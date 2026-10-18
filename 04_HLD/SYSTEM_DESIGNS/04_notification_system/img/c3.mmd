@@ -4,7 +4,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis<br/>worker mara, do email<br/>-> bhejne se pehle Redis me khabar ki APNI id se key (SET NX)<br/>key pehle se mili = khabar aa chuki, skip (idempotency key)<br/>Redis gira -> DB me ek baar hi lage<br/>key 24 ghante me mitti -> DB row rokegi"]
+    n_Redis["Redis<br/>worker mara, do email<br/>-> bhejne se pehle khabar ki apni id ki key, pehle se hai = skip (idempotency key)<br/>Redis gira -> DB me ek baar hi lage"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES

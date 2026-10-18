@@ -53,7 +53,8 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
     c2 = c.replace(ctag, re.sub(r' (width|height)="[^"]*"', '', ctag).replace('<svg ', f'<svg x="{ox2:.1f}" y="{h1+gap:.1f}" width="{w2:.1f}" height="{h2:.1f}" ', 1), 1)
     # kai peele ho to wo jiske label me text (<br/>) hai
     ys = re.findall(r'style (\w+) fill:#f9a825', mmd_src)
-    node = next((n for n in ys if re.search(n + r'\["[^"]*<br/>', mmd_src)), ys[0])
+    lab = lambda n: (re.search(r'\b' + n + r'\["([^"]*)"', mmd_src) or re.match('()', '')).group(1)
+    node = max(ys, key=lambda n: lab(n).count('<br/>'))   # sabse lamba peela = is card ka
     # sab dabbe (beech x, y, chaudai, unchai); teer neeche wale kisi dabbe ke upar se na jaaye
     boxes = {}
     for m in re.finditer(r'id="[^"]*flowchart-(\w+)-\d+"[^>]*transform="translate\(([\d.\-]+), ([\d.\-]+)\)"><rect([^>]*)>', d):

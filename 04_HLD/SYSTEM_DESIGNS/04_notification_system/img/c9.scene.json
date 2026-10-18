@@ -1,0 +1,61 @@
+{
+ "title": "Company ne \"bhej diya\" bola, mere phone tak pahuncha?",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: company ne le liya, aage pata nahi",
+   "items": [
+    {
+     "box": "Worker"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "SMS company",
+     "sub": "\"le liya\""
+    },
+    {
+     "arrow": "?",
+     "dash": true
+    },
+    {
+     "box": "Mera phone",
+     "sub": "pahuncha?",
+     "bad": true
+    }
+   ],
+   "result": "andhera"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: company baad me khud bataye pahuncha / fail (webhook)",
+   "items": [
+    {
+     "box": "Worker",
+     "sub": "message no. SID-9 save"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "SMS company"
+    },
+    {
+     "arrow": "webhook: SID-9 pahuncha"
+    },
+    {
+     "box": "Webhook Svc",
+     "sub": "SID-9 -> DELIVERED",
+     "cells": [
+      "DELIVERED"
+     ],
+     "state": "g",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "webhook aaya hi nahi -> company se status poochho; nakli webhook -> signature jaancho"
+  }
+ ]
+}

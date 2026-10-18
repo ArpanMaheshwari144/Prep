@@ -5,7 +5,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line + worker<br/>(push -> FCM / APNs)"]
     n_SES["SES + SendGrid"]
-    n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> 2-3 sec me jawab nahi to chhodo (timeout), har company alag<br/>5 fail -> circuit OPEN, SNS pe, 30 sec baad ek test call (circuit breaker)<br/>push / email -> har company ka apna circuit breaker<br/>SNS bhi band -> line me ruke, OTP ka alert"]
+    n_Twilio["Twilio + SNS<br/>SMS 30 sec atki<br/>-> jawab nahi to chhodo (timeout); baar-baar fail -> SNS pe, baad me test call (circuit breaker)<br/>SNS bhi band -> line me ruke, OTP ka alert"]
     n_Redis["Redis (key)"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka

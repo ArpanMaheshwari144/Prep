@@ -1,0 +1,68 @@
+{
+ "title": "Key lag gayi, par mera OTP gaya hi nahi",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: koshish se pehle hi \"bhej diya\" maan liya",
+   "items": [
+    {
+     "box": "Worker-A",
+     "sub": "key: bhej diya",
+     "cells": [
+      "SENT"
+     ],
+     "state": "r"
+    },
+    {
+     "arrow": "call FAIL"
+    },
+    {
+     "box": "Worker-B",
+     "sub": "\"bhej diya\" dekh ke chhoda",
+     "bad": true
+    }
+   ],
+   "result": "OTP kho gaya"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: bhejte waqt SENDING, company OK pe SENT; chhodna sirf SENT pe",
+   "items": [
+    {
+     "box": "Worker-A",
+     "sub": "key: SENDING",
+     "cells": [
+      "SENDING"
+     ],
+     "state": "o",
+     "clock": "60 sec"
+    },
+    {
+     "arrow": "mara"
+    },
+    {
+     "box": "Key",
+     "sub": "khud mit gayi",
+     "cells": [
+      ""
+     ],
+     "state": "e"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Worker-B",
+     "sub": "phir bheja, OK -> SENT",
+     "cells": [
+      "SENT"
+     ],
+     "state": "g",
+     "good": true
+    }
+   ],
+   "result": "OTP gaya",
+   "foot": "call fail aur worker zinda -> khud key hatao; B ko SENDING mili -> ruko"
+  }
+ ]
+}

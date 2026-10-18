@@ -4,7 +4,7 @@ flowchart LR
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (key + bucket)<br/>sale pe 429<br/>-> company ki had 100 / sec = har sec 100 token, sab worker ka ek bucket (Redis)<br/>har worker pehle token le (Lua, ek jhatke me), 429 pe Retry-After tak ruko (token bucket)<br/>token nahi mila -> line me intezaar, fail nahi<br/>worker badh gaye -> speed wahi, bucket saanjha<br/>bucket wala Redis gira -> har worker chhoti local had (fail-closed)"]
+    n_Redis["Redis (key + bucket)<br/>sale pe 429<br/>-> company ki had = sab worker ka ek token bucket, pehle token lo (token bucket)<br/>token nahi mila -> line me intezaar, fail nahi<br/>bucket wala Redis gira -> har worker chhoti local had"]
     n_DLQ["DLQ"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc

@@ -6,7 +6,7 @@ flowchart LR
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (key + bucket)"]
     n_DLQ["DLQ"]
-    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> company baad me khud call kare: pahuncha / fail (webhook)<br/>bhejte waqt company ka message number save (SES MessageId / Twilio SID), usi se haal badlo<br/>webhook aaya hi nahi -> company se status poochho<br/>nakli webhook -> signature jaancho"]
+    n_Webhook_Svc["Webhook Svc<br/>bheja, par mila?<br/>-> company baad me khud bataye pahuncha / fail, message number se haal badlo (webhook)<br/>webhook aaya hi nahi -> company se status poochho<br/>nakli webhook -> signature jaancho"]
     n_Tracking_DB["Tracking DB"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc

@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_Admin["Admin"]
-    n_CAMP["Campaign Svc + DB<br/>1 crore ko offer<br/>-> 1000-1000 ke tukde: id > aakhri_id, har tukda Kafka me, dheemi line<br/>aakhri_id campaign row me, job gira to wahin se (batch + campaign row)<br/>worker gira -> wahi batch dobara, bheje hue skip<br/>galat offer chala -> CANCELLED, worker har tukde se pehle dekhe"]
+    n_CAMP["Campaign Svc + DB<br/>1 crore ko offer<br/>-> chhote tukdon me bhejo, aakhri tukda campaign row me (batch + campaign row)<br/>job gira -> wahin se, bheje hue skip<br/>galat offer chala -> CANCELLED, worker har tukde se pehle dekhe"]
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]

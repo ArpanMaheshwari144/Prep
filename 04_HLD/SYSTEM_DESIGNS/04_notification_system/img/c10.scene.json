@@ -1,0 +1,63 @@
+{
+ "title": "Shaam ko \"Diwali offer sabko\": 1 crore log",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: ek request me 1 crore ek-ek karke",
+   "items": [
+    {
+     "box": "Admin",
+     "sub": "sabko bhejo"
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "Ek request",
+     "sub": "ghanton atki",
+     "cells": [
+      "1",
+      "2",
+      "..",
+      "1cr"
+     ],
+     "state": "oooo",
+     "bad": true
+    }
+   ],
+   "result": "OTP bhi peeche"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: chhote tukdon me, aakhri tukda campaign row me (batch)",
+   "items": [
+    {
+     "box": "Campaign row",
+     "sub": "aakhri_id = 3000",
+     "cells": [
+      "3000"
+     ],
+     "state": "y"
+    },
+    {
+     "arrow": "agla tukda"
+    },
+    {
+     "box": "Tukde",
+     "sub": "1000-1000, low line",
+     "cells": [
+      "1k",
+      "2k",
+      "3k",
+      "4k",
+      ".."
+     ],
+     "state": "gggyd",
+     "good": true
+    }
+   ],
+   "result": "",
+   "foot": "job gira -> 3000 se aage, bheje hue skip; galat offer -> CANCELLED, har tukde se pehle dekho"
+  }
+ ]
+}
