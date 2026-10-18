@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_LB["LB<br/>App machine giri<br/>-> App kuch yaad nahi rakhta (sab DB me), koi bhi machine koi bhi request le<br/>LB har kuch sec /health poochta, fail = list se bahar<br/>(stateless + health check)<br/>machine giri -> hold DB me, agli machine wahi dekhe<br/>payment beech me -> same id dobara, do baar nahi katega (idempotent)"]
+    n_LB["LB<br/>App machine giri<br/>-> App kuch yaad nahi rakhta, koi bhi machine koi bhi request le (stateless + health check)<br/>machine giri -> hold DB me, agli machine wahi dekhe<br/>payment beech me -> same id, do baar nahi"]
     n_App_xN["App x N"]
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_RRR["Redis Cluster + Read replica"]

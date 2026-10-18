@@ -1,0 +1,69 @@
+{
+ "title": "Maine aur Ravi ne 10:00:01 pe A1 book ki, dono ko mil gayi",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: pehle padha (khaali), phir likha (booked)",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Main",
+       "sub": "A1 khaali dekha, book"
+      },
+      {
+       "box": "Ravi",
+       "sub": "A1 khaali dekha, book"
+      }
+     ]
+    },
+    {
+     "arrow": ""
+    },
+    {
+     "box": "A1",
+     "cells": [
+      "Arpan",
+      "Ravi"
+     ],
+     "state": "rr",
+     "bad": true
+    }
+   ],
+   "result": "do ko biki"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: dekhna + book karna ek hi query me (atomic UPDATE)",
+   "items": [
+    {
+     "box": "Ek query",
+     "sub": [
+      "UPDATE seats SET status = booked",
+      "WHERE show_id = 42 AND seat_id = A1",
+      "AND status = available"
+     ]
+    },
+    {
+     "arrow": "row lock, ek-ek"
+    },
+    {
+     "stack": [
+      {
+       "box": "Main",
+       "sub": "1 row, A1 meri",
+       "good": true
+      },
+      {
+       "box": "Ravi",
+       "sub": "0 row, seat gayi",
+       "bad": true
+      }
+     ]
+    }
+   ],
+   "result": "ek ko hi",
+   "foot": "Ravi ne phir dabaya -> phir 0 row, kuch nahi milta"
+  }
+ ]
+}

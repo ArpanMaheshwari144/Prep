@@ -77,7 +77,7 @@ JAWAB:    Booking me sahi hona pehle: network toota aur pakka nahi pata seat kha
 ```
 seats table (seat_id, show_id, status). "Book" dabao -> status = 'booked'.
 ```
-![cdabba](img/cdabba.svg)
+![cdabba](img/cdabba-fc2796eb.svg)
 
 
 #### 1 Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
@@ -85,16 +85,10 @@ seats table (seat_id, show_id, status). "Book" dabao -> status = 'booked'.
 DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A1 khaali" dekha, Book dabaya.
            App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
 ```
-![c1](img/c1.svg)
+![c1](img/c1-f1062f3d.svg)
 
 ```
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
-```
-```
-TASVEER: ek row, do haath
-  10:00:01  main:  UPDATE ... 'booked' WHERE A1 AND 'available' -> row lock mujhe -> 1 row badli
-  10:00:01  Ravi:  wahi UPDATE -> lock pe ruka -> mera commit -> WHERE dobara: ab 'booked' -> 0 row
-  mujhe: "booked"                 Ravi ko: "seat ja chuki, doosri chuno"
 ```
 ```
 AAGE POOCHEGA:
@@ -111,17 +105,10 @@ AAGE POOCHEGA:
 DIKKAT     Maine A1 chuni, payment me 3 min. 'available' rehne di -> beech me Ravi le gaya. Seedha 'booked'
            kar di -> mera payment fail hua to A1 hamesha ke liye band.
 ```
-![c2](img/c2.svg)
+![c2](img/c2-e6c2623f.svg)
 
 ```
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
-```
-```
-TASVEER: seat ka safar
-  available --(maine A1 chuni)--> held (Arpan, held_until = abhi + 5 min)
-  held --(5 min ke andar pay)--> booked
-  held --(5 min nikle, pay nahi)--> booking UPDATE use khaali maane · sweeper -> available
-  beech me Ravi ko 'held' dikhe, le nahi sakta
 ```
 ```
 AAGE POOCHEGA:
@@ -138,7 +125,7 @@ AAGE POOCHEGA:
 DIKKAT     A1 chuni, Pay dabaya, paisa kat gaya, par jawab aate waqt network gaya. App ne khud dobara bheja
            -> paisa do baar kata, ticket ek.
 ```
-![c3](img/c3.svg)
+![c3](img/c3-43f51bf8.svg)
 
 ```
 AAGE POOCHEGA:
@@ -155,7 +142,7 @@ AAGE POOCHEGA:
 DIKKAT     11 baje release ka show, main seat map dekh raha, saath me 1 lakh log. Book koi-koi kar raha,
            par har map seedha main DB se -> DB pe bheed, booking bhi dheemi.
 ```
-![c4](img/c4.svg)
+![c4](img/c4-aef5824a.svg)
 
 ```
 AAGE POOCHEGA:
@@ -174,16 +161,10 @@ AAGE POOCHEGA:
 DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. Saari bheed DB ki wahi rows
            pe, har koi lock ke intezaar me -> sab dheema. (Aam din ye nahi hota, hold seedha DB pe.)
 ```
-![c5](img/c5.svg)
+![c5](img/c5-07534c44.svg)
 
 ```
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
-```
-```
-TASVEER: darwaze pe line
-  2 lakh log -> [ darwaza: Redis DECR, ek waqt ~3000 andar ] -> baaki line me, apni jagah dekhte
-  andar wale -> booking Kafka (key = show_id) -> ek worker -> ek-ek UPDATE -> DB
-  koi bina khareede gaya / hold khatam -> line se agla andar
 ```
 ```
 AAGE POOCHEGA:
@@ -203,7 +184,7 @@ AAGE POOCHEGA:
 DIKKAT     2 baje Redis restart hua, saara seat map khaali. Usi pal hazaaron log ek saath DB / replica pe
            map maangne gaye -> replica baith gayi, map nahi khul raha.
 ```
-![c6](img/c6.svg)
+![c6](img/c6-87d552b9.svg)
 
 ```
 AAGE POOCHEGA:
@@ -221,7 +202,7 @@ AAGE POOCHEGA:
 DIKKAT     Shaam ko main seat chun raha tha. Jis App machine pe tha wo gir gayi, aur ek hi machine thi
            -> page band, booking adhoori, kisi ka kuch nahi chal raha.
 ```
-![c7](img/c7.svg)
+![c7](img/c7-62a4dae3.svg)
 
 ```
 AAGE POOCHEGA:
@@ -256,7 +237,7 @@ JAWAB:    Seat map Redis aur copy se, booking main DB pe ek query se ('khaali ho
           Release ke din ki bheed: darwaze pe ginti + har show ki ek line. Payment pe id, do baar nahi katega.
           SQL kyunki sahi hona sabse zaroori, data chhota to baantna nahi.
 ```
-![c7_2](img/c7_2.svg)
+![c7_2](img/c7_2-2f9f4e07.svg)
 
 
 ---

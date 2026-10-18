@@ -3,7 +3,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis me (~5 sec umar), dekhna wahin se<br/>booking ka faisla sirf main DB ke UPDATE pe<br/>(cache + replica)<br/>Redis me nahi -> replica se banao, Redis me rakho<br/>kisi ne book kiya -> pehle DB, phir Redis se hatao<br/>A1 biki, map me khaali -> chalta, faisla UPDATE ka"]
+    n_Redis["Redis<br/>1 lakh seat map dekh rahe<br/>-> seat map Redis me thodi der, dekhna wahin se; faisla sirf DB ke UPDATE pe (cache + replica)<br/>kisi ne book kiya -> pehle DB, phir Redis se hatao<br/>A1 biki, map me khaali -> chalta, faisla UPDATE ka"]
     n_Read_replica["Read replica"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]

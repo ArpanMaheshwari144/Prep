@@ -1,0 +1,60 @@
+{
+ "title": "2 baje Redis restart, saara seat map ek saath replica pe",
+ "rows": [
+  {
+   "tag": "pehle",
+   "label": "PEHLE: map khaali, hazaaron ek saath DB pe",
+   "items": [
+    {
+     "box": "Hazaaron log"
+    },
+    {
+     "arrow": "miss, sab ek saath"
+    },
+    {
+     "box": "Replica",
+     "sub": "baith gayi",
+     "bad": true
+    }
+   ],
+   "result": "map nahi khulta"
+  },
+  {
+   "tag": "ab",
+   "label": "AB: sirf ek request DB se banaye, baaki ruk ke Redis se (lock)",
+   "items": [
+    {
+     "stack": [
+      {
+       "box": "Request 1",
+       "sub": "lock mila",
+       "good": true
+      },
+      {
+       "box": "Request 2..N",
+       "sub": "ruko 100 ms",
+       "miss": true
+      }
+     ]
+    },
+    {
+     "arrow": "sirf 1"
+    },
+    {
+     "box": "Replica",
+     "sub": "ek hi query"
+    },
+    {
+     "arrow": "map bharo"
+    },
+    {
+     "box": "Redis",
+     "sub": "baaki yahin se",
+     "clock": "lock 5s"
+    }
+   ],
+   "result": "",
+   "foot": "lock wala hi mara -> lock khud hate (TTL); ruk ke bhi khaali -> 2-3 retry, phir replica"
+  }
+ ]
+}

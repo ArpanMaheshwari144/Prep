@@ -4,7 +4,7 @@ flowchart LR
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
     n_RRR["Redis + Read replica"]
-    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe ginti (Redis DECR): ~3000 andar, baaki line me<br/>andar walo ki booking Kafka me, key = show_id: ek show ek worker, ek-ek UPDATE<br/>(waiting room)<br/>UPDATE jeeta -> user ko poll / push (bookingId)<br/>seat haar gaya -> seat gayi, doosri lo<br/>andar wala bina liye gaya -> line se agla andar"]
+    n_Kafka["Kafka<br/>3000 seat, 2 lakh log<br/>-> darwaze pe ginti, ~3000 andar, baaki line me; show ki booking ek line (waiting room)<br/>UPDATE jeeta -> user ko poll / push<br/>andar wala bina liye gaya -> line se agla"]
     n_Booking_worker["Booking worker"]
     n_SQL_primary["SQL primary"]
     n_Sweeper_job["Sweeper job"]
