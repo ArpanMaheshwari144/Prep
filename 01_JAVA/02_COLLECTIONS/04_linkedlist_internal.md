@@ -80,4 +80,4 @@ ticketQueue.addLast(normalTicket);     // O(1)
 
 > **Yaad rakh:**
 > ArrayList → Zyada READ, index access, end pe add/remove
-> LinkedList → Zyada INSERT/DELETE beech mein, queue/stack banani ho
+> LinkedList → Zyada INSERT/DELETE beech mein, iterator ke saath (queue/stack ke liye ArrayDeque behtar)
