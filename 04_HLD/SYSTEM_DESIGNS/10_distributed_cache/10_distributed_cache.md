@@ -179,6 +179,10 @@ flowchart LR
 
 </details>
 
+**CONSISTENT HASHING KAISE:**
+
+![consistent hashing](img/concept_consistent_hashing.svg)
+
 ```
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
 ```
