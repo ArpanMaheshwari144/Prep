@@ -104,7 +104,7 @@ cmap.put("key", null);         // NullPointerException
 
 ```
 Java 5-7:   Segments (16 default) — segment-level lock
-            (16 threads concurrent OK, 17th thread block)
+            (alag segment pe 16 tak LIKHNE wale ek saath; padhne pe taala nahi)
 
 Java 8+:    Per-bucket synchronized + CAS operations
             (Number of buckets = parallel threads possible)
