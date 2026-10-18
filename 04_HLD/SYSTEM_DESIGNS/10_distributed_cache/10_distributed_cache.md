@@ -79,25 +79,26 @@ flowchart LR
 
 #### 0 SHURU: CACHE-ASIDE (cache kaam kaise karta)
 ```
-DIKKAT 1   Meri profile DB se padhne me ~10 ms (disk). 10 lakh log / second profile khol rahe
+DIKKAT     Meri profile DB se padhne me ~10 ms (disk). 10 lakh log / second profile khol rahe
            -> DB ghutno pe.
-HAL        DB ke aage RAM wala cache. App pehle cache se poochhe:
-             mili (HIT) -> <1 ms me wapas
-             nahi mili (MISS) -> DB se laao -> cache me daalo (TTL ke saath) -> wapas. Agli baar HIT.
-           App khud cache sambhalta = CACHE-ASIDE (sabse aam tareeka).
-
-DIKKAT 2   Likhna kaise? cache-aside / write-through / write-back?
-HAL        Cache-aside: DB me likho, cache ki key DELETE.
-           Write-through: DB aur cache dono me saath (hamesha taaza, par likhna dheema).
-           Write-back: pehle sirf cache, DB me baad me (tez, par cache mara to data gaya -> paise pe kabhi
-           nahi).
-
-DIKKAT 3   Poora cache hi gir gaya?
-HAL        Saari padhai DB pe. DB ke aage rate limit / load shedding (faltu request mana), warna DB bhi
-           girega.
-
-DIKKAT 4   Chal raha hai, kaise pata?
-HAL        HIT RATIO sabse pehle (achanak gira = kuch toota) + p99 + kitni key nikaali ja rahi (evictions).
+HAL        DB ke aage RAM cache, App pehle cache se poochhe (CACHE-ASIDE): mili (HIT) -> <1 ms; nahi (MISS)
+           -> DB se laao, cache me daalo (TTL ke saath). Likhna = DB me, cache ki key DELETE.
+```
+```
+TASVEER: ek profile ka padhna aur likhna
+GET profile:42 -> cache me?  HIT  -> <1 ms, DB tak gaya hi nahi
+                             MISS -> DB (~10 ms) -> cache me daalo (TTL) -> agli baar HIT
+naam badla     -> DB me likho -> cache ki key DELETE -> agla padhne wala DB se naya laata
+```
+```
+AAGE POOCHEGA:
+  NIYAM: sach DB me, cache sirf tez copy: padho cache se, na mile to DB se bharo; likho DB me, key hatao.
+         App ko farak sirf tezi ka; cache khaali ho to bhi sahi data DB se milta.
+  SAFAR (profile:42 ka padhna):
+  sab theek                -> cache me mili (HIT) -> <1 ms, DB tak gaya hi nahi
+  cache me nahi (MISS)     -> DB se laao, cache me daalo (TTL ke saath): agli baar HIT
+  umar (TTL) khatam        -> agla padhne wala MISS -> DB se taaza: purana zyada der nahi tikta
+  naam badla               -> DB me likho, cache ki key DELETE: agla padhne wala naya laata
 ```
 
 #### 1 Subah cache machine ki RAM bhar gayi, kya hatayein
@@ -363,6 +364,12 @@ POOCHEGA: "How do you know it's working?"         -> HIT RATIO sabse
 
 ```
 SAFAR KE BAHAR WALE SAWAAL:
+(c0) "Likhna write-through / write-back kyun nahi?" -> write-through = DB + cache saath (taaza, likhna
+                                       dheema); write-back = pehle sirf cache, DB baad me (tez, par cache
+                                       mara to data gaya -> paise pe kabhi nahi)
+(c0) "Poora cache hi gir gaya?" -> saari padhai DB pe: DB ke aage rate limit / load shedding, warna DB
+                                  bhi gira
+(c0) "Chal raha hai, kaise pata?" -> HIT RATIO pehle (achanak gira = kuch toota) + p99 + evictions
 "LFU kyun nahi (kitni baar chhua)?" -> kal ki famous key aaj bhi baithi rehti, purani ginti nahi ghatti;
                                        default LRU
 "Redis sach me poori LRU list rakhta?" -> nahi, andaaze wala LRU: kuch random key me sabse purani; poori list

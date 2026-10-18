@@ -86,31 +86,26 @@ flowchart LR
 
 #### 0 SHURU: CODE KAISE BANE (dil ka hissa)
 ```
-DIKKAT 1   Maine diya "https://amazon.in/....../bahut-lamba-link". Mujhe chahiye "bit.ly/w7e".
-           Har link ka code alag hona chahiye, warna do link ek hi jagah khulenge.
-HAL        Ek ginti (counter) rakho: 1, 2, 3 ... Har naye link ko agla number do, aur us number ko
-           BASE62 me likh do. Wahi code hai.
-
-           Base62 = 62 akshar: 0-9 (10) + a-z (26) + A-Z (26).
-           Number ko baar-baar 62 se bhaag do, jo bachta (remainder) wo ek akshar, aakhir me ulta padho.
-           Misaal: 125 = 2 x 62 + 1 -> "21".   100 crore -> "15FTGg" (6 akshar).
-           Counter kabhi dohraata nahi -> code kabhi dohraata nahi. Check karne ki zaroorat hi nahi.
-
-DIKKAT 2   Counter kyun, lambe link ka MD5 / random code kyun nahi?
-HAL        MD5 / random me do link ka code same aa sakta hai. Har baar DB se poochna padega
-           "ye code pehle se hai?" Counter me ye dikkat hi nahi.
-
-DIKKAT 3   Counter se code ka andaza nahi lag jaayega? (abc124 ke baad abc125)
-HAL        Haan, ye keemat hai. Chahiye to number ko pehle shuffle / XOR karo, phir base62.
-           Phir bhi unique rahega.
-
-DIKKAT 4   User apna code maange ("bit.ly/arpan")?
-HAL        Check karo: lambai theek, "admin" / "login" jaisa reserved shabd nahi, pehle se liya hua nahi.
-           Do log ek saath same code maangein -> DB me UNIQUE rule, ek ko 409 (pehle se hai).
-
-DIKKAT 5   Redirect 301 dein ya 302?
-HAL        302. 301 pe browser link yaad kar leta hai, agli baar server tak aata hi nahi.
-           Tab click gin nahi paate aur expiry bhi kaam nahi karti.
+DIKKAT     Maine diya "https://amazon.in/....../bahut-lamba-link", mujhe chahiye "bit.ly/w7e".
+           Har link ka code alag ho, warna do link ek hi jagah khulenge.
+HAL        ek ginti (COUNTER) 1, 2, 3 ...: har naye link ko agla number, use BASE62 me likho = code.
+           Counter dohraata nahi -> code dohraata nahi. Click pe 302 (har baar server tak, gin sakein).
+```
+```
+TASVEER: number se code (base62)
+  62 akshar: 0-9 (10) + a-z (26) + A-Z (26)
+  number ko baar-baar 62 se bhaag do, bacha (remainder) = ek akshar, aakhir me ulta padho
+  125 = 2 x 62 + 1 -> "21"          100 crore -> "15FTGg" (6 akshar)
+```
+```
+AAGE POOCHEGA:
+  NIYAM: code = counter ka number, base62 me; ek number ek hi baar -> code kabhi same nahi, check nahi.
+         Click pe 302: har click server tak aata, isliye ginti + expiry chalti.
+  SAFAR (ek naya link, har mod pe kya):
+  sab theek              -> counter 1001 -> base62 "g9" -> DB me (g9, lamba link) -> user ko bit.ly/g9
+  do link ek saath       -> counter ek jagah se, har request ko alag number: code kabhi same nahi
+  click aaya             -> 302 -> lamba link: har click server tak, ginti + expiry chalti
+  301 diya hota          -> browser yaad rakh leta, agli baar server tak aata hi nahi: ginti band
 ```
 
 #### 1 Mera sale wala link viral hua, har click DB pe, DB baith gaya
@@ -563,6 +558,9 @@ CARD SE AAYE SAWAAL (safar ke bahar):
   ek link viral, machine garam?  -> pehle Redis me milta, Cassandra tak kam aata
   naya link turant, Redis?       -> banate hi Redis me bhi daala, zyadatar wahin se milta
   5 copy ho to?                  -> likhne + padhne ki ginti > copy (W + R > N): 3 + 3 > 5
+  (c0) MD5 / random code?         -> do link ka code same ho sakta, har baar "pehle se hai?"; counter me nahi
+  (c0) counter se code ka andaza? -> haan, keemat; chahiye to pehle shuffle / XOR, phir base62 (unique)
+  (c0) user apna code maange?     -> lambai, reserved (admin) nahi, pehle se nahi; do log same -> UNIQUE, 409
 ```
 
 ---

@@ -104,16 +104,25 @@ flowchart LR
 
 #### 0 SHURU: DB KAUNSA? SQL
 ```
-DIKKAT 1   Ek payment me paanch likhai: Arpan -500, merchant +500, khaate (ledger) me 2 line, payment ka haal.
+DIKKAT     Ek payment me paanch likhai: Arpan -500, merchant +500, khaate (ledger) me 2 line, payment ka haal.
            Ye paanchon ek saath honi chahiye. Chaar hui aur ek reh gaya = hisaab galat.
-HAL        SQL (Postgres / MySQL): kai row EK transaction me, sab ya kuch nahi (ACID).
-           Teen table: wallet (account_id, balance) · ledger (sirf jodte) · payment (key, haal).
-           Ek payment = BEGIN -> 2 balance UPDATE + 2 ledger INSERT + payment ka haal -> COMMIT.
-           Beech me kuch bhi fail -> ROLLBACK -> paanchon me se ek bhi nahi hua.
-
-DIKKAT 2   NoSQL kyun nahi?
-HAL        Yahan kai row / table pe ek saath "sab ya kuch nahi" chahiye, aur paisa turant sahi dikhe.
-           Paise me "thodi der baad sahi" (eventual) nahi chalta.
+HAL        paanchon ek saath ya koi nahi (SQL transaction, ACID): Postgres / MySQL me kai row, kai table,
+           BEGIN ... COMMIT; beech me kuch fail -> ROLLBACK.
+```
+```
+TASVEER: ek payment, paanch likhai
+teen table:  wallet (account_id, balance) · ledger (sirf jodte) · payment (key, haal)
+BEGIN -> Arpan -500 · merchant +500 · ledger 2 line · payment ka haal -> COMMIT
+beech me kuch bhi fail -> ROLLBACK -> paanchon me se ek bhi nahi hua
+```
+```
+AAGE POOCHEGA:
+  NIYAM: paanchon likhai ek transaction: sab ya kuch nahi (ACID); user ko sirf "hua" ya "nahi hua"
+         dikhe, beech ka kabhi nahi.
+  SAFAR (ek payment ki paanch likhai):
+  sab theek                -> BEGIN -> paanchon -> COMMIT: user ko "hua"
+  ledger INSERT fail       -> ROLLBACK: Arpan ka -500 bhi ulta, paanchon me se ek bhi nahi
+  ROLLBACK hua             -> user ko "nahi hua", paisa jaisa tha; dobara try kar sakta
 ```
 
 #### 1 Kirana ko 500 bheje, beech me server gira
@@ -586,6 +595,8 @@ SCAM 1992 (ledger kyun itna zaroori):
           (1994) · NSDL demat (1996) · T+2 (2003) · T+1 (2021-23)
 
 CARD SE AAYE SAWAAL (safar ke bahar):
+"NoSQL kyun nahi?"                  -> kai row / table pe ek saath sab ya kuch nahi, paisa turant sahi;
+                                       "thodi der baad sahi" (eventual) paise me nahi (card 0)
 "Sach me do payment (100 + 100)?"    -> do baar screen khuli = do key -> dono honge (card 3)
 "Key server kyun nahi banata?"       -> dobara app bhejta; app ki key hi dono request jodti (card 3)
 "Redis aur DB dono kyun?"            -> Redis (SETNX) tez pakde, DB UNIQUE aakhri deewar (card 3)

@@ -83,24 +83,26 @@ flowchart LR
 
 #### 0 SHURU: ORDER BOOK KAISE MATCH KARTA
 ```
-SCENE      TCS ka share. Kuch bechna chahte (SELL), kuch khareedna (BUY).
-
-           Bechne wale   : sasta upar      3000, 3001, 3005 ...   (min-heap)
-           Khareedne wale: mehnga upar     2999, 2998 ...         (max-heap)
-
-           Match  -> jab top khareedar >= top bechne wala
-           Daam   -> jo order pehle se book me tha, uska
-           Tie    -> same daam pe jo pehle aaya (chhota number)
-
-DIKKAT 1   Book DB me rakhi to (DABBA 0 jaisa)?
-HAL        RAM me rakho. DB = milliseconds har order, RAM = microseconds.
-
-DIKKAT 2   RAM me hai, server crash hua -> book gayi?
-HAL        Har order match se PEHLE log me likho (sirf neeche jodo).
-           Crash pe log shuru se chalao -> wahi book wapas (same kram = same nateeja).
-
-DIKKAT 3   Mujhe 10 chahiye, bechne wale ke paas 6?
-HAL        6 ka sauda. Mere baaki 4 book me pade rehte, un 4 ka paisa ruka rehta.
+DIKKAT     TCS ka share: kuch bechna chahte (SELL), kuch khareedna (BUY).
+           Kiska sauda kisse hoga, aur kis daam pe?
+HAL        ORDER BOOK, do taraf: bechne wale sasta upar, khareedne wale mehnga upar. Sauda jab top
+           khareedar >= top bechne wala; daam pehle se book wale ka; same daam pe jo pehle aaya.
+```
+```
+TASVEER: TCS ki order book
+  Bechne wale   : sasta upar      3000, 3001, 3005 ...   (min-heap)
+  Khareedne wale: mehnga upar     2999, 2998 ...         (max-heap)
+  naya BUY 3001 -> top SELL 3000 <= 3001 -> sauda 3000 pe (book wale ka daam)
+```
+```
+AAGE POOCHEGA:
+  NIYAM: sauda tabhi jab top khareedar >= top bechne wala; daam book wale ka, barabar pe pehle wala.
+         Bacha hissa book me khada rehta, uska paisa ruka rehta.
+  SAFAR (ek BUY order, har mod pe kya):
+  sab theek              -> BUY 3001, top SELL 3000 -> sauda 3000 pe (book wale ka daam)
+  BUY 2998 aaya          -> top SELL 3000 se kam -> sauda nahi, book me khada (mehnga upar)
+  same daam, do log      -> jo pehle aaya (chhota number) pehle
+  mujhe 10, uske 6       -> 6 ka sauda; baaki 4 book me khade, un 4 ka paisa ruka
 ```
 
 #### 1 Maine ek baar dabaya, order do lag gaye
@@ -489,6 +491,8 @@ CARD SE AAYE SAWAAL (safar ke bahar):
 "Crash me paisa ka kya?"             -> paisa DB me, wahan rollback; book log se (card 5)
 "Galti pakdoge kaise?"               -> raat ledger jod hamesha 0: galti turant dikhe (card 6)
 "Paisa ulta kyun nahi?"             -> match ke baad sauda pakka: bechne wale ko 20k mil chuke (card 7)
+"Book DB me rakhi to?"            -> RAM me rakho: DB = milliseconds har order, RAM = microseconds (card 0)
+"RAM me hai, crash -> book gayi?" -> match se PEHLE log me; crash pe log shuru se chalao = wahi book (card 0)
 ```
 
 ---

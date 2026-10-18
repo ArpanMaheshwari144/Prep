@@ -103,19 +103,26 @@ flowchart LR
 
 #### 0 SHURU: KHULA TAAR (WEBSOCKET) AUR REGISTER
 ```
-SCENE      Ravi ne kabhi nahi poochha "koi message aaya?", phir bhi mera "hi" uski screen pe.
-           Ravi ne /connect khola -> ye connection BAND nahi hota (WEBSOCKET).
-           Server ki register: "Ravi -> uska taar". Maine "hi" bheja -> server register me Ravi ka taar
-           dhoondh ke usi khule taar se Ravi tak. Taar = data nahi, Ravi tak pahunchne ka RAASTA.
-
-DIKKAT 1   "Thodi-thodi der me poochte rehte" (polling)?
-HAL        Galat shabd. Polling = har 5 sec "kuch aaya?", 100 me 1 kaam ki. WebSocket = ek baar judo, turant.
-
-DIKKAT 2   SSE kyun nahi?
-HAL        SSE sirf server -> user. Chat me dono taraf chahiye.
-
-DIKKAT 3   Net chupchaap gaya, server ko kaise pata?
-HAL        Ping / pong (dhadkan); jawab nahi to taar band, register se hatao.
+DIKKAT     Ravi ne kabhi nahi poochha "koi message aaya?", phir bhi mera "hi" uski screen pe turant chahiye.
+           HTTP me server sirf jawab deta, khud awaaz nahi laga sakta.
+HAL        Ravi ek baar /connect khole, taar band nahi hota (WEBSOCKET, dono taraf). Server ki register:
+           "Ravi -> uska taar"; "hi" aaya -> register me Ravi ka taar dhoondh ke usi se bhejo.
+```
+```
+TASVEER: taar aur register
+Ravi: GET /connect -> taar khula, band nahi hota (WebSocket)
+register (server ki memory):  Ravi -> taar#7 · Arpan -> taar#3
+main "hi" bheju -> register me Ravi -> taar#7 -> usi taar se turant Ravi ki screen
+taar = data nahi, Ravi tak pahunchne ka RAASTA
+```
+```
+AAGE POOCHEGA:
+  NIYAM: user ek baar jude, taar khula rahe: server khud bhej sake; register batata kaun kis taar pe.
+         Taar toota to register se hatao; user dobara jude to naya taar, naya register.
+  SAFAR (mera "hi" Ravi tak):
+  sab theek                -> register me Ravi -> taar#7 -> usi taar se "hi", turant
+  net chupchaap gaya       -> ping / pong (dhadkan); jawab nahi to taar band, register se hatao
+  Ravi wapas juda          -> naya /connect -> naya taar, register me Ravi -> naya taar
 ```
 
 #### 1 Subah 2 crore log jude, server ki memory khatam
@@ -564,6 +571,8 @@ API:      GET /connect (BAND nahi hoti — WebSocket) · POST /messages { chatId
           GET /messages?chatId=&before= (wapas lena + history, cursor)
           POST /chats/{chatId}/read { read_upto } (tick)
 
+(c0) "Polling (har 5 sec poochho)?" -> 100 me 1 kaam ki; WebSocket = ek baar judo, turant.
+(c0) "SSE kyun nahi?"             -> SSE sirf server -> user; chat me dono taraf chahiye.
 "Redis pub-sub se kyun nahi?"      -> chal sakta, par kuch rakhta nahi: sunne wala na ho to message gaya.
 "message_id se partition kyun nahi?" -> aakhri 50 = 50 jagah se; jo saath padha jaata wo saath nahi.
 "SQL kyun nahi?"                   -> rishte / transaction chahiye nahi; bas bahut likhai (46,000 / sec).

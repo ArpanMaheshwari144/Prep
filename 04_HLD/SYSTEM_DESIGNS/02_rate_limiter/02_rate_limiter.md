@@ -87,32 +87,27 @@ flowchart LR
 
 #### 0 SHURU: TOKEN BUCKET KAISE CHALTA (yahi algo chuna)
 ```
-SCENE      Ek baalti me token hain (max 10). Har second 1 token bharta hai. Har request 1 token leti hai.
-           Baalti khaali -> 429. Baalti bhari ho to 10 request ek saath bhi nikal jaati hain (burst),
-           aur asli traffic aisa hi hota hai. Redis me sirf 2 number, bharna request aane pe.
-
-           REDIS ME KAISE (ek HASH, ek Lua script; had 10, bharna 1 token / second):
-             key tb:Arpan:login -> tokens = 7, last = 10:00:05
-             Request aayi 10:00:08 -> 3 second beete x 1 = 3 token bharo -> 7 + 3 = 10 (had 10 se upar nahi)
-             -> token >= 1? haan -> 1 ghatao -> tokens = 9, last = 10:00:08 -> ALLOW
-             Khaali (tokens 0) -> 429, Retry-After = agla token kab bharega.
-             Padhna + hisaab + likhna EK Lua script me (HMGET -> hisaab -> HSET + EXPIRE), to do request
-             ek saath aake aakhri token dono nahi le sakti. Time app se bhejo ya Redis ka TIME, ek hi rakho.
-
-DIKKAT 1   Fixed window (har minute ka ek dabba) kyun nahi?
-HAL        Sasta, par kinare pe double (59th + 61st second).
-
-DIKKAT 2   Sliding log?
-HAL        Har request ka time likho, pichhle 60 second ki gino. Bilkul sahi, par memory bahut.
-
-DIKKAT 3   Sliding counter?
-HAL        Is minute ki + pichhle minute ka hissa (jaise 70%) jodo. 2 number, lagbhag sahi.
-
-DIKKAT 4   Leaky bucket?
-HAL        Request line me, nikalti ek fixed speed se. Smooth, par burst nahi nikalne deta.
-
-DIKKAT 5   Token bucket hi kyun?
-HAL        Burst chahiye + memory kam + Redis me 2 number. (AWS / Stripe yahi lete hain.)
+DIKKAT     Har user ki had chahiye, par asli traffic jhatke me aata (10 request ek saath).
+           Had bhi pakki rahe, aur jhatka bhi nikle.
+HAL        BAALTI (TOKEN BUCKET): max 10 token, har second 1 bharta, har request 1 leti; khaali -> 429.
+           Redis me sirf 2 number; bharne ka koi job nahi, request aane pe hisaab (lazy).
+```
+```
+TASVEER: baalti ka hisaab (had 10, 1 token / sec)
+  key tb:Arpan:login -> tokens = 7, last = 10:00:05
+  request 10:00:08 -> 3 sec beete x 1 = 3 bharo -> 7 + 3 = 10 (had 10 se upar nahi)
+  token >= 1? haan -> 1 ghatao -> tokens = 9, last = 10:00:08 -> ALLOW
+  khaali (0) -> 429, Retry-After = agla token kab bharega
+```
+```
+AAGE POOCHEGA:
+  NIYAM: baalti = do number (kitne token, aakhri baar kab); bharna request aane pe hisaab se, koi job nahi.
+         Jhatka baalti jitna nikalta, phir speed se; khaali -> user ko 429 + kab aao.
+  SAFAR (Arpan ki ek request, har mod pe kya):
+  sab theek              -> tokens 7 -> beeta time jodo -> 1 ghatao -> ALLOW
+  10 request ek saath    -> baalti bhari thi -> 10 nikal gayi (burst): asli traffic aisa hi
+  11vi request           -> baalti khaali -> 429 + Retry-After (agla token kab)
+  ghanta bhar soya       -> lautne pe hisaab: beeta time x 1, par had 10 se upar nahi
 ```
 
 #### 1 Password bhool gaya, 9 baar login kiya, saari andar chali gayi
@@ -558,6 +553,12 @@ CARD SE AAYE SAWAAL (safar ke bahar):
   429 ya 503?                   -> user ki had = 429 · system ki had = 503
   API key chori?                -> nuksaan seemit (had key pe), key badlo / band karo
   (c9) 5 galat password?        -> username pe lock nahi, CAPTCHA / der: warna attacker tujhe hi lock kare
+  (c0) fixed window kyun nahi?     -> sasta, par kinare pe double (59th + 61st second)
+  (c0) sliding log?                -> har request ka time, pichhle 60 sec gino: bilkul sahi, par memory bahut
+  (c0) sliding counter?            -> is minute ki + pichhle ka hissa (jaise 70%): 2 number, lagbhag sahi
+  (c0) leaky bucket?               -> line me, fixed speed se nikalti: smooth, par burst nahi nikalne deta
+  (c0) token bucket hi kyun?       -> burst chahiye + memory kam + Redis me 2 number (AWS / Stripe bhi yahi)
+  (c0) do request ek saath hisaab? -> padhna + hisaab + likhna EK Lua (HMGET -> HSET); time ek jagah se
 ```
 
 ---
