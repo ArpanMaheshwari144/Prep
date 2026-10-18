@@ -97,6 +97,7 @@ flowchart LR
 
 </details>
 
+
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
 ```
 DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
@@ -121,6 +122,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikkat khud ban jaati.
 ```
@@ -157,6 +159,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 NAHI       app me "pehle dekho, phir daalo": dono ne dekha "nahi hai", dono ne daala (race).
 ```
@@ -195,6 +198,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 NAHI       Java synchronized: Banking Svc ki kai machine, lock sirf ek ke andar.
 ```
@@ -231,6 +235,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 NAHI       khaata Kafka me: DB transaction wapas hua (paisa kam tha), Kafka me "Arpan -500" -> khaata jhooth.
 ```
@@ -270,6 +275,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
 ```
@@ -311,6 +317,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 TASVEER: khaata vs balance
 khaata (sach):  har len-den ki line, sirf INSERT   -> saari line jodo = 30,100
@@ -361,6 +368,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: service kuch yaad nahi rakhti (jitni lagao); sach DB me, copy sync; gira to app wahi id se dobara.
@@ -408,6 +416,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 AAGE POOCHEGA:
   NIYAM: copy thodi peeche: dikhana copy se, paise ka faisla primary pe; abhi likha to primary se padho.
@@ -456,6 +465,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 TASVEER: gol ghera, phir ek kram
 Txn1 (Arpan -> dukaan 500):        taala Arpan   -> intezaar dukaan
@@ -508,6 +518,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
 ```
@@ -555,6 +566,7 @@ flowchart LR
 ```
 
 </details>
+
 ```
 NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.
 ```
@@ -622,6 +634,7 @@ flowchart LR
 ```
 
 </details>
+
 
 ---
 
