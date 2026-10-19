@@ -1,0 +1,100 @@
+<!doctype html>
+<!-- Card 1 chalti tasveer. GIF: node 04_HLD/tools/anim2gif.js <is file> -->
+<meta charset="utf-8">
+<style>
+body{margin:0;background:#11161c}
+svg text{font-family:Consolas,"Courier New",monospace;fill:#e6edf3}
+.box{fill:#222d3a;stroke:#4b5a6a;stroke-width:1.5}
+.wire{stroke:#4b5a6a;stroke-width:1.5;fill:none;stroke-dasharray:4 4}
+.lbl{font-size:14px}
+.small{font-size:12px;fill:#9aa8b6!important}
+.big{font-size:15px;font-weight:bold}
+</style>
+<svg id="s" width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="400" fill="#11161c"/>
+  <rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
+  <text id="cap" x="20" y="29" style="font-size:16px;font-weight:bold"></text>
+  <g transform="translate(0,40)">
+    <path class="wire" d="M110 180 H170"/><path class="wire" d="M250 180 L360 95"/><path class="wire" d="M250 180 L360 265"/>
+    <g id="rwire"><path class="wire" d="M480 95 L620 170"/><path class="wire" d="M480 265 L620 190"/></g>
+
+    <rect class="box" x="20" y="135" width="90" height="90" rx="12"/>
+    <text class="lbl" x="65" y="175" text-anchor="middle">Main</text>
+    <text class="small" x="65" y="193" text-anchor="middle">9 login</text>
+
+    <rect class="box" x="170" y="155" width="80" height="50" rx="8"/>
+    <text class="lbl" x="210" y="185" text-anchor="middle">LB</text>
+
+    <rect class="box" x="360" y="65" width="120" height="60" rx="8"/>
+    <text class="lbl" x="420" y="100" text-anchor="middle">App-1</text>
+    <text id="g1" class="small" x="420" y="145" text-anchor="middle"></text>
+    <rect class="box" x="360" y="235" width="120" height="60" rx="8"/>
+    <text class="lbl" x="420" y="270" text-anchor="middle">App-2</text>
+    <text id="g2" class="small" x="420" y="315" text-anchor="middle"></text>
+
+    <g id="redis">
+      <rect class="box" x="620" y="145" width="160" height="70" rx="10" style="stroke:#f0a030"/>
+      <text class="lbl" x="700" y="170" text-anchor="middle">Redis (ek ginti)</text>
+      <text id="rc" x="700" y="195" text-anchor="middle" style="font-size:13px;fill:#f0a030"></text>
+    </g>
+
+    <text id="res1" class="big" x="890" y="300" text-anchor="end"></text>
+    <text id="res2" class="big" x="890" y="325" text-anchor="end"></text>
+    <text class="small" x="890" y="350" text-anchor="end">had: 5 login / minute</text>
+    <g id="dots"></g>
+  </g>
+</svg>
+<script>
+const DUR = 20, FIX = 8.5, N = 9, GAP = 0.5;
+const NS = 'http://www.w3.org/2000/svg';
+const APP = [[420, 95], [420, 265]], USER = [110, 180], LB = [210, 180], R = [700, 180];
+const dots = [];
+for (let i = 0; i < N; i++) {
+  const g = document.createElementNS(NS, 'g');
+  const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', '9');
+  const t = document.createElementNS(NS, 'text'); t.setAttribute('text-anchor', 'middle'); t.setAttribute('y', '4');
+  t.style.fontSize = '11px'; t.style.fontWeight = 'bold'; t.style.fill = '#11161c'; t.textContent = i + 1;
+  const l = document.createElementNS(NS, 'text'); l.setAttribute('text-anchor', 'middle'); l.setAttribute('y', '-14');
+  l.style.fontSize = '12px'; l.style.fontWeight = 'bold';
+  g.append(c, t, l); document.getElementById('dots').append(g); dots.push({ g, c, l });
+}
+function lerp(a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; }
+function path(pts, t) {   // pts: [[time, [x,y]], ...]
+  if (t < pts[0][0]) return null;
+  for (let i = 1; i < pts.length; i++) if (t <= pts[i][0])
+    return lerp(pts[i - 1][1], pts[i][1], (t - pts[i - 1][0]) / (pts[i][0] - pts[i - 1][0]));
+  return pts[pts.length - 1][1];
+}
+function txt(id, s, color) { const e = document.getElementById(id); e.textContent = s; e.style.fill = color || ''; }
+function draw(t) {
+  const fix = t >= FIX, t0 = fix ? FIX + 0.6 : 0.6;
+  document.getElementById('capbg').setAttribute('fill', fix ? '#123018' : '#3a1414');
+  txt('cap', fix ? 'ILAAJ: sab App ek hi Redis ginti dekhte (rate:Arpan:login, umar 60 sec). 6th pe 429'
+                 : 'DIKKAT: har App apni ginti. LB ne baanta: App-1 ne 5 gine, App-2 ne 4. Koi had paar nahi', '#e6edf3');
+  document.getElementById('redis').style.opacity = fix ? 1 : 0;
+  document.getElementById('rwire').style.opacity = fix ? 1 : 0;
+  let a1 = 0, a2 = 0, rc = 0, ok = 0, no = 0;
+  dots.forEach((d, i) => {
+    const s = t0 + i * GAP, app = APP[i % 2];
+    const pts = [[s, USER], [s + 0.4, LB], [s + 0.9, app]];
+    if (fix) pts.push([s + 1.4, R]);
+    const p = path(pts, t);
+    const done = t >= pts[pts.length - 1][0];
+    let col = '#64b5f6', label = '';
+    if (done) {
+      if (!fix) { i % 2 ? a2++ : a1++; ok++; col = '#66bb6a'; }
+      else { rc++; if (rc <= 5) { ok++; col = '#66bb6a'; } else { no++; col = '#ef5350'; label = '429'; } }
+    }
+    if (!p || (done && t > pts[pts.length - 1][0] + 1.6)) { d.g.setAttribute('visibility', 'hidden'); return; }
+    d.g.setAttribute('visibility', 'visible');
+    d.g.setAttribute('transform', `translate(${p[0]} ${p[1]})`);
+    d.c.style.fill = col; d.l.textContent = label; d.l.style.fill = '#ef5350';
+  });
+  txt('g1', fix ? '' : `apni ginti: ${a1} / 5`);
+  txt('g2', fix ? '' : `apni ginti: ${a2} / 5`);
+  txt('rc', fix ? `rate:Arpan:login = ${rc}` : '');
+  if (!fix) { txt('res1', `andar: ${ok}`, ok > 5 ? '#ef5350' : '#e6edf3'); txt('res2', ok > 5 ? 'had tooti!' : '', '#ef5350'); }
+  else { txt('res1', `andar: ${ok}`, '#66bb6a'); txt('res2', no ? `429: ${no}` : '', '#ef5350'); }
+}
+draw(0);
+</script>

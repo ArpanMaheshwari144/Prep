@@ -64,6 +64,8 @@ jagah se.
 
 **Cue:** Redis me EK ginti, 60 sec umar · dabba: Redis (LB + App x2 pehle)
 
+![card 1 chalti tasveer: har App apni ginti, phir Redis me ek ginti](img/c1_anim.gif)
+
 LB ne mere 9 login baant diye: App-1 ne 5 gine, App-2 ne 4. Kisi ki had paar nahi hui, 9 andar.
 
 Isliye sab App ek hi Redis key ginte hain (rate:Arpan:login). Har request pe +1. Pehli request pe key ki umar 60 sec
