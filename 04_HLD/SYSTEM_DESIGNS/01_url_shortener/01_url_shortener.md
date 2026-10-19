@@ -105,6 +105,12 @@ AAGE POOCHEGA:
 #### 1 Mera sale wala link viral hua, har click DB pe, DB baith gaya
 KIYA: pehle Redis (RAM) me dekho, nahi mila to DB se laao + rakho (cache-aside)
 
+```
+DOOSRA KYUN NAHI
+  DB ki copy (replica)? -> DISK: copy bhi disk se padhti (~10 ms), Redis RAM se (~0.1 ms)
+  Memcached?            -> COPY NAHI: Redis gira to uski copy kaam le; Memcached me copy hoti hi nahi
+```
+
 ![c1](img/c1-af2360f1.svg)
 
 ```
@@ -125,6 +131,12 @@ AAGE POOCHEGA:
 #### 2 Usi bheed me ek App machine giri, poori site band
 KIYA: kai App, LB baante, App kuch yaad nahi rakhta (stateless + LB)
 
+```
+DOOSRA KYUN NAHI
+  ek badi machine?      -> EK HI: kitni bhi badi ho, giri to poori site band
+  login App me yaad?    -> CHIPAK: user usi App se bandh jaata, wo gira to logout
+```
+
 ![c2](img/c2-9ceb0757.svg)
 
 ```
@@ -142,6 +154,12 @@ AAGE POOCHEGA:
 #### 3 Maine aur Ravi ne link banaya, dono ko ek hi code mila
 KIYA: Counter har App ko alag range de, App usme se agla le (range)
 
+```
+DOOSRA KYUN NAHI
+  UUID?                 -> LAMBA: 36 akshar, link chhota karna hi maqsad tha
+  hash ke 7 akshar?     -> TAKKAR: do link ka same code ho sakta, har baar DB check
+```
+
 ![c3](img/c3-2bf0fcca.svg)
 
 ```
@@ -157,6 +175,12 @@ AAGE POOCHEGA:
 
 #### 4 Maine click ginti chahi, redirect hi dheema ho gaya
 KIYA: redirect turant, click Kafka me daalo, Analytics apni speed se padhe
+
+```
+DOOSRA KYUN NAHI
+  click seedha DB me?   -> RUKAWAT: har redirect DB likhai ka intezaar kare
+  sirf Redis INCR?      -> SIRF GINTI: kaun, kab, kahan se click hua, wo detail nahi
+```
 
 ![c4](img/c4-f3581c47.svg)
 
@@ -176,6 +200,12 @@ AAGE POOCHEGA:
 #### 5 DB team boli: 5 saal me 90 TB, ek machine me nahi
 KIYA: data kai machine me, link ke code se tay kaunsi machine (shard + ring)
 
+```
+DOOSRA KYUN NAHI
+  ek badi machine?      -> HAD: 90 TB ek machine me aata hi nahi
+  code % machine?       -> SAB HILE: machine judi to lagbhag saari keys hilein; ring me sirf pados ki
+```
+
 ![c5](img/c5-a1107513.svg)
 
 ```
@@ -191,6 +221,12 @@ AAGE POOCHEGA:
 
 #### 6 Maine naya link banaya, turant khola, 404 aaya
 KIYA: likhna 2 me + padhna 2 se: har jodi me ek taaza copy (quorum)
+
+```
+DOOSRA KYUN NAHI
+  teeno me likho?       -> DHEEMA: ek copy dheemi / giri to har likhai ruke
+  ek se padho?          -> PURANA: wahi copy padhi jahan abhi pahuncha nahi = 404
+```
 
 ![c6](img/c6-fafca975.svg)
 
@@ -209,6 +245,11 @@ AAGE POOCHEGA:
 #### 7 Shaam ko LB hi gir gaya, koi request andar nahi
 KIYA: Route 53 LB se poochhta rahe, chup LB list se bahar (DNS failover)
 
+```
+DOOSRA KYUN NAHI
+  ek hi LB?             -> EK HI: wo gira to koi andar nahi aa sakta
+```
+
 ![c7](img/c7-ec51e010.svg)
 
 ```
@@ -223,6 +264,12 @@ AAGE POOCHEGA:
 
 #### 8 Raat ko spammer ki script, har second 5,000 link
 KIYA: gateway pe har key / IP ki ginti, had paar = 429 (rate limit)
+
+```
+DOOSRA KYUN NAHI
+  har App apni ginti?   -> BIKHRI: 10 App = had 10 guna, aur bheed App tak aa chuki
+  sirf IP pe had?       -> NAYA IP: bot IP badal leta, isliye ginti API key pe
+```
 
 ![c8](img/c8-18eab50e.svg)
 
