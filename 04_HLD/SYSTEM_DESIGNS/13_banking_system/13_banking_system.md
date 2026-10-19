@@ -204,6 +204,10 @@ app dobara, WAHI id se. Do baar nahi katta.
 
 **Pooche: sync copy matlab dheema?** Haan, ek network chakkar. Paise me chalega. Async me aakhri transfer kho sakta.
 
+**Pooche: 11 baje ek dukaan ke account me 50,000 payment ek saath aaye, us ek row pe lock ki line?** Credit
+ledger line me likho (sirf INSERT, lock nahi), balance column har second batch me jodo. Atomic check sirf debit pe
+chahiye, credit pe nahi.
+
 ---
 
 *ab machine kaafi, par bheed padhne wali hai*
