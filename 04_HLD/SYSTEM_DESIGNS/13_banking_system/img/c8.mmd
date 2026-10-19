@@ -4,7 +4,7 @@ flowchart LR
     n_LB["LB"]
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
-    n_RR["Read replica<br/>padhai primary pe, transfer dheema<br/>-> padhna copy se, likhna sirf primary pe (read replica)<br/>paise ka faisla -> sirf primary pe<br/>abhi bheja, copy peeche -> apna likha primary se padho"]
+    n_RR["Read replica<br/>(read-your-own-writes)"]
     n_DB["SQL DB (+ ledger, outbox)"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]

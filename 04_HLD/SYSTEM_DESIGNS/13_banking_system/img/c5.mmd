@@ -3,7 +3,7 @@ flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
     n_DB["SQL DB (+ ledger, outbox)"]
-    n_K["Kafka<br/>SMS service giri<br/>-> SMS ki khabar usi transaction me outbox me, relay baad me Kafka bheje (outbox)<br/>SMS service ghanta giri -> khabar Kafka me padi<br/>relay dobara bheje -> eventId se skip"]
+    n_K["Kafka<br/>(outbox)"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     n_DB --> n_K

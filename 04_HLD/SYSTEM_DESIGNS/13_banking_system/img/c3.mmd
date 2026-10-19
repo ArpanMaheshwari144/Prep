@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB<br/>Netflix + UPI, balance -100<br/>-> check aur kaatna ek hi query me, DB row lock, dono line me (atomic UPDATE)<br/>doosra -> balance kam, 0 row, kuch nahi kata"]
+    n_DB["SQL DB<br/>(atomic UPDATE)"]
     n_USER --> n_SVC
     n_SVC --> n_DB
     style n_DB fill:#f9a825,color:#000

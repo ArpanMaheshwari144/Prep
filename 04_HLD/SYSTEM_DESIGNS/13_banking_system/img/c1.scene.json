@@ -3,11 +3,11 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: do alag badlaav, beech me crash",
+   "label": "PEHLE: mera -500 aur Ravi ka +500 do alag kaam the",
    "items": [
     {
      "box": "Mera account",
-     "sub": "1000 -> 500",
+     "sub": "1000 se 500 ho gaya",
      "cells": [
       "-500"
      ],
@@ -18,16 +18,16 @@
     },
     {
      "box": "Server",
-     "sub": "gira",
+     "sub": "beech me gir gaya",
      "bad": true
     },
     {
-     "arrow": "+500 nahi",
+     "arrow": "+500 hua hi nahi",
      "dash": true
     },
     {
      "box": "Ravi",
-     "sub": "0 hi",
+     "sub": "abhi bhi 0",
      "cells": [
       ""
      ],
@@ -38,7 +38,7 @@
   },
   {
    "tag": "ab",
-   "label": "AB: dono badlaav ek transaction me, ya dono ya koi nahi",
+   "label": "AB: dono kaam ek transaction me, ya dono ya koi nahi (transaction)",
    "items": [
     {
      "box": "Transaction",
@@ -53,7 +53,7 @@
      "arrow": "COMMIT se pehle gira"
     },
     {
-     "box": "DB ka log (WAL)",
+     "box": "DB ka log",
      "sub": "COMMIT likha hi nahi",
      "cells": [
       "BEGIN",
@@ -72,7 +72,7 @@
     }
    ],
    "result": "kuch nahi khoya",
-   "foot": "COMMIT ho gaya tha to log se poora karo; aadha kisi ko kabhi nahi dikhta"
+   "foot": "COMMIT likh gaya tha to log se poora karo; aadha kaam kisi ko kabhi nahi dikhta"
   }
  ]
 }

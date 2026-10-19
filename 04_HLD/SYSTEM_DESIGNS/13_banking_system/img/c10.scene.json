@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: LIMIT 20 OFFSET 100000",
+   "label": "PEHLE: page 5000 = LIMIT 20 OFFSET 100000",
    "items": [
     {
      "box": "CA tool",
@@ -14,7 +14,7 @@
     },
     {
      "box": "DB",
-     "sub": "1,00,020 line padhe, 1,00,000 phenke",
+     "sub": "1 lakh line padhi, phir phenk di",
      "cells": [
       "1",
       "2",
@@ -26,7 +26,7 @@
      "bad": true
     }
    ],
-   "result": "dheema"
+   "result": "export bahut dheema"
   },
   {
    "tag": "ab",
@@ -64,7 +64,7 @@
     }
    ],
    "result": "page 5000 bhi tez",
-   "foot": "beech me nayi line aayi -> purana page nahi khiskta, line dobara nahi"
+   "foot": "beech me nayi line aayi to purana page nahi khiskta, line dobara nahi aati"
   }
  ]
 }

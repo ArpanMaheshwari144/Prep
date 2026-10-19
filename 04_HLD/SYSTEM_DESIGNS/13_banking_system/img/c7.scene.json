@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: ek hi machine",
+   "label": "PEHLE: sirf ek machine",
    "items": [
     {
      "box": "Laakhon transfer"
@@ -13,7 +13,7 @@
     },
     {
      "box": "Banking Svc",
-     "sub": "CPU bhara, phir giri",
+     "sub": "CPU bhar gaya, phir giri",
      "bad": true
     }
    ],
@@ -43,7 +43,7 @@
       },
       {
        "box": "M2",
-       "sub": "giri, list se bahar",
+       "sub": "giri, LB ne hataya",
        "bad": true,
        "miss": true
       },
@@ -54,8 +54,8 @@
      ]
     }
    ],
-   "result": "baaki chalti",
-   "foot": "sach DB me hai, isliye koi bhi machine koi bhi transfer le; adhoora -> app wahi id se dobara"
+   "result": "baaki machine chalti rahi",
+   "foot": "sach DB me hai, isliye koi bhi machine koi bhi transfer le sakti; adhoora ho to app wahi id se dobara"
   }
  ]
 }

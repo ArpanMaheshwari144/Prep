@@ -9,16 +9,16 @@
      "stack": [
       {
        "box": "Netflix -200",
-       "sub": "300 padha, pass"
+       "sub": "300 dekha, pass"
       },
       {
        "box": "UPI -200",
-       "sub": "300 padha, pass"
+       "sub": "300 dekha, pass"
       }
      ]
     },
     {
-     "arrow": "dono kate"
+     "arrow": "dono kat gaye"
     },
     {
      "box": "Mera balance",
@@ -29,11 +29,11 @@
      "bad": true
     }
    ],
-   "result": "balance -100"
+   "result": "balance minus me"
   },
   {
    "tag": "ab",
-   "label": "AB: check aur kaatna ek hi query me, DB row lock (atomic UPDATE)",
+   "label": "AB: check aur kaatna ek hi query me (atomic UPDATE)",
    "items": [
     {
      "box": "Ek query",
@@ -45,18 +45,18 @@
      ]
     },
     {
-     "arrow": "ek-ek karke"
+     "arrow": "DB ek-ek karke"
     },
     {
      "stack": [
       {
        "box": "Netflix",
-       "sub": "300 -> 100, ho gaya",
+       "sub": "300 se 100, ho gaya",
        "good": true
       },
       {
        "box": "UPI",
-       "sub": "100 >= 200 nahi, 0 row, 422",
+       "sub": "100 me 200 nahi, kuch nahi kata",
        "bad": true
       }
      ]

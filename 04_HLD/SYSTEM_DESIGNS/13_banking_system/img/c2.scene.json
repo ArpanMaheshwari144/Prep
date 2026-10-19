@@ -3,18 +3,21 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: har request naya transfer",
+   "label": "PEHLE: app har baar naya transfer bhejta tha",
    "items": [
     {
      "box": "App",
-     "sub": "Send (koi id nahi)"
+     "sub": [
+      "Send dabaya,",
+      "koi id nahi"
+     ]
     },
     {
-     "arrow": "timeout, dobara"
+     "arrow": "timeout, dobara bheja"
     },
     {
      "box": "Server",
-     "sub": "do transfer",
+     "sub": "do alag transfer samjha",
      "cells": [
       "500",
       "500"
@@ -23,22 +26,25 @@
      "bad": true
     }
    ],
-   "result": "1000 kate"
+   "result": "1000 kat gaye"
   },
   {
    "tag": "ab",
-   "label": "AB: screen khulte ek id, retry pe wahi id (idempotency key)",
+   "label": "AB: screen khulte hi ek id, retry pe wahi id (idempotency key)",
    "items": [
     {
      "box": "App",
-     "sub": "id T-77"
+     "sub": "id T-77 banayi"
     },
     {
      "arrow": "dobara, wahi T-77"
     },
     {
      "box": "Server",
-     "sub": "T-77 pehle se hai?",
+     "sub": [
+      "T-77 pehle aa chuka?",
+      "haan: dobara mat kaato"
+     ],
      "cells": [
       "T-77",
       "T-77"
@@ -50,12 +56,12 @@
     },
     {
      "box": "Mera account",
-     "sub": "500 hi kate",
+     "sub": "sirf 500 kate",
      "good": true
     }
    ],
-   "result": "ek baar",
-   "foot": "dono ek saath pahunche -> DB ka UNIQUE doosra insert rok deta"
+   "result": "ek hi baar kata",
+   "foot": "dono ek saath pahunche to DB ka UNIQUE doosre ko rok deta"
   }
  ]
 }

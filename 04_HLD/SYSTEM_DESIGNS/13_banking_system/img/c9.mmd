@@ -5,7 +5,7 @@ flowchart LR
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_RR["Read replica"]
-    n_DB["SQL DB<br/>500 gaye, 200 refund, dono atke<br/>-> do account pe taala hamesha ek kram me, chhoti id pehle (lock order)<br/>phir bhi phansa -> DB ek ko wapas, app wahi id se"]
+    n_DB["SQL DB<br/>(lock order)"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB

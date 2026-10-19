@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: dono ne ulte kram me taala liya",
+   "label": "PEHLE: dono ne ulte kram me taala liya (deadlock)",
    "items": [
     {
      "stack": [
@@ -13,13 +13,13 @@
       },
       {
        "box": "Txn2: dukaan -> Arpan",
-       "sub": "dukaan pakda, Arpan ka intezaar"
+       "sub": "dukaan pakdi, Arpan ka intezaar"
       }
      ],
-     "frame": "gol ghera"
+     "frame": "dono ek doosre ka intezaar"
     }
    ],
-   "result": "dono atke (deadlock)"
+   "result": "dono hamesha ke liye atke"
   },
   {
    "tag": "ab",
@@ -29,12 +29,12 @@
      "stack": [
       {
        "box": "Txn1",
-       "sub": "pehle id 7 (Arpan), phir 9 (dukaan)",
+       "sub": "pehle 7 (Arpan), phir 9 (dukaan)",
        "good": true
       },
       {
        "box": "Txn2",
-       "sub": "wahi kram: 7 pe ruka, intezaar"
+       "sub": "wahi kram: 7 pe intezaar"
       }
      ]
     },
@@ -48,7 +48,7 @@
     }
    ],
    "result": "ghera bana hi nahi",
-   "foot": "phir bhi phansa -> DB ek ko wapas karta, app wahi id se dobara"
+   "foot": "phir bhi phansa to DB ek ko wapas karta, app wahi id se dobara bhejta"
   }
  ]
 }

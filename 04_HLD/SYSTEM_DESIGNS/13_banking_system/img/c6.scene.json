@@ -6,14 +6,14 @@
    "label": "PEHLE: balance column aur khaata alag ho gaye (bug)",
    "items": [
     {
-     "box": "Khaata ka jod",
+     "box": "Khaate ka jod",
      "cells": [
       "29,800"
      ],
      "state": "g"
     },
     {
-     "arrow": "?"
+     "arrow": "kaun sahi?"
     },
     {
      "box": "Balance column",
@@ -24,25 +24,26 @@
      "bad": true
     }
    ],
-   "result": "koi pakde hi nahi"
+   "result": "kisi ne pakda hi nahi"
   },
   {
    "tag": "ab",
-   "label": "AB: khaata hi sach, balance uska jod; raat ko milao (reconciliation)",
+   "label": "AB: khaata hi sach, balance uska jod, raat ko dono milao (reconciliation)",
    "items": [
     {
      "box": "Raat ka job",
-     "sub": "jod vs column",
+     "sub": "khaate ka jod vs column",
      "clock": "raat"
     },
     {
-     "arrow": "farak 500"
+     "arrow": "500 ka farak"
     },
     {
      "box": "Alert",
      "sub": [
       "account roko",
-      "pehle KYUN, phir khaata jeete"
+      "pehle wajah dhoondo",
+      "phir khaata jeete"
      ],
      "good": true
     }

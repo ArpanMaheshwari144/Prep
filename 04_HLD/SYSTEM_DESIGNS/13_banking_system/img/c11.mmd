@@ -6,7 +6,7 @@ flowchart LR
     n_RR["Read replica"]
     n_DB["SQL DB"]
     n_K["Kafka"]
-    n_S3["Archive (S3)<br/>5 saal ek table me<br/>-> khaata mahine ke tukde me, band mahina S3 pe, sasta (partition + archive)<br/>5 saal delete nahi (bank ka niyam)<br/>balance ka jod -> mahine ka snapshot + baad ki line"]
+    n_S3["Archive (S3)<br/>(partition + archive)"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB
     n_LB --> n_Banking_Svc_xN

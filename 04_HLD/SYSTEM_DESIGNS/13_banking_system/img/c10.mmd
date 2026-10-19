@@ -5,7 +5,7 @@ flowchart LR
     n_S1["Banking Svc 1"]
     n_S2["Banking Svc 2"]
     n_RR["Read replica"]
-    n_DB["SQL DB<br/>page 5000 dheema<br/>-> pichhle page ki aakhri line yaad, agla page usse aage, OFFSET nahi (keyset)<br/>page 1 ho ya 5000 -> ek jaisa tez<br/>beech me nayi line -> purana page nahi khiskta"]
+    n_DB["SQL DB<br/>(keyset)"]
     n_K["Kafka"]
     n_REC["Reconciliation job"]
     n_USER --> n_LB

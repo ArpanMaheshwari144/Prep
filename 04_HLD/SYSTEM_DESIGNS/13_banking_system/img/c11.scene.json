@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: arabon line ek table",
+   "label": "PEHLE: 5 saal ki arabon line ek hi table me",
    "items": [
     {
      "box": "Ek table",
@@ -17,11 +17,11 @@
      "state": "oooo"
     },
     {
-     "arrow": "roz ki query + backup"
+     "arrow": "roz query + backup"
     },
     {
      "box": "DB",
-     "sub": "sab line ke saath",
+     "sub": "har baar saari line",
      "bad": true
     }
    ],
@@ -58,7 +58,7 @@
     }
    ],
    "result": "table chhoti",
-   "foot": "5 saal delete nahi (bank ka niyam); balance ka jod -> mahine ka snapshot + baad ki line"
+   "foot": "5 saal delete nahi (bank ka niyam); balance = mahine ka snapshot + baad ki line"
   }
  ]
 }

@@ -16,7 +16,7 @@ from xml.sax.saxutils import escape as esc
 W = 960
 FONT = 'Arial, Helvetica, sans-serif'
 COL = {'pehle': ('#e53935', '#fff5f5', '#c62828'), 'ab': ('#43a047', '#f3f9ee', '#2e7d32'),
-       'kaise': ('#1976d2', '#f3f8fd', '#0d47a1')}
+       'kaise': ('#1976d2', '#f3f8fd', '#0d47a1'), 'phir': ('#f9a825', '#fffbea', '#8a5a00')}
 CELL = {'o': ('#ffe0b2', '#ef6c00'), 'g': ('#c8e6c9', '#43a047'), 'y': ('#f9a825', '#333'),
         'e': ('#ffffff', '#bbb'), 'x': ('#ffebee', '#d32f2f'), 'b': ('#e3f2fd', '#1976d2'),
         'd': ('#eeeeee', '#bbb'), 'r': ('#ffcdd2', '#d32f2f')}

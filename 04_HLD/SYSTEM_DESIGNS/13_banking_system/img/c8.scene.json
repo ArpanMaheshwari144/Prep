@@ -8,12 +8,12 @@
     {
      "stack": [
       {
-       "box": "balance / history",
-       "sub": "laakhon padhai"
+       "box": "Balance / history",
+       "sub": "laakhon log padh rahe"
       },
       {
-       "box": "transfer",
-       "sub": "likhai"
+       "box": "Transfer",
+       "sub": "paisa bhejna (likhna)"
       }
      ]
     },
@@ -33,15 +33,18 @@
    "label": "AB: padhna copy se, likhna sirf primary pe (read replica)",
    "items": [
     {
-     "box": "transfer",
-     "sub": "likhai"
+     "box": "Transfer",
+     "sub": "paisa bhejna"
     },
     {
      "arrow": ""
     },
     {
      "box": "Primary DB",
-     "sub": "likhna + paise ka faisla",
+     "sub": [
+      "likhna +",
+      "paise ka faisla"
+     ],
      "good": true
     },
     {
@@ -49,11 +52,14 @@
     },
     {
      "box": "Replica",
-     "sub": "balance / history padho"
+     "sub": [
+      "balance / history",
+      "yahan se padho"
+     ]
     }
    ],
    "result": "transfer tez",
-   "foot": "abhi bheja aur turant dekha -> apna likha primary se padho"
+   "foot": "abhi bheja aur turant dekha to apna balance primary se padho"
   }
  ]
 }

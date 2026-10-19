@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: sirf balance column, purana mit gaya",
+   "label": "PEHLE: sirf balance column, purana hisaab mit gaya",
    "items": [
     {
      "box": "Balance column",
@@ -13,7 +13,7 @@
      "state": "o"
     },
     {
-     "arrow": "500 kahan?"
+     "arrow": "500 kahan gaye?"
     },
     {
      "box": "Support",
@@ -21,15 +21,15 @@
      "bad": true
     }
    ],
-   "result": "koi hisaab nahi"
+   "result": "koi hisaab nahi bacha"
   },
   {
    "tag": "ab",
-   "label": "AB: har transfer ki 2 line khaate me, sirf jodo, kabhi badlo nahi (ledger)",
+   "label": "AB: har transfer ki 2 line khaate me, usi transaction me (ledger)",
    "items": [
     {
      "box": "Khaata",
-     "sub": "usi transaction me",
+     "sub": "sirf jodo, kabhi mat badlo",
      "cells": [
       "-500",
       "+500",
@@ -39,19 +39,19 @@
      "state": "yggg"
     },
     {
-     "arrow": ""
+     "arrow": "support ne dekha"
     },
     {
      "box": "Support",
      "sub": [
-      "8:00, T-77",
-      "Ravi ko 500"
+      "8:00 baje, T-77",
+      "Ravi ko 500 gaye"
      ],
      "good": true
     }
    ],
    "result": "har paisa dikhe",
-   "foot": "galat line -> mitao nahi, ulti line jodo"
+   "foot": "galat line ho to mitao nahi, ulti line jodo"
   }
  ]
 }
