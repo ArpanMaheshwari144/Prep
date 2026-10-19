@@ -7,9 +7,10 @@ Har bug ki pehchaan = code ki SHAKAL. Shakal dikhi -> naam bolo -> asar bolo -> 
 DRILL ME KYA AAYEGA:
 - ROZ (abhi chhootte): request body se userId · owner check · aur neeche ke ★ me se 2, baari-baari
   (check-then-act · idempotency · status pehle verify baad · bahar ki call txn me / timeout · fail pe 200 ·
-  entity bahar · -ve / 0 amount · == se compare)
+  -ve / 0 amount · == se compare)
 - PAKKA (ab pakde jaate, roz nahi, hafte me ek baar taaki taaza rahe): SQL injection · catch nigalna ·
-  singleton me field · @Transactional private · DI (constructor nahi) · FAISLA line
+  singleton me field · @Transactional private · DI (constructor nahi) · FAISLA line ·
+  entity seedha bahar (DTO + mask)
 - ROZ wala lagaataar pakda jaaye -> PAKKA me shift.
 
 ---
