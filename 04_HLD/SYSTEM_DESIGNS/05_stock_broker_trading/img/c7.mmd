@@ -6,7 +6,7 @@ flowchart LR
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
     n_Settlement["Settlement"]
-    n_Wallet_DB["Wallet DB<br/>do DB, share nahi aaye<br/>-> har kadam ka haal likho, fail pe wahin se retry, match ke baad ulta nahi (status log)<br/>retry dobara chala -> trade_id se no-op<br/>ghanton fail -> PENDING + alert, ops"]
+    n_Wallet_DB["Wallet DB<br/>(status log)"]
     n_Portfolio_DB["Portfolio DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet

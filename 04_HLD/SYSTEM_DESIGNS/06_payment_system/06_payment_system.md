@@ -120,11 +120,9 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Kirana ko 500 bheje, beech me server gira
-```
-DIKKAT     Diwali subah maine kirana ko 500 bheje. Mere 500 kate, merchant me daalne se PEHLE server gira.
-           500 na mere paas, na merchant ke paas. Gayab.
-```
-![c1](img/c1-9e614cf4.svg)
+KIYA: dono badlaav ek transaction, ya dono ya koi nahi
+
+![c1](img/c1-0f237d55.svg)
 
 ```
 NAHI       app me 'pehle kaato, fail pe wapas jodo': server beech me gira to wapas jodna chala hi nahi.
@@ -140,11 +138,9 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Wallet me 600, phone se 500 aur laptop se 500 ek saath
-```
-DIKKAT     Ab wallet me 600. Phone se dukaan ko 500 scan kiya, usi second laptop pe Swiggy ka 500.
-           Do alag server, dono ne 600 dekha -> dono kaatenge?
-```
-![c2](img/c2-066e86df.svg)
+KIYA: check aur kaatna ek hi query me (atomic UPDATE)
+
+![c2](img/c2-2b36319b.svg)
 
 ```
 NAHI       Java synchronized Payment Svc me: do machine, lock ek ke andar; doosri phir bhi 600 dekhti.
@@ -160,11 +156,9 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Metro me network gaya, app ne dobara bheja, 1000 kate
-```
-DIKKAT     Metro me (Rahul ne 2000 bheje the) maine Pay dabaya. 500 kat gaye, par jawab aate waqt network
-           gaya. App ne timeout pe khud DOBARA bheja -> server ko do request, dono process -> 1000 kate.
-```
-![c3](img/c3-7ac729bf.svg)
+KIYA: screen khulte ek id, retry pe wahi id, DB me UNIQUE (idempotency key)
+
+![c3](img/c3-26bd6988.svg)
 
 ```
 NAHI       server key banaye: server ko pata hi nahi ye wahi request hai.
@@ -181,11 +175,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Bank se 2000 top-up, PSP dheema
-```
-DIKKAT     Dopahar maine bank se wallet me 2000 daale (top-up). Ye paisa hamara DB nahi hilata: server PSP
-           ko "bhejo" kehta, asli paisa bank rails pe. Wo raasta dheema -> har thread PSP me atka.
-```
-![c4](img/c4-2432afad.svg)
+KIYA: thodi der me chhodo = PENDING; baar-baar fail = call hi mat bhejo
+
+![c4](img/c4-5d8d9f46.svg)
 
 ```
 NAHI       timeout pe "fail" dikha do: paisa shayad kat chuka.
@@ -202,11 +194,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 PSP ko call kiya aur server gira: paisa gaya ya nahi?
-```
-DIKKAT     Usi top-up me server ne PSP ko call kiya aur jawab se pehle gira. Paisa kat gaya aur jawab kho
-           gaya, ya kata hi nahi? Pata nahi.
-```
-![c5](img/c5-f02df085.svg)
+KIYA: call se pehle PENDING likho; PSP baad me bataye (webhook), purane poochho
+
+![c5](img/c5-c560f58c.svg)
 
 ```
 NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
@@ -226,11 +216,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Merchant ka account doosre bank me, ek transaction nahi chalta
-```
-DIKKAT     Phir maine ek merchant ko 500 bheje, uska account Bank B me. Do system pe ek DB transaction nahi.
-           Wallet se 500 kata, Bank B me daalna (PSP payout) fail -> paisa beech me latka.
-```
-![c6](img/c6-e185235e.svg)
+KIYA: step-step chalo, haal likho, fail pe pichhle ka ulta (saga)
+
+![c6](img/c6-0d23e7e8.svg)
 
 ```
 NAHI       2PC: sab "ready" bol ke lock pakad ke rukte; coordinator gira = sab atke, har payment dheema.
@@ -247,11 +235,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Maine poochha: kal raat 2200 tha, subah 1100 kaise?
-```
-DIKKAT     Dopahar maine support se poochha "kal raat 2200, subah 1100 kaise?" (RBI audit bhi yahi poochhe).
-           Balance column sirf aaj ka number batata, 1100 kaise bana uska record nahi.
-```
-![c7](img/c7-bc80fa75.svg)
+KIYA: har paisa do line (DEBIT + CREDIT, jod 0), sirf jodo (ledger)
+
+![c7](img/c7-07b78e60.svg)
 
 ```
 NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam nahi jaanchta.
@@ -268,11 +254,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Shaam Diwali, 3000 payment / second, machine baith gayi
-```
-DIKKAT     Shaam Diwali, sab ek saath payment kar rahe: 3000 / sec. Saari request ek hi Payment Svc machine pe
-           -> CPU bhara, payment dheeme, phir machine giri -> kisi ka payment nahi ja raha.
-```
-![c8](img/c8-2898db34.svg)
+KIYA: machine kuch yaad nahi rakhti, LB kisi ko bhi de (stateless + LB)
+
+![c8](img/c8-d4fa0639.svg)
 
 ```
 AAGE POOCHEGA:
@@ -286,11 +270,9 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Merchant ki report ne mera payment rok diya
-```
-DIKKAT     Usi shaam ek bada merchant dashboard pe "is mahine ki saari payment" report chala raha. Bhaari
-           query usi DB pe -> DB busy -> mera 500 ka payment likhne me atak gaya.
-```
-![c9](img/c9-4cdbbc60.svg)
+KIYA: bhaari report copy pe, primary sirf payment (read replica)
+
+![c9](img/c9-cc74051e.svg)
 
 ```
 NAHI       balance bhi replica se padho: replica peeche, mujhe purana balance dikhta.
@@ -307,11 +289,9 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Saal me ~1000 crore row, primary ki likhai dheemi
-```
-DIKKAT     ~1000 crore payment row saal me. Table + index RAM me nahi samaate, har likhai pe index disk se
-           -> Diwali ke 3000 / sec pe ek primary ki likhai dheemi.
-```
-![c10](img/c10-4db9bf15.svg)
+KIYA: account_id se tukde, mera sab ek tukde pe (shard by account_id)
+
+![c10](img/c10-ca5f4baf.svg)
 
 ```
 NAHI       txn_id se baanto: meri payment alag shard pe, balance kahan? · time se: aaj wala shard garam.

@@ -72,11 +72,9 @@ jaanch wale (Validator) ko call kare (2-3 sec), jawab wapas.
 
 
 #### 1 Maine report.pdf daali, 3 second ghoomta screen dekhta raha
-```
-DIKKAT     31 March, maine report.pdf daali. Server Validator ke 3 sec jawab tak atka, main bhi screen pe.
-           Aakhri ghante ~200 upload / sec x 3 sec = ~600 thread atke, Tomcat ke 200 khatam.
-```
-![c1](img/c1-bb914e0a.svg)
+KIYA: turant tracking id do, khabar queue me, worker baad me jaanche (async)
+
+![c1](img/c1-ac96ba86.svg)
 
 ```
 NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
@@ -96,11 +94,9 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Meri 5 GB video hamare server ke raaste S3 jaa rahi
-```
-DIKKAT     Report ke baad maine 5 GB video daali: client -> hamara server -> S3. 5 GB do baar network pe,
-           thread minuton atka, sirf bytes aage badhane ko server badhane pade.
-```
-![c2](img/c2-a9103dcf.svg)
+KIYA: server sirf signed URL de, bytes seedha S3 (presigned URL)
+
+![c2](img/c2-903e497d.svg)
 
 ```
 NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
@@ -117,10 +113,9 @@ AAGE POOCHEGA:
 ```
 
 #### 3 4.5 GB chadh chuki thi, wifi chala gaya
-```
-DIKKAT     Usi video ki 4.5 GB chadh chuki thi, wifi chala gaya. Ab poori 5 GB shuru se?
-```
-![c3](img/c3-f12af79f.svg)
+KIYA: file tukdon me, har tukde ki rasid; pahunche tukde bache (multipart)
+
+![c3](img/c3-dd12c8e2.svg)
 
 ```
 NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
@@ -137,11 +132,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 App crash, "complete" kabhi aaya hi nahi
-```
-DIKKAT     Ek aur file chadhte waqt meri app crash. "complete" nahi aaya, S3 ka event bhi chhoota: bytes S3 me
-           pade (paisa lag raha), DB me T-103 "UPLOADING" pe atka, koi dhoondhta hi nahi.
-```
-![c4](img/c4-7bc5bb69.svg)
+KIYA: har kuch min ek job atke dhoondhe (sweeper)
+
+![c4](img/c4-9a5db941.svg)
 
 ```
 NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
@@ -160,11 +153,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Deadline ke din sab har 2 sec haal poochh rahe
-```
-DIKKAT     Shaam tak 10,000 log ka "Meri files" page khula, har 2 sec saari files ka haal
-           -> 5,000 sawaal / sec DB pe. Likhai 1-2 / sec thi, padhai ne DB ghera.
-```
-![c5](img/c5-8f9cb2c6.svg)
+KIYA: haal Redis se, nahi mila to copy se (cache + replica)
+
+![c5](img/c5-78d6b545.svg)
 
 ```
 NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
@@ -184,11 +175,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Maine file nahi, poora folder daala (1000 file)
-```
-DIKKAT     Deadline wale din maine ek file nahi, poora folder daala: 1000 file. Har file ka alag trackingId
-           -> 1000 id sambhaalna mere bas ka nahi, aur "poora folder ho gaya?" ka koi jawab nahi.
-```
-![c6](img/c6-78731ba2.svg)
+KIYA: folder ka ek id, har file usse judi (parent + child)
+
+![c6](img/c6-fb69362e.svg)
 
 ```
 AAGE POOCHEGA:
@@ -201,11 +190,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Ravi ne mera trackingId daal ke meri file le li
-```
-DIKKAT     Maine support chat me screenshot bheja, usme T-101 dikh raha tha. Ravi ne GET /download/T-101
-           maara -> meri file Ravi ko mil gayi.
-```
-![c7](img/c7-766b8cb2.svg)
+KIYA: file ka maalik = maangne wala? nahi to 403 (owner check)
+
+![c7](img/c7-2de57442.svg)
 
 ```
 NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
@@ -222,11 +209,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Maine S3 ka seedha link WhatsApp pe bhej diya
-```
-DIKKAT     Mujhe S3 ka pakka link mila tha. Maine dost ko WhatsApp pe bheja, dost ne group me.
-           Link hamesha chalta -> file kisi ke bhi haath.
-```
-![c8](img/c8-3957b720.svg)
+KIYA: DB me sirf S3 key; download pe maalik check, phir thodi der ka link
+
+![c8](img/c8-cf2651b6.svg)
 
 ```
 NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya to hamesha chalta.
@@ -243,11 +228,9 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Naam report.pdf, andar EXE nikla
-```
-DIKKAT     Raat ko kisi ne virus.exe ka naam report.pdf kiya, type "application/pdf" bheja -> S3 me pahunchi.
-           Naam aur type dono client ne bheje, jo jhooth bol sakta.
-```
-![c9](img/c9-1148fbee.svg)
+KIYA: file ke pehle byte asli type batate (magic bytes)
+
+![c9](img/c9-b37a4ddc.svg)
 
 ```
 NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaafi.

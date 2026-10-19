@@ -58,8 +58,41 @@
      "good": true
     }
    ],
-   "result": "ek atke, baaki chalte rahe",
-   "foot": "worker ne do baar likha to bhi ek hi lage (DB ka UNIQUE)"
+   "result": "ek atke, baaki chalte rahe"
+  },
+  {
+   "tag": "phir",
+   "label": "PHIR? \"Worker ne likha, Kafka commit se pehle crash. Dobara likha to?\"",
+   "items": [
+    {
+     "box": "Bloom se rokna",
+     "sub": [
+      "Bloom DB se alag,",
+      "update se pehle crash"
+     ],
+     "bad": true
+    },
+    {
+     "arrow": "naya worker"
+    },
+    {
+     "box": "Khabar 2 baar",
+     "sub": "feed me do baar",
+     "bad": true
+    },
+    {
+     "arrow": "isliye"
+    },
+    {
+     "box": "DB khud roke",
+     "sub": [
+      "url pe UNIQUE,",
+      "ON CONFLICT DO NOTHING"
+     ],
+     "good": true
+    }
+   ],
+   "result": "dobara likha to bhi ek hi"
   }
  ]
 }

@@ -4,7 +4,7 @@ flowchart LR
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_Redis["Redis"]
-    n_DB["DB<br/>1000 file ka folder<br/>-> folder ka ek id, har file ka chhota id folder se juda (parent + child)<br/>ek file DONE -> folder pe ginti +1<br/>koi FAILED -> folder PARTIAL, sirf fail wali dobara"]
+    n_DB["DB<br/>(parent + child)"]
     n_Read_replica["Read replica"]
     n_Sweeper_job["Sweeper job"]
     n_CHAIN["Kafka -> Worker -> Validator"]

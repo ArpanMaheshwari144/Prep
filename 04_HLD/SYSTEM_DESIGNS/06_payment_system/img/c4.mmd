@@ -3,7 +3,7 @@ flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
     n_Idempotency_store["Idempotency store"]
-    n_PSP["PSP<br/>bank ka raasta dheema<br/>-> thodi der me jawab nahi to chhodo = PENDING; baar-baar fail = call hi mat bhejo (timeout + circuit breaker)<br/>thodi der baad -> ek test call"]
+    n_PSP["PSP<br/>(timeout + circuit breaker)"]
     n_DB["SQL DB"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store

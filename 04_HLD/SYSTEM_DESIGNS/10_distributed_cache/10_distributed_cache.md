@@ -96,11 +96,9 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Subah cache machine ki RAM bhar gayi, kya hatayein
-```
-DIKKAT     Subah se mere app ki keys cache me jud rahi thi. 64 GB RAM bhar gayi, nayi key ke liye jagah nahi.
-           Kaunsi purani key nikaalein? Galat nikaali to wahi baar-baar DB se aayegi, app dheema.
-```
-![c1](img/c1-b464742f.svg)
+KIYA: sabse der se chhua bahar, har key ki umar bhi (LRU + TTL)
+
+![c1](img/c1-4c31bb82.svg)
 
 ```
 AAGE POOCHEGA:
@@ -113,11 +111,9 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Subah 11 tak data 1 TB: "user:42" kis machine pe?
-```
-DIKKAT     Subah 11 tak data 1 TB ho gaya, ek machine me 64 GB -> 16+ machine. "user:42" kis machine pe
-           jaaye, aur App ko har baar kaise pata chale?
-```
-![c2](img/c2-8d819223.svg)
+KIYA: machine jude / jaaye to sirf pados ki key hile (consistent hashing)
+
+![c2](img/c2-c1f69cd4.svg)
 
 ```
 NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
@@ -134,10 +130,9 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Dopahar machine B mar gayi, uski key ka bojh DB pe
-```
-DIKKAT     Dopahar machine B mar gayi. Uske hisse ki saari key gayab -> un key ki saari padhai seedha DB pe.
-```
-![c3](img/c3-73bb7bfd.svg)
+KIYA: har machine ki ek copy, B mari to copy B ban jaaye (replica)
+
+![c3](img/c3-889bc5df.svg)
 
 ```
 NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
@@ -155,11 +150,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Ravi ne naam badla, sabko purana dikh raha
-```
-DIKKAT     Shaam ko Ravi ne naam "Ravi" se "Ravi K" kiya. DB me naya ho gaya, cache me abhi bhi "Ravi"
-           -> sabko purana naam dikh raha.
-```
-![c4](img/c4-51bf65cc.svg)
+KIYA: pehle DB update, phir cache ki key DELETE (delete on write)
+
+![c4](img/c4-632b6a08.svg)
 
 ```
 NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
@@ -176,11 +169,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe
-```
-DIKKAT     7 baje "home page" key ki umar khatam hui. Usi pal 1000 log aaye, sabko cache me nahi mili,
-           sab ek saath DB pe gaye -> DB pe achanak bojh, home page sabke liye dheema.
-```
-![c5](img/c5-6fb447c8.svg)
+KIYA: ek jaaye DB se laaye, cache bhare; baaki ruk ke cache se (lock)
+
+![c5](img/c5-b4ffa9b4.svg)
 
 ```
 AAGE POOCHEGA:
@@ -195,11 +186,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi
-```
-DIKKAT     Raat IPL final, crore log har second "live:score" padh rahe. Ye ek key ek hi cache machine pe,
-           baaki machine khaali -> wo akeli machine CPU / network pe bhar gayi, score sabke liye atka.
-```
-![c6](img/c6-49143266.svg)
+KIYA: garam key ki thodi der ki copy har App ki memory me (L1 cache)
+
+![c6](img/c6-246b615f.svg)
 
 ```
 AAGE POOCHEGA:

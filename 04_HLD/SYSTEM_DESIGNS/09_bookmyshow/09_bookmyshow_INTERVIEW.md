@@ -81,11 +81,9 @@ seats table (seat_id, show_id, status). "Book" dabao -> status = 'booked'.
 
 
 #### 1 Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
-```
-DIKKAT     10 baje badi movie ki booking khuli. Maine aur Ravi ne 10:00:01 pe "A1 khaali" dekha, Book dabaya.
-           App ne dono baar pehle padha (khaali), phir likha (booked) -> A1 dono ko bik gayi.
-```
-![c1](img/c1-9bcea10d.svg)
+KIYA: dekhna + book karna ek hi query me (atomic UPDATE)
+
+![c1](img/c1-3557079d.svg)
 
 ```
 NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
@@ -101,11 +99,9 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Maine A1 chuni, payment me 3 minute lag rahe
-```
-DIKKAT     Maine A1 chuni, payment me 3 min. 'available' rehne di -> beech me Ravi le gaya. Seedha 'booked'
-           kar di -> mera payment fail hua to A1 hamesha ke liye band.
-```
-![c2](img/c2-5fc0f8c8.svg)
+KIYA: seat HELD + umar; umar khatam = khaali maano (hold)
+
+![c2](img/c2-922ce0a0.svg)
 
 ```
 NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
@@ -121,11 +117,9 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Pay dabaya, network gaya, app ne dobara bheja
-```
-DIKKAT     A1 chuni, Pay dabaya, paisa kat gaya, par jawab aate waqt network gaya. App ne khud dobara bheja
-           -> paisa do baar kata, ticket ek.
-```
-![c3](img/c3-c48b01d3.svg)
+KIYA: har booking ki ek id, pay hamesha usi id se (idempotency key)
+
+![c3](img/c3-2e1fa8ea.svg)
 
 ```
 AAGE POOCHEGA:
@@ -138,11 +132,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
-```
-DIKKAT     11 baje release ka show, main seat map dekh raha, saath me 1 lakh log. Book koi-koi kar raha,
-           par har map seedha main DB se -> DB pe bheed, booking bhi dheemi.
-```
-![c4](img/c4-7a448058.svg)
+KIYA: map Redis se (thodi der purana chalta), faisla sirf DB ke UPDATE pe
+
+![c4](img/c4-273b1b64.svg)
 
 ```
 AAGE POOCHEGA:
@@ -157,11 +149,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 12 baje Arijit ka concert khula, 2 lakh log ek show pe
-```
-DIKKAT     12 baje Arijit ka concert: ek show, 3000 seat, 2 lakh log ek saath. Saari bheed DB ki wahi rows
-           pe, har koi lock ke intezaar me -> sab dheema. (Aam din ye nahi hota, hold seedha DB pe.)
-```
-![c5](img/c5-285d6088.svg)
+KIYA: darwaze pe ginti, ~3000 andar, baaki line me (waiting room)
+
+![c5](img/c5-00964e83.svg)
 
 ```
 NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
@@ -180,11 +170,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 2 baje Redis restart, saara seat map ek saath replica pe
-```
-DIKKAT     2 baje Redis restart hua, saara seat map khaali. Usi pal hazaaron log ek saath DB / replica pe
-           map maangne gaye -> replica baith gayi, map nahi khul raha.
-```
-![c6](img/c6-1bb9c1d0.svg)
+KIYA: sirf ek request DB se banaye, baaki ruk ke Redis se (lock)
+
+![c6](img/c6-9527883d.svg)
 
 ```
 AAGE POOCHEGA:
@@ -198,11 +186,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Shaam ko main seat chun raha tha, App machine gir gayi
-```
-DIKKAT     Shaam ko main seat chun raha tha. Jis App machine pe tha wo gir gayi, aur ek hi machine thi
-           -> page band, booking adhoori, kisi ka kuch nahi chal raha.
-```
-![c7](img/c7-92707634.svg)
+KIYA: App kuch yaad nahi rakhta, LB zinda machine ko de (stateless)
+
+![c7](img/c7-2aae7e63.svg)
 
 ```
 AAGE POOCHEGA:

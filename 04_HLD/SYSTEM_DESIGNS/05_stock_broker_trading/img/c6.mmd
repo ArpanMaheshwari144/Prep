@@ -5,7 +5,7 @@ flowchart LR
     n_Wallet["Wallet"]
     n_Event_Log["Event Log"]
     n_Matching_Engine["Matching Engine"]
-    n_Settlement["Settlement<br/>paisa kata, Suresh ko nahi<br/>-> chaaron badlaav ek transaction, ya sab ya koi nahi (transaction)<br/>COMMIT se pehle crash -> rollback, user ko PENDING<br/>retry -> trade_id se do baar nahi"]
+    n_Settlement["Settlement<br/>(transaction)"]
     n_DB["DB"]
     n_USER --> n_Order_Service
     n_Order_Service --> n_Wallet

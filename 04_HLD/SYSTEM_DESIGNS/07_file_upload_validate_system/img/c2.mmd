@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>5 GB server se guzri<br/>-> server sirf thodi der ka signed URL de, bytes seedha S3 me (presigned URL)<br/>had se badi file -> S3 khud reject<br/>complete nahi aaya -> S3 event se queue"]
+    n_S3["S3<br/>(presigned URL)"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]

@@ -3,7 +3,7 @@ flowchart LR
     n_USER["USER"]
     n_Order_Service["Order Service<br/>+ idempotency key check"]
     n_Wallet["Wallet"]
-    n_Event_Log["Event Log (= wahi line)<br/>server gira, book gayab<br/>-> har order pehle log me, phir book; gira to log dobara chalao (event log + replay)<br/>replay me der -> standby log padhta, book taiyaar"]
+    n_Event_Log["Event Log (= wahi line)<br/>(event log + replay)"]
     n_Matching_Engine["Matching Engine"]
     n_DB["DB"]
     n_USER --> n_Order_Service

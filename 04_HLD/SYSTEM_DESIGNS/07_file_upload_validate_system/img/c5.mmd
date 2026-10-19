@@ -3,7 +3,7 @@ flowchart LR
     n_CLIENT["CLIENT"]
     n_S3["S3"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
-    n_RC["Redis + Read replica<br/>har 2 sec haal, DB ghira<br/>-> haal Redis se, nahi mila to copy se, phir Redis me (cache + replica)<br/>worker ne DONE likha -> DB + Redis saath, purana VALIDATING nahi dikhe<br/>har 2 sec poochna -> gap badhao"]
+    n_RC["Redis + Read replica<br/>(cache + replica)"]
     n_DB["DB (haal)"]
     n_Sweeper_job["Sweeper job"]
     n_CHAIN["Kafka -> Worker -> Validator"]

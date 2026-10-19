@@ -3,7 +3,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_Payment_Svc["Payment Svc (bookingId)"]
-    n_Redis["Redis Cluster<br/>restart, sab replica pe<br/>-> key khaali to sirf ek request DB se banaye, baaki ruk ke Redis se (lock)<br/>lock wala hi mara -> lock khud hate (TTL)<br/>ruk ke bhi khaali -> 2-3 retry, phir replica se"]
+    n_Redis["Redis Cluster<br/>(lock)"]
     n_Read_replica["Read replica"]
     n_KB["Kafka + Booking worker (badi sale)"]
     n_SQL_primary["SQL primary"]

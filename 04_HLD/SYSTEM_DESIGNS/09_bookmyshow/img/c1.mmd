@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_SQL_DB["SQL DB<br/>A1 do ko bik gayi<br/>-> khaali hai ya nahi dekhna + book karna ek hi query me, warna 0 row (atomic UPDATE)<br/>Ravi usi second -> row lock, uska 0 row = seat gayi"]
+    n_SQL_DB["SQL DB<br/>(atomic UPDATE)"]
     n_USER --> n_App
     n_App --> n_SQL_DB
     style n_SQL_DB fill:#f9a825,color:#000

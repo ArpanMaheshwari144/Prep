@@ -7,7 +7,7 @@ flowchart LR
     n_PS["Redis pub/sub"]
     n_SQL["SQL permissions"]
     n_BUF["Redis buffer"]
-    n_CAS["Cassandra edit log + snapshot<br/>purana doc, 10 lakh op<br/>-> har 1000 op pe doc ki photo, kholna = photo + baad ke op (snapshot)<br/>purana version maanga -> paas wali photo + baaki op"]
+    n_CAS["Cassandra edit log + snapshot<br/>(photo + baad ke op)"]
     n_USER --> n_App
     n_App --> n_LB
     n_LB --> n_Conn_Server_xN

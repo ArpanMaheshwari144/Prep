@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3 multipart<br/>90% pe wifi gaya<br/>-> file tukdon me, har tukde ki rasid, pahunche tukde bache (multipart)<br/>wifi gaya -> sirf bache tukde bhejo<br/>complete kabhi nahi -> kuch din baad S3 hata de"]
+    n_S3["S3 multipart<br/>(tukdon me upload)"]
     n_Upload_Svc["Upload Svc<br/>+ signed URL + tracking id"]
     n_DB["DB (haal)"]
     n_Kafka["Kafka"]

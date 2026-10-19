@@ -4,7 +4,7 @@ flowchart LR
     n_Payment_Svc["Payment Svc + SAGA"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
-    n_DB["SQL DB + Ledger table<br/>kal 2200, subah 1100 kaise<br/>-> har paisa do line me (DEBIT + CREDIT), sirf jodo, mitao nahi (ledger, double-entry)<br/>galat entry / refund -> nayi ulti line<br/>raat ka jod != balance -> alert"]
+    n_DB["SQL DB + Ledger table<br/>(ledger, double-entry)"]
     n_Reconciliation_job["Reconciliation job"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_Idempotency_store

@@ -5,7 +5,7 @@ flowchart LR
     n_LB["LB (docId se ring)"]
     n_Conn_Server_xN["Conn-Server x N (owner + OT)"]
     n_PS["Redis pub/sub"]
-    n_BUF["Redis buffer<br/>har akshar pe DB write<br/>-> op Redis me jama, har second ek saath DB me (buffer + batch)<br/>jama karte Redis gira -> app op dobara bheje<br/>batch dheema -> typing chalti, buffer badhe to alert"]
+    n_BUF["Redis buffer<br/>(buffer + batch)"]
     n_CAS["Cassandra edit log"]
     n_USER --> n_App
     n_App --> n_LB

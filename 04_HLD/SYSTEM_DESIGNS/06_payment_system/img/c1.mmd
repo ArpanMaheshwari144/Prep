@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_Payment_Svc["Payment Svc"]
-    n_DB["SQL DB<br/>-500 hua, +500 nahi<br/>-> dono badlaav ek transaction me, ya dono ya koi nahi (transaction)<br/>beech me gira -> DB ka log (WAL) dekhe, COMMIT nahi = ulta, 500 wapas"]
+    n_DB["SQL DB<br/>(transaction)"]
     n_USER --> n_Payment_Svc
     n_Payment_Svc --> n_DB
     style n_DB fill:#f9a825,color:#000

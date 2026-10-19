@@ -73,7 +73,41 @@
     }
    ],
    "result": "",
-   "foot": "Validator 1 ghanta band -> khabar line me padi rehti, offset aage nahi; user T-101 se haal dekhe"
+   "foot": "user T-101 se haal dekhe: tab tak VALIDATING"
+  },
+  {
+   "tag": "phir",
+   "label": "PHIR? \"Validator ek ghanta band hai. Upload bhi rok dein?\"",
+   "items": [
+    {
+     "box": "Upload pe error",
+     "sub": [
+      "'Validator band hai,'",
+      "'baad me aana'"
+     ],
+     "bad": true
+    },
+    {
+     "arrow": "31 March"
+    },
+    {
+     "box": "Deadline nikal gayi",
+     "sub": "file gayi hi nahi",
+     "bad": true
+    },
+    {
+     "arrow": "isliye"
+    },
+    {
+     "box": "Upload le lo",
+     "sub": [
+      "khabar Kafka me padi,",
+      "Validator aate hi jaanche"
+     ],
+     "good": true
+    }
+   ],
+   "result": "user ka kaam hua, jaanch baad me"
   }
  ]
 }

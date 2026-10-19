@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_LB_API_Gateway["LB / API Gateway"]
-    n_Payment_Svc_x_N_1["Payment Svc 1<br/>3000 / sec, CPU bhara<br/>-> machine kuch yaad nahi rakhti, LB kisi ko bhi de (stateless + LB)<br/>CPU bhara -> aur machine lagao<br/>ek machine mari -> LB se bahar"]
+    n_Payment_Svc_x_N_1["Payment Svc 1<br/>(stateless + LB)"]
     n_Payment_Svc_x_N_2["Payment Svc 2"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]

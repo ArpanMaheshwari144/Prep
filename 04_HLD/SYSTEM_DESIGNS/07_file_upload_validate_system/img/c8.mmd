@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_CLIENT["CLIENT"]
-    n_S3["S3<br/>link WhatsApp pe ghooma<br/>-> DB me sirf S3 key, download pe maalik check, phir thodi der ka naya link (signed GET)<br/>link group me gaya -> expire, nahi khula"]
+    n_S3["S3<br/>(signed GET)"]
     n_API_Gateway_LB["API Gateway / LB"]
     n_Upload_Svc["Upload Svc<br/>+ owner check"]
     n_RC["Redis + Read replica (haal)"]

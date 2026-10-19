@@ -3,7 +3,7 @@ flowchart LR
     n_USER["USER"]
     n_App["App"]
     n_SQL_DB["SQL DB<br/>+ atomic UPDATE"]
-    n_Sweeper_job["Sweeper job<br/>payment me 3 min<br/>-> seat HELD, saath me umar: umar khatam = khaali maano (hold + umar)<br/>umar khatam, phir pay -> 0 row = refund<br/>koi 10 seat pakad baithe -> had lagao"]
+    n_Sweeper_job["Sweeper job<br/>(hold + umar)"]
     n_USER --> n_App
     n_App --> n_SQL_DB
     n_Sweeper_job --> n_SQL_DB

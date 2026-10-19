@@ -1,6 +1,6 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_App["App<br/>key khatam, 1000 log ek saath DB pe (stampede)<br/>-> ek jaaye DB se laaye, cache bhare, baaki ruk ke cache se padhein (lock)<br/>lock wala hi mara -> lock khud khule (TTL)"]
+    n_App["App<br/>(lock)"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]

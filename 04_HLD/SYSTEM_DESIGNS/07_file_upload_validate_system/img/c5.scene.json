@@ -46,7 +46,38 @@
     }
    ],
    "result": "",
-   "foot": "worker ne DONE likha -> DB + Redis saath badlo, warna purana VALIDATING dikhe; poochne ka gap 2s, 4s, 8s"
+   "foot": "poochne ka gap badhao: 2s, 4s, 8s"
+  },
+  {
+   "tag": "phir",
+   "label": "PHIR? \"Worker ne DB me DONE likha, app abhi bhi VALIDATING kyun?\"",
+   "items": [
+    {
+     "box": "Sirf DB badla",
+     "sub": "Redis me purana VALIDATING",
+     "bad": true
+    },
+    {
+     "arrow": "app Redis se padhe"
+    },
+    {
+     "box": "App pe VALIDATING",
+     "sub": "user pareshaan",
+     "bad": true
+    },
+    {
+     "arrow": "isliye"
+    },
+    {
+     "box": "DB likho, Redis key hatao",
+     "sub": [
+      "agla poochh DB se,",
+      "naya DONE laaye"
+     ],
+     "good": true
+    }
+   ],
+   "result": "app pe turant DONE"
   }
  ]
 }

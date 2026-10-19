@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER A / B"]
     n_App["App (op bhejo)"]
-    n_CS["Conn-Server<br/>refresh pe hi dikha<br/>-> connection khula rehta, dono taraf turant bhejo (WebSocket)<br/>chupchaap mara -> ping, pong nahi = band<br/>toota -> judte hi version bata ke baaki lo"]
+    n_CS["Conn-Server<br/>(WebSocket)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_CS

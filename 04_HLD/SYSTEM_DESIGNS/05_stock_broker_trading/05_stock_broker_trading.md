@@ -96,11 +96,9 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Maine ek baar dabaya, order do lag gaye
-```
-DIKKAT     Subah maine TCS ka Buy ek hi baar dabaya. Network gaya, jawab nahi aaya, app ne khud dobara bheja
-           -> do order lag gaye, paisa do baar block, bhejna tha ek.
-```
-![c1](img/c1-31c308c1.svg)
+KIYA: screen khulte ek id, dobara bhejne pe wahi id (idempotency key)
+
+![c1](img/c1-e90369d2.svg)
 
 ```
 AAGE POOCHEGA:
@@ -114,11 +112,9 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
-```
-DIKKAT     Wallet me 50k. Laptop se TCS 30k, usi second phone se INFY 30k (do alag order, alag id).
-           Do server, dono ne 50k dekha, dono pass.
-```
-![c2](img/c2-1df629fa.svg)
+KIYA: check aur block ek hi query me (atomic UPDATE)
+
+![c2](img/c2-a0e502be.svg)
 
 ```
 NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
@@ -136,11 +132,9 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
-```
-DIKKAT     Mera order book me pahuncha. Suresh 10 bech raha, usi pal Mohan ne bhi BUY 10.
-           Do thread, dono ko "10 hai" dikha -> 20 bik gaye.
-```
-![c3](img/c3-b4dd0163.svg)
+KIYA: ek share ke saare order ek line, ek hi thread (ek symbol ek thread)
+
+![c3](img/c3-5eb0556e.svg)
 
 ```
 NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
@@ -156,10 +150,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 9:15 baje sab TCS pe toot pade
-```
-DIKKAT     Usi 9:15 pe poora market TCS pe toot pada: hazaaron order / second.
-```
-![c4](img/c4-f426eaba.svg)
+KIYA: TCS ki ek line, ek thread RAM me tez nipta
+
+![c4](img/c4-eaab2ebf.svg)
 
 ```
 NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
@@ -176,10 +169,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Server gira, poori order book gayab
-```
-DIKKAT     10:15 matching server gira. TCS ki book (4,000 order) RAM me thi -> gayab.
-```
-![c5](img/c5-a0cb52d3.svg)
+KIYA: har order pehle log me, phir book; gira to log dobara chalao (replay)
+
+![c5](img/c5-38458c3b.svg)
 
 ```
 NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
@@ -195,11 +187,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Mera paisa kat gaya, Suresh ko mila hi nahi
-```
-DIKKAT     10:30, server wapas, log se book bani; ab mera 10:10 wala sauda settle hone laga (Suresh se
-           10 TCS, 30k): mera 30k kata, Suresh ko milne se PEHLE crash.
-```
-![c6](img/c6-d96b5bf9.svg)
+KIYA: chaaron badlaav ek transaction, ya sab ya koi nahi
+
+![c6](img/c6-73935b15.svg)
 
 ```
 NAHI       chaar alag UPDATE: beech me gira to aadha likha.
@@ -215,11 +205,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
-```
-DIKKAT     Dopahar 1 baje INFY 5 share (20k) ka sauda. Paisa Wallet DB me, share Portfolio DB me -> ek
-           transaction nahi chalti. 20k kata, Portfolio me share se PEHLE crash.
-```
-![c7](img/c7-e6985fcf.svg)
+KIYA: har kadam ka haal likho, fail pe wahin se retry (status log)
+
+![c7](img/c7-82ed7c58.svg)
 
 ```
 NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
@@ -237,10 +225,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 10 lakh log ek saath price poochh rahe, server baith gaya
-```
-DIKKAT     Din bhar 10 lakh log har second "TCS ka price?" poochh rahe -> server baith gaya.
-```
-![c8](img/c8-3d4a5c48.svg)
+KIYA: connection khula, price badla tabhi server bheje (WebSocket + pub/sub)
+
+![c8](img/c8-59a09a1d.svg)
 
 ```
 NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.

@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_Payment_Svc["Payment Svc + SAGA<br/>merchant Bank B me<br/>-> step-step chalo, har step ka haal likho, fail pe pichhle ka ulta (saga)<br/>Bank B +500 fail -> wallet me 500 wapas (compensate)<br/>ulta bhi fail -> retry + alert"]
+    n_Payment_Svc["Payment Svc + SAGA<br/>(saga)"]
     n_Idempotency_store["Idempotency store"]
     n_PSP["PSP"]
     n_DB["SQL DB"]

@@ -69,11 +69,9 @@ Doc ka poora text DB me. "Save" dabao -> poora text upar likh do (overwrite).
 
 
 #### 1 Ravi ne baad me save kiya, mera "WORLD" mit gaya
-```
-DIKKAT     Doc me "HELLO". Maine "HELLO WORLD" karke 10:05 pe save kiya, Ravi ne purane "HELLO" pe
-           "HELLO THERE" 10:07 pe -> poora text upar likha -> mera "WORLD" gayab (LAST-WRITE-WINS).
-```
-![c1](img/c1-1fd3838c.svg)
+KIYA: poora text nahi, sirf ek badlaav bhejo (operation)
+
+![c1](img/c1-f6e6c0cc.svg)
 
 ```
 NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
@@ -90,11 +88,9 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Ravi ko mera likha refresh karne pe hi dikha
-```
-DIKKAT     Ab op ja raha, par normal HTTP me server khud kuch nahi bhej sakta, sirf jawab deta.
-           Ravi ko mera likha tabhi dikha jab usne refresh kiya. Bekaar.
-```
-![c2](img/c2-f0ab8c8c.svg)
+KIYA: connection khula rehta, dono taraf turant (WebSocket)
+
+![c2](img/c2-0a0cccff.svg)
 
 ```
 NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sirf server -> user.
@@ -110,11 +106,9 @@ AAGE POOCHEGA:
 ```
 
 #### 3 11 baje meeting me dono ne sabse upar ek saath type kiya
-```
-DIKKAT     11 baje meeting, doc "HELLO", dono sabse upar likhne lage. Mera "X" (pos 0) ~200 ms me Ravi tak,
-           usse pehle Ravi ka "Y" (pos 0) -> meri screen "YXHELLO", Ravi ki "XYHELLO". Do alag doc.
-```
-![c3](img/c3-bfaaa17b.svg)
+KIYA: kram server tay kare, doosre ka op khiskao (OT)
+
+![c3](img/c3-61722e9d.svg)
 
 ```
 NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
@@ -130,11 +124,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 50 lakh connection khule, ek connection server nahi jhelta
-```
-DIKKAT     Dopahar tak ~50 lakh WebSocket khule (3-4 crore roz ka ~15%), ek server ~1 lakh hi jhelta.
-           Kai server lagaye -> mere doc ke editor alag-alag server pe, to OT kaun kare?
-```
-![c4](img/c4-1d02fbd8.svg)
+KIYA: docId se ring pe server; ek doc ke saare editor ek server pe (owner)
+
+![c4](img/c4-66ccc5ff.svg)
 
 ```
 NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dobara jude.
@@ -153,11 +145,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Ravi ab sirf padh raha, wo doosre server pe
-```
-DIKKAT     Lunch ke baad Ravi sirf padh raha (viewer), wo server-2 pe; doc ka owner server-1 jahan main likh
-           raha. Maine type kiya -> server-1 ko pata, server-2 ko kaise pata chale?
-```
-![c5](img/c5-bd1aacaf.svg)
+KIYA: har doc ka channel, jis server pe uska user wo sune (pub/sub)
+
+![c5](img/c5-b3cb2a74.svg)
 
 ```
 NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, tezi chahiye.
@@ -175,10 +165,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
-```
-DIKKAT     3 baje DB alert: ~20 lakh log type, har ek ~3 akshar / sec -> ~60 lakh DB write / sec -> DB khatam.
-```
-![c6](img/c6-cfbb0f4e.svg)
+KIYA: op Redis me jama, har second ek saath DB me (buffer + batch)
+
+![c6](img/c6-139737e3.svg)
 
 ```
 NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
@@ -198,10 +187,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Metro me mera net 1 second gaya, typing rukegi?
-```
-DIKKAT     Shaam ko metro me mera network 1 second ke liye gaya. Typing ruk jaaye, ya main likhta rahun?
-```
-![c7](img/c7-2f9f3ce6.svg)
+KIYA: likhna chalta rahe (AP), permission turant roke (CP)
+
+![c7](img/c7-8bc9923c.svg)
 
 ```
 NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan sahi = "aakhir me sab same".
@@ -219,11 +207,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko 2 saal purana doc khola, 10 lakh op shuru se chale
-```
-DIKKAT     Raat ko maine 2 saal purana doc khola. Usme 10 lakh op jama the, server shuru se ek-ek chala ke
-           doc bana raha -> doc khulne me minute lag gaye, main khaali screen dekhta raha.
-```
-![c8](img/c8-8dd6ffe8.svg)
+KIYA: har 1000 op pe photo; kholna = aakhri photo + baad ke op (snapshot)
+
+![c8](img/c8-c3c544fc.svg)
 
 ```
 AAGE POOCHEGA:

@@ -91,7 +91,7 @@ AAGE POOCHEGA:
 #### 2 Meri feed me khabar 20 minute purani
 KIYA: fetcher sirf laaye, Kafka me daale, worker apni speed se likhe (Kafka)
 
-![c2](img/c2-42d5cb2f.svg)
+![c2](img/c2-6f12b21f.svg)
 
 ```
 AAGE POOCHEGA:

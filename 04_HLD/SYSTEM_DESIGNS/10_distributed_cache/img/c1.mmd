@@ -2,7 +2,7 @@
 flowchart LR
     n_App["App"]
     n_DB["DB"]
-    n_Cache["Cache<br/>64 GB RAM bhar gayi<br/>-> sabse der se chhua bahar, har key ki umar bhi (LRU + TTL)<br/>user:9 phir padha -> kram me aage, baad me nikle"]
+    n_Cache["Cache<br/>(LRU + TTL)"]
     n_App --> n_DB
     n_App --> n_Cache
     style n_Cache fill:#f9a825,color:#000

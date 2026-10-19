@@ -1,6 +1,6 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_App["App<br/>DB naya, cache purana<br/>-> pehle DB update, phir cache ki key DELETE (delete on write)<br/>delete fail -> umar khatam hote hi purana khud mite (TTL)"]
+    n_App["App<br/>(delete on write)"]
     n_DB["DB"]
     n_Cache_client["Cache client (ring)"]
     n_Node_A_replica["Node A + replica"]

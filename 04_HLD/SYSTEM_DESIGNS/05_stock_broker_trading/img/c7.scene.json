@@ -56,7 +56,41 @@
     }
    ],
    "result": "SETTLED",
-   "foot": "match ke baad ulta nahi; retry dobara chala -> trade_id se no-op; ghanton fail -> PENDING + alert"
+   "foot": "match ke baad ulta nahi; retry dobara chala to trade_id se kuch nahi badalta"
+  },
+  {
+   "tag": "phir",
+   "label": "PHIR? \"Portfolio DB ghanta bhar band hai. User ko bolo dobara order kare?\"",
+   "items": [
+    {
+     "box": "User ko bola 'dobara karo'",
+     "sub": [
+      "naya order gaya,",
+      "purana bhi zinda"
+     ],
+     "bad": true
+    },
+    {
+     "arrow": "DB wapas aaya"
+    },
+    {
+     "box": "5 ki jagah 10 INFY",
+     "sub": "paisa do baar kata",
+     "bad": true
+    },
+    {
+     "arrow": "isliye"
+    },
+    {
+     "box": "Trade PENDING + alert",
+     "sub": [
+      "system wahi trade_id se",
+      "retry kare, user nahi"
+     ],
+     "good": true
+    }
+   ],
+   "result": "user kuch nahi karta, trade khud poora"
   }
  ]
 }

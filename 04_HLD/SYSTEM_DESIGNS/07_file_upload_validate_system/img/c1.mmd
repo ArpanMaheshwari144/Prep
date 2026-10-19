@@ -4,7 +4,7 @@ flowchart LR
     n_Upload_Svc["Upload Svc"]
     n_DB["DB (haal)"]
     n_S3["S3"]
-    n_Kafka["Kafka<br/>3 sec ruka, thread atke<br/>-> upload hote hi tracking id do, khabar queue me, worker Validator chalaye (async + tracking id)<br/>Validator 1 ghanta band -> khabar line me padi, offset aage nahi<br/>wahi khabar dobara -> DONE hai to skip"]
+    n_Kafka["Kafka<br/>(async + tracking id)"]
     n_Worker["Worker"]
     n_Validator["Validator"]
     n_CLIENT --> n_Upload_Svc
