@@ -268,7 +268,7 @@ double limit = BankConfig.INSTANCE.getMaxTransactionLimit();
 
 ---
 
-## 4 Approaches Comparison
+## 5 Approaches Comparison
 
 | Approach | Thread-safe? | Lazy? | Code complexity | Recommended? |
 |---|---|---|---|---|
