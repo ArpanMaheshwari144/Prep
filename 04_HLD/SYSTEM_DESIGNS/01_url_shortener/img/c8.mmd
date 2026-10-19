@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_EDGE["Route 53 + LB x 2"]
-    n_API_Gateway["API Gateway<br/>spammer 5,000 link / sec<br/>-> har user / IP ki ginti, had paar = 429 (rate limit)<br/>kai gateway -> ginti ek jagah (shared Redis)<br/>bot naya IP -> ginti API key pe"]
+    n_API_Gateway["API Gateway<br/>(rate limit)"]
     n_App_xN["App x N"]
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]

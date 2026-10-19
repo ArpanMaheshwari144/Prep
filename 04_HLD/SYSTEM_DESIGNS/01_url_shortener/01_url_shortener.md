@@ -103,11 +103,9 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Mera sale wala link viral hua, har click DB pe, DB baith gaya
-```
-DIKKAT     10 baje maine sale ka chhota link College Gang me daala, viral -> ~1 lakh click / sec, har click
-           DB (disk) tak. Redirect dheema hua, phir DB hi baith gaya.
-```
-![c1](img/c1-16eef8cf.svg)
+KIYA: pehle Redis (RAM) me dekho, nahi mila to DB se laao + rakho (cache-aside)
+
+![c1](img/c1-af2360f1.svg)
 
 ```
 NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke liye bahut copies chahiye.
@@ -128,11 +126,9 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Usi bheed me ek App machine giri, poori site band
-```
-DIKKAT     11 baje wahi bheed ek hi App machine pe. Wo dheemi hui, phir giri -> poori site band.
-           Ek cheez jiske girne se sab ruk jaaye = SPOF (single point of failure).
-```
-![c2](img/c2-e922def8.svg)
+KIYA: kai App, LB baante, App kuch yaad nahi rakhta (stateless + LB)
+
+![c2](img/c2-9ceb0757.svg)
 
 ```
 NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
@@ -150,11 +146,9 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Maine aur Ravi ne link banaya, dono ko ek hi code mila
-```
-DIKKAT     Dopahar maine aur Ravi ne ek hi pal me link banaya. Request do alag App pe gayi, dono ne apni
-           ginti se agla number liya -> dono ko code "g9" mila. Ravi ka link khola to mera sale page khula.
-```
-![c3](img/c3-8b943786.svg)
+KIYA: Counter har App ko alag range de, App usme se agla le (range)
+
+![c3](img/c3-30f48616.svg)
 
 ```
 AAGE POOCHEGA:
@@ -168,11 +162,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Maine click ginti chahi, redirect hi dheema ho gaya
-```
-DIKKAT     2 baje mujhe ginti chahiye thi kitne click aaye. Usi request me analytics DB me likhne lage,
-           phir redirect. Analytics DB dheema -> har user redirect ke liye ruka.
-```
-![c4](img/c4-55008eea.svg)
+KIYA: redirect turant, click Kafka me daalo, Analytics apni speed se padhe
+
+![c4](img/c4-ab49f20e.svg)
 
 ```
 NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
@@ -191,11 +183,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 DB team boli: 5 saal me 90 TB, ek machine me nahi
-```
-DIKKAT     4 baje DB team: 10 crore link roz, 5 saal -> ~180 arab link, ~90 TB. Ek machine me nahi aata,
-           aur wo ek machine mari to saare link gaye.
-```
-![c5](img/c5-0cd3e6a0.svg)
+KIYA: data kai machine me, link ke code se tay kaunsi machine (shard + ring)
+
+![c5](img/c5-a1107513.svg)
 
 ```
 NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
@@ -212,12 +202,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Maine naya link banaya, turant khola, 404 aaya
-```
-DIKKAT     5 baje maine naya link banaya. Cassandra har link 3 alag machine pe rakhta: copy A, B, C.
-           Link A aur B me pahunch gaya, C tak abhi nahi (aam taur pe ms, bheed me second tak).
-           Isi beech mera click C pe gaya -> C bola "ye link mere paas nahi" -> 404.
-```
-![c6](img/c6-3f395383.svg)
+KIYA: likhna 2 me + padhna 2 se: har jodi me ek taaza copy (quorum)
+
+![c6](img/c6-fafca975.svg)
 
 ```
 NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
@@ -235,11 +222,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Shaam ko LB hi gir gaya, koi request andar nahi
-```
-DIKKAT     Shaam ko akela LB hi gir gaya. App machine sab zinda, par har click LB pe atka -> koi link
-           nahi khula, poori site band. App badhane se kuch nahi hua, darwaza hi band tha.
-```
-![c7](img/c7-9c1098f6.svg)
+KIYA: Route 53 LB se poochhta rahe, chup LB list se bahar (DNS failover)
+
+![c7](img/c7-da98581f.svg)
 
 ```
 AAGE POOCHEGA:
@@ -252,11 +237,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko spammer ki script, har second 5,000 link
-```
-DIKKAT     Raat ko spammer: ek API key se har second 5,000 link (phishing). Aam din poore system pe ~1,000
-           -> 5 guna bojh, asli users dheeme; Gmail / WhatsApp ne hamara domain "spam" maana.
-```
-![c8](img/c8-7fdabea3.svg)
+KIYA: gateway pe har key / IP ki ginti, had paar = 429 (rate limit)
+
+![c8](img/c8-18eab50e.svg)
 
 ```
 NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.

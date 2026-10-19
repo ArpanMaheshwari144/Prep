@@ -51,7 +51,7 @@
     }
    ],
    "result": "asli users bache",
-   "foot": "kai gateway -> ginti ek jagah (Redis); bot naya IP -> ginti API key pe"
+   "foot": "kai gateway ho to ginti ek jagah (Redis); bot naya IP le to ginti API key pe"
   }
  ]
 }

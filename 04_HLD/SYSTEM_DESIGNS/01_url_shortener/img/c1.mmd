@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_App["App"]
-    n_Redis["Redis<br/>link viral, DB baitha<br/>-> pehle Redis me dekho, nahi mila to DB se laao + Redis me rakho (cache-aside)<br/>Redis gira -> uski copy kaam le (replica)<br/>ek link ke 1000 click miss -> sirf ek DB tak, baaki uska jawab lein"]
+    n_Redis["Redis<br/>(cache-aside)"]
     n_DB["DB"]
     n_USER --> n_App
     n_App --> n_Redis

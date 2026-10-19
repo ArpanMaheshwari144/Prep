@@ -14,6 +14,9 @@ def main(f):
     def one(m):
         nonlocal n
         sc = os.path.join(img, m.group(4) + '.scene.json')
+        if m.group(4) in MANUAL:   # scene nahi (concept tasveer) -> haath se diya vaakya
+            n += 1
+            return m.group(1) + 'KIYA: ' + MANUAL[m.group(4)] + '\n\n' + m.group(3)
         if not os.path.exists(sc):
             return m.group(0)
         rows = json.load(open(sc, encoding='utf-8'))['rows']
@@ -30,6 +33,9 @@ def main(f):
     print(f'{os.path.basename(f)}: {n} KIYA, DIKKAT bache {left}')
 
 
+MANUAL = {}
 if __name__ == '__main__':
-    for f in sys.argv[1:]:
+    args = sys.argv[1:]
+    MANUAL.update(a.split('=', 1) for a in args if '=' in a)   # c5="data kai machine me ... (shard + ring)"
+    for f in [a for a in args if '=' not in a]:
         main(f)

@@ -50,7 +50,7 @@
     }
    ],
    "result": "DB bach gaya",
-   "foot": "miss -> DB se laao, Redis me rakho; ek link pe 1000 miss -> sirf ek DB tak, baaki uska jawab lein"
+   "foot": "miss hua to DB se laao, Redis me rakho; ek link pe 1000 miss ho to sirf ek DB tak jaaye, baaki uska jawab lein"
   }
  ]
 }

@@ -6,7 +6,7 @@ flowchart LR
     n_Counter["Counter"]
     n_ANA["Analytics (Kafka + DLQ)"]
     n_Redis["Redis"]
-    n_Cassandra["Cassandra<br/>naya link, turant 404<br/>-> har link 3 copy, likhna 2 me + padhna 2 se, ek taaza milegi hi (quorum)<br/>do copy giri -> likhna fail, user ko error"]
+    n_Cassandra["Cassandra<br/>(quorum)"]
     n_USER --> n_LB
     n_LB --> n_App_xN
     n_App_xN --> n_Counter
