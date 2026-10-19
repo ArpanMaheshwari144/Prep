@@ -96,6 +96,8 @@ hilta.
 
 **Cue:** KEY = userId (ek partition, kram) · dabba: Producer (key)
 
+![card 3 chalti tasveer: pehle bug, phir key = userId](img/c3_anim.gif)
+
 Isliye ek user hamesha ek hi tukde me, kram wahin (key = userId). hash % 10 se P7, to Ravi ki har khabar P7 me, kram
 pakka.
 
