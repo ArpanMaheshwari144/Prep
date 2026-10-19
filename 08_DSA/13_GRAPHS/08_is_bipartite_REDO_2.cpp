@@ -27,7 +27,7 @@ using namespace std;
 #include <bits/stdc++.h>
 using namespace std;
 
-bool BFS(vector<vector<int>> &graph, vector<int> color, int node)
+bool BFS(vector<vector<int>> &graph, vector<int> &color, int node)
 {
     queue<int> q;
     q.push(node);
@@ -63,7 +63,7 @@ bool isBipartite(vector<vector<int>> &graph)
 
     for (int i = 0; i < m; i++)
     {
-        if (color[i] = -1)
+        if (color[i] == -1)
         {
             if (BFS(graph, color, i) == false)
             {
