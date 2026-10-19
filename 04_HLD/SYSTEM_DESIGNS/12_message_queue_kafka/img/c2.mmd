@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer"]
-    n_B["Brokers A / B / C<br/>5,000 / sec aaye, ek worker 500 hi bheje<br/>-> topic ke tukde, har tukda alag worker (partition)<br/>worker zyada, tukde kam -> worker khaali baithe"]
+    n_B["Brokers A / B / C<br/>(partition)"]
     n_C["Consumer"]
     n_P --> n_B
     n_B --> n_C

@@ -122,15 +122,10 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Subah 2 crore log jude, server ki memory khatam
-```
-DIKKAT     Subah 9 baje 2 crore log jude, sabka connection khula. Ek connection = ek thread (~1 MB)
-           -> 1 lakh connection = ~100 GB. Server khatam.
-```
-![c1](img/c1-e4559ee8.svg)
+KIYA: kuch thread sab connection sambhalein, sirf jahan data aaya (event loop)
 
-```
-NAHI       badi machine lo (zyada RAM): thread ka kharcha wahi, bas thodi der baad tootega.
-```
+![c1](img/c1-8becdf59.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: connection kholo, thread mat do; server gira to log ruk-ruk ke judein; bheja hua khota nahi.
@@ -144,15 +139,10 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Maine Ravi ko "hi" bheja, server bola Ravi offline
-```
-DIKKAT     Main server-1 pe, Ravi server-7 pe. Maine "hi" bheja, server-1 ke map me sirf apne log
-           -> bola "Ravi offline", jabki Ravi online tha.
-```
-![c2](img/c2-0d5b84dc.svg)
+KIYA: Redis me pata: Ravi -> server-7 (map)
 
-```
-NAHI       har 200 server ko bhej do: 199 bekaar jaagte.
-```
+![c2](img/c2-db3be1a2.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: Redis me sirf PATA (umar ke saath); pata galat ya Redis gira, message khota nahi.
@@ -166,15 +156,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Ravi ka phone band tha, message kahan jaaye
-```
-DIKKAT     Ravi ka phone band, connection nahi. "Pehle bhejo, na pahunche to DB me daalo" -> beech me server
-           gira = message gaya.
-```
-![c3](img/c3-68e7a572.svg)
+KIYA: pehle DB me likho, phir bhejne ki koshish (store-then-forward)
 
-```
-NAHI       sirf Push bhej do, DB nahi: push sirf ghanti hai, pahunchne ki guarantee nahi, history bhi nahi.
-```
+![c3](img/c3-80144291.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: DB pehle, bhejna baad; push sirf ghanti; DB me hai wo khota nahi, wapas aaya to "aakhri ke baad" sab.
@@ -186,14 +171,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Roz 1.2 TB message, ek DB nahi jhelta
-```
-DIKKAT     Roz ~1.2 TB message, 46,000 likhai / second. Ek DB machine nahi jhelegi. Kis cheez se baantein?
-```
-![c4](img/c4-2d1cb57f.svg)
+KIYA: ek chat ke saare message ek partition me (key = chat_id)
 
-```
-NAHI       user_id se baanto: ek chat do jagah, group 500 jagah.
-```
+![c4](img/c4-8dd0bf53.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: jo saath padha jaata wo saath rakho (ek chat ek partition); partition badi ho to key me mahina jodo.
@@ -206,15 +187,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
-```
-DIKKAT     Metro me net dheema. App ne "hi" bheja, timeout aaya, dobara bheja. Pehla pahunch chuka tha
-           -> Ravi ko "hi" do baar.
-```
-![c5](img/c5-7f330cb0.svg)
+KIYA: app har message ki apni id, dobara pe wahi id (clientMsgId)
 
-```
-NAHI       server id banaye: har dobara bhejna = nayi id = duplicate.
-```
+![c5](img/c5-2cfdb2b1.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: id APP banata, server sirf "pehle dekha?" (ek kadam); dobara bhejna safe, wahi id = wahi message.
@@ -226,14 +202,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Meri ghadi 5 min aage, mere message upar chadh gaye
-```
-DIKKAT     Meri phone ki ghadi 5 min aage. Mere message chat me upar chadh gaye, Ravi ke jawab se pehle.
-```
-![c6](img/c6-f0618c85.svg)
+KIYA: har chat ka server pe +1 number, kram isi se (seq)
 
-```
-NAHI       Snowflake id se kram: do server ki ghadi me ms ka farak.
-```
+![c6](img/c6-e61ce2a2.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: kram = server ka +1 number (har chat alag), ghadi nahi; ginti me chhed = kuch chhoota, wo maango.
@@ -246,14 +218,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 College Gang (500) me ek message, 500 baar likhein?
-```
-DIKKAT     "College Gang" me 500 log. Maine ek message bheja -> 500 logon ke inbox me 500 baar likhein?
-```
-![c7](img/c7-1df332a6.svg)
+KIYA: group ka message ek baar, sab wahi padhein; har server ko ek call
 
-```
-NAHI       Twitter jaisa har inbox me copy: wahan feed sabki alag + crore follower, group sabka ek.
-```
+![c7](img/c7-9c887b8a.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: sabke liye ek jaisa = ek copy, har kisi ka alag = alag copy; bhejna server-wise, member-wise nahi.
@@ -265,15 +233,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Ravi ne 50 padhe: unread aur neeli tick kaise
-```
-DIKKAT     Shaam ko Ravi ne chat khol ke 50 message padhe. Har message x har member ka "padha" record
-           = 500 x 50 = 25,000 likhai. Bekaar.
-```
-![c8](img/c8-c60399a1.svg)
+KIYA: har member ka ek number: kahan tak padha (read_upto)
 
-```
-NAHI       unread COUNT column badhao-ghatao: har message pe 500 member x 1 UPDATE, phir bhi 25,000 likhai.
-```
+![c8](img/c8-f3eee266.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: nishaan khisakta, ginti nahi hoti; unread, tick, offline ke baad lena sab isi se; khoya to agli baar.
@@ -287,15 +250,10 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Shaadi ka 200 MB video chat ke raaste
-```
-DIKKAT     Maine College Gang me 200 MB shaadi ka video chat server se bheja -> 2 min connection atka,
-           server 500 x 200 MB = ~100 GB bheje.
-```
-![c9](img/c9-6cbcc3de.svg)
+KIYA: video seedha S3, message me sirf key + thumbnail (presigned URL)
 
-```
-NAHI       message me URL rakho: 10 min me khatam, kal link mara; KEY rakho.
-```
+![c9](img/c9-68934400.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: bhaari maal S3 me, message me sirf KEY (URL marta hai); ek upload, sabko wahi key.
@@ -308,14 +266,10 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Raat ko online / last seen sabko kaise
-```
-DIKKAT     Raat ko main online aaya, gaya. Har baar mere saare contacts ko batao = crore x 500 message.
-```
-![c10](img/c10-641cf492.svg)
+KIYA: online = Redis key + umar, app dhadkan de; dekho tabhi jab chat khule
 
-```
-NAHI       DB me online column, har dhadkan pe UPDATE: crore log x har 15 sec = DB baith jaata.
-```
+![c10](img/c10-34862e61.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: status maango tab dekho, khud mitne wali key; thoda purana status chalta (paisa nahi hai).

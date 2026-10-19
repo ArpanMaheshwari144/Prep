@@ -2,7 +2,7 @@
 flowchart LR
     n_P["Producer (key = userId)"]
     n_B["Brokers A / B / C"]
-    n_GE["Group email<br/>3 machine, Ravi ko 3 email<br/>-> teeno ek group, har tukda group ke ek hi member ko (consumer group)<br/>machine badhani -> tukde bhi badhao"]
+    n_GE["Group email<br/>(consumer group)"]
     n_P --> n_B
     n_B --> n_GE
     style n_GE fill:#f9a825,color:#000

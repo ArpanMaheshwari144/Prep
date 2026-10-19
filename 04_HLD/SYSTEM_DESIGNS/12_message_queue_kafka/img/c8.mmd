@@ -1,6 +1,6 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_P["Producer + Outbox<br/>order DB me bana, event nahi gaya<br/>-> order + khabar ek transaction, relay baad me Kafka bheje (outbox)<br/>bheja, sent=true se pehle crash -> dobara, consumer eventId se skip"]
+    n_P["Producer + Outbox<br/>(ek transaction)"]
     n_B["Brokers A / B / C"]
     n_K["Controller (KRaft)"]
     n_GE["Group email"]

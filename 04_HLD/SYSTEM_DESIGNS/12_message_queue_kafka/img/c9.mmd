@@ -5,7 +5,7 @@ flowchart LR
     n_K["Controller (KRaft)"]
     n_GE["Group email"]
     n_R["Redis (eventId)"]
-    n_DLQ["DLQ<br/>C2 mara, lag badha<br/>-> mare ke tukde baaki ko (rebalance), baar-baar fail khabar alag line (DLQ)<br/>lag phir badha -> alert, consumer badhao"]
+    n_DLQ["DLQ<br/>(rebalance + alag line)"]
     n_GA["Group analytics"]
     n_GD["Group dashboard"]
     n_P --> n_B

@@ -116,9 +116,6 @@ KIYA: machine jude / jaaye to sirf pados ki key hile (consistent hashing)
 ![c2](img/c2-c1f69cd4.svg)
 
 ```
-NAHI       hash(key) % N: N badla to lagbhag SAB key ki machine badli -> sab MISS -> DB gira.
-```
-```
 AAGE POOCHEGA:
   NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine), sirf us hisse
          ki ek baar miss; virtual nodes = pados kai machine, bojh ek pe nahi.
@@ -134,9 +131,6 @@ KIYA: har machine ki ek copy, B mari to copy B ban jaaye (replica)
 
 ![c3](img/c3-889bc5df.svg)
 
-```
-NAHI       sync copy: har likhai pe copy ke "haan" ka intezaar -> <1 ms gaya.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: cache me tezi pehle: copy thodi der baad, aakhri likhai kho jaaye to chalta, kyunki sach DB me.
@@ -154,9 +148,6 @@ KIYA: pehle DB update, phir cache ki key DELETE (delete on write)
 
 ![c4](img/c4-632b6a08.svg)
 
-```
-NAHI       cache UPDATE: "X" phir "Y" likha, cache me pehle Y pahuncha phir X -> galat "X" baith gaya.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: likho DB me, cache se hatao; kuch bhi pahunche, key khaali hi hogi -> agla padhne wala DB se naya

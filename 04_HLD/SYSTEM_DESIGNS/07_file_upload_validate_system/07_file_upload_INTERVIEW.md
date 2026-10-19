@@ -77,9 +77,6 @@ KIYA: turant tracking id do, khabar queue me, worker baad me jaanche (async)
 ![c1](img/c1-ac96ba86.svg)
 
 ```
-NAHI       thread pool 200 se 2000: jaanch tab bhi 3 sec, bas memory khatam hone tak der.
-```
-```
 AAGE POOCHEGA:
   NIYAM: dheema kaam line me peeche; user ko turant T-101 + haal (VALIDATING), wo kuch dobara nahi bhejta;
          khabar tabhi "padh li" jab DB me haal likha -> worker / Validator gire to khabar line me bachi.
@@ -99,9 +96,6 @@ KIYA: server sirf signed URL de, bytes seedha S3 (presigned URL)
 ![c2](img/c2-903e497d.svg)
 
 ```
-NAHI       S3 ki access key app me daal do: app se key nikli = poora bucket khula.
-```
-```
 AAGE POOCHEGA:
   NIYAM: server sirf paas deta (EK file, 10 min), bytes seedha app -> S3; server pe bojh nahi, aur paas
          leak ho bhi to sirf us ek file pe, 10 min tak. Paas khatam -> naya maango.
@@ -118,9 +112,6 @@ KIYA: file tukdon me, har tukde ki rasid; pahunche tukde bache (multipart)
 ![c3](img/c3-dd12c8e2.svg)
 
 ```
-NAHI       server ka timeout badha do: wifi gaya to connection hi toota, timeout kuch nahi bachata.
-```
-```
 AAGE POOCHEGA:
   NIYAM: jis tukde ki rasid S3 pe, wo pakka (rasid S3 pe hai, app pe nahi); net gaya / app band -> S3 se
          poochho, sirf bache tukde dobara. User ko shuru se kuch nahi.
@@ -136,9 +127,6 @@ KIYA: har kuch min ek job atke dhoondhe (sweeper)
 
 ![c4](img/c4-9a5db941.svg)
 
-```
-NAHI       sirf S3 lifecycle niyam: din me ek baar chalta aur DB nahi dekhta.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: har file ka haal DB me (UPLOADING -> VALIDATING -> DONE / FAILED); der se nahi badla = atka ->
@@ -157,9 +145,6 @@ KIYA: haal Redis se, nahi mila to copy se (cache + replica)
 
 ![c5](img/c5-78d6b545.svg)
 
-```
-NAHI       DB me index daalo: sawaal tez, par 5,000 / sec phir bhi primary pe.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: sach DB me, Redis sirf tez copy: padhna Redis se, likhna dono me; purana dikhe to chhoti umar se
@@ -195,9 +180,6 @@ KIYA: file ka maalik = maangne wala? nahi to 403 (owner check)
 ![c7](img/c7-2de57442.svg)
 
 ```
-NAHI       gateway pe hi check: use pata hi nahi T-101 kiski hai.
-```
-```
 AAGE POOCHEGA:
   NIYAM: kaun ho = gateway (JWT); is file pe haq = service, har request pe (owner_id == jwt.user_id);
          id leak ho jaaye tab bhi file nahi milti (403).
@@ -214,9 +196,6 @@ KIYA: DB me sirf S3 key; download pe maalik check, phir thodi der ka link
 ![c8](img/c8-cf2651b6.svg)
 
 ```
-NAHI       link me lamba random naam (koi andaza na lagaye): ek baar bahar gaya to hamesha chalta.
-```
-```
 AAGE POOCHEGA:
   NIYAM: DB me sirf pata (S3 key), pakka link kabhi bahar nahi; har download pe maalik check -> naya 5 min
          link. Link aage gaya to bas 5 min tak chalta.
@@ -232,9 +211,6 @@ KIYA: file ke pehle byte asli type batate (magic bytes)
 
 ![c9](img/c9-b37a4ddc.svg)
 
-```
-NAHI       type ke liye poori file padho: 5 GB S3 se laana; pehle kuch byte kaafi.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: client ka bheja (naam, type, size) kuch sach nahi; sach file ke bytes me (pehle kuch byte = type,

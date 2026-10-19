@@ -94,15 +94,10 @@ Feed = jinko follow karta unke tweet nikaalo, time se sort karo, upar ke 50 do.
 
 
 #### 1 Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
-```
-DIKKAT     Subah 8 baje maine app khola. Main 200 ko follow karta -> 200 logon ke tweet laao, jodo, sort,
-           upar ke 50. Har user ke saath, har baar app kholne pe 200 ka jod -> feed dheemi.
-```
-![c1](img/c1-f7ad8fc0.svg)
+KIYA: tweet hote hi follower ke inbox me id daalo, kholna = bas inbox padho (fanout)
 
-```
-NAHI       DB pe index / read replica: thoda tez, par har khulne pe 200 ka jod wahi ka wahi.
-```
+![c1](img/c1-6068c684.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: padhna 50 guna zyada -> mehnat likhte waqt (inbox me tweet_id), app khole to sirf inbox padho;
@@ -115,15 +110,10 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Maine tweet kiya, button 5 sec ghoomta raha
-```
-DIKKAT     9 baje maine tweet kiya (5,000 follower) -> usi request me 5,000 inbox, ~1 ms har -> 5+ sec,
-           timeout, "fail" dikha, par tweet DB me ban chuka tha.
-```
-![c2](img/c2-63fbbb99.svg)
+KIYA: tweet DB + khabar Kafka, user ko turant; workers peeche inbox bharein
 
-```
-NAHI       App me peeche ek thread: App crash = thread ka kaam gaya; Kafka disk pe, dobara padh sakte.
-```
+![c2](img/c2-d8ee15b2.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: user ko 'ho gaya' tab jab tweet DB me save; inbox bharna Kafka se peeche, dobara chale to bhi tweet
@@ -138,15 +128,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Bieber ka ek tweet = 10 crore inbox, line ghanton atki
-```
-DIKKAT     11 baje Bieber (10 crore follower) ne tweet kiya -> fanout ko 10 crore inbox. Uski Kafka line
-           ghanton atki; usi line ke baaki logon ke tweet bhi peeche khade.
-```
-![c3](img/c3-54c2db6f.svg)
+KIYA: aam user = push, celeb = pull; feed khulte dono milao (hybrid)
 
-```
-NAHI       sabke liye pull: har feed khulna phir 200 ka jod, mehnga.
-```
+![c3](img/c3-d8b4e02e.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: likhai ka bojh follower ginti se: aam = push (inbox me), celeb = pull (padhte waqt laao + milao);
@@ -160,15 +145,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Match khatam, Virat ka tweet, crore log ek saath, DB gira
-```
-DIKKAT     Dopahar ka match 4:30 pe khatam, Virat ne tweet kiya. Virat pull pe -> har feed me DB se. Crore log
-           ek saath app khole -> crore read DB pe -> DB gira.
-```
-![c4](img/c4-375ca1c7.svg)
+KIYA: garam tweet RAM me, miss pe sirf ek DB jaaye (hot-tweet cache + lock)
 
-```
-NAHI       DB ki copies badha do: wo bhi disk se (ms), ek garam hisse ki copies crore read nahi jhelti.
-```
+![c4](img/c4-8be3809f.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: garam cheez RAM me, DB tak sirf ek request; ek key = ek machine garam -> copies; badla to key hatao.
@@ -179,15 +159,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
-```
-DIKKAT     Shaam 5 baje Redis alert: har inbox me saare id, kabhi kaate nahi, soye users ke bhi
-           -> RAM bhar rahi.
-```
-![c5](img/c5-06f16f11.svg)
+KIYA: sirf aakhri kuch sau, sirf zinda logon ka inbox (trim)
 
-```
-NAHI       Redis me machine jodte jao: soye 40 crore ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
-```
+![c5](img/c5-e110876e.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: RAM me sirf id aur sirf zinda log; jo RAM me nahi wo DB se bana lo (ek baar dheema, galat nahi).
@@ -200,15 +175,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
-```
-DIKKAT     6 baje DB alert: har second ~5,000 naye tweet, 5 saal me ~0.5 PB. Ek DB na itna rakh sakta,
-           na itna likh sakta.
-```
-![c6](img/c6-5e338c2a.svg)
+KIYA: mere saare tweet ek machine pe, naya pehle (shard by user_id)
 
-```
-NAHI       MySQL: har tweet pe har index disk pe dhoondh ke badalna, dheema; join / transaction chahiye nahi.
-```
+![c6](img/c6-5f1612fc.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: jis cheez se padhte (user_id), usi se baanto; likhna sirf aakhir me jodo (tez); 3 copy, 2 me likho
@@ -223,11 +193,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Main Bangalore me, data US me, har feed 300 ms
-```
-DIKKAT     Main Bangalore me, saara data aur App US me. Har feed refresh pe request samundar paar US jaati
-           aur aati -> sirf raaste me 300 ms, feed har baar atak ke khulti.
-```
-![c7](img/c7-920ce87c.svg)
+KIYA: har region me data ki copy, paas wale region se (multi-region)
+
+![c7](img/c7-1735adc4.svg)
 
 ```
 AAGE POOCHEGA:
@@ -242,11 +210,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko har region me ek hi App machine; India wali giri, India band
-```
-DIKKAT     Raat ko har region me ek hi App machine thi. India wali machine giri -> India ke saare user ke
-           liye feed, tweet sab band, jab tak machine wapas na uthe.
-```
-![c8](img/c8-2cc31239.svg)
+KIYA: kai App, LB baante, App kuch yaad nahi rakhta (stateless x N)
+
+![c8](img/c8-e985f7b8.svg)
 
 ```
 AAGE POOCHEGA:
@@ -259,11 +225,9 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Highlights ki bheed ne mera tweet daalna dheema kar diya
-```
-DIKKAT     Match ke highlights aaye, crore log feed scroll kar rahe. Wahi App machine tweet likhti bhi thi
-           -> padhne ki bheed me mera tweet button 10 sec ghooma, likhna dheema.
-```
-![c9](img/c9-5602792b.svg)
+KIYA: likhne aur padhne ki alag service, jahan bheed wahi badhao
+
+![c9](img/c9-11f11a1f.svg)
 
 ```
 AAGE POOCHEGA:
@@ -276,11 +240,9 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Maine match ki video daali, sabko dheemi aur mehngi
-```
-DIKKAT     Maine match ki 50 MB video daali. Har dekhne wala use US ke server se khinchta -> door walon
-           ko buffering, aur har baar poori video hamare server se, bandwidth ka bill bhaari.
-```
-![c10](img/c10-c9cadfd9.svg)
+KIYA: video S3 me, paas wale CDN se (CDN)
+
+![c10](img/c10-8b40ea91.svg)
 
 ```
 AAGE POOCHEGA:

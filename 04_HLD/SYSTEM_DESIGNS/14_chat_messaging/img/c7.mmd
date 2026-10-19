@@ -5,7 +5,7 @@ flowchart LR
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
     n_I["Idempotency check"]
-    n_CA["Cassandra<br/>500 ka group, 500 copy?<br/>-> group ka message ek baar, sab wahi padhein; har server ko ek call (ek copy, fan-out on read)<br/>offline members -> push, wapas aaye to seq se<br/>naya member -> judne se pehle wale nahi"]
+    n_CA["Cassandra<br/>(ek copy, fan-out on read)"]
     n_P["Push (Google / Apple)"]
     n_SQ["Seq (Redis INCR)"]
     n_U --> n_LB

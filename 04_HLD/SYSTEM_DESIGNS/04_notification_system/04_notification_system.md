@@ -94,15 +94,10 @@ Order service khud seedha email bhejne wali company (Email API) ko call kare.
 
 
 #### 1 Maine order kiya, email company band thi, order hi fail
-```
-DIKKAT     Diwali subah maine order kiya. Order service email bhej ke jawab ka intezaar karti rahi; email
-           company band thi -> order hi fail. Aur email dobara bhejne wala koi nahi.
-```
-![c1](img/c1-a35fea4a.svg)
+KIYA: order + khabar ek txn (outbox), Kafka me daalo, Notification peeche padhe
 
-```
-NAHI       Order service me hi retry: request utni der atki, aur Order service giri to retry bhi gaya.
-```
+![c1](img/c1-254b4944.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: order kabhi khabar ka intezaar nahi karta: khabar disk ke log (Kafka) me, padhne wala yaad rakhe
@@ -117,15 +112,10 @@ AAGE POOCHEGA:
 ```
 
 #### 2 SMS company dheemi, mera push aur email bhi atke
-```
-DIKKAT     Usi order ki khabar push, email, SMS teeno se. Teeno ek line me; SMS company dheemi hui -> SMS
-           atke, unke peeche mera push aur email bhi khade.
-```
-![c2](img/c2-331a84e2.svg)
+KIYA: har raaste ki alag line + alag worker (alag queue)
 
-```
-NAHI       SMS worker badha do: company khud dheemi, line phir bhi ek, push / email phir bhi peeche.
-```
+![c2](img/c2-78de5bd5.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: har raasta (push / email / SMS) apni line, apni speed; ek ka dheema ya band hona doosre pe nahi aata.
@@ -136,15 +126,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Worker mara, mujhe do email aaye
-```
-DIKKAT     Worker ne mera email bheja, par Kafka ko "padh liya" (offset) bolne se pehle mar gaya. Kafka ne
-           wahi khabar doosre worker ko di -> dobara bheja -> mujhe DO email.
-```
-![c3](img/c3-6b0e68a1.svg)
+KIYA: bhejne se pehle khabar ki apni id ki key (idempotency key)
 
-```
-NAHI       har baar naya random id: dohraav kabhi pakda nahi jaata.
-```
+![c3](img/c3-97651dc2.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: khabar ki apni pakki id -> dobara aaye to pehchaan ke skip; Redis tez raasta, DB me (khabar_id,
@@ -157,15 +142,10 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Key lag gayi, par mera OTP gaya hi nahi
-```
-DIKKAT     Login ka OTP: Worker-A ne key "bhej diya" lagayi, SMS call FAIL (ya Worker-A mara). Kafka ne
-           dobara di, Worker-B ne "bhej diya" dekh ke chhoda -> OTP kho gaya. Koshish ko pakka maan liya.
-```
-![c4](img/c4-792368c5.svg)
+KIYA: bhejte waqt SENDING, company OK pe SENT; chhodna sirf SENT pe
 
-```
-NAHI       key hi hata do: worker mara to Kafka dobara deta -> OTP / email do baar (card 3 wapas).
-```
+![c4](img/c4-63367a86.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: chhodo sirf pakke SENT pe; SENDING = adhoora, chhoti umar se khud mit jaaye -> khabar khoti nahi;
@@ -180,15 +160,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 SMS company pehle se pareshaan, hum har second dobara maar rahe
-```
-DIKKAT     1 baje SMS company bhar gayi, turant error dene lagi. Hamare 50 worker har error pe TURANT
-           dobara bhejte -> company pe har second hazaaron call aur, wo aur bhari, hum aur dobara: chakkar.
-```
-![c5](img/c5-368ab42a.svg)
+KIYA: har baar zyada der + thoda random (backoff + jitter), had paar -> DLQ
 
-```
-NAHI       retry band, ek fail = chhodo: company 2 sec hili to OTP hamesha ke liye gaya.
-```
+![c5](img/c5-d9796ba0.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: fail pe ruk-ruk ke dobara (1, 2, 4 .. + random), khabar phenkna kabhi nahi; had ke baad DLQ + alert,
@@ -202,15 +177,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 SMS company band nahi, dheemi: saare worker 30 sec me phanse
-```
-DIKKAT     SMS company abhi bhi dheemi: line alag ho gayi, par har call 30 sec atki. Saare SMS worker
-           usi me phanse, OTP bhi ruka. Dheemi company band company se bhi buri.
-```
-![c6](img/c6-45631a43.svg)
+KIYA: thodi der me chhodo, baar-baar fail -> SNS pe (timeout + circuit breaker)
 
-```
-NAHI       worker badha do: naye worker bhi 30 sec me phanse, dheemi company pe aur bojh.
-```
+![c6](img/c6-737448bf.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: dheema = band maano (2-3 sec timeout); har company ka apna circuit breaker -> uske band hone se
@@ -224,15 +194,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 12 baje sale shuru, mera OTP 50,000 offer ke peeche
-```
-DIKKAT     12 baje sale. Line me 50,000 offer message the, mera OTP unke peeche khada raha, 10 minute baad
-           aaya. Tab tak login ka time khatam.
-```
-![c7](img/c7-18044daa.svg)
+KIYA: OTP ki apni tez line + apne worker (priority)
 
-```
-NAHI       ek line me "zaroori" tag: Kafka me "ye pehle bhejo" hota hi nahi.
-```
+![c7](img/c7-fbc1c25a.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: zaroori (OTP) kabhi kisi ke peeche nahi: apni line, apne worker, company me apna account.
@@ -243,14 +208,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Sale me laakhon message ek saath, company ne 429 diya
-```
-DIKKAT     Sale shuru, ek saath laakhon message. SMS company bolti "itna nahi" (429) -> sab fail.
-```
-![c8](img/c8-b9c7a811.svg)
+KIYA: sab worker ka ek token bucket, pehle token lo (token bucket)
 
-```
-NAHI       har worker apni speed 100 / sec: 100 worker = 100 guna -> phir 429.
-```
+![c8](img/c8-1c5256b1.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: had company ki hai, worker ki nahi: sab worker ek bucket se token lein; token nahi = ruko, khabar
@@ -264,14 +225,10 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Company ne "bhej diya" bola, par mere phone tak pahuncha?
-```
-DIKKAT     SMS company ne message le liya. Par mere phone tak pahuncha ya nahi, humein pata hi nahi.
-```
-![c9](img/c9-a1477ad9.svg)
+KIYA: company baad me khud bataye pahuncha / fail (webhook)
 
-```
-NAHI       baar-baar khud poochte raho: laakhon message x har kuch second = had + kharcha.
-```
+![c9](img/c9-6e145022.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: 'bheja' aur 'mila' alag haal; 'mila' tab likho jab company (asli, signed webhook) bataye.
@@ -283,15 +240,10 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Shaam ko "Diwali offer sabko": 1 crore log
-```
-DIKKAT     Shaam ko admin ne "Diwali offer sabko" chalaya = 1 crore user. Ek-ek karke bheja -> request ghanton
-           atki, OTP bhi peeche, company ki had tooti.
-```
-![c10](img/c10-42715897.svg)
+KIYA: chhote tukdon me, aakhri tukda campaign row me (batch)
 
-```
-NAHI       1 crore ko ek bada "sabko bhejo" message: ek worker pe atka, gira to shuru se.
-```
+![c10](img/c10-dd8ab4ae.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: bada kaam chhote tukdon me, har tukde ke baad 'kahan tak' likha -> gira to wahin se, galat chala to
@@ -303,15 +255,10 @@ AAGE POOCHEGA:
 ```
 
 #### 11 Raat 2 baje offer ka SMS, jabki maine band kiya tha
-```
-DIKKAT     Maine "offer SMS band" kiya tha aur raat 10 se subah 8 shaanti lagayi thi. Phir bhi raat 2 baje
-           "Diwali sale 70% off" ka SMS aaya, aur push se phone baj gaya.
-```
-![c11](img/c11-b08d167b.svg)
+KIYA: pehle pasand dekho, raat me ghanti nahi (preference + quiet hours)
 
-```
-NAHI       pasand sirf Campaign Svc me check: order / OTP wali khabar bina check nikal jaati.
-```
+![c11](img/c11-efd80bf9.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: bhejne se pehle user ki pasand dekho; offer pasand / shaanti ke neeche, zaroori alert (OTP) upar.

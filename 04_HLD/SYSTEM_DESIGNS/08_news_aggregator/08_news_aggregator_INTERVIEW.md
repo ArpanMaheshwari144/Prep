@@ -110,9 +110,6 @@ KIYA: kai Feed machine + LB, miss pe DB ki copy se (read replica)
 ![c3](img/c3-044f7882.svg)
 
 ```
-NAHI       Kafka se bheed sambhalo: Kafka likhne ke raaste ke liye hai, padhai ki bheed nahi jhelta.
-```
-```
 AAGE POOCHEGA:
   NIYAM: padhai copy pe, likhai main pe; jo kuch yaad nahi rakhta (Feed Svc) uski machine badhao; copy
          thodi peeche ho to user ko kuch sec purani khabar, nuksaan nahi.
@@ -166,9 +163,6 @@ KIYA: har category ki ek list, mere liye dono milao (category feed)
 ![c6](img/c6-0baed431.svg)
 
 ```
-NAHI       har baar DB se WHERE category IN (tech, sports): har khulne pe DB, cache ka fayda gaya.
-```
-```
 AAGE POOCHEGA:
   NIYAM: list category ki pehle se (feed:tech), milana padhte waqt; user ki pasand = kaunsi list milaani,
          har user ki alag feed nahi.
@@ -201,9 +195,6 @@ KIYA: har mahine ka alag tukda, purana S3 pe (partition + archive)
 ![c8](img/c8-260e4b77.svg)
 
 ```
-NAHI       "sharding karo": ye purana hatana (retention) hai, data baantna (sharding) nahi.
-```
-```
 AAGE POOCHEGA:
   NIYAM: naya mahina garam (Postgres), purane thande (S3); purani khabar khulti, bas dheemi; purana hatana =
          retention, sharding nahi.
@@ -220,9 +211,6 @@ KIYA: article_id se tukde, har tukda alag machine (shard)
 
 ![c9](img/c9-da5c1c60.svg)
 
-```
-NAHI       date se baanto: aaj ki saari likhai aaj wale shard pe -> wo akela garam.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: baantne ki key wo jo bojh barabar baante (article_id ka hash); ek shard garam / mara to sirf

@@ -98,7 +98,8 @@ def merge_concept(svg_path, mmd_src, term, csvg=None):
                         return True
         return False
 
-    xmin, xmax = dvx + 12, dvx + W0 - 12   # teer image ke andar hi
+    # teer poori image ke andar (patle design ke bagal ki khaali jagah bhi chalegi)
+    xmin, xmax = dvx - ox1 / k + 12, dvx + (W - ox1) / k - 12
 
     def route(nd, lines):
         a, b, c, e = boxes[nd]

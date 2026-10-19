@@ -3,7 +3,7 @@ flowchart LR
     n_U["USER"]
     n_LB["LB"]
     n_CS["Chat Server x200"]
-    n_R["Redis<br/>Ravi doosre server pe<br/>-> Redis me Ravi -> server-7, server-1 poochh ke server-7 ko de (map)<br/>server-7 mara -> entry khud hati (TTL), Ravi offline<br/>Ravi ke kai device -> pata list, har device pe"]
+    n_R["Redis<br/>(map)"]
     n_U --> n_LB
     n_LB --> n_CS
     n_CS --> n_R

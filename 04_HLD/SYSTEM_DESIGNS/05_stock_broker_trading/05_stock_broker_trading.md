@@ -117,9 +117,6 @@ KIYA: check aur block ek hi query me (atomic UPDATE)
 ![c2](img/c2-a0e502be.svg)
 
 ```
-NAHI       pehle SELECT, phir UPDATE: beech me doosra ghus jaata.
-```
-```
 AAGE POOCHEGA:
   NIYAM: 'hai?' aur 'block' ek hi UPDATE (DB ke andar), kitni bhi machine ho; 0 row = reject turant dikhao.
          'blocked' badhe naye order se, ghate sauda / cancel / umar khatam se.
@@ -137,9 +134,6 @@ KIYA: ek share ke saare order ek line, ek hi thread (ek symbol ek thread)
 ![c3](img/c3-5eb0556e.svg)
 
 ```
-NAHI       poore engine pe bada lock: TCS ke chakkar me INFY bhi ruka.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek stock ki book ko ek waqt ek hi haath (ek thread): doosra line me ruke, race hi nahi; thread
          atka to sirf us stock ki line rukti, baaki stock chalte, standby taiyaar.
@@ -155,9 +149,6 @@ KIYA: TCS ki ek line, ek thread RAM me tez nipta
 ![c4](img/c4-eaab2ebf.svg)
 
 ```
-NAHI       TCS ko do thread me baanto: do book = ek share do baar bike.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek stock = ek line; badhao stocks ke BEECH, ek stock ke andar kabhi nahi. User ko ACCEPTED
          turant, FILLED sauda hone pe; line lambi = der, order khota nahi (line me hai).
@@ -171,11 +162,8 @@ AAGE POOCHEGA:
 #### 5 Server gira, poori order book gayab
 KIYA: har order pehle log me, phir book; gira to log dobara chalao (replay)
 
-![c5](img/c5-38458c3b.svg)
+![c5](img/c5-10176ac3.svg)
 
-```
-NAHI       doosra engine saath chalao (active-active): dono match karte = ek sauda do baar settle.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: log hi sach, book uski photo: pehle log, phir book; gira = log se replay, standby
@@ -192,9 +180,6 @@ KIYA: chaaron badlaav ek transaction, ya sab ya koi nahi
 ![c6](img/c6-73935b15.svg)
 
 ```
-NAHI       chaar alag UPDATE: beech me gira to aadha likha.
-```
-```
 AAGE POOCHEGA:
   NIYAM: paisa ek DB me: chaaron likhai ek transaction, ya sab ya kuch nahi; ledger jod hamesha 0.
          Beech ka haal user ko PENDING dikhe, galat number kabhi nahi. Dobara = no-op (trade_id).
@@ -209,9 +194,6 @@ KIYA: har kadam ka haal likho, fail pe wahin se retry (status log)
 
 ![c7](img/c7-82ed7c58.svg)
 
-```
-NAHI       2PC: dono DB lock pakad ke rukte, coordinator gira = sab atke.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: match ke baad sauda PAKKA: system hi aage badhaata (retry), user ko kuch dobara nahi karna;
@@ -229,9 +211,6 @@ KIYA: connection khula, price badla tabhi server bheje (WebSocket + pub/sub)
 
 ![c8](img/c8-59a09a1d.svg)
 
-```
-NAHI       polling: 10 lakh bekaar sawaal / sec, 99% me price badla hi nahi.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: price = sirf abhi ka: badla tab server khud bheje (push), purana store nahi; wapas juda

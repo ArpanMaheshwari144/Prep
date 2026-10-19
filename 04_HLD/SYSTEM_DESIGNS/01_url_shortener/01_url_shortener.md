@@ -108,9 +108,6 @@ KIYA: pehle Redis (RAM) me dekho, nahi mila to DB se laao + rakho (cache-aside)
 ![c1](img/c1-af2360f1.svg)
 
 ```
-NAHI       DB ki read copy (replica): wo bhi disk se, dheemi; 1 lakh / sec ke liye bahut copies chahiye.
-```
-```
 AAGE POOCHEGA:
   NIYAM: sach ek hi jagah (DB), Redis sirf garam copy: purani / khoyi ho sakti, isliye DB se wapas bane.
          User ko farak nahi, bas tez. Redis gira -> uski copy, aakhir me kuch request mana (DB bachao).
@@ -131,9 +128,6 @@ KIYA: kai App, LB baante, App kuch yaad nahi rakhta (stateless + LB)
 ![c2](img/c2-9ceb0757.svg)
 
 ```
-NAHI       ek bahut badi machine (vertical scale): uski bhi had, aur akeli -> wahi giri to sab band.
-```
-```
 AAGE POOCHEGA:
   NIYAM: App kuch yaad nahi rakhta (sab Redis / DB me), isliye koi bhi machine koi bhi request le; ek giri
          to LB use list se hataata, user ka agla click doosri machine pe.
@@ -148,7 +142,7 @@ AAGE POOCHEGA:
 #### 3 Maine aur Ravi ne link banaya, dono ko ek hi code mila
 KIYA: Counter har App ko alag range de, App usme se agla le (range)
 
-![c3](img/c3-30f48616.svg)
+![c3](img/c3-c90a111e.svg)
 
 ```
 AAGE POOCHEGA:
@@ -164,11 +158,8 @@ AAGE POOCHEGA:
 #### 4 Maine click ginti chahi, redirect hi dheema ho gaya
 KIYA: redirect turant, click Kafka me daalo, Analytics apni speed se padhe
 
-![c4](img/c4-ab49f20e.svg)
+![c4](img/c4-f3581c47.svg)
 
-```
-NAHI       App ke andar peeche ek thread: App crash = memory me padi khabarein gayi.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: redirect kisi ka intezaar nahi karta; ginti peeche, apni speed se, disk pe (Kafka). Ginti wala
@@ -188,9 +179,6 @@ KIYA: data kai machine me, link ke code se tay kaunsi machine (shard + ring)
 ![c5](img/c5-a1107513.svg)
 
 ```
-NAHI       country / date se baanto: ek country / aaj ka din garam, aur code se country pata hi nahi.
-```
-```
 AAGE POOCHEGA:
   NIYAM: jis cheez se padhte ho (code), usi se baanto -> har click seedha ek machine; machine judi / giri to
          sirf pados ke code khiskein, aur har tukde ki 3 copy.
@@ -206,9 +194,6 @@ KIYA: likhna 2 me + padhna 2 se: har jodi me ek taaza copy (quorum)
 
 ![c6](img/c6-fafca975.svg)
 
-```
-NAHI       3 me likho tabhi done, phir 1 se padho: ek copy giri = har naya link fail.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: "2 me likha + 2 se padha" -> har jodi me ek taaza copy, isliye banane ke baad 404 nahi; 2 copy na
@@ -241,9 +226,6 @@ KIYA: gateway pe har key / IP ki ginti, had paar = 429 (rate limit)
 
 ![c8](img/c8-18eab50e.svg)
 
-```
-NAHI       har gateway machine apni ginti: banda har machine pe limit tak bana lega.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: rokna darwaze pe, sabki ek ginti se (shared Redis), us pehchaan pe jo bot badal na sake (API key);

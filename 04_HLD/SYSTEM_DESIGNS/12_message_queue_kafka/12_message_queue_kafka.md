@@ -82,15 +82,10 @@ Ek machine, uski memory me ek queue. Producer daale, consumer uthaye.
 
 
 #### 1 Subah queue machine restart hui, 500 signup gayab
-```
-DIKKAT     Subah, sale se pehle signup khule. Queue machine ki memory me 500 signup message, machine restart
-           -> memory saaf -> 500 gayab. Email service ko pata hi nahi chala ki 500 log aaye.
-```
-![c1](img/c1-11618b6e.svg)
+KIYA: disk pe file, message aakhir me judta, padhne se mitta nahi (log)
 
-```
-NAHI       DB me queue: insert = index + lock = idhar-udhar likhna; queue me WHERE nahi, bas "X ke baad do".
-```
+![c1](img/c1-ab83653a.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: message padhne se mit-ta nahi (disk pe log); har padhne wala sirf apna number (offset) yaad rakhta.
@@ -103,15 +98,10 @@ AAGE POOCHEGA:
 ```
 
 #### 2 10 baje sale shuru, 5,000 / sec aaye, ek worker 500 hi bhej paata
-```
-DIKKAT     10 baje sale: "order-events" pe 5,000 khabar / sec. Email worker ~500 / sec hi bhej paata
-           (har email ek API call). Topic ek line -> ek hi worker kram se padhe -> ghanton ki line (lag).
-```
-![c2](img/c2-513f834c.svg)
+KIYA: topic ke 10 tukde, har tukda apna worker (partition)
 
-```
-NAHI       copy (replica) badhao: copy sirf bachav ke liye, padhna bhi leader se hi; padhne wale = partition.
-```
+![c2](img/c2-5f6d07d9.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: partition = kitne ek saath padh sakein (ek partition ek worker); bheed badhe -> aur partition.
@@ -123,15 +113,10 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Ravi ne naam do baar badla, purana naam reh gaya
-```
-DIKKAT     Ravi ne naam "Ravi K" kiya, 1 min baad "Ravi Kumar". Pehla P0 me, doosra P1 me. P0 ka consumer
-           10 min peeche (lag) -> pehle "Ravi Kumar" laga, phir "Ravi K" -> galat naam reh gaya.
-```
-![c3](img/c3-103eb203.svg)
+KIYA: ek user hamesha ek hi tukde me, kram wahin (key = userId)
 
-```
-NAHI       poore topic ka kram: matlab sirf ek partition = speed khatam. Kram sirf key ke andar.
-```
+![c3](img/c3-171552cb.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: kram sirf EK partition ke andar: jiska kram chahiye wahi key (userId); same key = same partition.
@@ -146,11 +131,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Email service ki 3 machine, Ravi ko 3 order email
-```
-DIKKAT     Sale me email service ki 3 machine lagayi. Teeno ne har message padha, to Ravi ke ek order pe
-           3 email gaye -> Ravi pareshan, aur kaam teen guna hua.
-```
-![c4](img/c4-14c8a167.svg)
+KIYA: teeno ek team, har tukda team ke ek hi member ko (consumer group)
+
+![c4](img/c4-6367fe45.svg)
 
 ```
 AAGE POOCHEGA:
@@ -163,16 +146,10 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Ravi ka order analytics aur dashboard ko bhi chahiye
-```
-DIKKAT     Dopahar analytics team boli "humein bhi har order chahiye", dashboard team bhi. Teeno ko ek hi
-           group "email" me jod diya -> Kafka ne tukde teeno me baant diye: har ek ko ~1/3 order mile,
-           Ravi ka order sirf email ko, analytics aur dashboard ko nahi.
-```
-![c5](img/c5-78f17e7e.svg)
+KIYA: har service ka apna group, har group ko poori khabar (alag consumer group)
 
-```
-NAHI       har service ka alag topic: producer ek event teen baar bheje -> "ek message kai service" hi toota.
-```
+![c5](img/c5-6fc23383.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: group ke andar baanto, alag group = sabko (har group ka apna offset); ye MQ ka dil hai.
@@ -186,14 +163,10 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Dopahar Broker A ki disk mar gayi, data gaya
-```
-DIKKAT     Dopahar Broker A ki disk mari. Har partition ki ek hi copy thi -> P0 ka data hamesha ke liye gaya.
-```
-![c6](img/c6-ce6926db.svg)
+KIYA: har tukde ka leader + 2 copy, ISR wali copy likhein tab OK (acks=all)
 
-```
-NAHI       acks=1 sab jagah: leader ne "OK" bola, copy se pehle gira -> khabar gayi.
-```
+![c6](img/c6-a19765d8.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: "done" tabhi jab ISR copy pe bhi likha (acks=all); naya leader sirf ISR se.
@@ -206,15 +179,10 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Email bheja, "padh liya" bolne se pehle crash
-```
-DIKKAT     Email service ne offset 5 padha (Ravi ka order). Email bheja -> "padh liya" (commit) se pehle CRASH
-           -> restart pe phir 5 -> Ravi ko 2 email.
-```
-![c7](img/c7-4edcf8aa.svg)
+KIYA: pehle kaam, phir commit; eventId Redis me dekho (idempotent consumer)
 
-```
-NAHI       pehle commit, phir kaam: email se pehle CRASH -> restart 6 se -> event 5 KHO gaya.
-```
+![c7](img/c7-91eef5cc.svg)
+
 ```
 AAGE POOCHEGA:
   NIYAM: pehle kaam, phir commit -> khona kabhi nahi, par dobara aa sakta; dobara aaye to eventId se pehchano.
@@ -227,14 +195,10 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Order #101 DB me bana, Kafka bhejne se pehle server gira
-```
-DIKKAT     Ravi ka order #101 DB me bana, Kafka bhejne se pehle order server gira -> event gaya hi nahi.
-```
-![c8](img/c8-a3791af2.svg)
+KIYA: order + khabar ek hi transaction, relay baad me bheje (outbox)
 
-```
-NAHI       "offset bachayega": nahi, offset consumer ki taraf hai; ye producer ki taraf ki dikkat.
-```
+![c8](img/c8-1ef9ebee.svg)
+
 ```
 TASVEER: order + khabar ek saath
 BEGIN -> orders(101) + outbox(E-101, sent = false) -> COMMIT      (dono ya koi nahi)
@@ -256,11 +220,9 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Shaam ko C2 mar gaya, lag badhta ja raha
-```
-DIKKAT     Shaam ko email group ki ek machine C2 mar gayi. Uske tukdon ke message koi nahi padh raha,
-           peeche ki line (lag) badhti ja rahi -> logon ko order email ghanton der se.
-```
-![c9](img/c9-300db24d.svg)
+KIYA: mare ke tukde baaki ko (rebalance), kharab khabar alag line (DLQ)
+
+![c9](img/c9-782e7e1e.svg)
 
 ```
 AAGE POOCHEGA:
@@ -274,11 +236,9 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Raat ko broker ki disk bharti ja rahi
-```
-DIKKAT     Raat ko broker ki disk bharti ja rahi: din bhar ke sale ke saare message disk pe pade, koi nahi
-           hatata -> disk poori bhari to naye message likhne band, poora order flow ruk jaayega.
-```
-![c10](img/c10-b5902e53.svg)
+KIYA: kuch din rakho, phir purana tukda poora udao (retention)
+
+![c10](img/c10-17fcc88b.svg)
 
 ```
 AAGE POOCHEGA:

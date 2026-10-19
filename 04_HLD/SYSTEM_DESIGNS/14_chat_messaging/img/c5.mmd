@@ -4,7 +4,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
-    n_I["Idempotency<br/>net dheema, hi do baar<br/>-> app har message ki apni id, dobara pe wahi, server pe aaya = skip (clientMsgId)<br/>do user ki id same -> jodi pe check (sender_id, clientMsgId)"]
+    n_I["Idempotency<br/>(clientMsgId)"]
     n_CA["Cassandra (chat_id)"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB

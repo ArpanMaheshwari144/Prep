@@ -4,7 +4,7 @@ flowchart LR
     n_B["Brokers A / B / C"]
     n_K["Controller (KRaft)"]
     n_GE["Group email"]
-    n_R["Redis<br/>email bheja, commit se pehle crash<br/>-> pehle kaam phir commit, eventId Redis me dekho, hai to skip (idempotent consumer)<br/>eventId jaldi mitaya -> umar retry se lambi (TTL)"]
+    n_R["Redis<br/>(idempotent consumer)"]
     n_GA["Group analytics"]
     n_GD["Group dashboard"]
     n_P --> n_B

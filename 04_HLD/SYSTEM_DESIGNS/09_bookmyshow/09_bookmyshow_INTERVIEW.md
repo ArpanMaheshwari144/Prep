@@ -86,9 +86,6 @@ KIYA: dekhna + book karna ek hi query me (atomic UPDATE)
 ![c1](img/c1-3557079d.svg)
 
 ```
-NAHI       Java synchronized / lock App me: App ki kai machine, lock sirf ek ke andar.
-```
-```
 AAGE POOCHEGA:
   NIYAM: seat ka faisla DB ki EK query (WHERE khaali): jeeta = 1 row; haara = 0 row -> use turant "seat ja
          chuki, doosri chuno", dobara dabane se kuch nahi milta. Lock App me nahi, DB me.
@@ -103,9 +100,6 @@ KIYA: seat HELD + umar; umar khatam = khaali maano (hold)
 
 ![c2](img/c2-922ce0a0.svg)
 
-```
-NAHI       hold Redis me (SET NX EX 300): hold Redis me + booking DB me = do jagah sach, farak aa sakta.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: hold = DB ki usi row ka haal (held + umar): mujhe 5 min seat pakki, baaki ko 'held' dikhe; umar
@@ -153,9 +147,6 @@ KIYA: darwaze pe ginti, ~3000 andar, baaki line me (waiting room)
 
 ![c5](img/c5-00964e83.svg)
 
-```
-NAHI       read replica badhao: replica PADHNA sambhaalti, likhne ki bheed line (queue) sambhaalti.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: likhne ki bheed ko line me khada karo (waiting room; badi release pe Kafka): user ko apni jagah

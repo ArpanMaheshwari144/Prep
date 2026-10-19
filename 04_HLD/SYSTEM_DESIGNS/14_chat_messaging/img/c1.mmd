@@ -2,7 +2,7 @@
 flowchart LR
     n_U["USER"]
     n_LB["LB"]
-    n_CS["Chat Server x200<br/>2 crore jude, memory khatam<br/>-> kuch thread sab connection sambhalein, sirf jahan data aaya wahan kaam (event loop, Netty)<br/>~200 chat server, aage LB<br/>chat server gira -> ruk-ruk ke dobara judo (backoff)"]
+    n_CS["Chat Server x200<br/>(event loop, Netty)"]
     n_U --> n_LB
     n_LB --> n_CS
     style n_CS fill:#f9a825,color:#000

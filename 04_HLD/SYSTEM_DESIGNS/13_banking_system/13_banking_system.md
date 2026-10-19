@@ -86,9 +86,6 @@ KIYA: dono kaam ek transaction me, ya dono ya koi nahi (transaction)
 ![c1](img/c1-a8f576e0.svg)
 
 ```
-NAHI       SAGA / queue laga do: ek DB me kaatna aur daalna alag ho jaate, dikkat khud ban jaati.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek DB = ek transaction, aadha kabhi nahi (crash pe DB khud ulta); padhne wale ko aadha nahi dikhta.
   SAFAR (mere 500, Ravi tak):
@@ -102,9 +99,6 @@ KIYA: screen khulte hi ek id, retry pe wahi id (idempotency key)
 
 ![c2](img/c2-27c5205c.svg)
 
-```
-NAHI       app me "pehle dekho, phir daalo": dono ne dekha "nahi hai", dono ne daala (race).
-```
 ```
 AAGE POOCHEGA:
   NIYAM: aadha nahi = transaction, do baar nahi = id; user / app ka retry hamesha safe, wahi id = wahi jawab.
@@ -122,9 +116,6 @@ KIYA: check aur kaatna ek hi query me (atomic UPDATE)
 ![c3](img/c3-bb83d498.svg)
 
 ```
-NAHI       Java synchronized: Banking Svc ki kai machine, lock sirf ek ke andar.
-```
-```
 AAGE POOCHEGA:
   NIYAM: check + kaat ek query me, DB me (raaste kai, DB ek); haara = 0 row -> user ko saaf "paisa kam".
   SAFAR (300 me se kaat):
@@ -138,9 +129,6 @@ KIYA: har transfer ki 2 line khaate me, usi transaction me (ledger)
 
 ![c4](img/c4-501421b1.svg)
 
-```
-NAHI       khaata Kafka me: DB transaction wapas hua (paisa kam tha), Kafka me "Arpan -500" -> khaata jhooth.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: khaata usi txn me jahan paisa hila; sirf INSERT, galti = ulti line; rollback = khaata bhi gaya.
@@ -156,9 +144,6 @@ KIYA: DB me ek aur table "outbox": SMS ki chitthi bhi usi transaction me likho
 
 ![c5](img/c5-3617f9cb.svg)
 
-```
-NAHI       commit ke baad seedha Kafka: commit aur bhejne ke beech app gira = event gayab, SMS kabhi nahi.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: transfer side-kaam (SMS) pe na ruke; khabar outbox me usi txn, Kafka commit ke BAAD; dobara aa sakti.
@@ -236,9 +221,6 @@ KIYA: pichhle page ki aakhri line yaad, agla page usse aage (keyset)
 ![c10](img/c10-b995db2c.svg)
 
 ```
-NAHI       saari 5 lakh line ek baar me bhejo: memory bhari, request timeout.
-```
-```
 AAGE POOCHEGA:
   NIYAM: "kahan tak dekha" yaad, "kitne chhode" nahi; page 1 ya 5000 ek jaisa, nayi line aaye to dohraav nahi.
   SAFAR (CA ka export, page dar page):
@@ -253,9 +235,6 @@ KIYA: mahine ke tukde, band mahina S3 pe (partition + archive)
 
 ![c11](img/c11-112c6278.svg)
 
-```
-NAHI       "archive = sharding": archive jagah ghatata, shard likhne ka bojh baantta.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: naya paas, purana sasta (S3), kanoon (5 saal) tak pakka; jod = snapshot + baad ki line, poora nahi.

@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_P["Producer"]
-    n_L["Log<br/>restart, 500 message gayab<br/>-> disk pe aakhir me judte, padhne se mitte nahi; consumer apni jagah yaad rakhe (log + offset)<br/>dobara padhna -> offset peeche (replay)"]
+    n_L["Log<br/>(log + offset)"]
     n_C["Consumer"]
     n_P --> n_L
     n_L --> n_C

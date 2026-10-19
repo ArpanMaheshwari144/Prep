@@ -1,6 +1,6 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
-    n_P["Producer<br/>do badlaav do tukde me, kram toota<br/>-> ek user hamesha ek hi tukde me, kram wahin (key = userId)<br/>tukde badhaye -> key ka tukda badla<br/>ek tukda garam -> key me bucket jodo (hot partition)"]
+    n_P["Producer<br/>(key = userId)"]
     n_B["Brokers A / B / C"]
     n_C["Consumer"]
     n_P --> n_B

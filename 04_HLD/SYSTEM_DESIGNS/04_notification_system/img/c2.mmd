@@ -5,7 +5,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_PUSH["Push line<br/>queue + worker -> FCM / APNs"]
     n_EMAIL["Email line<br/>queue + worker -> SES"]
-    n_SMSL["SMS line (queue + worker -> Twilio)<br/>SMS dheema, sab atke<br/>-> push / email / SMS ki alag line + alag worker (alag queue)<br/>SMS band -> sirf SMS line ruke"]
+    n_SMSL["SMS line (queue + worker -> Twilio)<br/>(alag queue)"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_PUSH

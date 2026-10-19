@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_USER["USER"]
-    n_Route_53["Route 53<br/>Bangalore se US, 300 ms<br/>-> har region me data ki copy, user paas wale region se (multi-region)<br/>poora region gira -> zinda region, feed thodi purani<br/>dono region me likha -> baad wala jeete (last write wins)"]
+    n_Route_53["Route 53<br/>(multi-region)"]
     n_App["App"]
     n_Kafka["Kafka"]
     n_Fanout_workers["Fanout workers"]

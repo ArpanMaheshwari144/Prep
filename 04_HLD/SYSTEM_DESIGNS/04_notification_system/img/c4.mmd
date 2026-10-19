@@ -4,7 +4,7 @@ flowchart LR
     n_Kafka["Kafka"]
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
-    n_Redis["Redis (key)<br/>key lagi, OTP gaya nahi<br/>-> bhejte waqt SENDING, company OK pe SENT; chhodna sirf SENT pe (SENDING / SENT)<br/>call fail -> worker khud key hataye<br/>worker hi mara -> SENDING thodi der me khud mite"]
+    n_Redis["Redis (key)<br/>(SENDING / SENT)"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES

@@ -5,7 +5,7 @@ flowchart LR
     n_Notification_Svc["Notification Svc"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_Redis["Redis (key)"]
-    n_DLQ["DLQ<br/>company pe hathoda<br/>-> fail pe ruk ke, har baar zyada der + thoda random (backoff + jitter)<br/>had paar -> alag line + alert (DLQ)"]
+    n_DLQ["DLQ<br/>(backoff + jitter)"]
     n_Order_Svc --> n_Kafka
     n_Kafka --> n_Notification_Svc
     n_Notification_Svc --> n_LINES

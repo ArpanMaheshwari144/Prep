@@ -107,9 +107,6 @@ KIYA: sab App ek hi Redis key gine (rate:Arpan:login)
 ![c1](img/c1-96d105f2.svg)
 
 ```
-NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
-```
-```
 AAGE POOCHEGA:
   NIYAM: had tabhi sahi jab ginti EK jagah ho, aur wo har request ke saamne RAM-tez ho (Redis, DB nahi);
          umar = window. Had paar -> 429; ginti App ke paas rahi to App badalte hi had toot jaati.
@@ -125,9 +122,6 @@ KIYA: dekhna + ghatana ek hi kadam me, beech me koi nahi ghusta (Lua)
 
 ![c2](img/c2-c8ec54e5.svg)
 
-```
-NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: dekhna + badalna ek hi kadam, Redis ke andar (INCR / Lua); beech me koi request nahi ghus sakti.
@@ -162,9 +156,6 @@ KIYA: copy taiyaar; poora gaya to feed khuli, login band (replica + fail-open / 
 ![c4](img/c4-ccdb8b63.svg)
 
 ```
-NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
-```
-```
 AAGE POOCHEGA:
   NIYAM: Redis gira to kya karna, wo PEHLE se tay, endpoint ke hisaab se (feed khula, login band); copy =
          bachav + padhne ka bojh, shard = likhne ka bojh. Copy pe switch me thodi ginti khoti, chalta.
@@ -197,9 +188,6 @@ KIYA: har 429 Kafka me, Pattern Svc gine, zyada = WAF me ban
 
 ![c6](img/c6-6b7c9584.svg)
 
-```
-NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: limit maafi wali (429, phir aao); ban sirf pakke gunde pe, pattern dekh ke (Kafka -> WAF), aur apne
@@ -249,9 +237,6 @@ KIYA: login ke baad ginti user_id pe (key = user_id)
 
 ![c9](img/c9-0bab93fb.svg)
 
-```
-NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: had us pehchaan pe jo ek insaan ki ho (user_id / username); IP sirf tab jab aur kuch na ho (login se

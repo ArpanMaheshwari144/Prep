@@ -4,7 +4,7 @@ flowchart LR
     n_Order_Svc["Order Svc"]
     n_Kafka["Kafka high / medium / low"]
     n_Notification_Svc["Notification Svc"]
-    n_PREF["User-pref + Template DB<br/>raat 2 baje offer SMS<br/>-> pehle pasand dekho, raat me ghanti nahi, phir saancha bharo (preference + quiet hours)<br/>shaanti me offer -> subah bhejo<br/>shaanti me OTP -> bhejo, zaroori upar"]
+    n_PREF["User-pref + Template DB<br/>(preference + quiet hours)"]
     n_LINES["Push / Email / SMS line<br/>(queue + worker + company)"]
     n_RDLQ["Redis (key + bucket) + DLQ"]
     n_WH["Webhook Svc + Tracking DB"]

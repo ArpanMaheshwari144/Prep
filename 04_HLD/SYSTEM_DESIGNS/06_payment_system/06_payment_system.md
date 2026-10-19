@@ -125,9 +125,6 @@ KIYA: dono badlaav ek transaction, ya dono ya koi nahi
 ![c1](img/c1-0f237d55.svg)
 
 ```
-NAHI       app me 'pehle kaato, fail pe wapas jodo': server beech me gira to wapas jodna chala hi nahi.
-```
-```
 AAGE POOCHEGA:
   NIYAM: saare kate == saare jude, ek transaction (aadha kabhi nahi); gira to DB log (WAL) se poora ya
          ulta. User ko 'hua' ya 'nahi hua' dikhe, beech ka nahi; hisaab ka farak -> turant alert.
@@ -143,9 +140,6 @@ KIYA: check aur kaatna ek hi query me (atomic UPDATE)
 ![c2](img/c2-2b36319b.svg)
 
 ```
-NAHI       Java synchronized Payment Svc me: do machine, lock ek ke andar; doosri phir bhi 600 dekhti.
-```
-```
 AAGE POOCHEGA:
   NIYAM: 'hai?' aur 'kaato' ek hi kadam, DB ke andar: kitni bhi machine ho, jeetta ek; 0 row badli =
          reject, user ko turant 'paisa kam' dikhe.
@@ -160,9 +154,6 @@ KIYA: screen khulte ek id, retry pe wahi id, DB me UNIQUE (idempotency key)
 
 ![c3](img/c3-26bd6988.svg)
 
-```
-NAHI       server key banaye: server ko pata hi nahi ye wahi request hai.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: ek key = ek payment: key app banaye; wahi key dobara = kaam nahi, saved jawab. User ko ek hi
@@ -180,9 +171,6 @@ KIYA: thodi der me chhodo = PENDING; baar-baar fail = call hi mat bhejo
 ![c4](img/c4-5d8d9f46.svg)
 
 ```
-NAHI       timeout pe "fail" dikha do: paisa shayad kat chuka.
-```
-```
 AAGE POOCHEGA:
   NIYAM: call GAYI aur jawab nahi = PENDING, 'fail' kabhi nahi; call gayi hi nahi (circuit OPEN) = saaf
          "abhi nahi", paisa hila hi nahi. PSP dheema to jaldi chhodo, warna saare thread atke.
@@ -198,9 +186,6 @@ KIYA: call se pehle PENDING likho; PSP baad me bataye (webhook), purane poochho
 
 ![c5](img/c5-c560f58c.svg)
 
-```
-NAHI       "bas rollback kar do": PSP me shayad paisa sach me kat chuka.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: call se PEHLE 'pata nahi' (PENDING) likho: server gire to bhi tracking number bacha; PSP khud
@@ -221,9 +206,6 @@ KIYA: step-step chalo, haal likho, fail pe pichhle ka ulta (saga)
 ![c6](img/c6-0d23e7e8.svg)
 
 ```
-NAHI       2PC: sab "ready" bol ke lock pakad ke rukte; coordinator gira = sab atke, har payment dheema.
-```
-```
 AAGE POOCHEGA:
   NIYAM: alag system = har step likha (saga table); aage nahi badh sake to ulta kaam (compensate).
          Beech me user ko PROCESSING, phir SUCCESS ya paisa wapas.
@@ -239,9 +221,6 @@ KIYA: har paisa do line (DEBIT + CREDIT, jod 0), sirf jodo (ledger)
 
 ![c7](img/c7-07b78e60.svg)
 
-```
-NAHI       balance + alag audit_log table: usme kuch bhi likh sakte, koi niyam nahi jaanchta.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: ledger hi sach: sirf nayi line, kaat-peet nahi, jod hamesha 0; galti / refund = nayi ulti line.
@@ -275,9 +254,6 @@ KIYA: bhaari report copy pe, primary sirf payment (read replica)
 ![c9](img/c9-cc74051e.svg)
 
 ```
-NAHI       balance bhi replica se padho: replica peeche, mujhe purana balance dikhta.
-```
-```
 AAGE POOCHEGA:
   NIYAM: paisa / haal = PRIMARY se (replica peeche ho sakti); report = replica / warehouse se. Primary
          gira = sync standby bane, kuch nahi khota.
@@ -293,9 +269,6 @@ KIYA: account_id se tukde, mera sab ek tukde pe (shard by account_id)
 
 ![c10](img/c10-ca5f4baf.svg)
 
-```
-NAHI       txn_id se baanto: meri payment alag shard pe, balance kahan? · time se: aaj wala shard garam.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: jo ek transaction me saath chahiye (account + uski history), wo ek shard pe; do shard ke beech

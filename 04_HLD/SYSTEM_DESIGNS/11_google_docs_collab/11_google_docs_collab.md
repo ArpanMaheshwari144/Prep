@@ -74,9 +74,6 @@ KIYA: poora text nahi, sirf ek badlaav bhejo (operation)
 ![c1](img/c1-f6e6c0cc.svg)
 
 ```
-NAHI       doc pe lock, ek likhe baaki ruke: saath likhna hi khatam.
-```
-```
 AAGE POOCHEGA:
   NIYAM: text nahi, badlaav (op) bhejo + kis version ko dekh ke bana; server milata, kisi ka likha nahi mitta.
          user ko lock / intezaar nahi; purane version pe bana op bhi khisak ke lagta.
@@ -93,9 +90,6 @@ KIYA: connection khula rehta, dono taraf turant (WebSocket)
 ![c2](img/c2-0a0cccff.svg)
 
 ```
-NAHI       polling: crore log x har second bekaar sawaal + 1 sec der · SSE: sirf server -> user.
-```
-```
 AAGE POOCHEGA:
   NIYAM: ek khula connection dono taraf: server khud bhejta, user refresh nahi karta.
          connection toota to user likhta rahe; judte hi "main v12 pe tha" bata ke baaki op le lo.
@@ -111,9 +105,6 @@ KIYA: kram server tay kare, doosre ka op khiskao (OT)
 ![c3](img/c3-61722e9d.svg)
 
 ```
-NAHI       phone ke time se kram: ghadi alag, aur position phir bhi khiskani padti.
-```
-```
 AAGE POOCHEGA:
   NIYAM: kram sirf server ka (har op ko agla version), phone ki ghadi kabhi nahi; aaya op us kram se khiskta.
          nateeja: sabki screen same; mujhe apna likha turant dikhe, baaki ka khisak ke aaye.
@@ -128,9 +119,6 @@ KIYA: docId se ring pe server; ek doc ke saare editor ek server pe (owner)
 
 ![c4](img/c4-66ccc5ff.svg)
 
-```
-NAHI       hash(docId) % N: N badla to lagbhag har doc ka server badla = sab dobara jude.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: ek doc = ek owner server (OT wahin); editor docId se wahin, viewer kahin bhi.
@@ -150,9 +138,6 @@ KIYA: har doc ka channel, jis server pe uska user wo sune (pub/sub)
 ![c5](img/c5-b3cb2a74.svg)
 
 ```
-NAHI       Kafka: store karta + thoda dheema; live typing dobara padhni nahi, tezi chahiye.
-```
-```
 AAGE POOCHEGA:
   NIYAM: pub/sub sirf PAHUNCHATA, kuch store nahi (bheja aur bhool gaya): kaam turant dikhana.
          viewer ka chhoota to version se DB se le lo; bachana DB ka kaam, channel ka nahi.
@@ -169,9 +154,6 @@ KIYA: op Redis me jama, har second ek saath DB me (buffer + batch)
 
 ![c6](img/c6-139737e3.svg)
 
-```
-NAHI       "sahi chahiye to SQL lo": DB data ki shakal se chuno; join nahi, bas bahut jodna -> Cassandra.
-```
 ```
 AAGE POOCHEGA:
   NIYAM: ACK tabhi jab op Redis buffer + uski copy dono me; Cassandra ka batch ACK ke raaste me nahi.
@@ -191,9 +173,6 @@ KIYA: likhna chalta rahe (AP), permission turant roke (CP)
 
 ![c7](img/c7-8bc9923c.svg)
 
-```
-NAHI       "doc sahi chahiye -> CP": CP me net jaate hi typing ruk jaati; yahan sahi = "aakhir me sab same".
-```
 ```
 AAGE POOCHEGA:
   NIYAM: typing kabhi na ruke (AP): net gaya to likhta rahe, judte hi op bhejo, aakhir me sab same.

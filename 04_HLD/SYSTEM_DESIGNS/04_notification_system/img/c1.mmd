@@ -1,7 +1,7 @@
 %%{init: {"flowchart": {"wrappingWidth": 450}}}%%
 flowchart LR
     n_Order_Svc["Order Svc"]
-    n_Kafka["Kafka<br/>email band, order fail<br/>-> order + khabar ek txn (outbox), Kafka me daalo, Notification peeche padhe (Kafka, async)<br/>email company band -> khabar Kafka me padi, wapas aaye tab wahin se<br/>Svc dheemi -> machine badhao (consumer group)"]
+    n_Kafka["Kafka<br/>(Kafka, async)"]
     n_Notification_Svc["Notification Svc"]
     n_Email_API["Email API"]
     n_USER["USER"]

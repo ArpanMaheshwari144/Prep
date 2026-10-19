@@ -4,7 +4,7 @@ flowchart LR
     n_LB["LB"]
     n_CS["Chat Server x200"]
     n_R["Redis (map)"]
-    n_CA["Cassandra<br/>roz 1.2 TB, ek DB nahi jhelta<br/>-> ek chat ke saare message ek partition me, andar kram se (shard by chat_id)<br/>ek group garam -> ek partition, speed pe had<br/>partition badi -> key me mahina jodo"]
+    n_CA["Cassandra<br/>(shard by chat_id)"]
     n_P["Push (Google / Apple)"]
     n_U --> n_LB
     n_LB --> n_CS
