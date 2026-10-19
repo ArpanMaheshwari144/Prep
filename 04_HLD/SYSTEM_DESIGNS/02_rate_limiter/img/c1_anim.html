@@ -23,13 +23,13 @@ svg text{font-family:Consolas,"Courier New",monospace;fill:#e6edf3}
     <text class="small" x="65" y="193" text-anchor="middle">9 login</text>
 
     <rect class="box" x="170" y="155" width="80" height="50" rx="8"/>
-    <text class="lbl" x="210" y="185" text-anchor="middle">LB</text>
+    <text class="lbl" x="210" y="174" text-anchor="middle">LB</text>
 
     <rect class="box" x="360" y="65" width="120" height="60" rx="8"/>
-    <text class="lbl" x="420" y="100" text-anchor="middle">App-1</text>
+    <text class="lbl" x="420" y="86" text-anchor="middle">App-1</text>
     <text id="g1" class="small" x="420" y="145" text-anchor="middle"></text>
     <rect class="box" x="360" y="235" width="120" height="60" rx="8"/>
-    <text class="lbl" x="420" y="270" text-anchor="middle">App-2</text>
+    <text class="lbl" x="420" y="256" text-anchor="middle">App-2</text>
     <text id="g2" class="small" x="420" y="315" text-anchor="middle"></text>
 
     <g id="redis">
@@ -47,7 +47,7 @@ svg text{font-family:Consolas,"Courier New",monospace;fill:#e6edf3}
 <script>
 const DUR = 20, FIX = 8.5, N = 9, GAP = 0.5;
 const NS = 'http://www.w3.org/2000/svg';
-const APP = [[420, 95], [420, 265]], USER = [110, 180], LB = [210, 180], R = [700, 180];
+const APP = [[420, 108], [420, 278]], USER = [110, 192], LB = [210, 192], R = [610, 180];
 const dots = [];
 for (let i = 0; i < N; i++) {
   const g = document.createElementNS(NS, 'g');
