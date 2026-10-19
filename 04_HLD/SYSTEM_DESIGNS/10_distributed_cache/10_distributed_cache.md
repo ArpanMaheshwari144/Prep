@@ -1,294 +1,245 @@
 # Distributed Cache (Redis-jaisa)
 
 > Tez RAM wala key-value store, jo ek machine se bada ho aur ek machine mare to bhi chale. Concept detail = FOUNDATIONS/04_caching.md
-> Is design ka dil: **TEZ (<1 ms)** + **machine mare to bhi chale**. BookMyShow ka ulta: wahan sahi hona dil tha, yahan tezi.
+> Dil do cheezein: tez (<1 ms), aur machine mare to bhi chale. BookMyShow ka ulta: wahan sahi hona dil tha, yahan tezi.
+>
+> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
-## KAHANI (ek din, mere app ka cache, IPL final wala; har dikkat se design me ek dabba judta)
+## Poori tasveer (aakhir me design aisa banta hai)
 
-```
-   KYA HUA                                       ILAAJ                                 DABBA JUDA
-1  subah 64 GB RAM bhar gayi, kya hatayein    -> LRU + TTL (HashMap + DLL)             Cache (LRU + TTL)
-2  data 1 TB, "user:42" kis machine pe        -> CONSISTENT HASHING + virtual nodes    Cache client + Nodes
-3  dopahar machine B mari, bojh DB pe         -> REPLICA (async) + quorum failover     Node + replica
-4  Ravi ne naam badla, cache me purana        -> DB me likho, cache key DELETE         (App: likhne pe delete)
-5  7 baje "home page" key khatam, 1000 DB pe  -> LOCK: SET NX EX, sirf pehla DB jaaye  (App: SET NX lock)
-6  raat IPL final, "live:score" pe crore log  -> L1 LOCAL CACHE + key ki copies        App + L1 local cache
-
-POORA DESIGN (upar ke dabbe kram se):
-   App + L1 -> Cache client (consistent hashing: key -> machine) -> Node (LRU + TTL) primary + copy
-   miss -> DB (asli sach) · padhna = cache-aside · likhna = DB + cache key DELETE
-```
+![poora design](img/c6_2-4533d6f5.svg)
 
 ---
 
-## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
+## Shuru
 
-![How Can Cache Systems Go Wrong?](https://assets.bytebytego.com/diagrams/0038-how-caches-can-go-wrong.png)
-Source: [How Can Cache Systems Go Wrong?](https://bytebytego.com/guides/how-can-cache-systems-go-wrong/)
-(thundering herd / penetration / breakdown / crash)
+Sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1). App pehle cache se poochhta: mila to wahi do, nahi
+mila to DB se laao, cache me daalo, phir do (cache-aside).
 
-![Consistent Hashing Explained](https://assets.bytebytego.com/diagrams/0151-consistent-hashing.png)
-Source: [Consistent Hashing Explained](https://bytebytego.com/guides/consistent-hashing/)
-(machine jude ya gire to sirf thodi keys khiskein — ring)
+Kyun chahiye? Meri profile DB se padhne me ~10 ms lagte (disk). 10 lakh log har second profile khol rahe, DB ghutno pe.
+Isliye DB ke aage RAM cache. `GET profile:42`: cache me mili (HIT) to <1 ms, DB tak gaya hi nahi. Nahi mili (MISS) to
+DB se (~10 ms), cache me daalo TTL ke saath, agli baar HIT. Naam badla to DB me likho aur cache ki key DELETE, agla
+padhne wala DB se naya laata.
 
----
+Ye kyun chalta? Sach DB me, cache sirf tez copy. Padho cache se, na mile to DB se bharo. Likho DB me, key hatao. App ko
+farak sirf tezi ka, cache khaali ho tab bhi sahi data DB se milta.
 
-## SHURU: pehle poocho, phir numbers
+Pehle poochho: ek machine ka cache (kya hatayein, TTL) ya kai machine wala (baantna, copy), kis pe focus? Kaisa data,
+padhai zyada? Kitna purana chalega, 5 min? Isi se tay hota cache kab saaf karna. Hatane ka tareeka kya (LRU / LFU)?
+Cache DB ke aage hai ya khud asli store?
 
-```
-POOCHO:  "Ek machine ka cache (kya hatayein, TTL) ya kai machine wala (baantna, copy) — kis pe?"
-         kaisa data, padhai zyada? · kitna PURANA chalega? (5
-         min purana?)  <- isi se tay hota cache kab saaf karna
-         kya hatane ka tareeka (LRU / LFU)? · cache DB ke aage hai ya khud asli store?
+Kaam (FR): get(key), put(key, value, ttl), delete(key). Disk pe bachana, pub/sub, transactions scope se bahar.
+Kaisa chale (NFR): <1 ms (yahi dil), ek machine mare to chale, TB bhar data. "Thodi der baad sahi" (eventual) chalega,
+asli sach DB me.
 
-KYA KARE (FR):    get(key) · put(key, value, ttl) · delete(key)
-                  scope bahar: disk pe bachana · pub/sub · transactions
-KAISA CHALE (NFR): <1 ms (dil) · ek machine mare to chale · TB bhar data
-                   "thodi der baad sahi" (eventual) chalega — asli sach DB me, cache sirf tez copy
+Numbers: ~1 TB data, ~10 lakh read har second, padhai zyada. 1 TB ek machine ki RAM (64 GB) me nahi aata, isliye
+baanto (sharding). 10 lakh har second ek machine nahi deti, isliye machines me baanto. Machine mari to saara bojh DB
+pe, isliye har machine ki copy (replication). Teeno milke "ek machine kaafi" khaarij karte, isliye distributed.
 
-NUMBERS (andaaza):
-   ~1 TB data · ~10 lakh read / second · padhai zyada
-   1 TB         -> ek machine ki RAM (64 GB) me nahi aata -> BAANTO (sharding)
-   10 lakh / sec -> ek machine itna nahi deti -> machines me baanto
-   machine mari -> saara bojh DB pe -> har machine ki COPY (replication)
-   teeno milke "ek machine kaafi" khaarij -> isliye DISTRIBUTED
-```
+**Pooche: umar (TTL) khatam ho gayi?** Agla padhne wala MISS, DB se taaza. Purana zyada der nahi tikta.
+
+**Pooche: poora cache hi gir gaya?** Saari padhai DB pe. DB ke aage rate limit / load shedding, warna DB bhi gira.
 
 ---
 
-## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
+*ab tootega kahan? sabse pehle RAM pe, kyunki RAM chhoti hai*
 
-> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> Heading = dikkat, KIYA = jawab, tasveer dekho. AAGE POOCHEGA sirf jab interviewer aage poochhe.
+## 1. Subah cache machine ki RAM bhar gayi, kya hatayein
 
-#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
-```
-Ek machine, uski RAM me ek HashMap. get / put O(1).
-App pehle cache se poochhe: mila -> wahi do · nahi mila -> DB se laao -> cache me daalo -> do (CACHE-ASIDE).
-```
-![cdabba](img/cdabba-3c598f45.svg)
+Isliye jo sabse der se chhua, wo bahar (LRU). Aur har key ki umar bhi (TTL). Key rakho umar ke saath, padho to RAM se.
+RAM bhar gayi to sabse der se chhua hatao. Wahi LRU jo LC 146 me.
 
+Ye kyun chalta? RAM bhari to sabse purana chhua pehle jaata, umar khatam = key bekaar. Hati key = sirf ek miss, App DB
+se laake wapas rakh deta. Sach DB me, cache sirf tez copy.
 
-#### SHURU: CACHE-ASIDE
-```
-DIKKAT     Meri profile DB se padhne me ~10 ms (disk). 10 lakh log / second profile khol rahe
-           -> DB ghutno pe.
-HAL        DB ke aage RAM cache, App pehle cache se poochhe (CACHE-ASIDE): mili (HIT) -> <1 ms; nahi (MISS)
-           -> DB se laao, cache me daalo (TTL ke saath). Likhna = DB me, cache ki key DELETE.
-```
-```
-TASVEER: ek profile ka padhna aur likhna
-GET profile:42 -> cache me?  HIT  -> <1 ms, DB tak gaya hi nahi
-                             MISS -> DB (~10 ms) -> cache me daalo (TTL) -> agli baar HIT
-naam badla     -> DB me likho -> cache ki key DELETE -> agla padhne wala DB se naya laata
-```
-```
-AAGE POOCHEGA:
-  NIYAM: sach DB me, cache sirf tez copy: padho cache se, na mile to DB se bharo; likho DB me, key hatao.
-         App ko farak sirf tezi ka; cache khaali ho to bhi sahi data DB se milta.
-  SAFAR (profile:42 ka padhna):
-  sab theek                -> cache me mili (HIT) -> <1 ms, DB tak gaya hi nahi
-  cache me nahi (MISS)     -> DB se laao, cache me daalo (TTL ke saath): agli baar HIT
-  umar (TTL) khatam        -> agla padhne wala MISS -> DB se taaza: purana zyada der nahi tikta
-  naam badla               -> DB me likho, cache ki key DELETE: agla padhne wala naya laata
-```
+LFU (kitni baar chhua) kyun nahi? Kal ki famous key aaj bhi baithi rehti, kyunki purani ginti nahi ghatti. Default LRU.
 
-#### 1 Subah cache machine ki RAM bhar gayi, kya hatayein
-KIYA: sabse der se chhua bahar, har key ki umar bhi (LRU + TTL)
+Hatana hi band kar diya to? Naya likhna error deta (noeviction). Cache me allkeys-lru rakho.
 
-![c1](img/c1-4c31bb82.svg)
+**Pooche: sabse purana har baar dhoondhoge?** Nahi. HashMap + doubly linked list: chhua to aage, peeche wala hatao,
+O(1). Wahi LRU jo LC 146 me.
 
-```
-AAGE POOCHEGA:
-  NIYAM: RAM bhari to sabse purana chhua pehle jaaye; umar khatam = key bekaar. Hati key = sirf ek miss,
-         App DB se laake wapas rakhta; sach DB me, cache sirf tez copy.
-  SAFAR (ek key, RAM bhar gayi, har mod pe kya):
-  RAM me jagah, sab theek -> key rakho, umar (TTL) ke saath; padho to RAM se
-  RAM bhar gayi           -> sabse der se chhua hatao (LRU): wahi LRU jo LC 146 me
-  user:9 phir padha       -> utha ke aage: ab sabse baad me nikalega (chhua = taaza)
-```
+**Pooche: user:9 phir padha?** Utha ke aage. Ab sabse baad me nikalega, chhua = taaza.
 
-#### 2 Subah 11 tak data 1 TB: "user:42" kis machine pe?
-KIYA: machine jude / jaaye to sirf pados ki key hile (consistent hashing)
+**Pooche: Redis sach me poori LRU list rakhta?** Nahi, andaaze wala LRU: kuch random key me sabse purani. Poori list =
+har key pe memory.
 
-![c2](img/c2-c1f69cd4.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: machine jude / jaaye to sirf pados ki ~K/N key hilein (K = saari key, N = machine), sirf us hisse
-         ki ek baar miss; virtual nodes = pados kai machine, bojh ek pe nahi.
-  SAFAR (key "user:42" ka ghar, har mod pe kya):
-  user:42, sab theek     -> ring pe aage pehli machine uska ghar (TASVEER), aakhir ke baad ghoom ke pehli
-  machine D judi         -> sirf pados ki key khiski (201..250 C se D): baaki sab hit
-  machine A giri         -> uski key aage wali pe, sirf wahi ek baar miss
-  A ka bojh B pe double? -> har machine ring pe 100-200 jagah (virtual nodes): bojh kai pados pe bat-ta
-```
-
-#### 3 Dopahar machine B mar gayi, uski key ka bojh DB pe
-KIYA: har machine ki ek copy, B mari to copy B ban jaaye (replica)
-
-![c3](img/c3-889bc5df.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: cache me tezi pehle: copy thodi der baad, aakhri likhai kho jaaye to chalta, kyunki sach DB me.
-         Machine giri -> copy main bane, App ko us hisse me thodi der miss.
-  SAFAR (machine B ka hissa, har mod pe kya):
-  sab zinda, sab theek   -> har machine apna hissa, saath me uski copy chalti
-  B gayi                 -> sirf B ki key pe asar: har machine ka apna hissa
-  copy ko main banana    -> ~10-30 sec (pakka B mari?); us beech B ki key DB se, dheema
-  copy peeche thi        -> aakhri kuch likhai kho sakti: cache me chalta, sach DB me
-  network toota, do main -> zyadatar (quorum) tay kare, akeli likhna band (split brain)
-```
-
-#### 4 Ravi ne naam badla, sabko purana dikh raha
-KIYA: pehle DB update, phir cache ki key DELETE (delete on write)
-
-![c4](img/c4-632b6a08.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: likho DB me, cache se hatao; kuch bhi pahunche, key khaali hi hogi -> agla padhne wala DB se naya
-         laata. Umar = suraksha jaal: delete chhoota to bhi utni der hi purana.
-  SAFAR (Ravi ka naya naam, har mod pe kya):
-  naam badla, sab theek     -> pehle DB likho, phir cache key hatao: agla padhne wala DB se naya
-  delete fail               -> umar (TTL) bachati: utni der hi purana; pakka -> DB ke log se delete (CDC)
-  purana beech me wapas     -> thodi der baad phir delete (double delete), ya version se likho
-  Ravi ko apna purana dikha -> copy peeche: likhne wale ko kuch der primary se padhao
-```
-
-#### 5 7 baje "home page" key khatam, 1000 log ek saath DB pe
-KIYA: ek jaaye DB se laaye, cache bhare; baaki ruk ke cache se (lock)
-
-![c5](img/c5-b4ffa9b4.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: khaali key pe ek hi DB jaaye, baaki ruke ya purani value le: DB pe 1000 ek saath kabhi nahi.
-         lock ki umar: lene wala mare to khud khule; App ko bas thoda dheema / purana.
-  SAFAR (home page key, har mod pe kya):
-  key zinda, sab theek      -> sab cache se, DB pe kuch nahi
-  key khatam, 1000 aaye     -> pehla lock le (SET lock:home NX EX 5), wahi DB se laaye; baaki ruke
-  999 ruke                  -> 50-100 ms, ya purani value do: thodi purani home page chalti
-  lock lene wala hi mara    -> lock ki umar (EX 5): khud khule, agla le; 999 hamesha nahi ruke
-  saari key ek saath khatam -> umar me random (60 min +- 5): ek saath nahi girti
-```
-
-#### 6 Raat IPL final, "live:score" key ki machine akeli mar rahi
-KIYA: garam key ki thodi der ki copy har App ki memory me (L1 cache)
-
-![c6](img/c6-246b615f.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: garam key ko faila do (App ke paas 1-2 sec ki copy, ya key ke tukde): ek key = ek machine, isliye
-         bheed baanto; score thoda purana chalta, paisa nahi.
-  SAFAR (live:score ki bheed, har mod pe kya):
-  aam din, sab theek       -> key ek machine pe, sab Redis se
-  ek machine pe crore      -> pehle pakdo: App me ginti + machine ka metric achanak upar
-  garam pakdi              -> har App ke paas 1-2 sec copy (L1), ya key ki kai copy (score#1..#10)
-  L1 me score kitna purana -> 1-2 sec: score chalta, paisa / stock nahi
-```
+**Pooche: umar (TTL) kitni rakhoge?** Jitna purana jhel sake. Profile = minute, price / stock = second.
 
 ---
 
-## AAKHRI DABBA + WRAP (ek hi baar)
+*ab ek machine me jagah ka hisaab ho gaya, par data hi ek machine se bada*
+
+## 2. Subah 11 tak data 1 TB: "user:42" kis machine pe?
+
+Isliye kai machine, aur App ke paas cache client jo batata key kis machine pe (consistent hashing). Key ring pe aage
+chalti, pehli machine jo mile wo uska ghar. Aakhir ke baad ghoom ke pehli.
+
+Ye kyun chalta? Machine jude ya jaaye to sirf pados ki ~K/N key hilti hain (K = saari key, N = machine). Sirf us hisse
+ki ek baar miss, baaki sab hit. Virtual nodes = pados kai machine, bojh ek pe nahi.
+
+Seedha hash % N kyun nahi? N badla to har key ka % N badal jaata. 4 se 5 machine = ~80% key hilti. Ring me N hai hi nahi.
+
+A-M ek pe, N-Z doosre pe kyun nahi? Ek range garam ho jaati (sab "S" naam), ek machine pe bojh. Hash se key bikhar jaati.
+
+**Pooche: machine D judi?** Sirf pados ki key khiski (201..250, C se D pe). Baaki sab hit.
+
+**Pooche: machine A giri?** Uski key aage wali machine pe. Sirf wahi ek baar miss.
+
+**Pooche: A ka saara bojh B pe double?** Har machine ring pe 100-200 jagah baithti (virtual nodes). Bojh kai pados pe bat-ta.
+
+**Pooche: Redis Cluster bhi ring hai?** Nahi. `CRC16(key) % 16384` slot, slot se machine. Machine badhe to sirf kuch slot khiskao.
+
+---
+
+*ab data baant diya, par ek machine mari to?*
+
+## 3. Dopahar machine B mar gayi, uski key ka bojh DB pe
+
+Har machine akeli thi, copy nahi. B mari, B ki saari key (user:42 ...) miss, DB pe achanak bojh, DB dheema.
+
+Isliye har machine ki ek copy (replica, async). B mari to B ki copy B ban jaati. DB bacha.
+
+Ye kyun chalta? Cache me tezi pehle. Copy thodi der baad likhi jaati, aakhri likhai kho jaaye to chalta, kyunki sach
+DB me. Machine giri to copy main banti, App ko us hisse me thodi der miss. Aur asar sirf B ki key pe, kyunki har
+machine ka apna hissa.
+
+Copy na rakho to? Wahi pehle wala haal, B ki saari key DB pe.
+
+**Pooche: copy ko main banane me kitna?** ~10-30 sec (pakka B mari?). Us beech B ki key DB se, dheema.
+
+**Pooche: copy peeche thi?** Aakhri kuch likhai kho sakti. Cache me chalta, sach DB me.
+
+**Pooche: network toota, do main ban gaye?** Zyadatar machines (quorum) tay karti kaun main. Akeli wali likhna band
+(split brain).
+
+**Pooche: copy se padh bhi lo?** Haan, padhai bat-ti. Thoda purana mil sakta, copy peeche chalti.
+
+---
+
+*ab machine marne se nahi girta, par data purana dikh raha*
+
+## 4. Ravi ne naam badla, sabko purana dikh raha
+
+DB me naya "Ravi K", cache me purana "Ravi". Sab log padhte to "Ravi" dekhte.
+
+Isliye pehle DB update, phir cache ki key DELETE (delete on write). Agla padhne wala DB se naya laata, cache me rakhta.
+
+Ye kyun chalta? Likho DB me, cache se hatao. Kuch bhi pahunche, key khaali hi hogi, to agla padhne wala DB se naya
+laata. Umar suraksha jaal hai: delete chhoota to bhi utni der hi purana.
+
+Write-through kyun nahi? DB + cache saath likho. Taaza rehta, par likhna dheema.
+
+Write-back kyun nahi? Pehle sirf cache me, DB baad me. Tez hai, par cache mara to data gaya. Paise pe kabhi nahi.
+
+**Pooche: delete fail ho gaya?** Umar (TTL) bachati, utni der hi purana. Pakka chahiye to DB ke log se delete (CDC).
+
+**Pooche: purana beech me wapas bhar gaya?** Thodi der baad phir delete (double delete), ya version se likho.
+
+**Pooche: Ravi ko apna hi purana naam dikha?** Copy peeche hai. Likhne wale ko kuch der primary se padhao.
+
+---
+
+*ab data taaza, par key khatam hote hi bheed*
+
+## 5. 7 baje "home page" key khatam, 1000 log ek saath DB pe
+
+Sabko miss, sab DB pe, 1000 ek saath (stampede). Home page dheema.
+
+Isliye ek jaaye, DB se laaye, cache bhare. Baaki ruk ke cache se (lock). Pehla lock leta (`SET lock:home NX EX 5`),
+wahi DB se laata. Baaki 999 yahin cache se.
+
+Ye kyun chalta? Khaali key pe ek hi DB jaata, baaki rukte ya purani value lete. DB pe 1000 ek saath kabhi nahi. Lock
+ki umar hai, to lene wala mare to khud khulta. App ko bas thoda dheema ya purana.
+
+Sabko DB jaane do? Wahi pehle wala haal, 1000 ek saath, home page dheema.
+
+Purani de sakte, to key khatam hone hi kyun di? Umar khatam se thoda pehle taaza karo (soft-TTL), key khaali hi na ho.
+
+**Pooche: 999 kitna ruke?** 50-100 ms, ya purani value do. Thodi purani home page chalti.
+
+**Pooche: lock lene wala hi mar gaya?** Lock ki umar (EX 5). Khud khulta, agla le leta. 999 hamesha nahi ruke.
+
+**Pooche: saari key ek saath khatam?** Umar me random daalo (60 min +- 5). Ek saath nahi girti.
+
+**Pooche: key DB me thi hi nahi?** "Nahi hai" bhi cache karo, chhoti umar ke saath. Warna har baar DB (penetration).
+
+**Pooche: sale 12 baje, pata tha na?** Pehle hi cache bhar do + machine badhao. Waqt pata = tayyari pehle.
+
+---
+
+*ab key khaali hone ki bheed sambhal li, par ek key pe hi crore log*
+
+## 6. Raat IPL final, "live:score" key ki machine akeli mar rahi
+
+Ek key, ek machine, crore read har second. Machine A ka CPU full, B aur C khaali. Score atka.
+
+Isliye garam key ki thodi der ki copy har App ki memory me (L1 cache). App 1-2 sec me ek baar Machine A se leta,
+Machine A aaram se. Ya key ki kai copy (score#1..#10).
+
+Ye kyun chalta? Garam key ko faila do. Ek key = ek machine, isliye bheed baantni padti. Score 1-2 sec purana chalta,
+paisa nahi.
+
+Consistent hashing se bheed bat nahi jaati? Nahi. Ring key baant-ta hai, ek key ki bheed nahi. Ek key = ek machine.
+
+**Pooche: garam key pakdoge kaise?** Pehle pakdo: App me ginti + machine ka metric achanak upar.
+
+**Pooche: L1 me score kitna purana?** 1-2 sec. Score chalta, paisa / stock nahi.
+
+**Pooche: us garam key pe likhna (like)?** Key ke tukde like#0..#9. Kisi ek me likho, padhte waqt jodo.
+
+**Pooche: kitni parat hui?** L1 (App RAM) -> L2 Redis -> DB. Neeche wali dheemi, isliye upar se pehle.
+
+**Pooche: stampede aur hot key me farak?** Stampede = key khaali (lock). Hot key = key bhari, ek machine pe bheed (L1).
+
+---
+
+## Poora design ek saans me
 
 ```
 App + L1 local cache (nano-sec, hot key ka pehla ilaaj) -> Cache client (consistent hashing: key -> machine)
 -> Machine (HashMap + DLL = LRU, + TTL) primary + copy (alag AZ) -> miss pe DB (asli sach)
 PADHNA = cache-aside (~90% hit, DB pe bojh 10 guna kam) · PURANA = TTL + likhne pe delete
 STAMPEDE = lock / soft-TTL · HOT KEY = copies / L1 local
+```
 
-DB:  cache = RAM wala key-value (<1 ms, join nahi, sirf key se) · DB peeche asli sach
-     cache AP ki taraf: tezi > sahi hona, "thodi der baad sahi" chalta
-```
-```
-JAWAB:    Cache = RAM me rakhi key-value, kai machines me baanti (ring se), har machine ki copy.
-          App pehle cache se poochhta, na mile to DB se laake cache me rakhta. RAM bhare to purani key
-          nikalti, har key ki umar hoti.
-          Do dikkat dhyaan rakhni: purana data (badalne pe key hatao + umar) aur key khatam hote hi
-          bheed (ek laaye, baaki ruke).
-          Bahut garam key: har app server apne paas 1-2 second rakhe.
-```
-![c6_2](img/c6_2-4533d6f5.svg)
-
+Bolne ke liye: cache = RAM me rakhi key-value, kai machines me baanti (ring se), har machine ki copy. App pehle cache
+se poochhta, na mile to DB se laake cache me rakhta. RAM bhare to purani key nikalti, har key ki umar hoti. Do dikkat
+dhyaan rakhni: purana data (badalne pe key hatao + umar), aur key khatam hote hi bheed (ek laaye, baaki ruke). Bahut
+garam key: har app server apne paas 1-2 second rakhe.
 
 ---
 
-## 10 GUNA TRAFFIC — har dabba alag se
+## 10 guna traffic
 
-```
-Cache client  -> machine judi / gayi -> consistent hashing + virtual nodes
-Machine       -> RAM bhari -> LRU + TTL · mari -> copy promote · data badha -> machine jodo
-hot key       -> copies + L1 local cache
-umar khatam   -> lock · soft-TTL · kabhi khatam nahi · pehle se bharo
-DB            -> purana data -> likhne pe delete + TTL
-AAGE:         write-back (likhna bahut ho to) · kai region me cache
+- **Cache client**: machine judi / gayi to consistent hashing + virtual nodes.
+- **Machine**: RAM bhari to LRU + TTL. Mari to copy promote. Data badha to machine jodo.
+- **Hot key**: copies + L1 local cache.
+- **Umar khatam**: lock, soft-TTL, kabhi khatam nahi, ya pehle se bharo.
+- **DB**: purana data, to likhne pe delete + TTL.
+- **Aage**: write-back (likhna bahut ho to), kai region me cache.
 
-POOCHEGA: "How would you scale this to 10x?"      -> request ka raasta chalo
-POOCHEGA: "What's the single point of failure?"   -> machine (copy), cache client config (sab app me copy)
-POOCHEGA: "How do you know it's working?"         -> HIT RATIO sabse
-          zaroori (gira = kuch toota) · p99 · evictions · alert
-```
+**Pooche: 10 guna kaise?** Request ka raasta chalo.
+
+**Pooche: kahan se sab gir sakta?** Machine (copy hai), cache client ka config (sab App me copy).
+
+**Pooche: chal raha hai, kaise pata?** Hit ratio sabse zaroori (achanak gira = kuch toota), p99, evictions, alert.
 
 ---
 
-## POOCHE TO (gehra sawaal aaye tab)
+## Pooche to (kisi card me nahi baitha)
 
-```
-SAFAR KE BAHAR WALE SAWAAL:
-(SHURU) "Likhna write-through / write-back kyun nahi?" -> write-through = DB + cache saath (taaza, likhna
-                                       dheema); write-back = pehle sirf cache, DB baad me (tez, par cache
-                                       mara to data gaya -> paise pe kabhi nahi)
-(SHURU) "Poora cache hi gir gaya?" -> saari padhai DB pe: DB ke aage rate limit / load shedding, warna DB
-                                  bhi gira
-(SHURU) "Chal raha hai, kaise pata?" -> HIT RATIO pehle (achanak gira = kuch toota) + p99 + evictions
-"LFU kyun nahi (kitni baar chhua)?" -> kal ki famous key aaj bhi baithi rehti, purani ginti nahi ghatti;
-                                       default LRU
-"Redis sach me poori LRU list rakhta?" -> nahi, andaaze wala LRU: kuch random key me sabse purani; poori list
-                                          = har key pe memory
-"Seedha hash % N kyun nahi?" -> N badla to har key ka % N badla: 4 -> 5 machine = ~80% key hilti; ring me N
-                                nahi
-"A-M ek pe, N-Z doosre pe kyun nahi?" -> ek range garam ho jaati (sab "S" naam), ek machine pe bojh; hash se
-                                         key bikhar jaati
-"Redis Cluster bhi ring hai?" -> nahi: CRC16(key) % 16384 slot -> machine; machine badhe to sirf kuch slot
-                                 khiskao
-"Copy se padh bhi lo?" -> haan, padhai bat-ti; thoda purana mil sakta, copy peeche chalti
-"Umar (TTL) kitni rakhoge?" -> jitna purana jhel sake: profile = minute, price / stock = second
-"Purani de sakte, to khatam hone hi kyun di?" -> umar khatam se thoda pehle taaza karo: key khaali hi na ho
-"Sale 12 baje, pata tha na?" -> pehle hi cache bhar do + machine badhao: waqt pata = tayyari pehle
-"Consistent hashing se bheed bat nahi jaati?" -> nahi: ek key = ek machine; ring key baant-ta, ek key ki bheed
-                                                 nahi
-"Kitni parat hui?" -> L1 (App RAM) -> L2 Redis -> DB; neeche wali dheemi, isliye upar se pehle
-"Stampede aur hot key me farak?" -> stampede = key KHAALI (lock) · hot key = key BHARI, ek machine pe bheed
-                                    (L1)
-"Sabse purana har baar dhoondhoge?" (c1) -> nahi: hashmap + doubly linked list, chhua -> aage, peeche wala
-                                           hatao, O(1) (wahi LRU jo LC 146 me)
-"Hatana hi band kar diya to?" (c1) -> naya likhna error (noeviction); cache me allkeys-lru rakho
-"Key DB me thi hi nahi?" (c5) -> "nahi hai" bhi cache karo, chhoti umar: warna har baar DB (penetration)
-"Us garam key pe likhna (like)?" (c6) -> key ke tukde like#0..#9: kisi ek me likho, padhte waqt jodo
+API: GET key, PUT key value ttl, DELETE key. Jaan-boojh ke chhoti: query nahi, sirf key se, to index / planner nahi,
+isiliye tez.
 
-API:      GET key · PUT key value ttl · DELETE key
-          jaan-boojh ke chhoti — query nahi, sirf key se -> index / planner nahi -> isiliye tez
+Machine ke andar: HashMap key -> value (O(1)). LRU = HashMap + DLL. TTL lazy + active dono.
 
-MACHINE KE ANDAR: HashMap key -> value (O(1)) · LRU = HashMap + DLL · TTL lazy + active
-                  RAM wala key-value (Redis-jaisa), DB peeche asli sach
-                  <1 ms -> RAM (disk nahi) · join nahi -> key-value kaafi
+Kaunsa store: RAM wala key-value (Redis-jaisa), DB peeche asli sach. <1 ms chahiye to RAM (disk nahi). Join nahi
+chahiye, to key-value kaafi.
 
-KEY BAANTNA:    hash % N -> sab khiskti -> NAHI · CONSISTENT HASHING
-                -> ring + aage pehli machine + virtual nodes <- YAHI
-                range -> ek range garam -> NAHI
-
-TRADE-OFF:      tezi vs sahi hona — cache AP ki taraf, "thodi der baad sahi" chalta (CAP)
-
-LIBRARY DESK: 10,000 kitaab godaam me (DB = dheema, sab kuch) · top-100 front desk pe (cache = RAM, tez)
-   ek desk pe saari kitaab nahi aati + desk wala beemar pad sakta (machine band)
-   -> kai desk (nodes) + kaunsi kitaab kis desk (sharding) + har
-      desk ka backup banda (replication) = DISTRIBUTED CACHE
-```
+Trade-off: tezi vs sahi hona. Cache AP ki taraf, "thodi der baad sahi" chalta (CAP).
 
 ---
 

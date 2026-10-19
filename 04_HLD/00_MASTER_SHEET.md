@@ -38,7 +38,7 @@
 | OTP pehle · priority | [notification](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) card 7 |
 | monitoring · alert · pata kaise chale | [FOUNDATIONS/18](FOUNDATIONS/18_monitoring.md) |
 | security · abuse · owner check · WAF | [file upload](SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) card 7 · card 9 · [FOUNDATIONS/17](FOUNDATIONS/17_waf.md) |
-| data badhta jaaye · retention · archive | [banking](SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) "5 saal purana data" |
+| data badhta jaaye · retention · archive | [banking](SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) card 11 |
 | SPOF · single point of failure | [FOUNDATIONS/11](FOUNDATIONS/11_reliability_spof_cloud.md) |
 | SQL ya NoSQL | [TO1](#to1) |
 | sync ya async | [TO2](#to2) |
@@ -147,7 +147,7 @@
 ```
    ★ CONFUSION-PROOF NIYAM:
        "kya bolna"         -> ye file
-       "what if X fails?"  -> 8 DABBE (yahan) + design file ka SAFAR
+       "what if X fails?"  -> 8 DABBE (yahan) + design file me card ke "Pooche"
        "kaise bolna"       -> ye file, KAISE BOLNA + SHABD (aakhir me)
        "A ya B?"           -> ye file, A ya B — TRADE-OFF JODE (section 4 ke baad)
        "ye cheez hai kya?" -> FOUNDATIONS
@@ -206,8 +206,8 @@
 
 ```
 ★ har design ka ek sawaal sabse BHAARI = uska DIL:
-     payment 2 + 3 (retry, race) · google docs 3 (saath edit) · chat 1 + 6 (offline, der)
-     bookmyshow 3 (ek seat do log) · rate limiter 3 + 5 · feed 5 + 6
+     payment 2 + 3 (retry, race) · google docs 3 (saath edit) · chat 3 + 6 (offline, der)
+     bookmyshow 1 (ek seat do log) · rate limiter 3 + 5 · feed 5 + 6
 ★ jawab kahan se: common dabbe (LB/replica/shard/cache) aate hain · KHAAS wala = neeche section 5
 ★ round me bhool gaya -> ye 6 mann me ghumao. "ek second, sochta hoon" bolna normal.
    45 min me 2-3 dikkat GEHRAI se = kaafi. sab ek saath koi nahi bolta.
@@ -219,7 +219,7 @@
 
 ## ★★★ CROSS-QUESTION — jo har design me ghoom ke aate hain
 
-> Cross-question ab har design file me card ke neeche NIYAM + SAFAR, aakhir me POOCHE TO.
+> Cross-question ab har design file me usi card me "Pooche:" line, aakhir me "Pooche to".
 > Roz ek design ka mock -> end me usi file ke sawaal. Yahan bache: 8 dabbe x 4 line + jawab se pehle 5 sec.
 
 <a id="dabbe"></a>
@@ -357,7 +357,7 @@
 ```
 
 
-> Cross-question ab har design file me card ke neeche NIYAM + SAFAR, aakhir me POOCHE TO.
+> Cross-question ab har design file me usi card me "Pooche:" line, aakhir me "Pooche to".
 > Purana bank git history me (commit 9f0fe5d tak).
 
 ---
@@ -1105,7 +1105,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 
 > Rail (section 3), scope kaato, core entities, har box naam + ek "kyun", teen niyam (upar),
 > na-pata-ho 4 line (section 7), checklist (section 8) pehle se is file me hain. Neeche sirf jo baaki tha.
-> Common follow-ups ("scale 10x", "gira to", CAP, race, hot key, data lost, monitoring) = 8 DABBE (section 2) + design file ka SAFAR.
+> Common follow-ups ("scale 10x", "gira to", CAP, race, hot key, data lost, monitoring) = 8 DABBE (section 2) + design file ke card ke "Pooche".
 
 ```
 HLD ALAG KYUN LAGTA: DSA = binary (pattern hai/nahi) · Java = fixed sawaal-jawab · HLD = OPEN game,

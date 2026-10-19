@@ -1,333 +1,325 @@
 # Twitter Feed
 
-> App kholo -> HOME TIMELINE: jinhe tum follow karte ho unke tweet, sabse naye upar. Tweet daalna (POST) bhi.
-> Misaal: Arpan ne app khola -> Virat "Match great" · Sachin "Watching IPL" · Dhoni "Practice".
-> Is design ka dil do cheezein hain: **feed padhna sasta ho** (log 50 baar padhte hain, 1 baar likhte hain, isliye feed pehle se bana ke rakho)
-> aur **celebrity ka tweet** (10 crore follower).
-
-```
-DABBE (poori file me yahi naam):
-   Redis inbox = har user ki taiyaar feed      · Fanout service = naya tweet followers ki feed me daale
-   Tweet store (Cassandra) = saare tweet       · Tweet service = tweet likhe
-   Timeline service = feed padhe               · Follow store = kaun kise follow karta
-   Kafka = tweet service se fanout tak khabar
-```
+> App kholo to home timeline: jinhe tum follow karte ho unke tweet, sabse naye upar. Tweet daalna (POST) bhi. Misaal: Arpan ne app khola, Virat "Match great", Sachin "Watching IPL", Dhoni "Practice".
+> Dil do cheezein: feed padhna sasta ho (log 50 baar padhte, 1 baar likhte, isliye feed pehle se bana ke rakho), aur celebrity ka tweet (10 crore follower).
+>
+> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
-## KAHANI (ek din, meri feed aur mere tweet; har dikkat se design me ek dabba judta)
+## Poori tasveer (aakhir me design aisa banta hai)
 
-```
-    KYA HUA                                    ILAAJ                                DABBA JUDA
-1   subah app khola, 200 ka jod, feed dheemi -> PUSH: tweet hote hi INBOX me id     Fanout + Redis inbox
-2   maine tweet kiya, button 5 sec ghooma    -> KAFKA, fanout peeche                Kafka + Fanout workers
-3   Bieber ka tweet = 10 crore inbox         -> HYBRID: aam push, celeb pull        (celeb skip, merge)
-4   match khatam, Virat ka tweet, DB gira    -> HOT-TWEET CACHE (RAM)               Hot-tweet cache
-5   Redis alert: 50 crore inbox, RAM bhari   -> AAKHRI 800 + soye hue hatao         (inbox chhota)
-6   5,000 tweet / sec, 0.5 PB                -> CASSANDRA, user_id se baanto        Cassandra
-7   main Bangalore, data US, 300 ms          -> REGION-WISE + Route 53              Route 53
-8   akeli App machine giri, sab band         -> STATELESS App x N + ALB             ALB + App x N
-9   padhne ki bheed, tweet daalna dheema     -> ALAG SERVICE (likhna/padhna)       Tweet/Timeline/User/Follow
-10  maine video daali, sabko dheemi          -> S3 + CDN                            S3 + CDN
-
-POORA DESIGN (upar ke dabbe kram se):
-   LIKHNA: Route 53 -> ALB -> Tweet Svc -> Cassandra + Kafka -> Fanout workers -> Redis inbox (celeb skip)
-   PADHNA: Timeline Svc -> Redis inbox (push) + Hot-tweet cache (celeb pull) -> milao -> top 50
-   follow = User Svc + Follow store · photo / video = S3 + CDN
-```
+![poora design](img/c10_2-9c25b583.svg)
 
 ---
 
-## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
+## Shuru
 
-![Twitter Architecture 2022 vs. 2012](https://assets.bytebytego.com/diagrams/0392-twitter-architecture-2022-vs-2012.jpeg)
-Source: [Twitter Architecture 2022 vs. 2012](https://bytebytego.com/guides/twitter-architecture-2022-vs-2012/)
-(asli Twitter ka naksha: timeline service, fan-out, cache. Ye design uska chhota roop hai.)
+Sabse simple: do table. tweets (kisne kya likha) aur follows (kaun kisko follow karta). Feed = jinko follow karta unke
+tweet nikaalo, time se sort karo, upar ke 50 do.
 
----
+Dabbon ke naam poori file me yahi: Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet followers ki feed
+me daale. Tweet store (Cassandra) = saare tweet. Tweet service = tweet likhe. Timeline service = feed padhe. Follow
+store = kaun kise follow karta. Kafka = tweet service se fanout tak khabar.
 
-## SHURU: pehle poocho, phir numbers
+Pehle poocho: timeline, post, search, trending, DM, notification, kis pe dhyaan? Main home timeline + post pe chalta
+hoon. ~50 crore user maan lun? Celebrity (10 crore follower) sambhalna hai? Design yahin mudta hai. Feed bilkul usi
+second ki chahiye, ya 2 second purani chalegi? Chalegi to pehle se banana possible. Photo / video bhi, ya sirf text?
+Bahar: search, trending, DM, notification.
 
-```
-POOCHO:  "Timeline, post, search, trending, DM, notification — kis
-         pe dhyaan? Main home timeline + post pe chalta hoon."
-         ~50 crore user maan lun? · celebrity (10 crore follower) sambhalna hai?  <- design yahin mudta hai
-         feed bilkul usi second ki chahiye, ya 2 second purani chalegi? (chalegi -> pehle se banana possible)
-         photo / video bhi, ya sirf text?
+Numbers: 50 crore tweet / din, din me ~1 lakh second, to ~5,000 tweet har second. Ek aadmi ~200 ko follow karta.
+Celeb ke 10 crore follower. Padhna : likhna ~50 : 1. Feed 200 ms se tez chahiye.
 
-ZAROORI KAAM (FR):   tweet daalo · home timeline (follow kiye logon ke, naye upar) · profile ke tweet
-                     bahar: search · trending · DM · notification
-KAISA CHALE (NFR):   feed 200 ms se tez · padhna bahut zyada · 50 crore user · 2 second purani feed chalegi
+Number se faisla: 50 : 1 hai, to har baar feed khulne pe jodna mat, PEHLE se bana ke rakho. Celeb ka ek tweet 10 crore
+jagah likhna, yahi asli dikkat. 2 sec purani feed chalegi, to pehle se banana + cache chal jaayega.
 
-NUMBERS (andaaza):
-   50 crore tweet / din -> din me ~1 lakh second -> ~5,000 tweet har second
-   ek aadmi ~200 ko follow karta · celeb ke 10 crore follower · padhna : likhna ~50 : 1
-
-NUMBER SE FAISLA:
-   50 : 1        -> har baar feed khulne pe jodna mat, PEHLE se bana ke rakho
-   celeb         -> ek tweet pe 10 crore jagah likhna? -> asli dikkat
-   2 sec chalega -> pehle se banana + cache chal jaayega
-```
-```
-POOCHEGA: "Consistency or availability — which do you pick?"
-          (Consistency ya availability, kya chunoge?)
-
-JAWAB:    Feed ke liye: chalta rahe, chahe thoda purana ho.
-          Arpan ko 2 second purani feed dikhi to koi farak nahi. Par feed khuli hi nahi to wo app band
-          kar dega.
-          Isliye network toote to bhi jo hai wo dikhao, sahi wala thodi der me aa jaayega.
-```
+**Pooche: consistency ya availability, kya chunoge?** Feed ke liye: chalta rahe, chahe thoda purana ho. Arpan ko 2
+second purani feed dikhi to koi farak nahi. Par feed khuli hi nahi to wo app band kar dega. Isliye network toote to
+bhi jo hai wo dikhao, sahi wala thodi der me aa jaayega.
 
 ---
 
-## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
+*ab tootega kahan? sabse pehle padhne pe, kyunki padhna 50 guna*
 
-> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> Heading = dikkat, KIYA = jawab, tasveer dekho. AAGE POOCHEGA sirf jab interviewer aage poochhe.
+## 1. Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
 
-#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
-```
-Do table: tweets (kisne kya likha) + follows (kaun kisko follow karta).
-Feed = jinko follow karta unke tweet nikaalo, time se sort karo, upar ke 50 do.
-```
-![cdabba](img/cdabba-948b836f.svg)
+Kholte waqt 200 logon ke tweet laao, jodo, sort karo. Har baar dheema.
 
+Isliye tweet hote hi follower ke inbox me uski id daal dete hain (fanout). Ravi ne tweet t9 kiya, turant mere inbox me.
+App khola to bas apna inbox padho (tweet_id list), bana hua, jodna nahi. Ek read.
 
-#### 1 Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
-KIYA: tweet hote hi follower ke inbox me id daalo, kholna = bas inbox padho (fanout)
+Ye kyun chalta? Padhna 50 guna zyada hai, to mehnat likhte waqt karo. App khole to sirf inbox padho. Jo inbox me nahi
+(poora tweet, unfollow), wo padhte waqt jodo / chhaanto.
 
-![c1](img/c1-6068c684.svg)
+DB pe index ya read replica laga do? Thoda tez, par har khulne pe 200 ka jod wahi ka wahi.
 
-```
-AAGE POOCHEGA:
-  NIYAM: padhna 50 guna zyada -> mehnat likhte waqt (inbox me tweet_id), app khole to sirf inbox padho;
-         jo inbox me nahi (poora tweet, unfollow) wo padhte waqt jodo / chhaanto.
-  SAFAR (ek feed khulna, har mod pe kya):
-  app khola              -> apna inbox padho (tweet_id list): bana hua, jodna nahi
-  id se poora tweet      -> 50 id ek saath cache / store se (batch): ek-ek = 50 chakkar
-  kisi ko unfollow kiya  -> padhte waqt follow list se chhaanto: poora inbox badalna mehnga;
-                            safai peeche
-```
+**Pooche: id se poora tweet kaise?** 50 id ek saath cache / store se (batch). Ek-ek laaye to 50 chakkar.
 
-#### 2 Maine tweet kiya, button 5 sec ghoomta raha
-KIYA: tweet DB + khabar Kafka, user ko turant; workers peeche inbox bharein
-
-![c2](img/c2-d8ee15b2.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: user ko 'ho gaya' tab jab tweet DB me save; inbox bharna Kafka se peeche, dobara chale to bhi tweet
-         ek hi baar dikhe (sorted set); apna tweet apni feed me turant.
-  SAFAR (ek tweet daalna, har mod pe kya):
-  tweet bheja            -> DB me save -> 'ho gaya'; inbox bharna Kafka se peeche
-  DB save, Kafka fail    -> dono ek saath nahi hote: outbox / retry; dobara aaye to sorted set me ek hi
-  apni hi feed           -> apna tweet seedha jodo: fanout peeche, apna turant
-  worker 60/100 pe gira  -> Kafka ko 'ho gaya' bola hi nahi (commit nahi): khabar phir aayegi
-  wahi 60 dobara likhe   -> tweet ek hi baar: sorted set me same tweet_id ek hi rehta
-  ek worker kam pade     -> worker badhao, Kafka ki lines (partition) aapas me bat jaati
-```
-
-#### 3 Bieber ka ek tweet = 10 crore inbox, line ghanton atki
-KIYA: aam user = push, celeb = pull; feed khulte dono milao (hybrid)
-
-![c3](img/c3-5ce84781.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: likhai ka bojh follower ginti se: aam = push (inbox me), celeb = pull (padhte waqt laao + milao);
-         feed hamesha dono ka mel, user ko farak nahi dikhta.
-  SAFAR (ek tweet ka fanout, har mod pe kya):
-  aam banda tweet kare   -> har follower ke inbox me (push): feed turant
-  celeb (10 crore) kare  -> inbox me nahi, padhte waqt laao (pull): likhne ka toofan bacha
-  feed khuli             -> inbox + follow kiye celebs ke naye tweet milao (hybrid)
-  10,000 ke aas-paas     -> 12,000 upar pull, 8,000 neeche tabhi push: line pe baar-baar na palte
-  50 celeb follow kiye   -> celeb ke tweet alag se rakhe, 50 pull bhi sasta
-```
-
-#### 4 Match khatam, Virat ka tweet, crore log ek saath, DB gira
-KIYA: garam tweet RAM me, miss pe sirf ek DB jaaye (hot-tweet cache + lock)
-
-![c4](img/c4-8be3809f.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: garam cheez RAM me, DB tak sirf ek request; ek key = ek machine garam -> copies; badla to key hatao.
-  SAFAR (Virat ka ek tweet, har mod pe kya):
-  crore log padhein      -> RAM cache se, DB tak sirf ek request
-  ek key, machine garam  -> copies tweet:123#1..#5, kisi se padho + App memory 1-2 sec
-  Virat ne edit / delete -> cache se key hatao: agla read DB se naya
-```
-
-#### 5 Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
-KIYA: sirf aakhri kuch sau, sirf zinda logon ka inbox (trim)
-
-![c5](img/c5-dff134fa.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: RAM me sirf id aur sirf zinda log; jo RAM me nahi wo DB se bana lo (ek baar dheema, galat nahi).
-  SAFAR (ek inbox RAM me, har mod pe kya):
-  naya tweet aaya        -> inbox me sirf number + score (~60-100 byte): poora tweet nahi
-  soya user lauta        -> inbox nahi -> pehli baar pull se banao, phir bharo: RAM sirf zinda ki
-  800 ke aage scroll     -> wahan se store (DB) se: bahut kam log itna neeche
-  Redis gira             -> copy (replica): warna har feed DB se = mehnga
-  copy bhi gayi          -> kuch request mana, har inbox ek request, dheere bharo
-```
-
-#### 6 DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
-KIYA: mere saare tweet ek machine pe, naya pehle (shard by user_id)
-
-![c6](img/c6-1eaa76aa.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: jis cheez se padhte (user_id), usi se baanto; likhna sirf aakhir me jodo (tez); 3 copy, 2 me likho
-         2 se padho -> naya mil hi jaata.
-  SAFAR (ek tweet DB me, har mod pe kya):
-  tweet aaya             -> user_id ki machine pe (Cassandra): ek user ke tweet ek jagah
-  RAM bhar gayi          -> commit log ke aakhir jodo, badlo nahi; RAM ki nayi file disk pe: likhai tez
-  files bahut ho gayi    -> padhna dheema -> peeche milao (compaction) + bloom filter
-  meri machine giri      -> 3 copy, 2 me likho, 2 se padho -> naya mil hi jaata (quorum)
-  famous, machine garam  -> user_id se baantna phir bhi theek; garam tweet alag RAM cache
-  famous ke bahut tweet  -> key me mahina jodo (user_id, mahina): ek machine na bhare
-```
-
-#### 7 Main Bangalore me, data US me, har feed 300 ms
-KIYA: har region me data ki copy, paas wale region se (multi-region)
-
-![c7](img/c7-1735adc4.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: data user ke paas wale region me; doosre region ki copy thodi peeche -> region gira to feed thodi
-         purani, par chalti.
-  SAFAR (meri feed, region ke paar, har mod pe kya):
-  feed maangi            -> paas wala region (Route 53 pata deta): 300 ms nahi, tez
-  US celeb ka tweet      -> garam tweet India cache me bhi
-  main US ghooma         -> request India bhejo, ya paas ki copy se (thoda purana)
-  poora region gira      -> Route 53 zinda region pe palte; copy peeche thi -> feed thodi purani
-  dono region me likha   -> baad wala jeete (last write wins): tweet aksar naya, takraav kam
-```
-
-#### 8 Raat ko har region me ek hi App machine; India wali giri, India band
-KIYA: kai App, LB baante, App kuch yaad nahi rakhta (stateless x N)
-
-![c8](img/c8-e985f7b8.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: machine kuch yaad nahi rakhti (sab Redis / DB me) -> koi bhi gire, jude, badle, user ko farak nahi.
-  SAFAR (ek request, har mod pe kya):
-  request aayi           -> koi bhi machine (stateless): yaad sab Redis / DB me
-  machine giri           -> ALB har ~10 sec 'zinda?': chup = bahar, theek = wapas (Route 53 bhi)
-  naya code, App band    -> ek-ek karke nikaalo, daalo, jodo (rolling): baaki bheed sambhaalti
-  nayi machine judi      -> pehli request dheemi kam: apna data nahi; ALB dheere traffic de
-```
-
-#### 9 Highlights ki bheed ne mera tweet daalna dheema kar diya
-KIYA: likhne aur padhne ki alag service, jahan bheed wahi badhao
-
-![c9](img/c9-11f11a1f.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: har kaam alag service -> jiski bheed badhi sirf wahi badhao; ek ka dheema doosre ko nahi rokta.
-  SAFAR (ek request, kaunsi service, har mod pe kya):
-  POST /tweet            -> ALB path se Tweet Svc; GET /feed -> Timeline Svc
-  feed ki bheed badhi    -> sirf Timeline badhao: Tweet Svc pe asar nahi
-  feed ko follow list    -> User / Follow store se, par Redis me rakhi: har feed pe chahiye
-  Suresh, 5,000 follower -> Follow store se 1000-1000 padh ke inbox likho: ek baar me bhaari
-```
-
-#### 10 Maine match ki video daali, sabko dheemi aur mehngi
-KIYA: video S3 me, paas wale CDN se (CDN)
-
-![c10](img/c10-8b40ea91.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: bhaari maal S3 me, user tak CDN se (paas, sasta); tweet me sirf link -> link badlo = nayi file,
-         link pe hastakshar = sirf jisko mila wahi dekhe.
-  SAFAR (ek video, har mod pe kya):
-  video daali            -> seedha S3 (presigned link), App beech me nahi; tweet me sirf CDN link
-  koi dekhe              -> CDN paas se; uske paas nahi -> S3 se laake kuch der rakhe
-  photo hatayi, CDN pe dikhe -> CDN ko 'hatao' (invalidation), ya link me version -> nayi file
-  private photo          -> link pe hastakshar + expiry (signed URL): sirf jisko mila, thodi der
-```
+**Pooche: kisi ko unfollow kiya?** Padhte waqt follow list se chhaanto. Poora inbox badalna mehnga, safai peeche.
 
 ---
 
-## AAKHRI DABBA + WRAP (ek hi baar)
+*ab padhna tez, par inbox bharne ka kaam likhne pe aa gaya*
+
+## 2. Maine tweet kiya, button 5 sec ghoomta raha
+
+Mere 5,000 follower. Usi request me 5,000 inbox ek-ek karke bharo. 5+ sec, timeout, mujhe "fail" dikha, par tweet ban
+chuka tha.
+
+Isliye tweet DB me save aur khabar Kafka me, user ko turant "ho gaya". Workers peeche Kafka se padh ke 5,000 inbox
+bharte.
+
+Ye kyun chalta? User ko "ho gaya" tab jab tweet DB me save. Inbox bharna Kafka se peeche. Dobara chale to bhi tweet ek
+hi baar dikhe (sorted set). Apna tweet apni feed me turant.
+
+App me peeche ek thread chala do? App crash to thread ka kaam gaya. Kafka disk pe hai, dobara padh sakte.
+
+**Pooche: DB me save hua, Kafka fail?** Dono ek saath nahi hote. Outbox / retry. Dobara aaya to sorted set me ek hi.
+
+**Pooche: apni hi feed me apna tweet?** Seedha jodo. Fanout peeche, apna turant.
+
+**Pooche: worker 60/100 pe gira?** Kafka ko "ho gaya" bola hi nahi (commit nahi). Khabar phir aayegi.
+
+**Pooche: wahi 60 dobara likhe?** Tweet ek hi baar. Sorted set me same tweet_id ek hi rehta.
+
+**Pooche: ek worker kam pade?** Worker badhao, Kafka ki lines (partition) aapas me bat jaati.
+
+---
+
+*ab aam tweet theek, par celeb ka ek tweet?*
+
+## 3. Bieber ka ek tweet = 10 crore inbox, line ghanton atki
+
+Celeb ka bhi push kiya. Kafka line me 10 crore kaam, mera tweet line me peeche, ghanton der.
+
+Isliye aam user = push, celeb = pull (hybrid). Celeb ka tweet inbox me nahi jaata, celeb cache me rehta. Feed khuli to
+mera inbox + follow kiye celebs ke naye tweet, time se milao.
+
+Ye kyun chalta? Likhai ka bojh follower ginti se hai. Aam = push (inbox me), celeb = pull (padhte waqt laao + milao).
+Feed hamesha dono ka mel, user ko farak nahi dikhta. Line khaali.
+
+Sabke liye pull kar do? Har feed khulna phir 200 ka jod, mehnga.
+
+**Pooche: 10,000 follower ke aas-paas wala?** 12,000 upar to pull, 8,000 neeche aaye tabhi push. Line pe baar-baar na
+palte.
+
+**Pooche: kisi ne 50 celeb follow kiye?** Celeb ke tweet alag chhote cache me rakhe, 50 pull bhi sasta.
+
+**Pooche: celeb cache kitna bada?** Chhota: ~5 lakh tweet x 500 byte = ~250 MB, sirf garam.
+
+**Pooche: tweet pe laakhon like?** Ginti 10 tukde (tweet123#0..#9), padhte waqt jodo. Ek key ek machine pe hoti.
+
+---
+
+*ab ek tweet pe crore log ek saath*
+
+## 4. Match khatam, Virat ka tweet, crore log ek saath, DB gira
+
+Har feed Virat ka tweet DB se laa rahi thi. Crore read, DB gira, feed band.
+
+Isliye garam tweet RAM me (hot-tweet cache). Miss hua to sirf ek request DB jaaye (lock), baaki uska jawab lein.
+
+Ye kyun chalta? Garam cheez RAM me, DB tak sirf ek request. DB aaram se.
+
+DB ki copies badha do? Wo bhi disk se (ms). Ek garam hisse ki copies crore read nahi jhelti.
+
+**Pooche: ek key pe bheed, wo machine garam?** Key ki kai copy (tweet:123#1..#5), kisi se bhi padho. Saath me App memory
+me 1-2 sec.
+
+**Pooche: Virat ne edit / delete kiya?** Cache se key hatao. Agla read DB se naya.
+
+---
+
+*ab Redis hi bhar raha*
+
+## 5. Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
+
+Har inbox me saare id, soye users ke bhi. RAM khatam.
+
+Isliye sirf aakhri kuch sau (800), aur sirf zinda logon ka inbox (trim). Purane hatao. Jo 1 mahine se nahi aaya, uska
+inbox hi nahi rakhte.
+
+Ye kyun chalta? RAM me sirf id aur sirf zinda log. Jo RAM me nahi, wo DB se bana lo: ek baar dheema, galat nahi.
+
+Redis me machine jodte jao? Soye 40 crore ka inbox bhi RAM khaata. Kharcha badhta, dikkat wahi.
+
+**Pooche: inbox me kya rakhte?** Sirf number + score (~60-100 byte), poora tweet nahi.
+
+**Pooche: soya user lauta?** Inbox nahi hai. Pehli baar pull se banao, phir bharo. RAM sirf zinda ki.
+
+**Pooche: 800 ke aage scroll kiya?** Wahan se store (DB) se. Bahut kam log itna neeche jaate.
+
+**Pooche: Redis gira?** Copy (replica). Warna har feed DB se, mehnga.
+
+**Pooche: copy bhi gayi?** Kuch request mana, har inbox ek request, dheere bharo.
+
+---
+
+*ab tweet itne ho gaye*
+
+## 6. DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
+
+Ek DB tha. Na rakh sake, na likh sake.
+
+Isliye Cassandra, user_id se baanta (shard by user_id). Mere saare tweet ek machine pe, naya sabse upar. Ek read.
+
+Ye kyun chalta? Jis cheez se padhte ho (user_id), usi se baanto. Likhna sirf aakhir me jodo, tez. 3 copy, 2 me likho
+2 se padho, naya mil hi jaata.
+
+MySQL? Har tweet pe har index disk pe dhoondh ke badalna, dheema. Join / transaction chahiye nahi.
+
+tweet_id se kyun nahi baanta? Bojh barabar ho jaata, par profile ke liye saari machine poochni padti.
+
+**Pooche: likhai tez kaise?** Commit log ke aakhir jodo, badlo nahi. RAM bhari to RAM ki nayi file disk pe.
+
+**Pooche: files bahut ho gayi?** Padhna dheema. Peeche milao (compaction) + bloom filter.
+
+**Pooche: meri machine giri?** 3 copy, 2 me likho, 2 se padho, naya mil hi jaata (quorum).
+
+**Pooche: famous banda, uski machine garam?** user_id se baantna phir bhi theek. Garam tweet alag RAM cache me.
+
+**Pooche: famous ke bahut tweet?** Key me mahina jodo (user_id, mahina). Ek machine na bhare.
+
+---
+
+*ab data ek desh me, user doosre me*
+
+## 7. Main Bangalore me, data US me, har feed 300 ms
+
+Har request samundar paar, 300 ms aana-jaana. Feed atak ke aati.
+
+Isliye har region me data ki copy (multi-region). Route 53 paas wale region ka pata deta, India region se feed.
+Copy US se aati rehti.
+
+Ye kyun chalta? Data user ke paas wale region me. Doosre region ki copy thodi peeche, to region gira to feed thodi
+purani, par chalti.
+
+Sab US se hi do? Wahi 300 ms, har feed atak ke.
+
+**Pooche: US celeb ka tweet?** Garam tweet India cache me bhi.
+
+**Pooche: main US ghooma?** Request India bhejo, ya paas ki copy se (thoda purana).
+
+**Pooche: poora region gira?** Route 53 zinda region pe palte. Copy peeche thi, to feed thodi purani.
+
+**Pooche: dono region me likha?** Baad wala jeete (last write wins). Tweet aksar naya hota, takraav kam.
+
+**Pooche: region ka fayda?** Tez. Europe ka data Europe me (GDPR). Har region ki bheed ka time alag. Ek gira to baaki
+chalein.
+
+---
+
+*ab har region me App hi ek hai*
+
+## 8. Raat ko har region me ek hi App machine; India wali giri, India band
+
+Isliye kai App, aage ALB baante. App kuch yaad nahi rakhta (stateless x N). App 2 giri to bahar, baaki chalte rahe.
+
+Ye kyun chalta? Machine kuch yaad nahi rakhti, sab Redis / DB me. Koi bhi gire, jude, badle, user ko farak nahi.
+
+Ek hi App rakhte? Wo giri to poora region band.
+
+**Pooche: machine giri, pata kaise?** ALB har ~10 sec poochta "zinda?". Chup = bahar, theek = wapas (Route 53 bhi).
+
+**Pooche: naya code daalna, App band karni?** Ek-ek karke nikaalo, daalo, jodo (rolling). Baaki bheed sambhaalti.
+
+**Pooche: nayi machine judi?** Pehli request dheemi, apna data nahi. ALB dheere traffic de.
+
+---
+
+*ab padhne ki bheed likhne ko daba rahi*
+
+## 9. Highlights ki bheed ne mera tweet daalna dheema kar diya
+
+Padhna aur likhna ek hi service me. Crore log scroll kar rahe, mera tweet usi bheed me, dheema.
+
+Isliye likhne aur padhne ki alag service. ALB path se: POST /tweet to Tweet Svc (x 2), GET /feed to Timeline Svc
+(x 20). Jahan bheed, wahi badhao.
+
+Ye kyun chalta? Har kaam alag service, to jiski bheed badhi sirf wahi badhao. Ek ka dheema doosre ko nahi rokta.
+
+Ek hi service rakhte? Padhne ki bheed me likhna bhi dheema. Wahi hua.
+
+**Pooche: feed ki bheed badhi?** Sirf Timeline badhao. Tweet Svc pe asar nahi.
+
+**Pooche: feed ko follow list kahan se?** User / Follow store se, par Redis me rakhi, har feed pe chahiye.
+
+**Pooche: Suresh ke 5,000 follower, inbox kaise likhe?** Follow store se 1000-1000 padh ke inbox likho. Ek baar me
+bhaari.
+
+**Pooche: Graph DB (Neo4j) chahiye?** Nahi. Follow list ek table / Cassandra me. Neo4j tab jab "dost ke dost" chahiye.
+
+---
+
+*ab bhaari maal: photo, video*
+
+## 10. Maine match ki video daali, sabko dheemi aur mehngi
+
+50 MB ki video. Delhi, London, Sydney, har dekhne wala hamare US server se 50 MB khinche. Buffering + bandwidth bill.
+
+Isliye video S3 me, user tak paas wale CDN se. Upload seedha S3 pe (presigned link), App beech me nahi. Tweet me sirf
+CDN link.
+
+Ye kyun chalta? Bhaari maal S3 me, user tak CDN se: paas, sasta. Tweet me sirf link, link badlo = nayi file. Link pe
+hastakshar = sirf jisko mila wahi dekhe.
+
+API bhi CDN se? Nahi. CDN sirf media ke raaste.
+
+**Pooche: koi dekhe, CDN ke paas nahi?** S3 se laake kuch der rakhe.
+
+**Pooche: photo hatayi, CDN pe abhi bhi dikhe?** CDN ko "hatao" bolo (invalidation), ya link me version, nayi file.
+
+**Pooche: private photo?** Link pe hastakshar + expiry (signed URL). Sirf jisko mila, thodi der.
+
+---
+
+## Poora design ek saans me
 
 ```
 LIKHNA: Route 53 -> ALB -> Tweet Svc -> Cassandra me save -> Kafka -> Fanout workers
         -> aam followers ke Redis inbox me sirf tweet number (aakhri 800 rakho), celeb skip
 PADHNA: Timeline Svc -> Redis inbox (push) + celebs ke tweet celeb cache se (pull)
-        -> milao + sort -> number se poora tweet laao -> upar ke 50 · photo / video S3 me, user tak CDN se
+        -> milao + sort -> number se poora tweet laao -> upar ke 50
+MEDIA:  photo / video S3 me, user tak CDN se
 FOLLOW: User Svc + Follow store
+```
 
-DB:  Tweet = Cassandra (bahut zyada, seedha kaam, likhna bahut, user_id + time se baanta)
-     Inbox = har user ka Redis sorted set, sirf number (poora tweet 200 jagah copy kiya to RAM phategi)
-     Follow store = ek table / Cassandra (followers / following); Neo4j zaroori nahi
-```
-```
-JAWAB:    Likhna: tweet Cassandra me save, aur 'naya tweet' Kafka me. Worker aam followers ke Redis inbox
-          me tweet id daalte.
-          Padhna: Arpan ka inbox lo, famous logon ke naye tweet alag cache se lo, dono milao, time se
-          sort, top 50 bhejo.
-          Famous ke liye 'padhte waqt laao', baaki ke liye 'pehle se daal do'. Cassandra user id + time
-          se baanta, doosre desh me copy.
-          Aage: ML se ranking, trending, search.
-```
-![c10_2](img/c10_2-9c25b583.svg)
-
+Bolne ke liye: likhna, tweet Cassandra me save, aur "naya tweet" Kafka me. Worker aam followers ke Redis inbox me tweet
+id daalte. Padhna, Arpan ka inbox lo, famous logon ke naye tweet alag cache se lo, dono milao, time se sort, top 50
+bhejo. Famous ke liye "padhte waqt laao", baaki ke liye "pehle se daal do". Cassandra user id + time se baanta, doosre
+desh me copy. Aage: ML se ranking, trending, search.
 
 ---
 
-## 10 GUNA TRAFFIC — har dabba alag se
+## 10 guna traffic
 
-```
-Timeline Svc   -> har baar 200 logon ka jodna? -> inbox pehle se bana (ho gaya) · machine badhao
-Redis inbox    -> 50 crore inbox -> aakhri 800 + soye hue hatao · cluster + copy
-celeb ke read  -> celeb cache 95% · garam key ki kai copy + App ka chhota cache
-Cassandra      -> user_id (+ time) se baanta · Bieber ki machine garam -> uska data aur copy
-doosre desh    -> region + garam data har region me copy
-Kafka          -> partition badhao · fanout workers badhao
-IPL final      -> 10 guna: likhai Kafka line me rukti; pata ho to machine + cache pehle garam
-ASLI TWITTER   = sab ek saath: user_id se baanta + time ke tukde + region copy + garam data sab jagah cache
+- **Timeline Svc**: har baar 200 logon ka jodna nahi, inbox pehle se bana (ho gaya). Machine badhao.
+- **Redis inbox**: 50 crore inbox, to aakhri 800 + soye hue hatao. Cluster + copy.
+- **Celeb ke read**: celeb cache 95%. Garam key ki kai copy + App ka chhota cache.
+- **Cassandra**: user_id (+ time) se baanta. Bieber ki machine garam, to uska data aur copy.
+- **Doosre desh**: region + garam data har region me copy.
+- **Kafka**: partition badhao, fanout workers badhao.
+- **IPL final**: 10 guna, likhai Kafka line me rukti. Pata ho to machine + cache pehle garam.
+- **Asli Twitter**: sab ek saath. user_id se baanta + time ke tukde + region copy + garam data sab jagah cache.
 
-POOCHEGA: "Kahan se gir sakta?"       -> har dabbe pe "ye gira to?"
-POOCHEGA: "Chal raha, kaise pata?"    -> feed ka time (p99) · galtiyan · Kafka me kitna pending (fanout
-                                         peeche?) · alert
-```
+**Pooche: kahan se gir sakta?** Har dabbe pe "ye gira to?"
+
+**Pooche: chal raha hai, kaise pata?** Feed ka time (p99), galtiyan, Kafka me kitna pending (fanout peeche?), alert.
 
 ---
 
-## POOCHE TO (gehra sawaal aaye tab)
+## Pooche to (kisi card me nahi baitha)
 
-```
-API:      POST /tweet { content } -> tweetId · GET /feed?limit=50 -> home timeline · GET /user/{id}/tweets
+API: POST /tweet { content } -> tweetId. GET /feed?limit=50 -> home timeline. GET /user/{id}/tweets.
 
-DB:       TWEET  -> Cassandra (bahut zyada, seedha, likhna bahut, user_id se baanta)
-          INBOX  -> har user ka Redis SORTED SET (score = time): naya jodo (ZADD, same id dobara = ek hi)
-                    padho (ZREVRANGE 0 49) · 800 ke baad kaato (ZREMRANGEBYRANK)
-                    sirf number. Poora tweet daala to ek tweet 200 jagah copy, RAM phategi
-          FOLLOW -> ek table / Cassandra (followers / following)
+Tweet DB: Cassandra (bahut zyada, seedha kaam, likhna bahut, user_id + time se baanta).
 
-SAWAAL:   celeb cache kitna bada? -> chhota: ~5 lakh tweet x 500 byte = ~250 MB, sirf garam
-          tweet_id se kyun nahi baanta? -> bojh barabar, par profile ke liye saari machine poochni padti
-          Graph DB (Neo4j) chahiye? -> nahi: follow list ek table / Cassandra; Neo4j tab jab 'dost ke dost'
-          API bhi CDN se? -> nahi: CDN sirf media ke raaste
-          region ka fayda? -> tez · Europe ka data Europe me (GDPR) · har region ki bheed ka time
-          alag · ek gira to baaki chalein
-          (c3) tweet pe laakhon like? -> ginti 10 tukde (tweet123#0..#9), padhte waqt jodo: ek key ek machine
+Inbox: har user ka Redis sorted set (score = time). Naya jodo (ZADD, same id dobara = ek hi). Padho (ZREVRANGE 0 49).
+800 ke baad kaato (ZREMRANGEBYRANK). Sirf number. Poora tweet daala to ek tweet 200 jagah copy, RAM phategi.
 
-LIKHNA:   Suresh -> Tweet Svc -> Cassandra me save (tweet_id, user_id, content, time)
-                             -> Kafka -> Fanout: followers nikaalo, celeb
-                                chhodo, har aam follower ke inbox me tweet_id
-PADHNA:   Timeline Svc -> Redis inbox (push) + celebs ke tweet (cache / Cassandra, pull)
-                       -> milao + sort -> number se poora tweet -> upar ke 50
-```
+Follow store: ek table / Cassandra (followers / following). Neo4j zaroori nahi.
+
+Tweet row: tweet_id, user_id, content, time.
 
 ---
 

@@ -1,368 +1,360 @@
 # Notification System
 
-> Koi ghatna hui (order, OTP, offer) -> sahi user ko, sahi raaste (push / email / SMS) se, sahi waqt pe khabar.
-> Is design ka dil teen cheezein hain: **ek ghatna -> kai raaste, kai log (fanout)** · **khabar kabhi khoye nahi, do baar jaaye nahi** · **OTP turant**.
-
-```
-Amazon pe order -> phone pe push + email + SMS + app ke andar = EK ghatna, KAI raaste.
-SHAADI KA CARD: ek shaadi, 500 mehmaan, sabko alag raaste se nyota:
-   ghar wale = WhatsApp · office wale = email · padosi = chhapa card · VIP = phone karke
-   notification system = shaadi ka planner
-```
+> Koi ghatna hui (order, OTP, offer), to sahi user ko, sahi raaste (push / email / SMS) se, sahi waqt pe khabar.
+> Dil teen cheezein: ek ghatna, kai raaste, kai log (fanout). Khabar kabhi khoye nahi, do baar jaaye nahi. OTP turant.
+>
+> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
-## KAHANI (ek din, Diwali sale, mera phone; har dikkat se design me ek dabba judta)
+## Poori tasveer (aakhir me design aisa banta hai)
 
-```
-    KYA HUA                                    ILAAJ                                DABBA JUDA
-1   subah order kiya, email company band     -> KAFKA (async), order turant jawab     Kafka + Notification Svc
-2   SMS dheema, push / email bhi atke        -> har raaste ki ALAG LINE + worker      Push / Email / SMS queue
-3   worker mara, mujhe do email              -> KEY (SET NX, khabar ki apni id)       Redis
-4   OTP ki key lagi, call fail, OTP gayab   -> SENDING / SENT (do haal)              (Redis key)
-5   SMS company pareshaan, hum hathoda maare -> BACKOFF + JITTER, had ke baad DLQ     DLQ
-6   SMS company dheemi, worker 30 sec phanse -> TIMEOUT + CIRCUIT BREAKER            Twilio + SNS, SendGrid
-7   12 baje sale, OTP 50,000 offer ke peeche -> OTP ki ALAG TEZ LINE                  Kafka high / med / low
-8   sale me laakhon message, company ne 429  -> SAANJHA TOKEN BUCKET (Redis)          (Redis bucket)
-9   "bheja", par phone tak pahuncha?         -> WEBHOOK + company ka message id       Webhook + Tracking DB
-10  shaam "Diwali offer sabko", 1 crore      -> 1000 ke TUKDE + campaign row          Campaign Svc + DB
-11  raat 2 baje offer SMS, maine band kiya   -> PASAND + SHAANTI + SAANCHA (cache)    User-pref + Template DB
-
-POORA DESIGN (upar ke dabbe kram se):
-   Order / Campaign Svc -> Kafka (tez / beech / dheemi) -> Notification Svc (pasand + saancha)
-   -> push / email / SMS line -> worker (key, backoff, circuit breaker, bucket) -> 2 company -> user
-   webhook -> Tracking DB · fail -> DLQ
-```
+![poora design](img/c11_2-ee668a17.svg)
 
 ---
 
-## TASVEER (ByteByteGo / Alex Xu · CC BY-NC-ND 4.0)
+## Shuru
 
-![How Does a Typical Push Notification System Work?](https://assets.bytebytego.com/diagrams/0042-design-a-notification-push-system.png)
-Source: [How Does a Typical Push Notification System Work?](https://bytebytego.com/guides/how-does-a-typical-push-notification-system-work/)
-(poora naksha: ghatna -> notification service -> queue -> worker -> bhejne wali company FCM / APNs / SMS)
+Amazon pe order kiya, to phone pe push + email + SMS + app ke andar. EK ghatna, KAI raaste.
 
----
+Sabse simple: Order service khud seedha email bhejne wali company (Email API) ko call kare.
 
-## SHURU: pehle poocho, phir numbers
+Pehle poocho: sirf bhejne ki line banani hai, ya user ki pasand + message ke saanche (template) bhi? Kaunse raaste,
+push / email / SMS / app ke andar? Ek user ko din me kitne (~5)? Kya sab barabar zaroori? OTP turant chahiye, offer ruk
+sakta. Ek hi line me sab daala to OTP 10 minute late, yahi asli fail. Turant chahiye ya thodi der chalegi?
 
-```
-POOCHO:  "Sirf bhejne ki line banani hai, ya user ki pasand + message ke saanche (template) bhi?"
-         kaunse raaste? push / email / SMS / app ke andar · ek user ko din me kitne? (~5)
-         kya sab barabar zaroori? (OTP turant, offer ruk sakta)
-         <- ek hi line me sab = OTP 10 minute late = asli fail
-         turant chahiye ya thodi der chalegi?
+Misaal: order hua to push + email. OTP to SMS turant. Sale offer to push, ruk sakta hai. Bahar: analytics dashboard.
 
-MISAAL:  order hua -> push + email · OTP -> SMS turant · sale offer -> push, ruk sakta hai
-         bahar: analytics dashboard
+Kaisa chale, 6 cheez: ek ghatna kai log / raaste. Bhejne wala ruke nahi (async). Khoye nahi (dobara koshish + DLQ).
+Bheed jhele (~1 lakh / second). OTP ki alag tez line. User ki pasand maano.
 
-KAISA CHALE (NFR, 6 cheez):
-   ek ghatna kai log / raaste · bhejne wala ruke nahi (async) · khoye nahi (dobara koshish + DLQ)
-   bheed jhele (~1 lakh / second) · OTP ki alag tez line · user ki pasand maano
+Numbers: 10 crore user x 5 / din = 50 crore / din. Din me ~1 lakh second, to ~5,800 har second (aam din). Sale ke din
+10 guna, ~58,000 har second. Har ek 3 raaste se, to ~1.75 lakh / second Kafka me. Machines aam din ke hisaab se nahi,
+sale ke hisaab se. Ek worker ~1000 / second bhejta, to sale pe ~175 worker (raaste ke hisaab se bante). Kya gaya kya
+nahi ka hisaab ~90 TB / saal (Cassandra). Kafka me 7 din ki khabar ~3 TB. Bheed jhatke me aati, isliye beech me line
+(Kafka). Hisaab me likhna bahut, isliye NoSQL.
 
-NUMBERS (andaaza):
-   10 crore user x 5 / din = 50 crore / din -> din me ~1 lakh second -> ~5,800 har second (aam din)
-   sale ke din 10 guna -> ~58,000 har second
-   har ek 3 raaste se -> ~1.75 lakh / second Kafka me. Machines aam din ke hisaab se nahi, sale ke hisaab se.
-   ek worker ~1000 / second bhejta -> sale pe ~175 worker (raaste ke hisaab se bante)
-   kya gaya kya nahi ka hisaab ~90 TB / saal (Cassandra) · Kafka me 7 din ki khabar ~3 TB
-   bheed jhatke me aati -> beech me line (Kafka) · hisaab me likhna bahut -> NoSQL
-```
-```
-POOCHEGA: "What if traffic suddenly spikes 10x?"
-          (Traffic achanak 10 guna ho gaya to?)
-
-JAWAB:    Sale ke time saari khabar pehle Kafka ki line me jaati, to jhatka line sambhaal leti, worker
-          apni speed se bhejte.
-          Sale ka time pata hai (12 baje), to 11:50 tak worker badha do. Machine apne aap badhne me
-          minute lagte, jhatka second me.
-          Par worker utne hi badhao jitna DB aur SMS / email company jhel sake, warna wahan atak jaayega.
-```
+**Pooche: traffic achanak 10 guna ho gaya to?** Sale ke time saari khabar pehle Kafka ki line me jaati, to jhatka line
+sambhaal leti, worker apni speed se bhejte. Sale ka time pata hai (12 baje), to 11:50 tak worker badha do. Machine apne
+aap badhne me minute lagte, jhatka second me. Par worker utne hi badhao jitna DB aur SMS / email company jhel sake,
+warna wahan atak jaayega.
 
 ---
 
-## ════ MOCK SE PEHLE: SIRF YE CARD PADHO ════
+*ab tootega kahan? order seedha company ke bharose hai*
 
-> Har card: pehle PEELA DABBA dekho (scene + ilaaj). Yaad aa gaya -> aage. Nahi aaya -> neeche
-> Heading = dikkat, KIYA = jawab, tasveer dekho. AAGE POOCHEGA sirf jab interviewer aage poochhe.
+## 1. Maine order kiya, email company band thi, order hi fail
 
-#### DABBA 0: SABSE SIMPLE (yahan se shuru, phir "kahan tootega")
-```
-Order service khud seedha email bhejne wali company (Email API) ko call kare.
-```
-![cdabba](img/cdabba-8c137677.svg)
+Diwali subah order kiya. Order email ke jawab ka intezaar kar raha tha, email company band, order fail.
 
+Isliye order + khabar ek hi DB txn me (outbox), relay use Kafka me daalta. Order ko turant jawab. Notification Svc
+peeche Kafka se padh ke email bhejti.
 
-#### 1 Maine order kiya, email company band thi, order hi fail
-KIYA: order + khabar ek txn (outbox), Kafka me daalo, Notification peeche padhe
+Kafka hi kyun? Order kabhi khabar ka intezaar nahi karta. Khabar disk ke log (Kafka) me, padhne wala yaad rakhta kahan
+tak. Company band ho to bhi khabar padi rehti, wapas aate hi wahin se.
 
-![c1](img/c1-254b4944.svg)
+Order service me hi retry kar lo? Request utni der atki rehti. Aur Order service giri to retry bhi gaya.
 
-```
-AAGE POOCHEGA:
-  NIYAM: order kabhi khabar ka intezaar nahi karta: khabar disk ke log (Kafka) me, padhne wala yaad rakhe
-         kahan tak -> company band ho to bhi khabar padi rehti, wapas aate hi wahin se.
-  SAFAR (ek order ki khabar, har mod pe kya):
-  order bana             -> order + khabar ek DB txn (outbox), relay Kafka me; turant jawab
-  Kafka se pehle Svc giri -> khabar outbox row me padi: relay baad me bhej deta, khoti nahi
-  email company band     -> khabar Kafka log me ~7 din padi, padhne wala kahan tak yaad (offset)
-  company 2 din baad     -> wahin se aage: order kabhi email se fail nahi
-  Notification Svc dheemi -> machine badhao (consumer group): har line ek machine, lines bat jaati
-  Kafka ki machine giri  -> log ki 3 copy: baaki copy se chalta, khabar nahi khoti
-```
+**Pooche: Kafka tak pahunchne se pehle service giri?** Khabar outbox row me padi hai. Relay baad me bhej deta, khoti nahi.
 
-#### 2 SMS company dheemi, mera push aur email bhi atke
-KIYA: har raaste ki alag line + alag worker (alag queue)
+**Pooche: email company band?** Khabar Kafka log me ~7 din padi. Padhne wala kahan tak padha, yaad rakhta (offset).
 
-![c2](img/c2-78de5bd5.svg)
+**Pooche: company 2 din baad aayi?** Wahin se aage. Order kabhi email se fail nahi.
 
-```
-AAGE POOCHEGA:
-  NIYAM: har raasta (push / email / SMS) apni line, apni speed; ek ka dheema ya band hona doosre pe nahi aata.
-  SAFAR (ek ghatna, teen raaste, har mod pe kya):
-  ghatna aayi            -> teen chhote message (ghatna id + raasta), har raasta apni line
-  SMS dheema / band      -> sirf SMS ki line rukti: push / email apni speed chalte
-  SMS line lambi         -> sirf SMS ke worker badhao: push / email pe asar nahi
-```
+**Pooche: Notification Svc dheemi?** Machine badhao (consumer group). Har line ek machine, lines bat jaati.
 
-#### 3 Worker mara, mujhe do email aaye
-KIYA: bhejne se pehle khabar ki apni id ki key (idempotency key)
-
-![c3](img/c3-6a29cf69.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: khabar ki apni pakki id -> dobara aaye to pehchaan ke skip; Redis tez raasta, DB me (khabar_id,
-         raasta) ek baar hi lage = aakhri deewar.
-  SAFAR (ek khabar, dobara aayi, har mod pe kya):
-  khabar aayi            -> pehle dekho: ye khabar_id + raasta bheja? (Redis key, tez)
-  wahi dobara aayi       -> key mili -> skip: do email nahi
-  Redis gira             -> DB me (khabar_id, raasta) ek baar hi lage: pakka wahi rokta
-  key 24 ghante me mitti -> DB row nahi bhoolti, phir rokega
-```
-
-#### 4 Key lag gayi, par mera OTP gaya hi nahi
-KIYA: bhejte waqt SENDING, company OK pe SENT; chhodna sirf SENT pe
-
-![c4](img/c4-63367a86.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: chhodo sirf pakke SENT pe; SENDING = adhoora, chhoti umar se khud mit jaaye -> khabar khoti nahi;
-         kabhi do baar chali jaaye to chalega (OTP do baar > na aana).
-  SAFAR (ek OTP ki key, har mod pe kya):
-  worker ne uthaya       -> key SENDING (chhoti umar, ~60 sec) -> company ko call
-  call hua               -> key SENT: ab koi dobara nahi bhejega
-  bheja, jawab se pehle mara -> maana hua risk: do baar ja sakta; OTP do baar > na aana
-  call fail, worker zinda -> khud key hatao: koshish adhoori, agli chal jaaye
-  worker hi mara         -> hatane wala koi nahi -> SENDING ki umar (60 sec) khatam, khud mit jaati
-  Worker-B ko SENDING mili -> thoda ruko, phir dekho: chhodna sirf SENT pe
-```
-
-#### 5 SMS company pehle se pareshaan, hum har second dobara maar rahe
-KIYA: har baar zyada der + thoda random (backoff + jitter), had paar -> DLQ
-
-![c5](img/c5-d9796ba0.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: fail pe ruk-ruk ke dobara (1, 2, 4 .. + random), khabar phenkna kabhi nahi; had ke baad DLQ + alert,
-         theek karke wapas.
-  SAFAR (ek fail khabar, har mod pe kya):
-  bheja                  -> company ne liya, khatam
-  company ne mana kiya   -> ruk-ruk ke dobara (1, 2, 4 .. + random): sab ek saath na maarein
-  lamba rukna (10 min)   -> alag lines (retry-1m, retry-10m), worker 'kab chalana' dekhe
-  had paar               -> alag line me daalo (DLQ) + alert: phenkna kabhi nahi
-  DLQ wali khabar        -> dashboard pe dikhe, theek karke main line me wapas
-```
-
-#### 6 SMS company band nahi, dheemi: saare worker 30 sec me phanse
-KIYA: thodi der me chhodo, baar-baar fail -> SNS pe (timeout + circuit breaker)
-
-![c6](img/c6-d87f1a07.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: dheema = band maano (2-3 sec timeout); har company ka apna circuit breaker -> uske band hone se
-         baaki raaste chalte, khabar line me rukti, phenki nahi jaati.
-  SAFAR (ek SMS, company dheemi, har mod pe kya):
-  call bheja             -> 2-3 sec me jawab, khatam
-  jawab nahi aaya        -> 2-3 sec pe band maano (timeout): worker phanse nahi
-  baar-baar fail         -> circuit breaker khula: call band, SNS pe; thodi der baad ek test call
-  push / email pe asar?  -> nahi: har company ka apna circuit breaker, worker alag line pe
-  SNS bhi band           -> khabar line me rukti, backoff se koshish, phenko nahi; OTP ka alert
-```
-
-#### 7 12 baje sale shuru, mera OTP 50,000 offer ke peeche
-KIYA: OTP ki apni tez line + apne worker (priority)
-
-![c7](img/c7-fbc1c25a.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: zaroori (OTP) kabhi kisi ke peeche nahi: apni line, apne worker, company me apna account.
-  SAFAR (mera OTP, sale ki bheed me, har mod pe kya):
-  OTP aaya, 50,000 offer pehle -> OTP apni high line, apne worker: kisi ke peeche nahi
-  order update (medium)  -> beech wali line: OTP se peeche, offer se aage
-  OTP line khaali        -> uske worker beech wali padh lein, ulta kabhi nahi
-```
-
-#### 8 Sale me laakhon message ek saath, company ne 429 diya
-KIYA: sab worker ka ek token bucket, pehle token lo (token bucket)
-
-![c8](img/c8-1c5256b1.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: had company ki hai, worker ki nahi: sab worker ek bucket se token lein; token nahi = ruko, khabar
-         phenko nahi.
-  SAFAR (ek message, company ki had, har mod pe kya):
-  bhejna hai             -> saanjhe bucket se token mila -> bhejo (had company ki, worker ki nahi)
-  token nahi mila        -> line me intezaar: ye fail nahi, retry ginti nahi badhti
-  worker badh gaye       -> speed wahi: bucket saanjha, kul 100 / sec
-  1 lakh email, had kam  -> had badhwao + kai account; tab tak line dheere khaali, warna 429
-  bucket wala Redis gira -> har worker chhoti local had (fail-closed): company ki had paar nahi
-```
-
-#### 9 Company ne "bhej diya" bola, par mere phone tak pahuncha?
-KIYA: company baad me khud bataye pahuncha / fail (webhook)
-
-![c9](img/c9-6e145022.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: 'bheja' aur 'mila' alag haal; 'mila' tab likho jab company (asli, signed webhook) bataye.
-  SAFAR (ek SMS ka haal, har mod pe kya):
-  company ne liya        -> 'bheja' likho; 'mila' tab jab company webhook se bataye
-  webhook aaya hi nahi   -> sirf ghanton atke ko ek baar poochho (Twilio SID se); SES me poll nahi,
-                            sirf event (SNS / Firehose)
-  nakli webhook          -> hastakshar jaancho: Twilio HMAC · SES/SNS certificate · SendGrid public key
-```
-
-#### 10 Shaam ko "Diwali offer sabko": 1 crore log
-KIYA: chhote tukdon me, aakhri tukda campaign row me (batch)
-
-![c10](img/c10-49fd78d3.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: bada kaam chhote tukdon me, har tukde ke baad 'kahan tak' likha -> gira to wahin se, galat chala to
-         beech me roko; ek user ko ek hi baar.
-  SAFAR (1 crore ka offer, har mod pe kya):
-  campaign shuru         -> 1000-1000 ke tukde, har tukde ke baad 'kahan tak' likho
-  600 bhej ke worker gira -> tukda dobara; (campaign_id, user_id) se pehle ke 600 chhootein
-  galat offer chala      -> campaign row pe CANCELLED; worker har tukde se pehle dekhe
-```
-
-#### 11 Raat 2 baje offer ka SMS, jabki maine band kiya tha
-KIYA: pehle pasand dekho, raat me ghanti nahi (preference + quiet hours)
-
-![c11](img/c11-90665093.svg)
-
-```
-AAGE POOCHEGA:
-  NIYAM: bhejne se pehle user ki pasand dekho; offer pasand / shaanti ke neeche, zaroori alert (OTP) upar.
-  SAFAR (ek offer SMS, raat 2 baje, har mod pe kya):
-  bhejne se pehle        -> user ki pasand dekho (shaanti ka waqt, kya band)
-  shaanti me offer       -> roko, subah 8 baje bhejo (scheduled_at + job); phenko nahi
-  shaanti me OTP / login -> bhejo: zaroori alert pasand se upar
-  pasand badli, cache purana -> badalte hi cache delete + chhoti umar: bhejne se pehle sahi chahiye
-```
+**Pooche: Kafka ki machine giri?** Log ki 3 copy. Baaki copy se chalta, khabar nahi khoti.
 
 ---
 
-## AAKHRI DABBA + WRAP (ek hi baar)
+*ab sab raaste ek hi line me, ek dheema to?*
+
+## 2. SMS company dheemi, mera push aur email bhi atke
+
+Push, email, SMS ek hi line me. Worker SMS pe atka, sab atke.
+
+Isliye har raaste ki alag line + alag worker (alag queue). Ghatna aayi to teen chhote message (ghatna id + raasta), har
+raasta apni line me.
+
+Ye kyun chalta? Har raasta apni line, apni speed. Ek ka dheema ya band hona doosre pe nahi aata. SMS dheema to sirf SMS
+ruka, push + email aa gaye.
+
+SMS worker badha do? Company khud dheemi hai. Line phir bhi ek, push / email phir bhi peeche.
+
+**Pooche: SMS line lambi ho gayi?** Sirf SMS ke worker badhao. Push / email pe asar nahi.
+
+**Pooche: push kis phone pe jaaye?** Device token, install pe user ke saath save. Bekaar nikla to hatao.
+
+---
+
+*ab worker beech me mare to?*
+
+## 3. Worker mara, mujhe do email aaye
+
+Worker-A ne email bheja, "padh liya" bolne se pehle mara. Khabar dobara aayi, Worker-B ne phir bheja. Do email.
+
+Isliye bhejne se pehle khabar ki apni id ki key (idempotency key). Pehle dekho: ye khabar_id + raasta bheja? Redis me
+key mili to skip, ek email.
+
+Ye kyun chalta? Khabar ki apni pakki id hai, dobara aaye to pehchaan ke skip. Redis tez raasta, aur DB me (khabar_id,
+raasta) ek baar hi lage, wo aakhri deewar.
+
+Har baar naya random id? Dohraav kabhi pakda nahi jaata.
+
+**Pooche: Redis gira?** DB me (khabar_id, raasta) ek baar hi lage (UNIQUE). Pakka wahi rokta.
+
+**Pooche: key 24 ghante me mit gayi?** DB row nahi bhoolti, phir rokega.
+
+**Pooche: DB me ek baar kaise?** Cassandra INSERT IF NOT EXISTS (khabar_id, raasta) (LWT).
+
+---
+
+*ab key lagi, par galat waqt pe*
+
+## 4. Key lag gayi, par mera OTP gaya hi nahi
+
+Koshish se pehle hi key "bhej diya" (SENT) laga di. Call fail. Worker-B ne "bhej diya" dekha aur chhod diya. OTP kho
+gaya.
+
+Isliye do haal: bhejte waqt key SENDING (chhoti umar, ~60 sec), company ne OK bola tab SENT. Chhodna sirf SENT pe.
+
+Ye kyun chalta? SENDING = adhoora, chhoti umar se khud mit jaata, to khabar khoti nahi. Kabhi do baar chali jaaye to
+chalega: OTP do baar > na aana.
+
+Key hi hata do? Worker mara to Kafka dobara deta, OTP / email do baar. Card 3 wapas.
+
+**Pooche: bheja, jawab aane se pehle worker mara?** Maana hua risk: do baar ja sakta. OTP do baar > na aana.
+
+**Pooche: call fail, worker zinda?** Khud key hatao. Koshish adhoori, agli chal jaaye.
+
+**Pooche: worker hi mara?** Hatane wala koi nahi. SENDING ki umar (60 sec) khatam, key khud mit jaati.
+
+**Pooche: Worker-B ko SENDING mili?** Thoda ruko, phir dekho. Chhodna sirf SENT pe.
+
+**Pooche: SENDING ki umar kitni?** Call (~2-3 sec) se lambi, 60 sec. Pehle khatam hui to do log bhejenge.
+
+---
+
+*ab fail hua to dobara kaise maarein?*
+
+## 5. SMS company pehle se pareshaan, hum har second dobara maar rahe
+
+Fail pe turant dobara, 50 worker har second ek saath. Company pe aur hathoda, kabhi theek nahi hoti.
+
+Isliye har baar zyada der + thoda random (backoff + jitter): 1, 2, 4, 8 sec. Had paar to alag line (DLQ) + alert.
+
+Ye kyun chalta? Fail pe ruk-ruk ke dobara, random thoda sa jodo to sab worker ek hi pal me wapas nahi aate. Khabar
+phenkna kabhi nahi. Had ke baad DLQ + alert, theek karke wapas.
+
+Retry band, ek fail = chhodo? Company 2 sec hili to OTP hamesha ke liye gaya.
+
+**Pooche: lamba rukna ho (10 min)?** Alag lines (retry-1m, retry-10m), worker "kab chalana" dekhe.
+
+**Pooche: DLQ wali khabar ka kya?** Dashboard pe dikhe, theek karke main line me wapas.
+
+**Pooche: khabar khoye hi nahi, kaise?** Saari copy ne li tab OK (acks=all). Offset kaam ke BAAD.
+
+---
+
+*ab company band nahi, bas dheemi*
+
+## 6. SMS company band nahi, dheemi: saare worker 30 sec me phanse
+
+Har call 30 sec tak jawab ka intezaar. Saare SMS worker Twilio pe phanse, OTP bhi ruka.
+
+Isliye thodi der me chhodo (2-3 sec timeout). Baar-baar fail to circuit breaker khula: Twilio ko call band, OTP SNS se.
+Thodi der baad Twilio ko ek test call, theek to wapas.
+
+Ye kyun chalta? Dheema = band maano. Har company ka apna circuit breaker, to uske band hone se baaki raaste chalte.
+Khabar line me rukti, phenki nahi jaati.
+
+Worker badha do? Naye worker bhi 30 sec me phanse. Dheemi company pe aur bojh.
+
+**Pooche: push / email pe asar?** Nahi. Har company ka apna circuit breaker, worker alag line pe.
+
+**Pooche: SNS bhi band?** Khabar line me rukti, backoff se koshish, phenko nahi. OTP ka alert.
+
+**Pooche: circuit breaker har process apna ya saanjha?** Har process apna (Resilience4j), ya Redis me saanjha.
+
+**Pooche: push doosri company se bhej do?** Hota nahi. Android = FCM, iPhone = APNs, phone ka OS tay karta.
+
+---
+
+*ab sale aayi, bheed me OTP kahan?*
+
+## 7. 12 baje sale shuru, mera OTP 50,000 offer ke peeche
+
+Sab ek line me. 50,000 offer, phir mera OTP. 10 min baad pahuncha, time khatam, login fail.
+
+Isliye OTP ki apni tez line + apne worker (priority). High line OTP, beech wali order update, low line offer.
+
+Ye kyun chalta? Zaroori (OTP) kabhi kisi ke peeche nahi: apni line, apne worker, company me apna account.
+
+Ek line me "zaroori" tag laga do? Kafka me "ye pehle bhejo" hota hi nahi.
+
+**Pooche: order update (medium)?** Beech wali line. OTP se peeche, offer se aage.
+
+**Pooche: OTP line khaali?** Uske worker beech wali padh lein. Ulta kabhi nahi.
+
+**Pooche: offer OTP ki company had kha jaaye?** OTP ka alag account / number. Had wala card 8.
+
+---
+
+*ab bheed itni ki company hi mana kare*
+
+## 8. Sale me laakhon message ek saath, company ne 429 diya
+
+Sab worker jitna chahe bhejein. Company ki had 100 / sec, baaki 429, sab fail.
+
+Isliye sab worker ka ek saanjha token bucket (Redis me), har sec 100 token. Pehle token lo, mila to bhejo.
+
+Ye kyun chalta? Had company ki hai, worker ki nahi. Sab worker ek bucket se token lein. Token nahi = ruko, khabar
+phenko nahi.
+
+Har worker apni speed 100 / sec? 100 worker = 100 guna, phir 429.
+
+**Pooche: token nahi mila?** Line me intezaar. Ye fail nahi, retry ginti nahi badhti.
+
+**Pooche: worker badh gaye?** Speed wahi. Bucket saanjha, kul 100 / sec.
+
+**Pooche: 1 lakh email, had kam?** Had badhwao + kai account. Tab tak line dheere khaali, warna 429.
+
+**Pooche: bucket wala Redis gira?** Har worker chhoti local had (fail-closed). Company ki had paar nahi.
+
+**Pooche: had kitni hoti?** Company ki: SES shuru ~14 / sec (sandbox 1 / sec), Twilio short code ~100 / sec.
+
+---
+
+*ab bhej diya, par pahuncha?*
+
+## 9. Company ne "bhej diya" bola, par mere phone tak pahuncha?
+
+Company ne "le liya" bola. Aage pata nahi, andhera.
+
+Isliye company baad me khud bataye pahuncha / fail (webhook). Worker company ka message no. (SID-9) save karta. Webhook
+aaya "SID-9 pahuncha", Webhook Svc ne SID-9 DELIVERED likha.
+
+Ye kyun chalta? "Bheja" aur "mila" alag haal hain. "Mila" tab likho jab company (asli, signed webhook) bataye.
+
+Baar-baar khud poochte raho? Laakhon message x har kuch second = had + kharcha.
+
+**Pooche: webhook aaya hi nahi?** Sirf ghanton atke ko ek baar poochho (Twilio SID se). SES me poll nahi, sirf event
+(SNS / Firehose).
+
+**Pooche: nakli webhook?** Hastakshar jaancho: Twilio HMAC, SES/SNS certificate, SendGrid public key.
+
+**Pooche: hisaab kahan rakhte?** Cassandra (Tracking). Likhna bahut, seedhi row, jodna kuch nahi.
+
+---
+
+*ab ek ke liye nahi, 1 crore ke liye*
+
+## 10. Shaam ko "Diwali offer sabko": 1 crore log
+
+Admin ne "sabko bhejo" daba diya. Ek request me 1 crore ek-ek karke, ghanton atki, OTP bhi peeche.
+
+Isliye 1000-1000 ke tukde, low priority line me. Har tukde ke baad "kahan tak" campaign row me likho (aakhri_id = 3000).
+
+Ye kyun chalta? Bada kaam chhote tukdon me, har tukde ke baad "kahan tak" likha. Gira to wahin se, galat chala to beech
+me roko. Ek user ko ek hi baar.
+
+1 crore ko ek bada "sabko bhejo" message? Ek worker pe atka, gira to shuru se.
+
+1 crore alag-alag message? Bojh. 1000 ka tukda = saath bhi, aur dobara karna pade to chhota.
+
+**Pooche: 600 bhej ke worker gira?** Tukda dobara. (campaign_id, user_id) se pehle ke 600 chhoot jaate.
+
+**Pooche: galat offer chal gaya?** Campaign row pe CANCELLED. Worker har tukde se pehle dekhe.
+
+**Pooche: 1 crore me kitni der?** ~17 min (10,000 / sec). Jaan-boojh ke phailaya, had + OTP line bachi.
+
+**Pooche: sabko ek hi push?** FCM topic: ek call. Topic me sirf pasand wale (pasand se sync).
+
+---
+
+*ab bheja to sahi, par user chahta tha?*
+
+## 11. Raat 2 baje offer ka SMS, jabki maine band kiya tha
+
+Pasand dekhi hi nahi. Raat 2 baje offer, ghanti baji, gussa.
+
+Isliye bhejne se pehle user ki pasand dekho (preference + quiet hours): offer SMS band, raat 10 se subah 8 ghanti nahi.
+Shaanti me offer aaya to roko, subah 8 baje bhejo (scheduled_at + job), phenko nahi.
+
+Ye kyun chalta? Bhejne se pehle pasand. Offer pasand / shaanti ke neeche, zaroori alert (OTP) upar.
+
+Pasand sirf Campaign Svc me check? Order / OTP wali khabar bina check nikal jaati.
+
+**Pooche: shaanti me OTP / login?** Bhejo. Zaroori alert pasand se upar.
+
+**Pooche: pasand badli, cache purana?** Badalte hi cache delete + chhoti umar. Bhejne se pehle sahi chahiye.
+
+---
+
+## Poora design ek saans me
 
 ```
 Order / Campaign Svc -> Kafka (tez / beech / dheemi) -> Notification Svc (pasand + saancha, cache)
 -> push / email / SMS ki line
 -> worker (key BHEJ RAHA / BHEJ DIYA · ruk ke dobara · circuit breaker · speed limit)
 -> 2 company -> user · webhook -> Tracking DB · fail -> DLQ
-
-DB:  Tracking = Cassandra -> likhna bahut, seedhi row, pakki consistency nahi chahiye, aaram se badhta
+DB:  Tracking = Cassandra (likhna bahut, seedhi row, pakki consistency nahi chahiye, aaram se badhta)
      Pasand / saancha = chhota, har ghatna pe padha jaata -> cache
 ```
-```
-JAWAB:    Services 'kuch hua' ki khabar Kafka me daalti. Notification service user ki pasand dekhti,
-          message bharti, aur push / email / SMS ki alag line me daal deti.
-          Worker key (BHEJ RAHA / BHEJ DIYA) se do baar nahi bhejte, fail pe ruk-ruk ke dobara,
-          company ki had me, company dheemi to circuit breaker + doosri company, had ke baad DLQ.
-          OTP ki alag line.
-          Ek user ki khabar ek hi line me, to kram sahi. Company ke webhook se 'mila / fail' update.
-          Aage: raat ka shaant time, kai bhasha, khola / click ginti.
-```
-![c11_2](img/c11_2-ee668a17.svg)
 
+Bolne ke liye: services "kuch hua" ki khabar Kafka me daalti. Notification service user ki pasand dekhti, message
+bharti, aur push / email / SMS ki alag line me daal deti. Worker key (BHEJ RAHA / BHEJ DIYA) se do baar nahi bhejte, fail pe
+ruk-ruk ke dobara, company ki had me. Company dheemi to circuit breaker + doosri company, had ke baad DLQ. OTP ki alag
+line. Ek user ki khabar ek hi line me, to kram sahi. Company ke webhook se "mila / fail" update. Aage: raat ka shaant
+time, kai bhasha, khola / click ginti.
 
 ---
 
-## 10 GUNA TRAFFIC — har dabba alag se
+## 10 guna traffic
 
-```
-Kafka            -> sale pe 10 guna -> lines (partition) pehle se zyada · line user_id se
-Notification Svc -> pasand / saancha cache · machine badhao
-raaste ki line   -> alag line (ho gaya) + tez / dheemi line
-worker           -> sale pe badhao (ek worker ~1000 / second) · circuit breaker + do company · speed limit
-Tracking DB      -> 90 TB / saal -> Cassandra + row ki umar, purana sasti jagah (cold storage)
-                    (umar se jagah ghatti hai, baantne se bojh — dono alag cheez)
+- **Kafka**: sale pe 10 guna, to lines (partition) pehle se zyada. Line user_id se.
+- **Notification Svc**: pasand / saancha cache. Machine badhao.
+- **Raaste ki line**: alag line (ho gaya) + tez / dheemi line.
+- **Worker**: sale pe badhao (ek worker ~1000 / second). Circuit breaker + do company. Speed limit.
+- **Tracking DB**: 90 TB / saal, to Cassandra + row ki umar, purana sasti jagah (cold storage). Umar se jagah ghatti
+  hai, baantne se bojh, dono alag cheez.
 
-POOCHEGA: "Data keeps growing — what happens in 3 years?"
-          (Data badhta ja raha, 3 saal baad?)
+**Pooche: data badhta ja raha, 3 saal baad?** Kis message ka kya hua (bheja / mila / khola), uski row ki umar rakho
+(jaise 90 din), purani rows sasti jagah chali jaayein. Roz wali table chhoti rehti hai.
 
-JAWAB:    Kis message ka kya hua (bheja / mila / khola), uski row ki umar rakho (jaise 90 din), purani
-          rows sasti jagah chali jaayein. Roz wali table chhoti rehti hai.
+**Pooche: kahan se gir sakta?** Company (do company), Kafka (copies), Redis (Cassandra LWT peeche).
 
-POOCHEGA: "Kahan se gir sakta?"     -> company (do company), Kafka (copies), Redis (Cassandra LWT peeche)
-POOCHEGA: "Chal raha, kaise pata?"  -> webhook se delivered / failed · Kafka me kitna pending
-                                       · DLQ kitna bhara · alert
-```
+**Pooche: chal raha hai, kaise pata?** Webhook se delivered / failed, Kafka me kitna pending, DLQ kitna bhara, alert.
 
 ---
 
-## POOCHE TO (gehra sawaal aaye tab)
+## Pooche to (kisi card me nahi baitha)
 
-```
-KHABAR:   Kafka pe { event: "ORDER_PLACED", userId: 123, orderId: 999 }
-          (andar ke liye REST bhi: POST /notify { userId, type, channel?, payload })
+Khabar: Kafka pe { event: "ORDER_PLACED", userId: 123, orderId: 999 }. Andar ke liye REST bhi: POST /notify { userId,
+type, channel?, payload }.
 
-RAASTE:   Push: FCM (Android) / APNs (iPhone) · Email: SES / SendGrid / Mailgun · SMS: Twilio / SNS / MSG91
-          App ke andar: DB + WebSocket · Phone call: Twilio · Slack webhook
+Raaste: Push = FCM (Android) / APNs (iPhone). Email = SES / SendGrid / Mailgun. SMS = Twilio / SNS / MSG91. App ke
+andar = DB + WebSocket. Phone call = Twilio. Slack webhook.
 
-DB:       PASAND:  user_id -> kaunse raaste · shaanti ka waqt · kya band kiya
-          SAANCHA: template_id -> format · bhasha · khaali jagah {{name}} {{orderId}}
-          HISAAB:  bheja / mila / khola / click / fail -> Cassandra
-                   (bahut likhna, seedhi row, ACID nahi chahiye)
+Pasand: user_id -> kaunse raaste, shaanti ka waqt, kya band kiya. Saancha: template_id -> format, bhasha, khaali jagah
+{{name}} {{orderId}}. Hisaab: bheja / mila / khola / click / fail, Cassandra me (bahut likhna, seedhi row, ACID nahi
+chahiye).
 
-1 LAKH / SECOND:  ~100 worker · line "notifications" P0 -> W1 ... P99 -> W100
-          line user_id se -> ek user ki saari khabar ek line me -> kram bana rehta
-          (warna "ship hua" pehle aur "order hua" baad me)
+1 lakh / second: ~100 worker. Line "notifications" P0 -> W1 ... P99 -> W100. Line user_id se, to ek user ki saari
+khabar ek line me, kram bana rehta. Warna "ship hua" pehle aur "order hua" baad me.
 
-POORA RAASTA EK BAAR:
-          order -> Order Svc Kafka me { ORDER_PLACED, 123, 999 } -> Notification Svc uthaye -> pasand dekhe
-          (push chalu, email chalu, SMS band) -> saancha bhare -> push + email ki line -> worker -> company
-          -> user -> webhook -> Tracking DB · fail -> dobara -> DLQ
-SAWAAL:   push doosri company se? -> hota nahi: Android = FCM, iPhone = APNs, phone ka OS tay karta
-          had kitni? -> company ki: SES shuru ~14 / sec (sandbox 1 / sec) · Twilio short code ~100 / sec
-          1 crore kitni der? -> ~17 min (10,000 / sec): jaan-boojh ke phailaya, had + OTP line bachi
-          1000 ka tukda kyun? -> 1 crore alag = bojh · 1 bada = ek worker atka · 1000 = saath + dobara chhota
-          (c2) push kis phone pe? -> device token (install pe user ke saath save); bekaar nikla -> hatao
-          (c4) SENDING ki umar kitni? -> call (~2-3 sec) se lambi, 60 sec: pehle khatam = do log bhejenge
-          (c5) khabar khoye hi nahi? -> saari copy ne li tab OK (acks=all), offset kaam ke BAAD
-          (c6) circuit breaker har process apna ya saanjha? -> har process apna (Resilience4j),
-               ya Redis me saanjha
-          (c7) offer OTP ki company had kha jaaye? -> OTP ka alag account / number (had = card 8)
-          (c9) hisaab kahan? -> Cassandra (Tracking): likhna bahut, seedhi row, jodna kuch nahi
-          (c3) DB me ek baar kaise? -> Cassandra INSERT IF NOT EXISTS (khabar_id, raasta) (LWT)
-          (c10) sabko ek hi push? -> FCM topic: ek call; topic me sirf pasand wale (pasand se sync)
-```
+Poora raasta ek baar: order, Order Svc Kafka me { ORDER_PLACED, 123, 999 }, Notification Svc uthaye, pasand dekhe (push
+chalu, email chalu, SMS band), saancha bhare, push + email ki line, worker, company, user, webhook, Tracking DB. Fail to
+dobara, phir DLQ.
 
 ---
 
 ## HANDS-ON — provider ne 429 diya: chala ke dekha
 
-> Grill me galti: 429 pe "fail-open" bola. Fail-open HUMARE limiter ka faisla (Redis gira to); yahan limiter
-> PROVIDER ka, uska darwaza hum nahi khol sakte -> dheema HUMEIN hona padega.
-> CODE: `04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java` (Docker nahi, time nakli) · line 21 `SMART = false / true` -> `java Sms429Demo.java`
+Grill me galti: 429 pe "fail-open" bola. Fail-open HUMARE limiter ka faisla (Redis gira to); yahan limiter
+PROVIDER ka, uska darwaza hum nahi khol sakte -> dheema HUMEIN hona padega.
+
+CODE: `04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java` (Docker nahi, time nakli) · line 21 `SMART = false / true` -> `java Sms429Demo.java`
 
 ```
 SETUP:  1000 SMS ek saath · provider 100 / sec · t=3,4 pe 50 / sec
