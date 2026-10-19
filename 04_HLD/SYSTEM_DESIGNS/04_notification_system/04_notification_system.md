@@ -13,6 +13,30 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+    KYA HUA                                    ILAAJ                                DABBA JUDA
+1   subah order kiya, email company band     -> KAFKA (async), order turant jawab     Kafka + Notification Svc
+2   SMS dheema, push / email bhi atke        -> har raaste ki ALAG LINE + worker      Push / Email / SMS queue
+3   worker mara, mujhe do email              -> KEY (SET NX, khabar ki apni id)       Redis
+4   OTP ki key lagi, call fail, OTP gayab   -> SENDING / SENT (do haal)              (Redis key)
+5   SMS company pareshaan, hum hathoda maare -> BACKOFF + JITTER, had ke baad DLQ     DLQ
+6   SMS company dheemi, worker 30 sec phanse -> TIMEOUT + CIRCUIT BREAKER            Twilio + SNS, SendGrid
+7   12 baje sale, OTP 50,000 offer ke peeche -> OTP ki ALAG TEZ LINE                  Kafka high / med / low
+8   sale me laakhon message, company ne 429  -> SAANJHA TOKEN BUCKET (Redis)          (Redis bucket)
+9   "bheja", par phone tak pahuncha?         -> WEBHOOK + company ka message id       Webhook + Tracking DB
+10  shaam "Diwali offer sabko", 1 crore      -> 1000 ke TUKDE + campaign row          Campaign Svc + DB
+11  raat 2 baje offer SMS, maine band kiya   -> PASAND + SHAANTI + SAANCHA (cache)    User-pref + Template DB
+
+POORA DESIGN (upar ke dabbe kram se):
+   Order / Campaign Svc -> Kafka (tez / beech / dheemi) -> Notification Svc (pasand + saancha)
+   -> push / email / SMS line -> worker (key, backoff, circuit breaker, bucket) -> 2 company -> user
+   webhook -> Tracking DB · fail -> DLQ
+```
+
+---
+
 ## Shuru
 
 Amazon pe order kiya, to phone pe push + email + SMS + app ke andar. EK ghatna, KAI raaste.

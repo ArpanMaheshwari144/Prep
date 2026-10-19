@@ -13,6 +13,27 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+   KYA HUA                                       ILAAJ                                DABBA JUDA
+1  Ravi ne baad me save kiya, mera WORLD mita -> OPERATION + baseVersion (text nahi)  App (op bhejo)
+2  Ravi ko mera likha refresh pe hi dikha     -> WEBSOCKET (khula, dono taraf)         Conn-Server
+3  11 baje dono ne sabse upar ek saath likha  -> OT (server kram, op khiskao)         Conn-Server (OT)
+4  50 lakh connection, ek server na jhele     -> RING: docId se ek OWNER server       LB + Conn-Server (owner)
+5  Ravi sirf padh raha, doosre server pe      -> REDIS PUB/SUB (doc ek channel)       Redis pub/sub
+6  3 baje: har akshar pe DB write, DB baitha  -> REDIS BUFFER + BATCH, ACK = WAIT 1   Redis buffer + Cassandra
+7  metro me mera net 1 sec gaya               -> likhna AP, permission CP             SQL permissions
+8  raat ko 2 saal purana doc, 10 lakh op      -> SNAPSHOT + uske baad ke op           Cassandra (+ snapshot)
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> App (op) -> LB (docId se ring) -> Conn-Server OWNER (WebSocket + OT)
+        -> Redis buffer -> BATCH -> Cassandra (op log + snapshot)
+   doosre server ke viewer: Redis pub/sub · permission: SQL (CP) · app ki files: CDN
+```
+
+---
+
 ## Shuru
 
 Sabse simple: doc ka poora text DB me. "Save" dabao to poora text upar likh do (overwrite).

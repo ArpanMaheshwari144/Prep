@@ -13,6 +13,27 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+   KYA HUA                                     ILAAJ                                DABBA JUDA
+1  password bhoola, 9 login, sab andar      -> Redis me EK ginti, 60 sec umar       Redis (LB + App x2 pehle)
+2  bot ke 20 login ek pal me, 6 ghuse       -> ATOMIC: INCR / LUA script            (Redis atomic)
+3  bot ki 429 wali bhi App tak ghoomi       -> LIMITER GATEWAY pe, sabse aage       API Gateway
+4  dopahar Redis gira, limiter andha        -> REPLICA + FAIL-OPEN / FAIL-CLOSED    Redis Cluster + R53 + ALB
+5  meri script 3 region se, 150 nikli       -> HOME REGION me ginti                 (ginti ghar wale Redis me)
+6  bot har 60 sec phir aa jaata             -> KAFKA -> PATTERN -> WAF BAN          Kafka + Pattern Svc + WAF
+7  shaam sale, sab limit me, server gira    -> GLOBAL CAP + LOAD SHEDDING (503)     (gateway pe system ki had)
+8  raat attack, Redis gira, API khuli      -> LOCAL COUNTER FALLBACK               (gateway ki memory)
+9  office ka ek IP, 1000 log block          -> KEY = USER_ID (JWT), IP sirf login   (key badli)
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> Route 53 -> WAF -> ALB -> API Gateway (limiter) -> Redis Cluster (token bucket Lua) -> App
+   baar-baar wala: Gateway -> Kafka -> Pattern Svc -> WAF ban
+```
+
+---
+
 ## Shuru
 
 Seedhi baat: ek banda had se zyada request bheje to baaki users ke liye server khaali nahi bachta. Niyam lagao "itne

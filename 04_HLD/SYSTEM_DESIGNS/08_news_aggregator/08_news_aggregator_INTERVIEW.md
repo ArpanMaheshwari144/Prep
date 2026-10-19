@@ -13,6 +13,29 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+   KYA HUA                                       ILAAJ                                 DABBA JUDA
+1  subah 7, sabko wahi 20, har baar DB pe     -> FEED CACHE (Redis SORTED SET)         Redis
+2  meri feed me khabar 20 min purani          -> KAFKA: laana aur likhna alag          Kafka + Worker
+3  8 baje election result, 40 guna bheed      -> LB + READ REPLICA                     LB + Read replica
+4  dopahar "India ne match jeeta" 5 baar      -> DEDUPE (title hash + SimHash)         (Worker me dedupe)
+5  dopahar baad ek source 30 sec atka         -> TIMEOUT + CIRCUIT BREAKER            (Fetcher me breaker)
+6  shaam ko mujhe sirf tech + sports          -> CATEGORY FEED, padhte waqt milao      (Redis me feed:tech)
+7  raat ko maine "cricket" dhoondha           -> INVERTED INDEX                        Elasticsearch
+8  raat DBA mail: 2 crore row, kharcha        -> mahine ka PARTITION, purana ARCHIVE   Archive (S3)
+9  mail aage: 100 guna, ek DB nahi jhelegi    -> SHARD hash(article_id)                (DB ke tukde)
+
+POORA DESIGN (upar ke dabbe kram se):
+   LIKHNA: Sources -> Fetcher (timeout + circuit breaker) -> Kafka -> Worker (saaf + dedupe + category)
+           -> DB + Redis + ES
+   PADHNA: User -> LB -> Feed Svc x N -> Redis (99%) -> nahi mila to Read replica
+           search = ES · purana = Archive
+```
+
+---
+
 ## Shuru
 
 Sabse simple: Fetcher sources se khabar laata aur DB me daal deta. Feed service DB se "taazi 20" nikaal ke user ko

@@ -13,6 +13,26 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+   KYA HUA                                       ILAAJ                                 DABBA JUDA
+1  10 baje maine aur Ravi ne ek saath A1 li   -> ATOMIC UPDATE ... WHERE available     SQL DB
+2  A1 chuni, payment me 3 min                 -> HOLD + held_until (umar)              Sweeper job
+3  Pay ke baad network gaya, app ne dobara    -> IDEMPOTENCY KEY (bookingId)           Payment Svc
+4  11 baje 1 lakh log seat map dekh rahe      -> CACHE + READ REPLICA                  Redis + Read replica
+5  12 baje concert: 3000 seat, 2 lakh log     -> WAITING ROOM + Kafka (sirf badi sale) Kafka + Booking worker
+6  2 baje Redis restart, sab replica pe       -> SET NX lock, pehla hi banaye          Redis (SET NX + copy)
+7  shaam ko meri App machine giri             -> STATELESS App + LB health check       LB + App x N
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> LB -> App x N -> SQL primary (atomic UPDATE, hold + umar) -> Payment Svc (bookingId)
+   dekhna: Redis Cluster -> Read replica · badi sale: Kafka (key = show_id) -> Booking worker
+   Sweeper = purane hold ki safai
+```
+
+---
+
 ## Shuru
 
 Sabse simple: ek seats table (seat_id, show_id, status). "Book" dabao, status = 'booked'.

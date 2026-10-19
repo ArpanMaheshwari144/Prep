@@ -13,6 +13,24 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+   KYA HUA                                       ILAAJ                                 DABBA JUDA
+1  subah 64 GB RAM bhar gayi, kya hatayein    -> LRU + TTL (HashMap + DLL)             Cache (LRU + TTL)
+2  data 1 TB, "user:42" kis machine pe        -> CONSISTENT HASHING + virtual nodes    Cache client + Nodes
+3  dopahar machine B mari, bojh DB pe         -> REPLICA (async) + quorum failover     Node + replica
+4  Ravi ne naam badla, cache me purana        -> DB me likho, cache key DELETE         (App: likhne pe delete)
+5  7 baje "home page" key khatam, 1000 DB pe  -> LOCK: SET NX EX, sirf pehla DB jaaye  (App: SET NX lock)
+6  raat IPL final, "live:score" pe crore log  -> L1 LOCAL CACHE + key ki copies        App + L1 local cache
+
+POORA DESIGN (upar ke dabbe kram se):
+   App + L1 -> Cache client (consistent hashing: key -> machine) -> Node (LRU + TTL) primary + copy
+   miss -> DB (asli sach) · padhna = cache-aside · likhna = DB + cache key DELETE
+```
+
+---
+
 ## Shuru
 
 Sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1). App pehle cache se poochhta: mila to wahi do, nahi

@@ -13,6 +13,28 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+    KYA HUA                                   ILAAJ                                DABBA JUDA
+1   subah 2 crore jude, memory khatam      -> EVENT LOOP, kuch thread, lakhon conn   Chat Server x200 + LB
+2   Ravi doosre server pe, "offline" bola  -> MAP Redis me (kaun kahan)            Redis
+3   Ravi ka phone band                     -> pehle DB, phir bhejo; PUSH           Message DB + Push
+4   roz 1.2 TB message                     -> chat_id se baanto                    Cassandra
+5   net dheema, "hi" do baar               -> IDEMPOTENCY (clientMsgId)            Idempotency check
+6   meri ghadi 5 min aage                  -> SEQ, server ka +1                    Seq (Redis INCR)
+7   College Gang (500) me message          -> group ka EK copy                     (Cassandra me group chat)
+8   Ravi ne 50 padhe: unread / tick        -> NISHAAN read_upto                    Nishaan store
+9   200 MB shaadi ka video                 -> S3 PRESIGNED URL, message me pata    S3
+10  raat ko online / last seen             -> UMAR 30 sec (TTL)                    Presence
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> LB -> Chat Server (event loop) -> Idempotency -> Cassandra (chat_id, seq)
+   Redis: kaun kis server · Seq: +1 · Push: offline ghanti · Nishaan: read_upto · S3: video · Presence: TTL
+```
+
+---
+
 ## Shuru
 
 Chat baaki designs se alag kyun? Ab tak (url shortener, feed, payment, banking) user ne maanga, server ne diya,

@@ -13,6 +13,29 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+    KYA HUA                                   ILAAJ                                 DABBA JUDA
+1   subah queue restart, 500 signup gayab  -> LOG disk pe + OFFSET                  Log
+2   10 baje sale, 5,000 / sec, worker 500  -> PARTITION (tukde, alag machine)       Brokers A / B / C
+3   Ravi ne naam do baar badla, ulta laga  -> KEY = userId (ek partition, kram)     Producer (key)
+4   email ki 3 machine, Ravi ko 3 email    -> CONSUMER GROUP (ek team)              Group email
+5   analytics + dashboard ko bhi chahiye   -> HAR SERVICE KA APNA GROUP             Group analytics, dashboard
+6   dopahar Broker A ki disk mari          -> LEADER + ISR, acks=all                Brokers (ISR) + Controller
+7   email bheja, commit se pehle crash     -> PEHLE KAAM PHIR COMMIT + IDEMPOTENT   Redis (eventId)
+8   order DB me bana, Kafka se pehle gira  -> OUTBOX + relay                        Producer + Outbox
+9   shaam ko C2 mara, lag badhta gaya      -> REBALANCE + LAG alert + DLQ           DLQ
+10  raat ko broker ki disk bhar rahi       -> RETENTION 7 din + COMPACTION          Brokers (retention)
+
+POORA DESIGN (upar ke dabbe kram se):
+   Producer (key + acks, outbox) -> key se partition -> LEADER broker (offset) -> ISR copy
+   -> har service ka apna group, apne offset se -> kaam -> commit · Redis = eventId dedup · DLQ
+   Controller (KRaft) = naksha · khabar 7 din padi (replay)
+```
+
+---
+
 ## Shuru
 
 Sabse simple: ek machine, uski memory me ek queue. Producer daale, consumer uthaye.

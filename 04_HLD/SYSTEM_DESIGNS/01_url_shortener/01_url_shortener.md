@@ -13,6 +13,26 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+   KYA HUA                                     ILAAJ                                DABBA JUDA
+1  mera sale link viral, DB baith gaya      -> REDIS CACHE (cache-aside)            Redis
+2  usi bheed me ek App giri, site band      -> STATELESS App x N + LOAD BALANCER    LB + App x N
+3  main aur Ravi, dono ko ek hi code        -> COUNTER RANGE + base62               Counter
+4  click ginti likhi, redirect dheema       -> KAFKA, ginti peeche                  Kafka + Analytics + DLQ
+5  DB team: 5 saal me 90 TB                 -> SHARD by code (RING)                 Cassandra
+6  naya link banaya, turant khola, 404      -> QUORUM (2 me likho, 2 se padho)      (Cassandra quorum)
+7  shaam ko LB hi gira                      -> ROUTE 53 + 2 LB (health check)       Route 53 + LB x2
+8  raat ko spammer, 5,000 link / sec        -> RATE LIMIT darwaze pe + WAF          API Gateway + WAF
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> Route 53 -> LB x2 -> WAF -> API Gateway -> App x N (Counter se range) -> Redis -> Cassandra
+   click ki khabar: App -> Kafka -> Analytics (fail -> DLQ)
+```
+
+---
+
 ## Shuru
 
 Sabse simple: User link deta, App ek code banata, DB me (code, lamba link) rakh deta. Click aaya to App DB me code

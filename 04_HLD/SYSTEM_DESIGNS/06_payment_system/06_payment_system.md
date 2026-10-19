@@ -13,6 +13,28 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+    KYA HUA                                    ILAAJ                                DABBA JUDA
+1   kirana ko 500, beech me server gira     -> EK TRANSACTION (WAL se poora / ulta)   SQL DB
+2   600 me phone se 500, laptop se 500      -> check + kaato EK atomic query         (DB query)
+3   metro me network gaya, app ne dobara    -> IDEMPOTENCY KEY (screen khulte)       Idempotency store
+4   bank se 2000 top-up, PSP dheema         -> timeout = PENDING, circuit breaker = abhi nahi   PSP
+5   PSP ko call kiya, jawab se pehle crash  -> PENDING pehle + WEBHOOK + RECONCILE   Reconciliation job
+6   merchant ka account Bank B me           -> SAGA (step-step, fail pe ulta)        Payment Svc + SAGA
+7   "kal raat 2200, subah 1100 kaise?"      -> LEDGER double-entry, sirf INSERT      Ledger table
+8   shaam Diwali, 3000 payment / sec        -> STATELESS, kai machine + LB           LB / Gateway + Svc x N
+9   merchant ki report ne payment roke      -> READ REPLICA (sirf report)            Read replica
+10  ~1000 crore row / saal, likhai dheemi   -> SHARD by account_id                   SQL DB shard
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> Gateway / LB -> Payment Svc (stateless, saga) -> Idempotency -> SQL DB (ACID + ledger, shard)
+   bahar ka paisa: Payment Svc -> PSP (pehle PENDING) · webhook + Reconciliation job · report -> Read replica
+```
+
+---
+
 ## Shuru
 
 Sabse simple: Payment service DB me do kaam kare: Arpan ke 500 ghatao, merchant ke 500 badhao.

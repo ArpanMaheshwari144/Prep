@@ -13,6 +13,29 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+    KYA HUA                                    ILAAJ                                DABBA JUDA
+1   subah app khola, 200 ka jod, feed dheemi -> PUSH: tweet hote hi INBOX me id     Fanout + Redis inbox
+2   maine tweet kiya, button 5 sec ghooma    -> KAFKA, fanout peeche                Kafka + Fanout workers
+3   Bieber ka tweet = 10 crore inbox         -> HYBRID: aam push, celeb pull        (celeb skip, merge)
+4   match khatam, Virat ka tweet, DB gira    -> HOT-TWEET CACHE (RAM)               Hot-tweet cache
+5   Redis alert: 50 crore inbox, RAM bhari   -> AAKHRI 800 + soye hue hatao         (inbox chhota)
+6   5,000 tweet / sec, 0.5 PB                -> CASSANDRA, user_id se baanto        Cassandra
+7   main Bangalore, data US, 300 ms          -> REGION-WISE + Route 53              Route 53
+8   akeli App machine giri, sab band         -> STATELESS App x N + ALB             ALB + App x N
+9   padhne ki bheed, tweet daalna dheema     -> ALAG SERVICE (likhna/padhna)       Tweet/Timeline/User/Follow
+10  maine video daali, sabko dheemi          -> S3 + CDN                            S3 + CDN
+
+POORA DESIGN (upar ke dabbe kram se):
+   LIKHNA: Route 53 -> ALB -> Tweet Svc -> Cassandra + Kafka -> Fanout workers -> Redis inbox (celeb skip)
+   PADHNA: Timeline Svc -> Redis inbox (push) + Hot-tweet cache (celeb pull) -> milao -> top 50
+   follow = User Svc + Follow store · photo / video = S3 + CDN
+```
+
+---
+
 ## Shuru
 
 Sabse simple: do table. tweets (kisne kya likha) aur follows (kaun kisko follow karta). Feed = jinko follow karta unke

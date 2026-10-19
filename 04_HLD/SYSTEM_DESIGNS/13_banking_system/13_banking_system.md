@@ -13,6 +13,30 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+    KYA HUA                                     ILAAJ                                 DABBA JUDA
+1   8 baje Ravi ko 500, beech me server gira -> EK TRANSACTION (WAL)                  SQL DB
+2   8:30 network gaya, app ne dobara bheja   -> IDEMPOTENCY KEY (UNIQUE)              Banking Svc (+ key)
+3   9:00 Netflix auto-debit + mera UPI       -> CHECK + KAATNA EK QUERY               (SQL DB: balance >= x)
+4   mera 500 kahan gaya? (support / audit)  -> KHAATA (ledger) usi transaction me    (SQL DB: ledger table)
+5   10 baje salary, Ravi ko rent, SMS giri    -> OUTBOX, Kafka key = account_id        Kafka
+6   salary ke baad maine balance khola       -> BALANCE = CACHE, raat RECONCILIATION  Reconciliation job
+7   11 baje sabki salary, ek machine bhari   -> KAI MACHINE + LB, DB sync copy        LB + Banking Svc x N
+8   bheed me sab balance dekh rahe           -> READ REPLICA + read-your-own-writes   Read replica
+9   dukaan ko 500, usi sec 200 refund        -> CHHOTI ID PEHLE LOCK                  (SQL DB: lock kram)
+10  CA ka export, page 5000 dheema           -> KEYSET (ts, id) + index               (SQL DB: index)
+11  raat: 5 saal khaata ek table me          -> MAHINE KE TUKDE + S3, snapshot        Archive (S3)
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> LB -> Banking Svc (idempotency key) -> SQL DB: EK transaction (khaata + balance + outbox)
+        -> Kafka (commit ke baad, key = account_id) · Read replica = balance / history
+   Reconciliation (raat) · Archive S3 (mahine ke tukde, had se pehle delete nahi)
+```
+
+---
+
 ## Shuru
 
 Sabse simple: ek Banking Service (saara niyam / logic) aur uske peeche ek SQL DB. Jaan-boojh ke seedha.

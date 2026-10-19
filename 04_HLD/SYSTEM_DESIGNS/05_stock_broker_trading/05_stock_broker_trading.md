@@ -13,6 +13,27 @@
 
 ---
 
+## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
+
+```
+   KYA HUA                                     ILAAJ                                DABBA JUDA
+1  ek tap, network gaya, do order lag gaye  -> IDEMPOTENCY KEY (wahi id dobara)     Order Service
+2  wallet 50k, 30k-30k dono order pass      -> check + block EK atomic query        Wallet
+3  Suresh ke 10, mujhe aur Mohan dono ko    -> ek symbol ek thread, book RAM me     Matching Engine
+4  9:15 sab TCS pe toot pade                -> baanto mat, ek thread kaafi, line    Queue
+5  10:15 server gira, book gayab            -> pehle log, phir book; gira = replay  Event Log (= wahi line)
+6  mera 30k kata, Suresh ko mila nahi       -> ek transaction: chaaron ya koi nahi  Settlement
+7  dopahar INFY 20k kata, share nahi aaye   -> har step ka haal, aage badho         Wallet DB + Portfolio DB
+8  10 lakh log price poochh rahe            -> push (TV jaisa), WebSocket           Pub/Sub + WebSocket
+
+POORA DESIGN (upar ke dabbe kram se):
+   User -> Order Service (id) -> Wallet (block) -> Event Log -> Matching (ek stock ek thread)
+        -> Settlement -> Wallet DB + Portfolio DB
+   price: Matching -> Pub/Sub -> WebSocket -> users
+```
+
+---
+
 ## Shuru
 
 Sabse simple: Order service har order DB me likhti, aur DB me milta-julta SELL dhoondh ke match karti.
