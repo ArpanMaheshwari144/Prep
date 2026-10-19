@@ -25,7 +25,7 @@
 <text x="38" y="247" font-size="17" font-weight="bold" fill="#2e7d32">AB: dekha URL Bloom filter se, wahi khabar title ke hash se (Bloom + SimHash)</text>
 <rect x="40" y="263" width="368" height="106" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="224" y="289" text-anchor="middle" font-size="15" font-weight="bold">Bloom bits</text>
-<text x="224" y="308" text-anchor="middle" font-size="15">URL-B dekhe jagah 1, 4, 8</text>
+<text x="224" y="308" text-anchor="middle" font-size="15">URL-B ki jagah: bit 1, 4, 8</text>
 <rect x="54" y="321" width="31" height="26" fill="#eeeeee" stroke="#bbb"/>
 <text x="70" y="339" text-anchor="middle" font-size="12">0</text>
 <rect x="88" y="321" width="31" height="26" fill="#f9a825" stroke="#333"/>

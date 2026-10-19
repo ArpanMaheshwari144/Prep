@@ -75,7 +75,7 @@ Fetcher sources se khabar laaye, DB me daale. Feed service DB se "taazi 20" nika
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
 KIYA: sabki ek hi feed, ek baar banao, Redis me time se (sorted set)
 
-![c1](img/c1-d2c92ddd.svg)
+![c1](img/c1-cdba2292.svg)
 
 ```
 AAGE POOCHEGA:
@@ -91,7 +91,7 @@ AAGE POOCHEGA:
 #### 2 Meri feed me khabar 20 minute purani
 KIYA: fetcher sirf laaye, Kafka me daale, worker apni speed se likhe (Kafka)
 
-![c2](img/c2-6f12b21f.svg)
+![c2](img/c2-5759a2d9.svg)
 
 ```
 AAGE POOCHEGA:
@@ -124,7 +124,7 @@ AAGE POOCHEGA:
 #### 4 Dopahar "India ne match jeeta", meri feed me 5 baar
 KIYA: dekha URL Bloom filter se, wahi khabar title ke hash se (Bloom + SimHash)
 
-![c4](img/c4-fc25ba00.svg)
+![c4](img/c4-77f9d093.svg)
 
 ```
 AAGE POOCHEGA:
@@ -160,7 +160,7 @@ AAGE POOCHEGA:
 #### 6 Shaam ko mujhe sirf tech aur sports chahiye
 KIYA: har category ki ek list, mere liye dono milao (category feed)
 
-![c6](img/c6-0baed431.svg)
+![c6](img/c6-343e2f9e.svg)
 
 ```
 AAGE POOCHEGA:
@@ -175,7 +175,7 @@ AAGE POOCHEGA:
 #### 7 Raat ko maine "cricket" dhoondha, poori table padhi gayi
 KIYA: har shabd ki list: kis-kis khabar me hai (inverted index)
 
-![c7](img/c7-a8ab73c6.svg)
+![c7](img/c7-c41efc4a.svg)
 
 ```
 AAGE POOCHEGA:

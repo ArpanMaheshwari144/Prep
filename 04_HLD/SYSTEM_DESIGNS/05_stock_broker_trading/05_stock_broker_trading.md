@@ -114,7 +114,7 @@ AAGE POOCHEGA:
 #### 2 Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
 KIYA: check aur block ek hi query me (atomic UPDATE)
 
-![c2](img/c2-a0e502be.svg)
+![c2](img/c2-9d42175f.svg)
 
 ```
 AAGE POOCHEGA:

@@ -47,7 +47,7 @@
      "stack": [
       {
        "box": "App-1: 1 - 1000",
-       "sub": "main -> 1 -> \"1\"",
+       "sub": "mujhe 1 mila, link \"1\"",
        "cells": [
         "1",
         "2",
@@ -57,7 +57,7 @@
       },
       {
        "box": "App-2: 1001 - 2000",
-       "sub": "Ravi -> 1001 -> \"g9\"",
+       "sub": "Ravi ko 1001 mila, link \"g9\"",
        "cells": [
         "1001",
         ".."

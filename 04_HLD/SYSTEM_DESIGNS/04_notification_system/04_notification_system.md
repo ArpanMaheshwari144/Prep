@@ -128,7 +128,7 @@ AAGE POOCHEGA:
 #### 3 Worker mara, mujhe do email aaye
 KIYA: bhejne se pehle khabar ki apni id ki key (idempotency key)
 
-![c3](img/c3-97651dc2.svg)
+![c3](img/c3-6a29cf69.svg)
 
 ```
 AAGE POOCHEGA:
@@ -179,7 +179,7 @@ AAGE POOCHEGA:
 #### 6 SMS company band nahi, dheemi: saare worker 30 sec me phanse
 KIYA: thodi der me chhodo, baar-baar fail -> SNS pe (timeout + circuit breaker)
 
-![c6](img/c6-737448bf.svg)
+![c6](img/c6-d87f1a07.svg)
 
 ```
 AAGE POOCHEGA:
@@ -242,7 +242,7 @@ AAGE POOCHEGA:
 #### 10 Shaam ko "Diwali offer sabko": 1 crore log
 KIYA: chhote tukdon me, aakhri tukda campaign row me (batch)
 
-![c10](img/c10-dd8ab4ae.svg)
+![c10](img/c10-49fd78d3.svg)
 
 ```
 AAGE POOCHEGA:
@@ -257,7 +257,7 @@ AAGE POOCHEGA:
 #### 11 Raat 2 baje offer ka SMS, jabki maine band kiya tha
 KIYA: pehle pasand dekho, raat me ghanti nahi (preference + quiet hours)
 
-![c11](img/c11-efd80bf9.svg)
+![c11](img/c11-90665093.svg)
 
 ```
 AAGE POOCHEGA:

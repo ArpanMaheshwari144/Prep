@@ -184,7 +184,7 @@ AAGE POOCHEGA:
 #### 5 PSP ko call kiya aur server gira: paisa gaya ya nahi?
 KIYA: call se pehle PENDING likho; PSP baad me bataye (webhook), purane poochho
 
-![c5](img/c5-c560f58c.svg)
+![c5](img/c5-21fab237.svg)
 
 ```
 AAGE POOCHEGA:
@@ -235,7 +235,7 @@ AAGE POOCHEGA:
 #### 8 Shaam Diwali, 3000 payment / second, machine baith gayi
 KIYA: machine kuch yaad nahi rakhti, LB kisi ko bhi de (stateless + LB)
 
-![c8](img/c8-d4fa0639.svg)
+![c8](img/c8-2535eddf.svg)
 
 ```
 AAGE POOCHEGA:

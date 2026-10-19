@@ -130,7 +130,7 @@ AAGE POOCHEGA:
 #### 3 Bieber ka ek tweet = 10 crore inbox, line ghanton atki
 KIYA: aam user = push, celeb = pull; feed khulte dono milao (hybrid)
 
-![c3](img/c3-d8b4e02e.svg)
+![c3](img/c3-5ce84781.svg)
 
 ```
 AAGE POOCHEGA:
@@ -161,7 +161,7 @@ AAGE POOCHEGA:
 #### 5 Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
 KIYA: sirf aakhri kuch sau, sirf zinda logon ka inbox (trim)
 
-![c5](img/c5-e110876e.svg)
+![c5](img/c5-dff134fa.svg)
 
 ```
 AAGE POOCHEGA:
@@ -177,7 +177,7 @@ AAGE POOCHEGA:
 #### 6 DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
 KIYA: mere saare tweet ek machine pe, naya pehle (shard by user_id)
 
-![c6](img/c6-5f1612fc.svg)
+![c6](img/c6-1eaa76aa.svg)
 
 ```
 AAGE POOCHEGA:

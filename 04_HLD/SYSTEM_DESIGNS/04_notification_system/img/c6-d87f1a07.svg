@@ -19,22 +19,22 @@
 <text x="38" y="228" font-size="17" font-weight="bold" fill="#2e7d32">AB: thodi der me chhodo, baar-baar fail -&gt; SNS pe (timeout + circuit breaker)</text>
 <rect x="40" y="312" width="112" height="49" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="96" y="338" text-anchor="middle" font-size="15" font-weight="bold">SMS worker</text>
-<rect x="222" y="244" width="221" height="106" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
-<text x="333" y="270" text-anchor="middle" font-size="15" font-weight="bold">Twilio</text>
-<text x="333" y="289" text-anchor="middle" font-size="15">circuit OPEN, abhi nahi</text>
-<rect x="282" y="302" width="31" height="26" fill="#ffebee" stroke="#d32f2f"/>
-<text x="297" y="320" text-anchor="middle" font-size="12"></text>
-<path d="M286,306 L309,324 M309,306 L286,324" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>
-<rect x="316" y="302" width="31" height="26" fill="#ffebee" stroke="#d32f2f"/>
-<text x="331" y="320" text-anchor="middle" font-size="12"></text>
-<path d="M320,306 L343,324 M343,306 L320,324" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>
-<rect x="350" y="302" width="31" height="26" fill="#ffebee" stroke="#d32f2f"/>
-<text x="365" y="320" text-anchor="middle" font-size="12"></text>
-<path d="M354,306 L377,324 M377,306 L354,324" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>
-<rect x="268" y="360" width="129" height="68" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
-<text x="333" y="386" text-anchor="middle" font-size="15" font-weight="bold">SNS</text>
-<text x="333" y="405" text-anchor="middle" font-size="15">OTP yahan se</text>
+<rect x="222" y="244" width="297" height="106" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
+<text x="370" y="270" text-anchor="middle" font-size="15" font-weight="bold">Twilio</text>
+<text x="370" y="289" text-anchor="middle" font-size="15">circuit OPEN: abhi call mat karo</text>
+<rect x="319" y="302" width="31" height="26" fill="#ffebee" stroke="#d32f2f"/>
+<text x="335" y="320" text-anchor="middle" font-size="12"></text>
+<path d="M323,306 L346,324 M346,306 L323,324" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>
+<rect x="353" y="302" width="31" height="26" fill="#ffebee" stroke="#d32f2f"/>
+<text x="369" y="320" text-anchor="middle" font-size="12"></text>
+<path d="M357,306 L380,324 M380,306 L357,324" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>
+<rect x="387" y="302" width="31" height="26" fill="#ffebee" stroke="#d32f2f"/>
+<text x="403" y="320" text-anchor="middle" font-size="12"></text>
+<path d="M391,306 L414,324 M414,306 L391,324" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>
+<rect x="306" y="360" width="129" height="68" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
+<text x="370" y="386" text-anchor="middle" font-size="15" font-weight="bold">SNS</text>
+<text x="370" y="405" text-anchor="middle" font-size="15">OTP yahan se</text>
 <line x1="158" y1="336" x2="214" y2="394" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="463" y="344" font-size="22" font-weight="bold" fill="#2e7d32">OTP pahuncha</text>
+<text x="539" y="344" font-size="22" font-weight="bold" fill="#2e7d32">OTP pahuncha</text>
 <text x="38" y="462" font-size="15" fill="#2e7d32">thodi der baad Twilio ko ek test call; theek to wapas</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><polyline points="799.4,120.6 778.4,120.6 778.4,326.3 778.4,392.3" fill="none" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="788.4" text-anchor="start" y="366.3" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></g></svg>

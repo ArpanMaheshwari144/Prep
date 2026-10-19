@@ -152,7 +152,7 @@ AAGE POOCHEGA:
 #### 6 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
 KIYA: op Redis me jama, har second ek saath DB me (buffer + batch)
 
-![c6](img/c6-139737e3.svg)
+![c6](img/c6-951fe93f.svg)
 
 ```
 AAGE POOCHEGA:
@@ -171,7 +171,7 @@ AAGE POOCHEGA:
 #### 7 Metro me mera net 1 second gaya, typing rukegi?
 KIYA: likhna chalta rahe (AP), permission turant roke (CP)
 
-![c7](img/c7-8bc9923c.svg)
+![c7](img/c7-c24aa75f.svg)
 
 ```
 AAGE POOCHEGA:

@@ -189,7 +189,7 @@ AAGE POOCHEGA:
 #### 5 Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
 KIYA: app har message ki apni id, dobara pe wahi id (clientMsgId)
 
-![c5](img/c5-2cfdb2b1.svg)
+![c5](img/c5-1281aeba.svg)
 
 ```
 AAGE POOCHEGA:
@@ -235,7 +235,7 @@ AAGE POOCHEGA:
 #### 8 Ravi ne 50 padhe: unread aur neeli tick kaise
 KIYA: har member ka ek number: kahan tak padha (read_upto)
 
-![c8](img/c8-f3eee266.svg)
+![c8](img/c8-935832bf.svg)
 
 ```
 AAGE POOCHEGA:

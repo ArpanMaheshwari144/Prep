@@ -46,8 +46,11 @@
      "arrow": "purane hatao"
     },
     {
-     "box": "Soye user",
-     "sub": "inbox nahi; lauta to pull se banao"
+     "box": "Jo 1 mahine se nahi aaya",
+     "sub": [
+      "uska inbox hi nahi rakhte",
+      "wapas aaye to ek baar DB se bana do"
+     ]
     }
    ],
    "result": "RAM chhoti",

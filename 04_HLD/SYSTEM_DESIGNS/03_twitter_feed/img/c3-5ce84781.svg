@@ -27,27 +27,27 @@
 <text x="672" y="155" font-size="22" font-weight="bold" fill="#c62828">ghanton der</text>
 <rect x="20" y="238" width="920" height="295" rx="10" fill="#f3f9ee" stroke="#43a047" stroke-width="2.5"/>
 <text x="38" y="266" font-size="17" font-weight="bold" fill="#2e7d32">AB: aam user = push, celeb = pull; feed khulte dono milao (hybrid)</text>
-<rect x="44" y="282" width="171" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
-<text x="130" y="308" text-anchor="middle" font-size="15" font-weight="bold">Mera inbox (push)</text>
-<rect x="96" y="321" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="111" y="339" text-anchor="middle" font-size="12">t9</text>
-<rect x="130" y="321" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="145" y="339" text-anchor="middle" font-size="12">t7</text>
-<rect x="40" y="379" width="179" height="106" rx="8" fill="white" stroke="#555" stroke-width="2"/>
-<text x="130" y="405" text-anchor="middle" font-size="15" font-weight="bold">Celeb cache (pull)</text>
-<text x="130" y="424" text-anchor="middle" font-size="15">Bieber ke naye</text>
-<rect x="113" y="437" width="31" height="26" fill="#f9a825" stroke="#333"/>
-<text x="128" y="455" text-anchor="middle" font-size="12">b5</text>
-<rect x="344" y="340" width="130" height="87" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
-<text x="409" y="366" text-anchor="middle" font-size="15" font-weight="bold">Meri feed</text>
-<rect x="358" y="379" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="373" y="397" text-anchor="middle" font-size="12">t9</text>
-<rect x="392" y="379" width="31" height="26" fill="#f9a825" stroke="#333"/>
-<text x="407" y="397" text-anchor="middle" font-size="12">b5</text>
-<rect x="426" y="379" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="441" y="397" text-anchor="middle" font-size="12">t7</text>
-<line x1="225" y1="384" x2="336" y2="384" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="282" y="374" text-anchor="middle" font-size="13" fill="#2e7d32">time se milao</text>
-<text x="494" y="392" font-size="22" font-weight="bold" fill="#2e7d32">line khaali</text>
+<rect x="78" y="282" width="171" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
+<text x="163" y="308" text-anchor="middle" font-size="15" font-weight="bold">Mera inbox (push)</text>
+<rect x="129" y="321" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="145" y="339" text-anchor="middle" font-size="12">t9</text>
+<rect x="163" y="321" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="179" y="339" text-anchor="middle" font-size="12">t7</text>
+<rect x="40" y="379" width="246" height="106" rx="8" fill="white" stroke="#555" stroke-width="2"/>
+<text x="163" y="405" text-anchor="middle" font-size="15" font-weight="bold">Celeb cache (pull)</text>
+<text x="163" y="424" text-anchor="middle" font-size="15">Bieber ke naye tweet yahan</text>
+<rect x="146" y="437" width="31" height="26" fill="#f9a825" stroke="#333"/>
+<text x="162" y="455" text-anchor="middle" font-size="12">b5</text>
+<rect x="411" y="340" width="130" height="87" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
+<text x="476" y="366" text-anchor="middle" font-size="15" font-weight="bold">Meri feed</text>
+<rect x="425" y="379" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="441" y="397" text-anchor="middle" font-size="12">t9</text>
+<rect x="459" y="379" width="31" height="26" fill="#f9a825" stroke="#333"/>
+<text x="475" y="397" text-anchor="middle" font-size="12">b5</text>
+<rect x="493" y="379" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="509" y="397" text-anchor="middle" font-size="12">t7</text>
+<line x1="292" y1="384" x2="403" y2="384" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="349" y="374" text-anchor="middle" font-size="13" fill="#2e7d32">time se milao</text>
+<text x="561" y="392" font-size="22" font-weight="bold" fill="#2e7d32">line khaali</text>
 <text x="38" y="519" font-size="15" fill="#2e7d32">celeb ka tweet inbox me nahi jaata; 50 celeb follow -&gt; celeb tweet chhote cache se, pull sasta</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><polyline points="592.3,76.6 592.3,203.8 592.3,269.8" fill="none" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="602.3" text-anchor="start" y="243.8" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></g></svg>

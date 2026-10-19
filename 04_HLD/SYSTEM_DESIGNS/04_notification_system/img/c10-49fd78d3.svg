@@ -27,19 +27,19 @@
 <text x="121" y="327" text-anchor="middle" font-size="15">aakhri_id = 3000</text>
 <rect x="101" y="340" width="37" height="26" fill="#f9a825" stroke="#333"/>
 <text x="120" y="358" text-anchor="middle" font-size="12">3000</text>
-<rect x="305" y="282" width="198" height="106" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
-<text x="404" y="308" text-anchor="middle" font-size="15" font-weight="bold">Tukde</text>
-<text x="404" y="327" text-anchor="middle" font-size="15">1000-1000, low line</text>
-<rect x="319" y="340" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="335" y="358" text-anchor="middle" font-size="12">1k</text>
-<rect x="353" y="340" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="369" y="358" text-anchor="middle" font-size="12">2k</text>
-<rect x="387" y="340" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="403" y="358" text-anchor="middle" font-size="12">3k</text>
-<rect x="421" y="340" width="31" height="26" fill="#f9a825" stroke="#333"/>
-<text x="437" y="358" text-anchor="middle" font-size="12">4k</text>
-<rect x="455" y="340" width="31" height="26" fill="#eeeeee" stroke="#bbb"/>
-<text x="471" y="358" text-anchor="middle" font-size="12">..</text>
+<rect x="305" y="282" width="364" height="106" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
+<text x="487" y="308" text-anchor="middle" font-size="15" font-weight="bold">Tukde</text>
+<text x="487" y="327" text-anchor="middle" font-size="15">1000-1000 ke tukde, low priority line me</text>
+<rect x="402" y="340" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="418" y="358" text-anchor="middle" font-size="12">1k</text>
+<rect x="436" y="340" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="452" y="358" text-anchor="middle" font-size="12">2k</text>
+<rect x="470" y="340" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="486" y="358" text-anchor="middle" font-size="12">3k</text>
+<rect x="504" y="340" width="31" height="26" fill="#f9a825" stroke="#333"/>
+<text x="520" y="358" text-anchor="middle" font-size="12">4k</text>
+<rect x="538" y="340" width="31" height="26" fill="#eeeeee" stroke="#bbb"/>
+<text x="554" y="358" text-anchor="middle" font-size="12">..</text>
 <line x1="208" y1="335" x2="297" y2="335" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <text x="254" y="325" text-anchor="middle" font-size="13" fill="#2e7d32">agla tukda</text>
 <text x="38" y="422" font-size="15" fill="#2e7d32">job gira -&gt; 3000 se aage, bheje hue skip; galat offer -&gt; CANCELLED, har tukde se pehle dekho</text>

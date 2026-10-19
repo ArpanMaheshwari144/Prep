@@ -39,20 +39,20 @@
 <text x="920" y="441" text-anchor="end" font-size="22" font-weight="bold" fill="#2e7d32">ek atke, baaki chalte rahe</text>
 <rect x="20" y="481" width="920" height="185" rx="10" fill="#fffbea" stroke="#f9a825" stroke-width="2.5"/>
 <text x="38" y="509" font-size="17" font-weight="bold" fill="#8a5a00">PHIR? "Worker ne likha, Kafka commit se pehle crash. Dobara likha to?"</text>
-<rect x="40" y="525" width="204" height="87" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
-<text x="142" y="551" text-anchor="middle" font-size="15" font-weight="bold">Bloom se rokna</text>
-<text x="142" y="570" text-anchor="middle" font-size="15">Bloom DB se alag,</text>
-<text x="142" y="589" text-anchor="middle" font-size="15">update se pehle crash</text>
-<rect x="354" y="534" width="154" height="68" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
-<text x="431" y="560" text-anchor="middle" font-size="15" font-weight="bold">Khabar 2 baar</text>
-<text x="431" y="580" text-anchor="middle" font-size="15">feed me do baar</text>
-<rect x="582" y="525" width="213" height="87" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
-<text x="689" y="551" text-anchor="middle" font-size="15" font-weight="bold">DB khud roke</text>
-<text x="689" y="570" text-anchor="middle" font-size="15">url pe UNIQUE,</text>
-<text x="689" y="589" text-anchor="middle" font-size="15">ON CONFLICT DO NOTHING</text>
-<line x1="250" y1="568" x2="346" y2="568" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="299" y="558" text-anchor="middle" font-size="13" fill="#8a5a00">naya worker</text>
-<line x1="514" y1="568" x2="574" y2="568" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="545" y="558" text-anchor="middle" font-size="13" fill="#8a5a00">isliye</text>
+<rect x="40" y="525" width="322" height="87" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
+<text x="201" y="551" text-anchor="middle" font-size="15" font-weight="bold">Bloom se rokna</text>
+<text x="201" y="570" text-anchor="middle" font-size="15">Bloom DB se alag cheez hai,</text>
+<text x="201" y="589" text-anchor="middle" font-size="15">Bloom update se pehle crash ho gaya</text>
+<rect x="472" y="534" width="154" height="68" rx="8" fill="white" stroke="#e53935" stroke-width="2"/>
+<text x="549" y="560" text-anchor="middle" font-size="15" font-weight="bold">Khabar 2 baar</text>
+<text x="549" y="580" text-anchor="middle" font-size="15">feed me do baar</text>
+<rect x="700" y="525" width="213" height="87" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
+<text x="806" y="551" text-anchor="middle" font-size="15" font-weight="bold">DB khud roke</text>
+<text x="806" y="570" text-anchor="middle" font-size="15">url pe UNIQUE,</text>
+<text x="806" y="589" text-anchor="middle" font-size="15">ON CONFLICT DO NOTHING</text>
+<line x1="368" y1="568" x2="464" y2="568" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="417" y="558" text-anchor="middle" font-size="13" fill="#8a5a00">naya worker</text>
+<line x1="632" y1="568" x2="692" y2="568" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="663" y="558" text-anchor="middle" font-size="13" fill="#8a5a00">isliye</text>
 <text x="920" y="644" text-anchor="end" font-size="22" font-weight="bold" fill="#8a5a00">dobara likha to bhi ek hi</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><polyline points="437.6,183.6 437.6,188.8 437.6,254.8" fill="none" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="447.6" text-anchor="start" y="228.8" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></g></svg>

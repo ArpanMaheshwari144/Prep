@@ -31,11 +31,12 @@
 <text x="116" y="358" text-anchor="middle" font-size="12">..</text>
 <rect x="135" y="340" width="44" height="26" fill="#c8e6c9" stroke="#43a047"/>
 <text x="157" y="358" text-anchor="middle" font-size="12">t8201</text>
-<rect x="313" y="301" width="314" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
-<text x="470" y="327" text-anchor="middle" font-size="15" font-weight="bold">Soye user</text>
-<text x="470" y="346" text-anchor="middle" font-size="15">inbox nahi; lauta to pull se banao</text>
+<rect x="313" y="292" width="322" height="87" rx="8" fill="white" stroke="#555" stroke-width="2"/>
+<text x="474" y="318" text-anchor="middle" font-size="15" font-weight="bold">Jo 1 mahine se nahi aaya</text>
+<text x="474" y="336" text-anchor="middle" font-size="15">uska inbox hi nahi rakhte</text>
+<text x="474" y="356" text-anchor="middle" font-size="15">wapas aaye to ek baar DB se bana do</text>
 <line x1="202" y1="335" x2="305" y2="335" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <text x="255" y="325" text-anchor="middle" font-size="13" fill="#2e7d32">purane hatao</text>
-<text x="647" y="343" font-size="22" font-weight="bold" fill="#2e7d32">RAM chhoti</text>
+<text x="655" y="343" font-size="22" font-weight="bold" fill="#2e7d32">RAM chhoti</text>
 <text x="38" y="422" font-size="15" fill="#2e7d32">800 se aage scroll -&gt; DB se</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><polyline points="849.9,194.0 849.9,292.0 849.9,358.0" fill="none" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="859.9" text-anchor="start" y="332.0" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></g></svg>

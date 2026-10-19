@@ -142,7 +142,7 @@ AAGE POOCHEGA:
 #### 3 Maine aur Ravi ne link banaya, dono ko ek hi code mila
 KIYA: Counter har App ko alag range de, App usme se agla le (range)
 
-![c3](img/c3-c90a111e.svg)
+![c3](img/c3-2bf0fcca.svg)
 
 ```
 AAGE POOCHEGA:
@@ -209,7 +209,7 @@ AAGE POOCHEGA:
 #### 7 Shaam ko LB hi gir gaya, koi request andar nahi
 KIYA: Route 53 LB se poochhta rahe, chup LB list se bahar (DNS failover)
 
-![c7](img/c7-da98581f.svg)
+![c7](img/c7-ec51e010.svg)
 
 ```
 AAGE POOCHEGA:

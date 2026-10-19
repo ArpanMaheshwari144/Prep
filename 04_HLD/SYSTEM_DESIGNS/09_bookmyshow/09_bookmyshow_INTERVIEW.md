@@ -113,7 +113,7 @@ AAGE POOCHEGA:
 #### 3 Pay dabaya, network gaya, app ne dobara bheja
 KIYA: har booking ki ek id, pay hamesha usi id se (idempotency key)
 
-![c3](img/c3-2e1fa8ea.svg)
+![c3](img/c3-7a32eca0.svg)
 
 ```
 AAGE POOCHEGA:
@@ -128,7 +128,7 @@ AAGE POOCHEGA:
 #### 4 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
 KIYA: map Redis se (thodi der purana chalta), faisla sirf DB ke UPDATE pe
 
-![c4](img/c4-273b1b64.svg)
+![c4](img/c4-746ba14b.svg)
 
 ```
 AAGE POOCHEGA:
@@ -179,7 +179,7 @@ AAGE POOCHEGA:
 #### 7 Shaam ko main seat chun raha tha, App machine gir gayi
 KIYA: App kuch yaad nahi rakhta, LB zinda machine ko de (stateless)
 
-![c7](img/c7-2aae7e63.svg)
+![c7](img/c7-3848e658.svg)
 
 ```
 AAGE POOCHEGA:

@@ -20,22 +20,22 @@
 <rect x="40" y="282" width="78" height="68" rx="8" fill="white" stroke="#555" stroke-width="2"/>
 <text x="79" y="308" text-anchor="middle" font-size="15" font-weight="bold">App</text>
 <text x="79" y="327" text-anchor="middle" font-size="15">id m-9</text>
-<rect x="265" y="263" width="171" height="106" rx="8" fill="white" stroke="#555" stroke-width="2"/>
-<text x="350" y="289" text-anchor="middle" font-size="15" font-weight="bold">Server</text>
-<text x="350" y="308" text-anchor="middle" font-size="15">(main, m-9) aaya?</text>
-<rect x="316" y="321" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="332" y="339" text-anchor="middle" font-size="12">m-9</text>
-<rect x="350" y="321" width="31" height="26" fill="#ffebee" stroke="#d32f2f"/>
-<text x="366" y="339" text-anchor="middle" font-size="12">m-9</text>
-<path d="M354,325 L377,343 M377,325 L354,343" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>
-<rect x="506" y="272" width="129" height="87" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
-<text x="570" y="298" text-anchor="middle" font-size="15" font-weight="bold">Ravi ki chat</text>
-<rect x="553" y="312" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
-<text x="569" y="330" text-anchor="middle" font-size="12">hi</text>
+<rect x="265" y="263" width="246" height="106" rx="8" fill="white" stroke="#555" stroke-width="2"/>
+<text x="388" y="289" text-anchor="middle" font-size="15" font-weight="bold">Server</text>
+<text x="388" y="308" text-anchor="middle" font-size="15">main + m-9 pehle aaya tha?</text>
+<rect x="354" y="321" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="370" y="339" text-anchor="middle" font-size="12">m-9</text>
+<rect x="388" y="321" width="31" height="26" fill="#ffebee" stroke="#d32f2f"/>
+<text x="404" y="339" text-anchor="middle" font-size="12">m-9</text>
+<path d="M392,325 L415,343 M415,325 L392,343" stroke="#d32f2f" stroke-width="2" stroke-opacity="0.55"/>
+<rect x="581" y="272" width="129" height="87" rx="8" fill="white" stroke="#43a047" stroke-width="2"/>
+<text x="646" y="298" text-anchor="middle" font-size="15" font-weight="bold">Ravi ki chat</text>
+<rect x="629" y="312" width="31" height="26" fill="#c8e6c9" stroke="#43a047"/>
+<text x="644" y="330" text-anchor="middle" font-size="12">hi</text>
 <line x1="124" y1="316" x2="257" y2="316" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
 <text x="192" y="306" text-anchor="middle" font-size="13" fill="#2e7d32">dobara, wahi m-9</text>
-<line x1="442" y1="316" x2="498" y2="316" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
-<text x="471" y="306" text-anchor="middle" font-size="13" fill="#2e7d32">skip</text>
-<text x="654" y="324" font-size="22" font-weight="bold" fill="#2e7d32">ek baar</text>
+<line x1="517" y1="316" x2="573" y2="316" stroke="#444" stroke-width="2.5" marker-end="url(#sa)"/>
+<text x="546" y="306" text-anchor="middle" font-size="13" fill="#2e7d32">skip</text>
+<text x="730" y="324" font-size="22" font-weight="bold" fill="#2e7d32">ek baar</text>
 <text x="38" y="403" font-size="15" fill="#2e7d32">do user ki id same ho sakti -&gt; check jodi pe (sender_id, clientMsgId)</text>
 </svg><defs><marker id="kaise" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#f9a825"/></marker></defs><polyline points="678.7,130.9 724.5,130.9 724.5,261.8 724.5,327.8" fill="none" stroke="#f9a825" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#kaise)"/><text x="734.5" text-anchor="start" y="301.8" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#e65100">kaise?</text></g></svg>
