@@ -89,6 +89,8 @@ bucket.
 
 **Cue:** ATOMIC: INCR / LUA script · dabba: (Redis atomic)
 
+![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
+
 App-1 aur App-2 dono ne ginti 4 padhi, dono ne 5 likha. Had 5 thi, andar 6.
 
 Isliye dekhna + badalna ek hi kadam me, Redis ke andar (INCR / Lua). INCR me padhna + badhana ek command hai. Token
@@ -118,6 +120,8 @@ loop nahi.
 
 **Cue:** LIMITER GATEWAY pe, sabse aage · dabba: API Gateway
 
+![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
+
 Bot 10,000 / sec bhej raha, LB se hoke App tak aati, App ginti karke 429 deta. App bhar gaya.
 
 Isliye ginti darwaze pe: limiter API Gateway pe, sabse aage. Gateway Redis se poochta, had ke andar to App. Had paar
@@ -143,6 +147,8 @@ baarik had.
 ## 4. Dopahar Redis gira, limiter andha ho gaya
 
 **Cue:** REPLICA + FAIL-OPEN / FAIL-CLOSED · dabba: Redis Cluster + R53 + ALB
+
+![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
 Ek hi Redis tha, ginti wahin. Wo gira to kisi ko pata nahi kaun kitni bhej chuka.
 
@@ -172,6 +178,8 @@ padhne ka bojh, shard = likhne ka bojh.
 
 **Cue:** HOME REGION me ginti · dabba: (ginti ghar wale Redis me)
 
+![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
+
 India, US, Europe, har region ka apna Redis, apni ginti. Teeno me 50-50, jod 150. Had 100 tooti.
 
 Isliye meri ginti mere ghar region me (home region). Mera ghar India hai, to Frankfurt ki request bhi wahin gini
@@ -195,6 +203,8 @@ Har region apni alag ginti? Wahi 150. Had har region me alag lagi, user ke liye 
 ## 6. Wahi bot har 60 sec baad phir aa jaata, din bhar
 
 **Cue:** KAFKA -> PATTERN -> WAF BAN · dabba: Kafka + Pattern Svc + WAF
+
+![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
 429 sirf bolta "60 sec baad aao". Bot 60 sec baad phir aata, din bhar, roz. Kabhi nahi rukta.
 
@@ -221,6 +231,8 @@ Gateway seedha Pattern Svc ko call kare? Har request dheemi. Kafka me daal ke aa
 
 **Cue:** GLOBAL CAP + LOAD SHEDDING (503) · dabba: (gateway pe system ki had)
 
+![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
+
 Laakhon user, har ek apni had ke andar. Par kul jod se server CPU 100%, sabke liye band.
 
 Isliye gateway pe poore system ki bhi had (5,000 / sec). CPU 90% paar to kuch request 503. Kam zaroori pehle chhodo
@@ -242,6 +254,8 @@ Line (queue) me rok lo? Sirf chhota (~2 sec). User chala gaya to uska kaam bekaa
 ## 8. Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
 
 **Cue:** LOCAL COUNTER FALLBACK · dabba: (gateway ki memory)
+
+![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 
 Redis gaya to ginti kahin nahi. Fail-open wali API pe attacker ki sab request andar, server bhar gaye, site band.
 
@@ -266,6 +280,8 @@ behtar.
 ## 9. Office ki night shift: ek IP block, 1000 log atke
 
 **Cue:** KEY = USER_ID (JWT), IP sirf login · dabba: (key badli)
+
+![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
 
 Ginti IP pe thi. Office ka ek IP (NAT), 1000 log. Ek ki galti se IP block, 1000 atke.
 
