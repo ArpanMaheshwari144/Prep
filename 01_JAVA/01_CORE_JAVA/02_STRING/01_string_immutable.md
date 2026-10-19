@@ -211,4 +211,4 @@ x   ──────────────►│  "Hel"      │            
 
 > *"`intern()` returns the canonical pool reference of a string — useful for deduplication when many duplicate strings exist (XML/CSV parsing), but overuse risks filling the string pool memory."*
 
-> *"Java compiler folds compile-time constant expressions into a single pool string — `"Hel" + "lo"` becomes `"Hello"` at compile time. But `variable + literal` is computed at runtime via StringBuilder, creating a new heap object outside the pool. Always use `.equals()` for content comparison."*
+> *"Java compiler folds compile-time constant expressions into a single pool string — `"Hel" + "lo"` becomes `"Hello"` at compile time. But `variable + literal` is computed at runtime (StringBuilder up to Java 8, invokedynamic from Java 9), creating a new heap object outside the pool. Always use `.equals()` for content comparison."*
