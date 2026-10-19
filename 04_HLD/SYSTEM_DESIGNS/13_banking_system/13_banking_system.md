@@ -81,10 +81,8 @@ Banking Service (saara niyam / logic) -> SQL DB. Jaan-boojh ke seedha.
 ![cdabba](img/cdabba-5d4d8f19.svg)
 
 #### 1 Maine Ravi ko 500 bheje, beech me server gira
-```
-DIKKAT     1 tareekh subah 8 baje maine Ravi ko 500 bheje. Mere 500 kate, Ravi ke account me daalne se PEHLE
-           server gira. 500 na mere paas, na Ravi ke paas. Gayab.
-```
+KIYA: dono kaam ek transaction me, ya dono ya koi nahi (transaction)
+
 ![c1](img/c1-a8f576e0.svg)
 
 ```
@@ -100,10 +98,8 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Send dabaya, network gaya, app ne dobara bheja
-```
-DIKKAT     8:30 lift me maine Send dabaya, 500 kat bhi gaye, par jawab aate waqt network gaya. App ne timeout
-           pe khud dobara bheja -> 1000 kat gaye, bhejne the 500.
-```
+KIYA: screen khulte hi ek id, retry pe wahi id (idempotency key)
+
 ![c2](img/c2-27c5205c.svg)
 
 ```
@@ -121,10 +117,8 @@ AAGE POOCHEGA:
 ```
 
 #### 3 9 baje Netflix ka auto-debit aur mera UPI ek saath
-```
-DIKKAT     Mere paas 300. 9:00 Netflix ka 200 ka auto-debit chala, usi second maine UPI se Ravi ko 200 bheje.
-           Do request, do thread, dono ne balance 300 padha -> dono pass -> dono kate -> mera balance -100.
-```
+KIYA: check aur kaatna ek hi query me (atomic UPDATE)
+
 ![c3](img/c3-bb83d498.svg)
 
 ```
@@ -140,10 +134,8 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Maine poochha: mere 500 kahan gaye, kab?
-```
-DIKKAT     Subah se paisa kai baar hila. Maine support se poochha "mere 500 kahan gaye, kab?" (audit bhi yahi)
-           -> har len-den ka pakka khaata chahiye.
-```
+KIYA: har transfer ki 2 line khaate me, usi transaction me (ledger)
+
 ![c4](img/c4-501421b1.svg)
 
 ```
@@ -160,10 +152,8 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Salary aayi, Ravi ko rent bheja, SMS service giri
-```
-DIKKAT     10 baje salary 50,000 aayi, 1 min baad Ravi ko 20,000 rent bheja. Har transfer ke baad SMS, fraud,
-           statement chahiye. Par SMS service giri hui hai -> transfer na ruke, aur SMS khoye bhi nahi.
-```
+KIYA: DB me ek aur table "outbox": SMS ki chitthi bhi usi transaction me likho
+
 ![c5](img/c5-3617f9cb.svg)
 
 ```
@@ -180,10 +170,8 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Salary ke baad maine balance khola
-```
-DIKKAT     Salary aate hi maine balance khola. Har baar 50,000 khaate ki line jodna dheema, to balance
-           ek column me rakha. Par column aur khaata alag ho gaye (bug), to sach kaunsa? Kaun pakdega?
-```
+KIYA: khaata hi sach, balance uska jod, raat ko dono milao (reconciliation)
+
 ![c6](img/c6-cf181cd5.svg)
 
 ```
@@ -196,10 +184,8 @@ AAGE POOCHEGA:
 ```
 
 #### 7 11 baje sabki salary aa gayi, ek Banking service bhar gayi
-```
-DIKKAT     11 baje sabki salary aayi, laakhon transfer ek saath. Ek hi Banking Svc machine thi: CPU bhara,
-           transfer dheeme, phir machine giri -> koi bhi paisa nahi bhej pa raha.
-```
+KIYA: kai machine, LB baante, machine kuch yaad nahi rakhti (stateless)
+
 ![c7](img/c7-fdcf41af.svg)
 
 ```
@@ -214,10 +200,8 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Salary ki bheed me sab balance dekh rahe, transfer dheeme
-```
-DIKKAT     Salary ke baad sab baar-baar balance aur history dekh rahe. Saari padhai usi ek DB pe, jahan
-           transfer bhi likhe jaate -> padhne ki bheed ne paisa bhejna dheema kar diya.
-```
+KIYA: padhna copy se, likhna sirf primary pe (read replica)
+
 ![c8](img/c8-274f1f83.svg)
 
 ```
@@ -233,10 +217,8 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Ravi ki dukaan ko 500, usi second dukaan se 200 refund (deadlock)
-```
-DIKKAT     Maine Ravi ki dukaan ko 500 bheje, usi second dukaan ne mujhe 200 refund kiye. Ek ne pehle mera row
-           pakda, doosre ne dukaan ka; dono ek doosre ka intezaar -> dono atke (deadlock).
-```
+KIYA: taala hamesha ek kram me, chhoti id pehle (lock order)
+
 ![c9](img/c9-e971393e.svg)
 
 ```
@@ -249,10 +231,8 @@ AAGE POOCHEGA:
 ```
 
 #### 10 Shaam ko dukaan ke CA ka export, page 5000 pe atka
-```
-DIKKAT     Ravi ki dukaan: roz ~500 UPI, 3 saal = ~5 lakh line. CA ka tool 20-20 ke page maangta. Page 5000 pe
-           LIMIT 20 OFFSET 100000 -> DB 1,00,020 line PADH ke phenkta. Beech me nayi line -> ek line dobara.
-```
+KIYA: pichhle page ki aakhri line yaad, agla page usse aage (keyset)
+
 ![c10](img/c10-b995db2c.svg)
 
 ```
@@ -269,10 +249,8 @@ AAGE POOCHEGA:
 ```
 
 #### 11 Raat ko: 5 saal ka khaata ek hi table me
-```
-DIKKAT     5 saal ka khaata (~36 arab line) ek table me. Log roz sirf 3 mahine dekhte, par har query / backup
-           arabon line ke saath. Aur kanoon (PMLA / RBI) kam se kam 5 saal rakhwata, bank 8-10.
-```
+KIYA: mahine ke tukde, band mahina S3 pe (partition + archive)
+
 ![c11](img/c11-112c6278.svg)
 
 ```

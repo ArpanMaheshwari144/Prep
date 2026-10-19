@@ -73,10 +73,8 @@ Fetcher sources se khabar laaye, DB me daale. Feed service DB se "taazi 20" nika
 
 
 #### 1 Subah maine app khola, sabko wahi 20 khabar, har baar DB se
-```
-DIKKAT     Subah 7 baje laakhon log app khol rahe, sabko wahi top 20 khabar. Har khulne pe DB se sort karke
-           nikaalte -> DB pe bheed, feed dheemi, kabhi khulti hi nahi.
-```
+KIYA: sabki ek hi feed, ek baar banao, Redis me time se (sorted set)
+
 ![c1](img/c1-d2c92ddd.svg)
 
 ```
@@ -91,10 +89,8 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Meri feed me khabar 20 minute purani
-```
-DIKKAT     Badi khabar aayi, par meri feed me 20 minute baad dikhi. Ek hi kaam me source se laana aur DB me
-           likhna dono, ek dheema source poori line rok deta -> khabar purani.
-```
+KIYA: fetcher sirf laaye, Kafka me daale, worker apni speed se likhe (Kafka)
+
 ![c2](img/c2-42d5cb2f.svg)
 
 ```
@@ -109,10 +105,8 @@ AAGE POOCHEGA:
 ```
 
 #### 3 8 baje election result, 40 guna bheed
-```
-DIKKAT     8 baje election result: aam 500 / sec ki jagah 20,000 / sec. Ek Feed Svc machine ka CPU bhara,
-           cache miss seedha primary DB pe, jahan fetcher bhi likh raha -> dono dheeme.
-```
+KIYA: kai Feed machine + LB, miss pe DB ki copy se (read replica)
+
 ![c3](img/c3-044f7882.svg)
 
 ```
@@ -131,10 +125,8 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Dopahar "India ne match jeeta", meri feed me 5 baar
-```
-DIKKAT     Dopahar "India ne match jeeta" 5 source ne chhaapa, thode alag title, alag URL. Sab naya maana
-           -> meri feed me wahi khabar 5 baar, baaki khabar neeche dab gayi.
-```
+KIYA: dekha URL Bloom filter se, wahi khabar title ke hash se (Bloom + SimHash)
+
 ![c4](img/c4-fc25ba00.svg)
 
 ```
@@ -151,10 +143,8 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Dopahar baad nayi khabar aani ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
-```
-DIKKAT     Dopahar baad ek chhota source 30 sec tak jawab nahi de raha. Sab usi ke intezaar me atke, baaki
-           999 source ki khabar bhi nahi aayi -> poori feed ruk gayi.
-```
+KIYA: thodi der me chhodo, baar-baar fail = call hi mat karo (timeout + circuit breaker)
+
 ![c5](img/c5-0501d967.svg)
 
 ```
@@ -171,9 +161,8 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Shaam ko mujhe sirf tech aur sports chahiye
-```
-DIKKAT     Shaam ko mujhe sirf tech aur sports pasand. Har user ki alag feed (10 lakh feed) bahut mehngi.
-```
+KIYA: har category ki ek list, mere liye dono milao (category feed)
+
 ![c6](img/c6-0baed431.svg)
 
 ```
@@ -190,10 +179,8 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Raat ko maine "cricket" dhoondha, poori table padhi gayi
-```
-DIKKAT     Raat ko maine "cricket" dhoondha. DB ne har khabar ki poori line padh ke match kiya, 2 crore row
-           -> search bahut dheema, aur DB baaki sab ke liye dheemi.
-```
+KIYA: har shabd ki list: kis-kis khabar me hai (inverted index)
+
 ![c7](img/c7-a8ab73c6.svg)
 
 ```
@@ -209,10 +196,8 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko DBA ka mail: 6 mahine me ~2 crore row, kharcha badhta ja raha
-```
-DIKKAT     Usi raat DBA ka mail: 6 mahine me ~2 crore khabar ki row, disk / backup ka kharcha badh raha.
-           Taazi 20 ke alawa purana koi padhta hi nahi. (Query dheemi NAHI hui: published_at pe index hai.)
-```
+KIYA: har mahine ka alag tukda, purana S3 pe (partition + archive)
+
 ![c8](img/c8-260e4b77.svg)
 
 ```
@@ -231,10 +216,8 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Mail ka doosra hissa: source 100 guna hue to ek DB machine nahi jhelegi
-```
-DIKKAT     Mail aage: "source 100 guna ya log khud content daalne lage to ek DB likhai aur data nahi jhelegi."
-           (Hamare number pe ek DB kaafi hai, ye sirf bahut bade scale pe.)
-```
+KIYA: article_id se tukde, har tukda alag machine (shard)
+
 ![c9](img/c9-da5c1c60.svg)
 
 ```
