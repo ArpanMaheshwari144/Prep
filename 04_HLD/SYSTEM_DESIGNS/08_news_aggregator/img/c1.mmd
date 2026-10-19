@@ -2,7 +2,7 @@
 flowchart LR
     n_USER["USER"]
     n_Feed_Svc["Feed Svc"]
-    n_Redis["Redis<br/>sabko wahi 20, DB pe 500 / sec<br/>-> sabki ek hi feed, ek baar banao, Redis me time se (sorted set)<br/>breaking news -> aate hi sabse upar<br/>Redis khaali -> DB se ek hi banaye, baaki ruke (lock)"]
+    n_Redis["Redis<br/>(sorted set)"]
     n_DB["DB"]
     n_Fetcher["Fetcher"]
     n_USER --> n_Feed_Svc

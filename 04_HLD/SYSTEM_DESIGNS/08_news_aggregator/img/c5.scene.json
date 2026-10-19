@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: sab usi ke intezaar me",
+   "label": "PEHLE: fetcher sab ko usi ke intezaar me rokta",
    "items": [
     {
      "box": "Fetcher"
@@ -26,7 +26,7 @@
      "sub": "line me atke"
     }
    ],
-   "result": "feed ruki"
+   "result": "feed ruk gayi"
   },
   {
    "tag": "ab",

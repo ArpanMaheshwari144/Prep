@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: har khulne pe DB sort kare",
+   "label": "PEHLE: har baar app khulne pe DB sort karta tha",
    "items": [
     {
      "box": "Laakhon user",
@@ -14,11 +14,11 @@
     },
     {
      "box": "DB",
-     "sub": "500 / sec sort",
+     "sub": "500 / sec sort kar raha",
      "bad": true
     }
    ],
-   "result": "feed dheemi"
+   "result": "feed dheemi ho gayi"
   },
   {
    "tag": "ab",
@@ -52,8 +52,8 @@
      "good": true
     }
    ],
-   "result": "turant",
-   "foot": "Redis khaali ho gaya -> DB se ek hi banaye, baaki ruk ke Redis se (lock)"
+   "result": "feed turant khuli",
+   "foot": "Redis khaali ho gaya to DB se ek hi banaye, baaki ruk ke Redis se padhe"
   }
  ]
 }

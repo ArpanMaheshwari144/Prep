@@ -25,7 +25,7 @@
      "bad": true
     }
    ],
-   "result": "dono dheeme"
+   "result": "Feed aur DB dono dheeme"
   },
   {
    "tag": "ab",
@@ -68,7 +68,7 @@
     }
    ],
    "result": "main DB sirf likhe",
-   "foot": "8 baje pata tha -> 7:45 pe pehle se machine + cache garam"
+   "foot": "8 baje ka pata tha, isliye 7:45 pe pehle se machine + cache garam"
   }
  ]
 }

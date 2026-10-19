@@ -4,7 +4,7 @@ flowchart LR
     n_LF["LB -> Feed Svc x N"]
     n_RES["Redis + Elasticsearch"]
     n_Read_replica["Read replica"]
-    n_DB["DB<br/>ek machine nahi jhelti<br/>-> article_id se tukde, har tukda alag machine (shard by article_id)<br/>shard badhaya -> sirf thoda data hile (consistent hashing)<br/>taazi 20 -> Redis, miss pe har tukde se thoda"]
+    n_DB["DB<br/>(shard by article_id)"]
     n_Archive["Archive"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]

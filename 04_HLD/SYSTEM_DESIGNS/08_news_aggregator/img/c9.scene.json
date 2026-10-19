@@ -17,7 +17,7 @@
      "bad": true
     }
    ],
-   "result": "nahi jhelegi"
+   "result": "ek machine nahi jhelegi"
   },
   {
    "tag": "ab",
@@ -63,7 +63,7 @@
     }
    ],
    "result": "likhai barabar bati",
-   "foot": "taazi 20 Redis se; shard badhaya -> sirf thoda data hile (consistent hashing)"
+   "foot": "taazi 20 Redis se; shard badhaya to sirf thoda data hile (consistent hashing)"
   }
  ]
 }

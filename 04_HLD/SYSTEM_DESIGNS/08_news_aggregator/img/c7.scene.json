@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: DB har row padh ke match kare",
+   "label": "PEHLE: DB har row padh ke match karta",
    "items": [
     {
      "box": "\"cricket\""
@@ -25,7 +25,7 @@
      "bad": true
     }
    ],
-   "result": "dheema"
+   "result": "bahut dheema"
   },
   {
    "tag": "ab",
@@ -56,8 +56,8 @@
      "good": true
     }
    ],
-   "result": "turant",
-   "foot": "crikcet likha -> 1-2 akshar farak chalta (fuzzy); ES gadbad -> DB sach, ES dobara banao"
+   "result": "turant mila",
+   "foot": "crikcet likha to 1-2 akshar ka farak chal jaata; ES gadbad ho to DB sach, ES dobara banao"
   }
  ]
 }

@@ -5,7 +5,7 @@ flowchart LR
     n_Elasticsearch["Elasticsearch"]
     n_Redis["Redis (feed + category)"]
     n_DBR["DB + Read replica"]
-    n_Archive["Archive<br/>2 crore row, kharcha<br/>-> har mahine ka alag tukda, purana S3 pe (partition + archive)<br/>1 saal purani khuli -> S3 se, dheemi par chalti"]
+    n_Archive["Archive (S3)<br/>(partition + archive)"]
     n_KW["Kafka -> Worker"]
     n_SF["Sources -> Fetcher"]
     n_USER --> n_LF

@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: har URL naya maana",
+   "label": "PEHLE: har naya URL nayi khabar maana",
    "items": [
     {
      "box": "5 source",
@@ -25,7 +25,7 @@
      "bad": true
     }
    ],
-   "result": "5 baar"
+   "result": "5 baar dikhi"
   },
   {
    "tag": "ab",
@@ -71,7 +71,7 @@
      "good": true
     }
    ],
-   "result": "ek baar",
+   "result": "ek baar dikhi",
    "foot": "Bloom: koi bit 0 = pakka naya; sab 1 = shayad dekha (kabhi ek nayi chhoot jaaye, news me chalta)"
   }
  ]

@@ -5,7 +5,7 @@ flowchart LR
     n_Redis["Redis (taazi feed)"]
     n_DB["DB"]
     n_Worker["Worker"]
-    n_Kafka["Kafka<br/>khabar 20 min purani<br/>-> fetcher sirf laaye, Kafka me daale, worker apni speed se likhe (Kafka)<br/>ek atke to doosra nahi rukta<br/>worker ne do baar likha -> ek hi lage (UNIQUE)"]
+    n_Kafka["Kafka<br/>(queue)"]
     n_Fetcher["Fetcher"]
     n_Sources["Sources"]
     n_USER --> n_Feed_Svc

@@ -3,7 +3,7 @@
  "rows": [
   {
    "tag": "pehle",
-   "label": "PEHLE: har user ki alag feed",
+   "label": "PEHLE: har user ki alag feed banate",
    "items": [
     {
      "box": "10 lakh user"
@@ -61,8 +61,8 @@
      "good": true
     }
    ],
-   "result": "~20 list, 10 lakh nahi",
-   "foot": "ek khabar dono category me -> dono list me, milate waqt id se ek"
+   "result": "sirf ~20 list, 10 lakh nahi",
+   "foot": "ek khabar dono category me ho to dono list me, milate waqt id se ek"
   }
  ]
 }
