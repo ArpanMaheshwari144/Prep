@@ -3,7 +3,7 @@
 > User BUY / SELL order deta hai, system order match karta hai, paisa aur share sahi jagah pahunchte hain, sabko live price dikhta hai.
 > Dil do cheezein: paisa kabhi galat nahi (strong consistency), aur matching bahut tez (RAM me, microseconds). Finance interview me (JP / GS) yahi poochte: consistency, ACID, idempotency, ledger, audit.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,26 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-   KYA HUA                                     ILAAJ                                DABBA JUDA
-1  ek tap, network gaya, do order lag gaye  -> IDEMPOTENCY KEY (wahi id dobara)     Order Service
-2  wallet 50k, 30k-30k dono order pass      -> check + block EK atomic query        Wallet
-3  Suresh ke 10, mujhe aur Mohan dono ko    -> ek symbol ek thread, book RAM me     Matching Engine
-4  9:15 sab TCS pe toot pade                -> baanto mat, ek thread kaafi, line    Queue
-5  10:15 server gira, book gayab            -> pehle log, phir book; gira = replay  Event Log (= wahi line)
-6  mera 30k kata, Suresh ko mila nahi       -> ek transaction: chaaron ya koi nahi  Settlement
-7  dopahar INFY 20k kata, share nahi aaye   -> har step ka haal, aage badho         Wallet DB + Portfolio DB
-8  10 lakh log price poochh rahe            -> push (TV jaisa), WebSocket           Pub/Sub + WebSocket
-
-POORA DESIGN (upar ke dabbe kram se):
-   User -> Order Service (id) -> Wallet (block) -> Event Log -> Matching (ek stock ek thread)
-        -> Settlement -> Wallet DB + Portfolio DB
-   price: Matching -> Pub/Sub -> WebSocket -> users
-```
-
----
 
 ## Shuru
 
@@ -75,6 +55,8 @@ book wapas (card 5).
 
 ## 1. Maine ek baar dabaya, order do lag gaye
 
+**Cue:** IDEMPOTENCY KEY (wahi id dobara) · dabba: Order Service
+
 Isliye screen khulte hi app ek id banata hai. Network gaya aur app dobara bheje, to wahi id jaati hai. Server us id
 pe UNIQUE rakhta, wahi id dobara aayi to purana jawab, order ek hi (idempotency key).
 
@@ -92,6 +74,8 @@ Button pehli tap pe band kar do to? Kaafi nahi. Retry app khud karta hai, button
 *ab order ek hai, par paisa do order me baant diya to?*
 
 ## 2. Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
+
+**Cue:** check + block EK atomic query · dabba: Wallet
 
 Laptop se TCS 30k, phone se INFY 30k. Dono server ne pehle 50k dekha, dono pass, wallet minus me. Isliye check aur
 block ek hi query me: `SET blocked = blocked + 30k WHERE total - blocked >= 30k`. Ek jeeta to 1 row, block. Doosre
@@ -120,6 +104,8 @@ Java synchronized laga do? Nahi. Taala ek machine ka hai, phone doosre server pe
 
 ## 3. Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
 
+**Cue:** ek symbol ek thread, book RAM me · dabba: Matching Engine
+
 Do thread, dono ko "10 hai" dikha, dono ne le liye, 20 bik gaye. Isliye ek share ke saare order ek line me, aur us
 line ko ek hi thread chalata (ek symbol ek thread). Main pehle aaya to 10 mile, Mohan ko 0, wo line me.
 
@@ -138,6 +124,8 @@ Matching DB ke ACID se kyun nahi? DB har order pe dheema. Matching RAM me.
 
 ## 4. 9:15 baje sab TCS pe toot pade
 
+**Cue:** baanto mat, ek thread kaafi, line · dabba: Queue
+
 Hazaaron order har second. Isliye TCS ki ek line, aur ek thread RAM me tez nipta deta, lakhon har second. Line me
 lagte hi user ko ACCEPTED turant, FILLED tab jab sauda ho.
 
@@ -155,6 +143,8 @@ TCS ko do thread me baant do? Nahi. Ek stock = ek line. Baantna stocks ke BEECH,
 *ab sab RAM me hai, server gira to?*
 
 ## 5. Server gira, poori order book gayab
+
+**Cue:** pehle log, phir book; gira = replay · dabba: Event Log (= wahi line)
 
 10:15 matching server gira, book sirf RAM me thi, 4,000 order gayab. Isliye har order pehle log me (disk), phir
 book me. Gira to log dobara chalao, wahi 4,000 wapas (replay). Log me har order ko number milta (#501).
@@ -178,6 +168,8 @@ Time se kram kyun nahi, number kyun? Do machine ka time (clock) alag, aur ek sec
 
 ## 6. Mera paisa kat gaya, Suresh ko mila hi nahi
 
+**Cue:** ek transaction: chaaron ya koi nahi · dabba: Settlement
+
 Mera wallet -30k hua, phir crash, Suresh ko +30k nahi gaya. Isliye chaaron badlaav ek transaction me: Arpan -30k
 +10 share, Suresh +30k -10 share, phir COMMIT. Ya sab, ya koi nahi.
 
@@ -199,6 +191,8 @@ Aakhir me "done" flag laga do? Flag se pehle gira to pata hi nahi kitna likha th
 *ab paisa ek DB me, share doosre me, ek transaction nahi ban sakti to?*
 
 ## 7. Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
+
+**Cue:** har step ka haal, aage badho · dabba: Wallet DB + Portfolio DB
 
 Wallet DB me -20k hua, crash, Portfolio DB me 5 INFY nahi aaye. Do DB, ek transaction nahi. Isliye har kadam ka haal
 likhte hain (status log: wallet done, portfolio done). Fail hua to likhe haal se retry, aage hi, jab tak portfolio
@@ -228,6 +222,8 @@ kare, user nahi. User kuch nahi karta, trade khud poora.
 *ab andar sab theek, par bahar 10 lakh log price maang rahe*
 
 ## 8. 10 lakh log ek saath price poochh rahe, server baith gaya
+
+**Cue:** push (TV jaisa), WebSocket · dabba: Pub/Sub + WebSocket
 
 Har user har second poochh raha tha, server band. Isliye connection khula rakhte, price badla tabhi server khud
 bhejta (WebSocket push). Matching se price pub/sub pe jaata, wahan se har WebSocket server tak, wahan se users ko.

@@ -3,7 +3,7 @@
 > User file / folder deta hai, bahar ki company (third-party) use jaanchti hai (2-3 sec), file store hoti, user ko tracking link milta. JP ne ye sach me poocha tha (asli SDE-3 writeup). Aam product design, finance nahi.
 > Dil teen cheezein: user ruke nahi (async + trackingId), file ke bytes hamare server se na guzrein (presigned URL), aur haal hamesha pata.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,26 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-   KYA HUA                                     ILAAJ                                DABBA JUDA
-1  report.pdf daali, 3 sec ruka, thread atke -> ASYNC + TRACKING ID (queue, worker)  Kafka + Worker + DB
-2  5 GB video hamare server se guzri         -> PRESIGNED URL, bytes seedha S3       S3 (client seedha)
-3  4.5 GB chadhi, wifi gaya                  -> MULTIPART, sirf bache tukde          (S3 multipart)
-4  app crash, "complete" aaya hi nahi        -> SWEEPER job (atki file)              Sweeper job
-5  10,000 log har 2 sec haal poochh rahe     -> CACHE Redis + READ REPLICA           Redis + Read replica
-6  poora folder, 1000 file                   -> PARENT id + CHILD id                 (DB me parent)
-7  Ravi ne mera T-101 daal ke file maangi    -> OWNER CHECK (AUTHZ), 403             Gateway + Upload Svc
-8  maine S3 ka link WhatsApp pe bheja        -> SIGNED GET, 5 min ka naya paas       S3 signed GET (s3_key)
-9  naam report.pdf, andar EXE                -> MAGIC BYTES (pehle kuch byte)        Worker + magic bytes
-
-POORA DESIGN (upar ke dabbe kram se):
-   Client -> Gateway / LB -> Upload Svc (signed URL + T-101) · Client -> S3 seedha (multipart)
-   -> Kafka -> Worker (Validator + magic bytes) -> DB (haal) · Redis + replica = haal · Sweeper = atki file
-```
-
----
 
 ## Shuru
 
@@ -56,6 +36,8 @@ isliye beech me queue + worker.
 *ab tootega kahan? sabse pehle jaanch pe, kyunki wo 3 sec leti*
 
 ## 1. Maine report.pdf daali, 3 second ghoomta screen dekhta raha
+
+**Cue:** ASYNC + TRACKING ID (queue, worker) · dabba: Kafka + Worker + DB
 
 31 March, 200 upload har second, har server thread Validator ke jawab tak 3 sec atka, threads khatam. Isliye user ko
 turant tracking id (T-101) aur haal VALIDATING de dete hain. Khabar Kafka me jaati, worker baad me Validator chalata,
@@ -92,6 +74,8 @@ S3 se padhta, bytes hamare server se tab bhi nahi guzarte.
 
 ## 2. Meri 5 GB video hamare server ke raaste S3 jaa rahi
 
+**Cue:** PRESIGNED URL, bytes seedha S3 · dabba: S3 (client seedha)
+
 Phone se 5 GB hamare server pe, phir wahi 5 GB S3 pe. Bytes do baar, thread minuton atka, mehnga + dheema. Isliye
 server sirf ek signed URL deta (10 min ka) + T-102. Phone 5 GB seedha S3 pe bhejta, phir "/complete T-102" (presigned URL).
 
@@ -113,6 +97,8 @@ AWS chaabi hi app ko de do? Kabhi nahi. Chaabi = poora bucket. Paas = sirf ek fi
 
 ## 3. 4.5 GB chadh chuki thi, wifi chala gaya
 
+**Cue:** MULTIPART, sirf bache tukde · dabba: (S3 multipart)
+
 Ek hi lamba upload tha, 90% pe wifi gaya, phir 0 se 5 GB. Isliye file tukdon me: 100 tukde, kai saath jaate, har
 tukde ki rasid (ETag), aakhir me COMPLETE. Wifi gaya to 90 ki rasid S3 pe hai, sirf bache 91 - 100 bhejo (multipart).
 
@@ -132,6 +118,8 @@ Ek hi lamba upload? Ek baar toota to sab bekaar, 0 se shuru.
 *ab upload hua, par app hi crash ho gaya aur kisi ne bataya nahi*
 
 ## 4. App crash, "complete" kabhi aaya hi nahi
+
+**Cue:** SWEEPER job (atki file) · dabba: Sweeper job
 
 T-103 DB me UPLOADING pe atka hamesha, bytes S3 me pade (paisa lag raha), koi nahi dekhta. Isliye har kuch min (jaise
 5) ek job atki file dhoondhti (sweeper). 10 min se haal nahi badla, jabki jaanch 3 sec ki hai, to atka. S3 me bytes
@@ -153,6 +141,8 @@ Sweeper na ho? File atki hi rehti, koi nahi dekhta.
 *ab file chal padi, par deadline ke din sab haal poochh rahe*
 
 ## 5. Deadline ke din sab har 2 sec haal poochh rahe
+
+**Cue:** CACHE Redis + READ REPLICA · dabba: Redis + Read replica
 
 10,000 log har 2 sec, har poochh seedha primary DB pe, DB ghira, sab dheema. Isliye GET /status/T-101 pehle Redis se
 (1 ms). Redis me nahi mila to read replica se laao, Redis me rakho (cache + replica).
@@ -181,6 +171,8 @@ pe sirf SET NX + chhoti umar, ya primary se padho.
 
 ## 6. Maine file nahi, poora folder daala (1000 file)
 
+**Cue:** PARENT id + CHILD id · dabba: (DB me parent)
+
 1000 file, har ek ka alag tracking id, folder ka koi haal nahi. "Folder ho gaya?" ke liye 1000 id dekhun? Isliye folder
 ka ek id (P-1), har file uska child. Batch init me 1000 URL, har file ka child id. Har child DONE pe folder pe ginti +1
 (done_count). Sab DONE = P-1 DONE (parent + child).
@@ -201,6 +193,8 @@ Har file ka alag id hi rakhte? Folder ka haal pata hi nahi, 1000 id khud dekho.
 *ab sab chal raha, par koi doosre ki file maange to?*
 
 ## 7. Ravi ne mera trackingId daal ke meri file le li
+
+**Cue:** OWNER CHECK (AUTHZ), 403 · dabba: Gateway + Upload Svc
 
 Ravi ne GET /download/T-101 kiya, service ne id dekhi aur de di, file chori. Isliye har request pe check: file ka
 maalik = maangne wala? JWT bole ravi, T-101 ka maalik arpan, to 403 (owner check).
@@ -223,6 +217,8 @@ warna 403. userId JWT se, body se kabhi nahi.
 
 ## 8. Maine S3 ka seedha link WhatsApp pe bhej diya
 
+**Cue:** SIGNED GET, 5 min ka naya paas · dabba: S3 signed GET (s3_key)
+
 Pakka link hamesha chalta, WhatsApp group me gaya, koi bhi kabhi bhi khole. Isliye DB me sirf S3 key rakhte. Download
 maanga to maalik check, phir naya 5 min ka link (signed GET).
 
@@ -240,6 +236,8 @@ Pakka link DB me rakh ke de do? File sabke haath, hamesha ke liye.
 *ab file ka raasta safe, par file khud hi jhooth bol rahi ho to?*
 
 ## 9. Naam report.pdf, andar EXE nikla
+
+**Cue:** MAGIC BYTES (pehle kuch byte) · dabba: Worker + magic bytes
 
 Upload pe naam report.pdf, type application/pdf, humne client ka bola maana, andar virus.exe. Isliye worker file ke
 pehle 4 byte padhta. Shuru "MZ" = EXE, "%PDF" nahi, reject (magic bytes).

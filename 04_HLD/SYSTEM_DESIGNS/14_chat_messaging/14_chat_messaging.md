@@ -3,7 +3,7 @@
 > Maine message bheja, Ravi tak turant pahunche, chahe Ravi ne kuch na maanga ho. Ravi offline ho to baad me mile, kuch na khoye.
 > Dil: banda KAHAN juda hai (baaki designs me "data kahan rakhein"), aur khuli connection.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,27 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-    KYA HUA                                   ILAAJ                                DABBA JUDA
-1   subah 2 crore jude, memory khatam      -> EVENT LOOP, kuch thread, lakhon conn   Chat Server x200 + LB
-2   Ravi doosre server pe, "offline" bola  -> MAP Redis me (kaun kahan)            Redis
-3   Ravi ka phone band                     -> pehle DB, phir bhejo; PUSH           Message DB + Push
-4   roz 1.2 TB message                     -> chat_id se baanto                    Cassandra
-5   net dheema, "hi" do baar               -> IDEMPOTENCY (clientMsgId)            Idempotency check
-6   meri ghadi 5 min aage                  -> SEQ, server ka +1                    Seq (Redis INCR)
-7   College Gang (500) me message          -> group ka EK copy                     (Cassandra me group chat)
-8   Ravi ne 50 padhe: unread / tick        -> NISHAAN read_upto                    Nishaan store
-9   200 MB shaadi ka video                 -> S3 PRESIGNED URL, message me pata    S3
-10  raat ko online / last seen             -> UMAR 30 sec (TTL)                    Presence
-
-POORA DESIGN (upar ke dabbe kram se):
-   User -> LB -> Chat Server (event loop) -> Idempotency -> Cassandra (chat_id, seq)
-   Redis: kaun kis server · Seq: +1 · Push: offline ghanti · Nishaan: read_upto · S3: video · Presence: TTL
-```
-
----
 
 ## Shuru
 
@@ -82,6 +61,8 @@ TB roz). Aur history kahan, usi se jagah ka dhaancha tay, yahan Slack jaisa.
 
 ## 1. Subah 2 crore log jude, server ki memory khatam
 
+**Cue:** EVENT LOOP, kuch thread, lakhon conn · dabba: Chat Server x200 + LB
+
 Pehle ek connection = ek thread (~1 MB). 2 crore connection, har ek ka thread. Memory khatam.
 
 Isliye kuch thread (jaise 4) saare connection sambhalte hain. Zyadatar connection chup rehte. OS batata kahan data
@@ -105,6 +86,8 @@ judo (backoff + jitter). Bheja hua khota nahi.
 *ab 200 server hain, Ravi kis pe hai?*
 
 ## 2. Maine Ravi ko "hi" bheja, server bola Ravi offline
+
+**Cue:** MAP Redis me (kaun kahan) · dabba: Redis
 
 Pehle har server ke map me sirf apne log. Main server-1 pe, Ravi server-7 pe. Server-1 ke map me Ravi nahi, to bola
 "Ravi offline". Galat.
@@ -133,6 +116,8 @@ Redis pub-sub se kyun nahi? Chal sakta, par wo kuch rakhta nahi. Sunne wala na h
 
 ## 3. Ravi ka phone band tha, message kahan jaaye
 
+**Cue:** pehle DB, phir bhejo; PUSH · dabba: Message DB + Push
+
 Pehle bhejte the, na pahunche to DB me. Server DB me likhne se pehle gira, message gaya.
 
 Isliye pehle DB me likho, phir bhejne ki koshish (store-then-forward). Phone band hai to push ghanti (FCM / APNs).
@@ -151,6 +136,8 @@ Pehle bhejo, baad me DB? Wahi hua: beech me server gira, message gaya.
 *ab sab DB me likh rahe, DB kitna jhelega?*
 
 ## 4. Roz 1.2 TB message, ek DB nahi jhelta
+
+**Cue:** chat_id se baanto · dabba: Cassandra
 
 Pehle ek DB machine. 46,000 likhai / second, nahi jhelega.
 
@@ -178,6 +165,8 @@ Cassandra se.
 
 ## 5. Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
 
+**Cue:** IDEMPOTENCY (clientMsgId) · dabba: Idempotency check
+
 Pehle har bhejna naya message. Hi, timeout, phir hi. Ravi ki chat me do baar.
 
 Isliye app har message ki apni id banata (m-9), dobara bheje to wahi id (clientMsgId). Server dekhta "pehle aaya?",
@@ -197,6 +186,8 @@ message.
 *ab ek baar hi aaya, par kram galat*
 
 ## 6. Meri ghadi 5 min aage, mere message upar chadh gaye
+
+**Cue:** SEQ, server ka +1 · dabba: Seq (Redis INCR)
 
 Pehle kram phone ki ghadi se. Meri ghadi 10:05 (asal 10:00), mera message Ravi se upar chadh gaya. Kram ulta.
 
@@ -221,6 +212,8 @@ Snowflake id se kram? Wo sirf pehchaan (message_id). Kram nahi, do server ki gha
 
 ## 7. College Gang (500) me ek message, 500 baar likhein?
 
+**Cue:** group ka EK copy · dabba: (Cassandra me group chat)
+
 Pehle har member ke inbox me copy. Ek message, 500 likhai.
 
 Isliye group ka message ek baar likho, group chat ke neeche. Sab wahi padhte. Bhejna server-wise: online kahan hain
@@ -241,6 +234,8 @@ Har member ke inbox me copy? Wahi hua, 500 likhai.
 *ab message pahunch gaye, tick aur unread?*
 
 ## 8. Ravi ne 50 padhe: unread aur neeli tick kaise
+
+**Cue:** NISHAAN read_upto · dabba: Nishaan store
 
 Pehle har message x har member ka "padha" record. 50 message x 500 member = 25,000 likhai. Bhaari.
 
@@ -270,6 +265,8 @@ Har message pe "padha" record? Wahi 25,000 likhai.
 
 ## 9. Shaadi ka 200 MB video chat ke raaste
 
+**Cue:** S3 PRESIGNED URL, message me pata · dabba: S3
+
 Pehle video chat server se. 200 MB pe server 2 min atka, aur group me 500 x 200 MB = 100 GB.
 
 Isliye app video seedha S3 me daalta, 10 min ka paas leke (presigned URL). Message me sirf S3 key + thumbnail.
@@ -292,6 +289,8 @@ Chat server ke raaste? Wahi hua: server atka, 100 GB.
 *ab aakhri: kaun online hai*
 
 ## 10. Raat ko online / last seen sabko kaise
+
+**Cue:** UMAR 30 sec (TTL) · dabba: Presence
 
 Pehle har aana-jaana saare contacts ko batate the. 500 contacts x crore log, bahut message.
 

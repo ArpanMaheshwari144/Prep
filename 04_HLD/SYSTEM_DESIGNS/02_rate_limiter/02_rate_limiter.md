@@ -3,7 +3,7 @@
 > Ek user / IP ek tay samay me kitni request bhej sakta hai, uski had. Had paar to 429 (Too Many Requests). Misaal: ek IP se ek minute me 5 login.
 > Dil teen cheezein: har request ke saamne baitha hai, isliye ~1 ms. Ginti saari machines pe ek. Limiter khud gire to site na gire.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,26 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-   KYA HUA                                     ILAAJ                                DABBA JUDA
-1  password bhoola, 9 login, sab andar      -> Redis me EK ginti, 60 sec umar       Redis (LB + App x2 pehle)
-2  bot ke 20 login ek pal me, 6 ghuse       -> ATOMIC: INCR / LUA script            (Redis atomic)
-3  bot ki 429 wali bhi App tak ghoomi       -> LIMITER GATEWAY pe, sabse aage       API Gateway
-4  dopahar Redis gira, limiter andha        -> REPLICA + FAIL-OPEN / FAIL-CLOSED    Redis Cluster + R53 + ALB
-5  meri script 3 region se, 150 nikli       -> HOME REGION me ginti                 (ginti ghar wale Redis me)
-6  bot har 60 sec phir aa jaata             -> KAFKA -> PATTERN -> WAF BAN          Kafka + Pattern Svc + WAF
-7  shaam sale, sab limit me, server gira    -> GLOBAL CAP + LOAD SHEDDING (503)     (gateway pe system ki had)
-8  raat attack, Redis gira, API khuli      -> LOCAL COUNTER FALLBACK               (gateway ki memory)
-9  office ka ek IP, 1000 log block          -> KEY = USER_ID (JWT), IP sirf login   (key badli)
-
-POORA DESIGN (upar ke dabbe kram se):
-   User -> Route 53 -> WAF -> ALB -> API Gateway (limiter) -> Redis Cluster (token bucket Lua) -> App
-   baar-baar wala: Gateway -> Kafka -> Pattern Svc -> WAF ban
-```
-
----
 
 ## Shuru
 
@@ -82,6 +62,8 @@ jagah se.
 
 ## 1. Password bhool gaya, 9 baar login kiya, saari andar chali gayi
 
+**Cue:** Redis me EK ginti, 60 sec umar · dabba: Redis (LB + App x2 pehle)
+
 LB ne mere 9 login baant diye: App-1 ne 5 gine, App-2 ne 4. Kisi ki had paar nahi hui, 9 andar.
 
 Isliye sab App ek hi Redis key ginte hain (rate:Arpan:login). Har request pe +1. Pehli request pe key ki umar 60 sec
@@ -102,6 +84,8 @@ bucket.
 *ab ginti ek jagah hai, par ek saath 20 aayi to?*
 
 ## 2. Bot ne mere account pe 20 login ek saath bheje, 6 ghus gaye
+
+**Cue:** ATOMIC: INCR / LUA script · dabba: (Redis atomic)
 
 App-1 aur App-2 dono ne ginti 4 padhi, dono ne 5 likha. Had 5 thi, andar 6.
 
@@ -130,6 +114,8 @@ loop nahi.
 
 ## 3. Bot ki 429 wali request bhi App tak ghoom ke aayi
 
+**Cue:** LIMITER GATEWAY pe, sabse aage · dabba: API Gateway
+
 Bot 10,000 / sec bhej raha, LB se hoke App tak aati, App ginti karke 429 deta. App bhar gaya.
 
 Isliye ginti darwaze pe: limiter API Gateway pe, sabse aage. Gateway Redis se poochta, had ke andar to App. Had paar
@@ -153,6 +139,8 @@ baarik had.
 *ab sab kuch Redis pe tika hai, wo gira to?*
 
 ## 4. Dopahar Redis gira, limiter andha ho gaya
+
+**Cue:** REPLICA + FAIL-OPEN / FAIL-CLOSED · dabba: Redis Cluster + R53 + ALB
 
 Ek hi Redis tha, ginti wahin. Wo gira to kisi ko pata nahi kaun kitni bhej chuka.
 
@@ -180,6 +168,8 @@ padhne ka bojh, shard = likhne ka bojh.
 
 ## 5. Meri script 3 region se chali, 100 ki jagah 150 nikal gayi
 
+**Cue:** HOME REGION me ginti · dabba: (ginti ghar wale Redis me)
+
 India, US, Europe, har region ka apna Redis, apni ginti. Teeno me 50-50, jod 150. Had 100 tooti.
 
 Isliye meri ginti mere ghar region me (home region). Mera ghar India hai, to Frankfurt ki request bhi wahin gini
@@ -201,6 +191,8 @@ Har region apni alag ginti? Wahi 150. Had har region me alag lagi, user ke liye 
 *ab had lag rahi, par wahi bot roz wapas aa jaata*
 
 ## 6. Wahi bot har 60 sec baad phir aa jaata, din bhar
+
+**Cue:** KAFKA -> PATTERN -> WAF BAN · dabba: Kafka + Pattern Svc + WAF
 
 429 sirf bolta "60 sec baad aao". Bot 60 sec baad phir aata, din bhar, roz. Kabhi nahi rukta.
 
@@ -225,6 +217,8 @@ Gateway seedha Pattern Svc ko call kare? Har request dheemi. Kafka me daal ke aa
 
 ## 7. Shaam ki sale, har koi limit me, phir bhi server gira
 
+**Cue:** GLOBAL CAP + LOAD SHEDDING (503) · dabba: (gateway pe system ki had)
+
 Laakhon user, har ek apni had ke andar. Par kul jod se server CPU 100%, sabke liye band.
 
 Isliye gateway pe poore system ki bhi had (5,000 / sec). CPU 90% paar to kuch request 503. Kam zaroori pehle chhodo
@@ -244,6 +238,8 @@ Line (queue) me rok lo? Sirf chhota (~2 sec). User chala gaya to uska kaam bekaa
 *ab sabse bura waqt: attack aur Redis ek saath gaya*
 
 ## 8. Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
+
+**Cue:** LOCAL COUNTER FALLBACK · dabba: (gateway ki memory)
 
 Redis gaya to ginti kahin nahi. Fail-open wali API pe attacker ki sab request andar, server bhar gaye, site band.
 
@@ -266,6 +262,8 @@ behtar.
 *ab had sahi jagah lagi, par kis naam pe?*
 
 ## 9. Office ki night shift: ek IP block, 1000 log atke
+
+**Cue:** KEY = USER_ID (JWT), IP sirf login · dabba: (key badli)
 
 Ginti IP pe thi. Office ka ek IP (NAT), 1000 log. Ek ki galti se IP block, 1000 atke.
 

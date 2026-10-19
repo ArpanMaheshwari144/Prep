@@ -3,7 +3,7 @@
 > 2 ya zyada log ek doc ek saath edit karein. Kisi ka likha na mite, kuch kho na jaaye, turant dikhe.
 > Dil: ek saath edit, koi likha khoye nahi, aur aakhir me sabke paas doc same (convergence).
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,26 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-   KYA HUA                                       ILAAJ                                DABBA JUDA
-1  Ravi ne baad me save kiya, mera WORLD mita -> OPERATION + baseVersion (text nahi)  App (op bhejo)
-2  Ravi ko mera likha refresh pe hi dikha     -> WEBSOCKET (khula, dono taraf)         Conn-Server
-3  11 baje dono ne sabse upar ek saath likha  -> OT (server kram, op khiskao)         Conn-Server (OT)
-4  50 lakh connection, ek server na jhele     -> RING: docId se ek OWNER server       LB + Conn-Server (owner)
-5  Ravi sirf padh raha, doosre server pe      -> REDIS PUB/SUB (doc ek channel)       Redis pub/sub
-6  3 baje: har akshar pe DB write, DB baitha  -> REDIS BUFFER + BATCH, ACK = WAIT 1   Redis buffer + Cassandra
-7  metro me mera net 1 sec gaya               -> likhna AP, permission CP             SQL permissions
-8  raat ko 2 saal purana doc, 10 lakh op      -> SNAPSHOT + uske baad ke op           Cassandra (+ snapshot)
-
-POORA DESIGN (upar ke dabbe kram se):
-   User -> App (op) -> LB (docId se ring) -> Conn-Server OWNER (WebSocket + OT)
-        -> Redis buffer -> BATCH -> Cassandra (op log + snapshot)
-   doosre server ke viewer: Redis pub/sub · permission: SQL (CP) · app ki files: CDN
-```
-
----
 
 ## Shuru
 
@@ -53,6 +33,8 @@ baantna (sharding) lagega. Pakka number yahan maayne nahi rakhta.
 *ab tootega kahan? do log ek hi doc save karein to*
 
 ## 1. Ravi ne baad me save kiya, mera "WORLD" mit gaya
+
+**Cue:** OPERATION + baseVersion (text nahi) · dabba: App (op bhejo)
 
 Maine 10:05 pe "HELLO WORLD" save kiya, Ravi ne 10:07 pe "HELLO THERE". Baad wala jeeta, mera WORLD gayab.
 
@@ -75,6 +57,8 @@ akshar sahi jagah.
 
 ## 2. Ravi ko mera likha refresh karne pe hi dikha
 
+**Cue:** WEBSOCKET (khula, dono taraf) · dabba: Conn-Server
+
 HTTP me server khud kuch nahi bhej sakta. Maine X likha, server ke paas aaya, par Ravi ko refresh tak kuch nahi.
 
 Isliye connection khula rehta hai, dono taraf (WebSocket). Server khud bhejta, Ravi ko ~200 ms me X dikh jaata.
@@ -90,6 +74,8 @@ WebSocket hi kyun? Ek khula connection dono taraf chalta. Server khud bhejta, us
 *ab dono ek hi jagah ek saath likhein to?*
 
 ## 3. 11 baje meeting me dono ne sabse upar ek saath type kiya
+
+**Cue:** OT (server kram, op khiskao) · dabba: Conn-Server (OT)
 
 Maine X likha, Ravi ne Y, dono sabse upar. Jo aaya wahi laga diya, to meri screen pe "YX..." aur Ravi ki pe "XY...".
 Do alag doc.
@@ -117,6 +103,8 @@ par memory zyada. OT me op bhejo aur ek saath wale ko khiskao, CRDT me id se apn
 
 ## 4. 50 lakh connection khule, ek connection server nahi jhelta
 
+**Cue:** RING: docId se ek OWNER server · dabba: LB + Conn-Server (owner)
+
 Ek server ~1 lakh connection hi jhelta. Kai server lagaye, par mere doc ke editor alag server pe: main server-1 pe,
 Ravi server-3 pe. OT kaun kare? Do jagah do version, doc toota.
 
@@ -140,6 +128,8 @@ banata. Editor dobara jude, version bata ke baaki op le. Doc nahi khota.
 
 ## 5. Ravi ab sirf padh raha, wo doosre server pe
 
+**Cue:** REDIS PUB/SUB (doc ek channel) · dabba: Redis pub/sub
+
 Maine server-1 pe likha. Ravi server-2 pe hai, server-2 ko kuch pata nahi. Ravi ke paas purana doc.
 
 Isliye har doc ka ek channel (Redis pub/sub). Server-1 OT karke doc:123 channel pe op daalta. Jis server pe us doc ka
@@ -160,6 +150,8 @@ version bata ke baaki le le.
 *ab sab live chal raha, par har akshar DB tak?*
 
 ## 6. 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
+
+**Cue:** REDIS BUFFER + BATCH, ACK = WAIT 1 · dabba: Redis buffer + Cassandra
 
 20 lakh log, har second 3 akshar. Yaani 60 lakh write har second seedha DB pe. DB baith gaya.
 
@@ -186,6 +178,8 @@ se hai to skip.
 
 ## 7. Metro me mera net 1 second gaya, typing rukegi?
 
+**Cue:** likhna AP, permission CP · dabba: SQL permissions
+
 Net gaya to sab ruk jaata, kaam ruka. Ye nahi chahiye.
 
 Isliye likhna chalta rehta hai (AP), aur permission turant rokti hai (CP). Net gaya to main likhta rahun, op phone me
@@ -206,6 +200,8 @@ sab same.
 *ab doc purana aur lamba ho gaya*
 
 ## 8. Raat ko 2 saal purana doc khola, 10 lakh op shuru se chale
+
+**Cue:** SNAPSHOT + uske baad ke op · dabba: Cassandra (+ snapshot)
 
 Har baar shuru se saare op ek-ek chalate, to minuton khaali screen.
 

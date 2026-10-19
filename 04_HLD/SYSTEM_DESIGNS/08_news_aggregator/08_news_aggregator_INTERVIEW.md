@@ -3,7 +3,7 @@
 > Alag-alag source (NDTV, TOI, BBC ...) se khabar kheencho, store karo, user ko ek feed do (Google News / Inshorts jaisa).
 > Dil teen cheezein: padhne wale bahut zyada, likhne wale kam. Likhne ka raasta aur padhne ka raasta alag. Feed pehle se bana ke cache me.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,28 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-   KYA HUA                                       ILAAJ                                 DABBA JUDA
-1  subah 7, sabko wahi 20, har baar DB pe     -> FEED CACHE (Redis SORTED SET)         Redis
-2  meri feed me khabar 20 min purani          -> KAFKA: laana aur likhna alag          Kafka + Worker
-3  8 baje election result, 40 guna bheed      -> LB + READ REPLICA                     LB + Read replica
-4  dopahar "India ne match jeeta" 5 baar      -> DEDUPE (title hash + SimHash)         (Worker me dedupe)
-5  dopahar baad ek source 30 sec atka         -> TIMEOUT + CIRCUIT BREAKER            (Fetcher me breaker)
-6  shaam ko mujhe sirf tech + sports          -> CATEGORY FEED, padhte waqt milao      (Redis me feed:tech)
-7  raat ko maine "cricket" dhoondha           -> INVERTED INDEX                        Elasticsearch
-8  raat DBA mail: 2 crore row, kharcha        -> mahine ka PARTITION, purana ARCHIVE   Archive (S3)
-9  mail aage: 100 guna, ek DB nahi jhelegi    -> SHARD hash(article_id)                (DB ke tukde)
-
-POORA DESIGN (upar ke dabbe kram se):
-   LIKHNA: Sources -> Fetcher (timeout + circuit breaker) -> Kafka -> Worker (saaf + dedupe + category)
-           -> DB + Redis + ES
-   PADHNA: User -> LB -> Feed Svc x N -> Redis (99%) -> nahi mila to Read replica
-           search = ES · purana = Archive
-```
-
----
 
 ## Shuru
 
@@ -60,6 +38,8 @@ badhta jaata, isliye purana archive (bahut bade scale pe shard).
 
 ## 1. Subah maine app khola, sabko wahi 20 khabar, har baar DB se
 
+**Cue:** FEED CACHE (Redis SORTED SET) · dabba: Redis
+
 Pehle har baar app khulne pe DB sort karta tha. Laakhon user, DB 500 har second sort kar raha, feed dheemi.
 
 Isliye sabki ek hi feed ek baar banate hain aur Redis me time se rakhte hain (sorted set). Nayi khabar aati hai to
@@ -84,6 +64,8 @@ Ab ~99% DB tak jaate hi nahi.
 *ab padhna tez ho gaya, par khabar hi der se aa rahi*
 
 ## 2. Meri feed me khabar 20 minute purani
+
+**Cue:** KAFKA: laana aur likhna alag · dabba: Kafka + Worker
 
 Pehle ek hi fetcher khabar laata bhi tha aur DB me likhta bhi tha, 1000 source ek-ek karke. Source A dheema hokar
 atka, to B se Z tak line me khade. Khabar 20 min purani.
@@ -115,6 +97,8 @@ Isliye DB khud roke: url pe UNIQUE, `ON CONFLICT DO NOTHING`. Dobara likha to bh
 
 ## 3. 8 baje election result, 40 guna bheed
 
+**Cue:** LB + READ REPLICA · dabba: LB + Read replica
+
 500 se seedha 20,000 har second. Ek Feed machine ka CPU bhar gaya, aur Redis miss seedha main DB pe gaya, jahan
 fetcher bhi likh raha tha. Feed aur DB dono dheeme.
 
@@ -138,6 +122,8 @@ Miss main DB pe hi kyun nahi? Wahan fetcher bhi likh raha hai. Bheed ki padhai l
 *ab bheed sambhal li, par feed me wahi khabar baar-baar*
 
 ## 4. Dopahar "India ne match jeeta", meri feed me 5 baar
+
+**Cue:** DEDUPE (title hash + SimHash) · dabba: (Worker me dedupe)
 
 Pehle har naya URL nayi khabar maana. 5 source, alag URL, thoda alag title, to meri feed me 5 baar.
 
@@ -165,6 +151,8 @@ Har worker apna Bloom kyun nahi? Ek ne dekha, doosre ko pata hi nahi. Isliye ek 
 
 ## 5. Dopahar baad nayi khabar aani ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
 
+**Cue:** TIMEOUT + CIRCUIT BREAKER · dabba: (Fetcher me breaker)
+
 Fetcher source X ke jawab ka intezaar karta raha, 30 sec chup. Baaki 999 source line me atke, feed ruk gayi.
 
 Isliye thodi der me chhodo (timeout, 2-3 sec, thodi retry), aur baar-baar fail ho to call hi mat karo (circuit
@@ -187,6 +175,8 @@ Poora jawab aane tak ruke rehte to? Wahi 30 sec. Ek atka, 999 peeche.
 
 ## 6. Shaam ko mujhe sirf tech aur sports chahiye
 
+**Cue:** CATEGORY FEED, padhte waqt milao · dabba: (Redis me feed:tech)
+
 Isliye har category ki ek list pehle se (`feed:tech`, `feed:sports`). Khabar aayi to apni category list me. Maine
 khola to tech + sports ke top 20 time se mila diye (category feed).
 
@@ -204,6 +194,8 @@ Har user ki alag feed kyun nahi? 10 lakh user = 10 lakh feed, har nayi khabar sa
 *ab feed ban gayi, par dhoondhna dheema*
 
 ## 7. Raat ko maine "cricket" dhoondha, poori table padhi gayi
+
+**Cue:** INVERTED INDEX · dabba: Elasticsearch
 
 DB 2 crore row ek-ek padh ke match kar raha tha. Bahut dheema.
 
@@ -230,6 +222,8 @@ data ke liye, aur DB pe bojh nahi padta.
 
 ## 8. Raat ko DBA ka mail: 6 mahine me ~2 crore row, kharcha badhta ja raha
 
+**Cue:** mahine ka PARTITION, purana ARCHIVE · dabba: Archive (S3)
+
 Sab ek table me tha, May se Oct tak. Purana koi padhta hi nahi, par disk + backup ka kharcha badhta ja raha.
 
 Isliye har mahine ka alag tukda (partition), aur purana S3 pe (archive). Postgres me sirf haal ke mahine.
@@ -253,6 +247,8 @@ Sab ek hi table me rehne do? Wahi faltu kharcha. Jo koi padhta nahi uski disk au
 *ab jagah theek, par source hi 100 guna ho gaye*
 
 ## 9. Mail ka doosra hissa: source 100 guna hue to ek DB machine nahi jhelegi
+
+**Cue:** SHARD hash(article_id) · dabba: (DB ke tukde)
 
 Saari likhai ek machine pe, disk + likhai full.
 

@@ -3,7 +3,7 @@
 > Tez RAM wala key-value store, jo ek machine se bada ho aur ek machine mare to bhi chale. Concept detail = FOUNDATIONS/04_caching.md
 > Dil do cheezein: tez (<1 ms), aur machine mare to bhi chale. BookMyShow ka ulta: wahan sahi hona dil tha, yahan tezi.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,23 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-   KYA HUA                                       ILAAJ                                 DABBA JUDA
-1  subah 64 GB RAM bhar gayi, kya hatayein    -> LRU + TTL (HashMap + DLL)             Cache (LRU + TTL)
-2  data 1 TB, "user:42" kis machine pe        -> CONSISTENT HASHING + virtual nodes    Cache client + Nodes
-3  dopahar machine B mari, bojh DB pe         -> REPLICA (async) + quorum failover     Node + replica
-4  Ravi ne naam badla, cache me purana        -> DB me likho, cache key DELETE         (App: likhne pe delete)
-5  7 baje "home page" key khatam, 1000 DB pe  -> LOCK: SET NX EX, sirf pehla DB jaaye  (App: SET NX lock)
-6  raat IPL final, "live:score" pe crore log  -> L1 LOCAL CACHE + key ki copies        App + L1 local cache
-
-POORA DESIGN (upar ke dabbe kram se):
-   App + L1 -> Cache client (consistent hashing: key -> machine) -> Node (LRU + TTL) primary + copy
-   miss -> DB (asli sach) · padhna = cache-aside · likhna = DB + cache key DELETE
-```
-
----
 
 ## Shuru
 
@@ -66,6 +49,8 @@ pe, isliye har machine ki copy (replication). Teeno milke "ek machine kaafi" kha
 
 ## 1. Subah cache machine ki RAM bhar gayi, kya hatayein
 
+**Cue:** LRU + TTL (HashMap + DLL) · dabba: Cache (LRU + TTL)
+
 Isliye jo sabse der se chhua, wo bahar (LRU). Aur har key ki umar bhi (TTL). Key rakho umar ke saath, padho to RAM se.
 RAM bhar gayi to sabse der se chhua hatao. Wahi LRU jo LC 146 me.
 
@@ -92,6 +77,8 @@ har key pe memory.
 
 ## 2. Subah 11 tak data 1 TB: "user:42" kis machine pe?
 
+**Cue:** CONSISTENT HASHING + virtual nodes · dabba: Cache client + Nodes
+
 Isliye kai machine, aur App ke paas cache client jo batata key kis machine pe (consistent hashing). Key ring pe aage
 chalti, pehli machine jo mile wo uska ghar. Aakhir ke baad ghoom ke pehli.
 
@@ -115,6 +102,8 @@ A-M ek pe, N-Z doosre pe kyun nahi? Ek range garam ho jaati (sab "S" naam), ek m
 *ab data baant diya, par ek machine mari to?*
 
 ## 3. Dopahar machine B mar gayi, uski key ka bojh DB pe
+
+**Cue:** REPLICA (async) + quorum failover · dabba: Node + replica
 
 Har machine akeli thi, copy nahi. B mari, B ki saari key (user:42 ...) miss, DB pe achanak bojh, DB dheema.
 
@@ -141,6 +130,8 @@ Copy na rakho to? Wahi pehle wala haal, B ki saari key DB pe.
 
 ## 4. Ravi ne naam badla, sabko purana dikh raha
 
+**Cue:** DB me likho, cache key DELETE · dabba: (App: likhne pe delete)
+
 DB me naya "Ravi K", cache me purana "Ravi". Sab log padhte to "Ravi" dekhte.
 
 Isliye pehle DB update, phir cache ki key DELETE (delete on write). Agla padhne wala DB se naya laata, cache me rakhta.
@@ -163,6 +154,8 @@ Write-back kyun nahi? Pehle sirf cache me, DB baad me. Tez hai, par cache mara t
 *ab data taaza, par key khatam hote hi bheed*
 
 ## 5. 7 baje "home page" key khatam, 1000 log ek saath DB pe
+
+**Cue:** LOCK: SET NX EX, sirf pehla DB jaaye · dabba: (App: SET NX lock)
 
 Sabko miss, sab DB pe, 1000 ek saath (stampede). Home page dheema.
 
@@ -191,6 +184,8 @@ Purani de sakte, to key khatam hone hi kyun di? Umar khatam se thoda pehle taaza
 *ab key khaali hone ki bheed sambhal li, par ek key pe hi crore log*
 
 ## 6. Raat IPL final, "live:score" key ki machine akeli mar rahi
+
+**Cue:** L1 LOCAL CACHE + key ki copies · dabba: App + L1 local cache
 
 Ek key, ek machine, crore read har second. Machine A ka CPU full, B aur C khaali. Score atka.
 

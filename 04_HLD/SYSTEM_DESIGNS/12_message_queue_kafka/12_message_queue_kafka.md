@@ -3,7 +3,7 @@
 > Ek dabba jo khabar (event) le le aur kai services ko unki apni speed se de de, bina kisi ko roke, bina kuch khoye.
 > Dil: kisi ko roko mat (bahut saari khabar har second), kuch khoye nahi, aur ek user ki khabar kram me.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,28 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-    KYA HUA                                   ILAAJ                                 DABBA JUDA
-1   subah queue restart, 500 signup gayab  -> LOG disk pe + OFFSET                  Log
-2   10 baje sale, 5,000 / sec, worker 500  -> PARTITION (tukde, alag machine)       Brokers A / B / C
-3   Ravi ne naam do baar badla, ulta laga  -> KEY = userId (ek partition, kram)     Producer (key)
-4   email ki 3 machine, Ravi ko 3 email    -> CONSUMER GROUP (ek team)              Group email
-5   analytics + dashboard ko bhi chahiye   -> HAR SERVICE KA APNA GROUP             Group analytics, dashboard
-6   dopahar Broker A ki disk mari          -> LEADER + ISR, acks=all                Brokers (ISR) + Controller
-7   email bheja, commit se pehle crash     -> PEHLE KAAM PHIR COMMIT + IDEMPOTENT   Redis (eventId)
-8   order DB me bana, Kafka se pehle gira  -> OUTBOX + relay                        Producer + Outbox
-9   shaam ko C2 mara, lag badhta gaya      -> REBALANCE + LAG alert + DLQ           DLQ
-10  raat ko broker ki disk bhar rahi       -> RETENTION 7 din + COMPACTION          Brokers (retention)
-
-POORA DESIGN (upar ke dabbe kram se):
-   Producer (key + acks, outbox) -> key se partition -> LEADER broker (offset) -> ISR copy
-   -> har service ka apna group, apne offset se -> kaam -> commit · Redis = eventId dedup · DLQ
-   Controller (KRaft) = naksha · khabar 7 din padi (replay)
-```
-
----
 
 ## Shuru
 
@@ -64,6 +42,8 @@ MQ ka asli number JAGAH hai. Kafka padh ke delete nahi karta, rakhta hai. Log is
 
 ## 1. Subah queue machine restart hui, 500 signup gayab
 
+**Cue:** LOG disk pe + OFFSET · dabba: Log
+
 500 signup machine ki RAM me the. Restart hua, RAM saaf. Email service ko laga koi signup aaya hi nahi.
 
 Isliye disk pe file. Message file ke aakhir me judta, padhne se mitta nahi (log). Har padhne wala sirf apna number
@@ -88,6 +68,8 @@ RAM wali queue kyun nahi? Restart hua aur sab gaya.
 
 ## 2. 10 baje sale shuru, 5,000 / sec aaye, ek worker 500 hi bhej paata
 
+**Cue:** PARTITION (tukde, alag machine) · dabba: Brokers A / B / C
+
 Topic ek line, ek worker. Line badhti ja rahi, ghanton der (lag).
 
 Isliye topic ke 10 tukde (partition), har tukda alag machine pe, har tukda apna worker. 10 x 500 = 5,000.
@@ -111,6 +93,8 @@ hilta.
 *ab tukde ho gaye, par ek user ki khabar kram me?*
 
 ## 3. Ravi ne naam do baar badla, purana naam reh gaya
+
+**Cue:** KEY = userId (ek partition, kram) · dabba: Producer (key)
 
 Isliye ek user hamesha ek hi tukde me, kram wahin (key = userId). hash % 10 se P7, to Ravi ki har khabar P7 me, kram
 pakka.
@@ -137,6 +121,8 @@ par speed kam.
 
 ## 4. Email service ki 3 machine, Ravi ko 3 order email
 
+**Cue:** CONSUMER GROUP (ek team) · dabba: Group email
+
 Teeno machine alag-alag team, har ek ne har message padha. Ravi ka order P7 me tha, teeno ne bheja, 3 email.
 
 Isliye teeno ek team (consumer group). Har tukda team ke ek hi member ko. Ek group.id: P0-3 C1 ko, P4-6 C2 ko, P7-9
@@ -156,6 +142,8 @@ Ye kyun chalta? Ek group ke andar ek partition = ek hi machine. To ek khabar tea
 
 ## 5. Ravi ka order analytics aur dashboard ko bhi chahiye
 
+**Cue:** HAR SERVICE KA APNA GROUP · dabba: Group analytics, dashboard
+
 Teeno service ek hi group me thi. Ek group me ek message ek hi ko, to sirf email ko mila. Analytics aur dashboard ko kuch nahi.
 
 Isliye har service ka apna group, har group ko poori khabar (alag consumer group). Email, analytics, dashboard teen
@@ -174,6 +162,8 @@ Ye kyun chalta? Group ke andar baanto, alag group = sabko. Har group apni jagah 
 *ab machine hi mar gayi to?*
 
 ## 6. Dopahar Broker A ki disk mar gayi, data gaya
+
+**Cue:** LEADER + ISR, acks=all · dabba: Brokers (ISR) + Controller
 
 Isliye har tukde ka ek leader + 2 copy. Leader A likhta, B aur C copy lete (ISR). Saari ISR copy ne le liya, tab
 producer ko OK (acks=all).
@@ -196,6 +186,8 @@ acks=1 kyun nahi? Tab leader ki memory pe hi "OK". Leader replica se pehle gira 
 
 ## 7. Email bheja, "padh liya" bolne se pehle crash
 
+**Cue:** PEHLE KAAM PHIR COMMIT + IDEMPOTENT · dabba: Redis (eventId)
+
 Offset 5 = Ravi ka order. Email chala gaya, commit se pehle crash. Restart pe phir 5 se, Ravi ko 2 email.
 
 Isliye pehle kaam, phir commit. Aur har khabar ka eventId Redis me dekho (idempotent consumer). 5 phir aaya, Redis me
@@ -217,6 +209,8 @@ Pehle commit, phir kaam kyun nahi? Commit ho gaya aur kaam se pehle crash, to re
 *ab consumer sambhal gaya, par producer khud bhejne se pehle gira to?*
 
 ## 8. Order #101 DB me bana, Kafka bhejne se pehle server gira
+
+**Cue:** OUTBOX + relay · dabba: Producer + Outbox
 
 DB aur Kafka do alag kaam the. #101 DB me likh gaya, Kafka ko bhejne se pehle crash. #101 ki khabar gayab.
 
@@ -245,6 +239,8 @@ pakka likho = outbox.
 
 ## 9. Shaam ko C2 mar gaya, lag badhta ja raha
 
+**Cue:** REBALANCE + LAG alert + DLQ · dabba: DLQ
+
 C2 ke tukde P4, P5, P6 kisi ke paas nahi. Koi nahi padh raha, Ravi ka email ghanton baad.
 
 Isliye mare ke tukde baaki ko (rebalance): P4, P5 C1 ko, P6 C3 ko. Aur jo khabar baar-baar fail ho, wo alag line me
@@ -268,6 +264,8 @@ baad me dobara chalao.
 *ab khabar padi rehti hai, disk ka kya?*
 
 ## 10. Raat ko broker ki disk bharti ja rahi
+
+**Cue:** RETENTION 7 din + COMPACTION · dabba: Brokers (retention)
 
 Sab message hamesha pade, koi nahi hatata. Disk full, naya order likhna band, order flow ruka.
 

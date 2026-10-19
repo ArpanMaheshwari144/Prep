@@ -3,7 +3,7 @@
 > User A se User B / merchant ko paisa, bharose ke saath. Misaal: Arpan ne kirana dukaan (merchant) ko Rs. 500 bheje.
 > Dil do cheezein: paisa do baar na kate, aur paisa kabhi gum na ho. Finance HLD ka core, JP / GS ka favourite.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,27 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-    KYA HUA                                    ILAAJ                                DABBA JUDA
-1   kirana ko 500, beech me server gira     -> EK TRANSACTION (WAL se poora / ulta)   SQL DB
-2   600 me phone se 500, laptop se 500      -> check + kaato EK atomic query         (DB query)
-3   metro me network gaya, app ne dobara    -> IDEMPOTENCY KEY (screen khulte)       Idempotency store
-4   bank se 2000 top-up, PSP dheema         -> timeout = PENDING, circuit breaker = abhi nahi   PSP
-5   PSP ko call kiya, jawab se pehle crash  -> PENDING pehle + WEBHOOK + RECONCILE   Reconciliation job
-6   merchant ka account Bank B me           -> SAGA (step-step, fail pe ulta)        Payment Svc + SAGA
-7   "kal raat 2200, subah 1100 kaise?"      -> LEDGER double-entry, sirf INSERT      Ledger table
-8   shaam Diwali, 3000 payment / sec        -> STATELESS, kai machine + LB           LB / Gateway + Svc x N
-9   merchant ki report ne payment roke      -> READ REPLICA (sirf report)            Read replica
-10  ~1000 crore row / saal, likhai dheemi   -> SHARD by account_id                   SQL DB shard
-
-POORA DESIGN (upar ke dabbe kram se):
-   User -> Gateway / LB -> Payment Svc (stateless, saga) -> Idempotency -> SQL DB (ACID + ledger, shard)
-   bahar ka paisa: Payment Svc -> PSP (pehle PENDING) · webhook + Reconciliation job · report -> Read replica
-```
-
----
 
 ## Shuru
 
@@ -81,6 +60,8 @@ thode purane bhi chalte hain, wo chalte rahein.
 
 ## 1. Kirana ko 500 bheje, beech me server gira
 
+**Cue:** EK TRANSACTION (WAL se poora / ulta) · dabba: SQL DB
+
 Mera wallet -500 hua, crash, kirana ko +500 nahi gaya, 500 gayab. Isliye dono badlaav ek transaction me: BEGIN,
 Arpan -500, Kirana +500, COMMIT. Ya dono ya koi nahi.
 
@@ -101,6 +82,8 @@ Do alag badlaav, ek ke baad ek? Beech me crash = ek hua, doosra nahi. Paisa gaya
 
 ## 2. Wallet me 600, phone se 500 aur laptop se 500 ek saath
 
+**Cue:** check + kaato EK atomic query · dabba: (DB query)
+
 Phone se dukaan 500, laptop se Swiggy 500. Dono server ne 600 dekha, dono ne kaata, wallet -400. Isliye check aur
 kaatna ek hi query me: `SET balance = balance - 500 WHERE id = ? AND balance >= 500`. Phone jeeta, 600 se 100. Laptop
 ko 100 < 500, 0 row, "paisa kam" (atomic UPDATE).
@@ -118,6 +101,8 @@ sirf ek user ka dobara bhejna pakadti (card 3).
 *ab balance theek, par wahi payment network ne do baar bheji to?*
 
 ## 3. Metro me network gaya, app ne dobara bheja, 1000 kate
+
+**Cue:** IDEMPOTENCY KEY (screen khulte) · dabba: Idempotency store
 
 Timeout hua, app ne dobara bheja, server ne do naye payment maane, 1000 kate. Isliye payment screen khulte hi app ek
 key banata (key-555). Retry pe wahi key jaati. Store me key-555 pehle se hai, to saved jawab, 500 hi kate. DB me key
@@ -144,6 +129,8 @@ Sirf Redis ya sirf DB kyun nahi, dono kyun? Redis (SETNX) tez pakadta, DB ka UNI
 
 ## 4. Bank se 2000 top-up, PSP dheema
 
+**Cue:** timeout = PENDING, circuit breaker = abhi nahi · dabba: PSP
+
 Har thread PSP ke jawab tak ruka, PSP 30 sec le raha, server atka. Isliye thodi der (2-3 sec) me jawab nahi to
 chhodo, PENDING likho (pata nahi kata), baad me pata karo (timeout). 5 fail ho gaye to circuit OPEN: call jaati hi
 nahi, saaf bolo "abhi nahi", paisa hila hi nahi (circuit breaker).
@@ -162,6 +149,8 @@ Timeout lagao hi mat, wait karo? Sab thread PSP me atke, system band.
 *ab call gayi aur jawab se pehle hum hi gir gaye to?*
 
 ## 5. PSP ko call kiya aur server gira: paisa gaya ya nahi?
+
+**Cue:** PENDING pehle + WEBHOOK + RECONCILE · dabba: Reconciliation job
 
 Server ne PSP call ki aur gira. Top-up 2000 kata ya nahi, pata nahi. Isliye call se PEHLE DB me PENDING likho. PSP
 baad me khud bataye (webhook). Jo purane PENDING reh gaye, ek job PSP se unka haal poochhe. Dono me se jo bhi bataye,
@@ -191,6 +180,8 @@ milaan (reconciliation).
 
 ## 6. Merchant ka account doosre bank me, ek transaction nahi chalta
 
+**Cue:** SAGA (step-step, fail pe ulta) · dabba: Payment Svc + SAGA
+
 Mere wallet se 500 kata, Bank B ka payout fail, paisa beech me latka. Do system, ek transaction nahi. Isliye step-step
 chalo, har kadam saga table me likho (DEBITED, PAYOUT). Fail hua to pichhle ka ulta kaam: wallet me 500 wapas (saga,
 compensate).
@@ -209,6 +200,8 @@ Ek transaction me dono? Do alag system hain, ek transaction chalta hi nahi.
 *ab paisa sahi jagah, par hisaab poochha to?*
 
 ## 7. Maine poochha: kal raat 2200 tha, subah 1100 kaise?
+
+**Cue:** LEDGER double-entry, sirf INSERT · dabba: Ledger table
 
 Sirf balance column tha, 1100. Support ke paas koi record nahi. Isliye har paisa do line: DEBIT + CREDIT, jod 0. Sirf
 nayi line jodte hain (ledger, double-entry). Raat ki line padho: Arpan -800 bijli +800, Arpan -300 recharge +300.
@@ -233,6 +226,8 @@ Sirf balance column? Number hai, kahani nahi. "Kaise bana" ka jawab nahi.
 
 ## 8. Shaam Diwali, 3000 payment / second, machine baith gayi
 
+**Cue:** STATELESS, kai machine + LB · dabba: LB / Gateway + Svc x N
+
 Ek hi Payment Svc, CPU bhara, payment atke. Isliye kai machine, aage LB, LB kisi bhi machine ko de. Machine kuch yaad
 nahi rakhti, yaad DB + idempotency store me (stateless + LB).
 
@@ -252,6 +247,8 @@ Ek hi machine rakhte? CPU bhara, timeout, log dobara tap karte, aur bojh. Machin
 *ab machine badh gayi, par DB pe report ka bojh*
 
 ## 9. Merchant ki report ne mera payment rok diya
+
+**Cue:** READ REPLICA (sirf report) · dabba: Read replica
 
 Merchant ki mahine bhar ki report aur mera 500 ek hi primary DB pe, DB busy, payment atka. Isliye bhaari report copy
 pe (read replica), primary sirf payment. Copy 1-2 sec peeche chalti.
@@ -273,6 +270,8 @@ Report bhi primary pe? Wahi hua: report ne primary ko busy kiya, payment ruka.
 *ab padhna alag, par likhna hi itna ho gaya*
 
 ## 10. Saal me ~1000 crore row, primary ki likhai dheemi
+
+**Cue:** SHARD by account_id · dabba: SQL DB shard
 
 Sab ek DB me, index RAM me nahi samaata, disk se padhta, har likhai dheemi. Isliye account_id se tukde (shard). Mera
 balance + meri history ek hi tukde pe (shard by account_id).

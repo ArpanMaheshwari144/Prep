@@ -3,7 +3,7 @@
 > Movie / show dekho, seat chuno, pay karo, ticket. JP ke liye kaam ka: paisa aur seat ek saath sahi ("paisa do baar kharch na ho" jaisa).
 > Dil do cheezein: ek seat do logon ko na bike (ek saath booking), aur badi movie ke din ki bheed.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,25 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-   KYA HUA                                       ILAAJ                                 DABBA JUDA
-1  10 baje maine aur Ravi ne ek saath A1 li   -> ATOMIC UPDATE ... WHERE available     SQL DB
-2  A1 chuni, payment me 3 min                 -> HOLD + held_until (umar)              Sweeper job
-3  Pay ke baad network gaya, app ne dobara    -> IDEMPOTENCY KEY (bookingId)           Payment Svc
-4  11 baje 1 lakh log seat map dekh rahe      -> CACHE + READ REPLICA                  Redis + Read replica
-5  12 baje concert: 3000 seat, 2 lakh log     -> WAITING ROOM + Kafka (sirf badi sale) Kafka + Booking worker
-6  2 baje Redis restart, sab replica pe       -> SET NX lock, pehla hi banaye          Redis (SET NX + copy)
-7  shaam ko meri App machine giri             -> STATELESS App + LB health check       LB + App x N
-
-POORA DESIGN (upar ke dabbe kram se):
-   User -> LB -> App x N -> SQL primary (atomic UPDATE, hold + umar) -> Payment Svc (bookingId)
-   dekhna: Redis Cluster -> Read replica · badi sale: Kafka (key = show_id) -> Booking worker
-   Sweeper = purane hold ki safai
-```
-
----
 
 ## Shuru
 
@@ -57,6 +38,8 @@ logon ko bechna usse bura hai. Search = AP: movie list / seat ginti 2 sec purani
 *ab tootega kahan? sabse pehle wahin jahan dil hai, ek seat pe do log*
 
 ## 1. Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
+
+**Cue:** ATOMIC UPDATE ... WHERE available · dabba: SQL DB
 
 Pehle padha (khaali), phir likha (booked). Maine aur Ravi ne 10:00:01 pe dono ne A1 khaali dekhi, dono ne book ki.
 Do ko biki.
@@ -88,6 +71,8 @@ seat_id ke kram me bhejo.
 
 ## 2. Maine A1 chuni, payment me 3 minute lag rahe
 
+**Cue:** HOLD + held_until (umar) · dabba: Sweeper job
+
 Seat available rakho to Ravi le jaata, chhin gayi. Booked kar do aur payment fail ho to seat hamesha band. Dono galat.
 
 Isliye seat HELD + umar: usi row me `held_until = ab + 5 min`. Pay ho gaya to BOOKED. Umar khatam = khaali maano (hold).
@@ -104,6 +89,8 @@ khatam ya app gira to sweeper khud chhodta, koi haath se nahi. Sweeper sirf safa
 *ab seat pakad li, par pay ka network gaya*
 
 ## 3. Pay dabaya, network gaya, app ne dobara bheja
+
+**Cue:** IDEMPOTENCY KEY (bookingId) · dabba: Payment Svc
 
 Pehle har request naya payment tha. Paisa kata, network gaya, app ne dobara bheja, 500 do baar kata.
 
@@ -126,6 +113,8 @@ Har request ko naya payment maano to? Wahi pehle wala haal, do baar kata.
 *ab booking sahi, par dekhne wale bahut*
 
 ## 4. 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
+
+**Cue:** CACHE + READ REPLICA · dabba: Redis + Read replica
 
 Har map main DB se aa raha tha. Bheed, aur booking bhi dheemi. Sab dheema.
 
@@ -150,6 +139,8 @@ WebSocket / SSE.
 *ab dekhna sambhal liya, par badi release pe likhne wale bhi lakhon*
 
 ## 5. 12 baje Arijit ka concert khula, 2 lakh log ek show pe
+
+**Cue:** WAITING ROOM + Kafka (sirf badi sale) Kafka + Booking worker
 
 3000 seat, 2 lakh log. Sab seedha DB ki wahi rows pe, sab lock ke intezaar me. Sab dheema.
 
@@ -180,6 +171,8 @@ waqt pata = tayyari pehle.
 
 ## 6. 2 baje Redis restart, saara seat map ek saath replica pe
 
+**Cue:** SET NX lock, pehla hi banaye · dabba: Redis (SET NX + copy)
+
 Map khaali, hazaaron ek saath miss, sab ek saath replica pe. Replica baith gayi, map nahi khulta.
 
 Isliye sirf ek request DB se banaye, baaki ruk ke Redis se (lock). Pehli request lock leti (`SET NX EX 5`), replica
@@ -203,6 +196,8 @@ Sabko DB jaane do? Wahi pehle wala haal, hazaaron ek saath, replica baith gayi.
 *ab data surakshit, par App machine hi giri*
 
 ## 7. Shaam ko main seat chun raha tha, App machine gir gayi
+
+**Cue:** STATELESS App + LB health check · dabba: LB + App x N
 
 Ek hi App machine thi. Giri to booking band.
 

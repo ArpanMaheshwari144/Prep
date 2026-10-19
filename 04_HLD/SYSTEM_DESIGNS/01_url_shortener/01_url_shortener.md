@@ -3,7 +3,7 @@
 > Lamba link do, chhota 7 akshar ka code milta hai. Koi chhote link pe click kare to asli link pe bhej do (302).
 > Dil do cheezein: har link ka code alag, aur click pe redirect bahut tez. Log link banate kam, kholte zyada (100 me 99 baar kholna).
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,25 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-   KYA HUA                                     ILAAJ                                DABBA JUDA
-1  mera sale link viral, DB baith gaya      -> REDIS CACHE (cache-aside)            Redis
-2  usi bheed me ek App giri, site band      -> STATELESS App x N + LOAD BALANCER    LB + App x N
-3  main aur Ravi, dono ko ek hi code        -> COUNTER RANGE + base62               Counter
-4  click ginti likhi, redirect dheema       -> KAFKA, ginti peeche                  Kafka + Analytics + DLQ
-5  DB team: 5 saal me 90 TB                 -> SHARD by code (RING)                 Cassandra
-6  naya link banaya, turant khola, 404      -> QUORUM (2 me likho, 2 se padho)      (Cassandra quorum)
-7  shaam ko LB hi gira                      -> ROUTE 53 + 2 LB (health check)       Route 53 + LB x2
-8  raat ko spammer, 5,000 link / sec        -> RATE LIMIT darwaze pe + WAF          API Gateway + WAF
-
-POORA DESIGN (upar ke dabbe kram se):
-   User -> Route 53 -> LB x2 -> WAF -> API Gateway -> App x N (Counter se range) -> Redis -> Cassandra
-   click ki khabar: App -> Kafka -> Analytics (fail -> DLQ)
-```
-
----
 
 ## Shuru
 
@@ -67,6 +48,8 @@ long_url ke hash pe pehle dekh lo.
 *ab tootega kahan? sabse pehle padhne pe, kyunki click 100 guna hain*
 
 ## 1. Mera sale wala link viral hua, har click DB pe, DB baith gaya
+
+**Cue:** REDIS CACHE (cache-aside) · dabba: Redis
 
 Isliye beech me Redis lagaya. Click aata hai to pehle Redis me dekhte hain. Mil gaya to wahin se jawab, nahi mila to
 DB se laate hain aur Redis me rakh dete hain (cache-aside). Naya link banate hi Redis me bhi daal dete hain.
@@ -104,6 +87,8 @@ nahi to App wahin 404, DB tak nahi. Deleted / expired ke liye Redis me "nahi hai
 
 ## 2. Usi bheed me ek App machine giri, poori site band
 
+**Cue:** STATELESS App x N + LOAD BALANCER · dabba: LB + App x N
+
 Isliye kai App lagaye aur aage Load Balancer (LB). LB har request baari-baari kisi bhi App ko deta (round-robin).
 App kuch yaad nahi rakhta (stateless), sab Redis / DB me, isliye koi bhi App koi bhi click le sakta.
 
@@ -123,6 +108,8 @@ kuch pata hi nahi. Isliye session bahar, Redis / DB me.
 *ab kai App hain, sab code bana rahe, takkar?*
 
 ## 3. Maine aur Ravi ne link banaya, dono ko ek hi code mila
+
+**Cue:** COUNTER RANGE + base62 · dabba: Counter
 
 Isliye Counter har App ko alag range deta hai: App-1 ko 1 se 1000, App-2 ko 1001 se 2000. App apni range me se agla
 number leta. Ek range kabhi do App ko nahi milti, to code kabhi same nahi.
@@ -149,6 +136,8 @@ padta. Counter me takkar hoti hi nahi.
 *ab click gin-ne gaye to redirect dheema*
 
 ## 4. Maine click ginti chahi, redirect hi dheema ho gaya
+
+**Cue:** KAFKA, ginti peeche · dabba: Kafka + Analytics + DLQ
 
 Isliye redirect turant karte hain (302), aur "ek click hua" ki khabar Kafka me daal ke aage badh jaate hain.
 Analytics service apni speed se Kafka se padh ke ginti karti.
@@ -178,6 +167,8 @@ Sirf Redis me INCR? Ginti ho jaati, par sirf ginti. Kaun, kab, kahan se click hu
 
 ## 5. DB team boli: 5 saal me 90 TB, ek machine me nahi
 
+**Cue:** SHARD by code (RING) · dabba: Cassandra
+
 Isliye data kai machine me baant diya (shard), link ke code se. Code ring pe aage chalta hai, jo pehli machine mile
 wo uski (consistent hashing). Har tukde ki 3 copy.
 
@@ -204,6 +195,8 @@ Wajah kaam ka dhaancha + size hai, "NoSQL powerful" nahi.
 *ab har tukde ki 3 copy, par naya link 404?*
 
 ## 6. Maine naya link banaya, turant khola, 404 aaya
+
+**Cue:** QUORUM (2 me likho, 2 se padho) · dabba: (Cassandra quorum)
 
 Isliye likhna 2 copy me, aur padhna bhi 2 copy se (quorum, 3 me se 2). A, B me likha, padha A + C se, to A me mil
 gaya. Har jodi me ek taaza copy zaroor.
@@ -233,6 +226,8 @@ Par jo "done" bola, wo kabhi khota nahi.
 
 ## 7. Shaam ko LB hi gir gaya, koi request andar nahi
 
+**Cue:** ROUTE 53 + 2 LB (health check) · dabba: Route 53 + LB x2
+
 Isliye do LB, aur aage Route 53. Route 53 har ~30 second LB se poochta rehta (health check). Jo 3 baar chup, wo list
 se bahar, sab LB-2 pe (DNS failover).
 
@@ -250,6 +245,8 @@ Ek hi LB rakhte? Wo gira to App kitne bhi hon, koi andar nahi aa sakta.
 *ab koi galat istemal kare to?*
 
 ## 8. Raat ko spammer ki script, har second 5,000 link
+
+**Cue:** RATE LIMIT darwaze pe + WAF · dabba: API Gateway + WAF
 
 Isliye gateway pe hi ginti: har API key ki ek shared ginti (Redis me). Had paar hui to 429, request andar aayi hi nahi
 (rate limit).

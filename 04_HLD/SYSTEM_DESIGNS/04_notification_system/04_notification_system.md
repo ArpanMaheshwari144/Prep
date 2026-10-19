@@ -3,7 +3,7 @@
 > Koi ghatna hui (order, OTP, offer), to sahi user ko, sahi raaste (push / email / SMS) se, sahi waqt pe khabar.
 > Dil teen cheezein: ek ghatna, kai raaste, kai log (fanout). Khabar kabhi khoye nahi, do baar jaaye nahi. OTP turant.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,29 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-    KYA HUA                                    ILAAJ                                DABBA JUDA
-1   subah order kiya, email company band     -> KAFKA (async), order turant jawab     Kafka + Notification Svc
-2   SMS dheema, push / email bhi atke        -> har raaste ki ALAG LINE + worker      Push / Email / SMS queue
-3   worker mara, mujhe do email              -> KEY (SET NX, khabar ki apni id)       Redis
-4   OTP ki key lagi, call fail, OTP gayab   -> SENDING / SENT (do haal)              (Redis key)
-5   SMS company pareshaan, hum hathoda maare -> BACKOFF + JITTER, had ke baad DLQ     DLQ
-6   SMS company dheemi, worker 30 sec phanse -> TIMEOUT + CIRCUIT BREAKER            Twilio + SNS, SendGrid
-7   12 baje sale, OTP 50,000 offer ke peeche -> OTP ki ALAG TEZ LINE                  Kafka high / med / low
-8   sale me laakhon message, company ne 429  -> SAANJHA TOKEN BUCKET (Redis)          (Redis bucket)
-9   "bheja", par phone tak pahuncha?         -> WEBHOOK + company ka message id       Webhook + Tracking DB
-10  shaam "Diwali offer sabko", 1 crore      -> 1000 ke TUKDE + campaign row          Campaign Svc + DB
-11  raat 2 baje offer SMS, maine band kiya   -> PASAND + SHAANTI + SAANCHA (cache)    User-pref + Template DB
-
-POORA DESIGN (upar ke dabbe kram se):
-   Order / Campaign Svc -> Kafka (tez / beech / dheemi) -> Notification Svc (pasand + saancha)
-   -> push / email / SMS line -> worker (key, backoff, circuit breaker, bucket) -> 2 company -> user
-   webhook -> Tracking DB · fail -> DLQ
-```
-
----
 
 ## Shuru
 
@@ -69,6 +46,8 @@ warna wahan atak jaayega.
 
 ## 1. Maine order kiya, email company band thi, order hi fail
 
+**Cue:** KAFKA (async), order turant jawab · dabba: Kafka + Notification Svc
+
 Diwali subah order kiya. Order email ke jawab ka intezaar kar raha tha, email company band, order fail.
 
 Isliye order + khabar ek hi DB txn me (outbox), relay use Kafka me daalta. Order ko turant jawab. Notification Svc
@@ -95,6 +74,8 @@ Order service me hi retry kar lo? Request utni der atki rehti. Aur Order service
 
 ## 2. SMS company dheemi, mera push aur email bhi atke
 
+**Cue:** har raaste ki ALAG LINE + worker · dabba: Push / Email / SMS queue
+
 Push, email, SMS ek hi line me. Worker SMS pe atka, sab atke.
 
 Isliye har raaste ki alag line + alag worker (alag queue). Ghatna aayi to teen chhote message (ghatna id + raasta), har
@@ -114,6 +95,8 @@ SMS worker badha do? Company khud dheemi hai. Line phir bhi ek, push / email phi
 *ab worker beech me mare to?*
 
 ## 3. Worker mara, mujhe do email aaye
+
+**Cue:** KEY (SET NX, khabar ki apni id) · dabba: Redis
 
 Worker-A ne email bheja, "padh liya" bolne se pehle mara. Khabar dobara aayi, Worker-B ne phir bheja. Do email.
 
@@ -136,6 +119,8 @@ Har baar naya random id? Dohraav kabhi pakda nahi jaata.
 *ab key lagi, par galat waqt pe*
 
 ## 4. Key lag gayi, par mera OTP gaya hi nahi
+
+**Cue:** SENDING / SENT (do haal) · dabba: (Redis key)
 
 Koshish se pehle hi key "bhej diya" (SENT) laga di. Call fail. Worker-B ne "bhej diya" dekha aur chhod diya. OTP kho
 gaya.
@@ -163,6 +148,8 @@ Key hi hata do? Worker mara to Kafka dobara deta, OTP / email do baar. Card 3 wa
 
 ## 5. SMS company pehle se pareshaan, hum har second dobara maar rahe
 
+**Cue:** BACKOFF + JITTER, had ke baad DLQ · dabba: DLQ
+
 Fail pe turant dobara, 50 worker har second ek saath. Company pe aur hathoda, kabhi theek nahi hoti.
 
 Isliye har baar zyada der + thoda random (backoff + jitter): 1, 2, 4, 8 sec. Had paar to alag line (DLQ) + alert.
@@ -183,6 +170,8 @@ Retry band, ek fail = chhodo? Company 2 sec hili to OTP hamesha ke liye gaya.
 *ab company band nahi, bas dheemi*
 
 ## 6. SMS company band nahi, dheemi: saare worker 30 sec me phanse
+
+**Cue:** TIMEOUT + CIRCUIT BREAKER · dabba: Twilio + SNS, SendGrid
 
 Har call 30 sec tak jawab ka intezaar. Saare SMS worker Twilio pe phanse, OTP bhi ruka.
 
@@ -208,6 +197,8 @@ Worker badha do? Naye worker bhi 30 sec me phanse. Dheemi company pe aur bojh.
 
 ## 7. 12 baje sale shuru, mera OTP 50,000 offer ke peeche
 
+**Cue:** OTP ki ALAG TEZ LINE · dabba: Kafka high / med / low
+
 Sab ek line me. 50,000 offer, phir mera OTP. 10 min baad pahuncha, time khatam, login fail.
 
 Isliye OTP ki apni tez line + apne worker (priority). High line OTP, beech wali order update, low line offer.
@@ -227,6 +218,8 @@ Ek line me "zaroori" tag laga do? Kafka me "ye pehle bhejo" hota hi nahi.
 *ab bheed itni ki company hi mana kare*
 
 ## 8. Sale me laakhon message ek saath, company ne 429 diya
+
+**Cue:** SAANJHA TOKEN BUCKET (Redis) · dabba: (Redis bucket)
 
 Sab worker jitna chahe bhejein. Company ki had 100 / sec, baaki 429, sab fail.
 
@@ -253,6 +246,8 @@ Har worker apni speed 100 / sec? 100 worker = 100 guna, phir 429.
 
 ## 9. Company ne "bhej diya" bola, par mere phone tak pahuncha?
 
+**Cue:** WEBHOOK + company ka message id · dabba: Webhook + Tracking DB
+
 Company ne "le liya" bola. Aage pata nahi, andhera.
 
 Isliye company baad me khud bataye pahuncha / fail (webhook). Worker company ka message no. (SID-9) save karta. Webhook
@@ -274,6 +269,8 @@ Baar-baar khud poochte raho? Laakhon message x har kuch second = had + kharcha.
 *ab ek ke liye nahi, 1 crore ke liye*
 
 ## 10. Shaam ko "Diwali offer sabko": 1 crore log
+
+**Cue:** 1000 ke TUKDE + campaign row · dabba: Campaign Svc + DB
 
 Admin ne "sabko bhejo" daba diya. Ek request me 1 crore ek-ek karke, ghanton atki, OTP bhi peeche.
 
@@ -299,6 +296,8 @@ me roko. Ek user ko ek hi baar.
 *ab bheja to sahi, par user chahta tha?*
 
 ## 11. Raat 2 baje offer ka SMS, jabki maine band kiya tha
+
+**Cue:** PASAND + SHAANTI + SAANCHA (cache) · dabba: User-pref + Template DB
 
 Pasand dekhi hi nahi. Raat 2 baje offer, ghanti baji, gussa.
 

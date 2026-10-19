@@ -3,7 +3,7 @@
 > App kholo to home timeline: jinhe tum follow karte ho unke tweet, sabse naye upar. Tweet daalna (POST) bhi. Misaal: Arpan ne app khola, Virat "Match great", Sachin "Watching IPL", Dhoni "Practice".
 > Dil do cheezein: feed padhna sasta ho (log 50 baar padhte, 1 baar likhte, isliye feed pehle se bana ke rakho), aur celebrity ka tweet (10 crore follower).
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,28 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-    KYA HUA                                    ILAAJ                                DABBA JUDA
-1   subah app khola, 200 ka jod, feed dheemi -> PUSH: tweet hote hi INBOX me id     Fanout + Redis inbox
-2   maine tweet kiya, button 5 sec ghooma    -> KAFKA, fanout peeche                Kafka + Fanout workers
-3   Bieber ka tweet = 10 crore inbox         -> HYBRID: aam push, celeb pull        (celeb skip, merge)
-4   match khatam, Virat ka tweet, DB gira    -> HOT-TWEET CACHE (RAM)               Hot-tweet cache
-5   Redis alert: 50 crore inbox, RAM bhari   -> AAKHRI 800 + soye hue hatao         (inbox chhota)
-6   5,000 tweet / sec, 0.5 PB                -> CASSANDRA, user_id se baanto        Cassandra
-7   main Bangalore, data US, 300 ms          -> REGION-WISE + Route 53              Route 53
-8   akeli App machine giri, sab band         -> STATELESS App x N + ALB             ALB + App x N
-9   padhne ki bheed, tweet daalna dheema     -> ALAG SERVICE (likhna/padhna)       Tweet/Timeline/User/Follow
-10  maine video daali, sabko dheemi          -> S3 + CDN                            S3 + CDN
-
-POORA DESIGN (upar ke dabbe kram se):
-   LIKHNA: Route 53 -> ALB -> Tweet Svc -> Cassandra + Kafka -> Fanout workers -> Redis inbox (celeb skip)
-   PADHNA: Timeline Svc -> Redis inbox (push) + Hot-tweet cache (celeb pull) -> milao -> top 50
-   follow = User Svc + Follow store · photo / video = S3 + CDN
-```
-
----
 
 ## Shuru
 
@@ -66,6 +44,8 @@ bhi jo hai wo dikhao, sahi wala thodi der me aa jaayega.
 
 ## 1. Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
 
+**Cue:** PUSH: tweet hote hi INBOX me id · dabba: Fanout + Redis inbox
+
 Kholte waqt 200 logon ke tweet laao, jodo, sort karo. Har baar dheema.
 
 Isliye tweet hote hi follower ke inbox me uski id daal dete hain (fanout). Ravi ne tweet t9 kiya, turant mere inbox me.
@@ -88,6 +68,8 @@ tweet milao. Warna naya follow feed me tab dikhe jab wo agla tweet kare.
 *ab padhna tez, par inbox bharne ka kaam likhne pe aa gaya*
 
 ## 2. Maine tweet kiya, button 5 sec ghoomta raha
+
+**Cue:** KAFKA, fanout peeche · dabba: Kafka + Fanout workers
 
 Mere 5,000 follower. Usi request me 5,000 inbox ek-ek karke bharo. 5+ sec, timeout, mujhe "fail" dikha, par tweet ban
 chuka tha.
@@ -119,6 +101,8 @@ isliye Redis Cluster 10-20 tukde, inbox user_id se bate.
 
 ## 3. Bieber ka ek tweet = 10 crore inbox, line ghanton atki
 
+**Cue:** HYBRID: aam push, celeb pull · dabba: (celeb skip, merge)
+
 Celeb ka bhi push kiya. Kafka line me 10 crore kaam, mera tweet line me peeche, ghanton der.
 
 Isliye aam user = push, celeb = pull (hybrid). Celeb ka tweet inbox me nahi jaata, celeb cache me rehta. Feed khuli to
@@ -144,6 +128,8 @@ palte.
 
 ## 4. Match khatam, Virat ka tweet, crore log ek saath, DB gira
 
+**Cue:** HOT-TWEET CACHE (RAM) · dabba: Hot-tweet cache
+
 Har feed Virat ka tweet DB se laa rahi thi. Crore read, DB gira, feed band.
 
 Isliye garam tweet RAM me (hot-tweet cache). Miss hua to sirf ek request DB jaaye (lock), baaki uska jawab lein.
@@ -162,6 +148,8 @@ me 1-2 sec.
 *ab Redis hi bhar raha*
 
 ## 5. Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
+
+**Cue:** AAKHRI 800 + soye hue hatao · dabba: (inbox chhota)
 
 Har inbox me saare id, soye users ke bhi. RAM khatam.
 
@@ -191,6 +179,8 @@ Redis me machine jodte jao? Soye 40 crore ka inbox bhi RAM khaata. Kharcha badht
 
 ## 6. DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
 
+**Cue:** CASSANDRA, user_id se baanto · dabba: Cassandra
+
 Ek DB tha. Na rakh sake, na likh sake.
 
 Isliye Cassandra, user_id se baanta (shard by user_id). Mere saare tweet ek machine pe, naya sabse upar. Ek read.
@@ -217,6 +207,8 @@ tweet_id se kyun nahi baanta? Bojh barabar ho jaata, par profile ke liye saari m
 *ab data ek desh me, user doosre me*
 
 ## 7. Main Bangalore me, data US me, har feed 300 ms
+
+**Cue:** REGION-WISE + Route 53 · dabba: Route 53
 
 Har request samundar paar, 300 ms aana-jaana. Feed atak ke aati.
 
@@ -245,6 +237,8 @@ chalein.
 
 ## 8. Raat ko har region me ek hi App machine; India wali giri, India band
 
+**Cue:** STATELESS App x N + ALB · dabba: ALB + App x N
+
 Isliye kai App, aage ALB baante. App kuch yaad nahi rakhta (stateless x N). App 2 giri to bahar, baaki chalte rahe.
 
 Ye kyun chalta? Machine kuch yaad nahi rakhti, sab Redis / DB me. Koi bhi gire, jude, badle, user ko farak nahi.
@@ -262,6 +256,8 @@ Ek hi App rakhte? Wo giri to poora region band.
 *ab padhne ki bheed likhne ko daba rahi*
 
 ## 9. Highlights ki bheed ne mera tweet daalna dheema kar diya
+
+**Cue:** ALAG SERVICE (likhna/padhna) · dabba: Tweet/Timeline/User/Follow
 
 Padhna aur likhna ek hi service me. Crore log scroll kar rahe, mera tweet usi bheed me, dheema.
 
@@ -286,6 +282,8 @@ bhaari.
 *ab bhaari maal: photo, video*
 
 ## 10. Maine match ki video daali, sabko dheemi aur mehngi
+
+**Cue:** S3 + CDN · dabba: S3 + CDN
 
 50 MB ki video. Delhi, London, Sydney, har dekhne wala hamare US server se 50 MB khinche. Buffering + bandwidth bill.
 

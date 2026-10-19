@@ -3,7 +3,7 @@
 > Ek bank ke andar accounts, un pe paisa daalo / nikaalo / bhejo, aur balance dikhao.
 > Dil: khaata (ledger) sach hai, balance sirf uska jod. Aur paisa na bane, na gayab ho.
 >
-> Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. Kram me chalo. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
 
 ---
 
@@ -13,29 +13,6 @@
 
 ---
 
-## Mock cue (mock me sirf ye dekho: kya hua -> ilaaj -> kaunsa dabba juda)
-
-```
-    KYA HUA                                     ILAAJ                                 DABBA JUDA
-1   8 baje Ravi ko 500, beech me server gira -> EK TRANSACTION (WAL)                  SQL DB
-2   8:30 network gaya, app ne dobara bheja   -> IDEMPOTENCY KEY (UNIQUE)              Banking Svc (+ key)
-3   9:00 Netflix auto-debit + mera UPI       -> CHECK + KAATNA EK QUERY               (SQL DB: balance >= x)
-4   mera 500 kahan gaya? (support / audit)  -> KHAATA (ledger) usi transaction me    (SQL DB: ledger table)
-5   10 baje salary, Ravi ko rent, SMS giri    -> OUTBOX, Kafka key = account_id        Kafka
-6   salary ke baad maine balance khola       -> BALANCE = CACHE, raat RECONCILIATION  Reconciliation job
-7   11 baje sabki salary, ek machine bhari   -> KAI MACHINE + LB, DB sync copy        LB + Banking Svc x N
-8   bheed me sab balance dekh rahe           -> READ REPLICA + read-your-own-writes   Read replica
-9   dukaan ko 500, usi sec 200 refund        -> CHHOTI ID PEHLE LOCK                  (SQL DB: lock kram)
-10  CA ka export, page 5000 dheema           -> KEYSET (ts, id) + index               (SQL DB: index)
-11  raat: 5 saal khaata ek table me          -> MAHINE KE TUKDE + S3, snapshot        Archive (S3)
-
-POORA DESIGN (upar ke dabbe kram se):
-   User -> LB -> Banking Svc (idempotency key) -> SQL DB: EK transaction (khaata + balance + outbox)
-        -> Kafka (commit ke baad, key = account_id) · Read replica = balance / history
-   Reconciliation (raat) · Archive S3 (mahine ke tukde, had se pehle delete nahi)
-```
-
----
 
 ## Shuru
 
@@ -63,6 +40,8 @@ transfer ek saath, kaun rokega? Balance minus me na jaaye, ye niyam kahan likha?
 
 ## 1. Maine Ravi ko 500 bheje, beech me server gira
 
+**Cue:** EK TRANSACTION (WAL) · dabba: SQL DB
+
 Pehle mera -500 aur Ravi ka +500 do alag kaam the. Mera 500 kat gaya, server gira, Ravi ka +500 hua hi nahi.
 500 gayab.
 
@@ -86,6 +65,8 @@ ko milaan.
 *ab ek transfer to pakka, par wahi transfer do baar aa gaya to?*
 
 ## 2. Send dabaya, network gaya, app ne dobara bheja
+
+**Cue:** IDEMPOTENCY KEY (UNIQUE) · dabba: Banking Svc (+ key)
 
 Pehle app har baar naya transfer bhejta tha, koi id nahi. Timeout hua, app ne dobara bheja, server ne do alag
 transfer samjhe. 1000 kat gaye.
@@ -111,6 +92,8 @@ phir bhi chahiye.
 
 ## 3. 9 baje Netflix ka auto-debit aur mera UPI ek saath
 
+**Cue:** CHECK + KAATNA EK QUERY · dabba: (SQL DB: balance >= x)
+
 Mere paas 300. Netflix 200 aur UPI 200 ek saath aaye. Pehle dono ne balance padha (300, pass), phir dono ne kaata.
 Balance -100.
 
@@ -130,6 +113,8 @@ raasta usse guzarta.
 *ab paisa sahi kata, par support poochhe paisa gaya kahan?*
 
 ## 4. Maine poochha: mere 500 kahan gaye, kab?
+
+**Cue:** KHAATA (ledger) usi transaction me · dabba: (SQL DB: ledger table)
 
 Pehle sirf balance column tha. 1000 likha hai, par 500 kahan gaye, kab gaye, koi hisaab nahi bacha. Support bola
 "pata nahi".
@@ -155,6 +140,8 @@ line reh jaati.
 *ab paisa pakka gaya, par user ko khabar (SMS) bhi to jaani hai*
 
 ## 5. Salary aayi, Ravi ko rent bheja, SMS service giri
+
+**Cue:** OUTBOX, Kafka key = account_id · dabba: Kafka
 
 Pehle transfer karte hi SMS bhejne jaate the. Ravi ko 20,000 gaye, SMS service band thi. Transfer ho gaya, SMS
 kabhi nahi gaya.
@@ -188,6 +175,8 @@ skip karti.
 
 ## 6. Salary ke baad maine balance khola
 
+**Cue:** BALANCE = CACHE, raat RECONCILIATION · dabba: Reconciliation job
+
 Pehle balance column aur khaata alag ho gaye (bug). Khaate ka jod 29,800, column me 30,300. Kisi ne pakda hi nahi.
 
 Isliye khaata hi sach, balance column uska jod (cache), usi transaction me update. Raat ko ek job dono milata hai:
@@ -207,6 +196,8 @@ Column hi sach maan lo? Wahi hua: column galat ho gaya aur kisi ko pata nahi cha
 *ab sahi hai, par 11 baje sabki salary ek saath aayi*
 
 ## 7. 11 baje sabki salary aa gayi, ek Banking service bhar gayi
+
+**Cue:** KAI MACHINE + LB, DB sync copy · dabba: LB + Banking Svc x N
 
 Pehle sirf ek machine. Laakhon transfer, CPU bhar gaya, phir giri. Koi paisa nahi bhej pa raha.
 
@@ -238,6 +229,8 @@ chahiye, credit pe nahi.
 
 ## 8. Salary ki bheed me sab balance dekh rahe, transfer dheeme
 
+**Cue:** READ REPLICA + read-your-own-writes · dabba: Read replica
+
 Pehle padhna aur likhna ek hi DB pe. Laakhon log balance / history padh rahe, usi DB pe transfer bhi. Primary pe
 dono ka bojh, transfer dheema.
 
@@ -262,6 +255,8 @@ replica async hai, peeche rehti. Alag cheez.
 
 ## 9. Ravi ki dukaan ko 500, usi second dukaan se 200 refund (deadlock)
 
+**Cue:** CHHOTI ID PEHLE LOCK · dabba: (SQL DB: lock kram)
+
 Ye card 3 wali dikkat nahi hai. Wahan paisa do baar kat raha tha (double spend). Yahan dono transfer ek doosre ka
 intezaar karte atak gaye. Txn1 (Arpan se dukaan) ne Arpan pakda, dukaan ka intezaar. Txn2 (dukaan se Arpan refund)
 ne dukaan pakdi, Arpan ka intezaar. Gol ghera (deadlock).
@@ -280,6 +275,8 @@ Jo pehle aaye wo pehle pakde? Wahi hua: dono ne ulte kram me pakda, dono hamesha
 *ab sab chal raha, par purana hisaab maanga gaya*
 
 ## 10. Shaam ko dukaan ke CA ka export, page 5000 pe atka
+
+**Cue:** KEYSET (ts, id) + index · dabba: (SQL DB: index)
 
 Pehle page 5000 = LIMIT 20 OFFSET 100000. DB 1 lakh line padhta, phir phenk deta. Export bahut dheema.
 
@@ -306,6 +303,8 @@ pichhla kaafi.
 *ab saal guzre, khaata bas badhta hi ja raha*
 
 ## 11. Raat ko: 5 saal ka khaata ek hi table me
+
+**Cue:** MAHINE KE TUKDE + S3, snapshot · dabba: Archive (S3)
 
 Pehle 5 saal ki arabon line ek hi table me. Roz ki query aur backup har baar saari line chhoote. Dheema + mehnga.
 
