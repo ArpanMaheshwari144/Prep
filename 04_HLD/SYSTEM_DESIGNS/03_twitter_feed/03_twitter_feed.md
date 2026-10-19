@@ -57,6 +57,9 @@ DB pe index ya read replica laga do? Thoda tez, par har khulne pe 200 ka jod wah
 
 **Pooche: kisi ko unfollow kiya?** Padhte waqt follow list se chhaanto. Poora inbox badalna mehnga, safai peeche.
 
+**Pooche: maine abhi kisi ko follow kiya?** Uske aakhri 20 tweet id mere inbox me daal do, ya padhte waqt uske
+tweet milao. Warna naya follow feed me tab dikhe jab wo agla tweet kare.
+
 ---
 
 *ab padhna tez, par inbox bharne ka kaam likhne pe aa gaya*
@@ -83,6 +86,9 @@ App me peeche ek thread chala do? App crash to thread ka kaam gaya. Kafka disk p
 **Pooche: wahi 60 dobara likhe?** Tweet ek hi baar. Sorted set me same tweet_id ek hi rehta.
 
 **Pooche: ek worker kam pade?** Worker badhao, Kafka ki lines (partition) aapas me bat jaati.
+
+**Pooche: 5,000 tweet/sec x 200 follower = 10 lakh inbox likhai/sec, Redis jhelega?** Ek Redis ~1 lakh/sec,
+isliye Redis Cluster 10-20 tukde, inbox user_id se bate.
 
 ---
 
@@ -152,6 +158,9 @@ Redis me machine jodte jao? Soye 40 crore ka inbox bhi RAM khaata. Kharcha badht
 **Pooche: Redis gira?** Copy (replica). Warna har feed DB se, mehnga.
 
 **Pooche: copy bhi gayi?** Kuch request mana, har inbox ek request, dheere bharo.
+
+**Pooche: feed me neeche scroll, agla page?** Page number nahi, aakhri dikhe tweet ka time (cursor): "isse purane
+50". Beech me naya tweet aaya to page nahi khiskta.
 
 ---
 

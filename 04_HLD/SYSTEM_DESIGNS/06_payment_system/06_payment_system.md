@@ -70,6 +70,9 @@ Do alag badlaav, ek ke baad ek? Beech me crash = ek hua, doosra nahi. Paisa gaya
 
 **Pooche: hisaab me farak aaya to?** Turant alert. User ko "hua" ya "nahi hua" dikhe, beech ka nahi.
 
+**Pooche: A->B aur B->A ek saath, dono atke (deadlock)?** Taala hamesha chhoti account id pehle. Poora
+13_banking card 9 me.
+
 ---
 
 *ab ek payment theek, par do payment ek saath ek hi wallet pe?*
@@ -264,6 +267,9 @@ Ek hi DB rakhte? 1000 crore row, index disk se, dheema.
 **Pooche: idempotency key kahan rakhoge?** account_id se usi shard pe. Payment ke saath ek transaction me.
 
 **Pooche: account kis shard pe, kaise tay?** Ring (consistent hashing) ya naksha (lookup table).
+
+**Pooche: Swiggy ke ek account pe 3000 credit/sec, ek row pe lock ki line?** Credit sirf ledger line me likho
+(koi lock nahi), balance column peeche batch me jodo; ya merchant ke 10 sub-account, report me jodo.
 
 ---
 

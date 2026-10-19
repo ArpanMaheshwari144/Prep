@@ -62,6 +62,9 @@ file gayi hi nahi. Isliye upload le lo, khabar Kafka me padi, Validator aate hi 
 **Pooche: is line ke liye Kafka hi kyun?** Zaroori nahi. ~200 har second pe SQS / RabbitMQ kaafi. Kafka tab jab bahut
 bheed ho ya dobara padhna ho.
 
+**Pooche: Validator ko 5 GB file kaise doge?** File nahi bhejte, 10 min ka signed GET link dete. Validator seedha
+S3 se padhta, bytes hamare server se tab bhi nahi guzarte.
+
 ---
 
 *ab jaanch peeche gayi, par 5 GB ki file hamare server se hi guzar rahi*

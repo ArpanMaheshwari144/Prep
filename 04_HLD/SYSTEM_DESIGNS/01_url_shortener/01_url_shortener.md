@@ -39,6 +39,9 @@ maange to DB ka UNIQUE ek ko rokta, use 409.
 
 **Pooche: data ~500 GB hota to?** Ek MySQL kaafi. Shard tab jab ek machine me na aaye.
 
+**Pooche: do log same lamba link de to?** Alag code do, har ek ki apni ginti, apni expiry. Ek hi chahiye to
+long_url ke hash pe pehle dekh lo.
+
 ---
 
 *ab tootega kahan? sabse pehle padhne pe, kyunki click 100 guna hain*
@@ -71,6 +74,9 @@ to kuch click mana karo, DB bachao (load shedding).
 **Pooche: har App apna cache kyun nahi rakhta?** Link badla to har App ki copy purani reh jaati. Isliye ek shared Redis.
 
 **Pooche: ek link viral, uski DB machine garam?** Wo pehle hi Redis me mil jaata, DB tak kam aata.
+
+**Pooche: bot fake code (/xyz999) pe lakhon click, sab DB pe?** Code = counter ka number; itna number diya hi
+nahi to App wahin 404, DB tak nahi. Deleted / expired ke liye Redis me "nahi hai" 1 min rakho.
 
 ---
 
