@@ -102,11 +102,9 @@ AAGE POOCHEGA:
 ```
 
 #### 1 Password bhool gaya, 9 baar login kiya, saari andar chali gayi
-```
-DIKKAT     Subah 9 baje password bhool gaya, 9 baar login (limit 5 / min). LB ne baanta: App-1 pe 5, App-2
-           pe 4. Har App ne apni ginti dekhi -> kisi ko 5 PAAR nahi dikha, 9 andar.
-```
-![c1](img/c1-d7520bf1.svg)
+KIYA: sab App ek hi Redis key gine (rate:Arpan:login)
+
+![c1](img/c1-96d105f2.svg)
 
 ```
 NAHI       ek user hamesha ek App pe (sticky LB): wo App gira to ginti gayi; App badhe / ghate to phir bati.
@@ -123,11 +121,9 @@ AAGE POOCHEGA:
 ```
 
 #### 2 Bot ne mere account pe 20 login ek saath bheje, 6 ghus gaye
-```
-DIKKAT     10 baje bot ne mere account pe ek hi pal me 20 login parallel bheje; ginti 4, limit 5.
-           App-1 ne Redis se "4" padha (GET), App-2 ne bhi "4"; dono ne +1 karke "5" likha (SET) -> andar 6.
-```
-![c2](img/c2-bc90ad02.svg)
+KIYA: dekhna + ghatana ek hi kadam me, beech me koi nahi ghusta (Lua)
+
+![c2](img/c2-c8ec54e5.svg)
 
 ```
 NAHI       App me synchronized / lock: sirf ek machine ke andar; do App me race wahi ki wahi.
@@ -144,11 +140,9 @@ AAGE POOCHEGA:
 ```
 
 #### 3 Bot ki 429 wali request bhi App tak ghoom ke aayi
-```
-DIKKAT     Bot ki saari request App tak pahunchti, wahan ginti hoti, phir 429. Mana hone wali request bhi
-           LB, App aur Redis tak ghoomi -> bot ke 10,000 request / sec se App bhar gayi, asli log dheeme.
-```
-![c3](img/c3-3140ae70.svg)
+KIYA: ginti darwaze pe, had paar = wahin 429 (limiter gateway pe)
+
+![c3](img/c3-081c0ece.svg)
 
 ```
 AAGE POOCHEGA:
@@ -163,10 +157,9 @@ AAGE POOCHEGA:
 ```
 
 #### 4 Dopahar Redis gira, limiter andha ho gaya
-```
-DIKKAT     Dopahar Redis mar gaya. Saari ginti wahin thi -> kisi ko pata hi nahi kisne kitni bheji.
-```
-![c4](img/c4-7e278bc1.svg)
+KIYA: copy taiyaar; poora gaya to feed khuli, login band (replica + fail-open / closed)
+
+![c4](img/c4-ccdb8b63.svg)
 
 ```
 NAHI       sab fail-open: login khula = koi bina had password guess karta rahega.
@@ -184,11 +177,9 @@ AAGE POOCHEGA:
 ```
 
 #### 5 Meri script 3 region se chali, 100 ki jagah 150 nikal gayi
-```
-DIKKAT     Meri script India, US aur Europe teen region se ek saath chali. Har region ka Redis apni alag
-           ginti rakhta -> har jagah 50, kisi ki had paar nahi hui, aur 100 ki had pe 150 nikal gayi.
-```
-![c5](img/c5-e66609b2.svg)
+KIYA: meri ginti mere ghar region me (home region)
+
+![c5](img/c5-005ad5f5.svg)
 
 ```
 AAGE POOCHEGA:
@@ -202,10 +193,9 @@ AAGE POOCHEGA:
 ```
 
 #### 6 Wahi bot har 60 sec baad phir aa jaata, din bhar
-```
-DIKKAT     4 baje bhi wahi bot. 429 sirf bolta "60 second baad aao" -> bot 60 sec baad phir, din bhar, roz.
-```
-![c6](img/c6-ef376f85.svg)
+KIYA: har 429 Kafka me, Pattern Svc gine, zyada = WAF me ban
+
+![c6](img/c6-6b7c9584.svg)
 
 ```
 NAHI       turant ban: asli user bhi tez click karta, office ke 1000 log ek IP (NAT), sale me asli bheed.
@@ -223,11 +213,9 @@ AAGE POOCHEGA:
 ```
 
 #### 7 Shaam ki sale, har koi limit me, phir bhi server gira
-```
-DIKKAT     Shaam 6 baje sale khuli. Har user apni had ke andar tha, par laakhon user ek saath -> kul request
-           server ki taakat se zyada, CPU 100%, sabke liye site band. Per-user had kuch nahi rok paayi.
-```
-![c7](img/c7-ec0b7a3a.svg)
+KIYA: poore system ki bhi had, kam zaroori pehle chhodo (load shedding)
+
+![c7](img/c7-add4d8be.svg)
 
 ```
 AAGE POOCHEGA:
@@ -240,11 +228,9 @@ AAGE POOCHEGA:
 ```
 
 #### 8 Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
-```
-DIKKAT     Raat ko attack chal raha tha, usi waqt poora Redis Cluster gira, copy bhi. Ginti kahin nahi ho
-           rahi, aam API khuli chhodi thi -> attacker ki saari request bina roke andar, server bhar gaye.
-```
-![c8](img/c8-c2f9bb1d.svg)
+KIYA: har server apni memory me gine, had baant do (local fallback)
+
+![c8](img/c8-86d1b1ea.svg)
 
 ```
 AAGE POOCHEGA:
@@ -259,11 +245,9 @@ AAGE POOCHEGA:
 ```
 
 #### 9 Office ki night shift: ek IP block, 1000 log atke
-```
-DIKKAT     Raat 11 baje office ki night shift: 1000 log ek IP (NAT) ke peeche, ek ki galti -> IP block, sab
-           1000 block. Ulta, botnet ke paas 1000 IP, har IP se thoda -> kisi IP ki limit nahi tooti.
-```
-![c9](img/c9-34afbec0.svg)
+KIYA: login ke baad ginti user_id pe (key = user_id)
+
+![c9](img/c9-0bab93fb.svg)
 
 ```
 NAHI       IP ki had badha do (5 se 500): office bach gaya, par botnet ko bhi utni hi chhoot.

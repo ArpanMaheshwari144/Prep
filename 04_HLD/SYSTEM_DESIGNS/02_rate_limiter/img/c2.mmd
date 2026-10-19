@@ -4,7 +4,7 @@ flowchart LR
     n_LB["LB"]
     n_App_x_N_1["App 1"]
     n_App_x_N_2["App 2"]
-    n_Redis["Redis<br/>do ne 4 padha, 6 ghuse<br/>-> dekhna + ghatana ek hi kadam me, beech me koi nahi ghusta (atomic, Lua)<br/>ginti badhi, umar lagne se pehle crash -> dono ek Lua me"]
+    n_Redis["Redis<br/>(atomic, Lua)"]
     n_USER --> n_LB
     n_LB --> n_App_x_N_1
     n_LB --> n_App_x_N_2

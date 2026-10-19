@@ -22,7 +22,7 @@
   },
   {
    "tag": "ab",
-   "label": "AB: copy taiyaar; poora gaya to feed khuli, login band",
+   "label": "AB: copy taiyaar; poora gaya to feed khuli, login band (replica + fail-open / closed)",
    "items": [
     {
      "box": "Gateway"
@@ -61,8 +61,41 @@
      ]
     }
    ],
-   "result": "",
-   "foot": "Redis CPU full ho (gira nahi) -> tukde karo (shard), copy se nahi bachega"
+   "result": "limiter chalta raha"
+  },
+  {
+   "tag": "phir",
+   "label": "PHIR? \"Redis gira nahi, bas bojh se dheema hai. Copy (replica) laga do?\"",
+   "items": [
+    {
+     "box": "Replica lagaya",
+     "sub": [
+      "par har request pe",
+      "ginti LIKHNI hai"
+     ],
+     "bad": true
+    },
+    {
+     "arrow": "likhna sirf main pe"
+    },
+    {
+     "box": "Main Redis",
+     "sub": "ab bhi bhara",
+     "bad": true
+    },
+    {
+     "arrow": "isliye"
+    },
+    {
+     "box": "Keys tukdon me",
+     "sub": [
+      "har user ki key",
+      "alag Redis pe (shard)"
+     ],
+     "good": true
+    }
+   ],
+   "result": "likhai kai machine me bati"
   }
  ]
 }
