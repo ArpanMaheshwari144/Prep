@@ -8,7 +8,7 @@
 
 → Tune Student class banayi
 → School ka naam — har student ka same hai **"DPS"**
-→ Agar har Student object apna alag school naam store kare → **1000 students = 1000 baar same string** memory mein
+→ Agar har Student object apna alag school field rakhe → **1000 students = 1000 field**, sab me wahi "DPS" (badalna ho to 1000 jagah)
 → Bekar. **static field = class ka property** — sab share karte hain, **ek baar memory**
 → **static method = object banaye bina call karo**
 → `Math.sqrt()` yaad karo — `new Math()` nahi kiya kabhi
