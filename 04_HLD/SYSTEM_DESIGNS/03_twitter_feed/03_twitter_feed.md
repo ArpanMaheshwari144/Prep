@@ -46,6 +46,8 @@ bhi jo hai wo dikhao, sahi wala thodi der me aa jaayega.
 
 **Cue:** PUSH: tweet hote hi INBOX me id · dabba: Fanout + Redis inbox
 
+![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
+
 Kholte waqt 200 logon ke tweet laao, jodo, sort karo. Har baar dheema.
 
 Isliye tweet hote hi follower ke inbox me uski id daal dete hain (fanout). Ravi ne tweet t9 kiya, turant mere inbox me.
@@ -70,6 +72,8 @@ tweet milao. Warna naya follow feed me tab dikhe jab wo agla tweet kare.
 ## 2. Maine tweet kiya, button 5 sec ghoomta raha
 
 **Cue:** KAFKA, fanout peeche · dabba: Kafka + Fanout workers
+
+![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
 Mere 5,000 follower. Usi request me 5,000 inbox ek-ek karke bharo. 5+ sec, timeout, mujhe "fail" dikha, par tweet ban
 chuka tha.
@@ -103,6 +107,8 @@ isliye Redis Cluster 10-20 tukde, inbox user_id se bate.
 
 **Cue:** HYBRID: aam push, celeb pull · dabba: (celeb skip, merge)
 
+![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
+
 Celeb ka bhi push kiya. Kafka line me 10 crore kaam, mera tweet line me peeche, ghanton der.
 
 Isliye aam user = push, celeb = pull (hybrid). Celeb ka tweet inbox me nahi jaata, celeb cache me rehta. Feed khuli to
@@ -130,6 +136,8 @@ palte.
 
 **Cue:** HOT-TWEET CACHE (RAM) · dabba: Hot-tweet cache
 
+![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
+
 Har feed Virat ka tweet DB se laa rahi thi. Crore read, DB gira, feed band.
 
 Isliye garam tweet RAM me (hot-tweet cache). Miss hua to sirf ek request DB jaaye (lock), baaki uska jawab lein.
@@ -150,6 +158,8 @@ me 1-2 sec.
 ## 5. Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
 
 **Cue:** AAKHRI 800 + soye hue hatao · dabba: (inbox chhota)
+
+![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
 Har inbox me saare id, soye users ke bhi. RAM khatam.
 
@@ -181,6 +191,8 @@ Redis me machine jodte jao? Soye 40 crore ka inbox bhi RAM khaata. Kharcha badht
 
 **Cue:** CASSANDRA, user_id se baanto · dabba: Cassandra
 
+![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
+
 Ek DB tha. Na rakh sake, na likh sake.
 
 Isliye Cassandra, user_id se baanta (shard by user_id). Mere saare tweet ek machine pe, naya sabse upar. Ek read.
@@ -209,6 +221,8 @@ tweet_id se kyun nahi baanta? Bojh barabar ho jaata, par profile ke liye saari m
 ## 7. Main Bangalore me, data US me, har feed 300 ms
 
 **Cue:** REGION-WISE + Route 53 · dabba: Route 53
+
+![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 
 Har request samundar paar, 300 ms aana-jaana. Feed atak ke aati.
 
@@ -239,6 +253,8 @@ chalein.
 
 **Cue:** STATELESS App x N + ALB · dabba: ALB + App x N
 
+![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
+
 Isliye kai App, aage ALB baante. App kuch yaad nahi rakhta (stateless x N). App 2 giri to bahar, baaki chalte rahe.
 
 Ye kyun chalta? Machine kuch yaad nahi rakhti, sab Redis / DB me. Koi bhi gire, jude, badle, user ko farak nahi.
@@ -258,6 +274,8 @@ Ek hi App rakhte? Wo giri to poora region band.
 ## 9. Highlights ki bheed ne mera tweet daalna dheema kar diya
 
 **Cue:** ALAG SERVICE (likhna/padhna) · dabba: Tweet/Timeline/User/Follow
+
+![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
 
 Padhna aur likhna ek hi service me. Crore log scroll kar rahe, mera tweet usi bheed me, dheema.
 
@@ -284,6 +302,8 @@ bhaari.
 ## 10. Maine match ki video daali, sabko dheemi aur mehngi
 
 **Cue:** S3 + CDN · dabba: S3 + CDN
+
+![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
 
 50 MB ki video. Delhi, London, Sydney, har dekhne wala hamare US server se 50 MB khinche. Buffering + bandwidth bill.
 

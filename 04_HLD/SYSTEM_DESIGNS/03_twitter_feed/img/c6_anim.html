@@ -1,0 +1,119 @@
+<!doctype html>
+<!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
+<meta charset="utf-8">
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
+<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="400" fill="#11161c"/>
+<rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
+<text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
+<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+</svg>
+<script>
+// Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
+const NS = 'http://www.w3.org/2000/svg';
+const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
+  msg: '#64b5f6', good: '#66bb6a', bad: '#ef5350', acc: '#f0a030' };
+const ST = document.getElementById('st'), DYN = document.getElementById('dyn');
+function el(tag, a, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in a) e.setAttribute(k, a[k]);
+  if (text !== undefined) e.textContent = text;
+  (parent || ST).append(e); return e;
+}
+function grp(id) { return el('g', id ? { id } : {}); }
+// dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
+function box(x, y, w, h, label, sub, o = {}) {
+  const g = el('g', o.id ? { id: o.id } : {}, o.parent);
+  el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
+    'stroke-width': 1.5 }, g);
+  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
+  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  return g;
+}
+function wire(d, id, parent) {
+  return el('path', { d, id: id || '', fill: 'none', stroke: C.line, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, parent);
+}
+function vis(id, on) { const e = document.getElementById(id); if (e) e.style.opacity = on ? 1 : 0; }
+// har frame DYN saaf, phir naya
+function T(x, y, s, o = {}) {
+  return el('text', { x, y, 'text-anchor': o.a || 'middle', 'font-size': o.size || 13, fill: o.c || C.fg,
+    'font-weight': o.b ? 'bold' : 'normal', 'paint-order': 'stroke', stroke: C.bg, 'stroke-width': o.halo ? 5 : 0 }, DYN, s);
+}
+function dot(p, c, num, label, lc) {
+  if (!p) return;
+  el('circle', { cx: p[0], cy: p[1], r: 9, fill: c || C.msg }, DYN);
+  if (num !== undefined && num !== '') el('text', { x: p[0], y: p[1] + 4, 'text-anchor': 'middle', 'font-size': 10,
+    'font-weight': 'bold', fill: C.bg }, DYN, num);
+  if (label) T(p[0], p[1] - 15, label, { c: lc || c || C.msg, b: 1, size: 12, halo: 1 });
+}
+function cross(x, y) {
+  el('path', { d: `M${x - 14} ${y - 14} L${x + 14} ${y + 14} M${x + 14} ${y - 14} L${x - 14} ${y + 14}`,
+    stroke: C.bad, 'stroke-width': 4 }, DYN);
+}
+function lerp(a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; }
+// pts: [[time, [x,y]], ...] ; pehle se pehle null, aakhir ke baad aakhri jagah
+function path(pts, t) {
+  if (t < pts[0][0]) return null;
+  for (let i = 1; i < pts.length; i++) if (t <= pts[i][0])
+    return lerp(pts[i - 1][1], pts[i][1], (t - pts[i - 1][0]) / (pts[i][0] - pts[i - 1][0]));
+  return pts[pts.length - 1][1];
+}
+function bar(x, y, w, h, frac, label, good) {
+  el('rect', { x, y, width: w, height: h, rx: 4, fill: 'none', stroke: C.line }, DYN);
+  const c = good ? C.good : frac > 0.9 ? C.bad : frac > 0.6 ? C.acc : C.good;
+  el('rect', { x: x + 2, y: y + 2, width: Math.max(0, (w - 4) * Math.min(1, frac)), height: h - 4, rx: 3, fill: c }, DYN);
+  if (label) T(x + w / 2, y - 6, label, { size: 12, c: C.muted });
+}
+// list ke dabbe (inbox jaisa): items = [[text, color], ...], baayein se daayein
+function cells(x, y, items, o = {}) {
+  const w = o.w || 46, h = o.h || 26;
+  items.forEach(([s, c], i) => {
+    el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
+    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+  });
+}
+const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+function draw(t) {
+  DYN.replaceChildren();
+  const fix = t >= FIX;
+  CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
+  frame(t, fix, fix ? t - FIX : t);
+}
+
+// Card 6: ek DB, 5,000 tweet/sec, 0.5 PB -> na rakh sake na likh sake. Ilaaj: Cassandra, user_id se baanto.
+const DUR = 17, FIX = 8;
+const SRC = [70, 192], DB1 = [450, 192], N = [[560, 70], [560, 192], [560, 314]];
+function setup() {
+  const bug = grp('bug'), fix = grp('fix');
+  box(20, 150, 100, 84, 'Tweets', '5,000 / sec');
+  box(380, 140, 140, 104, 'Ek DB', '', { parent: bug }); wire('M120 192 H380', '', bug);
+  box(250, 160, 110, 64, 'hash(user_id)', '', { parent: fix, stroke: C.acc }); wire('M120 192 H250', '', fix);
+  N.forEach(([x, y], i) => { box(x - 70, y - 35, 140, 70, `Cassandra ${i + 1}`, '', { parent: fix }); wire(`M360 192 L${x - 70} ${y}`, '', fix); });
+}
+function frame(t, fix, tl) {
+  vis('bug', !fix); vis('fix', fix);
+  if (!fix) {
+    CAP.textContent = 'DIKKAT: ek hi DB. Har second 5,000 tweet, 5 saal me 0.5 PB. Na rakh sake, na likh sake';
+    for (let k = 0; k < 14; k++) { const s = 0.2 + k * 0.3; const p = path([[s, SRC], [s + 0.7, [370, 192]]], tl);
+      if (tl < s + 0.7) dot(p, C.msg); else if (k > 6 && tl < s + 1.4) dot([340 - (k - 6) * 22, 230], C.bad); }
+    const f = Math.min(1, tl / 5);
+    bar(390, 260, 120, 14, f, 'disk');
+    T(450, 300, `${(0.5 * f).toFixed(2)} PB`, { c: f >= 1 ? C.bad : C.fg, b: 1 });
+    if (tl > 3) T(270, 260, 'likhne ki line', { c: C.bad, size: 12 });
+    return;
+  }
+  CAP.textContent = 'ILAAJ: Cassandra, user_id se baanto. Mere saare tweet ek machine pe, naya sabse upar. Ek read';
+  const users = [['Main', 1], ['Ravi', 0], ['Asha', 2], ['Main', 1], ['Neha', 0], ['Main', 1]];
+  users.forEach(([u, n], k) => { const s = 0.3 + k * 0.6;
+    const p = path([[s, SRC], [s + 0.5, [305, 205]], [s + 1.0, [N[n][0] - 70, N[n][1] + 12]]], tl);
+    if (tl < s + 1.2) dot(p, u === 'Main' ? C.acc : C.msg, '', p && p[0] > 380 ? u : '', u === 'Main' ? C.acc : C.msg); });
+  if (tl > 4.5) {
+    T(700, 192, 'mere saare tweet yahin', { c: C.acc, b: 1, size: 13, a: 'start' });
+    T(700, 212, 'profile = 1 machine, 1 read', { c: C.good, size: 12, a: 'start' });
+  }
+  T(780, 330, 'har machine ki 3 copy', { c: C.muted, size: 12 });
+}
+
+setup(); draw(0);
+</script>

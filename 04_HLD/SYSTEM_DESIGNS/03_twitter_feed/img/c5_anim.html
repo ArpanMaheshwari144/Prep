@@ -1,0 +1,129 @@
+<!doctype html>
+<!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
+<meta charset="utf-8">
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
+<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="400" fill="#11161c"/>
+<rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
+<text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
+<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+</svg>
+<script>
+// Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
+const NS = 'http://www.w3.org/2000/svg';
+const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
+  msg: '#64b5f6', good: '#66bb6a', bad: '#ef5350', acc: '#f0a030' };
+const ST = document.getElementById('st'), DYN = document.getElementById('dyn');
+function el(tag, a, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in a) e.setAttribute(k, a[k]);
+  if (text !== undefined) e.textContent = text;
+  (parent || ST).append(e); return e;
+}
+function grp(id) { return el('g', id ? { id } : {}); }
+// dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
+function box(x, y, w, h, label, sub, o = {}) {
+  const g = el('g', o.id ? { id: o.id } : {}, o.parent);
+  el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
+    'stroke-width': 1.5 }, g);
+  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
+  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  return g;
+}
+function wire(d, id, parent) {
+  return el('path', { d, id: id || '', fill: 'none', stroke: C.line, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, parent);
+}
+function vis(id, on) { const e = document.getElementById(id); if (e) e.style.opacity = on ? 1 : 0; }
+// har frame DYN saaf, phir naya
+function T(x, y, s, o = {}) {
+  return el('text', { x, y, 'text-anchor': o.a || 'middle', 'font-size': o.size || 13, fill: o.c || C.fg,
+    'font-weight': o.b ? 'bold' : 'normal', 'paint-order': 'stroke', stroke: C.bg, 'stroke-width': o.halo ? 5 : 0 }, DYN, s);
+}
+function dot(p, c, num, label, lc) {
+  if (!p) return;
+  el('circle', { cx: p[0], cy: p[1], r: 9, fill: c || C.msg }, DYN);
+  if (num !== undefined && num !== '') el('text', { x: p[0], y: p[1] + 4, 'text-anchor': 'middle', 'font-size': 10,
+    'font-weight': 'bold', fill: C.bg }, DYN, num);
+  if (label) T(p[0], p[1] - 15, label, { c: lc || c || C.msg, b: 1, size: 12, halo: 1 });
+}
+function cross(x, y) {
+  el('path', { d: `M${x - 14} ${y - 14} L${x + 14} ${y + 14} M${x + 14} ${y - 14} L${x - 14} ${y + 14}`,
+    stroke: C.bad, 'stroke-width': 4 }, DYN);
+}
+function lerp(a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; }
+// pts: [[time, [x,y]], ...] ; pehle se pehle null, aakhir ke baad aakhri jagah
+function path(pts, t) {
+  if (t < pts[0][0]) return null;
+  for (let i = 1; i < pts.length; i++) if (t <= pts[i][0])
+    return lerp(pts[i - 1][1], pts[i][1], (t - pts[i - 1][0]) / (pts[i][0] - pts[i - 1][0]));
+  return pts[pts.length - 1][1];
+}
+function bar(x, y, w, h, frac, label, good) {
+  el('rect', { x, y, width: w, height: h, rx: 4, fill: 'none', stroke: C.line }, DYN);
+  const c = good ? C.good : frac > 0.9 ? C.bad : frac > 0.6 ? C.acc : C.good;
+  el('rect', { x: x + 2, y: y + 2, width: Math.max(0, (w - 4) * Math.min(1, frac)), height: h - 4, rx: 3, fill: c }, DYN);
+  if (label) T(x + w / 2, y - 6, label, { size: 12, c: C.muted });
+}
+// list ke dabbe (inbox jaisa): items = [[text, color], ...], baayein se daayein
+function cells(x, y, items, o = {}) {
+  const w = o.w || 46, h = o.h || 26;
+  items.forEach(([s, c], i) => {
+    el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
+    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+  });
+}
+const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+function draw(t) {
+  DYN.replaceChildren();
+  const fix = t >= FIX;
+  CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
+  frame(t, fix, fix ? t - FIX : t);
+}
+
+// Card 5: har inbox me saare id, soye logon ke bhi -> RAM bhari. Ilaaj: LPUSH + LTRIM 800, soye ka inbox TTL se mite.
+const DUR = 19, FIX = 8;
+function setup() {
+  box(20, 60, 110, 50, 'Mera inbox');
+  box(20, 220, 170, 60, 'Ravi ka inbox', '3 mahine se nahi aaya');
+  box(640, 290, 230, 60, 'Redis RAM');
+}
+function frame(t, fix, tl) {
+  if (!fix) {
+    CAP.textContent = 'DIKKAT: har inbox me saare tweet id, soye logon ke bhi. 50 crore inbox, RAM bhar rahi';
+    const n = Math.min(12, 3 + Math.floor(tl / 0.45));
+    const mine = []; for (let i = 0; i < n; i++) mine.push([`t${9000 - i}`, C.fg]);
+    cells(150, 72, mine.slice(0, 13), { w: 50, h: 26 });
+    T(150 + 13 * 54 - 40, 125, `${Math.round(n * 750)} id`, { c: C.bad, size: 12, b: 1, a: 'start' });
+    cells(205, 237, [['t1', C.muted], ['..', C.muted], ['t9000', C.muted]], { w: 60, h: 26 });
+    T(300, 290, '9,000 id, koi padhta nahi', { c: C.bad, size: 12 });
+    const f = Math.min(1, 0.4 + tl / 8);
+    bar(650, 322, 210, 14, f, '');
+    if (f >= 1) T(755, 278, 'RAM bhar gayi!', { c: C.bad, b: 1, size: 13 });
+    return;
+  }
+  CAP.textContent = 'ILAAJ: naya tweet upar (LPUSH), 800 se neeche wale kaato (LTRIM). Soye ka inbox 30 din me mite (TTL)';
+  T(390, 50, '8 dabbe = aakhri 800 (LTRIM 0 799)', { c: C.muted, size: 12 });
+  const k = Math.min(4, Math.floor(tl / 1.1));
+  const base = []; for (let i = 0; i < 8; i++) base.push(`t${9000 + k - i}`);
+  const items = base.map((s, i) => [s, i === 0 && k > 0 ? C.good : C.fg]);
+  cells(150, 72, items, { w: 54, h: 26 });
+  const ph = (tl % 1.1) / 1.1;
+  if (k < 4 && tl > 0.2) {   // gira hua purana
+    const x = 150 + 8 * 58 + 6, y = 72 + ph * 60;
+    el('rect', { x, y, width: 54, height: 26, rx: 4, fill: C.bg, stroke: C.bad }, DYN);
+    T(x + 27, y + 17, `t${9000 + k - 8}`, { c: C.bad, size: 11, b: 1 });
+    T(x + 27, y + 46, 'kata', { c: C.bad, size: 11 });
+  }
+  const gone = tl > 5;
+  if (!gone) { cells(205, 237, [['t1', C.muted], ['..', C.muted], ['t800', C.muted]], { w: 60, h: 26 });
+               T(420, 255, `TTL: ${Math.max(0, 30 - Math.round(tl * 6))} din`, { c: C.acc, size: 13, b: 1, a: 'start' }); }
+  else { T(330, 245, 'inbox khud mit gaya', { c: C.good, size: 13, b: 1 });
+         T(330, 265, 'wapas aaye to DB se ek baar bana do', { c: C.muted, size: 12 }); }
+  const f = gone ? 0.25 : 0.5;
+  bar(650, 322, 210, 14, f, '', true);
+  T(755, 278, '5 MB se 50 KB har inbox', { c: C.good, b: 1, size: 12 });
+}
+
+setup(); draw(0);
+</script>
