@@ -64,6 +64,8 @@ bin/
 # Playwright MCP (browser automation scratch — snapshots/logs/screenshots)
 .playwright-mcp/
 *.png
+# HLD kahani ki tasveer (tracked on purpose)
+!04_HLD/SYSTEM_DESIGNS/*/img/*.png
 
 # Java notes book (tracked on purpose)
 !01_JAVA/00_NOTES_BOOK/*.pdf
