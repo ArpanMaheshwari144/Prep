@@ -110,6 +110,20 @@ t2:              [═══════ running ═══════] done   <-
 
 ---
 
+## TRAP 4 — Thread HANG ho gaya to?
+
+> **`t.join()` (bina time) = main HAMESHA ke liye ruka rahega.**
+> Fix: `t.join(2000)` -> phir `t.isAlive()` check -> zinda hai to `t.interrupt()`.
+> interrupt sirf tab kaam karta jab thread sleep / wait / join me ho ya khud `isInterrupted()` check kare;
+> khaali CPU loop interrupt ko nazarandaz karta. Asli code me: `ExecutorService` + `future.get(timeout)`.
+
+```java
+t.join(2000);                          // max 2 sec
+if (t.isAlive()) t.interrupt();        // atka hai -> rukne ko bolo
+```
+
+---
+
 ## POWER PHRASE
 
 > *"`t.join()` makes the calling thread wait until thread t completes its execution. Without it, the main thread may proceed before the worker threads finish, giving incomplete results. join() only handles timing — thread-safety still needs synchronized or atomics."*
