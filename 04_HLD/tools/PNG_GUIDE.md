@@ -123,3 +123,7 @@ Build scenes only from what the card's DIKKAT (heading / TOOTA) / HAL / agar lin
 ## 7. Report (short, plain)
 Per card: scene count + one line per scene (kind + caption). Which sheets you looked at, what you fixed.
 md: count of ↳ lines, anything moved to Pooche to, any place you deviated from this guide and why.
+
+14. AGAR scene ka caption aur md ki "↳ agar" line SHABD-BA-SHABD same (Fable, 20-Oct). Pehle caption likho, wahi md me copy.
+15. Ek kadam = ek number. Do cheez ek saath (A + B me likhna) to number sirf ek teer pe.
+16. "Pehle ye phir wo" (race / kram) wali kahani = 4 frame baayein se daayein, har frame ek pal + us pal ki haalat.
