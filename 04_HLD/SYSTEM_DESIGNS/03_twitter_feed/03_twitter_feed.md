@@ -219,21 +219,13 @@ NAHI    Redis me machine jodte jao -> MEHNGA: soye 40 crore ka inbox bhi RAM kha
 
 Cue: CASSANDRA, user_id se baanto
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png" width="900">
+<img src="img/c6_1.png?v=2" width="900">
 
-<img src="img/c6_2.png" width="900">
+<img src="img/c6_2.png?v=2" width="900">
 
-<img src="img/c6_3.png" width="900">
-
-<img src="img/c6_4.png" width="900">
-
-<img src="img/c6_5.png" width="900">
-
-<img src="img/c6_6.png" width="900">
-
-<img src="img/c6_7.png" width="900">
+<img src="img/c6_3.png?v=2" width="900">
 
 </details>
 
@@ -264,21 +256,13 @@ NAHI    MySQL -> DHEEMA: har tweet pe har index disk pe dhoondh ke badalna. Join
 
 Cue: REGION-WISE + Route 53
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png" width="900">
+<img src="img/c7_1.png?v=2" width="900">
 
-<img src="img/c7_2.png" width="900">
+<img src="img/c7_2.png?v=2" width="900">
 
-<img src="img/c7_3.png" width="900">
-
-<img src="img/c7_4.png" width="900">
-
-<img src="img/c7_5.png" width="900">
-
-<img src="img/c7_6.png" width="900">
-
-<img src="img/c7_7.png" width="900">
+<img src="img/c7_3.png?v=2" width="900">
 
 </details>
 
@@ -309,19 +293,13 @@ NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana,
 
 Cue: STATELESS App x N + ALB
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png" width="900">
+<img src="img/c8_1.png?v=2" width="900">
 
-<img src="img/c8_2.png" width="900">
+<img src="img/c8_2.png?v=2" width="900">
 
-<img src="img/c8_3.png" width="900">
-
-<img src="img/c8_4.png" width="900">
-
-<img src="img/c8_5.png" width="900">
-
-<img src="img/c8_6.png" width="900">
+<img src="img/c8_3.png?v=2" width="900">
 
 </details>
 
@@ -346,17 +324,13 @@ NAHI    ek hi App -> GIRA: wo giri to poora region band
 
 Cue: ALAG SERVICE (likhna/padhna)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png" width="900">
+<img src="img/c9_1.png?v=2" width="900">
 
-<img src="img/c9_2.png" width="900">
+<img src="img/c9_2.png?v=2" width="900">
 
-<img src="img/c9_3.png" width="900">
-
-<img src="img/c9_4.png" width="900">
-
-<img src="img/c9_5.png" width="900">
+<img src="img/c9_3.png?v=2" width="900">
 
 </details>
 
@@ -384,19 +358,13 @@ NAHI    ek hi service -> DHEEMA: padhne ki bheed me likhna bhi dheema hota hai, 
 
 Cue: S3 + CDN
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c10_1.png" width="900">
+<img src="img/c10_1.png?v=2" width="900">
 
-<img src="img/c10_2.png" width="900">
+<img src="img/c10_2.png?v=2" width="900">
 
-<img src="img/c10_3.png" width="900">
-
-<img src="img/c10_4.png" width="900">
-
-<img src="img/c10_5.png" width="900">
-
-<img src="img/c10_6.png" width="900">
+<img src="img/c10_3.png?v=2" width="900">
 
 </details>
 

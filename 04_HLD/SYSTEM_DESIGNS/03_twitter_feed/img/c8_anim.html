@@ -133,67 +133,43 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 8: region me ek hi App, giri to region band. Ilaaj: kai App + ALB, App kuch yaad nahi rakhta.
-// Agar: giri pata kaise, naya code (rolling), nayi App (dheere traffic). Wapas: App 2 theek, ALB ne joda.
-const DUR = 18;
+// Card 8: har region me ek hi App, India wali giri, India band. Ilaaj: kai App + ALB, App kuch yaad nahi rakhta.
+// Agar: naya code daalna -> ek-ek App badlo (rolling), baaki bheed sambhaalti.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: raat ko India region me ek hi App. Wo giri, poora India band'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: kai App, aage ALB baante. App 2 giri to bahar, baaki chalu'],
-  [6, YEL, 'AGAR', 'AGAR App 2 giri, pata kaise? -> ALB har ~10 sec poochta "zinda ho?"'],
-  [9, YEL, 'AGAR', 'AGAR naya code daalna, App band? -> nahi, ek-ek karke nikaalo, daalo, jodo'],
-  [12, YEL, 'AGAR', 'AGAR nayi App judi, turant poori bheed? -> nahi, ALB dheere-dheere deta'],
-  [15, GRN, 'WAPAS', 'WAPAS: App 2 theek hui, ALB ne wapas jod di'],
+  [0, RED, 'DIKKAT', 'DIKKAT: India region me ek hi App machine. Wo giri, poora India band'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: kai App, aage ALB. App kuch yaad nahi rakhta, sab Redis / DB me'],
+  [6, YEL, 'AGAR', 'AGAR naya code daalna hai, App band karein? -> nahi, ek-ek karke badlo (rolling)'],
 ];
 function setup() {}
-const AY = [25, 150, 275];
-// st: har App ka rang, sub: har App ka chhota naam
 function apps(st, sub) {
-  B(20, 145, 110, 70, 'India users');
-  B(200, 150, 100, 60, 'ALB', '', { st: 'acc' });
-  AY.forEach((y, i) => B(420, y, 130, 55, `App ${i + 1}`, sub[i] || '', { st: st[i] }));
-  B(700, 150, 170, 60, 'Redis / DB', 'sab yahan');
+  ['App-1', 'App-2', 'App-3'].forEach((n, i) => B(420, 30 + i * 105, 160, 65, n, sub[i], { st: st[i] }));
 }
 function frame(ph) {
   if (ph === 0) {
-    B(20, 145, 110, 70, 'India users');
-    B(420, 150, 130, 60, 'Ek App', '', { st: 'bad' });
-    cross(575, 180); num(615, 180, 1, C.bad); L(635, 185, 'giri', C.bad, 'start');
-    A(130, 180, 418, 180, C.bad, { n: 2 }); L(275, 210, 'fail', C.bad);
-    B(700, 150, 170, 60, 'Redis / DB');
-    T(450, 300, 'poora India band', { c: C.bad, b: 1, size: 18 });
+    B(20, 140, 140, 60, 'India users', '');
+    B(420, 130, 180, 80, 'App', 'ek hi', { st: 'bad' }); cross(625, 170);
+    A(160, 170, 418, 170, C.bad, { n: 1, dash: 1 }); num(510, 245, 2, C.bad); L(510, 270, 'giri', C.bad);
+    L(450, 330, 'ek machine = ek kamzor jagah. Wahi giri to sab band', C.bad);
   } else if (ph === 1) {
-    apps(['good', 'bad', 'good'], []);
-    cross(575, 177); num(612, 177, 1, C.bad); L(630, 182, 'giri', C.bad, 'start');
-    A(130, 180, 198, 180, C.msg, { n: 2 });
-    A(300, 175, 418, 52, C.good, { n: 3 }); A(300, 185, 418, 302, C.good, { n: 3 });
-    A(550, 52, 698, 170, C.good, { n: 4 }); A(550, 302, 698, 195, C.good, { n: 4 });
-    L(785, 250, 'user ko farak nahi', C.good);
-  } else if (ph === 2) {
-    apps(['good', 'bad', 'good'], ['', 'chup', '']);
-    A(130, 180, 198, 180, C.line);
-    A(300, 180, 418, 177, C.acc, { dash: 1, n: 1 }); L(370, 158, 'zinda ho?', C.acc);
-    cross(575, 177); num(612, 177, 2, C.bad); L(630, 182, 'chup', C.bad, 'start');
-    A(300, 172, 418, 52, C.good, { n: 3 }); A(300, 188, 418, 302, C.good, { n: 3 });
-    L(450, 345, 'hal: ALB har ~10 sec poochta, chup to bahar', C.good);
-  } else if (ph === 3) {
-    apps(['good', 'acc', ''], ['naya code', 'code daal rahe', 'purana']);
-    num(410, 228, 1, C.acc); L(430, 233, 'bahar nikaali', C.acc, 'start');
-    A(130, 180, 198, 180, C.msg, { n: 2 });
-    A(300, 172, 418, 52, C.good, { n: 3 }); A(300, 188, 418, 302, C.good, { n: 3 });
-    L(450, 345, 'hal: ek-ek karke nikaalo, daalo, jodo (rolling)', C.good);
-  } else if (ph === 4) {
-    apps(['good', 'good', 'acc'], ['', '', 'nayi']);
-    num(580, 302, 1, C.acc); L(600, 307, 'data nahi: pehli dheemi', C.acc, 'start');
-    A(130, 180, 198, 180, C.line);
-    A(300, 172, 418, 52, C.good, { n: 2, w: 4 }); A(300, 180, 418, 177, C.good, { n: 2, w: 4 });
-    A(300, 188, 418, 302, C.acc, { dash: 1, n: 3 }); L(330, 290, 'thoda-thoda', C.acc);
-    L(720, 110, 'hal: ALB dheere-dheere traffic deta', C.good);
+    B(20, 140, 130, 60, 'India users', '');
+    B(220, 140, 110, 60, 'ALB', '/health');
+    apps(['good', 'bad', 'good'], ['', 'giri', '']); cross(605, 167);
+    B(700, 135, 170, 70, 'Redis / DB', 'data yahan', { st: 'acc' });
+    A(150, 170, 218, 170, C.msg, { n: 1 });
+    A(330, 160, 418, 62, C.good, { n: 2 }); A(330, 185, 418, 272, C.good, { n: 3 });
+    A(330, 172, 418, 167, C.bad, { dash: 1 }); L(372, 150, 'App-2 bahar', C.bad);
+    A(580, 62, 698, 150, C.muted); A(580, 272, 698, 190, C.muted);
+    L(450, 345, 'koi bhi App gire ya jude, user ko farak nahi', C.good);
   } else {
-    apps(['good', 'good', 'good'], ['', 'wapas', '']);
-    num(580, 177, 1, C.good); L(600, 182, 'theek hui', C.good, 'start');
-    A(130, 180, 198, 180, C.line);
-    A(300, 172, 418, 52, C.good); A(300, 180, 418, 177, C.good, { n: 2 }); A(300, 188, 418, 302, C.good);
-    L(370, 158, 'ALB ne joda', C.good);
+    B(20, 140, 130, 60, 'India users', '');
+    B(220, 140, 110, 60, 'ALB', '');
+    apps(['good', 'acc', 'good'], ['naya code', 'badal rahe', 'purana code']);
+    A(150, 170, 218, 170, C.msg);
+    A(330, 160, 418, 62, C.good, { n: 3 }); A(330, 185, 418, 272, C.good);
+    num(610, 62, 1, C.good); L(630, 67, 'pehle App-1 badla', C.good, 'start');
+    num(610, 167, 2, C.acc); L(630, 172, 'ab App-2 (bahar)', C.acc, 'start');
+    L(450, 345, 'bheed baaki App sambhaal leti. Ek-ek karke sab naye, koi band nahi', C.good);
   }
 }
 
