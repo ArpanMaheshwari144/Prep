@@ -114,11 +114,11 @@ Cue: HYBRID: aam push, celeb pull
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png?v=2" width="900">
+<img src="img/c3_1.png?v=3" width="900">
 
-<img src="img/c3_2.png?v=2" width="900">
+<img src="img/c3_2.png?v=3" width="900">
 
-<img src="img/c3_3.png?v=2" width="900">
+<img src="img/c3_3.png?v=3" width="900">
 
 </details>
 
