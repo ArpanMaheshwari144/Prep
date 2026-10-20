@@ -32,6 +32,14 @@ NFR     chaar mushkil hain, poori file inhi pe chalti hai:
 NUMBERS ~10 crore user, aam din kuch sau payment / sec, festival / sale pe kuch hazaar / sec.
         Bheed badi dikkat nahi hai, sahi hona badi dikkat hai
         -> pehle sab-ya-kuch-nahi + do-baar-nahi + ledger
+PAISA   Arpan aur merchant dono ka wallet hamare hi system me hai, Paytm / PhonePe wallet jaisa.
+        Wallet se wallet = hamare DB ke andar, ek transaction. Poori file isi pe chalti hai
+DB      SQL. Ek payment me paanch likhai hain: Arpan -500, merchant +500, ledger me 2 line, payment ka haal.
+        BEGIN, paanchon likho, COMMIT. Beech me fail hua to ROLLBACK, ek bhi nahi bachti
+        (SQL transaction, ACID)
+TABLE   teen table hain: wallet (account_id, balance), ledger (isme sirf jodte hain), payment (key, haal)
+DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe atomic hote hain. Sahi farak:
+        debit + credit + ledger = kai row ek saath, ye SQL me seedha aur pakka hota hai
 ```
 
 ---
@@ -40,26 +48,18 @@ NUMBERS ~10 crore user, aam din kuch sau payment / sec, festival / sale pe kuch 
 
 ## 1. Kirana ko 500 bheje, beech me server gira
 
-**Cue:** EK TRANSACTION (WAL se poora / ulta) · dabba: SQL DB
+Cue: EK TRANSACTION (WAL se poora / ulta)
 
 ![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
 
 ```
 HAL     BEGIN, Arpan -500, Kirana +500, COMMIT, ye sab ek hi transaction me. Ya dono honge ya koi nahi.
         COMMIT se pehle server gira, to DB apna log (WAL) dekh ke ulta kar deta hai
-PAISA   Arpan aur merchant dono ka wallet hamare hi system me hai, Paytm / PhonePe wallet jaisa.
-        Wallet se wallet = hamare DB ke andar, ek transaction. Poori file isi pe chalti hai
-DB      SQL. Ek payment me paanch likhai hain: Arpan -500, merchant +500, ledger me 2 line, payment ka haal.
-        BEGIN, paanchon likho, COMMIT. Beech me fail hua to ROLLBACK, ek bhi nahi bachti
-        (SQL transaction, ACID)
-TABLE   teen table hain: wallet (account_id, balance), ledger (isme sirf jodte hain), payment (key, haal)
 KYUN    DB ka apna log hota hai (WAL). COMMIT se pehle gira, to DB uth ke log dekhta hai, COMMIT nahi tha,
         to ulta kar deta hai aur 500 wapas
         COMMIT ke baad gira, to log me COMMIT hai, DB kaam poora karta hai, kuch nahi khota.
         Saare kate == saare jude, aadha kabhi nahi (chaar hui aur ek reh gayi = hisaab galat)
 NAHI    do alag badlaav, ek ke baad ek -> GAYAB: Arpan -500 hua, phir crash, merchant +500 hua hi nahi
-DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe atomic hote hain. Sahi farak:
-        debit + credit + ledger = kai row ek saath, ye SQL me seedha aur pakka hota hai
 AGAR    transaction ke beech ledger ka INSERT fail ho gaya
         -> ROLLBACK. Arpan ka -500 bhi ulta, paanchon me se ek bhi nahi bachta
         ROLLBACK ho gaya, to user ko kya dikhe?
@@ -82,7 +82,7 @@ AGAR    transaction ke beech ledger ka INSERT fail ho gaya
 
 ## 2. Wallet me 600, phone se 500 aur laptop se 500 ek saath
 
-**Cue:** check + kaato EK atomic query · dabba: (DB query)
+Cue: check + kaato EK atomic query
 
 ![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
@@ -106,7 +106,7 @@ AGAR    query me WHERE wala check likhna bhool gaye
 
 ## 3. Metro me network gaya, app ne dobara bheja, 1000 kate
 
-**Cue:** IDEMPOTENCY KEY (screen khulte) · dabba: Idempotency store
+Cue: IDEMPOTENCY KEY (screen khulte)
 
 ![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
 
@@ -136,7 +136,7 @@ AGAR    key wahi aayi, par amount alag hai -> request ka hash bhi rakho. Farak m
 
 ## 4. Bank se 2000 top-up, PSP dheema
 
-**Cue:** timeout = PENDING, circuit breaker = abhi nahi · dabba: PSP
+Cue: timeout = PENDING, circuit breaker = abhi nahi
 
 ![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
@@ -163,7 +163,7 @@ AGAR    circuit OPEN ho gaya, phir kab khulega?
 
 ## 5. PSP ko call kiya aur server gira: paisa gaya ya nahi?
 
-**Cue:** PENDING pehle + WEBHOOK + RECONCILE · dabba: Reconciliation job
+Cue: PENDING pehle + WEBHOOK + RECONCILE
 
 ![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
@@ -192,7 +192,7 @@ AGAR    webhook do baar aaya -> SUCCESS sirf ek baar, doosra ignore
 
 ## 6. Merchant ka account doosre bank me, ek transaction nahi chalta
 
-**Cue:** SAGA (step-step, fail pe ulta) · dabba: Payment Svc + SAGA
+Cue: SAGA (step-step, fail pe ulta)
 
 ![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
@@ -216,7 +216,7 @@ AGAR    SAGA chalate hue service beech me gir gayi
 
 ## 7. Maine poochha: kal raat 2200 tha, subah 1100 kaise?
 
-**Cue:** LEDGER double-entry, sirf INSERT · dabba: Ledger table
+Cue: LEDGER double-entry, sirf INSERT
 
 ![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 
@@ -244,7 +244,7 @@ AGAR    ledger me galat entry ho gayi ya refund aaya
 
 ## 8. Shaam Diwali, 3000 payment / second, machine baith gayi
 
-**Cue:** STATELESS, kai machine + LB · dabba: LB / Gateway + Svc x N
+Cue: STATELESS, kai machine + LB
 
 ![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 
@@ -266,7 +266,7 @@ AGAR    LB ke peeche ek machine mar gayi -> LB har kuch sec poochta hai (GET /he
 
 ## 9. Merchant ki report ne mera payment rok diya
 
-**Cue:** READ REPLICA (sirf report) · dabba: Read replica
+Cue: READ REPLICA (sirf report)
 
 ![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
 
@@ -288,7 +288,7 @@ AGAR    pay kiya, turant balance dekha -> primary se padho. Copy 1-2 sec peeche 
 
 ## 10. Saal me ~1000 crore row, primary ki likhai dheemi
 
-**Cue:** SHARD by account_id · dabba: SQL DB shard
+Cue: SHARD by account_id
 
 ![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
 

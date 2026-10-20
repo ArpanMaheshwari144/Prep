@@ -55,7 +55,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 ## 1. 9 baar login kiya, do App ne alag-alag gina, saari andar
 
-**Cue:** Redis me EK ginti, 60 sec umar · dabba: Redis (LB + App x2 pehle)
+Cue: Redis me EK ginti, 60 sec umar
 
 ![card 1 chalti tasveer: har App apni ginti, phir Redis me ek ginti](img/c1_anim.gif)
 
@@ -74,7 +74,7 @@ AGAR    minute ki window fixed hai, aur kinare pe 5 + 5 request aayi
 
 ## 2. Bot ne mere account pe 20 login ek saath bheje, 6 ghus gaye
 
-**Cue:** ATOMIC: INCR / LUA script · dabba: (Redis atomic)
+Cue: ATOMIC: INCR / LUA script
 
 ![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
@@ -100,7 +100,7 @@ AGAR    INCR ho gaya, par EXPIRE lagne se pehle Redis crash ho gaya
 
 ## 3. Bot ki 429 wali request bhi App tak ghoom ke aayi
 
-**Cue:** LIMITER GATEWAY pe, sabse aage · dabba: API Gateway
+Cue: LIMITER GATEWAY pe, sabse aage
 
 ![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
 
@@ -124,7 +124,7 @@ AGAR    429 bheja, uske saath kya bhejte ho?
 
 ## 4. Dopahar Redis gira, limiter andha ho gaya
 
-**Cue:** REPLICA + FAIL-OPEN / FAIL-CLOSED · dabba: Redis Cluster + R53 + ALB
+Cue: REPLICA + FAIL-OPEN / FAIL-CLOSED
 
 ![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
@@ -154,7 +154,7 @@ AGAR    Redis gira, ye pata kaise chalega?
 
 ## 5. Meri script 3 region se chali, 100 ki jagah 150 nikal gayi
 
-**Cue:** HOME REGION me ginti · dabba: (ginti ghar wale Redis me)
+Cue: HOME REGION me ginti
 
 ![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
@@ -176,7 +176,7 @@ AGAR    ghar region door hai (100-200 ms), har request wahan jaayegi?
 
 ## 6. Wahi bot har 60 sec baad phir aa jaata, din bhar
 
-**Cue:** KAFKA -> PATTERN -> WAF BAN · dabba: Kafka + Pattern Svc + WAF
+Cue: KAFKA -> PATTERN -> WAF BAN
 
 ![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
@@ -203,7 +203,7 @@ AGAR    Kafka peeche chal raha hai
 
 ## 7. Shaam ki sale, har koi limit me, phir bhi server gira
 
-**Cue:** GLOBAL CAP + LOAD SHEDDING (503) · dabba: (gateway pe system ki had)
+Cue: GLOBAL CAP + LOAD SHEDDING (503)
 
 ![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 
@@ -223,7 +223,7 @@ AGAR    had paar hui, 429 bhejoge ya 503?
 
 ## 8. Raat ko attack, usi waqt poora Redis Cluster gira (copy bhi), aam API khuli
 
-**Cue:** LOCAL COUNTER FALLBACK · dabba: (gateway ki memory)
+Cue: LOCAL COUNTER FALLBACK
 
 ![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 
@@ -247,7 +247,7 @@ AGAR    had baanti hi nahi, har gateway ne 100 di
 
 ## 9. Office ki night shift: ek IP block, 1000 log atke
 
-**Cue:** KEY = USER_ID (JWT), IP sirf login · dabba: (key badli)
+Cue: KEY = USER_ID (JWT), IP sirf login
 
 ![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
 

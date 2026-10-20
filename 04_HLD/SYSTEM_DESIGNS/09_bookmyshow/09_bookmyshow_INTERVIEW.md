@@ -26,6 +26,8 @@ NUMBERS 1 crore user hain, par bojh do alag hain, isliye ek number mat bolo.
         Dekhna (shows, seat map) sab karte hain, lakhon padhai hoti hai, isliye cache aur read replica.
         Booking kam log karte hain, par ek hi seat pe ek saath aur jhatke me, isliye queue.
         Active data chhota hai (aaj aur agle hafte ke show), purana archive me jaata hai, isliye sharding nahi
+PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'booked'. Pehle padha (khaali),
+        phir likha, to 10:00:01 pe dono ne A1 khaali dekhi aur dono ne book kar di
 ```
 
 ---
@@ -34,19 +36,17 @@ NUMBERS 1 crore user hain, par bojh do alag hain, isliye ek number mat bolo.
 
 ## 1. Maine aur Ravi ne ek hi second me A1 book ki, dono ko mil gayi
 
-**Cue:** ATOMIC UPDATE ... WHERE available · dabba: SQL DB
+Cue: ATOMIC UPDATE ... WHERE available
 
 ![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
 
 ```
 HAL     dekhna aur book karna ek hi atomic query me (UPDATE ... WHERE available). Row lock se Main ko 1 row
         milti hai, Ravi ko 0
-PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'booked'. Pehle padha (khaali),
-        phir likha, to 10:00:01 pe dono ne A1 khaali dekhi aur dono ne book kar di
-QUERY   UPDATE seats SET status = 'booked' WHERE show_id = 42 AND seat_id = 'A1' AND status = 'available'
-JEETA   jo jeeta use 1 row milti hai, A1 uski. Jo haara use 0 row, usko bolo "seat ja chuki, doosri chuno"
+        UPDATE seats SET status = 'booked' WHERE show_id = 42 AND seat_id = 'A1' AND status = 'available'
 KYUN    faisla DB ki ek query karti hai, WHERE me khaali check hai. DB ka row lock ek-ek ko chalata hai: main
         pehle gaya, Ravi ruka, phir uske WHERE ko 0 row mili. Lock App me nahi, DB me hai
+        jo jeeta use 1 row milti hai, A1 uski. Jo haara use 0 row, usko bolo "seat ja chuki, doosri chuno"
 NAHI    SELECT ... FOR UPDATE -> LAMBA: chalta bhi hai, par DB pe do baar jaana padta hai aur lock lamba
            rehta hai. Ek statement me lock sabse chhota rehta hai
         version column (optimistic) -> RETRY: haarne wala dobara try karta hai. Conditional UPDATE me haarne
@@ -75,7 +75,7 @@ AGAR    network toot gaya aur aakhri seat pe do log hain, consistency chunoge ya
 
 ## 2. Maine A1 chuni, payment me 3 minute lag rahe
 
-**Cue:** HOLD + held_until (umar) · dabba: Sweeper job
+Cue: HOLD + held_until (umar)
 
 ![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
@@ -101,7 +101,7 @@ AGAR    umar khatam ho gayi, phir pay aaya to?
 
 ## 3. Pay dabaya, network gaya, app ne dobara bheja
 
-**Cue:** IDEMPOTENCY KEY (bookingId) · dabba: Payment Svc
+Cue: IDEMPOTENCY KEY (bookingId)
 
 ![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
 
@@ -125,7 +125,7 @@ AGAR    user ne Pay double tap kar diya to?
 
 ## 4. 11 baje main seat map dekh raha tha, saath me 1 lakh log, book koi-koi
 
-**Cue:** CACHE + READ REPLICA · dabba: Redis + Read replica
+Cue: CACHE + READ REPLICA
 
 ![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
@@ -151,7 +151,7 @@ AGAR    Redis me map nahi mila to?
 
 ## 5. 12 baje Arijit ka concert khula, 2 lakh log ek show pe
 
-**Cue:** WAITING ROOM + Kafka (sirf badi sale) · dabba: Waiting room + Kafka + Booking worker
+Cue: WAITING ROOM + Kafka (sirf badi sale)
 
 ![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
@@ -183,7 +183,7 @@ AGAR    UPDATE jeet gaya, user ko kaise pata chalega?
 
 ## 6. 2 baje Redis restart, saara seat map ek saath replica pe
 
-**Cue:** SET NX lock, pehla hi banaye · dabba: Redis (SET NX + copy)
+Cue: SET NX lock, pehla hi banaye
 
 ![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
@@ -209,7 +209,7 @@ AGAR    lock lene wala hi mar gaya to?
 
 ## 7. Shaam ko main seat chun raha tha, App machine gir gayi
 
-**Cue:** STATELESS App + LB health check · dabba: LB + App x N
+Cue: STATELESS App + LB health check
 
 ![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 

@@ -27,6 +27,7 @@ NUMBERS ~1 TB data, ~10 lakh read / sec, padhai zyada. DB se ~10 ms lagta hai (d
         10 lakh / sec ek machine nahi deti, to machines me baanto
         machine mari to saara bojh DB pe, isliye har machine ki copy (replication)
         teeno ne "ek machine kaafi" khaarij kar diya, isliye distributed
+PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 ```
 
 ---
@@ -35,14 +36,13 @@ NUMBERS ~1 TB data, ~10 lakh read / sec, padhai zyada. DB se ~10 ms lagta hai (d
 
 ## 1. Subah cache machine ki RAM bhar gayi, kya hatayein
 
-**Cue:** LRU + TTL (HashMap + DLL) · dabba: Cache (LRU + TTL)
+Cue: LRU + TTL (HashMap + DLL)
 
 ```
-PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
-ASIDE   cache-aside: App pehle cache se poochhta hai. GET profile:42 mili (HIT) to <1 ms, DB tak nahi.
-        Nahi mili (MISS) to DB se (~10 ms), cache me TTL ke saath rakho, agli baar HIT
 HAL     jo sabse der se chhua gaya wo bahar (LRU), aur har key ki umar (TTL). RAM bhari to sabse der se
         chhua hatao. Wahi LRU jo LC 146 me hai
+        cache-aside: App pehle cache se poochhta hai. GET profile:42 mili (HIT) to <1 ms, DB tak nahi.
+        Nahi mili (MISS) to DB se (~10 ms), cache me TTL ke saath rakho, agli baar HIT
 KYUN    RAM bhari to sabse purana chhua pehle jaata hai, umar khatam to key bekaar. Hati key sirf ek miss
         hai, App DB se laake wapas rakh deta hai
         sach DB me hai, cache sirf tez copy. Cache khaali ho tab bhi sahi data DB se milta hai,
@@ -69,7 +69,7 @@ AGAR    LRU me sabse purana har baar dhoondhoge?
 
 ## 2. Subah 11 tak data 1 TB: "user:42" kis machine pe?
 
-**Cue:** CONSISTENT HASHING + virtual nodes · dabba: Cache client + Nodes
+Cue: CONSISTENT HASHING + virtual nodes
 
 ```
 HAL     kai machine hain, App ke paas cache client jo batata hai key kis machine pe hai (consistent hashing).
@@ -97,7 +97,7 @@ AGAR    ring me machine D judi
 
 ## 3. Dopahar machine B mar gayi, uski key ka bojh DB pe
 
-**Cue:** REPLICA (async) + quorum failover · dabba: Node + replica
+Cue: REPLICA (async) + quorum failover
 
 ```
 HAL     har machine ki ek copy hai (replica, async). B mari to B ki copy B ban jaati hai. DB bach gaya
@@ -125,7 +125,7 @@ AGAR    copy ko main banane me kitna time?
 
 ## 4. Ravi ne naam badla, sabko purana dikh raha
 
-**Cue:** DB me likho, cache key DELETE · dabba: (App: likhne pe delete)
+Cue: DB me likho, cache key DELETE
 
 ```
 HAL     pehle DB update, phir cache ki key DELETE (delete on write). Agla padhne wala DB se naya laata hai,
@@ -152,7 +152,7 @@ AGAR    cache ka delete fail ho gaya
 
 ## 5. 7 baje "home page" key khatam, 1000 log ek saath DB pe
 
-**Cue:** LOCK: SET NX EX, sirf pehla DB jaaye · dabba: (App: SET NX lock)
+Cue: LOCK: SET NX EX, sirf pehla DB jaaye
 
 ```
 HAL     ek jaaye, DB se laaye, cache bhare, baaki ruk ke cache se padhein (lock). Pehla lock leta hai
@@ -183,7 +183,7 @@ AGAR    purani value de sakte ho, to key khatam hone hi kyun di?
 
 ## 6. Raat IPL final, "live:score" key ki machine akeli mar rahi
 
-**Cue:** L1 LOCAL CACHE + key ki copies · dabba: App + L1 local cache
+Cue: L1 LOCAL CACHE + key ki copies
 
 ```
 HAL     garam key ki thodi der ki copy har App ki memory me (L1 cache). App 1-2 sec me ek baar Machine A

@@ -28,19 +28,6 @@ NUMBERS 50 crore user, roz 10 crore log x 40 message = ~400 crore / din = ~46,00
         ek waqt ~2 crore khuli connection = asli paimana
            ("kitni request / sec" nahi, "kitni connection khuli hain")
         jagah: 400 crore x ~300 byte ~ 1.2 TB roz, ~440 TB / saal
-```
-
----
-
-*ab tootega kahan? sabse pehle connection ki ginti pe, kyunki 2 crore khuli hain*
-
-## 1. Subah 2 crore log jude, server ki memory khatam
-
-**Cue:** EVENT LOOP, kuch thread, lakhon conn · dabba: Chat Server x200 + LB
-
-![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
-
-```
 ALAG    ab tak (url shortener, feed, payment, banking) user maangta tha, server deta tha, connection band.
            Chat me Ravi ne kuch nahi maanga, phir bhi message turant chahiye
         HTTP me server sirf jawab de sakta hai, khud awaaz nahi laga sakta, isliye connection khuli rakhni hai
@@ -49,6 +36,19 @@ SOCKET  WebSocket: Ravi ek baar /connect kholta hai, connection band nahi hota, 
 PAIMANA har khuli connection memory khaati hai, message aaye ya na aaye
 FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat server.
            Ye sirf connection pakadte hain, API / business server se alag
+```
+
+---
+
+*ab tootega kahan? sabse pehle connection ki ginti pe, kyunki 2 crore khuli hain*
+
+## 1. Subah 2 crore log jude, server ki memory khatam
+
+Cue: EVENT LOOP, kuch thread, lakhon conn
+
+![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
+
+```
 HAL     kuch thread (jaise 4) saare connection sambhalte hain. OS batata hai data kahan aaya (epoll),
            thread sirf usi pe kaam karta hai = event loop, Netty jaisa
         app khula to LB use kisi server pe bithata hai, connection khula rehta hai, thread nahi
@@ -71,7 +71,7 @@ AGAR    connection khula hai, aage ka message kis server pe jaayega?
 
 ## 2. Maine Ravi ko "hi" bheja, server bola Ravi offline
 
-**Cue:** MAP Redis me (kaun kahan) · dabba: Redis
+Cue: MAP Redis me (kaun kahan)
 
 ![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
@@ -104,7 +104,7 @@ AGAR    server-7 mar gaya -> umar khatam, entry khud hat jaati hai, Ravi offline
 
 ## 3. Ravi ka phone band tha, message kahan jaaye
 
-**Cue:** pehle DB, phir bhejo; PUSH · dabba: Message DB + Push
+Cue: pehle DB, phir bhejo; PUSH
 
 ![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
 
@@ -126,7 +126,7 @@ AGAR    Ravi wapas aaya -> app bolta hai "aakhri jo mila, uske baad sab do", ser
 
 ## 4. Roz 1.2 TB message, ek DB nahi jhelta
 
-**Cue:** chat_id se baanto · dabba: Cassandra
+Cue: chat_id se baanto
 
 ![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
@@ -156,7 +156,7 @@ AGAR    ek group bahut garam ho gaya -> ek chat ek hi partition me, to group ki 
 
 ## 5. Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
 
-**Cue:** IDEMPOTENCY (clientMsgId) · dabba: Idempotency check
+Cue: IDEMPOTENCY (clientMsgId)
 
 ![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
@@ -177,7 +177,7 @@ AGAR    dono copy ek saath aa gayi -> dekhna + daalna ek kadam me (Cassandra LWT
 
 ## 6. Meri ghadi 5 min aage, mera sawaal Ravi ke jawab ke neeche chala gaya
 
-**Cue:** SEQ, server ka +1 · dabba: Seq (Redis INCR)
+Cue: SEQ, server ka +1
 
 ![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
@@ -200,7 +200,7 @@ AGAR    app ko 4415 mila, phir 4417 -> 4416 chhoota (chhed). Thoda ruko, phir ma
 
 ## 7. College Gang (500) me ek message, 500 baar likhein?
 
-**Cue:** group ka EK copy · dabba: (Cassandra me group chat)
+Cue: group ka EK copy
 
 ![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 
@@ -222,7 +222,7 @@ AGAR    300 online hain -> Redis se unke server nikalo, har server ko ek call
 
 ## 8. Ravi ne 50 padhe: unread aur neeli tick kaise
 
-**Cue:** NISHAAN read_upto · dabba: Nishaan store
+Cue: NISHAAN read_upto
 
 ![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 
@@ -247,7 +247,7 @@ AGAR    unread kitne -> aakhri seq - nishaan, ghatao, gino nahi
 
 ## 9. Shaadi ka 200 MB video chat ke raaste
 
-**Cue:** S3 PRESIGNED URL, message me pata · dabba: S3
+Cue: S3 PRESIGNED URL, message me pata
 
 ![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
 
@@ -271,7 +271,7 @@ AGAR    200 MB upload ke beech net gaya -> tukdon me upload (multipart), bacha h
 
 ## 10. Raat ko online / last seen sabko kaise
 
-**Cue:** UMAR 30 sec (TTL) · dabba: Presence
+Cue: UMAR 30 sec (TTL)
 
 ![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
 

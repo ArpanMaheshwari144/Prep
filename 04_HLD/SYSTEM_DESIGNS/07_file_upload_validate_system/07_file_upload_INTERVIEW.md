@@ -25,6 +25,8 @@ NFR     user ko rukna na pade (yahi dil hai), file kabhi khoye nahi, haal hamesh
 NUMBERS roz 1 lakh file aati hai, din me ~1 lakh second, to ~1-2 upload / sec, jo kam hai
         deadline wale din (31 March) aakhri ghante me ~100 guna, yaani ~150-200 upload / sec
         log haal baar-baar dekhte hain, to padhna bahut zyada hai aur likhna kam
+PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turant chahiye ya user baad me
+        haal dekhega. Turant nahi chahiye to async + tracking
 ```
 
 ---
@@ -33,7 +35,7 @@ NUMBERS roz 1 lakh file aati hai, din me ~1 lakh second, to ~1-2 upload / sec, j
 
 ## 1. Maine report.pdf daali, 3 second ghoomta screen dekhta raha
 
-**Cue:** ASYNC + TRACKING ID (queue, worker) · dabba: Kafka + Worker + DB
+Cue: ASYNC + TRACKING ID (queue, worker)
 
 ```
 HAL     user ko turant tracking id T-101 milti hai aur haal VALIDATING. Khabar Kafka me jaati hai,
@@ -42,8 +44,6 @@ KYUN    jaanch dheemi hai, isliye beech me queue aur worker, dheema kaam line me
         User ko turant T-101 mil gaya, to wo file dobara nahi bhejta
         khabar tabhi "padh li" maani jaati hai (offset commit) jab DB me haal likh diya.
         Worker ya Validator gire to khabar line me bachi rehti hai
-PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turant chahiye ya user baad me
-        haal dekhega. Turant nahi chahiye to async + tracking
 NAHI    Upload Svc file S3 me rakhe aur Validator call karke jawab ka intezaar kare
         -> ATKA: 31 March ko 200 upload / sec pe har thread 3 sec atka rehta hai, threads khatam ho jaate hain
 AGAR    worker beech me mar gaya
@@ -74,7 +74,7 @@ AGAR    worker beech me mar gaya
 
 ## 2. Meri 5 GB video hamare server ke raaste S3 jaa rahi
 
-**Cue:** PRESIGNED URL, bytes seedha S3 · dabba: S3 (client seedha)
+Cue: PRESIGNED URL, bytes seedha S3
 
 ```
 HAL     server sirf ek signed URL deta hai (10 min ka) aur T-102. Phone 5 GB seedha S3 pe bhejta hai,
@@ -105,7 +105,7 @@ AGAR    had 5 GB hai, koi 50 GB bhej de to?
 
 ## 3. 4.5 GB chadh chuki thi, wifi chala gaya
 
-**Cue:** MULTIPART, sirf bache tukde · dabba: (S3 multipart)
+Cue: MULTIPART, sirf bache tukde
 
 ```
 HAL     file 100 tukdon me jaati hai, kai tukde saath, har tukde ki rasid (ETag), aakhir me COMPLETE.
@@ -128,7 +128,7 @@ AGAR    app band ho gaya, kal wapas aaya
 
 ## 4. App crash, "complete" kabhi aaya hi nahi
 
-**Cue:** SWEEPER job (atki file) · dabba: Sweeper job
+Cue: SWEEPER job (atki file)
 
 ```
 HAL     har kuch min (jaise 5) ek sweeper job atki file dhoondhta hai. 10 min se haal nahi badla, jabki
@@ -154,7 +154,7 @@ AGAR    /complete aur S3 event dono chhoot gaye
 
 ## 5. Deadline ke din sab har 2 sec haal poochh rahe
 
-**Cue:** CACHE Redis + READ REPLICA · dabba: Redis + Read replica
+Cue: CACHE Redis + READ REPLICA
 
 ```
 HAL     GET /status/T-101 pehle Redis se aata hai (1 ms). Redis me nahi mila to read replica se laao
@@ -185,7 +185,7 @@ AGAR    worker ne DB me DONE likh diya, par app me abhi bhi VALIDATING kyun?
 
 ## 6. Maine file nahi, poora folder daala (1000 file)
 
-**Cue:** PARENT id + CHILD id · dabba: (DB me parent)
+Cue: PARENT id + CHILD id
 
 ```
 HAL     folder ka ek id hai (P-1), har file uska child. Batch init me 1000 URL milte hain, har file ka
@@ -209,7 +209,7 @@ AGAR    folder ki koi file FAILED ho gayi
 
 ## 7. Ravi ne mera trackingId daal ke meri file le li
 
-**Cue:** OWNER CHECK (AUTHZ), 403 · dabba: Gateway + Upload Svc
+Cue: OWNER CHECK (AUTHZ), 403
 
 ```
 HAL     har request pe check hota hai ki file ka maalik hi maang raha hai. JWT bolta hai ravi, T-101 ka
@@ -233,7 +233,7 @@ AGAR    id to random tha, phir owner check kyun?
 
 ## 8. Maine S3 ka seedha link WhatsApp pe bhej diya
 
-**Cue:** SIGNED GET, 5 min ka naya paas · dabba: S3 signed GET (s3_key)
+Cue: SIGNED GET, 5 min ka naya paas
 
 ```
 HAL     DB me sirf S3 key (pata) rakhte hain. Download maanga to pehle maalik check, phir naya 5 min ka
@@ -255,7 +255,7 @@ AGAR    5 min me download adhoora reh gaya
 
 ## 9. Naam report.pdf, andar EXE nikla
 
-**Cue:** MAGIC BYTES (pehle kuch byte) · dabba: Worker + magic bytes
+Cue: MAGIC BYTES (pehle kuch byte)
 
 ```
 HAL     worker file ke pehle 4 byte padhta hai. Shuru me "MZ" hai to EXE, "%PDF" nahi, to reject (magic bytes)

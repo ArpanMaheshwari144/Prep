@@ -23,6 +23,9 @@ NFR     feed 200 ms se tez khulni chahiye. Feed 2 sec purani bhi chalegi, isliye
         Celebrity (10 crore follower) ko sambhalna hai, design yahin mudta hai
 NUMBERS ~50 crore user. 50 crore tweet / din, din me ~1 lakh sec, to ~5,000 tweet / sec.
         Ek aadmi ~200 ko follow karta hai, celeb ke 10 crore follower. Padhna : likhna ~50 : 1
+PEHLE   sabse simple: do table, tweets (kisne kya likha) aur follows (kaun kisko follow karta hai).
+        Feed = follow walon ke tweet nikaalo, time se sort, upar ke 50. Har baar 200 logon ka jod, dheema
+NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet followers ki feed me daalti hai
 ```
 
 ---
@@ -31,17 +34,14 @@ NUMBERS ~50 crore user. 50 crore tweet / din, din me ~1 lakh sec, to ~5,000 twee
 
 ## 1. Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
 
-**Cue:** PUSH: tweet hote hi INBOX me id · dabba: Fanout + Redis inbox
+Cue: PUSH: tweet hote hi INBOX me id
 
 ![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
 
 ```
 HAL     tweet hote hi follower ke inbox me uski id chali jaati hai (fanout).
         App kholo to bas apna inbox padho, ek hi read
-PEHLE   sabse simple: do table, tweets (kisne kya likha) aur follows (kaun kisko follow karta hai).
-        Feed = follow walon ke tweet nikaalo, time se sort, upar ke 50. Har baar 200 logon ka jod, dheema
-NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet followers ki feed me daalti hai
-MISAAL  Ravi ne t9 tweet kiya, wo turant mere inbox me aa gaya. Inbox = tweet_id ki list, pehle se bani hui
+        Ravi ne t9 tweet kiya, wo turant mere inbox me aa gaya. Inbox = tweet_id ki list, pehle se bani hui
 KYUN    padhna 50 guna hai, to mehnat likhte waqt karo, har baar khulne pe jodna mat.
         2 sec purani feed chalegi, isliye pehle se banana aur cache chal jaata hai.
         Jo inbox me nahi hai (poora tweet, unfollow), wo padhte waqt jodo ya chhaanto
@@ -62,7 +62,7 @@ AGAR    inbox me sirf id hai, to poora tweet kaise aayega?
 
 ## 2. Maine tweet kiya, button 5 sec ghoomta raha
 
-**Cue:** KAFKA, fanout peeche · dabba: Kafka + Fanout workers
+Cue: KAFKA, fanout peeche
 
 ![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
@@ -95,7 +95,7 @@ AGAR    tweet DB me save ho gaya, par Kafka me khabar fail ho gayi
 
 ## 3. Bieber ka ek tweet = 10 crore inbox, line ghanton atki
 
-**Cue:** HYBRID: aam push, celeb pull · dabba: (celeb skip, merge)
+Cue: HYBRID: aam push, celeb pull
 
 ![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
 
@@ -123,7 +123,7 @@ AGAR    koi user celeb ki had (~10,000 follower) pe hai, to baar-baar push / pul
 
 ## 4. Match khatam, Virat ka tweet, crore log ek saath, DB gira
 
-**Cue:** HOT-TWEET CACHE (RAM) · dabba: Hot-tweet cache
+Cue: HOT-TWEET CACHE (RAM)
 
 ![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
@@ -146,7 +146,7 @@ AGAR    hot-tweet cache ki ek key pe itni bheed ki wo machine garam ho gayi
 
 ## 5. Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
 
-**Cue:** AAKHRI 800 + soye hue hatao · dabba: (inbox chhota)
+Cue: AAKHRI 800 + soye hue hatao
 
 ![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
@@ -179,7 +179,7 @@ AGAR    inbox chhota rakhna hai, to usme kya rakhte ho?
 
 ## 6. DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
 
-**Cue:** CASSANDRA, user_id se baanto · dabba: Cassandra
+Cue: CASSANDRA, user_id se baanto
 
 ![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
@@ -208,7 +208,7 @@ AGAR    Cassandra pe itni likhai tez kaise hoti hai?
 
 ## 7. Main Bangalore me, data US me, har feed 300 ms
 
-**Cue:** REGION-WISE + Route 53 · dabba: Route 53
+Cue: REGION-WISE + Route 53
 
 ![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 
@@ -238,7 +238,7 @@ AGAR    regions ke beech network toot gaya, consistency chahiye ya availability?
 
 ## 8. Raat ko har region me ek hi App machine; India wali giri, India band
 
-**Cue:** STATELESS App x N + ALB · dabba: ALB + App x N
+Cue: STATELESS App x N + ALB
 
 ![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 
@@ -261,7 +261,7 @@ AGAR    App 2 giri, ye pata kaise chalega?
 
 ## 9. Highlights ki bheed ne mera tweet daalna dheema kar diya
 
-**Cue:** ALAG SERVICE (likhna/padhna) · dabba: Tweet/Timeline/User/Follow
+Cue: ALAG SERVICE (likhna/padhna)
 
 ![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
 
@@ -289,7 +289,7 @@ AGAR    feed ki bheed badh gayi, kya badhaoge?
 
 ## 10. Maine match ki video daali, sabko dheemi aur mehngi
 
-**Cue:** S3 + CDN · dabba: S3 + CDN
+Cue: S3 + CDN
 
 ![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
 

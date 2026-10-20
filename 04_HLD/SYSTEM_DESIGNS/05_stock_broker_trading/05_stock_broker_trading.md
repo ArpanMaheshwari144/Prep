@@ -34,7 +34,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 ## 1. Maine ek baar dabaya, order do lag gaye
 
-**Cue:** IDEMPOTENCY KEY (wahi id dobara) · dabba: Order Service
+Cue: IDEMPOTENCY KEY (wahi id dobara)
 
 ```
 HAL     screen khulte hi app ek id banata hai. Network gaya aur app ne dobara bheja, to wahi id jaati hai.
@@ -54,7 +54,7 @@ AGAR    wahi id dobara aayi, aur pehli wali abhi chal rahi hai
 
 ## 2. Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
 
-**Cue:** check + block EK atomic query · dabba: Wallet
+Cue: check + block EK atomic query
 
 ```
 HAL     check aur block ek hi query me (atomic UPDATE):
@@ -86,7 +86,7 @@ AGAR    block kiya, phir order cancel ho gaya
 
 ## 3. Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
 
-**Cue:** ek symbol ek thread, book RAM me · dabba: Matching Engine
+Cue: ek symbol ek thread, book RAM me
 
 ```
 HAL     ek share ke saare order ek line me, us line ko ek hi thread (ek symbol ek thread).
@@ -124,7 +124,7 @@ AGAR    BUY 2998 aaya
 
 ## 4. 9:15 baje sab TCS pe toot pade
 
-**Cue:** baanto mat, ek thread kaafi, line · dabba: Queue
+Cue: baanto mat, ek thread kaafi, line
 
 ```
 HAL     hazaaron order / sec aaye, to bhi TCS ki ek line, ek thread RAM me tez nipta deta.
@@ -143,7 +143,7 @@ AGAR    baantoge nahi, to badhaoge kaise?
 
 ## 5. Server gira, poori order book gayab
 
-**Cue:** pehle log, phir book; gira = replay · dabba: Event Log (= wahi line)
+Cue: pehle log, phir book; gira = replay
 
 ```
 HAL     har order pehle log me (disk), phir book me. Log me har order ko number (#501).
@@ -168,7 +168,7 @@ AGAR    book RAM me hai, crash hua to gayi?
 
 ## 6. Mera paisa kat gaya, Suresh ko mila hi nahi
 
-**Cue:** ek transaction: chaaron ya koi nahi · dabba: Settlement
+Cue: ek transaction: chaaron ya koi nahi
 
 ```
 HAL     chaaron badlaav ek transaction me: Arpan -30k +10 share, Suresh +30k -10 share, phir COMMIT.
@@ -192,7 +192,7 @@ AGAR    rollback ke baad retry hua, to Suresh ko do baar mila?
 
 ## 7. Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
 
-**Cue:** har step ka haal, aage badho · dabba: Wallet DB + Portfolio DB
+Cue: har step ka haal, aage badho
 
 ```
 HAL     do DB = ek transaction nahi ban sakti. Har kadam ka haal likho (status log: wallet done,
@@ -221,7 +221,7 @@ AGAR    step-step karne ki keemat kya hai?
 
 ## 8. 10 lakh log ek saath price poochh rahe, server baith gaya
 
-**Cue:** push (TV jaisa), WebSocket · dabba: Pub/Sub + WebSocket
+Cue: push (TV jaisa), WebSocket
 
 ```
 HAL     connection khula rakho, price badla tabhi server khud bheje (WebSocket push).

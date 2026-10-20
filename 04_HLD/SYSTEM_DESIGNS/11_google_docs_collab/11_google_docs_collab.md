@@ -24,6 +24,7 @@ NFR     typing turant ho aur kabhi na ruke (offline bhi). Aakhir me sabka doc sa
         "turant sab same" (strong) nahi
 NUMBERS ~10 crore user, ~3-4 crore roz. Har akshar ek event, to likhna bahut zyada hai,
         isliye buffer + baantna (sharding). Pakka number yahan maayne nahi rakhta
+PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar likh do (overwrite)
 ```
 
 ---
@@ -32,13 +33,12 @@ NUMBERS ~10 crore user, ~3-4 crore roz. Har akshar ek event, to likhna bahut zya
 
 ## 1. Ravi ne baad me save kiya, mera "WORLD" mit gaya
 
-**Cue:** OPERATION + baseVersion (text nahi) · dabba: App (op bhejo)
+Cue: OPERATION + baseVersion (text nahi)
 
 ![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
 
 ```
 HAL     sirf badlaav (op) bhejo, kis version pe bana (baseVersion v7). Server khiska ke lagata
-PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar likh do (overwrite)
 KYUN    server ke paas text nahi aata, badlaav aate hain. Server op ko agla version deta, lagata,
         aur Ravi ko bhej deta. Dono op v7 pe bane, to server samjhta ki saath bane,
         aur dono khiska ke lagata hai: "HELLO WORLD THERE"
@@ -56,7 +56,7 @@ AGAR    maine op se mitaya, aur Ravi ne wahin likha
 
 ## 2. Ravi ko mera likha refresh karne pe hi dikha
 
-**Cue:** WEBSOCKET (khula, dono taraf) · dabba: Conn-Server
+Cue: WEBSOCKET (khula, dono taraf)
 
 ![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
@@ -77,7 +77,7 @@ AGAR    WebSocket connection chupchaap mar gaya
 
 ## 3. 11 baje meeting me dono ne sabse upar ek saath type kiya
 
-**Cue:** OT (server kram, op khiskao) · dabba: Conn-Server (OT)
+Cue: OT (server kram, op khiskao)
 
 ![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
 
@@ -106,7 +106,7 @@ AGAR    CRDT hota kya hai?
 
 ## 4. 50 lakh connection khule, ek connection server nahi jhelta
 
-**Cue:** RING: docId se ek OWNER server · dabba: LB + Conn-Server (owner)
+Cue: RING: docId se ek OWNER server
 
 ![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
@@ -133,7 +133,7 @@ AGAR    ek doc pe 1000 log aa gaye
 
 ## 5. Ravi ab sirf padh raha, wo doosre server pe
 
-**Cue:** REDIS PUB/SUB (doc ek channel) · dabba: Redis pub/sub
+Cue: REDIS PUB/SUB (doc ek channel)
 
 ![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
@@ -156,7 +156,7 @@ AGAR    editor same server pe hai
 
 ## 6. 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
 
-**Cue:** REDIS BUFFER + BATCH, ACK = WAIT 1 · dabba: Redis buffer + Cassandra
+Cue: REDIS BUFFER + BATCH, ACK = WAIT 1
 
 ![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
@@ -183,7 +183,7 @@ AGAR    ACK se pehle Redis gira
 
 ## 7. Metro me mera net 1 second gaya, typing rukegi?
 
-**Cue:** likhna AP, permission CP · dabba: SQL permissions
+Cue: likhna AP, permission CP
 
 ![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 
@@ -208,7 +208,7 @@ AGAR    pending op ke saath 1 ghanta offline raha
 
 ## 8. Raat ko 2 saal purana doc khola, 10 lakh op shuru se chale
 
-**Cue:** SNAPSHOT + uske baad ke op · dabba: Cassandra (+ snapshot)
+Cue: SNAPSHOT + uske baad ke op
 
 ![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 

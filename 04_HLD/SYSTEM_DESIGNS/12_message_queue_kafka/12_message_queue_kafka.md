@@ -24,6 +24,7 @@ NFR     kuch khoye nahi. Ek machine gire to bhi chale. Lakhon message har second
         Ek key ka kram. 7 din rakho (replay). Consumer thoda peeche chale (lag) to theek hai
 NUMBERS 10 crore message roz / ~86,400 sec = ~1,200 / sec, bheed me 3-5 guna, ~5,000 / sec.
         ~1 KB ka message -> ~100 GB roz, 7 din ~700 GB, 3 copy ~2 TB
+PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, consumer uthaye
 ```
 
 ---
@@ -32,15 +33,14 @@ NUMBERS 10 crore message roz / ~86,400 sec = ~1,200 / sec, bheed me 3-5 guna, ~5
 
 ## 1. Subah queue machine restart hui, 500 signup gayab
 
-**Cue:** LOG disk pe + OFFSET · dabba: Log
+Cue: LOG disk pe + OFFSET
 
 ![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
 
 ```
 HAL     disk pe file hai (log), message padhne se mitta nahi.
         Email service apna number yaad rakhti hai (offset)
-PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, consumer uthaye
-MISAAL  message file ke aakhir me judta hai. Email ne 120 tak padha tha, to restart ke baad 121 se padhega
+        message file ke aakhir me judta hai. Email ne 120 tak padha tha, to restart ke baad 121 se padhega
 KYUN    message disk pe pada hai. Consumer gira to wapas aake apne offset se aage padhta,
         producer ko pata bhi nahi chalta.
         Consumer page cache se padhta hai
@@ -61,7 +61,7 @@ AGAR    consumer restart hua, wo kahan tak padha tha, ye kaun yaad rakhta hai?
 
 ## 2. 10 baje sale shuru, 5,000 / sec aaye, ek worker 500 hi bhej paata
 
-**Cue:** PARTITION (tukde, alag machine) · dabba: Brokers A / B / C
+Cue: PARTITION (tukde, alag machine)
 
 ![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
@@ -87,7 +87,7 @@ AGAR    worker 12 hain aur tukde 10, kya hoga?
 
 ## 3. Ravi ne naam do baar badla, purana naam reh gaya
 
-**Cue:** KEY = userId (ek partition, kram) · dabba: Producer (key)
+Cue: KEY = userId (ek partition, kram)
 
 ![card 3 chalti tasveer: pehle bug, phir key = userId](img/c3_anim.gif)
 
@@ -117,7 +117,7 @@ AGAR    producer ne retry kiya aur message ulta pahuncha, kram ka kya?
 
 ## 4. Email service ki 3 machine, Ravi ko 3 order email
 
-**Cue:** CONSUMER GROUP (ek team) · dabba: Group email
+Cue: CONSUMER GROUP (ek team)
 
 ![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
@@ -140,7 +140,7 @@ AGAR    group.id galat de diya (machine ka naam), kya hoga?
 
 ## 5. Ravi ka order analytics aur dashboard ko bhi chahiye
 
-**Cue:** HAR SERVICE KA APNA GROUP · dabba: Group analytics, dashboard
+Cue: HAR SERVICE KA APNA GROUP
 
 ![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
@@ -165,7 +165,7 @@ AGAR    nayi service aaj judi, kya badalna padega?
 
 ## 6. Dopahar Broker A ki disk mar gayi, data gaya
 
-**Cue:** LEADER + ISR, acks=all · dabba: Brokers (ISR) + Controller
+Cue: LEADER + ISR, acks=all
 
 ![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
@@ -192,7 +192,7 @@ AGAR    ISR copy kam pad gayi, phir bhi likhte rahein?
 
 ## 7. Email bheja, "padh liya" bolne se pehle crash
 
-**Cue:** PEHLE KAAM PHIR COMMIT + IDEMPOTENT · dabba: Redis (eventId)
+Cue: PEHLE KAAM PHIR COMMIT + IDEMPOTENT
 
 ![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 
@@ -221,7 +221,7 @@ AGAR    eventId ki jagah userId se dedup kiya, kya hoga?
 
 ## 8. Order #101 DB me bana, Kafka bhejne se pehle server gira
 
-**Cue:** OUTBOX + relay · dabba: Producer + Outbox
+Cue: OUTBOX + relay
 
 ![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 
@@ -250,7 +250,7 @@ AGAR    COMMIT se pehle crash ho gaya, kya bacha?
 
 ## 9. Shaam ko C2 mar gaya, lag badhta ja raha
 
-**Cue:** REBALANCE + LAG alert + DLQ · dabba: DLQ
+Cue: REBALANCE + LAG alert + DLQ
 
 ![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
 
@@ -277,7 +277,7 @@ AGAR    lag naapna hai, kaise naapoge?
 
 ## 10. Raat ko broker ki disk bharti ja rahi
 
-**Cue:** RETENTION 7 din + COMPACTION · dabba: Brokers (retention)
+Cue: RETENTION 7 din + COMPACTION
 
 ![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
 

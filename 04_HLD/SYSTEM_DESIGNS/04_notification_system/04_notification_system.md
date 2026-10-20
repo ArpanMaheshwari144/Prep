@@ -26,6 +26,8 @@ NUMBERS 10 crore user x ~5 / din = 50 crore / din, din me ~1 lakh sec -> ~5,800 
         sale ke din 10 guna ~58,000 / sec, har ek 3 raaste se -> ~1.75 lakh / sec Kafka me
         machines sale ke hisaab se: ek worker ~1000 / sec -> sale pe ~175 worker (raaste ke hisaab se bante)
         hisaab (kya gaya kya nahi) ~90 TB / saal · Kafka me 7 din ki khabar ~3 TB
+PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko call kare.
+        Order email ke jawab ka intezaar karta tha, company band to order hi fail
 ```
 
 ---
@@ -34,15 +36,13 @@ NUMBERS 10 crore user x ~5 / din = 50 crore / din, din me ~1 lakh sec -> ~5,800 
 
 ## 1. Maine order kiya, email company band thi, order hi fail
 
-**Cue:** KAFKA (async), order turant jawab · dabba: Kafka + Notification Svc
+Cue: KAFKA (async), order turant jawab
 
 ![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
 
 ```
 HAL     order aur khabar ek hi DB txn me likhte hain (outbox), relay use Kafka me daalta hai.
         Order ko turant OK milta hai, Notification Svc peeche Kafka se padh ke email bhejti hai
-PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko call kare.
-        Order email ke jawab ka intezaar karta tha, company band to order hi fail
 KYUN    order kabhi khabar ka intezaar nahi karta. Khabar disk ke log (Kafka) me padi rehti hai,
         padhne wala yaad rakhta hai kahan tak padha. Company band ho to bhi khabar padi hai,
         wapas aate hi wahin se
@@ -70,7 +70,7 @@ AGAR    Kafka tak pahunchne se pehle hi service gir gayi
 
 ## 2. SMS company dheemi, mera push aur email bhi atke
 
-**Cue:** har raaste ki ALAG LINE + worker · dabba: Push / Email / SMS queue
+Cue: har raaste ki ALAG LINE + worker
 
 ![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
 
@@ -91,7 +91,7 @@ AGAR    SMS ki line lambi ho gayi -> sirf SMS ke worker badhao, push / email pe 
 
 ## 3. Worker mara, mujhe do email aaye
 
-**Cue:** KEY (SET NX, khabar ki apni id) · dabba: Redis
+Cue: KEY (SET NX, khabar ki apni id)
 
 ![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
 
@@ -115,7 +115,7 @@ AGAR    key wala Redis gir gaya
 
 ## 4. Key lag gayi, par mera OTP gaya hi nahi
 
-**Cue:** SENDING / SENT (do haal) · dabba: (Redis key)
+Cue: SENDING / SENT (do haal)
 
 ![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
 
@@ -144,7 +144,7 @@ AGAR    SENDING laga ke bhej diya, par jawab aane se pehle worker mar gaya
 
 ## 5. SMS company pehle se pareshaan, hum har second dobara maar rahe
 
-**Cue:** BACKOFF + JITTER, had ke baad DLQ · dabba: DLQ
+Cue: BACKOFF + JITTER, had ke baad DLQ
 
 ![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
 
@@ -169,7 +169,7 @@ AGAR    backoff me lamba rukna ho (10 min)
 
 ## 6. SMS company band nahi, dheemi: saare worker 30 sec me phanse
 
-**Cue:** TIMEOUT + CIRCUIT BREAKER · dabba: Twilio + SNS, SendGrid
+Cue: TIMEOUT + CIRCUIT BREAKER
 
 ![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
 
@@ -196,7 +196,7 @@ AGAR    Twilio ka circuit breaker khula, push / email pe asar?
 
 ## 7. 12 baje sale shuru, mera OTP 50,000 offer ke peeche
 
-**Cue:** OTP ki ALAG TEZ LINE · dabba: Kafka high / med / low
+Cue: OTP ki ALAG TEZ LINE
 
 ![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
 
@@ -218,7 +218,7 @@ AGAR    order update kis line me jaaye (medium)? -> beech wali line me. OTP se p
 
 ## 8. Sale me laakhon message ek saath, company ne 429 diya
 
-**Cue:** SAANJHA TOKEN BUCKET (Redis) · dabba: (Redis bucket)
+Cue: SAANJHA TOKEN BUCKET (Redis)
 
 ![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 
@@ -243,7 +243,7 @@ AGAR    bucket se token nahi mila -> line me intezaar karo. Ye fail nahi hai, re
 
 ## 9. Company ne "bhej diya" bola, par mere phone tak pahuncha?
 
-**Cue:** WEBHOOK + company ka message id · dabba: Webhook + Tracking DB
+Cue: WEBHOOK + company ka message id
 
 ![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
 
@@ -267,7 +267,7 @@ AGAR    webhook aaya hi nahi
 
 ## 10. Shaam ko "Diwali offer sabko": 1 crore log
 
-**Cue:** 1000 ke TUKDE + campaign row · dabba: Campaign Svc + DB
+Cue: 1000 ke TUKDE + campaign row
 
 ![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
 
@@ -292,7 +292,7 @@ AGAR    tukde me 600 bhej ke worker gir gaya
 
 ## 11. Raat 2 baje offer ka SMS, jabki maine band kiya tha
 
-**Cue:** PASAND + SHAANTI + SAANCHA (cache) · dabba: User-pref + Template DB
+Cue: PASAND + SHAANTI + SAANCHA (cache)
 
 ![card 11 chalti tasveer: pehle dikkat, phir ilaaj](img/c11_anim.gif)
 

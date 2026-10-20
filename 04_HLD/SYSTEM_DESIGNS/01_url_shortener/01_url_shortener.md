@@ -23,6 +23,8 @@ NFR     har link ka code alag ho. Click pe redirect bahut tez ho. 100 me 99 baar
 NUMBERS roz 10 crore naye link (~1,000 / sec). Har link ~100 baar khulta hai (~1 lakh click / sec).
         Ek link ~500 byte, 5 saal me ~180 arab link, ~90 TB. 7 akshar = ~3.5 lakh crore code, ~100 saal.
         Click 100 guna hain, isliye aage cache. 90 TB ek machine me nahi aata, isliye aage shard
+PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe App DB me code dhoondh ke
+        asli link pe bhejta
 ```
 
 ---
@@ -31,13 +33,11 @@ NUMBERS roz 10 crore naye link (~1,000 / sec). Har link ~100 baar khulta hai (~1
 
 ## 1. Mera sale wala link viral hua, har click DB pe, DB baith gaya
 
-**Cue:** REDIS CACHE (cache-aside) · dabba: Redis
+Cue: REDIS CACHE (cache-aside)
 
 ```
 HAL     beech me Redis: click pe pehle Redis dekho, mila to wahin se, nahi to DB se laao aur Redis me rakho
         (cache-aside). Naya link banate hi Redis me bhi daal do
-PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe App DB me code dhoondh ke
-        asli link pe bhejta
 KYUN    Redis RAM se ~0.1 ms, DB disk se ~10 ms. 95% click Redis se hi nikal jaate hain.
         Sach ek hi jagah hai, DB me. Redis sirf garam copy hai, khoyi to DB se wapas ban jaati
 NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi rehti
@@ -69,7 +69,7 @@ AGAR    Redis bhar gaya
 
 ## 2. Usi bheed me ek App machine giri, poori site band
 
-**Cue:** STATELESS App x N + LOAD BALANCER · dabba: LB + App x N
+Cue: STATELESS App x N + LOAD BALANCER
 
 ```
 HAL     kai App aur aage Load Balancer (LB), jo baari-baari kisi bhi App ko bhejta (round-robin).
@@ -90,7 +90,7 @@ AGAR    giri hui App theek ho gayi
 
 ## 3. Maine aur Ravi ne link banaya, dono ko ek hi code mila
 
-**Cue:** COUNTER RANGE + base62 · dabba: Counter
+Cue: COUNTER RANGE + base62
 
 ```
 HAL     Counter har App ko alag range deta: App-1 ko 1-1000, App-2 ko 1001-2000. App apni range se agla
@@ -129,7 +129,7 @@ AGAR    MD5 ya random code kyun nahi?
 
 ## 4. Maine click ginti chahi, redirect hi dheema ho gaya
 
-**Cue:** KAFKA, ginti peeche · dabba: Kafka + Analytics + DLQ
+Cue: KAFKA, ginti peeche
 
 ```
 HAL     redirect turant (302), "ek click hua" ki khabar Kafka me daal ke aage. Analytics service apni speed
@@ -161,7 +161,7 @@ AGAR    302 kyun, 301 kyun nahi?
 
 ## 5. DB team boli: 5 saal me 90 TB, ek machine me nahi
 
-**Cue:** SHARD by code (RING) · dabba: Cassandra
+Cue: SHARD by code (RING)
 
 ```
 HAL     data kai machine me baanto (shard), link ke code se. Code ring pe aage chalta, jo pehli machine mile
@@ -192,7 +192,7 @@ AGAR    data sirf ~500 GB hota to?
 
 ## 6. Maine naya link banaya, turant khola, 404 aaya
 
-**Cue:** QUORUM (2 me likho, 2 se padho) · dabba: (Cassandra quorum)
+Cue: QUORUM (2 me likho, 2 se padho)
 
 ```
 HAL     likhna 2 copy me, padhna bhi 2 copy se (quorum, 3 me se 2). Har jodi me ek taaza copy zaroor hoti
@@ -221,7 +221,7 @@ AGAR    likhte waqt copy C gir gayi
 
 ## 7. Shaam ko LB hi gir gaya, koi request andar nahi
 
-**Cue:** ROUTE 53 + 2 LB (health check) · dabba: Route 53 + LB x2
+Cue: ROUTE 53 + 2 LB (health check)
 
 ```
 HAL     do LB, aage Route 53. Route 53 har ~30 sec LB se poochta hai (health check). Jo 3 baar chup raha,
@@ -240,7 +240,7 @@ AGAR    phone ne Route 53 se mila purana pata yaad rakh liya
 
 ## 8. Raat ko spammer ki script, har second 5,000 link
 
-**Cue:** RATE LIMIT darwaze pe + WAF · dabba: API Gateway + WAF
+Cue: RATE LIMIT darwaze pe + WAF
 
 ```
 HAL     gateway pe hi ginti: har API key ki ek shared ginti (Redis me). Had paar to 429,

@@ -24,6 +24,10 @@ NFR     sahi hona sabse upar (paisa na gum ho, na bane, hisaab har waqt barabar)
         Dobara bhejne pe dobara na kate (idempotent). Balance dekhna tez ho
 NUMBERS 50 lakh account, 1 crore transaction roz = ~120 likhai / sec, padhna kahin zyada.
         120 / sec ek Postgres ka dasva hissa hai, to shard nahi, primary + replica kaafi
+DABBA 0 sabse simple: ek Banking Service (saara niyam / logic) + peeche ek SQL DB, jaan-boojh ke seedha
+SCOPE   pehle poochho "ek hi bank ke andar, ya doosre bank ko bhi?", warna interviewer jitna bada chaahe
+        sar pe daal dega. "dono isi bank", ye ek shabd poora design badalta hai
+SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? -> card 1
 ```
 
 ---
@@ -32,13 +36,9 @@ NUMBERS 50 lakh account, 1 crore transaction roz = ~120 likhai / sec, padhna kah
 
 ## 1. Maine Ravi ko 500 bheje, beech me server gira
 
-**Cue:** EK TRANSACTION (WAL) · dabba: SQL DB
+Cue: EK TRANSACTION (WAL)
 
 ```
-DABBA 0 sabse simple: ek Banking Service (saara niyam / logic) + peeche ek SQL DB, jaan-boojh ke seedha
-SCOPE   pehle poochho "ek hi bank ke andar, ya doosre bank ko bhi?", warna interviewer jitna bada chaahe
-        sar pe daal dega. "dono isi bank", ye ek shabd poora design badalta hai
-SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? Yahi card
 TOOTA   mera -500 hua, server gira, Ravi ka +500 hua hi nahi, to 500 gayab
 HAL     BEGIN, Arpan -500, Ravi +500, COMMIT. Dono hon ya koi nahi (transaction)
 KYUN    ek DB me ek transaction kabhi aadha nahi rehta. Crash pe DB apne log se khud ulta karta hai
@@ -59,7 +59,7 @@ AGAR    beech me server gira, DB kaise jaanta hai kya karna?
 
 ## 2. Send dabaya, network gaya, app ne dobara bheja
 
-**Cue:** IDEMPOTENCY KEY (UNIQUE) · dabba: Banking Svc (+ key)
+Cue: IDEMPOTENCY KEY (UNIQUE)
 
 ```
 TOOTA   koi id nahi thi, timeout pe app ne dobara bheja, server ne do transfer samjhe, to 1000 kate
@@ -84,7 +84,7 @@ AGAR    wahi id wali do request ek saath aayi
 
 ## 3. 9 baje Netflix ka auto-debit aur mera UPI ek saath
 
-**Cue:** CHECK + KAATNA EK QUERY · dabba: (SQL DB: balance >= x)
+Cue: CHECK + KAATNA EK QUERY
 
 ```
 SAWAAL  ek account pe do transfer ek saath, kaun rokega? Balance minus na jaaye, ye niyam kahan? Yahi card
@@ -106,7 +106,7 @@ NAHI    pehle padho, phir kaato
 
 ## 4. Maine poochha: mere 500 kahan gaye, kab?
 
-**Cue:** KHAATA (ledger) usi transaction me · dabba: (SQL DB: ledger table)
+Cue: KHAATA (ledger) usi transaction me
 
 ```
 TOOTA   sirf balance column tha, 1000 dikhta, 500 kahan / kab gaye koi hisaab nahi, support bole "pata nahi"
@@ -130,7 +130,7 @@ AGAR    khaate me galat line likh di
 
 ## 5. Salary aayi, Ravi ko rent bheja, SMS service giri
 
-**Cue:** OUTBOX, Kafka key = account_id · dabba: Kafka
+Cue: OUTBOX, Kafka key = account_id
 
 ```
 TOOTA   transfer karte hi SMS bhejte the, Ravi ko 20,000 gaye, SMS service band, to SMS kabhi nahi gaya
@@ -162,7 +162,7 @@ AGAR    SMS service ghanta bhar giri
 
 ## 6. Salary ke baad maine balance khola
 
-**Cue:** BALANCE = CACHE, raat RECONCILIATION · dabba: Reconciliation job
+Cue: BALANCE = CACHE, raat RECONCILIATION
 
 ```
 TOOTA   column aur khaata alag ho gaye (bug): khaata 29,800, column 30,300, kisi ne pakda nahi
@@ -184,7 +184,7 @@ AGAR    raat ki reconciliation me farak mila, 29,800 vs 30,300
 
 ## 7. 11 baje sabki salary aa gayi, ek Banking service bhar gayi
 
-**Cue:** KAI MACHINE + LB, DB sync copy · dabba: LB + Banking Svc x N
+Cue: KAI MACHINE + LB, DB sync copy
 
 ```
 TOOTA   ek machine, laakhon transfer, CPU bhara, machine giri, koi paisa nahi bhej pa raha
@@ -215,7 +215,7 @@ AGAR    ek machine giri
 
 ## 8. Salary ki bheed me sab balance dekh rahe, transfer dheeme
 
-**Cue:** READ REPLICA + read-your-own-writes · dabba: Read replica
+Cue: READ REPLICA + read-your-own-writes
 
 ```
 TOOTA   padhna + likhna ek DB pe, laakhon log balance / history padh rahe, primary pe dono bojh,
@@ -240,7 +240,7 @@ AGAR    abhi paisa bheja, aur copy 5 sec peeche hai
 
 ## 9. Ravi ki dukaan ko 500, usi second dukaan se 200 refund (deadlock)
 
-**Cue:** CHHOTI ID PEHLE LOCK · dabba: (SQL DB: lock kram)
+Cue: CHHOTI ID PEHLE LOCK
 
 ```
 FARAK   card 3 me paisa do baar kat raha tha (double spend). Yahan dono ek doosre ke intezaar me atke
@@ -260,7 +260,7 @@ AGAR    lock kram ke baad bhi phans gaye
 
 ## 10. Shaam ko dukaan ke CA ka export, page 5000 pe atka
 
-**Cue:** KEYSET (ts, id) + index · dabba: (SQL DB: index)
+Cue: KEYSET (ts, id) + index
 
 ```
 TOOTA   page 5000 = LIMIT 20 OFFSET 100000, DB 1 lakh line padh ke phenkta hai, export bahut dheema
@@ -288,7 +288,7 @@ AGAR    ek hi ts pe do line hain
 
 ## 11. Raat ko: 5 saal ka khaata ek hi table me
 
-**Cue:** MAHINE KE TUKDE + S3, snapshot · dabba: Archive (S3)
+Cue: MAHINE KE TUKDE + S3, snapshot
 
 ```
 NUMBERS khaata 1 crore x 2 line x 365 = ~730 crore line saal me, 3 saal ~22 arab, 5 saal ~36 arab

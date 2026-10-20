@@ -28,6 +28,8 @@ NUMBERS 10 lakh user x 5 baar = 50 lakh padhai roz, din ~1 lakh sec, to ~50 / se
         1000 source har 5 min = ~3 lakh fetch roz. Nayi khabar ~1 lakh roz = ~1 likhai / sec
         padhna likhne se bahut zyada, to cache + read replica. Likhna peeche, to queue.
         Data badhta hai, to purana archive (bahut bade scale pe shard)
+PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc har baar DB se "taazi 20"
+        sort karke deta hai
 ```
 
 ---
@@ -36,11 +38,9 @@ NUMBERS 10 lakh user x 5 baar = 50 lakh padhai roz, din ~1 lakh sec, to ~50 / se
 
 ## 1. Subah maine app khola, sabko wahi 20 khabar, har baar DB se
 
-**Cue:** FEED CACHE (Redis SORTED SET) · dabba: Redis
+Cue: FEED CACHE (Redis SORTED SET)
 
 ```
-PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc har baar DB se "taazi 20"
-        sort karke deta hai
 HAL     sabki ek feed ek baar banti hai, Redis me time se (sorted set). Nayi khabar ZADD feed:latest,
         kholne pe ZREVRANGE 0 19 = 20 id. DB tak koi nahi jaata
 KYUN    sabko ek jaisi feed hai, to ek baar bana ke Redis me rakho. Nayi khabar aate hi apni jagah baith
@@ -65,7 +65,7 @@ AGAR    feed cache me, to khabar kitni taazi chahiye, 5 min purani chalegi?
 
 ## 2. Meri feed me khabar 20 minute purani
 
-**Cue:** KAFKA: laana aur likhna alag · dabba: Kafka + Worker
+Cue: KAFKA: laana aur likhna alag
 
 ```
 HAL     fetcher sirf laata hai aur Kafka me daalta hai (key = source_id). Worker apni speed se Kafka se padh
@@ -96,7 +96,7 @@ AGAR    fetcher gaya, par source pe kuch naya nahi hai
 
 ## 3. 8 baje election result, 40 guna bheed
 
-**Cue:** LB + READ REPLICA · dabba: LB + Read replica
+Cue: LB + READ REPLICA
 
 ```
 HAL     Feed Service kai machine pe chalti hai, aage LB. Redis miss hua to DB ki copy (read replica) se padho.
@@ -123,7 +123,7 @@ AGAR    8 baje ki bheed ka pehle se pata tha
 
 ## 4. Dopahar "India ne match jeeta", meri feed me 5 baar
 
-**Cue:** DEDUPE (title hash + SimHash) · dabba: (Worker me dedupe)
+Cue: DEDUPE (title hash + SimHash)
 
 ```
 HAL     dekha hua URL Bloom filter se pakdo, wahi khabar title ke hash se (Bloom + SimHash).
@@ -152,7 +152,7 @@ AGAR    title "wins" hai aur doosre me "won", hash alag ho gaya to?
 
 ## 5. Dopahar baad nayi khabar aani ruki: ek chhota source 30 sec atka, baaki 999 bhi ruke
 
-**Cue:** TIMEOUT + CIRCUIT BREAKER · dabba: (Fetcher me breaker)
+Cue: TIMEOUT + CIRCUIT BREAKER
 
 ```
 HAL     thodi der me chhod do (timeout 2-3 sec, thodi retry). Baar-baar fail ho to call hi mat karo
@@ -175,7 +175,7 @@ AGAR    breaker OPEN hai, wapas kab chalu hoga?
 
 ## 6. Shaam ko mujhe sirf tech aur sports chahiye
 
-**Cue:** CATEGORY FEED, padhte waqt milao · dabba: (Redis me feed:tech)
+Cue: CATEGORY FEED, padhte waqt milao
 
 ```
 HAL     har category ki list pehle se bani hai (feed:tech, feed:sports). Khabar aayi to apni list me.
@@ -196,7 +196,7 @@ AGAR    ek khabar 2 category list me hai
 
 ## 7. Raat ko maine "cricket" dhoondha, poori table padhi gayi
 
-**Cue:** INVERTED INDEX · dabba: Elasticsearch
+Cue: INVERTED INDEX
 
 ```
 HAL     har shabd ki list ki wo kis-kis khabar me hai (inverted index, Elasticsearch).
@@ -222,7 +222,7 @@ AGAR    "cricket kohli" dhoondha to?
 
 ## 8. Raat ko DBA ka mail: 6 mahine me ~2 crore row, kharcha badhta ja raha
 
-**Cue:** mahine ka PARTITION, purana ARCHIVE · dabba: Archive (S3)
+Cue: mahine ka PARTITION, purana ARCHIVE
 
 ```
 HAL     har mahine ka alag tukda (partition), purana S3 pe (archive). Postgres me sirf haal ke mahine
@@ -248,7 +248,7 @@ AGAR    mahina beet gaya, partition ka kya?
 
 ## 9. Mail ka doosra hissa: source 100 guna hue to ek DB machine nahi jhelegi
 
-**Cue:** SHARD hash(article_id) · dabba: (DB ke tukde)
+Cue: SHARD hash(article_id)
 
 ```
 HAL     article_id se tukde, har tukda alag machine pe (shard). hash(a91) -> shard 2.
