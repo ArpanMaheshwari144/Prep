@@ -60,6 +60,12 @@ arrow (+ kram badge n at fraction at) · `AP([[x,y],...],color,{n,at,dash})` ben
    = confusing. The CAUSE (gira / crash / loop) gets a number too, first in kram.
 9. (Arpan) AGAR scene must also SHOW the jawab / hal, not only the problem: green L() label 'hal: ...' with words from
    the md answer (even 'hal: chalta hai, ...'). Skip only if the very next WAPAS scene visibly shows that exact fix.
+11. (Arpan) TEER KI DISHA = cheez jidhar jaati: paisa / request / khabar jis se nikli wahan se, jahan pahunchi wahan tak.
+    Bhejne wala baayein, paane wala daayein. Ulta teer (jaise paisa Payment Svc se Arpan ko) = galat.
+12. (Arpan) Sirf wahi dabba jo us card / us scene ki baat me hai. Jo cheez file me aage ke card me aati hai (jaise
+    ledger card 7 me) wo pehle ke card me nahi. AGAR me koi dabba aaye to sirf usi scene me.
+13. Har scene ko caption ke saath padho: kya tasveer wahi kahani bol rahi hai? Sirf overlap check kaafi nahi.
+
 
 ## 4. Build + self-check (do it for EVERY card, fix until clean)
 - From `C:\DSA_PRACTICE\04_HLD`: `python tools/anim_build.py SYSTEM_DESIGNS/<d>/img/c1_anim.js SYSTEM_DESIGNS/<d>/img/c2_anim.js`
