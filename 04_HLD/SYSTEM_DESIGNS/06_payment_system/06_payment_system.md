@@ -200,19 +200,13 @@ NAHI    timeout lagao hi mat, wait karo -> ATKA: har thread PSP ke jawab tak ruk
 
 Cue: PENDING pehle + WEBHOOK + RECONCILE
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png">
+<img src="img/c5_1.png?v=2" width="900">
 
-<img src="img/c5_2.png">
+<img src="img/c5_2.png?v=2" width="900">
 
-<img src="img/c5_3.png">
-
-<img src="img/c5_4.png">
-
-<img src="img/c5_5.png">
-
-<img src="img/c5_6.png">
+<img src="img/c5_3.png?v=2" width="900">
 
 </details>
 
@@ -241,17 +235,13 @@ NAHI    sirf webhook -> KHOTA: webhook kho sakta hai (der ho, ya hamara server b
 
 Cue: SAGA (step-step, fail pe ulta)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png">
+<img src="img/c6_1.png?v=2" width="900">
 
-<img src="img/c6_2.png">
+<img src="img/c6_2.png?v=2" width="900">
 
-<img src="img/c6_3.png">
-
-<img src="img/c6_4.png">
-
-<img src="img/c6_5.png">
+<img src="img/c6_3.png?v=2" width="900">
 
 </details>
 
@@ -278,19 +268,13 @@ NAHI    ek transaction me dono -> NAMUMKIN: do alag system hain, ek transaction 
 
 Cue: LEDGER double-entry, sirf INSERT
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png">
+<img src="img/c7_1.png?v=2" width="900">
 
-<img src="img/c7_2.png">
+<img src="img/c7_2.png?v=2" width="900">
 
-<img src="img/c7_3.png">
-
-<img src="img/c7_4.png">
-
-<img src="img/c7_5.png">
-
-<img src="img/c7_6.png">
+<img src="img/c7_3.png?v=2" width="900">
 
 </details>
 
@@ -321,19 +305,13 @@ NAHI    sirf balance column -> ANDHA: number hai (1100), kahani nahi. Support ke
 
 Cue: STATELESS, kai machine + LB
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png">
+<img src="img/c8_1.png?v=2" width="900">
 
-<img src="img/c8_2.png">
+<img src="img/c8_2.png?v=2" width="900">
 
-<img src="img/c8_3.png">
-
-<img src="img/c8_4.png">
-
-<img src="img/c8_5.png">
-
-<img src="img/c8_6.png">
+<img src="img/c8_3.png?v=2" width="900">
 
 </details>
 
@@ -359,21 +337,13 @@ NAHI    ek hi machine -> BAITHI: CPU bhara, payment atke, timeout, log dobara ta
 
 Cue: READ REPLICA (sirf report)
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png">
+<img src="img/c9_1.png?v=2" width="900">
 
-<img src="img/c9_2.png">
+<img src="img/c9_2.png?v=2" width="900">
 
-<img src="img/c9_3.png">
-
-<img src="img/c9_4.png">
-
-<img src="img/c9_5.png">
-
-<img src="img/c9_6.png">
-
-<img src="img/c9_7.png">
+<img src="img/c9_3.png?v=2" width="900">
 
 </details>
 
@@ -399,19 +369,13 @@ NAHI    report bhi primary pe -> RUKA: wahi hua, mahine bhar ki report ne primar
 
 Cue: SHARD by account_id
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c10_1.png">
+<img src="img/c10_1.png?v=2" width="900">
 
-<img src="img/c10_2.png">
+<img src="img/c10_2.png?v=2" width="900">
 
-<img src="img/c10_3.png">
-
-<img src="img/c10_4.png">
-
-<img src="img/c10_5.png">
-
-<img src="img/c10_6.png">
+<img src="img/c10_3.png?v=2" width="900">
 
 </details>
 

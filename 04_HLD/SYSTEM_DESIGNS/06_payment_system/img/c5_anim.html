@@ -133,67 +133,48 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 5: PSP ko call, jawab se pehle server gira, DB me kuch nahi. Ilaaj: pehle PENDING, phir webhook ya job.
-// Agar: webhook do baar, nakli webhook, webhook aaya hi nahi. Wapas: job ko jawab mila -> SUCCESS / FAILED.
-const DUR = 18;
+// Card 5: PSP ko call kiya, jawab se pehle hamara server gira. Paisa gaya ya nahi?
+// Ilaaj: call se PEHLE PENDING, phir webhook / job se SUCCESS. Agar: webhook do baar -> SUCCESS ek baar.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: PSP ko call gayi, jawab se pehle server gira. Paisa gaya ya nahi?'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: call se PEHLE DB me PENDING likho. PSP baad me khud bataye (webhook)'],
+  [0, RED, 'DIKKAT', 'DIKKAT: PSP ko call kiya, jawab se pehle hamara server gira. Paisa gaya ya nahi?'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: call se PEHLE DB me PENDING. PSP webhook se bataye (ya job poochhe), tab SUCCESS'],
   [6, YEL, 'AGAR', 'AGAR webhook do baar aaya? -> SUCCESS sirf ek baar, doosra ignore'],
-  [9, YEL, 'AGAR', 'AGAR webhook nakli? -> hastakshar jaancho (PSP secret), PENDING se milao'],
-  [12, YEL, 'AGAR', 'AGAR webhook aaya hi nahi? -> job purane PENDING ke liye PSP se poochhe'],
-  [15, GRN, 'WAPAS', 'WAPAS: job ko PSP ka jawab: hua = SUCCESS, pakka fail = FAILED'],
 ];
 function setup() {}
-// o: { sv, ps, db, job } st ; s: { db }
-function base(o = {}, s = {}) {
-  B(40, 40, 160, 70, 'Payment Svc', '', { st: o.sv });
-  B(700, 40, 170, 70, 'PSP', '', { st: o.ps });
-  B(40, 240, 160, 80, 'SQL DB', s.db || 'payment ka haal', { st: o.db });
-  if (!o.noJob) B(400, 250, 180, 70, 'Reconciliation', 'job', { st: o.job });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base({ sv: 'bad', db: 'bad', noJob: 1 }, { db: 'kuch likha nahi' });
-    A(200, 60, 698, 60, C.msg, { n: 1 }); L(300, 50, 'call', C.msg);
-    num(785, 130, 2, C.acc); L(805, 135, 'paisa kata', C.acc, 'start');
-    num(60, 135, 3, C.bad); L(78, 140, 'server gira', C.bad, 'start'); cross(225, 128);
-    A(698, 95, 202, 95, C.good, { dash: 1 }); L(450, 120, 'jawab kisi ne nahi suna', C.bad);
-    L(500, 230, 'paisa gaya ya nahi? pata nahi', C.bad);
+    panel(0, 'call gayi', ['Payment Svc', 'top-up 2000', ''], ['PSP', '2000 laaya', 'good'], 'call', true, C.msg, 'PSP ne kaam kiya');
+    panel(1, 'server gira', ['Payment Svc', 'gira', 'bad'], ['PSP', '"SUCCESS"', 'good'], 'jawab', false, C.bad, 'sunne wala koi nahi');
+    panel(2, 'uth ke', ['Payment Svc', 'wapas aaya', 'acc'], ['Payment DB', 'koi record nahi', 'bad'], 'padha', false, C.acc, 'kya hua, pata nahi');
+    panel(3, 'andha?', ['Payment Svc', 'dobara call?', 'bad'], ['PSP', '2000 do baar?', 'bad'], 'phir call', true, C.bad, 'ya paisa gum, ya do baar');
+    L(450, 320, 'call se pehle kuch likha hi nahi tha, to uth ke kuch yaad nahi', C.bad);
   } else if (ph === 1) {
-    base({ sv: 'bad', db: 'good', ps: 'good', noJob: 1 }, { db: 'PENDING -> SUCCESS' });
-    A(120, 112, 120, 238, C.acc, { n: 1, at: 0.45 }); L(135, 172, 'pehle: PENDING likha', C.acc, 'start');
-    A(200, 75, 698, 75, C.msg, { n: 2, at: 0.5 }); L(450, 62, 'phir: PSP ko call', C.msg);
-    cross(225, 128); num(255, 128, 3, C.bad); L(273, 133, 'server gira', C.bad, 'start');
-    AP([[785, 112], [785, 300], [202, 300]], C.good, { n: 4, at: 0.55 });
-    L(500, 288, 'PSP ka webhook: "hua" -> DB me SUCCESS', C.good);
-    L(450, 350, 'server gira tab bhi DB me PENDING tha, isliye haal pata raha', C.good);
-  } else if (ph === 2) {
-    base({ db: 'good', ps: 'good', noJob: 1 }, { db: 'SUCCESS (ek baar)' });
-    AP([[700, 85], [650, 85], [202, 255]], C.good, { n: 1, at: 0.3 }); L(470, 105, 'webhook: SUCCESS likha', C.good);
-    AP([[700, 105], [670, 105], [202, 290]], C.acc, { dash: 1, n: 2, at: 0.25 }); L(500, 250, 'webhook dobara: ignore', C.acc);
-    L(450, 345, 'hal: SUCCESS sirf ek baar, doosra ignore', C.good);
-  } else if (ph === 3) {
-    base({ sv: 'good', db: 'good', noJob: 1 }, { db: 'PENDING (badla nahi)' });
-    B(400, 150, 160, 60, 'Nakli', 'webhook: hua', { st: 'bad' });
-    A(400, 165, 202, 95, C.bad, { n: 1, at: 0.5 }); L(330, 110, 'nakli webhook', C.bad);
-    num(60, 135, 2, C.acc); L(78, 140, 'hastakshar galat -> mana', C.acc, 'start');
-    L(450, 300, 'hal: hastakshar jaancho (PSP secret)', C.good, 'start');
-    L(450, 322, 'aur apne PENDING se milao', C.good, 'start');
-  } else if (ph === 4) {
-    base({ db: 'good', job: 'good', ps: 'good' }, { db: 'SUCCESS' });
-    AP([[700, 100], [650, 100], [420, 185]], C.bad, { dash: 1, n: 1, at: 0.3 }); cross(440, 178);
-    L(560, 175, 'webhook kho gaya', C.bad, 'start');
-    A(580, 262, 760, 112, C.acc, { n: 2, at: 0.45 }); L(690, 220, 'haal?', C.acc, 'start');
-    A(800, 112, 800, 270, C.good); A(800, 285, 582, 290, C.good, { n: 3, at: 0.5 }); L(800, 305, 'hua', C.good, 'start');
-    A(398, 290, 202, 285, C.good, { n: 4 }); L(300, 315, 'SUCCESS', C.good);
-    L(450, 345, 'hal: job har kuch minute poochhe, raat ko PSP file se milaan', C.good);
+    panel(0, 'pehle PENDING', ['Payment Svc', 'top-up 2000', ''], ['Payment DB', 't5: PENDING', 'acc'], 'likha', true, C.acc, 'call se pehle');
+    panel(1, 'call', ['Payment Svc', 'call ke baad gira', 'bad'], ['PSP', 't5: 2000 laaya', 'good'], 'call', true, C.msg, 'PENDING to bacha hai');
+    panel(2, 'webhook', ['PSP', '"t5 SUCCESS"', 'good'], ['Webhook Svc', 'suna', ''], 'batata', true, C.good, 'PSP khud batata');
+    panel(3, 'SUCCESS', ['Webhook Svc', '', ''], ['Payment DB', 't5: SUCCESS', 'good'], 'likha', true, C.good, 'webhook gum? job poochhti');
+    L(450, 320, 'Arpan ko PROCESSING dikha, phir SUCCESS. Andha dobara call kabhi nahi', C.good);
   } else {
-    base({ db: 'good', job: 'good', ps: 'good' }, { db: 'SUCCESS / FAILED' });
-    A(580, 262, 760, 112, C.acc, { n: 1, at: 0.45 }); L(690, 220, 'haal?', C.acc, 'start');
-    A(800, 112, 800, 270, C.good); A(800, 285, 582, 290, C.good, { n: 2, at: 0.5 }); L(810, 305, 'jawab', C.good, 'start');
-    A(398, 290, 202, 285, C.good, { n: 3 }); L(300, 315, 'hua = SUCCESS', C.good);
-    L(300, 345, 'pakka fail = FAILED, kuch wapas nahi', C.good);
+    B(20, 120, 150, 90, 'PSP', 't5 SUCCESS', { st: 'good' });
+    B(330, 120, 200, 90, 'Webhook Svc', '', { st: 'acc' });
+    B(690, 120, 180, 90, 'Payment DB', 't5: SUCCESS', { st: 'good' });
+    A(170, 140, 328, 140, C.good, { n: 1 }); L(250, 125, 'webhook #1', C.good);
+    A(530, 140, 688, 140, C.good, { n: 2 }); L(610, 125, 'PENDING -> SUCCESS', C.good);
+    A(170, 190, 328, 190, C.acc, { n: 3 }); L(250, 215, 'webhook #2, wahi', C.acc);
+    A(530, 190, 688, 190, C.acc, { dash: 1 }); num(780, 240, 4, C.acc); L(780, 265, '0 row: ignore', C.acc);
+    T(450, 300, "UPDATE payment SET status = 'SUCCESS' WHERE id = t5 AND status = 'PENDING'", { c: C.fg, size: 12 });
+    L(450, 340, 'paisa ek hi baar juda, doosre webhook ne kuch nahi badla', C.good);
   }
 }
 

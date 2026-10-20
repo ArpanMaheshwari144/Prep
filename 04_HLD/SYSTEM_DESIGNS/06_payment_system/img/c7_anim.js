@@ -1,69 +1,45 @@
-// Card 7: sirf balance column, 2200 -> 1100, "kaise?" ka jawab nahi. Ilaaj: ledger double-entry, line-line dikhta.
-// Agar: galat entry / refund, 3 saal me bada, balance aur khaata alag. Wapas: raat ka check theek.
-const DUR = 18;
+// Card 7: kal raat 2200, subah 1100. Sirf balance column, kahani nahi. Ilaaj: ledger double-entry, sirf INSERT.
+// Agar: galat entry / refund -> mitao nahi, nayi ulti line jodo.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: sirf balance column, 2200 se 1100. Number hai, kahani nahi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: ledger double-entry. Har paisa do line, jod 0, sirf INSERT'],
+  [0, RED, 'DIKKAT', 'DIKKAT: maine poochha, kal raat 2200 tha, subah 1100 kaise? DB me sirf balance hai'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: ledger double-entry. Har paisa do line (DEBIT + CREDIT), jod 0. Sirf INSERT'],
   [6, YEL, 'AGAR', 'AGAR galat entry ho gayi ya refund aaya? -> mitao nahi, nayi ulti line jodo'],
-  [9, YEL, 'AGAR', 'AGAR 3 saal me ledger bahut bada? -> mahine ke tukde, purane S3 Glacier me'],
-  [12, YEL, 'AGAR', 'AGAR balance column aur khaata alag? -> raat ko jod == balance, alert'],
-  [15, GRN, 'WAPAS', 'WAPAS: raat ka check: jod == balance. Hisaab saaf'],
 ];
 function setup() {}
-function base(o = {}, s = {}) {
-  B(20, 40, 140, 70, 'Arpan', '"1100 kaise?"', { st: o.ar });
-  B(20, 240, 140, 70, 'Support', '', { st: o.su });
-  B(240, 40, 190, 70, 'wallet', s.wl || 'balance: 1100', { st: o.wl });
-  if (!o.noLg) B(500, 40, 380, o.lgh || 250, 'Ledger (sirf INSERT)', '', { st: o.lg || 'acc' });
-}
-function rows(list, y0) {
-  list.forEach(([t, c], i) => T(520, (y0 || 100) + i * 28, t, { a: 'start', c: c || C.fg, size: 13, b: 1 }));
-}
-const R1 = 'Arpan -800   bijli +800      jod 0', R2 = 'Arpan -300   recharge +300   jod 0';
 function frame(ph) {
   if (ph === 0) {
-    base({ wl: 'bad', noLg: 1 });
-    L(445, 80, 'kal raat 2200, subah 1100', C.muted, 'start');
-    A(90, 112, 90, 238, C.msg, { n: 1 }); L(108, 175, 'kaise?', C.msg, 'start');
-    A(160, 245, 238, 80, C.acc, { n: 2, at: 0.5 }); L(215, 160, 'kyun?', C.acc, 'start');
-    A(335, 112, 162, 290, C.acc, { dash: 1, n: 3, at: 0.5 }); L(265, 215, 'sirf 1100', C.acc, 'start');
-    L(450, 330, 'sirf number, record nahi, jawab nahi', C.bad);
+    B(20, 130, 150, 70, 'Arpan', '2200 se 1100?');
+    B(300, 130, 170, 70, 'Support', '', { st: 'bad' });
+    B(640, 130, 220, 70, 'Wallet DB', 'balance: 1100', { st: 'bad' });
+    A(170, 150, 298, 150, C.msg, { n: 1 }); L(235, 135, 'kaise?', C.msg);
+    A(470, 150, 638, 150, C.acc, { n: 2 }); L(555, 135, 'dikhao', C.acc);
+    A(638, 180, 472, 180, C.acc, { n: 3 }); L(555, 205, 'bas 1100', C.acc);
+    A(298, 180, 172, 180, C.bad, { n: 4 }); L(235, 205, 'pata nahi', C.bad);
+    L(450, 300, 'number hai, kahani nahi. Kahan gaya, kisi ke paas record nahi', C.bad);
   } else if (ph === 1) {
-    base({ wl: 'good' });
-    rows([[R1], [R2]]);
-    A(90, 112, 90, 238, C.msg, { n: 1 }); L(108, 175, 'kaise?', C.msg, 'start');
-    A(160, 275, 498, 200, C.acc, { n: 2, at: 0.5 }); L(330, 270, 'line dikhao', C.acc);
-    L(690, 200, '2200 - 800 - 300 = 1100', C.good);
-    L(690, 230, 'line-line dikhta', C.good);
-  } else if (ph === 2) {
-    base({ wl: '' });
-    rows([[R1, C.bad], [R2], ['bijli -800   Arpan +800      jod 0', C.good]], 130);
-    num(530, 100, 1, C.bad); L(548, 105, 'galat entry', C.bad, 'start');
-    A(160, 275, 498, 190, C.good, { n: 2, at: 0.5 }); L(330, 260, 'nayi ulti line', C.good);
-    L(690, 230, 'audit me dono dikhti', C.good);
-    L(690, 330, 'hal: mitao nahi (sirf INSERT), ulti line jodo', C.good);
-  } else if (ph === 3) {
-    base({ wl: '', lg: 'acc', lgh: 150 });
-    num(560, 25, 1, C.bad); L(578, 30, '3 saal, bahut bada', C.bad, 'start');
-    cells(520, 110, [['mahina', C.muted], ['mahina', C.muted], ['mahina', C.muted], ['is mahine', C.good]], { w: 80, h: 30 });
-    num(700, 172, 2, C.acc); L(718, 177, 'mahine ke tukde', C.acc, 'start');
-    B(560, 260, 200, 70, 'S3 Glacier', 'sasti jagah', { st: 'good' });
-    A(560, 142, 600, 258, C.good, { n: 3, at: 0.5 }); L(560, 215, 'purane', C.good, 'end');
-    L(250, 330, 'hal: kanoon jitna kahe utna rakho', C.good);
-  } else if (ph === 4) {
-    base({ wl: 'bad', lg: 'bad' }, { wl: 'balance column' });
-    rows([[R1], [R2]]);
-    B(240, 200, 190, 60, 'raat ka check', 'jod == balance?', { st: 'acc' });
-    A(335, 112, 335, 198, C.acc, { n: 1 }); A(498, 200, 432, 220, C.acc, { n: 1 });
-    num(335, 285, 2, C.bad); L(355, 290, 'farak mila', C.bad, 'start');
-    A(240, 240, 162, 268, C.bad, { n: 3, at: 0.5 }); L(90, 330, 'alert', C.bad);
-    L(690, 330, 'hal: farak mila to alert', C.good);
+    B(20, 140, 130, 70, 'Arpan', '2200 se 1100?');
+    B(220, 140, 140, 70, 'Support', '');
+    B(470, 30, 410, 250, 'Ledger (sirf INSERT)', '', { st: 'good' });
+    cells(490, 75, [['Arpan -800', C.bad], ['bijli +800', C.good]], { w: 180, h: 32 });
+    cells(490, 120, [['Arpan -300', C.bad], ['recharge +300', C.good]], { w: 180, h: 32 });
+    T(675, 185, 'har jodi ka jod = 0', { c: C.good, size: 12 });
+    A(150, 160, 218, 160, C.msg, { n: 1 });
+    A(360, 160, 468, 130, C.acc, { n: 2 }); L(400, 120, 'lines', C.acc);
+    A(468, 220, 362, 190, C.good, { n: 3 }); L(420, 225, 'line-line', C.good);
+    A(218, 195, 152, 195, C.good, { n: 4 });
+    T(675, 240, '2200 - 800 - 300 = 1100', { c: C.fg, b: 1, size: 14 });
+    L(450, 330, 'balance ek number, ledger uski poori kahani', C.good);
   } else {
-    base({ wl: 'good', lg: 'good' }, { wl: 'balance: 1100' });
-    rows([[R1], [R2]]);
-    B(240, 200, 190, 60, 'raat ka check', 'jod == balance', { st: 'good' });
-    A(335, 112, 335, 198, C.good, { n: 1 }); A(498, 200, 432, 220, C.good, { n: 1 });
-    num(335, 285, 2, C.good); L(355, 290, 'barabar', C.good, 'start');
-    L(690, 230, 'hisaab saaf', C.good);
+    B(20, 130, 160, 70, 'Payment Svc', 'refund 500', { st: 'acc' });
+    B(330, 30, 550, 220, 'Ledger', '', { st: 'good' });
+    cells(350, 75, [['Arpan -500', C.muted], ['Kirana +500', C.muted]], { w: 180, h: 32 });
+    T(800, 92, 'purani: rehti', { c: C.muted, size: 12 });
+    cells(350, 125, [['Kirana -500', C.good], ['Arpan +500', C.good]], { w: 180, h: 32 });
+    T(800, 142, 'nayi ulti', { c: C.good, size: 12 });
+    A(180, 160, 348, 142, C.good, { n: 1 }); L(255, 135, 'INSERT', C.good);
+    A(180, 185, 348, 225, C.bad, { dash: 1 }); cross(275, 205); L(255, 240, 'DELETE / UPDATE nahi', C.bad);
+    T(605, 215, 'jod phir bhi 0', { c: C.good, size: 12 });
+    L(450, 320, 'audit me dono line dikhti: kya hua, phir kya theek kiya', C.good);
   }
 }
