@@ -39,7 +39,7 @@ Cue: REDIS CACHE (cache-aside)
 
 <img src="img/c1_1.png" width="900">
 
-<img src="img/c1_2.png" width="900">
+<img src="img/c1_2.png?v=2" width="900">
 
 <img src="img/c1_3.png" width="900">
 
@@ -115,7 +115,7 @@ Cue: COUNTER RANGE + base62
 
 <img src="img/c3_2.png" width="900">
 
-<img src="img/c3_3.png" width="900">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
@@ -237,9 +237,9 @@ Cue: QUORUM (2 me likho, 2 se padho)
 
 <img src="img/c6_1.png" width="900">
 
-<img src="img/c6_2.png" width="900">
+<img src="img/c6_2.png?v=2" width="900">
 
-<img src="img/c6_3.png" width="900">
+<img src="img/c6_3.png?v=2" width="900">
 
 </details>
 
@@ -273,9 +273,9 @@ Cue: ROUTE 53 + 2 LB (health check)
 
 <img src="img/c7_1.png" width="900">
 
-<img src="img/c7_2.png" width="900">
+<img src="img/c7_2.png?v=2" width="900">
 
-<img src="img/c7_3.png" width="900">
+<img src="img/c7_3.png?v=2" width="900">
 
 </details>
 
@@ -302,7 +302,7 @@ Cue: RATE LIMIT darwaze pe + WAF
 
 <img src="img/c8_1.png" width="900">
 
-<img src="img/c8_2.png" width="900">
+<img src="img/c8_2.png?v=2" width="900">
 
 <img src="img/c8_3.png" width="900">
 
