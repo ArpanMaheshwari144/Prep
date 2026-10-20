@@ -725,7 +725,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          j=2  prod 100 >= 100 -> 10 hatao, prod 10       +2   count 5   ([5,2],[2])
          j=3  prod 60               window [5,2,6]       +3   count 8
 
-     ★ EDGE (24-Sep): shrink ki shart me `&& i <= j` zaroori.
+     ★ EDGE: shrink ki shart me `&& i <= j` zaroori.
          k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
          aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
          k = 0 alag, upar hi return 0.
@@ -1736,7 +1736,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 │ TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
 │ KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
 │──────────────────────────────────────────────────────────────────────────────
-│ BUG-CATCH (find-min, 18-Jul): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
+│ BUG-CATCH (find-min): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
 │ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
 │──────────────────────────────────────────────────────────────────────────────
 │ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
@@ -2689,7 +2689,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
             right = solve(R, val, maxi)      // RIGHT jao -> mini = val (bada hona)
             return left && right   // && : dono subtree valid tabhi poora valid
      CALL : solve(root, LLONG_MIN, LLONG_MAX);   mini/maxi = long long.
-     ★ EDGE (24-Sep): INT_MIN/INT_MAX se shuru kiya to node ki value KHUD INT_MIN ya INT_MAX ho
+     ★ EDGE: INT_MIN/INT_MAX se shuru kiya to node ki value KHUD INT_MIN ya INT_MAX ho
         (LC-98 allow karta) -> strict check (<=, >=) use galat reject kar deta. [2147483647] pe false aata, sahi true.
      (alt: inorder traversal = strictly increasing? -> BST.)
      (2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
@@ -2864,7 +2864,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      END:
          for(i,j): if(grid[i][j]==1) return -1;       // fresh bacha -> impossible
          return mins == 0 ? 0 : mins-1;               // last level extra -> -1
-                                                      // ★ EDGE (24-Sep): grid me koi santra hi nahi -> loop
+                                                      // ★ EDGE: grid me koi santra hi nahi -> loop
                                                       //   chala hi nahi, mins=0 -> mins-1 = -1 aata, sahi 0
 
 ┌── FAMILY: TOPO-SORT / cycle-detect (DIRECTED graph) ─────────
@@ -3412,7 +3412,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
           MERGE:   overlap -> ans.back()[1]=max(...)  (merge)  |  end: return ANS (list)
           MEETING: overlap -> return FALSE           (ruko)    |  end: return TRUE
      TEMPLATE (merge-jaisa hi):
-         if (intervals.empty()) return true;   // ★ EDGE (24-Sep): warna intervals[0] pe crash
+         if (intervals.empty()) return true;   // ★ EDGE: warna intervals[0] pe crash
          sort(intervals);  ans.push_back(intervals[0]);   // start se sort, pehla interval baseline
          for(i=1..n){   // 1 se: intervals[0] pehle hi ans me
              if(intervals[i][0] < ans.back()[1]) return false;   // overlap -> attend nahi (< kyunki ek khatam usi pal doosri shuru = chalta)
