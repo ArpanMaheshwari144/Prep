@@ -30,10 +30,10 @@ function frame(ph) {
     ['copy A', 'copy B', 'copy C'].forEach((n, i) => B(560, 30 + i * 110, 200, 65, 'Node-2 ' + n,
       ['t9 likha', 't9 likha', 'gira'][i], { st: i === 2 ? 'bad' : 'good' }));
     cross(785, 282);
-    A(150, 160, 558, 62, C.good, { n: 1, at: 0.6 }); A(150, 170, 558, 172, C.good, { n: 2, at: 0.6 });
-    L(440, 235, '1 + 2: do me likha, save', C.good);
-    num(660, 345, 3, C.bad); L(680, 350, 'C giri', C.bad, 'start');
-    num(40, 290, 4, C.acc); L(60, 295, 'padhna bhi A + B se: t9 mila', C.acc, 'start');
+    A(150, 160, 558, 62, C.good, { n: 1, at: 0.6 }); A(150, 170, 558, 172, C.good); // ek kadam = ek number
+    L(440, 235, 'ek saath A + B me likha: save', C.good);
+    num(660, 345, 2, C.bad); L(680, 350, 'C giri', C.bad, 'start');
+    num(40, 290, 3, C.acc); L(60, 295, 'padhna bhi A + B se: t9 mila', C.acc, 'start');
     L(450, 20, '3 me se 2 likhe, 2 padhe: har jodi me ek taaza copy zaroor', C.good);
   }
 }

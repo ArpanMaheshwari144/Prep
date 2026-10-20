@@ -60,7 +60,7 @@ HAL     order aur khabar ek hi DB txn me likhte hain (outbox), relay use Kafka m
           leti hai, jhatka second me aata hai. Par worker utne hi jitna DB aur SMS / email company jhel sake,
           warna wahan atkega
         Order ko turant OK milta hai, Notification Svc peeche Kafka se padh ke email bhejti hai
-        ↳ agar email company band? -> khabar Kafka ke log me ~7 din padi
+        ↳ agar email company ghanton band? -> khabar Kafka me ~7 din padi, offset se aage
           padhne wala offset se yaad rakhta hai kahan tak padha
         ↳ agar Notification Svc dheemi? -> machine badhao (consumer group)
           Har line ek machine ko milti hai, lines bat jaati hain
@@ -93,7 +93,7 @@ Cue: har raaste ki ALAG LINE + worker
 
 ```
 HAL     har raaste ki alag line aur alag worker hota hai. SMS dheema ho to sirf SMS rukta hai.
-        ↳ agar SMS ki line lambi? -> sirf SMS ke worker badhao
+        ↳ agar SMS ki line lambi ho gayi? -> sirf SMS ke worker badhao, baaki ko mat chhuo
           push / email pe koi asar nahi
         Ghatna aayi to teen chhote message bante hain (ghatna id + raasta), har raasta apni line me jaata hai
         ↳ agar push ki line se bhejna hai, par kis phone pe jaaye?
@@ -124,7 +124,7 @@ Cue: KEY (SET NX, khabar ki apni id)
 ```
 HAL     bhejne se pehle khabar ki apni key (khabar_id + raasta) Redis me dekhte hain.
         Key mili to skip, ek hi email jaata hai
-        ↳ agar key wala Redis gir gaya? -> DB me (khabar_id, raasta) UNIQUE rokta
+        ↳ agar key wala Redis hi gira? -> DB me (khabar_id, raasta) UNIQUE, wahi rokta
           ek hi baar lagta hai, pakka wahi rokta hai
         ↳ agar Redis ki key 24 ghante me mit gayi? -> DB ki row nahi bhoolti
           wo phir bhi rokegi
@@ -160,7 +160,7 @@ HAL     bhejte waqt key SENDING rakhte hain (chhoti umar, ~60 sec), company OK b
           ye maana hua risk hai. OTP do baar aana, na aane se behtar
         ↳ agar call fail, worker zinda? -> worker khud key hata deta
           Koshish adhoori thi, agli chal jaaye
-        ↳ agar SENDING wala worker hi mar gaya? -> 60 sec me key khud mit jaati
+        ↳ agar SENDING laga ke worker hi mar gaya? -> 60 sec me key khud mit-ti, agla bhejta
           hatane wala koi nahi, par SENDING ki umar (60 sec) khatam hote hi key khud mit jaati hai
         ↳ agar SENDING ki umar kitni rakhein?
           -> call (~2-3 sec) se lambi, 60 sec. Umar pehle khatam ho gayi to do log bhej denge
@@ -196,8 +196,7 @@ HAL     har baar zyada der rukte hain (1, 2, 4, 8 sec) aur thoda random jodte ha
         ↳ agar backoff me lamba rukna ho (10 min)?
           -> alag lines banao (retry-1m, retry-10m), worker dekhta hai "kab chalana hai"
         Had paar ho gayi to khabar alag line (DLQ) me jaati hai + alert
-        ↳ agar DLQ me khabar pahunch gayi, ab uska kya?
-          -> dashboard pe dikhti hai, theek karke main line me wapas
+        ↳ agar khabar DLQ me pahunch gayi, ab uska kya? -> dashboard, theek karo, main line me wapas
 KYUN    pehle fail pe turant dobara, 50 worker har second ek saath, company pe aur hathoda,
         wo kabhi theek nahi hoti. Ab ruk-ruk ke maarte hain,
         aur random thoda sa jodne se sab worker ek hi pal me wapas nahi aate
@@ -228,7 +227,7 @@ HAL     2-3 sec me chhod do (timeout). Baar-baar fail hua to circuit breaker khu
         ↳ agar circuit breaker har process ka apna hai ya saanjha?
           -> har process ka apna (Resilience4j), ya Redis me saanjha
         Twilio ko call band, OTP SNS se jaata hai. Thodi der baad Twilio ko ek test call, theek hai to wapas
-        ↳ agar Twilio ka breaker khula, push / email pe asar? -> nahi
+        ↳ agar Twilio ka breaker khula, push / email pe asar? -> nahi, har company ka apna breaker
           Har company ka apna circuit breaker hai, aur worker alag line pe
         ↳ agar SNS bhi band ho gaya? -> khabar line me rukti, phenko nahi
           backoff se koshish. OTP ka alert
@@ -261,7 +260,7 @@ Cue: OTP ki ALAG TEZ LINE
 
 ```
 HAL     OTP ki apni tez line aur apne worker (priority).
-        ↳ agar OTP wali tez line khaali? -> uske worker beech wali line padh lein
+        ↳ agar OTP line khaali, OTP worker khaali baithe? -> beech wali padh lein. Ulta kabhi nahi
           Ulta kabhi nahi
         ↳ agar offer wale OTP ki company had kha jaayein? -> OTP ka alag account
           ya alag number. Had wala card 8
@@ -298,7 +297,7 @@ HAL     sab worker ka ek saanjha token bucket (Redis me), har second 100 token. 
         ↳ agar worker badh gaye? -> speed wahi. Bucket saanjha, kul 100 / sec
         ↳ agar 1 lakh email, had kam? -> had badhwao + kai account lo
           Tab tak line dheere khaali hogi, warna 429
-        ↳ agar bucket wala Redis gir gaya? -> har worker apni chhoti local had
+        ↳ agar bucket wala Redis hi gira? -> har worker apni chhoti had (100 / 4 = 25), fail-closed
           pe chalta hai (fail-closed). Company ki had paar nahi hoti
         ↳ agar bucket ki had kitni hoti hai?
           -> company ki had: SES shuru me ~14 / sec (sandbox 1 / sec), Twilio short code ~100 / sec
@@ -330,7 +329,7 @@ HAL     worker company ka message no. (SID-9) save karta hai. Company baad me kh
         "SID-9 pahuncha" aaya, to Webhook Svc ne Tracking DB me SID-9 DELIVERED likha
         ↳ agar webhook aaya hi nahi? -> ghanton se atke ko ek baar poochho
           Twilio SID se. SES me poll nahi, sirf event (SNS / Firehose)
-        ↳ agar nakli webhook aa gaya? -> hastakshar jaancho
+        ↳ agar koi nakli webhook bhej de "pahuncha"? -> hastakshar jaancho, nakli phenko
           Twilio HMAC, SES/SNS certificate, SendGrid public key
         ↳ agar Tracking DB me hisaab kahan rakhte hain?
           -> Cassandra me. Likhna bahut hai, isliye NoSQL: seedhi row, jodna kuch nahi
@@ -360,7 +359,7 @@ Cue: 1000 ke TUKDE + campaign row
 ```
 HAL     1000-1000 ke tukde banao, low priority line me. Har tukde ke baad campaign row me likho kahan tak
         pahunche (aakhri_id = 3000)
-        ↳ agar tukde me 600 bhej ke worker gir gaya? -> poora tukda dobara
+        ↳ agar tukde me 600 bhej ke worker gira? -> tukda dobara, par pehle wale 600 chhoot jaate
           par (campaign_id, user_id) se pehle wale 600 chhoot jaate hain
         ↳ agar galat offer chal gaya? -> campaign row pe CANCELLED likho
           Worker har tukde se pehle ye dekhta hai
@@ -395,7 +394,7 @@ Cue: PASAND + SHAANTI + SAANCHA (cache)
 HAL     bhejne se pehle user ki pasand + shaanti ka waqt dekho (preference + quiet hours): offer SMS band,
         raat 10 se subah 8 ghanti nahi. Shaanti me offer aaya to roko,
         subah 8 baje bhejo (scheduled_at + job), phenko nahi
-        ↳ agar shaanti ke waqt OTP / login aaya? -> bhejo, zaroori alert upar
+        ↳ agar shaanti ke waqt OTP / login alert aaya? -> bhejo. Zaroori alert pasand se upar
           Zaroori alert pasand se upar hai
         ↳ agar pasand badli, par cache purana? -> badalte hi cache delete
           aur chhoti umar. Bhejne se pehle sahi chahiye

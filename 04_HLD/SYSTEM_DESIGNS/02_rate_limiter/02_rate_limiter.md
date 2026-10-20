@@ -96,7 +96,7 @@ Cue: ATOMIC: INCR / LUA script
 
 ```
 HAL     INCR se padhna aur badhana ek hi kadam me ho jaata hai. Redis ek ke baad ek chalata hai
-        ↳ agar INCR hua, EXPIRE se pehle crash? -> key kabhi nahi mitegi, user block
+        ↳ agar ginti badhi, par "60 sec baad mita dena" bolne se pehle crash? -> hamesha block
           key ban gayi par uski expiry kabhi lagi hi nahi. Isliye INCR aur EXPIRE ek hi Lua script me
         ↳ agar Lua atak gayi? -> poora Redis ruk jaata, kyunki ek hi line hai
           Isliye script chhoti rakho, loop mat daalo
@@ -131,7 +131,7 @@ Cue: LIMITER GATEWAY pe, sabse aage
 HAL     limiter API Gateway pe hai, sabse aage. Had paar hui to wahin 429, request LB / App tak jaati hi nahi
         ↳ agar 429 bheja, uske saath kya bhejte ho?
           -> Retry-After: 30 (kab aao) aur X-RateLimit-Remaining (kitni bachi)
-        ↳ agar sab 30 sec baad ek saath aaye? -> Retry-After alag-alag do (28, 33)
+        ↳ agar sabko Retry-After 30 diya? -> 30 sec baad sab ek saath. Alag-alag do (jitter)
           isse sab ek saath nahi lautte (jitter)
         ↳ agar gateway gir gaya? -> 2+ machine pe, aage LB, darwaza akela nahi
         ↳ agar had sirf gateway pe lagana kaafi hai?
@@ -196,7 +196,7 @@ Cue: HOME REGION me ginti
 
 ```
 HAL     meri ginti mere ghar region (India) me hoti hai. US / Europe ki request bhi wahin gini jaati
-        ↳ agar ghar door hai? -> sirf paisa / login ghar tak, baaki har second sync
+        ↳ agar ghar door hai? -> sirf login / paisa ghar tak, baaki apni ginti, har second sync
           ghar region door hai (100-200 ms), to har request wahan nahi jaati. Baaki apni ginti rakhte
         ↳ agar do sync ke beech koi request aayi?
           -> ~1 second tak thodi dheel milti hai, halki had me ye chalta hai
@@ -227,7 +227,7 @@ Cue: KAFKA -> PATTERN -> WAF BAN
 HAL     har 429 Kafka me jaata hai. Pattern Svc dekhta: 10 min me 500+ 429 aaye
         ↳ agar Kafka peeche chal raha? -> ban kuch minute late, rate limit rok raha
         to WAF block list me daal deta, edge pe hi rok deta
-        ↳ agar office ka IP ban ho gaya? -> ban ~24 ghante me khud hat jaata
+        ↳ agar office ka IP (200 log, ek IP)? -> ban nahi, captcha. Ban bhi 24 ghante me hat jaata
           haath se bhi hata sakte. Bheed wale IP pe ban ki jagah captcha
         ↳ agar userId pe ban lagana hai, kahan lagega?
           -> gateway pe, JWT se userId milta. WAF edge pe baitha hai, wo sirf IP dekhta hai
@@ -259,8 +259,7 @@ Cue: GLOBAL CAP + LOAD SHEDDING (503)
 ```
 HAL     gateway pe poore system ki had (5,000 / sec). CPU 90% paar gaya to kam zaroori request ko 503,
         login / payment bachao
-        ↳ agar had paar hui, 429 bhejoge ya 503?
-          -> user ki had paar = 429, system ki had paar = 503
+        ↳ agar had paar hui, 429 bhejoge ya 503? -> user ki had = 429, system ki had = 503
 KYUN    user ki had aur system ki had alag cheez hain. Sab apni had me hon, phir bhi system bhar sakta hai
 NAHI    machine khud badh jaayegi -> DER: machine badhne me minute lagte, bheed second me aati
         line (queue) me rok lo    -> BEKAAR: sirf ~2 second chalta, user chala gaya to kaam bekaar

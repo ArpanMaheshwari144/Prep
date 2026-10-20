@@ -50,7 +50,7 @@ Cue: PUSH: tweet hote hi INBOX me id
 HAL     tweet hote hi follower ke inbox me uski id chali jaati hai (fanout).
         App kholo to bas apna inbox padho, ek hi read
         Ravi ne t9 tweet kiya, wo turant mere inbox me aa gaya. Inbox = tweet_id ki list, pehle se bani hui
-        ↳ agar inbox me sirf id, poora tweet? -> 50 id ek saath laao (batch)
+        ↳ agar inbox me sirf id hai, poora tweet kaise? -> 50 id ek saath laao (batch)
           cache / store se ek saath. Ek-ek laaye to 50 chakkar lagenge
         ↳ agar unfollow, tweet inbox me pade? -> padhte waqt follow list se chhaanto
           Poora inbox badalna mehnga hai, safai peeche hoti hai
@@ -88,7 +88,7 @@ HAL     tweet DB me save hota hai aur khabar Kafka me jaati hai, mujhe turant "h
         ↳ agar fanout peeche, mera tweet meri feed me kab? -> seedha apni feed me
           apna tweet seedha apni feed me jodo. Fanout peeche, apna turant
         Workers peeche Kafka se padh ke 5,000 inbox bharte hain
-        ↳ agar worker 100 me se 60 bhar ke gira? -> commit nahi, khabar phir aayegi
+        ↳ agar worker 100 me se 60 inbox bhar ke gira? -> commit nahi hua, khabar phir aayegi
           worker ne Kafka ko "ho gaya" bola hi nahi (commit nahi kiya), to khabar phir aayegi
         ↳ agar worker dobara chala aur wahi 60 phir likh diye, to tweet do baar dikhega?
           -> nahi, ek hi baar. Sorted set me same tweet_id ek hi baar rehta hai
@@ -125,7 +125,7 @@ Cue: HYBRID: aam push, celeb pull
 ```
 HAL     aam user ka tweet push hota hai (inbox me), celeb ka pull. Bieber ka tweet celeb cache me rehta hai,
         feed khule tab dono milate hain
-        ↳ agar user had (~10,000) pe? -> 12,000 upar pull, 8,000 neeche tabhi push
+        ↳ agar koi user had (~10,000 follower) pe aage-peeche hota rahe? -> do alag had
           Had pe baar-baar push / pull nahi palta
         ↳ agar 50 celeb follow kiye, 50 pull mehnge? -> chhote cache me, saste
           celeb ke tweet alag chhote cache me hain, to 50 pull bhi saste
@@ -163,7 +163,7 @@ HAL     garam tweet RAM me rakho (hot-tweet cache). Miss hua to sirf ek request 
         baaki sab usi ka jawab lete hain
         ↳ agar ek key pe bheed, machine garam? -> key ki kai copy, kisi se bhi padho
           (tweet:123#1..#5). Saath me App ki memory me 1-2 sec
-        ↳ agar Virat ne edit kiya, cache me purana? -> cache se key hata do
+        ↳ agar Virat ne tweet edit kiya, cache me purana? -> cache se key hata do
           edit / delete dono me. Agla read DB se naya laayega
 KYUN    pehle har feed Virat ka tweet DB se la rahi thi. Ab garam cheez RAM me hai, DB tak sirf ek request,
         DB aaram se rehta hai
@@ -200,8 +200,7 @@ HAL     naya tweet upar judta hai, 800 se neeche wale kaat do (trim). Soye hue u
           Warna har feed DB se banegi, mehnga
         ↳ agar Redis ki copy bhi gayi? -> kuch request mana, inbox dheere bharo
           har inbox ek request se dheere-dheere bharo
-        ↳ agar soya hua user wapas aaya, uska inbox to hai hi nahi?
-          -> pehli baar pull se banao, phir bharo. RAM sirf zinda logon ki
+        ↳ agar soya user 2 mahine baad wapas aaya, uska inbox hai hi nahi? -> pull se banao
         ↳ agar inbox chhota rakhna hai, to usme kya rakhte ho?
           -> sirf number aur score (~60-100 byte), poora tweet nahi
 KYUN    pehle har inbox me saare id the, soye users ke bhi. Ab RAM me sirf id, aur sirf zinda logon ki.
@@ -221,11 +220,11 @@ Cue: CASSANDRA, user_id se baanto
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=2" width="900">
+<img src="img/c6_1.png?v=3" width="900">
 
-<img src="img/c6_2.png?v=2" width="900">
+<img src="img/c6_2.png?v=3" width="900">
 
-<img src="img/c6_3.png?v=2" width="900">
+<img src="img/c6_3.png?v=3" width="900">
 
 </details>
 
@@ -235,7 +234,7 @@ HAL     Cassandra lagao, user_id se baanto. Mere saare tweet ek machine pe, naya
           -> commit log ke aakhir me jodta hai, badalta nahi. RAM bhar gayi to RAM ki nayi file disk pe
         ↳ agar Cassandra me files bahut? -> padhna dheema. Peeche milao (compaction)
           aur bloom filter lagao
-        ↳ agar meri machine giri? -> 3 copy, 2 me likho, 2 se padho (quorum)
+        ↳ agar meri tweet wali machine giri? -> 3 copy, 2 me likho, 2 se padho (quorum)
           naya mil hi jaata hai
         ↳ agar famous ki machine garam? -> theek hai, garam tweet alag RAM cache me
           user_id se baantna phir bhi theek hai
@@ -272,7 +271,7 @@ HAL     har region me data ki copy rakho (multi-region). Route 53 paas wale regi
           consistency nahi, availability: 2 sec purani feed se farak nahi,
           par feed khuli hi nahi to app band. Jo hai wo dikhao, sahi wala thodi der me
         ↳ agar US ke celeb ka tweet, India se door? -> garam tweet India cache me bhi
-        ↳ agar poora region gira? -> Route 53 zinda region pe palat deta
+        ↳ agar poora India region gira? -> Route 53 US pe palat deta. Feed thodi purani, par chalti
           Copy peeche thi, to feed thodi purani
         ↳ agar dono region me ek saath likha? -> baad wala jeetega (last write wins)
           Tweet aksar naya hota hai, takraav kam
@@ -308,7 +307,7 @@ HAL     kai App hain, aage ALB baant-ta hai. App kuch yaad nahi rakhta (stateles
         App 2 giri to wo bahar, baaki chalu rehte hain
         ↳ agar App 2 giri, pata kaise? -> ALB har ~10 sec poochta "zinda ho?"
           Chup raha to bahar, theek hua to wapas (Route 53 bhi)
-        ↳ agar naya code daalna, App band? -> nahi, ek-ek karke nikaalo, daalo, jodo
+        ↳ agar naya code daalna hai, App band karein? -> nahi, ek-ek karke badlo (rolling)
           (rolling). Baaki App bheed sambhaal leti hain
         ↳ agar nayi App judi, turant poori bheed? -> nahi, ALB dheere-dheere deta
           pehli request dheemi hoti hai, uske paas apna data nahi
@@ -336,7 +335,7 @@ Cue: ALAG SERVICE (likhna/padhna)
 
 ```
 HAL     likhne aur padhne ki alag service. ALB path se baant-ta hai. Jahan bheed hai, wahi badhao
-        ↳ agar feed ki bheed badh gayi? -> sirf Timeline badhao, Tweet Svc pe nahi
+        ↳ agar feed ki bheed aur badh gayi? -> sirf Timeline Svc badhao, Tweet Svc ko chhuo mat
           Tweet Svc pe koi asar nahi
         ↳ agar Suresh ke 5,000 follower? -> Follow store se 1000-1000 padh ke likho
           inbox likho. Ek baar me sab padhna bhaari hai
@@ -374,7 +373,7 @@ HAL     video S3 me rakho (seedha upload, presigned link), dekhne wale ko paas w
           kuch der apne paas rakh leta hai
         ↳ agar photo hata di, CDN pe abhi dikh rahi? -> CDN ko "hatao" bolo
           (invalidation), ya link me version daalo, nayi file
-        ↳ agar private photo, sabko dikhegi? -> nahi, link pe hastakshar + expiry
+        ↳ agar private photo hai, link kisi aur ko mil gaya? -> link pe hastakshar + expiry
           (signed URL). Sirf jisko mila, thodi der ke liye
 KYUN    pehle 50 MB ki video Delhi, London, Sydney, har dekhne wala hamare US server se khinchta:
         buffering aur bandwidth ka bill. Ab bhaari maal S3 me, user tak CDN se: paas bhi, sasta bhi.
