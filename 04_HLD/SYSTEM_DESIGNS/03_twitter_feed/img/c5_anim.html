@@ -81,7 +81,7 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 5: har inbox me saare id, soye logon ke bhi -> RAM bhari. Ilaaj: LPUSH + LTRIM 800, soye ka inbox TTL se mite.
+// Card 5: har inbox me saare id, soye logon ke bhi -> RAM bhari. Ilaaj: naya upar, 800 se neeche kaato, soye ka inbox TTL se mite.
 const DUR = 19, FIX = 8;
 function setup() {
   box(20, 60, 110, 50, 'Mera inbox');
@@ -102,8 +102,8 @@ function frame(t, fix, tl) {
     if (f >= 1) T(755, 278, 'RAM bhar gayi!', { c: C.bad, b: 1, size: 13 });
     return;
   }
-  CAP.textContent = 'ILAAJ: naya tweet upar (LPUSH), 800 se neeche wale kaato (LTRIM). Soye ka inbox 30 din me mite (TTL)';
-  T(390, 50, '8 dabbe = aakhri 800 (LTRIM 0 799)', { c: C.muted, size: 12 });
+  CAP.textContent = 'ILAAJ: naya tweet upar, 800 se neeche wale kaato. Soye ka inbox 30 din me mite (TTL)';
+  T(390, 50, '8 dabbe = aakhri 800', { c: C.muted, size: 12 });
   const k = Math.min(4, Math.floor(tl / 1.1));
   const base = []; for (let i = 0; i < 8; i++) base.push(`t${9000 + k - i}`);
   const items = base.map((s, i) => [s, i === 0 && k > 0 ? C.good : C.fg]);

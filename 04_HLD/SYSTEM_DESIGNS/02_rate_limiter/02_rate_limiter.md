@@ -33,11 +33,12 @@
 - **kyun:** ginti EK jagah + RAM jitni tez. Key ki umar = window.
 - **nahi:** DB -> har request pe disk + lock, dheema
 - **nahi:** sticky LB -> wo App gira to ginti gayi
-- **Pooche:** minute ke kinare 5 + 5? -> 2 sec me 10 andar, isliye asli me token bucket
+- **Pooche:** minute ke kinare 5 + 5? -> 2 sec me 10 andar (fixed window ki kamzori), isliye asli me token bucket
 - **token bucket:** max 10 token, har second 1 bharta, har request 1 leti, khaali = 429
 - **Redis me:** sirf 2 number: tokens + lastTime. Request aane pe bharo: tokens + (now - last) x rate, max 10. Koi job nahi.
 - **Pooche:** 10 ek saath? -> bucket bhara tha, 10 nikal gayi (burst)
 - **Pooche:** 11vi? -> bucket khaali, 429 + Retry-After
+- **Pooche:** ghanta bhar soya, phir aaya? -> beeta time x rate, par 10 se upar nahi (bucket ki had)
 - **Pooche:** sliding log? -> sabse sahi, par har request ka time rakho = memory bahut
 - **Pooche:** sliding counter? -> is minute ki ginti + pichhle ka hissa, 2 number, lagbhag sahi
 - **Pooche:** leaky bucket? -> smooth, par burst nahi nikalne deta
