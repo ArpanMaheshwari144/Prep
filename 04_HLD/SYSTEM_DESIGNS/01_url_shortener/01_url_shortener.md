@@ -35,7 +35,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 Cue: REDIS CACHE (cache-aside)
 
-```
+```text
 DIKKAT: har click seedha DB pe
 
   User                App                 DB
@@ -95,7 +95,7 @@ NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi reh
 
 Cue: STATELESS App x N + LOAD BALANCER
 
-```
+```text
 DIKKAT: ek hi App machine
 
   User                App                 DB
@@ -137,7 +137,7 @@ NAHI    ek badi machine -> GIRA: kitni bhi badi ho, ek hi hai. Giri to poori sit
 
 Cue: COUNTER RANGE + base62
 
-```
+```text
 DIKKAT: dono App ne DB se ek hi number liya
 
   Main                App-1               DB                  App-2               Ravi
@@ -200,7 +200,7 @@ NAHI    UUID -> LAMBA: 36 akshar, link chhota karna hi to kaam tha
 
 Cue: KAFKA, ginti peeche
 
-```
+```text
 DIKKAT: click ginti redirect ke raaste me
 
   User                    App                     DB
@@ -251,7 +251,7 @@ NAHI    click seedha DB me -> DHEEMA: har redirect DB likhai ka intezaar karta, 
 
 Cue: SHARD by code (RING)
 
-```
+```text
 DIKKAT: saare link ek DB machine me
 
   App                    DB
@@ -298,7 +298,7 @@ NAHI    country se baanto -> BIKHRA: code dekh ke pata nahi kis country ka, saar
 
 Cue: QUORUM (2 me likho, 2 se padho)
 
-```
+```text
 DIKKAT: ek copy me likha, doosri se padha
 
   App                 Copy A              Copy B              Copy C
@@ -346,7 +346,7 @@ NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
 
 Cue: ROUTE 53 + 2 LB (health check)
 
-```
+```text
 DIKKAT: ek hi LB
 
   User                DNS                 LB-1
@@ -389,7 +389,7 @@ NAHI    ek hi LB -> GIRA: wo gira to App kitne bhi hon, koi andar nahi aa sakta
 
 Cue: RATE LIMIT darwaze pe + WAF
 
-```
+```text
 DIKKAT: koi had nahi
 
   Spammer             App                 DB

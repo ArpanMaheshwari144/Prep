@@ -52,7 +52,7 @@ def card(scenes):
         if i: lines.append('')
         lines += scene(*sc)
     for l in lines: assert len(l) <= 110, f'line > 110: {l}'
-    return '```\n' + '\n'.join(lines) + '\n```'
+    return '```text\n' + '\n'.join(lines) + '\n```'   # text = GitHub rang nahi bharta
 
 def apply(md_path, cards):
     t = open(md_path, encoding='utf-8').read()
@@ -64,7 +64,7 @@ def apply(md_path, cards):
             new = card(cards[num])
             body, k = re.subn(r'<details><summary>kahani dekho.*?</details>', lambda m: new, body, count=1, flags=re.S)
             if not k:
-                body, k = re.subn(r'```\nDIKKAT:.*?```', lambda m: new, body, count=1, flags=re.S)
+                body, k = re.subn(r'```(?:text)?\nDIKKAT:.*?```', lambda m: new, body, count=1, flags=re.S)
             assert k, f'card {num}: jagah nahi mili'
         out += head + body
     open(md_path, 'w', encoding='utf-8').write(out)
