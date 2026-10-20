@@ -1,53 +1,46 @@
-// Card 3: limiter App me, 429 wali bhi App tak. Ilaaj: Gateway pe. Agar: sab ek saath lautein, gateway gira.
-const DUR = 15;
+// Card 3: limiter App me, 429 wali bhi App tak aayi. Ilaaj: limiter Gateway pe, sabse aage.
+// Agar: sab 30 sec baad ek saath lautein -> Retry-After alag-alag (jitter).
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: limiter App me. 429 wali bhi LB -> App tak ghoom ke aayi'],
+  [0, RED, 'DIKKAT', 'DIKKAT: limiter App ke andar. Mana wali request bhi LB -> App tak ghoom ke aayi'],
   [3, GRN, 'ILAAJ', 'ILAAJ: limiter Gateway pe, sabse aage. Had paar to wahin 429, App tak nahi'],
-  [6, YEL, 'AGAR', 'AGAR sab 30 sec baad ek saath aaye? -> Retry-After alag-alag do (28, 33)'],
-  [9, YEL, 'AGAR', 'AGAR gateway gir gaya? -> 2+ machine pe, aage LB, darwaza akela nahi'],
-  [12, GRN, 'WAPAS', 'WAPAS: gateway wapas aaya, LB phir dono pe bhejta'],
+  [6, YEL, 'AGAR', 'AGAR sabko Retry-After 30 diya? -> 30 sec baad sab ek saath. Alag-alag do (jitter)'],
 ];
 function setup() {}
 function frame(ph) {
   if (ph === 0) {
-    B(20, 140, 100, 80, 'Bot', '10,000/s'); A(120, 180, 198, 180, C.msg, { n: 1 });
-    B(200, 155, 80, 50, 'LB'); A(280, 180, 378, 180, C.bad, { n: 2 });
-    B(380, 130, 130, 100, 'App', 'limiter', { st: 'bad' });
-    bar(395, 250, 100, 18, 1, 'bojh');
-    B(700, 150, 130, 60, 'Redis'); A(510, 180, 698, 180, C.msg, { n: 3, at: 0.75 });
-    num(530, 105, 4, C.bad); dots(12, 555, 105, C.bad, { gap: 22, cols: 6 }); T(610, 85, '429', { c: C.bad, b: 1, size: 14 });
-    L(445, 295, 'App bhar gaya', C.bad);
+    B(20, 140, 110, 60, 'Bot', '1000 / sec', { st: 'bad' });
+    B(240, 145, 90, 50, 'LB');
+    B(450, 130, 170, 80, 'App', 'limiter yahan', { st: 'bad' });
+    A(130, 165, 238, 165, C.bad, { n: 1 }); A(330, 170, 448, 170, C.bad, { n: 2 });
+    bar(450, 225, 170, 14, 1, ''); T(535, 260, 'CPU 100%', { c: C.bad, b: 1, size: 14 });
+    num(640, 170, 3, C.bad); L(655, 175, 'ginti dekhi: 429', C.bad, 'start');
+    AP([[535, 128], [535, 80], [75, 80], [75, 138]], C.bad, { n: 4, at: 0.5 }); L(300, 65, '429 (par App tak aa ke)', C.bad);
+    L(450, 330, 'mana hone wali request bhi andar aayi, App usi me bhar gaya', C.bad);
   } else if (ph === 1) {
-    B(20, 140, 100, 80, 'Bot', '10,000/s'); A(120, 180, 178, 180, C.msg, { n: 1 });
-    B(180, 150, 110, 60, 'Gateway', 'limiter', { st: 'acc' });
-    B(180, 30, 110, 50, 'Redis'); A(235, 150, 235, 82, C.acc, { n: 2 });
-    num(130, 250, 3, C.bad); dots(12, 150, 250, C.bad, { gap: 22, cols: 6 }); T(205, 310, '429', { c: C.bad, b: 1, size: 14 });
-    A(290, 180, 368, 180, C.good, { n: 4 });
-    B(370, 155, 80, 50, 'LB'); A(450, 180, 528, 180, C.good, { n: 5 });
-    B(530, 130, 130, 100, 'App', '', { st: 'good' }); bar(545, 250, 100, 18, 0.2, 'bojh');
-    dots(3, 300, 145, C.good, { gap: 18 });
-  } else if (ph === 2) {
-    const ys = [70, 180, 290], tt = ['28 s', '31 s', '33 s'];
-    ys.forEach((y, i) => { B(20, y - 25, 110, 50, `user ${i + 1}`);
-      A(130, y, 448, 180, C.acc, { n: i + 1, at: 0.25 });
-      T(290, y + (180 - y) * 0.5 - 12, tt[i], { c: C.acc, b: 1, size: 14, halo: 1 }); });
-    L(290, 20, 'Retry-After alag-alag');
-    B(450, 150, 120, 60, 'Gateway', '', { st: 'good' });
-    bar(460, 235, 100, 18, 0.3, 'bojh', 1);
-    el('line', { x1: 640, y1: 200, x2: 880, y2: 200, stroke: C.line, 'stroke-width': 2 }, DYN);
-    [[680, '28'], [760, '31'], [840, '33']].forEach(([x, s]) => { dot([x, 180], C.acc); T(x, 225, s + ' s', { c: C.muted, size: 12 }); });
-    L(760, 260, 'ek saath nahi', C.good);
+    B(20, 60, 110, 60, 'Bot', '1000 / sec', { st: 'bad' });
+    B(20, 240, 110, 60, 'Asli user', '');
+    B(240, 140, 150, 70, 'Gateway', 'limiter yahan', { st: 'good' });
+    A(130, 80, 290, 138, C.bad, { n: 1 });
+    A(238, 175, 80, 122, C.bad, { n: 2, at: 0.5 }); L(150, 190, '429 + Retry-After', C.bad, 'end');
+    A(130, 270, 238, 195, C.good, { n: 3 });
+    B(490, 150, 90, 50, 'LB'); B(680, 135, 170, 80, 'App', 'sirf asli kaam', { st: 'good' });
+    A(390, 175, 488, 175, C.good, { n: 4 }); A(580, 175, 678, 175, C.good);
+    bar(680, 230, 170, 14, 0.3, '', 1); T(765, 265, 'CPU 30%', { c: C.good, b: 1, size: 14 });
+    L(450, 330, 'jitna aage roko, utna kam kaam bekaar', C.good);
   } else {
-    const down = ph === 3;
-    B(20, 150, 100, 60, 'users'); A(120, 180, 198, 180, C.msg, { n: 1 });
-    B(200, 155, 80, 50, 'LB');
-    B(400, 60, 130, 60, 'Gateway-1', '', { st: down ? 'bad' : 'good' });
-    if (down) { cross(555, 90); L(465, 45, 'gira', C.bad); } else L(465, 45, 'wapas aaya', C.good);
-    B(400, 240, 130, 60, 'Gateway-2', '', { st: 'good' });
-    A(280, 170, 398, 95, down ? C.bad : C.good, { dash: down, n: 2 });
-    A(280, 190, 398, 265, C.good, { n: down ? 3 : 2 });
-    B(680, 150, 120, 60, 'App');
-    if (!down) A(530, 90, 678, 170, C.good, { n: 3 });
-    A(530, 270, 678, 190, C.good, { n: down ? 4 : 3 });
+    B(20, 150, 140, 60, 'Gateway', '429 bhej raha', { st: 'acc' });
+    const ys = [50, 160, 270], ra = ['28', '31', '33'];
+    ys.forEach((y, i) => {
+      B(330, y, 110, 50, 'Client ' + (i + 1));
+      A(160, 180, 328, y + 25, C.acc, { n: i + 1, at: 0.55 });
+    });
+    L(250, 85, 'Retry-After: 28', C.acc); L(250, 165, 'Retry-After: 31', C.acc); L(250, 290, 'Retry-After: 33', C.acc);
+    // time ki line: kab lautte
+    el('line', { x1: 520, y1: 180, x2: 860, y2: 180, stroke: C.line, 'stroke-width': 2 }, DYN);
+    T(520, 205, '20 sec', { c: C.muted, size: 12 }); T(860, 205, '40 sec', { c: C.muted, size: 12 });
+    [28, 31, 33].forEach(s => { const x = 520 + (s - 20) * 17; dot([x, 180], C.good); T(x, 160, s + 's', { c: C.good, size: 12, b: 1 }); });
+    num(690, 240, 4, C.good); L(690, 270, 'alag-alag lautte, bheed nahi', C.good);
+    L(450, 345, 'sabko 30 dete to 30 sec baad sab ek saath = phir wahi bheed', C.bad);
   }
 }
