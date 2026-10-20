@@ -1,6 +1,6 @@
 // Card 7: sale, har user had me, phir bhi server gira. Ilaaj: gateway pe system ki had + load shedding (503).
 const DUR = 17, FIX = 7.5;
-const GW = [380, 192], APP = [620, 192];
+const GW = [380, 192], APP = [580, 205];
 const U = [[70, 70], [70, 130], [70, 192], [70, 254], [70, 316]];
 function setup() {
   U.forEach(([x, y], i) => { box(x - 50, y - 22, 100, 44, `user ${i + 1}`); wire(`M${x + 50} ${y} L335 192`); });
@@ -22,7 +22,7 @@ function frame(t, fix, tl) {
       const pts = drop ? [[s, U[u]], [s + 0.5, GW]] : [[s, U[u]], [s + 0.5, GW], [s + 0.9, APP]];
       const end = pts[pts.length - 1][0];
       if (tl >= end && !drop) cpu++;
-      if (tl < end + 0.5) dot(path(pts, tl), drop && tl >= end ? C.bad : imp ? C.good : C.msg, '',
+      if (tl < end + 0.5) dot(drop && tl >= end ? [380, 245] : path(pts, tl), drop && tl >= end ? C.bad : imp ? C.good : C.msg, '',
         drop && tl >= end ? '503' : '', C.bad);
     }
   }

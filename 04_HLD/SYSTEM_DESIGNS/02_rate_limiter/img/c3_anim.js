@@ -25,7 +25,8 @@ function frame(t, fix, tl) {
       const pts = okReq ? [[s, BOT], [s + 0.3, GW], [s + 0.8, LB], [s + 1.2, APP]] : [[s, BOT], [s + 0.3, GW]];
       const end = pts[pts.length - 1][0], p = path(pts, tl);
       if (tl >= end) { okReq ? inApp++ : blocked++; }
-      if (p && tl < end + 0.6) dot(p, tl >= end ? (okReq ? C.good : C.bad) : C.msg, '', tl >= end && !okReq ? '429' : '');
+      const q = tl >= end && !okReq ? [215, 238] : p;
+      if (q && tl < end + 0.6) dot(q, tl >= end ? (okReq ? C.good : C.bad) : C.msg, '', tl >= end && !okReq ? '429' : '');
     }
   }
   const load = fix ? inApp / N : inApp / N;

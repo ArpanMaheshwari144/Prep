@@ -1,6 +1,6 @@
 // Card 8: attack + poora Redis Cluster gira. Ilaaj: har gateway server apni memory me gine, had baant do (100 / 4 = 25).
 const DUR = 18, FIX = 8;
-const ATK = [70, 192], G = [[330, 70], [330, 152], [330, 234], [330, 316]], APP = [620, 192], RD = [620, 330];
+const ATK = [70, 192], G = [[330, 70], [330, 152], [330, 234], [330, 316]], APP = [580, 205], RD = [620, 330];
 function setup() {
   G.forEach(([x, y], i) => { box(x - 55, y - 26, 110, 52, `Gateway ${i + 1}`); wire(`M120 192 L${x - 55} ${y}`); wire(`M${x + 55} ${y} L560 192`); });
   box(20, 150, 100, 84, 'Attacker', 'raat ko');
@@ -8,7 +8,7 @@ function setup() {
   box(560, 300, 120, 50, 'Redis Cluster');
 }
 function frame(t, fix, tl) {
-  cross(620, 325);
+  cross(705, 325);
   let inn = 0, no = 0;
   const per = [0, 0, 0, 0];
   for (let k = 0; k < 28; k++) {
@@ -17,7 +17,7 @@ function frame(t, fix, tl) {
     per[g]++;
     const allow = !fix || per[g] <= 3;
     if (allow) { inn++; if (tl < s + 0.9) dot(path([[s + 0.5, G[g]], [s + 0.9, APP]], tl), C.msg); }
-    else { no++; if (tl < s + 0.9) dot(G[g], C.bad, '', '429'); }
+    else { no++; if (tl < s + 0.9) dot([G[g][0] - 85, G[g][1] + 12], C.bad, '', '429'); }
   }
   if (!fix) {
     CAP.textContent = 'DIKKAT: Redis gaya, ginti kahin nahi. Fail-open: attacker ki sab request andar';

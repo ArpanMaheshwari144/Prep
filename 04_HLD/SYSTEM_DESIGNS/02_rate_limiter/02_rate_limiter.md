@@ -15,18 +15,9 @@
 
 ## Shuru
 
-- **kya:** ek banda had se zyada bheje to baaki ke liye server nahi bachta. Niyam: "itne se zyada nahi".
-- **pehle poocho:** kis pe (IP / userId / API key) · kaunsa endpoint (login 5 / min, search 60 / min) · plan (free / pro)
-- **maqsad:** server bachana -> thoda zyada nikle, chalta · paisa / login / OTP -> ginti ekdum sahi
-- **algo:** token bucket: max 10 token, har second 1 bharta, har request 1 leti, khaali = 429
-- **Redis me:** sirf 2 number: tokens + lastTime. Request aane pe bharo: tokens + (now - last) x rate, max 10. Koi job nahi.
-- **numbers:** jagah ka nahi, speed ka sawaal (har request ke aage) -> RAM (Redis), DB nahi
-- **Pooche:** 10 ek saath? -> bucket bhara tha, 10 nikal gayi (burst) · 11vi? -> 429 + Retry-After
-- **Pooche:** fixed window kyun nahi? -> sasta, par kinare pe double (59th + 61st second)
-- **Pooche:** sliding log? -> sabse sahi, par har request ka time rakho = memory bahut
-- **Pooche:** sliding counter? -> is minute ki ginti + pichhle ka hissa, 2 number, lagbhag sahi
-- **Pooche:** leaky bucket? -> smooth, par burst nahi nikalne deta
-- **Pooche:** token bucket hi kyun? -> burst chalta, sirf 2 number, AWS / Stripe yahi
+- **FR:** har user / endpoint ki had (login 5 / min, API 100 / min) · had paar to 429 + Retry-After · plan ke hisaab se had (free / pro)
+- **NFR:** har request ke aage, ~1 ms · ginti saari machines pe EK · limiter gire to site na gire
+- **numbers:** ~1 crore user, peak ~10,000 request / sec. Jagah ka nahi, speed ka sawaal -> RAM (Redis), DB nahi
 
 ---
 
@@ -40,8 +31,17 @@
 
 - **hal:** sab App ek Redis key ginte (rate:Arpan:login), har request +1, umar 60 sec (EXPIRE) -> 6thi pe 429
 - **kyun:** ginti EK jagah + RAM jitni tez. Key ki umar = window.
-- **nahi:** DB -> har request pe disk + lock, dheema · sticky LB -> wo App gira to ginti gayi
+- **nahi:** DB -> har request pe disk + lock, dheema
+- **nahi:** sticky LB -> wo App gira to ginti gayi
 - **Pooche:** minute ke kinare 5 + 5? -> 2 sec me 10 andar, isliye asli me token bucket
+- **token bucket:** max 10 token, har second 1 bharta, har request 1 leti, khaali = 429
+- **Redis me:** sirf 2 number: tokens + lastTime. Request aane pe bharo: tokens + (now - last) x rate, max 10. Koi job nahi.
+- **Pooche:** 10 ek saath? -> bucket bhara tha, 10 nikal gayi (burst)
+- **Pooche:** 11vi? -> bucket khaali, 429 + Retry-After
+- **Pooche:** sliding log? -> sabse sahi, par har request ka time rakho = memory bahut
+- **Pooche:** sliding counter? -> is minute ki ginti + pichhle ka hissa, 2 number, lagbhag sahi
+- **Pooche:** leaky bucket? -> smooth, par burst nahi nikalne deta
+- **Pooche:** token bucket hi kyun? -> burst chalta, sirf 2 number, AWS / Stripe yahi
 
 ---
 
@@ -55,7 +55,8 @@
 
 - **hal:** padhna + badhana EK kadam me, Redis ke andar (INCR, token bucket me Lua)
 - **kyun:** Redis ek line me chalta, ek ke baad ek. Beech me koi ghus nahi sakta.
-- **nahi:** GET phir SET -> do kadam, dono ne 4 padha, dono andar · App me synchronized -> sirf ek machine ke andar
+- **nahi:** GET phir SET -> do kadam, dono ne 4 padha, dono andar
+- **nahi:** App me synchronized -> sirf ek machine ke andar
 - **Pooche:** INCR ke baad, EXPIRE se pehle crash? -> key bina umar, user hamesha block. INCR + EXPIRE ek Lua me.
 - **Pooche:** Lua atak jaaye? -> poora Redis rukta. Script chhota, loop nahi.
 - **Pooche:** Redis ek line me, dheema nahi? -> RAM, ~lakh command / sec (andaza). Zyada chahiye to shard.
@@ -125,7 +126,8 @@
 
 - **hal:** har 429 Kafka me. Pattern Svc: 10 min me 500+ 429 -> WAF block list, edge pe hi rok
 - **kyun:** 429 maafi wala (phir aao). Ban sirf pakke gunde pe, aur apne aap hatne wala.
-- **nahi:** turant ban -> asli tez click, office NAT, sale ki bheed sab bahar · gateway seedha Pattern Svc call -> har request dheemi
+- **nahi:** turant ban -> asli tez click, office NAT, sale ki bheed sab bahar
+- **nahi:** gateway seedha Pattern Svc call -> har request dheemi
 - **Pooche:** Kafka peeche chal raha? -> ban kuch minute late, tab tak rate limit rok raha
 - **Pooche:** galat ban (office / college IP)? -> ban ki umar ~24 ghante, apne aap hate, haath se bhi. Bheed wale IP pe captcha.
 - **Pooche:** userId pe ban? -> wo gateway pe (JWT). WAF edge pe sirf IP dekhta.
@@ -142,7 +144,8 @@
 
 - **hal:** gateway pe poore system ki had (5,000 / sec). Upar ho to 503, kam zaroori pehle chhodo, login / payment bachao.
 - **kyun:** user ki had aur system ki had alag. Sab had me hon, phir bhi system bhar sakta.
-- **nahi:** machine khud badh jaayegi -> minute lagte, bheed second me · line me rok lo -> sirf ~2 sec, user chala gaya to bekaar
+- **nahi:** machine khud badh jaayegi -> minute lagte, bheed second me
+- **nahi:** line me rok lo -> sirf ~2 sec, user chala gaya to bekaar
 - **Pooche:** 429 ya 503? -> user ki had = 429, system ki had = 503
 
 ---
@@ -155,10 +158,10 @@
 
 ![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
 
-- **hal:** har gateway apni memory me gine, had BAANT do: 100 / N (10 gateway -> har ek 10)
+- **hal:** har gateway apni memory me gine, had BAANT do: 100 / N (4 gateway -> har ek 25)
 - **kyun:** thodi galat had, bina had se behtar. Login ab bhi fail-closed.
 - **nahi:** sab andar aane do -> attacker ke liye site khuli, server bhar ke band
-- **Pooche:** baanta nahi to? -> har gateway 100 -> user ko 10 x 100 = 1000
+- **Pooche:** baanta nahi to? -> har gateway 100 -> user ko 4 x 100 = 400
 - **Pooche:** exact chahiye? -> LB userId ke hash se ek user hamesha ek gateway pe (sticky by userId)
 - **Pooche:** gateway badh gaye? -> N config / service discovery se, had dobara baanto
 - **Pooche:** Redis wapas? -> phir sabki ek ginti

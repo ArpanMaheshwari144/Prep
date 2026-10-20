@@ -17,7 +17,7 @@ function frame(t, fix, tl) {
     CAP.textContent = 'DIKKAT: 429 sirf bolta "60 sec baad aao". Bot 60 sec baad phir aata, din bhar';
     for (let k = 0; k < 4; k++) {
       const s = 0.3 + k * 1.8, p = path([[s, BOT], [s + 0.5, WAF], [s + 1.0, GW]], tl);
-      if (tl < s + 1.6) dot(p, tl > s + 1.0 ? C.bad : C.msg, '', tl > s + 1.0 ? '429' : '');
+      if (tl < s + 1.6) dot(tl > s + 1.0 ? [390, 245] : p, tl > s + 1.0 ? C.bad : C.msg, '', tl > s + 1.0 ? '429' : '');
     }
     const n = Math.min(4, Math.floor((tl - 0.3) / 1.8) + 1);
     T(70, 130, `${String(9 + n).padStart(2, '0')}:0${n} baje`, { c: C.muted, size: 12 });
@@ -30,10 +30,10 @@ function frame(t, fix, tl) {
     const s = 0.3 + k * 0.8;
     if (s + 0.5 > 4.4 && banned) {
       const p = path([[s, BOT], [s + 0.5, WAF]], tl);
-      if (tl < s + 1.1) dot(p, tl > s + 0.5 ? C.bad : C.msg, '', tl > s + 0.5 ? 'BAN' : '');
+      if (tl < s + 1.1) dot(tl > s + 0.5 ? [150, 238] : p, tl > s + 0.5 ? C.bad : C.msg, '', tl > s + 0.5 ? 'BAN' : '');
     } else {
       const p = path([[s, BOT], [s + 0.5, WAF], [s + 1.0, GW]], tl);
-      if (tl < s + 1.4) dot(p, tl > s + 1.0 ? C.bad : C.msg, '', tl > s + 1.0 ? '429' : '');
+      if (tl < s + 1.4) dot(tl > s + 1.0 ? [460, 245] : p, tl > s + 1.0 ? C.bad : C.msg, '', tl > s + 1.0 ? '429' : '');
       dot(path([[s + 1.0, GW], [s + 1.4, K], [s + 1.8, P]], tl < s + 1.8 ? tl : -1), C.acc);
     }
   }
