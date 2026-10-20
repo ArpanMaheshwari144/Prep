@@ -35,32 +35,49 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 Cue: REDIS CACHE (cache-aside)
 
+<details><summary>kahani dekho (7 scene)</summary>
+
+<img src="img/c1_1.png" width="900">
+
+<img src="img/c1_2.png" width="900">
+
+<img src="img/c1_3.png" width="900">
+
+<img src="img/c1_4.png" width="900">
+
+<img src="img/c1_5.png" width="900">
+
+<img src="img/c1_6.png" width="900">
+
+<img src="img/c1_7.png" width="900">
+
+</details>
+
 ```
 HAL     beech me Redis: click pe pehle Redis dekho, mila to wahin se, nahi to DB se laao aur Redis me rakho
         (cache-aside). Naya link banate hi Redis me bhi daal do
+        ↳ agar Redis bhar gaya? -> jo link der se nahi khule, unhe nikaalo (LRU)
+          Redis me sirf garam link, 180 arab nahi
+        ↳ agar link badla, Redis me purana? -> pehle DB badlo, phir Redis se hatao
+          link badla ya hataya, dono me yahi. Ulta kiya to beech ka click purana link wapas Redis me
+          bhar deta
+        ↳ agar Redis hi gir gaya? -> copy (cluster + replica) sambhalti hai
+          warna 95% click DB pe, DB phir baith jaata
+        ↳ agar Redis ki copy bhi gayi? -> 1000 click me sirf 1 DB tak jaata
+          baaki usi ka jawab lete. Tab bhi bojh ho to kuch click mana karo, DB bachao (load shedding)
+        ↳ agar link ki expiry hai, Redis me uska kya?
+          -> Redis ki umar (TTL) = link ki expiry, dono saath mitte hain
+        ↳ agar har App apna cache rakhe, Redis kyun?
+          -> link badla to har App ki copy purani reh jaati. Isliye ek shared Redis
+        ↳ agar ek link viral hua, uski DB machine garam ho gayi?
+          -> wo link pehle hi Redis me mil jaata hai, DB tak kam aata
+        ↳ agar bot fake code (/xyz999) pe lakhon click maar raha, sab DB pe jaayenge?
+          -> nahi. Code = counter ka number. Itna number diya hi nahi, to App wahin 404, DB tak nahi.
+          Deleted / expired link ke liye Redis me "nahi hai" 1 min rakho
 KYUN    Redis RAM se ~0.1 ms, DB disk se ~10 ms. 95% click Redis se hi nikal jaate hain.
         Sach ek hi jagah hai, DB me. Redis sirf garam copy hai, khoyi to DB se wapas ban jaati
 NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi rehti
         Memcached -> GIRA: usme copy nahi, gira to saari bheed seedha DB pe. Redis gira to uski copy sambhalti
-AGAR    Redis bhar gaya
-        -> jo link der se nahi khule, unhe nikaalo (LRU). Redis me sirf garam link, 180 arab nahi
-        link ki expiry hai, Redis me uska kya?
-        -> Redis ki umar (TTL) = link ki expiry, dono saath mitte hain
-        link badla ya hataya, Redis me purana pada hai
-        -> pehle DB badlo, phir Redis se hatao. Ulta kiya to beech ka click purana link wapas
-           Redis me bhar deta
-        Redis hi gir gaya
-        -> copy (cluster + replica) sambhalti hai. Warna 95% click DB pe, DB phir baith jaata
-        Redis ki copy bhi chali gayi
-        -> ek link ke 1000 click me sirf 1 DB tak jaata, baaki usi ka jawab lete. Tab bhi bojh ho to
-           kuch click mana karo, DB bachao (load shedding)
-        har App apna cache kyun nahi rakhta, Redis kyun?
-        -> link badla to har App ki copy purani reh jaati. Isliye ek shared Redis
-        ek link viral hua, uski DB machine garam ho gayi?
-        -> wo link pehle hi Redis me mil jaata hai, DB tak kam aata
-        bot fake code (/xyz999) pe lakhon click maar raha, sab DB pe jaayenge?
-        -> nahi. Code = counter ka number. Itna number diya hi nahi, to App wahin 404, DB tak nahi.
-           Deleted / expired link ke liye Redis me "nahi hai" 1 min rakho
 ```
 
 ---
@@ -71,17 +88,28 @@ AGAR    Redis bhar gaya
 
 Cue: STATELESS App x N + LOAD BALANCER
 
+<details><summary>kahani dekho (4 scene)</summary>
+
+<img src="img/c2_1.png" width="900">
+
+<img src="img/c2_2.png" width="900">
+
+<img src="img/c2_3.png" width="900">
+
+<img src="img/c2_4.png" width="900">
+
+</details>
+
 ```
 HAL     kai App aur aage Load Balancer (LB), jo baari-baari kisi bhi App ko bhejta (round-robin).
         App kuch yaad nahi rakhta (stateless), sab Redis / DB me, to koi bhi App koi bhi click le sakti
+        ↳ agar App giri nahi, bas dheemi? -> kam connection wali ko bhejo
+          jiske kam connection khule hain, use bhejo (least-conn)
+        ↳ agar giri hui App theek ho gayi? -> /health phir haan bolta, LB use wapas list me le leta
 KYUN    App giri to /health ka jawab nahi aata, LB use list se hata deta, agla click doosri App pe
 NAHI    ek badi machine -> GIRA: kitni bhi badi ho, ek hi hai. Giri to poori site band
         login App me hi yaad -> GIRA: user usi App se bandh jaata, wo giri to logout.
            Isliye session bahar, Redis / DB me
-AGAR    giri hui App theek ho gayi
-        -> /health phir haan bolta hai, LB use wapas list me le leta
-        App giri nahi, bas dheemi hai
-        -> jiske kam connection khule hain, use bhejo (least-conn)
 ```
 
 ---
@@ -92,35 +120,49 @@ AGAR    giri hui App theek ho gayi
 
 Cue: COUNTER RANGE + base62
 
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c3_1.png" width="900">
+
+<img src="img/c3_2.png" width="900">
+
+<img src="img/c3_3.png" width="900">
+
+<img src="img/c3_4.png" width="900">
+
+<img src="img/c3_5.png" width="900">
+
+<img src="img/c3_6.png" width="900">
+
+</details>
+
 ```
 HAL     Counter har App ko alag range deta: App-1 ko 1-1000, App-2 ko 1001-2000. App apni range se agla
         number leta. Ek range kabhi do App ko nahi, to code kabhi same nahi
+        ↳ agar do log ek saath same code maangein? -> DB ka UNIQUE ek ko rokta, 409
+          user apna code maange: lambai dekho, admin jaise reserved naam nahi, pehle se na ho
+        ↳ agar App-1 range me 400 pe crash? -> 401 se 1000 bekaar, jaan-boojh ke
+          3.5 lakh crore me kuch hazaar se farak nahi
+        ↳ agar Counter hi gir gaya? -> App ki range chalti rehti hai
+          tab tak Counter ki copy uth jaati
+        ↳ agar range khatam ho gayi? -> tabhi Counter (ZooKeeper / DB) se agli range lo
+        ↳ agar MD5 ya random code lagate?
+          -> do link ka code same ho sakta hai, har baar "pehle se hai?" dekhna padta. Counter me nahi
+        ↳ agar counter se agla code andaza ho jaaye?
+          -> haan, ye keemat hai. Chahiye to number pehle shuffle / XOR karo, phir base62. Unique phir bhi
+        ↳ agar do log same lamba link dein?
+          -> dono ko alag code, har ek ki apni ginti, apni expiry. Ek hi chahiye to long_url ke hash pe
+          pehle dekh lo
+        ↳ agar Redis INCR se number lete?
+          -> chal jaata, par har link pe ek call. Range me 1000 link pe ek call
+        ↳ agar har number bachana ho, ek bhi bekaar na jaaye?
+          -> har link pe Counter se poochho. Phir range ka fayda khatam
 BASE62  number ko 62 akshar (0-9, a-z, A-Z) me likho. 125 = "21", 100 crore = "15FTGg"
 KYUN    counter kabhi dohraata nahi, to code bhi nahi dohraata, check ki zaroorat hi nahi.
         Range ke andar App khud number deta, har link pe Counter tak nahi jaata. 1000 link pe ek call
 NAHI    UUID -> LAMBA: 36 akshar, link chhota karna hi to kaam tha
         lambe link ka hash, pehle 7 akshar -> TAKKAR: do link ke same aa sakte, har baar DB me dekho.
            Counter me takkar hoti hi nahi
-AGAR    MD5 ya random code kyun nahi?
-        -> do link ka code same ho sakta hai, har baar "pehle se hai?" dekhna padta. Counter me nahi
-        counter se agla code andaza nahi ho jaayega?
-        -> haan, ye keemat hai. Chahiye to number pehle shuffle / XOR karo, phir base62. Unique phir bhi
-        user apna code maange
-        -> lambai dekho, admin jaise reserved naam nahi, pehle se na ho. Do log ek saath maange to
-           DB ka UNIQUE ek ko rokta hai, use 409
-        do log same lamba link dein
-        -> dono ko alag code, har ek ki apni ginti, apni expiry. Ek hi chahiye to long_url ke hash pe
-           pehle dekh lo
-        range khatam ho gayi
-        -> tabhi Counter (ZooKeeper / DB) se agli range lo
-        App-1 apni range me 400 pe crash ho gayi
-        -> 401 se 1000 bekaar, jaan-boojh ke. 3.5 lakh crore me kuch hazaar se farak nahi
-        Counter hi gir gaya
-        -> App ki range chalti rehti hai, tab tak Counter ki copy uth jaati
-        Redis INCR se number kyun nahi?
-        -> chal jaata, par har link pe ek call. Range me 1000 link pe ek call
-        har number bachana ho, ek bhi bekaar na jaaye
-        -> har link pe Counter se poochho. Phir range ka fayda khatam
 ```
 
 ---
@@ -131,28 +173,43 @@ AGAR    MD5 ya random code kyun nahi?
 
 Cue: KAFKA, ginti peeche
 
+<details><summary>kahani dekho (7 scene)</summary>
+
+<img src="img/c4_1.png" width="900">
+
+<img src="img/c4_2.png" width="900">
+
+<img src="img/c4_3.png" width="900">
+
+<img src="img/c4_4.png" width="900">
+
+<img src="img/c4_5.png" width="900">
+
+<img src="img/c4_6.png" width="900">
+
+<img src="img/c4_7.png" width="900">
+
+</details>
+
 ```
 HAL     redirect turant (302), "ek click hua" ki khabar Kafka me daal ke aage. Analytics service apni speed
         se Kafka se padh ke ginti karti
+        ↳ agar 302 kyun, 301 kyun nahi? -> 301 pe browser yaad rakhta, ginti band
+          301 pe browser link yaad rakh leta, agli baar server tak aata hi nahi.
+          302 pe har click server tak aata, ginti aur expiry chalti
+        ↳ agar Analytics dheema ho gaya? -> khabar Kafka me padi rehti
+          wo apni speed se padhta, kahan tak padha yaad rakhta (offset)
+        ↳ agar wahi click do baar aaya? -> har click ki apni id, dobara to ginti nahi
+        ↳ agar Kafka me koi khabar kharab nikli? -> use alag line me daalo (DLQ), baaki ginti chalti rahe
+        ↳ agar Kafka hi band ho gaya? -> redirect phir bhi chalta
+          bas kuch click ginti me nahi aate
+        ↳ agar naya report chahiye? -> Kafka me pade purane click dobara padh lo (replay)
+        ↳ agar Kafka kyun, SQS kyun nahi?
+          -> SQS padhte hi message hata deta. Kafka rakhta hai, naya report = dobara padho
 KYUN    redirect kisi ka intezaar nahi karta. Ginti peeche hoti, disk pe pakki. Ginti wala dheema / band ho,
         to bhi link khulta hai, ginti thodi der se aati
 NAHI    click seedha DB me -> DHEEMA: har redirect DB likhai ka intezaar karta, wahi dheemapan
         sirf Redis me INCR -> ADHOORA: sirf ginti milti, kaun, kab, kahan se click hua, wo nahi
-AGAR    302 kyun, 301 kyun nahi?
-        -> 301 pe browser link yaad rakh leta, agli baar server tak aata hi nahi, ginti band.
-           302 pe har click server tak aata, ginti aur expiry chalti
-        Analytics dheema ho gaya
-        -> khabar Kafka me padi rehti. Wo apni speed se padhta, kahan tak padha yaad rakhta (offset)
-        wahi click do baar aaya
-        -> har click ki apni id hai. Wahi id dobara aayi to ginti nahi
-        Kafka me koi khabar kharab nikli
-        -> use alag line me daalo (DLQ), baaki ginti chalti rahe
-        Kafka hi band ho gaya
-        -> redirect phir bhi chalta. Bas kuch click ginti me nahi aate
-        naya report chahiye
-        -> Kafka me pade purane click dobara padh lo (replay)
-        Kafka kyun, SQS kyun nahi?
-        -> SQS padhte hi message hata deta. Kafka rakhta hai, naya report = dobara padho
 ```
 
 ---
@@ -163,27 +220,38 @@ AGAR    302 kyun, 301 kyun nahi?
 
 Cue: SHARD by code (RING)
 
+<details><summary>kahani dekho (5 scene)</summary>
+
+<img src="img/c5_1.png" width="900">
+
+<img src="img/c5_2.png" width="900">
+
+<img src="img/c5_3.png" width="900">
+
+<img src="img/c5_4.png" width="900">
+
+<img src="img/c5_5.png" width="900">
+
+</details>
+
 ```
 HAL     data kai machine me baanto (shard), link ke code se. Code ring pe aage chalta, jo pehli machine mile
         wo uski (consistent hashing). Har tukde ki 3 copy
+        ↳ agar data sirf ~500 GB hota? -> ek MySQL kaafi. Shard tab, jab ek machine me na aaye
+        ↳ agar ek machine mar gayi? -> baaki 2 copy se milta, link nahi gaye
+        ↳ agar ek machine pe zyada bojh? -> ring pe 100-200 jagah (virtual nodes)
+          har machine ring pe 100-200 jagah baithti, bojh barabar
+        ↳ agar Cassandra kyun, MySQL kyun nahi?
+          -> join aur transaction chahiye hi nahi, bas code se link, aur 90 TB.
+          Wajah kaam ka dhaancha + size, "NoSQL powerful" nahi
+        ↳ agar Cassandra me main copy kaunsi hai? -> koi nahi. Teeno barabar, koi bhi likh / padh sakti
+        ↳ agar copy badha do to likhna tez hoga?
+          -> nahi, har copy pe likhna padta. Likhne ka bojh = shard, copy = bachav
 KYUN    click hamesha code ke saath aata hai, to har click seedha ek machine pe jaata
 NAHI    country se baanto -> BIKHRA: code dekh ke pata nahi kis country ka, saari machine poochni padti
         ek badi machine -> CHHOTI: 90 TB ek machine me aata hi nahi
         seedha code % machine -> HILTA: machine judi to lagbhag saari keys hil jaati (3 se 4 = sab badle).
            Ring me sirf pados ki keys hilti
-AGAR    data sirf ~500 GB hota to?
-        -> ek MySQL kaafi. Shard tab, jab ek machine me na aaye
-        ek machine mar gayi
-        -> baaki 2 copy se milta, link nahi gaye
-        ek machine pe zyada bojh aa gaya
-        -> har machine ring pe 100-200 jagah baithti, bojh barabar (virtual nodes)
-        Cassandra kyun, MySQL kyun nahi?
-        -> join aur transaction chahiye hi nahi, bas code se link, aur 90 TB.
-           Wajah kaam ka dhaancha + size, "NoSQL powerful" nahi
-        Cassandra me main copy kaunsi hai?
-        -> koi nahi. Teeno barabar, koi bhi likh / padh sakti
-        copy badha do to likhna tez hoga?
-        -> nahi, har copy pe likhna padta. Likhne ka bojh = shard, copy = bachav
 ```
 
 ---
@@ -194,25 +262,38 @@ AGAR    data sirf ~500 GB hota to?
 
 Cue: QUORUM (2 me likho, 2 se padho)
 
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c6_1.png" width="900">
+
+<img src="img/c6_2.png" width="900">
+
+<img src="img/c6_3.png" width="900">
+
+<img src="img/c6_4.png" width="900">
+
+<img src="img/c6_5.png" width="900">
+
+<img src="img/c6_6.png" width="900">
+
+</details>
+
 ```
 HAL     likhna 2 copy me, padhna bhi 2 copy se (quorum, 3 me se 2). Har jodi me ek taaza copy zaroor hoti
+        ↳ agar likhte waqt copy C gir gayi? -> 2 me ho gaya to save
+          C uthi to padosi ke paas rakha note use mil jaata (hinted handoff)
+        ↳ agar padhte waqt A aur C me farak nikla? -> wahin C ko theek kar do
+          (read repair)
+        ↳ agar A aur B dono gir gayi, sirf 1 bachi? -> likhna fail, user ko error
+          (ya 1 pe likho, risk ke saath). Par jo "done" bola, wo kabhi khota nahi
+        ↳ agar 2 copy se padhna dheema nahi? -> thoda. Isliye pehla ilaaj Redis hai, DB tak kam aata
+        ↳ agar 5 copy hon to quorum kitna?
+          -> likhne + padhne ki ginti copy se zyada ho (W + R > N): 3 + 3 > 5
+        ↳ agar data bachane ko Kafka laga dein? -> nahi. DB ka apna log ye khud karta, extra dabba nahi
 MISAAL  A, B me likha, A + C se padha, to A me mil gaya
 KYUN    2 + 2 = 4, copy sirf 3. Padhne wali jodi me likhne wali ek copy aani hi hai. Banane ke baad 404 nahi
 NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
         ek se padho -> PURANA: wahi copy mil sakti jahan abhi pahuncha nahi, wahi 404
-AGAR    likhte waqt copy C gir gayi
-        -> 2 me ho gaya to save. C uthi to padosi ke paas rakha note use mil jaata (hinted handoff)
-        padhte waqt A aur C me farak nikla
-        -> wahin C ko theek kar do (read repair)
-        A aur B dono gir gayi, sirf 1 copy bachi
-        -> likhna fail, user ko error (ya 1 pe likho, risk ke saath).
-           Par jo "done" bola, wo kabhi khota nahi
-        2 copy se padhna dheema nahi?
-        -> thoda. Isliye pehla ilaaj Redis hai, DB tak kam aata
-        5 copy hon to quorum kitna?
-        -> likhne + padhne ki ginti copy se zyada ho (W + R > N): 3 + 3 > 5
-        data bachane ko Kafka laga dein?
-        -> nahi. DB ka apna log ye khud karta, extra dabba nahi
 ```
 
 ---
@@ -223,15 +304,29 @@ AGAR    likhte waqt copy C gir gayi
 
 Cue: ROUTE 53 + 2 LB (health check)
 
+<details><summary>kahani dekho (5 scene)</summary>
+
+<img src="img/c7_1.png" width="900">
+
+<img src="img/c7_2.png" width="900">
+
+<img src="img/c7_3.png" width="900">
+
+<img src="img/c7_4.png" width="900">
+
+<img src="img/c7_5.png" width="900">
+
+</details>
+
 ```
 HAL     do LB, aage Route 53. Route 53 har ~30 sec LB se poochta hai (health check). Jo 3 baar chup raha,
         wo list se bahar, sab LB-2 pe (DNS failover)
+        ↳ agar phone ne purana pata yaad rakha? -> ~60 sec kuch request fail
+          (DNS TTL). Isliye LB khud kai zone me (ALB), aur har jagah 2+
+        ↳ agar poora region hi chala gaya? -> Route 53 doosre region pe bhejta
+          naye link ke aakhri kuch second kho sakte
 KYUN    phone sabse pehle Route 53 se hi poochta hai "kahan jaun?". Wahin se zinda LB ka pata mil jaata
 NAHI    ek hi LB -> GIRA: wo gira to App kitne bhi hon, koi andar nahi aa sakta
-AGAR    phone ne Route 53 se mila purana pata yaad rakh liya
-        -> ~60 sec kuch request fail (DNS TTL). Isliye LB khud kai zone me (ALB), aur har jagah 2+
-        poora region hi chala gaya
-        -> Route 53 doosre region pe bhejta. Naye link ke aakhri kuch second kho sakte
 ```
 
 ---
@@ -242,16 +337,25 @@ AGAR    phone ne Route 53 se mila purana pata yaad rakh liya
 
 Cue: RATE LIMIT darwaze pe + WAF
 
+<details><summary>kahani dekho (4 scene)</summary>
+
+<img src="img/c8_1.png" width="900">
+
+<img src="img/c8_2.png" width="900">
+
+<img src="img/c8_3.png" width="900">
+
+<img src="img/c8_4.png" width="900">
+
+</details>
+
 ```
 HAL     gateway pe hi ginti: har API key ki ek shared ginti (Redis me). Had paar to 429,
         request andar aati hi nahi (rate limit)
+        ↳ agar darwaze pe pehchaana hua hamla aaya? -> WAF darwaze pe hi rok deta
 KYUN    rokna darwaze pe, sabki ek ginti se. Asli users ki speed bachi rehti
 NAHI    har App apni ginti -> DHEELA: 10 App = had 10 guna, aur bheed App tak aa chuki hoti
         sirf IP pe had -> BADLA: bot naya IP le aata. Isliye ginti API key / user_id pe, jo bot badal na sake
-AGAR    darwaze pe pehchaana hua hamla aaya
-        -> WAF darwaze pe hi rok deta hai
-        koi phishing ka lamba link chhota kare
-        -> chhota karne se pehle check karo (virus / dhokhe ki site), taaki hamara domain spam na bane
 ```
 
 Poora rate limit = [02_rate_limiter](../02_rate_limiter/02_rate_limiter.md).
@@ -300,6 +404,9 @@ Kaunsa DB kitne tak: MySQL ~1 arab row tak aaram se, Mongo ~10 arab tak, Cassand
 
 Shabd bhool jao to seedhi baat bolo: "MD5" = lambe link ka hash, pehle 7 akshar. "Base62" = 62 akshar me number likh do.
 "Counter" = ek badhta number, har link ko agla. Interviewer ko samajh chahiye, naam wo khud bol dega.
+
+Koi phishing ka lamba link chhota kare? Chhota karne se pehle check karo (virus / dhokhe ki site),
+taaki hamara domain spam na bane.
 
 ---
 
