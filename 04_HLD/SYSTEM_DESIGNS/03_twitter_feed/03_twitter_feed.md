@@ -359,11 +359,11 @@ Cue: S3 + CDN
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c10_1.png?v=2" width="900">
+<img src="img/c10_1.png?v=3" width="900">
 
-<img src="img/c10_2.png?v=2" width="900">
+<img src="img/c10_2.png?v=3" width="900">
 
-<img src="img/c10_3.png?v=2" width="900">
+<img src="img/c10_3.png?v=3" width="900">
 
 </details>
 

@@ -39,7 +39,7 @@ function frame(ph) {
   } else {
     panel(0, 'tukda 4', ['Worker-A', '3001-4000', ''], ['600 log', 'offer pahuncha', 'good'], 'bheja', true, C.good, '600 tak gaya');
     panel(1, 'gira', ['Worker-A', 'mara', 'bad'], ['Campaign row', 'aakhri_id = 3000', 'acc'], '', true, C.bad, '4000 likha hi nahi');
-    panel(2, 'tukda dobara', ['Worker-B', '3001-4000', ''], ['Sent list', '(campaign, user)', 'acc'], 'dekha', true, C.acc, 'kisko pehle gaya?');
+    panel(2, 'tukda dobara', ['Worker-B', '3001-4000', ''], ['Sent list', '(campaign, user)', 'acc'], 'poochha', true, C.acc, 'kisko pehle gaya?');
     panel(3, 'sirf baaki', ['Worker-B', '400 ko bheja', 'good'], ['Campaign row', 'aakhri_id = 4000', 'good'], 'likha', true, C.good, '600 ko dobara nahi');
     L(450, 320, 'tukda dobara chala, par ek user ko ek hi baar', C.good);
   }

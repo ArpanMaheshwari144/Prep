@@ -183,10 +183,13 @@ function frame(ph) {
     A(170, 60, 378, 60, C.good, { n: 1 }); L(275, 45, 'ginti +1', C.good);
     A(170, 95, 378, 95, C.bad, { n: 2, dash: 1, at: 0.3 }); cross(320, 95);
     L(275, 135, '"60 sec baad mita dena" pahuncha hi nahi', C.bad);
-    B(380, 250, 240, 60, 'Arpan', 'agle din');
-    A(470, 248, 470, 112, C.msg, { n: 3 }); L(455, 190, 'login', C.msg, 'end');
-    A(530, 112, 530, 248, C.bad, { n: 4 }); L(545, 190, '6 > 5: 429', C.bad, 'start');
-    L(500, 340, 'aaj, kal, har din block', C.bad);
+    B(20, 250, 150, 60, 'Arpan', 'agle din');
+    B(380, 250, 240, 60, 'App', 'dobara chalu');
+    A(170, 265, 378, 265, C.msg, { n: 3 }); L(275, 252, 'login', C.msg);
+    A(470, 248, 470, 112, C.acc, { n: 4 }); L(455, 190, 'ginti?', C.acc, 'end');
+    A(530, 112, 530, 248, C.bad, { n: 5 }); L(545, 190, '6 > 5', C.bad, 'start');
+    A(378, 295, 172, 295, C.bad, { n: 6 }); L(275, 315, '429', C.bad);
+    L(320, 345, 'aaj, kal, har din block', C.bad);
     B(660, 150, 210, 80, 'hal: Lua script', 'dono kaam ek saath bhejo', { st: 'good' });
     L(765, 255, 'ya dono hon, ya koi nahi', C.good);
   }
