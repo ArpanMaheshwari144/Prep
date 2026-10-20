@@ -1142,11 +1142,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  │ ▸ COUNT SUBARRAYS WITH XOR = K  = SUBARRAY-SUM-K, bas + ki jagah ^
  └──────────────────────────────────────────────────────────────
      count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
-     = SUBARRAY-SUM-K ka HUBAHU copy, sirf sign badle:
-        sum wale me:  complement = curSum - k      (a+b=c -> c-b=a)
-        XOR wale me:  complement = curXor ^ k      (a^b=c -> c^b=a)   [4^2=6 to 4^6=2]
-     xorr ^= it;   count += mp[xorr ^ k];   mp[xorr]++;   // pehle xorr update, phir lookup, insert sabse BAAD
-        mp[0]=1 SEED · complement mila -> count+ · same complement dobara -> count double (sum jaisa).   // mp[0]=1: shuru se hi XOR==k wala subarray bhi gino
+     ★ CHAABI:  x ^ x = 0   (same number khud se XOR = gayab)
+        isliye  (shuru se j tak ka XOR) ^ (shuru se i tak ka XOR) = beech wala subarray ka XOR   (common hissa kat gaya)
+        chahiye beech wala = k  ->  pichhla XOR = abhi ka XOR ^ k  ->  map me dekho kitni baar aaya
+     mp[0] = 1;                    // shuru se hi XOR == k wala subarray bhi gino
+     xorr ^= it;                   // abhi tak ka XOR
+     count += mp[xorr ^ k];        // pichhla XOR jo chahiye, kitni baar dikha
+     mp[xorr]++;                   // abhi wala map me, lookup ke BAAD
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
