@@ -1,69 +1,52 @@
-// Card 1: Main aur Ravi ne ek second me A1 book ki, dono ko mili. Ilaaj: atomic UPDATE ... WHERE available.
-// Agar: network toota (CP / AP), 4 seat me A4 gayi (ROLLBACK), ulte kram (deadlock). Wapas: Ravi ne phir dabaya.
-const DUR = 18;
+// Card 1: Arpan aur Ravi ek second me A1, dono ko mili. Ilaaj: UPDATE ... WHERE available. Agar: 4 seat, A4 gayi -> ROLLBACK.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: 10:00:01 pe Main aur Ravi dono ne A1 khaali padhi, dono ne book ki'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: dekhna + book ek atomic query. Row lock: Main ko 1 row, Ravi ko 0'],
-  [6, YEL, 'AGAR', 'AGAR network toota? -> booking: CP, mana karo. search: AP, purani list'],
-  [9, YEL, 'AGAR', 'AGAR 4 seat li, A4 pehle hi ja chuki thi? -> badli rows 4 nahi, ROLLBACK'],
-  [12, YEL, 'AGAR', 'AGAR do log ulte kram me 4 seat le rahe? -> DB deadlock pakad ke ek abort'],
-  [15, GRN, 'WAPAS', 'WAPAS: Ravi ne Book phir dabaya -> WHERE ko phir 0 row, kuch nahi milta'],
+  [0, RED, 'DIKKAT', 'DIKKAT: maine aur Ravi ne ek hi second me A1 book ki. Dono ko mil gayi. Pal-pal'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: dekhna + book karna ek hi query me (UPDATE ... WHERE available). Jeetta ek'],
+  [6, YEL, 'AGAR', 'AGAR 4 seat li, A4 pehle hi ja chuki thi? -> badli rows 4 nahi, ROLLBACK'],
 ];
 function setup() {}
-function ppl(mSub, mSt, rSub, rSt) {
-  B(20, 50, 130, 60, 'Main', mSub, { st: mSt }); if (rSub !== null) B(20, 250, 130, 60, 'Ravi', rSub, { st: rSt });
+const STEPS = [
+  [[C.acc, 'DB → App-1 (Arpan)', 'A1 available padha'], [C.acc, 'DB → App-2 (Ravi)', 'A1 abhi bhi available padha'], [C.bad, 'App-1 → DB', 'A1 booked (Arpan)'], [C.bad, 'App-2 → DB', 'A1 booked (Ravi). Ek seat, do ticket']],
+  [[C.acc, 'App-1 → DB', 'UPDATE ... WHERE A1 available'], [C.good, 'DB → App-1', '1 row: A1 Arpan ki'], [C.acc, 'App-2 → DB', 'wahi UPDATE, ek pal baad'], [C.bad, 'DB → App-2', '0 row: Ravi ko "seat gayi"']],
+  [[C.acc, 'App → DB', 'A1-A4 ek transaction me UPDATE'], [C.bad, 'DB', 'A4 pehle se booked: sirf 3 row badli'], [C.good, 'App → DB', '3 != 4: ROLLBACK. A1-A3 wapas khaali']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
-function appDb(dbSub) { B(300, 145, 120, 80, 'App'); B(620, 135, 230, 90, 'SQL DB', dbSub, { st: 'acc' }); }
-function seatA1(st, c) { cells(650, 245, [['A1', c], [st, c]], { w: 80 }); }
 function frame(ph) {
   if (ph === 0) {
-    T(880, 22, '10:00:01', { a: 'end', c: C.muted, size: 13, b: 1 });
-    ppl('Book A1', '', 'Book A1', ''); appDb('seats table');
-    A(150, 85, 298, 165, C.msg, { n: 1 }); A(150, 275, 298, 205, C.msg, { n: 1 });
-    A(420, 165, 618, 162, C.acc, { n: 2 }); L(520, 140, 'SELECT: dono ko A1 khaali', C.acc);
-    A(420, 205, 618, 205, C.bad, { n: 3 }); L(520, 240, 'dono ne SET booked', C.bad);
-    seatA1('booked', C.bad);
-    num(650, 312, 4, C.bad); T(672, 318, 'A1 ke ticket: 2', { a: 'start', c: C.bad, b: 1, size: 16 });
+    panel(0, 'Arpan padhta', ['App-1', 'Arpan: A1', 'acc'], ['Seats DB', 'A1: available', ''], 'padha', false, C.acc, 'khaali hai');
+    panel(1, 'Ravi padhta', ['App-2', 'Ravi: A1', 'acc'], ['Seats DB', 'A1: available', ''], 'padha', false, C.acc, 'abhi bhi khaali');
+    panel(2, 'Arpan likhta', ['App-1', '', 'bad'], ['Seats DB', 'A1: Arpan', 'bad'], 'booked', true, C.bad, 'ticket 1');
+    panel(3, 'Ravi likhta', ['App-2', '', 'bad'], ['Seats DB', 'A1: Ravi', 'bad'], 'booked', true, C.bad, 'ticket 2');
+    L(450, 320, 'padhna aur likhna alag kadam. Beech me doosra ghus gaya', C.bad);
   } else if (ph === 1) {
-    ppl('A1 meri', 'good', 'seat ja chuki', 'bad'); appDb('row lock');
-    A(150, 85, 298, 165, C.msg, { n: 1 }); A(150, 275, 298, 205, C.msg, { n: 1 });
-    A(420, 165, 618, 162, C.good, { n: 2 }); L(520, 140, 'Main: UPDATE -> 1 row', C.good);
-    A(420, 205, 618, 205, C.bad, { n: 3 }); L(520, 240, 'Ravi ruka, phir 0 row', C.bad);
-    seatA1('booked', C.good);
-    T(450, 340, "UPDATE seats SET status = 'booked' WHERE seat_id = 'A1' AND status = 'available'",
-      { c: C.muted, size: 12 });
-  } else if (ph === 2) {
-    ppl('mana (CP)', 'bad', 'search', 'good'); appDb('seats');
-    B(620, 255, 230, 60, 'movie list', '2 sec purani', { st: 'good' });
-    num(470, 118, 1, C.bad); L(490, 123, 'network toota', C.bad, 'start');
-    A(420, 165, 618, 165, C.bad, { dash: 1 }); cross(560, 165);
-    A(150, 95, 298, 172, C.msg, { n: 2 }); A(298, 150, 152, 62, C.bad, { n: 3, at: 0.7 });
-    L(250, 50, 'pakka nahi pata: mana', C.bad);
-    A(150, 275, 298, 205, C.msg, { n: 2 }); A(420, 210, 618, 280, C.good, { n: 3 });
-    L(585, 235, 'AP: list chalti', C.good);
-    L(450, 342, 'hal: booking me CP (sahi pehle), search me AP (chalta rahe)', C.good);
-  } else if (ph === 3) {
-    ppl('A1-A4 chahiye', '', null); appDb('ek transaction');
-    A(150, 85, 298, 165, C.msg, { n: 1 });
-    A(420, 175, 618, 175, C.acc, { n: 2 }); L(520, 152, '4 UPDATE', C.acc);
-    cells(640, 245, [['A1', C.acc], ['A2', C.acc], ['A3', C.acc], ['A4', C.bad]], { w: 46 });
-    L(805, 292, 'pehle se gayi', C.bad);
-    num(650, 320, 3, C.bad); T(670, 325, 'badli rows: 3, 4 nahi', { a: 'start', c: C.bad, b: 1, size: 14 });
-    A(422, 210, 618, 210, C.bad, { n: 4 }); L(520, 237, 'ROLLBACK', C.bad);
-    L(200, 300, 'hal: ROLLBACK, aadhi booking bekaar', C.good);
-  } else if (ph === 4) {
-    ppl('A1 phir A4', '', 'A4 phir A1', 'acc');
-    B(540, 20, 330, 320, 'SQL DB', '', { st: 'acc' });
-    B(620, 70, 180, 60, 'A1', 'lock: Main'); B(620, 250, 180, 60, 'A4', 'lock: Ravi');
-    A(150, 72, 618, 95, C.good, { n: 1 }); A(150, 285, 618, 285, C.good, { n: 1 });
-    A(150, 98, 618, 262, C.bad, { dash: 1, n: 2, at: 0.25 }); A(150, 262, 618, 118, C.bad, { dash: 1, n: 2, at: 0.25 });
-    L(85, 134, 'A4 ka intezaar', C.bad); L(85, 236, 'A1 ka intezaar', C.bad);
-    num(600, 190, 3, C.bad); L(710, 195, 'deadlock: Ravi abort', C.bad);
-    L(270, 340, 'hal: Ravi retry kare. Alag UPDATE to seat_id ke kram me', C.good);
+    B(20, 100, 190, 80, 'App-1', 'Arpan', { st: 'good' });
+    B(690, 100, 190, 80, 'App-2', 'Ravi', { st: 'bad' });
+    B(330, 90, 250, 100, 'Seats DB', 'A1: Arpan', { st: 'acc', icon: 'db' });
+    A(210, 120, 328, 120, C.acc, { n: 1 }); A(328, 160, 212, 160, C.good, { n: 2 });
+    A(688, 120, 582, 120, C.acc, { n: 3 }); A(582, 160, 688, 160, C.bad, { n: 4 });
+    T(450, 250, "UPDATE seats SET status = 'booked'", { c: C.fg, size: 14 });
+    T(450, 275, "WHERE seat_id = 'A1' AND status = 'available'", { c: C.fg, size: 14 });
+    L(450, 330, 'DB ek-ek karke chalata, jeetta ek', C.good);
   } else {
-    ppl('A1 meri', 'good', 'seat ja chuki', 'bad'); appDb('seats');
-    A(150, 275, 298, 205, C.msg, { n: 1 }); L(215, 220, 'Book (dobara)', C.msg);
-    A(420, 205, 618, 205, C.bad, { n: 2 }); L(520, 240, 'WHERE: phir 0 row', C.bad);
-    seatA1('booked', C.good); L(750, 305, 'Main ki hi', C.good);
+    B(20, 130, 150, 80, 'App', 'A1-A4');
+    B(260, 40, 380, 230, 'Ek transaction', '', { st: 'acc' });
+    cells(280, 100, [['A1', C.good], ['A2', C.good], ['A3', C.good], ['A4', C.bad]], { w: 80, h: 36 });
+    T(450, 180, 'A4 pehle se booked', { c: C.bad, size: 14 });
+    T(450, 210, 'badli rows = 3, chahiye 4', { c: C.fg, size: 14 });
+    B(720, 110, 150, 120, 'Seats DB', 'A1-A3 khaali', { st: 'good' });
+    A(170, 170, 258, 170, C.acc, { n: 1 });
+    num(615, 118, 2, C.bad);
+    A(640, 170, 718, 170, C.good, { n: 3 }); L(680, 155, 'ROLLBACK', C.good);
+    L(450, 345, 'aadhi booking bekaar. Ya chaaron, ya koi nahi', C.good);
   }
 }

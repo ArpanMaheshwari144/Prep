@@ -1,68 +1,57 @@
-// Card 4: 1 lakh log seat map main DB se, booking dheemi. Ilaaj: map Redis (seatmap:show42, ~5 sec), faisla main DB.
-// Agar: book hua (DEL key), A1 bik chuki par map me khaali, hot key. Wapas: map nahi mila -> replica se, Redis me.
-const DUR = 18;
+// Card 4: 1 lakh log seat map dekh rahe, sab main DB pe. Ilaaj: map Redis me (5 sec), faisla main DB UPDATE. Agar: map me khaali, bik chuki.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: 11 baje 1 lakh log seat map main DB se padh rahe, booking dheemi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: seat map Redis se (seatmap:show42, ~5 sec). Faisla sirf main DB'],
-  [6, YEL, 'AGAR', 'AGAR kisi ne book kiya, map ka kya? -> booking main DB pe, phir key DEL'],
-  [9, YEL, 'AGAR', 'AGAR A1 bik chuki, map me khaali dikhi? -> chalta hai, UPDATE 0 row bolega'],
-  [12, YEL, 'AGAR', 'AGAR lakh log ek hi Redis key pe? -> kai copy + App me 1-2 sec ki copy'],
-  [15, GRN, 'WAPAS', 'WAPAS: Redis me map nahi mila -> replica se banao, Redis me rakh do'],
+  [0, RED, 'DIKKAT', 'DIKKAT: 11 baje 1 lakh log seat map dekh rahe, book koi-koi. Sab main DB pe, booking dheemi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: seat map Redis se (seatmap:show42, ~5 sec umar). Faisla sirf main DB ka UPDATE'],
+  [6, YEL, 'AGAR', 'AGAR A1 bik chuki, map me khaali dikhi? -> chalta hai, UPDATE 0 row bolega'],
 ];
 function setup() {}
-function ppl(mSub, mSt) {
-  B(20, 40, 130, 70, '1 lakh log', 'map dekh rahe'); if (mSub !== null) B(20, 250, 130, 60, 'Main', mSub, { st: mSt });
-  B(230, 145, 110, 80, 'App');
-}
-function prim(sub, st) { B(690, 200, 180, 80, 'SQL primary', sub, { st: st || 'acc' }); }
-function rd(sub, st, rpSt) {
-  B(450, 30, 170, 64, 'Redis', sub, { st }); if (rpSt !== 'none') B(710, 30, 150, 64, 'Read replica', 'copy', { st: rpSt });
-}
-function load(f, good, s) {
-  bar(690, 292, 180, 16, f, '', good); T(780, 328, s || 'primary load', { c: good ? C.good : C.bad, size: 12, b: 1 });
+const STEPS = [
+  [[C.msg, 'Users → App', '1 lakh log map dekh rahe'], [C.bad, 'App → main DB', 'har map seedha DB se'], [C.bad, 'main DB', 'dekhne walon ne booking bhi dheemi kar di']],
+  [[C.msg, 'Users → App', 'map dekhna'], [C.good, 'App → Redis', 'seatmap:show42, 5 sec purana chalega'], [C.acc, 'Arpan → App → main DB', 'Book: UPDATE sirf main DB pe'], [C.acc, 'miss → read replica', 'Redis me nahi to copy se banao']],
+  [[C.acc, 'Redis → App → Arpan', 'map me A1 khaali (5 sec purana)'], [C.msg, 'Arpan → App → main DB', 'A1 book: UPDATE'], [C.bad, 'main DB → App', '0 row: A1 bik chuki'], [C.good, 'App → Arpan', '"seat gayi, doosri chuno"']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function frame(ph) {
   if (ph === 0) {
-    ppl('Book A1', 'bad'); prim('map + booking', 'bad');
-    A(150, 75, 228, 160, C.msg, { n: 1, at: 0.6 });
-    A(340, 172, 688, 222, C.msg, { n: 2, at: 0.2 }); dots(8, 450, 186, C.msg, { gap: 26, r: 6 });
-    L(520, 165, 'map: main DB se', C.msg);
-    A(150, 280, 228, 210, C.acc, { n: 3 }); A(340, 212, 688, 262, C.bad, { dash: 1, n: 4, at: 0.3 });
-    L(520, 275, 'booking ruki', C.bad);
-    load(0.98, false);
+    B(20, 120, 190, 80, 'Users', '1 lakh, map', { icon: 'users' });
+    B(330, 120, 180, 80, 'App', '');
+    B(640, 110, 230, 100, 'main DB', 'map + booking', { st: 'bad', icon: 'db' });
+    bar(660, 180, 190, 12, 0.95, '');
+    A(210, 160, 328, 160, C.msg, { n: 1 });
+    A(510, 160, 638, 160, C.bad, { n: 2 });
+    num(755, 250, 3, C.bad); L(755, 280, 'booking bhi dheemi', C.bad);
+    L(450, 345, 'dekhne wale bahut, book karne wale kam. Dono ek DB pe', C.bad);
   } else if (ph === 1) {
-    ppl('A1 meri, turant', 'good'); prim('faisla yahin'); rd('seatmap:show42', 'good', '');
-    A(150, 75, 228, 160, C.msg, { n: 1, at: 0.6 });
-    A(340, 160, 448, 75, C.good, { n: 2 }); L(330, 100, 'map: Redis se', C.good);
-    T(535, 115, 'umar ~5 sec', { c: C.acc, size: 13, b: 1 });
-    A(150, 280, 228, 210, C.msg, { n: 3 }); A(340, 210, 688, 245, C.good, { n: 4 });
-    L(520, 250, 'UPDATE: 1 row', C.good);
-    load(0.15, true);
-  } else if (ph === 2) {
-    ppl('Book A1', ''); prim('A1: booked'); rd('key gayi', 'acc', 'none');
-    A(150, 280, 228, 210, C.msg, { n: 1 }); A(340, 210, 688, 245, C.good, { n: 2 });
-    L(520, 250, 'UPDATE: 1 row', C.good);
-    A(340, 160, 448, 75, C.acc, { n: 3 }); L(310, 100, 'DEL seatmap:show42', C.acc);
-    L(330, 340, 'hal: booking main DB pe, phir map ki key DEL', C.good);
-  } else if (ph === 3) {
-    ppl('Book A1', 'bad'); prim('A1: booked'); rd('A1: khaali', 'acc', 'none');
-    num(470, 112, 1, C.acc); L(490, 117, 'purana map', C.acc, 'start');
-    A(448, 80, 342, 160, C.acc, { n: 2, at: 0.6 }); L(330, 100, 'A1 khaali dikhi', C.acc);
-    A(150, 280, 228, 210, C.msg, { n: 3 }); A(340, 210, 688, 245, C.bad, { n: 4 });
-    L(520, 250, 'UPDATE: 0 row', C.bad);
-    L(300, 340, 'hal: chalta hai, faisla UPDATE ka. Turant: WebSocket / SSE', C.good);
-  } else if (ph === 4) {
-    ppl(null); rd('hot key', 'bad', 'none');
-    dots(6, 30, 125, C.msg, { gap: 20, r: 6 });
-    A(150, 75, 228, 160, C.msg, { n: 1, at: 0.6 });
-    A(340, 160, 448, 75, C.bad, { n: 2 }); L(320, 100, 'ek key = ek machine', C.bad);
-    B(470, 115, 70, 34, 'copy', '', { st: 'good' }); B(550, 115, 70, 34, 'copy', '', { st: 'good' });
-    L(285, 245, 'App: 1-2 sec copy', C.good);
-    L(330, 340, 'hal: Redis ki kai copy + App me 1-2 sec ki copy', C.good);
+    B(20, 30, 170, 70, 'Users', 'map', { icon: 'users' });
+    B(20, 240, 170, 70, 'Arpan', 'Book', { icon: 'user' });
+    B(300, 130, 170, 80, 'App', '', { st: 'good' });
+    B(620, 10, 250, 70, 'Redis', 'seatmap:show42', { st: 'good' });
+    B(620, 125, 250, 70, 'Read replica', 'map ki copy', { st: 'acc' });
+    B(620, 245, 250, 75, 'main DB', 'sirf UPDATE', { st: 'acc', icon: 'db' });
+    A(190, 65, 298, 150, C.msg, { n: 1 });
+    A(470, 150, 618, 45, C.good, { n: 2 });
+    A(190, 268, 298, 205, C.acc, { n: 3 }); A(470, 200, 618, 278, C.acc);
+    A(470, 175, 618, 160, C.acc, { n: 4, dash: 1 });
+    L(450, 345, 'dekhna cache se, faisla DB se', C.good);
   } else {
-    ppl(null); rd('seatmap:show42', 'good', 'good');
-    A(250, 143, 448, 45, C.acc, { dash: 1, n: 1, at: 0.4 }); L(290, 75, 'miss', C.acc);
-    AP([[340, 165], [785, 165], [785, 96]], C.acc, { n: 2, at: 0.7 }); L(640, 188, 'replica se banao', C.acc);
-    A(300, 143, 448, 88, C.good, { n: 3, at: 0.6 }); L(440, 135, 'Redis me rakh do', C.good);
+    B(20, 130, 170, 90, 'Arpan', 'map dekha', { icon: 'user' });
+    B(330, 130, 200, 90, 'App', '', { st: 'good' });
+    B(670, 20, 200, 70, 'Redis map', 'A1: khaali', { st: 'acc' });
+    B(670, 240, 200, 80, 'main DB', 'A1: Ravi', { st: 'bad', icon: 'db' });
+    A(668, 60, 532, 145, C.acc, { n: 1 }); A(328, 150, 192, 150, C.acc);
+    A(190, 175, 328, 175, C.msg, { n: 2 }); A(530, 190, 668, 265, C.msg);
+    A(668, 300, 532, 210, C.bad, { n: 3 });
+    A(328, 205, 192, 205, C.good, { n: 4 });
+    L(450, 345, 'map thoda purana chalta. Faisla hamesha UPDATE ka', C.good);
   }
 }

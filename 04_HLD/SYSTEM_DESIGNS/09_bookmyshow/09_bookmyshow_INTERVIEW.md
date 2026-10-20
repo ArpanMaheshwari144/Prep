@@ -38,19 +38,13 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 Cue: ATOMIC UPDATE ... WHERE available
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png" width="900">
+<img src="img/c1_1.png?v=2" width="900">
 
-<img src="img/c1_2.png" width="900">
+<img src="img/c1_2.png?v=2" width="900">
 
-<img src="img/c1_3.png" width="900">
-
-<img src="img/c1_4.png" width="900">
-
-<img src="img/c1_5.png" width="900">
-
-<img src="img/c1_6.png" width="900">
+<img src="img/c1_3.png?v=2" width="900">
 
 </details>
 
@@ -88,17 +82,13 @@ NAHI    SELECT ... FOR UPDATE -> LAMBA: chalta bhi hai, par DB pe do baar jaana 
 
 Cue: HOLD + held_until (umar)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png" width="900">
+<img src="img/c2_1.png?v=2" width="900">
 
-<img src="img/c2_2.png" width="900">
+<img src="img/c2_2.png?v=2" width="900">
 
-<img src="img/c2_3.png" width="900">
-
-<img src="img/c2_4.png" width="900">
-
-<img src="img/c2_5.png" width="900">
+<img src="img/c2_3.png?v=2" width="900">
 
 </details>
 
@@ -126,19 +116,13 @@ NAHI    seat available hi rakho -> CHHINI: pay karte-karte Ravi seat le jaata ha
 
 Cue: IDEMPOTENCY KEY (bookingId)
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png" width="900">
+<img src="img/c3_1.png?v=2" width="900">
 
-<img src="img/c3_2.png" width="900">
+<img src="img/c3_2.png?v=2" width="900">
 
-<img src="img/c3_3.png" width="900">
-
-<img src="img/c3_4.png" width="900">
-
-<img src="img/c3_5.png" width="900">
-
-<img src="img/c3_6.png" width="900">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
@@ -163,19 +147,13 @@ NAHI    har request pe naya payment -> DOGUNA: paisa kata, network gaya, app ne 
 
 Cue: CACHE + READ REPLICA
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png" width="900">
+<img src="img/c4_1.png?v=2" width="900">
 
-<img src="img/c4_2.png" width="900">
+<img src="img/c4_2.png?v=2" width="900">
 
-<img src="img/c4_3.png" width="900">
-
-<img src="img/c4_4.png" width="900">
-
-<img src="img/c4_5.png" width="900">
-
-<img src="img/c4_6.png" width="900">
+<img src="img/c4_3.png?v=2" width="900">
 
 </details>
 
@@ -201,19 +179,13 @@ NAHI    map bhi main DB se -> DHEEMA: 1 lakh dekhne wale booking ko bhi dheema k
 
 Cue: WAITING ROOM + Kafka (sirf badi sale)
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png" width="900">
+<img src="img/c5_1.png?v=2" width="900">
 
-<img src="img/c5_2.png" width="900">
+<img src="img/c5_2.png?v=2" width="900">
 
-<img src="img/c5_3.png" width="900">
-
-<img src="img/c5_4.png" width="900">
-
-<img src="img/c5_5.png" width="900">
-
-<img src="img/c5_6.png" width="900">
+<img src="img/c5_3.png?v=2" width="900">
 
 </details>
 
@@ -245,17 +217,13 @@ NAHI    sab seedha DB pe -> DHEEMA: 3000 seat, 2 lakh log ek hi rows ke lock pe 
 
 Cue: SET NX lock, pehla hi banaye
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png" width="900">
+<img src="img/c6_1.png?v=2" width="900">
 
-<img src="img/c6_2.png" width="900">
+<img src="img/c6_2.png?v=2" width="900">
 
-<img src="img/c6_3.png" width="900">
-
-<img src="img/c6_4.png" width="900">
-
-<img src="img/c6_5.png" width="900">
+<img src="img/c6_3.png?v=2" width="900">
 
 </details>
 
@@ -279,17 +247,13 @@ NAHI    sabko DB jaane do -> GIRA: hazaaron miss ek saath replica pe, replica ba
 
 Cue: STATELESS App + LB health check
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png" width="900">
+<img src="img/c7_1.png?v=2" width="900">
 
-<img src="img/c7_2.png" width="900">
+<img src="img/c7_2.png?v=2" width="900">
 
-<img src="img/c7_3.png" width="900">
-
-<img src="img/c7_4.png" width="900">
-
-<img src="img/c7_5.png" width="900">
+<img src="img/c7_3.png?v=2" width="900">
 
 </details>
 

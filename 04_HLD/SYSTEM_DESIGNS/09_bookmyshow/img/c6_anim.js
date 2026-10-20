@@ -1,54 +1,55 @@
-// Card 6: 2 baje Redis restart, har miss replica pe -> replica baith gayi. Ilaaj: SET NX EX 5, pehla hi banaye.
-// Agar: lock wala mar gaya (EX 5), 100 ms baad bhi khaali (retry, phir replica). Wapas: map Redis me, sab Redis se.
-const DUR = 15;
+// Card 6: Redis restart, saare miss replica pe, replica baithi. Ilaaj: SET NX lock, pehla hi banaye. Agar: lock wala mara -> EX 5.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: 2 baje Redis restart, cache khaali. Har miss replica pe, baith gayi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: pehla SET NX EX 5 se lock, replica se ek query, map Redis me'],
+  [0, RED, 'DIKKAT', 'DIKKAT: 2 baje Redis restart. Saara seat map ek saath replica pe, replica baith gayi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: sirf pehli request lock leti (SET NX EX 5), replica se ek query, map Redis me'],
   [6, YEL, 'AGAR', 'AGAR lock lene wala hi mar gaya? -> EX 5 ki wajah se lock khud hat jaata'],
-  [9, YEL, 'AGAR', 'AGAR 100 ms baad bhi Redis khaali? -> 2-3 retry, phir khud replica se'],
-  [12, GRN, 'WAPAS', 'WAPAS: map Redis me aa gaya, baaki sab Redis se padhti, replica pe 1 query'],
 ];
 function setup() {}
-function core(uSub, uSt, appSt, rSub, rSt, rpSt) {
-  T(880, 22, 'samay 2:00', { a: 'end', c: C.muted, size: 13, b: 1 });
-  if (uSub !== null) B(20, 150, 110, 80, 'Hazaaron user', uSub, { st: uSt }); B(220, 150, 110, 80, 'App', '', { st: appSt });
-  B(450, 30, 180, 70, 'Redis', rSub, { st: rSt }); if (rpSt !== 'none') B(680, 170, 170, 80, 'Read replica', '', { st: rpSt });
+const STEPS = [
+  [[C.bad, 'Redis', 'restart: seat map khaali'], [C.bad, 'App x 1000 → replica', 'sabka miss, sab replica pe'], [C.bad, 'Read replica', 'hazaaron query ek saath, baith gayi']],
+  [[C.acc, 'App-A → Redis', 'miss. Lock liya: SET NX EX 5'], [C.good, 'App-A → replica', 'sirf ek query, map banaya'], [C.good, 'App-A → Redis', 'map wapas Redis me'], [C.acc, 'App-B → Redis', 'lock nahi mila: 100 ms ruka,|phir Redis se padha']],
+  [[C.acc, 'App-A → Redis', 'lock liya, 5 sec ki umar'], [C.bad, 'App-A mara', 'map banane se pehle'], [C.good, 'Redis', '5 sec baad lock khud hata (EX)'], [C.good, 'App-B → Redis', 'lock mila, map banaya']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
-function rload(f, good, s) { bar(680, 280, 170, 16, f, '', good); T(765, 318, s, { c: good ? C.good : C.bad, size: 12, b: 1 }); }
 function frame(ph) {
   if (ph === 0) {
-    core('map nahi khulta', 'bad', '', 'khaali', 'bad', 'bad');
-    num(650, 40, 1, C.bad); L(670, 45, 'restart', C.bad, 'start');
-    A(130, 190, 218, 190, C.msg, { n: 2 });
-    A(330, 165, 448, 80, C.acc, { dash: 1, n: 3 }); L(345, 110, 'miss', C.acc);
-    A(330, 205, 678, 210, C.bad, { n: 4, at: 0.15 }); dots(9, 420, 230, C.msg, { gap: 26, r: 6 });
-    cross(872, 210); L(765, 160, 'replica baith gayi', C.bad);
-    rload(1, false, 'replica load');
+    B(20, 30, 180, 80, 'Redis', 'restart: khaali', { st: 'bad' });
+    [[20, 170], [20, 250]].forEach(([x, y], i) => B(x, y, 180, 60, 'App', 'miss', { st: 'acc' }));
+    B(620, 110, 250, 110, 'Read replica', 'baith gayi', { st: 'bad', icon: 'db' });
+    bar(640, 190, 210, 12, 1, '');
+    num(230, 70, 1, C.bad);
+    A(200, 200, 618, 150, C.bad, { n: 2, at: 0.4 }); A(200, 280, 618, 190, C.bad);
+    num(745, 260, 3, C.bad); L(765, 265, 'map nahi khulta', C.bad, 'start');
+    L(450, 345, 'cache gaya to saara bojh ek saath DB pe', C.bad);
   } else if (ph === 1) {
-    core('', '', 'good', 'seatmap:show42', 'good', '');
-    A(300, 148, 448, 55, C.acc, { n: 1, at: 0.35 }); L(300, 85, 'SET NX EX 5: lock', C.acc);
-    A(330, 205, 678, 210, C.acc, { n: 2 }); L(505, 235, 'ek query', C.acc);
-    A(330, 172, 460, 102, C.good, { n: 3, at: 0.6 }); L(445, 150, 'map rakha', C.good, 'start');
-    dots(4, 245, 275, C.msg, { gap: 22 }); num(220, 275, 4, C.acc);
-    L(280, 305, 'baaki ruke (50-100 ms), phir Redis se', C.acc);
-    rload(0.1, true, 'replica: sirf 1 query');
-  } else if (ph === 2) {
-    core(null, '', 'bad', 'lock: EX 5', 'acc', 'none');
-    A(330, 172, 448, 75, C.acc, { n: 1 }); L(345, 105, 'lock liya', C.acc);
-    cross(275, 135); num(305, 128, 2, C.bad); L(275, 250, 'App mar gaya', C.bad);
-    num(650, 40, 3, C.good); L(670, 45, '5 sec: lock khud hata', C.good, 'start');
-    L(300, 340, 'hal: EX 5 ki wajah se lock khud hat jaata, agla le sakta', C.good);
-  } else if (ph === 3) {
-    core('dheema', 'acc', '', 'abhi khaali', 'bad', '');
-    dots(4, 245, 275, C.msg, { gap: 22 }); num(220, 275, 1, C.acc); L(280, 305, 'ruke 100 ms', C.acc);
-    A(330, 165, 448, 80, C.bad, { dash: 1, n: 2 }); L(345, 105, '2-3 retry: khaali', C.bad);
-    A(330, 205, 678, 210, C.acc, { n: 3 }); L(505, 235, 'khud replica se', C.acc);
-    L(600, 340, 'hal: user ko bas dheema lagega', C.good);
+    B(20, 30, 200, 80, 'App-A', 'pehla miss', { st: 'good' });
+    B(20, 240, 200, 80, 'App-B', 'doosra miss', { st: 'acc' });
+    B(360, 130, 220, 90, 'Redis', 'lock: A', { st: 'acc' });
+    B(690, 20, 180, 80, 'Read replica', '1 query', { icon: 'db' });
+    A(220, 60, 358, 142, C.acc, { n: 1, at: 0.45 });
+    A(220, 45, 688, 55, C.good, { n: 2, at: 0.75 });
+    A(220, 98, 358, 190, C.good, { n: 3, at: 0.5 });
+    A(220, 270, 358, 205, C.acc, { n: 4 });
+    L(470, 260, 'replica pe 1 query, 1000 nahi', C.good, 'start');
+    L(450, 345, 'ek banaye, baaki ruk ke Redis se padhein', C.good);
   } else {
-    core('map khula', 'good', 'good', 'seatmap:show42', 'good', 'good');
-    A(130, 190, 218, 190, C.msg, { n: 1 });
-    A(330, 172, 448, 75, C.good, { n: 2 }); L(345, 105, 'Redis se', C.good);
-    A(330, 205, 678, 210, C.line);
-    rload(0.1, true, 'replica: sirf 1 query');
+    B(20, 30, 200, 80, 'App-A', 'lock liya, mara', { st: 'bad' }); cross(240, 70);
+    B(20, 240, 200, 80, 'App-B', 'thoda ruka', { st: 'good' });
+    B(380, 120, 240, 100, 'Redis', 'lock: A (EX 5)', { st: 'acc', icon: 'clock' });
+    A(220, 85, 378, 145, C.acc, { n: 1 });
+    num(285, 70, 2, C.bad);
+    num(500, 255, 3, C.good); L(520, 260, '5 sec: lock khud hata', C.good, 'start');
+    A(220, 270, 378, 205, C.good, { n: 4 }); L(250, 225, 'lock mila', C.good);
+    L(450, 345, 'umar (EX) na hoti to lock hamesha atka rehta', C.good);
   }
 }

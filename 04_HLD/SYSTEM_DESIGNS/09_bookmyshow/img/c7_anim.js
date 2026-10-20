@@ -1,50 +1,54 @@
-// Card 7: ek hi App machine giri -> booking band. Ilaaj: App stateless, hold DB me, LB GET /health.
-// Agar: ek fail = jhatka (2-3 fail = bahar), payment beech me (same bookingId). Wapas: App-2 wahi hold dekhti.
-const DUR = 15;
+// Card 7: ek App machine giri, booking band. Ilaaj: stateless App + LB health. Agar: payment beech me, machine giri -> same bookingId.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: ek hi App machine. Main seat chun raha tha, wo giri, booking band'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: App stateless, hold DB me. LB GET /health, 2-3 fail = machine bahar'],
-  [6, YEL, 'AGAR', 'AGAR giri machine bahar kaise? -> 2-3 baar fail = bahar, ek fail jhatka'],
-  [9, YEL, 'AGAR', 'AGAR payment beech me tha, machine giri? -> same bookingId, doosri machine'],
-  [12, GRN, 'WAPAS', 'WAPAS: App-2 wahi hold dekhti (DB me tha). Seat wahin rehti hai'],
+  [0, RED, 'DIKKAT', 'DIKKAT: shaam ko main seat chun raha tha, ek hi App machine thi, wo gir gayi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: App kuch yaad nahi rakhti, hold DB me. LB /health se dekhta, giri machine bahar'],
+  [6, YEL, 'AGAR', 'AGAR payment beech me tha, machine giri? -> same bookingId, doosri machine'],
 ];
 function setup() {}
-function core(mSub, mSt, a1Sub, a1St, a2, dbSub, dbSt) {
-  B(20, 150, 110, 70, 'Main', mSub, { st: mSt });
-  B(360, 60, 120, 60, 'App-1', a1Sub, { st: a1St });
-  if (a2) { B(190, 160, 80, 50, 'LB'); B(360, 250, 120, 60, 'App-2', a2 === 1 ? '' : a2, { st: a2 === 1 ? '' : 'good' }); }
-  B(650, 150, 200, 80, 'SQL DB', dbSub || 'A1: HELD (Main)', { st: dbSt || 'acc' });
+const STEPS = [
+  [[C.msg, 'Arpan → App', 'seat chun raha tha'], [C.bad, 'App giri', 'ek hi machine thi'], [C.bad, 'Arpan', 'booking band, kuch nahi khulta']],
+  [[C.msg, 'Arpan → LB', 'Book'], [C.bad, 'LB → App-1', '/health? 3 baar chup: bahar'], [C.good, 'LB → App-2', 'request App-2 ko'], [C.good, 'App-2 → Seats DB', 'A1 ka hold wahi mila, booking chalu']],
+  [[C.good, 'App-1 → PSP', 'B-42: 500 kata'], [C.bad, 'App-1 giri', 'jawab dene se pehle'], [C.acc, 'App-2 → PSP', 'retry: wahi B-42'], [C.good, 'PSP → App-2', 'B-42 ho chuka: purana jawab, ek hi baar']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function frame(ph) {
   if (ph === 0) {
-    core('booking band', 'bad', 'giri', 'bad', 0);
-    A(130, 170, 358, 85, C.msg, { n: 1, at: 0.4 }); L(225, 110, 'hold A1', C.msg);
-    A(480, 95, 648, 170, C.msg, { n: 2 });
-    cross(500, 52); num(530, 40, 3, C.bad); L(550, 45, 'App-1 giri', C.bad, 'start');
-    A(130, 200, 358, 112, C.bad, { dash: 1, n: 4, at: 0.4 }); L(270, 190, 'Pay: koi nahi', C.bad);
+    B(20, 130, 170, 80, 'Arpan', 'A1 chun raha', { icon: 'user' });
+    B(340, 120, 200, 100, 'App', 'ek hi machine', { st: 'bad', icon: 'server' }); cross(565, 170);
+    B(690, 130, 180, 80, 'Seats DB', '', { icon: 'db' });
+    A(190, 170, 338, 170, C.msg, { n: 1 });
+    num(440, 250, 2, C.bad); L(460, 255, 'giri', C.bad, 'start');
+    num(105, 250, 3, C.bad); L(125, 255, 'booking band', C.bad, 'start');
+    L(450, 345, 'ek machine = ek kamzor jagah', C.bad);
   } else if (ph === 1) {
-    core('', '', 'bahar', 'bad', 1);
-    cross(500, 52); num(530, 40, 1, C.bad); L(550, 45, 'App-1 giri', C.bad, 'start');
-    A(250, 158, 358, 105, C.acc, { dash: 1, n: 2, at: 0.4 }); L(200, 125, 'GET /health', C.acc);
-    T(300, 95, 'fail: 3', { c: C.bad, b: 1, size: 13 });
-    A(130, 185, 188, 185, C.msg, { n: 3 });
-    A(250, 212, 358, 270, C.good, { n: 4 }); L(250, 270, 'App-2 pe', C.good);
-  } else if (ph === 2) {
-    B(360, 60, 120, 60, 'App-1', 'ek fail', { st: 'acc' }); B(190, 160, 80, 50, 'LB');
-    A(250, 158, 358, 105, C.acc, { dash: 1, n: 1, at: 0.4 }); L(200, 125, 'GET /health', C.acc);
-    T(300, 95, 'fail: 1', { c: C.acc, b: 1, size: 13 });
-    num(530, 90, 2, C.good); L(550, 95, 'sirf jhatka, andar hi', C.good, 'start');
-    L(330, 345, 'hal: 2-3 baar fail ho, tabhi bahar', C.good);
-  } else if (ph === 3) {
-    core('Pay (dobara)', 'acc', 'giri', 'bad', 1, 'idempotent', 'good');
-    cross(500, 52); num(530, 40, 1, C.bad); L(550, 45, 'beech me giri', C.bad, 'start');
-    A(130, 185, 188, 185, C.msg, { n: 2 }); L(160, 255, 'same bookingId', C.msg);
-    A(250, 212, 358, 270, C.msg, { n: 3 });
-    A(480, 280, 648, 205, C.good, { n: 4 }); L(600, 280, 'do baar nahi katega', C.good);
+    B(20, 130, 140, 80, 'Arpan', '', { icon: 'user' });
+    B(220, 130, 130, 80, 'LB', '/health', { st: 'acc' });
+    B(430, 20, 190, 70, 'App-1', 'giri', { st: 'bad' }); cross(645, 55);
+    B(430, 240, 190, 70, 'App-2', 'chalu', { st: 'good' });
+    B(700, 240, 170, 70, 'Seats DB', 'A1 HELD', { st: 'good', icon: 'db' });
+    A(160, 170, 218, 170, C.msg, { n: 1 });
+    A(350, 150, 428, 60, C.bad, { n: 2, dash: 1 });
+    A(350, 190, 428, 275, C.good, { n: 3 });
+    A(620, 275, 698, 275, C.good, { n: 4 });
+    L(450, 345, 'hold DB me hai, App me nahi. Koi bhi App le sakti', C.good);
   } else {
-    core('seat wahin', 'good', 'giri', 'dim', 'wahi hold', '', 'good');
-    A(130, 185, 188, 185, C.msg, { n: 1 });
-    A(250, 212, 358, 270, C.msg, { n: 2 });
-    A(480, 280, 648, 205, C.good, { n: 3 }); L(600, 280, 'HELD mila', C.good);
+    B(20, 30, 180, 80, 'App-1', 'B-42 pay', { st: 'bad' }); cross(60, 140);
+    B(20, 240, 180, 80, 'App-2', 'retry B-42', { st: 'good' });
+    B(560, 120, 300, 100, 'PSP', 'B-42: kata (ek baar)', { st: 'good' });
+    A(200, 55, 558, 140, C.good, { n: 1, at: 0.6 });
+    num(100, 140, 2, C.bad);
+    A(200, 265, 558, 185, C.acc, { n: 3, at: 0.6 });
+    A(558, 210, 202, 295, C.good, { n: 4, at: 0.35 });
+    L(450, 345, 'idempotent: do baar nahi katega', C.good);
   }
 }
