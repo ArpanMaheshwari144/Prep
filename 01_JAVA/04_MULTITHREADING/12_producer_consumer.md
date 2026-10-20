@@ -164,6 +164,18 @@ int item = queue.take();    // blocks if EMPTY until item available
 
 **That's it.** No `synchronized`, no `wait/notify`, no spurious wakeup handling. Library handles everything.
 
+### Queue vs BlockingQueue (saada line vs chaukidaar wali line)
+
+```
+                  Queue (LinkedList / ArrayDeque)   BlockingQueue (ArrayBlockingQueue / LinkedBlockingQueue)
+thread-safe?      NAHI                              HAAN (andar lock)
+khaali pe nikalo  poll() -> turant null             take() -> RUKTA jab tak item na aaye
+bhari pe daalo    limit nahi, badhta jaata          put() -> RUKTA jab tak jagah na bane (fixed size)
+kahan             ek thread (BFS, DSA)              kai thread (producer-consumer, thread pool)
+```
+Chala ke dekha: 2 thread x 1 lakh add -> LinkedList 197868 (~2000 gum, race) · BlockingQueue 200000.
+> Ek line: ek thread -> `Queue`. Kai thread share karein -> `BlockingQueue` (safe + put/take khud rokte).
+
 ### BlockingQueue variants
 
 | Implementation | Use case |
