@@ -38,6 +38,7 @@ function frame(ph) {
     num(405, 145, 1, C.good); num(605, 145, 2, C.bad);
     cells(420, 130, [['INCR', C.good], ['EXPIRE', C.bad]], { w: 86, h: 30 });
     L(660, 150, 'crash yahan', C.bad, 'start');
+    L(640, 220, 'hal: INCR + EXPIRE ek Lua me', C.good, 'start');
     B(420, 230, 180, 70, 'rate:Arpan', 'umar: nahi', { st: 'bad' });
     A(130, 175, 410, 260, C.bad, { n: 3, at: 0.15 });
     dots(3, 220, 205, C.bad, { gap: 60 });
