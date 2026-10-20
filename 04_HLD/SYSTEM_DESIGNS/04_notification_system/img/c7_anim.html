@@ -10,6 +10,7 @@
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
 // anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
 const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
@@ -74,51 +75,126 @@ function cells(x, y, items, o = {}) {
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
 function draw(t) {
   DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
   const fix = t >= FIX;
   CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 7: 12 baje sale, ek hi line me OTP 50,000 offer ke peeche -> 10 min late, login fail. Ilaaj: high / med / low alag line + apne worker.
-const DUR = 18, FIX = 8;
-const RY = [70, 190, 310];
-const mv = (a, b, s, e, tl) => (tl >= s && tl <= e ? path([[s, a], [e, b]], tl) : null);
-function setup() {
-  box(770, 30, 110, 310, 'Users');
-  RY.forEach((y, i) => {
-    wire(`M140 ${y} H620`, 'q' + i); wire(`M730 ${y} H770`, 'u' + i);
-    box(620, y - 25, 110, 50, ['OTP worker', 'Order worker', 'Offer worker'][i], '', { id: 'w' + i, stroke: i ? C.line : C.good });
+// Card 7: 12 baje sale, ek hi line me OTP 50,000 offer ke peeche -> 10 min late, login fail.
+// Ilaaj: high / beech / low alag line + apne worker. Agar: OTP line khaali, offer ne OTP ki company had khaayi.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: 12 baje sale. Ek hi line me OTP 50,000 offer ke peeche'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: OTP ki apni tez line + apne worker. High OTP, beech order, low offer'],
+  [6, YEL, 'AGAR', 'AGAR OTP wali tez line khaali? -> uske worker beech wali line padh lein'],
+  [9, YEL, 'AGAR', 'AGAR offer wale OTP ki company had kha jaayein? -> OTP ka alag account'],
+  [12, GRN, 'WAPAS', 'WAPAS: OTP kabhi kisi ke peeche nahi. Apni line, apne worker, apna account'],
+];
+const RY = [70, 190, 310], WN = ['OTP worker', 'Order worker', 'Offer worker'];
+function setup() {}
+function lanes(otp, ord, off, wst = ['good', '', '']) {
+  T(140, RY[0] - 22, 'high line', { c: C.good, size: 12, b: 1, a: 'start' });
+  T(140, RY[1] - 22, 'beech wali line', { c: C.muted, size: 12, a: 'start' });
+  T(140, RY[2] - 22, 'low line', { c: C.muted, size: 12, a: 'start' });
+  [otp, ord, off].forEach((k, i) => {
+    const nm = ['OTP', 'order', 'offer'][i], c = [C.good, C.msg, C.acc][i];
+    if (k) cells(140, RY[i] - 13, Array(k).fill([nm, c]), { w: 52 });
+    A(140 + Math.max(k, 0) * 56, RY[i], 618, RY[i], C.line);
+    B(620, RY[i] - 25, 110, 50, WN[i], '', { st: wst[i] });
   });
-  box(620, 45, 110, 50, 'Worker', '', { id: 'w' });
 }
-function frame(t, fix, tl) {
-  [0, 1, 2].forEach(i => { vis('w' + i, fix); vis('q' + i, fix || i === 0); vis('u' + i, fix || i === 0); });
-  vis('w', !fix);
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: 12 baje sale. Ek hi line me OTP 50,000 offer ke peeche';
-    cells(140, 57, [['OTP', C.bad]].concat(Array(7).fill(['offer', C.acc])), { w: 52 });
-    T(365, 40, '50,000 offer OTP se aage', { c: C.acc, b: 1, size: 12 });
-    for (let k = 0; k < 14; k++) dot(mv([730, 70], [758, 70], 0.3 + k * 0.5, 0.7 + k * 0.5, tl), C.acc);
-    T(365, 130, `offer baaki: ${(50000 - Math.round(tl * 100) * 10).toLocaleString('en-IN')}`, { c: C.acc, size: 13 });
-    T(365, 160, `OTP ka intezaar: ${Math.min(10, Math.round(tl * 1.6))} min`, { c: C.bad, b: 1, size: 14 });
-    if (tl > 6.2) T(365, 190, 'OTP time khatam -> login FAIL', { c: C.bad, b: 1, size: 14 });
-    return;
-  }
-  CAP.textContent = 'ILAAJ: OTP ki apni tez line + apne worker. High = OTP, beech = order, low = offer';
-  T(365, 35, 'high line', { c: C.good, size: 12, b: 1 });
-  T(365, 155, 'beech wali line', { c: C.muted, size: 12 });
-  T(365, 275, 'low line: offer ruk sakta', { c: C.muted, size: 12 });
-  if (tl < 0.6) cells(140, 57, [['OTP', C.good]], { w: 52 });
-  dot(mv([192, 70], [620, 70], 0.6, 1.1, tl), C.good, '', 'OTP', C.good);
-  dot(mv([730, 70], [758, 70], 1.2, 1.5, tl), C.good);
-  if (tl > 1.5) T(365, 105, 'OTP turant pahuncha, login OK', { c: C.good, b: 1, size: 14 });
-  cells(140, 177, Array(3).fill(['order', C.msg]), { w: 52 });
-  cells(140, 297, Array(8).fill(['offer', C.acc]), { w: 52 });
-  for (let k = 0; k < 9; k++) {
-    dot(mv([730, 190], [758, 190], 0.5 + k, 0.9 + k, tl), C.msg);
-    dot(mv([730, 310], [758, 310], 0.8 + k, 1.2 + k, tl), C.acc);
+function frame(ph) {
+  if (ph === 0) {
+    B(770, 30, 110, 310, 'Users', '', { st: 'bad' });
+    cells(140, 177, [['OTP', C.bad]].concat(Array(7).fill(['offer', C.acc])), { w: 52 });
+    A(588, 190, 618, 190, C.line); B(620, 165, 110, 50, 'Worker', '', { st: 'acc' });
+    num(130, 140, 1, C.acc); L(148, 145, '50,000 offer OTP se aage', C.acc, 'start');
+    A(730, 190, 768, 190, C.acc, { n: 2, at: 0.5 }); L(675, 150, 'offer bhej raha', C.acc);
+    num(160, 245, 3, C.bad); L(178, 250, 'OTP 10 min late -> login FAIL', C.bad, 'start');
+  } else if (ph === 1) {
+    B(770, 30, 110, 310, 'Users', 'OTP turant', { st: 'good' });
+    lanes(1, 3, 8);
+    A(730, 70, 768, 70, C.good, { n: 1, at: 0.5 });
+    A(730, 190, 768, 190, C.msg, { n: 2, at: 0.5 });
+    A(730, 310, 768, 310, C.acc, { n: 3, at: 0.5 }); L(530, 345, 'offer ruk sakta', C.acc);
+    L(400, 105, 'OTP kisi ke peeche nahi', C.good);
+  } else if (ph === 2) {
+    B(770, 30, 110, 310, 'Users', '', { st: 'good' });
+    lanes(0, 4, 8, ['good', '', '']);
+    num(160, 70, 1, C.muted); L(178, 75, 'khaali', C.muted, 'start');
+    AP([[364, 177], [364, 120], [600, 120], [640, 97]], C.good, { n: 2, at: 0.25 }); L(380, 112, 'OTP worker beech wali padhe', C.good, 'start');
+    A(730, 70, 768, 70, C.good, { n: 3 }); A(730, 190, 768, 190, C.msg, { n: 3 });
+    AP([[675, 285], [675, 245], [590, 245], [590, 85]], C.bad, { dash: 1, n: 4, at: 0.3 }); cross(590, 155);
+    L(520, 268, 'ulta kabhi nahi', C.bad);
+    L(450, 20, 'hal: OTP worker beech wali line padh lein. Ulta kabhi nahi', C.good);
+  } else if (ph === 3) {
+    lanes(1, 3, 8);
+    B(770, 30, 110, 110, 'OTP account', 'apna', { st: 'good' });
+    B(770, 230, 110, 110, 'Offer account', 'had khatam', { st: 'bad' });
+    num(825, 222, 1, C.bad); L(808, 228, 'offer ne had khaayi', C.bad, 'end');
+    A(730, 310, 768, 310, C.bad, { n: 2, dash: 1 });
+    A(730, 70, 768, 70, C.good, { n: 3 }); L(750, 160, 'OTP gaya', C.good);
+    L(400, 20, 'hal: OTP ka alag account / number. Had wala card 8', C.good);
+  } else {
+    lanes(1, 3, 8);
+    B(770, 30, 110, 110, 'OTP account', 'apna', { st: 'good' });
+    B(770, 230, 110, 110, 'Offer account', '', { st: 'acc' });
+    A(730, 70, 768, 70, C.good, { n: 1 }); L(400, 105, 'apni line, apne worker', C.good);
+    A(730, 190, 768, 250, C.msg, { n: 2 }); A(730, 310, 768, 310, C.acc, { n: 2 });
+    L(820, 165, 'OTP turant', C.good);
   }
 }
 

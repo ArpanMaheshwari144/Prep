@@ -1,43 +1,60 @@
-// Card 3: Worker-A ne email bheja, "padh liya" bolne se pehle mara, Worker-B ne phir bheja -> 2 email. Ilaaj: khabar_id + raasta ki key Redis me.
-const DUR = 18, FIX = 8;
-const K = [140, 190], A = [290, 85], B = [290, 275], AR = [430, 85], BR = [430, 275];
-const mv = (a, b, s, e, tl) => (tl >= s && tl <= e ? path([[s, a], [e, b]], tl) : null);
-function setup() {
-  box(20, 150, 120, 80, 'Kafka', 'khabar K-1');
-  wire('M140 190 L290 85'); wire('M140 190 L290 275');
-  box(290, 50, 140, 70, 'Worker-A'); box(290, 240, 140, 70, 'Worker-B');
-  wire('M430 85 L730 170'); wire('M430 275 L730 200');
-  box(730, 150, 130, 80, 'User', 'email inbox');
-  wire('M430 85 L510 165', 'wa'); wire('M430 275 L510 205', 'wb');
-  box(510, 150, 140, 70, 'Redis', 'khabar_id+raasta', { id: 'rd', stroke: C.acc });
+// Card 3: Worker-A ne email bheja, "padh liya" se pehle mara, Worker-B ne phir bheja -> 2 email.
+// Ilaaj: khabar ki key (khabar_id + raasta) Redis me. Agar: Redis gira, key 24 ghante me mit gayi. Wapas: Redis + DB.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: Worker-A ne email bheja, "padh liya" se pehle mara. B ne phir bheja'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: bhejne se pehle key (khabar_id + raasta) Redis me. Mili to skip'],
+  [6, YEL, 'AGAR', 'AGAR key wala Redis gir gaya? -> DB me (khabar_id, raasta) UNIQUE rokta'],
+  [9, YEL, 'AGAR', 'AGAR Redis ki key 24 ghante me mit gayi? -> DB ki row nahi bhoolti'],
+  [12, GRN, 'WAPAS', 'WAPAS: Redis tez raasta, DB aakhri deewar. Dobara aayi khabar skip'],
+];
+function setup() {}
+function base(o = {}) {
+  B(20, 150, 120, 80, 'Kafka', 'khabar K-1');
+  B(290, 50, 140, 70, 'Worker-A', '', { st: o.a }); B(290, 240, 140, 70, 'Worker-B', '', { st: o.b });
+  B(730, 150, 130, 80, 'User', o.mails, { st: o.u });
+  if (o.redis !== undefined) B(510, 140, 140, 70, 'Redis', o.redis, { st: o.rst });
+  if (o.db !== undefined) B(510, 270, 140, 60, 'DB', o.db, { st: o.dbst });
 }
-function frame(t, fix, tl) {
-  vis('rd', fix); vis('wa', fix); vis('wb', fix);
-  let mails = 0;
-  dot(mv(K, A, 0.3, 0.9, tl), C.msg);
-  const crash = () => {
-    if (tl > 2.4 && tl < 3.4) {
-      el('rect', { x: 290, y: 50, width: 140, height: 70, rx: 8, fill: C.bad, opacity: 0.35 }, DYN);
-      T(360, 38, 'mara, "padh liya" nahi bola', { c: C.bad, b: 1, size: 12 });
-    }
-    if (tl >= 3.4) { cross(450, 60); T(140, 135, 'khabar dobara', { c: C.acc, b: 1, size: 12 }); }
-  };
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: Worker-A ne email bheja, "padh liya" bolne se pehle mara. Worker-B ne phir bheja';
-    dot(mv(AR, [718, 175], 1.1, 2.0, tl), C.msg); if (tl >= 2.0) mails++;
-    crash();
-    dot(mv(K, B, 3.6, 4.2, tl), C.msg);
-    dot(mv(BR, [718, 195], 4.4, 5.3, tl), C.bad); if (tl >= 5.3) mails++;
-    T(795, 255, `email: ${mails}`, { c: mails > 1 ? C.bad : C.fg, b: 1, size: 15 });
-    return;
+function aDead(n) { num(275, 30, n, C.bad); L(293, 35, 'mara, "padh liya" nahi bola', C.bad, 'start'); cross(268, 62); }
+function frame(ph) {
+  if (ph === 0) {
+    base({ a: 'bad', b: 'bad', u: 'bad', mails: 'email: 2' });
+    A(140, 175, 288, 90, C.msg, { n: 1, at: 0.5 });
+    A(430, 85, 728, 175, C.msg, { n: 2, at: 0.5 });
+    aDead(3);
+    A(140, 205, 288, 270, C.acc, { n: 4, at: 0.5 }); L(150, 270, 'khabar dobara', C.acc, 'start');
+    A(430, 275, 728, 205, C.bad, { n: 5, at: 0.5 });
+  } else if (ph === 1) {
+    base({ a: 'bad', b: 'good', u: 'good', mails: 'email: 1', redis: 'K-1:email', rst: 'acc' });
+    A(140, 175, 288, 90, C.msg, { n: 1, at: 0.5 });
+    A(430, 95, 508, 160, C.acc, { n: 2, at: 0.5 }); L(515, 232, 'nahi mili -> likha', C.acc, 'start');
+    A(430, 62, 728, 160, C.good, { n: 3, at: 0.45 });
+    aDead(4);
+    A(140, 205, 288, 270, C.acc, { n: 5, at: 0.5 }); L(150, 270, 'khabar dobara', C.acc, 'start');
+    A(430, 260, 508, 195, C.acc, { n: 6, at: 0.5 }); L(440, 330, 'key mili -> skip', C.good, 'start');
+  } else if (ph === 2) {
+    base({ b: 'good', u: 'good', mails: 'email: 1', redis: 'gira', rst: 'bad', db: 'K-1, email', dbst: 'acc' });
+    cross(675, 175); num(675, 130, 1, C.bad); L(693, 135, 'gira', C.bad, 'start');
+    A(430, 75, 728, 165, C.line);
+    A(140, 205, 288, 270, C.acc, { n: 2, at: 0.5 }); L(150, 270, 'khabar dobara', C.acc, 'start');
+    A(430, 285, 508, 290, C.acc, { n: 3, at: 0.5 }); L(470, 270, 'likho', C.acc);
+    A(508, 315, 432, 305, C.bad, { n: 4, at: 0.5 }); L(440, 340, 'pehle se hai -> skip', C.good, 'start');
+    L(450, 25, 'hal: DB me (khabar_id, raasta) UNIQUE, ek hi baar lagta', C.good);
+  } else if (ph === 3) {
+    base({ b: 'good', u: 'good', mails: 'email: 1', redis: 'K-1: mit gayi', rst: 'acc', db: 'K-1, email', dbst: 'good' });
+    num(675, 130, 1, C.acc); L(693, 135, '24 ghante baad', C.acc, 'start');
+    A(430, 75, 728, 165, C.line);
+    A(140, 205, 288, 270, C.acc, { n: 2, at: 0.5 }); L(150, 270, 'khabar dobara', C.acc, 'start');
+    A(430, 255, 508, 195, C.acc, { n: 3, at: 0.5 }); L(520, 230, 'key nahi', C.acc, 'start');
+    A(430, 285, 508, 290, C.acc, { n: 4, at: 0.5 });
+    A(508, 315, 432, 305, C.good, { n: 5, at: 0.5 }); L(440, 340, 'row hai -> skip', C.good, 'start');
+    L(450, 25, 'hal: DB ki row nahi bhoolti, wo phir bhi rokegi', C.good);
+  } else {
+    base({ b: 'good', u: 'good', mails: 'email: 1', redis: 'tez raasta', rst: 'good', db: 'aakhri deewar', dbst: 'good' });
+    A(430, 75, 728, 165, C.line);
+    A(140, 205, 288, 270, C.acc, { n: 1, at: 0.5 }); L(150, 270, 'khabar dobara', C.acc, 'start');
+    A(430, 260, 508, 195, C.good, { n: 2, at: 0.5 }); L(520, 230, 'key mili -> skip', C.good, 'start');
+    A(430, 300, 508, 300, C.line, { dash: 1 });
   }
-  CAP.textContent = 'ILAAJ: bhejne se pehle key (khabar_id + raasta) Redis me. Mili to skip, ek email';
-  dot(mv(AR, [498, 165], 1.0, 1.4, tl), C.acc, '', 'K-1:email?', C.acc);
-  if (tl > 1.4) T(580, 245, 'K-1:email likha', { c: C.acc, b: 1, size: 12, halo: 1 });
-  dot(mv(AR, [718, 175], 1.6, 2.4, tl), C.good); if (tl >= 2.4) mails++;
-  crash();
-  dot(mv(K, B, 3.6, 4.2, tl), C.msg);
-  dot(mv(BR, [498, 205], 4.4, 4.9, tl), C.acc, '', 'K-1:email?', C.acc);
-  if (tl > 5.0) T(440, 335, 'key hai -> skip', { c: C.good, b: 1, size: 14 });
-  T(795, 255, `email: ${mails}`, { c: C.good, b: 1, size: 15 });
 }

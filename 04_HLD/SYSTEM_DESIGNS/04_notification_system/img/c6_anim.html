@@ -10,6 +10,7 @@
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
 // anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
 const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
@@ -74,63 +75,127 @@ function cells(x, y, items, o = {}) {
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
 function draw(t) {
   DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
   const fix = t >= FIX;
   CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 6: Twilio dheemi, har call 30 sec, saare SMS worker phanse, OTP ruka. Ilaaj: 2-3 sec timeout + circuit breaker -> OTP SNS se, baad me test call.
-const DUR = 18, FIX = 8;
+// Card 6: Twilio dheemi, har call 30 sec, saare SMS worker phanse, OTP ruka.
+// Ilaaj: 2-3 sec timeout + circuit breaker -> OTP SNS se. Agar: push / email pe asar, SNS bhi band. Wapas: test call.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: Twilio dheemi. Har call 30 sec, saare SMS worker phanse, OTP ruka'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: 2-3 sec me chhodo. Baar-baar fail -> breaker khula, OTP SNS se'],
+  [6, YEL, 'AGAR', 'AGAR Twilio ka breaker khula, push / email pe asar? -> nahi'],
+  [9, YEL, 'AGAR', 'AGAR SNS bhi band ho gaya? -> khabar line me rukti, phenko nahi'],
+  [12, GRN, 'WAPAS', 'WAPAS: thodi der baad Twilio ko test call. Theek hai to wapas'],
+];
 const WY = [80, 190, 300];
-const mv = (a, b, s, e, tl) => (tl >= s && tl <= e ? path([[s, a], [e, b]], tl) : null);
-function setup() {
-  WY.forEach((y, i) => {
-    wire(`M166 190 L210 ${y}`);
-    wire(`M300 ${y} L680 75`, 'd' + i); wire(`M300 ${y} L400 190`, 'f' + i);
-    box(210, y - 22, 90, 44, `W${i + 1}`);
-  });
-  wire('M520 190 L680 75', 'f3'); wire('M520 190 L680 305', 'f4');
-  box(400, 155, 120, 70, 'Circuit', 'breaker', { id: 'cb', stroke: C.acc });
-  box(680, 40, 180, 70, 'Twilio', 'dheemi', { stroke: C.bad });
-  box(680, 270, 180, 70, 'SNS', 'doosri company', { id: 'sns', stroke: C.acc });
-}
-function frame(t, fix, tl) {
-  [0, 1, 2].forEach(i => { vis('d' + i, !fix); vis('f' + i, fix); });
-  ['f3', 'f4', 'cb', 'sns'].forEach(i => vis(i, fix));
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: Twilio dheemi. Har call 30 sec intezaar, saare SMS worker phanse, OTP bhi ruka';
-    cells(20, 177, [['SMS', C.msg], ['SMS', C.msg], ['OTP', C.bad]], { w: 46 });
-    WY.forEach((y, i) => {
-      const s = 0.4 + i * 0.3;
-      dot(mv([300, y], [668, 62 + i * 13], s, s + 0.8, tl), C.msg);
-      if (tl > s + 0.8) { dot([668, 62 + i * 13], C.msg);
-        T(255, y + 38, `phansa ${Math.min(30, Math.round((tl - s - 0.8) * 5))} sec`, { c: C.bad, b: 1, size: 12 }); }
+function setup() {}
+function workers(st) { WY.forEach((y, i) => { A(166, 190, 208, y, C.line); B(210, y - 22, 90, 44, `W${i + 1}`, '', { st }); }); }
+function line(items) { cells(20, 177, items, { w: 46 }); }
+function tw(st, sub) { B(680, 40, 180, 70, 'Twilio', sub, { st }); }
+function sns(st, sub) { B(680, 270, 180, 70, 'SNS', sub, { st }); }
+function cb(st, sub) { B(400, 155, 120, 70, 'Circuit', sub || 'breaker', { st }); }
+function frame(ph) {
+  if (ph === 0) {
+    line([['SMS', C.msg], ['SMS', C.msg], ['OTP', C.bad]]); workers('bad'); tw('bad', 'dheemi'); sns('', 'doosri company');
+    num(665, 25, 1, C.bad); L(770, 130, 'har call 30 sec', C.bad);
+    WY.forEach((y, i) => A(300, y, 678, 60 + i * 12, C.bad, { n: i === 1 ? 2 : 0, at: 0.5 }));
+    WY.forEach(y => L(255, y + 38, 'phansa', C.bad));
+    num(30, 155, 3, C.bad); L(48, 160, 'OTP line me ruka', C.bad, 'start');
+  } else if (ph === 1) {
+    line([['SMS', C.msg], ['SMS', C.msg]]); workers('good'); tw('bad', 'dheemi'); sns('good', 'doosri company');
+    WY.forEach(y => A(300, y, 398, 190, C.msg));
+    cb('bad', 'KHULA');
+    A(520, 170, 678, 80, C.bad, { n: 1, dash: 1, at: 0.4 }); L(600, 150, '2 sec me chhoda', C.bad, 'start');
+    cross(640, 101); num(440, 245, 2, C.bad); L(458, 250, 'baar-baar fail', C.bad, 'start');
+    A(520, 210, 678, 300, C.good, { n: 3, at: 0.4 }); L(600, 300, 'OTP SNS se', C.good, 'end');
+  } else if (ph === 2) {
+    const R = [['SMS worker', 'KHULA', 'bad', 'Twilio', 'bad'], ['Push worker', 'band', 'good', 'FCM', 'good'],
+      ['Email worker', 'band', 'good', 'Email co.', 'good']];
+    R.forEach(([w, s, st, co, cst], i) => {
+      const y = [75, 190, 305][i];
+      B(170, y - 25, 130, 50, w, '', { st: i ? 'good' : '' });
+      B(400, y - 30, 120, 60, 'breaker', s, { st });
+      B(680, y - 30, 180, 60, co, '', { st: cst });
+      A(300, y, 398, y, i ? C.good : C.msg, { n: i ? 2 : 0 });
+      A(520, y, 678, y, i ? C.good : C.bad, { n: i ? 3 : 0, dash: !i });
     });
-    T(770, 135, 'har call 30 sec', { c: C.bad, b: 1, size: 13 });
-    if (tl > 3) T(93, 225, 'OTP line me ruka', { c: C.bad, b: 1, size: 12 });
-    return;
+    num(400, 32, 1, C.bad); cross(600, 75); L(600, 50, 'call band', C.bad);
+    L(600, 175, 'chal raha', C.good); L(600, 290, 'chal raha', C.good);
+    L(20, 140, 'hal: har company ka apna breaker,', C.good, 'start');
+    L(20, 160, 'worker alag line pe', C.good, 'start');
+  } else if (ph === 3) {
+    line([['SMS', C.msg], ['SMS', C.msg], ['OTP', C.acc]]); workers(''); tw('bad', 'band'); sns('bad', 'band');
+    cb('bad', 'KHULA');
+    WY.forEach(y => A(300, y, 398, 190, C.line));
+    num(665, 25, 1, C.bad); cross(875, 125);
+    A(520, 210, 678, 300, C.bad, { n: 2, dash: 1, at: 0.4 }); cross(875, 255);
+    AP([[460, 227], [460, 245], [90, 245], [90, 206]], C.acc, { n: 3, at: 0.3 }); L(380, 268, 'line me ruki, backoff se phir', C.acc);
+    num(30, 140, 4, C.bad); L(48, 145, 'OTP ka alert', C.bad, 'start');
+    L(20, 20, 'hal: khabar line me rukti, backoff se koshish, phenko nahi', C.good, 'start');
+  } else {
+    line([['SMS', C.msg], ['SMS', C.msg]]); workers('good'); tw('good', 'theek'); sns('good', 'doosri company');
+    cb('good', 'wapas band');
+    A(520, 165, 678, 62, C.acc, { n: 1, dash: 1, at: 0.4 }); L(560, 95, 'test call', C.acc, 'end');
+    A(678, 88, 522, 185, C.good, { n: 2, at: 0.5 }); L(640, 150, 'theek', C.good, 'start');
+    WY.forEach(y => A(300, y, 398, 190, C.good, { n: y === 300 ? 3 : 0, at: 0.4 }));
+    L(775, 130, 'SMS phir Twilio se', C.good);
   }
-  CAP.textContent = 'ILAAJ: 2-3 sec me chhodo (timeout). Baar-baar fail -> circuit breaker khula, OTP SNS se';
-  let fails = 0;
-  WY.forEach((y, i) => {
-    const s = 0.3 + i * 0.4;
-    dot(mv([300, y], [400, 190], s, s + 0.5, tl), C.msg);
-    dot(mv([520, 190], [668, 75], s + 0.5, s + 1.0, tl), C.msg);
-    if (tl > s + 1.0 && tl < s + 1.6) dot([668, 75], C.acc, '', '2 sec', C.acc);
-    if (tl >= s + 1.6) fails++;
-  });
-  const open = tl >= 3.4 && tl < 7.6;
-  T(460, 140, `fail: ${fails}`, { c: fails ? C.bad : C.fg, b: 1, size: 13 });
-  if (open) { cross(600, 132); T(460, 248, 'KHULA: Twilio band', { c: C.bad, b: 1, size: 13 }); }
-  cells(20, 177, tl < 3.9 ? [['SMS', C.msg], ['SMS', C.msg], ['OTP', C.good]] : [['SMS', C.msg], ['SMS', C.msg]], { w: 46 });
-  dot(mv([166, 190], [300, 190], 3.9, 4.3, tl), C.good, '', 'OTP', C.good);
-  dot(mv([300, 190], [400, 190], 4.3, 4.6, tl), C.good, '', 'OTP', C.good);
-  dot(mv([520, 190], [668, 300], 4.6, 5.3, tl), C.good, '', 'OTP', C.good);
-  if (tl > 5.3) T(660, 360 - 20, 'OTP gaya (SNS)', { c: C.good, b: 1, size: 13, a: 'end' });
-  dot(mv([520, 190], [668, 75], 6.4, 7.2, tl), C.acc, '', 'test call', C.acc);
-  if (tl >= 7.6) T(460, 248, 'Twilio theek -> wapas', { c: C.good, b: 1, size: 13 });
 }
 
 setup(); draw(0);

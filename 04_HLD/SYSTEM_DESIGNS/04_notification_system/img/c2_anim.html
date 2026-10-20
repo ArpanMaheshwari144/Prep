@@ -10,6 +10,7 @@
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
 // anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
 const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
@@ -74,59 +75,123 @@ function cells(x, y, items, o = {}) {
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
 function draw(t) {
   DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
   const fix = t >= FIX;
   CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 2: push / email / SMS ek hi line, worker SMS pe atka to sab atke. Ilaaj: har raaste ki alag line + alag worker.
-const DUR = 17, FIX = 7.5;
+// Card 2: push / email / SMS ek hi line, worker SMS pe atka to sab atke. Ilaaj: har raaste ki alag line + worker.
+// Agar: SMS ki line lambi. Wapas: har raasta apni line, apni speed.
+const DUR = 12;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: push, email, SMS ek hi line. Worker SMS pe atka, sab peeche'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har raaste ki alag line + alag worker. SMS dheema to sirf SMS ruka'],
+  [6, YEL, 'AGAR', 'AGAR SMS ki line lambi? -> sirf SMS ke worker badhao'],
+  [9, GRN, 'WAPAS', 'WAPAS: har raasta apni line me, apni speed se chalta hai'],
+];
 const ROW = [70, 190, 310], NM = ['Push', 'Email', 'SMS'];
-const mv = (a, b, s, e, tl) => (tl >= s && tl <= e ? path([[s, a], [e, b]], tl) : null);
-function setup() {
-  box(20, 150, 120, 80, 'Notification', 'Svc');
-  wire('M140 190 H480', 'one');
+function setup() {}
+function ns() { B(20, 150, 120, 80, 'Notification', 'Svc'); }
+function co(i, st, sub) { B(690, ROW[i] - 25, 120, 50, `${NM[i]} co.`, sub, { st }); }
+// alag lines: k[i] = line me kitne, st = [push, email, sms] worker box st
+function rows(k, wst, wsub = ['', '', '']) {
+  ns();
   ROW.forEach((y, i) => {
-    wire(`M140 190 L170 ${y}`, 'r' + i); wire(`M170 ${y} H480`, 'q' + i);
-    wire(`M590 ${y} H690`, 'c' + i);
-    box(480, y - 25, 110, 50, `${NM[i]} worker`, '', { id: 'wk' + i });
-    box(690, y - 25, 120, 50, `${NM[i]} co.`, '', { stroke: i === 2 ? C.bad : C.line });
+    A(140, 190, 166, y, C.msg, { n: i === 1 ? 1 : 0, at: 0.5 });
+    cells(170, y - 13, Array(k[i]).fill([NM[i], i === 2 ? C.bad : C.msg]), { w: 46 });
+    A(170 + k[i] * 50, y, 478, y, C.line);
+    B(480, y - 25, 110, 50, `${NM[i]} worker`, wsub[i], { st: wst[i] });
   });
-  wire('M590 190 L690 70', 'x0'); wire('M590 190 L690 310', 'x2');
-  box(480, 165, 110, 50, 'Worker', '', { id: 'w1' });
 }
-function frame(t, fix, tl) {
-  [0, 1, 2].forEach(i => { vis('r' + i, fix); vis('q' + i, fix); vis('wk' + i, fix); });
-  vis('c0', fix); vis('c2', fix); vis('one', !fix); vis('w1', !fix); vis('x0', !fix); vis('x2', !fix);
-  T(850, 345, 'SMS co. dheemi', { c: C.bad, size: 11, a: 'end' });
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: push, email, SMS ek hi line. Worker SMS pe atka, push + email bhi peeche';
+function frame(ph) {
+  if (ph === 0) {
+    ns(); A(140, 190, 168, 190, C.line);
     cells(170, 177, [['Email', C.msg], ['Push', C.msg], ['Email', C.msg], ['Push', C.msg], ['SMS', C.bad]], { w: 48 });
-    T(305, 165, 'ek hi line', { c: C.muted, size: 12 });
-    dot(mv([590, 190], [678, 300], 0.5, 1.2, tl), C.bad, '', 'SMS', C.bad);
-    if (tl > 1.2) dot([678, 300], C.bad);
-    if (tl > 1.2) T(535, 245, `SMS pe atka ${Math.round((tl - 1.2) * 4)} sec`, { c: C.bad, b: 1, size: 12 });
-    T(835, 75, '0', { c: C.bad, b: 1, size: 15 }); T(835, 195, '0', { c: C.bad, b: 1, size: 15 });
-    if (tl > 3) T(305, 225, 'push + email intezaar me', { c: C.bad, b: 1, size: 12 });
-    return;
+    T(290, 165, 'ek hi line', { c: C.muted, size: 12 });
+    A(430, 190, 478, 190, C.line);
+    B(480, 165, 110, 50, 'Worker', '', { st: 'bad' });
+    co(0, '', ''); co(1, '', ''); co(2, 'bad', 'dheemi');
+    num(835, 300, 1, C.bad); L(835, 345, 'dheemi', C.bad);
+    A(590, 200, 688, 305, C.bad, { n: 2, at: 0.45 }); L(600, 270, 'SMS pe atka', C.bad, 'end');
+    A(590, 180, 688, 75, C.line, { dash: 1 }); A(590, 190, 688, 190, C.line, { dash: 1 });
+    num(205, 230, 3, C.bad); L(222, 235, 'push + email peeche atke', C.bad, 'start');
+    T(840, 75, '0', { c: C.bad, b: 1, size: 15 }); T(840, 195, '0', { c: C.bad, b: 1, size: 15 });
+  } else if (ph === 1) {
+    rows([2, 2, 3], ['good', 'good', 'bad']);
+    L(80, 130, '3 chhote message', C.msg);
+    A(590, 70, 688, 70, C.good, { n: 2 }); co(0, 'good', 'pahuncha');
+    A(590, 190, 688, 190, C.good, { n: 2 }); co(1, 'good', 'pahuncha');
+    A(590, 310, 688, 310, C.bad, { n: 3, dash: 1 }); co(2, 'bad', 'dheemi');
+    L(640, 345, 'sirf SMS ruka', C.bad);
+  } else if (ph === 2) {
+    rows([2, 2, 6], ['good', 'good', 'acc'], ['', '', 'x3']);
+    num(155, 345, 2, C.bad); L(172, 350, 'SMS line lambi', C.bad, 'start');
+    A(590, 70, 688, 70, C.good, { n: 4 }); co(0, 'good', 'asar nahi');
+    A(590, 190, 688, 190, C.good, { n: 4 }); co(1, 'good', 'asar nahi');
+    num(535, 260, 3, C.acc); L(553, 265, 'worker badhe', C.acc, 'start');
+    A(590, 300, 688, 300, C.acc, { n: 5, at: 0.4 }); A(590, 318, 688, 318, C.acc);
+    co(2, 'acc', 'dheemi');
+    L(560, 25, 'hal: sirf SMS ke worker badhao, push / email pe asar nahi', C.good);
+  } else {
+    rows([1, 1, 2], ['good', 'good', 'good']);
+    A(590, 70, 688, 70, C.good, { n: 2 }); co(0, 'good', 'apni speed');
+    A(590, 190, 688, 190, C.good, { n: 2 }); co(1, 'good', 'apni speed');
+    A(590, 310, 688, 310, C.acc, { n: 2 }); co(2, 'acc', 'dheere');
+    L(640, 345, 'SMS dheere, par chal raha', C.acc);
   }
-  CAP.textContent = 'ILAAJ: har raaste ki alag line + alag worker. SMS dheema to sirf SMS ruka';
-  const n = [0, 0];
-  [0, 1].forEach(i => {
-    for (let k = 0; k < 6; k++) {
-      const s = 0.4 + k * 1.0 + i * 0.3;
-      if (tl >= s + 0.6) n[i]++;
-      dot(mv([590, ROW[i]], [678, ROW[i]], s, s + 0.6, tl), C.good);
-    }
-    cells(170, ROW[i] - 13, Array(Math.max(1, 5 - n[i])).fill([NM[i], C.msg]), { w: 48 });
-    T(835, ROW[i] + 5, `${n[i]}`, { c: C.good, b: 1, size: 15 });
-  });
-  cells(170, ROW[2] - 13, [['SMS', C.bad], ['SMS', C.bad], ['SMS', C.bad]], { w: 48 });
-  dot(mv([590, 310], [678, 310], 0.5, 1.5, tl), C.bad);
-  if (tl > 1.5) T(635, 290, 'dheema', { c: C.bad, b: 1, size: 12 });
-  T(305, 115, 'push chala', { c: C.good, size: 12 }); T(305, 235, 'email chala', { c: C.good, size: 12 });
 }
 
 setup(); draw(0);
