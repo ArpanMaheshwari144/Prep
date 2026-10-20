@@ -11,13 +11,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c);
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Arpan → Feed Svc', 'app khola'], [C.bad, 'Feed Svc → DB', '200 jagah se tweet laao'], [C.bad, 'Feed Svc', 'jodo + time se sort: ~2 sec'], [C.bad, 'Feed Svc → Arpan', 'feed der se. Har baar yahi']],
+  [[C.msg, 'Ravi → Tweet DB', 't9 save'], [C.acc, 'Follow list → Fanout Svc', 'follower kaun: Arpan, Mohan..'], [C.good, 'Fanout Svc → Arpan ka inbox', 't9 id daali, sabke inbox me'], [C.good, 'Arpan ka inbox → Arpan', 'app khola: ek read, feed turant']],
+  [[C.good, 'Arpan ka inbox → Feed Svc', '50 id'], [C.acc, 'Feed Svc → Tweet cache', 'ek call: 50 id'], [C.good, 'Tweet cache → Feed Svc', '50 tweet ek saath (batch)']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 120, 60, 'Arpan', 'app khola');
@@ -32,12 +37,12 @@ function frame(ph) {
     L(450, 320, 'aur ye har baar, jab bhi koi app khole. Padhna 50 guna hai', C.bad);
   } else if (ph === 1) {
     panel(0, 'Ravi tweet karta', ['Ravi', 'tweet: t9', ''], ['Tweet DB', 't9 save', 'acc'], 'tweet', true, C.msg, 't9 save ho gaya');
-    panel(1, 'follower kaun?', ['Fanout Svc', '', 'acc'], ['Follow list', 'Arpan, Mohan..', ''], 'padha', false, C.acc, 't9 ki khabar, follower dhoondhe');
+    panel(1, 'follower kaun?', ['Fanout Svc', '', 'acc'], ['Follow list', 'Arpan, Mohan..', ''], 'padha', false, C.acc, 'follower dhoondhe');
     panel(2, 'inbox me id daali', ['Fanout Svc', '', 'acc'], ['Arpan ka inbox', 't9, t7, t5 ...', 'good'], 't9 daala', true, C.good, 'Mohan, Neha.. sabke');
-    panel(3, 'Arpan app kholta', ['Arpan', 'app khola', ''], ['Arpan ka inbox', 't9, t7, t5 ...', 'good'], 'ek read', false, C.good, 'feed turant, koi jod nahi');
+    panel(3, 'Arpan app kholta', ['Arpan', 'app khola', ''], ['Arpan ka inbox', 't9, t7, t5 ...', 'good'], 'ek read', false, C.good, 'feed turant');
     L(450, 320, 'mehnat tweet ke waqt ek baar. Kholne pe sirf apna inbox padho', C.good);
   } else {
-    B(20, 130, 170, 70, 'Arpan ka inbox', 't9, t7, t5 ... (50 id)', { st: 'good' });
+    B(20, 130, 170, 70, 'Arpan ka inbox', '50 id', { st: 'good' });
     B(330, 130, 160, 70, 'Feed Svc', '');
     B(640, 120, 220, 90, 'Tweet cache', 'id -> poora tweet', { st: 'acc' });
     A(190, 165, 328, 165, C.good, { n: 1 }); L(260, 150, '50 id', C.good);

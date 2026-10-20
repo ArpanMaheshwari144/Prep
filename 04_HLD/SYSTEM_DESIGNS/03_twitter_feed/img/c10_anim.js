@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR private photo hai, link kisi aur ko mil gaya? -> link pe hastakshar + expiry'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'US server → Delhi, London, Sydney', '50 MB x laakhon, door se'], [C.bad, 'US server', 'bandwidth ka bill, buffering']],
+  [[C.msg, 'Arpan → App', 'upload link maanga, presigned mila'], [C.good, 'Arpan → S3', 'seedha S3, App beech me nahi'], [C.msg, 'Delhi → CDN Delhi', 'video dekhna'], [C.acc, 'S3 → CDN Delhi', 'pehli baar S3 se laaya, phir paas se']],
+  [[C.good, 'Mohan → CDN', 'signed link, 10 min'], [C.good, 'CDN → Mohan', 'photo mili'], [C.bad, 'Koi aur → CDN', '1 ghante baad wahi link'], [C.bad, 'CDN → Koi aur', '403: link ki umar khatam']],
+];
 function frame(ph) {
   if (ph === 0) {
     ['Delhi', 'London', 'Sydney'].forEach((c, i) => {
@@ -20,11 +25,11 @@ function frame(ph) {
     B(20, 30, 130, 60, 'Arpan', 'video daali');
     B(260, 30, 150, 60, 'App', 'upload link');
     B(560, 30, 200, 60, 'S3', 'video yahan', { st: 'good' });
-    A(150, 50, 258, 50, C.msg, { n: 1 }); A(258, 78, 152, 78, C.acc, { n: 2 }); L(205, 110, 'presigned link', C.acc);
-    AP([[85, 92], [85, 140], [660, 140], [660, 92]], C.good, { n: 3, at: 0.5 }); L(380, 160, 'seedha S3, App beech me nahi', C.good);
+    A(150, 50, 258, 50, C.msg, { n: 1 }); A(258, 78, 152, 78, C.acc); L(205, 110, 'presigned link', C.acc);
+    AP([[85, 92], [85, 140], [660, 140], [660, 92]], C.good, { n: 2, at: 0.5 }); L(380, 160, 'seedha S3, App beech me nahi', C.good);
     B(20, 240, 130, 60, 'Delhi', 'dekhna');
     B(330, 240, 170, 60, 'CDN Delhi', 'paas me', { st: 'good' });
-    A(150, 270, 328, 270, C.msg, { n: 4 }); A(620, 92, 500, 255, C.muted, { n: 5, dash: 1 }); L(560, 220, 'pehli baar S3 se laaya', C.muted, 'start');
+    A(150, 270, 328, 270, C.msg, { n: 3 }); A(620, 92, 500, 255, C.muted, { n: 4, dash: 1 }); L(560, 220, 'pehli baar S3 se laaya', C.muted, 'start');
     L(450, 340, 'baaki Delhi wale CDN Delhi se: paas bhi, sasta bhi', C.good);
   } else {
     B(20, 60, 130, 60, 'Mohan', 'follower');

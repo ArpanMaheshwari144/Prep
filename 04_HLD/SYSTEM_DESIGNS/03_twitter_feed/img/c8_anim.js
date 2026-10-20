@@ -10,6 +10,11 @@ function setup() {}
 function apps(st, sub) {
   ['App-1', 'App-2', 'App-3'].forEach((n, i) => B(420, 30 + i * 105, 160, 65, n, sub[i], { st: st[i] }));
 }
+const STEPS = [
+  [[C.bad, 'India users → App', 'ek hi machine'], [C.bad, 'App giri', 'poora India band']],
+  [[C.msg, 'India users → ALB', 'har request pehle ALB pe'], [C.good, 'ALB → App-1, App-3', 'App-2 giri: /health fail, bahar.|Baaki pe request']],
+  [[C.good, 'App-1', 'pehle App-1 pe naya code'], [C.acc, 'App-2', 'ab App-2 bahar, badal rahe'], [C.good, 'ALB → App-1, App-3', 'bheed baaki App sambhaal leti']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 140, 60, 'India users', '');
@@ -22,7 +27,7 @@ function frame(ph) {
     apps(['good', 'bad', 'good'], ['', 'giri', '']); cross(605, 167);
     B(700, 135, 170, 70, 'Redis / DB', 'data yahan', { st: 'acc' });
     A(150, 170, 218, 170, C.msg, { n: 1 });
-    A(330, 160, 418, 62, C.good, { n: 2 }); A(330, 185, 418, 272, C.good, { n: 3 });
+    A(330, 160, 418, 62, C.good, { n: 2 }); A(330, 185, 418, 272, C.good);
     A(330, 172, 418, 167, C.bad, { dash: 1 }); L(372, 150, 'App-2 bahar', C.bad);
     A(580, 62, 698, 150, C.muted); A(580, 272, 698, 190, C.muted);
     L(450, 345, 'koi bhi App gire ya jude, user ko farak nahi', C.good);

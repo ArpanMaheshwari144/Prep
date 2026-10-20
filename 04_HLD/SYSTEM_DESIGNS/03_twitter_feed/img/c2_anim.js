@@ -10,16 +10,21 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c);
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Arpan → Tweet Svc', 'tweet kiya'], [C.good, 'Tweet Svc → Tweet DB', 't9 save'], [C.bad, 'Tweet Svc → 5,000 inbox', 'usi request me ek-ek bharta'], [C.bad, 'Tweet Svc → Arpan', '5 sec: "fail". Dobara daala to do baar']],
+  [[C.good, 'Tweet Svc → Tweet DB', 'pehle DB me pakka'], [C.acc, 'Tweet Svc → Kafka', 't9 ki khabar, disk pe'], [C.good, 'Tweet Svc → Arpan', 'turant "ho gaya"'], [C.good, 'Kafka → Worker', 'peeche 5,000 inbox bhare']],
+  [[C.acc, 'Kafka → Worker-1', 't9'], [C.bad, 'Worker-1 gira', '60 / 100 bhar ke, "ho gaya" nahi bola'], [C.acc, 'Kafka → Worker-2', 't9 phir'], [C.good, 'Worker-2 → Mohan ka inbox', 'dobara likha: sorted set me|same id ek hi baar']],
+];
 function frame(ph) {
   if (ph === 0) {
-    B(20, 130, 120, 70, 'Arpan', 'button ghoom raha', { st: 'bad' });
+    B(20, 130, 120, 70, 'Arpan', 'ghoom raha', { st: 'bad' });
     B(240, 130, 150, 70, 'Tweet Svc', 'ek hi request me');
     B(600, 40, 200, 60, 'Tweet DB', 't9 save', { st: 'good' });
     B(560, 180, 280, 110, '5,000 inbox', '', { st: 'bad' });

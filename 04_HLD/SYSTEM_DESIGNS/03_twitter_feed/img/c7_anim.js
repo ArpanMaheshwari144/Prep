@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR poora India region gira? -> Route 53 US pe palat deta. Feed thodi purani, par chalti'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Arpan → US region', 'samundar paar jaana'], [C.bad, 'US region → Arpan', 'wapas: ~300 ms har feed']],
+  [[C.msg, 'Arpan → Route 53', 'site kahan?'], [C.acc, 'Route 53 → Arpan', 'India (paas wala)'], [C.good, 'Arpan → India region', '~30 ms'], [C.acc, 'US region → India region', 'data ki copy, thodi peeche']],
+  [[C.bad, 'Route 53 → India region', '/health: jawab nahi'], [C.acc, 'Route 53 → Arpan', 'ab US ka pata'], [C.good, 'Arpan → US region', 'thoda dheema, feed thodi purani, par chalti']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 150, 60, 'Arpan', 'Bangalore');

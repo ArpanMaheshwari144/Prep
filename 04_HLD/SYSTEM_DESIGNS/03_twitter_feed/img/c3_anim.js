@@ -10,13 +10,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c);
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Bieber → Kafka line', 'tweet: 10 cr inbox ka kaam'], [C.acc, 'Arpan → Kafka line', 'tweet, line me peeche'], [C.bad, 'Arpan ka tweet', 'ghanton der se pahuncha']],
+  [[C.good, 'Fanout Svc → Arpan ka inbox', 'aam user (Ravi): push, turant'], [C.acc, 'Fanout Svc → Celeb cache', 'Bieber: push nahi, yahin rakha'], [C.good, 'Arpan ka inbox → Feed Svc', 'app khola: aam logon ke tweet'], [C.acc, 'Celeb cache → Feed Svc', 'celeb ke tweet kheenche,|time se milaye']],
+  [[C.good, '12,100 follower', '12,000 se upar gaya: ab pull'], [C.good, '11,800 follower', '8,000 se upar hai: abhi bhi pull.|Do had: baar-baar nahi palat-ta']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 40, 140, 60, 'Bieber', '10 cr follower', { st: 'bad' });
@@ -27,10 +32,10 @@ function frame(ph) {
     cells(725, 160, [['Arpan t9', C.acc]], { w: 120, h: 34 });
     A(160, 70, 300, 158, C.bad, { n: 1 }); L(235, 95, 'tweet', C.bad);
     A(160, 250, 760, 196, C.acc, { n: 2, at: 0.3 }); L(330, 270, 'tweet (line me peeche)', C.acc);
-    num(560, 245, 3, C.bad); L(580, 250, 'Arpan ka tweet ghanton der se pahuncha', C.bad, 'start');
+    num(560, 245, 3, C.bad); L(580, 250, 'ghanton der se pahuncha', C.bad, 'start');
     L(450, 340, 'ek celeb ka tweet poori line rok deta. Mohan ko Arpan ka tweet dikha hi nahi', C.bad);
   } else if (ph === 1) {
-    panel(0, 'aam user: push', ['Fanout Svc', 'Ravi ka tweet r5', ''], ['Arpan ka inbox', 'r5 aaya', 'good'], 'push', true, C.good, 'Ravi ke 300 follower: turant');
+    panel(0, 'aam user: push', ['Fanout Svc', 'Ravi ka tweet r5', ''], ['Arpan ka inbox', 'r5 aaya', 'good'], 'push', true, C.good, '300 follower: turant');
     panel(1, 'celeb: push nahi', ['Fanout Svc', 'Bieber ka b7', 'acc'], ['Celeb cache', 'b7 yahin pada', 'acc'], 'rakha', true, C.acc, '10 cr jagah nahi likha');
     panel(2, 'app khola', ['Feed Svc', 'Arpan ki feed', ''], ['Arpan ka inbox', 'r5, r3 ...', 'good'], 'padha', false, C.good, 'aam logon ke tweet');
     panel(3, 'celeb milao', ['Feed Svc', 'r5 + b7, time se', 'good'], ['Celeb cache', 'b7 (Bieber)', 'acc'], 'kheencha', false, C.acc, 'Arpan jinhe follow karta');

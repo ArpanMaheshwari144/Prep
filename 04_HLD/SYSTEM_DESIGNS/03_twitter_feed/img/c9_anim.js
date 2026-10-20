@@ -2,11 +2,16 @@
 // ALB path se baant-ta, jahan bheed wahi badhao. Agar: feed ki bheed badhi -> sirf Timeline badhao.
 const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: padhna + likhna ek hi service me. Crore log scroll, mera tweet usi line me dheema'],
+  [0, RED, 'DIKKAT', 'DIKKAT: padhna + likhna ek service me. Crore log scroll, mera tweet usi line me dheema'],
   [3, GRN, 'ILAAJ', 'ILAAJ: likhne aur padhne ki alag service. ALB path se baant-ta'],
   [6, YEL, 'AGAR', 'AGAR feed ki bheed aur badh gayi? -> sirf Timeline Svc badhao, Tweet Svc ko chhuo mat'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Crore log → Ek service', 'GET /feed, scroll'], [C.acc, 'Arpan → Ek service', 'POST /tweet'], [C.bad, 'Arpan ka tweet', 'padhne ki bheed me atka']],
+  [[C.acc, 'Crore log → ALB', 'GET /feed'], [C.good, 'Arpan → ALB', 'POST /tweet'], [C.acc, 'ALB → Timeline Svc x20', '/feed yahan'], [C.good, 'ALB → Tweet Svc x2', '/tweet yahan, alag']],
+  [[C.acc, 'Crore log → ALB', 'bheed aur badhi'], [C.good, 'Arpan → ALB', 'POST /tweet'], [C.acc, 'ALB → Timeline Svc x40', 'sirf yahi 20 -> 40'], [C.good, 'ALB → Tweet Svc x2', 'koi asar nahi, tweet turant']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 40, 150, 70, 'Crore log', 'GET /feed', { st: 'bad' });

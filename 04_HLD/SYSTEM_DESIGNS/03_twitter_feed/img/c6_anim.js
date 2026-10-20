@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR meri tweet wali machine giri? -> 3 copy, 2 me likho, 2 se padho (quorum)'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Tweet Svc → Ek DB', 'har tweet yahin, 5,000 / sec'], [C.bad, 'Ek DB', 'na jagah (0.5 PB), na itni likhai']],
+  [[C.msg, 'Arpan → Tweet Svc', 'tweet'], [C.msg, 'Virat → Tweet Svc', 'tweet'], [C.good, 'Tweet Svc → Node-2', 'user_id dekha: Arpan -> Node-2'], [C.good, 'Tweet Svc → Node-3', 'Virat -> Node-3']],
+  [[C.good, 'Tweet Svc → copy A, B', 't9 ek saath 2 me likha: save'], [C.bad, 'copy C giri', 'likhai ruki nahi'], [C.acc, 'padhna', 'A + B se: t9 mila. Har jodi me|ek taaza copy zaroor']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 150, 70, 'Tweet Svc', '5,000 / sec');

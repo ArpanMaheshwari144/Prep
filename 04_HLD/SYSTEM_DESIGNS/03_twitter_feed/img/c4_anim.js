@@ -2,21 +2,26 @@
 // sirf ek request DB (lock), 4 frame. Agar: Virat ne edit kiya -> cache se key hatao, agla read DB se naya.
 const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: match khatam, Virat ka tweet. Crore feed ek saath DB se wahi tweet maangti, DB gira'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: garam tweet RAM me (hot-tweet cache). Miss pe sirf ek request DB jaati. Pal-pal dekho'],
+  [0, RED, 'DIKKAT', 'DIKKAT: match khatam, Virat ka tweet. Crore feed ek saath DB se wahi maangti, DB gira'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: garam tweet RAM me (hot-tweet cache). Miss pe sirf ek request DB jaati'],
   [6, YEL, 'AGAR', 'AGAR Virat ne tweet edit kiya, cache me purana? -> cache se key hata do'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c);
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Crore feeds → Feed Svc', 'Virat ka tweet?'], [C.bad, 'Feed Svc → Tweet DB', 'crore baar'], [C.bad, 'Tweet DB', 'disk pe crore read: gira']],
+  [[C.acc, 'Feed Svc → Hot cache', 'pehli request: miss, lock liya'], [C.acc, 'Tweet DB → Feed Svc', 'sirf ek DB tak: v1'], [C.good, 'Feed Svc → Hot cache', 'v1 RAM me rakha, lock khula'], [C.good, 'Hot cache → Crore feeds', 'baaki RAM se, ~0.1 ms']],
+  [[C.acc, 'Virat → Tweet Svc', 'edit: v2'], [C.good, 'Tweet Svc → Tweet DB', 'pehle DB: v2'], [C.bad, 'Tweet Svc → Hot cache', 'phir cache se key hatao'], [C.good, 'agla read', 'miss -> DB se v2']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 110, 150, 110, 'Crore feeds', '', { st: 'bad' }); dots(18, 35, 160, C.bad, { cols: 6, gap: 20, r: 6 });
@@ -27,7 +32,7 @@ function frame(ph) {
     num(705, 240, 3, C.bad); L(705, 265, 'disk pe crore read: gira', C.bad);
     L(450, 330, 'sab ek hi tweet maang rahe the, aur har baar disk tak gaye', C.bad);
   } else if (ph === 1) {
-    panel(0, 'pehli request', ['Feed Svc', 'Virat ka tweet?', ''], ['Hot cache', 'nahi mila (miss)', 'bad'], 'hai?', true, C.acc, 'lock liya: sirf yahi DB jaaye');
+    panel(0, 'pehli request', ['Feed Svc', 'Virat ka tweet?', ''], ['Hot cache', 'nahi mila (miss)', 'bad'], 'hai?', true, C.acc, 'lock: sirf yahi DB jaaye');
     panel(1, 'ek hi DB tak', ['Feed Svc', '', ''], ['Tweet DB', 'Virat: v1', ''], 'v1 laaya', false, C.acc, 'baaki request ruki');
     panel(2, 'cache me rakha', ['Feed Svc', '', ''], ['Hot cache', 'v1 (RAM)', 'good'], 'rakha', true, C.good, 'lock khula');
     panel(3, 'baaki crore', ['Crore feeds', '', 'good'], ['Hot cache', 'v1 (RAM)', 'good'], 'RAM se', false, C.good, '~0.1 ms, DB tak nahi');

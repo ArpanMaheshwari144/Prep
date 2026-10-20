@@ -38,11 +38,11 @@ Cue: PUSH: tweet hote hi INBOX me id
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png?v=2" width="900">
+<img src="img/c1_1.png?v=4" width="900">
 
-<img src="img/c1_2.png?v=2" width="900">
+<img src="img/c1_2.png?v=4" width="900">
 
-<img src="img/c1_3.png?v=2" width="900">
+<img src="img/c1_3.png?v=4" width="900">
 
 </details>
 
@@ -73,11 +73,11 @@ Cue: KAFKA, fanout peeche
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png?v=2" width="900">
+<img src="img/c2_1.png?v=4" width="900">
 
-<img src="img/c2_2.png?v=2" width="900">
+<img src="img/c2_2.png?v=4" width="900">
 
-<img src="img/c2_3.png?v=2" width="900">
+<img src="img/c2_3.png?v=4" width="900">
 
 </details>
 
@@ -114,11 +114,11 @@ Cue: HYBRID: aam push, celeb pull
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png?v=3" width="900">
+<img src="img/c3_1.png?v=4" width="900">
 
-<img src="img/c3_2.png?v=3" width="900">
+<img src="img/c3_2.png?v=4" width="900">
 
-<img src="img/c3_3.png?v=3" width="900">
+<img src="img/c3_3.png?v=4" width="900">
 
 </details>
 
@@ -150,11 +150,11 @@ Cue: HOT-TWEET CACHE (RAM)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png?v=2" width="900">
+<img src="img/c4_1.png?v=4" width="900">
 
-<img src="img/c4_2.png?v=2" width="900">
+<img src="img/c4_2.png?v=4" width="900">
 
-<img src="img/c4_3.png?v=2" width="900">
+<img src="img/c4_3.png?v=4" width="900">
 
 </details>
 
@@ -181,11 +181,11 @@ Cue: AAKHRI 800 + soye hue hatao
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png?v=2" width="900">
+<img src="img/c5_1.png?v=4" width="900">
 
-<img src="img/c5_2.png?v=2" width="900">
+<img src="img/c5_2.png?v=4" width="900">
 
-<img src="img/c5_3.png?v=2" width="900">
+<img src="img/c5_3.png?v=4" width="900">
 
 </details>
 
@@ -220,11 +220,11 @@ Cue: CASSANDRA, user_id se baanto
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=3" width="900">
+<img src="img/c6_1.png?v=4" width="900">
 
-<img src="img/c6_2.png?v=3" width="900">
+<img src="img/c6_2.png?v=4" width="900">
 
-<img src="img/c6_3.png?v=3" width="900">
+<img src="img/c6_3.png?v=4" width="900">
 
 </details>
 
@@ -257,11 +257,11 @@ Cue: REGION-WISE + Route 53
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png?v=2" width="900">
+<img src="img/c7_1.png?v=4" width="900">
 
-<img src="img/c7_2.png?v=2" width="900">
+<img src="img/c7_2.png?v=4" width="900">
 
-<img src="img/c7_3.png?v=2" width="900">
+<img src="img/c7_3.png?v=4" width="900">
 
 </details>
 
@@ -294,11 +294,11 @@ Cue: STATELESS App x N + ALB
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png?v=2" width="900">
+<img src="img/c8_1.png?v=4" width="900">
 
-<img src="img/c8_2.png?v=2" width="900">
+<img src="img/c8_2.png?v=4" width="900">
 
-<img src="img/c8_3.png?v=2" width="900">
+<img src="img/c8_3.png?v=4" width="900">
 
 </details>
 
@@ -325,11 +325,11 @@ Cue: ALAG SERVICE (likhna/padhna)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png?v=2" width="900">
+<img src="img/c9_1.png?v=4" width="900">
 
-<img src="img/c9_2.png?v=2" width="900">
+<img src="img/c9_2.png?v=4" width="900">
 
-<img src="img/c9_3.png?v=2" width="900">
+<img src="img/c9_3.png?v=4" width="900">
 
 </details>
 
@@ -359,11 +359,11 @@ Cue: S3 + CDN
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c10_1.png?v=3" width="900">
+<img src="img/c10_1.png?v=4" width="900">
 
-<img src="img/c10_2.png?v=3" width="900">
+<img src="img/c10_2.png?v=4" width="900">
 
-<img src="img/c10_3.png?v=3" width="900">
+<img src="img/c10_3.png?v=4" width="900">
 
 </details>
 

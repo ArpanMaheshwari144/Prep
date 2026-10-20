@@ -7,17 +7,22 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR soya user 2 mahine baad wapas aaya, uska inbox hai hi nahi? -> pull se banao'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Redis', 'har inbox me saare id.|40 cr soye hue users ke, RAM 95%']],
+  [[C.good, 'naya tweet', 'inbox me upar juda'], [C.bad, 'trim', '801va kata: sirf aakhri 800'], [C.good, 'Suresh ka inbox', '30 din app nahi khola: mita (TTL)']],
+  [[C.msg, 'Suresh → Feed Svc', '2 mahine baad app khola'], [C.bad, 'Feed Svc → Redis', 'inbox? nahi'], [C.acc, 'Feed Svc → Tweet DB', 'pull: follow walon ke tweet jodo'], [C.good, 'Feed Svc → Redis', 'inbox bana ke rakha, aage push']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(200, 30, 500, 210, 'Redis (RAM)', '', { st: 'bad' });
     B(230, 80, 140, 120, 'zinda', '10 cr inbox', { st: 'good' });
-    B(390, 80, 290, 120, 'soye hue (1 mahine se nahi aaye)', '40 cr inbox', { st: 'dim' });
+    B(390, 80, 290, 120, 'soye hue', '40 cr: mahine se nahi aaye', { st: 'dim' });
     bar(200, 260, 500, 18, 0.95, ''); T(450, 305, 'RAM 95% bhar gayi', { c: C.bad, b: 1, size: 15 });
     num(780, 135, 1, C.bad); L(780, 165, 'har inbox me', C.bad); L(780, 185, 'saare id', C.bad);
     L(450, 345, 'RAM ka bada hissa unke liye jo app kholte hi nahi', C.bad);
   } else if (ph === 1) {
     // trim: naya upar judta, 800 ke neeche kat-ta
-    T(240, 35, 'Arpan ka inbox (naya baayein)', { c: C.fg, b: 1, size: 13 });
+    T(240, 35, 'Arpan ka inbox (naya baayein)', { c: C.fg, b: 1, size: 15 });
     cells(30, 50, [['t901', C.good], ['t900', C.good], ['...', C.line], ['t102', C.good], ['t101', C.bad]], { w: 70, h: 34 });
     num(45, 110, 1, C.good); L(65, 115, 'naya tweet upar juda', C.good, 'start');
     cross(338, 67); num(338, 110, 2, C.bad); L(330, 135, '801va kata (trim)', C.bad);

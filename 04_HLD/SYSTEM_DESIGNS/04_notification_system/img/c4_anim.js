@@ -20,7 +20,7 @@ function panel(k, title, top, bot, lab, down, c, note) {
 const STEPS = [
   [[C.bad, 'Worker-A → Redis', 'bhejne se pehle hi k5 = SENT'], [C.bad, 'Worker-A → SMS company', 'call fail, OTP nahi gaya'], [C.acc, 'Redis → Worker-B', '"bheja ja chuka"'], [C.bad, 'Worker-B → Arpan', 'kuch nahi bheja, login atka']],
   [[C.acc, 'Worker-A → Redis', 'k5 = SENDING (umar 60 sec)'], [C.good, 'Worker-A → SMS company', 'bheja, company ne OK bola'], [C.good, 'Worker-A → Redis', 'ab k5 = SENT'], [C.good, 'Redis → Worker-B', 'SENT dekha: sahi skip']],
-  [[C.acc, 'Worker-A → Redis', 'k5 = SENDING'], [C.bad, 'Worker-A mara', 'SENT likhne wala koi nahi'], [C.good, 'Redis', '60 sec: key khud mit gayi'], [C.good, 'Worker-B → Arpan', 'OTP bheja, khoya nahi']],
+  [[C.acc, 'Worker-A → Redis', 'k5 = SENDING'], [C.bad, 'Worker-A mara', 'SENT likhega kaun?'], [C.good, 'Redis', '60 sec: key khud mit gayi'], [C.good, 'Worker-B → Arpan', 'OTP bheja, khoya nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {
@@ -39,7 +39,7 @@ function frame(ph) {
     L(450, 320, 'call fail hoti to Worker-A khud key hata deta, agla phir bhejta', C.good);
   } else {
     panel(0, 'SENDING', ['Worker-A', 'OTP k5', ''], ['Redis', 'k5 = SENDING', 'acc'], 'likha', true, C.acc, 'umar 60 sec');
-    panel(1, 'worker mara', ['Worker-A', 'mara', 'bad'], ['Redis', 'k5 = SENDING', 'acc'], '', true, C.bad, 'SENT likhne wala koi nahi');
+    panel(1, 'worker mara', ['Worker-A', 'mara', 'bad'], ['Redis', 'k5 = SENDING', 'acc'], '', true, C.bad, 'SENT likhega kaun?');
     A(295, 110, 295, 158, C.bad, { dash: 1 }); cross(295, 134); T(310, 139, 'SENT', { c: C.bad, b: 1, size: 14, a: 'start' });
     A(295, 110, 295, 158, C.bad, { dash: 1 }); cross(295, 134); T(310, 139, 'SENT', { c: C.bad, b: 1, size: 14, a: 'start' });
     panel(2, '60 sec baad', ['Redis', 'k5 = SENDING', 'acc'], ['Redis', 'k5 mit gayi', 'good'], 'umar khatam', true, C.muted, 'apne aap');

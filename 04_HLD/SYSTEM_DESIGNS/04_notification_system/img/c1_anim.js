@@ -35,7 +35,7 @@ function frame(ph) {
   } else if (ph === 1) {
     panel(0, 'ek hi txn', ['Order Svc', 'order aaya', ''], ['DB', 'order + outbox', 'good'], 'likha', true, C.good, 'dono saath, ya koi nahi');
     panel(1, 'turant jawab', ['Arpan', '"order ho gaya"', 'good'], ['Order Svc', '', ''], 'turant', false, C.good, 'email ka wait nahi');
-    panel(2, 'relay', ['DB outbox', 'khabar: order#9', 'acc'], ['Kafka', 'order#9', 'acc'], 'daala', true, C.acc, 'Order Svc gira to bhi bachi');
+    panel(2, 'relay', ['DB outbox', 'khabar: order#9', 'acc'], ['Kafka', 'order#9', 'acc'], 'daala', true, C.acc, 'Order Svc gire, tab bhi');
     panel(3, 'peeche email', ['Kafka', 'order#9', 'acc'], ['Notification Svc', 'email bheja', 'good'], 'padha', true, C.good, 'apni speed se');
     L(450, 320, 'order kabhi email ki wajah se fail nahi hota. Khabar khoti bhi nahi', C.good);
   } else {
