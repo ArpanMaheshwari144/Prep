@@ -1,47 +1,46 @@
-// Card 2: wallet 600, phone + laptop dono ne 600 padha, dono ne kaata -> -400. Ilaaj: check + kaato ek atomic UPDATE.
-// Agar: WHERE check bhool gaye -> DB ka CHECK pakadta. Wapas: dono deewar, jeetta ek.
-const DUR = 12;
+// Card 2: wallet 600, phone (dukaan 500) + laptop (Swiggy 500) ek saath, dono ne 600 padha, -400.
+// Ilaaj: check + kaato ek query (atomic UPDATE). Agar: WHERE bhool gaye -> DB ka CHECK pakadta.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: pehle padho, phir kaato. Dono server ne 600 dekha, wallet -400'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: check + kaato ek atomic UPDATE. Phone jeeta, laptop ko 0 row'],
+  [0, RED, 'DIKKAT', 'DIKKAT: wallet me 600. Phone se 500, laptop se 500, ek saath. Pal-pal'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: "paisa hai?" aur "kaato" ek hi query me. DB ek-ek karke chalata, jeetta ek'],
   [6, YEL, 'AGAR', 'AGAR WHERE wala check bhool gaye? -> DB ka CHECK (balance >= 0) pakadta'],
-  [9, GRN, 'WAPAS', 'WAPAS: WHERE + CHECK dono. Jeetta ek, doosre ko turant "paisa kam"'],
 ];
 function setup() {}
-function base(s1, s2, st1, st2, db, dst, dsub) {
-  B(20, 40, 130, 60, 'Phone', 'dukaan 500'); B(20, 240, 130, 60, 'Laptop', 'Swiggy 500');
-  B(270, 40, 140, 60, 'Server-1', s1, { st: st1 }); B(270, 240, 140, 60, 'Server-2', s2, { st: st2 });
-  B(620, 125, 240, 90, 'DB: Arpan wallet', db, { st: dst });
-  if (dsub) T(740, 200, dsub, { c: C.muted, size: 12 });
-  A(150, 70, 268, 70, C.msg, { n: 1 }); A(150, 270, 268, 270, C.msg, { n: 1 });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base('600 dekha', '600 dekha', 'bad', 'bad', 'balance: -400', 'bad');
-    A(410, 60, 618, 135, C.acc, { n: 2, at: 0.3 }); A(410, 280, 618, 205, C.acc, { n: 2, at: 0.3 });
-    L(500, 45, 'padho: 600', C.acc); L(500, 315, 'padho: 600', C.acc);
-    A(410, 90, 618, 160, C.bad, { n: 3, at: 0.6 }); A(410, 250, 618, 185, C.bad, { n: 3, at: 0.6 });
-    L(470, 140, 'kaato 500', C.bad); L(470, 210, 'kaato 500', C.bad);
-    L(740, 250, 'dono kate, wallet -400', C.bad);
+    panel(0, 'phone padhta', ['Server-1', 'phone: 600 dikha', 'acc'], ['Wallet DB', 'Arpan: 600', ''], 'padha', false, C.acc, '600 >= 500, theek');
+    panel(1, 'laptop padhta', ['Server-2', 'laptop: 600 dikha', 'acc'], ['Wallet DB', 'Arpan: 600', ''], 'padha', false, C.acc, 'abhi bhi 600');
+    panel(2, 'Server-1 kaata', ['Server-1', 'dukaan ko 500', 'bad'], ['Wallet DB', 'Arpan: 100', 'bad'], 'likha -500', true, C.bad, 'pehla kata');
+    panel(3, 'Server-2 kaata', ['Server-2', 'Swiggy ko 500', 'bad'], ['Wallet DB', 'Arpan: -400', 'bad'], 'likha -500', true, C.bad, 'doosra bhi kata');
+    L(450, 320, '600 the, 1000 kat gaye. Dono ne purana 600 padha tha', C.bad);
   } else if (ph === 1) {
-    base('1 row', '0 row', 'good', 'bad', 'balance: 100', 'good');
-    A(410, 75, 618, 150, C.good, { n: 2, at: 0.45 }); L(520, 75, 'UPDATE: 600 se 100', C.good);
-    A(410, 265, 618, 190, C.bad, { n: 3, at: 0.45 }); L(540, 290, 'UPDATE: 100 < 500', C.bad);
-    L(85, 130, 'hua, 100 bacha', C.good); L(85, 330, '"paisa kam"', C.bad);
-    T(450, 160, 'DB ek-ek chalata', { c: C.muted, size: 12 });
-    T(450, 180, 'jeetta ek', { c: C.muted, size: 12 });
-    L(450, 346, 'SET balance = balance - 500 WHERE id = ? AND balance >= 500', C.acc);
-  } else if (ph === 2) {
-    base('WHERE nahi', 'WHERE nahi', 'acc', 'bad', 'balance: 100', 'good', 'CHECK (balance >= 0)');
-    num(340, 125, 1, C.bad); L(358, 130, 'check bhool gaye', C.bad, 'start');
-    A(410, 75, 618, 150, C.good, { n: 2, at: 0.45 }); L(520, 75, '600 se 100', C.good);
-    A(410, 265, 618, 190, C.bad, { n: 3, at: 0.45 }); L(540, 290, '100 - 500 = -400 ?', C.bad);
-    num(668, 245, 4, C.bad); L(686, 250, 'CHECK ne mana kiya', C.bad, 'start');
-    L(450, 346, 'hal: DB ka CHECK (balance >= 0) aakhri deewar hai', C.good);
+    B(20, 110, 180, 70, 'Server-1', 'phone: 500', { st: 'good' });
+    B(700, 110, 180, 70, 'Server-2', 'laptop: 500', { st: 'bad' });
+    B(330, 100, 240, 90, 'Wallet DB', '600 -> 100', { st: 'acc' });
+    A(200, 130, 328, 130, C.acc, { n: 1 }); A(328, 165, 202, 165, C.good, { n: 2 }); L(265, 190, '1 row: kata', C.good);
+    A(698, 130, 572, 130, C.acc, { n: 3 }); A(572, 165, 698, 165, C.bad, { n: 4 }); L(635, 190, '0 row: paisa kam', C.bad);
+    L(450, 70, 'ek ke baad ek', C.acc);
+    T(450, 250, 'UPDATE wallet SET balance = balance - 500', { c: C.fg, size: 13 });
+    T(450, 272, 'WHERE id = Arpan AND balance >= 500', { c: C.fg, size: 13 });
+    L(450, 330, 'laptop ki baari pe 100 bacha tha, 100 < 500, kuch nahi kata', C.good);
   } else {
-    base('1 row', '0 row', 'good', 'good', 'balance: 100', 'good', 'WHERE + CHECK');
-    A(410, 75, 618, 150, C.good, { n: 2, at: 0.45 }); L(520, 75, 'UPDATE: jeeta', C.good);
-    A(410, 265, 618, 190, C.good, { n: 3, at: 0.45 }); L(540, 290, '0 row = reject', C.good);
-    L(85, 130, 'hua, 100 bacha', C.good); L(85, 330, '"paisa kam" turant', C.good);
+    B(20, 120, 200, 80, 'Server', 'WHERE bhool gaya', { st: 'bad' });
+    B(380, 110, 260, 100, 'Wallet DB: Arpan 100', 'CHECK (balance >= 0)', { st: 'acc' });
+    A(220, 145, 378, 145, C.bad, { n: 1 }); L(300, 130, '100 - 500', C.bad);
+    A(378, 180, 222, 180, C.acc, { n: 2 }); L(300, 200, 'error: -400 nahi', C.acc);
+    L(510, 240, 'DB ne likhne hi nahi diya, 100 wahi', C.acc);
+    T(450, 290, 'UPDATE wallet SET balance = balance - 500 WHERE id = Arpan', { c: C.fg, size: 13 });
+    L(450, 335, 'query bhool jaaye, to bhi DB ka CHECK aakhri deewar', C.good);
   }
 }

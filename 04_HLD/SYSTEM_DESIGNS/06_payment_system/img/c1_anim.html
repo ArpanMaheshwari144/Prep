@@ -133,88 +133,52 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 1: Arpan -500 hua, Kirana +500 se pehle server gira. Ilaaj: ek transaction, WAL se ulta.
-// Agar: ledger INSERT fail, network toota, A->B + B->A deadlock. Wapas: COMMIT ke baad gira, kuch nahi khota.
-// Naksha: paisa baayein se daayein -> Arpan (account) -> Payment Svc -> Kirana (account), ledger neeche.
-const DUR = 18;
+// Card 1: Kirana ko 500, Arpan -500 likha, server gira, Kirana +500 hua hi nahi.
+// Ilaaj: sab ek transaction (BEGIN ... COMMIT). Agar: ledger INSERT fail -> ROLLBACK, -500 bhi ulta.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: Arpan -500 hua, phir server gira, Kirana +500 hua hi nahi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: -500, +500 ek transaction. COMMIT se pehle gira -> WAL se ulta'],
+  [0, RED, 'DIKKAT', 'DIKKAT: Kirana ko 500. Arpan -500 likha, phir server gira. Kirana +500 hua hi nahi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: BEGIN, Arpan -500, Kirana +500, ledger, COMMIT. Ek transaction, ya sab ya kuch nahi'],
   [6, YEL, 'AGAR', 'AGAR ledger ka INSERT fail? -> ROLLBACK, Arpan ka -500 bhi ulta'],
-  [9, YEL, 'AGAR', 'AGAR network toota, consistency ya availability? -> sahi hona pehle'],
-  [12, YEL, 'AGAR', 'AGAR A->B aur B->A ek saath, dono atke? -> taala pehle chhoti account id pe'],
-  [15, GRN, 'WAPAS', 'WAPAS: COMMIT ke baad gira -> DB log dekh ke kaam poora, kuch nahi khota'],
 ];
 function setup() {}
-// o: { a, sv, k, lg } = st ; s: { a, k, lg } = sub
-function base(o = {}, s = {}) {
-  B(20, 130, 150, 70, 'Arpan', s.a || 'account', { st: o.a });
-  B(300, 130, 170, 70, 'Payment Svc', 'Arpan -> Kirana', { st: o.sv });
-  B(600, 130, 150, 70, 'Kirana', s.k || 'account', { st: o.k });
-  if (o.lg) B(300, 250, 170, 55, 'ledger', s.lg || '', { st: o.lg });   // ledger sirf jis scene me card laaye
-}
-function wal(lines, st) {
-  B(560, 225, 320, 115, 'WAL (DB ka log)', '', { st: st || 'acc' });
-  lines.forEach(([s, c], i) => T(580 + (i % 2) * 150, 275 + Math.floor(i / 2) * 22, s, { a: 'start', c, b: 1, size: 12 }));
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base({ a: 'acc', sv: 'bad', k: 'bad' }, { a: '-500 kata', k: '+500 nahi aaya' });
-    A(170, 165, 298, 165, C.acc, { n: 1, at: 0.4 }); L(235, 150, '-500 nikla', C.acc);
-    num(330, 110, 2, C.bad); L(348, 115, 'server gira', C.bad, 'start'); cross(490, 135);
-    A(470, 180, 598, 180, C.bad, { dash: 1, n: 3, at: 0.3 }); cross(560, 180);
-    L(535, 220, 'pahuncha hi nahi', C.bad);
-    L(780, 270, 'kata: 500', C.acc, 'start'); L(780, 295, 'juda: 0', C.bad, 'start');
-    L(780, 330, '500 gayab', C.bad, 'start');
+    panel(0, 'Arpan se kata', ['Payment Svc', 'Kirana ko 500', ''], ['Wallet DB', 'Arpan 1000 -> 500', 'acc'], 'likha', true, C.acc, 'pehla badlaav');
+    panel(1, 'server gira', ['Payment Svc', 'gira', 'bad'], ['Wallet DB', 'Arpan 500', 'acc'], '', true, C.bad, 'aage likha hi nahi');
+    panel(2, 'Kirana', ['Kirana', '+500?', 'bad'], ['Wallet DB', 'Kirana: kuch nahi', 'bad'], '', true, C.bad, 'paisa pahuncha nahi');
+    panel(3, 'hisaab', ['Arpan', '500 kata', 'bad'], ['Ledger', 'koi line nahi', 'bad'], '', true, C.bad, '500 gayab');
+    L(450, 320, 'do alag badlaav, beech me crash. Aadha hua, aadha nahi', C.bad);
   } else if (ph === 1) {
-    base({ a: 'good', sv: 'bad', k: '' }, { a: '500 wapas', k: '+500 likha nahi' });
-    wal([['BEGIN', C.fg], ['Arpan -500', C.acc], ['COMMIT nahi', C.bad]]);
-    A(170, 165, 298, 165, C.acc, { n: 1, at: 0.4 }); L(235, 150, 'BEGIN, -500', C.acc);
-    num(330, 110, 2, C.bad); L(348, 115, 'COMMIT se pehle gira', C.bad, 'start'); cross(490, 135);
-    AP([[560, 330], [95, 330], [95, 202]], C.good, { n: 3, at: 0.5 });
-    L(330, 40, 'DB utha, log: COMMIT nahi -> ulta', C.good);
-    L(330, 62, 'kata 0 == juda 0, kuch nahi khoya', C.good);
-  } else if (ph === 2) {
-    base({ a: 'good', k: 'good', lg: 'bad' }, { a: '-500 ulta', k: '+500 ulta', lg: 'INSERT fail' });
-    A(170, 165, 298, 165, C.acc, { n: 1, at: 0.4 }); A(470, 165, 598, 165, C.acc, { n: 1, at: 0.6 });
-    L(235, 150, '-500', C.acc); L(535, 150, '+500', C.acc);
-    A(385, 200, 385, 248, C.bad, { n: 2 }); L(400, 228, 'INSERT fail', C.bad, 'start');
-    AP([[300, 290], [95, 290], [95, 202]], C.good, { n: 3, at: 0.5 });
-    AP([[470, 290], [675, 290], [675, 202]], C.good, { n: 3, at: 0.5 });
-    L(385, 110, 'ROLLBACK: dono ulte', C.good);
-    L(95, 115, 'user: "nahi hua"', C.good);
-    L(450, 346, 'hal: ROLLBACK, paanchon me se ek bhi nahi bachta', C.good);
-  } else if (ph === 3) {
-    base({ a: 'dim', sv: 'acc', k: 'dim' }, { a: 'balance ?' });
-    B(300, 20, 170, 50, 'Arpan app', 'pay 500');
-    A(365, 72, 365, 128, C.msg, { n: 1, at: 0.5 });
-    A(298, 175, 172, 175, C.bad, { dash: 1, n: 2, at: 0.25 }); cross(220, 175);
-    L(235, 220, 'network toota', C.bad);
-    A(410, 128, 410, 72, C.bad, { n: 3, at: 0.5 }); L(425, 105, 'mana', C.bad, 'start');
-    L(385, 330, 'balance pakka nahi -> payment mana', C.acc);
-    B(600, 250, 200, 55, 'Dashboard', 'thoda purana', { st: 'good' });
-    L(700, 325, 'chalta rahe, chalega', C.good);
-    L(450, 350, 'hal: sahi hona pehle. Galat balance pe kaatna usse bhi bura', C.good);
-  } else if (ph === 4) {
-    B(20, 50, 150, 60, 'txn A->B', '');
-    B(20, 230, 150, 60, 'txn B->A', '');
-    B(300, 30, 300, 300, 'SQL DB', '', { st: 'dim' });
-    B(330, 70, 240, 55, 'A', 'taala: txn A->B', { st: 'acc' });
-    B(330, 230, 240, 55, 'B', 'taala: txn B->A', { st: 'acc' });
-    A(170, 80, 328, 92, C.acc, { n: 1, at: 0.5 }); A(170, 260, 328, 255, C.acc, { n: 1, at: 0.5 });
-    A(170, 100, 328, 240, C.bad, { dash: 1, n: 2, at: 0.2 }); A(170, 245, 328, 110, C.bad, { dash: 1, n: 2, at: 0.2 });
-    L(218, 122, 'B ka wait', C.bad, 'start'); L(218, 234, 'A ka wait', C.bad, 'start');
-    num(625, 175, 3, C.bad); L(645, 180, 'dono atke', C.bad, 'start');
-    L(450, 346, 'hal: taala hamesha chhoti account id pe pehle lo', C.good);
+    B(20, 140, 150, 70, 'Payment Svc', 'Kirana ko 500');
+    B(300, 30, 560, 250, 'Wallet DB: ek transaction', '', { st: 'good' });
+    cells(320, 80, [['BEGIN', C.acc]], { w: 120, h: 32 });
+    cells(320, 125, [['Arpan -500', C.good], ['Kirana +500', C.good]], { w: 160, h: 32 });
+    cells(320, 170, [['ledger 2 line', C.good], ['payment: DONE', C.good]], { w: 160, h: 32 });
+    cells(320, 215, [['COMMIT', C.good]], { w: 120, h: 32 });
+    A(170, 175, 298, 175, C.msg, { n: 1 });
+    num(700, 95, 2, C.good); L(720, 100, 'paanchon saath', C.good, 'start');
+    num(700, 231, 3, C.good); L(720, 236, 'tab pakka', C.good, 'start');
+    L(450, 320, 'COMMIT se pehle gira to DB apna log (WAL) dekh ke ulta karta, 500 wapas', C.good);
   } else {
-    base({ a: 'good', sv: 'bad', k: 'good' }, { a: '-500', k: '+500' });
-    wal([['BEGIN', C.fg], ['Arpan -500', C.good], ['Kirana +500', C.good], ['COMMIT', C.good]], 'good');
-    A(170, 165, 298, 165, C.good, { n: 1, at: 0.4 }); A(470, 165, 598, 165, C.good, { n: 1, at: 0.6 });
-    L(385, 110, 'COMMIT ho gaya', C.good);
-    num(330, 85, 2, C.bad); L(348, 90, 'phir gira', C.bad, 'start'); cross(490, 135);
-    A(720, 223, 700, 202, C.good, { n: 3, at: 0.2 });
-    L(330, 40, 'DB utha, log me COMMIT -> kaam poora', C.good);
-    L(190, 330, 'kata 500 == juda 500', C.good);
+    B(20, 30, 520, 220, 'Wallet DB: ek transaction', '', { st: 'acc' });
+    cells(40, 80, [['BEGIN', C.acc]], { w: 120, h: 32 });
+    cells(40, 125, [['Arpan -500', C.acc], ['Kirana +500', C.acc]], { w: 160, h: 32 });
+    cells(40, 170, [['ledger INSERT', C.bad]], { w: 160, h: 32 });
+    cross(230, 186); num(270, 186, 1, C.bad); L(290, 191, 'fail', C.bad, 'start');
+    B(680, 110, 190, 90, 'Wallet DB', 'Arpan 1000, Kirana jaisa', { st: 'good' });
+    A(540, 155, 678, 155, C.good, { n: 2 }); L(610, 140, 'ROLLBACK', C.good);
+    L(450, 320, 'paanchon me se ek bhi nahi bacha. User ko "nahi hua", dobara try kar sakta', C.good);
   }
 }
 

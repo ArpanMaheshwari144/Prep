@@ -133,63 +133,48 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 3: jawab raste me kho gaya, app ne dobara bheja, server ne naya payment maana -> 1000. Ilaaj: key-555, dobara = saved jawab.
-// Agar: key wahi amount alag (422), sach me do payment (do key, 200). Wapas: ek hi payment dikha.
-const DUR = 15;
+// Card 3: metro me network gaya, app ne dobara bheja, server ne do payment maane, 1000 kate.
+// Ilaaj: screen khulte key-555, retry pe wahi, UNIQUE. Agar: key wahi, amount alag -> hash, 422.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: network gaya, app ne dobara bheja, server ne naya maana: 1000'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: retry pe wahi key-555. Store me pehle se -> saved jawab, 500 hi'],
+  [0, RED, 'DIKKAT', 'DIKKAT: maine ek baar Pay dabaya. Metro me network gaya, app ne khud dobara bheja'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: screen khulte hi app key-555 banata. Retry pe wahi key, server UNIQUE se pakadta'],
   [6, YEL, 'AGAR', 'AGAR key wahi, par amount alag? -> request ka hash bhi rakho, farak = 422'],
-  [9, YEL, 'AGAR', 'AGAR sach me do payment, 100 + 100? -> do key, dono honge, 200'],
-  [12, GRN, 'WAPAS', 'WAPAS: network wapas, saved jawab mila. User ko ek hi payment dikhta'],
 ];
 function setup() {}
-function base(o = {}, s = {}) {
-  B(20, 140, 130, 70, 'Arpan app', s.app || 'metro', { st: o.app });
-  B(350, 140, 140, 70, 'Payment Svc', '', { st: o.sv });
-  B(700, 140, 160, 70, 'SQL DB', s.db || '', { st: o.db });
-  if (!o.noKs) B(330, 270, 180, 70, 'Idempotency', s.ks || 'store', { st: o.ks || 'acc' });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base({ db: 'bad', noKs: 1 }, { db: 'kata: 1000' });
-    A(150, 155, 348, 155, C.msg, { n: 1, at: 0.6 }); L(250, 140, '500', C.msg);
-    A(490, 165, 698, 165, C.acc, { n: 2 }); L(595, 150, '-500', C.acc);
-    A(348, 178, 152, 178, C.good, { dash: 1, n: 3, at: 0.2 }); cross(230, 178); L(250, 110, 'network gaya, jawab kho gaya', C.bad);
-    A(150, 200, 348, 200, C.msg, { n: 4, at: 0.6 }); L(250, 230, 'timeout -> dobara 500', C.msg);
-    A(490, 195, 698, 195, C.bad, { n: 5 }); L(595, 225, '-500 phir', C.bad);
-    L(420, 250, 'server: ye naya payment hai', C.bad);
+    panel(0, 'Pay dabaya', ['Arpan ka app', 'Kirana ko 500', ''], ['Payment Svc', 'payment#1: -500', 'good'], 'bheja', true, C.msg, 'ek baar dabaya');
+    panel(1, 'network gaya', ['Arpan ka app', 'jawab nahi aaya', 'bad'], ['Payment Svc', 'payment#1', ''], 'jawab', false, C.bad, 'metro me gum');
+    panel(2, 'app ne dobara', ['Arpan ka app', 'khud retry', 'acc'], ['Payment Svc', '', ''], 'phir bheja', true, C.acc, 'Arpan ne kuch nahi kiya');
+    panel(3, 'do payment', ['Payment Svc', 'naya maana', 'bad'], ['Wallet DB', '-500, phir -500', 'bad'], 'likha', true, C.bad, '1000 kate');
+    L(450, 320, 'server ko pata hi nahi tha ki ye wahi purani request hai', C.bad);
   } else if (ph === 1) {
-    base({ db: 'good', ks: 'good' }, { db: 'kata: 500', ks: 'key-555: DONE' });
-    A(150, 175, 348, 175, C.msg, { n: 1, at: 0.6 }); L(250, 160, 'key-555 dobara', C.msg);
-    A(400, 212, 400, 268, C.acc, { n: 2 }); L(384, 245, 'key-555?', C.acc, 'end');
-    A(440, 268, 440, 212, C.good, { n: 3 }); L(458, 245, 'pehle se', C.good, 'start');
-    A(348, 200, 152, 200, C.good, { n: 4, at: 0.4 }); L(250, 230, 'saved jawab: 500 hua', C.good);
-    A(490, 175, 698, 175, C.line); L(595, 160, 'dobara nahi kaata', C.good);
-  } else if (ph === 2) {
-    base({ app: 'acc', ks: 'good' }, { app: 'amount alag', db: 'kata: 500', ks: 'key-555 + hash' });
-    num(85, 120, 1, C.bad); L(103, 125, 'wahi key, amount alag', C.bad, 'start');
-    A(150, 175, 348, 175, C.msg, { n: 2, at: 0.6 }); L(250, 160, 'key-555', C.msg);
-    A(400, 212, 400, 268, C.acc, { n: 3 }); L(384, 245, 'hash milao', C.acc, 'end');
-    A(440, 268, 440, 212, C.bad, { n: 4 }); L(458, 245, 'hash alag', C.bad, 'start');
-    A(348, 200, 152, 200, C.good, { n: 5, at: 0.4 }); L(250, 230, '422', C.good);
-    A(490, 175, 698, 175, C.line); L(595, 160, 'kuch nahi kata', C.good);
-    L(620, 300, 'hal: request ka hash bhi rakho', C.good, 'start');
-    L(620, 322, 'farak mila to 422', C.good, 'start');
-  } else if (ph === 3) {
-    base({ db: 'good', ks: 'good' }, { app: 'do baar screen', db: 'kata: 200', ks: 'key-555, key-888' });
-    A(150, 160, 348, 160, C.msg, { n: 1, at: 0.6 }); L(250, 145, 'key-555, 100', C.msg);
-    A(150, 195, 348, 195, C.msg, { n: 1, at: 0.6 }); L(250, 225, 'key-888, 100', C.msg);
-    A(400, 212, 400, 268, C.acc, { n: 2 }); L(384, 245, 'do alag key', C.acc, 'end');
-    A(490, 160, 698, 160, C.good, { n: 3 }); A(490, 195, 698, 195, C.good, { n: 3 });
-    L(595, 145, '-100', C.good); L(595, 225, '-100', C.good);
-    L(620, 300, 'hal: do key = do payment, dono honge', C.good, 'start');
-    L(620, 322, 'sirf network ka dobara bhejna rukta', C.good, 'start');
+    panel(0, 'screen khuli', ['Arpan ka app', 'key-555', 'acc'], ['Arpan', 'Pay screen khola', ''], 'khola', false, C.acc, 'tap se pehle hi key');
+    panel(1, 'Pay (key-555)', ['Arpan ka app', 'key-555', ''], ['Payment Svc', 'key-555: -500', 'good'], 'bheja', true, C.good, 'key UNIQUE, save');
+    panel(2, 'network gaya', ['Arpan ka app', 'retry: key-555', 'acc'], ['Payment Svc', '', ''], 'phir key-555', true, C.acc, 'key wahi rahi');
+    panel(3, 'pehchaana', ['Arpan ka app', '"ho gaya"', 'good'], ['Payment Svc', 'key-555 pehle se', 'good'], 'saved jawab', false, C.good, '500 hi kate');
+    L(450, 320, 'app kitni baar bhi bheje, ek key = ek payment. Pay button bhi pehli tap pe band', C.good);
   } else {
-    base({ app: 'good', db: 'good', ks: 'good' }, { app: '"500 hua"', db: 'kata: 500', ks: 'key-555: DONE' });
-    num(250, 120, 1, C.good); L(268, 125, 'network wapas', C.good, 'start');
-    A(348, 175, 152, 175, C.good, { n: 2, at: 0.4 }); L(250, 205, 'saved jawab', C.good);
-    L(85, 240, 'ek hi payment', C.good);
+    B(20, 40, 170, 70, 'Request 1', 'key-555, 500');
+    B(20, 240, 170, 70, 'Request 2', 'key-555, 5000', { st: 'bad' });
+    B(350, 130, 240, 90, 'Payment Svc', 'key-555: hash(500)', { st: 'acc' });
+    B(700, 40, 170, 70, 'Wallet DB', '-500, ek baar', { st: 'good' });
+    A(190, 75, 348, 150, C.msg, { n: 1 }); L(250, 85, 'pehli baar', C.msg);
+    A(590, 150, 698, 80, C.good, { n: 2 }); L(615, 100, 'kata', C.good);
+    A(190, 265, 348, 200, C.acc, { n: 3 }); L(265, 210, 'key wahi', C.acc);
+    A(360, 222, 192, 295, C.bad, { n: 4, at: 0.55 }); L(330, 300, '422: amount alag', C.bad, 'start');
+    L(450, 30, 'sirf key nahi, request ka hash bhi milao', C.acc);
   }
 }
 

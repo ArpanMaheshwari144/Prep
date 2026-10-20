@@ -50,19 +50,13 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 Cue: EK TRANSACTION (WAL se poora / ulta)
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png">
+<img src="img/c1_1.png?v=2" width="900">
 
-<img src="img/c1_2.png">
+<img src="img/c1_2.png?v=2" width="900">
 
-<img src="img/c1_3.png">
-
-<img src="img/c1_4.png">
-
-<img src="img/c1_5.png">
-
-<img src="img/c1_6.png">
+<img src="img/c1_3.png?v=2" width="900">
 
 </details>
 
@@ -99,15 +93,13 @@ NAHI    do alag badlaav, ek ke baad ek -> GAYAB: Arpan -500 hua, phir crash, mer
 
 Cue: check + kaato EK atomic query
 
-<details><summary>kahani dekho (4 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png">
+<img src="img/c2_1.png?v=2" width="900">
 
-<img src="img/c2_2.png">
+<img src="img/c2_2.png?v=2" width="900">
 
-<img src="img/c2_3.png">
-
-<img src="img/c2_4.png">
+<img src="img/c2_3.png?v=2" width="900">
 
 </details>
 
@@ -133,17 +125,13 @@ NAHI    pehle padho, phir kaato -> RACE: phone (dukaan 500) aur laptop (Swiggy 5
 
 Cue: IDEMPOTENCY KEY (screen khulte)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png">
+<img src="img/c3_1.png?v=2" width="900">
 
-<img src="img/c3_2.png">
+<img src="img/c3_2.png?v=2" width="900">
 
-<img src="img/c3_3.png">
-
-<img src="img/c3_4.png">
-
-<img src="img/c3_5.png">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
@@ -176,17 +164,13 @@ NAHI    bina key -> DOUBLE: timeout hua, app ne dobara bheja, server ne do naye 
 
 Cue: timeout = PENDING, circuit breaker = abhi nahi
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png">
+<img src="img/c4_1.png?v=2" width="900">
 
-<img src="img/c4_2.png">
+<img src="img/c4_2.png?v=2" width="900">
 
-<img src="img/c4_3.png">
-
-<img src="img/c4_4.png">
-
-<img src="img/c4_5.png">
+<img src="img/c4_3.png?v=2" width="900">
 
 </details>
 
