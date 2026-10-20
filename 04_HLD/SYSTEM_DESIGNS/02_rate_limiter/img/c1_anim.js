@@ -17,7 +17,9 @@ function frame(ph) {
   if (ph === 0) {
     apps('bad', 'bad', 'ginti: 5', 'ginti: 4');
     A(450, 95, 478, 95, C.good, { n: 3, at: 0 }); dots(5, 500, 95, C.good);
+    L(470, 72, 'apni ginti: 5 <= 5, andar', C.good, 'start');
     A(450, 260, 478, 260, C.good, { n: 3, at: 0 }); dots(4, 500, 260, C.good);
+    L(470, 237, 'apni ginti: 4 <= 5, andar', C.good, 'start');
     T(770, 170, 'andar: 9', { c: C.bad, b: 1, size: 26 });
     T(770, 205, 'had: 5', { c: C.muted, size: 15 });
   } else if (ph === 1) {

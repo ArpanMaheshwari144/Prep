@@ -100,7 +100,8 @@ function AP(pts, c, o = {}) {
   }
   const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
   A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
-  if (o.n) { const [a, b] = [pts[best - 1], pts[best]]; num((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, o.n, c); }
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
 }
 // kram ka gol badge (1, 2, 3 ...)
 function num(x, y, n, c) {
@@ -142,12 +143,12 @@ const PH = [
   [12, GRN, 'WAPAS', 'WAPAS: Redis wapas aaya -> phir se sabki ek hi ginti Redis me'],
 ];
 function setup() {}
-function gws(n, sub, st, outC, n2) {
+function gws(n, sub, st, outC, n2, n1 = 1) {
   const h = n === 5 ? 46 : 52, g = n === 5 ? 66 : 82;
   for (let i = 0; i < n; i++) {
     const y = 20 + i * g, mid = i === 1;
     B(260, y, 130, h, `Gateway ${i + 1}`, sub, { st: i === 4 ? 'acc' : st });
-    A(130, 175, 258, y + h / 2, C.msg, { n: mid ? 1 : 0, at: 0.5 });
+    A(130, 175, 258, y + h / 2, C.msg, { n: mid ? n1 : 0, at: 0.5 });
     A(390, y + h / 2, 598, 175, outC || C.line, { n: mid ? n2 : 0, at: 0.3 });
   }
 }
@@ -156,10 +157,10 @@ function frame(ph) {
   const up = ph === 4;
   B(600, 285, 160, 50, 'Redis Cluster', '', { st: up ? 'good' : 'bad' }); if (!up) cross(785, 310);
   if (ph === 0) {
-    L(680, 270, 'gira', C.bad);
-    gws(4, '', '', C.bad, 2); B(600, 130, 140, 90, 'Server', 'CPU', { st: 'bad' });
+    num(650, 265, 1, C.bad); L(670, 270, 'gira', C.bad, 'start');
+    gws(4, '', '', C.bad, 3, 2); B(600, 130, 140, 90, 'Server', 'CPU', { st: 'bad' });
     bar(760, 165, 110, 18, 1, ''); T(815, 205, '100%', { c: C.bad, b: 1, size: 16 });
-    num(815, 240, 3, C.bad);
+    num(790, 245, 4, C.bad); L(805, 250, 'site band', C.bad, 'start');
   } else if (ph === 1) {
     gws(4, 'had 25', 'good', C.good, 3); B(600, 130, 140, 90, 'Server', 'CPU', { st: 'good' });
     bar(760, 165, 110, 18, 0.4, '', 1); T(815, 205, '40%', { c: C.good, b: 1, size: 16 });
