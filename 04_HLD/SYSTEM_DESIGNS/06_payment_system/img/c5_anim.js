@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Payment Svc → PSP', 'call gayi, PSP ne 2000 laaye'], [C.bad, 'PSP → Payment Svc', 'SUCCESS bheja, par server gira'], [C.acc, 'Payment DB → Payment Svc', 'uth ke dekha: koi record nahi'], [C.bad, 'Payment Svc → PSP', 'andha dobara call?|ya paisa gum, ya do baar']],
-  [[C.acc, 'Payment Svc → Payment DB', 'call se pehle t5: PENDING'], [C.msg, 'Payment Svc → PSP', 'call, phir server gira'], [C.good, 'PSP → Webhook Svc', 't5 SUCCESS: PSP khud batata'], [C.good, 'Webhook Svc → Payment DB', 't5: SUCCESS.|Webhook gum? job poochhti']],
-  [[C.good, 'PSP → Webhook Svc', 'webhook #1'], [C.good, 'Webhook Svc → Payment DB', 'PENDING -> SUCCESS'], [C.acc, 'PSP → Webhook Svc', 'webhook #2, wahi'], [C.acc, 'Payment DB', 'WHERE status = PENDING: 0 row, ignore']],
+  [[C.msg, 'Payment Svc → PSP', 'Payment Svc ki call gayi, PSP ne bank se 2000 le liye'], [C.bad, 'PSP → Payment Svc', 'PSP ne SUCCESS bheja, par tab tak server gir gaya'], [C.acc, 'Payment DB → Payment Svc', 'Server uth ke DB dekha, is payment ka koi record nahi'], [C.bad, 'Payment Svc → PSP', 'Bina jaane dobara call kare to ya paisa gum, ya do baar']],
+  [[C.acc, 'Payment Svc → Payment DB', 'Call se pehle hi t5 ko PENDING likh diya'], [C.msg, 'Payment Svc → PSP', 'PSP ko call gayi, phir server gir gaya'], [C.good, 'PSP → Webhook Svc', 'PSP ne webhook se khud bataya: t5 SUCCESS'], [C.good, 'Webhook Svc → Payment DB', 't5 SUCCESS likha; webhook kho jaaye to job PSP se poochhti']],
+  [[C.good, 'PSP → Webhook Svc', 'PSP ka pehla webhook aaya: t5 SUCCESS'], [C.good, 'Webhook Svc → Payment DB', 'Payment DB me PENDING se SUCCESS kiya'], [C.acc, 'PSP → Webhook Svc', 'PSP ne wahi webhook galti se dobara bheja'], [C.acc, 'Payment DB', 'WHERE status = PENDING se 0 row badli, dobara ignore']],
 ];
 function frame(ph) {
   if (ph === 0) {

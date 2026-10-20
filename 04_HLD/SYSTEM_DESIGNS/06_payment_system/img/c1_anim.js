@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.acc, 'Payment Svc → Wallet DB', 'Arpan -500 likha'], [C.bad, 'Payment Svc gira', 'aage likhne se pehle'], [C.bad, 'Payment Svc → Wallet DB', 'Kirana +500 likha hi nahi'], [C.bad, 'Wallet DB → Arpan / Kirana', 'Arpan ka 500 kata,|Kirana ko kuch nahi mila']],
-  [[C.msg, 'Payment Svc → Wallet DB', 'ek transaction shuru (BEGIN)'], [C.good, 'paanchon saath', 'Arpan -500, Kirana +500,|ledger 2 line, payment DONE'], [C.good, 'COMMIT', 'tab pakka. Pehle gira to DB|apne log (WAL) se ulta karta']],
-  [[C.bad, 'ledger INSERT', 'transaction ke beech fail'], [C.good, 'Transaction → Wallet DB', 'ROLLBACK: Arpan 1000,|Kirana jaisa tha, user ko "nahi hua"']],
+  [[C.acc, 'Payment Svc → Wallet DB', 'Payment Svc ne Arpan ke wallet se 500 kaat diye'], [C.bad, 'Payment Svc gira', 'Aage likhne se pehle hi Payment Svc gir gaya'], [C.bad, 'Payment Svc → Wallet DB', 'Kirana ke +500 kabhi likhe hi nahi gaye'], [C.bad, 'Wallet DB → Arpan / Kirana', 'Arpan ka 500 kata, aur Kirana ko kuch nahi mila']],
+  [[C.msg, 'Payment Svc → Wallet DB', 'Payment Svc ne ek transaction shuru kiya (BEGIN)'], [C.good, 'paanchon saath', 'Arpan -500, Kirana +500, ledger ki 2 line aur payment DONE, paanchon ek saath'], [C.good, 'COMMIT', 'COMMIT pe hi pakka; pehle gira to DB apne log (WAL) se sab ulta karta']],
+  [[C.bad, 'ledger INSERT', 'Transaction ke beech ledger wali line likhte waqt fail hua'], [C.good, 'Transaction → Wallet DB', 'ROLLBACK hua: Arpan ke 1000, Kirana jaisa tha, user ko "nahi hua"']],
 ];
 function frame(ph) {
   if (ph === 0) {

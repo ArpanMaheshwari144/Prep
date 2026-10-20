@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.msg, 'Arpan → Support', 'kal 2200, aaj 1100 kaise?'], [C.acc, 'Support → Wallet DB', 'dikhao'], [C.acc, 'Wallet DB → Support', 'bas balance: 1100'], [C.bad, 'Support → Arpan', 'pata nahi. Number hai, kahani nahi']],
-  [[C.msg, 'Arpan → Support', '2200 se 1100 kaise?'], [C.acc, 'Support → Ledger', 'Arpan ki lines do'], [C.good, 'Ledger → Support', '-800 bijli, -300 recharge'], [C.good, 'Support → Arpan', '2200 - 800 - 300 = 1100']],
-  [[C.good, 'Payment Svc → Ledger', 'refund: nayi ulti line INSERT.|Purani mitayi nahi'], [C.good, 'Ledger', 'audit me dono line, jod phir bhi 0']],
+  [[C.msg, 'Arpan → Support', 'Arpan ne poocha: kal 2200 the, aaj 1100 kaise?'], [C.acc, 'Support → Wallet DB', 'Support ne wajah dhoondhne ke liye Wallet DB khola'], [C.acc, 'Wallet DB → Support', 'Wallet DB me sirf abhi ka balance hai: 1100'], [C.bad, 'Support → Arpan', 'Support bata nahi paaya, number hai par kahani nahi']],
+  [[C.msg, 'Arpan → Support', 'Arpan ne phir poocha: 2200 se 1100 kaise hua?'], [C.acc, 'Support → Ledger', 'Support ne ledger se Arpan ki saari lines maangi'], [C.good, 'Ledger → Support', 'Ledger me dikha: -800 bijli ka bill, -300 recharge'], [C.good, 'Support → Arpan', 'Support ne hisaab samjhaya: 2200 - 800 - 300 = 1100']],
+  [[C.good, 'Payment Svc → Ledger', 'Refund pe ledger me nayi ulti line INSERT hui, purani mitayi nahi'], [C.good, 'Ledger', 'Audit me dono line dikhti, aur poora jod phir bhi 0']],
 ];
 function frame(ph) {
   if (ph === 0) {

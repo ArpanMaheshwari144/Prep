@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.msg, 'Payment Svc → Ek DB', 'likho'], [C.bad, 'Index 400 GB, RAM 64 GB', 'index RAM me nahi aata: disk'], [C.bad, 'Ek DB', 'har likhai dheemi']],
-  [[C.good, 'Payment Svc → Shard-1', 'Arpan: balance + history ek tukde pe'], [C.good, 'Payment Svc → Shard-2', 'Kirana apne tukde pe']],
-  [[C.acc, 'Saga Svc → Shard-1', 'pehle kaato: Arpan -500'], [C.good, 'Saga Svc → Shard-2', 'phir daalo: Kirana +500'], [C.bad, 'fail?', 'Shard-1 me +500 wapas (saga)']],
+  [[C.msg, 'Payment Svc → Ek DB', 'Payment Svc har payment ek hi DB me likh raha'], [C.bad, 'Index 400 GB, RAM 64 GB', 'Index 400 GB ka, RAM sirf 64 GB, to index disk se padhna padta'], [C.bad, 'Ek DB', 'Isliye DB pe har nayi likhai dheemi ho gayi']],
+  [[C.good, 'Payment Svc → Shard-1', 'Arpan ka balance aur history ek hi tukde (Shard-1) pe'], [C.good, 'Payment Svc → Shard-2', 'Kirana ka sab uske apne tukde (Shard-2) pe']],
+  [[C.acc, 'Saga Svc → Shard-1', 'Do tukde, ek transaction nahi; saga pehle Shard-1 me Arpan se 500 kaatta'], [C.good, 'Saga Svc → Shard-2', 'Phir Shard-2 me Kirana ko 500 daalta'], [C.bad, 'fail?', 'Doosra kadam fail hua to saga Shard-1 me Arpan ko 500 wapas deta']],
 ];
 function frame(ph) {
   if (ph === 0) {

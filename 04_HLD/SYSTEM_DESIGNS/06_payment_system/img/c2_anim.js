@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.acc, 'Wallet DB → Server-1', 'phone: 600 padha'], [C.acc, 'Wallet DB → Server-2', 'laptop: abhi bhi 600 padha'], [C.bad, 'Server-1 → Wallet DB', '-500 likha: 100'], [C.bad, 'Server-2 → Wallet DB', '-500 likha: -400']],
-  [[C.acc, 'Server-1 → Wallet DB', 'UPDATE ... WHERE balance >= 500'], [C.good, 'Wallet DB → Server-1', '1 row: kata, 600 -> 100'], [C.acc, 'Server-2 → Wallet DB', 'wahi UPDATE, ek pal baad'], [C.bad, 'Wallet DB → Server-2', '0 row: "paisa kam"']],
-  [[C.bad, 'Server → Wallet DB', 'WHERE bhool gaya: 100 - 500'], [C.acc, 'Wallet DB → Server', 'CHECK (balance >= 0): error.|Balance 100 hi raha']],
+  [[C.acc, 'Wallet DB → Server-1', 'Phone wali request ne balance padha: 600'], [C.acc, 'Wallet DB → Server-2', 'Usi pal laptop wali ne bhi 600 padha'], [C.bad, 'Server-1 → Wallet DB', 'Server-1 ne 500 kaat ke 100 likha'], [C.bad, 'Server-2 → Wallet DB', 'Server-2 ne bhi 500 kaate, balance -400 ho gaya']],
+  [[C.acc, 'Server-1 → Wallet DB', 'Server-1 ne ek query bheji: UPDATE ... WHERE balance >= 500'], [C.good, 'Wallet DB → Server-1', '1 row badli, 600 se 100, paisa kata'], [C.acc, 'Server-2 → Wallet DB', 'Server-2 ki wahi query ek pal baad chali'], [C.bad, 'Wallet DB → Server-2', 'Ab sirf 100 tha, 0 row badli, jawab "paisa kam"']],
+  [[C.bad, 'Server → Wallet DB', 'Kisi naye code me WHERE bhool gaye, 100 me se 500 kaatne chala'], [C.acc, 'Wallet DB → Server', 'DB ke CHECK (balance >= 0) ne error diya, balance 100 hi raha']],
 ];
 function frame(ph) {
   if (ph === 0) {

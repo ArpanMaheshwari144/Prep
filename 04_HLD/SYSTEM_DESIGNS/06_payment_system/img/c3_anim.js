@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'App → Payment Svc', 'Kirana ko 500'], [C.bad, 'Payment Svc → App', 'jawab metro me gum'], [C.acc, 'App → Payment Svc', 'khud dobara bheja'], [C.bad, 'Payment Svc → Wallet DB', 'naya maana: -500 phir, 1000 kate']],
-  [[C.acc, 'Arpan → App', 'screen khuli: key-555 bani'], [C.good, 'App → Payment Svc', 'key-555 ke saath, UNIQUE save'], [C.acc, 'App → Payment Svc', 'network gaya, retry: wahi key-555'], [C.good, 'Payment Svc → App', 'key-555 pehle se: saved jawab']],
-  [[C.msg, 'Request 1 → Payment Svc', 'key-555, 500: hash(500) rakha'], [C.good, 'Payment Svc → Wallet DB', '500 kata'], [C.acc, 'Request 2 → Payment Svc', 'wahi key-555, par 5000'], [C.bad, 'Payment Svc → Request 2', 'hash alag: 422']],
+  [[C.msg, 'App → Payment Svc', 'Arpan ne app se Kirana ko 500 bheje'], [C.bad, 'Payment Svc → App', 'Paisa kata, par jawab metro me network me kho gaya'], [C.acc, 'App → Payment Svc', 'App ne khud dobara bheja, Arpan ne kuch nahi dabaya'], [C.bad, 'Payment Svc → Wallet DB', 'Payment Svc ne naya maana, 500 phir kate, kul 1000']],
+  [[C.acc, 'Arpan → App', 'Pay screen khulte hi app ne key-555 bana li'], [C.good, 'App → Payment Svc', 'Payment key-555 ke saath gayi, UNIQUE ke saath save hui'], [C.acc, 'App → Payment Svc', 'Network gaya to app ne retry kiya, wahi key-555'], [C.good, 'Payment Svc → App', 'key-555 pehle se thi, to saved jawab lautaya, dobara nahi kata']],
+  [[C.msg, 'Request 1 → Payment Svc', 'Pehli request key-555 aur 500 ke saath, hash(500) bhi rakha'], [C.good, 'Payment Svc → Wallet DB', 'Hash ke saath Payment Svc ne Arpan ke 500 kaat diye'], [C.acc, 'Request 2 → Payment Svc', 'Galti se wahi key-555 aayi, par amount 5000'], [C.bad, 'Payment Svc → Request 2', 'Hash nahi mila, matlab request alag, to 422 diya']],
 ];
 function frame(ph) {
   if (ph === 0) {

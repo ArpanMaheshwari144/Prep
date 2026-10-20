@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Arpan → Payment Svc', 'bank se 2000 top-up'], [C.bad, 'Payment Svc → PSP', 'call, har thread jawab ka wait'], [C.bad, 'Payment Svc', 'koi thread khaali nahi, sab atke']],
-  [[C.acc, 'Payment Svc → PSP', 'call, 3 sec chup: chhoda'], [C.acc, 'Payment Svc → Payment DB', 'PENDING likha, "fail" nahi'], [C.bad, 'Breaker → PSP', '5 me 5 fail: OPEN, call roki'], [C.good, 'Payment Svc → Arpan', 'turant "abhi nahi", paisa hila nahi']],
-  [[C.acc, 'Breaker → Test call', '30 sec baad, sirf ek call'], [C.good, 'Test call → PSP', 'chali to breaker band, sab call wapas.|Nahi chali to phir OPEN']],
+  [[C.msg, 'Arpan → Payment Svc', 'Arpan ne bank se 2000 ka top-up kiya'], [C.bad, 'Payment Svc → PSP', 'Payment Svc ne PSP ko call kiya, har thread jawab ke intezaar me'], [C.bad, 'Payment Svc', 'PSP chup, koi thread khaali nahi, sab payment atke']],
+  [[C.acc, 'Payment Svc → PSP', 'PSP ko call kiya, 3 sec chup raha to chhod diya'], [C.acc, 'Payment Svc → Payment DB', 'Payment DB me PENDING likha, "fail" nahi'], [C.bad, 'Breaker → PSP', '5 me se 5 fail, breaker OPEN, PSP ki call wahin roki'], [C.good, 'Payment Svc → Arpan', 'Arpan ko turant "abhi nahi", uska paisa hila hi nahi']],
+  [[C.acc, 'Breaker → Test call', '30 sec baad breaker ne sirf ek test call jaane di'], [C.good, 'Test call → PSP', 'Test call chali to breaker band, sab call wapas; nahi chali to phir OPEN']],
 ];
 function frame(ph) {
   if (ph === 0) {

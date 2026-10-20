@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.acc, 'Payment Svc → Wallet DB', 'Arpan -500 kata'], [C.bad, 'Payment Svc → Bank B', 'payout fail'], [C.bad, 'Arpan', '500 gaya, merchant ko nahi.|Paisa beech me latka']],
-  [[C.acc, 'Saga Svc → Wallet DB', 'Arpan -500, saga: DEBITED'], [C.bad, 'Saga Svc → Bank B', 'payout fail'], [C.good, 'Saga Svc → Wallet DB', 'ulta kaam: Arpan +500 wapas'], [C.good, 'Saga Svc → Arpan', 'fail, 500 wapas. Hisaab saaf']],
-  [[C.bad, 'Saga Svc gira', 'step 1 (DEBITED) ke baad'], [C.acc, 'Saga table → Saga Svc', 'uth ke padha: t9 DEBITED'], [C.good, 'Saga Svc → Bank B', 'wahin se: payout. Kaatna dobara nahi']],
+  [[C.acc, 'Payment Svc → Wallet DB', 'Payment Svc ne Arpan ke 500 kaat liye'], [C.bad, 'Payment Svc → Bank B', 'Merchant ke bank B ko payout bheja, fail ho gaya'], [C.bad, 'Arpan', 'Arpan ka 500 gaya, merchant ko nahi mila, paisa beech me latka']],
+  [[C.acc, 'Saga Svc → Wallet DB', 'Saga ne Arpan ke 500 kaate aur saga table me DEBITED likha'], [C.bad, 'Saga Svc → Bank B', 'Bank B ko payout gaya, fail hua'], [C.good, 'Saga Svc → Wallet DB', 'Saga ne ulta kaam chalaya: Arpan ko 500 wapas'], [C.good, 'Saga Svc → Arpan', 'Arpan ko "fail, 500 wapas" dikha, hisaab saaf']],
+  [[C.bad, 'Saga Svc gira', 'Pehla kadam (DEBITED) likhne ke baad Saga Svc gira'], [C.acc, 'Saga table → Saga Svc', 'Uthne pe saga table padha: t9 DEBITED pe ruka tha'], [C.good, 'Saga Svc → Bank B', 'Wahin se payout bheja, paisa dobara nahi kaata']],
 ];
 function frame(ph) {
   if (ph === 0) {

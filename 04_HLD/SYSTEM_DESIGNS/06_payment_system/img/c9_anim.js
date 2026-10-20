@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Report Svc → Primary DB', 'mahine bhar ki bhaari query'], [C.acc, 'Payment Svc → Primary DB', 'payment line me'], [C.bad, 'Primary DB', 'report me busy, payment ruka']],
-  [[C.good, 'Payment Svc → Primary DB', 'payment sirf primary pe'], [C.acc, 'Primary DB → Read replica', 'copy, 1-2 sec peeche'], [C.acc, 'Report Svc → Read replica', 'report copy pe']],
-  [[C.msg, 'Payment Svc → Primary DB', 'pay: 1000 -> 500'], [C.good, 'Payment Svc → Primary DB', 'balance? -> 500 (sahi).|Replica se 1000 (purana) aata']],
+  [[C.bad, 'Report Svc → Primary DB', 'Report Svc ne primary DB pe mahine bhar ki bhaari query chalayi'], [C.acc, 'Payment Svc → Primary DB', 'Payment ki likhai usi DB pe line me lagi'], [C.bad, 'Primary DB', 'DB report me busy, payment ruk gaye']],
+  [[C.good, 'Payment Svc → Primary DB', 'Payment sirf primary DB pe likhe jaate'], [C.muted, 'Primary DB → Read replica', 'Primary ki copy replica me jaati, 1-2 sec peeche'], [C.acc, 'Report Svc → Read replica', 'Report ab copy pe chalti, primary pe bojh nahi']],
+  [[C.msg, 'Payment Svc → Primary DB', 'Arpan ne 500 pay kiye, primary me 1000 se 500 hua'], [C.good, 'Payment Svc → Primary DB', 'Turant balance primary se padha: 500 sahi; replica se purana 1000 aata']],
 ];
 function frame(ph) {
   if (ph === 0) {

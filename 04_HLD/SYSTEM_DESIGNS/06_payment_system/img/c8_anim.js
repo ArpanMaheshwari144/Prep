@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.msg, 'Users → Payment Svc', 'Diwali: 3000 payment / sec'], [C.bad, 'Payment Svc → Users', 'CPU 100%, timeout'], [C.bad, 'Users', 'log dobara tap karte: aur bojh']],
-  [[C.msg, 'Users → LB', '3000 / sec'], [C.good, 'LB → App x3', 'koi bhi App koi bhi payment le'], [C.good, 'App → DB + key store', 'yaad yahan, App me kuch nahi']],
-  [[C.acc, 'LB → App-2', '/health? jawab nahi'], [C.bad, 'App-2', 'list se bahar'], [C.good, 'LB → App-1, App-3', 'payment wahan. User ko pata bhi nahi']],
+  [[C.msg, 'Users → Payment Svc', 'Diwali pe 3000 payment har second aaye'], [C.bad, 'Payment Svc → Users', 'Ek machine ka CPU 100%, users ko timeout'], [C.bad, 'Users', 'Log dobara tap karte rahe, bojh aur badh gaya']],
+  [[C.msg, 'Users → LB', '3000 payment har second pehle LB pe aaye'], [C.good, 'LB → App x3', 'LB ne 3 App me baante, koi bhi App koi bhi payment le sakti'], [C.muted, 'App → DB + key store', 'Sab yaad DB aur key store me, App apne paas kuch nahi rakhti']],
+  [[C.acc, 'LB → App-2', 'LB ne App-2 se /health poocha, jawab nahi aaya'], [C.bad, 'App-2', 'App-2 ko LB ki list se bahar kar diya'], [C.good, 'LB → App-1, App-3', 'Payment App-1 aur App-3 pe gaye, user ko pata bhi nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {
