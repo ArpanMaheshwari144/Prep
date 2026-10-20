@@ -19,6 +19,11 @@ function gws(sub, st, c) {
     A(490, y + 30, 648, 185, c);
   });
 }
+const STEPS = [
+  [[C.bad, 'Redis Cluster', 'main + copy dono gire'], [C.bad, 'Attacker → LB', 'key k1'], [C.bad, 'Gateway x4 → Server', 'Redis nahi: sab aage'], [C.bad, 'Server', 'CPU 100%: site band']],
+  [[C.bad, 'Redis Cluster', 'abhi bhi gira'], [C.bad, 'Attacker → LB', 'key k1'], [C.msg, 'LB → Gateway x4', 'LB baante'], [C.good, 'Gateway → Server', 'har ek se 25: kul 100']],
+  [[C.acc, 'had baanti nahi', 'har gateway ne 100 rakhi'], [C.bad, 'Attacker → LB', 'key k1'], [C.bad, 'Gateway → Server', 'har ek se 100: 400 andar']],
+];
 function frame(ph) {
   if (ph === 0) {
     front(); gws('Redis nahi: sab andar', 'bad', C.bad);

@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR sabko Retry-After 30 diya? -> 30 sec baad sab ek saath. Alag-alag do (jitter)'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Bot → LB', '1000 / sec'], [C.bad, 'LB → App', 'mana wali bhi andar'], [C.bad, 'App', 'ginti dekhi: 429'], [C.bad, 'App → Bot', '429, par App tak aa ke. CPU 100%']],
+  [[C.bad, 'Bot → Gateway', '1000 / sec'], [C.bad, 'Gateway → Bot', '429 + Retry-After'], [C.good, 'Asli user → Gateway', 'had ke andar'], [C.good, 'Gateway → LB → App', 'sirf asli kaam, CPU 30%']],
+  [[C.acc, 'Gateway → Client 1', 'Retry-After: 28'], [C.acc, 'Gateway → Client 2', 'Retry-After: 31'], [C.acc, 'Gateway → Client 3', 'Retry-After: 33'], [C.good, 'alag-alag lautte', 'bheed nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 110, 60, 'Bot', '1000 / sec', { st: 'bad' });

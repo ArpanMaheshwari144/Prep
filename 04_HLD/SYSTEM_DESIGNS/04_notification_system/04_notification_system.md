@@ -40,11 +40,11 @@ Cue: KAFKA (async), order turant jawab
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png?v=6" width="900">
+<img src="img/c1_1.png?v=7" width="900">
 
-<img src="img/c1_2.png?v=6" width="900">
+<img src="img/c1_2.png?v=7" width="900">
 
-<img src="img/c1_3.png?v=6" width="900">
+<img src="img/c1_3.png?v=7" width="900">
 
 </details>
 
@@ -146,11 +146,11 @@ Cue: SENDING / SENT (do haal)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png?v=6" width="900">
+<img src="img/c4_1.png?v=7" width="900">
 
-<img src="img/c4_2.png?v=6" width="900">
+<img src="img/c4_2.png?v=7" width="900">
 
-<img src="img/c4_3.png?v=6" width="900">
+<img src="img/c4_3.png?v=7" width="900">
 
 </details>
 

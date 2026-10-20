@@ -9,6 +9,11 @@ const PH = [
 const RY = [40, 150, 260]; // US, Europe, India (y)
 function setup() {}
 function script() { B(20, 150, 120, 60, 'Meri script', '150 request'); }
+const STEPS = [
+  [[C.msg, 'Meri script → US', '50'], [C.msg, 'Meri script → Europe', '50'], [C.msg, 'Meri script → India', '50'], [C.bad, 'Andar', '150, had 100. Teeno ne kaha "50 < 100"']],
+  [[C.msg, 'Meri script → 3 region', '150 request'], [C.acc, 'US, Europe, India → Ghar Redis', 'sab yahin gini'], [C.bad, 'Ghar Redis', '101 > 100: 429']],
+  [[C.msg, 'US user → US region', 'login'], [C.acc, 'US region → Ghar Redis', 'login ghar tak (~150 ms, chalta hai)'], [C.good, 'US user → US region', 'feed: yahin gini'], [C.acc, 'US region → Ghar Redis', 'har second sync']],
+];
 function frame(ph) {
   if (ph === 0) {
     script();
@@ -25,13 +30,13 @@ function frame(ph) {
     script();
     ['US', 'Europe', 'India'].forEach((r, i) => {
       B(330, RY[i], 160, 60, r, i < 2 ? 'ginti India se' : 'ghar region', { st: i === 2 ? 'acc' : '' });
-      A(140, 180, 328, RY[i] + 30, C.msg, { n: i + 1, at: 0.6 });
+      A(140, 180, 328, RY[i] + 30, C.msg, { n: i ? 0 : 1, at: 0.6 });
     });
     B(660, 250, 190, 70, 'Ghar: India Redis', 'Arpan = 101', { st: 'acc' });
-    A(490, 70, 700, 248, C.acc, { n: 4, at: 0.5 }); L(640, 150, 'sab yahin gini', C.acc, 'start');
+    A(490, 70, 700, 248, C.acc, { n: 2, at: 0.5 }); L(640, 150, 'sab yahin gini', C.acc, 'start');
     A(490, 180, 670, 248, C.acc);
     A(490, 290, 658, 290, C.acc);
-    num(755, 345, 5, C.bad); L(775, 350, '101 > 100: 429', C.bad, 'start');
+    num(755, 345, 3, C.bad); L(775, 350, '101 > 100: 429', C.bad, 'start');
     L(330, 350, 'ek user ki ek hi ginti, ek hi ghar me', C.good);
   } else {
     B(20, 40, 120, 60, 'US user', 'login');

@@ -14,6 +14,11 @@ function users() {
     A(140, 47 + i * 64, 318, 175, C.msg, { n: i === 2 ? 1 : 0, at: 0.5 });
   });
 }
+const STEPS = [
+  [[C.msg, 'Users → Gateway', 'har user apni had me (80 / 100)'], [C.bad, 'Gateway → App', 'sab andar'], [C.bad, 'App', 'CPU 100%: login / payment bhi atke']],
+  [[C.msg, 'Users → Gateway', 'system ki had: 5,000 / sec'], [C.good, 'Gateway → App', 'zaroori: login, payment'], [C.acc, 'Gateway → feed, search', 'kam zaroori: 503, baad me aao']],
+  [[C.msg, 'Arpan → Gateway', '101 / 100'], [C.bad, 'Gateway → Arpan', '429: tu dheere chal'], [C.msg, 'Ravi → Gateway', '20 / 100, par system bhara'], [C.acc, 'Gateway → Ravi', '503: galti humari, baad me aa']],
+];
 function frame(ph) {
   if (ph === 0) {
     users();

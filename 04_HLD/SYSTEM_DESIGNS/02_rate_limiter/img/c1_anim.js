@@ -13,23 +13,28 @@ function front(s1, s2, st) {
   A(130, 170, 188, 170, C.msg, { n: 1 });
   B(330, 40, 150, 60, 'App-1', s1, { st }); B(330, 250, 150, 60, 'App-2', s2, { st });
   A(270, 160, 328, 75, C.msg, { n: 2 }); L(284, 112, '5 bheje', C.msg, 'end');
-  A(270, 180, 328, 275, C.msg, { n: 3 }); L(284, 232, '4 bheje', C.msg, 'end');
+  A(270, 180, 328, 275, C.msg); L(284, 232, '4 bheje', C.msg, 'end');
 }
+const STEPS = [
+  [[C.msg, 'Arpan → LB', '9 login'], [C.msg, 'LB → App-1, App-2', '5 aur 4 baante'], [C.bad, 'App-1, App-2 → Login', 'har App ne sirf apni ginti dekhi:|5 <= 5, 4 <= 5. 9 andar']],
+  [[C.msg, 'Arpan → LB', '9 login'], [C.msg, 'LB → App-1, App-2', '5 aur 4 baante'], [C.acc, 'App-1, App-2 → Redis', 'dono ek hi ginti +1'], [C.bad, 'Redis → App-2 → Arpan', '6 > 5: mana, 429']],
+  [[C.good, '10:00:59', '5 andar'], [C.acc, '10:01:00', 'naya minute: ginti 0 se'], [C.bad, '10:01:01', '5 phir andar: 2 sec me 10']],
+];
 function frame(ph) {
   if (ph === 0) {
     front('apni ginti: 5', 'apni ginti: 4', 'bad');
     B(680, 140, 160, 60, 'Login', 'andar: 9', { st: 'bad' });
-    A(480, 70, 678, 160, C.bad, { n: 4 }); L(600, 95, '5 <= 5, andar', C.bad);
-    A(480, 280, 678, 185, C.bad, { n: 5 }); L(600, 260, '4 <= 5, andar', C.bad);
+    A(480, 70, 678, 160, C.bad, { n: 3 }); L(600, 95, '5 <= 5, andar', C.bad);
+    A(480, 280, 678, 185, C.bad); L(600, 260, '4 <= 5, andar', C.bad);
     L(450, 340, 'had 5 thi, par har App ne sirf apni ginti dekhi: 9 andar', C.bad);
   } else if (ph === 1) {
     front('', '', '');
     B(620, 135, 220, 70, 'Redis', 'rate:Arpan:login = 9', { st: 'acc' });
     L(730, 120, 'ek hi ginti, umar 60 sec', C.acc);
-    A(480, 70, 618, 150, C.acc, { n: 4 }); L(560, 90, 'ginti +1', C.acc);
-    A(480, 262, 618, 190, C.acc, { n: 5 }); L(520, 205, 'ginti +1', C.acc);
-    AP([[760, 207], [760, 295], [482, 295]], C.bad, { n: 6, at: 0.4 }); L(775, 250, '6 > 5: mana', C.bad, 'start');
-    AP([[405, 312], [405, 345], [75, 345], [75, 202]], C.bad, { n: 7, at: 0.5 }); L(240, 330, '429', C.bad);
+    A(480, 70, 618, 150, C.acc, { n: 3 }); L(560, 90, 'ginti +1', C.acc);
+    A(480, 262, 618, 190, C.acc); L(520, 205, 'ginti +1', C.acc);
+    AP([[760, 207], [760, 295], [482, 295]], C.bad, { n: 4, at: 0.4 }); L(775, 250, '6 > 5: mana', C.bad, 'start');
+    AP([[405, 312], [405, 345], [75, 345], [75, 202]], C.bad); L(240, 330, '429', C.bad);
     L(470, 349, 'pehli 5 andar, baaki 4 ko 429', C.good, 'start');
   } else {
     // time ki line, minute 10:00 | 10:01

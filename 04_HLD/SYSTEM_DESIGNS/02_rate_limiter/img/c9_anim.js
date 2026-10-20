@@ -15,6 +15,11 @@ function office(subs, sts) {
   });
   B(230, 145, 130, 70, 'Office NAT', 'sabka IP 1.2.3.4');
 }
+const STEPS = [
+  [[C.bad, 'Ravi → Office NAT', '6 galat login'], [C.msg, 'Office NAT → Gateway', 'sabka ek IP: 1.2.3.4'], [C.bad, 'Gateway → Office NAT', 'IP block: Asha, Mohan, sab atke']],
+  [[C.bad, 'Ravi → Office NAT', '6 galat'], [C.msg, 'Office NAT → Gateway', 'ek IP, par JWT alag'], [C.bad, 'Gateway', 'ginti user_id pe: sirf Ravi ko 429'], [C.good, 'Gateway → App', 'baaki andar']],
+  [[C.bad, 'Attacker → Arpan ka account', 'Arpan ke naam se 5 galat password'], [C.bad, 'Arpan ka account', 'LOCK lag gaya'], [C.msg, 'Asli Arpan → account', 'sahi password'], [C.bad, 'account → Arpan', 'band, apna hi account']],
+];
 function frame(ph) {
   if (ph === 0) {
     office(['6 galat login', '', '', '', ''], ['bad', '', '', '', '']);

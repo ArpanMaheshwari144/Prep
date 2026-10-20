@@ -59,11 +59,11 @@ Cue: Redis me EK ginti, 60 sec umar
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png?v=2" width="900">
+<img src="img/c1_1.png?v=7" width="900">
 
-<img src="img/c1_2.png?v=2" width="900">
+<img src="img/c1_2.png?v=7" width="900">
 
-<img src="img/c1_3.png?v=2" width="900">
+<img src="img/c1_3.png?v=7" width="900">
 
 </details>
 
@@ -86,11 +86,11 @@ Cue: ATOMIC: INCR / LUA script
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png?v=6" width="900">
+<img src="img/c2_1.png?v=7" width="900">
 
-<img src="img/c2_2.png?v=6" width="900">
+<img src="img/c2_2.png?v=7" width="900">
 
-<img src="img/c2_3.png?v=6" width="900">
+<img src="img/c2_3.png?v=7" width="900">
 
 </details>
 
@@ -119,11 +119,11 @@ Cue: LIMITER GATEWAY pe, sabse aage
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png?v=2" width="900">
+<img src="img/c3_1.png?v=7" width="900">
 
-<img src="img/c3_2.png?v=2" width="900">
+<img src="img/c3_2.png?v=7" width="900">
 
-<img src="img/c3_3.png?v=2" width="900">
+<img src="img/c3_3.png?v=7" width="900">
 
 </details>
 
@@ -150,11 +150,11 @@ Cue: REPLICA + FAIL-OPEN / FAIL-CLOSED
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png?v=2" width="900">
+<img src="img/c4_1.png?v=7" width="900">
 
-<img src="img/c4_2.png?v=2" width="900">
+<img src="img/c4_2.png?v=7" width="900">
 
-<img src="img/c4_3.png?v=2" width="900">
+<img src="img/c4_3.png?v=7" width="900">
 
 </details>
 
@@ -186,11 +186,11 @@ Cue: HOME REGION me ginti
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png?v=2" width="900">
+<img src="img/c5_1.png?v=7" width="900">
 
-<img src="img/c5_2.png?v=2" width="900">
+<img src="img/c5_2.png?v=7" width="900">
 
-<img src="img/c5_3.png?v=2" width="900">
+<img src="img/c5_3.png?v=7" width="900">
 
 </details>
 
@@ -215,11 +215,11 @@ Cue: KAFKA -> PATTERN -> WAF BAN
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=2" width="900">
+<img src="img/c6_1.png?v=7" width="900">
 
-<img src="img/c6_2.png?v=2" width="900">
+<img src="img/c6_2.png?v=7" width="900">
 
-<img src="img/c6_3.png?v=2" width="900">
+<img src="img/c6_3.png?v=7" width="900">
 
 </details>
 
@@ -248,11 +248,11 @@ Cue: GLOBAL CAP + LOAD SHEDDING (503)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png?v=2" width="900">
+<img src="img/c7_1.png?v=7" width="900">
 
-<img src="img/c7_2.png?v=2" width="900">
+<img src="img/c7_2.png?v=7" width="900">
 
-<img src="img/c7_3.png?v=2" width="900">
+<img src="img/c7_3.png?v=7" width="900">
 
 </details>
 
@@ -275,11 +275,11 @@ Cue: LOCAL COUNTER FALLBACK
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png?v=2" width="900">
+<img src="img/c8_1.png?v=7" width="900">
 
-<img src="img/c8_2.png?v=2" width="900">
+<img src="img/c8_2.png?v=7" width="900">
 
-<img src="img/c8_3.png?v=2" width="900">
+<img src="img/c8_3.png?v=7" width="900">
 
 </details>
 
@@ -306,11 +306,11 @@ Cue: KEY = USER_ID (JWT), IP sirf login
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png?v=2" width="900">
+<img src="img/c9_1.png?v=7" width="900">
 
-<img src="img/c9_2.png?v=2" width="900">
+<img src="img/c9_2.png?v=7" width="900">
 
-<img src="img/c9_3.png?v=2" width="900">
+<img src="img/c9_3.png?v=7" width="900">
 
 </details>
 

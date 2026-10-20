@@ -7,26 +7,31 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR ginti badhi, par "60 sec baad mita dena" bolne se pehle crash? -> hamesha block'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.acc, 'Redis → App-1', '4 padha: andar aane do'], [C.acc, 'Redis → App-2', '4 padha: App-1 ne abhi likha nahi'], [C.bad, 'App-1 → Redis', '5 likha'], [C.bad, 'App-2 → Redis', '5 likha. Andar 6, had 5']],
+  [[C.acc, 'App-1 → Redis', 'INCR'], [C.good, 'Redis → App-1', '5: andar'], [C.acc, 'App-2 → Redis', 'INCR, ek pal baad'], [C.bad, 'Redis → App-2', '6 > 5: 429']],
+  [[C.good, 'App → Redis', 'ginti +1 (INCR)'], [C.bad, 'App crash', '"60 sec baad mita" (EXPIRE)|bheja hi nahi'], [C.msg, 'Arpan → App', 'agle din login'], [C.bad, 'App → Redis → Arpan', 'ginti 6 > 5, kabhi nahi mitegi: 429']],
+];
 function frame(ph) {
   if (ph === 0) {
     // movie jaisa: 4 frame, baayein se daayein, har frame ek pal. Har frame me Redis ki ginti abhi kitni
     const F = [
-      ['pal 1', 'App-1 padhta', 1, 'acc', 4, 'App-1: 4 dikha', '4 < 5, andar aane do'],
-      ['pal 2', 'App-2 padhta', 2, 'acc', 4, 'App-2: 4 dikha', 'App-1 ne abhi likha nahi'],
-      ['pal 3', 'App-1 likhta', 1, 'bad', 5, 'App-1: 5 likha', 'pehla aadmi andar'],
-      ['pal 4', 'App-2 likhta', 2, 'bad', 5, 'App-2: 5 likha', 'doosra bhi andar'],
+      ['pal 1', 'App-1 padhta', 1, 'acc', 4, '4 dikha', '4 < 5, andar aane do'],
+      ['pal 2', 'App-2 padhta', 2, 'acc', 4, '4 dikha', 'App-1 ne likha nahi'],
+      ['pal 3', 'App-1 likhta', 1, 'bad', 5, '5 likha', 'pehla aadmi andar'],
+      ['pal 4', 'App-2 likhta', 2, 'bad', 5, '5 likha', 'doosra bhi andar'],
     ];
     F.forEach(([pal, kya, who, st, val, l1, l2], k) => {
       const x = 15 + k * 220;
       el('rect', { x, y: 5, width: 205, height: 255, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-      num(x + 20, 25, k + 1, st === 'bad' ? C.bad : C.acc); T(x + 112, 30, pal + ': ' + kya, { c: C.fg, b: 1, size: 13 });
+      num(x + 20, 25, k + 1, st === 'bad' ? C.bad : C.acc); T(x + 115, 31, kya, { c: C.fg, b: 1, size: 14 });
       B(x + 10, 50, 80, 40, 'App-1', '', { st: who === 1 ? st : 'dim' });
       B(x + 115, 50, 80, 40, 'App-2', '', { st: who === 2 ? st : 'dim' });
       B(x + 45, 165, 115, 55, 'Redis', 'ginti: ' + val, { st: 'acc' });
       const ax = who === 1 ? x + 50 : x + 155;
       if (st === 'acc') A(ax + (who === 1 ? 30 : -30), 163, ax, 92, C.acc); else A(ax, 92, ax + (who === 1 ? 30 : -30), 163, C.bad);
-      T(who === 1 ? x + 150 : x + 55, 135, l1, { c: st === 'bad' ? C.bad : C.acc, b: 1, size: 12 }); // teer ki doosri taraf
-      T(x + 102, 245, l2, { c: C.muted, size: 11 });
+      T(who === 1 ? x + 150 : x + 55, 135, l1, { c: st === 'bad' ? C.bad : C.acc, b: 1, size: 14 }); // teer ki doosri taraf
+      T(x + 102, 245, l2, { c: C.muted, size: 12.5 });
     });
     L(450, 300, 'Redis me 5 likha hai, par andar 6 gaye (had 5 thi)', C.bad);
     L(450, 335, 'galti: padhna aur likhna do alag kadam. Beech me doosra purana 4 padh gaya', C.acc);
@@ -52,8 +57,8 @@ function frame(ph) {
     B(380, 250, 240, 60, 'App', 'dobara chalu');
     A(170, 265, 378, 265, C.msg, { n: 3 }); L(275, 252, 'login', C.msg);
     A(470, 248, 470, 112, C.acc, { n: 4 }); L(455, 190, 'ginti?', C.acc, 'end');
-    A(530, 112, 530, 248, C.bad, { n: 5 }); L(545, 190, '6 > 5', C.bad, 'start');
-    A(378, 295, 172, 295, C.bad, { n: 6 }); L(275, 315, '429', C.bad);
+    A(530, 112, 530, 248, C.bad); L(545, 190, '6 > 5', C.bad, 'start');
+    A(378, 295, 172, 295, C.bad); L(275, 315, '429', C.bad);
     L(320, 345, 'aaj, kal, har din block', C.bad);
     B(660, 150, 210, 80, 'hal: Lua script', 'dono kaam ek saath bhejo', { st: 'good' });
     L(765, 255, 'ya dono hon, ya koi nahi', C.good);

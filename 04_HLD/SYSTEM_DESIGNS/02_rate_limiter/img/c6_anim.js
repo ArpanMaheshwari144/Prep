@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR office ka IP (200 log, ek IP)? -> ban nahi, captcha. Ban bhi 24 ghante me hat jaata'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Bot → Gateway', 'login x 100'], [C.acc, 'Gateway → Bot', '429: 60 sec baad aao'], [C.bad, 'Bot', 'har minute phir aaya, din bhar']],
+  [[C.acc, 'Gateway → Kafka', 'har 429 yahan'], [C.acc, 'Kafka → Pattern Svc', 'padhta: 10 min me 500+ 429'], [C.good, 'Pattern Svc → WAF', 'block list me: 5.5.5.5'], [C.good, 'Bot → WAF', 'edge pe hi ruka']],
+  [[C.msg, 'Office → WAF', '200 log, ek IP: bheed'], [C.acc, 'WAF → Office', 'captcha, ban nahi'], [C.good, 'WAF → Gateway', 'captcha bhara: andar'], [C.good, 'galti se ban?', 'umar 24 ghante. Haath se bhi hata sakte']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 60, 110, 60, 'Bot', '', { st: 'bad' }); B(330, 60, 150, 60, 'Gateway', 'had paar');

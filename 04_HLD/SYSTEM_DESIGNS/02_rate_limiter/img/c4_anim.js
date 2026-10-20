@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR copy bhi gayi? -> pehle se tay: login band (fail-closed), feed khula (fail-open)'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.msg, 'User → Gateway', 'login'], [C.bad, 'Gateway → Redis', 'ginti +1?'], [C.bad, 'Redis gira', 'ginti yahin thi'], [C.bad, 'Gateway', 'jawab nahi: andar bhejun ya rokun?']],
+  [[C.bad, 'Redis main gira', 'ginti wahi thi'], [C.acc, 'Redis main → copy', 'copy main bani (Redis Cluster)'], [C.msg, 'User → Gateway', 'login'], [C.good, 'Gateway → Redis copy', 'ginti +1 -> 3: andar']],
+  [[C.bad, 'Redis main + copy', 'dono gaye'], [C.bad, 'User → Gateway → User', 'login: 503, thodi der baad|(fail-closed)'], [C.good, 'User → Gateway → Feed App', 'feed khula (fail-open)']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 150, 110, 60, 'User', 'login');
@@ -25,7 +30,7 @@ function frame(ph) {
     A(700, 102, 700, 218, C.acc, { n: 2, dash: 1, at: 0.6 }); L(715, 175, 'copy main bani', C.acc, 'start');
     A(130, 180, 258, 180, C.msg, { n: 3 });
     A(410, 200, 618, 245, C.acc, { n: 4, at: 0.4 }); L(500, 205, 'ginti +1', C.acc);
-    A(618, 270, 410, 215, C.good, { n: 5, at: 0.4 }); L(510, 285, 'ginti 3: andar', C.good);
+    A(618, 270, 410, 215, C.good); L(510, 285, 'ginti 3: andar', C.good);
     L(450, 345, 'beech ke kuch second ki ginti kho sakti, rate limit me chalta hai', C.muted);
   } else {
     B(20, 50, 120, 60, 'User', 'login');
@@ -34,10 +39,10 @@ function frame(ph) {
     B(560, 20, 120, 50, 'Redis main', '', { st: 'bad' }); B(720, 20, 120, 50, 'Redis copy', '', { st: 'bad' });
     cross(700, 45); cross(860, 45); num(620, 95, 1, C.bad); L(640, 100, 'dono gaye', C.bad, 'start');
     A(140, 70, 300, 143, C.msg, { n: 2, at: 0.45 });
-    A(278, 180, 80, 112, C.bad, { n: 3, at: 0.5 }); L(115, 185, '503, thodi der baad', C.bad);
-    A(140, 280, 278, 200, C.msg, { n: 4, at: 0.4 });
+    A(278, 180, 80, 112, C.bad); L(115, 185, '503, thodi der baad', C.bad);
+    A(140, 280, 278, 200, C.msg, { n: 3, at: 0.4 });
     B(620, 250, 160, 60, 'Feed App', 'khula', { st: 'good' });
-    A(420, 190, 618, 270, C.good, { n: 5, at: 0.5 }); L(470, 262, 'feed khula', C.good);
+    A(420, 190, 618, 270, C.good); L(470, 262, 'feed khula', C.good);
     L(450, 345, 'login band: koi bina had password guess na kare. Feed khula: site chalti rahe', C.good);
   }
 }
