@@ -1,32 +1,49 @@
-// Card 7: sab apni had me, phir bhi CPU 100%. Ilaaj: system ki had + 503 kam zaroori pe. Wapas: CPU neeche.
+// Card 7: sale, har user apni had me, phir bhi kul jod se server bhara. Ilaaj: system ki had + kam zaroori ko 503.
+// Agar: had paar hui to 429 ya 503? -> user ki had = 429, system ki had = 503.
 const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: har user apni had me, par kul jod se server CPU 100%'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: system ki had 5,000/sec. CPU 90% paar: kam zaroori ko 503'],
-  [6, GRN, 'WAPAS', 'WAPAS: CPU 90% se neeche, 503 band, sab request phir andar'],
+  [0, RED, 'DIKKAT', 'DIKKAT: sale. Har user apni had me, par sab ka jod server ki had se upar'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: gateway pe system ki had (5,000 / sec). CPU 90% paar: kam zaroori ko 503'],
+  [6, YEL, 'AGAR', 'AGAR had paar hui, 429 bhejoge ya 503? -> user ki had = 429, system ki had = 503'],
 ];
+const US = [['login', 1], ['payment', 1], ['feed', 0], ['search', 0], ['recommend', 0]];
 function setup() {}
+function users() {
+  US.forEach(([u], i) => {
+    B(20, 25 + i * 64, 120, 44, u, 'had me: 80/100');
+    A(140, 47 + i * 64, 318, 175, C.msg, { n: i === 2 ? 1 : 0, at: 0.5 });
+  });
+}
 function frame(ph) {
-  for (let i = 0; i < 5; i++) {
-    B(20, 25 + i * 64, 100, 44, `user ${i + 1}`, '', { st: 'good' });
-    A(120, 47 + i * 64, 308, 175, C.msg, { n: i === 2 ? 1 : 0, at: 0.45 });
-  }
-  B(310, 145, 110, 60, 'Gateway', ph ? 'had 5,000/s' : '', { st: 'acc' });
-  const cpu = [1, 0.93, 0.5][ph];
-  B(620, 130, 140, 90, 'Server', 'CPU', { st: ph === 0 ? 'bad' : 'good' });
-  bar(630, 235, 120, 18, cpu, ''); T(690, 278, `${Math.round(cpu * 100)}%`, { c: [C.bad, C.acc, C.good][ph], b: 1, size: 16 });
   if (ph === 0) {
-    A(420, 175, 618, 175, C.bad, { n: 2, at: 0.85 }); dots(6, 445, 150, C.msg, { gap: 26 });
-    num(690, 320, 3, C.bad); L(690, 345, 'server gira', C.bad);
-  }
-  if (ph === 1) {
-    A(420, 175, 618, 175, C.good, { n: 3, at: 0.85 }); dots(3, 470, 150, C.good, { gap: 34 });
-    T(505, 128, 'login / payment', { c: C.good, b: 1, size: 12 });
-    num(290, 245, 2, C.bad); dots(6, 315, 245, C.bad, { gap: 20 }); T(365, 280, '503', { c: C.bad, b: 1, size: 15 });
-    L(690, 320, 'CPU 90% paar', C.acc);
-  }
-  if (ph === 2) {
-    A(420, 175, 618, 175, C.good, { n: 2, at: 0.85 }); dots(6, 445, 150, C.good, { gap: 26 });
-    L(690, 320, 'CPU neeche', C.good);
+    users();
+    B(320, 140, 150, 70, 'Gateway', 'sab had me: pass');
+    B(640, 140, 170, 70, 'App', '', { st: 'bad' }); cross(835, 175);
+    A(470, 175, 638, 175, C.bad, { n: 2 }); L(555, 160, 'sab andar', C.bad);
+    bar(640, 225, 170, 14, 1, ''); T(725, 260, 'CPU 100%', { c: C.bad, b: 1, size: 14 });
+    num(725, 290, 3, C.bad); L(725, 315, 'login / payment bhi atke', C.bad);
+    L(450, 350, 'har user ki had theek thi, par system ki had kisi ne nahi dekhi', C.bad);
+  } else if (ph === 1) {
+    users();
+    B(320, 140, 150, 70, 'Gateway', 'system had: 5,000/s', { st: 'good' });
+    B(660, 60, 170, 60, 'App', 'login, payment', { st: 'good' });
+    A(470, 160, 658, 95, C.good, { n: 2 }); L(560, 105, 'zaroori: andar', C.good);
+    bar(660, 135, 170, 12, 0.85, '', 1); T(745, 165, 'CPU 85%', { c: C.good, b: 1, size: 13 });
+    B(660, 240, 170, 60, 'feed, search ...', '503: baad me aao', { st: 'acc' });
+    A(470, 195, 658, 265, C.acc, { n: 3 }); L(540, 290, 'kam zaroori: 503', C.acc);
+    L(450, 350, 'site gira nahi: zaroori kaam chala, baaki thodi der ruke', C.good);
+  } else {
+    // baayein: user ki had
+    B(20, 60, 120, 60, 'Arpan', '101 / 100');
+    B(240, 60, 150, 60, 'Gateway', 'Arpan ki had paar', { st: 'acc' });
+    A(140, 80, 238, 80, C.msg, { n: 1 }); A(238, 105, 142, 105, C.bad, { n: 2 }); L(190, 140, '429', C.bad);
+    L(205, 190, '429 = tu dheere chal', C.bad);
+    // daayein: system ki had
+    B(480, 60, 120, 60, 'Ravi', '20 / 100');
+    B(700, 60, 150, 60, 'Gateway', 'system bhara', { st: 'acc' });
+    A(600, 80, 698, 80, C.msg, { n: 3 }); A(698, 105, 602, 105, C.acc, { n: 4 }); L(650, 140, '503', C.acc);
+    L(665, 190, '503 = galti humari, tu baad me aa', C.acc);
+    el('line', { x1: 450, y1: 30, x2: 450, y2: 230, stroke: C.line, 'stroke-width': 1, 'stroke-dasharray': '4 4' }, DYN);
+    L(450, 290, 'Ravi apni had me tha, use 429 dena galat. Kiski had paar hui, wahi code', C.good);
   }
 }

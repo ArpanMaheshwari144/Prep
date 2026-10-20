@@ -1,47 +1,45 @@
-// Card 9: ginti IP pe, Ravi ki galti se office atka. Ilaaj: user_id (JWT). Agar: lock karo? Wapas: CAPTCHA.
-const DUR = 12;
+// Card 9: ginti IP pe, office ke sab log ek IP ke peeche. Ravi ki galti se sab atke.
+// Ilaaj: login ke baad ginti user_id pe (JWT se). Agar: 5 galat password pe lock? -> attacker tujhe hi lock kar dega.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: ginti IP pe. Ravi ke 6 galat login se office IP block, sab atke'],
+  [0, RED, 'DIKKAT', 'DIKKAT: ginti IP pe. Office ke sab ek IP ke peeche, Ravi ki galti se sab block'],
   [3, GRN, 'ILAAJ', 'ILAAJ: login ke baad ginti user_id pe (JWT se). Ravi ki galti sirf Ravi pe'],
   [6, YEL, 'AGAR', 'AGAR 5 galat password pe account lock? -> attacker tujhe hi lock kar dega'],
-  [9, GRN, 'WAPAS', 'WAPAS: lock ki jagah CAPTCHA. Ravi andar, attacker atka'],
 ];
 const NAMES = ['Ravi', 'Asha', 'Mohan', 'Neha', 'Suresh'];
 function setup() {}
-function office(sts, gsub) {
-  NAMES.forEach((n, i) => { B(20, 15 + i * 64, 110, 46, n, '', { st: sts[i] });
-    A(130, 38 + i * 64, 228, 175, i === 0 ? C.acc : C.msg, { n: i === 0 ? 1 : i === 3 ? 2 : 0, at: 0.4 }); });
-  B(230, 140, 110, 70, 'Office', '1 IP');
-  A(340, 175, 428, 175, C.msg, { n: 3 }); B(430, 140, 130, 70, 'Gateway', gsub, { st: 'acc' });
-  B(720, 140, 120, 70, 'App');
+function office(subs, sts) {
+  NAMES.forEach((n, i) => {
+    B(20, 25 + i * 64, 110, 44, n, subs[i], { st: sts[i] });
+    A(130, 47 + i * 64, 228, 180, i === 0 ? C.bad : C.msg, { n: i === 0 ? 1 : 0, at: 0.45 });
+  });
+  B(230, 145, 130, 70, 'Office NAT', 'sabka IP 1.2.3.4');
 }
 function frame(ph) {
   if (ph === 0) {
-    office(['acc', 'bad', 'bad', 'bad', 'bad'], 'ginti: IP');
-    L(75, 345, 'Ravi: 6 galat', C.acc);
-    A(560, 175, 718, 175, C.bad, { dash: 1, n: 4, at: 0.2 }); cross(650, 175);
-    T(495, 250, 'IP: 10 > 5', { c: C.bad, b: 1, size: 15 });
+    office(['6 galat login', '', '', '', ''], ['bad', '', '', '', '']);
+    B(500, 140, 190, 80, 'Gateway', 'IP 1.2.3.4 = 6 > 5', { st: 'bad' });
+    A(360, 170, 498, 170, C.msg, { n: 2 });
+    A(498, 200, 362, 200, C.bad, { n: 3 }); L(430, 230, 'IP block', C.bad);
+    L(160, 350, 'Asha, Mohan, Neha, Suresh ne kuch nahi kiya, phir bhi sab atke', C.bad, 'start');
   } else if (ph === 1) {
-    office(['bad', 'good', 'good', 'good', 'good'], 'ginti: user_id');
-    A(560, 175, 718, 175, C.good, { n: 4, at: 0.2 }); dots(4, 610, 150, C.good, { gap: 26 });
-    T(495, 250, 'Ravi: 6 > 5', { c: C.bad, b: 1, size: 15 });
+    office(['6 galat: 429', 'andar', 'andar', 'andar', 'andar'], ['bad', 'good', 'good', 'good', 'good']);
+    B(500, 120, 210, 120, 'Gateway', '', { st: 'good' });
+    cells(515, 160, [['Ravi: 6', C.bad], ['Asha: 1', C.good]], { w: 88, h: 30 });
+    T(605, 215, 'ginti user_id pe (JWT)', { c: C.muted, size: 12 });
+    A(360, 180, 498, 180, C.msg, { n: 2 });
+    num(605, 100, 3, C.bad); L(625, 105, 'sirf Ravi ko 429', C.bad, 'start');
+    B(760, 150, 110, 60, 'App', '', { st: 'good' }); A(710, 180, 758, 180, C.good, { n: 4 });
+    L(815, 240, 'baaki andar', C.good);
+    L(450, 350, 'login se pehle userId nahi hota: wahan IP pe dheeli had + WAF', C.muted);
   } else {
-    const cap = ph === 3;
-    B(20, 40, 120, 60, 'Attacker', '', { st: 'bad' });
-    B(20, 250, 120, 60, 'Ravi', '', { st: cap ? 'good' : 'bad' });
-    B(330, 140, 130, 70, cap ? 'CAPTCHA' : 'Gateway', '', { st: 'acc' });
-    A(140, 70, 328, 158, C.bad, { n: 1, at: cap ? 0.4 : 0.8 }); dots(5, 165, 35, C.bad, { gap: 22 });
-    L(250, 70, '5 galat password', C.bad);
-    if (!cap) {
-      B(620, 140, 190, 70, 'Ravi ka account', 'LOCK', { st: 'bad' });
-      A(460, 175, 618, 175, C.bad, { n: 2 });
-      A(140, 280, 328, 195, C.bad, { dash: 1, n: 3, at: 0.25 }); cross(255, 232);
-      L(715, 240, 'Ravi khud bahar', C.bad);
-    } else {
-      cross(305, 147);
-      B(620, 140, 190, 70, 'App', '', { st: 'good' });
-      A(140, 280, 328, 195, C.good, { n: 2, at: 0.25 }); dot([255, 232], C.good);
-      A(460, 175, 618, 175, C.good, { n: 3 });
-    }
+    B(20, 50, 130, 60, 'Attacker', '', { st: 'bad' });
+    B(20, 250, 130, 60, 'Asli Arpan', 'sahi password');
+    B(320, 140, 200, 80, 'Arpan ka account', 'LOCK (5 galat)', { st: 'bad' });
+    A(150, 80, 318, 160, C.bad, { n: 1 }); L(165, 60, 'Arpan ke naam se 5 galat password', C.bad, 'start');
+    num(420, 245, 2, C.bad); L(440, 250, 'lock lag gaya', C.bad, 'start');
+    A(150, 262, 318, 192, C.msg, { n: 3 }); A(330, 222, 152, 302, C.bad, { n: 4, at: 0.55 }); L(200, 330, 'band, apna hi account', C.bad, 'start');
+    B(610, 140, 260, 80, 'hal: lock nahi', 'CAPTCHA ya thodi der ruko', { st: 'good' });
+    L(740, 245, 'attacker atka, Arpan andar', C.good);
   }
 }

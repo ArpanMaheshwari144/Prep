@@ -184,17 +184,13 @@ NAHI    sab fail-open kar do -> KHULA: login khula reh gaya, koi bhi bina had pa
 
 Cue: HOME REGION me ginti
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png" width="900">
+<img src="img/c5_1.png?v=2" width="900">
 
-<img src="img/c5_2.png" width="900">
+<img src="img/c5_2.png?v=2" width="900">
 
-<img src="img/c5_3.png" width="900">
-
-<img src="img/c5_4.png" width="900">
-
-<img src="img/c5_5.png" width="900">
+<img src="img/c5_3.png?v=2" width="900">
 
 </details>
 
@@ -217,17 +213,13 @@ NAHI    har region apni ginti rakhe -> TOOTA: 50 + 50 + 50 = 150, had har region
 
 Cue: KAFKA -> PATTERN -> WAF BAN
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png" width="900">
+<img src="img/c6_1.png?v=2" width="900">
 
-<img src="img/c6_2.png" width="900">
+<img src="img/c6_2.png?v=2" width="900">
 
-<img src="img/c6_3.png" width="900">
-
-<img src="img/c6_4.png" width="900">
-
-<img src="img/c6_5.png" width="900">
+<img src="img/c6_3.png?v=2" width="900">
 
 </details>
 
@@ -256,11 +248,11 @@ Cue: GLOBAL CAP + LOAD SHEDDING (503)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png" width="900">
+<img src="img/c7_1.png?v=2" width="900">
 
-<img src="img/c7_2.png" width="900">
+<img src="img/c7_2.png?v=2" width="900">
 
-<img src="img/c7_3.png" width="900">
+<img src="img/c7_3.png?v=2" width="900">
 
 </details>
 
@@ -282,17 +274,13 @@ NAHI    machine khud badh jaayegi -> DER: machine badhne me minute lagte, bheed 
 
 Cue: LOCAL COUNTER FALLBACK
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png" width="900">
+<img src="img/c8_1.png?v=2" width="900">
 
-<img src="img/c8_2.png" width="900">
+<img src="img/c8_2.png?v=2" width="900">
 
-<img src="img/c8_3.png" width="900">
-
-<img src="img/c8_4.png" width="900">
-
-<img src="img/c8_5.png" width="900">
+<img src="img/c8_3.png?v=2" width="900">
 
 </details>
 
@@ -317,15 +305,13 @@ NAHI    Redis gaya to sab andar aane do -> KHULA: attacker ke liye site khul gay
 
 Cue: KEY = USER_ID (JWT), IP sirf login
 
-<details><summary>kahani dekho (4 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png" width="900">
+<img src="img/c9_1.png?v=2" width="900">
 
-<img src="img/c9_2.png" width="900">
+<img src="img/c9_2.png?v=2" width="900">
 
-<img src="img/c9_3.png" width="900">
-
-<img src="img/c9_4.png" width="900">
+<img src="img/c9_3.png?v=2" width="900">
 
 </details>
 
