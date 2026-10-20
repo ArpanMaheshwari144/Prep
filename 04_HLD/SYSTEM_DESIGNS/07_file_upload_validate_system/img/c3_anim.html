@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -210,9 +212,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Phone → S3', 'ek lamba upload, 4.5 GB chadha'], [C.bad, 'wifi gaya', 'upload beech me toota'], [C.bad, 'Phone → S3', 'phir 0 se poore 5 GB']],
-  [[C.good, 'Phone → S3', 'tukde 1-90, har tukde ki|rasid (ETag) S3 pe'], [C.bad, 'wifi gaya', 'beech me toota'], [C.acc, 'Phone → S3', 'sirf bache 91-100 bheje'], [C.good, 'Phone → S3', 'COMPLETE: S3 ne tukde jode']],
-  [[C.acc, 'Phone → S3', 'kal app khola: ListParts U-9'], [C.good, 'S3 → Phone', '1-90 pahunch chuke'], [C.good, 'Phone → S3', 'sirf 91-100. Rasid S3 pe thi,|phone pe nahi']],
+  [[C.msg, 'Phone → S3', 'Phone ek lamba upload kar raha tha, 4.5 GB chadh chuke the'], [C.bad, 'wifi gaya', 'Beech me wifi gaya aur upload toot gaya'], [C.bad, 'Phone → S3', 'Ab phir 0 se poore 5 GB bhejne pade']],
+  [[C.good, 'Phone → S3', 'Tukde 1 se 90 gaye, har tukde ki rasid (ETag) S3 pe rakhi'], [C.bad, 'wifi gaya', 'Beech me wifi gaya aur upload toota'], [C.acc, 'Phone → S3', 'Wifi aate hi sirf bache tukde 91 se 100 bheje'], [C.good, 'Phone → S3', 'COMPLETE bheja, S3 ne saare tukde jod ke ek file banayi']],
+  [[C.acc, 'Phone → S3', 'Agle din app khuli, S3 se poocha: ListParts U-9'], [C.good, 'S3 → Phone', 'S3 ne bataya tukde 1 se 90 pahunch chuke hain'], [C.good, 'Phone → S3', 'Sirf 91 se 100 bheje; rasid S3 pe thi, phone pe nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

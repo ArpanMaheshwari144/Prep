@@ -17,9 +17,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, 'Phone → Upload Svc', '5 GB pehle hamare server pe aaye'], [C.bad, 'Upload Svc → S3', 'wahi 5 GB phir S3 pe'], [C.bad, 'Upload Svc', 'thread minuton atka,|server pe bojh, mehnga bhi']],
-  [[C.msg, 'Phone → Upload Svc', 'paas maanga, bytes nahi bheje'], [C.acc, 'Upload Svc → Phone', '10 min ka signed URL + T-102'], [C.good, 'Phone → S3', '5 GB seedha S3 pe,|server beech me nahi'], [C.good, 'Phone → Upload Svc', '/complete T-102:|ab jaanch line me']],
-  [[C.acc, 'Upload Svc → Koi app', 'paas diya, usme max 5 GB sign'], [C.bad, 'Koi app → S3', '50 GB bhejne ki koshish'], [C.good, 'S3 → Koi app', 'size paas se bahar: reject.|Hamara server kuch nahi karta']],
+  [[C.bad, 'Phone → Upload Svc', 'Arpan ki 5 GB video pehle hamare server pe aayi'], [C.bad, 'Upload Svc → S3', 'Phir server ne wahi 5 GB S3 pe bheje, bytes do baar'], [C.bad, 'Upload Svc', 'Server ka thread minuton atka, bojh bhi aur kharcha bhi']],
+  [[C.msg, 'Phone → Upload Svc', 'Phone ne server se sirf upload ka paas maanga, bytes nahi bheje'], [C.acc, 'Upload Svc → Phone', 'Server ne 10 min ka signed URL aur T-102 diya'], [C.good, 'Phone → S3', 'Phone ne 5 GB seedha S3 pe bheje, server beech me nahi'], [C.good, 'Phone → Upload Svc', 'Upload ke baad /complete T-102 bheja, ab jaanch line me']],
+  [[C.acc, 'Upload Svc → Koi app', 'Server ne paas diya, usme max 5 GB ki had sign thi'], [C.bad, 'Koi app → S3', 'Ek app ne usi paas se 50 GB bhejne ki koshish ki'], [C.good, 'S3 → Koi app', 'Size paas ki had se bahar tha, S3 ne khud reject kiya']],
 ];
 function frame(ph) {
   if (ph === 0) {

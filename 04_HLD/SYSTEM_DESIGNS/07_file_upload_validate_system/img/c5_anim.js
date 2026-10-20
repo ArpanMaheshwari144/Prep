@@ -17,9 +17,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Users → Status Svc', '10,000 log, har 2 sec: haal?'], [C.bad, 'Status Svc → Primary DB', 'har poochh seedha DB pe'], [C.bad, 'Primary DB', 'ghira: upload ki likhai|bhi dheemi']],
-  [[C.msg, 'Users → Status Svc', 'T-101 ka haal?'], [C.good, 'Status Svc → Redis', 'Redis me mila: 1 ms'], [C.acc, 'Status Svc → Read replica', 'nahi mila to replica se laao,|phir Redis me rakh do']],
-  [[C.good, 'Worker → Status DB', 'T-101: DONE likha'], [C.acc, 'Worker → Redis', 'usi waqt Redis key hatayi'], [C.acc, 'Status Svc → Redis', 'agla poochh: Redis me nahi mila'], [C.good, 'Status DB → Status Svc', 'DB se naya DONE,|Redis me phir rakha']],
+  [[C.msg, 'Users → Status Svc', 'Deadline pe 10,000 log har 2 sec haal poochh rahe'], [C.bad, 'Status Svc → Primary DB', 'Status Svc har poochh seedha primary DB se le raha'], [C.bad, 'Primary DB', 'DB ghir gaya, upload ki likhai bhi dheemi ho gayi']],
+  [[C.msg, 'Users → Status Svc', 'Ek user ne apni file T-101 ka haal poocha'], [C.good, 'Status Svc → Redis', 'Status Svc ne Redis me dekha, 1 ms me mil gaya'], [C.acc, 'Status Svc → Read replica', 'Redis me nahi mila to replica se laaya aur Redis me rakh diya']],
+  [[C.good, 'Worker → Status DB', 'Worker ne DB me T-101: DONE likha'], [C.acc, 'Worker → Redis', 'Usi waqt Redis se T-101 ki purani key hata di'], [C.acc, 'Status Svc → Redis', 'Agli poochh pe Redis me key nahi mili'], [C.good, 'Status DB → Status Svc', 'DB se naya DONE aaya aur Redis me phir rakh diya']],
 ];
 function frame(ph) {
   if (ph === 0) {

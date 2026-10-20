@@ -17,9 +17,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Ravi → Worker', 'naam report.pdf, type pdf'], [C.bad, 'Worker → Status DB', 'naam pe bharosa: DONE'], [C.bad, 'Status DB → Arpan', 'DONE dekh ke download:|andar EXE nikla']],
-  [[C.acc, 'S3 → Worker', 'file ke pehle 4 byte padhe'], [C.good, 'Worker → Status DB', '"MZ" = EXE: REJECT']],
-  [[C.acc, 'Worker → Scanner', '%PDF theek, ab virus scan'], [C.bad, 'Scanner', 'virus mila'], [C.bad, 'Scanner → Quarantine', 'file wahan, download band'], [C.good, 'Scanner → Status DB', 'DONE nahi: REJECT']],
+  [[C.msg, 'Ravi → Worker', 'Ravi ki file aayi: naam report.pdf, type pdf'], [C.bad, 'Worker → Status DB', 'Worker ne naam pe bharosa karke DONE likh diya'], [C.bad, 'Status DB → Arpan', 'Arpan ne DONE dekh ke download kiya, andar EXE nikla']],
+  [[C.acc, 'S3 → Worker', 'Worker ne S3 se file ke pehle 4 byte padhe'], [C.good, 'Worker → Status DB', 'Shuru me "MZ" tha matlab EXE, worker ne REJECT likha']],
+  [[C.acc, 'Worker → Scanner', 'Shuru "%PDF" sahi tha, ab file virus scan me gayi'], [C.bad, 'Scanner', 'Scanner ko file ke andar virus mila'], [C.bad, 'Scanner → Quarantine', 'File quarantine me daal di, uska download band'], [C.good, 'Scanner → Status DB', 'Status DB me DONE nahi, REJECT likha gaya']],
 ];
 function frame(ph) {
   if (ph === 0) {

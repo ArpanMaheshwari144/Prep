@@ -17,16 +17,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Arpan → WhatsApp group', 'Arpan ne S3 ka pakka link|group me bhej diya'],
-   [C.bad, 'Group → koi bhi', 'link aage share hota raha,|6 mahine baad bhi koi click karta'],
-   [C.bad, 'Koi bhi → S3', 'jo bhi link kholta hai,|seedha S3 tak pahunchta'],
-   [C.bad, 'S3 → koi bhi', 'report.pdf mil gayi. Link kabhi expire|nahi, wo S3 ka pakka pata hai']],
-  [[C.msg, 'Arpan → Download Svc', 'download maanga. Pehle check:|T-101 ka maalik Arpan hi hai?'],
-   [C.acc, 'Download Svc → Arpan', 'DB me sirf S3 key. Usse naya|5 min ka signed link banaya'],
-   [C.good, 'S3 → Arpan', 'sign sahi, 5 min ke andar:|report.pdf mil gayi'],
-   [C.bad, 'S3 → group me koi', '1 ghanta baad wahi link khola:|umar khatam, 403']],
-  [[C.good, '4 min pe shuru', 'link chalu tha, download shuru hua.|9 min tak chala, poora mila'],
-   [C.bad, '6 min pe naya shuru', 'link ki umar khatam: 403.|Umar sirf shuru karne ki hai']],
+  [[C.msg, 'Arpan → WhatsApp group', 'Arpan ne S3 ka pakka link WhatsApp group me bhej diya'], [C.bad, 'Group → koi bhi', 'Link aage share hota raha, 6 mahine baad bhi koi click karta'], [C.bad, 'Koi bhi → S3', 'Jo bhi link kholta, seedha S3 tak pahunchta'], [C.bad, 'S3 → koi bhi', 'Sabko report.pdf mil gayi, kyunki pakka link kabhi expire nahi hota']],
+  [[C.msg, 'Arpan → Download Svc', 'Arpan ne download maanga, pehle check: T-101 ka maalik Arpan hi hai'], [C.acc, 'Download Svc → Arpan', 'DB me sirf S3 key thi, usse naya 5 min ka signed link banaya'], [C.good, 'S3 → Arpan', 'Sign sahi aur 5 min ke andar, to Arpan ko report.pdf mili'], [C.bad, 'S3 → group me koi', 'Group me kisi ne 1 ghante baad wahi link khola, umar khatam, 403']],
+  [[C.good, '4 min pe shuru', 'Link chalu tha to download 4 min pe shuru hua, 9 min tak chal ke poora mila'], [C.bad, '6 min pe naya shuru', 'Naya download 6 min pe shuru kiya to 403; umar sirf shuru karne ki hai']],
 ];
 function frame(ph) {
   if (ph === 0) {

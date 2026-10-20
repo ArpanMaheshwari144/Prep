@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -210,9 +212,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'App → Upload Svc', '1000 file, har file alag'], [C.acc, 'Upload Svc → 1000 id', 'har file ka apna id,|folder ka koi id nahi'], [C.bad, 'Upload Svc → App', '"folder ho gaya?" ka jawab nahi:|1000 id khud dekho']],
-  [[C.acc, 'Upload Svc → App', 'P-1 + 1000 URL, ek baar me'], [C.good, 'Worker → Status DB', 'C-7: DONE'], [C.acc, 'Worker → P-1', 'done_count +1|(ek UPDATE, DB ke andar)'], [C.good, 'P-1 → App', '1000 / 1000: P-1 DONE.|Ek poochh, poora haal']],
-  [[C.acc, 'P-1 → App', 'PARTIAL: 999 DONE, C-42 FAILED'], [C.msg, 'App → Upload Svc', 'sirf C-42 dobara'], [C.good, 'Upload Svc → Worker', 'ek file jaanch, 999 nahi'], [C.good, 'Worker → P-1', 'C-42 DONE: P-1 DONE']],
+  [[C.msg, 'App → Upload Svc', 'App ne poora folder bheja, 1000 file alag-alag'], [C.acc, 'Upload Svc → 1000 id', 'Har file ka apna id bana, folder ka koi id nahi'], [C.bad, 'Upload Svc → App', '"Folder ho gaya?" ka jawab nahi, app ko 1000 id khud dekhne pade']],
+  [[C.acc, 'Upload Svc → App', 'Upload Svc ne folder id P-1 aur 1000 URL ek baar me diye'], [C.good, 'Worker → Status DB', 'Worker ne ek file C-7 ko DONE likha'], [C.acc, 'Worker → P-1', 'Saath me P-1 ki ginti +1 ki, ek UPDATE DB ke andar'], [C.good, 'P-1 → App', '1000 / 1000 hote hi P-1 DONE, app ko ek poochh me poora haal']],
+  [[C.acc, 'P-1 → App', 'P-1 PARTIAL dikha: 999 DONE, sirf C-42 FAILED'], [C.msg, 'App → Upload Svc', 'App ne poora folder nahi, sirf C-42 dobara bheji'], [C.good, 'Upload Svc → Worker', 'Worker ne sirf ek file jaanchi, 999 dobara nahi'], [C.good, 'Worker → P-1', 'C-42 DONE hui to P-1 bhi DONE ho gaya']],
 ];
 function frame(ph) {
   if (ph === 0) {

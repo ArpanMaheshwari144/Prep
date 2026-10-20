@@ -17,9 +17,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.good, 'App → S3', '5 GB pahunch gaye'], [C.bad, 'App crash', 'S3 ke baad app band'], [C.bad, 'App → Upload Svc', '/complete gaya hi nahi'], [C.bad, 'Status DB', 'T-103 hamesha UPLOADING,|koi dekhta hi nahi']],
-  [[C.acc, 'Status DB → Sweeper', 'har 5 min: T-103 10 min se|atka mila'], [C.acc, 'Sweeper → S3', 'bytes hain? haan|(nahi to FAILED)'], [C.acc, 'Sweeper → Kafka', 'T-103 dobara line me'], [C.good, 'Worker → Status DB', 'jaancha, T-103: DONE']],
-  [[C.acc, 'Sweeper-1 → Redis lock', 'lock maanga, mil gaya'], [C.good, 'Sweeper-1 → Status DB', 'sirf A atki file dhoondhta'], [C.bad, 'Sweeper-2 → Redis lock', 'lock pehle se A ke paas:|is baar skip']],
+  [[C.good, 'App → S3', 'App ne 5 GB S3 tak pahuncha diye'], [C.bad, 'App crash', 'S3 ke baad, /complete bhejne se pehle app band ho gaya'], [C.bad, 'App → Upload Svc', '/complete Upload Svc tak gaya hi nahi'], [C.bad, 'Status DB', 'T-103 hamesha UPLOADING me atka, koi dekhne wala nahi']],
+  [[C.acc, 'Status DB → Sweeper', 'Sweeper har 5 min DB dekhta, T-103 10 min se atka mila'], [C.acc, 'Sweeper → S3', 'Sweeper ne S3 me dekha bytes hain? Haan (nahi hote to FAILED)'], [C.acc, 'Sweeper → Kafka', 'Sweeper ne T-103 dobara jaanch ki line me daala'], [C.good, 'Worker → Status DB', 'Worker ne jaancha aur T-103: DONE likh diya']],
+  [[C.acc, 'Sweeper-1 → Redis lock', 'Sweeper-1 ne Redis se lock maanga, use mil gaya'], [C.good, 'Sweeper-1 → Status DB', 'Lock jiske paas, sirf wahi Sweeper-1 atki file dhoondhta'], [C.bad, 'Sweeper-2 → Redis lock', 'Sweeper-2 ne bhi maanga, lock pehle se Sweeper-1 ke paas, is baar skip']],
 ];
 function frame(ph) {
   if (ph === 0) {

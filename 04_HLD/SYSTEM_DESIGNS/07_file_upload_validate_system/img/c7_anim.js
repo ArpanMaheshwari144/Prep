@@ -17,9 +17,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Ravi → Download Svc', 'GET T-101 (id leak hui thi)'], [C.acc, 'Download Svc → S3', 'id dekhi, file maangi'], [C.acc, 'S3 → Download Svc', 'Arpan ki report.pdf'], [C.bad, 'Download Svc → Ravi', 'Arpan ki file Ravi ko']],
-  [[C.msg, 'Ravi → Download Svc', 'GET T-101'], [C.acc, 'Download Svc → Status DB', 'T-101 ka maalik kaun?'], [C.acc, 'Status DB → Download Svc', 'arpan'], [C.good, 'Download Svc → Ravi', '403: ravi != arpan']],
-  [[C.msg, 'Admin → Download Svc', 'GET T-101'], [C.good, 'Download Svc → S3', 'admin role hai: file mili'], [C.msg, 'Ravi → Download Svc', 'GET T-101'], [C.bad, 'Download Svc → Ravi', 'na owner na admin: 403']],
+  [[C.msg, 'Ravi → Download Svc', 'Ravi ko Arpan ka id T-101 mil gaya, usne GET T-101 kiya'], [C.acc, 'Download Svc → S3', 'Download Svc ne bas id dekhi aur S3 se file maangi'], [C.acc, 'S3 → Download Svc', 'S3 ne Arpan ki report.pdf de di'], [C.bad, 'Download Svc → Ravi', 'Arpan ki file Ravi ke haath lag gayi']],
+  [[C.msg, 'Ravi → Download Svc', 'Ravi ne phir wahi GET T-101 bheja'], [C.acc, 'Download Svc → Status DB', 'Download Svc ne pehle DB se poocha T-101 ka maalik kaun'], [C.acc, 'Status DB → Download Svc', 'DB ne bataya T-101 ka maalik arpan hai'], [C.good, 'Download Svc → Ravi', 'JWT me ravi, maalik arpan, to Ravi ko 403']],
+  [[C.msg, 'Admin → Download Svc', 'Admin ne support ke liye GET T-101 kiya'], [C.good, 'Download Svc → S3', 'Admin role tha, to file mil gayi'], [C.msg, 'Ravi → Download Svc', 'Usi waqt Ravi ne bhi GET T-101 bheja'], [C.bad, 'Download Svc → Ravi', 'Na maalik na admin, to Ravi ko 403']],
 ];
 function frame(ph) {
   if (ph === 0) {

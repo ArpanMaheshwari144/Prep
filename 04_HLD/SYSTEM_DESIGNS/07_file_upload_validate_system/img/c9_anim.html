@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -210,9 +212,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Ravi → Worker', 'naam report.pdf, type pdf'], [C.bad, 'Worker → Status DB', 'naam pe bharosa: DONE'], [C.bad, 'Status DB → Arpan', 'DONE dekh ke download:|andar EXE nikla']],
-  [[C.acc, 'S3 → Worker', 'file ke pehle 4 byte padhe'], [C.good, 'Worker → Status DB', '"MZ" = EXE: REJECT']],
-  [[C.acc, 'Worker → Scanner', '%PDF theek, ab virus scan'], [C.bad, 'Scanner', 'virus mila'], [C.bad, 'Scanner → Quarantine', 'file wahan, download band'], [C.good, 'Scanner → Status DB', 'DONE nahi: REJECT']],
+  [[C.msg, 'Ravi → Worker', 'Ravi ki file aayi: naam report.pdf, type pdf'], [C.bad, 'Worker → Status DB', 'Worker ne naam pe bharosa karke DONE likh diya'], [C.bad, 'Status DB → Arpan', 'Arpan ne DONE dekh ke download kiya, andar EXE nikla']],
+  [[C.acc, 'S3 → Worker', 'Worker ne S3 se file ke pehle 4 byte padhe'], [C.good, 'Worker → Status DB', 'Shuru me "MZ" tha matlab EXE, worker ne REJECT likha']],
+  [[C.acc, 'Worker → Scanner', 'Shuru "%PDF" sahi tha, ab file virus scan me gayi'], [C.bad, 'Scanner', 'Scanner ko file ke andar virus mila'], [C.bad, 'Scanner → Quarantine', 'File quarantine me daal di, uska download band'], [C.good, 'Scanner → Status DB', 'Status DB me DONE nahi, REJECT likha gaya']],
 ];
 function frame(ph) {
   if (ph === 0) {

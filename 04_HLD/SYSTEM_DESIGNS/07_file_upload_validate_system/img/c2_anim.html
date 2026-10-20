@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -210,9 +212,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, 'Phone → Upload Svc', '5 GB pehle hamare server pe aaye'], [C.bad, 'Upload Svc → S3', 'wahi 5 GB phir S3 pe'], [C.bad, 'Upload Svc', 'thread minuton atka,|server pe bojh, mehnga bhi']],
-  [[C.msg, 'Phone → Upload Svc', 'paas maanga, bytes nahi bheje'], [C.acc, 'Upload Svc → Phone', '10 min ka signed URL + T-102'], [C.good, 'Phone → S3', '5 GB seedha S3 pe,|server beech me nahi'], [C.good, 'Phone → Upload Svc', '/complete T-102:|ab jaanch line me']],
-  [[C.acc, 'Upload Svc → Koi app', 'paas diya, usme max 5 GB sign'], [C.bad, 'Koi app → S3', '50 GB bhejne ki koshish'], [C.good, 'S3 → Koi app', 'size paas se bahar: reject.|Hamara server kuch nahi karta']],
+  [[C.bad, 'Phone → Upload Svc', 'Arpan ki 5 GB video pehle hamare server pe aayi'], [C.bad, 'Upload Svc → S3', 'Phir server ne wahi 5 GB S3 pe bheje, bytes do baar'], [C.bad, 'Upload Svc', 'Server ka thread minuton atka, bojh bhi aur kharcha bhi']],
+  [[C.msg, 'Phone → Upload Svc', 'Phone ne server se sirf upload ka paas maanga, bytes nahi bheje'], [C.acc, 'Upload Svc → Phone', 'Server ne 10 min ka signed URL aur T-102 diya'], [C.good, 'Phone → S3', 'Phone ne 5 GB seedha S3 pe bheje, server beech me nahi'], [C.good, 'Phone → Upload Svc', 'Upload ke baad /complete T-102 bheja, ab jaanch line me']],
+  [[C.acc, 'Upload Svc → Koi app', 'Server ne paas diya, usme max 5 GB ki had sign thi'], [C.bad, 'Koi app → S3', 'Ek app ne usi paas se 50 GB bhejne ki koshish ki'], [C.good, 'S3 → Koi app', 'Size paas ki had se bahar tha, S3 ne khud reject kiya']],
 ];
 function frame(ph) {
   if (ph === 0) {

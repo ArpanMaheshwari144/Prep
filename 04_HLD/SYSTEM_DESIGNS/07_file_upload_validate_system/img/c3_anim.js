@@ -17,9 +17,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Phone → S3', 'ek lamba upload, 4.5 GB chadha'], [C.bad, 'wifi gaya', 'upload beech me toota'], [C.bad, 'Phone → S3', 'phir 0 se poore 5 GB']],
-  [[C.good, 'Phone → S3', 'tukde 1-90, har tukde ki|rasid (ETag) S3 pe'], [C.bad, 'wifi gaya', 'beech me toota'], [C.acc, 'Phone → S3', 'sirf bache 91-100 bheje'], [C.good, 'Phone → S3', 'COMPLETE: S3 ne tukde jode']],
-  [[C.acc, 'Phone → S3', 'kal app khola: ListParts U-9'], [C.good, 'S3 → Phone', '1-90 pahunch chuke'], [C.good, 'Phone → S3', 'sirf 91-100. Rasid S3 pe thi,|phone pe nahi']],
+  [[C.msg, 'Phone → S3', 'Phone ek lamba upload kar raha tha, 4.5 GB chadh chuke the'], [C.bad, 'wifi gaya', 'Beech me wifi gaya aur upload toot gaya'], [C.bad, 'Phone → S3', 'Ab phir 0 se poore 5 GB bhejne pade']],
+  [[C.good, 'Phone → S3', 'Tukde 1 se 90 gaye, har tukde ki rasid (ETag) S3 pe rakhi'], [C.bad, 'wifi gaya', 'Beech me wifi gaya aur upload toota'], [C.acc, 'Phone → S3', 'Wifi aate hi sirf bache tukde 91 se 100 bheje'], [C.good, 'Phone → S3', 'COMPLETE bheja, S3 ne saare tukde jod ke ek file banayi']],
+  [[C.acc, 'Phone → S3', 'Agle din app khuli, S3 se poocha: ListParts U-9'], [C.good, 'S3 → Phone', 'S3 ne bataya tukde 1 se 90 pahunch chuke hain'], [C.good, 'Phone → S3', 'Sirf 91 se 100 bheje; rasid S3 pe thi, phone pe nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {
