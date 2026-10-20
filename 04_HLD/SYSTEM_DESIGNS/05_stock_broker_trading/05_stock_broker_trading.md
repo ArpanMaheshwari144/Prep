@@ -36,15 +36,13 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 Cue: IDEMPOTENCY KEY (wahi id dobara)
 
-<details><summary>kahani dekho (4 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png" width="900">
+<img src="img/c1_1.png?v=2" width="900">
 
-<img src="img/c1_2.png" width="900">
+<img src="img/c1_2.png?v=2" width="900">
 
-<img src="img/c1_3.png" width="900">
-
-<img src="img/c1_4.png" width="900">
+<img src="img/c1_3.png?v=2" width="900">
 
 </details>
 
@@ -67,19 +65,13 @@ NAHI    button pehli tap pe band -> ADHOORA: kaafi nahi, retry app khud karta ha
 
 Cue: check + block EK atomic query
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png" width="900">
+<img src="img/c2_1.png?v=2" width="900">
 
-<img src="img/c2_2.png" width="900">
+<img src="img/c2_2.png?v=2" width="900">
 
-<img src="img/c2_3.png" width="900">
-
-<img src="img/c2_4.png" width="900">
-
-<img src="img/c2_5.png" width="900">
-
-<img src="img/c2_6.png" width="900">
+<img src="img/c2_3.png?v=2" width="900">
 
 </details>
 
@@ -113,17 +105,13 @@ NAHI    pehle padho, phir block -> RACE: laptop (TCS 30k) + phone (INFY 30k), do
 
 Cue: ek symbol ek thread, book RAM me
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png" width="900">
+<img src="img/c3_1.png?v=2" width="900">
 
-<img src="img/c3_2.png" width="900">
+<img src="img/c3_2.png?v=2" width="900">
 
-<img src="img/c3_3.png" width="900">
-
-<img src="img/c3_4.png" width="900">
-
-<img src="img/c3_5.png" width="900">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
@@ -160,15 +148,13 @@ NAHI    do thread bina line -> RACE: dono ko "10 hai" dikha, dono ne le liye, 20
 
 Cue: baanto mat, ek thread kaafi, line
 
-<details><summary>kahani dekho (4 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png" width="900">
+<img src="img/c4_1.png?v=2" width="900">
 
-<img src="img/c4_2.png" width="900">
+<img src="img/c4_2.png?v=2" width="900">
 
-<img src="img/c4_3.png" width="900">
-
-<img src="img/c4_4.png" width="900">
+<img src="img/c4_3.png?v=2" width="900">
 
 </details>
 
