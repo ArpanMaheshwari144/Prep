@@ -44,6 +44,7 @@ function frame(ph) {
     dots(4, 385, 155, C.acc, { gap: 24 });
     L(430, 128, 'INCR');
     A(360, 200, 515, 280, C.bad, { dash: 1, n: 3, at: 0.25 }); cross(450, 248);
+    L(300, 330, 'hal: SHARD, har user ki key alag Redis pe', C.good);
   } else if (ph === 4) {
     left('bad', 'good'); main('bad'); copy('bad'); L(600, 345, 'copy bhi gayi', C.bad);
     A(150, 135, 238, 180, C.bad, { n: 1, at: 0.25 }); A(150, 245, 238, 200, C.good, { n: 1 });
