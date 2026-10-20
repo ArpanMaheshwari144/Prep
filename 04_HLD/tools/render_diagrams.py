@@ -22,6 +22,9 @@ def render(src, png, wide=1100):
     if vb and float(vb.group(1)) > wide and 'flowchart LR' in src:
         return render(src.replace('flowchart LR', 'flowchart TB', 1), png, wide)
     fix_size(png)
+    # teer ke label ke peeche safed poora (0.5 pe line text ke beech se dikhti)
+    t = open(png, encoding='utf-8').read()
+    open(png, 'w', encoding='utf-8').write(t.replace('edgeLabel rect{opacity:0.5;', 'edgeLabel rect{opacity:1;'))
     return True, ''
 
 CAP = 900   # GitHub pe chauda diagram chhota dikhe; click karo to poora

@@ -65,6 +65,10 @@ def apply(md_path, cards):
             body, k = re.subn(r'<details><summary>kahani dekho.*?</details>', lambda m: new, body, count=1, flags=re.S)
             if not k:
                 body, k = re.subn(r'```(?:text)?\nDIKKAT:.*?```', lambda m: new, body, count=1, flags=re.S)
+            if not k:   # purani GIF line
+                body, k = re.subn(r'!\[[^\]]*\]\(img/[^)]*\.gif\)', lambda m: new, body, count=1)
+            if not k:   # kuch nahi tha -> Cue line ke neeche
+                body, k = re.subn(r'(Cue:[^\n]*\n)', lambda m: m.group(1) + '\n' + new + '\n', body, count=1)
             assert k, f'card {num}: jagah nahi mili'
         out += head + body
     open(md_path, 'w', encoding='utf-8').write(out)

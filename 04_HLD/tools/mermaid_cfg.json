@@ -1,1 +1,1 @@
-{"theme":"default","htmlLabels":false,"fontFamily":"Arial, Helvetica, sans-serif","themeVariables":{"fontFamily":"Arial, Helvetica, sans-serif"},"flowchart":{"wrappingWidth":380,"htmlLabels":false}}
+{"theme": "default", "htmlLabels": false, "fontFamily": "Arial, Helvetica, sans-serif", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "edgeLabelBackground": "#ffffff"}, "flowchart": {"wrappingWidth": 380, "htmlLabels": false}}
