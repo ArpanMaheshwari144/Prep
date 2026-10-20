@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR Redis restart, list khaali? -> DB se ek baar banao, lock ke saath'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, 'Users → Feed Svc', 'subah lakhon log feed maang rahe'], [C.bad, 'Feed Svc → DB', 'har user pe ORDER BY time LIMIT 20'], [C.bad, 'DB', '500 / sec wahi sort, DB bhara,|feed dheemi']],
-  [[C.acc, 'Worker → Redis', 'nayi khabar aate hi ZADD,|time ke kram me apni jagah'], [C.msg, 'Arpan → Feed Svc', 'app khola, feed maangi'], [C.good, 'Redis → Feed Svc', 'ZREVRANGE 0 19: taazi 20 id'], [C.good, 'Feed Svc → Arpan', '20 khabar. DB tak koi nahi gaya']],
-  [[C.acc, 'Feed Svc-A → Redis', 'list khaali (miss). Lock liya (SET NX)'], [C.good, 'Feed Svc-A → DB', 'sirf A ne ek baar list banayi'], [C.good, 'Feed Svc-A → Redis', 'list wapas Redis me bhari'], [C.acc, 'Feed Svc-B → Redis', 'lock nahi mila: thoda ruka,|phir Redis se padha']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Users → Feed Svc', 'Subah lakhon log ek saath app khol ke feed maang rahe'], [C.bad, 'Feed Svc → DB', 'Har user ke liye DB pe ORDER BY time LIMIT 20 chala'], [C.bad, 'DB', 'Har second 500 baar wahi sort, DB bhar gaya aur feed dheemi']],
+  [[C.acc, 'Worker → Redis', 'Nayi khabar aate hi worker ne Redis me ZADD kiya, time ke kram me'], [C.msg, 'Arpan → Feed Svc', 'Arpan ne app khola aur feed maangi'], [C.good, 'Redis → Feed Svc', 'Redis ne ZREVRANGE 0 19 se taazi 20 id de di'], [C.good, 'Feed Svc → Arpan', 'Arpan ko 20 khabar mili, DB tak koi nahi gaya']],
+  [[C.acc, 'Feed Svc-A → Redis', 'Redis restart hua, list khaali; Feed Svc-A ne lock liya (SET NX)'], [C.good, 'Feed Svc-A → DB', 'Sirf A ne DB se ek baar list banayi'], [C.good, 'Feed Svc-A → Redis', 'A ne bani hui list wapas Redis me bhar di'], [C.acc, 'Feed Svc-B → Redis', 'B ko lock nahi mila, thoda ruka aur phir Redis se padha']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 120, 190, 80, 'Users', 'subah: lakhon', { icon: 'users' });

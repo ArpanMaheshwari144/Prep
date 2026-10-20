@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR OPEN hai, wapas kab chalu? -> thodi der baad HALF-OPEN: ek test call'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.bad, 'Fetcher → chhota blog', 'call gayi, 30 sec jawab nahi'], [C.bad, 'baaki 999 source', 'line me ruke'], [C.bad, 'Feed', 'nayi khabar aani band']],
-  [[C.acc, 'Fetcher → chhota blog', 'call, 3 sec baad chhoda'], [C.good, 'Fetcher → NDTV', 'agle source pe aage'], [C.bad, 'Breaker → chhota blog', '5 baar fail: OPEN, call roki'], [C.good, 'Worker → Redis', 'baaki 999 ki khabar feed me']],
-  [[C.acc, 'Breaker → Test call', 'thodi der baad sirf ek call|(HALF-OPEN)'], [C.good, 'Test call → CLOSED', 'chali: breaker band, sab call chalu'], [C.bad, 'ya fail → OPEN', 'phir OPEN, thodi der aur ruko']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Fetcher → chhota blog', 'Fetcher ne chhote blog ko call kiya, 30 sec jawab nahi aaya'], [C.bad, 'baaki 999 source', 'Baaki 999 source line me ruke rahe'], [C.bad, 'Feed', 'Feed me nayi khabar aani band ho gayi']],
+  [[C.acc, 'Fetcher → chhota blog', 'Fetcher ne blog ko call kiya, 3 sec me jawab nahi to chhoda'], [C.good, 'Fetcher → NDTV', 'Fetcher agle source NDTV pe aage badha'], [C.bad, 'Breaker → chhota blog', 'Blog 5 baar fail hua, breaker OPEN, call wahin roki'], [C.good, 'Worker → Redis', 'Baaki 999 source ki khabar feed me aati rahi']],
+  [[C.acc, 'Breaker → Test call', 'Thodi der baad breaker ne sirf ek test call jaane di (HALF-OPEN)'], [C.good, 'Test call → CLOSED', 'Test call chali to breaker band, sab call phir chalu'], [C.bad, 'ya fail → OPEN', 'Test fail hui to phir OPEN, thodi der aur ruko']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 170, 80, 'Fetcher', 'jawab ka wait', { st: 'bad' });

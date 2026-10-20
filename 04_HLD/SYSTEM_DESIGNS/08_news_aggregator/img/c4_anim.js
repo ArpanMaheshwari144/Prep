@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR "wins" aur "won", hash alag? -> SimHash: 90% same to duplicate'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, '5 source → Worker', 'wahi khabar, 5 alag URL'], [C.bad, 'Worker → Feed', 'har naya URL nayi khabar maani'], [C.bad, 'Feed', '"India ne match jeeta" 5 baar']],
-  [[C.acc, 'Worker → Bloom', 'ye URL pehli baar? (Bloom filter)'], [C.acc, 'Worker → Title hash', 'title saaf karke hash'], [C.good, 'Title hash → Worker', 'ye hash pehle se: duplicate, skip'], [C.good, 'Feed', 'khabar sirf ek baar (pehli wali)']],
-  [[C.bad, 'Exact hash', 'ek shabd badla, hash poora alag'], [C.good, 'SimHash', '64 me se 59 bit same = 92%'], [C.good, 'SimHash → Feed', '90% se upar: duplicate.|Feed me ek hi']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, '5 source → Worker', 'Wahi khabar 5 source se aayi, 5 alag URL ke saath'], [C.bad, 'Worker → Feed', 'Worker ne har naye URL ko nayi khabar maana'], [C.bad, 'Feed', 'Feed me "India ne match jeeta" 5 baar dikha']],
+  [[C.acc, 'Worker → Bloom', 'Worker ne Bloom filter se dekha ye URL pehli baar aaya?'], [C.acc, 'Worker → Title hash', 'Phir title chhote akshar aur bina chinh karke hash nikala'], [C.good, 'Title hash → Worker', 'Ye hash pehle se tha, matlab duplicate, skip kiya'], [C.good, 'Feed', 'Feed me khabar sirf ek baar, pehli wali']],
+  [[C.bad, 'Exact hash', '"wins" ki jagah "won", ek shabd badla to hash poora alag'], [C.good, 'SimHash', 'SimHash me 64 me se 59 bit same, matlab 92% milte'], [C.good, 'SimHash → Feed', '90% se upar to duplicate maana, feed me ek hi']],
+];
 function frame(ph) {
   if (ph === 0) {
     ['NDTV', 'ABP', 'TOI', 'HT', 'BBC'].forEach((s, i) => B(20, 5 + i * 64, 130, 52, s, ''));

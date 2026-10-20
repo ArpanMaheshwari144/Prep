@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR 1 saal purani khabar khuli? -> S3 archive se aati. Dheemi, par khulti'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.bad, 'Ek table', 'May se Oct, sab ek jagah'], [C.bad, 'Disk + backup', 'purane mahine bhi garam disk pe,|har backup me. Faltu kharcha']],
-  [[C.good, 'Worker → Oct tukda', 'nayi khabar sirf is mahine ke tukde me'], [C.acc, 'May tukda → S3', 'DETACH, purana thanda S3 pe (sasta)'], [C.good, 'Postgres', 'sirf haal ke mahine. Chhota, index RAM me']],
-  [[C.msg, 'Arpan → Article Svc', 'pichhle saal ki khabar a12'], [C.acc, 'Article Svc → Postgres', 'yahan nahi (sirf haal ke mahine)'], [C.acc, 'Article Svc → S3 archive', 'wahan mili'], [C.good, 'Article Svc → Arpan', 'khul gayi, thodi der se']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Ek table', 'May se Oct tak saari khabar ek hi table me'], [C.bad, 'Disk + backup', 'Purane mahine bhi mehngi disk pe aur har backup me, faltu kharcha']],
+  [[C.good, 'Worker → Oct tukda', 'Nayi khabar sirf is mahine (Oct) ke tukde me gayi'], [C.acc, 'May tukda → S3', 'Purana May wala tukda DETACH karke sasti S3 pe bheja'], [C.good, 'Postgres', 'Postgres me sirf haal ke mahine, chhota, index RAM me']],
+  [[C.msg, 'Arpan → Article Svc', 'Arpan ne pichhle saal ki khabar a12 kholi'], [C.muted, 'Article Svc → Postgres', 'Postgres me nahi mili, wahan sirf haal ke mahine'], [C.acc, 'Article Svc → S3 archive', 'Article Svc ne S3 archive me dhoondhi, wahan mili'], [C.good, 'Article Svc → Arpan', 'Khabar khul gayi, bas thodi der se']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 30, 560, 220, 'articles: ek table', '', { st: 'bad' });

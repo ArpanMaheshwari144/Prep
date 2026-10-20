@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR shard hain, taazi 20 kahan se? -> Redis se. Miss to har tukde se thoda'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, 'Workers → DB', '100 guna likhai ek machine pe'], [C.bad, 'DB', 'disk aur likhai full, sab dheema']],
-  [[C.acc, 'Worker', 'hash(a91) = 2'], [C.good, 'Worker → Shard 2', 'a91 shard 2 pe likhi'], [C.good, 'Shard 1, 2, 3', 'bojh barabar bata. Ek mara to sirf uska hissa']],
-  [[C.good, 'Feed Svc → Redis', 'feed:latest: 20 id, zyadatar yahin se'], [C.acc, 'Feed Svc → har shard', 'miss: har tukde se uske top 20'], [C.good, 'Feed Svc', 'sab milao, time se top 20 (scatter-gather)']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Workers → DB', 'Source 100 guna hue, saari likhai ek hi DB machine pe'], [C.bad, 'DB', 'Disk aur likhai dono full, sab dheema ho gaya']],
+  [[C.acc, 'Worker', 'Worker ne article id ka hash nikala: hash(a91) = 2'], [C.good, 'Worker → Shard 2', 'Isliye a91 shard 2 pe likhi gayi'], [C.good, 'Shard 1, 2, 3', 'Bojh teeno pe barabar bata; ek mara to sirf uska hissa jaata']],
+  [[C.good, 'Feed Svc → Redis', 'Feed Svc ne Redis ke feed:latest se 20 id li, zyadatar yahin se'], [C.acc, 'Feed Svc → har shard', 'Redis me nahi mila to har shard se uske top 20 maange'], [C.good, 'Feed Svc', 'Sab milake time se top 20 chune (scatter-gather)']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 20, 170, 60, 'Worker', '');

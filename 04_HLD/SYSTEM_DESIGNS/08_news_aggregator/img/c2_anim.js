@@ -7,11 +7,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR likha, Kafka commit se pehle crash? -> DB khud rokta: url pe UNIQUE'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.bad, 'Fetcher → Source A', 'ek-ek karke laata hai. A 30 sec atka'], [C.bad, 'Source B se Z', 'line me khade, kisi ki baari nahi'], [C.bad, 'Fetcher → DB', 'khud hi likhta bhi hai.|Laana aur likhna ek hi line me']],
-  [[C.acc, 'Fetcher → Kafka', 'a91 daali (key = source).|Bas laana, likhna nahi'], [C.acc, 'Kafka → Worker', 'worker apni speed se padhta'], [C.good, 'Worker → DB', 'a91 save'], [C.good, 'Worker → Redis', 'feed me ZADD a91']],
-  [[C.good, 'Worker-1 → DB', 'a91 likh diya'], [C.bad, 'Worker-1 mara', 'Kafka ko "padh liya" (commit)|bolne se pehle'], [C.acc, 'Kafka → Worker-2', 'a91 phir aayi'], [C.good, 'Worker-2 → DB', 'url UNIQUE: ON CONFLICT DO NOTHING.|Khabar ek hi baar']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -22,6 +17,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Fetcher → Source A', 'Fetcher ek-ek source se khabar laata, Source A pe 30 sec atka'], [C.bad, 'Source B se Z', 'Source B se Z tak line me khade, kisi ki baari nahi aayi'], [C.bad, 'Fetcher → DB', 'Fetcher khud DB me likhta bhi tha, laana aur likhna ek hi line me']],
+  [[C.acc, 'Fetcher → Kafka', 'Fetcher ne a91 Kafka me daali (key = source), bas laana, likhna nahi'], [C.acc, 'Kafka → Worker', 'Worker apni speed se Kafka se padhta'], [C.good, 'Worker → DB', 'Worker ne a91 DB me save ki'], [C.good, 'Worker → Redis', 'Phir feed me a91 ka ZADD kiya']],
+  [[C.good, 'Worker-1 → DB', 'Worker-1 ne a91 DB me likh di'], [C.bad, 'Worker-1 mara', 'Kafka ko "padh liya" (commit) bolne se pehle Worker-1 mar gaya'], [C.acc, 'Kafka → Worker-2', 'Isliye Kafka ne a91 Worker-2 ko dobara di'], [C.good, 'Worker-2 → DB', 'url UNIQUE tha, ON CONFLICT DO NOTHING se khabar ek hi baar rahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 170, 80, 'Fetcher', 'ek-ek karke', { st: 'bad' });

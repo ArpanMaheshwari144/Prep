@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR "cricket kohli" dhoondha? -> dono list milao, AND = a45'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, 'Arpan → Search Svc', '"cricket" dhoondha'], [C.bad, 'Search Svc → DB', 'LIKE %cricket%: % aage, index nahi lagta'], [C.bad, 'DB', '2 crore row ek-ek padhi, jawab 8 sec']],
-  [[C.msg, 'Search Svc → ES', '"cricket" ki list do'], [C.good, 'ES → Search Svc', 'a12, a45, a90: sirf id'], [C.acc, 'Search Svc → Redis / DB', 'in id ka text laao'], [C.good, 'Search Svc → Arpan', 'results, ms me']],
-  [[C.acc, 'cricket', 'a12, a45, a90'], [C.acc, 'kohli', 'a45, a77'], [C.good, 'AND', 'dono me sirf a45. Phir score se sort']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Arpan → Search Svc', 'Arpan ne search box me "cricket" likh ke dhoondha'], [C.bad, 'Search Svc → DB', 'DB pe LIKE %cricket% chala, % aage hai to index nahi lagta'], [C.bad, 'DB', 'DB ne 2 crore row ek-ek padhi, jawab 8 sec me']],
+  [[C.msg, 'Search Svc → ES', 'Search Svc ne Elasticsearch se "cricket" ki list maangi'], [C.good, 'ES → Search Svc', 'ES ne turant id di: a12, a45, a90'], [C.acc, 'Search Svc → Redis / DB', 'In id ka poora text Redis ya DB se laaya'], [C.good, 'Search Svc → Arpan', 'Search Svc ne Arpan ko results milliseconds me dikhaye']],
+  [[C.acc, 'cricket', '"cricket" shabd ki list me a12, a45, a90 hain'], [C.acc, 'kohli', '"kohli" shabd ki list me a45, a77 hain'], [C.good, 'AND', 'Dono me sirf a45 hai, phir score se sort karke dikhaya']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 160, 80, 'Arpan', '"cricket"', { icon: 'user' });

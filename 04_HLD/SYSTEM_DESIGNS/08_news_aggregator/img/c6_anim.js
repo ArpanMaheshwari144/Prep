@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR khabar 2 category list me? -> dono me ZADD, milate waqt id se dedupe'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.bad, 'Feed Svc → Arpan', 'sabki ek feed: politics, bollywood sab'], [C.bad, 'har user ki alag feed?', '10 lakh feed. Har nayi khabar|10 lakh jagah daalni padti']],
-  [[C.acc, 'Worker → feed:tech', 'khabar aayi to apni category ki list me'], [C.msg, 'Arpan → Feed Svc', 'pasand: tech + sports'], [C.good, 'Redis → Feed Svc', 'feed:tech + feed:sports ke top 20'], [C.good, 'Feed Svc → Arpan', 'time se milake 20. Sirf ~20 list, 10 lakh nahi']],
-  [[C.acc, 'Worker → 2 list', 'a91 tech bhi, sports bhi: dono me ZADD'], [C.acc, 'Redis → Feed Svc', 'dono list padhi: a91 do baar aayi'], [C.good, 'Feed Svc', 'id se dedupe: a91 ek hi baar']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Feed Svc → Arpan', 'Arpan ko sabki ek hi feed mili: politics, bollywood sab'], [C.bad, 'har user ki alag feed?', 'Har user ki alag feed = 10 lakh feed, har khabar 10 lakh jagah daalni padti']],
+  [[C.acc, 'Worker → feed:tech', 'Khabar aayi to worker ne apni category ki list me daali'], [C.msg, 'Arpan → Feed Svc', 'Arpan ki pasand tech aur sports hai, usne feed maangi'], [C.good, 'Redis → Feed Svc', 'Redis se feed:tech aur feed:sports ke top 20 aaye'], [C.good, 'Feed Svc → Arpan', 'Time se milake 20 diye; list sirf ~20, 10 lakh nahi']],
+  [[C.acc, 'Worker → 2 list', 'Khabar a91 tech bhi, sports bhi, to dono list me ZADD'], [C.acc, 'Redis → Feed Svc', 'Feed Svc ne dono list padhi, a91 do baar aayi'], [C.good, 'Feed Svc', 'id se dedupe kiya, a91 feed me ek hi baar']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 120, 200, 80, 'Arpan', 'tech + sports', { icon: 'user' });
