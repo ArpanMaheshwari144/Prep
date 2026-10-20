@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, 'Bieber → Kafka line', 'tweet: 10 cr inbox ka kaam'], [C.acc, 'Arpan → Kafka line', 'tweet, line me peeche'], [C.bad, 'Arpan ka tweet', 'ghanton der se pahuncha']],
-  [[C.good, 'Fanout Svc → Arpan ka inbox', 'aam user (Ravi): push, turant'], [C.acc, 'Fanout Svc → Celeb cache', 'Bieber: push nahi, yahin rakha'], [C.good, 'Arpan ka inbox → Feed Svc', 'app khola: aam logon ke tweet'], [C.acc, 'Celeb cache → Feed Svc', 'celeb ke tweet kheenche,|time se milaye']],
-  [[C.good, '12,100 follower', '12,000 se upar gaya: ab pull'], [C.good, '11,800 follower', '8,000 se upar hai: abhi bhi pull.|Do had: baar-baar nahi palat-ta']],
+  [[C.bad, 'Bieber → Kafka line', 'Bieber ne tweet kiya, 10 crore inbox bharne ka kaam line me aaya'], [C.acc, 'Arpan → Kafka line', 'Arpan ka tweet usi line me Bieber ke kaam ke peeche laga'], [C.bad, 'Arpan ka tweet', 'Arpan ka tweet followers tak ghanton der se pahuncha']],
+  [[C.good, 'Fanout Svc → Arpan ka inbox', 'Ravi jaise aam user ka tweet push hua, inbox me turant'], [C.acc, 'Fanout Svc → Celeb cache', 'Bieber ka tweet push nahi hua, sirf celeb cache me rakha'], [C.good, 'Arpan ka inbox → Feed Svc', 'Arpan ne app khola, inbox se aam logon ke tweet aaye'], [C.acc, 'Celeb cache → Feed Svc', 'Celeb ke tweet usi waqt kheenche aur time se milaye']],
+  [[C.good, '12,100 follower', 'Follower 12,000 se upar gaye, ab is user ka tweet pull hoga'], [C.good, '11,800 follower', 'Thode ghate par 8,000 se upar hai, to abhi bhi pull; do had se baar-baar nahi palat-ta']],
 ];
 function frame(ph) {
   if (ph === 0) {

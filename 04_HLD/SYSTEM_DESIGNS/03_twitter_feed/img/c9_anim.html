@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -201,9 +203,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Crore log → Ek service', 'GET /feed, scroll'], [C.acc, 'Arpan → Ek service', 'POST /tweet'], [C.bad, 'Arpan ka tweet', 'padhne ki bheed me atka']],
-  [[C.acc, 'Crore log → ALB', 'GET /feed'], [C.good, 'Arpan → ALB', 'POST /tweet'], [C.acc, 'ALB → Timeline Svc x20', '/feed yahan'], [C.good, 'ALB → Tweet Svc x2', '/tweet yahan, alag']],
-  [[C.acc, 'Crore log → ALB', 'bheed aur badhi'], [C.good, 'Arpan → ALB', 'POST /tweet'], [C.acc, 'ALB → Timeline Svc x40', 'sirf yahi 20 -> 40'], [C.good, 'ALB → Tweet Svc x2', 'koi asar nahi, tweet turant']],
+  [[C.bad, 'Crore log → Ek service', 'Crore log scroll kar rahe, sab GET /feed ek hi service pe'], [C.acc, 'Arpan → Ek service', 'Arpan ka POST /tweet bhi usi service pe aaya'], [C.bad, 'Arpan ka tweet', 'Padhne ki bheed me Arpan ka tweet atak gaya']],
+  [[C.acc, 'Crore log → ALB', 'Crore logon ka GET /feed pehle ALB pe aaya'], [C.good, 'Arpan → ALB', 'Arpan ka POST /tweet bhi ALB pe aaya'], [C.acc, 'ALB → Timeline Svc x20', 'ALB ne /feed padhne wali Timeline Svc (20 machine) ko bheja'], [C.good, 'ALB → Tweet Svc x2', '/tweet alag Tweet Svc pe gaya, bheed se door']],
+  [[C.acc, 'Crore log → ALB', 'Match ke waqt padhne wali bheed aur badh gayi'], [C.good, 'Arpan → ALB', 'Arpan ne usi waqt ek naya tweet kiya'], [C.acc, 'ALB → Timeline Svc x40', 'Sirf Timeline Svc ko 20 se 40 machine kiya'], [C.good, 'ALB → Tweet Svc x2', 'Tweet Svc pe koi asar nahi, Arpan ka tweet turant gaya']],
 ];
 function frame(ph) {
   if (ph === 0) {

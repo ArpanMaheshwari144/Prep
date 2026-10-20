@@ -11,9 +11,9 @@ function apps(st, sub) {
   ['App-1', 'App-2', 'App-3'].forEach((n, i) => B(420, 30 + i * 105, 160, 65, n, sub[i], { st: st[i] }));
 }
 const STEPS = [
-  [[C.bad, 'India users → App', 'ek hi machine'], [C.bad, 'App giri', 'poora India band']],
-  [[C.msg, 'India users → ALB', 'har request pehle ALB pe'], [C.good, 'ALB → App-1, App-3', 'App-2 giri: /health fail, bahar.|Baaki pe request']],
-  [[C.good, 'App-1', 'pehle App-1 pe naya code'], [C.acc, 'App-2', 'ab App-2 bahar, badal rahe'], [C.good, 'ALB → App-1, App-3', 'bheed baaki App sambhaal leti']],
+  [[C.bad, 'India users → App', 'India ke saare users ek hi App machine pe aa rahe the'], [C.bad, 'App giri', 'Wo ek machine giri to poora India band ho gaya']],
+  [[C.msg, 'India users → ALB', 'Ab har request pehle ALB pe aati, ALB tay karta kahan bheje'], [C.good, 'ALB → App-1, App-3', 'App-2 ne /health fail kiya to ALB ne use bahar kiya, request baaki App pe']],
+  [[C.good, 'App-1', 'Naya code pehle sirf App-1 pe daala, baaki purane pe chalte rahe'], [C.acc, 'App-2', 'Ab App-2 ko bahar karke badal rahe, ek waqt me ek hi'], [C.good, 'ALB → App-1, App-3', 'Tab tak bheed baaki App sambhaal leti, user ko kuch pata nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

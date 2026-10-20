@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'US server → Delhi, London, Sydney', '50 MB x laakhon, door se'], [C.bad, 'US server', 'bandwidth ka bill, buffering']],
-  [[C.msg, 'Arpan → App', 'upload link maanga, presigned mila'], [C.good, 'Arpan → S3', 'seedha S3, App beech me nahi'], [C.msg, 'Delhi → CDN Delhi', 'video dekhna'], [C.acc, 'S3 → CDN Delhi', 'pehli baar S3 se laaya, phir paas se']],
-  [[C.good, 'Mohan → CDN', 'signed link, 10 min'], [C.good, 'CDN → Mohan', 'photo mili'], [C.bad, 'Koi aur → CDN', '1 ghante baad wahi link'], [C.bad, 'CDN → Koi aur', '403: link ki umar khatam']],
+  [[C.bad, 'US server → Delhi, London, Sydney', '50 MB ki video laakhon logon ko door US server se ja rahi'], [C.bad, 'US server', 'Bandwidth ka bill bhaari, aur door walon ko buffering']],
+  [[C.msg, 'Arpan → App', 'Arpan ne App se upload link maanga, presigned link mila'], [C.good, 'Arpan → S3', 'Video seedha S3 me gayi, App beech me bojh nahi utha raha'], [C.msg, 'Delhi → CDN Delhi', 'Delhi ke user ne video dekhni chahi, request paas wale CDN pe'], [C.muted, 'S3 → CDN Delhi', 'Pehli baar CDN ne S3 se laayi, phir paas se hi deta']],
+  [[C.good, 'Mohan → CDN', 'Mohan ke paas signed link hai, 10 min ki umar wala'], [C.good, 'CDN → Mohan', 'Link sahi aur zinda tha, to Mohan ko photo mil gayi'], [C.bad, 'Koi aur → CDN', 'Kisi aur ne 1 ghante baad wahi link khola'], [C.bad, 'CDN → Koi aur', 'Link ki umar khatam, to CDN ne 403 diya']],
 ];
 function frame(ph) {
   if (ph === 0) {

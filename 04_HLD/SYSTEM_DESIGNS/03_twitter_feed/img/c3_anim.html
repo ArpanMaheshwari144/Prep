@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -211,9 +213,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, 'Bieber → Kafka line', 'tweet: 10 cr inbox ka kaam'], [C.acc, 'Arpan → Kafka line', 'tweet, line me peeche'], [C.bad, 'Arpan ka tweet', 'ghanton der se pahuncha']],
-  [[C.good, 'Fanout Svc → Arpan ka inbox', 'aam user (Ravi): push, turant'], [C.acc, 'Fanout Svc → Celeb cache', 'Bieber: push nahi, yahin rakha'], [C.good, 'Arpan ka inbox → Feed Svc', 'app khola: aam logon ke tweet'], [C.acc, 'Celeb cache → Feed Svc', 'celeb ke tweet kheenche,|time se milaye']],
-  [[C.good, '12,100 follower', '12,000 se upar gaya: ab pull'], [C.good, '11,800 follower', '8,000 se upar hai: abhi bhi pull.|Do had: baar-baar nahi palat-ta']],
+  [[C.bad, 'Bieber → Kafka line', 'Bieber ne tweet kiya, 10 crore inbox bharne ka kaam line me aaya'], [C.acc, 'Arpan → Kafka line', 'Arpan ka tweet usi line me Bieber ke kaam ke peeche laga'], [C.bad, 'Arpan ka tweet', 'Arpan ka tweet followers tak ghanton der se pahuncha']],
+  [[C.good, 'Fanout Svc → Arpan ka inbox', 'Ravi jaise aam user ka tweet push hua, inbox me turant'], [C.acc, 'Fanout Svc → Celeb cache', 'Bieber ka tweet push nahi hua, sirf celeb cache me rakha'], [C.good, 'Arpan ka inbox → Feed Svc', 'Arpan ne app khola, inbox se aam logon ke tweet aaye'], [C.acc, 'Celeb cache → Feed Svc', 'Celeb ke tweet usi waqt kheenche aur time se milaye']],
+  [[C.good, '12,100 follower', 'Follower 12,000 se upar gaye, ab is user ka tweet pull hoga'], [C.good, '11,800 follower', 'Thode ghate par 8,000 se upar hai, to abhi bhi pull; do had se baar-baar nahi palat-ta']],
 ];
 function frame(ph) {
   if (ph === 0) {

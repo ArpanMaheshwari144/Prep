@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -201,9 +203,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Redis', 'har inbox me saare id.|40 cr soye hue users ke, RAM 95%']],
-  [[C.good, 'naya tweet', 'inbox me upar juda'], [C.bad, 'trim', '801va kata: sirf aakhri 800'], [C.good, 'Suresh ka inbox', '30 din app nahi khola: mita (TTL)']],
-  [[C.msg, 'Suresh → Feed Svc', '2 mahine baad app khola'], [C.bad, 'Feed Svc → Redis', 'inbox? nahi'], [C.acc, 'Feed Svc → Tweet DB', 'pull: follow walon ke tweet jodo'], [C.good, 'Feed Svc → Redis', 'inbox bana ke rakha, aage push']],
+  [[C.bad, 'Redis', 'Har inbox me saare tweet id, 40 crore soye hue users ke bhi; RAM 95% bhar gayi']],
+  [[C.good, 'naya tweet', 'Naya tweet aaya to inbox me sabse upar juda'], [C.bad, 'trim', 'Inbox sirf aakhri 800 rakhta, 801va purana id kaat diya'], [C.muted, 'Suresh ka inbox', 'Suresh ne 30 din app nahi khola, uska inbox mit gaya (TTL)']],
+  [[C.msg, 'Suresh → Feed Svc', 'Suresh 2 mahine baad app kholne aaya'], [C.bad, 'Feed Svc → Redis', 'Redis me uska inbox nahi mila, TTL se mit chuka tha'], [C.acc, 'Feed Svc → Tweet DB', 'Feed Svc ne pull kiya: follow walon ke tweet DB se jode'], [C.good, 'Feed Svc → Redis', 'Bana hua inbox Redis me rakha, ab aage se push chalega']],
 ];
 function frame(ph) {
   if (ph === 0) {

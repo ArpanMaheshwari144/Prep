@@ -19,9 +19,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Arpan → Feed Svc', 'app khola'], [C.bad, 'Feed Svc → DB', '200 jagah se tweet laao'], [C.bad, 'Feed Svc', 'jodo + time se sort: ~2 sec'], [C.bad, 'Feed Svc → Arpan', 'feed der se. Har baar yahi']],
-  [[C.msg, 'Ravi → Tweet DB', 't9 save'], [C.acc, 'Follow list → Fanout Svc', 'follower kaun: Arpan, Mohan..'], [C.good, 'Fanout Svc → Arpan ka inbox', 't9 id daali, sabke inbox me'], [C.good, 'Arpan ka inbox → Arpan', 'app khola: ek read, feed turant']],
-  [[C.good, 'Arpan ka inbox → Feed Svc', '50 id'], [C.acc, 'Feed Svc → Tweet cache', 'ek call: 50 id'], [C.good, 'Tweet cache → Feed Svc', '50 tweet ek saath (batch)']],
+  [[C.msg, 'Arpan → Feed Svc', 'Arpan ne app khola, Feed Svc ko uski feed banani thi'], [C.bad, 'Feed Svc → DB', 'Feed Svc 200 follow walon ke tweet alag-alag jagah se laaya'], [C.bad, 'Feed Svc', 'Sab jod ke time se sort kiya, isme ~2 sec lag gaye'], [C.bad, 'Feed Svc → Arpan', 'Feed der se khuli, aur har baar app kholne pe yahi']],
+  [[C.msg, 'Ravi → Tweet DB', 'Ravi ne tweet kiya, t9 Tweet DB me save hua'], [C.acc, 'Follow list → Fanout Svc', 'Fanout Svc ne dekha Ravi ke follower kaun: Arpan, Mohan aur baaki'], [C.good, 'Fanout Svc → Arpan ka inbox', 'Har follower ke inbox me t9 ki id pehle se daal di'], [C.good, 'Arpan ka inbox → Arpan', 'Arpan ne app khola, ek hi read me feed turant aa gayi']],
+  [[C.good, 'Arpan ka inbox → Feed Svc', 'Inbox me sirf 50 tweet id hain, poora tweet nahi'], [C.acc, 'Feed Svc → Tweet cache', 'Feed Svc ne 50 id ek hi call me maangi, 50 alag call nahi'], [C.good, 'Tweet cache → Feed Svc', 'Cache ne 50 tweet ek saath lautaye (batch), feed jaldi bani']],
 ];
 function frame(ph) {
   if (ph === 0) {

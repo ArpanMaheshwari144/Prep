@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Arpan → Tweet Svc', 'tweet kiya'], [C.good, 'Tweet Svc → Tweet DB', 't9 save'], [C.bad, 'Tweet Svc → 5,000 inbox', 'usi request me ek-ek bharta'], [C.bad, 'Tweet Svc → Arpan', '5 sec: "fail". Dobara daala to do baar']],
-  [[C.good, 'Tweet Svc → Tweet DB', 'pehle DB me pakka'], [C.acc, 'Tweet Svc → Kafka', 't9 ki khabar, disk pe'], [C.good, 'Tweet Svc → Arpan', 'turant "ho gaya"'], [C.good, 'Kafka → Worker', 'peeche 5,000 inbox bhare']],
-  [[C.acc, 'Kafka → Worker-1', 't9'], [C.bad, 'Worker-1 gira', '60 / 100 bhar ke, "ho gaya" nahi bola'], [C.acc, 'Kafka → Worker-2', 't9 phir'], [C.good, 'Worker-2 → Mohan ka inbox', 'dobara likha: sorted set me|same id ek hi baar']],
+  [[C.msg, 'Arpan → Tweet Svc', 'Arpan ne tweet kiya, request Tweet Svc pe aayi'], [C.good, 'Tweet Svc → Tweet DB', 'Tweet Svc ne t9 DB me save kar diya'], [C.bad, 'Tweet Svc → 5,000 inbox', 'Phir usi request me 5,000 follower ke inbox ek-ek karke bharne laga'], [C.bad, 'Tweet Svc → Arpan', '5 sec me timeout, Arpan ko "fail" dikha, dobara daala to tweet do baar']],
+  [[C.good, 'Tweet Svc → Tweet DB', 'Tweet Svc ne pehle t9 DB me pakka save kiya'], [C.acc, 'Tweet Svc → Kafka', 't9 ki khabar Kafka me daali, wo disk pe surakshit rehti'], [C.good, 'Tweet Svc → Arpan', 'Arpan ko turant "ho gaya", inbox bharne ka intezaar nahi'], [C.good, 'Kafka → Worker', 'Worker ne peeche apni speed se 5,000 inbox bhare']],
+  [[C.acc, 'Kafka → Worker-1', 'Worker-1 ne Kafka se t9 uthaya aur inbox bharne laga'], [C.bad, 'Worker-1 gira', '100 me se 60 inbox bhar ke gira, Kafka ko "ho gaya" nahi bola'], [C.acc, 'Kafka → Worker-2', 'Isliye Kafka ne wahi t9 Worker-2 ko dobara de diya'], [C.good, 'Worker-2 → Mohan ka inbox', 'Mohan ke inbox me dobara likha, sorted set me same id ek hi baar rehti']],
 ];
 function frame(ph) {
   if (ph === 0) {

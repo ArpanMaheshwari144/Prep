@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Tweet Svc → Ek DB', 'har tweet yahin, 5,000 / sec'], [C.bad, 'Ek DB', 'na jagah (0.5 PB), na itni likhai']],
-  [[C.msg, 'Arpan → Tweet Svc', 'tweet'], [C.msg, 'Virat → Tweet Svc', 'tweet'], [C.good, 'Tweet Svc → Node-2', 'user_id dekha: Arpan -> Node-2'], [C.good, 'Tweet Svc → Node-3', 'Virat -> Node-3']],
-  [[C.good, 'Tweet Svc → copy A, B', 't9 ek saath 2 me likha: save'], [C.bad, 'copy C giri', 'likhai ruki nahi'], [C.acc, 'padhna', 'A + B se: t9 mila. Har jodi me|ek taaza copy zaroor']],
+  [[C.bad, 'Tweet Svc → Ek DB', 'Har tweet ek hi DB me ja raha, 5,000 tweet har second'], [C.bad, 'Ek DB', 'Ek machine me na itni jagah (0.5 PB), na itni likhai ki taakat']],
+  [[C.msg, 'Arpan → Tweet Svc', 'Arpan ne tweet kiya, Tweet Svc ko jagah chunni thi'], [C.msg, 'Virat → Tweet Svc', 'Usi waqt Virat ne bhi apna tweet kiya'], [C.good, 'Tweet Svc → Node-2', 'user_id dekh ke Arpan ka tweet Node-2 pe gaya'], [C.good, 'Tweet Svc → Node-3', 'Virat ka user_id Node-3 pe padta hai, wahan gaya']],
+  [[C.good, 'Tweet Svc → copy A, B', 't9 ek saath 2 copy (A, B) me likha, itne me save maana'], [C.bad, 'copy C giri', 'Copy C giri hui thi, par likhai ruki nahi'], [C.acc, 'padhna', 'Padhte waqt A + B se poocha, t9 mila; har jodi me ek taaza copy zaroor']],
 ];
 function frame(ph) {
   if (ph === 0) {

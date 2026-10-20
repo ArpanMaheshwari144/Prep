@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Redis', 'har inbox me saare id.|40 cr soye hue users ke, RAM 95%']],
-  [[C.good, 'naya tweet', 'inbox me upar juda'], [C.bad, 'trim', '801va kata: sirf aakhri 800'], [C.good, 'Suresh ka inbox', '30 din app nahi khola: mita (TTL)']],
-  [[C.msg, 'Suresh → Feed Svc', '2 mahine baad app khola'], [C.bad, 'Feed Svc → Redis', 'inbox? nahi'], [C.acc, 'Feed Svc → Tweet DB', 'pull: follow walon ke tweet jodo'], [C.good, 'Feed Svc → Redis', 'inbox bana ke rakha, aage push']],
+  [[C.bad, 'Redis', 'Har inbox me saare tweet id, 40 crore soye hue users ke bhi; RAM 95% bhar gayi']],
+  [[C.good, 'naya tweet', 'Naya tweet aaya to inbox me sabse upar juda'], [C.bad, 'trim', 'Inbox sirf aakhri 800 rakhta, 801va purana id kaat diya'], [C.muted, 'Suresh ka inbox', 'Suresh ne 30 din app nahi khola, uska inbox mit gaya (TTL)']],
+  [[C.msg, 'Suresh → Feed Svc', 'Suresh 2 mahine baad app kholne aaya'], [C.bad, 'Feed Svc → Redis', 'Redis me uska inbox nahi mila, TTL se mit chuka tha'], [C.acc, 'Feed Svc → Tweet DB', 'Feed Svc ne pull kiya: follow walon ke tweet DB se jode'], [C.good, 'Feed Svc → Redis', 'Bana hua inbox Redis me rakha, ab aage se push chalega']],
 ];
 function frame(ph) {
   if (ph === 0) {

@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, 'Crore feeds → Feed Svc', 'Virat ka tweet?'], [C.bad, 'Feed Svc → Tweet DB', 'crore baar'], [C.bad, 'Tweet DB', 'disk pe crore read: gira']],
-  [[C.acc, 'Feed Svc → Hot cache', 'pehli request: miss, lock liya'], [C.acc, 'Tweet DB → Feed Svc', 'sirf ek DB tak: v1'], [C.good, 'Feed Svc → Hot cache', 'v1 RAM me rakha, lock khula'], [C.good, 'Hot cache → Crore feeds', 'baaki RAM se, ~0.1 ms']],
-  [[C.acc, 'Virat → Tweet Svc', 'edit: v2'], [C.good, 'Tweet Svc → Tweet DB', 'pehle DB: v2'], [C.bad, 'Tweet Svc → Hot cache', 'phir cache se key hatao'], [C.good, 'agla read', 'miss -> DB se v2']],
+  [[C.bad, 'Crore feeds → Feed Svc', 'Crore logon ki feed me Virat ka ek hi tweet chahiye tha'], [C.bad, 'Feed Svc → Tweet DB', 'Har feed ke liye Feed Svc ne DB se wahi tweet maanga, crore baar'], [C.bad, 'Tweet DB', 'Disk pe crore read aaye aur DB gir gaya']],
+  [[C.acc, 'Feed Svc → Hot cache', 'Pehli request ko cache me nahi mila, usne lock le liya'], [C.acc, 'Tweet DB → Feed Svc', 'Sirf usi ek request ne DB se tweet v1 laaya, baaki ruke'], [C.good, 'Feed Svc → Hot cache', 'v1 RAM wale hot cache me rakha aur lock khol diya'], [C.good, 'Hot cache → Crore feeds', 'Baaki sab ko RAM se ~0.1 ms me tweet mil gaya']],
+  [[C.acc, 'Virat → Tweet Svc', 'Virat ne tweet edit kiya, naya version v2 bana'], [C.good, 'Tweet Svc → Tweet DB', 'Tweet Svc ne pehle DB me v2 likha, sach DB me rehta'], [C.bad, 'Tweet Svc → Hot cache', 'Phir cache se purani key hata di, taaki v1 na dikhe'], [C.good, 'agla read', 'Agle read ko cache me nahi mila, DB se naya v2 aaya']],
 ];
 function frame(ph) {
   if (ph === 0) {

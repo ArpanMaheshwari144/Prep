@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Arpan → US region', 'samundar paar jaana'], [C.bad, 'US region → Arpan', 'wapas: ~300 ms har feed']],
-  [[C.msg, 'Arpan → Route 53', 'site kahan?'], [C.acc, 'Route 53 → Arpan', 'India (paas wala)'], [C.good, 'Arpan → India region', '~30 ms'], [C.acc, 'US region → India region', 'data ki copy, thodi peeche']],
-  [[C.bad, 'Route 53 → India region', '/health: jawab nahi'], [C.acc, 'Route 53 → Arpan', 'ab US ka pata'], [C.good, 'Arpan → US region', 'thoda dheema, feed thodi purani, par chalti']],
+  [[C.bad, 'Arpan → US region', 'India me baithe Arpan ki request samundar paar US tak gayi'], [C.bad, 'US region → Arpan', 'Jawab wapas aane me har feed pe ~300 ms lage']],
+  [[C.msg, 'Arpan → Route 53', 'Arpan ke phone ne Route 53 se poocha site kahan hai'], [C.acc, 'Route 53 → Arpan', 'Route 53 ne paas wale India region ka pata diya'], [C.good, 'Arpan → India region', 'Request India region gayi, sirf ~30 ms me jawab'], [C.muted, 'US region → India region', 'US ka data India me copy hota, thoda peeche chalta']],
+  [[C.bad, 'Route 53 → India region', 'Route 53 ne /health poocha, India region ne jawab nahi diya'], [C.acc, 'Route 53 → Arpan', 'Route 53 ne ab Arpan ko US region ka pata diya'], [C.good, 'Arpan → US region', 'Thoda dheema aur feed thodi purani, par app chalti rahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -201,9 +203,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Arpan → US region', 'samundar paar jaana'], [C.bad, 'US region → Arpan', 'wapas: ~300 ms har feed']],
-  [[C.msg, 'Arpan → Route 53', 'site kahan?'], [C.acc, 'Route 53 → Arpan', 'India (paas wala)'], [C.good, 'Arpan → India region', '~30 ms'], [C.acc, 'US region → India region', 'data ki copy, thodi peeche']],
-  [[C.bad, 'Route 53 → India region', '/health: jawab nahi'], [C.acc, 'Route 53 → Arpan', 'ab US ka pata'], [C.good, 'Arpan → US region', 'thoda dheema, feed thodi purani, par chalti']],
+  [[C.bad, 'Arpan → US region', 'India me baithe Arpan ki request samundar paar US tak gayi'], [C.bad, 'US region → Arpan', 'Jawab wapas aane me har feed pe ~300 ms lage']],
+  [[C.msg, 'Arpan → Route 53', 'Arpan ke phone ne Route 53 se poocha site kahan hai'], [C.acc, 'Route 53 → Arpan', 'Route 53 ne paas wale India region ka pata diya'], [C.good, 'Arpan → India region', 'Request India region gayi, sirf ~30 ms me jawab'], [C.muted, 'US region → India region', 'US ka data India me copy hota, thoda peeche chalta']],
+  [[C.bad, 'Route 53 → India region', 'Route 53 ne /health poocha, India region ne jawab nahi diya'], [C.acc, 'Route 53 → Arpan', 'Route 53 ne ab Arpan ko US region ka pata diya'], [C.good, 'Arpan → US region', 'Thoda dheema aur feed thodi purani, par app chalti rahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

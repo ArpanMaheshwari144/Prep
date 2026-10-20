@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Crore log → Ek service', 'GET /feed, scroll'], [C.acc, 'Arpan → Ek service', 'POST /tweet'], [C.bad, 'Arpan ka tweet', 'padhne ki bheed me atka']],
-  [[C.acc, 'Crore log → ALB', 'GET /feed'], [C.good, 'Arpan → ALB', 'POST /tweet'], [C.acc, 'ALB → Timeline Svc x20', '/feed yahan'], [C.good, 'ALB → Tweet Svc x2', '/tweet yahan, alag']],
-  [[C.acc, 'Crore log → ALB', 'bheed aur badhi'], [C.good, 'Arpan → ALB', 'POST /tweet'], [C.acc, 'ALB → Timeline Svc x40', 'sirf yahi 20 -> 40'], [C.good, 'ALB → Tweet Svc x2', 'koi asar nahi, tweet turant']],
+  [[C.bad, 'Crore log → Ek service', 'Crore log scroll kar rahe, sab GET /feed ek hi service pe'], [C.acc, 'Arpan → Ek service', 'Arpan ka POST /tweet bhi usi service pe aaya'], [C.bad, 'Arpan ka tweet', 'Padhne ki bheed me Arpan ka tweet atak gaya']],
+  [[C.acc, 'Crore log → ALB', 'Crore logon ka GET /feed pehle ALB pe aaya'], [C.good, 'Arpan → ALB', 'Arpan ka POST /tweet bhi ALB pe aaya'], [C.acc, 'ALB → Timeline Svc x20', 'ALB ne /feed padhne wali Timeline Svc (20 machine) ko bheja'], [C.good, 'ALB → Tweet Svc x2', '/tweet alag Tweet Svc pe gaya, bheed se door']],
+  [[C.acc, 'Crore log → ALB', 'Match ke waqt padhne wali bheed aur badh gayi'], [C.good, 'Arpan → ALB', 'Arpan ne usi waqt ek naya tweet kiya'], [C.acc, 'ALB → Timeline Svc x40', 'Sirf Timeline Svc ko 20 se 40 machine kiya'], [C.good, 'ALB → Tweet Svc x2', 'Tweet Svc pe koi asar nahi, Arpan ka tweet turant gaya']],
 ];
 function frame(ph) {
   if (ph === 0) {
