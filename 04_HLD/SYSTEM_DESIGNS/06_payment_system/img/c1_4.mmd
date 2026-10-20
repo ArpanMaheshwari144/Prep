@@ -1,0 +1,9 @@
+---
+title: "AGAR network toota, consistency ya availability? -> sahi hona pehle"
+---
+flowchart TB
+  U["Arpan app<br/>pay 500"] -->|"1. pay"| P["Payment Svc"]:::warn
+  P -.->|"2. balance padhna: network toota"| D[("DB<br/>balance ?")]:::bad
+  P -->|"3. payment mana"| U
+  D ~~~ B["Dashboard / report<br/>thoda purana bhi chalega"]:::good
+  B ~~~ H["hal: sahi hona pehle<br/>galat balance pe kaatna usse bhi bura"]:::good

@@ -1,0 +1,8 @@
+---
+title: "AGAR A->B aur B->A ek saath, dono atke? -> taala pehle chhoti account id pe"
+---
+flowchart TB
+  T1["txn A->B<br/>1. account A pe taala"]:::warn -.->|"2. B chahiye, par B pe taala hai"| T2["txn B->A<br/>1. account B pe taala"]:::warn
+  T2 -.->|"2. A chahiye, par A pe taala hai"| T1
+  T2 ~~~ D["3. dono ek-doosre ka intezaar = deadlock"]:::bad
+  D ~~~ H["hal: taala hamesha chhoti account id pe pehle<br/>dono pehle A pakdenge, ek ruk jaayega, atkenge nahi"]:::good

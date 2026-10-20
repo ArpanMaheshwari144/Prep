@@ -1,0 +1,8 @@
+---
+title: "ILAAJ: -500, +500 ek transaction. COMMIT se pehle gira -> WAL se ulta"
+---
+flowchart LR
+  A["Arpan<br/>500 wapas"]:::good -->|"1. BEGIN, -500"| P["Payment Svc<br/>2. COMMIT se pehle gira"]:::bad
+  P -.->|"log me likha"| W["WAL (DB ka log)<br/>BEGIN, Arpan -500<br/>COMMIT nahi"]:::warn
+  W -->|"3. DB utha: COMMIT nahi tha -> ulta"| A
+  P ~~~ K["Kirana<br/>+500 likha nahi"]:::idle

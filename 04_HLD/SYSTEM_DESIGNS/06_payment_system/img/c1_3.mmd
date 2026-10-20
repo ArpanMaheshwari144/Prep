@@ -1,0 +1,9 @@
+---
+title: "AGAR ledger ka INSERT fail? -> ROLLBACK, Arpan ka -500 bhi ulta"
+---
+flowchart TB
+  A["Arpan"] -->|"1. -500"| P["Payment Svc<br/>ek transaction"]
+  P -->|"1. +500"| K["Kirana"]
+  P -->|"2. ledger me 2 line"| L["ledger<br/>INSERT fail"]:::bad
+  L -->|"3. ROLLBACK"| R["sab ulta<br/>Arpan -500 wapas, Kirana +500 wapas"]:::good
+  R ~~~ H["hal: paanchon me se ek bhi nahi bachta<br/>user ko dikhe: nahi hua"]:::good
