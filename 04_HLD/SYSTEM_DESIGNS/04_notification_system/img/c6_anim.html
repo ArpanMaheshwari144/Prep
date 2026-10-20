@@ -175,7 +175,7 @@ function frame(ph) {
       B(20, y, 140, 65, r + ' line', '');
       B(260, y, 170, 65, r + ' worker', '', { st: st === 'bad' ? 'acc' : 'good' });
       B(560, y, 250, 65, s.split(':')[0], s.split(':')[1], { st });
-      A(160, y + 32, 258, y + 32, C.msg, { n: i + 1 });
+      A(160, y + 32, 258, y + 32, C.msg, { n: i ? 0 : 1 });
       A(430, y + 32, 558, y + 32, st === 'bad' ? C.bad : C.good, { dash: st === 'bad' ? 1 : 0 });
     });
     L(450, 350, 'Twilio ka breaker sirf SMS rokta. Push aur email apni line, apni company', C.good);

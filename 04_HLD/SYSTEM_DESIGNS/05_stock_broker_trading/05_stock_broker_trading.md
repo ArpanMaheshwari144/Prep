@@ -212,19 +212,19 @@ Cue: ek transaction: chaaron ya koi nahi
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=2" width="900">
+<img src="img/c6_1.png?v=4" width="900">
 
-<img src="img/c6_2.png?v=2" width="900">
+<img src="img/c6_2.png?v=4" width="900">
 
-<img src="img/c6_3.png?v=2" width="900">
+<img src="img/c6_3.png?v=4" width="900">
 
 </details>
 
 ```
 HAL     chaaron badlaav ek transaction me: Arpan -30k +10 share, Suresh +30k -10 share, phir COMMIT.
         Ya sab, ya koi nahi
-        ↳ agar rollback ke baad retry, Suresh ko do baar? -> nahi, trade_id UNIQUE
-          dobara = kuch nahi
+        ↳ agar commit ho gaya par jawab kho gaya, retry aayi? -> trade_id UNIQUE, doosri ruki
+          Suresh ko +30k ek hi baar. Rollback hua hota to t1 likha hi nahi, retry seedha chalti
         ↳ agar galti pakdoge kaise? -> raat ko ledger jodo, hamesha 0 aana chahiye
           Galti turant dikhe
         ↳ agar balance ledger jod ke nikaal lo?

@@ -1,10 +1,10 @@
 // Card 8: sale me laakhon message, har worker apni speed se, company ne 429 diya. Ilaaj: saanjha token bucket (Redis),
-// kul 100 / sec. Agar: bucket wala Redis gira -> har worker apni chhoti local had (fail-closed).
+// kul 100 / sec. Agar: bucket wala Redis gira -> har worker apni surakshit had (100 / 4 = 25).
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: company ki had 100 / sec. Har worker apni taraf se 100 / sec, 4 worker = 400. 429'],
   [3, GRN, 'ILAAJ', 'ILAAJ: sab worker ek saanjha token bucket (Redis) se token lete. Kul 100 / sec. Pal-pal'],
-  [6, YEL, 'AGAR', 'AGAR bucket wala Redis hi gira? -> har worker apni chhoti had (100 / 4 = 25), fail-closed'],
+  [6, YEL, 'AGAR', 'AGAR bucket wala Redis hi gira? -> har worker apni surakshit had (100 / 4 = 25)'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {

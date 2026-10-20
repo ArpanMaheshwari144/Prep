@@ -27,7 +27,7 @@ function frame(ph) {
       B(220, y, 150, 60, l, '', { st: i ? 'good' : (more ? 'acc' : 'bad') });
       B(440, y, 170, 60, w, '', { st });
       B(690, y, 170, 60, d, s, { st });
-      A(140, 170, 218, y + 30, C.msg, { n: i + 1, at: 0.5 });
+      A(140, 170, 218, y + 30, C.msg, { n: i ? 0 : 1, at: 0.5 });
       A(370, y + 30, 438, y + 30, st === 'good' ? C.good : C.acc);
       A(610, y + 30, 688, y + 30, st === 'good' ? C.good : C.acc);
     });

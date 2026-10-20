@@ -134,12 +134,12 @@ function draw(t) {
 }
 
 // Card 6: mera paisa kata, Suresh ko mila hi nahi (beech me crash). Ilaaj: chaaron badlaav ek transaction, COMMIT.
-// Agar: rollback ke baad retry, Suresh ko do baar? -> nahi, trade_id UNIQUE.
+// Agar: commit ho gaya par jawab kho gaya, retry aayi -> trade_id UNIQUE, doosri ruki.
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: sauda hua. Arpan -30k likha, phir crash. Suresh ko +30k mila hi nahi'],
   [3, GRN, 'ILAAJ', 'ILAAJ: chaaron badlaav ek transaction me, phir COMMIT. Ya sab, ya koi nahi'],
-  [6, YEL, 'AGAR', 'AGAR rollback ke baad retry, Suresh ko do baar? -> nahi, trade_id UNIQUE'],
+  [6, YEL, 'AGAR', 'AGAR commit ho gaya par jawab kho gaya, retry aayi? -> trade_id UNIQUE, doosri ruki'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {

@@ -83,11 +83,11 @@ Cue: har raaste ki ALAG LINE + worker
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png?v=2" width="900">
+<img src="img/c2_1.png?v=5" width="900">
 
-<img src="img/c2_2.png?v=2" width="900">
+<img src="img/c2_2.png?v=5" width="900">
 
-<img src="img/c2_3.png?v=2" width="900">
+<img src="img/c2_3.png?v=5" width="900">
 
 </details>
 
@@ -214,11 +214,11 @@ Cue: TIMEOUT + CIRCUIT BREAKER
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=4" width="900">
+<img src="img/c6_1.png?v=5" width="900">
 
-<img src="img/c6_2.png?v=4" width="900">
+<img src="img/c6_2.png?v=5" width="900">
 
-<img src="img/c6_3.png?v=4" width="900">
+<img src="img/c6_3.png?v=5" width="900">
 
 </details>
 
@@ -282,11 +282,11 @@ Cue: SAANJHA TOKEN BUCKET (Redis)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png?v=2" width="900">
+<img src="img/c8_1.png?v=5" width="900">
 
-<img src="img/c8_2.png?v=2" width="900">
+<img src="img/c8_2.png?v=5" width="900">
 
-<img src="img/c8_3.png?v=2" width="900">
+<img src="img/c8_3.png?v=5" width="900">
 
 </details>
 
@@ -297,8 +297,8 @@ HAL     sab worker ka ek saanjha token bucket (Redis me), har second 100 token. 
         ↳ agar worker badh gaye? -> speed wahi. Bucket saanjha, kul 100 / sec
         ↳ agar 1 lakh email, had kam? -> had badhwao + kai account lo
           Tab tak line dheere khaali hogi, warna 429
-        ↳ agar bucket wala Redis hi gira? -> har worker apni chhoti had (100 / 4 = 25), fail-closed
-          pe chalta hai (fail-closed). Company ki had paar nahi hoti
+        ↳ agar bucket wala Redis hi gira? -> har worker apni surakshit had (100 / 4 = 25)
+          Bhejna band nahi, bas dheema. Company ki had paar nahi hoti
         ↳ agar bucket ki had kitni hoti hai?
           -> company ki had: SES shuru me ~14 / sec (sandbox 1 / sec), Twilio short code ~100 / sec
 KYUN    had company ki hai (100 / sec, baaki 429), worker ki nahi. Sab worker ek hi bucket se token lete hain.
