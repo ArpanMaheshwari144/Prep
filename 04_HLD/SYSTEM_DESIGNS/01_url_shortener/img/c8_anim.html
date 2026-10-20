@@ -155,9 +155,11 @@ function frame(ph) {
     B(540, 30, 130, 60, 'Redis', 'k1: 5000 / 100', { st: 'acc' });
     A(440, 130, 530, 62, C.acc, { n: 2, at: 0.35 }); L(440, 85, 'ginti +1', C.acc);
     A(560, 92, 470, 150, C.bad, { n: 3, at: 0.45 }); L(560, 135, 'had paar', C.bad, 'start');
-    A(318, 180, 152, 180, C.bad, { n: 4 }); T(235, 220, '429', { c: C.bad, b: 1, size: 18 });
-    B(700, 130, 120, 60, 'App', '', { st: 'good' }); A(450, 170, 698, 170, C.muted, { dash: 1 }); cross(575, 170); L(575, 215, 'App tak aaya hi nahi', C.good);
-    B(20, 260, 130, 50, 'Asli user', 'key: k2'); A(150, 285, 318, 185, C.good, { n: 5 }); L(760, 300, 'inki speed bachi', C.good);
+    A(318, 180, 152, 180, C.bad, { n: 4 }); T(185, 210, '429', { c: C.bad, b: 1, size: 18 });
+    B(700, 130, 120, 60, 'App', '', { st: 'good' }); A(450, 170, 698, 170, C.muted, { dash: 1 }); cross(575, 170); L(575, 215, 'k1 App tak aaya hi nahi', C.bad);
+    B(20, 260, 130, 50, 'Asli user', 'key: k2'); A(150, 285, 318, 185, C.good, { n: 5 });
+    // asli user had ke andar -> Gateway use App tak jaane deta
+    AP([[400, 192], [400, 260], [760, 260], [760, 192]], C.good, { n: 6, at: 0.5 }); L(580, 285, 'k2 had ke andar, App tak, speed bachi', C.good);
   } else {
     B(20, 130, 130, 60, 'Attacker', 'SQL inject / bot', { st: 'bad' });
     A(150, 160, 238, 160, C.bad, { n: 1 });

@@ -33,8 +33,7 @@ function frame(ph) {
   } else {
     ppl(); req(2); apps('abhi 400 / 1000', 'abhi 1300 / 2000', 'good');
     B(560, 150, 140, 60, 'Counter', '', { st: 'bad' }); cross(720, 180); num(630, 230, 1, C.bad); L(630, 255, 'gira', C.bad);
-    A(380, 70, 558, 160, C.muted, { dash: 1 }); A(380, 280, 558, 200, C.muted, { dash: 1 }); cross(470, 180);
-    
+    // App se Counter tak koi teer nahi: range pehle se App ke paas, Counter se kuch nahi maanga
     code(3, 'code 401', 'code 1301', C.good);
     L(20, 190, 'range pehle se App ke paas, usi se agla number.', C.good, 'start'); L(20, 210, 'Counter se kuch nahi maanga', C.good, 'start');
     B(740, 40, 140, 60, 'Counter copy', 'uth rahi', { st: 'acc' }); A(640, 148, 740, 100, C.acc, { n: 4, dash: 1 });

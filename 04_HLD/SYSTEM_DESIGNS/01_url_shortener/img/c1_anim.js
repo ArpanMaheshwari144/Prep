@@ -22,8 +22,10 @@ function frame(ph) {
     A(380, 145, 558, 85, C.good, { n: 2, at: 0.35 }); L(470, 75, 'hai?', C.good);
     A(558, 95, 380, 155, C.good, { n: 3, at: 0.35 }); L(470, 150, 'mila, 95% yahin', C.good);
     B(560, 230, 120, 60, 'DB', 'disk', {});
-    A(380, 175, 558, 255, C.muted, { n: 4, dash: 1, at: 0.4 }); L(470, 265, 'nahi mila to DB se', C.muted);
-    A(620, 228, 620, 112, C.muted, { n: 5, dash: 1 }); L(700, 175, 'copy Redis me rakho', C.muted, 'start');
+    A(380, 175, 558, 255, C.muted, { n: 4, dash: 1, at: 0.4 }); L(470, 265, 'nahi mila to DB se laao', C.muted);
+    // copy App hi Redis me rakhta (DB khud Redis ko nahi bhejta)
+    AP([[300, 128], [300, 20], [620, 20], [620, 48]], C.muted, { n: 5, dash: 1, at: 0.8 });
+    L(310, 12, 'App copy Redis me rakhta', C.muted, 'start');
     bar(560, 305, 120, 16, 0.05, '', 1); T(620, 345, '5%', { c: C.good, b: 1, size: 14 });
   } else {
     B(20, 130, 120, 60, 'Admin', 'link badla', { st: 'acc' });

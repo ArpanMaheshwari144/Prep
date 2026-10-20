@@ -22,16 +22,16 @@ function frame(ph) {
     L(330, 320, 'C tak naya link abhi pahuncha nahi', C.bad);
   } else if (ph === 1) {
     app(); copies(['good', 'naya link'], ['good', 'naya link'], ['', 'purani']);
-    W(0, C.good, 1); W(1, C.good, 1); L(300, 75, 'likho: A, B', C.good);
-    Rd(1, C.acc, 2); Rd(2, C.acc, 2); L(300, 275, 'padho: B, C', C.acc);
-    num(80, 250, 3, C.good); T(80, 280, 'B me mila', { c: C.good, b: 1, size: 14 });
+    W(0, C.good, 1); W(1, C.good, 2); L(300, 75, 'likho: A, B', C.good);
+    Rd(1, C.acc, 3); Rd(2, C.acc, 4); L(300, 275, 'padho: B, C', C.acc);
+    num(80, 250, 5, C.good); T(80, 280, 'B me mila', { c: C.good, b: 1, size: 14 });
     L(700, 180, '2 + 2 = 4, copy 3:', C.muted, 'start'); L(700, 200, 'jodi me ek taaza zaroor', C.good, 'start');
   } else {
     app(); copies(['good', 'naya link'], ['good', 'naya link'], ['bad', '']); cross(675, 305);
-    W(0, C.good, 1); W(1, C.good, 1); W(2, C.bad, 1, { dash: 1 }); L(300, 75, 'likho: A, B, C', C.good);
+    W(0, C.good, 1); W(1, C.good, 2); W(2, C.bad, 3, { dash: 1 }); L(300, 75, 'likho: A, B, C', C.good);
     L(330, 330, 'C giri, likhai nahi pahunchi', C.bad);
-    num(80, 250, 2, C.good); T(80, 280, 'save', { c: C.good, b: 1, size: 16 }); T(80, 300, '2 me ho gaya', { c: C.good, size: 12 });
-    B(720, 150, 150, 50, 'B ke paas note', 'C ke liye', { st: 'acc' }); A(650, 190, 718, 180, C.acc, { n: 3 });
-    A(790, 200, 660, 285, C.acc, { n: 4, dash: 1 }); L(585, 250, 'C uthi to note se bhar do', C.acc);
+    num(80, 250, 4, C.good); T(80, 280, 'save', { c: C.good, b: 1, size: 16 }); T(80, 300, '2 me ho gaya', { c: C.good, size: 12 });
+    B(720, 150, 150, 50, 'B ke paas note', 'C ke liye', { st: 'acc' }); A(650, 190, 718, 180, C.acc, { n: 5 });
+    A(790, 200, 660, 285, C.acc, { n: 6, dash: 1 }); L(585, 250, 'C uthi to note se bhar do', C.acc);
   }
 }
