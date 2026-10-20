@@ -177,19 +177,13 @@ NAHI    har order pe lock + DB -> DHEEMA: ek-ek karke dheema, jam
 
 Cue: pehle log, phir book; gira = replay
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png" width="900">
+<img src="img/c5_1.png?v=2" width="900">
 
-<img src="img/c5_2.png" width="900">
+<img src="img/c5_2.png?v=2" width="900">
 
-<img src="img/c5_3.png" width="900">
-
-<img src="img/c5_4.png" width="900">
-
-<img src="img/c5_5.png" width="900">
-
-<img src="img/c5_6.png" width="900">
+<img src="img/c5_3.png?v=2" width="900">
 
 </details>
 
@@ -216,15 +210,13 @@ NAHI    sirf book ki photo -> ADHOORA: photo ke BAAD wale order kahin likhe hi n
 
 Cue: ek transaction: chaaron ya koi nahi
 
-<details><summary>kahani dekho (4 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png" width="900">
+<img src="img/c6_1.png?v=2" width="900">
 
-<img src="img/c6_2.png" width="900">
+<img src="img/c6_2.png?v=2" width="900">
 
-<img src="img/c6_3.png" width="900">
-
-<img src="img/c6_4.png" width="900">
+<img src="img/c6_3.png?v=2" width="900">
 
 </details>
 
@@ -251,21 +243,13 @@ NAHI    aakhir me "done" flag -> ANDHA: flag se pehle gira to pata hi nahi kitna
 
 Cue: har step ka haal, aage badho
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png" width="900">
+<img src="img/c7_1.png?v=2" width="900">
 
-<img src="img/c7_2.png" width="900">
+<img src="img/c7_2.png?v=2" width="900">
 
-<img src="img/c7_3.png" width="900">
-
-<img src="img/c7_4.png" width="900">
-
-<img src="img/c7_5.png" width="900">
-
-<img src="img/c7_6.png" width="900">
-
-<img src="img/c7_7.png" width="900">
+<img src="img/c7_3.png?v=2" width="900">
 
 </details>
 
@@ -295,17 +279,13 @@ NAHI    paisa ulta kar do -> GALAT: match ke baad sauda pakka, bechne wale ko 20
 
 Cue: push (TV jaisa), WebSocket
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png" width="900">
+<img src="img/c8_1.png?v=2" width="900">
 
-<img src="img/c8_2.png" width="900">
+<img src="img/c8_2.png?v=2" width="900">
 
-<img src="img/c8_3.png" width="900">
-
-<img src="img/c8_4.png" width="900">
-
-<img src="img/c8_5.png" width="900">
+<img src="img/c8_3.png?v=2" width="900">
 
 </details>
 

@@ -1,66 +1,40 @@
-// Card 8: 10 lakh log har second price poochh rahe, server baitha. Ilaaj: WebSocket push. Agar: 1000 baar badla, 10 lakh ek server. Wapas: connection juda.
-const DUR = 15;
+// Card 8: 10 lakh log har second price poochh rahe (polling), server baitha. Ilaaj: WebSocket, price badla tab server bheje.
+// Agar: connection toota, wapas juda -> abhi ka price alag se do.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: 10 lakh log har second price poochh rahe, server baith gaya'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: connection khula, price badla to server khud bheje (WebSocket push)'],
-  [6, YEL, 'AGAR', 'AGAR second me 1000 baar price badla? -> har ~100 ms aakhri price bhejo'],
-  [9, YEL, 'AGAR', 'AGAR 10 lakh connection ek server pe? -> ek server ~lakh. Aur server + LB'],
-  [12, GRN, 'WAPAS', 'WAPAS: connection toota, wapas juda -> abhi ka price alag se do'],
+  [0, RED, 'DIKKAT', 'DIKKAT: 10 lakh log har second poochh rahe "TCS ka price?". Server baith gaya'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: connection khula rakho, price badla tabhi server khud bheje (WebSocket push)'],
+  [6, YEL, 'AGAR', 'AGAR connection toota, wapas juda? -> abhi ka price alag se do. Pub/sub kuch rakhta nahi'],
 ];
 function setup() {}
-function crowd(c, lab) { dots(24, 30, 80, c, { cols: 4, gap: 22 }); T(65, 225, lab || '10 lakh users', { c: C.muted, size: 12 }); }
-function chain(ws2) {
-  B(20, 140, 130, 70, 'Matching', '');
-  B(210, 140, 130, 70, 'Pub/Sub', '');
-  B(420, 50, 150, 70, 'WS server 1', '', { st: 'good' });
-  B(420, 230, 150, 70, 'WS server 2', '', { st: ws2 || 'good' });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    crowd(C.msg);
-    A(110, 100, 478, 135, C.msg); A(110, 140, 478, 155, C.msg, { n: 1, at: 0.3 }); A(110, 180, 478, 175, C.msg);
-    L(300, 100, 'har second: "price?"', C.msg);
-    B(480, 100, 180, 110, 'Server', 'baitha', { st: 'bad' });
-    num(690, 155, 2, C.bad); T(780, 162, '10 lakh / sec', { c: C.bad, b: 1, size: 18 });
+    B(20, 110, 170, 110, '10 lakh users', 'har second', { st: 'bad' }); dots(15, 35, 175, C.bad, { cols: 8, gap: 18, r: 5 });
+    B(560, 130, 220, 80, 'Price server', 'CPU 100%', { st: 'bad' }); cross(805, 170);
+    A(190, 150, 558, 150, C.bad, { n: 1 }); L(375, 135, '"price?" x 10 lakh / sec', C.bad);
+    A(558, 190, 192, 190, C.muted, { n: 2, dash: 1 }); L(375, 220, 'zyadatar jawab: "wahi hai"', C.muted);
+    L(450, 320, 'price badla hi nahi tab bhi poochh rahe. Poochhne ki line hi bekaar', C.bad);
   } else if (ph === 1) {
-    chain();
-    A(150, 175, 208, 175, C.acc, { n: 1 }); L(85, 235, 'price badla', C.acc);
-    A(340, 160, 418, 95, C.good, { n: 2, at: 0.5 }); A(340, 190, 418, 255, C.good, { n: 2, at: 0.5 });
-    A(570, 85, 668, 85, C.good, { n: 3, at: 0.4 }); A(570, 265, 668, 265, C.good, { n: 3, at: 0.4 });
-    L(620, 73, 'push', C.good); L(620, 253, 'push', C.good);
-    dots(8, 685, 75, C.good, { cols: 4, gap: 22 }); dots(8, 685, 255, C.good, { cols: 4, gap: 22 });
-    T(750, 180, 'users kuch nahi poochte', { c: C.muted, size: 12 });
-  } else if (ph === 2) {
-    chain('dim');
-    dots(6, 40, 115, C.acc, { gap: 18 }); L(85, 235, 'second me 1000 baar', C.acc);
-    num(160, 130, 1, C.acc);
-    A(150, 175, 208, 175, C.acc);
-    A(340, 160, 418, 95, C.acc, { n: 2, at: 0.5 });
-    cells(428, 88, [['old', C.muted], ['old', C.muted], ['naya', C.good]], { w: 42, h: 22 });
-    L(495, 145, 'purana bekaar', C.muted);
-    A(570, 85, 716, 85, C.good, { n: 3, at: 0.3 }); L(625, 73, 'har ~100 ms', C.good);
-    dot([730, 85], C.good, '', 'aakhri price', C.good);
-    L(450, 335, 'hal: har ~100 ms aakhri price bhejo, purana bekaar', C.good);
-  } else if (ph === 3) {
-    crowd(C.msg);
-    B(250, 20, 170, 60, 'ek server', '~lakh tak', { st: 'bad' }); cross(445, 50);
-    A(110, 95, 248, 55, C.bad, { n: 1, at: 0.4, dash: 1 }); L(470, 55, 'sab ek pe? nahi', C.bad, 'start');
-    B(250, 190, 100, 60, 'LB', '', { st: 'good' });
-    A(110, 180, 248, 220, C.msg, { n: 2, at: 0.4 });
-    B(450, 110, 150, 55, 'WS server 1', '', { st: 'good' });
-    B(450, 190, 150, 55, 'WS server 2', '', { st: 'good' });
-    B(450, 270, 150, 55, 'WS server 3', '', { st: 'good' });
-    A(350, 210, 448, 137, C.good, { n: 3, at: 0.5 }); A(350, 220, 448, 217, C.good, { n: 3, at: 0.5 });
-    A(350, 230, 448, 297, C.good, { n: 3, at: 0.5 });
-    L(745, 200, 'hal: aur server + LB', C.good);
-    L(745, 225, 'har server ~lakh', C.good);
+    panel(0, 'connection', ['Arpan ka app', 'WebSocket', ''], ['WS server', 'khula rakha', 'good'], 'juda', true, C.msg, 'ek baar judo');
+    panel(1, 'price badla', ['Matching', 'TCS 3001', 'acc'], ['Pub/sub', 'TCS 3001', 'acc'], 'daala', true, C.acc, 'sirf jab badla');
+    panel(2, 'har WS server', ['Pub/sub', '', 'acc'], ['WS server', 'TCS 3001', 'good'], 'bheja', true, C.good, 'sab server tak');
+    panel(3, 'push', ['WS server', '', ''], ['Arpan ka app', 'TCS 3001', 'good'], 'khud bheja', true, C.good, 'Arpan ne poochha nahi');
+    L(450, 320, 'badla tab bhejo. 1000 baar badla to har ~100 ms aakhri wala', C.good);
   } else {
-    B(20, 120, 140, 130, 'Arpan app', '');
-    B(380, 120, 160, 130, 'WS server', '', { st: 'good' });
-    B(700, 120, 150, 130, 'Pub/Sub', 'kuch rakhta nahi');
-    A(698, 185, 542, 185, C.line);
-    A(162, 150, 378, 150, C.bad, { n: 1, at: 0.75, dash: 1 }); cross(215, 150); L(290, 138, 'toota', C.bad);
-    A(162, 195, 378, 195, C.good, { n: 2, at: 0.15 }); L(275, 183, 'wapas juda', C.good);
-    A(378, 240, 162, 240, C.good, { n: 3, at: 0.15 }); L(265, 228, 'abhi ka price alag se', C.good);
+    panel(0, 'toota', ['Arpan ka app', 'net gaya', 'bad'], ['WS server', '', ''], '', true, C.bad, 'beech ke price gaye');
+    panel(1, 'wapas juda', ['Arpan ka app', 'phir juda', 'acc'], ['WS server', '', ''], 'juda', true, C.acc, 'purane nahi chahiye');
+    panel(2, 'abhi ka price', ['Price store', 'TCS 3007', 'good'], ['WS server', '', ''], 'abhi ka', true, C.good, 'alag se ek baar');
+    panel(3, 'phir push', ['WS server', '', ''], ['Arpan ka app', 'TCS 3007', 'good'], 'bheja', true, C.good, 'ab aage live');
+    L(450, 320, 'beech ke purane price bekaar the. Sirf abhi ka chahiye', C.good);
   }
 }
