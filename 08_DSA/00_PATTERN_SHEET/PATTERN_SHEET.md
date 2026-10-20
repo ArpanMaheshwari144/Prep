@@ -766,12 +766,12 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
      IDEA:
-        = LC-76 ka SAME minWindow() -- literally REUSE: numberOfSubstrings(s) = minWindow(s, "abc").
-          farak SIRF answer-line:
-              LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
-              LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
-          WHY ans += i: shrink INVALID tak -> i = kitne valid left-starts. hand-trace "abcabc": i = 0,0,1,2,3,4 -> sum 10.
-        WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
+        = LC-76 ka SAME code reuse:  numberOfSubstrings(s) = minWindow(s, "abc")
+          farak sirf answer ki line:
+              LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (sabse chhoti)
+              LC-1358 : while ke BAAD  -> ans += i                        (ginti)
+        ans += i KYUN: shrink window ko invalid hone tak le jaata -> 0 se i-1 tak har start valid tha -> i substring.
+           "abcabc": har j pe i = 0,0,1,2,3,4 -> jod 10
 
      TEMPLATE:
         t = "abc"  (count = 3 = t.size()).   // ans=0 se (count jod rahe)
