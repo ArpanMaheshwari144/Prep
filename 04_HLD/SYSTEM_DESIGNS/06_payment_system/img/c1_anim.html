@@ -154,11 +154,18 @@ function panel(k, title, top, bot, lab, down, c, note) {
 }
 function frame(ph) {
   if (ph === 0) {
-    panel(0, 'Arpan se kata', ['Payment Svc', 'Kirana ko 500', ''], ['Wallet DB', 'Arpan 1000 -> 500', 'acc'], 'likha', true, C.acc, 'pehla badlaav');
-    panel(1, 'server gira', ['Payment Svc', 'gira', 'bad'], ['Wallet DB', 'Arpan 500', 'acc'], '', true, C.bad, 'aage likha hi nahi');
-    panel(2, 'Kirana', ['Kirana', '+500?', 'bad'], ['Wallet DB', 'Kirana: kuch nahi', 'bad'], '', true, C.bad, 'paisa pahuncha nahi');
-    panel(3, 'hisaab', ['Arpan', '500 kata', 'bad'], ['Ledger', 'koi line nahi', 'bad'], '', true, C.bad, '500 gayab');
-    L(450, 320, 'do alag badlaav, beech me crash. Aadha hua, aadha nahi', C.bad);
+    B(20, 130, 160, 80, 'Payment Svc', 'Kirana ko 500');
+    B(330, 40, 260, 240, 'Wallet DB', '', { st: 'bad' });
+    cells(350, 95, [['Arpan: 1000 -> 500', C.acc]], { w: 220, h: 34 });
+    cells(350, 195, [['Kirana: +500 nahi', C.bad]], { w: 220, h: 34 });
+    A(180, 150, 348, 112, C.acc, { n: 1 }); L(255, 112, 'Arpan -500', C.acc);
+    num(100, 240, 2, C.bad); L(100, 265, 'phir server gira', C.bad);
+    A(180, 190, 348, 212, C.bad, { n: 3, dash: 1, at: 0.3 }); cross(300, 205); L(265, 300, 'Kirana +500 likha hi nahi', C.bad);
+    B(690, 40, 180, 70, 'Arpan', 'app pe 500 kam', { st: 'bad' });
+    B(690, 210, 180, 70, 'Kirana', 'kuch nahi mila', { st: 'bad' });
+    A(590, 112, 688, 80, C.bad, { n: 4 });
+    A(590, 212, 688, 245, C.bad, { n: 5 });
+    L(450, 340, 'do alag badlaav, beech me crash. 500 kata, kisi ko mila nahi', C.bad);
   } else if (ph === 1) {
     B(20, 140, 150, 70, 'Payment Svc', 'Kirana ko 500');
     B(300, 30, 560, 250, 'Wallet DB: ek transaction', '', { st: 'good' });

@@ -52,11 +52,11 @@ Cue: EK TRANSACTION (WAL se poora / ulta)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png?v=2" width="900">
+<img src="img/c1_1.png?v=3" width="900">
 
-<img src="img/c1_2.png?v=2" width="900">
+<img src="img/c1_2.png?v=3" width="900">
 
-<img src="img/c1_3.png?v=2" width="900">
+<img src="img/c1_3.png?v=3" width="900">
 
 </details>
 
