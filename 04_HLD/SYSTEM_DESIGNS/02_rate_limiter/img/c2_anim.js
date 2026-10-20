@@ -8,9 +8,9 @@ const PH = [
   [12, GRN, 'WAPAS', 'WAPAS: script chhoti rakhi, loop nahi. Line phir chal padi'],
 ];
 function setup() {}
-function base(s1, s2, st1, st2, rs, rst) {
+function base(s1, s2, st1, st2, rs, rst, bn = 1) {
   B(20, 140, 90, 80, 'Bot', '20 login');
-  A(110, 170, 248, 100, C.msg, { n: 1 }); A(110, 190, 248, 260, C.msg, { n: 1 });
+  A(110, 170, 248, 100, C.msg, { n: bn }); A(110, 190, 248, 260, C.msg, { n: bn });
   B(250, 60, 130, 70, 'App-1', s1, { st: st1 }); B(250, 225, 130, 70, 'App-2', s2, { st: st2 });
   B(530, 135, 170, 80, 'Redis', rs, { st: rst });
 }
@@ -43,17 +43,17 @@ function frame(ph) {
     dots(3, 220, 205, C.bad, { gap: 60 });
     T(280, 300, 'aaj  kal  parso: 429', { c: C.bad, b: 1, size: 14 });
   } else if (ph === 3) {
-    base('ruka', 'ruka', 'bad', 'bad', '', 'bad');
+    base('ruka', 'ruka', 'bad', 'bad', '', 'bad', 2);
     loop(615, 190, C.bad); num(575, 178, 1, C.bad);
     L(615, 245, 'Lua loop: ye chal rahi', C.bad);
-    A(380, 95, 528, 160, C.bad, { dash: 1, n: 2, at: 0.85 }); A(380, 260, 528, 190, C.bad, { dash: 1, n: 2, at: 0.85 });
+    A(380, 95, 528, 160, C.bad, { dash: 1, n: 3, at: 0.85 }); A(380, 260, 528, 190, C.bad, { dash: 1, n: 3, at: 0.85 });
     dots(3, 400, 115, C.msg, { gap: 22 }); dots(3, 400, 235, C.msg, { gap: 22 });
     L(455, 95, 'baaki ruke', C.bad);
     T(800, 175, '0 / sec', { c: C.bad, b: 1, size: 22 });
   } else {
     base('', '', 'good', 'good', 'INCR + EXPIRE', 'good');
-    A(380, 95, 528, 160, C.good, { n: 1 }); A(380, 260, 528, 190, C.good, { n: 1 });
+    A(380, 95, 528, 160, C.good, { n: 2 }); A(380, 260, 528, 190, C.good, { n: 2 });
     L(615, 240, 'script chhoti, jhat se', C.good);
-    A(700, 175, 780, 175, C.good, { n: 2, at: 0.35 }); dots(3, 800, 150, C.good, { gap: 25, cols: 1 });
+    A(700, 175, 780, 175, C.good, { n: 3, at: 0.35 }); dots(3, 800, 150, C.good, { gap: 25, cols: 1 });
   }
 }
