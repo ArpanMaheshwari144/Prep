@@ -3,7 +3,7 @@
 const DUR = 18;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: PSP ko call gayi, jawab se pehle server gira. Paisa gaya ya nahi?'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: call se PEHLE PENDING. Webhook bataye ya job poochhe -> SUCCESS'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: call se PEHLE DB me PENDING likho. PSP baad me khud bataye (webhook)'],
   [6, YEL, 'AGAR', 'AGAR webhook do baar aaya? -> SUCCESS sirf ek baar, doosra ignore'],
   [9, YEL, 'AGAR', 'AGAR webhook nakli? -> hastakshar jaancho (PSP secret), PENDING se milao'],
   [12, YEL, 'AGAR', 'AGAR webhook aaya hi nahi? -> job purane PENDING ke liye PSP se poochhe'],
@@ -26,13 +26,13 @@ function frame(ph) {
     A(698, 95, 202, 95, C.good, { dash: 1 }); L(450, 120, 'jawab kisi ne nahi suna', C.bad);
     L(500, 230, 'paisa gaya ya nahi? pata nahi', C.bad);
   } else if (ph === 1) {
-    base({ sv: 'bad', db: 'good', job: 'acc', ps: 'good' }, { db: 'PENDING -> SUCCESS' });
-    A(120, 112, 120, 238, C.acc, { n: 1 }); L(135, 180, 'PENDING pehle', C.acc, 'start');
-    A(200, 60, 698, 60, C.msg, { n: 2 }); L(300, 50, 'call', C.msg);
-    num(225, 120, 3, C.bad); L(245, 125, 'server gira', C.bad, 'start');
-    AP([[700, 100], [650, 100], [202, 265]], C.good, { n: 4, at: 0.3 }); L(500, 125, 'webhook: hua', C.good);
-    A(580, 260, 760, 112, C.acc, { dash: 1, n: 4, at: 0.5 }); L(690, 220, 'ya job poochhe', C.acc, 'start');
-    L(120, 345, 'tracking bacha, SUCCESS', C.good);
+    base({ sv: 'bad', db: 'good', ps: 'good', noJob: 1 }, { db: 'PENDING -> SUCCESS' });
+    A(120, 112, 120, 238, C.acc, { n: 1, at: 0.45 }); L(135, 172, 'pehle: PENDING likha', C.acc, 'start');
+    A(200, 75, 698, 75, C.msg, { n: 2, at: 0.5 }); L(450, 62, 'phir: PSP ko call', C.msg);
+    cross(225, 128); num(255, 128, 3, C.bad); L(273, 133, 'server gira', C.bad, 'start');
+    AP([[785, 112], [785, 300], [202, 300]], C.good, { n: 4, at: 0.55 });
+    L(500, 288, 'PSP ka webhook: "hua" -> DB me SUCCESS', C.good);
+    L(450, 350, 'server gira tab bhi DB me PENDING tha, isliye haal pata raha', C.good);
   } else if (ph === 2) {
     base({ db: 'good', ps: 'good', noJob: 1 }, { db: 'SUCCESS (ek baar)' });
     AP([[700, 85], [650, 85], [202, 255]], C.good, { n: 1, at: 0.3 }); L(470, 105, 'webhook: SUCCESS likha', C.good);
