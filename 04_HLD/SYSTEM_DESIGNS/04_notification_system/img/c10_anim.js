@@ -1,64 +1,46 @@
-// Card 10: "sabko bhejo" = ek request me 1 crore ek-ek, ghanton atki, OTP peeche.
-// Ilaaj: 1000 ke tukde low line me, campaign row me aakhri_id. Agar: 600 bhej ke worker gira, galat offer chala.
-const DUR = 15;
+// Card 10: "Diwali offer sabko", 1 crore log, ek request me ek-ek, ghanton atka, OTP bhi peeche.
+// Ilaaj: 1000-1000 ke tukde low line me, campaign row me kahan tak. Agar: tukde me 600 bhej ke worker gira.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: sabko bhejo: ek request me 1 crore ek-ek. Ghanton atki, OTP peeche'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: 1000-1000 ke tukde, low line me. Har tukde ke baad row me aakhri_id'],
-  [6, YEL, 'AGAR', 'AGAR tukde me 600 bhej ke worker gir gaya? -> poora tukda dobara'],
-  [9, YEL, 'AGAR', 'AGAR galat offer chal gaya? -> campaign row pe CANCELLED likho'],
-  [12, GRN, 'WAPAS', 'WAPAS: tukde low line me chalte rahe. Had + OTP line bachi'],
+  [0, RED, 'DIKKAT', 'DIKKAT: admin ne "sabko bhejo" dabaya. Ek hi request me 1 crore ek-ek, ghanton atka'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: 1000-1000 ke tukde, low line me. Har tukde ke baad campaign row me "kahan tak"'],
+  [6, YEL, 'AGAR', 'AGAR tukde me 600 bhej ke worker gira? -> tukda dobara, par pehle wale 600 chhoot jaate'],
 ];
 function setup() {}
-function base(o = {}) {
-  B(20, 150, 100, 70, 'Admin', 'sabko bhejo');
-  B(170, 150, 150, 70, 'Campaign Svc', '', { st: 'acc' });
-  B(170, 280, 150, 60, 'Campaign row', o.row || 'aakhri_id', { st: o.rowst || 'acc' });
-  B(630, 155, 100, 60, 'Worker', o.w || 'low line', { st: o.wst });
-  B(760, 150, 110, 70, 'Users', '1 crore', { st: o.ust });
-  A(120, 185, 168, 185, C.msg, { n: o.n1 || 0, at: 0.45 });
-}
-function tukde(list) {
-  cells(620 - list.length * 44, 172, list.map(s => [s, C.acc]), { w: 40 });
-  T(470, 160, 'tukde (1000 user)', { c: C.muted, size: 12 });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    B(20, 150, 100, 70, 'Admin', 'sabko bhejo');
-    B(170, 150, 150, 70, 'Notification Svc', '', { st: 'bad' });
-    B(760, 150, 110, 70, 'Users', '1 crore', { st: 'bad' });
-    A(120, 185, 168, 185, C.msg, { n: 1, at: 0.45 }); L(70, 135, 'ek request', C.msg);
-    A(320, 185, 758, 185, C.acc, { n: 2, at: 0.15 }); dots(11, 420, 185, C.acc, { gap: 28, cols: 11 });
-    L(540, 160, 'ek-ek, 1 crore', C.acc); L(540, 230, 'ghanton atki', C.bad);
-    num(195, 95, 3, C.bad); dot([245, 120], C.bad); L(245, 100, 'OTP peeche atka', C.bad, 'start');
+    B(20, 140, 140, 60, 'Admin', 'sabko bhejo');
+    B(300, 120, 220, 100, 'Campaign Svc', 'ek request: 1 crore', { st: 'bad' });
+    bar(320, 180, 180, 14, 0.15, ''); T(410, 245, '15 lakh / 1 crore, 2 ghante se', { c: C.bad, size: 12 });
+    A(160, 170, 298, 170, C.msg, { n: 1 });
+    num(620, 140, 2, C.bad); L(640, 145, 'beech me gira: shuru se', C.bad, 'start');
+    num(620, 190, 3, C.bad); L(640, 195, 'OTP bhi peeche atka', C.bad, 'start');
+    L(450, 330, 'ek bada kaam, ek hi jagah atka. Rokne ka bhi tareeka nahi', C.bad);
   } else if (ph === 1) {
-    base({ n1: 1, row: 'aakhri_id = 3000', ust: 'good' });
-    tukde(['4k', '5k', '6k']);
-    A(320, 185, 485, 185, C.acc, { n: 2, at: 0.5 }); A(615, 185, 628, 185, C.line);
-    A(730, 185, 758, 185, C.good, { n: 3, at: 0.5 });
-    AP([[680, 217], [680, 310], [322, 310]], C.acc, { n: 4, at: 0.5 }); L(500, 335, 'har tukde ke baad likha', C.acc);
-  } else if (ph === 2) {
-    base({ row: 'aakhri_id = 3000', w: 'gira -> naya', wst: 'acc', ust: 'good' });
-    tukde(['4k', '5k', '6k']);
-    num(680, 135, 1, C.bad); L(698, 140, '600 bheje, phir gira', C.bad, 'start');
-    AP([[322, 300], [680, 300], [680, 217]], C.acc, { n: 2, at: 0.5 }); L(500, 285, 'wahin se: 3001', C.acc);
-    A(730, 185, 758, 185, C.good, { n: 3, at: 0.5 });
-    L(815, 250, '600 skip, 400 gaye', C.good);
-    L(450, 25, 'hal: poora tukda dobara, (campaign_id, user_id) se', C.good);
-    L(450, 47, 'pehle wale 600 chhoot jaate. Ek user ko ek hi baar', C.good);
-  } else if (ph === 3) {
-    base({ n1: 1, row: 'CANCELLED', rowst: 'bad', w: 'ruka', wst: 'bad' });
-    tukde(['4k', '5k', '6k']);
-    L(70, 135, 'galat offer', C.bad);
-    A(245, 222, 245, 278, C.bad, { n: 2 }); L(262, 255, 'CANCELLED likho', C.bad, 'start');
-    AP([[680, 217], [680, 310], [322, 310]], C.acc, { n: 3, at: 0.5 }); L(500, 335, 'har tukde se pehle dekha', C.acc);
-    A(730, 185, 758, 185, C.bad, { dash: 1 }); cross(745, 160); L(815, 250, 'aage nahi gaya', C.bad);
-    L(450, 25, 'hal: worker har tukde se pehle row dekhta, CANCELLED pe ruk', C.good);
+    B(20, 130, 150, 70, 'Campaign Svc', '1 crore');
+    B(250, 30, 380, 80, 'Low line (offer)', '', { st: 'acc' });
+    cells(265, 70, [['1-1000', C.good], ['1001-2000', C.good], ['2001-3000', C.good], ['...', C.line]], { w: 82, h: 30 });
+    B(250, 230, 380, 70, 'Campaign row', 'aakhri_id = 3000, haal: CHALU', { st: 'good' });
+    B(720, 40, 150, 60, 'Worker', 'tukda bhejta');
+    A(170, 150, 248, 75, C.acc, { n: 1 }); L(195, 100, 'tukde', C.acc);
+    A(630, 70, 718, 70, C.acc, { n: 2 });
+    A(790, 102, 632, 255, C.good, { n: 3 }); L(740, 200, 'kahan tak likha', C.good, 'start');
+    L(450, 345, 'gira to wahin se. Galat offer? row pe CANCELLED, agla tukda ruk jaata', C.good);
   } else {
-    base({ row: 'aakhri_id', ust: 'good', wst: 'good' });
-    tukde(['7k', '8k']);
-    A(320, 185, 485, 185, C.acc, { n: 1, at: 0.6 });
-    A(730, 185, 758, 185, C.good, { n: 2, at: 0.5 }); L(815, 250, 'aaram se, had me', C.good);
-    B(170, 30, 150, 50, 'OTP', 'tez line', { st: 'good' });
-    A(320, 55, 758, 160, C.good, { n: 3, at: 0.5 }); L(600, 70, 'OTP turant', C.good, 'start');
+    panel(0, 'tukda 4', ['Worker-A', '3001-4000', ''], ['600 log', 'offer pahuncha', 'good'], 'bheja', true, C.good, '600 tak gaya');
+    panel(1, 'gira', ['Worker-A', 'mara', 'bad'], ['Campaign row', 'aakhri_id = 3000', 'acc'], '', true, C.bad, '4000 likha hi nahi');
+    panel(2, 'tukda dobara', ['Worker-B', '3001-4000', ''], ['Sent list', '(campaign, user)', 'acc'], 'dekha', true, C.acc, 'kisko pehle gaya?');
+    panel(3, 'sirf baaki', ['Worker-B', '400 ko bheja', 'good'], ['Campaign row', 'aakhri_id = 4000', 'good'], 'likha', true, C.good, '600 ko dobara nahi');
+    L(450, 320, 'tukda dobara chala, par ek user ko ek hi baar', C.good);
   }
 }

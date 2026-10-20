@@ -315,17 +315,13 @@ NAHI    har worker apni speed 100 / sec -> 429: 100 worker matlab 100 guna, comp
 
 Cue: WEBHOOK + company ka message id
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png" width="900">
+<img src="img/c9_1.png?v=2" width="900">
 
-<img src="img/c9_2.png" width="900">
+<img src="img/c9_2.png?v=2" width="900">
 
-<img src="img/c9_3.png" width="900">
-
-<img src="img/c9_4.png" width="900">
-
-<img src="img/c9_5.png" width="900">
+<img src="img/c9_3.png?v=2" width="900">
 
 </details>
 
@@ -351,17 +347,13 @@ NAHI    baar-baar khud poochte raho -> MEHENGA: laakhon message x har kuch secon
 
 Cue: 1000 ke TUKDE + campaign row
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c10_1.png" width="900">
+<img src="img/c10_1.png?v=2" width="900">
 
-<img src="img/c10_2.png" width="900">
+<img src="img/c10_2.png?v=2" width="900">
 
-<img src="img/c10_3.png" width="900">
-
-<img src="img/c10_4.png" width="900">
-
-<img src="img/c10_5.png" width="900">
+<img src="img/c10_3.png?v=2" width="900">
 
 </details>
 
@@ -389,17 +381,13 @@ NAHI    1 crore ko ek bada "sabko bhejo" message -> ATKA: ek worker pe atka, gir
 
 Cue: PASAND + SHAANTI + SAANCHA (cache)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c11_1.png" width="900">
+<img src="img/c11_1.png?v=2" width="900">
 
-<img src="img/c11_2.png" width="900">
+<img src="img/c11_2.png?v=2" width="900">
 
-<img src="img/c11_3.png" width="900">
-
-<img src="img/c11_4.png" width="900">
-
-<img src="img/c11_5.png" width="900">
+<img src="img/c11_3.png?v=2" width="900">
 
 </details>
 
