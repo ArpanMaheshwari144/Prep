@@ -10,6 +10,7 @@
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
 // anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
 const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
@@ -74,43 +75,132 @@ function cells(x, y, items, o = {}) {
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
 function draw(t) {
   DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
   const fix = t >= FIX;
   CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
   frame(t, fix, fix ? t - FIX : t);
 }
 
 // Card 10: 50 MB video sab US server se khinchte -> buffering + bill. Ilaaj: S3 + paas wala CDN, upload presigned.
-const DUR = 17, FIX = 8;
-const US = [450, 90], V = [[120, 300], [450, 300], [780, 300]], VN = ['Delhi', 'London', 'Sydney'];
-function setup() {
-  const fix = grp('fix');
-  box(370, 50, 160, 70, 'Hamara US server', '', { id: 'srv' });
-  V.forEach(([x, y], i) => box(x - 60, y - 25, 120, 50, VN[i]));
-  ['wa', 'wb', 'wc'].forEach((id, i) => wire(`M450 120 L${V[i][0]} ${V[i][1] - 25}`, id));
-  box(20, 40, 110, 60, 'Main', 'video upload', { parent: fix });
-  box(190, 45, 120, 50, 'S3', '', { parent: fix, stroke: C.acc }); wire('M130 70 H190', '', fix);
-  V.forEach(([x, y], i) => { box(x - 50, y - 110, 100, 40, `CDN ${VN[i]}`, '', { parent: fix, stroke: C.good });
-    wire(`M250 95 L${x} ${y - 110}`, '', fix); });
-}
-function frame(t, fix, tl) {
-  vis('fix', fix); vis('srv', !fix); ['wa', 'wb', 'wc'].forEach(id => vis(id, !fix));
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: 50 MB video, Delhi / London / Sydney sab hamare US server se khinchte';
-    V.forEach((v, i) => { const s = 0.3 + i * 0.2, d = 3.5;
-      const f = Math.min(1, Math.max(0, (tl - s) / d));
-      dot(lerp([450, 120], [v[0], v[1] - 25], f), C.msg);
-      T(v[0], v[1] + 45, f < 1 ? 'buffering...' : 'aayi, der se', { c: f < 1 ? C.bad : C.acc, size: 12, b: 1 }); });
-    T(560, 85, `bandwidth bill: Rs ${Math.round(Math.min(1, tl / 5) * 90000)}`, { c: C.bad, b: 1, size: 14, a: 'start' });
-    return;
+// Agar: CDN ke paas nahi, photo hata di par dikh rahi, private photo. Wapas: CDN ke paas copy, agli baar paas se.
+const DUR = 18;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: 50 MB video, Delhi / London / Sydney sab hamare US server se'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: video S3 me (seedha upload, presigned link), dekho paas wale CDN se'],
+  [6, YEL, 'AGAR', 'AGAR CDN ke paas video nahi, koi dekhne aaya? -> CDN S3 se laake rakh leta'],
+  [9, YEL, 'AGAR', 'AGAR photo hata di, CDN pe abhi dikh rahi? -> CDN ko "hatao" bolo'],
+  [12, YEL, 'AGAR', 'AGAR private photo, sabko dikhegi? -> nahi, link pe hastakshar + expiry'],
+  [15, GRN, 'WAPAS', 'WAPAS: CDN ke paas copy rakhi, agli baar paas se turant'],
+];
+function setup() {}
+const VX = [60, 390, 720], VN = ['Delhi', 'London', 'Sydney'];
+function viewers(st) { VX.forEach((x, i) => B(x, 270, 120, 50, VN[i], '', { st: st ? st[i] : '' })); }
+function cdns(st, sub) { VX.forEach((x, i) => B(x, 150, 120, 45, `CDN ${VN[i]}`, '', { st: st ? st[i] : '' })); }
+function s3(st, sub) { B(220, 25, 140, 50, 'S3', sub || '', { st }); }
+function frame(ph) {
+  if (ph === 0) {
+    B(370, 20, 160, 65, 'Hamara US server', '50 MB video', { st: 'bad' });
+    viewers(['bad', 'bad', 'bad']);
+    VX.forEach((x, i) => A(450, 87, x + 60, 268, C.bad, { n: i === 1 ? 1 : 0, at: 0.5 }));
+    VX.forEach(x => L(x + 60, 340, 'buffering', C.bad));
+    num(600, 50, 2, C.bad); L(620, 55, 'bandwidth ka bill', C.bad, 'start');
+  } else if (ph === 1) {
+    B(20, 20, 120, 60, 'Main', 'video upload');
+    s3('good'); A(140, 50, 218, 50, C.acc, { n: 1 }); L(80, 100, 'presigned link', C.acc);
+    L(380, 55, 'tweet me sirf CDN link', C.muted, 'start');
+    cdns(['good', 'good', 'good']); viewers(['good', 'good', 'good']);
+    VX.forEach((x, i) => A(290, 77, x + 60, 148, C.acc, { dash: 1, n: i === 1 ? 2 : 0, at: 0.6 }));
+    VX.forEach((x, i) => A(x + 60, 197, x + 60, 268, C.good, { n: 3 }));
+    VX.forEach(x => L(x + 60, 340, 'paas se, turant', C.good));
+  } else if (ph === 2) {
+    s3('good');
+    cdns(['acc', 'dim', 'dim']); viewers(['', 'dim', 'dim']);
+    A(95, 268, 95, 197, C.msg, { n: 1 }); L(40, 245, 'dekho', C.msg);
+    L(190, 178, 'miss: nahi hai', C.acc, 'start');
+    A(260, 77, 160, 148, C.acc, { n: 2 }); L(250, 125, 'S3 se laaya', C.acc, 'start');
+    A(145, 197, 145, 268, C.good, { n: 3 }); L(165, 240, 'ab paas rakhi', C.good, 'start');
+    L(600, 345, 'hal: CDN S3 se laake kuch der rakh leta', C.good);
+  } else if (ph === 3) {
+    B(20, 20, 120, 60, 'Main', 'photo hatao');
+    s3('bad', 'photo hata di'); num(390, 50, 1, C.bad); L(410, 55, 'S3 se gayi', C.bad, 'start');
+    A(140, 50, 218, 50, C.bad);
+    cdns(['bad', 'dim', 'dim']); viewers(['bad', 'dim', 'dim']);
+    L(190, 178, 'purani copy', C.bad, 'start');
+    A(120, 197, 120, 268, C.bad, { n: 2 }); L(200, 245, 'abhi bhi dikhi', C.bad, 'start');
+    A(80, 82, 80, 148, C.acc, { dash: 1, n: 3 }); L(40, 120, 'hatao', C.acc, 'end');
+    L(620, 120, 'hal: CDN ko "hatao" bolo (invalidation)', C.good);
+    L(620, 145, 'ya link me version, nayi file', C.good);
+  } else if (ph === 4) {
+    s3('good', 'private photo');
+    B(390, 150, 120, 45, 'CDN', '', { st: 'good' });
+    A(360, 60, 440, 148, C.line, { dash: 1 });
+    B(60, 270, 140, 55, 'Ravi', 'signed link', { st: 'good' });
+    B(700, 270, 160, 55, 'koi aur', 'bina hastakshar', { st: 'bad' });
+    A(390, 190, 200, 290, C.good, { n: 1, at: 0.5 }); L(270, 220, 'dikhi (thodi der)', C.good, 'end');
+    A(700, 290, 545, 205, C.bad, { n: 2, at: 0.3 }); cross(530, 210); L(600, 210, 'mana', C.bad, 'start');
+    L(690, 55, 'hal: link pe hastakshar + expiry', C.good);
+  } else {
+    s3('');
+    cdns(['good', 'good', 'good']); viewers(['good', 'good', 'good']);
+    VX.forEach(x => A(290, 77, x + 60, 148, C.line, { dash: 1 }));
+    VX.forEach((x, i) => {
+      A(x + 35, 268, x + 35, 197, C.msg, { n: i === 0 ? 1 : 0 });
+      A(x + 85, 197, x + 85, 268, C.good, { n: i === 0 ? 2 : 0 });
+    });
+    L(160, 345, 'CDN ke paas copy: paas se turant', C.good);
   }
-  CAP.textContent = 'ILAAJ: video S3 me (seedha upload, presigned link), dekhne wale ko paas wale CDN se';
-  dot(path([[0.3, [130, 70]], [0.9, [190, 70]]], tl < 0.9 ? tl : -1), C.acc, '', '50 MB', C.acc);
-  if (tl > 1) T(330, 75, 'tweet me sirf link', { c: C.muted, size: 12, a: 'start' });
-  V.forEach((v, i) => { const s = 1.4 + i * 0.3;
-    if (tl > s) dot(path([[s, [v[0], v[1] - 70]], [s + 0.6, [v[0], v[1] - 25]]], tl < s + 0.6 ? tl : -1), C.good);
-    if (tl > s + 0.6) T(v[0], v[1] + 45, 'turant chali', { c: C.good, size: 12, b: 1 }); });
 }
 
 setup(); draw(0);

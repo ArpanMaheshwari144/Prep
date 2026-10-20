@@ -10,6 +10,7 @@
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
 // anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
 const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
@@ -74,45 +75,149 @@ function cells(x, y, items, o = {}) {
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
 function draw(t) {
   DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
   const fix = t >= FIX;
   CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
   frame(t, fix, fix ? t - FIX : t);
 }
 
 // Card 6: ek DB, 5,000 tweet/sec, 0.5 PB -> na rakh sake na likh sake. Ilaaj: Cassandra, user_id se baanto.
-const DUR = 17, FIX = 8;
-const SRC = [70, 192], DB1 = [450, 192], N = [[560, 70], [560, 192], [560, 314]];
-function setup() {
-  const bug = grp('bug'), fix = grp('fix');
-  box(20, 150, 100, 84, 'Tweets', '5,000 / sec');
-  box(380, 140, 140, 104, 'Ek DB', '', { parent: bug }); wire('M120 192 H380', '', bug);
-  box(250, 160, 110, 64, 'hash(user_id)', '', { parent: fix, stroke: C.acc }); wire('M120 192 H250', '', fix);
-  N.forEach(([x, y], i) => { box(x - 70, y - 35, 140, 70, `Cassandra ${i + 1}`, '', { parent: fix }); wire(`M360 192 L${x - 70} ${y}`, '', fix); });
+// Agar: files bahut, machine giri, famous garam, famous bhar jaaye. Wapas: ek machine, ek read.
+const DUR = 21;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: ek hi DB. Har second 5,000 tweet, 5 saal me 0.5 PB'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: Cassandra, user_id se baanto. Mere saare tweet ek machine pe'],
+  [6, YEL, 'AGAR', 'AGAR Cassandra me files bahut? -> padhna dheema. Peeche milao (compaction)'],
+  [9, YEL, 'AGAR', 'AGAR meri machine giri? -> 3 copy, 2 me likho, 2 se padho (quorum)'],
+  [12, YEL, 'AGAR', 'AGAR famous ki machine garam? -> theek hai, garam tweet alag RAM cache me'],
+  [15, YEL, 'AGAR', 'AGAR famous ke bahut tweet, machine bhare? -> key (user_id, mahina)'],
+  [18, GRN, 'WAPAS', 'WAPAS: mere saare tweet ek machine pe, naya sabse upar. Ek hi read'],
+];
+function setup() {}
+function cass(st2, sub, o = {}) {
+  for (let i = 0; i < 3; i++) {
+    const y = 30 + i * 120;
+    B(560, y, 160, 60, `Cassandra ${i + 1}`, i === 1 ? sub : '', { st: i === 1 ? st2 : '' });
+    if (o.hash) A(360, 185, 558, y + 30, i === 1 ? C.acc : C.line, { n: i === 1 ? 2 : 0, at: 0.6 });
+  }
 }
-function frame(t, fix, tl) {
-  vis('bug', !fix); vis('fix', fix);
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: ek hi DB. Har second 5,000 tweet, 5 saal me 0.5 PB. Na rakh sake, na likh sake';
-    for (let k = 0; k < 14; k++) { const s = 0.2 + k * 0.3; const p = path([[s, SRC], [s + 0.7, [370, 192]]], tl);
-      if (tl < s + 0.7) dot(p, C.msg); else if (k > 6 && tl < s + 1.4) dot([340 - (k - 6) * 22, 230], C.bad); }
-    const f = Math.min(1, tl / 5);
-    bar(390, 260, 120, 14, f, 'disk');
-    T(450, 300, `${(0.5 * f).toFixed(2)} PB`, { c: f >= 1 ? C.bad : C.fg, b: 1 });
-    if (tl > 3) T(270, 260, 'likhne ki line', { c: C.bad, size: 12 });
-    return;
+function frame(ph) {
+  if (ph === 0) {
+    B(20, 150, 110, 70, 'Tweets', '5,000 / sec');
+    A(130, 185, 378, 185, C.msg, { n: 1, at: 0.15 });
+    dots(5, 220, 185, C.bad, { gap: 32 }); L(285, 220, 'likhne ki line', C.bad);
+    B(380, 130, 170, 110, 'Ek DB', '', { st: 'bad' });
+    bar(395, 190, 140, 18, 1, 'disk');
+    num(600, 165, 2, C.bad); L(620, 170, 'likh nahi paata', C.bad, 'start');
+    num(600, 215, 3, C.bad); L(620, 220, 'disk bhari: 0.5 PB', C.bad, 'start');
+  } else if (ph === 1 || ph === 6) {
+    const w = ph === 6;
+    if (!w) {
+      B(20, 150, 110, 70, 'Tweets', '5,000 / sec');
+      A(130, 185, 218, 185, C.msg, { n: 1 });
+      B(220, 155, 140, 60, 'hash(user_id)', '', { st: 'acc' });
+      cass('acc', 'Main', { hash: 1 });
+      L(800, 170, 'mere saare', C.acc); L(800, 190, 'tweet yahin', C.acc);
+    } else {
+      B(20, 150, 120, 70, 'Main', 'profile kholi', { st: 'good' });
+      cass('good', 'Main');
+      A(140, 185, 558, 185, C.good, { n: 1 }); L(350, 210, 'ek hi read', C.good);
+      cells(740, 172, [['naya', C.good], ['..', C.fg]], { w: 50, h: 26 });
+    }
+  } else if (ph === 2) {
+    B(20, 70, 120, 60, 'padhna');
+    B(300, 20, 570, 230, 'Cassandra 2');
+    const fs = []; for (let i = 1; i <= 8; i++) fs.push([`f${i}`, C.bad]);
+    cells(320, 60, fs, { w: 54, h: 28 });
+    A(140, 95, 298, 80, C.bad, { dash: 1, n: 1 }); L(210, 150, 'padhna dheema', C.bad);
+    A(420, 92, 420, 163, C.good, { n: 2 }); L(440, 132, 'peeche milao (compaction)', C.good, 'start');
+    cells(320, 168, [['f1-8 mili hui', C.good]], { w: 200, h: 30 });
+    num(600, 183, 3, C.good); cells(620, 168, [['bloom filter', C.good]], { w: 140, h: 30 });
+    L(690, 225, 'kam file padho', C.good);
+    L(450, 305, 'hal: peeche files milao (compaction) + bloom filter', C.good);
+  } else if (ph === 3) {
+    B(20, 150, 120, 60, 'Tweet Svc');
+    for (let i = 0; i < 3; i++) {
+      const y = 30 + i * 120;
+      B(450, y, 180, 60, `Cassandra ${i + 1}`, 'meri copy', { st: i === 1 ? 'bad' : 'good' });
+      if (i !== 1) A(140, 180, 448, y + 30, C.good, { n: 2, at: 0.6 });
+    }
+    A(140, 180, 415, 180, C.bad, { dash: 1 }); cross(432, 180);
+    num(660, 180, 1, C.bad); L(680, 185, 'giri', C.bad, 'start');
+    L(760, 70, 'likha + padha', C.good); L(760, 310, 'likha + padha', C.good);
+    L(220, 300, 'hal: 3 copy, 2 me likho, 2 se padho (quorum)', C.good);
+  } else if (ph === 4) {
+    B(20, 150, 120, 60, 'Feed Svc');
+    B(430, 40, 200, 65, 'garam tweet cache', 'RAM', { st: 'good' });
+    B(430, 230, 200, 65, 'Cassandra 2', 'Bieber ke tweet', { st: 'acc' });
+    num(660, 262, 1, C.acc); L(680, 267, 'garam', C.acc, 'start');
+    A(140, 165, 428, 75, C.good, { n: 2 }); L(250, 95, 'zyada read yahin', C.good);
+    A(140, 195, 428, 262, C.line);
+    L(720, 175, 'hal: theek hai, garam tweet RAM cache me', C.good);
+  } else if (ph === 5) {
+    B(20, 30, 230, 60, 'Cassandra 1', 'Bieber: saare tweet', { st: 'bad' });
+    bar(30, 105, 210, 14, 1, '');
+    num(40, 145, 1, C.bad); L(60, 150, 'ek machine bhar jaati', C.bad, 'start');
+    B(20, 210, 230, 60, 'key = (user_id, mahina)', '', { st: 'acc' });
+    ['Jan', 'Feb', 'Mar'].forEach((m, i) => {
+      const y = 30 + i * 100;
+      B(480, y, 220, 60, `Cassandra ${i + 1}`, `(Bieber, ${m})`, { st: 'good' });
+      A(250, 240, 478, y + 30, C.good, { n: i === 1 ? 2 : 0, at: 0.55 });
+    });
+    L(450, 335, 'hal: key me mahina jodo, ek machine nahi bharegi', C.good);
   }
-  CAP.textContent = 'ILAAJ: Cassandra, user_id se baanto. Mere saare tweet ek machine pe, naya sabse upar. Ek read';
-  const users = [['Main', 1], ['Ravi', 0], ['Asha', 2], ['Main', 1], ['Neha', 0], ['Main', 1]];
-  users.forEach(([u, n], k) => { const s = 0.3 + k * 0.6;
-    const p = path([[s, SRC], [s + 0.5, [305, 205]], [s + 1.0, [N[n][0] - 70, N[n][1] + 12]]], tl);
-    if (tl < s + 1.2) dot(p, u === 'Main' ? C.acc : C.msg, '', p && p[0] > 380 ? u : '', u === 'Main' ? C.acc : C.msg); });
-  if (tl > 4.5) {
-    T(700, 192, 'mere saare tweet yahin', { c: C.acc, b: 1, size: 13, a: 'start' });
-    T(700, 212, 'profile = 1 machine, 1 read', { c: C.good, size: 12, a: 'start' });
-  }
-  T(780, 330, 'har machine ki 3 copy', { c: C.muted, size: 12 });
 }
 
 setup(); draw(0);

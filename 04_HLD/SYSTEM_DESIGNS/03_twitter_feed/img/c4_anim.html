@@ -10,6 +10,7 @@
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
 // anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
 const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
@@ -74,50 +75,128 @@ function cells(x, y, items, o = {}) {
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
 function draw(t) {
   DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
   const fix = t >= FIX;
   CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
   frame(t, fix, fix ? t - FIX : t);
 }
 
 // Card 4: Virat ka tweet, crore feed DB pe -> DB gira. Ilaaj: hot-tweet cache (RAM), miss pe sirf ek DB jaaye.
-const DUR = 17, FIX = 8;
-const U = [[70, 70], [70, 140], [70, 210], [70, 280]], FS = [300, 192], HC = [450, 110], DB = [700, 250];
-function setup() {
-  U.forEach(([x, y], i) => { box(x - 50, y - 22, 100, 44, `crore log ${i + 1}`); wire(`M${x + 50} ${y} L250 175`); });
-  box(250, 150, 100, 64, 'Feed Svc');
-  box(640, 215, 120, 70, 'Tweet DB', '');
-  wire('M350 185 L640 245', 'wdb');
-  box(450, 55, 140, 70, 'Hot-tweet cache', 'RAM', { id: 'hc', stroke: C.acc });
-  wire('M350 165 L450 95', 'whc'); wire('M590 100 L700 215', 'whd');
-}
-function frame(t, fix, tl) {
-  vis('hc', fix); vis('whc', fix); vis('whd', fix);
-  let load = 0;
-  for (let k = 0; k < 18; k++) {
-    const s = 0.3 + k * 0.22, u = U[k % 4];
-    if (!fix) {
-      const p = path([[s, u], [s + 0.4, FS], [s + 0.9, DB]], tl);
-      if (tl >= s + 0.9) load++;
-      if (tl < s + 1.1) dot(p, C.msg);
-    } else {
-      const first = k === 0;
-      const pts = first ? [[s, u], [s + 0.4, FS], [s + 0.8, HC], [s + 1.3, DB]] : [[s, u], [s + 0.4, FS], [s + 0.8, HC]];
-      const end = pts[pts.length - 1][0];
-      if (first && tl >= end) load = 1;
-      if (tl < end + 0.3) dot(path(pts, tl), first ? C.acc : C.good, '', first && tl > s + 0.8 ? 'miss: sirf main DB' : '', C.acc);
-    }
+// Agar: ek key garam (kai copy), edit / delete (key hatao). Wapas: naya laaya, phir sab RAM se.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: har feed Virat ka tweet DB se laa rahi. Crore read, DB gira'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: garam tweet RAM me. Miss pe sirf ek request DB, baaki uska jawab'],
+  [6, YEL, 'AGAR', 'AGAR ek key pe bheed, machine garam? -> key ki kai copy, kisi se bhi padho'],
+  [9, YEL, 'AGAR', 'AGAR Virat ne edit kiya, cache me purana? -> cache se key hata do'],
+  [12, GRN, 'WAPAS', 'WAPAS: agla read DB se naya laaya, phir sab RAM se, DB aaram se'],
+];
+function setup() {}
+function users() {
+  for (let i = 0; i < 4; i++) {
+    const y = 30 + i * 80;
+    B(20, y, 110, 44, `log ${i + 1}`);
+    A(130, y + 22, 228, 180, C.msg, { n: i === 1 ? 1 : 0, at: 0.45 });
   }
-  const f = fix ? 0.08 : load / 18;
-  bar(650, 300, 100, 14, f, '');
-  T(700, 335, `DB bojh ${Math.round(100 * f)}%`, { c: f > 0.9 ? C.bad : C.good, b: 1, size: 12 });
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: har feed Virat ka tweet DB se laa rahi. Crore read, DB gira, feed band';
-    if (f >= 1) cross(700, 250);
+  B(230, 150, 110, 60, 'Feed Svc');
+}
+function frame(ph) {
+  if (ph === 0) {
+    users();
+    B(680, 230, 160, 70, 'Tweet DB', '', { st: 'bad' });
+    A(340, 190, 678, 260, C.bad, { n: 2, at: 0.3 }); L(530, 270, 'crore read', C.bad);
+    dots(5, 470, 205, C.bad, { gap: 30 });
+    cross(865, 265); num(735, 325, 3, C.bad); L(755, 330, 'DB gira', C.bad, 'start');
+    T(760, 150, 'feed band', { c: C.bad, b: 1, size: 18 });
+  } else if (ph === 1) {
+    users();
+    B(450, 30, 180, 65, 'Hot-tweet cache', 'RAM', { st: 'good' });
+    A(340, 165, 448, 75, C.good, { n: 2 }); L(470, 125, 'baaki sab yahin se', C.good, 'start');
+    B(680, 230, 160, 70, 'Tweet DB', '', { st: 'good' });
+    A(600, 97, 720, 228, C.acc, { dash: 1, n: 3 }); L(700, 165, 'miss: sirf ek (lock)', C.acc, 'start');
+    bar(690, 320, 140, 14, 0.1, '', 1);
+  } else if (ph === 2) {
+    users();
+    for (let i = 0; i < 5; i++) {
+      const y = 20 + i * 55;
+      B(470, y, 150, 42, `tweet:123#${i + 1}`, '', { st: 'good' });
+      A(340, 180, 468, y + 21, C.good, { n: i === 2 ? 2 : 0, at: 0.6 });
+    }
+    B(700, 20, 170, 60, 'ek machine', 'tweet:123', { st: 'bad' });
+    bar(710, 95, 150, 14, 1, '');
+    num(720, 135, 1, C.bad); L(740, 140, 'garam', C.bad, 'start');
+    B(220, 265, 130, 55, 'App memory', '1-2 sec', { st: 'good' });
+    A(285, 212, 285, 263, C.good, { n: 3 });
+    L(720, 320, 'hal: key ki kai copy, kisi se bhi padho', C.good);
+  } else if (ph === 3) {
+    B(20, 30, 120, 55, 'Virat', 'tweet edit');
+    AP([[140, 57], [760, 57], [760, 228]], C.msg, { n: 1, at: 0.6 }); L(560, 45, 'edit DB me', C.msg);
+    B(680, 230, 160, 70, 'Tweet DB', 'naya', { st: 'good' });
+    B(430, 140, 180, 65, 'Hot-tweet cache', 'purana', { st: 'bad' });
+    num(450, 230, 2, C.acc); L(470, 235, 'key hata do', C.acc, 'start');
+    B(230, 150, 110, 60, 'Feed Svc');
+    A(340, 175, 428, 172, C.good, { n: 3 }); L(385, 130, 'agla read', C.good);
+    A(610, 190, 678, 250, C.good, { n: 4 }); L(760, 330, 'DB se naya', C.good);
+    L(240, 320, 'hal: cache se key hata do', C.good);
   } else {
-    CAP.textContent = 'ILAAJ: garam tweet RAM me (hot-tweet cache). Miss pe sirf ek request DB, baaki uska jawab lein';
-    T(520, 145, 'baaki sab yahin se', { c: C.good, size: 12, b: 1 });
+    users();
+    B(450, 30, 180, 65, 'Hot-tweet cache', 'naya', { st: 'good' });
+    A(720, 228, 600, 97, C.good, { dash: 1, n: 2 }); L(690, 150, 'naya laaya', C.good, 'start');
+    A(340, 165, 448, 75, C.good, { n: 3 }); L(470, 125, 'sab RAM se', C.good, 'start');
+    B(680, 230, 160, 70, 'Tweet DB', '', { st: 'good' });
+    bar(690, 320, 140, 14, 0.1, '', 1); L(665, 295, 'DB aaram se', C.good, 'end');
   }
 }
 

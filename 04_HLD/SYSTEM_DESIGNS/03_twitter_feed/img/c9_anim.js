@@ -1,33 +1,67 @@
 // Card 9: padhna + likhna ek service me, highlights ki bheed me mera tweet dheema. Ilaaj: alag service, ALB path se.
-const DUR = 17, FIX = 8;
-const R = [70, 110], W = [70, 280], LB = [260, 192];
-function setup() {
-  const bug = grp('bug'), fix = grp('fix');
-  box(20, 70, 100, 80, 'Crore log', 'GET /feed');
-  box(20, 245, 100, 70, 'Main', 'POST /tweet');
-  box(210, 165, 100, 54, 'ALB');
-  wire('M120 110 L210 180'); wire('M120 280 L210 205');
-  box(470, 150, 150, 84, 'Ek service', 'padhna + likhna', { parent: bug }); wire('M310 192 H470', '', bug);
-  box(470, 50, 170, 70, 'Timeline Svc x 20', 'GET /feed', { parent: fix }); wire('M310 185 L470 85', '', fix);
-  box(470, 260, 170, 70, 'Tweet Svc x 2', 'POST /tweet', { parent: fix, stroke: C.acc }); wire('M310 200 L470 295', '', fix);
+// Agar: feed ki bheed badhi, Suresh ke 5,000 follower. Wapas: bheed Timeline pe, mera tweet turant.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: padhna, likhna ek service me. Crore log scroll, mera tweet dheema'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: likhne aur padhne ki alag service. ALB path se baante'],
+  [6, YEL, 'AGAR', 'AGAR feed ki bheed badh gayi? -> sirf Timeline badhao, Tweet Svc pe nahi'],
+  [9, YEL, 'AGAR', 'AGAR Suresh ke 5,000 follower? -> Follow store se 1000-1000 padh ke likho'],
+  [12, GRN, 'WAPAS', 'WAPAS: bheed Timeline pe, mera tweet Tweet Svc pe turant save'],
+];
+function setup() {}
+function left() {
+  B(20, 30, 120, 70, 'Crore log', 'GET /feed');
+  B(20, 260, 120, 70, 'Main', 'POST /tweet');
+  B(220, 155, 100, 60, 'ALB');
 }
-function frame(t, fix, tl) {
-  vis('bug', !fix); vis('fix', fix);
-  for (let k = 0; k < 16; k++) { const s = 0.2 + k * 0.25;
-    const end = fix ? [470, 85] : [470, 192];
-    const p = path([[s, R], [s + 0.4, LB], [s + 0.9, end]], tl);
-    if (tl < s + 1.0) dot(p, C.msg); }
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: padhna aur likhna ek hi service me. Crore log scroll kar rahe, mera tweet usi bheed me';
-    const p = path([[1.0, W], [1.5, LB], [2.0, [440, 205]], [5.5, [468, 205]]], tl);
-    dot(p, C.acc, '', tl > 2.0 ? '' : 'mera tweet', C.acc);
-    if (tl > 2.0) T(545, 255, 'mera tweet bheed ki line me', { c: C.acc, b: 1, size: 12 });
-    if (tl > 2.5) T(545, 278, `ruka: ${Math.min(4, tl - 2).toFixed(1)} sec`, { c: C.bad, b: 1, size: 13 });
-    return;
+function svcs(tst) {
+  B(470, 30, 200, 65, 'Timeline Svc x 20', 'GET /feed');
+  B(470, 265, 200, 65, 'Tweet Svc x 2', 'POST /tweet', { st: tst });
+}
+function frame(ph) {
+  if (ph === 0) {
+    left();
+    A(140, 65, 218, 170, C.msg, { n: 1 });
+    A(140, 295, 218, 200, C.acc, { n: 2 });
+    B(470, 140, 180, 85, 'Ek service', 'padhna + likhna', { st: 'bad' });
+    A(320, 185, 468, 185, C.msg, { n: 3 });
+    dots(4, 345, 220, C.msg, { gap: 22 }); dot([435, 220], C.acc);
+    L(400, 255, 'mera tweet bheed ki line me', C.acc);
+    num(690, 183, 4, C.bad); L(710, 188, 'tweet dheema', C.bad, 'start');
+  } else if (ph === 1) {
+    left(); svcs('good');
+    A(140, 65, 218, 170, C.msg, { n: 1 }); A(140, 295, 218, 200, C.acc, { n: 1 });
+    A(320, 175, 468, 62, C.msg, { n: 2 }); A(320, 195, 468, 297, C.good, { n: 2 });
+    T(690, 62, 'bheed sirf yahan', { c: C.muted, size: 13, a: 'start' });
+    L(690, 302, 'turant save', C.good, 'start');
+  } else if (ph === 2) {
+    left();
+    num(80, 125, 1, C.bad); L(100, 130, 'bheed badhi', C.bad, 'start');
+    A(140, 65, 218, 170, C.msg);
+    ['Timeline Svc', 'Timeline Svc', 'Timeline (naya)'].forEach((s, i) =>
+      B(470, 15 + i * 55, 200, 45, s, '', { st: i === 2 ? 'acc' : 'good' }));
+    A(320, 175, 468, 92, C.good, { n: 2, at: 0.55 }); A(320, 175, 468, 37, C.good); A(320, 175, 468, 147, C.good);
+    B(470, 265, 200, 65, 'Tweet Svc x 2', 'POST /tweet');
+    A(320, 195, 468, 297, C.line);
+    L(780, 300, 'koi asar nahi', C.muted);
+    L(785, 200, 'hal: sirf Timeline badhao', C.good);
+  } else if (ph === 3) {
+    B(20, 150, 120, 60, 'Suresh', '5,000 follower');
+    num(640, 50, 1, C.bad); L(660, 55, 'ek baar me sab: bhaari', C.bad, 'start');
+    B(200, 150, 110, 60, 'Fanout');
+    A(140, 180, 198, 180, C.msg, { n: 2 });
+    B(400, 20, 200, 60, 'Follow store');
+    A(255, 148, 398, 50, C.msg);
+    A(500, 82, 500, 143, C.acc, { n: 3 }); L(515, 118, '1000-1000 padho', C.acc, 'start');
+    cells(360, 148, [['1-1000', C.acc], ['..2000', C.acc], ['..3000', C.acc], ['..4000', C.acc], ['..5000', C.acc]], { w: 90, h: 28 });
+    B(400, 260, 300, 60, '5,000 inbox', '', { st: 'good' });
+    A(550, 180, 550, 258, C.good, { n: 4 }); L(565, 225, 'inbox likho', C.good, 'start');
+    L(220, 300, 'hal: 1000-1000 padh ke likho', C.good);
+  } else {
+    left(); svcs('good');
+    A(140, 65, 218, 170, C.msg); A(320, 175, 468, 62, C.msg);
+    A(140, 295, 218, 200, C.acc, { n: 1 }); A(320, 195, 468, 297, C.good, { n: 2 });
+    T(690, 62, 'bheed yahan', { c: C.muted, size: 13, a: 'start' });
+    L(690, 302, 'turant save', C.good, 'start');
   }
-  CAP.textContent = 'ILAAJ: likhne aur padhne ki alag service. ALB path se baante. Jahan bheed, wahi badhao';
-  const p = path([[1.0, W], [1.5, LB], [2.0, [470, 295]]], tl);
-  if (tl < 2.4) dot(p, C.acc, '', 'mera tweet', C.acc);
-  if (tl > 2.0) T(700, 300, 'turant save', { c: C.good, b: 1, size: 13, a: 'start' });
-  T(700, 90, 'bheed sirf yahan', { c: C.muted, size: 12, a: 'start' });
 }
