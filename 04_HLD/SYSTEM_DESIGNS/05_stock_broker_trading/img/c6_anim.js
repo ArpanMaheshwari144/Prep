@@ -10,20 +10,32 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.acc, 'Settlement → Wallet DB', 'Arpan -30k likha'], [C.bad, 'Settlement gira', 'aage likhne se pehle'], [C.bad, 'Settlement → Wallet DB', 'Suresh +30k, share: likhe hi nahi'], [C.bad, 'Wallet DB → Arpan / Suresh', 'Arpan ka 30k gaya, share nahi.|Suresh ko paisa nahi']],
+  [[C.msg, 'Settlement → Wallet DB', 'ek transaction (BEGIN)'], [C.good, 'chaaron saath', 'Arpan -30k +10 share,|Suresh +30k -10 share'], [C.good, 'COMMIT', 'tab pakka. Pehle gira to rollback']],
+  [[C.good, 'Settlement → Wallet DB', 't1 likha (commit hua)'], [C.acc, 'Settlement retry → Wallet DB', 'jawab kho gaya tha, t1 phir'], [C.acc, 'Wallet DB → retry', 't1 pehle se (UNIQUE): kuch nahi'], [C.good, 'Wallet DB → Suresh', '+30k ek hi baar']],
+];
 function frame(ph) {
   if (ph === 0) {
-    panel(0, 'Arpan se kata', ['Settlement', 'trade t1', ''], ['Wallet DB', 'Arpan -30k', 'acc'], 'likha', true, C.acc, 'pehla kadam');
-    panel(1, 'crash', ['Settlement', 'gira', 'bad'], ['Wallet DB', 'Arpan -30k', 'acc'], '', true, C.bad, 'aage likha hi nahi');
-    panel(2, 'Suresh', ['Suresh', '+30k?', 'bad'], ['Wallet DB', 'Suresh: kuch nahi', 'bad'], '', true, C.bad, 'paisa mila hi nahi');
-    panel(3, 'share', ['Arpan', '+10 share?', 'bad'], ['Wallet DB', 'share nahi jude', 'bad'], '', true, C.bad, '30k gayab');
-    L(450, 320, 'aadha kaam likha, aadha nahi. Paisa beech me gum', C.bad);
+    B(20, 130, 160, 80, 'Settlement', 'trade t1');
+    B(330, 30, 260, 250, 'Wallet DB', '', { st: 'bad' });
+    cells(350, 85, [['Arpan: -30k', C.acc]], { w: 220, h: 34 });
+    cells(350, 145, [['Suresh: +30k nahi', C.bad]], { w: 220, h: 34 });
+    cells(350, 205, [['share: nahi jude', C.bad]], { w: 220, h: 34 });
+    A(180, 150, 348, 102, C.acc, { n: 1 });
+    num(100, 240, 2, C.bad); L(100, 265, 'phir crash', C.bad);
+    A(180, 185, 348, 162, C.bad, { n: 3, dash: 1, at: 0.3 }); cross(290, 172);
+    B(690, 40, 180, 80, 'Arpan', '30k gaya', { st: 'bad', icon: 'user' });
+    B(690, 210, 180, 80, 'Suresh', 'paisa nahi', { st: 'bad', icon: 'user' });
+    A(590, 100, 688, 80, C.bad, { n: 4 }); A(590, 200, 688, 245, C.bad);
+    L(450, 330, 'aadha kaam likha, aadha nahi. Paisa beech me gum', C.bad);
   } else if (ph === 1) {
     B(20, 140, 150, 70, 'Settlement', 'trade t1');
     B(300, 40, 560, 230, 'Ek transaction', '', { st: 'good' });

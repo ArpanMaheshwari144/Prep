@@ -7,25 +7,30 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR block kiya, phir order cancel ho gaya? -> block hata do'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.acc, 'Wallet → Laptop', 'padha: 50k bacha'], [C.acc, 'Wallet → Phone', 'padha: abhi bhi 50k'], [C.bad, 'Laptop → Wallet', 'block +30k (TCS)'], [C.bad, 'Phone → Wallet', 'block +30k (INFY): 60k > 50k']],
+  [[C.acc, 'Laptop → Wallet DB', 'UPDATE ... WHERE bacha >= 30k'], [C.good, 'Wallet DB → Laptop', '1 row: block hua'], [C.acc, 'Phone → Wallet DB', 'wahi UPDATE, ek pal baad'], [C.bad, 'Wallet DB → Phone', '0 row: 20k hi bacha, reject']],
+  [[C.msg, 'Arpan → Order Svc', 'TCS order cancel'], [C.good, 'Order Svc → Wallet DB', 'block hatao: 30k -> 0'], [C.good, 'Wallet DB', 'poore 50k phir free']],
+];
 function frame(ph) {
   if (ph === 0) {
     const F = [
       ['pal 1', 'laptop padhta', 1, 'acc', 'bacha: 50k', 'padha: 50k', '30k <= 50k, theek'],
-      ['pal 2', 'phone padhta', 2, 'acc', 'bacha: 50k', 'padha: 50k', 'laptop ne abhi block nahi kiya'],
+      ['pal 2', 'phone padhta', 2, 'acc', 'bacha: 50k', 'padha: 50k', 'abhi block nahi hua'],
       ['pal 3', 'laptop block', 1, 'bad', 'blocked: 30k', 'block +30k', 'TCS laga'],
       ['pal 4', 'phone block', 2, 'bad', 'blocked: 60k', 'block +30k', 'INFY bhi laga'],
     ];
     F.forEach(([pal, kya, who, st, val, l1, l2], k) => {
       const x = 15 + k * 220;
       el('rect', { x, y: 5, width: 205, height: 255, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-      num(x + 20, 25, k + 1, st === 'bad' ? C.bad : C.acc); T(x + 112, 30, pal + ': ' + kya, { c: C.fg, b: 1, size: 13 });
+      num(x + 20, 25, k + 1, st === 'bad' ? C.bad : C.acc); T(x + 115, 31, kya, { c: C.fg, b: 1, size: 14 });
       B(x + 10, 50, 80, 40, 'Laptop', '', { st: who === 1 ? st : 'dim' });
       B(x + 115, 50, 80, 40, 'Phone', '', { st: who === 2 ? st : 'dim' });
       B(x + 40, 165, 125, 55, 'Wallet', val, { st: 'acc' });
       const ax = who === 1 ? x + 50 : x + 155;
       if (st === 'acc') A(ax + (who === 1 ? 30 : -30), 163, ax, 92, C.acc); else A(ax, 92, ax + (who === 1 ? 30 : -30), 163, C.bad);
-      T(who === 1 ? x + 150 : x + 55, 135, l1, { c: st === 'bad' ? C.bad : C.acc, b: 1, size: 12 });
-      T(x + 102, 245, l2, { c: C.muted, size: 11 });
+      T(who === 1 ? x + 150 : x + 55, 135, l1, { c: st === 'bad' ? C.bad : C.acc, b: 1, size: 14 });
+      T(x + 102, 245, l2, { c: C.muted, size: 12.5 });
     });
     L(450, 300, '60k block, jabki wallet me sirf 50k. Paisa minus me', C.bad);
     L(450, 335, 'galti: padhna aur block do alag kadam. Beech me doosra purana 50k padh gaya', C.acc);
@@ -42,8 +47,8 @@ function frame(ph) {
   } else {
     B(20, 140, 150, 60, 'Arpan', 'TCS order cancel');
     B(280, 140, 160, 60, 'Order Svc', '');
-    B(560, 120, 300, 100, 'Wallet DB', '', { st: 'good' });
-    cells(580, 160, [['blocked: 30k', C.bad], ['->', C.line], ['blocked: 0', C.good]], { w: 85, h: 30 });
+    B(560, 120, 300, 100, 'Wallet DB: blocked', '', { st: 'good' });
+    cells(578, 165, [['30k', C.bad], ['->', C.line], ['0', C.good]], { w: 85, h: 32 });
     A(170, 170, 278, 170, C.msg, { n: 1 });
     A(440, 170, 558, 170, C.good, { n: 2 }); L(500, 155, 'block hatao', C.good);
     num(710, 245, 3, C.good); L(710, 270, 'poore 50k phir free', C.good);

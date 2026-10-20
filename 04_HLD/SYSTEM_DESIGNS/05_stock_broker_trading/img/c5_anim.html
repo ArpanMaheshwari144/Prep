@@ -1,12 +1,14 @@
 <!doctype html>
 <!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
 <meta charset="utf-8">
-<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
-<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
-<rect width="900" height="400" fill="#11161c"/>
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}
+svg .sans{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif}</style>
+<svg id="root" width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect id="bgr" width="900" height="400" fill="#11161c"/>
 <rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
 <text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
-<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+<g id="pic" transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+<g id="leg"></g>
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
@@ -23,13 +25,35 @@ function el(tag, a, parent, text) {
   (parent || ST).append(e); return e;
 }
 function grp(id) { return el('g', id ? { id } : {}); }
+// generic line-icon (24 grid, stroke). Brand logo nahi. B(..., { icon: 'user' })
+const ICON = {
+  user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 4-6 8-6s8 2 8 6',
+  users: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3 3-5 7-5s7 2 7 5M16 5a3 3 0 0 1 0 6M18 15c2 .6 4 2 4 5',
+  bucket: 'M4 6h16l-2 14H6L4 6zM4 6c0-1.7 3.6-3 8-3s8 1.3 8 3',
+  db: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
+  server: 'M3 4h18v6H3zM3 14h18v6H3zM7 7h1M7 17h1',
+  phone: 'M7 2h10v20H7zM11 18h2',
+  chat: 'M4 4h16v12H9l-5 4V4zM8 9h8M8 12h5',
+  queue: 'M3 7h4v10H3zM10 7h4v10h-4zM17 7h4v10h-4z',
+  clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 3',
+  lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+  mail: 'M3 5h18v14H3zM3 5l9 7 9-7',
+  cloud: 'M7 18a4 4 0 0 1 0-8 6 6 0 0 1 11.5 1.5A3.5 3.5 0 0 1 18 18H7z',
+};
 // dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
 function box(x, y, w, h, label, sub, o = {}) {
   const g = el('g', o.id ? { id: o.id } : {}, o.parent);
   el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
     'stroke-width': 1.5 }, g);
-  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
-  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  let cx = x + w / 2;
+  if (o.icon && ICON[o.icon]) {
+    const k = 28 / 24, iy = y + (h - 28) / 2;
+    el('path', { d: ICON[o.icon], transform: `translate(${x + 14},${iy}) scale(${k})`, fill: 'none',
+      stroke: o.iconc || o.stroke || C.fg, 'stroke-width': 2 / k, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
+    cx = x + 50 + (w - 56) / 2;
+  }
+  el('text', { x: cx, y: BIG ? (h >= 90 ? y + 26 : y + h / 2 + (sub ? -4 : 6)) : y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': BIG ? 17 : 14, 'font-weight': BIG ? 'bold' : 'normal', fill: C.fg }, g, label);
+  if (sub) el('text', { x: cx, y: BIG ? (h >= 90 ? y + 46 : y + h / 2 + 17) : y + 36, 'text-anchor': 'middle', 'font-size': BIG ? 14 : 12, fill: C.muted }, g, sub);
   return g;
 }
 function wire(d, id, parent) {
@@ -71,7 +95,7 @@ function cells(x, y, items, o = {}) {
   const w = o.w || 46, h = o.h || 26;
   items.forEach(([s, c], i) => {
     el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
-    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+    T(x + i * (w + 4) + w / 2, y + h / 2 + (BIG ? 5 : 4), s, { c: c || C.fg, size: BIG ? 13 : 11, b: 1 });
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
@@ -83,7 +107,7 @@ function B(x, y, w, h, label, sub, o = {}) {
 }
 function A(x1, y1, x2, y2, c, o = {}) {
   c = c || C.line;
-  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || (BIG ? 2.5 : 2), 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
   const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
   el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
     `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
@@ -105,11 +129,11 @@ function AP(pts, c, o = {}) {
 }
 // kram ka gol badge (1, 2, 3 ...)
 function num(x, y, n, c) {
-  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
-  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+  el('circle', { cx: x, cy: y, r: BIG ? 14 : 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 5, 'text-anchor': 'middle', 'font-size': BIG ? 15 : 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
 }
 // "kya hua" chhota label
-function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: BIG ? 15 : 13, halo: 1, a }); }
 function dots(n, x, y, c, o = {}) {
   const cols = o.cols || 10, g = o.gap || 22;
   for (let i = 0; i < n; i++) {
@@ -118,7 +142,40 @@ function dots(n, x, y, c, o = {}) {
       fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
   }
 }
+// NAYA SAANCHA (21-Oct, Fable + Arpan): scene me STEPS ho to 900 x 610, bade akshar, neeche patti.
+// STEPS = [ [ [c, 'A -> B', 'pehli line|doosri line'], ... ] (DIKKAT), [...] (ILAAJ), [...] (AGAR) ]; c = number ka rang
+let BIG = false, BIGSET = false;
+function initBig() {   // draw() pe ek baar; tab tak scene ka STEPS ban chuka hota
+  if (BIGSET) return; BIGSET = true;
+  BIG = typeof STEPS !== 'undefined';
+  if (!BIG) return;
+  const R = document.getElementById('root');
+  R.setAttribute('height', 610); R.setAttribute('viewBox', '0 0 900 610');
+  document.getElementById('bgr').setAttribute('height', 610);
+  CAPBG.setAttribute('height', 48); CAP.setAttribute('y', 31); CAP.setAttribute('font-size', 17);
+  document.getElementById('pic').setAttribute('transform', 'translate(0,52)');
+}
+const LEG = document.getElementById('leg');
+function legend(steps) {
+  LEG.replaceChildren();
+  if (!steps || !steps.length) return;
+  const two = steps.length > 2, y0 = 418, h = two ? 178 : 100, H = y0 + h + 14;
+  const R = document.getElementById('root');   // patti chhoti to tasveer bhi chhoti
+  R.setAttribute('height', H); R.setAttribute('viewBox', `0 0 900 ${H}`); document.getElementById('bgr').setAttribute('height', H);
+  el('rect', { x: 20, y: y0, width: 860, height: h, rx: 10, fill: '#161d25', stroke: C.line }, LEG);
+  if (two) el('line', { x1: 450, y1: y0 + 14, x2: 450, y2: y0 + h - 14, stroke: C.line }, LEG);
+  steps.forEach(([c, head, line], i) => {
+    const col = two ? i % 2 : i, row = two ? Math.floor(i / 2) : 0;
+    const x = 40 + col * 430, y = y0 + 30 + row * 82;
+    el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
+    el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
+    el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
+    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+      fill: C.muted, class: 'sans' }, LEG, ln));
+  });
+}
 function draw(t) {
+  initBig();
   DYN.replaceChildren();
   if (typeof PH !== 'undefined') {
     let i = 0;
@@ -126,6 +183,7 @@ function draw(t) {
     CAPBG.setAttribute('fill', PH[i][1]);
     CAP.textContent = PH[i][3] || '';
     frame(i, t - PH[i][0]);
+    if (BIG) legend(STEPS[i]);
     return;
   }
   const fix = t >= FIX;
@@ -138,20 +196,25 @@ function draw(t) {
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: 10:15 pe matching server gira. Book RAM me thi, 4,000 order gayab'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: har order pehle log (disk) me, number ke saath, phir book me. Gira = log se replay'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har order pehle log (disk) me number ke saath, phir book me. Gira = replay'],
   [6, YEL, 'AGAR', 'AGAR replay me der lagi? -> standby pehle se log padhta, book taiyaar'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Orders → Matching server', '4,000 khule order'], [C.bad, 'server gira', 'book sirf RAM me thi, saaf'], [C.bad, 'Order book', '0 order: kisne kya maanga, pata nahi']],
+  [[C.acc, 'Order → Log (disk)', 'pehle log: #501, number ke saath'], [C.good, 'Log → Book (RAM)', 'phir book me, RAM me tez'], [C.bad, 'Matching gira', 'book gayab, par log disk pe'], [C.good, 'Log → Book (RAM)', 'replay #1 se #4000: kuch nahi khoya']],
+  [[C.acc, 'Log → Matching main', 'main log padhta tha'], [C.acc, 'Log → Standby', 'saath-saath padhta, book taiyaar'], [C.bad, 'Matching main gira', 'standby pehle se taiyaar'], [C.good, 'Standby → Orders', 'turant chalu, replay ka intezaar nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 140, 60, 'Orders', '4,000 khule');
@@ -172,7 +235,7 @@ function frame(ph) {
     B(330, 230, 230, 70, 'Standby', 'log padh ke book taiyaar', { st: 'good' });
     B(690, 140, 170, 60, 'Orders', 'chalte rahe', { st: 'good' });
     A(170, 160, 328, 75, C.acc, { n: 1 }); L(240, 95, 'padhta tha', C.acc);
-    A(170, 185, 328, 265, C.acc, { n: 2 }); L(240, 245, 'saath-saath padhta', C.acc);
+    A(170, 185, 328, 265, C.acc, { n: 2 }); L(235, 262, 'saath-saath', C.acc, 'end');
     num(445, 150, 3, C.bad); L(465, 155, 'main gira', C.bad, 'start');
     A(560, 265, 688, 180, C.good, { n: 4 }); L(640, 250, 'turant chalu', C.good);
     L(450, 345, 'do board ek saath nahi: standby sirf padhta, chalu tab jab main gire', C.good);

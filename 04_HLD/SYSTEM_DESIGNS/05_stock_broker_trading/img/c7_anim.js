@@ -2,7 +2,7 @@
 // Ilaaj: har kadam ka haal likho, fail pe likhe haal se retry, aage hi. Agar: Portfolio DB ghanta band, user dobara?
 const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: paisa Wallet DB me, share Portfolio DB me. 20k kata, Portfolio DB band, share nahi'],
+  [0, RED, 'DIKKAT', 'DIKKAT: paisa Wallet DB me, share Portfolio DB me. 20k kata, Portfolio band, share nahi'],
   [3, GRN, 'ILAAJ', 'ILAAJ: har kadam ka haal likho (status log). Fail hua to wahi se retry, aage hi'],
   [6, YEL, 'AGAR', 'AGAR Portfolio DB ghanta bhar band, user dobara order kare? -> nahi'],
 ];
@@ -10,20 +10,25 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.acc, 'Settlement → Wallet DB', '-20k'], [C.bad, 'Settlement → Portfolio DB', '+5 INFY: DB band'], [C.bad, 'Arpan', '20k gaya, share nahi: aadha sauda']],
+  [[C.good, 'Settlement → Status log', 'wallet: done'], [C.bad, 'Settlement → Portfolio DB', 'share do: band. Status PENDING'], [C.acc, 'Retry job → Portfolio DB', 'log padha, t7 se phir'], [C.good, 'Portfolio DB → Status log', '+5 INFY: SETTLED, aage hi']],
+  [[C.bad, 'Arpan → naya trade t8', 'dobara order kiya'], [C.bad, 'DB lauta', 't7 retry bhi chala, t8 bhi:|10 INFY, paisa 2 baar']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 150, 60, 'Settlement', 'INFY trade t7');
     B(330, 40, 200, 70, 'Wallet DB', 'Arpan -20k', { st: 'acc' });
     B(330, 230, 200, 70, 'Portfolio DB', 'band', { st: 'bad' }); cross(555, 265);
     A(170, 160, 328, 75, C.acc, { n: 1 }); L(240, 95, '-20k', C.acc);
-    A(170, 185, 328, 265, C.bad, { n: 2, dash: 1 }); L(240, 245, '+5 INFY', C.bad);
+    A(170, 185, 328, 265, C.bad, { n: 2, dash: 1 }); L(215, 262, '+5 INFY', C.bad, 'end');
     B(650, 130, 210, 80, 'Arpan', '20k gaya, share nahi', { st: 'bad' }); num(670, 245, 3, C.bad); L(690, 250, 'aadha sauda', C.bad, 'start');
     L(450, 340, 'do alag DB par ek transaction nahi ban sakta', C.bad);
   } else if (ph === 1) {
@@ -39,7 +44,7 @@ function frame(ph) {
     B(690, 130, 170, 90, 'DB wapas aaya', '10 INFY, paisa 2 baar', { st: 'bad' });
     L(445, 30, 'pehle se zinda, retry me', C.acc);
     A(170, 190, 328, 265, C.bad, { n: 1 }); L(240, 255, 'naya order', C.bad);
-    A(560, 75, 688, 160, C.acc); A(560, 265, 688, 195, C.bad); num(720, 245, 2, C.bad); L(740, 250, 'DB lauta: dono chale', C.bad, 'start');
+    A(560, 75, 688, 160, C.acc); A(560, 265, 688, 195, C.bad); num(720, 245, 2, C.bad); L(740, 250, 'dono chale', C.bad, 'start');
     L(450, 345, 'isliye user kuch nahi karta: system wahi t7 se retry, ops ko alert', C.good);
   }
 }

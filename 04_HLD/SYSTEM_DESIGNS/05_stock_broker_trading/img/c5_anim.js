@@ -3,20 +3,25 @@
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: 10:15 pe matching server gira. Book RAM me thi, 4,000 order gayab'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: har order pehle log (disk) me, number ke saath, phir book me. Gira = log se replay'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har order pehle log (disk) me number ke saath, phir book me. Gira = replay'],
   [6, YEL, 'AGAR', 'AGAR replay me der lagi? -> standby pehle se log padhta, book taiyaar'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Orders → Matching server', '4,000 khule order'], [C.bad, 'server gira', 'book sirf RAM me thi, saaf'], [C.bad, 'Order book', '0 order: kisne kya maanga, pata nahi']],
+  [[C.acc, 'Order → Log (disk)', 'pehle log: #501, number ke saath'], [C.good, 'Log → Book (RAM)', 'phir book me, RAM me tez'], [C.bad, 'Matching gira', 'book gayab, par log disk pe'], [C.good, 'Log → Book (RAM)', 'replay #1 se #4000: kuch nahi khoya']],
+  [[C.acc, 'Log → Matching main', 'main log padhta tha'], [C.acc, 'Log → Standby', 'saath-saath padhta, book taiyaar'], [C.bad, 'Matching main gira', 'standby pehle se taiyaar'], [C.good, 'Standby → Orders', 'turant chalu, replay ka intezaar nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 140, 60, 'Orders', '4,000 khule');
@@ -37,7 +42,7 @@ function frame(ph) {
     B(330, 230, 230, 70, 'Standby', 'log padh ke book taiyaar', { st: 'good' });
     B(690, 140, 170, 60, 'Orders', 'chalte rahe', { st: 'good' });
     A(170, 160, 328, 75, C.acc, { n: 1 }); L(240, 95, 'padhta tha', C.acc);
-    A(170, 185, 328, 265, C.acc, { n: 2 }); L(240, 245, 'saath-saath padhta', C.acc);
+    A(170, 185, 328, 265, C.acc, { n: 2 }); L(235, 262, 'saath-saath', C.acc, 'end');
     num(445, 150, 3, C.bad); L(465, 155, 'main gira', C.bad, 'start');
     A(560, 265, 688, 180, C.good, { n: 4 }); L(640, 250, 'turant chalu', C.good);
     L(450, 345, 'do board ek saath nahi: standby sirf padhta, chalu tab jab main gire', C.good);
