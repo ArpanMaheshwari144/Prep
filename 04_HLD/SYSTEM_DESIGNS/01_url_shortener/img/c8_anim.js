@@ -7,9 +7,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Spammer → App', '5,000 link / sec'], [C.bad, 'App → DB', 'sab seedhe DB tak: bhara, sab dheema']],
-  [[C.bad, 'Spammer → Gateway', 'key k1'], [C.acc, 'Gateway → Redis', 'ginti +1: k1 = 5000 / 100, had paar'], [C.bad, 'Gateway → Spammer', '429, App tak aaya hi nahi'], [C.good, 'Asli user → Gateway → App', 'k2 had ke andar, speed bachi']],
-  [[C.bad, 'Attacker → WAF', 'SQL inject / bot: pehchaana, roka'], [C.good, 'Asli user → WAF → Gateway', 'andar']],
+  [[C.bad, 'Spammer → App', 'Ek spammer 5,000 link / sec bana raha, koi rok-tok nahi'], [C.bad, 'App → DB', 'Saari likhai seedhe DB tak gayi, DB bhar gaya aur asli user bhi dheeme']],
+  [[C.bad, 'Spammer → Gateway', 'Spammer ki har request pehle Gateway pe aati hai, API key k1 ke saath'], [C.acc, 'Gateway → Redis', 'Gateway ne Redis me k1 ki ginti +1 ki; 5000 ho gayi, had sirf 100'], [C.bad, 'Gateway → Spammer', 'Had paar, to Gateway ne wahin 429 lauta diya, App tak gaya hi nahi'], [C.good, 'Asli user → Gateway → App', 'Asli user (k2) had ke andar hai, uski request App tak gayi, tez']],
+  [[C.bad, 'Attacker → WAF', 'Attacker ka SQL inject / bot wala pattern WAF ne pehchaana aur darwaze pe roka'], [C.good, 'Asli user → WAF → Gateway', 'Asli user ki request WAF se paas hui, Gateway aur App tak gayi']],
 ];
 function frame(ph) {
   if (ph === 0) {

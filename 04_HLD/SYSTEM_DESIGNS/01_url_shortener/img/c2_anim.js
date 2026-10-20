@@ -7,9 +7,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Users → App', 'ek hi machine'], [C.bad, 'App giri', 'koi jawab nahi: poori site band']],
-  [[C.msg, 'Users → LB', 'click'], [C.bad, 'LB → App-1', 'giri, /health chup'], [C.good, 'LB → App-2', 'agla click yahan'], [C.good, 'App-2 → Redis / DB', 'App kuch yaad nahi rakhta (stateless)']],
-  [[C.msg, 'Users → LB', 'click'], [C.good, 'LB → App-2', 'kam connection wali ko (5 vs 50).|Round-robin hota to aadhe dheemi pe']],
+  [[C.bad, 'Users → App', 'Saare users ek hi App machine pe aa rahe the, koi doosri machine nahi thi'], [C.bad, 'App giri', 'Wo ek machine giri to kisi ko jawab nahi mila, poori site band ho gayi']],
+  [[C.msg, 'Users → LB', 'Click pehle LB pe aata hai, LB tay karta hai kaunsi App ko dena'], [C.bad, 'LB → App-1', 'App-1 giri hai; /health ka jawab nahi diya, to LB use bhejna band karta'], [C.good, 'LB → App-2', 'Agla click LB ne App-2 ko de diya, user ko farak hi nahi pada'], [C.good, 'App-2 → Redis / DB', 'App-2 apne paas kuch yaad nahi rakhti, data Redis / DB se laati hai']],
+  [[C.msg, 'Users → LB', 'Naya click LB pe aaya; App-1 pe pehle se 50 connection khule hain'], [C.good, 'LB → App-2', 'LB ne kam bheed wali App-2 (5 connection) ko diya; round-robin aadhe click dheemi pe bhejta']],
 ];
 function frame(ph) {
   if (ph === 0) {

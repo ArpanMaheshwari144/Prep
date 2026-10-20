@@ -7,9 +7,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.msg, 'User → App', 'click'], [C.bad, 'App → DB', 'ginti likho, wait'], [C.bad, 'App', 'DB likhai (~10 ms) pe ruka'], [C.bad, 'App → User', 'redirect der se']],
-  [[C.msg, 'User → App', 'click'], [C.good, 'App → User', '302 turant'], [C.acc, 'App → Kafka', 'click ki khabar'], [C.good, 'Kafka → Analytics', 'ginti apni speed se']],
-  [[C.msg, 'User → App', 'click'], [C.good, 'App → User', '302 turant, koi asar nahi'], [C.acc, 'App → Kafka', 'khabar padi, khoti nahi'], [C.bad, 'Kafka → Analytics', 'dheema: offset se, baad me 40 se aage']],
+  [[C.msg, 'User → App', 'User ne short link pe click kiya'], [C.bad, 'App → DB', 'App ne pehle DB me click ki ginti +1 likhne bheji'], [C.bad, 'App', 'Disk pe likhai poori hone tak App ruka raha, user intezaar karta raha'], [C.bad, 'App → User', 'Ginti likhne ke baad hi redirect gaya, har click ~10 ms dheema']],
+  [[C.msg, 'User → App', 'User ne short link pe click kiya'], [C.good, 'App → User', 'App ne turant 302 bheja, ginti likhne ka intezaar nahi kiya'], [C.acc, 'App → Kafka', 'Click ki khabar Kafka me daal di, wo disk pe padi rehti hai'], [C.good, 'Kafka → Analytics', 'Analytics apni speed se Kafka padh ke ginti badhata, redirect pe asar nahi']],
+  [[C.msg, 'User → App', 'User ne short link pe click kiya, request App tak aayi'], [C.good, 'App → User', 'Redirect turant gaya; Analytics dheema hai par user ko pata bhi nahi'], [C.acc, 'App → Kafka', 'Click ki khabrein Kafka me jama hoti rahin, ek bhi nahi khoyi'], [C.bad, 'Kafka → Analytics', 'Analytics dheema hai, par offset yaad rakhta; theek hoke 40 ke aage se padhega']],
 ];
 function frame(ph) {
   if (ph === 0) {

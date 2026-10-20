@@ -15,9 +15,9 @@ function code(n, a, b, c) {
   T(190, 112, a, { c, b: 1, size: 14 }); T(190, 332, b, { c, b: 1, size: 14 });
 }
 const STEPS = [
-  [[C.msg, 'Main → App-1', 'link banao (Ravi bhi saath)'], [C.acc, 'App-1, App-2 → DB', 'agla number?'], [C.bad, 'DB → App-1, App-2', 'dono ko 501'], [C.bad, 'App → Main, Ravi', 'ek hi code do link ko']],
-  [[C.acc, 'Counter → App-1, App-2', 'pehle hi range: 1-1000, 1001-2000'], [C.msg, 'Main → App-1', 'link banao'], [C.good, 'App → Main, Ravi', 'code 1, code 1001. Takkar nahi']],
-  [[C.bad, 'Counter gira', 'App ki range chalti rehti'], [C.msg, 'Main → App-1', 'link banao'], [C.good, 'App → Main, Ravi', 'apni range se: 401, 1301.|Counter se kuch nahi maanga'], [C.acc, 'Counter copy → App', 'copy uthi. Range khatam pe|agli range wahan se']],
+  [[C.msg, 'Main → App-1', 'Maine link banaya, usi pal Ravi ne bhi App-2 se link banaya'], [C.acc, 'App-1, App-2 → DB', 'Dono App ne DB se poocha "agla number kya hai?", dono ek hi pal me'], [C.bad, 'DB → App-1, App-2', 'DB ne dono ko 501 de diya, kyunki dono ne ek saath poocha tha'], [C.bad, 'App → Main, Ravi', 'Do alag link ko ek hi code 501 mila; ek khulega to doosre ka URL']],
+  [[C.acc, 'Counter → App-1, App-2', 'Counter ne pehle hi App-1 ko 1-1000, App-2 ko 1001-2000 de rakha hai'], [C.msg, 'Main → App-1', 'Maine link banaya, App-1 ko kisi se poochhna nahi pada'], [C.good, 'App → Main, Ravi', 'App-1 ne apni range se 1, App-2 ne 1001 diya; ek number kabhi do jagah nahi']],
+  [[C.bad, 'Counter gira', 'Counter band ho gaya, par App ke paas pehle se range padi hai'], [C.msg, 'Main → App-1', 'Maine naya link banaya, App-1 ko Counter ki zaroorat hi nahi padi'], [C.good, 'App → Main, Ravi', 'App-1 ne apni range se 401 diya, App-2 ne 1301; kaam ruka nahi'], [C.acc, 'Counter copy → App', 'Tab tak Counter ki copy uth gayi; range khatam hogi to agli wahan se']],
 ];
 function frame(ph) {
   if (ph === 0) {

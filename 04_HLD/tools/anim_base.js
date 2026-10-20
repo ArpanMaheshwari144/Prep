@@ -157,7 +157,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }

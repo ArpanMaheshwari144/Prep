@@ -14,9 +14,9 @@ function app() { B(20, 130, 120, 90, 'App'); }
 function W(i, c, n, o = {}) { A(140, 150, 518, CY[i] + 18, c, { n, at: 0.3, ...o }); }   // likhna (upar se)
 function Rd(i, c, n, o = {}) { A(140, 200, 518, CY[i] + 36, c, { n, at: 0.3, ...o }); }  // padhna (neeche se)
 const STEPS = [
-  [[C.good, 'App → Copy A', 'likha: sirf A me'], [C.bad, 'App → Copy C', 'turant padha: C se'], [C.bad, '404', 'C tak naya link abhi pahuncha nahi']],
-  [[C.good, 'App → Copy A, B', 'likho: 2 me'], [C.acc, 'App → Copy B, C', 'padho: 2 se'], [C.good, 'B me mila', '2 + 2 > 3: har jodi me ek taaza copy']],
-  [[C.good, 'App → Copy A, B', 'likha'], [C.bad, 'App → Copy C', 'C giri, likhai nahi pahunchi'], [C.good, 'save', '2 me ho gaya: kaafi'], [C.acc, 'B → note → C', 'C ke liye note. C uthi to bhar di']],
+  [[C.good, 'App → Copy A', 'Naya link sirf Copy A me likha, B aur C tak abhi pahuncha nahi'], [C.bad, 'App → Copy C', 'User ne turant link khola, padhna Copy C se hua'], [C.bad, '404', 'C me naya link tha hi nahi, isliye user ko 404 dikha']],
+  [[C.good, 'App → Copy A, B', 'Likhte waqt 3 me se 2 copy (A, B) me likha, tab hi "ho gaya"'], [C.acc, 'App → Copy B, C', 'Padhte waqt bhi 2 copy (B, C) se padha'], [C.good, 'B me mila', 'Likhne ke 2 aur padhne ke 2 me kam se kam ek copy common, to naya link mila']],
+  [[C.good, 'App → Copy A, B', 'Naya link A aur B me likh diya gaya'], [C.bad, 'App → Copy C', 'C us waqt giri hui thi, use likhai nahi pahunchi'], [C.good, 'save', '3 me se 2 me likh gaya, itna kaafi hai, user ko "ho gaya"'], [C.acc, 'B → note → C', 'B ne C ke liye note rakha; C wapas aayi to note se naya link bhar diya']],
 ];
 function frame(ph) {
   if (ph === 0) {

@@ -8,9 +8,9 @@ const PH = [
 function setup() {}
 function apps(st) { B(740, 60, 110, 50, 'App-1', '', { st }); B(740, 200, 110, 50, 'App-2', '', { st }); }
 const STEPS = [
-  [[C.msg, 'Phone → DNS', 'LB ka pata?'], [C.msg, 'DNS → Phone', 'LB-1'], [C.bad, 'Phone → LB-1', 'gira: App zinda, par andar koi nahi']],
-  [[C.acc, 'Route 53 → LB-1', '/health? 3 baar chup: list se bahar'], [C.good, 'Route 53 → LB-2', '/health? haan'], [C.msg, 'Phone → Route 53', 'pata maanga: LB-2 mila'], [C.good, 'Phone → LB-2', 'request andar']],
-  [[C.bad, 'Phone → LB-1', 'purana pata yaad: fail'], [C.acc, 'TTL ~60 sec', 'phir DNS se naya'], [C.msg, 'Phone → Route 53', 'LB-2 ka pata'], [C.good, 'Phone → LB-2', 'ab theek']],
+  [[C.msg, 'Phone → DNS', 'Phone ne DNS se poocha ki site ka LB kahan hai'], [C.msg, 'DNS → Phone', 'DNS ne ek hi LB ka pata diya, LB-1'], [C.bad, 'Phone → LB-1', 'LB-1 gira hua hai; App zinda hain par koi request andar nahi pahunchti']],
+  [[C.acc, 'Route 53 → LB-1', 'Route 53 har 30 sec poochta hai; LB-1 3 baar chup raha, list se bahar'], [C.good, 'Route 53 → LB-2', 'LB-2 ne jawab diya "haan zinda hoon", wo list me raha'], [C.msg, 'Phone → Route 53', 'Phone ne pata poocha, Route 53 ne sirf zinda LB-2 ka diya'], [C.good, 'Phone → LB-2', 'Request LB-2 se App tak pahunchi, user ko kuch pata nahi chala']],
+  [[C.bad, 'Phone → LB-1', 'Phone ne purana pata (LB-1) yaad rakha tha, seedha wahan gaya aur fail'], [C.acc, 'TTL ~60 sec', 'Yaad ki umar (TTL) ~60 sec hai, uske baad phone phir poochta'], [C.msg, 'Phone → Route 53', 'Phir poochha to naya pata mila, LB-2'], [C.good, 'Phone → LB-2', 'Ab request theek jaati; bas ~60 sec kuch request fail hui']],
 ];
 function frame(ph) {
   if (ph === 0) {

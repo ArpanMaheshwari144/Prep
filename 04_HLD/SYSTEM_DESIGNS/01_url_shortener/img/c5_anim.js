@@ -16,9 +16,9 @@ function ring(dead) {
 }
 const HP = [CX - 95, CY - 45]; // hash ki jagah ring pe (DB-1 se thoda pehle)
 const STEPS = [
-  [[C.bad, 'App → DB', 'har link ek hi machine pe'], [C.bad, 'DB', '90 TB: samaata nahi']],
-  [[C.acc, 'App → ring', 'code ka hash = ring pe ek jagah'], [C.good, 'ring → DB-1', 'aage chalo, pehli machine: DB-1'], [C.acc, 'DB-1 → DB-2, DB-3', 'copy agle 2 pe']],
-  [[C.acc, 'App → ring', 'code ka hash'], [C.bad, 'ring → DB-1', 'DB-1 mar gayi'], [C.good, 'ring → DB-2', 'copy se mila, link gaya nahi']],
+  [[C.bad, 'App → DB', 'App har naya link ek hi DB machine pe likh raha hai'], [C.bad, 'DB', '5 saal me 90 TB ho jaayega, ek machine me itna samaata hi nahi']],
+  [[C.acc, 'App → ring', 'Code ka hash nikala, wo ring pe ek jagah batata hai'], [C.good, 'ring → DB-1', 'Us jagah se ring pe aage chalo, pehli machine DB-1 mili, link wahan gaya'], [C.acc, 'DB-1 → DB-2, DB-3', 'Ring pe agli do machine pe bhi copy rakhi, taaki ek gire to bhi mile']],
+  [[C.acc, 'App → ring', 'Link khulne aaya, code ka hash ring pe wahi jagah batata hai'], [C.bad, 'ring → DB-1', 'Pehli machine DB-1 mar chuki hai, wahan se jawab nahi'], [C.good, 'ring → DB-2', 'Ring pe agli machine DB-2 pe copy thi, link wahan se khul gaya']],
 ];
 function frame(ph) {
   if (ph === 0) {

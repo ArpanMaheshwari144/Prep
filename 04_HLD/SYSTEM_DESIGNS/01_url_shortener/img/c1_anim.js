@@ -8,9 +8,9 @@ const PH = [
 function setup() {}
 function users(n) { B(20, 130, 120, 60, 'Users', n, {}); }
 const STEPS = [
-  [[C.msg, 'Users → App', 'lakhon click'], [C.bad, 'App → DB', 'har click disk tak (~10 ms)'], [C.bad, 'DB', 'baith gaya, 100%']],
-  [[C.msg, 'Users → App', 'click'], [C.good, 'App → Redis', 'hai? mila to wahin se: 95%'], [C.acc, 'App → DB', 'nahi mila to DB se laao'], [C.acc, 'App → Redis', 'copy Redis me rakhta']],
-  [[C.acc, 'Admin → App', 'link badla'], [C.good, 'App → DB', 'pehle DB badlo'], [C.bad, 'App → Redis', 'phir Redis se hatao.|Agla click DB se naya laata']],
+  [[C.msg, 'Users → App', 'Sale ka link viral hua, lakhon log ek saath us pe click kar rahe hain'], [C.bad, 'App → DB', 'Har click pe App ne asli URL DB se maanga, har baar disk tak gaya (~10 ms)'], [C.bad, 'DB', 'Itni padhai DB jhel nahi paaya, 100% pe baith gaya aur sab link khulne band']],
+  [[C.msg, 'Users → App', 'User ne short link pe click kiya, request App tak aayi'], [C.good, 'App → Redis', 'App ne pehle Redis me dhoondha; 95% baar wahin mil jaata, 0.1 ms me jawab'], [C.acc, 'App → DB', 'Redis me nahi mila to hi App DB tak gaya aur asli URL laaya'], [C.acc, 'App → Redis', 'DB se laaya URL App ne Redis me rakh diya, taaki agla click wahin se khule']],
+  [[C.acc, 'Admin → App', 'Admin ne link ka target URL badal diya'], [C.good, 'App → DB', 'App ne pehle DB me naya URL likha, kyunki sach DB me rehta hai'], [C.bad, 'App → Redis', 'Phir Redis se purani key hata di; agla click DB se naya URL laayega']],
 ];
 function frame(ph) {
   if (ph === 0) {
