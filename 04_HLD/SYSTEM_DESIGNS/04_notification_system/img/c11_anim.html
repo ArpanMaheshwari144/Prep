@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -201,9 +203,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.msg, 'Offer khabar → SMS worker', 'raat 2:00'], [C.bad, 'SMS worker → phone', 'seedha bheja: ghanti baji'], [C.bad, 'Pasand', 'offer band tha, dekhi hi nahi']],
-  [[C.msg, 'Offer khabar → SMS worker', 'raat 2:00'], [C.acc, 'SMS worker → Pasand', 'offer band, shaanti 10 se 8'], [C.good, 'SMS worker → Subah ki line', '8 baje bhejo, phenka nahi']],
-  [[C.msg, 'OTP khabar → SMS worker', 'raat 2:00'], [C.acc, 'SMS worker → Pasand', 'shaanti hai'], [C.good, 'SMS worker → phone', 'zaroori: phir bhi bheja']],
+  [[C.msg, 'Offer khabar → SMS worker', 'Raat 2 baje offer ki khabar SMS worker ke paas aayi'], [C.bad, 'SMS worker → phone', 'Worker ne seedha bheja, raat ko phone ki ghanti baji'], [C.bad, 'Pasand', 'Arpan ne offer SMS band kiya tha, worker ne ye pasand dekhi hi nahi']],
+  [[C.msg, 'Offer khabar → SMS worker', 'Raat 2 baje phir offer ki khabar aayi'], [C.acc, 'SMS worker → Pasand', 'Worker ne pasand dekhi: offer band, shaanti 10 se 8'], [C.good, 'SMS worker → Subah ki line', 'Khabar subah ki line me rakhi, 8 baje jaayegi, phenki nahi']],
+  [[C.msg, 'OTP khabar → SMS worker', 'Raat 2 baje Arpan ne login kiya, OTP ki khabar aayi'], [C.muted, 'SMS worker → Pasand', 'Pasand me shaanti ka waqt chal raha tha'], [C.good, 'SMS worker → phone', 'OTP zaroori hai, to shaanti me bhi bheja']],
 ];
 function frame(ph) {
   if (ph === 0) {

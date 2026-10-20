@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.good, 'Worker-A → Arpan', 'email 1 gaya'], [C.bad, 'Worker-A mara', 'Kafka ko "padh liya" nahi bola'], [C.acc, 'Kafka → Worker-B', 'k9 phir di'], [C.bad, 'Worker-B → Arpan', 'email 2: do email']],
-  [[C.acc, 'Worker-A → Redis', 'bhejne se pehle key: k9:email'], [C.good, 'Worker-A → Arpan', 'email bheja, phir mara'], [C.acc, 'Worker-B → Redis', 'k9 phir mili: key hai?'], [C.good, 'Redis → Worker-B', 'haan: skip, ek hi email']],
-  [[C.bad, 'Worker-B → Redis', 'key? Redis gira'], [C.acc, 'Worker-B → DB', 'INSERT (k9, email)'], [C.good, 'DB → skip', 'UNIQUE: pehle se hai, email nahi']],
+  [[C.good, 'Worker-A → Arpan', 'Worker-A ne Arpan ko pehla email bhej diya'], [C.bad, 'Worker-A mara', 'Kafka ko "padh liya" bolne se pehle Worker-A mar gaya'], [C.acc, 'Kafka → Worker-B', 'Isliye Kafka ne wahi khabar k9 Worker-B ko di'], [C.bad, 'Worker-B → Arpan', 'Worker-B ne phir email bheja, Arpan ko do email mile']],
+  [[C.acc, 'Worker-A → Redis', 'Bhejne se pehle Worker-A ne Redis me key k9:email rakhi'], [C.good, 'Worker-A → Arpan', 'Worker-A ne Arpan ko email bheja, uske baad mar gaya'], [C.acc, 'Worker-B → Redis', 'Worker-B ko k9 dobara mili, usne poocha key hai?'], [C.good, 'Redis → Worker-B', 'Redis ne haan kaha, Worker-B ne skip kiya, ek hi email gaya']],
+  [[C.bad, 'Worker-B → Redis', 'Worker-B ne key poochhni chahi, par Redis gira hua tha'], [C.acc, 'Worker-B → DB', 'Isliye DB me INSERT (k9, email) karke dekha'], [C.good, 'DB → skip', 'UNIQUE ne roka, row pehle se thi, to email nahi gaya']],
 ];
 function frame(ph) {
   if (ph === 0) {

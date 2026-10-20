@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Arpan → Order Svc', 'order kiya'], [C.bad, 'Order Svc → Email company', 'email bhejo, jawab ka wait'], [C.bad, 'Email company band', 'jawab hi nahi'], [C.bad, 'Order Svc → Arpan', 'email ki wajah se order fail']],
-  [[C.good, 'Order Svc → DB', 'order + outbox ek hi txn'], [C.good, 'Order Svc → Arpan', 'turant "order ho gaya"'], [C.acc, 'DB outbox → Kafka', 'relay ne khabar daali'], [C.good, 'Kafka → Notification Svc', 'peeche email, apni speed se']],
-  [[C.acc, 'Kafka → Notification Svc', 'padha, offset 40 tak'], [C.bad, 'Notification Svc → Email company', 'band: bheja nahi'], [C.good, 'company wapas', '41 se aage. Kafka me padi thi, khoyi nahi']],
+  [[C.msg, 'Arpan → Order Svc', 'Arpan ne order kiya, request Order Svc pe aayi'], [C.bad, 'Order Svc → Email company', 'Order Svc ne usi waqt email bheja aur jawab ka intezaar kiya'], [C.bad, 'Email company band', 'Email company band thi, koi jawab hi nahi aaya'], [C.bad, 'Order Svc → Arpan', 'Sirf email ki wajah se Arpan ka order fail ho gaya']],
+  [[C.good, 'Order Svc → DB', 'Order aur outbox row ek hi transaction me DB me likhe'], [C.good, 'Order Svc → Arpan', 'Arpan ko turant "order ho gaya", email ka intezaar nahi'], [C.acc, 'DB outbox → Kafka', 'Relay ne outbox se khabar uthai aur Kafka me daali'], [C.good, 'Kafka → Notification Svc', 'Notification Svc ne peeche apni speed se email bheja']],
+  [[C.acc, 'Kafka → Notification Svc', 'Notification Svc ne offset 40 tak khabrein padh li'], [C.bad, 'Notification Svc → Email company', 'Email company band thi, email nahi gaya'], [C.good, 'company wapas', 'Company theek hui to 41 se aage padha; khabar Kafka me padi thi, khoyi nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

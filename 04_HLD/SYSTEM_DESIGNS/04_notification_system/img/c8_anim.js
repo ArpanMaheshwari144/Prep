@@ -24,9 +24,9 @@ function workers(sub, st, c) {
   });
 }
 const STEPS = [
-  [[C.bad, '4 worker → Email company', 'har worker apni taraf se 100 / sec'], [C.bad, 'Email company', '400 aaye: 300 ko 429']],
-  [[C.acc, 'Worker 1 → Redis bucket', 'token?'], [C.good, 'Worker 1 → Email company', 'mila: bheja'], [C.acc, 'Worker 2 → Redis bucket', 'token? is second ke khatam'], [C.acc, 'Worker 2', 'line me ruka, agle second.|Fail nahi']],
-  [[C.good, '4 worker → Email company', 'har ek 25 / sec: kul 100.|Thoda dheema, 429 nahi']],
+  [[C.bad, '4 worker → Email company', 'Har worker ne apni taraf se 100 email / sec bheje'], [C.bad, 'Email company', 'Company ki had 100 thi, 400 aaye to 300 ko 429']],
+  [[C.acc, 'Worker 1 → Redis bucket', 'Worker 1 ne bhejne se pehle Redis bucket se token maanga'], [C.good, 'Worker 1 → Email company', 'Token mila, to Worker 1 ne email bheja'], [C.acc, 'Worker 2 → Redis bucket', 'Worker 2 ne maanga, par is second ke token khatam'], [C.acc, 'Worker 2', 'Worker 2 line me ruka, agle second bhejega, fail nahi hua']],
+  [[C.good, '4 worker → Email company', 'Bucket wala Redis gira, to har worker ne apni had 25 / sec rakhi; kul 100, 429 nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

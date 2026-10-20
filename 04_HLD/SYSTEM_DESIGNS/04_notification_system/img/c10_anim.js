@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Admin → Campaign Svc', '"sabko bhejo": 1 crore ek request me'], [C.bad, 'beech me gira', 'shuru se dobara'], [C.bad, 'OTP', 'peeche atka']],
-  [[C.acc, 'Campaign Svc → Low line', '1000-1000 ke tukde'], [C.acc, 'Low line → Worker', 'tukda bhejta'], [C.good, 'Worker → Campaign row', 'aakhri_id = 3000 likha']],
-  [[C.good, 'Worker-A → 600 log', 'tukda 4: 600 ko gaya'], [C.bad, 'Worker-A mara', 'aakhri_id 3000 hi raha'], [C.acc, 'Worker-B → Sent list', 'kisko pehle gaya?'], [C.good, 'Worker-B → Campaign row', 'sirf 400 ko, aakhri_id = 4000']],
+  [[C.msg, 'Admin → Campaign Svc', 'Admin ne "sabko bhejo" dabaya, 1 crore ek hi request me'], [C.bad, 'beech me gira', 'Beech me request giri to shuru se dobara bhejna pada'], [C.bad, 'OTP', 'Itne bade kaam ke peeche OTP atak gaya']],
+  [[C.acc, 'Campaign Svc → Low line', 'Campaign Svc ne 1000-1000 ke tukde Low line me daale'], [C.acc, 'Low line → Worker', 'Worker line se ek-ek tukda uthake bhejta raha'], [C.good, 'Worker → Campaign row', 'Har tukde ke baad aakhri_id = 3000 likha, kahan tak gaya']],
+  [[C.good, 'Worker-A → 600 log', 'Worker-A ne tukda 4 me se 600 logon ko bhej diya'], [C.bad, 'Worker-A mara', 'Worker-A mara, aakhri_id 3000 pe hi reh gaya'], [C.acc, 'Worker-B → Sent list', 'Worker-B ne sent list me dekha kisko pehle ja chuka'], [C.good, 'Worker-B → Campaign row', 'Sirf bache 400 ko bheja, phir aakhri_id = 4000 likha']],
 ];
 function frame(ph) {
   if (ph === 0) {

@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -217,9 +219,9 @@ function workers(sub, st, c) {
   });
 }
 const STEPS = [
-  [[C.bad, '4 worker → Email company', 'har worker apni taraf se 100 / sec'], [C.bad, 'Email company', '400 aaye: 300 ko 429']],
-  [[C.acc, 'Worker 1 → Redis bucket', 'token?'], [C.good, 'Worker 1 → Email company', 'mila: bheja'], [C.acc, 'Worker 2 → Redis bucket', 'token? is second ke khatam'], [C.acc, 'Worker 2', 'line me ruka, agle second.|Fail nahi']],
-  [[C.good, '4 worker → Email company', 'har ek 25 / sec: kul 100.|Thoda dheema, 429 nahi']],
+  [[C.bad, '4 worker → Email company', 'Har worker ne apni taraf se 100 email / sec bheje'], [C.bad, 'Email company', 'Company ki had 100 thi, 400 aaye to 300 ko 429']],
+  [[C.acc, 'Worker 1 → Redis bucket', 'Worker 1 ne bhejne se pehle Redis bucket se token maanga'], [C.good, 'Worker 1 → Email company', 'Token mila, to Worker 1 ne email bheja'], [C.acc, 'Worker 2 → Redis bucket', 'Worker 2 ne maanga, par is second ke token khatam'], [C.acc, 'Worker 2', 'Worker 2 line me ruka, agle second bhejega, fail nahi hua']],
+  [[C.good, '4 worker → Email company', 'Bucket wala Redis gira, to har worker ne apni had 25 / sec rakhi; kul 100, 429 nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

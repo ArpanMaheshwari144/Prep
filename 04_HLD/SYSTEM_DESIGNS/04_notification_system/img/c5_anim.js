@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, '50 worker → SMS company', 'fail pe har second, ek saath.|Company theek hi nahi ho paati']],
-  [[C.good, 'har baar dugna ruko', '1, 2, 4, 8 sec'], [C.good, 'random (jitter)', 'dono worker ek pal me nahi'], [C.acc, 'Worker → DLQ', 'had paar: DLQ me, alert bhi']],
-  [[C.acc, 'Worker → DLQ', 'had paar: daala, phenka nahi'], [C.acc, 'DLQ → Dashboard', 'on-call ko dikha'], [C.good, 'On-call → Dashboard', 'wajah theek ki (number galat tha)'], [C.good, 'DLQ → Main line', 'k7 phir chali, SMS gaya']],
+  [[C.bad, '50 worker → SMS company', '50 worker fail hote hi har second ek saath retry karte, company theek hi nahi ho paati']],
+  [[C.good, 'har baar dugna ruko', 'Har fail ke baad dugna ruko: 1, 2, 4, 8 sec'], [C.good, 'random (jitter)', 'Upar se thoda random waqt, taaki do worker ek pal me na lautein'], [C.acc, 'Worker → DLQ', 'Kai baar fail ho to khabar DLQ me gayi aur alert bhi baja']],
+  [[C.acc, 'Worker → DLQ', 'Had paar hui to khabar DLQ me daali, phenki nahi'], [C.acc, 'DLQ → Dashboard', 'DLQ ki khabar dashboard pe on-call ko dikhi'], [C.good, 'On-call → Dashboard', 'On-call ne wajah dekhi (number galat tha) aur theek kiya'], [C.good, 'DLQ → Main line', 'k7 wapas main line me gayi, is baar SMS chala gaya']],
 ];
 function frame(ph) {
   if (ph === 0) {

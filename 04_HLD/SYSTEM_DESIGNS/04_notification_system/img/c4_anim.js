@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, 'Worker-A → Redis', 'bhejne se pehle hi k5 = SENT'], [C.bad, 'Worker-A → SMS company', 'call fail, OTP nahi gaya'], [C.acc, 'Redis → Worker-B', '"bheja ja chuka"'], [C.bad, 'Worker-B → Arpan', 'kuch nahi bheja, login atka']],
-  [[C.acc, 'Worker-A → Redis', 'k5 = SENDING (umar 60 sec)'], [C.good, 'Worker-A → SMS company', 'bheja, company ne OK bola'], [C.good, 'Worker-A → Redis', 'ab k5 = SENT'], [C.good, 'Redis → Worker-B', 'SENT dekha: sahi skip']],
-  [[C.acc, 'Worker-A → Redis', 'k5 = SENDING'], [C.bad, 'Worker-A mara', 'SENT likhega kaun?'], [C.good, 'Redis', '60 sec: key khud mit gayi'], [C.good, 'Worker-B → Arpan', 'OTP bheja, khoya nahi']],
+  [[C.bad, 'Worker-A → Redis', 'Worker-A ne bhejne se pehle hi Redis me k5 = SENT likh diya'], [C.bad, 'Worker-A → SMS company', 'SMS company ki call fail hui, OTP gaya hi nahi'], [C.acc, 'Redis → Worker-B', 'Worker-B ko Redis ne bola "bheja ja chuka hai"'], [C.bad, 'Worker-B → Arpan', 'Worker-B ne kuch nahi bheja, Arpan ka login atak gaya']],
+  [[C.acc, 'Worker-A → Redis', 'Worker-A ne pehle k5 = SENDING likha, 60 sec ki umar ke saath'], [C.good, 'Worker-A → SMS company', 'Worker-A ne SMS bheja aur company ne OK bola'], [C.good, 'Worker-A → Redis', 'Pakka hone ke baad hi k5 = SENT likha'], [C.good, 'Redis → Worker-B', 'Worker-B ne SENT dekha, to sahi me skip kiya']],
+  [[C.acc, 'Worker-A → Redis', 'Worker-A ne k5 = SENDING likha aur bhejne chala'], [C.bad, 'Worker-A mara', 'Worker-A beech me hi mara, SENT likhne wala koi nahi bacha'], [C.muted, 'Redis', '60 sec baad SENDING wali key khud mit gayi'], [C.good, 'Worker-B → Arpan', 'Worker-B ne OTP bheja, Arpan ka OTP khoya nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'SMS worker → SMS company', 'OTP bheja'], [C.good, 'SMS company → SMS worker', '200 OK: "le liya"'], [C.bad, 'Arpan ka phone', 'pahuncha? kisi ko pata nahi']],
-  [[C.acc, 'SMS worker → Tracking DB', 'SID-9: SENT'], [C.good, 'SMS company → phone', 'OTP aaya'], [C.good, 'SMS company → Webhook Svc', '"SID-9 pahuncha"'], [C.good, 'Webhook Svc → Tracking DB', 'SID-9: DELIVERED']],
-  [[C.good, 'SMS company → Webhook Svc', 'sahi hastakshar'], [C.good, 'Webhook Svc → Tracking DB', 'DELIVERED likha'], [C.bad, 'Koi bhi → Webhook Svc', 'nakli: hastakshar galat'], [C.bad, 'Webhook Svc', 'phenka, DB me kuch nahi']],
+  [[C.msg, 'SMS worker → SMS company', 'SMS worker ne Arpan ka OTP company ko bheja'], [C.good, 'SMS company → SMS worker', 'Company ne 200 OK diya, matlab sirf "le liya"'], [C.bad, 'Arpan ka phone', 'OTP phone tak pahuncha ya nahi, kisi ko pata nahi']],
+  [[C.acc, 'SMS worker → Tracking DB', 'Worker ne Tracking DB me SID-9 = SENT likha'], [C.good, 'SMS company → phone', 'Company ne OTP Arpan ke phone tak pahunchaya'], [C.good, 'SMS company → Webhook Svc', 'Company ne webhook se bataya: SID-9 pahuncha'], [C.good, 'Webhook Svc → Tracking DB', 'Webhook Svc ne SID-9 = DELIVERED likh diya']],
+  [[C.good, 'SMS company → Webhook Svc', 'Asli company ka webhook sahi hastakshar ke saath aaya'], [C.good, 'Webhook Svc → Tracking DB', 'Hastakshar sahi tha, to Tracking DB me DELIVERED likha'], [C.bad, 'Koi bhi → Webhook Svc', 'Kisi ne nakli webhook bheja, hastakshar galat'], [C.bad, 'Webhook Svc', 'Webhook Svc ne phenk diya, DB me kuch nahi likha']],
 ];
 function frame(ph) {
   if (ph === 0) {

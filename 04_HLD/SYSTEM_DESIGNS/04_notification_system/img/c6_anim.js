@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.acc, 'OTP line → SMS worker', 'Arpan ka OTP'], [C.bad, 'SMS worker x3 → Twilio', '30 sec wait. Koi worker khaali nahi']],
-  [[C.acc, 'SMS worker → Twilio', 'call, 3 sec baad chhoda'], [C.bad, 'Breaker → Twilio', '5 fail: KHULA, call roki'], [C.good, 'SMS worker → SNS', 'doosri company se OTP'], [C.good, 'Breaker → Twilio', 'thodi der baad ek test call']],
-  [[C.good, 'SMS / push / email line', 'har company ka apna breaker.|Sirf SMS ruka, push + email chalu']],
+  [[C.acc, 'OTP line → SMS worker', 'Arpan ka OTP line se SMS worker ke paas aaya'], [C.bad, 'SMS worker x3 → Twilio', 'Teeno worker Twilio pe 30 sec atke, koi khaali nahi']],
+  [[C.acc, 'SMS worker → Twilio', 'Worker ne Twilio ko call kiya, 3 sec me jawab nahi to chhoda'], [C.bad, 'Breaker → Twilio', '5 fail ke baad breaker khula, Twilio ki call wahin roki'], [C.good, 'SMS worker → SNS', 'Worker ne doosri company (SNS) se OTP bhej diya'], [C.good, 'Breaker → Twilio', 'Thodi der baad breaker ne ek test call se Twilio dekha']],
+  [[C.msg, 'SMS / push / email line', 'Har company ka apna breaker; sirf SMS ruka, push aur email chalte rahe']],
 ];
 function frame(ph) {
   if (ph === 0) {

@@ -15,9 +15,9 @@ function lines(st, sub, wsub) {
   });
 }
 const STEPS = [
-  [[C.acc, 'Ek line → Worker', '50,000 offer pehle'], [C.bad, 'OTP', 'baari 10 min baad. Umar 5 min: bekaar']],
-  [[C.good, 'High → OTP worker', 'OTP turant'], [C.acc, 'Medium → order worker', 'order thoda baad'], [C.acc, 'Low → offer worker', 'offer apni speed se']],
-  [[C.good, 'Medium → OTP worker', 'OTP line khaali: order padh liya'], [C.bad, 'offer worker', 'OTP line kabhi nahi (ulta nahi)']],
+  [[C.muted, 'Ek line → Worker', 'Ek hi line me 50,000 offer SMS pehle se khade the'], [C.bad, 'OTP', 'OTP ki baari 10 min baad aayi, par umar sirf 5 min, bekaar']],
+  [[C.good, 'High → OTP worker', 'High line ka OTP worker OTP turant bhejta'], [C.acc, 'Medium → order worker', 'Order ki khabar Medium line se thoda baad'], [C.muted, 'Low → offer worker', 'Offer Low line me, apni speed se, kisi ko nahi rokta']],
+  [[C.good, 'Medium → OTP worker', 'OTP line khaali thi, to OTP worker ne order wali bhi padh li'], [C.bad, 'offer worker', 'Ulta nahi: offer worker kabhi OTP line nahi padhta']],
 ];
 function frame(ph) {
   if (ph === 0) {

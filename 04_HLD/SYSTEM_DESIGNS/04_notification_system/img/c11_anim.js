@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.msg, 'Offer khabar → SMS worker', 'raat 2:00'], [C.bad, 'SMS worker → phone', 'seedha bheja: ghanti baji'], [C.bad, 'Pasand', 'offer band tha, dekhi hi nahi']],
-  [[C.msg, 'Offer khabar → SMS worker', 'raat 2:00'], [C.acc, 'SMS worker → Pasand', 'offer band, shaanti 10 se 8'], [C.good, 'SMS worker → Subah ki line', '8 baje bhejo, phenka nahi']],
-  [[C.msg, 'OTP khabar → SMS worker', 'raat 2:00'], [C.acc, 'SMS worker → Pasand', 'shaanti hai'], [C.good, 'SMS worker → phone', 'zaroori: phir bhi bheja']],
+  [[C.msg, 'Offer khabar → SMS worker', 'Raat 2 baje offer ki khabar SMS worker ke paas aayi'], [C.bad, 'SMS worker → phone', 'Worker ne seedha bheja, raat ko phone ki ghanti baji'], [C.bad, 'Pasand', 'Arpan ne offer SMS band kiya tha, worker ne ye pasand dekhi hi nahi']],
+  [[C.msg, 'Offer khabar → SMS worker', 'Raat 2 baje phir offer ki khabar aayi'], [C.acc, 'SMS worker → Pasand', 'Worker ne pasand dekhi: offer band, shaanti 10 se 8'], [C.good, 'SMS worker → Subah ki line', 'Khabar subah ki line me rakhi, 8 baje jaayegi, phenki nahi']],
+  [[C.msg, 'OTP khabar → SMS worker', 'Raat 2 baje Arpan ne login kiya, OTP ki khabar aayi'], [C.muted, 'SMS worker → Pasand', 'Pasand me shaanti ka waqt chal raha tha'], [C.good, 'SMS worker → phone', 'OTP zaroori hai, to shaanti me bhi bheja']],
 ];
 function frame(ph) {
   if (ph === 0) {

@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Ek line → Worker', 'SMS sabse aage'], [C.bad, 'Worker → SMS company', '30 sec / msg, worker atka'], [C.bad, 'push, email', 'SMS ke peeche khade']],
-  [[C.good, 'Ghatna → 3 line', 'har raaste ki apni line aur worker.|SMS dheema, push + email aage']],
-  [[C.good, 'Ghatna → 3 line', 'sirf SMS worker 1 -> 4.|Push aur email ko nahi chhua']],
+  [[C.bad, 'Ek line → Worker', 'Ek hi line me sabse aage SMS ki khabar khadi thi'], [C.bad, 'Worker → SMS company', 'SMS company 30 sec le rahi, worker wahin atka'], [C.bad, 'push, email', 'Push aur email SMS ke peeche khade, bina wajah ruke']],
+  [[C.msg, 'Ghatna → 3 line', 'Har raaste (SMS, push, email) ki apni line aur worker; SMS dheema to bhi baaki aage']],
+  [[C.msg, 'Ghatna → 3 line', 'SMS dheema pada to sirf SMS worker 1 se 4 kiye, push aur email ko nahi chhua']],
 ];
 function frame(ph) {
   if (ph === 0) {
