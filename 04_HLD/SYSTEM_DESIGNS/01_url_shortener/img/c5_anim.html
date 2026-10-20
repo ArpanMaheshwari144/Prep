@@ -133,68 +133,43 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 5: 90 TB ek machine me nahi. Ilaaj: code se shard, ring. Agar: machine mari, bojh ek pe. Wapas: har click ek machine pe.
-const DUR = 15;
+// Card 5: 90 TB ek machine me nahi. Ilaaj: code se shard (ring), 3 copy. Agar: ek machine mar gayi.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: 5 saal me 90 TB, ek machine me aata hi nahi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: code se kai machine me baanto. Ring pe aage, pehli machine uski'],
+  [0, RED, 'DIKKAT', 'DIKKAT: saare link ek DB machine me, 5 saal me 90 TB, samaata nahi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: code ka hash, ring pe aage chalo, jo pehli machine mile wo uski. 3 copy'],
   [6, YEL, 'AGAR', 'AGAR ek machine mar gayi? -> baaki 2 copy se milta, link nahi gaye'],
-  [9, YEL, 'AGAR', 'AGAR ek machine pe zyada bojh? -> ring pe 100-200 jagah (virtual nodes)'],
-  [12, GRN, 'WAPAS', 'WAPAS: click hamesha code ke saath, seedha ek machine pe'],
 ];
 function setup() {}
-const CX = 600, CY = 180, R = 120;
-function pt(deg) { const a = deg * Math.PI / 180; return [CX + R * Math.cos(a), CY + R * Math.sin(a)]; }
-function ring() { el('circle', { cx: CX, cy: CY, r: R, fill: 'none', stroke: C.line, 'stroke-width': 2 }, DYN); }
-// machine M1 upar, M2 daayein, M3 neeche, M4 baayein
-const MP = [[-90, 'M1'], [0, 'M2'], [90, 'M3'], [180, 'M4']];
-function machines(sts, subs) {
-  MP.forEach(([d, n], i) => { const [x, y] = pt(d); B(x - 45, y - 22, 90, 44, n, subs[i] || '', { st: sts[i] }); });
+const CX = 600, CY = 175, R = 105;
+const P = [[CX, CY - R], [CX + 91, CY + 52], [CX - 91, CY + 52]]; // DB-1 top, DB-2 right-neeche, DB-3 left-neeche
+function ring(dead) {
+  el('circle', { cx: CX, cy: CY, r: R, fill: 'none', stroke: C.line, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, DYN);
+  ['DB-1', 'DB-2', 'DB-3'].forEach((n, i) => {
+    const d = dead === i; B(P[i][0] - 40, P[i][1] - 20, 80, 40, n, '', { st: d ? 'bad' : 'good' }); if (d) cross(P[i][0] + 58, P[i][1]);
+  });
 }
-function arc(d1, d2, c, o = {}) {
-  const pts = []; for (let d = d1; d <= d2; d += 8) pts.push(pt(d)); pts.push(pt(d2));
-  AP(pts, c, o);
-}
-function app(n) {
-  B(20, 150, 110, 70, 'App', 'code');
-  const p = pt(-140); A(130, 175, p[0] - 4, p[1] + 2, C.msg, { n }); dot(p, C.msg);
-}
+const HP = [CX - 95, CY - 45]; // hash ki jagah ring pe (DB-1 se thoda pehle)
 function frame(ph) {
   if (ph === 0) {
-    B(20, 150, 110, 70, 'App', 'link'); A(130, 185, 298, 185, C.msg, { n: 1 });
-    B(300, 130, 200, 110, 'Ek machine', 'DB', { st: 'bad' });
-    bar(300, 260, 200, 20, 1, ''); T(400, 305, '90 TB', { c: C.bad, b: 1, size: 18 });
-    dots(5, 530, 160, C.bad, { gap: 22 }); num(530, 125, 2, C.bad); L(550, 130, 'aata hi nahi', C.bad, 'start');
+    B(20, 130, 120, 60, 'App'); A(140, 160, 358, 160, C.bad, { n: 1 }); L(250, 140, 'har link yahin', C.bad);
+    B(360, 110, 180, 100, 'DB', 'ek hi machine', { st: 'bad' }); cross(565, 160);
+    bar(360, 230, 180, 16, 1, ''); T(450, 270, '90 TB', { c: C.bad, b: 1, size: 16 }); num(450, 300, 2, C.bad); L(450, 325, 'samaata nahi', C.bad);
   } else if (ph === 1) {
-    ring(); machines(['', '', 'good', ''], ['', '', '', '']);
-    app(1);
-    arc(-140, -112, C.acc, { n: 2, at: 0.5 }); L(430, 70, 'ring pe aage', C.acc);
-    const p = pt(-90); num(p[0] + 60, p[1], 3, C.good); L(p[0] + 78, p[1] + 5, 'pehli machine: uski', C.good, 'start');
-    L(CX, CY + 5, '3 copy', C.muted);
-  } else if (ph === 2) {
-    ring(); machines(['bad', 'good', 'good', ''], ['', 'copy', 'copy', '']);
-    const p = pt(-90); cross(p[0] + 65, p[1]); num(p[0] + 100, p[1], 1, C.bad); L(p[0] + 118, p[1] + 5, 'mari', C.bad, 'start');
-    B(20, 150, 110, 70, 'App', 'code');
-    const q = pt(90); A(130, 200, q[0] - 47, q[1], C.good, { n: 2, at: 0.45 });
-    L(300, 220, 'copy se mila', C.good);
-    L(760, 320, 'hal: 3 copy, link nahi gaye', C.good);
-  } else if (ph === 3) {
-    ring(); machines(['bad', 'good', 'good', 'good'], ['', '', '', '']);
-    const cs = [C.bad, C.good, C.msg, C.acc];
-    let k = 0;
-    for (let d = -180; d < 180; d += 10) {
-      if ([-90, 0, 90, 180, -180].some(b => Math.abs(d - b) < 30)) continue;
-      dot(pt(d), cs[k % 4]); k++;
-    }
-    const off = [[0, -35], [62, 0], [0, 35], [-62, 0]];
-    MP.forEach(([d], i) => { const [x, y] = pt(d); dot([x + off[i][0], y + off[i][1]], cs[i]); });
-    const p = pt(-90); num(p[0] + 70, p[1] - 18, 1, C.bad); L(p[0] + 88, p[1] - 13, 'zyada bojh', C.bad, 'start');
-    L(CX, CY - 5, 'har machine', C.good); L(CX, CY + 13, '100-200 jagah', C.good);
-    L(160, 320, 'hal: virtual nodes, bojh barabar', C.good);
+    B(20, 130, 120, 60, 'App', 'code: ab3x9Kq'); ring(-1);
+    A(140, 150, HP[0] - 8, HP[1] + 4, C.acc, { n: 1, at: 0.45 }); L(300, 110, 'code ka hash = ring pe ek jagah', C.acc);
+    dot(HP, C.acc, '');
+    A(HP[0] + 8, HP[1] - 10, P[0][0] - 42, P[0][1] + 2, C.good, { n: 2 }); L(CX + 75, CY - R - 10, 'aage chalo, pehli: DB-1', C.good, 'start');
+    A(P[0][0] + 20, P[0][1] + 20, P[1][0] - 20, P[1][1] - 20, C.muted, { n: 3, dash: 1 });
+    A(P[1][0] - 42, P[1][1], P[2][0] + 42, P[2][1], C.muted, { dash: 1 });
+    L(CX + 60, CY + 100, 'copy agle 2 pe', C.muted, 'start');
+    L(20, 240, 'click code ke saath aata, seedha', C.muted, 'start'); L(20, 260, 'ek machine pe. Machine judi to', C.muted, 'start'); L(20, 280, 'sirf pados ki keys hilti', C.muted, 'start');
   } else {
-    ring(); machines(['good', 'good', 'good', 'good'], ['', '', '', '']);
-    app(1);
-    arc(-140, -112, C.good, { n: 2, at: 0.5 }); L(430, 70, 'seedha ek machine', C.good);
+    B(20, 130, 120, 60, 'App', 'code: ab3x9Kq'); ring(0);
+    A(140, 150, HP[0] - 8, HP[1] + 4, C.acc, { n: 1, at: 0.45 }); dot(HP, C.acc, '');
+    A(HP[0] + 8, HP[1] - 10, P[0][0] - 42, P[0][1] + 2, C.bad, { n: 2, dash: 1 }); L(CX + 75, CY - R - 10, 'DB-1 mar gayi', C.bad, 'start');
+    A(HP[0] + 10, HP[1] + 10, P[1][0] - 42, P[1][1] - 8, C.good, { n: 3 }); L(CX + 60, CY + 100, 'copy se mila, link gaya nahi', C.good, 'start');
+    L(20, 240, 'naya DB-1 aaya to baaki', C.muted, 'start'); L(20, 260, 'copy se bhar jaata', C.muted, 'start');
   }
 }
 

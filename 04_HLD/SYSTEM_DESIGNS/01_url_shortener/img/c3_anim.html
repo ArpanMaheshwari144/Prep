@@ -133,69 +133,47 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 3: dono ko ek code. Ilaaj: Counter har App ko alag range. Agar: same code maanga, 400 pe crash, Counter gira. Wapas.
-const DUR = 18;
+// Card 3: dono App ko ek hi code. Ilaaj: Counter range. Agar: Counter gira.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: maine aur Ravi ne link banaya, dono ko ek hi code mila'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: Counter har App ko alag range: App-1 ko 1-1000, App-2 ko 1001-2000'],
-  [6, YEL, 'AGAR', 'AGAR do log ek saath same code maangein? -> DB ka UNIQUE ek ko rokta, 409'],
-  [9, YEL, 'AGAR', 'AGAR App-1 range me 400 pe crash? -> 401 se 1000 bekaar, jaan-boojh ke'],
-  [12, YEL, 'AGAR', 'AGAR Counter hi gir gaya? -> App ki range chalti rehti hai'],
-  [15, GRN, 'WAPAS', 'WAPAS: Counter ki copy uth gayi, range khatam to agli range wahan se'],
+  [0, RED, 'DIKKAT', 'DIKKAT: dono App ne DB se "agla number?" poocha, dono ko 501 mila'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: Counter har App ko alag range deta, App apni range se number leta'],
+  [6, YEL, 'AGAR', 'AGAR Counter hi gir gaya? -> App ki range chalti rehti, tab tak copy uth jaati'],
 ];
 function setup() {}
-function people(n) {
-  B(20, 40, 110, 60, 'Arpan'); B(20, 250, 110, 60, 'Ravi');
-  A(130, 70, 228, 75, C.msg, { n }); A(130, 280, 228, 285, C.msg, { n });
+// Main/Ravi (x 20-130), App-1/App-2 (x 250-380), DB/Counter (x 560-700)
+function ppl() { B(20, 40, 110, 50, 'Main'); B(20, 260, 110, 50, 'Ravi'); }
+function apps(s1, s2, st) { B(250, 40, 130, 50, 'App-1', s1, { st }); B(250, 260, 130, 50, 'App-2', s2, { st }); }
+function req(n) { A(130, 52, 248, 52, C.msg, { n }); A(130, 272, 248, 272, C.msg); }
+function code(n, a, b, c) {
+  A(248, 80, 132, 80, c, { n }); A(248, 300, 132, 300, c);
+  T(190, 112, a, { c, b: 1, size: 14 }); T(190, 332, b, { c, b: 1, size: 14 });
 }
-function apps(st1, st2, s1, s2) {
-  B(230, 40, 140, 70, 'App-1', s1, { st: st1 }); B(230, 250, 140, 70, 'App-2', s2, { st: st2 });
-}
-function db(st, sub) { B(720, 145, 140, 70, 'DB', sub, { st }); }
-function counter(st, sub) { B(440, 145, 130, 70, 'Counter', sub, { st }); }
 function frame(ph) {
   if (ph === 0) {
-    people(1); apps('bad', 'bad', 'code: X', 'code: X'); db('bad', '');
-    A(370, 75, 718, 165, C.bad, { n: 2 }); A(370, 285, 718, 195, C.bad, { n: 2 });
-    num(790, 250, 3, C.bad); L(790, 280, 'ek code, do link', C.bad);
-    L(545, 100, 'dono ne khud banaya', C.bad);
+    ppl(); req(1); apps('', '');
+    B(560, 150, 140, 60, 'DB', 'agla = 501', { st: 'bad' });
+    A(380, 60, 558, 160, C.acc, { n: 2, at: 0.3 }); A(380, 290, 558, 200, C.acc);
+    L(480, 85, 'agla no.?', C.acc); L(480, 285, 'agla no.?', C.acc);
+    A(558, 175, 382, 85, C.bad, { n: 3, at: 0.6 }); A(558, 185, 382, 275, C.bad);
+    code(4, 'code 501', 'code 501', C.bad);
+    cross(740, 180); L(790, 165, 'ek hi code', C.bad, 'start'); L(790, 190, 'do link ko', C.bad, 'start');
   } else if (ph === 1) {
-    people(2); counter('acc', ''); db('good', 'code alag');
-    apps('good', 'good', 'range 1-1000', 'range 1001-2000');
-    A(470, 145, 372, 100, C.acc, { n: 1 }); A(470, 215, 372, 262, C.acc, { n: 1 });
-    L(430, 185, 'range di', C.acc, 'end');
-    A(370, 75, 718, 165, C.good, { n: 3, at: 0.6 }); L(600, 110, 'number: 1', C.good);
-    A(370, 285, 718, 195, C.good, { n: 3, at: 0.6 }); L(600, 260, 'number: 1001', C.good);
-  } else if (ph === 2) {
-    people(1); apps('good', 'bad', '', ''); db('acc', 'UNIQUE');
-    L(75, 125, 'same code maanga', C.msg);
-    A(370, 75, 718, 165, C.good, { n: 2 }); A(370, 280, 718, 190, C.acc, { n: 2, at: 0.3 });
-    A(718, 210, 372, 305, C.bad, { n: 3, at: 0.6 }); L(560, 290, '409', C.bad);
-    L(600, 110, 'save', C.good);
-    L(790, 250, 'hal: UNIQUE ek ko rokta', C.good);
-  } else if (ph === 3) {
-    people(0); db('', '');
-    apps('bad', 'good', 'range 1-1000', 'range 1001-2000'); cross(395, 75);
-    num(440, 50, 1, C.bad); L(460, 55, 'crash: 400 pe', C.bad, 'start');
-    cells(230, 120, [['1-400', C.good], ['401-1000', C.bad]], { w: 80, h: 22 });
-    L(400, 165, 'bekaar', C.bad, 'start');
-    A(370, 285, 718, 195, C.good, { n: 2, at: 0.6 }); L(600, 260, 'App-2 chalti', C.good);
-    L(720, 330, 'hal: chalta hai, 3.5 lakh crore me', C.good); L(720, 345, 'kuch hazaar se farak nahi', C.good);
-  } else if (ph === 4) {
-    people(0); counter('bad', ''); cross(597, 180);
-    num(440, 135, 1, C.bad); L(460, 130, 'gira', C.bad, 'start');
-    apps('good', 'good', 'range 1-1000', 'range 1001-2000'); db('good', '');
-    A(370, 75, 718, 165, C.good, { n: 2, at: 0.6 }); A(370, 285, 718, 195, C.good, { n: 2, at: 0.6 });
-    L(600, 110, 'apni range se', C.good);
-    B(600, 270, 150, 60, 'Counter copy', 'uth rahi', { st: 'acc' });
-    L(780, 345, 'hal: tab tak copy uth jaati', C.good);
+    ppl(); req(2); apps('range 1-1000', 'range 1001-2000', 'good');
+    B(560, 150, 140, 60, 'Counter', 'ZooKeeper / DB', { st: 'acc' });
+    A(558, 165, 382, 70, C.acc, { n: 1, at: 0.5, dash: 1 }); A(558, 195, 382, 290, C.acc, { dash: 1 });
+    L(480, 95, 'pehle hi: 1-1000', C.acc); L(480, 275, 'pehle hi: 1001-2000', C.acc);
+    code(3, 'code 1', 'code 1001', C.good);
+    L(630, 335, 'ek range kabhi do App ko nahi. 1000 link pe Counter ki ek call', C.good);
   } else {
-    people(0); counter('dim', ''); db('good', '');
-    apps('good', 'acc', 'range 1-1000', 'range khatam');
-    B(600, 270, 150, 60, 'Counter copy', 'uth gayi', { st: 'good' });
-    num(675, 250, 1, C.good); L(695, 255, 'uthi', C.good, 'start');
-    A(598, 300, 372, 300, C.acc, { n: 2 }); L(485, 330, 'agli range', C.acc);
-    A(370, 75, 718, 165, C.good);
+    ppl(); req(2); apps('abhi 400 / 1000', 'abhi 1300 / 2000', 'good');
+    B(560, 150, 140, 60, 'Counter', '', { st: 'bad' }); cross(720, 180); num(630, 230, 1, C.bad); L(630, 255, 'gira', C.bad);
+    A(380, 70, 558, 160, C.muted, { dash: 1 }); A(380, 280, 558, 200, C.muted, { dash: 1 }); cross(470, 180);
+    
+    code(3, 'code 401', 'code 1301', C.good);
+    L(20, 190, 'range pehle se App ke paas, usi se agla number.', C.good, 'start'); L(20, 210, 'Counter se kuch nahi maanga', C.good, 'start');
+    B(740, 40, 140, 60, 'Counter copy', 'uth rahi', { st: 'acc' }); A(640, 148, 740, 100, C.acc, { n: 4, dash: 1 });
+    L(630, 300, 'range khatam hone se pehle copy taiyaar', C.muted);
   }
 }
 

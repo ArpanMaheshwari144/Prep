@@ -1,42 +1,35 @@
-// Card 8: spammer script 5,000 link / sec. Ilaaj: gateway pe API key ki ek ginti, 429. Agar: pehchaana hamla -> WAF. Wapas.
-const DUR = 12;
+// Card 8: spammer 5000 link/sec. Ilaaj: gateway pe rate limit. Agar: pehchaana hua hamla -> WAF.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: spammer ki script, har second 5,000 link, sab andar tak'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: gateway pe har API key ki ek ginti (Redis). Had paar to 429'],
+  [0, RED, 'DIKKAT', 'DIKKAT: koi had nahi, spammer ke 5,000 link / sec seedhe DB tak, sab dheema'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: gateway pe har API key ki ek ginti (Redis). Had paar to 429, andar nahi'],
   [6, YEL, 'AGAR', 'AGAR darwaze pe pehchaana hua hamla aaya? -> WAF darwaze pe hi rok deta'],
-  [9, GRN, 'WAPAS', 'WAPAS: rokna darwaze pe, asli users ki speed bachi rehti'],
 ];
 function setup() {}
-function people(sst) { B(20, 40, 120, 60, 'Spam script', '5,000 / sec', { st: sst }); B(20, 260, 120, 60, 'Users', ''); }
-function gw(st, sub) { B(330, 150, 130, 70, 'Gateway', sub, { st }); }
-function back(st, sub) { B(560, 150, 110, 70, 'App', sub, { st }); B(750, 150, 110, 70, 'DB', '', { st }); }
 function frame(ph) {
   if (ph === 0) {
-    people('bad'); back('bad', '');
-    A(140, 70, 558, 170, C.bad, { n: 1, at: 0.3 }); L(250, 70, 'sab andar', C.bad, 'start');
-    A(670, 185, 748, 185, C.bad, { n: 2 }); L(710, 140, 'bhar gaya', C.bad);
-    A(140, 290, 558, 200, C.msg, { dash: 1, n: 3, at: 0.3 }); L(300, 300, 'asli users: dheema', C.msg, 'start');
+    B(20, 130, 130, 60, 'Spammer', '5,000 / sec', { st: 'bad' });
+    A(150, 160, 318, 160, C.bad, { n: 1, at: 0.7 }); dots(5, 170, 140, C.bad, { gap: 18 });
+    B(320, 130, 120, 60, 'App'); A(440, 160, 598, 160, C.bad, { n: 2, at: 0.7 }); dots(5, 460, 140, C.bad, { gap: 18 });
+    B(600, 130, 120, 60, 'DB', '', { st: 'bad' }); cross(745, 160); bar(600, 215, 120, 16, 1, ''); L(660, 255, 'bhara, sab dheema', C.bad);
+    B(20, 260, 130, 50, 'Asli user'); A(150, 285, 318, 185, C.muted, { dash: 1 }); L(240, 300, 'inka bhi dheema', C.muted);
   } else if (ph === 1) {
-    people('bad'); gw('acc', 'ginti: API key'); back('good', '');
-    B(330, 280, 130, 50, 'Redis', 'ek ginti');
-    A(140, 70, 328, 165, C.bad, { n: 1, at: 0.4 });
-    A(395, 220, 395, 278, C.acc, { n: 2 }); L(405, 255, 'gino', C.acc, 'start');
-    num(345, 132, 3, C.bad); L(363, 137, '429, App tak nahi', C.bad, 'start');
-    A(140, 290, 328, 205, C.good, { n: 4, at: 0.4 }); A(460, 185, 558, 185, C.good);
-    L(510, 165, 'asli users', C.good); A(670, 185, 748, 185, C.good);
-  } else if (ph === 2) {
-    B(20, 40, 120, 60, 'Hamla', 'pehchaana', { st: 'bad' }); B(20, 260, 120, 60, 'Users', '');
-    B(190, 150, 90, 70, 'WAF', '', { st: 'acc' }); gw('', ''); back('', '');
-    A(140, 70, 188, 165, C.bad, { n: 1 }); cross(235, 125);
-    num(268, 125, 2, C.bad); L(286, 130, 'WAF ne roka, aage nahi', C.bad, 'start');
-    A(140, 290, 188, 205, C.good, { n: 3 }); A(280, 195, 328, 195, C.good);
-    A(460, 185, 558, 185, C.good); A(670, 185, 748, 185, C.good);
-    L(560, 300, 'hal: WAF darwaze pe hi rok deta', C.good, 'start');
+    B(20, 130, 130, 60, 'Spammer', 'key: k1', { st: 'bad' });
+    A(150, 160, 318, 160, C.bad, { n: 1 });
+    B(320, 130, 130, 60, 'Gateway', 'rate limit', { st: 'acc' });
+    B(540, 30, 130, 60, 'Redis', 'k1: 5000 / 100', { st: 'acc' });
+    A(440, 130, 530, 62, C.acc, { n: 2, at: 0.35 }); L(440, 85, 'ginti +1', C.acc);
+    A(560, 92, 470, 150, C.bad, { n: 3, at: 0.45 }); L(560, 135, 'had paar', C.bad, 'start');
+    A(318, 180, 152, 180, C.bad, { n: 4 }); T(235, 220, '429', { c: C.bad, b: 1, size: 18 });
+    B(700, 130, 120, 60, 'App', '', { st: 'good' }); A(450, 170, 698, 170, C.muted, { dash: 1 }); cross(575, 170); L(575, 215, 'App tak aaya hi nahi', C.good);
+    B(20, 260, 130, 50, 'Asli user', 'key: k2'); A(150, 285, 318, 185, C.good, { n: 5 }); L(760, 300, 'inki speed bachi', C.good);
   } else {
-    people('bad'); gw('good', ''); back('good', '');
-    B(330, 280, 130, 50, 'Redis', 'ek ginti');
-    A(140, 70, 328, 165, C.bad, { n: 1 }); cross(355, 128); L(378, 133, '429, darwaze pe ruka', C.bad, 'start');
-    A(140, 290, 328, 205, C.good, { n: 2, at: 0.4 }); A(460, 185, 558, 185, C.good);
-    A(670, 185, 748, 185, C.good); L(610, 255, 'speed bachi', C.good);
+    B(20, 130, 130, 60, 'Attacker', 'SQL inject / bot', { st: 'bad' });
+    A(150, 160, 238, 160, C.bad, { n: 1 });
+    B(240, 130, 110, 60, 'WAF', 'darwaza', { st: 'acc' }); cross(385, 160); L(295, 215, 'pehchaana hua, roka', C.bad);
+    A(350, 160, 478, 160, C.muted, { dash: 1 });
+    B(480, 130, 130, 60, 'Gateway', 'rate limit'); A(610, 160, 698, 160, C.muted, { dash: 1 }); B(700, 130, 120, 60, 'App');
+    B(20, 260, 130, 50, 'Asli user'); A(150, 285, 238, 190, C.good, { n: 2 }); A(350, 175, 478, 175, C.good); A(610, 175, 698, 175, C.good);
+    L(540, 300, 'WAF = pehchaane hue hamle, rate limit = bheed. Dono darwaze pe', C.muted);
   }
 }
