@@ -1,12 +1,14 @@
 <!doctype html>
 <!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
 <meta charset="utf-8">
-<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
-<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
-<rect width="900" height="400" fill="#11161c"/>
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}
+svg .sans{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif}</style>
+<svg id="root" width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect id="bgr" width="900" height="400" fill="#11161c"/>
 <rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
 <text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
-<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+<g id="pic" transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+<g id="leg"></g>
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
@@ -23,13 +25,35 @@ function el(tag, a, parent, text) {
   (parent || ST).append(e); return e;
 }
 function grp(id) { return el('g', id ? { id } : {}); }
+// generic line-icon (24 grid, stroke). Brand logo nahi. B(..., { icon: 'user' })
+const ICON = {
+  user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 4-6 8-6s8 2 8 6',
+  users: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3 3-5 7-5s7 2 7 5M16 5a3 3 0 0 1 0 6M18 15c2 .6 4 2 4 5',
+  bucket: 'M4 6h16l-2 14H6L4 6zM4 6c0-1.7 3.6-3 8-3s8 1.3 8 3',
+  db: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
+  server: 'M3 4h18v6H3zM3 14h18v6H3zM7 7h1M7 17h1',
+  phone: 'M7 2h10v20H7zM11 18h2',
+  chat: 'M4 4h16v12H9l-5 4V4zM8 9h8M8 12h5',
+  queue: 'M3 7h4v10H3zM10 7h4v10h-4zM17 7h4v10h-4z',
+  clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 3',
+  lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+  mail: 'M3 5h18v14H3zM3 5l9 7 9-7',
+  cloud: 'M7 18a4 4 0 0 1 0-8 6 6 0 0 1 11.5 1.5A3.5 3.5 0 0 1 18 18H7z',
+};
 // dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
 function box(x, y, w, h, label, sub, o = {}) {
   const g = el('g', o.id ? { id: o.id } : {}, o.parent);
   el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
     'stroke-width': 1.5 }, g);
-  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
-  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  let cx = x + w / 2;
+  if (o.icon && ICON[o.icon]) {
+    const k = 28 / 24, iy = y + (h - 28) / 2;
+    el('path', { d: ICON[o.icon], transform: `translate(${x + 14},${iy}) scale(${k})`, fill: 'none',
+      stroke: o.iconc || o.stroke || C.fg, 'stroke-width': 2 / k, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
+    cx = x + 50 + (w - 56) / 2;
+  }
+  el('text', { x: cx, y: BIG ? (h >= 90 ? y + 26 : y + h / 2 + (sub ? -4 : 6)) : y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': BIG ? 17 : 14, 'font-weight': BIG ? 'bold' : 'normal', fill: C.fg }, g, label);
+  if (sub) el('text', { x: cx, y: BIG ? (h >= 90 ? y + 46 : y + h / 2 + 17) : y + 36, 'text-anchor': 'middle', 'font-size': BIG ? 14 : 12, fill: C.muted }, g, sub);
   return g;
 }
 function wire(d, id, parent) {
@@ -71,7 +95,7 @@ function cells(x, y, items, o = {}) {
   const w = o.w || 46, h = o.h || 26;
   items.forEach(([s, c], i) => {
     el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
-    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+    T(x + i * (w + 4) + w / 2, y + h / 2 + (BIG ? 5 : 4), s, { c: c || C.fg, size: BIG ? 13 : 11, b: 1 });
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
@@ -83,7 +107,7 @@ function B(x, y, w, h, label, sub, o = {}) {
 }
 function A(x1, y1, x2, y2, c, o = {}) {
   c = c || C.line;
-  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || (BIG ? 2.5 : 2), 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
   const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
   el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
     `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
@@ -105,11 +129,11 @@ function AP(pts, c, o = {}) {
 }
 // kram ka gol badge (1, 2, 3 ...)
 function num(x, y, n, c) {
-  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
-  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+  el('circle', { cx: x, cy: y, r: BIG ? 14 : 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 5, 'text-anchor': 'middle', 'font-size': BIG ? 15 : 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
 }
 // "kya hua" chhota label
-function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: BIG ? 15 : 13, halo: 1, a }); }
 function dots(n, x, y, c, o = {}) {
   const cols = o.cols || 10, g = o.gap || 22;
   for (let i = 0; i < n; i++) {
@@ -118,7 +142,40 @@ function dots(n, x, y, c, o = {}) {
       fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
   }
 }
+// NAYA SAANCHA (21-Oct, Fable + Arpan): scene me STEPS ho to 900 x 610, bade akshar, neeche patti.
+// STEPS = [ [ [c, 'A -> B', 'pehli line|doosri line'], ... ] (DIKKAT), [...] (ILAAJ), [...] (AGAR) ]; c = number ka rang
+let BIG = false, BIGSET = false;
+function initBig() {   // draw() pe ek baar; tab tak scene ka STEPS ban chuka hota
+  if (BIGSET) return; BIGSET = true;
+  BIG = typeof STEPS !== 'undefined';
+  if (!BIG) return;
+  const R = document.getElementById('root');
+  R.setAttribute('height', 610); R.setAttribute('viewBox', '0 0 900 610');
+  document.getElementById('bgr').setAttribute('height', 610);
+  CAPBG.setAttribute('height', 48); CAP.setAttribute('y', 31); CAP.setAttribute('font-size', 17);
+  document.getElementById('pic').setAttribute('transform', 'translate(0,52)');
+}
+const LEG = document.getElementById('leg');
+function legend(steps) {
+  LEG.replaceChildren();
+  if (!steps || !steps.length) return;
+  const two = steps.length > 2, y0 = 418, h = two ? 178 : 100, H = y0 + h + 14;
+  const R = document.getElementById('root');   // patti chhoti to tasveer bhi chhoti
+  R.setAttribute('height', H); R.setAttribute('viewBox', `0 0 900 ${H}`); document.getElementById('bgr').setAttribute('height', H);
+  el('rect', { x: 20, y: y0, width: 860, height: h, rx: 10, fill: '#161d25', stroke: C.line }, LEG);
+  if (two) el('line', { x1: 450, y1: y0 + 14, x2: 450, y2: y0 + h - 14, stroke: C.line }, LEG);
+  steps.forEach(([c, head, line], i) => {
+    const col = two ? i % 2 : i, row = two ? Math.floor(i / 2) : 0;
+    const x = 40 + col * 430, y = y0 + 30 + row * 82;
+    el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
+    el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
+    el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
+    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+      fill: C.muted, class: 'sans' }, LEG, ln));
+  });
+}
 function draw(t) {
+  initBig();
   DYN.replaceChildren();
   if (typeof PH !== 'undefined') {
     let i = 0;
@@ -126,6 +183,7 @@ function draw(t) {
     CAPBG.setAttribute('fill', PH[i][1]);
     CAP.textContent = PH[i][3] || '';
     frame(i, t - PH[i][0]);
+    if (BIG) legend(STEPS[i]);
     return;
   }
   const fix = t >= FIX;
@@ -133,55 +191,59 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 8: sab ek table me (May se Oct), purana koi padhta nahi, disk + backup ka kharcha.
-// Ilaaj: mahine ka partition, purana S3. Agar: DETACH pe lock, 1 saal purani khuli. Wapas: DB utna hi.
-const DUR = 15;
+// Card 8: 6 mahine me 2 crore row, purana koi padhta nahi, kharcha. Ilaaj: mahine ka partition, purana S3. Agar: purani khabar.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: sab ek table me (May se Oct), purana koi padhta nahi, faltu kharcha'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: har mahine ka alag partition, purana S3 pe. Postgres me sirf haal ka'],
-  [6, YEL, 'AGAR', 'AGAR DETACH pe lock lagega? -> normal DETACH: pal bhar ka lock, padhai ruki'],
-  [9, YEL, 'AGAR', 'AGAR 1 saal purani khabar khuli? -> S3 archive se aati. Dheemi, par khulti'],
-  [12, GRN, 'WAPAS', 'WAPAS: DB utna hi rehta. Naya mahina garam, purana thanda (S3)'],
+  [0, RED, 'DIKKAT', 'DIKKAT: 6 mahine me ~2 crore row, sab ek table me. Purana koi nahi padhta, kharcha badha'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har mahine ka alag tukda (partition). Purana tukda S3 pe (archive)'],
+  [6, YEL, 'AGAR', 'AGAR 1 saal purani khabar khuli? -> S3 archive se aati. Dheemi, par khulti'],
 ];
-const OLD = ['May', 'Jun', 'Jul', 'Aug', 'Sep'];
 function setup() {}
-function split(o = {}) {
-  B(20, 60, 110, 60, 'User', o.u);
-  B(250, 30, 250, 130, 'Postgres', 'garam, index', { st: o.pst || 'good' });
-  cells(330, 90, [[o.cur || 'Oct', C.good]], { w: 90, h: 40 });
-  B(560, 200, 320, 120, 'S3 archive', 'thanda, sasta', { st: o.sst || 'good' });
-  cells(576, 260, (o.old || OLD).map(m => [m, C.muted]), { w: 52, h: 34 });
+const STEPS = [
+  [[C.bad, 'Ek table', 'May se Oct, sab ek jagah'], [C.bad, 'Disk + backup', 'purane mahine bhi garam disk pe,|har backup me. Faltu kharcha']],
+  [[C.good, 'Worker → Oct tukda', 'nayi khabar sirf is mahine ke tukde me'], [C.acc, 'May tukda → S3', 'DETACH, purana thanda S3 pe (sasta)'], [C.good, 'Postgres', 'sirf haal ke mahine. Chhota, index RAM me']],
+  [[C.msg, 'Arpan → Article Svc', 'pichhle saal ki khabar a12'], [C.acc, 'Article Svc → Postgres', 'yahan nahi (sirf haal ke mahine)'], [C.acc, 'Article Svc → S3 archive', 'wahan mili'], [C.good, 'Article Svc → Arpan', 'khul gayi, thodi der se']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function frame(ph) {
   if (ph === 0) {
-    B(20, 60, 110, 60, 'User', 'Oct padhta');
-    B(250, 30, 420, 170, 'Postgres: articles', '~2 crore row', { st: 'bad' });
-    cells(270, 100, OLD.map(m => [m, C.bad]).concat([['Oct', C.good]]), { w: 60, h: 40 });
-    A(130, 90, 248, 90, C.msg, { n: 1 }); L(190, 75, 'sirf Oct', C.msg);
-    num(270, 170, 2, C.bad); L(288, 175, 'May se Sep: koi padhta nahi', C.bad, 'start');
-    bar(270, 260, 380, 22, 1, 'disk + backup'); T(460, 320, 'faltu kharcha', { c: C.bad, b: 1, size: 16 });
+    B(20, 30, 560, 220, 'articles: ek table', '', { st: 'bad' });
+    cells(40, 85, [['May', C.muted], ['Jun', C.muted], ['Jul', C.muted], ['Aug', C.muted], ['Sep', C.acc], ['Oct', C.good]], { w: 82, h: 34 });
+    T(300, 160, 'May-Aug koi nahi padhta', { c: C.muted, size: 14 });
+    num(60, 210, 1, C.bad); L(80, 215, '2 crore row, ek jagah', C.bad, 'start');
+    B(660, 80, 210, 120, 'Disk + backup', 'har mahine badhta', { st: 'bad' });
+    bar(680, 160, 170, 12, 0.9, '');
+    A(580, 140, 658, 140, C.bad, { n: 2 });
+    L(450, 330, 'thande data ka garam kharcha', C.bad);
   } else if (ph === 1) {
-    split({ u: 'Oct padhta' });
-    A(375, 162, 600, 255, C.acc, { n: 1 }); L(420, 230, 'mahina beeta -> S3', C.acc);
-    A(130, 90, 248, 90, C.good, { n: 2 }); L(190, 75, 'tez', C.good);
-  } else if (ph === 2) {
-    split({ u: 'Oct padhta', pst: 'bad' });
-    num(520, 40, 1, C.acc); L(538, 45, 'DETACH Sep', C.acc, 'start');
-    T(375, 152, 'LOCK', { c: C.bad, b: 1, size: 16 });
-    num(520, 80, 2, C.bad); L(538, 85, 'poore table pe pal bhar', C.bad, 'start');
-    A(130, 90, 248, 90, C.bad, { dash: 1, n: 3 }); cross(190, 125); L(190, 160, 'padhai ruki', C.bad);
-    L(20, 205, 'hal: PG 14+ me DETACH ... CONCURRENTLY,', C.good, 'start');
-    L(20, 225, 'kuch nahi rukta', C.good, 'start');
-  } else if (ph === 3) {
-    split({ u: '1 saal purani', sst: 'acc', old: ['1 saal', '..', 'Jul', 'Aug', 'Sep'] });
-    AP([[75, 120], [75, 290], [558, 290]], C.acc, { n: 1, at: 0.3 }); L(300, 280, 'S3 se aati', C.acc);
-    T(75, 320, 'dheemi', { c: C.acc, b: 1, size: 14 });
-    L(560, 185, 'hal: kabhi-kabhi hi khulti, dheemi chalegi', C.good, 'start');
+    B(20, 130, 150, 80, 'Worker', 'a91 (Oct)');
+    B(260, 30, 360, 200, 'Postgres', '', { st: 'good' });
+    cells(280, 90, [['Sep', C.acc], ['Oct', C.good]], { w: 150, h: 40 });
+    T(440, 212, 'garam: chhota, tez', { c: C.good, size: 14 });
+    B(700, 60, 170, 160, 'S3', 'May - Aug', { st: 'acc', icon: 'bucket' });
+    AP([[170, 165], [509, 165], [509, 133]], C.good, { n: 1, at: 0.3 });
+    A(620, 140, 698, 140, C.acc, { n: 2 }); L(660, 125, 'DETACH', C.acc);
+    num(440, 260, 3, C.good); L(460, 265, 'index RAM me', C.good, 'start');
+    L(450, 345, 'naya garam Postgres me, purana thanda S3 pe', C.good);
   } else {
-    split({ u: 'naya padhta', cur: 'naya', old: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'] });
-    A(375, 162, 600, 255, C.good, { n: 1 }); L(420, 230, 'Oct beeta -> S3', C.good);
-    A(130, 90, 248, 90, C.good, { n: 2 }); L(190, 75, 'tez', C.good);
-    L(520, 60, 'DB utna hi', C.good, 'start'); L(520, 85, 'naya garam, purana thanda', C.good, 'start');
+    B(20, 130, 150, 80, 'Arpan', 'a12 (2025)', { icon: 'user' });
+    B(270, 130, 200, 80, 'Article Svc', '', { st: 'good' });
+    B(620, 20, 250, 80, 'Postgres', 'sirf haal ke mahine', { icon: 'db' });
+    B(620, 220, 250, 80, 'S3 archive', 'purani yahan', { st: 'acc', icon: 'bucket' });
+    A(170, 170, 268, 170, C.msg, { n: 1 });
+    A(470, 150, 618, 60, C.muted, { n: 2, dash: 1 }); L(520, 85, 'nahi', C.muted, 'end');
+    A(470, 190, 618, 260, C.acc, { n: 3 });
+    A(268, 195, 172, 195, C.good, { n: 4 }); L(220, 225, 'khuli', C.good);
+    L(450, 345, 'kabhi-kabhi hi khulti hai, dheema chalta hai', C.good);
   }
 }
 

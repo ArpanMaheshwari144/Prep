@@ -1,51 +1,55 @@
-// Card 8: sab ek table me (May se Oct), purana koi padhta nahi, disk + backup ka kharcha.
-// Ilaaj: mahine ka partition, purana S3. Agar: DETACH pe lock, 1 saal purani khuli. Wapas: DB utna hi.
-const DUR = 15;
+// Card 8: 6 mahine me 2 crore row, purana koi padhta nahi, kharcha. Ilaaj: mahine ka partition, purana S3. Agar: purani khabar.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: sab ek table me (May se Oct), purana koi padhta nahi, faltu kharcha'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: har mahine ka alag partition, purana S3 pe. Postgres me sirf haal ka'],
-  [6, YEL, 'AGAR', 'AGAR DETACH pe lock lagega? -> normal DETACH: pal bhar ka lock, padhai ruki'],
-  [9, YEL, 'AGAR', 'AGAR 1 saal purani khabar khuli? -> S3 archive se aati. Dheemi, par khulti'],
-  [12, GRN, 'WAPAS', 'WAPAS: DB utna hi rehta. Naya mahina garam, purana thanda (S3)'],
+  [0, RED, 'DIKKAT', 'DIKKAT: 6 mahine me ~2 crore row, sab ek table me. Purana koi nahi padhta, kharcha badha'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har mahine ka alag tukda (partition). Purana tukda S3 pe (archive)'],
+  [6, YEL, 'AGAR', 'AGAR 1 saal purani khabar khuli? -> S3 archive se aati. Dheemi, par khulti'],
 ];
-const OLD = ['May', 'Jun', 'Jul', 'Aug', 'Sep'];
 function setup() {}
-function split(o = {}) {
-  B(20, 60, 110, 60, 'User', o.u);
-  B(250, 30, 250, 130, 'Postgres', 'garam, index', { st: o.pst || 'good' });
-  cells(330, 90, [[o.cur || 'Oct', C.good]], { w: 90, h: 40 });
-  B(560, 200, 320, 120, 'S3 archive', 'thanda, sasta', { st: o.sst || 'good' });
-  cells(576, 260, (o.old || OLD).map(m => [m, C.muted]), { w: 52, h: 34 });
+const STEPS = [
+  [[C.bad, 'Ek table', 'May se Oct, sab ek jagah'], [C.bad, 'Disk + backup', 'purane mahine bhi garam disk pe,|har backup me. Faltu kharcha']],
+  [[C.good, 'Worker → Oct tukda', 'nayi khabar sirf is mahine ke tukde me'], [C.acc, 'May tukda → S3', 'DETACH, purana thanda S3 pe (sasta)'], [C.good, 'Postgres', 'sirf haal ke mahine. Chhota, index RAM me']],
+  [[C.msg, 'Arpan → Article Svc', 'pichhle saal ki khabar a12'], [C.acc, 'Article Svc → Postgres', 'yahan nahi (sirf haal ke mahine)'], [C.acc, 'Article Svc → S3 archive', 'wahan mili'], [C.good, 'Article Svc → Arpan', 'khul gayi, thodi der se']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function frame(ph) {
   if (ph === 0) {
-    B(20, 60, 110, 60, 'User', 'Oct padhta');
-    B(250, 30, 420, 170, 'Postgres: articles', '~2 crore row', { st: 'bad' });
-    cells(270, 100, OLD.map(m => [m, C.bad]).concat([['Oct', C.good]]), { w: 60, h: 40 });
-    A(130, 90, 248, 90, C.msg, { n: 1 }); L(190, 75, 'sirf Oct', C.msg);
-    num(270, 170, 2, C.bad); L(288, 175, 'May se Sep: koi padhta nahi', C.bad, 'start');
-    bar(270, 260, 380, 22, 1, 'disk + backup'); T(460, 320, 'faltu kharcha', { c: C.bad, b: 1, size: 16 });
+    B(20, 30, 560, 220, 'articles: ek table', '', { st: 'bad' });
+    cells(40, 85, [['May', C.muted], ['Jun', C.muted], ['Jul', C.muted], ['Aug', C.muted], ['Sep', C.acc], ['Oct', C.good]], { w: 82, h: 34 });
+    T(300, 160, 'May-Aug koi nahi padhta', { c: C.muted, size: 14 });
+    num(60, 210, 1, C.bad); L(80, 215, '2 crore row, ek jagah', C.bad, 'start');
+    B(660, 80, 210, 120, 'Disk + backup', 'har mahine badhta', { st: 'bad' });
+    bar(680, 160, 170, 12, 0.9, '');
+    A(580, 140, 658, 140, C.bad, { n: 2 });
+    L(450, 330, 'thande data ka garam kharcha', C.bad);
   } else if (ph === 1) {
-    split({ u: 'Oct padhta' });
-    A(375, 162, 600, 255, C.acc, { n: 1 }); L(420, 230, 'mahina beeta -> S3', C.acc);
-    A(130, 90, 248, 90, C.good, { n: 2 }); L(190, 75, 'tez', C.good);
-  } else if (ph === 2) {
-    split({ u: 'Oct padhta', pst: 'bad' });
-    num(520, 40, 1, C.acc); L(538, 45, 'DETACH Sep', C.acc, 'start');
-    T(375, 152, 'LOCK', { c: C.bad, b: 1, size: 16 });
-    num(520, 80, 2, C.bad); L(538, 85, 'poore table pe pal bhar', C.bad, 'start');
-    A(130, 90, 248, 90, C.bad, { dash: 1, n: 3 }); cross(190, 125); L(190, 160, 'padhai ruki', C.bad);
-    L(20, 205, 'hal: PG 14+ me DETACH ... CONCURRENTLY,', C.good, 'start');
-    L(20, 225, 'kuch nahi rukta', C.good, 'start');
-  } else if (ph === 3) {
-    split({ u: '1 saal purani', sst: 'acc', old: ['1 saal', '..', 'Jul', 'Aug', 'Sep'] });
-    AP([[75, 120], [75, 290], [558, 290]], C.acc, { n: 1, at: 0.3 }); L(300, 280, 'S3 se aati', C.acc);
-    T(75, 320, 'dheemi', { c: C.acc, b: 1, size: 14 });
-    L(560, 185, 'hal: kabhi-kabhi hi khulti, dheemi chalegi', C.good, 'start');
+    B(20, 130, 150, 80, 'Worker', 'a91 (Oct)');
+    B(260, 30, 360, 200, 'Postgres', '', { st: 'good' });
+    cells(280, 90, [['Sep', C.acc], ['Oct', C.good]], { w: 150, h: 40 });
+    T(440, 212, 'garam: chhota, tez', { c: C.good, size: 14 });
+    B(700, 60, 170, 160, 'S3', 'May - Aug', { st: 'acc', icon: 'bucket' });
+    AP([[170, 165], [509, 165], [509, 133]], C.good, { n: 1, at: 0.3 });
+    A(620, 140, 698, 140, C.acc, { n: 2 }); L(660, 125, 'DETACH', C.acc);
+    num(440, 260, 3, C.good); L(460, 265, 'index RAM me', C.good, 'start');
+    L(450, 345, 'naya garam Postgres me, purana thanda S3 pe', C.good);
   } else {
-    split({ u: 'naya padhta', cur: 'naya', old: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'] });
-    A(375, 162, 600, 255, C.good, { n: 1 }); L(420, 230, 'Oct beeta -> S3', C.good);
-    A(130, 90, 248, 90, C.good, { n: 2 }); L(190, 75, 'tez', C.good);
-    L(520, 60, 'DB utna hi', C.good, 'start'); L(520, 85, 'naya garam, purana thanda', C.good, 'start');
+    B(20, 130, 150, 80, 'Arpan', 'a12 (2025)', { icon: 'user' });
+    B(270, 130, 200, 80, 'Article Svc', '', { st: 'good' });
+    B(620, 20, 250, 80, 'Postgres', 'sirf haal ke mahine', { icon: 'db' });
+    B(620, 220, 250, 80, 'S3 archive', 'purani yahan', { st: 'acc', icon: 'bucket' });
+    A(170, 170, 268, 170, C.msg, { n: 1 });
+    A(470, 150, 618, 60, C.muted, { n: 2, dash: 1 }); L(520, 85, 'nahi', C.muted, 'end');
+    A(470, 190, 618, 260, C.acc, { n: 3 });
+    A(268, 195, 172, 195, C.good, { n: 4 }); L(220, 225, 'khuli', C.good);
+    L(450, 345, 'kabhi-kabhi hi khulti hai, dheema chalta hai', C.good);
   }
 }

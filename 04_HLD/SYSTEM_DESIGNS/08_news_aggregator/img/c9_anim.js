@@ -1,67 +1,54 @@
-// Card 9: source 100 guna, saari likhai ek DB machine pe -> disk aur likhai full.
-// Ilaaj: article_id ke hash se shard. Agar: taazi 20 (scatter-gather), shard badhaya, do shard pe wahi khabar. Wapas.
-const DUR = 18;
+// Card 9: source 100 guna, ek DB machine nahi jhelti. Ilaaj: shard hash(article_id). Agar: taazi 20 -> Redis, miss to har shard se.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: source 100 guna, saari likhai ek machine pe, disk aur likhai full'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: article_id se tukde, hash(a91) -> shard 2. Likhai sab pe barabar'],
+  [0, RED, 'DIKKAT', 'DIKKAT: source 100 guna. Saari likhai ek hi DB machine pe, disk aur likhai full'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: article_id se tukde (shard). hash(a91) = 2 to shard 2. Likhai sab pe barabar'],
   [6, YEL, 'AGAR', 'AGAR shard hain, taazi 20 kahan se? -> Redis se. Miss to har tukde se thoda'],
-  [9, YEL, 'AGAR', 'AGAR shard badhaya? -> thoda hi data hilta (consistent hashing)'],
-  [12, YEL, 'AGAR', 'AGAR do shard pe wahi khabar? -> dedupe pehle saanjhe Bloom / Redis se'],
-  [15, GRN, 'WAPAS', 'WAPAS: sab tukde chalu, likhai sab tukdon pe barabar'],
 ];
-const SH = [30, 140, 250];
 function setup() {}
-function shards(o = {}) {
-  SH.forEach((y, i) => {
-    B(500, y, 160, 60, 'shard ' + (i + 1), (o.sub || [])[i], { st: (o.st || [])[i] || 'good' });
-    if (o.bars) bar(690, y + 22, 150, 18, o.bars[i], '', 1);
-  });
+const STEPS = [
+  [[C.msg, 'Workers → DB', '100 guna likhai ek machine pe'], [C.bad, 'DB', 'disk aur likhai full, sab dheema']],
+  [[C.acc, 'Worker', 'hash(a91) = 2'], [C.good, 'Worker → Shard 2', 'a91 shard 2 pe likhi'], [C.good, 'Shard 1, 2, 3', 'bojh barabar bata. Ek mara to sirf uska hissa']],
+  [[C.good, 'Feed Svc → Redis', 'feed:latest: 20 id, zyadatar yahin se'], [C.acc, 'Feed Svc → har shard', 'miss: har tukde se uske top 20'], [C.good, 'Feed Svc', 'sab milao, time se top 20 (scatter-gather)']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
-function worker(sub) { B(20, 150, 130, 60, 'Worker', sub); }
 function frame(ph) {
   if (ph === 0) {
-    worker('100 guna');
-    dots(10, 30, 240, C.msg, { gap: 12, r: 5 }); L(85, 275, '100 guna source', C.msg);
-    B(400, 110, 200, 100, 'DB', 'ek machine', { st: 'bad' });
-    A(150, 180, 398, 160, C.msg, { n: 1 }); L(275, 150, 'saari likhai', C.msg);
-    num(620, 110, 2, C.bad); L(638, 115, 'disk full', C.bad, 'start');
-    bar(620, 150, 220, 20, 1, ''); L(730, 200, 'likhai full', C.bad);
+    B(20, 20, 170, 60, 'Worker', '');
+    B(20, 120, 170, 60, 'Worker', '');
+    B(20, 220, 170, 60, 'Worker', '');
+    B(470, 90, 280, 140, 'Ek DB', '100 guna likhai', { st: 'bad' });
+    bar(490, 180, 240, 14, 1, '');
+    A(190, 50, 468, 130, C.bad, { n: 1, at: 0.4 }); A(190, 150, 468, 160, C.bad); A(190, 250, 468, 190, C.bad);
+    num(610, 270, 2, C.bad); L(630, 275, 'disk full', C.bad, 'start');
+    L(450, 345, 'ek machine ki had aa gayi', C.bad);
   } else if (ph === 1) {
-    worker('hash(a91)'); shards({ bars: [0.4, 0.4, 0.4] });
-    A(150, 180, 498, 170, C.good, { n: 1 }); L(320, 160, 'hash(a91) -> shard 2', C.good);
-    A(150, 165, 498, 60, C.msg, { n: 1 }); A(150, 195, 498, 280, C.msg, { n: 1 }); L(330, 270, 'baaki id: shard 1, 3', C.msg);
-    L(765, 20, 'bojh barabar', C.good);
-  } else if (ph === 2) {
-    B(20, 150, 130, 60, 'Feed Svc', 'taazi 20');
-    B(220, 30, 140, 60, 'Redis', 'miss', { st: 'acc' });
-    shards();
-    A(110, 148, 218, 75, C.acc, { n: 1 }); L(120, 100, 'miss', C.acc, 'end');
-    SH.forEach(y => A(150, 180, 498, y + 30, C.acc, { n: 2, at: 0.7 }));
-    L(280, 260, 'har tukde se thoda', C.acc);
-    T(780, 160, 'scatter-gather', { c: C.muted, size: 13 });
-    AP([[580, 312], [580, 335], [85, 335], [85, 212]], C.good, { n: 3, at: 0.5 });
-    L(330, 325, 'mila ke taazi 20', C.good);
-  } else if (ph === 3) {
-    worker('');
-    [20, 100, 180].forEach((y, i) => B(500, y, 160, 60, 'shard ' + (i + 1), '', { st: 'good' }));
-    B(500, 260, 160, 60, 'shard 4', 'naya', { st: 'acc' });
-    num(690, 290, 1, C.acc); L(708, 295, 'naya shard', C.acc, 'start');
-    AP([[660, 50], [760, 50], [760, 270], [662, 278]], C.acc, { n: 2, at: 0.5 });
-    L(775, 140, 'thoda hi', C.acc, 'start'); L(775, 160, 'data hilta', C.acc, 'start');
-    A(150, 180, 498, 290, C.good, { n: 3 }); L(300, 280, 'naye shard ka hissa', C.good);
-    L(20, 30, 'hal: consistent hashing, thoda hi data hilta', C.good, 'start');
-  } else if (ph === 4) {
-    worker('match jeeta x2');
-    B(220, 30, 160, 60, 'Bloom / Redis', 'saanjha', { st: 'good' });
-    shards({ sub: ['match jeeta', '', 'dobara?'], st: ['good', 'good', 'bad'] });
-    A(110, 148, 218, 75, C.acc, { n: 1 }); L(120, 100, 'pehle dekha?', C.acc, 'end');
-    A(150, 170, 498, 60, C.good, { n: 2 }); L(400, 112, 'pehli: likho', C.good, 'start');
-    A(150, 195, 498, 280, C.bad, { dash: 1, n: 3 }); cross(420, 252); L(300, 290, 'doosri: skip', C.good);
-    L(680, 338, 'UNIQUE sirf shard ke andar', C.muted, 'start');
+    B(20, 130, 200, 80, 'Worker', 'hash(a91) = 2', { st: 'acc' });
+    B(620, 20, 250, 70, 'Shard 1', 'a12, a77 ...', { st: 'good', icon: 'db' });
+    B(620, 135, 250, 70, 'Shard 2', 'a91 yahan', { st: 'good', icon: 'db' });
+    B(620, 250, 250, 70, 'Shard 3', 'a45, a60 ...', { st: 'good', icon: 'db' });
+    num(120, 250, 1, C.acc); L(140, 255, 'hash', C.acc, 'start');
+    A(220, 170, 618, 170, C.good, { n: 2 }); L(420, 155, 'a91', C.good);
+    A(220, 150, 618, 55, C.muted, { dash: 1 }); A(220, 190, 618, 285, C.muted, { dash: 1 });
+    num(560, 330, 3, C.good); L(580, 335, 'bojh barabar', C.good, 'start');
   } else {
-    worker('hash(id)'); shards({ bars: [0.45, 0.45, 0.45] });
-    A(150, 165, 498, 60, C.good, { n: 1 }); A(150, 180, 498, 170, C.good, { n: 1 });
-    A(150, 195, 498, 280, C.good, { n: 1 });
-    L(765, 20, 'bojh barabar', C.good); L(300, 320, 'sab tukde chalu', C.good); L(20, 30, 'har id apne tukde pe', C.good, 'start');
+    B(20, 130, 190, 80, 'Feed Svc', 'taazi 20?', { st: 'good' });
+    B(330, 10, 220, 70, 'Redis', 'feed:latest', { st: 'good' });
+    B(650, 110, 220, 60, 'Shard 1', 'top 20', { icon: 'db' });
+    B(650, 185, 220, 60, 'Shard 2', 'top 20', { icon: 'db' });
+    B(650, 260, 220, 60, 'Shard 3', 'top 20', { icon: 'db' });
+    A(210, 150, 328, 50, C.good, { n: 1 });
+    A(210, 175, 648, 140, C.acc, { n: 2, dash: 1, at: 0.4 }); A(210, 185, 648, 215, C.acc, { dash: 1 }); A(210, 195, 648, 290, C.acc, { dash: 1 });
+    num(115, 260, 3, C.good); L(135, 265, 'milao: top 20', C.good, 'start');
+    L(450, 345, 'zyadatar Redis se. Miss pe har tukde se thoda', C.good);
   }
 }

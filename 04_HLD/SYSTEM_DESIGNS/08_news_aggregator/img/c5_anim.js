@@ -1,61 +1,52 @@
-// Card 5: chhota source 30 sec atka, fetcher poora jawab tak ruka, baaki 999 bhi ruke.
-// Ilaaj: timeout + thodi retry, baar-baar fail to breaker OPEN. Agar: 429, kuch din OPEN, HALF-OPEN. Wapas: CLOSED.
-const DUR = 18;
+// Card 5: chhota source 30 sec atka, baaki 999 ruke. Ilaaj: timeout + circuit breaker. Agar: HALF-OPEN test call.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: chhota source 30 sec atka, fetcher ruka, baaki 999 bhi ruke'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: timeout 2-3 sec, thodi retry. Baar-baar fail: breaker OPEN'],
-  [6, YEL, 'AGAR', 'AGAR source ne 429 diya? -> dheere chalo, samay badhao, Retry-After maano'],
-  [9, YEL, 'AGAR', 'AGAR breaker kuch din se OPEN? -> alert, source ko list se bahar karo'],
-  [12, YEL, 'AGAR', 'AGAR OPEN hai, wapas kab chalu? -> thodi der baad HALF-OPEN: ek test call'],
-  [15, GRN, 'WAPAS', 'WAPAS: test call theek nikla, breaker CLOSED. Source ki khabar phir aayi'],
+  [0, RED, 'DIKKAT', 'DIKKAT: ek chhota source 30 sec atka. Fetcher uske jawab pe ruka, baaki 999 bhi ruke'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: 2-3 sec me chhodo (timeout). Baar-baar fail to call hi band (breaker OPEN)'],
+  [6, YEL, 'AGAR', 'AGAR OPEN hai, wapas kab chalu? -> thodi der baad HALF-OPEN: ek test call'],
 ];
 function setup() {}
-function base(o = {}) {
-  B(30, 140, 130, 80, 'Fetcher', o.f, { st: o.fst });
-  B(700, 40, 170, 60, 'chhota source', o.s, { st: o.sst });
-  B(700, 150, 170, 60, 'source 2', '');
-  B(700, 260, 170, 60, 'baaki 999', '');
-  if (o.br !== undefined) B(400, 40, 150, 60, 'Breaker', o.br, { st: o.brst });
+const STEPS = [
+  [[C.bad, 'Fetcher → chhota blog', 'call gayi, 30 sec jawab nahi'], [C.bad, 'baaki 999 source', 'line me ruke'], [C.bad, 'Feed', 'nayi khabar aani band']],
+  [[C.acc, 'Fetcher → chhota blog', 'call, 3 sec baad chhoda'], [C.good, 'Fetcher → NDTV', 'agle source pe aage'], [C.bad, 'Breaker → chhota blog', '5 baar fail: OPEN, call roki'], [C.good, 'Worker → Redis', 'baaki 999 ki khabar feed me']],
+  [[C.acc, 'Breaker → Test call', 'thodi der baad sirf ek call|(HALF-OPEN)'], [C.good, 'Test call → CLOSED', 'chali: breaker band, sab call chalu'], [C.bad, 'ya fail → OPEN', 'phir OPEN, thodi der aur ruko']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
-// Fetcher se source 2 aur baaki 999 tak
-function others(c, n) { A(160, 190, 698, 180, c, { n, at: 0.6 }); A(160, 205, 698, 290, c, { n, at: 0.6 }); }
 function frame(ph) {
   if (ph === 0) {
-    base({ fst: 'bad', f: 'ruka', s: '30 sec atka', sst: 'bad' });
-    A(160, 160, 698, 70, C.bad, { n: 1, at: 0.4 }); L(330, 85, 'poora jawab tak ruko', C.bad);
-    others(C.line); dots(3, 565, 225, C.acc, { gap: 22, hollow: 1 });
-    num(538, 225, 2, C.acc); L(615, 254, 'peeche khade', C.acc);
-    T(330, 330, 'nayi khabar aani ruki', { c: C.bad, b: 1, size: 16 });
+    B(20, 130, 170, 80, 'Fetcher', 'jawab ka wait', { st: 'bad' });
+    B(330, 20, 230, 70, 'Chhota blog', '30 sec atka', { st: 'bad' });
+    B(330, 150, 300, 90, 'Baaki 999', '', { st: 'acc' });
+    cells(345, 195, [['NDTV', C.acc], ['ABP', C.acc], ['...', C.line], ['BBC', C.acc]], { w: 62, h: 30 });
+    B(720, 260, 150, 70, 'Feed', 'purani', { st: 'bad' });
+    A(190, 150, 328, 60, C.bad, { n: 1, dash: 1 });
+    num(660, 195, 2, C.bad); L(680, 200, 'ruke', C.bad, 'start');
+    A(630, 230, 718, 285, C.bad, { n: 3, dash: 1 });
+    L(450, 345, 'ek beemar source ne poori feed rok di', C.bad);
   } else if (ph === 1) {
-    base({ fst: 'good', s: 'fail', sst: 'bad', br: 'OPEN', brst: 'bad' });
-    A(160, 160, 398, 75, C.acc, { n: 1 }); L(230, 95, 'timeout 2-3 sec', C.acc);
-    num(415, 125, 2, C.bad); L(433, 130, 'baar-baar fail -> OPEN', C.bad, 'start');
-    A(550, 70, 698, 70, C.bad, { dash: 1 }); cross(624, 70); L(624, 30, 'call nahi', C.bad);
-    others(C.good, 3); L(430, 335, 'baaki chalte', C.good);
-  } else if (ph === 2) {
-    base({ fst: 'acc', f: 'dheere', s: '429', sst: 'acc' });
-    A(160, 155, 698, 60, C.acc, { n: 1, at: 0.35 }); L(300, 90, 'khabar do', C.acc);
-    A(698, 85, 160, 175, C.bad, { n: 2, at: 0.6 }); L(420, 165, '429 + Retry-After', C.bad);
-    others(C.good);
-    L(20, 330, 'hal: dheere chalo, uska samay badhao, Retry-After maano', C.good, 'start');
-  } else if (ph === 3) {
-    base({ fst: 'good', s: 'band', sst: 'dim', br: 'OPEN: kuch din', brst: 'bad' });
-    num(385, 22, 1, C.bad); L(403, 27, 'kuch din se OPEN', C.bad, 'start');
-    B(190, 40, 130, 55, 'Alert', '', { st: 'acc' });
-    A(398, 67, 322, 67, C.acc, { n: 2 }); L(360, 122, 'alert bhejo', C.acc);
-    cross(675, 70); num(712, 122, 3, C.bad); L(730, 127, 'list se bahar', C.bad, 'start');
-    others(C.good); L(20, 330, 'hal: alert bhejo, source ko list se bahar karo', C.good, 'start');
-  } else if (ph === 4) {
-    base({ fst: 'good', s: '', sst: 'acc', br: 'HALF-OPEN', brst: 'acc' });
-    num(415, 125, 1, C.acc); L(433, 130, 'thodi der baad', C.acc, 'start');
-    A(550, 70, 698, 70, C.acc, { n: 2 }); L(624, 30, 'ek test call', C.acc);
-    others(C.good); L(20, 330, 'hal: test theek nikla to CLOSED', C.good, 'start');
+    panel(0, 'timeout', ['Fetcher', '', ''], ['Chhota blog', '3 sec chup', 'bad'], 'call', true, C.acc, '3 sec baad chhoda');
+    panel(1, 'aage', ['Fetcher', '', ''], ['NDTV', 'a91 mili', 'good'], 'agla', true, C.good, 'line nahi ruki');
+    panel(2, 'breaker', ['Breaker', 'OPEN', 'bad'], ['Chhota blog', '5 me 5 fail', 'bad'], '', true, C.bad, 'call jaati hi nahi');
+    A(525, 110, 525, 158, C.bad, { dash: 1 }); cross(525, 134); T(595, 139, 'call roki', { c: C.bad, b: 1, size: 14 });
+    panel(3, 'feed chalu', ['Worker', '999 ki khabar', 'good'], ['Redis', 'feed taazi', 'good'], 'ZADD', true, C.good, 'sirf blog ki der');
+    L(450, 320, 'ek source ki khabar der se, baaki feed chalti rahi', C.good);
   } else {
-    base({ fst: 'good', s: 'chalu', sst: 'good', br: 'CLOSED', brst: 'good' });
-    A(698, 85, 552, 85, C.good, { n: 1 }); L(624, 115, 'test theek', C.good);
-    num(415, 125, 2, C.good); L(433, 130, 'CLOSED', C.good, 'start');
-    A(160, 160, 398, 75, C.good, { n: 3 }); A(550, 55, 698, 55, C.good, { n: 3 });
-    L(624, 30, 'khabar phir aayi', C.good);
-    others(C.good, 3);
+    B(20, 130, 170, 80, 'Breaker', 'OPEN', { st: 'acc' });
+    B(320, 130, 220, 80, 'Test call', 'sirf ek (HALF-OPEN)', { st: 'acc' });
+    B(680, 30, 190, 80, 'CLOSED', 'sab call chalu', { st: 'good' });
+    B(680, 230, 190, 80, 'OPEN', 'thodi der aur', { st: 'bad' });
+    A(190, 170, 318, 170, C.acc, { n: 1 }); L(255, 155, 'kuch der baad', C.acc);
+    A(540, 150, 678, 75, C.good, { n: 2 }); L(590, 95, 'chali', C.good, 'end');
+    A(540, 190, 678, 265, C.bad, { n: 3 }); L(590, 255, 'fail', C.bad, 'end');
+    L(450, 345, 'ek call se jaanch: theek hua to sab wapas', C.good);
   }
 }

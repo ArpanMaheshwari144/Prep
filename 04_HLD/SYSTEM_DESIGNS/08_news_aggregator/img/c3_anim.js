@@ -1,73 +1,58 @@
-// Card 3: 8 baje 40 guna bheed, ek hi Feed machine, CPU bhar gaya.
-// Ilaaj: kai Feed machine + LB, miss pe read replica. Agar: aur badha, replica peeche, ek key garam. Wapas.
-const DUR = 18;
+// Card 3: 8 baje 40 guna bheed, ek Feed machine. Ilaaj: LB + kai Feed Svc + read replica. Agar: ek key pe 20,000/sec.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: ek hi Feed machine, 500 se seedha 20,000 / sec, CPU bhar gaya'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: Feed Svc kai machine, aage LB. Redis miss to read replica se'],
-  [6, YEL, 'AGAR', 'AGAR 20,000 / sec aur badh gaya? -> aur machine lagao, koi bhi request le'],
-  [9, YEL, 'AGAR', 'AGAR read replica peeche reh gayi? -> kuch second, koi nuksaan nahi'],
-  [12, YEL, 'AGAR', 'AGAR Redis ki ek key pe 20,000 / sec? -> Redis replica + App me copy'],
-  [15, GRN, 'WAPAS', 'WAPAS: bheed sambhal li. Padhai copy pe, likhai main pe'],
+  [0, RED, 'DIKKAT', 'DIKKAT: 8 baje election result, 20,000 / sec. Ek Feed machine, CPU bhara'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: kai Feed Svc, aage LB. Pehle Redis, miss pe DB ki copy (read replica)'],
+  [6, YEL, 'AGAR', 'AGAR Redis ki ek key pe 20,000 / sec? -> Redis replica + App me copy'],
 ];
-const SY = [30, 95, 160, 225, 290];
 function setup() {}
-function users(n) {
-  B(20, 145, 110, 60, 'Users', '8 baje');
-  A(130, 175, 178, 175, C.msg, { n }); L(152, 135, '20,000 / sec', C.msg);
-}
-function lb() { B(180, 145, 80, 60, 'LB', '', { st: 'good' }); L(215, 235, 'LB baant deta', C.msg); }
-// Feed machine slots (k = slot list), LB se teer
-function feeds(ks, o = {}) {
-  ks.forEach(k => {
-    const nw = (o.nw || []).includes(k);
-    B(320, SY[k], 120, 46, 'Feed Svc', nw ? 'nayi' : o.sub, { st: nw ? 'acc' : 'good' });
-    A(260, 175, 318, SY[k] + 23, nw ? C.acc : C.msg, { n: o.n, at: 0.7 });
-  });
-}
-function right(o = {}) {
-  B(560, 30, 140, 60, 'Redis', o.r, { st: o.rst || 'good' });
-  B(560, 250, 140, 70, 'read replica', o.rep, { st: o.repst || 'good' });
-  B(750, 30, 130, 60, 'Worker', '');
-  B(750, 250, 130, 70, 'Main DB', o.main || 'sirf likhai', { st: 'good' });
-  A(815, 90, 815, 248, o.wc || C.line, { n: o.wn }); L(832, 175, 'likhai', o.wc || C.muted, 'start');
-  A(748, 285, 702, 285, o.cn ? C.acc : C.line, { dash: 1, n: o.cn });
+const STEPS = [
+  [[C.msg, 'Users → Feed Svc', '500 se seedha 20,000 / sec'], [C.bad, 'Feed Svc', 'ek hi machine, CPU 100%'], [C.bad, 'Feed Svc → main DB', 'miss bhi main DB pe,|fetcher ki likhai bhi dheemi']],
+  [[C.msg, 'Users → LB', '20,000 / sec'], [C.good, 'LB → Feed Svc x3', 'koi bhi machine le, kuch yaad nahi rakhti'], [C.good, 'Feed Svc → Redis', 'pehle Redis'], [C.acc, 'Feed Svc → Read replica', 'miss to copy se.|Main DB sirf likhai ke liye']],
+  [[C.good, 'Feed Svc (RAM)', 'har machine me 2 sec ki copy.|Zyadatar jawab yahin se'], [C.acc, 'Feed Svc → Redis main', 'copy purani hui to ek baar laao'], [C.good, 'Feed Svc → Redis replica', 'baaki machine replica se.|Ek key pe sab nahi aate']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function frame(ph) {
   if (ph === 0) {
-    B(20, 145, 110, 60, 'Users', '8 baje'); L(152, 135, '20,000 / sec', C.msg);
-    A(130, 175, 318, 183, C.msg, { n: 1, at: 0.3 });
-    B(320, 160, 120, 46, 'Feed Svc', 'CPU', { st: 'bad' }); num(460, 160, 2, C.bad);
-    L(478, 165, 'CPU bhar gaya', C.bad, 'start');
-    bar(320, 230, 120, 18, 1, ''); T(380, 275, '500 -> 20,000 / sec', { c: C.bad, b: 1, size: 14 });
-    B(560, 30, 140, 60, 'Redis', '', { st: 'dim' }); B(750, 250, 130, 70, 'Main DB', '', { st: 'dim' });
-    T(650, 330, '40 guna bheed', { c: C.bad, b: 1, size: 16 });
+    B(20, 120, 190, 80, 'Users', '20,000 / sec', { icon: 'users' });
+    B(330, 110, 220, 100, 'Feed Svc', 'ek machine', { st: 'bad', icon: 'server' });
+    bar(350, 175, 180, 12, 1, '');
+    B(680, 120, 190, 80, 'Main DB', 'likhai bhi', { st: 'bad', icon: 'db' });
+    A(210, 160, 328, 160, C.msg, { n: 1 });
+    num(440, 250, 2, C.bad); L(460, 255, 'CPU 100%', C.bad, 'start');
+    A(550, 160, 678, 160, C.bad, { n: 3 });
+    L(450, 345, 'bheed ki padhai ne likhai bhi dheemi kar di', C.bad);
   } else if (ph === 1) {
-    users(1); lb(); feeds([0, 2, 4], { n: 2 }); right();
-    A(440, 53, 558, 60, C.good, { n: 3 }); L(500, 35, 'hit', C.good);
-    A(440, 313, 558, 290, C.acc, { n: 4, dash: 1 }); L(500, 330, 'miss', C.acc);
-  } else if (ph === 2) {
-    users(1); lb(); feeds([0, 1, 2, 3, 4], { n: 2, nw: [1, 3] }); right();
-    num(470, 135, 3, C.acc); L(488, 140, 'aur machine lagi', C.acc, 'start');
-    L(470, 205, 'hal: Feed Svc kuch yaad nahi rakhti,', C.good, 'start');
-    L(470, 225, 'koi bhi request le leti hai', C.good, 'start');
-  } else if (ph === 3) {
-    users(); lb(); feeds([0, 2, 4]);
-    right({ rep: '5 sec peeche', repst: 'acc', main: 'nayi khabar', cn: 1 });
-    L(725, 240, 'copy der se', C.acc);
-    A(440, 313, 558, 290, C.acc, { n: 2 }); L(500, 330, 'miss', C.acc);
-    L(470, 140, 'hal: kuch second ki baat,', C.good, 'start');
-    L(470, 160, '5 sec purani khabar se', C.good, 'start');
-    L(470, 180, 'koi nuksaan nahi', C.good, 'start');
-  } else if (ph === 4) {
-    users(); lb(); feeds([0, 2, 4], { sub: 'copy 1-2 sec' }); right({ r: 'feed:latest', rst: 'bad' });
-    num(548, 110, 1, C.bad); L(566, 115, 'ek key pe 20,000 / sec', C.bad, 'start');
-    B(560, 150, 140, 50, 'Redis replica', '', { st: 'good' });
-    A(440, 183, 558, 175, C.good, { n: 2 }); L(500, 225, 'baant li', C.good);
-    L(320, 22, 'hal: App me 1-2 sec ki copy, sab ek machine pe nahi', C.good, 'start');
+    B(20, 130, 130, 70, 'Users', '', { icon: 'users' });
+    B(200, 130, 110, 70, 'LB', '', { st: 'acc' });
+    B(370, 20, 170, 60, 'Feed Svc', '', { st: 'good' });
+    B(370, 135, 170, 60, 'Feed Svc', '', { st: 'good' });
+    B(370, 250, 170, 60, 'Feed Svc', '', { st: 'good' });
+    B(640, 10, 230, 70, 'Redis', 'feed:latest', { st: 'good' });
+    B(640, 125, 230, 70, 'Read replica', 'copy', { st: 'acc' });
+    B(640, 250, 230, 70, 'Main DB', 'sirf likhai', { icon: 'db' });
+    A(150, 165, 198, 165, C.msg, { n: 1 });
+    A(310, 150, 368, 55, C.good, { n: 2 }); A(310, 165, 368, 165, C.good); A(310, 180, 368, 280, C.good);
+    A(540, 155, 638, 50, C.good, { n: 3 });
+    A(540, 170, 638, 165, C.acc, { n: 4, dash: 1 });
+    A(755, 248, 755, 197, C.muted, { dash: 1 });
+    L(450, 345, 'machine badhao, koi bhi request le. Copy 5 sec purani, chalta hai', C.good);
   } else {
-    users(1); lb(); feeds([0, 2, 4], { n: 2 }); right({ wc: C.good, wn: 1 });
-    A(440, 53, 558, 60, C.good, { n: 3 }); L(500, 35, 'hit', C.good);
-    A(440, 313, 558, 290, C.good, { n: 4 }); L(500, 330, 'padhai copy pe', C.good);
-    L(650, 140, 'bheed sambhal li', C.good);
+    [[20, 'Feed Svc-1'], [130, 'Feed Svc-2'], [240, 'Feed Svc-3']].forEach(([y, n]) => B(20, y, 240, 80, n, 'RAM copy: 2 sec', { st: 'good' }));
+    B(640, 30, 230, 80, 'Redis main', 'feed:latest', { st: 'acc' });
+    B(640, 230, 230, 80, 'Redis replica', 'copy', { st: 'good' });
+    num(300, 120, 1, C.good); L(320, 125, 'pehle apni copy', C.good, 'start');
+    A(260, 55, 638, 65, C.acc, { n: 2, at: 0.6 });
+    A(260, 170, 638, 260, C.good, { n: 3, at: 0.7 }); A(260, 280, 638, 280, C.good);
+    L(450, 345, 'ek garam key ka bojh baant diya: RAM copy + replica', C.good);
   }
 }

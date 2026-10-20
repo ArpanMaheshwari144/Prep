@@ -1,58 +1,52 @@
-// Card 1: sabko wahi 20 khabar, har baar DB se sort. Ilaaj: feed ek baar Redis sorted set me.
-// Agar: breaking news turant (ZADD), Redis restart (lock ke saath ek banaye). Wapas: sab Redis se.
-const DUR = 15;
+// Card 1: sabko wahi 20 khabar, har baar DB se sort. Ilaaj: Redis sorted set. Agar: Redis khaali -> lock, ek banaye.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: subah sab ne khola, har baar DB se ORDER BY ... LIMIT 20'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: feed ek baar bani, Redis sorted set. ZREVRANGE 0 19 = 20 id'],
-  [6, YEL, 'AGAR', 'AGAR breaking news kitni der me feed me? -> aate hi ZADD, turant'],
-  [9, YEL, 'AGAR', 'AGAR Redis restart, list khaali? -> DB se ek baar banao, lock ke saath'],
-  [12, GRN, 'WAPAS', 'WAPAS: list phir bani, sab Redis se padhte. DB tak koi nahi jaata'],
+  [0, RED, 'DIKKAT', 'DIKKAT: subah sab app khol rahe. Sabko wahi 20 khabar, phir bhi har baar DB pe sort'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: feed ek baar banti, Redis me time se (sorted set). Kholne pe sirf 20 id, DB nahi'],
+  [6, YEL, 'AGAR', 'AGAR Redis restart, list khaali? -> DB se ek baar banao, lock ke saath'],
 ];
 function setup() {}
-function base(o = {}) {
-  B(20, 140, 110, 70, 'Users', 'subah');
-  dots(3, 40, 232, C.msg, { gap: 22 });
-  B(250, 140, 140, 70, 'Feed Svc', '', { st: o.f });
-  if (o.r !== undefined) B(520, 40, 180, 70, 'Redis', o.r, { st: o.rst });
-  if (o.fe !== undefined) B(760, 40, 120, 70, 'Fetcher', o.fe, { st: o.fest });
-  B(520, 250, 180, 70, 'DB', o.db, { st: o.dbst });
+const STEPS = [
+  [[C.msg, 'Users → Feed Svc', 'subah lakhon log feed maang rahe'], [C.bad, 'Feed Svc → DB', 'har user pe ORDER BY time LIMIT 20'], [C.bad, 'DB', '500 / sec wahi sort, DB bhara,|feed dheemi']],
+  [[C.acc, 'Worker → Redis', 'nayi khabar aate hi ZADD,|time ke kram me apni jagah'], [C.msg, 'Arpan → Feed Svc', 'app khola, feed maangi'], [C.good, 'Redis → Feed Svc', 'ZREVRANGE 0 19: taazi 20 id'], [C.good, 'Feed Svc → Arpan', '20 khabar. DB tak koi nahi gaya']],
+  [[C.acc, 'Feed Svc-A → Redis', 'list khaali (miss). Lock liya (SET NX)'], [C.good, 'Feed Svc-A → DB', 'sirf A ne ek baar list banayi'], [C.good, 'Feed Svc-A → Redis', 'list wapas Redis me bhari'], [C.acc, 'Feed Svc-B → Redis', 'lock nahi mila: thoda ruka,|phir Redis se padha']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base({ f: 'bad', db: 'ORDER BY ... LIMIT 20', dbst: 'bad' });
-    A(130, 165, 248, 165, C.msg, { n: 1 }); L(190, 140, 'feed kholo', C.msg);
-    A(390, 195, 518, 275, C.bad, { n: 2 }); L(440, 290, 'har baar sort', C.bad, 'end');
-    bar(720, 270, 150, 18, 1, 'DB CPU'); T(795, 315, '500 / sec sort', { c: C.bad, b: 1, size: 14 });
-    A(248, 195, 130, 195, C.bad, { dash: 1, n: 3 }); L(190, 225, 'dheemi', C.bad);
+    B(20, 120, 190, 80, 'Users', 'subah: lakhon', { icon: 'users' });
+    B(330, 120, 200, 80, 'Feed Svc', 'har baar DB');
+    B(650, 110, 220, 100, 'DB', 'ORDER BY time', { st: 'bad', icon: 'db' });
+    bar(670, 175, 180, 12, 0.95, '');
+    A(210, 160, 328, 160, C.msg, { n: 1 });
+    A(530, 160, 648, 160, C.bad, { n: 2 });
+    num(760, 250, 3, C.bad); L(760, 280, 'har baar wahi sort', C.bad);
+    L(450, 345, 'sabko wahi 20 khabar, phir bhi har user pe sort', C.bad);
   } else if (ph === 1) {
-    base({ f: 'good', r: 'feed:latest', rst: 'good', fe: '', dbst: 'dim' });
-    A(758, 75, 702, 75, C.acc, { n: 1 }); L(731, 103, 'ZADD', C.acc);
-    A(130, 165, 248, 165, C.msg, { n: 2 }); L(190, 140, 'feed kholo', C.msg);
-    A(390, 150, 518, 85, C.good, { n: 3 }); L(525, 135, 'ZREVRANGE 0 19 = 20 id', C.good, 'start');
-    A(248, 195, 130, 195, C.good, { n: 4 }); L(190, 225, '20 id, tez', C.good);
-    L(610, 238, 'DB tak koi nahi', C.good);
-  } else if (ph === 2) {
-    base({ f: 'good', r: 'feed:latest', rst: 'good', fe: 'breaking!', fest: 'acc', dbst: 'dim' });
-    A(758, 75, 702, 75, C.acc, { n: 1 }); L(731, 103, 'ZADD', C.acc);
-    cells(520, 125, [['nayi', C.acc], ['k1', C.good], ['k2', C.good], ['..', C.muted]], { w: 40, h: 24 });
-    L(705, 142, 'sabse upar', C.acc, 'start');
-    A(130, 165, 248, 165, C.msg, { n: 2 }); L(190, 140, 'feed kholo', C.msg);
-    A(390, 150, 518, 85, C.good, { n: 3 });
-    A(248, 195, 130, 195, C.good, { n: 4 }); L(190, 225, 'turant dikhi', C.good);
-    L(20, 25, 'hal: aate hi ZADD, turant. "5 min" sirf sabse bura haal', C.good, 'start');
-  } else if (ph === 3) {
-    base({ f: 'acc', r: 'list khaali', rst: 'bad', db: 'ek baar', dbst: 'acc' });
-    cross(728, 75); num(728, 30, 1, C.bad); L(746, 35, 'restart', C.bad, 'start');
-    A(130, 165, 248, 165, C.msg, { n: 2 }); L(190, 140, 'feed kholo', C.msg);
-    A(390, 195, 518, 275, C.acc, { n: 3 }); L(430, 282, 'ek banata (lock)', C.acc, 'end');
-    dots(3, 265, 232, C.acc, { gap: 22, hollow: 1 }); L(300, 260, 'baaki ruke', C.acc);
-    A(610, 248, 610, 112, C.good, { n: 4 }); L(630, 190, 'list bani', C.good, 'start');
-    L(20, 25, 'hal: ek banaye, baaki ruk ke Redis se padhein', C.good, 'start');
+    panel(0, 'nayi khabar', ['Worker', 'a91 aayi', ''], ['Redis', 'feed:latest', 'acc'], 'ZADD', true, C.acc, 'time ke kram me');
+    panel(1, 'app khola', ['Arpan', 'feed?', ''], ['Feed Svc', '', ''], 'maangi', true, C.msg, 'subah 8 baje');
+    panel(2, 'Redis se', ['Feed Svc', '20 id', 'good'], ['Redis', 'ZREVRANGE 0 19', 'acc'], 'top 20', false, C.good, '1 ms');
+    panel(3, 'jawab', ['Arpan', '20 khabar', 'good'], ['Feed Svc', '', ''], 'feed', false, C.good, 'DB tak koi nahi');
+    L(450, 330, 'feed ek baar banti, sab padhte. ~99% DB tak nahi jaata', C.good);
   } else {
-    base({ f: 'good', r: 'list wapas', rst: 'good', fe: '', dbst: 'dim' });
-    A(130, 165, 248, 165, C.msg, { n: 1 }); L(190, 140, 'feed kholo', C.msg);
-    A(390, 150, 518, 85, C.good, { n: 2 }); L(525, 135, 'ZREVRANGE 0 19', C.good, 'start');
-    A(248, 195, 130, 195, C.good, { n: 3 }); L(190, 225, '20 id, tez', C.good);
-    L(610, 238, 'DB tak koi nahi', C.good);
+    B(20, 30, 200, 80, 'Feed Svc-A', 'pehla miss', { st: 'good' });
+    B(20, 240, 200, 80, 'Feed Svc-B', 'doosra miss', { st: 'acc' });
+    B(360, 130, 220, 90, 'Redis', 'restart: khaali', { st: 'acc', icon: 'db' });
+    B(690, 20, 180, 80, 'DB', 'articles', { icon: 'db' });
+    A(220, 60, 358, 142, C.acc, { n: 1, at: 0.45 });
+    A(220, 45, 688, 55, C.good, { n: 2, at: 0.75 });
+    A(220, 98, 358, 190, C.good, { n: 3, at: 0.5 });
+    A(220, 270, 358, 205, C.acc, { n: 4 });
+    L(470, 250, 'DB pe sirf ek query, 1000 nahi', C.good, 'start');
+    L(450, 345, 'lock: ek banaye, baaki ruk ke Redis se padhein', C.good);
   }
 }

@@ -40,17 +40,13 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 Cue: FEED CACHE (Redis SORTED SET)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png" width="900">
+<img src="img/c1_1.png?v=2" width="900">
 
-<img src="img/c1_2.png" width="900">
+<img src="img/c1_2.png?v=2" width="900">
 
-<img src="img/c1_3.png" width="900">
-
-<img src="img/c1_4.png" width="900">
-
-<img src="img/c1_5.png" width="900">
+<img src="img/c1_3.png?v=2" width="900">
 
 </details>
 
@@ -81,17 +77,13 @@ NAHI    har user pe DB se ORDER BY ... LIMIT 20
 
 Cue: KAFKA: laana aur likhna alag
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png" width="900">
+<img src="img/c2_1.png?v=2" width="900">
 
-<img src="img/c2_2.png" width="900">
+<img src="img/c2_2.png?v=2" width="900">
 
-<img src="img/c2_3.png" width="900">
-
-<img src="img/c2_4.png" width="900">
-
-<img src="img/c2_5.png" width="900">
+<img src="img/c2_3.png?v=2" width="900">
 
 </details>
 
@@ -126,19 +118,13 @@ NAHI    fetcher hi DB me likhe
 
 Cue: LB + READ REPLICA
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png" width="900">
+<img src="img/c3_1.png?v=2" width="900">
 
-<img src="img/c3_2.png" width="900">
+<img src="img/c3_2.png?v=2" width="900">
 
-<img src="img/c3_3.png" width="900">
-
-<img src="img/c3_4.png" width="900">
-
-<img src="img/c3_5.png" width="900">
-
-<img src="img/c3_6.png" width="900">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
@@ -169,15 +155,13 @@ NAHI    ek hi Feed machine
 
 Cue: DEDUPE (title hash + SimHash)
 
-<details><summary>kahani dekho (4 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png" width="900">
+<img src="img/c4_1.png?v=2" width="900">
 
-<img src="img/c4_2.png" width="900">
+<img src="img/c4_2.png?v=2" width="900">
 
-<img src="img/c4_3.png" width="900">
-
-<img src="img/c4_4.png" width="900">
+<img src="img/c4_3.png?v=2" width="900">
 
 </details>
 
@@ -209,19 +193,13 @@ NAHI    har naya URL = nayi khabar
 
 Cue: TIMEOUT + CIRCUIT BREAKER
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png" width="900">
+<img src="img/c5_1.png?v=2" width="900">
 
-<img src="img/c5_2.png" width="900">
+<img src="img/c5_2.png?v=2" width="900">
 
-<img src="img/c5_3.png" width="900">
-
-<img src="img/c5_4.png" width="900">
-
-<img src="img/c5_5.png" width="900">
-
-<img src="img/c5_6.png" width="900">
+<img src="img/c5_3.png?v=2" width="900">
 
 </details>
 
@@ -246,15 +224,13 @@ NAHI    poora jawab aane tak ruko
 
 Cue: CATEGORY FEED, padhte waqt milao
 
-<details><summary>kahani dekho (4 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png" width="900">
+<img src="img/c6_1.png?v=2" width="900">
 
-<img src="img/c6_2.png" width="900">
+<img src="img/c6_2.png?v=2" width="900">
 
-<img src="img/c6_3.png" width="900">
-
-<img src="img/c6_4.png" width="900">
+<img src="img/c6_3.png?v=2" width="900">
 
 </details>
 
@@ -279,19 +255,13 @@ NAHI    har user ki alag feed
 
 Cue: INVERTED INDEX
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png" width="900">
+<img src="img/c7_1.png?v=2" width="900">
 
-<img src="img/c7_2.png" width="900">
+<img src="img/c7_2.png?v=2" width="900">
 
-<img src="img/c7_3.png" width="900">
-
-<img src="img/c7_4.png" width="900">
-
-<img src="img/c7_5.png" width="900">
-
-<img src="img/c7_6.png" width="900">
+<img src="img/c7_3.png?v=2" width="900">
 
 </details>
 
@@ -320,17 +290,13 @@ NAHI    LIKE '%cricket%'
 
 Cue: mahine ka PARTITION, purana ARCHIVE
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png" width="900">
+<img src="img/c8_1.png?v=2" width="900">
 
-<img src="img/c8_2.png" width="900">
+<img src="img/c8_2.png?v=2" width="900">
 
-<img src="img/c8_3.png" width="900">
-
-<img src="img/c8_4.png" width="900">
-
-<img src="img/c8_5.png" width="900">
+<img src="img/c8_3.png?v=2" width="900">
 
 </details>
 
@@ -360,19 +326,13 @@ NAHI    sab ek table me (May se Oct)
 
 Cue: SHARD hash(article_id)
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png" width="900">
+<img src="img/c9_1.png?v=2" width="900">
 
-<img src="img/c9_2.png" width="900">
+<img src="img/c9_2.png?v=2" width="900">
 
-<img src="img/c9_3.png" width="900">
-
-<img src="img/c9_4.png" width="900">
-
-<img src="img/c9_5.png" width="900">
-
-<img src="img/c9_6.png" width="900">
+<img src="img/c9_3.png?v=2" width="900">
 
 </details>
 

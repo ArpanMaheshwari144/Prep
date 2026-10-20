@@ -1,83 +1,54 @@
-// Card 2: fetcher hi DB me likhta, Source A atka to B se Z line me -> khabar 20 min purani.
-// Ilaaj: fetcher sirf laata, Kafka me daalta, worker apni speed se. Agar: 1000 ek saath, commit se pehle crash.
-const DUR = 15;
+// Card 2: fetcher ek-ek source, A atka to B-Z line me, khabar 20 min purani. Ilaaj: fetcher -> Kafka -> worker.
+// Agar: likha, commit se pehle crash -> url UNIQUE, ON CONFLICT DO NOTHING.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: fetcher hi DB me likhe. Source A atka, B se Z line me khade'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: fetcher sirf laata, Kafka me daalta. Worker apni speed se DB + Redis'],
-  [6, YEL, 'AGAR', 'AGAR 1000 khabar ek saath Kafka me? -> line lambi, gira kuch nahi'],
-  [9, YEL, 'AGAR', 'AGAR likha, Kafka commit se pehle crash? -> DB khud rokta: url pe UNIQUE'],
-  [12, GRN, 'WAPAS', 'WAPAS: ek source atke to baaki chalte. Feed Redis se khulti rahi'],
+  [0, RED, 'DIKKAT', 'DIKKAT: meri feed me khabar 20 min purani. Fetcher ek-ek source, ek atka to sab ruke'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: fetcher sirf laata, Kafka me daalta. Worker apni speed se DB + Redis me likhta'],
+  [6, YEL, 'AGAR', 'AGAR likha, Kafka commit se pehle crash? -> DB khud rokta: url pe UNIQUE'],
 ];
 function setup() {}
-function src(aSt, aSub) {
-  B(20, 40, 120, 55, 'Source A', aSub, { st: aSt });
-  B(20, 120, 120, 55, 'Source B'); B(20, 200, 120, 55, 'Source Z');
-  T(80, 285, '1000 source', { c: C.muted, size: 12 });
-}
-function kafka(st, cl) {
-  B(380, 100, 170, 100, 'Kafka', '10 partition', { st });
-  cells(392, 152, [['p0', cl], ['p1', cl], ['..', cl], ['p9', cl]], { w: 34, h: 24 });
-}
-// Source se Fetcher tak: A (atka ya chalu), B, Z
-function pull(aOk, n) {
-  if (aOk) A(140, 67, 198, 130, C.msg, { n });
-  else A(142, 72, 198, 128, C.bad, { dash: 1 });
-  A(140, 147, 198, 150, C.msg, { n }); A(140, 227, 198, 172, C.msg, { n });
+const STEPS = [
+  [[C.bad, 'Fetcher → Source A', 'ek-ek karke laata hai. A 30 sec atka'], [C.bad, 'Source B se Z', 'line me khade, kisi ki baari nahi'], [C.bad, 'Fetcher → DB', 'khud hi likhta bhi hai.|Laana aur likhna ek hi line me']],
+  [[C.acc, 'Fetcher → Kafka', 'a91 daali (key = source).|Bas laana, likhna nahi'], [C.acc, 'Kafka → Worker', 'worker apni speed se padhta'], [C.good, 'Worker → DB', 'a91 save'], [C.good, 'Worker → Redis', 'feed me ZADD a91']],
+  [[C.good, 'Worker-1 → DB', 'a91 likh diya'], [C.bad, 'Worker-1 mara', 'Kafka ko "padh liya" (commit)|bolne se pehle'], [C.acc, 'Kafka → Worker-2', 'a91 phir aayi'], [C.good, 'Worker-2 → DB', 'url UNIQUE: ON CONFLICT DO NOTHING.|Khabar ek hi baar']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function frame(ph) {
   if (ph === 0) {
-    src('bad', 'atka');
-    B(200, 110, 120, 80, 'Fetcher', 'laao + likho', { st: 'bad' });
-    B(730, 40, 150, 70, 'DB');
-    A(142, 72, 198, 128, C.bad, { n: 1 }); L(186, 95, 'A pe atka', C.bad, 'start');
-    A(142, 147, 198, 150, C.line); A(142, 227, 198, 172, C.line);
-    dots(3, 150, 268, C.acc, { gap: 20, hollow: 1 }); num(225, 268, 2, C.acc);
-    L(245, 273, 'B se Z line me khade', C.acc, 'start');
-    A(320, 130, 728, 75, C.bad, { dash: 1, n: 3, at: 0.6 }); L(560, 125, 'der se likha', C.bad);
-    T(600, 300, 'feed me khabar 20 min purani', { c: C.bad, b: 1, size: 16 });
+    B(20, 130, 170, 80, 'Fetcher', 'ek-ek karke', { st: 'bad' });
+    B(330, 20, 210, 70, 'Source A', '30 sec atka', { st: 'bad' });
+    B(330, 140, 300, 90, 'Line me', '', { st: 'acc' });
+    cells(345, 185, [['B', C.acc], ['C', C.acc], ['D', C.acc], ['...', C.line], ['Z', C.acc]], { w: 50, h: 32 });
+    B(720, 260, 150, 70, 'DB', 'der se', { st: 'bad', icon: 'db' });
+    A(190, 150, 328, 60, C.bad, { n: 1 });
+    num(660, 185, 2, C.bad); L(680, 190, 'wait', C.bad, 'start');
+    AP([[105, 212], [105, 295], [718, 295]], C.bad, { n: 3, dash: 1, at: 0.4 });
+    L(450, 345, 'ek beemar source, aur sab khabar 20 min peeche', C.bad);
   } else if (ph === 1) {
-    src('bad', 'atka'); pull(false, 1); L(186, 95, 'A atka', C.bad, 'start');
-    B(200, 110, 120, 80, 'Fetcher', 'sirf laana', { st: 'good' });
-    kafka('acc', C.good);
-    A(320, 150, 378, 150, C.msg, { n: 2 }); L(465, 225, 'key = source_id', C.msg);
-    B(610, 110, 120, 80, 'Worker', '', { st: 'good' });
-    A(550, 150, 608, 150, C.good, { n: 3 }); L(670, 215, 'apni speed se', C.good);
-    B(770, 40, 110, 60, 'DB', '', { st: 'good' }); B(770, 200, 110, 60, 'Redis', '', { st: 'good' });
-    A(730, 130, 768, 75, C.good, { n: 4 }); A(730, 170, 768, 225, C.good, { n: 4 }); L(800, 155, 'likha', C.good);
-    L(825, 285, 'feed khulti', C.good);
-  } else if (ph === 2) {
-    src('', ''); pull(true, 1);
-    L(255, 30, '1000 ek saath', C.acc); dots(10, 215, 50, C.acc, { gap: 20, cols: 5, r: 6 });
-    B(200, 110, 120, 80, 'Fetcher', '', { st: 'acc' });
-    kafka('acc', C.acc);
-    A(320, 150, 378, 150, C.acc, { n: 2 }); L(465, 225, 'line lambi', C.acc);
-    B(610, 110, 120, 80, 'Worker', '', { st: 'good' });
-    A(550, 150, 608, 150, C.good, { n: 3 }); L(670, 215, 'apni speed se', C.good);
-    B(770, 40, 110, 60, 'DB', '', { st: 'good' }); B(770, 200, 110, 60, 'Redis', '', { st: 'good' });
-    A(730, 130, 768, 75, C.good); A(730, 170, 768, 225, C.good);
-    L(20, 330, 'hal: Kafka disk pe rakhta hai, worker apni speed se padhta, gira kuch nahi', C.good, 'start');
-  } else if (ph === 3) {
-    src('dim', ''); B(200, 110, 120, 80, 'Fetcher', '', { st: 'dim' });
-    kafka('acc', C.good);
-    B(610, 40, 120, 60, 'Worker', '', { st: 'bad' }); B(610, 220, 120, 60, 'naya Worker', '', { st: 'good' });
-    B(770, 110, 110, 80, 'DB', 'url UNIQUE', { st: 'good' });
-    A(730, 70, 768, 128, C.good, { n: 1 }); L(800, 95, 'likha', C.good, 'start');
-    cross(590, 70); num(590, 22, 2, C.bad); L(608, 27, 'commit se pehle crash', C.bad, 'start');
-    A(550, 180, 608, 245, C.acc, { n: 3 }); L(470, 245, 'wahi khabar dobara', C.acc);
-    A(730, 250, 768, 175, C.acc, { n: 4 }); L(825, 230, 'url pehle se', C.acc);
-    T(825, 260, '-> kuch nahi', { c: C.good, b: 1, size: 13 });
-    L(20, 330, 'hal: url pe UNIQUE, ON CONFLICT DO NOTHING. Feed me ek hi baar', C.good, 'start');
+    panel(0, 'laao', ['Fetcher', 'NDTV se a91', ''], ['Kafka', 'key = NDTV', 'acc'], 'daala', true, C.acc, 'bas laana');
+    panel(1, 'line', ['Kafka', '10 partition', 'acc'], ['Worker', 'a91 padha', ''], 'padha', true, C.acc, 'apni speed se');
+    panel(2, 'likho', ['Worker', '', ''], ['DB', 'a91 save', 'good'], 'INSERT', true, C.good, 'sach DB me');
+    panel(3, 'feed', ['Worker', '', ''], ['Redis', 'ZADD a91', 'good'], 'ZADD', true, C.good, 'turant dikhi');
+    L(450, 320, 'laana aur likhna alag. Ek source atka to baaki chalte', C.good);
   } else {
-    src('bad', 'atka'); pull(false, 1); L(186, 95, 'A atka', C.bad, 'start');
-    L(80, 310, 'baaki chalte', C.good);
-    B(200, 110, 120, 80, 'Fetcher', '', { st: 'good' });
-    kafka('good', C.good);
-    A(320, 150, 378, 150, C.good, { n: 2 });
-    B(610, 110, 120, 80, 'Worker', '', { st: 'good' });
-    A(550, 150, 608, 150, C.good, { n: 3 });
-    B(770, 40, 110, 60, 'DB', '', { st: 'good' }); B(770, 200, 110, 60, 'Redis', '', { st: 'good' });
-    A(730, 130, 768, 75, C.good, { n: 4 }); A(730, 170, 768, 225, C.good, { n: 4 }); L(800, 155, 'likha', C.good);
-    B(610, 280, 120, 50, 'Users'); A(768, 245, 732, 295, C.good, { n: 5 });
-    L(825, 300, 'feed khuli', C.good);
+    B(20, 130, 160, 80, 'Kafka', 'a91', { st: 'acc' });
+    B(330, 20, 220, 80, 'Worker-1', 'commit se pehle mara', { st: 'bad' });
+    B(330, 240, 220, 80, 'Worker-2', 'a91 dobara', { st: 'good' });
+    B(700, 130, 170, 80, 'DB', 'url UNIQUE', { st: 'good', icon: 'db' });
+    A(180, 150, 328, 60, C.muted);
+    A(550, 60, 698, 150, C.good, { n: 1 });
+    num(440, 125, 2, C.bad); L(460, 130, 'mara', C.bad, 'start');
+    A(180, 190, 328, 280, C.acc, { n: 3 });
+    A(550, 280, 698, 190, C.good, { n: 4 }); L(640, 285, 'DO NOTHING', C.good, 'start');
+    L(450, 345, 'dobara aayi to bhi ek hi baar. Rok DB ke andar hai', C.good);
   }
 }

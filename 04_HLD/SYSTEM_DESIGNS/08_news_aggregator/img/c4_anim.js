@@ -1,58 +1,55 @@
-// Card 4: 5 source, 5 URL, ek hi khabar feed me 5 baar.
-// Ilaaj: dekha URL Bloom se, wahi khabar title ke hash se. Agar: "wins" / "won" hash alag -> SimHash. Wapas.
-const DUR = 12;
+// Card 4: 5 source, wahi khabar 5 baar. Ilaaj: URL Bloom + title hash. Agar: wins / won -> SimHash.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: har naya URL = nayi khabar. 5 source, feed me 5 baar'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: dekha URL Bloom se, wahi khabar title ke hash se. Feed me ek baar'],
+  [0, RED, 'DIKKAT', 'DIKKAT: "India ne match jeeta" 5 source se. Har naya URL nayi khabar, feed me 5 baar'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: URL Bloom se. Title chhote akshar, chinh hata ke hash. Hash wahi = khabar wahi'],
   [6, YEL, 'AGAR', 'AGAR "wins" aur "won", hash alag? -> SimHash: 90% same to duplicate'],
-  [9, GRN, 'WAPAS', 'WAPAS: same hash = same khabar, URL alag ho tab bhi. Feed me ek hi baar'],
 ];
-const UY = [20, 85, 150, 215, 280];
 function setup() {}
-function urls(n, c) {
-  L(185, 22, '5 source', c || C.msg, 'start');
-  UY.forEach((y, i) => {
-    B(20, y, 110, 44, 'url ' + (i + 1), '');
-    A(130, y + 22, 218, 180, c || C.msg, { n, at: 0.45 });
-  });
-}
-function feed(rows) {
-  B(640, 100, 240, 200, 'User ki feed', '');
-  rows.forEach(([s, c], i) => T(760, 150 + i * 28, s, { c, b: 1, size: 13 }));
+const STEPS = [
+  [[C.msg, '5 source → Worker', 'wahi khabar, 5 alag URL'], [C.bad, 'Worker → Feed', 'har naya URL nayi khabar maani'], [C.bad, 'Feed', '"India ne match jeeta" 5 baar']],
+  [[C.acc, 'Worker → Bloom', 'ye URL pehli baar? (Bloom filter)'], [C.acc, 'Worker → Title hash', 'title saaf karke hash'], [C.good, 'Title hash → Worker', 'ye hash pehle se: duplicate, skip'], [C.good, 'Feed', 'khabar sirf ek baar (pehli wali)']],
+  [[C.bad, 'Exact hash', 'ek shabd badla, hash poora alag'], [C.good, 'SimHash', '64 me se 59 bit same = 92%'], [C.good, 'SimHash → Feed', '90% se upar: duplicate.|Feed me ek hi']],
+];
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function frame(ph) {
   if (ph === 0) {
-    urls(1);
-    B(220, 145, 130, 70, 'Worker', 'URL naya?', { st: 'bad' });
-    num(232, 245, 2, C.bad); L(250, 250, 'naya URL = nayi khabar', C.bad, 'start');
-    A(350, 185, 638, 200, C.bad, { n: 3 }); L(495, 180, '5 baar', C.bad);
-    feed(Array(5).fill(['match jeeta', C.bad]));
+    ['NDTV', 'ABP', 'TOI', 'HT', 'BBC'].forEach((s, i) => B(20, 5 + i * 64, 130, 52, s, ''));
+    B(320, 120, 200, 80, 'Worker', 'naya URL = naya', { st: 'bad' });
+    B(640, 60, 230, 200, 'Feed', '', { st: 'bad' });
+    for (let i = 0; i < 5; i++) { A(150, 31 + i * 64, 318, 160, C.msg, i === 2 ? { n: 1 } : {});
+      cells(655, 100 + i * 30, [['India ne match jeeta', C.bad]], { w: 200, h: 24 }); }
+    A(520, 160, 638, 160, C.bad, { n: 2 });
+    num(755, 290, 3, C.bad); L(775, 295, '5 baar', C.bad, 'start');
+    L(450, 345, 'URL alag the, khabar ek', C.bad);
   } else if (ph === 1) {
-    urls(1);
-    B(220, 145, 130, 70, 'Worker', 'title -> hash', { st: 'good' });
-    B(440, 30, 160, 60, 'Bloom', 'Redis, saanjha', { st: 'acc' });
-    A(300, 143, 438, 75, C.acc, { n: 2 }); L(330, 100, 'dekha?', C.acc);
-    A(350, 185, 638, 200, C.good, { n: 3 }); L(495, 180, 'url 1: naya', C.good);
-    L(250, 250, 'url 2-5: same hash -> skip', C.acc, 'start');
-    feed([['match jeeta', C.good]]);
-  } else if (ph === 2) {
-    B(20, 85, 130, 44, 'title: wins', ''); B(20, 215, 130, 44, 'title: won', '');
-    A(150, 107, 218, 165, C.msg, { n: 1 }); A(150, 237, 218, 195, C.msg, { n: 1 });
-    B(220, 145, 130, 70, 'Worker', 'title -> hash', { st: 'acc' });
-    cells(220, 240, [['hash a', C.bad], ['hash b', C.bad]], { w: 63 });
-    num(232, 290, 2, C.bad); L(250, 295, 'hash alag', C.bad, 'start');
-    B(440, 30, 160, 60, 'SimHash', '90% same', { st: 'good' });
-    A(300, 143, 438, 75, C.good, { n: 3 }); L(330, 100, 'milao', C.good);
-    A(350, 185, 638, 200, C.good, { n: 4 }); L(495, 180, 'duplicate, ek baar', C.good);
-    feed([['match jeeta', C.good]]);
-    L(440, 330, 'hal: SimHash: 90% same to duplicate', C.good, 'start');
+    B(20, 130, 170, 80, 'Worker', 'naya title');
+    B(330, 20, 260, 70, 'Bloom (URL)', 'pehli baar? haan');
+    B(330, 160, 260, 80, 'Title hash', 'h7f3a pehle se', { st: 'acc' });
+    B(700, 130, 170, 80, 'Feed', 'ek hi baar', { st: 'good' });
+    A(190, 150, 328, 60, C.acc, { n: 1 });
+    A(190, 180, 328, 185, C.acc, { n: 2 });
+    A(328, 220, 192, 200, C.good, { n: 3, at: 0.6 });
+    A(590, 200, 698, 175, C.good, { n: 4 }); L(640, 225, 'sirf pehli', C.good);
+    T(450, 290, '"India WINS the match!" -> india wins the match -> h7f3a', { c: C.fg, size: 13 });
+    L(450, 345, 'URL alag ho tab bhi, title ka hash wahi to khabar wahi', C.good);
   } else {
-    urls(1, C.good);
-    B(220, 145, 130, 70, 'Worker', 'title -> hash', { st: 'good' });
-    B(440, 30, 160, 60, 'Bloom', 'Redis, saanjha', { st: 'good' });
-    A(300, 143, 438, 75, C.good, { n: 2 }); L(330, 100, 'dekha?', C.good);
-    A(350, 185, 638, 200, C.good, { n: 3 }); L(495, 180, 'ek hi baar', C.good);
-    L(250, 250, 'URL alag, hash same', C.good, 'start');
-    feed([['match jeeta', C.good]]);
+    B(20, 30, 380, 70, 'Title A', 'India wins the match');
+    B(20, 200, 380, 70, 'Title B', 'India won the match');
+    B(500, 20, 370, 70, 'Exact hash', 'h7f3a  !=  h91c2', { st: 'bad' });
+    B(500, 140, 370, 70, 'SimHash', '59 / 64 bit same = 92%', { st: 'good' });
+    B(500, 265, 370, 70, 'Feed', 'ek hi khabar', { st: 'good' });
+    A(400, 60, 498, 55, C.bad, { n: 1 }); A(400, 230, 498, 75, C.bad);
+    A(400, 75, 498, 165, C.good, { n: 2, at: 0.7 }); A(400, 220, 498, 185, C.good);
+    A(685, 212, 685, 263, C.good, { n: 3 });
   }
 }
