@@ -36,19 +36,13 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 Cue: PUSH: tweet hote hi INBOX me id
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png" width="900">
+<img src="img/c1_1.png?v=2" width="900">
 
-<img src="img/c1_2.png" width="900">
+<img src="img/c1_2.png?v=2" width="900">
 
-<img src="img/c1_3.png" width="900">
-
-<img src="img/c1_4.png" width="900">
-
-<img src="img/c1_5.png" width="900">
-
-<img src="img/c1_6.png" width="900">
+<img src="img/c1_3.png?v=2" width="900">
 
 </details>
 
@@ -77,21 +71,13 @@ NAHI    DB pe index  -> WAHI: thoda tez hota, par har khulne pe 200 ka jod wahi 
 
 Cue: KAFKA, fanout peeche
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png" width="900">
+<img src="img/c2_1.png?v=2" width="900">
 
-<img src="img/c2_2.png" width="900">
+<img src="img/c2_2.png?v=2" width="900">
 
-<img src="img/c2_3.png" width="900">
-
-<img src="img/c2_4.png" width="900">
-
-<img src="img/c2_5.png" width="900">
-
-<img src="img/c2_6.png" width="900">
-
-<img src="img/c2_7.png" width="900">
+<img src="img/c2_3.png?v=2" width="900">
 
 </details>
 
@@ -126,19 +112,13 @@ NAHI    App me peeche ek thread -> KHOYA: App crash hua to thread ka kaam gaya.
 
 Cue: HYBRID: aam push, celeb pull
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png" width="900">
+<img src="img/c3_1.png?v=2" width="900">
 
-<img src="img/c3_2.png" width="900">
+<img src="img/c3_2.png?v=2" width="900">
 
-<img src="img/c3_3.png" width="900">
-
-<img src="img/c3_4.png" width="900">
-
-<img src="img/c3_5.png" width="900">
-
-<img src="img/c3_6.png" width="900">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
@@ -168,17 +148,13 @@ NAHI    sabke liye pull -> MEHNGA: har feed khulne pe phir 200 ka jod
 
 Cue: HOT-TWEET CACHE (RAM)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png" width="900">
+<img src="img/c4_1.png?v=2" width="900">
 
-<img src="img/c4_2.png" width="900">
+<img src="img/c4_2.png?v=2" width="900">
 
-<img src="img/c4_3.png" width="900">
-
-<img src="img/c4_4.png" width="900">
-
-<img src="img/c4_5.png" width="900">
+<img src="img/c4_3.png?v=2" width="900">
 
 </details>
 
@@ -203,21 +179,13 @@ NAHI    DB ki copies badha do -> DHEEMA: wo bhi disk se padhti hain (ms).
 
 Cue: AAKHRI 800 + soye hue hatao
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png" width="900">
+<img src="img/c5_1.png?v=2" width="900">
 
-<img src="img/c5_2.png" width="900">
+<img src="img/c5_2.png?v=2" width="900">
 
-<img src="img/c5_3.png" width="900">
-
-<img src="img/c5_4.png" width="900">
-
-<img src="img/c5_5.png" width="900">
-
-<img src="img/c5_6.png" width="900">
-
-<img src="img/c5_7.png" width="900">
+<img src="img/c5_3.png?v=2" width="900">
 
 </details>
 
