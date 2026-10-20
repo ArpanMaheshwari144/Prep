@@ -10,13 +10,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.acc, 'OTP line → SMS worker', 'Arpan ka OTP'], [C.bad, 'SMS worker x3 → Twilio', '30 sec wait. Koi worker khaali nahi']],
+  [[C.acc, 'SMS worker → Twilio', 'call, 3 sec baad chhoda'], [C.bad, 'Breaker → Twilio', '5 fail: KHULA, call roki'], [C.good, 'SMS worker → SNS', 'doosri company se OTP'], [C.good, 'Breaker → Twilio', 'thodi der baad ek test call']],
+  [[C.good, 'SMS / push / email line', 'har company ka apna breaker.|Sirf SMS ruka, push + email chalu']],
+];
 function frame(ph) {
   if (ph === 0) {
     ['SMS worker 1', 'SMS worker 2', 'SMS worker 3'].forEach((w, i) => {

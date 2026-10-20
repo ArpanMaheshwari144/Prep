@@ -3,10 +3,15 @@
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: maine offer SMS band kiya tha. Phir bhi raat 2 baje ghanti baji'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: bhejne se pehle pasand + shaanti ka waqt dekho. Shaanti me offer ruko, subah 8 bhejo'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: pehle pasand + shaanti ka waqt dekho. Shaanti me offer ruko, subah 8 bhejo'],
   [6, YEL, 'AGAR', 'AGAR shaanti ke waqt OTP / login alert aaya? -> bhejo. Zaroori alert pasand se upar'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.msg, 'Offer khabar → SMS worker', 'raat 2:00'], [C.bad, 'SMS worker → phone', 'seedha bheja: ghanti baji'], [C.bad, 'Pasand', 'offer band tha, dekhi hi nahi']],
+  [[C.msg, 'Offer khabar → SMS worker', 'raat 2:00'], [C.acc, 'SMS worker → Pasand', 'offer band, shaanti 10 se 8'], [C.good, 'SMS worker → Subah ki line', '8 baje bhejo, phenka nahi']],
+  [[C.msg, 'OTP khabar → SMS worker', 'raat 2:00'], [C.acc, 'SMS worker → Pasand', 'shaanti hai'], [C.good, 'SMS worker → phone', 'zaroori: phir bhi bheja']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 150, 60, 'Offer khabar', 'raat 2:00');
@@ -32,7 +37,7 @@ function frame(ph) {
     B(640, 220, 200, 80, 'Arpan ka phone', 'OTP aaya', { st: 'good' });
     A(170, 170, 278, 170, C.msg, { n: 1 });
     A(470, 145, 558, 60, C.muted, { n: 2, dash: 1 }); L(530, 130, 'shaanti hai', C.muted, 'start');
-    A(470, 195, 638, 255, C.good, { n: 3 }); L(560, 245, 'phir bhi bhejo', C.good, 'end');
+    A(470, 195, 638, 255, C.good, { n: 3 }); L(530, 262, 'phir bhi bhejo', C.good, 'end');
     L(450, 345, 'Arpan khud login kar raha, OTP rokna ulta nuksaan', C.good);
   }
 }

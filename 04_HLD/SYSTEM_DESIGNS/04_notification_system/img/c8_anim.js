@@ -2,7 +2,7 @@
 // kul 100 / sec. Agar: bucket wala Redis gira -> har worker apni surakshit had (100 / 4 = 25).
 const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: company ki had 100 / sec. Har worker apni taraf se 100 / sec, 4 worker = 400. 429'],
+  [0, RED, 'DIKKAT', 'DIKKAT: company ki had 100 / sec. Har worker apni taraf se 100, 4 worker = 400. 429'],
   [3, GRN, 'ILAAJ', 'ILAAJ: sab worker ek saanjha token bucket (Redis) se token lete. Kul 100 / sec. Pal-pal'],
   [6, YEL, 'AGAR', 'AGAR bucket wala Redis hi gira? -> har worker apni surakshit had (100 / 4 = 25)'],
 ];
@@ -10,12 +10,12 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 function workers(sub, st, c) {
   [0, 1, 2, 3].forEach(i => {
@@ -23,6 +23,11 @@ function workers(sub, st, c) {
     A(200, 52 + i * 80, 548, 175, c, { n: i === 1 ? 1 : 0, at: 0.5 });
   });
 }
+const STEPS = [
+  [[C.bad, '4 worker → Email company', 'har worker apni taraf se 100 / sec'], [C.bad, 'Email company', '400 aaye: 300 ko 429']],
+  [[C.acc, 'Worker 1 → Redis bucket', 'token?'], [C.good, 'Worker 1 → Email company', 'mila: bheja'], [C.acc, 'Worker 2 → Redis bucket', 'token? is second ke khatam'], [C.acc, 'Worker 2', 'line me ruka, agle second.|Fail nahi']],
+  [[C.good, '4 worker → Email company', 'har ek 25 / sec: kul 100.|Thoda dheema, 429 nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     workers('100 / sec', 'bad', C.bad);
@@ -34,6 +39,8 @@ function frame(ph) {
     panel(1, 'mila, bhejo', ['Worker 1', 'token mila', 'good'], ['Email company', 'ek email', 'good'], 'bheja', true, C.good, 'had ke andar');
     panel(2, 'Worker 2', ['Worker 2', 'email bhejna', ''], ['Redis bucket', 'bache 0', 'bad'], 'token?', true, C.acc, 'is second ke khatam');
     panel(3, 'ruko', ['Worker 2', 'line me ruka', 'acc'], ['Redis bucket', 'agle second 100', 'good'], '', true, C.acc, 'fail nahi, bas intezaar');
+    A(735, 158, 735, 110, C.muted, { dash: 1 }); T(750, 139, 'agle second', { c: C.muted, b: 1, size: 14, a: 'start' });
+    A(735, 158, 735, 110, C.muted, { dash: 1 }); T(750, 139, 'agle second', { c: C.muted, b: 1, size: 14, a: 'start' });
     L(450, 320, 'worker kitne bhi hon, company tak kul 100 / sec. 429 nahi aata', C.good);
   } else {
     workers('apni had: 25 / sec', 'acc', C.good);

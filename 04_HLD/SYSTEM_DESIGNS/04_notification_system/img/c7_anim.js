@@ -14,6 +14,11 @@ function lines(st, sub, wsub) {
     B(560, y, 200, 65, ['OTP worker', 'order worker', 'offer worker'][i], wsub[i], { st: st ? s : '' });
   });
 }
+const STEPS = [
+  [[C.acc, 'Ek line → Worker', '50,000 offer pehle'], [C.bad, 'OTP', 'baari 10 min baad. Umar 5 min: bekaar']],
+  [[C.good, 'High → OTP worker', 'OTP turant'], [C.acc, 'Medium → order worker', 'order thoda baad'], [C.acc, 'Low → offer worker', 'offer apni speed se']],
+  [[C.good, 'Medium → OTP worker', 'OTP line khaali: order padh liya'], [C.bad, 'offer worker', 'OTP line kabhi nahi (ulta nahi)']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 110, 560, 100, 'Ek hi line', '', { st: 'bad' });

@@ -40,11 +40,11 @@ Cue: KAFKA (async), order turant jawab
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png?v=2" width="900">
+<img src="img/c1_1.png?v=6" width="900">
 
-<img src="img/c1_2.png?v=2" width="900">
+<img src="img/c1_2.png?v=6" width="900">
 
-<img src="img/c1_3.png?v=2" width="900">
+<img src="img/c1_3.png?v=6" width="900">
 
 </details>
 
@@ -83,11 +83,11 @@ Cue: har raaste ki ALAG LINE + worker
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png?v=5" width="900">
+<img src="img/c2_1.png?v=6" width="900">
 
-<img src="img/c2_2.png?v=5" width="900">
+<img src="img/c2_2.png?v=6" width="900">
 
-<img src="img/c2_3.png?v=5" width="900">
+<img src="img/c2_3.png?v=6" width="900">
 
 </details>
 
@@ -113,11 +113,11 @@ Cue: KEY (SET NX, khabar ki apni id)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png?v=3" width="900">
+<img src="img/c3_1.png?v=6" width="900">
 
-<img src="img/c3_2.png?v=3" width="900">
+<img src="img/c3_2.png?v=6" width="900">
 
-<img src="img/c3_3.png?v=3" width="900">
+<img src="img/c3_3.png?v=6" width="900">
 
 </details>
 
@@ -146,11 +146,11 @@ Cue: SENDING / SENT (do haal)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png?v=2" width="900">
+<img src="img/c4_1.png?v=6" width="900">
 
-<img src="img/c4_2.png?v=2" width="900">
+<img src="img/c4_2.png?v=6" width="900">
 
-<img src="img/c4_3.png?v=2" width="900">
+<img src="img/c4_3.png?v=6" width="900">
 
 </details>
 
@@ -183,11 +183,11 @@ Cue: BACKOFF + JITTER, had ke baad DLQ
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png?v=2" width="900">
+<img src="img/c5_1.png?v=6" width="900">
 
-<img src="img/c5_2.png?v=2" width="900">
+<img src="img/c5_2.png?v=6" width="900">
 
-<img src="img/c5_3.png?v=2" width="900">
+<img src="img/c5_3.png?v=6" width="900">
 
 </details>
 
@@ -214,11 +214,11 @@ Cue: TIMEOUT + CIRCUIT BREAKER
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=5" width="900">
+<img src="img/c6_1.png?v=6" width="900">
 
-<img src="img/c6_2.png?v=5" width="900">
+<img src="img/c6_2.png?v=6" width="900">
 
-<img src="img/c6_3.png?v=5" width="900">
+<img src="img/c6_3.png?v=6" width="900">
 
 </details>
 
@@ -250,11 +250,11 @@ Cue: OTP ki ALAG TEZ LINE
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png?v=2" width="900">
+<img src="img/c7_1.png?v=6" width="900">
 
-<img src="img/c7_2.png?v=2" width="900">
+<img src="img/c7_2.png?v=6" width="900">
 
-<img src="img/c7_3.png?v=2" width="900">
+<img src="img/c7_3.png?v=6" width="900">
 
 </details>
 
@@ -282,11 +282,11 @@ Cue: SAANJHA TOKEN BUCKET (Redis)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png?v=5" width="900">
+<img src="img/c8_1.png?v=6" width="900">
 
-<img src="img/c8_2.png?v=5" width="900">
+<img src="img/c8_2.png?v=6" width="900">
 
-<img src="img/c8_3.png?v=5" width="900">
+<img src="img/c8_3.png?v=6" width="900">
 
 </details>
 
@@ -316,11 +316,11 @@ Cue: WEBHOOK + company ka message id
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png?v=2" width="900">
+<img src="img/c9_1.png?v=6" width="900">
 
-<img src="img/c9_2.png?v=2" width="900">
+<img src="img/c9_2.png?v=6" width="900">
 
-<img src="img/c9_3.png?v=2" width="900">
+<img src="img/c9_3.png?v=6" width="900">
 
 </details>
 
@@ -348,11 +348,11 @@ Cue: 1000 ke TUKDE + campaign row
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c10_1.png?v=3" width="900">
+<img src="img/c10_1.png?v=6" width="900">
 
-<img src="img/c10_2.png?v=3" width="900">
+<img src="img/c10_2.png?v=6" width="900">
 
-<img src="img/c10_3.png?v=3" width="900">
+<img src="img/c10_3.png?v=6" width="900">
 
 </details>
 
@@ -382,11 +382,11 @@ Cue: PASAND + SHAANTI + SAANCHA (cache)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c11_1.png?v=2" width="900">
+<img src="img/c11_1.png?v=6" width="900">
 
-<img src="img/c11_2.png?v=2" width="900">
+<img src="img/c11_2.png?v=6" width="900">
 
-<img src="img/c11_3.png?v=2" width="900">
+<img src="img/c11_3.png?v=6" width="900">
 
 </details>
 

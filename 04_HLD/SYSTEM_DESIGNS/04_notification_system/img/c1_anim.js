@@ -10,13 +10,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c);
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Arpan → Order Svc', 'order kiya'], [C.bad, 'Order Svc → Email company', 'email bhejo, jawab ka wait'], [C.bad, 'Email company band', 'jawab hi nahi'], [C.bad, 'Order Svc → Arpan', 'email ki wajah se order fail']],
+  [[C.good, 'Order Svc → DB', 'order + outbox ek hi txn'], [C.good, 'Order Svc → Arpan', 'turant "order ho gaya"'], [C.acc, 'DB outbox → Kafka', 'relay ne khabar daali'], [C.good, 'Kafka → Notification Svc', 'peeche email, apni speed se']],
+  [[C.acc, 'Kafka → Notification Svc', 'padha, offset 40 tak'], [C.bad, 'Notification Svc → Email company', 'band: bheja nahi'], [C.good, 'company wapas', '41 se aage. Kafka me padi thi, khoyi nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 120, 60, 'Arpan', 'order kiya');

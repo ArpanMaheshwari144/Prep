@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR SMS ki line lambi ho gayi? -> sirf SMS ke worker badhao, baaki ko mat chhuo'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Ek line → Worker', 'SMS sabse aage'], [C.bad, 'Worker → SMS company', '30 sec / msg, worker atka'], [C.bad, 'push, email', 'SMS ke peeche khade']],
+  [[C.good, 'Ghatna → 3 line', 'har raaste ki apni line aur worker.|SMS dheema, push + email aage']],
+  [[C.good, 'Ghatna → 3 line', 'sirf SMS worker 1 -> 4.|Push aur email ko nahi chhua']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 110, 380, 100, 'Ek hi line', '', { st: 'bad' });

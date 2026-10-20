@@ -10,13 +10,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Admin → Campaign Svc', '"sabko bhejo": 1 crore ek request me'], [C.bad, 'beech me gira', 'shuru se dobara'], [C.bad, 'OTP', 'peeche atka']],
+  [[C.acc, 'Campaign Svc → Low line', '1000-1000 ke tukde'], [C.acc, 'Low line → Worker', 'tukda bhejta'], [C.good, 'Worker → Campaign row', 'aakhri_id = 3000 likha']],
+  [[C.good, 'Worker-A → 600 log', 'tukda 4: 600 ko gaya'], [C.bad, 'Worker-A mara', 'aakhri_id 3000 hi raha'], [C.acc, 'Worker-B → Sent list', 'kisko pehle gaya?'], [C.good, 'Worker-B → Campaign row', 'sirf 400 ko, aakhri_id = 4000']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 140, 60, 'Admin', 'sabko bhejo');
@@ -28,8 +33,8 @@ function frame(ph) {
     L(450, 330, 'ek bada kaam, ek hi jagah atka. Rokne ka bhi tareeka nahi', C.bad);
   } else if (ph === 1) {
     B(20, 130, 150, 70, 'Campaign Svc', '1 crore');
-    B(250, 30, 380, 80, 'Low line (offer)', '', { st: 'acc' });
-    cells(265, 70, [['1-1000', C.good], ['1001-2000', C.good], ['2001-3000', C.good], ['...', C.line]], { w: 82, h: 30 });
+    B(250, 20, 380, 100, 'Low line (offer)', '', { st: 'acc' });
+    cells(265, 76, [['1-1000', C.good], ['1001-2000', C.good], ['2001-3000', C.good], ['...', C.line]], { w: 82, h: 30 });
     B(250, 230, 380, 70, 'Campaign row', 'aakhri_id = 3000, haal: CHALU', { st: 'good' });
     B(720, 40, 150, 60, 'Worker', 'tukda bhejta');
     A(170, 150, 248, 75, C.acc, { n: 1 }); L(195, 100, 'tukde', C.acc);
@@ -39,6 +44,8 @@ function frame(ph) {
   } else {
     panel(0, 'tukda 4', ['Worker-A', '3001-4000', ''], ['600 log', 'offer pahuncha', 'good'], 'bheja', true, C.good, '600 tak gaya');
     panel(1, 'gira', ['Worker-A', 'mara', 'bad'], ['Campaign row', 'aakhri_id = 3000', 'acc'], '', true, C.bad, '4000 likha hi nahi');
+    A(295, 110, 295, 158, C.bad, { dash: 1 }); cross(295, 134); T(310, 139, '4000', { c: C.bad, b: 1, size: 14, a: 'start' });
+    A(295, 110, 295, 158, C.bad, { dash: 1 }); cross(295, 134); T(310, 139, '4000', { c: C.bad, b: 1, size: 14, a: 'start' });
     panel(2, 'tukda dobara', ['Worker-B', '3001-4000', ''], ['Sent list', '(campaign, user)', 'acc'], 'poochha', true, C.acc, 'kisko pehle gaya?');
     panel(3, 'sirf baaki', ['Worker-B', '400 ko bheja', 'good'], ['Campaign row', 'aakhri_id = 4000', 'good'], 'likha', true, C.good, '600 ko dobara nahi');
     L(450, 320, 'tukda dobara chala, par ek user ko ek hi baar', C.good);
