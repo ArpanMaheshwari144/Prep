@@ -9,7 +9,7 @@ const puppeteer = require(dir);
   const [out, src, ...ts] = process.argv.slice(2);
   const b = await puppeteer.launch({ headless: 'new' });
   const p = await b.newPage();
-  await p.setViewport({ width: 900, height: 400 });
+  await p.setViewport({ width: 900, height: 620 });
   await p.setContent(fs.readFileSync(src, 'utf8'));
   const el = await p.$('svg');
   if (!ts.length) {

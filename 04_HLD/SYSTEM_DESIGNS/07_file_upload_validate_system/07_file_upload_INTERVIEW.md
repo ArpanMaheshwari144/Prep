@@ -307,11 +307,11 @@ Cue: SIGNED GET, 5 min ka naya paas
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png?v=2" width="900">
+<img src="img/c8_1.png?v=3" width="900">
 
-<img src="img/c8_2.png?v=2" width="900">
+<img src="img/c8_2.png?v=3" width="900">
 
-<img src="img/c8_3.png?v=2" width="900">
+<img src="img/c8_3.png?v=3" width="900">
 
 </details>
 

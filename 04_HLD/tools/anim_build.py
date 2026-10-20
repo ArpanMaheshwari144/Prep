@@ -8,12 +8,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TPL = '''<!doctype html>
 <!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
 <meta charset="utf-8">
-<style>body{{margin:0;background:#11161c}} svg text{{font-family:Consolas,"Courier New",monospace}}</style>
-<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
-<rect width="900" height="400" fill="#11161c"/>
+<style>body{{margin:0;background:#11161c}} svg text{{font-family:Consolas,"Courier New",monospace}}
+svg .sans{{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif}}</style>
+<svg id="root" width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect id="bgr" width="900" height="400" fill="#11161c"/>
 <rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
 <text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
-<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+<g id="pic" transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+<g id="leg"></g>
 </svg>
 <script>
 {base}
