@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Bot → Gateway', 'login x 100'], [C.acc, 'Gateway → Bot', '429: 60 sec baad aao'], [C.bad, 'Bot', 'har minute phir aaya, din bhar']],
-  [[C.acc, 'Gateway → Kafka', 'har 429 yahan'], [C.acc, 'Kafka → Pattern Svc', 'padhta: 10 min me 500+ 429'], [C.good, 'Pattern Svc → WAF', 'block list me: 5.5.5.5'], [C.good, 'Bot → WAF', 'edge pe hi ruka']],
-  [[C.msg, 'Office → WAF', '200 log, ek IP: bheed'], [C.acc, 'WAF → Office', 'captcha, ban nahi'], [C.good, 'WAF → Gateway', 'captcha bhara: andar'], [C.good, 'galti se ban?', 'umar 24 ghante. Haath se bhi hata sakte']],
+  [[C.bad, 'Bot → Gateway', 'Bot ne ek minute me 100 login try kiye'], [C.acc, 'Gateway → Bot', 'Gateway ne 429 diya, bas "60 sec baad aana" bola'], [C.bad, 'Bot', 'Bot har minute wapas aata raha, din bhar yahi chala']],
+  [[C.acc, 'Gateway → Kafka', 'Gateway ne har 429 ki khabar Kafka me daali, rukte hue nahi'], [C.acc, 'Kafka → Pattern Svc', 'Pattern Svc ne dekha: is IP se 10 min me 500+ 429'], [C.good, 'Pattern Svc → WAF', 'Usne IP 5.5.5.5 ko WAF ki block list me daal diya'], [C.bad, 'Bot → WAF', 'Agli baar Bot darwaze (edge) pe hi ruk gaya, Gateway tak nahi aaya']],
+  [[C.msg, 'Office → WAF', 'Office ke 200 log ek hi IP se aa rahe, bheed jaisi dikhi'], [C.acc, 'WAF → Office', 'WAF ne ban nahi kiya, captcha dikhaya, taaki asli log nikal sakein'], [C.good, 'WAF → Gateway', 'Jisne captcha bhara wo andar gaya, kaam chalta raha'], [C.good, 'galti se ban?', 'Ban ki umar 24 ghante hai, khud hat jaata; zaroorat ho to haath se bhi']],
 ];
 function frame(ph) {
   if (ph === 0) {

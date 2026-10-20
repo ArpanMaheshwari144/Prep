@@ -16,9 +16,9 @@ function office(subs, sts) {
   B(230, 145, 130, 70, 'Office NAT', 'sabka IP 1.2.3.4');
 }
 const STEPS = [
-  [[C.bad, 'Ravi → Office NAT', '6 galat login'], [C.msg, 'Office NAT → Gateway', 'sabka ek IP: 1.2.3.4'], [C.bad, 'Gateway → Office NAT', 'IP block: Asha, Mohan, sab atke']],
-  [[C.bad, 'Ravi → Office NAT', '6 galat'], [C.msg, 'Office NAT → Gateway', 'ek IP, par JWT alag'], [C.bad, 'Gateway', 'ginti user_id pe: sirf Ravi ko 429'], [C.good, 'Gateway → App', 'baaki andar']],
-  [[C.bad, 'Attacker → Arpan ka account', 'Arpan ke naam se 5 galat password'], [C.bad, 'Arpan ka account', 'LOCK lag gaya'], [C.msg, 'Asli Arpan → account', 'sahi password'], [C.bad, 'account → Arpan', 'band, apna hi account']],
+  [[C.bad, 'Ravi → Office NAT', 'Ravi ne 6 baar galat password daala'], [C.msg, 'Office NAT → Gateway', 'Office ke sab log ek hi IP (1.2.3.4) se bahar jaate hain'], [C.bad, 'Gateway → Office NAT', 'Ginti IP pe thi, to poora IP block: Asha, Mohan sab atke']],
+  [[C.bad, 'Ravi → Office NAT', 'Ravi ne phir 6 galat password daale'], [C.msg, 'Office NAT → Gateway', 'IP wahi tha, par har user ka JWT alag hai'], [C.bad, 'Gateway', 'Ginti user_id pe hui, to sirf Ravi ko 429'], [C.good, 'Gateway → App', 'Asha, Mohan aur baaki sab ka kaam chalta raha']],
+  [[C.bad, 'Attacker → Arpan ka account', 'Attacker ne jaan-boojh ke Arpan ke naam se 5 galat password daale'], [C.bad, 'Arpan ka account', 'Niyam tha 5 galat pe lock, to Arpan ka account lock ho gaya'], [C.msg, 'Asli Arpan → account', 'Asli Arpan sahi password ke saath aaya'], [C.bad, 'account → Arpan', 'Account band mila, attacker jeet gaya; isliye lock nahi, captcha']],
 ];
 function frame(ph) {
   if (ph === 0) {

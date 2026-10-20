@@ -16,9 +16,9 @@ function front(s1, s2, st) {
   A(270, 180, 328, 275, C.msg); L(284, 232, '4 bheje', C.msg, 'end');
 }
 const STEPS = [
-  [[C.msg, 'Arpan → LB', '9 login'], [C.msg, 'LB → App-1, App-2', '5 aur 4 baante'], [C.bad, 'App-1, App-2 → Login', 'har App ne sirf apni ginti dekhi:|5 <= 5, 4 <= 5. 9 andar']],
-  [[C.msg, 'Arpan → LB', '9 login'], [C.msg, 'LB → App-1, App-2', '5 aur 4 baante'], [C.acc, 'App-1, App-2 → Redis', 'dono ek hi ginti +1'], [C.bad, 'Redis → App-2 → Arpan', '6 > 5: mana, 429']],
-  [[C.good, '10:00:59', '5 andar'], [C.acc, '10:01:00', 'naya minute: ginti 0 se'], [C.bad, '10:01:01', '5 phir andar: 2 sec me 10']],
+  [[C.msg, 'Arpan → LB', 'Arpan ne ek minute me 9 baar login try kiya, had sirf 5 ki thi'], [C.msg, 'LB → App-1, App-2', 'LB ne baari-baari baanta: 5 request App-1 ko, 4 App-2 ko'], [C.bad, 'App-1, App-2 → Login', 'Har App ne sirf apni ginti dekhi (5 aur 4), dono ko had ke andar laga, 9 andar']],
+  [[C.msg, 'Arpan → LB', 'Arpan ne phir 9 baar login try kiya'], [C.msg, 'LB → App-1, App-2', 'LB ne pehle jaisa 5 aur 4 baanta'], [C.acc, 'App-1, App-2 → Redis', 'Dono App ne ek hi Redis key me ginti +1 ki, ek saanjhi ginti'], [C.bad, 'Redis → App-2 → Arpan', 'Chhathi request pe ginti 6 hui, 5 se upar, to Arpan ko 429 mila']],
+  [[C.good, '10:00:59', 'Minute khatam hone se theek pehle 5 request aayi, had ke andar'], [C.acc, '10:01:00', 'Naya minute shuru hua, fixed window ki ginti 0 se shuru'], [C.bad, '10:01:01', 'Do second baad 5 aur aayi; 2 sec me 10 andar, jabki had 5 thi']],
 ];
 function frame(ph) {
   if (ph === 0) {

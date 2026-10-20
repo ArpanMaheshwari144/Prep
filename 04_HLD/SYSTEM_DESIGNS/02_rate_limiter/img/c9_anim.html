@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -209,9 +211,9 @@ function office(subs, sts) {
   B(230, 145, 130, 70, 'Office NAT', 'sabka IP 1.2.3.4');
 }
 const STEPS = [
-  [[C.bad, 'Ravi → Office NAT', '6 galat login'], [C.msg, 'Office NAT → Gateway', 'sabka ek IP: 1.2.3.4'], [C.bad, 'Gateway → Office NAT', 'IP block: Asha, Mohan, sab atke']],
-  [[C.bad, 'Ravi → Office NAT', '6 galat'], [C.msg, 'Office NAT → Gateway', 'ek IP, par JWT alag'], [C.bad, 'Gateway', 'ginti user_id pe: sirf Ravi ko 429'], [C.good, 'Gateway → App', 'baaki andar']],
-  [[C.bad, 'Attacker → Arpan ka account', 'Arpan ke naam se 5 galat password'], [C.bad, 'Arpan ka account', 'LOCK lag gaya'], [C.msg, 'Asli Arpan → account', 'sahi password'], [C.bad, 'account → Arpan', 'band, apna hi account']],
+  [[C.bad, 'Ravi → Office NAT', 'Ravi ne 6 baar galat password daala'], [C.msg, 'Office NAT → Gateway', 'Office ke sab log ek hi IP (1.2.3.4) se bahar jaate hain'], [C.bad, 'Gateway → Office NAT', 'Ginti IP pe thi, to poora IP block: Asha, Mohan sab atke']],
+  [[C.bad, 'Ravi → Office NAT', 'Ravi ne phir 6 galat password daale'], [C.msg, 'Office NAT → Gateway', 'IP wahi tha, par har user ka JWT alag hai'], [C.bad, 'Gateway', 'Ginti user_id pe hui, to sirf Ravi ko 429'], [C.good, 'Gateway → App', 'Asha, Mohan aur baaki sab ka kaam chalta raha']],
+  [[C.bad, 'Attacker → Arpan ka account', 'Attacker ne jaan-boojh ke Arpan ke naam se 5 galat password daale'], [C.bad, 'Arpan ka account', 'Niyam tha 5 galat pe lock, to Arpan ka account lock ho gaya'], [C.msg, 'Asli Arpan → account', 'Asli Arpan sahi password ke saath aaya'], [C.bad, 'account → Arpan', 'Account band mila, attacker jeet gaya; isliye lock nahi, captcha']],
 ];
 function frame(ph) {
   if (ph === 0) {

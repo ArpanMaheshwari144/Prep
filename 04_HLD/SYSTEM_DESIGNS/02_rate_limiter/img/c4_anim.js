@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.msg, 'User → Gateway', 'login'], [C.bad, 'Gateway → Redis', 'ginti +1?'], [C.bad, 'Redis gira', 'ginti yahin thi'], [C.bad, 'Gateway', 'jawab nahi: andar bhejun ya rokun?']],
-  [[C.bad, 'Redis main gira', 'ginti wahi thi'], [C.acc, 'Redis main → copy', 'copy main bani (Redis Cluster)'], [C.msg, 'User → Gateway', 'login'], [C.good, 'Gateway → Redis copy', 'ginti +1 -> 3: andar']],
-  [[C.bad, 'Redis main + copy', 'dono gaye'], [C.bad, 'User → Gateway → User', 'login: 503, thodi der baad|(fail-closed)'], [C.good, 'User → Gateway → Feed App', 'feed khula (fail-open)']],
+  [[C.msg, 'User → Gateway', 'User ne login kiya, Gateway ko ginti dekhni thi'], [C.bad, 'Gateway → Redis', 'Gateway ne Redis se ginti +1 maangi'], [C.bad, 'Redis gira', 'Redis band tha, ginti sirf wahin rakhi thi'], [C.bad, 'Gateway', 'Jawab nahi aaya, Gateway ko samajh nahi aaya andar bheje ya roke']],
+  [[C.bad, 'Redis main gira', 'Ginti wala main Redis band ho gaya'], [C.acc, 'Redis main → copy', 'Redis Cluster ne uski copy ko turant naya main bana diya'], [C.msg, 'User → Gateway', 'User ne login kiya, Gateway ne 5 ms ka timeout rakha'], [C.good, 'Gateway → Redis copy', 'Copy ne ginti +1 karke 3 bataya, had ke andar, user andar']],
+  [[C.bad, 'Redis main + copy', 'Main aur copy dono band, ginti kahin nahi'], [C.bad, 'User → Gateway → User', 'Login pe pehle se tay tha: band rakho (fail-closed), user ko 503'], [C.good, 'User → Gateway → Feed App', 'Feed pe tay tha khula rakho (fail-open), site chalti rahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

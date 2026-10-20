@@ -15,9 +15,9 @@ function users() {
   });
 }
 const STEPS = [
-  [[C.msg, 'Users → Gateway', 'har user apni had me (80 / 100)'], [C.bad, 'Gateway → App', 'sab andar'], [C.bad, 'App', 'CPU 100%: login / payment bhi atke']],
-  [[C.msg, 'Users → Gateway', 'system ki had: 5,000 / sec'], [C.good, 'Gateway → App', 'zaroori: login, payment'], [C.acc, 'Gateway → feed, search', 'kam zaroori: 503, baad me aao']],
-  [[C.msg, 'Arpan → Gateway', '101 / 100'], [C.bad, 'Gateway → Arpan', '429: tu dheere chal'], [C.msg, 'Ravi → Gateway', '20 / 100, par system bhara'], [C.acc, 'Gateway → Ravi', '503: galti humari, baad me aa']],
+  [[C.msg, 'Users → Gateway', 'Sale me har user apni had me tha (80 / 100), koi galat nahi'], [C.bad, 'Gateway → App', 'Gateway ne sabko andar jaane diya, user ki had to theek thi'], [C.bad, 'App', 'Sab milake App ka CPU 100%, login aur payment bhi atak gaye']],
+  [[C.msg, 'Users → Gateway', 'Request Gateway pe aayi, jo ab system ki kul had (5,000 / sec) bhi dekhta hai'], [C.good, 'Gateway → App', 'Zaroori kaam (login, payment) andar gaya, CPU 85% pe'], [C.acc, 'Gateway → feed, search', 'Kam zaroori (feed, search) ko 503: thodi der baad aao']],
+  [[C.msg, 'Arpan → Gateway', 'Arpan ne apni had se zyada request bheji: 101 / 100'], [C.bad, 'Gateway → Arpan', 'Galti Arpan ki, to 429: tu dheere chal'], [C.msg, 'Ravi → Gateway', 'Ravi apni had me tha (20 / 100), par system bhara hua tha'], [C.acc, 'Gateway → Ravi', 'Galti humari, to 503: baad me aa. Ravi ko 429 dena galat']],
 ];
 function frame(ph) {
   if (ph === 0) {

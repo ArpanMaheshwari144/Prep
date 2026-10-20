@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -213,9 +215,9 @@ function gws(sub, st, c) {
   });
 }
 const STEPS = [
-  [[C.bad, 'Redis Cluster', 'main + copy dono gire'], [C.bad, 'Attacker → LB', 'key k1'], [C.bad, 'Gateway x4 → Server', 'Redis nahi: sab aage'], [C.bad, 'Server', 'CPU 100%: site band']],
-  [[C.bad, 'Redis Cluster', 'abhi bhi gira'], [C.bad, 'Attacker → LB', 'key k1'], [C.msg, 'LB → Gateway x4', 'LB baante'], [C.good, 'Gateway → Server', 'har ek se 25: kul 100']],
-  [[C.acc, 'had baanti nahi', 'har gateway ne 100 rakhi'], [C.bad, 'Attacker → LB', 'key k1'], [C.bad, 'Gateway → Server', 'har ek se 100: 400 andar']],
+  [[C.bad, 'Redis Cluster', 'Attack ke beech Redis main aur copy dono gir gaye'], [C.bad, 'Attacker → LB', 'Attacker key k1 se lagaataar request bhej raha'], [C.bad, 'Gateway x4 → Server', 'Gateway ke paas ginti nahi, to sab request aage jaane di'], [C.bad, 'Server', 'Server ka CPU 100% pe pahuncha aur poori site band ho gayi']],
+  [[C.bad, 'Redis Cluster', 'Redis abhi bhi band hai, saanjhi ginti kahin nahi'], [C.bad, 'Attacker → LB', 'Attacker abhi bhi wahi key k1 se request bhej raha'], [C.msg, 'LB → Gateway x4', 'LB ne request 4 gateway me baant di'], [C.good, 'Gateway → Server', 'Har gateway apni memory me ginta, had 100 / 4 = 25, kul 100 hi andar']],
+  [[C.acc, 'had baanti nahi', 'Galti se har gateway ko poori had 100 de di gayi'], [C.bad, 'Attacker → LB', 'Attacker ki request 4 gateway me bati'], [C.bad, 'Gateway → Server', 'Har gateway ne 100 andar jaane diye, kul 400, had 4 guna dheeli']],
 ];
 function frame(ph) {
   if (ph === 0) {

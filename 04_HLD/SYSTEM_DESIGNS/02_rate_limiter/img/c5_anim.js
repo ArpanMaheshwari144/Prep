@@ -10,9 +10,9 @@ const RY = [40, 150, 260]; // US, Europe, India (y)
 function setup() {}
 function script() { B(20, 150, 120, 60, 'Meri script', '150 request'); }
 const STEPS = [
-  [[C.msg, 'Meri script → US', '50'], [C.msg, 'Meri script → Europe', '50'], [C.msg, 'Meri script → India', '50'], [C.bad, 'Andar', '150, had 100. Teeno ne kaha "50 < 100"']],
-  [[C.msg, 'Meri script → 3 region', '150 request'], [C.acc, 'US, Europe, India → Ghar Redis', 'sab yahin gini'], [C.bad, 'Ghar Redis', '101 > 100: 429']],
-  [[C.msg, 'US user → US region', 'login'], [C.acc, 'US region → Ghar Redis', 'login ghar tak (~150 ms, chalta hai)'], [C.good, 'US user → US region', 'feed: yahin gini'], [C.acc, 'US region → Ghar Redis', 'har second sync']],
+  [[C.msg, 'Meri script → US', 'Script ne 50 request US region ko bheji'], [C.msg, 'Meri script → Europe', 'Script ne 50 request Europe region ko bhi bheji'], [C.msg, 'Meri script → India', 'Script ne 50 India ko bheji; har region ne sirf apni ginti dekhi'], [C.bad, 'Andar', 'Teeno ko 50 had ke andar laga, kul 150 andar, jabki had 100 thi']],
+  [[C.msg, 'Meri script → 3 region', 'Script ne phir teeno region me request bheji'], [C.acc, 'US, Europe, India → Ghar Redis', 'Har region ne meri ginti mere ghar region (India) ke Redis me ki'], [C.bad, 'Ghar Redis', 'Ek jagah ginti hui, 101 pe 100 paar, to 429']],
+  [[C.msg, 'US user → US region', 'US ka user apne paas wale US region me login karne aaya'], [C.acc, 'US region → Ghar Redis', 'Login jaisi zaroori cheez ki ginti ghar tak gayi, ~150 ms laga par chalta hai'], [C.msg, 'US user → US region', 'Feed ki ginti US me hi hui, door jaane ki zaroorat nahi'], [C.muted, 'US region → Ghar Redis', 'Har second US apni ginti ghar ke saath mila leta hai (sync)']],
 ];
 function frame(ph) {
   if (ph === 0) {

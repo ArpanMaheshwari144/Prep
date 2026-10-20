@@ -20,9 +20,9 @@ function gws(sub, st, c) {
   });
 }
 const STEPS = [
-  [[C.bad, 'Redis Cluster', 'main + copy dono gire'], [C.bad, 'Attacker → LB', 'key k1'], [C.bad, 'Gateway x4 → Server', 'Redis nahi: sab aage'], [C.bad, 'Server', 'CPU 100%: site band']],
-  [[C.bad, 'Redis Cluster', 'abhi bhi gira'], [C.bad, 'Attacker → LB', 'key k1'], [C.msg, 'LB → Gateway x4', 'LB baante'], [C.good, 'Gateway → Server', 'har ek se 25: kul 100']],
-  [[C.acc, 'had baanti nahi', 'har gateway ne 100 rakhi'], [C.bad, 'Attacker → LB', 'key k1'], [C.bad, 'Gateway → Server', 'har ek se 100: 400 andar']],
+  [[C.bad, 'Redis Cluster', 'Attack ke beech Redis main aur copy dono gir gaye'], [C.bad, 'Attacker → LB', 'Attacker key k1 se lagaataar request bhej raha'], [C.bad, 'Gateway x4 → Server', 'Gateway ke paas ginti nahi, to sab request aage jaane di'], [C.bad, 'Server', 'Server ka CPU 100% pe pahuncha aur poori site band ho gayi']],
+  [[C.bad, 'Redis Cluster', 'Redis abhi bhi band hai, saanjhi ginti kahin nahi'], [C.bad, 'Attacker → LB', 'Attacker abhi bhi wahi key k1 se request bhej raha'], [C.msg, 'LB → Gateway x4', 'LB ne request 4 gateway me baant di'], [C.good, 'Gateway → Server', 'Har gateway apni memory me ginta, had 100 / 4 = 25, kul 100 hi andar']],
+  [[C.acc, 'had baanti nahi', 'Galti se har gateway ko poori had 100 de di gayi'], [C.bad, 'Attacker → LB', 'Attacker ki request 4 gateway me bati'], [C.bad, 'Gateway → Server', 'Har gateway ne 100 andar jaane diye, kul 400, had 4 guna dheeli']],
 ];
 function frame(ph) {
   if (ph === 0) {

@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.bad, 'Bot → LB', '1000 / sec'], [C.bad, 'LB → App', 'mana wali bhi andar'], [C.bad, 'App', 'ginti dekhi: 429'], [C.bad, 'App → Bot', '429, par App tak aa ke. CPU 100%']],
-  [[C.bad, 'Bot → Gateway', '1000 / sec'], [C.bad, 'Gateway → Bot', '429 + Retry-After'], [C.good, 'Asli user → Gateway', 'had ke andar'], [C.good, 'Gateway → LB → App', 'sirf asli kaam, CPU 30%']],
-  [[C.acc, 'Gateway → Client 1', 'Retry-After: 28'], [C.acc, 'Gateway → Client 2', 'Retry-After: 31'], [C.acc, 'Gateway → Client 3', 'Retry-After: 33'], [C.good, 'alag-alag lautte', 'bheed nahi']],
+  [[C.bad, 'Bot → LB', 'Bot ne ek second me 1000 login request bheji'], [C.bad, 'LB → App', 'LB ne sab App tak pahuncha di, kyunki limiter App ke andar tha'], [C.bad, 'App', 'App ne har request ke liye ginti dekhi, tab jaake pata chala had paar hai'], [C.bad, 'App → Bot', 'App ne 429 diya, par kaam to ho chuka tha, CPU 100% pe']],
+  [[C.bad, 'Bot → Gateway', 'Bot ki 1000 request ab sabse pehle Gateway pe aayi'], [C.bad, 'Gateway → Bot', 'Gateway ne wahin 429 lautaya, saath me Retry-After bhi bataya'], [C.good, 'Asli user → Gateway', 'Asli user ki request had ke andar thi, Gateway ne aage jaane di'], [C.good, 'Gateway → LB → App', 'App tak sirf asli kaam pahuncha, CPU 30% pe aaram se']],
+  [[C.acc, 'Gateway → Client 1', 'Client 1 ko 28 sec baad aane ko bola'], [C.acc, 'Gateway → Client 2', 'Client 2 ko 31 sec, thoda alag waqt (jitter)'], [C.acc, 'Gateway → Client 3', 'Client 3 ko 33 sec; sab ek hi pal pe nahi lautenge'], [C.good, 'alag-alag lautte', 'Sabko 30 sec dete to 30 pe sab ek saath aate aur phir wahi bheed']],
 ];
 function frame(ph) {
   if (ph === 0) {

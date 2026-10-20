@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.acc, 'Redis → App-1', '4 padha: andar aane do'], [C.acc, 'Redis → App-2', '4 padha: App-1 ne abhi likha nahi'], [C.bad, 'App-1 → Redis', '5 likha'], [C.bad, 'App-2 → Redis', '5 likha. Andar 6, had 5']],
-  [[C.acc, 'App-1 → Redis', 'INCR'], [C.good, 'Redis → App-1', '5: andar'], [C.acc, 'App-2 → Redis', 'INCR, ek pal baad'], [C.bad, 'Redis → App-2', '6 > 5: 429']],
-  [[C.good, 'App → Redis', 'ginti +1 (INCR)'], [C.bad, 'App crash', '"60 sec baad mita" (EXPIRE)|bheja hi nahi'], [C.msg, 'Arpan → App', 'agle din login'], [C.bad, 'App → Redis → Arpan', 'ginti 6 > 5, kabhi nahi mitegi: 429']],
+  [[C.acc, 'Redis → App-1', 'App-1 ne Redis se ginti padhi: 4, had 5 se kam, to andar aane diya'], [C.acc, 'Redis → App-2', 'Usi pal App-2 ne bhi 4 padha, App-1 ne abhi likha nahi tha'], [C.bad, 'App-1 → Redis', 'App-1 ne 4 + 1 = 5 likha aur apna user andar bheja'], [C.bad, 'App-2 → Redis', 'App-2 ne bhi 5 likha; asli me 6 andar gaye, had 5 thi']],
+  [[C.acc, 'App-1 → Redis', 'App-1 ne INCR bheja: Redis padhna aur badhana ek kadam me karta hai'], [C.good, 'Redis → App-1', 'Redis ne 5 lautaya, had ke andar, App-1 ka user andar'], [C.acc, 'App-2 → Redis', 'App-2 ka INCR uske baad chala, kyunki Redis ek-ek command chalata hai'], [C.bad, 'Redis → App-2', 'Ginti 6 aayi, had se upar, to App-2 ne 429 bheja']],
+  [[C.good, 'App → Redis', 'App ne INCR se ginti 6 kar di'], [C.bad, 'App crash', 'EXPIRE (60 sec baad mita do) bhejne se pehle hi App gir gaya, key ki umar nahi lagi'], [C.msg, 'Arpan → App', 'Agle din Arpan ne login kiya, request dobara chalu App pe gayi'], [C.bad, 'App → Redis → Arpan', 'Key abhi bhi 6 pe atki thi, kabhi mitegi nahi, to har din 429']],
 ];
 function frame(ph) {
   if (ph === 0) {
