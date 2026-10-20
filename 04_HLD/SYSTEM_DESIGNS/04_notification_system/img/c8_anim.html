@@ -133,70 +133,50 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 8: har worker apni 100 / sec -> 100 worker = 100 guna -> company ne 429 diya.
-// Ilaaj: saanjha token bucket (Redis), kul 100 / sec. Agar: token nahi, worker badhe, 1 lakh email, Redis gira.
-const DUR = 21;
+// Card 8: sale me laakhon message, har worker apni speed se, company ne 429 diya. Ilaaj: saanjha token bucket (Redis),
+// kul 100 / sec. Agar: bucket wala Redis gira -> har worker apni chhoti local had (fail-closed).
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: har worker apni speed 100 / sec. 100 worker = 100 guna -> 429'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: sab worker ka ek saanjha token bucket (Redis). Token mila to bhejo'],
-  [6, YEL, 'AGAR', 'AGAR bucket se token nahi mila? -> line me intezaar, ye fail nahi'],
-  [9, YEL, 'AGAR', 'AGAR worker badh gaye? -> speed wahi. Bucket saanjha, kul 100 / sec'],
-  [12, YEL, 'AGAR', 'AGAR 1 lakh email, had kam? -> had badhwao + kai account lo'],
-  [15, YEL, 'AGAR', 'AGAR bucket wala Redis gir gaya? -> har worker apni chhoti local had'],
-  [18, GRN, 'WAPAS', 'WAPAS: sab worker ek hi bucket se token lete. Kul 100 / sec, 429 nahi'],
+  [0, RED, 'DIKKAT', 'DIKKAT: company ki had 100 / sec. Har worker apni taraf se 100 / sec, 4 worker = 400. 429'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: sab worker ek saanjha token bucket (Redis) se token lete. Kul 100 / sec. Pal-pal'],
+  [6, YEL, 'AGAR', 'AGAR bucket wala Redis hi gira? -> har worker apni chhoti had (100 / 4 = 25), fail-closed'],
 ];
-const WY = [55, 135, 215, 305], WN = ['W1', 'W2', 'W3', 'W100'];
 function setup() {}
-function ws(st, sub) {
-  WY.forEach((y, i) => B(30, y - 22, 90, 44, WN[i], sub, { st }));
-  T(75, 268, '...', { c: C.muted, size: 16 });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
-function bucket(st, sub) { B(330, 150, 150, 80, 'Redis bucket', sub || '100 token / sec', { st }); }
-function co(st, sub, nm) { B(680, 150, 180, 80, nm || 'SMS company', sub || 'had 100 / sec', { st }); }
-function toBucket(c, n, dash) { WY.forEach((y, i) => A(120, y, 328, 175 + i * 10, c, { n: i === 1 ? n : 0, at: 0.5, dash })); }
+function workers(sub, st, c) {
+  [0, 1, 2, 3].forEach(i => {
+    B(30, 25 + i * 80, 170, 55, 'Worker ' + (i + 1), sub, { st });
+    A(200, 52 + i * 80, 548, 175, c, { n: i === 1 ? 1 : 0, at: 0.5 });
+  });
+}
 function frame(ph) {
   if (ph === 0) {
-    ws('bad'); co('bad', 'had 100 / sec');
-    WY.forEach((y, i) => A(120, y, 678, 170 + i * 13, C.msg, { n: i === 1 ? 1 : 0, at: 0.4 }));
-    L(400, 40, 'har worker: apni 100 / sec', C.bad);
-    A(770, 232, 770, 280, C.bad, { n: 2, at: 0.5 }); L(790, 305, '100 guna aaye -> 429', C.bad);
+    workers('100 / sec', 'bad', C.bad);
+    B(550, 135, 200, 80, 'Email company', 'had 100 / sec', { st: 'bad' });
+    T(650, 250, 'aaye 400 / sec', { c: C.bad, b: 1, size: 16 });
+    num(650, 285, 2, C.bad); L(650, 310, '300 ko 429', C.bad);
   } else if (ph === 1) {
-    ws('good'); bucket('acc'); co('good', '429: 0');
-    toBucket(C.acc, 1); L(230, 40, 'pehle token lo', C.acc);
-    A(480, 190, 678, 190, C.good, { n: 2 }); L(580, 170, 'token mila -> bhejo', C.good);
-    L(405, 260, 'kul 100 / sec', C.good);
-  } else if (ph === 2) {
-    ws('acc', 'ruka'); bucket('acc', 'token: 0'); co('good', '429: 0');
-    num(405, 252, 1, C.acc); L(423, 257, 'khaali', C.acc, 'start');
-    toBucket(C.acc, 2, 1); L(230, 40, 'nahi mila', C.acc);
-    A(480, 190, 678, 190, C.line, { dash: 1 });
-    num(130, 340, 3, C.acc); L(148, 345, 'line me ruko, retry ginti nahi badhti', C.acc, 'start');
-    L(580, 25, 'hal: intezaar karo. Ye fail nahi, khabar phenko nahi', C.good);
-  } else if (ph === 3) {
-    ws('good'); bucket('acc'); co('good', '429: 0');
-    B(170, 15, 110, 44, 'naye worker', '', { st: 'acc' }); num(160, 12, 1, C.acc);
-    toBucket(C.acc, 2); A(225, 59, 350, 148, C.acc, { n: 2, at: 0.5 });
-    A(480, 190, 678, 190, C.good, { n: 3 }); L(580, 170, 'kul 100 / sec', C.good);
-    L(580, 25, 'hal: speed wahi rehti, bucket saanjha', C.good);
-  } else if (ph === 4) {
-    ws('good'); bucket('acc'); co('acc', 'had kam', 'Email company');
-    cells(150, 15, Array(6).fill(['email', C.acc]), { w: 52 }); num(490, 28, 1, C.acc); L(508, 33, '1 lakh email line me', C.acc, 'start');
-    toBucket(C.acc, 0);
-    A(480, 190, 678, 190, C.acc, { n: 2 }); L(580, 170, 'dheere', C.acc);
-    B(680, 280, 180, 50, 'account 2', '', { st: 'good' }); A(480, 215, 678, 300, C.good, { n: 3, at: 0.5 });
-    L(770, 360 - 15, 'had badhwao + kai account', C.good);
-    L(580, 110, 'hal: tab tak line dheere khaali', C.good);
-  } else if (ph === 5) {
-    ws('good', 'local had'); bucket('bad', 'gira'); co('good', 'had paar nahi');
-    num(405, 215, 1, C.bad); cross(500, 165);
-    const YB = [60, 118, 262, 322];
-    WY.forEach((y, i) => AP([[120, y], [600, YB[i]], [678, 175 + i * 10]], C.good, { n: i === 1 ? 2 : 0, at: 0.75, dash: 1 }));
-    L(580, 25, 'hal: chhoti local had pe chalo (fail-closed)', C.good);
-    L(580, 47, 'company ki had paar nahi hoti', C.good);
+    panel(0, 'token lo', ['Worker 1', 'email bhejna', ''], ['Redis bucket', '100 / sec, bache 1', 'acc'], 'token?', true, C.acc, 'pehle token');
+    panel(1, 'mila, bhejo', ['Worker 1', 'token mila', 'good'], ['Email company', 'ek email', 'good'], 'bheja', true, C.good, 'had ke andar');
+    panel(2, 'Worker 2', ['Worker 2', 'email bhejna', ''], ['Redis bucket', 'bache 0', 'bad'], 'token?', true, C.acc, 'is second ke khatam');
+    panel(3, 'ruko', ['Worker 2', 'line me ruka', 'acc'], ['Redis bucket', 'agle second 100', 'good'], '', true, C.acc, 'fail nahi, bas intezaar');
+    L(450, 320, 'worker kitne bhi hon, company tak kul 100 / sec. 429 nahi aata', C.good);
   } else {
-    ws('good'); bucket('good'); co('good', '429: 0');
-    toBucket(C.good, 1);
-    A(480, 190, 678, 190, C.good, { n: 2 }); L(580, 170, 'kul 100 / sec', C.good);
+    workers('apni had: 25 / sec', 'acc', C.good);
+    B(550, 135, 200, 80, 'Email company', 'had 100 / sec', { st: 'good' });
+    B(560, 20, 190, 50, 'Redis bucket', 'gira', { st: 'bad' }); cross(775, 45);
+    T(650, 250, '4 x 25 = 100', { c: C.good, b: 1, size: 16 });
+    L(650, 285, 'company ki had paar nahi', C.good);
+    L(450, 350, 'thoda dheema, par 429 nahi. Redis lauta to phir saanjha bucket', C.good);
   }
 }
 

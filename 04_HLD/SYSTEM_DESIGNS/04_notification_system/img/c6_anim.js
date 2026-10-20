@@ -1,64 +1,47 @@
-// Card 6: Twilio dheemi, har call 30 sec, saare SMS worker phanse, OTP ruka.
-// Ilaaj: 2-3 sec timeout + circuit breaker -> OTP SNS se. Agar: push / email pe asar, SNS bhi band. Wapas: test call.
-const DUR = 15;
+// Card 6: SMS company (Twilio) band nahi, dheemi. Har call 30 sec, saare SMS worker phanse, OTP bhi ruka.
+// Ilaaj: timeout 2-3 sec + circuit breaker, OTP doosri company (SNS) se. Agar: Twilio band, push / email pe asar? nahi.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: Twilio dheemi. Har call 30 sec, saare SMS worker phanse, OTP ruka'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: 2-3 sec me chhodo. Baar-baar fail -> breaker khula, OTP SNS se'],
-  [6, YEL, 'AGAR', 'AGAR Twilio ka breaker khula, push / email pe asar? -> nahi'],
-  [9, YEL, 'AGAR', 'AGAR SNS bhi band ho gaya? -> khabar line me rukti, phenko nahi'],
-  [12, GRN, 'WAPAS', 'WAPAS: thodi der baad Twilio ko test call. Theek hai to wapas'],
+  [0, RED, 'DIKKAT', 'DIKKAT: Twilio band nahi, dheema. Har call 30 sec, saare SMS worker wahin phanse'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: 2-3 sec me chhodo (timeout). Baar-baar fail: circuit breaker khula, SNS se bhejo'],
+  [6, YEL, 'AGAR', 'AGAR Twilio ka breaker khula, push / email pe asar? -> nahi, har company ka apna breaker'],
 ];
-const WY = [80, 190, 300];
 function setup() {}
-function workers(st) { WY.forEach((y, i) => { A(166, 190, 208, y, C.line); B(210, y - 22, 90, 44, `W${i + 1}`, '', { st }); }); }
-function line(items) { cells(20, 177, items, { w: 46 }); }
-function tw(st, sub) { B(680, 40, 180, 70, 'Twilio', sub, { st }); }
-function sns(st, sub) { B(680, 270, 180, 70, 'SNS', sub, { st }); }
-function cb(st, sub) { B(400, 155, 120, 70, 'Circuit', sub || 'breaker', { st }); }
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
+}
 function frame(ph) {
   if (ph === 0) {
-    line([['SMS', C.msg], ['SMS', C.msg], ['OTP', C.bad]]); workers('bad'); tw('bad', 'dheemi'); sns('', 'doosri company');
-    num(665, 25, 1, C.bad); L(770, 130, 'har call 30 sec', C.bad);
-    WY.forEach((y, i) => A(300, y, 678, 60 + i * 12, C.bad, { n: i === 1 ? 2 : 0, at: 0.5 }));
-    WY.forEach(y => L(255, y + 38, 'phansa', C.bad));
-    num(30, 155, 3, C.bad); L(48, 160, 'OTP line me ruka', C.bad, 'start');
-  } else if (ph === 1) {
-    line([['SMS', C.msg], ['SMS', C.msg]]); workers('good'); tw('bad', 'dheemi'); sns('good', 'doosri company');
-    WY.forEach(y => A(300, y, 398, 190, C.msg));
-    cb('bad', 'KHULA');
-    A(520, 170, 678, 80, C.bad, { n: 1, dash: 1, at: 0.4 }); L(600, 150, '2 sec me chhoda', C.bad, 'start');
-    cross(640, 101); num(440, 245, 2, C.bad); L(458, 250, 'baar-baar fail', C.bad, 'start');
-    A(520, 210, 678, 300, C.good, { n: 3, at: 0.4 }); L(600, 300, 'OTP SNS se', C.good, 'end');
-  } else if (ph === 2) {
-    const R = [['SMS worker', 'KHULA', 'bad', 'Twilio', 'bad'], ['Push worker', 'theek', 'good', 'FCM', 'good'],
-      ['Email worker', 'theek', 'good', 'Email co.', 'good']];
-    R.forEach(([w, s, st, co, cst], i) => {
-      const y = [75, 190, 305][i];
-      B(170, y - 25, 130, 50, w, '', { st: i ? 'good' : '' });
-      B(400, y - 30, 120, 60, 'breaker', s, { st });
-      B(680, y - 30, 180, 60, co, '', { st: cst });
-      A(300, y, 398, y, i ? C.good : C.msg, { n: i ? 2 : 0 });
-      A(520, y, 678, y, i ? C.good : C.bad, { n: i ? 3 : 0, dash: !i });
+    ['SMS worker 1', 'SMS worker 2', 'SMS worker 3'].forEach((w, i) => {
+      B(240, 30 + i * 100, 170, 60, w, '30 sec wait...', { st: 'bad' });
+      A(410, 60 + i * 100, 638, 165, C.bad, { dash: 1 });
     });
-    num(400, 32, 1, C.bad); cross(600, 75); L(600, 50, 'call band', C.bad);
-    L(600, 175, 'chal raha', C.good); L(600, 290, 'chal raha', C.good);
-    L(20, 140, 'hal: har company ka apna breaker,', C.good, 'start');
-    L(20, 160, 'worker alag line pe', C.good, 'start');
-  } else if (ph === 3) {
-    line([['SMS', C.msg], ['SMS', C.msg], ['OTP', C.acc]]); workers(''); tw('bad', 'band'); sns('bad', 'band');
-    cb('bad', 'KHULA');
-    WY.forEach(y => A(300, y, 398, 190, C.line));
-    num(665, 25, 1, C.bad); cross(875, 125);
-    A(520, 210, 678, 300, C.bad, { n: 2, dash: 1, at: 0.4 }); cross(875, 255);
-    AP([[460, 227], [460, 245], [90, 245], [90, 206]], C.acc, { n: 3, at: 0.3 }); L(380, 268, 'line me ruki, backoff se phir', C.acc);
-    num(30, 140, 4, C.bad); L(48, 145, 'OTP ka alert', C.bad, 'start');
-    L(20, 20, 'hal: khabar line me rukti, backoff se koshish, phenko nahi', C.good, 'start');
+    B(640, 130, 200, 70, 'Twilio', 'dheemi: 30 sec', { st: 'bad' });
+    B(20, 130, 150, 70, 'OTP line', 'Arpan ka OTP', { st: 'acc' });
+    A(170, 165, 238, 165, C.acc, { n: 1 }); num(325, 345, 2, C.bad); L(345, 350, 'koi worker khaali nahi', C.bad, 'start');
+    L(740, 240, 'band hoti to pata chalta,', C.bad); L(740, 260, 'dheemi me sab phanse', C.bad);
+  } else if (ph === 1) {
+    panel(0, 'timeout', ['SMS worker', '', ''], ['Twilio', '3 sec, jawab nahi', 'bad'], 'chhoda', true, C.acc, 'worker chhoot gaya');
+    panel(1, 'breaker khula', ['Breaker', 'Twilio: KHULA', 'bad'], ['Twilio', '5 me 5 fail', 'bad'], 'call roki', true, C.bad, 'ab Twilio ko call nahi');
+    panel(2, 'doosri company', ['SMS worker', 'Arpan ka OTP', ''], ['SNS', 'OTP gaya', 'good'], 'bheja', true, C.good, 'OTP ruka nahi');
+    panel(3, 'test call', ['Breaker', 'thodi der baad', 'acc'], ['Twilio', 'theek? haan', 'good'], 'ek call', true, C.good, 'theek to wapas Twilio');
+    L(450, 320, 'dheema matlab band maano. Khabar line me rukti, phenki nahi', C.good);
   } else {
-    line([['SMS', C.msg], ['SMS', C.msg]]); workers('good'); tw('good', 'theek'); sns('good', 'doosri company');
-    cb('good', 'wapas theek');
-    A(520, 165, 678, 62, C.acc, { n: 1, dash: 1, at: 0.4 }); L(560, 95, 'test call', C.acc, 'end');
-    A(678, 88, 522, 185, C.good, { n: 2, at: 0.5 }); L(640, 150, 'theek', C.good, 'start');
-    WY.forEach(y => A(300, y, 398, 190, C.good, { n: y === 300 ? 3 : 0, at: 0.4 }));
-    L(775, 130, 'SMS phir Twilio se', C.good);
+    [['SMS', 'Twilio: breaker KHULA', 'bad'], ['push', 'FCM: chalu', 'good'], ['email', 'SES: chalu', 'good']].forEach(([r, s, st], i) => {
+      const y = 30 + i * 105;
+      B(20, y, 140, 65, r + ' line', '');
+      B(260, y, 170, 65, r + ' worker', '', { st: st === 'bad' ? 'acc' : 'good' });
+      B(560, y, 250, 65, s.split(':')[0], s.split(':')[1], { st });
+      A(160, y + 32, 258, y + 32, C.msg, { n: i + 1 });
+      A(430, y + 32, 558, y + 32, st === 'bad' ? C.bad : C.good, { dash: st === 'bad' ? 1 : 0 });
+    });
+    L(450, 350, 'Twilio ka breaker sirf SMS rokta. Push aur email apni line, apni company', C.good);
   }
 }
