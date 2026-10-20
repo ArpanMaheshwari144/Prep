@@ -422,7 +422,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      [A] O(n) space: leftMax[] ek pass AAGE se · rightMax[] ek pass PEECHE se · ans += min(leftMax[i], rightMax[i]) - height[i].
 
-     [B] O(1) two-pointer (arrays hata, bas 2 var)  — ★ 24-Sep THEEK KIYA (Arpan ka apna code):
+     [B] O(1) two-pointer (arrays hata, bas 2 var):
            left=0, right=n-1;   leftMax=0, rightMax=0;   // max 0 se: abhi koi deewar dekhi hi nahi
            while (left < right):   // < : milne wali cell sabse unchi deewar, uspe paani nahi
                if (height[left] <= height[right]):          // chhoti ASLI deewar wali taraf niptao: doosri taraf badi pakki
@@ -437,9 +437,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                     to had isi chhoti taraf ke max se tay hoti.
          ★ MILNE KI JAGAH: dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
            badi deewar apni jagah rukti -> dono SABSE UNCHI deewar pe milte, jahan paani hota hi nahi.
-         ★ PURANA (GALAT) jo yahan likha tha: faisla `leftMax <= rightMax` pe, leftMax=height[0] se shuru.
-           max abhi current deewar ko shaamil kiye bina -> milne ki jagah galat -> ek khamba chhoot jaata.
-           [4,1,4,1] pe 0 (sahi 3) · [4,5,3,1,4,4] pe 3 (sahi 4). 12 test pass the, random input pe ~1/5 galat.
+         ★ TRAP: faisla height[left] <= height[right] (DEEWAR) pe lo, leftMax <= rightMax pe NAHI.
+           max pe liya to ek khamba chhoot jaata: [4,1,4,1] -> 0 aata (sahi 3).
      edge: empty -> 0.
 
  ┌──────────────────────────────────────────────────────────────
