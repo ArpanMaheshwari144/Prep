@@ -4,7 +4,7 @@ const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: ginti padhna aur badhana do alag kadam. Beech me doosra bhi wahi padh leta'],
   [3, GRN, 'ILAAJ', 'ILAAJ: INCR = padhna + badhana ek hi kadam. Redis ek ke baad ek chalata'],
-  [6, YEL, 'AGAR', 'AGAR INCR hua, EXPIRE se pehle crash? -> key bina umar, user hamesha block'],
+  [6, YEL, 'AGAR', 'AGAR ginti badhi, par "60 sec baad mita dena" bolne se pehle crash? -> hamesha block'],
 ];
 function setup() {}
 function frame(ph) {
@@ -32,15 +32,17 @@ function frame(ph) {
     L(450, 300, 'INCR = padhna + badhana ek hi kadam', C.good);
     L(450, 330, 'beech me koi doosra ghus hi nahi sakta', C.good);
   } else {
-    B(300, 20, 300, 120, 'Redis', '', {});
-    cells(325, 70, [['INCR', C.good], ['EXPIRE', C.bad]], { w: 120, h: 34 });
-    num(385, 125, 1, C.good); L(385, 160, 'ho gaya', C.good);
-    cross(585, 50); num(505, 125, 2, C.bad); L(505, 160, 'crash, hua hi nahi', C.bad);
-    B(330, 210, 240, 60, 'rate:Arpan', 'umar: kabhi nahi', { st: 'bad' }); num(450, 192, 3, C.bad);
-    B(20, 210, 110, 60, 'Arpan', 'aaj, kal...');
-    A(328, 240, 132, 240, C.bad, { n: 4, at: 0.5 }); L(215, 290, 'har baar 429', C.bad);
-    B(650, 40, 220, 60, 'Lua script', 'INCR + EXPIRE ek saath', { st: 'good' });
-    L(760, 130, 'hal: ya dono, ya koi nahi', C.good);
-    L(450, 340, 'key ban gayi par umar kabhi lagi hi nahi, to kabhi mitegi nahi', C.bad);
+    // App ne ginti badhai, "60 sec baad mita dena" bhejne se pehle App crash
+    B(20, 40, 150, 70, 'App', 'yahin crash', { st: 'bad' });
+    B(380, 40, 240, 70, 'Redis', 'ginti 6, kabhi nahi mitegi', { st: 'bad' });
+    A(170, 60, 378, 60, C.good, { n: 1 }); L(275, 45, 'ginti +1', C.good);
+    A(170, 95, 378, 95, C.bad, { n: 2, dash: 1, at: 0.3 }); cross(320, 95);
+    L(275, 135, '"60 sec baad mita dena" pahuncha hi nahi', C.bad);
+    B(380, 250, 240, 60, 'Arpan', 'agle din');
+    A(470, 248, 470, 112, C.msg, { n: 3 }); L(455, 190, 'login', C.msg, 'end');
+    A(530, 112, 530, 248, C.bad, { n: 4 }); L(545, 190, '6 > 5: 429', C.bad, 'start');
+    L(500, 340, 'aaj, kal, har din block', C.bad);
+    B(660, 150, 210, 80, 'hal: Lua script', 'dono kaam ek saath bhejo', { st: 'good' });
+    L(765, 255, 'ya dono hon, ya koi nahi', C.good);
   }
 }
