@@ -133,55 +133,50 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 8: S3 ka pakka link WhatsApp pe gaya, hamesha chalta. Ilaaj: DB me sirf S3 key, 5 min ka signed GET.
-// Agar: 5 min me download adhoora, 5 min ke andar link aage gaya. Wapas: 1 ghante baad khola -> expire.
-const DUR = 15;
+// Card 8: pakka S3 link WhatsApp pe, hamesha chalta. Ilaaj: DB me sirf key, har baar naya 5 min ka link. Agar: download adhoora.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: pakka S3 link WhatsApp group pe, koi bhi kabhi bhi khole'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: DB me sirf S3 key. Pehle maalik check, phir naya 5 min link'],
+  [0, RED, 'DIKKAT', 'DIKKAT: maine S3 ka pakka link WhatsApp group pe bhej diya. Wo hamesha chalta, koi bhi khole'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: DB me sirf S3 key. Download pe pehle maalik check, phir naya 5 min ka link (signed GET)'],
   [6, YEL, 'AGAR', 'AGAR 5 min me download adhoora? -> chalu download beech me nahi katta'],
-  [9, YEL, 'AGAR', 'AGAR 5 min ke andar link aage bhej diya? -> ye risk maana hai'],
-  [12, GRN, 'WAPAS', 'WAPAS: group me 1 ghante baad khola -> expire, nahi khula'],
 ];
 function setup() {}
-function base(o = {}, s = {}) {
-  B(20, 150, 110, 70, 'Arpan', '', { st: o.ar });
-  B(250, 150, 140, 70, 'Upload Svc', '', { st: o.up });
-  B(250, 20, 140, 60, 'DB', s.db || 'sirf S3 key', { st: o.db });
-  B(700, 150, 160, 70, 'S3', s.s3 || 'T-101 file', { st: o.s3 });
-  if (o.g) B(420, 270, 200, 60, 'WhatsApp group', 'koi bhi', { st: o.g });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base({ g: 'bad', db: 'bad', s3: 'bad' }, { db: 'pakka S3 link', s3: 'hamesha khula' });
-    AP([[100, 222], [100, 300], [418, 300]], C.bad, { n: 1, at: 0.6 }); L(115, 270, 'pakka link bheja', C.bad, 'start');
-    A(620, 290, 698, 222, C.bad, { n: 2, at: 0.5 }); L(680, 280, 'kabhi bhi khole', C.bad, 'start');
-    dots(5, 445, 245, C.bad, { gap: 22 });
-    T(560, 120, 'file sabke haath, hamesha', { c: C.bad, b: 1, size: 16 });
+    B(20, 130, 150, 70, 'Arpan', 'pakka link');
+    B(300, 130, 180, 70, 'WhatsApp group', '200 log', { st: 'bad' });
+    B(700, 40, 170, 70, 'S3', 'report.pdf');
+    B(700, 230, 170, 70, 'Koi bhi', '6 mahine baad', { st: 'bad' });
+    A(170, 165, 298, 165, C.msg, { n: 1 });
+    A(480, 185, 698, 255, C.bad, { n: 2 }); L(560, 245, 'aage gaya', C.bad, 'end');
+    A(785, 228, 785, 112, C.bad, { n: 3 }); L(800, 170, 'khola', C.bad, 'start');
+    A(700, 90, 482, 150, C.bad, { n: 4, dash: 1 }); L(590, 100, 'file, hamesha', C.bad);
+    L(450, 340, 'link me koi umar nahi. File sabke haath, hamesha ke liye', C.bad);
   } else if (ph === 1) {
-    base({ ar: 'good', up: 'good', db: 'good', s3: 'good' });
-    A(130, 175, 248, 175, C.msg, { n: 1, at: 0.5 }); L(190, 140, 'download', C.msg);
-    A(320, 148, 320, 82, C.good, { n: 2 }); L(335, 120, 'maalik check + S3 key', C.good, 'start');
-    A(248, 200, 132, 200, C.good, { n: 3, at: 0.5 }); L(190, 235, 'naya 5 min link', C.good);
-    AP([[75, 222], [75, 260], [780, 260], [780, 222]], C.good, { n: 4 }); L(430, 285, 'signed GET se download', C.good);
-  } else if (ph === 2) {
-    base({ ar: 'good', s3: 'good' });
-    AP([[75, 222], [75, 260], [780, 260], [780, 222]], C.good, { n: 1 });
-    bar(470, 290, 200, 18, 0.6, '', 1); L(570, 330, 'download chalu', C.good);
-    num(560, 120, 2, C.acc); L(578, 125, '5 min khatam', C.acc, 'start');
-    L(560, 70, 'hal: umar sirf shuru karne ki hai', C.good);
-  } else if (ph === 3) {
-    base({ ar: 'good', g: 'acc', s3: 'acc' }, { s3: 'khul gaya' });
-    AP([[100, 222], [100, 300], [418, 300]], C.acc, { n: 1, at: 0.6 }); L(115, 270, '5 min wala link', C.acc, 'start');
-    A(620, 290, 698, 222, C.acc, { n: 2, at: 0.5 }); L(680, 280, '5 min ke andar', C.acc, 'start');
-    L(560, 70, 'hal: risk maana. Zyada sensitive ho to', C.good);
-    L(560, 92, 'CloudFront signed URL + IP ki had', C.good);
+    panel(0, 'maanga', ['Arpan', 'download T-101', ''], ['Download Svc', 'maalik? haan', 'acc'], 'maanga', true, C.msg, 'pehle owner check');
+    panel(1, 'naya link', ['Arpan', 'link, 5 min', 'good'], ['Download Svc', 'DB se S3 key', 'acc'], 'signed GET', false, C.acc, 'har baar naya');
+    panel(2, 'download', ['Arpan', 'report.pdf', 'good'], ['S3', 'sign sahi', 'good'], 'file', false, C.good, '5 min ke andar');
+    panel(3, '1 ghanta baad', ['Group me koi', 'wahi link', 'bad'], ['S3', 'umar khatam', 'bad'], '403', false, C.bad, 'link aage gaya, bekaar');
+    L(450, 320, 'pakka link kabhi bahar nahi jaata, sirf 5 min wala', C.good);
   } else {
-    base({ ar: 'good', g: 'dim', s3: 'good' }, { s3: 'link expire' });
-    AP([[100, 222], [100, 300], [418, 300]], C.msg, { n: 1, at: 0.6 }); L(115, 270, '5 min wala link', C.msg, 'start');
-    A(620, 290, 698, 222, C.bad, { dash: 1, n: 2, at: 0.3 }); cross(672, 245);
-    L(680, 300, '1 ghante baad: nahi khula', C.bad, 'start');
-    L(560, 70, 'link aage gaya to bas 5 min tak chalta', C.good);
+    el('line', { x1: 80, y1: 160, x2: 820, y2: 160, stroke: C.line, 'stroke-width': 2 }, DYN);
+    [[80, '0 min'], [450, '5 min: link ki umar khatam'], [820, '10 min']].forEach(([x, t]) => T(x, 190, t, { c: C.muted, size: 12 }));
+    el('line', { x1: 450, y1: 110, x2: 450, y2: 175, stroke: C.acc, 'stroke-width': 2 }, DYN);
+    el('rect', { x: 376, y: 120, width: 370, height: 18, rx: 4, fill: C.good }, DYN);
+    num(376, 105, 1, C.good); L(396, 110, '4 min pe shuru, 9 min tak chala: poora', C.good, 'start');
+    el('rect', { x: 524, y: 230, width: 60, height: 18, rx: 4, fill: C.bad }, DYN);
+    num(524, 270, 2, C.bad); L(544, 275, '6 min pe naya shuru: 403', C.bad, 'start');
+    L(450, 340, 'umar sirf shuru karne ki hai. Chalu download beech me nahi katta', C.good);
   }
 }
 

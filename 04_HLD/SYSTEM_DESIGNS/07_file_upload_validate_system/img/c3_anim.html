@@ -133,63 +133,51 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 3: 4.5 GB pe wifi gaya, ek lamba upload bekaar. Ilaaj: multipart, har tukde ki rasid (ETag).
-// Agar: app band, kal wapas (ListParts); COMPLETE aaya hi nahi (lifecycle). Wapas: bache tukde + COMPLETE.
-const DUR = 15;
+// Card 3: 4.5 GB chadh gayi, wifi gaya, shuru se. Ilaaj: multipart, rasid S3 pe. Agar: app band, kal -> ListParts.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: ek lamba upload, 4.5 GB pe wifi gaya. Phir 0 se 5 GB'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: 100 tukde, har tukde ki rasid (ETag). Wifi gaya to sirf 91 - 100'],
+  [0, RED, 'DIKKAT', 'DIKKAT: 4.5 GB chadh chuki thi, wifi chala gaya. Ek lamba upload, ab shuru se 5 GB'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: 100 tukde, har tukde ki rasid (ETag) S3 pe. Wifi gaya to sirf bache tukde'],
   [6, YEL, 'AGAR', 'AGAR app band, kal wapas aaya? -> S3 se poochho (ListParts U-9)'],
-  [9, YEL, 'AGAR', 'AGAR COMPLETE aaya hi nahi? -> S3 lifecycle adhoore tukde hataye'],
-  [12, GRN, 'WAPAS', 'WAPAS: bache 91 - 100 gaye, phir COMPLETE -> poori file S3 pe'],
 ];
 function setup() {}
-function base(o = {}, s = {}) {
-  B(20, 150, 110, 70, 'Phone', s.ph || '5 GB', { st: o.ph });
-  B(690, 150, 180, 70, 'S3', s.s3 || '', { st: o.s3 });
-}
-// 10 dabbe = 100 tukde (har dabba 10 tukde); upto tak hara, baaki rang c
-function parts(upto, c, y) {
-  const it = [];
-  for (let i = 1; i <= 10; i++) it.push([String(i * 10), i * 10 <= upto ? C.good : c]);
-  cells(150, y, it, { w: 46, h: 26 });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base({ ph: 'bad', s3: 'bad' }, { s3: '' });
-    bar(170, 180, 480, 26, 0.9, '');
-    T(410, 170, 'ek lamba upload: 4.5 GB', { c: C.acc, size: 13 });
-    A(130, 193, 168, 193, C.acc);
-    num(612, 245, 1, C.bad); L(630, 250, 'wifi gaya', C.bad, 'start'); cross(665, 193);
-    num(410, 290, 2, C.bad); L(410, 320, 'sab bekaar, phir 0 se 5 GB', C.bad);
+    B(20, 130, 160, 70, 'Arpan ka phone', 'video 5 GB');
+    B(560, 110, 310, 110, 'S3', '', { st: 'bad' });
+    bar(580, 160, 270, 14, 0.9, ''); T(715, 200, '4.5 GB, adhoora', { c: C.bad, size: 12 });
+    A(180, 150, 558, 150, C.msg, { n: 1 }); L(370, 135, 'ek lamba upload', C.msg);
+    num(370, 175, 2, C.bad); L(390, 180, 'wifi gaya', C.bad, 'start'); cross(330, 175);
+    A(180, 200, 558, 200, C.bad, { n: 3, dash: 1 }); L(370, 225, 'phir 0 se 5 GB', C.bad);
+    L(450, 320, '90% pe toota, aur sab bekaar', C.bad);
   } else if (ph === 1) {
-    base({ ph: 'good', s3: 'good' }, { s3: 'rasid: 1 - 90' });
-    parts(90, C.msg, 80);
-    AP([[75, 148], [75, 93], [148, 93]], C.good, { n: 1 }); L(150, 68, 'kai tukde saath', C.good, 'start');
-    AP([[648, 93], [780, 93], [780, 148]], C.good, { n: 2, at: 0.4 }); L(870, 68, 'har tukde ki rasid', C.good, 'end');
-    num(400, 190, 3, C.bad); L(418, 195, 'wifi gaya', C.bad, 'start');
-    A(130, 205, 688, 205, C.msg, { n: 4, at: 0.3 }); L(410, 240, 'sirf bache 91 - 100', C.msg);
-  } else if (ph === 2) {
-    base({ ph: 'acc', s3: 'good' }, { ph: 'kal wapas', s3: 'rasid: 1 - 90' });
-    num(75, 125, 1, C.acc); L(93, 130, 'app band tha', C.acc, 'start');
-    A(130, 170, 688, 170, C.msg, { n: 2, at: 0.3 }); L(410, 160, 'ListParts U-9', C.msg);
-    A(688, 205, 132, 205, C.good, { n: 3, at: 0.3 }); L(410, 235, 'rasid: 1 - 90', C.good);
-    parts(90, C.msg, 260);
-    L(410, 320, 'hal: rasid S3 pe hai, app pe nahi', C.good);
-  } else if (ph === 3) {
-    base({ ph: 'bad', s3: 'acc' }, { ph: 'gaya', s3: 'adhoore tukde' });
-    B(690, 280, 180, 60, 'S3 lifecycle', 'kuch din (jaise 7)', { st: 'good' });
-    parts(90, C.bad, 80);
-    A(130, 205, 688, 205, C.bad, { dash: 1 }); cross(410, 205); num(380, 245, 1, C.bad);
-    L(398, 250, 'COMPLETE nahi aaya', C.bad, 'start');
-    A(780, 278, 780, 222, C.good, { n: 2 }); L(765, 255, 'abort, hata diya', C.good, 'end');
-    L(410, 320, 'hal: lifecycle adhoore uploads ke bytes khud hataata', C.good);
+    B(20, 130, 160, 70, 'Arpan ka phone', 'video, 100 tukde');
+    B(400, 30, 470, 200, 'S3: upload U-9', '', { st: 'good' });
+    cells(420, 75, [['1', C.good], ['2', C.good], ['...', C.good], ['90', C.good]], { w: 70, h: 32 });
+    cells(420, 120, [['91', C.line], ['...', C.line], ['100', C.line]], { w: 70, h: 32 });
+    T(800, 92, '90 rasid', { c: C.good, size: 12 }); T(800, 137, 'baaki', { c: C.muted, size: 12 });
+    A(180, 140, 398, 90, C.good, { n: 1 }); L(280, 95, 'tukde 1-90', C.good);
+    num(80, 230, 2, C.bad); L(100, 235, 'wifi gaya', C.bad, 'start');
+    A(180, 170, 398, 137, C.acc, { n: 3 }); L(300, 180, 'sirf 91-100', C.acc);
+    A(180, 195, 398, 210, C.good, { n: 4 }); L(290, 228, 'COMPLETE', C.good);
+    L(450, 320, 'jis tukde ki rasid S3 pe, wo pakka pahuncha. Shuru se kuch nahi', C.good);
   } else {
-    base({ ph: 'good', s3: 'good' }, { s3: 'poori file' });
-    parts(100, C.good, 80);
-    A(130, 170, 688, 170, C.good, { n: 1, at: 0.3 }); L(410, 160, '91 - 100', C.good);
-    A(130, 205, 688, 205, C.good, { n: 2, at: 0.3 }); L(410, 235, 'COMPLETE', C.good);
-    L(410, 300, 'user ko shuru se kuch nahi', C.good);
+    B(20, 90, 180, 150, 'Arpan ka phone', 'kal khola', { st: 'acc' });
+    B(620, 90, 250, 150, 'S3: upload U-9', '1-90 ki rasid', { st: 'good' });
+    A(200, 120, 618, 120, C.acc, { n: 1 }); L(330, 106, 'ListParts U-9', C.acc);
+    A(618, 170, 202, 170, C.good, { n: 2 }); L(330, 156, '1-90 aa chuke', C.good);
+    A(200, 220, 618, 220, C.good, { n: 3 }); L(330, 206, 'sirf 91-100', C.good);
+    L(450, 310, 'rasid S3 pe hai, phone pe nahi. Phone band ho to bhi kuch nahi khota', C.good);
   }
 }
 

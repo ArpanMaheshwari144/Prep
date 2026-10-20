@@ -37,21 +37,13 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 Cue: ASYNC + TRACKING ID (queue, worker)
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png" width="900">
+<img src="img/c1_1.png?v=2" width="900">
 
-<img src="img/c1_2.png" width="900">
+<img src="img/c1_2.png?v=2" width="900">
 
-<img src="img/c1_3.png" width="900">
-
-<img src="img/c1_4.png" width="900">
-
-<img src="img/c1_5.png" width="900">
-
-<img src="img/c1_6.png" width="900">
-
-<img src="img/c1_7.png" width="900">
+<img src="img/c1_3.png?v=2" width="900">
 
 </details>
 
@@ -94,17 +86,13 @@ NAHI    Upload Svc file S3 me rakhe aur Validator call karke jawab ka intezaar k
 
 Cue: PRESIGNED URL, bytes seedha S3
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png" width="900">
+<img src="img/c2_1.png?v=2" width="900">
 
-<img src="img/c2_2.png" width="900">
+<img src="img/c2_2.png?v=2" width="900">
 
-<img src="img/c2_3.png" width="900">
-
-<img src="img/c2_4.png" width="900">
-
-<img src="img/c2_5.png" width="900">
+<img src="img/c2_3.png?v=2" width="900">
 
 </details>
 
@@ -139,17 +127,13 @@ NAHI    bytes server ke raaste bhejo
 
 Cue: MULTIPART, sirf bache tukde
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png" width="900">
+<img src="img/c3_1.png?v=2" width="900">
 
-<img src="img/c3_2.png" width="900">
+<img src="img/c3_2.png?v=2" width="900">
 
-<img src="img/c3_3.png" width="900">
-
-<img src="img/c3_4.png" width="900">
-
-<img src="img/c3_5.png" width="900">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
@@ -176,17 +160,13 @@ NAHI    ek hi lamba upload
 
 Cue: SWEEPER job (atki file)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png" width="900">
+<img src="img/c4_1.png?v=2" width="900">
 
-<img src="img/c4_2.png" width="900">
+<img src="img/c4_2.png?v=2" width="900">
 
-<img src="img/c4_3.png" width="900">
-
-<img src="img/c4_4.png" width="900">
-
-<img src="img/c4_5.png" width="900">
+<img src="img/c4_3.png?v=2" width="900">
 
 </details>
 
@@ -216,19 +196,13 @@ NAHI    sweeper hi na ho
 
 Cue: CACHE Redis + READ REPLICA
 
-<details><summary>kahani dekho (6 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png" width="900">
+<img src="img/c5_1.png?v=2" width="900">
 
-<img src="img/c5_2.png" width="900">
+<img src="img/c5_2.png?v=2" width="900">
 
-<img src="img/c5_3.png" width="900">
-
-<img src="img/c5_4.png" width="900">
-
-<img src="img/c5_5.png" width="900">
-
-<img src="img/c5_6.png" width="900">
+<img src="img/c5_3.png?v=2" width="900">
 
 </details>
 
@@ -264,17 +238,13 @@ NAHI    har poochh seedha DB pe
 
 Cue: PARENT id + CHILD id
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png" width="900">
+<img src="img/c6_1.png?v=2" width="900">
 
-<img src="img/c6_2.png" width="900">
+<img src="img/c6_2.png?v=2" width="900">
 
-<img src="img/c6_3.png" width="900">
-
-<img src="img/c6_4.png" width="900">
-
-<img src="img/c6_5.png" width="900">
+<img src="img/c6_3.png?v=2" width="900">
 
 </details>
 
@@ -302,17 +272,13 @@ NAHI    har file ka alag id hi rakho
 
 Cue: OWNER CHECK (AUTHZ), 403
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png" width="900">
+<img src="img/c7_1.png?v=2" width="900">
 
-<img src="img/c7_2.png" width="900">
+<img src="img/c7_2.png?v=2" width="900">
 
-<img src="img/c7_3.png" width="900">
-
-<img src="img/c7_4.png" width="900">
-
-<img src="img/c7_5.png" width="900">
+<img src="img/c7_3.png?v=2" width="900">
 
 </details>
 
@@ -339,17 +305,13 @@ NAHI    id hai to file de do
 
 Cue: SIGNED GET, 5 min ka naya paas
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png" width="900">
+<img src="img/c8_1.png?v=2" width="900">
 
-<img src="img/c8_2.png" width="900">
+<img src="img/c8_2.png?v=2" width="900">
 
-<img src="img/c8_3.png" width="900">
-
-<img src="img/c8_4.png" width="900">
-
-<img src="img/c8_5.png" width="900">
+<img src="img/c8_3.png?v=2" width="900">
 
 </details>
 
@@ -375,17 +337,13 @@ NAHI    pakka link DB me rakh ke de do
 
 Cue: MAGIC BYTES (pehle kuch byte)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png" width="900">
+<img src="img/c9_1.png?v=2" width="900">
 
-<img src="img/c9_2.png" width="900">
+<img src="img/c9_2.png?v=2" width="900">
 
-<img src="img/c9_3.png" width="900">
-
-<img src="img/c9_4.png" width="900">
-
-<img src="img/c9_5.png" width="900">
+<img src="img/c9_3.png?v=2" width="900">
 
 </details>
 

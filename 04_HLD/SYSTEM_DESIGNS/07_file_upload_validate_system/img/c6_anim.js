@@ -1,61 +1,48 @@
-// Card 6: folder (1000 file), har file ka alag id, folder ka haal nahi. Ilaaj: parent P-1 + child id, done_count.
-// Agar: ek file FAILED (PARTIAL), do worker ek saath +1. Wapas: fail wali dobara, P-1 DONE.
-const DUR = 15;
+// Card 6: folder (1000 file), har file alag id, folder ka haal nahi. Ilaaj: parent P-1 + child, done_count. Agar: ek FAILED.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: 1000 file, har file ka alag id. Folder ka koi haal nahi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: folder P-1, har file child. Child DONE pe done_count +1'],
+  [0, RED, 'DIKKAT', 'DIKKAT: maine poora folder daala (1000 file). Har file ka alag id, "folder ho gaya?" kisi ko pata nahi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: folder ka ek id P-1, har file uska child. Child DONE pe P-1 ki ginti +1. Sab DONE to P-1 DONE'],
   [6, YEL, 'AGAR', 'AGAR folder ki koi file FAILED? -> P-1 PARTIAL, sirf wahi dobara'],
-  [9, YEL, 'AGAR', 'AGAR do worker ek saath done_count +1? -> ek UPDATE, ginti nahi khoti'],
-  [12, GRN, 'WAPAS', 'WAPAS: fail wali file dobara DONE -> sab DONE, P-1 DONE'],
 ];
 function setup() {}
-function kids(c, mid) {
-  cells(360, 172, [['file 1', c], ['file 2', mid || c], ['...', C.muted], ['file 1000', c]], { w: 58 });
-}
-function base(o = {}, s = {}) {
-  B(20, 150, 110, 70, 'Phone', 'folder: 1000', { st: o.ph });
-  B(180, 150, 130, 70, 'Upload Svc', s.up || '', { st: o.up });
-  if (!o.noP) B(690, 150, 180, 70, 'P-1 (folder)', s.p || '', { st: o.p });
-  if (!o.noW) B(410, 275, 140, 60, 'Worker', '', { st: o.wk });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base({ noP: 1, noW: 1, ph: 'bad' });
-    A(130, 185, 178, 185, C.msg, { n: 1, at: 0.45 });
-    A(310, 185, 358, 185, C.msg); kids(C.msg);
-    num(75, 125, 2, C.bad); L(93, 130, '"folder ho gaya?"', C.bad, 'start');
-    L(480, 230, '1000 id khud dekhne padte', C.bad);
-    B(690, 150, 180, 70, 'folder ka haal', 'koi nahi', { st: 'bad' });
-    T(780, 260, 'ANDHA', { c: C.bad, b: 1, size: 20 });
+    B(20, 130, 150, 70, 'Arpan ka app', 'folder: 1000 file');
+    B(330, 130, 170, 70, 'Upload Svc', '');
+    B(620, 60, 260, 170, '1000 alag id', '', { st: 'bad' });
+    cells(640, 105, [['T-1', C.acc], ['T-2', C.acc], ['...', C.line], ['T-1000', C.acc]], { w: 55, h: 30 });
+    A(170, 150, 328, 150, C.msg, { n: 1 }); L(250, 135, '1000 file', C.msg);
+    A(500, 165, 618, 165, C.acc, { n: 2 }); L(560, 150, 'id', C.acc);
+    A(328, 185, 172, 185, C.bad, { n: 3 }); L(250, 210, '"folder ho gaya?"', C.bad);
+    num(750, 200, 4, C.bad); L(750, 255, '1000 id khud dekho', C.bad);
+    L(450, 330, 'folder ka koi haal hi nahi, sirf 1000 tukde', C.bad);
   } else if (ph === 1) {
-    base({ ph: 'good', up: 'good', p: 'good', wk: 'good' }, { up: 'batch init', p: 'done_count: 1000' });
-    A(130, 175, 178, 175, C.msg, { n: 1, at: 0.45 });
-    A(178, 200, 132, 200, C.good, { n: 2, at: 0.5 }); L(75, 250, '1000 URL + child id', C.good);
-    A(310, 185, 358, 185, C.line); kids(C.good);
-    A(480, 273, 480, 200, C.good, { n: 3 }); L(495, 245, 'child DONE', C.good, 'start');
-    A(550, 305, 760, 222, C.good, { n: 4, at: 0.5 }); L(670, 300, '+1', C.good, 'start');
-    L(780, 130, 'sab DONE to P-1 DONE', C.good);
-  } else if (ph === 2) {
-    base({ p: 'acc', wk: 'acc' }, { p: 'PARTIAL' });
-    A(310, 185, 358, 185, C.line); kids(C.good, C.bad);
-    num(451, 150, 1, C.bad); L(469, 155, 'FAILED', C.bad, 'start');
-    A(550, 305, 760, 222, C.acc, { n: 2, at: 0.5 }); L(670, 300, 'ek FAILED', C.acc, 'start');
-    AP([[451, 273], [451, 202]], C.good, { n: 3 }); L(436, 255, 'sirf wahi dobara', C.good, 'end');
-    L(780, 130, 'hal: poora folder nahi', C.good);
-  } else if (ph === 3) {
-    base({ noW: 1, p: 'good' }, { p: 'done_count + 1' });
-    B(420, 30, 140, 60, 'Worker 1', '', { st: 'acc' });
-    B(420, 275, 140, 60, 'Worker 2', '', { st: 'acc' });
-    A(560, 70, 688, 165, C.acc, { n: 1, at: 0.4 }); A(560, 295, 688, 205, C.acc, { n: 1, at: 0.4 });
-    L(612, 60, '+1', C.acc, 'start'); L(612, 320, '+1', C.acc, 'start');
-    L(780, 250, 'DB ke andar, ginti nahi khoti', C.good);
-    L(780, 130, 'hal: ek hi UPDATE', C.good);
-    L(20, 345, 'UPDATE done_count = done_count + 1', C.good, 'start');
+    panel(0, 'batch init', ['Arpan ka app', 'P-1 + 1000 URL', 'good'], ['Upload Svc', 'P-1, child C-1..', 'acc'], 'diya', false, C.acc, 'ek baar me');
+    panel(1, 'ek file DONE', ['Worker', 'C-7 jaancha', 'good'], ['Status DB', 'C-7: DONE', 'good'], 'likha', true, C.good, 'child ka haal');
+    panel(2, 'ginti', ['Worker', 'C-7 DONE', ''], ['P-1', 'done 999 / 1000', 'acc'], '+1', true, C.acc, 'ek UPDATE, DB ke andar');
+    panel(3, 'sab DONE', ['Arpan ka app', 'P-1: DONE', 'good'], ['P-1', '1000 / 1000', 'good'], 'ek poochh', false, C.good, 'ek id, poora haal');
+    L(450, 320, 'folder ka haal = bachchon ka jod', C.good);
   } else {
-    base({ ph: 'good', p: 'good', wk: 'good' }, { p: 'DONE (1000)' });
-    A(310, 185, 358, 185, C.line); kids(C.good);
-    AP([[451, 273], [451, 202]], C.good, { n: 1 }); L(436, 255, 'dobara DONE', C.good, 'end');
-    A(550, 305, 760, 222, C.good, { n: 2, at: 0.5 }); L(670, 300, '+1', C.good, 'start');
-    num(780, 125, 3, C.good); L(798, 130, 'P-1 DONE', C.good, 'start');
+    B(20, 40, 170, 70, 'Arpan ka app', 'P-1: PARTIAL', { st: 'acc' });
+    B(330, 30, 280, 110, 'P-1 (folder)', '', { st: 'acc' });
+    cells(345, 75, [['999 DONE', C.good], ['C-42 FAILED', C.bad]], { w: 120, h: 32 });
+    B(20, 240, 170, 70, 'Upload Svc', '');
+    B(700, 240, 170, 70, 'Worker', 'C-42 jaancha', { st: 'good' });
+    A(328, 75, 192, 75, C.acc, { n: 1 }); L(260, 60, 'PARTIAL', C.acc);
+    A(105, 112, 105, 238, C.msg, { n: 2 }); L(120, 180, 'sirf C-42 dobara', C.msg, 'start');
+    A(190, 275, 698, 275, C.good, { n: 3 }); L(445, 262, 'ek file, 999 nahi', C.good);
+    A(785, 238, 612, 120, C.good, { n: 4 }); L(735, 165, 'P-1: DONE', C.good, 'start');
+    L(450, 345, 'ek file fail hui to sirf wahi dobara, poora folder nahi', C.good);
   }
 }

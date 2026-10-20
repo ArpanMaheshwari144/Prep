@@ -133,54 +133,48 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 2: 5 GB server ke raaste S3 (bytes do baar). Ilaaj: signed URL, phone seedha S3.
-// Agar: 50 GB bheje, /complete aaya hi nahi. Wapas: /complete T-102 -> jaanch ki line.
-const DUR = 15;
+// Card 2: 5 GB server ke raaste S3. Ilaaj: presigned URL, bytes seedha S3. Agar: 50 GB bheje -> S3 khud reject.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: 5 GB phone -> server -> S3. Bytes do baar, thread minuton atka'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: server sirf signed URL (10 min) + T-102. Phone 5 GB seedha S3'],
+  [0, RED, 'DIKKAT', 'DIKKAT: meri 5 GB video pehle hamare server pe aayi, phir wahi server se S3. Bytes do baar'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: server sirf 10 min ka signed URL + T-102 deta. Phone 5 GB seedha S3 pe bhejta'],
   [6, YEL, 'AGAR', 'AGAR had 5 GB, koi 50 GB bhej de? -> had paas me, S3 khud reject'],
-  [9, YEL, 'AGAR', 'AGAR "/complete" aaya hi nahi? -> S3 event se queue me daalo'],
-  [12, GRN, 'WAPAS', 'WAPAS: phone ne "/complete T-102" bola -> T-102 jaanch ki line me'],
 ];
 function setup() {}
-function base(o = {}, s = {}) {
-  B(20, 150, 110, 70, 'Phone', s.ph || '5 GB video', { st: o.ph });
-  B(340, 20, 160, 70, 'Upload Svc', s.up || '', { st: o.up });
-  B(700, 150, 160, 70, 'S3', s.s3 || '', { st: o.s3 });
-  if (o.q) B(700, 280, 160, 60, 'Kafka', s.q || 'jaanch ki line', { st: o.q });
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
 function frame(ph) {
   if (ph === 0) {
-    base({ up: 'bad', s3: 'acc' }, { up: 'thread atka' });
-    A(130, 160, 338, 60, C.bad, { n: 1, at: 0.45 }); L(200, 90, '5 GB server pe', C.bad);
-    A(500, 60, 698, 160, C.bad, { n: 2, at: 0.5 }); L(650, 90, 'wahi 5 GB phir S3', C.bad, 'start');
-    T(420, 230, 'bytes do baar', { c: C.bad, b: 1, size: 22 });
-    L(420, 262, 'mehnga bhi, dheema bhi', C.bad);
+    B(20, 130, 150, 70, 'Arpan ka phone', 'video 5 GB');
+    B(330, 110, 220, 110, 'Upload Svc', '5 GB beech me', { st: 'bad' });
+    bar(350, 180, 180, 12, 0.95, '');
+    B(700, 130, 170, 70, 'S3', '');
+    A(170, 165, 328, 165, C.bad, { n: 1 }); L(250, 150, '5 GB', C.bad);
+    A(550, 165, 698, 165, C.bad, { n: 2 }); L(625, 150, 'phir 5 GB', C.bad);
+    num(440, 260, 3, C.bad); L(460, 265, 'thread minuton atka', C.bad, 'start');
+    L(450, 320, 'bytes do baar chale, server pe bojh, mehnga bhi', C.bad);
   } else if (ph === 1) {
-    base({ ph: 'good', up: 'good', s3: 'good' }, { up: 'bytes ko haath nahi', s3: 'T-102: 5 GB' });
-    A(130, 155, 338, 45, C.msg, { n: 1, at: 0.5 }); L(205, 82, 'init', C.msg, 'end');
-    A(338, 75, 132, 180, C.good, { n: 2, at: 0.5 }); L(260, 150, 'signed URL (10 min) + T-102', C.good, 'start');
-    A(130, 200, 698, 200, C.good, { n: 3, w: 4 }); L(415, 230, '5 GB seedha S3', C.good);
-  } else if (ph === 2) {
-    base({ ph: 'bad', up: 'good', s3: 'good' }, { ph: '50 GB', up: 'paas me had 5 GB', s3: 'had 5 GB' });
-    A(130, 200, 698, 200, C.bad, { dash: 1, n: 1, at: 0.3 }); L(300, 230, '50 GB bheje', C.bad);
-    cross(670, 200); num(640, 250, 2, C.bad); L(658, 255, 'S3 khud reject', C.bad, 'start');
-    L(450, 300, 'hal: POST me content-length-range, PUT me size sign hota', C.good);
-    L(450, 322, 'S3 event pe size phir se dekh lo', C.good);
-  } else if (ph === 3) {
-    base({ ph: 'acc', up: '', s3: 'good', q: 'good' }, { s3: 'T-102: aa gayi' });
-    A(130, 200, 698, 200, C.good, { n: 1 }); L(415, 230, '5 GB pahunchi', C.good);
-    A(130, 160, 338, 60, C.bad, { dash: 1 }); cross(240, 110); num(205, 90, 2, C.bad);
-    L(190, 60, '/complete nahi aaya', C.bad, 'end');
-    A(780, 222, 780, 278, C.good, { n: 3 }); L(760, 255, 'S3 event: file aa gayi', C.good, 'end');
-    L(560, 330, 'hal: client pe bharosa nahi', C.good, 'end');
+    panel(0, 'paas maanga', ['Arpan ka phone', 'video 5 GB', ''], ['Upload Svc', '', ''], 'maanga', true, C.msg, 'bytes nahi bheje');
+    panel(1, 'paas mila', ['Arpan ka phone', 'URL + T-102', 'good'], ['Upload Svc', 'signed URL, 10 min', 'acc'], 'diya', false, C.acc, 'sirf ek file ke liye');
+    panel(2, 'seedha S3', ['Arpan ka phone', '', ''], ['S3', '5 GB aaya', 'good'], '5 GB', true, C.good, 'server beech me nahi');
+    panel(3, 'complete', ['Arpan ka phone', '', ''], ['Upload Svc', 'T-102: aaya', 'good'], '/complete', true, C.good, 'ab jaanch line me');
+    L(450, 320, 'server sirf paas deta, bojh S3 uthata', C.good);
   } else {
-    base({ ph: 'good', up: 'good', s3: 'good', q: 'good' }, { s3: 'T-102: 5 GB', q: 'T-102' });
-    A(130, 160, 338, 60, C.msg, { n: 1, at: 0.45 }); L(200, 90, '/complete T-102', C.msg);
-    AP([[500, 70], [600, 70], [600, 310], [698, 310]], C.good, { n: 2, at: 0.5 });
-    L(615, 170, 'jaancho', C.good, 'start');
-    L(415, 230, 'bytes pehle hi S3 me', C.muted);
+    B(20, 130, 170, 80, 'Koi app', '50 GB bhejna', { st: 'bad' });
+    B(360, 30, 200, 70, 'Upload Svc', 'paas: max 5 GB', { st: 'acc' });
+    B(680, 130, 190, 80, 'S3', 'size paas se milao', { st: 'good' });
+    A(358, 75, 192, 145, C.acc, { n: 1 }); L(265, 90, 'paas (max 5 GB)', C.acc);
+    A(190, 170, 678, 170, C.bad, { n: 2, at: 0.4 }); L(400, 160, '50 GB bheja', C.bad);
+    A(678, 195, 192, 195, C.good, { n: 3, at: 0.6 }); L(450, 225, 'reject: paas me 5 GB likha', C.good);
+    L(450, 300, 'had paas me sign hai, S3 khud rokta. Hamara server kuch nahi karta', C.good);
   }
 }
 

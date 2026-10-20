@@ -1,58 +1,49 @@
-// Card 9: naam report.pdf, andar EXE. Ilaaj: worker pehle 4 byte padhta (magic bytes), reject.
-// Agar: shuru PDF par andar virus (scan), fail file ka kya (quarantine). Wapas: asli PDF -> DONE.
-const DUR = 15;
+// Card 9: naam report.pdf, andar EXE. Ilaaj: magic bytes (pehle 4 byte). Agar: PDF par andar virus -> scan bhi.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: naam report.pdf, type application/pdf, andar virus.exe'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: worker pehle 4 byte padhta. "MZ" = EXE, "%PDF" nahi -> reject'],
+  [0, RED, 'DIKKAT', 'DIKKAT: Ravi ne file daali: naam report.pdf, type application/pdf. Andar virus.exe nikla'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: worker file ke pehle 4 byte padhta: "%PDF" to PDF, "MZ" to EXE, reject (magic bytes)'],
   [6, YEL, 'AGAR', 'AGAR shuru PDF, andar virus? -> magic bytes sirf type, scan bhi chahiye'],
-  [9, YEL, 'AGAR', 'AGAR jaanch me fail hui file? -> quarantine bucket (download band)'],
-  [12, GRN, 'WAPAS', 'WAPAS: asli report.pdf: "%PDF" + scan pass -> DONE'],
 ];
 function setup() {}
-function base(o = {}, s = {}) {
-  B(20, 150, 110, 70, 'Phone', 'report.pdf', { st: o.ph });
-  B(190, 150, 120, 70, 'S3', 'tmp/', { st: o.s3 });
-  B(380, 150, 150, 70, 'Worker', s.wk || 'pehle 4 byte', { st: o.wk });
-  B(700, 30, 170, 60, 'DB', s.db || 'haal', { st: o.db });
-  B(700, 260, 170, 60, s.rj || 'reject', s.rjs || '', { st: o.rj });
-  if (o.sc) B(380, 275, 150, 60, 'Scan', 'ClamAV / S3 malware', { st: o.sc });
-  A(130, 185, 188, 185, C.line); A(310, 185, 378, 185, C.line);
+function panel(k, title, top, bot, lab, down, c, note) {
+  const x = 15 + k * 220;
+  el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
+  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
+  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
+  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
+  T(x + 140, 135, lab, { c, b: 1, size: 12 });
+  T(x + 102, 252, note, { c: C.muted, size: 11 });
 }
-function mz() { cells(380, 95, [['M', C.bad], ['Z', C.bad], ['.', C.muted], ['.', C.muted]], { w: 34 }); }
-function pdf() { cells(380, 95, [['%', C.good], ['P', C.good], ['D', C.good], ['F', C.good]], { w: 34 }); }
 function frame(ph) {
   if (ph === 0) {
-    base({ ph: 'bad', wk: 'bad', db: 'bad', rj: 'dim' }, { wk: 'naam dekha: .pdf', db: 'DONE (virus.exe)' });
-    num(75, 125, 1, C.bad); L(93, 130, 'client ne bola: PDF', C.bad, 'start');
-    L(250, 245, 'andar virus.exe', C.bad);
-    A(310, 185, 378, 185, C.msg, { n: 2 });
-    A(530, 165, 698, 60, C.bad, { n: 3, at: 0.5 }); L(600, 140, 'DONE', C.bad, 'start');
-    T(615, 230, 'JHOOTH pe bharosa', { c: C.bad, b: 1, size: 16 });
+    B(20, 130, 170, 70, 'Ravi', 'report.pdf', { st: 'bad' });
+    B(330, 130, 200, 70, 'Worker', 'naam pe bharosa', { st: 'bad' });
+    B(680, 40, 190, 70, 'Status DB', 'T-55: DONE', { st: 'bad' });
+    B(680, 230, 190, 70, 'Arpan', 'khola: virus', { st: 'bad' });
+    A(190, 165, 328, 165, C.msg, { n: 1 }); L(260, 150, '"pdf" bola', C.msg);
+    A(530, 150, 678, 80, C.bad, { n: 2 }); L(585, 95, 'pass', C.bad, 'end');
+    A(775, 112, 775, 228, C.bad, { n: 3 }); L(790, 170, 'download', C.bad, 'start');
+    T(430, 280, 'andar ke pehle byte: MZ ... (EXE)', { c: C.fg, size: 13 });
+    L(450, 330, 'naam aur type client ka bola hua hai, sach nahi', C.bad);
   } else if (ph === 1) {
-    base({ wk: 'good', rj: 'bad' }, { rjs: 'EXE' });
-    mz(); num(390, 75, 2, C.acc); L(408, 80, 'pehle 4 byte: "MZ" = EXE', C.acc, 'start');
-    A(310, 185, 378, 185, C.msg, { n: 1 });
-    A(530, 205, 698, 290, C.bad, { n: 3, at: 0.5 }); L(600, 270, 'reject', C.bad, 'end');
-    A(530, 165, 698, 60, C.line, { dash: 1 }); cross(665, 81);
-    L(640, 60, 'DONE nahi', C.muted, 'end');
-  } else if (ph === 2) {
-    base({ wk: 'good', sc: 'bad', rj: 'bad' }, { wk: 'type: PDF', rjs: 'virus' });
-    pdf(); num(560, 108, 1, C.good); L(578, 113, '"%PDF": type theek', C.good, 'start');
-    A(455, 222, 455, 273, C.msg, { n: 2 }); L(470, 255, 'scan', C.msg, 'start');
-    num(365, 290, 3, C.bad); L(350, 295, 'andar virus mila', C.bad, 'end');
-    A(530, 300, 698, 300, C.bad, { n: 4, at: 0.7 });
-    L(200, 340, 'hal: magic bytes + scan, dono', C.good);
-  } else if (ph === 3) {
-    base({ wk: 'bad', rj: 'acc' }, { wk: 'jaanch fail', rj: 'quarantine', rjs: 'bucket' });
-    A(530, 205, 698, 290, C.acc, { n: 1, at: 0.5 }); L(600, 270, 'yahan rakho', C.acc, 'end');
-    B(700, 140, 170, 60, 'download', '', { st: 'dim' });
-    A(785, 258, 785, 202, C.bad, { dash: 1 }); cross(830, 230); num(745, 230, 2, C.bad);
-    L(785, 345, 'download band', C.bad);
-    L(200, 300, 'hal: baad me delete, ya security wale dekhein', C.good);
+    B(20, 120, 160, 90, 'S3', 'T-55 ke bytes');
+    B(330, 120, 200, 90, 'Worker', 'pehle 4 byte', { st: 'acc' });
+    B(680, 120, 190, 90, 'Status DB', 'T-55: REJECT', { st: 'good' });
+    A(180, 145, 328, 145, C.acc, { n: 1 }); L(255, 130, 'padha', C.acc);
+    A(530, 165, 678, 165, C.good, { n: 2 }); L(605, 150, 'MZ = EXE', C.good);
+    cells(240, 250, [['%PDF = PDF: aage', C.good], ['MZ = EXE: reject', C.bad]], { w: 200, h: 34 });
+    L(450, 330, 'sach bytes me hai. Naam kuch bhi ho, pehle byte jhooth nahi bolte', C.good);
   } else {
-    base({ ph: 'good', wk: 'good', sc: 'good', db: 'good', rj: 'dim' }, { db: 'DONE' });
-    pdf(); num(365, 108, 1, C.good); L(350, 113, '"%PDF"', C.good, 'end');
-    A(455, 222, 455, 273, C.msg, { n: 2 }); L(470, 255, 'scan: saaf', C.good, 'start');
-    A(530, 165, 698, 60, C.good, { n: 3, at: 0.75 }); L(640, 125, 'DONE', C.good, 'start');
+    B(20, 130, 150, 70, 'Worker', '%PDF: type theek', { st: 'good' });
+    B(300, 130, 200, 70, 'Scanner', 'ClamAV / S3 malware', { st: 'acc' });
+    B(640, 40, 230, 70, 'Quarantine bucket', 'download band', { st: 'bad' });
+    B(640, 230, 230, 70, 'Status DB', 'T-56: REJECT', { st: 'good' });
+    A(170, 165, 298, 165, C.acc, { n: 1 }); L(235, 150, 'scan', C.acc);
+    num(320, 105, 2, C.bad); L(340, 110, 'virus mila', C.bad, 'start');
+    A(500, 150, 638, 80, C.bad, { n: 3 }); L(550, 95, 'file yahan', C.bad, 'end');
+    A(500, 185, 638, 260, C.good, { n: 4 }); L(550, 250, 'DONE nahi', C.good, 'end');
+    L(450, 340, 'magic bytes sirf type batate, virus scan batata', C.good);
   }
 }
