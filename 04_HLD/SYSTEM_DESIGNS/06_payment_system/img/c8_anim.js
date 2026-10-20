@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR peeche ek machine mar gayi? -> LB GET /health, jawab nahi = bahar'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.msg, 'Users → Payment Svc', 'Diwali: 3000 payment / sec'], [C.bad, 'Payment Svc → Users', 'CPU 100%, timeout'], [C.bad, 'Users', 'log dobara tap karte: aur bojh']],
+  [[C.msg, 'Users → LB', '3000 / sec'], [C.good, 'LB → App x3', 'koi bhi App koi bhi payment le'], [C.good, 'App → DB + key store', 'yaad yahan, App me kuch nahi']],
+  [[C.acc, 'LB → App-2', '/health? jawab nahi'], [C.bad, 'App-2', 'list se bahar'], [C.good, 'LB → App-1, App-3', 'payment wahan. User ko pata bhi nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 160, 70, 'Users', '3000 / sec');

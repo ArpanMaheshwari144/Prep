@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR pay kiya, turant balance dekha? -> primary se padho, copy peeche'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Report Svc → Primary DB', 'mahine bhar ki bhaari query'], [C.acc, 'Payment Svc → Primary DB', 'payment line me'], [C.bad, 'Primary DB', 'report me busy, payment ruka']],
+  [[C.good, 'Payment Svc → Primary DB', 'payment sirf primary pe'], [C.acc, 'Primary DB → Read replica', 'copy, 1-2 sec peeche'], [C.acc, 'Report Svc → Read replica', 'report copy pe']],
+  [[C.msg, 'Payment Svc → Primary DB', 'pay: 1000 -> 500'], [C.good, 'Payment Svc → Primary DB', 'balance? -> 500 (sahi).|Replica se 1000 (purana) aata']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 40, 180, 70, 'Report Svc', 'mahine bhar', { st: 'bad' });
@@ -34,7 +39,7 @@ function frame(ph) {
       A(220, 140, 618, 55, C.msg, { n: 1 }); L(400, 80, 'pay: 1000 -> 500', C.msg);
       A(220, 165, 618, 90, C.good, { n: 2, at: 0.75 }); L(400, 155, 'balance? -> 500', C.good);
       A(220, 195, 618, 270, C.bad, { dash: 1 }); cross(420, 232); L(470, 270, 'yahan se 1000 dikhta', C.bad);
-      A(745, 112, 745, 238, C.muted, { dash: 1 }); L(760, 175, 'abhi pahunchi nahi', C.muted, 'start');
+      A(745, 112, 745, 238, C.muted, { dash: 1 }); L(735, 175, 'abhi nahi pahunchi', C.muted, 'end');
       L(450, 345, 'paisa aur haal hamesha primary se. Replica sirf report', C.good);
     }
   }

@@ -10,13 +10,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Arpan → Payment Svc', 'bank se 2000 top-up'], [C.bad, 'Payment Svc → PSP', 'call, har thread jawab ka wait'], [C.bad, 'Payment Svc', 'koi thread khaali nahi, sab atke']],
+  [[C.acc, 'Payment Svc → PSP', 'call, 3 sec chup: chhoda'], [C.acc, 'Payment Svc → Payment DB', 'PENDING likha, "fail" nahi'], [C.bad, 'Breaker → PSP', '5 me 5 fail: OPEN, call roki'], [C.good, 'Payment Svc → Arpan', 'turant "abhi nahi", paisa hila nahi']],
+  [[C.acc, 'Breaker → Test call', '30 sec baad, sirf ek call'], [C.good, 'Test call → PSP', 'chali to breaker band, sab call wapas.|Nahi chali to phir OPEN']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 150, 70, 'Arpan', 'top-up 2000');
@@ -44,7 +49,7 @@ function frame(ph) {
     B(680, 230, 190, 80, 'phir fail', 'phir OPEN', { st: 'bad' });
     A(190, 170, 328, 170, C.acc, { n: 1 }); L(260, 155, '30 sec baad', C.acc);
     A(530, 150, 678, 85, C.good, { n: 2 }); L(590, 95, 'chali', C.good);
-    A(530, 190, 678, 265, C.bad); L(590, 255, 'ya nahi chali', C.bad);
+    A(530, 190, 678, 265, C.bad); L(560, 252, 'ya nahi chali', C.bad, 'end');
     L(450, 340, 'chali to sab call wapas PSP ko. Nahi chali to 30 sec aur ruko', C.good);
   }
 }

@@ -10,13 +10,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.acc, 'Wallet DB → Server-1', 'phone: 600 padha'], [C.acc, 'Wallet DB → Server-2', 'laptop: abhi bhi 600 padha'], [C.bad, 'Server-1 → Wallet DB', '-500 likha: 100'], [C.bad, 'Server-2 → Wallet DB', '-500 likha: -400']],
+  [[C.acc, 'Server-1 → Wallet DB', 'UPDATE ... WHERE balance >= 500'], [C.good, 'Wallet DB → Server-1', '1 row: kata, 600 -> 100'], [C.acc, 'Server-2 → Wallet DB', 'wahi UPDATE, ek pal baad'], [C.bad, 'Wallet DB → Server-2', '0 row: "paisa kam"']],
+  [[C.bad, 'Server → Wallet DB', 'WHERE bhool gaya: 100 - 500'], [C.acc, 'Wallet DB → Server', 'CHECK (balance >= 0): error.|Balance 100 hi raha']],
+];
 function frame(ph) {
   if (ph === 0) {
     panel(0, 'phone padhta', ['Server-1', 'phone: 600 dikha', 'acc'], ['Wallet DB', 'Arpan: 600', ''], 'padha', false, C.acc, '600 >= 500, theek');
@@ -28,8 +33,8 @@ function frame(ph) {
     B(20, 110, 180, 70, 'Server-1', 'phone: 500', { st: 'good' });
     B(700, 110, 180, 70, 'Server-2', 'laptop: 500', { st: 'bad' });
     B(330, 100, 240, 90, 'Wallet DB', '600 -> 100', { st: 'acc' });
-    A(200, 130, 328, 130, C.acc, { n: 1 }); A(328, 165, 202, 165, C.good, { n: 2 }); L(265, 190, '1 row: kata', C.good);
-    A(698, 130, 572, 130, C.acc, { n: 3 }); A(572, 165, 698, 165, C.bad, { n: 4 }); L(635, 190, '0 row: paisa kam', C.bad);
+    A(200, 130, 328, 130, C.acc, { n: 1 }); A(328, 165, 202, 165, C.good, { n: 2 }); L(265, 205, '1 row: kata', C.good);
+    A(698, 130, 572, 130, C.acc, { n: 3 }); A(572, 165, 698, 165, C.bad, { n: 4 }); L(635, 205, '0 row: paisa kam', C.bad);
     L(450, 70, 'ek ke baad ek', C.acc);
     T(450, 250, 'UPDATE wallet SET balance = balance - 500', { c: C.fg, size: 13 });
     T(450, 272, 'WHERE id = Arpan AND balance >= 500', { c: C.fg, size: 13 });
@@ -38,7 +43,7 @@ function frame(ph) {
     B(20, 120, 200, 80, 'Server', 'WHERE bhool gaya', { st: 'bad' });
     B(380, 110, 260, 100, 'Wallet DB: Arpan 100', 'CHECK (balance >= 0)', { st: 'acc' });
     A(220, 145, 378, 145, C.bad, { n: 1 }); L(300, 130, '100 - 500', C.bad);
-    A(378, 180, 222, 180, C.acc, { n: 2 }); L(300, 200, 'error: -400 nahi', C.acc);
+    A(378, 180, 222, 180, C.acc, { n: 2, at: 0.2 }); L(300, 200, 'error: -400 nahi', C.acc);
     L(510, 240, 'DB ne likhne hi nahi diya, 100 wahi', C.acc);
     T(450, 290, 'UPDATE wallet SET balance = balance - 500 WHERE id = Arpan', { c: C.fg, size: 13 });
     L(450, 335, 'query bhool jaaye, to bhi DB ka CHECK aakhri deewar', C.good);

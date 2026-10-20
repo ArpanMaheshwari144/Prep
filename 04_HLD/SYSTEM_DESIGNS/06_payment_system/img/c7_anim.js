@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR galat entry ho gayi ya refund aaya? -> mitao nahi, nayi ulti line jodo'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.msg, 'Arpan → Support', 'kal 2200, aaj 1100 kaise?'], [C.acc, 'Support → Wallet DB', 'dikhao'], [C.acc, 'Wallet DB → Support', 'bas balance: 1100'], [C.bad, 'Support → Arpan', 'pata nahi. Number hai, kahani nahi']],
+  [[C.msg, 'Arpan → Support', '2200 se 1100 kaise?'], [C.acc, 'Support → Ledger', 'Arpan ki lines do'], [C.good, 'Ledger → Support', '-800 bijli, -300 recharge'], [C.good, 'Support → Arpan', '2200 - 800 - 300 = 1100']],
+  [[C.good, 'Payment Svc → Ledger', 'refund: nayi ulti line INSERT.|Purani mitayi nahi'], [C.good, 'Ledger', 'audit me dono line, jod phir bhi 0']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 150, 70, 'Arpan', '2200 se 1100?');
@@ -26,7 +31,7 @@ function frame(ph) {
     T(675, 185, 'har jodi ka jod = 0', { c: C.good, size: 12 });
     A(150, 160, 218, 160, C.msg, { n: 1 });
     A(360, 160, 468, 130, C.acc, { n: 2 }); L(400, 120, 'lines', C.acc);
-    A(468, 220, 362, 190, C.good, { n: 3 }); L(420, 225, 'line-line', C.good);
+    A(468, 220, 362, 190, C.good, { n: 3 }); L(400, 250, 'line-line', C.good);
     A(218, 195, 152, 195, C.good, { n: 4 });
     T(675, 240, '2200 - 800 - 300 = 1100', { c: C.fg, b: 1, size: 14 });
     L(450, 330, 'balance ek number, ledger uski poori kahani', C.good);
@@ -38,8 +43,8 @@ function frame(ph) {
     cells(350, 125, [['Kirana -500', C.good], ['Arpan +500', C.good]], { w: 180, h: 32 });
     T(800, 142, 'nayi ulti', { c: C.good, size: 12 });
     A(180, 160, 348, 142, C.good, { n: 1 }); L(255, 135, 'INSERT', C.good);
-    A(180, 185, 348, 225, C.bad, { dash: 1 }); cross(275, 205); L(255, 240, 'DELETE / UPDATE nahi', C.bad);
-    T(605, 215, 'jod phir bhi 0', { c: C.good, size: 12 });
+    A(180, 185, 348, 225, C.bad, { dash: 1 }); cross(275, 205); L(215, 255, 'DELETE / UPDATE nahi', C.bad);
+    num(560, 215, 2, C.good); T(640, 220, 'jod phir bhi 0', { c: C.good, size: 13 });
     L(450, 320, 'audit me dono line dikhti: kya hua, phir kya theek kiya', C.good);
   }
 }

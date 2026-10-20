@@ -10,13 +10,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'App → Payment Svc', 'Kirana ko 500'], [C.bad, 'Payment Svc → App', 'jawab metro me gum'], [C.acc, 'App → Payment Svc', 'khud dobara bheja'], [C.bad, 'Payment Svc → Wallet DB', 'naya maana: -500 phir, 1000 kate']],
+  [[C.acc, 'Arpan → App', 'screen khuli: key-555 bani'], [C.good, 'App → Payment Svc', 'key-555 ke saath, UNIQUE save'], [C.acc, 'App → Payment Svc', 'network gaya, retry: wahi key-555'], [C.good, 'Payment Svc → App', 'key-555 pehle se: saved jawab']],
+  [[C.msg, 'Request 1 → Payment Svc', 'key-555, 500: hash(500) rakha'], [C.good, 'Payment Svc → Wallet DB', '500 kata'], [C.acc, 'Request 2 → Payment Svc', 'wahi key-555, par 5000'], [C.bad, 'Payment Svc → Request 2', 'hash alag: 422']],
+];
 function frame(ph) {
   if (ph === 0) {
     panel(0, 'Pay dabaya', ['Arpan ka app', 'Kirana ko 500', ''], ['Payment Svc', 'payment#1: -500', 'good'], 'bheja', true, C.msg, 'ek baar dabaya');

@@ -3,20 +3,25 @@
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: Kirana ko 500. Arpan -500 likha, phir server gira. Kirana +500 hua hi nahi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: BEGIN, Arpan -500, Kirana +500, ledger, COMMIT. Ek transaction, ya sab ya kuch nahi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: BEGIN, Arpan -500, Kirana +500, ledger, COMMIT. Ek transaction: sab ya kuch nahi'],
   [6, YEL, 'AGAR', 'AGAR ledger ka INSERT fail? -> ROLLBACK, Arpan ka -500 bhi ulta'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.acc, 'Payment Svc → Wallet DB', 'Arpan -500 likha'], [C.bad, 'Payment Svc gira', 'aage likhne se pehle'], [C.bad, 'Payment Svc → Wallet DB', 'Kirana +500 likha hi nahi'], [C.bad, 'Wallet DB → Arpan / Kirana', 'Arpan ka 500 kata,|Kirana ko kuch nahi mila']],
+  [[C.msg, 'Payment Svc → Wallet DB', 'ek transaction shuru (BEGIN)'], [C.good, 'paanchon saath', 'Arpan -500, Kirana +500,|ledger 2 line, payment DONE'], [C.good, 'COMMIT', 'tab pakka. Pehle gira to DB|apne log (WAL) se ulta karta']],
+  [[C.bad, 'ledger INSERT', 'transaction ke beech fail'], [C.good, 'Transaction → Wallet DB', 'ROLLBACK: Arpan 1000,|Kirana jaisa tha, user ko "nahi hua"']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 160, 80, 'Payment Svc', 'Kirana ko 500');
@@ -29,7 +34,7 @@ function frame(ph) {
     B(690, 40, 180, 70, 'Arpan', 'app pe 500 kam', { st: 'bad' });
     B(690, 210, 180, 70, 'Kirana', 'kuch nahi mila', { st: 'bad' });
     A(590, 112, 688, 80, C.bad, { n: 4 });
-    A(590, 212, 688, 245, C.bad, { n: 5 });
+    A(590, 212, 688, 245, C.bad);
     L(450, 340, 'do alag badlaav, beech me crash. 500 kata, kisi ko mila nahi', C.bad);
   } else if (ph === 1) {
     B(20, 140, 150, 70, 'Payment Svc', 'Kirana ko 500');
@@ -48,8 +53,8 @@ function frame(ph) {
     cells(40, 125, [['Arpan -500', C.acc], ['Kirana +500', C.acc]], { w: 160, h: 32 });
     cells(40, 170, [['ledger INSERT', C.bad]], { w: 160, h: 32 });
     cross(230, 186); num(270, 186, 1, C.bad); L(290, 191, 'fail', C.bad, 'start');
-    B(680, 110, 190, 90, 'Wallet DB', 'Arpan 1000, Kirana jaisa', { st: 'good' });
-    A(540, 155, 678, 155, C.good, { n: 2 }); L(610, 140, 'ROLLBACK', C.good);
+    B(610, 110, 260, 90, 'Wallet DB', 'Arpan 1000, Kirana jaisa', { st: 'good' });
+    A(540, 155, 608, 155, C.good, { n: 2 }); L(575, 140, 'ROLLBACK', C.good);
     L(450, 320, 'paanchon me se ek bhi nahi bacha. User ko "nahi hua", dobara try kar sakta', C.good);
   }
 }

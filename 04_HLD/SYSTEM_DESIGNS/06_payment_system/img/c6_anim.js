@@ -3,20 +3,25 @@
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: Arpan ka wallet hamare DB me, merchant Bank B me. Ek transaction chalta hi nahi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: SAGA. Step-step chalo, har kadam saga table me. Payout fail = ulta kaam, 500 wapas'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: SAGA. Step-step chalo, har kadam saga table me. Payout fail = ulta, 500 wapas'],
   [6, YEL, 'AGAR', 'AGAR SAGA ke beech service giri? -> uth ke saga table dekhe, wahin se aage'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.acc, 'Payment Svc → Wallet DB', 'Arpan -500 kata'], [C.bad, 'Payment Svc → Bank B', 'payout fail'], [C.bad, 'Arpan', '500 gaya, merchant ko nahi.|Paisa beech me latka']],
+  [[C.acc, 'Saga Svc → Wallet DB', 'Arpan -500, saga: DEBITED'], [C.bad, 'Saga Svc → Bank B', 'payout fail'], [C.good, 'Saga Svc → Wallet DB', 'ulta kaam: Arpan +500 wapas'], [C.good, 'Saga Svc → Arpan', 'fail, 500 wapas. Hisaab saaf']],
+  [[C.bad, 'Saga Svc gira', 'step 1 (DEBITED) ke baad'], [C.acc, 'Saga table → Saga Svc', 'uth ke padha: t9 DEBITED'], [C.good, 'Saga Svc → Bank B', 'wahin se: payout. Kaatna dobara nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 140, 160, 70, 'Payment Svc', 'merchant ko 500');
@@ -24,7 +29,7 @@ function frame(ph) {
     B(350, 240, 200, 70, 'Bank B (bahar)', 'payout fail', { st: 'bad' }); cross(575, 275);
     A(180, 160, 348, 75, C.acc, { n: 1 }); L(250, 95, 'kata', C.acc);
     A(180, 190, 348, 275, C.bad, { n: 2 }); L(250, 260, 'payout', C.bad);
-    B(680, 130, 190, 80, 'Arpan', '500 gaya, merchant ko nahi', { st: 'bad' });
+    B(680, 130, 190, 80, 'Arpan', '500 gaya', { st: 'bad' });
     num(700, 245, 3, C.bad); L(720, 250, 'paisa beech me latka', C.bad, 'start');
     L(450, 345, 'do alag system, inke upar ek BEGIN / COMMIT ho hi nahi sakta', C.bad);
   } else if (ph === 1) {

@@ -52,11 +52,11 @@ Cue: EK TRANSACTION (WAL se poora / ulta)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png?v=3" width="900">
+<img src="img/c1_1.png?v=4" width="900">
 
-<img src="img/c1_2.png?v=3" width="900">
+<img src="img/c1_2.png?v=4" width="900">
 
-<img src="img/c1_3.png?v=3" width="900">
+<img src="img/c1_3.png?v=4" width="900">
 
 </details>
 
@@ -95,11 +95,11 @@ Cue: check + kaato EK atomic query
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png?v=2" width="900">
+<img src="img/c2_1.png?v=4" width="900">
 
-<img src="img/c2_2.png?v=2" width="900">
+<img src="img/c2_2.png?v=4" width="900">
 
-<img src="img/c2_3.png?v=2" width="900">
+<img src="img/c2_3.png?v=4" width="900">
 
 </details>
 
@@ -127,11 +127,11 @@ Cue: IDEMPOTENCY KEY (screen khulte)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png?v=2" width="900">
+<img src="img/c3_1.png?v=4" width="900">
 
-<img src="img/c3_2.png?v=2" width="900">
+<img src="img/c3_2.png?v=4" width="900">
 
-<img src="img/c3_3.png?v=2" width="900">
+<img src="img/c3_3.png?v=4" width="900">
 
 </details>
 
@@ -166,11 +166,11 @@ Cue: timeout = PENDING, circuit breaker = abhi nahi
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png?v=3" width="900">
+<img src="img/c4_1.png?v=4" width="900">
 
-<img src="img/c4_2.png?v=3" width="900">
+<img src="img/c4_2.png?v=4" width="900">
 
-<img src="img/c4_3.png?v=3" width="900">
+<img src="img/c4_3.png?v=4" width="900">
 
 </details>
 
@@ -202,11 +202,11 @@ Cue: PENDING pehle + WEBHOOK + RECONCILE
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png?v=2" width="900">
+<img src="img/c5_1.png?v=4" width="900">
 
-<img src="img/c5_2.png?v=2" width="900">
+<img src="img/c5_2.png?v=4" width="900">
 
-<img src="img/c5_3.png?v=2" width="900">
+<img src="img/c5_3.png?v=4" width="900">
 
 </details>
 
@@ -237,11 +237,11 @@ Cue: SAGA (step-step, fail pe ulta)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=2" width="900">
+<img src="img/c6_1.png?v=4" width="900">
 
-<img src="img/c6_2.png?v=2" width="900">
+<img src="img/c6_2.png?v=4" width="900">
 
-<img src="img/c6_3.png?v=2" width="900">
+<img src="img/c6_3.png?v=4" width="900">
 
 </details>
 
@@ -270,11 +270,11 @@ Cue: LEDGER double-entry, sirf INSERT
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png?v=2" width="900">
+<img src="img/c7_1.png?v=4" width="900">
 
-<img src="img/c7_2.png?v=2" width="900">
+<img src="img/c7_2.png?v=4" width="900">
 
-<img src="img/c7_3.png?v=2" width="900">
+<img src="img/c7_3.png?v=4" width="900">
 
 </details>
 
@@ -307,11 +307,11 @@ Cue: STATELESS, kai machine + LB
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c8_1.png?v=2" width="900">
+<img src="img/c8_1.png?v=4" width="900">
 
-<img src="img/c8_2.png?v=2" width="900">
+<img src="img/c8_2.png?v=4" width="900">
 
-<img src="img/c8_3.png?v=2" width="900">
+<img src="img/c8_3.png?v=4" width="900">
 
 </details>
 
@@ -339,11 +339,11 @@ Cue: READ REPLICA (sirf report)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c9_1.png?v=2" width="900">
+<img src="img/c9_1.png?v=4" width="900">
 
-<img src="img/c9_2.png?v=2" width="900">
+<img src="img/c9_2.png?v=4" width="900">
 
-<img src="img/c9_3.png?v=2" width="900">
+<img src="img/c9_3.png?v=4" width="900">
 
 </details>
 
@@ -371,11 +371,11 @@ Cue: SHARD by account_id
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c10_1.png?v=2" width="900">
+<img src="img/c10_1.png?v=4" width="900">
 
-<img src="img/c10_2.png?v=2" width="900">
+<img src="img/c10_2.png?v=4" width="900">
 
-<img src="img/c10_3.png?v=2" width="900">
+<img src="img/c10_3.png?v=4" width="900">
 
 </details>
 

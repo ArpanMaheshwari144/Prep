@@ -7,6 +7,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR do account alag shard pe? -> saga: A se kaato, B me daalo'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.msg, 'Payment Svc → Ek DB', 'likho'], [C.bad, 'Index 400 GB, RAM 64 GB', 'index RAM me nahi aata: disk'], [C.bad, 'Ek DB', 'har likhai dheemi']],
+  [[C.good, 'Payment Svc → Shard-1', 'Arpan: balance + history ek tukde pe'], [C.good, 'Payment Svc → Shard-2', 'Kirana apne tukde pe']],
+  [[C.acc, 'Saga Svc → Shard-1', 'pehle kaato: Arpan -500'], [C.good, 'Saga Svc → Shard-2', 'phir daalo: Kirana +500'], [C.bad, 'fail?', 'Shard-1 me +500 wapas (saga)']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 170, 70, 'Payment Svc', 'likho');
@@ -15,7 +20,7 @@ function frame(ph) {
     A(190, 165, 348, 165, C.msg, { n: 1 });
     B(690, 40, 180, 60, 'RAM', '64 GB', { st: 'dim' });
     B(690, 210, 180, 60, 'Index', '400 GB', { st: 'bad' });
-    num(700, 160, 2, C.bad); L(720, 165, 'RAM me nahi aata: disk', C.bad, 'start');
+    num(700, 160, 2, C.bad); L(720, 165, 'disk se padha', C.bad, 'start');
     num(480, 270, 3, C.bad); L(500, 275, 'har likhai dheemi', C.bad, 'start');
     L(450, 340, 'ek machine ki had, data ki nahi', C.bad);
   } else if (ph === 1) {
@@ -23,8 +28,8 @@ function frame(ph) {
     B(560, 20, 300, 70, 'Shard-1', 'Arpan: balance + history', { st: 'good' });
     B(560, 140, 300, 70, 'Shard-2', 'Kirana: balance + history', { st: 'good' });
     B(560, 260, 300, 70, 'Shard-3', 'baaki account', { st: 'good' });
-    A(190, 150, 558, 55, C.good, { n: 1 }); L(370, 85, 'Arpan -> Shard-1', C.good);
-    A(190, 175, 558, 175, C.good, { n: 2 }); L(370, 165, 'Kirana -> Shard-2', C.good);
+    A(190, 150, 558, 55, C.good, { n: 1, at: 0.75 }); L(370, 85, 'Arpan -> Shard-1', C.good);
+    A(190, 175, 558, 175, C.good, { n: 2, at: 0.75 }); L(370, 165, 'Kirana -> Shard-2', C.good);
     A(190, 195, 558, 290, C.muted);
     L(370, 345, 'mera balance aur history ek tukde pe: ek transaction kaafi', C.good);
   } else {
