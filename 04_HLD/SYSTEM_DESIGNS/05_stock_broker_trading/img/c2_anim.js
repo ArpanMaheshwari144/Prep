@@ -8,9 +8,9 @@ const PH = [
 ];
 function setup() {}
 const STEPS = [
-  [[C.acc, 'Wallet → Laptop', 'padha: 50k bacha'], [C.acc, 'Wallet → Phone', 'padha: abhi bhi 50k'], [C.bad, 'Laptop → Wallet', 'block +30k (TCS)'], [C.bad, 'Phone → Wallet', 'block +30k (INFY): 60k > 50k']],
-  [[C.acc, 'Laptop → Wallet DB', 'UPDATE ... WHERE bacha >= 30k'], [C.good, 'Wallet DB → Laptop', '1 row: block hua'], [C.acc, 'Phone → Wallet DB', 'wahi UPDATE, ek pal baad'], [C.bad, 'Wallet DB → Phone', '0 row: 20k hi bacha, reject']],
-  [[C.msg, 'Arpan → Order Svc', 'TCS order cancel'], [C.good, 'Order Svc → Wallet DB', 'block hatao: 30k -> 0'], [C.good, 'Wallet DB', 'poore 50k phir free']],
+  [[C.acc, 'Wallet → Laptop', 'Laptop ne wallet padha, 50k bacha hai'], [C.acc, 'Wallet → Phone', 'Usi pal phone ne bhi padha, abhi bhi 50k'], [C.bad, 'Laptop → Wallet', 'Laptop ne TCS ke liye 30k block kiya'], [C.bad, 'Phone → Wallet', 'Phone ne INFY ke liye bhi 30k block kiya, 60k jabki tha 50k']],
+  [[C.acc, 'Laptop → Wallet DB', 'Laptop ne ek query bheji: UPDATE ... WHERE bacha >= 30k'], [C.good, 'Wallet DB → Laptop', '1 row badli, matlab 30k block ho gaya'], [C.acc, 'Phone → Wallet DB', 'Phone ki wahi query ek pal baad chali'], [C.bad, 'Wallet DB → Phone', 'Ab sirf 20k bacha tha, 0 row badli, order reject']],
+  [[C.msg, 'Arpan → Order Svc', 'Arpan ne TCS wala order cancel kar diya'], [C.good, 'Order Svc → Wallet DB', 'Order Svc ne 30k ka block hata diya'], [C.good, 'Wallet DB', 'Arpan ke poore 50k phir se free ho gaye']],
 ];
 function frame(ph) {
   if (ph === 0) {

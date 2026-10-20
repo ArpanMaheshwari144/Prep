@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.acc, 'TCS book → Thread-1', 'Arpan ke liye: 10 hain'], [C.acc, 'TCS book → Thread-2', 'Mohan ke liye: abhi bhi 10'], [C.bad, 'TCS book → Thread-1', '10 share Arpan ko: 0 bache'], [C.bad, 'TCS book → Thread-2', '10 share Mohan ko bhi: -10']],
-  [[C.msg, 'Arpan → TCS line', 'BUY 10, 9:30:01'], [C.msg, 'Mohan → TCS line', 'BUY 10, 9:30:02'], [C.acc, 'TCS line → Thread-1', 'ek-ek karke, sirf ek thread'], [C.good, 'Thread-1 → TCS book', 'Arpan FILLED 10.|Mohan OPEN, line me ruka']],
-  [[C.msg, 'Arpan → TCS book', 'BUY 10 @3000'], [C.msg, 'Suresh → TCS book', 'SELL 6 @3000'], [C.acc, 'TCS book → Arpan', '6 ka sauda: PARTIALLY FILLED.|Baaki 4 ka paisa ruka'], [C.good, 'Naya seller → TCS book', 'SELL 4: baaki bhare, FILLED']],
+  [[C.acc, 'TCS book → Thread-1', 'Thread-1 ne Arpan ke liye book dekhi, 10 share hain'], [C.acc, 'TCS book → Thread-2', 'Usi pal Thread-2 ne Mohan ke liye dekha, abhi bhi 10'], [C.bad, 'TCS book → Thread-1', 'Thread-1 ne 10 share Arpan ko de diye, 0 bache'], [C.bad, 'TCS book → Thread-2', 'Thread-2 ne bhi 10 Mohan ko de diye, book -10 pe']],
+  [[C.msg, 'Arpan → TCS line', 'Arpan ne 9:30:01 pe 10 share ka BUY daala'], [C.msg, 'Mohan → TCS line', 'Mohan ne ek second baad 10 ka BUY daala'], [C.acc, 'TCS line → Thread-1', 'TCS line ko sirf ek thread ek-ek karke chalata'], [C.good, 'Thread-1 → TCS book', 'Arpan ko 10 mile (FILLED), Mohan OPEN reh ke line me ruka']],
+  [[C.msg, 'Arpan → TCS book', 'Arpan ne 3000 pe 10 share ka BUY daala'], [C.msg, 'Suresh → TCS book', 'Suresh sirf 6 share bech raha tha, 3000 pe'], [C.acc, 'TCS book → Arpan', '6 ka sauda hua (PARTIALLY FILLED), baaki 4 ka paisa ruka raha'], [C.good, 'Naya seller → TCS book', 'Naye seller ne 4 beche, baaki bhar gaye, ab FILLED']],
 ];
 function frame(ph) {
   if (ph === 0) {

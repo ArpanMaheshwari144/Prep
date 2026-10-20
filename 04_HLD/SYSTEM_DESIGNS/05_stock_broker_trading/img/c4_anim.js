@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, 'Lakhon order → Order Svc', '9:15 pe sab TCS pe'], [C.bad, 'Order Svc → DB', 'har order pe DB lock, likho, chhodo'], [C.bad, 'DB', 'ek-ek karke, baaki intezaar me']],
-  [[C.msg, 'Arpan → TCS line', 'line me laga: no. 4,812'], [C.good, 'Order Svc → Arpan', 'turant ACCEPTED, app nahi ghooma'], [C.good, 'Thread-1 → TCS book (RAM)', 'RAM me match, microsecond'], [C.good, 'Thread-1 → Arpan', 'thodi der baad FILLED']],
-  [[C.good, 'har stock → apna thread', 'TCS, INFY, HDFC alag.|5000 stock: stock % 8 core'], [C.bad, 'TCS do thread me?', 'nahi: kram tootta.|Ek stock = ek line']],
+  [[C.bad, 'Lakhon order → Order Svc', '9:15 pe lakhon order ek saath TCS pe aaye'], [C.bad, 'Order Svc → DB', 'Har order pe DB me lock lo, likho, chhodo'], [C.bad, 'DB', 'DB ek-ek karke kar raha, baaki sab intezaar me']],
+  [[C.msg, 'Arpan → TCS line', 'Arpan ka order TCS line me 4,812 number pe laga'], [C.good, 'Order Svc → Arpan', 'Arpan ko turant ACCEPTED, app ghoomta nahi raha'], [C.good, 'Thread-1 → TCS book (RAM)', 'Thread-1 ne RAM wali book me microsecond me match kiya'], [C.good, 'Thread-1 → Arpan', 'Thodi der baad Arpan ko FILLED ki khabar aayi']],
+  [[C.good, 'har stock → apna thread', 'Har stock ki apni line: TCS, INFY, HDFC alag; 5000 stock 8 core pe bant jaate'], [C.bad, 'TCS do thread me?', 'TCS ko do thread me baanto to kram toot jaata, isliye ek stock = ek line']],
 ];
 function frame(ph) {
   if (ph === 0) {

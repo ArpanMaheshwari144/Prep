@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -211,9 +213,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'App → Order Svc', 'Buy TCS x 10'], [C.bad, 'Order Svc → App', 'jawab network me gum'], [C.acc, 'App → Order Svc', 'khud retry, Arpan ne kuch nahi kiya'], [C.bad, 'Order Svc → Orders', 'naya maana: order#2.|20 share, paisa dugna']],
-  [[C.acc, 'Arpan → App', 'Buy screen khula: id k7'], [C.good, 'App → Order Svc', 'k7 UNIQUE: order#1'], [C.acc, 'App → Order Svc', 'network gaya, retry: wahi k7'], [C.good, 'Order Svc → App', 'k7 pehle se: purana jawab']],
-  [[C.msg, 'Request 1 → Order Svc', 'k7 chal rahi (IN_PROGRESS)'], [C.msg, 'Request 2 → Order Svc', 'wahi k7 dobara'], [C.acc, 'Order Svc → Request 2', '409: thoda ruko'], [C.good, 'Order Svc → Orders', 'pehli poori: order#1.|Ruk ke aaya to saved jawab']],
+  [[C.msg, 'App → Order Svc', 'Arpan ne app se TCS ke 10 share kharidne ka order bheja'], [C.bad, 'Order Svc → App', 'Order ho gaya, par jawab network me kho gaya'], [C.acc, 'App → Order Svc', 'App ne khud retry kiya, Arpan ne kuch nahi dabaya'], [C.bad, 'Order Svc → Orders', 'Order Svc ne naya order#2 bana diya, 20 share aur paisa dugna']],
+  [[C.acc, 'Arpan → App', 'Buy screen khulte hi app ne ek id k7 bana li'], [C.good, 'App → Order Svc', 'Order k7 ke saath gaya, UNIQUE se order#1 bana'], [C.acc, 'App → Order Svc', 'Network gaya to app ne retry kiya, wahi k7 bheja'], [C.good, 'Order Svc → App', 'k7 pehle se tha, to naya order nahi, purana jawab lautaya']],
+  [[C.msg, 'Request 1 → Order Svc', 'Pehli request k7 abhi chal rahi thi (IN_PROGRESS)'], [C.msg, 'Request 2 → Order Svc', 'Usi beech retry wahi k7 leke aa gaya'], [C.acc, 'Order Svc → Request 2', 'Order Svc ne 409 diya: thoda ruko, kaam chal raha'], [C.good, 'Order Svc → Orders', 'Pehli poori hui (order#1), ruk ke aayi retry ko saved jawab mila']],
 ];
 function frame(ph) {
   if (ph === 0) {

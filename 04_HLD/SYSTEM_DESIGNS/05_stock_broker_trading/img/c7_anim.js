@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.acc, 'Settlement → Wallet DB', '-20k'], [C.bad, 'Settlement → Portfolio DB', '+5 INFY: DB band'], [C.bad, 'Arpan', '20k gaya, share nahi: aadha sauda']],
-  [[C.good, 'Settlement → Status log', 'wallet: done'], [C.bad, 'Settlement → Portfolio DB', 'share do: band. Status PENDING'], [C.acc, 'Retry job → Portfolio DB', 'log padha, t7 se phir'], [C.good, 'Portfolio DB → Status log', '+5 INFY: SETTLED, aage hi']],
-  [[C.bad, 'Arpan → naya trade t8', 'dobara order kiya'], [C.bad, 'DB lauta', 't7 retry bhi chala, t8 bhi:|10 INFY, paisa 2 baar']],
+  [[C.acc, 'Settlement → Wallet DB', 'Settlement ne Arpan ke wallet se 20k kaate'], [C.bad, 'Settlement → Portfolio DB', '5 INFY dene gaya, par Portfolio DB band tha'], [C.bad, 'Arpan', 'Arpan ka 20k gaya aur share nahi aaye, sauda aadha']],
+  [[C.good, 'Settlement → Status log', 'Settlement ne status log me likha: wallet done'], [C.bad, 'Settlement → Portfolio DB', 'Share dene gaya, DB band, status PENDING rakha'], [C.acc, 'Retry job → Portfolio DB', 'Retry job ne log padha aur t7 wahin se phir chalaya'], [C.good, 'Portfolio DB → Status log', '+5 INFY mil gaye, status SETTLED, sauda aage hi badha']],
+  [[C.bad, 'Arpan → naya trade t8', 'Share nahi dikhe to Arpan ne dobara order daal diya (t8)'], [C.bad, 'DB lauta', 'DB lauta to t7 retry bhi chala aur t8 bhi, 10 INFY aur paisa do baar']],
 ];
 function frame(ph) {
   if (ph === 0) {

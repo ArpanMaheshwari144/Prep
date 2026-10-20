@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -211,9 +213,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, '10 lakh users → Price server', 'har second "price?"'], [C.acc, 'Price server → users', 'zyadatar "wahi hai". CPU 100%']],
-  [[C.msg, 'App → WS server', 'ek baar juda, khula rakha'], [C.acc, 'Matching → Pub/sub', 'TCS 3001, sirf jab badla'], [C.good, 'Pub/sub → WS server', 'har WS server tak'], [C.good, 'WS server → App', 'khud bheja, Arpan ne poochha nahi']],
-  [[C.bad, 'WS server → App', 'net gaya: beech ke price nahi pahunche'], [C.acc, 'App → WS server', 'phir juda'], [C.good, 'Price store → WS server', 'abhi ka price: TCS 3007'], [C.good, 'WS server → App', 'push, ab aage live']],
+  [[C.bad, '10 lakh users → Price server', '10 lakh app har second price server se poochti "price?"'], [C.muted, 'Price server → users', 'Zyadatar jawab "wahi hai", phir bhi server ka CPU 100%']],
+  [[C.msg, 'App → WS server', 'App ek baar WS server se judi aur connection khula rakha'], [C.acc, 'Matching → Pub/sub', 'TCS ka price 3001 hua, sirf badalne pe khabar pub/sub me'], [C.good, 'Pub/sub → WS server', 'Pub/sub ne khabar har WS server tak pahunchai'], [C.good, 'WS server → App', 'WS server ne khud price bheja, Arpan ko poochhna nahi pada']],
+  [[C.bad, 'WS server → App', 'Net gaya, beech ke price app tak nahi pahunche'], [C.acc, 'App → WS server', 'Net aate hi app phir WS server se judi'], [C.good, 'Price store → WS server', 'WS server ne price store se abhi ka price liya: TCS 3007'], [C.good, 'WS server → App', 'Ye price push kiya, ab aage phir live']],
 ];
 function frame(ph) {
   if (ph === 0) {

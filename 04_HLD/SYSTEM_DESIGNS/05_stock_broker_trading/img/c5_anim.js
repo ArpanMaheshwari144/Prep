@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Orders → Matching server', '4,000 khule order'], [C.bad, 'server gira', 'book sirf RAM me thi, saaf'], [C.bad, 'Order book', '0 order: kisne kya maanga, pata nahi']],
-  [[C.acc, 'Order → Log (disk)', 'pehle log: #501, number ke saath'], [C.good, 'Log → Book (RAM)', 'phir book me, RAM me tez'], [C.bad, 'Matching gira', 'book gayab, par log disk pe'], [C.good, 'Log → Book (RAM)', 'replay #1 se #4000: kuch nahi khoya']],
-  [[C.acc, 'Log → Matching main', 'main log padhta tha'], [C.acc, 'Log → Standby', 'saath-saath padhta, book taiyaar'], [C.bad, 'Matching main gira', 'standby pehle se taiyaar'], [C.good, 'Standby → Orders', 'turant chalu, replay ka intezaar nahi']],
+  [[C.msg, 'Orders → Matching server', 'Matching server ki book me 4,000 khule order the'], [C.bad, 'server gira', 'Server gira, book sirf RAM me thi, saaf ho gayi'], [C.bad, 'Order book', 'Ab 0 order, kisne kya maanga tha kisi ko pata nahi']],
+  [[C.acc, 'Order → Log (disk)', 'Har order pehle disk wale log me number ke saath likha (#501)'], [C.good, 'Log → Book (RAM)', 'Phir RAM wali book me gaya, match tez hota'], [C.bad, 'Matching gira', 'Matching gira, book gayab, par log disk pe bacha'], [C.good, 'Log → Book (RAM)', 'Log #1 se #4000 tak dobara chala, book wapas, kuch nahi khoya']],
+  [[C.acc, 'Log → Matching main', 'Main matching server log padh ke book chala raha tha'], [C.acc, 'Log → Standby', 'Standby bhi saath-saath wahi log padhta, book taiyaar rakhta'], [C.bad, 'Matching main gira', 'Main gira, par standby ke paas poori book thi'], [C.good, 'Standby → Orders', 'Standby turant chalu, replay ka intezaar nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

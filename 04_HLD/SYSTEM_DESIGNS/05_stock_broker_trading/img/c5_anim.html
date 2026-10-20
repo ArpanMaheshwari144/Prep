@@ -170,7 +170,9 @@ function legend(steps) {
     el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
     el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
     el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
-    String(line).split('|').forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
       fill: C.muted, class: 'sans' }, LEG, ln));
   });
 }
@@ -211,9 +213,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.msg, 'Orders → Matching server', '4,000 khule order'], [C.bad, 'server gira', 'book sirf RAM me thi, saaf'], [C.bad, 'Order book', '0 order: kisne kya maanga, pata nahi']],
-  [[C.acc, 'Order → Log (disk)', 'pehle log: #501, number ke saath'], [C.good, 'Log → Book (RAM)', 'phir book me, RAM me tez'], [C.bad, 'Matching gira', 'book gayab, par log disk pe'], [C.good, 'Log → Book (RAM)', 'replay #1 se #4000: kuch nahi khoya']],
-  [[C.acc, 'Log → Matching main', 'main log padhta tha'], [C.acc, 'Log → Standby', 'saath-saath padhta, book taiyaar'], [C.bad, 'Matching main gira', 'standby pehle se taiyaar'], [C.good, 'Standby → Orders', 'turant chalu, replay ka intezaar nahi']],
+  [[C.msg, 'Orders → Matching server', 'Matching server ki book me 4,000 khule order the'], [C.bad, 'server gira', 'Server gira, book sirf RAM me thi, saaf ho gayi'], [C.bad, 'Order book', 'Ab 0 order, kisne kya maanga tha kisi ko pata nahi']],
+  [[C.acc, 'Order → Log (disk)', 'Har order pehle disk wale log me number ke saath likha (#501)'], [C.good, 'Log → Book (RAM)', 'Phir RAM wali book me gaya, match tez hota'], [C.bad, 'Matching gira', 'Matching gira, book gayab, par log disk pe bacha'], [C.good, 'Log → Book (RAM)', 'Log #1 se #4000 tak dobara chala, book wapas, kuch nahi khoya']],
+  [[C.acc, 'Log → Matching main', 'Main matching server log padh ke book chala raha tha'], [C.acc, 'Log → Standby', 'Standby bhi saath-saath wahi log padhta, book taiyaar rakhta'], [C.bad, 'Matching main gira', 'Main gira, par standby ke paas poori book thi'], [C.good, 'Standby → Orders', 'Standby turant chalu, replay ka intezaar nahi']],
 ];
 function frame(ph) {
   if (ph === 0) {

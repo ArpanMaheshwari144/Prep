@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.acc, 'Settlement → Wallet DB', 'Arpan -30k likha'], [C.bad, 'Settlement gira', 'aage likhne se pehle'], [C.bad, 'Settlement → Wallet DB', 'Suresh +30k, share: likhe hi nahi'], [C.bad, 'Wallet DB → Arpan / Suresh', 'Arpan ka 30k gaya, share nahi.|Suresh ko paisa nahi']],
-  [[C.msg, 'Settlement → Wallet DB', 'ek transaction (BEGIN)'], [C.good, 'chaaron saath', 'Arpan -30k +10 share,|Suresh +30k -10 share'], [C.good, 'COMMIT', 'tab pakka. Pehle gira to rollback']],
-  [[C.good, 'Settlement → Wallet DB', 't1 likha (commit hua)'], [C.acc, 'Settlement retry → Wallet DB', 'jawab kho gaya tha, t1 phir'], [C.acc, 'Wallet DB → retry', 't1 pehle se (UNIQUE): kuch nahi'], [C.good, 'Wallet DB → Suresh', '+30k ek hi baar']],
+  [[C.acc, 'Settlement → Wallet DB', 'Settlement ne Arpan ke wallet se 30k kaat diye'], [C.bad, 'Settlement gira', 'Aage likhne se pehle hi Settlement gir gaya'], [C.bad, 'Settlement → Wallet DB', 'Suresh ke +30k aur share likhe hi nahi gaye'], [C.bad, 'Wallet DB → Arpan / Suresh', 'Arpan ka 30k gaya par share nahi, Suresh ko paisa nahi']],
+  [[C.msg, 'Settlement → Wallet DB', 'Settlement ne ek transaction shuru kiya (BEGIN)'], [C.good, 'chaaron saath', 'Arpan -30k +10 share, Suresh +30k -10 share, chaaron ek saath'], [C.good, 'COMMIT', 'COMMIT pe hi pakka; beech me gira to sab rollback']],
+  [[C.good, 'Settlement → Wallet DB', 'Settlement ne trade t1 likha, commit ho gaya'], [C.acc, 'Settlement retry → Wallet DB', 'Jawab kho gaya tha, to retry ne t1 phir bheja'], [C.acc, 'Wallet DB → retry', 't1 pehle se tha (UNIQUE), DB ne kuch nahi badla'], [C.good, 'Wallet DB → Suresh', 'Suresh ko +30k sirf ek hi baar mile']],
 ];
 function frame(ph) {
   if (ph === 0) {

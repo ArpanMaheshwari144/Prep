@@ -18,9 +18,9 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
-  [[C.bad, '10 lakh users → Price server', 'har second "price?"'], [C.acc, 'Price server → users', 'zyadatar "wahi hai". CPU 100%']],
-  [[C.msg, 'App → WS server', 'ek baar juda, khula rakha'], [C.acc, 'Matching → Pub/sub', 'TCS 3001, sirf jab badla'], [C.good, 'Pub/sub → WS server', 'har WS server tak'], [C.good, 'WS server → App', 'khud bheja, Arpan ne poochha nahi']],
-  [[C.bad, 'WS server → App', 'net gaya: beech ke price nahi pahunche'], [C.acc, 'App → WS server', 'phir juda'], [C.good, 'Price store → WS server', 'abhi ka price: TCS 3007'], [C.good, 'WS server → App', 'push, ab aage live']],
+  [[C.bad, '10 lakh users → Price server', '10 lakh app har second price server se poochti "price?"'], [C.muted, 'Price server → users', 'Zyadatar jawab "wahi hai", phir bhi server ka CPU 100%']],
+  [[C.msg, 'App → WS server', 'App ek baar WS server se judi aur connection khula rakha'], [C.acc, 'Matching → Pub/sub', 'TCS ka price 3001 hua, sirf badalne pe khabar pub/sub me'], [C.good, 'Pub/sub → WS server', 'Pub/sub ne khabar har WS server tak pahunchai'], [C.good, 'WS server → App', 'WS server ne khud price bheja, Arpan ko poochhna nahi pada']],
+  [[C.bad, 'WS server → App', 'Net gaya, beech ke price app tak nahi pahunche'], [C.acc, 'App → WS server', 'Net aate hi app phir WS server se judi'], [C.good, 'Price store → WS server', 'WS server ne price store se abhi ka price liya: TCS 3007'], [C.good, 'WS server → App', 'Ye price push kiya, ab aage phir live']],
 ];
 function frame(ph) {
   if (ph === 0) {
