@@ -14,6 +14,11 @@ function code(n, a, b, c) {
   A(248, 80, 132, 80, c, { n }); A(248, 300, 132, 300, c);
   T(190, 112, a, { c, b: 1, size: 14 }); T(190, 332, b, { c, b: 1, size: 14 });
 }
+const STEPS = [
+  [[C.msg, 'Main → App-1', 'link banao (Ravi bhi saath)'], [C.acc, 'App-1, App-2 → DB', 'agla number?'], [C.bad, 'DB → App-1, App-2', 'dono ko 501'], [C.bad, 'App → Main, Ravi', 'ek hi code do link ko']],
+  [[C.acc, 'Counter → App-1, App-2', 'pehle hi range: 1-1000, 1001-2000'], [C.msg, 'Main → App-1', 'link banao'], [C.good, 'App → Main, Ravi', 'code 1, code 1001. Takkar nahi']],
+  [[C.bad, 'Counter gira', 'App ki range chalti rehti'], [C.msg, 'Main → App-1', 'link banao'], [C.good, 'App → Main, Ravi', 'apni range se: 401, 1301.|Counter se kuch nahi maanga'], [C.acc, 'Counter copy → App', 'copy uthi. Range khatam pe|agli range wahan se']],
+];
 function frame(ph) {
   if (ph === 0) {
     ppl(); req(1); apps('', '');
@@ -36,9 +41,9 @@ function frame(ph) {
     // App se Counter tak koi teer nahi: range pehle se App ke paas, Counter se kuch nahi maanga
     code(3, 'code 401', 'code 1301', C.good);
     L(20, 190, 'range pehle se App ke paas, usi se agla number.', C.good, 'start'); L(20, 210, 'Counter se kuch nahi maanga', C.good, 'start');
-    B(740, 40, 140, 60, 'Counter copy', 'ab yahi Counter', { st: 'acc' }); A(640, 148, 740, 100, C.acc, { n: 4, dash: 1 });
+    B(740, 40, 140, 60, 'Counter copy', 'ab yahi Counter', { st: 'acc' }); A(640, 148, 740, 100, C.acc, { dash: 1 });
     // range khatam hone pe App agli range copy se lete (range copy -> App jaati)
-    A(738, 70, 382, 70, C.acc, { n: 5, dash: 1, at: 0.25 }); L(560, 55, 'range khatam? agli range copy se', C.acc);
+    A(738, 70, 382, 70, C.acc, { n: 4, dash: 1, at: 0.25 }); L(560, 55, 'range khatam? agli range copy se', C.acc);
     AP([[810, 102], [810, 285], [382, 285]], C.acc, { dash: 1 });
     L(630, 345, 'range khatam hone se pehle copy taiyaar', C.muted);
   }

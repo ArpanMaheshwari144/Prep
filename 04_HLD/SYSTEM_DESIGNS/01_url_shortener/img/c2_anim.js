@@ -6,6 +6,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR App giri nahi, bas dheemi? -> jiske kam connection khule, use bhejo'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Users → App', 'ek hi machine'], [C.bad, 'App giri', 'koi jawab nahi: poori site band']],
+  [[C.msg, 'Users → LB', 'click'], [C.bad, 'LB → App-1', 'giri, /health chup'], [C.good, 'LB → App-2', 'agla click yahan'], [C.good, 'App-2 → Redis / DB', 'App kuch yaad nahi rakhta (stateless)']],
+  [[C.msg, 'Users → LB', 'click'], [C.good, 'LB → App-2', 'kam connection wali ko (5 vs 50).|Round-robin hota to aadhe dheemi pe']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 120, 60, 'Users'); A(140, 160, 358, 160, C.bad, { n: 1 });

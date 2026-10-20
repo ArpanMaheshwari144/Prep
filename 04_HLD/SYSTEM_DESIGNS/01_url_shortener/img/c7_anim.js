@@ -7,6 +7,11 @@ const PH = [
 ];
 function setup() {}
 function apps(st) { B(740, 60, 110, 50, 'App-1', '', { st }); B(740, 200, 110, 50, 'App-2', '', { st }); }
+const STEPS = [
+  [[C.msg, 'Phone → DNS', 'LB ka pata?'], [C.msg, 'DNS → Phone', 'LB-1'], [C.bad, 'Phone → LB-1', 'gira: App zinda, par andar koi nahi']],
+  [[C.acc, 'Route 53 → LB-1', '/health? 3 baar chup: list se bahar'], [C.good, 'Route 53 → LB-2', '/health? haan'], [C.msg, 'Phone → Route 53', 'pata maanga: LB-2 mila'], [C.good, 'Phone → LB-2', 'request andar']],
+  [[C.bad, 'Phone → LB-1', 'purana pata yaad: fail'], [C.acc, 'TTL ~60 sec', 'phir DNS se naya'], [C.msg, 'Phone → Route 53', 'LB-2 ka pata'], [C.good, 'Phone → LB-2', 'ab theek']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 110, 110, 60, 'Phone'); B(220, 110, 110, 60, 'DNS');
@@ -22,8 +27,8 @@ function frame(ph) {
     A(350, 115, 478, 60, C.acc, { n: 1, dash: 1, at: 0.4 }); L(330, 45, '/health? 3 baar chup', C.acc, 'start');
     A(350, 140, 478, 240, C.acc, { n: 2, dash: 1, at: 0.4 }); L(400, 215, '/health? haan', C.good);
     L(540, 110, 'list se bahar', C.bad);
-    A(130, 130, 218, 130, C.msg, { n: 3 }); A(218, 150, 132, 150, C.good, { n: 4 }); L(175, 95, 'LB-2 ka pata', C.good);
-    A(75, 170, 478, 268, C.good, { n: 5, at: 0.6 });
+    A(130, 130, 218, 130, C.msg, { n: 3 }); A(218, 150, 132, 150, C.good); L(175, 95, 'LB-2 ka pata', C.good);
+    A(75, 170, 478, 268, C.good, { n: 4, at: 0.6 });
     apps(''); A(600, 240, 738, 95, C.good); A(600, 255, 738, 225, C.good);
   } else {
     B(20, 110, 110, 60, 'Phone', 'yaad: LB-1'); B(220, 100, 130, 70, 'Route 53', 'ab: LB-2', { st: 'acc' });
@@ -31,8 +36,8 @@ function frame(ph) {
     B(480, 220, 120, 60, 'LB-2', '', { st: 'good' });
     AP([[75, 108], [75, 55], [478, 55]], C.bad, { n: 1, dash: 1, at: 0.6 }); L(300, 40, 'purana pata yaad, seedha LB-1, fail', C.bad);
     L(75, 200, 'TTL ~60 sec', C.acc); num(75, 225, 2, C.acc); L(75, 250, 'phir DNS se naya', C.muted);
-    A(130, 130, 218, 130, C.msg, { n: 3 }); A(218, 150, 132, 150, C.good, { n: 4 }); L(175, 100, 'LB-2 ka pata', C.good);
-    A(75, 170, 478, 262, C.good, { n: 5, at: 0.6 });
+    A(130, 130, 218, 130, C.msg, { n: 3 }); A(218, 150, 132, 150, C.good); L(175, 100, 'LB-2 ka pata', C.good);
+    A(75, 170, 478, 262, C.good, { n: 4, at: 0.6 });
     apps(''); A(600, 240, 738, 95, C.good); A(600, 255, 738, 225, C.good);
     L(540, 330, 'isliye LB khud kai zone me (ALB), har jagah 2+', C.muted);
   }

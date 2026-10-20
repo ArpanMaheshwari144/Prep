@@ -6,6 +6,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR Analytics dheema ho gaya? -> khabar Kafka me padi rehti, apni speed se padho'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.msg, 'User → App', 'click'], [C.bad, 'App → DB', 'ginti likho, wait'], [C.bad, 'App', 'DB likhai (~10 ms) pe ruka'], [C.bad, 'App → User', 'redirect der se']],
+  [[C.msg, 'User → App', 'click'], [C.good, 'App → User', '302 turant'], [C.acc, 'App → Kafka', 'click ki khabar'], [C.good, 'Kafka → Analytics', 'ginti apni speed se']],
+  [[C.msg, 'User → App', 'click'], [C.good, 'App → User', '302 turant, koi asar nahi'], [C.acc, 'App → Kafka', 'khabar padi, khoti nahi'], [C.bad, 'Kafka → Analytics', 'dheema: offset se, baad me 40 se aage']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 120, 60, 'User'); A(140, 145, 258, 145, C.msg, { n: 1 }); B(260, 130, 120, 60, 'App');

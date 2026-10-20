@@ -6,6 +6,11 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR darwaze pe pehchaana hua hamla aaya? -> WAF darwaze pe hi rok deta'],
 ];
 function setup() {}
+const STEPS = [
+  [[C.bad, 'Spammer → App', '5,000 link / sec'], [C.bad, 'App → DB', 'sab seedhe DB tak: bhara, sab dheema']],
+  [[C.bad, 'Spammer → Gateway', 'key k1'], [C.acc, 'Gateway → Redis', 'ginti +1: k1 = 5000 / 100, had paar'], [C.bad, 'Gateway → Spammer', '429, App tak aaya hi nahi'], [C.good, 'Asli user → Gateway → App', 'k2 had ke andar, speed bachi']],
+  [[C.bad, 'Attacker → WAF', 'SQL inject / bot: pehchaana, roka'], [C.good, 'Asli user → WAF → Gateway', 'andar']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 130, 60, 'Spammer', '5,000 / sec', { st: 'bad' });
@@ -19,12 +24,12 @@ function frame(ph) {
     B(320, 130, 130, 60, 'Gateway', 'rate limit', { st: 'acc' });
     B(540, 30, 130, 60, 'Redis', 'k1: 5000 / 100', { st: 'acc' });
     A(440, 130, 530, 62, C.acc, { n: 2, at: 0.35 }); L(440, 85, 'ginti +1', C.acc);
-    A(560, 92, 470, 150, C.bad, { n: 3, at: 0.45 }); L(560, 135, 'had paar', C.bad, 'start');
-    A(318, 180, 152, 180, C.bad, { n: 4 }); T(185, 210, '429', { c: C.bad, b: 1, size: 18 });
+    A(560, 92, 470, 150, C.bad); L(560, 135, 'had paar', C.bad, 'start');
+    A(318, 180, 152, 180, C.bad, { n: 3 }); T(185, 210, '429', { c: C.bad, b: 1, size: 18 });
     B(700, 130, 120, 60, 'App', '', { st: 'good' }); A(450, 170, 698, 170, C.muted, { dash: 1 }); cross(575, 170); L(575, 215, 'k1 App tak aaya hi nahi', C.bad);
-    B(20, 260, 130, 50, 'Asli user', 'key: k2'); A(150, 285, 318, 185, C.good, { n: 5 });
+    B(20, 260, 130, 50, 'Asli user', 'key: k2'); A(150, 285, 318, 185, C.good, { n: 4 });
     // asli user had ke andar -> Gateway use App tak jaane deta
-    AP([[400, 192], [400, 260], [760, 260], [760, 192]], C.good, { n: 6, at: 0.5 }); L(580, 285, 'k2 had ke andar, App tak, speed bachi', C.good);
+    AP([[400, 192], [400, 260], [760, 260], [760, 192]], C.good); L(580, 285, 'k2 had ke andar, App tak, speed bachi', C.good);
   } else {
     B(20, 130, 130, 60, 'Attacker', 'SQL inject / bot', { st: 'bad' });
     A(150, 160, 238, 160, C.bad, { n: 1 });

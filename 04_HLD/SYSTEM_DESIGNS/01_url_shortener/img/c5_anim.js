@@ -15,6 +15,11 @@ function ring(dead) {
   });
 }
 const HP = [CX - 95, CY - 45]; // hash ki jagah ring pe (DB-1 se thoda pehle)
+const STEPS = [
+  [[C.bad, 'App → DB', 'har link ek hi machine pe'], [C.bad, 'DB', '90 TB: samaata nahi']],
+  [[C.acc, 'App → ring', 'code ka hash = ring pe ek jagah'], [C.good, 'ring → DB-1', 'aage chalo, pehli machine: DB-1'], [C.acc, 'DB-1 → DB-2, DB-3', 'copy agle 2 pe']],
+  [[C.acc, 'App → ring', 'code ka hash'], [C.bad, 'ring → DB-1', 'DB-1 mar gayi'], [C.good, 'ring → DB-2', 'copy se mila, link gaya nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 120, 60, 'App'); A(140, 160, 358, 160, C.bad, { n: 1 }); L(250, 140, 'har link yahin', C.bad);
