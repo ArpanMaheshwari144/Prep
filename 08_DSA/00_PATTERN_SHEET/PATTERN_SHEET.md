@@ -1009,8 +1009,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      count pairs (i<j): (A[i]+A[j])%k==0.
      DERIVE: brute O(n²) har pair -> "partner pehle aaya?" baar-baar -> partner ko hashmap me CACHE -> O(n).
      ★ A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har element ka apna remainder.
-     sum = ((A[i]%k)+k)%k;   count += mp[(k-sum)%k];   mp[sum]++;   // +k phir %k: C++ me negative ka % negative aata, key galat
-        partner = (k-sum)%k · lookup PEHLE phir insert (warna khud-se-pair).
+     rem = ((A[i]%k)+k)%k;   count += mp[(k-rem)%k];   mp[rem]++;   // +k phir %k: C++ me negative ka % negative aata, key galat
+        partner = (k-rem)%k · lookup PEHLE phir insert (warna khud-se-pair).
 
       ★ k-sum ka INTUITION (ek element se, concrete):
         maan it=1, k=3.   pehle remainder: 1%3 = 1.
