@@ -181,9 +181,11 @@ function frame(ph) {
     A(360, 200, 515, 280, C.bad, { dash: 1, n: 3, at: 0.25 }); cross(450, 248);
   } else if (ph === 4) {
     left('bad', 'good'); main('bad'); copy('bad'); L(600, 345, 'copy bhi gayi', C.bad);
-    A(150, 135, 238, 180, C.bad, { n: 1 }); A(150, 245, 238, 200, C.good, { n: 1 });
-    L(300, 145, 'login: band', C.bad);
-    A(360, 190, 470, 190, C.good, { n: 2 }); dot([492, 190], C.good, '', 'feed: khula', C.good);
+    A(150, 135, 238, 180, C.bad, { n: 1, at: 0.25 }); A(150, 245, 238, 200, C.good, { n: 1 });
+    cross(220, 171); L(300, 140, 'login: 503 (fail-closed)', C.bad);
+    A(360, 210, 768, 210, C.good, { n: 2, at: 0.3 }); L(560, 235, 'feed: khula (fail-open)', C.good);
+    B(770, 180, 110, 60, 'App', '', { st: 'good' });
+    L(300, 300, 'hal: pehle se tay: login band, feed khula', C.good);
   } else if (ph === 5) {
     B(20, 15, 130, 50, 'Attacker', '', { st: 'bad' }); A(85, 65, 85, 106, C.bad, { n: 1 });
     left('bad', 'good'); main('bad'); copy('bad');
