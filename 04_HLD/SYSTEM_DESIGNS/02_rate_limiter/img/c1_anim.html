@@ -87,7 +87,29 @@ function A(x1, y1, x2, y2, c, o = {}) {
   const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
   el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
     `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
 }
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
 function dots(n, x, y, c, o = {}) {
   const cols = o.cols || 10, g = o.gap || 22;
   for (let i = 0; i < n; i++) {
@@ -122,22 +144,24 @@ const PH = [
 function setup() {}
 function apps(st1, st2, s1, s2) {
   B(20, 140, 100, 70, 'Arpan', '9 login'); B(170, 150, 70, 50, 'LB');
-  A(120, 175, 168, 175); A(240, 165, 318, 100); A(240, 185, 318, 260);
+  A(120, 175, 168, 175, C.msg, { n: 1, at: 0.45 });
+  A(240, 165, 318, 100, C.msg, { n: 2 }); A(240, 185, 318, 260, C.msg, { n: 2 });
   B(320, 60, 130, 70, 'App-1', s1, { st: st1 }); B(320, 225, 130, 70, 'App-2', s2, { st: st2 });
 }
 function frame(ph) {
   if (ph === 0) {
     apps('bad', 'bad', 'ginti: 5', 'ginti: 4');
-    dots(5, 480, 95, C.good); dots(4, 480, 260, C.good);
-    T(760, 170, 'andar: 9', { c: C.bad, b: 1, size: 26 });
-    T(760, 205, 'had: 5', { c: C.muted, size: 15 });
+    A(450, 95, 478, 95, C.good, { n: 3, at: 0 }); dots(5, 500, 95, C.good);
+    A(450, 260, 478, 260, C.good, { n: 3, at: 0 }); dots(4, 500, 260, C.good);
+    T(770, 170, 'andar: 9', { c: C.bad, b: 1, size: 26 });
+    T(770, 205, 'had: 5', { c: C.muted, size: 15 });
   } else if (ph === 1) {
     apps('', '', '', '');
     B(530, 135, 170, 80, 'Redis', 'ginti: 9', { st: 'acc' });
-    A(450, 95, 528, 160); A(450, 260, 528, 190);
-    dots(5, 740, 140, C.good, { gap: 26 });
-    dots(4, 740, 215, C.bad, { gap: 26 });
-    T(800, 120, 'andar: 5', { c: C.good, b: 1, size: 15 });
+    A(450, 95, 528, 160, C.acc, { n: 3 }); A(450, 260, 528, 190, C.acc, { n: 3 });
+    A(700, 160, 735, 140, C.good, { n: 4, at: 0 }); dots(5, 750, 140, C.good, { gap: 26 });
+    A(700, 190, 735, 215, C.bad, { n: 5, at: 0 }); dots(4, 750, 215, C.bad, { gap: 26 });
+    T(800, 115, 'andar: 5', { c: C.good, b: 1, size: 15 });
     T(800, 250, '429: 4', { c: C.bad, b: 1, size: 15 });
   } else if (ph === 2) {
     el('rect', { x: 60, y: 120, width: 390, height: 120, fill: '#1a2430', stroke: C.line }, DYN);
@@ -146,15 +170,18 @@ function frame(ph) {
     T(645, 300, 'minute 2: 5 / 5', { c: C.muted, size: 14 });
     el('line', { x1: 450, y1: 100, x2: 450, y2: 260, stroke: C.acc, 'stroke-width': 3 }, DYN);
     T(450, 280, '10:01:00', { c: C.acc, b: 1, size: 14 });
-    dots(5, 350, 180, C.good, { gap: 20 }); dots(5, 470, 180, C.good, { gap: 20 });
+    L(462, 140, 'ginti 0 se', C.acc, 'start');
+    num(330, 180, 1, C.good); dots(5, 350, 205, C.good, { gap: 20 });
+    num(570, 180, 2, C.good); dots(5, 470, 205, C.good, { gap: 20 });
     el('path', { d: 'M340 90 L340 75 L560 75 L560 90', fill: 'none', stroke: C.bad, 'stroke-width': 3 }, DYN);
     T(450, 60, '2 sec: 10 andar', { c: C.bad, b: 1, size: 16 });
   } else {
     B(80, 110, 220, 80, 'rate:Arpan:login', 'ginti: 5', { st: 'dim' });
-    A(310, 150, 570, 150, C.muted, { dash: 1 });
+    A(310, 150, 570, 150, C.muted, { dash: 1, n: 1, at: 0.2 });
     T(440, 135, '60 sec', { c: C.muted, size: 14 });
+    L(440, 175, 'key mit gayi', C.muted);
     B(580, 110, 220, 80, 'rate:Arpan:login', 'ginti: 0', { st: 'good' });
-    dot([690, 250], C.good); T(690, 285, 'andar', { c: C.good, b: 1, size: 14 });
+    A(690, 190, 690, 235, C.good, { n: 2 }); dot([690, 255], C.good); T(690, 290, 'andar', { c: C.good, b: 1, size: 14 });
   }
 }
 

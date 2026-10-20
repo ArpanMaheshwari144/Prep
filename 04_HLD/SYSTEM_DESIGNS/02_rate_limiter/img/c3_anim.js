@@ -10,38 +10,44 @@ const PH = [
 function setup() {}
 function frame(ph) {
   if (ph === 0) {
-    B(20, 140, 100, 80, 'Bot', '10,000/s'); A(120, 180, 198, 180);
-    B(200, 155, 80, 50, 'LB'); A(280, 180, 378, 180, C.bad);
+    B(20, 140, 100, 80, 'Bot', '10,000/s'); A(120, 180, 198, 180, C.msg, { n: 1 });
+    B(200, 155, 80, 50, 'LB'); A(280, 180, 378, 180, C.bad, { n: 2 });
     B(380, 130, 130, 100, 'App', 'limiter', { st: 'bad' });
     bar(395, 250, 100, 18, 1, 'bojh');
-    B(700, 150, 130, 60, 'Redis'); A(510, 180, 698, 180);
-    dots(12, 545, 110, C.bad, { gap: 22, cols: 6 }); T(600, 90, '429', { c: C.bad, b: 1, size: 14 });
+    B(700, 150, 130, 60, 'Redis'); A(510, 180, 698, 180, C.msg, { n: 3, at: 0.75 });
+    num(530, 105, 4, C.bad); dots(12, 555, 105, C.bad, { gap: 22, cols: 6 }); T(610, 85, '429', { c: C.bad, b: 1, size: 14 });
+    L(445, 295, 'App bhar gaya', C.bad);
   } else if (ph === 1) {
-    B(20, 140, 100, 80, 'Bot', '10,000/s'); A(120, 180, 178, 180);
-    B(180, 150, 110, 60, 'Gateway', 'limiter', { st: 'acc' }); A(290, 180, 368, 180, C.good);
-    dots(12, 140, 250, C.bad, { gap: 22, cols: 6 }); T(195, 310, '429', { c: C.bad, b: 1, size: 14 });
-    B(370, 155, 80, 50, 'LB'); A(450, 180, 528, 180, C.good);
+    B(20, 140, 100, 80, 'Bot', '10,000/s'); A(120, 180, 178, 180, C.msg, { n: 1 });
+    B(180, 150, 110, 60, 'Gateway', 'limiter', { st: 'acc' });
+    B(180, 30, 110, 50, 'Redis'); A(235, 150, 235, 82, C.acc, { n: 2 });
+    num(130, 250, 3, C.bad); dots(12, 150, 250, C.bad, { gap: 22, cols: 6 }); T(205, 310, '429', { c: C.bad, b: 1, size: 14 });
+    A(290, 180, 368, 180, C.good, { n: 4 });
+    B(370, 155, 80, 50, 'LB'); A(450, 180, 528, 180, C.good, { n: 5 });
     B(530, 130, 130, 100, 'App', '', { st: 'good' }); bar(545, 250, 100, 18, 0.2, 'bojh');
-    dots(3, 310, 150, C.good, { gap: 18 });
-    B(730, 150, 130, 60, 'Redis'); A(660, 180, 728, 180);
+    dots(3, 300, 145, C.good, { gap: 18 });
   } else if (ph === 2) {
     const ys = [70, 180, 290], tt = ['28 s', '31 s', '33 s'];
-    ys.forEach((y, i) => { B(20, y - 25, 110, 50, `user ${i + 1}`); A(130, y, 448, 180, C.acc);
+    ys.forEach((y, i) => { B(20, y - 25, 110, 50, `user ${i + 1}`);
+      A(130, y, 448, 180, C.acc, { n: i + 1, at: 0.25 });
       T(290, y + (180 - y) * 0.5 - 12, tt[i], { c: C.acc, b: 1, size: 14, halo: 1 }); });
+    L(290, 20, 'Retry-After alag-alag');
     B(450, 150, 120, 60, 'Gateway', '', { st: 'good' });
     bar(460, 235, 100, 18, 0.3, 'bojh', 1);
     el('line', { x1: 640, y1: 200, x2: 880, y2: 200, stroke: C.line, 'stroke-width': 2 }, DYN);
     [[680, '28'], [760, '31'], [840, '33']].forEach(([x, s]) => { dot([x, 180], C.acc); T(x, 225, s + ' s', { c: C.muted, size: 12 }); });
+    L(760, 260, 'ek saath nahi', C.good);
   } else {
     const down = ph === 3;
-    B(20, 150, 100, 60, 'users'); A(120, 180, 198, 180);
+    B(20, 150, 100, 60, 'users'); A(120, 180, 198, 180, C.msg, { n: 1 });
     B(200, 155, 80, 50, 'LB');
-    B(400, 60, 130, 60, 'Gateway-1', '', { st: down ? 'bad' : 'good' }); if (down) cross(555, 90);
+    B(400, 60, 130, 60, 'Gateway-1', '', { st: down ? 'bad' : 'good' });
+    if (down) { cross(555, 90); L(465, 45, 'gira', C.bad); } else L(465, 45, 'wapas aaya', C.good);
     B(400, 240, 130, 60, 'Gateway-2', '', { st: 'good' });
-    A(280, 170, 398, 95, down ? C.bad : C.good, { dash: down });
-    A(280, 190, 398, 265, C.good);
+    A(280, 170, 398, 95, down ? C.bad : C.good, { dash: down, n: 2 });
+    A(280, 190, 398, 265, C.good, { n: down ? 3 : 2 });
     B(680, 150, 120, 60, 'App');
-    if (!down) A(530, 90, 678, 170, C.good);
-    A(530, 270, 678, 190, C.good);
+    if (!down) A(530, 90, 678, 170, C.good, { n: 3 });
+    A(530, 270, 678, 190, C.good, { n: down ? 4 : 3 });
   }
 }

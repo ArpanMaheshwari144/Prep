@@ -87,7 +87,29 @@ function A(x1, y1, x2, y2, c, o = {}) {
   const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
   el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
     `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
 }
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
 function dots(n, x, y, c, o = {}) {
   const cols = o.cols || 10, g = o.gap || 22;
   for (let i = 0; i < n; i++) {
@@ -122,34 +144,39 @@ const PH = [
 const NAMES = ['Ravi', 'Asha', 'Mohan', 'Neha', 'Suresh'];
 function setup() {}
 function office(sts, gsub) {
-  NAMES.forEach((n, i) => { B(20, 15 + i * 64, 110, 46, n, '', { st: sts[i] }); A(130, 38 + i * 64, 228, 175); });
+  NAMES.forEach((n, i) => { B(20, 15 + i * 64, 110, 46, n, '', { st: sts[i] });
+    A(130, 38 + i * 64, 228, 175, i === 0 ? C.acc : C.msg, { n: i === 0 ? 1 : i === 3 ? 2 : 0, at: 0.4 }); });
   B(230, 140, 110, 70, 'Office', '1 IP');
-  A(340, 175, 428, 175); B(430, 140, 130, 70, 'Gateway', gsub, { st: 'acc' });
+  A(340, 175, 428, 175, C.msg, { n: 3 }); B(430, 140, 130, 70, 'Gateway', gsub, { st: 'acc' });
   B(720, 140, 120, 70, 'App');
 }
 function frame(ph) {
   if (ph === 0) {
     office(['acc', 'bad', 'bad', 'bad', 'bad'], 'ginti: IP');
-    A(560, 175, 718, 175, C.bad, { dash: 1 }); cross(640, 175);
+    L(75, 345, 'Ravi: 6 galat', C.acc);
+    A(560, 175, 718, 175, C.bad, { dash: 1, n: 4, at: 0.2 }); cross(650, 175);
     T(495, 250, 'IP: 10 > 5', { c: C.bad, b: 1, size: 15 });
   } else if (ph === 1) {
     office(['bad', 'good', 'good', 'good', 'good'], 'ginti: user_id');
-    A(560, 175, 718, 175, C.good); dots(4, 585, 150, C.good, { gap: 26 });
+    A(560, 175, 718, 175, C.good, { n: 4, at: 0.2 }); dots(4, 610, 150, C.good, { gap: 26 });
     T(495, 250, 'Ravi: 6 > 5', { c: C.bad, b: 1, size: 15 });
   } else {
     const cap = ph === 3;
     B(20, 40, 120, 60, 'Attacker', '', { st: 'bad' });
     B(20, 250, 120, 60, 'Ravi', '', { st: cap ? 'good' : 'bad' });
     B(330, 140, 130, 70, cap ? 'CAPTCHA' : 'Gateway', '', { st: 'acc' });
-    A(140, 70, 328, 158, C.bad); dots(5, 165, 92, C.bad, { gap: 22 });
+    A(140, 70, 328, 158, C.bad, { n: 1, at: cap ? 0.4 : 0.8 }); dots(5, 165, 35, C.bad, { gap: 22 });
+    L(250, 70, '5 galat password', C.bad);
     if (!cap) {
       B(620, 140, 190, 70, 'Ravi ka account', 'LOCK', { st: 'bad' });
-      A(460, 175, 618, 175, C.bad);
-      A(140, 280, 328, 195, C.bad, { dash: 1 }); cross(235, 238);
+      A(460, 175, 618, 175, C.bad, { n: 2 });
+      A(140, 280, 328, 195, C.bad, { dash: 1, n: 3, at: 0.25 }); cross(255, 232);
+      L(715, 240, 'Ravi khud bahar', C.bad);
     } else {
-      B(620, 140, 190, 70, 'App', '', { st: 'good' }); A(460, 175, 618, 175, C.good);
-      A(140, 280, 328, 195, C.good); dot([235, 238], C.good);
-      cross(300, 128);
+      cross(305, 147);
+      B(620, 140, 190, 70, 'App', '', { st: 'good' });
+      A(140, 280, 328, 195, C.good, { n: 2, at: 0.25 }); dot([255, 232], C.good);
+      A(460, 175, 618, 175, C.good, { n: 3 });
     }
   }
 }
