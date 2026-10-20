@@ -1012,18 +1012,18 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      rem = ((A[i]%k)+k)%k;   count += mp[(k-rem)%k];   mp[rem]++;   // +k phir %k: C++ me negative ka % negative aata, key galat
         partner = (k-rem)%k · lookup PEHLE phir insert (warna khud-se-pair).
 
-      ★ k-sum ka INTUITION (ek element se, concrete):
+      ★ k-rem ka INTUITION (ek element se, concrete):
         maan it=1, k=3.   pehle remainder: 1%3 = 1.
         chahiye: (1 + partner) % 3 == 0.   to partner ka remainder = 3 - 1 = 2.
         ab MAP me dekho: koi element pehle aaya jiska remainder 2 tha?
              mp[2] jitna -> utne pair bane (har aisa element 1 ke saath jodi banata).
-        yehi hai partner = (k - sum) = 3 - 1 = 2.
-        (sum=0 aaya -> partner = 3-0 = 3, par 3%3 = 0 -> partner 0.  isiliye (k-sum)%k.)
+        yehi hai partner = (k - rem) = 3 - 1 = 2.
+        (rem=0 aaya -> partner = 3-0 = 3, par 3%3 = 0 -> partner 0.  isiliye (k-rem)%k.)
 
    ── DRY-RUN (nums=[1,2,3,4,5], k=3  ->  4 pairs) ──
-      sum = ((it)%k+k)%k :   1->1   2->2   3->0   4->1   5->2
+      rem = ((it)%k+k)%k :   1->1   2->2   3->0   4->1   5->2
 
-      it  sum  partner=(k-sum)%k   mp[partner]   count    mp-after
+      it  rem  partner=(k-rem)%k   mp[partner]   count    mp-after
        1   1        2                  0           0       {1:1}
        2   2        1                  1          +1=1     {1:1, 2:1}      <- pair (1,2)
        3   0        0                  0           0       {1:1, 2:1, 0:1}
