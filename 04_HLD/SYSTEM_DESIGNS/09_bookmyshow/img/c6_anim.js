@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR lock lene wala hi mar gaya? -> EX 5 ki wajah se lock khud hat jaata'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.bad, 'Redis', 'restart: seat map khaali'], [C.bad, 'App x 1000 → replica', 'sabka miss, sab replica pe'], [C.bad, 'Read replica', 'hazaaron query ek saath, baith gayi']],
-  [[C.acc, 'App-A → Redis', 'miss. Lock liya: SET NX EX 5'], [C.good, 'App-A → replica', 'sirf ek query, map banaya'], [C.good, 'App-A → Redis', 'map wapas Redis me'], [C.acc, 'App-B → Redis', 'lock nahi mila: 100 ms ruka,|phir Redis se padha']],
-  [[C.acc, 'App-A → Redis', 'lock liya, 5 sec ki umar'], [C.bad, 'App-A mara', 'map banane se pehle'], [C.good, 'Redis', '5 sec baad lock khud hata (EX)'], [C.good, 'App-B → Redis', 'lock mila, map banaya']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Redis', 'Raat 2 baje Redis restart hua, seat map khaali'], [C.bad, 'App x 1000 → replica', 'Sabko miss mila, 1000 App ek saath replica pe gayi'], [C.bad, 'Read replica', 'Hazaaron query ek saath aayi, replica baith gayi']],
+  [[C.acc, 'App-A → Redis', 'App-A ko miss mila, usne lock liya (SET NX EX 5)'], [C.good, 'App-A → replica', 'Sirf App-A ne replica pe ek query chala ke map banaya'], [C.good, 'App-A → Redis', 'App-A ne map wapas Redis me rakh diya'], [C.acc, 'App-B → Redis', 'App-B ko lock nahi mila, 100 ms ruka aur phir Redis se padha']],
+  [[C.acc, 'App-A → Redis', 'App-A ne lock liya, 5 sec ki umar ke saath'], [C.bad, 'App-A mara', 'Map banane se pehle hi App-A mar gaya'], [C.good, 'Redis', '5 sec baad lock khud hat gaya (EX)'], [C.good, 'App-B → Redis', 'Ab App-B ko lock mila aur usne map bana diya']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 30, 180, 80, 'Redis', 'restart: khaali', { st: 'bad' });

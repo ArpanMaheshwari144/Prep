@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR 4 seat li, A4 pehle hi ja chuki thi? -> badli rows 4 nahi, ROLLBACK'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.acc, 'DB → App-1 (Arpan)', 'A1 available padha'], [C.acc, 'DB → App-2 (Ravi)', 'A1 abhi bhi available padha'], [C.bad, 'App-1 → DB', 'A1 booked (Arpan)'], [C.bad, 'App-2 → DB', 'A1 booked (Ravi). Ek seat, do ticket']],
-  [[C.acc, 'App-1 → DB', 'UPDATE ... WHERE A1 available'], [C.good, 'DB → App-1', '1 row: A1 Arpan ki'], [C.acc, 'App-2 → DB', 'wahi UPDATE, ek pal baad'], [C.bad, 'DB → App-2', '0 row: Ravi ko "seat gayi"']],
-  [[C.acc, 'App → DB', 'A1-A4 ek transaction me UPDATE'], [C.bad, 'DB', 'A4 pehle se booked: sirf 3 row badli'], [C.good, 'App → DB', '3 != 4: ROLLBACK. A1-A3 wapas khaali']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.acc, 'DB → App-1 (Arpan)', 'Arpan ki request ne DB me dekha, A1 available hai'], [C.acc, 'DB → App-2 (Ravi)', 'Usi pal Ravi ki request ne bhi A1 available padha'], [C.bad, 'App-1 → DB', 'App-1 ne A1 Arpan ke naam booked likha'], [C.bad, 'App-2 → DB', 'App-2 ne bhi A1 Ravi ke naam likha, ek seat ke do ticket']],
+  [[C.acc, 'App-1 → DB', 'App-1 ne ek query bheji: UPDATE ... WHERE A1 available'], [C.good, 'DB → App-1', '1 row badli, A1 Arpan ki ho gayi'], [C.acc, 'App-2 → DB', 'Ravi ki wahi query ek pal baad chali'], [C.bad, 'DB → App-2', 'A1 ab available nahi, 0 row badli, Ravi ko "seat gayi"']],
+  [[C.acc, 'App → DB', 'Arpan ne 4 seat li, A1 se A4 ek hi transaction me UPDATE'], [C.bad, 'DB', 'A4 pehle se booked thi, sirf 3 row badli'], [C.good, 'App → DB', '3 != 4 dekh ke ROLLBACK kiya, A1 se A3 phir khaali']],
+];
 function frame(ph) {
   if (ph === 0) {
     panel(0, 'Arpan padhta', ['App-1', 'Arpan: A1', 'acc'], ['Seats DB', 'A1: available', ''], 'padha', false, C.acc, 'khaali hai');

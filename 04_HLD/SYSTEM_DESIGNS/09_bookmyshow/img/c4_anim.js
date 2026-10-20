@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR A1 bik chuki, map me khaali dikhi? -> chalta hai, UPDATE 0 row bolega'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, 'Users → App', '1 lakh log map dekh rahe'], [C.bad, 'App → main DB', 'har map seedha DB se'], [C.bad, 'main DB', 'dekhne walon ne booking bhi dheemi kar di']],
-  [[C.msg, 'Users → App', 'map dekhna'], [C.good, 'App → Redis', 'seatmap:show42, 5 sec purana chalega'], [C.acc, 'Arpan → App → main DB', 'Book: UPDATE sirf main DB pe'], [C.acc, 'miss → read replica', 'Redis me nahi to copy se banao']],
-  [[C.acc, 'Redis → App → Arpan', 'map me A1 khaali (5 sec purana)'], [C.msg, 'Arpan → App → main DB', 'A1 book: UPDATE'], [C.bad, 'main DB → App', '0 row: A1 bik chuki'], [C.good, 'App → Arpan', '"seat gayi, doosri chuno"']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Users → App', '11 baje 1 lakh log seat map dekh rahe'], [C.bad, 'App → main DB', 'Har map seedha main DB se ban raha'], [C.bad, 'main DB', 'Dekhne walon ki bheed ne booking bhi dheemi kar di']],
+  [[C.msg, 'Users → App', 'Bheed ne seat map dekhne ke liye app khola'], [C.good, 'App → Redis', 'App ne map Redis (seatmap:show42) se diya, 5 sec purana bhi chalta'], [C.acc, 'Arpan → App → main DB', 'Arpan ne Book dabaya, UPDATE sirf main DB pe gaya'], [C.acc, 'miss → read replica', 'Redis me map nahi mila to replica se bana ke rakha']],
+  [[C.acc, 'Redis → App → Arpan', 'Arpan ko map me A1 khaali dikhi, 5 sec purani copy'], [C.msg, 'Arpan → App → main DB', 'Arpan ne A1 book ki, main DB pe UPDATE'], [C.bad, 'main DB → App', '0 row badli, A1 pehle hi bik chuki thi'], [C.good, 'App → Arpan', 'Arpan ko "seat gayi, doosri chuno" dikha, galat booking nahi']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 120, 190, 80, 'Users', '1 lakh, map', { icon: 'users' });

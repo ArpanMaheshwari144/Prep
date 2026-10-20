@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR UPDATE jeet gaya, user ko kaise pata chalega? -> bookingId se poll ya WebSocket push'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, '2 lakh → App', 'sab ek saath Book'], [C.bad, 'App → Seats DB', 'sab ek hi rows ke lock pe ruke'], [C.bad, 'Seats DB', 'sab dheema, kisi ko jawab nahi']],
-  [[C.msg, '2 lakh → Gate', 'waiting room: 3000 andar, baaki line me'], [C.acc, 'Gate → Kafka', 'andar walon ki booking, show 42 ki line'], [C.acc, 'Kafka → Worker', 'worker ek-ek uthata'], [C.good, 'Worker → Seats DB', 'UPDATE ... WHERE available, ms me']],
-  [[C.msg, 'Arpan → Gate', 'line me, B-77 mila'], [C.good, 'Worker → Seats DB', 'A1 UPDATE: 1 row'], [C.good, 'Worker → Status', 'B-77: CONFIRMED'], [C.good, 'Status → Arpan', 'push (WebSocket) ya Arpan poll kare']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, '2 lakh → App', '12 baje 2 lakh log ne ek saath Book dabaya'], [C.bad, 'App → Seats DB', 'Sab ek hi seat rows ke lock pe ruke'], [C.bad, 'Seats DB', 'Sab dheema, kisi ko jawab nahi mila']],
+  [[C.msg, '2 lakh → Gate', 'Waiting room: 3000 andar gaye, baaki line me ruke'], [C.acc, 'Gate → Kafka', 'Andar walon ki booking show 42 ki Kafka line me gayi'], [C.acc, 'Kafka → Worker', 'Worker line se ek-ek booking uthata, bheed nahi'], [C.good, 'Worker → Seats DB', 'UPDATE ... WHERE available, har booking ms me']],
+  [[C.msg, 'Arpan → Gate', 'Arpan line me laga, use bookingId B-77 mila'], [C.good, 'Worker → Seats DB', 'Worker ne A1 ka UPDATE kiya, 1 row badli'], [C.good, 'Worker → Status', 'Worker ne Status me B-77 = CONFIRMED likha'], [C.good, 'Status → Arpan', 'Arpan ko WebSocket se push mila, ya app B-77 se poll karti']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 110, 190, 100, '2 lakh log', 'ek saath Book', { icon: 'users' });

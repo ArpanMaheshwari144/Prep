@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR payment beech me tha, machine giri? -> same bookingId, doosri machine'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, 'Arpan → App', 'seat chun raha tha'], [C.bad, 'App giri', 'ek hi machine thi'], [C.bad, 'Arpan', 'booking band, kuch nahi khulta']],
-  [[C.msg, 'Arpan → LB', 'Book'], [C.bad, 'LB → App-1', '/health? 3 baar chup: bahar'], [C.good, 'LB → App-2', 'request App-2 ko'], [C.good, 'App-2 → Seats DB', 'A1 ka hold wahi mila, booking chalu']],
-  [[C.good, 'App-1 → PSP', 'B-42: 500 kata'], [C.bad, 'App-1 giri', 'jawab dene se pehle'], [C.acc, 'App-2 → PSP', 'retry: wahi B-42'], [C.good, 'PSP → App-2', 'B-42 ho chuka: purana jawab, ek hi baar']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Arpan → App', 'Shaam ko Arpan seat chun raha tha'], [C.bad, 'App giri', 'Ek hi App machine thi, wo gir gayi'], [C.bad, 'Arpan', 'Booking band, Arpan ke liye kuch nahi khulta']],
+  [[C.msg, 'Arpan → LB', 'Arpan ne Book dabaya, request pehle LB pe aayi'], [C.bad, 'LB → App-1', 'App-1 ne /health pe 3 baar jawab nahi diya, LB ne bahar kiya'], [C.good, 'LB → App-2', 'LB ne request App-2 ko de di'], [C.good, 'App-2 → Seats DB', 'A1 ka hold DB me wahi mila, booking aage chali']],
+  [[C.good, 'App-1 → PSP', 'App-1 ne B-42 ke 500 PSP se kaat liye'], [C.bad, 'App-1 giri', 'Arpan ko jawab dene se pehle App-1 gir gayi'], [C.acc, 'App-2 → PSP', 'App-2 ne retry kiya, wahi B-42 ke saath'], [C.good, 'PSP → App-2', 'B-42 pehle ho chuka tha, purana jawab mila, paisa ek hi baar']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 170, 80, 'Arpan', 'A1 chun raha', { icon: 'user' });

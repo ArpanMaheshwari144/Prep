@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR paisa kat gaya par seat fail? -> refund karo aur user ko batao'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, 'App → Booking Svc', 'pay 500 (B-42)'], [C.bad, 'Booking Svc → App', 'jawab network me gum'], [C.acc, 'App → Booking Svc', 'khud dobara bheja'], [C.bad, 'Booking Svc → PSP', 'naya maana: 500 phir kata']],
-  [[C.msg, 'App → Booking Svc', 'pay, bookingId B-42'], [C.good, 'Booking Svc → PSP', 'B-42: 500 kata, save'], [C.acc, 'App → Booking Svc', 'network gaya, retry: wahi B-42'], [C.good, 'Booking Svc → App', 'B-42 ho chuka: purana jawab']],
-  [[C.good, 'Booking Svc → PSP', '500 kata'], [C.bad, 'Booking Svc → Seats DB', 'confirm: 0 row, seat gayi'], [C.acc, 'Booking Svc → PSP', 'refund 500'], [C.good, 'Booking Svc → Arpan', 'seat nahi mili, paisa wapas']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'App → Booking Svc', 'Arpan ne booking B-42 ke 500 pay kiye'], [C.bad, 'Booking Svc → App', 'Paisa kata, par jawab network me kho gaya'], [C.acc, 'App → Booking Svc', 'App ne khud dobara bheja, Arpan ne kuch nahi dabaya'], [C.bad, 'Booking Svc → PSP', 'Booking Svc ne naya maana, 500 phir kat gaye']],
+  [[C.msg, 'App → Booking Svc', 'Pay request bookingId B-42 ke saath gayi'], [C.good, 'Booking Svc → PSP', 'B-42 ke 500 kate aur ye baat save hui'], [C.acc, 'App → Booking Svc', 'Network gaya, app ne retry kiya, wahi B-42'], [C.good, 'Booking Svc → App', 'B-42 pehle ho chuka, purana jawab lautaya, dobara nahi kata']],
+  [[C.good, 'Booking Svc → PSP', 'PSP se Arpan ke 500 kat gaye'], [C.bad, 'Booking Svc → Seats DB', 'Seat confirm ki, 0 row, seat ja chuki thi'], [C.acc, 'Booking Svc → PSP', 'Booking Svc ne PSP se 500 refund karwaye'], [C.good, 'Booking Svc → Arpan', 'Arpan ko bataya: seat nahi mili, paisa wapas']],
+];
 function frame(ph) {
   if (ph === 0) {
     panel(0, 'Pay dabaya', ['Arpan ka app', 'B-42: 500', ''], ['Booking Svc', 'kata', 'good'], 'pay', true, C.msg, 'ek baar dabaya');

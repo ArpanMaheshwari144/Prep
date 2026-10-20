@@ -6,11 +6,6 @@ const PH = [
   [6, YEL, 'AGAR', 'AGAR umar khatam, phir pay aaya? -> confirm pe bhi WHERE, 0 row, refund'],
 ];
 function setup() {}
-const STEPS = [
-  [[C.msg, 'App (Arpan) → Payment', 'A1 chuni, pay me 3 min'], [C.bad, 'App (Ravi) → Seats DB', 'A1 abhi available thi: book'], [C.bad, 'Arpan', 'paisa kata, seat Ravi ki']],
-  [[C.acc, 'App → Seats DB', 'A1 HELD (Arpan), 7:05 tak'], [C.good, 'Seats DB → App (Ravi)', 'A1 held dikhi, nahi le sakta'], [C.good, 'App → Seats DB', 'pay hua: A1 BOOKED'], [C.acc, 'Sweeper → Seats DB', 'pay nahi hua to 7:05 pe chhod do']],
-  [[C.acc, 'Sweeper → Seats DB', '7:05: umar khatam, A1 available'], [C.bad, 'App (Ravi) → Seats DB', 'A1 Ravi ne le li'], [C.bad, 'App → Seats DB', 'Arpan ka confirm: WHERE held +|Arpan: 0 row'], [C.good, 'App → Payment', 'refund. Arpan ko "seat gayi"']],
-];
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
@@ -21,6 +16,11 @@ function panel(k, title, top, bot, lab, down, c, note) {
   T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
   T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'App (Arpan) → Payment', 'Arpan ne A1 chuni, payment me 3 min lag rahe'], [C.bad, 'App (Ravi) → Seats DB', 'A1 abhi bhi available thi, Ravi ne book kar li'], [C.bad, 'Arpan', 'Arpan ka paisa kata, par seat Ravi ki ho gayi']],
+  [[C.acc, 'App → Seats DB', 'A1 chunte hi HELD (Arpan) likha, 7:05 tak ke liye'], [C.good, 'Seats DB → App (Ravi)', 'Ravi ko A1 held dikhi, wo nahi le sakta'], [C.good, 'App → Seats DB', 'Arpan ka pay hua, A1 BOOKED ho gayi'], [C.acc, 'Sweeper → Seats DB', 'Pay nahi hota to sweeper 7:05 pe A1 chhod deta']],
+  [[C.acc, 'Sweeper → Seats DB', '7:05 pe hold ki umar khatam, sweeper ne A1 available ki'], [C.bad, 'App (Ravi) → Seats DB', 'Ravi ne usi pal A1 book kar li'], [C.bad, 'App → Seats DB', 'Arpan ka confirm WHERE held + Arpan ke saath gaya, 0 row'], [C.good, 'App → Payment', 'Arpan ko refund mila aur "seat gayi" dikha']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 30, 170, 80, 'App (Arpan)', 'A1 chuni');
