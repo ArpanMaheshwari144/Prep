@@ -1,48 +1,56 @@
-// Card 2: A1 chuni, pay me 3 min, seat available hi rahi -> Ravi le gaya. Ilaaj: HELD + held_until, Sweeper safai.
-const DUR = 18, FIX = 8;
-const M = [130, 80], R = [130, 280], AU = [298, 168], AD = [298, 202], OU = [420, 168], OD = [420, 202],
-  DU = [568, 168], DD = [568, 202];
-function setup() {
-  wire('M130 80 L310 168'); wire('M130 280 L310 202'); wire('M420 185 H580');
-  wire('M690 280 V230', 'ws');
-  box(20, 50, 110, 60, 'Main', 'A1 chuni');
-  box(20, 250, 110, 60, 'Ravi');
-  box(310, 150, 110, 70, 'App');
-  box(580, 120, 230, 110, 'SQL DB', 'seats', { stroke: C.acc });
-  box(610, 280, 160, 54, 'Sweeper job', 'purane hold saaf', { id: 'sw' });
+// Card 2: A1 chuni, pay me 3 min, seat available rahi -> Ravi le gaya. Ilaaj: HELD + held_until.
+// Agar: umar khatam phir pay (WHERE, refund), koi 10 seat HOLD (had). Wapas: Sweeper seat chhodta.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: maine A1 chuni, pay me 3 min. Seat available rahi, Ravi le gaya'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: A1 HELD, held_until = ab + 5 min. Ravi ko A1 held dikhti hai'],
+  [6, YEL, 'AGAR', 'AGAR umar khatam, phir pay aaya? -> confirm pe bhi WHERE, 0 row, refund'],
+  [9, YEL, 'AGAR', 'AGAR koi 10 seat HOLD karke baith gaya? -> had lagao (ginti + rate limit)'],
+  [12, GRN, 'WAPAS', 'WAPAS: app gira, umar khatam -> Sweeper seat chhod deta, A1 phir khaali'],
+];
+function setup() {}
+function clk(s) { T(880, 22, 'samay ' + s, { a: 'end', c: C.muted, size: 13, b: 1 }); }
+function ppl(mSub, mSt, rLbl, rSub, rSt) {
+  B(20, 50, 130, 60, 'Main', mSub, { st: mSt }); if (rLbl) B(20, 250, 130, 60, rLbl, rSub, { st: rSt });
 }
-// ek chakkar: user -> App -> DB (s se), phir wapas (back) user ke paas rest
-function go(s, from, au, ou, du, tl, lb, c) {
-  if (tl > s && tl < s + 1.2) dot(tl < s + 0.6 ? path([[s, from], [s + 0.6, au]], tl) : path([[s + 0.6, ou], [s + 1.2, du]], tl), c, '', lb, c);
+function core(swSt) {
+  if (swSt !== 'good') B(310, 145, 110, 80, 'App'); B(580, 100, 270, 120, 'SQL DB', 'seats', { st: 'acc' });
+  if (swSt) B(620, 275, 190, 56, 'Sweeper job', 'purane hold saaf', { st: swSt });
 }
-function back(s, au, ou, du, rest, tl, lb, c) {
-  if (tl > s && tl < s + 1.2) dot(tl < s + 0.6 ? path([[s, du], [s + 0.6, ou]], tl) : path([[s + 0.6, au], [s + 1.2, rest]], tl), c, '', lb, c);
-  if (tl >= s + 1.2) dot(rest, c, '', lb, c);
-}
-function frame(t, fix, tl) {
-  vis('sw', fix); vis('ws', fix);
-  const clk = ['10:00', '10:01', '10:02', '10:03'][Math.min(3, Math.floor(tl / 1.6))];
-  T(890, 30, `samay ${clk}`, { a: 'end', c: C.muted, size: 13, b: 1 });
-  go(0.3, M, AU, OU, DU, tl, 'A1 chuni', C.msg);
-  if (tl > 1.5 && tl < 5.0) T(140, 40, 'pay chal raha... 3 min', { a: 'start', c: C.acc, size: 12 });
-  go(2.0, R, AD, OD, DD, tl, 'A1 book', C.msg);
-  go(5.0, M, AU, OU, DU, tl, 'pay ho gaya', C.msg);
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: maine A1 chuni, pay me 3 min. Seat available hi rahi, beech me Ravi le gaya';
-    const st = tl < 3.2 ? ['A1: available', C.good] : ['A1: booked (Ravi)', C.bad];
-    T(695, 185, st[0], { c: st[1], b: 1, size: 13 });
-    back(6.2, AU, OU, DU, [165, 60], tl, 'A1 gayi', C.bad);
-    if (tl > 3.2) back(3.2, AD, OD, DD, [165, 265], tl, 'ticket', C.good);
-    if (tl > 7.0) T(890, 340, 'paisa kata, seat Ravi ki', { a: 'end', c: C.bad, b: 1, size: 15 });
-    return;
+function frame(ph) {
+  if (ph === 0) {
+    clk('10:03'); ppl('pay: 3 min', 'bad', 'Ravi', 'ticket A1', 'good'); core();
+    A(150, 85, 308, 165, C.msg, { n: 1, at: 0.6 }); L(215, 170, 'A1 chuni', C.msg);
+    A(150, 275, 308, 205, C.msg, { n: 2 }); L(205, 225, 'Book A1', C.msg);
+    A(420, 190, 578, 190, C.bad, { n: 3 }); T(715, 180, 'A1: available', { c: C.muted, size: 13 });
+    T(715, 202, 'A1: booked (Ravi)', { c: C.bad, b: 1, size: 14 });
+    A(335, 143, 152, 58, C.bad, { n: 4, at: 0.75 }); L(260, 40, 'pay hua, par A1 gayi', C.bad);
+  } else if (ph === 1) {
+    clk('10:01'); ppl('pay: seat pakki', 'acc', 'Ravi', 'A1 held', 'bad'); core();
+    A(150, 85, 308, 165, C.msg, { n: 1 }); L(215, 170, 'A1 chuni', C.msg);
+    A(420, 170, 578, 160, C.acc, { n: 2 }); L(500, 140, 'HELD + umar', C.acc);
+    T(715, 180, 'A1: HELD (Main)', { c: C.acc, b: 1, size: 14 }); T(715, 202, 'held_until 10:05', { c: C.acc, size: 13 });
+    A(150, 275, 308, 205, C.msg, { n: 3 }); L(205, 225, 'Book A1', C.msg);
+    A(420, 205, 578, 205, C.bad, { n: 4 }); L(500, 235, '0 row: held hai', C.bad);
+  } else if (ph === 2) {
+    clk('10:06'); ppl('seat gayi', 'bad', null); core();
+    T(715, 180, 'A1: HELD (Main)', { c: C.acc, b: 1, size: 14 }); T(715, 202, 'held_until 10:05', { c: C.bad, size: 13 });
+    num(600, 80, 1, C.acc); L(620, 85, 'umar khatam', C.acc, 'start');
+    A(150, 85, 308, 165, C.msg, { n: 2 }); L(215, 170, 'pay aaya', C.msg);
+    A(420, 190, 578, 190, C.bad, { n: 3 }); L(500, 222, 'WHERE held + Main', C.bad); L(500, 240, '+ umar: 0 row', C.bad);
+    L(300, 335, 'hal: seat gayi, paisa refund', C.good);
+  } else if (ph === 3) {
+    clk('10:01'); ppl('seat nahi', 'dim', 'Koi', '10 seat HOLD', 'bad'); core();
+    A(150, 275, 308, 205, C.bad, { n: 1 }); A(420, 190, 578, 190, C.acc, { n: 2 }); L(500, 170, 'HOLD x10', C.acc);
+    dots(10, 620, 175, C.acc, { gap: 20 });
+    num(600, 80, 3, C.bad); L(620, 85, 'sabke liye band', C.bad, 'start');
+    L(255, 340, 'hal: had lagao: hold ki ginti + rate limit', C.good);
+  } else {
+    clk('10:05'); ppl('app gira', 'dim', null); core('good');
+    num(170, 30, 1, C.bad); cross(170, 62);
+    num(600, 80, 2, C.acc); L(620, 85, 'umar khatam', C.acc, 'start');
+    A(715, 273, 715, 222, C.good, { n: 3 }); L(775, 252, 'seat chhodo', C.good, 'start');
+    T(715, 180, 'A1: available', { c: C.good, b: 1, size: 14 });
+    L(715, 202, 'A1 phir khaali', C.good);
   }
-  CAP.textContent = 'ILAAJ: A1 HELD, held_until = ab + 5 min. Ravi ko held dikhti. Umar khatam = Sweeper chhodta';
-  const a1 = tl < 1.5 ? ['A1: available', C.good] : tl < 6.2 ? ['A1: HELD (Main) till 10:05', C.acc] : ['A1: BOOKED (Main)', C.good];
-  T(695, 185, a1[0], { c: a1[1], b: 1, size: 13 });
-  const a2 = tl < 5.4 ? ['A2: HELD (app gira) till 10:02', C.acc] : ['A2: available', C.good];
-  T(695, 210, a2[0], { c: a2[1], size: 12 });
-  back(3.2, AD, OD, DD, [165, 265], tl, '0 row: held hai', C.bad);
-  back(6.2, AU, OU, DU, [165, 60], tl, 'ticket', C.good);
-  if (tl > 4.9 && tl < 5.4) dot(path([[4.9, [690, 280]], [5.4, [690, 232]]], tl), C.acc);
-  if (tl > 4.9) T(600, 315, 'A2 umar khatam -> khaali', { a: 'end', c: C.acc, size: 12 });
 }

@@ -3,7 +3,7 @@
 > Movie / show dekho, seat chuno, pay karo, ticket. JP ke liye kaam ka: paisa aur seat ek saath sahi ("paisa do baar kharch na ho" jaisa).
 > Dil do cheezein: ek seat do logon ko na bike (ek saath booking), aur badi movie ke din ki bheed.
 >
-> Mock me sirf heading + Cue + GIF. Neeche har card ek block: HAL (GIF ka ILAAJ) · KYUN · NAHI (doosra kyun nahi) · AGAR (cross-Q).
+> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card ek block: HAL (↳ agar = cross-Q) · KYUN · NAHI (doosra kyun nahi).
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -38,12 +38,39 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 Cue: ATOMIC UPDATE ... WHERE available
 
-![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c1_1.png" width="900">
+
+<img src="img/c1_2.png" width="900">
+
+<img src="img/c1_3.png" width="900">
+
+<img src="img/c1_4.png" width="900">
+
+<img src="img/c1_5.png" width="900">
+
+<img src="img/c1_6.png" width="900">
+
+</details>
 
 ```
 HAL     dekhna aur book karna ek hi atomic query me (UPDATE ... WHERE available). Row lock se Main ko 1 row
         milti hai, Ravi ko 0
         UPDATE seats SET status = 'booked' WHERE show_id = 42 AND seat_id = 'A1' AND status = 'available'
+        ↳ agar network toota? -> booking: CP, mana karo. search: AP, purani list
+          Consistency ya availability? Ek hi system me dono chalte hain: booking me ek, search me doosra.
+          Booking (CP): sahi hona pehle. Seat khaali hai ya nahi, pakka nahi pata, to mana kar do.
+          Ek seat do logon ko bechna usse bura hai. Search (AP): movie list ya seat ginti 2 sec purani
+          bhi chalegi, bas search chalta rahe
+        ↳ agar 4 seat li, A4 pehle hi ja chuki thi? -> badli rows 4 nahi, ROLLBACK
+          Sab ek transaction me, kyunki aadhi booking bekaar hai
+        ↳ agar do log ulte kram me 4 seat le rahe? -> DB deadlock pakad ke ek abort
+          Row lock ke saath 4 seat hon to ye hota hai. Wo retry kare. Alag-alag UPDATE ho to seat_id ke
+          kram me bhejo
+        ↳ agar Ravi ne Book phir dabaya? -> WHERE ko phir 0 row, kuch nahi milta
+        ↳ agar UPDATE ke liye seat ki rows pehle se bani hoti hain? -> haan
+          Show banate hi saari seat rows ban jaati hain, booking sirf UPDATE hai
 KYUN    faisla DB ki ek query karti hai, WHERE me khaali check hai. DB ka row lock ek-ek ko chalata hai: main
         pehle gaya, Ravi ruka, phir uske WHERE ko 0 row mili. Lock App me nahi, DB me hai
         jo jeeta use 1 row milti hai, A1 uski. Jo haara use 0 row, usko bolo "seat ja chuki, doosri chuno"
@@ -51,22 +78,6 @@ NAHI    SELECT ... FOR UPDATE -> LAMBA: chalta bhi hai, par DB pe do baar jaana 
            rehta hai. Ek statement me lock sabse chhota rehta hai
         version column (optimistic) -> RETRY: haarne wala dobara try karta hai. Conditional UPDATE me haarne
            wala seedha sunta hai "seat gayi"
-AGAR    network toot gaya aur aakhri seat pe do log hain, consistency chunoge ya availability?
-        -> ek hi system me dono chalte hain: booking me ek, search me doosra
-        booking ke waqt network toota to?
-        -> CP: sahi hona pehle. Seat khaali hai ya nahi, pakka nahi pata, to mana kar do. Ek seat do logon
-           ko bechna usse bura hai
-        search ke waqt network toota to?
-        -> AP: movie list ya seat ginti 2 sec purani bhi chalegi, bas search chalta rahe
-        Ravi ne Book phir se dabaya to?
-        -> WHERE ko phir 0 row milegi. Dobara dabane se kuch nahi milta
-        UPDATE ke liye seat ki rows pehle se bani hoti hain?
-        -> haan. Show banate hi saari seat rows ban jaati hain, booking sirf UPDATE hai
-        UPDATE me 4 seat li aur A4 pehle hi ja chuki thi to?
-        -> sab ek transaction me. Badli rows 4 nahi hain to ROLLBACK, kyunki aadhi booking bekaar hai
-        row lock ke saath 4 seat, aur do log ulte kram me le rahe hain to?
-        -> DB deadlock pakad ke ek ko abort karta hai, wo retry kare. Alag-alag UPDATE ho to seat_id ke kram
-           me bhejo
 ```
 
 ---
@@ -77,11 +88,27 @@ AGAR    network toot gaya aur aakhri seat pe do log hain, consistency chunoge ya
 
 Cue: HOLD + held_until (umar)
 
-![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
+<details><summary>kahani dekho (5 scene)</summary>
+
+<img src="img/c2_1.png" width="900">
+
+<img src="img/c2_2.png" width="900">
+
+<img src="img/c2_3.png" width="900">
+
+<img src="img/c2_4.png" width="900">
+
+<img src="img/c2_5.png" width="900">
+
+</details>
 
 ```
 HAL     A1 HELD ho jaati hai, held_until = ab + 5 min. Ravi ko A1 held dikhti hai. Umar khatam ho gayi to
         Sweeper seat chhod deta hai
+        ↳ agar umar khatam, phir pay aaya? -> confirm pe bhi WHERE, 0 row, refund
+          WHERE me held + main + umar lagta hai. 0 row aayi to seat gayi, paisa refund
+        ↳ agar koi 10 seat HOLD karke baith gaya? -> had lagao (hold ki ginti + rate limit)
+          Kyunki hold matlab sabke liye band
 HOLD    usi row me held_until = ab + 5 min likhte hain. Pay ho gaya to BOOKED. Umar khatam ho gayi to seat
         khaali maano
 KYUN    hold DB ki usi row ka haal hai (held + umar). Mujhe 5 min ke liye seat pakki, baaki sabko 'held'
@@ -89,10 +116,6 @@ KYUN    hold DB ki usi row ka haal hai (held + umar). Mujhe 5 min ke liye seat p
         karta hai, asli faisla UPDATE ke WHERE me hota hai
 NAHI    seat available hi rakho -> CHHINI: pay karte-karte Ravi seat le jaata hai
         seedha booked kar do    -> BAND: payment fail hua to seat hamesha ke liye band
-AGAR    umar khatam ho gayi, phir pay aaya to?
-        -> confirm pe bhi WHERE lagta hai (held + main + umar). 0 row aayi to seat gayi, paisa refund
-        koi 10 seat HOLD karke baith gaya to?
-        -> had lagao (hold ki ginti + rate limit), kyunki hold matlab sabke liye band
 ```
 
 ---
@@ -103,20 +126,33 @@ AGAR    umar khatam ho gayi, phir pay aaya to?
 
 Cue: IDEMPOTENCY KEY (bookingId)
 
-![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c3_1.png" width="900">
+
+<img src="img/c3_2.png" width="900">
+
+<img src="img/c3_3.png" width="900">
+
+<img src="img/c3_4.png" width="900">
+
+<img src="img/c3_5.png" width="900">
+
+<img src="img/c3_6.png" width="900">
+
+</details>
 
 ```
 HAL     har pay usi bookingId (B-42) se jaata hai. Wahi dobara aaya to jawab "ho chuka", purana jawab milta
         hai, paisa ek hi baar katta hai
+        ↳ agar user ne Pay double tap kar diya? -> wahi bookingId, ek hi baar kata
+        ↳ agar paisa kat gaya par seat fail? -> refund karo aur user ko batao
+          Payment aur seat saga jaisa: ek fail hua to doosra ulta karo
+        ↳ agar PSP ka webhook der se aaya? -> PAYMENT_PENDING, hold thoda badhao
+          Aur roz hisaab milao (reconciliation)
 KYUN    bookingId hi idempotency key hai. Ek booking = ek payment. User ko kuch dobara nahi karna, beech ka
         haal PENDING dikhta hai. Paisa kata par seat nahi mili to refund
 NAHI    har request pe naya payment -> DOGUNA: paisa kata, network gaya, app ne dobara bheja, 500 do baar kata
-AGAR    user ne Pay double tap kar diya to?
-        -> wahi bookingId jaata hai, paisa ek hi baar katta hai
-        paisa kat gaya par seat fail ho gayi to?
-        -> refund karo aur user ko batao. Payment aur seat saga jaisa: ek fail hua to doosra ulta karo
-        PSP ka webhook der se aaya to?
-        -> PAYMENT_PENDING rakho, hold thoda badhao, aur roz hisaab milao (reconciliation)
 ```
 
 ---
@@ -127,22 +163,34 @@ AGAR    user ne Pay double tap kar diya to?
 
 Cue: CACHE + READ REPLICA
 
-![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c4_1.png" width="900">
+
+<img src="img/c4_2.png" width="900">
+
+<img src="img/c4_3.png" width="900">
+
+<img src="img/c4_4.png" width="900">
+
+<img src="img/c4_5.png" width="900">
+
+<img src="img/c4_6.png" width="900">
+
+</details>
 
 ```
 HAL     seat map Redis se aata hai (seatmap:show42, ~5 sec umar), DB tak nahi jaata. Faisla sirf main DB ka
         UPDATE karta hai
+        ↳ agar kisi ne book kiya, map ka kya? -> booking main DB pe, phir map ki key DEL
+        ↳ agar A1 bik chuki, map me khaali dikhi? -> chalta hai, UPDATE 0 row bolega
+          Faisla UPDATE ka hai. Turant chahiye to WebSocket / SSE
+        ↳ agar lakh log ek hi Redis key pe? -> kai copy + App me 1-2 sec ki copy
+          Ek key = ek machine (hot key)
+        ↳ agar Redis me map nahi mila? -> replica se banao, Redis me rakh do
 KYUN    dekhna copy se hota hai (Redis / replica), faisla sirf main DB ka UPDATE. Map thoda purana bhi
         chalta hai, galat dikhi seat ko DB pakad leta hai (0 row)
 NAHI    map bhi main DB se -> DHEEMA: 1 lakh dekhne wale booking ko bhi dheema kar dete hain
-AGAR    Redis me map nahi mila to?
-        -> replica se banao aur Redis me rakh do
-        kisi ne book kiya to map ka kya?
-        -> booking main DB pe hoti hai, phir map ki key DEL kar do
-        A1 bik chuki hai par map me khaali dikh rahi hai to?
-        -> chalta hai. Faisla UPDATE ka hai, wo 0 row bolega. Turant chahiye to WebSocket / SSE
-        lakh log ek hi Redis key pe aa gaye to?
-        -> kai copy rakho + App me 1-2 sec ki copy. Ek key = ek machine (hot key)
 ```
 
 ---
@@ -153,28 +201,40 @@ AGAR    Redis me map nahi mila to?
 
 Cue: WAITING ROOM + Kafka (sirf badi sale)
 
-![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c5_1.png" width="900">
+
+<img src="img/c5_2.png" width="900">
+
+<img src="img/c5_3.png" width="900">
+
+<img src="img/c5_4.png" width="900">
+
+<img src="img/c5_5.png" width="900">
+
+<img src="img/c5_6.png" width="900">
+
+</details>
 
 ```
 HAL     darwaze pe ginti: ~3000 andar, baaki line me (waiting room). Andar walon ki booking Kafka me, ek show
         ek line (key = show_id). Booking worker ek-ek UPDATE karta hai
+        ↳ agar UPDATE jeet gaya, user ko kaise pata chalega? -> bookingId se poll ya WebSocket push
+          Line me tha, to jawab baad me aata hai
+        ↳ agar UPDATE me seat haar gaya? -> "seat gayi, doosri lo". Faisla DB ka
+        ↳ agar ek hi Booking worker, dheema nahi? -> UPDATE ~ms ka, hazaar / sec
+          Aur chahiye to show ke hisse karo (balcony / stall)
+        ↳ agar line ki ginti Redis me, Redis restart? -> DB se dobara gin lo
+          Ginti sirf darwaza hai. Sach DB ki seats hain
+        ↳ agar andar wala bina liye chala gaya? -> line se agla andar aa jaata. Line sirf darwaza hai
+        ↳ agar release ka time to pata hai? -> haan, to pehle se machine badhao + har user ki had
+          (rate limit). Waqt pata hai to tayyari pehle
 KAB     sirf badi sale pe. Aam din App seedha SQL primary pe UPDATE karta hai, turant jawab. Badi sale pe
         user ko "booking ho rahi hai" dikhta hai
 KYUN    likhne ki bheed ko line me khada karo. User ko apni jagah dikhti hai. Ek show = ek line, aur sach
         hamesha DB ki seats hi hain
 NAHI    sab seedha DB pe -> DHEEMA: 3000 seat, 2 lakh log ek hi rows ke lock pe ruke, sab dheema
-AGAR    UPDATE jeet gaya, user ko kaise pata chalega?
-        -> bookingId se poll ya WebSocket push. Line me tha, to jawab baad me aata hai
-        UPDATE me seat haar gaya to?
-        -> "seat gayi, doosri lo". Faisla DB ka hai
-        andar wala bina liye chala gaya to?
-        -> line se agla andar aa jaata hai. Line sirf darwaza hai
-        ek hi Booking worker, dheema nahi hoga?
-        -> UPDATE ~ms ka hai, hazaar / sec. Aur chahiye to show ke hisse karo (balcony / stall)
-        line ki ginti Redis me thi, Redis restart ho gaya to?
-        -> ginti sirf darwaza hai. Sach DB ki seats hain, DB se dobara gin lo
-        release ka time to pata hai?
-        -> haan, to pehle se machine badhao + har user ki had (rate limit). Waqt pata hai to tayyari pehle
 ```
 
 ---
@@ -185,22 +245,30 @@ AGAR    UPDATE jeet gaya, user ko kaise pata chalega?
 
 Cue: SET NX lock, pehla hi banaye
 
-![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
+<details><summary>kahani dekho (5 scene)</summary>
+
+<img src="img/c6_1.png" width="900">
+
+<img src="img/c6_2.png" width="900">
+
+<img src="img/c6_3.png" width="900">
+
+<img src="img/c6_4.png" width="900">
+
+<img src="img/c6_5.png" width="900">
+
+</details>
 
 ```
 HAL     sirf pehli request SET NX EX 5 se lock leti hai, replica se ek query karti hai, map Redis me rakhti
         hai. Baaki 50-100 ms ruk ke Redis se padhti hain
+        ↳ agar lock lene wala hi mar gaya? -> EX 5 ki wajah se lock khud hat jaata
+          NX matlab koi aur pehle se na laga ho
+        ↳ agar 100 ms baad bhi Redis khaali? -> 2-3 retry, phir khud replica se
+          User ko bas dheema lagega
 KYUN    khaali cache pe sirf ek hi DB jaata hai, baaki rukte hain. Jo gir sakta hai uski copy pehle se
         taiyaar. User ko bas thoda dheema lagta hai, galat seat kabhi nahi, kyunki faisla DB me hai
 NAHI    sabko DB jaane do -> GIRA: hazaaron miss ek saath replica pe, replica baith gayi, map nahi khulta
-AGAR    lock lene wala hi mar gaya to?
-        -> EX 5 ki wajah se lock khud hat jaata hai. NX matlab koi aur pehle se na laga ho
-        ruke, aur 100 ms baad bhi Redis khaali hai to?
-        -> 2-3 retry, phir khud replica se. User ko bas dheema lagega
-        SQL primary hi gir gaya to?
-        -> ~30-120 sec me failover (Multi-AZ / Aurora). App wahi id se dobara bheje (idempotent)
-        aakhri booking copy tak pahunchi thi?
-        -> sync copy: likhai dono jagah pakki hoti hai (Multi-AZ). Booking matlab paisa
 ```
 
 ---
@@ -211,18 +279,30 @@ AGAR    lock lene wala hi mar gaya to?
 
 Cue: STATELESS App + LB health check
 
-![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
+<details><summary>kahani dekho (5 scene)</summary>
+
+<img src="img/c7_1.png" width="900">
+
+<img src="img/c7_2.png" width="900">
+
+<img src="img/c7_3.png" width="900">
+
+<img src="img/c7_4.png" width="900">
+
+<img src="img/c7_5.png" width="900">
+
+</details>
 
 ```
 HAL     App stateless hai, hold DB me hai. LB GET /health se poochta hai, 2-3 fail hue to machine bahar.
+        ↳ agar giri machine bahar kaise? -> 2-3 baar fail = bahar, ek fail jhatka
+          LB har kuch sec poochta hai (GET /health). Ek fail sirf jhatka hai
         App-2 wahi hold dekhti hai
+        ↳ agar payment beech me tha, machine giri? -> same bookingId, doosri machine
+          Idempotent hai, do baar nahi katega
 KYUN    App kuch yaad nahi rakhta, LB kisi bhi zinda machine pe bhej deta hai. Machine giri to agli machine
         wahi hold dekhti hai, kyunki hold DB me tha, memory me nahi. Seat wahin rehti hai
 NAHI    ek hi App machine -> BAND: wo giri to booking band
-AGAR    giri machine LB se bahar kaise hoti hai?
-        -> LB har kuch sec poochta hai (GET /health). 2-3 baar fail = bahar. Ek fail sirf jhatka hai
-        payment beech me tha aur machine giri to?
-        -> same bookingId se dobara, doosri machine pe. Idempotent hai, do baar nahi katega
 ```
 
 ---
@@ -277,6 +357,9 @@ bookings = booking_id, user_id, show_id, seat_ids, status, created_at.
 SQL kyun: sahi hona hi dil hai. ACID + row lock se ek seat do ko bikna namumkin. Seat + booking + payment ka haal kai
 row ek saath badalta, to ek transaction. NoSQL ka "thodi der baad sahi" matlab do machine alag-alag "khaali" bol
 sakti, khatra. Data chhota, isliye sharding nahi (bina zaroorat shard = faltu bhaari design).
+
+SQL primary hi gir gaya to? ~30-120 sec me failover (Multi-AZ / Aurora). App wahi id se dobara bheje (idempotent).
+Aakhri booking copy tak pahunchi thi? Sync copy: likhai dono jagah pakki hoti hai (Multi-AZ). Booking matlab paisa.
 
 "BookMyShow sach me aise karta hai?" Mat bolo "BMS aise karta". Bolo "a common pattern in flash sales", unka andar ka
 pata nahi.

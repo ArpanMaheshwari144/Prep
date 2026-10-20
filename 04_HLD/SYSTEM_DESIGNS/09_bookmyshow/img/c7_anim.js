@@ -1,52 +1,50 @@
-// Card 7: ek hi App machine, giri -> booking band. Ilaaj: App stateless, hold DB me, LB health check -> App-2.
-const DUR = 18, FIX = 8;
-const M = [130, 185], LBL = [178, 185], LBR = [270, 185], A1L = [348, 90], A1R = [480, 90], A2L = [348, 280],
-  A2R = [480, 280], DL = [638, 190];
-function setup() {
-  wire('M130 185 L360 90', 'wd');
-  wire('M130 185 H190', 'w0'); wire('M270 185 L360 90', 'w1'); wire('M270 185 L360 280', 'w2');
-  wire('M480 90 L650 180'); wire('M480 280 L650 200', 'w3');
-  box(20, 150, 110, 70, 'Main', 'seat chun raha');
-  box(190, 160, 80, 50, 'LB', '', { id: 'lb' });
-  box(360, 60, 120, 60, 'App-1');
-  box(360, 250, 120, 60, 'App-2', '', { id: 'a2' });
-  box(650, 150, 200, 80, 'SQL DB', '', { stroke: C.acc });
+// Card 7: ek hi App machine giri -> booking band. Ilaaj: App stateless, hold DB me, LB GET /health.
+// Agar: ek fail = jhatka (2-3 fail = bahar), payment beech me (same bookingId). Wapas: App-2 wahi hold dekhti.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: ek hi App machine. Main seat chun raha tha, wo giri, booking band'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: App stateless, hold DB me. LB GET /health, 2-3 fail = machine bahar'],
+  [6, YEL, 'AGAR', 'AGAR giri machine bahar kaise? -> 2-3 baar fail = bahar, ek fail jhatka'],
+  [9, YEL, 'AGAR', 'AGAR payment beech me tha, machine giri? -> same bookingId, doosri machine'],
+  [12, GRN, 'WAPAS', 'WAPAS: App-2 wahi hold dekhti (DB me tha). Seat wahin rehti hai'],
+];
+function setup() {}
+function core(mSub, mSt, a1Sub, a1St, a2, dbSub, dbSt) {
+  B(20, 150, 110, 70, 'Main', mSub, { st: mSt });
+  B(360, 60, 120, 60, 'App-1', a1Sub, { st: a1St });
+  if (a2) { B(190, 160, 80, 50, 'LB'); B(360, 250, 120, 60, 'App-2', a2 === 1 ? '' : a2, { st: a2 === 1 ? '' : 'good' }); }
+  B(650, 150, 200, 80, 'SQL DB', dbSub || 'A1: HELD (Main)', { st: dbSt || 'acc' });
 }
-function down(at, tl) {
-  if (tl > at) {
-    el('rect', { x: 360, y: 60, width: 120, height: 60, rx: 8, fill: C.bad, opacity: 0.3 }, DYN);
-    cross(500, 70); T(420, 45, 'App-1 giri', { c: C.bad, b: 1, size: 13 });
+function frame(ph) {
+  if (ph === 0) {
+    core('booking band', 'bad', 'giri', 'bad', 0);
+    A(130, 170, 358, 85, C.msg, { n: 1, at: 0.4 }); L(225, 110, 'hold A1', C.msg);
+    A(480, 95, 648, 170, C.msg, { n: 2 });
+    cross(500, 52); num(530, 40, 3, C.bad); L(550, 45, 'App-1 giri', C.bad, 'start');
+    A(130, 200, 358, 112, C.bad, { dash: 1, n: 4, at: 0.4 }); L(270, 190, 'Pay: koi nahi', C.bad);
+  } else if (ph === 1) {
+    core('', '', 'bahar', 'bad', 1);
+    cross(500, 52); num(530, 40, 1, C.bad); L(550, 45, 'App-1 giri', C.bad, 'start');
+    A(250, 158, 358, 105, C.acc, { dash: 1, n: 2, at: 0.4 }); L(200, 125, 'GET /health', C.acc);
+    T(300, 95, 'fail: 3', { c: C.bad, b: 1, size: 13 });
+    A(130, 185, 188, 185, C.msg, { n: 3 });
+    A(250, 212, 358, 270, C.good, { n: 4 }); L(250, 270, 'App-2 pe', C.good);
+  } else if (ph === 2) {
+    B(360, 60, 120, 60, 'App-1', 'ek fail', { st: 'acc' }); B(190, 160, 80, 50, 'LB');
+    A(250, 158, 358, 105, C.acc, { dash: 1, n: 1, at: 0.4 }); L(200, 125, 'GET /health', C.acc);
+    T(300, 95, 'fail: 1', { c: C.acc, b: 1, size: 13 });
+    num(530, 90, 2, C.good); L(550, 95, 'sirf jhatka, andar hi', C.good, 'start');
+    L(330, 345, 'hal: 2-3 baar fail ho, tabhi bahar', C.good);
+  } else if (ph === 3) {
+    core('Pay (dobara)', 'acc', 'giri', 'bad', 1, 'idempotent', 'good');
+    cross(500, 52); num(530, 40, 1, C.bad); L(550, 45, 'beech me giri', C.bad, 'start');
+    A(130, 185, 188, 185, C.msg, { n: 2 }); L(160, 255, 'same bookingId', C.msg);
+    A(250, 212, 358, 270, C.msg, { n: 3 });
+    A(480, 280, 648, 205, C.good, { n: 4 }); L(600, 280, 'do baar nahi katega', C.good);
+  } else {
+    core('seat wahin', 'good', 'giri', 'dim', 'wahi hold', '', 'good');
+    A(130, 185, 188, 185, C.msg, { n: 1 });
+    A(250, 212, 358, 270, C.msg, { n: 2 });
+    A(480, 280, 648, 205, C.good, { n: 3 }); L(600, 280, 'HELD mila', C.good);
   }
-}
-function frame(t, fix, tl) {
-  ['lb', 'a2', 'w0', 'w2', 'w3'].forEach(id => vis(id, fix)); vis('wd', !fix); vis('w1', fix && tl < 4.2);
-  if (tl > 1.6) T(750, 205, 'A1: HELD (Main)', { c: C.acc, b: 1, size: 13 });
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: ek hi App machine. Shaam ko main seat chun raha tha, wo giri -> booking band';
-    if (tl > 0.3 && tl < 1.6) dot(tl < 1.0 ? path([[0.3, M], [1.0, A1L]], tl) : path([[1.0, A1R], [1.6, DL]], tl), C.msg, '', 'hold A1', C.msg);
-    down(2.5, tl);
-    if (tl > 3.5) dot(path([[3.5, M], [4.3, [290, 115]]], tl), tl < 4.3 ? C.msg : C.bad, '', tl < 4.3 ? 'Pay' : 'koi nahi', tl < 4.3 ? C.msg : C.bad);
-    if (tl > 4.6) T(75, 255, 'booking band', { c: C.bad, b: 1, size: 15 });
-    return;
-  }
-  CAP.textContent = 'ILAAJ: App stateless, hold DB me. LB GET /health, 2-3 fail = bahar. App-2 wahi hold dekhti';
-  if (tl > 0.3 && tl < 1.6) dot(tl < 0.6 ? path([[0.3, M], [0.6, LBL]], tl) : tl < 1.0 ? path([[0.6, LBR], [1.0, A1L]], tl)
-    : path([[1.0, A1R], [1.6, DL]], tl), C.msg, '', 'hold A1', C.msg);
-  down(2.0, tl);
-  let fails = 0;
-  for (let k = 0; k < 3; k++) {
-    const s = 2.4 + k * 0.6;
-    if (tl > s && tl < s + 0.4) dot(path([[s, LBR], [s + 0.4, [335, 108]]], tl), C.acc, '', 'GET /health', C.acc);
-    if (tl >= s + 0.4) fails++;
-  }
-  if (tl > 2.4 && tl < 4.2) T(230, 235, `fail: ${fails}`, { c: C.bad, b: 1, size: 13 });
-  if (tl >= 4.2) T(230, 235, 'App-1 bahar', { c: C.bad, b: 1, size: 13 });
-  if (tl > 4.6 && tl < 6.8) {
-    const p = tl < 4.9 ? path([[4.6, M], [4.9, LBL]], tl) : tl < 5.3 ? path([[4.9, LBR], [5.3, A2L]], tl)
-      : tl < 5.9 ? path([[5.3, A2R], [5.9, [638, 205]]], tl) : tl < 6.4 ? path([[5.9, [638, 205]], [6.4, A2R]], tl)
-      : path([[6.4, A2L], [6.8, LBR]], tl);
-    dot(p, tl < 5.9 ? C.msg : C.good, '', tl < 5.9 ? 'Pay' : 'HELD mila', tl < 5.9 ? C.msg : C.good);
-  }
-  if (tl >= 6.8) dot(path([[6.8, LBL], [7.4, [75, 245]]], tl), C.good);
-  if (tl >= 7.4) T(75, 275, 'seat wahin', { c: C.good, b: 1, size: 15 });
 }
