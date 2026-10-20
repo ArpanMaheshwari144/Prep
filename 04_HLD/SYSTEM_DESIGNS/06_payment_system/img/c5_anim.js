@@ -1,47 +1,63 @@
-// Card 5: PSP ko call, jawab se pehle server gira, DB me kuch nahi. Ilaaj: pehle PENDING, phir webhook ya reconciliation job.
-const DUR = 18, FIX = 7.5;
-const SV = [190, 75], PS = [688, 75], PSL = [700, 75], WH0 = [780, 110], DBE = [190, 270];
-const JB = [540, 250], PSB = [760, 112], JL = [400, 285], DBR = [202, 285];
-let TL = 0;
-function setup() {
-  wire('M190 75 H700'); wire('M115 110 V230');
-  wire('M780 110 L190 270', 'wh'); wire('M540 250 L760 110', 'wj1'); wire('M400 285 H190', 'wj2');
-  box(40, 40, 150, 70, 'Payment Svc');
-  box(700, 40, 160, 70, 'PSP');
-  box(40, 230, 150, 80, 'SQL DB', 'payment ka haal');
-  box(400, 250, 180, 70, 'Reconciliation', 'job', { id: 'job' });
+// Card 5: PSP ko call, jawab se pehle server gira, DB me kuch nahi. Ilaaj: pehle PENDING, phir webhook ya job.
+// Agar: webhook do baar, nakli webhook, webhook aaya hi nahi. Wapas: job ko jawab mila -> SUCCESS / FAILED.
+const DUR = 18;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: PSP ko call gayi, jawab se pehle server gira. Paisa gaya ya nahi?'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: call se PEHLE PENDING. Webhook bataye ya job poochhe -> SUCCESS'],
+  [6, YEL, 'AGAR', 'AGAR webhook do baar aaya? -> SUCCESS sirf ek baar, doosra ignore'],
+  [9, YEL, 'AGAR', 'AGAR webhook nakli? -> hastakshar jaancho (PSP secret), PENDING se milao'],
+  [12, YEL, 'AGAR', 'AGAR webhook aaya hi nahi? -> job purane PENDING ke liye PSP se poochhe'],
+  [15, GRN, 'WAPAS', 'WAPAS: job ko PSP ka jawab: hua = SUCCESS, pakka fail = FAILED'],
+];
+function setup() {}
+// o: { sv, ps, db, job } st ; s: { db }
+function base(o = {}, s = {}) {
+  B(40, 40, 160, 70, 'Payment Svc', '', { st: o.sv });
+  B(700, 40, 170, 70, 'PSP', '', { st: o.ps });
+  B(40, 240, 160, 80, 'SQL DB', s.db || 'payment ka haal', { st: o.db });
+  if (!o.noJob) B(400, 250, 180, 70, 'Reconciliation', 'job', { st: o.job });
 }
-function crash(a, b) {
-  if (TL > a && TL < b) el('rect', { x: 40, y: 40, width: 150, height: 70, rx: 8, fill: C.bad, opacity: 0.4 }, DYN);
-  if (TL > a) T(115, 28, 'server gira', { c: C.bad, b: 1, size: 12 });
-}
-function frame(t, fix, tl) {
-  TL = tl;
-  ['wh', 'wj1', 'wj2', 'job'].forEach(id => vis(id, fix));
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: PSP ko call gayi, jawab se pehle server gira. DB me kuch nahi: paisa gaya ya nahi?';
-    if (tl < 1.0) dot(path([[0.3, SV], [1.0, PS]], tl), C.msg, '', 'call');
-    if (tl >= 1.2) T(780, 28, 'paisa kata', { c: C.acc, b: 1, size: 12 });
-    if (tl > 1.2 && tl < 1.7) dot(path([[1.2, PSL], [2.0, SV]], tl), C.good, '', 'hua');
-    crash(1.7, 2.8);
-    if (tl >= 2.4) T(115, 296, 'kuch likha nahi', { c: C.bad, b: 1, size: 12 });
-    if (tl >= 3.2) T(490, 210, 'paisa gaya ya nahi? pata nahi', { c: C.bad, b: 1, size: 16 });
-    return;
+function frame(ph) {
+  if (ph === 0) {
+    base({ sv: 'bad', db: 'bad', noJob: 1 }, { db: 'kuch likha nahi' });
+    A(200, 60, 698, 60, C.msg, { n: 1 }); L(300, 50, 'call', C.msg);
+    num(785, 130, 2, C.acc); L(805, 135, 'paisa kata', C.acc, 'start');
+    num(60, 135, 3, C.bad); L(78, 140, 'server gira', C.bad, 'start'); cross(225, 128);
+    A(698, 95, 202, 95, C.good, { dash: 1 }); L(450, 120, 'jawab kisi ne nahi suna', C.bad);
+    L(500, 230, 'paisa gaya ya nahi? pata nahi', C.bad);
+  } else if (ph === 1) {
+    base({ sv: 'bad', db: 'good', job: 'acc', ps: 'good' }, { db: 'PENDING -> SUCCESS' });
+    A(120, 112, 120, 238, C.acc, { n: 1 }); L(135, 180, 'PENDING pehle', C.acc, 'start');
+    A(200, 60, 698, 60, C.msg, { n: 2 }); L(300, 50, 'call', C.msg);
+    num(225, 120, 3, C.bad); L(245, 125, 'server gira', C.bad, 'start');
+    AP([[700, 100], [650, 100], [202, 265]], C.good, { n: 4, at: 0.3 }); L(500, 125, 'webhook: hua', C.good);
+    A(580, 260, 760, 112, C.acc, { dash: 1, n: 4, at: 0.5 }); L(690, 220, 'ya job poochhe', C.acc, 'start');
+    L(120, 345, 'tracking bacha, SUCCESS', C.good);
+  } else if (ph === 2) {
+    base({ db: 'good', ps: 'good', noJob: 1 }, { db: 'SUCCESS (ek baar)' });
+    AP([[700, 85], [650, 85], [202, 255]], C.good, { n: 1, at: 0.3 }); L(470, 105, 'webhook: SUCCESS likha', C.good);
+    AP([[700, 105], [670, 105], [202, 290]], C.acc, { dash: 1, n: 2, at: 0.25 }); L(500, 250, 'webhook dobara: ignore', C.acc);
+    L(450, 345, 'hal: SUCCESS sirf ek baar, doosra ignore', C.good);
+  } else if (ph === 3) {
+    base({ sv: 'good', db: 'good', noJob: 1 }, { db: 'PENDING (badla nahi)' });
+    B(400, 150, 160, 60, 'Nakli', 'webhook: hua', { st: 'bad' });
+    A(400, 165, 202, 95, C.bad, { n: 1, at: 0.5 }); L(330, 110, 'nakli webhook', C.bad);
+    num(60, 135, 2, C.acc); L(78, 140, 'hastakshar galat -> mana', C.acc, 'start');
+    L(450, 300, 'hal: hastakshar jaancho (PSP secret)', C.good, 'start');
+    L(450, 322, 'aur apne PENDING se milao', C.good, 'start');
+  } else if (ph === 4) {
+    base({ db: 'good', job: 'good', ps: 'good' }, { db: 'SUCCESS' });
+    AP([[700, 100], [650, 100], [420, 185]], C.bad, { dash: 1, n: 1, at: 0.3 }); cross(440, 178);
+    L(560, 175, 'webhook kho gaya', C.bad, 'start');
+    A(580, 262, 760, 112, C.acc, { n: 2, at: 0.45 }); L(690, 220, 'haal?', C.acc, 'start');
+    A(800, 112, 800, 270, C.good); A(800, 285, 582, 290, C.good, { n: 3, at: 0.5 }); L(800, 305, 'hua', C.good, 'start');
+    A(398, 290, 202, 285, C.good, { n: 4 }); L(300, 315, 'SUCCESS', C.good);
+    L(450, 345, 'hal: job har kuch minute poochhe, raat ko PSP file se milaan', C.good);
+  } else {
+    base({ db: 'good', job: 'good', ps: 'good' }, { db: 'SUCCESS / FAILED' });
+    A(580, 262, 760, 112, C.acc, { n: 1, at: 0.45 }); L(690, 220, 'haal?', C.acc, 'start');
+    A(800, 112, 800, 270, C.good); A(800, 285, 582, 290, C.good, { n: 2, at: 0.5 }); L(810, 305, 'jawab', C.good, 'start');
+    A(398, 290, 202, 285, C.good, { n: 3 }); L(300, 315, 'hua = SUCCESS', C.good);
+    L(300, 345, 'pakka fail = FAILED, kuch wapas nahi', C.good);
   }
-  CAP.textContent = 'ILAAJ: call se PEHLE PENDING. PSP bataye (webhook) ya job poochhe, jo bhi -> SUCCESS';
-  let st = '', sc = C.acc;
-  if (tl < 0.8) dot(path([[0.2, [115, 110]], [0.8, [115, 218]]], tl), C.acc, '', 'PENDING', C.acc);
-  if (tl >= 0.8) { st = 'PENDING'; }
-  if (tl > 1.0 && tl < 1.7) dot(path([[1.0, SV], [1.7, PS]], tl), C.msg, '', 'call');
-  if (tl >= 1.8) T(780, 28, 'paisa kata', { c: C.acc, b: 1, size: 12 });
-  crash(1.9, 2.8);
-  const lostAt = 0.45, WX = lerp(WH0, DBE, lostAt);
-  if (tl > 3.0 && tl < 3.8) dot(lerp(WH0, WX, (tl - 3.0) / 0.8), C.good, '', 'webhook');
-  if (tl >= 3.8) { cross(WX[0], WX[1]); T(WX[0], WX[1] - 22, 'webhook kho gaya', { c: C.bad, b: 1, size: 12, halo: 1 }); }
-  if (tl > 4.2 && tl < 5.0) dot(path([[4.2, JB], [5.0, PSB]], tl), C.acc, '', 'haal?', C.acc);
-  if (tl > 5.0 && tl < 5.8) dot(path([[5.0, PSB], [5.8, JB]], tl), C.good, '', 'hua', C.good);
-  if (tl > 5.9 && tl < 6.5) dot(path([[5.9, JL], [6.5, DBR]], tl), C.good, '', 'SUCCESS', C.good);
-  if (tl >= 6.5) { st = 'SUCCESS'; sc = C.good; }
-  if (st) T(115, 296, st, { c: sc, b: 1, size: 13 });
-  if (tl >= 6.8) T(490, 345, 'PENDING pehle likha -> server gira tab bhi tracking bacha', { c: C.muted, size: 12 });
 }

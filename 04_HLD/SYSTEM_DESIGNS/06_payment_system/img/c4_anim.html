@@ -10,6 +10,7 @@
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
 // anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
 const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
@@ -74,58 +75,126 @@ function cells(x, y, items, o = {}) {
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
 function draw(t) {
   DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
   const fix = t >= FIX;
   CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
   frame(t, fix, fix ? t - FIX : t);
 }
 
 // Card 4: PSP 30 sec, timeout nahi -> har thread ruka, sab atke. Ilaaj: 2-3 sec me PENDING, 5 fail -> circuit OPEN.
-const DUR = 18, FIX = 8;
-const US = [130, 185], SVL = [238, 185], SVR = [500, 185], PS = [708, 185];
-function setup() {
-  wire('M130 185 H250'); wire('M500 185 H720');
-  box(20, 150, 110, 70, 'Users', 'top-up 2000');
-  box(250, 90, 250, 190, 'Payment Svc', 'thread');
-  box(720, 150, 150, 70, 'PSP (bank)', 'dheema: 30 sec');
-  box(560, 240, 130, 60, 'Circuit', '', { id: 'cb' });
+// Agar: circuit kab khulega (30 sec baad test call), PSP poora band (doosra PSP). Wapas: test call chali, circuit band.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: timeout nahi. Har thread PSP (30 sec) tak ruka, sab atke, band'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: 2-3 sec me jawab nahi -> PENDING. 5 fail -> circuit OPEN'],
+  [6, YEL, 'AGAR', 'AGAR circuit OPEN, phir kab khulega? -> 30 sec baad ek test call'],
+  [9, YEL, 'AGAR', 'AGAR PSP hi poora band? -> doosra PSP. Par ek payment ek hi PSP pe'],
+  [12, GRN, 'WAPAS', 'WAPAS: test call chali -> circuit band, payment phir PSP tak'],
+];
+function setup() {}
+function threads(s, c) { const it = [0, 1, 2, 3].map(() => [s, c]); cells(250, 150, it, { w: 50, h: 28 }); cells(250, 190, it, { w: 50, h: 28 }); }
+// o: { us, sv, cb, ps, p2 } st ; s: { cb, ps }
+function base(o = {}, s = {}) {
+  B(20, 150, 110, 70, 'Users', 'top-up 2000', { st: o.us });
+  B(230, 100, 250, 140, 'Payment Svc', '', { st: o.sv });
+  if (!o.noCb) B(540, 150, 130, 70, 'Circuit', s.cb || '', { st: o.cb });
+  B(730, 150, 150, 70, 'PSP (bank)', s.ps || 'dheema: 30 sec', { st: o.ps });
+  if (o.p2) B(730, 270, 150, 60, 'PSP 2', 'doosra', { st: o.p2 });
 }
-function threads(st) {
-  const it = st.map(s => s === 0 ? ['free', C.good] : s === 1 ? ['ruka', C.bad] : ['wait', C.acc]);
-  cells(270, 145, it.slice(0, 4), { w: 50, h: 30 }); cells(270, 195, it.slice(4), { w: 50, h: 30 });
-}
-function frame(t, fix, tl) {
-  vis('cb', fix);
-  const st = [0, 0, 0, 0, 0, 0, 0, 0];
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: timeout hi nahi. Har thread PSP ke jawab (30 sec) tak ruka, saare atke, system band';
-    for (let k = 0; k < 10; k++) {
-      const s = 0.3 + 0.6 * k;
-      if (tl < s + 0.5) { dot(path([[s, US], [s + 0.5, SVL]], tl), C.msg); continue; }
-      if (k < 8) { st[k] = 1; if (tl < s + 1.1) dot(path([[s + 0.5, SVR], [s + 1.1, PS]], tl), C.acc); }
-      else dot([190, 245], C.bad, '', 'atka', C.bad);
-    }
-    threads(st);
-    T(795, 245, `intezaar: ${Math.max(0, Math.floor(tl - 0.8))} sec`, { c: C.bad, b: 1, size: 13 });
-    if (tl >= 5.6) T(375, 315, 'saare thread atke, system band', { c: C.bad, b: 1, size: 14 });
-    return;
+function frame(ph) {
+  if (ph === 0) {
+    base({ us: 'bad', sv: 'bad', noCb: 1, ps: 'acc' });
+    A(130, 175, 228, 175, C.msg, { n: 1 });
+    A(480, 185, 728, 185, C.acc, { n: 2, at: 0.3 }); L(605, 170, 'jawab ka intezaar: 30 sec', C.acc);
+    threads('ruka', C.bad); num(215, 262, 3, C.bad); L(235, 267, 'saare thread ruke', C.bad, 'start');
+    A(130, 205, 228, 205, C.bad, { dash: 1, n: 4, at: 0.4 });
+    L(75, 290, 'naye atke', C.bad); L(355, 300, 'system band', C.bad);
+  } else if (ph === 1) {
+    base({ us: 'good', sv: 'good', cb: 'bad', ps: 'acc' }, { cb: 'OPEN' });
+    A(130, 165, 228, 165, C.msg, { n: 1 });
+    A(480, 185, 538, 185, C.acc, { n: 2 });
+    threads('free', C.good); L(355, 270, '2-3 sec -> PENDING', C.acc);
+    L(355, 290, '(baad me pata karo)', C.acc);
+    num(605, 130, 3, C.bad); L(605, 110, '5 fail -> OPEN', C.bad);
+    A(670, 185, 728, 185, C.bad, { dash: 1 }); cross(700, 185);
+    L(700, 265, 'call jaati hi nahi', C.bad);
+    A(228, 210, 132, 210, C.good, { n: 4, at: 0.5 }); L(75, 245, '"abhi nahi"', C.good);
+    L(75, 265, 'paisa hila nahi', C.good);
+  } else if (ph === 2) {
+    base({ sv: '', cb: 'acc', ps: 'acc' }, { cb: 'OPEN' });
+    A(130, 175, 228, 175, C.line); A(480, 185, 538, 185, C.line);
+    threads('free', C.good);
+    num(605, 130, 1, C.acc); L(605, 110, '30 sec ho gaye', C.acc);
+    A(670, 185, 728, 185, C.acc, { dash: 1, n: 2 }); L(700, 250, 'ek test call', C.acc);
+    L(450, 330, 'hal: chali to circuit band, nahi to phir OPEN', C.good);
+  } else if (ph === 3) {
+    base({ sv: 'good', cb: '', ps: 'bad', p2: 'good' }, { ps: 'poora band' });
+    cross(712, 128); num(750, 128, 1, C.bad); L(768, 133, 'poora band', C.bad, 'start');
+    threads('free', C.good);
+    A(130, 175, 228, 175, C.msg, { n: 2 });
+    A(480, 185, 538, 185, C.good, { n: 3 });
+    AP([[670, 210], [700, 300], [728, 300]], C.good, { n: 4, at: 0.5 }); L(640, 300, 'doosra PSP', C.good, 'end');
+    L(450, 330, 'hal: doosra PSP. Par ek payment hamesha ek hi PSP pe', C.good);
+  } else {
+    base({ us: 'good', sv: 'good', cb: 'good', ps: 'good' }, { cb: 'band (CLOSED)', ps: 'wapas' });
+    num(605, 130, 1, C.good); L(605, 110, 'test call chali', C.good);
+    A(130, 175, 228, 175, C.msg, { n: 2 });
+    A(480, 185, 538, 185, C.good, { n: 3 });
+    A(670, 185, 728, 185, C.good, { n: 3 }); L(700, 250, 'payment phir PSP tak', C.good);
+    threads('free', C.good);
   }
-  CAP.textContent = 'ILAAJ: 2-3 sec me jawab nahi -> PENDING. 5 fail -> circuit OPEN, call hi nahi: "abhi nahi"';
-  const OPEN = 0.3 + 0.6 * 4 + 3.0;
-  let fails = 0, pend = 0;
-  for (let k = 0; k < 11; k++) {
-    const s = 0.3 + 0.6 * k;
-    if (tl < s + 0.5) { dot(path([[s, US], [s + 0.5, SVL]], tl), C.msg); continue; }
-    if (s + 0.5 >= OPEN) { if (tl < s + 1.1) dot(path([[s + 0.5, SVL], [s + 1.1, US]], tl), C.bad, '', 'abhi nahi', C.bad); continue; }
-    if (tl < s + 3.0) { st[k % 8] = 2; if (tl < s + 1.1) dot(path([[s + 0.5, SVR], [s + 1.1, PS]], tl), C.acc); }
-    else { fails++; pend++; }
-  }
-  threads(st);
-  const open = tl >= OPEN;
-  T(625, 288, open ? 'OPEN' : `CLOSED · fail ${Math.min(fails, 5)}`, { c: open ? C.bad : C.good, b: 1, size: 13 });
-  T(375, 305, `PENDING likha: ${pend} (baad me pata karo)`, { c: C.acc, b: 1, size: 12 });
-  if (open) { T(75, 250, '"abhi nahi"', { c: C.bad, b: 1, size: 12 }); T(75, 268, 'paisa hila nahi', { c: C.muted, size: 12 }); }
 }
 
 setup(); draw(0);

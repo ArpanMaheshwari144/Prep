@@ -1,46 +1,63 @@
 // Card 4: PSP 30 sec, timeout nahi -> har thread ruka, sab atke. Ilaaj: 2-3 sec me PENDING, 5 fail -> circuit OPEN.
-const DUR = 18, FIX = 8;
-const US = [130, 185], SVL = [238, 185], SVR = [500, 185], PS = [708, 185];
-function setup() {
-  wire('M130 185 H250'); wire('M500 185 H720');
-  box(20, 150, 110, 70, 'Users', 'top-up 2000');
-  box(250, 90, 250, 190, 'Payment Svc', 'thread');
-  box(720, 150, 150, 70, 'PSP (bank)', 'dheema: 30 sec');
-  box(560, 240, 130, 60, 'Circuit', '', { id: 'cb' });
+// Agar: circuit kab khulega (30 sec baad test call), PSP poora band (doosra PSP). Wapas: test call chali, circuit band.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: timeout nahi. Har thread PSP (30 sec) tak ruka, sab atke, band'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: 2-3 sec me jawab nahi -> PENDING. 5 fail -> circuit OPEN'],
+  [6, YEL, 'AGAR', 'AGAR circuit OPEN, phir kab khulega? -> 30 sec baad ek test call'],
+  [9, YEL, 'AGAR', 'AGAR PSP hi poora band? -> doosra PSP. Par ek payment ek hi PSP pe'],
+  [12, GRN, 'WAPAS', 'WAPAS: test call chali -> circuit band, payment phir PSP tak'],
+];
+function setup() {}
+function threads(s, c) { const it = [0, 1, 2, 3].map(() => [s, c]); cells(250, 150, it, { w: 50, h: 28 }); cells(250, 190, it, { w: 50, h: 28 }); }
+// o: { us, sv, cb, ps, p2 } st ; s: { cb, ps }
+function base(o = {}, s = {}) {
+  B(20, 150, 110, 70, 'Users', 'top-up 2000', { st: o.us });
+  B(230, 100, 250, 140, 'Payment Svc', '', { st: o.sv });
+  if (!o.noCb) B(540, 150, 130, 70, 'Circuit', s.cb || '', { st: o.cb });
+  B(730, 150, 150, 70, 'PSP (bank)', s.ps || 'dheema: 30 sec', { st: o.ps });
+  if (o.p2) B(730, 270, 150, 60, 'PSP 2', 'doosra', { st: o.p2 });
 }
-function threads(st) {
-  const it = st.map(s => s === 0 ? ['free', C.good] : s === 1 ? ['ruka', C.bad] : ['wait', C.acc]);
-  cells(270, 145, it.slice(0, 4), { w: 50, h: 30 }); cells(270, 195, it.slice(4), { w: 50, h: 30 });
-}
-function frame(t, fix, tl) {
-  vis('cb', fix);
-  const st = [0, 0, 0, 0, 0, 0, 0, 0];
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: timeout hi nahi. Har thread PSP ke jawab (30 sec) tak ruka, saare atke, system band';
-    for (let k = 0; k < 10; k++) {
-      const s = 0.3 + 0.6 * k;
-      if (tl < s + 0.5) { dot(path([[s, US], [s + 0.5, SVL]], tl), C.msg); continue; }
-      if (k < 8) { st[k] = 1; if (tl < s + 1.1) dot(path([[s + 0.5, SVR], [s + 1.1, PS]], tl), C.acc); }
-      else dot([190, 245], C.bad, '', 'atka', C.bad);
-    }
-    threads(st);
-    T(795, 245, `intezaar: ${Math.max(0, Math.floor(tl - 0.8))} sec`, { c: C.bad, b: 1, size: 13 });
-    if (tl >= 5.6) T(375, 315, 'saare thread atke, system band', { c: C.bad, b: 1, size: 14 });
-    return;
+function frame(ph) {
+  if (ph === 0) {
+    base({ us: 'bad', sv: 'bad', noCb: 1, ps: 'acc' });
+    A(130, 175, 228, 175, C.msg, { n: 1 });
+    A(480, 185, 728, 185, C.acc, { n: 2, at: 0.3 }); L(605, 170, 'jawab ka intezaar: 30 sec', C.acc);
+    threads('ruka', C.bad); num(215, 262, 3, C.bad); L(235, 267, 'saare thread ruke', C.bad, 'start');
+    A(130, 205, 228, 205, C.bad, { dash: 1, n: 4, at: 0.4 });
+    L(75, 290, 'naye atke', C.bad); L(355, 300, 'system band', C.bad);
+  } else if (ph === 1) {
+    base({ us: 'good', sv: 'good', cb: 'bad', ps: 'acc' }, { cb: 'OPEN' });
+    A(130, 165, 228, 165, C.msg, { n: 1 });
+    A(480, 185, 538, 185, C.acc, { n: 2 });
+    threads('free', C.good); L(355, 270, '2-3 sec -> PENDING', C.acc);
+    L(355, 290, '(baad me pata karo)', C.acc);
+    num(605, 130, 3, C.bad); L(605, 110, '5 fail -> OPEN', C.bad);
+    A(670, 185, 728, 185, C.bad, { dash: 1 }); cross(700, 185);
+    L(700, 265, 'call jaati hi nahi', C.bad);
+    A(228, 210, 132, 210, C.good, { n: 4, at: 0.5 }); L(75, 245, '"abhi nahi"', C.good);
+    L(75, 265, 'paisa hila nahi', C.good);
+  } else if (ph === 2) {
+    base({ sv: '', cb: 'acc', ps: 'acc' }, { cb: 'OPEN' });
+    A(130, 175, 228, 175, C.line); A(480, 185, 538, 185, C.line);
+    threads('free', C.good);
+    num(605, 130, 1, C.acc); L(605, 110, '30 sec ho gaye', C.acc);
+    A(670, 185, 728, 185, C.acc, { dash: 1, n: 2 }); L(700, 250, 'ek test call', C.acc);
+    L(450, 330, 'hal: chali to circuit band, nahi to phir OPEN', C.good);
+  } else if (ph === 3) {
+    base({ sv: 'good', cb: '', ps: 'bad', p2: 'good' }, { ps: 'poora band' });
+    cross(712, 128); num(750, 128, 1, C.bad); L(768, 133, 'poora band', C.bad, 'start');
+    threads('free', C.good);
+    A(130, 175, 228, 175, C.msg, { n: 2 });
+    A(480, 185, 538, 185, C.good, { n: 3 });
+    AP([[670, 210], [700, 300], [728, 300]], C.good, { n: 4, at: 0.5 }); L(640, 300, 'doosra PSP', C.good, 'end');
+    L(450, 330, 'hal: doosra PSP. Par ek payment hamesha ek hi PSP pe', C.good);
+  } else {
+    base({ us: 'good', sv: 'good', cb: 'good', ps: 'good' }, { cb: 'band (CLOSED)', ps: 'wapas' });
+    num(605, 130, 1, C.good); L(605, 110, 'test call chali', C.good);
+    A(130, 175, 228, 175, C.msg, { n: 2 });
+    A(480, 185, 538, 185, C.good, { n: 3 });
+    A(670, 185, 728, 185, C.good, { n: 3 }); L(700, 250, 'payment phir PSP tak', C.good);
+    threads('free', C.good);
   }
-  CAP.textContent = 'ILAAJ: 2-3 sec me jawab nahi -> PENDING. 5 fail -> circuit OPEN, call hi nahi: "abhi nahi"';
-  const OPEN = 0.3 + 0.6 * 4 + 3.0;
-  let fails = 0, pend = 0;
-  for (let k = 0; k < 11; k++) {
-    const s = 0.3 + 0.6 * k;
-    if (tl < s + 0.5) { dot(path([[s, US], [s + 0.5, SVL]], tl), C.msg); continue; }
-    if (s + 0.5 >= OPEN) { if (tl < s + 1.1) dot(path([[s + 0.5, SVL], [s + 1.1, US]], tl), C.bad, '', 'abhi nahi', C.bad); continue; }
-    if (tl < s + 3.0) { st[k % 8] = 2; if (tl < s + 1.1) dot(path([[s + 0.5, SVR], [s + 1.1, PS]], tl), C.acc); }
-    else { fails++; pend++; }
-  }
-  threads(st);
-  const open = tl >= OPEN;
-  T(625, 288, open ? 'OPEN' : `CLOSED · fail ${Math.min(fails, 5)}`, { c: open ? C.bad : C.good, b: 1, size: 13 });
-  T(375, 305, `PENDING likha: ${pend} (baad me pata karo)`, { c: C.acc, b: 1, size: 12 });
-  if (open) { T(75, 250, '"abhi nahi"', { c: C.bad, b: 1, size: 12 }); T(75, 268, 'paisa hila nahi', { c: C.muted, size: 12 }); }
 }

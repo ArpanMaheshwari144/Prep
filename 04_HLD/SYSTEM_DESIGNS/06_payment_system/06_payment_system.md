@@ -3,7 +3,7 @@
 > User A se User B / merchant ko paisa, bharose ke saath. Misaal: Arpan ne kirana dukaan (merchant) ko Rs. 500 bheje.
 > Dil do cheezein: paisa do baar na kate, aur paisa kabhi gum na ho. Finance HLD ka core, JP / GS ka favourite.
 >
-> Mock me sirf heading + Cue + GIF. Neeche har card ek block: HAL (GIF ka ILAAJ) · KYUN · NAHI (doosra kyun nahi) · AGAR (cross-Q).
+> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card ek block: HAL (↳ agar = cross-Q) · KYUN · NAHI (doosra kyun nahi).
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -50,30 +50,45 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 Cue: EK TRANSACTION (WAL se poora / ulta)
 
-![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c1_1.png" width="900">
+
+<img src="img/c1_2.png" width="900">
+
+<img src="img/c1_3.png" width="900">
+
+<img src="img/c1_4.png" width="900">
+
+<img src="img/c1_5.png" width="900">
+
+<img src="img/c1_6.png" width="900">
+
+</details>
 
 ```
 HAL     BEGIN, Arpan -500, Kirana +500, COMMIT, ye sab ek hi transaction me. Ya dono honge ya koi nahi.
         COMMIT se pehle server gira, to DB apna log (WAL) dekh ke ulta kar deta hai
+        ↳ agar ledger ka INSERT fail? -> ROLLBACK, Arpan ka -500 bhi ulta
+          transaction ke beech fail hua, to paanchon me se ek bhi nahi bachta
+        ↳ agar ROLLBACK ho gaya, to user ko kya dikhe?
+          -> "nahi hua". Paisa jaisa tha waisa hai, wo dobara try kar sakta hai.
+             User ko sirf "hua" ya "nahi hua" dikhta hai, beech ka kabhi nahi
+        ↳ agar hisaab me farak aaya? -> turant alert jaata hai
+          User ko "hua" ya "nahi hua" hi dikhe, beech ka nahi
+        ↳ agar SQL DB ki jagah NoSQL lagate, to?
+          -> kai row aur table pe ek saath sab ya kuch nahi chahiye, aur paisa turant sahi chahiye.
+             "Thodi der baad sahi" (eventual) paise me nahi chalta
+        ↳ agar network toota, consistency ya availability? -> sahi hona pehle
+          Balance pakka nahi, to payment mana. Galat balance pe kaatna usse bhi bura hai.
+          Dashboard aur report thode purane bhi chalte rahein to chalega
+        ↳ agar A->B aur B->A ek saath, dono atke? -> taala pehle chhoti account id pe
+          ye deadlock hai. Taala hamesha chhoti account id pe pehle lo. Poora 13_banking card 9 me hai
 KYUN    DB ka apna log hota hai (WAL). COMMIT se pehle gira, to DB uth ke log dekhta hai, COMMIT nahi tha,
         to ulta kar deta hai aur 500 wapas
         COMMIT ke baad gira, to log me COMMIT hai, DB kaam poora karta hai, kuch nahi khota.
         Saare kate == saare jude, aadha kabhi nahi (chaar hui aur ek reh gayi = hisaab galat)
 NAHI    do alag badlaav, ek ke baad ek -> GAYAB: Arpan -500 hua, phir crash, merchant +500 hua hi nahi
-AGAR    transaction ke beech ledger ka INSERT fail ho gaya
-        -> ROLLBACK. Arpan ka -500 bhi ulta, paanchon me se ek bhi nahi bachta
-        ROLLBACK ho gaya, to user ko kya dikhe?
-        -> "nahi hua". Paisa jaisa tha waisa hai, wo dobara try kar sakta hai.
-           User ko sirf "hua" ya "nahi hua" dikhta hai, beech ka kabhi nahi
-        hisaab me farak aaya -> turant alert jaata hai. User ko "hua" ya "nahi hua" hi dikhe, beech ka nahi
-        SQL DB ki jagah NoSQL lagate, to?
-        -> kai row aur table pe ek saath sab ya kuch nahi chahiye, aur paisa turant sahi chahiye.
-           "Thodi der baad sahi" (eventual) paise me nahi chalta
-        network toota, consistency chunoge ya availability?
-        -> sahi hona pehle. Balance pakka nahi, to payment mana. Galat balance pe kaatna usse bhi bura hai.
-           Dashboard aur report thode purane bhi chalte rahein to chalega
-        A->B aur B->A ke transaction ek saath chale, dono atak gaye (deadlock)
-        -> taala hamesha chhoti account id pe pehle lo. Poora 13_banking card 9 me hai
 ```
 
 ---
@@ -84,20 +99,30 @@ AGAR    transaction ke beech ledger ka INSERT fail ho gaya
 
 Cue: check + kaato EK atomic query
 
-![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
+<details><summary>kahani dekho (4 scene)</summary>
+
+<img src="img/c2_1.png" width="900">
+
+<img src="img/c2_2.png" width="900">
+
+<img src="img/c2_3.png" width="900">
+
+<img src="img/c2_4.png" width="900">
+
+</details>
 
 ```
 HAL     check aur kaatna ek hi query me karo (atomic UPDATE). DB ek-ek karke chalata hai, jeetta sirf ek:
         SET balance = balance - 500 WHERE id = ? AND balance >= 500
         Phone jeeta, 600 se 100 bacha. Laptop ke liye 100 < 500, 0 row aayi, use "paisa kam" dikha
+        ↳ agar WHERE wala check bhool gaye? -> DB ka CHECK (balance >= 0) pakadta
+          query me WHERE likhna bhool gaye, to bhi DB ka CHECK pakad leta hai. Ye aakhri deewar hai
 KYUN    "paisa hai?" aur "kaato" ek hi kadam me hota hai, DB ke andar. Kitni bhi machine hon, DB ek-ek karke
         chalata hai, jeetta ek. 0 row aayi = reject, user ko turant "paisa kam"
 NAHI    pehle padho, phir kaato -> RACE: phone (dukaan 500) aur laptop (Swiggy 500), dono server ne 600 dekha,
         dono ne kaata, wallet -400
         idempotency key -> GALAT: ye do alag payment hain, do log ek balance pe. Key sirf ek user ka
         dobara bhejna pakadti hai (card 3)
-AGAR    query me WHERE wala check likhna bhool gaye
-        -> DB ka CHECK (balance >= 0) pakad leta hai. Ye aakhri deewar hai
 ```
 
 ---
@@ -108,12 +133,31 @@ AGAR    query me WHERE wala check likhna bhool gaye
 
 Cue: IDEMPOTENCY KEY (screen khulte)
 
-![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
+<details><summary>kahani dekho (5 scene)</summary>
+
+<img src="img/c3_1.png" width="900">
+
+<img src="img/c3_2.png" width="900">
+
+<img src="img/c3_3.png" width="900">
+
+<img src="img/c3_4.png" width="900">
+
+<img src="img/c3_5.png" width="900">
+
+</details>
 
 ```
 HAL     payment screen khulte hi app ek key banata hai (key-555), retry pe wahi key jaati hai.
         Store me key-555 pehle se hai, to saved jawab wapas jaata hai, 500 hi kate.
         DB me key pe UNIQUE hai (idempotency key). Saath me Pay button pehli tap pe hi band ho jaata hai
+        ↳ agar key wahi, par amount alag? -> request ka hash bhi rakho, farak = 422
+          farak mila to 422 jaata hai
+        ↳ agar key store se key hatani ho, to kab?
+          -> sirf pakka fail hone pe (paisa hila hi nahi). DONE wali key ~24 ghante rakho
+        ↳ agar sach me do payment, 100 + 100? -> do key, dono honge, 200
+          do baar screen khuli = do key (key-555, key-888), dono honge, 200. Maqsad sirf network ke
+          dobara bhejne ko do baar ginne se rokna hai
 KYUN    ek key = ek payment. Wahi key dobara aayi to kaam nahi hota, saved jawab jaata hai.
         User ko ek hi payment dikhta hai. Nayi payment = nayi screen = nayi key
 HAAL    key ka haal: IN_PROGRESS -> kaato + daalo -> DONE + jawab
@@ -122,12 +166,6 @@ NAHI    bina key -> DOUBLE: timeout hua, app ne dobara bheja, server ne do naye 
         server ko pata hi nahi ki ye wahi wali hai
         sirf DB -> DHEEMA: Redis (SETNX) pehle aur tez pakadta hai
         sirf Redis -> KACHCHA: DB ka UNIQUE aakhri deewar hai
-AGAR    key wahi aayi, par amount alag hai -> request ka hash bhi rakho. Farak mila to 422
-        key store se key kab hatani hai?
-        -> sirf pakka fail hone pe (paisa hila hi nahi). DONE wali key ~24 ghante rakho
-        sach me do payment hain, 100 + 100, key kya karegi?
-        -> do baar screen khuli = do key (key-555, key-888), dono honge, 200. Maqsad sirf network ke
-           dobara bhejne ko do baar ginne se rokna hai
 ```
 
 ---
@@ -138,13 +176,29 @@ AGAR    key wahi aayi, par amount alag hai -> request ka hash bhi rakho. Farak m
 
 Cue: timeout = PENDING, circuit breaker = abhi nahi
 
-![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
+<details><summary>kahani dekho (5 scene)</summary>
+
+<img src="img/c4_1.png" width="900">
+
+<img src="img/c4_2.png" width="900">
+
+<img src="img/c4_3.png" width="900">
+
+<img src="img/c4_4.png" width="900">
+
+<img src="img/c4_5.png" width="900">
+
+</details>
 
 ```
 HAL     thodi der (2-3 sec) me jawab nahi aaya, to chhodo aur PENDING likho (pata nahi kata ya nahi),
         baad me pata karo (timeout)
         5 fail ho gaye, to circuit OPEN: call jaati hi nahi, saaf "abhi nahi", paisa hila hi nahi
         (circuit breaker)
+        ↳ agar circuit OPEN, phir kab khulega? -> 30 sec baad ek test call
+          chali to circuit band, nahi to phir OPEN
+        ↳ agar PSP hi poora band? -> doosra PSP. Par ek payment ek hi PSP pe
+          ek payment hamesha ek hi PSP pe chalti hai
 PSP     bahar ka paisa PSP (Razorpay / bank) se aata jaata hai: bank se wallet me (top-up),
         wallet se bank me (payout), ya merchant kisi doosre bank me ho
 KYUN    call gayi aur jawab nahi aaya = PENDING, "fail" kabhi nahi. Call gayi hi nahi (circuit OPEN)
@@ -152,9 +206,6 @@ KYUN    call gayi aur jawab nahi aaya = PENDING, "fail" kabhi nahi. Call gayi hi
         PSP dheema hai to jaldi chhodo, warna saare thread atak jaate hain
 NAHI    timeout lagao hi mat, wait karo -> ATKA: har thread PSP ke jawab tak ruka (PSP 30 sec),
         sab atke, system band
-AGAR    circuit OPEN ho gaya, phir kab khulega?
-        -> 30 sec baad ek test call jaati hai. Chali to circuit band, nahi to phir OPEN
-        PSP hi poora band ho gaya -> doosra PSP lo. Par ek payment hamesha ek hi PSP pe chalti hai
 ```
 
 ---
@@ -165,25 +216,37 @@ AGAR    circuit OPEN ho gaya, phir kab khulega?
 
 Cue: PENDING pehle + WEBHOOK + RECONCILE
 
-![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c5_1.png" width="900">
+
+<img src="img/c5_2.png" width="900">
+
+<img src="img/c5_3.png" width="900">
+
+<img src="img/c5_4.png" width="900">
+
+<img src="img/c5_5.png" width="900">
+
+<img src="img/c5_6.png" width="900">
+
+</details>
 
 ```
 HAL     call se PEHLE DB me PENDING likho. PSP baad me khud bataye (webhook), aur purane PENDING pe ek job
         PSP se haal poochhe. Dono me se jo bhi bataye, DB me SUCCESS
+        ↳ agar webhook do baar aaya? -> SUCCESS sirf ek baar, doosra ignore
+        ↳ agar webhook nakli? -> hastakshar jaancho (PSP secret), PENDING se milao
+          hastakshar jaancho (PSP secret) aur apne PENDING se milao
+        ↳ agar webhook aaya hi nahi? -> job purane PENDING ke liye PSP se poochhe
+          job har kuch minute poochhti hai. Raat ko PSP ki file se poora milaan hota hai (reconciliation)
+        ↳ agar job ko PSP ne jawab de diya, phir? -> hua = SUCCESS
+          Pakka fail = FAILED, kuch wapas nahi karna (paisa hila nahi)
 KYUN    "pata nahi" pehle likh diya, to server gire tab bhi tracking number bacha rehta hai. PSP bataye
         (webhook) ya hum poochhe (job). User ko PROCESSING dikhe, andha dobara kabhi nahi
 NAHI    sirf webhook -> KHOTA: webhook kho sakta hai (der ho, ya hamara server band ho).
         Job chhoota hua pakadti hai
         sirf job -> DHEEMA: der lagti hai aur kharcha bhi (PSP ki limit). Isliye dono
-AGAR    webhook do baar aaya -> SUCCESS sirf ek baar, doosra ignore
-        webhook nakli ho to? -> hastakshar jaancho (PSP secret) aur apne PENDING se milao
-        webhook aaya hi nahi
-        -> job har kuch minute purane PENDING ke liye PSP se poochhti hai. Raat ko PSP ki file se poora
-           milaan hota hai (reconciliation)
-        job ko PSP ne jawab de diya, phir?
-        -> hua = SUCCESS. Pakka fail = FAILED, kuch wapas nahi karna (paisa hila nahi)
-        sab theek chal raha hai, ye kaise pata chalega?
-        -> alert lagao (hisaab ka farak, p99, error, line) aur trace id
 ```
 
 ---
@@ -194,20 +257,33 @@ AGAR    webhook do baar aaya -> SUCCESS sirf ek baar, doosra ignore
 
 Cue: SAGA (step-step, fail pe ulta)
 
-![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
+<details><summary>kahani dekho (5 scene)</summary>
+
+<img src="img/c6_1.png" width="900">
+
+<img src="img/c6_2.png" width="900">
+
+<img src="img/c6_3.png" width="900">
+
+<img src="img/c6_4.png" width="900">
+
+<img src="img/c6_5.png" width="900">
+
+</details>
 
 ```
 HAL     SAGA: step-step chalo, har kadam saga table me likho (DEBITED, PAYOUT). Bank B ka payout fail hua,
         to pichhle kadam ka ulta kaam karo: wallet me 500 wapas (saga, compensate)
+        ↳ agar SAGA ke beech service giri? -> uth ke saga table dekhe, wahin se aage
+          wahin se aage badhe ya ulta kare
+        ↳ agar ulta kaam bhi fail? -> retry + alert, phir manual queue
+          Paisa beech me na atke
 KYUN    alag system me har step likha hua hai. Aage nahi badh sake to ulta karo. User ko PROCESSING dikhe,
         phir SUCCESS ya paisa wapas. Hisaab saaf
 PEHLE   sabse bada sawaal, shuru me poochho: dono account ek hi system / bank me hain ya alag?
         Poora design isse badalta hai. Ek DB = ek transaction (ACID) kaafi, alag bank = SAGA ka khel
 NAHI    ek transaction me dono -> NAMUMKIN: do alag system hain, ek transaction chalta hi nahi.
         Paisa beech me latka
-AGAR    SAGA chalate hue service beech me gir gayi
-        -> uth ke saga table dekhe, wahin se aage badhe ya ulta kare
-        ulta kaam bhi fail ho gaya -> retry + alert, phir manual queue. Paisa beech me na atke
 ```
 
 ---
@@ -218,24 +294,39 @@ AGAR    SAGA chalate hue service beech me gir gayi
 
 Cue: LEDGER double-entry, sirf INSERT
 
-![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c7_1.png" width="900">
+
+<img src="img/c7_2.png" width="900">
+
+<img src="img/c7_3.png" width="900">
+
+<img src="img/c7_4.png" width="900">
+
+<img src="img/c7_5.png" width="900">
+
+<img src="img/c7_6.png" width="900">
+
+</details>
 
 ```
 HAL     ledger double-entry: har paisa do line me, DEBIT + CREDIT, jod 0.
         Sirf nayi line jodte hain, sirf INSERT
+        ↳ agar galat entry ho gayi ya refund aaya? -> mitao nahi, nayi ulti line jodo
+          sirf INSERT hai. Audit me dono line dikhti hain
+        ↳ agar 3 saal me ledger bahut bada? -> mahine ke tukde, purane S3 Glacier me
+          Kanoon jitna kahe utna rakho
+        ↳ agar balance column aur khaata alag? -> raat ko jod == balance, alert
+          raat ko jod == balance check karo. Farak mila to alert
+        ↳ agar poochhe ledger crash se bhi bachaata hai? -> nahi, wo hisaab hai
+          Crash se PENDING + webhook + job bachate hain
 MISAAL  raat ki line: Arpan -800 bijli +800, Arpan -300 recharge +300.
         2200 - 800 - 300 = 1100, line-line dikhta hai
 KYUN    ledger hi sach hai. Sirf nayi line, kaat-peet nahi, jod hamesha 0.
         Har payment ki 2 line usi transaction me likhi jaati hain
 NAHI    sirf balance column -> ANDHA: number hai (1100), kahani nahi. Support ke paas koi record nahi,
         "kaise bana" ka jawab nahi
-AGAR    ledger me galat entry ho gayi ya refund aaya
-        -> mitao nahi (sirf INSERT). Nayi ulti line jodo, audit me dono dikhti hain
-        balance column aur khaata alag ho gaye -> raat ko jod == balance check karo. Farak mila to alert
-        ledger crash se bhi bachaata hai?
-        -> nahi, wo hisaab hai. Crash se PENDING + webhook + job bachate hain
-        3 saal me ledger bahut bada ho gaya
-        -> mahine ke tukde karo, purane S3 Glacier me. Kanoon jitna kahe utna rakho
 ```
 
 ---
@@ -246,18 +337,34 @@ AGAR    ledger me galat entry ho gayi ya refund aaya
 
 Cue: STATELESS, kai machine + LB
 
-![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c8_1.png" width="900">
+
+<img src="img/c8_2.png" width="900">
+
+<img src="img/c8_3.png" width="900">
+
+<img src="img/c8_4.png" width="900">
+
+<img src="img/c8_5.png" width="900">
+
+<img src="img/c8_6.png" width="900">
+
+</details>
 
 ```
 HAL     kai machine lagao, aage LB, LB kisi bhi machine ko de. Machine kuch yaad nahi rakhti, yaad DB aur
         idempotency store me hai (stateless + LB)
+        ↳ agar peeche ek machine mar gayi? -> LB GET /health, jawab nahi = bahar
+          LB ke peeche wali machine. LB har kuch sec poochta hai (GET /health)
 KYUN    koi bhi machine koi bhi request le sakti hai, koi bhi badlo ya badhao
 AUTH    user kaun hai, ye JWT se pata karo, body se kabhi nahi. Har request pe owner check
+        ↳ agar galat istemaal? -> "from" ka maalik JWT wala? Nahi to 403
+          Aage WAF + had
+        ↳ agar JWT chori? -> chhoti umar (~15 min) + refresh, bade pe PIN / OTP
+          Bade payment pe PIN / OTP
 NAHI    ek hi machine -> BAITHI: CPU bhara, payment atke, timeout, log dobara tap karte, aur bojh
-AGAR    LB ke peeche ek machine mar gayi -> LB har kuch sec poochta hai (GET /health). Jawab nahi = bahar
-        galat istemaal kaise roko?
-        -> "from" ka maalik JWT wala hai? Nahi to 403. Aage WAF + had
-        JWT chori ho gaya -> chhoti umar (~15 min) + refresh. Bade payment pe PIN / OTP
 ```
 
 ---
@@ -268,18 +375,36 @@ AGAR    LB ke peeche ek machine mar gayi -> LB har kuch sec poochta hai (GET /he
 
 Cue: READ REPLICA (sirf report)
 
-![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
+<details><summary>kahani dekho (7 scene)</summary>
+
+<img src="img/c9_1.png" width="900">
+
+<img src="img/c9_2.png" width="900">
+
+<img src="img/c9_3.png" width="900">
+
+<img src="img/c9_4.png" width="900">
+
+<img src="img/c9_5.png" width="900">
+
+<img src="img/c9_6.png" width="900">
+
+<img src="img/c9_7.png" width="900">
+
+</details>
 
 ```
 HAL     bhaari report copy pe chalao (read replica), primary sirf payment ke liye.
         Copy 1-2 sec peeche chalti hai
+        ↳ agar pay kiya, turant balance dekha? -> primary se padho, copy peeche
+          Copy 1-2 sec peeche hai
+        ↳ agar copy aur peeche chali gayi? -> lag naapo, had paar hui to alert
+          kitni peeche hai naapo (replication lag)
+        ↳ agar report itni bhaari ki copy bhi baithe? -> alag warehouse (CDC)
+        ↳ agar primary gir gaya? -> sync standby ban jaata, kuch nahi khota
 KYUN    paisa aur haal PRIMARY se padho, replica peeche ho sakti hai. Report replica / warehouse se.
         Payment tez rehta hai
 NAHI    report bhi primary pe -> RUKA: wahi hua, mahine bhar ki report ne primary busy kiya, payment ruka
-AGAR    pay kiya, turant balance dekha -> primary se padho. Copy 1-2 sec peeche hai
-        copy aur peeche chali gayi -> kitni peeche hai naapo (replication lag), had paar hui to alert
-        report itni bhaari ki copy bhi baith jaaye -> alag warehouse (CDC)
-        primary gir gaya -> sync standby ban jaata hai, kuch nahi khota
 ```
 
 ---
@@ -290,21 +415,39 @@ AGAR    pay kiya, turant balance dekha -> primary se padho. Copy 1-2 sec peeche 
 
 Cue: SHARD by account_id
 
-![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
+<details><summary>kahani dekho (6 scene)</summary>
+
+<img src="img/c10_1.png" width="900">
+
+<img src="img/c10_2.png" width="900">
+
+<img src="img/c10_3.png" width="900">
+
+<img src="img/c10_4.png" width="900">
+
+<img src="img/c10_5.png" width="900">
+
+<img src="img/c10_6.png" width="900">
+
+</details>
 
 ```
 HAL     account_id se tukde karo (shard). Mera balance aur meri history ek hi tukde pe (shard by account_id)
+        ↳ agar do account alag shard pe? -> saga: A se kaato, B me daalo
+          fail pe ulta. Ek transaction nahi
+        ↳ agar ek account bahut bada (merchant)? -> sub-account alag shard pe
+          wo shard garam ho jaata. Sub-account alag shard pe, report me jodo
+        ↳ agar shard wale system me idempotency key kahan rakhoge?
+          -> account_id se usi shard pe. Payment ke saath ek transaction me
+        ↳ agar account kis shard pe jaayega, kaise tay hoga?
+          -> ring (consistent hashing) ya naksha (lookup table)
+        ↳ agar Swiggy pe 3000 credit/sec, lock ki line? -> credit sirf ledger line
+          Swiggy ke ek account ki ek row pe lock ki line lag gayi. Credit sirf ledger line me
+          (koi lock nahi), balance column peeche batch me jodo; ya merchant ke 10 sub-account,
+          report me jodo
 KYUN    jo ek transaction me saath chahiye (account + uski history) wo ek shard pe.
         Transaction ek shard tak hi rehti hai
 NAHI    ek hi DB -> DHEEMA: 1000 crore row, index RAM me nahi samaata, disk se padhta, har likhai dheemi
-AGAR    do account alag shard pe hain -> saga: A se kaato, B me daalo, fail pe ulta. Ek transaction nahi
-        ek account bahut bada hai (merchant) -> wo shard garam. Sub-account alag shard pe, report me jodo
-        shard wale system me idempotency key kahan rakhoge?
-        -> account_id se usi shard pe. Payment ke saath ek transaction me
-        account kis shard pe jaayega, kaise tay hoga? -> ring (consistent hashing) ya naksha (lookup table)
-        Swiggy ke ek account pe 3000 credit/sec, ek row pe lock ki line lag gayi
-        -> credit sirf ledger line me (koi lock nahi), balance column peeche batch me jodo;
-           ya merchant ke 10 sub-account, report me jodo
 ```
 
 ---
@@ -347,6 +490,8 @@ Aage: fraud check, kai currency, chargeback.
 ## Pooche to (kisi card me nahi baitha)
 
 API: POST /pay { from, to, amount } + header Idempotency-Key: <UUID> -> { status, txn_id }.
+
+Sab theek chal raha hai, ye kaise pata chalega? Alert lagao (hisaab ka farak, p99, error, line) aur trace id.
 
 Key kab banti? Key random hai, payment screen khulte banti. Arpan ne do alag payment kiye: key-555, key-888, 100 + 100
 = 200, do payment, sahi. Ek tap + network ne dobara bheja: wahi key-555 dobara, "aa chuki", pehla jawab, 100. Farak =

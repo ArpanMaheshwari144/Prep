@@ -1,30 +1,69 @@
-// Card 9: mahine bhar ki report primary pe, primary busy, payment ruka. Ilaaj: report read replica pe, primary sirf payment.
-const DUR = 17, FIX = 7.5;
-const AR = [160, 75], PR = [376, 75], ME = [180, 285], PRL = [388, 112], RPL = [388, 290];
-function setup() {
-  wire('M160 75 H400'); wire('M180 285 L400 110', 'mr'); wire('M180 290 H400', 'mg'); wire('M490 120 V250', 'wr');
-  box(20, 40, 140, 70, 'Arpan', 'payment');
-  box(20, 250, 160, 70, 'Merchant', 'mahine bhar report');
-  box(400, 40, 180, 80, 'Primary DB', 'payment');
-  box(400, 250, 180, 80, 'Read replica', '1-2 sec peeche', { id: 'rp' });
+// Card 9: mahine bhar ki report primary pe, payment ruka. Ilaaj: report read replica pe, primary sirf payment.
+// Agar: turant balance, copy aur peeche, copy bhi baithi (warehouse), primary gira (standby). Wapas: payment tez.
+const DUR = 21;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: merchant ki mahine bhar ki report primary pe. Mera payment ruka'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: bhaari report copy pe (read replica), primary sirf payment ke liye'],
+  [6, YEL, 'AGAR', 'AGAR pay kiya, turant balance dekha? -> primary se padho, copy peeche'],
+  [9, YEL, 'AGAR', 'AGAR copy aur peeche chali gayi? -> lag naapo, had paar hui to alert'],
+  [12, YEL, 'AGAR', 'AGAR report itni bhaari ki copy bhi baithe? -> alag warehouse (CDC)'],
+  [15, YEL, 'AGAR', 'AGAR primary gir gaya? -> sync standby ban jaata, kuch nahi khota'],
+  [18, GRN, 'WAPAS', 'WAPAS: paisa aur haal primary se, report copy se. Payment tez rehta'],
+];
+function setup() {}
+function base(o = {}, s = {}) {
+  B(20, 40, 140, 70, 'Arpan', 'payment', { st: o.ar });
+  B(20, 250, 160, 70, 'Merchant', 'mahine bhar report', { st: o.me });
+  B(400, 40, 180, 80, 'Primary DB', s.pr || 'payment', { st: o.pr });
+  if (!o.noRp) B(400, 250, 180, 80, 'Read replica', s.rp || '1-2 sec peeche', { st: o.rp });
 }
-function frame(t, fix, tl) {
-  vis('mr', !fix); ['mg', 'wr', 'rp'].forEach(id => vis(id, fix));
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: merchant ki mahine bhar ki report primary pe. Primary busy, mera payment ruka';
-    if (tl < 1.3) dot(path([[0.3, ME], [1.3, PRL]], tl), C.acc, '', 'report', C.acc);
-    bar(640, 70, 220, 18, Math.min(1, 0.1 + Math.max(0, tl - 1.3) * 0.75), 'primary busy');
-    if (tl > 2.8) dot(path([[2.8, AR], [3.5, PR]], tl), tl > 3.5 ? C.bad : C.msg, '', tl > 3.5 ? 'ruka' : 'pay', tl > 3.5 ? C.bad : C.msg);
-    if (tl > 3.8) T(640, 130, `payment ruka: ${Math.floor(tl - 3.5)} sec`, { a: 'start', c: C.bad, b: 1, size: 13 });
-    return;
+function copyLine(c, n, dash) { A(490, 122, 490, 248, c || C.line, { dash: dash === undefined ? 1 : dash, n }); }
+function frame(ph) {
+  if (ph === 0) {
+    base({ ar: 'bad', pr: 'bad', noRp: 1 }, { pr: 'busy' });
+    A(180, 270, 420, 122, C.acc, { n: 1, at: 0.4 }); L(250, 190, 'bhaari report', C.acc, 'end');
+    bar(640, 70, 220, 18, 1, ''); num(620, 79, 2, C.bad); L(750, 120, 'primary busy', C.bad);
+    A(160, 75, 398, 75, C.bad, { dash: 1, n: 3 }); L(280, 60, 'pay: ruka', C.bad);
+  } else if (ph === 1) {
+    base({ ar: 'good', pr: 'good', rp: 'acc' });
+    copyLine(); L(500, 190, 'copy, 1-2 sec peeche', C.muted, 'start');
+    A(180, 285, 398, 285, C.acc, { n: 1 }); L(290, 270, 'report', C.acc);
+    A(160, 65, 398, 65, C.msg, { n: 2 }); L(280, 50, 'pay', C.msg);
+    A(398, 95, 162, 95, C.good, { n: 3 }); L(280, 120, 'hua, tez', C.good);
+    bar(640, 70, 220, 18, 0.15, 'primary', 1); bar(640, 280, 220, 18, 0.7, 'replica');
+  } else if (ph === 2) {
+    base({ ar: 'good', pr: 'good', rp: 'acc' }, { rp: 'purana balance' });
+    copyLine(); L(500, 190, '1-2 sec peeche', C.muted, 'start');
+    A(160, 60, 398, 60, C.msg, { n: 1 }); L(280, 45, 'pay', C.msg);
+    A(160, 105, 398, 270, C.bad, { dash: 1, n: 2, at: 0.3 }); cross(320, 205); L(200, 215, 'copy se: purana', C.bad, 'end');
+    A(160, 85, 398, 85, C.good, { n: 3 }); L(280, 102, 'balance: primary se', C.good);
+    L(700, 300, 'hal: paisa aur haal', C.good, 'start'); L(700, 322, 'primary se padho', C.good, 'start');
+  } else if (ph === 3) {
+    base({ pr: 'good', rp: 'bad' }, { rp: 'bahut peeche' });
+    copyLine(C.acc, 1); L(500, 175, 'lag badhta gaya', C.acc, 'start');
+    bar(640, 280, 220, 18, 1, 'replication lag'); num(620, 289, 2, C.bad); L(750, 330, 'had paar', C.bad);
+    B(680, 120, 180, 60, 'alert', '', { st: 'good' });
+    A(582, 270, 678, 165, C.good, { n: 3, at: 0.5 });
+    L(250, 200, 'hal: kitni peeche hai naapo', C.good); L(250, 222, 'had paar -> alert', C.good);
+  } else if (ph === 4) {
+    base({ pr: 'good', rp: 'bad' }, { rp: 'baith gayi' });
+    num(600, 255, 1, C.bad); cross(600, 300);
+    B(680, 150, 180, 70, 'Warehouse', 'alag', { st: 'good' });
+    A(582, 100, 678, 170, C.good, { n: 2, at: 0.5 }); L(650, 110, 'CDC', C.good, 'start');
+    AP([[100, 322], [100, 342], [770, 342], [770, 222]], C.acc, { n: 3, at: 0.3 }); L(260, 335, 'report', C.acc);
+    L(250, 180, 'hal: alag warehouse (CDC)', C.good);
+  } else if (ph === 5) {
+    base({ ar: 'good', pr: 'bad', rp: '' }, { pr: 'gira' });
+    cross(600, 80); num(600, 30, 1, C.bad); L(618, 35, 'primary gira', C.bad, 'start');
+    B(680, 40, 180, 80, 'Sync standby', 'ab primary', { st: 'good' });
+    num(700, 160, 2, C.good); L(718, 165, 'standby primary bana', C.good, 'start');
+    AP([[160, 95], [370, 95], [370, 135], [770, 135], [770, 122]], C.msg, { n: 3, at: 0.5 }); L(270, 120, 'pay', C.msg);
+    L(250, 200, 'hal: kuch nahi khota (sync)', C.good);
+  } else {
+    base({ ar: 'good', me: 'good', pr: 'good', rp: 'good' });
+    copyLine(); L(500, 190, 'copy, 1-2 sec peeche', C.muted, 'start');
+    A(180, 285, 398, 285, C.good, { n: 1 }); L(290, 270, 'report', C.good);
+    A(160, 65, 398, 65, C.msg, { n: 2 }); L(280, 50, 'pay', C.msg);
+    A(398, 95, 162, 95, C.good, { n: 3 }); L(280, 120, 'payment tez', C.good);
   }
-  CAP.textContent = 'ILAAJ: report copy pe (read replica, 1-2 sec peeche). Primary sirf payment, payment tez';
-  if (tl < 1.3) dot(path([[0.3, ME], [1.3, RPL]], tl), C.acc, '', 'report', C.acc);
-  bar(640, 70, 220, 18, 0.15, 'primary busy');
-  bar(640, 280, 220, 18, Math.min(0.8, Math.max(0, tl - 1.3) * 0.6), 'replica busy');
-  for (let k = 0; k < 8; k++) { const s = 0.2 + k; if (tl > s && tl < s + 0.6) dot(path([[s, [490, 120]], [s + 0.6, [490, 250]]], tl), C.line); }
-  T(500, 190, 'copy, 1-2 sec peeche', { a: 'start', c: C.muted, size: 11 });
-  if (tl > 2.8 && tl < 3.4) dot(path([[2.8, AR], [3.4, PR]], tl), C.msg, '', 'pay');
-  if (tl > 3.6 && tl < 4.2) dot(path([[3.6, PR], [4.2, [172, 75]]], tl), C.good, '', 'hua', C.good);
-  if (tl >= 4.2) T(640, 130, 'payment tez: hua', { a: 'start', c: C.good, b: 1, size: 13 });
 }
