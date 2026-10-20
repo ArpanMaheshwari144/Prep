@@ -29,7 +29,8 @@ function frame(ph) {
     L(740, 240, 'band hoti to pata chalta,', C.bad); L(740, 260, 'dheemi me sab phanse', C.bad);
   } else if (ph === 1) {
     panel(0, 'timeout', ['SMS worker', '', ''], ['Twilio', '3 sec, jawab nahi', 'bad'], 'call', true, C.acc, '3 sec baad chhoda');
-    panel(1, 'breaker khula', ['Breaker', 'KHULA: call roki', 'bad'], ['Twilio', '5 me 5 fail', 'bad'], '', true, C.bad, 'ab Twilio ko call nahi');
+    panel(1, 'breaker khula', ['Breaker', 'KHULA', 'bad'], ['Twilio', '5 me 5 fail', 'bad'], '', true, C.bad, 'ab Twilio ko call nahi');
+    A(305, 100, 305, 163, C.bad, { dash: 1 }); cross(305, 131); T(375, 135, 'call roki', { c: C.bad, b: 1, size: 12 });
     panel(2, 'doosri company', ['SMS worker', 'Arpan ka OTP', ''], ['SNS', 'OTP gaya', 'good'], 'bheja', true, C.good, 'OTP ruka nahi');
     panel(3, 'test call', ['Breaker', 'thodi der baad', 'acc'], ['Twilio', 'theek? haan', 'good'], 'ek call', true, C.good, 'theek to wapas Twilio');
     L(450, 320, 'dheema matlab band maano. Khabar line me rukti, phenki nahi', C.good);

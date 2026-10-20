@@ -214,11 +214,11 @@ Cue: TIMEOUT + CIRCUIT BREAKER
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=3" width="900">
+<img src="img/c6_1.png?v=4" width="900">
 
-<img src="img/c6_2.png?v=3" width="900">
+<img src="img/c6_2.png?v=4" width="900">
 
-<img src="img/c6_3.png?v=3" width="900">
+<img src="img/c6_3.png?v=4" width="900">
 
 </details>
 

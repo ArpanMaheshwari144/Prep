@@ -34,6 +34,7 @@ function frame(ph) {
     panel(0, 'call', ['Payment Svc', 'top-up 2000', ''], ['PSP', '3 sec, jawab nahi', 'bad'], 'call', true, C.acc, '3 sec baad chhoda');
     panel(1, 'PENDING', ['Payment Svc', 'pata nahi kata?', 'acc'], ['Payment DB', 'top-up: PENDING', 'acc'], 'likha', true, C.acc, '"fail" nahi, PENDING');
     panel(2, '5 fail', ['Breaker', 'OPEN', 'bad'], ['PSP', '5 me 5 fail', 'bad'], '', true, C.bad, 'call jaati hi nahi');
+    A(525, 100, 525, 163, C.bad, { dash: 1 }); cross(525, 131); T(595, 135, 'call roki', { c: C.bad, b: 1, size: 12 });
     panel(3, 'saaf jawab', ['Arpan', '"abhi nahi"', 'good'], ['Payment Svc', '', ''], 'turant', false, C.good, 'paisa hila hi nahi');
     L(450, 320, 'thread jaldi chhoot jaate, baaki payment chalte rehte', C.good);
   } else {
