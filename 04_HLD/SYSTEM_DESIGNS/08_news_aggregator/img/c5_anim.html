@@ -1,0 +1,199 @@
+<!doctype html>
+<!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
+<meta charset="utf-8">
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
+<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="400" fill="#11161c"/>
+<rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
+<text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
+<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+</svg>
+<script>
+// Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
+// anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
+const NS = 'http://www.w3.org/2000/svg';
+const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
+  msg: '#64b5f6', good: '#66bb6a', bad: '#ef5350', acc: '#f0a030' };
+const ST = document.getElementById('st'), DYN = document.getElementById('dyn');
+function el(tag, a, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in a) e.setAttribute(k, a[k]);
+  if (text !== undefined) e.textContent = text;
+  (parent || ST).append(e); return e;
+}
+function grp(id) { return el('g', id ? { id } : {}); }
+// dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
+function box(x, y, w, h, label, sub, o = {}) {
+  const g = el('g', o.id ? { id: o.id } : {}, o.parent);
+  el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
+    'stroke-width': 1.5 }, g);
+  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
+  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  return g;
+}
+function wire(d, id, parent) {
+  return el('path', { d, id: id || '', fill: 'none', stroke: C.line, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, parent);
+}
+function vis(id, on) { const e = document.getElementById(id); if (e) e.style.opacity = on ? 1 : 0; }
+// har frame DYN saaf, phir naya
+function T(x, y, s, o = {}) {
+  return el('text', { x, y, 'text-anchor': o.a || 'middle', 'font-size': o.size || 13, fill: o.c || C.fg,
+    'font-weight': o.b ? 'bold' : 'normal', 'paint-order': 'stroke', stroke: C.bg, 'stroke-width': o.halo ? 5 : 0 }, DYN, s);
+}
+function dot(p, c, num, label, lc) {
+  if (!p) return;
+  el('circle', { cx: p[0], cy: p[1], r: 9, fill: c || C.msg }, DYN);
+  if (num !== undefined && num !== '') el('text', { x: p[0], y: p[1] + 4, 'text-anchor': 'middle', 'font-size': 10,
+    'font-weight': 'bold', fill: C.bg }, DYN, num);
+  if (label) T(p[0], p[1] - 15, label, { c: lc || c || C.msg, b: 1, size: 12, halo: 1 });
+}
+function cross(x, y) {
+  el('path', { d: `M${x - 14} ${y - 14} L${x + 14} ${y + 14} M${x + 14} ${y - 14} L${x - 14} ${y + 14}`,
+    stroke: C.bad, 'stroke-width': 4 }, DYN);
+}
+function lerp(a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; }
+// pts: [[time, [x,y]], ...] ; pehle se pehle null, aakhir ke baad aakhri jagah
+function path(pts, t) {
+  if (t < pts[0][0]) return null;
+  for (let i = 1; i < pts.length; i++) if (t <= pts[i][0])
+    return lerp(pts[i - 1][1], pts[i][1], (t - pts[i - 1][0]) / (pts[i][0] - pts[i - 1][0]));
+  return pts[pts.length - 1][1];
+}
+function bar(x, y, w, h, frac, label, good) {
+  el('rect', { x, y, width: w, height: h, rx: 4, fill: 'none', stroke: C.line }, DYN);
+  const c = good ? C.good : frac > 0.9 ? C.bad : frac > 0.6 ? C.acc : C.good;
+  el('rect', { x: x + 2, y: y + 2, width: Math.max(0, (w - 4) * Math.min(1, frac)), height: h - 4, rx: 3, fill: c }, DYN);
+  if (label) T(x + w / 2, y - 6, label, { size: 12, c: C.muted });
+}
+// list ke dabbe (inbox jaisa): items = [[text, color], ...], baayein se daayein
+function cells(x, y, items, o = {}) {
+  const w = o.w || 46, h = o.h || 26;
+  items.forEach(([s, c], i) => {
+    el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
+    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+  });
+}
+const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 4.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
+function draw(t) {
+  DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
+  const fix = t >= FIX;
+  CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
+  frame(t, fix, fix ? t - FIX : t);
+}
+
+// Card 5: chhota source 30 sec atka, fetcher poora jawab tak ruka, baaki 999 bhi ruke.
+// Ilaaj: timeout + thodi retry, baar-baar fail to breaker OPEN. Agar: 429, kuch din OPEN, HALF-OPEN. Wapas: CLOSED.
+const DUR = 18;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: chhota source 30 sec atka, fetcher ruka, baaki 999 bhi ruke'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: timeout 2-3 sec, thodi retry. Baar-baar fail: breaker OPEN'],
+  [6, YEL, 'AGAR', 'AGAR source ne 429 diya? -> dheere chalo, samay badhao, Retry-After maano'],
+  [9, YEL, 'AGAR', 'AGAR breaker kuch din se OPEN? -> alert, source ko list se bahar karo'],
+  [12, YEL, 'AGAR', 'AGAR OPEN hai, wapas kab chalu? -> thodi der baad HALF-OPEN: ek test call'],
+  [15, GRN, 'WAPAS', 'WAPAS: test call theek nikla, breaker CLOSED. Source ki khabar phir aayi'],
+];
+function setup() {}
+function base(o = {}) {
+  B(30, 140, 130, 80, 'Fetcher', o.f, { st: o.fst });
+  B(700, 40, 170, 60, 'chhota source', o.s, { st: o.sst });
+  B(700, 150, 170, 60, 'source 2', '');
+  B(700, 260, 170, 60, 'baaki 999', '');
+  if (o.br !== undefined) B(400, 40, 150, 60, 'Breaker', o.br, { st: o.brst });
+}
+// Fetcher se source 2 aur baaki 999 tak
+function others(c, n) { A(160, 190, 698, 180, c, { n, at: 0.6 }); A(160, 205, 698, 290, c, { n, at: 0.6 }); }
+function frame(ph) {
+  if (ph === 0) {
+    base({ fst: 'bad', f: 'ruka', s: '30 sec atka', sst: 'bad' });
+    A(160, 160, 698, 70, C.bad, { n: 1, at: 0.4 }); L(330, 85, 'poora jawab tak ruko', C.bad);
+    others(C.line); dots(3, 565, 225, C.acc, { gap: 22, hollow: 1 });
+    num(538, 225, 2, C.acc); L(615, 254, 'peeche khade', C.acc);
+    T(330, 330, 'nayi khabar aani ruki', { c: C.bad, b: 1, size: 16 });
+  } else if (ph === 1) {
+    base({ fst: 'good', s: 'fail', sst: 'bad', br: 'OPEN', brst: 'bad' });
+    A(160, 160, 398, 75, C.acc, { n: 1 }); L(230, 95, 'timeout 2-3 sec', C.acc);
+    num(415, 125, 2, C.bad); L(433, 130, 'baar-baar fail -> OPEN', C.bad, 'start');
+    A(550, 70, 698, 70, C.bad, { dash: 1 }); cross(624, 70); L(624, 30, 'call nahi', C.bad);
+    others(C.good, 3); L(430, 335, 'baaki chalte', C.good);
+  } else if (ph === 2) {
+    base({ fst: 'acc', f: 'dheere', s: '429', sst: 'acc' });
+    A(160, 155, 698, 60, C.acc, { n: 1, at: 0.35 }); L(300, 90, 'khabar do', C.acc);
+    A(698, 85, 160, 175, C.bad, { n: 2, at: 0.6 }); L(420, 165, '429 + Retry-After', C.bad);
+    others(C.good);
+    L(20, 330, 'hal: dheere chalo, uska samay badhao, Retry-After maano', C.good, 'start');
+  } else if (ph === 3) {
+    base({ fst: 'good', s: 'band', sst: 'dim', br: 'OPEN: kuch din', brst: 'bad' });
+    num(385, 22, 1, C.bad); L(403, 27, 'kuch din se OPEN', C.bad, 'start');
+    B(190, 40, 130, 55, 'Alert', '', { st: 'acc' });
+    A(398, 67, 322, 67, C.acc, { n: 2 }); L(360, 122, 'alert bhejo', C.acc);
+    cross(675, 70); num(712, 122, 3, C.bad); L(730, 127, 'list se bahar', C.bad, 'start');
+    others(C.good); L(20, 330, 'hal: alert bhejo, source ko list se bahar karo', C.good, 'start');
+  } else if (ph === 4) {
+    base({ fst: 'good', s: '', sst: 'acc', br: 'HALF-OPEN', brst: 'acc' });
+    num(415, 125, 1, C.acc); L(433, 130, 'thodi der baad', C.acc, 'start');
+    A(550, 70, 698, 70, C.acc, { n: 2 }); L(624, 30, 'ek test call', C.acc);
+    others(C.good); L(20, 330, 'hal: test theek nikla to CLOSED', C.good, 'start');
+  } else {
+    base({ fst: 'good', s: 'chalu', sst: 'good', br: 'CLOSED', brst: 'good' });
+    A(698, 85, 552, 85, C.good, { n: 1 }); L(624, 115, 'test theek', C.good);
+    num(415, 125, 2, C.good); L(433, 130, 'CLOSED', C.good, 'start');
+    A(160, 160, 398, 75, C.good, { n: 3 }); A(550, 55, 698, 55, C.good, { n: 3 });
+    L(624, 30, 'khabar phir aayi', C.good);
+    others(C.good, 3);
+  }
+}
+
+setup(); draw(0);
+</script>
