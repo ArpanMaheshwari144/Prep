@@ -36,7 +36,10 @@ function frame(ph) {
     // App se Counter tak koi teer nahi: range pehle se App ke paas, Counter se kuch nahi maanga
     code(3, 'code 401', 'code 1301', C.good);
     L(20, 190, 'range pehle se App ke paas, usi se agla number.', C.good, 'start'); L(20, 210, 'Counter se kuch nahi maanga', C.good, 'start');
-    B(740, 40, 140, 60, 'Counter copy', 'uth rahi', { st: 'acc' }); A(640, 148, 740, 100, C.acc, { n: 4, dash: 1 });
-    L(630, 300, 'range khatam hone se pehle copy taiyaar', C.muted);
+    B(740, 40, 140, 60, 'Counter copy', 'ab yahi Counter', { st: 'acc' }); A(640, 148, 740, 100, C.acc, { n: 4, dash: 1 });
+    // range khatam hone pe App agli range copy se lete (range copy -> App jaati)
+    A(738, 70, 382, 70, C.acc, { n: 5, dash: 1, at: 0.25 }); L(560, 55, 'range khatam? agli range copy se', C.acc);
+    AP([[810, 102], [810, 285], [382, 285]], C.acc, { dash: 1 });
+    L(630, 345, 'range khatam hone se pehle copy taiyaar', C.muted);
   }
 }
