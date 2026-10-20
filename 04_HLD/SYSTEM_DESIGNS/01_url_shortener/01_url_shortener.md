@@ -3,7 +3,7 @@
 > Lamba link do, chhota 7 akshar ka code milta hai. Koi chhote link pe click kare to asli link pe bhej do (302).
 > Dil do cheezein: har link ka code alag, aur click pe redirect bahut tez. Log link banate kam, kholte zyada (100 me 99 baar kholna).
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card ek block: HAL (↳ agar = cross-Q) · KYUN · NAHI (doosra kyun nahi).
+> Mock me sirf heading + Cue + kahani (dabbe + teer, 1-2-3). Neeche har card ek block: HAL (↳ agar = cross-Q) · KYUN · NAHI (doosra kyun nahi).
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -35,23 +35,30 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 Cue: REDIS CACHE (cache-aside)
 
-<details><summary>kahani dekho (7 scene)</summary>
+```
+DIKKAT: har click seedha DB pe
 
-<img src="img/c1_1.png" width="900">
+  User                App                 DB
+   |                   |                   |
+   |---- 1. click ---->|                   |
+   |                   |---- 2. padho ---->|   lakhon click / sec
+   |                   |                   X  3. DB baith gaya
+   |<--- 4. error -----|                   |
+   |                   |                   |
 
-<img src="img/c1_2.png" width="900">
+ILAAJ: beech me Redis (cache-aside)
 
-<img src="img/c1_3.png" width="900">
-
-<img src="img/c1_4.png" width="900">
-
-<img src="img/c1_5.png" width="900">
-
-<img src="img/c1_6.png" width="900">
-
-<img src="img/c1_7.png" width="900">
-
-</details>
+  User                App                 Redis               DB
+   |                   |                   |                   |
+   |---- 1. click ---->|                   |                   |
+   |                   |----- 2. hai? ---->|                   |
+   |                   |<---- 3. mila -----|                   |   95% click yahin khatam
+   |<---- 4. link -----|                   |                   |
+   |                   |  nahi mila to:    |                   |
+   |                   |------------ 5. DB se laao ----------->|
+   |                   |-- 6. copy rakho ->|                   |
+   |                   |                   |                   |
+```
 
 ```
 HAL     beech me Redis: click pe pehle Redis dekho, mila to wahin se, nahi to DB se laao aur Redis me rakho
@@ -88,17 +95,27 @@ NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi reh
 
 Cue: STATELESS App x N + LOAD BALANCER
 
-<details><summary>kahani dekho (4 scene)</summary>
+```
+DIKKAT: ek hi App machine
 
-<img src="img/c2_1.png" width="900">
+  User                App                 DB
+   |                   |                   |
+   |---- 1. click ---->|                   |
+   |                   X                   |   2. App machine giri
+   |                   |                   |   3. koi jawab nahi, poori site band
+   |                   |                   |
 
-<img src="img/c2_2.png" width="900">
+ILAAJ: kai App, aage LB (App kuch yaad nahi rakhta)
 
-<img src="img/c2_3.png" width="900">
-
-<img src="img/c2_4.png" width="900">
-
-</details>
+  User                LB                  App-1               App-2
+   |                   |                   |                   |
+   |---- 1. click ---->|                   |                   |
+   |                   |--- 2. App-1 ko -->|                   |
+   |                   |                   X  3. App-1 giri    |
+   |                   |------- 4. agla click App-2 ko ------->|
+   |<--------------- 5. link mila, site chalu -----------------|
+   |                   |                   |                   |
+```
 
 ```
 HAL     kai App aur aage Load Balancer (LB), jo baari-baari kisi bhi App ko bhejta (round-robin).
@@ -120,21 +137,31 @@ NAHI    ek badi machine -> GIRA: kitni bhi badi ho, ek hi hai. Giri to poori sit
 
 Cue: COUNTER RANGE + base62
 
-<details><summary>kahani dekho (6 scene)</summary>
+```
+DIKKAT: dono App ne DB se ek hi number liya
 
-<img src="img/c3_1.png" width="900">
+  Main                App-1               DB                  App-2               Ravi
+   |                   |                   |                   |                   |
+   |-- 1. naya link -->|                   |                   |                   |
+   |                   |                   |                   |<- 2. naya link ---|
+   |                   |-- 3. agla no.? -->|                   |                   |
+   |                   |                   |<- 4. agla no.? ---|                   |
+   |                   |<---- 5. 501 ------|                   |                   |
+   |                   |                   |----- 6. 501 ----->|                   |   dono ko ek hi code
+   |                   |                   |                   |                   |
 
-<img src="img/c3_2.png" width="900">
+ILAAJ: Counter har App ko alag range deta, code kabhi same nahi
 
-<img src="img/c3_3.png" width="900">
-
-<img src="img/c3_4.png" width="900">
-
-<img src="img/c3_5.png" width="900">
-
-<img src="img/c3_6.png" width="900">
-
-</details>
+  Main                App-1               Counter             App-2               Ravi
+   |                   |                   |                   |                   |
+   |                   |<--- 1. 1-1000 ----|                   |                   |
+   |                   |                   |-- 2. 1001-2000 -->|                   |
+   |-- 3. naya link -->|                   |                   |                   |
+   |<-- 4. code = 1 ---|                   |                   |                   |
+   |                   |                   |                   |<- 5. naya link ---|
+   |                   |                   |                   |- 6. code = 1001 ->|
+   |                   |                   |                   |                   |
+```
 
 ```
 HAL     Counter har App ko alag range deta: App-1 ko 1-1000, App-2 ko 1001-2000. App apni range se agla
@@ -173,23 +200,27 @@ NAHI    UUID -> LAMBA: 36 akshar, link chhota karna hi to kaam tha
 
 Cue: KAFKA, ginti peeche
 
-<details><summary>kahani dekho (7 scene)</summary>
+```
+DIKKAT: click ginti redirect ke raaste me
 
-<img src="img/c4_1.png" width="900">
+  User                    App                     DB
+   |                       |                       |
+   |------ 1. click ------>|                       |
+   |                       |----- 2. ginti +1 ---->|
+   |                       |                       |  3. likhai ka wait
+   |< 4. redirect der se --|                       |
+   |                       |                       |
 
-<img src="img/c4_2.png" width="900">
+ILAAJ: redirect turant, ginti Kafka se peeche
 
-<img src="img/c4_3.png" width="900">
-
-<img src="img/c4_4.png" width="900">
-
-<img src="img/c4_5.png" width="900">
-
-<img src="img/c4_6.png" width="900">
-
-<img src="img/c4_7.png" width="900">
-
-</details>
+  User                  App                   Kafka                 Analytics
+   |                     |                     |                     |
+   |----- 1. click ----->|                     |                     |
+   |<-- 2. turant 302 ---|                     |                     |
+   |                     |--- 3. click hua --->|                     |
+   |                     |                     |- 4. apni speed se ->|   ginti yahan
+   |                     |                     |                     |
+```
 
 ```
 HAL     redirect turant (302), "ek click hua" ki khabar Kafka me daal ke aage. Analytics service apni speed
@@ -220,19 +251,24 @@ NAHI    click seedha DB me -> DHEEMA: har redirect DB likhai ka intezaar karta, 
 
 Cue: SHARD by code (RING)
 
-<details><summary>kahani dekho (5 scene)</summary>
+```
+DIKKAT: saare link ek DB machine me
 
-<img src="img/c5_1.png" width="900">
+  App                    DB
+   |                      |
+   |- 1. har link yahin ->|
+   |                      X  2. 90 TB, ek machine me nahi samaata
+   |                      |
 
-<img src="img/c5_2.png" width="900">
+ILAAJ: code se shard (ring), har tukde ki 3 copy
 
-<img src="img/c5_3.png" width="900">
-
-<img src="img/c5_4.png" width="900">
-
-<img src="img/c5_5.png" width="900">
-
-</details>
+  App                 DB-1                DB-2                DB-3
+   |                   |                   |                   |
+   |                   |                   |                   |   1. code ka hash, ring pe aage chalo
+   |------- 2. pehli machine = DB-2 ------>|                   |
+   |                   |                   |                   |  3. baaki code doosri machine pe
+   |                   |                   |                   |
+```
 
 ```
 HAL     data kai machine me baanto (shard), link ke code se. Code ring pe aage chalta, jo pehli machine mile
@@ -262,21 +298,27 @@ NAHI    country se baanto -> BIKHRA: code dekh ke pata nahi kis country ka, saar
 
 Cue: QUORUM (2 me likho, 2 se padho)
 
-<details><summary>kahani dekho (6 scene)</summary>
+```
+DIKKAT: ek copy me likha, doosri se padha
 
-<img src="img/c6_1.png" width="900">
+  App                 Copy A              Copy B              Copy C
+   |                   |                   |                   |
+   |-- 1. naya link -->|                   |                   |
+   |--------------------- 2. turant padha -------------------->|
+   |<------------------- 3. nahi mila, 404 --------------------|   C abhi purani
+   |                   |                   |                   |
 
-<img src="img/c6_2.png" width="900">
+ILAAJ: 2 me likho, 2 se padho (quorum)
 
-<img src="img/c6_3.png" width="900">
-
-<img src="img/c6_4.png" width="900">
-
-<img src="img/c6_5.png" width="900">
-
-<img src="img/c6_6.png" width="900">
-
-</details>
+  App                 Copy A              Copy B              Copy C
+   |                   |                   |                   |
+   |---- 1. likho ---->|                   |                   |
+   |-------------- 2. likho -------------->|                   |
+   |-------------- 3. padho -------------->|                   |
+   |------------------------ 4. padho ------------------------>|
+   |<----------- 5. B me mila -------------|                   |   jodi me ek taaza zaroor
+   |                   |                   |                   |
+```
 
 ```
 HAL     likhna 2 copy me, padhna bhi 2 copy se (quorum, 3 me se 2). Har jodi me ek taaza copy zaroor hoti
@@ -304,19 +346,29 @@ NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
 
 Cue: ROUTE 53 + 2 LB (health check)
 
-<details><summary>kahani dekho (5 scene)</summary>
+```
+DIKKAT: ek hi LB
 
-<img src="img/c7_1.png" width="900">
+  User                DNS                 LB-1
+   |                   |                   |
+   |- 1. site kahan? ->|                   |
+   |<---- 2. LB-1 -----|                   |
+   |------------- 3. request ------------->|
+   |                   |                   X  4. LB-1 gira, koi andar nahi
+   |                   |                   |
 
-<img src="img/c7_2.png" width="900">
+ILAAJ: do LB, aage Route 53 (health check)
 
-<img src="img/c7_3.png" width="900">
-
-<img src="img/c7_4.png" width="900">
-
-<img src="img/c7_5.png" width="900">
-
-</details>
+  User                    Route 53                LB-1                    LB-2
+   |                       |                       |                       |
+   |                       |- 1. /health? (~30s) ->|                       |
+   |                       |                       X  2. 3 baar chup       |
+   |                       |                       |                       |   3. LB-1 list se bahar
+   |--- 4. site kahan? --->|                       |                       |
+   |<------ 5. LB-2 -------|                       |                       |
+   |-------------------------- 6. request andar -------------------------->|
+   |                       |                       |                       |
+```
 
 ```
 HAL     do LB, aage Route 53. Route 53 har ~30 sec LB se poochta hai (health check). Jo 3 baar chup raha,
@@ -337,17 +389,26 @@ NAHI    ek hi LB -> GIRA: wo gira to App kitne bhi hon, koi andar nahi aa sakta
 
 Cue: RATE LIMIT darwaze pe + WAF
 
-<details><summary>kahani dekho (4 scene)</summary>
+```
+DIKKAT: koi had nahi
 
-<img src="img/c8_1.png" width="900">
+  Spammer             App                 DB
+   |                   |                   |
+   |- 1. 5,000 / sec ->|                   |
+   |                   |-- 2. sab likho -->|
+   |                   |                   X  3. DB bhara, sab dheema
+   |                   |                   |
 
-<img src="img/c8_2.png" width="900">
+ILAAJ: gateway pe ginti (rate limit)
 
-<img src="img/c8_3.png" width="900">
-
-<img src="img/c8_4.png" width="900">
-
-</details>
+  Spammer              Gateway              Redis                App
+   |                    |                    |                    |
+   |-- 1. link banao -->|                    |                    |
+   |                    |- 2. key ginti +1 ->|                    |
+   |                    |<-- 3. had paar ----|                    |
+   |<----- 4. 429 ------|                    |                    |   App tak aaya hi nahi
+   |                    |                    |                    |
+```
 
 ```
 HAL     gateway pe hi ginti: har API key ki ek shared ginti (Redis me). Had paar to 429,
