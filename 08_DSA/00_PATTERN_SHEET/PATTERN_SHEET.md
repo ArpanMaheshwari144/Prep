@@ -1163,10 +1163,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
         lastWall = aakhri index jahan arr[i] > K
         lastK    = aakhri index jahan arr[i] == K
      har i pe:  if (lastK > lastWall)  count += (lastK - lastWall);   // start-choices = lastWall+1 .. lastK · pehle lastWall/lastK update, PHIR count
-     ★ guard lastK > lastWall KYUN: warna (lastK - lastWall) NEGATIVE (K kisi wall ke peeche dab gaya) -> count galat. ([5,3,5] dry-run me pakda.)
+     ★ guard lastK > lastWall KYUN: warna (lastK - lastWall) NEGATIVE (K kisi wall ke peeche dab gaya) -> count galat. ([5,3,5] pe dikhta)
      ★ count ~n^2/2 (5e9) -> LONG LONG (int overflow).
-     WHY simple: "hard-dikhne" wala tha (scary constraints + 3 candidate-pattern), par EK insight (walls) ne
-        collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 
  common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
 
