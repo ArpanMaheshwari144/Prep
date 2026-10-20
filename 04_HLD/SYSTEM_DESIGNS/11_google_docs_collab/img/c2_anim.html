@@ -1,0 +1,121 @@
+<!doctype html>
+<!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
+<meta charset="utf-8">
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
+<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="400" fill="#11161c"/>
+<rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
+<text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
+<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+</svg>
+<script>
+// Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
+const NS = 'http://www.w3.org/2000/svg';
+const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
+  msg: '#64b5f6', good: '#66bb6a', bad: '#ef5350', acc: '#f0a030' };
+const ST = document.getElementById('st'), DYN = document.getElementById('dyn');
+function el(tag, a, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in a) e.setAttribute(k, a[k]);
+  if (text !== undefined) e.textContent = text;
+  (parent || ST).append(e); return e;
+}
+function grp(id) { return el('g', id ? { id } : {}); }
+// dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
+function box(x, y, w, h, label, sub, o = {}) {
+  const g = el('g', o.id ? { id: o.id } : {}, o.parent);
+  el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
+    'stroke-width': 1.5 }, g);
+  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
+  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  return g;
+}
+function wire(d, id, parent) {
+  return el('path', { d, id: id || '', fill: 'none', stroke: C.line, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, parent);
+}
+function vis(id, on) { const e = document.getElementById(id); if (e) e.style.opacity = on ? 1 : 0; }
+// har frame DYN saaf, phir naya
+function T(x, y, s, o = {}) {
+  return el('text', { x, y, 'text-anchor': o.a || 'middle', 'font-size': o.size || 13, fill: o.c || C.fg,
+    'font-weight': o.b ? 'bold' : 'normal', 'paint-order': 'stroke', stroke: C.bg, 'stroke-width': o.halo ? 5 : 0 }, DYN, s);
+}
+function dot(p, c, num, label, lc) {
+  if (!p) return;
+  el('circle', { cx: p[0], cy: p[1], r: 9, fill: c || C.msg }, DYN);
+  if (num !== undefined && num !== '') el('text', { x: p[0], y: p[1] + 4, 'text-anchor': 'middle', 'font-size': 10,
+    'font-weight': 'bold', fill: C.bg }, DYN, num);
+  if (label) T(p[0], p[1] - 15, label, { c: lc || c || C.msg, b: 1, size: 12, halo: 1 });
+}
+function cross(x, y) {
+  el('path', { d: `M${x - 14} ${y - 14} L${x + 14} ${y + 14} M${x + 14} ${y - 14} L${x - 14} ${y + 14}`,
+    stroke: C.bad, 'stroke-width': 4 }, DYN);
+}
+function lerp(a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; }
+// pts: [[time, [x,y]], ...] ; pehle se pehle null, aakhir ke baad aakhri jagah
+function path(pts, t) {
+  if (t < pts[0][0]) return null;
+  for (let i = 1; i < pts.length; i++) if (t <= pts[i][0])
+    return lerp(pts[i - 1][1], pts[i][1], (t - pts[i - 1][0]) / (pts[i][0] - pts[i - 1][0]));
+  return pts[pts.length - 1][1];
+}
+function bar(x, y, w, h, frac, label, good) {
+  el('rect', { x, y, width: w, height: h, rx: 4, fill: 'none', stroke: C.line }, DYN);
+  const c = good ? C.good : frac > 0.9 ? C.bad : frac > 0.6 ? C.acc : C.good;
+  el('rect', { x: x + 2, y: y + 2, width: Math.max(0, (w - 4) * Math.min(1, frac)), height: h - 4, rx: 3, fill: c }, DYN);
+  if (label) T(x + w / 2, y - 6, label, { size: 12, c: C.muted });
+}
+// list ke dabbe (inbox jaisa): items = [[text, color], ...], baayein se daayein
+function cells(x, y, items, o = {}) {
+  const w = o.w || 46, h = o.h || 26;
+  items.forEach(([s, c], i) => {
+    el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
+    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+  });
+}
+const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+function draw(t) {
+  DYN.replaceChildren();
+  const fix = t >= FIX;
+  CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
+  frame(t, fix, fix ? t - FIX : t);
+}
+
+// Card 2: HTTP me server khud nahi bhejta -> Ravi ko refresh pe dikha. Ilaaj: WebSocket khula, dono taraf.
+const DUR = 16, FIX = 7.5;
+const ME = [160, 185], SVR = [530, 185];
+function setup() {
+  wire('M160 185 H380'); wire('M530 185 H720');
+  box(30, 150, 130, 70, 'Main', 'X likha');
+  box(380, 150, 150, 70, 'Conn-Server');
+  box(720, 150, 140, 70, 'Ravi');
+}
+function frame(t, fix, tl) {
+  if (!fix) {
+    CAP.textContent = 'DIKKAT: HTTP me server khud kuch nahi bhejta. X server pe aaya, Ravi ko refresh tak nahi';
+    dot(path([[0.3, ME], [1.1, [368, 185]]], tl < 1.1 ? tl : -1), C.msg, 'X', 'POST');
+    if (tl >= 1.1) T(455, 245, 'X aa gaya', { c: C.fg, size: 12 });
+    if (tl >= 1.5 && tl < 2.2) dot(path([[1.5, SVR], [2.2, [625, 185]]], tl), C.msg, 'X');
+    if (tl >= 2.2) { cross(625, 185); T(625, 140, 'khud nahi bhej sakta', { c: C.bad, b: 1, size: 12 }); }
+    const got = tl >= 5.2;
+    T(790, 250, got ? 'Ravi: HELLO X' : 'Ravi: HELLO', { c: got ? C.acc : C.bad, b: 1, size: 13 });
+    if (!got && tl >= 2.2) T(790, 272, '(purana)', { c: C.bad, size: 12 });
+    if (tl >= 3.4 && tl < 4.2) T(790, 135, 'refresh', { c: C.acc, b: 1, size: 13 });
+    if (tl >= 3.6 && tl < 4.4) dot(path([[3.6, [708, 200]], [4.4, [542, 200]]], tl), C.acc, '', 'GET', C.acc);
+    if (tl >= 4.4 && tl < 5.2) dot(path([[4.4, [542, 200]], [5.2, [708, 200]]], tl), C.acc, 'X');
+    if (tl >= 5.2) T(790, 272, 'refresh ke baad hi', { c: C.acc, size: 12 });
+    return;
+  }
+  CAP.textContent = 'ILAAJ: connection khula rehta, dono taraf (WebSocket). Server khud bhejta, ~200 ms me dikhta';
+  el('path', { d: 'M160 185 H380 M530 185 H720', stroke: C.good, 'stroke-width': 4, fill: 'none' }, DYN);
+  T(270, 172, 'WebSocket', { c: C.good, b: 1, size: 12 }); T(625, 172, 'WebSocket', { c: C.good, b: 1, size: 12 });
+  T(455, 300, 'khula rehta, dono taraf', { c: C.good, size: 12 });
+  dot(path([[0.3, ME], [1.0, [368, 185]]], tl < 1.0 ? tl : -1), C.msg, 'X');
+  dot(path([[1.0, SVR], [1.5, [708, 185]]], tl > 1.0 && tl < 1.5 ? tl : -1), C.good, 'X', 'push', C.good);
+  const got = tl >= 1.5;
+  T(790, 250, got ? 'Ravi: HELLO X' : 'Ravi: HELLO', { c: got ? C.good : C.fg, b: 1, size: 13 });
+  if (got) T(790, 272, '~200 ms, refresh nahi', { c: C.good, size: 12 });
+}
+
+setup(); draw(0);
+</script>

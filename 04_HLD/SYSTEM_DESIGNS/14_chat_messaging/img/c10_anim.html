@@ -1,0 +1,141 @@
+<!doctype html>
+<!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
+<meta charset="utf-8">
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
+<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="400" fill="#11161c"/>
+<rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
+<text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
+<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+</svg>
+<script>
+// Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
+const NS = 'http://www.w3.org/2000/svg';
+const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
+  msg: '#64b5f6', good: '#66bb6a', bad: '#ef5350', acc: '#f0a030' };
+const ST = document.getElementById('st'), DYN = document.getElementById('dyn');
+function el(tag, a, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in a) e.setAttribute(k, a[k]);
+  if (text !== undefined) e.textContent = text;
+  (parent || ST).append(e); return e;
+}
+function grp(id) { return el('g', id ? { id } : {}); }
+// dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
+function box(x, y, w, h, label, sub, o = {}) {
+  const g = el('g', o.id ? { id: o.id } : {}, o.parent);
+  el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
+    'stroke-width': 1.5 }, g);
+  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
+  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  return g;
+}
+function wire(d, id, parent) {
+  return el('path', { d, id: id || '', fill: 'none', stroke: C.line, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, parent);
+}
+function vis(id, on) { const e = document.getElementById(id); if (e) e.style.opacity = on ? 1 : 0; }
+// har frame DYN saaf, phir naya
+function T(x, y, s, o = {}) {
+  return el('text', { x, y, 'text-anchor': o.a || 'middle', 'font-size': o.size || 13, fill: o.c || C.fg,
+    'font-weight': o.b ? 'bold' : 'normal', 'paint-order': 'stroke', stroke: C.bg, 'stroke-width': o.halo ? 5 : 0 }, DYN, s);
+}
+function dot(p, c, num, label, lc) {
+  if (!p) return;
+  el('circle', { cx: p[0], cy: p[1], r: 9, fill: c || C.msg }, DYN);
+  if (num !== undefined && num !== '') el('text', { x: p[0], y: p[1] + 4, 'text-anchor': 'middle', 'font-size': 10,
+    'font-weight': 'bold', fill: C.bg }, DYN, num);
+  if (label) T(p[0], p[1] - 15, label, { c: lc || c || C.msg, b: 1, size: 12, halo: 1 });
+}
+function cross(x, y) {
+  el('path', { d: `M${x - 14} ${y - 14} L${x + 14} ${y + 14} M${x + 14} ${y - 14} L${x - 14} ${y + 14}`,
+    stroke: C.bad, 'stroke-width': 4 }, DYN);
+}
+function lerp(a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; }
+// pts: [[time, [x,y]], ...] ; pehle se pehle null, aakhir ke baad aakhri jagah
+function path(pts, t) {
+  if (t < pts[0][0]) return null;
+  for (let i = 1; i < pts.length; i++) if (t <= pts[i][0])
+    return lerp(pts[i - 1][1], pts[i][1], (t - pts[i - 1][0]) / (pts[i][0] - pts[i - 1][0]));
+  return pts[pts.length - 1][1];
+}
+function bar(x, y, w, h, frac, label, good) {
+  el('rect', { x, y, width: w, height: h, rx: 4, fill: 'none', stroke: C.line }, DYN);
+  const c = good ? C.good : frac > 0.9 ? C.bad : frac > 0.6 ? C.acc : C.good;
+  el('rect', { x: x + 2, y: y + 2, width: Math.max(0, (w - 4) * Math.min(1, frac)), height: h - 4, rx: 3, fill: c }, DYN);
+  if (label) T(x + w / 2, y - 6, label, { size: 12, c: C.muted });
+}
+// list ke dabbe (inbox jaisa): items = [[text, color], ...], baayein se daayein
+function cells(x, y, items, o = {}) {
+  const w = o.w || 46, h = o.h || 26;
+  items.forEach(([s, c], i) => {
+    el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
+    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+  });
+}
+const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+function draw(t) {
+  DYN.replaceChildren();
+  const fix = t >= FIX;
+  CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
+  frame(t, fix, fix ? t - FIX : t);
+}
+
+// Card 10: har aana-jaana saare contacts ko -> bahut message. Ilaaj: online = Redis key + umar 30 sec, dhadkan 15 sec.
+const DUR = 19, FIX = 8;
+const RV = [150, 190], SL = [218, 190], SR = [360, 190], RDL = [438, 75], AR = [688, 260];
+function setup() {
+  wire('M150 190 H230');
+  box(20, 150, 130, 80, 'Ravi ka app');
+  box(230, 150, 130, 80, 'Chat Server');
+  wire('M360 190 L600 190', 'wc');
+  box(600, 20, 280, 320, '500 contacts', '', { id: 'ct' });
+  wire('M360 170 L450 90', 'wr'); wire('M560 120 L700 270', 'wa');
+  box(450, 30, 220, 90, 'Redis', 'online:Ravi', { id: 'rd', stroke: C.acc });
+  box(700, 230, 180, 90, 'Arpan', 'Ravi ki chat khuli', { id: 'ap' });
+}
+function frame(t, fix, tl) {
+  vis('ct', !fix); vis('wc', !fix);
+  ['wr', 'wa', 'rd', 'ap'].forEach(i => vis(i, fix));
+  if (!fix) {
+    CAP.textContent = 'DIKKAT: har aana-jaana saare contacts ko: 500 contacts x crore log, bahut message';
+    const ev = [[0.4, 'online'], [2.6, 'offline'], [4.8, 'online']];
+    let sent = 0;
+    ev.forEach(([s, lab]) => {
+      if (tl > s && tl < s + 0.6) dot(path([[s, RV], [s + 0.6, SL]], tl), C.msg, '', lab);
+      for (let k = 0; k < 12; k++) {
+        const s2 = s + 0.6 + k * 0.05;
+        if (tl > s2 && tl < s2 + 0.8) dot(path([[s2, SR], [s2 + 0.8, [620 + (k % 4) * 70, 70 + Math.floor(k / 4) * 90]]], tl), C.bad);
+      }
+      if (tl > s + 1.4) sent += 500;
+    });
+    for (let i = 0; i < 40; i++)
+      el('circle', { cx: 625 + (i % 8) * 33, cy: 75 + Math.floor(i / 8) * 50, r: 6, fill: 'none', stroke: C.line }, DYN);
+    T(740, 325, `ek Ravi se: ${sent} message`, { c: C.bad, b: 1, size: 13 });
+    if (tl > 6.4) T(300, 300, 'x crore log = bahut message', { c: C.bad, b: 1, size: 14 });
+    return;
+  }
+  // 1 sec asal = 6 sec kahani me
+  CAP.textContent = 'ILAAJ: online = Redis key + umar (30 sec), app har 15 sec dhadkan. Status tabhi jab chat khule';
+  const hb = [0.5, 3.0];
+  let last = -1;
+  hb.forEach(s => {
+    if (tl > s && tl < s + 0.5) dot(path([[s, RV], [s + 0.5, SL]], tl), C.good, '', 'hoon');
+    if (tl > s + 0.5 && tl < s + 1.0) dot(path([[s + 0.5, SR], [s + 1.0, RDL]], tl), C.good);
+    if (tl > s + 1.0) last = s + 1.0;
+  });
+  const umar = last < 0 ? null : Math.max(0, Math.round(30 - (tl - last) * 6));
+  const on = umar !== null && umar > 0;
+  if (umar !== null) T(560, 100, on ? `umar: ${umar} sec` : 'key khud mitti', { c: on ? C.good : C.bad, b: 1, size: 13 });
+  if (tl > 4.2) T(85, 260, 'app band: dhadkan band', { c: C.bad, b: 1, size: 12 });
+  const ask = (s, ans, c) => {
+    if (tl > s && tl < s + 0.6) dot(path([[s, AR], [s + 0.6, [600, 132]]], tl), C.acc, '', 'Ravi online?', C.acc);
+    if (tl > s + 0.6 && tl < s + 1.2) dot(path([[s + 0.6, [600, 132]], [s + 1.2, AR]], tl), c, '', ans, c);
+    if (tl > s + 1.2) T(790, 300, `Ravi: ${ans}`, { c, b: 1, size: 13 });
+  };
+  if (tl < 7.6) ask(2.0, 'online', C.good); else ask(8.6, 'offline', C.bad);
+  if (tl > 7.4) T(230, 330, 'maango tab dekho, sabko batana nahi', { a: 'start', c: C.good, size: 12 });
+}
+
+setup(); draw(0);
+</script>

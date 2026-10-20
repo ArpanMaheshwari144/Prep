@@ -3,7 +3,8 @@
 > Maine message bheja, Ravi tak turant pahunche, chahe Ravi ne kuch na maanga ho. Ravi offline ho to baad me mile, kuch na khoye.
 > Dil: banda KAHAN juda hai (baaki designs me "data kahan rakhein"), aur khuli connection.
 >
-> Mock me sirf heading + Cue + GIF. Neeche har card: **hal** · **kyun** · **nahi** (doosra kyun nahi) · **Pooche**.
+> Mock me sirf heading + Cue + GIF. Neeche har card ek block: HAL (GIF ka ILAAJ) · KYUN · NAHI (doosra kyun nahi) · AGAR (cross-Q).
+> Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
 
@@ -16,9 +17,18 @@
 
 ## Shuru
 
-- **FR:** 1-to-1 + chhote group (500 tak) · history server pe (Slack jaisa, design zyada dikhta) · tick: bheja / pahuncha / padha · offline ko baad me mile · bahar: E2E, voice / video, bade broadcast group
-- **NFR:** turant (<1 sec) · kabhi na khoye · ek chat ke andar kram na bigde · do baar na dikhe · 2 crore ek saath jude · server gire to doosra sambhale
-- **numbers:** 50 crore user, 10 crore roz x 40 message = ~400 crore / din = ~46,000 likhai / sec, bheed me 2-3 guna ~1.5 lakh · ek waqt ~2 crore khuli connection = asli paimana ("kitni request / sec" nahi, "kitni connection khuli") · jagah 400 crore x ~300 byte ~ 1.2 TB roz, ~440 TB / saal
+```
+FR      1-to-1 aur chhote group (500 tak). History server pe rahegi (Slack jaisa, design zyada dikhta hai)
+        tick chahiye: bheja / pahuncha / padha. Offline bande ko message baad me mile
+        bahar rakha: E2E, voice / video, bade broadcast group
+NFR     message turant pahunche (<1 sec), kabhi na khoye, ek chat ke andar kram na bigde, do baar na dikhe
+        2 crore log ek saath jude rahein, server gire to doosra sambhale
+NUMBERS 50 crore user, roz 10 crore log x 40 message = ~400 crore / din = ~46,000 likhai / sec
+           bheed me 2-3 guna, ~1.5 lakh / sec
+        ek waqt ~2 crore khuli connection = asli paimana
+           ("kitni request / sec" nahi, "kitni connection khuli hain")
+        jagah: 400 crore x ~300 byte ~ 1.2 TB roz, ~440 TB / saal
+```
 
 ---
 
@@ -28,22 +38,32 @@
 
 **Cue:** EVENT LOOP, kuch thread, lakhon conn · dabba: Chat Server x200 + LB
 
-- **chat alag kyun:** ab tak (url shortener, feed, payment, banking) user maanga, server diya, connection band. Chat me Ravi ne kuch nahi maanga, phir bhi turant.
-- **chat alag kyun:** HTTP me server sirf jawab de sakta, khud awaaz nahi laga sakta -> connection khuli rakhni
-- **dabba 0:** sabse simple, ek chat server, main aur Ravi dono jude, message server ke raaste Ravi tak
-- **WebSocket:** Ravi ek baar /connect kholta, connection band nahi hota, dono taraf baat
-- **paimana:** har khuli connection memory khaati, message aaye ya na aaye
-- **faisla:** connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat server, sirf connection pakadte, API / business server se alag
-- **toota:** ek connection = ek thread (~1 MB), 2 crore thread -> memory khatam
-- **hal:** kuch thread (jaise 4) saare connection. OS batata data kahan aaya (epoll), thread sirf usi pe (event loop, Netty jaisa).
-- **hal:** app khula to LB kisi server pe bithata, connection khula, thread nahi
-- **kyun:** zyadatar connection chup. Chup connection thodi memory, thread tabhi jab data aaya -> ~200 server kaafi.
-- **nahi:** ek connection ek thread -> 2 crore x ~1 MB, memory khatam
-- **nahi:** polling (har 5 sec poochho) -> 100 me 1 hi poochh kaam ki. WebSocket me ek baar judo, turant.
-- **nahi:** SSE -> sirf server se user, chat me dono taraf chahiye
-- **Pooche:** wahi connection aage kis server pe? -> wahi, connection khula. Naya connection = naya chunaav.
-- **Pooche:** chat server gira? -> 1 lakh log ek saath dobara judte. Ruk-ruk ke, random waqt (backoff + jitter). Bheja hua khota nahi.
-- **Pooche:** naya code deploy? -> thode-thode server khaali karo (draining), sab ek saath na judein
+![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
+
+```
+ALAG    ab tak (url shortener, feed, payment, banking) user maangta tha, server deta tha, connection band.
+           Chat me Ravi ne kuch nahi maanga, phir bhi message turant chahiye
+        HTTP me server sirf jawab de sakta hai, khud awaaz nahi laga sakta, isliye connection khuli rakhni hai
+DABBA 0 sabse simple: ek chat server, main aur Ravi dono jude, message server ke raaste Ravi tak jaata hai
+SOCKET  WebSocket: Ravi ek baar /connect kholta hai, connection band nahi hota, dono taraf baat hoti hai
+PAIMANA har khuli connection memory khaati hai, message aaye ya na aaye
+FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat server.
+           Ye sirf connection pakadte hain, API / business server se alag
+HAL     kuch thread (jaise 4) saare connection sambhalte hain. OS batata hai data kahan aaya (epoll),
+           thread sirf usi pe kaam karta hai = event loop, Netty jaisa
+        app khula to LB use kisi server pe bithata hai, connection khula rehta hai, thread nahi
+KYUN    zyadatar connection chup rehte hain. Chup connection thodi memory leta hai,
+           thread tabhi jab data aaya, isliye ~200 server kaafi hain
+NAHI    ek connection ek thread -> MEMORY: 2 crore x ~1 MB, memory khatam ho jaati hai
+        polling (har 5 sec poochho) -> FALTU: 100 me se 1 hi poochh kaam ki. WebSocket me ek baar judo, turant
+        SSE -> ADHOORA: sirf server se user ki taraf jaata hai, chat me dono taraf chahiye
+AGAR    connection khula hai, aage ka message kis server pe jaayega?
+        -> wahi server, kyunki connection khula hai. Naya connection banega tab naya chunaav hoga
+        chat server gira
+        -> 1 lakh log ek saath dobara judte hain. Ruk-ruk ke, random waqt pe judo (backoff + jitter).
+           Bheja hua message khota nahi
+        naya code deploy karna hai -> thode-thode server khaali karo (draining), taaki sab ek saath na judein
+```
 
 ---
 
@@ -53,18 +73,30 @@
 
 **Cue:** MAP Redis me (kaun kahan) · dabba: Redis
 
-- **map:** "kaun kis server se juda", yahi chat ka dil. Ek server me memory map: Ravi -> conn-7, Arpan -> conn-3, "hi" usi connection se Ravi ki screen pe.
-- **map:** connection data nahi, Ravi tak pahunchne ka raasta. Toota to map se hatao, dobara juda to naya connection, nayi entry.
-- **toota:** har server ke map me sirf apne log. Main server-1, Ravi server-7 -> server-1 bola "Ravi offline", galat.
-- **hal:** Redis me pata: Ravi -> server-7 (map). Server-1 Redis se poochta, server-7 ko deta, server-7 Ravi ko.
-- **kyun:** pata ek jagah, sab server dekhte. Redis me sirf pata, umar ke saath (TTL), server-7 zinda to dhadkan se umar badhti.
-- **kyun:** pata galat ho ya Redis gire, message phir bhi nahi khota
-- **nahi:** connection hi Redis me -> ho hi nahi sakta, zinda connection ek server ki memory me, mar sakti. Redis me pata, message DB me.
-- **nahi:** Redis pub-sub -> chal sakta, par kuch rakhta nahi, sunne wala na ho to message gaya
-- **Pooche:** server-7 mar gaya? -> umar khatam, entry khud hat-ti, Ravi offline maana
-- **Pooche:** Ravi ke kai device (phone + laptop + tab)? -> pata ek nahi, list (device -> server), har device pe bhejo
-- **Pooche:** pata galat, Ravi khisak gaya? -> message khota nahi, naye server pe judte hi milega
-- **Pooche:** Redis gira? -> copy pe switch (alag AZ), message khota nahi, judne pe milega
+![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
+
+```
+MAP     "kaun kis server se juda hai", yahi chat ka dil hai. Ek server ki memory me map hota hai:
+           Ravi -> conn-7, Arpan -> conn-3, aur "hi" usi connection se Ravi ki screen pe jaata hai
+        map me connection data nahi, Ravi tak pahunchne ka raasta hai. Connection toota to map se hatao,
+           dobara juda to naya connection, nayi entry
+HAL     Redis me pata rakho (Ravi -> server-7). Server-1 Redis se poochta hai, server-7 ko deta hai,
+           aur server-7 Ravi ko deta hai
+KYUN    pata ek jagah hai, sab server wahi dekhte hain. Redis me sirf pata hai, umar ke saath (TTL);
+           server-7 zinda hai to uski dhadkan se umar badhti rehti hai
+        pata galat ho ya Redis gir jaaye, message phir bhi nahi khota
+NAHI    har server ka apna map -> ADHOORA: main server-1 pe, Ravi server-7 pe,
+           server-1 bola "Ravi offline", galat
+        connection hi Redis me -> NAMUMKIN: zinda connection ek server ki memory me hota hai,
+           wo mar sakta hai. Redis me pata, message DB me
+        Redis pub-sub -> KHOTA: chal sakta hai, par kuch rakhta nahi, sunne wala na ho to message gaya
+AGAR    server-7 mar gaya -> umar khatam, entry khud hat jaati hai, Ravi offline maana jaata hai
+        Ravi ke kai device hain (phone + laptop + tab)
+        -> pata ek nahi, list rakho (device -> server), aur har device pe bhejo
+        pata galat hai, Ravi doosre server pe khisak gaya
+        -> message khota nahi, naye server pe judte hi milega
+        Redis gira -> copy pe switch (alag AZ), message khota nahi, judne pe milega
+```
 
 ---
 
@@ -74,14 +106,19 @@
 
 **Cue:** pehle DB, phir bhejo; PUSH · dabba: Message DB + Push
 
-- **scope:** offline banda: message kahan ruke, kab tak, push? (pehle poochho)
-- **toota:** pehle bhejte, na pahunche to DB. Server DB me likhne se pehle gira -> message gaya.
-- **hal:** pehle DB me likho, phir bhejo (store-then-forward). Phone band to push ghanti (FCM / APNs).
-- **kyun:** DB me hai to khota nahi, bhejne se pehle server gira tab bhi DB me
-- **kyun:** push sirf ghanti, sirf preview, raasta Google ka. Wapas aaya to "aakhri ke baad" sab.
-- **nahi:** pehle bhejo, baad me DB -> beech me server gira, message gaya
-- **Pooche:** Ravi wapas aaya? -> app bolta "aakhri jo mila, uske baad sab do", server baaki deta
-- **Pooche:** push wala (Google / Apple) atka? -> bahar ki cheez, apna retry / queue
+![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
+
+```
+SCOPE   offline banda: message kahan ruke, kab tak ruke, push chahiye ya nahi? (ye pehle poochho)
+HAL     pehle DB me likho, phir bhejo (store-then-forward). Phone band hai to push ghanti (FCM / APNs).
+           Ravi wapas aaya to app bolta hai "aakhri ke baad sab do"
+KYUN    DB me hai to khota nahi. Bhejne se pehle server gira, tab bhi message DB me pada hai
+        push sirf ghanti hai, sirf preview, aur raasta Google ka hai.
+           Wapas aaya to "aakhri ke baad" sab milta hai
+NAHI    pehle bhejo, na pahunche to baad me DB -> KHOTA: DB me likhne se pehle server gira to message gaya
+AGAR    Ravi wapas aaya -> app bolta hai "aakhri jo mila, uske baad sab do", server baaki de deta hai
+        push wala (Google / Apple) atak gaya -> wo bahar ki cheez hai, apna retry / queue rakho
+```
 
 ---
 
@@ -91,18 +128,27 @@
 
 **Cue:** chat_id se baanto · dabba: Cassandra
 
-- **scope:** history kahan, kitni der? WhatsApp: phone pe, pahunchte hi server se delete. Slack: server pe hamesha, 3 saal purana bhi search.
-- **scope:** ye ek jawab jagah ~zero se ~440 TB / saal kar deta. History kahan = jagah ka dhaancha, yahan Slack jaisa.
-- **faisla:** jagah ek machine ki nahi (banking ka ulta: wahan 120 / sec, yahan 46,000 / sec + 1.2 TB roz)
-- **toota:** ek DB machine, 46,000 likhai / sec nahi jhelegi
-- **hal:** Cassandra, ek chat ke saare message ek partition (key = chat_id), andar kram se
-- **kyun:** jo saath padha jaata wo saath rakho. Chat khuli to "aakhri 50" ek jagah, ek baar (keyset, OFFSET nahi).
-- **nahi:** message_id se partition -> aakhri 50 ke liye 50 jagah, saath padha saath nahi
-- **nahi:** SQL -> rishte / transaction chahiye hi nahi, bas bahut likhai (46,000 / sec)
-- **Pooche:** ek group bahut garam? -> ek chat ek partition hi, group ki speed pe had
-- **Pooche:** saalon me partition badi? -> key (chat_id, mahina). Size bandhta, bojh nahi baant-ta.
-- **Pooche:** 3 saal purane? -> sasti jagah (cold storage), kabhi-kabhi khulte
-- **Pooche:** purana message search? -> DB ke baad search index me bhi (Elasticsearch). ES id deta, message Cassandra se.
+![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
+
+```
+SCOPE   history kahan aur kitni der? WhatsApp: phone pe, pahunchte hi server se delete.
+           Slack: server pe hamesha, 3 saal purana bhi search hota hai
+        ye ek jawab jagah ko ~zero se ~440 TB / saal kar deta hai. History kahan = jagah ka dhaancha,
+           yahan Slack jaisa
+FAISLA  jagah ek machine ki nahi hai (banking ka ulta: wahan 120 / sec, yahan 46,000 / sec + 1.2 TB roz)
+HAL     Cassandra, key = chat_id. Ek chat ke saare message ek partition me, andar kram se
+KYUN    jo saath padha jaata hai wo saath rakho. Chat khuli to "aakhri 50" ek jagah se, ek baar me
+           (keyset, OFFSET nahi)
+NAHI    ek DB machine -> ATKA: 46,000 likhai / sec ek machine nahi jhelegi
+        message_id se partition -> BIKHRA: aakhri 50 ke liye 50 jagah jaana padega,
+           jo saath padha wo saath nahi
+        SQL -> FALTU: rishte / transaction chahiye hi nahi, bas bahut likhai hai (46,000 / sec)
+AGAR    ek group bahut garam ho gaya -> ek chat ek hi partition me, to group ki speed pe had hai
+        saalon me partition badi ho gayi -> key (chat_id, mahina). Size bandhta hai, bojh nahi baant-ta
+        3 saal purane message -> sasti jagah (cold storage), wo kabhi-kabhi hi khulte hain
+        purana message search karna hai
+        -> DB ke baad search index me bhi daalo (Elasticsearch). ES id deta hai, message Cassandra se aata hai
+```
 
 ---
 
@@ -112,30 +158,41 @@
 
 **Cue:** IDEMPOTENCY (clientMsgId) · dabba: Idempotency check
 
-- **toota:** har bhejna naya message: hi, timeout, phir hi -> Ravi ki chat me do baar
-- **hal:** app har message ki id banata (m-9), dobara pe wahi id (clientMsgId). Server: pehle aaya? haan to skip, pehli id lautao.
-- **kyun:** id app banata, server sirf "pehle dekha?" poochta, ek kadam. Wahi id = wahi message, dobara safe.
-- **Pooche:** dono ek saath? -> dekhna + daalna ek kadam (Cassandra LWT / Redis SET NX)
-- **Pooche:** do user ki id same? -> check jodi pe (sender_id, clientMsgId), alag log = alag message
-- **Pooche:** clientMsgId kab tak? -> jitni der me dobara aata, retry minute me, 1 ghanta kaafi
+![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
+
+```
+HAL     app har message ki id banata hai (m-9), dobara bhejne pe wahi id (clientMsgId).
+           Server poochta hai: pehle aaya? haan to skip, aur pehli id lauta do
+KYUN    id app banata hai, server sirf "pehle dekha?" poochta hai, ek kadam.
+           Wahi id = wahi message, dobara safe
+NAHI    har bhejna naya message -> DOHRA: hi, timeout, phir hi, aur Ravi ki chat me "hi" do baar
+AGAR    dono copy ek saath aa gayi -> dekhna + daalna ek kadam me (Cassandra LWT / Redis SET NX)
+        do user ki id same nikli -> check jodi pe (sender_id, clientMsgId), alag log = alag message
+        clientMsgId kab tak rakhein -> jitni der me dobara aata hai; retry minute me hota hai, 1 ghanta kaafi
+```
 
 ---
 
 *ab ek baar hi aaya, par kram galat*
 
-## 6. Meri ghadi 5 min aage, mere message upar chadh gaye
+## 6. Meri ghadi 5 min aage, mera sawaal Ravi ke jawab ke neeche chala gaya
 
 **Cue:** SEQ, server ka +1 · dabba: Seq (Redis INCR)
 
-- **toota:** kram phone ki ghadi se, meri 10:05 (asal 10:00), mera message Ravi se upar, kram ulta
-- **hal:** har chat ka server pe +1 number (Redis INCR seq:chat123), kram isi se (seq), har chat alag
-- **kyun:** kram server ka number tay karta, ghadi nahi. 5 min aage ho, farak nahi.
-- **kyun:** ginti me chhed dikhe to pata chalta kuch chhoota, maang lo
-- **nahi:** phone ki ghadi -> kram ulta
-- **nahi:** Snowflake id -> sirf pehchaan (message_id), kram nahi, do server ki ghadi me ms ka farak
-- **Pooche:** app ko 4415, phir 4417? -> 4416 chhoota (chhed). Thoda ruko, phir maango "4415 ke baad ke do".
-- **Pooche:** seq wala Redis restart? -> Cassandra me har message ka seq, sabse bade se aage
-- **Pooche:** Ravi wapas aaya? -> "meri aakhri 4417" -> 4418 se aage sab
+![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
+
+```
+HAL     har chat ka server pe ek +1 number (Redis INCR seq:chat123). Kram isi number (seq) se, ghadi se nahi.
+           Har chat ka alag number
+KYUN    kram server ka number tay karta hai, ghadi nahi. Phone 5 min aage ho, farak nahi padta
+        ginti me chhed dikhe to pata chal jaata hai kuch chhoota, wo maang lo
+NAHI    phone ki ghadi -> ULTA: meri ghadi 10:05 (asal 10:00), isliye kram ulta ho gaya
+        Snowflake id -> PEHCHAAN: wo sirf pehchaan hai (message_id), kram nahi;
+           do server ki ghadi me ms ka farak
+AGAR    app ko 4415 mila, phir 4417 -> 4416 chhoota (chhed). Thoda ruko, phir maango "4415 ke baad ke do"
+        seq wala Redis restart ho gaya -> Cassandra me har message ka seq hai, sabse bade se aage chalo
+        Ravi wapas aaya -> app bolta hai "meri aakhri 4417", server 4418 se aage sab deta hai
+```
 
 ---
 
@@ -145,15 +202,19 @@
 
 **Cue:** group ka EK copy · dabba: (Cassandra me group chat)
 
-- **scope:** 1-to-1 ya group? group = ek message, 500 jagah (pehle poochho)
-- **toota:** har member ke inbox me copy -> ek message, 500 likhai
-- **hal:** group ka message ek baar, group chat ke neeche, sab wahi padhte
-- **hal:** bhejna server-wise: online kahan Redis se, har server ko ek call (server-2 pe 120, server-5 pe 80)
-- **kyun:** sabke liye ek jaisa = ek copy, har kisi ka alag = alag copy. Bhejna server-wise, member-wise nahi.
-- **nahi:** har member ke inbox me copy -> 500 likhai
-- **Pooche:** 300 online? -> Redis se unke server, har server ko ek call
-- **Pooche:** offline members? -> push ghanti, wapas aaye to seq se aage
-- **Pooche:** naya member juda? -> judne ke seq se pehle wale nahi, tab group me tha hi nahi
+![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
+
+```
+SCOPE   1-to-1 ya group? Group = ek message, 500 jagah (ye pehle poochho)
+HAL     group ka message EK baar likho, group chat ke neeche, sab wahi padhte hain.
+           Bhejna server-wise: online kahan hai wo Redis se, har server ko ek call
+           (server-2 pe 120, server-5 pe 80)
+KYUN    sabke liye ek jaisa = ek copy, har kisi ka alag = alag copy. Bhejna server-wise, member-wise nahi
+NAHI    har member ke inbox me copy -> MEHNGA: ek message, 500 likhai
+AGAR    300 online hain -> Redis se unke server nikalo, har server ko ek call
+        offline members -> push ghanti, wapas aaye to seq se aage sab
+        naya member juda -> judne ke seq se pehle wale message nahi milte, tab wo group me tha hi nahi
+```
 
 ---
 
@@ -163,17 +224,22 @@
 
 **Cue:** NISHAAN read_upto · dabba: Nishaan store
 
-- **scope:** tick: ek (server tak), do (phone tak), neeli (padh li), online / last seen. Har tick ek ulta message, traffic kai guna.
-- **toota:** har message x har member ka "padha" record: 50 x 500 = 25,000 likhai
-- **hal:** har member ka ek number, kahan tak padha (read_upto). Ravi ne 50 padhe -> read_upto = 4467, ek likhai.
-- **kyun:** nishaan khisakta, ginti nahi. Unread, tick, offline ke baad lena, sab isi se. Khoya to agli baar.
-- **nahi:** har message pe "padha" record -> 25,000 likhai
-- **Pooche:** unread? -> aakhri seq - nishaan, ghatao, gino nahi
-- **Pooche:** neeli tick? -> mujhe ek push "read_upto 4467", 50 ek saath neeli
-- **Pooche:** do tick (mila)? -> "kahan tak mila" (delivered_upto), Ravi ka phone bhejta
-- **Pooche:** "mila" raaste me kho gaya? -> agli baar judte hi phone dobara bhejta, nishaan sirf aage
-- **Pooche:** group me do tick? -> sabse chhota nishaan: sab ka delivered_upto >= seq
-- **Pooche:** 10 lakh ka broadcast group? -> tick band, sirf unread, 10 lakh nishaan milana mehnga
+![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
+
+```
+SCOPE   tick: ek (server tak), do (phone tak), neeli (padh li), online / last seen.
+           Har tick ek ulta message hai, traffic kai guna ho jaata hai
+HAL     har member ka ek number, kahan tak padha (read_upto). Ravi ne 50 padhe -> read_upto = 4467, ek likhai
+KYUN    nishaan aage khisakta hai, ginti nahi hoti. Unread, tick, offline ke baad lena, sab isi se.
+           Khoya to agli baar aa jaayega
+NAHI    har message pe "padha" record -> MEHNGA: 50 x 500 = 25,000 likhai
+AGAR    unread kitne -> aakhri seq - nishaan, ghatao, gino nahi
+        neeli tick kaise -> mujhe ek push "read_upto 4467", aur 50 ek saath neeli
+        do tick (mila) kaise -> "kahan tak mila" (delivered_upto), wo Ravi ka phone bhejta hai
+        "mila" raaste me kho gaya -> agli baar judte hi phone dobara bhejta hai, nishaan sirf aage jaata hai
+        group me do tick kab -> sabse chhota nishaan dekho: sab ka delivered_upto >= seq
+        10 lakh ka broadcast group -> tick band, sirf unread; 10 lakh nishaan milana mehnga hai
+```
 
 ---
 
@@ -183,16 +249,21 @@
 
 **Cue:** S3 PRESIGNED URL, message me pata · dabba: S3
 
-- **scope:** media message ke saath nahi, alag S3 me, message me sirf pata
-- **toota:** video chat server se, 200 MB pe server 2 min atka, group me 500 x 200 MB = 100 GB
-- **hal:** app video seedha S3 me, 10 min ka paas (presigned URL). Message me sirf S3 key + thumbnail.
-- **kyun:** bhaari maal S3, message halka. Ek upload, 500 ko wahi key.
-- **kyun:** message me key, URL nahi, kyunki URL marta hai
-- **nahi:** chat server ke raaste -> server atka, 100 GB
-- **Pooche:** 200 MB me net gaya? -> tukdon me upload (multipart), bacha hissa hi dobara
-- **Pooche:** Ravi ne khola? -> key se naya chhota URL. URL marta, key nahi.
-- **Pooche:** wahi video 1000 baar forward? -> file ka hash, pehle se hai to wahi file, upload nahi
-- **Pooche:** E2E hai to thumbnail? -> app khud encrypt, chaabi message ke saath, server dekh nahi sakta
+![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
+
+```
+SCOPE   media message ke saath nahi jaata, alag S3 me jaata hai, message me sirf pata
+HAL     app video seedha S3 me daalta hai, 10 min ka paas leke (presigned URL).
+           Message me sirf S3 key + thumbnail
+KYUN    bhaari maal S3 me, message halka. Ek upload, aur 500 ko wahi key
+        message me key rakho, URL nahi, kyunki URL marta hai
+NAHI    chat server ke raaste -> ATKA: 200 MB pe server 2 min atka, group me 500 x 200 MB = 100 GB
+AGAR    200 MB upload ke beech net gaya -> tukdon me upload (multipart), bacha hissa hi dobara
+        Ravi ne video khola -> key se naya chhota URL banta hai. URL marta hai, key nahi
+        wahi video 1000 baar forward hua -> file ka hash dekho, pehle se hai to wahi file, upload nahi
+        E2E hai to thumbnail kaise
+        -> app khud encrypt karta hai, chaabi message ke saath, server dekh nahi sakta
+```
 
 ---
 
@@ -202,15 +273,19 @@
 
 **Cue:** UMAR 30 sec (TTL) · dabba: Presence
 
-- **toota:** har aana-jaana saare contacts ko: 500 contacts x crore log, bahut message
-- **hal:** online = Redis key + umar (30 sec), app har 15 sec dhadkan "hoon". Status tabhi dekho jab chat khule.
-- **kyun:** maango tab dekho, key khud mitti. Thoda purana status chalta, paisa nahi.
-- **nahi:** sabko har badlav batao -> bahut message
-- **Pooche:** chat khuli, main chala gaya? -> khuli chat = subscribe (live badlav), baaki chat pull
-- **Pooche:** crore dhadkan har second? -> chat server ikattha karke Redis me (batch)
-- **Pooche:** app band? -> dhadkan band, umar khatam = offline. Server us waqt last seen alag likhta.
-- **Pooche:** Ravi ne last seen chhupaya? -> mat dikhao
-- **Pooche:** "typing..."? -> sirf khuli chat me, store nahi, 2 sec ki khabar
+![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
+
+```
+HAL     online = Redis key + umar (30 sec), app har 15 sec dhadkan bhejta hai "hoon".
+           Status tabhi dekho jab chat khule
+KYUN    jab maango tab dekho, key khud mit jaati hai. Thoda purana status chal jaata hai, paisa nahi lagta
+NAHI    sabko har badlav batao -> BHEED: 500 contacts x crore log, bahut message
+AGAR    chat khuli hai aur main chala gaya -> khuli chat = subscribe (live badlav), baaki chat pull
+        crore dhadkan har second -> chat server ikattha karke Redis me daalta hai (batch)
+        app band ho gaya -> dhadkan band, umar khatam = offline. Server us waqt last seen alag likhta hai
+        Ravi ne last seen chhupaya -> mat dikhao
+        "typing..." -> sirf khuli chat me, store nahi, 2 sec ki khabar
+```
 
 ---
 

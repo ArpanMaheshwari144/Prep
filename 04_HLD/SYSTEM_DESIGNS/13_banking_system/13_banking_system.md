@@ -3,7 +3,8 @@
 > Ek bank ke andar accounts, un pe paisa daalo / nikaalo / bhejo, aur balance dikhao.
 > Dil: khaata (ledger) sach hai, balance sirf uska jod. Aur paisa na bane, na gayab ho.
 >
-> Mock me sirf heading + Cue + GIF. Neeche har card: **hal** · **kyun** · **nahi** (doosra kyun nahi) · **Pooche**.
+> Mock me sirf heading + Cue + GIF. Neeche har card ek block: HAL (GIF ka ILAAJ) · KYUN · NAHI (doosra kyun nahi) · AGAR (cross-Q).
+> Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
 
@@ -16,9 +17,14 @@
 
 ## Shuru
 
-- **FR:** user ke ek ya kai account · deposit, withdraw, transfer A se B (dono isi bank), balance, history · bahar: doosra bank, loan, byaaj, card, KYC
-- **NFR:** sahi hona sabse upar (paisa na gum, na bane, hisaab har waqt barabar) · har paisa trace (audit) · dobara bhejne pe dobara na kate (idempotent) · balance dekhna tez
-- **numbers:** 50 lakh account, 1 crore transaction roz = ~120 likhai / sec, padhna kahin zyada. 120 / sec = ek Postgres ka dasva hissa -> shard nahi, primary + replica kaafi
+```
+FR      user ke ek ya kai account. Deposit, withdraw, transfer A se B (dono isi bank), balance, history.
+        Bahar: doosra bank, loan, byaaj, card, KYC
+NFR     sahi hona sabse upar (paisa na gum ho, na bane, hisaab har waqt barabar). Har paisa trace ho (audit).
+        Dobara bhejne pe dobara na kate (idempotent). Balance dekhna tez ho
+NUMBERS 50 lakh account, 1 crore transaction roz = ~120 likhai / sec, padhna kahin zyada.
+        120 / sec ek Postgres ka dasva hissa hai, to shard nahi, primary + replica kaafi
+```
 
 ---
 
@@ -28,18 +34,24 @@
 
 **Cue:** EK TRANSACTION (WAL) · dabba: SQL DB
 
-- **dabba 0:** sabse simple, ek Banking Service (saara niyam / logic) + peeche ek SQL DB, jaan-boojh ke seedha
-- **scope pehle:** "ek hi bank ke andar, ya doosre bank ko bhi?" warna interviewer jitna bada chaahe sar pe daal dega
-- **scope:** "dono isi bank" ye ek shabd poora design badalta
-- **sawaal:** transfer me do row badalti, dono ho ya koi nahi, kaun sambhalega? -> ye card
-- **toota:** mera -500 hua, server gira, Ravi ka +500 hua hi nahi -> 500 gayab
-- **hal:** BEGIN, Arpan -500, Ravi +500, COMMIT -> dono ya koi nahi (transaction)
-- **kyun:** ek DB me ek transaction kabhi aadha nahi. Crash pe DB apne log se khud ulta karta.
-- **kyun:** padhne wale ko aadha kaam kabhi nahi dikhta
-- **nahi:** SAGA -> sab ek hi DB me, ek transaction kaafi. SAGA tab jab paisa do alag DB me.
-- **Pooche:** beech me server gira, DB kaise jaanta? -> log (WAL). COMMIT likha to poora, nahi to ulta, mera wapas 1000
-- **Pooche:** -500 ke baad, COMMIT se pehle, koi padhe? -> COMMIT se pehle wala hi dikhta, aadha kisi ko nahi
-- **Pooche:** Ravi doosre bank me? -> do bank = do DB, ek transaction nahi. PENDING + SAGA + raat ko milaan.
+```
+DABBA 0 sabse simple: ek Banking Service (saara niyam / logic) + peeche ek SQL DB, jaan-boojh ke seedha
+SCOPE   pehle poochho "ek hi bank ke andar, ya doosre bank ko bhi?", warna interviewer jitna bada chaahe
+        sar pe daal dega. "dono isi bank", ye ek shabd poora design badalta hai
+SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? Yahi card
+TOOTA   mera -500 hua, server gira, Ravi ka +500 hua hi nahi, to 500 gayab
+HAL     BEGIN, Arpan -500, Ravi +500, COMMIT. Dono hon ya koi nahi (transaction)
+KYUN    ek DB me ek transaction kabhi aadha nahi rehta. Crash pe DB apne log se khud ulta karta hai
+        padhne wale ko aadha kaam kabhi nahi dikhta
+NAHI    SAGA
+        -> FALTU: sab ek hi DB me hai, ek transaction kaafi. SAGA tab jab paisa do alag DB me ho
+AGAR    beech me server gira, DB kaise jaanta hai kya karna?
+        -> log (WAL) se. COMMIT likha hai to poora, nahi to ulta, mera wapas 1000
+        -500 ke baad, COMMIT se pehle koi padhe to?
+        -> COMMIT se pehle wala hi dikhta hai, aadha kisi ko nahi
+        Ravi doosre bank me ho to ek transaction chalega?
+        -> do bank = do DB, ek transaction nahi. PENDING + SAGA + raat ko milaan
+```
 
 ---
 
@@ -49,15 +61,22 @@
 
 **Cue:** IDEMPOTENCY KEY (UNIQUE) · dabba: Banking Svc (+ key)
 
-- **toota:** koi id nahi, timeout pe app ne dobara bheja, server ne do transfer samjhe -> 1000 kate
-- **hal:** screen khulte hi app id banata (T-77), send pe wahi id DB me UNIQUE ke saath (idempotency key)
-- **hal:** dobara T-77 aayi -> pehla jawab wapas, paisa doosri baar nahi katta
-- **kyun:** aadha nahi = transaction ka kaam. Do baar nahi = id ka kaam.
-- **kyun:** id app banata, server nahi, kyunki dobara bhejne wala wahi id laata. Wahi id = wahi jawab, retry safe.
-- **nahi:** send button band -> retry app khud karta (timeout pe), user ke dabaye bina
-- **Pooche:** dono request ek saath? -> DB khud rokta, doosra insert fail, UNIQUE hi taala
-- **Pooche:** wahi id, amount 5000? -> request ka hash nahi mila -> 422, purana jawab nahi
-- **Pooche:** id kab tak? -> 24-48 ghante, phir saaf. Retry itni der me hi aata.
+```
+TOOTA   koi id nahi thi, timeout pe app ne dobara bheja, server ne do transfer samjhe, to 1000 kate
+HAL     screen khulte hi app id banata hai (T-77), send pe wahi id DB me UNIQUE ke saath (idempotency key)
+        dobara T-77 aayi to pehla jawab wapas, paisa doosri baar nahi katta
+KYUN    aadha nahi, ye transaction ka kaam hai. Do baar nahi, ye id ka kaam hai
+        id app banata hai, server nahi, kyunki dobara bhejne wala wahi id laata hai.
+        Wahi id to wahi jawab, retry safe
+NAHI    send button band kar do
+        -> ADHOORA: retry app khud karta hai (timeout pe), user ke dabaye bina
+AGAR    wahi id wali do request ek saath aayi
+        -> DB khud rokta hai, doosra insert fail. UNIQUE hi taala hai
+        wahi id, par amount 5000
+        -> request ka hash nahi mila, to 422, purana jawab nahi
+        id kab tak rakhoge?
+        -> 24-48 ghante, phir saaf. Retry itni der me hi aata hai
+```
 
 ---
 
@@ -67,13 +86,19 @@
 
 **Cue:** CHECK + KAATNA EK QUERY · dabba: (SQL DB: balance >= x)
 
-- **sawaal:** ek account pe do transfer ek saath, kaun rokega? balance minus na jaaye, niyam kahan? -> ye card
-- **toota:** 300 the, Netflix 200 + UPI 200, dono ne 300 padha (pass), dono ne kaata -> -100
-- **hal:** check + kaatna ek query (atomic UPDATE): `UPDATE account SET balance = balance - 200 WHERE id = Arpan AND balance >= 200`
-- **kyun:** row pe taala, dono line me. Pehla 300 se 100. Doosra: 100 >= 200? nahi -> 0 row, kuch nahi kata, 422 "paisa kam".
-- **kyun:** balance kabhi minus nahi
-- **nahi:** pehle padho, phir kaato -> dono ne 300 dekha, beech me doosra ghus jaata
-- **nahi:** niyam Java me -> raaste kai (API, batch, haath se), DB ek. Niyam DB me to har raasta usse guzarta.
+```
+SAWAAL  ek account pe do transfer ek saath, kaun rokega? Balance minus na jaaye, ye niyam kahan? Yahi card
+TOOTA   300 the, Netflix 200 + UPI 200, dono ne 300 padha (pass), dono ne kaata, to -100
+HAL     check aur kaatna ek hi query me (atomic UPDATE):
+        UPDATE account SET balance = balance - 200 WHERE id = Arpan AND balance >= 200
+KYUN    row pe taala lagta hai, dono line me. Pehla 300 se 100. Doosra: 100 >= 200? nahi, to 0 row,
+        kuch nahi kata, 422 "paisa kam"
+        balance kabhi minus nahi jaata
+NAHI    pehle padho, phir kaato
+        -> RACE: dono ne 300 dekha, beech me doosra ghus jaata hai
+        niyam Java me
+        -> CHHOOT: raaste kai hain (API, batch, haath se), DB ek. Niyam DB me to har raasta usse guzarta hai
+```
 
 ---
 
@@ -83,14 +108,21 @@
 
 **Cue:** KHAATA (ledger) usi transaction me · dabba: (SQL DB: ledger table)
 
-- **toota:** sirf balance column, 1000 dikhta, 500 kahan / kab koi hisaab nahi, support "pata nahi"
-- **hal:** har transfer ki 2 line khaate me, usi transaction me: Arpan -500, Ravi +500 (ledger). Sirf jodo, kabhi badlo nahi.
-- **kyun:** transaction wapas (paisa kam) to khaata bhi wapas, jhoothi line bachti nahi
-- **kyun:** har line me waqt + transfer id -> support dekhta: 8:00, T-77, Ravi ko 500
-- **nahi:** sirf balance column -> jod dikhta, raasta nahi, purana hisaab mit jaata
-- **nahi:** khaata Kafka me -> Kafka + DB ek transaction nahi, rollback pe Kafka me jhoothi line
-- **Pooche:** galat line likhi? -> UPDATE nahi, ulti line jodo, galti bhi khaate me dikhe
-- **Pooche:** support ko kab, kisko, kyun? -> har line me waqt + transfer id, sab ek jagah
+```
+TOOTA   sirf balance column tha, 1000 dikhta, 500 kahan / kab gaye koi hisaab nahi, support bole "pata nahi"
+HAL     har transfer ki 2 line khaate me, usi transaction me: Arpan -500, Ravi +500 (ledger).
+        Sirf jodo, kabhi badlo nahi
+KYUN    transaction wapas hua (paisa kam) to khaata bhi wapas, jhoothi line bachti nahi
+        har line me waqt + transfer id, to support dekhta hai: 8:00, T-77, Ravi ko 500
+NAHI    sirf balance column
+        -> ANDHA: jod dikhta hai, raasta nahi, purana hisaab mit jaata hai
+        khaata Kafka me
+        -> JHOOTH: Kafka + DB ek transaction nahi, rollback pe Kafka me jhoothi line reh jaati
+AGAR    khaate me galat line likh di
+        -> UPDATE nahi, ulti line jodo, taaki galti bhi khaate me dikhe
+        support ko kab, kisko, kyun chahiye?
+        -> har line me waqt + transfer id, sab ek jagah
+```
 
 ---
 
@@ -100,18 +132,29 @@
 
 **Cue:** OUTBOX, Kafka key = account_id · dabba: Kafka
 
-- **toota:** transfer karte hi SMS bhejte, Ravi ko 20,000 gaye, SMS service band -> SMS kabhi nahi gaya
-- **hal:** DB me outbox table, khabar usi transaction me (sent=false)
-- **hal:** relay har second outbox dekhe, sent=false Kafka me (COMMIT ke ~1 sec baad). SMS service padhe, bheje, sent=true.
-- **kyun:** transfer SMS pe nahi rukta. Kafka tak COMMIT ke baad hi -> khabar tabhi jab paisa pakka.
-- **kyun:** DB gira to bhi khabar outbox me, kuch nahi khota
-- **nahi:** seedha SMS service bulao -> service band thi, khabar gayi
-- **nahi:** pehle Kafka, DB baad me -> "Ravi ko 20,000 aaye" nikla, DB fail, paisa gaya hi nahi. Paisa + khabar ek saath DB me.
-- **Pooche:** SMS service ghanta bhar giri? -> khabar Kafka me padi, wapas aate hi wahin se
-- **Pooche:** relay ne Kafka me daala, sent=true se pehle gira? -> khabar dobara, SMS service eventId dekh ke skip
-- **Pooche:** outbox bharti jaaye? -> roz saaf, sent=true ka kaam khatam
-- **Pooche:** relay likhna hi na pade? -> DB ke log se seedha Kafka (CDC, Debezium)
-- **Pooche:** SMS ulte kram me? -> Kafka key = account_id, ek account ek partition, kram se
+```
+TOOTA   transfer karte hi SMS bhejte the, Ravi ko 20,000 gaye, SMS service band, to SMS kabhi nahi gaya
+HAL     DB me outbox table, khabar usi transaction me likhi jaati hai (sent=false)
+        relay har second outbox dekhta hai, sent=false wali Kafka me (COMMIT ke ~1 sec baad).
+        SMS service padhti hai, bhejti hai, sent=true
+KYUN    transfer SMS pe nahi rukta. Kafka tak khabar COMMIT ke baad hi, to khabar tabhi jab paisa pakka
+        DB gira to bhi khabar outbox me hai, kuch nahi khota
+NAHI    seedha SMS service bulao
+        -> KHOYA: service band thi, khabar gayi
+        pehle Kafka, DB baad me
+        -> JHOOTH: "Ravi ko 20,000 aaye" nikal gaya, DB fail, paisa gaya hi nahi.
+           Paisa + khabar ek saath DB me
+AGAR    SMS service ghanta bhar giri
+        -> khabar Kafka me padi hai, wapas aate hi wahin se padhegi
+        relay ne Kafka me daala, sent=true se pehle gira
+        -> khabar dobara jaayegi, SMS service eventId dekh ke skip karti hai
+        outbox bharti hi jaaye to?
+        -> roz saaf karo, sent=true ka kaam khatam
+        relay likhna hi na pade, aisa ho sakta hai?
+        -> DB ke log se seedha Kafka (CDC, Debezium)
+        SMS ulte kram me pahunche to?
+        -> Kafka key = account_id, ek account ek partition, to kram se
+```
 
 ---
 
@@ -121,13 +164,19 @@
 
 **Cue:** BALANCE = CACHE, raat RECONCILIATION · dabba: Reconciliation job
 
-- **toota:** column aur khaata alag (bug): khaata 29,800, column 30,300, kisi ne pakda nahi
-- **hal:** khaata sach, balance column uska jod (cache), usi transaction me update
-- **hal:** raat job milata: khaata ka jod (snapshot + baad ki line) == column? (reconciliation)
-- **kyun:** balance sabse zyada dekha jaata, har baar 50,000 line jodna dheema -> column. Par sach ek jagah, khaate me.
-- **nahi:** column hi mat rakho, har baar khaate se jodo -> har baar 50,000 line, dheema
-- **nahi:** column hi sach -> galat hua, pata nahi chala, milane ko kuch tha hi nahi
-- **Pooche:** raat farak mila, 29,800 vs 30,300? -> alert + account roko. Pehle KYUN, phir khaata jeete.
+```
+TOOTA   column aur khaata alag ho gaye (bug): khaata 29,800, column 30,300, kisi ne pakda nahi
+HAL     khaata sach hai, balance column uska jod (cache), usi transaction me update hota hai
+        raat ko job milata hai: khaate ka jod (snapshot + baad ki line) == column? (reconciliation)
+KYUN    balance sabse zyada dekha jaata hai, har baar 50,000 line jodna dheema, isliye column.
+        Par sach ek hi jagah hai, khaate me
+NAHI    column hi mat rakho, har baar khaate se jodo
+        -> DHEEMA: har baar 50,000 line
+        column hi sach
+        -> ANDHA: galat hua to pata nahi chala, milane ko kuch tha hi nahi
+AGAR    raat ki reconciliation me farak mila, 29,800 vs 30,300
+        -> alert + account roko. Pehle KYUN dhoondho, phir khaata jeetega
+```
 
 ---
 
@@ -137,17 +186,28 @@
 
 **Cue:** KAI MACHINE + LB, DB sync copy · dabba: LB + Banking Svc x N
 
-- **toota:** ek machine, laakhon transfer, CPU bhara, giri, koi paisa nahi bhej pa raha
-- **hal:** kai machine + aage LB, machine kuch yaad nahi rakhti (stateless). DB ki sync copy doosri building me.
-- **kyun:** sach DB me, koi bhi machine koi bhi transfer le. Jitni chaho lagao, ek giri to baaki chalti.
-- **nahi:** ek badi machine -> ek hi thi, bhari aur giri
-- **Pooche:** ek machine giri? -> LB health check se list se hata deta
-- **Pooche:** transfer adhoora? -> app WAHI id se dobara, do baar nahi katta (card 2)
-- **Pooche:** LB akela? -> nahi, LB bhi do zone me
-- **Pooche:** main DB gira? -> sync copy (doosri building) promote, ~1-2 min (Multi-AZ). Beech me error to WAHI id se dobara.
-- **Pooche:** sync copy = dheema? -> haan, ek network chakkar, paise me chalega. Async me aakhri transfer kho sakta.
-- **Pooche:** 11 baje ek dukaan pe 50,000 payment ek saath, ek row pe lock ki line? -> credit ledger line me (sirf INSERT, lock nahi)
-- **Pooche:** phir dukaan ka balance? -> column har second batch me jodo. Atomic check sirf debit pe, credit pe nahi.
+```
+TOOTA   ek machine, laakhon transfer, CPU bhara, machine giri, koi paisa nahi bhej pa raha
+HAL     kai machine + aage LB, machine kuch yaad nahi rakhti (stateless). DB ki sync copy doosri building me
+KYUN    sach DB me hai, to koi bhi machine koi bhi transfer le sakti hai. Jitni chaho lagao, ek giri to
+        baaki chalti hain
+NAHI    ek badi machine
+        -> GIRA: ek hi thi, bhari aur giri
+AGAR    ek machine giri
+        -> LB health check se use list se hata deta hai
+        machine giri aur transfer adhoora reh gaya
+        -> app WAHI id se dobara bhejta hai, do baar nahi katta (card 2)
+        LB akela hai?
+        -> nahi, LB bhi do zone me
+        main DB gira
+        -> sync copy (doosri building) promote, ~1-2 min (Multi-AZ). Beech me error aaya to WAHI id se dobara
+        sync copy matlab dheema?
+        -> haan, ek network chakkar lagta hai, paise me chalega. Async me aakhri transfer kho sakta hai
+        11 baje ek dukaan pe 50,000 payment ek saath, to ek row pe lock ki line?
+        -> credit ledger line me likho (sirf INSERT, lock nahi)
+        phir dukaan ka balance kaise?
+        -> column har second batch me jodo. Atomic check sirf debit pe, credit pe nahi
+```
 
 ---
 
@@ -157,14 +217,22 @@
 
 **Cue:** READ REPLICA + read-your-own-writes · dabba: Read replica
 
-- **toota:** padhna + likhna ek DB pe, laakhon balance / history padh rahe, primary pe dono bojh, transfer dheema
-- **hal:** padhna copy se, likhna sirf primary pe (read replica). Primary ka log (WAL) copy tak jaata.
-- **kyun:** bheed padhne ki, copy le leti. Primary pe likhna + paise ka faisla, transfer tez.
-- **kyun:** paise ka faisla sirf primary pe, copy thodi peeche ho sakti
-- **nahi:** sab primary se -> padhne ki bheed ne transfer dheema kiya
-- **Pooche:** abhi bheja, copy 5 sec peeche? -> apna abhi likha primary se (last_write_at Redis me), warna purana balance dekh user dobara bhejega
-- **Pooche:** copy minute bhar peeche? -> lag naapo, alert, us copy ko list se hatao
-- **Pooche:** failover copy = read replica? -> nahi. Failover standby sync, kuch nahi khota. Read replica async, peeche.
+```
+TOOTA   padhna + likhna ek DB pe, laakhon log balance / history padh rahe, primary pe dono bojh,
+        transfer dheema
+HAL     padhna copy se, likhna sirf primary pe (read replica). Primary ka log (WAL) copy tak jaata hai
+KYUN    bheed padhne ki hai, copy use le leti hai. Primary pe likhna + paise ka faisla, to transfer tez
+        paise ka faisla sirf primary pe, kyunki copy thodi peeche ho sakti hai
+NAHI    sab primary se padho
+        -> DHEEMA: padhne ki bheed ne transfer dheema kiya
+AGAR    abhi paisa bheja, aur copy 5 sec peeche hai
+        -> apna abhi likha primary se padho (last_write_at Redis me), warna purana balance dekh ke
+           user dobara bhejega
+        copy minute bhar peeche ho gayi
+        -> lag naapo, alert, us copy ko list se hatao
+        failover wali copy aur read replica ek hi hain?
+        -> nahi. Failover standby sync hai, kuch nahi khota. Read replica async hai, peeche chalti hai
+```
 
 ---
 
@@ -174,12 +242,17 @@
 
 **Cue:** CHHOTI ID PEHLE LOCK · dabba: (SQL DB: lock kram)
 
-- **farak:** card 3 me paisa do baar kat raha tha (double spend). Yahan dono ek doosre ke intezaar me atke.
-- **toota:** Txn1 (Arpan se dukaan) ne Arpan pakda, dukaan ka intezaar. Txn2 (refund) ne dukaan pakdi, Arpan ka intezaar. Gol ghera (deadlock).
-- **hal:** taala hamesha ek kram me, chhoti id pehle (lock order): dono pehle 7 (Arpan), phir 9 (dukaan)
-- **kyun:** ek hi kram -> ghera banta hi nahi. Txn2 7 pe ruka, Txn1 poora, phir Txn2.
-- **nahi:** jo pehle aaye wo pehle pakde -> ulte kram me pakda, dono hamesha atke
-- **Pooche:** kram ke baad bhi phansa? -> DB ghera khud pakadta, ek ko wapas karta. App ruk ke WAHI id se dobara.
+```
+FARAK   card 3 me paisa do baar kat raha tha (double spend). Yahan dono ek doosre ke intezaar me atke
+TOOTA   Txn1 (Arpan se dukaan) ne Arpan pakda, dukaan ka intezaar. Txn2 (refund) ne dukaan pakdi,
+        Arpan ka intezaar. Gol ghera ban gaya (deadlock)
+HAL     taala hamesha ek kram me, chhoti id pehle (lock order): dono pehle 7 (Arpan), phir 9 (dukaan)
+KYUN    ek hi kram hai to ghera banta hi nahi. Txn2 7 pe ruka, Txn1 poora hua, phir Txn2
+NAHI    jo pehle aaye wo pehle pakde
+        -> ATKA: ulte kram me pakda, dono hamesha atke
+AGAR    lock kram ke baad bhi phans gaye
+        -> DB ghera khud pakadta hai, ek ko wapas karta hai. App ruk ke WAHI id se dobara bhejta hai
+```
 
 ---
 
@@ -189,16 +262,25 @@
 
 **Cue:** KEYSET (ts, id) + index · dabba: (SQL DB: index)
 
-- **toota:** page 5000 = LIMIT 20 OFFSET 100000, DB 1 lakh line padh ke phenkta, export bahut dheema
-- **hal:** pichhle page ki aakhri line yaad, agla usse aage (keyset), index ke saath:
-  `WHERE account_id = ? AND (ts, id) < (aakhri ts, id) ORDER BY ts DESC, id DESC LIMIT 20`
-- **kyun:** "kahan tak dekha" yaad, "kitne chhode" nahi. Index se seedha wahan, sirf 20. Page 1 ho ya 5000, ek jaisa.
-- **nahi:** OFFSET -> har page pe pichhli saari line padh ke phenko
-- **nahi:** OFFSET me beech me nayi line -> page khisakta, line dobara aati
-- **Pooche:** ek hi ts pe do line? -> isliye (ts, id), id barabari todti, line na chhoote na dohraye
-- **Pooche:** beech me nayi line? -> purana page nahi khisakta, "kahan tak" yaad hai
-- **Pooche:** (ts, id) app ko kaise? -> band lifafe me (next_cursor, base64), app andar nahi dekhti
-- **Pooche:** seedha page 500? -> keyset me nahi hota, agla / pichhla kaafi
+```
+TOOTA   page 5000 = LIMIT 20 OFFSET 100000, DB 1 lakh line padh ke phenkta hai, export bahut dheema
+HAL     pichhle page ki aakhri line yaad rakho, agla page usse aage (keyset), index ke saath:
+        WHERE account_id = ? AND (ts, id) < (aakhri ts, id) ORDER BY ts DESC, id DESC LIMIT 20
+KYUN    "kahan tak dekha" yaad hai, "kitne chhode" nahi. Index se seedha wahan, sirf 20.
+        Page 1 ho ya 5000, ek jaisa
+NAHI    OFFSET
+        -> DHEEMA: har page pe pichhli saari line padh ke phenko
+        OFFSET aur beech me nayi line aa gayi
+        -> KHISAKTA: page khisakta hai, line dobara aati hai
+AGAR    ek hi ts pe do line hain
+        -> isliye (ts, id), id barabari todti hai, line na chhoote na dohraye
+        keyset me beech me nayi line aa gayi
+        -> purana page nahi khisakta, "kahan tak" yaad hai
+        (ts, id) app ko kaise doge?
+        -> band lifafe me (next_cursor, base64), app andar nahi dekhti
+        seedha page 500 pe jaana ho
+        -> keyset me nahi hota, agla / pichhla kaafi hai
+```
 
 ---
 
@@ -208,15 +290,22 @@
 
 **Cue:** MAHINE KE TUKDE + S3, snapshot · dabba: Archive (S3)
 
-- **numbers:** khaata 1 crore x 2 line x 365 = ~730 crore line saal me, 3 saal ~22 arab, 5 saal ~36 arab
-- **toota:** 5 saal ki arabon line ek table me, roz ki query + backup saari line chhoote, dheema + mehnga
-- **hal:** mahine ke tukde (partition), is mahine ke paas aur tez. Mahina band -> alag karke S3 (archive), sasta.
-- **kyun:** table me sirf haal ke mahine, chhoti. Naya paas, purana sasta.
-- **kyun:** balance ka jod 5 saal se nahi, mahine ka snapshot + baad ki line
-- **nahi:** purana delete -> 5 saal (PMLA) se pehle nahi, bank ka niyam
-- **Pooche:** line S3 gayi, balance ka jod? -> poora nahi, mahine ka snapshot + baad ki line
-- **Pooche:** RBI ko 2021 ka statement? -> S3 pe hi query (Athena, Parquet), ya tukda wapas laao
-- **Pooche:** koi purani file badle? -> S3 pe taala, na delete na badal (Object Lock, WORM)
+```
+NUMBERS khaata 1 crore x 2 line x 365 = ~730 crore line saal me, 3 saal ~22 arab, 5 saal ~36 arab
+TOOTA   5 saal ki arabon line ek table me, roz ki query + backup saari line chhoote, dheema + mehnga
+HAL     mahine ke tukde (partition), is mahine ke paas aur tez. Mahina band hua to alag karke S3 pe
+        (archive), sasta
+KYUN    table me sirf haal ke mahine, to chhoti. Naya paas, purana sasta
+        balance ka jod 5 saal se nahi, mahine ka snapshot + baad ki line
+NAHI    purana delete kar do
+        -> NIYAM: 5 saal (PMLA) se pehle nahi, ye bank ka niyam hai
+AGAR    line S3 pe chali gayi, to balance ka jod kaise?
+        -> poora nahi jodte, mahine ka snapshot + baad ki line
+        RBI ko 2021 ka statement chahiye
+        -> S3 pe hi query (Athena, Parquet), ya tukda wapas laao
+        koi S3 pe purani file badal de to?
+        -> S3 pe taala, na delete na badal (Object Lock, WORM)
+```
 
 ---
 
