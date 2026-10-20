@@ -529,16 +529,16 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  └──────────────────────────────────────────────────────────────
      SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
      TEMPLATE:
-         unordered_map<char,int> mp;  int i=0, j=0, minLen=INT_MIN;   // INT_MIN: end me check karke khaali string pe 0
+         unordered_map<char,int> mp;  int i=0, j=0, maxLen=INT_MIN;   // INT_MIN: end me check karke khaali string pe 0
          while(j < s.size()){
              mp[s[j]]++;                          // window me add
              while(mp[s[j]] > 1){                 // INVALID: current char (s[j]) repeat (while: repeat wala char nikalne tak kai char hatane padte)
                  mp[s[i]]--; i++;                 // left shrink jab tak repeat khatam
              }
-             minLen = max(minLen, j - i + 1);     // valid window length (shrink ke BAAD record, ab window valid)
+             maxLen = max(maxLen, j - i + 1);     // valid window length (shrink ke BAAD record, ab window valid)
              j++;   // record ke BAAD aage badho
          }
-         return minLen==INT_MIN ? 0 : minLen;     // khaali string -> INT_MIN reh jaata -> 0
+         return maxLen==INT_MIN ? 0 : maxLen;     // khaali string -> INT_MIN reh jaata -> 0
      INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
 
  ┌──────────────────────────────────────────────────────────────
