@@ -2,20 +2,25 @@
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: Ravi ne file daali: naam report.pdf, type application/pdf. Andar virus.exe nikla'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: worker file ke pehle 4 byte padhta: "%PDF" to PDF, "MZ" to EXE, reject (magic bytes)'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: worker pehle 4 byte padhta: "%PDF" to PDF, "MZ" to EXE, reject (magic bytes)'],
   [6, YEL, 'AGAR', 'AGAR shuru PDF, andar virus? -> magic bytes sirf type, scan bhi chahiye'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Ravi → Worker', 'naam report.pdf, type pdf'], [C.bad, 'Worker → Status DB', 'naam pe bharosa: DONE'], [C.bad, 'Status DB → Arpan', 'DONE dekh ke download:|andar EXE nikla']],
+  [[C.acc, 'S3 → Worker', 'file ke pehle 4 byte padhe'], [C.good, 'Worker → Status DB', '"MZ" = EXE: REJECT']],
+  [[C.acc, 'Worker → Scanner', '%PDF theek, ab virus scan'], [C.bad, 'Scanner', 'virus mila'], [C.bad, 'Scanner → Quarantine', 'file wahan, download band'], [C.good, 'Scanner → Status DB', 'DONE nahi: REJECT']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 170, 70, 'Ravi', 'report.pdf', { st: 'bad' });

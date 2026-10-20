@@ -39,8 +39,8 @@ function box(x, y, w, h, label, sub, o = {}) {
       stroke: o.iconc || o.stroke || C.fg, 'stroke-width': 2 / k, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
     cx = x + 50 + (w - 56) / 2;
   }
-  el('text', { x: cx, y: BIG ? y + h / 2 + (sub ? -4 : 6) : y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': BIG ? 17 : 14, 'font-weight': BIG ? 'bold' : 'normal', fill: C.fg }, g, label);
-  if (sub) el('text', { x: cx, y: BIG ? y + h / 2 + 17 : y + 36, 'text-anchor': 'middle', 'font-size': BIG ? 14 : 12, fill: C.muted }, g, sub);
+  el('text', { x: cx, y: BIG ? (h >= 90 ? y + 26 : y + h / 2 + (sub ? -4 : 6)) : y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': BIG ? 17 : 14, 'font-weight': BIG ? 'bold' : 'normal', fill: C.fg }, g, label);
+  if (sub) el('text', { x: cx, y: BIG ? (h >= 90 ? y + 46 : y + h / 2 + 17) : y + 36, 'text-anchor': 'middle', 'font-size': BIG ? 14 : 12, fill: C.muted }, g, sub);
   return g;
 }
 function wire(d, id, parent) {
@@ -82,7 +82,7 @@ function cells(x, y, items, o = {}) {
   const w = o.w || 46, h = o.h || 26;
   items.forEach(([s, c], i) => {
     el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
-    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+    T(x + i * (w + 4) + w / 2, y + h / 2 + (BIG ? 5 : 4), s, { c: c || C.fg, size: BIG ? 13 : 11, b: 1 });
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');

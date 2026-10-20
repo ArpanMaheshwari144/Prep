@@ -2,20 +2,25 @@
 const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: Ravi ne mera trackingId T-101 daala. Service ne id dekhi aur meri file de di'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: har request pe check: file ka maalik hi maang raha? JWT ravi, T-101 ka maalik arpan, to 403'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har request pe check: maalik hi maang raha? JWT ravi, T-101 ka maalik arpan: 403'],
   [6, YEL, 'AGAR', 'AGAR admin maange to? -> owner ho ya admin role ho, warna 403'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Ravi → Download Svc', 'GET T-101 (id leak hui thi)'], [C.acc, 'Download Svc → S3', 'id dekhi, file maangi'], [C.acc, 'S3 → Download Svc', 'Arpan ki report.pdf'], [C.bad, 'Download Svc → Ravi', 'Arpan ki file Ravi ko']],
+  [[C.msg, 'Ravi → Download Svc', 'GET T-101'], [C.acc, 'Download Svc → Status DB', 'T-101 ka maalik kaun?'], [C.acc, 'Status DB → Download Svc', 'arpan'], [C.good, 'Download Svc → Ravi', '403: ravi != arpan']],
+  [[C.msg, 'Admin → Download Svc', 'GET T-101'], [C.good, 'Download Svc → S3', 'admin role hai: file mili'], [C.msg, 'Ravi → Download Svc', 'GET T-101'], [C.bad, 'Download Svc → Ravi', 'na owner na admin: 403']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 160, 70, 'Ravi', 'JWT: ravi', { st: 'bad' });

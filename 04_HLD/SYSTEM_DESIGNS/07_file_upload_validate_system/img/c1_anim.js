@@ -1,21 +1,26 @@
 // Card 1: jaanch 3 sec, user ghoomta screen dekhta. Ilaaj: async + tracking id. Agar: Validator 1 ghanta band.
 const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: maine report.pdf daali. Upload Svc ne jaanch ka 3 sec intezaar kiya, screen ghoomti rahi'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: turant tracking id T-101 + VALIDATING. Khabar Kafka me, worker peeche jaanchta, DB me DONE'],
+  [0, RED, 'DIKKAT', 'DIKKAT: report.pdf daali. Upload Svc jaanch ke 3 sec ruka, screen ghoomti rahi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: turant T-101 + VALIDATING. Khabar Kafka me, worker peeche jaanch ke DONE likhta'],
   [6, YEL, 'AGAR', 'AGAR Validator 1 ghanta band? -> 4,000 khabar line me padi rehti'],
 ];
 function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.msg, 'Arpan → Upload Svc', 'report.pdf bheji'], [C.acc, 'Upload Svc → Validator', 'jaanch karwayi, jawab ka intezaar'], [C.acc, 'Validator → Upload Svc', '3 sec baad "OK"'], [C.bad, 'Upload Svc → Arpan', 'tab jaake jawab. Itni der|screen ghoomti rahi']],
+  [[C.acc, 'Upload Svc → Kafka', 'T-101 ki khabar line me daali,|jaanch abhi nahi'], [C.good, 'Upload Svc → Arpan', 'turant T-101, haal VALIDATING'], [C.acc, 'Worker → Validator', 'worker ne line se T-101 uthaya,|peeche jaanch karwayi'], [C.good, 'Worker → Status DB', 'T-101: DONE likha,|tab hi offset aage']],
+  [[C.acc, 'Kafka → Worker', 'T-101 uthaya'], [C.bad, 'Worker → Validator', 'call fail, Validator 1 ghanta band'], [C.acc, 'Kafka line', 'DONE nahi likha, offset wahin.|4,000 khabar padi rahi, khoi nahi'], [C.good, 'Worker → Validator', 'Validator wapas aaya,|line ki saari khabar jaanch li']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 150, 70, 'Arpan', 'screen ghoom rahi', { st: 'bad' });
@@ -40,7 +45,7 @@ function frame(ph) {
     B(720, 240, 160, 70, 'Validator', 'wapas aaya', { st: 'good' });
     A(400, 90, 478, 90, C.acc, { n: 1 });
     A(630, 90, 718, 90, C.bad, { n: 2, dash: 1 }); L(675, 72, 'call fail', C.bad);
-    num(210, 175, 3, C.acc); L(230, 180, 'DONE nahi likha: offset wahin, khabar padi rahi', C.acc, 'start');
+    num(60, 175, 3, C.acc); L(80, 180, 'offset wahin, khabar padi', C.acc, 'start');
     A(555, 127, 718, 270, C.good, { n: 4 }); L(570, 225, 'ab sab jaancho', C.good, 'end');
     L(450, 345, 'khabar khoi nahi. Upload bhi chalta raha, sirf jaanch der se', C.good);
   }

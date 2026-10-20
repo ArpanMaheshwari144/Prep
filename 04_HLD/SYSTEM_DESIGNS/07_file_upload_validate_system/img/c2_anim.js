@@ -9,13 +9,18 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
+const STEPS = [
+  [[C.bad, 'Phone → Upload Svc', '5 GB pehle hamare server pe aaye'], [C.bad, 'Upload Svc → S3', 'wahi 5 GB phir S3 pe'], [C.bad, 'Upload Svc', 'thread minuton atka,|server pe bojh, mehnga bhi']],
+  [[C.msg, 'Phone → Upload Svc', 'paas maanga, bytes nahi bheje'], [C.acc, 'Upload Svc → Phone', '10 min ka signed URL + T-102'], [C.good, 'Phone → S3', '5 GB seedha S3 pe,|server beech me nahi'], [C.good, 'Phone → Upload Svc', '/complete T-102:|ab jaanch line me']],
+  [[C.acc, 'Upload Svc → Koi app', 'paas diya, usme max 5 GB sign'], [C.bad, 'Koi app → S3', '50 GB bhejne ki koshish'], [C.good, 'S3 → Koi app', 'size paas se bahar: reject.|Hamara server kuch nahi karta']],
+];
 function frame(ph) {
   if (ph === 0) {
     B(20, 130, 150, 70, 'Arpan ka phone', 'video 5 GB');
@@ -37,8 +42,8 @@ function frame(ph) {
     B(360, 30, 200, 70, 'Upload Svc', 'paas: max 5 GB', { st: 'acc' });
     B(680, 130, 190, 80, 'S3', 'size paas se milao', { st: 'good' });
     A(358, 75, 192, 145, C.acc, { n: 1 }); L(265, 90, 'paas (max 5 GB)', C.acc);
-    A(190, 170, 678, 170, C.bad, { n: 2, at: 0.4 }); L(400, 160, '50 GB bheja', C.bad);
-    A(678, 195, 192, 195, C.good, { n: 3, at: 0.6 }); L(450, 225, 'reject: paas me 5 GB likha', C.good);
+    A(190, 170, 678, 170, C.bad, { n: 2, at: 0.4 }); L(270, 158, '50 GB bheja', C.bad);
+    A(678, 195, 192, 195, C.good, { n: 3, at: 0.25 }); L(450, 225, 'reject: paas me 5 GB likha', C.good);
     L(450, 300, 'had paas me sign hai, S3 khud rokta. Hamara server kuch nahi karta', C.good);
   }
 }

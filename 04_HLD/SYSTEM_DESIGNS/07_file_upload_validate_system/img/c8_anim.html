@@ -52,8 +52,8 @@ function box(x, y, w, h, label, sub, o = {}) {
       stroke: o.iconc || o.stroke || C.fg, 'stroke-width': 2 / k, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
     cx = x + 50 + (w - 56) / 2;
   }
-  el('text', { x: cx, y: BIG ? y + h / 2 + (sub ? -4 : 6) : y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': BIG ? 17 : 14, 'font-weight': BIG ? 'bold' : 'normal', fill: C.fg }, g, label);
-  if (sub) el('text', { x: cx, y: BIG ? y + h / 2 + 17 : y + 36, 'text-anchor': 'middle', 'font-size': BIG ? 14 : 12, fill: C.muted }, g, sub);
+  el('text', { x: cx, y: BIG ? (h >= 90 ? y + 26 : y + h / 2 + (sub ? -4 : 6)) : y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': BIG ? 17 : 14, 'font-weight': BIG ? 'bold' : 'normal', fill: C.fg }, g, label);
+  if (sub) el('text', { x: cx, y: BIG ? (h >= 90 ? y + 46 : y + h / 2 + 17) : y + 36, 'text-anchor': 'middle', 'font-size': BIG ? 14 : 12, fill: C.muted }, g, sub);
   return g;
 }
 function wire(d, id, parent) {
@@ -95,7 +95,7 @@ function cells(x, y, items, o = {}) {
   const w = o.w || 46, h = o.h || 26;
   items.forEach(([s, c], i) => {
     el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
-    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+    T(x + i * (w + 4) + w / 2, y + h / 2 + (BIG ? 5 : 4), s, { c: c || C.fg, size: BIG ? 13 : 11, b: 1 });
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
@@ -194,7 +194,7 @@ function draw(t) {
 // Card 8: pakka S3 link WhatsApp pe, hamesha chalta. Ilaaj: DB me sirf key, har baar naya 5 min ka link. Agar: download adhoora.
 const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: maine S3 ka pakka link WhatsApp group pe bhej diya. Wo hamesha chalta, koi bhi khole'],
+  [0, RED, 'DIKKAT', 'DIKKAT: S3 ka pakka link WhatsApp group pe bhej diya. Wo hamesha chalta, koi bhi khole'],
   [3, GRN, 'ILAAJ', 'ILAAJ: DB me sirf S3 key. Pehle maalik check, phir naya 5 min ka link (signed GET)'],
   [6, YEL, 'AGAR', 'AGAR 5 min me download adhoora? -> chalu download beech me nahi katta'],
 ];
@@ -202,12 +202,12 @@ function setup() {}
 function panel(k, title, top, bot, lab, down, c, note) {
   const x = 15 + k * 220;
   el('rect', { x, y: 5, width: 205, height: 265, rx: 8, fill: '#161d25', stroke: C.line }, DYN);
-  num(x + 20, 25, k + 1, c); T(x + 112, 30, title, { c: C.fg, b: 1, size: 13 });
-  B(x + 40, 50, 125, 48, top[0], top[1], { st: top[2] });
-  B(x + 40, 165, 125, 58, bot[0], bot[1], { st: bot[2] });
-  if (lab) { if (down) A(x + 70, 100, x + 70, 163, c); else A(x + 70, 163, x + 70, 100, c); } // khaali lab = teer nahi
-  T(x + 140, 135, lab, { c, b: 1, size: 12 });
-  T(x + 102, 252, note, { c: C.muted, size: 11 });
+  num(x + 20, 25, k + 1, c); T(x + 112, 31, title, { c: C.fg, b: 1, size: 15 });
+  B(x + 12, 50, 181, 58, top[0], top[1], { st: top[2] });
+  B(x + 12, 160, 181, 64, bot[0], bot[1], { st: bot[2] });
+  if (lab) { if (down) A(x + 60, 110, x + 60, 158, c); else A(x + 60, 158, x + 60, 110, c); } // khaali lab = teer nahi
+  T(x + 72, 139, lab, { c, b: 1, size: 14, a: 'start' });
+  T(x + 102, 252, note, { c: C.muted, size: 13 });
 }
 const STEPS = [
   [[C.msg, 'Arpan → WhatsApp group', 'Arpan ne S3 ka pakka link|group me bhej diya'],
