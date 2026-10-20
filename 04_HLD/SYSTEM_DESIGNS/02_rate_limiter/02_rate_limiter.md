@@ -3,7 +3,8 @@
 > Ek user ek tay samay me kitni request bhej sakta hai, uski had. Had paar to 429.
 > Teen cheez: har request ke aage baitha (~1 ms) · ginti saari machines pe EK · limiter gire to site na gire.
 >
-> Mock me sirf heading + Cue + GIF. Neeche har card: **hal** · **kyun** · **nahi** (doosra kyun nahi) · **Pooche**.
+> Mock me sirf heading + Cue + GIF. Neeche har card: **hal** · **kyun** · **nahi** (doosra kyun nahi) · **agar ...:** (cross-Q).
+> Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
 
@@ -33,16 +34,16 @@
 - **kyun:** ginti EK jagah + RAM jitni tez. Key ki umar = window.
 - **nahi:** DB -> har request pe disk + lock, dheema
 - **nahi:** sticky LB -> wo App gira to ginti gayi
-- **Pooche:** minute ke kinare 5 + 5? -> 2 sec me 10 andar (fixed window ki kamzori), isliye asli me token bucket
+- **agar minute ki window (fixed):** kinare pe 5 + 5 aayi? -> 2 sec me 10 andar (fixed window ki kamzori), isliye asli me token bucket
 - **token bucket:** max 10 token, har second 1 bharta, har request 1 leti, khaali = 429
 - **Redis me:** sirf 2 number: tokens + lastTime. Request aane pe bharo: tokens + (now - last) x rate, max 10. Koi job nahi.
-- **Pooche:** 10 ek saath? -> bucket bhara tha, 10 nikal gayi (burst)
-- **Pooche:** 11vi? -> bucket khaali, 429 + Retry-After
-- **Pooche:** ghanta bhar soya, phir aaya? -> beeta time x rate, par 10 se upar nahi (bucket ki had)
-- **Pooche:** sliding log? -> sabse sahi, par har request ka time rakho = memory bahut
-- **Pooche:** sliding counter? -> is minute ki ginti + pichhle ka hissa, 2 number, lagbhag sahi
-- **Pooche:** leaky bucket? -> smooth, par burst nahi nikalne deta
-- **Pooche:** token bucket hi kyun? -> burst chalta, sirf 2 number, AWS / Stripe yahi
+- **agar bucket bhara:** 10 ek saath aayi? -> 10 nikal gayi (burst)
+- **agar bucket khaali:** 11vi aayi? -> 429 + Retry-After
+- **agar user ghanta bhar soya:** phir aaya to? -> beeta time x rate, par 10 se upar nahi (bucket ki had)
+- **agar sliding log lagate:** kaisa? -> sabse sahi, par har request ka time rakho = memory bahut
+- **agar sliding counter lagate:** kaisa? -> is minute ki ginti + pichhle ka hissa, 2 number, lagbhag sahi
+- **agar leaky bucket lagate:** kaisa? -> smooth, par burst nahi nikalne deta
+- **agar token bucket:** yahi kyun? -> burst chalta, sirf 2 number, AWS / Stripe yahi
 
 ---
 
@@ -58,10 +59,10 @@
 - **kyun:** Redis ek line me chalta, ek ke baad ek. Beech me koi ghus nahi sakta.
 - **nahi:** GET phir SET -> do kadam, dono ne 4 padha, dono andar
 - **nahi:** App me synchronized -> sirf ek machine ke andar
-- **Pooche:** INCR ke baad, EXPIRE se pehle crash? -> key bina umar, user hamesha block. INCR + EXPIRE ek Lua me.
-- **Pooche:** Lua atak jaaye? -> poora Redis rukta. Script chhota, loop nahi.
-- **Pooche:** Redis ek line me, dheema nahi? -> RAM, ~lakh command / sec (andaza). Zyada chahiye to shard.
-- **Pooche:** Lua me 2 key, cluster hai? -> {Arpan} hash tag: dono key ek hi machine pe
+- **agar INCR ke baad, EXPIRE se pehle crash:** kya hoga? -> key bina umar, user hamesha block. INCR + EXPIRE ek Lua me.
+- **agar Lua atak gaya:** kya hoga? -> poora Redis rukta. Script chhota, loop nahi.
+- **agar Redis ek line me chalta:** dheema nahi? -> RAM, ~lakh command / sec (andaza). Zyada chahiye to shard.
+- **agar Lua me 2 key, aur Redis cluster:** -> {Arpan} hash tag: dono key ek hi machine pe
 
 ---
 
@@ -76,10 +77,10 @@
 - **hal:** limiter API Gateway pe. Had paar to wahin 429, App tak pahunchti hi nahi.
 - **kyun:** jitna aage roko, utna kam kaam bekaar
 - **nahi:** ginti App me -> mana wali request bhi andar, App usi me bhar gaya
-- **Pooche:** 429 ke saath kya? -> Retry-After: 30 + X-RateLimit-Remaining
-- **Pooche:** sab 30 sec baad ek saath lautein? -> Retry-After alag-alag (28, 33) = jitter
-- **Pooche:** gateway gira? -> 2+ machine, aage LB
-- **Pooche:** sirf gateway pe? -> dono: gateway pe moti had, service me apni baarik had
+- **agar 429 bheja:** saath kya bhejo? -> Retry-After: 30 + X-RateLimit-Remaining
+- **agar sab 30 sec baad ek saath lautein:** -> Retry-After alag-alag (28, 33) = jitter
+- **agar gateway gira:** -> 2+ machine, aage LB
+- **agar had sirf gateway pe:** kaafi? -> dono: gateway pe moti had, service me apni baarik had
 
 ---
 
@@ -94,9 +95,12 @@
 - **hal:** Redis ki copy (Redis Cluster), main mara to copy main. Poora gaya to: feed / search khula, login / OTP band.
 - **kyun:** gire to kya karna, pehle se tay, endpoint ke hisaab se
 - **nahi:** sab fail-open -> login khula, koi bina had password guess karega
-- **Pooche:** gira, pata kaise? -> chhota timeout (~5 ms), nahi aaya to gira maano
-- **Pooche:** gira nahi, CPU full, copy laga do? -> nahi, INCR = likhna, sirf main pe. Isliye SHARD (user ki key alag Redis).
-- **Pooche:** LB / gateway akela? -> ALB kai zone me, Route 53 zinda wale pe
+- **agar Redis gira:** pata kaise chalega? -> chhota timeout (~5 ms), jawab nahi aaya to gira maano
+- **agar copy main ban rahi:** ginti ka kya? -> aakhri kuch second ki ginti khoti, rate limit me chalta
+- **agar Redis bas dheema (CPU full):** copy laga du? -> nahi, INCR = likhna, sirf main pe. Isliye SHARD (user ki key alag Redis).
+- **agar login band (fail-closed):** user ko kya dikhe? -> 503 + "thodi der baad try karo", chup nahi
+- **agar feed khuli (fail-open):** kab tak? -> Redis wapas aate hi band; tab tak har gateway apni ginti (card 8)
+- **agar LB / gateway akela:** -> ALB kai zone me, Route 53 zinda wale pe
 
 ---
 
@@ -111,9 +115,9 @@
 - **hal:** meri ginti mere ghar region me (India). Frankfurt ki request bhi wahin gini jaati -> 100 hi.
 - **kyun:** ek user ki ek ginti, ek ghar me
 - **nahi:** har region apni ginti -> 50 + 50 + 50 = 150
-- **Pooche:** ghar door (100-200 ms)? -> sirf paisa / login ghar tak, baaki apni ginti + har second sync
-- **Pooche:** sync ke beech? -> ~1 sec tak thodi dheel, chalta
-- **Pooche:** ghar region gira? -> Route 53 doosra region, ginti 0 se
+- **agar ghar region door (100-200 ms):** har request wahan? -> sirf paisa / login ghar tak, baaki apni ginti + har second sync
+- **agar sync ke beech:** -> ~1 sec tak thodi dheel, chalta
+- **agar ghar region gira:** -> Route 53 doosra region, ginti 0 se
 
 ---
 
@@ -129,9 +133,9 @@
 - **kyun:** 429 maafi wala (phir aao). Ban sirf pakke gunde pe, aur apne aap hatne wala.
 - **nahi:** turant ban -> asli tez click, office NAT, sale ki bheed sab bahar
 - **nahi:** gateway seedha Pattern Svc call -> har request dheemi
-- **Pooche:** Kafka peeche chal raha? -> ban kuch minute late, tab tak rate limit rok raha
-- **Pooche:** galat ban (office / college IP)? -> ban ki umar ~24 ghante, apne aap hate, haath se bhi. Bheed wale IP pe captcha.
-- **Pooche:** userId pe ban? -> wo gateway pe (JWT). WAF edge pe sirf IP dekhta.
+- **agar Kafka peeche chal raha:** -> ban kuch minute late, tab tak rate limit rok raha
+- **agar galat ban (office / college IP):** -> ban ki umar ~24 ghante, apne aap hate, haath se bhi. Bheed wale IP pe captcha.
+- **agar userId pe ban karna:** kahan? -> gateway pe (JWT). WAF edge pe sirf IP dekhta.
 
 ---
 
@@ -147,7 +151,7 @@
 - **kyun:** user ki had aur system ki had alag. Sab had me hon, phir bhi system bhar sakta.
 - **nahi:** machine khud badh jaayegi -> minute lagte, bheed second me
 - **nahi:** line me rok lo -> sirf ~2 sec, user chala gaya to bekaar
-- **Pooche:** 429 ya 503? -> user ki had = 429, system ki had = 503
+- **agar had paar:** 429 ya 503? -> user ki had = 429, system ki had = 503
 
 ---
 
@@ -162,10 +166,10 @@
 - **hal:** har gateway apni memory me gine, had BAANT do: 100 / N (4 gateway -> har ek 25)
 - **kyun:** thodi galat had, bina had se behtar. Login ab bhi fail-closed.
 - **nahi:** sab andar aane do -> attacker ke liye site khuli, server bhar ke band
-- **Pooche:** baanta nahi to? -> har gateway 100 -> user ko 4 x 100 = 400
-- **Pooche:** exact chahiye? -> LB userId ke hash se ek user hamesha ek gateway pe (sticky by userId)
-- **Pooche:** gateway badh gaye? -> N config / service discovery se, had dobara baanto
-- **Pooche:** Redis wapas? -> phir sabki ek ginti
+- **agar had baanti nahi:** -> har gateway 100 -> user ko 4 x 100 = 400
+- **agar exact had chahiye:** -> LB userId ke hash se ek user hamesha ek gateway pe (sticky by userId)
+- **agar gateway badh gaye:** -> N config / service discovery se, had dobara baanto
+- **agar Redis wapas aaya:** -> phir sabki ek ginti
 
 ---
 
@@ -180,9 +184,9 @@
 - **hal:** login ke baad ginti userId pe (JWT se). 1000 log = 1000 alag ginti.
 - **kyun:** had us pehchaan pe jo ek insaan ki ho. Ek IP pe 1000 log, ek botnet ke 1000 IP.
 - **nahi:** IP ki had badha do (5 se 500) -> office bacha, par botnet ko bhi utni chhoot
-- **Pooche:** login se pehle? -> userId hai hi nahi: IP pe dheeli had + WAF
-- **Pooche:** 5 galat password? -> username pe lock nahi, CAPTCHA / der. Warna attacker tujhe hi lock kar dega.
-- **Pooche:** API key chori? -> nuksaan seemit, had key pe. Key badlo / band karo.
+- **agar login se pehle (userId nahi):** -> IP pe dheeli had + WAF
+- **agar 5 galat password:** lock karo? -> username pe lock nahi, CAPTCHA / der. Warna attacker tujhe hi lock kar dega.
+- **agar API key chori:** -> nuksaan seemit, had key pe. Key badlo / band karo.
 
 ---
 
