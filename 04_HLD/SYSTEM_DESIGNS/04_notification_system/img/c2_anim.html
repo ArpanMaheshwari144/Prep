@@ -133,64 +133,40 @@ function draw(t) {
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 2: push / email / SMS ek hi line, worker SMS pe atka to sab atke. Ilaaj: har raaste ki alag line + worker.
-// Agar: SMS ki line lambi. Wapas: har raasta apni line, apni speed.
-const DUR = 12;
+// Card 2: push, email, SMS ek hi line me. SMS company dheemi, worker atka, push + email bhi atke.
+// Ilaaj: har raaste ki alag line + worker. Agar: SMS line lambi -> sirf SMS worker badhao.
+const DUR = 9;
 const PH = [
-  [0, RED, 'DIKKAT', 'DIKKAT: push, email, SMS ek hi line. Worker SMS pe atka, sab peeche'],
-  [3, GRN, 'ILAAJ', 'ILAAJ: har raaste ki alag line + alag worker. SMS dheema to sirf SMS ruka'],
-  [6, YEL, 'AGAR', 'AGAR SMS ki line lambi? -> sirf SMS ke worker badhao'],
-  [9, GRN, 'WAPAS', 'WAPAS: har raasta apni line me, apni speed se chalta hai'],
+  [0, RED, 'DIKKAT', 'DIKKAT: push, email, SMS ek hi line me. SMS company dheemi, worker wahin atka, sab atke'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har raaste ki apni line aur apna worker. SMS ruka, push + email chalte rahe'],
+  [6, YEL, 'AGAR', 'AGAR SMS ki line lambi ho gayi? -> sirf SMS ke worker badhao, baaki ko mat chhuo'],
 ];
-const ROW = [70, 190, 310], NM = ['Push', 'Email', 'SMS'];
 function setup() {}
-function ns() { B(20, 150, 120, 80, 'Notification', 'Svc'); }
-function co(i, st, sub) { B(690, ROW[i] - 25, 120, 50, `${NM[i]} co.`, sub, { st }); }
-// alag lines: k[i] = line me kitne, st = [push, email, sms] worker box st
-function rows(k, wst, wsub = ['', '', '']) {
-  ns();
-  ROW.forEach((y, i) => {
-    A(140, 190, 166, y, C.msg, { n: i === 1 ? 1 : 0, at: 0.5 });
-    cells(170, y - 13, Array(k[i]).fill([NM[i], i === 2 ? C.bad : C.msg]), { w: 46 });
-    A(170 + k[i] * 50, y, 478, y, C.line);
-    B(480, y - 25, 110, 50, `${NM[i]} worker`, wsub[i], { st: wst[i] });
-  });
-}
 function frame(ph) {
   if (ph === 0) {
-    ns(); A(140, 190, 168, 190, C.line);
-    cells(170, 177, [['Email', C.msg], ['Push', C.msg], ['Email', C.msg], ['Push', C.msg], ['SMS', C.bad]], { w: 48 });
-    T(290, 165, 'ek hi line', { c: C.muted, size: 12 });
-    A(430, 190, 478, 190, C.line);
-    B(480, 165, 110, 50, 'Worker', '', { st: 'bad' });
-    co(0, '', ''); co(1, '', ''); co(2, 'bad', 'dheemi');
-    num(835, 300, 1, C.bad); L(835, 345, 'dheemi', C.bad);
-    A(590, 200, 688, 305, C.bad, { n: 2, at: 0.45 }); L(600, 270, 'SMS pe atka', C.bad, 'end');
-    A(590, 180, 688, 75, C.line, { dash: 1 }); A(590, 190, 688, 190, C.line, { dash: 1 });
-    num(205, 230, 3, C.bad); L(222, 235, 'push + email peeche atke', C.bad, 'start');
-    T(840, 75, '0', { c: C.bad, b: 1, size: 15 }); T(840, 195, '0', { c: C.bad, b: 1, size: 15 });
-  } else if (ph === 1) {
-    rows([2, 2, 3], ['good', 'good', 'bad']);
-    L(80, 130, '3 chhote message', C.msg);
-    A(590, 70, 688, 70, C.good, { n: 2 }); co(0, 'good', 'pahuncha');
-    A(590, 190, 688, 190, C.good, { n: 2 }); co(1, 'good', 'pahuncha');
-    A(590, 310, 688, 310, C.bad, { n: 3, dash: 1 }); co(2, 'bad', 'dheemi');
-    L(640, 345, 'sirf SMS ruka', C.bad);
-  } else if (ph === 2) {
-    rows([2, 2, 6], ['good', 'good', 'acc'], ['', '', 'x3']);
-    num(155, 345, 2, C.bad); L(172, 350, 'SMS line lambi', C.bad, 'start');
-    A(590, 70, 688, 70, C.good, { n: 4 }); co(0, 'good', 'asar nahi');
-    A(590, 190, 688, 190, C.good, { n: 4 }); co(1, 'good', 'asar nahi');
-    num(535, 260, 3, C.acc); L(553, 265, 'worker badhe', C.acc, 'start');
-    A(590, 300, 688, 300, C.acc, { n: 5, at: 0.4 }); A(590, 318, 688, 318, C.acc);
-    co(2, 'acc', 'dheemi');
-    L(560, 25, 'hal: sirf SMS ke worker badhao, push / email pe asar nahi', C.good);
+    B(20, 110, 380, 100, 'Ek hi line', '', { st: 'bad' });
+    cells(35, 155, [['SMS', C.bad], ['push', C.muted], ['email', C.muted], ['push', C.muted], ['email', C.muted]], { w: 66, h: 34 });
+    B(470, 125, 140, 70, 'Worker', 'SMS pe atka', { st: 'bad' });
+    B(700, 125, 170, 70, 'SMS company', '30 sec / msg', { st: 'bad' });
+    A(400, 160, 468, 160, C.bad, { n: 1 }); A(610, 160, 698, 160, C.bad, { n: 2, dash: 1 });
+    num(240, 245, 3, C.bad); L(240, 270, 'push aur email SMS ke peeche khade', C.bad);
+    L(450, 330, 'ek dheema raasta sabko rok deta', C.bad);
   } else {
-    rows([1, 1, 2], ['good', 'good', 'good']);
-    A(590, 70, 688, 70, C.good, { n: 2 }); co(0, 'good', 'apni speed');
-    A(590, 190, 688, 190, C.good, { n: 2 }); co(1, 'good', 'apni speed');
-    A(590, 310, 688, 310, C.acc, { n: 2 }); co(2, 'acc', 'dheere');
-    L(640, 345, 'SMS dheere, par chal raha', C.acc);
+    const more = ph === 2;
+    const R = [['SMS line', 'SMS worker' + (more ? ' x 4' : ''), 'SMS company', more ? 'acc' : 'bad', 'dheemi hi hai'],
+               ['push line', 'push worker', 'phone', 'good', 'pahuncha'],
+               ['email line', 'email worker', 'Email company', 'good', 'pahuncha']];
+    B(20, 140, 120, 60, 'Ghatna', 'order#9');
+    R.forEach(([l, w, d, st, s], i) => {
+      const y = 25 + i * 110;
+      B(220, y, 150, 60, l, '', { st: i ? 'good' : (more ? 'acc' : 'bad') });
+      B(440, y, 170, 60, w, '', { st });
+      B(690, y, 170, 60, d, s, { st });
+      A(140, 170, 218, y + 30, C.msg, { n: i + 1, at: 0.5 });
+      A(370, y + 30, 438, y + 30, st === 'good' ? C.good : C.acc);
+      A(610, y + 30, 688, y + 30, st === 'good' ? C.good : C.acc);
+    });
+    L(450, 355, more ? 'sirf SMS worker 1 -> 4. Push aur email pe koi asar nahi' : 'SMS dheema, par push aur email apni line me aage nikal gaye', C.good);
   }
 }
 

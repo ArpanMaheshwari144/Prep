@@ -38,21 +38,13 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 Cue: KAFKA (async), order turant jawab
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png" width="900">
+<img src="img/c1_1.png?v=2" width="900">
 
-<img src="img/c1_2.png" width="900">
+<img src="img/c1_2.png?v=2" width="900">
 
-<img src="img/c1_3.png" width="900">
-
-<img src="img/c1_4.png" width="900">
-
-<img src="img/c1_5.png" width="900">
-
-<img src="img/c1_6.png" width="900">
-
-<img src="img/c1_7.png" width="900">
+<img src="img/c1_3.png?v=2" width="900">
 
 </details>
 
@@ -89,15 +81,13 @@ NAHI    Order Svc me hi retry -> ATAKTA: request utni der atki rehti hai, aur Or
 
 Cue: har raaste ki ALAG LINE + worker
 
-<details><summary>kahani dekho (4 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png" width="900">
+<img src="img/c2_1.png?v=2" width="900">
 
-<img src="img/c2_2.png" width="900">
+<img src="img/c2_2.png?v=2" width="900">
 
-<img src="img/c2_3.png" width="900">
-
-<img src="img/c2_4.png" width="900">
+<img src="img/c2_3.png?v=2" width="900">
 
 </details>
 
@@ -121,17 +111,13 @@ NAHI    SMS ke worker badha do -> BEKAAR: company khud dheemi hai, line phir bhi
 
 Cue: KEY (SET NX, khabar ki apni id)
 
-<details><summary>kahani dekho (5 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png" width="900">
+<img src="img/c3_1.png?v=2" width="900">
 
-<img src="img/c3_2.png" width="900">
+<img src="img/c3_2.png?v=2" width="900">
 
-<img src="img/c3_3.png" width="900">
-
-<img src="img/c3_4.png" width="900">
-
-<img src="img/c3_5.png" width="900">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
@@ -158,21 +144,13 @@ NAHI    har baar naya random id -> BEKAAR: dohraav kabhi pakda hi nahi jaata
 
 Cue: SENDING / SENT (do haal)
 
-<details><summary>kahani dekho (7 scene)</summary>
+<details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c4_1.png" width="900">
+<img src="img/c4_1.png?v=2" width="900">
 
-<img src="img/c4_2.png" width="900">
+<img src="img/c4_2.png?v=2" width="900">
 
-<img src="img/c4_3.png" width="900">
-
-<img src="img/c4_4.png" width="900">
-
-<img src="img/c4_5.png" width="900">
-
-<img src="img/c4_6.png" width="900">
-
-<img src="img/c4_7.png" width="900">
+<img src="img/c4_3.png?v=2" width="900">
 
 </details>
 
