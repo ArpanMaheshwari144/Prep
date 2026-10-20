@@ -3,7 +3,7 @@
 > User BUY / SELL order deta hai, system order match karta hai, paisa aur share sahi jagah pahunchte hain, sabko live price dikhta hai.
 > Dil do cheezein: paisa kabhi galat nahi (strong consistency), aur matching bahut tez (RAM me, microseconds). Finance interview me (JP / GS) yahi poochte: consistency, ACID, idempotency, ledger, audit.
 >
-> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue + GIF. Neeche har card: **hal** · **kyun** · **nahi** (doosra kyun nahi) · **Pooche**.
 
 ---
 
@@ -16,38 +16,9 @@
 
 ## Shuru
 
-Sabse simple: Order service har order DB me likhti, aur DB me milta-julta SELL dhoondh ke match karti.
-
-Scope pehle poochho. Trading bada hai: matching, price feed, risk, settlement. Hum order matching aur paise / share
-ka settlement (len-den poora karna) lenge. Risk / margin / IPO / mutual fund scope me nahi. LIMIT aur MARKET dono
-order chalenge, aadha bhara (partial fill) bhi. Is design me hum broker hain par apna matching karte (exchange jaisa).
-Asli India me Groww / Zerodha order NSE ko bhejte, matching NSE karta; wallet block broker ka kaam.
-
-Kya chahiye: buy / sell, order match, paisa + share move, live price, cancel / status. Kaisa chale: paisa hamesha
-sahi (strong, kabhi "thodi der baad sahi" nahi), tez, imaandar (jo pehle aaya wo pehle), har cheez ka record (audit).
-
-Numbers: ~50 lakh user, ~50 lakh order roz. Market ~6 ghante (~20,000 second) khulta, to ~250 order har second.
-9:15 baje market khulte hi jhatka, 10,000+ order har second. Price dekhne wale bahut zyada: ~10 lakh log app khula
-rakhte, har second naya price, to ~10 lakh har second. Isliye matching RAM me, aur price PUSH karo (har user ka
-baar-baar poochhna nahi). Jo tez chahiye aur thodi der ka hai (order book) wo RAM me. Jo paisa hai aur hamesha ka
-hai (wallet / ledger) wo SQL DB + ACID me.
-
-Order book kaise match karta? TCS ka share: kuch bechna chahte (SELL), kuch khareedna (BUY). Book ki do taraf hain:
-bechne wale sasta upar (3000, 3001, 3005), khareedne wale mehnga upar (2999, 2998). Sauda tabhi jab top khareedar
->= top bechne wala. Daam pehle se book wale ka. Naya BUY 3001 aaya, top SELL 3000, to sauda 3000 pe. Same daam pe jo
-pehle aaya wo pehle bikta.
-
-**Pooche: BUY 2998 aaya to?** Top SELL 3000 se kam hai, sauda nahi. Order book me khada rehta (mehnga upar).
-
-**Pooche: same daam, do log?** Jo pehle aaya (chhota number) wo pehle.
-
-**Pooche: mujhe 10 chahiye, uske paas 6?** 6 ka sauda. Baaki 4 book me khade, un 4 ka paisa ruka rehta. Naya seller
-@3000 aaya to 4 bhi bhar gaye. Status: FILLED / PARTIALLY FILLED / OPEN (Zerodha / Groww / NSE me yahi).
-
-**Pooche: book DB me rakhi to?** RAM me rakho. DB = har order pe milliseconds, RAM = microseconds.
-
-**Pooche: RAM me hai, crash hua to book gayi?** Match se PEHLE log me likhte hain. Crash pe log shuru se chalao, wahi
-book wapas (card 5).
+- **FR:** scope pehle poochho (matching, price feed, risk, settlement) · hum: buy / sell (LIMIT + MARKET, aadha bhara / partial fill bhi), order match, paisa + share move (settlement), live price, cancel / status · scope bahar: risk / margin / IPO / mutual fund
+- **NFR:** paisa hamesha sahi (strong, "thodi der baad sahi" nahi) · tez · imaandar (jo pehle aaya wo pehle) · har cheez ka record (audit)
+- **numbers:** ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~250 order / sec. 9:15 pe jhatka 10,000+ / sec. Price: ~10 lakh log app khula, har second naya price -> ~10 lakh / sec. Isliye matching RAM me, price PUSH (har user ka baar-baar poochhna nahi)
 
 ---
 
@@ -57,17 +28,11 @@ book wapas (card 5).
 
 **Cue:** IDEMPOTENCY KEY (wahi id dobara) · dabba: Order Service
 
-Isliye screen khulte hi app ek id banata hai. Network gaya aur app dobara bheje, to wahi id jaati hai. Server us id
-pe UNIQUE rakhta, wahi id dobara aayi to purana jawab, order ek hi (idempotency key).
-
-Ye kyun chalta? Ek id = ek kaam. Id app banata, server UNIQUE se pakadta. Wahi id dobara = purana jawab, kaam dobara
-nahi. User ko ek hi order dikhe, app chahe kitni baar bheje.
-
-Button pehli tap pe band kar do to? Kaafi nahi. Retry app khud karta hai, button dabta hi nahi.
-
-**Pooche: wahi id aayi, par pehli abhi chal rahi?** "Thoda ruko" (IN_PROGRESS, 409). Ho gaya to saved jawab.
-
-**Pooche: id kab tak yaad rakhoge?** ~24 ghante, phir saaf. Retry minute me hi aata.
+- **hal:** screen khulte hi app ek id banata. Network gaya, app dobara bheje, to wahi id. Server id pe UNIQUE: wahi id = purana jawab, order ek (idempotency key)
+- **kyun:** ek id = ek kaam. Id app banata, server UNIQUE se pakadta. User ko ek hi order dikhe, app kitni baar bhi bheje.
+- **nahi:** button pehli tap pe band -> kaafi nahi, retry app khud karta, button dabta hi nahi
+- **Pooche:** wahi id aayi, pehli abhi chal rahi? -> "thoda ruko" (IN_PROGRESS, 409). Ho gaya to saved jawab.
+- **Pooche:** id kab tak yaad? -> ~24 ghante, phir saaf. Retry minute me hi aata.
 
 ---
 
@@ -77,26 +42,17 @@ Button pehli tap pe band kar do to? Kaafi nahi. Retry app khud karta hai, button
 
 **Cue:** check + block EK atomic query · dabba: Wallet
 
-Laptop se TCS 30k, phone se INFY 30k. Dono server ne pehle 50k dekha, dono pass, wallet minus me. Isliye check aur
-block ek hi query me: `SET blocked = blocked + 30k WHERE total - blocked >= 30k`. Ek jeeta to 1 row, block. Doosre
-ko 20k hi bacha, 0 row, turant reject (atomic UPDATE).
-
-Ye kyun chalta? "Hai?" aur "block" ek hi UPDATE, DB ke andar. Kitni bhi machine ho, DB ek-ek karke chalata. Wallet
-kabhi minus nahi. 'blocked' badhta naye order se, ghatta sauda / cancel / umar khatam se.
-
-Java synchronized laga do? Nahi. Taala ek machine ka hai, phone doosre server pe gaya.
-
-**Pooche: block kiya, phir order cancel?** Block hatao.
-
-**Pooche: block kiya, sauda aadha hua?** Jitna bika utna kata, baaki blocked. Order abhi khula hai.
-
-**Pooche: MARKET order me bhav pata nahi, block kitna?** Aakhri bhav + thoda upar block, sauda ke baad bacha wapas.
-
-**Pooche: SELL pe bhi aisa?** Wahi line portfolio pe: qty - blocked_qty >= 10.
-
-**Pooche: order ki umar khatam (day order)?** Shaam ko block hatao. Blocked sirf sauda / cancel / umar se ghatta.
-
-**Pooche: cancel aur match usi pal?** Book ek haath me hai. Jo nahi bika sirf uska block hatao.
+- **hal:** check aur block ek hi query: `SET blocked = blocked + 30k WHERE total - blocked >= 30k`. Ek jeeta = 1 row, block. Doosre ko 20k bacha, 0 row, turant reject (atomic UPDATE)
+- **kyun:** "hai?" aur "block" ek hi UPDATE, DB ke andar. Kitni bhi machine, DB ek-ek karke chalata. Wallet kabhi minus nahi.
+- **blocked:** badhta naye order se, ghatta sauda / cancel / umar khatam se
+- **nahi:** pehle padho, phir block -> laptop (TCS 30k) + phone (INFY 30k), dono server ne 50k dekha, dono pass, wallet minus
+- **nahi:** Java synchronized -> taala ek machine ka, phone doosre server pe gaya
+- **Pooche:** block kiya, phir order cancel? -> block hatao
+- **Pooche:** block kiya, sauda aadha hua? -> jitna bika utna kata, baaki blocked. Order abhi khula.
+- **Pooche:** MARKET order me bhav pata nahi, block kitna? -> aakhri bhav + thoda upar, sauda ke baad bacha wapas
+- **Pooche:** SELL pe bhi aisa? -> wahi line portfolio pe: qty - blocked_qty >= 10
+- **Pooche:** order ki umar khatam (day order)? -> shaam ko block hatao. Blocked sirf sauda / cancel / umar se ghatta.
+- **Pooche:** cancel aur match usi pal? -> book ek haath me hai. Jo nahi bika sirf uska block hatao.
 
 ---
 
@@ -106,17 +62,21 @@ Java synchronized laga do? Nahi. Taala ek machine ka hai, phone doosre server pe
 
 **Cue:** ek symbol ek thread, book RAM me · dabba: Matching Engine
 
-Do thread, dono ko "10 hai" dikha, dono ne le liye, 20 bik gaye. Isliye ek share ke saare order ek line me, aur us
-line ko ek hi thread chalata (ek symbol ek thread). Main pehle aaya to 10 mile, Mohan ko 0, wo line me.
-
-Ye kyun chalta? Ek stock ki book ko ek waqt ek hi haath. Doosra line me rukta, race hi nahi. Thread atka (GC pause)
-to sirf us stock ki line rukti, INFY apne thread pe chalta, standby taiyaar.
-
-Har order pe lock laga do? Nahi. Race share pe hai, order pe nahi. Dono apna-apna lock lete, dono ko 10 dikhe.
-
-Matching DB ke ACID se kyun nahi? DB har order pe dheema. Matching RAM me.
-
-**Pooche: 5000 stock = 5000 thread?** Nahi. 8 core = 8 thread. stock % 8, par ek stock hamesha ek hi thread pe.
+- **hal:** ek share ke saare order ek line, us line ko ek hi thread (ek symbol ek thread). Main pehle aaya = 10 mile, Mohan ko 0, wo line me.
+- **kyun:** ek stock ki book ko ek waqt ek hi haath. Doosra line me rukta, race hi nahi.
+- **kyun:** thread atka (GC pause) to sirf us stock ki line rukti, INFY apne thread pe, standby taiyaar
+- **RAM / SQL:** jo tez + thodi der ka (order book) = RAM. Jo paisa + hamesha ka (wallet / ledger) = SQL DB + ACID.
+- **order book:** do taraf: bechne wale sasta upar (3000, 3001, 3005), khareedne wale mehnga upar (2999, 2998)
+- **sauda:** tabhi jab top khareedar >= top bechne wala. Daam book wale ka: naya BUY 3001, top SELL 3000 -> sauda 3000 pe. Same daam pe pehle aaya pehle bikta.
+- **broker:** is design me hum broker, par apna matching (exchange jaisa). Asli India me Groww / Zerodha order NSE ko bhejte, matching NSE; wallet block broker ka kaam.
+- **nahi:** do thread bina line -> dono ko "10 hai" dikha, dono ne le liye, 20 bik gaye
+- **nahi:** har order pe lock -> race share pe hai, order pe nahi. Dono apna lock lete, dono ko 10 dikhe.
+- **nahi:** sabse simple: Order service DB me likhe, DB me hi milta SELL dhoondh ke match (DB ka ACID) -> DB har order pe dheema, matching RAM me
+- **Pooche:** BUY 2998 aaya? -> top SELL 3000 se kam, sauda nahi. Book me khada (mehnga upar).
+- **Pooche:** same daam, do log? -> jo pehle aaya (chhota number) wo pehle
+- **Pooche:** mujhe 10 chahiye, uske paas 6? -> 6 ka sauda, baaki 4 book me, unka paisa ruka. Naya seller @3000 = 4 bhi bhare. Status: FILLED / PARTIALLY FILLED / OPEN (Zerodha / Groww / NSE me yahi)
+- **Pooche:** book DB me rakhi to? -> RAM me rakho. DB = har order pe milliseconds, RAM = microseconds.
+- **Pooche:** 5000 stock = 5000 thread? -> nahi. 8 core = 8 thread. stock % 8, par ek stock hamesha ek hi thread pe.
 
 ---
 
@@ -126,17 +86,11 @@ Matching DB ke ACID se kyun nahi? DB har order pe dheema. Matching RAM me.
 
 **Cue:** baanto mat, ek thread kaafi, line · dabba: Queue
 
-Hazaaron order har second. Isliye TCS ki ek line, aur ek thread RAM me tez nipta deta, lakhon har second. Line me
-lagte hi user ko ACCEPTED turant, FILLED tab jab sauda ho.
-
-Ek thread hi kyun kaafi? RAM me ek thread lakhon order har second nipta deta. Line lambi hui to der, par order khota
-nahi, line me hai.
-
-Har order pe lock + DB? Ek-ek karke dheema, jam.
-
-TCS ko do thread me baant do? Nahi. Ek stock = ek line. Baantna stocks ke BEECH, ek stock ke andar kabhi nahi.
-
-**Pooche: baanto nahi, to badhaoge kaise?** Stocks ke beech: TCS ek thread, INFY doosra. TCS ke andar nahi.
+- **hal:** hazaaron order / sec -> TCS ki ek line, ek thread RAM me tez nipta deta. Line me lagte hi user ko ACCEPTED turant, FILLED tab jab sauda ho.
+- **kyun:** RAM me ek thread lakhon order / sec nipta deta. Line lambi = der, par order khota nahi, line me hai.
+- **nahi:** har order pe lock + DB -> ek-ek karke dheema, jam
+- **nahi:** TCS ko do thread me baanto -> ek stock = ek line. Baantna stocks ke BEECH, ek stock ke andar kabhi nahi.
+- **Pooche:** baanto nahi, to badhaoge kaise? -> stocks ke beech: TCS ek thread, INFY doosra. TCS ke andar nahi.
 
 ---
 
@@ -146,21 +100,14 @@ TCS ko do thread me baant do? Nahi. Ek stock = ek line. Baantna stocks ke BEECH,
 
 **Cue:** pehle log, phir book; gira = replay · dabba: Event Log (= wahi line)
 
-10:15 matching server gira, book sirf RAM me thi, 4,000 order gayab. Isliye har order pehle log me (disk), phir
-book me. Gira to log dobara chalao, wahi 4,000 wapas (replay). Log me har order ko number milta (#501).
-
-Ye kyun chalta? Log hi sach hai, book uski photo. Pehle log, phir book. Gira = log se replay: aakhri photo + uske
-baad ke panne. Dobara chala to kuch nahi badalta (trade_id).
-
-Sirf book ki photo kaafi? Nahi. Photo ke BAAD wale order kahin likhe hi nahi.
-
-Time se kram kyun nahi, number kyun? Do machine ka time (clock) alag, aur ek second me do order aa jaate.
-
-**Pooche: replay me der lagi to?** Standby pehle se log padhta rehta, book taiyaar. Pehla gire tab wo chalu.
-
-**Pooche: dono board ek saath chala do?** Nahi. Do board = do sach = galat.
-
-**Pooche: crash me paisa ka kya?** Paisa DB me hai, wahan rollback. Book log se wapas.
+- **hal:** har order pehle log me (disk), phir book me. Log me har order ko number (#501). 10:15 gira, 4,000 order gayab -> log dobara chalao, wahi 4,000 wapas (replay).
+- **kyun:** log hi sach, book uski photo. Gira = aakhri photo + uske baad ke panne. Dobara chala to kuch nahi badalta (trade_id).
+- **nahi:** sirf book ki photo -> photo ke BAAD wale order kahin likhe hi nahi
+- **nahi:** time se kram -> do machine ka time (clock) alag, aur ek second me do order aa jaate
+- **Pooche:** book RAM me, crash hua to gayi? -> match se PEHLE log me likhte. Crash pe log shuru se chalao, wahi book wapas.
+- **Pooche:** replay me der lagi to? -> standby pehle se log padhta, book taiyaar. Pehla gire tab wo chalu.
+- **Pooche:** dono board ek saath chala do? -> nahi. Do board = do sach = galat.
+- **Pooche:** crash me paisa ka kya? -> paisa DB me, wahan rollback. Book log se wapas.
 
 ---
 
@@ -170,21 +117,13 @@ Time se kram kyun nahi, number kyun? Do machine ka time (clock) alag, aur ek sec
 
 **Cue:** ek transaction: chaaron ya koi nahi · dabba: Settlement
 
-Mera wallet -30k hua, phir crash, Suresh ko +30k nahi gaya. Isliye chaaron badlaav ek transaction me: Arpan -30k
-+10 share, Suresh +30k -10 share, phir COMMIT. Ya sab, ya koi nahi.
-
-Ye kyun chalta? Paisa ek DB me hai, to chaaron likhai ek transaction. COMMIT se pehle crash = rollback, kuch nahi
-likha, user ko PENDING dikhta, galat number kabhi nahi. Ledger ka jod hamesha 0.
-
-Aakhir me "done" flag laga do? Flag se pehle gira to pata hi nahi kitna likha tha.
-
-**Pooche: rollback ke baad retry, Suresh ko do baar?** Nahi. trade_id UNIQUE hai, dobara = kuch nahi.
-
-**Pooche: balance ledger jod ke nikaalo?** Dheema, lakhon line. Balance alag column, usi transaction me.
-
-**Pooche: asli paisa usi pal Suresh ko gaya?** Nahi, T+1 NSE Clearing. Ye broker ka apna khaata hai.
-
-**Pooche: galti pakdoge kaise?** Raat ko ledger jodo, hamesha 0. Galti turant dikhe.
+- **hal:** chaaron badlaav ek transaction: Arpan -30k +10 share, Suresh +30k -10 share, phir COMMIT. Ya sab, ya koi nahi.
+- **kyun:** paisa ek DB me, to chaaron likhai ek transaction. COMMIT se pehle crash = rollback, kuch nahi likha, user ko PENDING, galat number kabhi nahi. Ledger ka jod hamesha 0.
+- **nahi:** aakhir me "done" flag -> flag se pehle gira to pata hi nahi kitna likha tha
+- **Pooche:** rollback ke baad retry, Suresh ko do baar? -> nahi, trade_id UNIQUE, dobara = kuch nahi
+- **Pooche:** balance ledger jod ke nikaalo? -> dheema, lakhon line. Balance alag column, usi transaction me.
+- **Pooche:** asli paisa usi pal Suresh ko gaya? -> nahi, T+1 NSE Clearing. Ye broker ka apna khaata.
+- **Pooche:** galti pakdoge kaise? -> raat ko ledger jodo, hamesha 0. Galti turant dikhe.
 
 ---
 
@@ -194,28 +133,15 @@ Aakhir me "done" flag laga do? Flag se pehle gira to pata hi nahi kitna likha th
 
 **Cue:** har step ka haal, aage badho · dabba: Wallet DB + Portfolio DB
 
-Wallet DB me -20k hua, crash, Portfolio DB me 5 INFY nahi aaye. Do DB, ek transaction nahi. Isliye har kadam ka haal
-likhte hain (status log: wallet done, portfolio done). Fail hua to likhe haal se retry, aage hi, jab tak portfolio
-done na ho (SETTLED).
-
-Ye kyun chalta? Match ke baad sauda PAKKA. System hi aage badhaata (retry), user ko kuch dobara nahi karna. Beech ka
-haal user ko PENDING dikhe.
-
-Paisa ulta kyun nahi kar dete? Match ke baad sauda pakka. Bechne wale ko 20k mil chuke.
-
-**Pooche: step-step ki keemat?** Beech me PENDING dikhta, par 2PC jaisa lamba lock nahi.
-
-**Pooche: retry dobara chal gaya?** Har kadam trade_id se. Ho chuka = no-op, share do baar nahi.
-
-**Pooche: match se pehle atka to?** Sirf tab ulta (SAGA): block hatao.
-
-**Pooche: ghanton fail?** Trade PENDING + alert, ops share daalta.
-
-**Pooche: Portfolio DB ghanta bhar band, user ko bolo dobara order kare?** Nahi. Naya order gaya aur purana bhi zinda,
-DB wapas aaya to 5 ki jagah 10 INFY, paisa do baar kata. Isliye trade PENDING + alert, system wahi trade_id se retry
-kare, user nahi. User kuch nahi karta, trade khud poora.
-
-**Pooche: orchestration ya choreography?** Orchestration. Paise me saaf dikhe kaunsa step atka.
+- **hal:** do DB = ek transaction nahi. Har kadam ka haal likho (status log: wallet done, portfolio done). Fail = likhe haal se retry, aage hi, jab tak portfolio done (SETTLED).
+- **kyun:** match ke baad sauda PAKKA. System hi aage badhaata (retry), user ko kuch dobara nahi. Beech ka haal user ko PENDING.
+- **nahi:** paisa ulta kar do -> match ke baad sauda pakka, bechne wale ko 20k mil chuke
+- **Pooche:** step-step ki keemat? -> beech me PENDING dikhta, par 2PC jaisa lamba lock nahi
+- **Pooche:** retry dobara chal gaya? -> har kadam trade_id se. Ho chuka = no-op, share do baar nahi.
+- **Pooche:** match se pehle atka to? -> sirf tab ulta (SAGA): block hatao
+- **Pooche:** ghanton fail? -> trade PENDING + alert, ops share daalta
+- **Pooche:** Portfolio DB ghanta band, user dobara order kare? -> nahi: naya + purana dono zinda, DB wapas = 5 ki jagah 10 INFY, paisa do baar. Trade PENDING + alert, system wahi trade_id se retry, user kuch nahi karta.
+- **Pooche:** orchestration ya choreography? -> orchestration. Paise me saaf dikhe kaunsa step atka.
 
 ---
 
@@ -225,20 +151,13 @@ kare, user nahi. User kuch nahi karta, trade khud poora.
 
 **Cue:** push (TV jaisa), WebSocket · dabba: Pub/Sub + WebSocket
 
-Har user har second poochh raha tha, server band. Isliye connection khula rakhte, price badla tabhi server khud
-bhejta (WebSocket push). Matching se price pub/sub pe jaata, wahan se har WebSocket server tak, wahan se users ko.
-
-Ye kyun chalta? Price = sirf abhi ka. Badla tab server khud bheje, purana store nahi. Users kuch nahi poochte.
-
-Har user baar-baar poochhe (polling)? Poochhne ki line hi nahi chahiye. 10 lakh har second = server baitha.
-
-**Pooche: second me 1000 baar badla?** Har ~100 ms aakhri price. Purana bekaar.
-
-**Pooche: connection toota, wapas juda?** Abhi ka price alag se do. Pub/sub kuch rakhta nahi.
-
-**Pooche: 10 lakh connection ek server pe?** Ek server ~lakh connection. Aur server + LB.
-
-**Pooche: price sab server tak kaise?** Pub/sub se har server ko.
+- **hal:** connection khula rakho, price badla tabhi server khud bheje (WebSocket push). Matching -> pub/sub -> har WebSocket server -> users.
+- **kyun:** price = sirf abhi ka. Badla tab server khud bheje, purana store nahi. Users kuch nahi poochte.
+- **nahi:** har user baar-baar poochhe (polling) -> 10 lakh har second = server baitha. Poochhne ki line hi nahi chahiye.
+- **Pooche:** second me 1000 baar badla? -> har ~100 ms aakhri price. Purana bekaar.
+- **Pooche:** connection toota, wapas juda? -> abhi ka price alag se do. Pub/sub kuch rakhta nahi.
+- **Pooche:** 10 lakh connection ek server pe? -> ek server ~lakh connection. Aur server + LB.
+- **Pooche:** price sab server tak kaise? -> pub/sub se har server ko
 
 ---
 
