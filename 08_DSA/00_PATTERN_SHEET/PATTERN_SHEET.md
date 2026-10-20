@@ -876,7 +876,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
        if (L - k == 0) return Total;              // k==L -> saare cards (window size 0)
        int minSum = minSumK(nums, L-k);           // fixed-window MIN (= max_sum_k, min-version)
        return Total - minSum;   // liye cards ka max = total - na liye (beech) ka min
-     minSumK (fixed window, MIN): sum += nums[j]; jab (j-i+1 == size) -> minSum=min(minSum,sum); sum-=nums[i]; i++.   // minSum=INT_MAX se
+     minSumK (fixed window, MIN): sum += nums[j]; jab (j-i+1 >= size) -> minSum=min(minSum,sum); sum-=nums[i]; i++.   // minSum=INT_MAX se
 
      DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
      FAMILY: fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
