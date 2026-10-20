@@ -30,16 +30,16 @@ function frame(ph) {
     panel(0, 'wallet', ['Settlement', 't7', ''], ['Status log', 'wallet: done', 'good'], 'likha', true, C.good, 'pehla kadam pakka');
     panel(1, 'portfolio fail', ['Settlement', '', ''], ['Portfolio DB', 'band', 'bad'], 'share do', true, C.bad, 'status: PENDING');
     panel(2, 'retry', ['Retry job', 'log padha', 'acc'], ['Portfolio DB', 'wapas aaya', 'good'], 't7 se phir', true, C.acc, 'wahi trade_id');
-    panel(3, 'SETTLED', ['Status log', 'portfolio: done', 'good'], ['Arpan', '+5 INFY', 'good'], 'pura', true, C.good, 'aage hi, ulta nahi');
+    panel(3, 'SETTLED', ['Portfolio DB', 'Arpan +5 INFY', 'good'], ['Status log', 'SETTLED', 'good'], 'likha', true, C.good, 'aage hi, ulta nahi');
     L(450, 320, 'match ke baad sauda pakka. System aage badhata, Arpan ko PENDING dikhta', C.good);
   } else {
     B(20, 140, 150, 70, 'Arpan', 'dobara order?', { st: 'bad' });
     B(330, 40, 230, 70, 'Trade t7', 'PENDING + alert', { st: 'acc' });
     B(330, 230, 230, 70, 'Naya trade t8', '+5 INFY phir', { st: 'bad' });
     B(690, 130, 170, 90, 'DB wapas aaya', '10 INFY, paisa 2 baar', { st: 'bad' });
-    A(170, 160, 328, 75, C.acc, { n: 1 }); L(240, 95, 'purana zinda', C.acc);
-    A(170, 190, 328, 265, C.bad, { n: 2 }); L(240, 255, 'naya bhi', C.bad);
-    A(560, 75, 688, 160, C.acc); A(560, 265, 688, 195, C.bad); num(720, 245, 3, C.bad); L(740, 250, 'DB lauta: dono chale', C.bad, 'start');
+    L(445, 30, 'pehle se zinda, retry me', C.acc);
+    A(170, 190, 328, 265, C.bad, { n: 1 }); L(240, 255, 'naya order', C.bad);
+    A(560, 75, 688, 160, C.acc); A(560, 265, 688, 195, C.bad); num(720, 245, 2, C.bad); L(740, 250, 'DB lauta: dono chale', C.bad, 'start');
     L(450, 345, 'isliye user kuch nahi karta: system wahi t7 se retry, ops ko alert', C.good);
   }
 }

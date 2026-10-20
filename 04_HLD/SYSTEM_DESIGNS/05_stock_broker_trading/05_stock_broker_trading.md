@@ -38,11 +38,11 @@ Cue: IDEMPOTENCY KEY (wahi id dobara)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c1_1.png?v=2" width="900">
+<img src="img/c1_1.png?v=3" width="900">
 
-<img src="img/c1_2.png?v=2" width="900">
+<img src="img/c1_2.png?v=3" width="900">
 
-<img src="img/c1_3.png?v=2" width="900">
+<img src="img/c1_3.png?v=3" width="900">
 
 </details>
 
@@ -107,11 +107,11 @@ Cue: ek symbol ek thread, book RAM me
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png?v=2" width="900">
+<img src="img/c3_1.png?v=3" width="900">
 
-<img src="img/c3_2.png?v=2" width="900">
+<img src="img/c3_2.png?v=3" width="900">
 
-<img src="img/c3_3.png?v=2" width="900">
+<img src="img/c3_3.png?v=3" width="900">
 
 </details>
 
@@ -179,11 +179,11 @@ Cue: pehle log, phir book; gira = replay
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png?v=2" width="900">
+<img src="img/c5_1.png?v=3" width="900">
 
-<img src="img/c5_2.png?v=2" width="900">
+<img src="img/c5_2.png?v=3" width="900">
 
-<img src="img/c5_3.png?v=2" width="900">
+<img src="img/c5_3.png?v=3" width="900">
 
 </details>
 
@@ -245,11 +245,11 @@ Cue: har step ka haal, aage badho
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c7_1.png?v=2" width="900">
+<img src="img/c7_1.png?v=3" width="900">
 
-<img src="img/c7_2.png?v=2" width="900">
+<img src="img/c7_2.png?v=3" width="900">
 
-<img src="img/c7_3.png?v=2" width="900">
+<img src="img/c7_3.png?v=3" width="900">
 
 </details>
 

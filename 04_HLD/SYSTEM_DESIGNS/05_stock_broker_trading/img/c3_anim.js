@@ -21,8 +21,8 @@ function frame(ph) {
   if (ph === 0) {
     panel(0, 'Thread-1 padhta', ['Thread-1', 'Arpan: 10', 'acc'], ['TCS book', 'Suresh: 10', ''], 'padha', false, C.acc, '10 hain');
     panel(1, 'Thread-2 padhta', ['Thread-2', 'Mohan: 10', 'acc'], ['TCS book', 'Suresh: 10', ''], 'padha', false, C.acc, 'abhi bhi 10 dikhe');
-    panel(2, 'Thread-1 deta', ['Thread-1', 'Arpan ko 10', 'bad'], ['TCS book', 'Suresh: 0', 'bad'], 'liya', true, C.bad, 'mere 10');
-    panel(3, 'Thread-2 deta', ['Thread-2', 'Mohan ko 10', 'bad'], ['TCS book', 'Suresh: -10', 'bad'], 'liya', true, C.bad, 'Mohan ke bhi 10');
+    panel(2, 'Thread-1 deta', ['Thread-1', 'Arpan ko 10', 'bad'], ['TCS book', 'Suresh: 0', 'bad'], '10 share', false, C.bad, 'mere 10');
+    panel(3, 'Thread-2 deta', ['Thread-2', 'Mohan ko 10', 'bad'], ['TCS book', 'Suresh: -10', 'bad'], '10 share', false, C.bad, 'Mohan ke bhi 10');
     L(450, 320, '10 share the, 20 bik gaye. Suresh ke paas the hi nahi', C.bad);
   } else if (ph === 1) {
     B(20, 50, 130, 55, 'Arpan', 'BUY 10, 9:30:01');
