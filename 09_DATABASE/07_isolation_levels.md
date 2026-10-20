@@ -78,6 +78,7 @@ INSERT INTO account VALUES (1, 100);
    ko hamesha dekh leta -> tab me test "galat" chalta.
 2. "SESSION" = ek connection/login. Har connection ka apna transaction + isolation state.
 3. MySQL InnoDB DEFAULT = REPEATABLE READ (dirty + non-repeatable dono roke).
+   PostgreSQL / Oracle / SQL Server DEFAULT = READ COMMITTED (sirf dirty roke) -> DB badla to default bhi badla.
 4. Level ek SESSION pe set hota: SET SESSION TRANSACTION ISOLATION LEVEL <level>;
 5. TRADE-OFF: strict level = zyada locks = slow. Safety-vs-speed. Jitni chahiye utni lo.
 6. Workbench autocommit ON -> explicit txn ke liye START TRANSACTION zaroori (warna UPDATE turant commit).
