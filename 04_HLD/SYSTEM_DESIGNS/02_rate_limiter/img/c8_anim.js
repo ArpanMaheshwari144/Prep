@@ -1,35 +1,43 @@
-// Card 8: attack + poora Redis Cluster gira. Ilaaj: har gateway server apni memory me gine, had baant do (100 / 4 = 25).
-const DUR = 18, FIX = 8;
-const ATK = [70, 192], G = [[330, 70], [330, 152], [330, 234], [330, 316]], APP = [580, 205], RD = [620, 330];
-function setup() {
-  G.forEach(([x, y], i) => { box(x - 55, y - 26, 110, 52, `Gateway ${i + 1}`); wire(`M120 192 L${x - 55} ${y}`); wire(`M${x + 55} ${y} L560 192`); });
-  box(20, 150, 100, 84, 'Attacker', 'raat ko');
-  box(560, 150, 120, 84, 'Server', 'aam API');
-  box(560, 300, 120, 50, 'Redis Cluster');
-}
-function frame(t, fix, tl) {
-  cross(705, 325);
-  let inn = 0, no = 0;
-  const per = [0, 0, 0, 0];
-  for (let k = 0; k < 28; k++) {
-    const g = k % 4, s = 0.3 + k * 0.17;
-    if (tl < s + 0.5) { dot(path([[s, ATK], [s + 0.5, G[g]]], tl), C.msg); continue; }
-    per[g]++;
-    const allow = !fix || per[g] <= 3;
-    if (allow) { inn++; if (tl < s + 0.9) dot(path([[s + 0.5, G[g]], [s + 0.9, APP]], tl), C.msg); }
-    else { no++; if (tl < s + 0.9) dot([G[g][0] - 85, G[g][1] + 12], C.bad, '', '429'); }
+// Card 8: attack + Redis Cluster gira. Ilaaj: har gateway apni ginti, had 100 / 4 = 25. Agar: baanti nahi, gateway badhe.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: Redis gaya, ginti kahin nahi. Fail-open: attacker ki sab andar'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har gateway apni memory me ginta. Had 100, 4 gateway -> har ek 25'],
+  [6, YEL, 'AGAR', 'AGAR had baanti hi nahi, har gateway ne 100 di? -> 4 x 100 = 400 mil gayi'],
+  [9, YEL, 'AGAR', 'AGAR gateway badh gaye? -> N config se lo, aur had dobara baanto'],
+  [12, GRN, 'WAPAS', 'WAPAS: Redis wapas aaya -> phir se sabki ek hi ginti Redis me'],
+];
+function setup() {}
+function gws(n, sub, st) {
+  const h = n === 5 ? 46 : 52, g = n === 5 ? 66 : 82;
+  for (let i = 0; i < n; i++) {
+    const y = 20 + i * g;
+    B(260, y, 130, h, `Gateway ${i + 1}`, sub, { st });
+    A(130, 175, 258, y + h / 2); A(390, y + h / 2, 598, 175);
   }
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: Redis gaya, ginti kahin nahi. Fail-open: attacker ki sab request andar';
-    const f = inn / 28; bar(570, 245, 100, 16, f, '');
-    T(620, 285, `CPU ${Math.round(100 * f)}%`, { c: f > 0.9 ? C.bad : C.fg, b: 1 });
-    if (f >= 1) T(780, 192, 'site band', { c: C.bad, b: 1, size: 15 });
+}
+function frame(ph) {
+  B(20, 135, 110, 80, 'Attacker', '', { st: 'bad' });
+  const up = ph === 4;
+  B(600, 285, 160, 50, 'Redis Cluster', '', { st: up ? 'good' : 'bad' }); if (!up) cross(785, 310);
+  if (ph === 0) {
+    gws(4, '', ''); B(600, 130, 140, 90, 'Server', 'CPU', { st: 'bad' });
+    bar(760, 165, 110, 18, 1, ''); T(815, 205, '100%', { c: C.bad, b: 1, size: 16 });
+    dots(5, 430, 115, C.bad, { gap: 26 });
+  } else if (ph === 1) {
+    gws(4, 'had 25', 'good'); B(600, 130, 140, 90, 'Server', 'CPU', { st: 'good' });
+    bar(760, 165, 110, 18, 0.4, '', 1); T(815, 205, '40%', { c: C.good, b: 1, size: 16 });
+    for (let i = 0; i < 4; i++) dot([228, 46 + i * 82], C.bad, '', '429', C.bad);
+  } else if (ph === 2) {
+    gws(4, 'had 100', 'acc'); B(600, 130, 140, 90, 'Server', 'CPU', { st: 'acc' });
+    T(760, 100, 'user ko: 400', { c: C.bad, b: 1, size: 18, a: 'start' });
+    T(760, 250, 'had: 100', { c: C.muted, size: 14, a: 'start' });
+  } else if (ph === 3) {
+    gws(5, 'had 20', 'good'); B(600, 130, 140, 90, 'Server');
+    T(820, 100, 'N = 5', { c: C.acc, b: 1, size: 18 }); T(820, 255, '100 / 5 = 20', { c: C.good, b: 1, size: 14 });
   } else {
-    CAP.textContent = 'ILAAJ: har gateway apni memory me gine. Had 100, 4 server -> har ek 25 (local fallback)';
-    G.forEach(([x, y], i) => T(x, y + 42, `apni ginti: ${Math.min(per[i], 3) * 8 + (per[i] > 3 ? 1 : 0)} / 25`,
-      { c: per[i] > 3 ? C.bad : C.good, size: 11, b: 1 }));
-    const f = Math.min(0.5, inn / 28); bar(570, 245, 100, 16, f, '');
-    T(620, 285, `CPU ${Math.round(100 * f)}%`, { c: C.good, b: 1 });
-    T(780, 192, 'site chalu', { c: C.good, b: 1, size: 15 });
+    gws(4, '', 'good'); B(600, 130, 140, 90, 'Server', '', { st: 'good' });
+    for (let i = 0; i < 4; i++) A(390, 46 + i * 82, 598, 305, C.good, { dash: 1 });
+    T(830, 260, 'ek ginti', { c: C.good, b: 1, size: 15 });
   }
 }

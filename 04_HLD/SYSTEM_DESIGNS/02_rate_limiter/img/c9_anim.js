@@ -1,38 +1,42 @@
-// Card 9: office ka ek IP (NAT), 1000 log. Ginti IP pe -> ek ki galti se sab atke. Ilaaj: key = user_id (JWT).
-const DUR = 18, FIX = 8;
+// Card 9: ginti IP pe, Ravi ki galti se office atka. Ilaaj: user_id (JWT). Agar: lock karo? Wapas: CAPTCHA.
+const DUR = 12;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: ginti IP pe. Ravi ke 6 galat login se office IP block, sab atke'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: login ke baad ginti user_id pe (JWT se). Ravi ki galti sirf Ravi pe'],
+  [6, YEL, 'AGAR', 'AGAR 5 galat password pe account lock? -> attacker tujhe hi lock kar dega'],
+  [9, GRN, 'WAPAS', 'WAPAS: lock ki jagah CAPTCHA. Ravi andar, attacker atka'],
+];
 const NAMES = ['Ravi', 'Asha', 'Mohan', 'Neha', 'Suresh'];
-const P = NAMES.map((_, i) => [80, 70 + i * 62]), NAT = [270, 200], GW = [460, 212], APP = [700, 192];
-function setup() {
-  P.forEach(([x, y], i) => { box(x - 55, y - 22, 110, 44, NAMES[i]); wire(`M${x + 55} ${y} L225 192`); });
-  wire('M315 192 H410'); wire('M510 192 H640');
-  box(225, 160, 90, 64, 'Office', '1 IP (NAT)');
-  box(410, 160, 100, 64, 'Gateway', 'limiter', { stroke: C.acc });
-  box(640, 160, 120, 64, 'App');
+function setup() {}
+function office(sts, gsub) {
+  NAMES.forEach((n, i) => { B(20, 15 + i * 64, 110, 46, n, '', { st: sts[i] }); A(130, 38 + i * 64, 228, 175); });
+  B(230, 140, 110, 70, 'Office', '1 IP');
+  A(340, 175, 428, 175); B(430, 140, 130, 70, 'Gateway', gsub, { st: 'acc' });
+  B(720, 140, 120, 70, 'App');
 }
-function frame(t, fix, tl) {
-  // pehle Ravi 6 baar galat password, phir baaki chaar ek-ek baar
-  const reqs = [];
-  for (let k = 0; k < 6; k++) reqs.push([0, 0.3 + k * 0.35]);
-  for (let i = 1; i < 5; i++) reqs.push([i, 2.8 + i * 0.5]);
-  let ipCount = 0; const uc = [0, 0, 0, 0, 0];
-  reqs.forEach(([u, s]) => {
-    const arrive = s + 0.9;
-    if (tl < arrive) { dot(path([[s, P[u]], [s + 0.5, NAT], [arrive, GW]], tl), C.msg); return; }
-    ipCount++; uc[u]++;
-    const ok = fix ? uc[u] <= 5 : ipCount <= 5;
-    if (tl < arrive + 0.8) {
-      if (ok) dot(path([[arrive, GW], [arrive + 0.5, APP]], tl), C.good);
-      else dot([385, 212], C.bad, '', '429');
-    }
-    if (u > 0) T(P[u][0] + 70, P[u][1] + 5, ok ? 'andar' : 'atka!', { a: 'start', c: ok ? C.good : C.bad, b: 1, size: 12 });
-  });
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: ginti IP pe. Ravi ke 6 galat login se office ka IP block, baaki sab atke';
-    T(460, 140, `ginti[office IP] = ${ipCount}`, { c: ipCount > 5 ? C.bad : C.acc, b: 1, size: 13 });
+function frame(ph) {
+  if (ph === 0) {
+    office(['acc', 'bad', 'bad', 'bad', 'bad'], 'ginti: IP');
+    A(560, 175, 718, 175, C.bad, { dash: 1 }); cross(640, 175);
+    T(495, 250, 'IP: 10 > 5', { c: C.bad, b: 1, size: 15 });
+  } else if (ph === 1) {
+    office(['bad', 'good', 'good', 'good', 'good'], 'ginti: user_id');
+    A(560, 175, 718, 175, C.good); dots(4, 585, 150, C.good, { gap: 26 });
+    T(495, 250, 'Ravi: 6 > 5', { c: C.bad, b: 1, size: 15 });
   } else {
-    CAP.textContent = 'ILAAJ: login ke baad ginti user_id pe (JWT se). Ravi ki galti sirf Ravi pe';
-    T(460, 140, `ginti[Ravi] = ${uc[0]}`, { c: uc[0] > 5 ? C.bad : C.acc, b: 1, size: 13 });
-    T(460, 250, 'har user ki apni ginti', { c: C.muted, size: 12 });
+    const cap = ph === 3;
+    B(20, 40, 120, 60, 'Attacker', '', { st: 'bad' });
+    B(20, 250, 120, 60, 'Ravi', '', { st: cap ? 'good' : 'bad' });
+    B(330, 140, 130, 70, cap ? 'CAPTCHA' : 'Gateway', '', { st: 'acc' });
+    A(140, 70, 328, 158, C.bad); dots(5, 165, 92, C.bad, { gap: 22 });
+    if (!cap) {
+      B(620, 140, 190, 70, 'Ravi ka account', 'LOCK', { st: 'bad' });
+      A(460, 175, 618, 175, C.bad);
+      A(140, 280, 328, 195, C.bad, { dash: 1 }); cross(235, 238);
+    } else {
+      B(620, 140, 190, 70, 'App', '', { st: 'good' }); A(460, 175, 618, 175, C.good);
+      A(140, 280, 328, 195, C.good); dot([235, 238], C.good);
+      cross(300, 128);
+    }
   }
-  T(890, 345, 'had: 5 / minute', { a: 'end', c: C.muted, size: 12 });
 }

@@ -1,100 +1,162 @@
 <!doctype html>
-<!-- Card 1 chalti tasveer. GIF: node 04_HLD/tools/anim2gif.js <is file> -->
+<!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
 <meta charset="utf-8">
-<style>
-body{margin:0;background:#11161c}
-svg text{font-family:Consolas,"Courier New",monospace;fill:#e6edf3}
-.box{fill:#222d3a;stroke:#4b5a6a;stroke-width:1.5}
-.wire{stroke:#4b5a6a;stroke-width:1.5;fill:none;stroke-dasharray:4 4}
-.lbl{font-size:14px}
-.small{font-size:12px;fill:#9aa8b6!important}
-.big{font-size:15px;font-weight:bold}
-</style>
-<svg id="s" width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
-  <rect width="900" height="400" fill="#11161c"/>
-  <rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
-  <text id="cap" x="20" y="29" style="font-size:16px;font-weight:bold"></text>
-  <g transform="translate(0,40)">
-    <path class="wire" d="M110 180 H170"/><path class="wire" d="M250 180 L360 95"/><path class="wire" d="M250 180 L360 265"/>
-    <g id="rwire"><path class="wire" d="M480 95 L620 170"/><path class="wire" d="M480 265 L620 190"/></g>
-
-    <rect class="box" x="20" y="135" width="90" height="90" rx="12"/>
-    <text class="lbl" x="65" y="175" text-anchor="middle">Main</text>
-    <text class="small" x="65" y="193" text-anchor="middle">9 login</text>
-
-    <rect class="box" x="170" y="155" width="80" height="50" rx="8"/>
-    <text class="lbl" x="210" y="174" text-anchor="middle">LB</text>
-
-    <rect class="box" x="360" y="65" width="120" height="60" rx="8"/>
-    <text class="lbl" x="420" y="86" text-anchor="middle">App-1</text>
-    <text id="g1" class="small" x="420" y="145" text-anchor="middle"></text>
-    <rect class="box" x="360" y="235" width="120" height="60" rx="8"/>
-    <text class="lbl" x="420" y="256" text-anchor="middle">App-2</text>
-    <text id="g2" class="small" x="420" y="315" text-anchor="middle"></text>
-
-    <g id="redis">
-      <rect class="box" x="620" y="145" width="160" height="70" rx="10" style="stroke:#f0a030"/>
-      <text class="lbl" x="700" y="170" text-anchor="middle">Redis (ek ginti)</text>
-      <text id="rc" x="700" y="195" text-anchor="middle" style="font-size:13px;fill:#f0a030"></text>
-    </g>
-
-    <text id="res1" class="big" x="890" y="300" text-anchor="end"></text>
-    <text id="res2" class="big" x="890" y="325" text-anchor="end"></text>
-    <text class="small" x="890" y="350" text-anchor="end">had: 5 login / minute</text>
-    <g id="dots"></g>
-  </g>
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
+<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="400" fill="#11161c"/>
+<rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
+<text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
+<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
 </svg>
 <script>
-const DUR = 20, FIX = 8.5, N = 9, GAP = 0.5;
+// Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
+// anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
-const APP = [[420, 108], [420, 278]], USER = [110, 192], LB = [210, 192], R = [610, 180];
-const dots = [];
-for (let i = 0; i < N; i++) {
-  const g = document.createElementNS(NS, 'g');
-  const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', '9');
-  const t = document.createElementNS(NS, 'text'); t.setAttribute('text-anchor', 'middle'); t.setAttribute('y', '4');
-  t.style.fontSize = '11px'; t.style.fontWeight = 'bold'; t.style.fill = '#11161c'; t.textContent = i + 1;
-  const l = document.createElementNS(NS, 'text'); l.setAttribute('text-anchor', 'middle'); l.setAttribute('y', '-14');
-  l.style.fontSize = '12px'; l.style.fontWeight = 'bold';
-  g.append(c, t, l); document.getElementById('dots').append(g); dots.push({ g, c, l });
+const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
+  msg: '#64b5f6', good: '#66bb6a', bad: '#ef5350', acc: '#f0a030' };
+const ST = document.getElementById('st'), DYN = document.getElementById('dyn');
+function el(tag, a, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in a) e.setAttribute(k, a[k]);
+  if (text !== undefined) e.textContent = text;
+  (parent || ST).append(e); return e;
+}
+function grp(id) { return el('g', id ? { id } : {}); }
+// dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
+function box(x, y, w, h, label, sub, o = {}) {
+  const g = el('g', o.id ? { id: o.id } : {}, o.parent);
+  el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
+    'stroke-width': 1.5 }, g);
+  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
+  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  return g;
+}
+function wire(d, id, parent) {
+  return el('path', { d, id: id || '', fill: 'none', stroke: C.line, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, parent);
+}
+function vis(id, on) { const e = document.getElementById(id); if (e) e.style.opacity = on ? 1 : 0; }
+// har frame DYN saaf, phir naya
+function T(x, y, s, o = {}) {
+  return el('text', { x, y, 'text-anchor': o.a || 'middle', 'font-size': o.size || 13, fill: o.c || C.fg,
+    'font-weight': o.b ? 'bold' : 'normal', 'paint-order': 'stroke', stroke: C.bg, 'stroke-width': o.halo ? 5 : 0 }, DYN, s);
+}
+function dot(p, c, num, label, lc) {
+  if (!p) return;
+  el('circle', { cx: p[0], cy: p[1], r: 9, fill: c || C.msg }, DYN);
+  if (num !== undefined && num !== '') el('text', { x: p[0], y: p[1] + 4, 'text-anchor': 'middle', 'font-size': 10,
+    'font-weight': 'bold', fill: C.bg }, DYN, num);
+  if (label) T(p[0], p[1] - 15, label, { c: lc || c || C.msg, b: 1, size: 12, halo: 1 });
+}
+function cross(x, y) {
+  el('path', { d: `M${x - 14} ${y - 14} L${x + 14} ${y + 14} M${x + 14} ${y - 14} L${x - 14} ${y + 14}`,
+    stroke: C.bad, 'stroke-width': 4 }, DYN);
 }
 function lerp(a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; }
-function path(pts, t) {   // pts: [[time, [x,y]], ...]
+// pts: [[time, [x,y]], ...] ; pehle se pehle null, aakhir ke baad aakhri jagah
+function path(pts, t) {
   if (t < pts[0][0]) return null;
   for (let i = 1; i < pts.length; i++) if (t <= pts[i][0])
     return lerp(pts[i - 1][1], pts[i][1], (t - pts[i - 1][0]) / (pts[i][0] - pts[i - 1][0]));
   return pts[pts.length - 1][1];
 }
-function txt(id, s, color) { const e = document.getElementById(id); e.textContent = s; e.style.fill = color || ''; }
-function draw(t) {
-  const fix = t >= FIX, t0 = fix ? FIX + 0.6 : 0.6;
-  document.getElementById('capbg').setAttribute('fill', fix ? '#123018' : '#3a1414');
-  txt('cap', fix ? 'ILAAJ: sab App ek hi Redis ginti dekhte (rate:Arpan:login, umar 60 sec). 6th pe 429'
-                 : 'DIKKAT: har App apni ginti. LB ne baanta: App-1 ne 5 gine, App-2 ne 4. Koi had paar nahi', '#e6edf3');
-  document.getElementById('redis').style.opacity = fix ? 1 : 0;
-  document.getElementById('rwire').style.opacity = fix ? 1 : 0;
-  let a1 = 0, a2 = 0, rc = 0, ok = 0, no = 0;
-  dots.forEach((d, i) => {
-    const s = t0 + i * GAP, app = APP[i % 2];
-    const pts = [[s, USER], [s + 0.4, LB], [s + 0.9, app]];
-    if (fix) pts.push([s + 1.4, R]);
-    const p = path(pts, t);
-    const done = t >= pts[pts.length - 1][0];
-    let col = '#64b5f6', label = '';
-    if (done) {
-      if (!fix) { i % 2 ? a2++ : a1++; ok++; col = '#66bb6a'; }
-      else { rc++; if (rc <= 5) { ok++; col = '#66bb6a'; } else { no++; col = '#ef5350'; label = '429'; } }
-    }
-    if (!p || (done && t > pts[pts.length - 1][0] + 1.6)) { d.g.setAttribute('visibility', 'hidden'); return; }
-    d.g.setAttribute('visibility', 'visible');
-    d.g.setAttribute('transform', `translate(${p[0]} ${p[1]})`);
-    d.c.style.fill = col; d.l.textContent = label; d.l.style.fill = '#ef5350';
-  });
-  txt('g1', fix ? '' : `apni ginti: ${a1} / 5`);
-  txt('g2', fix ? '' : `apni ginti: ${a2} / 5`);
-  txt('rc', fix ? `rate:Arpan:login = ${rc}` : '');
-  if (!fix) { txt('res1', `andar: ${ok}`, ok > 5 ? '#ef5350' : '#e6edf3'); txt('res2', ok > 5 ? 'had tooti!' : '', '#ef5350'); }
-  else { txt('res1', `andar: ${ok}`, '#66bb6a'); txt('res2', no ? `429: ${no}` : '', '#ef5350'); }
+function bar(x, y, w, h, frac, label, good) {
+  el('rect', { x, y, width: w, height: h, rx: 4, fill: 'none', stroke: C.line }, DYN);
+  const c = good ? C.good : frac > 0.9 ? C.bad : frac > 0.6 ? C.acc : C.good;
+  el('rect', { x: x + 2, y: y + 2, width: Math.max(0, (w - 4) * Math.min(1, frac)), height: h - 4, rx: 3, fill: c }, DYN);
+  if (label) T(x + w / 2, y - 6, label, { size: 12, c: C.muted });
 }
-draw(0);
+// list ke dabbe (inbox jaisa): items = [[text, color], ...], baayein se daayein
+function cells(x, y, items, o = {}) {
+  const w = o.w || 46, h = o.h || 26;
+  items.forEach(([s, c], i) => {
+    el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
+    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+  });
+}
+const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || 2, 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+}
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
+function draw(t) {
+  DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    return;
+  }
+  const fix = t >= FIX;
+  CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
+  frame(t, fix, fix ? t - FIX : t);
+}
+
+// Card 1: do App, apni-apni ginti, 9 login andar. Ilaaj: sab App ek Redis ginti (60 sec umar).
+const DUR = 12;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: do App, dono ki apni ginti. 9 login, saari andar'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: sab App ek hi Redis ginti dekhte hain. 6thi request pe 429'],
+  [6, YEL, 'AGAR', 'AGAR window ke kinare pe 5 + 5 aayi? -> 2 sec me 10 andar'],
+  [9, GRN, 'WAPAS', 'WAPAS: 60 sec baad key mit gayi, ginti phir 0 se'],
+];
+function setup() {}
+function apps(st1, st2, s1, s2) {
+  B(20, 140, 100, 70, 'Arpan', '9 login'); B(170, 150, 70, 50, 'LB');
+  A(120, 175, 168, 175); A(240, 165, 318, 100); A(240, 185, 318, 260);
+  B(320, 60, 130, 70, 'App-1', s1, { st: st1 }); B(320, 225, 130, 70, 'App-2', s2, { st: st2 });
+}
+function frame(ph) {
+  if (ph === 0) {
+    apps('bad', 'bad', 'ginti: 5', 'ginti: 4');
+    dots(5, 480, 95, C.good); dots(4, 480, 260, C.good);
+    T(760, 170, 'andar: 9', { c: C.bad, b: 1, size: 26 });
+    T(760, 205, 'had: 5', { c: C.muted, size: 15 });
+  } else if (ph === 1) {
+    apps('', '', '', '');
+    B(530, 135, 170, 80, 'Redis', 'ginti: 9', { st: 'acc' });
+    A(450, 95, 528, 160); A(450, 260, 528, 190);
+    dots(5, 740, 140, C.good, { gap: 26 });
+    dots(4, 740, 215, C.bad, { gap: 26 });
+    T(800, 120, 'andar: 5', { c: C.good, b: 1, size: 15 });
+    T(800, 250, '429: 4', { c: C.bad, b: 1, size: 15 });
+  } else if (ph === 2) {
+    el('rect', { x: 60, y: 120, width: 390, height: 120, fill: '#1a2430', stroke: C.line }, DYN);
+    el('rect', { x: 450, y: 120, width: 390, height: 120, fill: '#1a2430', stroke: C.line }, DYN);
+    T(255, 300, 'minute 1: 5 / 5', { c: C.muted, size: 14 });
+    T(645, 300, 'minute 2: 5 / 5', { c: C.muted, size: 14 });
+    el('line', { x1: 450, y1: 100, x2: 450, y2: 260, stroke: C.acc, 'stroke-width': 3 }, DYN);
+    T(450, 280, '10:01:00', { c: C.acc, b: 1, size: 14 });
+    dots(5, 350, 180, C.good, { gap: 20 }); dots(5, 470, 180, C.good, { gap: 20 });
+    el('path', { d: 'M340 90 L340 75 L560 75 L560 90', fill: 'none', stroke: C.bad, 'stroke-width': 3 }, DYN);
+    T(450, 60, '2 sec: 10 andar', { c: C.bad, b: 1, size: 16 });
+  } else {
+    B(80, 110, 220, 80, 'rate:Arpan:login', 'ginti: 5', { st: 'dim' });
+    A(310, 150, 570, 150, C.muted, { dash: 1 });
+    T(440, 135, '60 sec', { c: C.muted, size: 14 });
+    B(580, 110, 220, 80, 'rate:Arpan:login', 'ginti: 0', { st: 'good' });
+    dot([690, 250], C.good); T(690, 285, 'andar', { c: C.good, b: 1, size: 14 });
+  }
+}
+
+setup(); draw(0);
 </script>

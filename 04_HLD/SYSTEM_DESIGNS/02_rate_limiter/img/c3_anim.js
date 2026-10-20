@@ -1,37 +1,47 @@
-// Card 3: 429 wali bhi App tak ghoomi, App bhar gaya. Ilaaj: limiter gateway pe, sabse aage.
-const DUR = 16, FIX = 7.5, N = 14, GAP = 0.3;
-const BOT = [110, 180], GW = [215, 192], LB = [390, 192], APP = [560, 192], RD = [740, 192];
-function setup() {
-  wire('M110 180 H170', 'w0'); wire('M170 180 H350', 'wbug'); wire('M260 180 H350'); wire('M430 180 H500'); wire('M620 180 H680', 'wapp');
-  wire('M215 205 L215 290 L690 290 L740 225', 'wgw');
-  box(20, 135, 90, 90, 'Bot', '10,000 / sec');
-  box(170, 160, 90, 50, 'Gateway', '', { id: 'gw', stroke: C.acc });
-  box(350, 160, 80, 50, 'LB');
-  box(500, 140, 120, 80, 'App');
-  box(680, 150, 130, 70, 'Redis', 'ginti');
-}
-function frame(t, fix, tl) {
-  CAP.textContent = fix ? 'ILAAJ: limiter API Gateway pe, sabse aage. Had paar = wahin 429, LB / App tak nahi'
-                        : 'DIKKAT: limiter App ke andar. 429 wali request bhi LB -> App tak ghoom ke aati';
-  vis('gw', fix); vis('wbug', !fix); vis('wgw', fix); vis('wapp', !fix);
-  let inApp = 0, blocked = 0;
-  for (let i = 0; i < N; i++) {
-    const s = 0.4 + i * GAP, okReq = i < 3;
-    if (!fix) {
-      const p = path([[s, BOT], [s + 0.5, LB], [s + 0.9, APP]], tl);
-      if (tl >= s + 0.9) { inApp++; if (!okReq) blocked++; }
-      if (p && tl < s + 1.5) dot(p, tl >= s + 0.9 ? (okReq ? C.good : C.bad) : C.msg, '', tl >= s + 0.9 && !okReq ? '429' : '');
-    } else {
-      const pts = okReq ? [[s, BOT], [s + 0.3, GW], [s + 0.8, LB], [s + 1.2, APP]] : [[s, BOT], [s + 0.3, GW]];
-      const end = pts[pts.length - 1][0], p = path(pts, tl);
-      if (tl >= end) { okReq ? inApp++ : blocked++; }
-      const q = tl >= end && !okReq ? [215, 238] : p;
-      if (q && tl < end + 0.6) dot(q, tl >= end ? (okReq ? C.good : C.bad) : C.msg, '', tl >= end && !okReq ? '429' : '');
-    }
+// Card 3: limiter App me, 429 wali bhi App tak. Ilaaj: Gateway pe. Agar: sab ek saath lautein, gateway gira.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: limiter App me. 429 wali bhi LB -> App tak ghoom ke aayi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: limiter Gateway pe, sabse aage. Had paar to wahin 429, App tak nahi'],
+  [6, YEL, 'AGAR', 'AGAR sab 30 sec baad ek saath aaye? -> Retry-After alag-alag do (28, 33)'],
+  [9, YEL, 'AGAR', 'AGAR gateway gir gaya? -> 2+ machine pe, aage LB, darwaza akela nahi'],
+  [12, GRN, 'WAPAS', 'WAPAS: gateway wapas aaya, LB phir dono pe bhejta'],
+];
+function setup() {}
+function frame(ph) {
+  if (ph === 0) {
+    B(20, 140, 100, 80, 'Bot', '10,000/s'); A(120, 180, 198, 180);
+    B(200, 155, 80, 50, 'LB'); A(280, 180, 378, 180, C.bad);
+    B(380, 130, 130, 100, 'App', 'limiter', { st: 'bad' });
+    bar(395, 250, 100, 18, 1, 'bojh');
+    B(700, 150, 130, 60, 'Redis'); A(510, 180, 698, 180);
+    dots(12, 545, 110, C.bad, { gap: 22, cols: 6 }); T(600, 90, '429', { c: C.bad, b: 1, size: 14 });
+  } else if (ph === 1) {
+    B(20, 140, 100, 80, 'Bot', '10,000/s'); A(120, 180, 178, 180);
+    B(180, 150, 110, 60, 'Gateway', 'limiter', { st: 'acc' }); A(290, 180, 368, 180, C.good);
+    dots(12, 140, 250, C.bad, { gap: 22, cols: 6 }); T(195, 310, '429', { c: C.bad, b: 1, size: 14 });
+    B(370, 155, 80, 50, 'LB'); A(450, 180, 528, 180, C.good);
+    B(530, 130, 130, 100, 'App', '', { st: 'good' }); bar(545, 250, 100, 18, 0.2, 'bojh');
+    dots(3, 310, 150, C.good, { gap: 18 });
+    B(730, 150, 130, 60, 'Redis'); A(660, 180, 728, 180);
+  } else if (ph === 2) {
+    const ys = [70, 180, 290], tt = ['28 s', '31 s', '33 s'];
+    ys.forEach((y, i) => { B(20, y - 25, 110, 50, `user ${i + 1}`); A(130, y, 448, 180, C.acc);
+      T(290, y + (180 - y) * 0.5 - 12, tt[i], { c: C.acc, b: 1, size: 14, halo: 1 }); });
+    B(450, 150, 120, 60, 'Gateway', '', { st: 'good' });
+    bar(460, 235, 100, 18, 0.3, 'bojh', 1);
+    el('line', { x1: 640, y1: 200, x2: 880, y2: 200, stroke: C.line, 'stroke-width': 2 }, DYN);
+    [[680, '28'], [760, '31'], [840, '33']].forEach(([x, s]) => { dot([x, 180], C.acc); T(x, 225, s + ' s', { c: C.muted, size: 12 }); });
+  } else {
+    const down = ph === 3;
+    B(20, 150, 100, 60, 'users'); A(120, 180, 198, 180);
+    B(200, 155, 80, 50, 'LB');
+    B(400, 60, 130, 60, 'Gateway-1', '', { st: down ? 'bad' : 'good' }); if (down) cross(555, 90);
+    B(400, 240, 130, 60, 'Gateway-2', '', { st: 'good' });
+    A(280, 170, 398, 95, down ? C.bad : C.good, { dash: down });
+    A(280, 190, 398, 265, C.good);
+    B(680, 150, 120, 60, 'App');
+    if (!down) A(530, 90, 678, 170, C.good);
+    A(530, 270, 678, 190, C.good);
   }
-  const load = fix ? inApp / N : inApp / N;
-  bar(510, 240, 100, 16, load, 'App ka bojh');
-  T(560, 280, fix ? `App tak: ${inApp}` : `App tak: ${inApp}`, { c: fix ? C.good : C.bad, b: 1, size: 13 });
-  if (!fix && tl > 5) T(560, 300, 'App bhar gaya', { c: C.bad, b: 1, size: 13 });
-  if (fix) T(215, 140, `wahin 429: ${blocked}`, { c: C.bad, b: 1, size: 13 });
 }

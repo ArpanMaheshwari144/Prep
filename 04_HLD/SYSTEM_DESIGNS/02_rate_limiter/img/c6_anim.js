@@ -1,43 +1,44 @@
-// Card 6: bot har 60 sec phir aata. Ilaaj: 429 -> Kafka -> Pattern Svc ginta -> WAF block list (edge pe).
-const DUR = 19, FIX = 8;
-const BOT = [70, 192], WAF = [210, 192], GW = [390, 192], K = [390, 310], P = [600, 310];
-function setup() {
-  wire('M120 192 H170'); wire('M250 192 H345'); wire('M435 192 H560');
-  wire('M390 222 L390 285', 'wk'); wire('M435 310 H540', 'wp'); wire('M600 285 L600 250 L210 250 L210 222', 'ww');
-  box(20, 150, 100, 84, 'Bot', 'roz, din bhar');
-  box(170, 165, 80, 54, 'WAF', 'edge', { id: 'waf' });
-  box(345, 162, 90, 60, 'Gateway', '429', { stroke: C.acc });
-  box(560, 165, 110, 54, 'App');
-  box(345, 285, 90, 50, 'Kafka', '', { id: 'kf' });
-  box(540, 285, 130, 50, 'Pattern Svc', '', { id: 'ps' });
+// Card 6: bot har 60 sec phir. Ilaaj: 429 -> Kafka -> Pattern Svc -> WAF ban. Agar: Kafka peeche, galat ban. Wapas.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: 429 bolta 60 sec baad aao. Bot har 60 sec phir aata, din bhar'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: har 429 Kafka me. 10 min me 500+ 429 -> WAF block list, edge pe roko'],
+  [6, YEL, 'AGAR', 'AGAR Kafka peeche chal raha? -> ban kuch minute late, rate limit rok raha'],
+  [9, YEL, 'AGAR', 'AGAR office ka IP ban ho gaya? -> ban ~24 ghante me khud hat jaata'],
+  [12, GRN, 'WAPAS', 'WAPAS: ban apne aap hata, office phir andar'],
+];
+function setup() {}
+function row(who, wst, sub) {
+  B(20, 130, 110, 80, who, sub); A(130, 170, 198, 170);
+  B(200, 140, 100, 60, 'WAF', 'edge', { st: wst }); A(300, 170, 388, 170);
+  B(390, 140, 110, 60, 'Gateway', '429', { st: 'acc' }); A(500, 170, 618, 170);
+  B(620, 140, 110, 60, 'App');
 }
-function frame(t, fix, tl) {
-  ['kf', 'ps', 'wk', 'wp', 'ww'].forEach(id => vis(id, fix));
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: 429 sirf bolta "60 sec baad aao". Bot 60 sec baad phir aata, din bhar';
-    for (let k = 0; k < 4; k++) {
-      const s = 0.3 + k * 1.8, p = path([[s, BOT], [s + 0.5, WAF], [s + 1.0, GW]], tl);
-      if (tl < s + 1.6) dot(tl > s + 1.0 ? [390, 245] : p, tl > s + 1.0 ? C.bad : C.msg, '', tl > s + 1.0 ? '429' : '');
-    }
-    const n = Math.min(4, Math.floor((tl - 0.3) / 1.8) + 1);
-    T(70, 130, `${String(9 + n).padStart(2, '0')}:0${n} baje`, { c: C.muted, size: 12 });
-    T(390, 130, 'kabhi nahi rukta', { c: C.bad, b: 1, size: 13 });
-    return;
+function pipe(kst, pst) {
+  A(445, 200, 445, 258); B(390, 260, 110, 50, 'Kafka', '', { st: kst });
+  A(500, 285, 588, 285); B(590, 260, 140, 50, 'Pattern Svc', '', { st: pst });
+  el('path', { d: 'M660 260 L660 228 L250 228 L250 202', fill: 'none',
+    stroke: pst === 'bad' ? C.bad : C.muted, 'stroke-width': 2 }, DYN);
+}
+function frame(ph) {
+  if (ph === 0) {
+    row('Bot');
+    ['01', '02', '03', '04'].forEach((s, i) => { dot([400 + i * 30, 245], C.bad); T(400 + i * 30, 275, s, { c: C.muted, size: 11 }); });
+    T(445, 305, 'minute', { c: C.muted, size: 11 });
+    T(445, 120, '429 . 429 . 429', { c: C.bad, b: 1, size: 14 });
+  } else if (ph === 1) {
+    row('Bot', 'bad'); pipe('', 'bad');
+    dots(4, 140, 250, C.bad, { gap: 20 }); T(170, 285, 'BAN', { c: C.bad, b: 1, size: 14 });
+    T(660, 335, '500+', { c: C.bad, b: 1, size: 15 });
+  } else if (ph === 2) {
+    row('Bot', 'dim'); pipe('acc', 'dim');
+    bar(395, 318, 100, 16, 0.95, ''); T(445, 350, 'peeche', { c: C.acc, b: 1, size: 12 });
+    dots(4, 410, 110, C.bad, { gap: 22 }); T(445, 95, '429', { c: C.bad, b: 1, size: 13 });
+  } else {
+    const ban = ph === 3;
+    row('Office', ban ? 'bad' : 'good', '1 IP');
+    dots(5, 25, 240, ban ? C.bad : C.good, { gap: 24 });
+    if (ban) { cross(325, 125); T(250, 255, '~24 ghante', { c: C.acc, b: 1, size: 14 }); }
+    else { A(500, 170, 618, 170, C.good); dots(3, 525, 125, C.good, { gap: 22 }); }
   }
-  CAP.textContent = 'ILAAJ: har 429 Kafka me. Pattern Svc: 10 min me 500+ 429 -> WAF block list, edge pe hi roko';
-  const banned = tl > 4.4;
-  for (let k = 0; k < 6; k++) {
-    const s = 0.3 + k * 0.8;
-    if (s + 0.5 > 4.4 && banned) {
-      const p = path([[s, BOT], [s + 0.5, WAF]], tl);
-      if (tl < s + 1.1) dot(tl > s + 0.5 ? [150, 238] : p, tl > s + 0.5 ? C.bad : C.msg, '', tl > s + 0.5 ? 'BAN' : '');
-    } else {
-      const p = path([[s, BOT], [s + 0.5, WAF], [s + 1.0, GW]], tl);
-      if (tl < s + 1.4) dot(tl > s + 1.0 ? [460, 245] : p, tl > s + 1.0 ? C.bad : C.msg, '', tl > s + 1.0 ? '429' : '');
-      dot(path([[s + 1.0, GW], [s + 1.4, K], [s + 1.8, P]], tl < s + 1.8 ? tl : -1), C.acc);
-    }
-  }
-  const cnt = Math.min(500, Math.round(Math.max(0, tl - 1.2) * 160));
-  T(605, 355, `bot ke 429: ${cnt}`, { c: cnt >= 500 ? C.bad : C.acc, b: 1, size: 13 });
-  if (banned) T(210, 145, 'block list: bot', { c: C.bad, b: 1, size: 13 });
 }

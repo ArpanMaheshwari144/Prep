@@ -1,4 +1,4 @@
-"""Scene (cN_anim.js) + anim_base.js -> cN_anim.html -> GIF.
+"""Scene (cN_anim.js) + anim_base.js -> cN_anim.html -> GIF (ya PH wala scene -> cN_1.png, cN_2.png ...).
 python 04_HLD/tools/anim_build.py <scene.js> [<scene.js> ...]"""
 import os
 import subprocess
@@ -27,4 +27,8 @@ for js in sys.argv[1:]:
     scene = open(js, encoding='utf-8').read()
     html = js[:-3] + '.html'
     open(html, 'w', encoding='utf-8').write(TPL.format(base=base, scene=scene))
-    subprocess.run(['node', os.path.join(HERE, 'anim2gif.js'), html, '12'], check=True)
+    if 'const PH' in scene:   # kahani wala scene: har phase ka aakhri frame PNG, GIF nahi
+        subprocess.run(['node', os.path.join(HERE, 'anim_frames.js'), os.path.dirname(os.path.abspath(js)), html],
+                       check=True)
+    else:
+        subprocess.run(['node', os.path.join(HERE, 'anim2gif.js'), html, '12'], check=True)

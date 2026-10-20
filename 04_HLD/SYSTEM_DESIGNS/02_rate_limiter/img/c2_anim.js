@@ -1,51 +1,48 @@
-// Card 2: do App ne ek saath 4 padha, dono ne 5 likha -> 6 andar. Ilaaj: INCR ek kadam.
-const DUR = 16, FIX = 7.5;
-const BOT = [110, 180], LB = [210, 192], A1 = [420, 108], A2 = [420, 278], R = [610, 180], RE = [600, 205];
-function setup() {
-  wire('M110 180 H170'); wire('M250 180 L360 95'); wire('M250 180 L360 265');
-  wire('M480 95 L620 170'); wire('M480 265 L620 190');
-  box(20, 135, 90, 90, 'Bot', '20 login');
-  box(170, 155, 80, 50, 'LB');
-  box(360, 65, 120, 60, 'App-1'); box(360, 235, 120, 60, 'App-2');
-  box(620, 145, 170, 70, 'Redis', '', { r: 10, stroke: C.acc });
+// Card 2: GET phir SET = do kadam, 6 andar. Ilaaj: INCR ek kadam. Agar: EXPIRE se pehle crash, Lua atki.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: GET phir SET, do kadam. Dono App ne 4 padha, 6 andar'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: INCR se padhna aur badhana ek hi kadam. Redis ek ke baad ek chalata'],
+  [6, YEL, 'AGAR', 'AGAR INCR hua, EXPIRE se pehle crash? -> key kabhi nahi mitegi, user block'],
+  [9, YEL, 'AGAR', 'AGAR Lua atak gayi? -> poora Redis ruk jaata, kyunki ek hi line hai'],
+  [12, GRN, 'WAPAS', 'WAPAS: script chhoti rakhi, loop nahi. Line phir chal padi'],
+];
+function setup() {}
+function base(s1, s2, st1, st2, rs, rst) {
+  B(20, 140, 90, 80, 'Bot', '20 login'); A(110, 170, 248, 100); A(110, 190, 248, 260);
+  B(250, 60, 130, 70, 'App-1', s1, { st: st1 }); B(250, 225, 130, 70, 'App-2', s2, { st: st2 });
+  B(530, 135, 170, 80, 'Redis', rs, { st: rst });
 }
-function frame(t, fix, tl) {
-  CAP.textContent = fix ? 'ILAAJ: INCR = padhna + badhana EK kadam. Redis ek ke baad ek chalata'
-                        : 'DIKKAT: GET phir SET = do kadam. Dono App ne 4 padha, dono ne 5 likha';
-  T(890, 330, 'had: 5 · pehle se andar: 4', { a: 'end', c: C.muted, size: 12 });
-  const d5 = path([[0.3, BOT], [0.7, LB], [1.1, A1]], tl), d6 = path([[0.3, BOT], [0.7, LB], [1.1, A2]], tl);
-  let rc = 4;
-  if (!fix) {
-    dot(d5, C.msg, 5); dot(d6, C.msg, 6);
-    if (tl > 1.1 && tl < 2.3) {               // GET jaata, 4 laata
-      const f = tl < 1.7 ? [[1.1, A1], [1.7, R]] : [[1.7, R], [2.3, A1]];
-      const g = tl < 1.7 ? [[1.1, A2], [1.7, R]] : [[1.7, R], [2.3, A2]];
-      const lb = tl < 1.7 ? 'GET' : '4';
-      dot(path(f, tl), C.acc, '', lb, C.acc); dot(path(g, tl), C.acc, '', lb, C.acc);
-    }
-    if (tl >= 2.3) { T(420, 150, '4 < 5 -> andar', { c: C.good, size: 12 }); T(420, 320, '4 < 5 -> andar', { c: C.good, size: 12 }); }
-    if (tl > 2.6 && tl < 3.2) {
-      dot(path([[2.6, A1], [3.2, R]], tl), C.acc, '', 'SET 5', C.acc);
-      dot(path([[2.6, A2], [3.2, R]], tl), C.acc, '', 'SET 5', C.acc);
-    }
-    if (tl >= 3.2) rc = 5;
-    if (tl >= 3.5) { T(890, 280, 'andar: 6', { a: 'end', c: C.bad, b: 1, size: 15 });
-                     T(890, 305, 'had tooti! (dono ne 4 padha)', { a: 'end', c: C.bad, size: 12 }); }
+function frame(ph) {
+  if (ph === 0) {
+    base('padha: 4', 'padha: 4', 'bad', 'bad', 'ginti: 5', '');
+    A(380, 95, 528, 160, C.acc); A(380, 260, 528, 190, C.acc);
+    T(455, 112, 'SET 5', { c: C.acc, b: 1, size: 13, halo: 1 }); T(455, 252, 'SET 5', { c: C.acc, b: 1, size: 13, halo: 1 });
+    T(800, 170, 'andar: 6', { c: C.bad, b: 1, size: 24 }); T(800, 200, 'had: 5', { c: C.muted, size: 14 });
+  } else if (ph === 1) {
+    base('5: andar', '6: 429', 'good', 'bad', 'ginti: 6', 'acc');
+    A(380, 95, 528, 160, C.good); A(380, 260, 528, 190, C.bad);
+    T(455, 112, 'INCR', { c: C.acc, b: 1, size: 13, halo: 1 }); T(455, 252, 'INCR', { c: C.acc, b: 1, size: 13, halo: 1 });
+    T(800, 170, 'andar: 5', { c: C.good, b: 1, size: 24 }); T(800, 200, 'had: 5', { c: C.muted, size: 14 });
+  } else if (ph === 2) {
+    B(20, 140, 110, 70, 'Arpan');
+    B(420, 30, 180, 70, 'Redis', '', { st: 'bad' }); cross(625, 65);
+    cells(420, 130, [['INCR', C.good], ['EXPIRE', C.bad]], { w: 86, h: 30 });
+    B(420, 230, 180, 70, 'rate:Arpan', 'umar: nahi', { st: 'bad' });
+    A(130, 175, 410, 260, C.bad);
+    dots(3, 200, 205, C.bad, { gap: 60 });
+    T(260, 300, 'aaj  kal  parso: 429', { c: C.bad, b: 1, size: 14 });
+  } else if (ph === 3) {
+    dots(9, 120, 175, C.msg, { gap: 34 });
+    A(420, 175, 498, 175, C.bad);
+    B(500, 120, 220, 110, 'Redis', 'Lua: loop', { st: 'bad' });
+    T(255, 135, 'sab ruki', { c: C.bad, b: 1, size: 15 });
+    T(810, 175, '0 / sec', { c: C.bad, b: 1, size: 20 });
   } else {
-    dot(d5, C.msg, 5); dot(d6, C.msg, 6);
-    T(705, 238, 'ek line: ek ke baad ek', { c: C.muted, size: 12 });
-    if (tl > 1.1 && tl < 2.6) {
-      const a = tl < 1.7 ? path([[1.1, A1], [1.7, RE]], tl) : path([[1.7, RE], [2.3, A1]], tl);
-      if (tl < 2.3) dot(a, tl < 1.7 ? C.acc : C.good, '', tl < 1.7 ? 'INCR' : '5: andar', tl < 1.7 ? C.acc : C.good);
-      const wait = [[1.1, A2], [1.7, [570, 228]], [2.0, [570, 228]], [2.0, RE]];
-      const b = tl < 2.0 ? path(wait, tl) : path([[2.0, RE], [2.6, A2]], tl);
-      dot(b, tl < 2.0 ? C.acc : C.bad, '', tl < 2.0 ? 'INCR (ruk)' : '6: 429', tl < 2.0 ? C.acc : C.bad);
-    }
-    if (tl >= 1.7) rc = 5;
-    if (tl >= 2.0) rc = 6;
-    if (tl >= 2.6) { T(420, 150, '5 -> andar', { c: C.good, size: 12 }); T(420, 320, '6 -> 429', { c: C.bad, size: 12 });
-                     T(890, 280, 'andar: 5', { a: 'end', c: C.good, b: 1, size: 15 });
-                     T(890, 305, '429: 1', { a: 'end', c: C.bad, b: 1, size: 13 }); }
+    dots(3, 320, 175, C.msg, { gap: 34 });
+    A(420, 175, 498, 175, C.good);
+    B(500, 120, 220, 110, 'Redis', 'Lua: chhoti', { st: 'good' });
+    A(720, 175, 790, 175, C.good);
+    dots(3, 810, 150, C.good, { gap: 26, cols: 1 });
   }
-  T(705, 195, `ginti = ${rc}`, { c: C.acc, size: 14, b: 1 });
 }

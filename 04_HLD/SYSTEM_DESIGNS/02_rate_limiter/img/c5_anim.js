@@ -1,36 +1,38 @@
-// Card 5: 3 region, har ek ki apni ginti, 50 + 50 + 50 = 150 (had 100). Ilaaj: ginti ghar region me.
-const DUR = 18, FIX = 8;
-const SCR = [70, 192], REG = [[330, 80], [330, 192], [330, 304]], NAMES = ['India', 'US', 'Europe'];
-const HOME = [640, 80];
-function setup() {
-  for (const [x, y] of REG) wire(`M120 192 L${x - 70} ${y}`);
-  wire('M400 192 L570 90', 'wh1'); wire('M400 304 L570 100', 'wh2'); wire('M400 80 H570', 'wh0');
-  box(20, 150, 100, 84, 'Meri script', '3 region se');
-  REG.forEach(([x, y], i) => box(x - 70, y - 28, 140, 56, NAMES[i]));
-  box(570, 50, 150, 60, 'India Redis', 'ghar ki ginti', { id: 'home', stroke: C.acc });
-}
-function frame(t, fix, tl) {
-  vis('home', fix); vis('wh0', fix); vis('wh1', fix); vis('wh2', fix);
-  T(890, 345, 'had: 100 / minute', { a: 'end', c: C.muted, size: 12 });
-  for (let i = 0; i < 3; i++) for (let k = 0; k < 4; k++) {
-    const s = 0.4 + k * 0.9 + i * 0.2;
-    const pts = fix && i !== 0 ? [[s, SCR], [s + 0.6, REG[i]], [s + 1.3, HOME]] : [[s, SCR], [s + 0.6, REG[i]]];
-    if (fix && i === 0) pts.push([s + 1.0, HOME]);
-    const end = pts[pts.length - 1][0];
-    if (tl < end + 0.2) dot(path(pts, tl), C.msg);
-  }
-  const f = Math.min(1, Math.max(0, (tl - 0.8) / 3.6));
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: har region ka apna Redis, apni ginti. Teeno me 50-50, jod 150';
-    REG.forEach(([x, y]) => T(x + 105, y + 5, `${Math.round(50 * f)} / 100`, { c: C.good, b: 1, a: 'start', size: 13 }));
-    const tot = Math.round(150 * f);
-    T(890, 290, `kul andar: ${tot}`, { a: 'end', c: tot > 100 ? C.bad : C.fg, b: 1, size: 15 });
-    if (tot > 100) T(890, 312, 'had tooti!', { a: 'end', c: C.bad, b: 1, size: 13 });
+// Card 5: 3 region, 50 + 50 + 50 = 150. Ilaaj: ginti ghar region (India) me. Agar: ghar door, ghar gira. Wapas.
+const DUR = 15;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: har region ki apni ginti. 50 + 50 + 50 = 150, had 100'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: meri ginti mere ghar region (India) me. US / Europe bhi wahin gini'],
+  [6, YEL, 'AGAR', 'AGAR ghar door hai? -> sirf paisa / login ghar tak, baaki har second sync'],
+  [9, YEL, 'AGAR', 'AGAR ghar region gir gaya? -> Route 53 doosre region pe, ginti 0 se'],
+  [12, GRN, 'WAPAS', 'WAPAS: India wapas aaya, ginti phir ghar region me'],
+];
+const R = [['India', 60], ['US', 175], ['Europe', 290]];
+function setup() {}
+function regs(st) { R.forEach(([n, y]) => { B(260, y - 28, 140, 56, n, '', { st: st && st[n] }); A(130, 175, 258, y); }); }
+function frame(ph) {
+  B(20, 140, 110, 70, 'Meri script');
+  if (ph === 0) {
+    regs();
+    R.forEach(([n, y]) => { A(400, y, 478, y); B(480, y - 22, 120, 44, '50 / 100', '', { st: 'good' }); });
+    T(760, 165, 'kul: 150', { c: C.bad, b: 1, size: 26 }); T(760, 200, 'had: 100', { c: C.muted, size: 15 });
+  } else if (ph === 1 || ph === 4) {
+    regs(); B(560, 30, 190, 70, 'India Redis', '100 / 100', { st: 'acc' });
+    A(400, 60, 558, 65, C.good); A(400, 175, 558, 80, C.good); A(400, 290, 558, 95, C.good);
+    if (ph === 1) { dots(5, 590, 175, C.bad, { gap: 24 }); T(640, 215, '429: 50', { c: C.bad, b: 1, size: 15 }); }
+    else T(655, 140, 'ghar = India', { c: C.good, b: 1, size: 14 });
+  } else if (ph === 2) {
+    regs({ US: 'acc' });
+    B(560, 30, 190, 70, 'India Redis', 'ghar');
+    A(400, 165, 558, 75, C.acc); T(470, 95, 'login / paisa', { c: C.acc, b: 1, size: 13, halo: 1 });
+    T(470, 118, '100-200 ms', { c: C.muted, size: 12, halo: 1 });
+    B(560, 250, 190, 70, 'US ginti', 'feed', { st: 'good' }); A(400, 185, 558, 270, C.good);
+    A(655, 248, 655, 102, C.muted, { dash: 1 }); T(730, 180, 'har 1 sec sync', { c: C.muted, size: 12 });
   } else {
-    CAP.textContent = 'ILAAJ: meri ginti mere ghar region (India) me. US / Europe ki request bhi wahin gini';
-    const c = Math.round(150 * f), inn = Math.min(100, c);
-    T(645, 135, `ginti: ${inn} / 100`, { c: inn >= 100 ? C.bad : C.good, b: 1, size: 14 });
-    T(890, 290, `kul andar: ${inn}`, { a: 'end', c: C.good, b: 1, size: 15 });
-    if (c > 100) T(890, 312, `429: ${c - 100}`, { a: 'end', c: C.bad, b: 1, size: 13 });
+    regs({ India: 'bad' });
+    B(560, 30, 190, 70, 'India Redis', '', { st: 'bad' }); cross(775, 65);
+    B(560, 140, 190, 60, 'Route 53', '', { st: 'acc' });
+    B(560, 250, 190, 70, 'US Redis', 'ginti: 0', { st: 'good' });
+    A(400, 175, 558, 170); A(655, 200, 655, 248, C.good);
   }
 }

@@ -1,42 +1,22 @@
-// Card 7: sale, har user had me, phir bhi server gira. Ilaaj: gateway pe system ki had + load shedding (503).
-const DUR = 17, FIX = 7.5;
-const GW = [380, 192], APP = [580, 205];
-const U = [[70, 70], [70, 130], [70, 192], [70, 254], [70, 316]];
-function setup() {
-  U.forEach(([x, y], i) => { box(x - 50, y - 22, 100, 44, `user ${i + 1}`); wire(`M${x + 50} ${y} L335 192`); });
-  wire('M425 192 H560');
-  box(335, 162, 90, 60, 'Gateway', 'limiter', { stroke: C.acc });
-  box(560, 150, 120, 84, 'Server', 'CPU');
-}
-function frame(t, fix, tl) {
-  let cpu = 0;
-  T(70, 22, 'har user apni had me', { c: C.good, size: 12 });
-  for (let k = 0; k < 20; k++) {
-    const u = k % 5, s = 0.3 + k * 0.22, imp = k % 3 === 0;   // har teesri = login / payment
-    if (!fix) {
-      const p = path([[s, U[u]], [s + 0.5, GW], [s + 0.9, APP]], tl);
-      if (tl >= s + 0.9) cpu++;
-      if (tl < s + 1.2) dot(p, C.msg);
-    } else {
-      const drop = !imp && k > 8;
-      const pts = drop ? [[s, U[u]], [s + 0.5, GW]] : [[s, U[u]], [s + 0.5, GW], [s + 0.9, APP]];
-      const end = pts[pts.length - 1][0];
-      if (tl >= end && !drop) cpu++;
-      if (tl < end + 0.5) dot(drop && tl >= end ? [380, 245] : path(pts, tl), drop && tl >= end ? C.bad : imp ? C.good : C.msg, '',
-        drop && tl >= end ? '503' : '', C.bad);
-    }
+// Card 7: sab apni had me, phir bhi CPU 100%. Ilaaj: system ki had + 503 kam zaroori pe. Wapas: CPU neeche.
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: har user apni had me, par kul jod se server CPU 100%'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: system ki had 5,000/sec. CPU 90% paar: kam zaroori ko 503'],
+  [6, GRN, 'WAPAS', 'WAPAS: CPU 90% se neeche, 503 band, sab request phir andar'],
+];
+function setup() {}
+function frame(ph) {
+  for (let i = 0; i < 5; i++) { B(20, 25 + i * 64, 100, 44, `user ${i + 1}`, '', { st: 'good' }); A(120, 47 + i * 64, 308, 175); }
+  B(310, 145, 110, 60, 'Gateway', ph ? 'had 5,000/s' : '', { st: 'acc' });
+  const cpu = [1, 0.85, 0.5][ph];
+  B(620, 130, 140, 90, 'Server', 'CPU', { st: ph === 0 ? 'bad' : 'good' });
+  bar(630, 235, 120, 18, cpu, ''); T(690, 278, `${Math.round(cpu * 100)}%`, { c: ph === 0 ? C.bad : C.good, b: 1, size: 16 });
+  if (ph === 0) { A(420, 175, 618, 175, C.bad); dots(6, 445, 150, C.msg, { gap: 26 }); }
+  if (ph === 1) {
+    A(420, 175, 618, 175, C.good); dots(3, 470, 150, C.good, { gap: 34 });
+    T(505, 128, 'login / payment', { c: C.good, b: 1, size: 12 });
+    dots(6, 310, 245, C.bad, { gap: 20 }); T(360, 280, '503', { c: C.bad, b: 1, size: 15 });
   }
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: laakhon user, har ek apni had me. Par kul jod se server CPU 100%';
-    const f = cpu / 20; bar(570, 245, 100, 16, f, '');
-    T(620, 285, `CPU ${Math.round(100 * f)}%`, { c: f > 0.9 ? C.bad : C.fg, b: 1 });
-    if (f >= 1) T(620, 305, 'server gira, sab band', { c: C.bad, b: 1 });
-  } else {
-    CAP.textContent = 'ILAAJ: gateway pe system ki had (5,000/sec). CPU 90% paar: kam zaroori 503, login/payment bachao';
-    const f = Math.min(0.85, cpu / 20 * 1.6); bar(570, 245, 100, 16, f, '');
-    T(620, 285, `CPU ${Math.round(100 * f)}%`, { c: C.good, b: 1 });
-    T(380, 140, 'had: 5,000 / sec', { c: C.acc, size: 12 });
-    T(880, 310, 'hara = login / payment', { a: 'end', c: C.good, size: 12 });
-    T(880, 330, 'laal 503 = recommendation', { a: 'end', c: C.bad, size: 12 });
-  }
+  if (ph === 2) { A(420, 175, 618, 175, C.good); dots(6, 445, 150, C.good, { gap: 26 }); }
 }
