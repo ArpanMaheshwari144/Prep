@@ -3,7 +3,7 @@
 > Lamba link do, chhota 7 akshar ka code milta hai. Koi chhote link pe click kare to asli link pe bhej do (302).
 > Dil do cheezein: har link ka code alag, aur click pe redirect bahut tez. Log link banate kam, kholte zyada (100 me 99 baar kholna).
 >
-> Mock me sirf heading + Cue padho. Har card: kya toota -> kya kiya -> yahi kyun -> doosra kyun nahi. "Pooche" wali line = interviewer aage poochhe to.
+> Mock me sirf heading + Cue + GIF. Neeche har card: **hal** · **kyun** · **nahi** (doosra kyun nahi) · **Pooche**.
 
 ---
 
@@ -13,35 +13,11 @@
 
 ---
 
-
 ## Shuru
 
-Sabse simple: User link deta, App ek code banata, DB me (code, lamba link) rakh deta. Click aaya to App DB me code
-dhoondhta aur asli link pe bhej deta.
-
-Code kaise bane? Ek ginti (counter) 1, 2, 3... Har naye link ko agla number, aur us number ko 62 akshar
-(0-9, a-z, A-Z) me likh do (base62). 125 = "21", 100 crore = "15FTGg". Counter kabhi dohraata nahi, to code bhi
-kabhi dohraata nahi, check ki zaroorat hi nahi.
-
-Numbers: roz 10 crore naye link, yaani ~1,000 har second. Har link ~100 baar khulta, to ~1 lakh click har second.
-Ek link ~500 byte, 5 saal me ~180 arab link, ~90 TB. 7 akshar se ~3.5 lakh crore code bante, ~100 saal chalega.
-Click naye link se 100 guna, isliye aage cache lagega. 90 TB ek machine me nahi aata, isliye aage shard lagega.
-
-**Pooche: 302 kyun, 301 kyun nahi?** 301 pe browser link yaad rakh leta, agli baar server tak aata hi nahi, ginti band.
-302 pe har click server tak aata, ginti aur expiry chalti.
-
-**Pooche: MD5 ya random code kyun nahi?** Do link ka code same ho sakta, har baar "pehle se hai?" dekhna padta. Counter me nahi.
-
-**Pooche: counter se agla code andaza nahi ho jaayega?** Haan, ye keemat hai. Chahiye to number ko pehle shuffle / XOR
-karo, phir base62. Unique phir bhi rehta.
-
-**Pooche: user apna code maange to?** Lambai dekho, admin jaise reserved naam nahi, pehle se na ho. Do log ek saath
-maange to DB ka UNIQUE ek ko rokta, use 409.
-
-**Pooche: data ~500 GB hota to?** Ek MySQL kaafi. Shard tab jab ek machine me na aaye.
-
-**Pooche: do log same lamba link de to?** Alag code do, har ek ki apni ginti, apni expiry. Ek hi chahiye to
-long_url ke hash pe pehle dekh lo.
+- **FR:** lamba link do, 7 akshar ka chhota code milta · chhote link pe click to asli link pe bhejo (302)
+- **NFR:** har link ka code alag · click pe redirect bahut tez · 100 me 99 baar kholna
+- **numbers:** roz 10 crore naye link (~1,000 / sec) · har link ~100 baar khulta (~1 lakh click / sec) · ek link ~500 byte, 5 saal me ~180 arab link, ~90 TB · 7 akshar = ~3.5 lakh crore code, ~100 saal. Click 100 guna -> aage cache, 90 TB ek machine me nahi -> aage shard
 
 ---
 
@@ -51,35 +27,20 @@ long_url ke hash pe pehle dekh lo.
 
 **Cue:** REDIS CACHE (cache-aside) · dabba: Redis
 
-Isliye beech me Redis lagaya. Click aata hai to pehle Redis me dekhte hain. Mil gaya to wahin se jawab, nahi mila to
-DB se laate hain aur Redis me rakh dete hain (cache-aside). Naya link banate hi Redis me bhi daal dete hain.
-
-Redis hi kyun? Redis RAM se padhta hai, ~0.1 ms. DB disk se, ~10 ms. Aur 95% click Redis se hi nikal jaate hain.
-
-DB ki copy (replica) kyun nahi laga di? Copy bhi disk se hi padhti hai, to dheemi hi rehti.
-
-Memcached bhi to cache hai, wo kyun nahi? Usme copy nahi hoti. Redis gira to uski copy kaam sambhal leti hai,
-Memcached gira to saari bheed seedha DB pe.
-
-Sach ek hi jagah hai, DB me. Redis sirf garam copy hai, khoyi bhi to DB se wapas ban jaati.
-
-**Pooche: Redis bhar gaya to?** Jo link der se nahi khule, unhe nikaal do (LRU). Redis me sirf garam link, 180 arab nahi.
-
-**Pooche: link ki expiry?** Redis ki umar (TTL) = link ki expiry. Dono saath mitte hain.
-
-**Pooche: link badla ya hataya to?** Pehle DB, phir Redis se hatao. Ulta kiya to beech ka click purana link wapas Redis me bhar deta.
-
-**Pooche: Redis hi gir gaya to?** Uski copy (cluster + replica) sambhalti hai. Warna 95% click DB pe, DB phir baith jaata.
-
-**Pooche: copy bhi gayi to?** Ek link ke 1000 click me sirf 1 DB tak jaata, baaki usi ka jawab lete. Tab bhi bojh ho
-to kuch click mana karo, DB bachao (load shedding).
-
-**Pooche: har App apna cache kyun nahi rakhta?** Link badla to har App ki copy purani reh jaati. Isliye ek shared Redis.
-
-**Pooche: ek link viral, uski DB machine garam?** Wo pehle hi Redis me mil jaata, DB tak kam aata.
-
-**Pooche: bot fake code (/xyz999) pe lakhon click, sab DB pe?** Code = counter ka number; itna number diya hi
-nahi to App wahin 404, DB tak nahi. Deleted / expired ke liye Redis me "nahi hai" 1 min rakho.
+- **pehle:** sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe App DB me code dhoondh ke asli link pe bhejta.
+- **hal:** beech me Redis: click pe pehle Redis, mila to wahin se, nahi to DB se laao + Redis me rakho (cache-aside). Naya link banate hi Redis me bhi.
+- **kyun:** Redis RAM se ~0.1 ms, DB disk se ~10 ms. 95% click Redis se hi nikal jaate.
+- **kyun:** sach ek hi jagah, DB me. Redis sirf garam copy, khoyi to DB se wapas ban jaati.
+- **nahi:** DB ki copy (replica) -> wo bhi disk se padhti, dheemi hi
+- **nahi:** Memcached -> usme copy nahi; gira to saari bheed seedha DB pe. Redis gira to uski copy sambhalti.
+- **Pooche:** Redis bhar gaya? -> jo link der se nahi khule, nikaalo (LRU). Redis me sirf garam link, 180 arab nahi.
+- **Pooche:** link ki expiry? -> Redis ki umar (TTL) = link ki expiry, dono saath mitte
+- **Pooche:** link badla ya hataya? -> pehle DB, phir Redis se hatao. Ulta kiya to beech ka click purana link wapas Redis me bhar deta.
+- **Pooche:** Redis hi gir gaya? -> copy (cluster + replica) sambhalti. Warna 95% click DB pe, DB phir baith jaata.
+- **Pooche:** copy bhi gayi? -> ek link ke 1000 click me sirf 1 DB tak, baaki usi ka jawab lete. Tab bhi bojh to kuch click mana, DB bachao (load shedding).
+- **Pooche:** har App apna cache kyun nahi? -> link badla to har App ki copy purani reh jaati. Isliye ek shared Redis.
+- **Pooche:** ek link viral, uski DB machine garam? -> wo pehle hi Redis me mil jaata, DB tak kam aata
+- **Pooche:** bot fake code (/xyz999) pe lakhon click, sab DB pe? -> code = counter ka number; itna number diya hi nahi to App wahin 404, DB tak nahi. Deleted / expired ke liye Redis me "nahi hai" 1 min rakho.
 
 ---
 
@@ -89,19 +50,12 @@ nahi to App wahin 404, DB tak nahi. Deleted / expired ke liye Redis me "nahi hai
 
 **Cue:** STATELESS App x N + LOAD BALANCER · dabba: LB + App x N
 
-Isliye kai App lagaye aur aage Load Balancer (LB). LB har request baari-baari kisi bhi App ko deta (round-robin).
-App kuch yaad nahi rakhta (stateless), sab Redis / DB me, isliye koi bhi App koi bhi click le sakta.
-
-Ye kyun chalta? Koi App giri to /health ka jawab nahi deti, LB use list se hata deta, agla click doosri App pe.
-
-Ek badi machine kyun nahi? Kitni bhi badi ho, ek hi hai. Wo giri to poori site band.
-
-User ka login App me hi yaad rakh lete to? User usi App se bandh jaata. Wo giri to logout, kyunki doosri App ko
-kuch pata hi nahi. Isliye session bahar, Redis / DB me.
-
-**Pooche: giri hui App theek ho gayi to?** /health phir haan bolta, LB use wapas list me le leta.
-
-**Pooche: App giri nahi, bas dheemi hai?** Jiske kam connection khule hain, use bhejo (least-conn).
+- **hal:** kai App + aage Load Balancer (LB), baari-baari kisi bhi App ko (round-robin). App kuch yaad nahi rakhta (stateless), sab Redis / DB me, koi bhi App koi bhi click le.
+- **kyun:** App giri to /health ka jawab nahi, LB use list se hata deta, agla click doosri App pe
+- **nahi:** ek badi machine -> kitni bhi badi, ek hi; giri to poori site band
+- **nahi:** login App me hi yaad -> user usi App se bandh jaata, wo giri to logout. Isliye session bahar, Redis / DB me.
+- **Pooche:** giri hui App theek ho gayi? -> /health phir haan bolta, LB wapas list me le leta
+- **Pooche:** App giri nahi, bas dheemi? -> jiske kam connection khule, use bhejo (least-conn)
 
 ---
 
@@ -111,25 +65,21 @@ kuch pata hi nahi. Isliye session bahar, Redis / DB me.
 
 **Cue:** COUNTER RANGE + base62 · dabba: Counter
 
-Isliye Counter har App ko alag range deta hai: App-1 ko 1 se 1000, App-2 ko 1001 se 2000. App apni range me se agla
-number leta. Ek range kabhi do App ko nahi milti, to code kabhi same nahi.
-
-Range kyun? Range ke andar App khud number deta, har link pe Counter tak jaana nahi. 1000 link pe ek call.
-
-UUID kyun nahi? 36 akshar ka hai. Link chhota karna hi to kaam tha.
-
-Lambe link ka hash le ke pehle 7 akshar? Do link ke pehle 7 akshar same aa sakte (takkar), har baar DB me dekhna
-padta. Counter me takkar hoti hi nahi.
-
-**Pooche: range khatam to?** Tabhi Counter (ZooKeeper / DB) se agli range.
-
-**Pooche: App-1 400 pe crash ho gaya?** 401 se 1000 bekaar, jaan-boojh ke. 3.5 lakh crore me kuch hazaar se farak nahi.
-
-**Pooche: Counter hi gir gaya?** App ki range chalti rehti, tab tak Counter ki copy uth jaati.
-
-**Pooche: Redis INCR se number kyun nahi?** Chal jaata, par har link pe ek call. Range me 1000 link pe ek.
-
-**Pooche: har number bachana ho to?** Har link pe Counter se poochho. Phir range ka fayda khatam.
+- **hal:** Counter har App ko alag range: App-1 ko 1-1000, App-2 ko 1001-2000. App apni range se agla number leta. Ek range kabhi do App ko nahi, to code kabhi same nahi.
+- **base62:** number ko 62 akshar (0-9, a-z, A-Z) me likho. 125 = "21", 100 crore = "15FTGg".
+- **kyun:** counter kabhi dohraata nahi, to code bhi nahi, check ki zaroorat hi nahi
+- **kyun:** range ke andar App khud number deta, har link pe Counter tak nahi. 1000 link pe ek call.
+- **nahi:** UUID -> 36 akshar, link chhota karna hi to kaam tha
+- **nahi:** lambe link ka hash, pehle 7 akshar -> do link ke same aa sakte (takkar), har baar DB me dekho. Counter me takkar hoti hi nahi.
+- **Pooche:** MD5 ya random code kyun nahi? -> do link ka code same ho sakta, har baar "pehle se hai?" dekhna. Counter me nahi.
+- **Pooche:** counter se agla code andaza nahi ho jaayega? -> haan, ye keemat hai. Chahiye to number pehle shuffle / XOR, phir base62. Unique phir bhi.
+- **Pooche:** user apna code maange? -> lambai dekho, admin jaise reserved naam nahi, pehle se na ho. Do log ek saath maange to DB ka UNIQUE ek ko rokta, use 409.
+- **Pooche:** do log same lamba link de? -> alag code, har ek ki apni ginti, apni expiry. Ek hi chahiye to long_url ke hash pe pehle dekh lo.
+- **Pooche:** range khatam? -> tabhi Counter (ZooKeeper / DB) se agli range
+- **Pooche:** App-1 400 pe crash? -> 401 se 1000 bekaar, jaan-boojh ke. 3.5 lakh crore me kuch hazaar se farak nahi.
+- **Pooche:** Counter hi gira? -> App ki range chalti rehti, tab tak Counter ki copy uth jaati
+- **Pooche:** Redis INCR se number kyun nahi? -> chal jaata, par har link pe ek call. Range me 1000 link pe ek.
+- **Pooche:** har number bachana ho? -> har link pe Counter se poochho. Phir range ka fayda khatam.
 
 ---
 
@@ -139,27 +89,17 @@ padta. Counter me takkar hoti hi nahi.
 
 **Cue:** KAFKA, ginti peeche · dabba: Kafka + Analytics + DLQ
 
-Isliye redirect turant karte hain (302), aur "ek click hua" ki khabar Kafka me daal ke aage badh jaate hain.
-Analytics service apni speed se Kafka se padh ke ginti karti.
-
-Ye kyun chalta? Redirect kisi ka intezaar nahi karta. Ginti peeche, disk pe pakki. Ginti wala dheema ya band ho tab
-bhi user ka link khulta, bas ginti thodi der se aati.
-
-Click seedha DB me likhte to? Har redirect DB likhai ka intezaar karta. Wahi dheemapan.
-
-Sirf Redis me INCR? Ginti ho jaati, par sirf ginti. Kaun, kab, kahan se click hua, wo nahi milta.
-
-**Pooche: Analytics dheema hai to?** Khabar Kafka me padi rehti. Wo apni speed se padhta, kahan tak padha yaad rakhta (offset).
-
-**Pooche: wahi click do baar aaya?** Har click ki apni id. Wahi id dobara aayi to ginti nahi.
-
-**Pooche: koi khabar kharab nikli?** Alag line me daal do (DLQ), baaki ginti chalti rahe.
-
-**Pooche: Kafka hi band?** Redirect phir bhi chalta. Bas kuch click ginti me nahi aate.
-
-**Pooche: naya report chahiye?** Kafka me pade purane click dobara padh lo (replay).
-
-**Pooche: SQS kyun nahi, Kafka kyun?** SQS padhte hi message hata deta. Kafka rakhta hai, naya report = dobara padho.
+- **hal:** redirect turant (302), "ek click hua" ki khabar Kafka me daal ke aage. Analytics service apni speed se Kafka se padh ke gine.
+- **kyun:** redirect kisi ka intezaar nahi karta. Ginti peeche, disk pe pakki. Ginti wala dheema / band to bhi link khulta, ginti thodi der se.
+- **nahi:** click seedha DB me -> har redirect DB likhai ka intezaar, wahi dheemapan
+- **nahi:** sirf Redis me INCR -> sirf ginti; kaun, kab, kahan se click hua, wo nahi milta
+- **Pooche:** 302 kyun, 301 kyun nahi? -> 301 pe browser link yaad rakh leta, agli baar server tak aata hi nahi, ginti band. 302 pe har click server tak, ginti aur expiry chalti.
+- **Pooche:** Analytics dheema? -> khabar Kafka me padi rehti. Wo apni speed se padhta, kahan tak padha yaad rakhta (offset).
+- **Pooche:** wahi click do baar aaya? -> har click ki apni id. Wahi id dobara to ginti nahi.
+- **Pooche:** koi khabar kharab nikli? -> alag line me (DLQ), baaki ginti chalti rahe
+- **Pooche:** Kafka hi band? -> redirect phir bhi chalta. Bas kuch click ginti me nahi aate.
+- **Pooche:** naya report chahiye? -> Kafka me pade purane click dobara padh lo (replay)
+- **Pooche:** SQS kyun nahi, Kafka kyun? -> SQS padhte hi message hata deta. Kafka rakhta hai, naya report = dobara padho.
 
 ---
 
@@ -169,26 +109,17 @@ Sirf Redis me INCR? Ginti ho jaati, par sirf ginti. Kaun, kab, kahan se click hu
 
 **Cue:** SHARD by code (RING) · dabba: Cassandra
 
-Isliye data kai machine me baant diya (shard), link ke code se. Code ring pe aage chalta hai, jo pehli machine mile
-wo uski (consistent hashing). Har tukde ki 3 copy.
-
-Code se hi kyun baanta? Click hamesha code ke saath aata hai, to har click seedha ek machine pe. Country se baantte to
-code dekh ke pata nahi chalta kis country ka, saari machine poochni padti.
-
-Ek badi machine? 90 TB ek machine me aata hi nahi.
-
-Seedha code % machine? Machine judi to lagbhag saari keys hil jaati (3 se 4 = sab badle). Ring me sirf pados ki.
-
-**Pooche: ek machine mari?** Baaki 2 copy se milta, link nahi gaye.
-
-**Pooche: ek machine pe zyada bojh?** Har machine ring pe 100-200 jagah baithti, bojh barabar (virtual nodes).
-
-**Pooche: Cassandra kyun, MySQL kyun nahi?** Join aur transaction chahiye hi nahi, bas code se link, aur 90 TB.
-Wajah kaam ka dhaancha + size hai, "NoSQL powerful" nahi.
-
-**Pooche: Cassandra me main copy kaunsi?** Koi nahi. Teeno barabar, koi bhi likh / padh sakti.
-
-**Pooche: copy badha do to likhna tez?** Nahi, har copy pe likhna padta. Likhne ka bojh = shard, copy = bachav.
+- **hal:** data kai machine me baanto (shard), link ke code se. Code ring pe aage chalta, jo pehli machine mile wo uski (consistent hashing). Har tukde ki 3 copy.
+- **kyun:** click hamesha code ke saath aata, to har click seedha ek machine pe
+- **nahi:** country se baanto -> code dekh ke pata nahi kis country ka, saari machine poochni padti
+- **nahi:** ek badi machine -> 90 TB ek machine me aata hi nahi
+- **nahi:** seedha code % machine -> machine judi to lagbhag saari keys hil jaati (3 se 4 = sab badle). Ring me sirf pados ki.
+- **Pooche:** data ~500 GB hota? -> ek MySQL kaafi. Shard tab jab ek machine me na aaye.
+- **Pooche:** ek machine mari? -> baaki 2 copy se milta, link nahi gaye
+- **Pooche:** ek machine pe zyada bojh? -> har machine ring pe 100-200 jagah baithti, bojh barabar (virtual nodes)
+- **Pooche:** Cassandra kyun, MySQL kyun nahi? -> join aur transaction chahiye hi nahi, bas code se link, aur 90 TB. Wajah kaam ka dhaancha + size, "NoSQL powerful" nahi.
+- **Pooche:** Cassandra me main copy kaunsi? -> koi nahi. Teeno barabar, koi bhi likh / padh sakti.
+- **Pooche:** copy badha do to likhna tez? -> nahi, har copy pe likhna padta. Likhne ka bojh = shard, copy = bachav.
 
 ---
 
@@ -198,27 +129,16 @@ Wajah kaam ka dhaancha + size hai, "NoSQL powerful" nahi.
 
 **Cue:** QUORUM (2 me likho, 2 se padho) · dabba: (Cassandra quorum)
 
-Isliye likhna 2 copy me, aur padhna bhi 2 copy se (quorum, 3 me se 2). A, B me likha, padha A + C se, to A me mil
-gaya. Har jodi me ek taaza copy zaroor.
-
-Ye kyun chalta? 2 + 2 = 4, copy sirf 3. To padhne wali jodi me likhne wali ek copy aani hi hai. Banane ke baad 404 nahi.
-
-Teeno me likho? Ek copy dheemi ya giri to har likhai ruk jaati.
-
-Ek se padho? Wahi copy mil sakti jahan abhi pahuncha nahi. Wahi 404.
-
-**Pooche: likhte waqt C giri?** 2 me ho gaya to save. C uthi to padosi ke paas rakha note use mil jaata (hinted handoff).
-
-**Pooche: padhte waqt A aur C me farak?** Wahin C ko theek kar do (read repair).
-
-**Pooche: A aur B dono giri?** Sirf 1 bachi. Likhna fail, user ko error (ya 1 pe likho, risk ke saath).
-Par jo "done" bola, wo kabhi khota nahi.
-
-**Pooche: 2 se padhna dheema nahi?** Thoda. Isliye pehla ilaaj Redis, DB tak kam aata.
-
-**Pooche: 5 copy ho to?** Likhne + padhne ki ginti copy se zyada ho (W + R > N): 3 + 3 > 5.
-
-**Pooche: data bachane ko Kafka laga dein?** Nahi. DB ka apna log ye khud karta, extra dabba nahi.
+- **hal:** likhna 2 copy me, padhna bhi 2 copy se (quorum, 3 me se 2). A, B me likha, A + C se padha, to A me mil gaya. Har jodi me ek taaza copy zaroor.
+- **kyun:** 2 + 2 = 4, copy sirf 3. Padhne wali jodi me likhne wali ek copy aani hi hai. Banane ke baad 404 nahi.
+- **nahi:** teeno me likho -> ek copy dheemi ya giri to har likhai ruk jaati
+- **nahi:** ek se padho -> wahi copy mil sakti jahan abhi pahuncha nahi, wahi 404
+- **Pooche:** likhte waqt C giri? -> 2 me ho gaya to save. C uthi to padosi ke paas rakha note use mil jaata (hinted handoff).
+- **Pooche:** padhte waqt A aur C me farak? -> wahin C ko theek kar do (read repair)
+- **Pooche:** A aur B dono giri? -> sirf 1 bachi. Likhna fail, user ko error (ya 1 pe likho, risk ke saath). Par jo "done" bola, wo kabhi khota nahi.
+- **Pooche:** 2 se padhna dheema nahi? -> thoda. Isliye pehla ilaaj Redis, DB tak kam aata.
+- **Pooche:** 5 copy ho to? -> likhne + padhne ki ginti copy se zyada ho (W + R > N): 3 + 3 > 5
+- **Pooche:** data bachane ko Kafka laga dein? -> nahi. DB ka apna log ye khud karta, extra dabba nahi.
 
 ---
 
@@ -228,17 +148,11 @@ Par jo "done" bola, wo kabhi khota nahi.
 
 **Cue:** ROUTE 53 + 2 LB (health check) · dabba: Route 53 + LB x2
 
-Isliye do LB, aur aage Route 53. Route 53 har ~30 second LB se poochta rehta (health check). Jo 3 baar chup, wo list
-se bahar, sab LB-2 pe (DNS failover).
-
-Route 53 hi kyun? Phone sabse pehle Route 53 se hi poochta hai "kahan jaun?". Wahin se zinda LB ka pata mil jaata.
-
-Ek hi LB rakhte? Wo gira to App kitne bhi hon, koi andar nahi aa sakta.
-
-**Pooche: phone ne purana pata yaad rakha to?** ~60 second kuch request fail (DNS TTL). Isliye LB khud kai zone me
-(ALB), aur har jagah 2+.
-
-**Pooche: poora region gaya?** Route 53 doosre region pe bhejta. Naye link ke aakhri kuch second kho sakte.
+- **hal:** do LB, aage Route 53. Route 53 har ~30 sec LB se poochta (health check). Jo 3 baar chup, wo list se bahar, sab LB-2 pe (DNS failover).
+- **kyun:** phone sabse pehle Route 53 se hi poochta "kahan jaun?". Wahin se zinda LB ka pata mil jaata.
+- **nahi:** ek hi LB -> wo gira to App kitne bhi hon, koi andar nahi aa sakta
+- **Pooche:** phone ne purana pata yaad rakha? -> ~60 sec kuch request fail (DNS TTL). Isliye LB khud kai zone me (ALB), aur har jagah 2+.
+- **Pooche:** poora region gaya? -> Route 53 doosre region pe bhejta. Naye link ke aakhri kuch second kho sakte.
 
 ---
 
@@ -248,19 +162,12 @@ Ek hi LB rakhte? Wo gira to App kitne bhi hon, koi andar nahi aa sakta.
 
 **Cue:** RATE LIMIT darwaze pe + WAF · dabba: API Gateway + WAF
 
-Isliye gateway pe hi ginti: har API key ki ek shared ginti (Redis me). Had paar hui to 429, request andar aayi hi nahi
-(rate limit).
-
-Ye kyun chalta? Rokna darwaze pe, sabki ek ginti se. Asli users ki speed bachi rehti.
-
-Har App apni ginti rakhe? 10 App = had 10 guna, aur bheed App tak aa chuki hoti.
-
-Sirf IP pe had? Bot naya IP le aata. Isliye ginti API key / user_id pe, jo bot badal na sake.
-
-**Pooche: pehchaana hua hamla?** WAF darwaze pe hi rok deta.
-
-**Pooche: koi phishing ka lamba link chhota kare?** Chhota karne se pehle check (virus / dhokhe ki site), taaki hamara
-domain spam na bane.
+- **hal:** gateway pe hi ginti: har API key ki ek shared ginti (Redis me). Had paar to 429, request andar aayi hi nahi (rate limit).
+- **kyun:** rokna darwaze pe, sabki ek ginti se. Asli users ki speed bachi rehti.
+- **nahi:** har App apni ginti -> 10 App = had 10 guna, aur bheed App tak aa chuki hoti
+- **nahi:** sirf IP pe had -> bot naya IP le aata. Isliye ginti API key / user_id pe, jo bot badal na sake.
+- **Pooche:** pehchaana hua hamla? -> WAF darwaze pe hi rok deta
+- **Pooche:** koi phishing ka lamba link chhota kare? -> chhota karne se pehle check (virus / dhokhe ki site), taaki hamara domain spam na bane
 
 Poora rate limit = [02_rate_limiter](../02_rate_limiter/02_rate_limiter.md).
 
