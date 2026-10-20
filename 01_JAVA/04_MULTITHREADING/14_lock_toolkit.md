@@ -199,7 +199,9 @@ Semaphore(10)          ->  theek 10. Na kam, na zyada.
 ### Asli duniya me
 
 ```
-rate limiter          ->  "ek user, ek second me 10 request"          = ginti
+concurrency limit     ->  "max 10 request EK SAATH chalein"           = ginti
+                          (per-SECOND rate = token bucket, semaphore nahi — semaphore
+                           sirf "ek saath kitne" ginta, "ek second me kitne" nahi)
 DB connection pool    ->  "sirf 20 connection hain"                   = ginti
 BULKHEAD              ->  "payment service ko max 5 thread do, taaki
                            wo gire to poori app na mare"              = ginti
