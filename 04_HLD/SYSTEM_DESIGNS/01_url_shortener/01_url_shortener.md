@@ -197,11 +197,11 @@ Cue: SHARD by code (RING)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c5_1.png?v=4" width="900">
+<img src="img/c5_1.png?v=5" width="900">
 
-<img src="img/c5_2.png?v=4" width="900">
+<img src="img/c5_2.png?v=5" width="900">
 
-<img src="img/c5_3.png?v=4" width="900">
+<img src="img/c5_3.png?v=5" width="900">
 
 </details>
 
