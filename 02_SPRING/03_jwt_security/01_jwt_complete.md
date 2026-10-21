@@ -821,7 +821,7 @@ KHAAS BAAT:
   3. Filter me exception aaye to @ControllerAdvice usse nahi pakadta, wo DispatcherServlet ke bahar hai.
      Interceptor me aaye to pakadta hai.
   4. Kab kya: auth / JWT / CORS / har request ka log -> Filter.
-     Controller-specific kaam (endpoint ka time, tenant check, audit jisme method ka naam chahiye) -> Interceptor.
+     Controller-specific kaam (endpoint ka time, tenant check, method ke naam wala audit) -> Interceptor.
 
 TERA PROJECT: usercrud me JwtFilter (OncePerRequestFilter) = Filter. Auth isliye filter me,
   kyunki controller tak pahunchne se pehle hi rokna hai.
