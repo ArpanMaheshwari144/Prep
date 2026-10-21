@@ -1,28 +1,46 @@
-// Card 6: Broker A ki disk mari, data gaya. Ilaaj: leader + ISR copy, acks=all, naya leader ISR se.
-const DUR = 18, FIX = 8;
-const PR = [120, 192];
-function setup() {
-  box(20, 150, 100, 84, 'Producer');
-  wire('M120 192 L340 80');
-  box(340, 50, 120, 60, 'Broker A', 'leader');
-  box(340, 162, 120, 60, 'Broker B', 'copy', { id: 'bb' }); box(340, 274, 120, 60, 'Broker C', 'copy', { id: 'bc' });
-  wire('M400 110 L400 162', 'w1'); wire('M460 80 C530 80 530 304 460 304', 'w2');
-}
-function frame(t, fix, tl) {
-  vis('bb', fix); vis('bc', fix); vis('w1', fix); vis('w2', fix);
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: har tukda sirf ek broker pe. Dopahar Broker A ki disk mari, data gaya';
-    dot(path([[0.4, PR], [1.2, [335, 85]]], tl < 1.2 ? tl : -1), C.msg, '', 'order #9', C.msg);
-    if (tl > 1.2 && tl < 3) T(560, 85, 'producer ko "OK"', { c: C.good, size: 12, a: 'start' });
-    if (tl > 3) { cross(400, 80); T(560, 85, 'disk mari: order #9 gaya', { c: C.bad, b: 1, a: 'start' }); }
-    return;
+// Card 6: Broker A ki disk mari, data gaya. Ilaaj: leader + ISR copy, acks=all. Agar: leader A gira, naya leader kaun.
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: acks=1: leader A ne likhte hi OK bola. Copy se pehle A ki disk mari, khabar gayi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: leader A + 2 copy (ISR). Saari ISR copy le lein, tab producer ko OK (acks=all)'],
+  [6, YEL, 'AGAR', 'AGAR leader A gir gaya? -> Controller ISR me se B ko leader banata, kuch nahi khota'],
+];
+function setup() {}
+const STEPS = [
+  [[C.msg, 'Producer → A', 'Order ki khabar sirf leader A pe likhi, turant OK (acks=1)'],
+   [C.bad, 'A', 'Copy B, C tak jaane se pehle hi A ki disk mar gayi'],
+   [C.bad, 'B, C', 'Copy pe khabar thi hi nahi: producer ko OK mila, par khabar gayi']],
+  [[C.msg, 'Producer → A', 'Khabar leader A pe likhi'],
+   [C.acc, 'A → B, C', 'ISR copy B aur C ne bhi khabar le li'],
+   [C.good, 'A → Producer', 'Tabhi producer ko OK (acks=all): khabar 3 machine pe']],
+  [[C.bad, 'A', 'Leader A gir gaya'],
+   [C.acc, 'Controller → B', 'Controller (KRaft) ne ISR me se B ko naya leader banaya'],
+   [C.good, 'Producer → B', 'Producer ab B pe likhta: B ke paas sab tha, kuch nahi khoya']],
+];
+function frame(ph) {
+  B(15, 140, 170, 60, 'Producer', 'order khabar', { icon: 'server' });
+  if (ph === 0) {
+    B(330, 135, 200, 70, 'Broker A', 'leader: disk mari', { st: 'bad', icon: 'db' }); cross(555, 170); num(590, 170, 2, C.bad);
+    A(185, 160, 328, 160, C.msg, { n: 1 }); A(328, 185, 187, 185, C.msg); L(255, 215, 'turant OK', C.msg);
+    B(680, 30, 200, 60, 'Broker B', 'copy: khaali', { st: 'bad', icon: 'db' });
+    B(680, 250, 200, 60, 'Broker C', 'copy: khaali', { st: 'bad', icon: 'db' });
+    A(530, 140, 678, 65, C.muted, { dash: 1 }); A(530, 200, 678, 275, C.muted, { dash: 1 });
+    num(780, 175, 3, C.bad); L(430, 320, 'OK mila, par khabar kahin nahi bachi', C.bad);
+  } else if (ph === 1) {
+    B(330, 135, 200, 70, 'Broker A', 'leader', { st: 'good', icon: 'db' });
+    A(185, 160, 328, 160, C.msg, { n: 1 });
+    B(680, 30, 200, 60, 'Broker B', 'ISR copy', { st: 'good', icon: 'db' });
+    B(680, 250, 200, 60, 'Broker C', 'ISR copy', { st: 'good', icon: 'db' });
+    A(530, 145, 678, 60, C.acc, { n: 2 }); A(530, 195, 678, 280, C.acc);
+    A(328, 190, 187, 190, C.good, { n: 3 }); L(255, 225, 'OK (acks=all)', C.good);
+    L(430, 320, 'OK = khabar 3 machine pe bach gayi', C.good);
+  } else {
+    B(330, 230, 200, 70, 'Broker A', 'gir gaya', { st: 'bad', icon: 'db' }); cross(555, 265); num(590, 265, 1, C.bad);
+    B(330, 20, 200, 60, 'Controller', 'KRaft', { st: 'acc', icon: 'server' });
+    B(680, 120, 200, 70, 'Broker B', 'naya leader', { st: 'good', icon: 'db' });
+    A(530, 50, 678, 140, C.acc, { n: 2 });
+    A(185, 170, 678, 165, C.good, { n: 3, at: 0.3 });
+    B(680, 260, 200, 60, 'Broker C', 'ISR copy', { st: 'dim', icon: 'db' });
+    L(430, 345, 'ISR me se hi leader: sab uske paas', C.muted);
   }
-  CAP.textContent = 'ILAAJ: leader A + 2 copy (ISR). Saari ISR copy le lein, tab producer ko OK (acks=all)';
-  dot(path([[0.4, PR], [1.2, [335, 85]]], tl < 1.2 ? tl : -1), C.msg, '', 'order #9', C.msg);
-  if (tl > 1.2 && tl < 1.9) { dot(path([[1.2, [400, 110]], [1.8, [400, 162]]], tl), C.acc);
-                              dot(path([[1.2, [500, 120]], [1.9, [500, 265]]], tl), C.acc); }
-  if (tl > 1.9) { T(480, 197, 'copy hai', { c: C.good, size: 12, a: 'start' }); T(480, 309, 'copy hai', { c: C.good, size: 12, a: 'start' }); }
-  if (tl > 2.1 && tl < 4) T(220, 130, 'ab producer ko "OK"', { c: C.good, b: 1, size: 12 });
-  if (tl > 4) { cross(400, 80); T(600, 185, 'A mara -> B naya leader', { c: C.good, b: 1, a: 'start' });
-                T(600, 205, 'order #9 bacha', { c: C.good, size: 12, a: 'start' }); }
 }

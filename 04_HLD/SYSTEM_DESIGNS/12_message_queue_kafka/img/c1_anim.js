@@ -1,35 +1,43 @@
-// Card 1: queue RAM me, restart = 500 signup gayab. Ilaaj: disk pe log + offset, consumer wahin se aage.
-const DUR = 17, FIX = 8;
-const P = [70, 192];
-function setup() {
-  box(20, 150, 100, 84, 'Signup Svc', 'producer');
-  wire('M120 192 H250'); wire('M510 192 H700');
-  box(250, 140, 260, 110, 'Queue');
-  box(700, 150, 140, 84, 'Email Svc', 'consumer');
-}
-function frame(t, fix, tl) {
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: 500 signup machine ki RAM me the. Restart hua, RAM saaf, sab gayab';
-    T(380, 180, 'RAM me', { c: C.muted, size: 12 });
-    const restart = tl > 3.6;
-    for (let k = 0; k < 6; k++) { const s = 0.3 + k * 0.4;
-      if (!restart) dot(path([[s, P], [s + 0.6, [290 + k * 36, 220]]], tl), C.msg); }
-    if (restart && tl < 4.4) { el('rect', { x: 250, y: 140, width: 260, height: 110, rx: 8, fill: C.bad, opacity: 0.35 }, DYN);
-      T(380, 285, 'RESTART', { c: C.bad, b: 1, size: 15 }); }
-    if (restart) T(380, 222, 'khaali', { c: C.bad, b: 1, size: 14 });
-    if (tl > 4.6) T(770, 130, '"koi signup aaya hi nahi"', { c: C.bad, b: 1, size: 12 });
-    return;
+// Card 1: queue machine restart, 500 signup gayab. Ilaaj: disk pe log + consumer ka offset. Agar: log dobara padhna (replay).
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: queue RAM me thi. Subah machine restart hui, 500 signup khabar gayab'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: disk pe file (log), padhne se mitti nahi. Email apna number yaad rakhta (offset)'],
+  [6, YEL, 'AGAR', 'AGAR log dobara padhna hai? -> offset peeche kar do (replay), khabar wahin padi hai'],
+];
+function setup() {}
+const STEPS = [
+  [[C.msg, 'Signup → Queue', '500 signup ki khabar queue ki RAM me padi thi'],
+   [C.bad, 'Queue', 'Subah machine restart hui, RAM saaf, 500 khabar gayab'],
+   [C.bad, 'Queue → Email', 'Email service ko welcome mail bhejne ko kuch nahi mila']],
+  [[C.msg, 'Signup → Log', 'Har khabar disk pe file ke aakhir me judti (log), number ke saath'],
+   [C.acc, 'Email', 'Email ne 120 tak padha, apna number yaad rakha (offset 120)'],
+   [C.good, 'Log → Email', 'Restart ke baad bhi file wahin, Email 121 se aage padhta']],
+  [[C.acc, 'Email', 'Bug theek hua, kal ki khabar dobara chahiye'],
+   [C.acc, 'Email → Log', 'Email ne apna offset 120 se peeche 100 kiya'],
+   [C.good, 'Log → Email', 'Khabar wahin padi thi, 100 se phir padhi (replay)']],
+];
+function frame(ph) {
+  B(15, 140, 170, 60, 'Signup', 'producer', { icon: 'server' });
+  if (ph === 0) {
+    B(280, 110, 340, 120, 'Queue (RAM)', 'restart: sab saaf', { st: 'bad', icon: 'queue' });
+    cells(335, 165, [['S1', C.bad], ['S2', C.bad], ['...'], ['S500', C.bad]], { w: 66, h: 34 }); cross(470, 182);
+    A(185, 170, 278, 170, C.msg, { n: 1 }); num(650, 120, 2, C.bad);
+    B(700, 140, 190, 60, 'Email', 'kuch nahi mila', { st: 'bad', icon: 'mail' });
+    A(622, 170, 698, 170, C.bad, { n: 3, dash: 1 });
+    L(450, 300, '500 signup gayab: kisi ko welcome mail nahi', C.bad);
+  } else if (ph === 1) {
+    B(260, 100, 400, 130, 'Log (disk pe file)', '', { st: 'good', icon: 'db' });
+    cells(302, 165, [['118'], ['119'], ['120'], ['121', C.acc], ['122', C.acc]], { w: 68, h: 34 });
+    A(185, 170, 258, 170, C.msg, { n: 1 }); L(460, 255, 'naya hamesha aakhir me judta', C.muted);
+    B(700, 140, 190, 60, 'Email', 'offset = 120', { st: 'acc', icon: 'mail' }); num(800, 115, 2, C.acc);
+    A(662, 180, 698, 180, C.good, { n: 3 }); L(790, 240, 'restart: 121 se aage', C.good);
+    L(450, 320, 'padhne se khabar mitti nahi, file me rehti', C.good);
+  } else {
+    B(260, 100, 400, 130, 'Log (disk pe file)', '', { st: 'good', icon: 'db' });
+    cells(302, 165, [['100', C.good], ['...'], ['119'], ['120'], ['121']], { w: 68, h: 34 });
+    B(700, 140, 190, 60, 'Email', 'offset 120 -> 100', { st: 'acc', icon: 'mail' }); num(800, 115, 1, C.acc);
+    A(698, 160, 662, 160, C.acc, { n: 2 });
+    AP([[336, 202], [336, 300], [800, 300], [800, 202]], C.good, { n: 3, at: 0.5 }); L(560, 325, '100 se dobara padha (replay)', C.good);
   }
-  CAP.textContent = 'ILAAJ: disk pe file (log), padhne se mitta nahi. Email apna number yaad rakhe (offset)';
-  T(380, 180, 'disk pe log', { c: C.acc, size: 12 });
-  const n = Math.min(8, Math.floor(tl / 0.4) + 1);
-  const items = []; for (let i = 0; i < n; i++) items.push([`${118 + i}`, i + 118 <= 120 ? C.muted : C.fg]);
-  cells(262, 200, items, { w: 26, h: 26 });
-  const off = tl < 3.5 ? 120 : Math.min(125, 120 + Math.floor((tl - 3.5) / 0.6) + 1);
-  if (tl > 2.0 && tl < 3.4) { el('rect', { x: 700, y: 150, width: 140, height: 84, rx: 8, fill: C.bad, opacity: 0.35 }, DYN);
-    T(770, 260, 'Email restart', { c: C.bad, b: 1, size: 13 }); }
-  T(770, 300, `offset = ${off}`, { c: C.acc, b: 1, size: 14 });
-  if (tl > 3.5) { T(770, 130, `${off} se aage padh raha`, { c: C.good, b: 1, size: 12 });
-    dot(path([[0, [510, 192]], [0.6, [700, 192]]], (tl - 3.5) % 0.6), C.good); }
-  T(380, 285, 'restart ho, message disk pe pade', { c: C.good, size: 12 });
 }

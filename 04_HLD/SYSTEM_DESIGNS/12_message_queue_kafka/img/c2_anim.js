@@ -1,31 +1,48 @@
-// Card 2: ek line, ek worker 500/sec, aaye 5,000/sec -> lag. Ilaaj: 10 partition, har tukda apna worker.
-const DUR = 17, FIX = 8;
-function setup() {
-  box(20, 150, 100, 84, 'Orders', '5,000 / sec');
-}
-function frame(t, fix, tl) {
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: topic ek line, worker ek (500 / sec). Aaye 5,000 / sec, line badhti ja rahi (lag)';
-    el('rect', { x: 200, y: 165, width: 420, height: 54, rx: 8, fill: C.box, stroke: C.line }, DYN);
-    T(410, 155, 'ek line', { c: C.muted, size: 12 });
-    const q = Math.min(14, Math.floor(tl * 2.2));
-    for (let i = 0; i < q; i++) el('circle', { cx: 600 - i * 28, cy: 192, r: 9, fill: C.msg }, DYN);
-    el('rect', { x: 680, y: 162, width: 120, height: 60, rx: 8, fill: C.box, stroke: C.line }, DYN);
-    T(740, 187, 'Worker', {}); T(740, 205, '500 / sec', { c: C.muted, size: 12 });
-    T(410, 260, `lag: ${Math.round(tl * 4500)} message`, { c: C.bad, b: 1, size: 15 });
-    T(410, 285, 'Ravi ka email ghanton baad', { c: C.bad, size: 12 });
-    return;
+// Card 2: sale me 5,000 / sec, ek worker 500. Ilaaj: 10 partition, har ek ka worker. Agar: 12 worker, 10 tukde.
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: 10 baje sale, 5,000 order / sec ek hi line me. Ek worker 500 hi bhej paata'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: topic ke 10 tukde (partition), har tukde ka apna worker. 10 x 500 = 5,000'],
+  [6, YEL, 'AGAR', 'AGAR worker 12, tukde 10? -> 2 worker khaali. Ek tukda ek hi worker padhta'],
+];
+function setup() {}
+const STEPS = [
+  [[C.msg, 'Orders → Queue', '10 baje sale: 5,000 order / sec ek hi line me aaye'],
+   [C.bad, 'Queue → Worker', 'Ek worker sirf 500 / sec bhej paata'],
+   [C.bad, 'Queue', 'Har second 4,500 peeche chhoote, line lambi hoti gayi (lag)']],
+  [[C.msg, 'Orders → P0..P9', 'Topic ke 10 tukde (partition), order unme bat gaye'],
+   [C.good, 'P → Worker', 'Har tukde ka apna worker, har ek 500 / sec'],
+   [C.good, 'kul', '10 tukde x 500 = 5,000 / sec, line nahi badhti']],
+  [[C.msg, 'tukde', 'Topic me 10 tukde hain, P0 se P9'],
+   [C.good, 'P → W', 'Ek tukda ek hi worker padhta: 10 worker ko kaam mila'],
+   [C.bad, 'W11, W12', '2 worker khaali baithe: pehle tukde badhao, worker baad me']],
+];
+function frame(ph) {
+  if (ph === 0) {
+    B(15, 140, 180, 60, 'Orders', '5,000 / sec', { icon: 'server' });
+    B(290, 130, 300, 80, 'Queue', 'ek hi line', { st: 'bad', icon: 'queue' }); bar(290, 225, 300, 14, 1, '');
+    A(195, 170, 288, 170, C.msg, { n: 1 });
+    B(690, 140, 190, 60, 'Worker', '500 / sec', { st: 'bad', icon: 'server' });
+    A(592, 170, 688, 170, C.bad, { n: 2 });
+    num(440, 270, 3, C.bad); L(440, 300, 'har sec 4,500 peeche: lag badhta', C.bad);
+  } else if (ph === 1) {
+    B(15, 140, 180, 60, 'Orders', '5,000 / sec', { icon: 'server' });
+    const ys = [20, 100, 180, 270], ps = ['P0', 'P1', '...', 'P9'], ws = ['W0', 'W1', '...', 'W9'];
+    ys.forEach((y, i) => {
+      const dim = ps[i] === '...';
+      B(320, y, 160, 55, ps[i], dim ? '' : 'tukda', { st: dim ? 'dim' : 'acc' });
+      B(620, y, 180, 55, ws[i], dim ? '' : '500 / sec', { st: dim ? 'dim' : 'good', icon: dim ? undefined : 'server' });
+      if (!dim) { A(195, 170, 318, y + 27, C.msg, { n: i === 0 ? 1 : 0 }); A(480, y + 27, 618, y + 27, C.good, { n: i === 0 ? 2 : 0 }); }
+    });
+    num(850, 170, 3, C.good); L(820, 345, '10 x 500 = 5,000', C.good);
+  } else {
+    num(20, 85, 1, C.msg);
+    const P = Array.from({ length: 10 }, (_, i) => ['P' + i, C.acc]);
+    cells(40, 65, P, { w: 72, h: 36 });
+    const W = Array.from({ length: 10 }, (_, i) => ['W' + (i + 1), C.good]);
+    cells(40, 235, W, { w: 72, h: 36 });
+    for (let i = 0; i < 10; i++) A(76 + i * 72, 103, 76 + i * 72, 233, C.good, { n: i === 4 ? 2 : 0, at: 0.5 });
+    cells(40, 300, [['W11', C.bad], ['W12', C.bad]], { w: 72, h: 36 }); num(205, 318, 3, C.bad);
+    L(470, 318, 'khaali: koi tukda bacha hi nahi', C.bad);
   }
-  CAP.textContent = 'ILAAJ: topic ke tukde (partition), har tukda alag machine pe, apna worker. 10 x 500 = 5,000';
-  for (let i = 0; i < 5; i++) {
-    const y = 30 + i * 62;
-    el('rect', { x: 200, y, width: 300, height: 44, rx: 8, fill: C.box, stroke: C.line }, DYN);
-    T(218, y + 27, `P${i}`, { c: C.muted, size: 12, a: 'start' });
-    el('rect', { x: 600, y, width: 110, height: 44, rx: 8, fill: C.box, stroke: C.good }, DYN);
-    T(655, y + 27, `Worker ${i}`, { size: 12 });
-    for (let k = 0; k < 2; k++) { const ph = ((tl + k * 0.5 + i * 0.13) % 1.0);
-      dot(lerp([260, y + 22], [600, y + 22], ph), C.good); }
-  }
-  T(450, 345, '(10 tukde, yahan 5 dikhaye)', { c: C.muted, size: 12 });
-  T(810, 192, 'lag: 0', { c: C.good, b: 1, size: 15 });
 }

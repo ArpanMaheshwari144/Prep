@@ -3,7 +3,7 @@
 > Ek dabba jo khabar (event) le le aur kai services ko unki apni speed se de de, bina kisi ko roke, bina kuch khoye.
 > Dil: kisi ko roko mat (bahut saari khabar har second), kuch khoye nahi, aur ek user ki khabar kram me.
 >
-> Mock me sirf heading + Cue + GIF. Neeche har card ek block: HAL (GIF ka ILAAJ) · KYUN · NAHI (doosra kyun nahi) · AGAR (cross-Q).
+> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -27,15 +27,38 @@ NUMBERS 10 crore message roz / ~86,400 sec = ~1,200 / sec, bheed me 3-5 guna, ~5
 PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, consumer uthaye
 ```
 
+> [!IMPORTANT]
+> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
+> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+>
+> | rail | is design me | card |
+> |---|---|---|
+> | 1 kaam chala | signup khabar email tak · Ravi ka order 3 service ko (email, analytics, dashboard) | 1, 5 |
+> | 2 bheed aayi | 10 baje sale, 5,000 / sec, ek worker 500 | 2 |
+> | 3 machine giri | queue restart, 500 gayab · Broker A ki disk mari (**is design ka khaas: kuch khoye nahi**) · Kafka se pehle server gira | 1, 6, 8 |
+> | 4 do log ek saath | Ravi ne naam do baar badla · 3 machine, 3 email · email bheja, commit se pehle crash | 3, 4, 7 |
+> | 5 kuch dheema | C2 mara, lag badhta · ek khabar dheemi, tukda atka (card 9 ka cross-Q) | 9 |
+> | 6 data bada | disk bharti ja rahi, 7 din ~700 GB | 10 |
+> | 7 door ke log | nahi aata | - |
+> | 8 bahar ka hamla | nahi aata | - |
+
 ---
 
 *ab tootega kahan? sabse pehle machine restart pe, kyunki sab RAM me hai*
 
 ## 1. Subah queue machine restart hui, 500 signup gayab
 
-Cue: LOG disk pe + OFFSET
+**Rail 3 MACHINE GIRI (restart)** · Cue: LOG disk pe + OFFSET
 
-![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c1_1.png?v=1" width="900">
+
+<img src="img/c1_2.png?v=1" width="900">
+
+<img src="img/c1_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     disk pe file hai (log), message padhne se mitta nahi.
@@ -45,15 +68,18 @@ KYUN    message disk pe pada hai. Consumer gira to wapas aake apne offset se aag
         producer ko pata bhi nahi chalta.
         Consumer page cache se padhta hai
 NAHI    RAM wali queue -> GAYA: restart hua aur sab gaya
-AGAR    consumer restart hua, wo kahan tak padha tha, ye kaun yaad rakhta hai?
-        -> Kafka khud rakhta hai (__consumer_offsets)
-        log dobara padhna hai, kaise padhoge?
-        -> offset peeche kar do (replay). Khabar wahin padi hai
-        offset ka number byte hai kya?
-        -> nahi, kram number hai: 0, 1, 2. Chhoti .index file batati hai ki file me wo kahan hai
-        disk pe likhna dheema nahi hoga?
-        -> nahi. Sirf aakhir me jodna = sequential, ye disk ka sabse tez kaam hai
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Disk pe log, padhne se mitta nahi. Har group apna offset yaad rakhta, restart pe wahin se. Peeche = replay.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - consumer restart hua, wo kahan tak padha tha, ye kaun yaad rakhta hai? → **__consumer_offsets**: Kafka khud rakhta hai (__consumer_offsets)
+> - log dobara padhna hai, kaise padhoge? → **offset peeche kar do (replay)**: Khabar wahin padi hai
+> - offset ka number byte hai kya? → **nahi, kram number**: nahi, kram number hai: 0, 1, 2. Chhoti .index file batati hai ki file me wo kahan hai
+> - disk pe likhna dheema nahi hoga? → **nahi, sequential**: nahi. Sirf aakhir me jodna = sequential, ye disk ka sabse tez kaam hai
+
 
 ---
 
@@ -61,25 +87,35 @@ AGAR    consumer restart hua, wo kahan tak padha tha, ye kaun yaad rakhta hai?
 
 ## 2. 10 baje sale shuru, 5,000 / sec aaye, ek worker 500 hi bhej paata
 
-Cue: PARTITION (tukde, alag machine)
+**Rail 2 BHEED AAYI** · Cue: PARTITION (tukde, alag machine)
 
-![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c2_1.png?v=1" width="900">
+
+<img src="img/c2_2.png?v=1" width="900">
+
+<img src="img/c2_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     topic ke 10 tukde (partition), har tukda alag machine pe, har tukde ka apna worker. 10 x 500 = 5,000
 KYUN    partition = kitne worker ek saath padh sakte. Ek partition ek worker. Bheed badhe to aur partition
 NAHI    ek hi line me aur worker -> KHAALI: ek tukda ek hi worker padhta hai,
            partition se zyada worker khaali baithe rehte
-AGAR    worker 12 hain aur tukde 10, kya hoga?
-        -> 2 worker khaali baithe rahenge. Ek tukda ek hi worker padhta hai
-        worker badhaye, phir bhi lag badh raha hai, kya dekhoge?
-        -> pehle tukdon ki ginti dekho, worker baad me
-        partition kitne rakhne hain, kaise tay karoge?
-        -> jitne worker ek saath chahiye (order topic ~10: 5,000 / sec, ek worker 500).
-           Shuru me thoda zyada rakho, baad me badle to key ka tukda hil jaata hai
-        10 tukde aur 3 broker hain, kaise baantoge?
-        -> barabar baanto. Kaunsa tukda kahan hai, ye naksha Controller rakhta hai
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Topic ke tukde (partition), ek tukda ek worker. 10 x 500 = 5,000. Worker tukdon se zyada = khaali.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - worker 12 hain aur tukde 10, kya hoga? → **2 worker khaali baithe rahenge**: Ek tukda ek hi worker padhta hai
+> - worker badhaye, phir bhi lag badh raha hai, kya dekhoge? → **pehle tukdon ki ginti dekho**: worker baad me
+> - partition kitne rakhne hain, kaise tay karoge? → **jitne worker ek saath**: jitne worker ek saath chahiye (order topic ~10: 5,000 / sec, ek worker 500). Shuru me thoda zyada rakho, baad me badle to key ka tukda hil jaata hai
+> - 10 tukde aur 3 broker hain, kaise baantoge? → **barabar baanto**: Kaunsa tukda kahan hai, ye naksha Controller rakhta hai
+
 
 ---
 
@@ -87,9 +123,17 @@ AGAR    worker 12 hain aur tukde 10, kya hoga?
 
 ## 3. Ravi ne naam do baar badla, purana naam reh gaya
 
-Cue: KEY = userId (ek partition, kram)
+**Rail 4 DO LOG EK SAATH (kram)** · Cue: KEY = userId (ek partition, kram)
 
-![card 3 chalti tasveer: pehle bug, phir key = userId](img/c3_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c3_1.png?v=1" width="900">
+
+<img src="img/c3_2.png?v=1" width="900">
+
+<img src="img/c3_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     key = userId rakho. Ravi ki har khabar ek hi partition (P1) me jaati hai, kram se
@@ -98,18 +142,19 @@ KYUN    kram sirf EK partition ke andar milta hai. Jiska kram chahiye, wahi key.
 NAHI    poore topic ka kram -> FALTU: alag key ka aapas me kram nahi milta, aur chahiye bhi nahi.
            Ek user ka kram kaafi hai
 POOCHHO pehle poochho: kram poore topic ka chahiye, ya ek user ka kaafi hai?
-AGAR    producer ne retry kiya aur message ulta pahuncha, kram ka kya?
-        -> har message ka number hota hai. 1 fail, 2 gaya, 1 phir aaya, to bhi theek (idempotent producer)
-        hash % 10 tha, ab 20 tukde kar diye, kram ka kya?
-        -> % 10 se % 20 hua to key ka tukda badal gaya, thodi der kram toota. Isliye shuru me zyada rakho
-        key di hi nahi, to message kahan jaayega?
-        -> round-robin / sticky se kahin bhi. Koi kram nahi
-        ek key ka tukda garam ho gaya (bheed), kya karoge?
-        -> key tod do (userId#bucket). Par sirf tab, jab us key pe kram zaroori nahi
-        RabbitMQ / SQS lagate to kram milta?
-        -> guarantee nahi, kai consumer ek line se padhte hain. SQS FIFO ya ek consumer = kram,
-           par speed kam
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Key = userId: ek user ki har khabar ek tukde me, kram sirf tukde ke andar. Same key = same partition.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - producer ne retry kiya aur message ulta pahuncha, kram ka kya? → **har message ka number hota hai**: 1 fail, 2 gaya, 1 phir aaya, to bhi theek (idempotent producer)
+> - hash % 10 tha, ab 20 tukde kar diye, kram ka kya? → **% 10 se % 20 hua to key ka tukda badal gaya**: thodi der kram toota. Isliye shuru me zyada rakho
+> - key di hi nahi, to message kahan jaayega? → **round-robin / sticky se kahin bhi**: Koi kram nahi
+> - ek key ka tukda garam ho gaya (bheed), kya karoge? → **key tod do (userId#bucket)**: Par sirf tab, jab us key pe kram zaroori nahi
+> - RabbitMQ / SQS lagate to kram milta? → **guarantee nahi**: guarantee nahi, kai consumer ek line se padhte hain. SQS FIFO ya ek consumer = kram,. par speed kam
+
 
 ---
 
@@ -117,22 +162,34 @@ AGAR    producer ne retry kiya aur message ulta pahuncha, kram ka kya?
 
 ## 4. Email service ki 3 machine, Ravi ko 3 order email
 
-Cue: CONSUMER GROUP (ek team)
+**Rail 4 DO LOG EK SAATH (group)** · Cue: CONSUMER GROUP (ek team)
 
-![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c4_1.png?v=1" width="900">
+
+<img src="img/c4_2.png?v=1" width="900">
+
+<img src="img/c4_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     teeno machine ek team hain (consumer group, ek group.id).
         Har tukda team ke ek hi member ko jaata hai: P7 sirf C3 ko
 BAANT   P0-3 C1 ko, P4-6 C2 ko, P7-9 C3 ko. Ravi P7 pe hai, to sirf C3 bhejta, ek hi email
 KYUN    ek group ke andar ek partition = ek hi machine. To ek khabar team me ek hi baar jaati hai
-AGAR    group.id galat de diya (machine ka naam), kya hoga?
-        -> teen alag team ban gayi, teeno ne bheja. Ravi ko 3 email
-        team me machine badhani hai, kaise?
-        -> tukde bhi badhao. 10 tukde + 12 machine = 2 khaali
-        team ki ek machine gir gayi, uske tukde ka kya?
-        -> baaki machines ko mil jaate hain (rebalance)
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Ek service = ek group.id. Har tukda group ke ek hi member ko, to khabar ek baar. Gira to rebalance.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - group.id galat de diya (machine ka naam), kya hoga? → **teen alag team ban gayi**: teeno ne bheja. Ravi ko 3 email
+> - team me machine badhani hai, kaise? → **tukde bhi badhao**: 10 tukde + 12 machine = 2 khaali
+> - team ki ek machine gir gayi, uske tukde ka kya? → **baaki machines ko mil jaate hain (rebalance)**
+
 
 ---
 
@@ -140,9 +197,17 @@ AGAR    group.id galat de diya (machine ka naam), kya hoga?
 
 ## 5. Ravi ka order analytics aur dashboard ko bhi chahiye
 
-Cue: HAR SERVICE KA APNA GROUP
+**Rail 1 KAAM CHALA (kai service)** · Cue: HAR SERVICE KA APNA GROUP
 
-![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c5_1.png?v=1" width="900">
+
+<img src="img/c5_2.png?v=1" width="900">
+
+<img src="img/c5_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     har service ka apna group. Group ke andar baanto, alag group = sabko poori khabar
@@ -151,13 +216,17 @@ KYUN    har group apni jagah (offset) khud yaad rakhta hai. Ye MQ ka dil hai
 NAHI    teeno service ek hi group me -> ADHOORA: group me message ek hi ko jaata, sirf email ko mila,
            analytics / dashboard ko kuch nahi
 POOCHHO ek message kai service ko (sabko) jaaye, ya kisi ek ko? Ye sawaal poora design badalta hai
-AGAR    nayi service aaj judi, kya badalna padega?
-        -> bas naya group. Producer kuch nahi badalta
-        naye group ko 7 din purana data chahiye, uska offset kahan se aayega?
-        -> naye group ka offset hota hi nahi. Tum batao: shuru se ya ab se (auto.offset.reset)
-        ek group dheema hai (peeche), to doosra group rukta hai?
-        -> nahi, offset alag-alag hain. Dashboard 95 pe hai to bhi email nahi rukta
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Har service ka apna group, apna offset. Alag group = sabko poori khabar. Nayi service = naya group.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - nayi service aaj judi, kya badalna padega? → **bas naya group**: Producer kuch nahi badalta
+> - naye group ko 7 din purana data chahiye, uska offset kahan se aayega? → **naye group ka offset hota hi nahi**: Tum batao: shuru se ya ab se (auto.offset.reset)
+> - ek group dheema hai (peeche), to doosra group rukta hai? → **nahi, offset alag**: nahi, offset alag-alag hain. Dashboard 95 pe hai to bhi email nahi rukta
+
 
 ---
 
@@ -165,9 +234,17 @@ AGAR    nayi service aaj judi, kya badalna padega?
 
 ## 6. Dopahar Broker A ki disk mar gayi, data gaya
 
-Cue: LEADER + ISR, acks=all
+**Rail 3 MACHINE GIRI (khaas)** · Cue: LEADER + ISR, acks=all
 
-![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c6_1.png?v=1" width="900">
+
+<img src="img/c6_2.png?v=1" width="900">
+
+<img src="img/c6_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     har tukde ka leader A aur 2 copy (ISR). Saari ISR copy le lein, tab producer ko OK (acks=all)
@@ -176,15 +253,18 @@ KYUN    leader A likhta hai, B aur C copy lete hain. "done" tabhi, jab ISR copy 
         3 copy = kam se kam 3 broker chahiye (har copy alag machine pe)
 NAHI    acks=1 -> KHOYA: leader ki memory pe hi "OK", leader copy se pehle gira to khabar gayi
 POOCHHO message kho sakta hai, ya bilkul nahi? Ye sawaal poora design badalta hai
-AGAR    ISR copy kam pad gayi, phir bhi likhte rahein?
-        -> min.insync=2 hai, to likhna band. Khone se rukna behtar hai
-        leader A gir gaya, naya leader kaun banega?
-        -> Controller (KRaft) ISR me se B ko leader banata hai. Ek hi faisla, do leader nahi bante
-        ek follower peeche chal raha hai, wo leader ban sakta hai?
-        -> nahi. Aakhri khabar uske paas nahi hai
-        acks badalna ho, to kaunse option hain?
-        -> 0 = bhej ke bhaag jao (kho sakta). 1 = sirf leader (click / log). all = saari ISR (paisa)
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Leader + ISR copy, acks=all: saari ISR copy le lein tab OK. Leader gira to ISR me se naya leader.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - ISR copy kam pad gayi, phir bhi likhte rahein? → **min.insync=2**: min.insync=2 hai, to likhna band. Khone se rukna behtar hai
+> - leader A gir gaya, naya leader kaun banega? → **Controller ISR se**: Controller (KRaft) ISR me se B ko leader banata hai. Ek hi faisla, do leader nahi bante
+> - ek follower peeche chal raha hai, wo leader ban sakta hai? → **nahi, aakhri khabar nahi**: nahi. Aakhri khabar uske paas nahi hai
+> - acks badalna ho, to kaunse option hain? → **0 / 1 / all**: 0 = bhej ke bhaag jao (kho sakta). 1 = sirf leader (click / log). all = saari ISR (paisa)
+
 
 ---
 
@@ -192,9 +272,17 @@ AGAR    ISR copy kam pad gayi, phir bhi likhte rahein?
 
 ## 7. Email bheja, "padh liya" bolne se pehle crash
 
-Cue: PEHLE KAAM PHIR COMMIT + IDEMPOTENT
+**Rail 4 DO LOG EK SAATH (dobara)** · Cue: PEHLE KAAM PHIR COMMIT + IDEMPOTENT
 
-![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c7_1.png?v=1" width="900">
+
+<img src="img/c7_2.png?v=1" width="900">
+
+<img src="img/c7_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     pehle kaam karo, phir commit. Har khabar ka eventId Redis me dekho: dobara aaye to skip
@@ -207,13 +295,17 @@ NAHI    pehle commit, phir kaam -> CHHOOTA: commit hua, kaam se pehle crash, res
 DHYAAN  "duplicate nahi aayega" mat bolna. Baad me "at-least-once, duplicate aayega" bologe to dono katengi.
         Sahi: khabar khoti nahi, duplicate aa sakta hai, consumer pehchaan ke sambhalta hai (idempotent).
         Asar exactly-once jaisa
-AGAR    eventId ki jagah userId se dedup kiya, kya hoga?
-        -> Ravi ka agla sahi event bhi skip ho jaayega. Pehchaan eventId se, kram userId se
-        Redis se eventId jaldi mit gaya, kya hoga?
-        -> khabar dobara aayi to phir bhej dega. eventId ki umar (TTL) retry window se lambi rakho
-        exactly-once poocha, Kafka me nahi hota?
-        -> sirf Kafka se Kafka (transactions). Email / DB ke liye consumer khud pehchaane
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Pehle kaam, phir commit: khabar khoti nahi, dobara aa sakti. eventId se pehchaan ke skip (idempotent).
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - eventId ki jagah userId se dedup kiya, kya hoga? → **Ravi ka agla sahi event bhi skip ho jaayega**: Pehchaan eventId se, kram userId se
+> - Redis se eventId jaldi mit gaya, kya hoga? → **khabar dobara aayi to phir bhej dega**: eventId ki umar (TTL) retry window se lambi rakho
+> - exactly-once poocha, Kafka me nahi hota? → **sirf Kafka se Kafka (transactions)**: Email / DB ke liye consumer khud pehchaane
+
 
 ---
 
@@ -221,9 +313,17 @@ AGAR    eventId ki jagah userId se dedup kiya, kya hoga?
 
 ## 8. Order #101 DB me bana, Kafka bhejne se pehle server gira
 
-Cue: OUTBOX + relay
+**Rail 3 MACHINE GIRI (producer)** · Cue: OUTBOX + relay
 
-![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c8_1.png?v=1" width="900">
+
+<img src="img/c8_2.png?v=1" width="900">
+
+<img src="img/c8_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     order aur khabar EK transaction me (outbox). Relay commit ke BAAD Kafka ko bhejta hai
@@ -232,17 +332,19 @@ RELAY   relay har 1 second sent = false wali row Kafka ko bhejta, ACK aaya to se
 KYUN    server kuch yaad nahi rakhta, DB ka sent column yaad rakhta hai. Order hai to khabar bhi hai
 NAHI    Saga -> ALAG: wo fail hue kaam ko ulta karta hai (refund). Yahan ulta nahi karna,
            khabar raaste me kho rahi hai. Pehle pakka likho = outbox
-AGAR    COMMIT se pehle crash ho gaya, kya bacha?
-        -> kuch nahi hua, na order na outbox. Ravi ko error dikha, wo dobara karega
-        COMMIT ke baad crash hua, khabar ka kya?
-        -> row DB me padi hai. Relay uthte hi sent = false wali bhej deta. Late, par khoya nahi
-        relay ne bheja, par sent = true likhne se pehle gir gaya
-        -> khabar dobara jaati hai. Consumer E-101 dekh ke skip karta, Ravi ko EK email
-        outbox table badi ho gayi, kya karoge?
-        -> sent = true wali rows roz saaf karo (delete / partition drop)
-        poore raaste kuch na khoye, kaise?
-        -> outbox + acks=all + kaam ke baad commit + eventId dedup + kharab ki alag line (DLQ)
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Order + outbox row EK transaction me. Relay commit ke baad Kafka ko bhejta, ACK pe sent = true.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - COMMIT se pehle crash ho gaya, kya bacha? → **kuch nahi hua**: na order na outbox. Ravi ko error dikha, wo dobara karega
+> - COMMIT ke baad crash hua, khabar ka kya? → **row DB me padi hai**: Relay uthte hi sent = false wali bhej deta. Late, par khoya nahi
+> - relay ne bheja, par sent = true likhne se pehle gir gaya → **khabar dobara jaati hai**: Consumer E-101 dekh ke skip karta, Ravi ko EK email
+> - outbox table badi ho gayi, kya karoge? → **roz saaf karo**: sent = true wali rows roz saaf karo (delete / partition drop)
+> - poore raaste kuch na khoye, kaise? → **paanch cheez saath**: outbox + acks=all + kaam ke baad commit + eventId dedup + kharab ki alag line (DLQ)
+
 
 ---
 
@@ -250,26 +352,36 @@ AGAR    COMMIT se pehle crash ho gaya, kya bacha?
 
 ## 9. Shaam ko C2 mar gaya, lag badhta ja raha
 
-Cue: REBALANCE + LAG alert + DLQ
+**Rail 5 KUCH DHEEMA (lag)** · Cue: REBALANCE + LAG alert + DLQ
 
-![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c9_1.png?v=1" width="900">
+
+<img src="img/c9_2.png?v=1" width="900">
+
+<img src="img/c9_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     mare hue C2 ke tukde baaki ko milte hain (rebalance): P4, P5 C1 ko, P6 C3 ko.
         Jo khabar baar-baar fail ho, wo alag line me (DLQ)
 KYUN    koi partition bina padhne wale ke nahi rehta. Kharab khabar poori line nahi rokti,
         use theek karke baad me dobara chalao
-AGAR    lag naapna hai, kaise naapoge?
-        -> lag = aakhri offset - group kahan tak padha. Sab theek ho to ~0
-        rebalance ke baad bhi lag badh raha hai, kya karoge?
-        -> alert. Consumer badhao (tukdon tak), dheema kaam alag karo
-        ek khabar baar-baar fail ho rahi, use DLQ me kab bhejoge?
-        -> kuch koshish ke baad alag line (DLQ) me. Warna poora tukda atka rahega
-        ek khabar dheemi hai (5 min), kya hoga?
-        -> poora tukda atak jaata, kyunki kram se padhta hai. Dheema kaam alag topic / pool me
-        rebalance chal raha hai, to sab ruk jaate hain?
-        -> purane tareeke (eager) me haan. Cooperative (Kafka 2.4+) me sirf wo, jinke tukde badle
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Mare consumer ke tukde baaki ko (rebalance). Lag = aakhri offset - padha, badhe to alert. Kharab = DLQ.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - lag naapna hai, kaise naapoge? → **lag = aakhri offset - group kahan tak padha**: Sab theek ho to ~0
+> - rebalance ke baad bhi lag badh raha hai, kya karoge? → **alert + consumer badhao**: alert. Consumer badhao (tukdon tak), dheema kaam alag karo
+> - ek khabar baar-baar fail ho rahi, use DLQ me kab bhejoge? → **kuch koshish ke baad alag line (DLQ) me**: Warna poora tukda atka rahega
+> - ek khabar dheemi hai (5 min), kya hoga? → **poora tukda atak jaata**: kyunki kram se padhta hai. Dheema kaam alag topic / pool me
+> - rebalance chal raha hai, to sab ruk jaate hain? → **purane tareeke (eager) me haan**: Cooperative (Kafka 2.4+) me sirf wo, jinke tukde badle
+
 
 ---
 
@@ -277,9 +389,17 @@ AGAR    lag naapna hai, kaise naapoge?
 
 ## 10. Raat ko broker ki disk bharti ja rahi
 
-Cue: RETENTION 7 din + COMPACTION
+**Rail 6 DATA BADA (disk)** · Cue: RETENTION 7 din + COMPACTION
 
-![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c10_1.png?v=1" width="900">
+
+<img src="img/c10_2.png?v=1" width="900">
+
+<img src="img/c10_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     7 din rakho, phir purana segment (~1 GB) poora udao (retention). Padh liya to delete nahi. Sasta
@@ -288,13 +408,17 @@ KYUN    jo rakha hai usi se replay hota hai. Purani khabar retention se jaati, p
         Log ise sirf "pipe" samajh lete hain
 NAHI    padhte hi delete -> GAYA: replay nahi ho paata. Disk sirf retention se khaali hoti, padhne se nahi
 POOCHHO purana dobara padhna (replay) chahiye?
-AGAR    bug theek kiya, ab replay chahiye, kaise?
-        -> offset peeche karo, ya naya group shuru se padhe (replay). Data pada hai
-        consumer 7 din se zyada (retention se lamba) band raha, data ka kya?
-        -> gaya. Retention consumer ki sabse lambi chhutti se lambi rakho, aur lag pe alert
-        har key ki sirf aakhri value chahiye, kaise?
-        -> compaction. Sirf aakhri khabar rakho (profile / config)
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Retention 7 din: purana segment poora udao, padhne se delete nahi. Key ki aakhri value = compaction.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - bug theek kiya, ab replay chahiye, kaise? → **offset peeche karo**: ya naya group shuru se padhe (replay). Data pada hai
+> - consumer 7 din se zyada (retention se lamba) band raha, data ka kya? → **gaya**: Retention consumer ki sabse lambi chhutti se lambi rakho, aur lag pe alert
+> - har key ki sirf aakhri value chahiye, kaise? → **compaction**: Sirf aakhri khabar rakho (profile / config)
+
 
 ---
 

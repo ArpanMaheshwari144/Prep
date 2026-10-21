@@ -1,28 +1,50 @@
-// Card 4: email ki 3 machine alag-alag, har ek ne P7 padha -> Ravi ko 3 email. Ilaaj: ek consumer group.
-const DUR = 16, FIX = 7.5;
-const P7 = [200, 192], M = [[560, 90], [560, 192], [560, 294]];
-function setup() {
-  box(80, 160, 120, 64, 'P7', 'Ravi ka order', { stroke: C.acc });
-  M.forEach(([x, y], i) => { wire(`M200 192 L${x - 60} ${y}`); wire(`M${x + 60} ${y} L740 192`); box(x - 60, y - 30, 120, 60, `Email C${i + 1}`); });
-  box(740, 160, 100, 64, 'Ravi');
-}
-function frame(t, fix, tl) {
-  let mails = 0;
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: teeno machine alag-alag. Har ek ne har message padha, Ravi ko 3 email';
-    M.forEach((m, i) => { const s = 0.4 + i * 0.3;
-      dot(path([[s, P7], [s + 0.7, [m[0] - 60, m[1] + 12]], [s + 1.4, [m[0] + 60, m[1] + 12]], [s + 2.0, [740, 192]]], tl < s + 2.0 ? tl : -1), C.msg);
-      if (tl >= s + 2.0) mails++; });
-    T(790, 260, `email: ${mails}`, { c: mails > 1 ? C.bad : C.fg, b: 1, size: 15 });
-    if (mails > 1) T(790, 285, 'Ravi pareshaan', { c: C.bad, size: 12 });
-    return;
+// Card 4: email service ki 3 machine, Ravi ko 3 email. Ilaaj: ek consumer group, har tukda ek hi member ko. Agar: ek machine giri -> rebalance.
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: teeno machine ka group.id alag, teeno ne P7 padha. Ravi ko ek order ke 3 email'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: teeno ek team (consumer group). Har tukda team ke ek hi member ko: P7 sirf C3 ko'],
+  [6, YEL, 'AGAR', 'AGAR team ki ek machine giri? -> uske tukde baaki machines ko (rebalance)'],
+];
+function setup() {}
+const STEPS = [
+  [[C.msg, 'P7 → C1, C2, C3', 'Teeno machine ka group.id alag (apna naam), teeno ne P7 padha'],
+   [C.bad, 'C1, C2, C3 → Ravi', 'Teeno ne apni taraf se email bheja'],
+   [C.bad, 'Ravi', 'Ravi ko ek order ke 3 email aaye']],
+  [[C.msg, 'P → C', 'Ek team (group: email): P0-3 C1 ko, P4-6 C2 ko, P7-9 C3 ko'],
+   [C.good, 'C3 → Ravi', 'Ravi P7 pe hai, sirf C3 ne email bheja'],
+   [C.good, 'Ravi', 'Ek order, ek email']],
+  [[C.bad, 'C3', 'Team ki machine C3 gir gayi'],
+   [C.acc, 'P7-9 → C1', 'Uske tukde baaki machine ko mile (rebalance): P7-9 ab C1 ke paas'],
+   [C.good, 'C1 → Ravi', 'Ravi ko email phir bhi ek hi gaya']],
+];
+function frame(ph) {
+  const ys = [30, 140, 250];
+  if (ph === 0) {
+    B(20, 140, 170, 60, 'P7', 'Ravi ka order', { st: 'acc' });
+    ['C1', 'C2', 'C3'].forEach((n, i) => {
+      B(330, ys[i], 200, 60, n, 'group.id: ' + n.toLowerCase(), { st: 'bad', icon: 'server' });
+      A(190, 170, 328, ys[i] + 30, C.msg, { n: i === 1 ? 1 : 0 });
+      A(530, ys[i] + 30, 688, 170, C.bad, { n: i === 1 ? 2 : 0 });
+    });
+    B(690, 140, 190, 60, 'Ravi', '3 email', { st: 'bad', icon: 'mail' }); num(785, 225, 3, C.bad);
+    L(785, 255, 'ek order, teen baar', C.bad);
+  } else {
+    el('rect', { x: 300, y: 15, width: 260, height: 315, rx: 12, fill: 'none', stroke: C.good, 'stroke-dasharray': '6 5', 'stroke-width': 2 }, DYN);
+    T(430, 348, 'ek team: group.id = email', { c: C.good, b: 1, size: 14 });
+    const P = ['P0-3', 'P4-6', 'P7-9'];
+    P.forEach((p, i) => B(20, ys[i], 150, 60, p, i === 2 ? 'Ravi P7 pe' : '', { st: i === 2 ? 'acc' : 'dim' }));
+    if (ph === 1) {
+      ['C1', 'C2', 'C3'].forEach((n, i) => { B(330, ys[i], 200, 60, n, 'padhta ' + P[i], { st: 'good', icon: 'server' }); A(170, ys[i] + 30, 328, ys[i] + 30, C.msg, { n: i === 0 ? 1 : 0 }); });
+      B(690, 250, 190, 60, 'Ravi', '1 email', { st: 'good', icon: 'mail' });
+      A(530, 280, 688, 280, C.good, { n: 2 }); num(785, 225, 3, C.good);
+    } else {
+      B(330, 30, 200, 60, 'C1', 'P0-3 + P7-9', { st: 'good', icon: 'server' });
+      B(330, 140, 200, 60, 'C2', 'padhta P4-6', { st: 'good', icon: 'server' });
+      B(330, 250, 200, 60, 'C3', 'gir gayi', { st: 'bad', icon: 'server' }); cross(545, 280); num(545, 245, 1, C.bad);
+      A(170, 60, 328, 60, C.msg); A(170, 170, 328, 170, C.msg);
+      A(170, 270, 328, 75, C.acc, { n: 2, dash: 1, at: 0.4 });
+      B(690, 30, 190, 60, 'Ravi', '1 email', { st: 'good', icon: 'mail' });
+      A(530, 60, 688, 60, C.good, { n: 3 });
+    }
   }
-  CAP.textContent = 'ILAAJ: teeno ek team (consumer group). Har tukda team ke ek hi member ko: P7 sirf C3';
-  el('rect', { x: 470, y: 45, width: 180, height: 290, rx: 10, fill: 'none', stroke: C.good, 'stroke-dasharray': '6 4' }, DYN);
-  T(560, 352, 'group.id = email', { c: C.good, size: 12 });
-  T(700, 95, 'P0-3', { c: C.muted, size: 11 }); T(700, 197, 'P4-6', { c: C.muted, size: 11 }); T(700, 299, 'P7-9', { c: C.acc, size: 11, b: 1 });
-  const m = M[2], s = 0.5;
-  dot(path([[s, P7], [s + 0.8, [m[0] - 60, m[1] + 12]], [s + 1.5, [m[0] + 60, m[1] + 12]], [s + 2.1, [740, 192]]], tl < s + 2.1 ? tl : -1), C.good);
-  if (tl >= s + 2.1) mails = 1;
-  T(790, 260, `email: ${mails}`, { c: C.good, b: 1, size: 15 });
 }
