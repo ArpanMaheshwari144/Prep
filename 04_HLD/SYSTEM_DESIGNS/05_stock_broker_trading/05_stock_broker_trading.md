@@ -113,12 +113,12 @@ NAHI    pehle padho, phir block -> RACE: laptop (TCS 30k) + phone (INFY 30k), do
 
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
-> - block kiya, phir order cancel ho gaya? → **block hata do**
+> - block kiya, phir order cancel ho gaya? → **block hata do**: blocked paisa / qty wapas free, warna user ka paisa bina order ke atka rehta
 > - block kiya, sauda aadha hua? → **jitna bika utna kata, baaki blocked**: Order abhi khula hai
 > - cancel aur match usi pal? → **jo nahi bika, sirf uska block hatao**: Book ek haath me hai
 > - day order ki umar khatam ho gayi? → **shaam ko block hatao**: Blocked sirf sauda / cancel / umar se ghatta hai
 > - MARKET order me bhav pata nahi, block kitna karoge? → **aakhri bhav + thoda upar**: aakhri bhav + thoda upar block karo. Sauda ke baad bacha paisa wapas
-> - SELL pe bhi aisa hi block? → **haan**: wahi line portfolio pe: qty - blocked_qty >= 10
+> - SELL pe bhi aisa hi block? → **haan, blocked_qty**: haan. wahi line portfolio pe: qty - blocked_qty >= 10
 
 
 ---
@@ -237,7 +237,7 @@ NAHI    sirf book ki photo -> ADHOORA: photo ke BAAD wale order kahin likhe hi n
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - book RAM me hai, crash hua to gayi? → **pehle log, phir match**: match se PEHLE log me likhte hain. Crash pe log shuru se chalao, wahi book wapas
 > - replay me der lagi? → **standby pehle se log padhta, book taiyaar**: Pehla gire tab wo chalu
-> - dono board ek saath chala do? → **nahi**: Do board = do sach = galat
+> - dono board ek saath chala do? → **nahi, do sach**: nahi. Do board = do sach = galat
 > - crash me paise ka kya? → **paisa DB me hai**: wahan rollback. Book log se wapas
 
 
@@ -275,7 +275,7 @@ NAHI    aakhir me "done" flag -> ANDHA: flag se pehle gira to pata hi nahi kitna
 > - commit ho gaya par jawab kho gaya, retry aayi? → **trade_id UNIQUE, doosri ruki**: Suresh ko +30k ek hi baar. Rollback hua hota to t1 likha hi nahi, retry seedha chalti
 > - galti pakdoge kaise? → **raat ko ledger jodo, hamesha 0 aana chahiye**: Galti turant dikhe
 > - balance ledger jod ke nikaal lo? → **dheema, alag column**: dheema hai, lakhon line. Balance alag column me, usi transaction me
-> - asli paisa usi pal Suresh ko gaya? → **nahi**: T+1 NSE Clearing. Ye broker ka apna khaata hai
+> - asli paisa usi pal Suresh ko gaya? → **nahi, T+1**: nahi. T+1 NSE Clearing. Ye broker ka apna khaata hai
 
 
 ---
@@ -312,7 +312,7 @@ NAHI    paisa ulta kar do -> GALAT: match ke baad sauda pakka, bechne wale ko 20
 > - retry dobara chal gaya? → **har kadam trade_id se, ho chuka = no-op**: Share do baar nahi
 > - match se pehle hi atak gaya? → **sirf tab ulta (SAGA): block hatao**
 > - ghanton tak fail ho raha? → **trade PENDING + alert**: ops share daalta
-> - Portfolio DB ghanta bhar band, user dobara order kare? → **nahi**: naya + purana dono zinda, DB wapas = 5 ki jagah 10 INFY, paisa do baar. Trade PENDING + alert, system wahi trade_id se retry, user kuch nahi karta
+> - Portfolio DB ghanta bhar band, user dobara order kare? → **nahi, PENDING + retry**: nahi. naya + purana dono zinda, DB wapas = 5 ki jagah 10 INFY, paisa do baar. Trade PENDING + alert, system wahi trade_id se retry, user kuch nahi karta
 > - step-step karne ki keemat kya hai? → **PENDING dikhta, lamba lock nahi**: beech me PENDING dikhta hai, par 2PC jaisa lamba lock nahi
 > - orchestration ya choreography? → **orchestration**: Paise me saaf dikhe kaunsa step atka
 
@@ -351,7 +351,7 @@ NAHI    har user baar-baar poochhe (polling) -> BAITHA: 10 lakh har second = ser
 > - second me 1000 baar price badla? → **har ~100 ms aakhri price bhejo**: Purana bekaar
 > - connection toota, wapas juda? → **abhi ka price alag se do**: Pub/sub kuch rakhta nahi
 > - 10 lakh connection ek server pe? → **ek server ~lakh**: Aur server + LB
-> - price sab server tak kaise pahunchta hai? → **pub/sub se har server ko**
+> - price sab server tak kaise pahunchta hai? → **pub/sub se har server ko**: price ek baar channel me, har server sunta aur apne WebSocket users ko push karta
 
 
 ---

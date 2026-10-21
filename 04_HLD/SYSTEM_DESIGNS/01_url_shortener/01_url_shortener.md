@@ -287,7 +287,7 @@ NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
 > - A aur B dono gir gayi, sirf 1 bachi? → **likhna fail**: user ko error (ya 1 pe likho, risk ke saath). Par jo "done" bola, wo kabhi khota nahi
 > - 2 copy se padhna dheema nahi? → **thoda, Redis pehle**: thoda. Isliye pehla ilaaj Redis hai, DB tak kam aata
 > - 5 copy hon to quorum kitna? → **W + R > N**: likhne + padhne ki ginti copy se zyada ho: 3 + 3 > 5
-> - Data bachane ko Kafka laga dein? → **nahi**: DB ka apna log ye khud karta, extra dabba nahi
+> - Data bachane ko Kafka laga dein? → **nahi, DB ka log**: nahi. DB ka apna log ye khud karta, extra dabba nahi
 
 
 ---

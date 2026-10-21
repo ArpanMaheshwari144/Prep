@@ -354,7 +354,7 @@ NAHI    sab primary se padho
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - abhi paisa bheja, aur copy 5 sec peeche hai → **apna likha primary se**: apna abhi likha primary se padho (last_write_at Redis me), warna purana balance dekh ke. user dobara bhejega
 > - copy minute bhar peeche ho gayi → **lag naapo**: alert, us copy ko list se hatao
-> - failover wali copy aur read replica ek hi hain? → **nahi**: Failover standby sync hai, kuch nahi khota. Read replica async hai, peeche chalti hai
+> - failover wali copy aur read replica ek hi hain? → **nahi, sync vs async**: nahi. Failover standby sync hai, kuch nahi khota. Read replica async hai, peeche chalti hai
 
 
 ---

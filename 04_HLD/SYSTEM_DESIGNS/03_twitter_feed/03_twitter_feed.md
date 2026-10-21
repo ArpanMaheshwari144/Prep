@@ -236,7 +236,7 @@ NAHI    Redis me machine jodte jao -> MEHNGA: soye 40 crore ka inbox bhi RAM kha
 > - neeche scroll, agla page? → **aakhri dikhe tweet ka time (cursor)**: page number nahi: "isse purane 50". Beech me naya tweet aaya to bhi page nahi khiskta
 > - Redis gira, feed ka kya? → **copy (replica) sambhalti hai**: Warna har feed DB se banegi, mehnga
 > - Redis ki copy bhi gayi? → **kuch request mana, inbox dheere bharo**: har inbox ek request se dheere-dheere bharo
-> - soya user 2 mahine baad wapas aaya, uska inbox hai hi nahi? → **pull se banao**
+> - soya user 2 mahine baad wapas aaya, uska inbox hai hi nahi? → **pull se banao**: soye users ka inbox nahi rakhte (jagah). Wapas aaya to follow walon ke taaze tweet khinch ke inbox bana do
 > - inbox chhota rakhna hai, to usme kya rakhte ho? → **sirf id + score**: sirf number aur score (~60-100 byte), poora tweet nahi
 
 
@@ -311,7 +311,7 @@ NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana,
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - regions ka network toota? → **feed chalta rahe, chahe thoda purana**: consistency nahi, availability: 2 sec purani feed se farak nahi, par feed khuli hi nahi to app band. Jo hai wo dikhao, sahi wala thodi der me
 > - US ke celeb ka tweet, India se door? → **garam tweet India cache me bhi**
-> - poora India region gira? → **Route 53 US pe palat deta. Feed thodi purani, par chalti**: Copy peeche thi, to feed thodi purani
+> - poora India region gira? → **Route 53 US pe**: Route 53 US pe palat deta. Feed thodi purani, par chalti, kyunki copy peeche thi
 > - dono region me ek saath likha? → **baad wala jeetega (last write wins)**: Tweet aksar naya hota hai, takraav kam
 > - main US ghoomne gaya, mera data kahan se aayega? → **India bhejo ya paas ki copy**: request India bhejo, ya paas wali copy se do (thoda purana)
 > - multi-region ka fayda kya hai? → **tez + GDPR + ek gira baaki chalein**: tez. Europe ka data Europe me (GDPR). Har region ki bheed ka time alag. Ek gira to baaki chalein

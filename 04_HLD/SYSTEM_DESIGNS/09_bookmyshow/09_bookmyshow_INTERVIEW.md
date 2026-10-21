@@ -85,7 +85,7 @@ NAHI    SELECT ... FOR UPDATE -> LAMBA: chalta bhi hai, par DB pe do baar jaana 
 > - 4 seat li, A4 pehle hi ja chuki thi? → **badli rows 4 nahi, ROLLBACK**: Sab ek transaction me, kyunki aadhi booking bekaar hai
 > - do log ulte kram me 4 seat le rahe? → **DB deadlock pakad ke ek abort**: Row lock ke saath 4 seat hon to ye hota hai. Wo retry kare. Alag-alag UPDATE ho to seat_id ke kram me bhejo
 > - Ravi ne Book phir dabaya? → **WHERE ko phir 0 row**: kuch nahi milta
-> - UPDATE ke liye seat ki rows pehle se bani hoti hain? → **haan**: Show banate hi saari seat rows ban jaati hain, booking sirf UPDATE hai
+> - UPDATE ke liye seat ki rows pehle se bani hoti hain? → **haan, show pe hi banti**: haan. Show banate hi saari seat rows ban jaati hain, booking sirf UPDATE hai
 
 
 ---
@@ -238,7 +238,7 @@ NAHI    sab seedha DB pe -> DHEEMA: 3000 seat, 2 lakh log ek hi rows ke lock pe 
 > - ek hi Booking worker, dheema nahi? → **UPDATE ~ms ka, hazaar / sec**: Aur chahiye to show ke hisse karo (balcony / stall)
 > - line ki ginti Redis me, Redis restart? → **DB se dobara gin lo**: Ginti sirf darwaza hai. Sach DB ki seats hain
 > - andar wala bina liye chala gaya? → **line se agla andar aa jaata**: Line sirf darwaza hai
-> - release ka time to pata hai? → **haan, to pehle se machine badhao + har user ki had**: (rate limit). Waqt pata hai to tayyari pehle
+> - release ka time to pata hai? → **pehle se machine badhao**: haan, to pehle se machine badhao + har user ki had (rate limit). Waqt pata hai to tayyari pehle
 
 
 ---

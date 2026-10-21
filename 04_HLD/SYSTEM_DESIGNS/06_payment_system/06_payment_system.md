@@ -253,7 +253,7 @@ NAHI    sirf webhook -> KHOTA: webhook kho sakta hai (der ho, ya hamara server b
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - webhook do baar aaya? → **SUCCESS sirf ek baar**: doosra ignore
-> - webhook nakli? → **hastakshar jaancho (PSP secret), PENDING se milao**: hastakshar jaancho (PSP secret) aur apne PENDING se milao
+> - webhook nakli? → **hastakshar (PSP secret)**: hastakshar jaancho (PSP secret) aur apne PENDING se milao
 > - webhook aaya hi nahi? → **job purane PENDING ke liye PSP se poochhe**: job har kuch minute poochhti hai. Raat ko PSP ki file se poora milaan hota hai (reconciliation)
 > - job ko PSP ne jawab de diya, phir? → **hua = SUCCESS**: Pakka fail = FAILED, kuch wapas nahi karna (paisa hila nahi)
 
@@ -369,7 +369,7 @@ NAHI    ek hi machine -> BAITHI: CPU bhara, payment atke, timeout, log dobara ta
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - peeche ek machine mar gayi? → **LB GET /health, jawab nahi = bahar**: LB ke peeche wali machine. LB har kuch sec poochta hai (GET /health)
 > - galat istemaal? → **"from" ka maalik JWT wala? Nahi to 403**: Aage WAF + had
-> - JWT chori? → **chhoti umar (~15 min) + refresh, bade pe PIN / OTP**: Bade payment pe PIN / OTP
+> - JWT chori? → **chhoti umar + refresh**: token ki umar chhoti (~15 min) + refresh token. Bade payment pe PIN / OTP
 
 
 ---
@@ -405,7 +405,7 @@ NAHI    report bhi primary pe -> RUKA: wahi hua, mahine bhar ki report ne primar
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - pay kiya, turant balance dekha? → **primary se padho, copy peeche**: Copy 1-2 sec peeche hai
 > - copy aur peeche chali gayi? → **lag naapo, had paar hui to alert**: kitni peeche hai naapo (replication lag)
-> - report itni bhaari ki copy bhi baithe? → **alag warehouse (CDC)**
+> - report itni bhaari ki copy bhi baithe? → **alag warehouse (CDC)**: DB ka log CDC se warehouse me, bhaari report wahan. Primary aur copy dono pe bojh nahi
 > - primary gir gaya? → **sync standby ban jaata**: kuch nahi khota
 
 
