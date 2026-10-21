@@ -235,11 +235,11 @@ Cue: QUORUM (2 me likho, 2 se padho)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c6_1.png?v=4" width="900">
+<img src="img/c6_1.png?v=5" width="900">
 
-<img src="img/c6_2.png?v=4" width="900">
+<img src="img/c6_2.png?v=5" width="900">
 
-<img src="img/c6_3.png?v=4" width="900">
+<img src="img/c6_3.png?v=5" width="900">
 
 </details>
 
