@@ -3,7 +3,7 @@
 > Tez RAM wala key-value store, jo ek machine se bada ho aur ek machine mare to bhi chale. Concept detail = FOUNDATIONS/04_caching.md
 > Dil do cheezein: tez (<1 ms), aur machine mare to bhi chale. BookMyShow ka ulta: wahan sahi hona dil tha, yahan tezi.
 >
-> Mock me sirf heading + Cue + GIF. Neeche har card ek block: HAL (GIF ka ILAAJ) · KYUN · NAHI (doosra kyun nahi) · AGAR (cross-Q).
+> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -30,13 +30,38 @@ NUMBERS ~1 TB data, ~10 lakh read / sec, padhai zyada. DB se ~10 ms lagta hai (d
 PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 ```
 
+> [!IMPORTANT]
+> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
+> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+>
+> | rail | is design me | card |
+> |---|---|---|
+> | 1 kaam chala | get / put, RAM bhar gayi, kya hatayein | 1 |
+> | 2 bheed aayi | 7 baje home key khatam, 1000 log DB pe · IPL final, ek key pe crore log | 5, 6 |
+> | 3 machine giri | machine B mari, uski key DB pe (**is design ka khaas: machine mare to bhi chale**) | 3 |
+> | 4 do log ek saath | Ravi ne naam badla, DB me naya, cache me purana · delete ke beech purana wapas bhara (card 4 ka cross-Q) | 4 |
+> | 5 kuch dheema | alag nahi: DB ~10 ms, isliye aage cache (Shuru) | - |
+> | 6 data bada | 1 TB, "user:42" kis machine pe | 2 |
+> | 7 door ke log | nahi aata | - |
+> | 8 bahar ka hamla | jo key DB me hai hi nahi, baar-baar maango (card 5 ka cross-Q) | 5 |
+
 ---
 
 *ab tootega kahan? sabse pehle RAM pe, kyunki RAM chhoti hai*
 
 ## 1. Subah cache machine ki RAM bhar gayi, kya hatayein
 
-Cue: LRU + TTL (HashMap + DLL)
+**Rail 1 KAAM CHALA** · Cue: LRU + TTL (HashMap + DLL)
+
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c1_1.png?v=1" width="900">
+
+<img src="img/c1_2.png?v=1" width="900">
+
+<img src="img/c1_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     jo sabse der se chhua gaya wo bahar (LRU), aur har key ki umar (TTL). RAM bhari to sabse der se
@@ -51,17 +76,19 @@ NAHI    LFU (kitni baar chhua)
         -> ATKA: kal ki famous key aaj bhi baithi rehti hai, purani ginti nahi ghatti. Default LRU
         hatana hi band (noeviction)
         -> ERROR: naya likhna error deta hai. Cache me allkeys-lru rakho
-AGAR    LRU me sabse purana har baar dhoondhoge?
-        -> nahi. HashMap + doubly linked list: chhua to aage, peeche wala hatao, O(1)
-        user:9 phir padha
-        -> utha ke aage rakho. Ab wo sabse baad me nikalega, chhua matlab taaza
-        Redis sach me poori LRU list rakhta hai?
-        -> nahi, andaaze wala LRU: kuch random key me sabse purani hatata hai. Poori list = har key pe memory
-        umar (TTL) kitni rakhoge?
-        -> jitna purana data jhel sako (5 min chalega?). Profile = minute, price / stock = second
-        umar (TTL) khatam ho gayi
-        -> agla padhne wala MISS karega, DB se taaza laayega. Purana zyada der nahi tikta
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** RAM bhari to sabse der se chhua bahar (LRU), har key ki umar (TTL). HashMap + list = O(1). Sach DB me.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - LRU me sabse purana har baar dhoondhoge? → **HashMap + doubly linked list**: nahi. HashMap + doubly linked list: chhua to aage, peeche wala hatao, O(1)
+> - user:9 phir padha → **utha ke aage rakho**: Ab wo sabse baad me nikalega, chhua matlab taaza
+> - Redis sach me poori LRU list rakhta hai? → **andaaze wala LRU**: nahi, andaaze wala LRU: kuch random key me sabse purani hatata hai. Poori list = har key pe memory
+> - umar (TTL) kitni rakhoge? → **jitna purana jhel sako**: jitna purana data jhel sako (5 min chalega?). Profile = minute, price / stock = second
+> - umar (TTL) khatam ho gayi → **agla padhne wala MISS karega**: DB se taaza laayega. Purana zyada der nahi tikta
+
 
 ---
 
@@ -69,7 +96,17 @@ AGAR    LRU me sabse purana har baar dhoondhoge?
 
 ## 2. Subah 11 tak data 1 TB: "user:42" kis machine pe?
 
-Cue: CONSISTENT HASHING + virtual nodes
+**Rail 6 DATA BADA** · Cue: CONSISTENT HASHING + virtual nodes
+
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c2_1.png?v=1" width="900">
+
+<img src="img/c2_2.png?v=1" width="900">
+
+<img src="img/c2_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     kai machine hain, App ke paas cache client jo batata hai key kis machine pe hai (consistent hashing).
@@ -81,15 +118,18 @@ NAHI    seedha hash % N
         -> HILTA: N badla to har key ka % N badla. 4 se 5 machine = ~80% key hilti. Ring me N hai hi nahi
         A-M ek pe, N-Z doosre pe
         -> GARAM: ek range garam (sab "S" naam), ek machine pe bojh. Hash se key bikhar jaati hai
-AGAR    ring me machine D judi
-        -> sirf pados ki key khiski (201..250, C se D pe). Baaki sab hit
-        ring se machine A giri
-        -> uski key aage wali machine pe chali jaati hain. Sirf wahi ek baar miss
-        A gira to uska saara bojh B pe double ho jaayega?
-        -> nahi, har machine ring pe 100-200 jagah hai (virtual nodes). Bojh kai pados pe bat jaata hai
-        Redis Cluster bhi ring hai?
-        -> nahi. CRC16(key) % 16384 se slot, slot se machine. Machine badhe to sirf kuch slot khiskao
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Key ka hash ring pe, aage chalo, pehli machine ghar. Machine jude / jaaye to sirf pados ki key hilti.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - ring me machine D judi → **sirf pados ki key khiski**: sirf pados ki key khiski (201..250, C se D pe). Baaki sab hit
+> - ring se machine A giri → **aage wali machine**: uski key aage wali machine pe chali jaati hain. Sirf wahi ek baar miss
+> - A gira to uska saara bojh B pe double ho jaayega? → **virtual nodes**: nahi, har machine ring pe 100-200 jagah hai (virtual nodes). Bojh kai pados pe bat jaata hai
+> - Redis Cluster bhi ring hai? → **nahi, 16384 slot**: nahi. CRC16(key) % 16384 se slot, slot se machine. Machine badhe to sirf kuch slot khiskao
+
 
 ---
 
@@ -97,7 +137,17 @@ AGAR    ring me machine D judi
 
 ## 3. Dopahar machine B mar gayi, uski key ka bojh DB pe
 
-Cue: REPLICA (async) + quorum failover
+**Rail 3 MACHINE GIRI (khaas)** · Cue: REPLICA (async) + quorum failover
+
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c3_1.png?v=1" width="900">
+
+<img src="img/c3_2.png?v=1" width="900">
+
+<img src="img/c3_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     har machine ki ek copy hai (replica, async). B mari to B ki copy B ban jaati hai. DB bach gaya
@@ -107,17 +157,19 @@ KYUN    cache me tezi pehle hai. Copy thodi der baad likhi jaati hai, aakhri lik
         har machine ka apna hissa hai
 NAHI    copy na rakho
         -> BOJH: pehle yahi tha, B mari, B ki saari key (user:42 ...) miss, DB pe achanak bojh, DB dheema
-AGAR    copy ko main banane me kitna time?
-        -> ~10-30 sec (pakka B mari?). Us beech B ki key DB se aati hai, dheema
-        copy peeche thi
-        -> aakhri kuch likhai kho sakti hai. Cache me chalta hai, sach DB me
-        network toota, do main ban gaye
-        -> zyadatar machines (quorum) tay karti hain kaun main. Akeli wali likhna band (split brain)
-        copy se padh bhi lo to?
-        -> haan, padhai bat jaati hai. Thoda purana mil sakta hai, copy peeche chalti hai
-        main aur copy sab, poora cache hi gir gaya
-        -> saari padhai DB pe. DB ke aage rate limit / load shedding, warna DB bhi gira
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Har machine ki async copy. B mari to ~10-30 sec me copy main. Network toota to zyadatar (quorum) chunte.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - copy ko main banane me kitna time? → **~10-30 sec (pakka B mari?)**: Us beech B ki key DB se aati hai, dheema
+> - copy peeche thi → **aakhri kuch likhai kho sakti hai**: Cache me chalta hai, sach DB me
+> - network toota, do main ban gaye → **quorum**: zyadatar machines (quorum) tay karti hain kaun main. Akeli wali likhna band (split brain)
+> - copy se padh bhi lo to? → **haan, thoda purana**: haan, padhai bat jaati hai. Thoda purana mil sakta hai, copy peeche chalti hai
+> - main aur copy sab, poora cache hi gir gaya → **saari padhai DB pe**: DB ke aage rate limit / load shedding, warna DB bhi gira
+
 
 ---
 
@@ -125,7 +177,17 @@ AGAR    copy ko main banane me kitna time?
 
 ## 4. Ravi ne naam badla, sabko purana dikh raha
 
-Cue: DB me likho, cache key DELETE
+**Rail 4 DO LOG EK SAATH** · Cue: DB me likho, cache key DELETE
+
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c4_1.png?v=1" width="900">
+
+<img src="img/c4_2.png?v=1" width="900">
+
+<img src="img/c4_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     pehle DB update, phir cache ki key DELETE (delete on write). Agla padhne wala DB se naya laata hai,
@@ -138,13 +200,17 @@ NAHI    sirf DB update karo
         -> DHEEMA: taaza rehta hai, par likhna dheema
         write-back (pehle sirf cache, DB baad me)
         -> KHOYA: tez hai, par cache mara to data gaya. Paise pe kabhi nahi
-AGAR    cache ka delete fail ho gaya
-        -> umar (TTL) bachati hai, utni der hi purana. Pakka chahiye to DB ke log se delete (CDC)
-        delete ke baad purana data beech me wapas bhar gaya
-        -> thodi der baad phir delete (double delete), ya version se likho
-        Ravi ko apna hi purana naam dikha
-        -> copy peeche hai. Likhne wale ko kuch der primary se padhao
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Pehle DB update, phir cache key DELETE. Delete fail ho to umar (TTL) bachati, utni der hi purana.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - cache ka delete fail ho gaya → **umar (TTL) bachati hai**: utni der hi purana. Pakka chahiye to DB ke log se delete (CDC)
+> - delete ke baad purana data beech me wapas bhar gaya → **thodi der baad phir delete (double delete)**: ya version se likho
+> - Ravi ko apna hi purana naam dikha → **copy peeche hai**: Likhne wale ko kuch der primary se padhao
+
 
 ---
 
@@ -152,7 +218,17 @@ AGAR    cache ka delete fail ho gaya
 
 ## 5. 7 baje "home page" key khatam, 1000 log ek saath DB pe
 
-Cue: LOCK: SET NX EX, sirf pehla DB jaaye
+**Rail 2 BHEED AAYI (key khaali)** · Cue: LOCK: SET NX EX, sirf pehla DB jaaye
+
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c5_1.png?v=1" width="900">
+
+<img src="img/c5_2.png?v=1" width="900">
+
+<img src="img/c5_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     ek jaaye, DB se laaye, cache bhare, baaki ruk ke cache se padhein (lock). Pehla lock leta hai
@@ -163,19 +239,20 @@ KYUN    khaali key pe ek hi DB jaata hai, baaki rukte hain ya purani value lete 
         milta hai
 NAHI    sabko DB jaane do
         -> BHEED: sabko miss, 1000 ek saath (stampede), home page dheema
-AGAR    purani value de sakte ho, to key khatam hone hi kyun di?
-        -> umar khatam hone se thoda pehle taaza karo (soft-TTL), key khaali hi na ho
-        lock nahi mila, 999 kitna ruke?
-        -> 50-100 ms, ya purani value do. Thodi purani home page chalti hai
-        lock lene wala hi mar gaya
-        -> lock ki umar (EX 5) hai. Khud khulta hai, agla le leta hai. 999 hamesha nahi rukte
-        saari key ki umar ek saath khatam
-        -> umar me random daalo (60 min +- 5). Ek saath nahi girti
-        key DB me thi hi nahi
-        -> "nahi hai" bhi cache karo, chhoti umar ke saath. Warna har baar DB jaayega (penetration)
-        sale 12 baje hai, pehle se pata tha
-        -> pehle hi cache bhar do + machine badhao. Waqt pata hai to tayyari pehle
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Khaali key pe pehla lock leta (SET NX EX 5), wahi DB jaata, baaki ruk ke cache se. Lock khud khulta.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - purani value de sakte ho, to key khatam hone hi kyun di? → **soft-TTL**: umar khatam hone se thoda pehle taaza karo (soft-TTL), key khaali hi na ho
+> - lock nahi mila, 999 kitna ruke? → **50-100 ms**: ya purani value do. Thodi purani home page chalti hai
+> - lock lene wala hi mar gaya → **lock ki umar (EX 5) hai**: Khud khulta hai, agla le leta hai. 999 hamesha nahi rukte
+> - saari key ki umar ek saath khatam → **umar me random daalo (60 min +- 5)**: Ek saath nahi girti
+> - key DB me thi hi nahi → **"nahi hai" bhi cache karo**: chhoti umar ke saath. Warna har baar DB jaayega (penetration)
+> - sale 12 baje hai, pehle se pata tha → **pehle hi cache bhar do + machine badhao**: Waqt pata hai to tayyari pehle
+
 
 ---
 
@@ -183,7 +260,17 @@ AGAR    purani value de sakte ho, to key khatam hone hi kyun di?
 
 ## 6. Raat IPL final, "live:score" key ki machine akeli mar rahi
 
-Cue: L1 LOCAL CACHE + key ki copies
+**Rail 2 BHEED AAYI (garam key)** · Cue: L1 LOCAL CACHE + key ki copies
+
+<details><summary>kahani dekho (3 scene)</summary>
+
+<img src="img/c6_1.png?v=1" width="900">
+
+<img src="img/c6_2.png?v=1" width="900">
+
+<img src="img/c6_3.png?v=1" width="900">
+
+</details>
 
 ```
 HAL     garam key ki thodi der ki copy har App ki memory me (L1 cache). App 1-2 sec me ek baar Machine A
@@ -193,17 +280,19 @@ KYUN    garam key ko faila do. Ek key = ek machine, crore read / sec pe A ka CPU
         score 1-2 sec purana chalta hai, paisa nahi hai
 NAHI    consistent hashing se bheed bat jaayegi
         -> GALAT: ring key baant-ta hai, ek key ki bheed nahi. Ek key = ek machine
-AGAR    garam key pakdoge kaise?
-        -> pehle pakdo: App me ginti + machine ka metric achanak upar
-        L1 me score kitna purana hoga?
-        -> 1-2 sec. Score me chalta hai, paisa / stock me nahi
-        us garam key pe likhna bhi ho (like)
-        -> key ke tukde like#0..#9. Kisi ek me likho, padhte waqt jodo
-        L1 ke baad kitni parat hui?
-        -> L1 (App RAM) -> L2 Redis -> DB. Neeche wali dheemi, isliye upar se pehle
-        stampede aur garam key me farak?
-        -> stampede = key khaali (lock). Hot key = key bhari, ek machine pe bheed (L1)
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Garam key ki 1-2 sec copy har App ki RAM me (L1). Likhna ho to tukde like#0..#9, padhte waqt jodo.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - garam key pakdoge kaise? → **App me ginti + metric**: pehle pakdo: App me ginti + machine ka metric achanak upar
+> - L1 me score kitna purana hoga? → **1-2 sec**: Score me chalta hai, paisa / stock me nahi
+> - us garam key pe likhna bhi ho (like) → **tukde like#0..#9**: key ke tukde like#0..#9. Kisi ek me likho, padhte waqt jodo
+> - L1 ke baad kitni parat hui? → **L1 (App RAM) -> L2 Redis -> DB**: Neeche wali dheemi, isliye upar se pehle
+> - stampede aur garam key me farak? → **stampede = key khaali (lock)**: Hot key = key bhari, ek machine pe bheed (L1)
+
 
 ---
 
