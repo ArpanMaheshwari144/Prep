@@ -216,6 +216,8 @@ HAL     data kai machine me baanto (shard), link ke code se. Code ring pe aage c
           -> join aur transaction chahiye hi nahi, bas code se link, aur 90 TB.
           Wajah kaam ka dhaancha + size, "NoSQL powerful" nahi
         ↳ agar Cassandra me main copy kaunsi hai? -> koi nahi. Teeno barabar, koi bhi likh / padh sakti
+        ↳ agar AWS pe Cassandra kahan? RDS pe? -> NAHI, RDS sirf SQL (MySQL / Postgres).
+          Cassandra = Amazon Keyspaces ya EC2 pe khud; ya seedha DynamoDB (key-value, AWS ka apna)
         ↳ agar copy badha do to likhna tez hoga?
           -> nahi, har copy pe likhna padta. Likhne ka bojh = shard, copy = bachav
 KYUN    click hamesha code ke saath aata hai, to har click seedha ek machine pe jaata

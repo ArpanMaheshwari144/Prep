@@ -536,4 +536,16 @@ PER-CRITICALITY (CAP se jod ke) — ek hi app mein dono zones:
    (analogy: hotel me waiter ka set sab guest sambhalta, har guest pe naya waiter nahi)
    line: "Creating a connection each time needs a TCP handshake, auth and setup. A pool keeps
           ready connections you borrow, use and return."
+
+6. AWS PE KAUNSA DB KAHAN (RDS pe Cassandra chalega? -> NAHI)
+   RDS = sirf SQL wale (relational), AWS chalata: MySQL · PostgreSQL · MariaDB · Oracle · SQL Server
+         (Aurora = AWS ka apna MySQL / Postgres jaisa, wo bhi isi parivaar me)
+   NoSQL RDS pe NAHI, uske alag service:
+     key-value          -> DynamoDB (AWS ka apna, ring + copy andar khud karta)
+     Cassandra jaisa    -> Amazon Keyspaces (Cassandra ki bhasha, AWS chalata) ya EC2 pe khud Cassandra
+     MongoDB jaisa      -> DocumentDB (Mongo ki bhasha) ya MongoDB Atlas
+     cache              -> ElastiCache (Redis)
+   URL shortener: "Cassandra on EC2 / Keyspaces, ya seedha DynamoDB" bolo, "RDS pe Cassandra" NAHI.
+   line: "RDS only runs relational engines like MySQL and Postgres. For key-value at this scale
+          I would use DynamoDB, or Cassandra via Amazon Keyspaces or self-managed on EC2."
 ```
