@@ -3,7 +3,7 @@
 > User BUY / SELL order deta hai, system order match karta hai, paisa aur share sahi jagah pahunchte hain, sabko live price dikhta hai.
 > Dil do cheezein: paisa kabhi galat nahi (strong consistency), aur matching bahut tez (RAM me, microseconds). Finance interview me (JP / GS) yahi poochte: consistency, ACID, idempotency, ledger, audit.
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card ek block: HAL (↳ agar = cross-Q) · KYUN · NAHI (doosra kyun nahi).
+> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -28,13 +28,28 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
         -> ~10 lakh / sec. Isliye matching RAM me, aur price PUSH (har user ka baar-baar poochhna nahi)
 ```
 
+> [!IMPORTANT]
+> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
+> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+>
+> | rail | is design me | card |
+> |---|---|---|
+> | 1 kaam chala | buy / sell order, book me match, paisa + share move, live price | Shuru |
+> | 2 bheed aayi | 9:15 sab TCS pe · 10 lakh log price poochh rahe | 4, 8 |
+> | 3 machine giri | matching server gira, book gayab · settlement beech me gira · Portfolio DB band | 5, 6, 7 |
+> | 4 do log ek saath | ek tap do order · 50k me 30k + 30k · 10 share, do khareedar (**is design ka khaas: ek stock ek thread**) | 1, 2, 3 |
+> | 5 kuch dheema | alag nahi: har order pe DB lock = dheema, isliye matching RAM me | 4 |
+> | 6 data bada | nahi aata: ~250 order / sec, chhota | - |
+> | 7 door ke log | nahi aata | - |
+> | 8 bahar ka hamla | is file me nahi: rate limit = 02_rate_limiter | - |
+
 ---
 
 *ab tootega kahan? sabse pehle darwaze pe, jab ek tap do baar pahunche*
 
 ## 1. Maine ek baar dabaya, order do lag gaye
 
-Cue: IDEMPOTENCY KEY (wahi id dobara)
+**Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY KEY (wahi id dobara)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -49,13 +64,19 @@ Cue: IDEMPOTENCY KEY (wahi id dobara)
 ```
 HAL     screen khulte hi app ek id banata hai. Network gaya aur app ne dobara bheja, to wahi id jaati hai.
         Server id pe UNIQUE: wahi id aayi to purana jawab, order ek hi (idempotency key)
-        ↳ agar wahi id dobara, pehli abhi chal rahi? -> thoda ruko (IN_PROGRESS, 409)
-          Ho gayi ho to saved jawab do
-        ↳ agar id kab tak yaad rakhoge? -> ~24 ghante, phir saaf. Retry minute me hi aata hai
 KYUN    ek id = ek kaam. Id app banata, server UNIQUE se pakadta. User ko ek hi order dikhe,
         app kitni baar bhi bheje
 NAHI    button pehli tap pe band -> ADHOORA: kaafi nahi, retry app khud karta hai, button dabta hi nahi
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Screen khulte hi app ek id banata, retry pe wahi id. Server UNIQUE se pakadta: ek id = ek order.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - wahi id dobara, pehli abhi chal rahi? → **thoda ruko (IN_PROGRESS, 409)**: Ho gayi ho to saved jawab do
+> - id kab tak yaad rakhoge? → **~24 ghante**: phir saaf. Retry minute me hi aata hai
+
 
 ---
 
@@ -63,7 +84,7 @@ NAHI    button pehli tap pe band -> ADHOORA: kaafi nahi, retry app khud karta ha
 
 ## 2. Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
 
-Cue: check + block EK atomic query
+**Rail 4 DO LOG EK SAATH (wallet)** · Cue: check + block EK atomic query
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -79,16 +100,6 @@ Cue: check + block EK atomic query
 HAL     check aur block ek hi query me (atomic UPDATE):
         SET blocked = blocked + 30k WHERE total - blocked >= 30k
         Ek jeeta = 1 row, block ho gaya. Doosre ko 20k bacha dikha, 0 row, turant reject
-        ↳ agar block kiya, phir order cancel ho gaya? -> block hata do
-        ↳ agar block kiya, sauda aadha hua? -> jitna bika utna kata, baaki blocked
-          Order abhi khula hai
-        ↳ agar cancel aur match usi pal? -> jo nahi bika, sirf uska block hatao
-          Book ek haath me hai
-        ↳ agar day order ki umar khatam ho gayi? -> shaam ko block hatao
-          Blocked sirf sauda / cancel / umar se ghatta hai
-        ↳ agar MARKET order me bhav pata nahi, block kitna karoge?
-          -> aakhri bhav + thoda upar block karo. Sauda ke baad bacha paisa wapas
-        ↳ agar SELL pe bhi aisa hi block? -> haan, wahi line portfolio pe: qty - blocked_qty >= 10
 KYUN    "hai?" aur "block" ek hi UPDATE me, DB ke andar. Kitni bhi machine ho, DB ek-ek karke chalata hai.
         Wallet kabhi minus nahi hota
 BLOCKED blocked badhta hai naye order se, ghatta hai sauda / cancel / umar khatam hone se
@@ -97,13 +108,26 @@ NAHI    pehle padho, phir block -> RACE: laptop (TCS 30k) + phone (INFY 30k), do
         Java synchronized -> CHHOTA: taala ek machine ka hai, phone doosre server pe gaya
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Check + block ek hi atomic UPDATE: blocked + 30k WHERE total - blocked >= 30k. 1 row = jeeta.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - block kiya, phir order cancel ho gaya? → **block hata do**
+> - block kiya, sauda aadha hua? → **jitna bika utna kata, baaki blocked**: Order abhi khula hai
+> - cancel aur match usi pal? → **jo nahi bika, sirf uska block hatao**: Book ek haath me hai
+> - day order ki umar khatam ho gayi? → **shaam ko block hatao**: Blocked sirf sauda / cancel / umar se ghatta hai
+> - MARKET order me bhav pata nahi, block kitna karoge? → **aakhri bhav + thoda upar**: aakhri bhav + thoda upar block karo. Sauda ke baad bacha paisa wapas
+> - SELL pe bhi aisa hi block? → **haan**: wahi line portfolio pe: qty - blocked_qty >= 10
+
+
 ---
 
 *ab paisa theek, par ek hi share do khareedaron ko?*
 
 ## 3. Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
 
-Cue: ek symbol ek thread, book RAM me
+**Rail 4 DO LOG EK SAATH (khaas)** · Cue: ek symbol ek thread, book RAM me
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -117,13 +141,7 @@ Cue: ek symbol ek thread, book RAM me
 
 ```
 HAL     ek share ke saare order ek line me, us line ko ek hi thread (ek symbol ek thread).
-        ↳ agar 5000 stock = 5000 thread?
-          -> nahi. 8 core = 8 thread. stock % 8, par ek stock hamesha ek hi thread pe
         Main pehle aaya to 10 mujhe mile, Mohan ko 0, wo line me
-        ↳ agar same daam pe do log aaye? -> jo pehle aaya (chhota number) wo pehle
-        ↳ agar mujhe 10 chahiye, uske paas 6? -> 6 ka sauda, baaki 4 book me, unka paisa ruka
-          Naya seller @3000 aaya to 4 bhi bhare.
-          Status: FILLED / PARTIALLY FILLED / OPEN (Zerodha / Groww / NSE me yahi)
 KYUN    ek stock ki book ko ek waqt ek hi haath. Doosra line me rukta, race hoti hi nahi.
         Thread atka (GC pause) to sirf us stock ki line rukti, INFY apne thread pe, standby taiyaar
 RAM/SQL jo tez aur thodi der ka hai (order book), wo RAM me. Jo paisa aur hamesha ka hai (wallet / ledger),
@@ -140,13 +158,23 @@ NAHI    do thread bina line -> RACE: dono ko "10 hai" dikha, dono ne le liye, 20
            -> DHEEMA: DB har order pe dheema, matching RAM me
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Ek stock ke saare order ek line, us line ka ek hi thread. Book RAM me, paisa SQL + ACID me.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - 5000 stock = 5000 thread? → **nahi: 8 core = 8 thread**: nahi. 8 core = 8 thread. stock % 8, par ek stock hamesha ek hi thread pe
+> - same daam pe do log aaye? → **jo pehle aaya (chhota number) wo pehle**
+> - mujhe 10 chahiye, uske paas 6? → **6 ka sauda, baaki 4 book me, unka paisa ruka**: Naya seller @3000 aaya to 4 bhi bhare. Status: FILLED / PARTIALLY FILLED / OPEN (Zerodha / Groww / NSE me yahi)
+
+
 ---
 
 *ab ek thread hai, par 9:15 pe bheed aayi to?*
 
 ## 4. 9:15 baje sab TCS pe toot pade
 
-Cue: baanto mat, ek thread kaafi, line
+**Rail 2 BHEED AAYI** · Cue: baanto mat, ek thread kaafi, line
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -160,8 +188,6 @@ Cue: baanto mat, ek thread kaafi, line
 
 ```
 HAL     hazaaron order / sec aaye, to bhi TCS ki ek line, ek thread RAM me tez nipta deta.
-        ↳ agar baantoge nahi, to badhaoge kaise? -> stocks ke beech: TCS, INFY alag
-          TCS ek thread, INFY doosra. TCS ke andar nahi
         Line me lagte hi user ko ACCEPTED turant, FILLED tab jab sauda ho
 KYUN    RAM me ek thread lakhon order / sec nipta deta. Line lambi = der, par order khota nahi, line me hai
 NAHI    har order pe lock + DB -> DHEEMA: ek-ek karke dheema, jam
@@ -169,13 +195,21 @@ NAHI    har order pe lock + DB -> DHEEMA: ek-ek karke dheema, jam
            ek stock ke andar kabhi nahi
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** TCS ki ek line, ek thread RAM me lakhon / sec. Line me lagte hi ACCEPTED, sauda pe FILLED. Baanto stocks ke beech.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - baantoge nahi, to badhaoge kaise? → **stocks ke beech: TCS, INFY alag**: TCS ek thread, INFY doosra. TCS ke andar nahi
+
+
 ---
 
 *ab sab RAM me hai, server gira to?*
 
 ## 5. Server gira, poori order book gayab
 
-Cue: pehle log, phir book; gira = replay
+**Rail 3 MACHINE GIRI (book)** · Cue: pehle log, phir book; gira = replay
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -189,18 +223,23 @@ Cue: pehle log, phir book; gira = replay
 
 ```
 HAL     har order pehle log me (disk), phir book me. Log me har order ko number (#501).
-        ↳ agar book RAM me hai, crash hua to gayi?
-          -> match se PEHLE log me likhte hain. Crash pe log shuru se chalao, wahi book wapas
         10:15 pe gira, 4,000 order gayab, to log dobara chalao, wahi 4,000 wapas (replay)
-        ↳ agar replay me der lagi? -> standby pehle se log padhta, book taiyaar
-          Pehla gire tab wo chalu
-        ↳ agar dono board ek saath chala do? -> nahi. Do board = do sach = galat
-        ↳ agar crash me paise ka kya? -> paisa DB me hai, wahan rollback. Book log se wapas
 KYUN    log hi sach hai, book uski photo. Gira = aakhri photo + uske baad ke panne.
         Dobara chalaya to kuch nahi badalta (trade_id)
 NAHI    sirf book ki photo -> ADHOORA: photo ke BAAD wale order kahin likhe hi nahi
         time se kram -> GALAT: do machine ka time (clock) alag, aur ek second me do order aa jaate
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Har order pehle log (disk, number ke saath), phir book. Gira = log replay. Standby log padh ke taiyaar.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - book RAM me hai, crash hua to gayi? → **pehle log, phir match**: match se PEHLE log me likhte hain. Crash pe log shuru se chalao, wahi book wapas
+> - replay me der lagi? → **standby pehle se log padhta, book taiyaar**: Pehla gire tab wo chalu
+> - dono board ek saath chala do? → **nahi**: Do board = do sach = galat
+> - crash me paise ka kya? → **paisa DB me hai**: wahan rollback. Book log se wapas
+
 
 ---
 
@@ -208,7 +247,7 @@ NAHI    sirf book ki photo -> ADHOORA: photo ke BAAD wale order kahin likhe hi n
 
 ## 6. Mera paisa kat gaya, Suresh ko mila hi nahi
 
-Cue: ek transaction: chaaron ya koi nahi
+**Rail 3 MACHINE GIRI (settlement)** · Cue: ek transaction: chaaron ya koi nahi
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -223,17 +262,21 @@ Cue: ek transaction: chaaron ya koi nahi
 ```
 HAL     chaaron badlaav ek transaction me: Arpan -30k +10 share, Suresh +30k -10 share, phir COMMIT.
         Ya sab, ya koi nahi
-        ↳ agar commit ho gaya par jawab kho gaya, retry aayi? -> trade_id UNIQUE, doosri ruki
-          Suresh ko +30k ek hi baar. Rollback hua hota to t1 likha hi nahi, retry seedha chalti
-        ↳ agar galti pakdoge kaise? -> raat ko ledger jodo, hamesha 0 aana chahiye
-          Galti turant dikhe
-        ↳ agar balance ledger jod ke nikaal lo?
-          -> dheema hai, lakhon line. Balance alag column me, usi transaction me
-        ↳ agar asli paisa usi pal Suresh ko gaya? -> nahi, T+1 NSE Clearing. Ye broker ka apna khaata hai
 KYUN    paisa ek DB me hai, to chaaron likhai ek transaction. COMMIT se pehle crash = rollback, kuch nahi
         likha, user ko PENDING, galat number kabhi nahi. Ledger ka jod hamesha 0
 NAHI    aakhir me "done" flag -> ANDHA: flag se pehle gira to pata hi nahi kitna likha tha
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Chaaron badlaav ek transaction: ya sab, ya koi nahi. trade_id UNIQUE, ledger ka jod hamesha 0.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - commit ho gaya par jawab kho gaya, retry aayi? → **trade_id UNIQUE, doosri ruki**: Suresh ko +30k ek hi baar. Rollback hua hota to t1 likha hi nahi, retry seedha chalti
+> - galti pakdoge kaise? → **raat ko ledger jodo, hamesha 0 aana chahiye**: Galti turant dikhe
+> - balance ledger jod ke nikaal lo? → **dheema, alag column**: dheema hai, lakhon line. Balance alag column me, usi transaction me
+> - asli paisa usi pal Suresh ko gaya? → **nahi**: T+1 NSE Clearing. Ye broker ka apna khaata hai
+
 
 ---
 
@@ -241,7 +284,7 @@ NAHI    aakhir me "done" flag -> ANDHA: flag se pehle gira to pata hi nahi kitna
 
 ## 7. Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
 
-Cue: har step ka haal, aage badho
+**Rail 3 MACHINE GIRI (do DB)** · Cue: har step ka haal, aage badho
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -256,20 +299,23 @@ Cue: har step ka haal, aage badho
 ```
 HAL     do DB = ek transaction nahi ban sakti. Har kadam ka haal likho (status log: wallet done,
         portfolio done). Fail hua to likhe haal se retry, aage hi, jab tak portfolio done (SETTLED)
-        ↳ agar retry dobara chal gaya? -> har kadam trade_id se, ho chuka = no-op
-          Share do baar nahi
-        ↳ agar match se pehle hi atak gaya? -> sirf tab ulta (SAGA): block hatao
-        ↳ agar ghanton tak fail ho raha? -> trade PENDING + alert, ops share daalta
-        ↳ agar Portfolio DB ghanta bhar band, user dobara order kare? -> nahi
-          naya + purana dono zinda, DB wapas = 5 ki jagah 10 INFY, paisa do baar.
-          Trade PENDING + alert, system wahi trade_id se retry, user kuch nahi karta
-        ↳ agar step-step karne ki keemat kya hai?
-          -> beech me PENDING dikhta hai, par 2PC jaisa lamba lock nahi
-        ↳ agar orchestration ya choreography? -> orchestration. Paise me saaf dikhe kaunsa step atka
 KYUN    match ke baad sauda PAKKA hai. System hi aage badhaata (retry), user ko kuch dobara nahi karna.
         Beech ka haal user ko PENDING dikhta
 NAHI    paisa ulta kar do -> GALAT: match ke baad sauda pakka, bechne wale ko 20k mil chuke
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Do DB = ek txn nahi. Har kadam ka haal likho, fail to wahi se retry, aage hi. User ko PENDING.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - retry dobara chal gaya? → **har kadam trade_id se, ho chuka = no-op**: Share do baar nahi
+> - match se pehle hi atak gaya? → **sirf tab ulta (SAGA): block hatao**
+> - ghanton tak fail ho raha? → **trade PENDING + alert**: ops share daalta
+> - Portfolio DB ghanta bhar band, user dobara order kare? → **nahi**: naya + purana dono zinda, DB wapas = 5 ki jagah 10 INFY, paisa do baar. Trade PENDING + alert, system wahi trade_id se retry, user kuch nahi karta
+> - step-step karne ki keemat kya hai? → **PENDING dikhta, lamba lock nahi**: beech me PENDING dikhta hai, par 2PC jaisa lamba lock nahi
+> - orchestration ya choreography? → **orchestration**: Paise me saaf dikhe kaunsa step atka
+
 
 ---
 
@@ -277,7 +323,7 @@ NAHI    paisa ulta kar do -> GALAT: match ke baad sauda pakka, bechne wale ko 20
 
 ## 8. 10 lakh log ek saath price poochh rahe, server baith gaya
 
-Cue: push (TV jaisa), WebSocket
+**Rail 2 BHEED AAYI (price)** · Cue: push (TV jaisa), WebSocket
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -291,15 +337,22 @@ Cue: push (TV jaisa), WebSocket
 
 ```
 HAL     connection khula rakho, price badla tabhi server khud bheje (WebSocket push).
-        ↳ agar second me 1000 baar price badla? -> har ~100 ms aakhri price bhejo. Purana bekaar
-        ↳ agar connection toota, wapas juda? -> abhi ka price alag se do. Pub/sub kuch rakhta nahi
         Matching -> pub/sub -> har WebSocket server -> users
-        ↳ agar 10 lakh connection ek server pe? -> ek server ~lakh. Aur server + LB
-        ↳ agar price sab server tak kaise pahunchta hai? -> pub/sub se har server ko
 KYUN    price = sirf abhi ka. Badla tab server khud bheje, purana store nahi. Users kuch nahi poochte
 NAHI    har user baar-baar poochhe (polling) -> BAITHA: 10 lakh har second = server baitha.
            Poochhne ki line hi nahi chahiye
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Connection khula rakho, price badla tab server khud bheje (WebSocket push), har ~100 ms aakhri wala.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - second me 1000 baar price badla? → **har ~100 ms aakhri price bhejo**: Purana bekaar
+> - connection toota, wapas juda? → **abhi ka price alag se do**: Pub/sub kuch rakhta nahi
+> - 10 lakh connection ek server pe? → **ek server ~lakh**: Aur server + LB
+> - price sab server tak kaise pahunchta hai? → **pub/sub se har server ko**
+
 
 ---
 

@@ -51,7 +51,7 @@ def line(q, a, rest, cue):
         if a and rest:
             cue, full = a, rest
         elif a:
-            m = re.match(r'([^.,(]{3,45})[.,(]\s*(.+)', a)
+            m = re.match(r'([^.,]{3,45})[.,]\s*(.+)', a)
             cue, full = (m.group(1).strip(), m.group(2).strip()) if m else (a, '')
         else:
             cue, full = '??', rest
