@@ -57,6 +57,12 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 > | 7 door ke log | nahi aata | - |
 > | 8 bahar ka hamla | body se userId / JWT chori: owner check (card 8 ke cross-Q) | 8 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Wallet / payment / ledger (SQL) → **AWS RDS (Postgres / MySQL)**: ACID: kaatna aur daalna ek transaction me
+
 ---
 
 *ab tootega kahan? sabse pehle beech me, jab kaatne ke baad server gire*

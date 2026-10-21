@@ -42,6 +42,13 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 > | 7 door ke log / darwaza | LB gira, region gaya | 7 |
 > | 8 bahar ka hamla | spammer 5,000 link / sec | 8 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Links (Cassandra) → **Amazon Keyspaces** (ya EC2 pe khud): 90 TB, likhai zyada, code se ring pe baant, RDS pe Cassandra nahi chalta
+> - Cache (Redis) → **ElastiCache (Redis)**: 95% click yahin se, <1 ms
+
 ---
 
 *ab tootega kahan? sabse pehle padhne pe, kyunki click 100 guna hain*

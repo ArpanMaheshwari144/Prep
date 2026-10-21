@@ -42,6 +42,14 @@ PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar li
 > | 7 door ke log | nahi aata | - |
 > | 8 bahar ka hamla | offline me access hata diya (card 7 ka cross-Q) | 7 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Op log (Cassandra) → **Amazon Keyspaces** (ya EC2 pe khud): har akshar ek op, likhai bahut, (docId, version)
+> - Permission (SQL) → **AWS RDS (Postgres / MySQL)**: access kabhi galat na ho (CP)
+> - Buffer / pub-sub (Redis) → **ElastiCache (Redis)**: ACK tez, doosre server tak op
+
 ---
 
 *ab tootega kahan? do log ek hi doc save karein to*

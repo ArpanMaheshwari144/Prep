@@ -38,6 +38,14 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
            Ye sirf connection pakadte hain, API / business server se alag
 ```
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Message (Cassandra) → **Amazon Keyspaces** (ya EC2 pe khud): key = chat_id, ek chat ek partition, likhai bahut
+> - seq / online (Redis) → **ElastiCache (Redis)**: tez ginti aur haal
+> - Search (Elasticsearch) → **Amazon OpenSearch**: purane message me shabd dhoondhna
+
 ---
 
 *ab tootega kahan? sabse pehle connection ki ginti pe, kyunki 2 crore khuli hain*

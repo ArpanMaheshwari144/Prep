@@ -47,6 +47,14 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 > | 7 door ke log | nahi aata | - |
 > | 8 bahar ka hamla | source ka 429 (card 5 ka cross-Q) | 5 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Khabar (SQL) → **AWS RDS (Postgres / MySQL)**: url UNIQUE, mahine ke tukde, index se tez
+> - Feed (Redis sorted set) → **ElastiCache (Redis)**: taazi 20 turant
+> - Search (Elasticsearch) → **Amazon OpenSearch**: shabd se dhoondhna
+
 ---
 
 *ab tootega kahan? sabse pehle padhne pe, kyunki sab subah ek saath kholte hain*

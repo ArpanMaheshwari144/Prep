@@ -43,6 +43,13 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 > | 7 door ke log | nahi aata | - |
 > | 8 bahar ka hamla | is file me nahi: rate limit = 02_rate_limiter | - |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Paisa / order (SQL) → **AWS RDS (Postgres / MySQL)**: ACID: paisa aur order kabhi aadha nahi
+> - Order book → RAM me: DB nahi, log se wapas banti
+
 ---
 
 *ab tootega kahan? sabse pehle darwaze pe, jab ek tap do baar pahunche*

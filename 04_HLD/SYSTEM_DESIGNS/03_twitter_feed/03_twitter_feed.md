@@ -43,6 +43,13 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 > | 7 door ke log | Bangalore se US 300 ms · video door ke server se | 7, 10 |
 > | 8 bahar ka hamla | is file me nahi: rate limit + WAF = 02_rate_limiter | - |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Tweets (Cassandra) → **Amazon Keyspaces** (ya EC2 pe khud): likhai bahut, user_id se baanto, join / transaction chahiye nahi
+> - Inbox / feed (Redis sorted set) → **ElastiCache (Redis)**: feed pehle se bani, padhna tez
+
 ---
 
 *ab tootega kahan? sabse pehle padhne pe, kyunki padhna 50 guna*

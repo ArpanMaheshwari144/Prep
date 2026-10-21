@@ -44,6 +44,14 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 > | 7 door ke log | nahi aata (download CDN se ho sakta) | - |
 > | 8 bahar ka hamla | Ravi ne mera trackingId daala · S3 link WhatsApp pe · naam pdf andar EXE | 7, 8, 9 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - File ka haal (SQL) → **AWS RDS (Postgres / MySQL)**: trackingId se dhoondhna + haal ko ACID
+> - File khud → **S3**: bytes DB me nahi
+> - Haal ka cache (Redis) → **ElastiCache (Redis)**: baar-baar GET /status tez
+
 ---
 
 *ab tootega kahan? sabse pehle jaanch pe, kyunki wo 3 sec leti*

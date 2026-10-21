@@ -45,6 +45,13 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 > | 7 door ke log | nahi aata | - |
 > | 8 bahar ka hamla | wahi id, par amount 5000 (card 2 ka cross-Q) | 2 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Account / khaata (SQL) → **AWS RDS (Postgres / MySQL)**: ek transaction, Multi-AZ = sync copy doosri building
+> - Purana khaata → **S3** (Object Lock): band mahina sasta, badal nahi sakte
+
 ---
 
 *ab tootega kahan? sabse pehle transfer ke beech me, kyunki ek transfer me do row badalti hain*

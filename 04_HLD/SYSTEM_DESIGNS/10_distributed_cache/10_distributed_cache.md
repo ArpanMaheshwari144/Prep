@@ -45,6 +45,12 @@ PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 > | 7 door ke log | nahi aata | - |
 > | 8 bahar ka hamla | jo key DB me hai hi nahi, baar-baar maango (card 5 ka cross-Q) | 5 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Ye khud cache hai → **ElastiCache (Redis)**: AWS pe Redis jaisa managed cache yahi
+
 ---
 
 *ab tootega kahan? sabse pehle RAM pe, kyunki RAM chhoti hai*

@@ -45,6 +45,13 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 > | 7 door ke log | nahi aata | - |
 > | 8 bahar ka hamla | koi 10 seat hold karke baith gaya (card 2 ka cross-Q) | 2 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Seat / booking (SQL) → **AWS RDS (Postgres / MySQL)**: ek seat ek hi baar bike: ACID + row lock
+> - Seat map (Redis) → **ElastiCache (Redis)**: dekhne ki bheed, ~5 sec purana chalta
+
 ---
 
 *ab tootega kahan? sabse pehle wahin jahan dil hai, ek seat pe do log*

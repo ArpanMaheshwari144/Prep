@@ -64,6 +64,12 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 > | 7 door ke log | 3 region se 150 nikal gayi | 5 |
 > | 8 bahar ka hamla | wahi bot roz wapas · ek IP pe poora office | 6, 9 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Ginti (Redis) → **ElastiCache (Redis)**: sab App ek hi jagah ginte, 1 ms, key ki umar = window
+
 ---
 
 *ab tootega kahan? kai App hain, har App apni ginti gin raha*

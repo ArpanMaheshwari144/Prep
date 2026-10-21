@@ -45,6 +45,13 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 > | 7 door ke log | is file me nahi aata | - |
 > | 8 bahar ka hamla | nakli webhook "pahuncha" (hastakshar jaancho) | 9 |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Tracking (Cassandra) → **Amazon Keyspaces** (ya EC2 pe khud): ~90 TB / saal, likhna bahut, seedhi row
+> - Dedup / had (Redis) → **ElastiCache (Redis)**: tez check, key ki umar
+
 ---
 
 *ab tootega kahan? order seedha company ke bharose hai*

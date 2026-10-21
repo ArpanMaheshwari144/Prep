@@ -42,6 +42,12 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 > | 7 door ke log | nahi aata | - |
 > | 8 bahar ka hamla | nahi aata | - |
 
+
+> [!NOTE]
+> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
+>
+> - Kafka khud → **Amazon MSK** (managed Kafka): broker, copy, Controller AWS sambhalta
+
 ---
 
 *ab tootega kahan? sabse pehle machine restart pe, kyunki sab RAM me hai*
