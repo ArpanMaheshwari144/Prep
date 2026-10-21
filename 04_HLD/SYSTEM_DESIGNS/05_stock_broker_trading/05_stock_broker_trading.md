@@ -164,7 +164,7 @@ NAHI    do thread bina line -> RACE: dono ko "10 hai" dikha, dono ne le liye, 20
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - 5000 stock = 5000 thread? → **nahi: 8 core = 8 thread**: nahi. 8 core = 8 thread. stock % 8, par ek stock hamesha ek hi thread pe
-> - same daam pe do log aaye? → **jo pehle aaya (chhota number) wo pehle**
+> - same daam pe do log aaye? → **jo pehle aaya pehle**: daam same to waqt se kram (price-time priority), chhota number pehle bikta, sabke liye ek niyam
 > - mujhe 10 chahiye, uske paas 6? → **6 ka sauda, baaki 4 book me, unka paisa ruka**: Naya seller @3000 aaya to 4 bhi bhare. Status: FILLED / PARTIALLY FILLED / OPEN (Zerodha / Groww / NSE me yahi)
 
 
@@ -310,7 +310,7 @@ NAHI    paisa ulta kar do -> GALAT: match ke baad sauda pakka, bechne wale ko 20
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - retry dobara chal gaya? → **har kadam trade_id se, ho chuka = no-op**: Share do baar nahi
-> - match se pehle hi atak gaya? → **sirf tab ulta (SAGA): block hatao**
+> - match se pehle hi atak gaya? → **SAGA: block hatao**: match se pehle sauda hua hi nahi, sirf ulta karo (SAGA): block hatao, paisa / share wapas free
 > - ghanton tak fail ho raha? → **trade PENDING + alert**: ops share daalta
 > - Portfolio DB ghanta bhar band, user dobara order kare? → **nahi, PENDING + retry**: nahi. naya + purana dono zinda, DB wapas = 5 ki jagah 10 INFY, paisa do baar. Trade PENDING + alert, system wahi trade_id se retry, user kuch nahi karta
 > - step-step karne ki keemat kya hai? → **PENDING dikhta, lamba lock nahi**: beech me PENDING dikhta hai, par 2PC jaisa lamba lock nahi

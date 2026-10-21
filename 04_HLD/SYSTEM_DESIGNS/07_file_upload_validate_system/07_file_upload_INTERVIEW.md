@@ -322,7 +322,7 @@ NAHI    id hai to file de do
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - id to random tha, phir check kyun? → **id leak hoti (screenshot)**: id leak hoti hai: log, screenshot, link se
-> - admin maange to? → **owner ho ya admin role ho**: warna 403
+> - admin maange to? → **owner ya admin role**: owner ho ya admin role ho, dono ki jaanch har request pe, warna 403
 > - PR me owner check kahan dhoondhoge? → **har handler ki pehli line**: har handler ki pehli line me: file.owner_id == jwt.user_id ya admin, warna 403. userId JWT se aata hai, body se kabhi nahi
 
 

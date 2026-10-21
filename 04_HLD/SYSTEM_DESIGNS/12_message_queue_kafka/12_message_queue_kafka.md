@@ -188,7 +188,7 @@ KYUN    ek group ke andar ek partition = ek hi machine. To ek khabar team me ek 
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - group.id galat de diya (machine ka naam), kya hoga? → **teen alag team ban gayi**: teeno ne bheja. Ravi ko 3 email
 > - team me machine badhani hai, kaise? → **tukde bhi badhao**: 10 tukde + 12 machine = 2 khaali
-> - team ki ek machine gir gayi, uske tukde ka kya? → **baaki machines ko mil jaate hain (rebalance)**
+> - team ki ek machine gir gayi, uske tukde ka kya? → **rebalance**: uske tukde baaki machines ko mil jaate hain (rebalance), koi tukda bina padhne wale ke nahi rehta
 
 
 ---

@@ -208,7 +208,7 @@ NAHI    har naya URL = nayi khabar
 
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
-> - "wins" aur "won", hash alag? → **SimHash: 90% same to duplicate**
+> - "wins" aur "won", hash alag? → **SimHash 90%**: shabd thoda badla to bhi SimHash fingerprint ~90% same rehta, to duplicate maano
 > - 5 me se kaunsi khabar dikhaoge? → **pehli ya bade source ki**: jo pehle aayi ya bade source ki. Baaki "aur sources" me link
 > - Bloom se URL hatana ho to? → **roz naya filter**: normal Bloom me nahi hota. Roz naya filter, purana phenko (ya counting Bloom)
 
@@ -322,7 +322,7 @@ NAHI    LIKE '%cricket%'
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - "cricket kohli" dhoondha? → **dono list milao, AND = a45**: [a12, a45, a90] aur [a45, a77]. AND = a45, OR = sab. Phir score se sort
-> - "crikcet" likh diya? → **fuzzy (ES): 1-2 akshar ka farak chal jaata**
+> - "crikcet" likh diya? → **fuzzy (ES)**: Elasticsearch fuzzy search me 1-2 akshar ka farak chal jaata, milta-julta shabd bhi milta
 > - ES aur DB alag ho gaye? → **DB sach hai, ES dobara bana lo (reindex)**: Likhna fail ho to retry ki line
 
 

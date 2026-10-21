@@ -310,7 +310,7 @@ NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana,
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - regions ka network toota? → **feed chalta rahe, chahe thoda purana**: consistency nahi, availability: 2 sec purani feed se farak nahi, par feed khuli hi nahi to app band. Jo hai wo dikhao, sahi wala thodi der me
-> - US ke celeb ka tweet, India se door? → **garam tweet India cache me bhi**
+> - US ke celeb ka tweet, India se door? → **garam tweet India cache me bhi**: garam tweet ki copy India ke cache me bhi rakho, log paas se padhte, US tak chakkar nahi
 > - poora India region gira? → **Route 53 US pe**: Route 53 US pe palat deta. Feed thodi purani, par chalti, kyunki copy peeche thi
 > - dono region me ek saath likha? → **baad wala jeetega (last write wins)**: Tweet aksar naya hota hai, takraav kam
 > - main US ghoomne gaya, mera data kahan se aayega? → **India bhejo ya paas ki copy**: request India bhejo, ya paas wali copy se do (thoda purana)
