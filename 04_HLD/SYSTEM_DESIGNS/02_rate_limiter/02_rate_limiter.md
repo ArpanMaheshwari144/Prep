@@ -163,7 +163,7 @@ NAHI    ginti App me rakho -> BHARA: mana hone wali request bhi andar aati, App 
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - 429 bheja, uske saath kya bhejte ho? → **Retry-After**: Retry-After: 30 (kab aao) aur X-RateLimit-Remaining (kitni bachi)
-> - sabko Retry-After 30 diya? → **jitter**: 30 sec baad sab ek saath. Alag-alag do (jitter). isse sab ek saath nahi lautte (jitter)
+> - sabko Retry-After 30 diya? → **jitter**: 30 sec baad sab ek saath lautenge. Alag-alag do (28, 33), isse bheed phail jaati (jitter)
 > - gateway gir gaya? → **2+ machine pe**: aage LB, darwaza akela nahi
 > - had sirf gateway pe lagana kaafi hai? → **dono jagah**: dono jagah: gateway pe sabke liye moti had, aur service ke andar apni baarik had
 

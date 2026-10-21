@@ -129,7 +129,8 @@ NAHI    bytes server ke raaste bhejo
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - had 5 GB, koi 50 GB bhej de? → **had paas me, S3 khud reject**: POST me content-length-range, PUT me size sign hota hai (ek PUT max 5 GB). S3 event pe size phir se dekh lo
 > - "/complete" aaya hi nahi? → **S3 event se queue me daalo**: S3 event matlab "file aa gayi". Client pe bharosa nahi karte
-> - S3 paas ko sahi kaise maanta hai? → **wahi hash khud banata**: S3 wahi hash khud banata hai. Server ne AWS secret se sign kiya tha, to dono mil jaate hain
+> - S3 paas ko sahi kaise maanta hai? → **wahi signature khud banata**: S3 ke paas bhi wahi AWS secret hai. URL ki cheezon (file ka naam, 10 min, PUT) se wahi signature banata, mile to paas asli. Naam / samay badla to nahi milta, 403
+> - file raaste me kharab to nahi hui? → **checksum (SHA-256)**: client file ka SHA-256 header me bhejta, S3 aayi hui file ka khud nikaal ke milaata, alag to reject
 
 
 ---
@@ -284,6 +285,7 @@ NAHI    har file ka alag id hi rakho
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - folder ki koi file FAILED? → **P-1 PARTIAL, sirf wahi dobara**: sirf fail wali file dobara, poora folder nahi
 > - do worker ek saath done_count +1? → **ek UPDATE, ginti nahi khoti**: done_count = done_count + 1, DB ke andar hota hai
+> - ek child ki DONE khabar dobara aayi? → **pehle child ka haal badlo**: UPDATE child SET status = 'DONE' WHERE id = ? AND status <> 'DONE'. 1 row badli tabhi folder +1, 0 row = pehle ho chuka, ginti do baar nahi badhti
 > - lakh chhoti files hon to? → **ZIP**: ZIP. Client ek file bana ke bheje, server use khol le
 
 
@@ -449,7 +451,8 @@ DB: files table: trackingId (KEY) | fileName | ownerId | status | s3_key | creat
 VALIDATING -> DONE / FAILED. "Kahan tak pahunchi" hi gadbad sambhalne ki buniyaad hai. PostgreSQL kyunki dhoondhna
 simple par haal ko ACID chahiye. Bahut bada + sirf key-value ho to NoSQL bhi chalta. Paisa hota to hamesha SQL.
 
-Dedup: file ka hash (MD5 / SHA). Pehle se hai to dobara store nahi, jagah bachi.
+Dedup: file ka hash (SHA-256). Pehle se hai to dobara store nahi, jagah bachi. Dedup sirf user ke andar, warna
+"ye file pehle se hai" se doosre ki file ka pata chal jaata (leak).
 
 Koi bheed / hamla kare? Rate limit har user pe, sabse aage WAF, HTTPS, secrets vault me.
 
