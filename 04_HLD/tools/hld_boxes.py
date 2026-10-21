@@ -56,7 +56,7 @@ def line(q, a, rest, cue):
         else:
             cue, full = '??', rest
     else:
-        full = (a + '. ' + rest).strip('. ') if a and rest else (a or rest)
+        full = (a.rstrip('.') + '. ' + rest).strip('. ') if a and rest else (a or rest)
     full = full.strip()
     return f'> - {q} → **{cue}**' + (f': {full}' if full else ''), cue == '??'
 

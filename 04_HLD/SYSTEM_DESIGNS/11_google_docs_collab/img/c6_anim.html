@@ -1,15 +1,18 @@
 <!doctype html>
 <!-- banaya: tools/anim_build.py se. Badlaav scene .js me karo, ye file dobara banti hai. -->
 <meta charset="utf-8">
-<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}</style>
-<svg width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
-<rect width="900" height="400" fill="#11161c"/>
+<style>body{margin:0;background:#11161c} svg text{font-family:Consolas,"Courier New",monospace}
+svg .sans{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif}</style>
+<svg id="root" width="900" height="400" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+<rect id="bgr" width="900" height="400" fill="#11161c"/>
 <rect id="capbg" x="0" y="0" width="900" height="44" fill="#3a1414"/>
 <text id="cap" x="20" y="29" font-size="15" font-weight="bold" fill="#e6edf3"></text>
-<g transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+<g id="pic" transform="translate(0,40)"><g id="st"></g><g id="dyn"></g></g>
+<g id="leg"></g>
 </svg>
 <script>
 // Chalti tasveer ka base. Scene file (cN_anim.js) deta hai: DUR, FIX, setup(), frame(t, fix, tl).
+// Ya kahani wala scene: DUR, PH, setup(), frame(ph, tl) -> har phase ka aakhri frame PNG (img/cN_k.png).
 // anim_build.py ise + scene ko ek html me jodta hai, phir anim2gif.js GIF banata hai.
 const NS = 'http://www.w3.org/2000/svg';
 const C = { bg: '#11161c', box: '#222d3a', line: '#4b5a6a', fg: '#e6edf3', muted: '#9aa8b6',
@@ -22,13 +25,35 @@ function el(tag, a, parent, text) {
   (parent || ST).append(e); return e;
 }
 function grp(id) { return el('g', id ? { id } : {}); }
+// generic line-icon (24 grid, stroke). Brand logo nahi. B(..., { icon: 'user' })
+const ICON = {
+  user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 4-6 8-6s8 2 8 6',
+  users: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3 3-5 7-5s7 2 7 5M16 5a3 3 0 0 1 0 6M18 15c2 .6 4 2 4 5',
+  bucket: 'M4 6h16l-2 14H6L4 6zM4 6c0-1.7 3.6-3 8-3s8 1.3 8 3',
+  db: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
+  server: 'M3 4h18v6H3zM3 14h18v6H3zM7 7h1M7 17h1',
+  phone: 'M7 2h10v20H7zM11 18h2',
+  chat: 'M4 4h16v12H9l-5 4V4zM8 9h8M8 12h5',
+  queue: 'M3 7h4v10H3zM10 7h4v10h-4zM17 7h4v10h-4z',
+  clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 3',
+  lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+  mail: 'M3 5h18v14H3zM3 5l9 7 9-7',
+  cloud: 'M7 18a4 4 0 0 1 0-8 6 6 0 0 1 11.5 1.5A3.5 3.5 0 0 1 18 18H7z',
+};
 // dabba: label upar ki taraf, taaki beech se dot guzre to naam na dhake
 function box(x, y, w, h, label, sub, o = {}) {
   const g = el('g', o.id ? { id: o.id } : {}, o.parent);
   el('rect', { x, y, width: w, height: h, rx: o.r || 8, fill: o.fill || C.box, stroke: o.stroke || C.line,
     'stroke-width': 1.5 }, g);
-  el('text', { x: x + w / 2, y: y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': 14, fill: C.fg }, g, label);
-  if (sub) el('text', { x: x + w / 2, y: y + 36, 'text-anchor': 'middle', 'font-size': 12, fill: C.muted }, g, sub);
+  let cx = x + w / 2;
+  if (o.icon && ICON[o.icon]) {
+    const k = 28 / 24, iy = y + (h - 28) / 2;
+    el('path', { d: ICON[o.icon], transform: `translate(${x + 14},${iy}) scale(${k})`, fill: 'none',
+      stroke: o.iconc || o.stroke || C.fg, 'stroke-width': 2 / k, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
+    cx = x + 50 + (w - 56) / 2;
+  }
+  el('text', { x: cx, y: BIG ? (h >= 90 ? y + 26 : y + h / 2 + (sub ? -4 : 6)) : y + (sub || h >= 60 ? 20 : h / 2 + 5), 'text-anchor': 'middle', 'font-size': BIG ? 17 : 14, 'font-weight': BIG ? 'bold' : 'normal', fill: C.fg }, g, label);
+  if (sub) el('text', { x: cx, y: BIG ? (h >= 90 ? y + 46 : y + h / 2 + 17) : y + 36, 'text-anchor': 'middle', 'font-size': BIG ? 14 : 12, fill: C.muted }, g, sub);
   return g;
 }
 function wire(d, id, parent) {
@@ -70,54 +95,148 @@ function cells(x, y, items, o = {}) {
   const w = o.w || 46, h = o.h || 26;
   items.forEach(([s, c], i) => {
     el('rect', { x: x + i * (w + 4), y, width: w, height: h, rx: 4, fill: C.bg, stroke: c || C.line, 'stroke-width': 1.5 }, DYN);
-    T(x + i * (w + 4) + w / 2, y + h / 2 + 4, s, { c: c || C.fg, size: 11, b: 1 });
+    T(x + i * (w + 4) + w / 2, y + h / 2 + (BIG ? 5 : 4), s, { c: c || C.fg, size: BIG ? 13 : 11, b: 1 });
   });
 }
 const CAP = document.getElementById('cap'), CAPBG = document.getElementById('capbg');
+// kahani wale scene (PH): [[startSec, bgColor, 'DIKKAT'|'ILAAJ'|'AGAR'|'WAPAS', caption], ...] -> frame(ph, tl)
+const RED = '#3a1414', GRN = '#123018', YEL = '#3a2e0a';
+function B(x, y, w, h, label, sub, o = {}) {
+  const m = { bad: [C.bad, '#3a1414'], good: [C.good, '#123018'], acc: [C.acc, C.box], dim: ['#33404d', '#161d25'] }[o.st] || [];
+  return box(x, y, w, h, label, sub, { ...o, stroke: o.stroke || m[0], fill: o.fill || m[1], parent: DYN });
+}
+function A(x1, y1, x2, y2, c, o = {}) {
+  c = c || C.line;
+  el('line', { x1, y1, x2, y2, stroke: c, 'stroke-width': o.w || (BIG ? 2.5 : 2), 'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  const a = Math.atan2(y2 - y1, x2 - x1), s = 10;
+  el('path', { d: `M${x2} ${y2} L${x2 - s * Math.cos(a - 0.45)} ${y2 - s * Math.sin(a - 0.45)} ` +
+    `L${x2 - s * Math.cos(a + 0.45)} ${y2 - s * Math.sin(a + 0.45)} Z`, fill: c }, DYN);
+  if (o.n) { const f = o.at === undefined ? 0.5 : o.at; num(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, o.n, c); }
+}
+// mudi hui line (pts = [[x,y], ...]), aakhri hisse pe teer; o.n = badge sabse lambe hisse ke beech
+function AP(pts, c, o = {}) {
+  let best = 0, bl = -1;
+  for (let i = 1; i < pts.length; i++) {
+    const [a, b] = [pts[i - 1], pts[i]], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (l > bl) { bl = l; best = i; }
+    if (i < pts.length - 1) el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: c, 'stroke-width': o.w || 2,
+      'stroke-dasharray': o.dash ? '6 5' : 'none' }, DYN);
+  }
+  const [p, q] = [pts[pts.length - 2], pts[pts.length - 1]];
+  A(p[0], p[1], q[0], q[1], c, { dash: o.dash, w: o.w });
+  if (o.n) { const [a, b] = [pts[best - 1], pts[best]], f = o.at === undefined ? 0.5 : o.at;
+    num(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, o.n, c); }
+}
+// kram ka gol badge (1, 2, 3 ...)
+function num(x, y, n, c) {
+  el('circle', { cx: x, cy: y, r: BIG ? 14 : 11, fill: c || C.muted, stroke: C.bg, 'stroke-width': 2 }, DYN);
+  el('text', { x, y: y + 5, 'text-anchor': 'middle', 'font-size': BIG ? 15 : 13, 'font-weight': 'bold', fill: '#11161c' }, DYN, n);
+}
+// "kya hua" chhota label
+function L(x, y, s, c, a) { return T(x, y, s, { c: c || C.acc, b: 1, size: BIG ? 15 : 13, halo: 1, a }); }
+function dots(n, x, y, c, o = {}) {
+  const cols = o.cols || 10, g = o.gap || 22;
+  for (let i = 0; i < n; i++) {
+    const cc = Array.isArray(c) ? c[i] : c;
+    el('circle', { cx: x + (i % cols) * g, cy: y + Math.floor(i / cols) * g, r: o.r || 8,
+      fill: o.hollow ? 'none' : cc, stroke: cc, 'stroke-width': 2 }, DYN);
+  }
+}
+// NAYA SAANCHA (21-Oct, Fable + Arpan): scene me STEPS ho to 900 x 610, bade akshar, neeche patti.
+// STEPS = [ [ [c, 'A -> B', 'pehli line|doosri line'], ... ] (DIKKAT), [...] (ILAAJ), [...] (AGAR) ]; c = number ka rang
+let BIG = false, BIGSET = false;
+function initBig() {   // draw() pe ek baar; tab tak scene ka STEPS ban chuka hota
+  if (BIGSET) return; BIGSET = true;
+  BIG = typeof STEPS !== 'undefined';
+  if (!BIG) return;
+  const R = document.getElementById('root');
+  R.setAttribute('height', 610); R.setAttribute('viewBox', '0 0 900 610');
+  document.getElementById('bgr').setAttribute('height', 610);
+  CAPBG.setAttribute('height', 48); CAP.setAttribute('y', 31); CAP.setAttribute('font-size', 17);
+  document.getElementById('pic').setAttribute('transform', 'translate(0,52)');
+}
+const LEG = document.getElementById('leg');
+function legend(steps) {
+  LEG.replaceChildren();
+  if (!steps || !steps.length) return;
+  const two = steps.length > 2, y0 = 418, h = two ? 178 : 100, H = y0 + h + 14;
+  const R = document.getElementById('root');   // patti chhoti to tasveer bhi chhoti
+  R.setAttribute('height', H); R.setAttribute('viewBox', `0 0 900 ${H}`); document.getElementById('bgr').setAttribute('height', H);
+  el('rect', { x: 20, y: y0, width: 860, height: h, rx: 10, fill: '#161d25', stroke: C.line }, LEG);
+  if (two) el('line', { x1: 450, y1: y0 + 14, x2: 450, y2: y0 + h - 14, stroke: C.line }, LEG);
+  steps.forEach(([c, head, line], i) => {
+    const col = two ? i % 2 : i, row = two ? Math.floor(i / 2) : 0;
+    const x = 40 + col * 430, y = y0 + 30 + row * 82;
+    el('circle', { cx: x + 14, cy: y, r: 14, fill: c }, LEG);
+    el('text', { x: x + 14, y: y + 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 'bold', fill: '#11161c' }, LEG, i + 1);
+    el('text', { x: x + 38, y: y + 6, 'font-size': 16, 'font-weight': 'bold', fill: C.fg, class: 'sans' }, LEG, head);
+    const words = String(line).replace(/\|/g, ' ').split(' '), rows = [''];   // apne aap 2 line me (~54 akshar)
+    words.forEach(w => { const r = rows.length - 1; if ((rows[r] + ' ' + w).trim().length > 54) rows.push(w); else rows[r] = (rows[r] + ' ' + w).trim(); });
+    rows.forEach((ln, k) => el('text', { x: x + 38, y: y + 28 + k * 19, 'font-size': 13.5,
+      fill: C.muted, class: 'sans' }, LEG, ln));
+  });
+}
 function draw(t) {
+  initBig();
   DYN.replaceChildren();
+  if (typeof PH !== 'undefined') {
+    let i = 0;
+    while (i + 1 < PH.length && t >= PH[i + 1][0]) i++;
+    CAPBG.setAttribute('fill', PH[i][1]);
+    CAP.textContent = PH[i][3] || '';
+    frame(i, t - PH[i][0]);
+    if (BIG) legend(STEPS[i]);
+    return;
+  }
   const fix = t >= FIX;
   CAPBG.setAttribute('fill', fix ? '#123018' : '#3a1414');
   frame(t, fix, fix ? t - FIX : t);
 }
 
-// Card 6: har akshar seedha DB -> 60 lakh write/sec, DB baitha. Ilaaj: Redis buffer + copy (WAIT 1) -> ACK, har 1 sec batch.
-const DUR = 18, FIX = 8;
-const U = [150, 182], CSR = [350, 182], DB = [688, 185];
-function setup() {
-  wire('M150 182 H220');
-  box(20, 140, 130, 84, '20 lakh log', '3 akshar / sec');
-  box(220, 150, 130, 64, 'Conn-Server');
-  box(700, 150, 170, 70, 'Cassandra');
-  wire('M350 182 H700', 'w0');
-  wire('M350 170 L450 92', 'w1'); wire('M350 195 L450 282', 'w2'); wire('M600 92 L700 170', 'w3');
-  box(450, 60, 150, 64, 'Redis buffer', 'op jama', { id: 'rb', stroke: C.acc });
-  box(450, 250, 150, 64, 'Redis copy', 'WAIT 1', { id: 'rc', stroke: C.acc });
-}
-function frame(t, fix, tl) {
-  ['rb', 'rc', 'w1', 'w2', 'w3'].forEach(i => vis(i, fix)); vis('w0', !fix);
-  for (let k = 0; k < 64; k++) {
-    const s = 0.2 + k * 0.15;
-    dot(path([[s, U], [s + 0.3, [214, 182]]], tl < s + 0.3 ? tl : -1), C.msg);
-    if (!fix) dot(path([[s + 0.35, CSR], [s + 1.0, DB]], tl > s + 0.35 && tl < s + 1.0 ? tl : -1), C.msg);
-    else dot(path([[s + 0.35, CSR], [s + 0.8, [438, 92]]], tl > s + 0.35 && tl < s + 0.8 ? tl : -1), C.msg);
+// Card 6: har akshar pe DB me likha, DB baith gaya. Ilaaj: Redis buffer + copy (WAIT 1) tab ACK, har 1 sec batch. Agar: ACK se pehle Redis gira.
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: har akshar ek op, har op seedha DB me likha. Lakhon likhai / sec, DB baith gaya'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: op Redis buffer + copy dono me (WAIT 1), tab ACK. Har 1 sec ek batch Cassandra me'],
+  [6, YEL, 'AGAR', 'AGAR ACK se pehle Redis gira? -> app op rakhta, opId ke saath phir bhejta'],
+];
+function setup() {}
+const STEPS = [
+  [[C.msg, 'Main → Server', 'Main type kar raha, har akshar ek op ban ke server pe'],
+   [C.bad, 'Server → DB', 'Har op ke liye seedha DB me ek likhai'],
+   [C.bad, 'DB', 'Lakhon log type kar rahe, lakhon likhai / sec, DB baith gaya']],
+  [[C.acc, 'Server → Redis', 'Op pehle Redis buffer me likha, RAM me, ~1 ms'],
+   [C.acc, 'Redis → copy', 'Copy me bhi pahuncha (WAIT 1), tabhi pakka'],
+   [C.good, 'Server → Main', 'Tab ACK: Main ko turant "saved" dikha'],
+   [C.good, 'Redis → Cassandra', 'Har 1 sec ek batch Cassandra me, DB pe likhai kam']],
+  [[C.msg, 'Main → Server', 'Maine op bheja (opId 77), app ne apne paas bhi rakha'],
+   [C.bad, 'Redis', 'ACK se pehle Redis gir gaya, ACK nahi aaya'],
+   [C.good, 'Main → Server', 'Judte hi opId 77 phir bheja; pehle se hai to skip, nahi to likho']],
+];
+function frame(ph) {
+  B(15, 140, 150, 60, 'Main', ph === 2 ? 'op 77 rakha' : 'type kar raha', { icon: 'user' });
+  B(230, 140, 150, 60, 'Server', '', { icon: 'server' });
+  if (ph === 0) {
+    A(165, 170, 228, 170, C.msg, { n: 1 });
+    B(650, 140, 200, 60, 'DB', 'lakhon likhai / sec', { st: 'bad', icon: 'db' });
+    [-20, -10, 0, 10, 20].forEach(d => A(380, 170 + d, 648, 170 + d, C.bad, { n: d === 0 ? 2 : 0 }));
+    bar(650, 215, 200, 14, 1, ''); num(870, 170, 3, C.bad); L(750, 260, 'DB baith gaya', C.bad);
+    L(450, 320, 'har akshar = ek op = ek DB likhai', C.muted);
+  } else if (ph === 1) {
+    B(450, 30, 190, 60, 'Redis buffer', 'RAM, ~1 ms', { st: 'acc', icon: 'queue' });
+    B(450, 250, 190, 60, 'Redis copy', 'WAIT 1', { st: 'acc', icon: 'queue' });
+    B(700, 140, 180, 60, 'Cassandra', 'batch me', { st: 'good', icon: 'db' });
+    A(380, 150, 448, 70, C.acc, { n: 1 }); A(545, 92, 545, 248, C.acc, { n: 2 });
+    A(228, 190, 167, 190, C.good, { n: 3 }); L(200, 235, 'ACK: saved', C.good);
+    A(642, 70, 740, 138, C.good, { n: 4 }); L(790, 95, 'har 1 sec', C.good);
+    L(450, 340, 'batch ACK ke raaste me nahi, typing nahi rukti', C.muted);
+  } else {
+    B(450, 120, 190, 60, 'Redis buffer', 'gir gaya', { st: 'bad', icon: 'queue' }); cross(665, 150); num(700, 150, 2, C.bad);
+    A(165, 160, 228, 160, C.msg, { n: 1 }); A(380, 160, 448, 150, C.msg);
+    A(228, 185, 167, 185, C.bad, { dash: 1 }); L(200, 230, 'ACK nahi aaya', C.bad);
+    AP([[90, 202], [90, 300], [305, 300], [305, 202]], C.good, { n: 3, at: 0.5 }); L(200, 330, 'phir bheja: opId 77', C.good);
+    L(600, 260, 'opId pehle se? skip', C.good); L(600, 282, 'nahi? likho', C.good);
   }
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: har akshar seedha DB me. 20 lakh log x 3 akshar = 60 lakh write / sec';
-    const f = Math.min(1, tl / 5);
-    bar(710, 245, 150, 16, f, '');
-    T(785, 285, `${Math.round(60 * f)} lakh write / sec`, { c: f > 0.9 ? C.bad : C.fg, b: 1, size: 12 });
-    if (f >= 1) T(785, 120, 'DB baith gaya', { c: C.bad, b: 1, size: 15 });
-    return;
-  }
-  CAP.textContent = 'ILAAJ: op Redis buffer + copy dono me (WAIT 1, ~1 ms), tab ACK. Har 1 sec ek batch Cassandra me';
-  if (tl > 0.6) { const ph = (tl - 0.6) % 1; if (ph < 0.4) dot(lerp([360, 200], [438, 282], ph / 0.4), C.acc, '', 'copy', C.acc); }
-  if (tl > 1.2) { const ph = (tl - 1.2) % 1; if (ph < 0.4) dot(lerp([214, 200], [150, 212], ph / 0.4), C.good, '', 'ACK', C.good); }
-  if (tl > 1.2) T(85, 320, 'ACK "saved" (~1 ms)', { c: C.good, b: 1, size: 13 });
-  if (tl > 1.0) { const ph = (tl - 1.0) % 1; if (ph < 0.5) dot(lerp([612, 104], [688, 170], ph / 0.5), C.acc, 'B', 'batch', C.acc); }
-  T(785, 120, 'har 1 sec ek batch', { c: C.acc, size: 12, b: 1 });
-  bar(710, 245, 150, 16, 0.15, '', 1);
-  T(785, 285, 'kam likhai, DB chalu', { c: C.good, b: 1, size: 12 });
 }
 
 setup(); draw(0);

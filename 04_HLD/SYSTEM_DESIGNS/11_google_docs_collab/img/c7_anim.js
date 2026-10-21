@@ -1,31 +1,47 @@
-// Card 7: net 1 sec gaya. Sab strong -> typing ruki. Ilaaj: likhna AP (pending op), permission CP (SQL check).
-const DUR = 18, FIX = 8;
-const PH = [170, 170], CS = [418, 170];
-function setup() {
-  wire('M170 170 H430'); wire('M510 200 V280');
-  box(20, 130, 150, 80, 'Main (phone)', 'metro me');
-  box(430, 130, 160, 70, 'Conn-Server', 'OT');
-  box(430, 280, 160, 60, 'SQL permissions', 'CP');
-}
-function frame(t, fix, tl) {
-  const off = tl >= 1.0 && tl < 3.5;
-  if (off) { cross(300, 170); T(300, 140, 'net gaya (1 sec)', { c: C.bad, b: 1, size: 12 }); }
-  if (tl >= 3.5) T(300, 140, 'net wapas', { c: C.good, b: 1, size: 12 });
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: sab kuch strong (turant sab same) rakha -> net jaate hi typing ruk gayi';
-    if (tl >= 1.2) { T(95, 245, 'typing ruki', { c: C.bad, b: 1, size: 14 });
-                     T(95, 267, 'kaam ruka', { c: C.bad, b: 1, size: 13 }); }
-    return;
+// Card 7: metro me net 1 sec gaya, typing rukegi? Ilaaj: likhna AP (pending op), permission CP (SQL). Agar: offline me access hata.
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: metro me net gaya. Har likhai server ke "haan" pe ruki (strong), typing ruk gayi'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: likhna AP: op phone me pending, typing chalti. Permission CP: net aate hi SQL check'],
+  [6, YEL, 'AGAR', 'AGAR offline me access hata diya? -> net aate hi SQL check, access nahi to op reject'],
+];
+function setup() {}
+const STEPS = [
+  [[C.bad, 'Main ✕ Server', 'Metro me net 1 second ke liye gaya'],
+   [C.bad, 'Main ka app', 'Har likhai server ke "haan" ka intezaar karti (strong), typing ruk gayi']],
+  [[C.acc, 'Main ka app', 'Net gaya, par typing chalti rahi; op phone me pending line me jama'],
+   [C.msg, 'Main → Server', 'Net aate hi teeno pending op server ko bheje'],
+   [C.good, 'Server → SQL', 'Pehle permission SQL se check (CP): access hai'],
+   [C.good, 'Server', 'Op khiska ke lage, aakhir me sabka doc same (AP)']],
+  [[C.bad, 'Owner → SQL', 'Main offline tha, doc ke owner ne mera access hata diya'],
+   [C.msg, 'Main → Server', 'Net aate hi pending op bheje'],
+   [C.bad, 'Server → SQL', 'SQL ne bola access nahi: saare pending op reject']],
+];
+function frame(ph) {
+  if (ph === 0) {
+    B(15, 130, 210, 70, 'Main ka app', 'typing ruki', { st: 'bad', icon: 'phone' });
+    B(620, 130, 180, 70, 'Server', '', { icon: 'server' });
+    A(225, 165, 618, 165, C.bad, { n: 1, dash: 1, at: 0.3 }); cross(470, 165); L(470, 130, 'net gaya (metro)', C.bad);
+    num(120, 230, 2, C.bad); L(120, 262, '"haan" ka intezaar', C.bad); L(120, 284, 'har akshar pe', C.bad);
+    L(560, 320, 'typing rukna = sabse bura, ye nahi chahiye', C.muted);
+  } else if (ph === 1) {
+    B(15, 30, 210, 70, 'Main ka app', 'typing chalti', { st: 'good', icon: 'phone' });
+    cells(20, 125, [['op1', C.acc], ['op2', C.acc], ['op3', C.acc]], { w: 66, h: 32 }); num(240, 141, 1, C.acc);
+    L(120, 185, 'pending (phone me)', C.acc);
+    B(380, 120, 180, 70, 'Server', 'OT', { st: 'good', icon: 'server' });
+    A(225, 80, 378, 135, C.msg, { n: 2 });
+    B(700, 30, 180, 65, 'SQL', 'permission (CP)', { st: 'good', icon: 'db' });
+    A(562, 140, 698, 70, C.good, { n: 3 }); L(790, 120, 'access hai', C.good);
+    B(700, 240, 180, 65, 'Doc', 'sab same', { st: 'good' });
+    A(562, 175, 698, 265, C.good, { n: 4 }); L(470, 300, 'khiska ke laga (AP)', C.good);
+  } else {
+    B(15, 140, 210, 70, 'Main ka app', 'pending: 3 op', { st: 'acc', icon: 'phone' });
+    B(380, 140, 180, 70, 'Server', '', { icon: 'server' });
+    B(700, 30, 180, 65, 'SQL', 'access nahi', { st: 'bad', icon: 'db' });
+    B(700, 250, 180, 65, 'Doc owner', 'access hataya', { icon: 'user' });
+    A(790, 248, 790, 97, C.bad, { n: 1 });
+    A(225, 175, 378, 175, C.msg, { n: 2 });
+    A(562, 160, 698, 70, C.bad, { n: 3 }); L(470, 260, 'pending op reject', C.bad);
+    L(470, 282, 'access kabhi galat nahi', C.muted);
   }
-  CAP.textContent = 'ILAAJ: likhna AP: typing chalti, op phone me pending. Permission CP: net aate hi SQL check';
-  const n = tl < 1.0 ? 0 : tl < 3.7 ? Math.min(3, Math.floor((tl - 1.0) / 0.6) + 1) : 0;
-  if (n) { T(95, 238, 'pending op', { c: C.acc, size: 12 });
-           cells(30, 248, ['a', 'b', 'c'].slice(0, n).map(s => [s, C.acc]), { w: 40 }); }
-  if (tl >= 1.0 && tl < 3.5) T(95, 300, 'likhta raha (AP)', { c: C.good, b: 1, size: 13 });
-  if (tl > 3.7 && tl < 4.4) dot(path([[3.7, PH], [4.4, CS]], tl), C.acc, '3', 'op + version', C.acc);
-  if (tl > 4.5 && tl < 5.0) dot(path([[4.5, [510, 205]], [5.0, [510, 268]]], tl), C.msg, '', 'access?');
-  if (tl > 5.0 && tl < 5.5) dot(path([[5.0, [510, 268]], [5.5, [510, 205]]], tl), C.good, '', 'haan', C.good);
-  if (tl >= 5.0) T(600, 315, 'pehle permission', { c: C.msg, size: 12, b: 1, a: 'start' });
-  if (tl >= 5.7) { T(740, 160, 'khiska ke lagaya', { c: C.good, b: 1, size: 13 });
-                   T(740, 182, 'aakhir me sab same', { c: C.good, b: 1, size: 13 }); }
 }

@@ -1,35 +1,47 @@
-// Card 2: HTTP me server khud nahi bhejta -> Ravi ko refresh pe dikha. Ilaaj: WebSocket khula, dono taraf.
-const DUR = 16, FIX = 7.5;
-const ME = [160, 185], SVR = [530, 185];
-function setup() {
-  wire('M160 185 H380'); wire('M530 185 H720');
-  box(30, 150, 130, 70, 'Main', 'X likha');
-  box(380, 150, 150, 70, 'Conn-Server');
-  box(720, 150, 140, 70, 'Ravi');
-}
-function frame(t, fix, tl) {
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: HTTP me server khud kuch nahi bhejta. X server pe aaya, Ravi ko refresh tak nahi';
-    dot(path([[0.3, ME], [1.1, [368, 185]]], tl < 1.1 ? tl : -1), C.msg, 'X', 'POST');
-    if (tl >= 1.1) T(455, 245, 'X aa gaya', { c: C.fg, size: 12 });
-    if (tl >= 1.5 && tl < 2.2) dot(path([[1.5, SVR], [2.2, [625, 185]]], tl), C.msg, 'X');
-    if (tl >= 2.2) { cross(625, 185); T(625, 140, 'khud nahi bhej sakta', { c: C.bad, b: 1, size: 12 }); }
-    const got = tl >= 5.2;
-    T(790, 250, got ? 'Ravi: HELLO X' : 'Ravi: HELLO', { c: got ? C.acc : C.bad, b: 1, size: 13 });
-    if (!got && tl >= 2.2) T(790, 272, '(purana)', { c: C.bad, size: 12 });
-    if (tl >= 3.4 && tl < 4.2) T(790, 135, 'refresh', { c: C.acc, b: 1, size: 13 });
-    if (tl >= 3.6 && tl < 4.4) dot(path([[3.6, [708, 200]], [4.4, [542, 200]]], tl), C.acc, '', 'GET', C.acc);
-    if (tl >= 4.4 && tl < 5.2) dot(path([[4.4, [542, 200]], [5.2, [708, 200]]], tl), C.acc, 'X');
-    if (tl >= 5.2) T(790, 272, 'refresh ke baad hi', { c: C.acc, size: 12 });
-    return;
+// Card 2: Ravi ko mera likha refresh pe hi dikha. Ilaaj: WebSocket (khula, dono taraf). Agar: connection toota -> version bata ke baaki op.
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: HTTP ektarfa hai. Server khud Ravi ko nahi bhej sakta, Ravi ko refresh pe hi dikha'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: connection khula rehta, dono taraf (WebSocket). Server khud bhejta, ~200 ms me dikhta'],
+  [6, YEL, 'AGAR', 'AGAR WebSocket toot gaya? -> judte hi "main v12 pe tha", server v13 se aage sab bhejta'],
+];
+function setup() {}
+const STEPS = [
+  [[C.msg, 'Main → Server', 'Maine "X" likha, HTTP request se server tak pahuncha'],
+   [C.bad, 'Server → Ravi', 'HTTP ektarfa hai, server khud Ravi ko kuch nahi bhej sakta'],
+   [C.acc, 'Ravi → Server', 'Ravi ne refresh dabaya, tab jaake use "X" dikha']],
+  [[C.msg, 'Main → Server', 'Maine "X" likha, khule connection (WebSocket) se server pe gaya'],
+   [C.good, 'Server → Ravi', 'Server ne khud Ravi ko bheja, ~200 ms me dikha, refresh nahi']],
+  [[C.bad, 'Ravi ✕ Server', 'Ravi ka connection toota, us waqt uske paas v12 tha'],
+   [C.msg, 'Main → Server', 'Main likhta raha, server pe doc v15 tak pahunch gaya'],
+   [C.acc, 'Ravi → Server', 'Ravi dobara juda aur bola "main v12 pe tha"'],
+   [C.good, 'Server → Ravi', 'Server ne v13, v14, v15 bheje, Ravi ka doc barabar']],
+];
+function wire(x1, x2, y) { el('line', { x1, y1: y, x2, y2: y, stroke: C.line, 'stroke-width': 10, 'stroke-linecap': 'round', opacity: 0.5 }, DYN); }
+function frame(ph) {
+  if (ph === 0) {
+    B(15, 130, 170, 60, 'Main', 'likha: X', { icon: 'user' });
+    B(360, 130, 180, 60, 'Server', 'X aa gaya', { icon: 'server' });
+    B(710, 130, 175, 60, 'Ravi', 'purana: X nahi', { st: 'bad', icon: 'user' });
+    A(185, 160, 358, 160, C.msg, { n: 1 }); L(272, 130, 'HTTP', C.msg);
+    A(540, 155, 708, 155, C.bad, { n: 2, dash: 1, at: 0.3 }); cross(640, 155); L(625, 120, 'khud nahi bhej sakta', C.bad);
+    AP([[797, 192], [797, 300], [450, 300], [450, 192]], C.acc, { n: 3, at: 0.3 }); L(600, 325, 'refresh dabaya, tab X dikha', C.acc);
+  } else if (ph === 1) {
+    wire(185, 360, 160); wire(540, 710, 160);
+    B(15, 130, 170, 60, 'Main', 'likha: X', { icon: 'user' });
+    B(360, 130, 180, 60, 'Server', 'WebSocket', { st: 'good', icon: 'server' });
+    B(710, 130, 175, 60, 'Ravi', 'X dikha', { st: 'good', icon: 'user' });
+    A(190, 140, 355, 140, C.msg, { n: 1 }); A(545, 140, 705, 140, C.good, { n: 2 });
+    L(450, 230, 'connection khula rehta, dono taraf', C.muted); L(625, 185, '~200 ms', C.good);
+    L(450, 300, 'Ravi ko refresh nahi karna padta', C.good);
+  } else {
+    B(15, 40, 170, 60, 'Main', 'likhta raha', { icon: 'user' });
+    B(330, 130, 240, 95, 'Server', '', { st: 'good', icon: 'server' });
+    cells(388, 185, [['v12'], ['v13', C.acc], ['v14', C.acc], ['v15', C.acc]], { w: 44, h: 30 });
+    B(710, 130, 175, 60, 'Ravi', 'mere paas v12', { icon: 'user' });
+    A(185, 70, 340, 140, C.msg, { n: 2 });
+    A(705, 145, 575, 145, C.bad, { n: 1, dash: 1, at: 0.4 }); cross(620, 120); L(640, 95, 'connection toota', C.bad);
+    A(705, 175, 575, 175, C.acc, { n: 3, at: 0.6 }); L(690, 250, '"main v12 pe tha"', C.acc);
+    AP([[450, 227], [450, 300], [797, 300], [797, 192]], C.good, { n: 4, at: 0.3 }); L(620, 330, 'v13, v14, v15 bheje: barabar', C.good);
   }
-  CAP.textContent = 'ILAAJ: connection khula rehta, dono taraf (WebSocket). Server khud bhejta, ~200 ms me dikhta';
-  el('path', { d: 'M160 185 H380 M530 185 H720', stroke: C.good, 'stroke-width': 4, fill: 'none' }, DYN);
-  T(270, 172, 'WebSocket', { c: C.good, b: 1, size: 12 }); T(625, 172, 'WebSocket', { c: C.good, b: 1, size: 12 });
-  T(455, 300, 'khula rehta, dono taraf', { c: C.good, size: 12 });
-  dot(path([[0.3, ME], [1.0, [368, 185]]], tl < 1.0 ? tl : -1), C.msg, 'X');
-  dot(path([[1.0, SVR], [1.5, [708, 185]]], tl > 1.0 && tl < 1.5 ? tl : -1), C.good, 'X', 'push', C.good);
-  const got = tl >= 1.5;
-  T(790, 250, got ? 'Ravi: HELLO X' : 'Ravi: HELLO', { c: got ? C.good : C.fg, b: 1, size: 13 });
-  if (got) T(790, 272, '~200 ms, refresh nahi', { c: C.good, size: 12 });
 }

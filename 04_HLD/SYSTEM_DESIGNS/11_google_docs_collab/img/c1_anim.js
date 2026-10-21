@@ -1,35 +1,50 @@
-// Card 1: poora text overwrite -> baad wala jeeta, WORLD gayab. Ilaaj: op + baseVersion, server khiska ke lagata.
-const DUR = 17, FIX = 7.5;
-const ME = [160, 92], RV = [160, 272], SV = [548, 182];
-function setup() {
-  wire('M160 92 L560 170'); wire('M160 272 L560 195');
-  box(30, 60, 130, 64, 'Main (App)', '10:05');
-  box(30, 240, 130, 64, 'Ravi (App)', '10:07');
-  box(560, 140, 220, 84, 'Server + DB');
-}
-function frame(t, fix, tl) {
-  if (!fix) {
-    CAP.textContent = 'DIKKAT: Save = poora text upar likh do. 10:07 Ravi ne save kiya, mera WORLD gayab';
-    dot(path([[0.3, ME], [1.3, SV]], tl < 1.3 ? tl : -1), C.msg, '', '"HELLO WORLD"');
-    dot(path([[2.5, RV], [3.5, SV]], tl < 3.5 ? tl : -1), C.acc, '', '"HELLO THERE"', C.acc);
-    let doc = 'HELLO', col = C.fg;
-    if (tl >= 1.3) { doc = 'HELLO WORLD'; col = C.good; }
-    if (tl >= 3.5) { doc = 'HELLO THERE'; col = C.bad; }
-    T(670, 200, `DB: ${doc}`, { c: col, b: 1, size: 14 });
-    if (tl >= 3.8) { T(670, 260, 'baad wala jeeta', { c: C.bad, b: 1, size: 14 });
-                     T(670, 282, 'mera WORLD gayab!', { c: C.bad, b: 1, size: 14 }); }
-    return;
+// Card 1: Ravi ne baad me save kiya, mera WORLD mit gaya. Ilaaj: sirf op + baseVersion bhejo. Agar: maine mitaya, Ravi ne wahin likha.
+const DUR = 9;
+const PH = [
+  [0, RED, 'DIKKAT', 'DIKKAT: Save pe poora text upar likha. Ravi ne baad me save kiya, mera "WORLD" mit gaya'],
+  [3, GRN, 'ILAAJ', 'ILAAJ: sirf badlaav (op) bhejo + kis version pe bana (v7). Server khiska ke lagata'],
+  [6, YEL, 'AGAR', 'AGAR maine mitaya, Ravi ne wahin likha? -> mitana bhi op, Ravi ka akshar khisak ke sahi jagah'],
+];
+function setup() {}
+const STEPS = [
+  [[C.msg, 'Main → DB', 'Maine Save dabaya, poora text "HELLO WORLD" DB me likh diya'],
+   [C.bad, 'Ravi → DB', 'Ravi ne baad me Save dabaya, uska poora "HELLO THERE" upar likha'],
+   [C.bad, 'DB', 'Ravi ka text mere wale ke upar baith gaya, mera "WORLD" mit gaya']],
+  [[C.msg, 'Main → Server', 'Maine sirf badlaav bheja: " WORLD" pos 5 pe, v7 pe bana'],
+   [C.msg, 'Ravi → Server', 'Ravi ne bhi sirf badlaav bheja: " THERE" pos 5 pe, wo bhi v7 pe'],
+   [C.acc, 'Server', 'Mera op v8 bana; Ravi ka v7 pe tha, to khiska ke pos 11 pe laga (v9)'],
+   [C.good, 'Server → doc', 'Doc ab "HELLO WORLD THERE", dono ka likha bacha, dono ko yahi bheja']],
+  [[C.msg, 'Main → Server', 'Maine "HELLO " mitaya: pos 0 se 6 akshar, v9 pe bana'],
+   [C.msg, 'Ravi → Server', 'Ravi ne end pe "!" likha, pos 11 pe, wo bhi v9 pe bana'],
+   [C.good, 'Server', 'Mitana bhi op: 6 akshar gaye, to Ravi ka "!" pos 11 se 5 pe khiska']],
+];
+function frame(ph) {
+  if (ph === 0) {
+    B(15, 30, 200, 60, 'Main', 'HELLO WORLD', { icon: 'user' });
+    B(15, 240, 200, 60, 'Ravi', 'HELLO THERE', { icon: 'user' });
+    B(560, 120, 290, 75, 'DB: doc', 'HELLO THERE', { st: 'bad', icon: 'db' });
+    A(215, 60, 558, 140, C.msg, { n: 1 }); L(390, 70, 'Save: poora text', C.msg);
+    A(215, 270, 558, 180, C.bad, { n: 2 }); L(390, 270, 'baad me Save: poora text', C.bad);
+    num(705, 225, 3, C.bad); L(705, 255, '"WORLD" mit gaya', C.bad);
+    L(705, 290, 'jo aakhir me save kare, wahi bachta', C.muted);
+  } else if (ph === 1) {
+    B(15, 30, 200, 60, 'Main', 'op: " WORLD" @5, v7', { icon: 'user' });
+    B(15, 240, 200, 60, 'Ravi', 'op: " THERE" @5, v7', { icon: 'user' });
+    B(500, 110, 260, 95, 'Server', '', { st: 'good', icon: 'server' });
+    T(630, 165, 'v8: mera @5', { c: C.good, b: 1, size: 14 }); T(630, 188, 'v9: Ravi ka @5 -> @11', { c: C.acc, b: 1, size: 14 });
+    A(215, 55, 498, 125, C.msg, { n: 1, at: 0.35 }); A(215, 275, 498, 195, C.msg, { n: 2, at: 0.35 });
+    num(785, 160, 3, C.acc);
+    cells(460, 270, [['HELLO'], [' WORLD', C.good], [' THERE', C.acc]], { w: 110, h: 36 });
+    A(630, 207, 630, 266, C.good, { n: 4 }); L(625, 335, 'dono ke paas: HELLO WORLD THERE', C.good);
+  } else {
+    B(15, 30, 210, 60, 'Main', 'mitaya "HELLO ", v9', { icon: 'user' });
+    B(15, 240, 210, 60, 'Ravi', '"!" @11, v9', { icon: 'user' });
+    T(560, 40, 'v9 + dono ke op:', { c: C.muted, b: 1, size: 14, a: 'start' });
+    cells(560, 55, [['HELLO ', C.bad], ['WORLD'], ['+! @11', C.acc]], { w: 100, h: 34 });
+    A(225, 60, 498, 150, C.msg, { n: 1, at: 0.4 }); A(225, 270, 498, 190, C.msg, { n: 2, at: 0.4 });
+    B(500, 130, 220, 75, 'Server', '@11 - 6 = @5', { st: 'good', icon: 'server' }); num(745, 168, 3, C.good);
+    T(560, 245, 'ab (v11):', { c: C.muted, b: 1, size: 14, a: 'start' });
+    cells(560, 260, [['WORLD', C.good], ['!', C.good]], { w: 100, h: 34 });
+    L(640, 330, '"!" sahi jagah, kuch nahi kata', C.good);
   }
-  CAP.textContent = 'ILAAJ: sirf badlaav (op) bhejo, kis version pe bana (baseVersion v7). Server khiska ke lagata';
-  dot(path([[0.3, ME], [1.3, SV]], tl < 1.3 ? tl : -1), C.msg, '', "pos 5 ' WORLD' @v7");
-  dot(path([[0.6, RV], [1.6, SV]], tl < 1.6 ? tl : -1), C.acc, '', "pos 5 ' THERE' @v7", C.acc);
-  let doc = 'HELLO', v = 7;
-  if (tl >= 1.3) { doc = 'HELLO WORLD'; v = 8; }
-  if (tl >= 2.0) { doc = 'HELLO WORLD THERE'; v = 9; }
-  T(670, 200, `doc v${v}: ${doc}`, { c: v === 9 ? C.good : C.fg, b: 1, size: 13 });
-  if (tl >= 1.3) T(670, 250, "v8: ' WORLD' pos 5", { c: C.msg, size: 12 });
-  if (tl >= 2.0) T(670, 270, "v9: ' THERE' khiska 5 -> 11", { c: C.acc, size: 12 });
-  if (tl >= 2.6 && tl < 3.6) dot(path([[2.6, SV], [3.6, [172, 285]]], tl), C.good, '', 'v8 + v9 Ravi ko', C.good);
-  if (tl >= 3.6) T(95, 330, 'Ravi: HELLO WORLD THERE', { c: C.good, b: 1, size: 13 });
-  if (tl >= 2.0) T(95, 150, 'kisi ka likha nahi mita', { c: C.good, size: 12 });
 }
