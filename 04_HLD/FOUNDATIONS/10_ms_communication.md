@@ -336,6 +336,36 @@ In MS:
 
 ---
 
+## 3 SERVICE SE MAAL JODNA (aggregator) — dikkat -> ilaaj
+
+```
+DESIGN: 3 service (A KYC, B credit report, C bank statement) se maal lao, jodo, save karo.
+Loan officer customer 42 ki file kholta hai.
+
+1  DIKKAT: pehle simple kiya: A ko call, phir B, phir C. Har ek 1 sec = file 3 sec me bani, dheema.
+   ILAAJ:  teeno ko SAATH me call (parallel). Ab file 1 sec me, jitni sabse dheemi service.
+
+2  DIKKAT: C (bank) atak gaya, 30 sec jawab nahi. Uska intezaar karte-karte saare thread phans gaye,
+           ab A aur B ki call bhi nahi ho rahi. Ek ki wajah se sab baitha.
+   ILAAJ:  har call pe timeout (2 sec). C baar-baar fail ho to circuit breaker: C ko call band,
+           turant "nahi mila". C ke liye alag thread pool (bulkhead), wo bhare to bhi A, B chalte rahein.
+
+3  DIKKAT: C nahi mila to poori file fail? Loan officer ke paas KYC aur credit report to hai.
+   ILAAJ:  jo mila wo save, file PARTIAL ("bank statement baaki"). Background job baad me C laake bhar deta.
+           (C zaroori ho to file FAILED, aur baad me dobara.)
+
+4  DIKKAT: retry hua, ya do baar request aayi, to customer 42 ki do file ban gayi.
+   ILAAJ:  save pe UNIQUE (customerId, requestId). Dobara aaya to wahi purani file milti, nayi nahi banti.
+
+5  DIKKAT: aggregator beech me mar gaya. File kahin adhoori lataki hai, kisi ko pata nahi.
+   ILAAJ:  job ka haal DB me (PENDING). Job PENDING me atka dikhe to sweeper use dobara chala deta.
+           A, B, C se sirf padhna hai, to dobara call karna safe.
+
+YAAD: saath me call · har service ka timeout + breaker + alag pool · PARTIAL save · UNIQUE · haal DB me.
+```
+
+---
+
 ## Service Discovery
 
 ### Problem
