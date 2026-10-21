@@ -27,13 +27,28 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
         asli link pe bhejta
 ```
 
+> [!IMPORTANT]
+> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
+> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+>
+> | rail | is design me | card |
+> |---|---|---|
+> | 1 kaam chala | lamba link → 7 akshar code, click pe 302 | Shuru |
+> | 2 bheed aayi | sale link viral, har click DB pe | 1 |
+> | 3 machine giri | App giri, site band | 2 |
+> | 4 do log ek saath | maine aur Ravi ko ek hi code (**is design ka khaas**) | 3 |
+> | 5 kuch dheema | click ginti se redirect dheema | 4 |
+> | 6 data bada | 90 TB ek machine me nahi · naya link 404 | 5, 6 |
+> | 7 door ke log / darwaza | LB gira, region gaya | 7 |
+> | 8 bahar ka hamla | spammer 5,000 link / sec | 8 |
+
 ---
 
 *ab tootega kahan? sabse pehle padhne pe, kyunki click 100 guna hain*
 
 ## 1. Mera sale wala link viral hua, har click DB pe, DB baith gaya
 
-Cue: REDIS CACHE (cache-aside)
+**Rail 2 BHEED AAYI** · Cue: REDIS CACHE (cache-aside)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -72,13 +87,28 @@ NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi reh
         Memcached -> GIRA: usme copy nahi, gira to saari bheed seedha DB pe. Redis gira to uski copy sambhalti
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Sach DB me. Redis sirf garam copy: click pehle Redis, miss pe DB se laao aur Redis me rakho.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue (bas itna yaad)**
+> - Redis bhar gaya? → **LRU, sirf garam link**
+> - Link badla, Redis me purana? → **pehle DB, phir Redis se hatao**
+> - Redis gira? → **copy (cluster + replica)**
+> - Copy bhi gayi, saari bheed DB pe? → **single flight (1 jaaye, baaki uska jawab) + load shedding**
+> - Link expiry? → **Redis TTL = link ki expiry**
+> - Har App apna cache kyun nahi? → **link badla to purana reh jaata, isliye shared Redis**
+> - Bot fake code pe lakhon click? → **itna number diya hi nahi, App wahin 404**
+> - Memcached kyun nahi? → **copy nahi, gira to bheed DB pe**
+
+
 ---
 
 *ab App hi ek hai, wo gir gaya to?*
 
 ## 2. Usi bheed me ek App machine giri, poori site band
 
-Cue: STATELESS App x N + LOAD BALANCER
+**Rail 3 MACHINE GIRI** · Cue: STATELESS App x N + LOAD BALANCER
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -101,13 +131,23 @@ NAHI    ek badi machine -> GIRA: kitni bhi badi ho, ek hi hai. Giri to poori sit
            Isliye session bahar, Redis / DB me
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** App kuch yaad nahi rakhti (stateless). LB /health poochta, chup App list se bahar.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue (bas itna yaad)**
+> - App giri nahi, bas dheemi? → **least-conn**
+> - Giri App theek ho gayi? → **/health haan, wapas list me**
+> - Login App me yaad rakhein? → **nahi, session Redis me**
+
+
 ---
 
 *ab kai App hain, sab code bana rahe, takkar?*
 
 ## 3. Maine aur Ravi ne link banaya, dono ko ek hi code mila
 
-Cue: COUNTER RANGE + base62
+**Rail 4 DO LOG EK SAATH (khaas)** · Cue: COUNTER RANGE + base62
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -148,13 +188,26 @@ NAHI    UUID -> LAMBA: 36 akshar, link chhota karna hi to kaam tha
            Counter me takkar hoti hi nahi
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Counter har App ko range deta, App range se agla number, phir base62. Takkar kabhi nahi.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue (bas itna yaad)**
+> - Do log same custom code maangein? → **DB UNIQUE, 409**
+> - App range ke beech crash? → **bache number bekaar, chalta hai**
+> - Counter gira? → **App ki range chalti + Counter ki copy**
+> - MD5 / random kyun nahi? → **takkar, har baar DB check**
+> - Agla code andaza ho jaaye? → **shuffle / XOR, phir base62**
+> - UUID kyun nahi? → **36 akshar, lamba**
+
+
 ---
 
 *ab click gin-ne gaye to redirect dheema*
 
 ## 4. Maine click ginti chahi, redirect hi dheema ho gaya
 
-Cue: KAFKA, ginti peeche
+**Rail 5 KUCH DHEEMA** · Cue: KAFKA, ginti peeche
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -187,13 +240,26 @@ NAHI    click seedha DB me -> DHEEMA: har redirect DB likhai ka intezaar karta, 
         sirf Redis me INCR -> ADHOORA: sirf ginti milti, kaun, kab, kahan se click hua, wo nahi
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Redirect turant (302), "click hua" Kafka me, ginti peeche Analytics apni speed se.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue (bas itna yaad)**
+> - 301 kyun nahi? → **browser yaad rakhta, ginti band**
+> - Analytics dheema? → **Kafka me padi, offset se aage**
+> - Wahi click do baar? → **click id, ginti ek**
+> - Kharab khabar? → **DLQ**
+> - Kafka hi band? → **redirect chalta, bas ginti kam**
+> - SQS kyun nahi? → **padhte hi mita deta, replay nahi**
+
+
 ---
 
 *ab data hi itna ho gaya*
 
 ## 5. DB team boli: 5 saal me 90 TB, ek machine me nahi
 
-Cue: SHARD by code (RING)
+**Rail 6 DATA BADA** · Cue: SHARD by code (RING)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -227,13 +293,31 @@ NAHI    country se baanto -> BIKHRA: code dekh ke pata nahi kis country ka, saar
            Ring me sirf pados ki keys hilti
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Code ka hash ring pe, pehli machine uski, agli 2 machine pe copy (Cassandra).
+
+> [!TIP]
+> **Cross-Q: sawaal → cue (bas itna yaad)**
+> - Data sirf 500 GB? → **ek MySQL kaafi**
+> - Ek machine mari? → **ring ke padosi pe copy**
+> - Ek machine pe zyada bojh? → **virtual nodes**
+> - Cassandra kyun, MySQL kyun nahi? → **join / transaction nahi + 90 TB**
+> - Main copy kaunsi? → **koi nahi, teeno barabar**
+> - Copy badhao to likhna tez? → **nahi, likhne ka bojh = shard**
+> - code % N kyun nahi? → **machine judi to sab keys hilti**
+
+> [!CAUTION]
+> **AWS pe Cassandra kahan? RDS pe? → NAHI.** RDS sirf SQL (MySQL · Postgres · MariaDB · Oracle · SQL Server).
+> Cassandra → **Amazon Keyspaces** ya EC2 pe khud · key-value → **DynamoDB** · Mongo → **DocumentDB** · Redis → **ElastiCache**
+
+
 ---
 
 *ab har tukde ki 3 copy, par naya link 404?*
 
 ## 6. Maine naya link banaya, turant khola, 404 aaya
 
-Cue: QUORUM (2 me likho, 2 se padho)
+**Rail 6 DATA BADA (copy ka AGAR)** · Cue: QUORUM (2 me likho, 2 se padho)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -263,13 +347,25 @@ NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
         ek se padho -> PURANA: wahi copy mil sakti jahan abhi pahuncha nahi, wahi 404
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** 3 copy: 2 me likho, 2 se padho (W + R > N). Har jodi me ek taaza copy.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue (bas itna yaad)**
+> - Likhte waqt copy C giri? → **2 kaafi, C ke liye note (hinted handoff)**
+> - Padhte waqt A, C me farak? → **read repair**
+> - 2 copy gir gayi? → **likhna fail, error**
+> - 5 copy ho to? → **3 + 3 > 5**
+> - Teeno me likho? → **ek giri to likhai ruki**
+
+
 ---
 
 *ab LB hi ek hai*
 
 ## 7. Shaam ko LB hi gir gaya, koi request andar nahi
 
-Cue: ROUTE 53 + 2 LB (health check)
+**Rail 7 DARWAZA / DOOR KE LOG** · Cue: ROUTE 53 + 2 LB (health check)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -292,13 +388,22 @@ KYUN    phone sabse pehle Route 53 se hi poochta hai "kahan jaun?". Wahin se zin
 NAHI    ek hi LB -> GIRA: wo gira to App kitne bhi hon, koi andar nahi aa sakta
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** 2 LB, aage Route 53. Health check pe 3 baar chup = bahar.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue (bas itna yaad)**
+> - Phone ne purana pata yaad rakha? → **DNS TTL ~60 sec, LB kai zone me**
+> - Poora region gaya? → **Route 53 doosre region pe**
+
+
 ---
 
 *ab koi galat istemal kare to?*
 
 ## 8. Raat ko spammer ki script, har second 5,000 link
 
-Cue: RATE LIMIT darwaze pe + WAF
+**Rail 8 BAHAR KA HAMLA** · Cue: RATE LIMIT darwaze pe + WAF
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -318,6 +423,16 @@ KYUN    rokna darwaze pe, sabki ek ginti se. Asli users ki speed bachi rehti
 NAHI    har App apni ginti -> DHEELA: 10 App = had 10 guna, aur bheed App tak aa chuki hoti
         sirf IP pe had -> BADLA: bot naya IP le aata. Isliye ginti API key / user_id pe, jo bot badal na sake
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Gateway pe sabki ek ginti (Redis), had paar to 429, andar aaya hi nahi. Pehchaana hamla WAF pe.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue (bas itna yaad)**
+> - Har App apni ginti? → **had N guna dheeli**
+> - Ginti IP pe? (college ek IP) → **nahi, user_id / API key**
+> - Ban kitni der? → **TTL (jaise 24 ghante), permanent nahi**
+
 
 Poora rate limit = [02_rate_limiter](../02_rate_limiter/02_rate_limiter.md).
 
