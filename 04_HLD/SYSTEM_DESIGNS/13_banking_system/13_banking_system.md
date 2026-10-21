@@ -156,6 +156,12 @@ NAHI    pehle padho, phir kaato
 > [!IMPORTANT]
 > **Yaad rakh:** Check + kaatna ek query: UPDATE ... WHERE balance >= 200. 0 row = "paisa kam". Niyam DB me, Java me nahi.
 
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - UPDATE me WHERE likhna bhool gaye? → **DB ka CHECK (balance >= 0)**: table pe CHECK (balance >= 0) aakhri deewar hai. Code bhoola to bhi DB minus wali likhai mana kar deta
+> - SELECT ... FOR UPDATE kyun nahi? → **ek UPDATE kaafi**: FOR UPDATE me do kadam (padho, phir likho), DB tak do chakkar aur taala lamba. Ek UPDATE me check + kaatna dono, taala sabse chhota
+> - transfer me -500 aur +500 do row, do UPDATE, kram kya? → **chhoti account id pehle**: dono row hamesha chhoti id pehle pakdo, warna ulte transfer ke saath gol ghera (deadlock, card 9)
+
 
 ---
 
