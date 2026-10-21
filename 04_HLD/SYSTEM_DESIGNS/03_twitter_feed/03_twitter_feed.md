@@ -3,7 +3,7 @@
 > App kholo to home timeline: jinhe tum follow karte ho unke tweet, sabse naye upar. Tweet daalna (POST) bhi. Misaal: Arpan ne app khola, Virat "Match great", Sachin "Watching IPL", Dhoni "Practice".
 > Dil do cheezein: feed padhna sasta ho (log 50 baar padhte, 1 baar likhte, isliye feed pehle se bana ke rakho), aur celebrity ka tweet (10 crore follower).
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card ek block: HAL (↳ agar = cross-Q) · KYUN · NAHI (doosra kyun nahi).
+> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -28,13 +28,28 @@ PEHLE   sabse simple: do table, tweets (kisne kya likha) aur follows (kaun kisko
 NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet followers ki feed me daalti hai
 ```
 
+> [!IMPORTANT]
+> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
+> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+>
+> | rail | is design me | card |
+> |---|---|---|
+> | 1 kaam chala | feed khulne pe har baar 200 logon ka jod (**is design ka khaas: push inbox / celeb pull**) | 1 |
+> | 2 bheed aayi | Virat ka tweet, crore feed ek saath · highlights ki bheed me tweet dheema | 4, 9 |
+> | 3 machine giri | India region me ek hi App, wo giri | 8 |
+> | 4 do log ek saath | alag nahi aata: worker dobara chala to bhi sorted set me tweet ek hi baar | 2 |
+> | 5 kuch dheema | tweet button 5 sec ghooma · Bieber ka tweet, line ghanton atki (**khaas**) | 2, 3 |
+> | 6 data bada | 50 crore inbox se RAM bhari · 5 saal me 0.5 PB tweet | 5, 6 |
+> | 7 door ke log | Bangalore se US 300 ms · video door ke server se | 7, 10 |
+> | 8 bahar ka hamla | is file me nahi: rate limit + WAF = 02_rate_limiter | - |
+
 ---
 
 *ab tootega kahan? sabse pehle padhne pe, kyunki padhna 50 guna*
 
 ## 1. Subah app khola, feed ghoomti rahi (har baar 200 logon ka jod)
 
-Cue: PUSH: tweet hote hi INBOX me id
+**Rail 1 KAAM CHALA (khaas)** · Cue: PUSH: tweet hote hi INBOX me id
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -50,12 +65,6 @@ Cue: PUSH: tweet hote hi INBOX me id
 HAL     tweet hote hi follower ke inbox me uski id chali jaati hai (fanout).
         App kholo to bas apna inbox padho, ek hi read
         Ravi ne t9 tweet kiya, wo turant mere inbox me aa gaya. Inbox = tweet_id ki list, pehle se bani hui
-        ↳ agar inbox me sirf id hai, poora tweet kaise? -> 50 id ek saath laao (batch)
-          cache / store se ek saath. Ek-ek laaye to 50 chakkar lagenge
-        ↳ agar unfollow, tweet inbox me pade? -> padhte waqt follow list se chhaanto
-          Poora inbox badalna mehnga hai, safai peeche hoti hai
-        ↳ agar abhi follow kiya? -> uske aakhri 20 tweet id mere inbox me daal do
-          ya padhte waqt uske tweet milao. Warna naya follow tab dikhega jab wo agla tweet karega
 KYUN    padhna 50 guna hai, to mehnat likhte waqt karo, har baar khulne pe jodna mat.
         2 sec purani feed chalegi, isliye pehle se banana aur cache chal jaata hai.
         Jo inbox me nahi hai (poora tweet, unfollow), wo padhte waqt jodo ya chhaanto
@@ -63,13 +72,23 @@ NAHI    DB pe index  -> WAHI: thoda tez hota, par har khulne pe 200 ka jod wahi 
         read replica -> WAHI: thoda tez hota, par har khulne pe 200 ka jod wahi ka wahi
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Tweet hote hi follower ke inbox me sirf id (fanout). Feed = apna inbox, ek read, likhte waqt mehnat.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - inbox me sirf id hai, poora tweet kaise? → **50 id ek saath laao (batch)**: cache / store se ek saath. Ek-ek laaye to 50 chakkar lagenge
+> - unfollow, tweet inbox me pade? → **padhte waqt follow list se chhaanto**: Poora inbox badalna mehnga hai, safai peeche hoti hai
+> - abhi follow kiya? → **uske aakhri 20 tweet id mere inbox me daal do**: ya padhte waqt uske tweet milao. Warna naya follow tab dikhega jab wo agla tweet karega
+
+
 ---
 
 *ab padhna tez, par inbox bharne ka kaam likhne pe aa gaya*
 
 ## 2. Maine tweet kiya, button 5 sec ghoomta raha
 
-Cue: KAFKA, fanout peeche
+**Rail 5 KUCH DHEEMA** · Cue: KAFKA, fanout peeche
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -83,19 +102,7 @@ Cue: KAFKA, fanout peeche
 
 ```
 HAL     tweet DB me save hota hai aur khabar Kafka me jaati hai, mujhe turant "ho gaya" dikhta hai.
-        ↳ agar tweet DB me save, Kafka me khabar fail? -> Outbox ya retry lagao
-          dono ek saath nahi hote. Dobara aaya to sorted set me ek hi rehta
-        ↳ agar fanout peeche, mera tweet meri feed me kab? -> seedha apni feed me
-          apna tweet seedha apni feed me jodo. Fanout peeche, apna turant
         Workers peeche Kafka se padh ke 5,000 inbox bharte hain
-        ↳ agar worker 100 me se 60 inbox bhar ke gira? -> commit nahi hua, khabar phir aayegi
-          worker ne Kafka ko "ho gaya" bola hi nahi (commit nahi kiya), to khabar phir aayegi
-        ↳ agar worker dobara chala aur wahi 60 phir likh diye, to tweet do baar dikhega?
-          -> nahi, ek hi baar. Sorted set me same tweet_id ek hi baar rehta hai
-        ↳ agar bheed me workers kam pad gaye? -> worker badhao, partition bat jaati
-          Kafka ki lines (partition) workers me aapas me bat jaati hain
-        ↳ agar inbox pe bheed: 5,000 tweet/sec x 200 follower = 10 lakh likhai/sec. Redis jhelega?
-          -> ek Redis ~1 lakh/sec jhelta hai, isliye Redis Cluster ke 10-20 tukde, inbox user_id se bate
 NAAM    Kafka = tweet service se fanout tak khabar le jaata hai
 KYUN    pehle usi request me 5,000 inbox ek-ek karke bharte the: 5+ sec, timeout, "fail" dikha,
         par tweet ban chuka tha. Ab "ho gaya" tab, jab tweet DB me save. Inbox bharna Kafka se peeche.
@@ -104,13 +111,26 @@ NAHI    App me peeche ek thread -> KHOYA: App crash hua to thread ka kaam gaya.
            Kafka disk pe hai, wahan se dobara padh sakte
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Tweet DB me save hote hi "ho gaya". Khabar Kafka me, workers peeche inbox bharte. Sorted set me dohra nahi.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - tweet DB me save, Kafka me khabar fail? → **Outbox ya retry lagao**: dono ek saath nahi hote. Dobara aaya to sorted set me ek hi rehta
+> - fanout peeche, mera tweet meri feed me kab? → **seedha apni feed me**: apna tweet seedha apni feed me jodo. Fanout peeche, apna turant
+> - worker 100 me se 60 inbox bhar ke gira? → **commit nahi hua, khabar phir aayegi**: worker ne Kafka ko "ho gaya" bola hi nahi (commit nahi kiya), to khabar phir aayegi
+> - worker dobara chala aur wahi 60 phir likh diye, to tweet do baar dikhega? → **ek hi baar (sorted set)**: nahi, ek hi baar. Sorted set me same tweet_id ek hi baar rehta hai
+> - bheed me workers kam pad gaye? → **worker badhao, partition bat jaati**: Kafka ki lines (partition) workers me aapas me bat jaati hain
+> - inbox pe bheed: 5,000 tweet/sec x 200 follower = 10 lakh likhai/sec. Redis jhelega? → **Redis Cluster, 10-20 tukde**: ek Redis ~1 lakh/sec jhelta hai, isliye Redis Cluster ke 10-20 tukde, inbox user_id se bate
+
+
 ---
 
 *ab aam tweet theek, par celeb ka ek tweet?*
 
 ## 3. Bieber ka ek tweet = 10 crore inbox, line ghanton atki
 
-Cue: HYBRID: aam push, celeb pull
+**Rail 5 KUCH DHEEMA (khaas)** · Cue: HYBRID: aam push, celeb pull
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -125,14 +145,6 @@ Cue: HYBRID: aam push, celeb pull
 ```
 HAL     aam user ka tweet push hota hai (inbox me), celeb ka pull. Bieber ka tweet celeb cache me rehta hai,
         feed khule tab dono milate hain
-        ↳ agar koi user had (~10,000 follower) pe aage-peeche hota rahe? -> do alag had
-          Had pe baar-baar push / pull nahi palta
-        ↳ agar 50 celeb follow kiye, 50 pull mehnge? -> chhote cache me, saste
-          celeb ke tweet alag chhote cache me hain, to 50 pull bhi saste
-        ↳ agar celeb tweet pe laakhon like? -> ginti ke 10 tukde, padhte waqt jodo
-          tweet123#0..#9. Ek key ek hi machine pe hoti hai
-        ↳ agar celeb cache kitna bada hoga?
-          -> chhota: ~5 lakh tweet x 500 byte = ~250 MB, sirf garam tweet
 KYUN    likhai ka bojh follower ki ginti se aata hai. Celeb ka ek tweet 10 crore jagah likhna, yahi dikkat.
         Push kiya to Kafka line me 10 crore kaam, mera tweet peeche, ghanton der.
         Feed hamesha dono ka mel hai: mera inbox + follow kiye celebs ke naye tweet, time se milao.
@@ -140,13 +152,24 @@ KYUN    likhai ka bojh follower ki ginti se aata hai. Celeb ka ek tweet 10 crore
 NAHI    sabke liye pull -> MEHNGA: har feed khulne pe phir 200 ka jod
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Aam user push, celeb pull (celeb cache). Feed = mera inbox + celebs ke naye tweet, time se milao.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - koi user had (~10,000 follower) pe aage-peeche hota rahe? → **do alag had**: Had pe baar-baar push / pull nahi palta
+> - 50 celeb follow kiye, 50 pull mehnge? → **chhote cache me, saste**: celeb ke tweet alag chhote cache me hain, to 50 pull bhi saste
+> - celeb tweet pe laakhon like? → **ginti ke 10 tukde, padhte waqt jodo**: tweet123#0..#9. Ek key ek hi machine pe hoti hai
+> - celeb cache kitna bada hoga? → **~250 MB**: chhota: ~5 lakh tweet x 500 byte = ~250 MB, sirf garam tweet
+
+
 ---
 
 *ab ek tweet pe crore log ek saath*
 
 ## 4. Match khatam, Virat ka tweet, crore log ek saath, DB gira
 
-Cue: HOT-TWEET CACHE (RAM)
+**Rail 2 BHEED AAYI** · Cue: HOT-TWEET CACHE (RAM)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -161,15 +184,20 @@ Cue: HOT-TWEET CACHE (RAM)
 ```
 HAL     garam tweet RAM me rakho (hot-tweet cache). Miss hua to sirf ek request DB jaati hai (lock),
         baaki sab usi ka jawab lete hain
-        ↳ agar ek key pe bheed, machine garam? -> key ki kai copy, kisi se bhi padho
-          (tweet:123#1..#5). Saath me App ki memory me 1-2 sec
-        ↳ agar Virat ne tweet edit kiya, cache me purana? -> cache se key hata do
-          edit / delete dono me. Agla read DB se naya laayega
 KYUN    pehle har feed Virat ka tweet DB se la rahi thi. Ab garam cheez RAM me hai, DB tak sirf ek request,
         DB aaram se rehta hai
 NAHI    DB ki copies badha do -> DHEEMA: wo bhi disk se padhti hain (ms).
            Ek garam hisse ki copies crore read nahi jhel paati
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Garam tweet RAM me (hot-tweet cache). Miss pe sirf ek request DB (lock), baaki uska jawab.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - ek key pe bheed, machine garam? → **key ki kai copy, kisi se bhi padho**: (tweet:123#1..#5). Saath me App ki memory me 1-2 sec
+> - Virat ne tweet edit kiya, cache me purana? → **cache se key hata do**: edit / delete dono me. Agla read DB se naya laayega
+
 
 ---
 
@@ -177,7 +205,7 @@ NAHI    DB ki copies badha do -> DHEEMA: wo bhi disk se padhti hain (ms).
 
 ## 5. Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi
 
-Cue: AAKHRI 800 + soye hue hatao
+**Rail 6 DATA BADA (RAM)** · Cue: AAKHRI 800 + soye hue hatao
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -192,17 +220,6 @@ Cue: AAKHRI 800 + soye hue hatao
 ```
 HAL     naya tweet upar judta hai, 800 se neeche wale kaat do (trim). Soye hue user ka inbox 30 din me
         mit jaata hai (TTL)
-        ↳ agar aakhri 800 ke aage scroll kiya? -> wahan se store (DB) se laao
-          Bahut kam log itna neeche jaate hain
-        ↳ agar neeche scroll, agla page? -> aakhri dikhe tweet ka time (cursor)
-          page number nahi: "isse purane 50". Beech me naya tweet aaya to bhi page nahi khiskta
-        ↳ agar Redis gira, feed ka kya? -> copy (replica) sambhalti hai
-          Warna har feed DB se banegi, mehnga
-        ↳ agar Redis ki copy bhi gayi? -> kuch request mana, inbox dheere bharo
-          har inbox ek request se dheere-dheere bharo
-        ↳ agar soya user 2 mahine baad wapas aaya, uska inbox hai hi nahi? -> pull se banao
-        ↳ agar inbox chhota rakhna hai, to usme kya rakhte ho?
-          -> sirf number aur score (~60-100 byte), poora tweet nahi
 KYUN    pehle har inbox me saare id the, soye users ke bhi. Ab RAM me sirf id, aur sirf zinda logon ki.
         Jo 1 mahine se nahi aaya, uska inbox hi nahi. Jo RAM me nahi, wo DB se bana lo:
         ek baar dheema hoga, par galat nahi
@@ -210,13 +227,26 @@ NAHI    Redis me machine jodte jao -> MEHNGA: soye 40 crore ka inbox bhi RAM kha
            Kharcha badhta hai, dikkat wahi rehti
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Inbox me sirf aakhri 800 id (trim), soye user ka inbox 30 din me mitao (TTL). Wapas aaye to pull se banao.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - aakhri 800 ke aage scroll kiya? → **wahan se store (DB) se laao**: Bahut kam log itna neeche jaate hain
+> - neeche scroll, agla page? → **aakhri dikhe tweet ka time (cursor)**: page number nahi: "isse purane 50". Beech me naya tweet aaya to bhi page nahi khiskta
+> - Redis gira, feed ka kya? → **copy (replica) sambhalti hai**: Warna har feed DB se banegi, mehnga
+> - Redis ki copy bhi gayi? → **kuch request mana, inbox dheere bharo**: har inbox ek request se dheere-dheere bharo
+> - soya user 2 mahine baad wapas aaya, uska inbox hai hi nahi? → **pull se banao**
+> - inbox chhota rakhna hai, to usme kya rakhte ho? → **sirf id + score**: sirf number aur score (~60-100 byte), poora tweet nahi
+
+
 ---
 
 *ab tweet itne ho gaye*
 
 ## 6. DB alert: har second 5,000 tweet, 5 saal me 0.5 PB
 
-Cue: CASSANDRA, user_id se baanto
+**Rail 6 DATA BADA (tweet)** · Cue: CASSANDRA, user_id se baanto
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -230,16 +260,6 @@ Cue: CASSANDRA, user_id se baanto
 
 ```
 HAL     Cassandra lagao, user_id se baanto. Mere saare tweet ek machine pe, naya sabse upar. Ek hi read
-        ↳ agar Cassandra pe itni likhai tez kaise hoti hai?
-          -> commit log ke aakhir me jodta hai, badalta nahi. RAM bhar gayi to RAM ki nayi file disk pe
-        ↳ agar Cassandra me files bahut? -> padhna dheema. Peeche milao (compaction)
-          aur bloom filter lagao
-        ↳ agar meri tweet wali machine giri? -> 3 copy, 2 me likho, 2 se padho (quorum)
-          naya mil hi jaata hai
-        ↳ agar famous ki machine garam? -> theek hai, garam tweet alag RAM cache me
-          user_id se baantna phir bhi theek hai
-        ↳ agar famous ke bahut tweet, machine bhare? -> key (user_id, mahina)
-          key me mahina jodo. Phir ek machine nahi bharegi
 NAAM    Tweet store (Cassandra) = saare tweet yahan rehte hain
 KYUN    ek DB na itna rakh sakta, na itna likh sakta. Jis cheez se padhte ho (user_id), usi se baanto.
         Likhna sirf aakhir me jodna hai, isliye tez. 3 copy, 2 me likho 2 se padho, naya mil hi jaata hai
@@ -247,13 +267,25 @@ NAHI    MySQL -> DHEEMA: har tweet pe har index disk pe dhoondh ke badalna. Join
         tweet_id se baanto -> BIKHRA: bojh barabar, par profile ke liye saari machine poochni padti
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Cassandra, user_id se baanto: mere saare tweet ek machine pe, ek read. 3 copy, 2 likho 2 padho.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - Cassandra pe itni likhai tez kaise hoti hai? → **aakhir me jodta (commit log)**: commit log ke aakhir me jodta hai, badalta nahi. RAM bhar gayi to RAM ki nayi file disk pe
+> - Cassandra me files bahut? → **padhna dheema. Peeche milao (compaction)**: aur bloom filter lagao
+> - meri tweet wali machine giri? → **3 copy, 2 me likho, 2 se padho (quorum)**: naya mil hi jaata hai
+> - famous ki machine garam? → **theek hai, garam tweet alag RAM cache me**: user_id se baantna phir bhi theek hai
+> - famous ke bahut tweet, machine bhare? → **key (user_id, mahina)**: key me mahina jodo. Phir ek machine nahi bharegi
+
+
 ---
 
 *ab data ek desh me, user doosre me*
 
 ## 7. Main Bangalore me, data US me, har feed 300 ms
 
-Cue: REGION-WISE + Route 53
+**Rail 7 DOOR KE LOG** · Cue: REGION-WISE + Route 53
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -267,22 +299,23 @@ Cue: REGION-WISE + Route 53
 
 ```
 HAL     har region me data ki copy rakho (multi-region). Route 53 paas wale region (India) ka pata deta hai
-        ↳ agar regions ka network toota? -> feed chalta rahe, chahe thoda purana
-          consistency nahi, availability: 2 sec purani feed se farak nahi,
-          par feed khuli hi nahi to app band. Jo hai wo dikhao, sahi wala thodi der me
-        ↳ agar US ke celeb ka tweet, India se door? -> garam tweet India cache me bhi
-        ↳ agar poora India region gira? -> Route 53 US pe palat deta. Feed thodi purani, par chalti
-          Copy peeche thi, to feed thodi purani
-        ↳ agar dono region me ek saath likha? -> baad wala jeetega (last write wins)
-          Tweet aksar naya hota hai, takraav kam
-        ↳ agar main US ghoomne gaya, mera data kahan se aayega?
-          -> request India bhejo, ya paas wali copy se do (thoda purana)
-        ↳ agar multi-region ka fayda kya hai?
-          -> tez. Europe ka data Europe me (GDPR). Har region ki bheed ka time alag. Ek gira to baaki chalein
 KYUN    data user ke paas wale region me hai, to feed India region se aati. Copy US se aati rehti hai.
         Doosre region ki copy thodi peeche, to region gira to feed thodi purani, par chalti rehti
 NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana, har feed atak ke aati
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Har region me data ki copy, Route 53 paas wala region deta. Region gira to doosra, feed thodi purani.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - regions ka network toota? → **feed chalta rahe, chahe thoda purana**: consistency nahi, availability: 2 sec purani feed se farak nahi, par feed khuli hi nahi to app band. Jo hai wo dikhao, sahi wala thodi der me
+> - US ke celeb ka tweet, India se door? → **garam tweet India cache me bhi**
+> - poora India region gira? → **Route 53 US pe palat deta. Feed thodi purani, par chalti**: Copy peeche thi, to feed thodi purani
+> - dono region me ek saath likha? → **baad wala jeetega (last write wins)**: Tweet aksar naya hota hai, takraav kam
+> - main US ghoomne gaya, mera data kahan se aayega? → **India bhejo ya paas ki copy**: request India bhejo, ya paas wali copy se do (thoda purana)
+> - multi-region ka fayda kya hai? → **tez + GDPR + ek gira baaki chalein**: tez. Europe ka data Europe me (GDPR). Har region ki bheed ka time alag. Ek gira to baaki chalein
+
 
 ---
 
@@ -290,7 +323,7 @@ NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana,
 
 ## 8. Raat ko har region me ek hi App machine; India wali giri, India band
 
-Cue: STATELESS App x N + ALB
+**Rail 3 MACHINE GIRI** · Cue: STATELESS App x N + ALB
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -305,15 +338,19 @@ Cue: STATELESS App x N + ALB
 ```
 HAL     kai App hain, aage ALB baant-ta hai. App kuch yaad nahi rakhta (stateless x N).
         App 2 giri to wo bahar, baaki chalu rehte hain
-        ↳ agar App 2 giri, pata kaise? -> ALB har ~10 sec poochta "zinda ho?"
-          Chup raha to bahar, theek hua to wapas (Route 53 bhi)
-        ↳ agar naya code daalna hai, App band karein? -> nahi, ek-ek karke badlo (rolling)
-          (rolling). Baaki App bheed sambhaal leti hain
-        ↳ agar nayi App judi, turant poori bheed? -> nahi, ALB dheere-dheere deta
-          pehli request dheemi hoti hai, uske paas apna data nahi
 KYUN    machine kuch yaad nahi rakhti, sab Redis / DB me. Koi bhi gire, jude, badle, user ko farak nahi
 NAHI    ek hi App -> GIRA: wo giri to poora region band
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Kai App (stateless), aage ALB. Giri App bahar, naya code ek-ek karke (rolling).
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - App 2 giri, pata kaise? → **ALB har ~10 sec poochta "zinda ho?"**: Chup raha to bahar, theek hua to wapas (Route 53 bhi)
+> - naya code daalna hai, App band karein? → **nahi, ek-ek karke badlo (rolling)**: (rolling). Baaki App bheed sambhaal leti hain
+> - nayi App judi, turant poori bheed? → **nahi, ALB dheere-dheere deta**: pehli request dheemi hoti hai, uske paas apna data nahi
+
 
 ---
 
@@ -321,7 +358,7 @@ NAHI    ek hi App -> GIRA: wo giri to poora region band
 
 ## 9. Highlights ki bheed ne mera tweet daalna dheema kar diya
 
-Cue: ALAG SERVICE (likhna/padhna)
+**Rail 2 BHEED AAYI (padhna)** · Cue: ALAG SERVICE (likhna/padhna)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -335,12 +372,6 @@ Cue: ALAG SERVICE (likhna/padhna)
 
 ```
 HAL     likhne aur padhne ki alag service. ALB path se baant-ta hai. Jahan bheed hai, wahi badhao
-        ↳ agar feed ki bheed aur badh gayi? -> sirf Timeline Svc badhao, Tweet Svc ko chhuo mat
-          Tweet Svc pe koi asar nahi
-        ↳ agar Suresh ke 5,000 follower? -> Follow store se 1000-1000 padh ke likho
-          inbox likho. Ek baar me sab padhna bhaari hai
-        ↳ agar Timeline ko follow list chahiye, wo kahan se laayega?
-          -> User / Follow store se, par wo Redis me rakhi hoti hai, kyunki har feed pe chahiye
 PATH    POST /tweet -> Tweet Svc (x 2), GET /feed -> Timeline Svc (x 20)
 NAAM    Tweet service = tweet likhti. Timeline service = feed padhti. Follow store = kaun kise follow karta
 KYUN    pehle padhna aur likhna ek service me tha. Crore log scroll kar rahe the,
@@ -349,13 +380,23 @@ KYUN    pehle padhna aur likhna ek service me tha. Crore log scroll kar rahe the
 NAHI    ek hi service -> DHEEMA: padhne ki bheed me likhna bhi dheema hota hai, wahi hua
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Likhne aur padhne ki alag service, ALB path se baante. Jiski bheed, wahi badhao.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - feed ki bheed aur badh gayi? → **sirf Timeline Svc badhao, Tweet Svc ko chhuo mat**: Tweet Svc pe koi asar nahi
+> - Suresh ke 5,000 follower? → **Follow store se 1000-1000 padh ke likho**: inbox likho. Ek baar me sab padhna bhaari hai
+> - Timeline ko follow list chahiye, wo kahan se laayega? → **Redis me rakhi follow list**: User / Follow store se, par wo Redis me rakhi hoti hai, kyunki har feed pe chahiye
+
+
 ---
 
 *ab bhaari maal: photo, video*
 
 ## 10. Maine match ki video daali, sabko dheemi aur mehngi
 
-Cue: S3 + CDN
+**Rail 7 DOOR KE LOG (media)** · Cue: S3 + CDN
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -369,18 +410,22 @@ Cue: S3 + CDN
 
 ```
 HAL     video S3 me rakho (seedha upload, presigned link), dekhne wale ko paas wale CDN se do
-        ↳ agar CDN ke paas video nahi, koi dekhne aaya? -> CDN S3 se laake rakh leta
-          kuch der apne paas rakh leta hai
-        ↳ agar photo hata di, CDN pe abhi dikh rahi? -> CDN ko "hatao" bolo
-          (invalidation), ya link me version daalo, nayi file
-        ↳ agar private photo hai, link kisi aur ko mil gaya? -> link pe hastakshar + expiry
-          (signed URL). Sirf jisko mila, thodi der ke liye
 KYUN    pehle 50 MB ki video Delhi, London, Sydney, har dekhne wala hamare US server se khinchta:
         buffering aur bandwidth ka bill. Ab bhaari maal S3 me, user tak CDN se: paas bhi, sasta bhi.
         Upload me App beech me nahi aata. Tweet me sirf CDN ka link, link badla = nayi file.
         Link pe hastakshar = sirf jisko mila wahi dekhe
 NAHI    API bhi CDN se -> GALAT: CDN sirf media ke raaste pe hai
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Video S3 me (seedha upload, presigned), dekhne wale ko paas ke CDN se. Private = signed URL.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - CDN ke paas video nahi, koi dekhne aaya? → **CDN S3 se laake rakh leta**: kuch der apne paas rakh leta hai
+> - photo hata di, CDN pe abhi dikh rahi? → **CDN ko "hatao" bolo**: (invalidation), ya link me version daalo, nayi file
+> - private photo hai, link kisi aur ko mil gaya? → **link pe hastakshar + expiry**: (signed URL). Sirf jisko mila, thodi der ke liye
+
 
 ---
 
