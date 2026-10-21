@@ -13,7 +13,7 @@ const STEPS = [
   [[C.good, 'Khaata', 'Mahine ke tukde (partition): is mahine ka tukda chhota, query tez'],
    [C.acc, 'DB → S3', 'Mahina band hua to tukda alag karke S3 pe (archive), sasta'],
    [C.good, 'App', 'Balance = mahine ka snapshot + baad ki line, 5 saal nahi jodte']],
-  [[C.msg, 'RBI → Bank', 'RBI ne 2021 ka statement maanga'],
+  [[C.msg, 'RBI → Athena', 'RBI ne 2021 ka statement maanga, query Athena pe gayi'],
    [C.good, 'Athena → S3', 'S3 pe hi query (Athena, Parquet), tukda wapas laane ki zaroorat nahi'],
    [C.acc, 'S3', 'Object Lock: purani file na delete, na badal sakte (5 saal, PMLA)']],
 ];
