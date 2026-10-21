@@ -43,6 +43,7 @@ list.forEach(System.out::println);
 ```java
 List<Integer> nums = List.of(-1, -2, 3);
 nums.stream().map(Math::abs).toList();     // [1, 2, 3]   (map lazy hai, toList() pe chalta)
+// toList() Java 16 se. Java 8 me: .collect(Collectors.toList())
 ```
 
 ### Us TYPE ke kisi bhi object ka method (type 3)
@@ -75,7 +76,7 @@ list.forEach(name -> System.out.println("Hello " + name));   // ye Lambda hi rah
 
 ## POWER PHRASE
 
-> *"Method references are shorthand for lambdas that only call an existing method — `ClassName::methodName` for static, `instance::method` for instance, and `ClassName::new` for constructors."*
+> *"Method references are shorthand for lambdas that only call an existing method — `ClassName::methodName` for static, `instance::method` for a specific object, `ClassName::instanceMethod` for any object of that type, and `ClassName::new` for constructors."*
 
 > **Yaad rakh:**
 > Lambda mein sirf method call → `::` use karo
