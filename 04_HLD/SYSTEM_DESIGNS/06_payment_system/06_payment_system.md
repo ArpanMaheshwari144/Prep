@@ -3,7 +3,7 @@
 > User A se User B / merchant ko paisa, bharose ke saath. Misaal: Arpan ne kirana dukaan (merchant) ko Rs. 500 bheje.
 > Dil do cheezein: paisa do baar na kate, aur paisa kabhi gum na ho. Finance HLD ka core, JP / GS ka favourite.
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card ek block: HAL (↳ agar = cross-Q) · KYUN · NAHI (doosra kyun nahi).
+> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -42,13 +42,28 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
         debit + credit + ledger = kai row ek saath, ye SQL me seedha aur pakka hota hai
 ```
 
+> [!IMPORTANT]
+> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
+> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+>
+> | rail | is design me | card |
+> |---|---|---|
+> | 1 kaam chala | Arpan se Kirana 500 (**is design ka khaas: paisa kabhi galat nahi = ek transaction + ledger**) · merchant doosre bank me · "2200 se 1100 kaise?" | 1, 6, 7 |
+> | 2 bheed aayi | Diwali 3000 payment / sec, machine baithi | 8 |
+> | 3 machine giri | kaatne ke baad server gira · PSP call ke baad server gira | 1, 5 |
+> | 4 do log ek saath | phone + laptop se 500-500, wallet me 600 · metro me retry, 1000 kate | 2, 3 |
+> | 5 kuch dheema | PSP dheema, thread atke · merchant ki report ne payment roka | 4, 9 |
+> | 6 data bada | saal me ~1000 crore row, index RAM me nahi | 10 |
+> | 7 door ke log | nahi aata | - |
+> | 8 bahar ka hamla | body se userId / JWT chori: owner check (card 8 ke cross-Q) | 8 |
+
 ---
 
 *ab tootega kahan? sabse pehle beech me, jab kaatne ke baad server gire*
 
 ## 1. Kirana ko 500 bheje, beech me server gira
 
-Cue: EK TRANSACTION (WAL se poora / ulta)
+**Rail 1 KAAM CHALA (khaas)** · Cue: EK TRANSACTION (WAL se poora / ulta)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -63,21 +78,6 @@ Cue: EK TRANSACTION (WAL se poora / ulta)
 ```
 HAL     BEGIN, Arpan -500, Kirana +500, COMMIT, ye sab ek hi transaction me. Ya dono honge ya koi nahi.
         COMMIT se pehle server gira, to DB apna log (WAL) dekh ke ulta kar deta hai
-        ↳ agar ledger ka INSERT fail? -> ROLLBACK, Arpan ka -500 bhi ulta
-          transaction ke beech fail hua, to paanchon me se ek bhi nahi bachta
-        ↳ agar ROLLBACK ho gaya, to user ko kya dikhe?
-          -> "nahi hua". Paisa jaisa tha waisa hai, wo dobara try kar sakta hai.
-             User ko sirf "hua" ya "nahi hua" dikhta hai, beech ka kabhi nahi
-        ↳ agar hisaab me farak aaya? -> turant alert jaata hai
-          User ko "hua" ya "nahi hua" hi dikhe, beech ka nahi
-        ↳ agar SQL DB ki jagah NoSQL lagate, to?
-          -> kai row aur table pe ek saath sab ya kuch nahi chahiye, aur paisa turant sahi chahiye.
-             "Thodi der baad sahi" (eventual) paise me nahi chalta
-        ↳ agar network toota, consistency ya availability? -> sahi hona pehle
-          Balance pakka nahi, to payment mana. Galat balance pe kaatna usse bhi bura hai.
-          Dashboard aur report thode purane bhi chalte rahein to chalega
-        ↳ agar A->B aur B->A ek saath, dono atke? -> taala pehle chhoti account id pe
-          ye deadlock hai. Taala hamesha chhoti account id pe pehle lo. Poora 13_banking card 9 me hai
 KYUN    DB ka apna log hota hai (WAL). COMMIT se pehle gira, to DB uth ke log dekhta hai, COMMIT nahi tha,
         to ulta kar deta hai aur 500 wapas
         COMMIT ke baad gira, to log me COMMIT hai, DB kaam poora karta hai, kuch nahi khota.
@@ -85,13 +85,26 @@ KYUN    DB ka apna log hota hai (WAL). COMMIT se pehle gira, to DB uth ke log de
 NAHI    do alag badlaav, ek ke baad ek -> GAYAB: Arpan -500 hua, phir crash, merchant +500 hua hi nahi
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** BEGIN, Arpan -500, Kirana +500, ledger, COMMIT: ek hi transaction. Ya sab, ya koi nahi (WAL).
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - ledger ka INSERT fail? → **ROLLBACK, Arpan ka -500 bhi ulta**: transaction ke beech fail hua, to paanchon me se ek bhi nahi bachta
+> - ROLLBACK ho gaya, to user ko kya dikhe? → **"nahi hua"**: "nahi hua". Paisa jaisa tha waisa hai, wo dobara try kar sakta hai. User ko sirf "hua" ya "nahi hua" dikhta hai, beech ka kabhi nahi
+> - hisaab me farak aaya? → **turant alert jaata hai**: User ko "hua" ya "nahi hua" hi dikhe, beech ka nahi
+> - SQL DB ki jagah NoSQL lagate, to? → **nahi: ACID + turant sahi**: kai row aur table pe ek saath sab ya kuch nahi chahiye, aur paisa turant sahi chahiye. "Thodi der baad sahi" (eventual) paise me nahi chalta
+> - network toota, consistency ya availability? → **sahi hona pehle**: Balance pakka nahi, to payment mana. Galat balance pe kaatna usse bhi bura hai. Dashboard aur report thode purane bhi chalte rahein to chalega
+> - A->B aur B->A ek saath, dono atke? → **taala pehle chhoti account id pe**: ye deadlock hai. Taala hamesha chhoti account id pe pehle lo. Poora 13_banking card 9 me hai
+
+
 ---
 
 *ab ek payment theek, par do payment ek saath ek hi wallet pe?*
 
 ## 2. Wallet me 600, phone se 500 aur laptop se 500 ek saath
 
-Cue: check + kaato EK atomic query
+**Rail 4 DO LOG EK SAATH (wallet)** · Cue: check + kaato EK atomic query
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -107,8 +120,6 @@ Cue: check + kaato EK atomic query
 HAL     check aur kaatna ek hi query me karo (atomic UPDATE). DB ek-ek karke chalata hai, jeetta sirf ek:
         SET balance = balance - 500 WHERE id = ? AND balance >= 500
         Phone jeeta, 600 se 100 bacha. Laptop ke liye 100 < 500, 0 row aayi, use "paisa kam" dikha
-        ↳ agar WHERE wala check bhool gaye? -> DB ka CHECK (balance >= 0) pakadta
-          query me WHERE likhna bhool gaye, to bhi DB ka CHECK pakad leta hai. Ye aakhri deewar hai
 KYUN    "paisa hai?" aur "kaato" ek hi kadam me hota hai, DB ke andar. Kitni bhi machine hon, DB ek-ek karke
         chalata hai, jeetta ek. 0 row aayi = reject, user ko turant "paisa kam"
 NAHI    pehle padho, phir kaato -> RACE: phone (dukaan 500) aur laptop (Swiggy 500), dono server ne 600 dekha,
@@ -117,13 +128,21 @@ NAHI    pehle padho, phir kaato -> RACE: phone (dukaan 500) aur laptop (Swiggy 5
         dobara bhejna pakadti hai (card 3)
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Check + kaato ek hi atomic UPDATE ... WHERE balance >= 500. 1 row = kata, 0 row = "paisa kam".
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - WHERE wala check bhool gaye? → **DB ka CHECK (balance >= 0) pakadta**: query me WHERE likhna bhool gaye, to bhi DB ka CHECK pakad leta hai. Ye aakhri deewar hai
+
+
 ---
 
 *ab balance theek, par wahi payment network ne do baar bheji to?*
 
 ## 3. Metro me network gaya, app ne dobara bheja, 1000 kate
 
-Cue: IDEMPOTENCY KEY (screen khulte)
+**Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY KEY (screen khulte)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -139,13 +158,6 @@ Cue: IDEMPOTENCY KEY (screen khulte)
 HAL     payment screen khulte hi app ek key banata hai (key-555), retry pe wahi key jaati hai.
         Store me key-555 pehle se hai, to saved jawab wapas jaata hai, 500 hi kate.
         DB me key pe UNIQUE hai (idempotency key). Saath me Pay button pehli tap pe hi band ho jaata hai
-        ↳ agar key wahi, par amount alag? -> request ka hash bhi rakho, farak = 422
-          farak mila to 422 jaata hai
-        ↳ agar key store se key hatani ho, to kab?
-          -> sirf pakka fail hone pe (paisa hila hi nahi). DONE wali key ~24 ghante rakho
-        ↳ agar sach me do payment, 100 + 100? -> do key, dono honge, 200
-          do baar screen khuli = do key (key-555, key-888), dono honge, 200. Maqsad sirf network ke
-          dobara bhejne ko do baar ginne se rokna hai
 KYUN    ek key = ek payment. Wahi key dobara aayi to kaam nahi hota, saved jawab jaata hai.
         User ko ek hi payment dikhta hai. Nayi payment = nayi screen = nayi key
 HAAL    key ka haal: IN_PROGRESS -> kaato + daalo -> DONE + jawab
@@ -156,13 +168,23 @@ NAHI    bina key -> DOUBLE: timeout hua, app ne dobara bheja, server ne do naye 
         sirf Redis -> KACHCHA: DB ka UNIQUE aakhri deewar hai
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Screen khulte hi key, retry pe wahi key. Key pehle se = saved jawab, dobara nahi kaata.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - key wahi, par amount alag? → **request ka hash bhi rakho, farak = 422**: farak mila to 422 jaata hai
+> - key store se key hatani ho, to kab? → **sirf pakka fail pe**: sirf pakka fail hone pe (paisa hila hi nahi). DONE wali key ~24 ghante rakho
+> - sach me do payment, 100 + 100? → **do key, dono honge, 200**: do baar screen khuli = do key (key-555, key-888), dono honge, 200. Maqsad sirf network ke dobara bhejne ko do baar ginne se rokna hai
+
+
 ---
 
 *ab andar sab theek, par bahar ka PSP dheema ho to?*
 
 ## 4. Bank se 2000 top-up, PSP dheema
 
-Cue: timeout = PENDING, circuit breaker = abhi nahi
+**Rail 5 KUCH DHEEMA (PSP)** · Cue: timeout = PENDING, circuit breaker = abhi nahi
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -179,10 +201,6 @@ HAL     thodi der (2-3 sec) me jawab nahi aaya, to chhodo aur PENDING likho (pat
         baad me pata karo (timeout)
         5 fail ho gaye, to circuit OPEN: call jaati hi nahi, saaf "abhi nahi", paisa hila hi nahi
         (circuit breaker)
-        ↳ agar circuit OPEN, phir kab khulega? -> 30 sec baad ek test call
-          chali to circuit band, nahi to phir OPEN
-        ↳ agar PSP hi poora band? -> doosra PSP. Par ek payment ek hi PSP pe
-          ek payment hamesha ek hi PSP pe chalti hai
 PSP     bahar ka paisa PSP (Razorpay / bank) se aata jaata hai: bank se wallet me (top-up),
         wallet se bank me (payout), ya merchant kisi doosre bank me ho
 KYUN    call gayi aur jawab nahi aaya = PENDING, "fail" kabhi nahi. Call gayi hi nahi (circuit OPEN)
@@ -192,13 +210,22 @@ NAHI    timeout lagao hi mat, wait karo -> ATKA: har thread PSP ke jawab tak ruk
         sab atke, system band
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** 2-3 sec me jawab nahi = PENDING, "fail" nahi. Baar-baar fail = circuit OPEN, turant "abhi nahi".
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - circuit OPEN, phir kab khulega? → **30 sec baad ek test call**: chali to circuit band, nahi to phir OPEN
+> - PSP hi poora band? → **doosra PSP. Par ek payment ek hi PSP pe**: ek payment hamesha ek hi PSP pe chalti hai
+
+
 ---
 
 *ab call gayi aur jawab se pehle hum hi gir gaye to?*
 
 ## 5. PSP ko call kiya aur server gira: paisa gaya ya nahi?
 
-Cue: PENDING pehle + WEBHOOK + RECONCILE
+**Rail 3 MACHINE GIRI (PSP call)** · Cue: PENDING pehle + WEBHOOK + RECONCILE
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -213,13 +240,6 @@ Cue: PENDING pehle + WEBHOOK + RECONCILE
 ```
 HAL     call se PEHLE DB me PENDING likho. PSP baad me khud bataye (webhook), aur purane PENDING pe ek job
         PSP se haal poochhe. Dono me se jo bhi bataye, DB me SUCCESS
-        ↳ agar webhook do baar aaya? -> SUCCESS sirf ek baar, doosra ignore
-        ↳ agar webhook nakli? -> hastakshar jaancho (PSP secret), PENDING se milao
-          hastakshar jaancho (PSP secret) aur apne PENDING se milao
-        ↳ agar webhook aaya hi nahi? -> job purane PENDING ke liye PSP se poochhe
-          job har kuch minute poochhti hai. Raat ko PSP ki file se poora milaan hota hai (reconciliation)
-        ↳ agar job ko PSP ne jawab de diya, phir? -> hua = SUCCESS
-          Pakka fail = FAILED, kuch wapas nahi karna (paisa hila nahi)
 KYUN    "pata nahi" pehle likh diya, to server gire tab bhi tracking number bacha rehta hai. PSP bataye
         (webhook) ya hum poochhe (job). User ko PROCESSING dikhe, andha dobara kabhi nahi
 NAHI    sirf webhook -> KHOTA: webhook kho sakta hai (der ho, ya hamara server band ho).
@@ -227,13 +247,24 @@ NAHI    sirf webhook -> KHOTA: webhook kho sakta hai (der ho, ya hamara server b
         sirf job -> DHEEMA: der lagti hai aur kharcha bhi (PSP ki limit). Isliye dono
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Call se PEHLE PENDING likho. PSP webhook se bataye, nahi to job PSP se poochhe (reconcile).
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - webhook do baar aaya? → **SUCCESS sirf ek baar**: doosra ignore
+> - webhook nakli? → **hastakshar jaancho (PSP secret), PENDING se milao**: hastakshar jaancho (PSP secret) aur apne PENDING se milao
+> - webhook aaya hi nahi? → **job purane PENDING ke liye PSP se poochhe**: job har kuch minute poochhti hai. Raat ko PSP ki file se poora milaan hota hai (reconciliation)
+> - job ko PSP ne jawab de diya, phir? → **hua = SUCCESS**: Pakka fail = FAILED, kuch wapas nahi karna (paisa hila nahi)
+
+
 ---
 
 *ab merchant doosre bank me hai, ek transaction ban hi nahi sakti*
 
 ## 6. Merchant ka account doosre bank me, ek transaction nahi chalta
 
-Cue: SAGA (step-step, fail pe ulta)
+**Rail 1 KAAM CHALA (doosra bank)** · Cue: SAGA (step-step, fail pe ulta)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -248,10 +279,6 @@ Cue: SAGA (step-step, fail pe ulta)
 ```
 HAL     SAGA: step-step chalo, har kadam saga table me likho (DEBITED, PAYOUT). Bank B ka payout fail hua,
         to pichhle kadam ka ulta kaam karo: wallet me 500 wapas (saga, compensate)
-        ↳ agar SAGA ke beech service giri? -> uth ke saga table dekhe, wahin se aage
-          wahin se aage badhe ya ulta kare
-        ↳ agar ulta kaam bhi fail? -> retry + alert, phir manual queue
-          Paisa beech me na atke
 KYUN    alag system me har step likha hua hai. Aage nahi badh sake to ulta karo. User ko PROCESSING dikhe,
         phir SUCCESS ya paisa wapas. Hisaab saaf
 PEHLE   sabse bada sawaal, shuru me poochho: dono account ek hi system / bank me hain ya alag?
@@ -260,13 +287,22 @@ NAHI    ek transaction me dono -> NAMUMKIN: do alag system hain, ek transaction 
         Paisa beech me latka
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Do system = ek txn nahi. SAGA: step-step, har kadam likho, fail pe ulta kaam (500 wapas).
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - SAGA ke beech service giri? → **uth ke saga table dekhe, wahin se aage**: wahin se aage badhe ya ulta kare
+> - ulta kaam bhi fail? → **retry + alert, phir manual queue**: Paisa beech me na atke
+
+
 ---
 
 *ab paisa sahi jagah, par hisaab poochha to?*
 
 ## 7. Maine poochha: kal raat 2200 tha, subah 1100 kaise?
 
-Cue: LEDGER double-entry, sirf INSERT
+**Rail 1 KAAM CHALA (hisaab)** · Cue: LEDGER double-entry, sirf INSERT
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -281,14 +317,6 @@ Cue: LEDGER double-entry, sirf INSERT
 ```
 HAL     ledger double-entry: har paisa do line me, DEBIT + CREDIT, jod 0.
         Sirf nayi line jodte hain, sirf INSERT
-        ↳ agar galat entry ho gayi ya refund aaya? -> mitao nahi, nayi ulti line jodo
-          sirf INSERT hai. Audit me dono line dikhti hain
-        ↳ agar 3 saal me ledger bahut bada? -> mahine ke tukde, purane S3 Glacier me
-          Kanoon jitna kahe utna rakho
-        ↳ agar balance column aur khaata alag? -> raat ko jod == balance, alert
-          raat ko jod == balance check karo. Farak mila to alert
-        ↳ agar poochhe ledger crash se bhi bachaata hai? -> nahi, wo hisaab hai
-          Crash se PENDING + webhook + job bachate hain
 MISAAL  raat ki line: Arpan -800 bijli +800, Arpan -300 recharge +300.
         2200 - 800 - 300 = 1100, line-line dikhta hai
 KYUN    ledger hi sach hai. Sirf nayi line, kaat-peet nahi, jod hamesha 0.
@@ -297,13 +325,24 @@ NAHI    sirf balance column -> ANDHA: number hai (1100), kahani nahi. Support ke
         "kaise bana" ka jawab nahi
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Ledger double-entry: har paisa do line, jod 0. Sirf INSERT, galti pe nayi ulti line.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - galat entry ho gayi ya refund aaya? → **mitao nahi, nayi ulti line jodo**: sirf INSERT hai. Audit me dono line dikhti hain
+> - 3 saal me ledger bahut bada? → **mahine ke tukde, purane S3 Glacier me**: Kanoon jitna kahe utna rakho
+> - balance column aur khaata alag? → **raat ko jod == balance, alert**: raat ko jod == balance check karo. Farak mila to alert
+> - poochhe ledger crash se bhi bachaata hai? → **nahi, wo hisaab hai**: Crash se PENDING + webhook + job bachate hain
+
+
 ---
 
 *ab hisaab theek, par Diwali ki bheed aayi*
 
 ## 8. Shaam Diwali, 3000 payment / second, machine baith gayi
 
-Cue: STATELESS, kai machine + LB
+**Rail 2 BHEED AAYI** · Cue: STATELESS, kai machine + LB
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -318,16 +357,20 @@ Cue: STATELESS, kai machine + LB
 ```
 HAL     kai machine lagao, aage LB, LB kisi bhi machine ko de. Machine kuch yaad nahi rakhti, yaad DB aur
         idempotency store me hai (stateless + LB)
-        ↳ agar peeche ek machine mar gayi? -> LB GET /health, jawab nahi = bahar
-          LB ke peeche wali machine. LB har kuch sec poochta hai (GET /health)
 KYUN    koi bhi machine koi bhi request le sakti hai, koi bhi badlo ya badhao
 AUTH    user kaun hai, ye JWT se pata karo, body se kabhi nahi. Har request pe owner check
-        ↳ agar galat istemaal? -> "from" ka maalik JWT wala? Nahi to 403
-          Aage WAF + had
-        ↳ agar JWT chori? -> chhoti umar (~15 min) + refresh, bade pe PIN / OTP
-          Bade payment pe PIN / OTP
 NAHI    ek hi machine -> BAITHI: CPU bhara, payment atke, timeout, log dobara tap karte, aur bojh
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Kai machine (stateless), aage LB. User kaun = JWT se, body se kabhi nahi, har request pe owner check.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - peeche ek machine mar gayi? → **LB GET /health, jawab nahi = bahar**: LB ke peeche wali machine. LB har kuch sec poochta hai (GET /health)
+> - galat istemaal? → **"from" ka maalik JWT wala? Nahi to 403**: Aage WAF + had
+> - JWT chori? → **chhoti umar (~15 min) + refresh, bade pe PIN / OTP**: Bade payment pe PIN / OTP
+
 
 ---
 
@@ -335,7 +378,7 @@ NAHI    ek hi machine -> BAITHI: CPU bhara, payment atke, timeout, log dobara ta
 
 ## 9. Merchant ki report ne mera payment rok diya
 
-Cue: READ REPLICA (sirf report)
+**Rail 5 KUCH DHEEMA (report)** · Cue: READ REPLICA (sirf report)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -350,16 +393,21 @@ Cue: READ REPLICA (sirf report)
 ```
 HAL     bhaari report copy pe chalao (read replica), primary sirf payment ke liye.
         Copy 1-2 sec peeche chalti hai
-        ↳ agar pay kiya, turant balance dekha? -> primary se padho, copy peeche
-          Copy 1-2 sec peeche hai
-        ↳ agar copy aur peeche chali gayi? -> lag naapo, had paar hui to alert
-          kitni peeche hai naapo (replication lag)
-        ↳ agar report itni bhaari ki copy bhi baithe? -> alag warehouse (CDC)
-        ↳ agar primary gir gaya? -> sync standby ban jaata, kuch nahi khota
 KYUN    paisa aur haal PRIMARY se padho, replica peeche ho sakti hai. Report replica / warehouse se.
         Payment tez rehta hai
 NAHI    report bhi primary pe -> RUKA: wahi hua, mahine bhar ki report ne primary busy kiya, payment ruka
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Bhaari report copy pe (read replica). Paisa aur haal hamesha primary se padho.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - pay kiya, turant balance dekha? → **primary se padho, copy peeche**: Copy 1-2 sec peeche hai
+> - copy aur peeche chali gayi? → **lag naapo, had paar hui to alert**: kitni peeche hai naapo (replication lag)
+> - report itni bhaari ki copy bhi baithe? → **alag warehouse (CDC)**
+> - primary gir gaya? → **sync standby ban jaata**: kuch nahi khota
+
 
 ---
 
@@ -367,7 +415,7 @@ NAHI    report bhi primary pe -> RUKA: wahi hua, mahine bhar ki report ne primar
 
 ## 10. Saal me ~1000 crore row, primary ki likhai dheemi
 
-Cue: SHARD by account_id
+**Rail 6 DATA BADA** · Cue: SHARD by account_id
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -381,22 +429,22 @@ Cue: SHARD by account_id
 
 ```
 HAL     account_id se tukde karo (shard). Mera balance aur meri history ek hi tukde pe (shard by account_id)
-        ↳ agar do account alag shard pe? -> saga: A se kaato, B me daalo
-          fail pe ulta. Ek transaction nahi
-        ↳ agar ek account bahut bada (merchant)? -> sub-account alag shard pe
-          wo shard garam ho jaata. Sub-account alag shard pe, report me jodo
-        ↳ agar shard wale system me idempotency key kahan rakhoge?
-          -> account_id se usi shard pe. Payment ke saath ek transaction me
-        ↳ agar account kis shard pe jaayega, kaise tay hoga?
-          -> ring (consistent hashing) ya naksha (lookup table)
-        ↳ agar Swiggy pe 3000 credit/sec, lock ki line? -> credit sirf ledger line
-          Swiggy ke ek account ki ek row pe lock ki line lag gayi. Credit sirf ledger line me
-          (koi lock nahi), balance column peeche batch me jodo; ya merchant ke 10 sub-account,
-          report me jodo
 KYUN    jo ek transaction me saath chahiye (account + uski history) wo ek shard pe.
         Transaction ek shard tak hi rehti hai
 NAHI    ek hi DB -> DHEEMA: 1000 crore row, index RAM me nahi samaata, disk se padhta, har likhai dheemi
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** account_id se shard: mera balance + history ek tukde pe. Do shard ke beech = saga.
+
+> [!TIP]
+> **Cross-Q: sawaal → cue, phir poora jawab**
+> - do account alag shard pe? → **saga: A se kaato, B me daalo**: fail pe ulta. Ek transaction nahi
+> - ek account bahut bada (merchant)? → **sub-account alag shard pe**: wo shard garam ho jaata. Sub-account alag shard pe, report me jodo
+> - shard wale system me idempotency key kahan rakhoge? → **usi shard pe**: account_id se usi shard pe. Payment ke saath ek transaction me
+> - account kis shard pe jaayega, kaise tay hoga? → **ring ya lookup table**: ring (consistent hashing) ya naksha (lookup table)
+> - Swiggy pe 3000 credit/sec, lock ki line? → **credit sirf ledger line**: Swiggy ke ek account ki ek row pe lock ki line lag gayi. Credit sirf ledger line me (koi lock nahi), balance column peeche batch me jodo; ya merchant ke 10 sub-account, report me jodo
+
 
 ---
 

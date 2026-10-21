@@ -20,7 +20,7 @@ def items(block):
             t = l.strip()[1:].strip()
             if t.startswith('agar '):
                 t = t[5:]
-            q, _, a = t.partition('->')
+            q, _, a = t.partition(' -> ') if ' -> ' in t else t.partition('->')
             cur = [q.strip(), a.strip(), []]
             out.append(cur)
         elif cur and l.startswith('          '):
