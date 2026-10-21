@@ -148,11 +148,32 @@ optional.orElseThrow(() -> new ...);     // safe with exception
 > Optional<User> findById(Long id) { ... }  // sahi use
 > ```
 
+## TRAP 3 — `orElse()` vs `orElseGet()` (interview favourite)
+
+→ `orElse(x)` me **x HAMESHA pehle ban jaata** — dabba bhara ho tab bhi. Java pehle argument banata, phir method chalata.
+→ `orElseGet(() -> x)` me x ek **lambda (Supplier)** hai — wo **sirf dabba KHAALI ho tabhi** chalta.
+→ Default sasta ho (`"Unknown"`, `0`) → `orElse` theek. Default MEHNGA ho (DB call, API call, naya object) → `orElseGet`.
+
+```java
+Optional<String> bhara = Optional.of("Arpan");
+
+bhara.orElse(dbSeLao());            // dabba bhara hai, phir bhi dbSeLao() CHALA -> DB call bekaar
+bhara.orElseGet(() -> dbSeLao());   // dabba bhara hai -> lambda chala hi nahi
+```
+Chala ke dekha (dbSeLao() andar "DB call chali" print karta):
+```
+orElse:
+  DB call chali      <- bekaar call
+  Arpan
+orElseGet:
+  Arpan              <- koi call nahi
+```
+
 ---
 
 ## POWER PHRASE
 
-> *"Optional is a container that may or may not hold a value — it replaces null checks with a fluent API. Use `orElse()` for defaults, `orElseThrow()` for exceptions, and `map()` to transform safely. Never call `get()` directly. Use `ofNullable()` when the value might be null, `of()` when guaranteed non-null."*
+> *"Optional is a container that may or may not hold a value — it replaces null checks with a fluent API. Use `orElse()` for defaults, `orElseThrow()` for exceptions, and `map()` to transform safely. Never call `get()` directly. `orElse()` always evaluates its default, `orElseGet()` only when empty, so use `orElseGet()` for an expensive default. Use `ofNullable()` when the value might be null, `of()` when guaranteed non-null."*
 
 > **Yaad rakh:**
 > Optional = null ka safe replacement
@@ -160,4 +181,5 @@ optional.orElseThrow(() -> new ...);     // safe with exception
 > `ofNullable()` = maybe null (90% yahi)
 > `orElse / orElseThrow` = safe access
 > `get()` seedha = dangerous
+> `orElse(x)` = x hamesha banta · `orElseGet(() -> x)` = sirf khaali pe (mehnga default)
 > Sirf return type mein use karo, parameter mein nahi
