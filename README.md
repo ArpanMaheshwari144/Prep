@@ -3,8 +3,16 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase — build done):** roz Java/Spring DIN (7 din ka chakkar) · DSA 1 redo + grill 5 · PR drill 1 · apply. Bada kaam roz DONO: HLD mock (design ka MOCK CUE padho -> file band karke bolo -> 2-3 cross-question) + STAR ek kahani bolke. Ab "jaanna" se "bolke nikaalna" pe focus.
-> Live state + plan → **[PROGRESS.md](PROGRESS.md)**
+> ★ **Abhi (DELIVERY + APPLY phase, build done):** roz Java / Spring DIN (7 din ka chakkar) · DSA 1 redo + grill 5 · PR drill 1 · HLD mock ek design · apply. STAR har 3-4 din me ek kahani.
+> Focus "jaanna" se "bolke nikaalna" pe: HLD me tasveer dekh ke design bolo, phir cross-question.
+
+```
+SAFAR (March: khaali folder)  ->  aaj
+  Java + Spring poora · LLD 11 · 6 project
+  HLD: 14 design (348 tasveer) + 19 foundation + master sheet
+  DSA: 18 pattern · 175 problem + 126 REDO = 301 .cpp · pattern sheet
+  STAR 11 kahani · PR review framework · DB internals
+```
 
 ---
 
@@ -15,13 +23,13 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | 14 designs (har design ke upar MOCK CUE table: har dikkat ek line, click = wo dikkat · har dikkat ke neeche interviewer ka cross-question) + master sheet (8 dabbe · trade-off · kaise bolna · SHABD) + 19 foundations + practice log + HANDS_ON (4 demo: chala ke dekha kya tootta) | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | 14 design (har card: RAIL tag + Cue + 3 tasveer DIKKAT / ILAAJ / AGAR + HAL / KYUN / NAHI + Yaad rakh + Cross-Q) + master sheet + 19 foundations + HANDS_ON (4 demo) | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 175 problem + 126 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
-| 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | STAR stories | JP ka pura **behavioral round** |
+| 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
 | 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | asli JP round ke hisaab se: correctness · security · quality · design | JP Superday **~10 min PR review** |
 | 13 | [**13_TOOLS**](13_TOOLS) | IntelliJ shortcuts + setup (source me ghoomna) | Spring/library ka andar khol ke dekhna, live coding me tez |
@@ -52,6 +60,10 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - **[08_TESTING](01_JAVA/08_TESTING)** — [unit testing (JUnit + Mockito)](01_JAVA/08_TESTING/01_unit_testing_mockito.md) — mock/when/assert/verify + tautology-vs-logic + usercrud anchor.
 
+- **[09_SYSTEM_WRITE](01_JAVA/09_SYSTEM_WRITE)** — CodeSignal / Airbnb jaisa round: class ke method likho, tests pass karo — [L1 Wallet](01_JAVA/09_SYSTEM_WRITE/L1_Wallet.java).
+
+- **[00_NOTES_BOOK](01_JAVA/00_NOTES_BOOK)** — poore Java notes ek kitaab me ([PDF](01_JAVA/00_NOTES_BOOK/Arpan_Java_Notes_V90.pdf) · [DOCX](01_JAVA/00_NOTES_BOOK/Arpan_Java_Notes_V90.docx)).
+
 
 ---
 
@@ -64,7 +76,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 - **[02_transactional](02_SPRING/02_transactional/01_transactional_complete.md)** — @Transactional complete (proxy pe tika, rollback/propagation/isolation).
 
-- **[03_jwt_security](02_SPRING/03_jwt_security/01_jwt_complete.md)** — JWT + Spring Security filter-chain complete.
+- **[03_jwt_security](02_SPRING/03_jwt_security/01_jwt_complete.md)** — JWT + Spring Security filter-chain complete + **Filter vs Interceptor** (kaun kahan chalta, kab kya).
 
 - **[04_profiles](02_SPRING/04_profiles)** — env-wise config — [basics](02_SPRING/04_profiles/01_basics.md) · [compose](02_SPRING/04_profiles/02_compose_integration.md) · [reference](02_SPRING/04_profiles/03_reference.md)
 
@@ -93,7 +105,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ---
 
 ## [04_HLD](04_HLD) — tera strong zone
-**Kya:** 14 poore design (roz ek ka mock, cross-question usi file me) + master sheet (doubt dhoondhne ka index) + neev (19 foundations) + bolke kiye round ka log. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
+**Kya:** 14 poore design (roz ek ka mock, cross-question usi file me) + master sheet + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
 ```
 ★★ HLD = DIKKAT KI CHAIN — ek dikkat ka ilaaj, agli dikkat khol deta
@@ -102,18 +114,26 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
   twitter:  200 ka data har baar ──► inbox ──► button atka ──► Kafka ──► Bieber 10 crore ──► celeb pull + merge
 
-★ MOCK KA KRAM (har design me SHURU ke baad MOCK CUE table)
+★ RAIL — har design isi kram me chalta (8 kadam, har file ke upar)
 
-  ┌────────────────┐   ┌──────────────────┐   ┌────────────────────┐   ┌──────────────────────┐
-  │ MOCK CUE padho │ → │ file band, bolo  │ → │ atke? number click │ → │ wahi dikkat, padh lo │
-  └────────────────┘   └──────────────────┘   └────────────────────┘   └──────────────────────┘
+  kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+
+★ HAR CARD KI SHAKAL
+
+  ┌────────────────┐   ┌────────────────────────┐   ┌───────────────────┐   ┌───────────────────────┐
+  │ Rail tag + Cue │ → │ 3 tasveer              │ → │ HAL · KYUN · NAHI │ → │ Yaad rakh + Cross-Q   │
+  │ (ilaaj ka naam)│   │ DIKKAT → ILAAJ → AGAR  │   │ (bolne wali line) │   │ (sawaal → cue: jawab) │
+  └────────────────┘   └────────────────────────┘   └───────────────────┘   └───────────────────────┘
+
+★ MOCK: heading + Cue + tasveer dekh ke poora design bolo → end me 2-3 cross-Q → jo atka wo usi card me
 ```
 
-- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design, ROZ EK KA MOCK. Har design: upar ByteByteGo tasveer + SHURU (sawaal · FR/NFR · numbers) -> **MOCK CUE** (har dikkat ek line + cue, number pe click = wo dikkat) -> DABBA 0 -> har **DIKKAT**: SOLUTION -> NAYA / BADLA -> KAISE / KYUN YE -> **BOARD PE · POOCHEGA · DHYAAN · BOL** (interviewer ka English sawaal + bolne layak line) -> **AGLA SAWAAL** (tere jawab se agla) -> diagram (mermaid). Mock me jo atka wo usi dikkat ke neeche — design padho to cross-question bhi saath me — [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
+- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design. Har file: upar poori tasveer + **Shuru** (FR · NFR · numbers · Dabba 0 · scope) + **RAIL dabba** (8 kadam, har kadam kis card me) + **AWS pe kaunsa DB** + har card (tasveer `<details>` me khulti, neeche patti me har kadam ka poora vakya) + ek saans + Pooche to. 01-13 naye saanche me (348 tasveer, Fable audit me 0 galti), 14 chat agla.
+  [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
 
 - ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md)** — doubt aaye to yahan dhoondho: sabse upar **clickable INDEX + DOUBT DHOONDHO** (doubt likha -> click -> seedha jawab; Alex Xu ke chapter ka map bhi) · 8 dabbe x 4 line · 6 archetype · universal rail · block-menu · A-ya-B trade-off jode · 14 design ka DIL + KHAAS hissa · anjaan-design recipe · kaise bolna · SHABD (word atke to). Cross-question (Q1-Q22) ab yahan nahi, design files me (4-Oct).
 
-- **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md) · [19 url-browser-journey](04_HLD/FOUNDATIONS/19_url_browser_journey.md)
+- **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) (+ interview me kaunsa DB: 4 sawaal) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) (+ 3 service se maal jodna: timeout · breaker · PARTIAL) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md) · [19 url-browser-journey](04_HLD/FOUNDATIONS/19_url_browser_journey.md)
 
 - **[HLD_PRACTICE_LOG](04_HLD/HLD_PRACTICE_LOG.md)** — bolke kiye HLD round ka log (kya khud nikla, kya round me seekha)
 
@@ -129,6 +149,8 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 | [02 INCR ke baad crash](04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java) | TTL -1 → user hamesha block · Lua se INCR+EXPIRE ek saath → theek | [rate limiter — HANDS-ON #3](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
 | [03 provider ka 429](04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java) | naive retry: 1000 me 700 SMS phenke · throttle + backoff + queue: 1000/1000 | [notification — HANDS-ON](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) |
 | [04 event kahan khota](04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java) | producer / Kafka / consumer pe crash → 5 me 3 khoye · outbox + acks=all + offset baad me + idempotent → 0 | [Kafka — HANDS-ON](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) |
+
+- **[tools](04_HLD/tools)** — tasveer banane ke script: `anim_build.py` (card ka scene -> PNG) · `sheet.py` (saari tasveer ek sheet pe, check ke liye) · `hld_boxes.py` (Yaad rakh + Cross-Q dabbe) · [PNG_GUIDE](04_HLD/tools/PNG_GUIDE.md) (tasveer ke niyam).
 
 
 ---
@@ -177,24 +199,27 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 177 problem (+ 110 REDO/BLANK files) = 287 .cpp
-**Kya:** pattern-wise solved problems + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + spaced-redo.
+## [08_DSA](08_DSA) — 18 pattern · 175 problem + 126 REDO = 301 .cpp
+**Kya:** pattern-wise solved problems (sirf C++) + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
-- ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi" (har pattern ka saar + template + dry-run) — **roz-glance**.
+- ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi": sabse upar DECISION (brute → redundancy → cache → DS = pattern), phir har pattern ka template, "kyun" usi code line pe comment.
 
-> Neeche ki ginti = **problem files** (REDO/BLANK alag se gine hain). Kul upar heading me.
+```
+ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disguised: kahani badli, shart wahi)
+     galti ya chhoota → usi din naya REDO   ·   18 pattern = 18 din ka ek chakkar, phir wapas 01
+```
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
-| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 7 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 9 |
-| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 10 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 1 |
-| 03 | [HASHING](08_DSA/03_HASHING) | 11 | 10 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 4 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 8 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 7 |
-| 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 4 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 5 |
-| 06 | [STACK](08_DSA/06_STACK) | 12 | 5 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 2 |
-| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 7 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 6 |
-| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 5 | | 17 | [DP](08_DSA/17_DP) | 16 | 14 |
-| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 3 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 3 |
+| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 9 | | 10 | [KADANE](08_DSA/10_KADANE) | 8 | 10 |
+| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 11 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 1 |
+| 03 | [HASHING](08_DSA/03_HASHING) | 10 | 12 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 4 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 9 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 9 |
+| 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 5 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 5 |
+| 06 | [STACK](08_DSA/06_STACK) | 12 | 5 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 3 |
+| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 8 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 7 |
+| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 6 | | 17 | [DP](08_DSA/17_DP) | 16 | 15 |
+| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 3 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 4 |
 
 ---
 
@@ -206,7 +231,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ---
 
 ## [10_BEHAVIORAL](10_BEHAVIORAL) — STAR
-**Kya:** JP-fit STAR kahaniyaan. &nbsp; **Kyu:** pura behavioral round; "tell me about a time" — bolke ready rakhni.
+**Kya:** JP-fit STAR kahaniyaan (11, sab ek-ek baar bolke). &nbsp; **Kyu:** pura behavioral round; "tell me about a time" — har 3-4 din me ek kahani dobara.
 
 [01 JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [02 why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [03 STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [04 STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [05 STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [06 STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [07 STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md) · [08 STAR: SQLi-WAF](10_BEHAVIORAL/08_STAR_SQLi_WAF.md) · [09 STAR: SMS opt-out](10_BEHAVIORAL/09_STAR_SMS_OptOut.md) · [10 STAR: email dedup](10_BEHAVIORAL/10_STAR_Email_Dedup.md) · [11 STAR: MongoDB sync](10_BEHAVIORAL/11_STAR_MongoDB_Sync.md) · [12 STAR: Fargate subnets](10_BEHAVIORAL/12_STAR_Fargate_Subnets.md) · [13 STAR: $0 pricing](10_BEHAVIORAL/13_STAR_Zero_Pricing.md)
 
@@ -224,7 +249,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 
 [PR review](12_CODE_REVIEW/PR_REVIEW.md) — sabse upar **10 SAWAAL** (fields · ID kiski · input · 2 request · save · bahar ki call · loop · catch · log · return), phir code ki har JAGAH ka section (class fields -> method params -> DB -> if -> write -> HTTP -> loop -> catch -> log -> return): code ki SHAKAL -> NAAM -> ASAR -> SAHI. End me **FAISLA** line, 3 blocker naam ke saath.
 
-> **Asli JP jaise drill (bug + style) ka record:** 28-Sep StatementJob 7/17 -> RefundController 9/17 -> 29-Sep UserController 9/15 -> 3-Oct BillReminder 17/23 (owner check pakda) -> Transfer 12+1/20 -> Refund 16+1/25 -> FD 18/27 -> 11-Oct Rewards 14/21 (owner check + FAISLA line dono aaye) -> 12-Oct Beneficiary 11+1/20 + FAISLA.
+> **Drill ka tareeka:** answer-key pehle likhi, PR me sirf wo bug jo abhi chhoot rahe (file ke sabse upar list). 2 drill lagaataar pakda gaya to "mat do" list me.
 
 ---
 
