@@ -792,6 +792,48 @@ HTTP Request
 
 ---
 
+## Filter vs Interceptor (Spring) — kaun kahan chalta
+
+```
+KAHANI: ek office building.
+  Filter        = building ke MAIN GATE ka guard. Har aane wala uske saamne se guzarta,
+                  chahe kisi bhi floor jaana ho. Use nahi pata tu kis cabin me jaayega.
+  Interceptor   = office floor ki RECEPTIONIST. Sirf Spring MVC wale request uske paas aate,
+                  aur use pata hai tu kis cabin (kaunsa controller method) jaa raha hai.
+  @PreAuthorize = cabin ke darwaze ka taala. Sabse aakhir me, method pe.
+
+TASVEER (ek request ka raasta):
+  Request
+    -> Filter 1, Filter 2 ... (Spring Security yahi hai: JwtFilter, Authorization filter)
+    -> DispatcherServlet (Spring MVC ka darwaza)
+    -> Interceptor.preHandle()        false lautaya to yahin ruk
+    -> @PreAuthorize (AOP proxy) -> Controller method
+    -> Interceptor.postHandle()       controller ke baad
+    -> Interceptor.afterCompletion()  hamesha chalta, exception aaye tab bhi
+    -> Filter wapas (response pe kuch karna ho to)
+  Response
+
+KHAAS BAAT:
+  1. Filter = Servlet ka hissa (jakarta.servlet.Filter), Spring MVC ke BAHAR. Interceptor = Spring MVC ka
+     (HandlerInterceptor), DispatcherServlet ke ANDAR.
+  2. Filter har request dekhta (static file bhi). Interceptor sirf controller wali request, aur
+     handler jaanta hai (kaunsa controller / method).
+  3. Filter me exception aaye to @ControllerAdvice usse nahi pakadta, wo DispatcherServlet ke bahar hai.
+     Interceptor me aaye to pakadta hai.
+  4. Kab kya: auth / JWT / CORS / har request ka log -> Filter.
+     Controller-specific kaam (endpoint ka time, tenant check, audit jisme method ka naam chahiye) -> Interceptor.
+
+TERA PROJECT: usercrud me JwtFilter (OncePerRequestFilter) = Filter. Auth isliye filter me,
+  kyunki controller tak pahunchne se pehle hi rokna hai.
+
+INTERVIEW LINE:
+  "Filter is servlet-level and runs before DispatcherServlet for every request; Spring Security is a
+   filter chain, so JWT validation lives there. An interceptor is Spring MVC-level, runs around the
+   controller and knows the handler, so I use it for per-endpoint concerns like timing or audit."
+```
+
+---
+
 ## Components needed (Spring side)
 
 ```
