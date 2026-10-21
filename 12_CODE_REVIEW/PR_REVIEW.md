@@ -4,20 +4,16 @@ Code upar se neeche chalo. Har JAGAH pe ruko, neeche uska section dekho.
 Har bug ki pehchaan = code ki SHAKAL. Shakal dikhi -> naam bolo -> asar bolo -> sahi bolo.
 ★ = drills me chhoota tha.
 
-DRILL ME KYA AAYEGA (upar = jo chhoot raha, neeche = jo pakda jaata):
-1. CHHOOT RAHE (har drill me, jab tak lagaataar pakde na jaayein):
-   - request body se userId (`req.getUserId()`) -> JWT / principal se lo
+DRILL ME KYA AAYEGA:
+★ AGLI PR ME SIRF YE (jo CHHOOT rahe; 21-Oct claim payout me chhoote). Jo pakda jaata wo PR me NAHI:
    - fail pe 200 (`catch` me `ok("FAILED")`) -> 502 / 4xx + status FAILED
-   - owner check (bill / order IS user ka hai?) -> naam se bolo: "OWNER CHECK nahi, 403"
-   - bahar ki call @Transactional ke andar + timeout nahi
-2. ABHI PAKAD RAHA (drill me rahenge, 2-3 baar aur pakde to neeche):
-   - (khaali: 21-Oct owner check + bahar ki call chhoote, upar gaye)
-3. ★ BAARI-BAARI (har drill me 1-2): check-then-act · idempotency · status pehle verify baad · -ve / 0 amount ·
-   == se compare (String / Long / Integer pe equals; enum pe == SAHI hai)
-4. PAKKA (ab pakde jaate, roz nahi, hafte me ek baar taaki taaza rahe): SQL injection · catch nigalna ·
-   singleton me field · @Transactional private · DI (constructor nahi) · FAISLA line ·
-   entity seedha bahar (DTO + mask)
-- Upar wala lagaataar pakda jaaye -> ek kadam neeche. Neeche wala chhoot jaaye -> wapas upar.
+   - owner check (claim / bill IS user ka hai?) -> naam se likho: "OWNER CHECK nahi, 403"
+   - bahar ki call (bank / SMS) @Transactional ke andar + timeout nahi -> txn ke bahar, timeout, PENDING
+   - double payout (check-then-act: status dekha -> pay -> PAID) -> atomic UPDATE ... WHERE status=? + idempotency key
+PR ME MAT DO (pakde jaate, koi matlab nahi): body se userId (21-Oct pakda) · CI / DI constructor ·
+   String == / enum · log me sensitive (account / card) · amount client se · @Transactional private ·
+   SQL injection · catch nigalna · singleton me field · FAISLA line · entity seedha bahar
+- Upar wala 2 drill lagaataar pakda jaaye -> "MAT DO" me. "MAT DO" wala kabhi chhoote -> wapas upar.
 
 ---
 
