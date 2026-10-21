@@ -437,6 +437,39 @@ Tera Amazon shopping experience:
 
 ---
 
+## ★ Interview: "Postgres, MongoDB, Redis ya Cassandra, kaunsa aur kyun?"
+
+```
+GALAT JAWAB: "MongoDB, fast hai, flexible hai, scale karta hai" -> reject.
+  kyunki DB pehle chuna nahi jaata. Pehle 4 sawaal:
+    1  data ka STRUCTURE kaisa hai?           (fixed table / har item alag / sirf key)
+    2  READ pattern kya hai?                  (join chahiye / ek key se / ek order ki history)
+    3  WRITE volume kitna hai?                (kam / lagaataar bahut saare)
+    4  ek galat read / write kitna MEHNGA?    (paisa = bahut / location thodi purani = chalega)
+
+MISAAL: food delivery app (order, menu, rider location, order tracking)
+
+  POSTGRES (SQL, table)       order place + payment kata + coupon laga = teeno saath ya koi nahi
+                              -> TRANSACTION (ACID), aur tables ke beech JOIN bhi.  paisa = Postgres.
+                              (Instagram ka main data Postgres pe)
+  MONGODB (NoSQL, document)   menu: pizza = size + toppings, biryani = half / full, thali = 10 item.
+                              har item alag shakal -> 1 item = 1 JSON document.
+                              naya field ("spicy": true) jodna ho to poora schema migrate nahi.
+  REDIS (NoSQL, key-value)    data RAM me -> jawab aksar 1 ms se kam.
+                              rider:77 -> lat,lng · session:42 -> logged_in · menu:hot -> cache.
+                              PAR RAM mehngi + kam -> asli data (source of truth) kisi DB me rakho.
+  CASSANDRA (NoSQL, wide col) order tracking: accepted -> rider assigned -> picked -> delivered.
+                              lakhon order x har order ke dher event = bas lagaataar WRITE.
+                              data kai node pe, koi ek leader nahi -> ek node gira, write chalti rahe.
+                              (Discord ke messages pehle Cassandra pe the)
+                              CATCH: JOIN nahi. table pehle se apni READ query ke hisaab se banao.
+
+SABSE ZAROORI: ek app me ek se zyada DB ho sakte hain (upar "Polyglot" dekho).
+  food app = order / payment Postgres · menu MongoDB · location + session Redis · tracking Cassandra.
+```
+
+---
+
 ## Quick Decision Logic
 
 ```
