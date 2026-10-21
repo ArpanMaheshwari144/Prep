@@ -84,6 +84,30 @@
 ```
 
 ```
+★ ITNE NoSQL KYUN? Mongo me hi Cassandra + Redis ki taakat kyun nahi daal dete?
+
+  Har DB ek cheez ke liye doosri CHHODTA hai, aur dono ULTI hain -> ek saath nahi aati.
+  Jaise gaadi: BIKE tez par 10 log nahi · TRUCK 10 ton par gali me nahi · tez = halki, maal = bhaari.
+
+  REDIS       sab RAM me           -> 1 ms se kam         PAR RAM chhoti + mehngi
+  CASSANDRA   koi leader nahi + sirf aage likhna (append)
+              -> likhai kabhi nahi rukti   PAR join nahi, padhna pehle se tay
+  MONGO       ek document, har shard ka ek leader
+              -> achhi query, azaad shakal   PAR likhai Cassandra jitni nahi
+  POSTGRES    ek machine, sab table saath
+              -> transaction + join pakka   PAR 100 machine pe baantna mushkil
+
+  NEEV ek hi ho sakti hai: data RAM me ya disk pe · leader hai ya nahi · likhna append ya jagah pe badalna.
+  Upar ke feature jod sakte ho, neev nahi badal sakte.
+    Mongo me "koi leader nahi" daalo -> do log ek saath likhe to kaun sahi? -> pakki query gayi
+    Redis ko Cassandra jitna bada -> RAM se disk pe -> 1 ms gaya
+
+  ITIHAAS: har DB ek company ki ek dikkat se paida hua -> Cassandra = Facebook inbox search (lagaataar likhai)
+  JODNA upar-upar hota hai: Mongo me transaction aaya, Postgres me JSONB. Phir bhi Postgres Cassandra
+  jitni likhai nahi jhelta, kyunki neev wahi.
+```
+
+```
    DESIGN            CHUNA           WAJAH
    ──────────────────────────────────────────────────────────────────────
    payment           SQL             debit + credit dono ya koi nahi (ACID)
@@ -240,6 +264,26 @@ Kya hai:
    • Tables jaise but har row alag columns ho sakte
    • Massive horizontal scale (1000s of nodes)
    • Write throughput = millions per second
+```
+
+### Andar kaise likhta — APPEND (sirf aage jodo)
+```
+POSTGRES (jagah pe badlo)   "order 42 = PICKED" -> order 42 DHOONDHO -> mitao -> wahin likho
+                            -> har likhai se pehle sahi jagah dhoondhna = lakhon likhai pe dheema
+CASSANDRA (sirf aage jodo)  "order 42 = PICKED" -> kuch dhoondhna nahi, aakhir me nayi line
+                               10:01  order 42  ACCEPTED
+                               10:05  order 42  RIDER ASSIGNED
+                               10:12  order 42  PICKED        <- bas neeche joda
+3 KADAM:
+  1  likhai -> commit log (disk, aage jodna; machine giri to yahin se wapas) + memtable (RAM)
+  2  memtable bhari -> disk pe file (SSTable), ye file kabhi nahi badalti
+  3  background me purani files milao (compaction), purani line hatao
+UPDATE = nayi line, jiska time naya wahi sach · DELETE = "mar gaya" ki nayi line (tombstone), safai compaction me
+KEEMAT: padhna dheema ho sakta (ek key RAM + kai file me) -> har file ke saath Bloom filter:
+        "is file me ye key pakka nahi" -> file skip
+BOL: "Cassandra is write-optimized: every write is an append to a commit log and an in-memory table,
+      flushed to immutable SSTables, merged later by compaction. No read-before-write, so writes are fast;
+      reads may touch several files, which is why it suits write-heavy data like order events."
 ```
 
 ### Real-world Connect:

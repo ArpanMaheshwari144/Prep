@@ -64,6 +64,20 @@ bahut events, kai sunne wale, replay chahiye        -> KAFKA
 ek kaam ek worker ko, complex routing, deliver+khatam -> RABBITMQ   (poora: 06_COMPARES/14_kafka_vs_rabbitmq.md)
 ```
 
+```
+★ KAFKA aur CASSANDRA — NEEV EK (sirf aage jodo = append), KAAM ALAG
+
+                 KAFKA (raasta)                         CASSANDRA (godaam / DB)
+kaam             message A se B tak pahunchana          data rakhna, baad me key se nikaalna
+padhna           shuru se aage, kram me (offset 0,1,2)  seedha key se: "order 42 do"
+update           hota hi nahi, bas naya message         nayi line, naya time wala jeetta
+kitne din        retention tak (jaise 7 din), phir hata hamesha, jab tak delete na karo
+purani line      consumer aage badh gaya, bas           compaction me milaake saaf
+
+EK LINE: Kafka = append karke aage bhejo · Cassandra = append karke sambhaal ke rakho.
+Dono likhne me tez isliye: disk pe sirf aage likhna (sequential) sabse tez tareeka hai.
+```
+
 ### 0D. Har shabd = ek dikkat ka ilaaj
 
 **YAAD KI TASVEER = AKHBAAR (newspaper):**
