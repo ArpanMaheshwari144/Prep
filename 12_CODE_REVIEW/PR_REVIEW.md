@@ -8,9 +8,10 @@ DRILL ME KYA AAYEGA (upar = jo chhoot raha, neeche = jo pakda jaata):
 1. CHHOOT RAHE (har drill me, jab tak lagaataar pakde na jaayein):
    - request body se userId (`req.getUserId()`) -> JWT / principal se lo
    - fail pe 200 (`catch` me `ok("FAILED")`) -> 502 / 4xx + status FAILED
-2. ABHI PAKAD RAHA (drill me rahenge, 2-3 baar aur pakde to neeche):
-   - owner check (bill / order IS user ka hai?)
+   - owner check (bill / order IS user ka hai?) -> naam se bolo: "OWNER CHECK nahi, 403"
    - bahar ki call @Transactional ke andar + timeout nahi
+2. ABHI PAKAD RAHA (drill me rahenge, 2-3 baar aur pakde to neeche):
+   - (khaali: 21-Oct owner check + bahar ki call chhoote, upar gaye)
 3. ★ BAARI-BAARI (har drill me 1-2): check-then-act · idempotency · status pehle verify baad · -ve / 0 amount ·
    == se compare (String / Long / Integer pe equals; enum pe == SAHI hai)
 4. PAKKA (ab pakde jaate, roz nahi, hafte me ek baar taaki taaza rahe): SQL injection · catch nigalna ·
