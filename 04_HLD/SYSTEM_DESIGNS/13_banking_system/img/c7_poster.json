@@ -1,5 +1,5 @@
 {
- "title": "Card 7: kai machine + LB, stateless, sach DB me. DB ki sync copy doosri building, gira to promote, WAHI id se retry",
+ "title": "Card 7: kai machine + LB, machine kuch yaad nahi rakhti, sach DB me. DB ki pakki copy doosri building me",
  "h": 600,
  "boxes": [
   {
@@ -10,7 +10,7 @@
    "kind": "user",
    "title": "Salary",
    "lines": [
-    "11 baje: laakhon"
+    "11 baje: laakhon credit"
    ]
   },
   {
@@ -22,7 +22,7 @@
    "title": "LB",
    "lines": [
     "do zone",
-    "health check"
+    "zinda ho? (health check)"
    ]
   },
   {
@@ -33,7 +33,7 @@
    "kind": "server",
    "title": "Banking 1",
    "lines": [
-    "stateless"
+    "kuch yaad nahi rakhti"
    ]
   },
   {
@@ -44,7 +44,7 @@
    "kind": "server",
    "title": "Banking 2",
    "lines": [
-    "stateless"
+    "kuch yaad nahi rakhti"
    ]
   },
   {
@@ -55,7 +55,7 @@
    "kind": "server",
    "title": "Banking 3",
    "lines": [
-    "stateless"
+    "kuch yaad nahi rakhti"
    ]
   },
   {
@@ -77,8 +77,8 @@
    "kind": "db",
    "title": "Sync copy",
    "lines": [
-    "doosri building",
-    "~1-2 min promote"
+    "doosri building (sync)",
+    "~1-2 min me primary"
    ]
   },
   {
@@ -89,7 +89,8 @@
    "kind": "plain",
    "title": "Dukaan pe 50,000 ek saath",
    "lines": [
-    "credit sirf INSERT (lock nahi), column batch me"
+    "credit sirf nayi line (lock nahi)",
+    "column baad me batch me"
    ]
   }
  ],
@@ -257,7 +258,7 @@
   7,
   11
  ],
- "peeche": "card 6 me BALANCE = CACHE, raat ko milaan",
+ "peeche": "card 6 me balance column = tez copy, raat ko milaan",
  "ab": "11 baje sabki salary aa gayi, ek Banking service bhar gayi, Arpan ka transfer atka",
  "agla": "ab machine kaafi. Par bheed padhne wali hai (card 8)"
 }

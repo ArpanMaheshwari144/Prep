@@ -1,5 +1,5 @@
 {
- "title": "Card 10: OFFSET nahi, keyset: (ts, id) < aakhri, index se seedha. Har page ek jaisa tez. id barabari todti",
+ "title": "Card 10: OFFSET nahi, aakhri line se aage (keyset): (ts, id) < aakhri. Index se seedha, har page ek jaisa tez",
  "h": 560,
  "boxes": [
   {
@@ -10,7 +10,7 @@
    "kind": "user",
    "title": "CA",
    "lines": [
-    "export,",
+    "saal ka export,",
     "page 5000"
    ]
   },
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "next_cursor",
-    "(ts, id) base64"
+    "agla page ka pata",
+    "(ts, id) base64 me"
    ]
   },
   {
@@ -34,10 +34,10 @@
    "kind": "db",
    "title": "DB (index: account, ts, id)",
    "lines": [
-    "WHERE account_id = ?",
-    "AND (ts, id) < (aakhri ts, id)",
-    "ORDER BY ts DESC, id DESC LIMIT 20",
-    "index se seedha, sirf 20"
+    "account_id = Arpan",
+    "aur (ts, id) < aakhri wali",
+    "naya pehle, sirf 20",
+    "index se seedha"
    ]
   },
   {
@@ -126,7 +126,7 @@
   10,
   11
  ],
- "peeche": "card 9 me CHHOTI ID PEHLE TAALA",
+ "peeche": "card 9 me taala chhoti id pe pehle",
  "ab": "Shaam ko dukaan ke CA ka export, page 5000 pe atka",
  "agla": "ab saal guzre, khaata badhta hi ja raha (card 11)"
 }

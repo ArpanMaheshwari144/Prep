@@ -1,5 +1,5 @@
 {
- "title": "Card 8: padhna read replica se, likhna + paise ka faisla primary pe. Apna abhi likha primary se padho",
+ "title": "Card 8: padhna DB ki copy (replica) se; likhna + paise ka faisla primary pe. Abhi khud likha to primary se padho",
  "h": 580,
  "boxes": [
   {
@@ -21,7 +21,7 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "padhna: copy",
+    "padhna: copy se",
     "likhna + faisla: primary"
    ]
   },
@@ -44,7 +44,7 @@
    "kind": "db",
    "title": "Read replica",
    "lines": [
-    "padhna (async, peeche)"
+    "sirf padhna (thoda peeche)"
    ]
   },
   {
@@ -55,7 +55,7 @@
    "kind": "cache",
    "title": "Redis",
    "lines": [
-    "last_write_at: abhi likha",
+    "Arpan ne abhi likha?",
     "to primary se padho"
    ]
   },
@@ -67,7 +67,8 @@
    "kind": "db",
    "title": "Failover standby",
    "lines": [
-    "sync: kuch nahi khota"
+    "pakki copy (sync)",
+    "kuch nahi khota"
    ]
   }
  ],
@@ -124,7 +125,7 @@
    ],
    "c": "purple",
    "dash": true,
-   "label": "WAL",
+   "label": "log (WAL) se copy",
    "lx": 845,
    "ly": 318,
    "a": "start"
@@ -214,7 +215,7 @@
   8,
   11
  ],
- "peeche": "card 7 me KAI MACHINE + LB, DB ki sync copy",
+ "peeche": "card 7 me kai machine + LB, DB ki pakki copy",
  "ab": "Salary ki bheed me sab balance dekh rahe, Arpan ka transfer dheema",
  "agla": "ab ek alag dikkat: do transfer ek doosre ke ulte (card 9)"
 }

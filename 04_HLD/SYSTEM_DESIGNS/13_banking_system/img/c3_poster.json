@@ -1,5 +1,5 @@
 {
- "title": "Card 3: check + kaatna ek query: UPDATE ... WHERE balance >= 200. 0 row = 'paisa kam'. Niyam DB me",
+ "title": "Card 3: balance check + kaatna ek hi UPDATE query me (sirf balance >= 200 ho to). 0 row = 'paisa kam'",
  "h": 560,
  "boxes": [
   {
@@ -32,9 +32,8 @@
    "kind": "db",
    "title": "DB (balance 300)",
    "lines": [
-    "UPDATE account SET balance = balance - 200",
-    "WHERE id = Arpan AND balance >= 200",
-    "",
+    "UPDATE: balance - 200",
+    "sirf jab balance >= 200",
     "pehla: 300 -> 100",
     "doosra: 0 row, kuch nahi kata"
    ]
@@ -173,7 +172,7 @@
   3,
   11
  ],
- "peeche": "card 2 me IDEMPOTENCY KEY (T-77)",
+ "peeche": "card 2 me transfer ki apni id (T-77)",
  "ab": "9 baje Netflix ka auto-debit aur Arpan ka UPI ek saath, balance 300",
  "agla": "ab paisa sahi kata. Par support poochhe paisa gaya kahan? (card 4)"
 }

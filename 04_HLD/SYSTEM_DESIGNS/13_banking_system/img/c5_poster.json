@@ -1,5 +1,5 @@
 {
- "title": "Card 5: khabar outbox me usi transaction me, relay COMMIT ke baad Kafka. Dobara = eventId skip. Key = account_id",
+ "title": "Card 5: khabar outbox me usi transaction me; relay COMMIT ke baad Kafka ko. Dobara aaye to eventId se skip",
  "h": 660,
  "boxes": [
   {
@@ -21,10 +21,10 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "BEGIN",
+    "shuru (BEGIN)",
     "-20,000 / +20,000",
-    "outbox: khabar, sent=false",
-    "COMMIT"
+    "outbox: khabar, sent = false",
+    "pakka (COMMIT)"
    ]
   },
   {
@@ -36,7 +36,7 @@
    "title": "Relay",
    "lines": [
     "har 1 sec",
-    "sent=false -> Kafka"
+    "sent = false -> Kafka"
    ]
   },
   {
@@ -47,8 +47,8 @@
    "kind": "cache",
    "title": "Kafka",
    "lines": [
-    "key =",
-    "account_id"
+    "key = account_id",
+    "(ek account, ek kram)"
    ]
   },
   {
@@ -59,8 +59,8 @@
    "kind": "server",
    "title": "SMS Svc",
    "lines": [
-    "eventId",
-    "dekh ke skip"
+    "eventId dekh ke",
+    "dobara wali skip"
    ]
   }
  ],
@@ -197,7 +197,7 @@
   5,
   11
  ],
- "peeche": "card 4 me KHAATA (ledger) usi transaction me",
+ "peeche": "card 4 me khaata (ledger) usi transaction me",
  "ab": "Salary aayi, Arpan ne Ravi ko rent bheja, SMS service giri",
  "agla": "ab khaata bhi hai, balance column bhi. Dono me farak aaya to? (card 6)"
 }

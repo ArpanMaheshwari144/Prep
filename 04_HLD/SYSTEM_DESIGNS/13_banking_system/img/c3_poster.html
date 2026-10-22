@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Card 3: check + kaatna ek query: UPDATE </title>
+<title>Card 3: balance check + kaatna ek hi UPD</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
 <svg width="1500" height="994" viewBox="0 0 1500 994" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
@@ -9,13 +9,13 @@
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
 </defs><rect width="1500" height="994" fill="#0b1220"/>
-<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 3: check + kaatna ek query: UPDATE ... WHERE balance &gt;= 200. 0 row = &#x27;paisa kam&#x27;. Niyam DB me</text>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 3: balance check + kaatna ek hi UPDATE query me (sirf balance &gt;= 200 ho to). 0 row = &#x27;paisa kam&#x27;</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
 <text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 3 / 11</text>
 <rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
 <text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
-<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 2 me IDEMPOTENCY KEY (T-77)</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 2 me transfer ki apni id (T-77)</text>
 <text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
 <text x="796" y="113" font-size="14.5" fill="#f0d4d8">9 baje Netflix ka auto-debit aur Arpan ka UPI ek saath, balance 300</text>
 <rect x="30" y="160" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
@@ -26,11 +26,10 @@
 <text x="140.0" y="360" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">200</text>
 <rect x="360" y="165" width="620" height="230" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
 <text x="670.0" y="199" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB (balance 300)</text>
-<text x="670.0" y="225" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">UPDATE account SET balance = balance - 200</text>
-<text x="670.0" y="247" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">WHERE id = Arpan AND balance &gt;= 200</text>
-<text x="670.0" y="269" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle"></text>
-<text x="670.0" y="291" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">pehla: 300 -&gt; 100</text>
-<text x="670.0" y="313" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">doosra: 0 row, kuch nahi kata</text>
+<text x="670.0" y="225" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">UPDATE: balance - 200</text>
+<text x="670.0" y="247" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sirf jab balance &gt;= 200</text>
+<text x="670.0" y="269" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">pehla: 300 -&gt; 100</text>
+<text x="670.0" y="291" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">doosra: 0 row, kuch nahi kata</text>
 <rect x="1080" y="160" width="390" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="1275.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Netflix</text>
 <text x="1275.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kat gaya</text>

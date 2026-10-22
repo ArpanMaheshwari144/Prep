@@ -1,5 +1,5 @@
 {
- "title": "Card 11: mahine ke tukde, band mahina S3 (sasta, Object Lock). Balance = snapshot + baad ki line. 5 saal rakhna",
+ "title": "Card 11: har mahine ka tukda; band mahina S3 me (sasta, badal na sake). Balance = snapshot + baad ki line. 5 saal",
  "h": 540,
  "boxes": [
   {
@@ -24,8 +24,7 @@
    "kind": "server",
    "title": "Mahina band",
    "lines": [
-    "alag karo",
-    "-> S3"
+    "alag karo -> S3"
    ]
   },
   {
@@ -37,8 +36,8 @@
    "title": "S3 (sasta)",
    "lines": [
     "purane mahine",
-    "Object Lock (WORM):",
-    "na delete na badal"
+    "Object Lock: na delete,",
+    "na badal"
    ]
   },
   {
@@ -50,7 +49,7 @@
    "title": "RBI",
    "lines": [
     "2021 statement:",
-    "Athena (Parquet)"
+    "Athena se padho"
    ]
   }
  ],
@@ -166,7 +165,7 @@
   11,
   11
  ],
- "peeche": "card 10 me KEYSET PAGE (ts, id)",
+ "peeche": "card 10 me page aakhri line se aage (keyset)",
  "ab": "Raat ko: 5 saal ka khaata ek hi table me, arabon line",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

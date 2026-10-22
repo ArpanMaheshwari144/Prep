@@ -1,5 +1,5 @@
 {
- "title": "Card 2: app screen pe id banata (T-77), DB me UNIQUE. Wahi id dobara = pehla jawab. Alag amount = 422",
+ "title": "Card 2: app screen pe id banata (T-77), DB me id ek hi baar. Wahi id dobara = pehla jawab. Alag amount = 422",
  "h": 680,
  "boxes": [
   {
@@ -10,7 +10,7 @@
    "kind": "user",
    "title": "App",
    "lines": [
-    "screen khulte: T-77"
+    "screen khulte hi id: T-77"
    ]
   },
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "Banking Svc",
    "lines": [
-    "T-77 pehle se?",
-    "pehla jawab wapas"
+    "T-77 pehle aa chuki?",
+    "to pehla jawab wapas"
    ]
   },
   {
@@ -33,9 +33,9 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "T-77 UNIQUE",
+    "T-77 ek hi baar (UNIQUE)",
     "+ request ka hash",
-    "24-48 ghante"
+    "24-48 ghante rakho"
    ]
   },
   {
@@ -188,7 +188,7 @@
   2,
   11
  ],
- "peeche": "card 1 me EK TRANSACTION",
+ "peeche": "card 1 me -500 aur +500 ek transaction me",
  "ab": "Arpan ne Send dabaya, network gaya, app ne dobara bheja",
  "agla": "ab ek transfer ek hi baar. Par do alag transfer ek hi account pe ek saath? (card 3)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 1: BEGIN, -500, +500, COMMIT: dono ya koi nahi. Beech me gira to DB log (WAL) se ulta. SAGA sirf do DB pe",
+ "title": "Card 1: Arpan -500 aur Ravi +500 ek transaction me (BEGIN ... COMMIT). Beech me gira to DB apne log (WAL) se ulta",
  "h": 570,
  "boxes": [
   {
@@ -21,9 +21,9 @@
    "kind": "server",
    "title": "Banking Svc",
    "lines": [
-    "BEGIN",
+    "shuru (BEGIN)",
     "Arpan -500, Ravi +500",
-    "COMMIT"
+    "pakka (COMMIT)"
    ]
   },
   {
@@ -36,7 +36,7 @@
    "lines": [
     "Arpan: 1000 -> 500",
     "Ravi: +500",
-    "WAL (DB ka apna log)",
+    "DB ka apna log (WAL)",
     "aadha kisi ko nahi dikhta"
    ]
   },

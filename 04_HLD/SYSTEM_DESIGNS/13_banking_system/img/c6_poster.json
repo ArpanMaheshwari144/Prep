@@ -1,5 +1,5 @@
 {
- "title": "Card 6: khaata sach, balance column uska cache. Raat ko milaan; farak = alert + account roko, khaata jeetta",
+ "title": "Card 6: khaata sach hai, balance column uski tez copy. Raat ko milaan: farak = alert + account roko, khaata jeetta",
  "h": 580,
  "boxes": [
   {
@@ -32,7 +32,7 @@
    "kind": "cache",
    "title": "Balance column",
    "lines": [
-    "30,300 (jod, cache)",
+    "30,300 (jod ki tez copy)",
     "usi txn me update"
    ]
   },
@@ -56,7 +56,7 @@
    "kind": "server",
    "title": "Raat ka job",
    "lines": [
-    "snapshot + baad ki line",
+    "purana jod + baad ki line",
     "== column?",
     "farak = alert + account roko"
    ]
@@ -152,7 +152,7 @@
   6,
   11
  ],
- "peeche": "card 5 me OUTBOX + Kafka",
+ "peeche": "card 5 me outbox + Kafka",
  "ab": "Salary ke baad Arpan ne balance khola: 30,300, par khaata 29,800",
  "agla": "ab sahi hai. Par 11 baje sabki salary ek saath aayi (card 7)"
 }

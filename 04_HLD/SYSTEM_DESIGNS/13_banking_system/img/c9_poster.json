@@ -1,5 +1,5 @@
 {
- "title": "Card 9: taala hamesha chhoti id pehle, ek kram = ghera nahi. Phir bhi phansa to DB ek ko wapas, WAHI id se retry",
+ "title": "Card 9: taala hamesha chhoti id pe pehle: ek kram = ghera nahi. Phir bhi phansa to DB ek ko wapas, wahi id se retry",
  "h": 590,
  "boxes": [
   {
@@ -11,7 +11,7 @@
    "title": "Txn1",
    "lines": [
     "Arpan -> dukaan 500",
-    "pakda: 7 (Arpan)"
+    "pakda: row 7 (Arpan)"
    ]
   },
   {
@@ -23,7 +23,7 @@
    "title": "Txn2",
    "lines": [
     "dukaan -> Arpan 200",
-    "pakda: 9 (dukaan)"
+    "pakda: row 9 (dukaan)"
    ]
   },
   {
@@ -169,7 +169,7 @@
   9,
   11
  ],
- "peeche": "card 8 me READ REPLICA + apna likha primary se",
+ "peeche": "card 8 me padhna copy se, apna likha primary se",
  "ab": "Arpan ne dukaan ko 500 bheje, usi second dukaan se Arpan ko 200 refund, dono atke",
  "agla": "ab sab chal raha. Par purana hisaab maanga gaya (card 10)"
 }

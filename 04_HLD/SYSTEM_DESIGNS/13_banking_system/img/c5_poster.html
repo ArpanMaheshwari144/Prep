@@ -9,13 +9,13 @@
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
 </defs><rect width="1500" height="933" fill="#0b1220"/>
-<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 5: khabar outbox me usi transaction me, relay COMMIT ke baad Kafka. Dobara = eventId skip. Key = account_id</text>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 5: khabar outbox me usi transaction me; relay COMMIT ke baad Kafka ko. Dobara aaye to eventId se skip</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
 <text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 5 / 11</text>
 <rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
 <text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
-<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 4 me KHAATA (ledger) usi transaction me</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 4 me khaata (ledger) usi transaction me</text>
 <text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
 <text x="796" y="113" font-size="14.5" fill="#f0d4d8">Salary aayi, Arpan ne Ravi ko rent bheja, SMS service giri</text>
 <rect x="30" y="200" width="200" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
@@ -23,22 +23,22 @@
 <text x="130.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Ravi ko 20,000</text>
 <rect x="300" y="160" width="340" height="200" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
 <text x="470.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB</text>
-<text x="470.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">BEGIN</text>
+<text x="470.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">shuru (BEGIN)</text>
 <text x="470.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">-20,000 / +20,000</text>
-<text x="470.0" y="264" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">outbox: khabar, sent=false</text>
-<text x="470.0" y="286" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">COMMIT</text>
+<text x="470.0" y="264" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">outbox: khabar, sent = false</text>
+<text x="470.0" y="286" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">pakka (COMMIT)</text>
 <rect x="730" y="190" width="240" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
 <text x="850.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Relay</text>
 <text x="850.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">har 1 sec</text>
-<text x="850.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sent=false -&gt; Kafka</text>
+<text x="850.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sent = false -&gt; Kafka</text>
 <rect x="1060" y="200" width="180" height="120" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
 <text x="1150.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Kafka</text>
-<text x="1150.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">key =</text>
-<text x="1150.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">account_id</text>
+<text x="1150.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">key = account_id</text>
+<text x="1150.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">(ek account, ek kram)</text>
 <rect x="1300" y="200" width="170" height="120" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
 <text x="1385.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">SMS Svc</text>
-<text x="1385.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">eventId</text>
-<text x="1385.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">dekh ke skip</text>
+<text x="1385.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">eventId dekh ke</text>
+<text x="1385.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">dobara wali skip</text>
 <path d="M232 260 L296 260" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
 <path d="M642 260 L726 260" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
 <path d="M972 260 L1056 260" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>

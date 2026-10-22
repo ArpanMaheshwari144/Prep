@@ -1,5 +1,5 @@
 {
- "title": "Card 4: har transfer ki 2 line khaate me, usi transaction me. Sirf jodo, galti pe ulti line. Waqt + transfer id",
+ "title": "Card 4: har transfer ki 2 line khaate me, usi transaction me. Sirf naya jodo, galti pe ulti line. Waqt + transfer id",
  "h": 550,
  "boxes": [
   {
@@ -33,8 +33,8 @@
    "kind": "db",
    "title": "DB: khaata (ledger)",
    "lines": [
-    "8:00 | Arpan -500 | T-77",
-    "8:00 | Ravi  +500 | T-77",
+    "8:00  Arpan -500  T-77",
+    "8:00  Ravi +500   T-77",
     "usi transaction me",
     "sirf jodo, kabhi badlo nahi"
    ]
@@ -149,7 +149,7 @@
   4,
   11
  ],
- "peeche": "card 3 me CHECK + KAATNA EK QUERY",
+ "peeche": "card 3 me check + kaatna ek hi query",
  "ab": "Arpan ne poochha: mere 500 kahan gaye, kab?",
  "agla": "ab paisa pakka gaya. Par Arpan ko SMS bhi to jaana hai (card 5)"
 }

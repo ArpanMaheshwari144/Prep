@@ -60,7 +60,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 3 MACHINE GIRI (khaas)** · Cue: EK TRANSACTION (WAL)
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -71,7 +71,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY KEY (UNIQUE)
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -82,7 +82,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 4 DO LOG EK SAATH (ek account)** · Cue: CHECK + KAATNA EK QUERY
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -93,7 +93,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 1 KAAM CHALA (hisaab)** · Cue: KHAATA (ledger) usi transaction me
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -104,7 +104,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 3 MACHINE GIRI (SMS)** · Cue: OUTBOX, Kafka key = account_id
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -115,7 +115,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 1 KAAM CHALA (balance)** · Cue: BALANCE = CACHE, raat RECONCILIATION
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -126,7 +126,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 2 BHEED AAYI (salary)** · Cue: KAI MACHINE + LB, DB sync copy
 
-<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -137,7 +137,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 2 BHEED AAYI (padhna)** · Cue: READ REPLICA + read-your-own-writes
 
-<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -148,7 +148,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 4 DO LOG EK SAATH (deadlock)** · Cue: CHHOTI ID PEHLE LOCK
 
-<img src="img/c9_poster.png?v=3" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=4" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -159,7 +159,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 5 KUCH DHEEMA (export)** · Cue: KEYSET (ts, id) + index
 
-<img src="img/c10_poster.png?v=3" width="1000" alt="card 10: kya toota, kaise bacha">
+<img src="img/c10_poster.png?v=4" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---
@@ -170,7 +170,7 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 6 DATA BADA (khaata)** · Cue: MAHINE KE TUKDE + S3, snapshot
 
-<img src="img/c11_poster.png?v=3" width="1000" alt="card 11: kya toota, kaise bacha">
+<img src="img/c11_poster.png?v=4" width="1000" alt="card 11: kya toota, kaise bacha">
 
 
 ---
