@@ -204,7 +204,7 @@ disk bharti gayi?                  -> 7 din se purani khabar hata do (retention)
 11va worker lagaya?          -> khaali baithega. Pehle tukde badhao
 10 tukde, 5 worker?          -> ek worker 2 tukde padhega, chalega, bas dheema
 kitne tukde rakhein?         -> jitne worker ek saath chahiye. 5,000 / 500 = 10. Thoda zyada rakho
-tukde baad me badhaye?       -> chalta hai, par kram toot sakta hai (Stop 3)
+tukde baad me badhaye?       -> chalta hai, par kram toot sakta hai (neeche: key)
 tukde alag machine pe?       -> haan, 3 broker me barabar baante, ek pe bojh nahi
 kaunsa tukda kis broker pe?  -> Controller ka naksha batata (Kafka ki kuch machines ka group, KRaft)
 ```
