@@ -77,7 +77,7 @@
    "w": 160,
    "h": 120,
    "kind": "user",
-   "title": "Meri feed",
+   "title": "Arpan ki feed",
    "lines": [
     "mera mix"
    ]
@@ -169,7 +169,7 @@
    "x": 30,
    "y": 84,
    "w": 590,
-   "red": "Har user ki alag feed?",
+   "red": "Har user ki alag feed bana do?",
    "green": "10 lakh feed, har nayi khabar sab me daalni padti",
    "n": 1
   },
@@ -178,8 +178,8 @@
    "x": 640,
    "y": 84,
    "w": 830,
-   "red": "Khabar 2 category me (tech + sports)",
-   "green": "Dono list me ZADD, milate waqt id se dedupe: do baar nahi",
+   "red": "Ek khabar 2 category me (tech + sports)",
+   "green": "Dono list me daalo. Milate waqt id se dohraav hatao: Arpan ko do baar nahi",
    "n": 2,
    "mark": [
     1190,
@@ -201,9 +201,16 @@
    "x": 30,
    "y": 530,
    "w": 1440,
-   "red": "Mujhe tech zyada pasand? Wo asli personalization (har user ki ranking), scope se bahar.",
+   "red": "Arpan ko tech zyada pasand? Wo asli personalization (har user ki ranking), is design se bahar.",
    "green": "Sirf ~20 list, 10 lakh nahi: milana padhte waqt"
   }
  ],
- "kyun": "List pehle se bani hai, milana padhte waqt hota hai. User ki pasand bas ye batati hai ki kaunsi list milaani hai. Sirf ~20 list, 10 lakh nahi"
+ "kyun": "Har category ki list pehle se bani (feed:tech, feed:sports). Arpan khole to uski pasand wali do list milao aur dohraav hatao. Sirf ~20 list, 10 lakh nahi",
+ "step": [
+  6,
+  9
+ ],
+ "peeche": "card 5 me TIMEOUT + CIRCUIT BREAKER",
+ "ab": "Shaam ko Arpan ko sirf tech aur sports chahiye",
+ "agla": "ab feed ban gayi. Par dhoondhna dheema (card 7)"
 }

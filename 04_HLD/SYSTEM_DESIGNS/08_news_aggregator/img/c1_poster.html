@@ -2,53 +2,64 @@
 <meta charset="utf-8">
 <title>Card 1: feed ek baar banti, Redis sorted</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="873" viewBox="0 0 1500 873" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="1019" viewBox="0 0 1500 1019" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="873" fill="#0b1220"/>
+</defs><rect width="1500" height="1019" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: feed ek baar banti, Redis sorted set me time se (ZADD). Kholne pe ZREVRANGE 0 19, DB tak nahi</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="164" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="140.0" y="198" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Users</text>
-<text x="140.0" y="224" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">subah app khola</text>
-<rect x="330" y="154" width="250" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="455.0" y="188" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc</text>
-<text x="455.0" y="214" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ZREVRANGE 0 19</text>
-<text x="455.0" y="236" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">= 20 id</text>
-<rect x="670" y="114" width="360" height="130" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="850.0" y="148" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
-<text x="850.0" y="174" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">feed:latest (sorted set)</text>
-<text x="850.0" y="196" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">time se, top 500</text>
-<text x="850.0" y="218" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">nayi khabar: ZADD</text>
-<rect x="670" y="294" width="360" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="850.0" y="328" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB</text>
-<text x="850.0" y="354" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">~1% hi yahan aate</text>
-<rect x="1120" y="164" width="350" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1295.0" y="198" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Meri feed</text>
-<text x="1295.0" y="224" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">20 khabar, tez</text>
-<path d="M252 224 L326 224" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M582 194 L666 179" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M582 284 L666 334" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
-<text x="610" y="329" font-size="13" fill="#6b7a90" class="m" text-anchor="end">miss</text>
-<path d="M582 269 L1116 269" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<circle cx="990" cy="114" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="990" y="119" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<rect x="30" y="454" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="480" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="480" font-size="13.5" fill="#cfeee0">Sabko ek jaisi feed hai, to ek baar bana ke Redis me rakho. Nayi khabar aate hi apni jagah baith jaati hai, turant dikhti hai</text>
-<rect x="30" y="528" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="553" r="12" fill="#ff5a6a"/>
-<text x="52" y="558" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="558" font-size="15" font-weight="700" fill="#ff5a6a">Redis restart, list khaali</text>
-<text x="52" y="585" font-size="13.5" fill="#7fe0b0">DB se ek baar banao, lock ke saath. Baaki</text>
-<text x="52" y="605" font-size="13.5" fill="#7fe0b0">ruk ke Redis se padhein</text>
-<rect x="30" y="683" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="709" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="733" font-size="13.5" fill="#e6dcb8">Har user pe DB se ORDER BY ... LIMIT 20: DB 500 / sec sort kar raha, feed dheemi</text>
-<rect x="30" y="771" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="801" font-size="13.5" fill="#c9d6e8">Kitni taazi? 5 min purani chalegi. Breaking news? Aate hi ZADD, turant.</text>
-<text x="48" y="823" font-size="13.5" fill="#c9d6e8">Scroll 21-40? ZREVRANGE 20 39 ya cursor (aakhri khabar ka time). Usse purani DB se</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 1 / 9</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">shuru: har feed DB se, har baar sort</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">Subah Arpan ne app khola, sabko wahi 20 khabar, har baar DB se, feed dheemi</text>
+<rect x="30" y="224" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="258" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Users</text>
+<text x="140.0" y="284" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">subah app khola</text>
+<rect x="330" y="214" width="250" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="455.0" y="248" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc</text>
+<text x="455.0" y="274" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ZREVRANGE 0 19</text>
+<text x="455.0" y="296" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">= 20 id</text>
+<rect x="670" y="174" width="360" height="130" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="850.0" y="208" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
+<text x="850.0" y="234" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">feed:latest (sorted set)</text>
+<text x="850.0" y="256" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">time se, top 500</text>
+<text x="850.0" y="278" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">nayi khabar: ZADD</text>
+<rect x="670" y="354" width="360" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="850.0" y="388" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB</text>
+<text x="850.0" y="414" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">~1% hi yahan aate</text>
+<rect x="1120" y="224" width="350" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1295.0" y="258" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan ki feed</text>
+<text x="1295.0" y="284" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">20 khabar, tez</text>
+<path d="M252 284 L326 284" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M582 254 L666 239" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M582 344 L666 394" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
+<text x="610" y="389" font-size="13" fill="#6b7a90" class="m" text-anchor="end">miss</text>
+<path d="M582 329 L1116 329" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<circle cx="990" cy="174" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="990" y="179" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<rect x="30" y="514" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="540" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="540" font-size="13.5" fill="#cfeee0">Sabki feed ek jaisi hai, to ek baar bana ke Redis me rakho (time ke kram se, sorted set). Nayi khabar aate hi apni jagah baith jaati. Arpan ke kholte hi top 20</text>
+<text x="160" y="560" font-size="13.5" fill="#cfeee0">Redis se, DB tak nahi</text>
+<rect x="30" y="608" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="633" r="12" fill="#ff5a6a"/>
+<text x="52" y="638" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="638" font-size="15" font-weight="700" fill="#ff5a6a">Redis restart hua, list khaali</text>
+<text x="52" y="665" font-size="13.5" fill="#7fe0b0">DB se ek baar banao, lock ke saath (ek hi</text>
+<text x="52" y="685" font-size="13.5" fill="#7fe0b0">banaye). Baaki ruk ke Redis se padhein</text>
+<rect x="30" y="763" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="789" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="813" font-size="13.5" fill="#e6dcb8">Har user ke liye DB se &quot;taazi 20 do&quot; (ORDER BY ... LIMIT 20): DB har second 500 baar sort kar raha, feed dheemi</text>
+<rect x="30" y="851" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="881" font-size="13.5" fill="#c9d6e8">Kitni taazi chahiye? 5 min purani chalegi. Breaking news? Aate hi Redis me daalo, turant.</text>
+<text x="48" y="903" font-size="13.5" fill="#c9d6e8">Arpan neeche scroll kare (21-40)? Agle 20 Redis se, ya aakhri khabar ke time se aage (cursor). Usse purani DB se</text>
+<rect x="30" y="945" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="973" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="973" font-size="14.5" fill="#e6dcb8">ab padhna tez. Par khabar hi 20 min der se aa rahi (card 2)</text>
 </svg>

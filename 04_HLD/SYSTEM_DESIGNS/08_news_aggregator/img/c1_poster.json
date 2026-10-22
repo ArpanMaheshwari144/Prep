@@ -55,7 +55,7 @@
    "w": 350,
    "h": 120,
    "kind": "user",
-   "title": "Meri feed",
+   "title": "Arpan ki feed",
    "lines": [
     "20 khabar, tez"
    ]
@@ -126,8 +126,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Har user pe DB se ORDER BY ... LIMIT 20?",
-   "green": "DB 500 / sec sort kar raha, feed dheemi",
+   "red": "Har user ke liye DB se \"taazi 20 do\" (ORDER BY ... LIMIT 20)?",
+   "green": "DB har second 500 baar sort kar raha, feed dheemi",
    "n": 1,
    "conn": [
     [
@@ -145,8 +145,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Redis restart, list khaali",
-   "green": "DB se ek baar banao, lock ke saath. Baaki ruk ke Redis se padhein",
+   "red": "Redis restart hua, list khaali",
+   "green": "DB se ek baar banao, lock ke saath (ek hi banaye). Baaki ruk ke Redis se padhein",
    "n": 2,
    "mark": [
     990,
@@ -168,9 +168,16 @@
    "x": 30,
    "y": 510,
    "w": 1440,
-   "red": "Kitni taazi? 5 min purani chalegi. Breaking news? Aate hi ZADD, turant.",
-   "green": "Scroll 21-40? ZREVRANGE 20 39 ya cursor (aakhri khabar ka time). Usse purani DB se"
+   "red": "Kitni taazi chahiye? 5 min purani chalegi. Breaking news? Aate hi Redis me daalo, turant.",
+   "green": "Arpan neeche scroll kare (21-40)? Agle 20 Redis se, ya aakhri khabar ke time se aage (cursor). Usse purani DB se"
   }
  ],
- "kyun": "Sabko ek jaisi feed hai, to ek baar bana ke Redis me rakho. Nayi khabar aate hi apni jagah baith jaati hai, turant dikhti hai"
+ "kyun": "Sabki feed ek jaisi hai, to ek baar bana ke Redis me rakho (time ke kram se, sorted set). Nayi khabar aate hi apni jagah baith jaati. Arpan ke kholte hi top 20 Redis se, DB tak nahi",
+ "step": [
+  1,
+  9
+ ],
+ "peeche": "shuru: har feed DB se, har baar sort",
+ "ab": "Subah Arpan ne app khola, sabko wahi 20 khabar, har baar DB se, feed dheemi",
+ "agla": "ab padhna tez. Par khabar hi 20 min der se aa rahi (card 2)"
 }

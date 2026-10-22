@@ -145,8 +145,8 @@
    "x": 30,
    "y": 84,
    "w": 600,
-   "red": "Fetcher hi DB me likhe?",
-   "green": "1000 source ek-ek karke, A atka to B se Z line me",
+   "red": "Fetcher hi seedha DB me likhe?",
+   "green": "1000 source ek-ek karke: source A atka to B se Z sab line me peeche",
    "n": 1,
    "conn": [
     [
@@ -164,8 +164,8 @@
    "x": 650,
    "y": 84,
    "w": 820,
-   "red": "Dobara likhna Bloom se roko?",
-   "green": "Galat: Bloom DB se alag, update se pehle crash = do baar feed me",
+   "red": "Dobara likhna Bloom filter se roko?",
+   "green": "Galat: Bloom DB se alag hai. Likhne ke beech crash = khabar feed me do baar",
    "n": 2
   },
   {
@@ -173,8 +173,8 @@
    "x": 30,
    "y": 470,
    "w": 800,
-   "red": "1000 khabar ek saath Kafka me",
-   "green": "Line lambi, gira kuch nahi: Kafka disk pe, worker apni speed",
+   "red": "1000 khabar ek saath Kafka me aayi",
+   "green": "Line lambi hui, gira kuch nahi: Kafka disk pe rakhta, worker apni speed se",
    "n": 3,
    "mark": [
     740,
@@ -196,8 +196,8 @@
    "x": 850,
    "y": 470,
    "w": 620,
-   "red": "Likha, Kafka commit se pehle crash",
-   "green": "DB khud rokta: url UNIQUE, ON CONFLICT DO NOTHING",
+   "red": "Worker ne DB me likha, Kafka ko \"padh liya\" bolne se pehle gira",
+   "green": "Khabar dobara aayi, par DB khud rokta: url UNIQUE (\"pehle se hai to kuch mat karo\")",
    "n": 4,
    "mark": [
     1060,
@@ -219,9 +219,16 @@
    "x": 30,
    "y": 565,
    "w": 1440,
-   "red": "Source pe kuch naya nahi? ETag / Last-Modified: naya nahi to download hi nahi.",
-   "green": "SQS? Chal jaata, par Kafka me search / analytics apne group se wahi khabar padh lete"
+   "red": "Source pe kuch naya hi nahi? Pehle poochho \"badla kya?\" (ETag / Last-Modified), nahi to download hi mat karo.",
+   "green": "SQS chalega? Chal jaata, par Kafka me search / analytics apne group se wahi khabar padh lete"
   }
  ],
- "kyun": "Laana aur padhna alag hai. User sirf Redis list padhta hai, to laane me der ya bheed ho tab bhi feed khulti hai, bas thodi purani"
+ "kyun": "Fetcher sirf khabar laata aur Kafka me daalta. Worker apni speed se DB + Redis me likhta. Laane me der ya bheed ho tab bhi Arpan ki feed khulti, bas thodi purani",
+ "step": [
+  2,
+  9
+ ],
+ "peeche": "card 1 me FEED CACHE (Redis sorted set)",
+ "ab": "Arpan ki feed me khabar 20 minute purani",
+ "agla": "ab khabar taazi. Par 8 baje sab ek saath aa gaye (card 3)"
 }

@@ -121,8 +121,8 @@
    "x": 30,
    "y": 84,
    "w": 580,
-   "red": "LIKE '%cricket%'?",
-   "green": "% aage: index nahi lagta, 2 crore row ek-ek padhi",
+   "red": "DB me LIKE \"%cricket%\"?",
+   "green": "Shuru me % hai to index nahi lagta: 2 crore row ek-ek padhi",
    "n": 1
   },
   {
@@ -130,7 +130,7 @@
    "x": 630,
    "y": 84,
    "w": 840,
-   "red": "Postgres full-text (GIN)?",
+   "red": "Postgres ka full-text search (GIN)?",
    "green": "Chhote scale pe haan. ES: ranking, galat spelling, bahut data",
    "n": 2
   },
@@ -139,7 +139,7 @@
    "x": 30,
    "y": 520,
    "w": 700,
-   "red": "'crikcet' likh diya",
+   "red": "Arpan ne \"crikcet\" likh diya",
    "green": "ES fuzzy: 1-2 akshar ka farak chal jaata",
    "n": 3,
    "mark": [
@@ -163,7 +163,7 @@
    "y": 520,
    "w": 720,
    "red": "ES gira ya DB se alag ho gaya",
-   "green": "DB sach hai: ES dobara bana lo (reindex). Khabar nahi khoti",
+   "green": "Sach DB me hai: ES dobara bana lo (reindex). Khabar nahi khoti",
    "n": 4,
    "mark": [
     960,
@@ -181,5 +181,12 @@
    ]
   }
  ],
- "kyun": "ES sirf dhoondhta hai, sach DB me hai. ES gira ya galat hua to DB se dobara bana lo. Khabar nahi khoti, bas search dheemi ya band"
+ "kyun": "Har shabd ki list: ye shabd kis-kis khabar me (cricket -> a12, a45). Do shabd = dono list milao. Elasticsearch sirf dhoondhta, asli khabar DB me. ES gira to DB se dobara bana lo",
+ "step": [
+  7,
+  9
+ ],
+ "peeche": "card 6 me CATEGORY LIST, padhte waqt milao",
+ "ab": "Raat ko Arpan ne \"cricket\" dhoondha, poori table padhi gayi",
+ "agla": "ab sab chal raha. Par data bharta ja raha (card 8)"
 }

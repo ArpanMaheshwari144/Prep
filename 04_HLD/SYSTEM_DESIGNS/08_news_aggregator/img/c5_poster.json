@@ -56,7 +56,7 @@
    "w": 300,
    "h": 110,
    "kind": "user",
-   "title": "Meri feed",
+   "title": "Arpan ki feed",
    "lines": [
     "chalti rahi"
    ]
@@ -147,7 +147,7 @@
    "y": 84,
    "w": 860,
    "red": "Chhota source 30 sec atka",
-   "green": "Timeout + breaker OPEN: sirf uski khabar ruki, baaki chale",
+   "green": "Timeout + breaker khula: sirf uski khabar ruki, baaki chale",
    "n": 2,
    "mark": [
     1030,
@@ -169,9 +169,16 @@
    "x": 30,
    "y": 490,
    "w": 1440,
-   "red": "429 aaya? Dheere chalo, Retry-After maano. Kuch din se OPEN? Alert, source list se bahar.",
-   "green": "HALF-OPEN ki test call theek nikli to CLOSED"
+   "red": "Source ne 429 diya? Dheere chalo, uska \"kab aao\" (Retry-After) maano. Kai din se khula? Alert, source list se bahar.",
+   "green": "Thodi der baad ek test call (HALF-OPEN), theek nikli to breaker band (CLOSED)"
   }
  ],
- "kyun": "Ek beemar source baaki ko nahi rokta. Had tak intezaar, phir breaker. Us source ki khabar kuch der nahi aayegi, baaki feed chalti rahegi"
+ "kyun": "Ek beemar source baaki ko nahi rokta. 2-3 sec se zyada intezaar nahi, baar-baar fail to breaker khula (us source ko call band). Uski khabar kuch der nahi aayegi, baaki feed chalti",
+ "step": [
+  5,
+  9
+ ],
+ "peeche": "card 4 me DEDUPE (title hash + SimHash)",
+ "ab": "Ek chhota source 30 sec atka, baaki 999 bhi ruke, Arpan ki feed me nayi khabar band",
+ "agla": "ab sab khabar aa rahi. Par Arpan ko sab nahi chahiye (card 6)"
 }

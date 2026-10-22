@@ -188,7 +188,7 @@
    "y": 84,
    "w": 560,
    "red": "Ek hi machine?",
-   "green": "Saari likhai wahin: disk aur likhai full",
+   "green": "Saara likhna wahin: disk aur likhna full",
    "n": 1
   },
   {
@@ -196,8 +196,8 @@
    "x": 610,
    "y": 84,
    "w": 860,
-   "red": "Category se shard?",
-   "green": "Bojh tirchha: sports / politics bade, baaki chhote",
+   "red": "Category se baant do?",
+   "green": "Bojh tedha: sports / politics bade, baaki chhote",
    "n": 2
   },
   {
@@ -205,8 +205,8 @@
    "x": 30,
    "y": 545,
    "w": 700,
-   "red": "Do shard pe wahi khabar likh di",
-   "green": "DB UNIQUE sirf shard ke andar: pehle saanjhe Bloom se dedupe",
+   "red": "Do tukdon pe wahi khabar likh di",
+   "green": "DB ka UNIQUE sirf ek tukde ke andar dekhta. Isliye likhne se pehle sabke ek Bloom se dohraav roko",
    "n": 3,
    "mark": [
     145,
@@ -228,7 +228,7 @@
    "x": 750,
    "y": 545,
    "w": 720,
-   "red": "Ek shard garam ya mara",
+   "red": "Ek tukda garam ya mara",
    "green": "Sirf uska hissa dheema, baaki chalte",
    "n": 4,
    "mark": [
@@ -259,9 +259,16 @@
    "x": 30,
    "y": 640,
    "w": 1440,
-   "red": "Shard badhaya? Thoda hi data hilta (consistent hashing).",
+   "red": "Tukda badhaya? Thoda hi data hilta (consistent hashing).",
    "green": "Baantne ki key: article_id ka hash, bojh barabar"
   }
  ],
- "kyun": "Baantne ki key wo jo bojh barabar baante, yaani article_id ka hash. Ek shard garam ya mara to sirf uska hissa dheema"
+ "kyun": "Khabar ko article_id ke hash se baanto: bojh barabar bat-ta. Ek tukda garam ya mara to sirf uska hissa dheema. Arpan ki taazi 20 Redis se, na mile to har tukde se thoda",
+ "step": [
+  9,
+  9
+ ],
+ "peeche": "card 8 me MAHINE KA PARTITION + ARCHIVE",
+ "ab": "Source 100 guna hue, ek DB machine likhna nahi jhel pa rahi",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

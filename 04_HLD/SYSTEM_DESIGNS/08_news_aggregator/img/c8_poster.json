@@ -97,8 +97,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Sab ek table me (May se Oct)?",
-   "green": "Purana koi padhta nahi, par disk + backup ka kharcha",
+   "red": "Sab ek hi table me (May se Oct)?",
+   "green": "Purana koi nahi padhta, par disk aur backup ka kharcha",
    "n": 1,
    "conn": [
     [
@@ -116,8 +116,8 @@
    "x": 690,
    "y": 84,
    "w": 780,
-   "red": "Normal DETACH pe lock",
-   "green": "Pal bhar ka lock, padhai ruki. PG 14+: DETACH ... CONCURRENTLY",
+   "red": "Mahina alag karte waqt (DETACH) lock laga",
+   "green": "Pal bhar padhna ruka. Postgres 14+: DETACH ... CONCURRENTLY, bina lock",
    "n": 2,
    "mark": [
     700,
@@ -139,9 +139,16 @@
    "x": 30,
    "y": 470,
    "w": 1440,
-   "red": "3 saal baad DB kitna? Utna hi: naya garam, purana S3. Bilkul nahi chahiye to DROP.",
-   "green": "Purana hatana retention hai, sharding nahi"
+   "red": "3 saal baad DB kitna? Utna hi: naya garam, purana S3. Bilkul nahi chahiye to hata do (DROP).",
+   "green": "Purana hatana = retention. Isse sharding mat samjho"
   }
  ],
- "kyun": "Naya mahina garam hai (Postgres, index se tez), purane thande (S3, sasta). Purani khabar khulti hai, bas dheemi"
+ "kyun": "Har mahine ka alag tukda (partition). Naya mahina Postgres me (garam, tez), purana S3 me (thanda, sasta). Arpan purani khabar khole to khulti, bas dheemi",
+ "step": [
+  8,
+  9
+ ],
+ "peeche": "card 7 me INVERTED INDEX (Elasticsearch)",
+ "ab": "DBA ka mail: 6 mahine me ~2 crore row, kharcha badhta ja raha",
+ "agla": "ab jagah theek. Par source hi 100 guna ho gaye (card 9)"
 }

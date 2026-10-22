@@ -2,56 +2,67 @@
 <meta charset="utf-8">
 <title>Card 7: har shabd ki list ki wo kis khab</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="821" viewBox="0 0 1500 821" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="967" viewBox="0 0 1500 967" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="821" fill="#0b1220"/>
+</defs><rect width="1500" height="967" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 7: har shabd ki list ki wo kis khabar me (inverted index, Elasticsearch). Do shabd = list milao</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="160" width="200" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="130.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
-<text x="130.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">&#x27;cricket kohli&#x27;</text>
-<rect x="300" y="150" width="240" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="420.0" y="184" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Search Svc</text>
-<text x="420.0" y="210" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ES se id lo,</text>
-<text x="420.0" y="232" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">text DB / cache se</text>
-<rect x="630" y="100" width="400" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="830.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB</text>
-<text x="830.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sach yahan (text)</text>
-<rect x="630" y="250" width="400" height="150" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="830.0" y="284" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Elasticsearch</text>
-<text x="830.0" y="310" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">cricket -&gt; a12, a45, a90</text>
-<text x="830.0" y="332" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kohli -&gt; a45, a77</text>
-<text x="830.0" y="354" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">AND = a45, OR = sab</text>
-<rect x="1120" y="170" width="350" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1295.0" y="204" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Result</text>
-<text x="1295.0" y="230" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">a45, score se sort</text>
-<path d="M232 220 L296 220" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M542 185 L626 155" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M542 260 L626 310" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M542 225 L1116 225" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<circle cx="130" cy="270" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="130" y="275" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<circle cx="960" cy="400" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="960" y="405" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="474" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="500" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="500" font-size="13.5" fill="#cfeee0">ES sirf dhoondhta hai, sach DB me hai. ES gira ya galat hua to DB se dobara bana lo. Khabar nahi khoti, bas search dheemi ya band</text>
-<rect x="30" y="548" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="573" r="12" fill="#ff5a6a"/>
-<text x="52" y="578" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="578" font-size="15" font-weight="700" fill="#ff5a6a">&#x27;crikcet&#x27; likh diya</text>
-<text x="52" y="605" font-size="13.5" fill="#7fe0b0">ES fuzzy: 1-2 akshar ka farak chal jaata</text>
-<rect x="392" y="548" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="573" r="12" fill="#ff5a6a"/>
-<text x="414" y="578" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="578" font-size="15" font-weight="700" fill="#ff5a6a">ES gira ya DB se alag ho gaya</text>
-<text x="414" y="605" font-size="13.5" fill="#7fe0b0">DB sach hai: ES dobara bana lo (reindex).</text>
-<text x="414" y="625" font-size="13.5" fill="#7fe0b0">Khabar nahi khoti</text>
-<rect x="30" y="703" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="729" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="753" font-size="13.5" fill="#e6dcb8">LIKE &#x27;%cricket%&#x27;: % aage: index nahi lagta, 2 crore row ek-ek padhi   ·   Postgres full-text (GIN): Chhote scale pe haan. ES: ranking, galat spelling, bahut data</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 7 / 9</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 6 me CATEGORY LIST, padhte waqt milao</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">Raat ko Arpan ne &quot;cricket&quot; dhoondha, poori table padhi gayi</text>
+<rect x="30" y="220" width="200" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
+<text x="130.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">&#x27;cricket kohli&#x27;</text>
+<rect x="300" y="210" width="240" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="420.0" y="244" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Search Svc</text>
+<text x="420.0" y="270" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ES se id lo,</text>
+<text x="420.0" y="292" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">text DB / cache se</text>
+<rect x="630" y="160" width="400" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="830.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB</text>
+<text x="830.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sach yahan (text)</text>
+<rect x="630" y="310" width="400" height="150" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="830.0" y="344" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Elasticsearch</text>
+<text x="830.0" y="370" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">cricket -&gt; a12, a45, a90</text>
+<text x="830.0" y="392" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kohli -&gt; a45, a77</text>
+<text x="830.0" y="414" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">AND = a45, OR = sab</text>
+<rect x="1120" y="230" width="350" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1295.0" y="264" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Result</text>
+<text x="1295.0" y="290" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">a45, score se sort</text>
+<path d="M232 280 L296 280" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M542 245 L626 215" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M542 320 L626 370" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M542 285 L1116 285" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<circle cx="130" cy="330" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="130" y="335" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="960" cy="460" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="960" y="465" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<rect x="30" y="534" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="560" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="560" font-size="13.5" fill="#cfeee0">Har shabd ki list: ye shabd kis-kis khabar me (cricket -&gt; a12, a45). Do shabd = dono list milao. Elasticsearch sirf dhoondhta, asli khabar DB me. ES gira to DB</text>
+<text x="160" y="580" font-size="13.5" fill="#cfeee0">se dobara bana lo</text>
+<rect x="30" y="628" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="653" r="12" fill="#ff5a6a"/>
+<text x="52" y="658" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="658" font-size="15" font-weight="700" fill="#ff5a6a">Arpan ne &quot;crikcet&quot; likh diya</text>
+<text x="52" y="685" font-size="13.5" fill="#7fe0b0">ES fuzzy: 1-2 akshar ka farak chal jaata</text>
+<rect x="392" y="628" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="653" r="12" fill="#ff5a6a"/>
+<text x="414" y="658" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="658" font-size="15" font-weight="700" fill="#ff5a6a">ES gira ya DB se alag ho gaya</text>
+<text x="414" y="685" font-size="13.5" fill="#7fe0b0">Sach DB me hai: ES dobara bana lo (reindex).</text>
+<text x="414" y="705" font-size="13.5" fill="#7fe0b0">Khabar nahi khoti</text>
+<rect x="30" y="783" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="809" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="833" font-size="13.5" fill="#e6dcb8">DB me LIKE &quot;%cricket%&quot;: Shuru me % hai to index nahi lagta: 2 crore row ek-ek padhi   ·   Postgres ka full-text search (GIN): Chhote scale pe haan. ES: ranking, galat spelling, bahut data</text>
+<rect x="30" y="893" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="921" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="921" font-size="14.5" fill="#e6dcb8">ab sab chal raha. Par data bharta ja raha (card 8)</text>
 </svg>

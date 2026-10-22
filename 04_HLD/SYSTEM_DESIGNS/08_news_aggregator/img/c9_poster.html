@@ -2,69 +2,81 @@
 <meta charset="utf-8">
 <title>Card 9: article_id ke hash se shard. Taa</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="924" viewBox="0 0 1500 924" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="1077" viewBox="0 0 1500 1077" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="924" fill="#0b1220"/>
+</defs><rect width="1500" height="1077" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 9: article_id ke hash se shard. Taazi 20 Redis se, miss pe har shard se thoda (scatter-gather)</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="160" width="230" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="145.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Worker</text>
-<text x="145.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">hash(a91)</text>
-<text x="145.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">-&gt; shard 2</text>
-<rect x="360" y="100" width="300" height="95" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="510.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Shard 1</text>
-<text x="510.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar ka hissa</text>
-<rect x="360" y="215" width="300" height="95" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="510.0" y="249" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Shard 2</text>
-<text x="510.0" y="275" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar ka hissa</text>
-<rect x="360" y="330" width="300" height="95" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="510.0" y="364" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Shard 3</text>
-<text x="510.0" y="390" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar ka hissa</text>
-<rect x="770" y="160" width="270" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="905.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc</text>
-<text x="905.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">taazi 20: Redis se</text>
-<text x="905.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">miss: har shard</text>
-<text x="905.0" y="264" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">se thoda</text>
-<rect x="1130" y="110" width="340" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="1300.0" y="144" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
-<text x="1300.0" y="170" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">taazi 20</text>
-<rect x="1130" y="270" width="340" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="1300.0" y="304" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Saanjha Bloom</text>
-<text x="1300.0" y="330" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">likhne se pehle dedupe</text>
-<path d="M262 200 L356 147" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M262 225 L356 262" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M262 250 L356 377" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M662 262 L766 240" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
-<text x="715" y="290" font-size="13" fill="#a98bff" class="m" text-anchor="middle">scatter-gather</text>
-<path d="M1042 200 L1126 160" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M145 292 L145 445 L1300 445 L1300 374" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
-<text x="900" y="435" font-size="13" fill="#a98bff" class="m" text-anchor="middle">likhne se pehle dekho</text>
-<circle cx="145" cy="290" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="145" y="295" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<circle cx="620" cy="425" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="620" y="430" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="505" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="531" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="531" font-size="13.5" fill="#cfeee0">Baantne ki key wo jo bojh barabar baante, yaani article_id ka hash. Ek shard garam ya mara to sirf uska hissa dheema</text>
-<rect x="30" y="579" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="604" r="12" fill="#ff5a6a"/>
-<text x="52" y="609" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="609" font-size="15" font-weight="700" fill="#ff5a6a">Do shard pe wahi khabar likh di</text>
-<text x="52" y="636" font-size="13.5" fill="#7fe0b0">DB UNIQUE sirf shard ke andar: pehle saanjhe</text>
-<text x="52" y="656" font-size="13.5" fill="#7fe0b0">Bloom se dedupe</text>
-<rect x="392" y="579" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="604" r="12" fill="#ff5a6a"/>
-<text x="414" y="609" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="609" font-size="15" font-weight="700" fill="#ff5a6a">Ek shard garam ya mara</text>
-<text x="414" y="636" font-size="13.5" fill="#7fe0b0">Sirf uska hissa dheema, baaki chalte</text>
-<rect x="30" y="734" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="760" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="784" font-size="13.5" fill="#e6dcb8">Ek hi machine: Saari likhai wahin: disk aur likhai full   ·   Category se shard: Bojh tirchha: sports / politics bade, baaki chhote</text>
-<rect x="30" y="822" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="852" font-size="13.5" fill="#c9d6e8">Shard badhaya? Thoda hi data hilta (consistent hashing).</text>
-<text x="48" y="874" font-size="13.5" fill="#c9d6e8">Baantne ki key: article_id ka hash, bojh barabar</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 9 / 9</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 8 me MAHINE KA PARTITION + ARCHIVE</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">Source 100 guna hue, ek DB machine likhna nahi jhel pa rahi</text>
+<rect x="30" y="220" width="230" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="145.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Worker</text>
+<text x="145.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">hash(a91)</text>
+<text x="145.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">-&gt; shard 2</text>
+<rect x="360" y="160" width="300" height="95" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="510.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Shard 1</text>
+<text x="510.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar ka hissa</text>
+<rect x="360" y="275" width="300" height="95" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="510.0" y="309" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Shard 2</text>
+<text x="510.0" y="335" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar ka hissa</text>
+<rect x="360" y="390" width="300" height="95" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="510.0" y="424" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Shard 3</text>
+<text x="510.0" y="450" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar ka hissa</text>
+<rect x="770" y="220" width="270" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="905.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc</text>
+<text x="905.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">taazi 20: Redis se</text>
+<text x="905.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">miss: har shard</text>
+<text x="905.0" y="324" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">se thoda</text>
+<rect x="1130" y="170" width="340" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="1300.0" y="204" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
+<text x="1300.0" y="230" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">taazi 20</text>
+<rect x="1130" y="330" width="340" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="1300.0" y="364" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Saanjha Bloom</text>
+<text x="1300.0" y="390" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">likhne se pehle dedupe</text>
+<path d="M262 260 L356 207" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M262 285 L356 322" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M262 310 L356 437" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M662 322 L766 300" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
+<text x="715" y="350" font-size="13" fill="#a98bff" class="m" text-anchor="middle">scatter-gather</text>
+<path d="M1042 260 L1126 220" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M145 352 L145 505 L1300 505 L1300 434" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
+<text x="900" y="495" font-size="13" fill="#a98bff" class="m" text-anchor="middle">likhne se pehle dekho</text>
+<circle cx="145" cy="350" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="145" y="355" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="620" cy="485" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="620" y="490" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<rect x="30" y="565" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="591" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="591" font-size="13.5" fill="#cfeee0">Khabar ko article_id ke hash se baanto: bojh barabar bat-ta. Ek tukda garam ya mara to sirf uska hissa dheema. Arpan ki taazi 20 Redis se, na mile to har tukde</text>
+<text x="160" y="611" font-size="13.5" fill="#cfeee0">se thoda</text>
+<rect x="30" y="659" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="684" r="12" fill="#ff5a6a"/>
+<text x="52" y="689" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="689" font-size="15" font-weight="700" fill="#ff5a6a">Do tukdon pe wahi khabar likh di</text>
+<text x="52" y="716" font-size="13.5" fill="#7fe0b0">DB ka UNIQUE sirf ek tukde ke andar dekhta.</text>
+<text x="52" y="736" font-size="13.5" fill="#7fe0b0">Isliye likhne se pehle sabke ek Bloom se</text>
+<text x="52" y="756" font-size="13.5" fill="#7fe0b0">dohraav roko</text>
+<rect x="392" y="659" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="684" r="12" fill="#ff5a6a"/>
+<text x="414" y="689" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="689" font-size="15" font-weight="700" fill="#ff5a6a">Ek tukda garam ya mara</text>
+<text x="414" y="716" font-size="13.5" fill="#7fe0b0">Sirf uska hissa dheema, baaki chalte</text>
+<rect x="30" y="821" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="847" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="871" font-size="13.5" fill="#e6dcb8">Ek hi machine: Saara likhna wahin: disk aur likhna full   ·   Category se baant do: Bojh tedha: sports / politics bade, baaki chhote</text>
+<rect x="30" y="909" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="939" font-size="13.5" fill="#c9d6e8">Tukda badhaya? Thoda hi data hilta (consistent hashing).</text>
+<text x="48" y="961" font-size="13.5" fill="#c9d6e8">Baantne ki key: article_id ka hash, bojh barabar</text>
+<rect x="30" y="1003" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="1031" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="1031" font-size="14.5" fill="#e6dcb8">poora design ek saans me: file me neeche &quot;Poora design ek saans me&quot;</text>
 </svg>

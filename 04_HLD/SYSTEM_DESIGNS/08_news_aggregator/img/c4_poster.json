@@ -53,7 +53,7 @@
    "w": 360,
    "h": 120,
    "kind": "user",
-   "title": "Meri feed",
+   "title": "Arpan ki feed",
    "lines": [
     "ek khabar, ek baar",
     "baaki 'aur sources'"
@@ -121,7 +121,7 @@
    "y": 84,
    "w": 620,
    "red": "Har naya URL = nayi khabar?",
-   "green": "5 source to feed me 5 baar",
+   "green": "5 source ne chhapi to Arpan ki feed me 5 baar",
    "n": 1,
    "conn": [
     [
@@ -139,8 +139,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Redis SET me URL? Ya har worker apna Bloom?",
-   "green": "SET: crore URL = bahut RAM. Apna Bloom: doosre ko pata nahi",
+   "red": "URL Redis ke set me? Ya har worker ka apna Bloom?",
+   "green": "Set: crore URL = bahut RAM. Apna Bloom: doosre worker ko pata hi nahi",
    "n": 2
   },
   {
@@ -148,7 +148,7 @@
    "x": 30,
    "y": 490,
    "w": 700,
-   "red": "'wins' aur 'won': hash alag nikla",
+   "red": "\"wins\" aur \"won\": hash alag nikla",
    "green": "SimHash ~90% same: duplicate maano",
    "n": 3,
    "mark": [
@@ -171,17 +171,24 @@
    "x": 750,
    "y": 490,
    "w": 720,
-   "red": "5 me se kaunsi dikhe? Pehli ya bade source ki.",
-   "green": "Bloom se URL hatana? Roz naya filter (ya counting Bloom)"
+   "red": "5 me se kaunsi dikhe? Pehli wali ya bade source ki.",
+   "green": "Bloom se URL hatana ho? Roz naya filter (ya counting Bloom)"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 585,
    "w": 1440,
-   "red": "Bloom: koi bit 0 = pakka naya, sab 1 = shayad dekha. Galat 'haan' kabhi ek nayi chhudaye, news me chalta.",
-   "green": "Isliye ek saanjha Bloom, har worker ka apna nahi"
+   "red": "Bloom: koi bit 0 = pakka naya, sab 1 = shayad dekha. Kabhi galat \"haan\" se ek nayi khabar chhoot sakti, news me chalta.",
+   "green": "Isliye sabka ek hi Bloom (Redis me), har worker ka apna nahi"
   }
  ],
- "kyun": "Same hash matlab same khabar, URL chahe alag ho (5 source, alag URL, thoda alag title). Ek khabar feed me ek hi baar"
+ "kyun": "Title ko saaf karo (chhote akshar, chinh hatao) aur uska hash nikalo. Same hash = same khabar, URL chahe alag ho. Thoda shabd badla to SimHash (~90% same). Arpan ko ek khabar ek hi baar",
+ "step": [
+  4,
+  9
+ ],
+ "peeche": "card 3 me kai machine + LB + READ REPLICA",
+ "ab": "Dopahar \"India ne match jeeta\", Arpan ki feed me 5 baar",
+ "agla": "ab khabar saaf. Par ek source hi atak gaya (card 5)"
 }

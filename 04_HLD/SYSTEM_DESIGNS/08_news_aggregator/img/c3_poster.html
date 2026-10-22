@@ -2,69 +2,80 @@
 <meta charset="utf-8">
 <title>Card 3: Feed Svc kai machine + LB. Redis</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="853" viewBox="0 0 1500 853" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="979" viewBox="0 0 1500 979" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="853" fill="#0b1220"/>
+</defs><rect width="1500" height="979" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 3: Feed Svc kai machine + LB. Redis miss pe DB ki copy (read replica). Primary DB sirf likhai</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="160" width="200" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="130.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Users</text>
-<text x="130.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">8 baje: 20,000 / sec</text>
-<rect x="300" y="150" width="200" height="130" rx="12" fill="#152033" stroke="#9fb0c8" stroke-width="2.5"/>
-<text x="400.0" y="184" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">LB</text>
-<text x="400.0" y="210" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">koi bhi machine</text>
-<rect x="590" y="100" width="250" height="70" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="715.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc 1</text>
-<text x="715.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kuch yaad nahi</text>
-<rect x="590" y="190" width="250" height="70" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="715.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc 2</text>
-<text x="715.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kuch yaad nahi</text>
-<rect x="590" y="280" width="250" height="70" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="715.0" y="314" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc 3</text>
-<text x="715.0" y="340" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kuch yaad nahi</text>
-<rect x="930" y="100" width="250" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="1055.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
-<text x="1055.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">feed</text>
-<rect x="930" y="240" width="250" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="1055.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Read replica</text>
-<text x="1055.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">miss pe yahan</text>
-<rect x="1260" y="240" width="210" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="1365.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Primary DB</text>
-<text x="1365.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sirf likhai</text>
-<path d="M232 215 L296 215" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M502 190 L586 135" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<path d="M502 215 L586 225" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<path d="M502 240 L586 315" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<path d="M842 135 L926 150" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M842 225 L926 285" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M1256 290 L1182 290" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
-<text x="1205" y="312" font-size="13" fill="#a98bff" class="m" text-anchor="middle">copy</text>
-<circle cx="955" cy="340" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="955" y="345" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<circle cx="1180" cy="150" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="1180" y="155" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="414" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="440" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="440" font-size="13.5" fill="#cfeee0">Padhai copy pe, likhai primary pe. Feed Svc kuch yaad nahi rakhti, to machine badhao, koi bhi request le. Copy thodi peeche hai, matlab kuch second purani</text>
-<text x="160" y="460" font-size="13.5" fill="#cfeee0">khabar, koi nuksaan nahi</text>
-<rect x="30" y="508" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="533" r="12" fill="#ff5a6a"/>
-<text x="52" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="538" font-size="15" font-weight="700" fill="#ff5a6a">Read replica peeche reh gayi</text>
-<text x="52" y="565" font-size="13.5" fill="#7fe0b0">Kuch second purani khabar, koi nuksaan nahi</text>
-<rect x="392" y="508" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="533" r="12" fill="#ff5a6a"/>
-<text x="414" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="538" font-size="15" font-weight="700" fill="#ff5a6a">Redis ki ek key pe 20,000 / sec</text>
-<text x="414" y="565" font-size="13.5" fill="#7fe0b0">Redis replica + App me 1-2 sec ki copy</text>
-<rect x="30" y="663" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="689" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="713" font-size="13.5" fill="#e6dcb8">Ek hi Feed machine: 500 se 20,000 / sec, CPU bhar gaya   ·   Redis miss pe primary DB se padho: Wahan fetcher likh raha: bheed likhai ko bhi dheema karti</text>
-<rect x="30" y="751" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="781" font-size="13.5" fill="#c9d6e8">Bheed ka pehle se pata? 7:45 pe machine badhao (scheduled scaling) + cache pehle bharo.</text>
-<text x="48" y="803" font-size="13.5" fill="#c9d6e8">Aur badha? Aur machine: Feed Svc kuch yaad nahi rakhti, koi bhi request le</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 3 / 9</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 2 me KAFKA: laana aur likhna alag</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">8 baje election result, 40 guna bheed, Arpan ki feed atki</text>
+<rect x="30" y="220" width="200" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Users</text>
+<text x="130.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">8 baje: 20,000 / sec</text>
+<rect x="300" y="210" width="200" height="130" rx="12" fill="#152033" stroke="#9fb0c8" stroke-width="2.5"/>
+<text x="400.0" y="244" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">LB</text>
+<text x="400.0" y="270" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">koi bhi machine</text>
+<rect x="590" y="160" width="250" height="70" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="715.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc 1</text>
+<text x="715.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kuch yaad nahi</text>
+<rect x="590" y="250" width="250" height="70" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="715.0" y="284" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc 2</text>
+<text x="715.0" y="310" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kuch yaad nahi</text>
+<rect x="590" y="340" width="250" height="70" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="715.0" y="374" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc 3</text>
+<text x="715.0" y="400" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kuch yaad nahi</text>
+<rect x="930" y="160" width="250" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="1055.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
+<text x="1055.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">feed</text>
+<rect x="930" y="300" width="250" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="1055.0" y="334" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Read replica</text>
+<text x="1055.0" y="360" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">miss pe yahan</text>
+<rect x="1260" y="300" width="210" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="1365.0" y="334" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Primary DB</text>
+<text x="1365.0" y="360" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sirf likhai</text>
+<path d="M232 275 L296 275" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M502 250 L586 195" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M502 275 L586 285" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M502 300 L586 375" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M842 195 L926 210" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M842 285 L926 345" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M1256 350 L1182 350" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
+<text x="1205" y="372" font-size="13" fill="#a98bff" class="m" text-anchor="middle">copy</text>
+<circle cx="955" cy="400" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="955" y="405" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="1180" cy="210" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="1180" y="215" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<rect x="30" y="474" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="500" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="500" font-size="13.5" fill="#cfeee0">Feed Svc kuch yaad nahi rakhti, to machine badhao, koi bhi request le. Redis me na mile to DB ki copy (replica) se padho. Primary pe sirf likhna. Copy thodi</text>
+<text x="160" y="520" font-size="13.5" fill="#cfeee0">peeche = kuch second purani khabar, koi nuksaan nahi</text>
+<rect x="30" y="568" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="593" r="12" fill="#ff5a6a"/>
+<text x="52" y="598" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="598" font-size="15" font-weight="700" fill="#ff5a6a">DB ki copy peeche reh gayi</text>
+<text x="52" y="625" font-size="13.5" fill="#7fe0b0">Kuch second purani khabar, koi nuksaan nahi</text>
+<rect x="392" y="568" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="593" r="12" fill="#ff5a6a"/>
+<text x="414" y="598" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="598" font-size="15" font-weight="700" fill="#ff5a6a">Redis ki ek hi key pe 20,000 / sec</text>
+<text x="414" y="625" font-size="13.5" fill="#7fe0b0">Redis ki copy se bhi padho + har App apni</text>
+<text x="414" y="645" font-size="13.5" fill="#7fe0b0">memory me 1-2 sec ki copy</text>
+<rect x="30" y="723" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="749" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="773" font-size="13.5" fill="#e6dcb8">Ek hi Feed machine: 500 se 20,000 / sec, CPU bhar gaya   ·   Redis me na mile to primary DB se padho: Wahan fetcher likh raha: padhne ki bheed likhne ko bhi dheema karti</text>
+<rect x="30" y="811" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="841" font-size="13.5" fill="#c9d6e8">Bheed ka pehle se pata? 7:45 pe machine badhao (scheduled scaling) + cache pehle bhar do.</text>
+<text x="48" y="863" font-size="13.5" fill="#c9d6e8">Aur bheed? Aur machine: Feed Svc kuch yaad nahi rakhti, koi bhi request le sakti</text>
+<rect x="30" y="905" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="933" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="933" font-size="14.5" fill="#e6dcb8">ab bheed sambhal li. Par feed me wahi khabar baar-baar (card 4)</text>
 </svg>

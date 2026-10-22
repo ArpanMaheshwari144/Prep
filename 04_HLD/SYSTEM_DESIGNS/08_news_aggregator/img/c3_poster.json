@@ -214,8 +214,8 @@
    "x": 570,
    "y": 84,
    "w": 900,
-   "red": "Redis miss pe primary DB se padho?",
-   "green": "Wahan fetcher likh raha: bheed likhai ko bhi dheema karti",
+   "red": "Redis me na mile to primary DB se padho?",
+   "green": "Wahan fetcher likh raha: padhne ki bheed likhne ko bhi dheema karti",
    "n": 2,
    "conn": [
     [
@@ -233,7 +233,7 @@
    "x": 30,
    "y": 490,
    "w": 700,
-   "red": "Read replica peeche reh gayi",
+   "red": "DB ki copy peeche reh gayi",
    "green": "Kuch second purani khabar, koi nuksaan nahi",
    "n": 3,
    "mark": [
@@ -264,8 +264,8 @@
    "x": 750,
    "y": 490,
    "w": 720,
-   "red": "Redis ki ek key pe 20,000 / sec",
-   "green": "Redis replica + App me 1-2 sec ki copy",
+   "red": "Redis ki ek hi key pe 20,000 / sec",
+   "green": "Redis ki copy se bhi padho + har App apni memory me 1-2 sec ki copy",
    "n": 4,
    "mark": [
     1180,
@@ -291,9 +291,16 @@
    "x": 30,
    "y": 585,
    "w": 1440,
-   "red": "Bheed ka pehle se pata? 7:45 pe machine badhao (scheduled scaling) + cache pehle bharo.",
-   "green": "Aur badha? Aur machine: Feed Svc kuch yaad nahi rakhti, koi bhi request le"
+   "red": "Bheed ka pehle se pata? 7:45 pe machine badhao (scheduled scaling) + cache pehle bhar do.",
+   "green": "Aur bheed? Aur machine: Feed Svc kuch yaad nahi rakhti, koi bhi request le sakti"
   }
  ],
- "kyun": "Padhai copy pe, likhai primary pe. Feed Svc kuch yaad nahi rakhti, to machine badhao, koi bhi request le. Copy thodi peeche hai, matlab kuch second purani khabar, koi nuksaan nahi"
+ "kyun": "Feed Svc kuch yaad nahi rakhti, to machine badhao, koi bhi request le. Redis me na mile to DB ki copy (replica) se padho. Primary pe sirf likhna. Copy thodi peeche = kuch second purani khabar, koi nuksaan nahi",
+ "step": [
+  3,
+  9
+ ],
+ "peeche": "card 2 me KAFKA: laana aur likhna alag",
+ "ab": "8 baje election result, 40 guna bheed, Arpan ki feed atki",
+ "agla": "ab bheed sambhal li. Par feed me wahi khabar baar-baar (card 4)"
 }
