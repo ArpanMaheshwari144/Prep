@@ -1,5 +1,5 @@
 {
- "title": "Card 6: garam key ki 1-2 sec copy har App ki RAM me (L1). Likhna ho to tukde like#0..#9, padhte waqt jodo",
+ "title": "Card 6: garam key ki 1-2 sec copy har App ki RAM me (L1). Likhna bhaari ho to 10 tukde, padhte waqt jodo",
  "h": 710,
  "boxes": [
   {
@@ -11,7 +11,7 @@
    "title": "Crore log",
    "lines": [
     "IPL final",
-    "live:score"
+    "sab live:score maangte"
    ]
   },
   {
@@ -55,9 +55,9 @@
    "kind": "cache",
    "title": "Machine A",
    "lines": [
-    "live:score",
+    "live:score yahan",
     "har App 1-2 sec",
-    "me ek baar"
+    "me ek baar aata"
    ]
   },
   {
@@ -211,7 +211,7 @@
   6,
   6
  ],
- "peeche": "card 5 me TAALA: sirf pehla DB jaaye",
+ "peeche": "card 5 me taala: sirf pehla DB jaaye",
  "ab": "Raat IPL final, \"live:score\" key ki machine akeli mar rahi, Arpan ka score atka",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

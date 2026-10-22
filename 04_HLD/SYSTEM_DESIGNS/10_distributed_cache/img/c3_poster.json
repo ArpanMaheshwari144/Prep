@@ -1,5 +1,5 @@
 {
- "title": "Card 3: har machine ki async copy. B mari to ~10-30 sec me copy primary. Network toota to zyadatar (quorum) chunte",
+ "title": "Card 3: har machine ki copy (async). B mari to ~10-30 sec me copy primary. Kaun primary, zyadatar tay karein",
  "h": 700,
  "boxes": [
   {
@@ -22,7 +22,7 @@
    "title": "Machine B (primary)",
    "lines": [
     "user:42 ...",
-    "async copy bhejta"
+    "copy ko peeche se bhejta"
    ]
   },
   {
@@ -57,8 +57,8 @@
    "kind": "plain",
    "title": "Quorum",
    "lines": [
-    "zyadatar tay karein",
-    "kaun primary"
+    "zyadatar milke",
+    "tay karein kaun primary"
    ]
   }
  ],
@@ -89,7 +89,7 @@
    ],
    "c": "purple",
    "dash": true,
-   "label": "async",
+   "label": "",
    "lx": 665,
    "ly": 292,
    "a": "middle"
@@ -215,7 +215,7 @@
   3,
   6
  ],
- "peeche": "card 2 me RING (consistent hashing)",
+ "peeche": "card 2 me ring: key ka ghar machine",
  "ab": "Dopahar machine B mar gayi, Arpan ki key usi pe thi, bojh DB pe",
  "agla": "ab machine marne se nahi girta. Par data purana dikh raha (card 4)"
 }

@@ -59,7 +59,7 @@ PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 
 **Rail 1 KAAM CHALA** · Cue: LRU + TTL (HashMap + DLL)
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -70,7 +70,7 @@ PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 
 **Rail 6 DATA BADA** · Cue: CONSISTENT HASHING + virtual nodes
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -81,7 +81,7 @@ PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 
 **Rail 3 MACHINE GIRI (khaas)** · Cue: REPLICA (async) + quorum failover
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -92,7 +92,7 @@ PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 
 **Rail 4 DO LOG EK SAATH** · Cue: DB me likho, cache key DELETE
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -103,7 +103,7 @@ PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 
 **Rail 2 BHEED AAYI (key khaali)** · Cue: LOCK: SET NX EX, sirf pehla DB jaaye
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -114,7 +114,7 @@ PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 
 **Rail 2 BHEED AAYI (garam key)** · Cue: L1 LOCAL CACHE + key ki copies
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---

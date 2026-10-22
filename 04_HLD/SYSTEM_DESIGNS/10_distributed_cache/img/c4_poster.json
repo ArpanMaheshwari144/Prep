@@ -1,5 +1,5 @@
 {
- "title": "Card 4: pehle DB update, phir cache key DELETE. Delete fail ho to umar (TTL) bachati, utni der hi purana",
+ "title": "Card 4: pehle DB me naya likho, phir cache se key HATAO. Hatana fail ho to umar (TTL) bachati, utni der hi purana",
  "h": 680,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "1: DB update",
-    "2: cache key DELETE"
+    "1: DB me naya likho",
+    "2: cache se key hatao"
    ]
   },
   {
@@ -86,7 +86,7 @@
     ]
    ],
    "c": "purple",
-   "label": "1",
+   "label": "",
    "lx": 600,
    "ly": 245,
    "a": "middle"
@@ -103,7 +103,7 @@
     ]
    ],
    "c": "orange",
-   "label": "2 DEL",
+   "label": "2: hatao",
    "lx": 640,
    "ly": 428,
    "a": "end"
@@ -201,7 +201,7 @@
   4,
   6
  ],
- "peeche": "card 3 me COPY (async) + quorum",
+ "peeche": "card 3 me har machine ki copy",
  "ab": "Arpan ne naam badla, sabko purana naam dikh raha",
  "agla": "ab data taaza. Par key khatam hote hi bheed (card 5)"
 }

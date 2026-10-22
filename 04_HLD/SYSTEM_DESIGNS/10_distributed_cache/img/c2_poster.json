@@ -1,5 +1,5 @@
 {
- "title": "Card 2: key ka hash ring pe, aage chalo, pehli machine ghar. Machine jude / jaaye to sirf pados ki key hilti",
+ "title": "Card 2: key ka hash ring pe, aage chalo, pehli machine us key ka ghar. Machine jude / jaaye to sirf pados ki key hilti",
  "h": 630,
  "circles": [
   {
@@ -18,8 +18,8 @@
    "kind": "server",
    "title": "App (cache client)",
    "lines": [
-    "hash(user:42)",
-    "ring pe"
+    "user:42 ka hash",
+    "ring pe jagah"
    ]
   },
   {
@@ -62,7 +62,7 @@
    "kind": "plain",
    "title": "Ghar kaise",
    "lines": [
-    "key aage chalo,",
+    "ring pe aage chalo,",
     "pehli machine = ghar",
     "har machine 100-200 jagah",
     "(virtual nodes)"
@@ -154,7 +154,7 @@
   2,
   6
  ],
- "peeche": "card 1 me LRU + TTL",
+ "peeche": "card 1 me LRU + umar (TTL)",
  "ab": "11 baje tak data 1 TB: Arpan ki key \"user:42\" kis machine pe?",
  "agla": "ab data baant diya. Par ek machine mari to? (card 3)"
 }

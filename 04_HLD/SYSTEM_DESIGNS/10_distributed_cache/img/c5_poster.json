@@ -1,5 +1,5 @@
 {
- "title": "Card 5: khaali key pe pehla lock leta (SET NX EX 5), wahi DB jaata, baaki ruk ke cache se. Lock khud khulta",
+ "title": "Card 5: khaali key pe pehli request taala leti (SET NX, 5 sec), wahi DB jaati, baaki ruk ke cache se. Taala khud khulta",
  "h": 670,
  "boxes": [
   {
@@ -21,7 +21,7 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "SET lock:home NX EX 5",
+    "taala lo (SET NX EX 5)",
     "pehla: DB jaata",
     "999: 50-100 ms ruko"
    ]
@@ -45,7 +45,7 @@
    "kind": "cache",
    "title": "Cache",
    "lines": [
-    "home key khatam",
+    "home key ki umar khatam",
     "pehla wapas bharta"
    ]
   },
@@ -218,7 +218,7 @@
   5,
   6
  ],
- "peeche": "card 4 me DB me likho, cache se HATAO",
+ "peeche": "card 4 me DB me likho, cache se hatao",
  "ab": "7 baje \"home page\" key khatam, 1000 log ek saath DB pe, Arpan ka page dheema",
  "agla": "ab khaali key ki bheed sambhal li. Par ek hi key pe crore log (card 6)"
 }
