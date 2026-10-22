@@ -105,15 +105,8 @@ NAHI    ek badi machine -> GIRA: kitni bhi badi ho, ek hi hai. Giri to poori sit
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: COUNTER RANGE + base62
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=4" width="900">
-
-<img src="img/c3_2.png?v=4" width="900">
-
-<img src="img/c3_3.png?v=4" width="900">
-
-</details>
 
 ```
 HAL     Counter har App ko alag range deta: App-1 ko 1-1000, App-2 ko 1001-2000. App apni range se agla
@@ -128,18 +121,6 @@ NAHI    UUID -> LAMBA: 36 akshar, link chhota karna hi to kaam tha
 
 > [!IMPORTANT]
 > **Yaad rakh:** Counter har App ko range deta, App range se agla number, phir base62. Takkar kabhi nahi.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Do log ek saath same code maangein? → **UNIQUE, 409**: DB ka UNIQUE ek ko rokta. User apna code maange: lambai dekho, admin jaise reserved naam nahi, pehle se na ho
-> - App-1 range me 400 pe crash? → **bekaar, jaan-boojh ke**: 401 se 1000 bekaar, jaan-boojh ke. 3.5 lakh crore me kuch hazaar se farak nahi
-> - Counter hi gir gaya? → **range chalti + copy**: App ki range chalti rehti hai, tab tak Counter ki copy uth jaati
-> - Range khatam ho gayi? → **agli range**: tabhi Counter (ZooKeeper / DB) se agli range lo
-> - MD5 ya random code lagate? → **takkar**: do link ka code same ho sakta hai, har baar "pehle se hai?" dekhna padta. Counter me nahi
-> - Counter se agla code andaza ho jaaye? → **shuffle / XOR**: haan, ye keemat hai. Chahiye to number pehle shuffle / XOR karo, phir base62. Unique phir bhi
-> - Do log same lamba link dein? → **alag code**: dono ko alag code, har ek ki apni ginti, apni expiry. Ek hi chahiye to long_url ke hash pe pehle dekh lo
-> - Redis INCR se number lete? → **har link pe call**: chal jaata, par har link pe ek call. Range me 1000 link pe ek call
-> - Har number bachana ho, ek bhi bekaar na jaaye? → **har link pe Counter**: har link pe Counter se poochho. Phir range ka fayda khatam
 
 
 ---
