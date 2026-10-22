@@ -143,15 +143,8 @@ NAHI    ginti App me rakho -> BHARA: mana hone wali request bhi andar aati, App 
 
 **Rail 3 MACHINE GIRI** · Cue: REPLICA + FAIL-OPEN / FAIL-CLOSED
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=8" width="900">
-
-<img src="img/c4_2.png?v=8" width="900">
-
-<img src="img/c4_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     Redis ki copy taiyaar rehti hai. Main gira to copy main ban jaati hai (Redis Cluster)
@@ -162,15 +155,6 @@ NAHI    sab fail-open kar do -> KHULA: login khula reh gaya, koi bhi bina had pa
 
 > [!IMPORTANT]
 > **Yaad rakh:** Redis ki copy taiyaar. Copy bhi gayi to pehle se tay: login band (fail-closed), feed khula (fail-open).
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Redis gira, ye pata kaise chalega? → **chhota timeout**: Redis ki call pe chhota timeout (~5 ms). Jawab nahi aaya to gira maano, ruko mat
-> - copy main ban rahi thi, beech ki ginti? → **kuch second ki kho gayi**: rate limit me itna chalta hai
-> - CPU full, copy laga du? → **nahi, SHARD**: nahi, INCR = likhna, likhna sirf main pe. Redis gira nahi, bas CPU full tha. Isliye SHARD, har user ki key alag Redis pe
-> - sab fail-open? → **login khula**: koi bhi bina had password guess karega
-> - login band hai, user ko kya dikhe? → **503**: 503 aur "thodi der baad try karo", chup-chaap fail nahi
-> - feed khuli chhodi, kab tak? → **Redis aate hi band**: Redis wapas aate hi band. Tab tak har gateway apni ginti rakhta hai (card 8)
 
 
 ---
