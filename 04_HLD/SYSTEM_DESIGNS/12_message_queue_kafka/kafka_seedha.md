@@ -122,7 +122,8 @@ Ye roz bolne ke liye nahi. Jab interviewer kisi stop pe ruk ke poochhe, tab yaha
 ## Stop 1 (log, offset) pe sawaal
 ```
 padhne se khabar mitti kyun nahi?  -> taaki dobara padh sakein (replay), aur doosri service bhi padhe
-bookmark kahan rakha?              -> Kafka khud rakhta hai
+bookmark kahan rakha?              -> padhne wala commit karta, Kafka use ek andar ke topic (__consumer_offsets)
+                                      me rakhta. Restart pe wahin se
 kal ki khabar dobara padhni hai?   -> bookmark peeche kar do, khabar disk pe padi hai
 disk bharti gayi?                  -> 7 din se purani khabar hata do (retention), neeche Gehra 3
 121 number wali khabar disk pe kahan hai?  -> Kafka ek chhoti index file rakhta: number -> jagah
@@ -135,7 +136,7 @@ disk bharti gayi?                  -> 7 din se purani khabar hata do (retention)
 kitne tukde rakhein?         -> jitne worker ek saath chahiye. 5,000 / 500 = 10. Thoda zyada rakho
 tukde baad me badhaye?       -> chalta hai, par kram toot sakta hai (Stop 3)
 tukde alag machine pe?       -> haan, 3 broker me barabar baante, ek pe bojh nahi
-kaunsa tukda kis broker pe?  -> Controller (Kafka ki ek machine jo baaki pe nazar rakhti) ka naksha batata
+kaunsa tukda kis broker pe?  -> Controller ka naksha batata (Kafka ki kuch machines ka group, KRaft)
 ```
 
 ## Stop 3 (key, consumer group) pe sawaal
@@ -166,7 +167,7 @@ A ne "ho gaya" bola, copy banne se pehle mar gaya?  -> khabar gayi. Isliye "ho g
                                                        bhi likh jaaye (acks=all)
 ek copy peeche chal rahi?           -> sirf poori taaza copy "pakki" (ISR). Leader pakki me se hi banta
 dono copy bhi gayi, sirf A bacha?   -> likhna rok do (min.insync = 2). Khone se behtar rukna
-naya leader kaun chunta?            -> Controller: Kafka ki ek machine jo baaki sab pe nazar rakhti (KRaft).
+naya leader kaun chunta?            -> Controller: Kafka ki kuch machines ka group jo baaki pe nazar rakhta (KRaft).
                                        Ek hi faisla, do leader kabhi nahi
 acks=all matlab saari copy?        -> nahi, saari PAKKI copy (ISR). Isliye min.insync = 2 saath zaroori, warna
                                        sirf leader bacha ho to bhi "ho gaya" mil jaata
@@ -210,6 +211,12 @@ flowchart LR
 userId se pehchano?             -> galat. Arpan ka agla sahi order bhi chhoot jaayega. Pehchaan eventId se
 Redis se E-5 jaldi mit gaya?    -> dobara aayi to pehchani nahi. Utni der rakho jitni der dobara aa sakti
 exactly-once milta hai?         -> sirf Kafka se Kafka tak. Email / DB ke liye padhne wala khud pehchaane
+idempotent producer aur eventId ek hi cheez?
+                                -> nahi. Idempotent producer: Order Svc ke retry se Kafka me dohri khabar nahi
+                                   likhi jaati. eventId: padhne wala dohra KAAM (dohra email) nahi karta
+email gaya, eventId likhne se pehle gira?
+                                -> dobara email ja sakta. Ilaaj: email company ko bhi wahi id do (wo khud
+                                   dohra rok de), ya pehle "SENDING" likho, phir email, phir "SENT"
 Redis hi gir gaya to?           -> email nahi rukta. Pakki deewar DB me: processed table me eventId UNIQUE.
                                    Redis sirf tez jaanch hai, sach DB me
 bookmark khud aage na badhe?    -> haan, auto-commit band (enable.auto.commit=false), kaam ke baad khud commit
