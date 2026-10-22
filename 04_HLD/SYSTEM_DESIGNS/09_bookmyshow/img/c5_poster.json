@@ -123,7 +123,7 @@
    "y": 84,
    "w": 700,
    "red": "Sab seedha DB pe?",
-   "green": "3000 seat, 2 lakh log ek hi rows ke lock pe: sab dheema",
+   "green": "3000 seat, 2 lakh log ek hi rows ke taale pe: sab dheema",
    "n": 1,
    "conn": [
     [
@@ -141,7 +141,7 @@
    "x": 750,
    "y": 84,
    "w": 720,
-   "red": "Kab? Sirf badi sale. Aam din App seedha UPDATE, turant jawab.",
+   "red": "Kab lagao? Sirf badi sale pe. Aam din App seedha UPDATE, turant jawab.",
    "green": "Release ka time pata? Pehle se machine badhao + har user ki had"
   },
   {
@@ -150,7 +150,7 @@
    "y": 480,
    "w": 700,
    "red": "Line ki ginti wala Redis restart",
-   "green": "DB se dobara gin lo: ginti sirf darwaza, sach DB ki seats",
+   "green": "DB se dobara gin lo: ginti sirf darwaza hai, sach DB ki seats",
    "n": 2,
    "mark": [
     425,
@@ -172,8 +172,8 @@
    "x": 750,
    "y": 480,
    "w": 720,
-   "red": "UPDATE me seat haar gaya",
-   "green": "'Seat gayi, doosri lo'. Faisla DB ka",
+   "red": "UPDATE me Arpan ki seat haar gayi",
+   "green": "\"Seat gayi, doosri lo\". Faisla DB ka",
    "n": 3,
    "mark": [
     1100,
@@ -195,9 +195,16 @@
    "x": 30,
    "y": 575,
    "w": 1440,
-   "red": "Jeeta kaise pata? bookingId se poll ya WebSocket push. Andar wala bina liye gaya? Line se agla andar.",
+   "red": "Jeeta ya nahi, kaise pata? bookingId se poochte raho, ya WebSocket push. Andar wala bina liye chala gaya? Line se agla andar.",
    "green": "Ek worker dheema? UPDATE ~ms, hazaar / sec. Aur chahiye to show ke hisse (balcony / stall)"
   }
  ],
- "kyun": "Likhne ki bheed ko line me khada karo. User ko apni jagah dikhti hai. Ek show = ek line, aur sach hamesha DB ki seats hi hain"
+ "kyun": "Darwaze pe ginti: ~3000 andar, baaki line me, sabko apni jagah dikhti. Andar walon ki booking Kafka se ek-ek. Sach hamesha DB ki seats. Ye sirf badi sale pe",
+ "step": [
+  5,
+  7
+ ],
+ "peeche": "card 4 me CACHE + READ REPLICA",
+ "ab": "12 baje Arijit ka concert khula, 2 lakh log ek show pe, Arpan bhi",
+ "agla": "ab line bani. Par cache hi khaali ho gaya (card 6)"
 }

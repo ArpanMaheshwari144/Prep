@@ -125,7 +125,7 @@
    "y": 84,
    "w": 600,
    "red": "Map bhi primary DB se?",
-   "green": "1 lakh dekhne wale booking ko bhi dheema karte",
+   "green": "1 lakh dekhne wale booking ko bhi dheema kar dete",
    "n": 1,
    "conn": [
     [
@@ -143,15 +143,15 @@
    "x": 650,
    "y": 84,
    "w": 820,
-   "red": "Kisi ne book kiya? Booking primary DB pe, phir map key DEL.",
-   "green": "Redis me map nahi? Replica se banao, Redis me rakh do"
+   "red": "Kisi ne book kiya? Booking primary DB pe, phir Redis se map hata do.",
+   "green": "Redis me map nahi? Copy (replica) se banao, Redis me rakh do"
   },
   {
    "type": "x",
    "x": 30,
    "y": 480,
    "w": 700,
-   "red": "A1 bik chuki, map me khaali dikhi",
+   "red": "A1 bik chuki, Arpan ke map me khaali dikhi",
    "green": "Chalta hai: UPDATE 0 row bolega. Turant chahiye to WebSocket / SSE",
    "n": 2,
    "mark": [
@@ -174,8 +174,8 @@
    "x": 750,
    "y": 480,
    "w": 720,
-   "red": "Lakh log ek hi Redis key pe (hot key)",
-   "green": "Kai copy + App me 1-2 sec ki copy",
+   "red": "Lakh log ek hi Redis key pe",
+   "green": "Us key ki kai copy + har App apni memory me 1-2 sec ki copy",
    "n": 3,
    "mark": [
     940,
@@ -193,5 +193,12 @@
    ]
   }
  ],
- "kyun": "Dekhna copy se hota hai (Redis / replica), faisla sirf primary DB ka UPDATE. Map thoda purana bhi chalta hai, galat dikhi seat ko DB pakad leta hai (0 row)"
+ "kyun": "Map dekhna copy se (Redis, ~5 sec purana chalega), faisla sirf primary DB ka UPDATE. Map me galat khaali dikhi seat ko DB pakad leta (0 row)",
+ "step": [
+  4,
+  7
+ ],
+ "peeche": "card 3 me bookingId = IDEMPOTENCY KEY",
+ "ab": "11 baje Arpan seat map dekh raha, saath me 1 lakh log, book koi-koi",
+ "agla": "ab dekhna sambhal liya. Par badi release pe book karne wale bhi lakhon (card 5)"
 }

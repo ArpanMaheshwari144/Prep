@@ -123,8 +123,8 @@
    "x": 30,
    "y": 84,
    "w": 580,
-   "red": "Seat available hi rakho?",
-   "green": "Pay karte-karte Ravi seat le jaata",
+   "red": "Pay hone tak seat khaali hi rakho?",
+   "green": "Arpan pay kar raha tha, Ravi seat le gaya",
    "n": 1
   },
   {
@@ -132,8 +132,8 @@
    "x": 630,
    "y": 84,
    "w": 840,
-   "red": "Seedha booked kar do?",
-   "green": "Payment fail = seat hamesha ke liye band",
+   "red": "Chunte hi seedha BOOKED kar do?",
+   "green": "Payment fail hua to seat hamesha ke liye band",
    "n": 2
   },
   {
@@ -141,10 +141,9 @@
    "x": 30,
    "y": 520,
    "w": 570,
-   "red": "Umar khatam, phir pay aaya",
-   "green": "Confirm pe bhi WHERE (held + Arpan + umar):",
+   "red": "Umar khatam ho gayi, phir Arpan ka payment aaya",
+   "green": "Confirm pe bhi WHERE (held + Arpan + umar baaki): 0 row = seat gayi, paisa wapas",
    "n": 3,
-   "green2": "0 row = seat gayi, paisa refund",
    "mark": [
     420,
     370
@@ -165,9 +164,16 @@
    "x": 620,
    "y": 520,
    "w": 850,
-   "red": "Koi 10 seat HOLD karke baith gaya? Had lagao: hold ki ginti + rate limit.",
-   "green": "Sweeper sirf safai, asli faisla UPDATE ke WHERE me"
+   "red": "Koi 10 seat pakad ke baith gaya? Had lagao: kitni seat hold kar sakta + rate limit.",
+   "green": "Sweeper sirf safai karta, asli faisla UPDATE ke WHERE me"
   }
  ],
- "kyun": "Hold DB ki usi row ka haal hai (held + umar). Mujhe 5 min ke liye seat pakki, baaki sabko 'held' dikhti hai. Umar khatam ho gayi ya app gir gaya to sweeper khud chhod deta hai. Sweeper sirf safai"
+ "kyun": "Chunte hi seat HELD, umar 5 min (held_until). Arpan ke liye pakki, baaki sabko \"held\" dikhti. Umar khatam ya app gira to seat chhoot jaati. Faisla DB ki query me, sweeper sirf safai",
+ "step": [
+  2,
+  7
+ ],
+ "peeche": "card 1 me EK UPDATE ... WHERE khaali",
+ "ab": "Arpan ne A1 chuni, payment me 3 minute lag rahe",
+ "agla": "ab seat pakad li. Par pay dabate hi network gaya (card 3)"
 }

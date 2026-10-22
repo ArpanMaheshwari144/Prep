@@ -53,7 +53,7 @@
    "w": 370,
    "h": 120,
    "kind": "user",
-   "title": "Meri screen",
+   "title": "Arpan ki screen",
    "lines": [
     "500 ek hi baar"
    ]
@@ -124,7 +124,7 @@
    "y": 84,
    "w": 640,
    "red": "Network gaya, app ne dobara bheja",
-   "green": "Wahi B-42: 'ho chuka', purana jawab, ek hi baar kata",
+   "green": "Wahi B-42 aaya: \"ho chuka\", pehla jawab, Arpan ke 500 ek hi baar kate",
    "n": 1,
    "mark": [
     300,
@@ -147,7 +147,7 @@
    "y": 84,
    "w": 780,
    "red": "Har request pe naya payment?",
-   "green": "Paisa kata, network gaya, dobara: 500 do baar kata",
+   "green": "Paisa kata, network gaya, dobara: Arpan ke 500 do baar kate",
    "n": 2
   },
   {
@@ -155,8 +155,8 @@
    "x": 30,
    "y": 490,
    "w": 740,
-   "red": "Paisa kat gaya, par seat fail",
-   "green": "Refund + user ko batao (saga jaisa: ek fail to doosra ulta)",
+   "red": "Paisa kat gaya, par seat nahi mili",
+   "green": "Paisa wapas + Arpan ko batao (saga jaisa: ek fail to doosra ulta)",
    "n": 3,
    "mark": [
     420,
@@ -178,7 +178,7 @@
    "x": 790,
    "y": 490,
    "w": 680,
-   "red": "PSP ka webhook der se aaya",
+   "red": "Bank (PSP) ka jawab (webhook) der se aaya",
    "green": "PAYMENT_PENDING, hold thoda badhao. Roz hisaab milao",
    "n": 4,
    "mark": [
@@ -201,9 +201,16 @@
    "x": 30,
    "y": 585,
    "w": 1440,
-   "red": "Double tap? Wahi bookingId, ek hi baar kata.",
+   "red": "Arpan ne do baar tap kiya? Wahi bookingId, ek hi baar kata.",
    "green": "bookingId hi idempotency key: ek booking = ek payment"
   }
  ],
- "kyun": "BookingId hi idempotency key hai. Ek booking = ek payment. User ko kuch dobara nahi karna, beech ka haal PENDING dikhta hai. Paisa kata par seat nahi mili to refund"
+ "kyun": "Har pay usi bookingId (B-42) se. Wahi dobara aaya to \"ho chuka\", pehla jawab, paisa ek hi baar. Arpan ko beech me PENDING dikhta. Paisa kata aur seat nahi mili to wapas",
+ "step": [
+  3,
+  7
+ ],
+ "peeche": "card 2 me HOLD + umar (held_until)",
+ "ab": "Arpan ne Pay dabaya, network gaya, app ne dobara bheja",
+ "agla": "ab booking sahi. Par seat map dekhne wale bahut (card 4)"
 }
