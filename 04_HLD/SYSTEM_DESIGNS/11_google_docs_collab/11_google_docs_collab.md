@@ -58,6 +58,8 @@ PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar li
 
 **Rail 4 DO LOG EK SAATH (save)** · Cue: OPERATION + baseVersion (text nahi)
 
+Jod: Jira / Confluence comment me bhi version; wahan purana = save MANA, Docs khiska ke lagata
+
 <details><summary>kahani dekho (3 scene)</summary>
 
 <img src="img/c1_1.png?v=1" width="900">
@@ -94,13 +96,15 @@ NAHI    lock lagao -> RUKNA: user ko lock ya intezaar nahi chahiye.
 
 **Rail 1 KAAM CHALA** · Cue: WEBSOCKET (khula, dono taraf)
 
+Jod: WhatsApp (net aate hi saare message ek saath) · Stock ka live price bhi WebSocket push (05 card 8)
+
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c2_1.png?v=1" width="900">
+<img src="img/c2_1.png?v=2" width="900">
 
-<img src="img/c2_2.png?v=1" width="900">
+<img src="img/c2_2.png?v=2" width="900">
 
-<img src="img/c2_3.png?v=1" width="900">
+<img src="img/c2_3.png?v=2" width="900">
 
 </details>
 
@@ -117,29 +121,32 @@ NAHI    HTTP -> EKTARFA: server khud kuch nahi bhej sakta.
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
 > - WebSocket connection chupchaap mar gaya → **ping / pong ~30 sec**: har ~30 second ping / pong hota hai. Jawab nahi aaya to connection band, jagah khaali
-> - WebSocket connection toot gaya → **"main v12 pe tha"**: main likhta rehta hoon. Judte hi bolta "main v12 pe tha", server v13 se aage sab bhej deta
+> - lift me net gaya, WebSocket toot gaya → **"main v12 pe tha"**: main likhta rehta hoon. Judte hi bolta "main v12 pe tha", server v13 se aage sab bhej deta
 
 
 ---
 
 *ab dono ek hi jagah ek saath likhein to?*
 
-## 3. 11 baje meeting me dono ne sabse upar ek saath type kiya
+## 3. Main aur Ravi ne sabse upar ek saath type kiya
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: OT (server kram, op khiskao)
 
+Jod: Chat me bhi kram server ka +1 number (seq), phone ki ghadi nahi (14 card 6)
+
 <details><summary>kahani dekho (3 scene)</summary>
 
-<img src="img/c3_1.png?v=1" width="900">
+<img src="img/c3_1.png?v=2" width="900">
 
-<img src="img/c3_2.png?v=1" width="900">
+<img src="img/c3_2.png?v=2" width="900">
 
-<img src="img/c3_3.png?v=1" width="900">
+<img src="img/c3_3.png?v=2" width="900">
 
 </details>
 
 ```
-HAL     kram server tay karta (OT): X pehle v8, Y v9 aur 0 se 1 pe khiska. Dono ke paas XYHELLO
+HAL     kram server tay karta (OT): X pehle aaya to v8. Y bhi v7 pe bana tha, X dikha hi nahi,
+        isliye Y 0 se 1 pe khiska (v9). Dono ke paas XYHELLO
 KYUN    kram sirf server ka hai, har op ko agla version milta, phone ki ghadi kabhi nahi.
         Aaya hua op us kram se khisakta hai, to sabki screen same rehti hai.
         Mujhe apna likha turant dikhta hai, baaki ka khisak ke aata hai
@@ -167,6 +174,8 @@ NAHI    jo aaya wahi laga do -> ALAG: meri screen "YX...", Ravi ki "XY...", do a
 ## 4. 50 lakh connection khule, ek connection server nahi jhelta
 
 **Rail 2 BHEED AAYI (connection)** · Cue: RING: docId se ek OWNER server
+
+Jod: URL shortener aur Cache me bhi ring (01 card 5, 10 card 2)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -206,6 +215,8 @@ PEHLE   pehle poochho: ek doc pe ek saath kitne log hain, 2-3 ya 100?
 
 **Rail 2 BHEED AAYI (viewer)** · Cue: REDIS PUB/SUB (doc ek channel)
 
+Jod: Stock ka price bhi pub/sub se har WebSocket server tak (05 card 8)
+
 <details><summary>kahani dekho (3 scene)</summary>
 
 <img src="img/c5_1.png?v=1" width="900">
@@ -239,7 +250,9 @@ KYUN    jis server pe us doc ka user hai, wo channel sunta hai (subscriber).
 
 ## 6. 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
 
-**Rail 6 DATA BADA (likhai)** · Cue: REDIS BUFFER + BATCH, ACK = WAIT 1
+**Rail 6 DATA BADA (likhai)** · Cue: REDIS BUFFER + BATCH, ACK copy ke baad
+
+Jod: Cassandra = sirf aage jodna (09 databases) · URL me bhi ginti Kafka se, raaste se bahar (01 card 4)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -252,14 +265,15 @@ KYUN    jis server pe us doc ka user hai, wo channel sunta hai (subscriber).
 </details>
 
 ```
-HAL     op Redis buffer + copy dono me (WAIT 1, ~1 ms), tab ACK. Har 1 sec ek batch Cassandra me
+HAL     op Redis buffer aur uski copy dono me pahunche (Redis WAIT 1, ~1 ms), tab ACK.
+        Har 1 sec ek batch Cassandra me
 KYUN    ACK tabhi jab op buffer aur copy dono me pahunch gaya.
         Cassandra ka batch ACK ke raaste me hai hi nahi.
         Isliye turant "saved" milta hai aur DB pe likhai kam hoti hai
 ```
 
 > [!IMPORTANT]
-> **Yaad rakh:** Op Redis buffer + copy (WAIT 1), tab ACK. Har 1 sec batch Cassandra me. Batch ACK ke raaste me nahi.
+> **Yaad rakh:** Op Redis buffer + copy me pahuncha (WAIT 1), tab ACK. Har 1 sec batch Cassandra me. Batch ACK ke raaste me nahi.
 
 > [!TIP]
 > **Cross-Q: sawaal → cue, phir poora jawab**
@@ -277,6 +291,8 @@ KYUN    ACK tabhi jab op buffer aur copy dono me pahunch gaya.
 ## 7. Metro me mera net 1 second gaya, typing rukegi?
 
 **Rail 3 MACHINE GIRI (net gaya)** · Cue: likhna AP, permission CP
+
+Jod: WhatsApp bhi offline me type karne deta (AP) · Banking me transfer / balance CP (13)
 
 <details><summary>kahani dekho (3 scene)</summary>
 
@@ -315,6 +331,8 @@ PEHLE   pehle poochho: offline chahiye ya nahi? Isi ke jawab se poora CAP faisla
 ## 8. Raat ko 2 saal purana doc khola, 10 lakh op shuru se chale
 
 **Rail 5 KUCH DHEEMA (purana doc)** · Cue: SNAPSHOT + uske baad ke op
+
+Jod: Banking ka balance bhi = mahine ka snapshot + baad ki line (13 card 11)
 
 <details><summary>kahani dekho (3 scene)</summary>
 

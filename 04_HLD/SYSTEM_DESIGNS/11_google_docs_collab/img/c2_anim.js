@@ -3,7 +3,7 @@ const DUR = 9;
 const PH = [
   [0, RED, 'DIKKAT', 'DIKKAT: HTTP ektarfa hai. Server khud Ravi ko nahi bhej sakta, Ravi ko refresh pe hi dikha'],
   [3, GRN, 'ILAAJ', 'ILAAJ: connection khula rehta, dono taraf (WebSocket). Server khud bhejta, ~200 ms me dikhta'],
-  [6, YEL, 'AGAR', 'AGAR WebSocket toot gaya? -> judte hi "main v12 pe tha", server v13 se aage sab bhejta'],
+  [6, YEL, 'AGAR', 'AGAR lift me net gaya, WebSocket toota? -> judte hi "main v12 pe tha"'],
 ];
 function setup() {}
 const STEPS = [
@@ -12,7 +12,7 @@ const STEPS = [
    [C.acc, 'Ravi → Server', 'Ravi ne refresh dabaya, tab jaake use "X" dikha']],
   [[C.msg, 'Main → Server', 'Maine "X" likha, khule connection (WebSocket) se server pe gaya'],
    [C.good, 'Server → Ravi', 'Server ne khud Ravi ko bheja, ~200 ms me dikha, refresh nahi']],
-  [[C.bad, 'Ravi ✕ Server', 'Ravi ka connection toota, us waqt uske paas v12 tha'],
+  [[C.bad, 'Ravi ✕ Server', 'Ravi lift me gaya, net gaya, WebSocket toot gaya. Tab uske paas v12 tha'],
    [C.msg, 'Main → Server', 'Main likhta raha, server pe doc v15 tak pahunch gaya'],
    [C.acc, 'Ravi → Server', 'Ravi dobara juda aur bola "main v12 pe tha"'],
    [C.good, 'Server → Ravi', 'Server ne v13, v14, v15 bheje, Ravi ka doc barabar']],
@@ -40,7 +40,7 @@ function frame(ph) {
     cells(388, 185, [['v12'], ['v13', C.acc], ['v14', C.acc], ['v15', C.acc]], { w: 44, h: 30 });
     B(710, 130, 175, 60, 'Ravi', 'mere paas v12', { icon: 'user' });
     A(185, 70, 340, 140, C.msg, { n: 2 });
-    A(705, 145, 575, 145, C.bad, { n: 1, dash: 1, at: 0.4 }); cross(620, 120); L(640, 95, 'connection toota', C.bad);
+    A(705, 145, 575, 145, C.bad, { n: 1, dash: 1, at: 0.4 }); cross(620, 120); L(660, 95, 'lift me net gaya, WebSocket toota', C.bad);
     A(705, 175, 575, 175, C.acc, { n: 3, at: 0.6 }); L(690, 250, '"main v12 pe tha"', C.acc);
     AP([[450, 227], [450, 300], [797, 300], [797, 192]], C.good, { n: 4, at: 0.3 }); L(620, 330, 'v13, v14, v15 bheje: barabar', C.good);
   }
