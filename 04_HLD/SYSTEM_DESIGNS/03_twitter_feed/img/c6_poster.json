@@ -1,0 +1,40 @@
+{
+  "title": "Card 6: Cassandra, user_id se baanto. Mere saare tweet ek machine pe, naya sabse upar",
+  "h": 670,
+  "boxes": [
+    {"x": 30, "y": 260, "w": 240, "h": 110, "kind": "server", "title": "Tweet Svc", "lines": ["5,000 tweet / sec", "5 saal me 0.5 PB"]},
+    {"x": 420, "y": 200, "w": 300, "h": 90, "kind": "db", "title": "Machine (Main)", "lines": ["Main ke saare tweet, naya upar"]},
+    {"x": 420, "y": 330, "w": 300, "h": 90, "kind": "db", "title": "Machine (Ravi)", "lines": ["Ravi ke saare tweet"]},
+    {"x": 1100, "y": 250, "w": 370, "h": 100, "kind": "user", "title": "Main ki profile khuli", "lines": ["ek machine, ek read"]}
+  ],
+  "arrows": [
+    {"pts": [[272, 300], [416, 250]], "c": "orange", "label": "user_id se", "lx": 290, "ly": 262},
+    {"pts": [[272, 330], [416, 370]], "c": "orange"},
+    {"pts": [[722, 265], [1096, 290]], "c": "green", "label": "ek read", "lx": 1000, "ly": 275}
+  ],
+  "callouts": [
+    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 640,
+     "red": "MySQL lagate?",
+     "green": "Har tweet pe har index disk pe dhoondh ke badalna, dheema",
+     "green2": "Join / transaction yahan chahiye hi nahi"},
+    {"n": 2, "type": "pehle", "x": 700, "y": 84, "w": 770,
+     "red": "tweet_id se baant dete?",
+     "green": "Bojh barabar, par profile ke liye saari machine poochni padti"},
+    {"n": 3, "type": "x", "x": 760, "y": 175, "w": 330,
+     "red": "Famous ki machine garam",
+     "green": "Theek hai: garam tweet",
+     "green2": "alag RAM cache me",
+     "mark": [722, 210], "conn": [[734, 210], [760, 210]]},
+    {"n": 4, "type": "x", "x": 380, "y": 470, "w": 500,
+     "red": "Ravi wali machine giri",
+     "green": "3 copy: 2 me likho, 2 se padho, naya mil jaata",
+     "mark": [600, 420], "conn": [[600, 432], [600, 470]]},
+    {"n": 5, "type": "x", "x": 920, "y": 470, "w": 550,
+     "red": "Kisi ke bahut tweet, ek machine bhar rahi",
+     "green": "Key me mahina jodo: (user_id, mahina)",
+     "mark": [722, 380], "conn": [[734, 380], [940, 470]]},
+    {"type": "grey", "x": 30, "y": 580, "w": 1440,
+     "red": "Likhai tez kaise? Commit log ke aakhir me jodta, badalta nahi. RAM bhari to nayi file disk pe.",
+     "green": "Files bahut ho gayi, padhna dheema: peeche milao (compaction) + Bloom filter"}
+  ]
+}

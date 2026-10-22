@@ -184,15 +184,8 @@ NAHI    Redis me machine jodte jao -> MEHNGA: soye 40 crore ka inbox bhi RAM kha
 
 **Rail 6 DATA BADA (tweet)** · Cue: CASSANDRA, user_id se baanto
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=5" width="900">
-
-<img src="img/c6_2.png?v=5" width="900">
-
-<img src="img/c6_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     Cassandra lagao, user_id se baanto. Mere saare tweet ek machine pe, naya sabse upar. Ek hi read
@@ -205,14 +198,6 @@ NAHI    MySQL -> DHEEMA: har tweet pe har index disk pe dhoondh ke badalna. Join
 
 > [!IMPORTANT]
 > **Yaad rakh:** Cassandra, user_id se baanto: mere saare tweet ek machine pe, ek read. 3 copy, 2 likho 2 padho.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Cassandra pe itni likhai tez kaise hoti hai? → **aakhir me jodta (commit log)**: commit log ke aakhir me jodta hai, badalta nahi. RAM bhar gayi to RAM ki nayi file disk pe
-> - Cassandra me files bahut? → **padhna dheema. Peeche milao (compaction)**: aur bloom filter lagao
-> - meri tweet wali machine giri? → **3 copy, 2 me likho, 2 se padho (quorum)**: naya mil hi jaata hai
-> - famous ki machine garam? → **theek hai, garam tweet alag RAM cache me**: user_id se baantna phir bhi theek hai
-> - famous ke bahut tweet, machine bhare? → **key (user_id, mahina)**: key me mahina jodo. Phir ek machine nahi bharegi
 
 
 ---
