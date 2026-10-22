@@ -57,8 +57,8 @@ khabar:  eventId · userId (key) · type (ORDER_CREATED) · time · data
 
 Kaam 1 dabbon pe chalao: "Arpan ne order kiya. Order Svc khabar Kafka ke topic order-events me daal ke aage badh
 gaya. Kafka disk pe likhta, padhne se mitti nahi. Email, Analytics, Dashboard teeno alag team (consumer group): har
-team ko poori khabar, har team apna bookmark (offset). Email team ki 3 machine, ek tukda ek machine ko, to Arpan ko
-ek hi email."
+team ko poori khabar, har team apna bookmark (offset). Email team ki 3 machine: ek tukda sirf ek machine ko (ek machine
+ke paas 3-4 tukde), to Arpan ko ek hi email."
 
 Kaam 2 chalao: "Arpan ki saari khabar key = userId se ek hi tukde (P1) me, to kram pakka. Kram sirf ek tukde ke
 andar milta, poore topic me nahi."
@@ -195,7 +195,7 @@ bookmark kahan rakha?              -> padhne wala commit karta, Kafka use ek and
                                       (__consumer_offsets)
                                       me rakhta. Restart pe wahin se
 kal ki khabar dobara padhni hai?   -> bookmark peeche kar do, khabar disk pe padi hai
-disk bharti gayi?                  -> 7 din se purani khabar hata do (retention), neeche: rebalance
+disk bharti gayi?                  -> 7 din se purani khabar hata do (retention), neeche: retention
 121 number wali khabar disk pe kahan hai?  -> Kafka ek chhoti index file rakhta: number -> jagah
 ```
 
@@ -215,12 +215,11 @@ key nahi di?                     -> khabar kisi bhi tukde me, kram nahi bachta
 poore topic ka ek kram chahiye?  -> ek hi tukda, phir wahi bheed. Aksar ek user ka kram kaafi
 ek celeb ki itni khabar ki uska tukda bhar gaya?
                                  -> key me number jodo (userId#1, #2), kram chhodna padega
-tukde 10 se 20 kiye?             -> tukda = hash(key) % ginti. Ginti badli to key ka tukda badla, kuch der
-                                    kram
-                                    toota. Isliye shuru me peak se 2-3 guna tukde rakho
+tukde 10 se 20 kiye?             -> tukda = hash(key) % ginti. Ginti badli to key ka tukda badla: Arpan ki
+                                    purani khabar purane tukde me, nayi naye me, kuch der kram toota.
+                                    Isliye shuru me peak se 2-3 guna tukde rakho
 Order Svc ne A bheja, wo network me atka, retry kiya, tab tak B pahunch gaya?
-                                 -> Order Svc ki Kafka library khud har khabar pe number lagati (1, 2), hum
-                                    nahi.
+                                 -> Order Svc ki Kafka library khud har khabar pe number lagati (1, 2).
                                     Kafka number dekh ke kram theek rakhta aur dobara aayi khabar nahi likhta
                                     (idempotent producer, setting enable.idempotence=true)
 RabbitMQ / SQS (doosre queue tool) me kram?
@@ -251,15 +250,51 @@ pehle kya poochho?                  -> khabar kho sakti hai ya bilkul nahi? Isi 
 
 ### commit, eventId
 ```
-
+"duplicate kabhi nahi aayega"?  -> galat. Khabar khoti nahi, dobara aa sakti. Padhne wala pehchaanta
+userId se pehchano?             -> galat. Arpan ka agla sahi order bhi chhoot jaayega. Pehchaan eventId se
+Redis se E-5 jaldi mit gaya?    -> dobara aayi to pehchani nahi. Utni der rakho jitni der dobara aa sakti
+idempotent producer aur eventId ek hi cheez?
+                                -> nahi. Idempotent producer: Order Svc ke retry se Kafka me dohri khabar nahi
+                                   likhi jaati. eventId: padhne wala dohra KAAM (dohra email) nahi karta
+email gaya, eventId likhne se pehle gira?
+                                -> dobara email ja sakta. Ilaaj: email company ko bhi wahi id do (wo khud
+                                   dohra rok de), ya pehle "SENDING" likho, phir email, phir "SENT"
+Redis hi gir gaya to?           -> email nahi rukta. Pakki deewar DB me: processed table me eventId UNIQUE.
+                                   Redis sirf tez jaanch hai, sach DB me
+bookmark khud aage na badhe?    -> haan, auto-commit band (enable.auto.commit=false), kaam ke baad khud commit
+pehle kaam phir commit ka naam?  -> at-least-once: khabar kam se kam ek baar, kabhi do baar
+exactly-once chahiye?           -> Kafka transactions (padho -> likho -> commit ek saath), sirf Kafka se
+                                   Kafka. Humein nahi chahiye, eventId kaafi
 ```
 
 ### outbox
 ```
-
+order likhne se pehle gira?        -> kuch nahi likha. Arpan dobara order karega, galat kuch nahi
+relay ne bheja, sent = true se pehle gira?  -> khabar dobara jaayegi. Padhne wala E-101 pehchaan lega
+outbox table bharti gayi?          -> sent = true wali row roz saaf karo
+5,000 / sec pe relay DB ko baar-baar poochhe (sent = false)?
+                                   -> DB pe bojh. Bada scale ho to CDC: Debezium DB ka apna log (WAL / binlog)
+                                      padh ke Kafka ko deta, table ko poochhna hi nahi padta
+saga kyun nahi?                    -> saga = kadam-kadam kaam, fail pe pichhla kaam ulta. Wo galti ulatne ke
+                                      liye hai. Yahan kuch ulatna nahi, khabar ko bachana hai
+poora bachav ek line me?           -> outbox + acks=all + pehle kaam phir commit + eventId + DLQ
 ```
 
 ### rebalance, lag, DLQ, retention
 ```
-
+rebalance me sab ruk jaate?        -> purane tareeke (eager) me poori team 1-2 sec rukti. Naye (cooperative)
+                                      me sirf wahi machine rukti jinke tukde badle
+worker ka kaam lamba, poll nahi kiya?
+                                   -> Kafka use mara samjhta (max.poll.interval.ms), rebalance. Email
+                                      dheema ho to yahi hota: ek baar me kam khabar lo, ya time badhao
+lag kaise naapein?                 -> tukde ki aakhri khabar ka number (latest offset) - team ka bookmark
+                                      (consumer offset). Alert isi farak pe
+lag badh raha?                     -> alert + worker badhao. Ek khabar 5 min le to use alag
+                                      workers ki alag line me bhejo
+DLQ wali khabar ka kya?            -> theek karke dobara chalao
+padhte hi delete kyun nahi?        -> dobara padhna (replay) band ho jaata
+Email Svc 7 din se zyada band?     -> wo khabar ud chuki. Retention sabse lambi chhutti se lamba rakho
+retention aur compaction me farak?  -> retention = waqt se hatao (7 din se purani sab). Compaction = har key
+                                      ki sirf aakhri khabar rakho (jaise user ka aakhri pata)
+Kafka ka asli number kya?          -> disk ki jagah, kyunki Kafka khabar rakhta hai, sirf aage nahi bhejta
 ```
