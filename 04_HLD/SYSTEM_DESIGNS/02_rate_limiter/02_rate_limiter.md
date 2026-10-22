@@ -255,15 +255,8 @@ NAHI    Redis gaya to sab andar aane do -> KHULA: attacker ke liye site khul gay
 
 **Rail 8 BAHAR KA HAMLA** · Cue: KEY = USER_ID (JWT), IP sirf login
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
 
-<img src="img/c9_1.png?v=8" width="900">
-
-<img src="img/c9_2.png?v=8" width="900">
-
-<img src="img/c9_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     login ke baad ginti user_id pe hoti hai (JWT se). Ravi ki galti sirf Ravi pe padti hai
@@ -273,12 +266,6 @@ NAHI    IP ki had badha do (5 se 500) -> CHHOOT: office bach gaya, par botnet ko
 
 > [!IMPORTANT]
 > **Yaad rakh:** Had us pehchaan pe jo ek insaan ki ho: login ke baad user_id (JWT), login se pehle IP pe dheeli had.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - login se pehle, jab userId hai hi nahi? → **IP pe dheeli had + WAF**: wahan IP pe dheeli had aur WAF
-> - 5 galat password pe account lock? → **lock nahi, CAPTCHA**: attacker tujhe hi lock kar dega. isliye username pe lock nahi, CAPTCHA ya thodi der ruko
-> - API key chori ho gayi? → **nuksaan seemit**: nuksaan seemit hai, kyunki had key pe hai. Key badlo ya band karo
 
 
 ---

@@ -1,0 +1,37 @@
+{
+  "title": "Card 9: login ke baad ginti user_id pe (JWT se). Ravi ki galti sirf Ravi pe padti",
+  "h": 600,
+  "boxes": [
+    {"x": 30, "y": 200, "w": 260, "h": 110, "kind": "user", "title": "Office (night shift)", "lines": ["1000 log, ek hi IP", "Ravi bhi inme"]},
+    {"x": 380, "y": 180, "w": 330, "h": 150, "kind": "server", "title": "Gateway",
+     "lines": ["JWT se user_id nikala", "key: rate:user_456", "login se pehle: IP pe dheeli"]},
+    {"x": 820, "y": 200, "w": 300, "h": 110, "kind": "cache", "title": "Redis", "lines": ["har user ki apni ginti", "Ravi ko 429, baaki nahi"]},
+    {"x": 1220, "y": 210, "w": 250, "h": 90, "kind": "server", "title": "App", "lines": ["baaki 999 andar"]}
+  ],
+  "arrows": [
+    {"pts": [[292, 255], [376, 255]], "c": "blue"},
+    {"pts": [[712, 255], [816, 255]], "c": "orange", "label": "INCR", "lx": 764, "ly": 245, "a": "middle"},
+    {"pts": [[1122, 255], [1216, 255]], "c": "green"}
+  ],
+  "callouts": [
+    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 620,
+     "red": "Pehle ginti IP pe thi: Ravi ne had todi, poora office atka",
+     "green": "Ab ginti user_id pe. Ravi ki galti sirf Ravi pe",
+     "conn": [[160, 146], [160, 200]]},
+    {"n": 2, "type": "pehle", "x": 680, "y": 84, "w": 790,
+     "red": "IP ki had hi badha do (5 se 500)?",
+     "green": "Office bach gaya, par botnet ko bhi utni hi chhoot mil gayi",
+     "conn": [[695, 146], [695, 180]]},
+    {"n": 3, "type": "x", "x": 30, "y": 410, "w": 640,
+     "red": "5 galat password pe account lock kar diya",
+     "green": "Attacker jaan-boojh ke tujhe lock karega. Lock nahi, CAPTCHA",
+     "mark": [392, 330], "conn": [[392, 342], [392, 410]]},
+    {"n": 4, "type": "x", "x": 720, "y": 410, "w": 750,
+     "red": "Kisi ki API key chori ho gayi",
+     "green": "Nuksaan seemit, kyunki had key pe hai. Key badlo ya band karo",
+     "mark": [1108, 310], "conn": [[1108, 322], [1108, 410]]},
+    {"type": "grey", "x": 30, "y": 500, "w": 1440,
+     "red": "Had us pehchaan pe lagao jo ek insaan ki ho. Ek IP ke peeche 1000 log, ek botnet ke 1000 IP.",
+     "green": "Login se pehle user_id hota hi nahi: tab IP pe dheeli had + WAF"}
+  ]
+}
