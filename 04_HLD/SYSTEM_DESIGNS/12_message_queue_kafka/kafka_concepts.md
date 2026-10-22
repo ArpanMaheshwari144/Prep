@@ -1,4 +1,4 @@
-# Kafka samjho (tasveer se)
+# Kafka concepts (tasveer se)
 
 > Ek line: main kaam ho gaya, ab khabar jahan-jahan chahiye wahan peeche se pahunchti rahe, aur main kaam kisi ka intezaar na kare.
 > Kafka khud SMS nahi bhejta: wo khabar rakhta aur pahunchata hai, kaam padhne wale karte hain.
