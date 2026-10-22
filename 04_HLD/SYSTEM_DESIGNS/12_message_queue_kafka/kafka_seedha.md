@@ -1,6 +1,6 @@
 # Kafka: shuru se, dabbe aur teer se
 
-Ek kahani: Arpan ne order kiya. Order Svc ko ye khabar email wale ko deni hai ("order #101 bana, email bhejo").
+Ek kahani: Arpan ne order kiya. Order Svc ko khabar email wale ko deni hai ("order #101 bana, email bhejo").
 Shuru me sab ek dabbe me. Har kadam pe ek dikkat aati hai, ek dabba ya ek shabd judta hai.
 Jo shabd tu bolega, sawaal wahi se uthega. Isliye har shabd ke neeche uske sawaal aur jawab:
 
@@ -8,6 +8,12 @@ Jo shabd tu bolega, sawaal wahi se uthega. Isliye har shabd ke neeche uske sawaa
 DABBA -> gir gaya?  bheed aa gayi?  dheema ho gaya?
 TEER  -> pahuncha hi nahi?  do baar pahuncha?  der se pahuncha?
 SHABD -> ye kyun, doosra kyun nahi?
+```
+
+Ginti (interviewer pooche to):
+```
+roz 10 crore khabar / ~86,400 sec = ~1,200 har second, sale me ~5,000 har second
+ek khabar ~1 KB -> roz ~100 GB, 7 din ~700 GB, 3 copy -> ~2 TB disk
 ```
 
 ---
@@ -63,6 +69,7 @@ padhne se khabar mitti kyun nahi?  -> taaki dobara padh sakein (replay), aur doo
 bookmark kahan rakha?              -> Kafka khud rakhta hai
 kal ki khabar dobara padhni hai?   -> bookmark peeche kar do, khabar disk pe padi hai
 disk bharti gayi?                  -> <- KADAM 10
+121 number wali khabar disk pe kahan hai?  -> Kafka ek chhoti index file rakhta: number -> jagah
 ```
 
 ---
@@ -95,7 +102,8 @@ Shabd bola: **partition (tukda)**. Sawaal:
 10 tukde, 5 worker?          -> ek worker 2 tukde padhega, chalega, bas dheema
 kitne tukde rakhein?         -> jitne worker ek saath chahiye. 5,000 / 500 = 10. Thoda zyada rakho
 tukde baad me badhaye?       -> chalta hai, par kram toot sakta hai      <- KADAM 4
-tukde alag machine pe?       -> haan, isliye ek machine pe bojh nahi
+tukde alag machine pe?       -> haan, 3 machine (broker) me barabar baante, ek pe bojh nahi
+kaunsa tukda kis machine pe?  -> Controller ka naksha rakhta hai
 ```
 
 ---
@@ -125,6 +133,10 @@ key nahi di?                     -> khabar kisi bhi tukde me, kram nahi bachta
 poore topic ka ek kram chahiye?  -> ek hi tukda, phir wahi bheed. Aksar ek user ka kram kaafi
 ek celeb ki itni khabar ki uska tukda bhar gaya?  -> key me number jodo (userId#1, #2), kram chhodna padega
 tukde 10 se 20 kiye?             -> key ka tukda badal gaya, kuch der kram toota. Isliye shuru me zyada rakho
+Order Svc ne A bheja, wo network me atka, retry kiya, tab tak B pahunch gaya?
+                                 -> Order Svc har khabar pe number lagata (1, 2). Kafka number dekh ke kram
+                                    theek rakhta aur dobara aayi khabar nahi likhta (idempotent producer)
+RabbitMQ / SQS me kram?          -> pakka nahi milta. SQS FIFO ya ek hi padhne wala ho tab, par speed kam
 ```
 
 ---
@@ -199,7 +211,10 @@ A ne "ho gaya" bola, copy banne se pehle mar gaya?  -> khabar gayi. Isliye "ho g
 ek copy peeche chal rahi?           -> sirf poori taaza copy "pakki" (ISR). Leader pakki me se hi banta
 dono copy bhi gayi, sirf A bacha?   -> likhna rok do (min.insync = 2). Khone se behtar rukna
 naya leader kaun chunta?            -> Controller (KRaft). Ek hi faisla, do leader kabhi nahi
-acks ke teen tareeke?               -> 0 = bhej ke bhool jao, 1 = sirf leader, all = saari pakki copy
+acks ke teen tareeke?               -> 0 = bhej ke bhool jao, 1 = sirf leader (click, log ke liye theek),
+                                       all = saari pakki copy (paisa, order)
+3 copy ke liye kitni machine?       -> kam se kam 3 alag machine
+pehle kya poochho?                  -> khabar kho sakti hai ya bilkul nahi? Isi se acks tay hota
 ```
 
 ---
@@ -256,6 +271,7 @@ order likhne se pehle gira?        -> kuch nahi likha. Arpan dobara order karega
 relay ne bheja, sent = true se pehle gira?  -> khabar dobara jaayegi. Padhne wala E-101 pehchaan lega
 outbox table bharti gayi?          -> sent = true wali row roz saaf karo
 saga kyun nahi?                    -> saga fail hua kaam ulta karta. Yahan khabar ko bachana hai
+poora bachav ek line me?           -> outbox + acks=all + pehle kaam phir bookmark + eventId + DLQ
 ```
 
 ---
@@ -277,10 +293,12 @@ Shabd bola: **rebalance, lag, DLQ, retention**. Sawaal:
 ```
 rebalance me sab ruk jaate?        -> purane tareeke me haan. Naye (cooperative) me sirf jinke tukde badle
 lag kaise naapein?                 -> aakhri khabar ka number - team ne kahan tak padha
+lag badh raha?                     -> alert + worker badhao. Ek khabar 5 min le to use alag pool me bhejo
 DLQ wali khabar ka kya?            -> theek karke dobara chalao
 padhte hi delete kyun nahi?        -> dobara padhna (replay) band ho jaata
 Email Svc 7 din se zyada band?     -> wo khabar ud chuki. Retention sabse lambi chhutti se lamba rakho
 ek user ka sirf aakhri naam chahiye?  -> compaction: har key ki sirf aakhri value rakho
+Kafka ka asli number kya?          -> disk ki jagah, kyunki Kafka khabar rakhta hai, sirf aage nahi bhejta
 ```
 
 ---
