@@ -244,15 +244,8 @@ PEHLE   pehle poochho: offline chahiye ya nahi? Isi ke jawab se poora CAP faisla
 
 Jod: Banking ka balance bhi = mahine ka snapshot + baad ki line (13 card 11)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: andar + kya toota, kaise bacha">
 
-<img src="img/c8_1.png?v=1" width="900">
-
-<img src="img/c8_2.png?v=1" width="900">
-
-<img src="img/c8_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     har 1000 op pe photo (snapshot), background job leta. Kholna = aakhri photo + baad ke op
@@ -263,12 +256,6 @@ NAHI    har baar shuru se saare op ek-ek chalao -> DHEEMA: minuton tak khaali sc
 
 > [!IMPORTANT]
 > **Yaad rakh:** Har 1000 op pe photo (snapshot), job leta. Kholna = aakhri photo + baad ke op. Koi bhi version aise hi.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - photo lete waqt kisi ne likha → **photo ek version tak**: photo ek version tak hai (v9,99,000), baad ke op alag. Kuch nahi rukta
-> - kal ka purana version v5,00,500 maanga → **pehli photo + beech ke op**: v5,00,000 ki photo + 500 op. Koi bhi purana version = us se pehli photo + beech ke op
-> - photo kitni baar lein? → **har 1000 op**: kam li to kholte waqt utne zyada op chalane padte. Har 1000 op pe theek hai
 
 
 ---
