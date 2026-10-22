@@ -186,15 +186,8 @@ NAHI    har region apni ginti rakhe -> TOOTA: 50 + 50 + 50 = 150, had har region
 
 **Rail 8 BAHAR KA HAMLA** · Cue: KAFKA -> PATTERN -> WAF BAN
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=8" width="900">
-
-<img src="img/c6_2.png?v=8" width="900">
-
-<img src="img/c6_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     har 429 Kafka me jaata hai. Pattern Svc dekhta: 10 min me 500+ 429 aaye
@@ -208,13 +201,6 @@ NAHI    turant ban kar do -> GALAT: asli user bhi tez click karta, office NAT, s
 
 > [!IMPORTANT]
 > **Yaad rakh:** 429 maafi wala. Har 429 Kafka me, pattern dikha to WAF ban (umar ke saath, bheed wale IP pe captcha).
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Kafka peeche chal raha? → **ban kuch minute late**: rate limit rok raha
-> - office ka IP (200 log, ek IP)? → **captcha, ban nahi**: ban nahi, captcha. Ban bhi 24 ghante me hat jaata. haath se bhi hata sakte. Bheed wale IP pe ban ki jagah captcha
-> - userId pe ban lagana hai, kahan lagega? → **gateway (JWT)**: gateway pe, JWT se userId milta. WAF edge pe baitha hai, wo sirf IP dekhta hai
-> - baar-baar wahi gunda, permanent ban? → **userId permanent, IP umar ke saath**: pakka fraud pe account / device hamesha ke liye band. IP ka WAF ban kuch ghante, kyunki IP kal kisi aur ka ho sakta
 
 
 ---
