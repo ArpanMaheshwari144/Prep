@@ -47,7 +47,7 @@
    "w": 300,
    "h": 110,
    "kind": "user",
-   "title": "Meri screen",
+   "title": "Arpan ki screen",
    "lines": [
     "'hua' ya 'nahi hua'",
     "beech ka kabhi nahi"
@@ -102,7 +102,7 @@
    "y": 84,
    "w": 620,
    "red": "Do alag badlaav, ek ke baad ek?",
-   "green": "Arpan -500 hua, crash, Kirana +500 hua hi nahi: paisa gayab",
+   "green": "Arpan -500 hua, crash, Kirana +500 hua hi nahi: 500 gayab",
    "n": 1,
    "conn": [
     [
@@ -121,7 +121,7 @@
    "y": 84,
    "w": 800,
    "red": "SQL ki jagah NoSQL?",
-   "green": "Nahi: kai row pe sab-ya-kuch-nahi + paisa turant sahi chahiye",
+   "green": "Nahi: kai row pe \"ya sab ya kuch nahi\" chahiye, aur paisa turant sahi",
    "n": 2
   },
   {
@@ -130,9 +130,8 @@
    "y": 470,
    "w": 470,
    "red": "COMMIT se pehle server gira",
-   "green": "DB uth ke WAL dekhta, COMMIT nahi:",
+   "green": "DB uth ke apna log (WAL) dekhta, COMMIT nahi mila: ulta kar deta, Arpan ke 500 wapas",
    "n": 3,
-   "green2": "ulta kar deta, 500 wapas",
    "mark": [
     400,
     375
@@ -153,10 +152,9 @@
    "x": 520,
    "y": 470,
    "w": 470,
-   "red": "Ledger ka INSERT fail",
-   "green": "ROLLBACK: Arpan ka -500 bhi ulta.",
+   "red": "Ledger ki line likhna fail hua",
+   "green": "Sab ulta (ROLLBACK): Arpan ka -500 bhi. Arpan ko \"nahi hua\", dobara try kare",
    "n": 4,
-   "green2": "User ko 'nahi hua', dobara try kare",
    "mark": [
     720,
     410
@@ -178,9 +176,8 @@
    "y": 470,
    "w": 460,
    "red": "COMMIT ke baad gira",
-   "green": "Log me COMMIT hai, DB kaam poora",
+   "green": "Log me COMMIT hai, DB uth ke kaam poora karta. Kuch nahi khota",
    "n": 5,
-   "green2": "karta, kuch nahi khota",
    "mark": [
     1050,
     410
@@ -201,17 +198,24 @@
    "x": 30,
    "y": 580,
    "w": 1440,
-   "red": "Network toota: sahi ya chalu? Sahi pehle: balance pakka nahi to payment mana. Dashboard purana chale to chalega.",
-   "green": "Hisaab me farak? Turant alert"
+   "red": "Network toota: sahi rakhein ya chalu? Sahi pehle: balance pakka nahi to payment mana. Dashboard purana chale to chalega.",
+   "green": "Hisaab me farak dikha? Turant alert"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 670,
    "w": 1440,
-   "red": "A->B aur B->A ek saath, dono atke (deadlock)? Taala pehle chhoti account id pe.",
-   "green": "Poora 13 banking card 9 me"
+   "red": "A->B aur B->A ek saath, dono ek-doosre ke intezaar me atke (deadlock)? Taala hamesha chhoti account id pe pehle.",
+   "green": "Poora: 13 banking ka card 9"
   }
  ],
- "kyun": "DB ka apna log hota hai (WAL). COMMIT se pehle gira, to DB uth ke log dekhta hai, COMMIT nahi tha, to ulta kar deta hai aur 500 wapas"
+ "kyun": "Arpan -500 aur Kirana +500 ek hi transaction me: ya dono, ya koi nahi. DB ka apna log (WAL) hota: COMMIT se pehle gira to DB uth ke ulta kar deta, Arpan ke 500 wapas",
+ "step": [
+  1,
+  10
+ ],
+ "peeche": "shuru: ek App, ek DB, paisa do alag kadam me",
+ "ab": "Arpan ne Kirana ko 500 bheje, beech me server gira",
+ "agla": "ab ek payment theek. Par do payment ek saath ek hi wallet pe? (card 2)"
 }

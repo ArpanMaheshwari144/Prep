@@ -65,7 +65,7 @@
    "w": 330,
    "h": 120,
    "kind": "user",
-   "title": "Meri screen",
+   "title": "Arpan ki screen",
    "lines": [
     "PROCESSING",
     "phir SUCCESS"
@@ -162,8 +162,8 @@
    "x": 30,
    "y": 84,
    "w": 560,
-   "red": "PSP ko call kiya aur server gira",
-   "green": "PENDING pehle likha tha: number bacha, andha dobara nahi",
+   "red": "PSP ko call ki aur server gira",
+   "green": "PENDING pehle likha tha: record bacha, andhe me dobara nahi",
    "n": 1,
    "mark": [
     250,
@@ -186,7 +186,7 @@
    "y": 84,
    "w": 860,
    "red": "Webhook do baar aaya, ya nakli aaya",
-   "green": "SUCCESS sirf ek baar. Hastakshar (PSP secret) jaancho, PENDING se milao",
+   "green": "SUCCESS sirf ek baar likho. Hastakshar (PSP secret) jaancho, PENDING se milao",
    "n": 2,
    "mark": [
     990,
@@ -209,7 +209,7 @@
    "y": 510,
    "w": 700,
    "red": "Webhook aaya hi nahi",
-   "green": "Job PENDING ke liye PSP se poochhe. Raat ko PSP file se milaan",
+   "green": "Job PENDING wale ke liye PSP se poochhe. Raat ko PSP ki file se milaan",
    "n": 3,
    "mark": [
     668,
@@ -232,7 +232,7 @@
    "y": 510,
    "w": 720,
    "red": "Sirf webhook? Ya sirf job?",
-   "green": "Webhook kho sakta. Job dheema + PSP ki limit. Isliye dono",
+   "green": "Webhook kho sakta. Job dheema aur PSP ki had. Isliye dono",
    "n": 4
   },
   {
@@ -240,9 +240,16 @@
    "x": 30,
    "y": 605,
    "w": 1440,
-   "red": "Job ko PSP ne jawab de diya? Hua = SUCCESS. Pakka fail = FAILED, kuch wapas nahi (paisa hila nahi).",
-   "green": "User ko PROCESSING dikhe, andha dobara kabhi nahi"
+   "red": "Job ko PSP ne jawab diya? Hua = SUCCESS. Pakka fail = FAILED, kuch wapas nahi karna (paisa hila hi nahi).",
+   "green": "Arpan ko PROCESSING dikhe, andhe me dobara kabhi nahi"
   }
  ],
- "kyun": "\"pata nahi\" pehle likh diya, to server gire tab bhi tracking number bacha rehta hai. PSP bataye (webhook) ya hum poochhe (job). User ko PROCESSING dikhe, andha dobara kabhi nahi"
+ "kyun": "Call se pehle hi DB me \"PENDING\" likh do, to server gire tab bhi record bacha. Phir PSP khud bataye (webhook), ya hamara job PSP se poochhe. Arpan ko PROCESSING, andhe me dobara kabhi nahi",
+ "step": [
+  5,
+  10
+ ],
+ "peeche": "card 4 me TIMEOUT = PENDING + CIRCUIT BREAKER",
+ "ab": "PSP ko call ki aur server gira: Arpan ka paisa gaya ya nahi?",
+ "agla": "ab merchant doosre bank me hai. Ek transaction ban hi nahi sakti (card 6)"
 }

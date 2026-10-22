@@ -171,8 +171,8 @@
    "x": 30,
    "y": 84,
    "w": 600,
-   "red": "Pehle padho, phir kaato",
-   "green": "Dono server ne 600 dekha, dono ne kaata: wallet -400",
+   "red": "Pehle server ne balance padha, phir kaata",
+   "green": "Dono server ne 600 dekha, dono ne kaata: Arpan ka wallet -400",
    "n": 1,
    "conn": [
     [
@@ -183,7 +183,8 @@
      440,
      190
     ]
-   ]
+   ],
+   "tha": "Dono server ne 600 dekha, dono ne kaata: Arpan ka wallet -400"
   },
   {
    "type": "pehle",
@@ -191,7 +192,7 @@
    "y": 84,
    "w": 810,
    "red": "Idempotency key laga do?",
-   "green": "Galat: ye do alag payment. Key sirf ek user ka dobara bhejna pakadti",
+   "green": "Galat ilaaj: ye do alag payment hain. Key sirf ek hi payment ka dobara aana pakadti",
    "n": 2
   },
   {
@@ -199,8 +200,8 @@
    "x": 640,
    "y": 480,
    "w": 830,
-   "red": "Query me WHERE wala check bhool gaye",
-   "green": "DB ka CHECK (balance >= 0) pakadta. Ye aakhri deewar",
+   "red": "Query me WHERE check bhool gaye",
+   "green": "DB ka CHECK (balance >= 0) pakad leta. Ye aakhri deewar",
    "n": 3,
    "mark": [
     890,
@@ -218,5 +219,12 @@
    ]
   }
  ],
- "kyun": "\"paisa hai?\" aur \"kaato\" ek hi kadam me hota hai, DB ke andar. Kitni bhi machine hon, DB ek-ek karke chalata hai, jeetta ek. 0 row aayi = reject, user ko turant \"paisa kam\""
+ "kyun": "\"Paisa hai?\" aur \"kaato\" ek hi UPDATE me, DB ke andar. DB ek-ek karke chalata: pehla jeeta, doosre ko 0 row = turant \"paisa kam\"",
+ "step": [
+  2,
+  10
+ ],
+ "peeche": "card 1 me EK TRANSACTION",
+ "ab": "Arpan ke wallet me 600, phone se 500 aur laptop se 500 ek saath",
+ "agla": "ab balance theek. Par wahi payment network ne do baar bheji to? (card 3)"
 }

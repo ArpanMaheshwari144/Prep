@@ -100,8 +100,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Timeout lagao hi mat, wait karo?",
-   "green": "Har thread PSP ke 30 sec tak ruka, sab atke, system band",
+   "red": "Timeout lagao hi mat, jawab ka intezaar karo?",
+   "green": "Har thread PSP pe 30 sec ruka, sab atke, system band",
    "n": 1,
    "conn": [
     [
@@ -120,7 +120,7 @@
    "y": 84,
    "w": 780,
    "red": "PSP hi poora band",
-   "green": "Doosra PSP. Par ek payment hamesha ek hi PSP pe",
+   "green": "Naye payment doosre PSP se. Par ek payment hamesha ek hi PSP pe",
    "n": 2,
    "mark": [
     1400,
@@ -143,7 +143,7 @@
    "y": 470,
    "w": 1440,
    "red": "Call gayi, jawab nahi aaya",
-   "green": "PENDING likho, 'fail' kabhi nahi. Baad me pata karo (card 5)",
+   "green": "PENDING likho, \"fail\" kabhi nahi. Baad me pata karo (card 5)",
    "n": 3,
    "mark": [
     975,
@@ -165,9 +165,16 @@
    "x": 30,
    "y": 565,
    "w": 1440,
-   "red": "Call gayi hi nahi (circuit OPEN) = saaf 'abhi nahi', paisa hila nahi. 30 sec baad test call: chali to band, nahi to phir OPEN.",
-   "green": "PSP kya? Bahar ka paisa: bank se wallet (top-up), wallet se bank (payout), doosre bank ka merchant"
+   "red": "Call gayi hi nahi (breaker khula) = saaf \"abhi nahi\", paisa hila hi nahi. 30 sec baad ek test call: chali to breaker band.",
+   "green": "PSP kya hai? Bahar ka paisa le jaane wala: bank se wallet (top-up), wallet se bank (payout), doosre bank ka merchant"
   }
  ],
- "kyun": "Call gayi aur jawab nahi aaya = PENDING, \"fail\" kabhi nahi. Call gayi hi nahi (circuit OPEN) = saaf \"abhi nahi\""
+ "kyun": "Call gayi aur 2-3 sec me jawab nahi = PENDING, \"fail\" kabhi nahi (paisa shayad kat gaya ho). Baar-baar fail to breaker khula: call jaati hi nahi, saaf \"abhi nahi\"",
+ "step": [
+  4,
+  10
+ ],
+ "peeche": "card 3 me IDEMPOTENCY KEY",
+ "ab": "Arpan ne bank se 2000 top-up kiya, PSP (Razorpay / bank) dheema",
+ "agla": "ab call gayi, aur jawab se pehle hum hi gir gaye to? (card 5)"
 }

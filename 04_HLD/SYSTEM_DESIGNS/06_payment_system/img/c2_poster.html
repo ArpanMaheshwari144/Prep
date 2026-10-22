@@ -2,62 +2,71 @@
 <meta charset="utf-8">
 <title>Card 2: check + kaato ek hi atomic UPDAT</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="838" viewBox="0 0 1500 838" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="944" viewBox="0 0 1500 944" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="838" fill="#0b1220"/>
+</defs><rect width="1500" height="944" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 2: check + kaato ek hi atomic UPDATE. 1 row = kata, 0 row = &#x27;paisa kam&#x27;</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="84" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
-<text x="48" y="110" font-size="14" font-weight="700" fill="#ff8a95">Pehle aisa tha:</text>
-<text x="170" y="110" font-size="13.5" fill="#d9b8bd">Pehle padho, phir kaato. Dono server ne 600 dekha, dono ne kaata: wallet -400</text>
-<rect x="30" y="162" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="140.0" y="196" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Phone</text>
-<text x="140.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">dukaan 500</text>
-<rect x="30" y="302" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="140.0" y="336" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Laptop</text>
-<text x="140.0" y="362" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Swiggy 500</text>
-<rect x="330" y="162" width="220" height="100" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="440.0" y="196" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 1</text>
-<text x="440.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">payment A</text>
-<rect x="330" y="302" width="220" height="100" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="440.0" y="336" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 2</text>
-<text x="440.0" y="362" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">payment B</text>
-<rect x="640" y="167" width="500" height="230" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="890.0" y="201" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Wallet DB (balance 600)</text>
-<text x="890.0" y="227" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">SET balance = balance - 500</text>
-<text x="890.0" y="249" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">WHERE id = ? AND balance &gt;= 500</text>
-<text x="890.0" y="271" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle"></text>
-<text x="890.0" y="293" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">phone: 1 row, 100 bacha</text>
-<text x="890.0" y="315" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">laptop: 100 &lt; 500, 0 row</text>
-<rect x="1230" y="162" width="240" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1350.0" y="196" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Phone</text>
-<text x="1350.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kat gaya</text>
-<rect x="1230" y="302" width="240" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1350.0" y="336" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Laptop</text>
-<text x="1350.0" y="362" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">&#x27;paisa kam&#x27;</text>
-<path d="M252 212 L326 212" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M252 352 L326 352" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M552 212 L636 232" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M552 352 L636 332" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M1142 232 L1226 212" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<path d="M1142 332 L1226 352" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
-<circle cx="890" cy="397" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="890" y="402" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<rect x="30" y="471" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="497" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="497" font-size="13.5" fill="#cfeee0">&quot;paisa hai?&quot; aur &quot;kaato&quot; ek hi kadam me hota hai, DB ke andar. Kitni bhi machine hon, DB ek-ek karke chalata hai, jeetta ek. 0 row aayi = reject, user ko turant</text>
-<text x="160" y="517" font-size="13.5" fill="#cfeee0">&quot;paisa kam&quot;</text>
-<rect x="30" y="565" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="590" r="12" fill="#ff5a6a"/>
-<text x="52" y="595" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="595" font-size="15" font-weight="700" fill="#ff5a6a">Query me WHERE wala check bhool gaye</text>
-<text x="52" y="622" font-size="13.5" fill="#7fe0b0">DB ka CHECK (balance &gt;= 0) pakadta. Ye</text>
-<text x="52" y="642" font-size="13.5" fill="#7fe0b0">aakhri deewar</text>
-<rect x="30" y="720" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="746" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="770" font-size="13.5" fill="#e6dcb8">Idempotency key laga do: Galat: ye do alag payment. Key sirf ek user ka dobara bhejna pakadti</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 2 / 10</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 1 me EK TRANSACTION</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">Arpan ke wallet me 600, phone se 500 aur laptop se 500 ek saath</text>
+<rect x="30" y="144" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
+<text x="48" y="170" font-size="14" font-weight="700" fill="#ff8a95">Pehle aisa tha:</text>
+<text x="170" y="170" font-size="13.5" fill="#d9b8bd">Pehle server ne balance padha, phir kaata. Dono server ne 600 dekha, dono ne kaata: Arpan ka wallet -400</text>
+<rect x="30" y="222" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="256" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Phone</text>
+<text x="140.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">dukaan 500</text>
+<rect x="30" y="362" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="396" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Laptop</text>
+<text x="140.0" y="422" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Swiggy 500</text>
+<rect x="330" y="222" width="220" height="100" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="440.0" y="256" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 1</text>
+<text x="440.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">payment A</text>
+<rect x="330" y="362" width="220" height="100" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="440.0" y="396" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 2</text>
+<text x="440.0" y="422" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">payment B</text>
+<rect x="640" y="227" width="500" height="230" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="890.0" y="261" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Wallet DB (balance 600)</text>
+<text x="890.0" y="287" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">SET balance = balance - 500</text>
+<text x="890.0" y="309" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">WHERE id = ? AND balance &gt;= 500</text>
+<text x="890.0" y="331" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle"></text>
+<text x="890.0" y="353" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">phone: 1 row, 100 bacha</text>
+<text x="890.0" y="375" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">laptop: 100 &lt; 500, 0 row</text>
+<rect x="1230" y="222" width="240" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1350.0" y="256" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Phone</text>
+<text x="1350.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kat gaya</text>
+<rect x="1230" y="362" width="240" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1350.0" y="396" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Laptop</text>
+<text x="1350.0" y="422" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">&#x27;paisa kam&#x27;</text>
+<path d="M252 272 L326 272" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M252 412 L326 412" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M552 272 L636 292" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M552 412 L636 392" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M1142 292 L1226 272" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M1142 392 L1226 412" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
+<circle cx="890" cy="457" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="890" y="462" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<rect x="30" y="531" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="557" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="557" font-size="13.5" fill="#cfeee0">&quot;Paisa hai?&quot; aur &quot;kaato&quot; ek hi UPDATE me, DB ke andar. DB ek-ek karke chalata: pehla jeeta, doosre ko 0 row = turant &quot;paisa kam&quot;</text>
+<rect x="30" y="605" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="630" r="12" fill="#ff5a6a"/>
+<text x="52" y="635" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="635" font-size="15" font-weight="700" fill="#ff5a6a">Query me WHERE check bhool gaye</text>
+<text x="52" y="662" font-size="13.5" fill="#7fe0b0">DB ka CHECK (balance &gt;= 0) pakad leta. Ye</text>
+<text x="52" y="682" font-size="13.5" fill="#7fe0b0">aakhri deewar</text>
+<rect x="30" y="760" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="786" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="810" font-size="13.5" fill="#e6dcb8">Idempotency key laga do: Galat ilaaj: ye do alag payment hain. Key sirf ek hi payment ka dobara aana pakadti</text>
+<rect x="30" y="870" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="898" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="898" font-size="14.5" fill="#e6dcb8">ab balance theek. Par wahi payment network ne do baar bheji to? (card 3)</text>
 </svg>

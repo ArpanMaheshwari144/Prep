@@ -66,7 +66,7 @@
    "w": 430,
    "h": 110,
    "kind": "user",
-   "title": "Meri screen",
+   "title": "Arpan ki screen",
    "lines": [
     "PROCESSING, phir",
     "SUCCESS ya 500 wapas"
@@ -150,8 +150,8 @@
    "x": 30,
    "y": 84,
    "w": 580,
-   "red": "Ek transaction me dono?",
-   "green": "Namumkin: do alag system. Paisa beech me latka",
+   "red": "Dono bank ek hi transaction me?",
+   "green": "Namumkin: do alag system. Paisa beech me latak jaata",
    "n": 1,
    "conn": [
     [
@@ -170,7 +170,7 @@
    "y": 84,
    "w": 840,
    "red": "Bank B ka payout fail",
-   "green": "Ulta kaam: wallet me 500 wapas (compensate)",
+   "green": "Ulta kaam: Arpan ke wallet me 500 wapas (compensate)",
    "n": 2,
    "mark": [
     1400,
@@ -192,8 +192,8 @@
    "x": 30,
    "y": 540,
    "w": 700,
-   "red": "SAGA ke beech service giri",
-   "green": "Uth ke saga table dekhe, wahin se aage ya ulta",
+   "red": "Saga ke beech service giri",
+   "green": "Uth ke saga table dekhti, wahin se aage ya ulta",
    "n": 3,
    "mark": [
     340,
@@ -216,7 +216,7 @@
    "y": 540,
    "w": 720,
    "red": "Ulta kaam bhi fail",
-   "green": "Retry + alert, phir manual queue. Paisa beech me na atke",
+   "green": "Dobara koshish + alert, phir manual line. Paisa beech me na atke",
    "n": 4,
    "mark": [
     900,
@@ -238,9 +238,16 @@
    "x": 30,
    "y": 635,
    "w": 1440,
-   "red": "Sabse pehla sawaal: dono account ek system / bank me ya alag? Ek DB = ek transaction (ACID), alag bank = SAGA.",
-   "green": "Poora design isi se badalta"
+   "red": "Sabse pehla sawaal: dono account ek hi system / bank me ya alag? Ek DB = ek transaction (ACID). Alag bank = SAGA.",
+   "green": "Poora design isi jawab se badalta"
   }
  ],
- "kyun": "Alag system me har step likha hua hai. Aage nahi badh sake to ulta karo. User ko PROCESSING dikhe, phir SUCCESS ya paisa wapas. Hisaab saaf"
+ "kyun": "Do alag system me ek transaction namumkin. Har kadam likho (500 kata, payout gaya). Aage nahi badh paaye to ulta kaam (Arpan ke 500 wapas). Arpan ko PROCESSING, phir SUCCESS ya paisa wapas",
+ "step": [
+  6,
+  10
+ ],
+ "peeche": "card 5 me PENDING PEHLE + WEBHOOK + JOB",
+ "ab": "Kirana ka account doosre bank me, ek transaction nahi chalti",
+ "agla": "ab paisa sahi jagah. Par Arpan hisaab poochhe to? (card 7)"
 }

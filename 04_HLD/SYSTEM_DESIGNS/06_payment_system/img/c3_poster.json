@@ -55,7 +55,7 @@
    "w": 360,
    "h": 120,
    "kind": "user",
-   "title": "Meri screen",
+   "title": "Arpan ki screen",
    "lines": [
     "500 hi kate"
    ]
@@ -126,7 +126,7 @@
    "y": 84,
    "w": 660,
    "red": "Metro me network gaya, app ne dobara bheja",
-   "green": "Wahi key-555 gayi: saved jawab, 500 hi kate",
+   "green": "Wahi key-555 gayi: server ne pehla jawab diya, 500 hi kate",
    "n": 1,
    "mark": [
     310,
@@ -149,7 +149,7 @@
    "y": 84,
    "w": 760,
    "red": "Key server banaye?",
-   "green": "Bekaar: dobara app bhejta, app ki key hi dono request jodti",
+   "green": "Bekaar: dobara app bhejta hai, aur dono request ko app ki key hi jodti",
    "n": 2
   },
   {
@@ -157,7 +157,7 @@
    "x": 30,
    "y": 500,
    "w": 700,
-   "red": "Bina key?",
+   "red": "Bina key ke?",
    "green": "Timeout, app ne dobara bheja, server ne do payment maane: 1000 kate",
    "n": 3,
    "conn": [
@@ -176,8 +176,8 @@
    "x": 750,
    "y": 500,
    "w": 720,
-   "red": "Sirf Redis? Ya sirf DB?",
-   "green": "Sirf Redis = kachcha (DB UNIQUE deewar). Sirf DB = dheema",
+   "red": "Sirf Redis me key? Ya sirf DB me?",
+   "green": "Sirf Redis = kachcha (asli deewar DB ka UNIQUE). Sirf DB = dheema. Dono rakho",
    "n": 4
   },
   {
@@ -185,9 +185,16 @@
    "x": 30,
    "y": 595,
    "w": 1440,
-   "red": "Key wahi, amount alag? Request ka hash bhi rakho, farak = 422. Key kab hatao? Sirf pakka fail pe, DONE ~24 ghante.",
-   "green": "Sach me do payment 100 + 100? Do screen = do key (key-555, key-888), dono honge: 200"
+   "red": "Key wahi, amount alag aaya? Request ka hash bhi rakho, farak mila to 422. Key kab hatao? Sirf pakka fail pe, DONE wali ~24 ghante.",
+   "green": "Arpan ko sach me do payment (100 + 100)? Do screen = do key (key-555, key-888), dono honge: 200"
   }
  ],
- "kyun": "Ek key = ek payment. Wahi key dobara aayi to kaam nahi hota, saved jawab jaata hai. User ko ek hi payment dikhta hai. Nayi payment = nayi screen = nayi key"
+ "kyun": "Pay screen khulte hi app ek key banata (key-555). Dobara bheje to wahi key jaati. Server key dekh ke kaam dobara nahi karta, pehla jawab de deta. Arpan ke 500 hi kate",
+ "step": [
+  3,
+  10
+ ],
+ "peeche": "card 2 me check + kaato EK query",
+ "ab": "Metro me network gaya, app ne dobara bheja, Arpan ke 1000 kate",
+ "agla": "ab andar sab theek. Par bahar ka PSP (bank) dheema ho to? (card 4)"
 }

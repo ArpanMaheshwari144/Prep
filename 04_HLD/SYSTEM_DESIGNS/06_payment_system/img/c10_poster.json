@@ -162,7 +162,7 @@
    "y": 84,
    "w": 580,
    "red": "Ek hi DB?",
-   "green": "1000 crore row, index RAM me nahi, har likhai dheemi",
+   "green": "1000 crore row, index RAM me nahi aata, har likhai dheemi",
    "n": 1
   },
   {
@@ -170,8 +170,8 @@
    "x": 630,
    "y": 84,
    "w": 840,
-   "red": "Do account alag shard pe, ek transaction?",
-   "green": "Nahi chalta: saga, A se kaato, B me daalo, fail pe ulta",
+   "red": "Arpan aur Kirana alag tukde pe, ek transaction?",
+   "green": "Nahi chalti: saga lagao. Arpan se kaato, Kirana me daalo, fail pe ulta",
    "n": 2,
    "conn": [
     [
@@ -189,8 +189,8 @@
    "x": 30,
    "y": 550,
    "w": 1440,
-   "red": "Swiggy pe 3000 credit / sec, ek row pe lock ki line",
-   "green": "Credit sirf ledger line (lock nahi), balance batch me jodo. Ya 10 sub-account, report me jodo",
+   "red": "Swiggy pe 3000 paisa aaye / sec, ek hi row pe lock ki line",
+   "green": "Aane wala paisa sirf ledger line (lock nahi), balance thodi-thodi der me jodo. Ya 10 chhote account, report me jodo",
    "n": 3,
    "mark": [
     880,
@@ -212,9 +212,16 @@
    "x": 30,
    "y": 645,
    "w": 1440,
-   "red": "Idempotency key kahan? Usi shard pe (account_id se), payment ke saath ek transaction me.",
-   "green": "Shard kaise tay? Ring (consistent hashing) ya lookup table"
+   "red": "Idempotency key kahan rakhein? Usi tukde pe (account_id se), payment ke saath ek transaction me.",
+   "green": "Tukda kaise tay ho? Ring (consistent hashing) ya ek lookup table"
   }
  ],
- "kyun": "Jo ek transaction me saath chahiye (account + uski history) wo ek shard pe. Transaction ek shard tak hi rehti hai"
+ "kyun": "Arpan ka balance aur uski history ek hi tukde (shard) pe, account_id se. Transaction ek tukde ke andar hi chalti, isliye ye saath rehna zaroori",
+ "step": [
+  10,
+  10
+ ],
+ "peeche": "card 9 me REPORT COPY PE (read replica)",
+ "ab": "Saal me ~1000 crore row, primary pe likhna dheema",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

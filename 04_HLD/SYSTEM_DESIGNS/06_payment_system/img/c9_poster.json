@@ -164,8 +164,8 @@
    "x": 30,
    "y": 84,
    "w": 500,
-   "red": "Report bhi primary pe?",
-   "green": "Mahine ki report ne primary busy kiya, payment ruka",
+   "red": "Report bhi primary pe chala do?",
+   "green": "Mahine ki report ne primary busy kiya, Arpan ka payment ruka",
    "n": 1,
    "conn": [
     [
@@ -184,7 +184,7 @@
    "y": 84,
    "w": 920,
    "red": "Primary gir gaya",
-   "green": "Sync standby ban jaata, kuch nahi khota",
+   "green": "Sync standby (jo har likhai saath leti) primary ban jaati, kuch nahi khota",
    "n": 2,
    "mark": [
     640,
@@ -206,8 +206,8 @@
    "x": 30,
    "y": 520,
    "w": 700,
-   "red": "Pay kiya, turant balance copy se dekha",
-   "green": "Purana dikha. Paisa aur haal primary se padho",
+   "red": "Arpan ne pay kiya, turant balance copy se dekha",
+   "green": "Purana dikha. Paisa aur haal hamesha primary se padho",
    "n": 3,
    "mark": [
     420,
@@ -230,7 +230,7 @@
    "y": 520,
    "w": 720,
    "red": "Copy aur peeche chali gayi",
-   "green": "Lag naapo, had paar = alert. Bahut bhaari = warehouse",
+   "green": "Kitni peeche (lag) naapo, had paar = alert. Bahut bhaari report = alag warehouse",
    "n": 4,
    "mark": [
     630,
@@ -256,5 +256,12 @@
    ]
   }
  ],
- "kyun": "Paisa aur haal PRIMARY se padho, replica peeche ho sakti hai. Report replica / warehouse se. Payment tez rehta hai"
+ "kyun": "Bhaari report DB ki copy (replica) se. Paisa aur haal hamesha primary se padho, kyunki copy 1-2 sec peeche ho sakti. Arpan ka payment tez rehta",
+ "step": [
+  9,
+  10
+ ],
+ "peeche": "card 8 me kai machine + LB, JWT",
+ "ab": "Merchant ki mahine ki report ne primary busy kiya, Arpan ka payment ruka",
+ "agla": "ab padhna alag ho gaya. Par likhna hi itna ho gaya (card 10)"
 }

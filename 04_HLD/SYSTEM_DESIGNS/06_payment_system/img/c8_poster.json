@@ -159,7 +159,7 @@
    "y": 84,
    "w": 640,
    "red": "Ek hi machine?",
-   "green": "CPU bhara, timeout, log dobara tap karte: aur bojh",
+   "green": "CPU bhara, timeout, log baar-baar tap karte: aur bojh",
    "n": 1
   },
   {
@@ -167,8 +167,8 @@
    "x": 690,
    "y": 84,
    "w": 780,
-   "red": "User id request body se lo?",
-   "green": "Nahi: user kaun = JWT se. 'from' ka maalik JWT wala nahi = 403",
+   "red": "User id request body se le lo?",
+   "green": "Nahi: user kaun = JWT se. Body me \"from\" Arpan ka nahi, JWT Arpan ka hai = 403",
    "n": 2
   },
   {
@@ -176,8 +176,8 @@
    "x": 30,
    "y": 520,
    "w": 700,
-   "red": "JWT chori ho gaya",
-   "green": "Chhoti umar (~15 min) + refresh. Bade payment pe PIN / OTP",
+   "red": "Arpan ka JWT chori ho gaya",
+   "green": "JWT ki chhoti umar (~15 min) + refresh. Bade payment pe PIN / OTP",
    "n": 3,
    "mark": [
     250,
@@ -200,7 +200,7 @@
    "y": 520,
    "w": 720,
    "red": "Payment Svc 3 mar gayi",
-   "green": "LB GET /health poochta, jawab nahi = bahar",
+   "green": "LB \"zinda ho?\" (/health) poochta, jawab nahi = list se bahar",
    "n": 4,
    "mark": [
     850,
@@ -218,5 +218,12 @@
    ]
   }
  ],
- "kyun": "Koi bhi machine koi bhi request le sakti hai, koi bhi badlo ya badhao"
+ "kyun": "Machine kuch yaad nahi rakhti, sab DB me. To koi bhi machine koi bhi payment le sakti, jitni chaho badhao. User kaun hai, ye JWT se pata, request body se kabhi nahi",
+ "step": [
+  8,
+  10
+ ],
+ "peeche": "card 7 me LEDGER (har paisa do line)",
+ "ab": "Shaam Diwali, 3000 payment / sec, machine baith gayi, Arpan ka payment atka",
+ "agla": "ab machine badh gayi. Par DB pe report ka bojh (card 9)"
 }

@@ -102,7 +102,7 @@
    "y": 84,
    "w": 700,
    "red": "Sirf balance column rakho?",
-   "green": "Number hai, kahani nahi: 'kaise bana' ka jawab nahi",
+   "green": "Number hai, kahani nahi: \"1100 kaise bana\" ka jawab nahi",
    "n": 1,
    "conn": [
     [
@@ -128,7 +128,7 @@
    "x": 30,
    "y": 480,
    "w": 700,
-   "red": "Galat entry ho gayi / refund aaya",
+   "red": "Galat line likh gayi, ya refund aaya",
    "green": "Mitao nahi, nayi ulti line jodo. Audit me dono dikhti",
    "n": 2,
    "mark": [
@@ -151,8 +151,8 @@
    "x": 750,
    "y": 480,
    "w": 720,
-   "red": "Ledger ka jod != balance column",
-   "green": "Raat ko jod == balance check, farak = alert",
+   "red": "Ledger ka jod balance column se alag aaya",
+   "green": "Raat ko check: ledger ka jod == balance? Farak = alert",
    "n": 3,
    "mark": [
     1365,
@@ -174,9 +174,16 @@
    "x": 30,
    "y": 575,
    "w": 1440,
-   "red": "3 saal me bahut bada? Mahine ke tukde, purane S3 Glacier, kanoon jitna kahe. Ledger crash se bachata? Nahi, wo hisaab hai.",
-   "green": "Crash se PENDING + webhook + job bachate"
+   "red": "3 saal me ledger bahut bada? Mahine ke tukde, purane sasti jagah (S3 Glacier), kanoon jitna kahe utna rakho.",
+   "green": "Ledger crash se bachata? Nahi, wo hisaab hai. Crash se PENDING + webhook + job bachate"
   }
  ],
- "kyun": "Ledger hi sach hai. Sirf nayi line, kaat-peet nahi, jod hamesha 0. Har payment ki 2 line usi transaction me likhi jaati hain"
+ "kyun": "Ledger hi sach hai. Har payment ki do line (Arpan -800, bijli +800), jod hamesha 0. Sirf nayi line jodo, kabhi mitao nahi. Arpan ka hisaab line-line dikhta",
+ "step": [
+  7,
+  10
+ ],
+ "peeche": "card 6 me SAGA (step-step, fail pe ulta)",
+ "ab": "Arpan ne poochha: kal raat 2200 the, subah 1100 kaise?",
+ "agla": "ab hisaab theek. Par Diwali ki bheed aayi (card 8)"
 }

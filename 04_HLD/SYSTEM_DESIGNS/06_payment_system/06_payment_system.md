@@ -71,7 +71,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: EK TRANSACTION (WAL se poora / ulta)
 
-<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -82,7 +82,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 4 DO LOG EK SAATH (wallet)** · Cue: check + kaato EK atomic query
 
-<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -93,7 +93,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY KEY (screen khulte)
 
-<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -104,7 +104,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 5 KUCH DHEEMA (PSP)** · Cue: timeout = PENDING, circuit breaker = abhi nahi
 
-<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -115,7 +115,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 3 MACHINE GIRI (PSP call)** · Cue: PENDING pehle + WEBHOOK + RECONCILE
 
-<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -126,7 +126,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 1 KAAM CHALA (doosra bank)** · Cue: SAGA (step-step, fail pe ulta)
 
-<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -137,7 +137,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 1 KAAM CHALA (hisaab)** · Cue: LEDGER double-entry, sirf INSERT
 
-<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -148,7 +148,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 2 BHEED AAYI** · Cue: STATELESS, kai machine + LB
 
-<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -159,7 +159,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 5 KUCH DHEEMA (report)** · Cue: READ REPLICA (sirf report)
 
-<img src="img/c9_poster.png?v=2" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=3" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -170,7 +170,7 @@ DHYAAN  "NoSQL me ACID hota hi nahi" mat bolo, kai NoSQL ek row / document pe at
 
 **Rail 6 DATA BADA** · Cue: SHARD by account_id
 
-<img src="img/c10_poster.png?v=2" width="1000" alt="card 10: kya toota, kaise bacha">
+<img src="img/c10_poster.png?v=3" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---
