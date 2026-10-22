@@ -1,13 +1,16 @@
-# Kafka concepts: ek-ek karke
+# Kafka concepts: ek kahani
 
-Kahani: Arpan ne Swiggy pe order kiya. Order Svc ka kaam bas order banana hai. Is order ki khabar do aur
-service ko chahiye: SMS Svc (Arpan ko SMS) aur Fraud Svc (order shaq wala to nahi).
+Arpan ne Swiggy pe order kiya. Order Svc ka kaam bas order banana hai. Par is order ki khabar do aur service ko
+chahiye: SMS Svc, jo Arpan ko SMS bhejegi, aur Fraud Svc, jo dekhegi ki order shaq wala to nahi.
 
-Har hisse ka diagram **pichhle diagram ko hi aage badhata** hai. **Peela = is hisse me naya juda**, baaki wahi purana.
+Har diagram pichhle diagram ko hi aage badhata hai. **Peela = jo abhi naya juda**, baaki wahi purana.
 
 ---
 
 ## 1. Topic
+
+Order Svc ko SMS aur Fraud ka intezaar nahi karna. Wo bas khabar ek naam wali line me daal deta hai aur apne
+kaam pe lag jaata hai. Is line ka naam "order-events" hai. Kafka me aisi naam wali line ko **topic** kehte hain.
 
 ```mermaid
 flowchart LR
@@ -17,18 +20,21 @@ flowchart LR
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-- Order Svc khabar ek naam wali line me daal deta hai. Line ka naam "order-events". Kafka me aisi naam wali
-  line ko **topic** kehte hain.
-- Order Svc ko pata hi nahi aage kaun padh raha. Khabar daal ke apne kaam pe.
-- SMS aur Fraud dono isi topic se padhte hain. Padhne se khabar mitti nahi, isliye dono ko poori khabar.
-- Kal teesri service aaye (Analytics), to bas isi topic se padhe. Order Svc me ek line nahi badalti.
+SMS aur Fraud dono isi topic se padhte hain. Padhne se khabar mitti nahi, isliye dono ko poori khabar milti hai.
+Kal koi teesri service aaye, jaise Analytics, to wo bhi bas isi topic se padhna shuru kar degi. Order Svc me ek
+line nahi badalti.
+
+Sab theek chal raha tha. Phir Diwali sale aayi.
 
 ---
 
-## 2. Partition (topic ke tukde)
+## 2. Partition
 
-**Peeche se:** upar wala wahi topic order-events, ek line, Kafka ki ek machine pe.
-**Ab:** Diwali sale, har second lakhon order. Ek machine itna bojh nahi utha paati. To **isi topic ke andar** 3 tukde.
+Sale me har second lakhon order aane lage. Saare isi ek topic order-events me ja rahe the, aur ye topic ek hi
+machine pe tha. Wo machine itna bojh nahi jhel paayi, line lambi hoti gayi, Arpan ka order bhi atak gaya.
+
+To humne topic badla nahi. Isi order-events ko andar se 3 tukdon me baant diya, aur har tukda alag machine pe
+rakh diya. Ek tukde ko **partition** kehte hain.
 
 ```mermaid
 flowchart LR
@@ -45,19 +51,24 @@ flowchart LR
     style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-- Topic wahi ek, order-events. Andar 3 tukde. Ek tukde ko **partition** kehte hain.
-- Har tukda alag machine pe, to bojh teen machine me bat gaya.
-- Kaunsi khabar kis tukde me, ye Order Svc ek **key** se tay karta hai. Key = user ki id. Same user ki khabar
-  hamesha same tukde me, isliye Arpan ki saari khabar (order, pay, cancel) P1 me.
-- Kram (order, phir pay, phir cancel) sirf ek tukde ke andar pakka. Isliye key = userId, taaki ek user ki
-  khabar ek tukde me rahe aur kram me rahe.
+Ab bojh teen machine me bat gaya. Par sawaal aaya: Arpan ki khabar kis tukde me jaaye? Arpan ne pehle order kiya,
+phir pay, phir cancel. Ye teeno alag tukdon me gaye to kaun pehle padha jaaye, iska koi bharosa nahi. Kram sirf ek
+tukde ke andar pakka hota hai.
+
+Isliye Order Svc har khabar ke saath ek **key** deta hai: user ki id. Same key hamesha same tukde me jaati hai.
+Arpan ki teeno khabar P1 me, aur wahan kram se.
+
+Tukde ban gaye. Par ab SMS Svc ko bhi bheed jhelni thi, to uski 3 machine chalayi gayi.
 
 ---
 
-## 3. Consumer group (ek service ki team)
+## 3. Consumer group
 
-**Peeche se:** order-events ke 3 tukde P0, P1, P2. Arpan ki khabar P1 me.
-**Ab:** SMS Svc ki 3 machine hain (banda-A, banda-B, banda-C). Teeno ne saare tukde padhe to Arpan ko 3 SMS.
+SMS Svc ki 3 machine hain: banda-A, banda-B, banda-C. Agar teeno saare tukde padhein, to Arpan ki khabar teeno ke
+paas jaayegi aur Arpan ko 3 SMS chale jaayenge.
+
+To teeno machine ko ek team bana diya. Sabko ek hi team ka naam diya (group.id = "sms"). Is team ko
+**consumer group** kehte hain. Team ke andar har tukda sirf ek bande ko milta hai.
 
 ```mermaid
 flowchart LR
@@ -80,19 +91,19 @@ flowchart LR
     style X fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-- SMS Svc ki teeno machine ko ek team bana do: sabko ek hi team ka naam (group.id = "sms"). Is team ko
-  **consumer group** kehte hain.
-- Team ke andar har tukda sirf ek bande ko. P1 sirf banda-B ke paas, isliye Arpan ko ek hi SMS.
-- Fraud Svc alag team ("fraud"). Use bhi poori khabar, teeno tukde. SMS ne padha to fraud ka kuch kam nahi.
-- Har team apna bookmark rakhti ki kahan tak padha (**offset**). Fraud dheema chale to bhi SMS nahi rukta.
-- banda-B gira to Kafka uska tukda P1 banda-A ya banda-C ko de deta. Ise **rebalance** kehte hain.
+P1 sirf banda-B ke paas hai, to Arpan ko ek hi SMS jaata hai. Fraud Svc alag team hai ("fraud"), use apni poori
+copy milti hai. Har team apna bookmark rakhti hai ki kahan tak padha, ise **offset** kehte hain. Isliye Fraud
+dheema chale to bhi SMS nahi rukta. Aur banda-B gir jaaye to Kafka uska tukda P1 banda-A ya banda-C ko de deta
+hai, ise **rebalance** kehte hain.
+
+Par banda-B girta kab hai, ye bhi maayne rakhta hai. Ek din wo kaam karte-karte beech me gir gaya.
 
 ---
 
-## 4. Commit (bookmark kab aage karein)
+## 4. Commit
 
-**Peeche se:** SMS team me P1 (Arpan ki khabar) banda-B padhta hai. Team ka bookmark (offset) batata kahan tak padha.
-**Ab:** banda-B kaam karte-karte beech me gir gaya to?
+banda-B ka kaam teen kadam ka hai: P1 se agli khabar uthao ("2 cancel"), Arpan ko SMS bhejo, phir Kafka ko batao
+"2 tak padh liya". Ye aakhri kadam, bookmark aage karna, **commit** kehlata hai.
 
 ```mermaid
 flowchart LR
@@ -106,13 +117,15 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-- Bookmark aage karne ko **commit** kehte hain.
-- SMS bheja, commit se pehle gira: bookmark abhi 1 pe. banda-A ko P1 mila, wo "2 cancel" dobara padhta. Arpan ko 2 SMS.
-- Ulta kram (pehle commit, phir SMS), beech me gira: bookmark 2 pe, banda-A 3 se padhta. "2 cancel" ka SMS kabhi
-  nahi gaya. Ye 2 SMS se bhi bura.
-- Isliye kram pakka: pehle kaam (SMS), phir commit. Khabar kabhi khoti nahi, bas kabhi dobara aa sakti.
+banda-B ne SMS bheja aur commit se pehle gir gaya. Bookmark abhi 1 pe hai. P1 banda-A ko mila, usne bookmark dekha
+aur "2 cancel" dobara padha. Arpan ko 2 SMS chale gaye.
 
-Dobara aayi khabar kaise pakdein: har khabar ki apni id (eventId). Id kahin likh ke rakho (Redis ya DB).
+Ulta karte (pehle commit, phir SMS) to aur bura hota: bookmark 2 pe chala jaata, banda-A 3 se padhta, aur "2 cancel"
+ka SMS kabhi jaata hi nahi.
+
+Isliye kram pakka hai: pehle kaam, phir commit. Khabar kabhi khoti nahi, bas kabhi dobara aa jaati hai. Dobara aayi
+khabar pakadne ke liye har khabar ki apni id hoti hai (eventId). SMS bhejne se pehle banda dekhta hai ki ye id pehle
+ho chuki ya nahi. Id kahin likh ke rakhte hain, jaise Redis ya DB me.
 
 ```mermaid
 flowchart LR
@@ -122,14 +135,20 @@ flowchart LR
     style X fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
-- Ye pehchaanna padhne wale (SMS Svc) ka kaam hai, Kafka ka nahi.
+Ye pehchaanna padhne wale (SMS Svc) ka kaam hai, Kafka ka nahi.
+
+Padhne wali taraf ab pakki thi. Phir ek din Kafka ki apni machine hi mar gayi.
 
 ---
 
-## 5. Broker gira (copy aur leader)
+## 5. Leader aur copy
 
-**Peeche se:** hissa 4 me padhne wali taraf pakki: pehle SMS, phir commit, dobara aaye to eventId.
-**Ab:** Arpan ki teeno khabar (P1) Kafka ki machine B pe. Kafka ki machine ko **broker** kehte hain. B ki disk mari to?
+Arpan ki teeno khabar P1 me thi, aur P1 Kafka ki machine B pe tha. Kafka ki har machine ko **broker** kehte hain.
+Machine B ki disk mar gayi. Agar P1 sirf wahin hota, to Arpan ki khabar hamesha ke liye chali jaati.
+
+Isliye har tukde ki 3 copy rakhte hain, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo **leader**
+hai, baaki do copy hain. Leader mara to bachi copy me se ek naya leader ban jaata hai. Ye faisla Kafka ki ek
+machine karti hai jo baaki sab pe nazar rakhti hai, use **Controller** kehte hain.
 
 ```mermaid
 flowchart LR
@@ -148,21 +167,22 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-- Ilaaj: har tukde ki 3 copy, teen alag machine pe. Jis pe likhna-padhna hota wo **leader**, baaki do copy.
-- Leader mara to bachi copy me se naya leader. Ye faisla Kafka ki ek machine karti jo baaki pe nazar rakhti:
-  **Controller**.
-- B ne Order Svc ko "ho gaya" bola aur copy banne se pehle mar gaya to khabar gayi. Isliye "ho gaya" tabhi bolo jab
-  copy pe bhi likh jaaye: **acks=all**.
-- Peeche chalti copy ko leader nahi banate (aakhri khabar kho jaati). Sirf poori taaza copy "pakki". Pakki copies ki
-  list = **ISR**.
-- Sirf leader bacha, koi pakki copy nahi: likhna rok do (**min.insync = 2**). Khone se behtar thodi der rukna.
+Par ek pench tha. Agar B ne Order Svc ko "ho gaya" bol diya aur copy tak khabar pahunchne se pehle hi mar gaya, to
+copy ke paas wo khabar thi hi nahi. Isliye "ho gaya" tabhi bolte hain jab copy pe bhi likh jaaye, ise **acks=all**
+kehte hain.
+
+Koi copy peeche chal rahi ho to use leader nahi banate, warna aakhri khabar kho jaayegi. Sirf poori taaza copy
+"pakki" maani jaati hai, aur pakki copies ki list ko **ISR** kehte hain. Aur agar sirf leader bacha ho, koi pakki
+copy nahi, to likhna hi rok dete hain (**min.insync = 2**). Khabar khone se behtar thodi der rukna hai.
+
+Ab Kafka bhi pakka tha aur padhne wala bhi. Bacha ek: bhejne wala, Order Svc khud.
 
 ---
 
-## 6. Outbox (Kafka tak pahunchne se pehle bhejne wala gira)
+## 6. Outbox
 
-**Peeche se:** hissa 4 me padhne wala gira to bache (commit, eventId), hissa 5 me Kafka machine giri to bache (3 copy).
-**Ab:** bacha bhejne wala, Order Svc. Arpan ne order cancel kiya. Order Svc ko DB me likhna hai aur Kafka ko khabar deni hai.
+Arpan ne order cancel kiya. Order Svc ko do kaam karne the: DB me likhna "order = cancel", aur Kafka ko khabar
+dena. Pehla kaam hua, aur doosre se pehle Order Svc gir gaya.
 
 ```mermaid
 flowchart LR
@@ -171,10 +191,13 @@ flowchart LR
     style K fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
-- DB aur Kafka do alag cheezein. Dono me ek saath, ek hi baar me likhne ka tareeka nahi. Beech me gira to ek me
-  likha, doosre me nahi: SMS aur Fraud ko cancel ka pata hi nahi chala.
-- Ilaaj: khabar bhi usi DB me, cancel ke saath, **ek hi transaction** me (dono likhe jaayenge ya koi nahi).
-  Is alag table ko **outbox** kehte hain.
+DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala. DB aur Kafka do alag cheezein hain, dono me ek
+saath, ek hi baar me likhne ka koi tareeka nahi.
+
+To khabar bhi usi DB me likh di, cancel ke saath, ek hi transaction me. Ek transaction ka matlab: dono likhe
+jaayenge ya koi nahi. Khabar jis alag table me jaati hai use **outbox** kehte hain. Phir ek chhota alag program,
+**relay**, har second outbox me dekhta hai ki kaunsi khabar abhi bheji nahi gayi (sent = false), use Kafka ko
+bhejta hai, aur Kafka OK bole to sent = true likh deta hai.
 
 ```mermaid
 flowchart LR
@@ -190,13 +213,9 @@ flowchart LR
     style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-- **Relay** = chhota alag program. Har second outbox me dekhta kaunsi khabar abhi bheji nahi (sent = false), Kafka
-  ko bhejta, Kafka OK bole to sent = true.
-- Transaction se pehle gira: na cancel likha, na khabar. Arpan dobara dabayega, kuch galat nahi.
-- Relay ne bheja, sent = true likhne se pehle gira: relay dobara bhejega. SMS Svc eventId se pakad lega (hissa 4).
-- Outbox table bharti gayi: sent = true wali purani row roz saaf karo.
+Ab Order Svc kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha, na khabar, Arpan dobara
+dabayega. Relay ne bheja aur sent = true likhne se pehle gira, to relay dobara bhejega, aur banda-B us dohri khabar
+ko eventId se pakad lega (hissa 4). Outbox table bharti jaaye to purani sent = true wali row roz saaf kar dete hain.
 
----
-
-Teeno jagah bachav ek line me: **bhejne wala = outbox · Kafka = 3 copy + acks=all · padhne wala = pehle kaam phir
-commit + eventId**.
+Is tarah teeno jagah bachav ho gaya: **bhejne wala = outbox · Kafka = 3 copy + acks=all · padhne wala = pehle kaam
+phir commit + eventId**.
