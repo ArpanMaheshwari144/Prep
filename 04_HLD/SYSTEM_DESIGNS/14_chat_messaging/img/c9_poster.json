@@ -1,0 +1,178 @@
+{
+ "title": "Card 9: video seedha S3 me (10 min ka paas). Message me sirf S3 key + thumbnail",
+ "h": 590,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "200 MB video"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 190,
+   "w": 260,
+   "h": 110,
+   "kind": "server",
+   "title": "Chat server",
+   "lines": [
+    "sirf paas (10 min)",
+    "+ message: S3 key"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 350,
+   "w": 260,
+   "h": 110,
+   "kind": "db",
+   "title": "S3",
+   "lines": [
+    "video yahan",
+    "(multipart)"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 240,
+   "w": 330,
+   "h": 120,
+   "kind": "user",
+   "title": "Group (500)",
+   "lines": [
+    "sabko wahi key",
+    "+ thumbnail"
+   ]
+  },
+  {
+   "x": 1120,
+   "y": 240,
+   "w": 350,
+   "h": 120,
+   "kind": "user",
+   "title": "Ravi ne khola",
+   "lines": [
+    "key se naya",
+    "chhota URL"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     270
+    ],
+    [
+     326,
+     245
+    ]
+   ],
+   "c": "blue",
+   "label": "paas",
+   "lx": 280,
+   "ly": 245,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     232,
+     330
+    ],
+    [
+     326,
+     395
+    ]
+   ],
+   "c": "orange",
+   "label": "seedha",
+   "lx": 250,
+   "ly": 380,
+   "a": "end"
+  },
+  {
+   "pts": [
+    [
+     592,
+     245
+    ],
+    [
+     696,
+     290
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     1032,
+     300
+    ],
+    [
+     1116,
+     300
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Chat server ke raaste?",
+   "green": "200 MB pe 2 min atka. Group: 500 x 200 MB = 100 GB",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "Message me URL rakho?",
+   "green": "URL marta hai, key nahi. Kholte waqt naya URL",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 500,
+   "w": 560,
+   "red": "Upload ke beech net gaya",
+   "green": "Multipart: bacha hissa hi dobara",
+   "n": 3,
+   "mark": [
+    280,
+    363
+   ],
+   "conn": [
+    [
+     280,
+     375
+    ],
+    [
+     280,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 610,
+   "y": 500,
+   "w": 860,
+   "red": "1000 baar forward? File hash: pehle se hai to wahi file. E2E? App khud encrypt.",
+   "green": "Bhaari maal S3 me, message halka"
+  }
+ ]
+}

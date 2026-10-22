@@ -1,0 +1,196 @@
+{
+ "title": "Card 2: pata Redis me (Ravi -> server-7). Server-1 Redis se poochta, server-7 ko deta, wo Ravi ko",
+ "h": 600,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 180,
+   "h": 110,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "'hi' Ravi ko"
+   ]
+  },
+  {
+   "x": 270,
+   "y": 230,
+   "w": 220,
+   "h": 130,
+   "kind": "server",
+   "title": "Server-1",
+   "lines": [
+    "Redis se poochho"
+   ]
+  },
+  {
+   "x": 570,
+   "y": 180,
+   "w": 330,
+   "h": 130,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "Ravi -> server-7",
+    "umar (TTL), dhadkan se badhe",
+    "kai device: list"
+   ]
+  },
+  {
+   "x": 570,
+   "y": 370,
+   "w": 330,
+   "h": 100,
+   "kind": "server",
+   "title": "Server-7",
+   "lines": [
+    "Ravi -> conn-7"
+   ]
+  },
+  {
+   "x": 1000,
+   "y": 370,
+   "w": 470,
+   "h": 100,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "'hi' screen pe"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     212,
+     295
+    ],
+    [
+     266,
+     295
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     492,
+     270
+    ],
+    [
+     566,
+     245
+    ]
+   ],
+   "c": "purple",
+   "label": "Ravi kahan?",
+   "lx": 500,
+   "ly": 220,
+   "a": "start"
+  },
+  {
+   "pts": [
+    [
+     492,
+     330
+    ],
+    [
+     566,
+     410
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     902,
+     420
+    ],
+    [
+     996,
+     420
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 510,
+   "red": "Har server ka apna map?",
+   "green": "Server-1 bola 'Ravi offline', galat",
+   "n": 1,
+   "conn": [
+    [
+     380,
+     146
+    ],
+    [
+     380,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 560,
+   "y": 84,
+   "w": 910,
+   "red": "Redis gira",
+   "green": "Copy pe switch (alag AZ), message nahi khota, judne pe milega",
+   "n": 2,
+   "mark": [
+    870,
+    180
+   ],
+   "conn": [
+    [
+     870,
+     168
+    ],
+    [
+     870,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 510,
+   "w": 700,
+   "red": "Server-7 mar gaya",
+   "green": "Umar khatam, entry khud hati, Ravi offline. Message DB me",
+   "n": 3,
+   "mark": [
+    610,
+    470
+   ],
+   "conn": [
+    [
+     610,
+     482
+    ],
+    [
+     610,
+     510
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 750,
+   "y": 510,
+   "w": 720,
+   "red": "Connection hi Redis me? Namumkin. Pub-sub? Kuch rakhta nahi.",
+   "green": "Ravi khisak gaya? Message nahi khota, naye server pe milega"
+  }
+ ]
+}

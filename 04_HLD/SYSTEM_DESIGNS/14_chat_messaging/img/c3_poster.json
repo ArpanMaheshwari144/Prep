@@ -1,0 +1,210 @@
+{
+ "title": "Card 3: pehle DB me likho, phir bhejo. Phone band to push ghanti. Wapas aaya to 'aakhri ke baad sab do'",
+ "h": 580,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 180,
+   "h": 110,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "'hi'"
+   ]
+  },
+  {
+   "x": 270,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Chat server",
+   "lines": [
+    "1: pehle DB",
+    "2: phir bhejo"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 190,
+   "w": 300,
+   "h": 110,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "'hi' pada hai"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 340,
+   "w": 300,
+   "h": 100,
+   "kind": "lb",
+   "title": "Push (FCM / APNs)",
+   "lines": [
+    "sirf ghanti + preview"
+   ]
+  },
+  {
+   "x": 1020,
+   "y": 250,
+   "w": 450,
+   "h": 120,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "phone band tha, wapas aaya:",
+    "'aakhri ke baad sab do'"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     212,
+     295
+    ],
+    [
+     266,
+     295
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     522,
+     270
+    ],
+    [
+     616,
+     245
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     522,
+     340
+    ],
+    [
+     616,
+     390
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     922,
+     245
+    ],
+    [
+     1016,
+     290
+    ]
+   ],
+   "c": "green",
+   "dash": true,
+   "label": "wapas aaya",
+   "lx": 970,
+   "ly": 245,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     922,
+     390
+    ],
+    [
+     1016,
+     340
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 470,
+   "red": "Pehle bhejo, na pahunche to DB?",
+   "green": "DB se pehle server gira: message gaya",
+   "n": 1,
+   "conn": [
+    [
+     395,
+     146
+    ],
+    [
+     395,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 520,
+   "y": 84,
+   "w": 950,
+   "red": "Bhejne se pehle server gira",
+   "green": "Message DB me pada: Ravi judte hi 'aakhri ke baad' le leta",
+   "n": 2,
+   "mark": [
+    510,
+    230
+   ],
+   "conn": [
+    [
+     510,
+     218
+    ],
+    [
+     510,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 490,
+   "w": 760,
+   "red": "Push wala (Google / Apple) atak gaya",
+   "green": "Bahar ki cheez: apna retry / queue rakho",
+   "n": 3,
+   "mark": [
+    770,
+    440
+   ],
+   "conn": [
+    [
+     770,
+     452
+    ],
+    [
+     770,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 810,
+   "y": 490,
+   "w": 660,
+   "red": "Pehle poochho: kahan ruke, kab tak, push chahiye?",
+   "green": "Push sirf ghanti, raasta Google ka"
+  }
+ ]
+}

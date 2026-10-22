@@ -1,0 +1,193 @@
+{
+ "title": "Card 7: group ka message EK baar likho. Bhejna server-wise: online kahan, Redis se, har server ko ek call",
+ "h": 600,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "College Gang",
+    "(500) me msg"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Chat server",
+   "lines": [
+    "EK baar likho",
+    "online kahan: Redis se"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 180,
+   "w": 320,
+   "h": 100,
+   "kind": "db",
+   "title": "Cassandra",
+   "lines": [
+    "group chat me EK copy"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 310,
+   "w": 320,
+   "h": 70,
+   "kind": "server",
+   "title": "Server-2",
+   "lines": [
+    "120 online: ek call"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 400,
+   "w": 320,
+   "h": 70,
+   "kind": "server",
+   "title": "Server-5",
+   "lines": [
+    "80 online: ek call"
+   ]
+  },
+  {
+   "x": 1050,
+   "y": 180,
+   "w": 420,
+   "h": 100,
+   "kind": "user",
+   "title": "Offline members",
+   "lines": [
+    "push ghanti, wapas aaye",
+    "to seq se aage sab"
+   ]
+  },
+  {
+   "x": 1050,
+   "y": 330,
+   "w": 420,
+   "h": 120,
+   "kind": "user",
+   "title": "Online members",
+   "lines": [
+    "'hi' turant"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     552,
+     270
+    ],
+    [
+     636,
+     230
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     552,
+     320
+    ],
+    [
+     636,
+     345
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     552,
+     345
+    ],
+    [
+     636,
+     435
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     962,
+     345
+    ],
+    [
+     1046,
+     380
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     962,
+     435
+    ],
+    [
+     1046,
+     400
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Har member ke inbox me copy?",
+   "green": "Ek message, 500 likhai: mehnga",
+   "n": 1
+  },
+  {
+   "type": "grey",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Pehle poochho: 1-to-1 ya group?",
+   "green": "Sabke liye ek jaisa = ek copy, har kisi ka alag = alag copy"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 510,
+   "w": 1440,
+   "red": "Naya member juda? Judne ke seq se pehle wale nahi milte, tab wo group me tha hi nahi.",
+   "green": "Bhejna server-wise, member-wise nahi"
+  }
+ ]
+}

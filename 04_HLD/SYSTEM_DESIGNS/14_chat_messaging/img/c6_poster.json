@@ -1,0 +1,208 @@
+{
+ "title": "Card 6: har chat ka server pe +1 number (Redis INCR seq). Kram seq se, ghadi se nahi",
+ "h": 580,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 190,
+   "w": 220,
+   "h": 100,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "ghadi 5 min aage"
+   ]
+  },
+  {
+   "x": 30,
+   "y": 330,
+   "w": 220,
+   "h": 100,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "jawab"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 240,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Chat server",
+   "lines": [
+    "INCR seq:chat123",
+    "+1 har message"
+   ]
+  },
+  {
+   "x": 670,
+   "y": 190,
+   "w": 300,
+   "h": 110,
+   "kind": "db",
+   "title": "Cassandra",
+   "lines": [
+    "har message ka seq"
+   ]
+  },
+  {
+   "x": 670,
+   "y": 350,
+   "w": 300,
+   "h": 100,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "seq: 4415, 4416, 4417"
+   ]
+  },
+  {
+   "x": 1070,
+   "y": 240,
+   "w": 400,
+   "h": 140,
+   "kind": "user",
+   "title": "Ravi ka app",
+   "lines": [
+    "kram seq se, ghadi nahi",
+    "'meri aakhri 4417'",
+    "-> 4418 se aage"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     240
+    ],
+    [
+     326,
+     290
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     252,
+     380
+    ],
+    [
+     326,
+     330
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     280
+    ],
+    [
+     666,
+     245
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     582,
+     340
+    ],
+    [
+     666,
+     395
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     972,
+     250
+    ],
+    [
+     1066,
+     290
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Phone ki ghadi se kram?",
+   "green": "Meri ghadi 10:05 (asal 10:00): kram ulta",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Snowflake id?",
+   "green": "Wo pehchaan hai, kram nahi: do server ki ghadi me ms farak",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 490,
+   "w": 700,
+   "red": "Seq wala Redis restart",
+   "green": "Cassandra me har message ka seq: sabse bade se aage",
+   "n": 3,
+   "mark": [
+    720,
+    450
+   ],
+   "conn": [
+    [
+     720,
+     462
+    ],
+    [
+     720,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 490,
+   "w": 720,
+   "red": "App ko 4415, phir 4417 mila",
+   "green": "4416 chhoota (chhed): thoda ruko, phir '4415 ke baad' maango",
+   "n": 4,
+   "mark": [
+    1270,
+    380
+   ],
+   "conn": [
+    [
+     1270,
+     392
+    ],
+    [
+     1270,
+     490
+    ]
+   ]
+  }
+ ]
+}

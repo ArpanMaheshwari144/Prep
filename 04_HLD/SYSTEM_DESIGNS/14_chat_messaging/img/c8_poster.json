@@ -1,0 +1,145 @@
+{
+ "title": "Card 8: har member ka ek nishaan, kahan tak padha (read_upto). Ravi ne 50 padhe = ek likhai",
+ "h": 600,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "50 padhe"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Chat server",
+   "lines": [
+    "read_upto = 4467",
+    "ek likhai"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 190,
+   "w": 400,
+   "h": 130,
+   "kind": "db",
+   "title": "Members",
+   "lines": [
+    "har member: read_upto,",
+    "delivered_upto",
+    "unread = aakhri seq - nishaan"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 370,
+   "w": 400,
+   "h": 100,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "ek push 'read_upto 4467':",
+    "50 ek saath neeli"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     552,
+     270
+    ],
+    [
+     636,
+     255
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     552,
+     340
+    ],
+    [
+     636,
+     415
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "Har message pe 'padha' record?",
+   "green": "50 x 500 = 25,000 likhai",
+   "n": 1
+  },
+  {
+   "type": "grey",
+   "x": 610,
+   "y": 84,
+   "w": 860,
+   "red": "Tick: ek (server), do (phone), neeli (padh li). Har tick ek ulta message.",
+   "green": "Do tick = delivered_upto, Ravi ka phone bhejta"
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 510,
+   "w": 700,
+   "red": "'Mila' raaste me kho gaya",
+   "green": "Agli baar judte hi phone dobara bhejta, nishaan sirf aage",
+   "n": 2,
+   "mark": [
+    255,
+    300
+   ],
+   "conn": [
+    [
+     255,
+     312
+    ],
+    [
+     255,
+     510
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 750,
+   "y": 510,
+   "w": 720,
+   "red": "Group me do tick? Sabse chhota nishaan >= seq.",
+   "green": "10 lakh ka broadcast? Tick band, sirf unread"
+  }
+ ]
+}

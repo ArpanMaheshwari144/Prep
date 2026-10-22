@@ -1,0 +1,160 @@
+{
+ "title": "Card 10: online = Redis key + umar 30 sec, app har 15 sec dhadkan. Status tabhi dekho jab chat khule",
+ "h": 590,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "Ravi ka app",
+   "lines": [
+    "har 15 sec 'hoon'"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Chat server",
+   "lines": [
+    "dhadkan ikattha,",
+    "Redis me batch"
+   ]
+  },
+  {
+   "x": 670,
+   "y": 190,
+   "w": 330,
+   "h": 120,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "online:ravi",
+    "umar 30 sec"
+   ]
+  },
+  {
+   "x": 670,
+   "y": 360,
+   "w": 330,
+   "h": 100,
+   "kind": "db",
+   "title": "Last seen",
+   "lines": [
+    "band hua to likha"
+   ]
+  },
+  {
+   "x": 1100,
+   "y": 240,
+   "w": 370,
+   "h": 130,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "chat khuli tabhi dekho",
+    "khuli chat = subscribe"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     270
+    ],
+    [
+     666,
+     250
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     582,
+     340
+    ],
+    [
+     666,
+     405
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1002,
+     250
+    ],
+    [
+     1096,
+     290
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "x",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Ravi ka app band ho gaya",
+   "green": "Dhadkan band, umar khatam = offline. Last seen alag likha",
+   "n": 1,
+   "mark": [
+    210,
+    240
+   ],
+   "conn": [
+    [
+     210,
+     228
+    ],
+    [
+     210,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "Sabko har badlav batao?",
+   "green": "500 contacts x crore log: bahut message",
+   "n": 2
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 500,
+   "w": 1440,
+   "red": "Crore dhadkan / sec? Chat server ikattha karke Redis me (batch). Last seen chhupaya? Mat dikhao.",
+   "green": "'typing...' sirf khuli chat me, store nahi, 2 sec ki khabar"
+  }
+ ]
+}

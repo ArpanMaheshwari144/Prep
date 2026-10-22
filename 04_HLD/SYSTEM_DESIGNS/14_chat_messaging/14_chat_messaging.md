@@ -54,7 +54,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 Cue: EVENT LOOP, kuch thread, lakhon conn
 
-![card 1 chalti tasveer: pehle dikkat, phir ilaaj](img/c1_anim.gif)
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
 ```
 HAL     kuch thread (jaise 4) saare connection sambhalte hain. OS batata hai data kahan aaya (epoll),
@@ -81,7 +81,7 @@ AGAR    connection khula hai, aage ka message kis server pe jaayega?
 
 Cue: MAP Redis me (kaun kahan)
 
-![card 2 chalti tasveer: pehle dikkat, phir ilaaj](img/c2_anim.gif)
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
 ```
 MAP     "kaun kis server se juda hai", yahi chat ka dil hai. Ek server ki memory me map hota hai:
@@ -114,7 +114,7 @@ AGAR    server-7 mar gaya -> umar khatam, entry khud hat jaati hai, Ravi offline
 
 Cue: pehle DB, phir bhejo; PUSH
 
-![card 3 chalti tasveer: pehle dikkat, phir ilaaj](img/c3_anim.gif)
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
 ```
 SCOPE   offline banda: message kahan ruke, kab tak ruke, push chahiye ya nahi? (ye pehle poochho)
@@ -136,7 +136,7 @@ AGAR    Ravi wapas aaya -> app bolta hai "aakhri jo mila, uske baad sab do", ser
 
 Cue: chat_id se baanto
 
-![card 4 chalti tasveer: pehle dikkat, phir ilaaj](img/c4_anim.gif)
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
 ```
 SCOPE   history kahan aur kitni der? WhatsApp: phone pe, pahunchte hi server se delete.
@@ -166,7 +166,7 @@ AGAR    ek group bahut garam ho gaya -> ek chat ek hi partition me, to group ki 
 
 Cue: IDEMPOTENCY (clientMsgId)
 
-![card 5 chalti tasveer: pehle dikkat, phir ilaaj](img/c5_anim.gif)
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
 ```
 HAL     app har message ki id banata hai (m-9), dobara bhejne pe wahi id (clientMsgId).
@@ -187,7 +187,7 @@ AGAR    dono copy ek saath aa gayi -> dekhna + daalna ek kadam me (Cassandra LWT
 
 Cue: SEQ, server ka +1
 
-![card 6 chalti tasveer: pehle dikkat, phir ilaaj](img/c6_anim.gif)
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
 ```
 HAL     har chat ka server pe ek +1 number (Redis INCR seq:chat123). Kram isi number (seq) se, ghadi se nahi.
@@ -210,7 +210,7 @@ AGAR    app ko 4415 mila, phir 4417 -> 4416 chhoota (chhed). Thoda ruko, phir ma
 
 Cue: group ka EK copy
 
-![card 7 chalti tasveer: pehle dikkat, phir ilaaj](img/c7_anim.gif)
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
 ```
 SCOPE   1-to-1 ya group? Group = ek message, 500 jagah (ye pehle poochho)
@@ -232,7 +232,7 @@ AGAR    300 online hain -> Redis se unke server nikalo, har server ko ek call
 
 Cue: NISHAAN read_upto
 
-![card 8 chalti tasveer: pehle dikkat, phir ilaaj](img/c8_anim.gif)
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
 ```
 SCOPE   tick: ek (server tak), do (phone tak), neeli (padh li), online / last seen.
@@ -257,7 +257,7 @@ AGAR    unread kitne -> aakhri seq - nishaan, ghatao, gino nahi
 
 Cue: S3 PRESIGNED URL, message me pata
 
-![card 9 chalti tasveer: pehle dikkat, phir ilaaj](img/c9_anim.gif)
+<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
 
 ```
 SCOPE   media message ke saath nahi jaata, alag S3 me jaata hai, message me sirf pata
@@ -281,7 +281,7 @@ AGAR    200 MB upload ke beech net gaya -> tukdon me upload (multipart), bacha h
 
 Cue: UMAR 30 sec (TTL)
 
-![card 10 chalti tasveer: pehle dikkat, phir ilaaj](img/c10_anim.gif)
+<img src="img/c10_poster.png?v=1" width="1000" alt="card 10: kya toota, kaise bacha">
 
 ```
 HAL     online = Redis key + umar (30 sec), app har 15 sec dhadkan bhejta hai "hoon".
