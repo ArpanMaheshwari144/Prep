@@ -1,5 +1,5 @@
 {
- "title": "Card 10: account_id se shard: Arpan ka balance + history ek tukde pe. Do shard ke beech = saga",
+ "title": "Card 10: account_id se DB ke tukde (shard): Arpan ka balance + history ek tukde pe. Do tukdon ke beech = saga",
  "h": 730,
  "boxes": [
   {
@@ -11,7 +11,7 @@
    "title": "Payment Svc",
    "lines": [
     "account_id dekh ke",
-    "shard chuno"
+    "tukda chunta"
    ]
   },
   {
@@ -23,7 +23,7 @@
    "title": "Ring / lookup",
    "lines": [
     "consistent hashing",
-    "ya naksha"
+    "ya lookup table"
    ]
   },
   {
@@ -34,7 +34,7 @@
    "kind": "db",
    "title": "Shard 1",
    "lines": [
-    "A: balance + history"
+    "A ka balance + history"
    ]
   },
   {
@@ -45,7 +45,7 @@
    "kind": "db",
    "title": "Shard 2",
    "lines": [
-    "B: balance + history"
+    "B ka balance + history"
    ]
   },
   {
@@ -56,7 +56,7 @@
    "kind": "db",
    "title": "Shard 3",
    "lines": [
-    "Swiggy: 10 sub-account"
+    "Swiggy ke 10 sub-account"
    ]
   },
   {
@@ -221,7 +221,7 @@
   10,
   10
  ],
- "peeche": "card 9 me REPORT COPY PE (read replica)",
+ "peeche": "card 9 me bhaari report copy pe",
  "ab": "Saal me ~1000 crore row, primary pe likhna dheema",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

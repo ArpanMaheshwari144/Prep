@@ -1,5 +1,5 @@
 {
- "title": "Card 4: 2-3 sec me jawab nahi = PENDING, 'fail' nahi. Baar-baar fail = circuit OPEN, turant 'abhi nahi'",
+ "title": "Card 4: bank 2-3 sec me na bole to PENDING, 'fail' nahi. Baar-baar fail = breaker khula, turant 'abhi nahi'",
  "h": 650,
  "boxes": [
   {
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "Payment Svc",
    "lines": [
-    "2-3 sec me chhodo",
-    "= PENDING"
+    "2-3 sec me jawab nahi",
+    "to PENDING (fail nahi)"
    ]
   },
   {
@@ -34,10 +34,9 @@
    "kind": "plain",
    "title": "Circuit breaker",
    "lines": [
-    "5 fail = OPEN",
+    "5 fail = khula (OPEN)",
     "call jaati hi nahi",
-    "30 sec baad",
-    "ek test call"
+    "30 sec baad ek test call"
    ]
   },
   {
@@ -174,7 +173,7 @@
   4,
   10
  ],
- "peeche": "card 3 me IDEMPOTENCY KEY",
+ "peeche": "card 3 me payment ki apni key, retry pe wahi",
  "ab": "Arpan ne bank se 2000 top-up kiya, PSP (Razorpay / bank) dheema",
  "agla": "ab call gayi, aur jawab se pehle hum hi gir gaye to? (card 5)"
 }

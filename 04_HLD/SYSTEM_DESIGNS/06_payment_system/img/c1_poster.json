@@ -1,5 +1,5 @@
 {
- "title": "Card 1: BEGIN, Arpan -500, Kirana +500, ledger, COMMIT: ek hi transaction. Ya sab, ya koi nahi",
+ "title": "Card 1: Arpan -500, Kirana +500 aur ledger: sab ek transaction me (BEGIN ... COMMIT). Ya sab, ya koi nahi",
  "h": 760,
  "boxes": [
   {
@@ -21,9 +21,9 @@
    "kind": "server",
    "title": "Payment Svc",
    "lines": [
-    "BEGIN",
+    "shuru (BEGIN)",
     "Arpan -500, Kirana +500",
-    "ledger, COMMIT"
+    "ledger likho, pakka (COMMIT)"
    ]
   },
   {
@@ -37,8 +37,8 @@
     "Arpan: -500",
     "Kirana: +500",
     "ledger ki 2 line",
-    "WAL (DB ka apna log)",
-    "saare kate == saare jude"
+    "DB ka apna log (WAL)",
+    "kul kata = kul juda"
    ]
   },
   {

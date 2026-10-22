@@ -1,5 +1,5 @@
 {
- "title": "Card 6: do system = ek txn nahi. SAGA: step-step, har kadam likho, fail pe ulta kaam (500 wapas)",
+ "title": "Card 6: do alag system ek transaction me nahi aate. SAGA: kadam-kadam, har kadam likho, fail pe ulta (500 wapas)",
  "h": 720,
  "boxes": [
   {
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "Saga Svc",
    "lines": [
-    "step-step,",
-    "har kadam likho"
+    "kadam-kadam chalata",
+    "har kadam likhta"
    ]
   },
   {
@@ -34,7 +34,7 @@
    "kind": "db",
    "title": "Wallet DB",
    "lines": [
-    "1: 500 kata"
+    "kadam 1: 500 kata"
    ]
   },
   {
@@ -45,8 +45,8 @@
    "kind": "db",
    "title": "Saga table",
    "lines": [
-    "DEBITED -> PAYOUT",
-    "-> DONE / ULTA"
+    "DEBITED -> PAYOUT -> DONE",
+    "fail: ULTA (500 wapas)"
    ]
   },
   {
@@ -57,7 +57,7 @@
    "kind": "lb",
    "title": "Bank B",
    "lines": [
-    "2: payout"
+    "kadam 2: Kirana ko bhejo"
    ]
   },
   {
@@ -247,7 +247,7 @@
   6,
   10
  ],
- "peeche": "card 5 me PENDING PEHLE + WEBHOOK + JOB",
+ "peeche": "card 5 me pehle PENDING, phir webhook ya job",
  "ab": "Kirana ka account doosre bank me, ek transaction nahi chalti",
  "agla": "ab paisa sahi jagah. Par Arpan hisaab poochhe to? (card 7)"
 }

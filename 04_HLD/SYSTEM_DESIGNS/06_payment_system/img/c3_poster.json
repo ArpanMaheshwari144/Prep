@@ -1,5 +1,5 @@
 {
- "title": "Card 3: screen khulte hi key, retry pe wahi key. Key pehle se = saved jawab, dobara nahi kaata",
+ "title": "Card 3: screen khulte hi app ek key banata, retry pe wahi key. Key pehle se mili = purana jawab, paisa dobara nahi",
  "h": 690,
  "boxes": [
   {
@@ -11,7 +11,7 @@
    "title": "App",
    "lines": [
     "screen khulte hi key-555",
-    "Pay button ek tap"
+    "Pay button ek hi tap"
    ]
   },
   {
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "Payment Svc",
    "lines": [
-    "key pehle se?",
-    "saved jawab do"
+    "key pehle aa chuki?",
+    "to purana jawab do"
    ]
   },
   {
@@ -34,7 +34,8 @@
    "kind": "cache",
    "title": "Redis",
    "lines": [
-    "SETNX key-555 (tez)"
+    "key-555 pehli baar? (SETNX)",
+    "tez check"
    ]
   },
   {
@@ -45,7 +46,7 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "key UNIQUE (deewar)",
+    "key ek hi baar (UNIQUE)",
     "IN_PROGRESS -> DONE"
    ]
   },
@@ -194,7 +195,7 @@
   3,
   10
  ],
- "peeche": "card 2 me check + kaato EK query",
+ "peeche": "card 2 me check + kaato ek hi query me",
  "ab": "Metro me network gaya, app ne dobara bheja, Arpan ke 1000 kate",
  "agla": "ab andar sab theek. Par bahar ka PSP (bank) dheema ho to? (card 4)"
 }

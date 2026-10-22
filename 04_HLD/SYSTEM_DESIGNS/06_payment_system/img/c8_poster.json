@@ -1,5 +1,5 @@
 {
- "title": "Card 8: kai machine (stateless), aage LB. User kaun = JWT se, body se kabhi nahi, har request pe owner check",
+ "title": "Card 8: kai machine, aage LB. User kaun = JWT se (body se kabhi nahi), har request pe owner check",
  "h": 610,
  "boxes": [
   {
@@ -10,7 +10,8 @@
    "kind": "user",
    "title": "Users",
    "lines": [
-    "Diwali: 3000 / sec"
+    "Diwali: har second",
+    "3000 payment"
    ]
   },
   {
@@ -21,8 +22,8 @@
    "kind": "lb",
    "title": "LB",
    "lines": [
-    "GET /health",
-    "chup = bahar"
+    "poochta: zinda ho?",
+    "chup machine bahar"
    ]
   },
   {
@@ -33,7 +34,7 @@
    "kind": "server",
    "title": "Payment Svc 1",
    "lines": [
-    "JWT + owner check"
+    "JWT se user, owner check"
    ]
   },
   {
@@ -44,7 +45,7 @@
    "kind": "server",
    "title": "Payment Svc 2",
    "lines": [
-    "JWT + owner check"
+    "JWT se user, owner check"
    ]
   },
   {
@@ -55,7 +56,7 @@
    "kind": "server",
    "title": "Payment Svc 3",
    "lines": [
-    "JWT + owner check"
+    "JWT se user, owner check"
    ]
   },
   {
@@ -223,7 +224,7 @@
   8,
   10
  ],
- "peeche": "card 7 me LEDGER (har paisa do line)",
+ "peeche": "card 7 me ledger: har paisa do line",
  "ab": "Shaam Diwali, 3000 payment / sec, machine baith gayi, Arpan ka payment atka",
  "agla": "ab machine badh gayi. Par DB pe report ka bojh (card 9)"
 }

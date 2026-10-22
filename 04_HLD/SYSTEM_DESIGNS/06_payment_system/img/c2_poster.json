@@ -1,5 +1,5 @@
 {
- "title": "Card 2: check + kaato ek hi atomic UPDATE. 1 row = kata, 0 row = 'paisa kam'",
+ "title": "Card 2: balance check aur kaatna ek hi UPDATE query me. 1 row badli = kata, 0 row = 'paisa kam'",
  "h": 580,
  "boxes": [
   {
@@ -54,9 +54,8 @@
    "kind": "db",
    "title": "Wallet DB (balance 600)",
    "lines": [
-    "SET balance = balance - 500",
-    "WHERE id = ? AND balance >= 500",
-    "",
+    "UPDATE: balance - 500",
+    "sirf jab balance >= 500",
     "phone: 1 row, 100 bacha",
     "laptop: 100 < 500, 0 row"
    ]
@@ -224,7 +223,7 @@
   2,
   10
  ],
- "peeche": "card 1 me EK TRANSACTION",
+ "peeche": "card 1 me sab ek transaction me",
  "ab": "Arpan ke wallet me 600, phone se 500 aur laptop se 500 ek saath",
  "agla": "ab balance theek. Par wahi payment network ne do baar bheji to? (card 3)"
 }

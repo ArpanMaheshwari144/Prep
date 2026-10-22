@@ -1,5 +1,5 @@
 {
- "title": "Card 5: call se PEHLE PENDING likho. PSP webhook se bataye, nahi to job PSP se poochhe (reconcile)",
+ "title": "Card 5: bank ko call se PEHLE DB me PENDING likho. Bank webhook se bataye, nahi to job khud poochhe (reconcile)",
  "h": 690,
  "boxes": [
   {
@@ -55,8 +55,8 @@
    "kind": "server",
    "title": "Job (har kuch min)",
    "lines": [
-    "purane PENDING:",
-    "PSP se poochho"
+    "purane PENDING",
+    "bank se poochho"
    ]
   },
   {
@@ -137,7 +137,7 @@
    ],
    "c": "purple",
    "dash": true,
-   "label": "haal?",
+   "label": "poochha",
    "lx": 690,
    "ly": 360,
    "a": "middle"
@@ -249,7 +249,7 @@
   5,
   10
  ],
- "peeche": "card 4 me TIMEOUT = PENDING + CIRCUIT BREAKER",
+ "peeche": "card 4 me jawab nahi to PENDING, baar-baar fail to breaker",
  "ab": "PSP ko call ki aur server gira: Arpan ka paisa gaya ya nahi?",
  "agla": "ab merchant doosre bank me hai. Ek transaction ban hi nahi sakti (card 6)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 9: bhaari report copy pe (read replica). Paisa aur haal hamesha primary se padho",
+ "title": "Card 9: bhaari report copy pe (read replica). Paisa aur payment ka haal hamesha primary se padho",
  "h": 610,
  "boxes": [
   {
@@ -10,7 +10,8 @@
    "kind": "server",
    "title": "Payment Svc",
    "lines": [
-    "paisa + haal"
+    "paisa aur haal",
+    "yahin se padhta"
    ]
   },
   {
@@ -32,7 +33,7 @@
    "kind": "db",
    "title": "Primary",
    "lines": [
-    "sirf payment"
+    "sirf payment ka kaam"
    ]
   },
   {
@@ -43,7 +44,7 @@
    "kind": "db",
    "title": "Read replica",
    "lines": [
-    "1-2 sec peeche"
+    "1-2 sec peeche chalti"
    ]
   },
   {
@@ -66,7 +67,8 @@
    "kind": "db",
    "title": "Warehouse",
    "lines": [
-    "bhaari report (CDC)"
+    "bhaari report",
+    "(CDC se copy)"
    ]
   }
  ],
@@ -261,7 +263,7 @@
   9,
   10
  ],
- "peeche": "card 8 me kai machine + LB, JWT",
+ "peeche": "card 8 me kai machine + LB, user JWT se",
  "ab": "Merchant ki mahine ki report ne primary busy kiya, Arpan ka payment ruka",
  "agla": "ab padhna alag ho gaya. Par likhna hi itna ho gaya (card 10)"
 }

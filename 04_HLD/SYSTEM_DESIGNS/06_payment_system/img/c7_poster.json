@@ -1,5 +1,5 @@
 {
- "title": "Card 7: ledger double-entry: har paisa do line, jod 0. Sirf INSERT, galti pe nayi ulti line",
+ "title": "Card 7: ledger me har paisa do line (ek se gaya, ek me aaya), jod 0. Sirf naya likho, galti pe nayi ulti line",
  "h": 660,
  "boxes": [
   {
@@ -10,8 +10,8 @@
    "kind": "user",
    "title": "Arpan",
    "lines": [
-    "raat 2200,",
-    "subah 1100?"
+    "raat 2200 the,",
+    "subah 1100 kyun?"
    ]
   },
   {
@@ -22,7 +22,7 @@
    "kind": "server",
    "title": "App / support",
    "lines": [
-    "ledger padho"
+    "ledger padh ke batao"
    ]
   },
   {
@@ -33,10 +33,10 @@
    "kind": "db",
    "title": "Ledger (sirf INSERT)",
    "lines": [
-    "Arpan -800 | bijli +800",
-    "Arpan -300 | recharge +300",
+    "Arpan -800, bijli +800",
+    "Arpan -300, recharge +300",
     "har payment: 2 line, jod 0",
-    "payment ke saath usi txn me",
+    "payment ke saath, usi txn me",
     "2200 - 800 - 300 = 1100"
    ]
   },
@@ -48,8 +48,7 @@
    "kind": "db",
    "title": "Balance column",
    "lines": [
-    "1100",
-    "(sirf number)"
+    "1100 (sirf aakhri number)"
    ]
   }
  ],
@@ -183,7 +182,7 @@
   7,
   10
  ],
- "peeche": "card 6 me SAGA (step-step, fail pe ulta)",
+ "peeche": "card 6 me saga: kadam-kadam, fail pe ulta",
  "ab": "Arpan ne poochha: kal raat 2200 the, subah 1100 kaise?",
  "agla": "ab hisaab theek. Par Diwali ki bheed aayi (card 8)"
 }
