@@ -216,15 +216,8 @@ KYUN    ACK tabhi jab op buffer aur copy dono me pahunch gaya.
 
 Jod: WhatsApp bhi offline me type karne deta (AP) · Banking me transfer / balance CP (13)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: andar + kya toota, kaise bacha">
 
-<img src="img/c7_1.png?v=1" width="900">
-
-<img src="img/c7_2.png?v=1" width="900">
-
-<img src="img/c7_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     likhna AP: typing chalti, op phone me pending. Permission CP: net aate hi SQL check
@@ -239,11 +232,6 @@ PEHLE   pehle poochho: offline chahiye ya nahi? Isi ke jawab se poora CAP faisla
 
 > [!IMPORTANT]
 > **Yaad rakh:** Likhna AP: op phone me pending, typing kabhi nahi rukti. Permission CP: judte hi SQL check, nahi to reject.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - pending op ke saath 1 ghanta offline raha → **pending op + version**: pending op aur aakhri version rakho. Wapas aate hi bhejo, server khiska ke lagata, sab same
-> - offline me mera access hata diya → **pehle permission (CP)**: Judte hi SQL check, access nahi hai to pending op reject
 
 
 ---

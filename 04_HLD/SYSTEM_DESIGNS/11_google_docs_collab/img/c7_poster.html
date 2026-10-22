@@ -1,0 +1,71 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 7 poster</title>
+<style>
+body{margin:0;background:#0b1220}
+svg text{font-family:"Segoe UI",Arial,sans-serif}
+.m{font-family:Consolas,monospace}
+</style>
+<svg width="1500" height="475" viewBox="0 0 1500 475" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="ab" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+  <marker id="ag" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+</defs>
+<rect width="1500" height="475" fill="#0b1220"/>
+
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 7: likhna AP (typing kabhi na ruke), permission CP (access kabhi galat na ho)</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Neela / hara = roz ka raasta · Laal X = yahan toota, saath wale dabbe me: laal = kya hua, hara = kaise bacha</text>
+
+<rect x="30" y="185" width="300" height="140" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="180" y="220" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main ka app (metro me)</text>
+<text x="180" y="246" font-size="13" fill="#9fb0c8" text-anchor="middle" class="m">typing chalti (AP)</text>
+<text x="180" y="268" font-size="13" fill="#9fb0c8" text-anchor="middle" class="m">yaad: aakhri version v12</text>
+<rect x="55" y="282" width="80" height="28" rx="6" fill="#0b1220" stroke="#ffa94d" stroke-width="2"/><text x="95" y="301" font-size="12" fill="#ffa94d" text-anchor="middle" class="m">op pending</text>
+<rect x="140" y="282" width="80" height="28" rx="6" fill="#0b1220" stroke="#ffa94d" stroke-width="2"/><text x="180" y="301" font-size="12" fill="#ffa94d" text-anchor="middle" class="m">op pending</text>
+<rect x="225" y="282" width="80" height="28" rx="6" fill="#0b1220" stroke="#ffa94d" stroke-width="2"/><text x="265" y="301" font-size="12" fill="#ffa94d" text-anchor="middle" class="m">op pending</text>
+
+<rect x="590" y="195" width="300" height="120" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="740" y="230" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server</text>
+<text x="740" y="258" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">1. pehle permission check</text>
+<text x="740" y="282" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">2. phir khiska ke lagata</text>
+
+<rect x="1180" y="200" width="290" height="110" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="1325" y="236" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Permission (SQL)</text>
+<text x="1325" y="264" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">alag DB, CP</text>
+<text x="1325" y="286" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">hataya to turant laagu</text>
+
+<!-- roz ka raasta -->
+<line x1="332" y1="255" x2="586" y2="255" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ab)"/>
+<text x="459" y="288" font-size="13" fill="#4aa8ff" text-anchor="middle" class="m">net aate hi pending op</text>
+<line x1="892" y1="255" x2="1176" y2="255" stroke="#3ddc97" stroke-width="3" marker-end="url(#ag)"/>
+<text x="960" y="288" font-size="13" fill="#3ddc97" class="m">access hai?</text>
+
+<!-- 1: net gaya -->
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="418" y1="243" x2="442" y2="267"/><line x1="442" y1="243" x2="418" y2="267"/></g>
+<line x1="430" y1="240" x2="430" y2="146" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="30" y="84" width="560" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ff5a6a"/><text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ff5a6a">metro me net 1 sec gaya</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">bacha: typing nahi rukti, op phone me pending (AP)</text>
+
+<!-- 2: access hataya -->
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="1048" y1="243" x2="1072" y2="267"/><line x1="1072" y1="243" x2="1048" y2="267"/></g>
+<line x1="1060" y1="240" x2="1060" y2="146" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="760" y="84" width="710" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="782" cy="106" r="13" fill="#ff5a6a"/><text x="782" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="804" y="111" font-size="15" font-weight="700" fill="#ff5a6a">offline the, tabhi mera access hata diya</text>
+<text x="782" y="135" font-size="15" font-weight="700" fill="#3ddc97">bacha: judte hi pehle SQL check, access nahi to pending op reject (CP)</text>
+
+<!-- 3: 1 ghanta offline -->
+<g stroke="#ff5a6a" stroke-width="6" stroke-linecap="round"><line x1="315" y1="323" x2="341" y2="349"/><line x1="341" y1="323" x2="315" y2="349"/></g>
+<line x1="328" y1="351" x2="328" y2="390" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="30" y="390" width="600" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="412" r="13" fill="#ff5a6a"/><text x="52" y="417" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="74" y="417" font-size="15" font-weight="700" fill="#ff5a6a">1 ghanta offline raha, bahut op pending</text>
+<text x="52" y="441" font-size="15" font-weight="700" fill="#3ddc97">bacha: aakhri version + pending bhejo, server khiska ke lagata</text>
+
+<!-- doosra kyun nahi -->
+<rect x="680" y="390" width="790" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="702" y="417" font-size="15" font-weight="700" fill="#c9d6e8">sab kuch "turant sab same" (strong) rakhte? net jaate hi typing ruk jaati.</text>
+<text x="702" y="441" font-size="15" font-weight="700" fill="#9fb0c8">Humein "aakhir me same" chahiye. Pehle poochho: offline chahiye ya nahi?</text>
+</svg>
