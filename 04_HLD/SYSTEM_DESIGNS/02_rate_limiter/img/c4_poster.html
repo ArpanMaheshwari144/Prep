@@ -2,66 +2,67 @@
 <meta charset="utf-8">
 <title>Card 4: Redis ki copy taiyaar. Copy bhi </title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="640" viewBox="0 0 1500 640" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="801" viewBox="0 0 1500 801" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="640" fill="#0b1220"/>
+</defs><rect width="1500" height="801" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 4: Redis ki copy taiyaar. Copy bhi gayi to pehle se tay: login band, feed khula</text>
-<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
-<rect x="30" y="200" width="260" height="120" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="160.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Gateway</text>
-<text x="160.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">har request pe Redis</text>
-<text x="160.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">se poochta, ~5 ms tak</text>
-<rect x="420" y="160" width="260" height="90" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="550.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis main</text>
-<text x="550.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ginti yahin likhi jaati</text>
-<rect x="420" y="330" width="260" height="90" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="550.0" y="364" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis copy</text>
-<text x="550.0" y="390" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">main gira to yahi main</text>
-<rect x="860" y="190" width="340" height="140" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1030.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Endpoint ke hisaab se</text>
-<text x="1030.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">login: band, user ko 503</text>
-<text x="1030.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">feed: khula, Redis aate hi band</text>
-<text x="1030.0" y="294" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">tab tak gateway apni ginti</text>
-<path d="M292 230 L416 205" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
-<text x="296" y="216" font-size="13" fill="#ffa94d" class="m">INCR</text>
-<path d="M550 252 L550 326" fill="none" stroke="#3ddc97" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agreen)"/>
-<text x="560" y="295" font-size="13" fill="#3ddc97" class="m">copy</text>
-<path d="M292 290 L416 370" fill="none" stroke="#3ddc97" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agreen)"/>
-<text x="232" y="350" font-size="13" fill="#3ddc97" class="m">main gira to</text>
-<path d="M682 375 L856 300" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
-<text x="722" y="388" font-size="13" fill="#6b7a90" class="m">copy bhi gayi</text>
-<path d="M354 206 L354 146" fill="none" stroke="#ff5a6a" stroke-width="2"/>
-<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="342" y1="206" x2="366" y2="230"/><line x1="366" y1="206" x2="342" y2="230"/></g>
-<rect x="30" y="84" width="640" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="106" r="13" fill="#ff5a6a"/>
-<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Redis ne jawab nahi diya. Gira hai, pata kaise chale?</text>
-<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">Chhota timeout (~5 ms). Jawab nahi aaya to gira maano, ruko mat</text>
-<path d="M684 152 L740 146" fill="none" stroke="#ff5a6a" stroke-width="2"/>
-<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="660" y1="148" x2="684" y2="172"/><line x1="684" y1="148" x2="660" y2="172"/></g>
-<rect x="720" y="84" width="750" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="742" cy="106" r="13" fill="#ff5a6a"/>
-<text x="742" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="764" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Redis main gira</text>
-<text x="742" y="135" font-size="15" font-weight="700" fill="#3ddc97">Copy main ban jaati (Redis Cluster). Beech ki kuch sec ki ginti gayi, chalta hai</text>
-<path d="M672 432 L672 470" fill="none" stroke="#ff5a6a" stroke-width="2"/>
-<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="660" y1="408" x2="684" y2="432"/><line x1="684" y1="408" x2="660" y2="432"/></g>
-<rect x="380" y="470" width="560" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="402" cy="492" r="13" fill="#ff5a6a"/>
-<text x="402" y="497" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
-<text x="424" y="497" font-size="15" font-weight="700" fill="#ff5a6a">Copy bhi gayi, dono Redis band</text>
-<text x="402" y="521" font-size="15" font-weight="700" fill="#3ddc97">Pehle se tay hai, endpoint ke hisaab se (upar dabba)</text>
-<path d="M1030 332 L1030 470" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
-<rect x="980" y="470" width="490" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="1002" cy="492" r="13" fill="#ffcc4d"/>
-<text x="1002" y="497" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">4</text>
-<text x="1024" y="497" font-size="15" font-weight="700" fill="#ffcc4d">Sab fail-open kar dete?</text>
-<text x="1002" y="521" font-size="15" font-weight="700" fill="#3ddc97">Login khula: koi bhi bina had password try karta</text>
-<rect x="30" y="560" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
-<text x="52" y="587" font-size="15" font-weight="700" fill="#c9d6e8">CPU full tha, Redis gira nahi. Copy laga doon? Nahi: INCR likhna hai, aur likhna sirf main pe hota.</text>
-<text x="52" y="611" font-size="15" font-weight="700" fill="#9fb0c8">Isliye SHARD: har user ki key alag Redis pe</text>
+<text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
+<rect x="30" y="154" width="260" height="120" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="160.0" y="188" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Gateway</text>
+<text x="160.0" y="214" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">har request pe Redis</text>
+<text x="160.0" y="236" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">se poochta, ~5 ms tak</text>
+<rect x="420" y="114" width="260" height="90" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="550.0" y="148" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis main</text>
+<text x="550.0" y="174" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ginti yahin likhi jaati</text>
+<rect x="420" y="284" width="260" height="90" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="550.0" y="318" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis copy</text>
+<text x="550.0" y="344" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">main gira to yahi main</text>
+<rect x="860" y="144" width="340" height="140" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1030.0" y="178" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Endpoint ke hisaab se</text>
+<text x="1030.0" y="204" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">login: band, user ko 503</text>
+<text x="1030.0" y="226" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">feed: khula, Redis aate hi band</text>
+<text x="1030.0" y="248" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">tab tak gateway apni ginti</text>
+<path d="M292 184 L416 159" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<text x="296" y="170" font-size="13" fill="#ffa94d" class="m">INCR</text>
+<path d="M550 206 L550 280" fill="none" stroke="#3ddc97" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agreen)"/>
+<text x="560" y="249" font-size="13" fill="#3ddc97" class="m">copy</text>
+<path d="M292 244 L416 324" fill="none" stroke="#3ddc97" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agreen)"/>
+<text x="232" y="304" font-size="13" fill="#3ddc97" class="m">main gira to</text>
+<path d="M682 329 L856 254" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
+<text x="722" y="342" font-size="13" fill="#6b7a90" class="m">copy bhi gayi</text>
+<circle cx="354" cy="172" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="354" y="177" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="672" cy="114" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="672" y="119" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<circle cx="672" cy="374" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="672" y="379" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
+<rect x="30" y="448" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="473" r="12" fill="#ff5a6a"/>
+<text x="52" y="478" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="478" font-size="15" font-weight="700" fill="#ff5a6a">Redis ne jawab nahi diya. Gira hai,</text>
+<text x="74" y="499" font-size="15" font-weight="700" fill="#ff5a6a">pata kaise chale?</text>
+<text x="52" y="526" font-size="13.5" fill="#7fe0b0">Chhota timeout (~5 ms). Jawab nahi aaya to</text>
+<text x="52" y="546" font-size="13.5" fill="#7fe0b0">gira maano, ruko mat</text>
+<rect x="392" y="448" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="473" r="12" fill="#ff5a6a"/>
+<text x="414" y="478" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="478" font-size="15" font-weight="700" fill="#ff5a6a">Redis main gira</text>
+<text x="414" y="505" font-size="13.5" fill="#7fe0b0">Copy main ban jaati (Redis Cluster). Beech</text>
+<text x="414" y="525" font-size="13.5" fill="#7fe0b0">ki kuch sec ki ginti gayi, chalta hai</text>
+<rect x="754" y="448" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="776" cy="473" r="12" fill="#ff5a6a"/>
+<text x="776" y="478" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="798" y="478" font-size="15" font-weight="700" fill="#ff5a6a">Copy bhi gayi, dono Redis band</text>
+<text x="776" y="505" font-size="13.5" fill="#7fe0b0">Pehle se tay hai, endpoint ke hisaab se</text>
+<text x="776" y="525" font-size="13.5" fill="#7fe0b0">(upar dabba)</text>
+<rect x="30" y="611" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="637" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="661" font-size="13.5" fill="#e6dcb8">Sab fail-open kar dete: Login khula: koi bhi bina had password try karta</text>
+<rect x="30" y="699" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="729" font-size="13.5" fill="#c9d6e8">CPU full tha, Redis gira nahi. Copy laga doon? Nahi: INCR likhna hai, aur likhna sirf main pe hota.</text>
+<text x="48" y="751" font-size="13.5" fill="#c9d6e8">Isliye SHARD: har user ki key alag Redis pe</text>
 </svg>

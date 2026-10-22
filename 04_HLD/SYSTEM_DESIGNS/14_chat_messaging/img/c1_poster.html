@@ -2,53 +2,47 @@
 <meta charset="utf-8">
 <title>Card 1: kuch thread (event loop) lakhon </title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="540" viewBox="0 0 1500 540" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="719" viewBox="0 0 1500 719" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="540" fill="#0b1220"/>
+</defs><rect width="1500" height="719" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: kuch thread (event loop) lakhon connection sambhalte. Connection khula rehta, thread nahi</text>
-<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
-<rect x="30" y="240" width="200" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="130.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">2 crore log</text>
-<text x="130.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">app khule</text>
-<rect x="290" y="240" width="180" height="120" rx="12" fill="#152033" stroke="#9fb0c8" stroke-width="2.5"/>
-<text x="380.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">LB</text>
-<text x="380.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">server pe</text>
-<text x="380.0" y="322" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">bithata</text>
-<rect x="560" y="200" width="400" height="200" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="760.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Chat server</text>
-<text x="760.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">4 thread (event loop, Netty)</text>
-<text x="760.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">OS batata data kahan (epoll)</text>
-<text x="760.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">chup connection = thodi memory</text>
-<text x="760.0" y="326" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">~200 server kaafi</text>
-<rect x="1050" y="240" width="420" height="120" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1260.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Connections</text>
-<text x="1260.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khule rehte,</text>
-<text x="1260.0" y="322" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">thread sirf data aane pe</text>
-<path d="M232 300 L286 300" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M472 300 L556 300" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M962 300 L1046 300" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
-<rect x="30" y="84" width="520" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
-<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Ek connection ek thread?</text>
-<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">2 crore x ~1 MB: memory khatam</text>
-<rect x="570" y="84" width="900" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="592" cy="106" r="13" fill="#ffcc4d"/>
-<text x="592" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="614" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Polling (har 5 sec)? Ya SSE?</text>
-<text x="592" y="135" font-size="15" font-weight="700" fill="#3ddc97">Polling: 100 me 1 kaam ki. SSE: sirf ek taraf, chat me dono chahiye</text>
-<path d="M760 412 L760 450" fill="none" stroke="#ff5a6a" stroke-width="2"/>
-<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="748" y1="388" x2="772" y2="412"/><line x1="772" y1="388" x2="748" y2="412"/></g>
-<rect x="30" y="450" width="900" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="472" r="13" fill="#ff5a6a"/>
-<text x="52" y="477" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
-<text x="74" y="477" font-size="15" font-weight="700" fill="#ff5a6a">Chat server gira</text>
-<text x="52" y="501" font-size="15" font-weight="700" fill="#3ddc97">1 lakh ek saath judte: ruk-ruk, random waqt (backoff + jitter). Message nahi khota</text>
-<rect x="950" y="450" width="520" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
-<text x="972" y="477" font-size="15" font-weight="700" fill="#c9d6e8">Naya code? Thode-thode server khaali (draining).</text>
-<text x="972" y="501" font-size="15" font-weight="700" fill="#9fb0c8">Aage ka message? Wahi server, connection khula</text>
+<text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
+<rect x="30" y="140" width="200" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="174" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">2 crore log</text>
+<text x="130.0" y="200" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">app khule</text>
+<rect x="290" y="140" width="180" height="120" rx="12" fill="#152033" stroke="#9fb0c8" stroke-width="2.5"/>
+<text x="380.0" y="174" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">LB</text>
+<text x="380.0" y="200" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">server pe</text>
+<text x="380.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">bithata</text>
+<rect x="560" y="100" width="400" height="200" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="760.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Chat server</text>
+<text x="760.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">4 thread (event loop, Netty)</text>
+<text x="760.0" y="182" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">OS batata data kahan (epoll)</text>
+<text x="760.0" y="204" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">chup connection = thodi memory</text>
+<text x="760.0" y="226" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">~200 server kaafi</text>
+<rect x="1050" y="140" width="420" height="120" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1260.0" y="174" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Connections</text>
+<text x="1260.0" y="200" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khule rehte,</text>
+<text x="1260.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">thread sirf data aane pe</text>
+<path d="M232 200 L286 200" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M472 200 L556 200" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M962 200 L1046 200" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
+<circle cx="760" cy="300" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="760" y="305" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<rect x="30" y="374" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="399" r="12" fill="#ff5a6a"/>
+<text x="52" y="404" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="404" font-size="15" font-weight="700" fill="#ff5a6a">Chat server gira</text>
+<text x="52" y="431" font-size="13.5" fill="#7fe0b0">1 lakh ek saath judte: ruk-ruk, random waqt</text>
+<text x="52" y="451" font-size="13.5" fill="#7fe0b0">(backoff + jitter). Message nahi khota</text>
+<rect x="30" y="529" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="555" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="579" font-size="13.5" fill="#e6dcb8">Ek connection ek thread: 2 crore x ~1 MB: memory khatam   ·   Polling (har 5 sec)? Ya SSE: Polling: 100 me 1 kaam ki. SSE: sirf ek taraf, chat me dono chahiye</text>
+<rect x="30" y="617" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="647" font-size="13.5" fill="#c9d6e8">Naya code? Thode-thode server khaali (draining).</text>
+<text x="48" y="669" font-size="13.5" fill="#c9d6e8">Aage ka message? Wahi server, connection khula</text>
 </svg>

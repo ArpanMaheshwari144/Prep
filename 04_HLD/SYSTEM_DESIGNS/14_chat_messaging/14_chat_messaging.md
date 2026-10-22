@@ -3,7 +3,7 @@
 > Maine message bheja, Ravi tak turant pahunche, chahe Ravi ne kuch na maanga ho. Ravi offline ho to baad me mile, kuch na khoye.
 > Dil: banda KAHAN juda hai (baaki designs me "data kahan rakhein"), aur khuli connection.
 >
-> Mock me sirf heading + Cue + GIF. Neeche har card ek block: HAL (GIF ka ILAAJ) · KYUN · NAHI (doosra kyun nahi) · AGAR (cross-Q).
+> Mock me sirf heading + Cue + poster. Neeche har card ek block: HAL · KYUN · NAHI · AGAR, phir YAAD RAKH dabba.
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -39,6 +39,21 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 ```
 
 
+> [!IMPORTANT]
+> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
+> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+>
+> | rail | is design me | card |
+> |---|---|---|
+> | 1 kaam chala | Ravi kis server pe (map) · offline ko baad me · tick | 2, 8 |
+> | 2 bheed aayi | 2 crore khuli connection · group 500 · online sabko | 1, 7, 10 |
+> | 3 machine giri | bhejne se pehle server gira · Ravi ka phone band | 3 |
+> | 4 do log ek saath | app ne dobara bheja · ghadi aage, kram ulta (**is design ka khaas**) | 5, 6 |
+> | 5 kuch dheema | 200 MB video chat ke raaste | 9 |
+> | 6 data bada | roz 1.2 TB message | 4 |
+> | 7 door ke log | nahi aata | - |
+> | 8 bahar ka hamla | is file me nahi: rate limit = 02_rate_limiter | - |
+
 > [!NOTE]
 > **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
 >
@@ -52,7 +67,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 ## 1. Subah 2 crore log jude, server ki memory khatam
 
-Cue: EVENT LOOP, kuch thread, lakhon conn
+**Rail 2 BHEED AAYI (connection)** · Cue: EVENT LOOP, kuch thread, lakhon conn
 
 <img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
@@ -73,13 +88,16 @@ AGAR    connection khula hai, aage ka message kis server pe jaayega?
         naya code deploy karna hai -> thode-thode server khaali karo (draining), taaki sab ek saath na judein
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Kuch thread (event loop) saari khuli connection sambhalte. Chup connection thodi memory, ~200 server kaafi.
+
 ---
 
 *ab 200 server hain, Ravi kis pe hai?*
 
 ## 2. Maine Ravi ko "hi" bheja, server bola Ravi offline
 
-Cue: MAP Redis me (kaun kahan)
+**Rail 1 KAAM CHALA (kaun kahan)** · Cue: MAP Redis me (kaun kahan)
 
 <img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
@@ -106,13 +124,16 @@ AGAR    server-7 mar gaya -> umar khatam, entry khud hat jaati hai, Ravi offline
         Redis gira -> copy pe switch (alag AZ), message khota nahi, judne pe milega
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Ravi kis server pe, ye pata Redis me (umar + dhadkan). Server-1 Redis se poochh ke server-7 ko deta.
+
 ---
 
 *ab Ravi mila hi nahi, phone band hai*
 
 ## 3. Ravi ka phone band tha, message kahan jaaye
 
-Cue: pehle DB, phir bhejo; PUSH
+**Rail 3 MACHINE GIRI (phone band)** · Cue: pehle DB, phir bhejo; PUSH
 
 <img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
@@ -128,13 +149,16 @@ AGAR    Ravi wapas aaya -> app bolta hai "aakhri jo mila, uske baad sab do", ser
         push wala (Google / Apple) atak gaya -> wo bahar ki cheez hai, apna retry / queue rakho
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Pehle DB me likho, phir bhejo. Phone band to push ghanti. Wapas aaya to "aakhri ke baad sab do".
+
 ---
 
 *ab sab DB me likh rahe, DB kitna jhelega?*
 
 ## 4. Roz 1.2 TB message, ek DB nahi jhelta
 
-Cue: chat_id se baanto
+**Rail 6 DATA BADA** · Cue: chat_id se baanto
 
 <img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
@@ -158,13 +182,16 @@ AGAR    ek group bahut garam ho gaya -> ek chat ek hi partition me, to group ki 
         -> DB ke baad search index me bhi daalo (Elasticsearch). ES id deta hai, message Cassandra se aata hai
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Cassandra, key = chat_id: ek chat ek partition, andar kram se. Aakhri 50 ek jagah se.
+
 ---
 
 *ab DB sahi, par net dheema, app ne dobara bheja*
 
 ## 5. Net dheema, app ne dobara bheja, Ravi ko "hi" do baar
 
-Cue: IDEMPOTENCY (clientMsgId)
+**Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY (clientMsgId)
 
 <img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
@@ -179,13 +206,16 @@ AGAR    dono copy ek saath aa gayi -> dekhna + daalna ek kadam me (Cassandra LWT
         clientMsgId kab tak rakhein -> jitni der me dobara aata hai; retry minute me hota hai, 1 ghanta kaafi
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** App har message ki id banata (m-9), dobara pe wahi id. Server (sender, id) dekh ke skip.
+
 ---
 
 *ab ek baar hi aaya, par kram galat*
 
 ## 6. Meri ghadi 5 min aage, mera sawaal Ravi ke jawab ke neeche chala gaya
 
-Cue: SEQ, server ka +1
+**Rail 4 DO LOG EK SAATH (khaas)** · Cue: SEQ, server ka +1
 
 <img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
@@ -202,13 +232,16 @@ AGAR    app ko 4415 mila, phir 4417 -> 4416 chhoota (chhed). Thoda ruko, phir ma
         Ravi wapas aaya -> app bolta hai "meri aakhri 4417", server 4418 se aage sab deta hai
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Har chat ka server pe +1 number (seq). Kram seq se, ghadi se nahi. Chhed dikhe to maango.
+
 ---
 
 *ab 1-to-1 theek, group me 500 log*
 
 ## 7. College Gang (500) me ek message, 500 baar likhein?
 
-Cue: group ka EK copy
+**Rail 2 BHEED AAYI (group)** · Cue: group ka EK copy
 
 <img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
@@ -224,13 +257,16 @@ AGAR    300 online hain -> Redis se unke server nikalo, har server ko ek call
         naya member juda -> judne ke seq se pehle wale message nahi milte, tab wo group me tha hi nahi
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Group ka message EK baar likho. Bhejna server-wise: online kahan, Redis se, har server ko ek call.
+
 ---
 
 *ab message pahunch gaye, tick aur unread?*
 
 ## 8. Ravi ne 50 padhe: unread aur neeli tick kaise
 
-Cue: NISHAAN read_upto
+**Rail 1 KAAM CHALA (tick)** · Cue: NISHAAN read_upto
 
 <img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
@@ -249,13 +285,16 @@ AGAR    unread kitne -> aakhri seq - nishaan, ghatao, gino nahi
         10 lakh ka broadcast group -> tick band, sirf unread; 10 lakh nishaan milana mehnga hai
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Har member ka ek nishaan, kahan tak padha (read_upto). Unread = aakhri seq - nishaan.
+
 ---
 
 *ab text theek, par video bhaari*
 
 ## 9. Shaadi ka 200 MB video chat ke raaste
 
-Cue: S3 PRESIGNED URL, message me pata
+**Rail 5 KUCH DHEEMA (video)** · Cue: S3 PRESIGNED URL, message me pata
 
 <img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
 
@@ -273,13 +312,16 @@ AGAR    200 MB upload ke beech net gaya -> tukdon me upload (multipart), bacha h
         -> app khud encrypt karta hai, chaabi message ke saath, server dekh nahi sakta
 ```
 
+> [!IMPORTANT]
+> **Yaad rakh:** Video seedha S3 me (10 min ka paas). Message me sirf S3 key + thumbnail. URL marta, key nahi.
+
 ---
 
 *ab aakhri: kaun online hai*
 
 ## 10. Raat ko online / last seen sabko kaise
 
-Cue: UMAR 30 sec (TTL)
+**Rail 2 BHEED AAYI (online)** · Cue: UMAR 30 sec (TTL)
 
 <img src="img/c10_poster.png?v=1" width="1000" alt="card 10: kya toota, kaise bacha">
 
@@ -294,6 +336,9 @@ AGAR    chat khuli hai aur main chala gaya -> khuli chat = subscribe (live badla
         Ravi ne last seen chhupaya -> mat dikhao
         "typing..." -> sirf khuli chat me, store nahi, 2 sec ki khabar
 ```
+
+> [!IMPORTANT]
+> **Yaad rakh:** Online = Redis key + umar 30 sec, app har 15 sec dhadkan. Status tabhi dekho jab chat khule.
 
 ---
 

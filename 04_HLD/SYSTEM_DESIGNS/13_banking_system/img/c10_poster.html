@@ -2,46 +2,39 @@
 <meta charset="utf-8">
 <title>Card 10: OFFSET nahi, keyset: (ts, id) &lt;</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="560" viewBox="0 0 1500 560" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="570" viewBox="0 0 1500 570" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="560" fill="#0b1220"/>
+</defs><rect width="1500" height="570" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 10: OFFSET nahi, keyset: (ts, id) &lt; aakhri, index se seedha. Har page ek jaisa tez. id barabari todti</text>
-<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
-<rect x="30" y="240" width="200" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="130.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">CA</text>
-<text x="130.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">export,</text>
-<text x="130.0" y="322" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">page 5000</text>
-<rect x="300" y="230" width="260" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="430.0" y="264" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App</text>
-<text x="430.0" y="290" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">next_cursor</text>
-<text x="430.0" y="312" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">(ts, id) base64</text>
-<rect x="650" y="190" width="560" height="220" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="930.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB (index: account, ts, id)</text>
-<text x="930.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">WHERE account_id = ?</text>
-<text x="930.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">AND (ts, id) &lt; (aakhri ts, id)</text>
-<text x="930.0" y="294" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ORDER BY ts DESC, id DESC LIMIT 20</text>
-<text x="930.0" y="316" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">index se seedha, sirf 20</text>
-<rect x="1290" y="250" width="180" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1380.0" y="284" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Page</text>
-<text x="1380.0" y="310" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">20 line, tez</text>
-<path d="M232 300 L296 300" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M562 300 L646 300" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M1212 300 L1286 300" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<rect x="30" y="84" width="560" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
-<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">LIMIT 20 OFFSET 100000?</text>
-<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">DB 1 lakh line padh ke phenkta: dheema</text>
-<rect x="610" y="84" width="860" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="632" cy="106" r="13" fill="#ffcc4d"/>
-<text x="632" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="654" y="111" font-size="15" font-weight="700" fill="#ffcc4d">OFFSET aur beech me nayi line aa gayi?</text>
-<text x="632" y="135" font-size="15" font-weight="700" fill="#3ddc97">Page khisakta, line dobara aati</text>
-<rect x="30" y="470" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
-<text x="52" y="497" font-size="15" font-weight="700" fill="#c9d6e8">Ek hi ts pe do line? Isliye (ts, id): id barabari todti. Beech me nayi line? Purana page nahi khisakta.</text>
-<text x="52" y="521" font-size="15" font-weight="700" fill="#9fb0c8">Seedha page 500? Keyset me nahi hota: agla / pichhla kaafi</text>
+<text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
+<rect x="30" y="150" width="200" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="184" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">CA</text>
+<text x="130.0" y="210" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">export,</text>
+<text x="130.0" y="232" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">page 5000</text>
+<rect x="300" y="140" width="260" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="430.0" y="174" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App</text>
+<text x="430.0" y="200" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">next_cursor</text>
+<text x="430.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">(ts, id) base64</text>
+<rect x="650" y="100" width="560" height="220" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="930.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB (index: account, ts, id)</text>
+<text x="930.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">WHERE account_id = ?</text>
+<text x="930.0" y="182" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">AND (ts, id) &lt; (aakhri ts, id)</text>
+<text x="930.0" y="204" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ORDER BY ts DESC, id DESC LIMIT 20</text>
+<text x="930.0" y="226" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">index se seedha, sirf 20</text>
+<rect x="1290" y="160" width="180" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1380.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Page</text>
+<text x="1380.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">20 line, tez</text>
+<path d="M232 210 L296 210" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M562 210 L646 210" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M1212 210 L1286 210" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<rect x="30" y="380" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="406" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="430" font-size="13.5" fill="#e6dcb8">LIMIT 20 OFFSET 100000: DB 1 lakh line padh ke phenkta: dheema   ·   OFFSET aur beech me nayi line aa gayi: Page khisakta, line dobara aati</text>
+<rect x="30" y="468" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="498" font-size="13.5" fill="#c9d6e8">Ek hi ts pe do line? Isliye (ts, id): id barabari todti. Beech me nayi line? Purana page nahi khisakta.</text>
+<text x="48" y="520" font-size="13.5" fill="#c9d6e8">Seedha page 500? Keyset me nahi hota: agla / pichhla kaafi</text>
 </svg>

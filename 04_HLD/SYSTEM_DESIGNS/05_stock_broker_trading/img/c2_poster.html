@@ -2,61 +2,52 @@
 <meta charset="utf-8">
 <title>Card 2: check + block ek hi atomic UPDAT</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="660" viewBox="0 0 1500 660" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="634" viewBox="0 0 1500 634" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="660" fill="#0b1220"/>
+</defs><rect width="1500" height="634" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 2: check + block ek hi atomic UPDATE. 1 row = jeeta, 0 row = turant reject</text>
-<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
-<rect x="30" y="190" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="140.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Laptop</text>
-<text x="140.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">TCS 30k</text>
-<rect x="30" y="330" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="140.0" y="364" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Phone</text>
-<text x="140.0" y="390" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">INFY 30k</text>
-<rect x="330" y="190" width="220" height="100" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="440.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 1</text>
-<text x="440.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">order A</text>
-<rect x="330" y="330" width="220" height="100" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="440.0" y="364" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 2</text>
-<text x="440.0" y="390" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">order B</text>
-<rect x="640" y="195" width="500" height="230" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="890.0" y="229" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Wallet DB (total 50k)</text>
-<text x="890.0" y="255" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">SET blocked = blocked + 30k</text>
-<text x="890.0" y="277" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">WHERE total - blocked &gt;= 30k</text>
-<text x="890.0" y="299" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle"></text>
-<text x="890.0" y="321" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">A: 1 row = jeeta, block</text>
-<text x="890.0" y="343" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">B: 20k bacha, 0 row</text>
-<rect x="1230" y="190" width="240" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1350.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Laptop</text>
-<text x="1350.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">TCS block ho gaya</text>
-<rect x="1230" y="330" width="240" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1350.0" y="364" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Phone</text>
-<text x="1350.0" y="390" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">turant reject</text>
-<path d="M252 240 L326 240" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M252 380 L326 380" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M552 240 L636 260" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M552 380 L636 360" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M1142 260 L1226 240" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<path d="M1142 360 L1226 380" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
-<path d="M440 146 L440 190" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
-<rect x="30" y="84" width="600" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
-<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Pehle padho, phir block</text>
-<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">Dono server ne 50k dekha, dono pass, wallet minus</text>
-<rect x="660" y="84" width="810" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="682" cy="106" r="13" fill="#ffcc4d"/>
-<text x="682" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="704" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Java synchronized laga do?</text>
-<text x="682" y="135" font-size="15" font-weight="700" fill="#3ddc97">Taala ek machine ka hai, phone doosre server pe gaya</text>
-<rect x="30" y="475" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
-<text x="52" y="502" font-size="15" font-weight="700" fill="#c9d6e8">Order cancel? Block hatao. Sauda aadha? Jitna bika utna kata, baaki blocked. Cancel + match usi pal? Jo nahi bika, sirf uska.</text>
-<text x="52" y="526" font-size="15" font-weight="700" fill="#9fb0c8">Day order khatam? Shaam ko block hatao. Blocked sirf sauda / cancel / umar se ghatta</text>
-<rect x="30" y="565" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
-<text x="52" y="592" font-size="15" font-weight="700" fill="#c9d6e8">MARKET order, bhav pata nahi? Aakhri bhav + thoda upar block, sauda ke baad bacha wapas.</text>
-<text x="52" y="616" font-size="15" font-weight="700" fill="#9fb0c8">SELL pe bhi? Haan, portfolio pe: qty - blocked_qty &gt;= 10</text>
+<text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
+<rect x="30" y="100" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Laptop</text>
+<text x="140.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">TCS 30k</text>
+<rect x="30" y="240" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Phone</text>
+<text x="140.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">INFY 30k</text>
+<rect x="330" y="100" width="220" height="100" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="440.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 1</text>
+<text x="440.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">order A</text>
+<rect x="330" y="240" width="220" height="100" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="440.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 2</text>
+<text x="440.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">order B</text>
+<rect x="640" y="105" width="500" height="230" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="890.0" y="139" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Wallet DB (total 50k)</text>
+<text x="890.0" y="165" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">SET blocked = blocked + 30k</text>
+<text x="890.0" y="187" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">WHERE total - blocked &gt;= 30k</text>
+<text x="890.0" y="209" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle"></text>
+<text x="890.0" y="231" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">A: 1 row = jeeta, block</text>
+<text x="890.0" y="253" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">B: 20k bacha, 0 row</text>
+<rect x="1230" y="100" width="240" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1350.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Laptop</text>
+<text x="1350.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">TCS block ho gaya</text>
+<rect x="1230" y="240" width="240" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1350.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Phone</text>
+<text x="1350.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">turant reject</text>
+<path d="M252 150 L326 150" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M252 290 L326 290" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M552 150 L636 170" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M552 290 L636 270" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M1142 170 L1226 150" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M1142 270 L1226 290" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
+<rect x="30" y="400" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="426" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="450" font-size="13.5" fill="#e6dcb8">Pehle padho, phir block: Dono server ne 50k dekha, dono pass, wallet minus   ·   Java synchronized laga do: Taala ek machine ka hai, phone doosre server pe gaya</text>
+<rect x="30" y="488" width="1440" height="116" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="518" font-size="13.5" fill="#c9d6e8">Order cancel? Block hatao. Sauda aadha? Jitna bika utna kata, baaki blocked. Cancel + match usi pal? Jo nahi bika, sirf uska.</text>
+<text x="48" y="540" font-size="13.5" fill="#c9d6e8">Day order khatam? Shaam ko block hatao. Blocked sirf sauda / cancel / umar se ghatta</text>
+<text x="48" y="562" font-size="13.5" fill="#c9d6e8">MARKET order, bhav pata nahi? Aakhri bhav + thoda upar block, sauda ke baad bacha wapas.</text>
+<text x="48" y="584" font-size="13.5" fill="#c9d6e8">SELL pe bhi? Haan, portfolio pe: qty - blocked_qty &gt;= 10</text>
 </svg>

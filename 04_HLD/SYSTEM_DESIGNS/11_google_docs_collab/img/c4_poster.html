@@ -1,37 +1,24 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Card 4 poster</title>
-<style>
-body{margin:0;background:#0b1220}
-svg text{font-family:"Segoe UI",Arial,sans-serif}
-.m{font-family:Consolas,monospace}
-</style>
-<svg width="1500" height="610" viewBox="0 0 1500 610" xmlns="http://www.w3.org/2000/svg">
-<defs>
+<title>Card 4: docId se ring pe ek OWNER server</title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="771" viewBox="0 0 1500 771" xmlns="http://www.w3.org/2000/svg"><defs>
   <marker id="ab" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
   <marker id="ag" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
-</defs>
-<rect width="1500" height="610" fill="#0b1220"/>
-
+</defs><rect width="1500" height="771" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 4: docId se ring pe ek OWNER server. Ek doc ke sab editor wahin, OT ek jagah</text>
-<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
-
-<!-- editors -->
+<text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
+<g transform="translate(0,-49)">
 <rect x="30" y="160" width="260" height="90" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="160" y="198" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main + Ravi (editor)</text>
 <text x="160" y="225" font-size="14" fill="#9fb0c8" text-anchor="middle" class="m">doc 123 likh rahe</text>
-<!-- viewers -->
 <rect x="30" y="380" width="260" height="85" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="160" y="416" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Viewer (sirf padh rahe)</text>
 <text x="160" y="442" font-size="14" fill="#9fb0c8" text-anchor="middle" class="m">doc 123 dekh rahe</text>
-
-<!-- LB -->
 <rect x="380" y="255" width="220" height="110" rx="12" fill="#152033" stroke="#9fb0c8" stroke-width="2.5"/>
 <text x="490" y="290" font-size="20" font-weight="700" fill="#e6edf3" text-anchor="middle">LB</text>
 <text x="490" y="318" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">editor: docId se ring</text>
 <text x="490" y="342" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">viewer: koi bhi server</text>
-
-<!-- ring -->
 <circle cx="900" cy="310" r="130" fill="none" stroke="#2a3a5a" stroke-width="3" stroke-dasharray="6 6"/>
 <text x="900" y="315" font-size="15" fill="#6b7a90" text-anchor="middle" class="m">ring (docId)</text>
 <rect x="830" y="155" width="140" height="52" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
@@ -41,14 +28,10 @@ svg text{font-family:"Segoe UI",Arial,sans-serif}
 <text x="1040" y="315" font-size="15" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 2</text>
 <rect x="835" y="415" width="130" height="50" rx="9" fill="#152033" stroke="#4aa8ff" stroke-width="2"/>
 <text x="900" y="445" font-size="15" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 3</text>
-
-<!-- DB -->
 <rect x="1250" y="255" width="220" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
 <text x="1360" y="292" font-size="20" font-weight="700" fill="#e6edf3" text-anchor="middle">Op log (DB)</text>
 <text x="1360" y="320" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">doc server pe nahi,</text>
 <text x="1360" y="340" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">yahan rehta</text>
-
-<!-- roz ka raasta -->
 <line x1="292" y1="205" x2="378" y2="280" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ab)"/>
 <line x1="292" y1="425" x2="378" y2="345" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ab)"/>
 <line x1="602" y1="285" x2="826" y2="186" stroke="#3ddc97" stroke-width="3" marker-end="url(#ag)"/>
@@ -57,42 +40,30 @@ svg text{font-family:"Segoe UI",Arial,sans-serif}
 <text x="625" y="415" font-size="13" fill="#4aa8ff" class="m">viewer kahin bhi</text>
 <line x1="972" y1="185" x2="1246" y2="290" stroke="#a98bff" stroke-width="3" marker-end="url(#ag)"/>
 <text x="1120" y="215" font-size="13" fill="#a98bff" class="m">op likha</text>
-
-<!-- 1: editor alag server -->
-<line x1="730" y1="220" x2="730" y2="146" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
-<rect x="300" y="84" width="530" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="322" cy="106" r="13" fill="#ffcc4d"/><text x="322" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="344" y="111" font-size="15" font-weight="700" fill="#ffcc4d">editor alag server pe: OT do jagah, do version</text>
-<text x="322" y="135" font-size="15" font-weight="700" fill="#3ddc97">bacha: LB docId se owner chunta, sab editor S1 pe</text>
-
-<!-- 2: owner gira -->
-<g stroke="#ff5a6a" stroke-width="6" stroke-linecap="round"><line x1="958" y1="150" x2="984" y2="176"/><line x1="984" y1="150" x2="958" y2="176"/></g>
-<line x1="971" y1="148" x2="971" y2="146" stroke="#ff5a6a" stroke-width="2"/>
-<rect x="880" y="84" width="590" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="902" cy="106" r="13" fill="#ff5a6a"/><text x="902" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="924" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Server 1 (owner) gira</text>
-<text x="902" y="135" font-size="15" font-weight="700" fill="#3ddc97">bacha: ring ka agla owner, DB se doc; editor version bata ke judte</text>
-
-<!-- 3: bheed -->
-<line x1="808" y1="414" x2="808" y2="520" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
-<rect x="560" y="520" width="510" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<circle cx="582" cy="542" r="13" fill="#ffcc4d"/><text x="582" y="547" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
-<text x="604" y="547" font-size="15" font-weight="700" fill="#ffcc4d">50 lakh connection, ek server ~1 lakh jhelta</text>
-<text x="582" y="571" font-size="15" font-weight="700" fill="#3ddc97">bacha: kai server, docId se ring pe baanto</text>
-
-<!-- 4: ring me server juda / gira -->
-<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="1093" y1="326" x2="1117" y2="350"/><line x1="1117" y1="326" x2="1093" y2="350"/></g>
-<line x1="1105" y1="352" x2="1105" y2="440" stroke="#ff5a6a" stroke-width="2"/>
-<rect x="1085" y="440" width="385" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="1107" cy="462" r="13" fill="#ff5a6a"/><text x="1107" y="467" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">4</text>
-<text x="1129" y="467" font-size="15" font-weight="700" fill="#ff5a6a">Server 2 gira, ya naya server juda</text>
-<text x="1107" y="491" font-size="15" font-weight="700" fill="#3ddc97">bacha: sirf pados ke doc khiskte</text>
-
-<!-- 5: ek doc pe 1000 log -->
-<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="268" y1="455" x2="292" y2="479"/><line x1="292" y1="455" x2="268" y2="479"/></g>
-<line x1="280" y1="482" x2="280" y2="500" stroke="#ff5a6a" stroke-width="2"/>
-<rect x="30" y="500" width="500" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="522" r="13" fill="#ff5a6a"/><text x="52" y="527" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">5</text>
-<text x="74" y="527" font-size="15" font-weight="700" fill="#ff5a6a">ek doc pe 1000 log aa gaye</text>
-<text x="52" y="551" font-size="15" font-weight="700" fill="#3ddc97">bacha: 100 editor owner pe, 900 viewer kahin bhi</text>
+</g>
+<circle cx="971" cy="114" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="971.0" y="119.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="1105" cy="289" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="1105.0" y="294.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<circle cx="280" cy="418" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="280.0" y="423.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
+<rect x="30" y="498.0" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="523.0" r="12" fill="#ff5a6a"/>
+<text x="52" y="528.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="528.0" font-size="15" font-weight="700" fill="#ff5a6a">Server 1 (owner) gira</text>
+<text x="52" y="555.0" font-size="13.5" fill="#7fe0b0">ring ka agla owner, DB se doc; editor</text>
+<text x="52" y="575.0" font-size="13.5" fill="#7fe0b0">version bata ke judte</text>
+<rect x="392" y="498.0" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="523.0" r="12" fill="#ff5a6a"/>
+<text x="414" y="528.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="528.0" font-size="15" font-weight="700" fill="#ff5a6a">Server 2 gira, ya naya server juda</text>
+<text x="414" y="555.0" font-size="13.5" fill="#7fe0b0">sirf pados ke doc khiskte</text>
+<rect x="754" y="498.0" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="776" cy="523.0" r="12" fill="#ff5a6a"/>
+<text x="776" y="528.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="798" y="528.0" font-size="15" font-weight="700" fill="#ff5a6a">ek doc pe 1000 log aa gaye</text>
+<text x="776" y="555.0" font-size="13.5" fill="#7fe0b0">100 editor owner pe, 900 viewer kahin bhi</text>
+<rect x="30" y="653.0" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="679.0" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="703.0" font-size="13.5" fill="#e6dcb8">editor alag server pe: OT do jagah, do version: LB docId se owner chunta, sab editor S1 pe   ·   50 lakh connection, ek server ~1 lakh jhelta: kai server, docId se ring pe baanto</text>
 </svg>

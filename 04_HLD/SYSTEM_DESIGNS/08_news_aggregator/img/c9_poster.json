@@ -153,6 +153,32 @@
     ]
    ],
    "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     145,
+     372
+    ],
+    [
+     145,
+     525
+    ],
+    [
+     1300,
+     525
+    ],
+    [
+     1300,
+     454
+    ]
+   ],
+   "c": "purple",
+   "dash": true,
+   "label": "likhne se pehle dekho",
+   "lx": 900,
+   "ly": 515,
+   "a": "middle"
   }
  ],
  "callouts": [
