@@ -1,5 +1,5 @@
 {
- "title": "Card 5: har service ka apna group, apna offset. Alag group = sabko poori khabar. Nayi service = naya group",
+ "title": "Card 5: har service ka apna group, apna offset. Alag group = sabko poori khabar. Nayi service = bas naya group",
  "h": 650,
  "boxes": [
   {
@@ -54,8 +54,8 @@
    "kind": "plain",
    "title": "Nayi service",
    "lines": [
-    "bas naya group, producer kuch nahi badalta",
-    "offset? shuru se ya ab se",
+    "bas naya group, producer same",
+    "shuru se padhe ya ab se?",
     "(auto.offset.reset)"
    ]
   }
@@ -152,7 +152,7 @@
   5,
   10
  ],
- "peeche": "card 4 me CONSUMER GROUP (ek team)",
+ "peeche": "card 4 me ek service = ek group (ek team)",
  "ab": "Arpan ka order analytics aur dashboard ko bhi chahiye",
  "agla": "ab machine hi mar gayi to? (card 6)"
 }

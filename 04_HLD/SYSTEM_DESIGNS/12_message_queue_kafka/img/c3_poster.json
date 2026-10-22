@@ -1,5 +1,5 @@
 {
- "title": "Card 3: key = userId: ek user ki har khabar ek tukde me, kram sirf tukde ke andar. Same key = same partition",
+ "title": "Card 3: key = userId: ek user ki har khabar ek hi tukde me. Kram sirf tukde ke andar milta",
  "h": 670,
  "boxes": [
   {
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "Producer",
    "lines": [
-    "key = userId",
-    "hash % 10 = P1"
+    "key = Arpan ka userId",
+    "hash se tukda: P1"
    ]
   },
   {
@@ -56,7 +56,7 @@
    "kind": "server",
    "title": "Profile Svc",
    "lines": [
-    "aakhri naam 'B'"
+    "aakhri naam sahi: B"
    ]
   }
  ],
@@ -208,7 +208,7 @@
   3,
   10
  ],
- "peeche": "card 2 me PARTITION (tukde, alag machine)",
+ "peeche": "card 2 me topic ke tukde (partition), alag machine",
  "ab": "Arpan ne naam do baar badla (A, phir B), purana reh gaya",
  "agla": "ab ek service ki kai machine padh rahi: Arpan ko kitne email? (card 4)"
 }

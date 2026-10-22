@@ -1,5 +1,5 @@
 {
- "title": "Card 7: pehle kaam, phir commit: khabar khoti nahi, dobara aa sakti. eventId se pehchaan ke skip",
+ "title": "Card 7: pehle kaam, phir commit: khabar kabhi nahi khoti, par dobara aa sakti. Khabar ki id (eventId) dekh ke skip",
  "h": 670,
  "boxes": [
   {
@@ -21,7 +21,7 @@
    "kind": "server",
    "title": "Email consumer",
    "lines": [
-    "1: Redis me E-5?",
+    "1: Redis me E-5 hai?",
     "2: email bhejo",
     "3: phir commit"
    ]
@@ -225,7 +225,7 @@
   7,
   10
  ],
- "peeche": "card 6 me LEADER + ISR, acks=all",
+ "peeche": "card 6 me leader + copy (ISR), acks=all",
  "ab": "Arpan ko email bheja, \"padh liya\" bolne se pehle crash",
  "agla": "ab consumer sambhal gaya, par producer khud bhejne se pehle gira to? (card 8)"
 }

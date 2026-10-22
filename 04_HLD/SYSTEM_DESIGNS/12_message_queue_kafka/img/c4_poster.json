@@ -1,5 +1,5 @@
 {
- "title": "Card 4: ek service = ek group.id. Har tukda group ke ek hi member ko, to khabar ek baar. Gira to rebalance",
+ "title": "Card 4: ek service = ek group. Har tukda group ke ek hi member ko, to khabar ek baar. Member gira to tukde baante",
  "h": 610,
  "boxes": [
   {
@@ -10,10 +10,8 @@
    "kind": "cache",
    "title": "Topic",
    "lines": [
-    "P0 - P3",
-    "P4 - P6",
-    "P7 (Arpan)",
-    "P8 - P9"
+    "P0-P3, P4-P6",
+    "P7 (Arpan), P8-P9"
    ]
   },
   {
@@ -24,7 +22,7 @@
    "kind": "server",
    "title": "C1",
    "lines": [
-    "P0 - P3"
+    "tukde P0 - P3 padhta"
    ]
   },
   {
@@ -35,7 +33,7 @@
    "kind": "server",
    "title": "C2",
    "lines": [
-    "P4 - P6"
+    "tukde P4 - P6 padhta"
    ]
   },
   {
@@ -46,7 +44,7 @@
    "kind": "server",
    "title": "C3",
    "lines": [
-    "P7 - P9: Arpan"
+    "P7 - P9 (Arpan wala P7)"
    ]
   },
   {
@@ -57,7 +55,8 @@
    "kind": "plain",
    "title": "Email = ek group.id",
    "lines": [
-    "har tukda group ke ek hi member ko",
+    "har tukda group ke",
+    "ek hi member ko",
     "P7 sirf C3 ko"
    ]
   },
@@ -178,7 +177,7 @@
   4,
   10
  ],
- "peeche": "card 3 me KEY = userId",
+ "peeche": "card 3 me key = userId, ek user ek tukda",
  "ab": "Email Svc ki 3 machine, Arpan ko 3 order email",
  "agla": "ab group me baant diya, par doosri service ko bhi wahi khabar chahiye (card 5)"
 }

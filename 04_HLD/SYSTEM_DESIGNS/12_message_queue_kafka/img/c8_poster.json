@@ -1,5 +1,5 @@
 {
- "title": "Card 8: order + outbox row EK transaction me. Relay commit ke baad Kafka ko bhejta, ACK pe sent = true",
+ "title": "Card 8: order aur outbox row EK transaction me. Relay commit ke baad Kafka ko bhejta, Kafka OK bole to sent = true",
  "h": 660,
  "boxes": [
   {
@@ -10,9 +10,9 @@
    "kind": "server",
    "title": "Order Svc",
    "lines": [
-    "BEGIN",
-    "orders(101) + outbox(E-101)",
-    "COMMIT"
+    "shuru (BEGIN)",
+    "order 101 + outbox E-101",
+    "pakka (COMMIT)"
    ]
   },
   {
@@ -37,8 +37,8 @@
    "title": "Relay",
    "lines": [
     "har 1 sec:",
-    "sent = false bhejo",
-    "ACK pe sent = true"
+    "sent = false wali bhejo",
+    "Kafka OK: sent = true"
    ]
   },
   {
@@ -49,7 +49,7 @@
    "kind": "cache",
    "title": "Kafka",
    "lines": [
-    "E-101 -> consumer",
+    "E-101 consumer ko",
     "dobara aaye to skip"
    ]
   }
@@ -188,7 +188,7 @@
   8,
   10
  ],
- "peeche": "card 7 me PEHLE KAAM PHIR COMMIT + eventId",
+ "peeche": "card 7 me pehle kaam phir commit, eventId se skip",
  "ab": "Arpan ka order #101 DB me bana, Kafka bhejne se pehle gira",
  "agla": "ab sab bach gaya, par ek consumer mara to? (card 9)"
 }

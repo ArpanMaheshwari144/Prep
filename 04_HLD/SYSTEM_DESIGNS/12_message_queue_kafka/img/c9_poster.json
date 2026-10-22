@@ -1,5 +1,5 @@
 {
- "title": "Card 9: mare consumer ke tukde baaki ko (rebalance). Lag = aakhri offset - padha, badhe to alert. Kharab = DLQ",
+ "title": "Card 9: mare consumer ke tukde baaki ko (rebalance). Lag = kitna padhna baaki. Kharab khabar = alag line (DLQ)",
  "h": 630,
  "boxes": [
   {
@@ -22,7 +22,7 @@
    "kind": "server",
    "title": "C1",
    "lines": [
-    "P0-P3 + P4, P5"
+    "P0-P3 + ab P4, P5 bhi"
    ]
   },
   {
@@ -44,7 +44,7 @@
    "kind": "server",
    "title": "C3",
    "lines": [
-    "P7-P9 + P6"
+    "P7-P9 + ab P6 bhi"
    ]
   },
   {
@@ -67,7 +67,7 @@
    "title": "Lag alert",
    "lines": [
     "lag = aakhri offset",
-    "- group ne padha",
+    "- group ne kahan tak padha",
     "badhe to alert"
    ]
   },
@@ -240,7 +240,7 @@
   9,
   10
  ],
- "peeche": "card 8 me OUTBOX + relay",
+ "peeche": "card 8 me outbox + relay",
  "ab": "Shaam ko C2 mara, Arpan wale tukde ka lag badh raha",
  "agla": "ab khabar padi rehti hai, disk ka kya? (card 10)"
 }

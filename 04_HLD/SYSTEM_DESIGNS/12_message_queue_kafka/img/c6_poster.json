@@ -1,5 +1,5 @@
 {
- "title": "Card 6: leader + ISR copy, acks=all: saari ISR copy le lein tab OK. Leader gira to ISR me se naya leader",
+ "title": "Card 6: har tukde ka leader + 2 copy (ISR). acks=all: saari copy le lein tab OK. Leader gira to copy se naya leader",
  "h": 650,
  "boxes": [
   {
@@ -10,7 +10,8 @@
    "kind": "server",
    "title": "Producer",
    "lines": [
-    "acks=all"
+    "acks=all: saari",
+    "copy le lein tab OK"
    ]
   },
   {
@@ -21,7 +22,7 @@
    "kind": "db",
    "title": "Broker A (leader)",
    "lines": [
-    "P3 likhta"
+    "P3 yahan likhta"
    ]
   },
   {
@@ -32,7 +33,7 @@
    "kind": "db",
    "title": "Broker B",
    "lines": [
-    "ISR copy"
+    "P3 ki pakki copy (ISR)"
    ]
   },
   {
@@ -43,7 +44,7 @@
    "kind": "db",
    "title": "Broker C",
    "lines": [
-    "ISR copy"
+    "P3 ki pakki copy (ISR)"
    ]
   },
   {
@@ -54,7 +55,7 @@
    "kind": "plain",
    "title": "Controller (KRaft)",
    "lines": [
-    "ISR me se naya leader (B)",
+    "copy me se naya leader (B)",
     "ek hi faisla, do leader nahi"
    ]
   }
@@ -208,7 +209,7 @@
   6,
   10
  ],
- "peeche": "card 5 me HAR SERVICE KA APNA GROUP",
+ "peeche": "card 5 me har service ka apna group",
  "ab": "Dopahar Broker A ki disk mari, Arpan ki khabar usi pe thi",
  "agla": "ab broker pe to bach gaya, consumer pe kho sakta? (card 7)"
 }

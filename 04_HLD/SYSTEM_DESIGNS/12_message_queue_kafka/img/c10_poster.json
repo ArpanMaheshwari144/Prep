@@ -1,5 +1,5 @@
 {
- "title": "Card 10: retention 7 din: purana segment poora udao, padhne se delete nahi. Key ki aakhri value = compaction",
+ "title": "Card 10: khabar 7 din rakho, phir purana segment poora udao (retention). Key ki sirf aakhri value = compaction",
  "h": 620,
  "boxes": [
   {
@@ -188,7 +188,7 @@
   10,
   10
  ],
- "peeche": "card 9 me REBALANCE + LAG alert + DLQ",
+ "peeche": "card 9 me rebalance + lag alert + DLQ",
  "ab": "Raat ko broker ki disk bharti ja rahi",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

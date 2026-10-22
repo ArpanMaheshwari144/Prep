@@ -1,5 +1,5 @@
 {
- "title": "Card 2: topic ke tukde (partition), ek tukda ek worker. 10 x 500 = 5,000. Worker tukdon se zyada = khaali",
+ "title": "Card 2: topic ke 10 tukde (partition), har tukda ek worker. 10 x 500 = 5,000 / sec. Tukdon se zyada worker = khaali",
  "h": 570,
  "boxes": [
   {
@@ -10,7 +10,8 @@
    "kind": "user",
    "title": "Sale",
    "lines": [
-    "5,000 / sec"
+    "har second",
+    "5,000 order"
    ]
   },
   {
@@ -21,9 +22,8 @@
    "kind": "cache",
    "title": "Topic 'order'",
    "lines": [
-    "P0 | P1 | P2 | P3 | P4",
-    "P5 | P6 | P7 | P8 | P9",
-    "har tukda alag machine",
+    "10 tukde: P0 ... P9",
+    "har tukda alag machine pe",
     "(3 broker me barabar)"
    ]
   },
@@ -49,7 +49,7 @@
    "title": "Controller",
    "lines": [
     "naksha: kaunsa tukda",
-    "kis broker pe"
+    "kis machine (broker) pe"
    ]
   },
   {
@@ -163,7 +163,7 @@
   2,
   10
  ],
- "peeche": "card 1 me LOG disk pe + OFFSET",
+ "peeche": "card 1 me khabar disk pe log me, har group ka offset",
  "ab": "10 baje sale, 5,000 / sec, ek worker 500 hi. Arpan ka order line me atka",
  "agla": "ab tukde ho gaye, par Arpan ki khabar kram me rahegi? (card 3)"
 }

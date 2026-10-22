@@ -1,5 +1,5 @@
 {
- "title": "Card 1: disk pe log, padhne se mitta nahi. Har group apna offset yaad rakhta, restart pe wahin se",
+ "title": "Card 1: khabar disk pe ek log me, padhne se mitti nahi. Har group yaad rakhta kahan tak padha (offset)",
  "h": 570,
  "boxes": [
   {
@@ -23,7 +23,7 @@
    "lines": [
     "msg 0, 1, 2 ... 500 (aakhir me judta)",
     "padhne se mitta nahi",
-    "sirf aakhir me jodna = tez (sequential)"
+    "sirf aakhir me jodna = tez"
    ]
   },
   {
@@ -34,7 +34,7 @@
    "kind": "server",
    "title": "Email Svc",
    "lines": [
-    "offset 120 yaad",
+    "yaad: 120 tak padha (offset)",
     "restart: 121 se"
    ]
   },
@@ -46,7 +46,7 @@
    "kind": "plain",
    "title": "Offset store",
    "lines": [
-    "__consumer_offsets",
+    "kaun kahan tak padha",
     "(Kafka khud rakhta)"
    ]
   }
