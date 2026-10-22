@@ -111,13 +111,82 @@ flowchart LR
 ## Khatam
 
 Poora diagram ek baar dikhao, phir bolo: "Khabar do baar aaye ya beech me kho jaaye, aur kharab khabar atak jaaye, in
-pe aap poochein to main gehra ja sakta hoon." Yahin se cross-Q shuru hote hain, aur unke jawab neeche hain.
+pe aap poochein to main gehra ja sakta hoon." Yahin se cross-Q shuru hote hain. Har dabbe aur teer ke "gira to kya" neeche Bhaag 2 me.
 
 ---
 
 # BHAAG 2: INTERVIEWER GEHRA JAAYE TO
 
 Ye roz bolne ke liye nahi. Jab interviewer kisi stop pe ruk ke poochhe, tab yahan.
+
+## Har dabba, har teer: gira to kya? (cross-Q yahin se)
+
+Design me jo dabba aur teer bola, interviewer unhi ko todta hai. Dabbe ke liye: gira / bheed / dheema. Teer ke liye:
+pahuncha hi nahi / do baar / der se. Har ek ka jawab:
+
+```
+DABBA: Order Svc
+  gira, order likhne se pehle  -> kuch nahi likha. Arpan dobara order karega
+  gira, order likha, khabar nahi bheji -> khabar outbox me order ke saath likhi hai, relay bhej dega (Gehra 2)
+  bheed                        -> Order Svc ki kai machine, aage LB. Khabar likhna sirf ek row, tez
+  dheema                       -> Kafka aur Email pe asar nahi, bas khabar thodi der se
+
+DABBA: DB (order + outbox)
+  gira                         -> order hi nahi banta, Arpan ko error. DB ki copy (replica) primary banti
+  outbox bharti gayi           -> sent = true wali row roz saaf
+  dheema                       -> relay peeche, khabar late. Khoti kuch nahi
+
+DABBA: Relay
+  gira                         -> khabar outbox me sent = false padi. Uthte hi wahin se bhejega
+  do relay ek saath chal gaye  -> ek khabar do baar ja sakti. Padhne wala eventId se pakad leta
+  bheed / dheema               -> DB ko baar-baar poochna bhaari. Bada scale = CDC (Debezium, DB ka log padhta)
+
+DABBA: Kafka machine (leader)
+  gira                         -> pakki copy (ISR) naya leader. acks=all tha, to khabar copy pe thi, kuch nahi gaya
+  saari copy giri, sirf leader -> min.insync = 2, likhna band. Relay retry karta, khabar outbox me padi rehti
+  bheed                        -> tukde badhao, nayi machine (broker) jodo
+  disk bhari                   -> 7 din se purani khabar ek saath hatao (retention)
+
+DABBA: Email worker
+  gira                         -> uske tukde baaki worker ko (rebalance). Bookmark se aage padhte
+  gira, email bhej ke, commit se pehle -> khabar dobara aati. eventId se pakdo, dohra email nahi (Gehra 1)
+  bheed / dheema               -> lag badhta, alert. Worker badhao, par tukdon ki ginti tak hi
+  ek khabar baar-baar fail     -> 3-4 koshish, phir DLQ. Baaki line nahi rukti
+
+DABBA: Redis (eventId)
+  gira / dheema                -> email nahi rukta. Pakki jaanch DB me (eventId UNIQUE). Redis sirf tez jaanch
+
+DABBA: Email company (bahar ki)
+  gira / dheema                -> 2-3 sec me chhodo (timeout), ruk-ruk ke dobara (backoff), phir bhi nahi to DLQ
+  Email team ruki to?          -> Analytics, Dashboard nahi rukte. Har team ka apna bookmark
+
+DABBA: Analytics / Dashboard team
+  gira / dheema                -> sirf wo peeche, baaki nahi rukte. Uthke apne bookmark se aage
+  7 din se zyada band          -> wo khabar ud chuki (retention). Retention sabse lambi chhutti se lamba
+
+TEER: Relay -> Kafka
+  pahuncha hi nahi             -> Kafka ne OK nahi bola, sent = false raha, relay dobara bhejega
+  do baar pahuncha             -> Kafka library ka retry: idempotent producer dohra nahi likhta.
+                                  Relay ka dobara bhejna: padhne wala eventId se pakadta
+  der se                       -> khabar late, kram ek tukde me phir bhi sahi
+
+TEER: Leader -> copy
+  pahuncha hi nahi             -> wo copy peeche, pakki list (ISR) se bahar. Baaki pakki copy pe likh ke "ho gaya"
+  der se                       -> wahi: peeche wali copy leader nahi banti
+
+TEER: Kafka -> Email worker
+  pahuncha hi nahi             -> bookmark nahi hila, agli baar wahi khabar milegi
+  do baar pahuncha             -> eventId se pakdo
+  der se                       -> lag. Alert + worker badhao
+
+TEER: Email worker -> Email company
+  pahuncha hi nahi             -> timeout + dobara. Commit tabhi jab email chala gaya
+  do baar pahuncha             -> email company ko bhi wahi id do, ya "SENDING" pehle likho
+  der se                       -> timeout pe chhodo, dobara
+
+TEER: Email worker -> Redis
+  pahuncha hi nahi             -> DB wali UNIQUE jaanch pe girao, email ruke nahi
+```
 
 ## Stop 1 (log, offset) pe sawaal
 ```
