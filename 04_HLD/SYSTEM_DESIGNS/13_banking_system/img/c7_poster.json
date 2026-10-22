@@ -203,7 +203,7 @@
    "y": 84,
    "w": 820,
    "red": "Primary DB gira",
-   "green": "Sync copy promote (~1-2 min). Beech me error: WAHI id se dobara",
+   "green": "Sync copy primary banti (~1-2 min). Beech me error: app WAHI id (T-77) se dobara bheje",
    "n": 2,
    "mark": [
     1150,
@@ -225,8 +225,8 @@
    "x": 30,
    "y": 510,
    "w": 700,
-   "red": "Banking 3 giri, transfer adhoora",
-   "green": "LB list se hatata. App WAHI id se dobara: do baar nahi kata",
+   "red": "Banking 3 giri, Arpan ka transfer adhoora",
+   "green": "LB use list se hatata. App WAHI id se dobara: paisa do baar nahi kata",
    "n": 3,
    "mark": [
     700,
@@ -248,9 +248,16 @@
    "x": 750,
    "y": 510,
    "w": 720,
-   "red": "Sync copy = dheema? Haan, ek chakkar, paise me chalega.",
-   "green": "Async me aakhri transfer kho sakta. Atomic check sirf debit pe"
+   "red": "Sync copy = dheema? Haan, ek chakkar aur, paise me chalega.",
+   "green": "Async copy me aakhri transfer kho sakta. Isliye paise me sync"
   }
  ],
- "kyun": "Sach DB me hai, to koi bhi machine koi bhi transfer le sakti hai. Jitni chaho lagao, ek giri to baaki chalti hain"
+ "kyun": "Machine kuch yaad nahi rakhti, sach DB me. To koi bhi machine koi bhi transfer le sakti, jitni chaho lagao. DB ki sync copy doosri building me, primary gira to wo primary",
+ "step": [
+  7,
+  11
+ ],
+ "peeche": "card 6 me BALANCE = CACHE, raat ko milaan",
+ "ab": "11 baje sabki salary aa gayi, ek Banking service bhar gayi, Arpan ka transfer atka",
+ "agla": "ab machine kaafi. Par bheed padhne wali hai (card 8)"
 }

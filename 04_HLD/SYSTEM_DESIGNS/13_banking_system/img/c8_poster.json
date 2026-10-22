@@ -151,7 +151,7 @@
    "y": 84,
    "w": 600,
    "red": "Sab primary se padho?",
-   "green": "Padhne ki bheed ne transfer dheema kiya",
+   "green": "Padhne ki bheed ne Arpan ka transfer dheema kiya",
    "n": 1
   },
   {
@@ -159,16 +159,16 @@
    "x": 650,
    "y": 84,
    "w": 820,
-   "red": "Failover standby aur read replica ek hi? Nahi.",
-   "green": "Standby sync (kuch nahi khota), replica async (peeche)"
+   "red": "Failover wali copy aur padhne wali copy ek hi? Nahi.",
+   "green": "Failover copy sync (kuch nahi khota), padhne wali async (thodi peeche)"
   },
   {
    "type": "x",
    "x": 30,
    "y": 490,
    "w": 700,
-   "red": "Abhi paisa bheja, copy 5 sec peeche",
-   "green": "Apna likha primary se padho, warna purana dekh ke dobara bhejega",
+   "red": "Arpan ne abhi paisa bheja, copy 5 sec peeche",
+   "green": "Apna abhi likha primary se padho, warna purana balance dekh ke dobara bhejega",
    "n": 2,
    "mark": [
     700,
@@ -191,7 +191,7 @@
    "y": 490,
    "w": 720,
    "red": "Copy minute bhar peeche ho gayi",
-   "green": "Lag naapo: alert, us copy ko list se hatao",
+   "green": "Kitni peeche (lag) naapo: alert, us copy ko list se hatao",
    "n": 3,
    "mark": [
     950,
@@ -209,5 +209,12 @@
    ]
   }
  ],
- "kyun": "Bheed padhne ki hai, copy use le leti hai. Primary pe likhna + paise ka faisla, to transfer tez. Paise ka faisla sirf primary pe, kyunki copy thodi peeche ho sakti hai"
+ "kyun": "Padhne ki bheed DB ki copy (replica) le leti. Primary pe sirf likhna + paise ka faisla, to transfer tez. Arpan ne abhi bheja to apna balance kuch der primary se padhe",
+ "step": [
+  8,
+  11
+ ],
+ "peeche": "card 7 me KAI MACHINE + LB, DB ki sync copy",
+ "ab": "Salary ki bheed me sab balance dekh rahe, Arpan ka transfer dheema",
+ "agla": "ab ek alag dikkat: do transfer ek doosre ke ulte (card 9)"
 }

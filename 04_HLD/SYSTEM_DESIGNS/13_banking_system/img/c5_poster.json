@@ -124,7 +124,7 @@
    "x": 30,
    "y": 84,
    "w": 560,
-   "red": "Seedha SMS service bulao?",
+   "red": "Transfer ke beech seedha SMS service bulao?",
    "green": "Service band thi: khabar gayi",
    "n": 1
   },
@@ -133,8 +133,8 @@
    "x": 610,
    "y": 84,
    "w": 860,
-   "red": "Pehle Kafka, DB baad me?",
-   "green": "'Ravi ko 20,000 aaye' nikla, DB fail: paisa gaya hi nahi",
+   "red": "Pehle Kafka me khabar, DB baad me?",
+   "green": "\"Ravi ko 20,000 aaye\" SMS gaya, DB fail: paisa gaya hi nahi",
    "n": 2
   },
   {
@@ -142,8 +142,8 @@
    "x": 30,
    "y": 480,
    "w": 860,
-   "red": "Relay ne daala, sent=true se pehle gira",
-   "green": "Khabar dobara jaati: SMS service eventId dekh ke skip",
+   "red": "Relay ne Kafka ko bheja, sent=true likhne se pehle gira",
+   "green": "Khabar dobara jaati: SMS service eventId dekh ke chhod deti",
    "n": 3,
    "mark": [
     850,
@@ -188,9 +188,16 @@
    "x": 30,
    "y": 575,
    "w": 1440,
-   "red": "Outbox bharti jaaye? sent=true roz saaf. Relay hi na likhna pade? CDC (Debezium).",
-   "green": "SMS ulte kram me? Kafka key = account_id: ek account ek partition"
+   "red": "Outbox bharti jaaye? Bheji hui (sent=true) roz saaf. Relay likhna hi na pade? DB ke badlaav se padho (CDC, Debezium).",
+   "green": "Arpan ke SMS ulte kram me? Kafka key = account_id: ek account ek line"
   }
  ],
- "kyun": "Transfer SMS pe nahi rukta. Kafka tak khabar COMMIT ke baad hi, to khabar tabhi jab paisa pakka. DB gira to bhi khabar outbox me hai, kuch nahi khota"
+ "kyun": "SMS ki khabar outbox table me, transfer ke saath usi transaction me. Relay COMMIT ke baad Kafka ko bhejta. Paisa pakka hua tabhi khabar. SMS band ho to khabar Kafka me padi rehti",
+ "step": [
+  5,
+  11
+ ],
+ "peeche": "card 4 me KHAATA (ledger) usi transaction me",
+ "ab": "Salary aayi, Arpan ne Ravi ko rent bheja, SMS service giri",
+ "agla": "ab khaata bhi hai, balance column bhi. Dono me farak aaya to? (card 6)"
 }

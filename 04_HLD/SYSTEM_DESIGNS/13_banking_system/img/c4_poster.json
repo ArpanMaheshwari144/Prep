@@ -99,8 +99,8 @@
    "x": 30,
    "y": 84,
    "w": 600,
-   "red": "Sirf balance column?",
-   "green": "1000 dikhta, raasta nahi: support 'pata nahi'",
+   "red": "Sirf balance column rakho?",
+   "green": "1000 dikhta, raasta nahi: support bolta \"pata nahi\"",
    "n": 1
   },
   {
@@ -108,8 +108,8 @@
    "x": 650,
    "y": 84,
    "w": 820,
-   "red": "Khaata Kafka me?",
-   "green": "Kafka + DB ek transaction nahi: rollback pe jhoothi line",
+   "red": "Khaata Kafka me likho?",
+   "green": "Kafka aur DB ek transaction me nahi: DB ulta hua to Kafka me jhoothi line bachi",
    "n": 2
   },
   {
@@ -118,7 +118,7 @@
    "y": 460,
    "w": 700,
    "red": "Khaate me galat line likh di",
-   "green": "UPDATE nahi: ulti line jodo, galti bhi dikhe",
+   "green": "Badlo mat: ulti line jodo, galti bhi dikhe",
    "n": 3,
    "mark": [
     680,
@@ -140,9 +140,16 @@
    "x": 750,
    "y": 460,
    "w": 720,
-   "red": "Transaction wapas (paisa kam)? Khaata bhi wapas.",
+   "red": "Transaction wapas hua (paisa kam)? Khaata bhi wapas.",
    "green": "Har line me waqt + transfer id: sab ek jagah"
   }
  ],
- "kyun": "Transaction wapas hua (paisa kam) to khaata bhi wapas, jhoothi line bachti nahi. Har line me waqt + transfer id, to support dekhta hai: 8:00, T-77, Ravi ko 500"
+ "kyun": "Har transfer ki 2 line khaate me (Arpan -500, Ravi +500, waqt + T-77), usi transaction me. Transaction ulta hua to khaata bhi ulta. Support line padh ke batata: 8:00, T-77, Ravi ko 500",
+ "step": [
+  4,
+  11
+ ],
+ "peeche": "card 3 me CHECK + KAATNA EK QUERY",
+ "ab": "Arpan ne poochha: mere 500 kahan gaye, kab?",
+ "agla": "ab paisa pakka gaya. Par Arpan ko SMS bhi to jaana hai (card 5)"
 }

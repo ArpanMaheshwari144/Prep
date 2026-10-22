@@ -103,7 +103,7 @@
    "y": 84,
    "w": 400,
    "red": "Purana delete kar do?",
-   "green": "5 saal (PMLA) se pehle nahi",
+   "green": "Kanoon (PMLA): 5 saal se pehle nahi",
    "n": 1
   },
   {
@@ -112,7 +112,7 @@
    "y": 84,
    "w": 1020,
    "red": "5 saal ki arabon line ek table me",
-   "green": "Roz ki query + backup sab chhoote: dheema + mehnga. Mahine ke tukde",
+   "green": "Roz ki query aur backup sab line chhoote: dheema + mehnga. Mahine ke tukde",
    "n": 2,
    "mark": [
     455,
@@ -134,8 +134,8 @@
    "x": 30,
    "y": 450,
    "w": 700,
-   "red": "1 crore x 2 line x 365 = ~730 crore / saal, 5 saal ~36 arab.",
-   "green": "S3 pe gaya to balance? Snapshot + baad ki line"
+   "red": "1 crore log × 2 line × 365 = ~730 crore line / saal, 5 saal ~36 arab.",
+   "green": "S3 pe gaya to balance kaise? Mahine ki photo + baad ki line"
   },
   {
    "type": "x",
@@ -143,7 +143,7 @@
    "y": 450,
    "w": 720,
    "red": "Koi S3 pe purani file badal de",
-   "green": "Object Lock (WORM): na delete na badal",
+   "green": "Object Lock (WORM): na delete, na badal",
    "n": 3,
    "mark": [
     1180,
@@ -161,5 +161,12 @@
    ]
   }
  ],
- "kyun": "Table me sirf haal ke mahine, to chhoti. Naya paas, purana sasta. Balance ka jod 5 saal se nahi, mahine ka snapshot + baad ki line"
+ "kyun": "Table me sirf haal ke mahine, to chhoti aur tez. Band mahina S3 me (sasta, badal nahi sakte). Arpan ka balance 5 saal jod ke nahi: mahine ki photo (snapshot) + baad ki line",
+ "step": [
+  11,
+  11
+ ],
+ "peeche": "card 10 me KEYSET PAGE (ts, id)",
+ "ab": "Raat ko: 5 saal ka khaata ek hi table me, arabon line",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

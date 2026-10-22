@@ -138,7 +138,7 @@
    "y": 84,
    "w": 1040,
    "red": "Gol ghera (deadlock): dono ek doosre ke intezaar me",
-   "green": "Taala ek kram me, chhoti id pehle: ghera banta hi nahi",
+   "green": "Taala ek hi kram me (chhoti id pehle): ghera banta hi nahi",
    "n": 2,
    "mark": [
     440,
@@ -160,9 +160,16 @@
    "x": 30,
    "y": 500,
    "w": 1440,
-   "red": "Card 3 se farak? Wahan paisa do baar kat raha tha (double spend). Yahan dono atke.",
-   "green": "Kram ke baad bhi phansa? DB ghera khud pakadta, ek ko wapas: WAHI id se retry"
+   "red": "Card 3 se farak? Wahan paisa do baar kat raha tha. Yahan dono atke.",
+   "green": "Kram ke baad bhi phansa? DB ghera khud pakad ke ek ko wapas karta: WAHI id se dobara"
   }
  ],
- "kyun": "Ek hi kram hai to ghera banta hi nahi. Txn2 7 pe ruka, Txn1 poora hua, phir Txn2"
+ "kyun": "Taala hamesha chhoti account id pe pehle. Dono transfer pehle 7 (Arpan) pakadte, to ghera banta hi nahi: refund 7 pe rukta, Arpan wala poora hota, phir refund",
+ "step": [
+  9,
+  11
+ ],
+ "peeche": "card 8 me READ REPLICA + apna likha primary se",
+ "ab": "Arpan ne dukaan ko 500 bheje, usi second dukaan se Arpan ko 200 refund, dono atke",
+ "agla": "ab sab chal raha. Par purana hisaab maanga gaya (card 10)"
 }

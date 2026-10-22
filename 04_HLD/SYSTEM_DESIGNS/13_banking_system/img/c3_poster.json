@@ -123,8 +123,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Pehle padho, phir kaato?",
-   "green": "Dono ne 300 dekha, dono ne kaata: -100",
+   "red": "Pehle balance padho, phir kaato?",
+   "green": "Dono ne 300 dekha, dono ne kaata: Arpan ka balance -100",
    "n": 1
   },
   {
@@ -132,8 +132,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Niyam Java me?",
-   "green": "Raaste kai (API, batch, haath se), DB ek. Niyam DB me",
+   "red": "\"Paisa kam to mana\" ka niyam Java me?",
+   "green": "Paisa kai raaste se katta (API, batch, haath se), DB ek hai. Niyam DB me",
    "n": 2
   },
   {
@@ -164,9 +164,16 @@
    "x": 750,
    "y": 470,
    "w": 720,
-   "red": "FOR UPDATE kyun nahi? Do kadam, taala lamba.",
-   "green": "Transfer ki do row? Chhoti account id pehle (card 9)"
+   "red": "FOR UPDATE se pehle taala kyun nahi? Do kadam, taala lamba.",
+   "green": "Transfer me do row (Arpan, Ravi)? Taala chhoti account id pe pehle (card 9)"
   }
  ],
- "kyun": "Row pe taala lagta hai, dono line me. Pehla 300 se 100. Doosra: 100 >= 200? nahi, to 0 row, kuch nahi kata, 422 \"paisa kam\""
+ "kyun": "\"Paisa hai?\" aur \"kaato\" ek hi UPDATE me. DB row pe taala lagata, dono line me: pehla 300 se 100, doosre ko 0 row = \"paisa kam\". Niyam DB me hai, kisi bhi raaste se aao",
+ "step": [
+  3,
+  11
+ ],
+ "peeche": "card 2 me IDEMPOTENCY KEY (T-77)",
+ "ab": "9 baje Netflix ka auto-debit aur Arpan ka UPI ek saath, balance 300",
+ "agla": "ab paisa sahi kata. Par support poochhe paisa gaya kahan? (card 4)"
 }

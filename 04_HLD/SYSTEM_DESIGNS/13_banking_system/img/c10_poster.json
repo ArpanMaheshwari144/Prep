@@ -100,7 +100,7 @@
    "y": 84,
    "w": 560,
    "red": "LIMIT 20 OFFSET 100000?",
-   "green": "DB 1 lakh line padh ke phenkta: dheema",
+   "green": "DB 1 lakh line padh ke phenkta, phir 20 deta: dheema",
    "n": 1
   },
   {
@@ -108,8 +108,8 @@
    "x": 610,
    "y": 84,
    "w": 860,
-   "red": "OFFSET aur beech me nayi line aa gayi?",
-   "green": "Page khisakta, line dobara aati",
+   "red": "OFFSET, aur beech me nayi line aa gayi?",
+   "green": "Page khisak jaata, ek line dobara dikhti",
    "n": 2
   },
   {
@@ -117,9 +117,16 @@
    "x": 30,
    "y": 470,
    "w": 1440,
-   "red": "Ek hi ts pe do line? Isliye (ts, id): id barabari todti. Beech me nayi line? Purana page nahi khisakta.",
-   "green": "Seedha page 500? Keyset me nahi hota: agla / pichhla kaafi"
+   "red": "Ek hi waqt (ts) pe do line? Isliye (ts, id): id barabari todti. Beech me nayi line aayi? Purana page nahi khisakta.",
+   "green": "Seedha page 500 pe jaana? Keyset me nahi hota: agla / pichhla kaafi"
   }
  ],
- "kyun": "\"kahan tak dekha\" yaad hai, \"kitne chhode\" nahi. Index se seedha wahan, sirf 20. Page 1 ho ya 5000, ek jaisa"
+ "kyun": "\"Kitne chhode\" (OFFSET) nahi, \"kahan tak dekha\" (aakhri ts, id) yaad rakho. Index se seedha wahan, sirf 20 padho. Page 1 ho ya 5000, ek jaisa tez",
+ "step": [
+  10,
+  11
+ ],
+ "peeche": "card 9 me CHHOTI ID PEHLE TAALA",
+ "ab": "Shaam ko dukaan ke CA ka export, page 5000 pe atka",
+ "agla": "ab saal guzre, khaata badhta hi ja raha (card 11)"
 }
