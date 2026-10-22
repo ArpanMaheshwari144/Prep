@@ -1,0 +1,35 @@
+{
+  "title": "Card 7: gateway pe poore system ki had. CPU 90% paar to kam zaroori ko 503",
+  "h": 540,
+  "boxes": [
+    {"x": 30, "y": 205, "w": 240, "h": 110, "kind": "user", "title": "Shaam ki sale", "lines": ["lakhon log, har koi", "apni had me"]},
+    {"x": 360, "y": 190, "w": 330, "h": 140, "kind": "server", "title": "Gateway",
+     "lines": ["system ki had: 5,000 / sec", "CPU 90% paar?", "kam zaroori ko 503"]},
+    {"x": 800, "y": 160, "w": 280, "h": 90, "kind": "server", "title": "Login / payment", "lines": ["hamesha andar"]},
+    {"x": 800, "y": 290, "w": 280, "h": 90, "kind": "plain", "title": "Feed / suggestion", "lines": ["bheed me 503"]},
+    {"x": 1180, "y": 160, "w": 290, "h": 100, "kind": "server", "title": "App", "lines": ["CPU 90% pe ruka, gira nahi"]}
+  ],
+  "arrows": [
+    {"pts": [[272, 260], [356, 260]], "c": "blue"},
+    {"pts": [[692, 230], [796, 205]], "c": "green"},
+    {"pts": [[692, 290], [796, 330]], "c": "grey", "dash": true, "label": "503", "lx": 735, "ly": 335},
+    {"pts": [[1082, 205], [1176, 205]], "c": "green"}
+  ],
+  "callouts": [
+    {"n": 1, "type": "pehle", "x": 700, "y": 84, "w": 770,
+     "red": "Pehle sirf user ki had thi. Sab apni had me, phir bhi server gira",
+     "green": "User ki had aur system ki had alag. Ab poore system ki had bhi",
+     "conn": [[1320, 146], [1320, 160]]},
+    {"n": 2, "type": "pehle", "x": 30, "y": 84, "w": 620,
+     "red": "Machine khud badh jaayegi (autoscale)?",
+     "green": "Badhne me minute lagte, bheed second me aa jaati",
+     "conn": [[520, 146], [520, 190]]},
+    {"n": 3, "type": "pehle", "x": 30, "y": 440, "w": 620,
+     "red": "Line (queue) me rok lo?",
+     "green": "Sirf ~2 sec chalta. User chala gaya to kaam bekaar",
+     "conn": [[520, 332], [520, 440]]},
+    {"type": "grey", "x": 700, "y": 440, "w": 770,
+     "red": "Had paar hui: 429 bhejoge ya 503?",
+     "green": "User ki had paar = 429. Poore system ki had paar = 503"}
+  ]
+}

@@ -211,15 +211,8 @@ NAHI    turant ban kar do -> GALAT: asli user bhi tez click karta, office NAT, s
 
 **Rail 2 BHEED AAYI** · Cue: GLOBAL CAP + LOAD SHEDDING (503)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
-<img src="img/c7_1.png?v=8" width="900">
-
-<img src="img/c7_2.png?v=8" width="900">
-
-<img src="img/c7_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     gateway pe poore system ki had (5,000 / sec). CPU 90% paar gaya to kam zaroori request ko 503,
@@ -231,10 +224,6 @@ NAHI    machine khud badh jaayegi -> DER: machine badhne me minute lagte, bheed 
 
 > [!IMPORTANT]
 > **Yaad rakh:** User ki had = 429, system ki had = 503. CPU 90% paar to kam zaroori ko 503, login / payment bachao.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - had paar hui, 429 bhejoge ya 503? → **429 ya 503**: user ki had = 429, system ki had = 503
 
 
 ---
