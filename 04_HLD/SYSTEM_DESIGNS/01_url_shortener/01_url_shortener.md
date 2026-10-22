@@ -207,15 +207,8 @@ NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
 
 **Rail 7 DARWAZA / DOOR KE LOG** · Cue: ROUTE 53 + 2 LB (health check)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
-<img src="img/c7_1.png?v=4" width="900">
-
-<img src="img/c7_2.png?v=4" width="900">
-
-<img src="img/c7_3.png?v=4" width="900">
-
-</details>
 
 ```
 HAL     do LB, aage Route 53. Route 53 har ~30 sec LB se poochta hai (health check). Jo 3 baar chup raha,
@@ -226,11 +219,6 @@ NAHI    ek hi LB -> GIRA: wo gira to App kitne bhi hon, koi andar nahi aa sakta
 
 > [!IMPORTANT]
 > **Yaad rakh:** 2 LB, aage Route 53. Health check pe 3 baar chup = bahar.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Phone ne purana pata yaad rakha? → **DNS TTL**: ~60 sec kuch request fail. Isliye LB khud kai zone me (ALB), aur har jagah 2+
-> - Poora region hi chala gaya? → **doosra region**: Route 53 doosre region pe bhejta, naye link ke aakhri kuch second kho sakte
 
 
 ---

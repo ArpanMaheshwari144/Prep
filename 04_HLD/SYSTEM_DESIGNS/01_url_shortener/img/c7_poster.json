@@ -1,0 +1,37 @@
+{
+  "title": "Card 7: do LB, aage Route 53. Jo LB 3 baar chup raha, wo list se bahar",
+  "h": 560,
+  "boxes": [
+    {"x": 30, "y": 250, "w": 200, "h": 90, "kind": "user", "title": "Phone", "lines": ["pehle poochta:", "kahan jaun?"]},
+    {"x": 320, "y": 230, "w": 270, "h": 130, "kind": "lb", "title": "Route 53",
+     "lines": ["har ~30 sec health check", "3 baar chup = bahar"]},
+    {"x": 700, "y": 160, "w": 240, "h": 80, "kind": "lb", "title": "LB-1", "lines": ["zone A"]},
+    {"x": 700, "y": 340, "w": 240, "h": 80, "kind": "lb", "title": "LB-2", "lines": ["zone B, zinda"]},
+    {"x": 1080, "y": 245, "w": 300, "h": 100, "kind": "server", "title": "App x N", "lines": ["peeche wahi App"]}
+  ],
+  "arrows": [
+    {"pts": [[232, 295], [316, 295]], "c": "blue"},
+    {"pts": [[592, 270], [696, 205]], "c": "grey", "dash": true},
+    {"pts": [[592, 320], [696, 380]], "c": "green", "label": "zinda wala", "lx": 596, "ly": 402},
+    {"pts": [[942, 205], [1076, 280]], "c": "grey", "dash": true},
+    {"pts": [[942, 380], [1076, 310]], "c": "green"}
+  ],
+  "callouts": [
+    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 620,
+     "red": "Ek hi LB rakhte?",
+     "green": "Wo gira to App kitne bhi hon, koi andar nahi aa sakta",
+     "conn": [[455, 146], [455, 230]]},
+    {"n": 2, "type": "x", "x": 960, "y": 84, "w": 510,
+     "red": "Shaam ko LB-1 gir gaya",
+     "green": "3 baar chup, Route 53 ne sab LB-2 pe bheja",
+     "mark": [928, 162], "conn": [[940, 150], [960, 130]]},
+    {"n": 3, "type": "x", "x": 30, "y": 460, "w": 640,
+     "red": "Phone ne LB-1 ka purana pata yaad rakha (DNS TTL)",
+     "green": "~60 sec kuch request fail. Isliye LB khud kai zone me",
+     "mark": [218, 338], "conn": [[218, 350], [218, 460]]},
+    {"n": 4, "type": "x", "x": 700, "y": 460, "w": 770,
+     "red": "Poora region hi chala gaya",
+     "green": "Route 53 doosre region pe bhejta. Naye link ke aakhri kuch second kho sakte",
+     "mark": [1368, 343], "conn": [[1368, 355], [1368, 460]]}
+  ]
+}
