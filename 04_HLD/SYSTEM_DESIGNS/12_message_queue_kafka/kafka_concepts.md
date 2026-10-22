@@ -147,3 +147,42 @@ flowchart LR
 - Peeche chalti copy ko leader nahi banate (aakhri khabar kho jaati). Sirf poori taaza copy "pakki". Pakki copies ki
   list = **ISR**.
 - Sirf leader bacha, koi pakki copy nahi: likhna rok do (**min.insync = 2**). Khone se behtar thodi der rukna.
+
+---
+
+## 6. Outbox (Kafka tak pahunchne se pehle bhejne wala gira)
+
+**Peeche se:** hissa 4 me padhne wala gira to bache (commit, eventId), hissa 5 me Kafka machine giri to bache (3 copy).
+**Ab:** bacha bhejne wala, Order Svc. Arpan ne order cancel kiya. Order Svc ko DB me likhna hai aur Kafka ko khabar deni hai.
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "1. order = cancel" --> D[("DB")]
+    O -. "2. khabar (yahan gira, gayi hi nahi)" .-> K[("Kafka")]
+    style K fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+```
+
+- DB aur Kafka do alag cheezein. Dono me ek saath, ek hi baar me likhne ka tareeka nahi. Beech me gira to ek me
+  likha, doosre me nahi: SMS aur Fraud ko cancel ka pata hi nahi chala.
+- Ilaaj: khabar bhi usi DB me, cancel ke saath, **ek hi transaction** me (dono likhe jaayenge ya koi nahi).
+  Is alag table ko **outbox** kehte hain.
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "ek transaction" --> D[("DB<br/>order = cancel<br/>+ outbox: E-6, sent = false")]
+    R["Relay<br/>(har second)"] -- "sent = false padhta" --> D
+    R -- "bhejta" --> K[("Kafka")]
+    K -- "OK -> sent = true" --> R
+    style D fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
+```
+
+- **Relay** = chhota alag program. Har second outbox me dekhta kaunsi khabar abhi bheji nahi (sent = false), Kafka
+  ko bhejta, Kafka OK bole to sent = true.
+- Transaction se pehle gira: na cancel likha, na khabar. Arpan dobara dabayega, kuch galat nahi.
+- Relay ne bheja, sent = true likhne se pehle gira: relay dobara bhejega. SMS Svc eventId se pakad lega (hissa 4).
+- Outbox table bharti gayi: sent = true wali purani row roz saaf karo.
+
+---
+
+Teeno jagah bachav ek line me: **bhejne wala = outbox · Kafka = 3 copy + acks=all · padhne wala = pehle kaam phir
+commit + eventId**.
