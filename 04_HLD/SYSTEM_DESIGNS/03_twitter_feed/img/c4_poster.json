@@ -104,8 +104,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Pehle har feed Virat ka tweet DB se la rahi thi",
-   "green": "DB gira. Ab garam tweet RAM me, DB tak sirf ek",
+   "red": "Pehle har feed Virat ka tweet DB se laati thi",
+   "green": "DB gira",
    "conn": [
     [
      440,
@@ -125,7 +125,7 @@
    "y": 84,
    "w": 790,
    "red": "DB ki copies badha do?",
-   "green": "Wo bhi disk se padhti (ms). Crore read ek garam hissa nahi jhel paata",
+   "green": "Wo bhi disk se padhti. Crore read ek hi garam tweet pe, koi copy nahi jhel paati",
    "conn": [
     [
      1280,
@@ -143,8 +143,8 @@
    "x": 380,
    "y": 420,
    "w": 600,
-   "red": "Virat wali key ki machine garam ho gayi",
-   "green": "Key ki 5 copy, kisi se bhi padho. App memory me 1-2 sec",
+   "red": "Virat ke tweet wali cache machine garam ho gayi",
+   "green": "Us key ki 5 copy rakho, kisi se bhi padho. Har App apni memory me bhi 1-2 sec ki copy rakhe",
    "mark": [
     672,
     340
@@ -166,8 +166,8 @@
    "x": 1010,
    "y": 420,
    "w": 460,
-   "red": "Virat ne tweet edit kiya, cache me purana",
-   "green": "Cache se key hata do, agla read DB se naya",
+   "red": "Virat ne tweet edit kiya, cache me purana pada",
+   "green": "Cache se key hata do. Agla read DB se naya laata",
    "mark": [
     968,
     340
@@ -184,5 +184,12 @@
    ]
   }
  ],
- "kyun": "Garam cheez RAM me hai, DB tak sirf ek request jaati, DB aaram se rehta hai"
+ "kyun": "Garam tweet RAM (cache) me rakho. Cache me na mile to sirf ek request DB tak jaati, baaki uska jawab ruk ke le lete. DB aaram se rehta",
+ "step": [
+  4,
+  10
+ ],
+ "peeche": "card 3 me HYBRID: aam push, celeb pull",
+ "ab": "Match khatam, Virat ka tweet, crore log ek saath, DB gira, Arpan ki feed atki",
+ "agla": "ab Redis hi bharne laga (card 5)"
 }

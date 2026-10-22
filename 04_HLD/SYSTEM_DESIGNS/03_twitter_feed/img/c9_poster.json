@@ -135,8 +135,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Pehle likhna aur padhna ek hi service me",
-   "green": "Crore log scroll kar rahe the, mera tweet usi bheed me dheema",
+   "red": "Pehle likhna aur padhna ek hi service me tha",
+   "green": "Crore log scroll kar rahe the, Arpan ka tweet usi bheed me dheema",
    "conn": [
     [
      425,
@@ -146,7 +146,8 @@
      425,
      230
     ]
-   ]
+   ],
+   "tha": "Crore log scroll kar rahe the, Arpan ka tweet usi bheed me dheema"
   },
   {
    "n": 2,
@@ -154,8 +155,8 @@
    "x": 680,
    "y": 84,
    "w": 790,
-   "red": "Suresh ke 5,000 follower: ek baar me sab padhna bhaari",
-   "green": "Follow store se 1000-1000 padh ke inbox likho",
+   "red": "Suresh ke 5,000 follower: ek baar me sab ki list padhna bhaari",
+   "green": "Follow list 1000-1000 karke padho aur inbox likho",
    "mark": [
     990,
     268
@@ -177,8 +178,15 @@
    "y": 470,
    "w": 1440,
    "red": "Feed ki bheed aur badhi? Sirf Timeline Svc badhao, Tweet Svc ko chhuo mat.",
-   "green": "Timeline ko follow list har feed pe chahiye, isliye wo Redis me rakhi hoti"
+   "green": "Timeline ko follow list har feed pe chahiye, isliye wo Redis me bhi rakhi hai"
   }
  ],
- "kyun": "Jiski bheed badhi sirf wahi badhao. Ek ka dheemapan doosre ko nahi rokta"
+ "kyun": "Tweet likhna aur feed padhna alag service. Jiski bheed badhi sirf wahi badhao. Crore log scroll karein to bhi Arpan ka tweet nahi atakta",
+ "step": [
+  9,
+  10
+ ],
+ "peeche": "card 8 me kai App + ALB",
+ "ab": "Highlights ki bheed ne Arpan ka tweet daalna dheema kar diya",
+ "agla": "ab bhaari maal: photo, video (card 10)"
 }

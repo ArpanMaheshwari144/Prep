@@ -2,76 +2,88 @@
 <meta charset="utf-8">
 <title>Card 2: tweet DB me save + khabar Kafka </title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="949" viewBox="0 0 1500 949" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="1075" viewBox="0 0 1500 1075" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="949" fill="#0b1220"/>
+</defs><rect width="1500" height="1075" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 2: tweet DB me save + khabar Kafka me, turant &#x27;ho gaya&#x27;. Inbox workers peeche bharte</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="84" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
-<text x="48" y="110" font-size="14" font-weight="700" fill="#ff8a95">Pehle aisa tha:</text>
-<text x="170" y="110" font-size="13.5" fill="#d9b8bd">Usi request me 5,000 inbox ek-ek bharte the 5+ sec, timeout, &#x27;fail&#x27; dikha, par tweet ban chuka tha</text>
-<rect x="30" y="182" width="200" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="130.0" y="216" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
-<text x="130.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">tweet kiya</text>
-<rect x="300" y="162" width="240" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="420.0" y="196" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Tweet Svc</text>
-<text x="420.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">DB me save</text>
-<text x="420.0" y="244" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Kafka me khabar</text>
-<text x="420.0" y="266" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">turant &#x27;ho gaya&#x27;</text>
-<rect x="640" y="182" width="220" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="750.0" y="216" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Kafka</text>
-<text x="750.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar disk pe</text>
-<rect x="940" y="162" width="220" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="1050.0" y="196" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Workers</text>
-<text x="1050.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Kafka se padh ke</text>
-<text x="1050.0" y="244" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">inbox bharte</text>
-<rect x="1240" y="172" width="230" height="120" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="1355.0" y="206" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">5,000 inbox</text>
-<text x="1355.0" y="232" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sorted set (Redis)</text>
-<text x="1355.0" y="254" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">id ek hi baar</text>
-<rect x="300" y="382" width="240" height="80" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="420.0" y="416" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Tweet DB</text>
-<text x="420.0" y="442" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">tweet pakka yahan</text>
-<path d="M232 232 L296 232" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M542 232 L636 232" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
-<path d="M862 232 L936 232" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
-<path d="M1162 232 L1236 232" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<path d="M420 304 L420 378" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<circle cx="952" cy="302" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="952" y="307" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<circle cx="1252" cy="292" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="1252" y="297" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<circle cx="590" cy="232" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="590" y="237" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
-<rect x="30" y="522" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="548" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="548" font-size="13.5" fill="#cfeee0">Ab &#x27;ho gaya&#x27; tab, jab tweet DB me save. Inbox bharna Kafka se peeche. Dobara chale to bhi tweet ek hi baar dikhta (sorted set)</text>
-<rect x="30" y="596" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="621" r="12" fill="#ff5a6a"/>
-<text x="52" y="626" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="626" font-size="15" font-weight="700" fill="#ff5a6a">Worker 100 me se 60 inbox bhar ke gira</text>
-<text x="52" y="653" font-size="13.5" fill="#7fe0b0">Kafka ko &#x27;ho gaya&#x27; bola hi nahi, khabar phir</text>
-<text x="52" y="673" font-size="13.5" fill="#7fe0b0">aayegi</text>
-<rect x="392" y="596" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="621" r="12" fill="#ff5a6a"/>
-<text x="414" y="626" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="626" font-size="15" font-weight="700" fill="#ff5a6a">Wahi 60 dobara likhe</text>
-<text x="414" y="653" font-size="13.5" fill="#7fe0b0">Sorted set: id ek hi baar</text>
-<rect x="754" y="596" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="776" cy="621" r="12" fill="#ff5a6a"/>
-<text x="776" y="626" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
-<text x="798" y="626" font-size="15" font-weight="700" fill="#ff5a6a">Tweet DB me save, par Kafka me khabar</text>
-<text x="798" y="647" font-size="15" font-weight="700" fill="#ff5a6a">fail</text>
-<text x="776" y="674" font-size="13.5" fill="#7fe0b0">Outbox ya retry. Dobara aayi to bhi sorted</text>
-<text x="776" y="694" font-size="13.5" fill="#7fe0b0">set me ek hi</text>
-<rect x="30" y="759" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="785" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="809" font-size="13.5" fill="#e6dcb8">App me peeche ek thread chala dete: App crash hua to thread ka kaam gaya. Kafka disk pe hai, wahan se dobara padh lo</text>
-<rect x="30" y="847" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="877" font-size="13.5" fill="#c9d6e8">Apna tweet apni feed me kab? Seedha apni feed me jodo, fanout peeche. Workers kam? Badhao, partition bat jaati.</text>
-<text x="48" y="899" font-size="13.5" fill="#c9d6e8">Inbox pe 10 lakh likhai / sec: ek Redis ~1 lakh jhelta, isliye Redis Cluster ke 10-20 tukde</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 2 / 10</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 1 me PUSH: tweet hote hi INBOX me id</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">Arpan ne tweet kiya, button 5 sec ghoomta raha</text>
+<rect x="30" y="144" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
+<text x="48" y="170" font-size="14" font-weight="700" fill="#ff8a95">Pehle aisa tha:</text>
+<text x="170" y="170" font-size="13.5" fill="#d9b8bd">Usi request me 5,000 inbox ek-ek bharte the 5 sec se zyada, timeout, Arpan ko &quot;fail&quot; dikha, jabki tweet ban chuka tha</text>
+<rect x="30" y="242" width="200" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="276" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
+<text x="130.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">tweet kiya</text>
+<rect x="300" y="222" width="240" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="420.0" y="256" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Tweet Svc</text>
+<text x="420.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">DB me save</text>
+<text x="420.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Kafka me khabar</text>
+<text x="420.0" y="326" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">turant &#x27;ho gaya&#x27;</text>
+<rect x="640" y="242" width="220" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="750.0" y="276" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Kafka</text>
+<text x="750.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar disk pe</text>
+<rect x="940" y="222" width="220" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="1050.0" y="256" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Workers</text>
+<text x="1050.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Kafka se padh ke</text>
+<text x="1050.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">inbox bharte</text>
+<rect x="1240" y="232" width="230" height="120" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="1355.0" y="266" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">5,000 inbox</text>
+<text x="1355.0" y="292" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sorted set (Redis)</text>
+<text x="1355.0" y="314" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">id ek hi baar</text>
+<rect x="300" y="442" width="240" height="80" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="420.0" y="476" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Tweet DB</text>
+<text x="420.0" y="502" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">tweet pakka yahan</text>
+<path d="M232 292 L296 292" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M542 292 L636 292" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M862 292 L936 292" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M1162 292 L1236 292" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M420 364 L420 438" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<circle cx="952" cy="362" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="952" y="367" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="1252" cy="352" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="1252" y="357" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<circle cx="590" cy="292" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="590" y="297" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
+<rect x="30" y="582" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="608" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="608" font-size="13.5" fill="#cfeee0">Tweet DB me save hote hi Arpan ko &quot;ho gaya&quot;. 5,000 inbox bharna Kafka se peeche hota. Kaam dobara chale to bhi inbox me tweet ek hi baar dikhta (sorted set)</text>
+<rect x="30" y="656" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="681" r="12" fill="#ff5a6a"/>
+<text x="52" y="686" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="686" font-size="15" font-weight="700" fill="#ff5a6a">Worker 100 me se 60 inbox bhar ke gira</text>
+<text x="52" y="713" font-size="13.5" fill="#7fe0b0">Kafka ko &quot;ho gaya&quot; bola hi nahi tha, to</text>
+<text x="52" y="733" font-size="13.5" fill="#7fe0b0">khabar phir aayegi aur baaki 40 bhi bhar</text>
+<text x="52" y="753" font-size="13.5" fill="#7fe0b0">jaayenge</text>
+<rect x="392" y="656" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="681" r="12" fill="#ff5a6a"/>
+<text x="414" y="686" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="686" font-size="15" font-weight="700" fill="#ff5a6a">Wahi 60 inbox dobara likhe gaye</text>
+<text x="414" y="713" font-size="13.5" fill="#7fe0b0">Inbox sorted set hai: ek id ek hi baar</text>
+<text x="414" y="733" font-size="13.5" fill="#7fe0b0">rehti, dohraav nahi</text>
+<rect x="754" y="656" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="776" cy="681" r="12" fill="#ff5a6a"/>
+<text x="776" y="686" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="798" y="686" font-size="15" font-weight="700" fill="#ff5a6a">Tweet DB me save hua, par Kafka me</text>
+<text x="798" y="707" font-size="15" font-weight="700" fill="#ff5a6a">khabar nahi gayi</text>
+<text x="776" y="734" font-size="13.5" fill="#7fe0b0">Outbox ya retry se dobara bhejo. Dobara aayi</text>
+<text x="776" y="754" font-size="13.5" fill="#7fe0b0">to bhi inbox me ek hi baar</text>
+<rect x="30" y="819" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="845" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="869" font-size="13.5" fill="#e6dcb8">App ke andar peeche ek thread chala dete: App crash hui to thread ka kaam bhi gaya. Kafka disk pe hai, wahan se dobara padh sakte</text>
+<rect x="30" y="907" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="937" font-size="13.5" fill="#c9d6e8">Arpan ka apna tweet uski feed me kab? Seedha usi waqt apni feed me jodo, baaki peeche.</text>
+<text x="48" y="959" font-size="13.5" fill="#c9d6e8">Inbox pe 10 lakh likhai / sec: ek Redis ~1 lakh jhelta, isliye Redis Cluster ke 10-20 tukde</text>
+<rect x="30" y="1001" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="1029" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="1029" font-size="14.5" fill="#e6dcb8">ab aam tweet theek. Par celebrity ka ek tweet? (card 3)</text>
 </svg>

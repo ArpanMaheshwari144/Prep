@@ -106,7 +106,7 @@
    "y": 84,
    "w": 620,
    "red": "Sab US se hi do?",
-   "green": "Har request samundar paar, 300 ms, har feed atak ke aati",
+   "green": "Har request samundar paar, 300 ms, Arpan ki har feed atak ke aati",
    "conn": [
     [
      445,
@@ -125,7 +125,7 @@
    "y": 84,
    "w": 790,
    "red": "India aur US ke beech network toota",
-   "green": "Feed chalti rahe, chahe thodi purani. Yahan availability, consistency nahi",
+   "green": "Feed chalti rahe, chahe thodi purani. Yahan chalna zaroori, ekdum taaza hona nahi",
    "mark": [
     1022,
     260
@@ -148,7 +148,7 @@
    "y": 420,
    "w": 620,
    "red": "Poora India region gira",
-   "green": "Route 53 US pe palat deta. Feed thodi purani, par chalti",
+   "green": "Route 53 US ka pata dene lagta. Feed thodi purani, par chalti",
    "mark": [
     672,
     320
@@ -170,8 +170,8 @@
    "x": 980,
    "y": 420,
    "w": 490,
-   "red": "Dono region me ek saath likha",
-   "green": "Baad wala jeetega, takraav kam hota",
+   "red": "Dono region me ek saath likha gaya",
+   "green": "Jo baad me likha wo jeetta. Aisa kam hota",
    "mark": [
     1092,
     260
@@ -192,9 +192,16 @@
    "x": 30,
    "y": 520,
    "w": 1440,
-   "red": "US ke celeb ka tweet? Garam tweet India cache me bhi. Arpan US gaya? Request India bhejo ya paas ki copy se.",
-   "green": "Fayda: tez + GDPR (Europe ka data Europe me) + ek region gira to baaki chalein"
+   "red": "US ke celeb ka tweet? Garam tweet India ke cache me bhi rakho. Arpan US gaya to paas wala region.",
+   "green": "Fayda: tez, Europe ka data Europe me (GDPR), aur ek region gira to baaki chalte"
   }
  ],
- "kyun": "Data user ke paas wale region me hai, to feed India region se aati. Copy US se aati rehti hai. Doosre region ki copy thodi peeche, to region gira to feed thodi purani, par chalti rehti"
+ "kyun": "Har region me data ki copy. Route 53 Arpan ko paas wale region (India) ka pata deta, feed wahin se aati. US se copy aati rehti, thodi peeche ho to feed thodi purani, par chalti rehti",
+ "step": [
+  7,
+  10
+ ],
+ "peeche": "card 6 me CASSANDRA, user_id se baanto",
+ "ab": "Arpan Bangalore me, data US me, har feed 300 ms",
+ "agla": "ab har region me App ek hi machine. Wo giri to? (card 8)"
 }

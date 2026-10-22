@@ -82,8 +82,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Pehle har inbox me saare id, soye users ke bhi",
-   "green": "RAM bhar rahi thi. Ab sirf 800, sirf zinda logon ka",
+   "red": "Pehle har inbox me saari id thi, soye hue users ki bhi",
+   "green": "RAM bhar rahi thi",
    "conn": [
     [
      600,
@@ -103,7 +103,7 @@
    "y": 84,
    "w": 770,
    "red": "Redis me machine jodte jao?",
-   "green": "Soye 40 crore ka inbox bhi RAM khaata. Kharcha badhta, dikkat wahi"
+   "green": "Soye 40 crore logon ka inbox bhi RAM khaata. Kharcha badhta, dikkat wahi"
   },
   {
    "n": 3,
@@ -112,8 +112,7 @@
    "y": 440,
    "w": 640,
    "red": "Redis gira",
-   "green": "Copy (replica) sambhalti, warna har feed DB se banti",
-   "green2": "Copy bhi gayi: kuch request mana, inbox dheere bharo",
+   "green": "Copy sambhal leti. Copy bhi gayi to kuch request mana karo aur inbox dheere-dheere DB se bharo",
    "mark": [
     412,
     360
@@ -135,8 +134,8 @@
    "x": 700,
    "y": 440,
    "w": 770,
-   "red": "Soya user 2 mahine baad aaya, uska inbox hai hi nahi",
-   "green": "Follow walon ke taaze tweet khinch ke (pull) inbox bana do",
+   "red": "Arpan 2 mahine baad aaya, uska inbox mit chuka",
+   "green": "Follow kiye logon ke taaze tweet khinch ke (pull) inbox dobara bana do",
    "mark": [
     828,
     360
@@ -157,9 +156,16 @@
    "x": 30,
    "y": 550,
    "w": 1440,
-   "red": "800 ke aage scroll? Wahan se Tweet store (DB) se laao, bahut kam log itna neeche jaate.",
-   "green": "Agla page: page number nahi, aakhri dikhe tweet ka time (cursor): 'isse purane 50'"
+   "red": "Arpan 800 ke aage scroll kare? Tab Tweet store (DB) se laao, bahut kam log itna neeche jaate.",
+   "green": "Agla page: page number nahi, aakhri dikhe tweet ka time do (cursor): \"isse purane 50\""
   }
  ],
- "kyun": "RAM me sirf id, aur sirf zinda logon ki. Jo 1 mahine se nahi aaya, uska inbox nahi. Jo RAM me nahi, wo DB se bana lo: ek baar dheema, par galat nahi"
+ "kyun": "RAM me sirf id rakho, aur sirf aakhri 800. Jo 1 mahine se nahi aaya uska inbox mita do. Arpan ka inbox na mile to DB se bana lo: ek baar dheema, par galat nahi",
+ "step": [
+  5,
+  10
+ ],
+ "peeche": "card 4 me GARAM TWEET RAM me",
+ "ab": "Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi",
+ "agla": "ab tweet hi itne ho gaye ki DB me nahi aate (card 6)"
 }

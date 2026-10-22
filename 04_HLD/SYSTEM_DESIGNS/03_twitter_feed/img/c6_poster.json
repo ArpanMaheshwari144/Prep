@@ -102,9 +102,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "MySQL lagate?",
-   "green": "Har tweet pe har index disk pe dhoondh ke badalna, dheema",
-   "green2": "Join / transaction yahan chahiye hi nahi"
+   "red": "MySQL laga dete?",
+   "green": "Har tweet pe har index disk pe dhoondh ke badalna, dheema. Aur join / transaction yahan chahiye hi nahi"
   },
   {
    "n": 2,
@@ -113,7 +112,7 @@
    "y": 84,
    "w": 770,
    "red": "tweet_id se baant dete?",
-   "green": "Bojh barabar, par profile ke liye saari machine poochni padti"
+   "green": "Bojh barabar bat-ta, par Arpan ki profile ke liye saari machine poochni padti"
   },
   {
    "n": 3,
@@ -121,9 +120,8 @@
    "x": 760,
    "y": 175,
    "w": 330,
-   "red": "Famous ki machine garam",
-   "green": "Theek hai: garam tweet",
-   "green2": "alag RAM cache me",
+   "red": "Famous aadmi ki machine garam ho gayi",
+   "green": "Theek hai: garam tweet waise bhi alag RAM cache (card 4) se jaate",
    "mark": [
     722,
     210
@@ -146,7 +144,7 @@
    "y": 470,
    "w": 500,
    "red": "Ravi wali machine giri",
-   "green": "3 copy: 2 me likho, 2 se padho, naya mil jaata",
+   "green": "Har cheez ki 3 copy. 2 me likho, 2 se padho, naya tweet mil hi jaata",
    "mark": [
     600,
     420
@@ -168,8 +166,8 @@
    "x": 920,
    "y": 470,
    "w": 550,
-   "red": "Kisi ke bahut tweet, ek machine bhar rahi",
-   "green": "Key me mahina jodo: (user_id, mahina)",
+   "red": "Kisi ke itne tweet ki ek machine bhar rahi",
+   "green": "Key me mahina jodo (user_id, mahina): har mahine ka alag tukda",
    "mark": [
     722,
     380
@@ -190,9 +188,16 @@
    "x": 30,
    "y": 580,
    "w": 1440,
-   "red": "Likhai tez kaise? Commit log ke aakhir me jodta, badalta nahi. RAM bhari to nayi file disk pe.",
-   "green": "Files bahut ho gayi, padhna dheema: peeche milao (compaction) + Bloom filter"
+   "red": "Cassandra me likhna tez kyun? Wo sirf aakhir me jodta (log), purana badalta nahi. RAM bhari to nayi file disk pe.",
+   "green": "Files bahut ho gayi to padhna dheema: peeche milao (compaction), aur Bloom filter batata kis file me dekhna"
   }
  ],
- "kyun": "Ek DB na itna rakh sakta, na itna likh sakta. Jis cheez se padhte ho (user_id), usi se baanto. Likhna sirf aakhir me jodna hai, isliye tez. 3 copy, 2 me likho 2 se padho, naya mil hi jaata hai"
+ "kyun": "Ek DB na itna rakh sakta na itna likh sakta. Profile user_id se padhte hain, to user_id se hi baanto: Arpan ke saare tweet ek machine pe. Cassandra sirf aakhir me jodta, isliye likhna tez",
+ "step": [
+  6,
+  10
+ ],
+ "peeche": "card 5 me AAKHRI 800 + soye hue hatao",
+ "ab": "DB alert: har second 5,000 tweet, 5 saal me 0.5 PB",
+ "agla": "ab data US me, par Arpan Bangalore me (card 7)"
 }

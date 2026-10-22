@@ -148,7 +148,7 @@
    "y": 84,
    "w": 600,
    "red": "Pehle usi request me 5,000 inbox ek-ek bharte the",
-   "green": "5+ sec, timeout, 'fail' dikha, par tweet ban chuka tha",
+   "green": "5 sec se zyada, timeout, Arpan ko \"fail\" dikha, jabki tweet ban chuka tha",
    "conn": [
     [
      420,
@@ -158,7 +158,8 @@
      420,
      200
     ]
-   ]
+   ],
+   "tha": "5 sec se zyada, timeout, Arpan ko \"fail\" dikha, jabki tweet ban chuka tha"
   },
   {
    "n": 2,
@@ -166,8 +167,8 @@
    "x": 660,
    "y": 84,
    "w": 810,
-   "red": "App me peeche ek thread chala dete?",
-   "green": "App crash hua to thread ka kaam gaya. Kafka disk pe hai, wahan se dobara padh lo",
+   "red": "App ke andar peeche ek thread chala dete?",
+   "green": "App crash hui to thread ka kaam bhi gaya. Kafka disk pe hai, wahan se dobara padh sakte",
    "conn": [
     [
      750,
@@ -186,7 +187,7 @@
    "y": 420,
    "w": 520,
    "red": "Worker 100 me se 60 inbox bhar ke gira",
-   "green": "Kafka ko 'ho gaya' bola hi nahi, khabar phir aayegi",
+   "green": "Kafka ko \"ho gaya\" bola hi nahi tha, to khabar phir aayegi aur baaki 40 bhi bhar jaayenge",
    "mark": [
     952,
     340
@@ -208,8 +209,8 @@
    "x": 1150,
    "y": 420,
    "w": 320,
-   "red": "Wahi 60 dobara likhe",
-   "green": "Sorted set: id ek hi baar",
+   "red": "Wahi 60 inbox dobara likhe gaye",
+   "green": "Inbox sorted set hai: ek id ek hi baar rehti, dohraav nahi",
    "mark": [
     1252,
     330
@@ -231,8 +232,8 @@
    "x": 560,
    "y": 520,
    "w": 580,
-   "red": "Tweet DB me save, par Kafka me khabar fail",
-   "green": "Outbox ya retry. Dobara aayi to bhi sorted set me ek hi",
+   "red": "Tweet DB me save hua, par Kafka me khabar nahi gayi",
+   "green": "Outbox ya retry se dobara bhejo. Dobara aayi to bhi inbox me ek hi baar",
    "mark": [
     590,
     270
@@ -253,9 +254,16 @@
    "x": 30,
    "y": 610,
    "w": 1440,
-   "red": "Apna tweet apni feed me kab? Seedha apni feed me jodo, fanout peeche. Workers kam? Badhao, partition bat jaati.",
+   "red": "Arpan ka apna tweet uski feed me kab? Seedha usi waqt apni feed me jodo, baaki peeche.",
    "green": "Inbox pe 10 lakh likhai / sec: ek Redis ~1 lakh jhelta, isliye Redis Cluster ke 10-20 tukde"
   }
  ],
- "kyun": "Ab 'ho gaya' tab, jab tweet DB me save. Inbox bharna Kafka se peeche. Dobara chale to bhi tweet ek hi baar dikhta (sorted set)"
+ "kyun": "Tweet DB me save hote hi Arpan ko \"ho gaya\". 5,000 inbox bharna Kafka se peeche hota. Kaam dobara chale to bhi inbox me tweet ek hi baar dikhta (sorted set)",
+ "step": [
+  2,
+  10
+ ],
+ "peeche": "card 1 me PUSH: tweet hote hi INBOX me id",
+ "ab": "Arpan ne tweet kiya, button 5 sec ghoomta raha",
+ "agla": "ab aam tweet theek. Par celebrity ka ek tweet? (card 3)"
 }

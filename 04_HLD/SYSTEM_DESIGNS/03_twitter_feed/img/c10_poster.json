@@ -101,8 +101,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Pehle har dekhne wala hamare US server se khinchta",
-   "green": "Buffering aur bandwidth ka bill. Ab S3 + CDN: paas bhi, sasta bhi",
+   "red": "Pehle har dekhne wala hamare US server se video khinchta",
+   "green": "Buffering, aur bandwidth ka bada bill",
    "conn": [
     [
      520,
@@ -113,7 +113,7 @@
      210
     ]
    ],
-   "tha": "Buffering aur bandwidth ka bill"
+   "tha": "Buffering, aur bandwidth ka bada bill"
   },
   {
    "n": 2,
@@ -122,7 +122,7 @@
    "y": 84,
    "w": 770,
    "red": "API bhi CDN se chala dete?",
-   "green": "CDN sirf media ke raaste pe hai, API nahi",
+   "green": "CDN sirf photo / video ke liye hai, API ke liye nahi",
    "conn": [
     [
      920,
@@ -141,7 +141,7 @@
    "y": 420,
    "w": 470,
    "red": "CDN ke paas video nahi thi",
-   "green": "S3 se laake kuch der apne paas rakh leta",
+   "green": "S3 se laake kuch der apne paas rakh leta. Agla dekhne wala paas se",
    "mark": [
     792,
     330
@@ -171,8 +171,8 @@
    "x": 520,
    "y": 420,
    "w": 450,
-   "red": "Photo hata di, CDN pe ab bhi",
-   "green": "CDN ko 'hatao' bolo, ya link me version",
+   "red": "Arpan ne photo hata di, par CDN pe ab bhi dikh rahi",
+   "green": "CDN ko \"hatao\" bolo, ya link me version number badlo",
    "mark": [
     1048,
     330
@@ -202,8 +202,8 @@
    "x": 990,
    "y": 420,
    "w": 480,
-   "red": "Private photo ka link kisi aur ko mila",
-   "green": "Link pe hastakshar + expiry (signed URL)",
+   "red": "Private photo ka link kisi aur ko mil gaya",
+   "green": "Link pe hastakshar + expiry (signed URL): sirf jisko diya, wo bhi kuch der",
    "mark": [
     1300,
     320
@@ -220,5 +220,12 @@
    ]
   }
  ],
- "kyun": "Bhaari maal S3 me, user tak paas wale CDN se: paas bhi, sasta bhi. Upload me App beech me nahi aata. Tweet me sirf CDN ka link"
+ "kyun": "Bhaari video S3 me, dekhne wale tak paas wale CDN se: paas bhi, sasta bhi. Upload seedha phone se S3, App beech me nahi. Tweet me sirf CDN ka link",
+ "step": [
+  10,
+  10
+ ],
+ "peeche": "card 9 me ALAG SERVICE (likhna / padhna)",
+ "ab": "Arpan ne match ki video daali, sabko dheemi aur mehngi",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

@@ -31,7 +31,7 @@
    "w": 320,
    "h": 130,
    "kind": "cache",
-   "title": "Mera inbox (Redis)",
+   "title": "Arpan ka inbox (Redis)",
    "lines": [
     "t9, t8, t5 ... (sirf id)",
     "pehle se bana hua"
@@ -129,8 +129,8 @@
    "x": 30,
    "y": 84,
    "w": 610,
-   "red": "Pehle har baar app khulne pe 200 logon ka jod",
-   "green": "Padhna 50 guna hai, to mehnat likhte waqt karo",
+   "red": "Pehle har baar app khulne pe Arpan ke follow kiye 200 logon ke tweet jodte the",
+   "green": "",
    "conn": [
     [
      450,
@@ -149,8 +149,8 @@
    "x": 680,
    "y": 84,
    "w": 790,
-   "red": "DB pe index ya read replica laga dete?",
-   "green": "Thoda tez hota, par har khulne pe 200 ka jod wahi ka wahi"
+   "red": "DB pe index ya copy (read replica) laga dete?",
+   "green": "Thoda tez hota, par har baar app khulne pe 200 logon ka jod wahi ka wahi"
   },
   {
    "n": 3,
@@ -158,8 +158,8 @@
    "x": 380,
    "y": 430,
    "w": 640,
-   "red": "Unfollow kiya, uske tweet inbox me pade hain",
-   "green": "Padhte waqt follow list se chhaanto, safai peeche",
+   "red": "Arpan ne kisi ko unfollow kiya, uske tweet inbox me pade hain",
+   "green": "Feed dikhate waqt follow list se chhaant do. Inbox ki safai baad me",
    "mark": [
     692,
     300
@@ -181,8 +181,8 @@
    "x": 1050,
    "y": 440,
    "w": 420,
-   "red": "Abhi Suresh ko follow kiya",
-   "green": "Uske aakhri 20 tweet id inbox me daal do",
+   "red": "Arpan ne abhi Suresh ko follow kiya",
+   "green": "Suresh ke aakhri 20 tweet ki id Arpan ke inbox me daal do",
    "mark": [
     990,
     300
@@ -207,9 +207,16 @@
    "x": 30,
    "y": 530,
    "w": 1440,
-   "red": "Inbox me sirf id hai, poora tweet kaise? 50 id ek saath Tweet store se laao (batch).",
+   "red": "Inbox me sirf id hai, poora tweet kaise aaye? 50 id ek saath Tweet store se laao (batch).",
    "green": "Ek-ek laaye to 50 chakkar lagte"
   }
  ],
- "kyun": "Padhna 50 guna hai, to mehnat likhte waqt karo, har baar khulne pe jodna mat. 2 sec purani feed chalegi, isliye pehle se banana aur cache chal jaata hai"
+ "kyun": "Log tweet karne se 50 guna zyada feed padhte hain. Isliye mehnat tweet karte waqt karo: tweet hote hi har follower ke inbox me uski id daal do. Arpan app khole to bas apna bana-banaya inbox padhe",
+ "step": [
+  1,
+  10
+ ],
+ "peeche": "shuru: ek App, ek DB, feed har baar jodo",
+ "ab": "Subah Arpan ne app khola, feed ghoomti rahi (har baar 200 logon ke tweet jodna)",
+ "agla": "ab feed tez hai, par inbox bharne ka kaam tweet karte waqt aa gaya. Arpan ka tweet button atka? (card 2)"
 }

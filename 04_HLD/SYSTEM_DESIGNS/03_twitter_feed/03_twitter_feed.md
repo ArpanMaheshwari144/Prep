@@ -58,7 +58,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: PUSH: tweet hote hi INBOX me id
 
-<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -69,7 +69,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 5 KUCH DHEEMA** · Cue: KAFKA, fanout peeche
 
-<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -80,7 +80,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 5 KUCH DHEEMA (khaas)** · Cue: HYBRID: aam push, celeb pull
 
-<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -91,7 +91,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 2 BHEED AAYI** · Cue: HOT-TWEET CACHE (RAM)
 
-<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -102,7 +102,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 6 DATA BADA (RAM)** · Cue: AAKHRI 800 + soye hue hatao
 
-<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -113,7 +113,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 6 DATA BADA (tweet)** · Cue: CASSANDRA, user_id se baanto
 
-<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -124,7 +124,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 7 DOOR KE LOG** · Cue: REGION-WISE + Route 53
 
-<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -135,7 +135,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 3 MACHINE GIRI** · Cue: STATELESS App x N + ALB
 
-<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -146,7 +146,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 2 BHEED AAYI (padhna)** · Cue: ALAG SERVICE (likhna/padhna)
 
-<img src="img/c9_poster.png?v=2" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=3" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -157,7 +157,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 7 DOOR KE LOG (media)** · Cue: S3 + CDN
 
-<img src="img/c10_poster.png?v=2" width="1000" alt="card 10: kya toota, kaise bacha">
+<img src="img/c10_poster.png?v=3" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---
