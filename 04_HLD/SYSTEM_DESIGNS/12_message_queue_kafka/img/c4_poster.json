@@ -12,7 +12,7 @@
    "lines": [
     "P0 - P3",
     "P4 - P6",
-    "P7 (Ravi)",
+    "P7 (Arpan)",
     "P8 - P9"
    ]
   },
@@ -46,7 +46,7 @@
    "kind": "server",
    "title": "C3",
    "lines": [
-    "P7 - P9: Ravi"
+    "P7 - P9: Arpan"
    ]
   },
   {
@@ -67,7 +67,7 @@
    "w": 300,
    "h": 90,
    "kind": "user",
-   "title": "Ravi",
+   "title": "Arpan",
    "lines": [
     "ek hi email"
    ]
@@ -134,7 +134,7 @@
    "y": 84,
    "w": 620,
    "red": "group.id galat (machine ka naam)?",
-   "green": "Teen alag team: teeno ne bheja, Ravi ko 3 email",
+   "green": "Teen alag team: teeno ne bheja, Arpan ko 3 email",
    "n": 1
   },
   {
@@ -173,5 +173,12 @@
    "green": "10 tukde + 12 machine = 2 khaali"
   }
  ],
- "kyun": "Ek group ke andar ek partition = ek hi machine. To ek khabar team me ek hi baar jaati hai"
+ "kyun": "Ek group ke andar ek partition = ek hi machine. To ek khabar team me ek hi baar jaati hai",
+ "step": [
+  4,
+  10
+ ],
+ "peeche": "card 3 me KEY = userId",
+ "ab": "Email Svc ki 3 machine, Arpan ko 3 order email",
+ "agla": "ab group me baant diya, par doosri service ko bhi wahi khabar chahiye (card 5)"
 }

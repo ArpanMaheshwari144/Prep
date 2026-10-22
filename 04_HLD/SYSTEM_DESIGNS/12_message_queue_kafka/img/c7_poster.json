@@ -34,7 +34,7 @@
    "kind": "lb",
    "title": "Email company",
    "lines": [
-    "Ravi ko email"
+    "Arpan ko email"
    ]
   },
   {
@@ -54,7 +54,7 @@
    "w": 360,
    "h": 120,
    "kind": "user",
-   "title": "Ravi",
+   "title": "Arpan",
    "lines": [
     "ek hi email"
    ]
@@ -140,7 +140,7 @@
    "y": 84,
    "w": 880,
    "red": "Email bheja, 'padh liya' se pehle crash",
-   "green": "5 phir aaya: Redis me E-5 pada, skip. Ravi ko ek hi email",
+   "green": "5 phir aaya: Redis me E-5 pada, skip. Arpan ko ek hi email",
    "n": 2,
    "mark": [
     600,
@@ -163,7 +163,7 @@
    "y": 490,
    "w": 720,
    "red": "eventId ki jagah userId se dedup",
-   "green": "Ravi ka agla sahi event bhi skip. Pehchaan eventId se, kram userId se",
+   "green": "Arpan ka agla sahi event bhi skip. Pehchaan eventId se, kram userId se",
    "n": 3,
    "mark": [
     740,
@@ -220,5 +220,12 @@
    "green": "Exactly-once? Sirf Kafka se Kafka (transactions). Email / DB ke liye consumer khud pehchaane"
   }
  ],
- "kyun": "Pehle kaam phir commit, to khabar kabhi nahi khoti, bas dobara aa sakti hai. Dobara aaye to eventId se pehchano. Pehchaan consumer karta hai, Kafka nahi"
+ "kyun": "Pehle kaam phir commit, to khabar kabhi nahi khoti, bas dobara aa sakti hai. Dobara aaye to eventId se pehchano. Pehchaan consumer karta hai, Kafka nahi",
+ "step": [
+  7,
+  10
+ ],
+ "peeche": "card 6 me LEADER + ISR, acks=all",
+ "ab": "Arpan ko email bheja, \"padh liya\" bolne se pehle crash",
+ "agla": "ab consumer sambhal gaya, par producer khud bhejne se pehle gira to? (card 8)"
 }

@@ -203,5 +203,12 @@
    "green": ""
   }
  ],
- "kyun": "Leader A likhta hai, B aur C copy lete hain. \"done\" tabhi, jab ISR copy pe bhi likh gaya. Producer ko OK = khabar bach gayi. Naya leader sirf ISR me se banta hai"
+ "kyun": "Leader A likhta hai, B aur C copy lete hain. \"done\" tabhi, jab ISR copy pe bhi likh gaya. Producer ko OK = khabar bach gayi. Naya leader sirf ISR me se banta hai",
+ "step": [
+  6,
+  10
+ ],
+ "peeche": "card 5 me HAR SERVICE KA APNA GROUP",
+ "ab": "Dopahar Broker A ki disk mari, Arpan ki khabar usi pe thi",
+ "agla": "ab broker pe to bach gaya, consumer pe kho sakta? (card 7)"
 }

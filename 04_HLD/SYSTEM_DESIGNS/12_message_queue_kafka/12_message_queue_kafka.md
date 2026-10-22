@@ -35,10 +35,10 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 >
 > | rail | is design me | card |
 > |---|---|---|
-> | 1 kaam chala | signup khabar email tak · Ravi ka order 3 service ko (email, analytics, dashboard) | 1, 5 |
+> | 1 kaam chala | Arpan ka order email tak · Arpan ka order 3 service ko (email, analytics, dashboard) | 1, 5 |
 > | 2 bheed aayi | 10 baje sale, 5,000 / sec, ek worker 500 | 2 |
 > | 3 machine giri | queue restart, 500 gayab · Broker A ki disk mari (**is design ka khaas: kuch khoye nahi**) · Kafka se pehle server gira | 1, 6, 8 |
-> | 4 do log ek saath | Ravi ne naam do baar badla · 3 machine, 3 email · email bheja, commit se pehle crash | 3, 4, 7 |
+> | 4 do log ek saath | Arpan ne naam do baar badla · 3 machine, 3 email · email bheja, commit se pehle crash | 3, 4, 7 |
 > | 5 kuch dheema | C2 mara, lag badhta · ek khabar dheemi, tukda atka (card 9 ka cross-Q) | 9 |
 > | 6 data bada | disk bharti ja rahi, 7 din ~700 GB | 10 |
 > | 7 door ke log | nahi aata | - |
@@ -54,11 +54,11 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 *ab tootega kahan? sabse pehle machine restart pe, kyunki sab RAM me hai*
 
-## 1. Subah queue machine restart hui, 500 signup gayab
+## 1. Subah queue machine restart hui, Arpan ka order + 499 aur gayab
 
 **Rail 3 MACHINE GIRI (restart)** · Cue: LOG disk pe + OFFSET
 
-<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -69,40 +69,40 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 2 BHEED AAYI** · Cue: PARTITION (tukde, alag machine)
 
-<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
 
-*ab tukde ho gaye, par ek user ki khabar kram me?*
+*ab tukde ho gaye, par Arpan ki khabar kram me?*
 
-## 3. Ravi ne naam do baar badla, purana naam reh gaya
+## 3. Arpan ne naam do baar badla, purana naam reh gaya
 
 **Rail 4 DO LOG EK SAATH (kram)** · Cue: KEY = userId (ek partition, kram)
 
-<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
 
 *ab ek service ki kai machine padh rahi*
 
-## 4. Email service ki 3 machine, Ravi ko 3 order email
+## 4. Email service ki 3 machine, Arpan ko 3 order email
 
 **Rail 4 DO LOG EK SAATH (group)** · Cue: CONSUMER GROUP (ek team)
 
-<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
 
 *ab group me baant diya, par doosri service ko bhi wahi khabar chahiye*
 
-## 5. Ravi ka order analytics aur dashboard ko bhi chahiye
+## 5. Arpan ka order analytics aur dashboard ko bhi chahiye
 
 **Rail 1 KAAM CHALA (kai service)** · Cue: HAR SERVICE KA APNA GROUP
 
-<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -113,7 +113,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 3 MACHINE GIRI (khaas)** · Cue: LEADER + ISR, acks=all
 
-<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -124,7 +124,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 4 DO LOG EK SAATH (dobara)** · Cue: PEHLE KAAM PHIR COMMIT + IDEMPOTENT
 
-<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -135,7 +135,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 3 MACHINE GIRI (producer)** · Cue: OUTBOX + relay
 
-<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -146,7 +146,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 5 KUCH DHEEMA (lag)** · Cue: REBALANCE + LAG alert + DLQ
 
-<img src="img/c9_poster.png?v=2" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=3" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -157,7 +157,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 6 DATA BADA (disk)** · Cue: RETENTION 7 din + COMPACTION
 
-<img src="img/c10_poster.png?v=2" width="1000" alt="card 10: kya toota, kaise bacha">
+<img src="img/c10_poster.png?v=3" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---
@@ -218,14 +218,14 @@ der. Push hota to broker dhakelta, dheema consumer doob jaata.
 Message: offset (broker deta), timestamp, key (hash(key) % n), value (JSON / Avro), headers (traceId, eventType,
 retryCount).
 
-Disk pe: /topic-user-signup/partition-0/ ke andar 00000000000000000000.log (message, sirf jodte, segment ~1 GB),
+Disk pe: /order-events/partition-0/ ke andar 00000000000000000000.log (message, sirf jodte, segment ~1 GB),
 00000000000000000000.index (offset se file me jagah). Segment bhara to naya, jaise 00000000000512340000.log.
 
 Data 3 kism ka. Message (bahut, tez): append-only file, DB nahi, bachav = copy + acks. Naksha (kam, 100% sahi: topic /
 partition / leader / ISR): pakka sahi jagah (Zookeeper / KRaft-Raft), kyunki do broker khud ko ek partition ka leader
 samjhein to split-brain, data kharab. Consumer offset: __consumer_offsets.
 
-Kab Kafka: bhejne wale ko jawab ka intezaar nahi (signup ke baad email / analytics), ek khabar kai service, bahut
+Kab Kafka: bhejne wale ko jawab ka intezaar nahi (order ke baad email / analytics), ek khabar kai service, bahut
 saari khabar + replay (log, clickstream, audit), bhejne / lene wale ki speed alag (bheed ka buffer).
 
 Kab nahi: turant jawab chahiye to REST / gRPC. Poore system ka pakka kram, ya simple kaam ki line + har message ka

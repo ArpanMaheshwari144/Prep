@@ -147,5 +147,12 @@
    ]
   }
  ],
- "kyun": "Har group apni jagah (offset) khud yaad rakhta hai. Ye MQ ka dil hai"
+ "kyun": "Har group apni jagah (offset) khud yaad rakhta hai. Ye MQ ka dil hai",
+ "step": [
+  5,
+  10
+ ],
+ "peeche": "card 4 me CONSUMER GROUP (ek team)",
+ "ab": "Arpan ka order analytics aur dashboard ko bhi chahiye",
+ "agla": "ab machine hi mar gayi to? (card 6)"
 }

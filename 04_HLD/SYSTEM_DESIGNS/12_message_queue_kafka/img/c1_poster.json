@@ -8,9 +8,9 @@
    "w": 220,
    "h": 120,
    "kind": "server",
-   "title": "Signup Svc",
+   "title": "Order Svc",
    "lines": [
-    "500 signup bheje"
+    "Arpan #101 + 499 order"
    ]
   },
   {
@@ -100,7 +100,7 @@
    "y": 84,
    "w": 620,
    "red": "RAM wali queue?",
-   "green": "Restart hua aur 500 signup gaye",
+   "green": "Restart hua aur 500 order gaye (Arpan ka bhi)",
    "n": 1,
    "conn": [
     [
@@ -145,5 +145,12 @@
    "green": "Offset byte nahi, kram number (0, 1, 2). Chhoti .index file batati file me kahan"
   }
  ],
- "kyun": "Message disk pe pada hai. Consumer gira to wapas aake apne offset se aage padhta, producer ko pata bhi nahi chalta"
+ "kyun": "Message disk pe pada hai. Consumer gira to wapas aake apne offset se aage padhta, producer ko pata bhi nahi chalta",
+ "step": [
+  1,
+  10
+ ],
+ "peeche": "shuru: ek machine, uski RAM me ek queue",
+ "ab": "Subah queue machine restart, Arpan ka order + 499 aur gayab",
+ "agla": "ab sale aayi: ek worker kitna jhelega? (card 2)"
 }

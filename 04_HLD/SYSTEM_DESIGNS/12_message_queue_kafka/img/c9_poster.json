@@ -235,5 +235,12 @@
    ]
   }
  ],
- "kyun": "Koi partition bina padhne wale ke nahi rehta. Kharab khabar poori line nahi rokti, use theek karke baad me dobara chalao"
+ "kyun": "Koi partition bina padhne wale ke nahi rehta. Kharab khabar poori line nahi rokti, use theek karke baad me dobara chalao",
+ "step": [
+  9,
+  10
+ ],
+ "peeche": "card 8 me OUTBOX + relay",
+ "ab": "Shaam ko C2 mara, Arpan wale tukde ka lag badh raha",
+ "agla": "ab khabar padi rehti hai, disk ka kya? (card 10)"
 }

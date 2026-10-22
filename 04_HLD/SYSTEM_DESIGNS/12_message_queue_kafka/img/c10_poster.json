@@ -183,5 +183,12 @@
    ]
   }
  ],
- "kyun": "Jo rakha hai usi se replay hota hai. Purani khabar retention se jaati, poora segment ek saath. MQ ka asli number JAGAH hai. Kafka padh ke delete nahi karta, rakhta hai"
+ "kyun": "Jo rakha hai usi se replay hota hai. Purani khabar retention se jaati, poora segment ek saath. MQ ka asli number JAGAH hai. Kafka padh ke delete nahi karta, rakhta hai",
+ "step": [
+  10,
+  10
+ ],
+ "peeche": "card 9 me REBALANCE + LAG alert + DLQ",
+ "ab": "Raat ko broker ki disk bharti ja rahi",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

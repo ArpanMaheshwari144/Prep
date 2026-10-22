@@ -158,5 +158,12 @@
    "green": "12 worker, 10 tukde? 2 khaali baithe"
   }
  ],
- "kyun": "Partition = kitne worker ek saath padh sakte. Ek partition ek worker. Bheed badhe to aur partition"
+ "kyun": "Partition = kitne worker ek saath padh sakte. Ek partition ek worker. Bheed badhe to aur partition",
+ "step": [
+  2,
+  10
+ ],
+ "peeche": "card 1 me LOG disk pe + OFFSET",
+ "ab": "10 baje sale, 5,000 / sec, ek worker 500 hi. Arpan ka order line me atka",
+ "agla": "ab tukde ho gaye, par Arpan ki khabar kram me rahegi? (card 3)"
 }

@@ -8,7 +8,7 @@
    "w": 220,
    "h": 120,
    "kind": "user",
-   "title": "Ravi",
+   "title": "Arpan",
    "lines": [
     "naam 'A',",
     "phir 'B'"
@@ -34,7 +34,7 @@
    "kind": "cache",
    "title": "P1",
    "lines": [
-    "Ravi: A, B (kram se)"
+    "Arpan: A, B (kram se)"
    ]
   },
   {
@@ -203,5 +203,12 @@
    "green": "RabbitMQ / SQS me kram? Guarantee nahi. SQS FIFO ya ek consumer = kram, par speed kam"
   }
  ],
- "kyun": "Kram sirf EK partition ke andar milta hai. Jiska kram chahiye, wahi key. Same key = same partition. Tukda key ke hash se tay hota hai (hash % tukde)"
+ "kyun": "Kram sirf EK partition ke andar milta hai. Jiska kram chahiye, wahi key. Same key = same partition. Tukda key ke hash se tay hota hai (hash % tukde)",
+ "step": [
+  3,
+  10
+ ],
+ "peeche": "card 2 me PARTITION (tukde, alag machine)",
+ "ab": "Arpan ne naam do baar badla (A, phir B), purana reh gaya",
+ "agla": "ab ek service ki kai machine padh rahi: Arpan ko kitne email? (card 4)"
 }

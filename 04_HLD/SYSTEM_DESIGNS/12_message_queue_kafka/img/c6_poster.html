@@ -2,62 +2,72 @@
 <meta charset="utf-8">
 <title>Card 6: leader + ISR copy, acks=all: saa</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="875" viewBox="0 0 1500 875" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="1001" viewBox="0 0 1500 1001" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="875" fill="#0b1220"/>
+</defs><rect width="1500" height="1001" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 6: leader + ISR copy, acks=all: saari ISR copy le lein tab OK. Leader gira to ISR me se naya leader</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="160" width="220" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="140.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Producer</text>
-<text x="140.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">acks=all</text>
-<rect x="350" y="120" width="260" height="120" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="480.0" y="154" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Broker A (leader)</text>
-<text x="480.0" y="180" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">P3 likhta</text>
-<rect x="720" y="100" width="260" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="850.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Broker B</text>
-<text x="850.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ISR copy</text>
-<rect x="720" y="240" width="260" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="850.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Broker C</text>
-<text x="850.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ISR copy</text>
-<rect x="1080" y="140" width="390" height="140" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1275.0" y="174" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Controller (KRaft)</text>
-<text x="1275.0" y="200" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ISR me se naya leader (B)</text>
-<text x="1275.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ek hi faisla, do leader nahi</text>
-<path d="M252 195 L346 180" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
-<path d="M612 160 L716 150" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
-<path d="M612 210 L716 290" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
-<path d="M346 220 L254 250" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<text x="300" y="265" font-size="13" fill="#3ddc97" class="m" text-anchor="middle">OK</text>
-<path d="M982 170 L1076 200" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
-<circle cx="590" cy="120" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="590" y="125" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<circle cx="760" cy="340" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="760" y="345" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="414" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="440" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="440" font-size="13.5" fill="#cfeee0">Leader A likhta hai, B aur C copy lete hain. &quot;done&quot; tabhi, jab ISR copy pe bhi likh gaya. Producer ko OK = khabar bach gayi. Naya leader sirf ISR me se banta</text>
-<text x="160" y="460" font-size="13.5" fill="#cfeee0">hai</text>
-<rect x="30" y="508" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="533" r="12" fill="#ff5a6a"/>
-<text x="52" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="538" font-size="15" font-weight="700" fill="#ff5a6a">Broker A ki disk mar gayi</text>
-<text x="52" y="565" font-size="13.5" fill="#7fe0b0">Controller ISR me se B ko leader banata.</text>
-<text x="52" y="585" font-size="13.5" fill="#7fe0b0">Data B, C pe bacha</text>
-<rect x="392" y="508" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="533" r="12" fill="#ff5a6a"/>
-<text x="414" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="538" font-size="15" font-weight="700" fill="#ff5a6a">ISR copy kam pad gayi</text>
-<text x="414" y="565" font-size="13.5" fill="#7fe0b0">min.insync=2: likhna band. Khone se rukna</text>
-<text x="414" y="585" font-size="13.5" fill="#7fe0b0">behtar</text>
-<rect x="30" y="663" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="689" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="713" font-size="13.5" fill="#e6dcb8">acks=1: Leader ki memory pe OK: copy se pehle gira to gayi</text>
-<rect x="30" y="751" width="1440" height="94" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="781" font-size="13.5" fill="#c9d6e8">Peeche wala follower leader? Nahi, aakhri khabar nahi. 3 copy = kam se kam 3 broker.</text>
-<text x="48" y="803" font-size="13.5" fill="#c9d6e8">acks: 0 = bhej ke bhaago · 1 = sirf leader (click / log) · all = saari ISR (paisa)</text>
-<text x="48" y="825" font-size="13.5" fill="#c9d6e8">Pehle poochho: message kho sakta hai, ya bilkul nahi? Isi se acks tay hota</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 6 / 10</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 5 me HAR SERVICE KA APNA GROUP</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">Dopahar Broker A ki disk mari, Arpan ki khabar usi pe thi</text>
+<rect x="30" y="220" width="220" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="140.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Producer</text>
+<text x="140.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">acks=all</text>
+<rect x="350" y="180" width="260" height="120" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="480.0" y="214" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Broker A (leader)</text>
+<text x="480.0" y="240" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">P3 likhta</text>
+<rect x="720" y="160" width="260" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="850.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Broker B</text>
+<text x="850.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ISR copy</text>
+<rect x="720" y="300" width="260" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="850.0" y="334" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Broker C</text>
+<text x="850.0" y="360" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ISR copy</text>
+<rect x="1080" y="200" width="390" height="140" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1275.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Controller (KRaft)</text>
+<text x="1275.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ISR me se naya leader (B)</text>
+<text x="1275.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ek hi faisla, do leader nahi</text>
+<path d="M252 255 L346 240" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M612 220 L716 210" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
+<path d="M612 270 L716 350" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
+<path d="M346 280 L254 310" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<text x="300" y="325" font-size="13" fill="#3ddc97" class="m" text-anchor="middle">OK</text>
+<path d="M982 230 L1076 260" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
+<circle cx="590" cy="180" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="590" y="185" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="760" cy="400" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="760" y="405" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<rect x="30" y="474" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="500" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="500" font-size="13.5" fill="#cfeee0">Leader A likhta hai, B aur C copy lete hain. &quot;done&quot; tabhi, jab ISR copy pe bhi likh gaya. Producer ko OK = khabar bach gayi. Naya leader sirf ISR me se banta</text>
+<text x="160" y="520" font-size="13.5" fill="#cfeee0">hai</text>
+<rect x="30" y="568" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="593" r="12" fill="#ff5a6a"/>
+<text x="52" y="598" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="598" font-size="15" font-weight="700" fill="#ff5a6a">Broker A ki disk mar gayi</text>
+<text x="52" y="625" font-size="13.5" fill="#7fe0b0">Controller ISR me se B ko leader banata.</text>
+<text x="52" y="645" font-size="13.5" fill="#7fe0b0">Data B, C pe bacha</text>
+<rect x="392" y="568" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="593" r="12" fill="#ff5a6a"/>
+<text x="414" y="598" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="598" font-size="15" font-weight="700" fill="#ff5a6a">ISR copy kam pad gayi</text>
+<text x="414" y="625" font-size="13.5" fill="#7fe0b0">min.insync=2: likhna band. Khone se rukna</text>
+<text x="414" y="645" font-size="13.5" fill="#7fe0b0">behtar</text>
+<rect x="30" y="723" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="749" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="773" font-size="13.5" fill="#e6dcb8">acks=1: Leader ki memory pe OK: copy se pehle gira to gayi</text>
+<rect x="30" y="811" width="1440" height="94" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="841" font-size="13.5" fill="#c9d6e8">Peeche wala follower leader? Nahi, aakhri khabar nahi. 3 copy = kam se kam 3 broker.</text>
+<text x="48" y="863" font-size="13.5" fill="#c9d6e8">acks: 0 = bhej ke bhaago · 1 = sirf leader (click / log) · all = saari ISR (paisa)</text>
+<text x="48" y="885" font-size="13.5" fill="#c9d6e8">Pehle poochho: message kho sakta hai, ya bilkul nahi? Isi se acks tay hota</text>
+<rect x="30" y="927" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="955" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="955" font-size="14.5" fill="#e6dcb8">ab broker pe to bach gaya, consumer pe kho sakta? (card 7)</text>
 </svg>

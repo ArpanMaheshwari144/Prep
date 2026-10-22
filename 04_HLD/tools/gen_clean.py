@@ -58,10 +58,38 @@ def bada(s):
     return s[:1].upper() + s[1:]
 
 
+def kahani(o, spec):
+    """Card aapas me jude (22-Oct, Arpan): kone me 'card N / total', upar patti 'Peeche: .. · Ab: ..'. Lautata: agla y."""
+    y = 84
+    if spec.get('step'):
+        n, tot = spec['step']
+        o.append(f'<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>')
+        o.append(t(1400, 69, f'card {n} / {tot}', 14, '#ffa94d', True, anchor='middle'))
+    if spec.get('peeche') or spec.get('ab'):
+        o.append(f'<rect x="30" y="{y}" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>')
+        o.append(t(48, y + 29, 'Peeche:', 15, '#9fb0c8', True))
+        o.append(t(118, y + 29, spec.get('peeche', ''), 14.5, '#c9d6e8'))
+        o.append(t(760, y + 29, 'Ab:', 15, '#ff8a95', True))
+        o.append(t(796, y + 29, spec.get('ab', ''), 14.5, '#f0d4d8'))
+        y += 46 + 14
+    return y
+
+
+def agla(o, y, spec):
+    """Neeche peeli patti: AGLA > agla card kya tootega."""
+    if not spec.get('agla'):
+        return y
+    y += 22
+    o.append(f'<rect x="30" y="{y}" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>')
+    o.append(t(48, y + 28, 'AGLA >', 15, '#ffcc4d', True))
+    o.append(t(118, y + 28, spec['agla'], 14.5, '#e6dcb8'))
+    return y + 44
+
+
 def pehle_box(o, dikkat, y=84):
     """Tasveer se pehle ek chhota laal-dhundhla dabba 'Pehle aisa tha'. Lautata: tasveer kahan se shuru."""
     if not dikkat:
-        return TOP
+        return y + 16
     # 'tha' = sirf dikkat wala hara hissa (ilaaj 'Ab ...' yahan nahi, wo Kyun chalta me)
     txt = '   ·   '.join(J(bina_pehle(c['red']), *((bada(c['tha']),) if 'tha' in c else
                                                      (bada(c.get('green', '')), c.get('green2', ''))))
@@ -146,7 +174,7 @@ def build(spec):
     o = []
     o.append(t(30, 40, spec['title'], 26, '#e6edf3', True))
     o.append(t(30, 68, SUB, 15, '#9fb0c8'))
-    top = pehle_box(o, dikkat)
+    top = pehle_box(o, dikkat, kahani(o, spec))
     dy = top - min(ys)
     dia_end = max(ye) + dy
 
@@ -180,6 +208,7 @@ def build(spec):
             o.append(f'<circle cx="{p[0]}" cy="{Y(p[1])}" r="14" fill="#1a0f14" stroke="{RED}" stroke-width="2.5"/>')
             o.append(t(p[0], Y(p[1]) + 5, str(i), 14, RED, True, anchor='middle'))
     y = bottom(o, dia_end + GAP, toots, pehle, greys, spec.get('kyun', ''))
+    y = agla(o, y, spec)
     H = int(y + 30)
     head = [f'<svg width="{W}" height="{H}" viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg"><defs>']
     for k in COL:

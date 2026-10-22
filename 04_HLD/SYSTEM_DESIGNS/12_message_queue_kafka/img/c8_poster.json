@@ -134,7 +134,7 @@
    "y": 480,
    "w": 560,
    "red": "COMMIT se pehle crash",
-   "green": "Kuch nahi hua: na order na outbox. Ravi dobara karega",
+   "green": "Kuch nahi hua: na order na outbox. Arpan dobara karega",
    "n": 3,
    "mark": [
     150,
@@ -157,7 +157,7 @@
    "y": 480,
    "w": 860,
    "red": "Relay ne bheja, sent = true se pehle gira",
-   "green": "Khabar dobara jaati: consumer E-101 dekh ke skip, Ravi ko ek email",
+   "green": "Khabar dobara jaati: consumer E-101 dekh ke skip, Arpan ko ek email",
    "n": 4,
    "mark": [
     940,
@@ -183,5 +183,12 @@
    "green": "Poora raasta: outbox + acks=all + kaam ke baad commit + eventId dedup + DLQ"
   }
  ],
- "kyun": "Server kuch yaad nahi rakhta, DB ka sent column yaad rakhta hai. Order hai to khabar bhi hai"
+ "kyun": "Server kuch yaad nahi rakhta, DB ka sent column yaad rakhta hai. Order hai to khabar bhi hai",
+ "step": [
+  8,
+  10
+ ],
+ "peeche": "card 7 me PEHLE KAAM PHIR COMMIT + eventId",
+ "ab": "Arpan ka order #101 DB me bana, Kafka bhejne se pehle gira",
+ "agla": "ab sab bach gaya, par ek consumer mara to? (card 9)"
 }
