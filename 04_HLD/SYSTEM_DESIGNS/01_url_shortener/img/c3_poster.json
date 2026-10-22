@@ -1,48 +1,274 @@
 {
-  "title": "Card 3: Counter har App ko alag range deta. App range se agla number, phir base62",
-  "h": 760,
-  "boxes": [
-    {"x": 30, "y": 170, "w": 200, "h": 80, "kind": "user", "title": "Main", "lines": ["link banaya"]},
-    {"x": 30, "y": 330, "w": 200, "h": 80, "kind": "user", "title": "Ravi", "lines": ["usi pal link banaya"]},
-    {"x": 320, "y": 160, "w": 260, "h": 100, "kind": "server", "title": "App 1", "lines": ["range 1 se 1000", "agla 125 -> code '21'"]},
-    {"x": 320, "y": 320, "w": 260, "h": 100, "kind": "server", "title": "App 2", "lines": ["range 1001 se 2000", "agla 1001, alag code"]},
-    {"x": 700, "y": 235, "w": 280, "h": 105, "kind": "lb", "title": "Counter", "lines": ["har App ko alag range", "kabhi dohraata nahi"]},
-    {"x": 1100, "y": 235, "w": 300, "h": 105, "kind": "db", "title": "DB", "lines": ["code UNIQUE", "code -> lamba link"]}
-  ],
-  "arrows": [
-    {"pts": [[232, 210], [316, 210]], "c": "blue"},
-    {"pts": [[232, 370], [316, 370]], "c": "blue"},
-    {"pts": [[582, 230], [696, 270]], "c": "grey", "dash": true, "label": "1000 pe 1", "lx": 598, "ly": 298},
-    {"pts": [[582, 360], [696, 310]], "c": "grey", "dash": true},
-    {"pts": [[582, 185], [1250, 185], [1250, 231]], "c": "green", "label": "code '21' save", "lx": 900, "ly": 177, "a": "middle"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "x", "x": 30, "y": 84, "w": 610,
-     "red": "App 1 range me 400 pe crash ho gaya",
-     "green": "401 se 1000 bekaar, jaan-boojh ke. 3.5 lakh crore me farak nahi",
-     "mark": [568, 162], "conn": [[568, 150], [568, 146]]},
-    {"n": 2, "type": "x", "x": 900, "y": 84, "w": 570,
-     "red": "Maine aur Ravi ne ek hi custom code maanga",
-     "green": "DB ka UNIQUE ek ko rokta, use 409",
-     "mark": [1388, 237], "conn": [[1388, 223], [1388, 146]]},
-    {"n": 3, "type": "pehle", "x": 30, "y": 470, "w": 700,
-     "red": "UUID ya lambe link ka hash (pehle 7 akshar) lete?",
-     "green": "UUID 36 akshar, lamba. Hash me do link ka code same ho sakta",
-     "green2": "Har baar DB me 'pehle se hai?' dekhna padta. Counter me takkar hi nahi",
-     "conn": [[450, 422], [450, 470]]},
-    {"n": 4, "type": "x", "x": 760, "y": 470, "w": 710,
-     "red": "Counter hi gir gaya",
-     "green": "App ki range chalti rehti, tab tak Counter ki copy uth jaati",
-     "mark": [968, 340], "conn": [[968, 352], [968, 470]]},
-    {"n": 5, "type": "pehle", "x": 30, "y": 580, "w": 700,
-     "red": "Har number Redis INCR se le lete?",
-     "green": "Chalta, par har link pe ek call. Range me 1000 link pe ek",
-     "green2": "Ek bhi number bekaar na jaaye, to range ka fayda hi khatam"},
-    {"type": "grey", "x": 760, "y": 580, "w": 710,
-     "red": "Range khatam? Counter se agli range le lo.",
-     "green": "Agla code andaza na lage: number shuffle / XOR, phir base62"},
-    {"type": "grey", "x": 30, "y": 680, "w": 1440,
-     "red": "base62 = 0-9, a-z, A-Z: 125 = '21', 100 crore = '15FTGg'. Do log same lamba link dein to dono ko alag code.",
-     "green": "Ek hi code chahiye to pehle lambe link ke hash pe dekh lo"}
-  ]
+ "title": "Card 3: Counter har App ko alag range deta. App range se agla number, phir base62",
+ "h": 760,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 170,
+   "w": 200,
+   "h": 80,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "link banaya"
+   ]
+  },
+  {
+   "x": 30,
+   "y": 330,
+   "w": 200,
+   "h": 80,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "usi pal link banaya"
+   ]
+  },
+  {
+   "x": 320,
+   "y": 160,
+   "w": 260,
+   "h": 100,
+   "kind": "server",
+   "title": "App 1",
+   "lines": [
+    "range 1 se 1000",
+    "agla 125 -> code '21'"
+   ]
+  },
+  {
+   "x": 320,
+   "y": 320,
+   "w": 260,
+   "h": 100,
+   "kind": "server",
+   "title": "App 2",
+   "lines": [
+    "range 1001 se 2000",
+    "agla 1001, alag code"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 235,
+   "w": 280,
+   "h": 105,
+   "kind": "lb",
+   "title": "Counter",
+   "lines": [
+    "har App ko alag range",
+    "kabhi dohraata nahi"
+   ]
+  },
+  {
+   "x": 1100,
+   "y": 235,
+   "w": 300,
+   "h": 105,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "code UNIQUE",
+    "code -> lamba link"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     210
+    ],
+    [
+     316,
+     210
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     232,
+     370
+    ],
+    [
+     316,
+     370
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     230
+    ],
+    [
+     696,
+     270
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "1000 pe 1",
+   "lx": 598,
+   "ly": 298
+  },
+  {
+   "pts": [
+    [
+     582,
+     360
+    ],
+    [
+     696,
+     310
+    ]
+   ],
+   "c": "grey",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     582,
+     185
+    ],
+    [
+     1250,
+     185
+    ],
+    [
+     1250,
+     231
+    ]
+   ],
+   "c": "green",
+   "label": "code '21' save",
+   "lx": 900,
+   "ly": 177,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "x",
+   "x": 30,
+   "y": 84,
+   "w": 610,
+   "red": "App 1 range me 400 pe crash ho gaya",
+   "green": "401 se 1000 bekaar, jaan-boojh ke. 3.5 lakh crore me farak nahi",
+   "mark": [
+    568,
+    162
+   ],
+   "conn": [
+    [
+     568,
+     150
+    ],
+    [
+     568,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 900,
+   "y": 84,
+   "w": 570,
+   "red": "Maine aur Ravi ne ek hi custom code maanga",
+   "green": "DB ka UNIQUE ek ko rokta, use 409",
+   "mark": [
+    1388,
+    237
+   ],
+   "conn": [
+    [
+     1388,
+     223
+    ],
+    [
+     1388,
+     170
+    ]
+   ],
+   "green2": "Lambai dekho, admin jaise reserved naam nahi"
+  },
+  {
+   "n": 3,
+   "type": "pehle",
+   "x": 30,
+   "y": 470,
+   "w": 700,
+   "red": "UUID ya lambe link ka hash (pehle 7 akshar) lete?",
+   "green": "UUID 36 akshar, lamba. Hash me do link ka code same ho sakta",
+   "green2": "Har baar DB me 'pehle se hai?' dekhna padta. Counter me takkar hi nahi",
+   "conn": [
+    [
+     450,
+     422
+    ],
+    [
+     450,
+     470
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 760,
+   "y": 470,
+   "w": 710,
+   "red": "Counter hi gir gaya",
+   "green": "App ki range chalti rehti, tab tak Counter ki copy uth jaati",
+   "mark": [
+    968,
+    340
+   ],
+   "conn": [
+    [
+     968,
+     352
+    ],
+    [
+     968,
+     470
+    ]
+   ]
+  },
+  {
+   "n": 5,
+   "type": "pehle",
+   "x": 30,
+   "y": 580,
+   "w": 700,
+   "red": "Har number Redis INCR se le lete?",
+   "green": "Chalta, par har link pe ek call. Range me 1000 link pe ek",
+   "green2": "Ek bhi number bekaar na jaaye, to range ka fayda hi khatam"
+  },
+  {
+   "type": "grey",
+   "x": 760,
+   "y": 580,
+   "w": 710,
+   "red": "Range khatam? Counter se agli range le lo.",
+   "green": "Agla code andaza na lage: number shuffle / XOR, phir base62"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 680,
+   "w": 1440,
+   "red": "base62 = 0-9, a-z, A-Z: 125 = '21', 100 crore = '15FTGg'. Do log same lamba link dein to dono ko alag code.",
+   "green": "Ek hi code chahiye to pehle lambe link ke hash pe dekh lo"
+  }
+ ]
 }
