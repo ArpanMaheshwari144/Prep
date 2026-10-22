@@ -135,15 +135,8 @@ NAHI    sabke liye pull -> MEHNGA: har feed khulne pe phir 200 ka jod
 
 **Rail 2 BHEED AAYI** · Cue: HOT-TWEET CACHE (RAM)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=5" width="900">
-
-<img src="img/c4_2.png?v=5" width="900">
-
-<img src="img/c4_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     garam tweet RAM me rakho (hot-tweet cache). Miss hua to sirf ek request DB jaati hai (lock),
@@ -156,11 +149,6 @@ NAHI    DB ki copies badha do -> DHEEMA: wo bhi disk se padhti hain (ms).
 
 > [!IMPORTANT]
 > **Yaad rakh:** Garam tweet RAM me (hot-tweet cache). Miss pe sirf ek request DB (lock), baaki uska jawab.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - ek key pe bheed, machine garam? → **key ki kai copy, kisi se bhi padho**: (tweet:123#1..#5). Saath me App ki memory me 1-2 sec
-> - Virat ne tweet edit kiya, cache me purana? → **cache se key hata do**: edit / delete dono me. Agla read DB se naya laayega
 
 
 ---
