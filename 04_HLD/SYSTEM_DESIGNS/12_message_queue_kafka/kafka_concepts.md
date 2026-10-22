@@ -122,3 +122,28 @@ flowchart LR
 ```
 
 - Ye pehchaanna padhne wale (SMS Svc) ka kaam hai, Kafka ka nahi.
+
+---
+
+## 5. Broker gira (copy aur leader)
+
+**Peeche se:** hissa 4 me padhne wali taraf pakki: pehle SMS, phir commit, dobara aaye to eventId.
+**Ab:** Arpan ki teeno khabar (P1) Kafka ki machine B pe. Kafka ki machine ko **broker** kehte hain. B ki disk mari to?
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "khabar" --> B[("machine B<br/>P1 LEADER<br/>(disk mari)")]
+    B -- "copy" --> A[("machine A<br/>P1 copy<br/>naya LEADER")]
+    B -- "copy" --> C[("machine C<br/>P1 copy")]
+    style B fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+    style A fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
+```
+
+- Ilaaj: har tukde ki 3 copy, teen alag machine pe. Jis pe likhna-padhna hota wo **leader**, baaki do copy.
+- Leader mara to bachi copy me se naya leader. Ye faisla Kafka ki ek machine karti jo baaki pe nazar rakhti:
+  **Controller**.
+- B ne Order Svc ko "ho gaya" bola aur copy banne se pehle mar gaya to khabar gayi. Isliye "ho gaya" tabhi bolo jab
+  copy pe bhi likh jaaye: **acks=all**.
+- Peeche chalti copy ko leader nahi banate (aakhri khabar kho jaati). Sirf poori taaza copy "pakki". Pakki copies ki
+  list = **ISR**.
+- Sirf leader bacha, koi pakki copy nahi: likhna rok do (**min.insync = 2**). Khone se behtar thodi der rukna.

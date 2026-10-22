@@ -105,11 +105,16 @@ do baar utha sakte hain, ya kram bigad jaayega. Isliye line ke tukde karo:
 ```mermaid
 flowchart LR
     K["khabar"] --> P0[("Tukda 0")] & P1[("Tukda 1")] & P9[("Tukda 9")]
-    P0 --> W0["Worker 0"]
-    P1 --> W1["Worker 1"]
-    P9 --> W9["Worker 9"]
-    W10["Worker 10<br/>koi tukda nahi bacha, khaali"]
-    style W10 stroke-dasharray: 5 5
+    subgraph WS["Workers"]
+        W0["Worker 0"]
+        W1["Worker 1"]
+        W9["Worker 9"]
+        W10["Worker 10<br/>koi tukda nahi bacha, khaali"]
+    end
+    P0 --> W0
+    P1 --> W1
+    P9 --> W9
+    style W10 fill:#ffe3e3,stroke:#e03131,stroke-width:2px,stroke-dasharray: 5 5,color:#000
 ```
 
 10 tukde, 10 worker, 10 x 500 = 5,000 har second. Kaunsa tukda kis worker ko, ye Kafka khud baantta hai
