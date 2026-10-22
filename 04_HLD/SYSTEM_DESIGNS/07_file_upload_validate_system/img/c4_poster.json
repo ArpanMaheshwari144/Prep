@@ -162,7 +162,7 @@
    "y": 84,
    "w": 680,
    "red": "Sweeper hi na ho?",
-   "green": "T-103 hamesha UPLOADING, bytes S3 me pade, paisa lag raha",
+   "green": "T-103 hamesha UPLOADING rehta, bytes S3 me pade, paisa lagta rehta",
    "n": 1,
    "conn": [
     [
@@ -181,7 +181,7 @@
    "y": 84,
    "w": 740,
    "red": "Sweeper do machine pe chal gaya",
-   "green": "Ek hi chale (lock / leader). Ya chalne do: dobara daalna safe",
+   "green": "Ek hi chale (lock / leader). Ya chalne do: dobara line me daalna safe hai",
    "n": 2,
    "mark": [
     1020,
@@ -203,8 +203,8 @@
    "x": 30,
    "y": 500,
    "w": 700,
-   "red": "App crash: /complete aur S3 event dono chhoote",
-   "green": "Isi liye sweeper: har kuch min atki file dhoondhta",
+   "red": "App crash: \"/complete\" aur S3 event dono chhoote",
+   "green": "Isliye sweeper: har kuch min atki file dhoondhta",
    "n": 3,
    "mark": [
     280,
@@ -226,9 +226,16 @@
    "x": 750,
    "y": 500,
    "w": 720,
-   "red": "Sweeper hai to S3 lifecycle kyun? Wo bytes saaf karta.",
-   "green": "Haal sweeper badalta. Dobara line me safe: worker skip karta"
+   "red": "Sweeper hai to S3 ka niyam (lifecycle) kyun? Wo bytes saaf karta.",
+   "green": "Haal sweeper badalta. Dobara line me daalna safe: worker haal dekh ke chhod deta"
   }
  ],
- "kyun": "Har file ka haal DB me hai: UPLOADING -> VALIDATING -> DONE / FAILED. Der tak nahi badla matlab atka dobara line me daalna safe hai, worker haal dekh ke skip kar deta hai"
+ "kyun": "Har file ka haal DB me: UPLOADING -> VALIDATING -> DONE / FAILED. Sweeper har ~5 min dekhta: 10 min se haal nahi badla = atka. Bytes S3 me hain to dobara line me, nahi to FAILED",
+ "step": [
+  4,
+  9
+ ],
+ "peeche": "card 3 me TUKDON ME UPLOAD (multipart)",
+ "ab": "Arpan ka app crash, \"upload ho gaya\" kabhi aaya hi nahi",
+ "agla": "ab file chal padi. Par deadline ke din sab haal poochh rahe (card 5)"
 }

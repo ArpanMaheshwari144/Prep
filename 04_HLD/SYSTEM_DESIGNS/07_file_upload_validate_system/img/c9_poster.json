@@ -125,8 +125,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Naam / type pe bharosa (report.pdf)?",
-   "green": "Client ka bola hua: andar virus.exe aa gaya",
+   "red": "Naam / type pe bharosa kar lo (report.pdf)?",
+   "green": "Ye app ne bola hai: andar virus.exe aa gaya",
    "n": 1,
    "conn": [
     [
@@ -144,8 +144,8 @@
    "x": 690,
    "y": 84,
    "w": 780,
-   "red": "Shuru PDF, andar virus",
-   "green": "Magic bytes sirf type batate. Scan bhi chahiye",
+   "red": "Shuru PDF jaisa, andar virus",
+   "green": "Pehle byte sirf type batate. Virus ke liye scan bhi chahiye",
    "n": 2,
    "mark": [
     960,
@@ -167,7 +167,7 @@
    "x": 560,
    "y": 490,
    "w": 910,
-   "red": "Pehle poochho: kaunse type allowed?",
+   "red": "Pehle poochho: kaunse type allowed hain?",
    "green": "Sach file ke bytes me, naam me nahi"
   },
   {
@@ -176,7 +176,7 @@
    "y": 490,
    "w": 510,
    "red": "Jaanch me fail",
-   "green": "Quarantine bucket (download band),",
+   "green": "Alag bucket me daalo (quarantine, download band), baad me delete ya security dekhe",
    "n": 3,
    "mark": [
     140,
@@ -191,9 +191,15 @@
      140,
      490
     ]
-   ],
-   "green2": "baad me delete ya security dekhe"
+   ]
   }
  ],
- "kyun": "Client ne jo bheja (naam, type, size) wo kuch sach nahi. Sach file ke bytes me hai: pehle kuch byte type batate hain, scan virus batata hai. Jaanch pass nahi hui to DONE nahi, reject"
+ "kyun": "Naam, type, size jo app ne bheja wo sach nahi. Sach file ke bytes me: pehle 4 byte type batate (%PDF = PDF, MZ = EXE). Virus scan alag. Jaanch fail to DONE nahi, file band",
+ "step": [
+  9,
+  9
+ ],
+ "peeche": "card 8 me 5 MIN KA NAYA LINK",
+ "ab": "Arpan ke naam se report.pdf aayi, andar EXE nikla",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

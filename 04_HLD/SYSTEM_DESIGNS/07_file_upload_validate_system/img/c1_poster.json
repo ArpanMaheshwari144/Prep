@@ -145,8 +145,8 @@
    "x": 30,
    "y": 84,
    "w": 700,
-   "red": "Upload Svc hi Validator call karke ruke?",
-   "green": "31 March: 200 / sec, har thread 3 sec atka, threads khatam",
+   "red": "Upload Svc hi jaanch wali company (Validator) ko call karke ruke?",
+   "green": "31 March ki bheed: 200 file / sec, har thread 3 sec atka, threads khatam, sab atka",
    "n": 1,
    "conn": [
     [
@@ -165,7 +165,7 @@
    "y": 84,
    "w": 720,
    "red": "Validator 1 ghanta band",
-   "green": "4,000 khabar line me padi. Breaker + doosri company. Upload mat roko",
+   "green": "4,000 khabar line me padi rehti. Breaker + doosri company. Upload mat roko",
    "n": 2,
    "mark": [
     1440,
@@ -187,16 +187,16 @@
    "x": 30,
    "y": 470,
    "w": 510,
-   "red": "Kafka hi kyun? Zaroori nahi: ~200 / sec pe SQS.",
-   "green": "Validator ko 5 GB? 10 min ka signed GET link"
+   "red": "Kafka hi kyun? Zaroori nahi: ~200 / sec pe SQS bhi chalega.",
+   "green": "Validator ko 5 GB kaise de? 10 min ka signed GET link"
   },
   {
    "type": "x",
    "x": 560,
    "y": 470,
    "w": 460,
-   "red": "Worker beech me mar gaya",
-   "green": "Offset DB ke baad: khabar dobara milti",
+   "red": "Worker jaanch ke beech mar gaya",
+   "green": "Kafka ko \"padh liya\" DB me likhne ke baad bolte, to khabar dobara milti",
    "n": 3,
    "mark": [
     990,
@@ -219,7 +219,7 @@
    "y": 470,
    "w": 430,
    "red": "Wahi khabar dobara aayi",
-   "green": "Haal dekho, DONE to skip (idempotent)",
+   "green": "Haal dekho, DONE hai to chhod do",
    "n": 4,
    "mark": [
     1170,
@@ -245,5 +245,12 @@
    ]
   }
  ],
- "kyun": "Jaanch dheemi hai, isliye beech me queue aur worker, dheema kaam line me peeche chala jaata hai. User ko turant T-101 mil gaya, to wo file dobara nahi bhejta"
+ "kyun": "Jaanch dheemi hai (3 sec), isliye Arpan ko turant id T-101 aur haal VALIDATING de do. Khabar Kafka me, worker peeche jaanch ke DONE likhta. Arpan ko id mil gayi, to wo file dobara nahi bhejta",
+ "step": [
+  1,
+  9
+ ],
+ "peeche": "shuru: upload ke saath hi jaanch, user ruke",
+ "ab": "Arpan ne report.pdf daali, 3 second screen ghoomti rahi",
+ "agla": "ab jaanch peeche gayi. Par 5 GB ki file hamare server se guzar rahi (card 2)"
 }

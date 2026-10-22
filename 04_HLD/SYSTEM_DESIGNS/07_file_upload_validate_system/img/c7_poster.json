@@ -124,7 +124,7 @@
    "y": 84,
    "w": 800,
    "red": "Id hai to file de do?",
-   "green": "Ravi ne T-101 daala, file mil gayi: chori",
+   "green": "Ravi ne T-101 daala, Arpan ki file mil gayi: chori",
    "n": 1,
    "conn": [
     [
@@ -142,8 +142,8 @@
    "x": 850,
    "y": 84,
    "w": 620,
-   "red": "Id to random tha, check kyun?",
-   "green": "Id leak hoti: log, screenshot, link",
+   "red": "Id to random tha, phir check kyun?",
+   "green": "Id leak ho jaata: log, screenshot, share kiya link",
    "n": 2
   },
   {
@@ -151,9 +151,16 @@
    "x": 30,
    "y": 490,
    "w": 1440,
-   "red": "Admin maange? Owner ho ya admin role, dono ki jaanch har request pe.",
-   "green": "PR me kahan? Har handler ki pehli line. userId JWT se, body se kabhi nahi"
+   "red": "Admin maange? Maalik ho ya admin role, dono ki jaanch har request pe.",
+   "green": "Code review me kahan dekhein? Har handler ki pehli line. userId JWT se, body se kabhi nahi"
   }
  ],
- "kyun": "Kaun ho, ye gateway batata hai (JWT). Is file pe haq hai ya nahi, ye service khud dekhti hai, har request pe (owner_id == jwt.user_id). Id leak ho tab bhi file nahi milti"
+ "kyun": "Kaun ho, ye JWT batata. File pe haq hai ya nahi, service har request pe khud dekhti: file ka maalik == JWT wala? Nahi to 403. Arpan ka id leak ho tab bhi file nahi milti",
+ "step": [
+  7,
+  9
+ ],
+ "peeche": "card 6 me FOLDER id + har file ka id",
+ "ab": "Ravi ne Arpan ka id (T-101) daal ke Arpan ki file le li",
+ "agla": "ab andar se safe. Par link hi bahar chala gaya to? (card 8)"
 }

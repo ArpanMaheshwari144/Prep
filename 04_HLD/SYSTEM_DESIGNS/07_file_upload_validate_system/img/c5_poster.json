@@ -185,8 +185,8 @@
    "x": 750,
    "y": 84,
    "w": 720,
-   "red": "Replica peeche, purana haal Redis me baitha",
-   "green": "Miss pe sirf SET NX + chhoti umar, ya primary se padho",
+   "red": "Copy peeche thi, purana haal Redis me baith gaya",
+   "green": "Redis me tabhi rakho jab khaali ho (SET NX) + chhoti umar. Ya primary se padho",
    "n": 2,
    "mark": [
     900,
@@ -208,8 +208,8 @@
    "x": 30,
    "y": 480,
    "w": 700,
-   "red": "DB me DONE, app me VALIDATING",
-   "green": "DONE likhte hi Redis key hatao, agla poochh naya DONE laaye",
+   "red": "DB me DONE, Arpan ke app me VALIDATING",
+   "green": "DONE likhte hi Redis se haal hata do. Agla poochh naya DONE laata",
    "n": 3,
    "mark": [
     700,
@@ -232,7 +232,7 @@
    "y": 480,
    "w": 720,
    "red": "Redis gira",
-   "green": "Seedha replica pe: dheema par chalta. Poochne pe rate limit",
+   "green": "Seedha copy se padho: dheema par chalta. Poochne pe had (rate limit)",
    "n": 4,
    "mark": [
     930,
@@ -254,9 +254,16 @@
    "x": 30,
    "y": 575,
    "w": 1440,
-   "red": "Har 2 sec zaroori? Gap badhao (2, 4, 8 sec). Band hi karwa do? Server khud bheje (SSE / WebSocket) jab haal badle.",
+   "red": "Har 2 sec poochhna zaroori? Gap badhao (2, 4, 8 sec). Ya server khud bataye (SSE / WebSocket) jab haal badle.",
    "green": "Sach DB me, Redis sirf tez copy"
   }
  ],
- "kyun": "Padhna bahut zyada hai, likhna kam, isliye haal ke liye cache + read replica. Sach DB me hai, Redis sirf tez copy hai. Padhna Redis se, likhna dono me"
+ "kyun": "Haal poochna bahut zyada, likhna kam. Pehle Redis (1 ms), wahan nahi to DB ki copy (replica), phir Redis me rakh do. Asli haal DB me, Redis sirf tez copy",
+ "step": [
+  5,
+  9
+ ],
+ "peeche": "card 4 me SWEEPER (atki file dhoondho)",
+ "ab": "Deadline ke din 10,000 log har 2 sec haal poochh rahe, Arpan ka bhi atka",
+ "agla": "ab ek file theek. Par Arpan ne poora folder daala to? (card 6)"
 }

@@ -140,8 +140,8 @@
    "x": 30,
    "y": 84,
    "w": 590,
-   "red": "Har file ka alag id hi rakho?",
-   "green": "Folder ka haal nahi: 1000 id khud dekhne padte",
+   "red": "Har file ka sirf alag id rakho?",
+   "green": "Folder ka haal pata nahi: Arpan ko 1000 id khud dekhne padte",
    "n": 1,
    "conn": [
     [
@@ -159,7 +159,7 @@
    "x": 640,
    "y": 84,
    "w": 830,
-   "red": "Do worker ek saath +1",
+   "red": "Do worker ne ek saath +1 kiya",
    "green": "done_count = done_count + 1, DB ke andar: ginti nahi khoti",
    "n": 2,
    "mark": [
@@ -182,8 +182,8 @@
    "x": 30,
    "y": 500,
    "w": 700,
-   "red": "Ek child ki DONE khabar dobara aayi",
-   "green": "Pehle child: WHERE status <> 'DONE'. 1 row tabhi folder +1",
+   "red": "Ek file ki DONE khabar dobara aayi",
+   "green": "Pehle file ka haal badlo (WHERE status <> DONE). 1 row badli tabhi folder +1",
    "n": 3,
    "mark": [
     690,
@@ -228,9 +228,16 @@
    "x": 30,
    "y": 595,
    "w": 1440,
-   "red": "Lakh chhoti files? ZIP: client ek file bana ke bheje, server khole.",
+   "red": "Lakh chhoti files? ZIP: app ek file bana ke bheje, server khole.",
    "green": "Pehle poochho: sirf file aayegi ya folder bhi"
   }
  ],
- "kyun": "Folder ek bada id hai, har file ka chhota id. Folder ka haal bachchon ka jod hai. Sab DONE to DONE, koi FAILED to PARTIAL. Ek file fail hui to sirf wahi dobara"
+ "kyun": "Folder ka ek bada id (P-1), har file ka chhota id. File DONE hui to folder ki ginti +1. Sab DONE = folder DONE, koi FAILED = PARTIAL. Fail hui to sirf wahi file dobara",
+ "step": [
+  6,
+  9
+ ],
+ "peeche": "card 5 me REDIS CACHE + READ REPLICA",
+ "ab": "Arpan ne file nahi, poora folder daala (1000 file)",
+ "agla": "ab sab chal raha. Par koi doosre ki file maange to? (card 7)"
 }

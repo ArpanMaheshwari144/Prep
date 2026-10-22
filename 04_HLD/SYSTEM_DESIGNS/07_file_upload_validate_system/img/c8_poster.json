@@ -130,7 +130,7 @@
    "y": 84,
    "w": 840,
    "red": "Pakka link DB me rakh ke de do?",
-   "green": "Hamesha chalta: WhatsApp me koi bhi kabhi bhi khole",
+   "green": "Hamesha chalta: WhatsApp group me koi bhi kabhi bhi khole",
    "n": 1,
    "conn": [
     [
@@ -148,10 +148,9 @@
    "x": 890,
    "y": 84,
    "w": 580,
-   "red": "5 min ke andar link aage bhej diya",
-   "green": "Ye risk maana hai. Bahut sensitive:",
+   "red": "5 min ke andar hi link aage bhej diya",
+   "green": "Ye risk maana hua hai. Bahut sensitive file ho to CloudFront signed URL + IP pe had",
    "n": 2,
-   "green2": "CloudFront signed URL + IP had",
    "mark": [
     1400,
     240
@@ -172,8 +171,8 @@
    "x": 560,
    "y": 500,
    "w": 910,
-   "red": "5 min me download adhoora",
-   "green": "Chalu download beech me nahi katta: umar sirf shuru karne ki",
+   "red": "5 min me download poora nahi hua",
+   "green": "Chalu download beech me nahi katta: 5 min sirf shuru karne ke liye",
    "n": 3,
    "mark": [
     850,
@@ -191,5 +190,12 @@
    ]
   }
  ],
- "kyun": "Pakka link kabhi bahar nahi jaata. Link aage gaya to bas 5 min tak chalta hai. Group me kisi ne 1 ghante baad khola to expire, nahi khula"
+ "kyun": "DB me sirf S3 ka pata. Download pe pehle maalik check, phir naya 5 min ka link. Pakka link kabhi bahar nahi jaata. Group me 1 ghante baad khola to link mar chuka",
+ "step": [
+  8,
+  9
+ ],
+ "peeche": "card 7 me OWNER CHECK, 403",
+ "ab": "Arpan ne S3 ka seedha link WhatsApp group pe bhej diya",
+ "agla": "ab raasta safe. Par file khud hi jhooth bol rahi ho to? (card 9)"
 }

@@ -106,8 +106,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "'/complete' aaya hi nahi",
-   "green": "S3 event se queue me daalo. Client pe bharosa nahi",
+   "red": "App ne \"upload ho gaya\" (/complete) bheja hi nahi",
+   "green": "S3 khud \"file aa gayi\" event deta, wahi queue me daalo. App pe bharosa mat karo",
    "n": 1,
    "mark": [
     305,
@@ -130,7 +130,7 @@
    "y": 84,
    "w": 800,
    "red": "Bytes server ke raaste bhejo?",
-   "green": "5 GB do baar, thread minuton atka: mehnga + dheema",
+   "green": "5 GB do baar chalti (phone se server, server se S3), thread minuton atka: mehnga aur dheema",
    "n": 2
   },
   {
@@ -139,7 +139,7 @@
    "y": 480,
    "w": 510,
    "red": "AWS ki chaabi app ko de do?",
-   "green": "Chaabi = poora bucket. Paas = ek file, 10 min",
+   "green": "Chaabi = poora bucket kisi ke haath. Paas = sirf ek file, 10 min",
    "n": 3
   },
   {
@@ -148,7 +148,7 @@
    "y": 480,
    "w": 910,
    "red": "Had 5 GB, koi 50 GB bhej de",
-   "green": "Had paas me sign hai: S3 khud reject. S3 event pe size phir dekho",
+   "green": "Had paas me hi likhi hai: S3 khud mana kar deta. S3 event pe size phir dekh lo",
    "n": 4,
    "mark": [
     820,
@@ -170,9 +170,16 @@
    "x": 30,
    "y": 575,
    "w": 1440,
-   "red": "S3 paas ko asli kaise maane? Wahi AWS secret se signature khud banata: mile to asli, naam / samay badla to 403.",
-   "green": "Raaste me kharab? Client SHA-256 bhejta, S3 khud nikaal ke milaata. Pehle poochho: file kitni badi?"
+   "red": "S3 paas ko asli kaise maane? Wahi AWS secret se khud hastakshar banata: mile to asli, naam / samay badla to 403.",
+   "green": "Raaste me file kharab? Phone SHA-256 bhejta, S3 khud nikaal ke milaata. Pehle poochho: file kitni badi?"
   }
  ],
- "kyun": "Server sirf paas deta hai: ek file ke liye, 10 min ke liye. Bytes seedha app se S3 jaate hain, server pe koi bojh nahi"
+ "kyun": "Server sirf ek paas (signed URL) deta: ek file, 10 min ke liye. Arpan ka phone 5 GB seedha S3 pe bhejta. Server pe koi bojh nahi, paas leak bhi ho to bas ek file, 10 min",
+ "step": [
+  2,
+  9
+ ],
+ "peeche": "card 1 me TURANT ID + JAANCH PEECHE (queue)",
+ "ab": "Arpan ki 5 GB video hamare server ke raaste S3 jaa rahi",
+ "agla": "ab bytes seedha S3 jaate. Par beech me wifi gaya to? (card 3)"
 }

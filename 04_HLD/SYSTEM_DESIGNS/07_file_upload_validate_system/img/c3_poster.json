@@ -80,7 +80,7 @@
    "y": 84,
    "w": 640,
    "red": "4.5 GB pe wifi gaya",
-   "green": "90 ki rasid S3 pe. Sirf 91 - 100 dobara bhejo",
+   "green": "90 tukdon ki rasid S3 pe hai. Sirf 91 se 100 dobara bhejo",
    "n": 1,
    "mark": [
     320,
@@ -111,8 +111,8 @@
    "x": 30,
    "y": 470,
    "w": 700,
-   "red": "App band, kal wapas aaya",
-   "green": "S3 se poochho (ListParts U-9): rasid wahan, app pe nahi",
+   "red": "App band, Arpan kal wapas aaya",
+   "green": "S3 se poochho (ListParts U-9): rasid S3 pe hai, app pe nahi",
    "n": 3,
    "mark": [
     140,
@@ -134,8 +134,8 @@
    "x": 750,
    "y": 470,
    "w": 720,
-   "red": "COMPLETE aaya hi nahi",
-   "green": "Lifecycle adhoore tukde khud hataata (abort)",
+   "red": "Aakhri \"jod do\" (COMPLETE) aaya hi nahi",
+   "green": "S3 ka niyam (lifecycle) adhoore tukde ~7 din baad khud hata deta",
    "n": 4,
    "mark": [
     1200,
@@ -157,9 +157,16 @@
    "x": 30,
    "y": 565,
    "w": 1440,
-   "red": "Tukda kitna bada? Min 5 MB (aakhri chhod ke), max 10,000 tukde. Badi file to bada tukda.",
-   "green": "Rasid S3 pe hai, app pe nahi: user ko shuru se kuch nahi"
+   "red": "Tukda kitna bada? Kam se kam 5 MB (aakhri chhod ke), zyada se zyada 10,000 tukde. Badi file to bada tukda.",
+   "green": "Rasid S3 pe hai, app pe nahi: Arpan ko shuru se kuch nahi"
   }
  ],
- "kyun": "Jis tukde ki rasid S3 pe hai, wo pakka pahunch gaya. Rasid S3 pe hai, app pe nahi. Net gaya ya app band hua, S3 se poochho aur sirf bache tukde dobara bhejo. User ko shuru se kuch nahi"
+ "kyun": "File 100 tukdon me jaati. Jo tukda pahuncha uski rasid S3 pe likhi. Wifi gaya ya app band hua to S3 se poochho, sirf bache tukde dobara bhejo. Arpan ko shuru se kuch nahi",
+ "step": [
+  3,
+  9
+ ],
+ "peeche": "card 2 me SIGNED URL, bytes seedha S3",
+ "ab": "Arpan ki 4.5 GB chadh chuki thi, wifi chala gaya",
+ "agla": "ab upload hua. Par app hi crash ho gaya aur kisi ne bataya nahi (card 4)"
 }
