@@ -61,6 +61,8 @@ wo machine restart hui?  -> RAM khaali, saari khabar gayi        <- AGLA KADAM
 **To:** line ko RAM ki jagah disk pe likho, taaki restart pe bhi bachi rahe. Aisi disk wali line khud banane
 ki jagah ek bana-banaya tool lete hain: **Kafka**. Kafka bas yahi hai: khabar ki ek line jo disk pe likhi
 rehti hai. Isliye is kadam se dabbe ka naam "LINE" ki jagah "KAFKA".
+Is line ko Kafka me **log** kehte hain (aisi line jisme nayi khabar sirf aakhir me judti hai), aur line ke
+naam ko **topic** (jaise topic "order"). Kafka ki har machine ko **broker** kehte hain.
 
 ```
 [ Order Svc ] --khabar--> [ KAFKA: disk pe log ] -----> [ Email Svc ]
@@ -76,7 +78,7 @@ Shabd bola: **log, offset**. Sawaal:
 padhne se khabar mitti kyun nahi?  -> taaki dobara padh sakein (replay), aur doosri service bhi padhe
 bookmark kahan rakha?              -> Kafka khud rakhta hai
 kal ki khabar dobara padhni hai?   -> bookmark peeche kar do, khabar disk pe padi hai
-disk bharti gayi?                  -> <- KADAM 10
+disk bharti gayi?                  -> 7 din se purani khabar hata do (retention)    <- KADAM 10
 121 number wali khabar disk pe kahan hai?  -> Kafka ek chhoti index file rakhta: number -> jagah
 ```
 
@@ -90,9 +92,10 @@ disk bharti gayi?                  -> <- KADAM 10
 ```
 Sale: har second 5,000 order. Ek Email worker sirf 500 utha paata.
 
-[ LINE ] --> [ Worker ]      line lambi hoti ja rahi, Arpan ka order fasa
+[ KAFKA: topic "order" ] --> [ Worker ]      line lambi hoti ja rahi, Arpan ka order fasa
 ```
 
+Worker = Email Svc ki ek chalti copy, jo khabar utha ke email bhejti hai.
 Ek line ko ek waqt me ek hi worker padh sakta hai. Do worker ek line se uthayenge to ek hi order
 do baar utha sakte hain, ya kram bigad jaayega. Isliye line ke tukde karo:
 
@@ -105,7 +108,8 @@ do baar utha sakte hain, ya kram bigad jaayega. Isliye line ke tukde karo:
                               [ Worker 10 ]  <- koi tukda nahi bacha, khaali
 ```
 
-10 tukde, 10 worker, 10 x 500 = 5,000 har second.
+10 tukde, 10 worker, 10 x 500 = 5,000 har second. Kaunsa tukda kis worker ko, ye Kafka khud baantta hai
+(kaise, wo Kadam 5 me).
 
 Shabd bola: **partition (tukda)**. Sawaal:
 ```
@@ -113,8 +117,8 @@ Shabd bola: **partition (tukda)**. Sawaal:
 10 tukde, 5 worker?          -> ek worker 2 tukde padhega, chalega, bas dheema
 kitne tukde rakhein?         -> jitne worker ek saath chahiye. 5,000 / 500 = 10. Thoda zyada rakho
 tukde baad me badhaye?       -> chalta hai, par kram toot sakta hai      <- KADAM 4
-tukde alag machine pe?       -> haan, 3 machine (broker) me barabar baante, ek pe bojh nahi
-kaunsa tukda kis machine pe?  -> Controller ka naksha rakhta hai
+tukde alag machine pe?       -> haan, 3 broker (Kafka machine) me barabar baante, ek pe bojh nahi
+kaunsa tukda kis broker pe?  -> Controller (Kafka ki ek machine jo baaki pe nazar rakhti) ka naksha batata
 ```
 
 ---
@@ -145,12 +149,14 @@ Shabd bola: **key = userId**. Sawaal:
 ```
 key nahi di?                     -> khabar kisi bhi tukde me, kram nahi bachta
 poore topic ka ek kram chahiye?  -> ek hi tukda, phir wahi bheed. Aksar ek user ka kram kaafi
-ek celeb ki itni khabar ki uska tukda bhar gaya?  -> key me number jodo (userId#1, #2), kram chhodna padega
+ek celeb ki itni khabar ki uska tukda bhar gaya?
+                                 -> key me number jodo (userId#1, #2), kram chhodna padega
 tukde 10 se 20 kiye?             -> key ka tukda badal gaya, kuch der kram toota. Isliye shuru me zyada rakho
 Order Svc ne A bheja, wo network me atka, retry kiya, tab tak B pahunch gaya?
                                  -> Order Svc har khabar pe number lagata (1, 2). Kafka number dekh ke kram
                                     theek rakhta aur dobara aayi khabar nahi likhta (idempotent producer)
-RabbitMQ / SQS me kram?          -> pakka nahi milta. SQS FIFO ya ek hi padhne wala ho tab, par speed kam
+RabbitMQ / SQS (doosre queue tool) me kram?
+                                 -> pakka nahi milta. SQS FIFO ya ek hi padhne wala ho tab, par speed kam
 ```
 
 ---
@@ -158,7 +164,8 @@ RabbitMQ / SQS me kram?          -> pakka nahi milta. SQS FIFO ya ek hi padhne w
 ## Kadam 5: Email Svc ki 3 machine, Arpan ko 3 email
 
 **Peeche se:** Kadam 4 me key = userId se Arpan ki saari khabar ek tukde me, kram se.
-**Ab:** Email Svc ek machine pe nahi chalti, uski 3 machine hain. Teeno ne wahi tukda padha to?
+**Ab:** Kadam 3 me maana tha ki Kafka har tukda ek worker ko deta hai. Par Kafka ko kaise pata ki ye teen
+machine ek hi Email Svc ki hain? Na bataya to Kafka har machine ko alag padhne wala maanta hai:
 
 ```
              [ Tukda 7 ] ---> [ Email machine 1 ]
@@ -166,7 +173,7 @@ RabbitMQ / SQS me kram?          -> pakka nahi milta. SQS FIFO ya ek hi padhne w
                          ---> [ Email machine 3 ]
 ```
 
-Teeno machine ko ek hi team bana do (consumer group, ek hi group.id).
+Teeno machine ko ek hi team bana do: sabko ek hi team ka naam do (group.id). Is team ko consumer group kehte hain.
 Team ke andar har tukda sirf ek machine ko milta hai.
 
 ```
@@ -178,7 +185,7 @@ Team ke andar har tukda sirf ek machine ko milta hai.
 
 Shabd bola: **consumer group**. Sawaal:
 ```
-team ki ek machine gir gayi?      -> uske tukde baaki machine ko mil jaate (rebalance)   <- KADAM 9
+team ki ek machine gir gayi?      -> uske tukde baaki machine ko mil jaate (rebalance)   <- KADAM 10
 har machine ka group.id alag?     -> Kafka teeno ko alag team samjhega, phir 3 email
 team me machine badhani hai?      -> tukde bhi badhao, warna nayi machine khaali
 ```
@@ -346,7 +353,7 @@ Kafka ka asli number kya?          -> disk ki jagah, kyunki Kafka khabar rakhta 
 ## Poora design ek saath
 
 ```
- [ Order Svc ] --ek txn--> [ DB + outbox ] --relay--> [ KAFKA ]
+ [ Order Svc ] --ek transaction--> [ DB + outbox ] --relay--> [ KAFKA ]
                                                         topic "order", 10 tukde, key = userId
                                                         har tukda 3 copy, acks=all, 7 din
                                                            |
