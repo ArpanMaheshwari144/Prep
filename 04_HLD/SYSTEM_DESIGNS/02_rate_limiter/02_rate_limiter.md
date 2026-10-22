@@ -78,7 +78,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 4 DO LOG EK SAATH** · Cue: Redis me EK ginti, 60 sec umar
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -89,7 +89,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: ATOMIC: INCR / LUA script
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -100,7 +100,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 5 KUCH DHEEMA** · Cue: LIMITER GATEWAY pe, sabse aage
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -111,7 +111,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 3 MACHINE GIRI** · Cue: REPLICA + FAIL-OPEN / FAIL-CLOSED
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -122,7 +122,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 7 DOOR KE LOG** · Cue: HOME REGION me ginti
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -133,7 +133,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 8 BAHAR KA HAMLA** · Cue: KAFKA -> PATTERN -> WAF BAN
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -144,7 +144,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 2 BHEED AAYI** · Cue: GLOBAL CAP + LOAD SHEDDING (503)
 
-<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -155,7 +155,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 3 MACHINE GIRI (Redis + copy)** · Cue: LOCAL COUNTER FALLBACK
 
-<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -166,7 +166,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 8 BAHAR KA HAMLA** · Cue: KEY = USER_ID (JWT), IP sirf login
 
-<img src="img/c9_poster.png?v=3" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=4" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
