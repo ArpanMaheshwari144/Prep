@@ -7,10 +7,14 @@ service ko chahiye: SMS Svc (Arpan ko SMS) aur Fraud Svc (order shaq wala to nah
 
 ## 1. Topic
 
-```
-                                          +--> [ SMS Svc ]
- [ Order Svc ] --khabar--> [ order-events ]
-                              (topic)     +--> [ Fraud Svc ]
+```mermaid
+flowchart LR
+    O["Order Svc<br/>(order banata)"] -- "khabar daali:<br/>Arpan ka order" --> T[("Kafka topic<br/>order-events<br/>(naam wali line)")]
+    T -- "padha" --> S["SMS Svc<br/>(Arpan ko SMS)"]
+    T -- "wahi khabar padha" --> F["Fraud Svc<br/>(shaq to nahi)"]
+    T -. "kal judegi" .-> A["Analytics<br/>(nayi service)"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style A stroke-dasharray: 5 5
 ```
 
 - Order Svc khabar ek naam wali line me daal deta hai. Line ka naam "order-events". Kafka me aisi naam wali
