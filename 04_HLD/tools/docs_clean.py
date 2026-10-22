@@ -116,7 +116,9 @@ def run(f):
         c['tha'] = ''
     greys = [c for c in calls if c['type'] == 'grey']
     o = [G.t(30, 40, title, 26, '#e6edf3', True), G.t(30, 68, G.SUB, 15, '#9fb0c8')]
-    dy = G.pehle_box(o, dikkat) - min(ylist)
+    kyall = json.load(open(os.path.join(os.path.dirname(f), 'kyun.json'), encoding='utf-8'))
+    ky = kyall.get(re.search(r'c(\d+)_poster', f).group(1), {})
+    dy = G.pehle_box(o, dikkat, G.kahani(o, ky)) - min(ylist)
     dia_end = max(ylist2) + dy + 6
     o += [f'<g transform="translate(0,{dy:g})">'] + dia + ['</g>']
     for i, c in enumerate(toots, 1):
@@ -129,6 +131,7 @@ def run(f):
     for line in ky.get('baaki', []):
         greys.append({'red': line, 'green': ''})
     y = G.bottom(o, dia_end + G.GAP, toots, pehle, greys, ky.get('kyun', ''))
+    y = G.agla(o, y, ky)
     Ht = int(y + 30)
     out = ('<!doctype html>\n<meta charset="utf-8">\n<title>' + H.escape(title[:40]) + '</title>\n'
            '<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} '
