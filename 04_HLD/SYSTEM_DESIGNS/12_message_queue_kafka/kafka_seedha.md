@@ -233,7 +233,8 @@ A ne "ho gaya" bola, copy banne se pehle mar gaya?  -> khabar gayi. Isliye "ho g
                                                        bhi likh jaaye (acks=all)
 ek copy peeche chal rahi?           -> sirf poori taaza copy "pakki" (ISR). Leader pakki me se hi banta
 dono copy bhi gayi, sirf A bacha?   -> likhna rok do (min.insync = 2). Khone se behtar rukna
-naya leader kaun chunta?            -> Controller (KRaft). Ek hi faisla, do leader kabhi nahi
+naya leader kaun chunta?            -> Controller: Kafka ki ek machine jo baaki sab pe nazar rakhti (KRaft).
+                                       Ek hi faisla, do leader kabhi nahi
 acks ke teen tareeke?               -> 0 = bhej ke bhool jao, 1 = sirf leader (click, log ke liye theek),
                                        all = saari pakki copy (paisa, order)
 3 copy ke liye kitni machine?       -> kam se kam 3 alag machine
@@ -256,7 +257,9 @@ pehle kya poochho?                  -> khabar kho sakti hai ya bilkul nahi? Isi 
 Bookmark nahi hila, to restart pe wahi khabar dobara aati hai. Arpan ko 2 email.
 Ulta karo (pehle bookmark, phir email) to beech me girne pe email kabhi nahi jaata. Ye usse bura hai.
 
-To kram: pehle kaam, phir bookmark. Aur dobara aaye to pehchano:
+To kram: pehle kaam, phir bookmark (bookmark aage karne ko "commit" kehte hain). Aur dobara aaye to pehchano.
+Har khabar ki apni id hoti hai (eventId, jaise E-5). Jo id ka kaam ho chuka, use ek tez jagah likh lo,
+jaise Redis (RAM wala tez store, DB bhi chalega):
 
 ```
  khabar E-5 aayi --> [ Redis: E-5 pehle dekha? ] --haan--> chhod do
@@ -277,6 +280,8 @@ exactly-once milta hai?         -> sirf Kafka se Kafka tak. Email / DB ke liye p
 
 **Peeche se:** Kadam 8 me padhne wala gire to bhi theek: pehle kaam, phir bookmark, eventId se pehchaan.
 **Ab:** padhne wala aur Kafka dono surakshit. Bacha bhejne wala, Order Svc. Wo gira to?
+
+Order Svc do kaam karta hai: pehle order apne DB me likhta, phir Kafka ko khabar deta.
 
 ```
  [ Order Svc ] --1. DB me order 101--> [ DB ]
@@ -299,7 +304,8 @@ Shabd bola: **outbox, relay**. Sawaal:
 order likhne se pehle gira?        -> kuch nahi likha. Arpan dobara order karega, galat kuch nahi
 relay ne bheja, sent = true se pehle gira?  -> khabar dobara jaayegi. Padhne wala E-101 pehchaan lega
 outbox table bharti gayi?          -> sent = true wali row roz saaf karo
-saga kyun nahi?                    -> saga fail hua kaam ulta karta. Yahan khabar ko bachana hai
+saga kyun nahi?                    -> saga = kadam-kadam kaam, fail pe pichhla kaam ulta. Wo galti ulatne ke
+                                      liye hai. Yahan kuch ulatna nahi, khabar ko bachana hai
 poora bachav ek line me?           -> outbox + acks=all + pehle kaam phir bookmark + eventId + DLQ
 ```
 
@@ -323,9 +329,11 @@ poora bachav ek line me?           -> outbox + acks=all + pehle kaam phir bookma
 
 Shabd bola: **rebalance, lag, DLQ, retention**. Sawaal:
 ```
-rebalance me sab ruk jaate?        -> purane tareeke me haan. Naye (cooperative) me sirf jinke tukde badle
+rebalance me sab ruk jaate?        -> purane tareeke me haan. Naye tareeke (cooperative) me sirf wahi
+                                      machine rukti jinke tukde badle
 lag kaise naapein?                 -> aakhri khabar ka number - team ne kahan tak padha
-lag badh raha?                     -> alert + worker badhao. Ek khabar 5 min le to use alag pool me bhejo
+lag badh raha?                     -> alert + worker badhao. Ek khabar 5 min le to use alag
+                                      workers ki alag line me bhejo
 DLQ wali khabar ka kya?            -> theek karke dobara chalao
 padhte hi delete kyun nahi?        -> dobara padhna (replay) band ho jaata
 Email Svc 7 din se zyada band?     -> wo khabar ud chuki. Retention sabse lambi chhutti se lamba rakho
