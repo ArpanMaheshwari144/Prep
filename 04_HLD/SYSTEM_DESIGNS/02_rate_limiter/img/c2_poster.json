@@ -1,0 +1,216 @@
+{
+ "title": "Card 2: padhna aur badhana ek hi kadam me (INCR). Redis ek ke baad ek chalata",
+ "h": 560,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 200,
+   "w": 220,
+   "h": 100,
+   "kind": "user",
+   "title": "Bot",
+   "lines": [
+    "Arpan ke account pe",
+    "20 login ek saath"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 195,
+   "w": 230,
+   "h": 110,
+   "kind": "server",
+   "title": "App (kai machine)",
+   "lines": [
+    "sab ek saath",
+    "Redis ko bhejte"
+   ]
+  },
+  {
+   "x": 690,
+   "y": 180,
+   "w": 380,
+   "h": 150,
+   "kind": "cache",
+   "title": "Redis (ek hi line me chalta)",
+   "lines": [
+    "Lua: INCR + EXPIRE ek saath",
+    "rate:Arpan:login = 1, 2, 3 ...",
+    "ek ke baad ek, beech me koi nahi"
+   ]
+  },
+  {
+   "x": 1180,
+   "y": 210,
+   "w": 290,
+   "h": 90,
+   "kind": "plain",
+   "title": "5 andar, 15 ko 429",
+   "lines": [
+    "had 5 hi rahi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     250
+    ],
+    [
+     336,
+     250
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     572,
+     250
+    ],
+    [
+     686,
+     250
+    ]
+   ],
+   "c": "orange",
+   "label": "20 ek saath",
+   "lx": 612,
+   "ly": 240,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     1072,
+     255
+    ],
+    [
+     1176,
+     255
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 400,
+   "w": 560,
+   "red": "Pehle GET phir SET: dono ne 4 padha, dono andar",
+   "green": "INCR me padhna aur badhana ek hi kadam",
+   "conn": [
+    [
+     455,
+     307
+    ],
+    [
+     455,
+     400
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "App ke andar synchronized laga dete?",
+   "green": "Wo ek hi machine me chalta, doosri App ko pata nahi",
+   "conn": [
+    [
+     455,
+     146
+    ],
+    [
+     455,
+     195
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 640,
+   "y": 84,
+   "w": 830,
+   "red": "Ginti badh gayi, par EXPIRE lagne se pehle crash: key kabhi nahi mitegi",
+   "green": "Arpan hamesha ke liye block. Isliye INCR aur EXPIRE ek hi Lua script me",
+   "mark": [
+    1060,
+    180
+   ],
+   "conn": [
+    [
+     1060,
+     166
+    ],
+    [
+     1060,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 620,
+   "y": 400,
+   "w": 420,
+   "red": "Lua script atak gayi",
+   "green": "Poora Redis ruk jaata. Script chhoti, loop nahi",
+   "mark": [
+    702,
+    330
+   ],
+   "conn": [
+    [
+     702,
+     342
+    ],
+    [
+     702,
+     400
+    ]
+   ]
+  },
+  {
+   "n": 5,
+   "type": "x",
+   "x": 1050,
+   "y": 400,
+   "w": 420,
+   "red": "Lua me 2 key, cluster me alag machine",
+   "green": "Hash tag {Arpan}: dono key ek machine pe",
+   "mark": [
+    1058,
+    330
+   ],
+   "conn": [
+    [
+     1058,
+     342
+    ],
+    [
+     1058,
+     400
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 480,
+   "w": 1010,
+   "red": "Sab ek hi line me, to dheema nahi hoga? Nahi, RAM me hai, ek machine ~lakh command / sec (andaza).",
+   "green": "Aur zyada chahiye to shard: har user ki key alag Redis pe"
+  }
+ ]
+}

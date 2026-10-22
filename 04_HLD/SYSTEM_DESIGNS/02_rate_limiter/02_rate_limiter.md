@@ -100,15 +100,8 @@ NAHI    ginti DB me     -> DHEEMA: har request pe disk aur lock lagta, bahut dhe
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: ATOMIC: INCR / LUA script
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=8" width="900">
-
-<img src="img/c2_2.png?v=8" width="900">
-
-<img src="img/c2_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     INCR se padhna aur badhana ek hi kadam me ho jaata hai. Redis ek ke baad ek chalata hai
@@ -119,13 +112,6 @@ NAHI    pehle GET phir SET  -> RACE: do kadam hue, dono ne 4 padha, dono andar a
 
 > [!IMPORTANT]
 > **Yaad rakh:** Padhna + badhana ek kadam (INCR), aur INCR + EXPIRE ek hi Lua script me.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - ginti badhi, par "60 sec baad mita dena" bolne se pehle crash? → **hamesha block**: key ban gayi par uski expiry kabhi lagi hi nahi. Isliye INCR aur EXPIRE ek hi Lua script me
-> - Lua atak gayi? → **Redis ruk jaata**: poora Redis ruk jaata, kyunki ek hi line hai. Isliye script chhoti rakho, loop mat daalo
-> - Redis sab kuch ek line me karta hai, to dheema nahi hoga? → **nahi, RAM + shard**: nahi, RAM me hai, ek machine ~lakh command / sec (andaza). Aur chahiye to shard
-> - Lua me 2 key hain aur Redis cluster hai? → **hash tag {Arpan}**: dono key alag machine pe ja sakti. {Arpan} hash tag lagao, dono ek hi machine pe aayengi
 
 
 ---
