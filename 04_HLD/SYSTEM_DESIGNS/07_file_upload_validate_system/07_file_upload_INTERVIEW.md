@@ -60,15 +60,8 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: ASYNC + TRACKING ID (queue, worker)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
-<img src="img/c1_1.png?v=5" width="900">
-
-<img src="img/c1_2.png?v=5" width="900">
-
-<img src="img/c1_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     user ko turant tracking id T-101 milti hai aur haal VALIDATING. Khabar Kafka me jaati hai,
@@ -84,17 +77,6 @@ NAHI    Upload Svc file S3 me rakhe aur Validator call karke jawab ka intezaar k
 > [!IMPORTANT]
 > **Yaad rakh:** Turant T-101 + VALIDATING. Khabar Kafka me, worker peeche jaanch ke DONE likhta.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - worker beech me mar gaya? → **khabar dobara milti hai**: kyunki offset commit DB me likhne ke baad hi hota hai
-> - wahi khabar dobara aa gayi? → **pehle haal dekho, DONE to skip**: T-101 DONE hai to skip kar do (idempotent)
-> - Validator do baar chal gaya? → **idempotent, theek hai**: jaanch T-101 pe idempotent hai, dobara chalna theek hai, DONE ek hi baar likha jaata hai
-> - Validator 1 ghanta band? → **4,000 khabar line me padi rehti**: DONE likhe bina offset aage nahi badhta
-> - band hai, call karte rahoge? → **nahi, circuit breaker lagao**: 3-5 fail pe call band, thodi der baad ek test call. Aur doosri company rakho, kyunki unki copy hum khud nahi chala sakte
-> - Validator band hai, to upload bhi rok dein? → **nahi, upload le lo**: nahi, error diya to 31 March ki deadline gayi aur file gayi hi nahi. Upload le lo, khabar Kafka me padi rahegi, Validator aate hi jaanch lega
-> - is line ke liye Kafka hi kyun? → **zaroori nahi: SQS / RabbitMQ**: zaroori nahi hai. ~200 / sec pe SQS ya RabbitMQ kaafi hai. Kafka tab jab bahut bheed ho ya khabar dobara padhni ho
-> - Validator ko 5 GB ki file kaise doge? → **signed GET link**: file nahi bhejte, 10 min ka signed GET link dete hain. Validator seedha S3 se padhta hai, bytes tab bhi hamare server se nahi guzarte
-
 
 ---
 
@@ -104,15 +86,8 @@ NAHI    Upload Svc file S3 me rakhe aur Validator call karke jawab ka intezaar k
 
 **Rail 5 KUCH DHEEMA (bytes)** · Cue: PRESIGNED URL, bytes seedha S3
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=5" width="900">
-
-<img src="img/c2_2.png?v=5" width="900">
-
-<img src="img/c2_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     server sirf ek signed URL deta hai (10 min ka) aur T-102. Phone 5 GB seedha S3 pe bhejta hai,
@@ -133,13 +108,6 @@ NAHI    bytes server ke raaste bhejo
 > [!IMPORTANT]
 > **Yaad rakh:** Server sirf 10 min ka signed URL + T-102 deta, phone bytes seedha S3 pe. Had (5 GB) paas me sign.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - had 5 GB, koi 50 GB bhej de? → **had paas me, S3 khud reject**: POST me content-length-range, PUT me size sign hota hai (ek PUT max 5 GB). S3 event pe size phir se dekh lo
-> - "/complete" aaya hi nahi? → **S3 event se queue me daalo**: S3 event matlab "file aa gayi". Client pe bharosa nahi karte
-> - S3 paas ko sahi kaise maanta hai? → **wahi signature khud banata**: S3 ke paas bhi wahi AWS secret hai. URL ki cheezon (file ka naam, 10 min, PUT) se wahi signature banata, mile to paas asli. Naam / samay badla to nahi milta, 403
-> - file raaste me kharab to nahi hui? → **checksum (SHA-256)**: client file ka SHA-256 header me bhejta, S3 aayi hui file ka khud nikaal ke milaata, alag to reject
-
 
 ---
 
@@ -149,15 +117,8 @@ NAHI    bytes server ke raaste bhejo
 
 **Rail 5 KUCH DHEEMA (wifi)** · Cue: MULTIPART, sirf bache tukde
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=5" width="900">
-
-<img src="img/c3_2.png?v=5" width="900">
-
-<img src="img/c3_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     file 100 tukdon me jaati hai, kai tukde saath, har tukde ki rasid (ETag), aakhir me COMPLETE.
@@ -171,12 +132,6 @@ NAHI    ek hi lamba upload
 > [!IMPORTANT]
 > **Yaad rakh:** Multipart: 100 tukde, har tukde ki rasid (ETag) S3 pe. Wifi gaya to sirf bache tukde.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - app band, kal wapas aaya? → **S3 se poochho (ListParts U-9)**: rasid wahan hai, app pe nahi
-> - COMPLETE aaya hi nahi? → **S3 lifecycle adhoore tukde hataye**: kuch din (jaise 7) baad khud hata deta hai (abort)
-> - tukda kitna bada rakhoge? → **min 5 MB, max 10,000 tukde**: S3 ki had hai: min 5 MB (aakhri tukda chhod ke), max 10,000 tukde. Badi file to bada tukda
-
 
 ---
 
@@ -186,15 +141,8 @@ NAHI    ek hi lamba upload
 
 **Rail 3 MACHINE GIRI** · Cue: SWEEPER job (atki file)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=5" width="900">
-
-<img src="img/c4_2.png?v=5" width="900">
-
-<img src="img/c4_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     har kuch min (jaise 5) ek sweeper job atki file dhoondhta hai. 10 min se haal nahi badla, jabki
@@ -210,12 +158,6 @@ NAHI    sweeper hi na ho
 > [!IMPORTANT]
 > **Yaad rakh:** Har kuch min sweeper: 10 min se haal nahi badla = atka. Bytes hain to dobara line me, nahi to FAILED.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - /complete aur S3 event dono chhoot gaye? → **isi liye sweeper**: wo har kuch min atki file dhoondhta hai
-> - sweeper do machine pe chal gaya? → **ek hi chale (lock / leader)**: Ya chalne do, kyunki dobara daalna safe hai
-> - sweeper hai, to S3 lifecycle kis kaam ka? → **bytes ki safai**: wo bytes ki safai karta hai: adhoore uploads ke bytes khud hataata hai. DB ka haal sweeper badalta hai
-
 
 ---
 
@@ -225,15 +167,8 @@ NAHI    sweeper hi na ho
 
 **Rail 2 BHEED AAYI** · Cue: CACHE Redis + READ REPLICA
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=5" width="900">
-
-<img src="img/c5_2.png?v=5" width="900">
-
-<img src="img/c5_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     GET /status/T-101 pehle Redis se aata hai (1 ms). Redis me nahi mila to read replica se laao
@@ -249,14 +184,6 @@ NAHI    har poochh seedha DB pe
 > [!IMPORTANT]
 > **Yaad rakh:** GET /status pehle Redis (1 ms), miss pe replica, Redis me rakho. DONE pe Redis key hatao.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - DB me DONE, app me VALIDATING? → **DONE pe Redis key hatao**: sirf DB badla, Redis me purana haal pada tha. Worker DONE likhe to usi waqt DB likho aur Redis key hatao, agla poochh DB se naya DONE laayega. Redis chhoot bhi gaya to umar (TTL) baad naya
-> - replica peeche, purana haal Redis me baitha? → **SET NX + chhoti umar**: DONE ke baad bhi purana haal Redis me baith sakta hai. Miss pe sirf SET NX + chhoti umar, ya primary se padho
-> - Redis gira? → **seedha replica pe jao, dheema par chalta hai**: Poochne pe rate limit lagao
-> - har 2 sec poochhna zaroori hai? → **gap badhao**: gap badhao (2s, 4s, 8s). Haal itni jaldi nahi badalta
-> - poochhna hi band karwa do to? → **SSE / WebSocket**: server khud bheje (SSE / WebSocket), sirf jab haal badle
-
 
 ---
 
@@ -266,15 +193,8 @@ NAHI    har poochh seedha DB pe
 
 **Rail 6 DATA BADA (folder)** · Cue: PARENT id + CHILD id
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=5" width="900">
-
-<img src="img/c6_2.png?v=5" width="900">
-
-<img src="img/c6_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     folder ka ek id hai (P-1), har file uska child. Batch init me 1000 URL milte hain, har file ka
@@ -289,13 +209,6 @@ NAHI    har file ka alag id hi rakho
 > [!IMPORTANT]
 > **Yaad rakh:** Folder ka id P-1, har file child. Child DONE pe ginti +1 (ek UPDATE), sab DONE to P-1 DONE.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - folder ki koi file FAILED? → **P-1 PARTIAL, sirf wahi dobara**: sirf fail wali file dobara, poora folder nahi
-> - do worker ek saath done_count +1? → **ek UPDATE, ginti nahi khoti**: done_count = done_count + 1, DB ke andar hota hai
-> - ek child ki DONE khabar dobara aayi? → **pehle child ka haal badlo**: UPDATE child SET status = 'DONE' WHERE id = ? AND status <> 'DONE'. 1 row badli tabhi folder +1, 0 row = pehle ho chuka, ginti do baar nahi badhti
-> - lakh chhoti files hon to? → **ZIP**: ZIP. Client ek file bana ke bheje, server use khol le
-
 
 ---
 
@@ -305,15 +218,8 @@ NAHI    har file ka alag id hi rakho
 
 **Rail 8 BAHAR KA HAMLA (id)** · Cue: OWNER CHECK (AUTHZ), 403
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
-<img src="img/c7_1.png?v=5" width="900">
-
-<img src="img/c7_2.png?v=5" width="900">
-
-<img src="img/c7_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     har request pe check hota hai ki file ka maalik hi maang raha hai. JWT bolta hai ravi, T-101 ka
@@ -327,12 +233,6 @@ NAHI    id hai to file de do
 > [!IMPORTANT]
 > **Yaad rakh:** Har request pe owner check: JWT ka user = file ka maalik? Nahi to 403 (admin role chhoot).
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - id to random tha, phir check kyun? → **id leak hoti (screenshot)**: id leak hoti hai: log, screenshot, link se
-> - admin maange to? → **owner ya admin role**: owner ho ya admin role ho, dono ki jaanch har request pe, warna 403
-> - PR me owner check kahan dhoondhoge? → **har handler ki pehli line**: har handler ki pehli line me: file.owner_id == jwt.user_id ya admin, warna 403. userId JWT se aata hai, body se kabhi nahi
-
 
 ---
 
@@ -342,15 +242,8 @@ NAHI    id hai to file de do
 
 **Rail 8 BAHAR KA HAMLA (link)** · Cue: SIGNED GET, 5 min ka naya paas
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
-<img src="img/c8_1.png?v=5" width="900">
-
-<img src="img/c8_2.png?v=5" width="900">
-
-<img src="img/c8_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     DB me sirf S3 key (pata) rakhte hain. Download maanga to pehle maalik check, phir naya 5 min ka
@@ -365,11 +258,6 @@ NAHI    pakka link DB me rakh ke de do
 > [!IMPORTANT]
 > **Yaad rakh:** DB me sirf S3 key. Download pe pehle maalik check, phir naya 5 min ka signed link.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - 5 min me download adhoora? → **chalu download beech me nahi katta**: umar sirf shuru karne ki hai
-> - 5 min ke andar link aage bhej diya? → **ye risk maana hai**: Zyada sensitive ho to CloudFront signed URL + IP ki had
-
 
 ---
 
@@ -379,15 +267,8 @@ NAHI    pakka link DB me rakh ke de do
 
 **Rail 8 BAHAR KA HAMLA (file)** · Cue: MAGIC BYTES (pehle kuch byte)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
 
-<img src="img/c9_1.png?v=5" width="900">
-
-<img src="img/c9_2.png?v=5" width="900">
-
-<img src="img/c9_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     worker file ke pehle 4 byte padhta hai. Shuru me "MZ" hai to EXE, "%PDF" nahi, to reject (magic bytes)
@@ -400,11 +281,6 @@ NAHI    naam / type pe bharosa karo (report.pdf, application/pdf)
 
 > [!IMPORTANT]
 > **Yaad rakh:** Pehle 4 byte padho (magic bytes): "%PDF" = PDF, "MZ" = EXE reject. Virus ke liye scan alag.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - shuru PDF, andar virus? → **magic bytes sirf type, scan bhi chahiye**: magic bytes sirf type batate hain. Scan bhi chahiye (ClamAV / S3 malware)
-> - jaanch me fail hui file? → **quarantine bucket (download band)**: Baad me delete, ya security wale dekhein
 
 
 ---

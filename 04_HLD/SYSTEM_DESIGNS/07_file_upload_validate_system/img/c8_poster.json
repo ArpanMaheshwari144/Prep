@@ -1,0 +1,194 @@
+{
+ "title": "Card 8: DB me sirf S3 key. Download pe pehle maalik check, phir naya 5 min ka signed link",
+ "h": 600,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "download maanga"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 215,
+   "w": 280,
+   "h": 170,
+   "kind": "server",
+   "title": "File Svc",
+   "lines": [
+    "pehle maalik check",
+    "phir naya",
+    "5 min ka link"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 190,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "sirf S3 key (pata)"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 340,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "S3",
+   "lines": [
+    "file"
+   ]
+  },
+  {
+   "x": 1100,
+   "y": 240,
+   "w": 370,
+   "h": 120,
+   "kind": "user",
+   "title": "WhatsApp group",
+   "lines": [
+    "1 ghanta baad khola:",
+    "expire, nahi khula"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     612,
+     265
+    ],
+    [
+     696,
+     240
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     612,
+     335
+    ],
+    [
+     696,
+     385
+    ]
+   ],
+   "c": "purple",
+   "label": "sign",
+   "lx": 648,
+   "ly": 343,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     1002,
+     385
+    ],
+    [
+     1096,
+     330
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "expire",
+   "lx": 1060,
+   "ly": 385
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 840,
+   "red": "Pakka link DB me rakh ke de do?",
+   "green": "Hamesha chalta: WhatsApp me koi bhi kabhi bhi khole",
+   "n": 1,
+   "conn": [
+    [
+     850,
+     146
+    ],
+    [
+     850,
+     190
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 890,
+   "y": 84,
+   "w": 580,
+   "red": "5 min ke andar link aage bhej diya",
+   "green": "Ye risk maana hai. Bahut sensitive:",
+   "n": 2,
+   "green2": "CloudFront signed URL + IP had",
+   "mark": [
+    1400,
+    240
+   ],
+   "conn": [
+    [
+     1400,
+     228
+    ],
+    [
+     1400,
+     170
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 560,
+   "y": 500,
+   "w": 910,
+   "red": "5 min me download adhoora",
+   "green": "Chalu download beech me nahi katta: umar sirf shuru karne ki",
+   "n": 3,
+   "mark": [
+    850,
+    440
+   ],
+   "conn": [
+    [
+     850,
+     452
+    ],
+    [
+     850,
+     500
+    ]
+   ]
+  }
+ ]
+}

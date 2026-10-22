@@ -1,0 +1,235 @@
+{
+ "title": "Card 6: folder ka id P-1, har file child. Child DONE pe ginti +1 (ek UPDATE), sab DONE to P-1 DONE",
+ "h": 680,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 110,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "poora folder",
+    "1000 file"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Upload Svc",
+   "lines": [
+    "batch init:",
+    "1000 URL, child id"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 190,
+   "w": 380,
+   "h": 120,
+   "kind": "db",
+   "title": "Folder P-1",
+   "lines": [
+    "done_count 999 / 1000",
+    "sab DONE = DONE",
+    "koi FAILED = PARTIAL"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 350,
+   "w": 380,
+   "h": 100,
+   "kind": "db",
+   "title": "Child (C-1 ... C-1000)",
+   "lines": [
+    "har file apna haal"
+   ]
+  },
+  {
+   "x": 1110,
+   "y": 260,
+   "w": 360,
+   "h": 130,
+   "kind": "server",
+   "title": "Worker",
+   "lines": [
+    "child DONE pe",
+    "folder +1 (ek UPDATE)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     552,
+     280
+    ],
+    [
+     636,
+     250
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     552,
+     330
+    ],
+    [
+     636,
+     395
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1106,
+     300
+    ],
+    [
+     1022,
+     255
+    ]
+   ],
+   "c": "purple",
+   "label": "+1",
+   "lx": 1070,
+   "ly": 262,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     1106,
+     360
+    ],
+    [
+     1022,
+     400
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 590,
+   "red": "Har file ka alag id hi rakho?",
+   "green": "Folder ka haal nahi: 1000 id khud dekhne padte",
+   "n": 1,
+   "conn": [
+    [
+     425,
+     146
+    ],
+    [
+     425,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 640,
+   "y": 84,
+   "w": 830,
+   "red": "Do worker ek saath +1",
+   "green": "done_count = done_count + 1, DB ke andar: ginti nahi khoti",
+   "n": 2,
+   "mark": [
+    980,
+    190
+   ],
+   "conn": [
+    [
+     980,
+     178
+    ],
+    [
+     980,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 500,
+   "w": 700,
+   "red": "Ek child ki DONE khabar dobara aayi",
+   "green": "Pehle child: WHERE status <> 'DONE'. 1 row tabhi folder +1",
+   "n": 3,
+   "mark": [
+    690,
+    450
+   ],
+   "conn": [
+    [
+     690,
+     462
+    ],
+    [
+     690,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 500,
+   "w": 720,
+   "red": "Folder ki ek file FAILED",
+   "green": "P-1 PARTIAL, sirf wahi file dobara",
+   "n": 4,
+   "mark": [
+    980,
+    450
+   ],
+   "conn": [
+    [
+     980,
+     462
+    ],
+    [
+     980,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 595,
+   "w": 1440,
+   "red": "Lakh chhoti files? ZIP: client ek file bana ke bheje, server khole.",
+   "green": "Pehle poochho: sirf file aayegi ya folder bhi"
+  }
+ ]
+}

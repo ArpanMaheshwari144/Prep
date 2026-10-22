@@ -1,0 +1,158 @@
+{
+ "title": "Card 7: har request pe owner check: JWT ka user = file ka maalik? Nahi to 403 (admin role chhoot)",
+ "h": 580,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 230,
+   "h": 120,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "GET /download/T-101",
+    "JWT: ravi"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 240,
+   "w": 210,
+   "h": 120,
+   "kind": "lb",
+   "title": "Gateway",
+   "lines": [
+    "JWT: kaun ho"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 215,
+   "w": 330,
+   "h": 170,
+   "kind": "server",
+   "title": "File Svc",
+   "lines": [
+    "pehli line:",
+    "owner_id == jwt.user_id",
+    "ya admin role",
+    "warna 403"
+   ]
+  },
+  {
+   "x": 1060,
+   "y": 240,
+   "w": 410,
+   "h": 120,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "T-101: maalik arpan"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     262,
+     300
+    ],
+    [
+     336,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     552,
+     300
+    ],
+    [
+     636,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     972,
+     300
+    ],
+    [
+     1056,
+     300
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     805,
+     387
+    ],
+    [
+     805,
+     440
+    ],
+    [
+     145,
+     440
+    ],
+    [
+     145,
+     364
+    ]
+   ],
+   "c": "grey",
+   "label": "403",
+   "lx": 470,
+   "ly": 430,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 800,
+   "red": "Id hai to file de do?",
+   "green": "Ravi ne T-101 daala, file mil gayi: chori",
+   "n": 1,
+   "conn": [
+    [
+     805,
+     146
+    ],
+    [
+     805,
+     215
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 850,
+   "y": 84,
+   "w": 620,
+   "red": "Id to random tha, check kyun?",
+   "green": "Id leak hoti: log, screenshot, link",
+   "n": 2
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 490,
+   "w": 1440,
+   "red": "Admin maange? Owner ho ya admin role, dono ki jaanch har request pe.",
+   "green": "PR me kahan? Har handler ki pehli line. userId JWT se, body se kabhi nahi"
+  }
+ ]
+}
