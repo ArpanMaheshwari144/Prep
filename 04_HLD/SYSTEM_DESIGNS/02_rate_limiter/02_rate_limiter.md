@@ -282,6 +282,7 @@ NAHI    turant ban kar do -> GALAT: asli user bhi tez click karta, office NAT, s
 > - Kafka peeche chal raha? → **ban kuch minute late**: rate limit rok raha
 > - office ka IP (200 log, ek IP)? → **captcha, ban nahi**: ban nahi, captcha. Ban bhi 24 ghante me hat jaata. haath se bhi hata sakte. Bheed wale IP pe ban ki jagah captcha
 > - userId pe ban lagana hai, kahan lagega? → **gateway (JWT)**: gateway pe, JWT se userId milta. WAF edge pe baitha hai, wo sirf IP dekhta hai
+> - baar-baar wahi gunda, permanent ban? → **userId permanent, IP umar ke saath**: pakka fraud pe account / device hamesha ke liye band. IP ka WAF ban kuch ghante, kyunki IP kal kisi aur ka ho sakta
 
 
 ---
