@@ -1,0 +1,44 @@
+{
+  "title": "Card 2: tweet DB me save + khabar Kafka me, turant 'ho gaya'. Inbox workers peeche bharte",
+  "h": 700,
+  "boxes": [
+    {"x": 30, "y": 220, "w": 200, "h": 100, "kind": "user", "title": "Main", "lines": ["tweet kiya"]},
+    {"x": 300, "y": 200, "w": 240, "h": 140, "kind": "server", "title": "Tweet Svc", "lines": ["DB me save", "Kafka me khabar", "turant 'ho gaya'"]},
+    {"x": 640, "y": 220, "w": 220, "h": 100, "kind": "cache", "title": "Kafka", "lines": ["khabar disk pe"]},
+    {"x": 940, "y": 200, "w": 220, "h": 140, "kind": "server", "title": "Workers", "lines": ["Kafka se padh ke", "inbox bharte"]},
+    {"x": 1240, "y": 210, "w": 230, "h": 120, "kind": "cache", "title": "5,000 inbox", "lines": ["sorted set (Redis)", "id ek hi baar"]},
+    {"x": 300, "y": 420, "w": 240, "h": 80, "kind": "db", "title": "Tweet DB", "lines": ["tweet pakka yahan"]}
+  ],
+  "arrows": [
+    {"pts": [[232, 270], [296, 270]], "c": "blue"},
+    {"pts": [[542, 270], [636, 270]], "c": "orange"},
+    {"pts": [[862, 270], [936, 270]], "c": "orange"},
+    {"pts": [[1162, 270], [1236, 270]], "c": "green"},
+    {"pts": [[420, 342], [420, 416]], "c": "purple"}
+  ],
+  "callouts": [
+    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 600,
+     "red": "Pehle usi request me 5,000 inbox ek-ek bharte the",
+     "green": "5+ sec, timeout, 'fail' dikha, par tweet ban chuka tha",
+     "conn": [[420, 146], [420, 200]]},
+    {"n": 2, "type": "pehle", "x": 660, "y": 84, "w": 810,
+     "red": "App me peeche ek thread chala dete?",
+     "green": "App crash hua to thread ka kaam gaya. Kafka disk pe hai, wahan se dobara padh lo",
+     "conn": [[750, 146], [750, 220]]},
+    {"n": 3, "type": "x", "x": 620, "y": 420, "w": 520,
+     "red": "Worker 100 me se 60 inbox bhar ke gira",
+     "green": "Kafka ko 'ho gaya' bola hi nahi, khabar phir aayegi",
+     "mark": [952, 340], "conn": [[952, 352], [952, 420]]},
+    {"n": 4, "type": "x", "x": 1150, "y": 420, "w": 320,
+     "red": "Wahi 60 dobara likhe",
+     "green": "Sorted set: id ek hi baar",
+     "mark": [1252, 330], "conn": [[1252, 342], [1252, 420]]},
+    {"n": 5, "type": "x", "x": 560, "y": 520, "w": 580,
+     "red": "Tweet DB me save, par Kafka me khabar fail",
+     "green": "Outbox ya retry. Dobara aayi to bhi sorted set me ek hi",
+     "mark": [590, 270], "conn": [[590, 282], [590, 520]]},
+    {"type": "grey", "x": 30, "y": 610, "w": 1440,
+     "red": "Apna tweet apni feed me kab? Seedha apni feed me jodo, fanout peeche. Workers kam? Badhao, partition bat jaati.",
+     "green": "Inbox pe 10 lakh likhai / sec: ek Redis ~1 lakh jhelta, isliye Redis Cluster ke 10-20 tukde"}
+  ]
+}

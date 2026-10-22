@@ -84,15 +84,8 @@ NAHI    DB pe index  -> WAHI: thoda tez hota, par har khulne pe 200 ka jod wahi 
 
 **Rail 5 KUCH DHEEMA** · Cue: KAFKA, fanout peeche
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=5" width="900">
-
-<img src="img/c2_2.png?v=5" width="900">
-
-<img src="img/c2_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     tweet DB me save hota hai aur khabar Kafka me jaati hai, mujhe turant "ho gaya" dikhta hai.
@@ -107,15 +100,6 @@ NAHI    App me peeche ek thread -> KHOYA: App crash hua to thread ka kaam gaya.
 
 > [!IMPORTANT]
 > **Yaad rakh:** Tweet DB me save hote hi "ho gaya". Khabar Kafka me, workers peeche inbox bharte. Sorted set me dohra nahi.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - tweet DB me save, Kafka me khabar fail? → **Outbox ya retry lagao**: dono ek saath nahi hote. Dobara aaya to sorted set me ek hi rehta
-> - fanout peeche, mera tweet meri feed me kab? → **seedha apni feed me**: apna tweet seedha apni feed me jodo. Fanout peeche, apna turant
-> - worker 100 me se 60 inbox bhar ke gira? → **commit nahi hua, khabar phir aayegi**: worker ne Kafka ko "ho gaya" bola hi nahi (commit nahi kiya), to khabar phir aayegi
-> - worker dobara chala aur wahi 60 phir likh diye, to tweet do baar dikhega? → **ek hi baar (sorted set)**: nahi, ek hi baar. Sorted set me same tweet_id ek hi baar rehta hai
-> - bheed me workers kam pad gaye? → **worker badhao, partition bat jaati**: Kafka ki lines (partition) workers me aapas me bat jaati hain
-> - inbox pe bheed: 5,000 tweet/sec x 200 follower = 10 lakh likhai/sec. Redis jhelega? → **Redis Cluster, 10-20 tukde**: ek Redis ~1 lakh/sec jhelta hai, isliye Redis Cluster ke 10-20 tukde, inbox user_id se bate
 
 
 ---

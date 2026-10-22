@@ -1,0 +1,77 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 2: tweet DB me save + khabar Kafka </title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="700" viewBox="0 0 1500 700" xmlns="http://www.w3.org/2000/svg"><defs>
+<marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+<marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+<marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
+<marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
+<marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
+</defs><rect width="1500" height="700" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 2: tweet DB me save + khabar Kafka me, turant &#x27;ho gaya&#x27;. Inbox workers peeche bharte</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
+<rect x="30" y="220" width="200" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main</text>
+<text x="130.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">tweet kiya</text>
+<rect x="300" y="200" width="240" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="420.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Tweet Svc</text>
+<text x="420.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">DB me save</text>
+<text x="420.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Kafka me khabar</text>
+<text x="420.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">turant &#x27;ho gaya&#x27;</text>
+<rect x="640" y="220" width="220" height="100" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="750.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Kafka</text>
+<text x="750.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar disk pe</text>
+<rect x="940" y="200" width="220" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="1050.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Workers</text>
+<text x="1050.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Kafka se padh ke</text>
+<text x="1050.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">inbox bharte</text>
+<rect x="1240" y="210" width="230" height="120" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="1355.0" y="244" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">5,000 inbox</text>
+<text x="1355.0" y="270" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sorted set (Redis)</text>
+<text x="1355.0" y="292" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">id ek hi baar</text>
+<rect x="300" y="420" width="240" height="80" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="420.0" y="454" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Tweet DB</text>
+<text x="420.0" y="480" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">tweet pakka yahan</text>
+<path d="M232 270 L296 270" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M542 270 L636 270" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M862 270 L936 270" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M1162 270 L1236 270" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M420 342 L420 416" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M420 146 L420 200" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="30" y="84" width="600" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
+<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Pehle usi request me 5,000 inbox ek-ek bharte the</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">5+ sec, timeout, &#x27;fail&#x27; dikha, par tweet ban chuka tha</text>
+<path d="M750 146 L750 220" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="660" y="84" width="810" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="682" cy="106" r="13" fill="#ffcc4d"/>
+<text x="682" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="704" y="111" font-size="15" font-weight="700" fill="#ffcc4d">App me peeche ek thread chala dete?</text>
+<text x="682" y="135" font-size="15" font-weight="700" fill="#3ddc97">App crash hua to thread ka kaam gaya. Kafka disk pe hai, wahan se dobara padh lo</text>
+<path d="M952 352 L952 420" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="940" y1="328" x2="964" y2="352"/><line x1="964" y1="328" x2="940" y2="352"/></g>
+<rect x="620" y="420" width="520" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="642" cy="442" r="13" fill="#ff5a6a"/>
+<text x="642" y="447" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="664" y="447" font-size="15" font-weight="700" fill="#ff5a6a">Worker 100 me se 60 inbox bhar ke gira</text>
+<text x="642" y="471" font-size="15" font-weight="700" fill="#3ddc97">Kafka ko &#x27;ho gaya&#x27; bola hi nahi, khabar phir aayegi</text>
+<path d="M1252 342 L1252 420" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="1240" y1="318" x2="1264" y2="342"/><line x1="1264" y1="318" x2="1240" y2="342"/></g>
+<rect x="1150" y="420" width="320" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="1172" cy="442" r="13" fill="#ff5a6a"/>
+<text x="1172" y="447" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">4</text>
+<text x="1194" y="447" font-size="15" font-weight="700" fill="#ff5a6a">Wahi 60 dobara likhe</text>
+<text x="1172" y="471" font-size="15" font-weight="700" fill="#3ddc97">Sorted set: id ek hi baar</text>
+<path d="M590 282 L590 520" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="578" y1="258" x2="602" y2="282"/><line x1="602" y1="258" x2="578" y2="282"/></g>
+<rect x="560" y="520" width="580" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="582" cy="542" r="13" fill="#ff5a6a"/>
+<text x="582" y="547" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">5</text>
+<text x="604" y="547" font-size="15" font-weight="700" fill="#ff5a6a">Tweet DB me save, par Kafka me khabar fail</text>
+<text x="582" y="571" font-size="15" font-weight="700" fill="#3ddc97">Outbox ya retry. Dobara aayi to bhi sorted set me ek hi</text>
+<rect x="30" y="610" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="52" y="637" font-size="15" font-weight="700" fill="#c9d6e8">Apna tweet apni feed me kab? Seedha apni feed me jodo, fanout peeche. Workers kam? Badhao, partition bat jaati.</text>
+<text x="52" y="661" font-size="15" font-weight="700" fill="#9fb0c8">Inbox pe 10 lakh likhai / sec: ek Redis ~1 lakh jhelta, isliye Redis Cluster ke 10-20 tukde</text>
+</svg>
