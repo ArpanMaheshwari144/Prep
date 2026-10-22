@@ -60,7 +60,7 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: ATOMIC UPDATE ... WHERE available
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -71,7 +71,7 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 **Rail 1 KAAM CHALA (hold)** · Cue: HOLD + held_until (umar)
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -82,7 +82,7 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 **Rail 4 DO LOG EK SAATH (pay)** · Cue: IDEMPOTENCY KEY (bookingId)
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -93,7 +93,7 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 **Rail 2 BHEED AAYI (map)** · Cue: CACHE + READ REPLICA
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -104,7 +104,7 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 **Rail 2 BHEED AAYI (sale)** · Cue: WAITING ROOM + Kafka (sirf badi sale)
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -115,7 +115,7 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 **Rail 3 MACHINE GIRI (Redis)** · Cue: SET NX lock, pehla hi banaye
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -126,7 +126,7 @@ PEHLE   seats table me seat_id, show_id, status. "Book" dabaya to status = 'book
 
 **Rail 3 MACHINE GIRI (App)** · Cue: STATELESS App + LB health check
 
-<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---

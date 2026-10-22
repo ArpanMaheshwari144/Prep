@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Card 6: sirf pehli request lock (SET NX </title>
+<title>Card 6: map banane ka taala sirf pehli r</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
 <svg width="1500" height="999" viewBox="0 0 1500 999" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
@@ -9,13 +9,13 @@
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
 </defs><rect width="1500" height="999" fill="#0b1220"/>
-<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 6: sirf pehli request lock (SET NX EX 5), replica se ek query, map Redis me. Baaki ruk ke Redis se</text>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 6: map banane ka taala sirf pehli request ko (SET NX, 5 sec). Wo map Redis me daale, baaki ruk ke Redis se</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
 <text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 6 / 7</text>
 <rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
 <text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
-<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 5 me WAITING ROOM + Kafka</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 5 me waiting room + Kafka</text>
 <text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
 <text x="796" y="113" font-size="14.5" fill="#f0d4d8">2 baje Redis restart, saara seat map ek saath DB copy pe</text>
 <rect x="30" y="224" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
@@ -23,16 +23,16 @@
 <text x="140.0" y="284" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">map chahiye</text>
 <rect x="330" y="209" width="250" height="150" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
 <text x="455.0" y="243" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App</text>
-<text x="455.0" y="269" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">SET NX EX 5</text>
-<text x="455.0" y="291" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">pehla: lock mila</text>
+<text x="455.0" y="269" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">taala lo (SET NX EX 5)</text>
+<text x="455.0" y="291" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">pehla: taala mila</text>
 <text x="455.0" y="313" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">baaki: 50-100 ms ruko</text>
 <rect x="680" y="174" width="300" height="110" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
 <text x="830.0" y="208" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
 <text x="830.0" y="234" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">2 baje restart: khaali</text>
-<text x="830.0" y="256" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">lock:map42</text>
+<text x="830.0" y="256" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">taala: lock:map42</text>
 <rect x="680" y="334" width="300" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
 <text x="830.0" y="368" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Read replica</text>
-<text x="830.0" y="394" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sirf EK query</text>
+<text x="830.0" y="394" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sirf EK query aayi</text>
 <rect x="1080" y="224" width="390" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="1275.0" y="258" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Map khula</text>
 <text x="1275.0" y="284" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">thoda dheema,</text>

@@ -1,5 +1,5 @@
 {
- "title": "Card 7: App stateless, hold DB me. LB /health se, 2-3 fail = bahar. Payment beech me = same bookingId",
+ "title": "Card 7: App kuch yaad nahi rakhti, hold DB me. LB /health poochta, 2-3 baar chup = machine bahar",
  "h": 550,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "lb",
    "title": "LB",
    "lines": [
-    "GET /health",
-    "2-3 fail = bahar"
+    "poochta: zinda ho? (/health)",
+    "2-3 baar chup = bahar"
    ]
   },
   {
@@ -44,7 +44,7 @@
    "kind": "server",
    "title": "App-2",
    "lines": [
-    "wahi hold dekhti"
+    "wahi hold DB se dekhti"
    ]
   },
   {
@@ -194,7 +194,7 @@
   7,
   7
  ],
- "peeche": "card 6 me SET NX taala, pehla hi banaye",
+ "peeche": "card 6 me map ka taala, pehla hi banaye",
  "ab": "Shaam ko Arpan seat chun raha tha, App machine gir gayi",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

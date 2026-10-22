@@ -1,5 +1,5 @@
 {
- "title": "Card 5: darwaze pe ginti (waiting room): ~3000 andar, baaki line. Andar walon ki booking Kafka se, worker UPDATE",
+ "title": "Card 5: darwaze pe ginti (waiting room): ~3000 andar, baaki line me. Booking Kafka se, worker ek-ek UPDATE",
  "h": 660,
  "boxes": [
   {
@@ -35,7 +35,7 @@
    "title": "Kafka",
    "lines": [
     "key = show_id",
-    "ek show ek line"
+    "ek show ki ek line"
    ]
   },
   {
@@ -47,7 +47,7 @@
    "title": "Booking worker",
    "lines": [
     "ek-ek UPDATE",
-    "~ms, hazaar / sec"
+    "har second hazaar"
    ]
   },
   {
@@ -204,7 +204,7 @@
   5,
   7
  ],
- "peeche": "card 4 me CACHE + READ REPLICA",
+ "peeche": "card 4 me map Redis se, faisla primary DB",
  "ab": "12 baje Arijit ka concert khula, 2 lakh log ek show pe, Arpan bhi",
  "agla": "ab line bani. Par cache hi khaali ho gaya (card 6)"
 }

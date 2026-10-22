@@ -1,5 +1,5 @@
 {
- "title": "Card 1: dekhna + book karna ek hi UPDATE ... WHERE available. 1 row = jeeta, 0 row = 'seat gayi'",
+ "title": "Card 1: seat dekhna aur book karna ek hi UPDATE query me (sirf khaali ho to). 1 row = jeeta, 0 row = 'seat gayi'",
  "h": 660,
  "boxes": [
   {
@@ -32,8 +32,8 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "UPDATE ... WHERE",
-    "status = 'available'"
+    "ek hi UPDATE query",
+    "(WHERE seat khaali)"
    ]
   },
   {
@@ -44,12 +44,10 @@
    "kind": "db",
    "title": "Seats DB (show 42)",
    "lines": [
-    "UPDATE seats SET status = 'booked'",
-    "WHERE seat_id = 'A1'",
-    "AND status = 'available'",
-    "",
-    "row lock: ek-ek",
-    "Arpan: 1 row · Ravi: 0 row"
+    "UPDATE: A1 = booked",
+    "sirf jab A1 khaali",
+    "DB ek-ek karke chalata",
+    "Arpan: 1 row, Ravi: 0 row"
    ]
   },
   {

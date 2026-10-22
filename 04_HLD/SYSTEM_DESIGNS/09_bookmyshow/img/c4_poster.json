@@ -1,5 +1,5 @@
 {
- "title": "Card 4: seat map Redis se (~5 sec umar), faisla sirf primary DB ka UPDATE. Map purana to UPDATE 0 row bolega",
+ "title": "Card 4: seat map Redis se (~5 sec purana chalega), book ka faisla sirf primary DB ka UPDATE. Map purana to 0 row",
  "h": 570,
  "boxes": [
   {
@@ -21,7 +21,7 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "map: Redis se",
+    "map dekhna: Redis se",
     "book: primary DB"
    ]
   },
@@ -33,7 +33,8 @@
    "kind": "db",
    "title": "Read replica",
    "lines": [
-    "miss pe map yahan se"
+    "Redis me nahi mila",
+    "to map yahan se"
    ]
   },
   {
@@ -44,7 +45,7 @@
    "kind": "cache",
    "title": "Redis",
    "lines": [
-    "seatmap:show42, ~5 sec"
+    "show 42 ka map, ~5 sec"
    ]
   },
   {
@@ -56,7 +57,7 @@
    "title": "Primary DB",
    "lines": [
     "faisla: UPDATE",
-    "book ke baad map key DEL"
+    "book ke baad map hatao"
    ]
   }
  ],
@@ -198,7 +199,7 @@
   4,
   7
  ],
- "peeche": "card 3 me bookingId = IDEMPOTENCY KEY",
+ "peeche": "card 3 me booking id se paisa ek hi baar",
  "ab": "11 baje Arpan seat map dekh raha, saath me 1 lakh log, book koi-koi",
  "agla": "ab dekhna sambhal liya. Par badi release pe book karne wale bhi lakhon (card 5)"
 }

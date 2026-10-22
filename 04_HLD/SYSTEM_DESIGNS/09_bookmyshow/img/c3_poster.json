@@ -1,5 +1,5 @@
 {
- "title": "Card 3: har pay usi bookingId se. Wahi dobara aaya to 'ho chuka', purana jawab, ek hi baar kata",
+ "title": "Card 3: har pay usi booking id (B-42) se. Wahi id dobara aayi to 'ho chuka', purana jawab, paisa ek hi baar",
  "h": 670,
  "boxes": [
   {
@@ -10,7 +10,7 @@
    "kind": "user",
    "title": "App",
    "lines": [
-    "Pay, B-42"
+    "Pay, booking B-42"
    ]
   },
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "Booking Svc",
    "lines": [
-    "B-42 pehle se?",
-    "'ho chuka' + purana jawab"
+    "B-42 pehle aa chuki?",
+    "to purana jawab"
    ]
   },
   {
@@ -33,7 +33,7 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "B-42: PAID / PENDING"
+    "B-42: PAID ya PENDING"
    ]
   },
   {
@@ -210,7 +210,7 @@
   3,
   7
  ],
- "peeche": "card 2 me HOLD + umar (held_until)",
+ "peeche": "card 2 me seat 5 min HELD",
  "ab": "Arpan ne Pay dabaya, network gaya, app ne dobara bheja",
  "agla": "ab booking sahi. Par seat map dekhne wale bahut (card 4)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 2: chunte hi HELD, held_until = ab + 5 min. Umar khatam to chhuti. Confirm pe bhi WHERE, 0 row = refund",
+ "title": "Card 2: seat chunte hi 5 min ke liye HELD. Umar khatam to seat wapas. Pay pe bhi check, 0 row = refund",
  "h": 625,
  "boxes": [
   {
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "HELD,",
-    "held_until = ab + 5 min"
+    "A1 = HELD",
+    "5 min ke liye (held_until)"
    ]
   },
   {
@@ -35,7 +35,7 @@
    "title": "Seats DB",
    "lines": [
     "A1: HELD (Arpan)",
-    "held_until 11:05",
+    "11:05 tak",
     "pay hua = BOOKED"
    ]
   },
@@ -47,7 +47,7 @@
    "kind": "server",
    "title": "Sweeper",
    "lines": [
-    "umar khatam: seat chhodo"
+    "umar khatam: seat wapas"
    ]
   },
   {
@@ -173,7 +173,7 @@
   2,
   7
  ],
- "peeche": "card 1 me EK UPDATE ... WHERE khaali",
+ "peeche": "card 1 me ek UPDATE, sirf khaali seat pe",
  "ab": "Arpan ne A1 chuni, payment me 3 minute lag rahe",
  "agla": "ab seat pakad li. Par pay dabate hi network gaya (card 3)"
 }
