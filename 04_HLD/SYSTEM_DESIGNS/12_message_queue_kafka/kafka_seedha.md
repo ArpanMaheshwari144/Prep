@@ -142,7 +142,7 @@ DABBA: Relay
   bheed / dheema               -> DB ko baar-baar poochna bhaari. Bada scale = CDC (Debezium, DB ka log padhta)
 
 DABBA: Kafka machine (leader)
-  gira                         -> pakki copy (ISR) naya leader. acks=all tha, to khabar copy pe thi, kuch nahi gaya
+  gira                         -> pakki copy (ISR) naya leader. acks=all tha, khabar copy pe thi, kuch nahi gaya
   saari copy giri, sirf leader -> min.insync = 2, likhna band. Relay retry karta, khabar outbox me padi rehti
   bheed                        -> tukde badhao, nayi machine (broker) jodo
   disk bhari                   -> 7 din se purani khabar ek saath hatao (retention)
@@ -236,7 +236,7 @@ A ne "ho gaya" bola, copy banne se pehle mar gaya?  -> khabar gayi. Isliye "ho g
                                                        bhi likh jaaye (acks=all)
 ek copy peeche chal rahi?           -> sirf poori taaza copy "pakki" (ISR). Leader pakki me se hi banta
 dono copy bhi gayi, sirf A bacha?   -> likhna rok do (min.insync = 2). Khone se behtar rukna
-naya leader kaun chunta?            -> Controller: Kafka ki kuch machines ka group jo baaki pe nazar rakhta (KRaft).
+naya leader kaun chunta?            -> Controller: kuch Kafka machines ka group, sab pe nazar (KRaft).
                                        Ek hi faisla, do leader kabhi nahi
 acks=all matlab saari copy?        -> nahi, saari PAKKI copy (ISR). Isliye min.insync = 2 saath zaroori, warna
                                        sirf leader bacha ho to bhi "ho gaya" mil jaata
