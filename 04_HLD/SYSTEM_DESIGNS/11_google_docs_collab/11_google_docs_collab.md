@@ -167,15 +167,8 @@ PEHLE   pehle poochho: ek doc pe ek saath kitne log hain, 2-3 ya 100?
 
 Jod: Stock ka price bhi pub/sub se har WebSocket server tak (05 card 8)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: andar + kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=1" width="900">
-
-<img src="img/c5_2.png?v=1" width="900">
-
-<img src="img/c5_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     har doc ka ek channel (Redis pub/sub). Server-1 op daalta, server-2 sunta, Ravi ko bhejta
@@ -186,12 +179,6 @@ KYUN    jis server pe us doc ka user hai, wo channel sunta hai (subscriber).
 
 > [!IMPORTANT]
 > **Yaad rakh:** Har doc ek Redis channel: owner daalta, doosre server sunte. Store nahi, chhoota to version bata ke DB se.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - editor same server pe hai → **seedha push**: pub/sub ki zaroorat hi nahi
-> - Ravi ka server restart ho gaya → **store nahi, DB me hai**: op channel se chala gaya (store nahi), par DB me hai. Ravi judta, version bata ke baaki le leta
-> - Redis pub/sub hi gir gaya → **copy main ban jaati hai (Sentinel)**: Live kuch second ruka, khoya kuch nahi
 
 
 ---

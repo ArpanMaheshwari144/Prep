@@ -1,0 +1,84 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 5 poster</title>
+<style>
+body{margin:0;background:#0b1220}
+svg text{font-family:"Segoe UI",Arial,sans-serif}
+.m{font-family:Consolas,monospace}
+</style>
+<svg width="1500" height="620" viewBox="0 0 1500 620" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="ab" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+  <marker id="ag" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+</defs>
+<rect width="1500" height="620" fill="#0b1220"/>
+
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 5: har doc ka ek channel (Redis pub/sub). Owner daalta, doosre server sunte</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Neela / hara = roz ka raasta · Laal X = yahan toota, saath wale dabbe me: laal = kya hua, hara = kaise bacha</text>
+
+<rect x="30" y="200" width="200" height="90" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130" y="238" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main (editor)</text>
+<text x="130" y="264" font-size="13" fill="#9fb0c8" text-anchor="middle" class="m">likha "X"</text>
+
+<rect x="290" y="190" width="250" height="110" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="415" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 1 (owner)</text>
+<text x="415" y="252" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">OT, phir channel me</text>
+<text x="415" y="274" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">daalta (publish)</text>
+
+<rect x="620" y="190" width="260" height="110" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="750" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis pub/sub</text>
+<text x="750" y="252" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">channel: doc:123</text>
+<text x="750" y="274" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">store nahi: bheja, bhoola</text>
+
+<rect x="960" y="190" width="240" height="110" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1080" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Server 2</text>
+<text x="1080" y="252" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">doc:123 sunta</text>
+<text x="1080" y="274" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">(Ravi yahan juda)</text>
+
+<rect x="1270" y="200" width="200" height="90" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1370" y="238" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Ravi (viewer)</text>
+<text x="1370" y="264" font-size="13" fill="#9fb0c8" text-anchor="middle" class="m">yaad: main v12</text>
+
+<rect x="290" y="430" width="250" height="90" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="415" y="468" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Op log (DB)</text>
+<text x="415" y="494" font-size="13" fill="#c9d6e8" text-anchor="middle" class="m">bachana yahan</text>
+
+<!-- roz ka raasta -->
+<line x1="232" y1="245" x2="286" y2="245" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ab)"/>
+<line x1="542" y1="245" x2="616" y2="245" stroke="#3ddc97" stroke-width="3" marker-end="url(#ag)"/>
+<line x1="882" y1="245" x2="956" y2="245" stroke="#3ddc97" stroke-width="3" marker-end="url(#ag)"/>
+<line x1="1202" y1="245" x2="1266" y2="245" stroke="#3ddc97" stroke-width="3" marker-end="url(#ag)"/>
+<line x1="415" y1="302" x2="415" y2="426" stroke="#a98bff" stroke-width="3" marker-end="url(#ag)"/>
+<text x="425" y="370" font-size="13" fill="#a98bff" class="m">op likha</text>
+<path d="M542 475 L1080 475 L1080 306" fill="none" stroke="#3ddc97" stroke-width="2.5" stroke-dasharray="8 6" marker-end="url(#ag)"/>
+<text x="810" y="465" font-size="13" fill="#3ddc97" text-anchor="middle" class="m">chhoota op DB se (version bata ke)</text>
+
+<!-- 1: pub/sub gira -->
+<g stroke="#ff5a6a" stroke-width="6" stroke-linecap="round"><line x1="737" y1="174" x2="763" y2="200"/><line x1="763" y1="174" x2="737" y2="200"/></g>
+<line x1="750" y1="172" x2="750" y2="146" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="430" y="84" width="560" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="452" cy="106" r="13" fill="#ff5a6a"/><text x="452" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="474" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Redis pub/sub hi gira</text>
+<text x="452" y="135" font-size="15" font-weight="700" fill="#3ddc97">bacha: copy main ban jaati (Sentinel), live kuch sec ruka</text>
+
+<!-- 2: Server 2 restart -->
+<g stroke="#ff5a6a" stroke-width="6" stroke-linecap="round"><line x1="1177" y1="174" x2="1203" y2="200"/><line x1="1203" y1="174" x2="1177" y2="200"/></g>
+<line x1="1190" y1="172" x2="1190" y2="146" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="1010" y="84" width="460" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="1032" cy="106" r="13" fill="#ff5a6a"/><text x="1032" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="1054" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Ravi ka server restart, op nikal gaye</text>
+<text x="1032" y="135" font-size="15" font-weight="700" fill="#3ddc97">bacha: op DB me hai, version bata ke le lo</text>
+
+<!-- 3: pehle, Ravi doosre server pe -->
+<g stroke="#ff5a6a" stroke-width="6" stroke-linecap="round"><line x1="1447" y1="280" x2="1473" y2="306"/><line x1="1473" y1="280" x2="1447" y2="306"/></g>
+<line x1="1460" y1="308" x2="1460" y2="350" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="1095" y="350" width="375" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="1117" cy="372" r="13" fill="#ff5a6a"/><text x="1117" y="377" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="1139" y="377" font-size="15" font-weight="700" fill="#ff5a6a">pehle: op sirf Server 1 pe tha</text>
+<text x="1117" y="401" font-size="15" font-weight="700" fill="#3ddc97">bacha: channel, Server 2 sun ke bhejta</text>
+
+<!-- doosra kyun nahi -->
+<rect x="30" y="545" width="560" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="52" y="572" font-size="15" font-weight="700" fill="#c9d6e8">editor bhi same server pe ho to? seedha push,</text>
+<text x="52" y="596" font-size="15" font-weight="700" fill="#9fb0c8">pub/sub sirf doosre server wale viewer ke liye</text>
+</svg>
