@@ -60,7 +60,7 @@ PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar li
 
 Jod: Jira / Confluence comment me bhi version; wahan purana = save MANA, Docs khiska ke lagata
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: andar + kya gira, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: andar + kya gira, kaise bacha">
 
 
 ---
@@ -73,7 +73,7 @@ Jod: Jira / Confluence comment me bhi version; wahan purana = save MANA, Docs kh
 
 Jod: WhatsApp (net aate hi saare message ek saath) · Stock ka live price bhi WebSocket push (05 card 8)
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: andar + kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: andar + kya toota, kaise bacha">
 
 
 ---
@@ -86,7 +86,7 @@ Jod: WhatsApp (net aate hi saare message ek saath) · Stock ka live price bhi We
 
 Jod: Chat me bhi kram server ka +1 number (seq), phone ki ghadi nahi (14 card 6)
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: andar + kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: andar + kya toota, kaise bacha">
 
 
 ---
@@ -99,7 +99,7 @@ Jod: Chat me bhi kram server ka +1 number (seq), phone ki ghadi nahi (14 card 6)
 
 Jod: URL shortener aur Cache me bhi ring (01 card 5, 10 card 2)
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: andar + kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: andar + kya toota, kaise bacha">
 
 
 ---
@@ -112,7 +112,7 @@ Jod: URL shortener aur Cache me bhi ring (01 card 5, 10 card 2)
 
 Jod: Stock ka price bhi pub/sub se har WebSocket server tak (05 card 8)
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: andar + kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: andar + kya toota, kaise bacha">
 
 
 ---
@@ -125,7 +125,7 @@ Jod: Stock ka price bhi pub/sub se har WebSocket server tak (05 card 8)
 
 Jod: Cassandra = sirf aage jodna (09 databases) · URL me bhi ginti Kafka se, raaste se bahar (01 card 4)
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: andar + kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: andar + kya toota, kaise bacha">
 
 
 ---
@@ -138,7 +138,7 @@ Jod: Cassandra = sirf aage jodna (09 databases) · URL me bhi ginti Kafka se, ra
 
 Jod: WhatsApp bhi offline me type karne deta (AP) · Banking me transfer / balance CP (13)
 
-<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: andar + kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: andar + kya toota, kaise bacha">
 
 
 ---
@@ -151,7 +151,7 @@ Jod: WhatsApp bhi offline me type karne deta (AP) · Banking me transfer / balan
 
 Jod: Banking ka balance bhi = mahine ka snapshot + baad ki line (13 card 11)
 
-<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: andar + kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: andar + kya toota, kaise bacha">
 
 
 ---
