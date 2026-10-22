@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 1: BEGIN, -500, +500, COMMIT: dono </title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="570" viewBox="0 0 1500 570" xmlns="http://www.w3.org/2000/svg"><defs>
+<marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+<marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+<marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
+<marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
+<marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
+</defs><rect width="1500" height="570" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: BEGIN, -500, +500, COMMIT: dono ya koi nahi. Beech me gira to DB log (WAL) se ulta. SAGA sirf do DB pe</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
+<rect x="30" y="240" width="200" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main</text>
+<text x="130.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Ravi ko 500</text>
+<rect x="300" y="225" width="270" height="150" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="435.0" y="259" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Banking Svc</text>
+<text x="435.0" y="285" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">BEGIN</text>
+<text x="435.0" y="307" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Arpan -500, Ravi +500</text>
+<text x="435.0" y="329" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">COMMIT</text>
+<rect x="660" y="190" width="420" height="220" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="870.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB</text>
+<text x="870.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Arpan: 1000 -&gt; 500</text>
+<text x="870.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Ravi: +500</text>
+<text x="870.0" y="294" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">WAL (DB ka apna log)</text>
+<text x="870.0" y="316" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">aadha kisi ko nahi dikhta</text>
+<rect x="1170" y="250" width="300" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1320.0" y="284" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Ravi</text>
+<text x="1320.0" y="310" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">+500 aaya</text>
+<path d="M232 300 L296 300" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M572 300 L656 300" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M1082 300 L1166 300" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<rect x="30" y="84" width="500" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
+<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">SAGA lagao?</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">Faltu: sab ek DB me. SAGA tab jab do DB</text>
+<path d="M560 213 L560 146" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="548" y1="213" x2="572" y2="237"/><line x1="572" y1="213" x2="548" y2="237"/></g>
+<rect x="550" y="84" width="920" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="572" cy="106" r="13" fill="#ff5a6a"/>
+<text x="572" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="594" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Beech me server gira (-500 hua, +500 nahi)</text>
+<text x="572" y="135" font-size="15" font-weight="700" fill="#3ddc97">COMMIT nahi tha: DB log (WAL) se ulta, mera wapas 1000</text>
+<rect x="30" y="480" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="52" y="507" font-size="15" font-weight="700" fill="#c9d6e8">-500 ke baad, COMMIT se pehle koi padhe? COMMIT se pehle wala hi dikhta.</text>
+<text x="52" y="531" font-size="15" font-weight="700" fill="#9fb0c8">Ravi doosre bank me? Do bank = do DB: PENDING + SAGA + raat ko milaan</text>
+</svg>

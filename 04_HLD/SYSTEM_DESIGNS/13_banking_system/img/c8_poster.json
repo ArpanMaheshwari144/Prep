@@ -1,0 +1,212 @@
+{
+ "title": "Card 8: padhna read replica se, likhna + paise ka faisla primary pe. Apna abhi likha primary se padho",
+ "h": 580,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 220,
+   "h": 110,
+   "kind": "user",
+   "title": "Laakhon log",
+   "lines": [
+    "balance / history"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 240,
+   "w": 250,
+   "h": 130,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "padhna: copy",
+    "likhna + faisla: primary"
+   ]
+  },
+  {
+   "x": 670,
+   "y": 190,
+   "w": 320,
+   "h": 110,
+   "kind": "db",
+   "title": "Primary",
+   "lines": [
+    "likhna + paise ka faisla"
+   ]
+  },
+  {
+   "x": 670,
+   "y": 350,
+   "w": 320,
+   "h": 100,
+   "kind": "db",
+   "title": "Read replica",
+   "lines": [
+    "padhna (async, peeche)"
+   ]
+  },
+  {
+   "x": 1090,
+   "y": 190,
+   "w": 380,
+   "h": 110,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "last_write_at: abhi likha",
+    "to primary se padho"
+   ]
+  },
+  {
+   "x": 1090,
+   "y": 350,
+   "w": 380,
+   "h": 100,
+   "kind": "db",
+   "title": "Failover standby",
+   "lines": [
+    "sync: kuch nahi khota"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     305
+    ],
+    [
+     326,
+     305
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     280
+    ],
+    [
+     666,
+     245
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     582,
+     340
+    ],
+    [
+     666,
+     395
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     830,
+     302
+    ],
+    [
+     830,
+     346
+    ]
+   ],
+   "c": "purple",
+   "dash": true,
+   "label": "WAL",
+   "lx": 845,
+   "ly": 318,
+   "a": "start"
+  },
+  {
+   "pts": [
+    [
+     992,
+     280
+    ],
+    [
+     1086,
+     395
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Sab primary se padho?",
+   "green": "Padhne ki bheed ne transfer dheema kiya",
+   "n": 1
+  },
+  {
+   "type": "grey",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Failover standby aur read replica ek hi? Nahi.",
+   "green": "Standby sync (kuch nahi khota), replica async (peeche)"
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 490,
+   "w": 700,
+   "red": "Abhi paisa bheja, copy 5 sec peeche",
+   "green": "Apna likha primary se padho, warna purana dekh ke dobara bhejega",
+   "n": 2,
+   "mark": [
+    700,
+    450
+   ],
+   "conn": [
+    [
+     700,
+     462
+    ],
+    [
+     700,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 490,
+   "w": 720,
+   "red": "Copy minute bhar peeche ho gayi",
+   "green": "Lag naapo: alert, us copy ko list se hatao",
+   "n": 3,
+   "mark": [
+    950,
+    450
+   ],
+   "conn": [
+    [
+     950,
+     462
+    ],
+    [
+     950,
+     490
+    ]
+   ]
+  }
+ ]
+}

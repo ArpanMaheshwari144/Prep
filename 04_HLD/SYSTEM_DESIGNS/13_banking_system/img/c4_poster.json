@@ -1,0 +1,147 @@
+{
+ "title": "Card 4: har transfer ki 2 line khaate me, usi transaction me. Sirf jodo, galti pe ulti line. Waqt + transfer id",
+ "h": 550,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "500 kahan,",
+    "kab gaye?"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 240,
+   "w": 230,
+   "h": 120,
+   "kind": "server",
+   "title": "Support",
+   "lines": [
+    "khaata padho"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 190,
+   "w": 530,
+   "h": 220,
+   "kind": "db",
+   "title": "DB: khaata (ledger)",
+   "lines": [
+    "8:00 | Arpan -500 | T-77",
+    "8:00 | Ravi  +500 | T-77",
+    "usi transaction me",
+    "sirf jodo, kabhi badlo nahi"
+   ]
+  },
+  {
+   "x": 1240,
+   "y": 250,
+   "w": 230,
+   "h": 110,
+   "kind": "user",
+   "title": "Jawab",
+   "lines": [
+    "8:00, T-77,",
+    "Ravi ko 500"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     532,
+     300
+    ],
+    [
+     616,
+     300
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1152,
+     300
+    ],
+    [
+     1236,
+     300
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Sirf balance column?",
+   "green": "1000 dikhta, raasta nahi: support 'pata nahi'",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Khaata Kafka me?",
+   "green": "Kafka + DB ek transaction nahi: rollback pe jhoothi line",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 460,
+   "w": 700,
+   "red": "Khaate me galat line likh di",
+   "green": "UPDATE nahi: ulti line jodo, galti bhi dikhe",
+   "n": 3,
+   "mark": [
+    680,
+    410
+   ],
+   "conn": [
+    [
+     680,
+     422
+    ],
+    [
+     680,
+     460
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 750,
+   "y": 460,
+   "w": 720,
+   "red": "Transaction wapas (paisa kam)? Khaata bhi wapas.",
+   "green": "Har line me waqt + transfer id: sab ek jagah"
+  }
+ ]
+}

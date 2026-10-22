@@ -1,0 +1,150 @@
+{
+ "title": "Card 6: khaata sach, balance column uska cache. Raat ko milaan; farak = alert + account roko, khaata jeetta",
+ "h": 580,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "balance khola"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "column padho"
+   ]
+  },
+  {
+   "x": 610,
+   "y": 190,
+   "w": 300,
+   "h": 110,
+   "kind": "cache",
+   "title": "Balance column",
+   "lines": [
+    "30,300 (jod, cache)",
+    "usi txn me update"
+   ]
+  },
+  {
+   "x": 610,
+   "y": 340,
+   "w": 300,
+   "h": 110,
+   "kind": "db",
+   "title": "Khaata",
+   "lines": [
+    "sach: 29,800",
+    "50,000 line"
+   ]
+  },
+  {
+   "x": 1010,
+   "y": 240,
+   "w": 460,
+   "h": 140,
+   "kind": "server",
+   "title": "Raat ka job",
+   "lines": [
+    "snapshot + baad ki line",
+    "== column?",
+    "farak = alert + account roko"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     522,
+     280
+    ],
+    [
+     606,
+     250
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     912,
+     395
+    ],
+    [
+     1006,
+     330
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "Column hi mat rakho?",
+   "green": "Har baar 50,000 line jodna: dheema"
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 610,
+   "y": 84,
+   "w": 860,
+   "red": "Bug: column 30,300, khaata 29,800",
+   "green": "Raat ka milaan pakadta: alert + account roko, KYUN dhoondho, khaata jeetta",
+   "mark": [
+    880,
+    190
+   ],
+   "conn": [
+    [
+     880,
+     178
+    ],
+    [
+     880,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "pehle",
+   "x": 30,
+   "y": 490,
+   "w": 1440,
+   "red": "Column hi sach?",
+   "green": "Galat hua to pata nahi: milane ko kuch tha hi nahi"
+  }
+ ]
+}

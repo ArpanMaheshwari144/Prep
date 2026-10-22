@@ -1,0 +1,124 @@
+{
+ "title": "Card 10: OFFSET nahi, keyset: (ts, id) < aakhri, index se seedha. Har page ek jaisa tez. id barabari todti",
+ "h": 560,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "CA",
+   "lines": [
+    "export,",
+    "page 5000"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 260,
+   "h": 140,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "next_cursor",
+    "(ts, id) base64"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 190,
+   "w": 560,
+   "h": 220,
+   "kind": "db",
+   "title": "DB (index: account, ts, id)",
+   "lines": [
+    "WHERE account_id = ?",
+    "AND (ts, id) < (aakhri ts, id)",
+    "ORDER BY ts DESC, id DESC LIMIT 20",
+    "index se seedha, sirf 20"
+   ]
+  },
+  {
+   "x": 1290,
+   "y": 250,
+   "w": 180,
+   "h": 110,
+   "kind": "user",
+   "title": "Page",
+   "lines": [
+    "20 line, tez"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     562,
+     300
+    ],
+    [
+     646,
+     300
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1212,
+     300
+    ],
+    [
+     1286,
+     300
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "LIMIT 20 OFFSET 100000?",
+   "green": "DB 1 lakh line padh ke phenkta: dheema",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 610,
+   "y": 84,
+   "w": 860,
+   "red": "OFFSET aur beech me nayi line aa gayi?",
+   "green": "Page khisakta, line dobara aati",
+   "n": 2
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 470,
+   "w": 1440,
+   "red": "Ek hi ts pe do line? Isliye (ts, id): id barabari todti. Beech me nayi line? Purana page nahi khisakta.",
+   "green": "Seedha page 500? Keyset me nahi hota: agla / pichhla kaafi"
+  }
+ ]
+}

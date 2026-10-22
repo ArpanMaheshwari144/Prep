@@ -1,0 +1,164 @@
+{
+ "title": "Card 11: mahine ke tukde, band mahina S3 (sasta, Object Lock). Balance = snapshot + baad ki line. 5 saal rakhna",
+ "h": 540,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 200,
+   "w": 440,
+   "h": 200,
+   "kind": "db",
+   "title": "Postgres: khaata",
+   "lines": [
+    "haal ke mahine (partition)",
+    "is mahine ka = tez",
+    "balance = snapshot",
+    "+ baad ki line"
+   ]
+  },
+  {
+   "x": 560,
+   "y": 240,
+   "w": 240,
+   "h": 130,
+   "kind": "server",
+   "title": "Mahina band",
+   "lines": [
+    "alag karo",
+    "-> S3"
+   ]
+  },
+  {
+   "x": 890,
+   "y": 200,
+   "w": 330,
+   "h": 200,
+   "kind": "db",
+   "title": "S3 (sasta)",
+   "lines": [
+    "purane mahine",
+    "Object Lock (WORM):",
+    "na delete na badal"
+   ]
+  },
+  {
+   "x": 1300,
+   "y": 240,
+   "w": 170,
+   "h": 130,
+   "kind": "user",
+   "title": "RBI",
+   "lines": [
+    "2021 statement:",
+    "Athena (Parquet)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     472,
+     300
+    ],
+    [
+     556,
+     300
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     802,
+     300
+    ],
+    [
+     886,
+     300
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1222,
+     300
+    ],
+    [
+     1296,
+     300
+    ]
+   ],
+   "c": "green",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 400,
+   "red": "Purana delete kar do?",
+   "green": "5 saal (PMLA) se pehle nahi",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 450,
+   "y": 84,
+   "w": 1020,
+   "red": "5 saal ki arabon line ek table me",
+   "green": "Roz ki query + backup sab chhoote: dheema + mehnga. Mahine ke tukde",
+   "n": 2,
+   "mark": [
+    455,
+    200
+   ],
+   "conn": [
+    [
+     455,
+     188
+    ],
+    [
+     455,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 450,
+   "w": 700,
+   "red": "1 crore x 2 line x 365 = ~730 crore / saal, 5 saal ~36 arab.",
+   "green": "S3 pe gaya to balance? Snapshot + baad ki line"
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 450,
+   "w": 720,
+   "red": "Koi S3 pe purani file badal de",
+   "green": "Object Lock (WORM): na delete na badal",
+   "n": 3,
+   "mark": [
+    1180,
+    400
+   ],
+   "conn": [
+    [
+     1180,
+     412
+    ],
+    [
+     1180,
+     450
+    ]
+   ]
+  }
+ ]
+}

@@ -1,0 +1,186 @@
+{
+ "title": "Card 2: app screen pe id banata (T-77), DB me UNIQUE. Wahi id dobara = pehla jawab. Alag amount = 422",
+ "h": 680,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "App",
+   "lines": [
+    "screen khulte: T-77"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 230,
+   "w": 260,
+   "h": 140,
+   "kind": "server",
+   "title": "Banking Svc",
+   "lines": [
+    "T-77 pehle se?",
+    "pehla jawab wapas"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 220,
+   "w": 330,
+   "h": 160,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "T-77 UNIQUE",
+    "+ request ka hash",
+    "24-48 ghante"
+   ]
+  },
+  {
+   "x": 1130,
+   "y": 250,
+   "w": 340,
+   "h": 110,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "500 ek hi baar"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     336,
+     300
+    ]
+   ],
+   "c": "blue",
+   "label": "T-77",
+   "lx": 280,
+   "ly": 330,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     602,
+     300
+    ],
+    [
+     696,
+     300
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1032,
+     300
+    ],
+    [
+     1126,
+     300
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "x",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Network gaya, app ne dobara bheja",
+   "green": "Wahi T-77: pehla jawab, paisa doosri baar nahi kata",
+   "n": 1,
+   "mark": [
+    288,
+    300
+   ],
+   "conn": [
+    [
+     288,
+     288
+    ],
+    [
+     288,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "Send button band kar do?",
+   "green": "Adhoora: retry app khud karta (timeout pe), bina dabaye",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 500,
+   "w": 740,
+   "red": "Wahi id ki do request ek saath",
+   "green": "DB khud rokta: doosra insert fail. UNIQUE hi taala",
+   "n": 3,
+   "mark": [
+    760,
+    380
+   ],
+   "conn": [
+    [
+     760,
+     392
+    ],
+    [
+     760,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 790,
+   "y": 500,
+   "w": 680,
+   "red": "Wahi id, par amount 5000",
+   "green": "Request ka hash nahi mila: 422, purana jawab nahi",
+   "n": 4,
+   "mark": [
+    1000,
+    380
+   ],
+   "conn": [
+    [
+     1000,
+     392
+    ],
+    [
+     1000,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 595,
+   "w": 1440,
+   "red": "Bina id? Timeout pe app ne dobara bheja, server ne do transfer samjhe: 1000 kate.",
+   "green": "Id app banata, server nahi: dobara bhejne wala wahi id laata"
+  }
+ ]
+}

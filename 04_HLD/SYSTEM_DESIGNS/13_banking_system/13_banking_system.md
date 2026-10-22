@@ -60,15 +60,8 @@ SAWAAL  transfer me do row badalti hain, dono hon ya koi nahi, kaun sambhalega? 
 
 **Rail 3 MACHINE GIRI (khaas)** · Cue: EK TRANSACTION (WAL)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
-<img src="img/c1_1.png?v=1" width="900">
-
-<img src="img/c1_2.png?v=1" width="900">
-
-<img src="img/c1_3.png?v=1" width="900">
-
-</details>
 
 ```
 TOOTA   mera -500 hua, server gira, Ravi ka +500 hua hi nahi, to 500 gayab
@@ -82,12 +75,6 @@ NAHI    SAGA
 > [!IMPORTANT]
 > **Yaad rakh:** BEGIN, -500, +500, COMMIT: dono ya koi nahi. Beech me gira to DB log (WAL) se ulta. SAGA sirf do DB pe.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - beech me server gira, DB kaise jaanta hai kya karna? → **log (WAL) se**: COMMIT likha hai to poora, nahi to ulta, mera wapas 1000
-> - -500 ke baad, COMMIT se pehle koi padhe to? → **COMMIT se pehle wala hi dikhta hai**: aadha kisi ko nahi
-> - Ravi doosre bank me ho to ek transaction chalega? → **do bank = do DB**: ek transaction nahi. PENDING + SAGA + raat ko milaan
-
 
 ---
 
@@ -97,15 +84,8 @@ NAHI    SAGA
 
 **Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY KEY (UNIQUE)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=1" width="900">
-
-<img src="img/c2_2.png?v=1" width="900">
-
-<img src="img/c2_3.png?v=1" width="900">
-
-</details>
 
 ```
 TOOTA   koi id nahi thi, timeout pe app ne dobara bheja, server ne do transfer samjhe, to 1000 kate
@@ -121,12 +101,6 @@ NAHI    send button band kar do
 > [!IMPORTANT]
 > **Yaad rakh:** App screen pe id banata (T-77), DB me UNIQUE. Wahi id dobara = pehla jawab. Alag amount = 422.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - wahi id wali do request ek saath aayi → **DB khud rokta hai**: doosra insert fail. UNIQUE hi taala hai
-> - wahi id, par amount 5000 → **request ka hash nahi mila**: to 422, purana jawab nahi
-> - id kab tak rakhoge? → **24-48 ghante**: phir saaf. Retry itni der me hi aata hai
-
 
 ---
 
@@ -136,15 +110,8 @@ NAHI    send button band kar do
 
 **Rail 4 DO LOG EK SAATH (ek account)** · Cue: CHECK + KAATNA EK QUERY
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=1" width="900">
-
-<img src="img/c3_2.png?v=1" width="900">
-
-<img src="img/c3_3.png?v=1" width="900">
-
-</details>
 
 ```
 SAWAAL  ek account pe do transfer ek saath, kaun rokega? Balance minus na jaaye, ye niyam kahan? Yahi card
@@ -163,12 +130,6 @@ NAHI    pehle padho, phir kaato
 > [!IMPORTANT]
 > **Yaad rakh:** Check + kaatna ek query: UPDATE ... WHERE balance >= 200. 0 row = "paisa kam". Niyam DB me, Java me nahi.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - UPDATE me WHERE likhna bhool gaye? → **DB ka CHECK (balance >= 0)**: table pe CHECK (balance >= 0) aakhri deewar hai. Code bhoola to bhi DB minus wali likhai mana kar deta
-> - SELECT ... FOR UPDATE kyun nahi? → **ek UPDATE kaafi**: FOR UPDATE me do kadam (padho, phir likho), DB tak do chakkar aur taala lamba. Ek UPDATE me check + kaatna dono, taala sabse chhota
-> - transfer me -500 aur +500 do row, do UPDATE, kram kya? → **chhoti account id pehle**: dono row hamesha chhoti id pehle pakdo, warna ulte transfer ke saath gol ghera (deadlock, card 9)
-
 
 ---
 
@@ -178,15 +139,8 @@ NAHI    pehle padho, phir kaato
 
 **Rail 1 KAAM CHALA (hisaab)** · Cue: KHAATA (ledger) usi transaction me
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=1" width="900">
-
-<img src="img/c4_2.png?v=1" width="900">
-
-<img src="img/c4_3.png?v=1" width="900">
-
-</details>
 
 ```
 TOOTA   sirf balance column tha, 1000 dikhta, 500 kahan / kab gaye koi hisaab nahi, support bole "pata nahi"
@@ -203,11 +157,6 @@ NAHI    sirf balance column
 > [!IMPORTANT]
 > **Yaad rakh:** Har transfer ki 2 line khaate me, usi transaction me. Sirf jodo, galti pe ulti line. Waqt + transfer id.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - khaate me galat line likh di → **ulti line jodo**: UPDATE nahi, ulti line jodo, taaki galti bhi khaate me dikhe
-> - support ko kab, kisko, kyun chahiye? → **har line me waqt + transfer id**: sab ek jagah
-
 
 ---
 
@@ -217,15 +166,8 @@ NAHI    sirf balance column
 
 **Rail 3 MACHINE GIRI (SMS)** · Cue: OUTBOX, Kafka key = account_id
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=1" width="900">
-
-<img src="img/c5_2.png?v=1" width="900">
-
-<img src="img/c5_3.png?v=1" width="900">
-
-</details>
 
 ```
 TOOTA   transfer karte hi SMS bhejte the, Ravi ko 20,000 gaye, SMS service band, to SMS kabhi nahi gaya
@@ -244,14 +186,6 @@ NAHI    seedha SMS service bulao
 > [!IMPORTANT]
 > **Yaad rakh:** Khabar outbox me usi transaction me, relay COMMIT ke baad Kafka. Dobara = eventId skip. Key = account_id.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - SMS service ghanta bhar giri → **khabar Kafka me padi hai**: wapas aate hi wahin se padhegi
-> - relay ne Kafka me daala, sent=true se pehle gira → **khabar dobara jaayegi**: SMS service eventId dekh ke skip karti hai
-> - outbox bharti hi jaaye to? → **roz saaf karo**: sent=true ka kaam khatam
-> - relay likhna hi na pade, aisa ho sakta hai? → **CDC (Debezium)**: DB ke log se seedha Kafka (CDC, Debezium)
-> - SMS ulte kram me pahunche to? → **Kafka key = account_id**: ek account ek partition, to kram se
-
 
 ---
 
@@ -261,15 +195,8 @@ NAHI    seedha SMS service bulao
 
 **Rail 1 KAAM CHALA (balance)** · Cue: BALANCE = CACHE, raat RECONCILIATION
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=1" width="900">
-
-<img src="img/c6_2.png?v=1" width="900">
-
-<img src="img/c6_3.png?v=1" width="900">
-
-</details>
 
 ```
 TOOTA   column aur khaata alag ho gaye (bug): khaata 29,800, column 30,300, kisi ne pakda nahi
@@ -286,10 +213,6 @@ NAHI    column hi mat rakho, har baar khaate se jodo
 > [!IMPORTANT]
 > **Yaad rakh:** Khaata sach, balance column uska cache. Raat ko milaan; farak = alert + account roko, khaata jeetta.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - raat ki reconciliation me farak mila, 29,800 vs 30,300 → **alert + account roko**: Pehle KYUN dhoondho, phir khaata jeetega
-
 
 ---
 
@@ -299,15 +222,8 @@ NAHI    column hi mat rakho, har baar khaate se jodo
 
 **Rail 2 BHEED AAYI (salary)** · Cue: KAI MACHINE + LB, DB sync copy
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
-<img src="img/c7_1.png?v=1" width="900">
-
-<img src="img/c7_2.png?v=1" width="900">
-
-<img src="img/c7_3.png?v=1" width="900">
-
-</details>
 
 ```
 TOOTA   ek machine, laakhon transfer, CPU bhara, machine giri, koi paisa nahi bhej pa raha
@@ -321,16 +237,6 @@ NAHI    ek badi machine
 > [!IMPORTANT]
 > **Yaad rakh:** Kai machine + LB, stateless, sach DB me. DB ki sync copy doosri building, gira to promote, WAHI id se retry.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - ek machine giri → **LB health check**: LB health check se use list se hata deta hai
-> - machine giri aur transfer adhoora reh gaya → **app WAHI id se dobara bhejta hai**: do baar nahi katta (card 2)
-> - LB akela hai? → **nahi, do zone**: nahi, LB bhi do zone me
-> - main DB gira → **sync copy (doosri building) promote**: ~1-2 min (Multi-AZ). Beech me error aaya to WAHI id se dobara
-> - sync copy matlab dheema? → **haan, ek chakkar**: haan, ek network chakkar lagta hai, paise me chalega. Async me aakhri transfer kho sakta hai
-> - 11 baje ek dukaan pe 50,000 payment ek saath, to ek row pe lock ki line? → **credit sirf INSERT**: credit ledger line me likho (sirf INSERT, lock nahi)
-> - phir dukaan ka balance kaise? → **column har second batch me jodo**: Atomic check sirf debit pe, credit pe nahi
-
 
 ---
 
@@ -340,15 +246,8 @@ NAHI    ek badi machine
 
 **Rail 2 BHEED AAYI (padhna)** · Cue: READ REPLICA + read-your-own-writes
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
-<img src="img/c8_1.png?v=1" width="900">
-
-<img src="img/c8_2.png?v=1" width="900">
-
-<img src="img/c8_3.png?v=1" width="900">
-
-</details>
 
 ```
 TOOTA   padhna + likhna ek DB pe, laakhon log balance / history padh rahe, primary pe dono bojh,
@@ -363,12 +262,6 @@ NAHI    sab primary se padho
 > [!IMPORTANT]
 > **Yaad rakh:** Padhna read replica se, likhna + paise ka faisla primary pe. Apna abhi likha primary se padho.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - abhi paisa bheja, aur copy 5 sec peeche hai → **apna likha primary se**: apna abhi likha primary se padho (last_write_at Redis me), warna purana balance dekh ke. user dobara bhejega
-> - copy minute bhar peeche ho gayi → **lag naapo**: alert, us copy ko list se hatao
-> - failover wali copy aur read replica ek hi hain? → **nahi, sync vs async**: nahi. Failover standby sync hai, kuch nahi khota. Read replica async hai, peeche chalti hai
-
 
 ---
 
@@ -378,15 +271,8 @@ NAHI    sab primary se padho
 
 **Rail 4 DO LOG EK SAATH (deadlock)** · Cue: CHHOTI ID PEHLE LOCK
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
 
-<img src="img/c9_1.png?v=1" width="900">
-
-<img src="img/c9_2.png?v=1" width="900">
-
-<img src="img/c9_3.png?v=1" width="900">
-
-</details>
 
 ```
 FARAK   card 3 me paisa do baar kat raha tha (double spend). Yahan dono ek doosre ke intezaar me atke
@@ -401,10 +287,6 @@ NAHI    jo pehle aaye wo pehle pakde
 > [!IMPORTANT]
 > **Yaad rakh:** Taala hamesha chhoti id pehle, ek kram = ghera nahi. Phir bhi phansa to DB ek ko wapas, WAHI id se retry.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - lock kram ke baad bhi phans gaye → **DB ghera khud pakadta hai**: ek ko wapas karta hai. App ruk ke WAHI id se dobara bhejta hai
-
 
 ---
 
@@ -414,15 +296,8 @@ NAHI    jo pehle aaye wo pehle pakde
 
 **Rail 5 KUCH DHEEMA (export)** · Cue: KEYSET (ts, id) + index
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c10_poster.png?v=1" width="1000" alt="card 10: kya toota, kaise bacha">
 
-<img src="img/c10_1.png?v=1" width="900">
-
-<img src="img/c10_2.png?v=1" width="900">
-
-<img src="img/c10_3.png?v=1" width="900">
-
-</details>
 
 ```
 TOOTA   page 5000 = LIMIT 20 OFFSET 100000, DB 1 lakh line padh ke phenkta hai, export bahut dheema
@@ -439,13 +314,6 @@ NAHI    OFFSET
 > [!IMPORTANT]
 > **Yaad rakh:** OFFSET nahi, keyset: (ts, id) < aakhri, index se seedha. Har page ek jaisa tez. id barabari todti.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - ek hi ts pe do line hain → **(ts, id)**: isliye (ts, id), id barabari todti hai, line na chhoote na dohraye
-> - keyset me beech me nayi line aa gayi → **purana page nahi khisakta**: "kahan tak" yaad hai
-> - (ts, id) app ko kaise doge? → **next_cursor (base64)**: band lifafe me (next_cursor, base64), app andar nahi dekhti
-> - seedha page 500 pe jaana ho → **keyset me nahi hota**: agla / pichhla kaafi hai
-
 
 ---
 
@@ -455,15 +323,8 @@ NAHI    OFFSET
 
 **Rail 6 DATA BADA (khaata)** · Cue: MAHINE KE TUKDE + S3, snapshot
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c11_poster.png?v=1" width="1000" alt="card 11: kya toota, kaise bacha">
 
-<img src="img/c11_1.png?v=1" width="900">
-
-<img src="img/c11_2.png?v=1" width="900">
-
-<img src="img/c11_3.png?v=1" width="900">
-
-</details>
 
 ```
 NUMBERS khaata 1 crore x 2 line x 365 = ~730 crore line saal me, 3 saal ~22 arab, 5 saal ~36 arab
@@ -478,12 +339,6 @@ NAHI    purana delete kar do
 
 > [!IMPORTANT]
 > **Yaad rakh:** Mahine ke tukde, band mahina S3 (sasta, Object Lock). Balance = snapshot + baad ki line. 5 saal rakhna (PMLA).
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - line S3 pe chali gayi, to balance ka jod kaise? → **poora nahi jodte**: mahine ka snapshot + baad ki line
-> - RBI ko 2021 ka statement chahiye → **Athena (Parquet)**: S3 pe hi query (Athena, Parquet), ya tukda wapas laao
-> - koi S3 pe purani file badal de to? → **S3 pe taala**: na delete na badal (Object Lock, WORM)
 
 
 ---

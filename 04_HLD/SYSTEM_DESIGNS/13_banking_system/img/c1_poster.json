@@ -1,0 +1,138 @@
+{
+ "title": "Card 1: BEGIN, -500, +500, COMMIT: dono ya koi nahi. Beech me gira to DB log (WAL) se ulta. SAGA sirf do DB pe",
+ "h": 570,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 110,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "Ravi ko 500"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 225,
+   "w": 270,
+   "h": 150,
+   "kind": "server",
+   "title": "Banking Svc",
+   "lines": [
+    "BEGIN",
+    "Arpan -500, Ravi +500",
+    "COMMIT"
+   ]
+  },
+  {
+   "x": 660,
+   "y": 190,
+   "w": 420,
+   "h": 220,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "Arpan: 1000 -> 500",
+    "Ravi: +500",
+    "WAL (DB ka apna log)",
+    "aadha kisi ko nahi dikhta"
+   ]
+  },
+  {
+   "x": 1170,
+   "y": 250,
+   "w": 300,
+   "h": 110,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "+500 aaya"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     572,
+     300
+    ],
+    [
+     656,
+     300
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1082,
+     300
+    ],
+    [
+     1166,
+     300
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 500,
+   "red": "SAGA lagao?",
+   "green": "Faltu: sab ek DB me. SAGA tab jab do DB",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 550,
+   "y": 84,
+   "w": 920,
+   "red": "Beech me server gira (-500 hua, +500 nahi)",
+   "green": "COMMIT nahi tha: DB log (WAL) se ulta, mera wapas 1000",
+   "n": 2,
+   "mark": [
+    560,
+    225
+   ],
+   "conn": [
+    [
+     560,
+     213
+    ],
+    [
+     560,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 480,
+   "w": 1440,
+   "red": "-500 ke baad, COMMIT se pehle koi padhe? COMMIT se pehle wala hi dikhta.",
+   "green": "Ravi doosre bank me? Do bank = do DB: PENDING + SAGA + raat ko milaan"
+  }
+ ]
+}
