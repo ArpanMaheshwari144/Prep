@@ -60,7 +60,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: KAFKA (async), order turant jawab
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -71,7 +71,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 5 KUCH DHEEMA** · Cue: har raaste ki ALAG LINE + worker
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -82,7 +82,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 4 DO LOG EK SAATH** · Cue: KEY (SET NX, khabar ki apni id)
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -93,7 +93,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 3 MACHINE GIRI** · Cue: SENDING / SENT (do haal)
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -104,7 +104,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 5 KUCH DHEEMA (retry)** · Cue: BACKOFF + JITTER, had ke baad DLQ
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -115,7 +115,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 5 KUCH DHEEMA (company)** · Cue: TIMEOUT + CIRCUIT BREAKER
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -126,7 +126,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 2 BHEED AAYI (OTP)** · Cue: OTP ki ALAG TEZ LINE
 
-<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -137,7 +137,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 2 BHEED AAYI (company ki had)** · Cue: SAANJHA TOKEN BUCKET (Redis)
 
-<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -148,7 +148,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 6 DATA BADA / 8 HAMLA** · Cue: WEBHOOK + company ka message id
 
-<img src="img/c9_poster.png?v=3" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=4" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -159,7 +159,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 2 BHEED AAYI (campaign)** · Cue: 1000 ke TUKDE + campaign row
 
-<img src="img/c10_poster.png?v=3" width="1000" alt="card 10: kya toota, kaise bacha">
+<img src="img/c10_poster.png?v=4" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---
@@ -170,7 +170,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 1 KAAM CHALA (pasand)** · Cue: PASAND + SHAANTI + SAANCHA (cache)
 
-<img src="img/c11_poster.png?v=3" width="1000" alt="card 11: kya toota, kaise bacha">
+<img src="img/c11_poster.png?v=4" width="1000" alt="card 11: kya toota, kaise bacha">
 
 
 ---

@@ -46,8 +46,8 @@
    "kind": "lb",
    "title": "SES",
    "lines": [
-    "had 100 / sec",
-    "upar = 429"
+    "had 100 email har second",
+    "zyada bheja to 429"
    ]
   }
  ],
@@ -77,7 +77,7 @@
     ]
    ],
    "c": "purple",
-   "label": "token?",
+   "label": "token lo",
    "lx": 585,
    "ly": 228,
    "a": "middle"
@@ -180,7 +180,7 @@
   8,
   11
  ],
- "peeche": "card 7 me OTP ki ALAG TEZ LINE",
+ "peeche": "card 7 me OTP ki apni tez line",
  "ab": "Sale me laakhon email ek saath, SES (email company) ne 429 diya",
  "agla": "ab company ne \"bhej diya\" bola. Par Arpan ke phone tak pahuncha? (card 9)"
 }

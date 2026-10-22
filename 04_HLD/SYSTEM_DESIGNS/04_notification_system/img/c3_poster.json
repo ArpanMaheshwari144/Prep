@@ -46,8 +46,8 @@
    "kind": "db",
    "title": "Cassandra (aakhri deewar)",
    "lines": [
-    "(khabar_id, raasta)",
-    "ek hi baar lagta"
+    "(khabar_id, raasta) jodi",
+    "ek hi baar likh sakti"
    ]
   },
   {
@@ -88,7 +88,7 @@
     ]
    ],
    "c": "purple",
-   "label": "key?",
+   "label": "dekho",
    "lx": 560,
    "ly": 248,
    "a": "middle"
@@ -222,7 +222,7 @@
   3,
   11
  ],
- "peeche": "card 2 me har raaste ki ALAG LINE",
+ "peeche": "card 2 me har raaste (push / email / SMS) ki alag line",
  "ab": "Worker email bhej ke mara, khabar dobara aayi, Arpan ko do email",
  "agla": "ab id lagi, par galat waqt pe lagi to? (card 4)"
 }

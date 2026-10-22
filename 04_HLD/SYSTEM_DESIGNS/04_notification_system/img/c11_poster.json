@@ -22,8 +22,8 @@
    "title": "Worker",
    "lines": [
     "bhejne se pehle",
-    "pasand + shaanti",
-    "dekho"
+    "Arpan ki pasand +",
+    "shaanti ka waqt dekho"
    ]
   },
   {
@@ -47,7 +47,7 @@
    "kind": "cache",
    "title": "Redis (cache)",
    "lines": [
-    "pasand + saancha",
+    "user ki pasand",
     "raat 10 - subah 8 chup"
    ]
   },
@@ -103,7 +103,7 @@
     ]
    ],
    "c": "purple",
-   "label": "pasand?",
+   "label": "pasand",
    "lx": 575,
    "ly": 400,
    "a": "middle"
@@ -189,7 +189,7 @@
   11,
   11
  ],
- "peeche": "card 10 me 1000 ke TUKDE + campaign row",
+ "peeche": "card 10 me campaign 1000-1000 ke tukde, gira to wahin se",
  "ab": "Raat 2 baje Arpan ko offer ka SMS, jabki usne band kiya tha",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

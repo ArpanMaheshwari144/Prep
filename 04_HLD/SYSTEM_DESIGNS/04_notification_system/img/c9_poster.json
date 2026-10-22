@@ -1,5 +1,5 @@
 {
- "title": "Card 9: company ka message no. (SID) save. 'Mila' sirf jab company signed webhook se bataye",
+ "title": "Card 9: company ka message number (SID) save karo. \"Pahuncha\" tabhi likho jab company khud bataye (webhook)",
  "h": 620,
  "boxes": [
   {
@@ -10,7 +10,8 @@
    "kind": "server",
    "title": "Worker",
    "lines": [
-    "SID-9 save"
+    "company ka message no.",
+    "(SID-9) save kiya"
    ]
   },
   {
@@ -21,8 +22,8 @@
    "kind": "lb",
    "title": "Twilio",
    "lines": [
-    "'le liya' (SID-9)",
-    "baad me batati"
+    "bola: le liya (SID-9)",
+    "pahuncha to baad me batati"
    ]
   },
   {
@@ -57,7 +58,7 @@
    "title": "Tracking DB (Cassandra)",
    "lines": [
     "bheja / mila / khola",
-    "likhna bahut, seedhi row"
+    "bahut likhna, isliye Cassandra"
    ]
   }
  ],
@@ -201,7 +202,7 @@
   9,
   11
  ],
- "peeche": "card 8 me SAANJHA TOKEN BUCKET (Redis)",
+ "peeche": "card 8 me sab worker ka ek token bucket (Redis)",
  "ab": "Company ne \"bhej diya\" bola, par Arpan ke phone tak pahuncha ya nahi, pata nahi",
  "agla": "ab ek ke liye nahi, 1 crore logon ke liye bhejna hai (card 10)"
 }

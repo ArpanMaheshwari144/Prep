@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Card 1: order + khabar ek hi DB txn me (</title>
+<title>Card 1: order aur &quot;email bhejo&quot; ki khaba</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
 <svg width="1500" height="939" viewBox="0 0 1500 939" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
@@ -9,7 +9,7 @@
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
 </defs><rect width="1500" height="939" fill="#0b1220"/>
-<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: order + khabar ek hi DB txn me (outbox). Order ko turant OK, email peeche Kafka se</text>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: order aur &quot;email bhejo&quot; ki khabar ek saath DB me (outbox). Arpan ko turant OK, email peeche Kafka se</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
 <text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 1 / 11</text>
@@ -26,24 +26,23 @@
 <text x="120.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">order kiya</text>
 <rect x="270" y="222" width="230" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
 <text x="385.0" y="256" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Order Svc</text>
-<text x="385.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">order + khabar</text>
-<text x="385.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ek txn (outbox)</text>
-<text x="385.0" y="326" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">turant OK</text>
+<text x="385.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">order + khabar ek saath</text>
+<text x="385.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">DB me save (outbox)</text>
+<text x="385.0" y="326" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Arpan ko turant OK</text>
 <rect x="590" y="232" width="210" height="120" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
 <text x="695.0" y="266" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Kafka</text>
-<text x="695.0" y="292" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar ~7 din</text>
-<text x="695.0" y="314" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">3 copy</text>
+<text x="695.0" y="292" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">khabar 7 din tak rakhta</text>
+<text x="695.0" y="314" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">3 machine pe copy</text>
 <rect x="890" y="222" width="230" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
 <text x="1005.0" y="256" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Notification Svc</text>
-<text x="1005.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">peeche padh ke</text>
-<text x="1005.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">email bhejti</text>
-<text x="1005.0" y="326" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">yaad: kahan tak</text>
+<text x="1005.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">peeche padh ke email bhejti</text>
+<text x="1005.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">yaad: kahan tak padha</text>
 <rect x="1200" y="232" width="270" height="120" rx="12" fill="#152033" stroke="#9fb0c8" stroke-width="2.5"/>
 <text x="1335.0" y="266" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Email company</text>
 <text x="1335.0" y="292" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">aaj band thi</text>
 <path d="M212 292 L266 292" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
 <path d="M502 292 L586 292" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
-<text x="544" y="322" font-size="13" fill="#ffa94d" class="m" text-anchor="middle">relay</text>
+<text x="544" y="322" font-size="13" fill="#ffa94d" class="m" text-anchor="middle">outbox se</text>
 <path d="M802 292 L886 292" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
 <path d="M1122 292 L1196 292" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
 <circle cx="530" cy="292" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>

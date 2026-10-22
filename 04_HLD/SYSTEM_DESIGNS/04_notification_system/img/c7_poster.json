@@ -22,7 +22,8 @@
    "kind": "server",
    "title": "Notification Svc",
    "lines": [
-    "kis line me?"
+    "khabar dekh ke",
+    "line chunti"
    ]
   },
   {
@@ -276,7 +277,7 @@
   7,
   11
  ],
- "peeche": "card 6 me TIMEOUT + CIRCUIT BREAKER",
+ "peeche": "card 6 me timeout + breaker, Twilio dheemi to SNS",
  "ab": "12 baje sale shuru, Arpan ka OTP 1 crore offer ke peeche, 10 min late, login fail",
  "agla": "ab bheed itni ki company hi mana karne lagi (429) (card 8)"
 }

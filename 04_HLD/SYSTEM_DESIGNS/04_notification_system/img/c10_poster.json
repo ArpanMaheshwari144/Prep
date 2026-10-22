@@ -1,5 +1,5 @@
 {
- "title": "Card 10: 1000-1000 ke tukde, low line, campaign row me aakhri_id. Gira to wahin se",
+ "title": "Card 10: 1 crore ko 1000-1000 ke tukdon me, low line se. Campaign row me likho kahan tak bheja, gira to wahin se",
  "h": 745,
  "boxes": [
   {
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "Campaign Svc",
    "lines": [
-    "1000-1000",
-    "ke tukde"
+    "1 crore ko 1000-1000",
+    "ke tukdon me baanta"
    ]
   },
   {
@@ -34,7 +34,7 @@
    "kind": "cache",
    "title": "Low line",
    "lines": [
-    "tukde"
+    "tukde line me"
    ]
   },
   {
@@ -68,7 +68,8 @@
    "kind": "db",
    "title": "Campaign row",
    "lines": [
-    "aakhri_id = 3000 · RUNNING / CANCELLED"
+    "aakhri_id = 3000",
+    "RUNNING / CANCELLED"
    ]
   }
  ],
@@ -137,7 +138,7 @@
     ]
    ],
    "c": "purple",
-   "label": "kahan tak",
+   "label": "kahan tak bheja",
    "lx": 1125,
    "ly": 400
   }
@@ -232,7 +233,7 @@
   10,
   11
  ],
- "peeche": "card 9 me WEBHOOK + company ka message no.",
+ "peeche": "card 9 me company ka message no. (SID) + webhook se pakki khabar",
  "ab": "Shaam ko \"Diwali offer sabko\": 1 crore log",
  "agla": "ab bheja to sahi, par Arpan chahta tha? (card 11)"
 }

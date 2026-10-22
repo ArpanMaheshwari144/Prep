@@ -1,5 +1,5 @@
 {
- "title": "Card 1: order + khabar ek hi DB txn me (outbox). Order ko turant OK, email peeche Kafka se",
+ "title": "Card 1: order aur \"email bhejo\" ki khabar ek saath DB me (outbox). Arpan ko turant OK, email peeche Kafka se",
  "h": 630,
  "boxes": [
   {
@@ -21,9 +21,9 @@
    "kind": "server",
    "title": "Order Svc",
    "lines": [
-    "order + khabar",
-    "ek txn (outbox)",
-    "turant OK"
+    "order + khabar ek saath",
+    "DB me save (outbox)",
+    "Arpan ko turant OK"
    ]
   },
   {
@@ -34,8 +34,8 @@
    "kind": "cache",
    "title": "Kafka",
    "lines": [
-    "khabar ~7 din",
-    "3 copy"
+    "khabar 7 din tak rakhta",
+    "3 machine pe copy"
    ]
   },
   {
@@ -46,9 +46,8 @@
    "kind": "server",
    "title": "Notification Svc",
    "lines": [
-    "peeche padh ke",
-    "email bhejti",
-    "yaad: kahan tak"
+    "peeche padh ke email bhejti",
+    "yaad: kahan tak padha"
    ]
   },
   {
@@ -89,7 +88,7 @@
     ]
    ],
    "c": "orange",
-   "label": "relay",
+   "label": "outbox se",
    "lx": 544,
    "ly": 300,
    "a": "middle"
