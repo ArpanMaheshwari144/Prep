@@ -122,15 +122,8 @@ NAHI    pehle GET phir SET  -> RACE: do kadam hue, dono ne 4 padha, dono andar a
 
 **Rail 5 KUCH DHEEMA** · Cue: LIMITER GATEWAY pe, sabse aage
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=8" width="900">
-
-<img src="img/c3_2.png?v=8" width="900">
-
-<img src="img/c3_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     limiter API Gateway pe hai, sabse aage. Had paar hui to wahin 429, request LB / App tak jaati hi nahi
@@ -140,13 +133,6 @@ NAHI    ginti App me rakho -> BHARA: mana hone wali request bhi andar aati, App 
 
 > [!IMPORTANT]
 > **Yaad rakh:** Limiter gateway pe, sabse aage. Had paar to wahin 429, LB / App tak jaati hi nahi.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - 429 bheja, uske saath kya bhejte ho? → **Retry-After**: Retry-After: 30 (kab aao) aur X-RateLimit-Remaining (kitni bachi)
-> - sabko Retry-After 30 diya? → **jitter**: 30 sec baad sab ek saath lautenge. Alag-alag do (28, 33), isse bheed phail jaati (jitter)
-> - gateway gir gaya? → **2+ machine pe**: aage LB, darwaza akela nahi
-> - had sirf gateway pe lagana kaafi hai? → **dono jagah**: dono jagah: gateway pe sabke liye moti had, aur service ke andar apni baarik had
 
 
 ---
