@@ -21,7 +21,7 @@
    "kind": "lb",
    "title": "WAF (edge)",
    "lines": [
-    "block list: IP",
+    "bot ka IP block list me",
     "ban 24 ghante tak"
    ]
   },
@@ -45,7 +45,7 @@
    "kind": "cache",
    "title": "Kafka",
    "lines": [
-    "429 ki line"
+    "har 429 ka record"
    ]
   },
   {
@@ -137,7 +137,7 @@
     ]
    ],
    "c": "green",
-   "label": "ban: IP block list me",
+   "label": "IP ban karo",
    "lx": 740,
    "ly": 535,
    "a": "middle"
@@ -250,7 +250,7 @@
   6,
   9
  ],
- "peeche": "card 5 me HOME REGION me ginti",
+ "peeche": "card 5 me Arpan ki ginti uske ghar region (India) me",
  "ab": "Wahi bot Arpan ke account pe har 60 sec baad phir aata, din bhar",
  "agla": "ab har user had me hai. Phir bhi poora system bhar gaya to? (card 7)"
 }

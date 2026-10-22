@@ -34,7 +34,8 @@
    "kind": "lb",
    "title": "LB",
    "lines": [
-    "sirf paas wali"
+    "sirf had wali",
+    "request aati"
    ]
   },
   {
@@ -45,8 +46,8 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "apni baarik had",
-    "bhi lagata"
+    "har kaam ki apni",
+    "chhoti had bhi"
    ]
   }
  ],
@@ -63,7 +64,7 @@
     ]
    ],
    "c": "blue",
-   "label": "20/s",
+   "label": "",
    "lx": 289,
    "ly": 220,
    "a": "middle"
@@ -118,7 +119,7 @@
     ]
    ],
    "c": "orange",
-   "label": "429 + Retry-After",
+   "label": "429: itni der baad aao",
    "lx": 300,
    "ly": 342,
    "a": "middle"
@@ -213,7 +214,7 @@
   3,
   9
  ],
- "peeche": "card 2 me ATOMIC: INCR / LUA",
+ "peeche": "card 2 me ginti +1 ek hi kadam me (INCR / Lua)",
  "ab": "Bot ki mana wali (429) request bhi App tak ghoom ke aayi",
  "agla": "ab sab Redis pe tika hai. Redis gira to? (card 4)"
 }

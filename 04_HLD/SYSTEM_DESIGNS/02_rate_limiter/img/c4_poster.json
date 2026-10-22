@@ -10,8 +10,8 @@
    "kind": "server",
    "title": "Gateway",
    "lines": [
-    "har request pe Redis",
-    "se poochta, ~5 ms tak"
+    "har request pe Redis se poochta",
+    "5 ms me jawab nahi = gira"
    ]
   },
   {
@@ -45,8 +45,8 @@
    "title": "Endpoint ke hisaab se",
    "lines": [
     "login: band, user ko 503",
-    "feed: khula, Redis aate hi band",
-    "tab tak gateway apni ginti"
+    "feed: khula rehta",
+    "tab tak gateway apni memory me ginta"
    ]
   }
  ],
@@ -63,7 +63,7 @@
     ]
    ],
    "c": "orange",
-   "label": "INCR",
+   "label": "+1",
    "lx": 296,
    "ly": 216
   },
@@ -80,7 +80,7 @@
    ],
    "c": "green",
    "dash": true,
-   "label": "copy",
+   "label": "copy banti",
    "lx": 560,
    "ly": 295
   },
@@ -222,7 +222,7 @@
   4,
   9
  ],
- "peeche": "card 3 me LIMITER GATEWAY pe",
+ "peeche": "card 3 me limiter sabse aage, API Gateway pe",
  "ab": "Dopahar Redis gira, limiter andha ho gaya, Arpan ke login pe koi had nahi",
  "agla": "ab ek region me sab theek. Par Arpan kai region se aaye to? (card 5)"
 }

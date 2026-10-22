@@ -43,8 +43,8 @@
    "kind": "cache",
    "title": "Redis (ginti yahin)",
    "lines": [
-    "rate:Arpan:login = 6",
-    "60 sec baad key khud mit jaati",
+    "Arpan ke login ki ginti = 6",
+    "60 sec baad ginti khud mit jaati",
     "had 5, chhathi pe mana"
    ]
   },
@@ -99,7 +99,7 @@
     ]
    ],
    "c": "orange",
-   "label": "INCR",
+   "label": "ginti +1",
    "lx": 600,
    "ly": 196
   },
@@ -128,7 +128,7 @@
     ]
    ],
    "c": "green",
-   "label": "6 > 5",
+   "label": "mana",
    "lx": 1104,
    "ly": 250,
    "a": "middle"

@@ -21,7 +21,7 @@
    "kind": "server",
    "title": "US gateway",
    "lines": [
-    "ghar door hai"
+    "ginti India bhejta"
    ]
   },
   {
@@ -32,7 +32,7 @@
    "kind": "server",
    "title": "Europe gateway",
    "lines": [
-    "ghar door hai"
+    "ginti India bhejta"
    ]
   },
   {
@@ -43,7 +43,7 @@
    "kind": "server",
    "title": "India gateway",
    "lines": [
-    "ghar yahi hai"
+    "Arpan ka ghar yahi"
    ]
   },
   {
@@ -54,8 +54,8 @@
    "kind": "cache",
    "title": "Ghar Redis (India)",
    "lines": [
-    "rate:Arpan = ek hi ginti",
-    "had 100, sab yahin"
+    "Arpan ki ek hi ginti",
+    "had 100, sab yahin gini"
    ]
   },
   {
@@ -148,7 +148,7 @@
     ]
    ],
    "c": "orange",
-   "label": "paas",
+   "label": "paas wala gateway",
    "lx": 640,
    "ly": 452
   },
@@ -262,7 +262,7 @@
   5,
   9
  ],
- "peeche": "card 4 me REDIS COPY + kaun khula kaun band",
+ "peeche": "card 4 me Redis ki copy; Redis gira to login band, feed khula",
  "ab": "Arpan ki script 3 region se chali, 100 ki had me 150 nikal gayi",
  "agla": "ab had lag rahi. Par wahi bot roz wapas aa jaata (card 6)"
 }

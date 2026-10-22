@@ -1,5 +1,5 @@
 {
- "title": "Card 2: padhna aur badhana ek hi kadam me (INCR). Redis ek ke baad ek chalata",
+ "title": "Card 2: ginti padhna aur +1 karna ek hi kadam me (INCR). Redis ek-ek karke chalata, beech me koi nahi",
  "h": 560,
  "boxes": [
   {
@@ -34,8 +34,8 @@
    "kind": "cache",
    "title": "Redis (ek hi line me chalta)",
    "lines": [
-    "Lua: INCR + EXPIRE ek saath",
-    "rate:Arpan:login = 1, 2, 3 ...",
+    "+1 aur umar ek hi kadam me (Lua)",
+    "ginti 1, 2, 3 ... ek-ek karke",
     "ek ke baad ek, beech me koi nahi"
    ]
   },
@@ -219,7 +219,7 @@
   2,
   9
  ],
- "peeche": "card 1 me Redis me EK ginti",
+ "peeche": "card 1 me sab App ki ek hi ginti, Redis me",
  "ab": "Bot ne Arpan ke account pe 20 login ek saath bheje, 6 ghus gaye",
  "agla": "ab ginti sahi hai. Par mana wali request bhi andar tak aa rahi (card 3)"
 }

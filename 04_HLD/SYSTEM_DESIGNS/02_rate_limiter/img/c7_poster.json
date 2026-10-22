@@ -22,7 +22,7 @@
    "kind": "server",
    "title": "Gateway",
    "lines": [
-    "system ki had: 5,000 / sec",
+    "system ki had: 5,000 har second",
     "CPU 90% paar?",
     "kam zaroori ko 503"
    ]
@@ -192,7 +192,7 @@
   7,
   9
  ],
- "peeche": "card 6 me KAFKA -> PATTERN -> WAF BAN",
+ "peeche": "card 6 me har 429 Kafka me, pattern dikha to WAF ban",
  "ab": "Shaam ki sale, har koi apni had me, phir bhi server gira, Arpan ka payment atka",
  "agla": "ab sabse bura waqt: attack aur Redis ek saath gaye (card 8)"
 }
