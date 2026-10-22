@@ -1,5 +1,5 @@
 {
- "title": "Card 3: Counter har App ko alag range deta. App range se agla number, phir base62",
+ "title": "Card 3: Counter har App ko numbers ka alag dabba deta. App usme se agla number le ke chhota code banata",
  "h": 760,
  "boxes": [
   {
@@ -32,7 +32,7 @@
    "kind": "server",
    "title": "App 1",
    "lines": [
-    "range 1 se 1000",
+    "dabba: 1 se 1000",
     "agla 125 -> code \"21\""
    ]
   },
@@ -44,8 +44,8 @@
    "kind": "server",
    "title": "App 2",
    "lines": [
-    "range 1001 se 2000",
-    "agla 1001, alag code"
+    "dabba: 1001 se 2000",
+    "agla 1001 -> alag code"
    ]
   },
   {
@@ -56,8 +56,8 @@
    "kind": "lb",
    "title": "Counter",
    "lines": [
-    "har App ko alag range",
-    "kabhi dohraata nahi"
+    "har App ko alag dabba",
+    "number kabhi dohraata nahi"
    ]
   },
   {
@@ -68,7 +68,7 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "code UNIQUE",
+    "code UNIQUE (ek hi baar)",
     "code -> lamba link"
    ]
   }
@@ -113,7 +113,7 @@
    ],
    "c": "grey",
    "dash": true,
-   "label": "1000 pe 1",
+   "label": "naya dabba",
    "lx": 598,
    "ly": 298
   },
@@ -273,7 +273,7 @@
   3,
   8
  ],
- "peeche": "card 2 me kai App + LOAD BALANCER",
+ "peeche": "card 2 me kai App lagayi, aage load balancer",
  "ab": "Arpan aur Ravi ne ek hi pal me link banaya, dono ko ek hi code mila",
  "agla": "ab har click gin-na hai. Ginti ke chakkar me redirect dheema to nahi? (card 4)"
 }

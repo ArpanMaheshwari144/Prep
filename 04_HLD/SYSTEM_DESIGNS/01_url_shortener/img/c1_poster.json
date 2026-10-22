@@ -1,5 +1,5 @@
 {
- "title": "Card 1: beech me Redis. Click pe pehle Redis, nahi mila to DB se laao aur Redis me rakho",
+ "title": "Card 1: App aur DB ke beech Redis. Click pe pehle Redis dekho, wahan nahi to DB se laao, Redis me rakh do",
  "h": 720,
  "boxes": [
   {
@@ -32,9 +32,9 @@
    "kind": "cache",
    "title": "Redis (garam copy)",
    "lines": [
-    "95% click yahin se",
-    "~0.1 ms (RAM)",
-    "umar (TTL) = link ki expiry"
+    "100 me 95 click yahin se",
+    "~0.1 ms (RAM me)",
+    "umar (TTL) = link kab tak chale"
    ]
   },
   {
@@ -45,8 +45,8 @@
    "kind": "db",
    "title": "DB (sach yahin)",
    "lines": [
-    "~10 ms (disk)",
-    "khoya Redis yahin se banta"
+    "~10 ms (disk pe)",
+    "Redis khoya to yahin se dobara"
    ]
   }
  ],
@@ -107,7 +107,7 @@
     ]
    ],
    "c": "green",
-   "label": "laao + rakho",
+   "label": "DB se laaya",
    "lx": 962,
    "ly": 352,
    "a": "middle"

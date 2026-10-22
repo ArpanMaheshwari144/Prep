@@ -1,5 +1,5 @@
 {
- "title": "Card 8: gateway pe sabki ek ginti (API key pe, Redis me). Had paar to 429, andar aaya hi nahi",
+ "title": "Card 8: darwaze (gateway) pe sabki ek ginti, Redis me. Had paar to 429, request andar aayi hi nahi",
  "h": 630,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "lb",
    "title": "WAF",
    "lines": [
-    "pehchaana hamla",
-    "yahin ruk jaata"
+    "jaana-pehchana hamla",
+    "yahin rok deta"
    ]
   },
   {
@@ -34,7 +34,7 @@
    "title": "Gateway",
    "lines": [
     "ginti API key pe",
-    "had paar: 429"
+    "had paar: 429 (baad me aao)"
    ]
   },
   {
@@ -116,7 +116,7 @@
     ]
    ],
    "c": "orange",
-   "label": "INCR",
+   "label": "ginti +1",
    "lx": 830,
    "ly": 420
   }
@@ -197,7 +197,7 @@
   8,
   8
  ],
- "peeche": "card 7 me ROUTE 53 + 2 LB",
+ "peeche": "card 7 me do LB, aage Route 53 (DNS)",
  "ab": "Raat ko spammer ki script, har second 5,000 link, Arpan ki site dheemi",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

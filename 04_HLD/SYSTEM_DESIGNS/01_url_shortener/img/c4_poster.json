@@ -1,5 +1,5 @@
 {
- "title": "Card 4: redirect turant (302), 'click hua' Kafka me. Ginti peeche, apni speed se",
+ "title": "Card 4: link turant khulta (302), \"click hua\" ki khabar Kafka me. Ginti peeche, apni speed se",
  "h": 680,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "302 turant",
-    "'click hua' Kafka me"
+    "302: turant link pe bhejo",
+    "\"click hua\" Kafka me daalo"
    ]
   },
   {
@@ -33,8 +33,8 @@
    "kind": "cache",
    "title": "Kafka",
    "lines": [
-    "click rakhta",
-    "padhne ke baad bhi"
+    "click ki khabar rakhta",
+    "padhne ke baad bhi nahi mitata"
    ]
   },
   {
@@ -45,8 +45,8 @@
    "kind": "server",
    "title": "Analytics",
    "lines": [
-    "apni speed se padhta",
-    "kahan tak padha yaad"
+    "click ginta, apni speed se",
+    "yaad: kahan tak padha"
    ]
   }
  ],
@@ -191,7 +191,7 @@
    "x": 520,
    "y": 410,
    "w": 470,
-   "red": "Kafka me ek khabar kharab nikli",
+   "red": "Ek click ki khabar tooti hui aayi, padhi hi nahi ja rahi",
    "green": "Use alag line (DLQ) me daalo, baaki ginti chalti rahe",
    "mark": [
     985,
@@ -262,7 +262,7 @@
   4,
   8
  ],
- "peeche": "card 3 me COUNTER RANGE + base62",
+ "peeche": "card 3 me Counter se numbers ka dabba, number se chhota code",
  "ab": "Arpan ne click ginti chahi, redirect hi dheema ho gaya",
  "agla": "ab data hi itna ho gaya ki ek machine me nahi aata (card 5)"
 }

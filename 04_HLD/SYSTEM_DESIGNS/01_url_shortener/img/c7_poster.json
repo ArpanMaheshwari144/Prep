@@ -1,5 +1,5 @@
 {
- "title": "Card 7: do LB, aage Route 53. Jo LB 3 baar chup raha, wo list se bahar",
+ "title": "Card 7: do LB, aage Route 53 (DNS). Jo LB 3 baar jawab na de, wo list se bahar",
  "h": 560,
  "boxes": [
   {
@@ -22,8 +22,8 @@
    "kind": "lb",
    "title": "Route 53",
    "lines": [
-    "har ~30 sec health check",
-    "3 baar chup = bahar"
+    "har ~30 sec poochta: zinda ho?",
+    "3 baar chup = list se bahar"
    ]
   },
   {
@@ -34,7 +34,7 @@
    "kind": "lb",
    "title": "LB-1",
    "lines": [
-    "zone A"
+    "zone A (ek building)"
    ]
   },
   {
@@ -45,7 +45,7 @@
    "kind": "lb",
    "title": "LB-2",
    "lines": [
-    "zone B, zinda"
+    "zone B (doosri), zinda"
    ]
   },
   {
@@ -56,7 +56,7 @@
    "kind": "server",
    "title": "App x N",
    "lines": [
-    "peeche wahi App"
+    "dono LB ke peeche wahi App"
    ]
   }
  ],
@@ -227,7 +227,7 @@
   7,
   8
  ],
- "peeche": "card 6 me QUORUM (2 me likho, 2 se padho)",
+ "peeche": "card 6 me 2 copy me likho, 2 se padho, naya link turant milta",
  "ab": "Shaam ko LB hi gir gaya, Arpan ka koi click andar nahi gaya",
  "agla": "ab koi galat istemal kare to? (card 8)"
 }

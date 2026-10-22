@@ -1,5 +1,5 @@
 {
- "title": "Card 6: 3 copy me se 2 me likho, 2 se padho. Har jodi me ek taaza copy zaroor",
+ "title": "Card 6: 3 copy me se 2 me likho, 2 se padho. Padhne wali do me se ek me naya link zaroor milega",
  "h": 740,
  "boxes": [
   {
@@ -67,7 +67,8 @@
    "kind": "plain",
    "title": "2 + 2 > 3",
    "lines": [
-    "padhne wali jodi me ek taaza",
+    "likha 2 me + padha 2 se",
+    "= ek copy dono me aayegi",
     "isliye banate hi 404 nahi"
    ]
   }
@@ -128,7 +129,7 @@
    ],
    "c": "blue",
    "dash": true,
-   "label": "padha A+C",
+   "label": "padha",
    "lx": 556,
    "ly": 376
   }
@@ -251,7 +252,7 @@
   6,
   8
  ],
- "peeche": "card 5 me SHARD by code (RING)",
+ "peeche": "card 5 me data code ke hisaab se machines me baanta (ring), har link ki 3 copy",
  "ab": "Arpan ne naya link banaya, turant khola, 404 aaya",
  "agla": "ab saare App ke aage ek hi LB hai. Wo gira to? (card 7)"
 }

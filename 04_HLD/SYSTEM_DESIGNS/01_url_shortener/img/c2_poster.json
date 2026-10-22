@@ -1,5 +1,5 @@
 {
- "title": "Card 2: kai App, aage LB. App kuch yaad nahi rakhti, to koi bhi App koi bhi click le le",
+ "title": "Card 2: kai App, aage LB (load balancer). App kuch yaad nahi rakhti, isliye koi bhi App koi bhi click le sakti",
  "h": 680,
  "boxes": [
   {
@@ -22,7 +22,7 @@
    "title": "LB",
    "lines": [
     "baari-baari bhejta",
-    "har App se /health",
+    "har App se poochta: zinda ho?",
     "chup App list se bahar"
    ]
   },
@@ -67,7 +67,8 @@
    "kind": "db",
    "title": "Redis / DB",
    "lines": [
-    "login, link sab yahan"
+    "login, link sab yahan",
+    "(App me kuch nahi)"
    ]
   }
  ],
@@ -227,7 +228,7 @@
   2,
   8
  ],
- "peeche": "card 1 me REDIS CACHE",
+ "peeche": "card 1 me Redis lagaya, click pehle Redis se",
  "ab": "Usi bheed me Arpan ki site wali ek App machine giri, poori site band",
  "agla": "ab kai App hain, sab ek saath code bana rahe. Do ko ek hi code to nahi milega? (card 3)"
 }

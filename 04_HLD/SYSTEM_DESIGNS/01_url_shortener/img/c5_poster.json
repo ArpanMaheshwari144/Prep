@@ -1,5 +1,5 @@
 {
- "title": "Card 5: data code se baanto (ring). Code ki machine + agli 2 pe copy",
+ "title": "Card 5: data ko code ke hisaab se machines me baanto (ring). Har link apni machine + agli 2 pe copy",
  "h": 790,
  "circles": [
   {
@@ -59,9 +59,9 @@
    "w": 330,
    "h": 120,
    "kind": "db",
-   "title": "Har tukda: 3 copy",
+   "title": "Har link ki 3 copy",
    "lines": [
-    "code ki machine + agli 2",
+    "apni machine + agli 2",
     "teeno barabar (Cassandra)"
    ]
   }
@@ -79,7 +79,7 @@
     ]
    ],
    "c": "green",
-   "label": "hash(code)",
+   "label": "code se ring pe jagah",
    "lx": 330,
    "ly": 308,
    "a": "middle"
@@ -196,7 +196,7 @@
   5,
   8
  ],
- "peeche": "card 4 me KAFKA, ginti peeche",
+ "peeche": "card 4 me click ki khabar Kafka me, ginti peeche",
  "ab": "DB team boli: 5 saal me 90 TB, ek machine me nahi aata",
  "agla": "ab har tukde ki 3 copy hain. Par Arpan ka naya link kholte hi 404? (card 6)"
 }
