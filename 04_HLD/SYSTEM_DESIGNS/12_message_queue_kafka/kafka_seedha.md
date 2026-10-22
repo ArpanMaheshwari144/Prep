@@ -173,7 +173,8 @@ machine ek hi Email Svc ki hain? Na bataya to Kafka har machine ko alag padhne w
                          ---> [ Email machine 3 ]
 ```
 
-Teeno machine ko ek hi team bana do: sabko ek hi team ka naam do (group.id). Is team ko consumer group kehte hain.
+Teeno machine ko ek team bana do: sabko ek hi team ka naam do (group.id).
+Is team ko consumer group kehte hain.
 Team ke andar har tukda sirf ek machine ko milta hai.
 
 ```
