@@ -30,11 +30,18 @@ flowchart LR
 **Peeche se:** order-events ek topic, ek line, Kafka ki ek machine pe.
 **Ab:** Diwali sale, har second lakhon order. Ek machine itna bojh nahi utha paati.
 
-```
- topic: order-events
-   [ Tukda P0 ]  machine A   <- Ravi ki khabar
-   [ Tukda P1 ]  machine B   <- Arpan ki khabar
-   [ Tukda P2 ]  machine C   <- Sita ki khabar
+```mermaid
+flowchart LR
+    O["Order Svc<br/>key = userId"]
+    subgraph T["topic: order-events (ek hi topic, andar 3 tukde)"]
+        P0[("P0 · machine A<br/>Ravi ki khabar")]
+        P1[("P1 · machine B<br/>Arpan: order, pay, cancel<br/>(kram se)")]
+        P2[("P2 · machine C<br/>Sita ki khabar")]
+    end
+    O -- "Ravi" --> P0
+    O -- "Arpan (hamesha P1)" --> P1
+    O -- "Sita" --> P2
+    style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 - Topic wahi ek, order-events. Andar 3 tukde. Ek tukde ko **partition** kehte hain.
@@ -51,11 +58,29 @@ flowchart LR
 **Peeche se:** order-events ke 3 tukde P0, P1, P2. Arpan ki khabar P1 me.
 **Ab:** SMS Svc ki 3 machine hain (banda-A, banda-B, banda-C). Teeno ne saare tukde padhe to Arpan ko 3 SMS.
 
-```
- TEAM "sms" (3 bande)                    TEAM "fraud" (1 banda)
-   P0 ---> banda-A                        P0 --+
-   P1 ---> banda-B  (Arpan -> 1 SMS)      P1 --+--> banda-X
-   P2 ---> banda-C                        P2 --+
+```mermaid
+flowchart TB
+    subgraph T["topic: order-events"]
+        direction LR
+        P0[("P0<br/>Ravi")]
+        P1[("P1<br/>Arpan")]
+        P2[("P2<br/>Sita")]
+    end
+    subgraph S["TEAM sms (group.id = sms, 3 bande)"]
+        direction LR
+        A["banda-A"]
+        B["banda-B<br/>Arpan ko 1 SMS"]
+        C["banda-C"]
+    end
+    subgraph F["TEAM fraud (1 banda)"]
+        X["banda-X<br/>teeno tukde padhta"]
+    end
+    P0 --> A
+    P1 --> B
+    P2 --> C
+    T -. "poori khabar, apna bookmark" .-> F
+    style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style B fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
 - SMS Svc ki teeno machine ko ek team bana do: sabko ek hi team ka naam (group.id = "sms"). Is team ko
