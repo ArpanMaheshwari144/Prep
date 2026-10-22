@@ -89,7 +89,8 @@ flowchart LR
 ## Stop 4: machine giri
 
 Kafka ki machine ki disk mari to khabar na jaaye, isliye har tukde ki 3 copy, alag machine pe. Ek leader, do copy.
-Order Svc ko "ho gaya" tabhi jab copy pe bhi likh jaaye (**acks=all**). Leader mara to copy naya leader.
+Order Svc ko "ho gaya" tabhi jab saari pakki copy (ISR) pe bhi likh jaaye (**acks=all**), aur kam se kam 2 pakki
+copy zinda hon (**min.insync = 2**). Leader mara to pakki copy naya leader.
 
 ```mermaid
 flowchart LR
@@ -143,10 +144,12 @@ key nahi di?                     -> khabar kisi bhi tukde me, kram nahi bachta
 poore topic ka ek kram chahiye?  -> ek hi tukda, phir wahi bheed. Aksar ek user ka kram kaafi
 ek celeb ki itni khabar ki uska tukda bhar gaya?
                                  -> key me number jodo (userId#1, #2), kram chhodna padega
-tukde 10 se 20 kiye?             -> key ka tukda badal gaya, kuch der kram toota. Isliye shuru me zyada rakho
+tukde 10 se 20 kiye?             -> tukda = hash(key) % ginti. Ginti badli to key ka tukda badla, kuch der kram
+                                    toota. Isliye shuru me peak se 2-3 guna tukde rakho
 Order Svc ne A bheja, wo network me atka, retry kiya, tab tak B pahunch gaya?
-                                 -> Order Svc har khabar pe number lagata (1, 2). Kafka number dekh ke kram
-                                    theek rakhta aur dobara aayi khabar nahi likhta (idempotent producer)
+                                 -> Order Svc ki Kafka library khud har khabar pe number lagati (1, 2), hum nahi.
+                                    Kafka number dekh ke kram theek rakhta aur dobara aayi khabar nahi likhta
+                                    (idempotent producer, setting enable.idempotence=true)
 RabbitMQ / SQS (doosre queue tool) me kram?
                                  -> pakka nahi milta. SQS FIFO ya ek hi padhne wala ho tab, par speed kam
 team ki ek machine gir gayi?      -> uske tukde baaki machine ko mil jaate (rebalance), neeche Gehra 3
@@ -165,6 +168,8 @@ ek copy peeche chal rahi?           -> sirf poori taaza copy "pakki" (ISR). Lead
 dono copy bhi gayi, sirf A bacha?   -> likhna rok do (min.insync = 2). Khone se behtar rukna
 naya leader kaun chunta?            -> Controller: Kafka ki ek machine jo baaki sab pe nazar rakhti (KRaft).
                                        Ek hi faisla, do leader kabhi nahi
+acks=all matlab saari copy?        -> nahi, saari PAKKI copy (ISR). Isliye min.insync = 2 saath zaroori, warna
+                                       sirf leader bacha ho to bhi "ho gaya" mil jaata
 acks ke teen tareeke?               -> 0 = bhej ke bhool jao, 1 = sirf leader (click, log ke liye theek),
                                        all = saari pakki copy (paisa, order)
 3 copy ke liye kitni machine?       -> kam se kam 3 alag machine
@@ -205,6 +210,9 @@ flowchart LR
 userId se pehchano?             -> galat. Arpan ka agla sahi order bhi chhoot jaayega. Pehchaan eventId se
 Redis se E-5 jaldi mit gaya?    -> dobara aayi to pehchani nahi. Utni der rakho jitni der dobara aa sakti
 exactly-once milta hai?         -> sirf Kafka se Kafka tak. Email / DB ke liye padhne wala khud pehchaane
+Redis hi gir gaya to?           -> email nahi rukta. Pakki deewar DB me: processed table me eventId UNIQUE.
+                                   Redis sirf tez jaanch hai, sach DB me
+bookmark khud aage na badhe?    -> haan, auto-commit band (enable.auto.commit=false), kaam ke baad khud commit
 ```
 
 ## Gehra 2: bhejne wala hi gira (outbox)
@@ -238,6 +246,9 @@ flowchart LR
 order likhne se pehle gira?        -> kuch nahi likha. Arpan dobara order karega, galat kuch nahi
 relay ne bheja, sent = true se pehle gira?  -> khabar dobara jaayegi. Padhne wala E-101 pehchaan lega
 outbox table bharti gayi?          -> sent = true wali row roz saaf karo
+5,000 / sec pe relay DB ko baar-baar poochhe (sent = false)?
+                                   -> DB pe bojh. Bada scale ho to CDC: Debezium DB ka apna log (WAL / binlog)
+                                      padh ke Kafka ko deta, table ko poochhna hi nahi padta
 saga kyun nahi?                    -> saga = kadam-kadam kaam, fail pe pichhla kaam ulta. Wo galti ulatne ke
                                       liye hai. Yahan kuch ulatna nahi, khabar ko bachana hai
 poora bachav ek line me?           -> outbox + acks=all + pehle kaam phir commit + eventId + DLQ
