@@ -165,15 +165,8 @@ NAHI    sab fail-open kar do -> KHULA: login khula reh gaya, koi bhi bina had pa
 
 **Rail 7 DOOR KE LOG** · Cue: HOME REGION me ginti
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=8" width="900">
-
-<img src="img/c5_2.png?v=8" width="900">
-
-<img src="img/c5_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     meri ginti mere ghar region (India) me hoti hai. US / Europe ki request bhi wahin gini jaati
@@ -183,12 +176,6 @@ NAHI    har region apni ginti rakhe -> TOOTA: 50 + 50 + 50 = 150, had har region
 
 > [!IMPORTANT]
 > **Yaad rakh:** Meri ginti mere ghar region me. Door ho to sirf login / paisa ghar tak, baaki har second sync.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - ghar door hai? → **sirf login / paisa ghar tak**: sirf login / paisa ghar tak, baaki apni ginti, har second sync. ghar region door hai (100-200 ms), to har request wahan nahi jaati. Baaki apni ginti rakhte
-> - do sync ke beech koi request aayi? → **~1 sec dheel**: ~1 second tak thodi dheel milti hai, halki had me ye chalta hai
-> - ghar region gir gaya? → **doosra region, ginti 0 se**: Route 53 doosre region pe, ginti 0 se
 
 
 ---
