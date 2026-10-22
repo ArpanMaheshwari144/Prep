@@ -1,0 +1,190 @@
+{
+ "title": "Card 6: chaaron badlaav ek transaction: ya sab, ya koi nahi. Ledger ka jod hamesha 0",
+ "h": 660,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 230,
+   "h": 120,
+   "kind": "plain",
+   "title": "Sauda hua",
+   "lines": [
+    "TCS 10 @ 3000",
+    "trade_id t1"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 230,
+   "w": 260,
+   "h": 140,
+   "kind": "server",
+   "title": "Settlement",
+   "lines": [
+    "BEGIN",
+    "chaaron likho",
+    "COMMIT"
+   ]
+  },
+  {
+   "x": 690,
+   "y": 190,
+   "w": 420,
+   "h": 220,
+   "kind": "db",
+   "title": "Wallet / ledger DB",
+   "lines": [
+    "Arpan: -30k, +10 TCS",
+    "Suresh: +30k, -10 TCS",
+    "trade_id UNIQUE",
+    "ledger ka jod = 0",
+    "balance alag column"
+   ]
+  },
+  {
+   "x": 1200,
+   "y": 250,
+   "w": 270,
+   "h": 110,
+   "kind": "user",
+   "title": "Arpan + Suresh",
+   "lines": [
+    "dono ka sahi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     262,
+     300
+    ],
+    [
+     336,
+     300
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     602,
+     300
+    ],
+    [
+     686,
+     300
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1112,
+     300
+    ],
+    [
+     1196,
+     300
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Pehle aakhir me 'done' flag",
+   "green": "Flag se pehle gira to pata hi nahi kitna likha",
+   "n": 1,
+   "conn": [
+    [
+     470,
+     146
+    ],
+    [
+     470,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "Balance ledger jod ke nikaal lo?",
+   "green": "Dheema, lakhon line. Balance alag column, usi transaction me",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 470,
+   "w": 700,
+   "red": "COMMIT se pehle crash",
+   "green": "Rollback, kuch nahi likha. User ko PENDING, galat number nahi",
+   "n": 3,
+   "mark": [
+    470,
+    370
+   ],
+   "conn": [
+    [
+     470,
+     382
+    ],
+    [
+     470,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 470,
+   "w": 720,
+   "red": "Commit hua, jawab kho gaya, retry aayi",
+   "green": "trade_id UNIQUE, doosri ruki: Suresh ko +30k ek hi baar",
+   "n": 4,
+   "mark": [
+    625,
+    300
+   ],
+   "conn": [
+    [
+     625,
+     312
+    ],
+    [
+     625,
+     435
+    ],
+    [
+     900,
+     435
+    ],
+    [
+     900,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 565,
+   "w": 1440,
+   "red": "Galti kaise pakdoge? Raat ko ledger jodo, hamesha 0 aana chahiye.",
+   "green": "Asli paisa usi pal Suresh ko? Nahi, T+1 NSE Clearing. Ye broker ka apna khaata"
+  }
+ ]
+}

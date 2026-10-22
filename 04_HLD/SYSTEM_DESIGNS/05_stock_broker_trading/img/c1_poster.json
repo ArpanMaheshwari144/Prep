@@ -1,0 +1,166 @@
+{
+ "title": "Card 1: screen khulte hi app ek id banata, retry pe wahi id. Server UNIQUE se pakadta: ek id = ek order",
+ "h": 630,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 240,
+   "h": 120,
+   "kind": "user",
+   "title": "Main (app)",
+   "lines": [
+    "screen khulte hi",
+    "id = K7"
+   ]
+  },
+  {
+   "x": 380,
+   "y": 230,
+   "w": 300,
+   "h": 140,
+   "kind": "server",
+   "title": "Order Svc",
+   "lines": [
+    "id pe UNIQUE",
+    "wahi id = purana jawab"
+   ]
+  },
+  {
+   "x": 760,
+   "y": 390,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "Order DB",
+   "lines": [
+    "K7: ek hi row"
+   ]
+  },
+  {
+   "x": 1120,
+   "y": 240,
+   "w": 350,
+   "h": 120,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "ek hi order dikha"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     272,
+     300
+    ],
+    [
+     376,
+     300
+    ]
+   ],
+   "c": "blue",
+   "label": "K7",
+   "lx": 290,
+   "ly": 330,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     682,
+     340
+    ],
+    [
+     756,
+     425
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     682,
+     290
+    ],
+    [
+     1116,
+     290
+    ]
+   ],
+   "c": "green",
+   "label": "ek hi order",
+   "lx": 900,
+   "ly": 280,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "x",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Network gaya, app ne dobara bheja",
+   "green": "Wahi id K7 gayi, server ne pehchaana: ek hi order",
+   "n": 1,
+   "mark": [
+    305,
+    300
+   ],
+   "conn": [
+    [
+     305,
+     288
+    ],
+    [
+     305,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 700,
+   "y": 84,
+   "w": 770,
+   "red": "Button pehli tap pe band kar do?",
+   "green": "Adhoora: retry app khud karta hai, button dabta hi nahi",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 540,
+   "w": 700,
+   "red": "Wahi id dobara, pehli abhi chal rahi",
+   "green": "Thoda ruko (IN_PROGRESS, 409). Ho gayi ho to saved jawab",
+   "n": 3,
+   "mark": [
+    420,
+    370
+   ],
+   "conn": [
+    [
+     420,
+     382
+    ],
+    [
+     420,
+     540
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 750,
+   "y": 540,
+   "w": 720,
+   "red": "Id kab tak yaad? ~24 ghante, phir saaf.",
+   "green": "Retry minute me hi aata hai"
+  }
+ ]
+}

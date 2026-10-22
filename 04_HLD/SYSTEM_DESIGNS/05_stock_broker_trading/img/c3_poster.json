@@ -1,0 +1,214 @@
+{
+ "title": "Card 3: ek stock ke saare order ek line, us line ka ek hi thread. Book RAM me, paisa SQL + ACID me",
+ "h": 710,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 190,
+   "w": 200,
+   "h": 90,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "BUY 10 (pehle)"
+   ]
+  },
+  {
+   "x": 30,
+   "y": 320,
+   "w": 200,
+   "h": 90,
+   "kind": "user",
+   "title": "Mohan",
+   "lines": [
+    "BUY 10"
+   ]
+  },
+  {
+   "x": 310,
+   "y": 220,
+   "w": 240,
+   "h": 150,
+   "kind": "cache",
+   "title": "TCS line",
+   "lines": [
+    "ek line,",
+    "kram se"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 220,
+   "w": 260,
+   "h": 150,
+   "kind": "server",
+   "title": "TCS thread",
+   "lines": [
+    "ek hi haath",
+    "Main: 10 mile",
+    "Mohan: 0, book me"
+   ]
+  },
+  {
+   "x": 970,
+   "y": 190,
+   "w": 500,
+   "h": 160,
+   "kind": "plain",
+   "title": "Order book (RAM)",
+   "lines": [
+    "SELL: 3000 (Suresh 10), 3001",
+    "BUY: 2999, 2998",
+    "sauda: top BUY >= top SELL",
+    "same daam: jo pehle aaya"
+   ]
+  },
+  {
+   "x": 970,
+   "y": 390,
+   "w": 500,
+   "h": 90,
+   "kind": "db",
+   "title": "Wallet / ledger",
+   "lines": [
+    "SQL + ACID (paisa hamesha ka)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     235
+    ],
+    [
+     306,
+     270
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     232,
+     365
+    ],
+    [
+     306,
+     320
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     552,
+     295
+    ],
+    [
+     626,
+     295
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     892,
+     270
+    ],
+    [
+     966,
+     270
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     892,
+     340
+    ],
+    [
+     966,
+     435
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 770,
+   "red": "Do thread, bina line?",
+   "green": "Dono ko '10 hai' dikha, dono ne le liye: 20 bik gaye",
+   "n": 1,
+   "conn": [
+    [
+     760,
+     146
+    ],
+    [
+     760,
+     220
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 820,
+   "y": 84,
+   "w": 650,
+   "red": "Har order pe lock? Ya DB me hi match?",
+   "green": "Lock galat: race share pe hai. DB me: har order pe dheema",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 520,
+   "w": 720,
+   "red": "TCS ka thread atka (GC pause)",
+   "green": "Sirf TCS ki line ruki, INFY apne thread pe, standby taiyaar",
+   "n": 3,
+   "mark": [
+    690,
+    370
+   ],
+   "conn": [
+    [
+     690,
+     382
+    ],
+    [
+     690,
+     520
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 770,
+   "y": 520,
+   "w": 700,
+   "red": "5000 stock = 5000 thread? Nahi: 8 core = 8 thread, stock % 8.",
+   "green": "Mujhe 10, uske paas 6? 6 ka sauda, 4 book me (PARTIALLY FILLED)"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 615,
+   "w": 1440,
+   "red": "Asli India me Groww / Zerodha order NSE ko bhejte, matching NSE karta. Wallet block broker ka kaam.",
+   "green": "Is design me hum apna matching chala rahe (exchange jaisa)"
+  }
+ ]
+}

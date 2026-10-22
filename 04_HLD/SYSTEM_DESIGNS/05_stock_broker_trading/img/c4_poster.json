@@ -1,0 +1,171 @@
+{
+ "title": "Card 4: 9:15 ki bheed: TCS ki ek line, ek thread RAM me lakhon / sec. Baanto stocks ke beech",
+ "h": 620,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "Users",
+   "lines": [
+    "9:15: hazaaron",
+    "order / sec"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 230,
+   "w": 260,
+   "h": 140,
+   "kind": "cache",
+   "title": "TCS line",
+   "lines": [
+    "lambi, par",
+    "order khota nahi"
+   ]
+  },
+  {
+   "x": 680,
+   "y": 230,
+   "w": 260,
+   "h": 140,
+   "kind": "server",
+   "title": "TCS thread",
+   "lines": [
+    "RAM me",
+    "lakhon / sec"
+   ]
+  },
+  {
+   "x": 680,
+   "y": 400,
+   "w": 260,
+   "h": 90,
+   "kind": "server",
+   "title": "INFY thread",
+   "lines": [
+    "alag, apni line"
+   ]
+  },
+  {
+   "x": 1040,
+   "y": 230,
+   "w": 430,
+   "h": 140,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "line me lagte hi: ACCEPTED",
+    "sauda hua: FILLED"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     592,
+     300
+    ],
+    [
+     676,
+     300
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     942,
+     300
+    ],
+    [
+     1036,
+     300
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     140,
+     362
+    ],
+    [
+     140,
+     445
+    ],
+    [
+     676,
+     445
+    ]
+   ],
+   "c": "orange"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 700,
+   "red": "Har order pe lock + DB?",
+   "green": "Ek-ek karke dheema, jam",
+   "n": 1,
+   "conn": [
+    [
+     460,
+     146
+    ],
+    [
+     460,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 750,
+   "y": 84,
+   "w": 720,
+   "red": "TCS ko do thread me baanto?",
+   "green": "Toota: ek stock = ek line. Baantna stocks ke beech",
+   "n": 2,
+   "conn": [
+    [
+     810,
+     146
+    ],
+    [
+     810,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 530,
+   "w": 1440,
+   "red": "Baantoge nahi to badhaoge kaise? Stocks ke beech: TCS ek thread, INFY doosra. TCS ke andar nahi.",
+   "green": "Line lambi = der, par order khota nahi. ACCEPTED turant, FILLED sauda pe"
+  }
+ ]
+}

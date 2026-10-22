@@ -1,0 +1,171 @@
+{
+ "title": "Card 8: connection khula rakho, price badla tab server khud bheje (WebSocket push)",
+ "h": 580,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "server",
+   "title": "Matching",
+   "lines": [
+    "price badla"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 240,
+   "w": 230,
+   "h": 120,
+   "kind": "cache",
+   "title": "Pub/sub",
+   "lines": [
+    "kuch rakhta nahi"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 190,
+   "w": 280,
+   "h": 100,
+   "kind": "server",
+   "title": "WebSocket server 1",
+   "lines": [
+    "~1 lakh connection"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 330,
+   "w": 280,
+   "h": 100,
+   "kind": "server",
+   "title": "WebSocket server 2",
+   "lines": [
+    "~1 lakh connection"
+   ]
+  },
+  {
+   "x": 1040,
+   "y": 240,
+   "w": 430,
+   "h": 120,
+   "kind": "user",
+   "title": "10 lakh app",
+   "lines": [
+    "har ~100 ms",
+    "aakhri price"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     562,
+     280
+    ],
+    [
+     646,
+     240
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     562,
+     320
+    ],
+    [
+     646,
+     380
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     932,
+     240
+    ],
+    [
+     1036,
+     280
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     932,
+     380
+    ],
+    [
+     1036,
+     320
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 700,
+   "red": "Har user baar-baar poochhe (polling)?",
+   "green": "10 lakh har second = server baitha",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 480,
+   "w": 720,
+   "red": "Connection toota, wapas juda",
+   "green": "Abhi ka price alag se do, pub/sub kuch rakhta nahi",
+   "n": 2,
+   "mark": [
+    985,
+    350
+   ],
+   "conn": [
+    [
+     985,
+     362
+    ],
+    [
+     985,
+     480
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 480,
+   "w": 700,
+   "red": "1000 baar badla? Har ~100 ms aakhri price, purana bekaar.",
+   "green": "10 lakh ek server pe? Ek server ~lakh, aur server + LB"
+  }
+ ]
+}

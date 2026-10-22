@@ -1,0 +1,195 @@
+{
+ "title": "Card 7: do DB = ek txn nahi. Har kadam ka haal likho, fail to wahi se retry, aage hi",
+ "h": 700,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 200,
+   "h": 110,
+   "kind": "plain",
+   "title": "Sauda pakka",
+   "lines": [
+    "INFY 20k",
+    "trade_id t9"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 225,
+   "w": 260,
+   "h": 160,
+   "kind": "server",
+   "title": "Settlement",
+   "lines": [
+    "haal likho:",
+    "wallet done",
+    "portfolio done",
+    "= SETTLED"
+   ]
+  },
+  {
+   "x": 660,
+   "y": 190,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "Wallet DB",
+   "lines": [
+    "20k kata (done)"
+   ]
+  },
+  {
+   "x": 660,
+   "y": 350,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "Portfolio DB",
+   "lines": [
+    "share daalo"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 250,
+   "w": 390,
+   "h": 110,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "beech me: PENDING",
+    "phir SETTLED"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     305
+    ],
+    [
+     296,
+     305
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     562,
+     265
+    ],
+    [
+     656,
+     240
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     562,
+     345
+    ],
+    [
+     656,
+     400
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     562,
+     315
+    ],
+    [
+     1076,
+     315
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Paisa ulta kar do?",
+   "green": "Galat: match ke baad sauda pakka, bechne wale ko 20k mil chuke",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "Do DB, ek transaction?",
+   "green": "Nahi ban sakti. Isliye har kadam ka haal, retry aage hi",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 500,
+   "w": 700,
+   "red": "Portfolio DB fail, share nahi aaye",
+   "green": "Likhe haal se retry, aage hi, jab tak SETTLED",
+   "n": 3,
+   "mark": [
+    700,
+    450
+   ],
+   "conn": [
+    [
+     700,
+     462
+    ],
+    [
+     700,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 500,
+   "w": 720,
+   "red": "Portfolio DB ghanta bhar band",
+   "green": "Trade PENDING + alert, ops share daalta. User dobara nahi:",
+   "n": 4,
+   "green2": "naya + purana dono zinda = 10 INFY, paisa do baar",
+   "mark": [
+    920,
+    450
+   ],
+   "conn": [
+    [
+     920,
+     462
+    ],
+    [
+     920,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 605,
+   "w": 1440,
+   "red": "Retry dobara chal gaya? Har kadam trade_id se, ho chuka = no-op. Match se pehle atka? SAGA: block hatao.",
+   "green": "Keemat? Beech me PENDING, par 2PC jaisa lamba lock nahi. Orchestration: saaf dikhe kaunsa step atka"
+  }
+ ]
+}
