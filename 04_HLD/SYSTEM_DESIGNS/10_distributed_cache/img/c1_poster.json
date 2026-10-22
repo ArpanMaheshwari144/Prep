@@ -1,0 +1,169 @@
+{
+ "title": "Card 1: RAM bhari to sabse der se chhua bahar (LRU), har key ki umar (TTL). HashMap + list = O(1). Sach DB me",
+ "h": 660,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 230,
+   "h": 130,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "GET profile:42",
+    "HIT: <1 ms"
+   ]
+  },
+  {
+   "x": 360,
+   "y": 190,
+   "w": 420,
+   "h": 190,
+   "kind": "cache",
+   "title": "Cache",
+   "lines": [
+    "HashMap + doubly linked list",
+    "chhua = aage",
+    "RAM bhari: peeche wala bahar",
+    "har key ki umar (TTL)"
+   ]
+  },
+  {
+   "x": 880,
+   "y": 240,
+   "w": 280,
+   "h": 120,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "sach yahan",
+    "MISS: ~10 ms"
+   ]
+  },
+  {
+   "x": 1250,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "plain",
+   "title": "user:7 bahar",
+   "lines": [
+    "sabse der se",
+    "chhua tha"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     262,
+     300
+    ],
+    [
+     356,
+     300
+    ]
+   ],
+   "c": "purple",
+   "label": "pehle cache",
+   "lx": 305,
+   "ly": 280,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     782,
+     300
+    ],
+    [
+     876,
+     300
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "MISS",
+   "lx": 830,
+   "ly": 290,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     570,
+     382
+    ],
+    [
+     570,
+     435
+    ],
+    [
+     1360,
+     435
+    ],
+    [
+     1360,
+     364
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "RAM bhari: bahar",
+   "lx": 960,
+   "ly": 425,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "LFU (kitni baar chhua)?",
+   "green": "Kal ki famous key aaj bhi baithi. Default LRU",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Subah RAM bhar gayi",
+   "green": "Sabse der se chhua (user:7) bahar. Hati key = ek miss, DB se wapas",
+   "n": 2,
+   "mark": [
+    740,
+    190
+   ],
+   "conn": [
+    [
+     740,
+     178
+    ],
+    [
+     740,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 480,
+   "w": 1440,
+   "red": "Hatana hi band (noeviction)? Naya likhna error. Cache me allkeys-lru. Redis poori LRU list? Nahi: kuch random key me sabse purani.",
+   "green": "user:9 phir padha? Utha ke aage, ab sabse baad me nikalega"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 570,
+   "w": 1440,
+   "red": "Umar kitni? Jitna purana jhel sako: profile = minute, price / stock = second.",
+   "green": "Umar khatam to agla MISS, DB se taaza laata. Cache khaali ho tab bhi sahi data DB se"
+  }
+ ]
+}

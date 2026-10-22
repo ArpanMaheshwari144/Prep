@@ -1,0 +1,199 @@
+{
+ "title": "Card 4: pehle DB update, phir cache key DELETE. Delete fail ho to umar (TTL) bachati, utni der hi purana",
+ "h": 680,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "naam: 'Ravi K'"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "1: DB update",
+    "2: cache key DELETE"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 190,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "Ravi K (naya)"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 350,
+   "w": 300,
+   "h": 100,
+   "kind": "cache",
+   "title": "Cache",
+   "lines": [
+    "user:9 key hati"
+   ]
+  },
+  {
+   "x": 1050,
+   "y": 250,
+   "w": 420,
+   "h": 120,
+   "kind": "user",
+   "title": "Agla padhne wala",
+   "lines": [
+    "DB se naya laaya,",
+    "cache me rakha"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     552,
+     270
+    ],
+    [
+     646,
+     240
+    ]
+   ],
+   "c": "purple",
+   "label": "1",
+   "lx": 600,
+   "ly": 245,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     552,
+     340
+    ],
+    [
+     646,
+     395
+    ]
+   ],
+   "c": "orange",
+   "label": "2 DEL",
+   "lx": 640,
+   "ly": 428,
+   "a": "end"
+  },
+  {
+   "pts": [
+    [
+     952,
+     240
+    ],
+    [
+     1046,
+     290
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Sirf DB update karo?",
+   "green": "DB me 'Ravi K', cache me purana: sab 'Ravi' dekhte",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Write-through? Write-back?",
+   "green": "Through: likhna dheema. Back: cache mara to data gaya, paise pe kabhi nahi",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 500,
+   "w": 700,
+   "red": "Cache ka delete fail ho gaya",
+   "green": "Umar (TTL) bachati: utni der hi purana. Pakka chahiye to CDC se",
+   "n": 3,
+   "mark": [
+    575,
+    353
+   ],
+   "conn": [
+    [
+     575,
+     365
+    ],
+    [
+     575,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 500,
+   "w": 720,
+   "red": "Delete ke baad purana wapas bhar gaya",
+   "green": "Thodi der baad phir delete (double delete), ya version se likho",
+   "n": 4,
+   "mark": [
+    900,
+    450
+   ],
+   "conn": [
+    [
+     900,
+     462
+    ],
+    [
+     900,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 595,
+   "w": 1440,
+   "red": "Ravi ko apna hi purana naam dikha? Copy peeche hai.",
+   "green": "Likhne wale ko kuch der primary se padhao"
+  }
+ ]
+}

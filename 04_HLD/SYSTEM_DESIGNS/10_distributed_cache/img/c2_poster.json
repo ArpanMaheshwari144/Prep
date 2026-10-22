@@ -1,0 +1,152 @@
+{
+ "title": "Card 2: key ka hash ring pe, aage chalo, pehli machine ghar. Machine jude / jaaye to sirf pados ki key hilti",
+ "h": 630,
+ "circles": [
+  {
+   "cx": 650,
+   "cy": 330,
+   "r": 140,
+   "label": "ring"
+  }
+ ],
+ "boxes": [
+  {
+   "x": 30,
+   "y": 270,
+   "w": 240,
+   "h": 110,
+   "kind": "server",
+   "title": "App (cache client)",
+   "lines": [
+    "hash(user:42)",
+    "ring pe"
+   ]
+  },
+  {
+   "x": 590,
+   "y": 168,
+   "w": 120,
+   "h": 50,
+   "kind": "cache",
+   "title": "A"
+  },
+  {
+   "x": 770,
+   "y": 305,
+   "w": 120,
+   "h": 50,
+   "kind": "cache",
+   "title": "B"
+  },
+  {
+   "x": 590,
+   "y": 443,
+   "w": 120,
+   "h": 50,
+   "kind": "cache",
+   "title": "C"
+  },
+  {
+   "x": 410,
+   "y": 305,
+   "w": 120,
+   "h": 50,
+   "kind": "cache",
+   "title": "D (nayi)"
+  },
+  {
+   "x": 1000,
+   "y": 250,
+   "w": 470,
+   "h": 150,
+   "kind": "plain",
+   "title": "Ghar kaise",
+   "lines": [
+    "key aage chalo,",
+    "pehli machine = ghar",
+    "har machine 100-200 jagah",
+    "(virtual nodes)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     272,
+     325
+    ],
+    [
+     406,
+     330
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     892,
+     330
+    ],
+    [
+     996,
+     325
+    ]
+   ],
+   "c": "grey",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Seedha hash % N?",
+   "green": "4 se 5 machine = ~80% key hili. Ring me N hai hi nahi",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Machine A giri",
+   "green": "Uski key aage wali pe, sirf wahi ek baar miss. Bojh kai pe (virtual nodes)",
+   "n": 2,
+   "mark": [
+    700,
+    178
+   ],
+   "conn": [
+    [
+     700,
+     166
+    ],
+    [
+     700,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 540,
+   "w": 700,
+   "red": "A-M ek pe, N-Z doosre pe?",
+   "green": "Ek range garam (sab 'S' naam). Hash se key bikhar jaati",
+   "n": 3
+  },
+  {
+   "type": "grey",
+   "x": 750,
+   "y": 540,
+   "w": 720,
+   "red": "D judi? Sirf pados ki key khiski (C se D), baaki hit.",
+   "green": "Redis Cluster: ring nahi, CRC16(key) % 16384 slot"
+  }
+ ]
+}

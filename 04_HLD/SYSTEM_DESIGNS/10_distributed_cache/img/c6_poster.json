@@ -1,0 +1,209 @@
+{
+ "title": "Card 6: garam key ki 1-2 sec copy har App ki RAM me (L1). Likhna ho to tukde like#0..#9, padhte waqt jodo",
+ "h": 710,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 280,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "Crore log",
+   "lines": [
+    "IPL final",
+    "live:score"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 190,
+   "w": 280,
+   "h": 90,
+   "kind": "server",
+   "title": "App 1",
+   "lines": [
+    "L1: score (1-2 sec)"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 300,
+   "w": 280,
+   "h": 90,
+   "kind": "server",
+   "title": "App 2",
+   "lines": [
+    "L1: score (1-2 sec)"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 410,
+   "w": 280,
+   "h": 90,
+   "kind": "server",
+   "title": "App 3",
+   "lines": [
+    "L1: score (1-2 sec)"
+   ]
+  },
+  {
+   "x": 720,
+   "y": 270,
+   "w": 300,
+   "h": 140,
+   "kind": "cache",
+   "title": "Machine A",
+   "lines": [
+    "live:score",
+    "har App 1-2 sec",
+    "me ek baar"
+   ]
+  },
+  {
+   "x": 1120,
+   "y": 270,
+   "w": 350,
+   "h": 140,
+   "kind": "cache",
+   "title": "Machine B, C",
+   "lines": [
+    "pehle khaali baithe,",
+    "ab bhi aaram"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     320
+    ],
+    [
+     326,
+     235
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     252,
+     340
+    ],
+    [
+     326,
+     345
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     252,
+     360
+    ],
+    [
+     326,
+     455
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     612,
+     235
+    ],
+    [
+     716,
+     310
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     612,
+     345
+    ],
+    [
+     716,
+     340
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     612,
+     455
+    ],
+    [
+     716,
+     375
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 680,
+   "red": "Consistent hashing se bheed bat jaayegi?",
+   "green": "Ring key baant-ta, ek key ki bheed nahi: ek key = ek machine",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 730,
+   "y": 84,
+   "w": 740,
+   "red": "Machine A ka CPU full (crore read / sec)",
+   "green": "L1: har App 1-2 sec me ek baar A se. Ya key ki copy score#1..#10",
+   "n": 2,
+   "mark": [
+    980,
+    270
+   ],
+   "conn": [
+    [
+     980,
+     258
+    ],
+    [
+     980,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 530,
+   "w": 1440,
+   "red": "Garam key pakdoge kaise? App me ginti + machine metric achanak upar. Likhna bhi (like)? Tukde like#0..#9, padhte waqt jodo.",
+   "green": "L1 kitna purana? 1-2 sec: score me chalta, paisa / stock me nahi"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 620,
+   "w": 1440,
+   "red": "Parat: L1 (App RAM) -> L2 Redis -> DB, neeche wali dheemi.",
+   "green": "Stampede = key khaali (lock). Hot key = key bhari, ek machine pe bheed (L1)"
+  }
+ ]
+}

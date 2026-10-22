@@ -59,15 +59,8 @@ PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
 
 **Rail 1 KAAM CHALA** · Cue: LRU + TTL (HashMap + DLL)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
-<img src="img/c1_1.png?v=1" width="900">
-
-<img src="img/c1_2.png?v=1" width="900">
-
-<img src="img/c1_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     jo sabse der se chhua gaya wo bahar (LRU), aur har key ki umar (TTL). RAM bhari to sabse der se
@@ -87,14 +80,6 @@ NAHI    LFU (kitni baar chhua)
 > [!IMPORTANT]
 > **Yaad rakh:** RAM bhari to sabse der se chhua bahar (LRU), har key ki umar (TTL). HashMap + list = O(1). Sach DB me.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - LRU me sabse purana har baar dhoondhoge? → **HashMap + doubly linked list**: nahi. HashMap + doubly linked list: chhua to aage, peeche wala hatao, O(1)
-> - user:9 phir padha → **utha ke aage rakho**: Ab wo sabse baad me nikalega, chhua matlab taaza
-> - Redis sach me poori LRU list rakhta hai? → **andaaze wala LRU**: nahi, andaaze wala LRU: kuch random key me sabse purani hatata hai. Poori list = har key pe memory
-> - umar (TTL) kitni rakhoge? → **jitna purana jhel sako**: jitna purana data jhel sako (5 min chalega?). Profile = minute, price / stock = second
-> - umar (TTL) khatam ho gayi → **agla padhne wala MISS karega**: DB se taaza laayega. Purana zyada der nahi tikta
-
 
 ---
 
@@ -104,15 +89,8 @@ NAHI    LFU (kitni baar chhua)
 
 **Rail 6 DATA BADA** · Cue: CONSISTENT HASHING + virtual nodes
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=1" width="900">
-
-<img src="img/c2_2.png?v=1" width="900">
-
-<img src="img/c2_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     kai machine hain, App ke paas cache client jo batata hai key kis machine pe hai (consistent hashing).
@@ -129,13 +107,6 @@ NAHI    seedha hash % N
 > [!IMPORTANT]
 > **Yaad rakh:** Key ka hash ring pe, aage chalo, pehli machine ghar. Machine jude / jaaye to sirf pados ki key hilti.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - ring me machine D judi → **sirf pados ki key khiski**: sirf pados ki key khiski (201..250, C se D pe). Baaki sab hit
-> - ring se machine A giri → **aage wali machine**: uski key aage wali machine pe chali jaati hain. Sirf wahi ek baar miss
-> - A gira to uska saara bojh B pe double ho jaayega? → **virtual nodes**: nahi, har machine ring pe 100-200 jagah hai (virtual nodes). Bojh kai pados pe bat jaata hai
-> - Redis Cluster bhi ring hai? → **nahi, 16384 slot**: nahi. CRC16(key) % 16384 se slot, slot se machine. Machine badhe to sirf kuch slot khiskao
-
 
 ---
 
@@ -145,15 +116,8 @@ NAHI    seedha hash % N
 
 **Rail 3 MACHINE GIRI (khaas)** · Cue: REPLICA (async) + quorum failover
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=1" width="900">
-
-<img src="img/c3_2.png?v=1" width="900">
-
-<img src="img/c3_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     har machine ki ek copy hai (replica, async). B mari to B ki copy B ban jaati hai. DB bach gaya
@@ -168,14 +132,6 @@ NAHI    copy na rakho
 > [!IMPORTANT]
 > **Yaad rakh:** Har machine ki async copy. B mari to ~10-30 sec me copy main. Network toota to zyadatar (quorum) chunte.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - copy ko main banane me kitna time? → **~10-30 sec (pakka B mari?)**: Us beech B ki key DB se aati hai, dheema
-> - copy peeche thi → **aakhri kuch likhai kho sakti hai**: Cache me chalta hai, sach DB me
-> - network toota, do main ban gaye → **quorum**: zyadatar machines (quorum) tay karti hain kaun main. Akeli wali likhna band (split brain)
-> - copy se padh bhi lo to? → **haan, thoda purana**: haan, padhai bat jaati hai. Thoda purana mil sakta hai, copy peeche chalti hai
-> - main aur copy sab, poora cache hi gir gaya → **saari padhai DB pe**: DB ke aage rate limit / load shedding, warna DB bhi gira
-
 
 ---
 
@@ -185,15 +141,8 @@ NAHI    copy na rakho
 
 **Rail 4 DO LOG EK SAATH** · Cue: DB me likho, cache key DELETE
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=1" width="900">
-
-<img src="img/c4_2.png?v=1" width="900">
-
-<img src="img/c4_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     pehle DB update, phir cache ki key DELETE (delete on write). Agla padhne wala DB se naya laata hai,
@@ -211,12 +160,6 @@ NAHI    sirf DB update karo
 > [!IMPORTANT]
 > **Yaad rakh:** Pehle DB update, phir cache key DELETE. Delete fail ho to umar (TTL) bachati, utni der hi purana.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - cache ka delete fail ho gaya → **umar (TTL) bachati hai**: utni der hi purana. Pakka chahiye to DB ke log se delete (CDC)
-> - delete ke baad purana data beech me wapas bhar gaya → **thodi der baad phir delete (double delete)**: ya version se likho
-> - Ravi ko apna hi purana naam dikha → **copy peeche hai**: Likhne wale ko kuch der primary se padhao
-
 
 ---
 
@@ -226,15 +169,8 @@ NAHI    sirf DB update karo
 
 **Rail 2 BHEED AAYI (key khaali)** · Cue: LOCK: SET NX EX, sirf pehla DB jaaye
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=1" width="900">
-
-<img src="img/c5_2.png?v=1" width="900">
-
-<img src="img/c5_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     ek jaaye, DB se laaye, cache bhare, baaki ruk ke cache se padhein (lock). Pehla lock leta hai
@@ -250,15 +186,6 @@ NAHI    sabko DB jaane do
 > [!IMPORTANT]
 > **Yaad rakh:** Khaali key pe pehla lock leta (SET NX EX 5), wahi DB jaata, baaki ruk ke cache se. Lock khud khulta.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - purani value de sakte ho, to key khatam hone hi kyun di? → **soft-TTL**: umar khatam hone se thoda pehle taaza karo (soft-TTL), key khaali hi na ho
-> - lock nahi mila, 999 kitna ruke? → **50-100 ms**: ya purani value do. Thodi purani home page chalti hai
-> - lock lene wala hi mar gaya → **lock ki umar (EX 5) hai**: Khud khulta hai, agla le leta hai. 999 hamesha nahi rukte
-> - saari key ki umar ek saath khatam → **umar me random daalo (60 min +- 5)**: Ek saath nahi girti
-> - key DB me thi hi nahi → **"nahi hai" bhi cache karo**: chhoti umar ke saath. Warna har baar DB jaayega (penetration)
-> - sale 12 baje hai, pehle se pata tha → **pehle hi cache bhar do + machine badhao**: Waqt pata hai to tayyari pehle
-
 
 ---
 
@@ -268,15 +195,8 @@ NAHI    sabko DB jaane do
 
 **Rail 2 BHEED AAYI (garam key)** · Cue: L1 LOCAL CACHE + key ki copies
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=1" width="900">
-
-<img src="img/c6_2.png?v=1" width="900">
-
-<img src="img/c6_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     garam key ki thodi der ki copy har App ki memory me (L1 cache). App 1-2 sec me ek baar Machine A
@@ -290,14 +210,6 @@ NAHI    consistent hashing se bheed bat jaayegi
 
 > [!IMPORTANT]
 > **Yaad rakh:** Garam key ki 1-2 sec copy har App ki RAM me (L1). Likhna ho to tukde like#0..#9, padhte waqt jodo.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - garam key pakdoge kaise? → **App me ginti + metric**: pehle pakdo: App me ginti + machine ka metric achanak upar
-> - L1 me score kitna purana hoga? → **1-2 sec**: Score me chalta hai, paisa / stock me nahi
-> - us garam key pe likhna bhi ho (like) → **tukde like#0..#9**: key ke tukde like#0..#9. Kisi ek me likho, padhte waqt jodo
-> - L1 ke baad kitni parat hui? → **L1 (App RAM) -> L2 Redis -> DB**: Neeche wali dheemi, isliye upar se pehle
-> - stampede aur garam key me farak? → **stampede = key khaali (lock)**: Hot key = key bhari, ek machine pe bheed (L1)
 
 
 ---
