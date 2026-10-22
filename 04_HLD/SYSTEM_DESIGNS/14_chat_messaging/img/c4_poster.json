@@ -1,5 +1,5 @@
 {
- "title": "Card 4: Cassandra, key = chat_id. Ek chat ke saare message ek partition me, andar kram se",
+ "title": "Card 4: message Cassandra me, key = chat_id. Ek chat ke saare message ek jagah (partition), andar kram se",
  "h": 650,
  "boxes": [
   {
@@ -10,8 +10,8 @@
    "kind": "server",
    "title": "Chat servers",
    "lines": [
-    "46,000 likhai / sec",
-    "1.2 TB roz"
+    "har second 46,000 message",
+    "roz 1.2 TB"
    ]
   },
   {
@@ -23,10 +23,9 @@
    "title": "Cassandra",
    "lines": [
     "key = chat_id",
-    "ek chat = ek partition",
+    "ek chat = ek jagah",
     "andar seq se kram",
-    "'aakhri 50' ek jagah se",
-    "(keyset, OFFSET nahi)"
+    "'aakhri 50' ek jagah se"
    ]
   },
   {
@@ -37,7 +36,7 @@
    "kind": "cache",
    "title": "Elasticsearch",
    "lines": [
-    "search: id deta"
+    "search: message id deta"
    ]
   },
   {
@@ -199,7 +198,7 @@
   4,
   10
  ],
- "peeche": "card 3 me PEHLE DB, phir bhejo + PUSH",
+ "peeche": "card 3 me pehle DB, phir bhejo + push",
  "ab": "Roz 1.2 TB message, ek DB nahi jhelta",
  "agla": "ab DB sahi. Par net dheema, app ne dobara bheja (card 5)"
 }

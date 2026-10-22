@@ -69,7 +69,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 2 BHEED AAYI (connection)** · Cue: EVENT LOOP, kuch thread, lakhon conn
 
-<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=5" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -80,7 +80,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 1 KAAM CHALA (kaun kahan)** · Cue: MAP Redis me (kaun kahan)
 
-<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=5" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -91,7 +91,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 3 MACHINE GIRI (phone band)** · Cue: pehle DB, phir bhejo; PUSH
 
-<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=5" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -102,7 +102,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 6 DATA BADA** · Cue: chat_id se baanto
 
-<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=5" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -113,7 +113,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY (clientMsgId)
 
-<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=5" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -124,7 +124,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: SEQ, server ka +1
 
-<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=5" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -135,7 +135,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 2 BHEED AAYI (group)** · Cue: group ka EK copy
 
-<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=5" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -146,7 +146,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 1 KAAM CHALA (tick)** · Cue: NISHAAN read_upto
 
-<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=5" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -157,7 +157,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 5 KUCH DHEEMA (video)** · Cue: S3 PRESIGNED URL, message me pata
 
-<img src="img/c9_poster.png?v=4" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=5" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -168,7 +168,7 @@ FAISLA  connection ki apni line: 2 crore / ~1 lakh har machine = ~200 chat serve
 
 **Rail 2 BHEED AAYI (online)** · Cue: UMAR 30 sec (TTL)
 
-<img src="img/c10_poster.png?v=4" width="1000" alt="card 10: kya toota, kaise bacha">
+<img src="img/c10_poster.png?v=5" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---

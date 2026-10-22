@@ -1,5 +1,5 @@
 {
- "title": "Card 8: har member ka ek nishaan, kahan tak padha (read_upto). Ravi ne 50 padhe = ek likhai",
+ "title": "Card 8: har member ka ek nishaan: kahan tak padha (read_upto). Ravi ne 50 padhe = ek hi likhai",
  "h": 600,
  "boxes": [
   {
@@ -22,7 +22,7 @@
    "title": "Chat server",
    "lines": [
     "read_upto = 4467",
-    "ek likhai"
+    "(ek likhai)"
    ]
   },
   {
@@ -33,9 +33,9 @@
    "kind": "db",
    "title": "Members",
    "lines": [
-    "har member: read_upto,",
-    "delivered_upto",
-    "unread = aakhri seq - nishaan"
+    "har member: kahan tak padha",
+    "aur kahan tak pahuncha",
+    "unread = aakhri - nishaan"
    ]
   },
   {
@@ -46,8 +46,8 @@
    "kind": "user",
    "title": "Arpan",
    "lines": [
-    "ek push 'read_upto 4467':",
-    "50 ek saath neeli"
+    "ek push: 4467 tak padha",
+    "50 tick ek saath neele"
    ]
   }
  ],
@@ -147,7 +147,7 @@
   8,
   10
  ],
- "peeche": "card 7 me GROUP ka EK copy",
+ "peeche": "card 7 me group message ek hi baar likha",
  "ab": "Ravi ne Arpan ke 50 message padhe: unread aur neeli tick kaise?",
  "agla": "ab text theek. Par video bhaari (card 9)"
 }

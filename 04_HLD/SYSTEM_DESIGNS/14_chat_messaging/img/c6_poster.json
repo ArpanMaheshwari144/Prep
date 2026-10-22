@@ -1,5 +1,5 @@
 {
- "title": "Card 6: har chat ka server pe +1 number (Redis INCR seq). Kram seq se, ghadi se nahi",
+ "title": "Card 6: har chat ka server pe +1 number (seq, Redis INCR). Kram is number se, phone ki ghadi se nahi",
  "h": 580,
  "boxes": [
   {
@@ -32,8 +32,8 @@
    "kind": "server",
    "title": "Chat server",
    "lines": [
-    "INCR seq:chat123",
-    "+1 har message"
+    "chat123 ka number +1",
+    "(INCR seq)"
    ]
   },
   {
@@ -55,7 +55,7 @@
    "kind": "cache",
    "title": "Redis",
    "lines": [
-    "seq: 4415, 4416, 4417"
+    "chat123: 4415, 4416, 4417"
    ]
   },
   {
@@ -66,9 +66,9 @@
    "kind": "user",
    "title": "Ravi ka app",
    "lines": [
-    "kram seq se, ghadi nahi",
+    "kram number (seq) se",
     "'meri aakhri 4417'",
-    "-> 4418 se aage"
+    "-> 4418 se aage do"
    ]
   }
  ],
@@ -210,7 +210,7 @@
   6,
   10
  ],
- "peeche": "card 5 me MESSAGE KI APNI ID (clientMsgId)",
+ "peeche": "card 5 me message ki apni id",
  "ab": "Arpan ki ghadi 5 min aage, uska sawaal Ravi ke jawab ke neeche chala gaya",
  "agla": "ab 1-to-1 theek. Group me 500 log (card 7)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 7: group ka message EK baar likho. Bhejna server-wise: online kahan, Redis se, har server ko ek call",
+ "title": "Card 7: group message EK baar likho. Bhejna server ke hisaab se: kaun kahan online (Redis), har server ko ek call",
  "h": 600,
  "boxes": [
   {
@@ -23,7 +23,7 @@
    "title": "Chat server",
    "lines": [
     "EK baar likho",
-    "online kahan: Redis se"
+    "kaun kahan online: Redis se"
    ]
   },
   {
@@ -67,8 +67,8 @@
    "kind": "user",
    "title": "Offline members",
    "lines": [
-    "push ghanti, wapas aaye",
-    "to seq se aage sab"
+    "push ghanti; wapas aaye",
+    "to number se aage sab"
    ]
   },
   {
@@ -195,7 +195,7 @@
   7,
   10
  ],
- "peeche": "card 6 me SEQ: server ka +1 number",
+ "peeche": "card 6 me har chat ka +1 number (seq)",
  "ab": "College Gang (500 log) me Arpan ka ek message, 500 baar likhein?",
  "agla": "ab message pahunch gaye. Tick aur unread kaise? (card 8)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 9: video seedha S3 me (10 min ka paas). Message me sirf S3 key + thumbnail",
+ "title": "Card 9: video phone se seedha S3 me (10 min ka pass). Message me sirf S3 ka pata (key) + chhoti photo",
  "h": 590,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "Chat server",
    "lines": [
-    "sirf paas (10 min)",
-    "+ message: S3 key"
+    "sirf pass (10 min)",
+    "+ message: S3 ka pata"
    ]
   },
   {
@@ -45,8 +45,8 @@
    "kind": "user",
    "title": "Group (500)",
    "lines": [
-    "sabko wahi key",
-    "+ thumbnail"
+    "sabko wahi pata",
+    "+ chhoti photo"
    ]
   },
   {
@@ -57,8 +57,8 @@
    "kind": "user",
    "title": "Ravi ne khola",
    "lines": [
-    "key se naya",
-    "chhota URL"
+    "pata se naya",
+    "chhota link"
    ]
   }
  ],
@@ -75,7 +75,7 @@
     ]
    ],
    "c": "blue",
-   "label": "paas",
+   "label": "pass",
    "lx": 280,
    "ly": 245,
    "a": "middle"
@@ -180,7 +180,7 @@
   9,
   10
  ],
- "peeche": "card 8 me NISHAAN read_upto",
+ "peeche": "card 8 me nishaan: kahan tak padha",
  "ab": "Arpan ne shaadi ka 200 MB video chat ke raaste bheja, sab atka",
  "agla": "ab aakhri: kaun online hai? (card 10)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 1: kuch thread (event loop) lakhon connection sambhalte. Connection khula rehta, thread nahi",
+ "title": "Card 1: kuch thread (event loop) lakhon connection sambhalte. Connection khula rehta, thread tabhi jab data aaye",
  "h": 540,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "lb",
    "title": "LB",
    "lines": [
-    "server pe",
-    "bithata"
+    "har user ko",
+    "ek server pe bithata"
    ]
   },
   {
@@ -33,8 +33,8 @@
    "kind": "server",
    "title": "Chat server",
    "lines": [
-    "4 thread (event loop, Netty)",
-    "OS batata data kahan (epoll)",
+    "sirf 4 thread (event loop)",
+    "OS batata data kahan aaya",
     "chup connection = thodi memory",
     "~200 server kaafi"
    ]

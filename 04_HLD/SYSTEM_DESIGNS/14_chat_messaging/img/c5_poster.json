@@ -1,5 +1,5 @@
 {
- "title": "Card 5: app har message ki id banata (m-9), dobara pe wahi id. Server: pehle aaya? haan to skip",
+ "title": "Card 5: app har message ki id banata (m-9), dobara bhejne pe wahi id. Server: pehle aaya? haan to skip",
  "h": 570,
  "boxes": [
   {
@@ -21,9 +21,9 @@
    "kind": "server",
    "title": "Chat server",
    "lines": [
-    "(sender, m-9) pehle?",
+    "Arpan ka m-9 pehle aaya?",
     "haan: skip,",
-    "pehli id lauta do"
+    "pehla jawab lauta do"
    ]
   },
   {
@@ -34,8 +34,8 @@
    "kind": "cache",
    "title": "Store",
    "lines": [
-    "SET NX / Cassandra LWT",
     "dekhna + daalna ek kadam",
+    "(SET NX / Cassandra LWT)",
     "umar ~1 ghanta"
    ]
   },
@@ -181,7 +181,7 @@
   5,
   10
  ],
- "peeche": "card 4 me chat_id se BAANTO",
+ "peeche": "card 4 me message chat_id se ek jagah",
  "ab": "Net dheema, app ne dobara bheja, Ravi ko Arpan ka \"hi\" do baar",
  "agla": "ab ek hi baar aaya. Par kram galat (card 6)"
 }

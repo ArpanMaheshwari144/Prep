@@ -1,5 +1,5 @@
 {
- "title": "Card 2: pata Redis me (Ravi -> server-7). Server-1 Redis se poochta, server-7 ko deta, wo Ravi ko",
+ "title": "Card 2: kaun kis server pe, ye Redis me (Ravi -> server-7). Server-1 poochta, server-7 ko deta, wo Ravi ko",
  "h": 600,
  "boxes": [
   {
@@ -21,7 +21,8 @@
    "kind": "server",
    "title": "Server-1",
    "lines": [
-    "Redis se poochho"
+    "Redis se poocha:",
+    "Ravi kahan hai?"
    ]
   },
   {
@@ -34,7 +35,7 @@
    "lines": [
     "Ravi -> server-7",
     "umar 30 sec (TTL)",
-    "server-7 \"zinda hoon\" bole",
+    "server-7 zinda bole",
     "to umar phir 30 sec"
    ]
   },
@@ -46,7 +47,7 @@
    "kind": "server",
    "title": "Server-7",
    "lines": [
-    "Ravi -> conn-7"
+    "Ravi ka connection yahan"
    ]
   },
   {
@@ -87,7 +88,7 @@
     ]
    ],
    "c": "purple",
-   "label": "Ravi kahan?",
+   "label": "",
    "lx": 500,
    "ly": 220,
    "a": "start"
@@ -199,7 +200,7 @@
   2,
   10
  ],
- "peeche": "card 1 me EVENT LOOP (kuch thread, lakhon connection)",
+ "peeche": "card 1 me kuch thread, lakhon connection",
  "ab": "Arpan ne Ravi ko \"hi\" bheja, server bola Ravi offline",
  "agla": "ab Ravi mila hi nahi, uska phone band hai (card 3)"
 }
