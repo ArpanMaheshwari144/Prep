@@ -151,7 +151,7 @@
    "y": 84,
    "w": 560,
    "red": "Pehli 429 pe hi ban kar dete?",
-   "green": "Asli user bhi tez click karta, office NAT, sale ki bheed",
+   "green": "Asli user bhi tez click karta, office me kai log ek IP pe, sale ki bheed. Sab ban ho jaate",
    "conn": [
     [
      410,
@@ -169,8 +169,8 @@
    "x": 640,
    "y": 84,
    "w": 830,
-   "red": "Gateway har baar seedha Pattern Svc ko call kare?",
-   "green": "Har request ruk ke jaati. Isliye Kafka me daalo aur aage badho",
+   "red": "Gateway har baar seedha Pattern Svc ko poochhe?",
+   "green": "Har request ruk ke jaati. Isliye 429 Kafka me daalo aur aage badho",
    "conn": [
     [
      760,
@@ -189,7 +189,7 @@
    "y": 230,
    "w": 610,
    "red": "Kafka peeche chal raha",
-   "green": "Ban kuch minute late lagega. Tab tak rate limit rok raha",
+   "green": "Ban kuch minute late lagega. Tab tak rate limit to rok hi raha hai",
    "mark": [
     879,
     457
@@ -211,8 +211,8 @@
    "x": 30,
    "y": 570,
    "w": 560,
-   "red": "Office ka IP: 200 log, ek hi IP",
-   "green": "Ban nahi, CAPTCHA. Ban bhi 24 ghante me hat jaata",
+   "red": "Arpan ke office ka IP: 200 log, ek hi IP",
+   "green": "Ban nahi, CAPTCHA. Aur ban bhi 24 ghante me khud hat jaata",
    "mark": [
     306,
     330
@@ -233,17 +233,24 @@
    "x": 620,
    "y": 570,
    "w": 850,
-   "red": "userId pe ban lagana ho to? Gateway pe, JWT se userId milta.",
-   "green": "WAF edge pe baitha hai, wo sirf IP dekhta hai"
+   "red": "User pe ban lagana ho to? Gateway pe, JWT se userId milta.",
+   "green": "WAF sabse aage baitha hai, wo sirf IP dekhta, user nahi"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 650,
    "w": 1440,
-   "red": "Wahi gunda baar-baar: permanent ban? Pakka fraud ho to account / device hamesha ke liye band.",
-   "green": "IP ka WAF ban kuch ghante hi, kyunki IP kal kisi aur ka ho sakta"
+   "red": "Wahi gunda baar-baar aaye to hamesha ka ban? Pakka fraud ho to account / device hamesha ke liye band.",
+   "green": "IP ka ban kuch ghante hi, kyunki wahi IP kal kisi aur ka ho sakta"
   }
  ],
- "kyun": "429 maafi wala hai (phir aao). Ban sirf pakke gunde pe lagta, aur wo khud hat jaata hai"
+ "kyun": "429 maafi wala hai (\"thodi der baad aao\"). Ban sirf us pe jo baar-baar aata (10 min me 500+), aur wo bhi kuch ghante me khud hat jaata",
+ "step": [
+  6,
+  9
+ ],
+ "peeche": "card 5 me HOME REGION me ginti",
+ "ab": "Wahi bot Arpan ke account pe har 60 sec baad phir aata, din bhar",
+ "agla": "ab har user had me hai. Phir bhi poora system bhar gaya to? (card 7)"
 }

@@ -103,8 +103,8 @@
    "x": 30,
    "y": 400,
    "w": 560,
-   "red": "Pehle GET phir SET: dono ne 4 padha, dono andar",
-   "green": "INCR me padhna aur badhana ek hi kadam",
+   "red": "Pehle App ne ginti padhi (GET), phir badhayi (SET): do request ne ek saath 4 padha, dono andar",
+   "green": "",
    "conn": [
     [
      455,
@@ -123,8 +123,8 @@
    "x": 30,
    "y": 84,
    "w": 560,
-   "red": "App ke andar synchronized laga dete?",
-   "green": "Wo ek hi machine me chalta, doosri App ko pata nahi",
+   "red": "App ke andar taala (synchronized) laga dete?",
+   "green": "Wo taala sirf ek machine ke andar chalta. Doosri App ko pata hi nahi",
    "conn": [
     [
      455,
@@ -142,8 +142,8 @@
    "x": 640,
    "y": 84,
    "w": 830,
-   "red": "Ginti badh gayi, par EXPIRE lagne se pehle crash: key kabhi nahi mitegi",
-   "green": "Arpan hamesha ke liye block. Isliye INCR aur EXPIRE ek hi Lua script me",
+   "red": "Ginti badh gayi, par umar (EXPIRE) lagne se pehle gira",
+   "green": "Ginti kabhi nahi mitegi, Arpan hamesha ke liye block. Isliye INCR aur EXPIRE ek hi Lua script me, dono saath",
    "mark": [
     1060,
     180
@@ -166,7 +166,7 @@
    "y": 400,
    "w": 420,
    "red": "Lua script atak gayi",
-   "green": "Poora Redis ruk jaata. Script chhoti, loop nahi",
+   "green": "Redis ek line me chalta, to poora Redis ruk jaata. Script chhoti rakho, loop nahi",
    "mark": [
     702,
     330
@@ -188,8 +188,8 @@
    "x": 1050,
    "y": 400,
    "w": 420,
-   "red": "Lua me 2 key, cluster me alag machine",
-   "green": "Hash tag {Arpan}: dono key ek machine pe",
+   "red": "Script me 2 key, par cluster me dono alag machine pe",
+   "green": "Key me {Arpan} likho (hash tag), dono key ek hi machine pe jaati",
    "mark": [
     1058,
     330
@@ -210,9 +210,16 @@
    "x": 30,
    "y": 480,
    "w": 1010,
-   "red": "Sab ek hi line me, to dheema nahi hoga? Nahi, RAM me hai, ek machine ~lakh command / sec (andaza).",
-   "green": "Aur zyada chahiye to shard: har user ki key alag Redis pe"
+   "red": "Sab ek hi line me, to dheema nahi hoga? Nahi, RAM me hai, ek machine ~lakh kaam / sec (andaza).",
+   "green": "Aur chahiye to shard: har user ki ginti alag Redis machine pe"
   }
  ],
- "kyun": "Redis ek hi line me chalta hai, beech me koi doosri request ghus hi nahi sakti"
+ "kyun": "Redis ek waqt me ek hi kaam karta, line se. INCR padhna aur badhana ek hi kadam me karta, to do request beech me ek hi number nahi padh sakti",
+ "step": [
+  2,
+  9
+ ],
+ "peeche": "card 1 me Redis me EK ginti",
+ "ab": "Bot ne Arpan ke account pe 20 login ek saath bheje, 6 ghus gaye",
+ "agla": "ab ginti sahi hai. Par mana wali request bhi andar tak aa rahi (card 3)"
 }

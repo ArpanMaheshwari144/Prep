@@ -103,8 +103,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Pehle ginti IP pe thi: Ravi ne had todi, poora office atka",
-   "green": "Ab ginti user_id pe. Ravi ki galti sirf Ravi pe",
+   "red": "Pehle ginti IP pe thi: Ravi ne had todi, Arpan samet poora office atka",
+   "green": "",
    "conn": [
     [
      160,
@@ -124,7 +124,7 @@
    "y": 84,
    "w": 790,
    "red": "IP ki had hi badha do (5 se 500)?",
-   "green": "Office bach gaya, par botnet ko bhi utni hi chhoot mil gayi",
+   "green": "Office bach gaya, par bot ko bhi utni hi chhoot mil gayi",
    "conn": [
     [
      695,
@@ -142,8 +142,8 @@
    "x": 30,
    "y": 410,
    "w": 640,
-   "red": "5 galat password pe account lock kar diya",
-   "green": "Attacker jaan-boojh ke tujhe lock karega. Lock nahi, CAPTCHA",
+   "red": "5 galat password pe Arpan ka account lock kar diya",
+   "green": "Attacker jaan-boojh ke Arpan ko lock karwa dega. Lock nahi, CAPTCHA",
    "mark": [
     392,
     330
@@ -166,7 +166,7 @@
    "y": 410,
    "w": 750,
    "red": "Kisi ki API key chori ho gayi",
-   "green": "Nuksaan seemit, kyunki had key pe hai. Key badlo ya band karo",
+   "green": "Nuksaan kam, kyunki had key pe lagi hai. Key badlo ya band karo",
    "mark": [
     1108,
     310
@@ -187,9 +187,16 @@
    "x": 30,
    "y": 500,
    "w": 1440,
-   "red": "Had us pehchaan pe lagao jo ek insaan ki ho. Ek IP ke peeche 1000 log, ek botnet ke 1000 IP.",
-   "green": "Login se pehle user_id hota hi nahi: tab IP pe dheeli had + WAF"
+   "red": "Login se pehle user_id hota hi nahi to?",
+   "green": "Tab IP pe dheeli had + WAF"
   }
  ],
- "kyun": "Had us pehchaan pe lagao jo ek insaan ki ho. Ek IP pe 1000 log hote, ek botnet ke 1000 IP"
+ "kyun": "Had us pehchaan pe lagao jo ek insaan ki ho. Ek IP ke peeche 1000 log ho sakte, aur ek botnet ke paas 1000 IP. Login ke baad JWT se user_id milta, to ginti user_id pe",
+ "step": [
+  9,
+  9
+ ],
+ "peeche": "card 8 me GATEWAY KI APNI GINTI",
+ "ab": "Arpan ke office ki night shift: Ravi ne had todi, poora office ka IP block, Arpan bhi atka",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

@@ -183,8 +183,8 @@
    "x": 860,
    "y": 84,
    "w": 610,
-   "red": "Attack ke beech hi poora Redis Cluster gira (copy bhi)",
-   "green": "Har gateway apni memory me ginta: 100 / 4 = 25",
+   "red": "Attack ke beech poora Redis gira (copy bhi)",
+   "green": "Har gateway apni memory me ginta: had 100 ÷ 4 gateway = 25 har ek pe",
    "mark": [
     1240,
     222
@@ -226,7 +226,7 @@
    "y": 500,
    "w": 620,
    "red": "Had baanti hi nahi, har gateway ne poori 100 di",
-   "green": "4 x 100 = 400 nikal gayi. Had 4 guna dheeli",
+   "green": "4 × 100 = 400 nikal gayi. Had 4 guna dheeli",
    "mark": [
     552,
     470
@@ -249,7 +249,7 @@
    "y": 500,
    "w": 560,
    "red": "Gateway 4 se 6 ho gaye",
-   "green": "N config se lo, had dobara baanto (100 / 6)",
+   "green": "Ginti config se lo, had dobara baanto (100 ÷ 6)",
    "mark": [
     796,
     470
@@ -270,9 +270,16 @@
    "x": 30,
    "y": 590,
    "w": 1440,
-   "red": "Bilkul exact had chahiye? LB userId ke hash se ek user ko hamesha ek hi gateway pe bheje.",
+   "red": "Bilkul sahi had chahiye? LB ek user ko hamesha ek hi gateway pe bheje (userId ke hash se).",
    "green": "Redis wapas aaya to phir se sabki ek hi ginti Redis me"
   }
  ],
- "kyun": "Thodi galat had, bina had se behtar hai. Login ab bhi fail-closed rehta hai"
+ "kyun": "Thodi galat had, bina had se behtar. Redis nahi hai to har gateway apni memory me ginta, had ko 4 me baant ke. Arpan ka login phir bhi band rehta",
+ "step": [
+  8,
+  9
+ ],
+ "peeche": "card 7 me POORE SYSTEM KI HAD + 503",
+ "ab": "Raat ko attack, usi waqt poora Redis (copy bhi) gira",
+ "agla": "ab had sahi jagah lagi. Par kis naam pe? IP pe ya user pe? (card 9)"
 }

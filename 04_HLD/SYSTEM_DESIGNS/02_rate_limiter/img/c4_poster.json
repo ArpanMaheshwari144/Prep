@@ -126,8 +126,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Redis ne jawab nahi diya. Gira hai, pata kaise chale?",
-   "green": "Chhota timeout (~5 ms). Jawab nahi aaya to gira maano, ruko mat",
+   "red": "Redis ne jawab hi nahi diya. Gira hai, pata kaise chale?",
+   "green": "Chhota timeout (~5 ms). Itne me jawab nahi aaya to gira maano, ruko mat",
    "mark": [
     354,
     218
@@ -150,7 +150,7 @@
    "y": 84,
    "w": 750,
    "red": "Redis primary gira",
-   "green": "Copy primary ban jaati (Redis Cluster). Beech ki kuch sec ki ginti gayi, chalta hai",
+   "green": "Copy primary ban jaati (Redis Cluster). Beech ke kuch second ki ginti gayi, chalta hai",
    "mark": [
     672,
     160
@@ -173,7 +173,7 @@
    "y": 470,
    "w": 560,
    "red": "Copy bhi gayi, dono Redis band",
-   "green": "Pehle se tay hai, endpoint ke hisaab se (upar dabba)",
+   "green": "Pehle se tay hai (upar wala dabba): login band, user ko 503. Feed khula, tab tak gateway apni ginti",
    "mark": [
     672,
     420
@@ -195,8 +195,8 @@
    "x": 980,
    "y": 470,
    "w": 490,
-   "red": "Sab fail-open kar dete?",
-   "green": "Login khula: koi bhi bina had password try karta",
+   "red": "Sab kuch khula chhod dete (fail-open)?",
+   "green": "Login bhi khul jaata: koi bhi bina had Arpan ka password try karta",
    "conn": [
     [
      1030,
@@ -213,9 +213,16 @@
    "x": 30,
    "y": 560,
    "w": 1440,
-   "red": "CPU full tha, Redis gira nahi. Copy laga doon? Nahi: INCR likhna hai, aur likhna sirf primary pe hota.",
-   "green": "Isliye SHARD: har user ki key alag Redis pe"
+   "red": "Redis gira nahi, bas CPU full tha. Copy laga doon? Nahi: ginti badhana = likhna, aur likhna sirf primary pe hota.",
+   "green": "Isliye tukde (shard): har user ki ginti alag Redis machine pe"
   }
  ],
- "kyun": "Redis gire to kya karna hai, ye pehle se tay hai, endpoint ke hisaab se"
+ "kyun": "Redis ki copy pehle se taiyaar rehti. Dono gire to kya karna hai, ye pehle se likha hai: login jaisi cheez band (fail-closed), feed jaisi khuli (fail-open)",
+ "step": [
+  4,
+  9
+ ],
+ "peeche": "card 3 me LIMITER GATEWAY pe",
+ "ab": "Dopahar Redis gira, limiter andha ho gaya, Arpan ke login pe koi had nahi",
+ "agla": "ab ek region me sab theek. Par Arpan kai region se aaye to? (card 5)"
 }

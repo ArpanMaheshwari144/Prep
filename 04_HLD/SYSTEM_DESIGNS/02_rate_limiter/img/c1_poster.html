@@ -2,55 +2,68 @@
 <meta charset="utf-8">
 <title>Card 1: sab App ek hi Redis ginti dekhte</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="817" viewBox="0 0 1500 817" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="1004" viewBox="0 0 1500 1004" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="817" fill="#0b1220"/>
+</defs><rect width="1500" height="1004" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: sab App ek hi Redis ginti dekhte hain. Chhathi request pe 429</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="84" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
-<text x="48" y="110" font-size="14" font-weight="700" fill="#ff8a95">Pehle aisa tha:</text>
-<text x="170" y="110" font-size="13.5" fill="#d9b8bd">Har App apni ginti rakhta tha: 5 + 4 = 9 andar</text>
-<rect x="30" y="212" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="140.0" y="246" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
-<text x="140.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">9 baar login dabaya</text>
-<rect x="340" y="162" width="220" height="90" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="450.0" y="196" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App 1</text>
-<text x="450.0" y="222" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">har baar Redis se poochta</text>
-<rect x="340" y="312" width="220" height="90" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="450.0" y="346" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App 2</text>
-<text x="450.0" y="372" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">wahi Redis, wahi ginti</text>
-<rect x="700" y="212" width="330" height="120" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
-<text x="865.0" y="246" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis (ginti yahin)</text>
-<text x="865.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">rate:Arpan:login = 6</text>
-<text x="865.0" y="294" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">60 sec baad key khud mit jaati</text>
-<text x="865.0" y="316" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">had 5, chhathi pe mana</text>
-<rect x="1180" y="227" width="290" height="90" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1325.0" y="261" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan ko 429</text>
-<text x="1325.0" y="287" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">6 se 9 tak sab mana</text>
-<path d="M252 247 L336 212" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M252 277 L336 352" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
-<path d="M562 207 L696 252" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
-<text x="600" y="208" font-size="13" fill="#ffa94d" class="m">INCR</text>
-<path d="M562 357 L696 302" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
-<path d="M1032 272 L1176 272" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<text x="1104" y="262" font-size="13" fill="#3ddc97" class="m" text-anchor="middle">6 &gt; 5</text>
-<circle cx="1018" cy="212" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="1018" y="217" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<rect x="30" y="462" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="488" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="488" font-size="13.5" fill="#cfeee0">Ginti ek hi jagah hai aur RAM jitni tez hai. Key ki umar hi window hai, minute khatam to key mit jaati</text>
-<rect x="30" y="536" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="561" r="12" fill="#ff5a6a"/>
-<text x="52" y="566" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="566" font-size="15" font-weight="700" fill="#ff5a6a">Minute ke kinare pe 5 aur agle minute</text>
-<text x="74" y="587" font-size="15" font-weight="700" fill="#ff5a6a">ke shuru me 5: 2 sec me 10 andar</text>
-<text x="52" y="614" font-size="13.5" fill="#7fe0b0">Ye fixed window ki kamzori hai. Isliye asli</text>
-<text x="52" y="634" font-size="13.5" fill="#7fe0b0">me token bucket lagate</text>
-<rect x="30" y="699" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="725" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="749" font-size="13.5" fill="#e6dcb8">Ginti DB me rakhte: Har request pe disk aur lock, bahut dheema. Redis RAM me hai, ~1 ms   ·   Sticky LB se Arpan ko hamesha ek hi App pe bhejte: Wo App gira to Arpan ki ginti bhi saath gayi</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 1 / 9</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">shuru: kai App, har App apni ginti</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">Arpan ne 9 baar login dabaya, do App ne alag-alag gina, saare andar gaye</text>
+<rect x="30" y="144" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
+<text x="48" y="170" font-size="14" font-weight="700" fill="#ff8a95">Pehle aisa tha:</text>
+<text x="170" y="170" font-size="13.5" fill="#d9b8bd">Har App apni alag ginti rakhti thi: App 1 ne 5 gine, App 2 ne 4, to 9 andar</text>
+<rect x="30" y="272" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="306" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
+<text x="140.0" y="332" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">9 baar login dabaya</text>
+<rect x="340" y="222" width="220" height="90" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="450.0" y="256" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App 1</text>
+<text x="450.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">har baar Redis se poochta</text>
+<rect x="340" y="372" width="220" height="90" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="450.0" y="406" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App 2</text>
+<text x="450.0" y="432" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">wahi Redis, wahi ginti</text>
+<rect x="700" y="272" width="330" height="120" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="865.0" y="306" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis (ginti yahin)</text>
+<text x="865.0" y="332" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">rate:Arpan:login = 6</text>
+<text x="865.0" y="354" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">60 sec baad key khud mit jaati</text>
+<text x="865.0" y="376" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">had 5, chhathi pe mana</text>
+<rect x="1180" y="287" width="290" height="90" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1325.0" y="321" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan ko 429</text>
+<text x="1325.0" y="347" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">6 se 9 tak sab mana</text>
+<path d="M252 307 L336 272" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M252 337 L336 412" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M562 267 L696 312" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<text x="600" y="268" font-size="13" fill="#ffa94d" class="m">INCR</text>
+<path d="M562 417 L696 362" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M1032 332 L1176 332" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<text x="1104" y="322" font-size="13" fill="#3ddc97" class="m" text-anchor="middle">6 &gt; 5</text>
+<circle cx="1018" cy="272" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="1018" y="277" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<rect x="30" y="522" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="548" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="548" font-size="13.5" fill="#cfeee0">Saari App ek hi jagah (Redis) ginti dekhti hain, aur Redis RAM me hai to tez. Ginti ki umar 60 sec hai: minute khatam to ginti khud mit jaati, naya minute 0 se</text>
+<rect x="30" y="596" width="345" height="169" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="621" r="12" fill="#ff5a6a"/>
+<text x="52" y="626" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="626" font-size="15" font-weight="700" fill="#ff5a6a">Minute ke aakhri second me 5 aur agle</text>
+<text x="74" y="647" font-size="15" font-weight="700" fill="#ff5a6a">minute ke pehle second me 5: 2 sec me</text>
+<text x="74" y="668" font-size="15" font-weight="700" fill="#ff5a6a">10 andar</text>
+<text x="52" y="695" font-size="13.5" fill="#7fe0b0">Ye &quot;minute wali&quot; ginti (fixed window) ki</text>
+<text x="52" y="715" font-size="13.5" fill="#7fe0b0">kamzori hai. Isliye asli me token bucket</text>
+<text x="52" y="735" font-size="13.5" fill="#7fe0b0">lagate</text>
+<rect x="30" y="800" width="1440" height="86" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="826" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="850" font-size="13.5" fill="#e6dcb8">Ginti DB me rakhte: Har request pe disk aur lock, bahut dheema. Redis RAM me hai, ~1 ms   ·   LB se Arpan ko hamesha ek hi App pe bhejte (sticky): Wo App giri to Arpan ki ginti bhi saath</text>
+<text x="48" y="870" font-size="13.5" fill="#e6dcb8">gayi</text>
+<rect x="30" y="930" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="958" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="958" font-size="14.5" fill="#e6dcb8">ab ginti ek jagah hai. Par 20 request ek hi pal me aayi to? (card 2)</text>
 </svg>

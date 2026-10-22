@@ -141,8 +141,8 @@
    "x": 30,
    "y": 430,
    "w": 560,
-   "red": "Pehle har App apni ginti rakhta tha: 5 + 4 = 9 andar",
-   "green": "Ab dono App ek hi Redis ginti dekhte, 6 pe mana",
+   "red": "Pehle har App apni alag ginti rakhti thi: App 1 ne 5 gine, App 2 ne 4, to 9 andar",
+   "green": "",
    "conn": [
     [
      450,
@@ -180,8 +180,8 @@
    "x": 30,
    "y": 84,
    "w": 560,
-   "red": "Sticky LB se Arpan ko hamesha ek hi App pe bhejte?",
-   "green": "Wo App gira to Arpan ki ginti bhi saath gayi",
+   "red": "LB se Arpan ko hamesha ek hi App pe bhejte (sticky)?",
+   "green": "Wo App giri to Arpan ki ginti bhi saath gayi",
    "conn": [
     [
      450,
@@ -199,8 +199,8 @@
    "x": 700,
    "y": 84,
    "w": 770,
-   "red": "Minute ke kinare pe 5 aur agle minute ke shuru me 5: 2 sec me 10 andar",
-   "green": "Ye fixed window ki kamzori hai. Isliye asli me token bucket lagate",
+   "red": "Minute ke aakhri second me 5 aur agle minute ke pehle second me 5: 2 sec me 10 andar",
+   "green": "Ye \"minute wali\" ginti (fixed window) ki kamzori hai. Isliye asli me token bucket lagate",
    "mark": [
     1018,
     200
@@ -217,5 +217,12 @@
    ]
   }
  ],
- "kyun": "Ginti ek hi jagah hai aur RAM jitni tez hai. Key ki umar hi window hai, minute khatam to key mit jaati"
+ "kyun": "Saari App ek hi jagah (Redis) ginti dekhti hain, aur Redis RAM me hai to tez. Ginti ki umar 60 sec hai: minute khatam to ginti khud mit jaati, naya minute 0 se",
+ "step": [
+  1,
+  9
+ ],
+ "peeche": "shuru: kai App, har App apni ginti",
+ "ab": "Arpan ne 9 baar login dabaya, do App ne alag-alag gina, saare andar gaye",
+ "agla": "ab ginti ek jagah hai. Par 20 request ek hi pal me aayi to? (card 2)"
 }

@@ -131,8 +131,8 @@
    "x": 880,
    "y": 84,
    "w": 590,
-   "red": "Pehle ginti App me thi: mana wali request bhi andar aati",
-   "green": "App unhi me bhar gaya. Ab gateway pe hi rok do",
+   "red": "Pehle ginti App ke andar thi, mana wali request bhi andar tak aati",
+   "green": "App unhi se bhar gaya",
    "conn": [
     [
      1170,
@@ -143,7 +143,7 @@
      195
     ]
    ],
-   "tha": "App unhi me bhar gaya"
+   "tha": "App unhi se bhar gaya"
   },
   {
    "n": 2,
@@ -152,7 +152,7 @@
    "y": 84,
    "w": 600,
    "red": "Gateway hi gir gaya",
-   "green": "Ek nahi, 2+ gateway machine, aage LB. Darwaza akela nahi",
+   "green": "Ek nahi, 2 ya zyada gateway machine, aage LB. Darwaza akela nahi",
    "mark": [
     650,
     180
@@ -174,8 +174,8 @@
    "x": 30,
    "y": 400,
    "w": 620,
-   "red": "Sabko Retry-After 30 diya: 30 sec baad sab ek saath lautte",
-   "green": "Alag-alag time do (28, 33). Bheed phail jaati (jitter)",
+   "red": "Sabko \"30 sec baad aao\" (Retry-After 30) bola: 30 sec baad sab ek saath laute",
+   "green": "Har ek ko thoda alag time do (28, 33 ...). Bheed bikhar jaati (jitter)",
    "mark": [
     200,
     352
@@ -197,7 +197,7 @@
    "y": 400,
    "w": 780,
    "red": "Had sirf gateway pe kaafi? Nahi, dono jagah lagao:",
-   "green": "gateway pe sabke liye moti had, service ke andar apni baarik had"
+   "green": "Gateway pe sabke liye moti had, aur har service ke andar apni chhoti had"
   },
   {
    "type": "grey",
@@ -205,8 +205,15 @@
    "y": 490,
    "w": 1440,
    "red": "429 ke saath kya bhejte? Retry-After: 30 (kab aao) aur X-RateLimit-Remaining (kitni bachi).",
-   "green": "Sirf 'na' mat bolo, warna client turant phir maarta"
+   "green": "Sirf \"na\" mat bolo, warna client turant phir maarta"
   }
  ],
- "kyun": "Jitna aage roko, utna kam kaam bekaar jaata hai"
+ "kyun": "Jitna pehle roko, utna kam kaam bekaar jaata. Gateway sabse aage hai, wahin 429 de do, App tak bot ki request pahunchti hi nahi",
+ "step": [
+  3,
+  9
+ ],
+ "peeche": "card 2 me ATOMIC: INCR / LUA",
+ "ab": "Bot ki mana wali (429) request bhi App tak ghoom ke aayi",
+ "agla": "ab sab Redis pe tika hai. Redis gira to? (card 4)"
 }

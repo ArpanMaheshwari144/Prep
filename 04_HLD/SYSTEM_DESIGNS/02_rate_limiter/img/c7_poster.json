@@ -126,8 +126,8 @@
    "x": 700,
    "y": 84,
    "w": 770,
-   "red": "Pehle sirf user ki had thi. Sab apni had me, phir bhi server gira",
-   "green": "User ki had aur system ki had alag. Ab poore system ki had bhi",
+   "red": "Pehle sirf har user ki had thi. Sab apni had me, phir bhi server gira",
+   "green": "",
    "conn": [
     [
      1320,
@@ -165,8 +165,8 @@
    "x": 30,
    "y": 440,
    "w": 620,
-   "red": "Line (queue) me rok lo?",
-   "green": "Sirf ~2 sec chalta. User chala gaya to kaam bekaar",
+   "red": "Request ko line (queue) me rok lo?",
+   "green": "Sirf ~2 sec kaam karta. User chala gaya to wo kaam bekaar",
    "conn": [
     [
      520,
@@ -184,8 +184,15 @@
    "y": 440,
    "w": 770,
    "red": "Had paar hui: 429 bhejoge ya 503?",
-   "green": "User ki had paar = 429. Poore system ki had paar = 503"
+   "green": "User ki apni had paar = 429. Poore system ki had paar = 503"
   }
  ],
- "kyun": "User ki had aur system ki had alag cheez hain. Sab apni had me hon, phir bhi system bhar sakta hai"
+ "kyun": "Har user ki had alag cheez hai, poore system ki had alag. Sab apni had me hon, phir bhi milke system bhar sakta. Isliye gateway poore system ki had bhi rakhta, aur kam zaroori kaam pehle rokta",
+ "step": [
+  7,
+  9
+ ],
+ "peeche": "card 6 me KAFKA -> PATTERN -> WAF BAN",
+ "ab": "Shaam ki sale, har koi apni had me, phir bhi server gira, Arpan ka payment atka",
+ "agla": "ab sabse bura waqt: attack aur Redis ek saath gaye (card 8)"
 }
