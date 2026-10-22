@@ -10,8 +10,9 @@ DRILL ME KYA AAYEGA:
    - owner check (claim / bill IS user ka hai?) -> naam se likho: "OWNER CHECK nahi, 403"
    - bahar ki call (bank / SMS) @Transactional ke andar + timeout nahi -> txn ke bahar, timeout, PENDING
    - double payout (check-then-act: status dekha -> pay -> PAID) -> atomic UPDATE ... WHERE status=? + idempotency key
+   - ENUM pe `==` SAHI hai (bug NAHI). Sirf String pe `==` galat -> equals. Pehle dekho: type enum hai ya String?
 PR ME MAT DO (pakde jaate, koi matlab nahi): body se userId (21-Oct pakda) · CI / DI constructor ·
-   String == / enum · log me sensitive (account / card) · amount client se · @Transactional private ·
+   String == · log me sensitive (account / card) · amount client se · @Transactional private ·
    SQL injection · catch nigalna · singleton me field · FAISLA line · entity seedha bahar
 - Upar wala 2 drill lagaataar pakda jaaye -> "MAT DO" me. "MAT DO" wala kabhi chhoote -> wapas upar.
 
