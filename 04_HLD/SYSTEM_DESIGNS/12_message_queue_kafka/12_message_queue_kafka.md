@@ -1,6 +1,6 @@
 # Design a Message Queue (Kafka-jaisa)
 
-> **Pehle ye padh: [Kafka shuru se, dabbe aur teer se](kafka_seedha.md)** · phir [concepts tasveer](kafka_concepts.md)
+> **Pehle ye padh: [Kafka shuru se, dabbe aur teer se](kafka_seedha.md)**
 
 > Ek dabba jo khabar (event) le le aur kai services ko unki apni speed se de de, bina kisi ko roke, bina kuch khoye.
 > Dil: kisi ko roko mat (bahut saari khabar har second), kuch khoye nahi, aur ek user ki khabar kram me.
