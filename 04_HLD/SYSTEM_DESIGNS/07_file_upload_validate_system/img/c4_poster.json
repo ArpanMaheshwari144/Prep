@@ -1,5 +1,5 @@
 {
- "title": "Card 4: har kuch min sweeper: 10 min se haal nahi badla = atka. Bytes hain to dobara line me, nahi to FAILED",
+ "title": "Card 4: sweeper har ~5 min: 10 min se haal nahi badla = file atki. Bytes S3 me hain to dobara line me, nahi to FAILED",
  "h": 600,
  "boxes": [
   {
@@ -10,8 +10,8 @@
    "kind": "user",
    "title": "App",
    "lines": [
-    "crash",
-    "/complete nahi"
+    "crash ho gaya,",
+    "\"khatam\" bataya hi nahi"
    ]
   },
   {
@@ -24,8 +24,8 @@
    "lines": [
     "T-103: UPLOADING",
     "10 min se nahi badla",
-    "UPLOADING -> VALIDATING",
-    "-> DONE / FAILED"
+    "raasta: UPLOADING -> VALIDATING",
+    "-> DONE ya FAILED"
    ]
   },
   {
@@ -48,7 +48,7 @@
    "kind": "db",
    "title": "S3",
    "lines": [
-    "bytes hain?"
+    "bytes aaye the?"
    ]
   },
   {
@@ -102,7 +102,7 @@
     ]
    ],
    "c": "purple",
-   "label": "atki?",
+   "label": "atki dhoondho",
    "lx": 705,
    "ly": 240,
    "a": "middle"
@@ -235,7 +235,7 @@
   4,
   9
  ],
- "peeche": "card 3 me TUKDON ME UPLOAD (multipart)",
+ "peeche": "card 3 me badi file ke tukde (multipart)",
  "ab": "Arpan ka app crash, \"upload ho gaya\" kabhi aaya hi nahi",
  "agla": "ab file chal padi. Par deadline ke din sab haal poochh rahe (card 5)"
 }

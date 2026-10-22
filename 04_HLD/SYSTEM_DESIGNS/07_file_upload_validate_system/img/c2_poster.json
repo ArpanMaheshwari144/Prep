@@ -1,5 +1,5 @@
 {
- "title": "Card 2: server sirf 10 min ka signed URL + T-102 deta, phone bytes seedha S3 pe",
+ "title": "Card 2: server sirf 10 min ka signed URL (S3 ka pass) + id T-102 deta. Phone 5 GB seedha S3 pe bhejta",
  "h": 660,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "Upload Svc",
    "lines": [
-    "sirf paas + T-102",
-    "(10 min, ek file)"
+    "sirf pass (signed URL)",
+    "+ id T-102, 10 min, ek file"
    ]
   },
   {
@@ -33,9 +33,9 @@
    "kind": "db",
    "title": "S3 (blob)",
    "lines": [
-    "bytes yahan",
-    "had 5 GB paas me sign",
-    "SHA-256 milaata"
+    "bytes yahan aate",
+    "had 5 GB pass me likhi",
+    "SHA-256 se file milaata"
    ]
   },
   {
@@ -46,8 +46,8 @@
    "kind": "cache",
    "title": "Queue",
    "lines": [
-    "S3 event:",
-    "'file aa gayi'"
+    "S3 batata:",
+    "file aa gayi"
    ]
   }
  ],
@@ -64,7 +64,7 @@
     ]
    ],
    "c": "blue",
-   "label": "init / complete",
+   "label": "shuru / khatam",
    "lx": 258,
    "ly": 314,
    "a": "start"
@@ -179,7 +179,7 @@
   2,
   9
  ],
- "peeche": "card 1 me TURANT ID + JAANCH PEECHE (queue)",
+ "peeche": "card 1 me turant id, jaanch peeche (Kafka)",
  "ab": "Arpan ki 5 GB video hamare server ke raaste S3 jaa rahi",
  "agla": "ab bytes seedha S3 jaate. Par beech me wifi gaya to? (card 3)"
 }

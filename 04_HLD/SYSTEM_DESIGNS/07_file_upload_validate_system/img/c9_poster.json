@@ -1,5 +1,5 @@
 {
- "title": "Card 9: pehle 4 byte padho (magic bytes): '%PDF' = PDF, 'MZ' = EXE reject. Virus ke liye scan alag",
+ "title": "Card 9: file ke pehle 4 byte padho (magic bytes): '%PDF' = asli PDF, 'MZ' = EXE, reject. Virus ka scan alag",
  "h": 600,
  "boxes": [
   {
@@ -10,7 +10,7 @@
    "kind": "user",
    "title": "Upload",
    "lines": [
-    "report.pdf",
+    "naam report.pdf,",
     "andar EXE"
    ]
   },
@@ -23,7 +23,7 @@
    "title": "Worker",
    "lines": [
     "pehle 4 byte padho",
-    "%PDF = PDF",
+    "%PDF = asli PDF",
     "MZ = EXE: reject"
    ]
   },
@@ -35,7 +35,7 @@
    "kind": "lb",
    "title": "Virus scan",
    "lines": [
-    "ClamAV / S3 malware"
+    "ClamAV / S3 malware scan"
    ]
   },
   {
@@ -46,6 +46,7 @@
    "kind": "db",
    "title": "Quarantine bucket",
    "lines": [
+    "shaq wali file yahan",
     "download band"
    ]
   },
@@ -100,7 +101,7 @@
     ]
    ],
    "c": "grey",
-   "label": "fail",
+   "label": "",
    "lx": 648,
    "ly": 343,
    "a": "middle"
@@ -199,7 +200,7 @@
   9,
   9
  ],
- "peeche": "card 8 me 5 MIN KA NAYA LINK",
+ "peeche": "card 8 me download pe naya 5 min ka link",
  "ab": "Arpan ke naam se report.pdf aayi, andar EXE nikla",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

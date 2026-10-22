@@ -1,5 +1,5 @@
 {
- "title": "Card 8: DB me sirf S3 key. Download pe pehle maalik check, phir naya 5 min ka signed link",
+ "title": "Card 8: DB me sirf S3 ka pata (key). Download pe pehle maalik check, phir naya 5 min ka signed link",
  "h": 600,
  "boxes": [
   {
@@ -22,8 +22,7 @@
    "title": "File Svc",
    "lines": [
     "pehle maalik check",
-    "phir naya",
-    "5 min ka link"
+    "phir naya 5 min ka link"
    ]
   },
   {
@@ -34,7 +33,7 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "sirf S3 key (pata)"
+    "sirf S3 ka pata (key)"
    ]
   },
   {
@@ -57,7 +56,7 @@
    "title": "WhatsApp group",
    "lines": [
     "1 ghanta baad khola:",
-    "expire, nahi khula"
+    "link expire, nahi khula"
    ]
   }
  ],
@@ -100,7 +99,7 @@
     ]
    ],
    "c": "purple",
-   "label": "sign",
+   "label": "",
    "lx": 648,
    "ly": 343,
    "a": "middle"
@@ -195,7 +194,7 @@
   8,
   9
  ],
- "peeche": "card 7 me OWNER CHECK, 403",
+ "peeche": "card 7 me har request pe owner check",
  "ab": "Arpan ne S3 ka seedha link WhatsApp group pe bhej diya",
  "agla": "ab raasta safe. Par file khud hi jhooth bol rahi ho to? (card 9)"
 }

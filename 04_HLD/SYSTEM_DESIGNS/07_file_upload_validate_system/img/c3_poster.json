@@ -1,5 +1,5 @@
 {
- "title": "Card 3: multipart: 100 tukde, har tukde ki rasid (ETag) S3 pe. Wifi gaya to sirf bache tukde",
+ "title": "Card 3: badi file ke 100 tukde (multipart), har tukde ki rasid (ETag). Wifi gaya to sirf bache tukde dobara",
  "h": 650,
  "boxes": [
   {
@@ -11,7 +11,7 @@
    "title": "Phone",
    "lines": [
     "5 GB = 100 tukde",
-    "kai saath"
+    "kai tukde ek saath"
    ]
   },
   {
@@ -22,9 +22,9 @@
    "kind": "db",
    "title": "S3 (upload U-9)",
    "lines": [
-    "tukda 1-90: rasid (ETag)",
+    "tukda 1-90: rasid mili (ETag)",
     "tukda 91-100: baaki",
-    "aakhir me COMPLETE"
+    "aakhir me jodo (COMPLETE)"
    ]
   },
   {
@@ -35,7 +35,7 @@
    "kind": "plain",
    "title": "S3 lifecycle",
    "lines": [
-    "COMPLETE nahi aaya:",
+    "COMPLETE nahi aaya to",
     "adhoore tukde ~7 din baad hatao"
    ]
   }
@@ -166,7 +166,7 @@
   3,
   9
  ],
- "peeche": "card 2 me SIGNED URL, bytes seedha S3",
+ "peeche": "card 2 me signed URL, bytes seedha S3",
  "ab": "Arpan ki 4.5 GB chadh chuki thi, wifi chala gaya",
  "agla": "ab upload hua. Par app hi crash ho gaya aur kisi ne bataya nahi (card 4)"
 }

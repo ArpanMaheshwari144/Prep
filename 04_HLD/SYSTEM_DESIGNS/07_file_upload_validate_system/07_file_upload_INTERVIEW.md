@@ -60,7 +60,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: ASYNC + TRACKING ID (queue, worker)
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -71,7 +71,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 5 KUCH DHEEMA (bytes)** · Cue: PRESIGNED URL, bytes seedha S3
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -82,7 +82,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 5 KUCH DHEEMA (wifi)** · Cue: MULTIPART, sirf bache tukde
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -93,7 +93,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 3 MACHINE GIRI** · Cue: SWEEPER job (atki file)
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -104,7 +104,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 2 BHEED AAYI** · Cue: CACHE Redis + READ REPLICA
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -115,7 +115,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 6 DATA BADA (folder)** · Cue: PARENT id + CHILD id
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -126,7 +126,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 8 BAHAR KA HAMLA (id)** · Cue: OWNER CHECK (AUTHZ), 403
 
-<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -137,7 +137,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 8 BAHAR KA HAMLA (link)** · Cue: SIGNED GET, 5 min ka naya paas
 
-<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -148,7 +148,7 @@ PEHLE   pehle poochho ki jaanch kitna time leti hai (2-3 sec), aur nateeja turan
 
 **Rail 8 BAHAR KA HAMLA (file)** · Cue: MAGIC BYTES (pehle kuch byte)
 
-<img src="img/c9_poster.png?v=3" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=4" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---

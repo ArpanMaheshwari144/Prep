@@ -1,5 +1,5 @@
 {
- "title": "Card 7: har request pe owner check: JWT ka user = file ka maalik? Nahi to 403 (admin role chhoot)",
+ "title": "Card 7: har request pe owner check: JWT ka user = file ka maalik? Nahi to 403. Admin ki chhoot",
  "h": 580,
  "boxes": [
   {
@@ -22,7 +22,7 @@
    "kind": "lb",
    "title": "Gateway",
    "lines": [
-    "JWT: kaun ho"
+    "JWT se: kaun ho"
    ]
   },
   {
@@ -34,8 +34,8 @@
    "title": "File Svc",
    "lines": [
     "pehli line:",
-    "owner_id == jwt.user_id",
-    "ya admin role",
+    "maalik == JWT ka user?",
+    "ya admin",
     "warna 403"
    ]
   },
@@ -160,7 +160,7 @@
   7,
   9
  ],
- "peeche": "card 6 me FOLDER id + har file ka id",
+ "peeche": "card 6 me folder ki id + har file child",
  "ab": "Ravi ne Arpan ka id (T-101) daal ke Arpan ki file le li",
  "agla": "ab andar se safe. Par link hi bahar chala gaya to? (card 8)"
 }

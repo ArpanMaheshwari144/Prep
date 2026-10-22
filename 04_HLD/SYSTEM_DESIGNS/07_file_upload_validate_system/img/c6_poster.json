@@ -1,5 +1,5 @@
 {
- "title": "Card 6: folder ka id P-1, har file child. Child DONE pe ginti +1 (ek UPDATE), sab DONE to P-1 DONE",
+ "title": "Card 6: folder ki ek id (P-1), har file uska child. File DONE pe folder ginti +1, sab DONE to folder DONE",
  "h": 680,
  "boxes": [
   {
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "Upload Svc",
    "lines": [
-    "batch init:",
-    "1000 URL, child id"
+    "ek saath shuru:",
+    "1000 URL + 1000 child id"
    ]
   },
   {
@@ -59,7 +59,7 @@
    "title": "Worker",
    "lines": [
     "child DONE pe",
-    "folder +1 (ek UPDATE)"
+    "folder ginti +1 (ek UPDATE)"
    ]
   }
  ],
@@ -237,7 +237,7 @@
   6,
   9
  ],
- "peeche": "card 5 me REDIS CACHE + READ REPLICA",
+ "peeche": "card 5 me status Redis + DB copy se",
  "ab": "Arpan ne file nahi, poora folder daala (1000 file)",
  "agla": "ab sab chal raha. Par koi doosre ki file maange to? (card 7)"
 }

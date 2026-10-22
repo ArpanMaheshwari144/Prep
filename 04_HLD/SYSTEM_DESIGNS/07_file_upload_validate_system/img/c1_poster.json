@@ -1,5 +1,5 @@
 {
- "title": "Card 1: turant T-101 + VALIDATING. Khabar Kafka me, worker peeche jaanch ke DONE likhta",
+ "title": "Card 1: file aate hi Arpan ko turant id (T-101) + \"jaanch chalu\". Kafka se worker peeche jaanch ke DONE likhta",
  "h": 560,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "Upload Svc",
    "lines": [
-    "turant T-101",
-    "VALIDATING"
+    "turant id: T-101",
+    "VALIDATING (jaanch chalu)"
    ]
   },
   {
@@ -33,7 +33,7 @@
    "kind": "cache",
    "title": "Kafka",
    "lines": [
-    "khabar T-101"
+    "khabar: T-101 jaancho"
    ]
   },
   {
@@ -44,9 +44,9 @@
    "kind": "server",
    "title": "Worker",
    "lines": [
-    "Validator chalao",
-    "DB me DONE",
-    "phir offset"
+    "Validator se jaanch",
+    "DB me DONE likho",
+    "phir Kafka ko \"padh liya\""
    ]
   },
   {
@@ -57,7 +57,8 @@
    "kind": "lb",
    "title": "Validator",
    "lines": [
-    "bahar ki company"
+    "bahar ki company",
+    "file jaanchti"
    ]
   },
   {

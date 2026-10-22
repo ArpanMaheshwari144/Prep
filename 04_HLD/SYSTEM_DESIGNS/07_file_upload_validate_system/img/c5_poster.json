@@ -1,5 +1,5 @@
 {
- "title": "Card 5: GET /status pehle Redis (1 ms), miss pe replica, Redis me rakho. DONE pe Redis key hatao",
+ "title": "Card 5: status pehle Redis se (1 ms), wahan nahi to DB copy se, phir Redis me rakho. DONE hote hi Redis se hatao",
  "h": 660,
  "boxes": [
   {
@@ -11,7 +11,7 @@
    "title": "Users",
    "lines": [
     "10,000 log",
-    "har 2 sec poochh"
+    "har 2 sec poochte"
    ]
   },
   {
@@ -22,7 +22,8 @@
    "kind": "server",
    "title": "Status Svc",
    "lines": [
-    "GET /status/T-101"
+    "GET /status/T-101",
+    "haal kya hai?"
    ]
   },
   {
@@ -33,7 +34,8 @@
    "kind": "db",
    "title": "Read replica",
    "lines": [
-    "miss pe yahan se"
+    "Redis me nahi mila",
+    "to yahan se"
    ]
   },
   {
@@ -66,8 +68,8 @@
    "kind": "server",
    "title": "Worker",
    "lines": [
-    "DONE: DB likho",
-    "+ Redis key hatao"
+    "DONE: DB me likho",
+    "+ Redis se hatao"
    ]
   }
  ],
@@ -208,7 +210,7 @@
    "x": 30,
    "y": 480,
    "w": 700,
-   "red": "DB me DONE, Arpan ke app me VALIDATING",
+   "red": "DB me DONE, app me VALIDATING",
    "green": "DONE likhte hi Redis se haal hata do. Agla poochh naya DONE laata",
    "n": 3,
    "mark": [
@@ -263,7 +265,7 @@
   5,
   9
  ],
- "peeche": "card 4 me SWEEPER (atki file dhoondho)",
+ "peeche": "card 4 me sweeper atki file dhoondhta",
  "ab": "Deadline ke din 10,000 log har 2 sec haal poochh rahe, Arpan ka bhi atka",
  "agla": "ab ek file theek. Par Arpan ne poora folder daala to? (card 6)"
 }
