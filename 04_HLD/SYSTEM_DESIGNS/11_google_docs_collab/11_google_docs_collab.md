@@ -191,15 +191,8 @@ KYUN    jis server pe us doc ka user hai, wo channel sunta hai (subscriber).
 
 Jod: Cassandra = sirf aage jodna (09 databases) · URL me bhi ginti Kafka se, raaste se bahar (01 card 4)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: andar + kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=1" width="900">
-
-<img src="img/c6_2.png?v=1" width="900">
-
-<img src="img/c6_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     op Redis buffer aur uski copy dono me pahunche (Redis WAIT 1, ~1 ms), tab ACK.
@@ -211,14 +204,6 @@ KYUN    ACK tabhi jab op buffer aur copy dono me pahunch gaya.
 
 > [!IMPORTANT]
 > **Yaad rakh:** Op Redis buffer + copy me pahuncha (WAIT 1), tab ACK. Har 1 sec batch Cassandra me. Batch ACK ke raaste me nahi.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - ACK se pehle Redis gira → **app op rakhta, opId**: app op rakhta hai, bina ACK pakka nahi. Judte hi opId ke saath phir bhejo, pehle se hai to skip
-> - ACK ke baad Redis gira → **copy main ban gayi**: ACK se pehle copy me likh chuke the, kuch nahi khoya
-> - batch dheema ho gaya → **typing nahi rukti**: kyunki batch ACK ke raaste me nahi. Buffer badhta hai, to alert
-> - batch dobara likh diya → **(docId, version) ek row**: (docId, version) same hai, to ek hi row banti hai. Kuch double nahi
-> - Cassandra hi kyun? → **sirf neeche jodta**: wo sirf neeche jodta hai (commit log + RAM), likhai tez. Join chahiye nahi. Mongo bhi chalega
 
 
 ---
