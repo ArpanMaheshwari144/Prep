@@ -57,7 +57,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 2 BHEED AAYI** · Cue: REDIS CACHE (cache-aside)
 
-<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -68,7 +68,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 3 MACHINE GIRI** · Cue: STATELESS App x N + LOAD BALANCER
 
-<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -79,7 +79,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: COUNTER RANGE + base62
 
-<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -90,7 +90,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 5 KUCH DHEEMA** · Cue: KAFKA, ginti peeche
 
-<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -101,7 +101,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 6 DATA BADA** · Cue: SHARD by code (RING)
 
-<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 > [!CAUTION]
@@ -117,7 +117,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 6 DATA BADA (copy ka AGAR)** · Cue: QUORUM (2 me likho, 2 se padho)
 
-<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -128,7 +128,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 7 DARWAZA / DOOR KE LOG** · Cue: ROUTE 53 + 2 LB (health check)
 
-<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -139,7 +139,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 8 BAHAR KA HAMLA** · Cue: RATE LIMIT darwaze pe + WAF
 
-<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 Poora rate limit = [02_rate_limiter](../02_rate_limiter/02_rate_limiter.md).

@@ -118,8 +118,8 @@
    "x": 30,
    "y": 84,
    "w": 580,
-   "red": "Click seedha DB me likh dete?",
-   "green": "Har redirect DB likhai ka intezaar karta, wahi dheemapan",
+   "red": "Har click seedha DB me likh dete?",
+   "green": "Har redirect DB me likhne ka intezaar karta, wahi dheemapan",
    "conn": [
     [
      450,
@@ -138,7 +138,7 @@
    "y": 84,
    "w": 830,
    "red": "Kafka hi band ho gaya",
-   "green": "Redirect phir bhi chalta, bas kuch click ginti me nahi aate",
+   "green": "Redirect phir bhi chalta. Bas kuch click ginti me nahi aate",
    "mark": [
     948,
     222
@@ -161,7 +161,7 @@
    "y": 410,
    "w": 470,
    "red": "Wahi click do baar aaya",
-   "green": "Har click ki apni id, dobara aaya to gino mat",
+   "green": "Har click ki apni id hai. Wahi id dobara aayi to gino mat",
    "mark": [
     606,
     275
@@ -192,7 +192,7 @@
    "y": 410,
    "w": 470,
    "red": "Kafka me ek khabar kharab nikli",
-   "green": "Use alag line (DLQ) me daalo, baaki chalti rahe",
+   "green": "Use alag line (DLQ) me daalo, baaki ginti chalti rahe",
    "mark": [
     985,
     275
@@ -214,8 +214,8 @@
    "x": 1010,
    "y": 410,
    "w": 460,
-   "red": "Analytics dheema ho gaya",
-   "green": "Khabar Kafka me padi, apni speed se padhta",
+   "red": "Ginti wala (Analytics) dheema ho gaya",
+   "green": "Khabar Kafka me padi rehti, wo apni speed se padh leta. Redirect pe asar nahi",
    "mark": [
     1368,
     330
@@ -237,7 +237,7 @@
    "x": 30,
    "y": 500,
    "w": 700,
-   "red": "Sirf Redis me INCR kar lete?",
+   "red": "Sirf Redis me ginti badha dete (INCR)?",
    "green": "Sirf ginti milti. Kaun, kab, kahan se click hua, wo nahi"
   },
   {
@@ -246,7 +246,7 @@
    "y": 500,
    "w": 710,
    "red": "302 kyun, 301 kyun nahi? 301 pe browser link yaad rakh leta.",
-   "green": "Agli baar server tak aata hi nahi, ginti aur expiry band"
+   "green": "Agli baar click server tak aata hi nahi, to na ginti na expiry"
   },
   {
    "type": "grey",
@@ -254,8 +254,15 @@
    "y": 590,
    "w": 1440,
    "red": "Naya report chahiye? Kafka me pade purane click dobara padh lo (replay).",
-   "green": "SQS kyun nahi? SQS padhte hi message mita deta, Kafka rakhta hai"
+   "green": "SQS kyun nahi? SQS padhte hi khabar mita deta, Kafka rakhta hai"
   }
  ],
- "kyun": "Redirect kisi ka intezaar nahi karta. Ginti peeche hoti, disk pe pakki. Ginti wala dheema / band ho, to bhi link khulta hai, ginti thodi der se aati"
+ "kyun": "Click khulte hi turant redirect (302), aur \"click hua\" ki khabar Kafka me daal do. Ginti wala apni speed se peeche padhta. Wo dheema ya band ho, Arpan ka link phir bhi turant khulta",
+ "step": [
+  4,
+  8
+ ],
+ "peeche": "card 3 me COUNTER RANGE + base62",
+ "ab": "Arpan ne click ginti chahi, redirect hi dheema ho gaya",
+ "agla": "ab data hi itna ho gaya ki ek machine me nahi aata (card 5)"
 }

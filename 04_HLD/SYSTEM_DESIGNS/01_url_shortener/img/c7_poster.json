@@ -159,7 +159,7 @@
    "y": 84,
    "w": 510,
    "red": "Shaam ko LB-1 gir gaya",
-   "green": "3 baar chup, Route 53 ne sab LB-2 pe bheja",
+   "green": "Route 53 ke 3 check pe chup raha, Route 53 ne sab LB-2 pe bhejna shuru kiya",
    "mark": [
     928,
     162
@@ -181,8 +181,8 @@
    "x": 30,
    "y": 460,
    "w": 640,
-   "red": "Phone ne LB-1 ka purana pata yaad rakha (DNS TTL)",
-   "green": "~60 sec kuch request fail. Isliye LB khud kai zone me",
+   "red": "Arpan ke phone ne LB-1 ka purana pata yaad rakha (DNS TTL)",
+   "green": "~60 sec tak kuch click fail. Isliye LB khud bhi kai zone me rakhte",
    "mark": [
     218,
     338
@@ -222,5 +222,12 @@
    ]
   }
  ],
- "kyun": "Phone sabse pehle Route 53 se hi poochta hai \"kahan jaun?\". Wahin se zinda LB ka pata mil jaata"
+ "kyun": "Arpan ka phone sabse pehle Route 53 (DNS) se poochta \"kahan jaun?\". Route 53 har LB ko check karta, jo zinda hai wahi pata deta",
+ "step": [
+  7,
+  8
+ ],
+ "peeche": "card 6 me QUORUM (2 me likho, 2 se padho)",
+ "ab": "Shaam ko LB hi gir gaya, Arpan ka koi click andar nahi gaya",
+ "agla": "ab koi galat istemal kare to? (card 8)"
 }

@@ -146,7 +146,7 @@
    "y": 84,
    "w": 600,
    "red": "Ek hi badi machine le lete?",
-   "green": "Kitni bhi badi ho, ek hi hai. Giri to poori site band",
+   "green": "Kitni bhi badi ho, hai to ek hi. Wo giri to poori site band",
    "conn": [
     [
      450,
@@ -165,7 +165,7 @@
    "y": 84,
    "w": 770,
    "red": "App 1 giri",
-   "green": "/health ka jawab nahi aaya, LB ne list se hata di. Agla click doosri App pe",
+   "green": "LB ke \"zinda ho?\" (/health) ka jawab nahi aaya, LB ne use list se hata diya. Arpan ka agla click App 2 pe gaya",
    "mark": [
     928,
     162
@@ -188,7 +188,7 @@
    "y": 500,
    "w": 770,
    "red": "App 3 giri nahi, bas dheemi ho gayi",
-   "green": "Least-conn: jiske kam connection khule hain, use bhejo",
+   "green": "LB use bhejta jiske paas sabse kam kaam khula hai (least connections). Dheemi App ko kam click milte",
    "mark": [
     928,
     450
@@ -210,18 +210,24 @@
    "x": 30,
    "y": 500,
    "w": 640,
-   "red": "Login App ke andar hi yaad rakhte?",
-   "green": "User usi App se bandh jaata, wo giri to logout",
-   "green2": "Isliye session bahar, Redis / DB me"
+   "red": "Arpan ka login App ke andar hi yaad rakhte?",
+   "green": "Arpan usi App se bandh jaata. Wo giri to Arpan logout. Isliye login Redis / DB me rakho"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 600,
    "w": 1440,
-   "red": "Giri hui App theek ho gayi to? /health phir 'haan' bolta, LB use wapas list me le leta.",
-   "green": "App stateless hai, isliye wapas aate hi kaam pe lag jaati"
+   "red": "Giri hui App theek ho gayi to? \"zinda ho?\" pe phir haan bolti, LB use wapas list me le leta.",
+   "green": "App kuch yaad nahi rakhti, isliye wapas aate hi kaam pe lag jaati"
   }
  ],
- "kyun": "App giri to /health ka jawab nahi aata, LB use list se hata deta, agla click doosri App pe"
+ "kyun": "App kuch yaad nahi rakhti (login, link sab Redis / DB me), isliye koi bhi App koi bhi click le sakti. LB har App se poochta \"zinda ho?\", jo chup ho use list se hata deta",
+ "step": [
+  2,
+  8
+ ],
+ "peeche": "card 1 me REDIS CACHE",
+ "ab": "Usi bheed me Arpan ki site wali ek App machine giri, poori site band",
+ "agla": "ab kai App hain, sab ek saath code bana rahe. Do ko ek hi code to nahi milega? (card 3)"
 }

@@ -33,7 +33,7 @@
    "title": "App 1",
    "lines": [
     "range 1 se 1000",
-    "agla 125 -> code '21'"
+    "agla 125 -> code \"21\""
    ]
   },
   {
@@ -160,8 +160,8 @@
    "x": 30,
    "y": 84,
    "w": 610,
-   "red": "App 1 range me 400 pe crash ho gaya",
-   "green": "401 se 1000 bekaar, jaan-boojh ke. 3.5 lakh crore me farak nahi",
+   "red": "App 1 apne dabbe me 400 pe gir gayi",
+   "green": "401 se 1000 tak ke number bekaar gaye, koi baat nahi. Number itne hain (3.5 lakh crore) ki farak nahi padta",
    "mark": [
     568,
     162
@@ -183,8 +183,8 @@
    "x": 900,
    "y": 84,
    "w": 570,
-   "red": "Maine aur Ravi ne ek hi custom code maanga",
-   "green": "DB ka UNIQUE ek ko rokta, use 409",
+   "red": "Arpan aur Ravi dono ne apni marzi ka ek hi code maanga (jaise /sale)",
+   "green": "DB me code UNIQUE hai, to ek hi bachta. Doosre ko \"ye code le liya gaya\" (409). Bahut chhota ya \"admin\" jaisa naam mana",
    "mark": [
     1388,
     237
@@ -198,8 +198,7 @@
      1388,
      170
     ]
-   ],
-   "green2": "Lambai dekho, admin jaise reserved naam nahi"
+   ]
   },
   {
    "n": 3,
@@ -207,9 +206,8 @@
    "x": 30,
    "y": 470,
    "w": 700,
-   "red": "UUID ya lambe link ka hash (pehle 7 akshar) lete?",
-   "green": "UUID 36 akshar, lamba. Hash me do link ka code same ho sakta",
-   "green2": "Har baar DB me 'pehle se hai?' dekhna padta. Counter me takkar hi nahi",
+   "red": "UUID ya lambe link ka hash (pehle 7 akshar) le lete?",
+   "green": "UUID 36 akshar ka, link lamba ho jaata. Hash me do link ka code same aa sakta, har baar DB me \"pehle se hai?\" dekhna padta. Counter me takkar hoti hi nahi",
    "conn": [
     [
      450,
@@ -228,7 +226,7 @@
    "y": 470,
    "w": 710,
    "red": "Counter hi gir gaya",
-   "green": "App ki range chalti rehti, tab tak Counter ki copy uth jaati",
+   "green": "App ke paas abhi dabbe me number bache hain, wo chalti rehti. Tab tak Counter ki copy uth jaati",
    "mark": [
     968,
     340
@@ -250,26 +248,32 @@
    "x": 30,
    "y": 580,
    "w": 700,
-   "red": "Har number Redis INCR se le lete?",
-   "green": "Chalta, par har link pe ek call. Range me 1000 link pe ek",
-   "green2": "Ek bhi number bekaar na jaaye, to range ka fayda hi khatam"
+   "red": "Har number Redis se ek-ek le lete (INCR)?",
+   "green": "Chalta, par har link pe ek call. Dabbe me 1000 link pe ek call. Haan, agar ek bhi number bekaar nahi jaana chahiye to dabba mat lo"
   },
   {
    "type": "grey",
    "x": 760,
    "y": 580,
    "w": 710,
-   "red": "Range khatam? Counter se agli range le lo.",
-   "green": "Agla code andaza na lage: number shuffle / XOR, phir base62"
+   "red": "Dabba khatam? Counter se agla dabba le lo.",
+   "green": "Agla code koi andaza na lagaye: number ko thoda ghuma do (shuffle / XOR), phir code banao"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 680,
    "w": 1440,
-   "red": "base62 = 0-9, a-z, A-Z: 125 = '21', 100 crore = '15FTGg'. Do log same lamba link dein to dono ko alag code.",
-   "green": "Ek hi code chahiye to pehle lambe link ke hash pe dekh lo"
+   "red": "base62 = number ko 62 akshar (0-9, a-z, A-Z) me likhna: 125 = \"21\", 100 crore = \"15FTGg\".",
+   "green": "Do log same lamba link dein to dono ko alag code milta. Ek hi chahiye to pehle lambe link ka hash dekh lo"
   }
  ],
- "kyun": "Counter kabhi dohraata nahi, to code bhi nahi dohraata, check ki zaroorat hi nahi. Range ke andar App khud number deta, har link pe Counter tak nahi jaata. 1000 link pe ek call"
+ "kyun": "Counter har App ko numbers ka alag dabba deta (App 1: 1-1000, App 2: 1001-2000). Number kabhi dohraata nahi, to code bhi nahi. App apne dabbe se khud number leta, har link pe Counter se nahi poochta",
+ "step": [
+  3,
+  8
+ ],
+ "peeche": "card 2 me kai App + LOAD BALANCER",
+ "ab": "Arpan aur Ravi ne ek hi pal me link banaya, dono ko ek hi code mila",
+ "agla": "ab har click gin-na hai. Ginti ke chakkar me redirect dheema to nahi? (card 4)"
 }

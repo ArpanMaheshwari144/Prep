@@ -129,7 +129,7 @@
    "y": 84,
    "w": 620,
    "red": "Har App apni ginti rakhe?",
-   "green": "10 App = had 10 guna, aur bheed App tak aa chuki",
+   "green": "10 App = had 10 guna ho jaati, aur bheed App tak pahunch chuki hoti",
    "conn": [
     [
      620,
@@ -147,8 +147,8 @@
    "x": 680,
    "y": 84,
    "w": 790,
-   "red": "Sirf IP pe had? (college ke 2,000 log, ek IP)",
-   "green": "Bot naya IP le aata, college atak jaata. Ginti API key / user_id pe",
+   "red": "Sirf IP pe had? (college ke 2,000 log ek hi IP pe)",
+   "green": "Bot naya IP le aata, aur college ke log atak jaate. Ginti API key / user_id pe karo",
    "conn": [
     [
      800,
@@ -166,8 +166,8 @@
    "x": 30,
    "y": 440,
    "w": 560,
-   "red": "Pehchaana hua hamla aaya",
-   "green": "WAF darwaze pe hi rok deta, App tak nahi",
+   "red": "Pehle se pehchana hua hamla aaya",
+   "green": "WAF darwaze pe hi rok deta, App tak nahi pahunchta",
    "mark": [
     518,
     340
@@ -192,5 +192,12 @@
    "green": "Poora rate limit: 02_rate_limiter file"
   }
  ],
- "kyun": "Rokna darwaze pe, sabki ek ginti se. Asli users ki speed bachi rehti"
+ "kyun": "Darwaze (gateway) pe hi roko, sabki ginti ek jagah (Redis) me. Had paar to 429, andar aaya hi nahi. Arpan jaise asli users ki speed bachi rehti",
+ "step": [
+  8,
+  8
+ ],
+ "peeche": "card 7 me ROUTE 53 + 2 LB",
+ "ab": "Raat ko spammer ki script, har second 5,000 link, Arpan ki site dheemi",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

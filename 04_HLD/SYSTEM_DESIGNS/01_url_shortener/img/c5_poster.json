@@ -107,8 +107,7 @@
    "y": 84,
    "w": 550,
    "red": "Country se baant dete, ya ek badi machine le lete?",
-   "green": "Country: code dekh ke pata nahi, saari machine poochni padti",
-   "green2": "Ek machine: 90 TB usme aata hi nahi",
+   "green": "Country se: code dekh ke pata nahi chalta kis machine pe, saari poochni padti. Ek machine: 90 TB usme aata hi nahi",
    "conn": [
     [
      140,
@@ -126,9 +125,8 @@
    "x": 730,
    "y": 84,
    "w": 740,
-   "red": "Seedha code % machine se baant dete?",
-   "green": "Machine judi to lagbhag saari keys hilti (3 se 4 = sab badle)",
-   "green2": "Ring me sirf pados ki keys hilti"
+   "red": "Seedha code % machine ginti se baant dete?",
+   "green": "Ek machine judi to (3 se 4) lagbhag saare link ki jagah badal jaati. Ring me sirf pados wale link hilte"
   },
   {
    "n": 3,
@@ -137,7 +135,7 @@
    "y": 470,
    "w": 630,
    "red": "Machine 2 mar gayi",
-   "green": "Baaki 2 copy se milta, ek bhi link nahi gaya",
+   "green": "Har link ki 3 copy hain (apni machine + agli 2). Baaki 2 copy se mil jaata, Arpan ka link nahi gaya",
    "mark": [
     868,
     355
@@ -160,7 +158,7 @@
    "y": 520,
    "w": 780,
    "red": "Ek machine pe zyada bojh aa gaya",
-   "green": "Virtual nodes: har machine ring pe 100-200 jagah baithti, bojh barabar",
+   "green": "Har machine ring pe 100-200 jagah baithti (virtual nodes), to bojh barabar bat jaata",
    "mark": [
     600,
     493
@@ -181,8 +179,8 @@
    "x": 30,
    "y": 610,
    "w": 1440,
-   "red": "Data sirf ~500 GB hota to? Ek MySQL kaafi. Shard tab, jab ek machine me na aaye.",
-   "green": "Cassandra kyun? Join / transaction chahiye hi nahi, bas code se link, aur 90 TB"
+   "red": "Data sirf ~500 GB hota to? Ek MySQL kaafi. Tukde tabhi jab ek machine me na aaye.",
+   "green": "Cassandra kyun? Join ya transaction chahiye hi nahi, bas code se link, aur data 90 TB"
   },
   {
    "type": "grey",
@@ -190,8 +188,15 @@
    "y": 700,
    "w": 1440,
    "red": "Cassandra me primary copy kaunsi? Koi nahi, teeno barabar, koi bhi likh / padh sakti.",
-   "green": "Copy badhane se likhna tez? Nahi, har copy pe likhna padta. Likhne ka bojh = shard"
+   "green": "Copy badhane se likhna tez? Nahi, har copy pe likhna padta. Likhne ka bojh tukde (shard) se ghatta"
   }
  ],
- "kyun": "Click hamesha code ke saath aata hai, to har click seedha ek machine pe jaata"
+ "kyun": "Har click code ke saath aata, aur code se tay hota ki wo kis machine pe hai (ring). To har click seedha ek machine pe jaata, saari machine nahi poochni padti",
+ "step": [
+  5,
+  8
+ ],
+ "peeche": "card 4 me KAFKA, ginti peeche",
+ "ab": "DB team boli: 5 saal me 90 TB, ek machine me nahi aata",
+ "agla": "ab har tukde ki 3 copy hain. Par Arpan ka naya link kholte hi 404? (card 6)"
 }

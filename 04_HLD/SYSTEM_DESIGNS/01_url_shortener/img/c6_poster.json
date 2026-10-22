@@ -140,7 +140,7 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Teeno copy me likho, tab 'done'?",
+   "red": "Teeno copy me likho, tab \"ho gaya\"?",
    "green": "Ek copy dheemi ya giri to har likhai ruk jaati",
    "conn": [
     [
@@ -160,8 +160,7 @@
    "y": 84,
    "w": 510,
    "red": "A aur B dono gir gayi, sirf C bachi",
-   "green": "Likhna fail, user ko error",
-   "green2": "Par jo 'done' bola tha, wo kabhi nahi khota",
+   "green": "Likhna fail, Arpan ko error dikhta. Par jo pehle \"ho gaya\" bola tha, wo kabhi nahi khota",
    "mark": [
     [
      928,
@@ -190,8 +189,7 @@
    "y": 470,
    "w": 510,
    "red": "Likhte waqt copy C gir gayi",
-   "green": "2 me likh gaya, to save ho gaya",
-   "green2": "C uthi to padosi ke paas rakha note mil jaata",
+   "green": "2 me likh gaya, to save ho gaya. C uthi to padosi machine ke paas rakha note use mil jaata",
    "mark": [
     928,
     458
@@ -237,16 +235,23 @@
    "y": 560,
    "w": 900,
    "red": "Ek hi copy se padh lo?",
-   "green": "Wahi copy mil sakti jahan abhi pahuncha nahi: naya link 404"
+   "green": "Wahi copy mil sakti jahan naya link abhi pahuncha nahi: Arpan ko 404"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 650,
    "w": 1440,
-   "red": "2 copy se padhna dheema? Thoda, isliye pehla ilaaj Redis. 5 copy ho to W + R > N: 3 + 3 > 5.",
-   "green": "Data bachane ko Kafka laga dein? Nahi, DB ka apna log ye khud karta"
+   "red": "2 copy se padhna dheema? Thoda, isliye pehla ilaaj Redis hai. 5 copy hon to 3 me likho, 3 se padho (3 + 3 > 5).",
+   "green": "Data bachane ko Kafka laga dein? Nahi, DB ka apna log ye kaam khud karta"
   }
  ],
- "kyun": "2 + 2 = 4, copy sirf 3. Padhne wali jodi me likhne wali ek copy aani hi hai. Banane ke baad 404 nahi"
+ "kyun": "3 copy hain. Likho 2 me, padho 2 se. 2 + 2 = 4, copy sirf 3, to padhne wali do me se ek me naya link zaroor hoga. Isliye banate hi 404 nahi",
+ "step": [
+  6,
+  8
+ ],
+ "peeche": "card 5 me SHARD by code (RING)",
+ "ab": "Arpan ne naya link banaya, turant khola, 404 aaya",
+ "agla": "ab saare App ke aage ek hi LB hai. Wo gira to? (card 7)"
 }
