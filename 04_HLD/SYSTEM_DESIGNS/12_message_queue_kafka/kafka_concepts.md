@@ -89,3 +89,36 @@ flowchart TB
 - Fraud Svc alag team ("fraud"). Use bhi poori khabar, teeno tukde. SMS ne padha to fraud ka kuch kam nahi.
 - Har team apna bookmark rakhti ki kahan tak padha (**offset**). Fraud dheema chale to bhi SMS nahi rukta.
 - banda-B gira to Kafka uska tukda P1 banda-A ya banda-C ko de deta. Ise **rebalance** kehte hain.
+
+---
+
+## 4. Commit (bookmark kab aage karein)
+
+**Peeche se:** SMS team me P1 (Arpan ki khabar) banda-B padhta hai. Team ka bookmark (offset) batata kahan tak padha.
+**Ab:** banda-B kaam karte-karte beech me gir gaya to?
+
+```mermaid
+flowchart LR
+    P1[("P1 (Arpan)<br/>0 order · 1 pay · 2 cancel<br/>bookmark: 1 tak padha")] -- "2 cancel uthaya" --> B["banda-B"]
+    B -- "1. SMS bheja" --> S["Arpan ko SMS"]
+    B -- "2. phir bola: 2 tak padh liya<br/>(COMMIT, bookmark 2 pe)" --> P1
+    style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+- Bookmark aage karne ko **commit** kehte hain.
+- SMS bheja, commit se pehle gira: bookmark abhi 1 pe. banda-A ko P1 mila, wo "2 cancel" dobara padhta. Arpan ko 2 SMS.
+- Ulta kram (pehle commit, phir SMS), beech me gira: bookmark 2 pe, banda-A 3 se padhta. "2 cancel" ka SMS kabhi
+  nahi gaya. Ye 2 SMS se bhi bura.
+- Isliye kram pakka: pehle kaam (SMS), phir commit. Khabar kabhi khoti nahi, bas kabhi dobara aa sakti.
+
+Dobara aayi khabar kaise pakdein: har khabar ki apni id (eventId). Id kahin likh ke rakho (Redis ya DB).
+
+```mermaid
+flowchart LR
+    K["khabar 2 cancel<br/>(eventId E-6)"] --> R{{"E-6 pehle<br/>ho chuki?<br/>(Redis / DB)"}}
+    R -- "haan" --> X["chhod do<br/>(dobara SMS nahi)"]
+    R -- "nahi" --> S["SMS bhejo,<br/>E-6 likh do, commit"]
+    style X fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
+```
+
+- Ye pehchaanna padhne wale (SMS Svc) ka kaam hai, Kafka ka nahi.
