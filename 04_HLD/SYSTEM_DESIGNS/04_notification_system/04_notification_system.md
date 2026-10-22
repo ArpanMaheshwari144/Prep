@@ -60,15 +60,8 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: KAFKA (async), order turant jawab
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
-<img src="img/c1_1.png?v=8" width="900">
-
-<img src="img/c1_2.png?v=8" width="900">
-
-<img src="img/c1_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     order aur khabar ek hi DB txn me likhte hain (outbox), relay use Kafka me daalta hai.
@@ -82,15 +75,6 @@ NAHI    Order Svc me hi retry -> ATAKTA: request utni der atki rehti hai, aur Or
 
 > [!IMPORTANT]
 > **Yaad rakh:** Order + khabar ek DB txn (outbox), relay Kafka me. Order turant OK, email peeche, company band ho to bhi khabar padi.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Kafka tak pahunchne se pehle service giri? → **khabar outbox me padi**: khabar outbox ki row me padi hai, relay baad me bhej deta hai, khabar khoti nahi
-> - Kafka ki ek machine gir gayi? → **log ki 3 copy hain**: baaki copy se chalta hai, khabar nahi khoti
-> - traffic achanak 10 guna? → **jhatka Kafka ki line sambhaalti**: saari khabar pehle Kafka ki line me jaati hai, worker apni speed se. Sale ka time pata hai (12 baje), to 11:50 tak worker badha do; machine apne aap badhne me minute leti hai, jhatka second me aata hai. Par worker utne hi jitna DB aur SMS / email company jhel sake, warna wahan atkega
-> - email company ghanton band? → **khabar Kafka me ~7 din padi, offset se aage**: padhne wala offset se yaad rakhta hai kahan tak padha
-> - Notification Svc dheemi? → **machine badhao (consumer group)**: Har line ek machine ko milti hai, lines bat jaati hain
-> - email company 2 din baad wapas aayi? → **wahin se aage chalta hai**: Order kabhi email ki wajah se fail nahi hota
 
 
 ---
