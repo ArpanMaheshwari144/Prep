@@ -1,0 +1,251 @@
+{
+ "title": "Card 6: 3 copy me se 2 me likho, 2 se padho. Har jodi me ek taaza copy zaroor",
+ "h": 740,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 210,
+   "h": 100,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "link banaya",
+    "turant khola"
+   ]
+  },
+  {
+   "x": 320,
+   "y": 230,
+   "w": 230,
+   "h": 120,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "likha: 2 copy me",
+    "padha: 2 copy se"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 140,
+   "w": 240,
+   "h": 80,
+   "kind": "db",
+   "title": "Copy A",
+   "lines": [
+    "taaza"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 260,
+   "w": 240,
+   "h": 80,
+   "kind": "db",
+   "title": "Copy B",
+   "lines": [
+    "taaza"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 380,
+   "w": 240,
+   "h": 80,
+   "kind": "db",
+   "title": "Copy C",
+   "lines": [
+    "abhi pahuncha nahi"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 240,
+   "w": 390,
+   "h": 110,
+   "kind": "plain",
+   "title": "2 + 2 > 3",
+   "lines": [
+    "padhne wali jodi me ek taaza",
+    "isliye banate hi 404 nahi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     242,
+     290
+    ],
+    [
+     316,
+     290
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     552,
+     260
+    ],
+    [
+     696,
+     185
+    ]
+   ],
+   "c": "green",
+   "label": "likha",
+   "lx": 600,
+   "ly": 210
+  },
+  {
+   "pts": [
+    [
+     552,
+     285
+    ],
+    [
+     696,
+     300
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     552,
+     320
+    ],
+    [
+     696,
+     415
+    ]
+   ],
+   "c": "blue",
+   "dash": true,
+   "label": "padha A+C",
+   "lx": 556,
+   "ly": 376
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Teeno copy me likho, tab 'done'?",
+   "green": "Ek copy dheemi ya giri to har likhai ruk jaati",
+   "conn": [
+    [
+     430,
+     146
+    ],
+    [
+     430,
+     230
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 960,
+   "y": 84,
+   "w": 510,
+   "red": "A aur B dono gir gayi, sirf C bachi",
+   "green": "Likhna fail, user ko error",
+   "green2": "Par jo 'done' bola tha, wo kabhi nahi khota",
+   "mark": [
+    [
+     928,
+     142
+    ],
+    [
+     928,
+     262
+    ]
+   ],
+   "conn": [
+    [
+     940,
+     142
+    ],
+    [
+     960,
+     130
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 960,
+   "y": 470,
+   "w": 510,
+   "red": "Likhte waqt copy C gir gayi",
+   "green": "2 me likh gaya, to save ho gaya",
+   "green2": "C uthi to padosi ke paas rakha note mil jaata",
+   "mark": [
+    928,
+    458
+   ],
+   "conn": [
+    [
+     940,
+     470
+    ],
+    [
+     960,
+     490
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 30,
+   "y": 470,
+   "w": 620,
+   "red": "Padhte waqt A aur C me farak mila",
+   "green": "Wahin C ko theek kar do (read repair)",
+   "mark": [
+    662,
+    392
+   ],
+   "conn": [
+    [
+     650,
+     402
+    ],
+    [
+     640,
+     470
+    ]
+   ]
+  },
+  {
+   "n": 5,
+   "type": "pehle",
+   "x": 30,
+   "y": 560,
+   "w": 900,
+   "red": "Ek hi copy se padh lo?",
+   "green": "Wahi copy mil sakti jahan abhi pahuncha nahi: naya link 404"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 650,
+   "w": 1440,
+   "red": "2 copy se padhna dheema? Thoda, isliye pehla ilaaj Redis. 5 copy ho to W + R > N: 3 + 3 > 5.",
+   "green": "Data bachane ko Kafka laga dein? Nahi, DB ka apna log ye khud karta"
+  }
+ ]
+}

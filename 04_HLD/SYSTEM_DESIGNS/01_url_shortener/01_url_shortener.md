@@ -184,15 +184,8 @@ NAHI    country se baanto -> BIKHRA: code dekh ke pata nahi kis country ka, saar
 
 **Rail 6 DATA BADA (copy ka AGAR)** · Cue: QUORUM (2 me likho, 2 se padho)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=5" width="900">
-
-<img src="img/c6_2.png?v=5" width="900">
-
-<img src="img/c6_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     likhna 2 copy me, padhna bhi 2 copy se (quorum, 3 me se 2). Har jodi me ek taaza copy zaroor hoti
@@ -204,15 +197,6 @@ NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
 
 > [!IMPORTANT]
 > **Yaad rakh:** 3 copy: 2 me likho, 2 se padho (W + R > N). Har jodi me ek taaza copy.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Likhte waqt copy C gir gayi? → **hinted handoff**: 2 me ho gaya to save. C uthi to padosi ke paas rakha note use mil jaata
-> - Padhte waqt A aur C me farak? → **read repair**: wahin C ko theek kar do
-> - A aur B dono gir gayi, sirf 1 bachi? → **likhna fail**: user ko error (ya 1 pe likho, risk ke saath). Par jo "done" bola, wo kabhi khota nahi
-> - 2 copy se padhna dheema nahi? → **thoda, Redis pehle**: thoda. Isliye pehla ilaaj Redis hai, DB tak kam aata
-> - 5 copy hon to quorum kitna? → **W + R > N**: likhne + padhne ki ginti copy se zyada ho: 3 + 3 > 5
-> - Data bachane ko Kafka laga dein? → **nahi, DB ka log**: nahi. DB ka apna log ye khud karta, extra dabba nahi
 
 
 ---

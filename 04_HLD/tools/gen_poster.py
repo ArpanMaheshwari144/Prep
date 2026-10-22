@@ -72,7 +72,9 @@ def build(spec):
             o.append(f'<path d="{d}" fill="none" stroke="{line}" stroke-width="2"'
                      f'{" stroke-dasharray=\"6 5\"" if kind == "pehle" else ""}/>')
         if kind == 'x' and c.get('mark'):
-            o.append(xmark(*c['mark']))
+            m = c['mark']
+            for pt in (m if isinstance(m[0], list) else [m]):   # ek ya kai X
+                o.append(xmark(*pt))
         bg = '#1a0f14' if kind == 'x' else '#221c08'
         o.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="9" fill="{bg}" stroke="{line}" stroke-width="2"/>')
         o.append(f'<circle cx="{x+22}" cy="{y+22}" r="13" fill="{line}"/>')
