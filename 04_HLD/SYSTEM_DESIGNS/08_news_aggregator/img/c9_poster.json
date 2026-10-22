@@ -1,5 +1,5 @@
 {
- "title": "Card 9: article_id ke hash se shard. Taazi 20 Redis se, miss pe har shard se thoda (scatter-gather)",
+ "title": "Card 9: khabar id ke hash se DB ke tukde (shard). Taazi 20 Redis se; nahi to har tukde se thoda (scatter-gather)",
  "h": 725,
  "boxes": [
   {
@@ -10,8 +10,8 @@
    "kind": "server",
    "title": "Worker",
    "lines": [
-    "hash(a91)",
-    "-> shard 2"
+    "id a91 ka hash",
+    "-> tukda 2"
    ]
   },
   {
@@ -22,7 +22,7 @@
    "kind": "db",
    "title": "Shard 1",
    "lines": [
-    "khabar ka hissa"
+    "kuch khabrein"
    ]
   },
   {
@@ -33,7 +33,7 @@
    "kind": "db",
    "title": "Shard 2",
    "lines": [
-    "khabar ka hissa"
+    "kuch khabrein"
    ]
   },
   {
@@ -44,7 +44,7 @@
    "kind": "db",
    "title": "Shard 3",
    "lines": [
-    "khabar ka hissa"
+    "kuch khabrein"
    ]
   },
   {
@@ -56,8 +56,8 @@
    "title": "Feed Svc",
    "lines": [
     "taazi 20: Redis se",
-    "miss: har shard",
-    "se thoda"
+    "nahi mila: har tukde",
+    "se thoda laao"
    ]
   },
   {
@@ -68,7 +68,7 @@
    "kind": "cache",
    "title": "Redis",
    "lines": [
-    "taazi 20"
+    "taazi 20 khabar"
    ]
   },
   {
@@ -79,7 +79,8 @@
    "kind": "cache",
    "title": "Saanjha Bloom",
    "lines": [
-    "likhne se pehle dedupe"
+    "likhne se pehle",
+    "dohri khabar dekho"
    ]
   }
  ],
@@ -136,7 +137,7 @@
    ],
    "c": "purple",
    "dash": true,
-   "label": "scatter-gather",
+   "label": "har tukde se",
    "lx": 715,
    "ly": 370,
    "a": "middle"
@@ -175,7 +176,7 @@
    ],
    "c": "purple",
    "dash": true,
-   "label": "likhne se pehle dekho",
+   "label": "pehle dekho",
    "lx": 900,
    "ly": 515,
    "a": "middle"
@@ -268,7 +269,7 @@
   9,
   9
  ],
- "peeche": "card 8 me MAHINE KA PARTITION + ARCHIVE",
+ "peeche": "card 8 me har mahine ka hissa, purana S3 me",
  "ab": "Source 100 guna hue, ek DB machine likhna nahi jhel pa rahi",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 3: Feed Svc kai machine + LB. Redis miss pe DB ki copy (read replica). Primary DB sirf likhai",
+ "title": "Card 3: Feed Svc kai machine + LB. Redis me nahi mila to DB ki copy se (read replica). Primary sirf likhne ke liye",
  "h": 670,
  "boxes": [
   {
@@ -10,7 +10,8 @@
    "kind": "user",
    "title": "Users",
    "lines": [
-    "8 baje: 20,000 / sec"
+    "8 baje: har second",
+    "20,000 log"
    ]
   },
   {
@@ -21,7 +22,8 @@
    "kind": "lb",
    "title": "LB",
    "lines": [
-    "koi bhi machine"
+    "koi bhi machine",
+    "le sakti"
    ]
   },
   {
@@ -65,7 +67,7 @@
    "kind": "cache",
    "title": "Redis",
    "lines": [
-    "feed"
+    "feed yahan"
    ]
   },
   {
@@ -76,7 +78,8 @@
    "kind": "db",
    "title": "Read replica",
    "lines": [
-    "miss pe yahan"
+    "Redis me nahi mila",
+    "to yahan se"
    ]
   },
   {
@@ -87,7 +90,7 @@
    "kind": "db",
    "title": "Primary DB",
    "lines": [
-    "sirf likhai"
+    "sirf likhne ke liye"
    ]
   }
  ],
@@ -300,7 +303,7 @@
   3,
   9
  ],
- "peeche": "card 2 me KAFKA: laana aur likhna alag",
+ "peeche": "card 2 me laana aur likhna alag, beech me Kafka",
  "ab": "8 baje election result, 40 guna bheed, Arpan ki feed atki",
  "agla": "ab bheed sambhal li. Par feed me wahi khabar baar-baar (card 4)"
 }

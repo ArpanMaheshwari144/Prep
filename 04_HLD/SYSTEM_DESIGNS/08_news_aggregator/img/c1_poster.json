@@ -1,5 +1,5 @@
 {
- "title": "Card 1: feed ek baar banti, Redis sorted set me time se (ZADD). Kholne pe ZREVRANGE 0 19, DB tak nahi",
+ "title": "Card 1: feed ek baar banti, Redis me time ke kram se (sorted set). Kholte hi top 20 Redis se, DB tak nahi",
  "h": 600,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "Feed Svc",
    "lines": [
-    "ZREVRANGE 0 19",
-    "= 20 id"
+    "Redis se top 20 id",
+    "(ZREVRANGE 0 19)"
    ]
   },
   {
@@ -34,8 +34,8 @@
    "title": "Redis",
    "lines": [
     "feed:latest (sorted set)",
-    "time se, top 500",
-    "nayi khabar: ZADD"
+    "time ke kram se, top 500",
+    "nayi khabar aayi: ZADD"
    ]
   },
   {
@@ -46,7 +46,7 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "~1% hi yahan aate"
+    "~1% hi yahan tak aate"
    ]
   },
   {
@@ -101,7 +101,7 @@
    ],
    "c": "grey",
    "dash": true,
-   "label": "miss",
+   "label": "nahi mila",
    "lx": 610,
    "ly": 405,
    "a": "end"

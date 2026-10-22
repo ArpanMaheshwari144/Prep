@@ -1,5 +1,5 @@
 {
- "title": "Card 8: har mahine ka partition, purana DETACH karke S3 archive. Postgres me sirf haal ke mahine",
+ "title": "Card 8: har mahine ka alag hissa (partition). Purana mahina nikaal ke S3 me. Postgres me sirf haal ke mahine",
  "h": 560,
  "boxes": [
   {
@@ -22,7 +22,8 @@
    "kind": "server",
    "title": "Mahina beeta",
    "lines": [
-    "DETACH -> S3"
+    "hissa nikaalo (DETACH)",
+    "-> S3"
    ]
   },
   {
@@ -148,7 +149,7 @@
   8,
   9
  ],
- "peeche": "card 7 me INVERTED INDEX (Elasticsearch)",
+ "peeche": "card 7 me search: har shabd ki list (Elasticsearch)",
  "ab": "DBA ka mail: 6 mahine me ~2 crore row, kharcha badhta ja raha",
  "agla": "ab jagah theek. Par source hi 100 guna ho gaye (card 9)"
 }

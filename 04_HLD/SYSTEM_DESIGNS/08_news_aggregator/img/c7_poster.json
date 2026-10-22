@@ -1,5 +1,5 @@
 {
- "title": "Card 7: har shabd ki list ki wo kis khabar me (inverted index, Elasticsearch). Do shabd = list milao",
+ "title": "Card 7: har shabd ki list: wo kin khabron me hai (inverted index, Elasticsearch). Do shabd = dono list milao",
  "h": 610,
  "boxes": [
   {
@@ -21,7 +21,7 @@
    "kind": "server",
    "title": "Search Svc",
    "lines": [
-    "ES se id lo,",
+    "ES se khabar id lo,",
     "text DB / cache se"
    ]
   },
@@ -46,7 +46,7 @@
    "lines": [
     "cricket -> a12, a45, a90",
     "kohli -> a45, a77",
-    "AND = a45, OR = sab"
+    "dono = a45, koi bhi = sab"
    ]
   },
   {
@@ -57,7 +57,7 @@
    "kind": "user",
    "title": "Result",
    "lines": [
-    "a45, score se sort"
+    "a45, score se kram"
    ]
   }
  ],
@@ -186,7 +186,7 @@
   7,
   9
  ],
- "peeche": "card 6 me CATEGORY LIST, padhte waqt milao",
+ "peeche": "card 6 me category list, kholte waqt milao",
  "ab": "Raat ko Arpan ne \"cricket\" dhoondha, poori table padhi gayi",
  "agla": "ab sab chal raha. Par data bharta ja raha (card 8)"
 }

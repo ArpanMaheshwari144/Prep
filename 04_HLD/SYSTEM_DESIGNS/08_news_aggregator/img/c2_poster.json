@@ -1,5 +1,5 @@
 {
- "title": "Card 2: fetcher sirf laata, Kafka me daalta (key = source). Worker apni speed se DB + Redis. url UNIQUE",
+ "title": "Card 2: fetcher sirf khabar laata, Kafka me daalta. Worker apni speed se DB + Redis me likhta. Ek url ek hi baar",
  "h": 650,
  "boxes": [
   {
@@ -22,7 +22,7 @@
    "kind": "server",
    "title": "Fetchers",
    "lines": [
-    "sirf laao,",
+    "sirf khabar laao,",
     "Kafka me daalo"
    ]
   },
@@ -35,7 +35,7 @@
    "title": "Kafka",
    "lines": [
     "10 partition",
-    "key = source_id"
+    "key = source (kram bana rahe)"
    ]
   },
   {
@@ -46,7 +46,7 @@
    "kind": "server",
    "title": "Worker",
    "lines": [
-    "apni speed se"
+    "apni speed se likhta"
    ]
   },
   {
@@ -57,7 +57,7 @@
    "kind": "cache",
    "title": "Redis",
    "lines": [
-    "feed"
+    "feed me jodo"
    ]
   },
   {
@@ -68,7 +68,7 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "url UNIQUE"
+    "url ek hi baar (UNIQUE)"
    ]
   }
  ],
@@ -228,7 +228,7 @@
   2,
   9
  ],
- "peeche": "card 1 me FEED CACHE (Redis sorted set)",
+ "peeche": "card 1 me feed Redis me pehle se bani",
  "ab": "Arpan ki feed me khabar 20 minute purani",
  "agla": "ab khabar taazi. Par 8 baje sab ek saath aa gaye (card 3)"
 }

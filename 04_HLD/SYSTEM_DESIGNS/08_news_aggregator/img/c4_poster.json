@@ -1,5 +1,5 @@
 {
- "title": "Card 4: URL Bloom filter se, wahi khabar title hash se (saaf karke). Shabd badla to SimHash ~90%",
+ "title": "Card 4: same URL Bloom filter pakadta, same khabar title ke hash se. Shabd badle to SimHash (~90% mila = wahi)",
  "h": 680,
  "boxes": [
   {
@@ -21,8 +21,9 @@
    "kind": "server",
    "title": "Worker",
    "lines": [
-    "title: chhote akshar,",
-    "chinh hatao, hash"
+    "title saaf karo:",
+    "chhote akshar, chinh hatao",
+    "phir hash"
    ]
   },
   {
@@ -33,7 +34,7 @@
    "kind": "cache",
    "title": "Bloom (saanjha, Redis)",
    "lines": [
-    "URL dekha?"
+    "ye URL pehle dekha?"
    ]
   },
   {
@@ -44,7 +45,7 @@
    "kind": "cache",
    "title": "Title hash / SimHash",
    "lines": [
-    "same = wahi khabar"
+    "same hash = wahi khabar"
    ]
   },
   {
@@ -55,8 +56,8 @@
    "kind": "user",
    "title": "Arpan ki feed",
    "lines": [
-    "ek khabar, ek baar",
-    "baaki 'aur sources'"
+    "ek khabar ek baar",
+    "baaki \"aur sources\" me"
    ]
   }
  ],
@@ -188,7 +189,7 @@
   4,
   9
  ],
- "peeche": "card 3 me kai machine + LB + READ REPLICA",
+ "peeche": "card 3 me kai machine + LB + DB ki copy",
  "ab": "Dopahar \"India ne match jeeta\", Arpan ki feed me 5 baar",
  "agla": "ab khabar saaf. Par ek source hi atak gaya (card 5)"
 }

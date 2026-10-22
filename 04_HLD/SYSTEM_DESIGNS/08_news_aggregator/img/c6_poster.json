@@ -1,5 +1,5 @@
 {
- "title": "Card 6: har category ki list pehle se (feed:tech). Kholne pe pasand wali lists milao, id se dedupe",
+ "title": "Card 6: har category ki list pehle se bani (feed:tech). Kholte waqt Arpan ki pasand wali lists milao, dohri hatao",
  "h": 620,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "Worker",
    "lines": [
-    "apni category",
-    "list me ZADD"
+    "apni category ki",
+    "list me jodo (ZADD)"
    ]
   },
   {
@@ -33,7 +33,8 @@
    "kind": "cache",
    "title": "feed:tech",
    "lines": [
-    "sorted set"
+    "tech khabrein",
+    "(sorted set)"
    ]
   },
   {
@@ -44,7 +45,8 @@
    "kind": "cache",
    "title": "feed:sports",
    "lines": [
-    "sorted set"
+    "sports khabrein",
+    "(sorted set)"
    ]
   },
   {
@@ -68,7 +70,7 @@
    "lines": [
     "pasand: tech + sports",
     "dono ke top 20 milao",
-    "id se dedupe"
+    "dohri id hatao"
    ]
   },
   {
@@ -210,7 +212,7 @@
   6,
   9
  ],
- "peeche": "card 5 me TIMEOUT + CIRCUIT BREAKER",
+ "peeche": "card 5 me timeout + breaker",
  "ab": "Shaam ko Arpan ko sirf tech aur sports chahiye",
  "agla": "ab feed ban gayi. Par dhoondhna dheema (card 7)"
 }

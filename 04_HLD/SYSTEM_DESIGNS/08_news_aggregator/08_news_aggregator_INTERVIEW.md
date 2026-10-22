@@ -63,7 +63,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 2 BHEED AAYI** · Cue: FEED CACHE (Redis SORTED SET)
 
-<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=5" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -74,7 +74,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 5 KUCH DHEEMA (fetch)** · Cue: KAFKA: laana aur likhna alag
 
-<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=5" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -85,7 +85,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 2 BHEED AAYI (result)** · Cue: LB + READ REPLICA
 
-<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=5" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -96,7 +96,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: DEDUPE (title hash + SimHash)
 
-<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=5" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -107,7 +107,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 5 KUCH DHEEMA (source)** · Cue: TIMEOUT + CIRCUIT BREAKER
 
-<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=5" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -118,7 +118,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 1 KAAM CHALA (category)** · Cue: CATEGORY FEED, padhte waqt milao
 
-<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=5" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -129,7 +129,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 1 KAAM CHALA (search)** · Cue: INVERTED INDEX
 
-<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=5" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -140,7 +140,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 6 DATA BADA (purana)** · Cue: mahine ka PARTITION, purana ARCHIVE
 
-<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=5" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -151,7 +151,7 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 6 DATA BADA (likhai)** · Cue: SHARD hash(article_id)
 
-<img src="img/c9_poster.png?v=4" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=5" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---

@@ -1,5 +1,5 @@
 {
- "title": "Card 5: 2-3 sec timeout. Baar-baar fail to breaker OPEN, call band. Thodi der baad HALF-OPEN: ek test call",
+ "title": "Card 5: 2-3 sec me jawab nahi to chhodo (timeout). Baar-baar fail to breaker khula; thodi der baad ek test call",
  "h": 580,
  "boxes": [
   {
@@ -10,7 +10,7 @@
    "kind": "server",
    "title": "Fetcher",
    "lines": [
-    "2-3 sec timeout",
+    "2-3 sec me chhodo",
     "thodi retry"
    ]
   },
@@ -22,10 +22,10 @@
    "kind": "plain",
    "title": "Breaker",
    "lines": [
-    "baar-baar fail = OPEN",
+    "baar-baar fail = khula",
     "call band",
     "thodi der baad",
-    "HALF-OPEN: test call"
+    "ek test call (HALF-OPEN)"
    ]
   },
   {
@@ -178,7 +178,7 @@
   5,
   9
  ],
- "peeche": "card 4 me DEDUPE (title hash + SimHash)",
+ "peeche": "card 4 me dohri khabar hatai (title hash + SimHash)",
  "ab": "Ek chhota source 30 sec atka, baaki 999 bhi ruke, Arpan ki feed me nayi khabar band",
  "agla": "ab sab khabar aa rahi. Par Arpan ko sab nahi chahiye (card 6)"
 }
