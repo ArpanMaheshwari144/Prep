@@ -1,0 +1,260 @@
+{
+ "title": "Card 4: redirect turant (302), 'click hua' Kafka me. Ginti peeche, apni speed se",
+ "h": 680,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 220,
+   "w": 200,
+   "h": 100,
+   "kind": "user",
+   "title": "Click",
+   "lines": [
+    "link khola"
+   ]
+  },
+  {
+   "x": 320,
+   "y": 210,
+   "w": 260,
+   "h": 130,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "302 turant",
+    "'click hua' Kafka me"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 220,
+   "w": 260,
+   "h": 110,
+   "kind": "cache",
+   "title": "Kafka",
+   "lines": [
+    "click rakhta",
+    "padhne ke baad bhi"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 220,
+   "w": 300,
+   "h": 110,
+   "kind": "server",
+   "title": "Analytics",
+   "lines": [
+    "apni speed se padhta",
+    "kahan tak padha yaad"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     250
+    ],
+    [
+     316,
+     250
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     318,
+     315
+    ],
+    [
+     234,
+     300
+    ]
+   ],
+   "c": "orange",
+   "label": "302",
+   "lx": 262,
+   "ly": 330
+  },
+  {
+   "pts": [
+    [
+     582,
+     275
+    ],
+    [
+     696,
+     275
+    ]
+   ],
+   "c": "orange",
+   "label": "click hua",
+   "lx": 655,
+   "ly": 300,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     962,
+     275
+    ],
+    [
+     1076,
+     275
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 580,
+   "red": "Click seedha DB me likh dete?",
+   "green": "Har redirect DB likhai ka intezaar karta, wahi dheemapan",
+   "conn": [
+    [
+     450,
+     146
+    ],
+    [
+     450,
+     210
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 640,
+   "y": 84,
+   "w": 830,
+   "red": "Kafka hi band ho gaya",
+   "green": "Redirect phir bhi chalta, bas kuch click ginti me nahi aate",
+   "mark": [
+    948,
+    222
+   ],
+   "conn": [
+    [
+     948,
+     210
+    ],
+    [
+     948,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 30,
+   "y": 410,
+   "w": 470,
+   "red": "Wahi click do baar aaya",
+   "green": "Har click ki apni id, dobara aaya to gino mat",
+   "mark": [
+    606,
+    275
+   ],
+   "conn": [
+    [
+     606,
+     287
+    ],
+    [
+     606,
+     380
+    ],
+    [
+     300,
+     380
+    ],
+    [
+     300,
+     410
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 520,
+   "y": 410,
+   "w": 470,
+   "red": "Kafka me ek khabar kharab nikli",
+   "green": "Use alag line (DLQ) me daalo, baaki chalti rahe",
+   "mark": [
+    985,
+    275
+   ],
+   "conn": [
+    [
+     985,
+     287
+    ],
+    [
+     985,
+     410
+    ]
+   ]
+  },
+  {
+   "n": 5,
+   "type": "x",
+   "x": 1010,
+   "y": 410,
+   "w": 460,
+   "red": "Analytics dheema ho gaya",
+   "green": "Khabar Kafka me padi, apni speed se padhta",
+   "mark": [
+    1368,
+    330
+   ],
+   "conn": [
+    [
+     1368,
+     342
+    ],
+    [
+     1368,
+     410
+    ]
+   ]
+  },
+  {
+   "n": 6,
+   "type": "pehle",
+   "x": 30,
+   "y": 500,
+   "w": 700,
+   "red": "Sirf Redis me INCR kar lete?",
+   "green": "Sirf ginti milti. Kaun, kab, kahan se click hua, wo nahi"
+  },
+  {
+   "type": "grey",
+   "x": 760,
+   "y": 500,
+   "w": 710,
+   "red": "302 kyun, 301 kyun nahi? 301 pe browser link yaad rakh leta.",
+   "green": "Agli baar server tak aata hi nahi, ginti aur expiry band"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 590,
+   "w": 1440,
+   "red": "Naya report chahiye? Kafka me pade purane click dobara padh lo (replay).",
+   "green": "SQS kyun nahi? SQS padhte hi message mita deta, Kafka rakhta hai"
+  }
+ ]
+}

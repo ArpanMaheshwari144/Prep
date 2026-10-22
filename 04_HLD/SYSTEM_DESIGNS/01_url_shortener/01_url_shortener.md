@@ -131,15 +131,8 @@ NAHI    UUID -> LAMBA: 36 akshar, link chhota karna hi to kaam tha
 
 **Rail 5 KUCH DHEEMA** · Cue: KAFKA, ginti peeche
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=4" width="900">
-
-<img src="img/c4_2.png?v=4" width="900">
-
-<img src="img/c4_3.png?v=4" width="900">
-
-</details>
 
 ```
 HAL     redirect turant (302), "ek click hua" ki khabar Kafka me daal ke aage. Analytics service apni speed
@@ -152,16 +145,6 @@ NAHI    click seedha DB me -> DHEEMA: har redirect DB likhai ka intezaar karta, 
 
 > [!IMPORTANT]
 > **Yaad rakh:** Redirect turant (302), "click hua" Kafka me, ginti peeche Analytics apni speed se.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - 302 kyun, 301 kyun nahi? → **301 = ginti band**: 301 pe browser link yaad rakh leta, agli baar server tak aata hi nahi. 302 pe har click server tak aata, ginti aur expiry chalti
-> - Analytics dheema ho gaya? → **offset**: khabar Kafka me padi rehti, wo apni speed se padhta, kahan tak padha yaad rakhta
-> - Wahi click do baar aaya? → **click id**: har click ki apni id, dobara to ginti nahi
-> - Kafka me koi khabar kharab nikli? → **DLQ**: use alag line me daalo, baaki ginti chalti rahe
-> - Kafka hi band ho gaya? → **redirect chalta**: redirect phir bhi chalta, bas kuch click ginti me nahi aate
-> - Naya report chahiye? → **replay**: Kafka me pade purane click dobara padh lo
-> - Kafka kyun, SQS kyun nahi? → **SQS mita deta**: SQS padhte hi message hata deta. Kafka rakhta hai, naya report = dobara padho
 
 
 ---
