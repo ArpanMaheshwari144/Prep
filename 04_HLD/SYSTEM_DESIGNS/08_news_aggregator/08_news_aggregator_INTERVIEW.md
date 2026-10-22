@@ -63,15 +63,8 @@ PEHLE   sabse simple: Fetcher sources se laata hai, DB me daalta hai. Feed Svc h
 
 **Rail 2 BHEED AAYI** · Cue: FEED CACHE (Redis SORTED SET)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
-<img src="img/c1_1.png?v=3" width="900">
-
-<img src="img/c1_2.png?v=3" width="900">
-
-<img src="img/c1_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     sabki ek feed ek baar banti hai, Redis me time se (sorted set). Nayi khabar ZADD feed:latest,
@@ -85,14 +78,6 @@ NAHI    har user pe DB se ORDER BY ... LIMIT 20
 > [!IMPORTANT]
 > **Yaad rakh:** Feed ek baar banti, Redis sorted set me time se (ZADD). Kholne pe ZREVRANGE 0 19, DB tak nahi.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - feed cache me, to khabar kitni taazi chahiye, 5 min purani chalegi? → **chalegi**: chalegi, isliye feed pehle se bana ke cache me rakhte hain
-> - breaking news kitni der me feed me? → **aate hi ZADD, turant**: "5 min" sirf sabse bura haal hai
-> - user neeche scroll kare (21-40)? → **cursor (aakhri khabar ka time)**: ZREVRANGE 20 39, ya cursor: aakhri dekhi khabar ke time se pehle ki 20
-> - Redis restart, list khaali? → **DB se ek baar banao, lock ke saath**: ek banaye, baaki ruk ke Redis se padhein
-> - Redis me list kitni lambi rakhoge? → **top 500, RAM chhoti rehti hai**: Usse purani chahiye to DB se
-
 
 ---
 
@@ -102,15 +87,8 @@ NAHI    har user pe DB se ORDER BY ... LIMIT 20
 
 **Rail 5 KUCH DHEEMA (fetch)** · Cue: KAFKA: laana aur likhna alag
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=3" width="900">
-
-<img src="img/c2_2.png?v=3" width="900">
-
-<img src="img/c2_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     fetcher sirf laata hai aur Kafka me daalta hai (key = source_id). Worker apni speed se Kafka se padh
@@ -130,13 +108,6 @@ NAHI    fetcher hi DB me likhe
 > [!IMPORTANT]
 > **Yaad rakh:** Fetcher sirf laata, Kafka me daalta (key = source). Worker apni speed se DB + Redis. url UNIQUE.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - fetcher gaya, par source pe kuch naya nahi hai? → **ETag / Last-Modified**: ETag / Last-Modified dekho. "Naya nahi" to download hi nahi karte
-> - 1000 khabar ek saath Kafka me? → **line lambi, gira kuch nahi**: Kafka disk pe rakhta hai, worker apni speed se padhta hai
-> - likha, Kafka commit se pehle crash? → **DB khud rokta: url pe UNIQUE**: naya worker dobara likhe to bhi ON CONFLICT DO NOTHING
-> - fetcher har source ko kitni baar dekhega? → **apna-apna samay**: apna-apna samay: NDTV har 1 min, chhota blog har 15 min
-
 
 ---
 
@@ -146,15 +117,8 @@ NAHI    fetcher hi DB me likhe
 
 **Rail 2 BHEED AAYI (result)** · Cue: LB + READ REPLICA
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=3" width="900">
-
-<img src="img/c3_2.png?v=3" width="900">
-
-<img src="img/c3_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     Feed Service kai machine pe chalti hai, aage LB. Redis miss hua to DB ki copy (read replica) se padho.
@@ -170,13 +134,6 @@ NAHI    ek hi Feed machine
 > [!IMPORTANT]
 > **Yaad rakh:** Feed Svc kai machine + LB. Redis miss pe DB ki copy (read replica). Garam key pe App me 2 sec copy.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - 8 baje ki bheed ka pehle se pata tha? → **scheduled scaling + cache pehle**: 7:45 pe machine badhao (scheduled scaling) + cache pehle se bharo
-> - 20,000 / sec aur badh gaya? → **aur machine lagao, koi bhi request le**: Feed Svc kuch yaad nahi rakhti, koi bhi request le leti hai
-> - read replica peeche reh gayi? → **kuch second, koi nuksaan nahi**: 5 sec purani khabar se koi nuksaan nahi
-> - Redis ki ek key pe 20,000 / sec? → **Redis replica + App me copy**: App me 1-2 sec ki copy. Sab ek machine pe nahi aata
-
 
 ---
 
@@ -186,15 +143,8 @@ NAHI    ek hi Feed machine
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: DEDUPE (title hash + SimHash)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=3" width="900">
-
-<img src="img/c4_2.png?v=3" width="900">
-
-<img src="img/c4_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     dekha hua URL Bloom filter se pakdo, wahi khabar title ke hash se (Bloom + SimHash).
@@ -214,12 +164,6 @@ NAHI    har naya URL = nayi khabar
 > [!IMPORTANT]
 > **Yaad rakh:** URL Bloom filter se, wahi khabar title hash se (saaf karke). Shabd badla to SimHash 90%.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - "wins" aur "won", hash alag? → **SimHash 90%**: shabd thoda badla to bhi SimHash fingerprint ~90% same rehta, to duplicate maano
-> - 5 me se kaunsi khabar dikhaoge? → **pehli ya bade source ki**: jo pehle aayi ya bade source ki. Baaki "aur sources" me link
-> - Bloom se URL hatana ho to? → **roz naya filter**: normal Bloom me nahi hota. Roz naya filter, purana phenko (ya counting Bloom)
-
 
 ---
 
@@ -229,15 +173,8 @@ NAHI    har naya URL = nayi khabar
 
 **Rail 5 KUCH DHEEMA (source)** · Cue: TIMEOUT + CIRCUIT BREAKER
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=3" width="900">
-
-<img src="img/c5_2.png?v=3" width="900">
-
-<img src="img/c5_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     thodi der me chhod do (timeout 2-3 sec, thodi retry). Baar-baar fail ho to call hi mat karo
@@ -251,12 +188,6 @@ NAHI    poora jawab aane tak ruko
 > [!IMPORTANT]
 > **Yaad rakh:** 2-3 sec timeout. Baar-baar fail to breaker OPEN, call band. Thodi der baad HALF-OPEN: ek test call.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - source ne 429 diya? → **dheere chalo**: samay badhao, Retry-After maano
-> - breaker kuch din se OPEN? → **alert**: source ko list se bahar karo
-> - OPEN hai, wapas kab chalu? → **thodi der baad HALF-OPEN: ek test call**: Theek nikla to CLOSED
-
 
 ---
 
@@ -266,15 +197,8 @@ NAHI    poora jawab aane tak ruko
 
 **Rail 1 KAAM CHALA (category)** · Cue: CATEGORY FEED, padhte waqt milao
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=3" width="900">
-
-<img src="img/c6_2.png?v=3" width="900">
-
-<img src="img/c6_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     har category ki list pehle se bani hai (feed:tech, feed:sports). Khabar aayi to apni list me.
@@ -288,11 +212,6 @@ NAHI    har user ki alag feed
 > [!IMPORTANT]
 > **Yaad rakh:** Har category ki list pehle se (feed:tech). Kholne pe pasand wali lists milao, id se dedupe.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - khabar 2 category list me? → **dono me ZADD, milate waqt id se dedupe**: taaki do baar na dikhe
-> - mujhe tech zyada pasand hai, to? → **personalization, scope bahar**: wo asli personalization hai, har user ki ranking. Scope se bahar
-
 
 ---
 
@@ -302,15 +221,8 @@ NAHI    har user ki alag feed
 
 **Rail 1 KAAM CHALA (search)** · Cue: INVERTED INDEX
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
-<img src="img/c7_1.png?v=3" width="900">
-
-<img src="img/c7_2.png?v=3" width="900">
-
-<img src="img/c7_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     har shabd ki list ki wo kis-kis khabar me hai (inverted index, Elasticsearch).
@@ -327,12 +239,6 @@ NAHI    LIKE '%cricket%'
 > [!IMPORTANT]
 > **Yaad rakh:** Har shabd ki list ki wo kis khabar me (inverted index, Elasticsearch). Do shabd = list milao (AND).
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - "cricket kohli" dhoondha? → **dono list milao, AND = a45**: [a12, a45, a90] aur [a45, a77]. AND = a45, OR = sab. Phir score se sort
-> - "crikcet" likh diya? → **fuzzy (ES)**: Elasticsearch fuzzy search me 1-2 akshar ka farak chal jaata, milta-julta shabd bhi milta
-> - ES aur DB alag ho gaye? → **DB sach hai, ES dobara bana lo (reindex)**: Likhna fail ho to retry ki line
-
 
 ---
 
@@ -342,15 +248,8 @@ NAHI    LIKE '%cricket%'
 
 **Rail 6 DATA BADA (purana)** · Cue: mahine ka PARTITION, purana ARCHIVE
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
-<img src="img/c8_1.png?v=3" width="900">
-
-<img src="img/c8_2.png?v=3" width="900">
-
-<img src="img/c8_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     har mahine ka alag tukda (partition), purana S3 pe (archive). Postgres me sirf haal ke mahine
@@ -364,13 +263,6 @@ NAHI    sab ek table me (May se Oct)
 > [!IMPORTANT]
 > **Yaad rakh:** Har mahine ka partition, purana DETACH karke S3 archive. Postgres me sirf haal ke mahine.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - mahina beet gaya, partition ka kya? → **DETACH -> S3**: DETACH karke S3 pe. Bilkul nahi chahiye to DROP. Pal bhar ka kaam
-> - DETACH pe lock lagega? → **normal DETACH: pal bhar ka lock, padhai ruki**: normal DETACH = poore table pe pal bhar ka lock, padhai bhi rukti hai. PG 14+ me DETACH ... CONCURRENTLY, kuch nahi rukta
-> - 1 saal purani khabar khuli? → **S3 archive se aati. Dheemi, par khulti**: kabhi-kabhi hi khulti hai
-> - 3 saal baad DB kitna bada hoga? → **utna hi**: utna hi. Naya mahina garam, purana thanda (S3)
-
 
 ---
 
@@ -380,15 +272,8 @@ NAHI    sab ek table me (May se Oct)
 
 **Rail 6 DATA BADA (likhai)** · Cue: SHARD hash(article_id)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
 
-<img src="img/c9_1.png?v=3" width="900">
-
-<img src="img/c9_2.png?v=3" width="900">
-
-<img src="img/c9_3.png?v=3" width="900">
-
-</details>
 
 ```
 HAL     article_id se tukde, har tukda alag machine pe (shard). hash(a91) -> shard 2.
@@ -403,12 +288,6 @@ NAHI    ek hi machine
 
 > [!IMPORTANT]
 > **Yaad rakh:** article_id ke hash se shard. Taazi 20 Redis se, miss pe har shard se thoda (scatter-gather).
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - shard hain, taazi 20 kahan se? → **Redis se. Miss to har tukde se thoda**: (scatter-gather)
-> - shard badhaya? → **thoda hi data hilta (consistent hashing)**: sirf naye shard ke hisse ka
-> - do shard pe wahi khabar? → **dedupe pehle saanjhe Bloom / Redis se**: DB ka UNIQUE sirf shard ke andar kaam karta hai
 
 
 ---

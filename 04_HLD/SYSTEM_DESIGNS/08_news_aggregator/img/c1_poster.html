@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 1: feed ek baar banti, Redis sorted</title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="600" viewBox="0 0 1500 600" xmlns="http://www.w3.org/2000/svg"><defs>
+<marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+<marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+<marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
+<marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
+<marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
+</defs><rect width="1500" height="600" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: feed ek baar banti, Redis sorted set me time se (ZADD). Kholne pe ZREVRANGE 0 19, DB tak nahi</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
+<rect x="30" y="240" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Users</text>
+<text x="140.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">subah app khola</text>
+<rect x="330" y="230" width="250" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="455.0" y="264" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Feed Svc</text>
+<text x="455.0" y="290" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ZREVRANGE 0 19</text>
+<text x="455.0" y="312" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">= 20 id</text>
+<rect x="670" y="190" width="360" height="130" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="850.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
+<text x="850.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">feed:latest (sorted set)</text>
+<text x="850.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">time se, top 500</text>
+<text x="850.0" y="294" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">nayi khabar: ZADD</text>
+<rect x="670" y="370" width="360" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="850.0" y="404" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB</text>
+<text x="850.0" y="430" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">~1% hi yahan aate</text>
+<rect x="1120" y="240" width="350" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1295.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Meri feed</text>
+<text x="1295.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">20 khabar, tez</text>
+<path d="M252 300 L326 300" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M582 270 L666 255" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M582 360 L666 410" fill="none" stroke="#6b7a90" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agrey)"/>
+<text x="610" y="405" font-size="13" fill="#6b7a90" class="m" text-anchor="end">miss</text>
+<path d="M582 345 L1116 345" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M455 146 L455 230" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="30" y="84" width="620" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
+<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Har user pe DB se ORDER BY ... LIMIT 20?</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">DB 500 / sec sort kar raha, feed dheemi</text>
+<path d="M990 178 L990 146" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="978" y1="178" x2="1002" y2="202"/><line x1="1002" y1="178" x2="978" y2="202"/></g>
+<rect x="670" y="84" width="800" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="692" cy="106" r="13" fill="#ff5a6a"/>
+<text x="692" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="714" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Redis restart, list khaali</text>
+<text x="692" y="135" font-size="15" font-weight="700" fill="#3ddc97">DB se ek baar banao, lock ke saath. Baaki ruk ke Redis se padhein</text>
+<rect x="30" y="510" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="52" y="537" font-size="15" font-weight="700" fill="#c9d6e8">Kitni taazi? 5 min purani chalegi. Breaking news? Aate hi ZADD, turant.</text>
+<text x="52" y="561" font-size="15" font-weight="700" fill="#9fb0c8">Scroll 21-40? ZREVRANGE 20 39 ya cursor (aakhri khabar ka time). Usse purani DB se</text>
+</svg>

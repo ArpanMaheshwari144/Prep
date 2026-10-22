@@ -1,0 +1,208 @@
+{
+ "title": "Card 6: har category ki list pehle se (feed:tech). Kholne pe pasand wali lists milao, id se dedupe",
+ "h": 620,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Nayi khabar",
+   "lines": [
+    "tech + sports"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 240,
+   "h": 140,
+   "kind": "server",
+   "title": "Worker",
+   "lines": [
+    "apni category",
+    "list me ZADD"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 180,
+   "w": 260,
+   "h": 90,
+   "kind": "cache",
+   "title": "feed:tech",
+   "lines": [
+    "sorted set"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 290,
+   "w": 260,
+   "h": 90,
+   "kind": "cache",
+   "title": "feed:sports",
+   "lines": [
+    "sorted set"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 400,
+   "w": 260,
+   "h": 90,
+   "kind": "cache",
+   "title": "feed:politics ...",
+   "lines": [
+    "~20 list kul"
+   ]
+  },
+  {
+   "x": 980,
+   "y": 230,
+   "w": 250,
+   "h": 150,
+   "kind": "server",
+   "title": "Feed Svc",
+   "lines": [
+    "pasand: tech + sports",
+    "dono ke top 20 milao",
+    "id se dedupe"
+   ]
+  },
+  {
+   "x": 1310,
+   "y": 250,
+   "w": 160,
+   "h": 120,
+   "kind": "user",
+   "title": "Meri feed",
+   "lines": [
+    "mera mix"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     542,
+     270
+    ],
+    [
+     626,
+     225
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     542,
+     310
+    ],
+    [
+     626,
+     335
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     892,
+     225
+    ],
+    [
+     976,
+     270
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     892,
+     335
+    ],
+    [
+     976,
+     330
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1232,
+     305
+    ],
+    [
+     1306,
+     305
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 590,
+   "red": "Har user ki alag feed?",
+   "green": "10 lakh feed, har nayi khabar sab me daalni padti",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 640,
+   "y": 84,
+   "w": 830,
+   "red": "Khabar 2 category me (tech + sports)",
+   "green": "Dono list me ZADD, milate waqt id se dedupe: do baar nahi",
+   "n": 2,
+   "mark": [
+    1190,
+    230
+   ],
+   "conn": [
+    [
+     1190,
+     218
+    ],
+    [
+     1190,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 530,
+   "w": 1440,
+   "red": "Mujhe tech zyada pasand? Wo asli personalization (har user ki ranking), scope se bahar.",
+   "green": "Sirf ~20 list, 10 lakh nahi: milana padhte waqt"
+  }
+ ]
+}

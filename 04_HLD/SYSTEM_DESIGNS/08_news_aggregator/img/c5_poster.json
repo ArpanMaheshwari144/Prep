@@ -1,0 +1,176 @@
+{
+ "title": "Card 5: 2-3 sec timeout. Baar-baar fail to breaker OPEN, call band. Thodi der baad HALF-OPEN: ek test call",
+ "h": 580,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Fetcher",
+   "lines": [
+    "2-3 sec timeout",
+    "thodi retry"
+   ]
+  },
+  {
+   "x": 370,
+   "y": 215,
+   "w": 300,
+   "h": 170,
+   "kind": "plain",
+   "title": "Breaker",
+   "lines": [
+    "baar-baar fail = OPEN",
+    "call band",
+    "thodi der baad",
+    "HALF-OPEN: test call"
+   ]
+  },
+  {
+   "x": 770,
+   "y": 190,
+   "w": 300,
+   "h": 100,
+   "kind": "lb",
+   "title": "Chhota source",
+   "lines": [
+    "30 sec atka"
+   ]
+  },
+  {
+   "x": 770,
+   "y": 340,
+   "w": 300,
+   "h": 100,
+   "kind": "lb",
+   "title": "Baaki 999 source",
+   "lines": [
+    "chalte rahe"
+   ]
+  },
+  {
+   "x": 1170,
+   "y": 260,
+   "w": 300,
+   "h": 110,
+   "kind": "user",
+   "title": "Meri feed",
+   "lines": [
+    "chalti rahi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     282,
+     300
+    ],
+    [
+     366,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     672,
+     270
+    ],
+    [
+     766,
+     240
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "call band",
+   "lx": 722,
+   "ly": 224,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     672,
+     335
+    ],
+    [
+     766,
+     390
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     1072,
+     390
+    ],
+    [
+     1166,
+     330
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "Poora jawab aane tak ruko?",
+   "green": "30 sec: ek atka to 999 peeche khade",
+   "n": 1,
+   "conn": [
+    [
+     155,
+     146
+    ],
+    [
+     155,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 610,
+   "y": 84,
+   "w": 860,
+   "red": "Chhota source 30 sec atka",
+   "green": "Timeout + breaker OPEN: sirf uski khabar ruki, baaki chale",
+   "n": 2,
+   "mark": [
+    1030,
+    190
+   ],
+   "conn": [
+    [
+     1030,
+     178
+    ],
+    [
+     1030,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 490,
+   "w": 1440,
+   "red": "429 aaya? Dheere chalo, Retry-After maano. Kuch din se OPEN? Alert, source list se bahar.",
+   "green": "HALF-OPEN ki test call theek nikli to CLOSED"
+  }
+ ]
+}

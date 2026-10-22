@@ -1,0 +1,226 @@
+{
+ "title": "Card 2: fetcher sirf laata, Kafka me daalta (key = source). Worker apni speed se DB + Redis. url UNIQUE",
+ "h": 650,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "lb",
+   "title": "1000 source",
+   "lines": [
+    "NDTV har 1 min",
+    "blog har 15 min"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 240,
+   "h": 140,
+   "kind": "server",
+   "title": "Fetchers",
+   "lines": [
+    "sirf laao,",
+    "Kafka me daalo"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 230,
+   "w": 240,
+   "h": 120,
+   "kind": "cache",
+   "title": "Kafka",
+   "lines": [
+    "10 partition",
+    "key = source_id"
+   ]
+  },
+  {
+   "x": 940,
+   "y": 230,
+   "w": 240,
+   "h": 130,
+   "kind": "server",
+   "title": "Worker",
+   "lines": [
+    "apni speed se"
+   ]
+  },
+  {
+   "x": 1270,
+   "y": 190,
+   "w": 200,
+   "h": 100,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "feed"
+   ]
+  },
+  {
+   "x": 1270,
+   "y": 340,
+   "w": 200,
+   "h": 100,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "url UNIQUE"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     542,
+     295
+    ],
+    [
+     616,
+     290
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     862,
+     290
+    ],
+    [
+     936,
+     295
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1182,
+     265
+    ],
+    [
+     1266,
+     240
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1182,
+     330
+    ],
+    [
+     1266,
+     385
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Fetcher hi DB me likhe?",
+   "green": "1000 source ek-ek karke, A atka to B se Z line me",
+   "n": 1,
+   "conn": [
+    [
+     420,
+     146
+    ],
+    [
+     420,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Dobara likhna Bloom se roko?",
+   "green": "Galat: Bloom DB se alag, update se pehle crash = do baar feed me",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 470,
+   "w": 800,
+   "red": "1000 khabar ek saath Kafka me",
+   "green": "Line lambi, gira kuch nahi: Kafka disk pe, worker apni speed",
+   "n": 3,
+   "mark": [
+    740,
+    350
+   ],
+   "conn": [
+    [
+     740,
+     362
+    ],
+    [
+     740,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 850,
+   "y": 470,
+   "w": 620,
+   "red": "Likha, Kafka commit se pehle crash",
+   "green": "DB khud rokta: url UNIQUE, ON CONFLICT DO NOTHING",
+   "n": 4,
+   "mark": [
+    1060,
+    360
+   ],
+   "conn": [
+    [
+     1060,
+     372
+    ],
+    [
+     1060,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 565,
+   "w": 1440,
+   "red": "Source pe kuch naya nahi? ETag / Last-Modified: naya nahi to download hi nahi.",
+   "green": "SQS? Chal jaata, par Kafka me search / analytics apne group se wahi khabar padh lete"
+  }
+ ]
+}

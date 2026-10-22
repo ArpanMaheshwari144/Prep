@@ -1,0 +1,184 @@
+{
+ "title": "Card 7: har shabd ki list ki wo kis khabar me (inverted index, Elasticsearch). Do shabd = list milao",
+ "h": 610,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 110,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "'cricket kohli'"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 240,
+   "h": 140,
+   "kind": "server",
+   "title": "Search Svc",
+   "lines": [
+    "ES se id lo,",
+    "text DB / cache se"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 180,
+   "w": 400,
+   "h": 100,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "sach yahan (text)"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 330,
+   "w": 400,
+   "h": 150,
+   "kind": "cache",
+   "title": "Elasticsearch",
+   "lines": [
+    "cricket -> a12, a45, a90",
+    "kohli -> a45, a77",
+    "AND = a45, OR = sab"
+   ]
+  },
+  {
+   "x": 1120,
+   "y": 250,
+   "w": 350,
+   "h": 120,
+   "kind": "user",
+   "title": "Result",
+   "lines": [
+    "a45, score se sort"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     542,
+     265
+    ],
+    [
+     626,
+     235
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     542,
+     340
+    ],
+    [
+     626,
+     390
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     542,
+     305
+    ],
+    [
+     1116,
+     305
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 580,
+   "red": "LIKE '%cricket%'?",
+   "green": "% aage: index nahi lagta, 2 crore row ek-ek padhi",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 630,
+   "y": 84,
+   "w": 840,
+   "red": "Postgres full-text (GIN)?",
+   "green": "Chhote scale pe haan. ES: ranking, galat spelling, bahut data",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 520,
+   "w": 700,
+   "red": "'crikcet' likh diya",
+   "green": "ES fuzzy: 1-2 akshar ka farak chal jaata",
+   "n": 3,
+   "mark": [
+    130,
+    350
+   ],
+   "conn": [
+    [
+     130,
+     362
+    ],
+    [
+     130,
+     520
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 520,
+   "w": 720,
+   "red": "ES gira ya DB se alag ho gaya",
+   "green": "DB sach hai: ES dobara bana lo (reindex). Khabar nahi khoti",
+   "n": 4,
+   "mark": [
+    960,
+    480
+   ],
+   "conn": [
+    [
+     960,
+     492
+    ],
+    [
+     960,
+     520
+    ]
+   ]
+  }
+ ]
+}

@@ -1,0 +1,298 @@
+{
+ "title": "Card 3: Feed Svc kai machine + LB. Redis miss pe DB ki copy (read replica). Main DB sirf likhai",
+ "h": 670,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 200,
+   "h": 110,
+   "kind": "user",
+   "title": "Users",
+   "lines": [
+    "8 baje: 20,000 / sec"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 240,
+   "w": 200,
+   "h": 130,
+   "kind": "lb",
+   "title": "LB",
+   "lines": [
+    "koi bhi machine"
+   ]
+  },
+  {
+   "x": 590,
+   "y": 190,
+   "w": 250,
+   "h": 70,
+   "kind": "server",
+   "title": "Feed Svc 1",
+   "lines": [
+    "kuch yaad nahi"
+   ]
+  },
+  {
+   "x": 590,
+   "y": 280,
+   "w": 250,
+   "h": 70,
+   "kind": "server",
+   "title": "Feed Svc 2",
+   "lines": [
+    "kuch yaad nahi"
+   ]
+  },
+  {
+   "x": 590,
+   "y": 370,
+   "w": 250,
+   "h": 70,
+   "kind": "server",
+   "title": "Feed Svc 3",
+   "lines": [
+    "kuch yaad nahi"
+   ]
+  },
+  {
+   "x": 930,
+   "y": 190,
+   "w": 250,
+   "h": 100,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "feed"
+   ]
+  },
+  {
+   "x": 930,
+   "y": 330,
+   "w": 250,
+   "h": 100,
+   "kind": "db",
+   "title": "Read replica",
+   "lines": [
+    "miss pe yahan"
+   ]
+  },
+  {
+   "x": 1260,
+   "y": 330,
+   "w": 210,
+   "h": 100,
+   "kind": "db",
+   "title": "Main DB",
+   "lines": [
+    "sirf likhai"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     305
+    ],
+    [
+     296,
+     305
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     502,
+     280
+    ],
+    [
+     586,
+     225
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     502,
+     305
+    ],
+    [
+     586,
+     315
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     502,
+     330
+    ],
+    [
+     586,
+     405
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     842,
+     225
+    ],
+    [
+     926,
+     240
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     842,
+     315
+    ],
+    [
+     926,
+     375
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1256,
+     380
+    ],
+    [
+     1182,
+     380
+    ]
+   ],
+   "c": "purple",
+   "dash": true,
+   "label": "copy",
+   "lx": 1205,
+   "ly": 402,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 520,
+   "red": "Ek hi Feed machine?",
+   "green": "500 se 20,000 / sec, CPU bhar gaya",
+   "n": 1,
+   "conn": [
+    [
+     400,
+     146
+    ],
+    [
+     400,
+     240
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 570,
+   "y": 84,
+   "w": 900,
+   "red": "Redis miss pe main DB se padho?",
+   "green": "Wahan fetcher likh raha: bheed likhai ko bhi dheema karti",
+   "n": 2,
+   "conn": [
+    [
+     1365,
+     146
+    ],
+    [
+     1365,
+     330
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 490,
+   "w": 700,
+   "red": "Read replica peeche reh gayi",
+   "green": "Kuch second purani khabar, koi nuksaan nahi",
+   "n": 3,
+   "mark": [
+    955,
+    430
+   ],
+   "conn": [
+    [
+     955,
+     442
+    ],
+    [
+     955,
+     465
+    ],
+    [
+     700,
+     465
+    ],
+    [
+     700,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 490,
+   "w": 720,
+   "red": "Redis ki ek key pe 20,000 / sec",
+   "green": "Redis replica + App me 1-2 sec ki copy",
+   "n": 4,
+   "mark": [
+    1180,
+    240
+   ],
+   "conn": [
+    [
+     1192,
+     240
+    ],
+    [
+     1240,
+     240
+    ],
+    [
+     1240,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 585,
+   "w": 1440,
+   "red": "Bheed ka pehle se pata? 7:45 pe machine badhao (scheduled scaling) + cache pehle bharo.",
+   "green": "Aur badha? Aur machine: Feed Svc kuch yaad nahi rakhti, koi bhi request le"
+  }
+ ]
+}

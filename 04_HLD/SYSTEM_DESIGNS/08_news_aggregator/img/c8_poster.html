@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 8: har mahine ka partition, purana </title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="560" viewBox="0 0 1500 560" xmlns="http://www.w3.org/2000/svg"><defs>
+<marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+<marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+<marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
+<marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
+<marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
+</defs><rect width="1500" height="560" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 8: har mahine ka partition, purana DETACH karke S3 archive. Postgres me sirf haal ke mahine</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
+<rect x="30" y="220" width="380" height="140" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="220.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Postgres: Oct, Sep</text>
+<text x="220.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">haal ke mahine</text>
+<text x="220.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">garam, index se tez</text>
+<rect x="500" y="230" width="240" height="120" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="620.0" y="264" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Mahina beeta</text>
+<text x="620.0" y="290" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">DETACH -&gt; S3</text>
+<rect x="830" y="220" width="330" height="140" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="995.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">S3 archive</text>
+<text x="995.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">May - Aug</text>
+<text x="995.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">thanda, sasta</text>
+<rect x="1250" y="240" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1360.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">1 saal purani</text>
+<text x="1360.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">dheemi, par khulti</text>
+<path d="M412 290 L496 290" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M742 290 L826 290" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M1162 290 L1246 300" fill="none" stroke="#3ddc97" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#agreen)"/>
+<path d="M220 146 L220 220" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="30" y="84" width="640" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
+<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Sab ek table me (May se Oct)?</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">Purana koi padhta nahi, par disk + backup ka kharcha</text>
+<path d="M700 218 L700 146" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="688" y1="218" x2="712" y2="242"/><line x1="712" y1="218" x2="688" y2="242"/></g>
+<rect x="690" y="84" width="780" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="712" cy="106" r="13" fill="#ff5a6a"/>
+<text x="712" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="734" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Normal DETACH pe lock</text>
+<text x="712" y="135" font-size="15" font-weight="700" fill="#3ddc97">Pal bhar ka lock, padhai ruki. PG 14+: DETACH ... CONCURRENTLY</text>
+<rect x="30" y="470" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="52" y="497" font-size="15" font-weight="700" fill="#c9d6e8">3 saal baad DB kitna? Utna hi: naya garam, purana S3. Bilkul nahi chahiye to DROP.</text>
+<text x="52" y="521" font-size="15" font-weight="700" fill="#9fb0c8">Purana hatana retention hai, sharding nahi</text>
+</svg>

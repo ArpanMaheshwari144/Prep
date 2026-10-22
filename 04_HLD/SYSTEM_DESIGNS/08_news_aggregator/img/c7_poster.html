@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 7: har shabd ki list ki wo kis khab</title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="610" viewBox="0 0 1500 610" xmlns="http://www.w3.org/2000/svg"><defs>
+<marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+<marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+<marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
+<marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
+<marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
+</defs><rect width="1500" height="610" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 7: har shabd ki list ki wo kis khabar me (inverted index, Elasticsearch). Do shabd = list milao</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
+<rect x="30" y="240" width="200" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main</text>
+<text x="130.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">&#x27;cricket kohli&#x27;</text>
+<rect x="300" y="230" width="240" height="140" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="420.0" y="264" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Search Svc</text>
+<text x="420.0" y="290" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ES se id lo,</text>
+<text x="420.0" y="312" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">text DB / cache se</text>
+<rect x="630" y="180" width="400" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="830.0" y="214" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">DB</text>
+<text x="830.0" y="240" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sach yahan (text)</text>
+<rect x="630" y="330" width="400" height="150" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="830.0" y="364" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Elasticsearch</text>
+<text x="830.0" y="390" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">cricket -&gt; a12, a45, a90</text>
+<text x="830.0" y="412" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">kohli -&gt; a45, a77</text>
+<text x="830.0" y="434" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">AND = a45, OR = sab</text>
+<rect x="1120" y="250" width="350" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1295.0" y="284" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Result</text>
+<text x="1295.0" y="310" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">a45, score se sort</text>
+<path d="M232 300 L296 300" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M542 265 L626 235" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M542 340 L626 390" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M542 305 L1116 305" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<rect x="30" y="84" width="580" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
+<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">LIKE &#x27;%cricket%&#x27;?</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">% aage: index nahi lagta, 2 crore row ek-ek padhi</text>
+<rect x="630" y="84" width="840" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="652" cy="106" r="13" fill="#ffcc4d"/>
+<text x="652" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="674" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Postgres full-text (GIN)?</text>
+<text x="652" y="135" font-size="15" font-weight="700" fill="#3ddc97">Chhote scale pe haan. ES: ranking, galat spelling, bahut data</text>
+<path d="M130 362 L130 520" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="118" y1="338" x2="142" y2="362"/><line x1="142" y1="338" x2="118" y2="362"/></g>
+<rect x="30" y="520" width="700" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="542" r="13" fill="#ff5a6a"/>
+<text x="52" y="547" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="74" y="547" font-size="15" font-weight="700" fill="#ff5a6a">&#x27;crikcet&#x27; likh diya</text>
+<text x="52" y="571" font-size="15" font-weight="700" fill="#3ddc97">ES fuzzy: 1-2 akshar ka farak chal jaata</text>
+<path d="M960 492 L960 520" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="948" y1="468" x2="972" y2="492"/><line x1="972" y1="468" x2="948" y2="492"/></g>
+<rect x="750" y="520" width="720" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="772" cy="542" r="13" fill="#ff5a6a"/>
+<text x="772" y="547" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">4</text>
+<text x="794" y="547" font-size="15" font-weight="700" fill="#ff5a6a">ES gira ya DB se alag ho gaya</text>
+<text x="772" y="571" font-size="15" font-weight="700" fill="#3ddc97">DB sach hai: ES dobara bana lo (reindex). Khabar nahi khoti</text>
+</svg>

@@ -1,0 +1,175 @@
+{
+ "title": "Card 1: feed ek baar banti, Redis sorted set me time se (ZADD). Kholne pe ZREVRANGE 0 19, DB tak nahi",
+ "h": 600,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "Users",
+   "lines": [
+    "subah app khola"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Feed Svc",
+   "lines": [
+    "ZREVRANGE 0 19",
+    "= 20 id"
+   ]
+  },
+  {
+   "x": 670,
+   "y": 190,
+   "w": 360,
+   "h": 130,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "feed:latest (sorted set)",
+    "time se, top 500",
+    "nayi khabar: ZADD"
+   ]
+  },
+  {
+   "x": 670,
+   "y": 370,
+   "w": 360,
+   "h": 100,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "~1% hi yahan aate"
+   ]
+  },
+  {
+   "x": 1120,
+   "y": 240,
+   "w": 350,
+   "h": 120,
+   "kind": "user",
+   "title": "Meri feed",
+   "lines": [
+    "20 khabar, tez"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     270
+    ],
+    [
+     666,
+     255
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     582,
+     360
+    ],
+    [
+     666,
+     410
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "miss",
+   "lx": 610,
+   "ly": 405,
+   "a": "end"
+  },
+  {
+   "pts": [
+    [
+     582,
+     345
+    ],
+    [
+     1116,
+     345
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Har user pe DB se ORDER BY ... LIMIT 20?",
+   "green": "DB 500 / sec sort kar raha, feed dheemi",
+   "n": 1,
+   "conn": [
+    [
+     455,
+     146
+    ],
+    [
+     455,
+     230
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "Redis restart, list khaali",
+   "green": "DB se ek baar banao, lock ke saath. Baaki ruk ke Redis se padhein",
+   "n": 2,
+   "mark": [
+    990,
+    190
+   ],
+   "conn": [
+    [
+     990,
+     178
+    ],
+    [
+     990,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 510,
+   "w": 1440,
+   "red": "Kitni taazi? 5 min purani chalegi. Breaking news? Aate hi ZADD, turant.",
+   "green": "Scroll 21-40? ZREVRANGE 20 39 ya cursor (aakhri khabar ka time). Usse purani DB se"
+  }
+ ]
+}

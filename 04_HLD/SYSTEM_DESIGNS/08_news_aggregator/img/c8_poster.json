@@ -1,0 +1,146 @@
+{
+ "title": "Card 8: har mahine ka partition, purana DETACH karke S3 archive. Postgres me sirf haal ke mahine",
+ "h": 560,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 220,
+   "w": 380,
+   "h": 140,
+   "kind": "db",
+   "title": "Postgres: Oct, Sep",
+   "lines": [
+    "haal ke mahine",
+    "garam, index se tez"
+   ]
+  },
+  {
+   "x": 500,
+   "y": 230,
+   "w": 240,
+   "h": 120,
+   "kind": "server",
+   "title": "Mahina beeta",
+   "lines": [
+    "DETACH -> S3"
+   ]
+  },
+  {
+   "x": 830,
+   "y": 220,
+   "w": 330,
+   "h": 140,
+   "kind": "db",
+   "title": "S3 archive",
+   "lines": [
+    "May - Aug",
+    "thanda, sasta"
+   ]
+  },
+  {
+   "x": 1250,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "1 saal purani",
+   "lines": [
+    "dheemi, par khulti"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     412,
+     290
+    ],
+    [
+     496,
+     290
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     742,
+     290
+    ],
+    [
+     826,
+     290
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1162,
+     290
+    ],
+    [
+     1246,
+     300
+    ]
+   ],
+   "c": "green",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Sab ek table me (May se Oct)?",
+   "green": "Purana koi padhta nahi, par disk + backup ka kharcha",
+   "n": 1,
+   "conn": [
+    [
+     220,
+     146
+    ],
+    [
+     220,
+     220
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 690,
+   "y": 84,
+   "w": 780,
+   "red": "Normal DETACH pe lock",
+   "green": "Pal bhar ka lock, padhai ruki. PG 14+: DETACH ... CONCURRENTLY",
+   "n": 2,
+   "mark": [
+    700,
+    230
+   ],
+   "conn": [
+    [
+     700,
+     218
+    ],
+    [
+     700,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 470,
+   "w": 1440,
+   "red": "3 saal baad DB kitna? Utna hi: naya garam, purana S3. Bilkul nahi chahiye to DROP.",
+   "green": "Purana hatana retention hai, sharding nahi"
+  }
+ ]
+}
