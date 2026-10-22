@@ -1,0 +1,216 @@
+{
+ "title": "Card 1: BEGIN, Arpan -500, Kirana +500, ledger, COMMIT: ek hi transaction. Ya sab, ya koi nahi",
+ "h": 760,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 110,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "Kirana ko 500"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 225,
+   "w": 270,
+   "h": 150,
+   "kind": "server",
+   "title": "Payment Svc",
+   "lines": [
+    "BEGIN",
+    "Arpan -500, Kirana +500",
+    "ledger, COMMIT"
+   ]
+  },
+  {
+   "x": 660,
+   "y": 190,
+   "w": 420,
+   "h": 220,
+   "kind": "db",
+   "title": "SQL DB",
+   "lines": [
+    "Arpan: -500",
+    "Kirana: +500",
+    "ledger ki 2 line",
+    "WAL (DB ka apna log)",
+    "saare kate == saare jude"
+   ]
+  },
+  {
+   "x": 1170,
+   "y": 250,
+   "w": 300,
+   "h": 110,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "'hua' ya 'nahi hua'",
+    "beech ka kabhi nahi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     572,
+     300
+    ],
+    [
+     656,
+     300
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1082,
+     300
+    ],
+    [
+     1166,
+     300
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Do alag badlaav, ek ke baad ek?",
+   "green": "Arpan -500 hua, crash, Kirana +500 hua hi nahi: paisa gayab",
+   "n": 1,
+   "conn": [
+    [
+     435,
+     146
+    ],
+    [
+     435,
+     225
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "SQL ki jagah NoSQL?",
+   "green": "Nahi: kai row pe sab-ya-kuch-nahi + paisa turant sahi chahiye",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 470,
+   "w": 470,
+   "red": "COMMIT se pehle server gira",
+   "green": "DB uth ke WAL dekhta, COMMIT nahi:",
+   "n": 3,
+   "green2": "ulta kar deta, 500 wapas",
+   "mark": [
+    400,
+    375
+   ],
+   "conn": [
+    [
+     400,
+     387
+    ],
+    [
+     400,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 520,
+   "y": 470,
+   "w": 470,
+   "red": "Ledger ka INSERT fail",
+   "green": "ROLLBACK: Arpan ka -500 bhi ulta.",
+   "n": 4,
+   "green2": "User ko 'nahi hua', dobara try kare",
+   "mark": [
+    720,
+    410
+   ],
+   "conn": [
+    [
+     720,
+     422
+    ],
+    [
+     720,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 1010,
+   "y": 470,
+   "w": 460,
+   "red": "COMMIT ke baad gira",
+   "green": "Log me COMMIT hai, DB kaam poora",
+   "n": 5,
+   "green2": "karta, kuch nahi khota",
+   "mark": [
+    1050,
+    410
+   ],
+   "conn": [
+    [
+     1050,
+     422
+    ],
+    [
+     1050,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 580,
+   "w": 1440,
+   "red": "Network toota: sahi ya chalu? Sahi pehle: balance pakka nahi to payment mana. Dashboard purana chale to chalega.",
+   "green": "Hisaab me farak? Turant alert"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 670,
+   "w": 1440,
+   "red": "A->B aur B->A ek saath, dono atke (deadlock)? Taala pehle chhoti account id pe.",
+   "green": "Poora 13 banking card 9 me"
+  }
+ ]
+}

@@ -1,0 +1,221 @@
+{
+ "title": "Card 8: kai machine (stateless), aage LB. User kaun = JWT se, body se kabhi nahi, har request pe owner check",
+ "h": 610,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 200,
+   "h": 110,
+   "kind": "user",
+   "title": "Users",
+   "lines": [
+    "Diwali: 3000 / sec"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 220,
+   "h": 150,
+   "kind": "lb",
+   "title": "LB",
+   "lines": [
+    "GET /health",
+    "chup = bahar"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 190,
+   "w": 260,
+   "h": 80,
+   "kind": "server",
+   "title": "Payment Svc 1",
+   "lines": [
+    "JWT + owner check"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 290,
+   "w": 260,
+   "h": 80,
+   "kind": "server",
+   "title": "Payment Svc 2",
+   "lines": [
+    "JWT + owner check"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 390,
+   "w": 260,
+   "h": 80,
+   "kind": "server",
+   "title": "Payment Svc 3",
+   "lines": [
+    "JWT + owner check"
+   ]
+  },
+  {
+   "x": 990,
+   "y": 250,
+   "w": 300,
+   "h": 120,
+   "kind": "db",
+   "title": "DB + key store",
+   "lines": [
+    "sab yaad yahan",
+    "(machine kuch nahi)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     305
+    ],
+    [
+     296,
+     305
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     522,
+     280
+    ],
+    [
+     616,
+     230
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     522,
+     305
+    ],
+    [
+     616,
+     330
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     522,
+     330
+    ],
+    [
+     616,
+     430
+    ]
+   ],
+   "c": "grey",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     882,
+     230
+    ],
+    [
+     986,
+     285
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     882,
+     330
+    ],
+    [
+     986,
+     320
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Ek hi machine?",
+   "green": "CPU bhara, timeout, log dobara tap karte: aur bojh",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 690,
+   "y": 84,
+   "w": 780,
+   "red": "User id request body se lo?",
+   "green": "Nahi: user kaun = JWT se. 'from' ka maalik JWT wala nahi = 403",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 520,
+   "w": 700,
+   "red": "JWT chori ho gaya",
+   "green": "Chhoti umar (~15 min) + refresh. Bade payment pe PIN / OTP",
+   "n": 3,
+   "mark": [
+    250,
+    305
+   ],
+   "conn": [
+    [
+     250,
+     317
+    ],
+    [
+     250,
+     520
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 520,
+   "w": 720,
+   "red": "Payment Svc 3 mar gayi",
+   "green": "LB GET /health poochta, jawab nahi = bahar",
+   "n": 4,
+   "mark": [
+    850,
+    470
+   ],
+   "conn": [
+    [
+     850,
+     482
+    ],
+    [
+     850,
+     520
+    ]
+   ]
+  }
+ ]
+}

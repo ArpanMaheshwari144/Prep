@@ -1,0 +1,245 @@
+{
+ "title": "Card 6: do system = ek txn nahi. SAGA: step-step, har kadam likho, fail pe ulta kaam (500 wapas)",
+ "h": 720,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 110,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "Kirana ko 500",
+    "(doosra bank)"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 225,
+   "w": 260,
+   "h": 150,
+   "kind": "server",
+   "title": "Saga Svc",
+   "lines": [
+    "step-step,",
+    "har kadam likho"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 190,
+   "w": 300,
+   "h": 110,
+   "kind": "db",
+   "title": "Wallet DB",
+   "lines": [
+    "1: 500 kata"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 380,
+   "w": 300,
+   "h": 110,
+   "kind": "db",
+   "title": "Saga table",
+   "lines": [
+    "DEBITED -> PAYOUT",
+    "-> DONE / ULTA"
+   ]
+  },
+  {
+   "x": 1040,
+   "y": 190,
+   "w": 430,
+   "h": 110,
+   "kind": "lb",
+   "title": "Bank B",
+   "lines": [
+    "2: payout"
+   ]
+  },
+  {
+   "x": 1040,
+   "y": 380,
+   "w": 430,
+   "h": 110,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "PROCESSING, phir",
+    "SUCCESS ya 500 wapas"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     562,
+     270
+    ],
+    [
+     646,
+     245
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     562,
+     330
+    ],
+    [
+     646,
+     430
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     952,
+     245
+    ],
+    [
+     1036,
+     245
+    ]
+   ],
+   "c": "orange",
+   "label": "phir",
+   "lx": 994,
+   "ly": 235,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     952,
+     435
+    ],
+    [
+     1036,
+     435
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 580,
+   "red": "Ek transaction me dono?",
+   "green": "Namumkin: do alag system. Paisa beech me latka",
+   "n": 1,
+   "conn": [
+    [
+     430,
+     146
+    ],
+    [
+     430,
+     225
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 630,
+   "y": 84,
+   "w": 840,
+   "red": "Bank B ka payout fail",
+   "green": "Ulta kaam: wallet me 500 wapas (compensate)",
+   "n": 2,
+   "mark": [
+    1400,
+    190
+   ],
+   "conn": [
+    [
+     1400,
+     178
+    ],
+    [
+     1400,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 540,
+   "w": 700,
+   "red": "SAGA ke beech service giri",
+   "green": "Uth ke saga table dekhe, wahin se aage ya ulta",
+   "n": 3,
+   "mark": [
+    340,
+    375
+   ],
+   "conn": [
+    [
+     340,
+     387
+    ],
+    [
+     340,
+     540
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 540,
+   "w": 720,
+   "red": "Ulta kaam bhi fail",
+   "green": "Retry + alert, phir manual queue. Paisa beech me na atke",
+   "n": 4,
+   "mark": [
+    900,
+    490
+   ],
+   "conn": [
+    [
+     900,
+     502
+    ],
+    [
+     900,
+     540
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 635,
+   "w": 1440,
+   "red": "Sabse pehla sawaal: dono account ek system / bank me ya alag? Ek DB = ek transaction (ACID), alag bank = SAGA.",
+   "green": "Poora design isi se badalta"
+  }
+ ]
+}

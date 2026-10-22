@@ -1,0 +1,192 @@
+{
+ "title": "Card 3: screen khulte hi key, retry pe wahi key. Key pehle se = saved jawab, dobara nahi kaata",
+ "h": 690,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 250,
+   "h": 120,
+   "kind": "user",
+   "title": "App",
+   "lines": [
+    "screen khulte hi key-555",
+    "Pay button ek tap"
+   ]
+  },
+  {
+   "x": 370,
+   "y": 230,
+   "w": 260,
+   "h": 140,
+   "kind": "server",
+   "title": "Payment Svc",
+   "lines": [
+    "key pehle se?",
+    "saved jawab do"
+   ]
+  },
+  {
+   "x": 720,
+   "y": 190,
+   "w": 300,
+   "h": 100,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "SETNX key-555 (tez)"
+   ]
+  },
+  {
+   "x": 720,
+   "y": 330,
+   "w": 300,
+   "h": 120,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "key UNIQUE (deewar)",
+    "IN_PROGRESS -> DONE"
+   ]
+  },
+  {
+   "x": 1110,
+   "y": 240,
+   "w": 360,
+   "h": 120,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "500 hi kate"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     282,
+     300
+    ],
+    [
+     366,
+     300
+    ]
+   ],
+   "c": "blue",
+   "label": "key-555",
+   "lx": 320,
+   "ly": 330,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     632,
+     270
+    ],
+    [
+     716,
+     240
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     632,
+     340
+    ],
+    [
+     716,
+     390
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     632,
+     310
+    ],
+    [
+     1106,
+     310
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "x",
+   "x": 30,
+   "y": 84,
+   "w": 660,
+   "red": "Metro me network gaya, app ne dobara bheja",
+   "green": "Wahi key-555 gayi: saved jawab, 500 hi kate",
+   "n": 1,
+   "mark": [
+    310,
+    300
+   ],
+   "conn": [
+    [
+     310,
+     288
+    ],
+    [
+     310,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 710,
+   "y": 84,
+   "w": 760,
+   "red": "Key server banaye?",
+   "green": "Bekaar: dobara app bhejta, app ki key hi dono request jodti",
+   "n": 2
+  },
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 500,
+   "w": 700,
+   "red": "Bina key?",
+   "green": "Timeout, app ne dobara bheja, server ne do payment maane: 1000 kate",
+   "n": 3,
+   "conn": [
+    [
+     420,
+     500
+    ],
+    [
+     420,
+     370
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 750,
+   "y": 500,
+   "w": 720,
+   "red": "Sirf Redis? Ya sirf DB?",
+   "green": "Sirf Redis = kachcha (DB UNIQUE deewar). Sirf DB = dheema",
+   "n": 4
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 595,
+   "w": 1440,
+   "red": "Key wahi, amount alag? Request ka hash bhi rakho, farak = 422. Key kab hatao? Sirf pakka fail pe, DONE ~24 ghante.",
+   "green": "Sach me do payment 100 + 100? Do screen = do key (key-555, key-888), dono honge: 200"
+  }
+ ]
+}

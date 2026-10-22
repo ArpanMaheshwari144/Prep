@@ -1,0 +1,247 @@
+{
+ "title": "Card 5: call se PEHLE PENDING likho. PSP webhook se bataye, nahi to job PSP se poochhe (reconcile)",
+ "h": 690,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Payment Svc",
+   "lines": [
+    "call se PEHLE",
+    "DB me PENDING"
+   ]
+  },
+  {
+   "x": 380,
+   "y": 200,
+   "w": 260,
+   "h": 110,
+   "kind": "lb",
+   "title": "PSP",
+   "lines": [
+    "paisa kata?"
+   ]
+  },
+  {
+   "x": 380,
+   "y": 380,
+   "w": 260,
+   "h": 100,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "PENDING -> SUCCESS"
+   ]
+  },
+  {
+   "x": 760,
+   "y": 190,
+   "w": 280,
+   "h": 110,
+   "kind": "server",
+   "title": "Webhook Svc",
+   "lines": [
+    "PSP ne bataya"
+   ]
+  },
+  {
+   "x": 760,
+   "y": 350,
+   "w": 280,
+   "h": 110,
+   "kind": "server",
+   "title": "Job (har kuch min)",
+   "lines": [
+    "purane PENDING:",
+    "PSP se poochho"
+   ]
+  },
+  {
+   "x": 1140,
+   "y": 250,
+   "w": 330,
+   "h": 120,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "PROCESSING",
+    "phir SUCCESS"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     282,
+     270
+    ],
+    [
+     376,
+     255
+    ]
+   ],
+   "c": "green",
+   "label": "call",
+   "lx": 330,
+   "ly": 250,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     282,
+     330
+    ],
+    [
+     376,
+     425
+    ]
+   ],
+   "c": "purple",
+   "label": "pehle PENDING",
+   "lx": 300,
+   "ly": 410,
+   "a": "end"
+  },
+  {
+   "pts": [
+    [
+     642,
+     245
+    ],
+    [
+     756,
+     245
+    ]
+   ],
+   "c": "purple",
+   "label": "webhook",
+   "lx": 712,
+   "ly": 232,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     756,
+     400
+    ],
+    [
+     644,
+     285
+    ]
+   ],
+   "c": "purple",
+   "dash": true,
+   "label": "haal?",
+   "lx": 690,
+   "ly": 360,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     1042,
+     245
+    ],
+    [
+     1136,
+     290
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "x",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "PSP ko call kiya aur server gira",
+   "green": "PENDING pehle likha tha: number bacha, andha dobara nahi",
+   "n": 1,
+   "mark": [
+    250,
+    230
+   ],
+   "conn": [
+    [
+     250,
+     218
+    ],
+    [
+     250,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 610,
+   "y": 84,
+   "w": 860,
+   "red": "Webhook do baar aaya, ya nakli aaya",
+   "green": "SUCCESS sirf ek baar. Hastakshar (PSP secret) jaancho, PENDING se milao",
+   "n": 2,
+   "mark": [
+    990,
+    190
+   ],
+   "conn": [
+    [
+     990,
+     178
+    ],
+    [
+     990,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 510,
+   "w": 700,
+   "red": "Webhook aaya hi nahi",
+   "green": "Job PENDING ke liye PSP se poochhe. Raat ko PSP file se milaan",
+   "n": 3,
+   "mark": [
+    668,
+    245
+   ],
+   "conn": [
+    [
+     668,
+     257
+    ],
+    [
+     668,
+     510
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 750,
+   "y": 510,
+   "w": 720,
+   "red": "Sirf webhook? Ya sirf job?",
+   "green": "Webhook kho sakta. Job dheema + PSP ki limit. Isliye dono",
+   "n": 4
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 605,
+   "w": 1440,
+   "red": "Job ko PSP ne jawab de diya? Hua = SUCCESS. Pakka fail = FAILED, kuch wapas nahi (paisa hila nahi).",
+   "green": "User ko PROCESSING dikhe, andha dobara kabhi nahi"
+  }
+ ]
+}

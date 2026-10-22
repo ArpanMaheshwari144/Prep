@@ -1,0 +1,181 @@
+{
+ "title": "Card 7: ledger double-entry: har paisa do line, jod 0. Sirf INSERT, galti pe nayi ulti line",
+ "h": 660,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "raat 2200,",
+    "subah 1100?"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 240,
+   "w": 240,
+   "h": 120,
+   "kind": "server",
+   "title": "App / support",
+   "lines": [
+    "ledger padho"
+   ]
+  },
+  {
+   "x": 660,
+   "y": 190,
+   "w": 520,
+   "h": 240,
+   "kind": "db",
+   "title": "Ledger (sirf INSERT)",
+   "lines": [
+    "Arpan -800 | bijli +800",
+    "Arpan -300 | recharge +300",
+    "har payment: 2 line, jod 0",
+    "payment ke saath usi txn me",
+    "2200 - 800 - 300 = 1100"
+   ]
+  },
+  {
+   "x": 1260,
+   "y": 240,
+   "w": 210,
+   "h": 120,
+   "kind": "db",
+   "title": "Balance column",
+   "lines": [
+    "1100",
+    "(sirf number)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     572,
+     300
+    ],
+    [
+     656,
+     300
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1182,
+     300
+    ],
+    [
+     1256,
+     300
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 700,
+   "red": "Sirf balance column rakho?",
+   "green": "Number hai, kahani nahi: 'kaise bana' ka jawab nahi",
+   "n": 1,
+   "conn": [
+    [
+     700,
+     146
+    ],
+    [
+     700,
+     165
+    ],
+    [
+     1365,
+     165
+    ],
+    [
+     1365,
+     240
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 480,
+   "w": 700,
+   "red": "Galat entry ho gayi / refund aaya",
+   "green": "Mitao nahi, nayi ulti line jodo. Audit me dono dikhti",
+   "n": 2,
+   "mark": [
+    700,
+    430
+   ],
+   "conn": [
+    [
+     700,
+     442
+    ],
+    [
+     700,
+     480
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 480,
+   "w": 720,
+   "red": "Ledger ka jod != balance column",
+   "green": "Raat ko jod == balance check, farak = alert",
+   "n": 3,
+   "mark": [
+    1365,
+    360
+   ],
+   "conn": [
+    [
+     1365,
+     372
+    ],
+    [
+     1365,
+     480
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 575,
+   "w": 1440,
+   "red": "3 saal me bahut bada? Mahine ke tukde, purane S3 Glacier, kanoon jitna kahe. Ledger crash se bachata? Nahi, wo hisaab hai.",
+   "green": "Crash se PENDING + webhook + job bachate"
+  }
+ ]
+}

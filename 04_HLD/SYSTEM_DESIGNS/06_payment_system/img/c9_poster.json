@@ -1,0 +1,259 @@
+{
+ "title": "Card 9: bhaari report copy pe (read replica). Paisa aur haal hamesha primary se padho",
+ "h": 610,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 200,
+   "w": 240,
+   "h": 110,
+   "kind": "server",
+   "title": "Payment Svc",
+   "lines": [
+    "paisa + haal"
+   ]
+  },
+  {
+   "x": 30,
+   "y": 370,
+   "w": 240,
+   "h": 100,
+   "kind": "server",
+   "title": "Report",
+   "lines": [
+    "merchant ki report"
+   ]
+  },
+  {
+   "x": 380,
+   "y": 200,
+   "w": 280,
+   "h": 110,
+   "kind": "db",
+   "title": "Primary",
+   "lines": [
+    "sirf payment"
+   ]
+  },
+  {
+   "x": 380,
+   "y": 370,
+   "w": 280,
+   "h": 100,
+   "kind": "db",
+   "title": "Read replica",
+   "lines": [
+    "1-2 sec peeche"
+   ]
+  },
+  {
+   "x": 780,
+   "y": 190,
+   "w": 300,
+   "h": 110,
+   "kind": "db",
+   "title": "Sync standby",
+   "lines": [
+    "primary gire to",
+    "yahi primary"
+   ]
+  },
+  {
+   "x": 780,
+   "y": 370,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "Warehouse",
+   "lines": [
+    "bhaari report (CDC)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     272,
+     255
+    ],
+    [
+     376,
+     255
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     272,
+     420
+    ],
+    [
+     376,
+     420
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     520,
+     312
+    ],
+    [
+     520,
+     366
+    ]
+   ],
+   "c": "purple",
+   "dash": true,
+   "label": "copy",
+   "lx": 532,
+   "ly": 328
+  },
+  {
+   "pts": [
+    [
+     662,
+     240
+    ],
+    [
+     776,
+     240
+    ]
+   ],
+   "c": "purple",
+   "dash": true,
+   "label": "sync",
+   "lx": 720,
+   "ly": 230,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     662,
+     290
+    ],
+    [
+     720,
+     290
+    ],
+    [
+     720,
+     420
+    ],
+    [
+     776,
+     420
+    ]
+   ],
+   "c": "purple",
+   "dash": true,
+   "label": "CDC",
+   "lx": 730,
+   "ly": 360
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 500,
+   "red": "Report bhi primary pe?",
+   "green": "Mahine ki report ne primary busy kiya, payment ruka",
+   "n": 1,
+   "conn": [
+    [
+     470,
+     146
+    ],
+    [
+     470,
+     200
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 550,
+   "y": 84,
+   "w": 920,
+   "red": "Primary gir gaya",
+   "green": "Sync standby ban jaata, kuch nahi khota",
+   "n": 2,
+   "mark": [
+    640,
+    200
+   ],
+   "conn": [
+    [
+     640,
+     188
+    ],
+    [
+     640,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 520,
+   "w": 700,
+   "red": "Pay kiya, turant balance copy se dekha",
+   "green": "Purana dikha. Paisa aur haal primary se padho",
+   "n": 3,
+   "mark": [
+    420,
+    470
+   ],
+   "conn": [
+    [
+     420,
+     482
+    ],
+    [
+     420,
+     520
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 520,
+   "w": 720,
+   "red": "Copy aur peeche chali gayi",
+   "green": "Lag naapo, had paar = alert. Bahut bhaari = warehouse",
+   "n": 4,
+   "mark": [
+    630,
+    470
+   ],
+   "conn": [
+    [
+     630,
+     482
+    ],
+    [
+     630,
+     500
+    ],
+    [
+     900,
+     500
+    ],
+    [
+     900,
+     520
+    ]
+   ]
+  }
+ ]
+}
