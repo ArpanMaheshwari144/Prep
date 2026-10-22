@@ -60,17 +60,8 @@ PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar li
 
 Jod: Jira / Confluence comment me bhi version; wahan purana = save MANA, Docs khiska ke lagata
 
-<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: andar + kya gira, kaise bacha">
+<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: andar + kya gira, kaise bacha">
 
-<details><summary>kahani dekho (3 scene)</summary>
-
-<img src="img/c1_1.png?v=1" width="900">
-
-<img src="img/c1_2.png?v=1" width="900">
-
-<img src="img/c1_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     sirf badlaav (op) bhejo, kis version pe bana (baseVersion v7). Server khiska ke lagata
@@ -83,11 +74,6 @@ NAHI    lock lagao -> RUKNA: user ko lock ya intezaar nahi chahiye.
 
 > [!IMPORTANT]
 > **Yaad rakh:** Text nahi, sirf badlaav (op) + baseVersion. Server agla version deta, purane pe bana op khiska ke lagata.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - maine op se mitaya, aur Ravi ne wahin likha → **mitana bhi ek op hai**: Server dono khiska ke lagata, Ravi ka akshar sahi jagah aata
-> - sirf op aate hain, to abhi ka doc kya hai? → **doc = op ka jod**: us doc ke saare op kram se, pehle se aakhri tak laga do. Doc = op ka jod
 
 
 ---
