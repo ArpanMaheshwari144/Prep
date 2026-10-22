@@ -33,8 +33,9 @@
    "title": "Redis",
    "lines": [
     "Ravi -> server-7",
-    "umar (TTL), dhadkan se badhe",
-    "kai device: list"
+    "umar 30 sec (TTL)",
+    "server-7 \"zinda hoon\" bole",
+    "to umar phir 30 sec"
    ]
   },
   {
@@ -166,8 +167,8 @@
    "x": 30,
    "y": 510,
    "w": 700,
-   "red": "Server-7 mar gaya",
-   "green": "Pata ki umar khatam, khud hat gaya, Ravi offline. Message DB me pada",
+   "red": "Ravi ka server (server-7) mar gaya",
+   "green": "Server-7 ab \"zinda hoon\" nahi bolta, to 30 sec me \"Ravi -> server-7\" khud mit jaata, Ravi offline. Arpan ka \"hi\" DB me save hai: Ravi ka phone doosre server se judte hi le leta",
    "n": 3,
    "mark": [
     610,
@@ -193,7 +194,7 @@
    "green": "Ravi doosre server pe khisak gaya? Message nahi khota, naye server pe milega"
   }
  ],
- "kyun": "\"Ravi kis server pe hai\" ye pata ek jagah, Redis me. Server-1 Redis se poochh ke server-7 ko deta, wo Ravi ko. Pata ki umar hai, server-7 zinda hai to dhadkan se badhti rehti",
+ "kyun": "\"Ravi kis server pe hai\" ye pata ek jagah, Redis me. Server-1 Redis se poochh ke server-7 ko deta, wo Ravi ko. Is pate ki umar 30 sec: server-7 har kuch sec \"zinda hoon\" bolta, umar phir 30 sec ho jaati",
  "step": [
   2,
   10
