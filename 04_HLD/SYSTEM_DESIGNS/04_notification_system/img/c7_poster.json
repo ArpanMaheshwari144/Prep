@@ -11,7 +11,7 @@
    "title": "Sale ka din",
    "lines": [
     "1 crore offer",
-    "+ mera OTP"
+    "+ Arpan ka OTP"
    ]
   },
   {
@@ -97,7 +97,7 @@
    "w": 170,
    "h": 80,
    "kind": "user",
-   "title": "Mera phone",
+   "title": "Arpan ka phone",
    "lines": [
     "OTP turant"
    ]
@@ -216,8 +216,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Pehle sab ek hi line me",
-   "green": "OTP 1 crore offer ke peeche, 10 min late, login fail",
+   "red": "Pehle sab khabar ek hi line me thi",
+   "green": "Arpan ka OTP 1 crore offer ke peeche, 10 min late, login fail",
    "conn": [
     [
      405,
@@ -227,7 +227,8 @@
      405,
      240
     ]
-   ]
+   ],
+   "tha": "Arpan ka OTP 1 crore offer ke peeche, 10 min late, login fail"
   },
   {
    "n": 2,
@@ -235,8 +236,8 @@
    "x": 700,
    "y": 84,
    "w": 770,
-   "red": "Ek hi line me OTP pe 'zaroori' tag laga do?",
-   "green": "Kafka me 'ye pehle bhejo' jaisa kuch hota hi nahi"
+   "red": "Ek hi line me OTP pe \"zaroori\" tag laga do?",
+   "green": "Kafka me \"ye pehle bhejo\" jaisa kuch hota hi nahi, line kram se hi chalti"
   },
   {
    "n": 3,
@@ -244,8 +245,8 @@
    "x": 770,
    "y": 525,
    "w": 700,
-   "red": "Offer ne Twilio ki had kha li",
-   "green": "OTP ka alag account (ya alag number). Had wala card 8",
+   "red": "Offer ne Twilio ki poori had kha li",
+   "green": "OTP ka alag account (ya alag number) rakho. Had wali baat card 8 me",
    "mark": [
     1105,
     490
@@ -270,5 +271,12 @@
    "green": "Order update kahan? Beech wali line: OTP se peeche, offer se aage"
   }
  ],
- "kyun": "Sab barabar zaroori nahi: OTP turant, offer ruk sakta. Zaroori (OTP) kabhi kisi ke peeche nahi: apni line, apne worker, company me apna account"
+ "kyun": "Sab khabar barabar zaroori nahi. OTP turant chahiye, offer ruk sakta. OTP ki apni line, apne worker, company me apna account: wo kabhi kisi ke peeche nahi",
+ "step": [
+  7,
+  11
+ ],
+ "peeche": "card 6 me TIMEOUT + CIRCUIT BREAKER",
+ "ab": "12 baje sale shuru, Arpan ka OTP 1 crore offer ke peeche, 10 min late, login fail",
+ "agla": "ab bheed itni ki company hi mana karne lagi (429) (card 8)"
 }

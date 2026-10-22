@@ -54,7 +54,7 @@
    "w": 160,
    "h": 110,
    "kind": "user",
-   "title": "Mera phone",
+   "title": "Arpan ka phone",
    "lines": [
     "OTP aaya"
    ]
@@ -125,8 +125,8 @@
    "x": 30,
    "y": 84,
    "w": 720,
-   "red": "Pehle bhejne se pehle hi SENT laga di",
-   "green": "Call fail hui, Worker-B ne SENT dekh ke chhoda: OTP gaya",
+   "red": "Pehle bhejne se pehle hi SENT likh diya",
+   "green": "Call fail hui, Worker-B ne SENT dekha aur chhod diya: Arpan ka OTP gaya hi nahi",
    "conn": [
     [
      700,
@@ -136,7 +136,8 @@
      700,
      190
     ]
-   ]
+   ],
+   "tha": "Call fail hui, Worker-B ne SENT dekha aur chhod diya: Arpan ka OTP gaya hi nahi"
   },
   {
    "n": 2,
@@ -144,8 +145,8 @@
    "x": 770,
    "y": 84,
    "w": 700,
-   "red": "Key hi hata do?",
-   "green": "Worker mara to Kafka dobara deta: OTP do baar (card 3 wapas)"
+   "red": "Id hi hata do?",
+   "green": "Worker mara to Kafka khabar dobara deta: OTP do baar (card 3 ki dikkat wapas)"
   },
   {
    "n": 3,
@@ -153,9 +154,8 @@
    "x": 30,
    "y": 470,
    "w": 470,
-   "red": "Bhej diya, jawab se pehle worker mara",
-   "green": "Do baar ja sakta. Maana hua risk:",
-   "green2": "OTP do baar aana, na aane se behtar",
+   "red": "Bhej diya, company ka jawab aane se pehle worker mara",
+   "green": "OTP do baar ja sakta. Ye maana hua risk hai: do baar aana, na aane se behtar",
    "mark": [
     310,
     370
@@ -177,9 +177,8 @@
    "x": 520,
    "y": 470,
    "w": 470,
-   "red": "SENDING laga ke worker hi mar gaya",
-   "green": "Hatane wala koi nahi, par 60 sec me",
-   "green2": "key khud mit-ti, agla worker bhejta",
+   "red": "SENDING likh ke worker hi mar gaya",
+   "green": "Hatane wala koi nahi, par 60 sec me SENDING khud mit jaata, agla worker bhejta",
    "mark": [
     505,
     370
@@ -209,9 +208,8 @@
    "x": 1010,
    "y": 470,
    "w": 460,
-   "red": "Call fail hui, worker zinda",
-   "green": "Worker khud key hata deta,",
-   "green2": "agli koshish chal jaaye",
+   "red": "Call fail hui, worker zinda hai",
+   "green": "Worker khud SENDING hata deta, agli koshish chal jaati",
    "mark": [
     980,
     320
@@ -240,9 +238,16 @@
    "x": 30,
    "y": 600,
    "w": 1440,
-   "red": "Umar kitni? Call (~2-3 sec) se lambi, 60 sec. Pehle khatam ho gayi to do worker bhej denge.",
-   "green": "Worker-B ko SENDING mili? Thoda ruko, phir dekho. Chhodna sirf SENT pe"
+   "red": "Umar kitni? Call (~2-3 sec) se lambi, 60 sec. Pehle mit gayi to do worker bhej denge.",
+   "green": "Worker-B ko SENDING mila? Thoda ruko, phir dekho. Chhodna sirf SENT pe"
   }
  ],
- "kyun": "SENDING matlab adhoora, chhoti umar se khud mit jaata, to khabar khoti nahi. Kabhi do baar chali jaaye to chalega: OTP do baar aana, na aane se behtar"
+ "kyun": "Do haal: SENDING (bhej raha hoon, adhoora) aur SENT (ho gaya). SENDING ki umar chhoti (60 sec), worker mara to khud mit jaata aur agla worker bhejta. Doosra worker sirf SENT dekh ke chhodta",
+ "step": [
+  4,
+  11
+ ],
+ "peeche": "card 3 me KHABAR KI APNI ID (key)",
+ "ab": "Id lag gayi, par Arpan ka OTP gaya hi nahi",
+ "agla": "ab fail hua to dobara kaise bhejein? (card 5)"
 }

@@ -43,7 +43,7 @@
    "w": 390,
    "h": 110,
    "kind": "user",
-   "title": "Mera phone",
+   "title": "Arpan ka phone",
    "lines": [
     "OTP aaya (teesri koshish)"
    ]
@@ -152,7 +152,7 @@
    "y": 84,
    "w": 760,
    "red": "Twilio 2 sec ke liye hili",
-   "green": "Ruk-ruk ke dobara (1, 2, 4 sec), teesri koshish me OTP gaya",
+   "green": "Ruk-ruk ke dobara (1, 2, 4 sec), teesri koshish me Arpan ka OTP pahuncha",
    "mark": [
     730,
     200
@@ -174,8 +174,8 @@
    "x": 810,
    "y": 84,
    "w": 660,
-   "red": "Had paar, Twilio ab bhi fail",
-   "green": "Phenko nahi: DLQ + alert, theek karke wapas",
+   "red": "Had paar ho gayi, Twilio ab bhi fail",
+   "green": "Khabar phenko nahi: alag line (DLQ) + alert. Theek karke wapas asli line me",
    "mark": [
     900,
     200
@@ -197,8 +197,8 @@
    "x": 30,
    "y": 540,
    "w": 720,
-   "red": "Pehle fail pe turant dobara, 50 worker har second ek saath",
-   "green": "Twilio pe aur hathoda, wo kabhi theek hi nahi hoti",
+   "red": "Pehle fail pe turant dobara: 50 worker har second ek saath",
+   "green": "Twilio pe aur hathoda, wo kabhi theek hi nahi ho paati",
    "conn": [
     [
      415,
@@ -208,7 +208,8 @@
      415,
      365
     ]
-   ]
+   ],
+   "tha": "Twilio pe aur hathoda, wo kabhi theek hi nahi ho paati"
   },
   {
    "n": 4,
@@ -216,17 +217,24 @@
    "x": 770,
    "y": 540,
    "w": 700,
-   "red": "Retry band, ek fail = chhodo?",
-   "green": "Twilio 2 sec hili to OTP hamesha ke liye gaya"
+   "red": "Dobara bhejna band, ek fail = chhodo?",
+   "green": "Twilio 2 sec hili aur Arpan ka OTP hamesha ke liye gaya"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 635,
    "w": 1440,
-   "red": "Random kyun? Sab worker ek hi pal me wapas na aayein. 10 min rukna ho? Alag retry lines (retry-1m, retry-10m).",
-   "green": "Worker line se padh ke dekhta hai 'kab chalana hai'"
+   "red": "Random kyun? Taaki saare worker ek hi pal me wapas na aayein. 10 min rukna ho to alag retry line (retry-1m, retry-10m).",
+   "green": "Worker line se padh ke dekhta hai ki khabar ka chalne ka waqt aaya ya nahi"
   }
  ],
- "kyun": "Ruk-ruk ke maarte hain, thoda random jodne se sab worker ek hi pal me wapas nahi aate. Khabar phenkna kabhi nahi: had ke baad DLQ + alert"
+ "kyun": "Fail hua to har baar zyada ruko (1, 2, 4, 8 sec) aur thoda random jodo, taaki saare worker ek hi pal me wapas na maarein. Had ke baad bhi fail to khabar phenko nahi: alag line (DLQ) + alert",
+ "step": [
+  5,
+  11
+ ],
+ "peeche": "card 4 me SENDING / SENT (do haal)",
+ "ab": "SMS company pehle se pareshaan, hum har second dobara maar rahe, Arpan ka OTP nahi aaya",
+ "agla": "ab company band nahi, bas dheemi. Worker phanse to? (card 6)"
 }

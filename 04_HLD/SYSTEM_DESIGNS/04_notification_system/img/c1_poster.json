@@ -129,7 +129,7 @@
    "y": 84,
    "w": 640,
    "red": "Pehle order ke andar hi email bhejte the",
-   "green": "Email company band = order hi fail. Ab order turant OK",
+   "green": "Email company band = Arpan ka order hi fail",
    "conn": [
     [
      385,
@@ -140,7 +140,7 @@
      200
     ]
    ],
-   "tha": "Email company band = order hi fail"
+   "tha": "Email company band = Arpan ka order hi fail"
   },
   {
    "n": 2,
@@ -148,8 +148,8 @@
    "x": 700,
    "y": 84,
    "w": 770,
-   "red": "Order Svc me hi retry karte rehte?",
-   "green": "Request atki rehti, aur Order Svc gira to retry bhi gaya"
+   "red": "Order Svc ke andar hi email retry karte rehte?",
+   "green": "Arpan ki request atki rehti, aur Order Svc gira to retry bhi gaya"
   },
   {
    "n": 3,
@@ -157,8 +157,8 @@
    "x": 30,
    "y": 420,
    "w": 520,
-   "red": "Kafka tak pahunchne se pehle service giri",
-   "green": "Khabar outbox row me padi, relay baad me bhejta",
+   "red": "Kafka tak pahunchne se pehle Order Svc gira",
+   "green": "Khabar outbox row me padi thi (DB me), relay baad me bhej deta",
    "mark": [
     530,
     270
@@ -181,7 +181,7 @@
    "y": 420,
    "w": 370,
    "red": "Kafka ki ek machine giri",
-   "green": "Log ki 3 copy, khabar nahi khoti",
+   "green": "Khabar ki 3 copy hain, nahi khoti",
    "mark": [
     602,
     330
@@ -204,8 +204,7 @@
    "y": 420,
    "w": 510,
    "red": "Email company ghanton band",
-   "green": "Khabar Kafka me padi, wapas aate hi wahin se",
-   "green2": "Order kabhi email ki wajah se fail nahi",
+   "green": "Khabar Kafka me padi rehti, wapas aate hi wahin se. Arpan ka order kabhi email ki wajah se fail nahi",
    "mark": [
     1458,
     330
@@ -226,9 +225,16 @@
    "x": 30,
    "y": 535,
    "w": 1440,
-   "red": "Traffic 10 guna? Khabar pehle Kafka ki line me, worker apni speed se. Sale 12 baje: 11:50 tak worker badha do.",
-   "green": "Notification Svc dheemi? Machine badhao (consumer group), lines aapas me bat jaati"
+   "red": "Traffic 10 guna? Khabar Kafka ki line me, worker apni speed se. Sale 12 baje ho to 11:50 tak worker badha do.",
+   "green": "Notification Svc dheemi? Machine badhao (consumer group), line aapas me bat jaati"
   }
  ],
- "kyun": "Order kabhi khabar ka intezaar nahi karta. Khabar disk ke log (Kafka) me padi rehti hai, padhne wala yaad rakhta hai kahan tak padha. Company band ho to bhi khabar padi hai, wapas aate hi wahin se"
+ "kyun": "Order kabhi email ka intezaar nahi karta. Order aur \"order hua\" ki khabar ek saath DB me (outbox), phir Kafka. Email company band ho to khabar Kafka me padi rehti, wapas aate hi wahin se",
+ "step": [
+  1,
+  11
+ ],
+ "peeche": "shuru: order ke andar hi email / SMS",
+ "ab": "Arpan ne order kiya, email company band thi, Arpan ka order hi fail",
+ "agla": "ab push, email, SMS sab ek hi line me. Ek dheema to? (card 2)"
 }

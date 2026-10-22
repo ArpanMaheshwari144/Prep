@@ -139,8 +139,8 @@
    "x": 30,
    "y": 84,
    "w": 700,
-   "red": "Key wala Redis hi gira",
-   "green": "DB me (khabar_id, raasta) ek hi baar lagta, wahi rokta",
+   "red": "Id wala Redis hi gira",
+   "green": "DB me (khabar_id, raasta) ek hi baar likh sakte, wahi doosra email rokta",
    "mark": [
     670,
     190
@@ -162,7 +162,7 @@
    "x": 750,
    "y": 84,
    "w": 720,
-   "red": "Redis ki key 24 ghante me mit gayi",
+   "red": "Redis me id 24 ghante baad mit gayi",
    "green": "DB ki row nahi bhoolti, wo phir bhi rokti",
    "mark": [
     890,
@@ -185,8 +185,8 @@
    "x": 30,
    "y": 520,
    "w": 720,
-   "red": "Pehle Worker-A ne bheja, 'padh liya' bolne se pehle mara",
-   "green": "Khabar dobara aayi, Worker-B ne phir bheja: do email",
+   "red": "Pehle Worker-A ne email bheja aur Kafka ko \"padh liya\" bolne se pehle mara",
+   "green": "Khabar dobara aayi, Worker-B ne phir bheja: Arpan ko do email",
    "conn": [
     [
      380,
@@ -196,7 +196,8 @@
      380,
      372
     ]
-   ]
+   ],
+   "tha": "Khabar dobara aayi, Worker-B ne phir bheja: Arpan ko do email"
   },
   {
    "n": 4,
@@ -204,17 +205,24 @@
    "x": 770,
    "y": 520,
    "w": 700,
-   "red": "Har baar naya random id?",
-   "green": "Dohraav kabhi pakda hi nahi jaata. Id khabar ki apni ho"
+   "red": "Har baar naya random id bana do?",
+   "green": "Dohraav kabhi pakda hi nahi jaata. Id khabar ki apni honi chahiye"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 610,
    "w": 1440,
-   "red": "DB me ek hi baar kaise? Cassandra me INSERT IF NOT EXISTS (khabar_id, raasta), yaani LWT.",
+   "red": "DB me ek hi baar kaise? Cassandra me \"INSERT ... IF NOT EXISTS\" (LWT): pehle se hai to nahi likhta.",
    "green": "Redis tez raasta, DB aakhri deewar"
   }
  ],
- "kyun": "Pakki id hai, to dobara aayi khabar pehchaan ke skip ho jaati hai. Redis tez raasta, DB me (khabar_id, raasta) ek hi baar lagta: aakhri deewar"
+ "kyun": "Har khabar ki pakki id hai (khabar_id + raasta). Bhejne se pehle dekho: ye id pehle aa chuki? To chhod do. Redis tez wala check hai, DB aakhri deewar",
+ "step": [
+  3,
+  11
+ ],
+ "peeche": "card 2 me har raaste ki ALAG LINE",
+ "ab": "Worker email bhej ke mara, khabar dobara aayi, Arpan ko do email",
+ "agla": "ab id lagi, par galat waqt pe lagi to? (card 4)"
 }

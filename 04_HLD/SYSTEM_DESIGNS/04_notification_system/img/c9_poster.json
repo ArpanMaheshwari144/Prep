@@ -31,7 +31,7 @@
    "w": 230,
    "h": 90,
    "kind": "user",
-   "title": "Mera phone",
+   "title": "Arpan ka phone",
    "lines": [
     "pahuncha"
    ]
@@ -126,8 +126,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Pehle company ne sirf 'le liya' bola",
-   "green": "Aage andhera. 'Bheja' aur 'mila' alag haal hain",
+   "red": "Pehle company ne sirf \"le liya\" bola",
+   "green": "Aage andhera: pahuncha ya nahi, pata hi nahi",
    "conn": [
     [
      475,
@@ -138,7 +138,7 @@
      230
     ]
    ],
-   "tha": "Aage andhera"
+   "tha": "Aage andhera: pahuncha ya nahi, pata hi nahi"
   },
   {
    "n": 2,
@@ -146,8 +146,8 @@
    "x": 700,
    "y": 84,
    "w": 770,
-   "red": "Baar-baar khud poochte raho?",
-   "green": "Laakhon message x har kuch second = had + kharcha"
+   "red": "Baar-baar khud company se poochte raho?",
+   "green": "Laakhon message × har kuch second = had paar + kharcha"
   },
   {
    "n": 3,
@@ -156,7 +156,7 @@
    "y": 520,
    "w": 700,
    "red": "Webhook aaya hi nahi",
-   "green": "Ghanton se atke ko ek baar poochho (SID se). SES me sirf event",
+   "green": "Ghanton se atke message ko ek baar khud poochho (SID se). SES me sirf event hote",
    "mark": [
     650,
     368
@@ -178,8 +178,8 @@
    "x": 750,
    "y": 520,
    "w": 720,
-   "red": "Kisi ne nakli webhook bheja 'pahuncha'",
-   "green": "Hastakshar jaancho (Twilio HMAC, SES/SNS certificate), nakli phenko",
+   "red": "Kisi ne nakli webhook bheja \"pahuncha\"",
+   "green": "Hastakshar jaancho (Twilio HMAC, SES / SNS certificate), nakli phenko",
    "mark": [
     835,
     460
@@ -196,5 +196,12 @@
    ]
   }
  ],
- "kyun": "'Bheja' aur 'mila' alag haal hain. 'Mila' tab likho jab company khud bataye (signed webhook), andaze se nahi"
+ "kyun": "\"Bheja\" aur \"mila\" alag haal hain. Company ka message number (SID) save karo. \"Mila\" tabhi likho jab company khud bataye (webhook, uske hastakshar ke saath), andaze se nahi",
+ "step": [
+  9,
+  11
+ ],
+ "peeche": "card 8 me SAANJHA TOKEN BUCKET (Redis)",
+ "ab": "Company ne \"bhej diya\" bola, par Arpan ke phone tak pahuncha ya nahi, pata nahi",
+ "agla": "ab ek ke liye nahi, 1 crore logon ke liye bhejna hai (card 10)"
 }

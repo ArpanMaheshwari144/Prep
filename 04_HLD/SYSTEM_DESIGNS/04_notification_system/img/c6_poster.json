@@ -56,7 +56,7 @@
    "w": 310,
    "h": 110,
    "kind": "user",
-   "title": "Mera phone",
+   "title": "Arpan ka phone",
    "lines": [
     "OTP aaya"
    ]
@@ -128,8 +128,8 @@
    "x": 30,
    "y": 84,
    "w": 560,
-   "red": "Pehle har call 30 sec tak intezaar",
-   "green": "Saare SMS worker Twilio pe phanse, OTP bhi ruka",
+   "red": "Pehle har call 30 sec tak jawab ka intezaar karti",
+   "green": "Saare SMS worker Twilio pe phanse, Arpan ka OTP bhi ruka",
    "conn": [
     [
      155,
@@ -139,7 +139,8 @@
      155,
      240
     ]
-   ]
+   ],
+   "tha": "Saare SMS worker Twilio pe phanse, Arpan ka OTP bhi ruka"
   },
   {
    "n": 2,
@@ -148,7 +149,7 @@
    "y": 84,
    "w": 860,
    "red": "SNS bhi band ho gaya",
-   "green": "Khabar line me rukti, phenko nahi. Backoff se koshish + OTP ka alert",
+   "green": "Khabar line me rukti, phenko nahi. Ruk-ruk ke koshish + OTP ka alert",
    "mark": [
     1000,
     190
@@ -171,7 +172,7 @@
    "y": 520,
    "w": 560,
    "red": "Worker badha do?",
-   "green": "Naye worker bhi 30 sec me phanse, Twilio pe aur bojh"
+   "green": "Naye worker bhi 30 sec me phans jaate, aur Twilio pe aur bojh"
   },
   {
    "n": 4,
@@ -179,8 +180,8 @@
    "x": 610,
    "y": 520,
    "w": 860,
-   "red": "Twilio dheemi (dheema = band maano)",
-   "green": "Breaker khula, OTP SNS se. Test call theek aayi to Twilio wapas",
+   "red": "Twilio dheemi ho gayi",
+   "green": "Breaker khula, Arpan ka OTP SNS se gaya. Thodi der baad ek test call, theek aayi to Twilio wapas",
    "mark": [
     1000,
     460
@@ -201,9 +202,16 @@
    "x": 30,
    "y": 615,
    "w": 1440,
-   "red": "Breaker kahan? Har process ka apna (Resilience4j), ya Redis me saanjha. Har company ka apna, Twilio khula to push / email chalte.",
+   "red": "Breaker kahan rehta? Har process ka apna (Resilience4j), ya Redis me sabka ek. Har company ka alag, Twilio ka khula to push / email chalte.",
    "green": "Push bhi doosri company se? Nahi: Android = FCM, iPhone = APNs, phone ka OS tay karta"
   }
  ],
- "kyun": "Dheema matlab band maano. Har company ka apna circuit breaker, to uske band hone se baaki raaste chalte rehte. Khabar line me rukti hai, phenki nahi jaati"
+ "kyun": "Dheema = band maano. 2-3 sec me jawab nahi to chhodo (timeout). Baar-baar fail to breaker khulta: Twilio ko call band, OTP doosri company (SNS) se. Khabar line me rukti, phenki nahi jaati",
+ "step": [
+  6,
+  11
+ ],
+ "peeche": "card 5 me RUK-RUK KE DOBARA + DLQ",
+ "ab": "SMS company band nahi, dheemi: saare worker 30 sec me phanse, Arpan ka OTP ruka",
+ "agla": "ab sale aayi. Bheed me Arpan ka OTP kahan? (card 7)"
 }

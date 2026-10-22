@@ -57,7 +57,7 @@
    "w": 390,
    "h": 110,
    "kind": "user",
-   "title": "Mera phone",
+   "title": "Arpan ka phone",
    "lines": [
     "OTP: turant",
     "offer: subah"
@@ -130,7 +130,7 @@
    "y": 84,
    "w": 560,
    "red": "Pehle pasand dekhi hi nahi",
-   "green": "Raat ko ghanti baji, user gussa",
+   "green": "Raat ko ghanti baji, Arpan gussa",
    "conn": [
     [
      420,
@@ -140,7 +140,8 @@
      420,
      230
     ]
-   ]
+   ],
+   "tha": "Raat ko ghanti baji, Arpan gussa"
   },
   {
    "n": 2,
@@ -149,7 +150,7 @@
    "y": 84,
    "w": 860,
    "red": "Pasand sirf Campaign Svc me check?",
-   "green": "Order / OTP wali khabar bina check nikal jaati. Check worker me"
+   "green": "Order / OTP wali khabar bina check nikal jaati. Check worker me karo"
   },
   {
    "n": 3,
@@ -157,8 +158,8 @@
    "x": 610,
    "y": 510,
    "w": 860,
-   "red": "Pasand badli, cache purana",
-   "green": "Badalte hi cache delete + chhoti umar. Bhejne se pehle sahi chahiye",
+   "red": "Arpan ne pasand badli, cache me purani",
+   "green": "Badalte hi cache hata do + chhoti umar. Bhejne se pehle sahi pasand chahiye",
    "mark": [
     930,
     470
@@ -180,8 +181,15 @@
    "y": 605,
    "w": 1440,
    "red": "Shaanti ke waqt OTP / login alert aaya? Bhejo. Zaroori alert pasand se upar.",
-   "green": "Offer pasand / shaanti ke neeche"
+   "green": "Offer pasand aur shaanti dono ke neeche"
   }
  ],
- "kyun": "Bhejne se pehle pasand dekhte hain. Offer pasand / shaanti ke neeche, zaroori alert (OTP) upar"
+ "kyun": "Bhejne se pehle Arpan ki pasand aur shaanti ka waqt dekho. Offer raat ko roko, subah bhejo. OTP / login alert pasand se upar, hamesha turant",
+ "step": [
+  11,
+  11
+ ],
+ "peeche": "card 10 me 1000 ke TUKDE + campaign row",
+ "ab": "Raat 2 baje Arpan ko offer ka SMS, jabki usne band kiya tha",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

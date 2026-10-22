@@ -97,7 +97,7 @@
    "w": 220,
    "h": 100,
    "kind": "user",
-   "title": "Mera phone",
+   "title": "Arpan ka phone",
    "lines": [
     "push + email aaye"
    ]
@@ -240,7 +240,8 @@
      405,
      240
     ]
-   ]
+   ],
+   "tha": "Worker SMS pe atka to push aur email bhi atak gaye"
   },
   {
    "n": 2,
@@ -248,8 +249,8 @@
    "x": 700,
    "y": 84,
    "w": 770,
-   "red": "Ek line rakh ke SMS ke worker badha do?",
-   "green": "Bekaar: Twilio khud dheemi hai, line ek ho to push / email phir peeche"
+   "red": "Ek hi line rakh ke SMS ke worker badha do?",
+   "green": "Bekaar: Twilio (SMS company) khud dheemi hai. Line ek hai to push / email phir bhi peeche"
   },
   {
    "n": 3,
@@ -281,7 +282,7 @@
    "y": 525,
    "w": 700,
    "red": "Twilio dheemi ho gayi",
-   "green": "Sirf SMS ruka, push aur email phone pe aa gaye",
+   "green": "Sirf SMS ruka, Arpan ke phone pe push aur email aa gaye",
    "mark": [
     1045,
     490
@@ -302,9 +303,16 @@
    "x": 30,
    "y": 620,
    "w": 1440,
-   "red": "Push kis phone pe jaaye? Device token pe, jo app install pe user ke saath save hota hai.",
+   "red": "Push kis phone pe jaaye? Device token pe, jo app install karte waqt Arpan ke naam se save hota.",
    "green": "Token bekaar nikla (app hata di) to use hata do"
   }
  ],
- "kyun": "Har raasta apni line me, apni speed se chalta hai. SMS ruka, par push + email aa gaye"
+ "kyun": "Push, email, SMS teeno ki alag line aur alag worker. SMS company dheemi ho to sirf SMS rukta, Arpan ka push aur email aa jaate",
+ "step": [
+  2,
+  11
+ ],
+ "peeche": "card 1 me KAFKA (order turant, khabar peeche)",
+ "ab": "SMS company dheemi hui, Arpan ka push aur email bhi atke",
+ "agla": "ab worker beech me mar gaya to? Arpan ko do email? (card 3)"
 }

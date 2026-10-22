@@ -107,7 +107,7 @@
    "x": 30,
    "y": 84,
    "w": 700,
-   "red": "Har worker apni speed 100 / sec?",
+   "red": "Har worker apni speed 100 / sec rakhe?",
    "green": "100 worker = 100 guna, SES phir 429 degi",
    "conn": [
     [
@@ -126,8 +126,8 @@
    "x": 750,
    "y": 84,
    "w": 720,
-   "red": "Bucket wala Redis hi gira",
-   "green": "Har worker apni surakshit had (100 / 4 = 25). Dheema, band nahi",
+   "red": "Token wala Redis hi gira",
+   "green": "Har worker apni chhoti surakshit had pe chalta (100 ÷ 4 = 25). Dheema, par band nahi",
    "mark": [
     930,
     190
@@ -150,7 +150,7 @@
    "y": 425,
    "w": 720,
    "red": "1 lakh email, had kam",
-   "green": "Had badhwao + kai account. Tab tak line dheere khaali hogi",
+   "green": "Company se had badhwao, ya kai account. Tab tak line dheere khaali hogi",
    "mark": [
     1300,
     360
@@ -171,9 +171,16 @@
    "x": 30,
    "y": 520,
    "w": 1440,
-   "red": "Token nahi mila? Line me intezaar, ye fail nahi (retry ki ginti nahi badhti). Worker badhe? Speed wahi, kul 100 / sec.",
-   "green": "Had kitni? Company ki: SES shuru me ~14 / sec (sandbox 1 / sec), Twilio short code ~100 / sec"
+   "red": "Token nahi mila? Line me intezaar karo, ye fail nahi (retry ki ginti nahi badhti). Worker badhaye? Speed wahi, kul 100 / sec.",
+   "green": "Had kitni? Company batati: SES shuru me ~14 / sec (sandbox 1 / sec), Twilio short code ~100 / sec"
   }
  ],
- "kyun": "Had company ki hai (100 / sec, baaki 429), worker ki nahi. Sab worker ek hi bucket se token lete hain. Token nahi mila to ruko, khabar phenko nahi"
+ "kyun": "Had company ki hai (100 / sec, upar 429), worker ki nahi. Saare worker ek hi jagah (Redis) se token lete. Token nahi mila to ruko, khabar phenko nahi",
+ "step": [
+  8,
+  11
+ ],
+ "peeche": "card 7 me OTP ki ALAG TEZ LINE",
+ "ab": "Sale me laakhon email ek saath, SES (email company) ne 429 diya",
+ "agla": "ab company ne \"bhej diya\" bola. Par Arpan ke phone tak pahuncha? (card 9)"
 }
