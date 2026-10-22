@@ -1,0 +1,37 @@
+{
+  "title": "Card 10: video S3 me (seedha upload), dekhne wale ko paas wale CDN se",
+  "h": 520,
+  "boxes": [
+    {"x": 30, "y": 220, "w": 220, "h": 100, "kind": "user", "title": "Main", "lines": ["match ki video daali"]},
+    {"x": 380, "y": 210, "w": 280, "h": 120, "kind": "db", "title": "S3", "lines": ["bhaari maal yahan", "seedha upload (presigned)"]},
+    {"x": 780, "y": 210, "w": 280, "h": 120, "kind": "cache", "title": "CDN (paas wala)", "lines": ["video ki copy", "Delhi, London, Sydney"]},
+    {"x": 1180, "y": 220, "w": 290, "h": 100, "kind": "user", "title": "Dekhne wale", "lines": ["paas se dekha"]}
+  ],
+  "arrows": [
+    {"pts": [[252, 270], [376, 270]], "c": "orange", "label": "seedha", "lx": 314, "ly": 260, "a": "middle"},
+    {"pts": [[662, 270], [776, 270]], "c": "green"},
+    {"pts": [[1062, 270], [1176, 270]], "c": "green"}
+  ],
+  "callouts": [
+    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 640,
+     "red": "Pehle har dekhne wala hamare US server se khinchta",
+     "green": "Buffering aur bandwidth ka bill. Ab S3 + CDN: paas bhi, sasta bhi",
+     "conn": [[520, 146], [520, 210]]},
+    {"n": 2, "type": "pehle", "x": 700, "y": 84, "w": 770,
+     "red": "API bhi CDN se chala dete?",
+     "green": "CDN sirf media ke raaste pe hai, API nahi",
+     "conn": [[920, 146], [920, 210]]},
+    {"n": 3, "type": "x", "x": 30, "y": 420, "w": 470,
+     "red": "CDN ke paas video nahi thi",
+     "green": "S3 se laake kuch der apne paas rakh leta",
+     "mark": [792, 330], "conn": [[792, 342], [792, 385], [260, 385], [260, 420]]},
+    {"n": 4, "type": "x", "x": 520, "y": 420, "w": 450,
+     "red": "Photo hata di, CDN pe ab bhi",
+     "green": "CDN ko 'hatao' bolo, ya link me version",
+     "mark": [1048, 330], "conn": [[1048, 342], [1048, 398], [745, 398], [745, 420]]},
+    {"n": 5, "type": "x", "x": 990, "y": 420, "w": 480,
+     "red": "Private photo ka link kisi aur ko mila",
+     "green": "Link pe hastakshar + expiry (signed URL)",
+     "mark": [1300, 320], "conn": [[1300, 332], [1300, 420]]}
+  ]
+}

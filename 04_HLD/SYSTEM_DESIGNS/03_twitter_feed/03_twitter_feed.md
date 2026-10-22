@@ -277,15 +277,8 @@ NAHI    ek hi service -> DHEEMA: padhne ki bheed me likhna bhi dheema hota hai, 
 
 **Rail 7 DOOR KE LOG (media)** · Cue: S3 + CDN
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c10_poster.png?v=1" width="1000" alt="card 10: kya toota, kaise bacha">
 
-<img src="img/c10_1.png?v=5" width="900">
-
-<img src="img/c10_2.png?v=5" width="900">
-
-<img src="img/c10_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     video S3 me rakho (seedha upload, presigned link), dekhne wale ko paas wale CDN se do
@@ -298,12 +291,6 @@ NAHI    API bhi CDN se -> GALAT: CDN sirf media ke raaste pe hai
 
 > [!IMPORTANT]
 > **Yaad rakh:** Video S3 me (seedha upload, presigned), dekhne wale ko paas ke CDN se. Private = signed URL.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - CDN ke paas video nahi, koi dekhne aaya? → **CDN S3 se laake rakh leta**: kuch der apne paas rakh leta hai
-> - photo hata di, CDN pe abhi dikh rahi? → **CDN ko "hatao" bolo**: (invalidation), ya link me version daalo, nayi file
-> - private photo hai, link kisi aur ko mil gaya? → **link pe hastakshar + expiry**: (signed URL). Sirf jisko mila, thodi der ke liye
 
 
 ---
