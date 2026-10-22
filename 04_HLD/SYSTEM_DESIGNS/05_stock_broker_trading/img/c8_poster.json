@@ -167,5 +167,6 @@
    "red": "1000 baar badla? Har ~100 ms aakhri price, purana bekaar.",
    "green": "10 lakh ek server pe? Ek server ~lakh, aur server + LB"
   }
- ]
+ ],
+ "kyun": "Price = sirf abhi ka. Badla tab server khud bheje, purana store nahi. Users kuch nahi poochte"
 }

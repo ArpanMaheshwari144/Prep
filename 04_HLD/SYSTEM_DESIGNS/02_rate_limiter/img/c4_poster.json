@@ -20,7 +20,7 @@
    "w": 260,
    "h": 90,
    "kind": "cache",
-   "title": "Redis main",
+   "title": "Redis primary",
    "lines": [
     "ginti yahin likhi jaati"
    ]
@@ -33,7 +33,7 @@
    "kind": "cache",
    "title": "Redis copy",
    "lines": [
-    "main gira to yahi main"
+    "primary gira to yahi primary"
    ]
   },
   {
@@ -97,7 +97,7 @@
    ],
    "c": "green",
    "dash": true,
-   "label": "main gira to",
+   "label": "primary gira to",
    "lx": 232,
    "ly": 350
   },
@@ -149,8 +149,8 @@
    "x": 720,
    "y": 84,
    "w": 750,
-   "red": "Redis main gira",
-   "green": "Copy main ban jaati (Redis Cluster). Beech ki kuch sec ki ginti gayi, chalta hai",
+   "red": "Redis primary gira",
+   "green": "Copy primary ban jaati (Redis Cluster). Beech ki kuch sec ki ginti gayi, chalta hai",
    "mark": [
     672,
     160
@@ -213,8 +213,9 @@
    "x": 30,
    "y": 560,
    "w": 1440,
-   "red": "CPU full tha, Redis gira nahi. Copy laga doon? Nahi: INCR likhna hai, aur likhna sirf main pe hota.",
+   "red": "CPU full tha, Redis gira nahi. Copy laga doon? Nahi: INCR likhna hai, aur likhna sirf primary pe hota.",
    "green": "Isliye SHARD: har user ki key alag Redis pe"
   }
- ]
+ ],
+ "kyun": "Redis gire to kya karna hai, ye pehle se tay hai, endpoint ke hisaab se"
 }

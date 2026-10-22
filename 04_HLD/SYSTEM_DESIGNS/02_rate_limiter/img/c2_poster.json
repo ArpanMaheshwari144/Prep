@@ -114,7 +114,8 @@
      455,
      400
     ]
-   ]
+   ],
+   "tha": ""
   },
   {
    "n": 2,
@@ -212,5 +213,6 @@
    "red": "Sab ek hi line me, to dheema nahi hoga? Nahi, RAM me hai, ek machine ~lakh command / sec (andaza).",
    "green": "Aur zyada chahiye to shard: har user ki key alag Redis pe"
   }
- ]
+ ],
+ "kyun": "Redis ek hi line me chalta hai, beech me koi doosri request ghus hi nahi sakti"
 }

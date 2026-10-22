@@ -3,7 +3,7 @@
 > Koi ghatna hui (order, OTP, offer), to sahi user ko, sahi raaste (push / email / SMS) se, sahi waqt pe khabar.
 > Dil teen cheezein: ek ghatna, kai raaste, kai log (fanout). Khabar kabhi khoye nahi, do baar jaaye nahi. OTP turant.
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
+> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -60,21 +60,7 @@ PEHLE   sabse simple tha: Order Svc khud seedha email company (Email API) ko cal
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: KAFKA (async), order turant jawab
 
-<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
-
-
-```
-HAL     order aur khabar ek hi DB txn me likhte hain (outbox), relay use Kafka me daalta hai.
-        Order ko turant OK milta hai, Notification Svc peeche Kafka se padh ke email bhejti hai
-KYUN    order kabhi khabar ka intezaar nahi karta. Khabar disk ke log (Kafka) me padi rehti hai,
-        padhne wala yaad rakhta hai kahan tak padha. Company band ho to bhi khabar padi hai,
-        wapas aate hi wahin se
-        bheed jhatke me aati hai, isliye beech me ek line (Kafka) chahiye
-NAHI    Order Svc me hi retry -> ATAKTA: request utni der atki rehti hai, aur Order Svc gira to retry bhi gaya
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Order + khabar ek DB txn (outbox), relay Kafka me. Order turant OK, email peeche, company band ho to bhi khabar padi.
+<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -85,19 +71,7 @@ NAHI    Order Svc me hi retry -> ATAKTA: request utni der atki rehti hai, aur Or
 
 **Rail 5 KUCH DHEEMA** · Cue: har raaste ki ALAG LINE + worker
 
-<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
-
-
-```
-HAL     har raaste ki alag line aur alag worker hota hai. SMS dheema ho to sirf SMS rukta hai.
-        Ghatna aayi to teen chhote message bante hain (ghatna id + raasta), har raasta apni line me jaata hai
-KYUN    pehle push, email, SMS ek hi line me the, worker SMS pe atka to sab atak gaye.
-        Ab har raasta apni line me, apni speed se chalta hai. SMS ruka, par push + email aa gaye
-NAHI    SMS ke worker badha do -> BEKAAR: company khud dheemi hai, line phir bhi ek, push / email peeche
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Har raaste (push / email / SMS) ki alag line + alag worker. Ek dheema to sirf wahi ruka.
+<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -108,20 +82,7 @@ NAHI    SMS ke worker badha do -> BEKAAR: company khud dheemi hai, line phir bhi
 
 **Rail 4 DO LOG EK SAATH** · Cue: KEY (SET NX, khabar ki apni id)
 
-<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
-
-
-```
-HAL     bhejne se pehle khabar ki apni key (khabar_id + raasta) Redis me dekhte hain.
-        Key mili to skip, ek hi email jaata hai
-KYUN    pehle Worker-A ne email bheja aur "padh liya" bolne se pehle mar gaya, khabar dobara aayi, Worker-B ne
-        phir bheja. Ab pakki id hai, to dobara aayi khabar pehchaan ke skip ho jaati hai
-        Redis tez raasta hai, aur DB me (khabar_id, raasta) ek hi baar lag sakta hai, wo aakhri deewar hai
-NAHI    har baar naya random id -> BEKAAR: dohraav kabhi pakda hi nahi jaata
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Bhejne se pehle key (khabar_id + raasta) Redis me dekho, mili to skip. Aakhri deewar DB ka UNIQUE.
+<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -132,21 +93,7 @@ NAHI    har baar naya random id -> BEKAAR: dohraav kabhi pakda hi nahi jaata
 
 **Rail 3 MACHINE GIRI** · Cue: SENDING / SENT (do haal)
 
-<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
-
-
-```
-HAL     bhejte waqt key SENDING rakhte hain (chhoti umar, ~60 sec), company OK bole tab SENT.
-        Chhodna sirf SENT pe
-KYUN    pehle koshish se pehle hi SENT laga di, call fail hui, Worker-B ne SENT dekh ke chhod diya,
-        OTP kho gaya.
-        SENDING matlab adhoora, chhoti umar se khud mit jaata hai, to khabar khoti nahi
-        kabhi do baar chali jaaye to chalega: OTP do baar aana, na aane se behtar hai
-NAHI    key hi hata do -> DOHRAAV: worker mara to Kafka dobara deta hai, OTP / email do baar, card 3 wapas
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Bhejte waqt SENDING (umar ~60 sec), company OK bole tab SENT. Chhodna sirf SENT pe.
+<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -157,21 +104,7 @@ NAHI    key hi hata do -> DOHRAAV: worker mara to Kafka dobara deta hai, OTP / e
 
 **Rail 5 KUCH DHEEMA (retry)** · Cue: BACKOFF + JITTER, had ke baad DLQ
 
-<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
-
-
-```
-HAL     har baar zyada der rukte hain (1, 2, 4, 8 sec) aur thoda random jodte hain (backoff + jitter).
-        Had paar ho gayi to khabar alag line (DLQ) me jaati hai + alert
-KYUN    pehle fail pe turant dobara, 50 worker har second ek saath, company pe aur hathoda,
-        wo kabhi theek nahi hoti. Ab ruk-ruk ke maarte hain,
-        aur random thoda sa jodne se sab worker ek hi pal me wapas nahi aate
-        khabar phenkna kabhi nahi. Had ke baad DLQ + alert, theek karke wapas
-NAHI    retry band, ek fail = chhodo -> KHOYA: company 2 sec hili to OTP hamesha ke liye gaya
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Har baar zyada ruko (1, 2, 4, 8 sec) + thoda random (jitter). Had paar to DLQ + alert, phenko nahi.
+<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -182,21 +115,7 @@ NAHI    retry band, ek fail = chhodo -> KHOYA: company 2 sec hili to OTP hamesha
 
 **Rail 5 KUCH DHEEMA (company)** · Cue: TIMEOUT + CIRCUIT BREAKER
 
-<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
-
-
-```
-HAL     2-3 sec me chhod do (timeout). Baar-baar fail hua to circuit breaker khul jaata hai:
-        Twilio ko call band, OTP SNS se jaata hai. Thodi der baad Twilio ko ek test call, theek hai to wapas
-KYUN    pehle har call 30 sec tak intezaar karti thi, saare SMS worker Twilio pe phanse, OTP bhi ruka.
-        Dheema matlab band maano
-        har company ka apna circuit breaker hai, to uske band hone se baaki raaste chalte rehte hain.
-        Khabar line me rukti hai, phenki nahi jaati
-NAHI    worker badha do -> PHANSE: naye worker bhi 30 sec me phans jaate, dheemi company pe aur bojh
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** 2-3 sec me chhodo (timeout). Baar-baar fail to breaker khula, doosri company (SNS) se.
+<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -207,20 +126,7 @@ NAHI    worker badha do -> PHANSE: naye worker bhi 30 sec me phans jaate, dheemi
 
 **Rail 2 BHEED AAYI (OTP)** · Cue: OTP ki ALAG TEZ LINE
 
-<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
-
-
-```
-HAL     OTP ki apni tez line aur apne worker (priority).
-        High line me OTP, beech wali me order update, low line me offer
-KYUN    sab barabar zaroori nahi: OTP turant chahiye, offer ruk sakta hai.
-        Ek hi line me sab daala to OTP 10 min late, time khatam, login fail, yahi asli fail hai
-        zaroori (OTP) kabhi kisi ke peeche nahi: apni line, apne worker, company me apna account
-NAHI    ek line me "zaroori" tag laga do -> BEKAAR: Kafka me "ye pehle bhejo" jaisa kuch hota hi nahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** OTP ki apni tez line + apne worker. High = OTP, beech = order, low = offer. Ulta kabhi nahi.
+<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -231,18 +137,7 @@ NAHI    ek line me "zaroori" tag laga do -> BEKAAR: Kafka me "ye pehle bhejo" ja
 
 **Rail 2 BHEED AAYI (company ki had)** · Cue: SAANJHA TOKEN BUCKET (Redis)
 
-<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
-
-
-```
-HAL     sab worker ka ek saanjha token bucket (Redis me), har second 100 token. Pehle token lo, mila to bhejo
-KYUN    had company ki hai (100 / sec, baaki 429), worker ki nahi. Sab worker ek hi bucket se token lete hain.
-        Token nahi mila to ruko, khabar phenko nahi
-NAHI    har worker apni speed 100 / sec -> 429: 100 worker matlab 100 guna, company phir 429 degi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Sab worker ka ek saanjha token bucket (Redis). Token nahi mila to ruko, fail nahi.
+<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -253,19 +148,7 @@ NAHI    har worker apni speed 100 / sec -> 429: 100 worker matlab 100 guna, comp
 
 **Rail 6 DATA BADA / 8 HAMLA** · Cue: WEBHOOK + company ka message id
 
-<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
-
-
-```
-HAL     worker company ka message no. (SID-9) save karta hai. Company baad me khud batati hai (webhook):
-        "SID-9 pahuncha" aaya, to Webhook Svc ne Tracking DB me SID-9 DELIVERED likha
-KYUN    company ne sirf "le liya" bola, aage andhera. "Bheja" aur "mila" alag haal hain.
-        "Mila" tab likho jab company (asli, signed webhook) bataye
-NAHI    baar-baar khud poochte raho -> MEHENGA: laakhon message x har kuch second = had + kharcha
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Company ka message no. (SID) save. "Mila" sirf jab company signed webhook se bataye.
+<img src="img/c9_poster.png?v=2" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -276,20 +159,7 @@ NAHI    baar-baar khud poochte raho -> MEHENGA: laakhon message x har kuch secon
 
 **Rail 2 BHEED AAYI (campaign)** · Cue: 1000 ke TUKDE + campaign row
 
-<img src="img/c10_poster.png?v=1" width="1000" alt="card 10: kya toota, kaise bacha">
-
-
-```
-HAL     1000-1000 ke tukde banao, low priority line me. Har tukde ke baad campaign row me likho kahan tak
-        pahunche (aakhri_id = 3000)
-KYUN    pehle admin ne "sabko bhejo" dabaya, ek request me 1 crore ek-ek, ghanton atki, OTP bhi peeche.
-        Ab bada kaam chhote tukdon me: gira to wahin se, galat chala to beech me roko. Ek user ko ek hi baar
-NAHI    1 crore ko ek bada "sabko bhejo" message -> ATKA: ek worker pe atka, gira to shuru se
-        1 crore alag-alag message -> BOJH: 1000 ka tukda = saath bhi, aur dobara karna pade to chhota
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** 1000-1000 ke tukde, low line, campaign row me aakhri_id. Gira to wahin se, galat to CANCELLED.
+<img src="img/c10_poster.png?v=2" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---
@@ -300,20 +170,7 @@ NAHI    1 crore ko ek bada "sabko bhejo" message -> ATKA: ek worker pe atka, gir
 
 **Rail 1 KAAM CHALA (pasand)** · Cue: PASAND + SHAANTI + SAANCHA (cache)
 
-<img src="img/c11_poster.png?v=1" width="1000" alt="card 11: kya toota, kaise bacha">
-
-
-```
-HAL     bhejne se pehle user ki pasand + shaanti ka waqt dekho (preference + quiet hours): offer SMS band,
-        raat 10 se subah 8 ghanti nahi. Shaanti me offer aaya to roko,
-        subah 8 baje bhejo (scheduled_at + job), phenko nahi
-KYUN    pehle pasand dekhi hi nahi, ghanti baji, user gussa. Ab bhejne se pehle pasand dekhte hain.
-        Offer pasand / shaanti ke neeche, zaroori alert (OTP) upar
-NAHI    pasand sirf Campaign Svc me check -> ADHOORA: order / OTP wali khabar bina check nikal jaati
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Bhejne se pehle pasand + shaanti ka waqt. Offer roko, subah bhejo. OTP pasand se upar.
+<img src="img/c11_poster.png?v=2" width="1000" alt="card 11: kya toota, kaise bacha">
 
 
 ---

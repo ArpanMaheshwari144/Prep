@@ -144,5 +144,6 @@
    "red": "Naya code? Thode-thode server khaali (draining).",
    "green": "Aage ka message? Wahi server, connection khula"
   }
- ]
+ ],
+ "kyun": "Zyadatar connection chup rehte hain. Chup connection thodi memory leta hai, thread tabhi jab data aaya, isliye ~200 server kaafi hain"
 }

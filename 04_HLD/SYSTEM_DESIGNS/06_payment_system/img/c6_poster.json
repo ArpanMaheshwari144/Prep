@@ -8,7 +8,7 @@
    "w": 200,
    "h": 110,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "Kirana ko 500",
     "(doosra bank)"
@@ -241,5 +241,6 @@
    "red": "Sabse pehla sawaal: dono account ek system / bank me ya alag? Ek DB = ek transaction (ACID), alag bank = SAGA.",
    "green": "Poora design isi se badalta"
   }
- ]
+ ],
+ "kyun": "Alag system me har step likha hua hai. Aage nahi badh sake to ulta karo. User ko PROCESSING dikhe, phir SUCCESS ya paisa wapas. Hisaab saaf"
 }

@@ -1,33 +1,187 @@
 {
-  "title": "Card 11: bhejne se pehle pasand + shaanti ka waqt. Offer roko, subah bhejo. OTP pasand se upar",
-  "h": 690,
-  "boxes": [
-    {"x": 30, "y": 250, "w": 190, "h": 110, "kind": "cache", "title": "Khabar", "lines": ["offer / OTP"]},
-    {"x": 290, "y": 230, "w": 260, "h": 150, "kind": "server", "title": "Worker", "lines": ["bhejne se pehle", "pasand + shaanti", "dekho"]},
-    {"x": 640, "y": 175, "w": 330, "h": 125, "kind": "plain", "title": "Subah ki line", "lines": ["shaanti me offer: roko", "subah 8 baje bhejo", "(scheduled_at + job)"]},
-    {"x": 640, "y": 360, "w": 330, "h": 110, "kind": "cache", "title": "Redis (cache)", "lines": ["pasand + saancha", "raat 10 - subah 8 chup"]},
-    {"x": 1080, "y": 260, "w": 390, "h": 110, "kind": "user", "title": "Mera phone", "lines": ["OTP: turant", "offer: subah"]}
-  ],
-  "arrows": [
-    {"pts": [[222, 305], [286, 305]], "c": "orange"},
-    {"pts": [[552, 265], [636, 240]], "c": "orange"},
-    {"pts": [[552, 345], [636, 410]], "c": "purple", "label": "pasand?", "lx": 575, "ly": 400, "a": "middle"},
-    {"pts": [[552, 320], [1076, 320]], "c": "green"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 560,
-     "red": "Pehle pasand dekhi hi nahi",
-     "green": "Raat ko ghanti baji, user gussa",
-     "conn": [[420, 146], [420, 230]]},
-    {"n": 2, "type": "pehle", "x": 610, "y": 84, "w": 860,
-     "red": "Pasand sirf Campaign Svc me check?",
-     "green": "Order / OTP wali khabar bina check nikal jaati. Check worker me"},
-    {"n": 3, "type": "x", "x": 610, "y": 510, "w": 860,
-     "red": "Pasand badli, cache purana",
-     "green": "Badalte hi cache delete + chhoti umar. Bhejne se pehle sahi chahiye",
-     "mark": [930, 470], "conn": [[930, 482], [930, 510]]},
-    {"type": "grey", "x": 30, "y": 605, "w": 1440,
-     "red": "Shaanti ke waqt OTP / login alert aaya? Bhejo. Zaroori alert pasand se upar.",
-     "green": "Offer pasand / shaanti ke neeche"}
-  ]
+ "title": "Card 11: bhejne se pehle pasand + shaanti ka waqt. Offer roko, subah bhejo. OTP pasand se upar",
+ "h": 690,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 190,
+   "h": 110,
+   "kind": "cache",
+   "title": "Khabar",
+   "lines": [
+    "offer / OTP"
+   ]
+  },
+  {
+   "x": 290,
+   "y": 230,
+   "w": 260,
+   "h": 150,
+   "kind": "server",
+   "title": "Worker",
+   "lines": [
+    "bhejne se pehle",
+    "pasand + shaanti",
+    "dekho"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 175,
+   "w": 330,
+   "h": 125,
+   "kind": "plain",
+   "title": "Subah ki line",
+   "lines": [
+    "shaanti me offer: roko",
+    "subah 8 baje bhejo",
+    "(scheduled_at + job)"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 360,
+   "w": 330,
+   "h": 110,
+   "kind": "cache",
+   "title": "Redis (cache)",
+   "lines": [
+    "pasand + saancha",
+    "raat 10 - subah 8 chup"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 260,
+   "w": 390,
+   "h": 110,
+   "kind": "user",
+   "title": "Mera phone",
+   "lines": [
+    "OTP: turant",
+    "offer: subah"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     222,
+     305
+    ],
+    [
+     286,
+     305
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     552,
+     265
+    ],
+    [
+     636,
+     240
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     552,
+     345
+    ],
+    [
+     636,
+     410
+    ]
+   ],
+   "c": "purple",
+   "label": "pasand?",
+   "lx": 575,
+   "ly": 400,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     552,
+     320
+    ],
+    [
+     1076,
+     320
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "Pehle pasand dekhi hi nahi",
+   "green": "Raat ko ghanti baji, user gussa",
+   "conn": [
+    [
+     420,
+     146
+    ],
+    [
+     420,
+     230
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 610,
+   "y": 84,
+   "w": 860,
+   "red": "Pasand sirf Campaign Svc me check?",
+   "green": "Order / OTP wali khabar bina check nikal jaati. Check worker me"
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 610,
+   "y": 510,
+   "w": 860,
+   "red": "Pasand badli, cache purana",
+   "green": "Badalte hi cache delete + chhoti umar. Bhejne se pehle sahi chahiye",
+   "mark": [
+    930,
+    470
+   ],
+   "conn": [
+    [
+     930,
+     482
+    ],
+    [
+     930,
+     510
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 605,
+   "w": 1440,
+   "red": "Shaanti ke waqt OTP / login alert aaya? Bhejo. Zaroori alert pasand se upar.",
+   "green": "Offer pasand / shaanti ke neeche"
+  }
+ ],
+ "kyun": "Bhejne se pehle pasand dekhte hain. Offer pasand / shaanti ke neeche, zaroori alert (OTP) upar"
 }

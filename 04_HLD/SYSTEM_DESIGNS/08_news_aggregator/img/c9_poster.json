@@ -262,5 +262,6 @@
    "red": "Shard badhaya? Thoda hi data hilta (consistent hashing).",
    "green": "Baantne ki key: article_id ka hash, bojh barabar"
   }
- ]
+ ],
+ "kyun": "Baantne ki key wo jo bojh barabar baante, yaani article_id ka hash. Ek shard garam ya mara to sirf uska hissa dheema"
 }

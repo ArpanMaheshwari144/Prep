@@ -190,5 +190,6 @@
    "red": "100 ms baad bhi Redis khaali? 2-3 retry, phir khud replica se.",
    "green": "User ko bas dheema lagta, faisla DB me"
   }
- ]
+ ],
+ "kyun": "Khaali cache pe sirf ek hi DB jaata hai, baaki rukte hain. Jo gir sakta hai uski copy pehle se taiyaar. User ko bas thoda dheema lagta hai, galat seat kabhi nahi, kyunki faisla DB me hai"
 }

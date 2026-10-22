@@ -219,5 +219,6 @@
    "red": "'Duplicate nahi aayega' mat bolna. Sahi: khabar khoti nahi, duplicate aa sakta, consumer pehchaan ke sambhalta.",
    "green": "Exactly-once? Sirf Kafka se Kafka (transactions). Email / DB ke liye consumer khud pehchaane"
   }
- ]
+ ],
+ "kyun": "Pehle kaam phir commit, to khabar kabhi nahi khoti, bas dobara aa sakti hai. Dobara aaye to eventId se pehchano. Pehchaan consumer karta hai, Kafka nahi"
 }

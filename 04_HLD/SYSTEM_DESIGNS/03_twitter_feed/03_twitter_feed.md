@@ -3,7 +3,7 @@
 > App kholo to home timeline: jinhe tum follow karte ho unke tweet, sabse naye upar. Tweet daalna (POST) bhi. Misaal: Arpan ne app khola, Virat "Match great", Sachin "Watching IPL", Dhoni "Practice".
 > Dil do cheezein: feed padhna sasta ho (log 50 baar padhte, 1 baar likhte, isliye feed pehle se bana ke rakho), aur celebrity ka tweet (10 crore follower).
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
+> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -58,22 +58,7 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: PUSH: tweet hote hi INBOX me id
 
-<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
-
-
-```
-HAL     tweet hote hi follower ke inbox me uski id chali jaati hai (fanout).
-        App kholo to bas apna inbox padho, ek hi read
-        Ravi ne t9 tweet kiya, wo turant mere inbox me aa gaya. Inbox = tweet_id ki list, pehle se bani hui
-KYUN    padhna 50 guna hai, to mehnat likhte waqt karo, har baar khulne pe jodna mat.
-        2 sec purani feed chalegi, isliye pehle se banana aur cache chal jaata hai.
-        Jo inbox me nahi hai (poora tweet, unfollow), wo padhte waqt jodo ya chhaanto
-NAHI    DB pe index  -> WAHI: thoda tez hota, par har khulne pe 200 ka jod wahi ka wahi
-        read replica -> WAHI: thoda tez hota, par har khulne pe 200 ka jod wahi ka wahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Tweet hote hi follower ke inbox me sirf id (fanout). Feed = apna inbox, ek read, likhte waqt mehnat.
+<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -84,22 +69,7 @@ NAHI    DB pe index  -> WAHI: thoda tez hota, par har khulne pe 200 ka jod wahi 
 
 **Rail 5 KUCH DHEEMA** · Cue: KAFKA, fanout peeche
 
-<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
-
-
-```
-HAL     tweet DB me save hota hai aur khabar Kafka me jaati hai, mujhe turant "ho gaya" dikhta hai.
-        Workers peeche Kafka se padh ke 5,000 inbox bharte hain
-NAAM    Kafka = tweet service se fanout tak khabar le jaata hai
-KYUN    pehle usi request me 5,000 inbox ek-ek karke bharte the: 5+ sec, timeout, "fail" dikha,
-        par tweet ban chuka tha. Ab "ho gaya" tab, jab tweet DB me save. Inbox bharna Kafka se peeche.
-        Dobara chale to bhi tweet ek hi baar dikhta hai (sorted set). Apna tweet apni feed me turant
-NAHI    App me peeche ek thread -> KHOYA: App crash hua to thread ka kaam gaya.
-           Kafka disk pe hai, wahan se dobara padh sakte
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Tweet DB me save hote hi "ho gaya". Khabar Kafka me, workers peeche inbox bharte. Sorted set me dohra nahi.
+<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -110,21 +80,7 @@ NAHI    App me peeche ek thread -> KHOYA: App crash hua to thread ka kaam gaya.
 
 **Rail 5 KUCH DHEEMA (khaas)** · Cue: HYBRID: aam push, celeb pull
 
-<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
-
-
-```
-HAL     aam user ka tweet push hota hai (inbox me), celeb ka pull. Bieber ka tweet celeb cache me rehta hai,
-        feed khule tab dono milate hain
-KYUN    likhai ka bojh follower ki ginti se aata hai. Celeb ka ek tweet 10 crore jagah likhna, yahi dikkat.
-        Push kiya to Kafka line me 10 crore kaam, mera tweet peeche, ghanton der.
-        Feed hamesha dono ka mel hai: mera inbox + follow kiye celebs ke naye tweet, time se milao.
-        User ko farak nahi dikhta, aur line khaali rehti
-NAHI    sabke liye pull -> MEHNGA: har feed khulne pe phir 200 ka jod
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Aam user push, celeb pull (celeb cache). Feed = mera inbox + celebs ke naye tweet, time se milao.
+<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -135,20 +91,7 @@ NAHI    sabke liye pull -> MEHNGA: har feed khulne pe phir 200 ka jod
 
 **Rail 2 BHEED AAYI** · Cue: HOT-TWEET CACHE (RAM)
 
-<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
-
-
-```
-HAL     garam tweet RAM me rakho (hot-tweet cache). Miss hua to sirf ek request DB jaati hai (lock),
-        baaki sab usi ka jawab lete hain
-KYUN    pehle har feed Virat ka tweet DB se la rahi thi. Ab garam cheez RAM me hai, DB tak sirf ek request,
-        DB aaram se rehta hai
-NAHI    DB ki copies badha do -> DHEEMA: wo bhi disk se padhti hain (ms).
-           Ek garam hisse ki copies crore read nahi jhel paati
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Garam tweet RAM me (hot-tweet cache). Miss pe sirf ek request DB (lock), baaki uska jawab.
+<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -159,21 +102,7 @@ NAHI    DB ki copies badha do -> DHEEMA: wo bhi disk se padhti hain (ms).
 
 **Rail 6 DATA BADA (RAM)** · Cue: AAKHRI 800 + soye hue hatao
 
-<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
-
-
-```
-HAL     naya tweet upar judta hai, 800 se neeche wale kaat do (trim). Soye hue user ka inbox 30 din me
-        mit jaata hai (TTL)
-KYUN    pehle har inbox me saare id the, soye users ke bhi. Ab RAM me sirf id, aur sirf zinda logon ki.
-        Jo 1 mahine se nahi aaya, uska inbox hi nahi. Jo RAM me nahi, wo DB se bana lo:
-        ek baar dheema hoga, par galat nahi
-NAHI    Redis me machine jodte jao -> MEHNGA: soye 40 crore ka inbox bhi RAM khaata.
-           Kharcha badhta hai, dikkat wahi rehti
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Inbox me sirf aakhri 800 id (trim), soye user ka inbox 30 din me mitao (TTL). Wapas aaye to pull se banao.
+<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -184,42 +113,18 @@ NAHI    Redis me machine jodte jao -> MEHNGA: soye 40 crore ka inbox bhi RAM kha
 
 **Rail 6 DATA BADA (tweet)** · Cue: CASSANDRA, user_id se baanto
 
-<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
-
-
-```
-HAL     Cassandra lagao, user_id se baanto. Mere saare tweet ek machine pe, naya sabse upar. Ek hi read
-NAAM    Tweet store (Cassandra) = saare tweet yahan rehte hain
-KYUN    ek DB na itna rakh sakta, na itna likh sakta. Jis cheez se padhte ho (user_id), usi se baanto.
-        Likhna sirf aakhir me jodna hai, isliye tez. 3 copy, 2 me likho 2 se padho, naya mil hi jaata hai
-NAHI    MySQL -> DHEEMA: har tweet pe har index disk pe dhoondh ke badalna. Join / transaction chahiye hi nahi
-        tweet_id se baanto -> BIKHRA: bojh barabar, par profile ke liye saari machine poochni padti
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Cassandra, user_id se baanto: mere saare tweet ek machine pe, ek read. 3 copy, 2 likho 2 padho.
+<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
 
 *ab data ek desh me, user doosre me*
 
-## 7. Main Bangalore me, data US me, har feed 300 ms
+## 7. Arpan Bangalore me, data US me, har feed 300 ms
 
 **Rail 7 DOOR KE LOG** · Cue: REGION-WISE + Route 53
 
-<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
-
-
-```
-HAL     har region me data ki copy rakho (multi-region). Route 53 paas wale region (India) ka pata deta hai
-KYUN    data user ke paas wale region me hai, to feed India region se aati. Copy US se aati rehti hai.
-        Doosre region ki copy thodi peeche, to region gira to feed thodi purani, par chalti rehti
-NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana, har feed atak ke aati
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Har region me data ki copy, Route 53 paas wala region deta. Region gira to doosra, feed thodi purani.
+<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -230,18 +135,7 @@ NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana,
 
 **Rail 3 MACHINE GIRI** · Cue: STATELESS App x N + ALB
 
-<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
-
-
-```
-HAL     kai App hain, aage ALB baant-ta hai. App kuch yaad nahi rakhta (stateless x N).
-        App 2 giri to wo bahar, baaki chalu rehte hain
-KYUN    machine kuch yaad nahi rakhti, sab Redis / DB me. Koi bhi gire, jude, badle, user ko farak nahi
-NAHI    ek hi App -> GIRA: wo giri to poora region band
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Kai App (stateless), aage ALB. Giri App bahar, naya code ek-ek karke (rolling).
+<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -252,21 +146,7 @@ NAHI    ek hi App -> GIRA: wo giri to poora region band
 
 **Rail 2 BHEED AAYI (padhna)** · Cue: ALAG SERVICE (likhna/padhna)
 
-<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
-
-
-```
-HAL     likhne aur padhne ki alag service. ALB path se baant-ta hai. Jahan bheed hai, wahi badhao
-PATH    POST /tweet -> Tweet Svc (x 2), GET /feed -> Timeline Svc (x 20)
-NAAM    Tweet service = tweet likhti. Timeline service = feed padhti. Follow store = kaun kise follow karta
-KYUN    pehle padhna aur likhna ek service me tha. Crore log scroll kar rahe the,
-        mera tweet usi bheed me dheema ho gaya.
-        Ab jiski bheed badhi sirf wahi badhao, ek ka dheemapan doosre ko nahi rokta
-NAHI    ek hi service -> DHEEMA: padhne ki bheed me likhna bhi dheema hota hai, wahi hua
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Likhne aur padhne ki alag service, ALB path se baante. Jiski bheed, wahi badhao.
+<img src="img/c9_poster.png?v=2" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -277,20 +157,7 @@ NAHI    ek hi service -> DHEEMA: padhne ki bheed me likhna bhi dheema hota hai, 
 
 **Rail 7 DOOR KE LOG (media)** · Cue: S3 + CDN
 
-<img src="img/c10_poster.png?v=1" width="1000" alt="card 10: kya toota, kaise bacha">
-
-
-```
-HAL     video S3 me rakho (seedha upload, presigned link), dekhne wale ko paas wale CDN se do
-KYUN    pehle 50 MB ki video Delhi, London, Sydney, har dekhne wala hamare US server se khinchta:
-        buffering aur bandwidth ka bill. Ab bhaari maal S3 me, user tak CDN se: paas bhi, sasta bhi.
-        Upload me App beech me nahi aata. Tweet me sirf CDN ka link, link badla = nayi file.
-        Link pe hastakshar = sirf jisko mila wahi dekhe
-NAHI    API bhi CDN se -> GALAT: CDN sirf media ke raaste pe hai
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Video S3 me (seedha upload, presigned), dekhne wale ko paas ke CDN se. Private = signed URL.
+<img src="img/c10_poster.png?v=2" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---

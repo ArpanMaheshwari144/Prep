@@ -8,7 +8,7 @@
    "w": 200,
    "h": 110,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "poora folder",
     "1000 file"
@@ -231,5 +231,6 @@
    "red": "Lakh chhoti files? ZIP: client ek file bana ke bheje, server khole.",
    "green": "Pehle poochho: sirf file aayegi ya folder bhi"
   }
- ]
+ ],
+ "kyun": "Folder ek bada id hai, har file ka chhota id. Folder ka haal bachchon ka jod hai. Sab DONE to DONE, koi FAILED to PARTIAL. Ek file fail hui to sirf wahi dobara"
 }

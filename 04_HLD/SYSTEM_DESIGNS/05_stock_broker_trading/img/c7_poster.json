@@ -191,5 +191,6 @@
    "red": "Retry dobara chal gaya? Har kadam trade_id se, ho chuka = no-op. Match se pehle atka? SAGA: block hatao.",
    "green": "Keemat? Beech me PENDING, par 2PC jaisa lamba lock nahi. Orchestration: saaf dikhe kaunsa step atka"
   }
- ]
+ ],
+ "kyun": "Match ke baad sauda PAKKA hai. System hi aage badhaata (retry), user ko kuch dobara nahi karna. Beech ka haal user ko PENDING dikhta"
 }

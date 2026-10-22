@@ -243,5 +243,6 @@
    "red": "Job ko PSP ne jawab de diya? Hua = SUCCESS. Pakka fail = FAILED, kuch wapas nahi (paisa hila nahi).",
    "green": "User ko PROCESSING dikhe, andha dobara kabhi nahi"
   }
- ]
+ ],
+ "kyun": "\"pata nahi\" pehle likh diya, to server gire tab bhi tracking number bacha rehta hai. PSP bataye (webhook) ya hum poochhe (job). User ko PROCESSING dikhe, andha dobara kabhi nahi"
 }

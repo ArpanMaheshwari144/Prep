@@ -157,5 +157,6 @@
    "red": "Kitne partition? Jitne worker ek saath (5,000 / 500 = 10). Shuru me thoda zyada: baad me badle to key ka tukda hilta.",
    "green": "12 worker, 10 tukde? 2 khaali baithe"
   }
- ]
+ ],
+ "kyun": "Partition = kitne worker ek saath padh sakte. Ek partition ek worker. Bheed badhe to aur partition"
 }

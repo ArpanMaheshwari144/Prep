@@ -160,5 +160,6 @@
    "red": "Tukda kitna bada? Min 5 MB (aakhri chhod ke), max 10,000 tukde. Badi file to bada tukda.",
    "green": "Rasid S3 pe hai, app pe nahi: user ko shuru se kuch nahi"
   }
- ]
+ ],
+ "kyun": "Jis tukde ki rasid S3 pe hai, wo pakka pahunch gaya. Rasid S3 pe hai, app pe nahi. Net gaya ya app band hua, S3 se poochho aur sirf bache tukde dobara bhejo. User ko shuru se kuch nahi"
 }

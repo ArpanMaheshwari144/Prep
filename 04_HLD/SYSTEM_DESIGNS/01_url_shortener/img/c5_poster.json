@@ -189,8 +189,9 @@
    "x": 30,
    "y": 700,
    "w": 1440,
-   "red": "Cassandra me main copy kaunsi? Koi nahi, teeno barabar, koi bhi likh / padh sakti.",
+   "red": "Cassandra me primary copy kaunsi? Koi nahi, teeno barabar, koi bhi likh / padh sakti.",
    "green": "Copy badhane se likhna tez? Nahi, har copy pe likhna padta. Likhne ka bojh = shard"
   }
- ]
+ ],
+ "kyun": "Click hamesha code ke saath aata hai, to har click seedha ek machine pe jaata"
 }

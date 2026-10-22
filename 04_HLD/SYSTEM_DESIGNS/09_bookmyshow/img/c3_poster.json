@@ -204,5 +204,6 @@
    "red": "Double tap? Wahi bookingId, ek hi baar kata.",
    "green": "bookingId hi idempotency key: ek booking = ek payment"
   }
- ]
+ ],
+ "kyun": "BookingId hi idempotency key hai. Ek booking = ek payment. User ko kuch dobara nahi karna, beech ka haal PENDING dikhta hai. Paisa kata par seat nahi mili to refund"
 }

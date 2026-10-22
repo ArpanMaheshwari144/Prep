@@ -8,7 +8,7 @@
    "w": 200,
    "h": 110,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "seat chun raha"
    ]
@@ -188,5 +188,6 @@
    "red": "Ek fail = bahar? Nahi, ek fail sirf jhatka.",
    "green": "LB har kuch sec poochta"
   }
- ]
+ ],
+ "kyun": "App kuch yaad nahi rakhta, LB kisi bhi zinda machine pe bhej deta hai. Machine giri to agli machine wahi hold dekhti hai, kyunki hold DB me tha, memory me nahi. Seat wahin rehti hai"
 }

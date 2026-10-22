@@ -8,7 +8,7 @@
    "w": 230,
    "h": 100,
    "kind": "user",
-   "title": "Main (Bangalore)",
+   "title": "Arpan (Bangalore)",
    "lines": [
     "feed khola"
    ]
@@ -192,8 +192,9 @@
    "x": 30,
    "y": 520,
    "w": 1440,
-   "red": "US ke celeb ka tweet? Garam tweet India cache me bhi. Main US gaya? Request India bhejo ya paas ki copy se.",
+   "red": "US ke celeb ka tweet? Garam tweet India cache me bhi. Arpan US gaya? Request India bhejo ya paas ki copy se.",
    "green": "Fayda: tez + GDPR (Europe ka data Europe me) + ek region gira to baaki chalein"
   }
- ]
+ ],
+ "kyun": "Data user ke paas wale region me hai, to feed India region se aati. Copy US se aati rehti hai. Doosre region ki copy thodi peeche, to region gira to feed thodi purani, par chalti rehti"
 }

@@ -8,7 +8,7 @@
    "w": 200,
    "h": 110,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "Ravi ko 500"
    ]
@@ -134,5 +134,6 @@
    "red": "-500 ke baad, COMMIT se pehle koi padhe? COMMIT se pehle wala hi dikhta.",
    "green": "Ravi doosre bank me? Do bank = do DB: PENDING + SAGA + raat ko milaan"
   }
- ]
+ ],
+ "kyun": "Ek DB me ek transaction kabhi aadha nahi rehta. Crash pe DB apne log se khud ulta karta hai. Padhne wale ko aadha kaam kabhi nahi dikhta"
 }

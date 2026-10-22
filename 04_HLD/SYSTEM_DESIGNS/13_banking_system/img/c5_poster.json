@@ -191,5 +191,6 @@
    "red": "Outbox bharti jaaye? sent=true roz saaf. Relay hi na likhna pade? CDC (Debezium).",
    "green": "SMS ulte kram me? Kafka key = account_id: ek account ek partition"
   }
- ]
+ ],
+ "kyun": "Transfer SMS pe nahi rukta. Kafka tak khabar COMMIT ke baad hi, to khabar tabhi jab paisa pakka. DB gira to bhi khabar outbox me hai, kuch nahi khota"
 }

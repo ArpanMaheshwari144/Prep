@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 8: kai machine (stateless), aage LB</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="727" viewBox="0 0 1500 727" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="801" viewBox="0 0 1500 801" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="727" fill="#0b1220"/>
+</defs><rect width="1500" height="801" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 8: kai machine (stateless), aage LB. User kaun = JWT se, body se kabhi nahi, har request pe owner check</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="160" width="200" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
@@ -41,18 +41,21 @@
 <text x="250" y="220" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
 <circle cx="850" cy="380" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="850" y="385" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="454" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="479" r="12" fill="#ff5a6a"/>
-<text x="52" y="484" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="484" font-size="15" font-weight="700" fill="#ff5a6a">JWT chori ho gaya</text>
-<text x="52" y="511" font-size="13.5" fill="#7fe0b0">Chhoti umar (~15 min) + refresh. Bade</text>
-<text x="52" y="531" font-size="13.5" fill="#7fe0b0">payment pe PIN / OTP</text>
-<rect x="392" y="454" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="479" r="12" fill="#ff5a6a"/>
-<text x="414" y="484" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="484" font-size="15" font-weight="700" fill="#ff5a6a">Payment Svc 3 mar gayi</text>
-<text x="414" y="511" font-size="13.5" fill="#7fe0b0">LB GET /health poochta, jawab nahi = bahar</text>
-<rect x="30" y="609" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="635" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="659" font-size="13.5" fill="#e6dcb8">Ek hi machine: CPU bhara, timeout, log dobara tap karte: aur bojh   ·   User id request body se lo: Nahi: user kaun = JWT se. &#x27;from&#x27; ka maalik JWT wala nahi = 403</text>
+<rect x="30" y="454" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="480" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="480" font-size="13.5" fill="#cfeee0">Koi bhi machine koi bhi request le sakti hai, koi bhi badlo ya badhao</text>
+<rect x="30" y="528" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="553" r="12" fill="#ff5a6a"/>
+<text x="52" y="558" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="558" font-size="15" font-weight="700" fill="#ff5a6a">JWT chori ho gaya</text>
+<text x="52" y="585" font-size="13.5" fill="#7fe0b0">Chhoti umar (~15 min) + refresh. Bade</text>
+<text x="52" y="605" font-size="13.5" fill="#7fe0b0">payment pe PIN / OTP</text>
+<rect x="392" y="528" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="553" r="12" fill="#ff5a6a"/>
+<text x="414" y="558" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="558" font-size="15" font-weight="700" fill="#ff5a6a">Payment Svc 3 mar gayi</text>
+<text x="414" y="585" font-size="13.5" fill="#7fe0b0">LB GET /health poochta, jawab nahi = bahar</text>
+<rect x="30" y="683" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="709" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="733" font-size="13.5" fill="#e6dcb8">Ek hi machine: CPU bhara, timeout, log dobara tap karte: aur bojh   ·   User id request body se lo: Nahi: user kaun = JWT se. &#x27;from&#x27; ka maalik JWT wala nahi = 403</text>
 </svg>

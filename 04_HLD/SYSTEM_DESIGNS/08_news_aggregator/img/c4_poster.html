@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 4: URL Bloom filter se, wahi khabar</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="823" viewBox="0 0 1500 823" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="897" viewBox="0 0 1500 897" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="823" fill="#0b1220"/>
+</defs><rect width="1500" height="897" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 4: URL Bloom filter se, wahi khabar title hash se (saaf karke). Shabd badla to SimHash ~90%</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="110" width="240" height="120" rx="12" fill="#152033" stroke="#9fb0c8" stroke-width="2.5"/>
@@ -34,17 +34,20 @@
 <path d="M602 230 L1106 230" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
 <circle cx="720" cy="360" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="720" y="365" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<rect x="30" y="434" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="459" r="12" fill="#ff5a6a"/>
-<text x="52" y="464" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="464" font-size="15" font-weight="700" fill="#ff5a6a">&#x27;wins&#x27; aur &#x27;won&#x27;: hash alag nikla</text>
-<text x="52" y="491" font-size="13.5" fill="#7fe0b0">SimHash ~90% same: duplicate maano</text>
-<rect x="30" y="589" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="615" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="639" font-size="13.5" fill="#e6dcb8">Har naya URL = nayi khabar: 5 source to feed me 5 baar   ·   Redis SET me URL? Ya har worker apna Bloom: SET: crore URL = bahut RAM. Apna Bloom: doosre ko pata nahi</text>
-<rect x="30" y="677" width="1440" height="116" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="707" font-size="13.5" fill="#c9d6e8">5 me se kaunsi dikhe? Pehli ya bade source ki.</text>
-<text x="48" y="729" font-size="13.5" fill="#c9d6e8">Bloom se URL hatana? Roz naya filter (ya counting Bloom)</text>
-<text x="48" y="751" font-size="13.5" fill="#c9d6e8">Bloom: koi bit 0 = pakka naya, sab 1 = shayad dekha. Galat &#x27;haan&#x27; kabhi ek nayi chhudaye, news me chalta.</text>
-<text x="48" y="773" font-size="13.5" fill="#c9d6e8">Isliye ek saanjha Bloom, har worker ka apna nahi</text>
+<rect x="30" y="434" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="460" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="460" font-size="13.5" fill="#cfeee0">Same hash matlab same khabar, URL chahe alag ho (5 source, alag URL, thoda alag title). Ek khabar feed me ek hi baar</text>
+<rect x="30" y="508" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="533" r="12" fill="#ff5a6a"/>
+<text x="52" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="538" font-size="15" font-weight="700" fill="#ff5a6a">&#x27;wins&#x27; aur &#x27;won&#x27;: hash alag nikla</text>
+<text x="52" y="565" font-size="13.5" fill="#7fe0b0">SimHash ~90% same: duplicate maano</text>
+<rect x="30" y="663" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="689" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="713" font-size="13.5" fill="#e6dcb8">Har naya URL = nayi khabar: 5 source to feed me 5 baar   ·   Redis SET me URL? Ya har worker apna Bloom: SET: crore URL = bahut RAM. Apna Bloom: doosre ko pata nahi</text>
+<rect x="30" y="751" width="1440" height="116" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="781" font-size="13.5" fill="#c9d6e8">5 me se kaunsi dikhe? Pehli ya bade source ki.</text>
+<text x="48" y="803" font-size="13.5" fill="#c9d6e8">Bloom se URL hatana? Roz naya filter (ya counting Bloom)</text>
+<text x="48" y="825" font-size="13.5" fill="#c9d6e8">Bloom: koi bit 0 = pakka naya, sab 1 = shayad dekha. Galat &#x27;haan&#x27; kabhi ek nayi chhudaye, news me chalta.</text>
+<text x="48" y="847" font-size="13.5" fill="#c9d6e8">Isliye ek saanjha Bloom, har worker ka apna nahi</text>
 </svg>

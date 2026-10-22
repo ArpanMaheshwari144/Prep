@@ -8,7 +8,7 @@
    "w": 210,
    "h": 100,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "link banaya",
     "turant khola"
@@ -247,5 +247,6 @@
    "red": "2 copy se padhna dheema? Thoda, isliye pehla ilaaj Redis. 5 copy ho to W + R > N: 3 + 3 > 5.",
    "green": "Data bachane ko Kafka laga dein? Nahi, DB ka apna log ye khud karta"
   }
- ]
+ ],
+ "kyun": "2 + 2 = 4, copy sirf 3. Padhne wali jodi me likhne wali ek copy aani hi hai. Banane ke baad 404 nahi"
 }

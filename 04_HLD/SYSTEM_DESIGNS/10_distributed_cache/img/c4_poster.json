@@ -195,5 +195,6 @@
    "red": "Ravi ko apna hi purana naam dikha? Copy peeche hai.",
    "green": "Likhne wale ko kuch der primary se padhao"
   }
- ]
+ ],
+ "kyun": "Likho DB me, cache se hatao. Kuch bhi pahunche, key khaali hai, to agla DB se naya laayega. Umar suraksha jaal hai: delete chhoot gaya to bhi utni der hi purana dikhega"
 }

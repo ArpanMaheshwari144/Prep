@@ -1,41 +1,227 @@
 {
-  "title": "Card 2: kai App, aage LB. App kuch yaad nahi rakhti, to koi bhi App koi bhi click le le",
-  "h": 680,
-  "boxes": [
-    {"x": 30, "y": 250, "w": 200, "h": 90, "kind": "user", "title": "Click ki bheed", "lines": ["har second hazaaron"]},
-    {"x": 320, "y": 220, "w": 260, "h": 150, "kind": "lb", "title": "LB",
-     "lines": ["baari-baari bhejta", "har App se /health", "chup App list se bahar"]},
-    {"x": 700, "y": 160, "w": 240, "h": 80, "kind": "server", "title": "App 1", "lines": ["kuch yaad nahi rakhti"]},
-    {"x": 700, "y": 265, "w": 240, "h": 80, "kind": "server", "title": "App 2", "lines": ["kuch yaad nahi rakhti"]},
-    {"x": 700, "y": 370, "w": 240, "h": 80, "kind": "server", "title": "App 3", "lines": ["kuch yaad nahi rakhti"]},
-    {"x": 1080, "y": 255, "w": 300, "h": 100, "kind": "db", "title": "Redis / DB", "lines": ["login, link sab yahan"]}
-  ],
-  "arrows": [
-    {"pts": [[232, 295], [316, 295]], "c": "blue"},
-    {"pts": [[582, 270], [696, 200]], "c": "green"},
-    {"pts": [[582, 295], [696, 305]], "c": "green"},
-    {"pts": [[582, 320], [696, 410]], "c": "green"},
-    {"pts": [[942, 305], [1076, 305]], "c": "purple"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 600,
-     "red": "Ek hi badi machine le lete?",
-     "green": "Kitni bhi badi ho, ek hi hai. Giri to poori site band",
-     "conn": [[450, 146], [450, 220]]},
-    {"n": 2, "type": "x", "x": 700, "y": 84, "w": 770,
-     "red": "App 1 giri",
-     "green": "/health ka jawab nahi aaya, LB ne list se hata di. Agla click doosri App pe",
-     "mark": [928, 162], "conn": [[928, 150], [928, 146]]},
-    {"n": 3, "type": "x", "x": 700, "y": 500, "w": 770,
-     "red": "App 3 giri nahi, bas dheemi ho gayi",
-     "green": "Least-conn: jiske kam connection khule hain, use bhejo",
-     "mark": [928, 450], "conn": [[928, 462], [928, 500]]},
-    {"n": 4, "type": "pehle", "x": 30, "y": 500, "w": 640,
-     "red": "Login App ke andar hi yaad rakhte?",
-     "green": "User usi App se bandh jaata, wo giri to logout",
-     "green2": "Isliye session bahar, Redis / DB me"},
-    {"type": "grey", "x": 30, "y": 600, "w": 1440,
-     "red": "Giri hui App theek ho gayi to? /health phir 'haan' bolta, LB use wapas list me le leta.",
-     "green": "App stateless hai, isliye wapas aate hi kaam pe lag jaati"}
-  ]
+ "title": "Card 2: kai App, aage LB. App kuch yaad nahi rakhti, to koi bhi App koi bhi click le le",
+ "h": 680,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 200,
+   "h": 90,
+   "kind": "user",
+   "title": "Click ki bheed",
+   "lines": [
+    "har second hazaaron"
+   ]
+  },
+  {
+   "x": 320,
+   "y": 220,
+   "w": 260,
+   "h": 150,
+   "kind": "lb",
+   "title": "LB",
+   "lines": [
+    "baari-baari bhejta",
+    "har App se /health",
+    "chup App list se bahar"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 160,
+   "w": 240,
+   "h": 80,
+   "kind": "server",
+   "title": "App 1",
+   "lines": [
+    "kuch yaad nahi rakhti"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 265,
+   "w": 240,
+   "h": 80,
+   "kind": "server",
+   "title": "App 2",
+   "lines": [
+    "kuch yaad nahi rakhti"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 370,
+   "w": 240,
+   "h": 80,
+   "kind": "server",
+   "title": "App 3",
+   "lines": [
+    "kuch yaad nahi rakhti"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 255,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "Redis / DB",
+   "lines": [
+    "login, link sab yahan"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     295
+    ],
+    [
+     316,
+     295
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     270
+    ],
+    [
+     696,
+     200
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     582,
+     295
+    ],
+    [
+     696,
+     305
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     582,
+     320
+    ],
+    [
+     696,
+     410
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     942,
+     305
+    ],
+    [
+     1076,
+     305
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Ek hi badi machine le lete?",
+   "green": "Kitni bhi badi ho, ek hi hai. Giri to poori site band",
+   "conn": [
+    [
+     450,
+     146
+    ],
+    [
+     450,
+     220
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 700,
+   "y": 84,
+   "w": 770,
+   "red": "App 1 giri",
+   "green": "/health ka jawab nahi aaya, LB ne list se hata di. Agla click doosri App pe",
+   "mark": [
+    928,
+    162
+   ],
+   "conn": [
+    [
+     928,
+     150
+    ],
+    [
+     928,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 700,
+   "y": 500,
+   "w": 770,
+   "red": "App 3 giri nahi, bas dheemi ho gayi",
+   "green": "Least-conn: jiske kam connection khule hain, use bhejo",
+   "mark": [
+    928,
+    450
+   ],
+   "conn": [
+    [
+     928,
+     462
+    ],
+    [
+     928,
+     500
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "pehle",
+   "x": 30,
+   "y": 500,
+   "w": 640,
+   "red": "Login App ke andar hi yaad rakhte?",
+   "green": "User usi App se bandh jaata, wo giri to logout",
+   "green2": "Isliye session bahar, Redis / DB me"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 600,
+   "w": 1440,
+   "red": "Giri hui App theek ho gayi to? /health phir 'haan' bolta, LB use wapas list me le leta.",
+   "green": "App stateless hai, isliye wapas aate hi kaam pe lag jaati"
+  }
+ ],
+ "kyun": "App giri to /health ka jawab nahi aata, LB use list se hata deta, agla click doosri App pe"
 }

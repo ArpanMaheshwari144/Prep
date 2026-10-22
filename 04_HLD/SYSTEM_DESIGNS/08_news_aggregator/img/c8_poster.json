@@ -142,5 +142,6 @@
    "red": "3 saal baad DB kitna? Utna hi: naya garam, purana S3. Bilkul nahi chahiye to DROP.",
    "green": "Purana hatana retention hai, sharding nahi"
   }
- ]
+ ],
+ "kyun": "Naya mahina garam hai (Postgres, index se tez), purane thande (S3, sasta). Purani khabar khulti hai, bas dheemi"
 }

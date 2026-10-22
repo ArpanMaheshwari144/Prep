@@ -182,5 +182,6 @@
    "red": "Outbox table badi? sent = true wali roz saaf (delete / partition drop).",
    "green": "Poora raasta: outbox + acks=all + kaam ke baad commit + eventId dedup + DLQ"
   }
- ]
+ ],
+ "kyun": "Server kuch yaad nahi rakhta, DB ka sent column yaad rakhta hai. Order hai to khabar bhi hai"
 }

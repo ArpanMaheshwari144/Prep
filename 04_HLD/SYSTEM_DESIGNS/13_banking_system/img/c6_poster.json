@@ -8,7 +8,7 @@
    "w": 200,
    "h": 120,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "balance khola"
    ]
@@ -146,5 +146,6 @@
    "red": "Column hi sach?",
    "green": "Galat hua to pata nahi: milane ko kuch tha hi nahi"
   }
- ]
+ ],
+ "kyun": "Balance sabse zyada dekha jaata hai, har baar 50,000 line jodna dheema, isliye column. Par sach ek hi jagah hai, khaate me"
 }

@@ -1,46 +1,310 @@
 {
-  "title": "Card 2: har raaste (push / email / SMS) ki alag line + alag worker. Ek dheema to sirf wahi ruka",
-  "h": 710,
-  "boxes": [
-    {"x": 30, "y": 260, "w": 190, "h": 100, "kind": "user", "title": "Ghatna", "lines": ["order ho gaya"]},
-    {"x": 280, "y": 240, "w": 250, "h": 140, "kind": "server", "title": "Notification Svc", "lines": ["3 chhote message", "(ghatna id + raasta)"]},
-    {"x": 610, "y": 190, "w": 230, "h": 80, "kind": "cache", "title": "Push line", "lines": ["apne worker"]},
-    {"x": 610, "y": 300, "w": 230, "h": 80, "kind": "cache", "title": "Email line", "lines": ["apne worker"]},
-    {"x": 610, "y": 410, "w": 230, "h": 80, "kind": "cache", "title": "SMS line", "lines": ["apne worker"]},
-    {"x": 930, "y": 190, "w": 230, "h": 80, "kind": "lb", "title": "FCM / APNs", "lines": ["push"]},
-    {"x": 930, "y": 300, "w": 230, "h": 80, "kind": "lb", "title": "SES", "lines": ["email"]},
-    {"x": 930, "y": 410, "w": 230, "h": 80, "kind": "lb", "title": "Twilio", "lines": ["aaj dheemi"]},
-    {"x": 1250, "y": 250, "w": 220, "h": 100, "kind": "user", "title": "Mera phone", "lines": ["push + email aaye"]}
-  ],
-  "arrows": [
-    {"pts": [[222, 310], [276, 310]], "c": "blue"},
-    {"pts": [[532, 290], [606, 230]], "c": "orange"},
-    {"pts": [[532, 310], [606, 340]], "c": "orange"},
-    {"pts": [[532, 330], [606, 450]], "c": "orange"},
-    {"pts": [[842, 230], [926, 230]], "c": "orange"},
-    {"pts": [[842, 340], [926, 340]], "c": "orange"},
-    {"pts": [[842, 450], [926, 450]], "c": "orange"},
-    {"pts": [[1162, 230], [1246, 280]], "c": "green"},
-    {"pts": [[1162, 340], [1246, 320]], "c": "green"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 640,
-     "red": "Pehle push, email, SMS ek hi line me the",
-     "green": "Worker SMS pe atka to push aur email bhi atak gaye",
-     "conn": [[405, 146], [405, 240]]},
-    {"n": 2, "type": "pehle", "x": 700, "y": 84, "w": 770,
-     "red": "Ek line rakh ke SMS ke worker badha do?",
-     "green": "Bekaar: Twilio khud dheemi hai, line ek ho to push / email phir peeche"},
-    {"n": 3, "type": "x", "x": 30, "y": 525, "w": 720,
-     "red": "SMS ki line lambi ho gayi",
-     "green": "Sirf SMS ke worker badhao, push / email ko mat chhuo",
-     "mark": [725, 490], "conn": [[725, 502], [725, 525]]},
-    {"n": 4, "type": "x", "x": 770, "y": 525, "w": 700,
-     "red": "Twilio dheemi ho gayi",
-     "green": "Sirf SMS ruka, push aur email phone pe aa gaye",
-     "mark": [1045, 490], "conn": [[1045, 502], [1045, 525]]},
-    {"type": "grey", "x": 30, "y": 620, "w": 1440,
-     "red": "Push kis phone pe jaaye? Device token pe, jo app install pe user ke saath save hota hai.",
-     "green": "Token bekaar nikla (app hata di) to use hata do"}
-  ]
+ "title": "Card 2: har raaste (push / email / SMS) ki alag line + alag worker. Ek dheema to sirf wahi ruka",
+ "h": 710,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 260,
+   "w": 190,
+   "h": 100,
+   "kind": "user",
+   "title": "Ghatna",
+   "lines": [
+    "order ho gaya"
+   ]
+  },
+  {
+   "x": 280,
+   "y": 240,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Notification Svc",
+   "lines": [
+    "3 chhote message",
+    "(ghatna id + raasta)"
+   ]
+  },
+  {
+   "x": 610,
+   "y": 190,
+   "w": 230,
+   "h": 80,
+   "kind": "cache",
+   "title": "Push line",
+   "lines": [
+    "apne worker"
+   ]
+  },
+  {
+   "x": 610,
+   "y": 300,
+   "w": 230,
+   "h": 80,
+   "kind": "cache",
+   "title": "Email line",
+   "lines": [
+    "apne worker"
+   ]
+  },
+  {
+   "x": 610,
+   "y": 410,
+   "w": 230,
+   "h": 80,
+   "kind": "cache",
+   "title": "SMS line",
+   "lines": [
+    "apne worker"
+   ]
+  },
+  {
+   "x": 930,
+   "y": 190,
+   "w": 230,
+   "h": 80,
+   "kind": "lb",
+   "title": "FCM / APNs",
+   "lines": [
+    "push"
+   ]
+  },
+  {
+   "x": 930,
+   "y": 300,
+   "w": 230,
+   "h": 80,
+   "kind": "lb",
+   "title": "SES",
+   "lines": [
+    "email"
+   ]
+  },
+  {
+   "x": 930,
+   "y": 410,
+   "w": 230,
+   "h": 80,
+   "kind": "lb",
+   "title": "Twilio",
+   "lines": [
+    "aaj dheemi"
+   ]
+  },
+  {
+   "x": 1250,
+   "y": 250,
+   "w": 220,
+   "h": 100,
+   "kind": "user",
+   "title": "Mera phone",
+   "lines": [
+    "push + email aaye"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     222,
+     310
+    ],
+    [
+     276,
+     310
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     532,
+     290
+    ],
+    [
+     606,
+     230
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     532,
+     310
+    ],
+    [
+     606,
+     340
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     532,
+     330
+    ],
+    [
+     606,
+     450
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     842,
+     230
+    ],
+    [
+     926,
+     230
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     842,
+     340
+    ],
+    [
+     926,
+     340
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     842,
+     450
+    ],
+    [
+     926,
+     450
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1162,
+     230
+    ],
+    [
+     1246,
+     280
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     1162,
+     340
+    ],
+    [
+     1246,
+     320
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Pehle push, email, SMS ek hi line me the",
+   "green": "Worker SMS pe atka to push aur email bhi atak gaye",
+   "conn": [
+    [
+     405,
+     146
+    ],
+    [
+     405,
+     240
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 700,
+   "y": 84,
+   "w": 770,
+   "red": "Ek line rakh ke SMS ke worker badha do?",
+   "green": "Bekaar: Twilio khud dheemi hai, line ek ho to push / email phir peeche"
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 30,
+   "y": 525,
+   "w": 720,
+   "red": "SMS ki line lambi ho gayi",
+   "green": "Sirf SMS ke worker badhao, push / email ko mat chhuo",
+   "mark": [
+    725,
+    490
+   ],
+   "conn": [
+    [
+     725,
+     502
+    ],
+    [
+     725,
+     525
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 770,
+   "y": 525,
+   "w": 700,
+   "red": "Twilio dheemi ho gayi",
+   "green": "Sirf SMS ruka, push aur email phone pe aa gaye",
+   "mark": [
+    1045,
+    490
+   ],
+   "conn": [
+    [
+     1045,
+     502
+    ],
+    [
+     1045,
+     525
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 620,
+   "w": 1440,
+   "red": "Push kis phone pe jaaye? Device token pe, jo app install pe user ke saath save hota hai.",
+   "green": "Token bekaar nikla (app hata di) to use hata do"
+  }
+ ],
+ "kyun": "Har raasta apni line me, apni speed se chalta hai. SMS ruka, par push + email aa gaye"
 }

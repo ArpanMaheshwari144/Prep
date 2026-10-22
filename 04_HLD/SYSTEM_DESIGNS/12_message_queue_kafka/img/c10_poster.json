@@ -182,5 +182,6 @@
     ]
    ]
   }
- ]
+ ],
+ "kyun": "Jo rakha hai usi se replay hota hai. Purani khabar retention se jaati, poora segment ek saath. MQ ka asli number JAGAH hai. Kafka padh ke delete nahi karta, rakhta hai"
 }

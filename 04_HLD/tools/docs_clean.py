@@ -1,6 +1,8 @@
 """Haath se bane poster (Docs 11) ko saaf saanche me: tasveer wahi, X + callout hata ke number-gol, neeche gen_clean ka hissa.
-python 04_HLD/tools/docs_clean.py <cN_poster.html> [...]   (purana HTML git me rehta; ye usi se banata)"""
+python 04_HLD/tools/docs_clean.py <cN_poster.html> [...]   (purana HTML git me rehta; ye usi se banata). Kyun + baaki line: img/kyun.json"""
 import html as H
+import json
+import os
 import re
 import sys
 
@@ -110,6 +112,8 @@ def run(f):
     ylist2 = [v for e in dia for v in ys_of(e)] + [c['mark'][1] + 14 for c in calls if c.get('mark') and c['type'] == 'x']
     toots = sorted([c for c in calls if c['type'] == 'x'], key=lambda c: c['n'])
     dikkat, pehle = G.split_pehle(sorted([c for c in calls if c['type'] == 'pehle'], key=lambda c: c['n']))
+    for c in dikkat:  # Docs me peele ka hara = ilaaj, to "Pehle aisa tha" me sirf laal
+        c['tha'] = ''
     greys = [c for c in calls if c['type'] == 'grey']
     o = [G.t(30, 40, title, 26, '#e6edf3', True), G.t(30, 68, G.SUB, 15, '#9fb0c8')]
     dy = G.pehle_box(o, dikkat) - min(ylist)
@@ -120,13 +124,19 @@ def run(f):
             px, py = c['mark'][0], c['mark'][1] + dy
             o.append(f'<circle cx="{px:g}" cy="{py:g}" r="14" fill="#1a0f14" stroke="{G.RED}" stroke-width="2.5"/>')
             o.append(G.t(px, py + 5, str(i), 14, G.RED, True, anchor='middle'))
-    y = G.bottom(o, dia_end + G.GAP, toots, pehle, greys)
+    kyall = json.load(open(os.path.join(os.path.dirname(f), 'kyun.json'), encoding='utf-8'))
+    ky = kyall.get(re.search(r'c(\d+)_poster', f).group(1), {})
+    for line in ky.get('baaki', []):
+        greys.append({'red': line, 'green': ''})
+    y = G.bottom(o, dia_end + G.GAP, toots, pehle, greys, ky.get('kyun', ''))
     Ht = int(y + 30)
     out = ('<!doctype html>\n<meta charset="utf-8">\n<title>' + H.escape(title[:40]) + '</title>\n'
            '<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} '
            '.m{font-family:Consolas,monospace}</style>\n'
            f'<svg width="1500" height="{Ht}" viewBox="0 0 1500 {Ht}" xmlns="http://www.w3.org/2000/svg">{defs}'
            f'<rect width="1500" height="{Ht}" fill="#0b1220"/>\n' + '\n'.join(o) + '\n</svg>\n')
+    for x, y in kyall.get('badlo', []):  # shabd badlo (main = Arpan / primary)
+        out = out.replace(x, y)
     open(f, 'w', encoding='utf-8', newline='\n').write(out)
     print(f, 'toot', len(toots), 'pehle tha', [c['red'] for c in dikkat], 'nahi', [c['red'] for c in pehle], 'grey', len(greys), 'bina mark', [c['n'] for c in toots if not c.get('mark')])
 

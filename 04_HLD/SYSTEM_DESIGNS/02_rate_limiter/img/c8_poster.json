@@ -1,43 +1,278 @@
 {
-  "title": "Card 8: Redis poora gaya to har gateway apni memory me ginta. Had 100 / 4 gateway = 25",
-  "h": 680,
-  "boxes": [
-    {"x": 30, "y": 230, "w": 200, "h": 90, "kind": "user", "title": "Raat ko attack", "lines": ["lakhon request"]},
-    {"x": 290, "y": 230, "w": 170, "h": 90, "kind": "lb", "title": "LB", "lines": ["4 gateway me baanta"]},
-    {"x": 540, "y": 130, "w": 260, "h": 70, "kind": "server", "title": "Gateway 1", "lines": ["apni ginti, had 25"]},
-    {"x": 540, "y": 220, "w": 260, "h": 70, "kind": "server", "title": "Gateway 2", "lines": ["apni ginti, had 25"]},
-    {"x": 540, "y": 310, "w": 260, "h": 70, "kind": "server", "title": "Gateway 3", "lines": ["apni ginti, had 25"]},
-    {"x": 540, "y": 400, "w": 260, "h": 70, "kind": "server", "title": "Gateway 4", "lines": ["apni ginti, had 25"]},
-    {"x": 950, "y": 220, "w": 300, "h": 110, "kind": "cache", "title": "Redis Cluster", "lines": ["main aur copy dono gire"]},
-    {"x": 950, "y": 390, "w": 300, "h": 80, "kind": "plain", "title": "Login", "lines": ["ab bhi band (fail-closed)"]}
-  ],
-  "arrows": [
-    {"pts": [[232, 275], [286, 275]], "c": "blue"},
-    {"pts": [[462, 260], [536, 165]], "c": "blue"},
-    {"pts": [[462, 268], [536, 255]], "c": "blue"},
-    {"pts": [[462, 282], [536, 345]], "c": "blue"},
-    {"pts": [[462, 290], [536, 435]], "c": "blue"},
-    {"pts": [[802, 255], [946, 270]], "c": "grey", "dash": true, "label": "jawab nahi", "lx": 874, "ly": 252, "a": "middle"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "x", "x": 860, "y": 84, "w": 610,
-     "red": "Attack ke beech hi poora Redis Cluster gira (copy bhi)",
-     "green": "Har gateway apni memory me ginta: 100 / 4 = 25",
-     "mark": [1240, 222], "conn": [[1240, 208], [1240, 146]]},
-    {"n": 2, "type": "pehle", "x": 30, "y": 84, "w": 490,
-     "red": "Redis gaya to sabko andar aane do?",
-     "green": "Attacker ke liye site khul jaati, server bhar ke band",
-     "conn": [[375, 146], [375, 230]]},
-    {"n": 3, "type": "x", "x": 30, "y": 500, "w": 620,
-     "red": "Had baanti hi nahi, har gateway ne poori 100 di",
-     "green": "4 x 100 = 400 nikal gayi. Had 4 guna dheeli",
-     "mark": [552, 470], "conn": [[552, 482], [552, 500]]},
-    {"n": 4, "type": "x", "x": 680, "y": 500, "w": 560,
-     "red": "Gateway 4 se 6 ho gaye",
-     "green": "N config se lo, had dobara baanto (100 / 6)",
-     "mark": [796, 470], "conn": [[796, 482], [796, 500]]},
-    {"type": "grey", "x": 30, "y": 590, "w": 1440,
-     "red": "Bilkul exact had chahiye? LB userId ke hash se ek user ko hamesha ek hi gateway pe bheje.",
-     "green": "Redis wapas aaya to phir se sabki ek hi ginti Redis me"}
-  ]
+ "title": "Card 8: Redis poora gaya to har gateway apni memory me ginta. Had 100 / 4 gateway = 25",
+ "h": 680,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 230,
+   "w": 200,
+   "h": 90,
+   "kind": "user",
+   "title": "Raat ko attack",
+   "lines": [
+    "lakhon request"
+   ]
+  },
+  {
+   "x": 290,
+   "y": 230,
+   "w": 170,
+   "h": 90,
+   "kind": "lb",
+   "title": "LB",
+   "lines": [
+    "4 gateway me baanta"
+   ]
+  },
+  {
+   "x": 540,
+   "y": 130,
+   "w": 260,
+   "h": 70,
+   "kind": "server",
+   "title": "Gateway 1",
+   "lines": [
+    "apni ginti, had 25"
+   ]
+  },
+  {
+   "x": 540,
+   "y": 220,
+   "w": 260,
+   "h": 70,
+   "kind": "server",
+   "title": "Gateway 2",
+   "lines": [
+    "apni ginti, had 25"
+   ]
+  },
+  {
+   "x": 540,
+   "y": 310,
+   "w": 260,
+   "h": 70,
+   "kind": "server",
+   "title": "Gateway 3",
+   "lines": [
+    "apni ginti, had 25"
+   ]
+  },
+  {
+   "x": 540,
+   "y": 400,
+   "w": 260,
+   "h": 70,
+   "kind": "server",
+   "title": "Gateway 4",
+   "lines": [
+    "apni ginti, had 25"
+   ]
+  },
+  {
+   "x": 950,
+   "y": 220,
+   "w": 300,
+   "h": 110,
+   "kind": "cache",
+   "title": "Redis Cluster",
+   "lines": [
+    "primary aur copy dono gire"
+   ]
+  },
+  {
+   "x": 950,
+   "y": 390,
+   "w": 300,
+   "h": 80,
+   "kind": "plain",
+   "title": "Login",
+   "lines": [
+    "ab bhi band (fail-closed)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     275
+    ],
+    [
+     286,
+     275
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     462,
+     260
+    ],
+    [
+     536,
+     165
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     462,
+     268
+    ],
+    [
+     536,
+     255
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     462,
+     282
+    ],
+    [
+     536,
+     345
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     462,
+     290
+    ],
+    [
+     536,
+     435
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     802,
+     255
+    ],
+    [
+     946,
+     270
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "jawab nahi",
+   "lx": 874,
+   "ly": 252,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "x",
+   "x": 860,
+   "y": 84,
+   "w": 610,
+   "red": "Attack ke beech hi poora Redis Cluster gira (copy bhi)",
+   "green": "Har gateway apni memory me ginta: 100 / 4 = 25",
+   "mark": [
+    1240,
+    222
+   ],
+   "conn": [
+    [
+     1240,
+     208
+    ],
+    [
+     1240,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 490,
+   "red": "Redis gaya to sabko andar aane do?",
+   "green": "Attacker ke liye site khul jaati, server bhar ke band",
+   "conn": [
+    [
+     375,
+     146
+    ],
+    [
+     375,
+     230
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 30,
+   "y": 500,
+   "w": 620,
+   "red": "Had baanti hi nahi, har gateway ne poori 100 di",
+   "green": "4 x 100 = 400 nikal gayi. Had 4 guna dheeli",
+   "mark": [
+    552,
+    470
+   ],
+   "conn": [
+    [
+     552,
+     482
+    ],
+    [
+     552,
+     500
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 680,
+   "y": 500,
+   "w": 560,
+   "red": "Gateway 4 se 6 ho gaye",
+   "green": "N config se lo, had dobara baanto (100 / 6)",
+   "mark": [
+    796,
+    470
+   ],
+   "conn": [
+    [
+     796,
+     482
+    ],
+    [
+     796,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 590,
+   "w": 1440,
+   "red": "Bilkul exact had chahiye? LB userId ke hash se ek user ko hamesha ek hi gateway pe bheje.",
+   "green": "Redis wapas aaya to phir se sabki ek hi ginti Redis me"
+  }
+ ],
+ "kyun": "Thodi galat had, bina had se behtar hai. Login ab bhi fail-closed rehta hai"
 }

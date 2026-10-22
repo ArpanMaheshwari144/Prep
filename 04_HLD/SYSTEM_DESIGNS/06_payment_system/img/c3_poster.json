@@ -188,5 +188,6 @@
    "red": "Key wahi, amount alag? Request ka hash bhi rakho, farak = 422. Key kab hatao? Sirf pakka fail pe, DONE ~24 ghante.",
    "green": "Sach me do payment 100 + 100? Do screen = do key (key-555, key-888), dono honge: 200"
   }
- ]
+ ],
+ "kyun": "Ek key = ek payment. Wahi key dobara aayi to kaam nahi hota, saved jawab jaata hai. User ko ek hi payment dikhta hai. Nayi payment = nayi screen = nayi key"
 }

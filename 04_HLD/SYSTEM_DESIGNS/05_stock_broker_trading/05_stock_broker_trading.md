@@ -3,7 +3,7 @@
 > User BUY / SELL order deta hai, system order match karta hai, paisa aur share sahi jagah pahunchte hain, sabko live price dikhta hai.
 > Dil do cheezein: paisa kabhi galat nahi (strong consistency), aur matching bahut tez (RAM me, microseconds). Finance interview me (JP / GS) yahi poochte: consistency, ACID, idempotency, ledger, audit.
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
+> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -58,19 +58,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY KEY (wahi id dobara)
 
-<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
-
-
-```
-HAL     screen khulte hi app ek id banata hai. Network gaya aur app ne dobara bheja, to wahi id jaati hai.
-        Server id pe UNIQUE: wahi id aayi to purana jawab, order ek hi (idempotency key)
-KYUN    ek id = ek kaam. Id app banata, server UNIQUE se pakadta. User ko ek hi order dikhe,
-        app kitni baar bhi bheje
-NAHI    button pehli tap pe band -> ADHOORA: kaafi nahi, retry app khud karta hai, button dabta hi nahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Screen khulte hi app ek id banata, retry pe wahi id. Server UNIQUE se pakadta: ek id = ek order.
+<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -81,23 +69,7 @@ NAHI    button pehli tap pe band -> ADHOORA: kaafi nahi, retry app khud karta ha
 
 **Rail 4 DO LOG EK SAATH (wallet)** · Cue: check + block EK atomic query
 
-<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
-
-
-```
-HAL     check aur block ek hi query me (atomic UPDATE):
-        SET blocked = blocked + 30k WHERE total - blocked >= 30k
-        Ek jeeta = 1 row, block ho gaya. Doosre ko 20k bacha dikha, 0 row, turant reject
-KYUN    "hai?" aur "block" ek hi UPDATE me, DB ke andar. Kitni bhi machine ho, DB ek-ek karke chalata hai.
-        Wallet kabhi minus nahi hota
-BLOCKED blocked badhta hai naye order se, ghatta hai sauda / cancel / umar khatam hone se
-NAHI    pehle padho, phir block -> RACE: laptop (TCS 30k) + phone (INFY 30k), dono server ne 50k dekha,
-           dono pass, wallet minus
-        Java synchronized -> CHHOTA: taala ek machine ka hai, phone doosre server pe gaya
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Check + block ek hi atomic UPDATE: blocked + 30k WHERE total - blocked >= 30k. 1 row = jeeta.
+<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -108,30 +80,7 @@ NAHI    pehle padho, phir block -> RACE: laptop (TCS 30k) + phone (INFY 30k), do
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: ek symbol ek thread, book RAM me
 
-<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
-
-
-```
-HAL     ek share ke saare order ek line me, us line ko ek hi thread (ek symbol ek thread).
-        Main pehle aaya to 10 mujhe mile, Mohan ko 0, wo line me
-KYUN    ek stock ki book ko ek waqt ek hi haath. Doosra line me rukta, race hoti hi nahi.
-        Thread atka (GC pause) to sirf us stock ki line rukti, INFY apne thread pe, standby taiyaar
-RAM/SQL jo tez aur thodi der ka hai (order book), wo RAM me. Jo paisa aur hamesha ka hai (wallet / ledger),
-        wo SQL DB + ACID me
-BOOK    order book ki do taraf: bechne wale sasta upar (3000, 3001, 3005), khareedne wale mehnga upar
-        (2999, 2998)
-SAUDA   sauda tabhi jab top khareedar >= top bechne wala. Daam book wale ka: naya BUY 3001,
-        top SELL 3000, to sauda 3000 pe. Same daam pe jo pehle aaya wo pehle bikta
-BROKER  is design me hum broker hain, par apna matching (exchange jaisa). Asli India me Groww / Zerodha
-        order NSE ko bhejte, matching NSE karta; wallet block broker ka kaam
-NAHI    do thread bina line -> RACE: dono ko "10 hai" dikha, dono ne le liye, 20 bik gaye
-        har order pe lock -> GALAT: race share pe hai, order pe nahi. Dono apna lock lete, dono ko 10 dikhe
-        DB me hi match (sabse simple: Order service DB me likhe, wahin SELL dhoondh ke match, DB ka ACID)
-           -> DHEEMA: DB har order pe dheema, matching RAM me
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Ek stock ke saare order ek line, us line ka ek hi thread. Book RAM me, paisa SQL + ACID me.
+<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -142,20 +91,7 @@ NAHI    do thread bina line -> RACE: dono ko "10 hai" dikha, dono ne le liye, 20
 
 **Rail 2 BHEED AAYI** · Cue: baanto mat, ek thread kaafi, line
 
-<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
-
-
-```
-HAL     hazaaron order / sec aaye, to bhi TCS ki ek line, ek thread RAM me tez nipta deta.
-        Line me lagte hi user ko ACCEPTED turant, FILLED tab jab sauda ho
-KYUN    RAM me ek thread lakhon order / sec nipta deta. Line lambi = der, par order khota nahi, line me hai
-NAHI    har order pe lock + DB -> DHEEMA: ek-ek karke dheema, jam
-        TCS ko do thread me baanto -> TOOTA: ek stock = ek line. Baantna stocks ke BEECH,
-           ek stock ke andar kabhi nahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** TCS ki ek line, ek thread RAM me lakhon / sec. Line me lagte hi ACCEPTED, sauda pe FILLED. Baanto stocks ke beech.
+<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -166,20 +102,7 @@ NAHI    har order pe lock + DB -> DHEEMA: ek-ek karke dheema, jam
 
 **Rail 3 MACHINE GIRI (book)** · Cue: pehle log, phir book; gira = replay
 
-<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
-
-
-```
-HAL     har order pehle log me (disk), phir book me. Log me har order ko number (#501).
-        10:15 pe gira, 4,000 order gayab, to log dobara chalao, wahi 4,000 wapas (replay)
-KYUN    log hi sach hai, book uski photo. Gira = aakhri photo + uske baad ke panne.
-        Dobara chalaya to kuch nahi badalta (trade_id)
-NAHI    sirf book ki photo -> ADHOORA: photo ke BAAD wale order kahin likhe hi nahi
-        time se kram -> GALAT: do machine ka time (clock) alag, aur ek second me do order aa jaate
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Har order pehle log (disk, number ke saath), phir book. Gira = log replay. Standby log padh ke taiyaar.
+<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -190,19 +113,7 @@ NAHI    sirf book ki photo -> ADHOORA: photo ke BAAD wale order kahin likhe hi n
 
 **Rail 3 MACHINE GIRI (settlement)** · Cue: ek transaction: chaaron ya koi nahi
 
-<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
-
-
-```
-HAL     chaaron badlaav ek transaction me: Arpan -30k +10 share, Suresh +30k -10 share, phir COMMIT.
-        Ya sab, ya koi nahi
-KYUN    paisa ek DB me hai, to chaaron likhai ek transaction. COMMIT se pehle crash = rollback, kuch nahi
-        likha, user ko PENDING, galat number kabhi nahi. Ledger ka jod hamesha 0
-NAHI    aakhir me "done" flag -> ANDHA: flag se pehle gira to pata hi nahi kitna likha tha
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Chaaron badlaav ek transaction: ya sab, ya koi nahi. trade_id UNIQUE, ledger ka jod hamesha 0.
+<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -213,19 +124,7 @@ NAHI    aakhir me "done" flag -> ANDHA: flag se pehle gira to pata hi nahi kitna
 
 **Rail 3 MACHINE GIRI (do DB)** · Cue: har step ka haal, aage badho
 
-<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
-
-
-```
-HAL     do DB = ek transaction nahi ban sakti. Har kadam ka haal likho (status log: wallet done,
-        portfolio done). Fail hua to likhe haal se retry, aage hi, jab tak portfolio done (SETTLED)
-KYUN    match ke baad sauda PAKKA hai. System hi aage badhaata (retry), user ko kuch dobara nahi karna.
-        Beech ka haal user ko PENDING dikhta
-NAHI    paisa ulta kar do -> GALAT: match ke baad sauda pakka, bechne wale ko 20k mil chuke
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Do DB = ek txn nahi. Har kadam ka haal likho, fail to wahi se retry, aage hi. User ko PENDING.
+<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -236,19 +135,7 @@ NAHI    paisa ulta kar do -> GALAT: match ke baad sauda pakka, bechne wale ko 20
 
 **Rail 2 BHEED AAYI (price)** · Cue: push (TV jaisa), WebSocket
 
-<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
-
-
-```
-HAL     connection khula rakho, price badla tabhi server khud bheje (WebSocket push).
-        Matching -> pub/sub -> har WebSocket server -> users
-KYUN    price = sirf abhi ka. Badla tab server khud bheje, purana store nahi. Users kuch nahi poochte
-NAHI    har user baar-baar poochhe (polling) -> BAITHA: 10 lakh har second = server baitha.
-           Poochhne ki line hi nahi chahiye
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Connection khula rakho, price badla tab server khud bheje (WebSocket push), har ~100 ms aakhri wala.
+<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---

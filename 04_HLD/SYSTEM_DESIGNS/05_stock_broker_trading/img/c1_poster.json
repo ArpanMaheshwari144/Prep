@@ -8,7 +8,7 @@
    "w": 240,
    "h": 120,
    "kind": "user",
-   "title": "Main (app)",
+   "title": "Arpan (app)",
    "lines": [
     "screen khulte hi",
     "id = K7"
@@ -162,5 +162,6 @@
    "red": "Id kab tak yaad? ~24 ghante, phir saaf.",
    "green": "Retry minute me hi aata hai"
   }
- ]
+ ],
+ "kyun": "Ek id = ek kaam. Id app banata, server UNIQUE se pakadta. User ko ek hi order dikhe, app kitni baar bhi bheje"
 }

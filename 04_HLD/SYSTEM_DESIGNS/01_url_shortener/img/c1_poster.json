@@ -244,5 +244,6 @@
    "red": "Ek link viral, to uski DB machine garam ho jaayegi? Nahi, wo link pehle hi Redis me mil jaata.",
    "green": "Deleted / expire hua link: Redis me 'nahi hai' 1 min rakho, taaki DB baar-baar na poocha jaaye"
   }
- ]
+ ],
+ "kyun": "Redis RAM se ~0.1 ms, DB disk se ~10 ms. 95% click Redis se hi nikal jaate hain. Sach ek hi jagah hai, DB me. Redis sirf garam copy hai, khoyi to DB se wapas ban jaati"
 }

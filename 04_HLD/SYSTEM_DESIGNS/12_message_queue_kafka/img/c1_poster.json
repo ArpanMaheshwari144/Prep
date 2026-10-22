@@ -144,5 +144,6 @@
    "red": "Dobara padhna hai? Offset peeche karo (replay), khabar wahin padi.",
    "green": "Offset byte nahi, kram number (0, 1, 2). Chhoti .index file batati file me kahan"
   }
- ]
+ ],
+ "kyun": "Message disk pe pada hai. Consumer gira to wapas aake apne offset se aage padhta, producer ko pata bhi nahi chalta"
 }

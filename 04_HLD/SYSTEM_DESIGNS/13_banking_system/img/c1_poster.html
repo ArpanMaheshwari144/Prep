@@ -2,17 +2,17 @@
 <meta charset="utf-8">
 <title>Card 1: BEGIN, -500, +500, COMMIT: dono </title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="733" viewBox="0 0 1500 733" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="807" viewBox="0 0 1500 807" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="733" fill="#0b1220"/>
+</defs><rect width="1500" height="807" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: BEGIN, -500, +500, COMMIT: dono ya koi nahi. Beech me gira to DB log (WAL) se ulta. SAGA sirf do DB pe</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="150" width="200" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="130.0" y="184" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main</text>
+<text x="130.0" y="184" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
 <text x="130.0" y="210" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Ravi ko 500</text>
 <rect x="300" y="135" width="270" height="150" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
 <text x="435.0" y="169" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Banking Svc</text>
@@ -33,17 +33,20 @@
 <path d="M1082 210 L1166 210" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
 <circle cx="560" cy="135" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="560" y="140" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<rect x="30" y="380" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="405" r="12" fill="#ff5a6a"/>
-<text x="52" y="410" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="410" font-size="15" font-weight="700" fill="#ff5a6a">Beech me server gira (-500 hua, +500</text>
-<text x="74" y="431" font-size="15" font-weight="700" fill="#ff5a6a">nahi)</text>
-<text x="52" y="458" font-size="13.5" fill="#7fe0b0">COMMIT nahi tha: DB log (WAL) se ulta, mera</text>
-<text x="52" y="478" font-size="13.5" fill="#7fe0b0">wapas 1000</text>
-<rect x="30" y="543" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="569" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="593" font-size="13.5" fill="#e6dcb8">SAGA lagao: Faltu: sab ek DB me. SAGA tab jab do DB</text>
-<rect x="30" y="631" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="661" font-size="13.5" fill="#c9d6e8">-500 ke baad, COMMIT se pehle koi padhe? COMMIT se pehle wala hi dikhta.</text>
-<text x="48" y="683" font-size="13.5" fill="#c9d6e8">Ravi doosre bank me? Do bank = do DB: PENDING + SAGA + raat ko milaan</text>
+<rect x="30" y="380" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="406" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="406" font-size="13.5" fill="#cfeee0">Ek DB me ek transaction kabhi aadha nahi rehta. Crash pe DB apne log se khud ulta karta hai. Padhne wale ko aadha kaam kabhi nahi dikhta</text>
+<rect x="30" y="454" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="479" r="12" fill="#ff5a6a"/>
+<text x="52" y="484" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="484" font-size="15" font-weight="700" fill="#ff5a6a">Beech me server gira (-500 hua, +500</text>
+<text x="74" y="505" font-size="15" font-weight="700" fill="#ff5a6a">nahi)</text>
+<text x="52" y="532" font-size="13.5" fill="#7fe0b0">COMMIT nahi tha: DB log (WAL) se ulta, mera</text>
+<text x="52" y="552" font-size="13.5" fill="#7fe0b0">wapas 1000</text>
+<rect x="30" y="617" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="643" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="667" font-size="13.5" fill="#e6dcb8">SAGA lagao: Faltu: sab ek DB me. SAGA tab jab do DB</text>
+<rect x="30" y="705" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="735" font-size="13.5" fill="#c9d6e8">-500 ke baad, COMMIT se pehle koi padhe? COMMIT se pehle wala hi dikhta.</text>
+<text x="48" y="757" font-size="13.5" fill="#c9d6e8">Ravi doosre bank me? Do bank = do DB: PENDING + SAGA + raat ko milaan</text>
 </svg>

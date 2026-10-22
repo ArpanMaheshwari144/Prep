@@ -193,5 +193,6 @@
    "red": "Pehle poochho: history kahan? WhatsApp: phone pe (server se delete). Slack: server pe hamesha (~440 TB / saal).",
    "green": "Banking ka ulta: wahan 120 / sec, yahan 46,000 / sec. Yahan Slack jaisa"
   }
- ]
+ ],
+ "kyun": "Jo saath padha jaata hai wo saath rakho. Chat khuli to \"aakhri 50\" ek jagah se, ek baar me (keyset, OFFSET nahi)"
 }

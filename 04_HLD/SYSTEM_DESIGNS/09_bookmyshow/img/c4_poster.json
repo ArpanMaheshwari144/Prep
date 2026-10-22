@@ -1,5 +1,5 @@
 {
- "title": "Card 4: seat map Redis se (~5 sec umar), faisla sirf main DB ka UPDATE. Map purana to UPDATE 0 row bolega",
+ "title": "Card 4: seat map Redis se (~5 sec umar), faisla sirf primary DB ka UPDATE. Map purana to UPDATE 0 row bolega",
  "h": 570,
  "boxes": [
   {
@@ -22,7 +22,7 @@
    "title": "App",
    "lines": [
     "map: Redis se",
-    "book: main DB"
+    "book: primary DB"
    ]
   },
   {
@@ -53,7 +53,7 @@
    "w": 390,
    "h": 130,
    "kind": "db",
-   "title": "Main DB",
+   "title": "Primary DB",
    "lines": [
     "faisla: UPDATE",
     "book ke baad map key DEL"
@@ -124,7 +124,7 @@
    "x": 30,
    "y": 84,
    "w": 600,
-   "red": "Map bhi main DB se?",
+   "red": "Map bhi primary DB se?",
    "green": "1 lakh dekhne wale booking ko bhi dheema karte",
    "n": 1,
    "conn": [
@@ -143,7 +143,7 @@
    "x": 650,
    "y": 84,
    "w": 820,
-   "red": "Kisi ne book kiya? Booking main DB pe, phir map key DEL.",
+   "red": "Kisi ne book kiya? Booking primary DB pe, phir map key DEL.",
    "green": "Redis me map nahi? Replica se banao, Redis me rakh do"
   },
   {
@@ -192,5 +192,6 @@
     ]
    ]
   }
- ]
+ ],
+ "kyun": "Dekhna copy se hota hai (Redis / replica), faisla sirf primary DB ka UPDATE. Map thoda purana bhi chalta hai, galat dikhi seat ko DB pakad leta hai (0 row)"
 }

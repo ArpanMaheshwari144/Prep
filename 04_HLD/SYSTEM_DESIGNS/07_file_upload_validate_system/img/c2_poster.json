@@ -173,5 +173,6 @@
    "red": "S3 paas ko asli kaise maane? Wahi AWS secret se signature khud banata: mile to asli, naam / samay badla to 403.",
    "green": "Raaste me kharab? Client SHA-256 bhejta, S3 khud nikaal ke milaata. Pehle poochho: file kitni badi?"
   }
- ]
+ ],
+ "kyun": "Server sirf paas deta hai: ek file ke liye, 10 min ke liye. Bytes seedha app se S3 jaate hain, server pe koi bojh nahi"
 }

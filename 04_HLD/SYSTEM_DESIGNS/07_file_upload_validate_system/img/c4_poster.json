@@ -229,5 +229,6 @@
    "red": "Sweeper hai to S3 lifecycle kyun? Wo bytes saaf karta.",
    "green": "Haal sweeper badalta. Dobara line me safe: worker skip karta"
   }
- ]
+ ],
+ "kyun": "Har file ka haal DB me hai: UPLOADING -> VALIDATING -> DONE / FAILED. Der tak nahi badla matlab atka dobara line me daalna safe hai, worker haal dekh ke skip kar deta hai"
 }

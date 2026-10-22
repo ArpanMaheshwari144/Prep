@@ -1,37 +1,220 @@
 {
-  "title": "Card 3: bhejne se pehle khabar ki apni key (khabar_id + raasta) dekho. Mili to skip",
-  "h": 700,
-  "boxes": [
-    {"x": 30, "y": 250, "w": 190, "h": 110, "kind": "cache", "title": "Kafka", "lines": ["khabar dobara", "aa sakti"]},
-    {"x": 290, "y": 240, "w": 230, "h": 130, "kind": "server", "title": "Worker-B", "lines": ["key dekho,", "mili to skip"]},
-    {"x": 620, "y": 190, "w": 320, "h": 110, "kind": "cache", "title": "Redis (tez raasta)", "lines": ["key: khabar_id + raasta", "umar 24 ghante"]},
-    {"x": 620, "y": 330, "w": 320, "h": 110, "kind": "db", "title": "Cassandra (aakhri deewar)", "lines": ["(khabar_id, raasta)", "ek hi baar lagta"]},
-    {"x": 1060, "y": 250, "w": 410, "h": 110, "kind": "lb", "title": "Email company", "lines": ["ek hi email gaya"]}
-  ],
-  "arrows": [
-    {"pts": [[222, 305], [286, 305]], "c": "orange"},
-    {"pts": [[522, 280], [616, 245]], "c": "purple", "label": "key?", "lx": 560, "ly": 248, "a": "middle"},
-    {"pts": [[522, 330], [616, 385]], "c": "purple"},
-    {"pts": [[440, 372], [440, 475], [1265, 475], [1265, 364]], "c": "green", "label": "ek hi email", "lx": 850, "ly": 465, "a": "middle"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "x", "x": 30, "y": 84, "w": 700,
-     "red": "Key wala Redis hi gira",
-     "green": "DB me (khabar_id, raasta) ek hi baar lagta, wahi rokta",
-     "mark": [670, 190], "conn": [[670, 178], [670, 146]]},
-    {"n": 2, "type": "x", "x": 750, "y": 84, "w": 720,
-     "red": "Redis ki key 24 ghante me mit gayi",
-     "green": "DB ki row nahi bhoolti, wo phir bhi rokti",
-     "mark": [890, 190], "conn": [[890, 178], [890, 146]]},
-    {"n": 3, "type": "pehle", "x": 30, "y": 520, "w": 720,
-     "red": "Pehle Worker-A ne bheja, 'padh liya' bolne se pehle mara",
-     "green": "Khabar dobara aayi, Worker-B ne phir bheja: do email",
-     "conn": [[380, 520], [380, 372]]},
-    {"n": 4, "type": "pehle", "x": 770, "y": 520, "w": 700,
-     "red": "Har baar naya random id?",
-     "green": "Dohraav kabhi pakda hi nahi jaata. Id khabar ki apni ho"},
-    {"type": "grey", "x": 30, "y": 610, "w": 1440,
-     "red": "DB me ek hi baar kaise? Cassandra me INSERT IF NOT EXISTS (khabar_id, raasta), yaani LWT.",
-     "green": "Redis tez raasta, DB aakhri deewar"}
-  ]
+ "title": "Card 3: bhejne se pehle khabar ki apni key (khabar_id + raasta) dekho. Mili to skip",
+ "h": 700,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 190,
+   "h": 110,
+   "kind": "cache",
+   "title": "Kafka",
+   "lines": [
+    "khabar dobara",
+    "aa sakti"
+   ]
+  },
+  {
+   "x": 290,
+   "y": 240,
+   "w": 230,
+   "h": 130,
+   "kind": "server",
+   "title": "Worker-B",
+   "lines": [
+    "key dekho,",
+    "mili to skip"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 190,
+   "w": 320,
+   "h": 110,
+   "kind": "cache",
+   "title": "Redis (tez raasta)",
+   "lines": [
+    "key: khabar_id + raasta",
+    "umar 24 ghante"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 330,
+   "w": 320,
+   "h": 110,
+   "kind": "db",
+   "title": "Cassandra (aakhri deewar)",
+   "lines": [
+    "(khabar_id, raasta)",
+    "ek hi baar lagta"
+   ]
+  },
+  {
+   "x": 1060,
+   "y": 250,
+   "w": 410,
+   "h": 110,
+   "kind": "lb",
+   "title": "Email company",
+   "lines": [
+    "ek hi email gaya"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     222,
+     305
+    ],
+    [
+     286,
+     305
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     522,
+     280
+    ],
+    [
+     616,
+     245
+    ]
+   ],
+   "c": "purple",
+   "label": "key?",
+   "lx": 560,
+   "ly": 248,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     522,
+     330
+    ],
+    [
+     616,
+     385
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     440,
+     372
+    ],
+    [
+     440,
+     475
+    ],
+    [
+     1265,
+     475
+    ],
+    [
+     1265,
+     364
+    ]
+   ],
+   "c": "green",
+   "label": "ek hi email",
+   "lx": 850,
+   "ly": 465,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "x",
+   "x": 30,
+   "y": 84,
+   "w": 700,
+   "red": "Key wala Redis hi gira",
+   "green": "DB me (khabar_id, raasta) ek hi baar lagta, wahi rokta",
+   "mark": [
+    670,
+    190
+   ],
+   "conn": [
+    [
+     670,
+     178
+    ],
+    [
+     670,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 750,
+   "y": 84,
+   "w": 720,
+   "red": "Redis ki key 24 ghante me mit gayi",
+   "green": "DB ki row nahi bhoolti, wo phir bhi rokti",
+   "mark": [
+    890,
+    190
+   ],
+   "conn": [
+    [
+     890,
+     178
+    ],
+    [
+     890,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "pehle",
+   "x": 30,
+   "y": 520,
+   "w": 720,
+   "red": "Pehle Worker-A ne bheja, 'padh liya' bolne se pehle mara",
+   "green": "Khabar dobara aayi, Worker-B ne phir bheja: do email",
+   "conn": [
+    [
+     380,
+     520
+    ],
+    [
+     380,
+     372
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "pehle",
+   "x": 770,
+   "y": 520,
+   "w": 700,
+   "red": "Har baar naya random id?",
+   "green": "Dohraav kabhi pakda hi nahi jaata. Id khabar ki apni ho"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 610,
+   "w": 1440,
+   "red": "DB me ek hi baar kaise? Cassandra me INSERT IF NOT EXISTS (khabar_id, raasta), yaani LWT.",
+   "green": "Redis tez raasta, DB aakhri deewar"
+  }
+ ],
+ "kyun": "Pakki id hai, to dobara aayi khabar pehchaan ke skip ho jaati hai. Redis tez raasta, DB me (khabar_id, raasta) ek hi baar lagta: aakhri deewar"
 }

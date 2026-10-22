@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 3: key = userId: ek user ki har kha</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="777" viewBox="0 0 1500 777" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="851" viewBox="0 0 1500 851" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="777" fill="#0b1220"/>
+</defs><rect width="1500" height="851" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 3: key = userId: ek user ki har khabar ek tukde me, kram sirf tukde ke andar. Same key = same partition</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="150" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
@@ -38,29 +38,32 @@
 <text x="720" y="355" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
 <circle cx="960" cy="350" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="960" y="355" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
-<rect x="30" y="424" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="449" r="12" fill="#ff5a6a"/>
-<text x="52" y="454" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="454" font-size="15" font-weight="700" fill="#ff5a6a">Producer retry: 1 fail, 2 gaya, 1 phir</text>
-<text x="74" y="475" font-size="15" font-weight="700" fill="#ff5a6a">aaya</text>
-<text x="52" y="502" font-size="13.5" fill="#7fe0b0">Har message ka number (idempotent producer):</text>
-<text x="52" y="522" font-size="13.5" fill="#7fe0b0">kram theek</text>
-<rect x="392" y="424" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="449" r="12" fill="#ff5a6a"/>
-<text x="414" y="454" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="454" font-size="15" font-weight="700" fill="#ff5a6a">10 se 20 tukde kar diye</text>
-<text x="414" y="481" font-size="13.5" fill="#7fe0b0">% 10 se % 20: key ka tukda badla, thodi der</text>
-<text x="414" y="501" font-size="13.5" fill="#7fe0b0">kram toota</text>
-<rect x="754" y="424" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="776" cy="449" r="12" fill="#ff5a6a"/>
-<text x="776" y="454" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
-<text x="798" y="454" font-size="15" font-weight="700" fill="#ff5a6a">Ek key ka tukda garam (bheed)</text>
-<text x="776" y="481" font-size="13.5" fill="#7fe0b0">Key tod do (userId#bucket), sirf jab kram</text>
-<text x="776" y="501" font-size="13.5" fill="#7fe0b0">zaroori nahi</text>
-<rect x="30" y="587" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="613" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="637" font-size="13.5" fill="#e6dcb8">Poore topic ka kram: Faltu: alag key ka kram chahiye hi nahi</text>
-<rect x="30" y="675" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="705" font-size="13.5" fill="#c9d6e8">Key di hi nahi? Round-robin / sticky, koi kram nahi. Pehle poochho: kram poore topic ka, ya ek user ka?</text>
-<text x="48" y="727" font-size="13.5" fill="#c9d6e8">RabbitMQ / SQS me kram? Guarantee nahi. SQS FIFO ya ek consumer = kram, par speed kam</text>
+<rect x="30" y="424" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="450" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="450" font-size="13.5" fill="#cfeee0">Kram sirf EK partition ke andar milta hai. Jiska kram chahiye, wahi key. Same key = same partition. Tukda key ke hash se tay hota hai (hash % tukde)</text>
+<rect x="30" y="498" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="523" r="12" fill="#ff5a6a"/>
+<text x="52" y="528" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="528" font-size="15" font-weight="700" fill="#ff5a6a">Producer retry: 1 fail, 2 gaya, 1 phir</text>
+<text x="74" y="549" font-size="15" font-weight="700" fill="#ff5a6a">aaya</text>
+<text x="52" y="576" font-size="13.5" fill="#7fe0b0">Har message ka number (idempotent producer):</text>
+<text x="52" y="596" font-size="13.5" fill="#7fe0b0">kram theek</text>
+<rect x="392" y="498" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="523" r="12" fill="#ff5a6a"/>
+<text x="414" y="528" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="528" font-size="15" font-weight="700" fill="#ff5a6a">10 se 20 tukde kar diye</text>
+<text x="414" y="555" font-size="13.5" fill="#7fe0b0">% 10 se % 20: key ka tukda badla, thodi der</text>
+<text x="414" y="575" font-size="13.5" fill="#7fe0b0">kram toota</text>
+<rect x="754" y="498" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="776" cy="523" r="12" fill="#ff5a6a"/>
+<text x="776" y="528" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="798" y="528" font-size="15" font-weight="700" fill="#ff5a6a">Ek key ka tukda garam (bheed)</text>
+<text x="776" y="555" font-size="13.5" fill="#7fe0b0">Key tod do (userId#bucket), sirf jab kram</text>
+<text x="776" y="575" font-size="13.5" fill="#7fe0b0">zaroori nahi</text>
+<rect x="30" y="661" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="687" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="711" font-size="13.5" fill="#e6dcb8">Poore topic ka kram: Faltu: alag key ka kram chahiye hi nahi</text>
+<rect x="30" y="749" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="779" font-size="13.5" fill="#c9d6e8">Key di hi nahi? Round-robin / sticky, koi kram nahi. Pehle poochho: kram poore topic ka, ya ek user ka?</text>
+<text x="48" y="801" font-size="13.5" fill="#c9d6e8">RabbitMQ / SQS me kram? Guarantee nahi. SQS FIFO ya ek consumer = kram, par speed kam</text>
 </svg>

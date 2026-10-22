@@ -8,7 +8,7 @@
    "w": 200,
    "h": 110,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "bank se 2000",
     "top-up"
@@ -168,5 +168,6 @@
    "red": "Call gayi hi nahi (circuit OPEN) = saaf 'abhi nahi', paisa hila nahi. 30 sec baad test call: chali to band, nahi to phir OPEN.",
    "green": "PSP kya? Bahar ka paisa: bank se wallet (top-up), wallet se bank (payout), doosre bank ka merchant"
   }
- ]
+ ],
+ "kyun": "Call gayi aur jawab nahi aaya = PENDING, \"fail\" kabhi nahi. Call gayi hi nahi (circuit OPEN) = saaf \"abhi nahi\""
 }

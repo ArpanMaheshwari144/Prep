@@ -3,7 +3,7 @@
 > 2 ya zyada log ek doc ek saath edit karein. Kisi ka likha na mite, kuch kho na jaaye, turant dikhe.
 > Dil: ek saath edit, koi likha khoye nahi, aur aakhir me sabke paas doc same (convergence).
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
+> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -60,20 +60,7 @@ PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar li
 
 Jod: Jira / Confluence comment me bhi version; wahan purana = save MANA, Docs khiska ke lagata
 
-<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: andar + kya gira, kaise bacha">
-
-
-```
-HAL     sirf badlaav (op) bhejo, kis version pe bana (baseVersion v7). Server khiska ke lagata
-KYUN    server ke paas text nahi aata, badlaav aate hain. Server op ko agla version deta, lagata,
-        aur Ravi ko bhej deta. Dono op v7 pe bane, to server samjhta ki saath bane,
-        aur dono khiska ke lagata hai: "HELLO WORLD THERE"
-NAHI    lock lagao -> RUKNA: user ko lock ya intezaar nahi chahiye.
-        Purane version pe bana op bhi khisak ke lag jaata hai
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Text nahi, sirf badlaav (op) + baseVersion. Server agla version deta, purane pe bana op khiska ke lagata.
+<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: andar + kya gira, kaise bacha">
 
 
 ---
@@ -89,45 +76,17 @@ Jod: WhatsApp (net aate hi saare message ek saath) · Stock ka live price bhi We
 <img src="img/c2_poster.png?v=2" width="1000" alt="card 2: andar + kya toota, kaise bacha">
 
 
-```
-HAL     connection khula rehta, dono taraf (WebSocket). Server khud bhejta, ~200 ms me dikhta
-KYUN    ek hi khula connection dono taraf chalta hai. Server khud bhej deta, user ko refresh nahi karna padta
-NAHI    HTTP -> EKTARFA: server khud kuch nahi bhej sakta.
-        X server tak aaya, par Ravi ko refresh tak kuch nahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Khula connection, dono taraf (WebSocket). Server khud bhejta ~200 ms. Toota to "main v12 pe tha", baaki op.
-
-
 ---
 
 *ab dono ek hi jagah ek saath likhein to?*
 
-## 3. Main aur Ravi ne sabse upar ek saath type kiya
+## 3. Arpan aur Ravi ne sabse upar ek saath type kiya
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: OT (server kram, op khiskao)
 
 Jod: Chat me bhi kram server ka +1 number (seq), phone ki ghadi nahi (14 card 6)
 
 <img src="img/c3_poster.png?v=2" width="1000" alt="card 3: andar + kya toota, kaise bacha">
-
-
-```
-HAL     kram server tay karta (OT): X pehle aaya to v8. Y bhi v7 pe bana tha, X dikha hi nahi,
-        isliye Y 0 se 1 pe khiska (v9). Dono ke paas XYHELLO
-KYUN    kram sirf server ka hai, har op ko agla version milta, phone ki ghadi kabhi nahi.
-        Aaya hua op us kram se khisakta hai, to sabki screen same rehti hai.
-        Mujhe apna likha turant dikhta hai, baaki ka khisak ke aata hai
-NAHI    jo aaya wahi laga do -> ALAG: meri screen "YX...", Ravi ki "XY...", do alag doc ban gaye
-        kram timestamp se    -> TAKKAR: ek ms pe do op = same key, ek ne doosra chupchaap mita diya.
-                                Isliye version
-        CRDT                 -> FALTU: beech me server hai hi, har op usse guzarta.
-                                OT yahi maangta (Docs bhi OT)
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Kram sirf server ka (OT): har op ko agla version, aaya op khisak ke lagta. Sabki screen same.
 
 
 ---
@@ -143,20 +102,6 @@ Jod: URL shortener aur Cache me bhi ring (01 card 5, 10 card 2)
 <img src="img/c4_poster.png?v=2" width="1000" alt="card 4: andar + kya toota, kaise bacha">
 
 
-```
-HAL     docId se ring pe server chuno. doc:123 ka owner server-1, dono editor wahin, OT ek jagah
-KYUN    ek server ~1 lakh connection hi jhelta hai, isliye kai server chahiye.
-        Ek doc = ek owner server, to OT ek hi jagah hota hai.
-        Editor docId se owner pe aata hai, viewer kahin bhi jud sakta hai
-NAHI    editor alag-alag server pe (main server-1, Ravi server-3) -> TOOTA: OT kaun kare?
-        do server = do version, doc toot gaya
-PEHLE   pehle poochho: ek doc pe ek saath kitne log hain, 2-3 ya 100?
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** docId se ring pe owner server, ek doc ke sab editor wahin, OT ek jagah. Doc DB me, server gira to agla.
-
-
 ---
 
 *ab viewer kahin bhi hai, use op pahunche kaise?*
@@ -168,17 +113,6 @@ PEHLE   pehle poochho: ek doc pe ek saath kitne log hain, 2-3 ya 100?
 Jod: Stock ka price bhi pub/sub se har WebSocket server tak (05 card 8)
 
 <img src="img/c5_poster.png?v=2" width="1000" alt="card 5: andar + kya toota, kaise bacha">
-
-
-```
-HAL     har doc ka ek channel (Redis pub/sub). Server-1 op daalta, server-2 sunta, Ravi ko bhejta
-KYUN    jis server pe us doc ka user hai, wo channel sunta hai (subscriber).
-        Iska kaam sirf turant pahunchana hai, kuch store nahi karta (bheja aur bhool gaya).
-        Bachana DB ka kaam hai, channel ka nahi. Viewer ka kuch chhoot gaya to version bata ke DB se le lo
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Har doc ek Redis channel: owner daalta, doosre server sunte. Store nahi, chhoota to version bata ke DB se.
 
 
 ---
@@ -194,18 +128,6 @@ Jod: Cassandra = sirf aage jodna (09 databases) · URL me bhi ginti Kafka se, ra
 <img src="img/c6_poster.png?v=2" width="1000" alt="card 6: andar + kya toota, kaise bacha">
 
 
-```
-HAL     op Redis buffer aur uski copy dono me pahunche (Redis WAIT 1, ~1 ms), tab ACK.
-        Har 1 sec ek batch Cassandra me
-KYUN    ACK tabhi jab op buffer aur copy dono me pahunch gaya.
-        Cassandra ka batch ACK ke raaste me hai hi nahi.
-        Isliye turant "saved" milta hai aur DB pe likhai kam hoti hai
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Op Redis buffer + copy me pahuncha (WAIT 1), tab ACK. Har 1 sec batch Cassandra me. Batch ACK ke raaste me nahi.
-
-
 ---
 
 *ab net hi chala gaya to?*
@@ -219,21 +141,6 @@ Jod: WhatsApp bhi offline me type karne deta (AP) · Banking me transfer / balan
 <img src="img/c7_poster.png?v=2" width="1000" alt="card 7: andar + kya toota, kaise bacha">
 
 
-```
-HAL     likhna AP: typing chalti, op phone me pending. Permission CP: net aate hi SQL check
-KYUN    typing kabhi na ruke (AP): net wapas aate hi op bhejo, server permission check karke khiska ke
-        lagata, aakhir me sab same. Access kabhi galat na ho (CP): permission hatate hi roko,
-        chahe thodi der ruke. Isliye permission alag SQL me
-NAHI    net gaya to sab ruk jaaye -> RUKA: kaam ruk gaya, ye nahi chahiye
-        sab kuch "turant sab same" (strong) -> RUKA: net jaate hi typing ruk jaati.
-        Humein "aakhir me same" chahiye
-PEHLE   pehle poochho: offline chahiye ya nahi? Isi ke jawab se poora CAP faisla tay hota hai
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Likhna AP: op phone me pending, typing kabhi nahi rukti. Permission CP: judte hi SQL check, nahi to reject.
-
-
 ---
 
 *ab doc purana aur lamba ho gaya*
@@ -245,17 +152,6 @@ PEHLE   pehle poochho: offline chahiye ya nahi? Isi ke jawab se poora CAP faisla
 Jod: Banking ka balance bhi = mahine ka snapshot + baad ki line (13 card 11)
 
 <img src="img/c8_poster.png?v=2" width="1000" alt="card 8: andar + kya toota, kaise bacha">
-
-
-```
-HAL     har 1000 op pe photo (snapshot), background job leta. Kholna = aakhri photo + baad ke op
-KYUN    photo ek version tak ki hoti hai, to kholna = photo + uske baad ke ~1000 op. Shuru se kabhi nahi.
-        Photo background job leta hai, user ko dikhta hi nahi
-NAHI    har baar shuru se saare op ek-ek chalao -> DHEEMA: minuton tak khaali screen
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Har 1000 op pe photo (snapshot), job leta. Kholna = aakhri photo + baad ke op. Koi bhi version aise hi.
 
 
 ---

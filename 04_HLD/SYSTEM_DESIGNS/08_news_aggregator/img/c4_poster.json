@@ -182,5 +182,6 @@
    "red": "Bloom: koi bit 0 = pakka naya, sab 1 = shayad dekha. Galat 'haan' kabhi ek nayi chhudaye, news me chalta.",
    "green": "Isliye ek saanjha Bloom, har worker ka apna nahi"
   }
- ]
+ ],
+ "kyun": "Same hash matlab same khabar, URL chahe alag ho (5 source, alag URL, thoda alag title). Ek khabar feed me ek hi baar"
 }

@@ -2,17 +2,17 @@
 <meta charset="utf-8">
 <title>Card 3: ek stock ke saare order ek line,</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="839" viewBox="0 0 1500 839" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="913" viewBox="0 0 1500 913" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="839" fill="#0b1220"/>
+</defs><rect width="1500" height="913" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 3: ek stock ke saare order ek line, us line ka ek hi thread. Book RAM me, paisa SQL + ACID me</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="100" width="200" height="90" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="130.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main</text>
+<text x="130.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
 <text x="130.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">BUY 10 (pehle)</text>
 <rect x="30" y="230" width="200" height="90" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="130.0" y="264" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Mohan</text>
@@ -24,7 +24,7 @@
 <rect x="630" y="130" width="260" height="150" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
 <text x="760.0" y="164" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">TCS thread</text>
 <text x="760.0" y="190" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">ek hi haath</text>
-<text x="760.0" y="212" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Main: 10 mile</text>
+<text x="760.0" y="212" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Arpan: 10 mile</text>
 <text x="760.0" y="234" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">Mohan: 0, book me</text>
 <rect x="970" y="100" width="500" height="160" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="1220.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Order book (RAM)</text>
@@ -42,18 +42,21 @@
 <path d="M892 250 L966 345" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
 <circle cx="690" cy="280" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="690" y="285" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<rect x="30" y="450" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="475" r="12" fill="#ff5a6a"/>
-<text x="52" y="480" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="480" font-size="15" font-weight="700" fill="#ff5a6a">TCS ka thread atka (GC pause)</text>
-<text x="52" y="507" font-size="13.5" fill="#7fe0b0">Sirf TCS ki line ruki, INFY apne thread pe,</text>
-<text x="52" y="527" font-size="13.5" fill="#7fe0b0">standby taiyaar</text>
-<rect x="30" y="605" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="631" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="655" font-size="13.5" fill="#e6dcb8">Do thread, bina line: Dono ko &#x27;10 hai&#x27; dikha, dono ne le liye: 20 bik gaye   ·   Har order pe lock? Ya DB me hi match: Lock galat: race share pe hai. DB me: har order pe dheema</text>
-<rect x="30" y="693" width="1440" height="116" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="723" font-size="13.5" fill="#c9d6e8">5000 stock = 5000 thread? Nahi: 8 core = 8 thread, stock % 8.</text>
-<text x="48" y="745" font-size="13.5" fill="#c9d6e8">Mujhe 10, uske paas 6? 6 ka sauda, 4 book me (PARTIALLY FILLED)</text>
-<text x="48" y="767" font-size="13.5" fill="#c9d6e8">Asli India me Groww / Zerodha order NSE ko bhejte, matching NSE karta. Wallet block broker ka kaam.</text>
-<text x="48" y="789" font-size="13.5" fill="#c9d6e8">Is design me hum apna matching chala rahe (exchange jaisa)</text>
+<rect x="30" y="450" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="476" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="476" font-size="13.5" fill="#cfeee0">Ek stock ki book ko ek waqt ek hi haath. Doosra line me rukta, race hoti hi nahi. Book RAM me (tez), paisa SQL + ACID me (hamesha ka)</text>
+<rect x="30" y="524" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="549" r="12" fill="#ff5a6a"/>
+<text x="52" y="554" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="554" font-size="15" font-weight="700" fill="#ff5a6a">TCS ka thread atka (GC pause)</text>
+<text x="52" y="581" font-size="13.5" fill="#7fe0b0">Sirf TCS ki line ruki, INFY apne thread pe,</text>
+<text x="52" y="601" font-size="13.5" fill="#7fe0b0">standby taiyaar</text>
+<rect x="30" y="679" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="705" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="729" font-size="13.5" fill="#e6dcb8">Do thread, bina line: Dono ko &#x27;10 hai&#x27; dikha, dono ne le liye: 20 bik gaye   ·   Har order pe lock? Ya DB me hi match: Lock galat: race share pe hai. DB me: har order pe dheema</text>
+<rect x="30" y="767" width="1440" height="116" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="797" font-size="13.5" fill="#c9d6e8">5000 stock = 5000 thread? Nahi: 8 core = 8 thread, stock % 8.</text>
+<text x="48" y="819" font-size="13.5" fill="#c9d6e8">Mujhe 10, uske paas 6? 6 ka sauda, 4 book me (PARTIALLY FILLED)</text>
+<text x="48" y="841" font-size="13.5" fill="#c9d6e8">Asli India me Groww / Zerodha order NSE ko bhejte, matching NSE karta. Wallet block broker ka kaam.</text>
+<text x="48" y="863" font-size="13.5" fill="#c9d6e8">Is design me hum apna matching chala rahe (exchange jaisa)</text>
 </svg>

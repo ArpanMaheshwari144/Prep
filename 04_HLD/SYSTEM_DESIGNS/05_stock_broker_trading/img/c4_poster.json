@@ -167,5 +167,6 @@
    "red": "Baantoge nahi to badhaoge kaise? Stocks ke beech: TCS ek thread, INFY doosra. TCS ke andar nahi.",
    "green": "Line lambi = der, par order khota nahi. ACCEPTED turant, FILLED sauda pe"
   }
- ]
+ ],
+ "kyun": "RAM me ek thread lakhon order / sec nipta deta. Line lambi = der, par order khota nahi, line me hai"
 }

@@ -8,7 +8,7 @@
    "w": 200,
    "h": 80,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "link banaya"
    ]
@@ -270,5 +270,6 @@
    "red": "base62 = 0-9, a-z, A-Z: 125 = '21', 100 crore = '15FTGg'. Do log same lamba link dein to dono ko alag code.",
    "green": "Ek hi code chahiye to pehle lambe link ke hash pe dekh lo"
   }
- ]
+ ],
+ "kyun": "Counter kabhi dohraata nahi, to code bhi nahi dohraata, check ki zaroorat hi nahi. Range ke andar App khud number deta, har link pe Counter tak nahi jaata. 1000 link pe ek call"
 }

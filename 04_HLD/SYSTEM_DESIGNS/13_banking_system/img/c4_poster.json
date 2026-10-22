@@ -8,7 +8,7 @@
    "w": 200,
    "h": 120,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "500 kahan,",
     "kab gaye?"
@@ -143,5 +143,6 @@
    "red": "Transaction wapas (paisa kam)? Khaata bhi wapas.",
    "green": "Har line me waqt + transfer id: sab ek jagah"
   }
- ]
+ ],
+ "kyun": "Transaction wapas hua (paisa kam) to khaata bhi wapas, jhoothi line bachti nahi. Har line me waqt + transfer id, to support dekhta hai: 8:00, T-77, Ravi ko 500"
 }

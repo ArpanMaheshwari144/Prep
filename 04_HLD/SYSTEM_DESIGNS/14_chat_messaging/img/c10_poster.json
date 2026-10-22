@@ -54,7 +54,7 @@
    "w": 370,
    "h": 130,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "chat khuli tabhi dekho",
     "khuli chat = subscribe"
@@ -156,5 +156,6 @@
    "red": "Crore dhadkan / sec? Chat server ikattha karke Redis me (batch). Last seen chhupaya? Mat dikhao.",
    "green": "'typing...' sirf khuli chat me, store nahi, 2 sec ki khabar"
   }
- ]
+ ],
+ "kyun": "Jab maango tab dekho, key khud mit jaati hai. Thoda purana status chal jaata hai, paisa nahi lagta"
 }

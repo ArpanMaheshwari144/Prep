@@ -198,5 +198,6 @@
    "red": "Jeeta kaise pata? bookingId se poll ya WebSocket push. Andar wala bina liye gaya? Line se agla andar.",
    "green": "Ek worker dheema? UPDATE ~ms, hazaar / sec. Aur chahiye to show ke hisse (balcony / stall)"
   }
- ]
+ ],
+ "kyun": "Likhne ki bheed ko line me khada karo. User ko apni jagah dikhti hai. Ek show = ek line, aur sach hamesha DB ki seats hi hain"
 }

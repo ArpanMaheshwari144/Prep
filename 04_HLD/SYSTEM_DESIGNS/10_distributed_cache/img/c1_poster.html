@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 1: RAM bhari to sabse der se chhua </title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="808" viewBox="0 0 1500 808" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="882" viewBox="0 0 1500 882" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="808" fill="#0b1220"/>
+</defs><rect width="1500" height="882" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: RAM bhari to sabse der se chhua bahar (LRU), har key ki umar (TTL). HashMap + list = O(1). Sach DB me</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="164" width="230" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
@@ -37,18 +37,21 @@
 <text x="960" y="349" font-size="13" fill="#6b7a90" class="m" text-anchor="middle">RAM bhari: bahar</text>
 <circle cx="740" cy="114" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="740" y="119" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<rect x="30" y="419" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="444" r="12" fill="#ff5a6a"/>
-<text x="52" y="449" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="449" font-size="15" font-weight="700" fill="#ff5a6a">Subah RAM bhar gayi</text>
-<text x="52" y="476" font-size="13.5" fill="#7fe0b0">Sabse der se chhua (user:7) bahar. Hati key</text>
-<text x="52" y="496" font-size="13.5" fill="#7fe0b0">= ek miss, DB se wapas</text>
-<rect x="30" y="574" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="600" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="624" font-size="13.5" fill="#e6dcb8">LFU (kitni baar chhua): Kal ki famous key aaj bhi baithi. Default LRU</text>
-<rect x="30" y="662" width="1440" height="116" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="692" font-size="13.5" fill="#c9d6e8">Hatana hi band (noeviction)? Naya likhna error. Cache me allkeys-lru. Redis poori LRU list? Nahi: kuch random key me sabse purani.</text>
-<text x="48" y="714" font-size="13.5" fill="#c9d6e8">user:9 phir padha? Utha ke aage, ab sabse baad me nikalega</text>
-<text x="48" y="736" font-size="13.5" fill="#c9d6e8">Umar kitni? Jitna purana jhel sako: profile = minute, price / stock = second.</text>
-<text x="48" y="758" font-size="13.5" fill="#c9d6e8">Umar khatam to agla MISS, DB se taaza laata. Cache khaali ho tab bhi sahi data DB se</text>
+<rect x="30" y="419" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="445" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="445" font-size="13.5" fill="#cfeee0">RAM bhari to sabse purana chhua pehle jaata hai, umar khatam to key bekaar. Hati key sirf ek miss hai, App DB se laake wapas rakh deta hai</text>
+<rect x="30" y="493" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="518" r="12" fill="#ff5a6a"/>
+<text x="52" y="523" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="523" font-size="15" font-weight="700" fill="#ff5a6a">Subah RAM bhar gayi</text>
+<text x="52" y="550" font-size="13.5" fill="#7fe0b0">Sabse der se chhua (user:7) bahar. Hati key</text>
+<text x="52" y="570" font-size="13.5" fill="#7fe0b0">= ek miss, DB se wapas</text>
+<rect x="30" y="648" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="674" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="698" font-size="13.5" fill="#e6dcb8">LFU (kitni baar chhua): Kal ki famous key aaj bhi baithi. Default LRU</text>
+<rect x="30" y="736" width="1440" height="116" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="766" font-size="13.5" fill="#c9d6e8">Hatana hi band (noeviction)? Naya likhna error. Cache me allkeys-lru. Redis poori LRU list? Nahi: kuch random key me sabse purani.</text>
+<text x="48" y="788" font-size="13.5" fill="#c9d6e8">user:9 phir padha? Utha ke aage, ab sabse baad me nikalega</text>
+<text x="48" y="810" font-size="13.5" fill="#c9d6e8">Umar kitni? Jitna purana jhel sako: profile = minute, price / stock = second.</text>
+<text x="48" y="832" font-size="13.5" fill="#c9d6e8">Umar khatam to agla MISS, DB se taaza laata. Cache khaali ho tab bhi sahi data DB se</text>
 </svg>

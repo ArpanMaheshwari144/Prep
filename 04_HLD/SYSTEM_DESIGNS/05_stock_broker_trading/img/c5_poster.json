@@ -177,5 +177,6 @@
    "red": "Replay me der? Standby pehle se log padh ke taiyaar, pehla gire to wo chalu. Crash me paisa? DB me, wahan rollback.",
    "green": "Dobara chalaya to kuch nahi badalta (trade_id)"
   }
- ]
+ ],
+ "kyun": "Log hi sach hai, book uski photo. Gira = aakhri photo + uske baad ke panne. Dobara chalaya to kuch nahi badalta (trade_id)"
 }

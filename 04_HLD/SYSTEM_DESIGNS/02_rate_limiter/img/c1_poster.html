@@ -2,18 +2,18 @@
 <meta charset="utf-8">
 <title>Card 1: sab App ek hi Redis ginti dekhte</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="743" viewBox="0 0 1500 743" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="817" viewBox="0 0 1500 817" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="743" fill="#0b1220"/>
+</defs><rect width="1500" height="817" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: sab App ek hi Redis ginti dekhte hain. Chhathi request pe 429</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="84" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
 <text x="48" y="110" font-size="14" font-weight="700" fill="#ff8a95">Pehle aisa tha:</text>
-<text x="170" y="110" font-size="13.5" fill="#d9b8bd">Har App apni ginti rakhta tha: 5 + 4 = 9 andar. Ab dono App ek hi Redis ginti dekhte, 6 pe mana</text>
+<text x="170" y="110" font-size="13.5" fill="#d9b8bd">Har App apni ginti rakhta tha: 5 + 4 = 9 andar</text>
 <rect x="30" y="212" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="140.0" y="246" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
 <text x="140.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">9 baar login dabaya</text>
@@ -40,14 +40,17 @@
 <text x="1104" y="262" font-size="13" fill="#3ddc97" class="m" text-anchor="middle">6 &gt; 5</text>
 <circle cx="1018" cy="212" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="1018" y="217" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<rect x="30" y="462" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="487" r="12" fill="#ff5a6a"/>
-<text x="52" y="492" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="492" font-size="15" font-weight="700" fill="#ff5a6a">Minute ke kinare pe 5 aur agle minute</text>
-<text x="74" y="513" font-size="15" font-weight="700" fill="#ff5a6a">ke shuru me 5: 2 sec me 10 andar</text>
-<text x="52" y="540" font-size="13.5" fill="#7fe0b0">Ye fixed window ki kamzori hai. Isliye asli</text>
-<text x="52" y="560" font-size="13.5" fill="#7fe0b0">me token bucket lagate</text>
-<rect x="30" y="625" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="651" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="675" font-size="13.5" fill="#e6dcb8">Ginti DB me rakhte: Har request pe disk aur lock, bahut dheema. Redis RAM me hai, ~1 ms   ·   Sticky LB se Arpan ko hamesha ek hi App pe bhejte: Wo App gira to Arpan ki ginti bhi saath gayi</text>
+<rect x="30" y="462" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="488" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="488" font-size="13.5" fill="#cfeee0">Ginti ek hi jagah hai aur RAM jitni tez hai. Key ki umar hi window hai, minute khatam to key mit jaati</text>
+<rect x="30" y="536" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="561" r="12" fill="#ff5a6a"/>
+<text x="52" y="566" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="566" font-size="15" font-weight="700" fill="#ff5a6a">Minute ke kinare pe 5 aur agle minute</text>
+<text x="74" y="587" font-size="15" font-weight="700" fill="#ff5a6a">ke shuru me 5: 2 sec me 10 andar</text>
+<text x="52" y="614" font-size="13.5" fill="#7fe0b0">Ye fixed window ki kamzori hai. Isliye asli</text>
+<text x="52" y="634" font-size="13.5" fill="#7fe0b0">me token bucket lagate</text>
+<rect x="30" y="699" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="725" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="749" font-size="13.5" fill="#e6dcb8">Ginti DB me rakhte: Har request pe disk aur lock, bahut dheema. Redis RAM me hai, ~1 ms   ·   Sticky LB se Arpan ko hamesha ek hi App pe bhejte: Wo App gira to Arpan ki ginti bhi saath gayi</text>
 </svg>

@@ -196,6 +196,12 @@
    "w": 1440,
    "red": "Peeche wala follower leader? Nahi, aakhri khabar nahi. 3 copy = kam se kam 3 broker.",
    "green": "acks: 0 = bhej ke bhaago · 1 = sirf leader (click / log) · all = saari ISR (paisa)"
+  },
+  {
+   "type": "grey",
+   "red": "Pehle poochho: message kho sakta hai, ya bilkul nahi? Isi se acks tay hota",
+   "green": ""
   }
- ]
+ ],
+ "kyun": "Leader A likhta hai, B aur C copy lete hain. \"done\" tabhi, jab ISR copy pe bhi likh gaya. Producer ko OK = khabar bach gayi. Naya leader sirf ISR me se banta hai"
 }

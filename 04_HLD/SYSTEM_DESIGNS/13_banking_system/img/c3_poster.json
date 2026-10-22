@@ -167,5 +167,6 @@
    "red": "FOR UPDATE kyun nahi? Do kadam, taala lamba.",
    "green": "Transfer ki do row? Chhoti account id pehle (card 9)"
   }
- ]
+ ],
+ "kyun": "Row pe taala lagta hai, dono line me. Pehla 300 se 100. Doosra: 100 >= 200? nahi, to 0 row, kuch nahi kata, 422 \"paisa kam\""
 }

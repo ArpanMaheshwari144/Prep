@@ -172,5 +172,6 @@
    "red": "429 aaya? Dheere chalo, Retry-After maano. Kuch din se OPEN? Alert, source list se bahar.",
    "green": "HALF-OPEN ki test call theek nikli to CLOSED"
   }
- ]
+ ],
+ "kyun": "Ek beemar source baaki ko nahi rokta. Had tak intezaar, phir breaker. Us source ki khabar kuch der nahi aayegi, baaki feed chalti rahegi"
 }

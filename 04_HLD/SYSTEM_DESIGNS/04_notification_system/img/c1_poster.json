@@ -1,42 +1,234 @@
 {
-  "title": "Card 1: order + khabar ek hi DB txn me (outbox). Order ko turant OK, email peeche Kafka se",
-  "h": 630,
-  "boxes": [
-    {"x": 30, "y": 220, "w": 180, "h": 100, "kind": "user", "title": "Main", "lines": ["order kiya"]},
-    {"x": 270, "y": 200, "w": 230, "h": 140, "kind": "server", "title": "Order Svc", "lines": ["order + khabar", "ek txn (outbox)", "turant OK"]},
-    {"x": 590, "y": 210, "w": 210, "h": 120, "kind": "cache", "title": "Kafka", "lines": ["khabar ~7 din", "3 copy"]},
-    {"x": 890, "y": 200, "w": 230, "h": 140, "kind": "server", "title": "Notification Svc", "lines": ["peeche padh ke", "email bhejti", "yaad: kahan tak"]},
-    {"x": 1200, "y": 210, "w": 270, "h": 120, "kind": "lb", "title": "Email company", "lines": ["aaj band thi"]}
-  ],
-  "arrows": [
-    {"pts": [[212, 270], [266, 270]], "c": "blue"},
-    {"pts": [[502, 270], [586, 270]], "c": "orange", "label": "relay", "lx": 544, "ly": 300, "a": "middle"},
-    {"pts": [[802, 270], [886, 270]], "c": "orange"},
-    {"pts": [[1122, 270], [1196, 270]], "c": "green"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 640,
-     "red": "Pehle order ke andar hi email bhejte the",
-     "green": "Email company band = order hi fail. Ab order turant OK",
-     "conn": [[385, 146], [385, 200]]},
-    {"n": 2, "type": "pehle", "x": 700, "y": 84, "w": 770,
-     "red": "Order Svc me hi retry karte rehte?",
-     "green": "Request atki rehti, aur Order Svc gira to retry bhi gaya"},
-    {"n": 3, "type": "x", "x": 30, "y": 420, "w": 520,
-     "red": "Kafka tak pahunchne se pehle service giri",
-     "green": "Khabar outbox row me padi, relay baad me bhejta",
-     "mark": [530, 270], "conn": [[530, 282], [530, 420]]},
-    {"n": 4, "type": "x", "x": 570, "y": 420, "w": 370,
-     "red": "Kafka ki ek machine giri",
-     "green": "Log ki 3 copy, khabar nahi khoti",
-     "mark": [602, 330], "conn": [[602, 342], [602, 420]]},
-    {"n": 5, "type": "x", "x": 960, "y": 420, "w": 510,
-     "red": "Email company ghanton band",
-     "green": "Khabar Kafka me padi, wapas aate hi wahin se",
-     "green2": "Order kabhi email ki wajah se fail nahi",
-     "mark": [1458, 330], "conn": [[1458, 342], [1458, 420]]},
-    {"type": "grey", "x": 30, "y": 535, "w": 1440,
-     "red": "Traffic 10 guna? Khabar pehle Kafka ki line me, worker apni speed se. Sale 12 baje: 11:50 tak worker badha do.",
-     "green": "Notification Svc dheemi? Machine badhao (consumer group), lines aapas me bat jaati"}
-  ]
+ "title": "Card 1: order + khabar ek hi DB txn me (outbox). Order ko turant OK, email peeche Kafka se",
+ "h": 630,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 220,
+   "w": 180,
+   "h": 100,
+   "kind": "user",
+   "title": "Arpan",
+   "lines": [
+    "order kiya"
+   ]
+  },
+  {
+   "x": 270,
+   "y": 200,
+   "w": 230,
+   "h": 140,
+   "kind": "server",
+   "title": "Order Svc",
+   "lines": [
+    "order + khabar",
+    "ek txn (outbox)",
+    "turant OK"
+   ]
+  },
+  {
+   "x": 590,
+   "y": 210,
+   "w": 210,
+   "h": 120,
+   "kind": "cache",
+   "title": "Kafka",
+   "lines": [
+    "khabar ~7 din",
+    "3 copy"
+   ]
+  },
+  {
+   "x": 890,
+   "y": 200,
+   "w": 230,
+   "h": 140,
+   "kind": "server",
+   "title": "Notification Svc",
+   "lines": [
+    "peeche padh ke",
+    "email bhejti",
+    "yaad: kahan tak"
+   ]
+  },
+  {
+   "x": 1200,
+   "y": 210,
+   "w": 270,
+   "h": 120,
+   "kind": "lb",
+   "title": "Email company",
+   "lines": [
+    "aaj band thi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     212,
+     270
+    ],
+    [
+     266,
+     270
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     502,
+     270
+    ],
+    [
+     586,
+     270
+    ]
+   ],
+   "c": "orange",
+   "label": "relay",
+   "lx": 544,
+   "ly": 300,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     802,
+     270
+    ],
+    [
+     886,
+     270
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1122,
+     270
+    ],
+    [
+     1196,
+     270
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Pehle order ke andar hi email bhejte the",
+   "green": "Email company band = order hi fail. Ab order turant OK",
+   "conn": [
+    [
+     385,
+     146
+    ],
+    [
+     385,
+     200
+    ]
+   ],
+   "tha": "Email company band = order hi fail"
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 700,
+   "y": 84,
+   "w": 770,
+   "red": "Order Svc me hi retry karte rehte?",
+   "green": "Request atki rehti, aur Order Svc gira to retry bhi gaya"
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 30,
+   "y": 420,
+   "w": 520,
+   "red": "Kafka tak pahunchne se pehle service giri",
+   "green": "Khabar outbox row me padi, relay baad me bhejta",
+   "mark": [
+    530,
+    270
+   ],
+   "conn": [
+    [
+     530,
+     282
+    ],
+    [
+     530,
+     420
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 570,
+   "y": 420,
+   "w": 370,
+   "red": "Kafka ki ek machine giri",
+   "green": "Log ki 3 copy, khabar nahi khoti",
+   "mark": [
+    602,
+    330
+   ],
+   "conn": [
+    [
+     602,
+     342
+    ],
+    [
+     602,
+     420
+    ]
+   ]
+  },
+  {
+   "n": 5,
+   "type": "x",
+   "x": 960,
+   "y": 420,
+   "w": 510,
+   "red": "Email company ghanton band",
+   "green": "Khabar Kafka me padi, wapas aate hi wahin se",
+   "green2": "Order kabhi email ki wajah se fail nahi",
+   "mark": [
+    1458,
+    330
+   ],
+   "conn": [
+    [
+     1458,
+     342
+    ],
+    [
+     1458,
+     420
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 535,
+   "w": 1440,
+   "red": "Traffic 10 guna? Khabar pehle Kafka ki line me, worker apni speed se. Sale 12 baje: 11:50 tak worker badha do.",
+   "green": "Notification Svc dheemi? Machine badhao (consumer group), lines aapas me bat jaati"
+  }
+ ],
+ "kyun": "Order kabhi khabar ka intezaar nahi karta. Khabar disk ke log (Kafka) me padi rehti hai, padhne wala yaad rakhta hai kahan tak padha. Company band ho to bhi khabar padi hai, wapas aate hi wahin se"
 }

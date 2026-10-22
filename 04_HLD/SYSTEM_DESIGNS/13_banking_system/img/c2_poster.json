@@ -182,5 +182,6 @@
    "red": "Bina id? Timeout pe app ne dobara bheja, server ne do transfer samjhe: 1000 kate.",
    "green": "Id app banata, server nahi: dobara bhejne wala wahi id laata"
   }
- ]
+ ],
+ "kyun": "Aadha nahi, ye transaction ka kaam hai. Do baar nahi, ye id ka kaam hai. Id app banata hai, server nahi, kyunki dobara bhejne wala wahi id laata hai"
 }

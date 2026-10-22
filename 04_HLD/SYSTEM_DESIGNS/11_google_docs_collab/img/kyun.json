@@ -1,0 +1,83 @@
+{
+ "1": {
+  "kyun": "Server ke paas text nahi aata, badlaav aate hain. Server op ko agla version deta, lagata, aur Ravi ko bhej deta. Dono op v7 pe bane, to server samjhta ki saath bane aur dono khiska ke lagata"
+ },
+ "2": {
+  "kyun": "Ek hi khula connection dono taraf chalta hai. Server khud bhej deta, user ko refresh nahi karna padta"
+ },
+ "3": {
+  "kyun": "Kram sirf server ka hai, har op ko agla version milta, phone ki ghadi kabhi nahi. Aaya hua op us kram se khisakta hai, to sabki screen same rehti hai"
+ },
+ "4": {
+  "kyun": "Ek server ~1 lakh connection hi jhelta hai, isliye kai server chahiye. Ek doc = ek owner server, to OT ek hi jagah hota hai",
+  "baaki": [
+   "Pehle poochho: ek doc pe ek saath kitne log hain, 2-3 ya 100?"
+  ]
+ },
+ "5": {
+  "kyun": "Jis server pe us doc ka user hai, wo channel sunta hai (subscriber). Iska kaam sirf turant pahunchana hai, kuch store nahi karta (bheja aur bhool gaya)"
+ },
+ "6": {
+  "kyun": "ACK tabhi jab op buffer aur copy dono me pahunch gaya. Cassandra ka batch ACK ke raaste me hai hi nahi"
+ },
+ "7": {
+  "kyun": "Typing kabhi na ruke (AP): net wapas aate hi op bhejo, server permission check karke khiska ke lagata, aakhir me sab same. Access kabhi galat na ho (CP): permission hatate hi roko, chahe thodi der ruke. Isliye permission alag SQL me"
+ },
+ "8": {
+  "kyun": "Photo ek version tak ki hoti hai, to kholna = photo + uske baad ke ~1000 op. Shuru se kabhi nahi. Photo background job leta hai, user ko dikhta hi nahi"
+ },
+ "badlo": [
+  [
+   "Main ka",
+   "Arpan ka"
+  ],
+  [
+   "yaad: main v7 pe hoon",
+   "yaad: Arpan v7 pe hai"
+  ],
+  [
+   "yaad: main bhi v7 pe hoon",
+   "yaad: Ravi bhi v7 pe hai"
+  ],
+  [
+   "main v9 pe tha",
+   "Arpan v9 pe tha"
+  ],
+  [
+   "(Main, Ravi)",
+   "(Arpan, Ravi)"
+  ],
+  [
+   "yaad: main v12 pe hoon",
+   "yaad: Ravi v12 pe hai"
+  ],
+  [
+   "main v12 pe tha",
+   "Ravi v12 pe tha"
+  ],
+  [
+   "Main + Ravi",
+   "Arpan + Ravi"
+  ],
+  [
+   "Main (editor)",
+   "Arpan (editor)"
+  ],
+  [
+   "yaad: main v12",
+   "yaad: Ravi v12"
+  ],
+  [
+   "copy main ban",
+   "copy primary ban"
+  ],
+  [
+   "copy main bani",
+   "copy primary bani"
+  ],
+  [
+   "Raat ko Main ne",
+   "Raat ko Arpan ne"
+  ]
+ ]
+}

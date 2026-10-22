@@ -163,5 +163,6 @@
    "red": "Card 3 se farak? Wahan paisa do baar kat raha tha (double spend). Yahan dono atke.",
    "green": "Kram ke baad bhi phansa? DB ghera khud pakadta, ek ko wapas: WAHI id se retry"
   }
- ]
+ ],
+ "kyun": "Ek hi kram hai to ghera banta hi nahi. Txn2 7 pe ruka, Txn1 poora hua, phir Txn2"
 }

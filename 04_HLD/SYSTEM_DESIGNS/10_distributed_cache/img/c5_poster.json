@@ -212,5 +212,6 @@
    "red": "Purani value de sakte? Soft-TTL: khatam se pehle taaza karo. 999 kitna ruke? 50-100 ms, ya purani value.",
    "green": "Sale 12 baje pata tha? Pehle hi cache bhar do + machine badhao"
   }
- ]
+ ],
+ "kyun": "Khaali key pe ek hi DB jaata hai, baaki rukte hain ya purani value lete hain. DB pe 1000 ek saath kabhi nahi"
 }

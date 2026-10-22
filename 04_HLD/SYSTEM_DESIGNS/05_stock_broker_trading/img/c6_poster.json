@@ -186,5 +186,6 @@
    "red": "Galti kaise pakdoge? Raat ko ledger jodo, hamesha 0 aana chahiye.",
    "green": "Asli paisa usi pal Suresh ko? Nahi, T+1 NSE Clearing. Ye broker ka apna khaata"
   }
- ]
+ ],
+ "kyun": "Paisa ek DB me hai, to chaaron likhai ek transaction. COMMIT se pehle crash = rollback, kuch nahi likha, user ko PENDING, galat number kabhi nahi. Ledger ka jod hamesha 0"
 }

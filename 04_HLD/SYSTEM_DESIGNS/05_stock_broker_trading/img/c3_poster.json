@@ -8,7 +8,7 @@
    "w": 200,
    "h": 90,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "BUY 10 (pehle)"
    ]
@@ -45,7 +45,7 @@
    "title": "TCS thread",
    "lines": [
     "ek hi haath",
-    "Main: 10 mile",
+    "Arpan: 10 mile",
     "Mohan: 0, book me"
    ]
   },
@@ -210,5 +210,6 @@
    "red": "Asli India me Groww / Zerodha order NSE ko bhejte, matching NSE karta. Wallet block broker ka kaam.",
    "green": "Is design me hum apna matching chala rahe (exchange jaisa)"
   }
- ]
+ ],
+ "kyun": "Ek stock ki book ko ek waqt ek hi haath. Doosra line me rukta, race hoti hi nahi. Book RAM me (tez), paisa SQL + ACID me (hamesha ka)"
 }

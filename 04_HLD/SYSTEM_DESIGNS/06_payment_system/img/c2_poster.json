@@ -217,5 +217,6 @@
     ]
    ]
   }
- ]
+ ],
+ "kyun": "\"paisa hai?\" aur \"kaato\" ek hi kadam me hota hai, DB ke andar. Kitni bhi machine hon, DB ek-ek karke chalata hai, jeetta ek. 0 row aayi = reject, user ko turant \"paisa kam\""
 }

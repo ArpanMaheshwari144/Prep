@@ -1,5 +1,5 @@
 {
- "title": "Card 3: har machine ki async copy. B mari to ~10-30 sec me copy main. Network toota to zyadatar (quorum) chunte",
+ "title": "Card 3: har machine ki async copy. B mari to ~10-30 sec me copy primary. Network toota to zyadatar (quorum) chunte",
  "h": 700,
  "boxes": [
   {
@@ -19,7 +19,7 @@
    "w": 260,
    "h": 120,
    "kind": "cache",
-   "title": "Machine B (main)",
+   "title": "Machine B (primary)",
    "lines": [
     "user:42 ...",
     "async copy bhejta"
@@ -34,7 +34,7 @@
    "title": "B ki copy",
    "lines": [
     "B mari: ~10-30 sec",
-    "me main ban jaati"
+    "me primary ban jaati"
    ]
   },
   {
@@ -58,7 +58,7 @@
    "title": "Quorum",
    "lines": [
     "zyadatar tay karein",
-    "kaun main"
+    "kaun primary"
    ]
   }
  ],
@@ -133,8 +133,8 @@
    "x": 620,
    "y": 84,
    "w": 850,
-   "red": "Network toota, do main ban gaye",
-   "green": "Zyadatar (quorum) tay karti kaun main. Akeli wali likhna band (split brain)",
+   "red": "Network toota, do primary ban gaye",
+   "green": "Zyadatar (quorum) tay karti kaun primary. Akeli wali likhna band (split brain)",
    "n": 2,
    "mark": [
     628,
@@ -157,7 +157,7 @@
    "y": 520,
    "w": 640,
    "red": "Dopahar machine B mari",
-   "green": "Copy ~10-30 sec me main. Beech me B ki key DB se, dheema",
+   "green": "Copy ~10-30 sec me primary. Beech me B ki key DB se, dheema",
    "n": 3,
    "mark": [
     470,
@@ -179,7 +179,7 @@
    "x": 690,
    "y": 520,
    "w": 780,
-   "red": "Main aur copy sab, poora cache gira",
+   "red": "Primary aur copy sab, poora cache gira",
    "green": "Saari padhai DB pe: DB ke aage rate limit / load shedding",
    "n": 4,
    "mark": [
@@ -209,5 +209,6 @@
    "red": "Copy peeche thi? Aakhri kuch likhai kho sakti, cache me chalta, sach DB me.",
    "green": "Copy se padh bhi lo? Haan, padhai bat jaati, thoda purana"
   }
- ]
+ ],
+ "kyun": "Cache me tezi pehle hai. Copy thodi der baad likhi jaati hai, aakhri likhai khoye to chalta hai, sach DB me hai"
 }

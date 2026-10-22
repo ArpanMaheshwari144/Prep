@@ -3,7 +3,7 @@
 > Lamba link do, chhota 7 akshar ka code milta hai. Koi chhote link pe click kare to asli link pe bhej do (302).
 > Dil do cheezein: har link ka code alag, aur click pe redirect bahut tez. Log link banate kam, kholte zyada (100 me 99 baar kholna).
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue).
+> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -57,20 +57,7 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 2 BHEED AAYI** · Cue: REDIS CACHE (cache-aside)
 
-<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
-
-
-```
-HAL     beech me Redis: click pe pehle Redis dekho, mila to wahin se, nahi to DB se laao aur Redis me rakho
-        (cache-aside). Naya link banate hi Redis me bhi daal do
-KYUN    Redis RAM se ~0.1 ms, DB disk se ~10 ms. 95% click Redis se hi nikal jaate hain.
-        Sach ek hi jagah hai, DB me. Redis sirf garam copy hai, khoyi to DB se wapas ban jaati
-NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi rehti
-        Memcached -> GIRA: usme copy nahi, gira to saari bheed seedha DB pe. Redis gira to uski copy sambhalti
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Sach DB me. Redis sirf garam copy: click pehle Redis, miss pe DB se laao aur Redis me rakho.
+<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -81,20 +68,7 @@ NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi reh
 
 **Rail 3 MACHINE GIRI** · Cue: STATELESS App x N + LOAD BALANCER
 
-<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
-
-
-```
-HAL     kai App aur aage Load Balancer (LB), jo baari-baari kisi bhi App ko bhejta (round-robin).
-        App kuch yaad nahi rakhta (stateless), sab Redis / DB me, to koi bhi App koi bhi click le sakti
-KYUN    App giri to /health ka jawab nahi aata, LB use list se hata deta, agla click doosri App pe
-NAHI    ek badi machine -> GIRA: kitni bhi badi ho, ek hi hai. Giri to poori site band
-        login App me hi yaad -> GIRA: user usi App se bandh jaata, wo giri to logout.
-           Isliye session bahar, Redis / DB me
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** App kuch yaad nahi rakhti (stateless). LB /health poochta, chup App list se bahar.
+<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -105,22 +79,7 @@ NAHI    ek badi machine -> GIRA: kitni bhi badi ho, ek hi hai. Giri to poori sit
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: COUNTER RANGE + base62
 
-<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
-
-
-```
-HAL     Counter har App ko alag range deta: App-1 ko 1-1000, App-2 ko 1001-2000. App apni range se agla
-        number leta. Ek range kabhi do App ko nahi, to code kabhi same nahi
-BASE62  number ko 62 akshar (0-9, a-z, A-Z) me likho. 125 = "21", 100 crore = "15FTGg"
-KYUN    counter kabhi dohraata nahi, to code bhi nahi dohraata, check ki zaroorat hi nahi.
-        Range ke andar App khud number deta, har link pe Counter tak nahi jaata. 1000 link pe ek call
-NAHI    UUID -> LAMBA: 36 akshar, link chhota karna hi to kaam tha
-        lambe link ka hash, pehle 7 akshar -> TAKKAR: do link ke same aa sakte, har baar DB me dekho.
-           Counter me takkar hoti hi nahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Counter har App ko range deta, App range se agla number, phir base62. Takkar kabhi nahi.
+<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -131,20 +90,7 @@ NAHI    UUID -> LAMBA: 36 akshar, link chhota karna hi to kaam tha
 
 **Rail 5 KUCH DHEEMA** · Cue: KAFKA, ginti peeche
 
-<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
-
-
-```
-HAL     redirect turant (302), "ek click hua" ki khabar Kafka me daal ke aage. Analytics service apni speed
-        se Kafka se padh ke ginti karti
-KYUN    redirect kisi ka intezaar nahi karta. Ginti peeche hoti, disk pe pakki. Ginti wala dheema / band ho,
-        to bhi link khulta hai, ginti thodi der se aati
-NAHI    click seedha DB me -> DHEEMA: har redirect DB likhai ka intezaar karta, wahi dheemapan
-        sirf Redis me INCR -> ADHOORA: sirf ginti milti, kaun, kab, kahan se click hua, wo nahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Redirect turant (302), "click hua" Kafka me, ginti peeche Analytics apni speed se.
+<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -155,21 +101,8 @@ NAHI    click seedha DB me -> DHEEMA: har redirect DB likhai ka intezaar karta, 
 
 **Rail 6 DATA BADA** · Cue: SHARD by code (RING)
 
-<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
 
-
-```
-HAL     data kai machine me baanto (shard), link ke code se. Code ring pe aage chalta, jo pehli machine mile
-        wo uski (consistent hashing). Har tukde ki 3 copy
-KYUN    click hamesha code ke saath aata hai, to har click seedha ek machine pe jaata
-NAHI    country se baanto -> BIKHRA: code dekh ke pata nahi kis country ka, saari machine poochni padti
-        ek badi machine -> CHHOTI: 90 TB ek machine me aata hi nahi
-        seedha code % machine -> HILTA: machine judi to lagbhag saari keys hil jaati (3 se 4 = sab badle).
-           Ring me sirf pados ki keys hilti
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Code ka hash ring pe, pehli machine uski, agli 2 machine pe copy (Cassandra).
 
 > [!CAUTION]
 > **AWS pe Cassandra kahan? RDS pe? → NAHI.** RDS sirf SQL (MySQL · Postgres · MariaDB · Oracle · SQL Server).
@@ -184,19 +117,7 @@ NAHI    country se baanto -> BIKHRA: code dekh ke pata nahi kis country ka, saar
 
 **Rail 6 DATA BADA (copy ka AGAR)** · Cue: QUORUM (2 me likho, 2 se padho)
 
-<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
-
-
-```
-HAL     likhna 2 copy me, padhna bhi 2 copy se (quorum, 3 me se 2). Har jodi me ek taaza copy zaroor hoti
-MISAAL  A, B me likha, A + C se padha, to A me mil gaya
-KYUN    2 + 2 = 4, copy sirf 3. Padhne wali jodi me likhne wali ek copy aani hi hai. Banane ke baad 404 nahi
-NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
-        ek se padho -> PURANA: wahi copy mil sakti jahan abhi pahuncha nahi, wahi 404
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** 3 copy: 2 me likho, 2 se padho (W + R > N). Har jodi me ek taaza copy.
+<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -207,18 +128,7 @@ NAHI    teeno me likho -> RUKA: ek copy dheemi ya giri to har likhai ruk jaati
 
 **Rail 7 DARWAZA / DOOR KE LOG** · Cue: ROUTE 53 + 2 LB (health check)
 
-<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
-
-
-```
-HAL     do LB, aage Route 53. Route 53 har ~30 sec LB se poochta hai (health check). Jo 3 baar chup raha,
-        wo list se bahar, sab LB-2 pe (DNS failover)
-KYUN    phone sabse pehle Route 53 se hi poochta hai "kahan jaun?". Wahin se zinda LB ka pata mil jaata
-NAHI    ek hi LB -> GIRA: wo gira to App kitne bhi hon, koi andar nahi aa sakta
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** 2 LB, aage Route 53. Health check pe 3 baar chup = bahar.
+<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -229,19 +139,7 @@ NAHI    ek hi LB -> GIRA: wo gira to App kitne bhi hon, koi andar nahi aa sakta
 
 **Rail 8 BAHAR KA HAMLA** · Cue: RATE LIMIT darwaze pe + WAF
 
-<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
-
-
-```
-HAL     gateway pe hi ginti: har API key ki ek shared ginti (Redis me). Had paar to 429,
-        request andar aati hi nahi (rate limit)
-KYUN    rokna darwaze pe, sabki ek ginti se. Asli users ki speed bachi rehti
-NAHI    har App apni ginti -> DHEELA: 10 App = had 10 guna, aur bheed App tak aa chuki hoti
-        sirf IP pe had -> BADLA: bot naya IP le aata. Isliye ginti API key / user_id pe, jo bot badal na sake
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Gateway pe sabki ek ginti (Redis), had paar to 429, andar aaya hi nahi. Pehchaana hamla WAF pe.
+<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 Poora rate limit = [02_rate_limiter](../02_rate_limiter/02_rate_limiter.md).

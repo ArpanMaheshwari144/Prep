@@ -148,5 +148,6 @@
    "red": "D judi? Sirf pados ki key khiski (C se D), baaki hit.",
    "green": "Redis Cluster: ring nahi, CRC16(key) % 16384 slot"
   }
- ]
+ ],
+ "kyun": "Machine jude ya jaaye to sirf pados ki ~K/N key hilti hain (K = saari key, N = machine). Sirf us hisse ki ek baar miss, baaki hit"
 }

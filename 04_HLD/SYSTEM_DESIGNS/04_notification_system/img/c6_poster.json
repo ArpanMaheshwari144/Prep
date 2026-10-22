@@ -204,5 +204,6 @@
    "red": "Breaker kahan? Har process ka apna (Resilience4j), ya Redis me saanjha. Har company ka apna, Twilio khula to push / email chalte.",
    "green": "Push bhi doosri company se? Nahi: Android = FCM, iPhone = APNs, phone ka OS tay karta"
   }
- ]
+ ],
+ "kyun": "Dheema matlab band maano. Har company ka apna circuit breaker, to uske band hone se baaki raaste chalte rehte. Khabar line me rukti hai, phenki nahi jaati"
 }

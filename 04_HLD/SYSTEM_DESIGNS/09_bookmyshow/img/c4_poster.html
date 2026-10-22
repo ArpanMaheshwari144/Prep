@@ -2,14 +2,14 @@
 <meta charset="utf-8">
 <title>Card 4: seat map Redis se (~5 sec umar),</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="769" viewBox="0 0 1500 769" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="843" viewBox="0 0 1500 843" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="769" fill="#0b1220"/>
-<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 4: seat map Redis se (~5 sec umar), faisla sirf main DB ka UPDATE. Map purana to UPDATE 0 row bolega</text>
+</defs><rect width="1500" height="843" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 4: seat map Redis se (~5 sec umar), faisla sirf primary DB ka UPDATE. Map purana to UPDATE 0 row bolega</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="170" width="220" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="140.0" y="204" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">1 lakh log</text>
@@ -17,7 +17,7 @@
 <rect x="330" y="160" width="230" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
 <text x="445.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App</text>
 <text x="445.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">map: Redis se</text>
-<text x="445.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">book: main DB</text>
+<text x="445.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">book: primary DB</text>
 <rect x="650" y="100" width="330" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
 <text x="815.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Read replica</text>
 <text x="815.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">miss pe map yahan se</text>
@@ -25,7 +25,7 @@
 <text x="815.0" y="284" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
 <text x="815.0" y="310" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">seatmap:show42, ~5 sec</text>
 <rect x="1080" y="160" width="390" height="130" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="1275.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main DB</text>
+<text x="1275.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Primary DB</text>
 <text x="1275.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">faisla: UPDATE</text>
 <text x="1275.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">book ke baad map key DEL</text>
 <path d="M252 225 L326 225" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
@@ -37,21 +37,24 @@
 <text x="700" y="355" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
 <circle cx="940" cy="350" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="940" y="355" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="424" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="449" r="12" fill="#ff5a6a"/>
-<text x="52" y="454" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="454" font-size="15" font-weight="700" fill="#ff5a6a">A1 bik chuki, map me khaali dikhi</text>
-<text x="52" y="481" font-size="13.5" fill="#7fe0b0">Chalta hai: UPDATE 0 row bolega. Turant</text>
-<text x="52" y="501" font-size="13.5" fill="#7fe0b0">chahiye to WebSocket / SSE</text>
-<rect x="392" y="424" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="449" r="12" fill="#ff5a6a"/>
-<text x="414" y="454" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="454" font-size="15" font-weight="700" fill="#ff5a6a">Lakh log ek hi Redis key pe (hot key)</text>
-<text x="414" y="481" font-size="13.5" fill="#7fe0b0">Kai copy + App me 1-2 sec ki copy</text>
-<rect x="30" y="579" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="605" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="629" font-size="13.5" fill="#e6dcb8">Map bhi main DB se: 1 lakh dekhne wale booking ko bhi dheema karte</text>
-<rect x="30" y="667" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="697" font-size="13.5" fill="#c9d6e8">Kisi ne book kiya? Booking main DB pe, phir map key DEL.</text>
-<text x="48" y="719" font-size="13.5" fill="#c9d6e8">Redis me map nahi? Replica se banao, Redis me rakh do</text>
+<rect x="30" y="424" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="450" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="450" font-size="13.5" fill="#cfeee0">Dekhna copy se hota hai (Redis / replica), faisla sirf primary DB ka UPDATE. Map thoda purana bhi chalta hai, galat dikhi seat ko DB pakad leta hai (0 row)</text>
+<rect x="30" y="498" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="523" r="12" fill="#ff5a6a"/>
+<text x="52" y="528" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="528" font-size="15" font-weight="700" fill="#ff5a6a">A1 bik chuki, map me khaali dikhi</text>
+<text x="52" y="555" font-size="13.5" fill="#7fe0b0">Chalta hai: UPDATE 0 row bolega. Turant</text>
+<text x="52" y="575" font-size="13.5" fill="#7fe0b0">chahiye to WebSocket / SSE</text>
+<rect x="392" y="498" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="523" r="12" fill="#ff5a6a"/>
+<text x="414" y="528" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="528" font-size="15" font-weight="700" fill="#ff5a6a">Lakh log ek hi Redis key pe (hot key)</text>
+<text x="414" y="555" font-size="13.5" fill="#7fe0b0">Kai copy + App me 1-2 sec ki copy</text>
+<rect x="30" y="653" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="679" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="703" font-size="13.5" fill="#e6dcb8">Map bhi primary DB se: 1 lakh dekhne wale booking ko bhi dheema karte</text>
+<rect x="30" y="741" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="771" font-size="13.5" fill="#c9d6e8">Kisi ne book kiya? Booking primary DB pe, phir map key DEL.</text>
+<text x="48" y="793" font-size="13.5" fill="#c9d6e8">Redis me map nahi? Replica se banao, Redis me rakh do</text>
 </svg>

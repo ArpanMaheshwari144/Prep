@@ -1,44 +1,248 @@
 {
-  "title": "Card 4: bhejte waqt key SENDING (umar ~60 sec), company OK bole tab SENT. Chhodna sirf SENT pe",
-  "h": 720,
-  "boxes": [
-    {"x": 30, "y": 250, "w": 190, "h": 110, "kind": "cache", "title": "Kafka", "lines": ["OTP ki khabar"]},
-    {"x": 290, "y": 240, "w": 230, "h": 130, "kind": "server", "title": "Worker-A", "lines": ["pehle SENDING,", "OK aaya to SENT"]},
-    {"x": 620, "y": 190, "w": 320, "h": 100, "kind": "cache", "title": "Redis", "lines": ["SENDING = adhoora", "SENT = ho gaya"]},
-    {"x": 1040, "y": 250, "w": 210, "h": 110, "kind": "lb", "title": "Twilio", "lines": ["OTP bhejo"]},
-    {"x": 1310, "y": 250, "w": 160, "h": 110, "kind": "user", "title": "Mera phone", "lines": ["OTP aaya"]}
-  ],
-  "arrows": [
-    {"pts": [[222, 305], [286, 305]], "c": "orange"},
-    {"pts": [[522, 275], [616, 245]], "c": "purple"},
-    {"pts": [[522, 320], [1036, 320]], "c": "green", "label": "call (~2-3 sec)", "lx": 780, "ly": 345, "a": "middle"},
-    {"pts": [[1252, 305], [1306, 305]], "c": "green"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 720,
-     "red": "Pehle bhejne se pehle hi SENT laga di",
-     "green": "Call fail hui, Worker-B ne SENT dekh ke chhoda: OTP gaya",
-     "conn": [[700, 146], [700, 190]]},
-    {"n": 2, "type": "pehle", "x": 770, "y": 84, "w": 700,
-     "red": "Key hi hata do?",
-     "green": "Worker mara to Kafka dobara deta: OTP do baar (card 3 wapas)"},
-    {"n": 3, "type": "x", "x": 30, "y": 470, "w": 470,
-     "red": "Bhej diya, jawab se pehle worker mara",
-     "green": "Do baar ja sakta. Maana hua risk:",
-     "green2": "OTP do baar aana, na aane se behtar",
-     "mark": [310, 370], "conn": [[310, 382], [310, 470]]},
-    {"n": 4, "type": "x", "x": 520, "y": 470, "w": 470,
-     "red": "SENDING laga ke worker hi mar gaya",
-     "green": "Hatane wala koi nahi, par 60 sec me",
-     "green2": "key khud mit-ti, agla worker bhejta",
-     "mark": [505, 370], "conn": [[505, 382], [505, 430], [700, 430], [700, 470]]},
-    {"n": 5, "type": "x", "x": 1010, "y": 470, "w": 460,
-     "red": "Call fail hui, worker zinda",
-     "green": "Worker khud key hata deta,",
-     "green2": "agli koshish chal jaaye",
-     "mark": [980, 320], "conn": [[980, 332], [980, 430], [1200, 430], [1200, 470]]},
-    {"type": "grey", "x": 30, "y": 600, "w": 1440,
-     "red": "Umar kitni? Call (~2-3 sec) se lambi, 60 sec. Pehle khatam ho gayi to do worker bhej denge.",
-     "green": "Worker-B ko SENDING mili? Thoda ruko, phir dekho. Chhodna sirf SENT pe"}
-  ]
+ "title": "Card 4: bhejte waqt key SENDING (umar ~60 sec), company OK bole tab SENT. Chhodna sirf SENT pe",
+ "h": 720,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 190,
+   "h": 110,
+   "kind": "cache",
+   "title": "Kafka",
+   "lines": [
+    "OTP ki khabar"
+   ]
+  },
+  {
+   "x": 290,
+   "y": 240,
+   "w": 230,
+   "h": 130,
+   "kind": "server",
+   "title": "Worker-A",
+   "lines": [
+    "pehle SENDING,",
+    "OK aaya to SENT"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 190,
+   "w": 320,
+   "h": 100,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "SENDING = adhoora",
+    "SENT = ho gaya"
+   ]
+  },
+  {
+   "x": 1040,
+   "y": 250,
+   "w": 210,
+   "h": 110,
+   "kind": "lb",
+   "title": "Twilio",
+   "lines": [
+    "OTP bhejo"
+   ]
+  },
+  {
+   "x": 1310,
+   "y": 250,
+   "w": 160,
+   "h": 110,
+   "kind": "user",
+   "title": "Mera phone",
+   "lines": [
+    "OTP aaya"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     222,
+     305
+    ],
+    [
+     286,
+     305
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     522,
+     275
+    ],
+    [
+     616,
+     245
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     522,
+     320
+    ],
+    [
+     1036,
+     320
+    ]
+   ],
+   "c": "green",
+   "label": "call (~2-3 sec)",
+   "lx": 780,
+   "ly": 345,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     1252,
+     305
+    ],
+    [
+     1306,
+     305
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 720,
+   "red": "Pehle bhejne se pehle hi SENT laga di",
+   "green": "Call fail hui, Worker-B ne SENT dekh ke chhoda: OTP gaya",
+   "conn": [
+    [
+     700,
+     146
+    ],
+    [
+     700,
+     190
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 770,
+   "y": 84,
+   "w": 700,
+   "red": "Key hi hata do?",
+   "green": "Worker mara to Kafka dobara deta: OTP do baar (card 3 wapas)"
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 30,
+   "y": 470,
+   "w": 470,
+   "red": "Bhej diya, jawab se pehle worker mara",
+   "green": "Do baar ja sakta. Maana hua risk:",
+   "green2": "OTP do baar aana, na aane se behtar",
+   "mark": [
+    310,
+    370
+   ],
+   "conn": [
+    [
+     310,
+     382
+    ],
+    [
+     310,
+     470
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 520,
+   "y": 470,
+   "w": 470,
+   "red": "SENDING laga ke worker hi mar gaya",
+   "green": "Hatane wala koi nahi, par 60 sec me",
+   "green2": "key khud mit-ti, agla worker bhejta",
+   "mark": [
+    505,
+    370
+   ],
+   "conn": [
+    [
+     505,
+     382
+    ],
+    [
+     505,
+     430
+    ],
+    [
+     700,
+     430
+    ],
+    [
+     700,
+     470
+    ]
+   ]
+  },
+  {
+   "n": 5,
+   "type": "x",
+   "x": 1010,
+   "y": 470,
+   "w": 460,
+   "red": "Call fail hui, worker zinda",
+   "green": "Worker khud key hata deta,",
+   "green2": "agli koshish chal jaaye",
+   "mark": [
+    980,
+    320
+   ],
+   "conn": [
+    [
+     980,
+     332
+    ],
+    [
+     980,
+     430
+    ],
+    [
+     1200,
+     430
+    ],
+    [
+     1200,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 600,
+   "w": 1440,
+   "red": "Umar kitni? Call (~2-3 sec) se lambi, 60 sec. Pehle khatam ho gayi to do worker bhej denge.",
+   "green": "Worker-B ko SENDING mili? Thoda ruko, phir dekho. Chhodna sirf SENT pe"
+  }
+ ],
+ "kyun": "SENDING matlab adhoora, chhoti umar se khud mit jaata, to khabar khoti nahi. Kabhi do baar chali jaaye to chalega: OTP do baar aana, na aane se behtar"
 }

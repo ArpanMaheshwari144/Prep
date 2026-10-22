@@ -174,5 +174,6 @@
    "red": "Token nahi mila? Line me intezaar, ye fail nahi (retry ki ginti nahi badhti). Worker badhe? Speed wahi, kul 100 / sec.",
    "green": "Had kitni? Company ki: SES shuru me ~14 / sec (sandbox 1 / sec), Twilio short code ~100 / sec"
   }
- ]
+ ],
+ "kyun": "Had company ki hai (100 / sec, baaki 429), worker ki nahi. Sab worker ek hi bucket se token lete hain. Token nahi mila to ruko, khabar phenko nahi"
 }

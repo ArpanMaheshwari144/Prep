@@ -202,5 +202,6 @@
    "red": "Key di hi nahi? Round-robin / sticky, koi kram nahi. Pehle poochho: kram poore topic ka, ya ek user ka?",
    "green": "RabbitMQ / SQS me kram? Guarantee nahi. SQS FIFO ya ek consumer = kram, par speed kam"
   }
- ]
+ ],
+ "kyun": "Kram sirf EK partition ke andar milta hai. Jiska kram chahiye, wahi key. Same key = same partition. Tukda key ke hash se tay hota hai (hash % tukde)"
 }

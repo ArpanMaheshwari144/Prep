@@ -194,5 +194,6 @@
    ],
    "green2": "baad me delete ya security dekhe"
   }
- ]
+ ],
+ "kyun": "Client ne jo bheja (naam, type, size) wo kuch sach nahi. Sach file ke bytes me hai: pehle kuch byte type batate hain, scan virus batata hai. Jaanch pass nahi hui to DONE nahi, reject"
 }

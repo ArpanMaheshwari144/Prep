@@ -8,7 +8,7 @@
    "w": 220,
    "h": 120,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "raat 2200,",
     "subah 1100?"
@@ -177,5 +177,6 @@
    "red": "3 saal me bahut bada? Mahine ke tukde, purane S3 Glacier, kanoon jitna kahe. Ledger crash se bachata? Nahi, wo hisaab hai.",
    "green": "Crash se PENDING + webhook + job bachate"
   }
- ]
+ ],
+ "kyun": "Ledger hi sach hai. Sirf nayi line, kaat-peet nahi, jod hamesha 0. Har payment ki 2 line usi transaction me likhi jaati hain"
 }

@@ -8,7 +8,7 @@
    "w": 200,
    "h": 120,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "A1 chuni,",
     "pay me 3 min"
@@ -34,7 +34,7 @@
    "kind": "db",
    "title": "Seats DB",
    "lines": [
-    "A1: HELD (main)",
+    "A1: HELD (Arpan)",
     "held_until 11:05",
     "pay hua = BOOKED"
    ]
@@ -142,7 +142,7 @@
    "y": 520,
    "w": 570,
    "red": "Umar khatam, phir pay aaya",
-   "green": "Confirm pe bhi WHERE (held + main + umar):",
+   "green": "Confirm pe bhi WHERE (held + Arpan + umar):",
    "n": 3,
    "green2": "0 row = seat gayi, paisa refund",
    "mark": [
@@ -168,5 +168,6 @@
    "red": "Koi 10 seat HOLD karke baith gaya? Had lagao: hold ki ginti + rate limit.",
    "green": "Sweeper sirf safai, asli faisla UPDATE ke WHERE me"
   }
- ]
+ ],
+ "kyun": "Hold DB ki usi row ka haal hai (held + umar). Mujhe 5 min ke liye seat pakki, baaki sabko 'held' dikhti hai. Umar khatam ho gayi ya app gir gaya to sweeper khud chhod deta hai. Sweeper sirf safai"
 }

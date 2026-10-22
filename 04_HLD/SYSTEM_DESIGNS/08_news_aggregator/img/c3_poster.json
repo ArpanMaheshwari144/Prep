@@ -1,5 +1,5 @@
 {
- "title": "Card 3: Feed Svc kai machine + LB. Redis miss pe DB ki copy (read replica). Main DB sirf likhai",
+ "title": "Card 3: Feed Svc kai machine + LB. Redis miss pe DB ki copy (read replica). Primary DB sirf likhai",
  "h": 670,
  "boxes": [
   {
@@ -85,7 +85,7 @@
    "w": 210,
    "h": 100,
    "kind": "db",
-   "title": "Main DB",
+   "title": "Primary DB",
    "lines": [
     "sirf likhai"
    ]
@@ -214,7 +214,7 @@
    "x": 570,
    "y": 84,
    "w": 900,
-   "red": "Redis miss pe main DB se padho?",
+   "red": "Redis miss pe primary DB se padho?",
    "green": "Wahan fetcher likh raha: bheed likhai ko bhi dheema karti",
    "n": 2,
    "conn": [
@@ -294,5 +294,6 @@
    "red": "Bheed ka pehle se pata? 7:45 pe machine badhao (scheduled scaling) + cache pehle bharo.",
    "green": "Aur badha? Aur machine: Feed Svc kuch yaad nahi rakhti, koi bhi request le"
   }
- ]
+ ],
+ "kyun": "Padhai copy pe, likhai primary pe. Feed Svc kuch yaad nahi rakhti, to machine badhao, koi bhi request le. Copy thodi peeche hai, matlab kuch second purani khabar, koi nuksaan nahi"
 }

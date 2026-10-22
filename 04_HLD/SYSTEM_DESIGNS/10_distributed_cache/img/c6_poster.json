@@ -205,5 +205,6 @@
    "red": "Parat: L1 (App RAM) -> L2 Redis -> DB, neeche wali dheemi.",
    "green": "Stampede = key khaali (lock). Hot key = key bhari, ek machine pe bheed (L1)"
   }
- ]
+ ],
+ "kyun": "Garam key ko faila do. Ek key = ek machine, crore read / sec pe A ka CPU full, B aur C khaali. Isliye bheed baantni padti hai"
 }

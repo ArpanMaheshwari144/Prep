@@ -1,37 +1,221 @@
 {
-  "title": "Card 1: sab App ek hi Redis ginti dekhte hain. Chhathi request pe 429",
-  "h": 510,
-  "boxes": [
-    {"x": 30, "y": 200, "w": 220, "h": 100, "kind": "user", "title": "Arpan", "lines": ["9 baar login dabaya"]},
-    {"x": 340, "y": 150, "w": 220, "h": 90, "kind": "server", "title": "App 1", "lines": ["har baar Redis se poochta"]},
-    {"x": 340, "y": 300, "w": 220, "h": 90, "kind": "server", "title": "App 2", "lines": ["wahi Redis, wahi ginti"]},
-    {"x": 700, "y": 200, "w": 330, "h": 120, "kind": "cache", "title": "Redis (ginti yahin)",
-     "lines": ["rate:Arpan:login = 6", "60 sec baad key khud mit jaati", "had 5, chhathi pe mana"]},
-    {"x": 1180, "y": 215, "w": 290, "h": 90, "kind": "plain", "title": "Arpan ko 429", "lines": ["6 se 9 tak sab mana"]}
-  ],
-  "arrows": [
-    {"pts": [[252, 235], [336, 200]], "c": "blue"},
-    {"pts": [[252, 265], [336, 340]], "c": "blue"},
-    {"pts": [[562, 195], [696, 240]], "c": "orange", "label": "INCR", "lx": 600, "ly": 196},
-    {"pts": [[562, 345], [696, 290]], "c": "orange"},
-    {"pts": [[1032, 260], [1176, 260]], "c": "green", "label": "6 > 5", "lx": 1104, "ly": 250, "a": "middle"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 430, "w": 560,
-     "red": "Pehle har App apni ginti rakhta tha: 5 + 4 = 9 andar",
-     "green": "Ab dono App ek hi Redis ginti dekhte, 6 pe mana",
-     "conn": [[450, 392], [450, 430]]},
-    {"n": 2, "type": "pehle", "x": 640, "y": 430, "w": 620,
-     "red": "Ginti DB me rakhte?",
-     "green": "Har request pe disk aur lock, bahut dheema. Redis RAM me hai, ~1 ms",
-     "conn": [[865, 322], [865, 430]]},
-    {"n": 3, "type": "pehle", "x": 30, "y": 84, "w": 560,
-     "red": "Sticky LB se Arpan ko hamesha ek hi App pe bhejte?",
-     "green": "Wo App gira to Arpan ki ginti bhi saath gayi",
-     "conn": [[450, 146], [450, 150]]},
-    {"n": 4, "type": "x", "x": 700, "y": 84, "w": 770,
-     "red": "Minute ke kinare pe 5 aur agle minute ke shuru me 5: 2 sec me 10 andar",
-     "green": "Ye fixed window ki kamzori hai. Isliye asli me token bucket lagate",
-     "mark": [1018, 200], "conn": [[1018, 186], [1018, 146]]}
-  ]
+ "title": "Card 1: sab App ek hi Redis ginti dekhte hain. Chhathi request pe 429",
+ "h": 510,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 200,
+   "w": 220,
+   "h": 100,
+   "kind": "user",
+   "title": "Arpan",
+   "lines": [
+    "9 baar login dabaya"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 150,
+   "w": 220,
+   "h": 90,
+   "kind": "server",
+   "title": "App 1",
+   "lines": [
+    "har baar Redis se poochta"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 300,
+   "w": 220,
+   "h": 90,
+   "kind": "server",
+   "title": "App 2",
+   "lines": [
+    "wahi Redis, wahi ginti"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 200,
+   "w": 330,
+   "h": 120,
+   "kind": "cache",
+   "title": "Redis (ginti yahin)",
+   "lines": [
+    "rate:Arpan:login = 6",
+    "60 sec baad key khud mit jaati",
+    "had 5, chhathi pe mana"
+   ]
+  },
+  {
+   "x": 1180,
+   "y": 215,
+   "w": 290,
+   "h": 90,
+   "kind": "plain",
+   "title": "Arpan ko 429",
+   "lines": [
+    "6 se 9 tak sab mana"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     235
+    ],
+    [
+     336,
+     200
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     252,
+     265
+    ],
+    [
+     336,
+     340
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     562,
+     195
+    ],
+    [
+     696,
+     240
+    ]
+   ],
+   "c": "orange",
+   "label": "INCR",
+   "lx": 600,
+   "ly": 196
+  },
+  {
+   "pts": [
+    [
+     562,
+     345
+    ],
+    [
+     696,
+     290
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1032,
+     260
+    ],
+    [
+     1176,
+     260
+    ]
+   ],
+   "c": "green",
+   "label": "6 > 5",
+   "lx": 1104,
+   "ly": 250,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 430,
+   "w": 560,
+   "red": "Pehle har App apni ginti rakhta tha: 5 + 4 = 9 andar",
+   "green": "Ab dono App ek hi Redis ginti dekhte, 6 pe mana",
+   "conn": [
+    [
+     450,
+     392
+    ],
+    [
+     450,
+     430
+    ]
+   ],
+   "tha": ""
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 640,
+   "y": 430,
+   "w": 620,
+   "red": "Ginti DB me rakhte?",
+   "green": "Har request pe disk aur lock, bahut dheema. Redis RAM me hai, ~1 ms",
+   "conn": [
+    [
+     865,
+     322
+    ],
+    [
+     865,
+     430
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "Sticky LB se Arpan ko hamesha ek hi App pe bhejte?",
+   "green": "Wo App gira to Arpan ki ginti bhi saath gayi",
+   "conn": [
+    [
+     450,
+     146
+    ],
+    [
+     450,
+     150
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 700,
+   "y": 84,
+   "w": 770,
+   "red": "Minute ke kinare pe 5 aur agle minute ke shuru me 5: 2 sec me 10 andar",
+   "green": "Ye fixed window ki kamzori hai. Isliye asli me token bucket lagate",
+   "mark": [
+    1018,
+    200
+   ],
+   "conn": [
+    [
+     1018,
+     186
+    ],
+    [
+     1018,
+     146
+    ]
+   ]
+  }
+ ],
+ "kyun": "Ginti ek hi jagah hai aur RAM jitni tez hai. Key ki umar hi window hai, minute khatam to key mit jaati"
 }

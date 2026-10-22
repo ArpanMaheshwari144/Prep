@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 3: bhejne se pehle khabar ki apni k</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="866" viewBox="0 0 1500 866" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="940" viewBox="0 0 1500 940" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="866" fill="#0b1220"/>
+</defs><rect width="1500" height="940" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 3: bhejne se pehle khabar ki apni key (khabar_id + raasta) dekho. Mili to skip</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="84" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
@@ -43,21 +43,24 @@
 <text x="670" y="181" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
 <circle cx="890" cy="176" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="890" y="181" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="521" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="546" r="12" fill="#ff5a6a"/>
-<text x="52" y="551" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="551" font-size="15" font-weight="700" fill="#ff5a6a">Key wala Redis hi gira</text>
-<text x="52" y="578" font-size="13.5" fill="#7fe0b0">DB me (khabar_id, raasta) ek hi baar lagta,</text>
-<text x="52" y="598" font-size="13.5" fill="#7fe0b0">wahi rokta</text>
-<rect x="392" y="521" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="546" r="12" fill="#ff5a6a"/>
-<text x="414" y="551" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="551" font-size="15" font-weight="700" fill="#ff5a6a">Redis ki key 24 ghante me mit gayi</text>
-<text x="414" y="578" font-size="13.5" fill="#7fe0b0">DB ki row nahi bhoolti, wo phir bhi rokti</text>
-<rect x="30" y="676" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="702" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="726" font-size="13.5" fill="#e6dcb8">Har baar naya random id: Dohraav kabhi pakda hi nahi jaata. Id khabar ki apni ho</text>
-<rect x="30" y="764" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="794" font-size="13.5" fill="#c9d6e8">DB me ek hi baar kaise? Cassandra me INSERT IF NOT EXISTS (khabar_id, raasta), yaani LWT.</text>
-<text x="48" y="816" font-size="13.5" fill="#c9d6e8">Redis tez raasta, DB aakhri deewar</text>
+<rect x="30" y="521" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="547" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="547" font-size="13.5" fill="#cfeee0">Pakki id hai, to dobara aayi khabar pehchaan ke skip ho jaati hai. Redis tez raasta, DB me (khabar_id, raasta) ek hi baar lagta: aakhri deewar</text>
+<rect x="30" y="595" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="620" r="12" fill="#ff5a6a"/>
+<text x="52" y="625" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="625" font-size="15" font-weight="700" fill="#ff5a6a">Key wala Redis hi gira</text>
+<text x="52" y="652" font-size="13.5" fill="#7fe0b0">DB me (khabar_id, raasta) ek hi baar lagta,</text>
+<text x="52" y="672" font-size="13.5" fill="#7fe0b0">wahi rokta</text>
+<rect x="392" y="595" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="620" r="12" fill="#ff5a6a"/>
+<text x="414" y="625" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="625" font-size="15" font-weight="700" fill="#ff5a6a">Redis ki key 24 ghante me mit gayi</text>
+<text x="414" y="652" font-size="13.5" fill="#7fe0b0">DB ki row nahi bhoolti, wo phir bhi rokti</text>
+<rect x="30" y="750" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="776" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="800" font-size="13.5" fill="#e6dcb8">Har baar naya random id: Dohraav kabhi pakda hi nahi jaata. Id khabar ki apni ho</text>
+<rect x="30" y="838" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="868" font-size="13.5" fill="#c9d6e8">DB me ek hi baar kaise? Cassandra me INSERT IF NOT EXISTS (khabar_id, raasta), yaani LWT.</text>
+<text x="48" y="890" font-size="13.5" fill="#c9d6e8">Redis tez raasta, DB aakhri deewar</text>
 </svg>

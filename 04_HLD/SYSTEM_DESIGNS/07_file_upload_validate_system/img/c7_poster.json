@@ -154,5 +154,6 @@
    "red": "Admin maange? Owner ho ya admin role, dono ki jaanch har request pe.",
    "green": "PR me kahan? Har handler ki pehli line. userId JWT se, body se kabhi nahi"
   }
- ]
+ ],
+ "kyun": "Kaun ho, ye gateway batata hai (JWT). Is file pe haq hai ya nahi, ye service khud dekhti hai, har request pe (owner_id == jwt.user_id). Id leak ho tab bhi file nahi milti"
 }

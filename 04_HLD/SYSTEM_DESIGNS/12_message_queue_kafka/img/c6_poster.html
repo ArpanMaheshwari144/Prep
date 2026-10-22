@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 6: leader + ISR copy, acks=all: saa</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="759" viewBox="0 0 1500 759" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="875" viewBox="0 0 1500 875" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="759" fill="#0b1220"/>
+</defs><rect width="1500" height="875" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 6: leader + ISR copy, acks=all: saari ISR copy le lein tab OK. Leader gira to ISR me se naya leader</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="160" width="220" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
@@ -37,22 +37,27 @@
 <text x="590" y="125" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
 <circle cx="760" cy="340" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="760" y="345" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="414" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="439" r="12" fill="#ff5a6a"/>
-<text x="52" y="444" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="444" font-size="15" font-weight="700" fill="#ff5a6a">Broker A ki disk mar gayi</text>
-<text x="52" y="471" font-size="13.5" fill="#7fe0b0">Controller ISR me se B ko leader banata.</text>
-<text x="52" y="491" font-size="13.5" fill="#7fe0b0">Data B, C pe bacha</text>
-<rect x="392" y="414" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="439" r="12" fill="#ff5a6a"/>
-<text x="414" y="444" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="444" font-size="15" font-weight="700" fill="#ff5a6a">ISR copy kam pad gayi</text>
-<text x="414" y="471" font-size="13.5" fill="#7fe0b0">min.insync=2: likhna band. Khone se rukna</text>
-<text x="414" y="491" font-size="13.5" fill="#7fe0b0">behtar</text>
-<rect x="30" y="569" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="595" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="619" font-size="13.5" fill="#e6dcb8">acks=1: Leader ki memory pe OK: copy se pehle gira to gayi</text>
-<rect x="30" y="657" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="687" font-size="13.5" fill="#c9d6e8">Peeche wala follower leader? Nahi, aakhri khabar nahi. 3 copy = kam se kam 3 broker.</text>
-<text x="48" y="709" font-size="13.5" fill="#c9d6e8">acks: 0 = bhej ke bhaago · 1 = sirf leader (click / log) · all = saari ISR (paisa)</text>
+<rect x="30" y="414" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="440" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="440" font-size="13.5" fill="#cfeee0">Leader A likhta hai, B aur C copy lete hain. &quot;done&quot; tabhi, jab ISR copy pe bhi likh gaya. Producer ko OK = khabar bach gayi. Naya leader sirf ISR me se banta</text>
+<text x="160" y="460" font-size="13.5" fill="#cfeee0">hai</text>
+<rect x="30" y="508" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="533" r="12" fill="#ff5a6a"/>
+<text x="52" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="538" font-size="15" font-weight="700" fill="#ff5a6a">Broker A ki disk mar gayi</text>
+<text x="52" y="565" font-size="13.5" fill="#7fe0b0">Controller ISR me se B ko leader banata.</text>
+<text x="52" y="585" font-size="13.5" fill="#7fe0b0">Data B, C pe bacha</text>
+<rect x="392" y="508" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="533" r="12" fill="#ff5a6a"/>
+<text x="414" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="538" font-size="15" font-weight="700" fill="#ff5a6a">ISR copy kam pad gayi</text>
+<text x="414" y="565" font-size="13.5" fill="#7fe0b0">min.insync=2: likhna band. Khone se rukna</text>
+<text x="414" y="585" font-size="13.5" fill="#7fe0b0">behtar</text>
+<rect x="30" y="663" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="689" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="713" font-size="13.5" fill="#e6dcb8">acks=1: Leader ki memory pe OK: copy se pehle gira to gayi</text>
+<rect x="30" y="751" width="1440" height="94" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="781" font-size="13.5" fill="#c9d6e8">Peeche wala follower leader? Nahi, aakhri khabar nahi. 3 copy = kam se kam 3 broker.</text>
+<text x="48" y="803" font-size="13.5" fill="#c9d6e8">acks: 0 = bhej ke bhaago · 1 = sirf leader (click / log) · all = saari ISR (paisa)</text>
+<text x="48" y="825" font-size="13.5" fill="#c9d6e8">Pehle poochho: message kho sakta hai, ya bilkul nahi? Isi se acks tay hota</text>
 </svg>

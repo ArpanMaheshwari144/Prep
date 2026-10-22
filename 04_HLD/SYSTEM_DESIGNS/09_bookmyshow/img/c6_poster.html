@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 6: sirf pehli request lock (SET NX </title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="779" viewBox="0 0 1500 779" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="873" viewBox="0 0 1500 873" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="779" fill="#0b1220"/>
+</defs><rect width="1500" height="873" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 6: sirf pehli request lock (SET NX EX 5), replica se ek query, map Redis me. Baaki ruk ke Redis se</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="164" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
@@ -38,21 +38,25 @@
 <text x="940" y="119" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
 <circle cx="400" cy="299" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="400" y="304" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="434" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="459" r="12" fill="#ff5a6a"/>
-<text x="52" y="464" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="464" font-size="15" font-weight="700" fill="#ff5a6a">2 baje Redis restart</text>
-<text x="52" y="491" font-size="13.5" fill="#7fe0b0">Sirf pehli request lock leke replica jaati,</text>
-<text x="52" y="511" font-size="13.5" fill="#7fe0b0">map Redis me rakhti</text>
-<rect x="392" y="434" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="459" r="12" fill="#ff5a6a"/>
-<text x="414" y="464" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="464" font-size="15" font-weight="700" fill="#ff5a6a">Lock lene wala hi mar gaya</text>
-<text x="414" y="491" font-size="13.5" fill="#7fe0b0">EX 5: lock 5 sec me khud hat jaata</text>
-<rect x="30" y="589" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="615" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="639" font-size="13.5" fill="#e6dcb8">Sabko DB jaane do: Hazaaron miss ek saath: replica baith gayi, map nahi khulta</text>
-<rect x="30" y="677" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="707" font-size="13.5" fill="#c9d6e8">100 ms baad bhi Redis khaali? 2-3 retry, phir khud replica se.</text>
-<text x="48" y="729" font-size="13.5" fill="#c9d6e8">User ko bas dheema lagta, faisla DB me</text>
+<rect x="30" y="434" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="460" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="460" font-size="13.5" fill="#cfeee0">Khaali cache pe sirf ek hi DB jaata hai, baaki rukte hain. Jo gir sakta hai uski copy pehle se taiyaar. User ko bas thoda dheema lagta hai, galat seat kabhi</text>
+<text x="160" y="480" font-size="13.5" fill="#cfeee0">nahi, kyunki faisla DB me hai</text>
+<rect x="30" y="528" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="553" r="12" fill="#ff5a6a"/>
+<text x="52" y="558" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="558" font-size="15" font-weight="700" fill="#ff5a6a">2 baje Redis restart</text>
+<text x="52" y="585" font-size="13.5" fill="#7fe0b0">Sirf pehli request lock leke replica jaati,</text>
+<text x="52" y="605" font-size="13.5" fill="#7fe0b0">map Redis me rakhti</text>
+<rect x="392" y="528" width="345" height="120" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="553" r="12" fill="#ff5a6a"/>
+<text x="414" y="558" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="558" font-size="15" font-weight="700" fill="#ff5a6a">Lock lene wala hi mar gaya</text>
+<text x="414" y="585" font-size="13.5" fill="#7fe0b0">EX 5: lock 5 sec me khud hat jaata</text>
+<rect x="30" y="683" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="709" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="733" font-size="13.5" fill="#e6dcb8">Sabko DB jaane do: Hazaaron miss ek saath: replica baith gayi, map nahi khulta</text>
+<rect x="30" y="771" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="801" font-size="13.5" fill="#c9d6e8">100 ms baad bhi Redis khaali? 2-3 retry, phir khud replica se.</text>
+<text x="48" y="823" font-size="13.5" fill="#c9d6e8">User ko bas dheema lagta, faisla DB me</text>
 </svg>

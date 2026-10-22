@@ -8,7 +8,7 @@
    "w": 180,
    "h": 110,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "'hi' Ravi ko"
    ]
@@ -192,5 +192,6 @@
    "red": "Connection hi Redis me? Namumkin. Pub-sub? Kuch rakhta nahi.",
    "green": "Ravi khisak gaya? Message nahi khota, naye server pe milega"
   }
- ]
+ ],
+ "kyun": "Pata ek jagah hai, sab server wahi dekhte hain. Redis me sirf pata hai, umar ke saath (TTL); server-7 zinda hai to uski dhadkan se umar badhti rehti hai"
 }

@@ -3,7 +3,7 @@
 > Ek user ek tay samay me kitni request bhej sakta hai, uski had. Had paar to 429.
 > Teen cheez: har request ke aage baitha (~1 ms) · ginti saari machines pe EK · limiter gire to site na gire.
 >
-> Mock me sirf heading + Cue + kahani ki tasveer. Neeche har card: HAL · KYUN · NAHI, phir YAAD RAKH dabba + CROSS-Q dabba (sawaal → cue, poora jawab).
+> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
 > Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
 
 ---
@@ -78,18 +78,7 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 4 DO LOG EK SAATH** · Cue: Redis me EK ginti, 60 sec umar
 
-<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
-
-
-```
-HAL     sab App ek hi Redis ginti dekhte hain (rate:Arpan:login, umar 60 sec). 6thi request pe 429
-KYUN    ginti ek hi jagah hai aur RAM jitni tez hai. Key ki umar hi window hai, minute khatam to key mit jaati
-NAHI    ginti DB me     -> DHEEMA: har request pe disk aur lock lagta, bahut dheema ho jaata
-        sticky LB       -> GIRA: ek user ek hi App pe jaata, wo App gira to uski ginti bhi gayi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Sab App ek hi Redis ginti dekhte (rate:Arpan:login), key ki umar hi window. Ginti ek jagah.
+<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -100,18 +89,7 @@ NAHI    ginti DB me     -> DHEEMA: har request pe disk aur lock lagta, bahut dhe
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: ATOMIC: INCR / LUA script
 
-<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
-
-
-```
-HAL     INCR se padhna aur badhana ek hi kadam me ho jaata hai. Redis ek ke baad ek chalata hai
-KYUN    Redis ek hi line me chalta hai, beech me koi doosri request ghus hi nahi sakti
-NAHI    pehle GET phir SET  -> RACE: do kadam hue, dono ne 4 padha, dono andar aa gaye
-        App me synchronized -> CHHOTA: wo sirf ek machine ke andar chalta hai, doosri App ko pata hi nahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Padhna + badhana ek kadam (INCR), aur INCR + EXPIRE ek hi Lua script me.
+<img src="img/c2_poster.png?v=2" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -122,17 +100,7 @@ NAHI    pehle GET phir SET  -> RACE: do kadam hue, dono ne 4 padha, dono andar a
 
 **Rail 5 KUCH DHEEMA** · Cue: LIMITER GATEWAY pe, sabse aage
 
-<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
-
-
-```
-HAL     limiter API Gateway pe hai, sabse aage. Had paar hui to wahin 429, request LB / App tak jaati hi nahi
-KYUN    jitna aage roko, utna kam kaam bekaar jaata hai
-NAHI    ginti App me rakho -> BHARA: mana hone wali request bhi andar aati, App usi me bhar gaya
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Limiter gateway pe, sabse aage. Had paar to wahin 429, LB / App tak jaati hi nahi.
+<img src="img/c3_poster.png?v=2" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -143,18 +111,7 @@ NAHI    ginti App me rakho -> BHARA: mana hone wali request bhi andar aati, App 
 
 **Rail 3 MACHINE GIRI** · Cue: REPLICA + FAIL-OPEN / FAIL-CLOSED
 
-<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
-
-
-```
-HAL     Redis ki copy taiyaar rehti hai. Main gira to copy main ban jaati hai (Redis Cluster)
-        copy bhi gayi to pehle se tay hai: login band (fail-closed), feed khula (fail-open)
-KYUN    Redis gire to kya karna hai, ye pehle se tay hai, endpoint ke hisaab se
-NAHI    sab fail-open kar do -> KHULA: login khula reh gaya, koi bhi bina had password guess karega
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Redis ki copy taiyaar. Copy bhi gayi to pehle se tay: login band (fail-closed), feed khula (fail-open).
+<img src="img/c4_poster.png?v=2" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -165,17 +122,7 @@ NAHI    sab fail-open kar do -> KHULA: login khula reh gaya, koi bhi bina had pa
 
 **Rail 7 DOOR KE LOG** · Cue: HOME REGION me ginti
 
-<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
-
-
-```
-HAL     meri ginti mere ghar region (India) me hoti hai. US / Europe ki request bhi wahin gini jaati
-KYUN    ek user ki ek hi ginti, ek hi ghar me. Isliye 100 hi nikalti hain
-NAHI    har region apni ginti rakhe -> TOOTA: 50 + 50 + 50 = 150, had har region me alag lagi, user pe nahi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Meri ginti mere ghar region me. Door ho to sirf login / paisa ghar tak, baaki har second sync.
+<img src="img/c5_poster.png?v=2" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -186,21 +133,7 @@ NAHI    har region apni ginti rakhe -> TOOTA: 50 + 50 + 50 = 150, had har region
 
 **Rail 8 BAHAR KA HAMLA** · Cue: KAFKA -> PATTERN -> WAF BAN
 
-<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
-
-
-```
-HAL     har 429 Kafka me jaata hai. Pattern Svc dekhta: 10 min me 500+ 429 aaye
-        to WAF block list me daal deta, edge pe hi rok deta
-KYUN    429 maafi wala hai (phir aao). Ban sirf pakke gunde pe lagta, aur wo khud hat jaata hai
-NAHI    turant ban kar do -> GALAT: asli user bhi tez click karta, office NAT, sale ki bheed,
-        sab bahar ho jaate
-        gateway seedha Pattern Svc ko call kare -> DHEEMA: har request ruk ke jaayegi,
-        isliye Kafka me daal ke aage badho
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** 429 maafi wala. Har 429 Kafka me, pattern dikha to WAF ban (umar ke saath, bheed wale IP pe captcha).
+<img src="img/c6_poster.png?v=2" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -211,19 +144,7 @@ NAHI    turant ban kar do -> GALAT: asli user bhi tez click karta, office NAT, s
 
 **Rail 2 BHEED AAYI** · Cue: GLOBAL CAP + LOAD SHEDDING (503)
 
-<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
-
-
-```
-HAL     gateway pe poore system ki had (5,000 / sec). CPU 90% paar gaya to kam zaroori request ko 503,
-        login / payment bachao
-KYUN    user ki had aur system ki had alag cheez hain. Sab apni had me hon, phir bhi system bhar sakta hai
-NAHI    machine khud badh jaayegi -> DER: machine badhne me minute lagte, bheed second me aati
-        line (queue) me rok lo    -> BEKAAR: sirf ~2 second chalta, user chala gaya to kaam bekaar
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** User ki had = 429, system ki had = 503. CPU 90% paar to kam zaroori ko 503, login / payment bachao.
+<img src="img/c7_poster.png?v=2" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -234,17 +155,7 @@ NAHI    machine khud badh jaayegi -> DER: machine badhne me minute lagte, bheed 
 
 **Rail 3 MACHINE GIRI (Redis + copy)** · Cue: LOCAL COUNTER FALLBACK
 
-<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
-
-
-```
-HAL     har gateway apni memory me ginta hai. Had 100, 4 gateway -> har ek ki had 25 (local fallback)
-KYUN    thodi galat had, bina had se behtar hai. Login ab bhi fail-closed rehta hai
-NAHI    Redis gaya to sab andar aane do -> KHULA: attacker ke liye site khul gayi, server bhar ke band
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Redis gaya to har gateway apni memory me ginta, had baant ke: 100 / 4 gateway = 25.
+<img src="img/c8_poster.png?v=2" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -255,17 +166,7 @@ NAHI    Redis gaya to sab andar aane do -> KHULA: attacker ke liye site khul gay
 
 **Rail 8 BAHAR KA HAMLA** · Cue: KEY = USER_ID (JWT), IP sirf login
 
-<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
-
-
-```
-HAL     login ke baad ginti user_id pe hoti hai (JWT se). Ravi ki galti sirf Ravi pe padti hai
-KYUN    had us pehchaan pe lagao jo ek insaan ki ho. Ek IP pe 1000 log hote, ek botnet ke 1000 IP
-NAHI    IP ki had badha do (5 se 500) -> CHHOOT: office bach gaya, par botnet ko bhi utni hi chhoot mil gayi
-```
-
-> [!IMPORTANT]
-> **Yaad rakh:** Had us pehchaan pe jo ek insaan ki ho: login ke baad user_id (JWT), login se pehle IP pe dheeli had.
+<img src="img/c9_poster.png?v=2" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---

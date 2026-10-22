@@ -44,7 +44,7 @@
    "w": 400,
    "h": 100,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "ek push 'read_upto 4467':",
     "50 ek saath neeli"
@@ -141,5 +141,6 @@
    "red": "Group me do tick? Sabse chhota nishaan >= seq.",
    "green": "10 lakh ka broadcast? Tick band, sirf unread"
   }
- ]
+ ],
+ "kyun": "Nishaan aage khisakta hai, ginti nahi hoti. Unread, tick, offline ke baad lena, sab isi se. Khoya to agli baar aa jaayega"
 }

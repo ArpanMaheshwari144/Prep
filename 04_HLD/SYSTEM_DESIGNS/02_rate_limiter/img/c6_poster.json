@@ -1,42 +1,249 @@
 {
-  "title": "Card 6: har 429 Kafka me. Pattern dikha (10 min me 500+) to WAF ban, edge pe hi rok",
-  "h": 730,
-  "boxes": [
-    {"x": 30, "y": 220, "w": 200, "h": 90, "kind": "user", "title": "Bot", "lines": ["har 60 sec wapas"]},
-    {"x": 300, "y": 200, "w": 220, "h": 130, "kind": "lb", "title": "WAF (edge)", "lines": ["block list: IP", "ban 24 ghante tak"]},
-    {"x": 600, "y": 200, "w": 240, "h": 130, "kind": "server", "title": "Gateway", "lines": ["had paar: 429", "har 429 Kafka me"]},
-    {"x": 600, "y": 420, "w": 240, "h": 80, "kind": "cache", "title": "Kafka", "lines": ["429 ki line"]},
-    {"x": 920, "y": 400, "w": 290, "h": 110, "kind": "server", "title": "Pattern Svc", "lines": ["10 min me 500+ 429?", "to WAF block list me"]}
-  ],
-  "arrows": [
-    {"pts": [[232, 265], [296, 265]], "c": "blue"},
-    {"pts": [[522, 265], [596, 265]], "c": "blue"},
-    {"pts": [[720, 332], [720, 416]], "c": "orange", "label": "har 429", "lx": 730, "ly": 380},
-    {"pts": [[842, 460], [916, 455]], "c": "orange"},
-    {"pts": [[1065, 512], [1065, 545], [410, 545], [410, 334]], "c": "green", "label": "ban: IP block list me", "lx": 740, "ly": 535, "a": "middle"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 560,
-     "red": "Pehli 429 pe hi ban kar dete?",
-     "green": "Asli user bhi tez click karta, office NAT, sale ki bheed",
-     "conn": [[410, 146], [410, 200]]},
-    {"n": 2, "type": "pehle", "x": 640, "y": 84, "w": 830,
-     "red": "Gateway har baar seedha Pattern Svc ko call kare?",
-     "green": "Har request ruk ke jaati. Isliye Kafka me daalo aur aage badho",
-     "conn": [[760, 146], [760, 200]]},
-    {"n": 3, "type": "x", "x": 860, "y": 230, "w": 610,
-     "red": "Kafka peeche chal raha",
-     "green": "Ban kuch minute late lagega. Tab tak rate limit rok raha",
-     "mark": [879, 457], "conn": [[879, 445], [879, 292]]},
-    {"n": 4, "type": "x", "x": 30, "y": 570, "w": 560,
-     "red": "Office ka IP: 200 log, ek hi IP",
-     "green": "Ban nahi, CAPTCHA. Ban bhi 24 ghante me hat jaata",
-     "mark": [306, 330], "conn": [[306, 342], [306, 570]]},
-    {"type": "grey", "x": 620, "y": 570, "w": 850,
-     "red": "userId pe ban lagana ho to? Gateway pe, JWT se userId milta.",
-     "green": "WAF edge pe baitha hai, wo sirf IP dekhta hai"},
-    {"type": "grey", "x": 30, "y": 650, "w": 1440,
-     "red": "Wahi gunda baar-baar: permanent ban? Pakka fraud ho to account / device hamesha ke liye band.",
-     "green": "IP ka WAF ban kuch ghante hi, kyunki IP kal kisi aur ka ho sakta"}
-  ]
+ "title": "Card 6: har 429 Kafka me. Pattern dikha (10 min me 500+) to WAF ban, edge pe hi rok",
+ "h": 730,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 220,
+   "w": 200,
+   "h": 90,
+   "kind": "user",
+   "title": "Bot",
+   "lines": [
+    "har 60 sec wapas"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 200,
+   "w": 220,
+   "h": 130,
+   "kind": "lb",
+   "title": "WAF (edge)",
+   "lines": [
+    "block list: IP",
+    "ban 24 ghante tak"
+   ]
+  },
+  {
+   "x": 600,
+   "y": 200,
+   "w": 240,
+   "h": 130,
+   "kind": "server",
+   "title": "Gateway",
+   "lines": [
+    "had paar: 429",
+    "har 429 Kafka me"
+   ]
+  },
+  {
+   "x": 600,
+   "y": 420,
+   "w": 240,
+   "h": 80,
+   "kind": "cache",
+   "title": "Kafka",
+   "lines": [
+    "429 ki line"
+   ]
+  },
+  {
+   "x": 920,
+   "y": 400,
+   "w": 290,
+   "h": 110,
+   "kind": "server",
+   "title": "Pattern Svc",
+   "lines": [
+    "10 min me 500+ 429?",
+    "to WAF block list me"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     265
+    ],
+    [
+     296,
+     265
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     522,
+     265
+    ],
+    [
+     596,
+     265
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     720,
+     332
+    ],
+    [
+     720,
+     416
+    ]
+   ],
+   "c": "orange",
+   "label": "har 429",
+   "lx": 730,
+   "ly": 380
+  },
+  {
+   "pts": [
+    [
+     842,
+     460
+    ],
+    [
+     916,
+     455
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1065,
+     512
+    ],
+    [
+     1065,
+     545
+    ],
+    [
+     410,
+     545
+    ],
+    [
+     410,
+     334
+    ]
+   ],
+   "c": "green",
+   "label": "ban: IP block list me",
+   "lx": 740,
+   "ly": 535,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "Pehli 429 pe hi ban kar dete?",
+   "green": "Asli user bhi tez click karta, office NAT, sale ki bheed",
+   "conn": [
+    [
+     410,
+     146
+    ],
+    [
+     410,
+     200
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 640,
+   "y": 84,
+   "w": 830,
+   "red": "Gateway har baar seedha Pattern Svc ko call kare?",
+   "green": "Har request ruk ke jaati. Isliye Kafka me daalo aur aage badho",
+   "conn": [
+    [
+     760,
+     146
+    ],
+    [
+     760,
+     200
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 860,
+   "y": 230,
+   "w": 610,
+   "red": "Kafka peeche chal raha",
+   "green": "Ban kuch minute late lagega. Tab tak rate limit rok raha",
+   "mark": [
+    879,
+    457
+   ],
+   "conn": [
+    [
+     879,
+     445
+    ],
+    [
+     879,
+     292
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 30,
+   "y": 570,
+   "w": 560,
+   "red": "Office ka IP: 200 log, ek hi IP",
+   "green": "Ban nahi, CAPTCHA. Ban bhi 24 ghante me hat jaata",
+   "mark": [
+    306,
+    330
+   ],
+   "conn": [
+    [
+     306,
+     342
+    ],
+    [
+     306,
+     570
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 620,
+   "y": 570,
+   "w": 850,
+   "red": "userId pe ban lagana ho to? Gateway pe, JWT se userId milta.",
+   "green": "WAF edge pe baitha hai, wo sirf IP dekhta hai"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 650,
+   "w": 1440,
+   "red": "Wahi gunda baar-baar: permanent ban? Pakka fraud ho to account / device hamesha ke liye band.",
+   "green": "IP ka WAF ban kuch ghante hi, kyunki IP kal kisi aur ka ho sakta"
+  }
+ ],
+ "kyun": "429 maafi wala hai (phir aao). Ban sirf pakke gunde pe lagta, aur wo khud hat jaata hai"
 }

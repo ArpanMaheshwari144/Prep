@@ -165,5 +165,6 @@
    "red": "Umar kitni? Jitna purana jhel sako: profile = minute, price / stock = second.",
    "green": "Umar khatam to agla MISS, DB se taaza laata. Cache khaali ho tab bhi sahi data DB se"
   }
- ]
+ ],
+ "kyun": "RAM bhari to sabse purana chhua pehle jaata hai, umar khatam to key bekaar. Hati key sirf ek miss hai, App DB se laake wapas rakh deta hai"
 }

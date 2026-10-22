@@ -1,41 +1,274 @@
 {
-  "title": "Card 7: OTP ki apni tez line + apne worker. High = OTP, beech = order, low = offer",
-  "h": 710,
-  "boxes": [
-    {"x": 30, "y": 250, "w": 200, "h": 110, "kind": "user", "title": "Sale ka din", "lines": ["1 crore offer", "+ mera OTP"]},
-    {"x": 290, "y": 240, "w": 230, "h": 130, "kind": "server", "title": "Notification Svc", "lines": ["kis line me?"]},
-    {"x": 610, "y": 190, "w": 280, "h": 80, "kind": "cache", "title": "High line", "lines": ["OTP"]},
-    {"x": 610, "y": 300, "w": 280, "h": 80, "kind": "cache", "title": "Beech line", "lines": ["order update"]},
-    {"x": 610, "y": 410, "w": 280, "h": 80, "kind": "cache", "title": "Low line", "lines": ["offer (ruk sakta)"]},
-    {"x": 980, "y": 190, "w": 250, "h": 80, "kind": "server", "title": "OTP worker", "lines": ["apne, alag"]},
-    {"x": 980, "y": 300, "w": 250, "h": 80, "kind": "server", "title": "Order worker", "lines": ["beech wale"]},
-    {"x": 980, "y": 410, "w": 250, "h": 80, "kind": "server", "title": "Offer worker", "lines": ["dheere-dheere"]},
-    {"x": 1300, "y": 190, "w": 170, "h": 80, "kind": "user", "title": "Mera phone", "lines": ["OTP turant"]}
-  ],
-  "arrows": [
-    {"pts": [[232, 305], [286, 305]], "c": "blue"},
-    {"pts": [[522, 285], [606, 230]], "c": "orange"},
-    {"pts": [[522, 305], [606, 340]], "c": "orange"},
-    {"pts": [[522, 325], [606, 450]], "c": "orange"},
-    {"pts": [[892, 230], [976, 230]], "c": "orange"},
-    {"pts": [[892, 340], [976, 340]], "c": "orange"},
-    {"pts": [[892, 450], [976, 450]], "c": "orange"},
-    {"pts": [[1232, 230], [1296, 230]], "c": "green"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 640,
-     "red": "Pehle sab ek hi line me",
-     "green": "OTP 1 crore offer ke peeche, 10 min late, login fail",
-     "conn": [[405, 146], [405, 240]]},
-    {"n": 2, "type": "pehle", "x": 700, "y": 84, "w": 770,
-     "red": "Ek hi line me OTP pe 'zaroori' tag laga do?",
-     "green": "Kafka me 'ye pehle bhejo' jaisa kuch hota hi nahi"},
-    {"n": 3, "type": "x", "x": 770, "y": 525, "w": 700,
-     "red": "Offer ne Twilio ki had kha li",
-     "green": "OTP ka alag account (ya alag number). Had wala card 8",
-     "mark": [1105, 490], "conn": [[1105, 502], [1105, 525]]},
-    {"type": "grey", "x": 30, "y": 620, "w": 1440,
-     "red": "OTP line khaali, OTP worker khaali baithe? Beech wali line padh lein. Ulta kabhi nahi.",
-     "green": "Order update kahan? Beech wali line: OTP se peeche, offer se aage"}
-  ]
+ "title": "Card 7: OTP ki apni tez line + apne worker. High = OTP, beech = order, low = offer",
+ "h": 710,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 200,
+   "h": 110,
+   "kind": "user",
+   "title": "Sale ka din",
+   "lines": [
+    "1 crore offer",
+    "+ mera OTP"
+   ]
+  },
+  {
+   "x": 290,
+   "y": 240,
+   "w": 230,
+   "h": 130,
+   "kind": "server",
+   "title": "Notification Svc",
+   "lines": [
+    "kis line me?"
+   ]
+  },
+  {
+   "x": 610,
+   "y": 190,
+   "w": 280,
+   "h": 80,
+   "kind": "cache",
+   "title": "High line",
+   "lines": [
+    "OTP"
+   ]
+  },
+  {
+   "x": 610,
+   "y": 300,
+   "w": 280,
+   "h": 80,
+   "kind": "cache",
+   "title": "Beech line",
+   "lines": [
+    "order update"
+   ]
+  },
+  {
+   "x": 610,
+   "y": 410,
+   "w": 280,
+   "h": 80,
+   "kind": "cache",
+   "title": "Low line",
+   "lines": [
+    "offer (ruk sakta)"
+   ]
+  },
+  {
+   "x": 980,
+   "y": 190,
+   "w": 250,
+   "h": 80,
+   "kind": "server",
+   "title": "OTP worker",
+   "lines": [
+    "apne, alag"
+   ]
+  },
+  {
+   "x": 980,
+   "y": 300,
+   "w": 250,
+   "h": 80,
+   "kind": "server",
+   "title": "Order worker",
+   "lines": [
+    "beech wale"
+   ]
+  },
+  {
+   "x": 980,
+   "y": 410,
+   "w": 250,
+   "h": 80,
+   "kind": "server",
+   "title": "Offer worker",
+   "lines": [
+    "dheere-dheere"
+   ]
+  },
+  {
+   "x": 1300,
+   "y": 190,
+   "w": 170,
+   "h": 80,
+   "kind": "user",
+   "title": "Mera phone",
+   "lines": [
+    "OTP turant"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     305
+    ],
+    [
+     286,
+     305
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     522,
+     285
+    ],
+    [
+     606,
+     230
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     522,
+     305
+    ],
+    [
+     606,
+     340
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     522,
+     325
+    ],
+    [
+     606,
+     450
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     892,
+     230
+    ],
+    [
+     976,
+     230
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     892,
+     340
+    ],
+    [
+     976,
+     340
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     892,
+     450
+    ],
+    [
+     976,
+     450
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1232,
+     230
+    ],
+    [
+     1296,
+     230
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Pehle sab ek hi line me",
+   "green": "OTP 1 crore offer ke peeche, 10 min late, login fail",
+   "conn": [
+    [
+     405,
+     146
+    ],
+    [
+     405,
+     240
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 700,
+   "y": 84,
+   "w": 770,
+   "red": "Ek hi line me OTP pe 'zaroori' tag laga do?",
+   "green": "Kafka me 'ye pehle bhejo' jaisa kuch hota hi nahi"
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 770,
+   "y": 525,
+   "w": 700,
+   "red": "Offer ne Twilio ki had kha li",
+   "green": "OTP ka alag account (ya alag number). Had wala card 8",
+   "mark": [
+    1105,
+    490
+   ],
+   "conn": [
+    [
+     1105,
+     502
+    ],
+    [
+     1105,
+     525
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 620,
+   "w": 1440,
+   "red": "OTP line khaali, OTP worker khaali baithe? Beech wali line padh lein. Ulta kabhi nahi.",
+   "green": "Order update kahan? Beech wali line: OTP se peeche, offer se aage"
+  }
+ ],
+ "kyun": "Sab barabar zaroori nahi: OTP turant, offer ruk sakta. Zaroori (OTP) kabhi kisi ke peeche nahi: apni line, apne worker, company me apna account"
 }

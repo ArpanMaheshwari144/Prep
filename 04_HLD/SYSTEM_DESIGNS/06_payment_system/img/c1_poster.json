@@ -8,7 +8,7 @@
    "w": 200,
    "h": 110,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "Kirana ko 500"
    ]
@@ -212,5 +212,6 @@
    "red": "A->B aur B->A ek saath, dono atke (deadlock)? Taala pehle chhoti account id pe.",
    "green": "Poora 13 banking card 9 me"
   }
- ]
+ ],
+ "kyun": "DB ka apna log hota hai (WAL). COMMIT se pehle gira, to DB uth ke log dekhta hai, COMMIT nahi tha, to ulta kar deta hai aur 500 wapas"
 }

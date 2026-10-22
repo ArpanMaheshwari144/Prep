@@ -171,5 +171,6 @@
    "red": "Kitni taazi? 5 min purani chalegi. Breaking news? Aate hi ZADD, turant.",
    "green": "Scroll 21-40? ZREVRANGE 20 39 ya cursor (aakhri khabar ka time). Usse purani DB se"
   }
- ]
+ ],
+ "kyun": "Sabko ek jaisi feed hai, to ek baar bana ke Redis me rakho. Nayi khabar aate hi apni jagah baith jaati hai, turant dikhti hai"
 }

@@ -257,5 +257,6 @@
    "red": "Har 2 sec zaroori? Gap badhao (2, 4, 8 sec). Band hi karwa do? Server khud bheje (SSE / WebSocket) jab haal badle.",
    "green": "Sach DB me, Redis sirf tez copy"
   }
- ]
+ ],
+ "kyun": "Padhna bahut zyada hai, likhna kam, isliye haal ke liye cache + read replica. Sach DB me hai, Redis sirf tez copy hai. Padhna Redis se, likhna dono me"
 }

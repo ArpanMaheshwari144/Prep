@@ -142,7 +142,8 @@
      1170,
      195
     ]
-   ]
+   ],
+   "tha": "App unhi me bhar gaya"
   },
   {
    "n": 2,
@@ -206,5 +207,6 @@
    "red": "429 ke saath kya bhejte? Retry-After: 30 (kab aao) aur X-RateLimit-Remaining (kitni bachi).",
    "green": "Sirf 'na' mat bolo, warna client turant phir maarta"
   }
- ]
+ ],
+ "kyun": "Jitna aage roko, utna kam kaam bekaar jaata hai"
 }

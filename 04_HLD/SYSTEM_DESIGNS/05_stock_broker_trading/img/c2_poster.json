@@ -210,5 +210,6 @@
    "red": "MARKET order, bhav pata nahi? Aakhri bhav + thoda upar block, sauda ke baad bacha wapas.",
    "green": "SELL pe bhi? Haan, portfolio pe: qty - blocked_qty >= 10"
   }
- ]
+ ],
+ "kyun": "\"hai?\" aur \"block\" ek hi UPDATE me, DB ke andar. Kitni bhi machine ho, DB ek-ek karke chalata hai. Wallet kabhi minus nahi hota"
 }

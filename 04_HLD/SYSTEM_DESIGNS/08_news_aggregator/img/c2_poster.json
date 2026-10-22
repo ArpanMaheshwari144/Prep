@@ -222,5 +222,6 @@
    "red": "Source pe kuch naya nahi? ETag / Last-Modified: naya nahi to download hi nahi.",
    "green": "SQS? Chal jaata, par Kafka me search / analytics apne group se wahi khabar padh lete"
   }
- ]
+ ],
+ "kyun": "Laana aur padhna alag hai. User sirf Redis list padhta hai, to laane me der ya bheed ho tab bhi feed khulti hai, bas thodi purani"
 }

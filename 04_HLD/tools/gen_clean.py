@@ -1,7 +1,7 @@
 """Saaf poster (saancha: Fable c1_clean, 22-Oct): wahi cN_poster.json, naya roop.
 python 04_HLD/tools/gen_clean.py <cN_poster.json> [...]  -> cN_poster.html (phir node poster2png.js)
 
-Upar tasveer: sirf dabbe + teer. Toot ki jagah laal number-gol (X / line nahi).
+Upar tasveer: sirf dabbe + teer. Tasveer ke neeche hara "Kyun chalta" (json me kyun). Toot ki jagah laal number-gol (X / line nahi).
 Tasveer ke 60 px neeche ek row me toot-dabbe (max 4, 345 x 120, beech 17 px): laal title = kya hua, hara = kaise bacha.
 Peele wale do tarah: "Pehle ... tha" (bina ?) = upar chhota laal-dhundhla dabba "Pehle aisa tha" (tasveer se pehle);
 sawaal wale = peela dabba "Doosra tareeka kyun nahi?". Phir grey "baaki" (grey + 4 se zyada toot).
@@ -62,7 +62,10 @@ def pehle_box(o, dikkat, y=84):
     """Tasveer se pehle ek chhota laal-dhundhla dabba 'Pehle aisa tha'. Lautata: tasveer kahan se shuru."""
     if not dikkat:
         return TOP
-    txt = '   ·   '.join(J(bina_pehle(c['red']), bada(c.get('green', '')), c.get('green2', '')) for c in dikkat)
+    # 'tha' = sirf dikkat wala hara hissa (ilaaj 'Ab ...' yahan nahi, wo Kyun chalta me)
+    txt = '   ·   '.join(J(bina_pehle(c['red']), *((bada(c['tha']),) if 'tha' in c else
+                                                     (bada(c.get('green', '')), c.get('green2', ''))))
+                           for c in dikkat)
     lines = textwrap.wrap(txt, 165)
     h = 16 + 20 * len(lines) + 8
     o.append(f'<rect x="30" y="{y}" width="1440" height="{h}" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>')
@@ -72,8 +75,17 @@ def pehle_box(o, dikkat, y=84):
     return y + h + 34
 
 
-def bottom(o, y, toots, pehle, greys):
-    """Neeche ka hissa: toot-dabbe (max 4), peela, grey. Docs wala script bhi yahi chalata."""
+def bottom(o, y, toots, pehle, greys, kyun=''):
+    """Neeche ka hissa: hara 'Kyun chalta', toot-dabbe (max 4), peela, grey. Docs wala script bhi yahi chalata."""
+    # hara: kyun chalta (tasveer ke turant neeche)
+    if kyun:
+        lines = textwrap.wrap(kyun, 160)
+        h = 16 + 20 * len(lines) + 8
+        o.append(f'<rect x="30" y="{y}" width="1440" height="{h}" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>')
+        o.append(t(48, y + 26, 'Kyun chalta:', 14, '#3ddc97', True))
+        for k, ln in enumerate(lines):
+            o.append(t(160, y + 26 + 20 * k, ln, 13.5, '#cfeee0'))
+        y += h + 30
     # toot-dabbe
     row = toots[:4]
     if row:
@@ -167,7 +179,7 @@ def build(spec):
         for p in (m if isinstance(m[0], list) else [m]):
             o.append(f'<circle cx="{p[0]}" cy="{Y(p[1])}" r="14" fill="#1a0f14" stroke="{RED}" stroke-width="2.5"/>')
             o.append(t(p[0], Y(p[1]) + 5, str(i), 14, RED, True, anchor='middle'))
-    y = bottom(o, dia_end + GAP, toots, pehle, greys)
+    y = bottom(o, dia_end + GAP, toots, pehle, greys, spec.get('kyun', ''))
     H = int(y + 30)
     head = [f'<svg width="{W}" height="{H}" viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg"><defs>']
     for k in COL:

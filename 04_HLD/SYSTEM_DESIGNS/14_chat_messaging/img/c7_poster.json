@@ -8,7 +8,7 @@
    "w": 200,
    "h": 120,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "College Gang",
     "(500) me msg"
@@ -189,5 +189,6 @@
    "red": "Naya member juda? Judne ke seq se pehle wale nahi milte, tab wo group me tha hi nahi.",
    "green": "Bhejna server-wise, member-wise nahi"
   }
- ]
+ ],
+ "kyun": "Sabke liye ek jaisa = ek copy, har kisi ka alag = alag copy. Bhejna server-wise, member-wise nahi"
 }

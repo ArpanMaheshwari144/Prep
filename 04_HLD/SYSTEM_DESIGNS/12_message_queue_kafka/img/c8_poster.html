@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 8: order + outbox row EK transactio</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="697" viewBox="0 0 1500 697" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="771" viewBox="0 0 1500 771" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="697" fill="#0b1220"/>
+</defs><rect width="1500" height="771" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 8: order + outbox row EK transaction me. Relay commit ke baad Kafka ko bhejta, ACK pe sent = true</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="140" width="280" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
@@ -39,30 +39,33 @@
 <text x="150" y="275" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
 <circle cx="940" cy="270" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="940" y="275" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
-<rect x="30" y="344" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="369" r="12" fill="#ff5a6a"/>
-<text x="52" y="374" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="374" font-size="15" font-weight="700" fill="#ff5a6a">Order bana, Kafka bhejne se pehle</text>
-<text x="74" y="395" font-size="15" font-weight="700" fill="#ff5a6a">server gira</text>
-<text x="52" y="422" font-size="13.5" fill="#7fe0b0">Row DB me padi (sent = false): relay uthte</text>
-<text x="52" y="442" font-size="13.5" fill="#7fe0b0">hi bhejta. Late, khoya nahi</text>
-<rect x="392" y="344" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="369" r="12" fill="#ff5a6a"/>
-<text x="414" y="374" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="374" font-size="15" font-weight="700" fill="#ff5a6a">COMMIT se pehle crash</text>
-<text x="414" y="401" font-size="13.5" fill="#7fe0b0">Kuch nahi hua: na order na outbox. Ravi</text>
-<text x="414" y="421" font-size="13.5" fill="#7fe0b0">dobara karega</text>
-<rect x="754" y="344" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="776" cy="369" r="12" fill="#ff5a6a"/>
-<text x="776" y="374" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
-<text x="798" y="374" font-size="15" font-weight="700" fill="#ff5a6a">Relay ne bheja, sent = true se pehle</text>
-<text x="798" y="395" font-size="15" font-weight="700" fill="#ff5a6a">gira</text>
-<text x="776" y="422" font-size="13.5" fill="#7fe0b0">Khabar dobara jaati: consumer E-101 dekh ke</text>
-<text x="776" y="442" font-size="13.5" fill="#7fe0b0">skip, Ravi ko ek email</text>
-<rect x="30" y="507" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="533" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="557" font-size="13.5" fill="#e6dcb8">Saga lagao: Alag: wo fail kaam ulta karta. Yahan khabar raaste me kho rahi</text>
-<rect x="30" y="595" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="625" font-size="13.5" fill="#c9d6e8">Outbox table badi? sent = true wali roz saaf (delete / partition drop).</text>
-<text x="48" y="647" font-size="13.5" fill="#c9d6e8">Poora raasta: outbox + acks=all + kaam ke baad commit + eventId dedup + DLQ</text>
+<rect x="30" y="344" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="370" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="370" font-size="13.5" fill="#cfeee0">Server kuch yaad nahi rakhta, DB ka sent column yaad rakhta hai. Order hai to khabar bhi hai</text>
+<rect x="30" y="418" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="443" r="12" fill="#ff5a6a"/>
+<text x="52" y="448" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="448" font-size="15" font-weight="700" fill="#ff5a6a">Order bana, Kafka bhejne se pehle</text>
+<text x="74" y="469" font-size="15" font-weight="700" fill="#ff5a6a">server gira</text>
+<text x="52" y="496" font-size="13.5" fill="#7fe0b0">Row DB me padi (sent = false): relay uthte</text>
+<text x="52" y="516" font-size="13.5" fill="#7fe0b0">hi bhejta. Late, khoya nahi</text>
+<rect x="392" y="418" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="443" r="12" fill="#ff5a6a"/>
+<text x="414" y="448" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="448" font-size="15" font-weight="700" fill="#ff5a6a">COMMIT se pehle crash</text>
+<text x="414" y="475" font-size="13.5" fill="#7fe0b0">Kuch nahi hua: na order na outbox. Ravi</text>
+<text x="414" y="495" font-size="13.5" fill="#7fe0b0">dobara karega</text>
+<rect x="754" y="418" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="776" cy="443" r="12" fill="#ff5a6a"/>
+<text x="776" y="448" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="798" y="448" font-size="15" font-weight="700" fill="#ff5a6a">Relay ne bheja, sent = true se pehle</text>
+<text x="798" y="469" font-size="15" font-weight="700" fill="#ff5a6a">gira</text>
+<text x="776" y="496" font-size="13.5" fill="#7fe0b0">Khabar dobara jaati: consumer E-101 dekh ke</text>
+<text x="776" y="516" font-size="13.5" fill="#7fe0b0">skip, Ravi ko ek email</text>
+<rect x="30" y="581" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="607" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="631" font-size="13.5" fill="#e6dcb8">Saga lagao: Alag: wo fail kaam ulta karta. Yahan khabar raaste me kho rahi</text>
+<rect x="30" y="669" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="699" font-size="13.5" fill="#c9d6e8">Outbox table badi? sent = true wali roz saaf (delete / partition drop).</text>
+<text x="48" y="721" font-size="13.5" fill="#c9d6e8">Poora raasta: outbox + acks=all + kaam ke baad commit + eventId dedup + DLQ</text>
 </svg>

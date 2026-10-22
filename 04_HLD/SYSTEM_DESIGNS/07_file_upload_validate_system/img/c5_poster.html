@@ -2,13 +2,13 @@
 <meta charset="utf-8">
 <title>Card 5: GET /status pehle Redis (1 ms), </title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="781" viewBox="0 0 1500 781" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="855" viewBox="0 0 1500 855" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="781" fill="#0b1220"/>
+</defs><rect width="1500" height="855" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 5: GET /status pehle Redis (1 ms), miss pe replica, Redis me rakho. DONE pe Redis key hatao</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
 <rect x="30" y="164" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
@@ -45,29 +45,32 @@
 <text x="700" y="359" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
 <circle cx="930" cy="354" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
 <text x="930" y="359" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
-<rect x="30" y="428" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="453" r="12" fill="#ff5a6a"/>
-<text x="52" y="458" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="458" font-size="15" font-weight="700" fill="#ff5a6a">Replica peeche, purana haal Redis me</text>
-<text x="74" y="479" font-size="15" font-weight="700" fill="#ff5a6a">baitha</text>
-<text x="52" y="506" font-size="13.5" fill="#7fe0b0">Miss pe sirf SET NX + chhoti umar, ya</text>
-<text x="52" y="526" font-size="13.5" fill="#7fe0b0">primary se padho</text>
-<rect x="392" y="428" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="453" r="12" fill="#ff5a6a"/>
-<text x="414" y="458" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="458" font-size="15" font-weight="700" fill="#ff5a6a">DB me DONE, app me VALIDATING</text>
-<text x="414" y="485" font-size="13.5" fill="#7fe0b0">DONE likhte hi Redis key hatao, agla poochh</text>
-<text x="414" y="505" font-size="13.5" fill="#7fe0b0">naya DONE laaye</text>
-<rect x="754" y="428" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="776" cy="453" r="12" fill="#ff5a6a"/>
-<text x="776" y="458" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
-<text x="798" y="458" font-size="15" font-weight="700" fill="#ff5a6a">Redis gira</text>
-<text x="776" y="485" font-size="13.5" fill="#7fe0b0">Seedha replica pe: dheema par chalta.</text>
-<text x="776" y="505" font-size="13.5" fill="#7fe0b0">Poochne pe rate limit</text>
-<rect x="30" y="591" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="617" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="641" font-size="13.5" fill="#e6dcb8">Har poochh seedha DB pe: 10,000 log har 2 sec: primary ghir gaya, sab dheema</text>
-<rect x="30" y="679" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="709" font-size="13.5" fill="#c9d6e8">Har 2 sec zaroori? Gap badhao (2, 4, 8 sec). Band hi karwa do? Server khud bheje (SSE / WebSocket) jab haal badle.</text>
-<text x="48" y="731" font-size="13.5" fill="#c9d6e8">Sach DB me, Redis sirf tez copy</text>
+<rect x="30" y="428" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="454" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="454" font-size="13.5" fill="#cfeee0">Padhna bahut zyada hai, likhna kam, isliye haal ke liye cache + read replica. Sach DB me hai, Redis sirf tez copy hai. Padhna Redis se, likhna dono me</text>
+<rect x="30" y="502" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="527" r="12" fill="#ff5a6a"/>
+<text x="52" y="532" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="532" font-size="15" font-weight="700" fill="#ff5a6a">Replica peeche, purana haal Redis me</text>
+<text x="74" y="553" font-size="15" font-weight="700" fill="#ff5a6a">baitha</text>
+<text x="52" y="580" font-size="13.5" fill="#7fe0b0">Miss pe sirf SET NX + chhoti umar, ya</text>
+<text x="52" y="600" font-size="13.5" fill="#7fe0b0">primary se padho</text>
+<rect x="392" y="502" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="527" r="12" fill="#ff5a6a"/>
+<text x="414" y="532" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="532" font-size="15" font-weight="700" fill="#ff5a6a">DB me DONE, app me VALIDATING</text>
+<text x="414" y="559" font-size="13.5" fill="#7fe0b0">DONE likhte hi Redis key hatao, agla poochh</text>
+<text x="414" y="579" font-size="13.5" fill="#7fe0b0">naya DONE laaye</text>
+<rect x="754" y="502" width="345" height="128" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="776" cy="527" r="12" fill="#ff5a6a"/>
+<text x="776" y="532" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="798" y="532" font-size="15" font-weight="700" fill="#ff5a6a">Redis gira</text>
+<text x="776" y="559" font-size="13.5" fill="#7fe0b0">Seedha replica pe: dheema par chalta.</text>
+<text x="776" y="579" font-size="13.5" fill="#7fe0b0">Poochne pe rate limit</text>
+<rect x="30" y="665" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="691" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="715" font-size="13.5" fill="#e6dcb8">Har poochh seedha DB pe: 10,000 log har 2 sec: primary ghir gaya, sab dheema</text>
+<rect x="30" y="753" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="783" font-size="13.5" fill="#c9d6e8">Har 2 sec zaroori? Gap badhao (2, 4, 8 sec). Band hi karwa do? Server khud bheje (SSE / WebSocket) jab haal badle.</text>
+<text x="48" y="805" font-size="13.5" fill="#c9d6e8">Sach DB me, Redis sirf tez copy</text>
 </svg>

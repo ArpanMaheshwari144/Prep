@@ -1,37 +1,215 @@
 {
-  "title": "Card 1: tweet hote hi follower ke inbox me uski id. App kholo to bas apna inbox padho",
-  "h": 620,
-  "boxes": [
-    {"x": 30, "y": 180, "w": 220, "h": 100, "kind": "user", "title": "Ravi", "lines": ["tweet t9 kiya"]},
-    {"x": 320, "y": 170, "w": 260, "h": 120, "kind": "server", "title": "Fanout", "lines": ["Ravi ke har follower", "ke inbox me id"]},
-    {"x": 680, "y": 170, "w": 320, "h": 130, "kind": "cache", "title": "Mera inbox (Redis)", "lines": ["t9, t8, t5 ... (sirf id)", "pehle se bana hua"]},
-    {"x": 1120, "y": 180, "w": 350, "h": 110, "kind": "user", "title": "Main ne app khola", "lines": ["bas apna inbox padha"]},
-    {"x": 1120, "y": 330, "w": 350, "h": 80, "kind": "db", "title": "Tweet store", "lines": ["poora tweet yahan"]}
-  ],
-  "arrows": [
-    {"pts": [[252, 230], [316, 230]], "c": "blue"},
-    {"pts": [[582, 230], [676, 230]], "c": "orange", "label": "id daali", "lx": 629, "ly": 220, "a": "middle"},
-    {"pts": [[1116, 235], [1004, 235]], "c": "green", "label": "ek read", "lx": 1060, "ly": 225, "a": "middle"},
-    {"pts": [[1295, 292], [1295, 326]], "c": "purple"}
-  ],
-  "callouts": [
-    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 610,
-     "red": "Pehle har baar app khulne pe 200 logon ka jod",
-     "green": "Padhna 50 guna hai, to mehnat likhte waqt karo",
-     "conn": [[450, 146], [450, 170]]},
-    {"n": 2, "type": "pehle", "x": 680, "y": 84, "w": 790,
-     "red": "DB pe index ya read replica laga dete?",
-     "green": "Thoda tez hota, par har khulne pe 200 ka jod wahi ka wahi"},
-    {"n": 3, "type": "x", "x": 380, "y": 430, "w": 640,
-     "red": "Unfollow kiya, uske tweet inbox me pade hain",
-     "green": "Padhte waqt follow list se chhaanto, safai peeche",
-     "mark": [692, 300], "conn": [[692, 312], [692, 430]]},
-    {"n": 4, "type": "x", "x": 1050, "y": 440, "w": 420,
-     "red": "Abhi Suresh ko follow kiya",
-     "green": "Uske aakhri 20 tweet id inbox me daal do",
-     "mark": [990, 300], "conn": [[990, 312], [990, 380], [1070, 440]]},
-    {"type": "grey", "x": 30, "y": 530, "w": 1440,
-     "red": "Inbox me sirf id hai, poora tweet kaise? 50 id ek saath Tweet store se laao (batch).",
-     "green": "Ek-ek laaye to 50 chakkar lagte"}
-  ]
+ "title": "Card 1: tweet hote hi follower ke inbox me uski id. App kholo to bas apna inbox padho",
+ "h": 620,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 180,
+   "w": 220,
+   "h": 100,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "tweet t9 kiya"
+   ]
+  },
+  {
+   "x": 320,
+   "y": 170,
+   "w": 260,
+   "h": 120,
+   "kind": "server",
+   "title": "Fanout",
+   "lines": [
+    "Ravi ke har follower",
+    "ke inbox me id"
+   ]
+  },
+  {
+   "x": 680,
+   "y": 170,
+   "w": 320,
+   "h": 130,
+   "kind": "cache",
+   "title": "Mera inbox (Redis)",
+   "lines": [
+    "t9, t8, t5 ... (sirf id)",
+    "pehle se bana hua"
+   ]
+  },
+  {
+   "x": 1120,
+   "y": 180,
+   "w": 350,
+   "h": 110,
+   "kind": "user",
+   "title": "Arpan ne app khola",
+   "lines": [
+    "bas apna inbox padha"
+   ]
+  },
+  {
+   "x": 1120,
+   "y": 330,
+   "w": 350,
+   "h": 80,
+   "kind": "db",
+   "title": "Tweet store",
+   "lines": [
+    "poora tweet yahan"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     230
+    ],
+    [
+     316,
+     230
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     230
+    ],
+    [
+     676,
+     230
+    ]
+   ],
+   "c": "orange",
+   "label": "id daali",
+   "lx": 629,
+   "ly": 220,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     1116,
+     235
+    ],
+    [
+     1004,
+     235
+    ]
+   ],
+   "c": "green",
+   "label": "ek read",
+   "lx": 1060,
+   "ly": 225,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     1295,
+     292
+    ],
+    [
+     1295,
+     326
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 610,
+   "red": "Pehle har baar app khulne pe 200 logon ka jod",
+   "green": "Padhna 50 guna hai, to mehnat likhte waqt karo",
+   "conn": [
+    [
+     450,
+     146
+    ],
+    [
+     450,
+     170
+    ]
+   ],
+   "tha": ""
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 680,
+   "y": 84,
+   "w": 790,
+   "red": "DB pe index ya read replica laga dete?",
+   "green": "Thoda tez hota, par har khulne pe 200 ka jod wahi ka wahi"
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 380,
+   "y": 430,
+   "w": 640,
+   "red": "Unfollow kiya, uske tweet inbox me pade hain",
+   "green": "Padhte waqt follow list se chhaanto, safai peeche",
+   "mark": [
+    692,
+    300
+   ],
+   "conn": [
+    [
+     692,
+     312
+    ],
+    [
+     692,
+     430
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 1050,
+   "y": 440,
+   "w": 420,
+   "red": "Abhi Suresh ko follow kiya",
+   "green": "Uske aakhri 20 tweet id inbox me daal do",
+   "mark": [
+    990,
+    300
+   ],
+   "conn": [
+    [
+     990,
+     312
+    ],
+    [
+     990,
+     380
+    ],
+    [
+     1070,
+     440
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 530,
+   "w": 1440,
+   "red": "Inbox me sirf id hai, poora tweet kaise? 50 id ek saath Tweet store se laao (batch).",
+   "green": "Ek-ek laaye to 50 chakkar lagte"
+  }
+ ],
+ "kyun": "Padhna 50 guna hai, to mehnat likhte waqt karo, har baar khulne pe jodna mat. 2 sec purani feed chalegi, isliye pehle se banana aur cache chal jaata hai"
 }

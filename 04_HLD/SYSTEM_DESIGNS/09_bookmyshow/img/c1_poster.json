@@ -8,7 +8,7 @@
    "w": 200,
    "h": 100,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "A1 (pehle)"
    ]
@@ -49,7 +49,7 @@
     "AND status = 'available'",
     "",
     "row lock: ek-ek",
-    "Main: 1 row · Ravi: 0 row"
+    "Arpan: 1 row · Ravi: 0 row"
    ]
   },
   {
@@ -58,7 +58,7 @@
    "w": 230,
    "h": 100,
    "kind": "user",
-   "title": "Main",
+   "title": "Arpan",
    "lines": [
     "A1 meri"
    ]
@@ -227,5 +227,6 @@
    "red": "Network toota? Booking CP (pakka nahi to mana), search AP (2 sec purani list chalegi).",
    "green": "Seat rows show banate hi bani, booking sirf UPDATE. Ravi ne phir dabaya? Phir 0 row"
   }
- ]
+ ],
+ "kyun": "Faisla DB ki ek query karti hai, WHERE me khaali check hai. DB ka row lock ek-ek ko chalata hai: Arpan pehle gaya, Ravi ruka, phir uske WHERE ko 0 row mili. Lock App me nahi, DB me hai"
 }

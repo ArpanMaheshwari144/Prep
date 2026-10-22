@@ -202,7 +202,7 @@
    "x": 650,
    "y": 84,
    "w": 820,
-   "red": "Main DB gira",
+   "red": "Primary DB gira",
    "green": "Sync copy promote (~1-2 min). Beech me error: WAHI id se dobara",
    "n": 2,
    "mark": [
@@ -251,5 +251,6 @@
    "red": "Sync copy = dheema? Haan, ek chakkar, paise me chalega.",
    "green": "Async me aakhri transfer kho sakta. Atomic check sirf debit pe"
   }
- ]
+ ],
+ "kyun": "Sach DB me hai, to koi bhi machine koi bhi transfer le sakti hai. Jitni chaho lagao, ek giri to baaki chalti hain"
 }

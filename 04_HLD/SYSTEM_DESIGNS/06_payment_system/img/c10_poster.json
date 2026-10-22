@@ -215,5 +215,6 @@
    "red": "Idempotency key kahan? Usi shard pe (account_id se), payment ke saath ek transaction me.",
    "green": "Shard kaise tay? Ring (consistent hashing) ya lookup table"
   }
- ]
+ ],
+ "kyun": "Jo ek transaction me saath chahiye (account + uski history) wo ek shard pe. Transaction ek shard tak hi rehti hai"
 }

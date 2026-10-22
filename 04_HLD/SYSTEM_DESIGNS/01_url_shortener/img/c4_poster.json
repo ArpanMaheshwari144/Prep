@@ -256,5 +256,6 @@
    "red": "Naya report chahiye? Kafka me pade purane click dobara padh lo (replay).",
    "green": "SQS kyun nahi? SQS padhte hi message mita deta, Kafka rakhta hai"
   }
- ]
+ ],
+ "kyun": "Redirect kisi ka intezaar nahi karta. Ginti peeche hoti, disk pe pakki. Ginti wala dheema / band ho, to bhi link khulta hai, ginti thodi der se aati"
 }
