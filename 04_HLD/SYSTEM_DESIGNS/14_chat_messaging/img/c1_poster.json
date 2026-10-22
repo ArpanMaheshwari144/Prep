@@ -100,8 +100,8 @@
    "x": 30,
    "y": 84,
    "w": 520,
-   "red": "Ek connection ek thread?",
-   "green": "2 crore x ~1 MB: memory khatam",
+   "red": "Har connection ka apna thread?",
+   "green": "2 crore × ~1 MB: memory khatam",
    "n": 1
   },
   {
@@ -109,8 +109,8 @@
    "x": 570,
    "y": 84,
    "w": 900,
-   "red": "Polling (har 5 sec)? Ya SSE?",
-   "green": "Polling: 100 me 1 kaam ki. SSE: sirf ek taraf, chat me dono chahiye",
+   "red": "Har 5 sec poochho (polling)? Ya SSE?",
+   "green": "Polling: 100 me 1 poochh hi kaam ki. SSE sirf server se phone, chat me dono taraf chahiye",
    "n": 2
   },
   {
@@ -119,7 +119,7 @@
    "y": 450,
    "w": 900,
    "red": "Chat server gira",
-   "green": "1 lakh ek saath judte: ruk-ruk, random waqt (backoff + jitter). Message nahi khota",
+   "green": "1 lakh log ek saath dobara judte: ruk-ruk ke, random waqt pe (backoff + jitter). Message nahi khota",
    "n": 3,
    "mark": [
     760,
@@ -141,9 +141,16 @@
    "x": 950,
    "y": 450,
    "w": 520,
-   "red": "Naya code? Thode-thode server khaali (draining).",
-   "green": "Aage ka message? Wahi server, connection khula"
+   "red": "Naya code daalna? Thode-thode server khaali karo (draining).",
+   "green": "Agla message kis server pe? Wahi, connection khula hai"
   }
  ],
- "kyun": "Zyadatar connection chup rehte hain. Chup connection thodi memory leta hai, thread tabhi jab data aaya, isliye ~200 server kaafi hain"
+ "kyun": "Zyadatar connection chup rehte. Kuch thread (event loop) saare khule connection sambhalte, thread tabhi kaam karta jab data aaye. Chup connection thodi memory, isliye ~200 server kaafi",
+ "step": [
+  1,
+  10
+ ],
+ "peeche": "shuru: ek server, har connection ka ek thread",
+ "ab": "Subah 2 crore log jude (Arpan bhi), server ki memory khatam",
+ "agla": "ab 200 server hain. Ravi kis server pe hai? (card 2)"
 }

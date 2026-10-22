@@ -124,8 +124,8 @@
    "x": 30,
    "y": 84,
    "w": 510,
-   "red": "Har server ka apna map?",
-   "green": "Server-1 bola 'Ravi offline', galat",
+   "red": "Har server ka apna alag pata-register?",
+   "green": "Server-1 ko Ravi dikha hi nahi, bola \"Ravi offline\": galat",
    "n": 1,
    "conn": [
     [
@@ -144,7 +144,7 @@
    "y": 84,
    "w": 910,
    "red": "Redis gira",
-   "green": "Copy pe switch (alag AZ), message nahi khota, judne pe milega",
+   "green": "Uski copy (doosri jagah) sambhalti. Message nahi khota, Ravi judte hi le leta",
    "n": 2,
    "mark": [
     870,
@@ -167,7 +167,7 @@
    "y": 510,
    "w": 700,
    "red": "Server-7 mar gaya",
-   "green": "Umar khatam, entry khud hati, Ravi offline. Message DB me",
+   "green": "Pata ki umar khatam, khud hat gaya, Ravi offline. Message DB me pada",
    "n": 3,
    "mark": [
     610,
@@ -189,9 +189,16 @@
    "x": 750,
    "y": 510,
    "w": 720,
-   "red": "Connection hi Redis me? Namumkin. Pub-sub? Kuch rakhta nahi.",
-   "green": "Ravi khisak gaya? Message nahi khota, naye server pe milega"
+   "red": "Connection hi Redis me rakh do? Namumkin. Pub-sub? Wo kuch yaad nahi rakhta.",
+   "green": "Ravi doosre server pe khisak gaya? Message nahi khota, naye server pe milega"
   }
  ],
- "kyun": "Pata ek jagah hai, sab server wahi dekhte hain. Redis me sirf pata hai, umar ke saath (TTL); server-7 zinda hai to uski dhadkan se umar badhti rehti hai"
+ "kyun": "\"Ravi kis server pe hai\" ye pata ek jagah, Redis me. Server-1 Redis se poochh ke server-7 ko deta, wo Ravi ko. Pata ki umar hai, server-7 zinda hai to dhadkan se badhti rehti",
+ "step": [
+  2,
+  10
+ ],
+ "peeche": "card 1 me EVENT LOOP (kuch thread, lakhon connection)",
+ "ab": "Arpan ne Ravi ko \"hi\" bheja, server bola Ravi offline",
+ "agla": "ab Ravi mila hi nahi, uska phone band hai (card 3)"
 }

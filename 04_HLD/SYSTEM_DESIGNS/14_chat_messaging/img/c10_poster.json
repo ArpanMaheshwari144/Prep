@@ -122,7 +122,7 @@
    "y": 84,
    "w": 620,
    "red": "Ravi ka app band ho gaya",
-   "green": "Dhadkan band, umar khatam = offline. Last seen alag likha",
+   "green": "\"Hoon\" band, 30 sec me umar khatam = offline. Last seen alag likha",
    "n": 1,
    "mark": [
     210,
@@ -144,8 +144,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Sabko har badlav batao?",
-   "green": "500 contacts x crore log: bahut message",
+   "red": "Har badlaav sabko batao?",
+   "green": "500 contact × crore log: bahut message",
    "n": 2
   },
   {
@@ -153,9 +153,16 @@
    "x": 30,
    "y": 500,
    "w": 1440,
-   "red": "Crore dhadkan / sec? Chat server ikattha karke Redis me (batch). Last seen chhupaya? Mat dikhao.",
-   "green": "'typing...' sirf khuli chat me, store nahi, 2 sec ki khabar"
+   "red": "Crore \"hoon\" har second? Chat server ikattha karke Redis me ek saath daalta. Last seen chhupaya? To mat dikhao.",
+   "green": "\"typing...\" sirf khuli chat me, kahin store nahi, 2 sec ki khabar"
   }
  ],
- "kyun": "Jab maango tab dekho, key khud mit jaati hai. Thoda purana status chal jaata hai, paisa nahi lagta"
+ "kyun": "Online = Redis me ek key, umar 30 sec. Ravi ka app har 15 sec \"hoon\" bolta. Band hua to key khud mit jaati = offline. Arpan tabhi dekhe jab Ravi ki chat khole",
+ "step": [
+  10,
+  10
+ ],
+ "peeche": "card 9 me S3 + message me sirf pata",
+ "ab": "Raat ko online / last seen sabko kaise dikhayein?",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

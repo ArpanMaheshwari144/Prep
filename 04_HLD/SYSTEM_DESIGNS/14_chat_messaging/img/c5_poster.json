@@ -103,7 +103,7 @@
    "y": 84,
    "w": 620,
    "red": "Net dheema, app ne dobara bheja",
-   "green": "Wahi m-9: server ne pehchaana, skip",
+   "green": "Wahi m-9 aayi: server ne pehchaana, chhod diya",
    "n": 1,
    "mark": [
     295,
@@ -125,8 +125,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Har bhejna naya message?",
-   "green": "hi, timeout, phir hi: Ravi ki chat me do baar",
+   "red": "Har bhejna naya message maano?",
+   "green": "\"hi\", timeout, phir \"hi\": Ravi ki chat me do baar",
    "n": 2
   },
   {
@@ -134,8 +134,8 @@
    "x": 30,
    "y": 480,
    "w": 720,
-   "red": "Dono copy ek saath aa gayi",
-   "green": "Dekhna + daalna ek kadam me (LWT / SET NX)",
+   "red": "Dono copy ek hi pal me aayi",
+   "green": "\"Dekho + likho\" ek hi kadam me (Cassandra LWT / Redis SET NX)",
    "n": 3,
    "mark": [
     740,
@@ -157,8 +157,8 @@
    "x": 770,
    "y": 480,
    "w": 700,
-   "red": "Do user ki id same nikli",
-   "green": "Check jodi pe (sender_id, clientMsgId)",
+   "red": "Do log ki id same nikal aayi",
+   "green": "Check jodi pe karo (bhejne wala, id): alag log = alag message",
    "n": 4,
    "mark": [
     960,
@@ -176,5 +176,12 @@
    ]
   }
  ],
- "kyun": "Id app banata hai, server sirf \"pehle dekha?\" poochta hai, ek kadam. Wahi id = wahi message, dobara safe"
+ "kyun": "App har message ki id banata (m-9), dobara bheje to wahi id. Server poochta \"ye id pehle dekhi?\", haan to chhod deta. Wahi id = wahi message",
+ "step": [
+  5,
+  10
+ ],
+ "peeche": "card 4 me chat_id se BAANTO",
+ "ab": "Net dheema, app ne dobara bheja, Ravi ko Arpan ka \"hi\" do baar",
+ "agla": "ab ek hi baar aaya. Par kram galat (card 6)"
 }

@@ -127,7 +127,7 @@
    "y": 84,
    "w": 700,
    "red": "Ek DB machine? Ya SQL?",
-   "green": "46,000 / sec ek machine nahi jhelti. Rishte / txn chahiye hi nahi",
+   "green": "46,000 likhai / sec ek machine nahi jhelti. Join / transaction chahiye hi nahi",
    "n": 1
   },
   {
@@ -135,8 +135,8 @@
    "x": 750,
    "y": 84,
    "w": 720,
-   "red": "message_id se partition?",
-   "green": "Aakhri 50 ke liye 50 jagah: saath padha, saath nahi",
+   "red": "message_id se baanto?",
+   "green": "Aakhri 50 ke liye 50 jagah jaana padta. Jo saath padha jaata, wo saath nahi",
    "n": 2
   },
   {
@@ -145,7 +145,7 @@
    "y": 470,
    "w": 560,
    "red": "Ek group bahut garam",
-   "green": "Ek chat ek partition: group ki speed pe had",
+   "green": "Ek chat = ek tukda, to us group ki speed pe had",
    "n": 3,
    "mark": [
     400,
@@ -167,8 +167,8 @@
    "x": 610,
    "y": 470,
    "w": 860,
-   "red": "Saalon me partition badi ho gayi",
-   "green": "Key (chat_id, mahina): size bandhta, bojh nahi baant-ta",
+   "red": "Saalon me ek chat ka tukda bahut bada",
+   "green": "Key me mahina jodo (chat_id, mahina): tukda chhota rehta",
    "n": 4,
    "mark": [
     760,
@@ -190,9 +190,16 @@
    "x": 30,
    "y": 565,
    "w": 1440,
-   "red": "Pehle poochho: history kahan? WhatsApp: phone pe (server se delete). Slack: server pe hamesha (~440 TB / saal).",
+   "red": "Pehle poochho: history kahan rahegi? WhatsApp: phone pe (server se mit jaati). Slack: server pe hamesha (~440 TB / saal).",
    "green": "Banking ka ulta: wahan 120 / sec, yahan 46,000 / sec. Yahan Slack jaisa"
   }
  ],
- "kyun": "Jo saath padha jaata hai wo saath rakho. Chat khuli to \"aakhri 50\" ek jagah se, ek baar me (keyset, OFFSET nahi)"
+ "kyun": "Jo saath padha jaata, wo saath rakho. Arpan-Ravi chat ke saare message ek hi tukde (chat_id) me, andar kram se. Chat khuli to \"aakhri 50\" ek hi jagah se, ek baar me",
+ "step": [
+  4,
+  10
+ ],
+ "peeche": "card 3 me PEHLE DB, phir bhejo + PUSH",
+ "ab": "Roz 1.2 TB message, ek DB nahi jhelta",
+ "agla": "ab DB sahi. Par net dheema, app ne dobara bheja (card 5)"
 }

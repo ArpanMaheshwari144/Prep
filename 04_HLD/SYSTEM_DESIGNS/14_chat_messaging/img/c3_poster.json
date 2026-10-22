@@ -138,8 +138,8 @@
    "x": 30,
    "y": 84,
    "w": 470,
-   "red": "Pehle bhejo, na pahunche to DB?",
-   "green": "DB se pehle server gira: message gaya",
+   "red": "Pehle bhejo, na pahunche to DB me?",
+   "green": "DB se pehle server gira: Arpan ka message gaya",
    "n": 1,
    "conn": [
     [
@@ -158,7 +158,7 @@
    "y": 84,
    "w": 950,
    "red": "Bhejne se pehle server gira",
-   "green": "Message DB me pada: Ravi judte hi 'aakhri ke baad' le leta",
+   "green": "Message DB me pada: Ravi judte hi \"aakhri ke baad ke\" le leta",
    "n": 2,
    "mark": [
     510,
@@ -181,7 +181,7 @@
    "y": 490,
    "w": 760,
    "red": "Push wala (Google / Apple) atak gaya",
-   "green": "Bahar ki cheez: apna retry / queue rakho",
+   "green": "Wo bahar ki cheez hai: apna retry / line rakho",
    "n": 3,
    "mark": [
     770,
@@ -203,9 +203,16 @@
    "x": 810,
    "y": 490,
    "w": 660,
-   "red": "Pehle poochho: kahan ruke, kab tak, push chahiye?",
-   "green": "Push sirf ghanti, raasta Google ka"
+   "red": "Pehle poochho: message kahan ruke, kab tak, push chahiye ya nahi?",
+   "green": "Push sirf ghanti + preview, raasta Google / Apple ka"
   }
  ],
- "kyun": "DB me hai to khota nahi. Bhejne se pehle server gira, tab bhi message DB me pada hai. Push sirf ghanti hai, sirf preview, aur raasta Google ka hai"
+ "kyun": "Pehle DB me likho, phir bhejo. DB me hai to khota nahi. Phone band to sirf push ghanti. Ravi wapas aaya to bolta \"meri aakhri ke baad ke sab do\"",
+ "step": [
+  3,
+  10
+ ],
+ "peeche": "card 2 me PATA Redis me (kaun kahan)",
+ "ab": "Ravi ka phone band tha, Arpan ka \"hi\" kahan jaaye?",
+ "agla": "ab sab DB me likh rahe. DB kitna jhelega? (card 4)"
 }

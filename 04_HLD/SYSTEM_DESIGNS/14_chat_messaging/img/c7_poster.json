@@ -169,7 +169,7 @@
    "x": 30,
    "y": 84,
    "w": 600,
-   "red": "Har member ke inbox me copy?",
+   "red": "Har member ke inbox me alag copy?",
    "green": "Ek message, 500 likhai: mehnga",
    "n": 1
   },
@@ -179,16 +179,23 @@
    "y": 84,
    "w": 820,
    "red": "Pehle poochho: 1-to-1 ya group?",
-   "green": "Sabke liye ek jaisa = ek copy, har kisi ka alag = alag copy"
+   "green": "Sabke liye ek jaisa = ek copy. Har kisi ka alag = alag copy"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 510,
    "w": 1440,
-   "red": "Naya member juda? Judne ke seq se pehle wale nahi milte, tab wo group me tha hi nahi.",
+   "red": "Naya member juda? Uske judne se pehle wale message nahi milte, tab wo group me tha hi nahi.",
    "green": "Bhejna server-wise, member-wise nahi"
   }
  ],
- "kyun": "Sabke liye ek jaisa = ek copy, har kisi ka alag = alag copy. Bhejna server-wise, member-wise nahi"
+ "kyun": "Group ka message EK baar likho. Bhejna server ke hisaab se: Redis se dekho online member kis server pe, har server ko ek call",
+ "step": [
+  7,
+  10
+ ],
+ "peeche": "card 6 me SEQ: server ka +1 number",
+ "ab": "College Gang (500 log) me Arpan ka ek message, 500 baar likhein?",
+ "agla": "ab message pahunch gaye. Tick aur unread kaise? (card 8)"
 }

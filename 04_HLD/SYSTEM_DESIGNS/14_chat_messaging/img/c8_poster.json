@@ -98,8 +98,8 @@
    "x": 30,
    "y": 84,
    "w": 560,
-   "red": "Har message pe 'padha' record?",
-   "green": "50 x 500 = 25,000 likhai",
+   "red": "Har message pe \"padha\" ka alag record?",
+   "green": "50 × 500 member = 25,000 likhai",
    "n": 1
   },
   {
@@ -107,16 +107,16 @@
    "x": 610,
    "y": 84,
    "w": 860,
-   "red": "Tick: ek (server), do (phone), neeli (padh li). Har tick ek ulta message.",
-   "green": "Do tick = delivered_upto, Ravi ka phone bhejta"
+   "red": "Tick: ek (server tak), do (phone tak), neeli (padh li). Har tick ek ulta message.",
+   "green": "Do tick = kahan tak mila (delivered_upto), Ravi ka phone bhejta"
   },
   {
    "type": "x",
    "x": 30,
    "y": 510,
    "w": 700,
-   "red": "'Mila' raaste me kho gaya",
-   "green": "Agli baar judte hi phone dobara bhejta, nishaan sirf aage",
+   "red": "\"Mila\" wali khabar raaste me kho gayi",
+   "green": "Agli baar judte hi phone dobara bhejta, nishaan sirf aage badhta",
    "n": 2,
    "mark": [
     255,
@@ -138,9 +138,16 @@
    "x": 750,
    "y": 510,
    "w": 720,
-   "red": "Group me do tick? Sabse chhota nishaan >= seq.",
-   "green": "10 lakh ka broadcast? Tick band, sirf unread"
+   "red": "Group me do tick kab? Jab sabka nishaan us number tak pahunch jaaye.",
+   "green": "10 lakh ka broadcast group? Tick band, sirf unread"
   }
  ],
- "kyun": "Nishaan aage khisakta hai, ginti nahi hoti. Unread, tick, offline ke baad lena, sab isi se. Khoya to agli baar aa jaayega"
+ "kyun": "Har member ka ek nishaan: kahan tak padha (read_upto). Ravi ne 50 padhe = ek hi likhai. Unread = aakhri number - nishaan. Arpan ko ek push, 50 ek saath neeli",
+ "step": [
+  8,
+  10
+ ],
+ "peeche": "card 7 me GROUP ka EK copy",
+ "ab": "Ravi ne Arpan ke 50 message padhe: unread aur neeli tick kaise?",
+ "agla": "ab text theek. Par video bhaari (card 9)"
 }
