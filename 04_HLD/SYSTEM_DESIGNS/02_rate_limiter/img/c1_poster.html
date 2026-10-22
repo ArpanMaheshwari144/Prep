@@ -1,0 +1,63 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 1: sab App ek hi Redis ginti dekhte</title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="510" viewBox="0 0 1500 510" xmlns="http://www.w3.org/2000/svg"><defs>
+<marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+<marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+<marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
+<marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
+<marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
+</defs><rect width="1500" height="510" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: sab App ek hi Redis ginti dekhte hain. Chhathi request pe 429</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
+<rect x="30" y="200" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan</text>
+<text x="140.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">9 baar login dabaya</text>
+<rect x="340" y="150" width="220" height="90" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="450.0" y="184" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App 1</text>
+<text x="450.0" y="210" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">har baar Redis se poochta</text>
+<rect x="340" y="300" width="220" height="90" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="450.0" y="334" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App 2</text>
+<text x="450.0" y="360" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">wahi Redis, wahi ginti</text>
+<rect x="700" y="200" width="330" height="120" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="865.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis (ginti yahin)</text>
+<text x="865.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">rate:Arpan:login = 6</text>
+<text x="865.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">60 sec baad key khud mit jaati</text>
+<text x="865.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">had 5, chhathi pe mana</text>
+<rect x="1180" y="215" width="290" height="90" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1325.0" y="249" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan ko 429</text>
+<text x="1325.0" y="275" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">6 se 9 tak sab mana</text>
+<path d="M252 235 L336 200" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M252 265 L336 340" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M562 195 L696 240" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<text x="600" y="196" font-size="13" fill="#ffa94d" class="m">INCR</text>
+<path d="M562 345 L696 290" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M1032 260 L1176 260" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<text x="1104" y="250" font-size="13" fill="#3ddc97" class="m" text-anchor="middle">6 &gt; 5</text>
+<path d="M450 392 L450 430" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="30" y="430" width="560" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="452" r="13" fill="#ffcc4d"/>
+<text x="52" y="457" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="457" font-size="15" font-weight="700" fill="#ffcc4d">Pehle har App apni ginti rakhta tha: 5 + 4 = 9 andar</text>
+<text x="52" y="481" font-size="15" font-weight="700" fill="#3ddc97">Ab dono App ek hi Redis ginti dekhte, 6 pe mana</text>
+<path d="M865 322 L865 430" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="640" y="430" width="620" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="662" cy="452" r="13" fill="#ffcc4d"/>
+<text x="662" y="457" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="684" y="457" font-size="15" font-weight="700" fill="#ffcc4d">Ginti DB me rakhte to har request pe disk aur lock</text>
+<text x="662" y="481" font-size="15" font-weight="700" fill="#3ddc97">Bahut dheema hota. Redis RAM me hai, ~1 ms</text>
+<path d="M450 146 L450 150" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="30" y="84" width="560" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
+<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Sticky LB se Arpan ko hamesha ek hi App pe bhejte?</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">Wo App gira to Arpan ki ginti bhi saath gayi</text>
+<path d="M1018 186 L1018 146" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="1006" y1="188" x2="1030" y2="212"/><line x1="1030" y1="188" x2="1006" y2="212"/></g>
+<rect x="700" y="84" width="770" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="722" cy="106" r="13" fill="#ff5a6a"/>
+<text x="722" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">4</text>
+<text x="744" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Minute ke kinare pe 5 aur agle minute ke shuru me 5: 2 sec me 10 andar</text>
+<text x="722" y="135" font-size="15" font-weight="700" fill="#3ddc97">Ye fixed window ki kamzori hai. Isliye asli me token bucket lagate</text>
+</svg>

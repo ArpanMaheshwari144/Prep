@@ -78,15 +78,8 @@ AGAR    bucket bhara tha, 10 request ek saath aayi
 
 **Rail 4 DO LOG EK SAATH** · Cue: Redis me EK ginti, 60 sec umar
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
-<img src="img/c1_1.png?v=8" width="900">
-
-<img src="img/c1_2.png?v=8" width="900">
-
-<img src="img/c1_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     sab App ek hi Redis ginti dekhte hain (rate:Arpan:login, umar 60 sec). 6thi request pe 429
@@ -97,10 +90,6 @@ NAHI    ginti DB me     -> DHEEMA: har request pe disk aur lock lagta, bahut dhe
 
 > [!IMPORTANT]
 > **Yaad rakh:** Sab App ek hi Redis ginti dekhte (rate:Arpan:login), key ki umar hi window. Ginti ek jagah.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - window ke kinare pe 5 + 5 aayi? → **2 sec me 10 andar**: Ye fixed window ki kamzori hai, isliye asli me token bucket
 
 
 ---
