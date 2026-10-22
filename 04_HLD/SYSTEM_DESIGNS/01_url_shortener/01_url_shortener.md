@@ -229,15 +229,8 @@ NAHI    ek hi LB -> GIRA: wo gira to App kitne bhi hon, koi andar nahi aa sakta
 
 **Rail 8 BAHAR KA HAMLA** · Cue: RATE LIMIT darwaze pe + WAF
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
-<img src="img/c8_1.png?v=4" width="900">
-
-<img src="img/c8_2.png?v=4" width="900">
-
-<img src="img/c8_3.png?v=4" width="900">
-
-</details>
 
 ```
 HAL     gateway pe hi ginti: har API key ki ek shared ginti (Redis me). Had paar to 429,
@@ -249,12 +242,6 @@ NAHI    har App apni ginti -> DHEELA: 10 App = had 10 guna, aur bheed App tak aa
 
 > [!IMPORTANT]
 > **Yaad rakh:** Gateway pe sabki ek ginti (Redis), had paar to 429, andar aaya hi nahi. Pehchaana hamla WAF pe.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Darwaze pe pehchaana hua hamla aaya? → **WAF**: WAF darwaze pe hi rok deta, App tak aata hi nahi
-> - Ginti IP pe rakhein? (college ke 2,000 log ek IP) → **user_id / API key**: IP pe ginti se poora college atakta, aur bot naya IP le aata. Ginti user_id / API key pe, sirf wahi rukta
-> - Ban kitni der? → **TTL**: ban hamesha umar ke saath (jaise 24 ghante), permanent nahi. Galti se laga to apne aap hat jaata
 
 
 Poora rate limit = [02_rate_limiter](../02_rate_limiter/02_rate_limiter.md).
