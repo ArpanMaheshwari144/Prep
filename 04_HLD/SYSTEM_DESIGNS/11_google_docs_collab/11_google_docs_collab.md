@@ -60,7 +60,7 @@ PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar li
 
 Jod: Jira / Confluence comment me bhi version; wahan purana = save MANA, Docs khiska ke lagata
 
-<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: andar + kya gira, kaise bacha">
+<img src="img/c1_poster.png?v=2" width="1000" alt="card 1: andar + kya gira, kaise bacha">
 
 <details><summary>kahani dekho (3 scene)</summary>
 
