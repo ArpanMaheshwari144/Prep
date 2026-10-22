@@ -1480,8 +1480,18 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ NEXT GREATER ELEM II
  └──────────────────────────────────────────────────────────────
-     same monotonic, bas array CIRCULAR. trick: loop 2 BAAR (i: 0..2n-1), access i % n (mod).   // push(i%n), i nahi (asli index) · ans size n, init -1
-     doosre chakkar me aakhri elements ko SHURU ka greater mil jaata (wrap). baaki wahi; na mile -> -1.
+     same next-greater (monotonic stack), bas array CIRCULAR -> aakhri element ka greater SHURU me bhi ho sakta.
+     vector<int> ans(n, -1);                          // size n (2n nahi) · na mile -> -1
+     stack<int> st;                                   // INDEX rakho (0..n-1) -- jinka greater abhi nahi mila
+     for (int i = 0; i < 2 * n; i++) {                // 2n: doosre chakkar me aakhri elements ko shuru wale dikhte (wrap)
+         while (!st.empty() && nums[st.top()] < nums[i % n]) {   // i % n = asli index (i 2n tak jaata, array n ka)
+             ans[st.top()] = nums[i % n];             // greater TOP ka mila -> ans[top] me likho (ans[i] me nahi)
+             st.pop();
+         }
+         st.push(i % n);                              // push i % n, i nahi (i >= n pe index bahar)
+     }
+     [1,2,1]: pehle chakkar ke baad aakhri 1 (idx 2) stack me bacha -> doosre chakkar me i=4 -> 4%3=1 -> nums[1]=2
+              -> ans[2] = 2.  Isliye 2n.
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
