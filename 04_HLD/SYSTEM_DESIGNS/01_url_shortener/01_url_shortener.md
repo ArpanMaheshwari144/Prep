@@ -155,15 +155,8 @@ NAHI    click seedha DB me -> DHEEMA: har redirect DB likhai ka intezaar karta, 
 
 **Rail 6 DATA BADA** · Cue: SHARD by code (RING)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=5" width="900">
-
-<img src="img/c5_2.png?v=5" width="900">
-
-<img src="img/c5_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     data kai machine me baanto (shard), link ke code se. Code ring pe aage chalta, jo pehli machine mile
@@ -177,15 +170,6 @@ NAHI    country se baanto -> BIKHRA: code dekh ke pata nahi kis country ka, saar
 
 > [!IMPORTANT]
 > **Yaad rakh:** Code ka hash ring pe, pehli machine uski, agli 2 machine pe copy (Cassandra).
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Data sirf ~500 GB hota? → **ek MySQL**: ek MySQL kaafi. Shard tab, jab ek machine me na aaye
-> - Ek machine mar gayi? → **padosi ki copy**: baaki 2 copy se milta, link nahi gaye
-> - Ek machine pe zyada bojh? → **virtual nodes**: har machine ring pe 100-200 jagah baithti, bojh barabar
-> - Cassandra kyun, MySQL kyun nahi? → **join nahi + 90 TB**: join aur transaction chahiye hi nahi, bas code se link, aur 90 TB. Wajah kaam ka dhaancha + size, "NoSQL powerful" nahi
-> - Cassandra me main copy kaunsi? → **koi nahi**: teeno barabar, koi bhi likh / padh sakti
-> - Copy badha do to likhna tez hoga? → **nahi, shard**: har copy pe likhna padta. Likhne ka bojh = shard, copy = bachav
 
 > [!CAUTION]
 > **AWS pe Cassandra kahan? RDS pe? → NAHI.** RDS sirf SQL (MySQL · Postgres · MariaDB · Oracle · SQL Server).

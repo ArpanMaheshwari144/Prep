@@ -1,0 +1,196 @@
+{
+ "title": "Card 5: data code se baanto (ring). Code ki machine + agli 2 pe copy",
+ "h": 790,
+ "circles": [
+  {
+   "cx": 650,
+   "cy": 330,
+   "r": 140,
+   "label": "ring (code)"
+  }
+ ],
+ "boxes": [
+  {
+   "x": 30,
+   "y": 270,
+   "w": 220,
+   "h": 100,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "code '15FTGg' aaya"
+   ]
+  },
+  {
+   "x": 590,
+   "y": 168,
+   "w": 120,
+   "h": 50,
+   "kind": "db",
+   "title": "Machine 1"
+  },
+  {
+   "x": 760,
+   "y": 305,
+   "w": 120,
+   "h": 50,
+   "kind": "db",
+   "title": "Machine 2"
+  },
+  {
+   "x": 590,
+   "y": 443,
+   "w": 120,
+   "h": 50,
+   "kind": "db",
+   "title": "Machine 3"
+  },
+  {
+   "x": 420,
+   "y": 305,
+   "w": 120,
+   "h": 50,
+   "kind": "db",
+   "title": "Machine 4"
+  },
+  {
+   "x": 1000,
+   "y": 260,
+   "w": 330,
+   "h": 120,
+   "kind": "db",
+   "title": "Har tukda: 3 copy",
+   "lines": [
+    "code ki machine + agli 2",
+    "teeno barabar (Cassandra)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     315
+    ],
+    [
+     416,
+     325
+    ]
+   ],
+   "c": "green",
+   "label": "hash(code)",
+   "lx": 330,
+   "ly": 308,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     882,
+     330
+    ],
+    [
+     996,
+     320
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Country se baant dete, ya ek badi machine le lete?",
+   "green": "Country: code dekh ke pata nahi, saari machine poochni padti",
+   "green2": "Ek machine: 90 TB usme aata hi nahi",
+   "conn": [
+    [
+     140,
+     170
+    ],
+    [
+     140,
+     270
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 730,
+   "y": 84,
+   "w": 740,
+   "red": "Seedha code % machine se baant dete?",
+   "green": "Machine judi to lagbhag saari keys hilti (3 se 4 = sab badle)",
+   "green2": "Ring me sirf pados ki keys hilti"
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 840,
+   "y": 470,
+   "w": 630,
+   "red": "Machine 2 mar gayi",
+   "green": "Baaki 2 copy se milta, ek bhi link nahi gaya",
+   "mark": [
+    868,
+    355
+   ],
+   "conn": [
+    [
+     868,
+     367
+    ],
+    [
+     868,
+     470
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 30,
+   "y": 520,
+   "w": 780,
+   "red": "Ek machine pe zyada bojh aa gaya",
+   "green": "Virtual nodes: har machine ring pe 100-200 jagah baithti, bojh barabar",
+   "mark": [
+    600,
+    493
+   ],
+   "conn": [
+    [
+     600,
+     505
+    ],
+    [
+     600,
+     520
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 610,
+   "w": 1440,
+   "red": "Data sirf ~500 GB hota to? Ek MySQL kaafi. Shard tab, jab ek machine me na aaye.",
+   "green": "Cassandra kyun? Join / transaction chahiye hi nahi, bas code se link, aur 90 TB"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 700,
+   "w": 1440,
+   "red": "Cassandra me main copy kaunsi? Koi nahi, teeno barabar, koi bhi likh / padh sakti.",
+   "green": "Copy badhane se likhna tez? Nahi, har copy pe likhna padta. Likhne ka bojh = shard"
+  }
+ ]
+}

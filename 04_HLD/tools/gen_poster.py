@@ -4,6 +4,7 @@ python 04_HLD/tools/gen_poster.py <cN_poster.json> [...]  -> cN_poster.html (phi
 spec (json):
   title, h (height)
   boxes:    [{x, y, w, h, kind: user|server|cache|db|lb|plain, title, lines: [..]}]
+  circles:  [{cx, cy, r, label}]   (ring)
   arrows:   [{pts: [[x,y],..], c: blue|green|purple|grey|orange, dash: bool, label, lx, ly, a: start|middle|end}]
   callouts: [{n, type: x|pehle|grey, x, y, w, red, green, green2, mark: [x,y], conn: [[x,y],..]}]
 NIYAM: gira = dabbe pe X · raasta toota = teer pe X · pehle / galat tareeka = PEELA, X nahi · doosra kyun nahi = GREY.
@@ -38,6 +39,10 @@ def build(spec):
     o.append(f'</defs><rect width="{W}" height="{H}" fill="#0b1220"/>')
     o.append(t(30, 40, spec['title'], 26, '#e6edf3', True))
     o.append(t(30, 68, SUB, 16, '#9fb0c8'))
+    for r in spec.get('circles', []):   # ring jaisa gol (dashed)
+        o.append(f'<circle cx="{r["cx"]}" cy="{r["cy"]}" r="{r["r"]}" fill="none" stroke="#2a3a5a" stroke-width="3" stroke-dasharray="6 6"/>')
+        if r.get('label'):
+            o.append(t(r['cx'], r['cy'] + 5, r['label'], 15, '#6b7a90', mono=True, anchor='middle'))
     for b in spec['boxes']:
         fill, st = BOX[b['kind']]
         x, y, w, h = b['x'], b['y'], b['w'], b['h']
