@@ -1,0 +1,231 @@
+{
+ "title": "Card 1: dekhna + book karna ek hi UPDATE ... WHERE available. 1 row = jeeta, 0 row = 'seat gayi'",
+ "h": 660,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 190,
+   "w": 200,
+   "h": 100,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "A1 (pehle)"
+   ]
+  },
+  {
+   "x": 30,
+   "y": 330,
+   "w": 200,
+   "h": 100,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "A1 (usi second)"
+   ]
+  },
+  {
+   "x": 310,
+   "y": 240,
+   "w": 230,
+   "h": 140,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "UPDATE ... WHERE",
+    "status = 'available'"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 190,
+   "w": 520,
+   "h": 240,
+   "kind": "db",
+   "title": "Seats DB (show 42)",
+   "lines": [
+    "UPDATE seats SET status = 'booked'",
+    "WHERE seat_id = 'A1'",
+    "AND status = 'available'",
+    "",
+    "row lock: ek-ek",
+    "Main: 1 row · Ravi: 0 row"
+   ]
+  },
+  {
+   "x": 1240,
+   "y": 190,
+   "w": 230,
+   "h": 100,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "A1 meri"
+   ]
+  },
+  {
+   "x": 1240,
+   "y": 330,
+   "w": 230,
+   "h": 100,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "'seat gayi,",
+    "doosri chuno'"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     240
+    ],
+    [
+     306,
+     290
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     232,
+     380
+    ],
+    [
+     306,
+     330
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     542,
+     310
+    ],
+    [
+     626,
+     310
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1152,
+     260
+    ],
+    [
+     1236,
+     240
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     1152,
+     360
+    ],
+    [
+     1236,
+     380
+    ]
+   ],
+   "c": "grey",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 700,
+   "red": "SELECT ... FOR UPDATE?",
+   "green": "Chalta, par DB pe do baar, lock lamba. Ek statement me lock chhota",
+   "n": 1,
+   "conn": [
+    [
+     425,
+     146
+    ],
+    [
+     425,
+     240
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 750,
+   "y": 84,
+   "w": 720,
+   "red": "Version column (optimistic)?",
+   "green": "Haarne wala retry karta. Yahan seedha sunta 'seat gayi'",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 480,
+   "w": 700,
+   "red": "4 seat li, A4 pehle hi ja chuki",
+   "green": "Badli rows 4 nahi: ROLLBACK, sab ek transaction me",
+   "n": 3,
+   "mark": [
+    700,
+    430
+   ],
+   "conn": [
+    [
+     700,
+     442
+    ],
+    [
+     700,
+     480
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 480,
+   "w": 720,
+   "red": "Do log ulte kram me 4 seat le rahe",
+   "green": "DB deadlock pakad ke ek abort, wo retry. seat_id ke kram me bhejo",
+   "n": 4,
+   "mark": [
+    1100,
+    430
+   ],
+   "conn": [
+    [
+     1100,
+     442
+    ],
+    [
+     1100,
+     480
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 575,
+   "w": 1440,
+   "red": "Network toota? Booking CP (pakka nahi to mana), search AP (2 sec purani list chalegi).",
+   "green": "Seat rows show banate hi bani, booking sirf UPDATE. Ravi ne phir dabaya? Phir 0 row"
+  }
+ ]
+}

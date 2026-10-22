@@ -1,0 +1,202 @@
+{
+ "title": "Card 5: darwaze pe ginti (waiting room): ~3000 andar, baaki line. Andar walon ki booking Kafka se, worker UPDATE",
+ "h": 660,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "2 lakh log",
+   "lines": [
+    "12 baje, Arijit"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 220,
+   "w": 250,
+   "h": 160,
+   "kind": "plain",
+   "title": "Waiting room",
+   "lines": [
+    "~3000 andar",
+    "baaki line me",
+    "apni jagah dikhti"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 240,
+   "w": 250,
+   "h": 120,
+   "kind": "cache",
+   "title": "Kafka",
+   "lines": [
+    "key = show_id",
+    "ek show ek line"
+   ]
+  },
+  {
+   "x": 980,
+   "y": 230,
+   "w": 240,
+   "h": 140,
+   "kind": "server",
+   "title": "Booking worker",
+   "lines": [
+    "ek-ek UPDATE",
+    "~ms, hazaar / sec"
+   ]
+  },
+  {
+   "x": 1300,
+   "y": 240,
+   "w": 170,
+   "h": 120,
+   "kind": "db",
+   "title": "Seats DB",
+   "lines": [
+    "sach yahi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     552,
+     300
+    ],
+    [
+     636,
+     300
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     892,
+     300
+    ],
+    [
+     976,
+     300
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1222,
+     300
+    ],
+    [
+     1296,
+     300
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 700,
+   "red": "Sab seedha DB pe?",
+   "green": "3000 seat, 2 lakh log ek hi rows ke lock pe: sab dheema",
+   "n": 1,
+   "conn": [
+    [
+     425,
+     146
+    ],
+    [
+     425,
+     220
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 750,
+   "y": 84,
+   "w": 720,
+   "red": "Kab? Sirf badi sale. Aam din App seedha UPDATE, turant jawab.",
+   "green": "Release ka time pata? Pehle se machine badhao + har user ki had"
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 480,
+   "w": 700,
+   "red": "Line ki ginti wala Redis restart",
+   "green": "DB se dobara gin lo: ginti sirf darwaza, sach DB ki seats",
+   "n": 2,
+   "mark": [
+    425,
+    380
+   ],
+   "conn": [
+    [
+     425,
+     392
+    ],
+    [
+     425,
+     480
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 480,
+   "w": 720,
+   "red": "UPDATE me seat haar gaya",
+   "green": "'Seat gayi, doosri lo'. Faisla DB ka",
+   "n": 3,
+   "mark": [
+    1100,
+    370
+   ],
+   "conn": [
+    [
+     1100,
+     382
+    ],
+    [
+     1100,
+     480
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 575,
+   "w": 1440,
+   "red": "Jeeta kaise pata? bookingId se poll ya WebSocket push. Andar wala bina liye gaya? Line se agla andar.",
+   "green": "Ek worker dheema? UPDATE ~ms, hazaar / sec. Aur chahiye to show ke hisse (balcony / stall)"
+  }
+ ]
+}

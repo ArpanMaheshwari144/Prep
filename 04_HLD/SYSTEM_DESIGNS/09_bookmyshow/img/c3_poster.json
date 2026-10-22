@@ -1,0 +1,208 @@
+{
+ "title": "Card 3: har pay usi bookingId se. Wahi dobara aaya to 'ho chuka', purana jawab, ek hi baar kata",
+ "h": 670,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "App",
+   "lines": [
+    "Pay, B-42"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 230,
+   "w": 260,
+   "h": 140,
+   "kind": "server",
+   "title": "Booking Svc",
+   "lines": [
+    "B-42 pehle se?",
+    "'ho chuka' + purana jawab"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 190,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "DB",
+   "lines": [
+    "B-42: PAID / PENDING"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 340,
+   "w": 300,
+   "h": 100,
+   "kind": "lb",
+   "title": "PSP",
+   "lines": [
+    "paisa ek hi baar"
+   ]
+  },
+  {
+   "x": 1100,
+   "y": 240,
+   "w": 370,
+   "h": 120,
+   "kind": "user",
+   "title": "Meri screen",
+   "lines": [
+    "500 ek hi baar"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     336,
+     300
+    ]
+   ],
+   "c": "blue",
+   "label": "B-42",
+   "lx": 280,
+   "ly": 330,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     602,
+     265
+    ],
+    [
+     696,
+     240
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     602,
+     345
+    ],
+    [
+     696,
+     390
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     602,
+     315
+    ],
+    [
+     1096,
+     315
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "x",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Network gaya, app ne dobara bheja",
+   "green": "Wahi B-42: 'ho chuka', purana jawab, ek hi baar kata",
+   "n": 1,
+   "mark": [
+    300,
+    300
+   ],
+   "conn": [
+    [
+     300,
+     288
+    ],
+    [
+     300,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "pehle",
+   "x": 690,
+   "y": 84,
+   "w": 780,
+   "red": "Har request pe naya payment?",
+   "green": "Paisa kata, network gaya, dobara: 500 do baar kata",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 490,
+   "w": 740,
+   "red": "Paisa kat gaya, par seat fail",
+   "green": "Refund + user ko batao (saga jaisa: ek fail to doosra ulta)",
+   "n": 3,
+   "mark": [
+    420,
+    370
+   ],
+   "conn": [
+    [
+     420,
+     382
+    ],
+    [
+     420,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 790,
+   "y": 490,
+   "w": 680,
+   "red": "PSP ka webhook der se aaya",
+   "green": "PAYMENT_PENDING, hold thoda badhao. Roz hisaab milao",
+   "n": 4,
+   "mark": [
+    960,
+    440
+   ],
+   "conn": [
+    [
+     960,
+     452
+    ],
+    [
+     960,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 585,
+   "w": 1440,
+   "red": "Double tap? Wahi bookingId, ek hi baar kata.",
+   "green": "bookingId hi idempotency key: ek booking = ek payment"
+  }
+ ]
+}

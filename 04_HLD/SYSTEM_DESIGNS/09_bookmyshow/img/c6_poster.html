@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 6: sirf pehli request lock (SET NX </title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="590" viewBox="0 0 1500 590" xmlns="http://www.w3.org/2000/svg"><defs>
+<marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+<marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+<marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
+<marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
+<marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
+</defs><rect width="1500" height="590" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 6: sirf pehli request lock (SET NX EX 5), replica se ek query, map Redis me. Baaki ruk ke Redis se</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
+<rect x="30" y="240" width="220" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="140.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Hazaaron request</text>
+<text x="140.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">map chahiye</text>
+<rect x="330" y="225" width="250" height="150" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="455.0" y="259" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">App</text>
+<text x="455.0" y="285" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">SET NX EX 5</text>
+<text x="455.0" y="307" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">pehla: lock mila</text>
+<text x="455.0" y="329" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">baaki: 50-100 ms ruko</text>
+<rect x="680" y="190" width="300" height="110" rx="12" fill="#2a1a10" stroke="#ffa94d" stroke-width="2.5"/>
+<text x="830.0" y="224" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Redis</text>
+<text x="830.0" y="250" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">2 baje restart: khaali</text>
+<text x="830.0" y="272" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">lock:map42</text>
+<rect x="680" y="350" width="300" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="830.0" y="384" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Read replica</text>
+<text x="830.0" y="410" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sirf EK query</text>
+<rect x="1080" y="240" width="390" height="120" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1275.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Map khula</text>
+<text x="1275.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">thoda dheema,</text>
+<text x="1275.0" y="322" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">galat seat kabhi nahi</text>
+<path d="M252 300 L326 300" fill="none" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ablue)"/>
+<path d="M582 265 L676 245" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M582 340 L676 395" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M582 320 L1076 320" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<path d="M455 146 L455 225" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="30" y="84" width="620" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
+<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">Sabko DB jaane do?</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">Hazaaron miss ek saath: replica baith gayi, map nahi khulta</text>
+<path d="M940 178 L940 146" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="928" y1="178" x2="952" y2="202"/><line x1="952" y1="178" x2="928" y2="202"/></g>
+<rect x="670" y="84" width="800" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="692" cy="106" r="13" fill="#ff5a6a"/>
+<text x="692" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="714" y="111" font-size="15" font-weight="700" fill="#ff5a6a">2 baje Redis restart</text>
+<text x="692" y="135" font-size="15" font-weight="700" fill="#3ddc97">Sirf pehli request lock leke replica jaati, map Redis me rakhti</text>
+<path d="M400 387 L400 500" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="388" y1="363" x2="412" y2="387"/><line x1="412" y1="363" x2="388" y2="387"/></g>
+<rect x="30" y="500" width="600" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="522" r="13" fill="#ff5a6a"/>
+<text x="52" y="527" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="74" y="527" font-size="15" font-weight="700" fill="#ff5a6a">Lock lene wala hi mar gaya</text>
+<text x="52" y="551" font-size="15" font-weight="700" fill="#3ddc97">EX 5: lock 5 sec me khud hat jaata</text>
+<rect x="650" y="500" width="820" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="672" y="527" font-size="15" font-weight="700" fill="#c9d6e8">100 ms baad bhi Redis khaali? 2-3 retry, phir khud replica se.</text>
+<text x="672" y="551" font-size="15" font-weight="700" fill="#9fb0c8">User ko bas dheema lagta, faisla DB me</text>
+</svg>

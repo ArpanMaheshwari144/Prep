@@ -1,0 +1,194 @@
+{
+ "title": "Card 6: sirf pehli request lock (SET NX EX 5), replica se ek query, map Redis me. Baaki ruk ke Redis se",
+ "h": 590,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "Hazaaron request",
+   "lines": [
+    "map chahiye"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 225,
+   "w": 250,
+   "h": 150,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "SET NX EX 5",
+    "pehla: lock mila",
+    "baaki: 50-100 ms ruko"
+   ]
+  },
+  {
+   "x": 680,
+   "y": 190,
+   "w": 300,
+   "h": 110,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "2 baje restart: khaali",
+    "lock:map42"
+   ]
+  },
+  {
+   "x": 680,
+   "y": 350,
+   "w": 300,
+   "h": 100,
+   "kind": "db",
+   "title": "Read replica",
+   "lines": [
+    "sirf EK query"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 240,
+   "w": 390,
+   "h": 120,
+   "kind": "user",
+   "title": "Map khula",
+   "lines": [
+    "thoda dheema,",
+    "galat seat kabhi nahi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     265
+    ],
+    [
+     676,
+     245
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     582,
+     340
+    ],
+    [
+     676,
+     395
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     582,
+     320
+    ],
+    [
+     1076,
+     320
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Sabko DB jaane do?",
+   "green": "Hazaaron miss ek saath: replica baith gayi, map nahi khulta",
+   "n": 1,
+   "conn": [
+    [
+     455,
+     146
+    ],
+    [
+     455,
+     225
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "2 baje Redis restart",
+   "green": "Sirf pehli request lock leke replica jaati, map Redis me rakhti",
+   "n": 2,
+   "mark": [
+    940,
+    190
+   ],
+   "conn": [
+    [
+     940,
+     178
+    ],
+    [
+     940,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 500,
+   "w": 600,
+   "red": "Lock lene wala hi mar gaya",
+   "green": "EX 5: lock 5 sec me khud hat jaata",
+   "n": 3,
+   "mark": [
+    400,
+    375
+   ],
+   "conn": [
+    [
+     400,
+     387
+    ],
+    [
+     400,
+     500
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 650,
+   "y": 500,
+   "w": 820,
+   "red": "100 ms baad bhi Redis khaali? 2-3 retry, phir khud replica se.",
+   "green": "User ko bas dheema lagta, faisla DB me"
+  }
+ ]
+}

@@ -1,0 +1,196 @@
+{
+ "title": "Card 4: seat map Redis se (~5 sec umar), faisla sirf main DB ka UPDATE. Map purana to UPDATE 0 row bolega",
+ "h": 570,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 220,
+   "h": 110,
+   "kind": "user",
+   "title": "1 lakh log",
+   "lines": [
+    "map dekh rahe"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 240,
+   "w": 230,
+   "h": 130,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "map: Redis se",
+    "book: main DB"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 180,
+   "w": 330,
+   "h": 100,
+   "kind": "db",
+   "title": "Read replica",
+   "lines": [
+    "miss pe map yahan se"
+   ]
+  },
+  {
+   "x": 650,
+   "y": 330,
+   "w": 330,
+   "h": 100,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "seatmap:show42, ~5 sec"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 240,
+   "w": 390,
+   "h": 130,
+   "kind": "db",
+   "title": "Main DB",
+   "lines": [
+    "faisla: UPDATE",
+    "book ke baad map key DEL"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     305
+    ],
+    [
+     326,
+     305
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     562,
+     270
+    ],
+    [
+     646,
+     230
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     562,
+     345
+    ],
+    [
+     646,
+     380
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     562,
+     305
+    ],
+    [
+     1076,
+     305
+    ]
+   ],
+   "c": "green",
+   "label": "book",
+   "lx": 1020,
+   "ly": 295,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 600,
+   "red": "Map bhi main DB se?",
+   "green": "1 lakh dekhne wale booking ko bhi dheema karte",
+   "n": 1,
+   "conn": [
+    [
+     445,
+     146
+    ],
+    [
+     445,
+     240
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 650,
+   "y": 84,
+   "w": 820,
+   "red": "Kisi ne book kiya? Booking main DB pe, phir map key DEL.",
+   "green": "Redis me map nahi? Replica se banao, Redis me rakh do"
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 480,
+   "w": 700,
+   "red": "A1 bik chuki, map me khaali dikhi",
+   "green": "Chalta hai: UPDATE 0 row bolega. Turant chahiye to WebSocket / SSE",
+   "n": 2,
+   "mark": [
+    700,
+    430
+   ],
+   "conn": [
+    [
+     700,
+     442
+    ],
+    [
+     700,
+     480
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 480,
+   "w": 720,
+   "red": "Lakh log ek hi Redis key pe (hot key)",
+   "green": "Kai copy + App me 1-2 sec ki copy",
+   "n": 3,
+   "mark": [
+    940,
+    430
+   ],
+   "conn": [
+    [
+     940,
+     442
+    ],
+    [
+     940,
+     480
+    ]
+   ]
+  }
+ ]
+}

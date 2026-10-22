@@ -1,0 +1,172 @@
+{
+ "title": "Card 2: chunte hi HELD, held_until = ab + 5 min. Umar khatam to chhuti. Confirm pe bhi WHERE, 0 row = refund",
+ "h": 610,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Main",
+   "lines": [
+    "A1 chuni,",
+    "pay me 3 min"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 230,
+   "w": 240,
+   "h": 140,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "HELD,",
+    "held_until = ab + 5 min"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 190,
+   "w": 420,
+   "h": 140,
+   "kind": "db",
+   "title": "Seats DB",
+   "lines": [
+    "A1: HELD (main)",
+    "held_until 11:05",
+    "pay hua = BOOKED"
+   ]
+  },
+  {
+   "x": 630,
+   "y": 380,
+   "w": 420,
+   "h": 100,
+   "kind": "server",
+   "title": "Sweeper",
+   "lines": [
+    "umar khatam: seat chhodo"
+   ]
+  },
+  {
+   "x": 1140,
+   "y": 190,
+   "w": 330,
+   "h": 140,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "A1 'held' dikhti"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     300
+    ],
+    [
+     296,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     542,
+     280
+    ],
+    [
+     626,
+     260
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1052,
+     260
+    ],
+    [
+     1136,
+     260
+    ]
+   ],
+   "c": "grey",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     840,
+     376
+    ],
+    [
+     840,
+     334
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 580,
+   "red": "Seat available hi rakho?",
+   "green": "Pay karte-karte Ravi seat le jaata",
+   "n": 1
+  },
+  {
+   "type": "pehle",
+   "x": 630,
+   "y": 84,
+   "w": 840,
+   "red": "Seedha booked kar do?",
+   "green": "Payment fail = seat hamesha ke liye band",
+   "n": 2
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 520,
+   "w": 570,
+   "red": "Umar khatam, phir pay aaya",
+   "green": "Confirm pe bhi WHERE (held + main + umar):",
+   "n": 3,
+   "green2": "0 row = seat gayi, paisa refund",
+   "mark": [
+    420,
+    370
+   ],
+   "conn": [
+    [
+     420,
+     382
+    ],
+    [
+     420,
+     520
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 620,
+   "y": 520,
+   "w": 850,
+   "red": "Koi 10 seat HOLD karke baith gaya? Had lagao: hold ki ginti + rate limit.",
+   "green": "Sweeper sirf safai, asli faisla UPDATE ke WHERE me"
+  }
+ ]
+}
