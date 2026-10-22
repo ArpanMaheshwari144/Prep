@@ -108,13 +108,13 @@ def run(f):
     dia = [e for e in els if e not in used]
     ylist = [v for e in dia for v in ys_of(e)] + [c['mark'][1] - 14 for c in calls if c.get('mark') and c['type'] == 'x']
     ylist2 = [v for e in dia for v in ys_of(e)] + [c['mark'][1] + 14 for c in calls if c.get('mark') and c['type'] == 'x']
-    dy = G.TOP - min(ylist)
-    dia_end = max(ylist2) + dy + 6
     toots = sorted([c for c in calls if c['type'] == 'x'], key=lambda c: c['n'])
-    pehle = sorted([c for c in calls if c['type'] == 'pehle'], key=lambda c: c['n'])
+    dikkat, pehle = G.split_pehle(sorted([c for c in calls if c['type'] == 'pehle'], key=lambda c: c['n']))
     greys = [c for c in calls if c['type'] == 'grey']
-    o = [G.t(30, 40, title, 26, '#e6edf3', True), G.t(30, 68, G.SUB, 15, '#9fb0c8'),
-         f'<g transform="translate(0,{dy:g})">'] + dia + ['</g>']
+    o = [G.t(30, 40, title, 26, '#e6edf3', True), G.t(30, 68, G.SUB, 15, '#9fb0c8')]
+    dy = G.pehle_box(o, dikkat) - min(ylist)
+    dia_end = max(ylist2) + dy + 6
+    o += [f'<g transform="translate(0,{dy:g})">'] + dia + ['</g>']
     for i, c in enumerate(toots, 1):
         if c.get('mark'):
             px, py = c['mark'][0], c['mark'][1] + dy
@@ -128,7 +128,7 @@ def run(f):
            f'<svg width="1500" height="{Ht}" viewBox="0 0 1500 {Ht}" xmlns="http://www.w3.org/2000/svg">{defs}'
            f'<rect width="1500" height="{Ht}" fill="#0b1220"/>\n' + '\n'.join(o) + '\n</svg>\n')
     open(f, 'w', encoding='utf-8', newline='\n').write(out)
-    print(f, 'toot', len(toots), 'pehle', len(pehle), 'grey', len(greys), 'bina mark', [c['n'] for c in toots if not c.get('mark')])
+    print(f, 'toot', len(toots), 'pehle tha', [c['red'] for c in dikkat], 'nahi', [c['red'] for c in pehle], 'grey', len(greys), 'bina mark', [c['n'] for c in toots if not c.get('mark')])
 
 
 if __name__ == '__main__':

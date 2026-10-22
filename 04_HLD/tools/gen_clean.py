@@ -3,10 +3,12 @@ python 04_HLD/tools/gen_clean.py <cN_poster.json> [...]  -> cN_poster.html (phir
 
 Upar tasveer: sirf dabbe + teer. Toot ki jagah laal number-gol (X / line nahi).
 Tasveer ke 60 px neeche ek row me toot-dabbe (max 4, 345 x 120, beech 17 px): laal title = kya hua, hara = kaise bacha.
-Phir peela ek dabba "Doosra tareeka kyun nahi?" (saare pehle wale), phir grey "baaki" (grey + 4 se zyada toot).
+Peele wale do tarah: "Pehle ... tha" (bina ?) = upar chhota laal-dhundhla dabba "Pehle aisa tha" (tasveer se pehle);
+sawaal wale = peela dabba "Doosra tareeka kyun nahi?". Phir grey "baaki" (grey + 4 se zyada toot).
 Text 13.5-15 px, 44 akshar pe wrap.
 """
 import json
+import re
 import sys
 import textwrap
 from html import escape
@@ -37,6 +39,37 @@ def J(*parts):
 
 def wrap(s, n=44):
     return textwrap.wrap(s, n) or ['']
+
+
+def split_pehle(pehle):
+    """peele wale do tarah ke: 'Pehle ... tha' (bina ?) = DIKKAT, upar alag dabba; sawaal (?) = NAHI, peela."""
+    dikkat = [c for c in pehle if '?' not in c['red']]
+    return dikkat, [c for c in pehle if c not in dikkat]
+
+
+def bina_pehle(s):
+    """label 'Pehle aisa tha' hai, to line ke shuru ka 'Pehle' / 'pehle:' hatao ('Pehle padho, phir' wala kram rehne do)."""
+    if re.match(r'(?i)pehle:?\s', s) and 'phir' not in s.split(':')[0]:
+        s = re.sub(r'(?i)^pehle:?\s+', '', s)
+    return s[0].upper() + s[1:]
+
+
+def bada(s):
+    return s[:1].upper() + s[1:]
+
+
+def pehle_box(o, dikkat, y=84):
+    """Tasveer se pehle ek chhota laal-dhundhla dabba 'Pehle aisa tha'. Lautata: tasveer kahan se shuru."""
+    if not dikkat:
+        return TOP
+    txt = '   ·   '.join(J(bina_pehle(c['red']), bada(c.get('green', '')), c.get('green2', '')) for c in dikkat)
+    lines = textwrap.wrap(txt, 165)
+    h = 16 + 20 * len(lines) + 8
+    o.append(f'<rect x="30" y="{y}" width="1440" height="{h}" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>')
+    o.append(t(48, y + 26, 'Pehle aisa tha:', 14, '#ff8a95', True))
+    for k, ln in enumerate(lines):
+        o.append(t(170, y + 26 + 20 * k, ln, 13.5, '#d9b8bd'))
+    return y + h + 34
 
 
 def bottom(o, y, toots, pehle, greys):
@@ -84,7 +117,7 @@ def bottom(o, y, toots, pehle, greys):
 
 def build(spec):
     toots = [c for c in spec['callouts'] if c.get('type', 'x') == 'x']
-    pehle = [c for c in spec['callouts'] if c.get('type') == 'pehle']
+    dikkat, pehle = split_pehle([c for c in spec['callouts'] if c.get('type') == 'pehle'])
     greys = [c for c in spec['callouts'] if c.get('type') == 'grey']
     # tasveer ki seema
     ys = [b['y'] for b in spec['boxes']] + [r['cy'] - r['r'] for r in spec.get('circles', [])]
@@ -98,15 +131,16 @@ def build(spec):
         if m:
             for p in (m if isinstance(m[0], list) else [m]):
                 ys.append(p[1] - 14); ye.append(p[1] + 14)
-    dy = TOP - min(ys)
+    o = []
+    o.append(t(30, 40, spec['title'], 26, '#e6edf3', True))
+    o.append(t(30, 68, SUB, 15, '#9fb0c8'))
+    top = pehle_box(o, dikkat)
+    dy = top - min(ys)
     dia_end = max(ye) + dy
 
     def Y(y):
         return y + dy
 
-    o = []
-    o.append(t(30, 40, spec['title'], 26, '#e6edf3', True))
-    o.append(t(30, 68, SUB, 15, '#9fb0c8'))
     for r in spec.get('circles', []):
         o.append(f'<circle cx="{r["cx"]}" cy="{Y(r["cy"])}" r="{r["r"]}" fill="none" stroke="#2a3a5a" stroke-width="3" stroke-dasharray="6 6"/>')
         if r.get('label'):

@@ -2,14 +2,17 @@
 <meta charset="utf-8">
 <title>Card 6: op Redis buffer + copy me, tab A</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="737" viewBox="0 0 1500 737" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="711" viewBox="0 0 1500 711" xmlns="http://www.w3.org/2000/svg"><defs>
   <marker id="ab" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
   <marker id="ag" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
   <marker id="ap" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
-</defs><rect width="1500" height="737" fill="#0b1220"/>
+</defs><rect width="1500" height="711" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 6: op Redis buffer + copy me, tab ACK. Har 1 sec ek batch Cassandra me</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<g transform="translate(0,-16)">
+<rect x="30" y="84" width="1440" height="44" rx="9" fill="#1f1418" stroke="#8a4a55" stroke-width="2"/>
+<text x="48" y="110" font-size="14" font-weight="700" fill="#ff8a95">Pehle aisa tha:</text>
+<text x="170" y="110" font-size="13.5" fill="#d9b8bd">Har akshar pe DB likha, DB baith gaya. Buffer me jama, har 1 sec ek batch</text>
+<g transform="translate(0,46)">
 <rect x="30" y="200" width="220" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
 <text x="140" y="238" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Main ka app</text>
 <text x="140" y="264" font-size="13" fill="#9fb0c8" text-anchor="middle" class="m">op + opId, ACK tak</text>
@@ -33,34 +36,31 @@
 <line x1="922" y1="250" x2="1176" y2="250" stroke="#a98bff" stroke-width="3" marker-end="url(#ap)"/>
 <text x="935" y="240" font-size="14" fill="#a98bff" class="m">har 1 sec, batch</text>
 </g>
-<circle cx="640" cy="305" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="640.0" y="310.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<circle cx="1120" cy="234" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="1120.0" y="239.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<circle cx="1460" cy="173" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="1460.0" y="178.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
-<rect x="30" y="385.0" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="410.0" r="12" fill="#ff5a6a"/>
-<text x="52" y="415.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="415.0" font-size="15" font-weight="700" fill="#ff5a6a">Redis gira</text>
-<text x="52" y="442.0" font-size="13.5" fill="#7fe0b0">ACK se pehle: app ke paas op, opId ke saath</text>
-<text x="52" y="462.0" font-size="13.5" fill="#7fe0b0">phir bhejo. ACK ke baad: copy main bani,</text>
-<text x="52" y="482.0" font-size="13.5" fill="#7fe0b0">kuch nahi khoya</text>
-<rect x="392" y="385.0" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="410.0" r="12" fill="#ff5a6a"/>
-<text x="414" y="415.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="415.0" font-size="15" font-weight="700" fill="#ff5a6a">batch dheema ho gaya</text>
-<text x="414" y="442.0" font-size="13.5" fill="#7fe0b0">typing nahi rukti (ACK raaste me nahi),</text>
-<text x="414" y="462.0" font-size="13.5" fill="#7fe0b0">alert</text>
-<rect x="754" y="385.0" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="776" cy="410.0" r="12" fill="#ff5a6a"/>
-<text x="776" y="415.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
-<text x="798" y="415.0" font-size="15" font-weight="700" fill="#ff5a6a">batch dobara likh diya</text>
-<text x="776" y="442.0" font-size="13.5" fill="#7fe0b0">(docId, version) same, ek hi row</text>
-<rect x="30" y="547.0" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="573.0" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="597.0" font-size="13.5" fill="#e6dcb8">pehle: har akshar pe DB likha, DB baith gaya: buffer me jama, har 1 sec ek batch</text>
-<rect x="30" y="635.0" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="665.0" font-size="13.5" fill="#c9d6e8">Cassandra kyun? sirf aage jodta (commit log + RAM), likhai tez.</text>
-<text x="48" y="687.0" font-size="13.5" fill="#c9d6e8">Join chahiye nahi. Mongo bhi chalega</text>
+<circle cx="640" cy="367" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="640.0" y="372.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="1120" cy="296" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="1120.0" y="301.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<circle cx="1460" cy="235" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="1460.0" y="240.0" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">3</text>
+<rect x="30" y="447.0" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="472.0" r="12" fill="#ff5a6a"/>
+<text x="52" y="477.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="477.0" font-size="15" font-weight="700" fill="#ff5a6a">Redis gira</text>
+<text x="52" y="504.0" font-size="13.5" fill="#7fe0b0">ACK se pehle: app ke paas op, opId ke saath</text>
+<text x="52" y="524.0" font-size="13.5" fill="#7fe0b0">phir bhejo. ACK ke baad: copy main bani,</text>
+<text x="52" y="544.0" font-size="13.5" fill="#7fe0b0">kuch nahi khoya</text>
+<rect x="392" y="447.0" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="472.0" r="12" fill="#ff5a6a"/>
+<text x="414" y="477.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="477.0" font-size="15" font-weight="700" fill="#ff5a6a">batch dheema ho gaya</text>
+<text x="414" y="504.0" font-size="13.5" fill="#7fe0b0">typing nahi rukti (ACK raaste me nahi),</text>
+<text x="414" y="524.0" font-size="13.5" fill="#7fe0b0">alert</text>
+<rect x="754" y="447.0" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="776" cy="472.0" r="12" fill="#ff5a6a"/>
+<text x="776" y="477.0" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="798" y="477.0" font-size="15" font-weight="700" fill="#ff5a6a">batch dobara likh diya</text>
+<text x="776" y="504.0" font-size="13.5" fill="#7fe0b0">(docId, version) same, ek hi row</text>
+<rect x="30" y="609.0" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="639.0" font-size="13.5" fill="#c9d6e8">Cassandra kyun? sirf aage jodta (commit log + RAM), likhai tez.</text>
+<text x="48" y="661.0" font-size="13.5" fill="#c9d6e8">Join chahiye nahi. Mongo bhi chalega</text>
 </svg>
