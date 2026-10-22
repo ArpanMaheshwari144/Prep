@@ -81,15 +81,8 @@ NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi reh
 
 **Rail 3 MACHINE GIRI** · Cue: STATELESS App x N + LOAD BALANCER
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=4" width="900">
-
-<img src="img/c2_2.png?v=4" width="900">
-
-<img src="img/c2_3.png?v=4" width="900">
-
-</details>
 
 ```
 HAL     kai App aur aage Load Balancer (LB), jo baari-baari kisi bhi App ko bhejta (round-robin).
@@ -102,11 +95,6 @@ NAHI    ek badi machine -> GIRA: kitni bhi badi ho, ek hi hai. Giri to poori sit
 
 > [!IMPORTANT]
 > **Yaad rakh:** App kuch yaad nahi rakhti (stateless). LB /health poochta, chup App list se bahar.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - App giri nahi, bas dheemi? → **least-conn**: jiske kam connection khule, use bhejo
-> - Giri hui App theek ho gayi? → **/health haan**: /health phir haan bolta, LB use wapas list me le leta
 
 
 ---
