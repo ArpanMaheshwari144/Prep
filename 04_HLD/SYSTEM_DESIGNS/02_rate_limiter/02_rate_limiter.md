@@ -234,15 +234,8 @@ NAHI    machine khud badh jaayegi -> DER: machine badhne me minute lagte, bheed 
 
 **Rail 3 MACHINE GIRI (Redis + copy)** · Cue: LOCAL COUNTER FALLBACK
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
-<img src="img/c8_1.png?v=8" width="900">
-
-<img src="img/c8_2.png?v=8" width="900">
-
-<img src="img/c8_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     har gateway apni memory me ginta hai. Had 100, 4 gateway -> har ek ki had 25 (local fallback)
@@ -252,13 +245,6 @@ NAHI    Redis gaya to sab andar aane do -> KHULA: attacker ke liye site khul gay
 
 > [!IMPORTANT]
 > **Yaad rakh:** Redis gaya to har gateway apni memory me ginta, had baant ke: 100 / 4 gateway = 25.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - had baanti hi nahi, har gateway ne 100 di? → **400 mil gayi**: 4 x 100 = 400 mil gayi. had 4 guna dheeli
-> - bilkul exact had chahiye? → **sticky by userId**: LB userId ke hash se ek user ko hamesha ek hi gateway pe bheje (sticky by userId)
-> - gateway badh gaye? → **had dobara baanto**: N config se lo, aur had dobara baanto. N config / service discovery se aata hai
-> - Redis wapas aa gaya? → **wapas ek Redis ginti**: phir se sabki ek hi ginti Redis me
 
 
 ---
