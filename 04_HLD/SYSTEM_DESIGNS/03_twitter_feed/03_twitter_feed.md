@@ -230,15 +230,8 @@ NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana,
 
 **Rail 3 MACHINE GIRI** · Cue: STATELESS App x N + ALB
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
-<img src="img/c8_1.png?v=5" width="900">
-
-<img src="img/c8_2.png?v=5" width="900">
-
-<img src="img/c8_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     kai App hain, aage ALB baant-ta hai. App kuch yaad nahi rakhta (stateless x N).
@@ -249,12 +242,6 @@ NAHI    ek hi App -> GIRA: wo giri to poora region band
 
 > [!IMPORTANT]
 > **Yaad rakh:** Kai App (stateless), aage ALB. Giri App bahar, naya code ek-ek karke (rolling).
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - App 2 giri, pata kaise? → **ALB har ~10 sec poochta "zinda ho?"**: Chup raha to bahar, theek hua to wapas (Route 53 bhi)
-> - naya code daalna hai, App band karein? → **nahi, ek-ek karke badlo (rolling)**: (rolling). Baaki App bheed sambhaal leti hain
-> - nayi App judi, turant poori bheed? → **nahi, ALB dheere-dheere deta**: pehli request dheemi hoti hai, uske paas apna data nahi
 
 
 ---
