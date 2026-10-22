@@ -20,8 +20,10 @@ ek khabar ~1 KB -> roz ~100 GB, 7 din ~700 GB, 3 copy -> ~2 TB disk
 
 ## Kadam 0: sabse seedha
 
-```
-[ Arpan ] --order--> [ Order Svc ] --"email bhejo"--> [ Email Svc ]
+```mermaid
+flowchart LR
+    A["Arpan"] -- order --> O["Order Svc"] -- "email bhejo (jawab tak ruka)" --> E["Email Svc"]
+    style E fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
 Order Svc khud Email Svc ko bulata hai aur jawab aane tak rukta hai.
@@ -39,9 +41,10 @@ Email Svc band            -> order hi fail, jabki order to sahi tha
 **Peeche se:** Kadam 0 me Order Svc seedha Email Svc ko bulata tha. Email dheema hua to order bhi ruk gaya.
 **To:** dono ko alag karo. Beech me ek line rakh do, Order Svc khabar daale aur aage badh jaaye.
 
-```
-[ Order Svc ] --khabar--> [ LINE ] --uthata--> [ Email Svc ]
-                           #101 #102 ...
+```mermaid
+flowchart LR
+    O["Order Svc"] -- khabar --> L[("LINE (queue)<br/>#101 #102 ...")] -- "apni speed se uthata" --> E["Email Svc"]
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Order Svc khabar line me daal ke aage badh jaata hai. Email Svc apni speed se uthata hai.
@@ -64,10 +67,10 @@ rehti hai. Isliye is kadam se dabbe ka naam "LINE" ki jagah "KAFKA".
 Is line ko Kafka me **log** kehte hain (aisi line jisme nayi khabar sirf aakhir me judti hai), aur line ke
 naam ko **topic** (jaise topic "order"). Kafka ki har machine ko **broker** kehte hain.
 
-```
-[ Order Svc ] --khabar--> [ KAFKA: disk pe log ] -----> [ Email Svc ]
-                           0  1  2  3 ... 500             bookmark: 120 tak padha
-                           (sirf aakhir me judta)          (offset)
+```mermaid
+flowchart LR
+    O["Order Svc"] -- khabar --> K[("KAFKA: disk pe log<br/>0 1 2 3 ... 500<br/>sirf aakhir me judta")] --> E["Email Svc<br/>bookmark: 120 tak padha (offset)"]
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Khabar disk pe likhi jaati hai, padhne se mitti nahi. Email Svc yaad rakhta hai kahan tak padha (offset).
@@ -89,23 +92,24 @@ disk bharti gayi?                  -> 7 din se purani khabar hata do (retention)
 **Peeche se:** Kadam 2 me khabar Kafka ki disk pe surakshit hai, Email Svc bookmark se padhta hai.
 **Ab:** khabar bachi rehti hai, par padhne wala ek hi hai. Bheed aayi to?
 
-```
-Sale: har second 5,000 order. Ek Email worker sirf 500 utha paata.
-
-[ KAFKA: topic "order" ] --> [ Worker ]      line lambi hoti ja rahi, Arpan ka order fasa
+```mermaid
+flowchart LR
+    S["Sale: 5,000 / sec"] --> K[("KAFKA<br/>topic order (ek line)")] --> W["ek Worker<br/>sirf 500 / sec"]
+    style W fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
 Worker = Email Svc ki ek chalti copy, jo khabar utha ke email bhejti hai.
 Ek line ko ek waqt me ek hi worker padh sakta hai. Do worker ek line se uthayenge to ek hi order
 do baar utha sakte hain, ya kram bigad jaayega. Isliye line ke tukde karo:
 
-```
-             [ Tukda 0 ] ---> [ Worker 0 ]
- khabar -->  [ Tukda 1 ] ---> [ Worker 1 ]
-             ...               ...
-             [ Tukda 9 ] ---> [ Worker 9 ]
-
-                              [ Worker 10 ]  <- koi tukda nahi bacha, khaali
+```mermaid
+flowchart LR
+    K["khabar"] --> P0[("Tukda 0")] & P1[("Tukda 1")] & P9[("Tukda 9")]
+    P0 --> W0["Worker 0"]
+    P1 --> W1["Worker 1"]
+    P9 --> W9["Worker 9"]
+    W10["Worker 10<br/>koi tukda nahi bacha, khaali"]
+    style W10 stroke-dasharray: 5 5
 ```
 
 10 tukde, 10 worker, 10 x 500 = 5,000 har second. Kaunsa tukda kis worker ko, ye Kafka khud baantta hai
@@ -128,21 +132,21 @@ kaunsa tukda kis broker pe?  -> Controller (Kafka ki ek machine jo baaki pe naza
 **Peeche se:** Kadam 3 me line ke 10 tukde kiye, har tukde ka apna worker. Bheed sambhal li.
 **Ab:** khabar alag-alag tukdon me ja rahi hai, aur har worker apni speed se padhta hai. Kram ka kya?
 
-```
-Arpan ne naam badla: pehle "A", phir "B".
-
- "A" --> [ Tukda 1 ] --> [ Worker 1 ]  (dheema)   --> baad me chhapa
- "B" --> [ Tukda 5 ] --> [ Worker 5 ]  (tez)      --> pehle chhapa
-
- aakhir me purana naam "A" bacha
+```mermaid
+flowchart LR
+    A["A (pehle)"] --> P1[("Tukda 1")] --> W1["Worker 1 (dheema)<br/>A baad me chhapa"]
+    B["B (baad me)"] --> P5[("Tukda 5")] --> W5["Worker 5 (tez)<br/>B pehle chhapa"]
+    style W1 fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
 Kram sirf ek tukde ke andar milta hai. To Arpan ki saari khabar ek hi tukde me bhejo.
 Har khabar ke saath ek key do: key = Arpan ka userId. Same key hamesha same tukde me jaati hai.
 
-```
- "A" (key Arpan) --> [ Tukda 1 ]  --> pehle A
- "B" (key Arpan) --> [ Tukda 1 ]  --> phir B
+```mermaid
+flowchart LR
+    A["A (key Arpan)"] --> P1[("Tukda 1<br/>pehle A, phir B")]
+    B["B (key Arpan)"] --> P1
+    style P1 fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
 Shabd bola: **key = userId**. Sawaal:
@@ -167,21 +171,29 @@ RabbitMQ / SQS (doosre queue tool) me kram?
 **Ab:** Kadam 3 me maana tha ki Kafka har tukda ek worker ko deta hai. Par Kafka ko kaise pata ki ye teen
 machine ek hi Email Svc ki hain? Na bataya to Kafka har machine ko alag padhne wala maanta hai:
 
-```
-             [ Tukda 7 ] ---> [ Email machine 1 ]
-                         ---> [ Email machine 2 ]   teeno ne padha, teen email
-                         ---> [ Email machine 3 ]
+```mermaid
+flowchart LR
+    P7[("Tukda 7")] --> M1["Email machine 1"] & M2["Email machine 2"] & M3["Email machine 3"]
+    style M1 fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+    style M2 fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+    style M3 fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
 Teeno machine ko ek team bana do: sabko ek hi team ka naam do (group.id).
 Is team ko consumer group kehte hain.
 Team ke andar har tukda sirf ek machine ko milta hai.
 
-```
- TEAM "email"
- [ Tukda 0-3 ] ---> [ machine 1 ]
- [ Tukda 4-6 ] ---> [ machine 2 ]
- [ Tukda 7-9 ] ---> [ machine 3 ]    Tukda 7 sirf machine 3 ke paas -> ek email
+```mermaid
+flowchart LR
+    subgraph T["TEAM email (ek group.id)"]
+        M1["machine 1"]
+        M2["machine 2"]
+        M3["machine 3<br/>Arpan ko 1 email"]
+    end
+    A[("Tukda 0-3")] --> M1
+    B[("Tukda 4-6")] --> M2
+    C[("Tukda 7-9")] --> M3
+    style M3 fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
 Shabd bola: **consumer group**. Sawaal:
@@ -198,10 +210,11 @@ team me machine badhani hai?      -> tukde bhi badhao, warna nayi machine khaali
 **Peeche se:** Kadam 5 me Email ki 3 machine ek team bani, khabar team me ek hi baar.
 **Ab:** sirf Email nahi, Analytics aur Dashboard ko bhi wahi order chahiye. Teeno ek team me daalein?
 
-```
-                        +--> TEAM email      bookmark 100
- [ order ki khabar ] ---+--> TEAM analytics  bookmark 98
-                        +--> TEAM dashboard  bookmark 95 (dheema)
+```mermaid
+flowchart LR
+    K[("order ki khabar")] --> E["TEAM email<br/>bookmark 100"]
+    K --> A["TEAM analytics<br/>bookmark 98"]
+    K --> D["TEAM dashboard<br/>bookmark 95 (dheema)"]
 ```
 
 Har service ki apni team, apna bookmark. Har team ko poori khabar milti hai.
@@ -221,18 +234,20 @@ nayi service shuru se padhe ya ab se?  -> tay karna padta hai (auto.offset.reset
 **Peeche se:** Kadam 6 tak padhne wali taraf sab theek: tukde, team, har service ka bookmark.
 **Ab:** khabar to Kafka ki ek machine ki disk pe rakhi hai. Wahi machine mar gayi to?
 
-```
- [ Order Svc ] --khabar--> [ Kafka machine A ]   disk mari -> khabar gayi
+```mermaid
+flowchart LR
+    O["Order Svc"] -- khabar --> A[("Kafka machine A<br/>disk mari, khabar gayi")]
+    style A fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
 Har tukde ki 3 copy, 3 alag machine pe. Ek leader (likhna yahin), do copy.
 
-```
- [ Order Svc ] --khabar--> [ Machine A: LEADER ]
-                                 |-- copy --> [ Machine B ]
-                                 |-- copy --> [ Machine C ]
-
- A mari -> B naya leader, khabar bachi
+```mermaid
+flowchart LR
+    O["Order Svc"] -- khabar --> A[("Machine A: LEADER")]
+    A -- copy --> B[("Machine B: copy<br/>A mari to naya leader")]
+    A -- copy --> C[("Machine C: copy")]
+    style B fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
 Shabd bola: **leader, copy (replica), acks**. Sawaal:
@@ -256,10 +271,11 @@ pehle kya poochho?                  -> khabar kho sakti hai ya bilkul nahi? Isi 
 **Peeche se:** Kadam 7 me Kafka ki taraf khabar bach gayi (3 copy, acks=all).
 **Ab:** Kafka se khabar padhne wala worker kaam karte-karte gir gaya to?
 
-```
- [ Tukda ] ---> [ Email worker ] ---> email bheja ---> bookmark aage kiya
-                                   ^
-                          yahan gira (email gaya, bookmark nahi hila)
+```mermaid
+flowchart LR
+    P[("Tukda")] --> W["Email worker"] --> E["email bheja"] --> C["bookmark aage (commit)"]
+    E -. "yahan gira" .-> X["bookmark nahi hila<br/>khabar dobara, 2 email"]
+    style X fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
 Bookmark nahi hila, to restart pe wahi khabar dobara aati hai. Arpan ko 2 email.
@@ -269,9 +285,12 @@ To kram: pehle kaam, phir bookmark (bookmark aage karne ko "commit" kehte hain).
 Har khabar ki apni id hoti hai (eventId, jaise E-5). Jo id ka kaam ho chuka, use ek tez jagah likh lo,
 jaise Redis (RAM wala tez store, DB bhi chalega):
 
-```
- khabar E-5 aayi --> [ Redis: E-5 pehle dekha? ] --haan--> chhod do
-                                                 --nahi--> email bhejo, E-5 likh do, bookmark aage
+```mermaid
+flowchart LR
+    K["khabar E-5"] --> R{"Redis: E-5<br/>pehle dekha?"}
+    R -- haan --> S["chhod do"]
+    R -- nahi --> E["email bhejo, E-5 likho,<br/>bookmark aage"]
+    style S fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
 Shabd bola: **pehle kaam phir commit, eventId**. Sawaal:
@@ -291,20 +310,23 @@ exactly-once milta hai?         -> sirf Kafka se Kafka tak. Email / DB ke liye p
 
 Order Svc do kaam karta hai: pehle order apne DB me likhta, phir Kafka ko khabar deta.
 
-```
- [ Order Svc ] --1. DB me order 101--> [ DB ]
-               --2. Kafka ko khabar--> [ Kafka ]
-                 ^
-          beech me gira: order bana, khabar gayi hi nahi
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "1. order 101" --> D[("DB")]
+    O -. "2. khabar (gira, nahi gayi)" .-> K[("Kafka")]
+    style K fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
 Khabar bhi usi DB me, order ke saath, ek hi transaction me likho (outbox table).
 Ek chhota relay har second outbox se padh ke Kafka ko bhejta hai.
 
-```
- [ Order Svc ] --ek transaction--> [ DB: order 101 + outbox E-101 (sent = false) ]
-                                              |
-                                   [ Relay ] padhta --> [ Kafka ] --> OK --> sent = true
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "ek transaction" --> D[("DB<br/>order 101<br/>+ outbox E-101 (sent = false)")]
+    R["Relay (har second)"] -- padhta --> D
+    R -- bhejta --> K[("Kafka")]
+    K -- "OK: sent = true" --> R
+    style D fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
 Shabd bola: **outbox, relay**. Sawaal:
@@ -324,15 +346,14 @@ poora bachav ek line me?           -> outbox + acks=all + pehle kaam phir bookma
 **Peeche se:** Kadam 9 me teeno jagah bachav: bhejne wala (outbox), Kafka (copy), padhne wala (eventId).
 **Ab:** sab chal raha hai, par roz ki baatein: koi machine marti hai, koi khabar atakti hai, disk bharti hai.
 
-```
- [ Tukda 4,5,6 ] ---> [ Email machine 2 ]  mar gayi
-                ---> baant diye: 4,5 machine 1 ko, 6 machine 3 ko   (rebalance)
-
- ek khabar baar-baar fail --> [ alag line: DLQ ]  baaki chalte rahein
- kitna padhna baaki (lag) badh raha --> alert
-
- disk: [ din 1 ][ din 2 ] ... [ din 7 ][ aaj ]
-          ^ 7 din se purana poora tukda ek saath uda do (retention)
+```mermaid
+flowchart LR
+    T[("Tukda 4, 5, 6")] -. "machine 2 mar gayi" .-> M2["machine 2"]
+    T -- "4, 5 (rebalance)" --> M1["machine 1"]
+    T -- "6 (rebalance)" --> M3["machine 3"]
+    F["baar-baar fail khabar"] --> Q[("DLQ (alag line)")]
+    style M2 fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Shabd bola: **rebalance, lag, DLQ, retention**. Sawaal:
@@ -353,14 +374,12 @@ Kafka ka asli number kya?          -> disk ki jagah, kyunki Kafka khabar rakhta 
 
 ## Poora design ek saath
 
-```
- [ Order Svc ] --ek transaction--> [ DB + outbox ] --relay--> [ KAFKA ]
-                                                        topic "order", 10 tukde, key = userId
-                                                        har tukda 3 copy, acks=all, 7 din
-                                                           |
-                       +-----------------------------------+------------------+
-                       |                                   |                  |
-                 TEAM email                         TEAM analytics      TEAM dashboard
-                 pehle kaam, phir bookmark
-                 eventId se pehchaan, kharab -> DLQ, lag alert
+```mermaid
+flowchart TB
+    O["Order Svc"] -- "ek transaction" --> D[("DB + outbox")]
+    D -- relay --> K[("KAFKA: topic order<br/>10 tukde, key = userId<br/>3 copy, acks=all, 7 din")]
+    K --> E["TEAM email<br/>pehle kaam phir commit<br/>eventId, DLQ, lag alert"]
+    K --> A["TEAM analytics"]
+    K --> B["TEAM dashboard"]
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
