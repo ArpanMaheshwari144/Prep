@@ -1,0 +1,238 @@
+{
+ "title": "Card 9: mare consumer ke tukde baaki ko (rebalance). Lag = aakhri offset - padha, badhe to alert. Kharab = DLQ",
+ "h": 630,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 200,
+   "w": 260,
+   "h": 220,
+   "kind": "cache",
+   "title": "Topic",
+   "lines": [
+    "P4, P5, P6",
+    "(C2 ke the)"
+   ]
+  },
+  {
+   "x": 400,
+   "y": 190,
+   "w": 280,
+   "h": 90,
+   "kind": "server",
+   "title": "C1",
+   "lines": [
+    "P0-P3 + P4, P5"
+   ]
+  },
+  {
+   "x": 400,
+   "y": 300,
+   "w": 280,
+   "h": 90,
+   "kind": "server",
+   "title": "C2",
+   "lines": [
+    "mar gaya"
+   ]
+  },
+  {
+   "x": 400,
+   "y": 410,
+   "w": 280,
+   "h": 90,
+   "kind": "server",
+   "title": "C3",
+   "lines": [
+    "P7-P9 + P6"
+   ]
+  },
+  {
+   "x": 800,
+   "y": 190,
+   "w": 300,
+   "h": 110,
+   "kind": "cache",
+   "title": "DLQ (alag line)",
+   "lines": [
+    "baar-baar fail wali"
+   ]
+  },
+  {
+   "x": 800,
+   "y": 350,
+   "w": 300,
+   "h": 140,
+   "kind": "plain",
+   "title": "Lag alert",
+   "lines": [
+    "lag = aakhri offset",
+    "- group ne padha",
+    "badhe to alert"
+   ]
+  },
+  {
+   "x": 1200,
+   "y": 190,
+   "w": 270,
+   "h": 110,
+   "kind": "plain",
+   "title": "Baad me",
+   "lines": [
+    "theek karke",
+    "dobara chalao"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     292,
+     260
+    ],
+    [
+     396,
+     235
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     292,
+     310
+    ],
+    [
+     396,
+     345
+    ]
+   ],
+   "c": "grey",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     292,
+     370
+    ],
+    [
+     396,
+     455
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     682,
+     235
+    ],
+    [
+     796,
+     240
+    ]
+   ],
+   "c": "purple"
+  },
+  {
+   "pts": [
+    [
+     1102,
+     245
+    ],
+    [
+     1196,
+     245
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 84,
+   "w": 510,
+   "red": "Rebalance me sab rukte? Purane (eager) me haan.",
+   "green": "Cooperative (2.4+): sirf jinke tukde badle"
+  },
+  {
+   "type": "x",
+   "x": 560,
+   "y": 84,
+   "w": 910,
+   "red": "Ek khabar baar-baar fail",
+   "green": "Kuch koshish ke baad DLQ: warna poora tukda atka rehta",
+   "n": 1,
+   "mark": [
+    1060,
+    190
+   ],
+   "conn": [
+    [
+     1060,
+     178
+    ],
+    [
+     1060,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 540,
+   "w": 740,
+   "red": "Shaam ko C2 mar gaya",
+   "green": "Rebalance: P4, P5 C1 ko, P6 C3 ko. Koi tukda bina padhne wale ke nahi",
+   "n": 2,
+   "mark": [
+    680,
+    345
+   ],
+   "conn": [
+    [
+     692,
+     345
+    ],
+    [
+     740,
+     345
+    ],
+    [
+     740,
+     540
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 790,
+   "y": 540,
+   "w": 680,
+   "red": "Rebalance ke baad bhi lag badh raha",
+   "green": "Alert + consumer badhao. 5 min wali khabar = tukda atka: alag pool",
+   "n": 3,
+   "mark": [
+    950,
+    490
+   ],
+   "conn": [
+    [
+     950,
+     502
+    ],
+    [
+     950,
+     540
+    ]
+   ]
+  }
+ ]
+}

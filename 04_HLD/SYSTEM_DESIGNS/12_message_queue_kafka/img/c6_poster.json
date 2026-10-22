@@ -1,0 +1,201 @@
+{
+ "title": "Card 6: leader + ISR copy, acks=all: saari ISR copy le lein tab OK. Leader gira to ISR me se naya leader",
+ "h": 650,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 130,
+   "kind": "server",
+   "title": "Producer",
+   "lines": [
+    "acks=all"
+   ]
+  },
+  {
+   "x": 350,
+   "y": 200,
+   "w": 260,
+   "h": 120,
+   "kind": "db",
+   "title": "Broker A (leader)",
+   "lines": [
+    "P3 likhta"
+   ]
+  },
+  {
+   "x": 720,
+   "y": 180,
+   "w": 260,
+   "h": 100,
+   "kind": "db",
+   "title": "Broker B",
+   "lines": [
+    "ISR copy"
+   ]
+  },
+  {
+   "x": 720,
+   "y": 320,
+   "w": 260,
+   "h": 100,
+   "kind": "db",
+   "title": "Broker C",
+   "lines": [
+    "ISR copy"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 220,
+   "w": 390,
+   "h": 140,
+   "kind": "plain",
+   "title": "Controller (KRaft)",
+   "lines": [
+    "ISR me se naya leader (B)",
+    "ek hi faisla, do leader nahi"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     275
+    ],
+    [
+     346,
+     260
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     612,
+     240
+    ],
+    [
+     716,
+     230
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     612,
+     290
+    ],
+    [
+     716,
+     370
+    ]
+   ],
+   "c": "purple",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     346,
+     300
+    ],
+    [
+     254,
+     330
+    ]
+   ],
+   "c": "green",
+   "label": "OK",
+   "lx": 300,
+   "ly": 345,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     982,
+     250
+    ],
+    [
+     1076,
+     280
+    ]
+   ],
+   "c": "grey",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 530,
+   "red": "acks=1?",
+   "green": "Leader ki memory pe OK: copy se pehle gira to gayi",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 570,
+   "y": 84,
+   "w": 900,
+   "red": "Broker A ki disk mar gayi",
+   "green": "Controller ISR me se B ko leader banata. Data B, C pe bacha",
+   "n": 2,
+   "mark": [
+    590,
+    200
+   ],
+   "conn": [
+    [
+     590,
+     188
+    ],
+    [
+     590,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 470,
+   "w": 1440,
+   "red": "ISR copy kam pad gayi",
+   "green": "min.insync=2: likhna band. Khone se rukna behtar",
+   "n": 3,
+   "mark": [
+    760,
+    420
+   ],
+   "conn": [
+    [
+     760,
+     432
+    ],
+    [
+     760,
+     470
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 565,
+   "w": 1440,
+   "red": "Peeche wala follower leader? Nahi, aakhri khabar nahi. 3 copy = kam se kam 3 broker.",
+   "green": "acks: 0 = bhej ke bhaago · 1 = sirf leader (click / log) · all = saari ISR (paisa)"
+  }
+ ]
+}

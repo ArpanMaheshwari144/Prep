@@ -1,0 +1,206 @@
+{
+ "title": "Card 3: key = userId: ek user ki har khabar ek tukde me, kram sirf tukde ke andar. Same key = same partition",
+ "h": 670,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 220,
+   "h": 120,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "naam 'A',",
+    "phir 'B'"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "server",
+   "title": "Producer",
+   "lines": [
+    "key = userId",
+    "hash % 10 = P1"
+   ]
+  },
+  {
+   "x": 680,
+   "y": 190,
+   "w": 320,
+   "h": 110,
+   "kind": "cache",
+   "title": "P1",
+   "lines": [
+    "Ravi: A, B (kram se)"
+   ]
+  },
+  {
+   "x": 680,
+   "y": 340,
+   "w": 320,
+   "h": 100,
+   "kind": "cache",
+   "title": "P5",
+   "lines": [
+    "doosre users"
+   ]
+  },
+  {
+   "x": 1100,
+   "y": 240,
+   "w": 370,
+   "h": 120,
+   "kind": "server",
+   "title": "Profile Svc",
+   "lines": [
+    "aakhri naam 'B'"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     582,
+     270
+    ],
+    [
+     676,
+     245
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     582,
+     340
+    ],
+    [
+     676,
+     385
+    ]
+   ],
+   "c": "orange",
+   "dash": true
+  },
+  {
+   "pts": [
+    [
+     1002,
+     245
+    ],
+    [
+     1096,
+     290
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "Poore topic ka kram?",
+   "green": "Faltu: alag key ka kram chahiye hi nahi",
+   "n": 1
+  },
+  {
+   "type": "x",
+   "x": 610,
+   "y": 84,
+   "w": 860,
+   "red": "Producer retry: 1 fail, 2 gaya, 1 phir aaya",
+   "green": "Har message ka number (idempotent producer): kram theek",
+   "n": 2,
+   "mark": [
+    630,
+    257
+   ],
+   "conn": [
+    [
+     630,
+     245
+    ],
+    [
+     630,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 30,
+   "y": 490,
+   "w": 720,
+   "red": "10 se 20 tukde kar diye",
+   "green": "% 10 se % 20: key ka tukda badla, thodi der kram toota",
+   "n": 3,
+   "mark": [
+    720,
+    440
+   ],
+   "conn": [
+    [
+     720,
+     452
+    ],
+    [
+     720,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 770,
+   "y": 490,
+   "w": 700,
+   "red": "Ek key ka tukda garam (bheed)",
+   "green": "Key tod do (userId#bucket), sirf jab kram zaroori nahi",
+   "n": 4,
+   "mark": [
+    960,
+    440
+   ],
+   "conn": [
+    [
+     960,
+     452
+    ],
+    [
+     960,
+     490
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 585,
+   "w": 1440,
+   "red": "Key di hi nahi? Round-robin / sticky, koi kram nahi. Pehle poochho: kram poore topic ka, ya ek user ka?",
+   "green": "RabbitMQ / SQS me kram? Guarantee nahi. SQS FIFO ya ek consumer = kram, par speed kam"
+  }
+ ]
+}

@@ -1,0 +1,176 @@
+{
+ "title": "Card 4: ek service = ek group.id. Har tukda group ke ek hi member ko, to khabar ek baar. Gira to rebalance",
+ "h": 610,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 200,
+   "w": 280,
+   "h": 220,
+   "kind": "cache",
+   "title": "Topic",
+   "lines": [
+    "P0 - P3",
+    "P4 - P6",
+    "P7 (Ravi)",
+    "P8 - P9"
+   ]
+  },
+  {
+   "x": 420,
+   "y": 190,
+   "w": 300,
+   "h": 80,
+   "kind": "server",
+   "title": "C1",
+   "lines": [
+    "P0 - P3"
+   ]
+  },
+  {
+   "x": 420,
+   "y": 290,
+   "w": 300,
+   "h": 80,
+   "kind": "server",
+   "title": "C2",
+   "lines": [
+    "P4 - P6"
+   ]
+  },
+  {
+   "x": 420,
+   "y": 390,
+   "w": 300,
+   "h": 80,
+   "kind": "server",
+   "title": "C3",
+   "lines": [
+    "P7 - P9: Ravi"
+   ]
+  },
+  {
+   "x": 830,
+   "y": 190,
+   "w": 640,
+   "h": 150,
+   "kind": "plain",
+   "title": "Email = ek group.id",
+   "lines": [
+    "har tukda group ke ek hi member ko",
+    "P7 sirf C3 ko"
+   ]
+  },
+  {
+   "x": 830,
+   "y": 385,
+   "w": 300,
+   "h": 90,
+   "kind": "user",
+   "title": "Ravi",
+   "lines": [
+    "ek hi email"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     312,
+     250
+    ],
+    [
+     416,
+     230
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     312,
+     310
+    ],
+    [
+     416,
+     330
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     312,
+     370
+    ],
+    [
+     416,
+     430
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     722,
+     430
+    ],
+    [
+     826,
+     430
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "group.id galat (machine ka naam)?",
+   "green": "Teen alag team: teeno ne bheja, Ravi ko 3 email",
+   "n": 1
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "Team ki ek machine (C2) gir gayi",
+   "green": "Rebalance: uske tukde baaki ko, koi tukda bina padhne wale ke nahi",
+   "mark": [
+    720,
+    330
+   ],
+   "conn": [
+    [
+     732,
+     330
+    ],
+    [
+     790,
+     330
+    ],
+    [
+     790,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 520,
+   "w": 1440,
+   "red": "Team me machine badhani? Tukde bhi badhao.",
+   "green": "10 tukde + 12 machine = 2 khaali"
+  }
+ ]
+}

@@ -1,0 +1,150 @@
+{
+ "title": "Card 5: har service ka apna group, apna offset. Alag group = sabko poori khabar. Nayi service = naya group",
+ "h": 650,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 220,
+   "w": 280,
+   "h": 180,
+   "kind": "cache",
+   "title": "Order topic",
+   "lines": [
+    "msg 0 ... 100"
+   ]
+  },
+  {
+   "x": 420,
+   "y": 180,
+   "w": 320,
+   "h": 90,
+   "kind": "server",
+   "title": "Email group",
+   "lines": [
+    "offset 100"
+   ]
+  },
+  {
+   "x": 420,
+   "y": 300,
+   "w": 320,
+   "h": 90,
+   "kind": "server",
+   "title": "Analytics group",
+   "lines": [
+    "offset 98"
+   ]
+  },
+  {
+   "x": 420,
+   "y": 420,
+   "w": 320,
+   "h": 90,
+   "kind": "server",
+   "title": "Dashboard group",
+   "lines": [
+    "offset 95 (peeche)"
+   ]
+  },
+  {
+   "x": 860,
+   "y": 280,
+   "w": 610,
+   "h": 150,
+   "kind": "plain",
+   "title": "Nayi service",
+   "lines": [
+    "bas naya group, producer kuch nahi badalta",
+    "offset? shuru se ya ab se",
+    "(auto.offset.reset)"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     312,
+     270
+    ],
+    [
+     416,
+     225
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     312,
+     310
+    ],
+    [
+     416,
+     345
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     312,
+     350
+    ],
+    [
+     416,
+     465
+    ]
+   ],
+   "c": "orange"
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 700,
+   "red": "Teeno service ek hi group me?",
+   "green": "Group me message ek ko: sirf email ko mila, baaki ko kuch nahi",
+   "n": 1
+  },
+  {
+   "type": "grey",
+   "x": 750,
+   "y": 84,
+   "w": 720,
+   "red": "Ek message kai service ko, ya kisi ek ko?",
+   "green": "Ye sawaal design badalta. Alag group = sabko poori"
+  },
+  {
+   "type": "x",
+   "x": 750,
+   "y": 560,
+   "w": 720,
+   "red": "Dashboard dheema (95 pe)",
+   "green": "Email nahi rukta: har group ka offset alag",
+   "n": 2,
+   "mark": [
+    740,
+    465
+   ],
+   "conn": [
+    [
+     752,
+     465
+    ],
+    [
+     800,
+     465
+    ],
+    [
+     800,
+     560
+    ]
+   ]
+  }
+ ]
+}

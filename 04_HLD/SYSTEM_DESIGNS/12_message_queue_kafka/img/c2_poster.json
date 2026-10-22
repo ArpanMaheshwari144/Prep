@@ -1,0 +1,161 @@
+{
+ "title": "Card 2: topic ke tukde (partition), ek tukda ek worker. 10 x 500 = 5,000. Worker tukdon se zyada = khaali",
+ "h": 570,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 200,
+   "h": 120,
+   "kind": "user",
+   "title": "Sale",
+   "lines": [
+    "5,000 / sec"
+   ]
+  },
+  {
+   "x": 300,
+   "y": 200,
+   "w": 320,
+   "h": 220,
+   "kind": "cache",
+   "title": "Topic 'order'",
+   "lines": [
+    "P0 | P1 | P2 | P3 | P4",
+    "P5 | P6 | P7 | P8 | P9",
+    "har tukda alag machine",
+    "(3 broker me barabar)"
+   ]
+  },
+  {
+   "x": 720,
+   "y": 200,
+   "w": 300,
+   "h": 220,
+   "kind": "server",
+   "title": "Workers",
+   "lines": [
+    "W0 ... W9",
+    "ek tukda = ek worker",
+    "10 x 500 = 5,000 / sec"
+   ]
+  },
+  {
+   "x": 1110,
+   "y": 200,
+   "w": 360,
+   "h": 120,
+   "kind": "plain",
+   "title": "Controller",
+   "lines": [
+    "naksha: kaunsa tukda",
+    "kis broker pe"
+   ]
+  },
+  {
+   "x": 1110,
+   "y": 350,
+   "w": 360,
+   "h": 90,
+   "kind": "server",
+   "title": "W10, W11",
+   "lines": [
+    "khaali baithe"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     310
+    ],
+    [
+     296,
+     310
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     622,
+     310
+    ],
+    [
+     716,
+     310
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     1022,
+     380
+    ],
+    [
+     1106,
+     395
+    ]
+   ],
+   "c": "grey",
+   "dash": true
+  }
+ ],
+ "callouts": [
+  {
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Ek hi line me aur worker?",
+   "green": "Ek tukda ek hi worker padhta: baaki khaali",
+   "n": 1,
+   "conn": [
+    [
+     460,
+     146
+    ],
+    [
+     460,
+     200
+    ]
+   ]
+  },
+  {
+   "type": "x",
+   "x": 670,
+   "y": 84,
+   "w": 800,
+   "red": "Worker badhaye, phir bhi lag badh raha",
+   "green": "Pehle tukdon ki ginti dekho, worker baad me",
+   "n": 2,
+   "mark": [
+    980,
+    200
+   ],
+   "conn": [
+    [
+     980,
+     188
+    ],
+    [
+     980,
+     146
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 480,
+   "w": 1440,
+   "red": "Kitne partition? Jitne worker ek saath (5,000 / 500 = 10). Shuru me thoda zyada: baad me badle to key ka tukda hilta.",
+   "green": "12 worker, 10 tukde? 2 khaali baithe"
+  }
+ ]
+}

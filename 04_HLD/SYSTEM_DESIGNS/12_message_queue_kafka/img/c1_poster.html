@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 1: disk pe log, padhne se mitta nah</title>
+<style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
+<svg width="1500" height="570" viewBox="0 0 1500 570" xmlns="http://www.w3.org/2000/svg"><defs>
+<marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+<marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+<marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
+<marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
+<marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
+</defs><rect width="1500" height="570" fill="#0b1220"/>
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 1: disk pe log, padhne se mitta nahi. Har group apna offset yaad rakhta, restart pe wahin se</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Laal X = yahan gira / toota · Peela dabba = pehle aisa tha (X nahi) · har dabbe me hara = kaise bacha</text>
+<rect x="30" y="240" width="220" height="120" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="140.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Signup Svc</text>
+<text x="140.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">500 signup bheje</text>
+<rect x="330" y="200" width="520" height="180" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="590.0" y="234" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Kafka log (disk)</text>
+<text x="590.0" y="260" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">msg 0, 1, 2 ... 500 (aakhir me judta)</text>
+<text x="590.0" y="282" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">padhne se mitta nahi</text>
+<text x="590.0" y="304" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">sirf aakhir me jodna = tez (sequential)</text>
+<rect x="950" y="240" width="260" height="130" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="1080.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Email Svc</text>
+<text x="1080.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">offset 120 yaad</text>
+<text x="1080.0" y="322" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">restart: 121 se</text>
+<rect x="1270" y="240" width="200" height="130" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1370.0" y="274" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Offset store</text>
+<text x="1370.0" y="300" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">__consumer_offsets</text>
+<text x="1370.0" y="322" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">(Kafka khud rakhta)</text>
+<path d="M252 300 L326 300" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M852 300 L946 300" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M1212 305 L1266 305" fill="none" stroke="#a98bff" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#apurple)"/>
+<path d="M590 146 L590 200" fill="none" stroke="#ffcc4d" stroke-width="2" stroke-dasharray="6 5"/>
+<rect x="30" y="84" width="620" height="62" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ffcc4d"/>
+<text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ffcc4d">RAM wali queue?</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">Restart hua aur 500 signup gaye</text>
+<path d="M820 188 L820 146" fill="none" stroke="#ff5a6a" stroke-width="2"/>
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="808" y1="188" x2="832" y2="212"/><line x1="832" y1="188" x2="808" y2="212"/></g>
+<rect x="670" y="84" width="800" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="692" cy="106" r="13" fill="#ff5a6a"/>
+<text x="692" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="714" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Subah queue machine restart</text>
+<text x="692" y="135" font-size="15" font-weight="700" fill="#3ddc97">Message disk pe pada: Email wapas aake 121 se padhta</text>
+<rect x="30" y="480" width="1440" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="52" y="507" font-size="15" font-weight="700" fill="#c9d6e8">Dobara padhna hai? Offset peeche karo (replay), khabar wahin padi.</text>
+<text x="52" y="531" font-size="15" font-weight="700" fill="#9fb0c8">Offset byte nahi, kram number (0, 1, 2). Chhoti .index file batati file me kahan</text>
+</svg>
