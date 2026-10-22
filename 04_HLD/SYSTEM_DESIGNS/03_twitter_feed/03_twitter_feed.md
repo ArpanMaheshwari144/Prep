@@ -252,15 +252,8 @@ NAHI    ek hi App -> GIRA: wo giri to poora region band
 
 **Rail 2 BHEED AAYI (padhna)** · Cue: ALAG SERVICE (likhna/padhna)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
 
-<img src="img/c9_1.png?v=5" width="900">
-
-<img src="img/c9_2.png?v=5" width="900">
-
-<img src="img/c9_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     likhne aur padhne ki alag service. ALB path se baant-ta hai. Jahan bheed hai, wahi badhao
@@ -274,12 +267,6 @@ NAHI    ek hi service -> DHEEMA: padhne ki bheed me likhna bhi dheema hota hai, 
 
 > [!IMPORTANT]
 > **Yaad rakh:** Likhne aur padhne ki alag service, ALB path se baante. Jiski bheed, wahi badhao.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - feed ki bheed aur badh gayi? → **sirf Timeline Svc badhao, Tweet Svc ko chhuo mat**: Tweet Svc pe koi asar nahi
-> - Suresh ke 5,000 follower? → **Follow store se 1000-1000 padh ke likho**: inbox likho. Ek baar me sab padhna bhaari hai
-> - Timeline ko follow list chahiye, wo kahan se laayega? → **Redis me rakhi follow list**: User / Follow store se, par wo Redis me rakhi hoti hai, kyunki har feed pe chahiye
 
 
 ---

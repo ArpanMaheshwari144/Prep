@@ -1,0 +1,31 @@
+{
+  "title": "Card 9: likhne aur padhne ki alag service. ALB path se baant-ta, jahan bheed wahi badhao",
+  "h": 560,
+  "boxes": [
+    {"x": 30, "y": 250, "w": 220, "h": 100, "kind": "user", "title": "Users", "lines": ["crore scroll,", "kuch tweet"]},
+    {"x": 310, "y": 230, "w": 230, "h": 140, "kind": "lb", "title": "ALB", "lines": ["path dekh ke", "baant-ta"]},
+    {"x": 640, "y": 190, "w": 280, "h": 90, "kind": "server", "title": "Tweet Svc (x 2)", "lines": ["POST /tweet"]},
+    {"x": 640, "y": 330, "w": 280, "h": 90, "kind": "server", "title": "Timeline Svc (x 20)", "lines": ["GET /feed"]},
+    {"x": 1060, "y": 260, "w": 330, "h": 100, "kind": "db", "title": "Follow store", "lines": ["kaun kise follow karta", "(Redis me bhi)"]}
+  ],
+  "arrows": [
+    {"pts": [[252, 300], [306, 300]], "c": "blue"},
+    {"pts": [[542, 280], [636, 240]], "c": "orange"},
+    {"pts": [[542, 320], [636, 370]], "c": "green"},
+    {"pts": [[922, 240], [1056, 295]], "c": "purple"},
+    {"pts": [[922, 370], [1056, 330]], "c": "purple"}
+  ],
+  "callouts": [
+    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 620,
+     "red": "Pehle likhna aur padhna ek hi service me",
+     "green": "Crore log scroll kar rahe the, mera tweet usi bheed me dheema",
+     "conn": [[425, 146], [425, 230]]},
+    {"n": 2, "type": "x", "x": 680, "y": 84, "w": 790,
+     "red": "Suresh ke 5,000 follower: ek baar me sab padhna bhaari",
+     "green": "Follow store se 1000-1000 padh ke inbox likho",
+     "mark": [990, 268], "conn": [[990, 256], [990, 146]]},
+    {"type": "grey", "x": 30, "y": 470, "w": 1440,
+     "red": "Feed ki bheed aur badhi? Sirf Timeline Svc badhao, Tweet Svc ko chhuo mat.",
+     "green": "Timeline ko follow list har feed pe chahiye, isliye wo Redis me rakhi hoti"}
+  ]
+}
