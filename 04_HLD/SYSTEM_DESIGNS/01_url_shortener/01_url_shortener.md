@@ -57,15 +57,8 @@ PEHLE   sabse simple: App code banata, DB me (code, lamba link) rakhta. Click pe
 
 **Rail 2 BHEED AAYI** · Cue: REDIS CACHE (cache-aside)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
-<img src="img/c1_1.png?v=4" width="900">
-
-<img src="img/c1_2.png?v=4" width="900">
-
-<img src="img/c1_3.png?v=4" width="900">
-
-</details>
 
 ```
 HAL     beech me Redis: click pe pehle Redis dekho, mila to wahin se, nahi to DB se laao aur Redis me rakho
@@ -78,17 +71,6 @@ NAHI    DB ki copy (replica) -> DHEEMA: wo bhi disk se padhti hai, dheemi hi reh
 
 > [!IMPORTANT]
 > **Yaad rakh:** Sach DB me. Redis sirf garam copy: click pehle Redis, miss pe DB se laao aur Redis me rakho.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - Redis bhar gaya? → **LRU**: jo link der se nahi khule, unhe nikaalo. Redis me sirf garam link, 180 arab nahi
-> - Link badla, Redis me purana? → **pehle DB, phir Redis se hatao**: link badla ya hataya, dono me yahi. Ulta kiya to beech ka click purana link wapas Redis me bhar deta
-> - Redis hi gir gaya? → **copy (cluster + replica)**: copy sambhalti hai, warna 95% click DB pe, DB phir baith jaata
-> - Redis ki copy bhi gayi? → **single flight + load shedding**: 1000 click me sirf 1 DB tak jaata, baaki usi ka jawab lete. Tab bhi bojh ho to kuch click mana karo, DB bachao
-> - Link ki expiry hai, Redis me uska kya? → **TTL = expiry**: Redis ki umar (TTL) = link ki expiry, dono saath mitte hain
-> - Har App apna cache rakhe, Redis kyun? → **shared Redis**: link badla to har App ki copy purani reh jaati. Isliye ek shared Redis
-> - Ek link viral, uski DB machine garam? → **Redis me mil jaata**: wo link pehle hi Redis me mil jaata hai, DB tak kam aata
-> - Bot fake code (/xyz999) pe lakhon click, sab DB pe? → **App wahin 404**: nahi. Code = counter ka number. Itna number diya hi nahi, to App wahin 404, DB tak nahi. Deleted / expired link ke liye Redis me "nahi hai" 1 min rakho
 
 
 ---

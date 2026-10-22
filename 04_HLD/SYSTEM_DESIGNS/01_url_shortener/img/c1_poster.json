@@ -1,0 +1,248 @@
+{
+ "title": "Card 1: beech me Redis. Click pe pehle Redis, nahi mila to DB se laao aur Redis me rakho",
+ "h": 720,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 260,
+   "w": 200,
+   "h": 90,
+   "kind": "user",
+   "title": "Mera link viral",
+   "lines": [
+    "lakhon click"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 250,
+   "w": 220,
+   "h": 110,
+   "kind": "server",
+   "title": "App",
+   "lines": [
+    "pehle Redis dekhta"
+   ]
+  },
+  {
+   "x": 620,
+   "y": 220,
+   "w": 300,
+   "h": 150,
+   "kind": "cache",
+   "title": "Redis (garam copy)",
+   "lines": [
+    "95% click yahin se",
+    "~0.1 ms (RAM)",
+    "umar (TTL) = link ki expiry"
+   ]
+  },
+  {
+   "x": 1060,
+   "y": 230,
+   "w": 300,
+   "h": 130,
+   "kind": "db",
+   "title": "DB (sach yahin)",
+   "lines": [
+    "~10 ms (disk)",
+    "khoya Redis yahin se banta"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     232,
+     305
+    ],
+    [
+     336,
+     305
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     562,
+     300
+    ],
+    [
+     616,
+     295
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     922,
+     270
+    ],
+    [
+     1056,
+     270
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "nahi mila",
+   "lx": 989,
+   "ly": 260,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     1058,
+     330
+    ],
+    [
+     924,
+     330
+    ]
+   ],
+   "c": "green",
+   "label": "laao + rakho",
+   "lx": 962,
+   "ly": 352,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 900,
+   "y": 84,
+   "w": 570,
+   "red": "DB ki copy (replica) ya Memcached laga dete?",
+   "green": "Replica bhi disk se padhti, dheemi hi rehti",
+   "green2": "Memcached me copy nahi, gira to bheed seedha DB pe",
+   "conn": [
+    [
+     1210,
+     170
+    ],
+    [
+     1210,
+     230
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 300,
+   "y": 84,
+   "w": 580,
+   "red": "Redis bhar gaya",
+   "green": "LRU: jo link der se nahi khule, wo nikaalo",
+   "mark": [
+    632,
+    222
+   ],
+   "conn": [
+    [
+     632,
+     208
+    ],
+    [
+     632,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 330,
+   "y": 430,
+   "w": 600,
+   "red": "Redis hi gir gaya",
+   "green": "Uski copy sambhalti (cluster + replica)",
+   "green2": "Copy bhi gayi: 1000 click me 1 hi DB tak (single flight)",
+   "mark": [
+    632,
+    370
+   ],
+   "conn": [
+    [
+     632,
+     382
+    ],
+    [
+     632,
+     430
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 960,
+   "y": 430,
+   "w": 510,
+   "red": "Link badla, par Redis me purana pada",
+   "green": "Pehle DB badlo, phir Redis se hatao",
+   "mark": [
+    1030,
+    330
+   ],
+   "conn": [
+    [
+     1030,
+     342
+    ],
+    [
+     1030,
+     430
+    ]
+   ]
+  },
+  {
+   "n": 5,
+   "type": "x",
+   "x": 30,
+   "y": 540,
+   "w": 700,
+   "red": "Bot ne fake code (/xyz999) pe lakhon click bheje",
+   "green": "Itna number diya hi nahi, to App wahin 404. DB tak nahi jaata",
+   "mark": [
+    284,
+    305
+   ],
+   "conn": [
+    [
+     284,
+     317
+    ],
+    [
+     284,
+     540
+    ]
+   ]
+  },
+  {
+   "n": 6,
+   "type": "pehle",
+   "x": 760,
+   "y": 540,
+   "w": 710,
+   "red": "Har App apna cache rakh le?",
+   "green": "Link badla to har App ki copy purani reh jaati. Isliye ek shared Redis"
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 630,
+   "w": 1440,
+   "red": "Ek link viral, to uski DB machine garam ho jaayegi? Nahi, wo link pehle hi Redis me mil jaata.",
+   "green": "Deleted / expire hua link: Redis me 'nahi hai' 1 min rakho, taaki DB baar-baar na poocha jaaye"
+  }
+ ]
+}
