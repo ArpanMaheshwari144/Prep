@@ -1,7 +1,7 @@
 # Kafka (message queue): interview me aise bolo
 
 Ek hi page, jaise interview me likhte-bolte ho. Upar chhote notes (bullet + tir), neeche ek hi diagram jo badhta jaata
-hai. Kram 4 hisson ka: **1 daayra -> 2 ginti -> 3 dabbe + kaam chalao -> 4 khud todo, jodo**. API nahi, sirf khabar ka
+hai. Kram 4 hisson ka: **1 daayra -> 2 ginti -> 3 dabbe (chhote se badhao) -> 4 khud todo, jodo**. API nahi, sirf khabar ka
 chhota box. Neeche cross-Q: har dabba, har teer "gira to kya".
 
 Samajh chahiye to pehle [kafka_concepts.md](kafka_concepts.md) (kahani se, 6 hisse).
@@ -32,22 +32,32 @@ Bolo: "Sab kuch nahi, ye 2 kaam pakde. Theek hai?" Interviewer haan bole tab aag
 
 ---
 
-## 3. Dabbe + kaam chalao
+## 3. Dabbe: chhote se shuru, bolte-bolte badhao
 
-Bolte-bolte ye banao:
+Ek saath poora mat banao. Pehle 2 dabbe, phir har dikkat pe ek-do dabbe aur. Peela = abhi juda.
+
+**Kadam 1: sabse seedha.** "Arpan ne order kiya. Order Svc seedha Email Svc ko call kare."
 
 ```mermaid
 flowchart LR
-    O["Order Svc<br/>(producer)"] -- "khabar, key = userId" --> K
-    subgraph K["KAFKA · topic order-events"]
-        P0[("P0")]
-        P1[("P1 · Arpan")]
-        P9[("P9")]
-    end
-    K --> E["TEAM email<br/>(consumer group)"]
+    O["Order Svc"] -- "seedha call" --> E["Email Svc"]
+    style E fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+```
+
+"Dikkat: Email dheema to order dheema. Email gira to order bhi atka. Aur kal Analytics ko bhi khabar chahiye to
+Order Svc ka code badlega. Isliye beech me ek line rakhte hain."
+
+**Kadam 2: beech me Kafka.** "Order Svc khabar Kafka ke topic order-events me daal ke aage badh jaata hai."
+
+```mermaid
+flowchart LR
+    O["Order Svc<br/>(producer)"] -- "khabar" --> K[("KAFKA<br/>topic order-events")]
+    K --> E["TEAM email"]
     K --> A["TEAM analytics"]
     K --> D["TEAM dashboard"]
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Khabar ka chhota box (main table jaisa):
@@ -55,22 +65,45 @@ Khabar ka chhota box (main table jaisa):
 khabar:  eventId · userId (key) · type (ORDER_CREATED) · time · data
 ```
 
-Kaam 1 dabbon pe chalao: "Arpan ne order kiya. Order Svc khabar Kafka ke topic order-events me daal ke aage badh
-gaya. Kafka disk pe likhta, padhne se mitti nahi. Email, Analytics, Dashboard teeno alag team (consumer group): har
-team ko poori khabar, har team apna bookmark (offset). Email team ki 3 machine: ek tukda sirf ek machine ko (ek machine
-ke paas 3-4 tukde), to Arpan ko ek hi email."
+"Kafka disk pe likhta, padhne se khabar mitti nahi. Email, Analytics, Dashboard teeno alag team (consumer group):
+har team ko poori khabar, har team apna bookmark (offset). Nayi service aaye to bas nayi team, Order Svc me kuch
+nahi badalta."
 
-Kaam 2 chalao: "Arpan ki saari khabar key = userId se ek hi tukde (P1) me, to kram pakka. Kram sirf ek tukde ke
-andar milta, poore topic me nahi."
+"Ab ginti yaad karo: sale me 5,000 khabar / sec, ek worker ~500 hi sambhalta. Ek line pe ek hi padhne wala, to
+line lambi hoti jaayegi."
+
+**Kadam 3: topic ke tukde.** "Isi topic ko 10 tukdon (partition) me baanto, har tukda alag machine pe."
+
+```mermaid
+flowchart LR
+    O["Order Svc<br/>key = userId"] --> P0 & P1 & P9
+    subgraph K["KAFKA · topic order-events · 10 tukde"]
+        P0[("P0")]
+        P1[("P1 · Arpan<br/>order, pay, cancel")]
+        P9[("P9")]
+    end
+    K --> E["TEAM email<br/>3 machine, har ek ke<br/>paas 3-4 tukde"]
+    K --> A["TEAM analytics"]
+    K --> D["TEAM dashboard"]
+    style P0 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style P9 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style E fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+"Team ke andar ek tukda sirf ek machine ko, to Arpan ko ek hi email. Arpan ki saari khabar key = userId se ek hi
+tukde (P1) me, to kram pakka. Kram sirf ek tukde ke andar milta, poore topic me nahi."
 
 "Kyun" pehle hi bolo, poochhne ka intezaar mat karo: "Kafka isliye ki padhne se khabar mitti nahi (kai team padh
-sakein, dobara padh sakein), aur tukdon se bheed bat jaati. Seedha call karte to Email dheema = order dheema."
+sakein, dobara padh sakein), aur tukdon se bheed bat jaati."
+
+"Dono kaam chal gaye. Ab dekhte hain kya toot sakta hai."
 
 ---
 
 ## 4. Khud todo, phir jodo
 
-Interviewer ke poochhne se pehle khud bolo: "ab dekhte hain kya toot sakta hai." Teen jagah:
+Interviewer ke poochhne se pehle khud bolo. Teen jagah:
 
 ```
  - bheed:          ek worker kam -> 10 tukde, 10 worker. 11va khaali. Tukde peak ke 2-3 guna rakho
@@ -81,16 +114,16 @@ Interviewer ke poochhne se pehle khud bolo: "ab dekhte hain kya toot sakta hai."
      ek khabar atki    -> 3-4 koshish, phir DLQ
 ```
 
-Wahi diagram badhao:
+**Kadam 4: wahi diagram badhao.**
 
 ```mermaid
 flowchart LR
     O["Order Svc"] -- "ek transaction" --> DB[("DB<br/>order + outbox")]
     DB -- "relay (ya CDC)" --> K
     subgraph K["KAFKA · topic order-events · 10 tukde · 3 copy · acks=all · 7 din"]
-        L[("leader")]
-        C1[("copy")]
-        C2[("copy")]
+        L[("P1 leader")]
+        C1[("P1 copy")]
+        C2[("P1 copy")]
     end
     L --> C1
     L --> C2
@@ -100,7 +133,8 @@ flowchart LR
     K --> A["TEAM analytics"]
     K --> D["TEAM dashboard"]
     style DB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
