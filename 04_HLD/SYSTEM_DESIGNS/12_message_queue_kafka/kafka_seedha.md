@@ -36,6 +36,9 @@ Email Svc band            -> order hi fail, jabki order to sahi tha
 
 ## Kadam 1: beech me ek line (queue)
 
+**Peeche se:** Kadam 0 me Order Svc seedha Email Svc ko bulata tha. Email dheema hua to order bhi ruk gaya.
+**To:** dono ko alag karo. Beech me ek line rakh do, Order Svc khabar daale aur aage badh jaaye.
+
 ```
 [ Order Svc ] --khabar--> [ LINE ] --uthata--> [ Email Svc ]
                            #101 #102 ...
@@ -53,6 +56,11 @@ wo machine restart hui?  -> RAM khaali, saari khabar gayi        <- AGLA KADAM
 ---
 
 ## Kadam 2: line disk pe, aur "kahan tak padha" ka bookmark
+
+**Peeche se:** Kadam 1 me line ek machine ki RAM me thi. Machine restart hui, RAM khaali, saari khabar gayi.
+**To:** line ko RAM ki jagah disk pe likho, taaki restart pe bhi bachi rahe. Aisi disk wali line khud banane
+ki jagah ek bana-banaya tool lete hain: **Kafka**. Kafka bas yahi hai: khabar ki ek line jo disk pe likhi
+rehti hai. Isliye is kadam se dabbe ka naam "LINE" ki jagah "KAFKA".
 
 ```
 [ Order Svc ] --khabar--> [ KAFKA: disk pe log ] -----> [ Email Svc ]
@@ -75,6 +83,9 @@ disk bharti gayi?                  -> <- KADAM 10
 ---
 
 ## Kadam 3: bheed aayi, ek worker kam pada
+
+**Peeche se:** Kadam 2 me khabar Kafka ki disk pe surakshit hai, Email Svc bookmark se padhta hai.
+**Ab:** khabar bachi rehti hai, par padhne wala ek hi hai. Bheed aayi to?
 
 ```
 Sale: har second 5,000 order. Ek Email worker sirf 500 utha paata.
@@ -110,6 +121,9 @@ kaunsa tukda kis machine pe?  -> Controller ka naksha rakhta hai
 
 ## Kadam 4: kram toota
 
+**Peeche se:** Kadam 3 me line ke 10 tukde kiye, har tukde ka apna worker. Bheed sambhal li.
+**Ab:** khabar alag-alag tukdon me ja rahi hai, aur har worker apni speed se padhta hai. Kram ka kya?
+
 ```
 Arpan ne naam badla: pehle "A", phir "B".
 
@@ -143,6 +157,9 @@ RabbitMQ / SQS me kram?          -> pakka nahi milta. SQS FIFO ya ek hi padhne w
 
 ## Kadam 5: Email Svc ki 3 machine, Arpan ko 3 email
 
+**Peeche se:** Kadam 4 me key = userId se Arpan ki saari khabar ek tukde me, kram se.
+**Ab:** Email Svc ek machine pe nahi chalti, uski 3 machine hain. Teeno ne wahi tukda padha to?
+
 ```
              [ Tukda 7 ] ---> [ Email machine 1 ]
                          ---> [ Email machine 2 ]   teeno ne padha, teen email
@@ -170,6 +187,9 @@ team me machine badhani hai?      -> tukde bhi badhao, warna nayi machine khaali
 
 ## Kadam 6: wahi order Analytics aur Dashboard ko bhi chahiye
 
+**Peeche se:** Kadam 5 me Email ki 3 machine ek team bani, khabar team me ek hi baar.
+**Ab:** sirf Email nahi, Analytics aur Dashboard ko bhi wahi order chahiye. Teeno ek team me daalein?
+
 ```
                         +--> TEAM email      bookmark 100
  [ order ki khabar ] ---+--> TEAM analytics  bookmark 98
@@ -189,6 +209,9 @@ nayi service shuru se padhe ya ab se?  -> tay karna padta hai (auto.offset.reset
 ---
 
 ## Kadam 7: Kafka ki machine hi mar gayi
+
+**Peeche se:** Kadam 6 tak padhne wali taraf sab theek: tukde, team, har service ka bookmark.
+**Ab:** khabar to Kafka ki ek machine ki disk pe rakhi hai. Wahi machine mar gayi to?
 
 ```
  [ Order Svc ] --khabar--> [ Kafka machine A ]   disk mari -> khabar gayi
@@ -221,6 +244,9 @@ pehle kya poochho?                  -> khabar kho sakti hai ya bilkul nahi? Isi 
 
 ## Kadam 8: worker beech me gira
 
+**Peeche se:** Kadam 7 me Kafka ki taraf khabar bach gayi (3 copy, acks=all).
+**Ab:** Kafka se khabar padhne wala worker kaam karte-karte gir gaya to?
+
 ```
  [ Tukda ] ---> [ Email worker ] ---> email bheja ---> bookmark aage kiya
                                    ^
@@ -248,6 +274,9 @@ exactly-once milta hai?         -> sirf Kafka se Kafka tak. Email / DB ke liye p
 ---
 
 ## Kadam 9: bhejne wala hi gira
+
+**Peeche se:** Kadam 8 me padhne wala gire to bhi theek: pehle kaam, phir bookmark, eventId se pehchaan.
+**Ab:** padhne wala aur Kafka dono surakshit. Bacha bhejne wala, Order Svc. Wo gira to?
 
 ```
  [ Order Svc ] --1. DB me order 101--> [ DB ]
@@ -277,6 +306,9 @@ poora bachav ek line me?           -> outbox + acks=all + pehle kaam phir bookma
 ---
 
 ## Kadam 10: line lambi, aur disk bhari
+
+**Peeche se:** Kadam 9 me teeno jagah bachav: bhejne wala (outbox), Kafka (copy), padhne wala (eventId).
+**Ab:** sab chal raha hai, par roz ki baatein: koi machine marti hai, koi khabar atakti hai, disk bharti hai.
 
 ```
  [ Tukda 4,5,6 ] ---> [ Email machine 2 ]  mar gayi
