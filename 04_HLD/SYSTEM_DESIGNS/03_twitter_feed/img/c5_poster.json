@@ -1,0 +1,35 @@
+{
+  "title": "Card 5: inbox me sirf aakhri 800 (trim). Soye user ka inbox 30 din me khud mit jaata (TTL)",
+  "h": 640,
+  "boxes": [
+    {"x": 30, "y": 230, "w": 260, "h": 100, "kind": "user", "title": "Main", "lines": ["feed scroll kar raha"]},
+    {"x": 400, "y": 200, "w": 440, "h": 160, "kind": "cache", "title": "Inbox (Redis)",
+     "lines": ["sirf aakhri 800 id (purane kaate)", "soye user ka inbox 30 din me mita", "har item: id + score, ~60-100 byte"]},
+    {"x": 980, "y": 230, "w": 320, "h": 100, "kind": "db", "title": "Tweet store (DB)", "lines": ["purana sab yahan"]}
+  ],
+  "arrows": [
+    {"pts": [[292, 280], [396, 280]], "c": "green", "label": "feed", "lx": 344, "ly": 270, "a": "middle"},
+    {"pts": [[842, 280], [976, 280]], "c": "grey", "dash": true, "label": "800 ke aage", "lx": 909, "ly": 270, "a": "middle"}
+  ],
+  "callouts": [
+    {"n": 1, "type": "pehle", "x": 30, "y": 84, "w": 640,
+     "red": "Pehle har inbox me saare id, soye users ke bhi",
+     "green": "RAM bhar rahi thi. Ab sirf 800, sirf zinda logon ka",
+     "conn": [[600, 146], [600, 200]]},
+    {"n": 2, "type": "pehle", "x": 700, "y": 84, "w": 770,
+     "red": "Redis me machine jodte jao?",
+     "green": "Soye 40 crore ka inbox bhi RAM khaata. Kharcha badhta, dikkat wahi"},
+    {"n": 3, "type": "x", "x": 30, "y": 440, "w": 640,
+     "red": "Redis gira",
+     "green": "Copy (replica) sambhalti, warna har feed DB se banti",
+     "green2": "Copy bhi gayi: kuch request mana, inbox dheere bharo",
+     "mark": [412, 360], "conn": [[412, 372], [412, 440]]},
+    {"n": 4, "type": "x", "x": 700, "y": 440, "w": 770,
+     "red": "Soya user 2 mahine baad aaya, uska inbox hai hi nahi",
+     "green": "Follow walon ke taaze tweet khinch ke (pull) inbox bana do",
+     "mark": [828, 360], "conn": [[828, 372], [828, 440]]},
+    {"type": "grey", "x": 30, "y": 550, "w": 1440,
+     "red": "800 ke aage scroll? Wahan se Tweet store (DB) se laao, bahut kam log itna neeche jaate.",
+     "green": "Agla page: page number nahi, aakhri dikhe tweet ka time (cursor): 'isse purane 50'"}
+  ]
+}

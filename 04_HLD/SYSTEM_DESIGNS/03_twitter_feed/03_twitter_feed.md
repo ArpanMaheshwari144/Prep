@@ -159,15 +159,8 @@ NAHI    DB ki copies badha do -> DHEEMA: wo bhi disk se padhti hain (ms).
 
 **Rail 6 DATA BADA (RAM)** · Cue: AAKHRI 800 + soye hue hatao
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=5" width="900">
-
-<img src="img/c5_2.png?v=5" width="900">
-
-<img src="img/c5_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     naya tweet upar judta hai, 800 se neeche wale kaat do (trim). Soye hue user ka inbox 30 din me
@@ -181,15 +174,6 @@ NAHI    Redis me machine jodte jao -> MEHNGA: soye 40 crore ka inbox bhi RAM kha
 
 > [!IMPORTANT]
 > **Yaad rakh:** Inbox me sirf aakhri 800 id (trim), soye user ka inbox 30 din me mitao (TTL). Wapas aaye to pull se banao.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - aakhri 800 ke aage scroll kiya? → **wahan se store (DB) se laao**: Bahut kam log itna neeche jaate hain
-> - neeche scroll, agla page? → **aakhri dikhe tweet ka time (cursor)**: page number nahi: "isse purane 50". Beech me naya tweet aaya to bhi page nahi khiskta
-> - Redis gira, feed ka kya? → **copy (replica) sambhalti hai**: Warna har feed DB se banegi, mehnga
-> - Redis ki copy bhi gayi? → **kuch request mana, inbox dheere bharo**: har inbox ek request se dheere-dheere bharo
-> - soya user 2 mahine baad wapas aaya, uska inbox hai hi nahi? → **pull se banao**: soye users ka inbox nahi rakhte (jagah). Wapas aaya to follow walon ke taaze tweet khinch ke inbox bana do
-> - inbox chhota rakhna hai, to usme kya rakhte ho? → **sirf id + score**: sirf number aur score (~60-100 byte), poora tweet nahi
 
 
 ---
