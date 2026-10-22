@@ -140,15 +140,8 @@ NAHI    jo aaya wahi laga do -> ALAG: meri screen "YX...", Ravi ki "XY...", do a
 
 Jod: URL shortener aur Cache me bhi ring (01 card 5, 10 card 2)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: andar + kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=1" width="900">
-
-<img src="img/c4_2.png?v=1" width="900">
-
-<img src="img/c4_3.png?v=1" width="900">
-
-</details>
 
 ```
 HAL     docId se ring pe server chuno. doc:123 ka owner server-1, dono editor wahin, OT ek jagah
@@ -162,12 +155,6 @@ PEHLE   pehle poochho: ek doc pe ek saath kitne log hain, 2-3 ya 100?
 
 > [!IMPORTANT]
 > **Yaad rakh:** docId se ring pe owner server, ek doc ke sab editor wahin, OT ek jagah. Doc DB me, server gira to agla.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - ek doc pe 1000 log aa gaye → **editor owner pe, viewer kahin bhi**: 100 editor owner pe (OT sirf likhne walon ka), 900 viewer kahin bhi
-> - ring me server juda ya gira → **sirf pados ke doc**: ring pe sirf uske pados ke doc khiskte hain, wo log dobara judte hain
-> - owner server gira, to doc kahan gaya? → **doc DB me hai**: doc server pe nahi, DB me hai. Ring agla server deta, naya owner DB se doc banata. Editor dobara judte, version bata ke baaki op le lete. Doc nahi khota
 
 
 ---
