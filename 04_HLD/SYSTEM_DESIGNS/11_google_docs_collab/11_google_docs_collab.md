@@ -86,15 +86,8 @@ NAHI    lock lagao -> RUKNA: user ko lock ya intezaar nahi chahiye.
 
 Jod: WhatsApp (net aate hi saare message ek saath) · Stock ka live price bhi WebSocket push (05 card 8)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: andar + kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=2" width="900">
-
-<img src="img/c2_2.png?v=2" width="900">
-
-<img src="img/c2_3.png?v=2" width="900">
-
-</details>
 
 ```
 HAL     connection khula rehta, dono taraf (WebSocket). Server khud bhejta, ~200 ms me dikhta
@@ -105,11 +98,6 @@ NAHI    HTTP -> EKTARFA: server khud kuch nahi bhej sakta.
 
 > [!IMPORTANT]
 > **Yaad rakh:** Khula connection, dono taraf (WebSocket). Server khud bhejta ~200 ms. Toota to "main v12 pe tha", baaki op.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - WebSocket connection chupchaap mar gaya → **ping / pong ~30 sec**: har ~30 second ping / pong hota hai. Jawab nahi aaya to connection band, jagah khaali
-> - lift me net gaya, WebSocket toot gaya → **"main v12 pe tha"**: main likhta rehta hoon. Judte hi bolta "main v12 pe tha", server v13 se aage sab bhej deta
 
 
 ---
