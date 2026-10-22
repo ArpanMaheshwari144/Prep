@@ -110,15 +110,8 @@ NAHI    App me peeche ek thread -> KHOYA: App crash hua to thread ka kaam gaya.
 
 **Rail 5 KUCH DHEEMA (khaas)** · Cue: HYBRID: aam push, celeb pull
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=5" width="900">
-
-<img src="img/c3_2.png?v=5" width="900">
-
-<img src="img/c3_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     aam user ka tweet push hota hai (inbox me), celeb ka pull. Bieber ka tweet celeb cache me rehta hai,
@@ -132,13 +125,6 @@ NAHI    sabke liye pull -> MEHNGA: har feed khulne pe phir 200 ka jod
 
 > [!IMPORTANT]
 > **Yaad rakh:** Aam user push, celeb pull (celeb cache). Feed = mera inbox + celebs ke naye tweet, time se milao.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - koi user had (~10,000 follower) pe aage-peeche hota rahe? → **do alag had**: Had pe baar-baar push / pull nahi palta
-> - 50 celeb follow kiye, 50 pull mehnge? → **chhote cache me, saste**: celeb ke tweet alag chhote cache me hain, to 50 pull bhi saste
-> - celeb tweet pe laakhon like? → **ginti ke 10 tukde, padhte waqt jodo**: tweet123#0..#9. Ek key ek hi machine pe hoti hai
-> - celeb cache kitna bada hoga? → **~250 MB**: chhota: ~5 lakh tweet x 500 byte = ~250 MB, sirf garam tweet
 
 
 ---

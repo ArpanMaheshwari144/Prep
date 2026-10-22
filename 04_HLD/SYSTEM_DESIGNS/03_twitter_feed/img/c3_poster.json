@@ -1,0 +1,240 @@
+{
+ "title": "Card 3: aam user ka tweet push (inbox me), celeb ka pull. Feed khule tab dono milao",
+ "h": 630,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 200,
+   "w": 220,
+   "h": 90,
+   "kind": "user",
+   "title": "Bieber",
+   "lines": [
+    "10 crore follower"
+   ]
+  },
+  {
+   "x": 30,
+   "y": 380,
+   "w": 220,
+   "h": 90,
+   "kind": "user",
+   "title": "Ravi (aam)",
+   "lines": [
+    "200 follower"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 190,
+   "w": 300,
+   "h": 110,
+   "kind": "cache",
+   "title": "Celeb cache",
+   "lines": [
+    "Bieber ka tweet yahin",
+    "inbox me push nahi"
+   ]
+  },
+  {
+   "x": 340,
+   "y": 370,
+   "w": 300,
+   "h": 110,
+   "kind": "server",
+   "title": "Fanout (push)",
+   "lines": [
+    "Ravi ka tweet",
+    "200 inbox me"
+   ]
+  },
+  {
+   "x": 740,
+   "y": 380,
+   "w": 260,
+   "h": 100,
+   "kind": "cache",
+   "title": "Mera inbox",
+   "lines": [
+    "aam logon ke id"
+   ]
+  },
+  {
+   "x": 1100,
+   "y": 270,
+   "w": 370,
+   "h": 130,
+   "kind": "plain",
+   "title": "Meri feed (kholte waqt)",
+   "lines": [
+    "inbox + celebs ke naye tweet",
+    "time se milao"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     252,
+     245
+    ],
+    [
+     336,
+     245
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     252,
+     425
+    ],
+    [
+     336,
+     425
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     642,
+     425
+    ],
+    [
+     736,
+     430
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     642,
+     280
+    ],
+    [
+     1096,
+     310
+    ]
+   ],
+   "c": "green",
+   "label": "pull",
+   "lx": 1000,
+   "ly": 295
+  },
+  {
+   "pts": [
+    [
+     1002,
+     425
+    ],
+    [
+     1096,
+     370
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Bieber ka tweet bhi push: 10 crore inbox likho?",
+   "green": "Kafka line me 10 crore kaam, mera tweet ghanton peeche",
+   "conn": [
+    [
+     490,
+     146
+    ],
+    [
+     490,
+     190
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 700,
+   "y": 84,
+   "w": 770,
+   "red": "Sabke liye pull kar dete?",
+   "green": "Har feed khulne pe phir 200 ka jod, mehnga",
+   "conn": [
+    [
+     1285,
+     146
+    ],
+    [
+     1285,
+     270
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 700,
+   "y": 165,
+   "w": 360,
+   "red": "Celeb tweet pe lakhon like",
+   "green": "Ginti ke 10 tukde, padhte",
+   "green2": "waqt jodo (tweet123#0..#9)",
+   "mark": [
+    640,
+    215
+   ],
+   "conn": [
+    [
+     652,
+     215
+    ],
+    [
+     700,
+     205
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 30,
+   "y": 530,
+   "w": 640,
+   "red": "Koi user had (~10,000 follower) pe aage-peeche",
+   "green": "Do alag had rakho, baar-baar push / pull nahi palta",
+   "mark": [
+    240,
+    470
+   ],
+   "conn": [
+    [
+     240,
+     482
+    ],
+    [
+     240,
+     530
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 700,
+   "y": 530,
+   "w": 770,
+   "red": "50 celeb follow kiye, 50 pull mehnge? Nahi, celeb cache chhota, saste.",
+   "green": "Celeb cache kitna? ~5 lakh garam tweet x 500 byte = ~250 MB"
+  }
+ ]
+}
