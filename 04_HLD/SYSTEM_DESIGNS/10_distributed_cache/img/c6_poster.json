@@ -162,8 +162,8 @@
    "x": 30,
    "y": 84,
    "w": 680,
-   "red": "Consistent hashing se bheed bat jaayegi?",
-   "green": "Ring key baant-ta, ek key ki bheed nahi: ek key = ek machine",
+   "red": "Ring se bheed bat jaayegi?",
+   "green": "Ring key baant-ta, ek key ki bheed nahi: ek key = ek hi machine",
    "n": 1
   },
   {
@@ -172,7 +172,7 @@
    "y": 84,
    "w": 740,
    "red": "Machine A ka CPU full (crore read / sec)",
-   "green": "L1: har App 1-2 sec me ek baar A se. Ya key ki copy score#1..#10",
+   "green": "Har App 1-2 sec me ek hi baar A se padhe (L1). Ya key ki 10 copy (score#1 .. #10), kisi se bhi padho",
    "n": 2,
    "mark": [
     980,
@@ -194,17 +194,24 @@
    "x": 30,
    "y": 530,
    "w": 1440,
-   "red": "Garam key pakdoge kaise? App me ginti + machine metric achanak upar. Likhna bhi (like)? Tukde like#0..#9, padhte waqt jodo.",
-   "green": "L1 kitna purana? 1-2 sec: score me chalta, paisa / stock me nahi"
+   "red": "Garam key kaise pakdein? App me ginti, ya machine ka CPU achanak upar. Likhna bhi garam (like)? Ginti 10 tukdon me, padhte waqt jodo.",
+   "green": "App ki copy kitni purani? 1-2 sec: score me chalta, paisa / stock me nahi"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 620,
    "w": 1440,
-   "red": "Parat: L1 (App RAM) -> L2 Redis -> DB, neeche wali dheemi.",
-   "green": "Stampede = key khaali (lock). Hot key = key bhari, ek machine pe bheed (L1)"
+   "red": "Parat: App ki RAM (L1) -> Redis (L2) -> DB. Neeche wali dheemi.",
+   "green": "Fark: key khaali = sab DB pe (card 5, taala). Key bhari = sab ek machine pe (yahan, L1)"
   }
  ],
- "kyun": "Garam key ko faila do. Ek key = ek machine, crore read / sec pe A ka CPU full, B aur C khaali. Isliye bheed baantni padti hai"
+ "kyun": "Ek key = ek machine, to crore read ek hi machine pe. Isliye garam key ki 1-2 sec ki copy har App apni RAM me rakhe (L1). Machine A pe har App ka 1-2 sec me ek hi chakkar",
+ "step": [
+  6,
+  6
+ ],
+ "peeche": "card 5 me TAALA: sirf pehla DB jaaye",
+ "ab": "Raat IPL final, \"live:score\" key ki machine akeli mar rahi, Arpan ka score atka",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

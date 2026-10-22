@@ -122,7 +122,7 @@
    "y": 84,
    "w": 500,
    "red": "Sabko DB jaane do?",
-   "green": "Sabko miss, 1000 ek saath (stampede), home page dheema",
+   "green": "Sabko miss, 1000 ek saath DB pe (stampede), home page dheema",
    "n": 1,
    "conn": [
     [
@@ -140,8 +140,8 @@
    "x": 550,
    "y": 84,
    "w": 920,
-   "red": "Lock lene wala hi mar gaya",
-   "green": "EX 5: lock khud khulta, agla le leta. 999 hamesha nahi rukte",
+   "red": "Taala lene wala hi mar gaya",
+   "green": "Taala 5 sec me khud khulta, agla le leta. 999 hamesha nahi rukte",
    "n": 2,
    "mark": [
     570,
@@ -164,7 +164,7 @@
    "y": 490,
    "w": 720,
    "red": "Saari key ki umar ek saath khatam",
-   "green": "Umar me random daalo (60 min +- 5): ek saath nahi girti",
+   "green": "Umar me thoda random jodo (60 min ± 5): sab ek saath nahi girti",
    "n": 3,
    "mark": [
     730,
@@ -186,8 +186,8 @@
    "x": 770,
    "y": 490,
    "w": 700,
-   "red": "Key DB me thi hi nahi (penetration)",
-   "green": "'Nahi hai' bhi cache karo, chhoti umar ke saath",
+   "red": "Key DB me thi hi nahi, har baar DB tak",
+   "green": "\"Nahi hai\" ko bhi cache karo, chhoti umar ke saath",
    "n": 4,
    "mark": [
     960,
@@ -209,9 +209,16 @@
    "x": 30,
    "y": 585,
    "w": 1440,
-   "red": "Purani value de sakte? Soft-TTL: khatam se pehle taaza karo. 999 kitna ruke? 50-100 ms, ya purani value.",
-   "green": "Sale 12 baje pata tha? Pehle hi cache bhar do + machine badhao"
+   "red": "Purani value de sakte? To khatam hone se pehle hi taaza kar lo (soft TTL). 999 kitna ruke? 50-100 ms, ya purani value.",
+   "green": "12 baje sale pata thi? Pehle hi cache bhar do + machine badhao"
   }
  ],
- "kyun": "Khaali key pe ek hi DB jaata hai, baaki rukte hain ya purani value lete hain. DB pe 1000 ek saath kabhi nahi"
+ "kyun": "Key khaali ho to sirf pehla aadmi taala leta (SET NX, 5 sec) aur DB jaata. Baaki 50-100 ms ruk ke cache se lete, ya purani value. DB pe 1000 ek saath kabhi nahi",
+ "step": [
+  5,
+  6
+ ],
+ "peeche": "card 4 me DB me likho, cache se HATAO",
+ "ab": "7 baje \"home page\" key khatam, 1000 log ek saath DB pe, Arpan ka page dheema",
+ "agla": "ab khaali key ki bheed sambhal li. Par ek hi key pe crore log (card 6)"
 }

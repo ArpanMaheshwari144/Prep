@@ -114,7 +114,7 @@
    "x": 30,
    "y": 84,
    "w": 570,
-   "red": "Copy na rakho?",
+   "red": "Copy rakho hi mat?",
    "green": "B mari, B ki saari key miss, DB pe achanak bojh",
    "n": 1,
    "conn": [
@@ -133,8 +133,8 @@
    "x": 620,
    "y": 84,
    "w": 850,
-   "red": "Network toota, do primary ban gaye",
-   "green": "Zyadatar (quorum) tay karti kaun primary. Akeli wali likhna band (split brain)",
+   "red": "Network toota, do machine khud ko primary samajhne lagi",
+   "green": "Zyadatar machine milke tay karti kaun primary (quorum). Akeli wali likhna band (split brain se bachav)",
    "n": 2,
    "mark": [
     628,
@@ -157,7 +157,7 @@
    "y": 520,
    "w": 640,
    "red": "Dopahar machine B mari",
-   "green": "Copy ~10-30 sec me primary. Beech me B ki key DB se, dheema",
+   "green": "Copy ~10-30 sec me primary. Beech me Arpan ki key DB se, thoda dheema",
    "n": 3,
    "mark": [
     470,
@@ -179,8 +179,8 @@
    "x": 690,
    "y": 520,
    "w": 780,
-   "red": "Primary aur copy sab, poora cache gira",
-   "green": "Saari padhai DB pe: DB ke aage rate limit / load shedding",
+   "red": "Primary aur copy, poora cache gira",
+   "green": "Saara padhna DB pe: DB ke aage had (rate limit) aur kam zaroori kaam band",
    "n": 4,
    "mark": [
     960,
@@ -207,8 +207,15 @@
    "y": 615,
    "w": 1440,
    "red": "Copy peeche thi? Aakhri kuch likhai kho sakti, cache me chalta, sach DB me.",
-   "green": "Copy se padh bhi lo? Haan, padhai bat jaati, thoda purana"
+   "green": "Copy se padh bhi lo? Haan, padhna bat jaata, bas thoda purana"
   }
  ],
- "kyun": "Cache me tezi pehle hai. Copy thodi der baad likhi jaati hai, aakhri likhai khoye to chalta hai, sach DB me hai"
+ "kyun": "Har machine ki ek copy. Copy thodi der baad likhi jaati (tezi pehle). B mari to ~10-30 sec me copy primary ban jaati. Aakhri ek-do likhai kho bhi jaaye to chalta, asli data DB me",
+ "step": [
+  3,
+  6
+ ],
+ "peeche": "card 2 me RING (consistent hashing)",
+ "ab": "Dopahar machine B mar gayi, Arpan ki key usi pe thi, bojh DB pe",
+ "agla": "ab machine marne se nahi girta. Par data purana dikh raha (card 4)"
 }

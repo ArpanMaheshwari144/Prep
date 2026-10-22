@@ -8,9 +8,9 @@
    "w": 200,
    "h": 120,
    "kind": "user",
-   "title": "Ravi",
+   "title": "Arpan",
    "lines": [
-    "naam: 'Ravi K'"
+    "naam: 'Arpan K'"
    ]
   },
   {
@@ -33,7 +33,7 @@
    "kind": "db",
    "title": "DB",
    "lines": [
-    "Ravi K (naya)"
+    "Arpan K (naya)"
    ]
   },
   {
@@ -128,8 +128,8 @@
    "x": 30,
    "y": 84,
    "w": 600,
-   "red": "Sirf DB update karo?",
-   "green": "DB me 'Ravi K', cache me purana: sab 'Ravi' dekhte",
+   "red": "Sirf DB me badlo?",
+   "green": "DB me \"Arpan K\", cache me purana: sab \"Arpan\" dekhte",
    "n": 1
   },
   {
@@ -137,8 +137,8 @@
    "x": 650,
    "y": 84,
    "w": 820,
-   "red": "Write-through? Write-back?",
-   "green": "Through: likhna dheema. Back: cache mara to data gaya, paise pe kabhi nahi",
+   "red": "Har likhai cache me bhi (write-through)? Ya pehle cache, DB baad me (write-back)?",
+   "green": "Through: likhna dheema. Back: cache mara to data gaya, paise ke kaam me kabhi nahi",
    "n": 2
   },
   {
@@ -146,8 +146,8 @@
    "x": 30,
    "y": 500,
    "w": 700,
-   "red": "Cache ka delete fail ho gaya",
-   "green": "Umar (TTL) bachati: utni der hi purana. Pakka chahiye to CDC se",
+   "red": "Cache se hatana fail ho gaya",
+   "green": "Umar (TTL) bachati: utni der hi purana. Pakka chahiye to DB ke badlaav se hatao (CDC)",
    "n": 3,
    "mark": [
     575,
@@ -169,8 +169,8 @@
    "x": 750,
    "y": 500,
    "w": 720,
-   "red": "Delete ke baad purana wapas bhar gaya",
-   "green": "Thodi der baad phir delete (double delete), ya version se likho",
+   "red": "Hatane ke baad purana phir bhar gaya",
+   "green": "Thodi der baad dobara hatao (double delete), ya version number se likho",
    "n": 4,
    "mark": [
     900,
@@ -192,9 +192,16 @@
    "x": 30,
    "y": 595,
    "w": 1440,
-   "red": "Ravi ko apna hi purana naam dikha? Copy peeche hai.",
-   "green": "Likhne wale ko kuch der primary se padhao"
+   "red": "Arpan ko apna hi purana naam dikha? DB ki copy peeche hai.",
+   "green": "Jisne abhi likha, use kuch der primary se padhao"
   }
  ],
- "kyun": "Likho DB me, cache se hatao. Kuch bhi pahunche, key khaali hai, to agla DB se naya laayega. Umar suraksha jaal hai: delete chhoot gaya to bhi utni der hi purana dikhega"
+ "kyun": "Pehle DB me naya likho, phir cache se key hata do. Key khaali hai, to agla padhne wala DB se naya laata. Hatana chhoot gaya to umar (TTL) bachati: utni der hi purana",
+ "step": [
+  4,
+  6
+ ],
+ "peeche": "card 3 me COPY (async) + quorum",
+ "ab": "Arpan ne naam badla, sabko purana naam dikh raha",
+ "agla": "ab data taaza. Par key khatam hote hi bheed (card 5)"
 }
