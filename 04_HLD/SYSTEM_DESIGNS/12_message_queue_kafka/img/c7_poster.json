@@ -120,8 +120,8 @@
    "x": 30,
    "y": 84,
    "w": 540,
-   "red": "Pehle commit, phir kaam?",
-   "green": "Commit hua, kaam se pehle crash: khabar chhooti",
+   "red": "Pehle bookmark aage karo, phir email bhejo?",
+   "green": "Bookmark aage hua aur email se pehle gira: Arpan ka email kabhi nahi gaya",
    "n": 1,
    "conn": [
     [
@@ -139,8 +139,8 @@
    "x": 590,
    "y": 84,
    "w": 880,
-   "red": "Email bheja, 'padh liya' se pehle crash",
-   "green": "5 phir aaya: Redis me E-5 pada, skip. Arpan ko ek hi email",
+   "red": "Email bheja, bookmark aage karne se pehle gira",
+   "green": "Wahi khabar (E-5) dobara aayi. Redis me E-5 pehle se likha tha, to chhod di. Arpan ko ek hi email",
    "n": 2,
    "mark": [
     600,
@@ -162,8 +162,8 @@
    "x": 30,
    "y": 490,
    "w": 720,
-   "red": "eventId ki jagah userId se dedup",
-   "green": "Arpan ka agla sahi event bhi skip. Pehchaan eventId se, kram userId se",
+   "red": "eventId ki jagah userId se pehchana",
+   "green": "Arpan ka agla sahi order bhi chhoot gaya. Pehchaan eventId se, kram userId se",
    "n": 3,
    "mark": [
     740,
@@ -194,7 +194,7 @@
    "y": 490,
    "w": 700,
    "red": "Redis se eventId jaldi mit gaya",
-   "green": "Dobara aayi to phir bhejega: umar retry window se lambi",
+   "green": "Dobara aayi khabar pehchani nahi gayi, phir email gaya. eventId utni der rakho jitni der dobara aa sakti hai",
    "n": 4,
    "mark": [
     980,
@@ -216,11 +216,11 @@
    "x": 30,
    "y": 585,
    "w": 1440,
-   "red": "'Duplicate nahi aayega' mat bolna. Sahi: khabar khoti nahi, duplicate aa sakta, consumer pehchaan ke sambhalta.",
-   "green": "Exactly-once? Sirf Kafka se Kafka (transactions). Email / DB ke liye consumer khud pehchaane"
+   "red": "Interview me \"duplicate kabhi nahi aayega\" mat bolna. Sahi: khabar khoti nahi, dobara aa sakti, padhne wala pehchaan ke sambhalta.",
+   "green": "Exactly-once? Sirf Kafka se Kafka tak (transactions). Email ya DB ke liye padhne wala khud pehchaane"
   }
  ],
- "kyun": "Pehle kaam phir commit, to khabar kabhi nahi khoti, bas dobara aa sakti hai. Dobara aaye to eventId se pehchano. Pehchaan consumer karta hai, Kafka nahi",
+ "kyun": "Pehle email bhejo, phir bookmark aage karo (commit). Beech me gira to khabar khoti nahi, bas dobara aati. Dobara aaye to eventId dekh ke pehchano, ye kaam padhne wale ka hai, Kafka ka nahi",
  "step": [
   7,
   10

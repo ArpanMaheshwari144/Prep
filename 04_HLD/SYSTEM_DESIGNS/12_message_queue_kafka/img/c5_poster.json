@@ -107,8 +107,8 @@
    "x": 30,
    "y": 84,
    "w": 700,
-   "red": "Teeno service ek hi group me?",
-   "green": "Group me message ek ko: sirf email ko mila, baaki ko kuch nahi",
+   "red": "Teeno service ek hi team (group) me daal dete?",
+   "green": "Team me har khabar ek hi member ko jaati: sirf Email ko mila, Analytics aur Dashboard ko kuch nahi",
    "n": 1
   },
   {
@@ -116,16 +116,16 @@
    "x": 750,
    "y": 84,
    "w": 720,
-   "red": "Ek message kai service ko, ya kisi ek ko?",
-   "green": "Ye sawaal design badalta. Alag group = sabko poori"
+   "red": "Pehle poochho: ek khabar kai service ko jaani hai, ya kisi ek ko?",
+   "green": "Ye sawaal poora design badalta. Kai service ko = har service ki alag team"
   },
   {
    "type": "x",
    "x": 750,
    "y": 560,
    "w": 720,
-   "red": "Dashboard dheema (95 pe)",
-   "green": "Email nahi rukta: har group ka offset alag",
+   "red": "Dashboard dheema hai, abhi 95 pe atka",
+   "green": "Email nahi rukta, wo 100 pe hai. Har team ka bookmark alag, koi kisi ka intezaar nahi karta",
    "n": 2,
    "mark": [
     740,
@@ -147,7 +147,7 @@
    ]
   }
  ],
- "kyun": "Har group apni jagah (offset) khud yaad rakhta hai. Ye MQ ka dil hai",
+ "kyun": "Har service ki apni team (group) aur apna bookmark (offset). Isliye Email, Analytics, Dashboard teeno ko Arpan ka poora order milta, aur koi dheema ho to baaki nahi rukte",
  "step": [
   5,
   10

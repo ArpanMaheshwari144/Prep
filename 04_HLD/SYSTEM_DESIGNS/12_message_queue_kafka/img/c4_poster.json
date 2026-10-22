@@ -133,8 +133,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "group.id galat (machine ka naam)?",
-   "green": "Teen alag team: teeno ne bheja, Arpan ko 3 email",
+   "red": "Har machine ka group.id alag (jaise machine ka naam)?",
+   "green": "To Kafka teeno ko alag team samjhega, teeno ne email bheja: Arpan ko 3 email",
    "n": 1
   },
   {
@@ -144,7 +144,7 @@
    "y": 84,
    "w": 800,
    "red": "Team ki ek machine (C2) gir gayi",
-   "green": "Rebalance: uske tukde baaki ko, koi tukda bina padhne wale ke nahi",
+   "green": "Kafka uske tukde baaki machine (C1, C3) ko de deta (rebalance). Koi tukda bina padhne wale ke nahi rehta",
    "mark": [
     720,
     330
@@ -169,11 +169,11 @@
    "x": 30,
    "y": 520,
    "w": 1440,
-   "red": "Team me machine badhani? Tukde bhi badhao.",
-   "green": "10 tukde + 12 machine = 2 khaali"
+   "red": "Team me machine badhani hai? To tukde bhi badhao.",
+   "green": "10 tukde aur 12 machine = 2 machine khaali"
   }
  ],
- "kyun": "Ek group ke andar ek partition = ek hi machine. To ek khabar team me ek hi baar jaati hai",
+ "kyun": "Email Svc ki saari machine ek hi team (group.id) me hain. Team ke andar har tukda sirf ek machine ko milta, to Arpan ki khabar team me ek hi baar padhi jaati, ek hi email",
  "step": [
   4,
   10

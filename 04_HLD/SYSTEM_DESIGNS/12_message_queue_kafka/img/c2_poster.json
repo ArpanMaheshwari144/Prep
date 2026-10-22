@@ -112,8 +112,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Ek hi line me aur worker?",
-   "green": "Ek tukda ek hi worker padhta: baaki khaali",
+   "red": "Ek hi line me aur worker laga dete?",
+   "green": "Bekaar: ek line ko ek hi worker padh sakta, baaki worker khaali baithe rehte",
    "n": 1,
    "conn": [
     [
@@ -131,8 +131,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Worker badhaye, phir bhi lag badh raha",
-   "green": "Pehle tukdon ki ginti dekho, worker baad me",
+   "red": "Worker badhaye, phir bhi line lambi hoti ja rahi",
+   "green": "Pehle dekho tukde kitne hain. Tukde 10 hain to 11va worker kuch nahi karega, pehle tukde badhao",
    "n": 2,
    "mark": [
     980,
@@ -154,11 +154,11 @@
    "x": 30,
    "y": 480,
    "w": 1440,
-   "red": "Kitne partition? Jitne worker ek saath (5,000 / 500 = 10). Shuru me thoda zyada: baad me badle to key ka tukda hilta.",
-   "green": "12 worker, 10 tukde? 2 khaali baithe"
+   "red": "Kitne tukde rakhein? Jitne worker ek saath chahiye: 5,000 / sec ÷ 500 ek worker = 10. Shuru me thoda zyada rakho, baad me badhaoge to key ka tukda badal jaata.",
+   "green": "12 worker aur 10 tukde? 2 worker khaali baithe rahenge"
   }
  ],
- "kyun": "Partition = kitne worker ek saath padh sakte. Ek partition ek worker. Bheed badhe to aur partition",
+ "kyun": "Topic ke tukde (partition) bana do. Ek tukde ko ek hi worker padhta, to 10 tukde = 10 worker ek saath. Bheed badhe to tukde badhao",
  "step": [
   2,
   10

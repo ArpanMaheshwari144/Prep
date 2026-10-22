@@ -158,16 +158,16 @@
    "x": 30,
    "y": 84,
    "w": 510,
-   "red": "Rebalance me sab rukte? Purane (eager) me haan.",
-   "green": "Cooperative (2.4+): sirf jinke tukde badle"
+   "red": "Kaam baantne (rebalance) ke waqt sab ruk jaate? Purane tareeke (eager) me haan.",
+   "green": "Naye tareeke (cooperative, Kafka 2.4+) me sirf wahi rukte jinke tukde badle"
   },
   {
    "type": "x",
    "x": 560,
    "y": 84,
    "w": 910,
-   "red": "Ek khabar baar-baar fail",
-   "green": "Kuch koshish ke baad DLQ: warna poora tukda atka rehta",
+   "red": "Ek khabar baar-baar fail ho rahi",
+   "green": "Kuch koshish ke baad alag line (DLQ) me daal do. Warna uske peeche Arpan ki khabar bhi atki rehti",
    "n": 1,
    "mark": [
     1060,
@@ -190,7 +190,7 @@
    "y": 540,
    "w": 740,
    "red": "Shaam ko C2 mar gaya",
-   "green": "Rebalance: P4, P5 C1 ko, P6 C3 ko. Koi tukda bina padhne wale ke nahi",
+   "green": "Uske tukde baant diye: P4, P5 C1 ko, P6 C3 ko. Arpan wala tukda phir padha jaane laga",
    "n": 2,
    "mark": [
     680,
@@ -216,8 +216,8 @@
    "x": 790,
    "y": 540,
    "w": 680,
-   "red": "Rebalance ke baad bhi lag badh raha",
-   "green": "Alert + consumer badhao. 5 min wali khabar = tukda atka: alag pool",
+   "red": "Baantne ke baad bhi line lambi hoti ja rahi",
+   "green": "Lag = kitni khabar padhni baaki. Badhe to alert + machine badhao. Ek khabar 5 min le to use alag pool me bhejo",
    "n": 3,
    "mark": [
     950,
@@ -235,7 +235,7 @@
    ]
   }
  ],
- "kyun": "Koi partition bina padhne wale ke nahi rehta. Kharab khabar poori line nahi rokti, use theek karke baad me dobara chalao",
+ "kyun": "Koi tukda bina padhne wale ke nahi rehta, mare ka kaam baaki ko milta. Kharab khabar alag line (DLQ) me jaati, to wo poori line nahi rokti",
  "step": [
   9,
   10

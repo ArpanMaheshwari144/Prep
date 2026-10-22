@@ -114,8 +114,8 @@
    "x": 30,
    "y": 84,
    "w": 520,
-   "red": "Padhte hi delete?",
-   "green": "Replay nahi ho paata. Disk sirf retention se khaali",
+   "red": "Padhte hi khabar delete kar do?",
+   "green": "Phir dobara padhna (replay) namumkin. Disk sirf 7 din wale niyam se khaali hoti",
    "n": 1,
    "conn": [
     [
@@ -134,7 +134,7 @@
    "y": 84,
    "w": 900,
    "red": "Raat ko broker ki disk bharti ja rahi",
-   "green": "Retention 7 din: purana segment ek saath udta. Sasta",
+   "green": "7 din se purana segment (~1 GB ka tukda) ek saath uda do. Sasta aur tez",
    "n": 2,
    "mark": [
     575,
@@ -156,16 +156,16 @@
    "x": 30,
    "y": 525,
    "w": 700,
-   "red": "Kafka pipe nahi, rakhta hai: MQ ka asli number = JAGAH.",
-   "green": "Pehle poochho: purana dobara padhna chahiye?"
+   "red": "Kafka sirf pipe nahi, khabar rakhta hai. Isliye iska asli number disk ki JAGAH hai.",
+   "green": "Pehle poochho: purani khabar dobara padhni padegi?"
   },
   {
    "type": "x",
    "x": 750,
    "y": 525,
    "w": 720,
-   "red": "Consumer 7 din se zyada band raha",
-   "green": "Data gaya. Retention sabse lambi chhutti se lambi + lag alert",
+   "red": "Email Svc 7 din se zyada band raha",
+   "green": "Wo khabar ud chuki. Retention sabse lambi chhutti se lamba rakho + lag ka alert",
    "n": 3,
    "mark": [
     1420,
@@ -183,7 +183,7 @@
    ]
   }
  ],
- "kyun": "Jo rakha hai usi se replay hota hai. Purani khabar retention se jaati, poora segment ek saath. MQ ka asli number JAGAH hai. Kafka padh ke delete nahi karta, rakhta hai",
+ "kyun": "Kafka padh ke delete nahi karta, 7 din rakhta (retention). Purana poora tukda (segment) ek saath udta, sasta. Jo rakha hai usi se dobara padh sakte (replay)",
  "step": [
   10,
   10

@@ -99,8 +99,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "RAM wali queue?",
-   "green": "Restart hua aur 500 order gaye (Arpan ka bhi)",
+   "red": "Queue ko machine ki RAM me rakhte?",
+   "green": "Restart hote hi RAM khaali: Arpan ka order aur baaki 499 hamesha ke liye gaye",
    "n": 1,
    "conn": [
     [
@@ -118,8 +118,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Subah queue machine restart",
-   "green": "Message disk pe pada: Email wapas aake 121 se padhta",
+   "red": "Subah queue wali machine restart hui",
+   "green": "Khabar disk pe padi rahi. Email Svc ko yaad tha ki 120 tak padh chuka, wapas aake 121 se aage padha",
    "n": 2,
    "mark": [
     820,
@@ -141,11 +141,11 @@
    "x": 30,
    "y": 480,
    "w": 1440,
-   "red": "Dobara padhna hai? Offset peeche karo (replay), khabar wahin padi.",
-   "green": "Offset byte nahi, kram number (0, 1, 2). Chhoti .index file batati file me kahan"
+   "red": "Kal ki khabar dobara padhni ho to? Offset peeche kar do (replay), khabar disk pe wahin padi hai.",
+   "green": "Offset = line me khabar ka number (0, 1, 2 ...). Kafka ek chhoti .index file rakhta jo batati number wali khabar file me kahan hai"
   }
  ],
- "kyun": "Message disk pe pada hai. Consumer gira to wapas aake apne offset se aage padhta, producer ko pata bhi nahi chalta",
+ "kyun": "Khabar RAM me nahi, disk pe likhi hai, isliye restart pe nahi mitti. Email Svc yaad rakhta hai kahan tak padha (offset). Wapas aake wahin se aage padhta, Order Svc ko pata bhi nahi chalta",
  "step": [
   1,
   10

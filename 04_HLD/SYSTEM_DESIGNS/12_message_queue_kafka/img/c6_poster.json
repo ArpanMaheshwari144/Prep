@@ -139,8 +139,8 @@
    "x": 30,
    "y": 84,
    "w": 530,
-   "red": "acks=1?",
-   "green": "Leader ki memory pe OK: copy se pehle gira to gayi",
+   "red": "Sirf leader pe likh ke \"ho gaya\" bol do (acks=1)?",
+   "green": "Leader ne OK bola aur copy banne se pehle mar gaya: Arpan ki khabar gayi",
    "n": 1
   },
   {
@@ -148,8 +148,8 @@
    "x": 570,
    "y": 84,
    "w": 900,
-   "red": "Broker A ki disk mar gayi",
-   "green": "Controller ISR me se B ko leader banata. Data B, C pe bacha",
+   "red": "Dopahar Broker A ki disk mar gayi",
+   "green": "Controller copy wali B ko naya leader banata. Arpan ki khabar B aur C pe bachi thi",
    "n": 2,
    "mark": [
     590,
@@ -171,8 +171,8 @@
    "x": 30,
    "y": 470,
    "w": 1440,
-   "red": "ISR copy kam pad gayi",
-   "green": "min.insync=2: likhna band. Khone se rukna behtar",
+   "red": "Copy wali machine bhi kam pad gayi (sirf 1 bachi)",
+   "green": "min.insync=2: tab likhna hi band. Khabar khone se behtar hai thodi der rukna",
    "n": 3,
    "mark": [
     760,
@@ -194,16 +194,16 @@
    "x": 30,
    "y": 565,
    "w": 1440,
-   "red": "Peeche wala follower leader? Nahi, aakhri khabar nahi. 3 copy = kam se kam 3 broker.",
-   "green": "acks: 0 = bhej ke bhaago · 1 = sirf leader (click / log) · all = saari ISR (paisa)"
+   "red": "Peeche chal rahi copy ko leader bana do? Nahi, uske paas aakhri khabar nahi. 3 copy ke liye kam se kam 3 machine.",
+   "green": "acks = kitni jagah likh ke \"ho gaya\": 0 = bhej ke bhool jao · 1 = sirf leader (click, log) · all = saari copy (paisa, order)"
   },
   {
    "type": "grey",
-   "red": "Pehle poochho: message kho sakta hai, ya bilkul nahi? Isi se acks tay hota",
-   "green": ""
+   "red": "Pehle poochho: khabar kho sakti hai, ya bilkul nahi?",
+   "green": "Isi jawab se acks tay hota"
   }
  ],
- "kyun": "Leader A likhta hai, B aur C copy lete hain. \"done\" tabhi, jab ISR copy pe bhi likh gaya. Producer ko OK = khabar bach gayi. Naya leader sirf ISR me se banta hai",
+ "kyun": "Arpan ki khabar teen machine pe likhi jaati: leader A aur do copy B, C. \"Ho gaya\" tabhi bolte jab copy pe bhi likh gayi (acks=all). A mari to copy wali B naya leader banti, khabar bachi rehti",
  "step": [
   6,
   10

@@ -58,7 +58,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 3 MACHINE GIRI (restart)** · Cue: LOG disk pe + OFFSET
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -69,7 +69,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 2 BHEED AAYI** · Cue: PARTITION (tukde, alag machine)
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -80,7 +80,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 4 DO LOG EK SAATH (kram)** · Cue: KEY = userId (ek partition, kram)
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -91,7 +91,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 4 DO LOG EK SAATH (group)** · Cue: CONSUMER GROUP (ek team)
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -102,7 +102,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 1 KAAM CHALA (kai service)** · Cue: HAR SERVICE KA APNA GROUP
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -113,7 +113,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 3 MACHINE GIRI (khaas)** · Cue: LEADER + ISR, acks=all
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -124,7 +124,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 4 DO LOG EK SAATH (dobara)** · Cue: PEHLE KAAM PHIR COMMIT + IDEMPOTENT
 
-<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -135,7 +135,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 3 MACHINE GIRI (producer)** · Cue: OUTBOX + relay
 
-<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---
@@ -146,7 +146,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 5 KUCH DHEEMA (lag)** · Cue: REBALANCE + LAG alert + DLQ
 
-<img src="img/c9_poster.png?v=3" width="1000" alt="card 9: kya toota, kaise bacha">
+<img src="img/c9_poster.png?v=4" width="1000" alt="card 9: kya toota, kaise bacha">
 
 
 ---
@@ -157,7 +157,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 6 DATA BADA (disk)** · Cue: RETENTION 7 din + COMPACTION
 
-<img src="img/c10_poster.png?v=3" width="1000" alt="card 10: kya toota, kaise bacha">
+<img src="img/c10_poster.png?v=4" width="1000" alt="card 10: kya toota, kaise bacha">
 
 
 ---
