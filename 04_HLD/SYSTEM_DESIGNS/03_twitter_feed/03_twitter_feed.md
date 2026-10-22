@@ -58,15 +58,8 @@ NAAM    Redis inbox = har user ki taiyaar feed. Fanout service = naya tweet foll
 
 **Rail 1 KAAM CHALA (khaas)** · Cue: PUSH: tweet hote hi INBOX me id
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c1_poster.png?v=1" width="1000" alt="card 1: kya toota, kaise bacha">
 
-<img src="img/c1_1.png?v=5" width="900">
-
-<img src="img/c1_2.png?v=5" width="900">
-
-<img src="img/c1_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     tweet hote hi follower ke inbox me uski id chali jaati hai (fanout).
@@ -81,12 +74,6 @@ NAHI    DB pe index  -> WAHI: thoda tez hota, par har khulne pe 200 ka jod wahi 
 
 > [!IMPORTANT]
 > **Yaad rakh:** Tweet hote hi follower ke inbox me sirf id (fanout). Feed = apna inbox, ek read, likhte waqt mehnat.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - inbox me sirf id hai, poora tweet kaise? → **50 id ek saath laao (batch)**: cache / store se ek saath. Ek-ek laaye to 50 chakkar lagenge
-> - unfollow, tweet inbox me pade? → **padhte waqt follow list se chhaanto**: Poora inbox badalna mehnga hai, safai peeche hoti hai
-> - abhi follow kiya? → **uske aakhri 20 tweet id mere inbox me daal do**: ya padhte waqt uske tweet milao. Warna naya follow tab dikhega jab wo agla tweet karega
 
 
 ---
