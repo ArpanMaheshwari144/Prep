@@ -101,8 +101,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Pehle aakhir me 'done' flag",
-   "green": "Flag se pehle gira to pata hi nahi kitna likha",
+   "red": "Pehle chaaron ek-ek likh ke aakhir me \"done\" flag lagate",
+   "green": "Flag se pehle gira to pata hi nahi kitna likha gaya",
    "n": 1,
    "conn": [
     [
@@ -113,15 +113,16 @@
      470,
      230
     ]
-   ]
+   ],
+   "tha": "Flag se pehle gira to pata hi nahi kitna likha gaya"
   },
   {
    "type": "pehle",
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Balance ledger jod ke nikaal lo?",
-   "green": "Dheema, lakhon line. Balance alag column, usi transaction me",
+   "red": "Balance har baar ledger jod ke nikaal lo?",
+   "green": "Dheema, lakhon line. Balance alag column, usi transaction me badlo",
    "n": 2
   },
   {
@@ -130,7 +131,7 @@
    "y": 470,
    "w": 700,
    "red": "COMMIT se pehle crash",
-   "green": "Rollback, kuch nahi likha. User ko PENDING, galat number nahi",
+   "green": "Sab ulta (rollback), kuch nahi likha. Arpan ko PENDING, galat number nahi",
    "n": 3,
    "mark": [
     470,
@@ -152,8 +153,8 @@
    "x": 750,
    "y": 470,
    "w": 720,
-   "red": "Commit hua, jawab kho gaya, retry aayi",
-   "green": "trade_id UNIQUE, doosri ruki: Suresh ko +30k ek hi baar",
+   "red": "COMMIT hua, par jawab kho gaya, dobara aaya",
+   "green": "trade_id UNIQUE, doosra ruk gaya: Suresh ko +30k ek hi baar",
    "n": 4,
    "mark": [
     625,
@@ -183,9 +184,16 @@
    "x": 30,
    "y": 565,
    "w": 1440,
-   "red": "Galti kaise pakdoge? Raat ko ledger jodo, hamesha 0 aana chahiye.",
-   "green": "Asli paisa usi pal Suresh ko? Nahi, T+1 NSE Clearing. Ye broker ka apna khaata"
+   "red": "Galti kaise pakdoge? Raat ko ledger jodo, jod hamesha 0 aana chahiye.",
+   "green": "Asli paisa usi pal Suresh ko? Nahi, T+1 pe NSE Clearing. Ye broker ka apna khaata hai"
   }
  ],
- "kyun": "Paisa ek DB me hai, to chaaron likhai ek transaction. COMMIT se pehle crash = rollback, kuch nahi likha, user ko PENDING, galat number kabhi nahi. Ledger ka jod hamesha 0"
+ "kyun": "Sauda = chaar badlaav (Arpan -30k +10 TCS, Suresh +30k -10 TCS). Paisa ek hi DB me, to chaaron ek transaction me. COMMIT se pehle gira = kuch nahi likha. Arpan ko PENDING, galat number kabhi nahi",
+ "step": [
+  6,
+  8
+ ],
+ "peeche": "card 5 me PEHLE LOG, PHIR BOOK",
+ "ab": "Arpan ka paisa kat gaya, Suresh ko mila hi nahi",
+ "agla": "ab paisa ek DB me, share doosre DB me. Ek transaction nahi ban sakti to? (card 7)"
 }

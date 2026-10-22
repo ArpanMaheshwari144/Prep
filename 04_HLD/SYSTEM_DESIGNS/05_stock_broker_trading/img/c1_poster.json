@@ -43,7 +43,7 @@
    "w": 350,
    "h": 120,
    "kind": "user",
-   "title": "Meri screen",
+   "title": "Arpan ki screen",
    "lines": [
     "ek hi order dikha"
    ]
@@ -104,8 +104,8 @@
    "x": 30,
    "y": 84,
    "w": 640,
-   "red": "Network gaya, app ne dobara bheja",
-   "green": "Wahi id K7 gayi, server ne pehchaana: ek hi order",
+   "red": "Network gaya, app ne khud order dobara bheja",
+   "green": "Wahi id K7 gayi, server ne pehchaana: Arpan ka ek hi order",
    "n": 1,
    "mark": [
     305,
@@ -127,8 +127,8 @@
    "x": 700,
    "y": 84,
    "w": 770,
-   "red": "Button pehli tap pe band kar do?",
-   "green": "Adhoora: retry app khud karta hai, button dabta hi nahi",
+   "red": "Buy button pehli tap ke baad band kar do?",
+   "green": "Adhoora ilaaj: dobara app khud bhejta hai (timeout pe), button dabta hi nahi",
    "n": 2
   },
   {
@@ -136,8 +136,8 @@
    "x": 30,
    "y": 540,
    "w": 700,
-   "red": "Wahi id dobara, pehli abhi chal rahi",
-   "green": "Thoda ruko (IN_PROGRESS, 409). Ho gayi ho to saved jawab",
+   "red": "Wahi id dobara aayi, pehli abhi chal rahi",
+   "green": "Thoda ruko bolo (IN_PROGRESS, 409). Pehli ho gayi ho to wahi purana jawab do",
    "n": 3,
    "mark": [
     420,
@@ -159,9 +159,16 @@
    "x": 750,
    "y": 540,
    "w": 720,
-   "red": "Id kab tak yaad? ~24 ghante, phir saaf.",
-   "green": "Retry minute me hi aata hai"
+   "red": "Id kitni der yaad rakhein? ~24 ghante, phir saaf.",
+   "green": "App dobara minute ke andar hi bhejta hai"
   }
  ],
- "kyun": "Ek id = ek kaam. Id app banata, server UNIQUE se pakadta. User ko ek hi order dikhe, app kitni baar bhi bheje"
+ "kyun": "Order screen khulte hi app ek id banata (K7). Net jaane pe app dobara bhejta to wahi K7 jaati. Server ke DB me K7 ek hi baar likh sakte (UNIQUE), to Arpan ka ek hi order",
+ "step": [
+  1,
+  8
+ ],
+ "peeche": "shuru: order seedha DB me, ek server",
+ "ab": "Arpan ne Buy ek baar dabaya, order do lag gaye",
+ "agla": "ab order ek hai. Par wallet ka paisa do order me baant diya to? (card 2)"
 }

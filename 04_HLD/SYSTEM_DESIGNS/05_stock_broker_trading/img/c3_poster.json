@@ -148,8 +148,8 @@
    "x": 30,
    "y": 84,
    "w": 770,
-   "red": "Do thread, bina line?",
-   "green": "Dono ko '10 hai' dikha, dono ne le liye: 20 bik gaye",
+   "red": "Do thread, bina line ke?",
+   "green": "Dono ko \"10 hai\" dikha, dono ne le liye: 20 bik gaye, jabki the 10",
    "n": 1,
    "conn": [
     [
@@ -167,8 +167,8 @@
    "x": 820,
    "y": 84,
    "w": 650,
-   "red": "Har order pe lock? Ya DB me hi match?",
-   "green": "Lock galat: race share pe hai. DB me: har order pe dheema",
+   "red": "Har order pe lock lagao? Ya match DB me hi karo?",
+   "green": "Lock galat jagah: jhagda share pe hai. DB me match: har order pe dheema",
    "n": 2
   },
   {
@@ -176,8 +176,8 @@
    "x": 30,
    "y": 520,
    "w": 720,
-   "red": "TCS ka thread atka (GC pause)",
-   "green": "Sirf TCS ki line ruki, INFY apne thread pe, standby taiyaar",
+   "red": "TCS ka thread atka (Java GC pause)",
+   "green": "Sirf TCS ki line ruki, INFY apne thread pe chalta. Standby taiyaar",
    "n": 3,
    "mark": [
     690,
@@ -199,17 +199,24 @@
    "x": 770,
    "y": 520,
    "w": 700,
-   "red": "5000 stock = 5000 thread? Nahi: 8 core = 8 thread, stock % 8.",
-   "green": "Mujhe 10, uske paas 6? 6 ka sauda, 4 book me (PARTIALLY FILLED)"
+   "red": "5000 stock = 5000 thread? Nahi: 8 core = 8 thread, stock ko 8 me baanto.",
+   "green": "Arpan ko 10 chahiye, Suresh ke paas 6? 6 ka sauda, baaki 4 book me (PARTIALLY FILLED)"
   },
   {
    "type": "grey",
    "x": 30,
    "y": 615,
    "w": 1440,
-   "red": "Asli India me Groww / Zerodha order NSE ko bhejte, matching NSE karta. Wallet block broker ka kaam.",
-   "green": "Is design me hum apna matching chala rahe (exchange jaisa)"
+   "red": "Asli India me Groww / Zerodha order NSE ko bhejte, match NSE karta. Paisa rokna broker ka kaam.",
+   "green": "Is design me hum apna matching khud chala rahe (exchange jaisa)"
   }
  ],
- "kyun": "Ek stock ki book ko ek waqt ek hi haath. Doosra line me rukta, race hoti hi nahi. Book RAM me (tez), paisa SQL + ACID me (hamesha ka)"
+ "kyun": "Ek stock (TCS) ke saare order ek line me, aur us line ko ek hi thread chalata. Doosra order line me rukta, isliye dono ko \"10 hai\" dikhta hi nahi. Book RAM me (tez), paisa SQL DB me (pakka)",
+ "step": [
+  3,
+  8
+ ],
+ "peeche": "card 2 me check + block EK query",
+ "ab": "Suresh ke paas 10 TCS the, Arpan aur Mohan dono ko 10-10 mil gaye",
+ "agla": "ab ek thread hai. Par 9:15 pe sab TCS pe toot pade to? (card 4)"
 }

@@ -114,8 +114,8 @@
    "x": 30,
    "y": 84,
    "w": 510,
-   "red": "Sirf book ki photo?",
-   "green": "Photo ke baad wale order likhe hi nahi",
+   "red": "Sirf book ki photo kabhi-kabhi le lo?",
+   "green": "Photo ke baad aaye order kahin likhe hi nahi, gaye",
    "n": 1
   },
   {
@@ -124,7 +124,7 @@
    "y": 84,
    "w": 910,
    "red": "10:15 server gira, book (RAM) gayab",
-   "green": "Log dobara chalao (replay): wahi 4,000 wapas",
+   "green": "Log dobara chalao (replay): wahi 4,000 order wapas, Arpan ka bhi",
    "n": 2,
    "mark": [
     940,
@@ -146,8 +146,8 @@
    "x": 30,
    "y": 500,
    "w": 700,
-   "red": "Time se kram rakho?",
-   "green": "Do machine ka clock alag, ek second me do order",
+   "red": "Kram time se rakho?",
+   "green": "Do machine ki ghadi alag. Ek hi second me do order, kaun pehle pata nahi",
    "n": 3,
    "conn": [
     [
@@ -165,8 +165,8 @@
    "x": 750,
    "y": 500,
    "w": 720,
-   "red": "Dono board ek saath chala do?",
-   "green": "Nahi: do board = do sach = galat. Standby sirf padhta",
+   "red": "Dono matching server ek saath chala do?",
+   "green": "Nahi: do board = do alag sach = galat. Standby sirf log padhta, match nahi karta",
    "n": 4
   },
   {
@@ -175,8 +175,15 @@
    "y": 595,
    "w": 1440,
    "red": "Replay me der? Standby pehle se log padh ke taiyaar, pehla gire to wo chalu. Crash me paisa? DB me, wahan rollback.",
-   "green": "Dobara chalaya to kuch nahi badalta (trade_id)"
+   "green": "Dobara chalaya to kuch dohraata nahi (trade_id se pehchaan)"
   }
  ],
- "kyun": "Log hi sach hai, book uski photo. Gira = aakhri photo + uske baad ke panne. Dobara chalaya to kuch nahi badalta (trade_id)"
+ "kyun": "Har order pehle disk ke log me likho (number ke saath), phir book me. Log hi sach, book uski photo. Gira to log dobara chala do (replay), wahi 4,000 order wapas",
+ "step": [
+  5,
+  8
+ ],
+ "peeche": "card 4 me TCS ek line, baanto stocks ke beech",
+ "ab": "10:15 server gira, poori order book (RAM) gayab, Arpan ka order bhi",
+ "agla": "ab sauda hua. Par paisa aadha pahuncha to? (card 6)"
 }

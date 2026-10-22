@@ -133,7 +133,7 @@
    "y": 84,
    "w": 700,
    "red": "Har user baar-baar poochhe (polling)?",
-   "green": "10 lakh har second = server baitha",
+   "green": "10 lakh log har second = server baith gaya",
    "n": 1
   },
   {
@@ -141,8 +141,8 @@
    "x": 750,
    "y": 480,
    "w": 720,
-   "red": "Connection toota, wapas juda",
-   "green": "Abhi ka price alag se do, pub/sub kuch rakhta nahi",
+   "red": "Arpan ka connection toota, wapas juda",
+   "green": "Abhi ka price alag se de do. Pub/sub kuch yaad nahi rakhta",
    "n": 2,
    "mark": [
     985,
@@ -164,9 +164,16 @@
    "x": 30,
    "y": 480,
    "w": 700,
-   "red": "1000 baar badla? Har ~100 ms aakhri price, purana bekaar.",
-   "green": "10 lakh ek server pe? Ek server ~lakh, aur server + LB"
+   "red": "Price 1000 baar badla? Har ~100 ms sirf aakhri price bhejo, beech wale bekaar.",
+   "green": "10 lakh ek server pe? Ek server ~1 lakh, aur server + LB"
   }
  ],
- "kyun": "Price = sirf abhi ka. Badla tab server khud bheje, purana store nahi. Users kuch nahi poochte"
+ "kyun": "Price sirf abhi ka chahiye. Connection khula rakho (WebSocket), price badle tab server khud bheje. Arpan ko baar-baar poochna nahi padta",
+ "step": [
+  8,
+  8
+ ],
+ "peeche": "card 7 me HAR KADAM KA HAAL, AAGE HI",
+ "ab": "10 lakh log ek saath price poochh rahe, server baith gaya, Arpan ka TCS price atka",
+ "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

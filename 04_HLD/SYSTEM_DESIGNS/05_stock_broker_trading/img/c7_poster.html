@@ -2,63 +2,75 @@
 <meta charset="utf-8">
 <title>Card 7: do DB = ek txn nahi. Har kadam k</title>
 <style>body{margin:0;background:#0b1220} svg text{font-family:"Segoe UI",Arial,sans-serif} .m{font-family:Consolas,monospace}</style>
-<svg width="1500" height="860" viewBox="0 0 1500 860" xmlns="http://www.w3.org/2000/svg"><defs>
+<svg width="1500" height="1026" viewBox="0 0 1500 1026" xmlns="http://www.w3.org/2000/svg"><defs>
 <marker id="ablue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
 <marker id="agreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
 <marker id="apurple" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#a98bff"/></marker>
 <marker id="agrey" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6b7a90"/></marker>
 <marker id="aorange" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffa94d"/></marker>
-</defs><rect width="1500" height="860" fill="#0b1220"/>
+</defs><rect width="1500" height="1026" fill="#0b1220"/>
 <text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 7: do DB = ek txn nahi. Har kadam ka haal likho, fail to wahi se retry, aage hi</text>
 <text x="30" y="68" font-size="15" fill="#9fb0c8">Laal number = yahan toot sakta hai, neeche usi number pe: laal = kya hua, hara = kaise bacha</text>
-<rect x="30" y="160" width="200" height="110" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="130.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Sauda pakka</text>
-<text x="130.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">INFY 20k</text>
-<text x="130.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">trade_id t9</text>
-<rect x="300" y="135" width="260" height="160" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
-<text x="430.0" y="169" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Settlement</text>
-<text x="430.0" y="195" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">haal likho:</text>
-<text x="430.0" y="217" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">wallet done</text>
-<text x="430.0" y="239" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">portfolio done</text>
-<text x="430.0" y="261" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">= SETTLED</text>
-<rect x="660" y="100" width="300" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="810.0" y="134" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Wallet DB</text>
-<text x="810.0" y="160" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">20k kata (done)</text>
-<rect x="660" y="260" width="300" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
-<text x="810.0" y="294" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Portfolio DB</text>
-<text x="810.0" y="320" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">share daalo</text>
-<rect x="1080" y="160" width="390" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
-<text x="1275.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Meri screen</text>
-<text x="1275.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">beech me: PENDING</text>
-<text x="1275.0" y="242" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">phir SETTLED</text>
-<path d="M232 215 L296 215" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
-<path d="M562 175 L656 150" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M562 255 L656 310" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
-<path d="M562 225 L1076 225" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
-<circle cx="700" cy="360" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="700" y="365" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
-<circle cx="920" cy="360" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
-<text x="920" y="365" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
-<rect x="30" y="434" width="1440" height="44" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
-<text x="48" y="460" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
-<text x="160" y="460" font-size="13.5" fill="#cfeee0">Match ke baad sauda PAKKA hai. System hi aage badhaata (retry), user ko kuch dobara nahi karna. Beech ka haal user ko PENDING dikhta</text>
-<rect x="30" y="508" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="52" cy="533" r="12" fill="#ff5a6a"/>
-<text x="52" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
-<text x="74" y="538" font-size="15" font-weight="700" fill="#ff5a6a">Portfolio DB fail, share nahi aaye</text>
-<text x="52" y="565" font-size="13.5" fill="#7fe0b0">Likhe haal se retry, aage hi, jab tak</text>
-<text x="52" y="585" font-size="13.5" fill="#7fe0b0">SETTLED</text>
-<rect x="392" y="508" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
-<circle cx="414" cy="533" r="12" fill="#ff5a6a"/>
-<text x="414" y="538" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
-<text x="436" y="538" font-size="15" font-weight="700" fill="#ff5a6a">Portfolio DB ghanta bhar band</text>
-<text x="414" y="565" font-size="13.5" fill="#7fe0b0">Trade PENDING + alert, ops share daalta.</text>
-<text x="414" y="585" font-size="13.5" fill="#7fe0b0">User dobara nahi: naya + purana dono zinda =</text>
-<text x="414" y="605" font-size="13.5" fill="#7fe0b0">10 INFY, paisa do baar</text>
-<rect x="30" y="670" width="1440" height="66" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
-<text x="48" y="696" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
-<text x="48" y="720" font-size="13.5" fill="#e6dcb8">Paisa ulta kar do: Galat: match ke baad sauda pakka, bechne wale ko 20k mil chuke   ·   Do DB, ek transaction: Nahi ban sakti. Isliye har kadam ka haal, retry aage hi</text>
-<rect x="30" y="758" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
-<text x="48" y="788" font-size="13.5" fill="#c9d6e8">Retry dobara chal gaya? Har kadam trade_id se, ho chuka = no-op. Match se pehle atka? SAGA: block hatao.</text>
-<text x="48" y="810" font-size="13.5" fill="#c9d6e8">Keemat? Beech me PENDING, par 2PC jaisa lamba lock nahi. Orchestration: saaf dikhe kaunsa step atka</text>
+<rect x="1330" y="50" width="140" height="28" rx="14" fill="#2a1a10" stroke="#ffa94d" stroke-width="2"/>
+<text x="1400" y="69" font-size="14" font-weight="700" fill="#ffa94d" text-anchor="middle">card 7 / 8</text>
+<rect x="30" y="84" width="1440" height="46" rx="9" fill="#111a2a" stroke="#33425a" stroke-width="2"/>
+<text x="48" y="113" font-size="15" font-weight="700" fill="#9fb0c8">Peeche:</text>
+<text x="118" y="113" font-size="14.5" fill="#c9d6e8">card 6 me EK TRANSACTION: chaaron ya koi nahi</text>
+<text x="760" y="113" font-size="15" font-weight="700" fill="#ff8a95">Ab:</text>
+<text x="796" y="113" font-size="14.5" fill="#f0d4d8">Dopahar Arpan ka INFY ka 20k kata (Wallet DB), share nahi aaye (Portfolio DB)</text>
+<rect x="30" y="220" width="200" height="110" rx="12" fill="#152033" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="130.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Sauda pakka</text>
+<text x="130.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">INFY 20k</text>
+<text x="130.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">trade_id t9</text>
+<rect x="300" y="195" width="260" height="160" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="430.0" y="229" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Settlement</text>
+<text x="430.0" y="255" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">haal likho:</text>
+<text x="430.0" y="277" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">wallet done</text>
+<text x="430.0" y="299" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">portfolio done</text>
+<text x="430.0" y="321" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">= SETTLED</text>
+<rect x="660" y="160" width="300" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="810.0" y="194" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Wallet DB</text>
+<text x="810.0" y="220" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">20k kata (done)</text>
+<rect x="660" y="320" width="300" height="100" rx="12" fill="#1d1838" stroke="#a98bff" stroke-width="2.5"/>
+<text x="810.0" y="354" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Portfolio DB</text>
+<text x="810.0" y="380" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">share daalo</text>
+<rect x="1080" y="220" width="390" height="110" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="1275.0" y="254" font-size="19" font-weight="700" fill="#e6edf3" text-anchor="middle">Arpan ki screen</text>
+<text x="1275.0" y="280" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">beech me: PENDING</text>
+<text x="1275.0" y="302" font-size="13" fill="#c9d6e8" class="m" text-anchor="middle">phir SETTLED</text>
+<path d="M232 275 L296 275" fill="none" stroke="#ffa94d" stroke-width="3" marker-end="url(#aorange)"/>
+<path d="M562 235 L656 210" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M562 315 L656 370" fill="none" stroke="#a98bff" stroke-width="3" marker-end="url(#apurple)"/>
+<path d="M562 285 L1076 285" fill="none" stroke="#3ddc97" stroke-width="3" marker-end="url(#agreen)"/>
+<circle cx="700" cy="420" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="700" y="425" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">1</text>
+<circle cx="920" cy="420" r="14" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2.5"/>
+<text x="920" y="425" font-size="14" font-weight="700" fill="#ff5a6a" text-anchor="middle">2</text>
+<rect x="30" y="494" width="1440" height="64" rx="9" fill="#0f2a22" stroke="#3ddc97" stroke-width="2"/>
+<text x="48" y="520" font-size="14" font-weight="700" fill="#3ddc97">Kyun chalta:</text>
+<text x="160" y="520" font-size="13.5" fill="#cfeee0">Do alag DB me ek transaction nahi ban sakti. Har kadam ka haal likho (wallet done, portfolio done). Fail hua to wahin se dobara, aage hi. Sauda pakka hai, ulta</text>
+<text x="160" y="540" font-size="13.5" fill="#cfeee0">nahi. Arpan ko beech me PENDING</text>
+<rect x="30" y="588" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="613" r="12" fill="#ff5a6a"/>
+<text x="52" y="618" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="74" y="618" font-size="15" font-weight="700" fill="#ff5a6a">Portfolio DB fail, share nahi aaye</text>
+<text x="52" y="645" font-size="13.5" fill="#7fe0b0">Likhe hue haal se dobara koshish, aage hi,</text>
+<text x="52" y="665" font-size="13.5" fill="#7fe0b0">jab tak SETTLED</text>
+<rect x="392" y="588" width="345" height="127" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="414" cy="613" r="12" fill="#ff5a6a"/>
+<text x="414" y="618" font-size="13" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="436" y="618" font-size="15" font-weight="700" fill="#ff5a6a">Portfolio DB ghanta bhar band</text>
+<text x="414" y="645" font-size="13.5" fill="#7fe0b0">Trade PENDING + alert, ops share daalta.</text>
+<text x="414" y="665" font-size="13.5" fill="#7fe0b0">Arpan dobara order na kare: naya + purana</text>
+<text x="414" y="685" font-size="13.5" fill="#7fe0b0">dono = 10 INFY, paisa do baar</text>
+<rect x="30" y="750" width="1440" height="86" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="776" font-size="14" font-weight="700" fill="#ffcc4d">Doosra tareeka kyun nahi?</text>
+<text x="48" y="800" font-size="13.5" fill="#e6dcb8">Paisa wapas kar do (ulta): Galat: match ke baad sauda pakka hai, bechne wale ko 20k mil chuke   ·   Dono DB me ek hi transaction: Nahi ban sakti. Isliye har kadam ka haal likho, dobara aage</text>
+<text x="48" y="820" font-size="13.5" fill="#e6dcb8">hi</text>
+<rect x="30" y="858" width="1440" height="72" rx="9" fill="#141c2b" stroke="#3a4a63" stroke-width="2"/>
+<text x="48" y="888" font-size="13.5" fill="#c9d6e8">Dobara chalane pe kuch do baar ho gaya? Har kadam trade_id se, ho chuka = kuch mat karo. Match se pehle atka? Tab ulta (SAGA): block hatao.</text>
+<text x="48" y="910" font-size="13.5" fill="#c9d6e8">Keemat: beech me PENDING dikhta, par lamba lock (2PC) nahi. Ek jagah (orchestrator) se dikhta kaunsa kadam atka</text>
+<rect x="30" y="952" width="1440" height="44" rx="9" fill="#221c08" stroke="#ffcc4d" stroke-width="2"/>
+<text x="48" y="980" font-size="15" font-weight="700" fill="#ffcc4d">AGLA &gt;</text>
+<text x="118" y="980" font-size="14.5" fill="#e6dcb8">ab andar sab theek. Par bahar 10 lakh log price maang rahe (card 8)</text>
 </svg>

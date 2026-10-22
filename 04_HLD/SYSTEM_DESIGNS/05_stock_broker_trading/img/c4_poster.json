@@ -55,7 +55,7 @@
    "w": 430,
    "h": 140,
    "kind": "user",
-   "title": "Meri screen",
+   "title": "Arpan ki screen",
    "lines": [
     "line me lagte hi: ACCEPTED",
     "sauda hua: FILLED"
@@ -127,7 +127,7 @@
    "y": 84,
    "w": 700,
    "red": "Har order pe lock + DB?",
-   "green": "Ek-ek karke dheema, jam",
+   "green": "Ek-ek karke dheema, sab jam",
    "n": 1,
    "conn": [
     [
@@ -145,8 +145,8 @@
    "x": 750,
    "y": 84,
    "w": 720,
-   "red": "TCS ko do thread me baanto?",
-   "green": "Toota: ek stock = ek line. Baantna stocks ke beech",
+   "red": "TCS ko do thread me baant do?",
+   "green": "Galat: ek stock = ek line. Do thread = phir wahi do ko 10 wali dikkat. Baanto stocks ke beech",
    "n": 2,
    "conn": [
     [
@@ -168,5 +168,12 @@
    "green": "Line lambi = der, par order khota nahi. ACCEPTED turant, FILLED sauda pe"
   }
  ],
- "kyun": "RAM me ek thread lakhon order / sec nipta deta. Line lambi = der, par order khota nahi, line me hai"
+ "kyun": "RAM me ek thread lakhon order / sec nipta deta. Line lambi = thodi der, par order khota nahi. Arpan ko line me lagte hi ACCEPTED, sauda hone pe FILLED",
+ "step": [
+  4,
+  8
+ ],
+ "peeche": "card 3 me ek stock = ek line, ek thread",
+ "ab": "9:15 baje sab TCS pe toot pade, hazaaron order / sec",
+ "agla": "ab sab RAM me hai. Server gira to? (card 5)"
 }

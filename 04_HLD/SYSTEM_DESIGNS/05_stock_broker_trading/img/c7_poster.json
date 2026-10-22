@@ -56,7 +56,7 @@
    "w": 390,
    "h": 110,
    "kind": "user",
-   "title": "Meri screen",
+   "title": "Arpan ki screen",
    "lines": [
     "beech me: PENDING",
     "phir SETTLED"
@@ -123,8 +123,8 @@
    "x": 30,
    "y": 84,
    "w": 620,
-   "red": "Paisa ulta kar do?",
-   "green": "Galat: match ke baad sauda pakka, bechne wale ko 20k mil chuke",
+   "red": "Paisa wapas kar do (ulta)?",
+   "green": "Galat: match ke baad sauda pakka hai, bechne wale ko 20k mil chuke",
    "n": 1
   },
   {
@@ -132,8 +132,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Do DB, ek transaction?",
-   "green": "Nahi ban sakti. Isliye har kadam ka haal, retry aage hi",
+   "red": "Dono DB me ek hi transaction?",
+   "green": "Nahi ban sakti. Isliye har kadam ka haal likho, dobara aage hi",
    "n": 2
   },
   {
@@ -142,7 +142,7 @@
    "y": 500,
    "w": 700,
    "red": "Portfolio DB fail, share nahi aaye",
-   "green": "Likhe haal se retry, aage hi, jab tak SETTLED",
+   "green": "Likhe hue haal se dobara koshish, aage hi, jab tak SETTLED",
    "n": 3,
    "mark": [
     700,
@@ -165,9 +165,8 @@
    "y": 500,
    "w": 720,
    "red": "Portfolio DB ghanta bhar band",
-   "green": "Trade PENDING + alert, ops share daalta. User dobara nahi:",
+   "green": "Trade PENDING + alert, ops share daalta. Arpan dobara order na kare: naya + purana dono = 10 INFY, paisa do baar",
    "n": 4,
-   "green2": "naya + purana dono zinda = 10 INFY, paisa do baar",
    "mark": [
     920,
     450
@@ -188,9 +187,16 @@
    "x": 30,
    "y": 605,
    "w": 1440,
-   "red": "Retry dobara chal gaya? Har kadam trade_id se, ho chuka = no-op. Match se pehle atka? SAGA: block hatao.",
-   "green": "Keemat? Beech me PENDING, par 2PC jaisa lamba lock nahi. Orchestration: saaf dikhe kaunsa step atka"
+   "red": "Dobara chalane pe kuch do baar ho gaya? Har kadam trade_id se, ho chuka = kuch mat karo. Match se pehle atka? Tab ulta (SAGA): block hatao.",
+   "green": "Keemat: beech me PENDING dikhta, par lamba lock (2PC) nahi. Ek jagah (orchestrator) se dikhta kaunsa kadam atka"
   }
  ],
- "kyun": "Match ke baad sauda PAKKA hai. System hi aage badhaata (retry), user ko kuch dobara nahi karna. Beech ka haal user ko PENDING dikhta"
+ "kyun": "Do alag DB me ek transaction nahi ban sakti. Har kadam ka haal likho (wallet done, portfolio done). Fail hua to wahin se dobara, aage hi. Sauda pakka hai, ulta nahi. Arpan ko beech me PENDING",
+ "step": [
+  7,
+  8
+ ],
+ "peeche": "card 6 me EK TRANSACTION: chaaron ya koi nahi",
+ "ab": "Dopahar Arpan ka INFY ka 20k kata (Wallet DB), share nahi aaye (Portfolio DB)",
+ "agla": "ab andar sab theek. Par bahar 10 lakh log price maang rahe (card 8)"
 }
