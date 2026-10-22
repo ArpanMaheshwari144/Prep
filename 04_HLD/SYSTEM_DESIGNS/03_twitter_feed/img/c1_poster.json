@@ -1,5 +1,5 @@
 {
- "title": "Card 1: tweet hote hi follower ke inbox me uski id. App kholo to bas apna inbox padho",
+ "title": "Card 1: tweet hote hi har follower ke inbox me uski id daal do. App kholo to bas apna inbox padho",
  "h": 620,
  "boxes": [
   {
@@ -10,7 +10,7 @@
    "kind": "user",
    "title": "Ravi",
    "lines": [
-    "tweet t9 kiya"
+    "tweet kiya (id: t9)"
    ]
   },
   {
@@ -22,7 +22,7 @@
    "title": "Fanout",
    "lines": [
     "Ravi ke har follower",
-    "ke inbox me id"
+    "ke inbox me t9 daalta"
    ]
   },
   {
@@ -33,7 +33,7 @@
    "kind": "cache",
    "title": "Arpan ka inbox (Redis)",
    "lines": [
-    "t9, t8, t5 ... (sirf id)",
+    "t9, t8, t5 ... (sirf tweet ki id)",
     "pehle se bana hua"
    ]
   },
@@ -56,7 +56,7 @@
    "kind": "db",
    "title": "Tweet store",
    "lines": [
-    "poora tweet yahan"
+    "poora tweet (text, photo) yahan"
    ]
   }
  ],
@@ -103,7 +103,7 @@
     ]
    ],
    "c": "green",
-   "label": "ek read",
+   "label": "padha",
    "lx": 1060,
    "ly": 225,
    "a": "middle"

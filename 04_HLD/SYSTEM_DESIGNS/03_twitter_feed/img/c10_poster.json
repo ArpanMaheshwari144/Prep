@@ -1,5 +1,5 @@
 {
- "title": "Card 10: video S3 me (seedha upload), dekhne wale ko paas wale CDN se",
+ "title": "Card 10: video S3 me (phone se seedha upload), dekhne wale ko paas wale CDN se",
  "h": 520,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "db",
    "title": "S3",
    "lines": [
-    "bhaari maal yahan",
-    "seedha upload (presigned)"
+    "bhaari video yahan",
+    "phone se seedha upload (presigned)"
    ]
   },
   {
@@ -33,7 +33,7 @@
    "kind": "cache",
    "title": "CDN (paas wala)",
    "lines": [
-    "video ki copy",
+    "video ki copy shehron me",
     "Delhi, London, Sydney"
    ]
   },
@@ -225,7 +225,7 @@
   10,
   10
  ],
- "peeche": "card 9 me ALAG SERVICE (likhna / padhna)",
+ "peeche": "card 9 me likhne aur padhne ki alag service",
  "ab": "Arpan ne match ki video daali, sabko dheemi aur mehngi",
  "agla": "poora design ek saans me: file me neeche \"Poora design ek saans me\""
 }

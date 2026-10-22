@@ -1,5 +1,5 @@
 {
- "title": "Card 8: kai App, aage ALB. App kuch yaad nahi rakhti, ek giri to baaki chalti",
+ "title": "Card 8: kai App, aage ALB (load balancer). App kuch yaad nahi rakhti, ek giri to baaki chalti",
  "h": 590,
  "boxes": [
   {
@@ -21,9 +21,8 @@
    "kind": "lb",
    "title": "ALB",
    "lines": [
-    "har ~10 sec:",
-    "zinda ho?",
-    "chup = bahar"
+    "har ~10 sec poochta: zinda ho?",
+    "chup App list se bahar"
    ]
   },
   {
@@ -67,7 +66,7 @@
    "kind": "db",
    "title": "Redis / DB",
    "lines": [
-    "sab yaad yahan"
+    "login, inbox sab yahan"
    ]
   }
  ],
@@ -217,7 +216,7 @@
   8,
   10
  ],
- "peeche": "card 7 me HAR REGION ME COPY + Route 53",
+ "peeche": "card 7 me har region me data ki copy, Route 53 paas wala region deta",
  "ab": "Raat ko India me ek hi App machine thi, wo giri, Arpan samet poora India band",
  "agla": "ab padhne ki bheed tweet likhne ko daba rahi (card 9)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 6: Cassandra, user_id se baanto. Mere saare tweet ek machine pe, naya sabse upar",
+ "title": "Card 6: tweet Cassandra me, user_id se machines me baanto. Arpan ke saare tweet ek machine pe, naya sabse upar",
  "h": 670,
  "boxes": [
   {
@@ -10,8 +10,8 @@
    "kind": "server",
    "title": "Tweet Svc",
    "lines": [
-    "5,000 tweet / sec",
-    "5 saal me 0.5 PB"
+    "har second 5,000 tweet",
+    "5 saal me 0.5 PB data"
    ]
   },
   {
@@ -44,7 +44,7 @@
    "kind": "user",
    "title": "Arpan ki profile khuli",
    "lines": [
-    "ek machine, ek read"
+    "ek hi machine se padha"
    ]
   }
  ],
@@ -90,7 +90,7 @@
     ]
    ],
    "c": "green",
-   "label": "ek read",
+   "label": "padha",
    "lx": 1000,
    "ly": 275
   }
@@ -197,7 +197,7 @@
   6,
   10
  ],
- "peeche": "card 5 me AAKHRI 800 + soye hue hatao",
+ "peeche": "card 5 me inbox me sirf aakhri 800, soye user ka inbox mita",
  "ab": "DB alert: har second 5,000 tweet, 5 saal me 0.5 PB",
  "agla": "ab data US me, par Arpan Bangalore me (card 7)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 5: inbox me sirf aakhri 800 (trim). Soye user ka inbox 30 din me khud mit jaata (TTL)",
+ "title": "Card 5: inbox me sirf aakhri 800 tweet (purane kaato). Soye user ka inbox 30 din me khud mit jaata (TTL)",
  "h": 640,
  "boxes": [
   {
@@ -21,9 +21,9 @@
    "kind": "cache",
    "title": "Inbox (Redis)",
    "lines": [
-    "sirf aakhri 800 id (purane kaate)",
-    "soye user ka inbox 30 din me mita",
-    "har item: id + score, ~60-100 byte"
+    "sirf aakhri 800 id, purane kaate",
+    "soya user: 30 din me inbox mita",
+    "har id ~60-100 byte"
    ]
   },
   {
@@ -165,7 +165,7 @@
   5,
   10
  ],
- "peeche": "card 4 me GARAM TWEET RAM me",
+ "peeche": "card 4 me garam tweet RAM me, DB tak sirf ek request",
  "ab": "Shaam ko Redis alert: 50 crore inbox, RAM bhar rahi",
  "agla": "ab tweet hi itne ho gaye ki DB me nahi aate (card 6)"
 }

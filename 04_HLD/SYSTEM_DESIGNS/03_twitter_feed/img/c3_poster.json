@@ -1,5 +1,5 @@
 {
- "title": "Card 3: aam user ka tweet push (inbox me), celeb ka pull. Feed khule tab dono milao",
+ "title": "Card 3: aam user ka tweet inbox me daalo (push), celeb ka tweet feed kholte waqt laao (pull)",
  "h": 630,
  "boxes": [
   {
@@ -32,8 +32,8 @@
    "kind": "cache",
    "title": "Celeb cache",
    "lines": [
-    "Bieber ka tweet yahin",
-    "inbox me push nahi"
+    "Bieber ka tweet yahin rakha",
+    "10 crore inbox me nahi daala"
    ]
   },
   {
@@ -45,7 +45,7 @@
    "title": "Fanout (push)",
    "lines": [
     "Ravi ka tweet",
-    "200 inbox me"
+    "uske 200 follower ke inbox me"
    ]
   },
   {
@@ -56,7 +56,7 @@
    "kind": "cache",
    "title": "Arpan ka inbox",
    "lines": [
-    "aam logon ke id"
+    "aam logon ke tweet ki id"
    ]
   },
   {
@@ -68,7 +68,7 @@
    "title": "Arpan ki feed (kholte waqt)",
    "lines": [
     "inbox + celebs ke naye tweet",
-    "time se milao"
+    "dono ko time se milao"
    ]
   }
  ],
@@ -124,7 +124,7 @@
     ]
    ],
    "c": "green",
-   "label": "pull",
+   "label": "laao",
    "lx": 1000,
    "ly": 295
   },
@@ -241,7 +241,7 @@
   3,
   10
  ],
- "peeche": "card 2 me KAFKA, inbox peeche",
+ "peeche": "card 2 me khabar Kafka me, workers peeche se inbox bharte",
  "ab": "Bieber ka ek tweet = 10 crore inbox, Kafka ki line ghanton atki, Arpan ka tweet peeche",
  "agla": "ab ek tweet pe crore log ek saath. DB jhel payega? (card 4)"
 }

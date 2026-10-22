@@ -1,5 +1,5 @@
 {
- "title": "Card 4: garam tweet RAM me (hot-tweet cache). Miss pe sirf ek request DB tak, baaki uska jawab lete",
+ "title": "Card 4: garam tweet RAM me (hot-tweet cache). Cache me nahi mila to sirf ek request DB tak, baaki ruk ke wahi lete",
  "h": 520,
  "boxes": [
   {
@@ -21,8 +21,8 @@
    "kind": "server",
    "title": "App",
    "lines": [
-    "memory me 1-2 sec",
-    "ki copy bhi"
+    "apni memory me bhi",
+    "1-2 sec ki copy"
    ]
   },
   {
@@ -33,9 +33,9 @@
    "kind": "cache",
    "title": "Hot-tweet cache (RAM)",
    "lines": [
-    "tweet:123#1 .. #5",
-    "miss: sirf ek DB jaaye",
-    "(lock), baaki ruk ke lein"
+    "ek tweet ki 5 copy, 5 machine pe",
+    "nahi mila: sirf ek DB jaaye (lock)",
+    "baaki ruk ke usi ka jawab lein"
    ]
   },
   {
@@ -91,7 +91,7 @@
    ],
    "c": "grey",
    "dash": true,
-   "label": "miss: ek",
+   "label": "sirf ek",
    "lx": 1039,
    "ly": 260,
    "a": "middle"
@@ -189,7 +189,7 @@
   4,
   10
  ],
- "peeche": "card 3 me HYBRID: aam push, celeb pull",
+ "peeche": "card 3 me aam ka tweet push, celeb ka pull",
  "ab": "Match khatam, Virat ka tweet, crore log ek saath, DB gira, Arpan ki feed atki",
  "agla": "ab Redis hi bharne laga (card 5)"
 }

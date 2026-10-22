@@ -1,5 +1,5 @@
 {
- "title": "Card 9: likhne aur padhne ki alag service. ALB path se baant-ta, jahan bheed wahi badhao",
+ "title": "Card 9: tweet likhne aur feed padhne ki alag service. ALB raasta (path) dekh ke bhejta, jahan bheed wahi badhao",
  "h": 560,
  "boxes": [
   {
@@ -10,8 +10,8 @@
    "kind": "user",
    "title": "Users",
    "lines": [
-    "crore scroll,",
-    "kuch tweet"
+    "crore log feed padhte,",
+    "kuch hi tweet likhte"
    ]
   },
   {
@@ -22,8 +22,8 @@
    "kind": "lb",
    "title": "ALB",
    "lines": [
-    "path dekh ke",
-    "baant-ta"
+    "raasta (path) dekh ke",
+    "sahi service ko bhejta"
    ]
   },
   {
@@ -34,7 +34,7 @@
    "kind": "server",
    "title": "Tweet Svc (x 2)",
    "lines": [
-    "POST /tweet"
+    "tweet likhna (POST /tweet)"
    ]
   },
   {
@@ -45,7 +45,7 @@
    "kind": "server",
    "title": "Timeline Svc (x 20)",
    "lines": [
-    "GET /feed"
+    "feed padhna (GET /feed)"
    ]
   },
   {
@@ -186,7 +186,7 @@
   9,
   10
  ],
- "peeche": "card 8 me kai App + ALB",
+ "peeche": "card 8 me kai App, aage ALB",
  "ab": "Highlights ki bheed ne Arpan ka tweet daalna dheema kar diya",
  "agla": "ab bhaari maal: photo, video (card 10)"
 }

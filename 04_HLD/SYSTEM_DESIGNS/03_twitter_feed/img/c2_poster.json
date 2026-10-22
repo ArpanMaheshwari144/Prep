@@ -1,5 +1,5 @@
 {
- "title": "Card 2: tweet DB me save + khabar Kafka me, turant 'ho gaya'. Inbox workers peeche bharte",
+ "title": "Card 2: tweet DB me save, khabar Kafka me, turant \"ho gaya\". Workers peeche se inbox bharte",
  "h": 700,
  "boxes": [
   {
@@ -34,7 +34,8 @@
    "kind": "cache",
    "title": "Kafka",
    "lines": [
-    "khabar disk pe"
+    "khabar disk pe rakhta",
+    "kuch nahi khota"
    ]
   },
   {
@@ -57,8 +58,8 @@
    "kind": "cache",
    "title": "5,000 inbox",
    "lines": [
-    "sorted set (Redis)",
-    "id ek hi baar"
+    "har follower ka inbox (Redis)",
+    "ek id ek hi baar"
    ]
   },
   {
@@ -263,7 +264,7 @@
   2,
   10
  ],
- "peeche": "card 1 me PUSH: tweet hote hi INBOX me id",
+ "peeche": "card 1 me tweet hote hi follower ke inbox me id (push)",
  "ab": "Arpan ne tweet kiya, button 5 sec ghoomta raha",
  "agla": "ab aam tweet theek. Par celebrity ka ek tweet? (card 3)"
 }

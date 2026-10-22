@@ -92,7 +92,7 @@
    ],
    "c": "purple",
    "dash": true,
-   "label": "copy",
+   "label": "data ki copy",
    "lx": 1050,
    "ly": 300,
    "a": "middle"
@@ -201,7 +201,7 @@
   7,
   10
  ],
- "peeche": "card 6 me CASSANDRA, user_id se baanto",
+ "peeche": "card 6 me tweet Cassandra me, user_id se baante",
  "ab": "Arpan Bangalore me, data US me, har feed 300 ms",
  "agla": "ab har region me App ek hi machine. Wo giri to? (card 8)"
 }
