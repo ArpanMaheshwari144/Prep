@@ -1,5 +1,5 @@
 {
- "title": "Card 2: check + block ek hi atomic UPDATE. 1 row = jeeta, 0 row = turant reject",
+ "title": "Card 2: paisa check karna aur block karna ek hi UPDATE query me. 1 row badli = jeeta, 0 row = turant mana",
  "h": 660,
  "boxes": [
   {
@@ -54,10 +54,9 @@
    "kind": "db",
    "title": "Wallet DB (total 50k)",
    "lines": [
-    "SET blocked = blocked + 30k",
-    "WHERE total - blocked >= 30k",
-    "",
-    "A: 1 row = jeeta, block",
+    "UPDATE: blocked + 30k",
+    "sirf jab bacha >= 30k",
+    "A: 1 row badli = block",
     "B: 20k bacha, 0 row"
    ]
   },
@@ -217,7 +216,7 @@
   2,
   8
  ],
- "peeche": "card 1 me IDEMPOTENCY KEY (wahi id dobara)",
+ "peeche": "card 1 me order ki apni id, retry pe wahi",
  "ab": "Arpan ke wallet me 50k the, phir bhi 30k-30k ke dono order (laptop + phone) lag gaye",
  "agla": "ab paisa theek. Par ek hi share do khareedaron ko bik gaya to? (card 3)"
 }

@@ -1,5 +1,5 @@
 {
- "title": "Card 1: screen khulte hi app ek id banata, retry pe wahi id. Server UNIQUE se pakadta: ek id = ek order",
+ "title": "Card 1: screen khulte hi app order ki ek id banata (K7), retry pe wahi id. DB me id ek hi baar: ek id = ek order",
  "h": 630,
  "boxes": [
   {
@@ -10,8 +10,8 @@
    "kind": "user",
    "title": "Arpan (app)",
    "lines": [
-    "screen khulte hi",
-    "id = K7"
+    "order screen khuli",
+    "app ne id banayi: K7"
    ]
   },
   {
@@ -22,8 +22,8 @@
    "kind": "server",
    "title": "Order Svc",
    "lines": [
-    "id pe UNIQUE",
-    "wahi id = purana jawab"
+    "id DB me ek hi baar (UNIQUE)",
+    "wahi id dobara = purana jawab"
    ]
   },
   {
@@ -62,7 +62,7 @@
     ]
    ],
    "c": "blue",
-   "label": "K7",
+   "label": "id K7",
    "lx": 290,
    "ly": 330,
    "a": "middle"

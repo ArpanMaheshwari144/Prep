@@ -1,5 +1,5 @@
 {
- "title": "Card 6: chaaron badlaav ek transaction: ya sab, ya koi nahi. Ledger ka jod hamesha 0",
+ "title": "Card 6: chaaron badlaav (dono ka paisa + share) ek transaction me: ya sab, ya koi nahi",
  "h": 660,
  "boxes": [
   {
@@ -22,9 +22,9 @@
    "kind": "server",
    "title": "Settlement",
    "lines": [
-    "BEGIN",
-    "chaaron likho",
-    "COMMIT"
+    "shuru (BEGIN)",
+    "chaaron badlaav likho",
+    "pakka (COMMIT)"
    ]
   },
   {
@@ -37,9 +37,8 @@
    "lines": [
     "Arpan: -30k, +10 TCS",
     "Suresh: +30k, -10 TCS",
-    "trade_id UNIQUE",
-    "ledger ka jod = 0",
-    "balance alag column"
+    "trade_id ek hi baar (UNIQUE)",
+    "saari entry ka jod = 0"
    ]
   },
   {
@@ -193,7 +192,7 @@
   6,
   8
  ],
- "peeche": "card 5 me PEHLE LOG, PHIR BOOK",
+ "peeche": "card 5 me pehle log, phir book",
  "ab": "Arpan ka paisa kat gaya, Suresh ko mila hi nahi",
  "agla": "ab paisa ek DB me, share doosre DB me. Ek transaction nahi ban sakti to? (card 7)"
 }

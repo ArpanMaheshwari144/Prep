@@ -1,5 +1,5 @@
 {
- "title": "Card 4: 9:15 ki bheed: TCS ki ek line, ek thread RAM me lakhon / sec. Baanto stocks ke beech",
+ "title": "Card 4: 9:15 ki bheed: TCS ka ek thread RAM me lakhon order / sec jhel leta. Alag stock, alag thread",
  "h": 620,
  "boxes": [
   {
@@ -10,8 +10,8 @@
    "kind": "user",
    "title": "Users",
    "lines": [
-    "9:15: hazaaron",
-    "order / sec"
+    "9:15: har second",
+    "hazaaron order"
    ]
   },
   {
@@ -34,8 +34,8 @@
    "kind": "server",
    "title": "TCS thread",
    "lines": [
-    "RAM me",
-    "lakhon / sec"
+    "RAM me, har second",
+    "lakhon order"
    ]
   },
   {

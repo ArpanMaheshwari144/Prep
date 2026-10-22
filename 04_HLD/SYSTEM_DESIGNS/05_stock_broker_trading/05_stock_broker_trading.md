@@ -58,7 +58,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY KEY (wahi id dobara)
 
-<img src="img/c1_poster.png?v=3" width="1000" alt="card 1: kya toota, kaise bacha">
+<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
 
 
 ---
@@ -69,7 +69,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 4 DO LOG EK SAATH (wallet)** · Cue: check + block EK atomic query
 
-<img src="img/c2_poster.png?v=3" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
@@ -80,7 +80,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 4 DO LOG EK SAATH (khaas)** · Cue: ek symbol ek thread, book RAM me
 
-<img src="img/c3_poster.png?v=3" width="1000" alt="card 3: kya toota, kaise bacha">
+<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
 
 
 ---
@@ -91,7 +91,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 2 BHEED AAYI** · Cue: baanto mat, ek thread kaafi, line
 
-<img src="img/c4_poster.png?v=3" width="1000" alt="card 4: kya toota, kaise bacha">
+<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
 
 
 ---
@@ -102,7 +102,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 3 MACHINE GIRI (book)** · Cue: pehle log, phir book; gira = replay
 
-<img src="img/c5_poster.png?v=3" width="1000" alt="card 5: kya toota, kaise bacha">
+<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
 
 
 ---
@@ -113,7 +113,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 3 MACHINE GIRI (settlement)** · Cue: ek transaction: chaaron ya koi nahi
 
-<img src="img/c6_poster.png?v=3" width="1000" alt="card 6: kya toota, kaise bacha">
+<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
 
 
 ---
@@ -124,7 +124,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 3 MACHINE GIRI (do DB)** · Cue: har step ka haal, aage badho
 
-<img src="img/c7_poster.png?v=3" width="1000" alt="card 7: kya toota, kaise bacha">
+<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
 
 
 ---
@@ -135,7 +135,7 @@ NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~25
 
 **Rail 2 BHEED AAYI (price)** · Cue: push (TV jaisa), WebSocket
 
-<img src="img/c8_poster.png?v=3" width="1000" alt="card 8: kya toota, kaise bacha">
+<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
 
 
 ---

@@ -1,5 +1,5 @@
 {
- "title": "Card 7: do DB = ek txn nahi. Har kadam ka haal likho, fail to wahi se retry, aage hi",
+ "title": "Card 7: do alag DB ek transaction me nahi aate. Har kadam ka haal likho; fail to wahi kadam dobara, peeche nahi",
  "h": 700,
  "boxes": [
   {
@@ -196,7 +196,7 @@
   7,
   8
  ],
- "peeche": "card 6 me EK TRANSACTION: chaaron ya koi nahi",
+ "peeche": "card 6 me chaaron badlaav ek transaction me",
  "ab": "Dopahar Arpan ka INFY ka 20k kata (Wallet DB), share nahi aaye (Portfolio DB)",
  "agla": "ab andar sab theek. Par bahar 10 lakh log price maang rahe (card 8)"
 }

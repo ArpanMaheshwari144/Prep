@@ -1,5 +1,5 @@
 {
- "title": "Card 3: ek stock ke saare order ek line, us line ka ek hi thread. Book RAM me, paisa SQL + ACID me",
+ "title": "Card 3: ek stock ke saare order ek line me, use ek hi thread chalata. Book RAM me, paisa SQL DB me",
  "h": 710,
  "boxes": [
   {
@@ -32,8 +32,8 @@
    "kind": "cache",
    "title": "TCS line",
    "lines": [
-    "ek line,",
-    "kram se"
+    "saare TCS order",
+    "aane ke kram se"
    ]
   },
   {
@@ -44,7 +44,7 @@
    "kind": "server",
    "title": "TCS thread",
    "lines": [
-    "ek hi haath",
+    "akela chalata",
     "Arpan: 10 mile",
     "Mohan: 0, book me"
    ]
@@ -57,9 +57,9 @@
    "kind": "plain",
    "title": "Order book (RAM)",
    "lines": [
-    "SELL: 3000 (Suresh 10), 3001",
-    "BUY: 2999, 2998",
-    "sauda: top BUY >= top SELL",
+    "bechne wale: 3000 (Suresh 10), 3001",
+    "khareedne wale: 2999, 2998",
+    "sauda: khareed daam >= bech daam",
     "same daam: jo pehle aaya"
    ]
   },
@@ -71,7 +71,8 @@
    "kind": "db",
    "title": "Wallet / ledger",
    "lines": [
-    "SQL + ACID (paisa hamesha ka)"
+    "SQL + ACID",
+    "(paisa hamesha ke liye)"
    ]
   }
  ],
@@ -216,7 +217,7 @@
   3,
   8
  ],
- "peeche": "card 2 me check + block EK query",
+ "peeche": "card 2 me paisa check + block ek hi query me",
  "ab": "Suresh ke paas 10 TCS the, Arpan aur Mohan dono ko 10-10 mil gaye",
  "agla": "ab ek thread hai. Par 9:15 pe sab TCS pe toot pade to? (card 4)"
 }

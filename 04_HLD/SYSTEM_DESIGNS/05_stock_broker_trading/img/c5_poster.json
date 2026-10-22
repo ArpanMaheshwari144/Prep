@@ -1,5 +1,5 @@
 {
- "title": "Card 5: har order pehle log (disk, number ke saath), phir book. Gira = log replay",
+ "title": "Card 5: har order pehle log me (disk, number ke saath), phir book me. Machine giri = log se book dobara (replay)",
  "h": 690,
  "boxes": [
   {
@@ -23,7 +23,7 @@
    "lines": [
     "har order pehle yahan",
     "number ke saath",
-    "= sach"
+    "yahi asli sach"
    ]
   },
   {
@@ -34,8 +34,8 @@
    "kind": "plain",
    "title": "Book (RAM)",
    "lines": [
-    "log ki photo",
-    "10:15: 4,000 order"
+    "log se bani copy",
+    "10:15 tak 4,000 order"
    ]
   },
   {
@@ -183,7 +183,7 @@
   5,
   8
  ],
- "peeche": "card 4 me TCS ek line, baanto stocks ke beech",
+ "peeche": "card 4 me alag stock, alag thread",
  "ab": "10:15 server gira, poori order book (RAM) gayab, Arpan ka order bhi",
  "agla": "ab sauda hua. Par paisa aadha pahuncha to? (card 6)"
 }
