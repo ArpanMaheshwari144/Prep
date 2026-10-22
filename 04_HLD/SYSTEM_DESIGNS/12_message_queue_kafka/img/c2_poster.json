@@ -131,8 +131,8 @@
    "x": 670,
    "y": 84,
    "w": 800,
-   "red": "Worker badhaye, phir bhi line lambi hoti ja rahi",
-   "green": "Pehle dekho tukde kitne hain. Tukde 10 hain to 11va worker kuch nahi karega, pehle tukde badhao",
+   "red": "Arpan ne 11va worker joda, line phir bhi lambi",
+   "green": "Ek tukda ek hi worker padh sakta. 10 tukde = sirf 10 worker kaam pe, 11va khaali baitha. Tez karna hai to pehle tukde badhao (10 se 20)",
    "n": 2,
    "mark": [
     980,

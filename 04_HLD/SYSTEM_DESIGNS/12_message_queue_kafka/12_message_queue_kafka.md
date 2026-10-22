@@ -69,7 +69,7 @@ PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, cons
 
 **Rail 2 BHEED AAYI** · Cue: PARTITION (tukde, alag machine)
 
-<img src="img/c2_poster.png?v=5" width="1000" alt="card 2: kya toota, kaise bacha">
+<img src="img/c2_poster.png?v=5b" width="1000" alt="card 2: kya toota, kaise bacha">
 
 
 ---
