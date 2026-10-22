@@ -39,3 +39,24 @@ service ko chahiye: SMS Svc (Arpan ko SMS) aur Fraud Svc (order shaq wala to nah
   hamesha same tukde me, isliye Arpan ki saari khabar (order, pay, cancel) P1 me.
 - Kram (order, phir pay, phir cancel) sirf ek tukde ke andar pakka. Isliye key = userId, taaki ek user ki
   khabar ek tukde me rahe aur kram me rahe.
+
+---
+
+## 3. Consumer group (ek service ki team)
+
+**Peeche se:** order-events ke 3 tukde P0, P1, P2. Arpan ki khabar P1 me.
+**Ab:** SMS Svc ki 3 machine hain (banda-A, banda-B, banda-C). Teeno ne saare tukde padhe to Arpan ko 3 SMS.
+
+```
+ TEAM "sms" (3 bande)                    TEAM "fraud" (1 banda)
+   P0 ---> banda-A                        P0 --+
+   P1 ---> banda-B  (Arpan -> 1 SMS)      P1 --+--> banda-X
+   P2 ---> banda-C                        P2 --+
+```
+
+- SMS Svc ki teeno machine ko ek team bana do: sabko ek hi team ka naam (group.id = "sms"). Is team ko
+  **consumer group** kehte hain.
+- Team ke andar har tukda sirf ek bande ko. P1 sirf banda-B ke paas, isliye Arpan ko ek hi SMS.
+- Fraud Svc alag team ("fraud"). Use bhi poori khabar, teeno tukde. SMS ne padha to fraud ka kuch kam nahi.
+- Har team apna bookmark rakhti ki kahan tak padha (**offset**). Fraud dheema chale to bhi SMS nahi rukta.
+- banda-B gira to Kafka uska tukda P1 banda-A ya banda-C ko de deta. Ise **rebalance** kehte hain.
