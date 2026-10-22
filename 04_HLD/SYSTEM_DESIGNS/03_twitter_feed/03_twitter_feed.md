@@ -208,15 +208,8 @@ NAHI    MySQL -> DHEEMA: har tweet pe har index disk pe dhoondh ke badalna. Join
 
 **Rail 7 DOOR KE LOG** · Cue: REGION-WISE + Route 53
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
-<img src="img/c7_1.png?v=5" width="900">
-
-<img src="img/c7_2.png?v=5" width="900">
-
-<img src="img/c7_3.png?v=5" width="900">
-
-</details>
 
 ```
 HAL     har region me data ki copy rakho (multi-region). Route 53 paas wale region (India) ka pata deta hai
@@ -227,15 +220,6 @@ NAHI    sab US se hi do -> DHEEMA: har request samundar paar, 300 ms aana-jaana,
 
 > [!IMPORTANT]
 > **Yaad rakh:** Har region me data ki copy, Route 53 paas wala region deta. Region gira to doosra, feed thodi purani.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - regions ka network toota? → **feed chalta rahe, chahe thoda purana**: consistency nahi, availability: 2 sec purani feed se farak nahi, par feed khuli hi nahi to app band. Jo hai wo dikhao, sahi wala thodi der me
-> - US ke celeb ka tweet, India se door? → **garam tweet India cache me bhi**: garam tweet ki copy India ke cache me bhi rakho, log paas se padhte, US tak chakkar nahi
-> - poora India region gira? → **Route 53 US pe**: Route 53 US pe palat deta. Feed thodi purani, par chalti, kyunki copy peeche thi
-> - dono region me ek saath likha? → **baad wala jeetega (last write wins)**: Tweet aksar naya hota hai, takraav kam
-> - main US ghoomne gaya, mera data kahan se aayega? → **India bhejo ya paas ki copy**: request India bhejo, ya paas wali copy se do (thoda purana)
-> - multi-region ka fayda kya hai? → **tez + GDPR + ek gira baaki chalein**: tez. Europe ka data Europe me (GDPR). Har region ki bheed ka time alag. Ek gira to baaki chalein
 
 
 ---

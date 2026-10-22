@@ -1,0 +1,199 @@
+{
+ "title": "Card 7: har region me data ki copy. Route 53 paas wale region (India) ka pata deta",
+ "h": 610,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 230,
+   "h": 100,
+   "kind": "user",
+   "title": "Main (Bangalore)",
+   "lines": [
+    "feed khola"
+   ]
+  },
+  {
+   "x": 330,
+   "y": 240,
+   "w": 230,
+   "h": 120,
+   "kind": "lb",
+   "title": "Route 53",
+   "lines": [
+    "paas wale region",
+    "ka pata deta"
+   ]
+  },
+  {
+   "x": 660,
+   "y": 200,
+   "w": 330,
+   "h": 120,
+   "kind": "server",
+   "title": "India region",
+   "lines": [
+    "data ki copy",
+    "garam tweet ka cache bhi"
+   ]
+  },
+  {
+   "x": 1120,
+   "y": 200,
+   "w": 350,
+   "h": 120,
+   "kind": "server",
+   "title": "US region",
+   "lines": [
+    "data ki copy"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     262,
+     300
+    ],
+    [
+     326,
+     300
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     562,
+     290
+    ],
+    [
+     656,
+     270
+    ]
+   ],
+   "c": "green",
+   "label": "paas wala",
+   "lx": 572,
+   "ly": 312
+  },
+  {
+   "pts": [
+    [
+     1116,
+     260
+    ],
+    [
+     994,
+     260
+    ]
+   ],
+   "c": "purple",
+   "dash": true,
+   "label": "copy",
+   "lx": 1050,
+   "ly": 300,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 620,
+   "red": "Sab US se hi do?",
+   "green": "Har request samundar paar, 300 ms, har feed atak ke aati",
+   "conn": [
+    [
+     445,
+     146
+    ],
+    [
+     445,
+     240
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 680,
+   "y": 84,
+   "w": 790,
+   "red": "India aur US ke beech network toota",
+   "green": "Feed chalti rahe, chahe thodi purani. Yahan availability, consistency nahi",
+   "mark": [
+    1022,
+    260
+   ],
+   "conn": [
+    [
+     1022,
+     248
+    ],
+    [
+     1022,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 330,
+   "y": 420,
+   "w": 620,
+   "red": "Poora India region gira",
+   "green": "Route 53 US pe palat deta. Feed thodi purani, par chalti",
+   "mark": [
+    672,
+    320
+   ],
+   "conn": [
+    [
+     672,
+     332
+    ],
+    [
+     672,
+     420
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 980,
+   "y": 420,
+   "w": 490,
+   "red": "Dono region me ek saath likha",
+   "green": "Baad wala jeetega, takraav kam hota",
+   "mark": [
+    1092,
+    260
+   ],
+   "conn": [
+    [
+     1092,
+     272
+    ],
+    [
+     1092,
+     420
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 520,
+   "w": 1440,
+   "red": "US ke celeb ka tweet? Garam tweet India cache me bhi. Main US gaya? Request India bhejo ya paas ki copy se.",
+   "green": "Fayda: tez + GDPR (Europe ka data Europe me) + ek region gira to baaki chalein"
+  }
+ ]
+}
