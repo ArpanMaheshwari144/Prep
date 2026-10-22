@@ -110,15 +110,8 @@ NAHI    HTTP -> EKTARFA: server khud kuch nahi bhej sakta.
 
 Jod: Chat me bhi kram server ka +1 number (seq), phone ki ghadi nahi (14 card 6)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: andar + kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=2" width="900">
-
-<img src="img/c3_2.png?v=2" width="900">
-
-<img src="img/c3_3.png?v=2" width="900">
-
-</details>
 
 ```
 HAL     kram server tay karta (OT): X pehle aaya to v8. Y bhi v7 pe bana tha, X dikha hi nahi,
@@ -135,12 +128,6 @@ NAHI    jo aaya wahi laga do -> ALAG: meri screen "YX...", Ravi ki "XY...", do a
 
 > [!IMPORTANT]
 > **Yaad rakh:** Kram sirf server ka (OT): har op ko agla version, aaya op khisak ke lagta. Sabki screen same.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - CRDT hota kya hai? → **unique id (CRDT)**: har akshar ki unique id hoti, kisi bhi kram me jodo to nateeja same. Offline chalta, memory zyada. OT op ko khiskata hai, CRDT id se apne aap judta hai
-> - OT ke beech Ravi ka op ~200 ms baad aaya, aur maine beech me likh diya tha → **pending op khiskao**: mera app apne pending op khiska ke uska op lagata hai
-> - dono ne pos 0 pe likha, tie ho gaya → **jo pehle aaya wo 0 pe**: server pe jo pehle aaya wo 0 pe, doosra 1 pe khisakta. Dono ke paas "XYHELLO"
 
 
 ---

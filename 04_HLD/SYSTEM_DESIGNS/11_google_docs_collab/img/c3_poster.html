@@ -1,0 +1,86 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Card 3 poster</title>
+<style>
+body{margin:0;background:#0b1220}
+svg text{font-family:"Segoe UI",Arial,sans-serif}
+.m{font-family:Consolas,monospace}
+</style>
+<svg width="1500" height="590" viewBox="0 0 1500 590" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="ab" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4aa8ff"/></marker>
+  <marker id="ag" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#3ddc97"/></marker>
+</defs>
+<rect width="1500" height="590" fill="#0b1220"/>
+
+<text x="30" y="40" font-size="26" font-weight="700" fill="#e6edf3">Card 3: kram sirf server ka (OT). Aaya hua op khisak ke lagta, sabki screen same</text>
+<text x="30" y="68" font-size="16" fill="#9fb0c8">Neela / hara = roz ka raasta · Laal X = yahan toota, saath wale dabbe me: laal = kya hua, hara = kaise bacha</text>
+
+<!-- Main app -->
+<rect x="30" y="150" width="300" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="180" y="190" font-size="20" font-weight="700" fill="#e6edf3" text-anchor="middle">Main ka app</text>
+<text x="180" y="218" font-size="14" fill="#9fb0c8" text-anchor="middle" class="m">likha "X" pos 0, doc v7</text>
+
+<!-- Ravi app -->
+<rect x="30" y="370" width="300" height="100" rx="12" fill="#10243f" stroke="#4aa8ff" stroke-width="2.5"/>
+<text x="180" y="410" font-size="20" font-weight="700" fill="#e6edf3" text-anchor="middle">Ravi ka app</text>
+<text x="180" y="438" font-size="14" fill="#9fb0c8" text-anchor="middle" class="m">likha "Y" pos 0, doc v7</text>
+
+<!-- Server -->
+<rect x="590" y="215" width="340" height="170" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="760" y="248" font-size="21" font-weight="700" fill="#e6edf3" text-anchor="middle">Server (kram yahin)</text>
+<text x="760" y="278" font-size="14" fill="#c9d6e8" text-anchor="middle" class="m">v8: X pehle aaya, pos 0</text>
+<text x="760" y="302" font-size="14" fill="#c9d6e8" text-anchor="middle" class="m">v9: Y v7 pe bana, X dekha nahi</text>
+<text x="760" y="326" font-size="14" fill="#c9d6e8" text-anchor="middle" class="m">-&gt; Y pos 0 se 1 khiska</text>
+<text x="760" y="356" font-size="14" fill="#9fb0c8" text-anchor="middle" class="m">har op ko agla version</text>
+
+<!-- dono ki screen -->
+<rect x="1180" y="245" width="290" height="90" rx="12" fill="#0f2a22" stroke="#3ddc97" stroke-width="2.5"/>
+<text x="1325" y="282" font-size="20" font-weight="700" fill="#e6edf3" text-anchor="middle">Dono ki screen</text>
+<text x="1325" y="312" font-size="16" fill="#3ddc97" text-anchor="middle" class="m">X Y HELLO, same</text>
+
+<!-- roz ka raasta -->
+<line x1="332" y1="200" x2="586" y2="270" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ab)"/>
+<text x="470" y="200" font-size="14" fill="#4aa8ff" class="m">X @0, base v7</text>
+<line x1="332" y1="420" x2="586" y2="345" stroke="#4aa8ff" stroke-width="3" marker-end="url(#ab)"/>
+<text x="338" y="462" font-size="14" fill="#4aa8ff" class="m">Y @0, base v7</text>
+<line x1="932" y1="290" x2="1176" y2="290" stroke="#3ddc97" stroke-width="3" marker-end="url(#ag)"/>
+<text x="1054" y="280" font-size="14" fill="#3ddc97" text-anchor="middle" class="m">v8, v9 dono ko</text>
+
+<!-- 1: tie, dono pos 0 -->
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="468" y1="367" x2="492" y2="391"/><line x1="492" y1="367" x2="468" y2="391"/></g>
+<line x1="480" y1="394" x2="480" y2="490" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="360" y="490" width="560" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="382" cy="512" r="13" fill="#ff5a6a"/><text x="382" y="517" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">1</text>
+<text x="404" y="517" font-size="15" font-weight="700" fill="#ff5a6a">do saath: dono ne pos 0 pe, ek hi pal me (tie)</text>
+<text x="382" y="541" font-size="15" font-weight="700" fill="#3ddc97">bacha: server pe jo pehle aaya wo 0 pe, doosra 1 pe</text>
+
+<!-- 4: pending op -->
+<g stroke="#ff5a6a" stroke-width="5" stroke-linecap="round"><line x1="388" y1="203" x2="412" y2="227"/><line x1="412" y1="203" x2="388" y2="227"/></g>
+<line x1="400" y1="200" x2="400" y2="146" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="30" y="84" width="560" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="52" cy="106" r="13" fill="#ff5a6a"/><text x="52" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">2</text>
+<text x="74" y="111" font-size="15" font-weight="700" fill="#ff5a6a">Ravi ka op ~200 ms baad aaya, maine beech me Z likha</text>
+<text x="52" y="135" font-size="15" font-weight="700" fill="#3ddc97">bacha: mera app apna pending Z khiska ke uska op lagata</text>
+
+<!-- 3: ghadi se kram -->
+<g stroke="#ff5a6a" stroke-width="6" stroke-linecap="round"><line x1="904" y1="198" x2="930" y2="224"/><line x1="930" y1="198" x2="904" y2="224"/></g>
+<line x1="917" y1="196" x2="917" y2="146" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="640" y="84" width="520" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="662" cy="106" r="13" fill="#ff5a6a"/><text x="662" y="111" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">3</text>
+<text x="684" y="111" font-size="15" font-weight="700" fill="#ff5a6a">kram phone ki ghadi se: ek ms pe do op = takkar</text>
+<text x="662" y="135" font-size="15" font-weight="700" fill="#3ddc97">bacha: version server deta (v8, v9), ghadi nahi</text>
+
+<!-- 4: bina server kram -->
+<g stroke="#ff5a6a" stroke-width="6" stroke-linecap="round"><line x1="1446" y1="324" x2="1472" y2="350"/><line x1="1472" y1="324" x2="1446" y2="350"/></g>
+<line x1="1459" y1="352" x2="1459" y2="400" stroke="#ff5a6a" stroke-width="2"/>
+<rect x="960" y="400" width="510" height="62" rx="9" fill="#1a0f14" stroke="#ff5a6a" stroke-width="2"/>
+<circle cx="982" cy="422" r="13" fill="#ff5a6a"/><text x="982" y="427" font-size="14" font-weight="700" fill="#0b1220" text-anchor="middle">4</text>
+<text x="1004" y="427" font-size="15" font-weight="700" fill="#ff5a6a">jo aaya wahi laga: meri YX, Ravi ki XY</text>
+<text x="982" y="451" font-size="15" font-weight="700" fill="#3ddc97">bacha: kram sirf server ka, dono XYHELLO</text>
+
+<!-- doosra kyun nahi: CRDT -->
+<rect x="960" y="490" width="510" height="62" rx="9" fill="#141c2b" stroke="#6b7a90" stroke-width="2"/>
+<text x="982" y="517" font-size="15" font-weight="700" fill="#c9d6e8">CRDT kyun nahi? har akshar ki unique id, offline chalta</text>
+<text x="982" y="541" font-size="15" font-weight="700" fill="#9fb0c8">par memory zyada. Yahan server hai hi, to OT (Docs bhi OT)</text>
+</svg>
