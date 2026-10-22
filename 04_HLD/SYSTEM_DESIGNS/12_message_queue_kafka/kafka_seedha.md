@@ -139,10 +139,12 @@ DABBA: DB (order + outbox)
 DABBA: Relay
   gira                         -> khabar outbox me sent = false padi. Uthte hi wahin se bhejega
   do relay ek saath chal gaye  -> ek khabar do baar ja sakti. Padhne wala eventId se pakad leta
-  bheed / dheema               -> DB ko baar-baar poochna bhaari. Bada scale = CDC (Debezium, DB ka log padhta)
+  bheed / dheema               -> DB ko baar-baar poochna bhaari. Bada scale = CDC (Debezium, DB ka log
+                                  padhta)
 
 DABBA: Kafka machine (leader)
-  gira                         -> pakki copy (ISR) naya leader. acks=all tha, khabar copy pe thi, kuch nahi gaya
+  gira                         -> pakki copy (ISR) naya leader. acks=all tha, khabar copy pe thi, kuch nahi
+                                  gaya
   saari copy giri, sirf leader -> min.insync = 2, likhna band. Relay retry karta, khabar outbox me padi rehti
   bheed                        -> tukde badhao, nayi machine (broker) jodo
   disk bhari                   -> 7 din se purani khabar ek saath hatao (retention)
@@ -157,7 +159,8 @@ DABBA: Redis (eventId)
   gira / dheema                -> email nahi rukta. Pakki jaanch DB me (eventId UNIQUE). Redis sirf tez jaanch
 
 DABBA: Email company (bahar ki)
-  gira / dheema                -> 2-3 sec me chhodo (timeout), ruk-ruk ke dobara (backoff), phir bhi nahi to DLQ
+  gira / dheema                -> 2-3 sec me chhodo (timeout), ruk-ruk ke dobara (backoff), phir bhi nahi
+                                  to DLQ
   Email team ruki to?          -> Analytics, Dashboard nahi rukte. Har team ka apna bookmark
 
 DABBA: Analytics / Dashboard team
@@ -171,7 +174,8 @@ TEER: Relay -> Kafka
   der se                       -> khabar late, kram ek tukde me phir bhi sahi
 
 TEER: Leader -> copy
-  pahuncha hi nahi             -> wo copy peeche, pakki list (ISR) se bahar. Baaki pakki copy pe likh ke "ho gaya"
+  pahuncha hi nahi             -> wo copy peeche, pakki list (ISR) se bahar. Baaki pakki copy pe likh ke
+                                  "ho gaya"
   der se                       -> wahi: peeche wali copy leader nahi banti
 
 TEER: Kafka -> Email worker
@@ -191,7 +195,8 @@ TEER: Email worker -> Redis
 ## Stop 1 (log, offset) pe sawaal
 ```
 padhne se khabar mitti kyun nahi?  -> taaki dobara padh sakein (replay), aur doosri service bhi padhe
-bookmark kahan rakha?              -> padhne wala commit karta, Kafka use ek andar ke topic (__consumer_offsets)
+bookmark kahan rakha?              -> padhne wala commit karta, Kafka use ek andar ke topic
+                                      (__consumer_offsets)
                                       me rakhta. Restart pe wahin se
 kal ki khabar dobara padhni hai?   -> bookmark peeche kar do, khabar disk pe padi hai
 disk bharti gayi?                  -> 7 din se purani khabar hata do (retention), neeche Gehra 3
@@ -214,10 +219,12 @@ key nahi di?                     -> khabar kisi bhi tukde me, kram nahi bachta
 poore topic ka ek kram chahiye?  -> ek hi tukda, phir wahi bheed. Aksar ek user ka kram kaafi
 ek celeb ki itni khabar ki uska tukda bhar gaya?
                                  -> key me number jodo (userId#1, #2), kram chhodna padega
-tukde 10 se 20 kiye?             -> tukda = hash(key) % ginti. Ginti badli to key ka tukda badla, kuch der kram
+tukde 10 se 20 kiye?             -> tukda = hash(key) % ginti. Ginti badli to key ka tukda badla, kuch der
+                                    kram
                                     toota. Isliye shuru me peak se 2-3 guna tukde rakho
 Order Svc ne A bheja, wo network me atka, retry kiya, tab tak B pahunch gaya?
-                                 -> Order Svc ki Kafka library khud har khabar pe number lagati (1, 2), hum nahi.
+                                 -> Order Svc ki Kafka library khud har khabar pe number lagati (1, 2), hum
+                                    nahi.
                                     Kafka number dekh ke kram theek rakhta aur dobara aayi khabar nahi likhta
                                     (idempotent producer, setting enable.idempotence=true)
 RabbitMQ / SQS (doosre queue tool) me kram?
