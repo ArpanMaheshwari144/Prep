@@ -7,7 +7,7 @@
 
 ## 1. Topic = naam wali diary
 
-<img src="img/k1_topic.png?v=1" width="1000" alt="topic">
+<img src="img/k1_topic.png?v=2" width="1000" alt="topic">
 
 ```
 "A topic is a named stream of events. The order service writes to order-events and moves on.
@@ -19,7 +19,7 @@
 
 ## 2. Partition = topic ke hisse
 
-<img src="img/k2_partition.png?v=1" width="1000" alt="partition">
+<img src="img/k2_partition.png?v=2" width="1000" alt="partition">
 
 ```
 "A topic is split into partitions so the load spreads across brokers and many consumers can read in parallel.
@@ -31,7 +31,7 @@
 
 ## 3. Consumer group = ek service ki team
 
-<img src="img/k3_group.png?v=1" width="1000" alt="consumer group">
+<img src="img/k3_group.png?v=2" width="1000" alt="consumer group">
 
 ```
 "Each service is a consumer group. Inside a group, each partition goes to exactly one consumer,
