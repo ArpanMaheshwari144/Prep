@@ -1,0 +1,39 @@
+{
+  "title": "Card 5: fail hua to har baar zyada ruko (1, 2, 4, 8 sec) + thoda random. Had paar to DLQ + alert",
+  "h": 730,
+  "boxes": [
+    {"x": 30, "y": 240, "w": 190, "h": 110, "kind": "cache", "title": "SMS line", "lines": ["OTP ki khabar"]},
+    {"x": 280, "y": 225, "w": 270, "h": 140, "kind": "server", "title": "Worker", "lines": ["fail? ruko:", "1, 2, 4, 8 sec", "+ thoda random"]},
+    {"x": 680, "y": 200, "w": 260, "h": 110, "kind": "lb", "title": "Twilio", "lines": ["kuch sec hili"]},
+    {"x": 1080, "y": 200, "w": 390, "h": 110, "kind": "user", "title": "Mera phone", "lines": ["OTP aaya (teesri koshish)"]},
+    {"x": 680, "y": 380, "w": 260, "h": 110, "kind": "cache", "title": "DLQ (alag line)", "lines": ["had paar: yahan", "+ alert"]},
+    {"x": 1080, "y": 380, "w": 390, "h": 110, "kind": "plain", "title": "Dashboard", "lines": ["theek karo,", "main line me wapas"]}
+  ],
+  "arrows": [
+    {"pts": [[222, 295], [276, 295]], "c": "orange"},
+    {"pts": [[552, 265], [676, 255]], "c": "green"},
+    {"pts": [[942, 255], [1076, 255]], "c": "green"},
+    {"pts": [[552, 335], [676, 435]], "c": "orange", "label": "had paar", "lx": 600, "ly": 410, "a": "end"},
+    {"pts": [[942, 435], [1076, 435]], "c": "purple"}
+  ],
+  "callouts": [
+    {"n": 1, "type": "x", "x": 30, "y": 84, "w": 760,
+     "red": "Twilio 2 sec ke liye hili",
+     "green": "Ruk-ruk ke dobara (1, 2, 4 sec), teesri koshish me OTP gaya",
+     "mark": [730, 200], "conn": [[730, 188], [730, 146]]},
+    {"n": 2, "type": "x", "x": 810, "y": 84, "w": 660,
+     "red": "Had paar, Twilio ab bhi fail",
+     "green": "Phenko nahi: DLQ + alert, theek karke wapas",
+     "mark": [900, 200], "conn": [[900, 188], [900, 146]]},
+    {"n": 3, "type": "pehle", "x": 30, "y": 540, "w": 720,
+     "red": "Pehle fail pe turant dobara, 50 worker har second ek saath",
+     "green": "Twilio pe aur hathoda, wo kabhi theek hi nahi hoti",
+     "conn": [[415, 540], [415, 365]]},
+    {"n": 4, "type": "pehle", "x": 770, "y": 540, "w": 700,
+     "red": "Retry band, ek fail = chhodo?",
+     "green": "Twilio 2 sec hili to OTP hamesha ke liye gaya"},
+    {"type": "grey", "x": 30, "y": 635, "w": 1440,
+     "red": "Random kyun? Sab worker ek hi pal me wapas na aayein. 10 min rukna ho? Alag retry lines (retry-1m, retry-10m).",
+     "green": "Worker line se padh ke dekhta hai 'kab chalana hai'"}
+  ]
+}

@@ -1,0 +1,208 @@
+{
+ "title": "Card 6: 2-3 sec me chhodo (timeout). Baar-baar fail to breaker khula, OTP doosri company (SNS) se",
+ "h": 700,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 250,
+   "h": 130,
+   "kind": "server",
+   "title": "SMS worker",
+   "lines": [
+    "2-3 sec me chhodo",
+    "(timeout)"
+   ]
+  },
+  {
+   "x": 360,
+   "y": 215,
+   "w": 270,
+   "h": 180,
+   "kind": "plain",
+   "title": "Twilio ka breaker",
+   "lines": [
+    "baar-baar fail = khula",
+    "Twilio ko call band",
+    "thodi der baad",
+    "ek test call"
+   ]
+  },
+  {
+   "x": 740,
+   "y": 190,
+   "w": 300,
+   "h": 100,
+   "kind": "lb",
+   "title": "SNS",
+   "lines": [
+    "OTP ab yahan se"
+   ]
+  },
+  {
+   "x": 740,
+   "y": 360,
+   "w": 300,
+   "h": 100,
+   "kind": "lb",
+   "title": "Twilio",
+   "lines": [
+    "dheemi, 30 sec"
+   ]
+  },
+  {
+   "x": 1160,
+   "y": 260,
+   "w": 310,
+   "h": 110,
+   "kind": "user",
+   "title": "Mera phone",
+   "lines": [
+    "OTP aaya"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     282,
+     305
+    ],
+    [
+     356,
+     305
+    ]
+   ],
+   "c": "blue"
+  },
+  {
+   "pts": [
+    [
+     632,
+     270
+    ],
+    [
+     736,
+     240
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     632,
+     345
+    ],
+    [
+     736,
+     410
+    ]
+   ],
+   "c": "grey",
+   "dash": true,
+   "label": "call band",
+   "lx": 730,
+   "ly": 440,
+   "a": "end"
+  },
+  {
+   "pts": [
+    [
+     1042,
+     240
+    ],
+    [
+     1156,
+     300
+    ]
+   ],
+   "c": "green"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 560,
+   "red": "Pehle har call 30 sec tak intezaar",
+   "green": "Saare SMS worker Twilio pe phanse, OTP bhi ruka",
+   "conn": [
+    [
+     155,
+     146
+    ],
+    [
+     155,
+     240
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 610,
+   "y": 84,
+   "w": 860,
+   "red": "SNS bhi band ho gaya",
+   "green": "Khabar line me rukti, phenko nahi. Backoff se koshish + OTP ka alert",
+   "mark": [
+    1000,
+    190
+   ],
+   "conn": [
+    [
+     1000,
+     178
+    ],
+    [
+     1000,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "pehle",
+   "x": 30,
+   "y": 520,
+   "w": 560,
+   "red": "Worker badha do?",
+   "green": "Naye worker bhi 30 sec me phanse, Twilio pe aur bojh"
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 610,
+   "y": 520,
+   "w": 860,
+   "red": "Twilio dheemi (dheema = band maano)",
+   "green": "Breaker khula, OTP SNS se. Test call theek aayi to Twilio wapas",
+   "mark": [
+    1000,
+    460
+   ],
+   "conn": [
+    [
+     1000,
+     472
+    ],
+    [
+     1000,
+     520
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 615,
+   "w": 1440,
+   "red": "Breaker kahan? Har process ka apna (Resilience4j), ya Redis me saanjha. Har company ka apna, Twilio khula to push / email chalte.",
+   "green": "Push bhi doosri company se? Nahi: Android = FCM, iPhone = APNs, phone ka OS tay karta"
+  }
+ ]
+}

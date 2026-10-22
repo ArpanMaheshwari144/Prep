@@ -1,0 +1,178 @@
+{
+ "title": "Card 8: sab worker ka ek saanjha token bucket (Redis), har second 100. Token nahi to ruko, fail nahi",
+ "h": 610,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 250,
+   "w": 190,
+   "h": 110,
+   "kind": "cache",
+   "title": "Email line",
+   "lines": [
+    "1 lakh email"
+   ]
+  },
+  {
+   "x": 290,
+   "y": 230,
+   "w": 250,
+   "h": 150,
+   "kind": "server",
+   "title": "Worker x 100",
+   "lines": [
+    "pehle token lo,",
+    "mila to bhejo,",
+    "nahi to ruko"
+   ]
+  },
+  {
+   "x": 640,
+   "y": 190,
+   "w": 330,
+   "h": 110,
+   "kind": "cache",
+   "title": "Redis",
+   "lines": [
+    "saanjha bucket",
+    "har second 100 token"
+   ]
+  },
+  {
+   "x": 1100,
+   "y": 250,
+   "w": 370,
+   "h": 110,
+   "kind": "lb",
+   "title": "SES",
+   "lines": [
+    "had 100 / sec",
+    "upar = 429"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     222,
+     305
+    ],
+    [
+     286,
+     305
+    ]
+   ],
+   "c": "orange"
+  },
+  {
+   "pts": [
+    [
+     542,
+     265
+    ],
+    [
+     636,
+     245
+    ]
+   ],
+   "c": "purple",
+   "label": "token?",
+   "lx": 585,
+   "ly": 228,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     542,
+     330
+    ],
+    [
+     1096,
+     330
+    ]
+   ],
+   "c": "green",
+   "label": "kul 100 / sec",
+   "lx": 820,
+   "ly": 355,
+   "a": "middle"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 700,
+   "red": "Har worker apni speed 100 / sec?",
+   "green": "100 worker = 100 guna, SES phir 429 degi",
+   "conn": [
+    [
+     415,
+     146
+    ],
+    [
+     415,
+     230
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "x",
+   "x": 750,
+   "y": 84,
+   "w": 720,
+   "red": "Bucket wala Redis hi gira",
+   "green": "Har worker apni surakshit had (100 / 4 = 25). Dheema, band nahi",
+   "mark": [
+    930,
+    190
+   ],
+   "conn": [
+    [
+     930,
+     178
+    ],
+    [
+     930,
+     146
+    ]
+   ]
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 750,
+   "y": 425,
+   "w": 720,
+   "red": "1 lakh email, had kam",
+   "green": "Had badhwao + kai account. Tab tak line dheere khaali hogi",
+   "mark": [
+    1300,
+    360
+   ],
+   "conn": [
+    [
+     1300,
+     372
+    ],
+    [
+     1300,
+     425
+    ]
+   ]
+  },
+  {
+   "type": "grey",
+   "x": 30,
+   "y": 520,
+   "w": 1440,
+   "red": "Token nahi mila? Line me intezaar, ye fail nahi (retry ki ginti nahi badhti). Worker badhe? Speed wahi, kul 100 / sec.",
+   "green": "Had kitni? Company ki: SES shuru me ~14 / sec (sandbox 1 / sec), Twilio short code ~100 / sec"
+  }
+ ]
+}

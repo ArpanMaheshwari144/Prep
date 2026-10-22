@@ -85,15 +85,8 @@ NAHI    Order Svc me hi retry -> ATAKTA: request utni der atki rehti hai, aur Or
 
 **Rail 5 KUCH DHEEMA** · Cue: har raaste ki ALAG LINE + worker
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c2_poster.png?v=1" width="1000" alt="card 2: kya toota, kaise bacha">
 
-<img src="img/c2_1.png?v=8" width="900">
-
-<img src="img/c2_2.png?v=8" width="900">
-
-<img src="img/c2_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     har raaste ki alag line aur alag worker hota hai. SMS dheema ho to sirf SMS rukta hai.
@@ -106,11 +99,6 @@ NAHI    SMS ke worker badha do -> BEKAAR: company khud dheemi hai, line phir bhi
 > [!IMPORTANT]
 > **Yaad rakh:** Har raaste (push / email / SMS) ki alag line + alag worker. Ek dheema to sirf wahi ruka.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - SMS ki line lambi ho gayi? → **sirf SMS ke worker badhao, baaki ko mat chhuo**: push / email pe koi asar nahi
-> - push ki line se bhejna hai, par kis phone pe jaaye? → **device token**: device token pe, jo install pe user ke saath save hota hai. Token bekaar nikla to hata do
-
 
 ---
 
@@ -120,15 +108,8 @@ NAHI    SMS ke worker badha do -> BEKAAR: company khud dheemi hai, line phir bhi
 
 **Rail 4 DO LOG EK SAATH** · Cue: KEY (SET NX, khabar ki apni id)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c3_poster.png?v=1" width="1000" alt="card 3: kya toota, kaise bacha">
 
-<img src="img/c3_1.png?v=8" width="900">
-
-<img src="img/c3_2.png?v=8" width="900">
-
-<img src="img/c3_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     bhejne se pehle khabar ki apni key (khabar_id + raasta) Redis me dekhte hain.
@@ -142,12 +123,6 @@ NAHI    har baar naya random id -> BEKAAR: dohraav kabhi pakda hi nahi jaata
 > [!IMPORTANT]
 > **Yaad rakh:** Bhejne se pehle key (khabar_id + raasta) Redis me dekho, mili to skip. Aakhri deewar DB ka UNIQUE.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - key wala Redis hi gira? → **DB me (khabar_id, raasta) UNIQUE, wahi rokta**: ek hi baar lagta hai, pakka wahi rokta hai
-> - Redis ki key 24 ghante me mit gayi? → **DB ki row nahi bhoolti**: wo phir bhi rokegi
-> - DB me ek hi baar kaise lagta hai? → **LWT (IF NOT EXISTS)**: Cassandra me INSERT IF NOT EXISTS (khabar_id, raasta), yaani LWT
-
 
 ---
 
@@ -157,15 +132,8 @@ NAHI    har baar naya random id -> BEKAAR: dohraav kabhi pakda hi nahi jaata
 
 **Rail 3 MACHINE GIRI** · Cue: SENDING / SENT (do haal)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c4_poster.png?v=1" width="1000" alt="card 4: kya toota, kaise bacha">
 
-<img src="img/c4_1.png?v=8" width="900">
-
-<img src="img/c4_2.png?v=8" width="900">
-
-<img src="img/c4_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     bhejte waqt key SENDING rakhte hain (chhoti umar, ~60 sec), company OK bole tab SENT.
@@ -180,14 +148,6 @@ NAHI    key hi hata do -> DOHRAAV: worker mara to Kafka dobara deta hai, OTP / e
 > [!IMPORTANT]
 > **Yaad rakh:** Bhejte waqt SENDING (umar ~60 sec), company OK bole tab SENT. Chhodna sirf SENT pe.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - bhej diya, jawab se pehle worker mara? → **do baar ja sakta**: ye maana hua risk hai. OTP do baar aana, na aane se behtar
-> - call fail, worker zinda? → **worker khud key hata deta**: Koshish adhoori thi, agli chal jaaye
-> - SENDING laga ke worker hi mar gaya? → **60 sec me key khud mit-ti, agla bhejta**: hatane wala koi nahi, par SENDING ki umar (60 sec) khatam hote hi key khud mit jaati hai
-> - SENDING ki umar kitni rakhein? → **call se lambi, 60 sec**: call (~2-3 sec) se lambi, 60 sec. Umar pehle khatam ho gayi to do log bhej denge
-> - Worker-B ko SENDING mili? → **thoda ruko**: phir dekho. Chhodna sirf SENT pe
-
 
 ---
 
@@ -197,15 +157,8 @@ NAHI    key hi hata do -> DOHRAAV: worker mara to Kafka dobara deta hai, OTP / e
 
 **Rail 5 KUCH DHEEMA (retry)** · Cue: BACKOFF + JITTER, had ke baad DLQ
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c5_poster.png?v=1" width="1000" alt="card 5: kya toota, kaise bacha">
 
-<img src="img/c5_1.png?v=8" width="900">
-
-<img src="img/c5_2.png?v=8" width="900">
-
-<img src="img/c5_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     har baar zyada der rukte hain (1, 2, 4, 8 sec) aur thoda random jodte hain (backoff + jitter).
@@ -220,11 +173,6 @@ NAHI    retry band, ek fail = chhodo -> KHOYA: company 2 sec hili to OTP hamesha
 > [!IMPORTANT]
 > **Yaad rakh:** Har baar zyada ruko (1, 2, 4, 8 sec) + thoda random (jitter). Had paar to DLQ + alert, phenko nahi.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - backoff me lamba rukna ho (10 min)? → **alag retry lines**: alag lines banao (retry-1m, retry-10m), worker dekhta hai "kab chalana hai"
-> - khabar DLQ me pahunch gayi, ab uska kya? → **dashboard**: theek karo, main line me wapas
-
 
 ---
 
@@ -234,15 +182,8 @@ NAHI    retry band, ek fail = chhodo -> KHOYA: company 2 sec hili to OTP hamesha
 
 **Rail 5 KUCH DHEEMA (company)** · Cue: TIMEOUT + CIRCUIT BREAKER
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c6_poster.png?v=1" width="1000" alt="card 6: kya toota, kaise bacha">
 
-<img src="img/c6_1.png?v=8" width="900">
-
-<img src="img/c6_2.png?v=8" width="900">
-
-<img src="img/c6_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     2-3 sec me chhod do (timeout). Baar-baar fail hua to circuit breaker khul jaata hai:
@@ -257,13 +198,6 @@ NAHI    worker badha do -> PHANSE: naye worker bhi 30 sec me phans jaate, dheemi
 > [!IMPORTANT]
 > **Yaad rakh:** 2-3 sec me chhodo (timeout). Baar-baar fail to breaker khula, doosri company (SNS) se.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - circuit breaker har process ka apna hai ya saanjha? → **apna ya Redis me**: har process ka apna (Resilience4j), ya Redis me saanjha
-> - Twilio ka breaker khula, push / email pe asar? → **nahi, har company ka apna breaker**: Har company ka apna circuit breaker hai, aur worker alag line pe
-> - SNS bhi band ho gaya? → **khabar line me rukti, phenko nahi**: backoff se koshish. OTP ka alert
-> - push bhi doosri company se bhej do? → **nahi: FCM / APNs**: ye hota nahi. Android = FCM, iPhone = APNs, phone ka OS tay karta hai
-
 
 ---
 
@@ -273,15 +207,8 @@ NAHI    worker badha do -> PHANSE: naye worker bhi 30 sec me phans jaate, dheemi
 
 **Rail 2 BHEED AAYI (OTP)** · Cue: OTP ki ALAG TEZ LINE
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c7_poster.png?v=1" width="1000" alt="card 7: kya toota, kaise bacha">
 
-<img src="img/c7_1.png?v=8" width="900">
-
-<img src="img/c7_2.png?v=8" width="900">
-
-<img src="img/c7_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     OTP ki apni tez line aur apne worker (priority).
@@ -295,12 +222,6 @@ NAHI    ek line me "zaroori" tag laga do -> BEKAAR: Kafka me "ye pehle bhejo" ja
 > [!IMPORTANT]
 > **Yaad rakh:** OTP ki apni tez line + apne worker. High = OTP, beech = order, low = offer. Ulta kabhi nahi.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - OTP line khaali, OTP worker khaali baithe? → **beech wali padh lein. Ulta kabhi nahi**: Ulta kabhi nahi
-> - offer wale OTP ki company had kha jaayein? → **OTP ka alag account**: ya alag number. Had wala card 8
-> - order update kis line me jaaye (medium)? → **beech wali line me**: OTP se peeche, offer se aage
-
 
 ---
 
@@ -310,15 +231,8 @@ NAHI    ek line me "zaroori" tag laga do -> BEKAAR: Kafka me "ye pehle bhejo" ja
 
 **Rail 2 BHEED AAYI (company ki had)** · Cue: SAANJHA TOKEN BUCKET (Redis)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c8_poster.png?v=1" width="1000" alt="card 8: kya toota, kaise bacha">
 
-<img src="img/c8_1.png?v=8" width="900">
-
-<img src="img/c8_2.png?v=8" width="900">
-
-<img src="img/c8_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     sab worker ka ek saanjha token bucket (Redis me), har second 100 token. Pehle token lo, mila to bhejo
@@ -330,14 +244,6 @@ NAHI    har worker apni speed 100 / sec -> 429: 100 worker matlab 100 guna, comp
 > [!IMPORTANT]
 > **Yaad rakh:** Sab worker ka ek saanjha token bucket (Redis). Token nahi mila to ruko, fail nahi.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - bucket se token nahi mila? → **line me intezaar, ye fail nahi**: retry ki ginti nahi badhti
-> - worker badh gaye? → **speed wahi**: Bucket saanjha, kul 100 / sec
-> - 1 lakh email, had kam? → **had badhwao + kai account lo**: Tab tak line dheere khaali hogi, warna 429
-> - bucket wala Redis hi gira? → **har worker apni surakshit had (100 / 4 = 25)**: Bhejna band nahi, bas dheema. Company ki had paar nahi hoti
-> - bucket ki had kitni hoti hai? → **company ki had**: company ki had: SES shuru me ~14 / sec (sandbox 1 / sec), Twilio short code ~100 / sec
-
 
 ---
 
@@ -347,15 +253,8 @@ NAHI    har worker apni speed 100 / sec -> 429: 100 worker matlab 100 guna, comp
 
 **Rail 6 DATA BADA / 8 HAMLA** · Cue: WEBHOOK + company ka message id
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c9_poster.png?v=1" width="1000" alt="card 9: kya toota, kaise bacha">
 
-<img src="img/c9_1.png?v=8" width="900">
-
-<img src="img/c9_2.png?v=8" width="900">
-
-<img src="img/c9_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     worker company ka message no. (SID-9) save karta hai. Company baad me khud batati hai (webhook):
@@ -368,12 +267,6 @@ NAHI    baar-baar khud poochte raho -> MEHENGA: laakhon message x har kuch secon
 > [!IMPORTANT]
 > **Yaad rakh:** Company ka message no. (SID) save. "Mila" sirf jab company signed webhook se bataye.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - webhook aaya hi nahi? → **ghanton se atke ko ek baar poochho**: Twilio SID se. SES me poll nahi, sirf event (SNS / Firehose)
-> - koi nakli webhook bhej de "pahuncha"? → **hastakshar jaancho, nakli phenko**: Twilio HMAC, SES/SNS certificate, SendGrid public key
-> - Tracking DB me hisaab kahan rakhte hain? → **Cassandra**: Cassandra me. Likhna bahut hai, isliye NoSQL: seedhi row, jodna kuch nahi
-
 
 ---
 
@@ -383,15 +276,8 @@ NAHI    baar-baar khud poochte raho -> MEHENGA: laakhon message x har kuch secon
 
 **Rail 2 BHEED AAYI (campaign)** · Cue: 1000 ke TUKDE + campaign row
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c10_poster.png?v=1" width="1000" alt="card 10: kya toota, kaise bacha">
 
-<img src="img/c10_1.png?v=8" width="900">
-
-<img src="img/c10_2.png?v=8" width="900">
-
-<img src="img/c10_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     1000-1000 ke tukde banao, low priority line me. Har tukde ke baad campaign row me likho kahan tak
@@ -405,13 +291,6 @@ NAHI    1 crore ko ek bada "sabko bhejo" message -> ATKA: ek worker pe atka, gir
 > [!IMPORTANT]
 > **Yaad rakh:** 1000-1000 ke tukde, low line, campaign row me aakhri_id. Gira to wahin se, galat to CANCELLED.
 
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - tukde me 600 bhej ke worker gira? → **tukda dobara, par pehle wale 600 chhoot jaate**: par (campaign_id, user_id) se pehle wale 600 chhoot jaate hain
-> - galat offer chal gaya? → **campaign row pe CANCELLED likho**: Worker har tukde se pehle ye dekhta hai
-> - 1 crore ke tukde bhejne me kitni der? → **~17 min**: ~17 min (10,000 / sec). Jaan-boojh ke phailaya, had + OTP line bachi
-> - sabko ek hi push bhejna hai? → **FCM topic: ek call**: Topic me sirf pasand wale (pasand se sync)
-
 
 ---
 
@@ -421,15 +300,8 @@ NAHI    1 crore ko ek bada "sabko bhejo" message -> ATKA: ek worker pe atka, gir
 
 **Rail 1 KAAM CHALA (pasand)** · Cue: PASAND + SHAANTI + SAANCHA (cache)
 
-<details><summary>kahani dekho (3 scene)</summary>
+<img src="img/c11_poster.png?v=1" width="1000" alt="card 11: kya toota, kaise bacha">
 
-<img src="img/c11_1.png?v=8" width="900">
-
-<img src="img/c11_2.png?v=8" width="900">
-
-<img src="img/c11_3.png?v=8" width="900">
-
-</details>
 
 ```
 HAL     bhejne se pehle user ki pasand + shaanti ka waqt dekho (preference + quiet hours): offer SMS band,
@@ -442,11 +314,6 @@ NAHI    pasand sirf Campaign Svc me check -> ADHOORA: order / OTP wali khabar bi
 
 > [!IMPORTANT]
 > **Yaad rakh:** Bhejne se pehle pasand + shaanti ka waqt. Offer roko, subah bhejo. OTP pasand se upar.
-
-> [!TIP]
-> **Cross-Q: sawaal → cue, phir poora jawab**
-> - shaanti ke waqt OTP / login alert aaya? → **bhejo. Zaroori alert pasand se upar**: Zaroori alert pasand se upar hai
-> - pasand badli, par cache purana? → **badalte hi cache delete**: aur chhoti umar. Bhejne se pehle sahi chahiye
 
 
 ---

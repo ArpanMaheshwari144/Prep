@@ -1,0 +1,198 @@
+{
+ "title": "Card 9: company ka message no. (SID) save. 'Mila' sirf jab company signed webhook se bataye",
+ "h": 620,
+ "boxes": [
+  {
+   "x": 30,
+   "y": 240,
+   "w": 230,
+   "h": 130,
+   "kind": "server",
+   "title": "Worker",
+   "lines": [
+    "SID-9 save"
+   ]
+  },
+  {
+   "x": 350,
+   "y": 230,
+   "w": 250,
+   "h": 140,
+   "kind": "lb",
+   "title": "Twilio",
+   "lines": [
+    "'le liya' (SID-9)",
+    "baad me batati"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 190,
+   "w": 230,
+   "h": 90,
+   "kind": "user",
+   "title": "Mera phone",
+   "lines": [
+    "pahuncha"
+   ]
+  },
+  {
+   "x": 700,
+   "y": 330,
+   "w": 270,
+   "h": 130,
+   "kind": "server",
+   "title": "Webhook Svc",
+   "lines": [
+    "hastakshar jaancho",
+    "SID-9 DELIVERED"
+   ]
+  },
+  {
+   "x": 1080,
+   "y": 330,
+   "w": 390,
+   "h": 130,
+   "kind": "db",
+   "title": "Tracking DB (Cassandra)",
+   "lines": [
+    "bheja / mila / khola",
+    "likhna bahut, seedhi row"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "pts": [
+    [
+     262,
+     305
+    ],
+    [
+     346,
+     305
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     602,
+     260
+    ],
+    [
+     696,
+     235
+    ]
+   ],
+   "c": "green"
+  },
+  {
+   "pts": [
+    [
+     602,
+     340
+    ],
+    [
+     696,
+     395
+    ]
+   ],
+   "c": "purple",
+   "label": "webhook",
+   "lx": 655,
+   "ly": 332,
+   "a": "middle"
+  },
+  {
+   "pts": [
+    [
+     972,
+     395
+    ],
+    [
+     1076,
+     395
+    ]
+   ],
+   "c": "purple"
+  }
+ ],
+ "callouts": [
+  {
+   "n": 1,
+   "type": "pehle",
+   "x": 30,
+   "y": 84,
+   "w": 640,
+   "red": "Pehle company ne sirf 'le liya' bola",
+   "green": "Aage andhera. 'Bheja' aur 'mila' alag haal hain",
+   "conn": [
+    [
+     475,
+     146
+    ],
+    [
+     475,
+     230
+    ]
+   ]
+  },
+  {
+   "n": 2,
+   "type": "pehle",
+   "x": 700,
+   "y": 84,
+   "w": 770,
+   "red": "Baar-baar khud poochte raho?",
+   "green": "Laakhon message x har kuch second = had + kharcha"
+  },
+  {
+   "n": 3,
+   "type": "x",
+   "x": 30,
+   "y": 520,
+   "w": 700,
+   "red": "Webhook aaya hi nahi",
+   "green": "Ghanton se atke ko ek baar poochho (SID se). SES me sirf event",
+   "mark": [
+    650,
+    368
+   ],
+   "conn": [
+    [
+     650,
+     380
+    ],
+    [
+     650,
+     520
+    ]
+   ]
+  },
+  {
+   "n": 4,
+   "type": "x",
+   "x": 750,
+   "y": 520,
+   "w": 720,
+   "red": "Kisi ne nakli webhook bheja 'pahuncha'",
+   "green": "Hastakshar jaancho (Twilio HMAC, SES/SNS certificate), nakli phenko",
+   "mark": [
+    835,
+    460
+   ],
+   "conn": [
+    [
+     835,
+     472
+    ],
+    [
+     835,
+     520
+    ]
+   ]
+  }
+ ]
+}
