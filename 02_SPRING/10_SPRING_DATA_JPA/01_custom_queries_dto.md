@@ -110,7 +110,7 @@ List<UserSummary> findOlderSummaryNative(@Param("age") int age);
 ```java
 public class UserSummaryDTO {
     private String name; private int age; private String city;
-    public UserSummaryDTO(String name, int age, String city) {   // ZAROORI, fields ke order me
+    public UserSummaryDTO(String name, int age, String city) {   // ZAROORI, SELECT ke order me (u.name, u.age, u.city)
         this.name = name; this.age = age; this.city = city;
     }
     // getters
@@ -182,4 +182,4 @@ UserRepository:   @Query("FROM User u WHERE u.age >= :minAge")                  
 AuthorRepository: @Query("Select Distinct a from Author a left join fetch a.books") // JOIN FETCH (N+1 fix) + DISTINCT
 ```
 Real `@Query` LIVE — JPQL custom queries. AuthorRepository ka JOIN FETCH N+1-note se bhi juda (DISTINCT duplicate hataata).
-QueryDSL vs @Query: **QueryDSL = runtime DYNAMIC** (conditions code me build) · **@Query = FIXED JPQL** (compile-time likhi). usercrud me dono side-by-side.
+QueryDSL vs @Query: **QueryDSL = runtime DYNAMIC** (conditions code me build) · **@Query = FIXED JPQL** (pehle se likhi, app start pe check hoti). usercrud me dono side-by-side.
