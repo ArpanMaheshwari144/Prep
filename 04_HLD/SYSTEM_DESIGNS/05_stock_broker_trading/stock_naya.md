@@ -68,3 +68,27 @@ flowchart LR
 
 Dikkat: Arpan ne "Buy" dabaya, network atka, app ne dobara bheja (ya do baar tap). Order book me Arpan ke do
 order lag gaye, 20 share kharid liye gaye, jabki use 10 chahiye the.
+
+### Kadam 2: ek tap, ek order ([banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) wali key)
+
+App har order ke saath apni ek id bhejta hai: `client_order_id = A-501`. Orders table me
+`UNIQUE(client_order_id)`.
+
+```
+pehla Buy  : A-501 -> table me nahi -> order likho -> order book me
+dobara Buy : A-501 -> pehle se hai  -> "ho chuka", wahi purana order lautao. Book me dusra nahi
+```
+
+```mermaid
+flowchart LR
+    U["Arpan: Buy (A-501)"] --> O["Order Svc"]
+    O -- "UNIQUE client_order_id" --> T[("Orders table")]
+    O -- "sirf pehli baar" --> M["Matching engine"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ye bilkul [banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) hai, bas paise ki jagah order. Order book me jaane se pehle ye check, to dohra
+order kabhi book tak pahunchta hi nahi.
+
+Par Arpan ke wallet me 50,000 hain. Usne ek saath do order daale: TCS 30,000 ka aur INFY 30,000 ka. Dono
+Order Svc pe saath pahunche, dono ne dekha "50k hai, chalega", dono lag gaye. 60,000 ke order, paisa 50,000.
