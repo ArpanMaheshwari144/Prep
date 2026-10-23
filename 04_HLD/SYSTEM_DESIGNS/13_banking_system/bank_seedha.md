@@ -286,5 +286,33 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par balance ek column, khaata alag lines. Kisi bug / haath ke galat UPDATE se dono me farak:
-balance 600 dikha raha, khaate ka jod 100. Kisi ko pata nahi chala.
+Par balance ek column, khaata alag lines. Kisi bug / haath ke galat UPDATE se dono me farak: balance 600
+dikha raha, khaate ka jod 100. Kisi ko pata nahi chala.
+
+### Kadam 9: balance aur khaata alag (raat ka milaan = reconciliation)
+
+Ilaaj: raat ko **milaan job** (read replica pe, primary pe bojh nahi):
+
+```
+har account:  balance column == khaate ki lines ka jod ?   nahi -> ALERT
+poora bank:   saari lines ka jod == 0 ? (double-entry)       nahi -> ALERT
+galti mili    -> khud theek NAHI. Insaan dekhe, ulti line daal ke theek (kadam 5: kuch mitta nahi)
+5 saal jodna bhaari -> SNAPSHOT: mahine ke end har account ka pakka balance.
+                       sahi balance = pichhla snapshot + uske BAAD ki lines (5 saal nahi, 1 mahina)
+```
+
+```mermaid
+flowchart LR
+    J["Raat ka milaan job"] -- "snapshot + baad ki lines" --> R[("Read replica")]
+    J -- "balance == jod ? · sab ka jod == 0 ?" --> X{"farak?"}
+    X -- "haan" --> A["ALERT, insaan dekhe"]
+    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Asli bank me yahi: **end of day (EOD)** batch (SBI = TCS BaNCS, HDFC = Finacle me roz), aur NPCI ki
+settlement file se apna khaata milaana. Bolo: "Banks me EOD reconciliation: khaate se balance milao, farak
+pe alert."
+
+Par shaam ko dukaan ka CA saal bhar ki history export kar raha, page by page. Page 5000 pe query atki
+(`OFFSET 100000`), replica bhi dheema.
+
