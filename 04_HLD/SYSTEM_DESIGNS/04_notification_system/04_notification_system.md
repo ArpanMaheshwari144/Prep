@@ -461,7 +461,7 @@ register me tick. OTP ki alag tez line, sale ki bheed me nahi phansta.
 
 ---
 
-## Pooche to
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 API?

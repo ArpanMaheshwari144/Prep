@@ -292,7 +292,7 @@ seat pakki, hold mar chuka to refund. Redis poora gaya to dheema, galat nahi.
 
 ---
 
-## Pooche to
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 API?

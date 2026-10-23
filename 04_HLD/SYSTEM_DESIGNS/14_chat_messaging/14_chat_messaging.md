@@ -464,7 +464,7 @@ do baar na dikhe  -> clientMsgId
 
 ---
 
-## Pooche to (ek line)
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 API                -> GET /connect (WebSocket, band nahi hoti) ·

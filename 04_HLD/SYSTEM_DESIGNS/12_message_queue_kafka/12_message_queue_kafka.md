@@ -337,7 +337,7 @@ ek dheema, baaki chalein -> har team ka apna bookmark
 
 ---
 
-## Pooche to (ek line)
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 chal raha, kaise pata?   -> lag naapo (tukde ki aakhri khabar - team ka bookmark), had se zyada = alert,

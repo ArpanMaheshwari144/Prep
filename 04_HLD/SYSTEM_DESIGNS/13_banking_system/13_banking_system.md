@@ -391,7 +391,7 @@ balance tez             -> read replica (jisne abhi transfer kiya, wo primary se
 
 ---
 
-## Pooche to (ek line)
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 API              -> POST /transfers { from, to, amount } + Idempotency-Key header ·

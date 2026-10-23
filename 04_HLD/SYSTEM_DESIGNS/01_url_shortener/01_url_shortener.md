@@ -352,7 +352,7 @@ ek code = ek link  -> counter range, takkar kabhi nahi
 
 ---
 
-## Pooche to (ek line)
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 Ye sawaal bahut aate hain. Design nahi badalte (naya dabba nahi), isliye kadam nahi, par jawab pata ho:
 

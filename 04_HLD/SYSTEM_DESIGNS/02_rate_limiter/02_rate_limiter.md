@@ -349,7 +349,7 @@ gire to site chale    -> Redis ki copy, fail-open (aam API) / fail-closed (login
 
 ---
 
-## Pooche to (ek line)
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 Redis + copy dono gaye?          -> har gateway apni memory me ginti rakhe, had baant ke: 100 / min aur

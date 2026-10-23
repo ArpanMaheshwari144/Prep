@@ -357,7 +357,7 @@ Bhaav: 1 / sec, Redis pub/sub, WebSocket push.
 
 ---
 
-## Pooche to
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 LIMIT vs MARKET?

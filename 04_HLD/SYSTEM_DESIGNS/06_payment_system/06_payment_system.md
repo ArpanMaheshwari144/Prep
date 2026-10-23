@@ -298,7 +298,7 @@ har paisa trace ho   -> ledger (sirf INSERT, double-entry)
 
 ---
 
-## Pooche to (ek line)
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 API             -> POST /pay { from, to, amount } + header Idempotency-Key -> { status, txn_id }
