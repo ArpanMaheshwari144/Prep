@@ -208,8 +208,8 @@ lag gaya. OTP 5 min me bekaar ho jaata hai, offer 1 ghanta baad bhi chalega.
 
 Notification Svc har khabar ko ek darja deta hai: **TEZ** (OTP, password reset), **BEECH** (order hua, ship
 hua), **DHEEMI** (offer, sale ki khabar). Har darje ki apni alag line, aur **apne alag worker**.
-OTP wale worker kabhi offer nahi uthate. Sale me 50,000 offer DHEEMI line me khade rehte hain, Arpan ka OTP TEZ line se
-turant nikal jaata hai.
+OTP wale worker kabhi offer nahi uthate. Sale me 50,000 offer DHEEMI line me khade rehte hain,
+Arpan ka OTP TEZ line se turant nikal jaata hai.
 
 ```mermaid
 flowchart LR
