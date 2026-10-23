@@ -116,10 +116,13 @@ flowchart LR
 ```
 
 ```
-screen khulte kyun?          -> retry app karti. Id pehle bani ho tabhi dobara pe wahi. Send pe nayi = naya payment
-UNIQUE kyun, pehle dekho?    -> do retry ek saath "nahi hai" dekhte, dono kaat dete. UNIQUE = DB khud, ek hi jeete
+screen khulte kyun?          -> retry app karti. Id pehle bani ho tabhi dobara pe wahi.
+                                Send pe nayi = naya payment
+UNIQUE kyun, pehle dekho?    -> do retry ek saath "nahi hai" dekhte, dono kaat dete.
+                                UNIQUE = DB khud lagata, ek hi jeete
 same amount 1 min me block?  -> sach me do baar 500 bhejna bhi rukta. Pehchaan id se, amount se nahi
-wahi k-77, amount 5000?      -> key ke saath request ka hash (amount + kisko). Key same, hash alag -> mana (422)
+wahi k-77, amount 5000?      -> key ke saath request ka hash (amount + kisko).
+                                Key same, hash alag -> mana (422)
 ```
 
 Par wallet me 600. Raat 9 baje Netflix ka 500 auto-debit aur Arpan ka 500 UPI ek saath. Dono ne padha 600,
