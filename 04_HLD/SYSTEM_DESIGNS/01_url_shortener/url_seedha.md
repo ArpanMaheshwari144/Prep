@@ -450,4 +450,10 @@ AWS naam          -> Cassandra = Keyspaces / EC2 (RDS sirf SQL, Cassandra RDS pe
                      · Redis = ElastiCache · key-value = DynamoDB
 API               -> POST /api/shorten { long_url } -> { short_url } · GET /aB3x9 -> 302
 row               -> code (isi se machine tay) · long_url · created_at · band?
+click ginti chahiye -> redirect turant, click ki khabar Kafka me, Analytics peeche gine (redirect ruke nahi)
+duniya bhar        -> Route 53 user ko paas wale region pe (geo-routing)
+10 guna            -> App badhao (padhne wale ~20, likhne wale 2 alag) · Redis garam rakho (LRU)
+                     · Cassandra machine / copy badhao
+kaunsa DB kitne tak -> MySQL ~1 arab row aaram se · Cassandra / DynamoDB usse bahut aage
+kaise pata chal raha -> redirect ka time (p99), galti ginti, alert
 ```

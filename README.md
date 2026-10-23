@@ -3,13 +3,13 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase, build done):** roz Java / Spring DIN (7 din ka chakkar) · DSA 1 redo + grill 5 · PR drill 1 · HLD mock ek design · apply. STAR har 3-4 din me ek kahani.
-> Focus "jaanna" se "bolke nikaalna" pe: HLD me tasveer dekh ke design bolo, phir cross-question.
+> ★ **Abhi (DELIVERY + APPLY phase, build done):** roz HLD ek design (naye saanche me, saath baith ke) · DSA 1 redo + grill 5 · Java / Spring DIN (7 din ka chakkar) · PR drill 1 · apply. STAR har 3-4 din me ek kahani.
+> HLD = ek kahani: har dikkat ka ek shabd (CUE) yaad, kahani apne aap ban jaati. Interview me wahi shabd bolte jao.
 
 ```
 SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 14 design (348 tasveer) + 19 foundation + master sheet
+  HLD: 14 design (naye saanche me: URL, rate limiter; baaki roz ek) + 19 foundation + master sheet
   DSA: 18 pattern · 175 problem + 126 REDO = 301 .cpp · pattern sheet
   STAR 11 kahani · PR review framework · DB internals
 ```
@@ -23,7 +23,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | 14 design (har card: RAIL tag + Cue + 3 tasveer DIKKAT / ILAAJ / AGAR + HAL / KYUN / NAHI + Yaad rakh + Cross-Q) + master sheet + 19 foundations + HANDS_ON (4 demo) | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | 14 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + master sheet + 19 foundations + HANDS_ON (4 demo) | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
@@ -105,31 +105,29 @@ SAFAR (March: khaali folder)  ->  aaj
 ---
 
 ## [04_HLD](04_HLD) — tera strong zone
-**Kya:** 14 poore design (roz ek ka mock, cross-question usi file me) + master sheet + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
+**Kya:** 14 poore design (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + master sheet + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
 ```
-★★ HLD = DIKKAT KI CHAIN — ek dikkat ka ilaaj, agli dikkat khol deta
+★★ HLD = EK KAHANI — har dikkat pe ek dabba judta, wahi dabba agli dikkat khol deta
 
   dikkat ──► dabba ──► nayi dikkat ──► dabba ──► ...
 
-  twitter:  200 ka data har baar ──► inbox ──► button atka ──► Kafka ──► Bieber 10 crore ──► celeb pull + merge
+  url:   seedha (server + DB) ──► counter + base62 ──► Redis ──► LB + counter range ──► shard ──► ring
+         ──► 3 copy ──► quorum ──► local cache (viral) ──► lock + purana (stampede) ──► rate limit (bot)
 
-★ RAIL — har design isi kram me chalta (8 kadam, har file ke upar)
+★ HAR FILE KI SHAKAL (naya saancha, 23-Oct)
 
-  kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
+  upar CUE kram (sirf shabd) → 1 FR → 2 NFR → 3 numbers → 4 design:
+     Kadam 1 sabse seedha → har kadam: dikkat → ilaaj (dabba) → kyun ye, doosra kyun nahi → mermaid diagram
+     (peela = abhi juda) → "Par ..." agli dikkat
+  → 5 Wrap (30 sec, NFR se milao) → Pooche to (ek line) → HANDS-ON (jahan hai)
 
-★ HAR CARD KI SHAKAL
-
-  ┌────────────────┐   ┌────────────────────────┐   ┌───────────────────┐   ┌───────────────────────┐
-  │ Rail tag + Cue │ → │ 3 tasveer              │ → │ HAL · KYUN · NAHI │ → │ Yaad rakh + Cross-Q   │
-  │ (ilaaj ka naam)│   │ DIKKAT → ILAAJ → AGAR  │   │ (bolne wali line) │   │ (sawaal → cue: jawab) │
-  └────────────────┘   └────────────────────────┘   └───────────────────┘   └───────────────────────┘
-
-★ MOCK: heading + Cue + tasveer dekh ke poora design bolo → end me 2-3 cross-Q → jo atka wo usi card me
+★ INTERVIEW: CUE kram ka ek-ek shabd bolo, har shabd pe uski chhoti kahani. Cross-Q = jo dabba bola wahi
+  gira / dheema / do baar → jawab usi kadam me
 ```
 
-- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design. Har file: upar poori tasveer + **Shuru** (FR · NFR · numbers · Dabba 0 · scope) + **RAIL dabba** (8 kadam, har kadam kis card me) + **AWS pe kaunsa DB** + har card (tasveer `<details>` me khulti, neeche patti me har kadam ka poora vakya) + ek saans + Pooche to. 01-13 naye saanche me (348 tasveer, Fable audit me 0 galti), 14 chat agla.
-  [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
+- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design. **Naye saanche me ho gaye: 01 URL, 02 rate limiter** (purani poster wali file hata di, git history me hai). Baaki 12 purane poster saanche me, roz ek naye me badlegi. Kram: chat · banking · payment · kafka · notification · cache · twitter · BMS · stock · file upload · news · docs.
+  [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/url_seedha.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/rate_seedha.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) ([interview page](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_seedha.md) · [concepts kahani se](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md)) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
 
 - ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md)** — doubt aaye to yahan dhoondho: sabse upar **clickable INDEX + DOUBT DHOONDHO** (doubt likha -> click -> seedha jawab; Alex Xu ke chapter ka map bhi) · 8 dabbe x 4 line · 6 archetype · universal rail · block-menu · A-ya-B trade-off jode · 14 design ka DIL + KHAAS hissa · anjaan-design recipe · kaise bolna · SHABD (word atke to). Cross-question (Q1-Q22) ab yahan nahi, design files me (4-Oct).
 
@@ -145,12 +143,12 @@ SAFAR (March: khaali folder)  ->  aaj
 
 | Demo (chalao) | Kya dekha | Notes (asli output) |
 |---------------|-----------|---------------------|
-| [01 rate limiter + asli Redis](04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java) | Redis maara → fail-open · wapas aaya → ginti gaayab, blocked user phir allow | [rate limiter — HANDS-ON #3](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
-| [02 INCR ke baad crash](04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java) | TTL -1 → user hamesha block · Lua se INCR+EXPIRE ek saath → theek | [rate limiter — HANDS-ON #3](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
+| [01 rate limiter + asli Redis](04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java) | Redis maara → fail-open · wapas aaya → ginti gaayab, blocked user phir allow | [rate limiter — HANDS-ON #3](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/rate_seedha.md) |
+| [02 INCR ke baad crash](04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java) | TTL -1 → user hamesha block · Lua se INCR+EXPIRE ek saath → theek | [rate limiter — HANDS-ON #3](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/rate_seedha.md) |
 | [03 provider ka 429](04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java) | naive retry: 1000 me 700 SMS phenke · throttle + backoff + queue: 1000/1000 | [notification — HANDS-ON](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) |
 | [04 event kahan khota](04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java) | producer / Kafka / consumer pe crash → 5 me 3 khoye · outbox + acks=all + offset baad me + idempotent → 0 | [Kafka — HANDS-ON](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) |
 
-- **[tools](04_HLD/tools)** — tasveer banane ke script: `anim_build.py` (card ka scene -> PNG) · `sheet.py` (saari tasveer ek sheet pe, check ke liye) · `hld_boxes.py` (Yaad rakh + Cross-Q dabbe) · [PNG_GUIDE](04_HLD/tools/PNG_GUIDE.md) (tasveer ke niyam).
+- **[tools](04_HLD/tools)** — purane poster saanche ke script (`gen_clean.py`, `poster2png.js`, `anim_build.py`). Naye saanche me diagram mermaid hain, GitHub khud banata; check `mermaid_cfg.json` se.
 
 
 ---
@@ -195,7 +193,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | Kafka produce/consume · DLQ · idempotency | [KafkaProducerController](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/KafkaProducerController.java) · [KafkaConsumer](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/KafkaConsumer.java) · [KafkaConfig](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/config/KafkaConfig.java) · [IdempotencyController](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/IdempotencyController.java) | [kafka-basics](02_SPRING/14_KAFKA/01_kafka_basics.md) |
 | JWT · Spring Security filter-chain | [AuthController](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/AuthController.java) · [SecurityConfig](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/security/SecurityConfig.java) | [jwt-complete](02_SPRING/03_jwt_security/01_jwt_complete.md) |
 | volatile visibility (live) | [VolatileDemoController](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/VolatileDemoController.java) | [volatile](01_JAVA/04_MULTITHREADING/05_volatile.md) |
-| Rate limiter | [RateLimitController](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/RateLimitController.java) | [rate-limiter (HLD)](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
+| Rate limiter | [RateLimitController](07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/RateLimitController.java) | [rate-limiter (HLD)](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/rate_seedha.md) |
 
 ---
 
