@@ -174,7 +174,7 @@ Tu Author chahta sirf:
 
 Deep tree:
    Author → Publisher → Country → Continent (all EAGER)
-   findById(1) → 4 joins
+   findById(1) → 3 joins (4 table)
    = Massive waste if you only needed name
 ```
 
