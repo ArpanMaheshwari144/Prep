@@ -319,7 +319,8 @@ Cricket match ka link 1 crore log ek saath. Ek link ki key Redis ki ek hi machin
 (Redis bhi key se baantta), to saara bojh usi pe. Wo dheemi, aur us pe pade baaki link bhi atke.
 
 Ilaaj 1: **app server ki apni memory me chhota cache (local cache)**.
-Bahut garam link har server 5-10 sec rakhe. Mila to request Redis tak jaati hi nahi. 10 server = Redis tak 10 sec me bas 10 request.
+Bahut garam link har server 5-10 sec rakhe. Mila to request Redis tak jaati hi nahi.
+10 server = Redis tak 10 sec me bas 10 request.
 
 ```
 local cache ki dikkat:
