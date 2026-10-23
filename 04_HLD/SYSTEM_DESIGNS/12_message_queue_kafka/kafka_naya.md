@@ -173,3 +173,39 @@ flowchart LR
 Par machine A ne Arpan ka SMS bheja, aur bookmark aage karne se pehle gir gayi. P1 machine B ke paas gaya, B
 ne bookmark dekha (abhi bhi purana), aur wahi khabar dobara padhi. Arpan ko 2 SMS.
 
+### Kadam 5: bookmark se pehle gira, 2 SMS (pehle kaam phir commit + eventId)
+
+Machine A ka kaam teen kadam ka tha: khabar padho, SMS bhejo, phir Kafka ko batao "yahan tak padh liya"
+(bookmark aage karna = **commit**). SMS bheja aur commit se pehle gir gayi. Bookmark purana hi raha, to B ne
+wahi khabar dobara padhi.
+
+Ulta karte (pehle commit, phir SMS) to commit hua aur SMS se pehle gira, bookmark aage chala gaya, aur ye
+SMS kabhi jaata hi nahi. Ye usse bhi bura hai. Isliye kram pakka hai: **pehle kaam, phir commit**. Khabar
+kabhi khoti nahi, bas kabhi-kabhi dobara aa jaati hai. Iska naam hai **at-least-once**: kam se kam ek baar,
+kabhi do baar.
+
+Dobara aayi khabar pakadne ke liye har khabar ki apni id hoti hai (**eventId**, jaise `E-6`). SMS bhejne se
+pehle machine dekhti hai ki ye id pehle ho chuki ya nahi:
+
+```
+E-6 aayi -> Redis / DB me dekho: E-6 ho chuki?
+             nahi -> SMS bhejo, E-6 likh do, commit
+             haan -> chhod do (dobara SMS nahi), commit
+```
+
+Ye chat wala `clientMsgId` aur banking wali idempotency key hi hai: dobara aaye to id se pehchaano. Ye
+pehchaanna padhne wale (SMS Svc) ka kaam hai, Kafka ka nahi.
+
+Exactly-once (theek ek baar) Kafka sirf Kafka se Kafka tak deta hai. SMS bahar ki cheez hai, wahan eventId
+hi rasta hai. Interview me bolo: "at-least-once + eventId se dohra kaam nahi."
+
+```mermaid
+flowchart LR
+    P1[("P1 · Arpan")] -- "E-6 cancel" --> A["TEAM sms<br/>1. SMS 2. commit"]
+    A -- "E-6 pehle ho chuki?" --> R[("Redis / DB<br/>eventId")]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan ki khabar P1 me thi, aur P1 Kafka ki ek machine (broker) pe tha. Us machine ki disk mar gayi. P1
+sirf wahin tha, to Arpan ki saari khabar hamesha ke liye gayi.
+
