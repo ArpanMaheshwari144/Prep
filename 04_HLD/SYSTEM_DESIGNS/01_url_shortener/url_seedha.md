@@ -62,4 +62,37 @@ KHOLO:  aB3x9 aaya      -> DB me dhoondho -> browser ko bolo "is lambe link pe j
 DB kyun, server ki memory (Java HashMap) kyun nahi? Memory me rakhte to server restart hote hi
 saare link gayab. Link saalon chalna chahiye, isliye disk wala DB.
 
-Agli dikkat: chhota code `aB3x9` banega kaise, aur do logon ko same code na mile ye kaise pakka?
+Par chhota code `aB3x9` banega kaise, aur do logon ko same code na mile ye kaise pakka?
+
+### Kadam 2: code banana (counter + base62)
+
+Teen tareeke ho sakte the:
+
+```
+(a) RANDOM:   7 akshar ulte-seedhe chuno (aB3x9Qz)
+(b) HASH:     lambe link ka MD5 nikaalo, uske pehle 7 akshar lo
+(c) COUNTER:  har naye link ko ek badhta number do (1, 2, 3 ...),
+              us number ko 62 akshar me likh do (base62)
+```
+
+```
+(a) random  -> do logon ko same code mil sakta. Har baar DB me dekho "pehle se hai?", mila to dobara.
+               Link badhte gaye to takkar bhi badhti
+(b) hash    -> do alag link ke pehle 7 akshar same aa sakte. Wahi DB check, wahi dobara
+(c) counter -> har number naya, to code kabhi same nahi. DB check hi nahi chahiye. ISLIYE YE
+```
+
+Base62 = jaise 10 ko binary me `1010` likhte, waise number ko 62 akshar (a-z, A-Z, 0-9) me likho. 1 arab bhi sirf 6
+akshar me. 7 akshar me ~3.5 lakh crore number.
+
+```mermaid
+flowchart LR
+    U["Arpan"] --> S["App server<br/>counter: agla number<br/>-> base62 -> aB3x9"]
+    S --> D[("DB<br/>aB3x9 -> amazon.in/...")]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Abhi ek hi server, to counter bhi ek (DB ka apna auto-increment id bhi chal jaata).
+
+Ab link ban rahe hain. Par har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna pad raha hai. DB
+itna bojh nahi jhel paayega.
