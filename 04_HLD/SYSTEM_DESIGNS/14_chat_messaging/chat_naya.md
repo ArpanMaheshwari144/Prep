@@ -1,8 +1,8 @@
 # Chat / messaging (WhatsApp jaisa): shuru se, ek kahani
 
-Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
-shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
-me ek hi kahani hai: Arpan apne dost Ravi ko message bhejta hai.
+Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe
+se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
+file me ek hi kahani hai: Arpan apne dost Ravi ko message bhejta hai.
 
 ---
 
@@ -16,8 +16,8 @@ me ek hi kahani hai: Arpan apne dost Ravi ko message bhejta hai.
 scope ke bahar (poochh ke hata do): end-to-end encryption, voice / video call, lakhon wale broadcast
 ```
 
-End-to-end encryption (E2E) zaroor poochhna. Haan bola to server message padh hi nahi sakta: server pe search
-khatam ho jaata hai, aur poora design badal jaata hai.
+End-to-end encryption (E2E) zaroor poochhna. Haan bola to server message padh hi nahi sakta: server pe
+search khatam ho jaata hai, aur poora design badal jaata hai.
 
 ## 2. NFR: kaisa chalna chahiye
 
@@ -37,8 +37,8 @@ khatam ho jaata hai, aur poora design badal jaata hai.
 ```
 
 Ye URL aur banking se alag hai. Wahan asli paimana tha "har second kitni request". Yahan asli paimana hai
-"kitni connection ek saath khuli hain", kyunki har khuli connection server ki memory khaati hai, chahe message
-aaye ya na aaye.
+"kitni connection ek saath khuli hain", kyunki har khuli connection server ki memory khaati hai, chahe
+message aaye ya na aaye.
 
 ---
 
@@ -76,3 +76,30 @@ flowchart LR
 
 Par subah 2 crore log ek saath app khol ke baithe hain. Har ek ki connection khuli hai, aur ek server ki
 memory itni connection nahi sambhal paati.
+
+### Kadam 2: 2 crore khuli connection (kai chat server + event loop)
+
+Ilaaj 1: kai chat server. Ek machine ~1 lakh khuli connection sambhal leti hai, to 2 crore / 1 lakh = ~**200
+chat server**, aur aage LB. Ye chat server sirf ek kaam karte hain: connection pakad ke rakhna aur message
+idhar-udhar karna. Baaki kaam (profile, group banana) alag API server pe hota hai.
+
+Ilaaj 2: har connection ke liye ek thread mat do. Normal server har connection ko ek thread deta hai: 1 lakh
+connection = 1 lakh thread. Har thread memory khaata hai, aur zyadatar thread khaali baithe intezaar karte
+rehte hain, kyunki log har second message nahi bhejte. Isliye **event loop** lagao (jaise Netty ya Node):
+kuch hi thread, aur wo jis connection pe message aaya sirf usi ko sambhalte hain. Baaki connection bas khuli
+padi rehti hain, un pe koi thread nahi baitha.
+
+```mermaid
+flowchart LR
+    A["Arpan"] --> LB["LB"]
+    R["Ravi"] --> LB
+    LB --> S5["Chat server 5<br/>(Arpan juda)"]
+    LB --> S9["Chat server 9<br/>(Ravi juda)"]
+    S5 & S9 --> D[("DB")]
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S9 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan chat server 5 se juda hai, aur Ravi chat server 9 se. Arpan ka "hi" server 5 pe aaya. Ab server 5
+ko kaise pata ki Ravi 200 me se kis server pe baitha hai?
+
