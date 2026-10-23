@@ -5,6 +5,11 @@ se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me pe
 file me ek hi kahani hai: Arpan ne Amazon pe order kiya, use push bhi aana chahiye aur email bhi, aur login
 ke waqt OTP ka SMS turant.
 
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+seedha call -> Kafka + Notification Svc -> har raaste ki line + worker -> key BHEJ_RAHA / BHEJ_DIYA (Redis)
+-> retry line + DLQ -> timeout + circuit breaker + doosri company -> OTP ki tez line -> saanjha token bucket
+-> webhook + Tracking DB (Cassandra) -> campaign tukde -> pasand + saancha cache
+
 ---
 
 ## 1. FR: kya karna hai
@@ -441,3 +446,83 @@ flowchart LR
 
 Cache kyun chalta yahan: pasand aur saancha bahut baar padhe jaate (har khabar pe), par badalte kabhi-kabhi
 (Arpan mahine me ek baar setting chhoota). Aisa data cache ke liye sabse sahi.
+
+---
+
+## Wrap: 30 sec me poora design
+
+```
+Order Svc khabar Kafka me daal ke aage badh jaata (ruke nahi). Notification Svc pasand + saancha (cache se)
+dekh ke khabar ko darje (TEZ / BEECH / DHEEMI) aur raaste (push / email / SMS) ki alag line me daalta.
+Har line ke apne worker: Redis key (BHEJ_RAHA -> BHEJ_DIYA) se do baar nahi, fail pe ruk-ruk ke dobara phir
+DLQ (khoye nahi), 2 sec timeout + circuit breaker + doosri company, saanjha token bucket se company ki had me.
+Company ka webhook Tracking DB (Cassandra) me "mila / fail" likhta. 1 crore ka campaign 1000 ke tukdon me,
+register me tick. OTP ki alag tez line, sale ki bheed me nahi phansta.
+```
+
+---
+
+## Pooche to
+
+```
+API?
+  -> Kafka pe { event: "ORDER_PLACED", userId: 123, orderId: 999 }. Andar ke liye REST bhi:
+     POST /notify { userId, type, channel?, payload }
+
+Raaste kaunse?
+  -> Push = FCM (Android) / APNs (iPhone). Email = SES / SendGrid. SMS = Twilio / MSG91.
+     App ke andar = DB + WebSocket.
+
+Arpan ki "order hua" aur "ship hua" ulti kram me na pahunche?
+  -> Kafka key = userId. Ek user ki saari khabar ek hi tukde (partition) me,
+     aur tukde ke andar kram bana rehta.
+
+Kafka me khabar khoye hi nahi, pakka?
+  -> saari copy ne li tab hi OK (acks=all), aur worker offset kaam ke BAAD commit karta.
+
+Raat 2 baje offer ka SMS?
+  -> kanoon (TRAI) kehta offer wala (promotional) SMS sirf din me, OTP / order kabhi bhi. Asal me loopholes
+     hain: push / WhatsApp pe koi rok nahi, company "pehle schedule kiya tha, der se gaya" bol sakti.
+     Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana, isliye Kadam 11 me pasand check.
+
+10 guna traffic?
+  -> Kafka me tukde (partition) pehle se zyada · Notification Svc ki machine badhao · worker badhao
+     (ek ~1000 / sec) · pasand / saancha cache · company ki had saanjha bucket se.
+
+Data 3 saal baad (Tracking DB ~90 TB / saal)?
+  -> har row ki umar (jaise 90 din), purani rows sasti jagah (cold storage). Roz wali table chhoti rehti.
+
+Chal raha hai, kaise pata?
+  -> webhook se delivered / failed ginti, Kafka me kitna pending (lag), DLQ kitna bhara -> alert.
+
+AWS pe naam?
+  -> Tracking (Cassandra) = Amazon Keyspaces (ya EC2 pe khud) · Redis = ElastiCache · Kafka = MSK.
+```
+
+---
+
+## HANDS-ON: company ne 429 diya, chala ke dekha
+
+Galti jo hui thi: 429 pe "fail-open" bola. Fail-open HUMARE limiter ka faisla hai (Redis gira to). Yahan had
+COMPANY ki hai, uska darwaza hum nahi khol sakte, dheema HUMEIN hona padega.
+
+CODE: `04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java` (Docker nahi, time nakli)
+· line 21 `SMART = false / true`
+-> `java Sms429Demo.java`
+
+```
+SETUP:  1000 SMS ek saath · company 100 / sec · t=3,4 pe 50 / sec
+NAIVE:  sab ek saath, 429 pe agle second turant dobara, 3 fail -> PHENK DO
+SMART:  apni taraf 100 / sec (token bucket) · 429 pe 1s, 2s, 4s · kabhi phenko mat
+
+NAIVE   PAHUNCHE 300 / 1000 · CHHODE 700 · call 2700 (429 = 2400) · 3 sec me khatam
+SMART   PAHUNCHE 1000 / 1000 · CHHODE 0 · call 1100 (429 = 100) · 11 sec, dheere par sab pahunche
+```
+
+Jawab: chala ke dekha, company ki had ka dhyaan na rakha aur turant dobara bheja to 1000 me se 700 gaye hi
+nahi. Had me bheja aur ruk-ruk ke dobara koshish ki to poore 1000 pahunche.
+
+CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) ·
+[ms-communication](../../FOUNDATIONS/10_ms_communication.md) ·
+saath: [12 message-queue](../12_message_queue_kafka/12_message_queue_kafka.md) ·
+[<- MASTER SHEET](../../00_MASTER_SHEET.md)
