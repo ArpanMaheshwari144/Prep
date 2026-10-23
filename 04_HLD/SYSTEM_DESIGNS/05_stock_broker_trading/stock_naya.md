@@ -132,7 +132,8 @@ haath daal rahe hain. Do thread ne ek hi Suresh ko do kharidne walon se mila diy
 ### Kadam 4: ek share ki book, ek hi thread (stock ka apna)
 
 Har share ki apni order book, aur har book ko **sirf ek thread** chalata hai. Us share ke saare order ek line
-(queue) me lagte hain (ye line bhi engine ki RAM me), thread unhe ek-ek karke uthata hai.
+(queue) me lagte hain (abhi engine ki RAM me; Kadam 5 me yahi line log banegi: disk + standby), thread
+unhe ek-ek karke uthata hai.
 
 ```
 TCS ke order  --> [TCS line] --> TCS thread (akela) --> TCS order book
@@ -170,3 +171,44 @@ me lakhon order nipta sakta (mera andaza, asli number exchange pe nirbhar). TCS 
 
 Par order book RAM me hai. Dopahar 12 baje matching machine gir gayi, poori TCS order book gayab. Kisne kis
 bhaav pe kharidne ka order dala tha, kuch nahi bacha.
+
+### Kadam 5: engine giri (log + standby, ack ke baad milaan)
+
+Dikkat: order book engine ki RAM me hai. Machine giri to book gayi, aur restart tak TCS ka trading ruka.
+
+Ilaaj: engine har aane wala **order** (book nahi) pehle pakka karta hai, phir milata hai, isi kram me:
+
+```
+order 501 "Arpan buy 10 @ 3500"
+  1. apni disk pe LOG me likho
+  2. STANDBY machine ko bhejo
+  3. standby bole "mil gaya" (ack)  <- iske BAAD hi milao
+  4. milao
+12:00 primary gira -> standby ke paas 1..501 sab, usi kram me -> book wahi -> standby primary ban gaya
+```
+
+```mermaid
+flowchart LR
+    O["Order Svc"] --> P["Primary engine<br/>(RAM book)"]
+    P -- "1. likho" --> L[("apni disk: LOG")]
+    P -- "2. order bhejo" --> S["Standby engine<br/>(wahi book banti)"]
+    S -- "3. ack" --> P
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ack ka intezaar kyun: engine ne bheja aur turant gira, standby tak pahuncha hi nahi. Agar engine pehle hi milaan
+kar chuka hota, to wo sauda standby ko pata hi nahi. Ack = standby ke paas order pakka.
+
+Standby ko order kyun, book kyun nahi: standby wahi program chala raha, wahi order usi kram me milata hai, to
+uski RAM me apne aap wahi book banti hai. Ye [banking kadam 7](../13_banking_system/13_banking_system.md#kadam-7-salary-ki-bheed--ek-hi-db-kai-machine--db-ki-sync-copy) ki sync copy jaisa hi.
+
+Ek waqt me ek hi engine: heartbeat se tay hota hai ki primary mar gaya, tabhi standby kaam shuru karta hai.
+Purana primary wapas aaye to wo standby ban ke baithta hai. Do engine ek book pe chal gaye to ek Suresh do baar
+bik jaayega (**split brain**, sabse bada khatra).
+
+Snapshot: naya standby subah 9:15 se poora log padhe to minute lagenge. Har minute book ki photo (snapshot);
+naya standby aakhri photo + uske baad ka chhota log padhta hai.
+
+Kafka kyun nahi yahan: Kafka me log rakhna bhi chalta, par har order pe uska chakkar milli-second ka hai, apna
+log + seedha copy usse kahin tez (andaza: ~100 micro-second vs 2-5 ms). Exchange ke liye ye farak bada hai.
