@@ -186,3 +186,31 @@ to sab ruk jaate hain. Bahar wale ke saath saga hi chalta hai.
 Par Diwali ki shaam, har second 3000 payment. Ek Payment Svc machine nahi jheli. Aur dukaan wale apni "aaj
 ki bikri" report baar-baar khol rahe hain, jo isi DB pe chalti hai. Arpan ka payment dheema ho gaya.
 
+### Kadam 6: Diwali ki bheed + report ne payment dheema kiya (kai machine + read replica)
+
+Ek Payment Svc machine 3000 payment / sec nahi jhel paayi. Ilaaj: kai Payment Svc machine, aage LB. Ye
+isliye chalta hai kyunki Payment Svc apne andar kuch yaad nahi rakhta. Saara haal (PENDING, SUCCESS, wallet)
+DB me hai, to koi bhi machine koi bhi payment sambhal sakti hai (banking kadam 7 jaisa).
+
+Dukaan wale "aaj ki bikri" report baar-baar khol rahe hain. Ye bhaari query hai, din bhar ke payment jod ke
+total nikalti hai, aur usi primary DB pe chal rahi thi jahan payment likhe ja rahe hain. Isliye Arpan ka
+payment dheema hua.
+
+Ilaaj: **read replica**. Report sirf padhti hai, to DB ki copy se chalao. Primary sirf payment likhne ke
+liye bachta hai. Copy kuch second peeche ho sakti hai, matlab abhi aaya payment report me 2 second baad
+dikhega. Report ke liye ye chal jaata hai. Paisa kaatne ka faisla hamesha primary se hota hai.
+
+```mermaid
+flowchart LR
+    U["3000 payment / sec"] --> LB["LB"]
+    LB --> S1["Payment Svc 1"] & S2["Payment Svc 2"]
+    S1 & S2 -- "payment likho" --> P[("Primary")]
+    P -- "copy" --> R[("Read replica")]
+    M["dukaan ki report"] --> R
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par saal bhar me ~1000 crore payment ki lines ho gayi. Ek hi primary pe itni likhai aur itna data, primary
+dheema pad gaya. Banking se farak: wahan 120 likhai / sec thi, yahan Diwali pe 3000 / sec.
+
