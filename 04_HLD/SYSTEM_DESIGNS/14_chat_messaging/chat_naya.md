@@ -191,3 +191,40 @@ Par isse ek aur cheez khulti hai: server ne DB me likh liya, aur ack bhejne se p
 bheja, aur Ravi ko "hi" do baar dikha. Ye agle kisi kadam me aayega. Usse pehle, roz ~400 crore message,
 yaani roz ~1.2 TB. Ek DB itna likhna aur rakhna nahi jhel paayega.
 
+### Kadam 5: roz 1.2 TB (Cassandra, chat ke hisaab se baanto)
+
+Roz ~400 crore message, ~46,000 likhai har second, roz ~1.2 TB. Ek DB machine ye nahi jhel paayegi.
+
+Pehle data dekho. Ek message likha jaata hai aur phir kabhi badalta nahi. Padhai hamesha ek hi tarah se hoti
+hai: "is chat ke aakhri 50 message do" ya "number 41 ke baad wale do". Na join chahiye, na bank jaisa
+transaction.
+
+Ilaaj: **Cassandra**, aur data **chat ke hisaab se baanto (chat_id)**. Chat arpan-ravi ke saare message ek
+hi machine pe, number ke kram me rakhe hote hain. "41 ke baad sab do" ek machine se, ek jagah se seedha padh
+liya.
+
+SQL kyun nahi, Cassandra kyun? Yahan likhai bahut zyada hai, data roz badhta hai, aur padhai seedhi hai.
+Cassandra isi kaam ke liye bana hai: tez likhai, kai machine me khud baantna, aur har cheez ki copy. SQL ki
+taakat (join, transaction) yahan chahiye hi nahi, aur itni likhai ke liye SQL me baantna haath se karna
+padta. Ye URL wali soch hi hai.
+
+chat_id se hi kyun baanta? Ek chat ke saare message ek jagah rahein, to "aakhri 50 do" ek hi machine se mil
+jaata hai. User id se baant-te to Arpan aur Ravi ki ek hi chat do machine me batt jaati.
+
+Cassandra kab lagta hai, ek niyam: likhai bahut zyada + padhai ek key se (jaise chat_id, code) + transaction
+nahi chahiye. Chat ke message, URL ke link, notification ki history, sensor / log data. Kab nahi: paisa
+(banking, payment = SQL), join wali query, aur shabd dhoondhna (search = Elasticsearch).
+
+```mermaid
+flowchart LR
+    S["Chat servers"] -- "chat_id se" --> C1[("Cassandra 1<br/>arpan-ravi: 1..42")]
+    S --> C2[("Cassandra 2<br/>sita-geeta")]
+    S --> C3[("Cassandra 3<br/>college gang")]
+    style C1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par wo jo kadam 4 me khula tha: server ne DB me likh liya, ack bhejne se pehle gira. App ne dobara bheja,
+aur Ravi ko "hi" do baar dikha.
+
