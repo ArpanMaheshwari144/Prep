@@ -229,11 +229,11 @@ TCS thread 9:15 pe in paanchon ka intezaar nahi kar sakta, warna milaan dheema. 
 
 Galat raaste:
 - engine khud har kaam kare: har sauda pe 5 jagah call, thread wahin atka.
-- engine seedha Kafka ko bheje: ms-ms ka intezaar, aur milaan ke baad bhejne se pehle gira to sauda kahin likha
-  hi nahi.
+- engine seedha Kafka ko bheje: ms-ms ka intezaar, aur milaan ke baad bhejne se pehle gira to sauda kahin
+  likha hi nahi.
 
-Sahi: engine sauda bhi usi Kadam 5 wale log me likhta (jaise order likhta tha). Ek chhota **relay** log padh ke
-sauda **Kafka** ke `trades` topic me daalta. Paanchon kaam karne wale wahin se padhte.
+Sahi: engine sauda bhi usi Kadam 5 wale log me likhta (jaise order likhta tha). Ek chhota **relay** log padh
+ke sauda **Kafka** ke `trades` topic me daalta. Paanchon kaam karne wale wahin se padhte.
 
 ```mermaid
 flowchart LR
@@ -248,8 +248,8 @@ flowchart LR
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Kafka hi kyun: dikkat thi "ek baat, kai sunne wale, aur bolne wala ruke nahi". Kafka yahi karta: ek baar likha,
-sab apni raftaar se padhte, padhne se khabar mitti nahi. Ye [banking kadam 6](../13_banking_system/13_banking_system.md#kadam-6-sms-service-giri-outbox--kafka) / Kafka file ka **outbox**
+Kafka hi kyun: dikkat thi "ek baat, kai sunne wale, aur bolne wala ruke nahi". Kafka yahi karta: ek baar
+likha, sab apni raftaar se padhte, padhne se khabar mitti nahi. Ye [banking kadam 6](../13_banking_system/13_banking_system.md#kadam-6-sms-service-giri-outbox--kafka) / Kafka file ka **outbox**
 hi hai, bas outbox table ki jagah engine ka apna log.
 
 Par settlement worker ne S-88 uthaya. Arpan ka paisa wallet DB me, share portfolio DB me. Paisa kat gaya, aur
