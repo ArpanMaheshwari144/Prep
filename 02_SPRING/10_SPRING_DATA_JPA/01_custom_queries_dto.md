@@ -162,9 +162,55 @@ List<CustomerOrderSummary> getCustomerSummaries(@Param("city") String city,
 - **Aggregation** `COUNT/SUM/MAX` — count, total, last-date.
 - **GROUP BY** — per-user ek row · **HAVING** — group-level filter (`WHERE`=row-level).
 - **COALESCE(...,0)** — NULL → 0.
-- ★ **LEFT JOIN ka trap:** right table (orders) ki condition WHERE me daali to NULL wali rows hat jaati
-  -> LEFT JOIN chupchaap INNER JOIN ban jaata (bina order wale users gaayab). Isliye `created_at` wali
-  condition **ON me** hai, WHERE me nahi. (Pehle yahi galti is file me thi — 28-Sep theek ki.)
+- ★ **LEFT JOIN ka trap** -> neeche 5b (misaal se).
+
+## 5b. LEFT JOIN trap — shart ON me kyun, WHERE me kyun nahi
+
+```
+users                    orders
+id | name                id | user_id | created_at
+ 1 | Arpan                1 |    1    | 20-Oct
+ 2 | Ravi                 2 |    1    | 01-Jan
+ 3 | Sita     (Sita ka koi order nahi)
+```
+
+Sawaal: "SAARE users dikhao, aur unke 1-Oct ke baad wale order gino (jinka nahi, unka 0)."
+LEFT JOIN = left table (users) ke SAB log aayenge; jiska order nahi mila, uske order wale khaane NULL.
+
+**GALAT: shart WHERE me**
+```sql
+FROM users u LEFT JOIN orders o ON o.user_id = u.id
+WHERE o.created_at >= '1-Oct'
+```
+```
+Pehle join:                 Phir WHERE har row pe ("created_at >= 1-Oct?"):
+Arpan | 20-Oct              haan -> bachi
+Arpan | 01-Jan              nahi -> hati
+Ravi  | NULL                NULL ki tulna kuch nahi deti -> hati
+Sita  | NULL                hati
+```
+Bacha sirf Arpan. Ravi aur Sita GAAYAB, jabki unhe 0 ke saath aana tha.
+LEFT JOIN ne bina-order wale rakhe the, WHERE ne kaat diye = result INNER JOIN jaisa.
+**Isi ko "LEFT JOIN chupchaap INNER ban jaata" kehte hain.**
+
+**SAHI: shart ON me**
+```sql
+FROM users u LEFT JOIN orders o
+  ON o.user_id = u.id AND o.created_at >= '1-Oct'
+```
+ON sirf ye tay karta hai ki join karte waqt kaunsa order kis user se JUDEGA. User ko hatata nahi.
+```
+Arpan | 20-Oct    (01-Jan wala juda hi nahi)
+Ravi  | NULL      -> count 0
+Sita  | NULL      -> count 0
+```
+Teeno user bache, Ravi / Sita ke aage 0. Yahi chahiye tha.
+
+**WHERE vs HAVING**
+- WHERE = join ke baad har ek ROW pe filter (row fail -> hat jaati).
+- HAVING = GROUP BY ke baad poore GROUP pe filter ("jinke 2 se zyada order", `HAVING COUNT(o.id) > 2`).
+
+**Ek line:** LEFT JOIN me right table (orders) ki shart **ON** me daalo. WHERE me daali to bina-match wale log kat jaate.
 
 ---
 
