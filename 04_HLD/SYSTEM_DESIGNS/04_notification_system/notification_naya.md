@@ -203,3 +203,31 @@ flowchart LR
 
 Par 12 baje sale shuru hui, aur 50,000 offer SMS line me pehle se khade hain. Arpan ka login OTP unke peeche
 lag gaya. OTP 5 min me bekaar ho jaata hai, offer 1 ghanta baad bhi chalega.
+
+### Kadam 7: OTP ki alag tez line
+
+Notification Svc har khabar ko ek darja deta hai: **TEZ** (OTP, password reset), **BEECH** (order hua, ship
+hua), **DHEEMI** (offer, sale ki khabar). Har darje ki apni alag line, aur **apne alag worker**. OTP wale worker
+kabhi offer nahi uthate. Sale me 50,000 offer DHEEMI line me khade rehte hain, Arpan ka OTP TEZ line se
+turant nikal jaata hai.
+
+```mermaid
+flowchart LR
+    N["Notification Svc<br/>(darja)"] --> T[("TEZ line: OTP")]
+    N --> B[("BEECH line: order")]
+    N --> D[("DHEEMI line: offer")]
+    T --> WT["OTP worker (sirf ye)"]
+    B --> WB["order worker"]
+    D --> WD["offer worker<br/>(bheed yahan ruke, chalega)"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style WT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ek line + priority kyun nahi: Kafka line me aage-peeche nahi karta, jo pehle aaya wahi pehle nikalta hai.
+Isliye alag line hi raasta hai.
+
+OTP ki umar: OTP me 5 min ki expiry likhi hoti hai. Kisi wajah se 5 min baad worker tak pahuncha, to wo
+bhejta hi nahi, kyunki bekaar OTP bhejna faltu hai.
+
+Par sale me ek saath laakhon SMS. Humare worker tez hain, par SMS company ki had hai: 1000 / sec. Usse zyada
+bheja to wo **429** (Too Many Requests) lauta deti hai.
