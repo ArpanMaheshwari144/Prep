@@ -212,3 +212,94 @@ naya standby aakhri photo + uske baad ka chhota log padhta hai.
 
 Kafka kyun nahi yahan: Kafka me log rakhna bhi chalta, par har order pe uska chakkar milli-second ka hai, apna
 log + seedha copy usse kahin tez (andaza: ~100 micro-second vs 2-5 ms). Exchange ke liye ye farak bada hai.
+
+### Kadam 6: sauda hua, kai logon ko batana (yahan Kafka asli wajah se)
+
+Dikkat: sauda S-88 hua (Arpan ne Suresh se 10 TCS 3500 pe liye). Ab ek saath kai kaam baaki:
+
+```
+sauda S-88 --> 1. Arpan ka paisa kaato, Suresh ko do     (settlement)
+           --> 2. Arpan ke portfolio me 10 TCS           (settlement)
+           --> 3. Arpan ko "10 TCS mil gaye" SMS / push  (notification)
+           --> 4. audit / record                         (NFR "har cheez ka record")
+           --> 5. TCS ka naya bhaav 3500                 (aage)
+```
+
+TCS thread 9:15 pe in paanchon ka intezaar nahi kar sakta, warna milaan dheema. Par sauda khona bhi nahi.
+
+Galat raaste:
+- engine khud har kaam kare: har sauda pe 5 jagah call, thread wahin atka.
+- engine seedha Kafka ko bheje: ms-ms ka intezaar, aur milaan ke baad bhejne se pehle gira to sauda kahin likha
+  hi nahi.
+
+Sahi: engine sauda bhi usi Kadam 5 wale log me likhta (jaise order likhta tha). Ek chhota **relay** log padh ke
+sauda **Kafka** ke `trades` topic me daalta. Paanchon kaam karne wale wahin se padhte.
+
+```mermaid
+flowchart LR
+    E["Engine"] -- "sauda S-88" --> L[("apna LOG")]
+    L --> R["Relay"]
+    R --> K[("Kafka: trades")]
+    K --> ST["Settlement"]
+    K --> N["Notification"]
+    K --> A["Audit"]
+    K --> PS["Price Svc"]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Kafka hi kyun: dikkat thi "ek baat, kai sunne wale, aur bolne wala ruke nahi". Kafka yahi karta: ek baar likha,
+sab apni raftaar se padhte, padhne se khabar mitti nahi. Ye [banking kadam 6](../13_banking_system/13_banking_system.md#kadam-6-sms-service-giri-outbox--kafka) / Kafka file ka **outbox**
+hi hai, bas outbox table ki jagah engine ka apna log.
+
+Par settlement worker ne S-88 uthaya. Arpan ka paisa wallet DB me, share portfolio DB me. Paisa kat gaya, aur
+share likhne se pehle portfolio DB band ho gaya. Arpan ke 35,000 gaye, share aaye nahi.
+
+### Kadam 7: sauda ke baad paisa + share (settlement)
+
+Pakka niyam: **sauda ho gaya to ulta nahi hota.** Exchange me Suresh ka share bik chuka. Humari taraf koi DB
+band ho, tab bhi sauda cancel nahi karte, bas use poora karte hain.
+
+Sabse seedha: wallet aur portfolio ek hi DB me. Tab paisa + share ek hi transaction me
+([banking kadam 2](../13_banking_system/13_banking_system.md#kadam-2-beech-me-server-gira-paisa-gayab-ek-transaction)):
+
+```sql
+BEGIN
+  wallet:    Arpan blocked -35,000      Suresh available +35,000
+  portfolio: Arpan TCS +10              Suresh TCS (blocked) -10
+  settlement: S-88 = DONE               -- sauda id UNIQUE, do baar nahi
+COMMIT          -- ya sab hua, ya kuch nahi
+```
+
+Agar dono alag DB me (badi company me aksar):
+
+```
+Settlement worker: Kafka trades se "SAUDA S-88" uthaya
+  1. settlement table: S-88 = PENDING
+  2. wallet DB:    paisa move      -> S-88 paisa = DONE
+  3. portfolio DB: share move      -> BAND hai!
+       -> ruk-ruk ke dobara (1s, 2s, 4s) -- sauda ulta NAHI
+       -> 10 min tak band -> ALERT, ops dekhe
+       -> Arpan ko app me: "share aa rahe hain (PENDING)"
+  4. portfolio wapas -> share move -> S-88 = DONE
+raat ka milaan: saare sauda vs wallet vs portfolio -> farak = alert
+```
+
+```mermaid
+flowchart LR
+    L[("Kafka: trades<br/>SAUDA S-88")] --> W["Settlement worker"]
+    W --> ST[("settlement: S-88<br/>PENDING / DONE")]
+    W -- "paisa" --> WD[("Wallet DB")]
+    W -- "share (band to dobara)" --> PD[("Portfolio DB")]
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style ST fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Har step `S-88` se pehchana jaata: worker beech me mara aur dobara chala, to "S-88 paisa = DONE" dekh ke paisa
+dobara nahi kaatta. Wahi idempotency, bas key sauda id. Raat ka milaan [banking kadam 9](../13_banking_system/13_banking_system.md#kadam-9-balance-aur-khaata-alag-ho-gaye-raat-ka-milaan--reconciliation) wala hi.
+
+Arpan ko "retry karo" kyun nahi: Arpan dobara Buy dabayega to wo naya order, 20 share aa jaayenge. Galti
+humari taraf ki, to theek bhi hum karte: PENDING dikhao, khud poora karo.
+
+Par 10 lakh logon ka app khula, sab ko har second TCS ka naya bhaav dekhna. Har app har second server se
+poochh raha "TCS kitna?". 10 lakh sawaal / sec, server baith gaya.
