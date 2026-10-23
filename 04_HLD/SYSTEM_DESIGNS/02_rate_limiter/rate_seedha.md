@@ -80,3 +80,32 @@ Redis RAM me ~1 ms, aur data sirf 500 MB, RAM me aa jaata.
 
 Par "har minute 5" = ghadi ka minute (10:00 - 10:01). Bot ne 10:00:59 pe 5 bheji, 10:01:00 pe phir 5.
 Ek second me 10 andar, kyunki minute badalte hi ginti 0.
+
+### Kadam 3: minute ke kinare pe dugni (kaunsa tareeka gine)
+
+Ab tak ghadi ka minute (**fixed window**): 10:00:59 pe 5 + 10:01:00 pe 5 = ek second me 10.
+
+```
+SLIDING LOG     har request ka time likho, nayi aaye to pichhle 60 sec wale gino
+                -> sabse sahi, par har request ka time = memory bahut (1 crore user)
+SLIDING COUNTER is minute ki ginti + pichhle minute ka bacha hissa (2 number)
+                -> lagbhag sahi, sasta
+LEAKY BUCKET    request line me, fix raftaar se nikalti (nal se boond)
+                -> smooth, par jhatka (burst) nahi nikalne deta
+TOKEN BUCKET    baalti me max 5 token, har 12 sec 1 bharta, har request 1 leti, khaali -> 429
+                -> ISLIYE YE
+```
+
+```
+token bucket kyun?  -> sirf 2 number (tokens, aakhri baar) = wahi 500 MB
+                    -> jhatka chalta: 1 ghanta baad aaya to 5 ek saath (asli user aise hi)
+                    -> kinara nahi: khaali hui to agla token 12 sec baad, minute se reset nahi
+                    -> AWS / Stripe yahi
+bharta kaun?        -> koi job nahi. Request aane pe hisaab (lazy refill):
+                       tokens = min(5, tokens + (abhi - aakhri baar) x raftaar)
+                       1 ghanta baad: 300 bante, par baalti 5 ki -> 5
+```
+
+Par bot ne ek saath 20 login bheje. 20 App ne ek saath padha "tokens = 5",
+sabne socha "bache hain", sabne 1 ghata ke likha.
+20 andar, jabki 5 jaane the.
