@@ -169,3 +169,28 @@ Celebrity kaun? Ek had tay hoti (jaise 1 lakh se zyada follower). Ye faisla hai,
 
 Par match khatam, Virat ke tweet pe 1 crore log ek saath feed khol rahe. Sab ek hi Redis key `celeb:Virat`
 padh rahe, aur wo ek Redis machine garam ho ke dheemi pad gayi.
+
+### Kadam 5: Virat ka tweet viral, ek Redis key garam (local cache)
+
+Dikkat: 1 crore log ek saath `celeb:Virat` padh rahe, aur ye key sirf ek Redis machine pe.
+
+Ilaaj: har Feed Svc machine celebrity ki list **apni memory me** 1-2 second ke liye rakh leti (local cache).
+
+```
+pehle: 1 crore feed --> sab ek hi Redis machine pe "celeb:Virat" --> garam
+ab:    1 crore feed --> 100 Feed Svc machine, har ek ki apni memory me celeb:Virat (umar 2 sec)
+                        --> Redis tak har machine 2 sec me sirf ek baar = 100 / 2 sec, crore nahi
+```
+
+```mermaid
+flowchart LR
+    U["1 crore feed"] --> F["100 Feed Svc machine<br/>(apni memory: celeb:Virat, 2 sec)"]
+    F -. "2 sec me ek baar" .-> CL[("Redis: celeb:Virat")]
+    style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+2 second purana chalega? Haan, NFR: feed 2-5 sec purani chalegi. Ye bilkul [URL kadam 8](../01_url_shortener/01_url_shortener.md#kadam-8-ek-link-viral-local-cache) hai: wahan viral
+link, yahan viral celebrity. Ilaaj wahi, apni memory me thodi der.
+
+Par Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. Redis ki RAM bhar rahi, aur Redis RAM
+mehngi hai.
