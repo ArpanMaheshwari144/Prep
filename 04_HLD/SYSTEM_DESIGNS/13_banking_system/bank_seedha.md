@@ -172,8 +172,10 @@ COMMIT
 ```
 
 ```
-sirf INSERT       -> kabhi UPDATE / DELETE nahi. Galti = ulti line (+500 wapas), purani nahi mitti. Audit isi se
-double-entry kyun -> har transfer ki dono line jod = 0. Poore khaate ka jod 0 nahi = galti. Paisa na bana na gaya
+sirf INSERT       -> kabhi UPDATE / DELETE nahi. Galti = ulti line (+500 wapas), purani nahi mitti.
+                     Audit isi se
+double-entry kyun -> har transfer ki dono line jod = 0. Poore khaate ka jod 0 nahi = galti.
+                     Paisa na bana na gaya
 khaata = sach      -> balance = us account ki saari lines ka jod. Balance column bas tez padhne ki copy
 ```
 
