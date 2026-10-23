@@ -209,3 +209,40 @@ flowchart LR
 Par Arpan ki khabar P1 me thi, aur P1 Kafka ki ek machine (broker) pe tha. Us machine ki disk mar gayi. P1
 sirf wahin tha, to Arpan ki saari khabar hamesha ke liye gayi.
 
+### Kadam 6: Kafka ki machine mari (3 copy, acks=all, min.insync)
+
+Ilaaj: har tukde ki **3 copy**, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo **leader**
+hai, baaki do copy. P1 ka leader machine B pe, copy A aur C pe. B ki disk mari to A ya C naya leader ban
+jaata hai, aur Arpan ki khabar bach jaati hai. Naya leader kaun banega, ye Kafka ki ek machine tay karti hai
+jo sab pe nazar rakhti hai: **Controller**.
+
+Par ek pench: leader B ne khabar likhi aur turant Order Svc ko "ho gaya" bol diya, aur copy tak khabar
+pahunchne se pehle hi B mar gayi. Copy ke paas wo khabar thi hi nahi, to khabar gayi.
+
+Ilaaj: **acks=all**. Leader "ho gaya" tabhi bolta hai jab pakki copies pe bhi likh jaaye.
+
+```
+acks=0    bhej ke bhool jao (sabse tez, khabar kho sakti)
+acks=1    sirf leader ne likha to "ho gaya" (leader mara to aakhri khabar gayi)
+acks=all  saari pakki copies pe likha tab "ho gaya"     <- order / paisa ke liye
+```
+
+"Pakki copy" wo hai jo leader ke saath bilkul taaza chal rahi hai. Unki list ko **ISR** kehte hain. Peeche
+chal rahi copy ko leader nahi banate, warna aakhri khabar kho jaayegi.
+
+Sab copies gir gayi aur sirf leader bacha, to `acks=all` me "saari pakki copy" sirf leader khud hai, aur wo
+"ho gaya" bol dega jabki copy ek bhi nahi. Isliye saath me **min.insync = 2**: kam se kam 2 pakki copy na
+hon to likhna hi band. Khabar khone se behtar hai thodi der ruk jaana.
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "acks=all" --> L[("machine B<br/>P1 leader")]
+    L -- "copy" --> A[("machine A<br/>P1 copy")]
+    L -- "copy" --> C[("machine C<br/>P1 copy")]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par ab bhejne wala bacha. Arpan ne order cancel kiya. Order Svc ne DB me likha "order = cancel", aur Kafka
+ko khabar bhejne se pehle gir gaya. DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala.
+
