@@ -278,3 +278,36 @@ Par Arpan ki ghadi 5 minute aage chal rahi thi. Usne sawaal poochha, phir Ravi n
 kram phone ke time se lagaya, to Arpan ka sawaal Ravi ke jawab ke neeche chala gaya. Chat ulti padh rahi
 hai.
 
+### Kadam 7: kram ulta ho gaya (phone ki ghadi nahi, server ka number)
+
+Message ka kram phone ke time se lag raha tha. Arpan ki ghadi 5 minute aage thi:
+
+```
+10:00  Arpan: "kal milein?"     -> phone ne time daala 10:05 (ghadi aage)
+10:02  Ravi:  "haan, 5 baje"    -> phone ne time daala 10:02
+time se lagaya: Ravi ka jawab upar, Arpan ka sawaal neeche. Ulta
+```
+
+Har phone ki ghadi alag hoti hai, isliye phone ke time pe bharosa nahi kar sakte.
+
+Ilaaj: kram **server** de. Message server pe pahunchte hi us chat ka agla number milta hai (`INCR
+seq:arpan-ravi` Redis me): "kal milein?" = 42, "haan, 5 baje" = 43. Kram number se lagta hai, phone ki ghadi
+kuch bhi kahe. Number har chat ka alag hai, kyunki kram sirf ek chat ke andar chahiye. Kadam 4 ka "mere paas
+aakhri 41 hai, uske baad ke do" isi number se chalta hai.
+
+WhatsApp pe kabhi-kabhi message aage-peeche dikhte hain. Wo andar se kram kaise lagata hai, ye kisi ke paas
+pakka nahi hai. Wahan end-to-end encryption hai, to server message dekh hi nahi sakta. Hamare design me E2E
+scope se bahar hai, to server khud kram de sakta hai. Interview me itna hi bolo.
+
+```mermaid
+flowchart LR
+    A["Arpan: kal milein?"] --> S["Chat server"]
+    RV["Ravi: haan, 5 baje"] --> S
+    S -- "INCR seq:arpan-ravi" --> R[("Redis<br/>42, phir 43")]
+    S --> D[("Cassandra<br/>42 · 43, number se kram")]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par "College Gang" group me 500 log hain. Arpan ne ek message bheja. Kya ye 500 baar DB me likhein, har
+member ke liye ek?
+
