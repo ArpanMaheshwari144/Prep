@@ -63,8 +63,9 @@ guna zyada, to DB har second laakhon baar yahi bhaari jod. Feed 3 sec me khulti,
 
 ### Kadam 2: har user ka pehle se bana inbox (fanout on write)
 
-Har user ka Redis me ek **inbox** = uski taiyaar feed (sorted set, naya sabse upar). Koi tweet kare to wo tweet
-usi waqt uske saare followers ke inbox me daal do. Isi ko **fanout** kehte hain: ek tweet, kai inbox me bikhra.
+Har user ka Redis me ek **inbox** = uski taiyaar feed (sorted set, naya sabse upar). Koi tweet kare to wo
+tweet usi waqt uske saare followers ke inbox me daal do. Isi ko **fanout** kehte hain: ek tweet, kai inbox me
+bikhra.
 
 ```
 Ravi ne tweet kiya (T-901) --> Ravi ke 200 follower kaun? --> har ek ke inbox me T-901 daalo
@@ -87,11 +88,11 @@ Ab kya theek hua: feed kholna sirf ek Redis read, 200 ms se bahut kam. Bhaari ka
 ab tweet karte waqt ek baar, har feed pe nahi. Dekhne wale 50 guna zyada, to kaam likhne wali taraf khiskana
 sahi.
 
-Inbox me poora tweet nahi, sirf tweet id (`T-901`). Text ek baar tweets table me; 200 jagah poora text rakhte to
-jagah 200 guna.
+Inbox me poora tweet nahi, sirf tweet id (`T-901`). Text ek baar tweets table me; 200 jagah poora text rakhte
+to jagah 200 guna.
 
-Par Arpan ka dost Mohan chhota influencer hai, 5,000 follower. Mohan ne tweet dabaya, aur Tweet Svc 5,000 inbox
-me likh raha, uske baad hi "tweet ho gaya" bolega. Mohan ka button 5 second ghoomta raha.
+Par Arpan ka dost Mohan chhota influencer hai, 5,000 follower. Mohan ne tweet dabaya, aur Tweet Svc 5,000
+inbox me likh raha, uske baad hi "tweet ho gaya" bolega. Mohan ka button 5 second ghoomta raha.
 
 ### Kadam 3: tweet turant, fanout peeche se (Kafka + fanout worker)
 
