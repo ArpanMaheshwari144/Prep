@@ -402,14 +402,16 @@ Ilaaj 2: sab ek saath expire na hon: TTL me thoda random (1 ghanta + 0-5 min).
 
 ### Kadam 11: bot spam link bana raha (rate limit + link jaanch)
 
-Bot har second hazaron link: counter / DB faltu bhar rahe, aur hamare chhote link pe dhokhe wali site (phishing).
+Bot har second hazaron link: counter / DB faltu bhar rahe,
+aur hamare chhote link pe dhokhe wali site (phishing).
 
-Ilaaj 1: **rate limit** sirf BANAO pe. Ek user / IP 1 min me 10 link, zyada pe `429`. LB / API gateway pe, Redis me
-ginti (token bucket). KHOLO pe nahi: kholna hi asli kaam (1 lakh / sec), spam banane se aata.
+Ilaaj 1: **rate limit** sirf BANAO pe. Ek user / IP 1 min me 10 link, zyada pe `429`.
+LB / API gateway pe, Redis me ginti (token bucket).
+KHOLO pe nahi: kholna hi asli kaam (1 lakh / sec), spam banane se aata.
 
-Ilaaj 2: **link jaanch**. Banate waqt lamba link kaali list se milao (Google Safe Browsing). Baad me report aaye to DB
-me "band". 302 isliye kaam aaya: har click hamare paas, band link pe chetavani page (301 hota to browser seedha
-phishing pe).
+Ilaaj 2: **link jaanch**. Banate waqt lamba link kaali list se milao (Google Safe Browsing).
+Baad me report aaye to DB me "band". 302 isliye kaam aaya: har click hamare paas, band link pe
+chetavani page (301 hota to browser seedha phishing pe).
 
 ```mermaid
 flowchart LR
