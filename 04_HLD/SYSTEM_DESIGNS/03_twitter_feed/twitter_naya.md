@@ -334,7 +334,3 @@ Fanout worker Arpan ka inbox Mumbai ke Redis me bharta.
 
 Copy peeche se (US tak kuch second) kyun chalta: NFR, feed 2-5 sec purani chalegi. US wale ko Virat ka tweet
 2 sec baad dikhe to dikkat nahi; bank jaisa "abhi ka abhi pakka" yahan nahi chahiye.
-
-Region vs edge server: edge = CDN ki machine (Kadam 8), sirf video / photo jaisi files paas rakhti, feed nahi
-banati. Region = poora data center (Feed Svc, Tweet Svc, Redis, Cassandra ki copy). Video edge se, feed region
-se.
