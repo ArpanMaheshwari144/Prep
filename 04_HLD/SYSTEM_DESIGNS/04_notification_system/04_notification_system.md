@@ -86,7 +86,6 @@ Kafka kyun:
   se padh leta hai.
 - sale me 58,000 khabar / sec aayein to Kafka unhe pakad ke rakhta hai, Notification Svc apni raftaar se
   nikalta hai.
-- wahi khabar kal Analytics bhi padh sakta hai, kyunki padhne se khabar mitti nahi.
 
 Ab kya theek hua: email company band hai to bhi order chal jaata hai. SMS jodna ho to sirf Notification Svc
 badalta hai, Order Svc nahi.
