@@ -365,7 +365,8 @@ dekh ke DB pe toot padi (**stampede**).
 
 ### Kadam 10: entry expire hui, sab DB pe toot pade (stampede)
 
-Match link ki Redis entry ka time (TTL) khatam. Usi pal 10,000 request ko Redis me nahi mila, sab ek saath DB pe.
+Match link ki Redis entry ka time (TTL) khatam.
+Usi pal 10,000 request ko Redis me nahi mila, sab ek saath DB pe.
 
 Ilaaj 1: **sirf ek jaaye (lock / single flight)**.
 
