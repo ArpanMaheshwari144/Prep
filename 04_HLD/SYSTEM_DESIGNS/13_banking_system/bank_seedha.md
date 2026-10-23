@@ -257,3 +257,29 @@ flowchart LR
 Par salary aate hi sab balance + history dekh rahe. Padhna likhne se kahin zyada, aur sab primary pe.
 Primary bhara, transfer dheeme.
 
+### Kadam 8: sab balance dekh rahe, transfer dheeme (read replica)
+
+Ilaaj: **read replica** = primary ki ek aur copy, sirf padhne ke liye. Balance / history wahan se, primary
+sirf transfer.
+
+```
+ye copy ASYNC        -> kuch ms peeche chal sakti. Sirf padhai, to chalta, aur primary dheema nahi
+                        (kadam 7 wali SYNC copy failover ke liye, ye alag)
+padhai aur badhi     -> replica 2-3
+pench                -> Arpan ne abhi 500 bheje, turant balance: replica peeche, purana 600 dikha. Ghabraya
+read-your-own-writes -> jisne abhi transfer kiya, uska balance kuch sec PRIMARY se. Ya jawab me naya balance
+```
+
+```mermaid
+flowchart LR
+    S["Banking Svc"] -- "transfer" --> P[("Primary")]
+    P -- "sync" --> C[("Copy (failover)")]
+    P -- "async" --> R[("Read replica")]
+    S -- "balance / history" --> R
+    S -. "abhi transfer kiya? primary se" .-> P
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan ne dukaan ko 500 bheje, usi second dukaan ne Arpan ko 200 refund. Pehla: Arpan lock, phir dukaan
+maange. Doosra: dukaan lock, phir Arpan maange. Dono ek doosre ka intezaar (**deadlock**).
+
