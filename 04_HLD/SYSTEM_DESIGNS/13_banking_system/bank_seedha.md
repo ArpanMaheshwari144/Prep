@@ -286,5 +286,5 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par balance ek column, khaata alag lines. Kisi bug / haath ke galat UPDATE se dono me farak: balance 600 dikha raha,
-khaate ka jod 100. Kisi ko pata nahi chala.
+Par balance ek column, khaata alag lines. Kisi bug / haath ke galat UPDATE se dono me farak:
+balance 600 dikha raha, khaate ka jod 100. Kisi ko pata nahi chala.
