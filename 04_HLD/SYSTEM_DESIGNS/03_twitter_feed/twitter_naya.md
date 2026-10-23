@@ -280,3 +280,29 @@ Ye [chat kadam 5](../14_chat_messaging/14_chat_messaging.md#kadam-5-roz-12-tb-ca
 
 SQL kyun nahi: SQL ki taakat jod aur transaction, yahan dono nahi chahiye. Itni likhai ke liye SQL ko haath se
 baantna padta. Cassandra likhai ke liye hi bana, khud kai machine me baant leta.
+
+Par Arpan ne match ki 100 MB video daali. Video Tweet Svc aur Cassandra ke raaste gayi to dono bhar jaayenge,
+saath me sabke tweet atkenge. Aur 1 crore log dekhenge, to har baar wahi 100 MB humare server se jaayega.
+
+### Kadam 8: 100 MB ki video (S3 + CDN, tweet me sirf link)
+
+```
+1. app Tweet Svc se poochhta: "upload kahan karun?"
+   -> Tweet Svc deta: S3 ka ek link, 10 min ke liye (presigned URL)
+2. app video seedha S3 pe daalta (humare server ke beech se nahi)
+3. tweet me sirf link: "T-990: Arpan: 'kya catch!' + video: s3/.../v1.mp4"
+4. dekhne wale video CDN se lete (paas wali machine se), S3 / humare server se nahi
+```
+
+```mermaid
+flowchart LR
+    U["Arpan: video"] -- "1. upload link do" --> TS["Tweet Svc"]
+    U -- "2. video seedha" --> S3[("S3")]
+    S3 --> CDN["CDN (paas wali machine)"]
+    CDN -- "4. dekhne wale" --> V["1 crore log"]
+    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style CDN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab kya theek hua: bhaari video kabhi Tweet Svc / Cassandra se nahi guzarti, tweet chhota (sirf link), crore log
+CDN se dekhte. Ye bilkul [chat kadam 10](../14_chat_messaging/14_chat_messaging.md#kadam-10-200-mb-ka-video-s3-me-message-me-sirf-link) wala: wahan bhi message me sirf link, video S3 me.
