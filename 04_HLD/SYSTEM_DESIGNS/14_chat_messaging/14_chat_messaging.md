@@ -193,9 +193,8 @@ flowchart LR
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par isse ek aur cheez khulti hai: server ne DB me likh liya, aur ack bhejne se pehle gira. App ne dobara
-bheja, aur Ravi ko "hi" do baar dikha. Ye agle kisi kadam me aayega. Usse pehle, roz ~400 crore message,
-yaani roz ~1.2 TB. Ek DB itna likhna aur rakhna nahi jhel paayega.
+Par ab har message DB me jaata hai: roz ~400 crore message, yaani roz ~1.2 TB. Ek DB itna likhna aur
+rakhna nahi jhel paayega.
 
 ### Kadam 5: roz 1.2 TB (Cassandra, chat ke hisaab se baanto)
 
@@ -231,7 +230,7 @@ flowchart LR
     style C3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par wo jo kadam 4 me khula tha: server ne DB me likh liya, ack bhejne se pehle gira. App ne dobara bheja,
+Par server ne DB me likh liya, aur ack bhejne se pehle gira. App ne dobara bheja,
 aur Ravi ko "hi" do baar dikha.
 
 ### Kadam 6: Ravi ko "hi" do baar dikha (message ki apni id)

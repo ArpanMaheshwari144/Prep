@@ -9,7 +9,7 @@ kadam 4 (ek query) = [BMS kadam 2](../09_bookmyshow/09_bookmyshow.md#kadam-2-pad
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 service + SQL -> ek transaction (WAL) -> idempotency key -> check + kaato ek query -> ledger (double-entry)
--> outbox + Kafka (SMS) -> LB + sync copy -> read replica -> raat ka milaan -> mahine ke tukde + S3
+-> outbox (SMS) -> LB + sync copy -> read replica -> raat ka milaan -> mahine ke tukde + S3
 
 ---
 
@@ -213,40 +213,40 @@ Par paisa Ravi ko chala gaya, ab Ravi ko SMS jaana chahiye: "500 aaye". SMS serv
 call kiya, aur SMS service giri hui thi. Ab ya to poora transfer ruk jaata hai, ya transfer ho jaata hai aur
 SMS kabhi nahi jaata.
 
-### Kadam 6: SMS service giri (outbox + Kafka)
+### Kadam 6: SMS service giri (outbox)
 
 SMS ko transaction ke andar bhejo to SMS dheema ya gira hua ho to transfer bhi ruk jaata hai, paise ka kaam
 SMS pe atak gaya. COMMIT ke baad seedha SMS bhejo to COMMIT hua aur SMS bhejne se pehle server gira, to SMS
 kabhi nahi gaya.
 
 Ilaaj: **outbox**. SMS ki khabar bhi usi transaction me DB ki ek table (outbox) me likh do. Ek chhota
-**relay** program outbox se khabar uthata hai aur **Kafka** me daal deta hai. SMS Svc Kafka se padh ke SMS
-bhejta hai.
+**relay** program outbox se `sent = false` wali khabar uthata hai aur SMS Svc ko bhejta hai. Gaya to
+`sent = true`. SMS Svc gira hai to relay ruk-ruk ke dobara koshish karta hai; tab tak khabar table me padi.
 
 ```
 BEGIN
   idem · Arpan -500 · Ravi +500 · ledger 2 line
   INSERT outbox ("ravi ko 500 aaye", sent = false)
 COMMIT
-relay -> outbox se sent = false wali khabar -> Kafka -> SMS Svc -> SMS
+relay -> outbox se sent = false wali khabar -> SMS Svc -> SMS -> sent = true
 ```
 
-Transfer hua to khabar bhi pakki likhi gayi, dono ek saath. SMS Svc gira to khabar Kafka me padi rehti hai,
-uthne pe bhej dega, transfer pe koi asar nahi. Kafka key = `account_id` rakhte hain, taaki Ravi ki saari SMS
-kram se jaayein ("500 aaye", phir "200 gaye"). Yahi khabar fraud jaanch, analytics aur statement bhi padh lete
-hain.
+Transfer hua to khabar bhi pakki likhi gayi, dono ek saath. SMS Svc gira to khabar outbox me padi rehti hai,
+uthne pe relay bhej dega, transfer pe koi asar nahi. Relay ek account ki khabar `id` ke kram se uthata hai,
+taaki Ravi ki SMS kram se jaayein ("500 aaye", phir "200 gaye").
 
 ```mermaid
 flowchart LR
     S["Banking Svc"] -- "ek transaction" --> D[("SQL DB<br/>... + outbox")]
     RL["Relay"] -- "sent = false" --> D
-    RL --> K[("Kafka<br/>key = account_id")]
-    K --> SMS["SMS Svc"]
-    K --> F["Fraud / statement"]
+    RL -- "bhejo, gira to dobara" --> SMS["SMS Svc"]
     style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style SMS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+Kafka kyun nahi yahan? Dikkat sirf itni thi "SMS gira to transfer na ruke, SMS khoye nahi", aur outbox ye
+akela kar deta hai. Kafka tab aata jab yahi khabar kai service ko chahiye (fraud jaanch, statement): tab relay
+khabar Kafka me daale (key = `account_id`) aur sab wahan se padhein. Abhi FR me sirf SMS hai.
 
 Ye wahi outbox hai jo Kafka wali file me padha tha. Wahan Order Svc tha, yahan Banking Svc.
 
@@ -378,8 +378,8 @@ flowchart LR
 Request LB se kisi bhi Banking Svc machine pe jaati hai. Transfer SQL primary pe ek transaction me hota hai:
 idempotency key, check karke kaatna (ek query), dono balance, ledger ki 2 line, aur outbox me SMS ki khabar.
 Primary ki sync copy doosri building me hai, aur read replica balance / history ke liye. Ledger mahine ke
-tukdon me hai, purane mahine S3 me. Relay outbox se Kafka me daalta hai (key = account_id), wahan se SMS,
-fraud aur statement. Raat ko milaan job: snapshot + lines ko balance se milao, sabka jod 0, farak pe alert.
+tukdon me hai, purane mahine S3 me. Relay outbox se SMS Svc ko bhejta hai (gira to dobara). Raat ko milaan
+job: snapshot + lines ko balance se milao, sabka jod 0, farak pe alert.
 
 ```
 SAHI (na gum, na bane)  -> ek transaction (WAL) · check + kaato ek query · double-entry ledger ·
@@ -404,8 +404,9 @@ CP ya AP?        -> transfer / balance = CP (galat balance dikhane se mana karna
 SPOF?            -> DB primary (sync copy) · Banking Svc (LB + kai machine)
 10 guna traffic? -> padhai badhi: replica · jagah badhi: tukde + S3 · likhai badhi: tab account_id se shard
                     (do shard ke beech transfer = saga). 120 / sec pe ye sawaal hi nahi
-chal raha, kaise pata? -> milaan ka alert, p99, error rate, Kafka lag, har transfer ka trace id
-AWS naam         -> RDS (Postgres) Multi-AZ · S3 Object Lock · Athena · MSK (Kafka)
+chal raha, kaise pata? -> milaan ka alert, p99, error rate, outbox me kitni sent = false,
+                          har transfer ka trace id
+AWS naam         -> RDS (Postgres) Multi-AZ · S3 Object Lock · Athena
 round kis pe tay -> idempotency, transaction, queue, reconciliation, audit. Paise me ACID, eventual nahi,
                     aur asli khaate ke liye SQL, NoSQL nahi
 ```
