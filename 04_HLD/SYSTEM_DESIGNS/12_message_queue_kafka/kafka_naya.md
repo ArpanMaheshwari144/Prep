@@ -1,8 +1,8 @@
 # Message queue (Kafka): shuru se, ek kahani
 
-Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
-shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
-me ek hi kahani hai: Arpan ne Swiggy pe order kiya. Concepts kahani se padhne hon to
+Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe
+se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
+file me ek hi kahani hai: Arpan ne Swiggy pe order kiya. Concepts kahani se padhne hon to
 [kafka_concepts.md](kafka_concepts.md).
 
 ---
@@ -57,3 +57,36 @@ order ka SMS se koi lena-dena nahi. Aur kal koi naya Coupon Svc aaya, to Order S
 
 Order Svc ko kisi ka intezaar nahi karna. Wo khabar kahin daal de aur aage badh jaaye, aur jise chahiye wo
 wahan se le le. Par "kahin" ka matlab kahan?
+
+### Kadam 2: khabar kahan daalein (Kafka topic, disk pe)
+
+Order Svc khabar ek line (queue) me daal deta hai aur aage badh jaata hai. SMS, Fraud aur Analytics usi line
+se padhte hain. Par line kaisi ho? Ye asli choice hai:
+
+```
+SERVER KI MEMORY ME LIST  -> server restart = saari khabar gayab. NFR "kabhi na khoye" toota
+RABBITMQ (aam queue)      -> khabar ek ne padhi to line se nikal gayi (mit gayi).
+                             SMS ne padhi to Fraud ko mili hi nahi. Har service ke liye alag line banao
+KAFKA (topic, disk pe)    -> khabar disk pe likhi jaati hai, padhne se mit-ti NAHI.
+                             SMS, Fraud, Analytics teeno wahi khabar padhte hain, apni-apni jagah se
+```
+
+**Isliye Kafka.** Line ko Kafka me **topic** kehte hain (`order-events`). Padhne se khabar mit-ti nahi,
+isliye ek hi khabar teen service padh leti hain, aur kal Coupon Svc aaya to wo bas padhna shuru kar degi,
+Order Svc me ek line nahi badalti. Har service apna bookmark rakhti hai ki kahan tak padha (**offset**), to
+Fraud dheema hua to bas wo peeche rahega, SMS nahi rukega. Disk pe hai, to kuch din (jaise 7 din) rakhi
+rehti hai, aur kisi service me bug tha to bookmark peeche karke dobara padh sakte hain.
+
+```mermaid
+flowchart LR
+    U["Arpan"] --> O["Order Svc"]
+    O -- "khabar daali, aage badha" --> T[("KAFKA<br/>topic order-events")]
+    T --> S["SMS Svc"]
+    T --> F["Fraud Svc"]
+    T --> A["Analytics"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Diwali sale me har second 5,000 order. Saari khabar ek topic me, aur topic ek hi machine pe. Upar se SMS
+ka ek worker sirf 500 / sec sambhal paata hai. Line lambi hoti ja rahi hai.
+
