@@ -107,25 +107,6 @@ SAFAR (March: khaali folder)  ->  aaj
 ## [04_HLD](04_HLD) — tera strong zone
 **Kya:** 14 poore design (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + master sheet + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
-```
-★★ HLD = EK KAHANI — har dikkat pe ek dabba judta, wahi dabba agli dikkat khol deta
-
-  dikkat ──► dabba ──► nayi dikkat ──► dabba ──► ...
-
-  url:   seedha (server + DB) ──► counter + base62 ──► Redis ──► LB + counter range ──► shard ──► ring
-         ──► 3 copy ──► local cache (viral) ──► rate limit (bot)
-
-★ HAR FILE KI SHAKAL (naya saancha, 23-Oct)
-
-  upar CUE kram (sirf shabd) → 1 FR → 2 NFR → 3 numbers → 4 design:
-     Kadam 1 sabse seedha → har kadam: dikkat → ilaaj (dabba) → kyun ye, doosra kyun nahi → mermaid diagram
-     (peela = abhi juda) → "Par ..." agli dikkat. Kadam sirf jo design badle (naya dabba); baaki Pooche to
-  → 5 Wrap (30 sec, NFR se milao) → Pooche to (ek line) → HANDS-ON (jahan hai)
-
-★ INTERVIEW: CUE kram ka ek-ek shabd bolo, har shabd pe uski chhoti kahani. Cross-Q = jo dabba bola wahi
-  gira / dheema / do baar → jawab usi kadam me
-```
-
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design. **Naye saanche me ho gaye: 01 URL, 02 rate limiter, 03 twitter, 04 notification, 05 stock, 06 payment, 09 BookMyShow, 12 kafka, 13 banking, 14 chat** (purani poster wali file hata di, git history me hai). Baaki 4 purane poster saanche me, roz ek naye me badlegi. Kram: docs · cache · file upload · news.
   [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) ([concepts kahani se](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md)) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
 
