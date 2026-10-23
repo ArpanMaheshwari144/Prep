@@ -76,14 +76,15 @@ Teen tareeke ho sakte the:
 ```
 
 ```
-(a) random  -> do logon ko same code mil sakta. Har baar DB me dekho "pehle se hai?", mila to dobara.
+(a) random  -> do logon ko same code mil sakta. Har baar DB me dekho "pehle se hai?",
+               mila to dobara.
                Link badhte gaye to takkar bhi badhti
 (b) hash    -> do alag link ke pehle 7 akshar same aa sakte. Wahi DB check, wahi dobara
 (c) counter -> har number naya, to code kabhi same nahi. DB check hi nahi chahiye. ISLIYE YE
 ```
 
-Base62 = jaise 10 ko binary me `1010` likhte, waise number ko 62 akshar (a-z, A-Z, 0-9) me likho. 1 arab bhi sirf 6
-akshar me. 7 akshar me ~3.5 lakh crore number.
+Base62 = jaise 10 ko binary me `1010` likhte, waise number ko 62 akshar (a-z, A-Z, 0-9) me likho.
+1 arab bhi sirf 6 akshar me. 7 akshar me ~3.5 lakh crore number.
 
 ```mermaid
 flowchart LR
