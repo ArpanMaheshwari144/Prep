@@ -371,3 +371,33 @@ flowchart LR
 Par Ravi ne message padh liye. Arpan ke phone pe neeli tick kaise aaye? Aur Ravi ki app pe "College Gang (50
 unread)" kaise gina jaaye?
 
+### Kadam 9: neeli tick aur unread ginti (har user ka "kahan tak" nishaan)
+
+Har message pe "padha / nahi padha" likhna bahut bhaari hai: group ke 980 message x 500 member = 4.9 lakh
+nishaan.
+
+Ilaaj: har user ka har chat me bas **ek number**, ki wo kahan tak pahuncha aur kahan tak padha:
+
+```
+Ravi, chat arpan-ravi:   pahuncha_upto = 43    padha_upto = 41
+```
+
+Ek tick (server ke paas pahuncha) kadam 4 wala ack hai. Do grey tick: Ravi ki app ne bola "43 tak mil gaye",
+to `pahuncha_upto = 43`, aur Arpan ko batate hain ki 43 tak ke message pe do tick. Neeli tick: Ravi ne chat
+kholi aur 43 tak dekhe, to `padha_upto = 43`, aur Arpan ko 43 tak neela. Unread ginti: chat ka aakhri number
+980, Ravi ka `padha_upto` 930, to 980 - 930 = 50 unread. Kuch ginna nahi pada, bas ek ghatana.
+
+Kadam 7 ka number yahan bhi kaam aaya: ek number se "kahan tak" bata dete hain, har message ke liye alag
+nishaan nahi chahiye.
+
+```mermaid
+flowchart LR
+    RV["Ravi ne chat kholi"] -- "padha_upto = 43" --> S["Chat server"]
+    S --> D[("DB<br/>ravi, arpan-ravi: padha_upto 43")]
+    S -- "43 tak neeli tick" --> A["Arpan"]
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan ne shaadi ka 200 MB ka video bheja. Ye chat server aur Cassandra ke raaste gaya, to dono bhar
+jaayenge, aur baaki sabke message atak jaayenge.
+
