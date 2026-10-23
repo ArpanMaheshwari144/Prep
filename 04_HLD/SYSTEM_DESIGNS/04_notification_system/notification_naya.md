@@ -404,3 +404,40 @@ Ek hi dikkat, par faisla darje se badalta: OTP me khona bura (bhejte raho), offe
 
 Par offer ka SMS raat 2 baje chala gaya, jabki Arpan ne offer wale SMS band kiye the. Aur har khabar pe
 Notification Svc DB se pasand + saancha padh raha hai: 1.75 lakh / sec padhna, DB ghut raha hai.
+
+### Kadam 11: pasand + saancha, aur unka cache
+
+Notification Svc bhejne se pehle 2 cheez dekhta hai:
+
+```
+khabar --> [1 pasand]  Arpan: push chalu, email chalu, offer SMS BAND
+       --> [2 saancha] "Hi {{name}}, {{offer}}" bharo
+
+   OTP / order (transactional) -> hamesha bhejo, Arpan ne khud maanga
+   offer SMS (promotional)     -> Arpan ne BAND kiya / DND pe hai -> bhejo hi mat
+                                  (ye kanoon hai: unsubscribe ke baad bheja to jurmana)
+```
+
+Ab bheed: har khabar pe pasand aur saancha DB se padhna, sale me 1.75 lakh / sec padhna, DB ghut jaata hai.
+
+```
+Notification Svc --pasand padho--> [Redis cache] --mila--> turant (DB tak gaye hi nahi)
+                                       | nahi mila
+                                       +--> Pasand DB -> cache me rakho -> agli baar cache se
+
+Arpan ne pasand badli (offer SMS chalu) -> DB update + cache ki key DELETE
+                                        -> agli khabar pe naya padha jaata
+```
+
+```mermaid
+flowchart LR
+    K[("Kafka")] --> N["Notification Svc"]
+    N -- "pasand / saancha" --> RC[("Redis cache")]
+    RC -. "nahi mila" .-> PD[("Pasand + saancha DB")]
+    N --> L[("TEZ / BEECH / DHEEMI line")]
+    style RC fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style PD fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Cache kyun chalta yahan: pasand aur saancha bahut baar padhe jaate (har khabar pe), par badalte kabhi-kabhi
+(Arpan mahine me ek baar setting chhoota). Aisa data cache ke liye sabse sahi.
