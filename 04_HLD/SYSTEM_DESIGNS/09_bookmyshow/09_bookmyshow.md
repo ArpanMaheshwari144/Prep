@@ -58,14 +58,14 @@ scope ke bahar: refund, review, recommendation
 
 ## 4. Design
 
-### Kadam 1: sabse seedha (BMS Svc + SQL DB, pehle padho phir likho)
+### Kadam 1: sabse seedha (BMS Service + SQL DB, pehle padho phir likho)
 
-BMS Svc aur ek SQL DB. `seats` table me har seat ki row: `show 9pm | A1 | FREE`. Arpan "Book A1" dabata hai.
-BMS Svc pehle padhta hai "A1 FREE hai?", haan. Phir likhta hai `status = BOOKED`.
+BMS Service aur ek SQL DB. `seats` table me har seat ki row: `show 9pm | A1 | FREE`. Arpan "Book A1" dabata hai.
+BMS Service pehle padhta hai "A1 FREE hai?", haan. Phir likhta hai `status = BOOKED`.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] -- "Book A1" --> S["BMS Svc"]
+    U["Arpan"] -- "Book A1" --> S["BMS Service"]
     S -- "1. padho: A1 FREE?<br/>2. likho: A1 = BOOKED" --> D[("SQL DB: seats")]
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -126,7 +126,7 @@ dusri kahani: Arpan ne pay kiya hi nahi
 
 ```mermaid
 flowchart LR
-    U["Arpan"] -- "A1 chuni" --> S["BMS Svc"]
+    U["Arpan"] -- "A1 chuni" --> S["BMS Service"]
     S -- "HELD, Arpan, 9:05 tak" --> D[("SQL DB: seats<br/>status + hold_until")]
     U -- "pay" --> P["Payment<br/>(payment file)"]
     P -- "pay ho gaya" --> S
@@ -163,7 +163,7 @@ Arpan ne A1 HOLD ki --> SQL me likha (Kadam 3) --> Redis ki map:9pm DELETE --> a
 flowchart LR
     V["lakhon log<br/>map dekh rahe"] --> R[("Redis: map:9pm<br/>umar 5 sec")]
     R -. "nahi mila" .-> D[("SQL DB: seats")]
-    U["Arpan: A1 HOLD"] --> S["BMS Svc"]
+    U["Arpan: A1 HOLD"] --> S["BMS Service"]
     S -- "HOLD query" --> D
     S -- "map:9pm DELETE" --> R
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -199,7 +199,7 @@ phans jaata hai, sab ka app ghoomta rehta hai.
 ```mermaid
 flowchart LR
     B["2 lakh log<br/>Book dabaya"] --> W[("WAITING ROOM<br/>Redis line")]
-    W -- "har minute 2,000 ko token" --> S["BMS Svc"]
+    W -- "har minute 2,000 ko token" --> S["BMS Service"]
     S -- "HOLD query" --> D[("SQL DB: seats")]
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -219,13 +219,13 @@ nahi. HOLD, BOOKED, payment sab SQL me. Redis poora gaya to system dheema ya ruk
 
 ```
 1. SEAT MAP (dikhane wala cache) gaya
-   -> har BMS Svc apni memory me aakhri map 5 sec rakhta (chhota local cache)
+   -> har BMS Service apni memory me aakhri map 5 sec rakhta (chhota local cache)
    -> lakhon "dekho" usi se, SQL tak sirf 5 sec me ek baar
    -> map thoda purana dikhe to chalega (Kadam 4: faisla SQL karta)
 
 2. WAITING ROOM (line) gaya, concert ke beech
    -> jo andar hain: unka token ek SIGNED parchi hai (umar ke saath)
-      BMS Svc parchi ka signature khud check karta, Redis nahi chahiye -> wo booking poori karte
+      BMS Service parchi ka signature khud check karta, Redis nahi chahiye -> wo booking poori karte
    -> jo line me the: line ka kram kho gaya
       -> darwaza BAND (fail-closed): "booking thodi der me, ruko" page
       -> seedha 2 lakh ko andar nahi chhodte, warna SQL ghut jaayega (Kadam 5 ki dikkat wapas)
@@ -266,8 +266,8 @@ PSP webhook "B-77 SUCCESS" --> Kadam 3 wali query: A1 HELD -> BOOKED (sirf agar 
 
 ```mermaid
 flowchart LR
-    U["Arpan"] -- "Pay (key B-77)" --> S["BMS Svc"]
-    S --> P["Payment Svc<br/>(PENDING, UNIQUE booking_id)"]
+    U["Arpan"] -- "Pay (key B-77)" --> S["BMS Service"]
+    S --> P["Payment Service<br/>(PENDING, UNIQUE booking_id)"]
     P --> G["PSP -> bank"]
     G -- "webhook: B-77 SUCCESS" --> S
     S -- "A1 HELD -> BOOKED" --> D[("SQL DB: seats")]

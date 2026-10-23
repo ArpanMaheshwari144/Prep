@@ -12,7 +12,7 @@ se hai, wahan bas ek line + link. Poora sirf wahi jo stock ka apna hai (order bo
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 order book + matching engine -> client_order_id UNIQUE -> paisa / share BLOCK -> ek share ek thread
 -> log + standby (ack ke baad milaan) -> Kafka trades (kai sunne wale) -> settlement (ulta nahi, PENDING)
--> Price Svc + Redis pub/sub + WebSocket
+-> Price Service + Redis pub/sub + WebSocket
 
 ---
 
@@ -46,7 +46,7 @@ scope ke bahar: margin / risk, IPO, mutual fund
 
 ## 4. Design
 
-### Kadam 1: sabse seedha (Order Svc + matching engine + DB)
+### Kadam 1: sabse seedha (Order Service + matching engine + DB)
 
 Stock ka dil hai **order book**: har share ki do list.
 
@@ -57,14 +57,14 @@ TCS order book
   Mohan   5 @ 3490             Ravi    8 @ 3510
 ```
 
-Arpan ne order dala. Order Svc use **matching engine** ko deta hai. Engine dekhta hai: koi bechne wala 3500 ya
+Arpan ne order dala. Order Service use **matching engine** ko deta hai. Engine dekhta hai: koi bechne wala 3500 ya
 usse kam pe hai? Suresh hai, sauda ho gaya. Phir DB me likha jaata hai: Arpan ka paisa ghata, share badhe;
 Suresh ka ulta. Kram ka niyam: ek hi bhaav pe do bechne wale hon, to jo pehle aaya usse pehle (price-time
 priority).
 
 ```mermaid
 flowchart LR
-    U["Arpan: buy TCS 10 @ 3500"] --> O["Order Svc"]
+    U["Arpan: buy TCS 10 @ 3500"] --> O["Order Service"]
     O --> M["Matching engine<br/>(TCS order book)"]
     M -- "sauda" --> D[("SQL DB<br/>paisa + share")]
     style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -86,7 +86,7 @@ dobara Buy : A-501 -> pehle se hai  -> "ho chuka", wahi purana order lautao. Boo
 
 ```mermaid
 flowchart LR
-    U["Arpan: Buy (A-501)"] --> O["Order Svc"]
+    U["Arpan: Buy (A-501)"] --> O["Order Service"]
     O -- "UNIQUE client_order_id" --> T[("Orders table")]
     O -- "sirf pehli baar" --> M["Matching engine"]
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -96,7 +96,7 @@ Ye bilkul [banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-ne
 order kabhi book tak pahunchta hi nahi.
 
 Par Arpan ke wallet me 50,000 hain. Usne ek saath do order daale: TCS 30,000 ka aur INFY 30,000 ka. Dono
-Order Svc pe saath pahunche, dono ne dekha "50k hai, chalega", dono lag gaye. 60,000 ke order, paisa 50,000.
+Order Service pe saath pahunche, dono ne dekha "50k hai, chalega", dono lag gaye. 60,000 ke order, paisa 50,000.
 
 ### Kadam 3: paisa BLOCK (BMS ka seat HOLD, bas balance pe)
 
@@ -116,7 +116,7 @@ INFY :  20k >= 30k? nahi -> 0 row -> "paisa kam hai", order lagta hi nahi
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] -- "paisa BLOCK (ek query)" --> W[("Wallet<br/>available | blocked")]
+    O["Order Service"] -- "paisa BLOCK (ek query)" --> W[("Wallet<br/>available | blocked")]
     O -- "1 row badli to hi" --> M["Matching engine"]
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -150,7 +150,7 @@ line me kram = jo pehle aaya wo pehle milta (imaandari, NFR wala)
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] --> LT[("TCS line")]
+    O["Order Service"] --> LT[("TCS line")]
     O --> LI[("INFY line")]
     LT --> TT["TCS thread (akela)<br/>TCS order book"]
     LI --> TI["INFY thread (akela)<br/>INFY order book"]
@@ -194,7 +194,7 @@ order 501 "Arpan buy 10 @ 3500"
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] --> P["Primary engine<br/>(RAM book)"]
+    O["Order Service"] --> P["Primary engine<br/>(RAM book)"]
     P -- "1. likho" --> L[("apni disk: LOG")]
     P -- "2. order bhejo" --> S["Standby engine<br/>(wahi book banti)"]
     S -- "3. ack" --> P
@@ -248,7 +248,7 @@ flowchart LR
     K --> ST["Settlement"]
     K --> N["Notification"]
     K --> A["Audit"]
-    K --> PS["Price Svc"]
+    K --> PS["Price Service"]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -284,7 +284,7 @@ Settlement worker: Kafka trades se "SAUDA S-88" uthaya
   2. wallet DB:    paisa move      -> S-88 paisa = DONE
   3. portfolio DB: share move      -> BAND hai!
        -> ruk-ruk ke dobara (1s, 2s, 4s) -- sauda ulta NAHI
-       -> 10 min tak band -> ALERT, ops dekhe
+       -> 10 min tak band -> ALERT, ops team dekhe
        -> Arpan ko app me: "share aa rahe hain (PENDING)"
   4. portfolio wapas -> share move -> S-88 = DONE
 raat ka milaan: saare sauda vs wallet vs portfolio -> farak = alert
@@ -309,19 +309,19 @@ humari taraf ki, to theek bhi hum karte: PENDING dikhao, khud poora karo.
 Par 10 lakh logon ka app khula, sab ko har second TCS ka naya bhaav dekhna. Har app har second server se
 poochh raha "TCS kitna?". 10 lakh sawaal / sec, server baith gaya.
 
-### Kadam 8: bhaav 10 lakh logon tak (Price Svc + Redis pub/sub + WebSocket)
+### Kadam 8: bhaav 10 lakh logon tak (Price Service + Redis pub/sub + WebSocket)
 
 Dikkat: 10 lakh app har second "TCS kitna?" poochh rahe, server baith gaya.
 
 ```
-[Kafka: trades] --> Price Svc --> [Redis pub/sub: channel "TCS"] --> 20 WebSocket machine --> 10 lakh app
+[Kafka: trades] --> Price Service --> [Redis pub/sub: channel "TCS"] --> 20 WebSocket machine --> 10 lakh app
                    (har share ka                                   (har machine apne logon ke
                     1 bhaav / sec)                                  share sunti, unhe push)
 ```
 
-1. **Price Svc:** Kadam 6 wala `trades` topic hi padhta. TCS ke ek second me 5,000 sauda, to bhi us second ka
+1. **Price Service:** Kadam 6 wala `trades` topic hi padhta. TCS ke ek second me 5,000 sauda, to bhi us second ka
    sirf aakhri bhaav, har share ka 1 bhaav / sec. Aankh ko itna hi chahiye.
-2. **Redis pub/sub:** Price Svc ko nahi pata Arpan 20 me se kis WebSocket machine pe juda hai. To bhaav ek
+2. **Redis pub/sub:** Price Service ko nahi pata Arpan 20 me se kis WebSocket machine pe juda hai. To bhaav ek
    channel pe chilla deta hai ("TCS 3502"). Har WebSocket machine sirf un share ke channel sunti jo uske log
    dekh rahe.
 3. **WebSocket:** machine wo bhaav apne logon ko push karti. App ko poochhna hi nahi
@@ -329,7 +329,7 @@ Dikkat: 10 lakh app har second "TCS kitna?" poochh rahe, server baith gaya.
 
 ```mermaid
 flowchart LR
-    K[("Kafka: trades")] --> PS["Price Svc<br/>(1 bhaav / sec)"]
+    K[("Kafka: trades")] --> PS["Price Service<br/>(1 bhaav / sec)"]
     PS --> RP[("Redis pub/sub<br/>channel TCS")]
     RP --> W["20 WebSocket machine"]
     W -- "push" --> U["10 lakh app"]
@@ -348,11 +348,11 @@ is baat se: khabar khona chalega ya nahi.
 ## Wrap: 30 sec me poora design
 
 ```
-Order Svc: client_order_id UNIQUE (dohra nahi) + paisa / share BLOCK ek query me. Matching engine: har share
-ki ek line, ek thread, RAM me order book (pehle aaya pehle mila, lock nahi). Har order pehle log + standby ko,
-ack ke baad milaan; primary gira to standby (ek waqt ek hi, snapshot). Sauda log me -> relay -> Kafka trades
--> settlement (sauda ulta nahi, PENDING + dobara, trade_id se ek baar), notification, audit, Price Svc.
-Bhaav: 1 / sec, Redis pub/sub, WebSocket push.
+Order Service: client_order_id UNIQUE (dohra nahi) + paisa / share BLOCK ek query me. Matching engine: har
+share ki ek line, ek thread, RAM me order book (pehle aaya pehle mila, lock nahi). Har order pehle log +
+standby ko, ack ke baad milaan; primary gira to standby (ek waqt ek hi, snapshot). Sauda log me -> relay ->
+Kafka trades -> settlement (sauda ulta nahi, PENDING + dobara, trade_id se ek baar), notification, audit,
+Price Service. Bhaav: 1 / sec, Redis pub/sub, WebSocket push.
 ```
 
 ---

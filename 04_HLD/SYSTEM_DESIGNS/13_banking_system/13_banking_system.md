@@ -46,7 +46,7 @@ kaafi hai. Ye URL se ulta hai: wahan dikkat speed aur size ki thi.
 
 ## 4. Design
 
-### Kadam 1: sabse seedha (Banking Svc + SQL DB)
+### Kadam 1: sabse seedha (Banking Service + SQL DB)
 
 Ek Banking Service aur peeche ek SQL DB. Arpan ne Ravi ko 500 bheje:
 
@@ -57,7 +57,7 @@ UPDATE account SET balance = balance + 500 WHERE id = ravi
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> S["Banking Svc"]
+    U["Arpan"] --> S["Banking Service"]
     S --> D[("SQL DB<br/>arpan: 2000 · ravi: 1000")]
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -90,7 +90,7 @@ kar deta hai, aur jo COMMIT ho gaya tha wo pakka rehta hai, bijli jaane pe bhi.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> S["Banking Svc"]
+    U["Arpan"] --> S["Banking Service"]
     S -- "BEGIN · -500 · +500 · COMMIT" --> D[("SQL DB<br/>WAL: commit nahi = ulta")]
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -121,7 +121,7 @@ dobara k-77 aaya -> INSERT fail (UNIQUE) -> paisa nahi kata, purana jawab wapas 
 
 ```mermaid
 flowchart LR
-    U["Arpan app<br/>key k-77"] -- "1. bheja (jawab kho gaya)" --> S["Banking Svc"]
+    U["Arpan app<br/>key k-77"] -- "1. bheja (jawab kho gaya)" --> S["Banking Service"]
     U -- "2. dobara, wahi k-77" --> S
     S --> D[("SQL DB<br/>idem: k-77 UNIQUE")]
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -183,9 +183,9 @@ Ilaaj: har paisa hilne pe ek **khaata (ledger)** me line likho. Usi transaction 
 transfer ki do line, ek jagah se gaya aur ek jagah aaya.
 
 ```
-txn   account  amount  time       kisko / kisse
-t-91  arpan    -500    21:00:03   ravi
-t-91  ravi     +500    21:00:03   arpan
+transaction  account  amount  time       kisko / kisse
+t-91         arpan    -500    21:00:03   ravi
+t-91         ravi     +500    21:00:03   arpan
 
 BEGIN
   idem k-77 · Arpan -500 (check ke saath) · Ravi +500
@@ -204,7 +204,7 @@ copy hai.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> S["Banking Svc"]
+    U["Arpan"] --> S["Banking Service"]
     S -- "ek transaction" --> D[("SQL DB<br/>account (balance)<br/>ledger (sirf INSERT)<br/>idem")]
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -220,26 +220,26 @@ SMS pe atak gaya. COMMIT ke baad seedha SMS bhejo to COMMIT hua aur SMS bhejne s
 kabhi nahi gaya.
 
 Ilaaj: **outbox**. SMS ki khabar bhi usi transaction me DB ki ek table (outbox) me likh do. Ek chhota
-**relay** program outbox se `sent = false` wali khabar uthata hai aur SMS Svc ko bhejta hai. Gaya to
-`sent = true`. SMS Svc gira hai to relay ruk-ruk ke dobara koshish karta hai; tab tak khabar table me padi.
+**relay** program outbox se `sent = false` wali khabar uthata hai aur SMS Service ko bhejta hai. Gaya to
+`sent = true`. SMS Service gira hai to relay ruk-ruk ke dobara koshish karta hai; tab tak khabar table me padi.
 
 ```
 BEGIN
   idem · Arpan -500 · Ravi +500 · ledger 2 line
   INSERT outbox ("ravi ko 500 aaye", sent = false)
 COMMIT
-relay -> outbox se sent = false wali khabar -> SMS Svc -> SMS -> sent = true
+relay -> outbox se sent = false wali khabar -> SMS Service -> SMS -> sent = true
 ```
 
-Transfer hua to khabar bhi pakki likhi gayi, dono ek saath. SMS Svc gira to khabar outbox me padi rehti hai,
+Transfer hua to khabar bhi pakki likhi gayi, dono ek saath. SMS Service gira to khabar outbox me padi rehti hai,
 uthne pe relay bhej dega, transfer pe koi asar nahi. Relay ek account ki khabar `id` ke kram se uthata hai,
 taaki Ravi ki SMS kram se jaayein ("500 aaye", phir "200 gaye").
 
 ```mermaid
 flowchart LR
-    S["Banking Svc"] -- "ek transaction" --> D[("SQL DB<br/>... + outbox")]
+    S["Banking Service"] -- "ek transaction" --> D[("SQL DB<br/>... + outbox")]
     RL["Relay"] -- "sent = false" --> D
-    RL -- "bhejo, gira to dobara" --> SMS["SMS Svc"]
+    RL -- "bhejo, gira to dobara" --> SMS["SMS Service"]
     style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style SMS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -248,14 +248,14 @@ Kafka kyun nahi yahan? Dikkat sirf itni thi "SMS gira to transfer na ruke, SMS k
 akela kar deta hai. Kafka tab aata jab yahi khabar kai service ko chahiye (fraud jaanch, statement): tab relay
 khabar Kafka me daale (key = `account_id`) aur sab wahan se padhein. Abhi FR me sirf SMS hai.
 
-Ye wahi outbox hai jo Kafka wali file me padha tha. Wahan Order Svc tha, yahan Banking Svc.
+Ye wahi outbox hai jo Kafka wali file me padha tha. Wahan Order Service tha, yahan Banking Service.
 
-Par subah 11 baje sabki salary ek saath aayi. Ek Banking Svc machine itni requests nahi jhel paayi. Aur DB ek
+Par subah 11 baje sabki salary ek saath aayi. Ek Banking Service machine itni requests nahi jhel paayi. Aur DB ek
 hi hai: wo gira to poora bank band.
 
 ### Kadam 7: salary ki bheed + ek hi DB (kai machine + DB ki sync copy)
 
-Ilaaj 1: kai Banking Svc machine, aur aage LB. Ye isliye chalta hai kyunki Banking Svc apne andar kuch yaad
+Ilaaj 1: kai Banking Service machine, aur aage LB. Ye isliye chalta hai kyunki Banking Service apne andar kuch yaad
 nahi rakhta (stateless). Saara sach DB me hai, to koi bhi machine koi bhi request le sakti hai.
 
 Ilaaj 2: DB ki **copy doosri building me** (AWS RDS Multi-AZ). Primary gira to copy turant primary ban jaati
@@ -270,7 +270,7 @@ sirf 120 / sec hai, to dheemapan dikhta bhi nahi.
 ```mermaid
 flowchart LR
     U["sab log, 11 baje"] --> LB["LB"]
-    LB --> S1["Banking Svc 1"] & S2["Banking Svc 2"]
+    LB --> S1["Banking Service 1"] & S2["Banking Service 2"]
     S1 & S2 --> P[("Primary DB")]
     P -- "sync copy" --> C[("Copy, doosri building")]
     style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -296,7 +296,7 @@ naya balance bhej do.
 
 ```mermaid
 flowchart LR
-    S["Banking Svc"] -- "transfer" --> P[("Primary")]
+    S["Banking Service"] -- "transfer" --> P[("Primary")]
     P -- "sync" --> C[("Copy (failover)")]
     P -- "async" --> R[("Read replica")]
     S -- "balance / history" --> R
@@ -366,7 +366,7 @@ doosri pe ho sakte the, tab ek transaction nahi chalta, aur kadam 2 ka saara bha
 
 ```mermaid
 flowchart LR
-    S["Banking Svc"] --> P[("Primary<br/>ledger: mahine ke tukde")]
+    S["Banking Service"] --> P[("Primary<br/>ledger: mahine ke tukde")]
     P -- "1 saal se purane" --> S3[("S3 + Object Lock")]
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -375,10 +375,10 @@ flowchart LR
 
 ## 5. Wrap (30 second me poora design, NFR se milao)
 
-Request LB se kisi bhi Banking Svc machine pe jaati hai. Transfer SQL primary pe ek transaction me hota hai:
+Request LB se kisi bhi Banking Service machine pe jaati hai. Transfer SQL primary pe ek transaction me hota hai:
 idempotency key, check karke kaatna (ek query), dono balance, ledger ki 2 line, aur outbox me SMS ki khabar.
 Primary ki sync copy doosri building me hai, aur read replica balance / history ke liye. Ledger mahine ke
-tukdon me hai, purane mahine S3 me. Relay outbox se SMS Svc ko bhejta hai (gira to dobara). Raat ko milaan
+tukdon me hai, purane mahine S3 me. Relay outbox se SMS Service ko bhejta hai (gira to dobara). Raat ko milaan
 job: snapshot + lines ko balance se milao, sabka jod 0, farak pe alert.
 
 ```
@@ -401,7 +401,7 @@ tables           -> account (balance) · ledger (sirf INSERT, mahine ke tukde) �
                     outbox · snapshot
 CP ya AP?        -> transfer / balance = CP (galat balance dikhane se mana karna behtar) ·
                     SMS / statement = AP (2 sec late chalega)
-SPOF?            -> DB primary (sync copy) · Banking Svc (LB + kai machine)
+SPOF?            -> DB primary (sync copy) · Banking Service (LB + kai machine)
 10 guna traffic? -> padhai badhi: replica · jagah badhi: tukde + S3 · likhai badhi: tab account_id se shard
                     (do shard ke beech transfer = saga). 120 / sec pe ye sawaal hi nahi
 chal raha, kaise pata? -> milaan ka alert, p99, error rate, outbox me kitni sent = false,

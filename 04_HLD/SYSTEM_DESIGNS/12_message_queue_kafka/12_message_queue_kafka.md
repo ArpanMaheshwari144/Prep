@@ -15,8 +15,8 @@ seedha call (dheema) -> Kafka topic (disk, padhne se mitta nahi) -> 10 tukde + k
 ## 1. FR: kya karna hai
 
 ```
-1. Order Svc ki khabar ("Arpan ne order kiya") kai service tak pahunche: SMS, Fraud, Analytics
-2. Order Svc kisi ka intezaar na kare
+1. Order Service ki khabar ("Arpan ne order kiya") kai service tak pahunche: SMS, Fraud, Analytics
+2. Order Service kisi ka intezaar na kare
 3. ek user ki khabar kram me pahunche (order, phir pay, phir cancel)
 scope ke bahar (poochh ke hata do): duniya bhar ke region, exactly-once (Kafka se bahar)
 ```
@@ -43,29 +43,29 @@ scope ke bahar (poochh ke hata do): duniya bhar ke region, exactly-once (Kafka s
 
 ## 4. Design
 
-### Kadam 1: sabse seedha (Order Svc seedha sabko call kare)
+### Kadam 1: sabse seedha (Order Service seedha sabko call kare)
 
-Arpan ne order kiya. Order Svc order banata hai, phir khud SMS Svc, Fraud Svc aur Analytics ko ek-ek karke
+Arpan ne order kiya. Order Service order banata hai, phir khud SMS Service, Fraud Service aur Analytics ko ek-ek karke
 call karta hai, har ek ke jawab ka intezaar karta hai, aur tab jaake Arpan ko "order ho gaya" bolta hai.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> O["Order Svc"]
-    O -- "call, intezaar" --> S["SMS Svc"]
-    O -- "call, intezaar" --> F["Fraud Svc"]
+    U["Arpan"] --> O["Order Service"]
+    O -- "call, intezaar" --> S["SMS Service"]
+    O -- "call, intezaar" --> F["Fraud Service"]
     O -- "call, intezaar" --> A["Analytics"]
     style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Dikkat: SMS Svc dheema hai to Arpan ka order bhi dheema ho jaata hai. SMS Svc gira to order hi fail, jabki
-order ka SMS se koi lena-dena nahi. Aur kal koi naya Coupon Svc aaya, to Order Svc ka code badalna padega.
+Dikkat: SMS Service dheema hai to Arpan ka order bhi dheema ho jaata hai. SMS Service gira to order hi fail, jabki
+order ka SMS se koi lena-dena nahi. Aur kal koi naya Coupon Service aaya, to Order Service ka code badalna padega.
 
-Order Svc ko kisi ka intezaar nahi karna. Wo khabar kahin daal de aur aage badh jaaye, aur jise chahiye wo
+Order Service ko kisi ka intezaar nahi karna. Wo khabar kahin daal de aur aage badh jaaye, aur jise chahiye wo
 wahan se le le. Par "kahin" ka matlab kahan?
 
 ### Kadam 2: khabar kahan daalein (Kafka topic, disk pe)
 
-Order Svc khabar ek line (queue) me daal deta hai aur aage badh jaata hai. SMS, Fraud aur Analytics usi line
+Order Service khabar ek line (queue) me daal deta hai aur aage badh jaata hai. SMS, Fraud aur Analytics usi line
 se padhte hain. Par line kaisi ho? Ye asli choice hai:
 
 ```
@@ -77,17 +77,17 @@ KAFKA (topic, disk pe)    -> khabar disk pe likhi jaati hai, padhne se mit-ti NA
 ```
 
 **Isliye Kafka.** Line ko Kafka me **topic** kehte hain (`order-events`). Padhne se khabar mit-ti nahi,
-isliye ek hi khabar teen service padh leti hain, aur kal Coupon Svc aaya to wo bas padhna shuru kar degi,
-Order Svc me ek line nahi badalti. Har service apna bookmark rakhti hai ki kahan tak padha (**offset**), to
+isliye ek hi khabar teen service padh leti hain, aur kal Coupon Service aaya to wo bas padhna shuru kar degi,
+Order Service me ek line nahi badalti. Har service apna bookmark rakhti hai ki kahan tak padha (**offset**), to
 Fraud dheema hua to bas wo peeche rahega, SMS nahi rukega. Disk pe hai, to kuch din (jaise 7 din) rakhi
 rehti hai, aur kisi service me bug tha to bookmark peeche karke dobara padh sakte hain.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> O["Order Svc"]
+    U["Arpan"] --> O["Order Service"]
     O -- "khabar daali, aage badha" --> T[("KAFKA<br/>topic order-events")]
-    T --> S["SMS Svc"]
-    T --> F["Fraud Svc"]
+    T --> S["SMS Service"]
+    T --> F["Fraud Service"]
     T --> A["Analytics"]
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -105,7 +105,7 @@ Par tukde karte hi nayi dikkat aati hai: kram. Arpan ki 3 khabar (order, pay, ca
 gayi, to padhne wala kis kram me padhe, koi bharosa nahi. "cancel" pehle padh liya to gadbad. Kafka me kram
 sirf ek tukde ke andar pakka hota hai, poore topic me nahi.
 
-Ilaaj: **key**. Order Svc har khabar ke saath ek key deta hai, `userId`. Same key hamesha same tukde me
+Ilaaj: **key**. Order Service har khabar ke saath ek key deta hai, `userId`. Same key hamesha same tukde me
 jaati hai:
 
 ```
@@ -117,7 +117,7 @@ Ye chat wali baat hi hai: wahan kram sirf ek chat ke andar chahiye tha, yahan si
 
 ```mermaid
 flowchart LR
-    O["Order Svc<br/>key = userId"] --> P0 & P1 & P9
+    O["Order Service<br/>key = userId"] --> P0 & P1 & P9
     subgraph T["KAFKA · topic order-events · 10 tukde"]
         P0[("P0")]
         P1[("P1 · Arpan<br/>order, pay, cancel")]
@@ -132,7 +132,7 @@ Tukde 10 se 20 kiye to? Tukda = hash(key) % ginti hai. Ginti badli to key ka tuk
 purani khabar P1 me rahegi, nayi kahin aur, thodi der kram toot sakta hai. Isliye shuru me hi zaroorat se
 2-3 guna tukde rakhte hain.
 
-Par SMS Svc ki 3 machine lagayi taaki 10 tukde jaldi padhe jaayein. Teeno machine saare tukde padhne lagin,
+Par SMS Service ki 3 machine lagayi taaki 10 tukde jaldi padhe jaayein. Teeno machine saare tukde padhne lagin,
 aur Arpan ko ek order ke 3 SMS chale gaye.
 
 ### Kadam 4: 3 machine, 3 SMS (consumer group)
@@ -199,7 +199,7 @@ E-6 aayi -> Redis / DB me dekho: E-6 ho chuki?
 ```
 
 Ye chat wala `clientMsgId` aur banking wali idempotency key hi hai: dobara aaye to id se pehchaano. Ye
-pehchaanna padhne wale (SMS Svc) ka kaam hai, Kafka ka nahi.
+pehchaanna padhne wale (SMS Service) ka kaam hai, Kafka ka nahi.
 
 Exactly-once (theek ek baar) Kafka sirf Kafka se Kafka tak deta hai. SMS bahar ki cheez hai, wahan eventId
 hi rasta hai. Interview me bolo: "at-least-once + eventId se dohra kaam nahi."
@@ -221,7 +221,7 @@ hai, baaki do copy. P1 ka leader machine B pe, copy A aur C pe. B ki disk mari t
 jaata hai, aur Arpan ki khabar bach jaati hai. Naya leader kaun banega, ye Kafka ki ek machine tay karti hai
 jo sab pe nazar rakhti hai: **Controller**.
 
-Par ek pench: leader B ne khabar likhi aur turant Order Svc ko "ho gaya" bol diya, aur copy tak khabar
+Par ek pench: leader B ne khabar likhi aur turant Order Service ko "ho gaya" bol diya, aur copy tak khabar
 pahunchne se pehle hi B mar gayi. Copy ke paas wo khabar thi hi nahi, to khabar gayi.
 
 Ilaaj: **acks=all**. Leader "ho gaya" tabhi bolta hai jab pakki copies pe bhi likh jaaye.
@@ -241,21 +241,21 @@ hon to likhna hi band. Khabar khone se behtar hai thodi der ruk jaana.
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] -- "acks=all" --> L[("machine B<br/>P1 leader")]
+    O["Order Service"] -- "acks=all" --> L[("machine B<br/>P1 leader")]
     L -- "copy" --> A[("machine A<br/>P1 copy")]
     L -- "copy" --> C[("machine C<br/>P1 copy")]
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par ab bhejne wala bacha. Arpan ne order cancel kiya. Order Svc ne DB me likha "order = cancel", aur Kafka
+Par ab bhejne wala bacha. Arpan ne order cancel kiya. Order Service ne DB me likha "order = cancel", aur Kafka
 ko khabar bhejne se pehle gir gaya. DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala.
 
 ### Kadam 7: bhejne wala gira (outbox)
 
-Order Svc ko do kaam karne the: DB me "order = cancel" likhna, aur Kafka ko khabar dena. DB aur Kafka do
+Order Service ko do kaam karne the: DB me "order = cancel" likhna, aur Kafka ko khabar dena. DB aur Kafka do
 alag cheezein hain, dono me ek saath, ek hi baar me likhne ka koi tareeka nahi. Pehla kaam hua, doosre se
-pehle Order Svc gira.
+pehle Order Service gira.
 
 Ilaaj: **outbox**. Khabar bhi usi DB me likh do, cancel ke saath, ek transaction me. Khabar jis table me
 jaati hai use outbox kehte hain. Ek chhota program **relay** har second outbox me `sent = false` wali khabar
@@ -268,9 +268,9 @@ BEGIN
 COMMIT                      -> dono likhe gaye, ya koi nahi
 ```
 
-Ab Order Svc kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha na khabar, Arpan
+Ab Order Service kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha na khabar, Arpan
 dobara dabayega. Transaction ke baad gira to khabar outbox me padi hai, relay bhej dega. Relay ne bheja aur
-`sent = true` likhne se pehle gira, to relay dobara bhejega, aur SMS Svc us dohri khabar ko eventId se pakad
+`sent = true` likhne se pehle gira, to relay dobara bhejega, aur SMS Service us dohri khabar ko eventId se pakad
 lega (kadam 5). Ye banking kadam 6 wala outbox hi hai.
 
 Relay DB ko baar-baar poochta rahe to DB pe bojh? Bahut bada scale ho to relay ki jagah **CDC (Debezium)**
@@ -279,7 +279,7 @@ padta.
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6")]
+    O["Order Service"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6")]
     RL["Relay"] -- "sent = false" --> DB
     RL -- "acks=all" --> K[("KAFKA")]
     K --> S["TEAM sms<br/>eventId"]
@@ -290,13 +290,13 @@ flowchart LR
 Ab teeno jagah bachav: bhejne wala = outbox · Kafka = 3 copy + acks=all + min.insync · padhne wala = pehle
 kaam phir commit + eventId.
 
-Par ek khabar me galti thi (Arpan ka phone number hi galat). SMS Svc use bhejne ki koshish karta raha, fail
+Par ek khabar me galti thi (Arpan ka phone number hi galat). SMS Service use bhejne ki koshish karta raha, fail
 hota raha, commit nahi kiya, aur P1 ki baaki saari khabar uske peeche atak gayi.
 
 ### Kadam 8: ek kharab khabar ne line rok di (DLQ)
 
 Ek tukde me kram se padhna hota hai, aur machine agli khabar tabhi uthati hai jab pichhli ka commit ho
-jaaye. Arpan ki khabar me phone number galat tha, to SMS kabhi jaayega hi nahi. SMS Svc baar-baar koshish
+jaaye. Arpan ki khabar me phone number galat tha, to SMS kabhi jaayega hi nahi. SMS Service baar-baar koshish
 karta raha, aur P1 ki baaki khabar (Ravi, Sita ...) uske peeche atak gayi.
 
 Ilaaj: **DLQ (dead letter queue)**, kharab khabar ki alag line. Khabar fail hui to 3-4 baar ruk-ruk ke
@@ -321,14 +321,14 @@ flowchart LR
 
 ## 5. Wrap (30 second me poora design, NFR se milao)
 
-Order Svc order aur khabar ek transaction me DB me likhta hai (outbox), relay khabar Kafka ko bhejta hai
+Order Service order aur khabar ek transaction me DB me likhta hai (outbox), relay khabar Kafka ko bhejta hai
 (acks=all). Kafka me topic `order-events` 10 tukdon me hai, key = userId taaki ek user ki khabar kram me
 rahe, aur har tukde ki 3 copy hain (min.insync = 2). SMS, Fraud aur Analytics alag-alag team hain, har team
 ko poori khabar milti hai, aur team ke andar ek tukda ek machine ko. Padhne wala pehle kaam karta hai phir
 commit, dobara aayi khabar eventId se pakadta hai, aur baar-baar fail hone wali khabar DLQ me jaati hai.
 
 ```
-intezaar nahi        -> Order Svc khabar daal ke aage, sab apni speed se padhte
+intezaar nahi        -> Order Service khabar daal ke aage, sab apni speed se padhte
 khabar na khoye      -> outbox (bhejne wala) · 3 copy + acks=all + min.insync (Kafka) · pehle kaam phir commit
 kram                 -> key = userId, ek tukde me kram
 bheed                -> 10 tukde, team me tukde baant ke padhna
@@ -398,12 +398,12 @@ ROUND 2  FIX = true
 ```
 ```
                FIX = false                                   FIX = true
-e3 producer    debit hua, bhejne se pehle crash -> KHOYA     debit + outbox EK txn, relay ne bheja -> BACHA
+e3 producer    debit hua, bhejne se pehle crash -> KHOYA     debit + outbox ek transaction, relay bheje -> BACHA
 e4 Kafka       acks=1 leader "OK", replica se pehle -> KHOYA acks=all replica ke baad "OK" -> BACHA
 e2 consumer    pehle commit, SMS se pehle crash -> KHOYA     pehle SMS, baad commit, phir aaya, dedup -> BACHA
 
 EK NIYAM: "ho gaya" tabhi bolo jab sach me PAKKA
-OUTBOX      chhota LEDGER: "ye bhejna hai" debit ke SAATH, USI ek txn
+OUTBOX      chhota LEDGER: "ye bhejna hai" debit ke SAATH, USI ek transaction
                            -> "paisa kata, likha nahi" ho hi nahi sakta
 acks=all    replica pe likhne ke BAAD "OK" (acks=1 = leader ki memory pe "OK" -> leader gira = gaya)
 OFFSET BAAD kaam PEHLE, commit BAAD -> crash = event phir aayega (at-least-once)

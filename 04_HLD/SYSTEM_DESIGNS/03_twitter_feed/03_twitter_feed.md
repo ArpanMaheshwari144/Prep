@@ -58,7 +58,7 @@ feed = follows se Arpan ke 200 log nikaalo
 
 ```mermaid
 flowchart LR
-    U["Arpan: feed kholi"] --> F["Feed Svc"]
+    U["Arpan: feed kholi"] --> F["Feed Service"]
     F -- "1. Arpan ke 200 log" --> FO[("SQL: follows")]
     F -- "2. un 200 ke tweet, sort" --> T[("SQL: tweets")]
     style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -84,9 +84,9 @@ Arpan ne feed kholi --> Redis: inbox:Arpan se upar ke 50 --> turant (koi jod nah
 
 ```mermaid
 flowchart LR
-    R["Ravi: tweet T-901"] --> TS["Tweet Svc"]
+    R["Ravi: tweet T-901"] --> TS["Tweet Service"]
     TS -- "200 follower ke inbox me" --> IN[("Redis: inbox per user")]
-    U["Arpan: feed kholi"] --> F["Feed Svc"]
+    U["Arpan: feed kholi"] --> F["Feed Service"]
     F -- "inbox:Arpan, upar ke 50" --> IN
     style IN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -101,7 +101,7 @@ to jagah 200 guna. Feed pe un 50 id ka poora tweet DB se ek saath aata.
 Read replica laga dete? Copy pe bhi har feed wahi 200 logon ka jod hota, bas bant jaata. Jod hi dikkat hai,
 fanout hi jawab.
 
-Par Arpan ka dost Mohan chhota influencer hai, 5,000 follower. Mohan ne tweet dabaya, aur Tweet Svc 5,000
+Par Arpan ka dost Mohan chhota influencer hai, 5,000 follower. Mohan ne tweet dabaya, aur Tweet Service 5,000
 inbox me likh raha, uske baad hi "tweet ho gaya" bolega. Mohan ka button 5 second ghoomta raha.
 
 ### Kadam 3: tweet turant, fanout peeche se (Kafka + fanout worker)
@@ -110,7 +110,7 @@ Dikkat: tweet karne wala ruke nahi, 5,000 inbox me likhna peeche se ho, aur beec
 notification kadam 2 wali dikkat hai, to wahi ilaaj.
 
 ```
-Mohan: tweet --> Tweet Svc --1. tweets DB me save--> "tweet ho gaya" (turant)
+Mohan: tweet --> Tweet Service --1. tweets DB me save--> "tweet ho gaya" (turant)
                            --2. khabar "T-950 by Mohan"--> [Kafka: tweets]
                                                               |
                                           fanout worker (kai machine) uthata
@@ -120,7 +120,7 @@ Mohan: tweet --> Tweet Svc --1. tweets DB me save--> "tweet ho gaya" (turant)
 
 ```mermaid
 flowchart LR
-    M["Mohan: tweet"] --> TS["Tweet Svc"]
+    M["Mohan: tweet"] --> TS["Tweet Service"]
     TS -- "save + outbox" --> DB[("tweets DB")]
     DB -- "relay" --> K[("Kafka: tweets")]
     K --> FW["Fanout worker<br/>(kai machine)"]
@@ -138,7 +138,7 @@ Ab kya theek hua:
 - worker gira to khabar Kafka me padi, wapas aake wahin se uthata.
 - 5,000 tweet / sec ki bheed: worker badha do.
 
-Ek chhed: Tweet Svc ne DB me tweet save kiya, aur Kafka ko bhejne se pehle gira. Tweet DB me hai, par kisi ke
+Ek chhed: Tweet Service ne DB me tweet save kiya, aur Kafka ko bhejne se pehle gira. Tweet DB me hai, par kisi ke
 inbox me nahi. Ilaaj wahi **outbox** ([Kafka file kadam 7](../12_message_queue_kafka/12_message_queue_kafka.md#kadam-7-bhejne-wala-gira-outbox)): khabar bhi usi transaction me outbox table me,
 relay use Kafka me daale.
 
@@ -162,9 +162,9 @@ Arpan ne feed kholi:
 
 ```mermaid
 flowchart LR
-    V["Virat: tweet"] --> TS["Tweet Svc"]
+    V["Virat: tweet"] --> TS["Tweet Service"]
     TS -- "sirf save, fanout nahi" --> T[("tweets DB<br/>index: author_id + time")]
-    U["Arpan: feed"] --> F["Feed Svc"]
+    U["Arpan: feed"] --> F["Feed Service"]
     F -- "1. aam logon ke" --> IN[("Redis: inbox:Arpan")]
     F -- "2. 5 celeb ke aakhri 20" --> T
     style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -193,19 +193,19 @@ padhai, DB garam.
 
 ### Kadam 5: crore log, sab DB se "Virat ke aakhri 20" (har server ka apna cache)
 
-Ilaaj: har Feed Svc machine ye jawab **apni memory me** 2 second rakhti hai (local cache). Matlab har server
+Ilaaj: har Feed Service machine ye jawab **apni memory me** 2 second rakhti hai (local cache). Matlab har server
 ka apna chhota cache, uske andar hi; koi alag Redis nahi.
 
 ```
 pehle: 1 crore feed --> sab tweets DB pe "Virat ke aakhri 20"          --> DB garam
-ab:    1 crore feed --> 100 Feed Svc machine
+ab:    1 crore feed --> 100 Feed Service machine
                         har machine ki memory me "Virat ke 20" (umar 2 sec)
                         --> DB tak har machine 2 sec me sirf 1 baar = 100 sawaal / 2 sec, crore nahi
 ```
 
 ```mermaid
 flowchart LR
-    U["1 crore feed"] --> F["100 Feed Svc machine<br/>(har ek ka apna cache: Virat ke 20, 2 sec)"]
+    U["1 crore feed"] --> F["100 Feed Service machine<br/>(har ek ka apna cache: Virat ke 20, 2 sec)"]
     F -. "2 sec me ek baar" .-> T[("tweets DB")]
     style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -275,7 +275,7 @@ Ilaaj: tweets ko **Cassandra** me rakho, aur `author_id` se baanto. Virat ke saa
 time ke kram me. "Virat ke aakhri 20" ek hi jagah se seedha.
 
 ```
-Tweet Svc --likho--> [Cassandra: kai machine, author_id se baanta]
+Tweet Service --likho--> [Cassandra: kai machine, author_id se baanta]
                         machine 1: Virat ke tweet (time ke kram me)
                         machine 2: Mohan ke tweet
                         ...
@@ -283,7 +283,7 @@ Tweet Svc --likho--> [Cassandra: kai machine, author_id se baanta]
 
 ```mermaid
 flowchart LR
-    TS["Tweet Svc"] --> C1[("Cassandra 1<br/>Virat ke tweet")]
+    TS["Tweet Service"] --> C1[("Cassandra 1<br/>Virat ke tweet")]
     TS --> C2[("Cassandra 2<br/>Mohan ke tweet")]
     TS --> C3[("Cassandra ...<br/>author_id se baanta")]
     style C1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -296,14 +296,14 @@ Ye [chat kadam 5](../14_chat_messaging/14_chat_messaging.md#kadam-5-roz-12-tb-ca
 SQL kyun nahi: SQL ki taakat jod aur transaction, yahan dono nahi chahiye. Itni likhai ke liye SQL ko haath se
 baantna padta. Cassandra likhai ke liye hi bana, khud kai machine me baant leta.
 
-Par Arpan ne match ki 100 MB video daali. Video Tweet Svc aur Cassandra ke raaste gayi to dono bhar jaayenge,
+Par Arpan ne match ki 100 MB video daali. Video Tweet Service aur Cassandra ke raaste gayi to dono bhar jaayenge,
 saath me sabke tweet atkenge. Aur 1 crore log dekhenge, to har baar wahi 100 MB humare server se jaayega.
 
 ### Kadam 8: 100 MB ki video (S3 + CDN, tweet me sirf link)
 
 ```
-1. app Tweet Svc se poochhta: "upload kahan karun?"
-   -> Tweet Svc deta: S3 ka ek link, 10 min ke liye (presigned URL)
+1. app Tweet Service se poochhta: "upload kahan karun?"
+   -> Tweet Service deta: S3 ka ek link, 10 min ke liye (presigned URL)
 2. app video seedha S3 pe daalta (humare server ke beech se nahi)
 3. tweet me sirf link: "T-990: Arpan: 'kya catch!' + video: s3/.../v1.mp4"
 4. dekhne wale video CDN se lete (paas wali machine se), S3 / humare server se nahi
@@ -311,7 +311,7 @@ saath me sabke tweet atkenge. Aur 1 crore log dekhenge, to har baar wahi 100 MB 
 
 ```mermaid
 flowchart LR
-    U["Arpan: video"] -- "1. upload link do" --> TS["Tweet Svc"]
+    U["Arpan: video"] -- "1. upload link do" --> TS["Tweet Service"]
     U -- "2. video seedha" --> S3[("S3")]
     S3 --> CDN["CDN (paas wali machine)"]
     CDN -- "4. dekhne wale" --> V["1 crore log"]
@@ -319,7 +319,7 @@ flowchart LR
     style CDN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Ab kya theek hua: bhaari video kabhi Tweet Svc / Cassandra se nahi guzarti, tweet chhota (sirf link),
+Ab kya theek hua: bhaari video kabhi Tweet Service / Cassandra se nahi guzarti, tweet chhota (sirf link),
 crore log CDN se dekhte. Ye bilkul [chat kadam 10](../14_chat_messaging/14_chat_messaging.md#kadam-10-200-mb-ka-video-s3-me-message-me-sirf-link) wala: wahan bhi message me sirf link, video S3 me.
 
 Par Arpan Bangalore me, aur saare server, Redis, Cassandra US me. Har feed ko US jaana aur aana, akela safar
@@ -328,7 +328,7 @@ hi ~300 ms. NFR "feed 200 ms" toot gaya.
 ### Kadam 9: Arpan India me, server US me (India me apna region)
 
 ```
-India region (Mumbai):  Feed Svc + Tweet Svc + Redis inbox + Cassandra ki copy
+India region (Mumbai):  Feed Service + Tweet Service + Redis inbox + Cassandra ki copy
 US region:              wahi sab, apne logon ke liye
 
 Arpan (India) --feed--> Mumbai region -> inbox:Arpan Mumbai ke Redis me -> ~50 ms
@@ -337,7 +337,7 @@ Virat ne tweet kiya (India) -> Mumbai Cassandra me likha -> peeche se US Cassand
 
 ```mermaid
 flowchart LR
-    A["Arpan (India)"] --> M["Mumbai region<br/>Feed Svc + Redis inbox + Cassandra"]
+    A["Arpan (India)"] --> M["Mumbai region<br/>Feed Service + Redis inbox + Cassandra"]
     J["John (US)"] --> U["US region<br/>wahi sab"]
     M -. "tweet ki copy, peeche se" .-> U
     style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -367,9 +367,10 @@ Copy peeche se (US tak kuch second) kyun chalta: NFR, feed 2-5 sec purani chaleg
 ## Wrap: 30 sec me poora design
 
 ```
-Tweet aaya: Tweet Svc use Cassandra me save karta (author_id se baanta), outbox se Kafka me khabar, turant
-"ho gaya". Fanout worker aam logon ke tweet ki id unke active followers ke Redis inbox me daalte (aakhri 800,
-soye hue ko chhod ke). Celebrity ka fanout nahi: feed padhte waqt unke aakhri tweet DB se, har server ke apne
-cache se 2 sec. Feed = inbox ki 50 id + celebrity ke tweet, milao, poora tweet DB se. Video S3 me, dekhne wale
-CDN se. Har desh ka apna region; Kafka topic ki copy doosre region jaati, wahan ka worker wahan ke inbox bhare.
+Tweet aaya: Tweet Service use Cassandra me save karta (author_id se baanta), outbox se Kafka me khabar,
+turant "ho gaya". Fanout worker aam logon ke tweet ki id unke active followers ke Redis inbox me daalte
+(aakhri 800, soye hue ko chhod ke). Celebrity ka fanout nahi: feed padhte waqt unke aakhri tweet DB se, har
+server ke apne cache se 2 sec. Feed = inbox ki 50 id + celebrity ke tweet, milao, poora tweet DB se. Video
+S3 me, dekhne wale CDN se. Har desh ka apna region; Kafka topic ki copy doosre region jaati, wahan ka worker
+wahan ke inbox bhare.
 ```

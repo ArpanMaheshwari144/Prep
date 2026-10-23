@@ -6,7 +6,7 @@ file me ek hi kahani hai: Arpan ne Amazon pe order kiya, use push bhi aana chahi
 ke waqt OTP ka SMS turant.
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
-seedha call -> Kafka + Notification Svc -> har raaste ki line + worker -> key BHEJ_RAHA / BHEJ_DIYA (Redis)
+seedha call -> Kafka + Notification Service -> har raaste ki line + worker -> key BHEJ_RAHA / BHEJ_DIYA (Redis)
 -> retry line + DLQ -> timeout + circuit breaker + doosri company -> OTP ki tez line -> saanjha token bucket
 -> webhook + Tracking DB (Cassandra) -> campaign tukde -> pasand + saancha cache
 
@@ -24,7 +24,7 @@ scope ke bahar: analytics dashboard
 ## 2. NFR: kaisa chalna chahiye
 
 ```
-- bhejne wala (Order Svc) ruke nahi
+- bhejne wala (Order Service) ruke nahi
 - khabar khoye nahi, do baar jaaye nahi
 - sale ki bheed jhele, OTP us bheed me phanse nahi
 ```
@@ -41,40 +41,40 @@ scope ke bahar: analytics dashboard
 
 ## 4. Design
 
-### Kadam 1: sabse seedha (Order Svc seedha email company ko call kare)
+### Kadam 1: sabse seedha (Order Service seedha email company ko call kare)
 
-Arpan ne order kiya. Order Svc order banata hai, phir khud seedha email company (SendGrid) ki API call karta
+Arpan ne order kiya. Order Service order banata hai, phir khud seedha email company (SendGrid) ki API call karta
 hai, uske jawab ka intezaar karta hai, aur tab jaake Arpan ko "order ho gaya" bolta hai.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> O["Order Svc"]
+    U["Arpan"] --> O["Order Service"]
     O -- "call, intezaar" --> E["Email company"]
     E --> I["Arpan ka inbox"]
     style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Dikkat: email company dheemi hai to Arpan ka order bhi dheema. Email company band hui to order hi fail, jabki
-order ka email se koi lena-dena nahi. Aur kal SMS aur push bhi jodne hain, to Order Svc ke code me teen
+order ka email se koi lena-dena nahi. Aur kal SMS aur push bhi jodne hain, to Order Service ke code me teen
 company ki call aa jaayengi.
 
-Par Order Svc ko kisi ka intezaar nahi karna. Wo bas khabar kahin daal de aur aage badh jaaye.
+Par Order Service ko kisi ka intezaar nahi karna. Wo bas khabar kahin daal de aur aage badh jaaye.
 
-### Kadam 2: khabar Kafka me daalo, Notification Svc uthaye
+### Kadam 2: khabar Kafka me daalo, Notification Service uthaye
 
-Ab Order Svc order banata hai, ek chhoti khabar `{ ORDER_PLACED, userId: Arpan, orderId: 999 }` Kafka ke
+Ab Order Service order banata hai, ek chhoti khabar `{ ORDER_PLACED, userId: Arpan, orderId: 999 }` Kafka ke
 topic me daalta hai, aur turant Arpan ko "order ho gaya" bol deta hai. Kisi company ka intezaar nahi.
 
-Ek naya dabba judta hai: **Notification Svc**. Ye Kafka se khabar uthata hai, Arpan ki pasand dekhta hai
+Ek naya dabba judta hai: **Notification Service**. Ye Kafka se khabar uthata hai, Arpan ki pasand dekhta hai
 (push chalu, email chalu, SMS band), saancha bharta hai ("Hi Arpan, order 999 ho gaya"), phir email aur push
 company ko call karta hai.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> O["Order Svc"]
+    U["Arpan"] --> O["Order Service"]
     O -- "khabar" --> K[("Kafka topic")]
     O -. "turant: order ho gaya" .-> U
-    K --> N["Notification Svc<br/>(pasand + saancha)"]
+    K --> N["Notification Service<br/>(pasand + saancha)"]
     N --> E["Email company"]
     N --> P["Push company"]
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -82,27 +82,27 @@ flowchart LR
 ```
 
 Kafka kyun:
-- khabar disk pe likhi jaati hai, to Notification Svc gira ho tab bhi khabar khoti nahi. Wo wapas aake wahin
+- khabar disk pe likhi jaati hai, to Notification Service gira ho tab bhi khabar khoti nahi. Wo wapas aake wahin
   se padh leta hai.
-- sale me 58,000 khabar / sec aayein to Kafka unhe pakad ke rakhta hai, Notification Svc apni raftaar se
+- sale me 58,000 khabar / sec aayein to Kafka unhe pakad ke rakhta hai, Notification Service apni raftaar se
   nikalta hai.
 
-Ab kya theek hua: email company band hai to bhi order chal jaata hai. SMS jodna ho to sirf Notification Svc
-badalta hai, Order Svc nahi.
+Ab kya theek hua: email company band hai to bhi order chal jaata hai. SMS jodna ho to sirf Notification Service
+badalta hai, Order Service nahi.
 
-Par Notification Svc ek hi line me teeno raaste bhej raha hai. SMS company dheemi hui to uske peeche Arpan
+Par Notification Service ek hi line me teeno raaste bhej raha hai. SMS company dheemi hui to uske peeche Arpan
 ka push aur email bhi atak jaata hai.
 
 ### Kadam 3: har raaste ki alag line (topic) aur apne worker
 
-Notification Svc ab company ko khud call nahi karta. Wo bas tay karta hai ki Arpan ko kis raaste bhejna hai,
+Notification Service ab company ko khud call nahi karta. Wo bas tay karta hai ki Arpan ko kis raaste bhejna hai,
 aur har raaste ki **alag Kafka line** me khabar daal deta hai: push wali line, email wali line, SMS wali line.
 Har line ke apne **worker** hain: push worker sirf push company ko bhejte, email worker sirf email company
 ko, SMS worker sirf SMS company ko.
 
 ```mermaid
 flowchart LR
-    K[("Kafka")] --> N["Notification Svc<br/>(pasand + saancha)"]
+    K[("Kafka")] --> N["Notification Service<br/>(pasand + saancha)"]
     N --> LP[("push line")]
     N --> LE[("email line")]
     N --> LS[("SMS line")]
@@ -210,14 +210,14 @@ lag gaya. OTP 5 min me bekaar ho jaata hai, offer 1 ghanta baad bhi chalega.
 
 ### Kadam 7: OTP ki alag tez line
 
-Notification Svc har khabar ko ek darja deta hai: **TEZ** (OTP, password reset), **BEECH** (order hua, ship
+Notification Service har khabar ko ek darja deta hai: **TEZ** (OTP, password reset), **BEECH** (order hua, ship
 hua), **DHEEMI** (offer, sale ki khabar). Har darje ki apni alag line, aur **apne alag worker**.
 OTP wale worker kabhi offer nahi uthate. Sale me 50,000 offer DHEEMI line me khade rehte hain,
 Arpan ka OTP TEZ line se turant nikal jaata hai.
 
 ```mermaid
 flowchart LR
-    N["Notification Svc<br/>(darja)"] --> T[("TEZ line: OTP")]
+    N["Notification Service<br/>(darja)"] --> T[("TEZ line: OTP")]
     N --> B[("BEECH line: order")]
     N --> D[("DHEEMI line: offer")]
     T --> WT["OTP worker (sirf ye)"]
@@ -331,7 +331,7 @@ Cassandra isi kaam ke liye bana: bahut likhna, machine jodte jao aur jagah badht
 Ab kya theek hua: Arpan bole "OTP nahi aaya", to support dekh sakta hai: BHEJA tha, company ne FAIL bola,
 number DND pe tha.
 
-Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Svc ek hi baar me 1 crore
+Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Service ek hi baar me 1 crore
 khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.
 
 ### Kadam 10: 1 crore ka campaign, 1000 ke tukdon me
@@ -339,7 +339,7 @@ khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, ku
 PEHLE (tukde nahi): ek hi baar me 1 crore
 
 ```
-Campaign Svc:  user 1, 2, 3 ... 40,00,000  X gir gaya
+Campaign Service:  user 1, 2, 3 ... 40,00,000  X gir gaya
                                           |
                kisko gaya? kisko nahi? -> PATA NAHI
                shuru se chalao -> 40 lakh ko DO offer
@@ -375,7 +375,7 @@ tukda 1, 2 ko koi chhoota bhi nahi (tick laga hai)
 
 ```mermaid
 flowchart LR
-    CS["Campaign Svc"] --> DB[("campaign register<br/>tukda | haal")]
+    CS["Campaign Service"] --> DB[("campaign register<br/>tukda | haal")]
     CS --> K[("Kafka: 10,000 tukde")]
     K --> TW["tukda worker<br/>(pasand dekho)"]
     TW --> D[("DHEEMI line")]
@@ -407,11 +407,11 @@ Redis gira
 Ek hi dikkat, par faisla darje se badalta: OTP me khona bura (bhejte raho), offer me dohraav bura (ruk jao).
 
 Par offer ka SMS raat 2 baje chala gaya, jabki Arpan ne offer wale SMS band kiye the. Aur har khabar pe
-Notification Svc DB se pasand + saancha padh raha hai: 1.75 lakh / sec padhna, DB ghut raha hai.
+Notification Service DB se pasand + saancha padh raha hai: 1.75 lakh / sec padhna, DB ghut raha hai.
 
 ### Kadam 11: pasand + saancha, aur unka cache
 
-Notification Svc bhejne se pehle 2 cheez dekhta hai:
+Notification Service bhejne se pehle 2 cheez dekhta hai:
 
 ```
 khabar --> [1 pasand]  Arpan: push chalu, email chalu, offer SMS BAND
@@ -425,7 +425,7 @@ khabar --> [1 pasand]  Arpan: push chalu, email chalu, offer SMS BAND
 Ab bheed: har khabar pe pasand aur saancha DB se padhna, sale me 1.75 lakh / sec padhna, DB ghut jaata hai.
 
 ```
-Notification Svc --pasand padho--> [Redis cache] --mila--> turant (DB tak gaye hi nahi)
+Notification Service --pasand padho--> [Redis cache] --mila--> turant (DB tak gaye hi nahi)
                                        | nahi mila
                                        +--> Pasand DB -> cache me rakho -> agli baar cache se
 
@@ -435,7 +435,7 @@ Arpan ne pasand badli (offer SMS chalu) -> DB update + cache ki key DELETE
 
 ```mermaid
 flowchart LR
-    K[("Kafka")] --> N["Notification Svc"]
+    K[("Kafka")] --> N["Notification Service"]
     N -- "pasand / saancha" --> RC[("Redis cache")]
     RC -. "nahi mila" .-> PD[("Pasand + saancha DB")]
     N --> L[("TEZ / BEECH / DHEEMI line")]
@@ -451,12 +451,12 @@ Cache kyun chalta yahan: pasand aur saancha bahut baar padhe jaate (har khabar p
 ## Wrap: 30 sec me poora design
 
 ```
-Order Svc khabar Kafka me daal ke aage badh jaata (ruke nahi). Notification Svc pasand + saancha (cache se)
-dekh ke khabar ko darje (TEZ / BEECH / DHEEMI) aur raaste (push / email / SMS) ki alag line me daalta.
-Har line ke apne worker: Redis key (BHEJ_RAHA -> BHEJ_DIYA) se do baar nahi, fail pe ruk-ruk ke dobara phir
-DLQ (khoye nahi), 2 sec timeout + circuit breaker + doosri company, saanjha token bucket se company ki had me.
-Company ka webhook Tracking DB (Cassandra) me "mila / fail" likhta. 1 crore ka campaign 1000 ke tukdon me,
-register me tick. OTP ki alag tez line, sale ki bheed me nahi phansta.
+Order Service khabar Kafka me daal ke aage badh jaata (ruke nahi). Notification Service pasand + saancha
+(cache se) dekh ke khabar ko darje (TEZ / BEECH / DHEEMI) aur raaste (push / email / SMS) ki alag line me
+daalta. Har line ke apne worker: Redis key (BHEJ_RAHA -> BHEJ_DIYA) se do baar nahi, fail pe ruk-ruk ke
+dobara phir DLQ (khoye nahi), 2 sec timeout + circuit breaker + doosri company, saanjha token bucket se
+company ki had me. Company ka webhook Tracking DB (Cassandra) me "mila / fail" likhta. 1 crore ka campaign
+1000 ke tukdon me, register me tick. OTP ki alag tez line, sale ki bheed me nahi phansta.
 ```
 
 ---
@@ -485,7 +485,7 @@ Raat 2 baje offer ka SMS?
      Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana, isliye Kadam 11 me pasand check.
 
 10 guna traffic?
-  -> Kafka me tukde (partition) pehle se zyada · Notification Svc ki machine badhao · worker badhao
+  -> Kafka me tukde (partition) pehle se zyada · Notification Service ki machine badhao · worker badhao
      (ek ~1000 / sec) · pasand / saancha cache · company ki had saanjha bucket se.
 
 Data 3 saal baad (Tracking DB ~90 TB / saal)?

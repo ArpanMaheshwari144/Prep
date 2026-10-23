@@ -214,7 +214,7 @@ din bhar yahi chalta hai.
 
 ### Kadam 7: wahi bot baar-baar (pattern pakdo, ban karo)
 
-Ilaaj: har 429 ki khabar **Kafka** me daalo. Peeche ek Pattern Svc dekhta hai: "ye 1 ghante me 50 baar had
+Ilaaj: har 429 ki khabar **Kafka** me daalo. Peeche ek Pattern Service dekhta hai: "ye 1 ghante me 50 baar had
 paar kar chuka hai", to use **ban** kar deta hai. Ban list gateway ya WAF pe hoti hai, to ban wala darwaze pe
 hi ruk jaata hai, Redis tak bhi nahi pahunchta.
 
@@ -229,7 +229,7 @@ flowchart LR
     U["bot"] --> W["WAF / gateway<br/>ban list (TTL)"]
     W --> G["API Gateway<br/>limiter"]
     G -- "429 ki khabar" --> K[("Kafka")]
-    K --> P["Pattern Svc<br/>baar-baar? -> ban"]
+    K --> P["Pattern Service<br/>baar-baar? -> ban"]
     P -- "ban (1 ghanta)" --> W
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -263,7 +263,7 @@ flowchart LR
     G -- "Lua" --> R[("Redis + copy")]
     G -- "had me" --> S["App x 10"]
     G -- "429 ki khabar" --> K[("Kafka")]
-    K --> P["Pattern Svc"]
+    K --> P["Pattern Service"]
     P -- "ban" --> W
     style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -338,7 +338,7 @@ sahi."
 Request pehle WAF pe aati hai, jahan ban list hai. Phir API Gateway pe limiter: user ki had (429) aur poore
 system ki had (503). Ginti Redis me hai, token bucket ki Lua script se ek jhatke me, key = userId (login pe
 IP), user ke home region me, aur Redis ki copy ke saath. Had ke andar hai to app pe, warna 429 aur
-Retry-After. Har 429 ki khabar Kafka se Pattern Svc tak, jo baar-baar wale ko ban karta hai.
+Retry-After. Har 429 ki khabar Kafka se Pattern Service tak, jo baar-baar wale ko ban karta hai.
 
 ```
 TEZ (1 ms)            -> Redis RAM me, gateway pe, ek Lua jhatka
@@ -455,7 +455,8 @@ CODE KA DIL (user:1 ko 60 sec me 5):
    catch IOException -> FAIL_OPEN ? ALLOW : BLOCK
 ```
 ```
-CASE A  chalta kaise  req 1..9:  count 1 TTL 60 ALLOW · 2/57 ALLOW · 3/56 ALLOW · 4/49 ALLOW · 5/48 ALLOW ·
+CASE A  chalta kaise  request 1..9:  count 1 TTL 60 ALLOW · 2/57 ALLOW · 3/56 ALLOW · 4/49 ALLOW ·
+                                 5/48 ALLOW ·
                                  6/47 429 · 7/45 429 · 8/45 429 · 9/44 429     (window PEHLI request se)
 
 CASE B  docker stop   "REDIS SE BAAT NAHI HUI: Connection refused" -> FAIL_OPEN = true -> ALLOW (2 baar)
@@ -469,7 +470,7 @@ CASE D  INCR ke baad, EXPIRE se pehle crash (USE_LUA = false)
                       RUN 1: count 1, CRASH · TTL -> -1
                       RUN 2: count 2..5 ALLOW, 6..7 429, har baar TTL
                              -1 -> key KABHI nahi mitegi, HAMESHA block
-FIX D   USE_LUA = true   req 10..14: count 10 TTL 58 · 11/57 · 12/56 · 13/56 · 14/55 -> 1 min me free
+FIX D   USE_LUA = true   request 10..14: count 10 TTL 58 · 11/57 · 12/56 · 13/56 · 14/55 -> 1 min me free
 
 TTL:  -1 = key hai, timer nahi · -2 = key hi nahi · 58 = 58 sec baaki
 ```

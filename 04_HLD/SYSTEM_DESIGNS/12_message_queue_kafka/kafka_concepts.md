@@ -1,7 +1,7 @@
 # Kafka concepts: ek kahani
 
-Arpan ne Swiggy pe order kiya. Order Svc ka kaam bas order banana hai. Par is order ki khabar do aur service ko
-chahiye: SMS Svc, jo Arpan ko SMS bhejegi, aur Fraud Svc, jo dekhegi ki order shaq wala to nahi.
+Arpan ne Swiggy pe order kiya. Order Service ka kaam bas order banana hai. Par is order ki khabar do aur service ko
+chahiye: SMS Service, jo Arpan ko SMS bhejegi, aur Fraud Service, jo dekhegi ki order shaq wala to nahi.
 
 Har diagram pichhle diagram ko hi aage badhata hai. **Peela = jo abhi naya juda**, baaki wahi purana.
 
@@ -9,19 +9,19 @@ Har diagram pichhle diagram ko hi aage badhata hai. **Peela = jo abhi naya juda*
 
 ## 1. Topic
 
-Order Svc ko SMS aur Fraud ka intezaar nahi karna. Wo bas khabar ek naam wali line me daal deta hai aur apne
+Order Service ko SMS aur Fraud ka intezaar nahi karna. Wo bas khabar ek naam wali line me daal deta hai aur apne
 kaam pe lag jaata hai. Is line ka naam "order-events" hai. Kafka me aisi naam wali line ko **topic** kehte hain.
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] -- "Arpan ka order" --> T[("topic<br/>order-events")]
-    T --> S["SMS Svc"]
-    T --> F["Fraud Svc"]
+    O["Order Service"] -- "Arpan ka order" --> T[("topic<br/>order-events")]
+    T --> S["SMS Service"]
+    T --> F["Fraud Service"]
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
 SMS aur Fraud dono isi topic se padhte hain. Padhne se khabar mitti nahi, isliye dono ko poori khabar milti hai.
-Kal koi teesri service aaye, jaise Analytics, to wo bhi bas isi topic se padhna shuru kar degi. Order Svc me ek
+Kal koi teesri service aaye, jaise Analytics, to wo bhi bas isi topic se padhna shuru kar degi. Order Service me ek
 line nahi badalti.
 
 Sab theek chal raha tha. Phir Diwali sale aayi.
@@ -38,14 +38,14 @@ rakh diya. Ek tukde ko **partition** kehte hain.
 
 ```mermaid
 flowchart LR
-    O["Order Svc<br/>key = userId"] --> P0 & P1 & P2
+    O["Order Service<br/>key = userId"] --> P0 & P1 & P2
     subgraph T["topic order-events"]
         P0[("P0 · Ravi")]
         P1[("P1 · Arpan<br/>order, pay, cancel")]
         P2[("P2 · Sita")]
     end
-    T --> S["SMS Svc"]
-    T --> F["Fraud Svc"]
+    T --> S["SMS Service"]
+    T --> F["Fraud Service"]
     style P0 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
     style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
     style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
@@ -55,16 +55,16 @@ Ab bojh teen machine me bat gaya. Par sawaal aaya: Arpan ki khabar kis tukde me 
 phir pay, phir cancel. Ye teeno alag tukdon me gaye to kaun pehle padha jaaye, iska koi bharosa nahi. Kram sirf ek
 tukde ke andar pakka hota hai.
 
-Isliye Order Svc har khabar ke saath ek **key** deta hai: user ki id. Same key hamesha same tukde me jaati hai.
+Isliye Order Service har khabar ke saath ek **key** deta hai: user ki id. Same key hamesha same tukde me jaati hai.
 Arpan ki teeno khabar P1 me, aur wahan kram se.
 
-Tukde ban gaye. Par ab SMS Svc ko bhi bheed jhelni thi, to uski 3 machine chalayi gayi.
+Tukde ban gaye. Par ab SMS Service ko bhi bheed jhelni thi, to uski 3 machine chalayi gayi.
 
 ---
 
 ## 3. Consumer group
 
-SMS Svc ki 3 machine hain: banda-A, banda-B, banda-C. Agar teeno saare tukde padhein, to Arpan ki khabar teeno ke
+SMS Service ki 3 machine hain: banda-A, banda-B, banda-C. Agar teeno saare tukde padhein, to Arpan ki khabar teeno ke
 paas jaayegi aur Arpan ko 3 SMS chale jaayenge.
 
 To teeno machine ko ek team bana diya. Sabko ek hi team ka naam diya (group.id = "sms"). Is team ko
@@ -72,7 +72,7 @@ To teeno machine ko ek team bana diya. Sabko ek hi team ka naam diya (group.id =
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] --> T
+    O["Order Service"] --> T
     subgraph T["topic order-events"]
         P0[("P0 · Ravi")]
         P1[("P1 · Arpan")]
@@ -91,7 +91,7 @@ flowchart LR
     style X fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-P1 sirf banda-B ke paas hai, to Arpan ko ek hi SMS jaata hai. Fraud Svc alag team hai ("fraud"), use apni poori
+P1 sirf banda-B ke paas hai, to Arpan ko ek hi SMS jaata hai. Fraud Service alag team hai ("fraud"), use apni poori
 copy milti hai. Har team apna bookmark rakhti hai ki kahan tak padha, ise **offset** kehte hain. Isliye Fraud
 dheema chale to bhi SMS nahi rukta. Aur banda-B gir jaaye to Kafka uska tukda P1 banda-A ya banda-C ko de deta
 hai, ise **rebalance** kehte hain.
@@ -107,7 +107,7 @@ banda-B ka kaam teen kadam ka hai: P1 se agli khabar uthao ("2 cancel"), Arpan k
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] --> P1
+    O["Order Service"] --> P1
     subgraph T["topic order-events"]
         P1[("P1 · Arpan<br/>0 order · 1 pay · 2 cancel<br/>bookmark: 1")]
     end
@@ -135,7 +135,7 @@ flowchart LR
     style X fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
-Ye pehchaanna padhne wale (SMS Svc) ka kaam hai, Kafka ka nahi.
+Ye pehchaanna padhne wale (SMS Service) ka kaam hai, Kafka ka nahi.
 
 Padhne wali taraf ab pakki thi. Phir ek din Kafka ki apni machine hi mar gayi.
 
@@ -152,7 +152,7 @@ machine karti hai jo baaki sab pe nazar rakhti hai, use **Controller** kehte hai
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] -- "acks=all" --> L
+    O["Order Service"] -- "acks=all" --> L
     subgraph T["topic order-events · P1 (Arpan)"]
         L[("machine B<br/>P1 LEADER (disk mari)")]
         A[("machine A<br/>P1 copy -> naya LEADER")]
@@ -167,7 +167,7 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-Par ek pench tha. Agar B ne Order Svc ko "ho gaya" bol diya aur copy tak khabar pahunchne se pehle hi mar gaya, to
+Par ek pench tha. Agar B ne Order Service ko "ho gaya" bol diya aur copy tak khabar pahunchne se pehle hi mar gaya, to
 copy ke paas wo khabar thi hi nahi. Isliye "ho gaya" tabhi bolte hain jab copy pe bhi likh jaaye, ise **acks=all**
 kehte hain.
 
@@ -175,18 +175,18 @@ Koi copy peeche chal rahi ho to use leader nahi banate, warna aakhri khabar kho 
 "pakki" maani jaati hai, aur pakki copies ki list ko **ISR** kehte hain. Aur agar sirf leader bacha ho, koi pakki
 copy nahi, to likhna hi rok dete hain (**min.insync = 2**). Khabar khone se behtar thodi der rukna hai.
 
-Ab Kafka bhi pakka tha aur padhne wala bhi. Bacha ek: bhejne wala, Order Svc khud.
+Ab Kafka bhi pakka tha aur padhne wala bhi. Bacha ek: bhejne wala, Order Service khud.
 
 ---
 
 ## 6. Outbox
 
-Arpan ne order cancel kiya. Order Svc ko do kaam karne the: DB me likhna "order = cancel", aur Kafka ko khabar
-dena. Pehla kaam hua, aur doosre se pehle Order Svc gir gaya.
+Arpan ne order cancel kiya. Order Service ko do kaam karne the: DB me likhna "order = cancel", aur Kafka ko khabar
+dena. Pehla kaam hua, aur doosre se pehle Order Service gir gaya.
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] -- "1. order = cancel" --> D[("DB")]
+    O["Order Service"] -- "1. order = cancel" --> D[("DB")]
     O -. "2. khabar (yahan gira, gayi hi nahi)" .-> K[("Kafka")]
     style K fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
@@ -201,7 +201,7 @@ bhejta hai, aur Kafka OK bole to sent = true likh deta hai.
 
 ```mermaid
 flowchart LR
-    O["Order Svc"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6")]
+    O["Order Service"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6")]
     RL["Relay"] -- "sent = false padhta" --> DB
     RL -- "acks=all" --> T
     subgraph T["topic order-events · P1 (3 copy)"]
@@ -213,7 +213,7 @@ flowchart LR
     style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-Ab Order Svc kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha, na khabar, Arpan dobara
+Ab Order Service kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha, na khabar, Arpan dobara
 dabayega. Relay ne bheja aur sent = true likhne se pehle gira, to relay dobara bhejega, aur banda-B us dohri khabar
 ko eventId se pakad lega (hissa 4). Outbox table bharti jaaye to purani sent = true wali row roz saaf kar dete hain.
 

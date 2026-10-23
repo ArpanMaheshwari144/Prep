@@ -65,7 +65,7 @@ bahar hai.
 Ilaaj: beech me **PSP (Payment Service Provider)**, jaise Razorpay, Juspay ya Stripe.
 
 ```
-1. Arpan: "2000 daalo"  -> hum PSP ko bolte hain: "2000 ka order banao" (apna txn id: t-50)
+1. Arpan: "2000 daalo"  -> hum PSP ko bolte hain: "2000 ka order banao" (apna transaction id: t-50)
 2. Arpan apne UPI / bank app me 2000 pay karta hai (paisa PSP ke paas)
 3. PSP humein batata hai: "t-50 SUCCESS"
 4. hum ek transaction me: wallet +2000, aur ledger me line ("PSP se aaya")
@@ -73,7 +73,7 @@ Ilaaj: beech me **PSP (Payment Service Provider)**, jaise Razorpay, Juspay ya St
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> S["Payment Svc"]
+    U["Arpan"] --> S["Payment Service"]
     S -- "1. order t-50" --> P["PSP<br/>(Razorpay)"]
     U -- "2. UPI se pay" --> P
     P -- "3. t-50 SUCCESS" --> S
@@ -117,7 +117,7 @@ wapas aane pe hi pakka hoga.
 
 ```mermaid
 flowchart LR
-    S["Payment Svc<br/>timeout 5 sec -> PENDING"] -. "PSP-1 band (breaker khula)" .-> P1["PSP-1"]
+    S["Payment Service<br/>timeout 5 sec -> PENDING"] -. "PSP-1 band (breaker khula)" .-> P1["PSP-1"]
     S -- "naye top-up" --> P2["PSP-2"]
     S --> D[("SQL DB<br/>payment: PENDING")]
     style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -157,7 +157,7 @@ milaan (pakka).
 
 ```mermaid
 flowchart LR
-    S["Payment Svc"] -- "1. t-50 PENDING (pehle)" --> D[("SQL DB")]
+    S["Payment Service"] -- "1. t-50 PENDING (pehle)" --> D[("SQL DB")]
     S -- "2. call t-50" --> P["PSP"]
     P -- "webhook: t-50 SUCCESS" --> S
     J["Job, har 5 min<br/>DB me purane PENDING dekho"] --> D
@@ -198,7 +198,7 @@ nikal chuka hai par dukaan ke bank nahi pahuncha. Isse har waqt poore hisaab ka 
 
 ```mermaid
 flowchart LR
-    S["Payment Svc"] -- "1. Arpan -500, hold +500" --> D[("SQL DB")]
+    S["Payment Service"] -- "1. Arpan -500, hold +500" --> D[("SQL DB")]
     S -- "2. payout t-60" --> P["PSP"] --> B["dukaan ka bank"]
     P -- "3a SUCCESS: hold -500" --> S
     P -- "3b FAILED: ulta, Arpan +500" --> S
@@ -209,13 +209,13 @@ Yahan ek asli choice hai: saga ya 2PC (two-phase commit)? 2PC me saare DB pehle 
 phir sab ek saath commit karte hain. Par bank ya PSP ka DB isme hissa le hi nahi sakta, aur ek bhi ruk gaya to
 sab ruk jaate hain. Bahar wale ke saath saga hi chalta hai.
 
-Par Diwali ki shaam, har second 3000 payment. Ek Payment Svc machine nahi jheli. Aur dukaan wale apni "aaj ki
+Par Diwali ki shaam, har second 3000 payment. Ek Payment Service machine nahi jheli. Aur dukaan wale apni "aaj ki
 bikri" report baar-baar khol rahe hain, jo isi DB pe chalti hai. Arpan ka payment dheema ho gaya.
 
 ### Kadam 6: Diwali ki bheed + report ne payment dheema kiya (kai machine + read replica)
 
-Ek Payment Svc machine 3000 payment / sec nahi jhel paayi. Ilaaj: kai Payment Svc machine, aage LB. Ye isliye
-chalta hai kyunki Payment Svc apne andar kuch yaad nahi rakhta. Saara haal (PENDING, SUCCESS, wallet) DB me
+Ek Payment Service machine 3000 payment / sec nahi jhel paayi. Ilaaj: kai Payment Service machine, aage LB. Ye isliye
+chalta hai kyunki Payment Service apne andar kuch yaad nahi rakhta. Saara haal (PENDING, SUCCESS, wallet) DB me
 hai, to koi bhi machine koi bhi payment sambhal sakti hai ([banking kadam 7](../13_banking_system/13_banking_system.md#kadam-7-salary-ki-bheed--ek-hi-db-kai-machine--db-ki-sync-copy) jaisa).
 
 Dukaan wale "aaj ki bikri" report baar-baar khol rahe hain. Ye bhaari query hai, din bhar ke payment jod ke
@@ -229,7 +229,7 @@ Report ke liye ye chal jaata hai. Paisa kaatne ka faisla hamesha primary se hota
 ```mermaid
 flowchart LR
     U["3000 payment / sec"] --> LB["LB"]
-    LB --> S1["Payment Svc 1"] & S2["Payment Svc 2"]
+    LB --> S1["Payment Service 1"] & S2["Payment Service 2"]
     S1 & S2 -- "payment likho" --> P[("Primary")]
     P -- "copy" --> R[("Read replica")]
     M["dukaan ki report"] --> R
@@ -271,7 +271,7 @@ saari likhai ek hi shard pe girti.
 
 ```mermaid
 flowchart LR
-    S["Payment Svc"] -- "Arpan -500, hold" --> S1[("Shard 1<br/>Arpan")]
+    S["Payment Service"] -- "Arpan -500, hold" --> S1[("Shard 1<br/>Arpan")]
     S -- "dukaan +500" --> S3[("Shard 3<br/>dukaan")]
     S3 -. "fail -> ulta" .-> S1
     style S1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -282,7 +282,7 @@ flowchart LR
 
 ## 5. Wrap (30 second me poora design, NFR se milao)
 
-Arpan app se payment karta hai. Request LB se kisi bhi Payment Svc machine pe jaati hai. Wallet se wallet ho
+Arpan app se payment karta hai. Request LB se kisi bhi Payment Service machine pe jaati hai. Wallet se wallet ho
 to hamare DB me ek transaction: idempotency key, check karke kaatna, dono taraf ka balance aur ledger. Paisa
 bahar se aana ya bahar jaana ho (top-up, dukaan ka bank) to PSP: pehle DB me PENDING likho, phir PSP ko call,
 aur jawab webhook se ya hamare poochne wale job se aata hai. Dukaan ke bank me bhejna saga se: pehle Arpan se
@@ -290,7 +290,7 @@ kaat ke beech ke khaate me, fail hua to wapas. PSP dheema ho to timeout pe PENDI
 doosra PSP. Report replica se, aur bahut bada hua to account id se shard.
 
 ```
-do baar na kate      -> idempotency key (UNIQUE), PSP ko bhi wahi txn id
+do baar na kate      -> idempotency key (UNIQUE), PSP ko bhi wahi transaction id
 dono taraf ek saath  -> hamare DB me ek transaction, bahar / doosre shard ke saath saga
 paisa na khoye       -> PENDING pehle likho, webhook + poochne wala job + raat ka milaan
 har paisa trace ho   -> ledger (sirf INSERT, double-entry)
