@@ -92,3 +92,36 @@ App khud ulta kare?      -> App hi gira to yaad kaun rakhe? WAL ye pehle se kart
 Par Send dabaya, transaction ho gaya, jawab se pehle metro me network gaya. App ne socha fail, dobara bheja.
 1000 kate.
 
+### Kadam 3: network gaya, app ne dobara bheja (idempotency key)
+
+Server ke liye dono request alag thi, pata hi nahi chala ki doosri pehli ka dobara bhejna hai.
+
+Ilaaj: **idempotency key**. App Send screen KHULTE hi ek id (UUID, `k-77`). Har request ke saath wahi,
+dobara bhi wahi. Server usi transaction me table me likhta, table pe **UNIQUE**.
+
+```
+BEGIN
+  INSERT INTO idem (key, result) VALUES ('k-77', ...)    <- UNIQUE
+  -500 Arpan · +500 Ravi
+COMMIT
+dobara k-77 -> INSERT fail (UNIQUE) -> paisa nahi kata, purana jawab ("ho gaya")
+```
+
+```mermaid
+flowchart LR
+    U["Arpan app<br/>key k-77"] -- "1. bheja (jawab kho gaya)" --> S["Banking Svc"]
+    U -- "2. dobara, wahi k-77" --> S
+    S --> D[("SQL DB<br/>idem: k-77 UNIQUE")]
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+screen khulte kyun?          -> retry app karti. Id pehle bani ho tabhi dobara pe wahi. Send pe nayi = naya payment
+UNIQUE kyun, pehle dekho?    -> do retry ek saath "nahi hai" dekhte, dono kaat dete. UNIQUE = DB khud, ek hi jeete
+same amount 1 min me block?  -> sach me do baar 500 bhejna bhi rukta. Pehchaan id se, amount se nahi
+wahi k-77, amount 5000?      -> key ke saath request ka hash (amount + kisko). Key same, hash alag -> mana (422)
+```
+
+Par wallet me 600. Raat 9 baje Netflix ka 500 auto-debit aur Arpan ka 500 UPI ek saath. Dono ne padha 600,
+dono ko "chalega", dono kate. Balance -400.
+
