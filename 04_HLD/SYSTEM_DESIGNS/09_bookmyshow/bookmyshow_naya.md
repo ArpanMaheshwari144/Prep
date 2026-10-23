@@ -89,3 +89,50 @@ Par seat book karte hi paisa nahi aata, Arpan ko pay karne me 3 minute lagte hai
 - pehle seat BOOKED, phir pay: Arpan ne pay hi nahi kiya, app band kar di, to A1 hamesha ke liye BOOKED padi
   rahegi, kisi ko nahi milegi.
 - pehle pay, phir seat: 3 minute me Ravi le gaya, to Arpan ka paisa kat gaya aur seat nahi mili.
+
+### Kadam 3: seat HOLD 5 minute, umar ke saath (BMS ka apna)
+
+Na pehle BOOKED, na pehle pay. Beech ka ek haal: **HELD** = "Arpan ke liye 5 min ruki hui". Seat 5 min Arpan ki;
+pay kiya to pakki, nahi kiya to apne aap wapas FREE.
+
+```sql
+-- seat chuni: HOLD (Kadam 2 wali ek query, bas haal HELD + umar)
+UPDATE seats SET status = 'HELD', user = 'Arpan', hold_until = now() + 5 min
+WHERE show = '9pm' AND seat = 'A1'
+  AND (status = 'FREE' OR (status = 'HELD' AND hold_until < now()));   -- purana hold mar chuka to bhi le lo
+
+-- pay ho gaya: pakka (sirf apna, aur umar abhi baaki ho)
+UPDATE seats SET status = 'BOOKED'
+WHERE seat = 'A1' AND user = 'Arpan' AND status = 'HELD' AND hold_until > now();
+```
+
+```
+9:00:00  Arpan ne A1 chuni   -> HELD, Arpan, 9:05 tak
+9:01:00  Ravi ne A1 chuni    -> HELD hai, umar baaki -> "seat abhi kisi ke paas hai"
+9:02:30  Arpan ne pay kiya   -> BOOKED. pakka
+
+dusri kahani: Arpan ne pay kiya hi nahi
+9:05:01  Ravi ne A1 chuni    -> hold_until < now -> purana hold mara -> Ravi ka HELD
+```
+
+```mermaid
+flowchart LR
+    U["Arpan"] -- "A1 chuni" --> S["BMS Svc"]
+    S -- "HELD, Arpan, 9:05 tak" --> D[("SQL DB: seats<br/>status + hold_until")]
+    U -- "pay" --> P["Payment<br/>(payment file)"]
+    P -- "pay ho gaya" --> S
+    S -- "HELD -> BOOKED" --> D
+    J["safai job (har minute)"] -. "purane HELD -> FREE" .-> D
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Koi job chahiye jo 5 min baad seat FREE kare? Zaroori nahi. Shart query me hi likhi hai (`hold_until < now()`),
+to mara hua hold apne aap gina hi nahi jaata. Ek chhota job har minute purane HELD saaf kar deta hai, bas
+taaki seat map pe A1 jaldi khaali dikhe.
+
+Arpan ne 5:30 min pe pay kiya, hold mar chuka tha, aur seat Ravi le gaya? Paisa kat chuka, seat nahi mili ->
+paisa wapas (refund). Ye payment file wala hi hissa hai (PSP, PENDING, webhook).
+
+Par 9 baje ke show ka seat map lakhon log dekh rahe hain, book koi-koi kar raha hai. Har "map dekho" pe SQL DB
+se 200 seat padhna. DB padhne me hi ghut raha hai, aur Arpan ki booking query bhi dheemi ho gayi.
