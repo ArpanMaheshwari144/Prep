@@ -95,5 +95,5 @@ flowchart LR
 
 Abhi ek hi server, to counter bhi ek (DB ka apna auto-increment id bhi chal jaata).
 
-Ab link ban rahe hain. Par har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna pad raha hai. DB
-itna bojh nahi jhel paayega.
+Ab link ban rahe hain. Par har second 1 lakh log link khol rahe hain, aur har baar DB me
+dhoondhna pad raha hai. DB itna bojh nahi jhel paayega.
