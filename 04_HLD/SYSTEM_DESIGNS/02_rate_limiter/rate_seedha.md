@@ -106,6 +106,14 @@ bharta kaun?        -> koi job nahi. Request aane pe hisaab (lazy refill):
                        1 ghanta baad: 300 bante, par baalti 5 ki -> 5
 ```
 
+```mermaid
+flowchart LR
+    U["Arpan"] --> G["App x 10"]
+    G -- "token lo" --> R[("Redis<br/>arpan:login<br/>tokens = 4 · aakhri = 10:00:05")]
+    R -- "khaali" --> X["429"]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 Par bot ne ek saath 20 login bheje. 20 App ne ek saath padha "tokens = 5",
 sabne socha "bache hain", sabne 1 ghata ke likha.
 20 andar, jabki 5 jaane the.
@@ -208,6 +216,17 @@ local had/N  -> site chalti, had lagbhag sahi    <- ISLIYE YE
 Redis wapas  -> sab phir Redis se
 ```
 
+```mermaid
+flowchart LR
+    U["Arpan / bot"] --> LB["LB"]
+    LB --> G1["Gateway 1<br/>apni ginti: 10 / min"] & G2["Gateway 2<br/>apni ginti: 10 / min"]
+    G1 -. "Redis + copy gaye" .-> R[("Redis (gira)")]
+    G2 -.-> R
+    style G1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style G2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style R fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+```
+
 Par wahi bot har 60 sec baad wapas: 429 khaata, minute khatam, phir aata. Din bhar.
 
 ### Kadam 8: wahi bot baar-baar (pattern -> ban)
@@ -249,6 +268,18 @@ login se pehle   -> IP + jis account pe koshish   (rl:ip:1.2.3.4:login, rl:acct:
                     login ki had chhoti (5 / min), office ke log alag-alag login karte nikal jaate
 login ke baad    -> userId                       (rl:arpan:search)
 ban (kadam 8)    -> userId pe lamba, IP pe chhota (TTL)
+```
+
+```mermaid
+flowchart LR
+    U["Arpan / bot"] --> W["WAF<br/>ban list (TTL)"]
+    W --> G["API Gateway<br/>key = userId (login pe IP)<br/>Lua token bucket"]
+    G -- "Lua" --> R[("Redis + copy")]
+    G -- "had me" --> S["App x 10"]
+    G -- "429 ki khabar" --> K[("Kafka")]
+    K --> P["Pattern Svc"]
+    P -- "ban" --> W
+    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Par shaam ki sale: har user apni had ke andar, par 1 crore log ek saath.
