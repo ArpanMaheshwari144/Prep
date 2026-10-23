@@ -131,3 +131,41 @@ relay use Kafka me daale.
 
 Par Virat Kohli ne match ke baad tweet kiya, 10 crore follower. Fanout worker 10 crore inbox me likhne baitha,
 ghanton lag gaye. Uske peeche Arpan, Mohan, sabke tweet line me atke.
+
+### Kadam 4: celebrity ka alag raasta (hybrid fanout, twitter ka apna)
+
+Do tarah ke log, do raaste:
+
+```
+aam log (jaise Mohan, 5,000 follower)  -> fanout on WRITE: tweet sabke inbox me (Kadam 2-3)
+celebrity (jaise Virat, 10 crore)      -> fanout NAHI. Tweet bas Virat ki apni list me (Redis):
+                                          celeb:Virat = [T-777, T-760 ...]  (sabke liye ek hi)
+
+Arpan ne feed kholi:
+  1. inbox:Arpan se aam logon ke tweet          (pehle se bane)
+  2. Arpan jin 5 celebrity ko follow karta, unki list se aakhri tweet (abhi padhe)
+  3. dono milao -> time se sort -> upar ke 50
+```
+
+```mermaid
+flowchart LR
+    V["Virat: tweet"] --> TS["Tweet Svc"]
+    TS -- "fanout nahi" --> CL[("Redis: celeb:Virat<br/>sabke liye ek list")]
+    U["Arpan: feed"] --> F["Feed Svc"]
+    F -- "1. aam logon ke" --> IN[("Redis: inbox:Arpan")]
+    F -- "2. 5 celeb ki list" --> CL
+    style CL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab kya theek hua: Virat ka tweet ek hi jagah likha, 10 crore jagah nahi, to fanout line nahi atakti. Arpan ki
+feed me bas 5 celebrity ki list padhni, 200 logon ki nahi, to feed tez rehti.
+
+Doosra kyun nahi (asli choice):
+- sabke liye fanout on write: Virat ka ek tweet = 10 crore likhai, line ghanton atakti (Kadam 3 wali).
+- sabke liye fanout on read: har feed pe 200 logon ka jod, Kadam 1 wapas, feed dheemi.
+- dono ka mel (hybrid): kam follower wale ka likhte waqt baanto, bahut wale ka padhte waqt jodo.
+
+Celebrity kaun? Ek had tay hoti (jaise 1 lakh se zyada follower). Ye faisla hai, pakka niyam nahi.
+
+Par match khatam, Virat ke tweet pe 1 crore log ek saath feed khol rahe. Sab ek hi Redis key `celeb:Virat`
+padh rahe, aur wo ek Redis machine garam ho ke dheemi pad gayi.
