@@ -147,7 +147,8 @@ pehle `BHEJ_RAHA` likho, uspe 60 sec ki umar (TTL), aur bhejne ke baad hi `BHEJ_
 hain, par OTP khoyega nahi. Khona dohraav se bura hai.
 
 Redis hi mar gaya to? Uski replica (copy) primary ban jaati hai (Sentinel / ElastiCache Multi-AZ). Copy
-thodi peeche chalti hai, to aakhri kuch key shayad pahunchi na hon, aur un khabron ke do message ja sakte hain.
+thodi peeche chalti hai, to aakhri kuch key shayad pahunchi na hon, aur un khabron ke do message ja
+sakte hain.
 Aur dono gaye to bhi worker bhejna band nahi karte: do message chalenge, khoya hua OTP nahi.
 
 Par SMS company ne fail lauta diya. Worker turant dobara bhejta hai, phir fail, phir turant. Wo pehle se
