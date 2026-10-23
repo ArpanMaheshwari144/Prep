@@ -248,3 +248,35 @@ jaise [URL me shard](../01_url_shortener/01_url_shortener.md#kadam-5-data-bahut-
 
 Par roz 50 crore naye tweet tweets DB me jaate: 5,000 likhai / sec, saal bhar me sau TB. Ek SQL DB machine ye
 likhai aur jagah nahi jhel paayegi.
+
+### Kadam 7: tweets DB pe likhai bahut (Cassandra, author_id se baanto)
+
+Pehle tweets ka kaam dekho:
+- tweet ek baar likha jaata, phir badalta nahi.
+- padhai seedhi: "ye 50 id ke tweet do" ya "Virat ke aakhri 20".
+- koi jod nahi chahiye, bank jaisa transaction bhi nahi.
+
+Ilaaj: tweets ko **Cassandra** me rakho, aur `author_id` se baanto. Virat ke saare tweet ek hi machine pe, time
+ke kram me. "Virat ke aakhri 20" ek hi jagah se seedha.
+
+```
+Tweet Svc --likho--> [Cassandra: kai machine, author_id se baanta]
+                        machine 1: Virat ke tweet (time ke kram me)
+                        machine 2: Mohan ke tweet
+                        ...
+```
+
+```mermaid
+flowchart LR
+    TS["Tweet Svc"] --> C1[("Cassandra 1<br/>Virat ke tweet")]
+    TS --> C2[("Cassandra 2<br/>Mohan ke tweet")]
+    TS --> C3[("Cassandra ...<br/>author_id se baanta")]
+    style C1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ye [chat kadam 5](../14_chat_messaging/14_chat_messaging.md#kadam-5-roz-12-tb-cassandra-chat-ke-hisaab-se-baanto) wala hi faisla: wahan message `chat_id` se baante, yahan tweet `author_id` se.
+
+SQL kyun nahi: SQL ki taakat jod aur transaction, yahan dono nahi chahiye. Itni likhai ke liye SQL ko haath se
+baantna padta. Cassandra likhai ke liye hi bana, khud kai machine me baant leta.
