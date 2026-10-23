@@ -177,3 +177,29 @@ Retry line alag kyun: worker wahin baith ke wait kare to uske peeche Arpan ke ba
 
 Par SMS company band nahi, bas dheemi hai: har call 30 sec me jawab de rahi hai. Saare SMS worker usi intezaar
 me phanse baithe hain.
+
+### Kadam 6: timeout + circuit breaker + doosri company
+
+**Timeout:** worker SMS company ko sirf 2 sec deta hai. Jawab nahi aaya to call chhod ke khabar retry line
+(Kadam 5) me. Ab koi worker 30 sec phansa nahi rehta.
+
+**Circuit breaker:** 100 me se 50 call fail / timeout ho rahi hain, to worker samajh jaata hai company abhi
+bimaar hai, aur kuch der us company ko call karna hi band (breaker OPEN). Har call pe 2 sec barbaad nahi.
+30 sec baad 2-4 call test ki tarah bhejta hai (HALF-OPEN). Chal gayi to wapas CLOSED, normal kaam.
+
+**Doosri company:** breaker open hai to SMS kahan jaaye? Ek doosri SMS company rakhte hain. Twilio bimaar,
+to MSG91 se bhejo. Arpan ka OTP rukta nahi.
+
+```mermaid
+flowchart LR
+    WS["SMS worker<br/>(2 sec timeout)"] --> CB{"circuit breaker"}
+    CB -- "CLOSED" --> T["Twilio"]
+    CB -- "OPEN: Twilio bimaar" --> M["MSG91<br/>(doosri company)"]
+    T --> A["Arpan ka OTP"]
+    M --> A
+    style CB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par 12 baje sale shuru hui, aur 50,000 offer SMS line me pehle se khade hain. Arpan ka login OTP unke peeche
+lag gaya. OTP 5 min me bekaar ho jaata hai, offer 1 ghanta baad bhi chalega.
