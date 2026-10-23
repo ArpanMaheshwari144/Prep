@@ -5,6 +5,7 @@ har dikkat pe ek dabba judta. Peela = abhi juda. Kahani ek hi: Arpan ka Amazon l
 
 **CUE (yahi kahani, yahi kram):** seedha (server + DB) -> counter + base62 -> Redis -> LB + counter range ->
 shard -> ring -> 3 copy -> quorum -> local cache (viral) -> lock + purana (stampede)
+-> rate limit (bot)
 
 ---
 
@@ -398,3 +399,37 @@ purana bhi nahi       -> 2-3 baar 50 ms ruk ke Redis, phir khud DB (timeout ke s
 ```
 
 Ilaaj 2: sab ek saath expire na hon: TTL me thoda random (1 ghanta + 0-5 min).
+
+### Kadam 11: bot spam link bana raha (rate limit + link jaanch)
+
+Bot har second hazaron link: counter / DB faltu bhar rahe, aur hamare chhote link pe dhokhe wali site (phishing).
+
+Ilaaj 1: **rate limit** sirf BANAO pe. Ek user / IP 1 min me 10 link, zyada pe `429`. LB / API gateway pe, Redis me
+ginti (token bucket). KHOLO pe nahi: kholna hi asli kaam (1 lakh / sec), spam banane se aata.
+
+Ilaaj 2: **link jaanch**. Banate waqt lamba link kaali list se milao (Google Safe Browsing). Baad me report aaye to DB
+me "band". 302 isliye kaam aaya: har click hamare paas, band link pe chetavani page (301 hota to browser seedha
+phishing pe).
+
+```mermaid
+flowchart LR
+    U["Arpan / bot"] --> LB["LB / API gateway<br/>rate limit (Redis ginti)"]
+    LB -- "10 tak" --> S["App<br/>kaali list jaanch"]
+    LB -- "zyada" --> X["429"]
+    S --> D[("DB<br/>code · link · band?")]
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+---
+
+## 5. Wrap (30 sec, NFR se milao)
+
+```
+BANAO:  LB (rate limit) -> App: counter range -> base62 code -> Cassandra (ring, 3 copy, W=2) + Redis
+KHOLO:  LB -> App: local cache -> Redis (lock + purana) -> Cassandra (R=2) -> 302
+
+tez               -> Redis + local cache, DB tak kam hi jaata
+hamesha chale     -> kai App + LB, 3 copy, quorum
+ek code = ek link -> counter range, takkar kabhi nahi
+```
