@@ -1,211 +1,396 @@
-# Google Docs (Collaborative Editor)
+# Google Docs: shuru se, ek kahani
 
-> 2 ya zyada log ek doc ek saath edit karein. Kisi ka likha na mite, kuch kho na jaaye, turant dikhe.
-> Dil: ek saath edit, koi likha khoye nahi, aur aakhir me sabke paas doc same (convergence).
->
-> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
-> Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
+Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
+shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
+me ek hi kahani hai: Arpan aur Ravi ek hi doc pe saath kaam kar rahe hain.
+
+Zyadatar tukde pehle se padhe hue: ring ([cache](../10_distributed_cache/10_distributed_cache.md)), WebSocket
++ Cassandra ([chat](../14_chat_messaging/14_chat_messaging.md)), idempotency
+([payment](../06_payment_system/06_payment_system.md)). Iska apna: do log ek hi jagah ek saath likhein to bhi
+sabka doc same kaise rahe (OT).
+
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+poora text overwrite -> operation + baseVersion (text nahi) -> WebSocket (dono taraf push)
+-> OT (server kram, operation khiskao) -> docId se owner server (ring) -> viewer kahin bhi (Redis pub/sub)
+-> operation log Cassandra (docId, version) + batch
+-> ACK tab jab Redis buffer + copy me likh gaya (operationId)
+-> typing AP (app ki queue), permission CP (SQL)
 
 ---
 
-## Poori tasveer (aakhir me design aisa banta hai)
-
-![poora design](img/c8_2-a2085e82.svg)
-
----
-
-
-## Shuru
+## 1. FR: kya karna hai
 
 ```
-FR      kai log ek doc saath edit karein, doosron ka likha turant dikhe, kisi ka likha na mite.
-        Dhyaan sirf ek saath EDITING pe (comments, version history, formatting scope ke bahar)
-NFR     typing turant ho aur kabhi na ruke (offline bhi). Aakhir me sabka doc same (convergence),
-        "turant sab same" (strong) nahi
-NUMBERS ~10 crore user, ~3-4 crore roz. Har akshar ek event, to likhna bahut zyada hai,
-        isliye buffer + baantna (sharding). Pakka number yahan maayne nahi rakhta
-PEHLE   sabse simple tha: poora text DB me rakho, aur Save pe poora text upar likh do (overwrite)
+1. kai log ek doc ek saath edit karein
+2. doosre ka likha turant dikhe, kisi ka likha mite nahi
+scope ke bahar: comments, version history, formatting
 ```
 
-> [!IMPORTANT]
-> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
-> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
->
-> | rail | is design me | card |
-> |---|---|---|
-> | 1 kaam chala | kai log saath edit, likha turant dikhe · Ravi ko refresh pe hi dikha | 2 |
-> | 2 bheed aayi | 50 lakh connection, ek server nahi jhelta · Ravi viewer, doosre server pe | 4, 5 |
-> | 3 machine giri | owner server gira (card 4 ka cross-Q) · metro me net gaya, typing rukegi? | 4, 7 |
-> | 4 do log ek saath | Ravi ne baad me save kiya, mera WORLD mita · dono ne sabse upar ek saath type kiya (**is design ka khaas: ek saath edit, sabka doc same**) | 1, 3 |
-> | 5 kuch dheema | 2 saal purana doc, 10 lakh op shuru se | 8 |
-> | 6 data bada | har akshar ek op, har op pe DB likhai | 6 |
-> | 7 door ke log | nahi aata | - |
-> | 8 bahar ka hamla | offline me access hata diya (card 7 ka cross-Q) | 7 |
-
-
-> [!NOTE]
-> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
->
-> - Op log (Cassandra) → **Amazon Keyspaces** (ya EC2 pe khud): har akshar ek op, likhai bahut, (docId, version)
-> - Permission (SQL) → **AWS RDS (Postgres / MySQL)**: access kabhi galat na ho (CP)
-> - Buffer / pub-sub (Redis) → **ElastiCache (Redis)**: ACK tez, doosre server tak op
-
----
-
-*ab tootega kahan? do log ek hi doc save karein to*
-
-## 1. Ravi ne baad me save kiya, mera "WORLD" mit gaya
-
-**Rail 4 DO LOG EK SAATH (save)** · Cue: OPERATION + baseVersion (text nahi)
-
-Jod: Jira / Confluence comment me bhi version; wahan purana = save MANA, Docs khiska ke lagata
-
-<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: andar + kya gira, kaise bacha">
-
-
----
-
-*ab badlaav bhej to diye, par Ravi ko dikhe kaise?*
-
-## 2. Ravi ko mera likha refresh karne pe hi dikha
-
-**Rail 1 KAAM CHALA** · Cue: WEBSOCKET (khula, dono taraf)
-
-Jod: WhatsApp (net aate hi saare message ek saath) · Stock ka live price bhi WebSocket push (05 card 8)
-
-<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: andar + kya toota, kaise bacha">
-
-
----
-
-*ab dono ek hi jagah ek saath likhein to?*
-
-## 3. Arpan aur Ravi ne sabse upar ek saath type kiya
-
-**Rail 4 DO LOG EK SAATH (khaas)** · Cue: OT (server kram, op khiskao)
-
-Jod: Chat me bhi kram server ka +1 number (seq), phone ki ghadi nahi (14 card 6)
-
-<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: andar + kya toota, kaise bacha">
-
-
----
-
-*ab OT ek server pe hota hai, par connection itne saare*
-
-## 4. 50 lakh connection khule, ek connection server nahi jhelta
-
-**Rail 2 BHEED AAYI (connection)** · Cue: RING: docId se ek OWNER server
-
-Jod: URL shortener aur Cache me bhi ring (01 card 5, 10 card 2)
-
-<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: andar + kya toota, kaise bacha">
-
-
----
-
-*ab viewer kahin bhi hai, use op pahunche kaise?*
-
-## 5. Ravi ab sirf padh raha, wo doosre server pe
-
-**Rail 2 BHEED AAYI (viewer)** · Cue: REDIS PUB/SUB (doc ek channel)
-
-Jod: Stock ka price bhi pub/sub se har WebSocket server tak (05 card 8)
-
-<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: andar + kya toota, kaise bacha">
-
-
----
-
-*ab sab live chal raha, par har akshar DB tak?*
-
-## 6. 3 baje DB alert: har akshar pe DB me likha, DB baith gaya
-
-**Rail 6 DATA BADA (likhai)** · Cue: REDIS BUFFER + BATCH, ACK copy ke baad
-
-Jod: Cassandra = sirf aage jodna (09 databases) · URL me bhi ginti Kafka se, raaste se bahar (01 card 4)
-
-<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: andar + kya toota, kaise bacha">
-
-
----
-
-*ab net hi chala gaya to?*
-
-## 7. Metro me mera net 1 second gaya, typing rukegi?
-
-**Rail 3 MACHINE GIRI (net gaya)** · Cue: likhna AP, permission CP
-
-Jod: WhatsApp bhi offline me type karne deta (AP) · Banking me transfer / balance CP (13)
-
-<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: andar + kya toota, kaise bacha">
-
-
----
-
-*ab doc purana aur lamba ho gaya*
-
-## 8. Raat ko 2 saal purana doc khola, 10 lakh op shuru se chale
-
-**Rail 5 KUCH DHEEMA (purana doc)** · Cue: SNAPSHOT + uske baad ke op
-
-Jod: Banking ka balance bhi = mahine ka snapshot + baad ki line (13 card 11)
-
-<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: andar + kya toota, kaise bacha">
-
-
----
-
-## Poora design ek saans me
+## 2. NFR: kaisa chalna chahiye
 
 ```
-CDN (app ki files) -> LB (editor: docId se owner server · viewer: koi bhi) -> Conn-Server (WebSocket + OT)
--> editors ko seedha PUSH · Redis pub/sub sirf un dekhne walon tak jo doosre server pe hain
--> Redis buffer (+ copy, phir ACK) -> BATCH -> Cassandra op log (docId, version) + snapshot
-permission = alag SQL (CP) · edit AP (typing kabhi na ruke)
+- typing turant ho, kabhi ruke nahi (net jaaye tab bhi)
+- aakhir me sabka doc SAME ho (convergence). "har pal sab same" zaroori nahi
 ```
 
-Bolne ke liye: har user doc ke hisaab se ek server se juda, ek doc ke sab editor ek server pe. Har akshar ek
-badlaav. Server ek saath wale badlaav khiska ke lagata, kisi ka likha nahi khota, sabka doc same. Doosre servers
-tak Redis se. Badlaav jama karke Cassandra me, photo ke saath taaki doc jaldi khule. Likhna kabhi na ruke,
-permission turant lage (SQL).
+## 3. Numbers
+
+```
+- ~10 crore user, roz ~3-4 crore
+- har akshar ek badlaav hai, to likhna bahut zyada hoga. Bas itna yaad rakhna.
+```
 
 ---
 
-## 10 guna traffic
+## 4. Design
 
-- **WebSocket**: ~50 lakh connection. Alag connection line, aur docId se same server.
-- **Conn-Server**: OT kahan? docId se baanto, ek doc = ek jagah.
-- **Redis pub/sub**: bheed badhi to copy + aur machine.
-- **DB likhna**: har akshar? Buffer + batch, docId se baanto.
-- **Doc kholna**: 10 lakh op? Snapshot + baad ke op.
+### Kadam 1: sabse seedha (poora text, Save pe overwrite)
 
-**Pooche: 10 guna kaise?** User ka raasta chalo, pehle jo toote wahi theek karo.
+Ek server hai aur ek DB. Doc ka poora text DB me ek row me pada hai. Arpan "Save" dabata hai to app poora text
+bhej deti hai, aur server purane text ke upar likh deta hai (overwrite).
 
-**Pooche: kahan se sab gir sakta?** Conn-Server (doosre pe dobara judo), Redis (copy).
+```mermaid
+flowchart LR
+    A["Arpan (app)"] -- "Save: poora text" --> S["Doc Server"]
+    S -- "overwrite" --> D[("DB: doc ka poora text")]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
-**Pooche: chal raha hai, kaise pata?** Likha pahunchne ka p99, WebSocket toot-ne ki dar, buffer lag, alert.
+Ek aadmi ke liye ye chal jaata hai.
+
+Par Arpan aur Ravi dono ne doc khola. Text tha "HELLO". Arpan ne aage "WORLD" joda aur save kiya. Ravi ki
+screen pe abhi bhi purana "HELLO" tha. Usne beech me "!" joda aur Arpan ke baad save kiya. Ab DB me Ravi ka
+poora text hai, "HEL!LO". Arpan ka "WORLD" mit gaya, aur kisi ko error bhi nahi aaya.
+
+### Kadam 2: poora text nahi, sirf BADLAAV bhejo (operation + version)
+
+Dikkat ye thi ki poora text upar likhne se doosre ka kaam mit jaata hai. Ilaaj: app poora text nahi bhejti,
+sirf **kya badla** wo bhejti hai. Isko **operation** kehte hain.
+
+Server har doc ka ek **version** number rakhta hai. Har operation ke saath app batati hai ki maine kis version
+pe dekh ke ye likha (**baseVersion**).
+
+```
+doc: "HELLO"  (version 1)
+
+Arpan: operation = insert "WORLD" at 5, base v1  --> server lagata --> "HELLOWORLD"  (v2)
+Ravi : operation = insert "!" at 3,     base v1  --> server: ye v1 pe bana, ab v2 hai
+                                                     -> ise abhi ke text pe lagao --> "HEL!LOWORLD"  (v3)
+```
+
+```mermaid
+flowchart LR
+    A["Arpan / Ravi (app)"] -- "operation + baseVersion" --> S["Doc Server: version gino, operation lagao"]
+    S --> D[("DB: operation log")]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab dono ka likha bach gaya. DB me poora text nahi, operations ki list jaati hai (operation log). Doc = sab
+operations ko kram se lagao.
+
+Doosra kyun nahi (yahan asli choice hai):
+- **Lock** (ek waqt me ek hi edit kare): Arpan type kar raha ho to Ravi ruka rahega. Docs ka matlab hi saath
+  likhna hai.
+- **Version mila nahi to reject** (Jira jaisa: "kisi ne badla, dobara karo"): har akshar pe Ravi ka likha
+  wapas aa jaata. Isliye reject nahi karte, operation ko khiska ke lagate hain.
+
+Par Arpan ne "WORLD" likha, aur Ravi ki screen pe ye tab dikha jab usne page refresh kiya. "Saath kaam" ho hi
+nahi raha.
+
+### Kadam 3: Ravi ko turant dikhe (WebSocket)
+
+Dikkat ye hai ki Ravi ko Arpan ka likha tabhi dikhta hai jab wo khud server se maange (refresh). Ilaaj: app
+aur server ke beech ek **khula connection** rakho jo dono taraf chalta hai. Isko **WebSocket** kehte hain.
+
+```
+Arpan (app) ==WebSocket==> [ Doc Server ] ==WebSocket==> Ravi (app)
+   operation: insert "WORLD"   lagao, v2          turant push: "v2: insert WORLD at 5"
+```
+
+```mermaid
+flowchart LR
+    A["Arpan (app)"] <== "WebSocket: operation" ==> S["Doc Server: operation lagao, push karo"]
+    S <== "WebSocket: push" ==> R["Ravi (app)"]
+    S --> D[("DB: operation log")]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Arpan ka har operation isi connection se jaata hai. Server us operation ko lagata hai aur usi pal Ravi ke
+connection pe push kar deta hai, Ravi ko poochna nahi padta.
+
+Doosra kyun nahi (asli choice):
+- **Polling** (Ravi ki app har second poochhe "kuch naya?"): zyadatar jawab "kuch nahi" aata hai, crore users
+  ki faaltu requests banti hain, aur 1 sec ki der bhi rehti hai.
+- **SSE** (sirf server se app ki taraf): Docs me dono taraf har akshar chalta hai. SSE ke saath bhejne ke liye
+  har akshar pe alag HTTP request lagani padti.
+
+Par doc me "ABC" likha hai. Ek hi pal me Arpan ne "A" mitaya, aur Ravi ne B aur C ke beech "X" daala (position
+2 pe).
+- Arpan ki screen: pehle uska apna kaam, "BC". Phir Ravi ka operation "X at 2" aaya, to "BCX" bana.
+- Ravi ki screen: pehle uska apna kaam, "ABXC". Phir Arpan ka operation "position 0 mitao" aaya, to "BXC"
+  bana.
+
+Dono ki screen pe alag doc hai. Ek ke paas "BCX", doosre ke paas "BXC".
+
+### Kadam 4: dono ka doc same karo (OT: server kram tay kare, operation khiskao)
+
+Dikkat ye thi ki dono ne apna operation pehle lagaya aur doosre ka baad me. Doosre ka operation purani
+position wala tha, isliye galat jagah laga. Ilaaj ke do hisse hain:
+
+1. **Kram server tay karta hai.** Jo operation server pe pehle pahuncha, use agla version milta hai. Ye kram
+   sab maante hain.
+2. **Baad wala operation khiskao.** Server dekhta hai ki tera operation jis version pe bana tha, uske baad
+   kya-kya laga. Phir position usi hisaab se aage-peeche kar deta hai. Isko **OT (Operational
+   Transformation)** kehte hain.
+
+```
+doc "ABC" (v1)
+server pe pehle aaya:  Arpan "position 0 mitao"  -> "BC" (v2)
+phir aaya:             Ravi "X at 2", base v1
+  server: v1 ke baad position 0 pe ek akshar mita, jo 2 se PEHLE hai
+       -> Ravi ka operation ek khisko: "X at 1" -> "BXC" (v3)
+  Arpan ko push: "X at 1"  -> uske "BC" pe -> "BXC"
+  Ravi ki app bhi Arpan ka operation apne operation ke hisaab se khiskati -> "BXC"
+sab ke paas "BXC"
+```
+
+Seedhi baat: A, position 2 se pehle hata, to Ravi ka X bhi ek ghar peeche khisak gaya.
+
+```mermaid
+flowchart LR
+    A["Arpan (app)"] <== "WebSocket" ==> S["Doc Server: OT (kram + operation khiskao)"]
+    S <== "WebSocket" ==> R["Ravi (app)"]
+    S --> D[("DB: operation log")]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Isi wajah se ek doc ke saare operation **ek hi jagah** se guzarne chahiye. Wahi ek kram bana sakta hai.
+
+Doosra kyun nahi (asli choice): **CRDT**. Isme har akshar ka apna pakka id hota hai ("X, B ke baad"), to kram
+ke liye server ki zarurat nahi padti. Offline aur peer-to-peer me achha hai. Par har akshar ke saath extra
+data chalta hai, memory zyada lagti hai. Google Docs OT use karta hai kyunki uske paas server hamesha hai.
+Offline-first apps CRDT lete hain.
+
+Par ab sab users ke WebSocket ek Doc Server pe khule hain. Roz 3-4 crore log, ek saath ~50 lakh connection. Ek
+machine itne khule connection nahi sambhal sakti.
+
+### Kadam 5: kai server, par ek doc ka ek hi OWNER server (docId se ring)
+
+Dikkat ye hai ki 50 lakh connection ek machine pe nahi aate, to kai Doc Server lagane padenge. Lekin OT ka
+niyam hai ki ek doc ke saare operation ek hi jagah se guzrein. Agar Arpan server 1 pe hai aur Ravi server 2
+pe, to do jagah alag kram banega aur doc phir se alag ho jaayega.
+
+Ilaaj: har doc ka ek **owner server** tay karo. LB connection ko `docId` dekh ke bhejta hai, aur ek doc ke
+saare editor usi server pe pahunchte hain.
+
+```
+Arpan: doc-42 kholo  --> LB: hash(doc-42) ring pe -> Server 3
+Ravi : doc-42 kholo  --> LB: hash(doc-42) ring pe -> Server 3   (dono ek jagah, OT ek jagah)
+Mohan: doc-77 kholo  --> LB: -> Server 1                        (alag doc, alag server)
+```
+
+```mermaid
+flowchart LR
+    U["Arpan, Ravi (doc-42)"] --> LB["LB: docId se ring"]
+    M["Mohan (doc-77)"] --> LB
+    LB --> S3["Server 3: doc-42 owner, OT"]
+    LB --> S1["Server 1: doc-77 owner, OT"]
+    S3 --> D[("DB: operation log")]
+    S1 --> D
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Doosra kyun nahi:
+- **Round robin** (jo server khaali ho): Arpan aur Ravi alag server pe pahunch jaate, aur OT do jagah chalta.
+- **hash % N**: ek server badhaya ya gira to lagbhag saare doc ka owner badal jaata, aur sab connection ek
+  saath tootte. **Ring** me sirf us server ke doc hilte hain (cache design wali hi baat).
+
+Par company ka "All-hands" doc hai. Ek aadmi likh raha hai aur 50,000 log padh rahe hain. Sab doc-42 ke owner
+Server 3 pe aaye, to wo akela server phir se bhar gaya.
+
+### Kadam 6: padhne wale kisi bhi server pe (Redis pub/sub)
+
+Dikkat ye hai ki 50,000 padhne wale (viewer) owner server pe aa gaye. Lekin viewer koi operation nahi bhejta,
+to use OT ki zarurat nahi hai. Use bas naye operation milne chahiye.
+
+Ilaaj: **editor** (jo likh raha) owner server pe hi jaata hai. **Viewer** kisi bhi server pe jaa sakta hai.
+Owner har naya operation Redis ke ek channel `doc-42` pe daal deta hai. Jin servers pe doc-42 ke viewer jude
+hain, wo us channel ko sun rahe hote hain, aur operation apne viewers ko push kar dete hain. Isko **pub/sub**
+kehte hain (publish = daalo, subscribe = suno).
+
+```
+Arpan (editor) --> Server 3 (owner, OT) --operation v8--> [ Redis channel: doc-42 ]
+                                                              |--> Server 1 --> 20,000 viewer
+                                                              |--> Server 5 --> 30,000 viewer
+```
+
+```mermaid
+flowchart LR
+    A["Arpan (editor)"] --> LB["LB: docId se ring"]
+    LB --> S3["Server 3: doc-42 owner, OT"]
+    S3 --> D[("DB: operation log")]
+    S3 -- "publish operation" --> P["Redis pub/sub: channel doc-42"]
+    P --> S1["Server 1"] --> V1["20,000 viewer"]
+    P --> S5["Server 5"] --> V5["30,000 viewer"]
+    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab owner pe sirf editor hain, jo kam hote hain. Viewers saare servers me bant gaye.
+
+Doosra kyun nahi: **Kafka**. Kafka operation ko disk pe likhta hai aur baad me dobara padhne deta hai. Yahan
+iski zarurat nahi, kyunki har operation pehle se DB ke operation log me hai. Pub/sub sirf "abhi bata do" ka
+kaam karta hai, aur tez hai. Agar kisi viewer ka operation chhoot gaya (v8 ke baad seedha v10 aaya), to uski
+app version ka gap dekh ke beech ke operation DB se maang leti hai.
+
+Par har akshar ek operation hai, aur har operation pe DB me ek likhai ho rahi hai. Lakhon log type kar rahe
+hain, to DB pe har second lakhon likhai pad rahi hain. Raat 3 baje alert aaya ki DB baith gaya.
+
+### Kadam 7: operation log Cassandra me, aur ek-ek nahi, jama karke (batch)
+
+Dikkat ye hai ki likhai bahut zyada hai, har akshar ek row. Ilaaj ke do hisse hain:
+
+1. **Cassandra.** Operation log me hum sirf aage jodte hain, purana kabhi badalte nahi. Aur padhna bhi hamesha
+   "is doc ke operation, version ke kram se" hota hai. Cassandra isi kaam ke liye bana hai: likhai bahut tez
+   hoti hai, aur machine jodte jao to data khud bant jaata hai.
+   ```
+   key = (docId, version)  ->  docId se partition (ek doc ek jagah), version se sort
+   ```
+2. **Batch.** Owner server har akshar pe alag likhai nahi karta. ~100 ms ke saare operation jama karta hai aur
+   ek saath likhta hai. Arpan ne ek second me 5 akshar likhe to 5 ki jagah 1 likhai hoti hai.
+
+```mermaid
+flowchart LR
+    A["Arpan (editor)"] --> LB["LB: docId se ring"]
+    LB --> S3["Server 3: owner, OT, 100 ms ka batch"]
+    S3 -- "batch" --> C[("Cassandra: operation log (docId, version)")]
+    S3 -- "publish operation" --> P["Redis pub/sub: doc-42"]
+    P --> V["Server 1, 5 -> viewers"]
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Doosra kyun nahi: **Postgres**. Ek machine ki likhai ki ek had hoti hai. Uske upar sharding khud karni padti,
+aur join ya transaction ki yahan zarurat hi nahi hai. Sirf jodna hai aur docId se padhna hai, to Cassandra.
+
+Par batch ke 100 ms ke operation abhi owner server ki memory me hain. Server ne Arpan ko "mil gaya" (ACK) bol
+diya tha. Usi pal Server 3 gir gaya. Arpan ki aakhri line na DB me gayi, na kahin aur. Wo line kho gayi.
+
+### Kadam 8: ACK tabhi jab operation kahin pakka likh gaya (Redis buffer + copy)
+
+Dikkat ye thi ki server ne operation sirf apni memory me rakh ke ACK de diya. Ilaaj ke teen hisse hain:
+
+1. **Owner server operation ko turant Redis buffer me likhta hai, aur Redis ki ek copy (replica) bhi hoti
+   hai.** Dono me likh jaane ke baad hi Arpan ko ACK jaata hai. Redis memory me hai, to ye kuch millisecond ka
+   kaam hai aur typing nahi rukti.
+2. **Batch ab Redis se Cassandra jaata hai.** Server gira, to buffer Redis me pada hai. Ring pe agla server
+   doc-42 ka naya owner banta hai, buffer se bacha hua kaam utha leta hai.
+3. **Arpan ki app bhi apna operation tab tak sambhal ke rakhti hai jab tak ACK na aaye.** ACK nahi aaya to wo
+   naye owner ko dobara bhej deti hai.
+
+```
+Arpan --operation--> Server 3 (owner) --> [ Redis buffer + copy ] --likh gaya--> ACK Arpan ko
+                                                |
+                                                +--100 ms batch--> [( Cassandra: operation log )]
+Server 3 gira --> ring: Server 4 naya owner --> Redis buffer se bacha hua utha liya
+```
+
+```mermaid
+flowchart LR
+    A["Arpan (editor)"] --> LB["LB: docId se ring"]
+    LB --> S3["Server 3: owner, OT"]
+    S3 -- "1. operation likho" --> B[("Redis buffer + copy")]
+    B -- "2. likh gaya, tab ACK" --> S3
+    B -- "100 ms batch" --> C[("Cassandra: operation log")]
+    S3 -- "publish operation" --> P["Redis pub/sub: doc-42"]
+    P --> V["Server 1, 5 -> viewers"]
+    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Server 3 operation aate hi gira, Redis tak pahuncha hi nahi, to Arpan ko dobara likhna padega? Nahi. Ye kaam
+app karti hai, server nahi. ACK nahi aaya, to operation app ki queue me hai aur screen pe bhi dikh raha hai:
+
+```
+Arpan --operation 5--> Server 3  X gira (Redis tak nahi pahuncha, ACK nahi aaya)
+app: operation 5 abhi queue me, ACK nahi aaya
+     -> WebSocket toota -> dobara judo -> LB -> ring -> Server 4 (naya owner)
+     -> operation 5 dobara bhejo (wahi baseVersion) -> Server 4 lagata -> Redis -> ACK
+Arpan ko kuch pata bhi nahi chala
+```
+
+Isme ek chhupi dikkat hai: Server 3 ne operation 5 Redis me likh diya, aur ACK bhejne se theek pehle gira. App
+ko ACK nahi mila, to wo operation 5 dobara bhejegi, aur "WORLD" do baar lag jaayega ("WORLDWORLD"). Ilaaj: har
+operation ka apna id, `operationId = (Arpan ki app, 5)`. Naya owner pehle dekhta hai ki ye operationId buffer
+me pehle se hai ya nahi. Hai to dobara nahi lagata, bas ACK bhej deta hai. Ye payment wali idempotency hi hai.
+
+Doosra kyun nahi: **seedha Cassandra me likh ke ACK**. Har akshar pe phir se ek likhai hogi, aur kadam 7 wali
+bheed wapas aa jaayegi. Kafka bhi buffer ka kaam kar sakta hai, par Redis ka ACK zyada tez hai, aur typing me
+har millisecond dikhta hai.
+
+Par Arpan metro me hai. 1 second ke liye net gaya. Kya uski typing ruk jaayegi?
+
+### Kadam 9: typing kabhi na ruke (AP), par permission hamesha sahi (CP, SQL)
+
+Dikkat ye hai ki net gaya to kya typing ruk jaaye? Nahi. NFR me pehli line yahi thi.
+
+**Typing = AP (chalta rahe, baad me sab same ho jaaye).** Arpan ki app har akshar pehle apni screen pe laga
+deti hai aur operation ko ek local line (queue) me rakh leti hai. Net aate hi saare operation `baseVersion` ke
+saath bhej deti hai. Beech me Ravi ne jo likha tha, uske hisaab se server OT se khiska deta hai. Ye kadam 4
+wala hi kaam hai, naya kuch nahi chahiye.
+
+```
+net gaya:  Arpan likhta raha -> screen pe dikhta raha -> queue: [operation 1, 2, 3]  (base v20)
+net aaya:  queue bheja --> owner: v20 ke baad Ravi ke operation lage the -> OT se khiskao -> sab same
+```
+
+**Permission = CP (galat kabhi nahi chalega).** Doc ke owner ne Ravi ka edit access hata diya. Iske baad Ravi
+ka ek bhi operation lagna nahi chahiye, chahe thodi der ke liye "abhi nahi ho sakta" bolna pade. Isliye
+permission ek alag **SQL DB** me rakhte hain: kaun, kis doc pe, kya kar sakta (rishte + pakka sahi). Owner
+server har connection pe aur har operation pe ye check karta hai.
+
+```
+Ravi offline me likhta raha --> beech me owner ne access hataya (SQL me)
+net aaya, operation bheje --> owner server: SQL check -> access nahi -> operation reject, Ravi ki screen wapas
+```
+
+```mermaid
+flowchart LR
+    A["Arpan (editor)"] --> LB["LB: docId se ring"]
+    LB --> S3["Server 3: owner, OT"]
+    S3 -- "check" --> Q[("SQL: permission")]
+    S3 --> B[("Redis buffer + copy")]
+    B -- "batch" --> C[("Cassandra: operation log")]
+    S3 -- "publish operation" --> P["Redis pub/sub: doc-42"]
+    P --> V["Server 1, 5 -> viewers"]
+    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Doosra kyun nahi: **sab CP**. Har akshar pe "pakka hai?" ka intezaar karna padta, aur net jaate hi typing ruk
+jaati. Isliye ek hi system me do alag faisle hain: likhna AP, permission CP.
 
 ---
 
-## Pooche to (kisi card me nahi baitha)
+## Wrap: 30 sec me poora design
 
-API: GET /documents/{docId} -> snapshot + baad ke op. POST /documents/{docId}/edits -> ek op.
-WebSocket /documents/{docId} -> live, dono taraf.
+```
+Har badlaav ek operation hai, version ke saath. Doc ke editor LB se docId dekh ke ring pe ek hi owner server
+pe jaate hain, WebSocket se. Wahan OT kram tay karta hai aur ek saath bane operation khiska ke lagata hai,
+isliye sabka doc same rehta hai. Operation pehle Redis buffer + copy me jaata hai, tab ACK. Phir batch me
+Cassandra ke operation log me (docId, version). Viewers kisi bhi server pe hote hain, operation unhe Redis
+pub/sub se milta hai. Net jaaye to app likhti rehti hai, queue baad me bhejti hai (AP). Permission alag SQL
+me hai, har operation pe check (CP).
+```
 
-Op: { docId, userId, opType (insert / delete), position, char / text, baseVersion }. Server har op ko agla version
-deta (kram). Timestamp sirf dikhane ke liye.
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
-DB: op log Cassandra (bahut saara jodna, Mongo bhi chalega), snapshot taaki doc jaldi khule. Permission alag SQL
-(rishte + CP).
-
-Ek akshar ka safar: maine akshar likha, op bana. WebSocket se doc ke owner Conn-Server tak (Ravi bhi usi pe). OT ne
-ek saath bane op ke hisaab se khiskaya, agla version diya, lagaya. Ravi ko seedha push, doosre server ke dekhne walon
-ko Redis pub/sub se. Phir Redis buffer, batch, Cassandra edit log. Ravi ke app ne op liya, apni taraf khiskaya,
-screen update.
-
-App ki static files? CDN. JS / CSS sabke liye same, paas se aaye.
-
----
-
-ARCHETYPE D (real-time) · CONCEPTS: [CAP](../../FOUNDATIONS/08_cap_theorem.md) · [pubsub/queues](../../FOUNDATIONS/07_message_queues.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
+```
+2 saal purana doc, 10 lakh operation?
+  -> har 1,000 operation pe SNAPSHOT (poora text + version). Kholo = snapshot + uske baad ke operation.
+     Banking ka balance jaisa.
+viewer ka operation chhoot gaya?
+  -> version ka gap dikha (v8 ke baad v10), beech ke operation DB se maang lo
+app ki JS / CSS?
+  -> CDN
+API
+  -> GET /docs/{id} (snapshot + baad ke operation)
+  -> WebSocket /docs/{id} (operation dono taraf)
+```
