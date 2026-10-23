@@ -286,6 +286,12 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+```
+history scroll    -> "jahan pichhla page khatam, wahan se aage" (keyset: time + id, index),
+                     OFFSET nahi (door ke page dheeme)
+saal ka statement -> background job file banaye -> S3 -> link / email. Replica pe chale
+```
+
 Par balance ek column, khaata alag lines. Kisi bug / haath ke galat UPDATE se dono me farak: balance 600
 dikha raha, khaate ka jod 100. Kisi ko pata nahi chala.
 
@@ -313,6 +319,5 @@ Asli bank me yahi: **end of day (EOD)** batch (SBI = TCS BaNCS, HDFC = Finacle m
 settlement file se apna khaata milaana. Bolo: "Banks me EOD reconciliation: khaate se balance milao, farak
 pe alert."
 
-Par shaam ko dukaan ka CA saal bhar ki history export kar raha, page by page. Page 5000 pe query atki
-(`OFFSET 100000`), replica bhi dheema.
-
+Par 5 saal ka khaata ek table me: roz 1 crore transfer x 2 line = 5 saal me ~36 arab line.
+Table + index RAM me nahi, har query dheemi. Aur purana phenk bhi nahi sakte (RBI / audit maangte).
