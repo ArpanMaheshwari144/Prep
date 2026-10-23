@@ -1,9 +1,0 @@
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_U["USER"]
-    n_LB["LB"]
-    n_CS["Chat Server x200<br/>(event loop, Netty)"]
-    n_U --> n_LB
-    n_LB --> n_CS
-    style n_CS fill:#f9a825,color:#000
-    style n_LB fill:#f9a825,color:#000
