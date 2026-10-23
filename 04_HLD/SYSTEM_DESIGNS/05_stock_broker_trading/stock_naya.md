@@ -266,5 +266,5 @@ dobara nahi kaatta. Wahi idempotency, bas key sauda id. Raat ka milaan [banking 
 Arpan ko "retry karo" kyun nahi: Arpan dobara Buy dabayega to wo naya order, 20 share aa jaayenge. Galti
 humari taraf ki, to theek bhi hum karte: PENDING dikhao, khud poora karo.
 
-Par 10 lakh logon ka app khula, sab ko har second TCS ka naya bhaav dekhna. Har app har second server se poochh
-raha "TCS kitna?". 10 lakh sawaal / sec, server baith gaya.
+Par 10 lakh logon ka app khula, sab ko har second TCS ka naya bhaav dekhna. Har app har second server se
+poochh raha "TCS kitna?". 10 lakh sawaal / sec, server baith gaya.
