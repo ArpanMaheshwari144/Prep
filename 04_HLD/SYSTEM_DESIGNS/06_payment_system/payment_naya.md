@@ -1,8 +1,8 @@
 # Payment system (UPI / wallet): shuru se, ek kahani
 
 Kram: **FR -> NFR -> numbers -> design**. Design sabse seedhe dabbe se shuru, har dikkat pe ek dabba judta.
-Peela = abhi juda. Kahani ek hi: Arpan ne kirana dukaan (merchant) ko 500 bheje. Dono ka wallet hamare app me
-(Paytm / PhonePe wallet jaisa). Andar ka core = [banking](../13_banking_system/13_banking_system.md).
+Peela = abhi juda. Kahani ek hi: Arpan ne kirana dukaan (merchant) ko 500 bheje. Dono ka wallet hamare app
+me (Paytm / PhonePe wallet jaisa). Andar ka core = [banking](../13_banking_system/13_banking_system.md).
 
 ---
 
@@ -46,13 +46,13 @@ BEGIN
 COMMIT
 ```
 
-Bolo: "Wallet se wallet hamare DB ke andar: ek transaction + idempotency key + check-kaato ek query + ledger,
-banking jaisa." Naya hissa yahan se: paisa BAHAR se aana / jaana.
+Bolo: "Wallet se wallet hamare DB ke andar: ek transaction + idempotency key + check-kaato ek query +
+ledger, banking jaisa." Naya hissa yahan se: paisa BAHAR se aana / jaana.
 
 ### Kadam 2: bank se wallet me 2000 (PSP)
 
-Arpan ka HDFC hamara DB nahi, bahar hai.
-Ilaaj: beech me **PSP** (Payment Service Provider: Razorpay, Juspay, Stripe).
+Arpan ka HDFC hamara DB nahi, bahar hai. Ilaaj: beech me **PSP** (Payment Service Provider: Razorpay,
+Juspay, Stripe).
 
 ```
 1. Arpan: "2000 daalo"  -> hum PSP ko: "2000 ka order" (apna txn id t-50)
@@ -77,5 +77,36 @@ KHUD har bank se  -> har bank, UPI (NPCI), card network alag-alag. NPCI manzoori
 PSP               -> ek API, sab bank / UPI / card PSP sambhale. Thoda fees     <- ISLIYE YE
 ```
 
-Par PSP ko call kiya, PSP dheema, 30 sec jawab nahi.
-Arpan ka paisa kata ya nahi, pata hi nahi. Fail dikhayein ya success?
+Par PSP ko call kiya, PSP dheema, 30 sec jawab nahi. Arpan ka paisa kata ya nahi, pata hi nahi. Fail
+dikhayein ya success?
+
+### Kadam 3: PSP dheema / band (PENDING + timeout + breaker + doosra PSP)
+
+FAILED dikhaya to Arpan dobara 2000 daalega. Pehla bhi kata tha to 4000 gaye. Ilaaj: jo pata nahi, wo
+**PENDING**.
+
+```
+haal:  INITIATED -> PENDING -> SUCCESS / FAILED
+PSP chup  -> PENDING. Arpan ko "processing, 2-3 min me pakka"
+             (galat FAILED = dohra, galat SUCCESS = nakli paisa)
+timeout chhota (5 sec) -> har request ek thread pakde. 30 sec rukte to Diwali pe saare thread PSP me phanse,
+                          wallet se wallet bhi ruk jaata
+circuit breaker        -> 1 min me 50% fail = KHULA: PSP ko call hi nahi, turant "top-up abhi band".
+                          30 sec baad 1-2 try, chala to BAND
+PSP poora band         -> doosra PSP (Razorpay + Cashfree). Naye top-up PSP-2 se. Dono band = "abhi band",
+                          wallet se wallet chalta
+DHYAAN                 -> PSP-1 pe PENDING wala PSP-2 pe DOBARA NAHI (PSP-1 ne shayad kaat liya = dohra)
+```
+
+```mermaid
+flowchart LR
+    S["Payment Svc<br/>timeout 5 sec -> PENDING"] -. "PSP-1 band (breaker khula)" .-> P1["PSP-1"]
+    S -- "naye top-up" --> P2["PSP-2"]
+    S --> D[("SQL DB<br/>payment: PENDING")]
+    style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par PENDING ka pakka kaise pata chale? Aur PSP ko call kiya, jawab se pehle HAMARA server gira. Restart pe
+yaad hi nahi call gayi thi ya nahi.
+
