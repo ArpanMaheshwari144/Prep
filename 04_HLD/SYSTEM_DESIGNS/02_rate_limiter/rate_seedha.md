@@ -3,6 +3,10 @@
 Kram: **FR -> NFR -> numbers -> design**. Design sabse seedhe dabbe se shuru, har dikkat pe ek dabba judta.
 Peela = abhi juda. Kahani ek hi: Arpan ka app, login pe ek bot.
 
+**CUE (yahi kahani, yahi kram):** server me ginti -> Redis (ek ginti) -> token bucket -> Lua (atomic) ->
+gateway pe -> copy + fail-open / closed -> local had / N -> Kafka + ban -> userId (login pe IP)
+-> global cap 503 -> home region
+
 ---
 
 ## 1. FR: kya karna hai
@@ -314,3 +318,56 @@ flowchart LR
 
 Par Arpan ki script 3 region se chali (Mumbai, Singapore, US). Har region ka apna Redis, har ek ne 100 gine.
 Had 100, nikal gayi 300.
+
+### Kadam 11: 3 region se 300 nikal gayi (home region)
+
+Kadam 2 wali dikkat, bas server ki jagah region alag-alag gin rahe.
+
+```
+sab ek Redis se poochhein    -> sahi, par US se Mumbai = ~200 ms har request. 1 ms toota
+had baant do (100 / 3 = 33)  -> tez, par sirf Mumbai se aaye to bhi 33 hi (kadam 7 jaisa had / N)
+HOME REGION                  -> har user ka ek ghar region (jahan account bana), ginti sirf wahin
+                                <- ISLIYE YE
+```
+
+```
+Arpan (ghar Mumbai) Mumbai se  -> Mumbai Redis, 1 ms
+Arpan ki script US se          -> US gateway Mumbai Redis se poochhe (~200 ms)
+asli user zyadatar apne region se (1 ms). Bahar se kabhi-kabhi, aur wahi aksar bot, uska dheema chalta
+```
+
+```mermaid
+flowchart LR
+    M["Mumbai gateway"] --> RM[("Mumbai Redis<br/>Arpan ki ginti")]
+    S["Singapore gateway"] -- "Arpan? ghar Mumbai" --> RM
+    US["US gateway"] -- "Arpan? ghar Mumbai" --> RM
+    style RM fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Bolo: "Har user ka home region. Ginti wahin. Bahar se aaye to home se poochho, thoda dheema, par sahi."
+
+---
+
+## 5. Wrap (30 sec, NFR se milao)
+
+```
+User -> WAF (ban list, TTL) -> API Gateway: user had (429) + global cap (503)
+     -> Lua token bucket in Redis (key = userId, login pe IP · home region · copy)
+     -> had me? App : 429 + Retry-After
+429 ki khabar -> Kafka -> Pattern Svc -> ban -> WAF
+
+TEZ (1 ms)          -> Redis RAM me, gateway pe, ek Lua jhatka
+ginti EK            -> Redis (kai server) + home region (kai region) + Lua (ek saath 20)
+gire to site chale  -> copy, fail-open (aam) / fail-closed (login), local had / N
+```
+
+---
+
+## Pooche to (ek line)
+
+```
+had kahan se aati (free / pro)?  -> DB me user ka plan, gateway cache kare. Redis me usi had se milao
+429 pe kya bhejein?              -> Retry-After (kitne sec baad), X-RateLimit-Remaining (kitne bache)
+kaise pata chal raha?            -> limiter ka time (p99), kitne 429 / 503, Redis galtiyan, alert
+AWS naam                         -> Redis = ElastiCache · gateway = API Gateway (throttling) · WAF = AWS WAF
+```
