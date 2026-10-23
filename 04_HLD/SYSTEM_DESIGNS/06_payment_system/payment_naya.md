@@ -51,7 +51,8 @@ banking jaisa." Naya hissa yahan se: paisa BAHAR se aana / jaana.
 
 ### Kadam 2: bank se wallet me 2000 (PSP)
 
-Arpan ka HDFC hamara DB nahi, bahar hai. Ilaaj: beech me **PSP** (Payment Service Provider: Razorpay, Juspay, Stripe).
+Arpan ka HDFC hamara DB nahi, bahar hai.
+Ilaaj: beech me **PSP** (Payment Service Provider: Razorpay, Juspay, Stripe).
 
 ```
 1. Arpan: "2000 daalo"  -> hum PSP ko: "2000 ka order" (apna txn id t-50)
@@ -71,8 +72,8 @@ flowchart LR
 ```
 
 ```
-KHUD har bank se  -> har bank, UPI (NPCI), card network alag-alag. NPCI manzoori, card data ke kade niyam
-                     (PCI-DSS). Saalon ka kaam
+KHUD har bank se  -> har bank, UPI (NPCI), card network alag-alag. NPCI manzoori,
+                     card data ke kade niyam (PCI-DSS). Saalon ka kaam
 PSP               -> ek API, sab bank / UPI / card PSP sambhale. Thoda fees     <- ISLIYE YE
 ```
 
