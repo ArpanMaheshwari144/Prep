@@ -401,3 +401,21 @@ flowchart LR
 Par Arpan ne shaadi ka 200 MB ka video bheja. Ye chat server aur Cassandra ke raaste gaya, to dono bhar
 jaayenge, aur baaki sabke message atak jaayenge.
 
+### Kadam 10: 200 MB ka video (S3 me, message me sirf link)
+
+Video chat server ke raaste mat bhejo. App video seedha **S3** me daalti hai (server ek presigned URL deta
+hai, yaani 10 minute ki chaabi), aur message me sirf uska link jaata hai. Ravi tap karta hai tab video CDN
+se aata hai. Chat server ke raaste bas chhota message gaya, aur group ke 500 log bhi dekhein to video ki
+copy ek hi hai.
+
+```mermaid
+flowchart LR
+    A["Arpan app"] -- "video seedha" --> S3[("S3")]
+    A -- "message: sirf link" --> S["Chat server"] --> RV["Ravi"]
+    RV -- "tap kiya to video" --> S3
+    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Ravi ki app pe "Arpan online" ya "last seen 10:30" kaise dikhe? 2 crore log hain, aur har ek ka online /
+offline badalta rehta hai.
+
