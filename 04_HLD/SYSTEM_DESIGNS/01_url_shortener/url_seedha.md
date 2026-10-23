@@ -3,6 +3,9 @@
 Kram video jaisa: **FR -> NFR -> numbers -> design**. Design sabse seedhe dabbe se shuru,
 har dikkat pe ek dabba judta. Peela = abhi juda. Kahani ek hi: Arpan ka Amazon link.
 
+**CUE (yahi kahani, yahi kram):** seedha (server + DB) -> counter + base62 -> Redis -> LB + counter range ->
+shard -> ring -> 3 copy -> quorum -> local cache (viral) -> lock + purana (stampede)
+
 ---
 
 ## 1. FR: kya karna hai
@@ -359,3 +362,38 @@ Bolo: "302, kyunki control hamare paas. Bojh cache se sambhal liya."
 
 Par match link ki Redis entry expire hui, aur usi pal 10,000 request ek saath "Redis me nahi"
 dekh ke DB pe toot padi (**stampede**).
+
+### Kadam 10: entry expire hui, sab DB pe toot pade (stampede)
+
+Match link ki Redis entry ka time (TTL) khatam. Usi pal 10,000 request ko Redis me nahi mila, sab ek saath DB pe.
+
+Ilaaj 1: **sirf ek jaaye (lock / single flight)**.
+
+```
+pehli request  -> Redis me lock (SET lock:aB3x9 NX, 2 sec)
+                  mila -> DB se lao, Redis me rakho, lock hatao
+baaki 9,999    -> lock nahi mila -> 50 ms ruko, phir Redis -> mil gaya
+DB pe 10,000 ki jagah 1
+```
+
+```mermaid
+flowchart LR
+    A["10,000 request"] --> R[("Redis<br/>aB3x9 nahi")]
+    A -- "sirf 1 (lock mila)" --> D[("DB")]
+    A -. "9,999 ruko, phir Redis" .-> R
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Lock wali request hi dheemi (DB dheema / server atka)? Baaki 9,999 khade rahenge. Ilaaj: **intezaar mat karao,
+purana do**. Redis me do time:
+
+```
+soft time 1 ghanta  -> iske baad "purani"      soft nikla:  pehli -> lock, peeche se DB se taaza
+hard time 1 din     -> iske baad hi hatt-ti                 baaki  -> intezaar NAHI, purana link turant
+URL me link badalta hi nahi, to purana bhi sahi
+lock me time (2 sec)  -> lock wala atka / gira to lock khud hate
+DB call me timeout    -> 500 ms me nahi to chhodo, purana chalta rahe
+purana bhi nahi       -> 2-3 baar 50 ms ruk ke Redis, phir khud DB (timeout ke saath). Kabhi-kabhi hi
+```
+
+Ilaaj 2: sab ek saath expire na hon: TTL me thoda random (1 ghanta + 0-5 min).
