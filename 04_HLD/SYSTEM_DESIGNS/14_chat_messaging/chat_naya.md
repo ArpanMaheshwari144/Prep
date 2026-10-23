@@ -147,3 +147,47 @@ flowchart LR
 Par Ravi ka phone band hai. Redis me Ravi ki koi entry hi nahi. Arpan ka "hi" kahan jaaye? Phone 2 ghante
 baad on hoga, tab use ye message milna chahiye.
 
+### Kadam 4: Ravi ka phone band (pehle DB, phir bhejo + push)
+
+Ravi offline hai, Redis me uski entry nahi. Arpan ka "hi" kahin to rukna chahiye, warna kho jaayega.
+
+Ilaaj 1: har message **pehle DB me likho, phir bhejo**.
+
+```
+"hi" aaya -> PEHLE DB me likho (chat arpan-ravi, message number 42)
+          -> phir Redis dekho: Ravi online? -> haan: uske server pe bhejo
+                                            -> nahi: DB me pada rahega
+```
+
+Pehle DB kyun, pehle bhejna kyun nahi? Agar pehle Ravi ko bheja aur DB me likhne se pehle server gir gaya,
+to message kahin pakka nahi raha, aur Ravi ka phone band tha to message hamesha ke liye gaya. Pehle DB me
+likha to message pakka hai, chahe aage kuch bhi gire. NFR "kabhi na khoye" yahi kehta hai.
+
+DB me likhne se bhi pehle server gir gaya to? Tab bhi message khota nahi, kyunki wo Arpan ke phone pe hai.
+Arpan ne Send dabaya to app message phone me rakhti hai aur uske paas ghadi ka nishaan dikhati hai ("bheja
+ja raha hai"). Server DB me likh ke hi app ko jawab (ack) deta hai, tab ghadi hat ke ek tick banti hai
+(WhatsApp ka ek grey tick = server ke paas pakka pahuncha). Server ack se pehle gira to app ko ack kabhi
+nahi milta, aur app khud thodi der me dobara bhejti hai (kisi aur server pe). Arpan ko kuch nahi karna
+padta.
+
+Ilaaj 2: **push notification**. Ravi offline hai, to uske phone pe notification bhejo ("Arpan: hi"). Ye
+Google (FCM) aur Apple (APNs) ki service se jaata hai, jo band app tak bhi pahunchti hai.
+
+Ilaaj 3: **wapas judne pe baaki sab**. Har chat ke message ko ek badhta number milta hai. 2 ghante baad Ravi
+ka phone on hua aur app judi, to app bolti hai "is chat me mere paas aakhri message number 41 hai, uske baad
+ke sab do", aur server DB se 42, 43, 44 ... bhej deta hai.
+
+```mermaid
+flowchart LR
+    A["Arpan"] --> S5["Chat server 5"]
+    S5 -- "1. pehle likho (42)" --> D[("DB")]
+    S5 -- "2. ravi online?" --> R[("Redis map")]
+    S5 -- "3. offline: notification" --> P["Push (FCM / APNs)"] --> RV["Ravi ka phone"]
+    RV -. "wapas juda: 41 ke baad sab do" .-> D
+    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par isse ek aur cheez khulti hai: server ne DB me likh liya, aur ack bhejne se pehle gira. App ne dobara
+bheja, aur Ravi ko "hi" do baar dikha. Ye agle kisi kadam me aayega. Usse pehle, roz ~400 crore message,
+yaani roz ~1.2 TB. Ek DB itna likhna aur rakhna nahi jhel paayega.
+
