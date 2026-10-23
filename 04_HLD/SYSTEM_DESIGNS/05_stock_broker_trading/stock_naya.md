@@ -128,3 +128,48 @@ pe "share kam hain". Ek share do baar nahi bik sakta.
 
 Par 9:15 baje market khula, 10,000 order / sec, aadhe sirf TCS pe. Ek hi TCS order book pe kai thread ek saath
 haath daal rahe hain. Do thread ne ek hi Suresh ko do kharidne walon se mila diya, book bigad gayi.
+
+### Kadam 4: ek share ki book, ek hi thread (stock ka apna)
+
+Har share ki apni order book, aur har book ko **sirf ek thread** chalata hai. Us share ke saare order ek line
+(queue) me lagte hain, thread unhe ek-ek karke uthata hai.
+
+```
+TCS ke order  --> [TCS line] --> TCS thread (akela) --> TCS order book
+INFY ke order --> [INFY line] --> INFY thread (akela) --> INFY order book
+RELIANCE ...  --> [RELIANCE line] --> RELIANCE thread --> ...
+
+line me kram = jo pehle aaya wo pehle milta (imaandari, NFR wala)
+```
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "key = share" --> LT[("TCS line")]
+    O --> LI[("INFY line")]
+    LT --> TT["TCS thread (akela)<br/>TCS order book"]
+    LI --> TI["INFY thread (akela)<br/>INFY order book"]
+    style LT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style LI fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab kya theek hua:
+- ek book pe ek hi haath, to Suresh do logon se kabhi nahi milta. Lock bhi nahi chahiye.
+- kram line se tay: jo pehle line me laga, wo pehle milega.
+- alag share alag thread pe (ya alag machine pe), to TCS aur INFY saath-saath chalte hain.
+
+Ye [Kafka](../12_message_queue_kafka/12_message_queue_kafka.md) kadam 3 jaisa: wahan `key = userId` taaki ek user ki khabar ek line me, yahan `key = share`
+taaki ek share ke order ek line me.
+
+Lock kyun nahi (asli choice): book pe lock bhi chal jaata, par 9:15 pe saare thread usi ek lock ki line me
+khade honge, aur lock pehle kise mile ye tay nahi, to "pehle aaya pehle mila" toot jaata. Akela thread RAM me
+bahut tez, aur kram apne aap sahi.
+
+RAM matlab? Matching engine wali machine ki apni memory (Java program ka heap). Order book wahin ek data
+structure: buy aur sell ki do sorted list (bhaav + time ke kram se). Redis ya DB nahi, warna har milaan pe
+network ka chakkar, aur 9:15 pe wahi dheema. Isi wajah se machine giri to book bhi gayi (agla kadam).
+
+Ek thread TCS ki bheed jhel lega? Haan. Book RAM me, ek order milana microseconds ka kaam. Ek thread ek second
+me lakhon order nipta sakta (mera andaza, asli number exchange pe nirbhar). TCS ke 5,000 / sec usse bahut kam.
+
+Par order book RAM me hai. Dopahar 12 baje matching machine gir gayi, poori TCS order book gayab. Kisne kis
+bhaav pe kharidne ka order dala tha, kuch nahi bacha.
