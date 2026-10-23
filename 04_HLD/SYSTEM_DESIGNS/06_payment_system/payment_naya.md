@@ -142,3 +142,47 @@ flowchart LR
 Par Arpan ne dukaan ko 500 bheje, aur dukaan ko paisa wallet me nahi, seedha apne BANK me chahiye (payout).
 Arpan ka wallet hamare DB me, dukaan ka bank bahar. Ek transaction nahi chalega.
 
+### Kadam 5: dukaan ka paisa uske bank me (saga)
+
+Arpan ka wallet hamare DB me hai, aur dukaan ka bank bahar. Ek transaction (BEGIN ... COMMIT) sirf hamare DB
+ke andar chalta hai, bank ka DB usme shaamil nahi ho sakta.
+
+Ilaaj: **saga**, yaani kaam kadam-kadam karo, aur koi kadam fail ho to pichhla kaam ulta kar do.
+
+```
+Kadam 1 (hamare DB me, ek transaction):
+   Arpan ke wallet se 500 nikaalo, ek "beech ke khaate" (hold) me 500 daalo, ledger me dono line likho,
+   aur payout t-60 ko PENDING likho.
+   Ab paisa Arpan se nikal gaya hai, par dukaan tak abhi nahi pahuncha, beech me ruka hai.
+
+Kadam 2: PSP ko payout call (t-60), taaki dukaan ke bank me 500 jaayein.
+   Iska jawab waise hi aata hai jaise kadam 4 me: PSP ka webhook, ya hamara poochne wala job.
+
+Kadam 3a, SUCCESS aaya: beech ke khaate se 500 hata do (ledger line), t-60 = SUCCESS. Kaam poora.
+Kadam 3b, FAILED aaya (galat IFSC, ya bank band): ULTA kaam karo.
+   Beech ke khaate se 500 hatao, Arpan ke wallet me 500 wapas daalo (nayi ledger lines),
+   t-60 = FAILED, aur Arpan ko batao "paisa wapas aa gaya".
+```
+
+"Ulta karna" ka matlab mitaana nahi hai. Nayi line daal ke paisa wapas karte hain, kyunki khaate me sirf
+INSERT hota hai (banking kadam 5).
+
+Beech ka khaata isliye chahiye kyunki kadam 2 ke dauraan paisa kahin to dikhna chahiye. Wo Arpan ke wallet
+se nikal chuka hai par dukaan ke bank nahi pahuncha. Isse har waqt poore hisaab ka jod 0 rehta hai.
+
+```mermaid
+flowchart LR
+    S["Payment Svc"] -- "1. Arpan -500, hold +500" --> D[("SQL DB")]
+    S -- "2. payout t-60" --> P["PSP"] --> B["dukaan ka bank"]
+    P -- "3a SUCCESS: hold -500" --> S
+    P -- "3b FAILED: ulta, Arpan +500" --> S
+    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Yahan ek asli choice hai: saga ya 2PC (two-phase commit)? 2PC me saare DB pehle "taiyaar hoon" bolte hain,
+phir sab ek saath commit karte hain. Par bank ya PSP ka DB isme hissa le hi nahi sakta, aur ek bhi ruk gaya
+to sab ruk jaate hain. Bahar wale ke saath saga hi chalta hai.
+
+Par Diwali ki shaam, har second 3000 payment. Ek Payment Svc machine nahi jheli. Aur dukaan wale apni "aaj
+ki bikri" report baar-baar khol rahe hain, jo isi DB pe chalti hai. Arpan ka payment dheema ho gaya.
+
