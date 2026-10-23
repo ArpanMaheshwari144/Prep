@@ -59,7 +59,7 @@ KHOLO:  aB3x9 aaya      -> DB me dhoondho -> browser ko bolo "is lambe link pe j
                            (redirect, 302)
 ```
 
-DB kyun, server ki memory (Java HashMap) kyun nahi? Memory me rakhte to server restart hote hi saare link gayab. Link
-saalon chalna chahiye, isliye disk wala DB.
+DB kyun, server ki memory (Java HashMap) kyun nahi? Memory me rakhte to server restart hote hi
+saare link gayab. Link saalon chalna chahiye, isliye disk wala DB.
 
 Agli dikkat: chhota code `aB3x9` banega kaise, aur do logon ko same code na mile ye kaise pakka?
