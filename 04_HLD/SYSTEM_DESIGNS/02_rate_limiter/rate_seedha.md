@@ -167,3 +167,29 @@ AWS pe                         -> API Gateway me throttling pehle se. Har user k
 ```
 
 Par sab Redis pe tika. Dopahar Redis gira. Limiter haan bole ya na? Sabko 429 = poori site band.
+
+### Kadam 6: Redis gira (copy + fail-open / fail-closed)
+
+Ilaaj 1: **Redis ki copy**. Redis gira to copy jagah leti (ElastiCache khud, kuch second me).
+
+Un kuch second me?
+
+```
+FAIL-OPEN    Redis nahi -> sabko jaane do    -> site chalti, bas kuch second bina had
+FAIL-CLOSED  Redis nahi -> sabko 429         -> bot nahi ghusa, par site band
+
+aam API (search, feed) -> fail-open. Bina had chhota nuksaan, site band bada
+                          (NFR: limiter gire to site na gire)
+login / OTP            -> fail-closed. Yahin bot password ka andaza lagata, OTP pe SMS ka paisa
+```
+
+```mermaid
+flowchart LR
+    G["API Gateway"] -- "Lua" --> R[("Redis (gira)")]
+    R -.-> RC[("Redis copy<br/>jagah leti")]
+    G -- "Redis nahi: search / feed" --> O["jaane do (fail-open)"]
+    G -- "Redis nahi: login / OTP" --> C["429 (fail-closed)"]
+    style RC fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
