@@ -468,7 +468,8 @@ do baar na dikhe  -> clientMsgId
 
 ```
 API                -> GET /connect (WebSocket, band nahi hoti) ·
-                      POST /messages { chatId, text, clientMsgId } · GET /messages?chatId=&after=41 · POST /chats/{chatId}/read { padha_upto }
+                      POST /messages { chatId, text, clientMsgId } · GET /messages?chatId=&after=41 ·
+                      POST /chats/{chatId}/read { padha_upto }
 chat server gira?  -> uske 1 lakh log dobara judte hain kisi aur server se. Sab ek saath na aayein, isliye
                       ruk-ruk ke aur thoda random (backoff + jitter).
                       Deploy pe server dheere-dheere khaali karo
