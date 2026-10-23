@@ -136,3 +136,38 @@ paisa wapas (refund). Ye payment file wala hi hissa hai (PSP, PENDING, webhook).
 
 Par 9 baje ke show ka seat map lakhon log dekh rahe hain, book koi-koi kar raha hai. Har "map dekho" pe SQL DB
 se 200 seat padhna. DB padhne me hi ghut raha hai, aur Arpan ki booking query bhi dheemi ho gayi.
+
+### Kadam 4: seat map ka cache (Redis)
+
+Har "map dekho" pe SQL tak jaana band. Redis me har show ka seat map ek key me:
+`map:9pm = { A1: HELD, A2: FREE, ... 200 seat }`.
+
+```
+lakhon log "map dekho" --> [Redis: map:9pm] --mila--> turant (SQL tak gaye hi nahi)
+                                 | nahi mila / umar khatam
+                                 +--> SQL se 200 seat padho -> Redis me rakho (umar 5 sec)
+
+Arpan ne A1 HOLD ki --> SQL me likha (Kadam 3) --> Redis ki map:9pm DELETE --> agla dekhne wala naya map
+```
+
+```mermaid
+flowchart LR
+    V["lakhon log<br/>map dekh rahe"] --> R[("Redis: map:9pm<br/>umar 5 sec")]
+    R -. "nahi mila" .-> D[("SQL DB: seats")]
+    U["Arpan: A1 HOLD"] --> S["BMS Svc"]
+    S -- "HOLD query" --> D
+    S -- "map:9pm DELETE" --> R
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Map 2-5 sec purana dikhe to chalega? Haan. Map sirf dikhane ke liye hai, faisla nahi karta. Ravi ko cache me
+A1 FREE dikha, jabki asal me Arpan le chuka tha. Ravi ne A1 dabaya, Kadam 3 wali query SQL pe chali: "0 row
+badli, seat chali gayi". Sach hamesha SQL me, cache sirf aankh ke liye. Yahi banking ke read replica me tha:
+balance dekhna copy se, paisa kaatna hamesha primary se. Yahan map dekhna cache se, seat lena hamesha SQL se.
+
+Ab kya theek hua: lakhon "dekho" Redis jhel leta hai, SQL sirf booking ki query dekhta hai, Arpan ki booking
+tez.
+
+Par 12 baje Arijit Singh ke concert ki booking khuli. 2 lakh log ek hi second me, ek hi show pe "Book" daba
+rahe hain, seat sirf 5000. Saari HOLD query ek hi table ki chand rows pe toot padti hain. SQL lock ki line me
+phans jaata hai, sab ka app ghoomta rehta hai.
