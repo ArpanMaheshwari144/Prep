@@ -174,7 +174,8 @@ phans jaata hai, sab ka app ghoomta rehta hai.
 
 ### Kadam 5: waiting room (line me lagao, thode-thode andar bhejo)
 
-2 lakh log seedhe booking pe nahi jaate. Pehle ek **line** me lagte hain (Redis me line, jo pehle aaya wo aage).
+2 lakh log seedhe booking pe nahi jaate. Pehle ek **line** me lagte hain
+(Redis me line, jo pehle aaya wo aage).
 
 ```
 12:00:00  2 lakh log "Book" --> [WAITING ROOM: Redis line]
@@ -197,9 +198,9 @@ flowchart LR
 SQL pe ek waqt me sirf 2,000 log, 2 lakh nahi. Lock ki line chhoti, query tez. Aur jo pehle aaya wo pehle
 andar, to sabke saath barabari.
 
-Doosra kyun nahi, "SQL ki aur machine laga do"? Machine badhane se nahi chalega. Jhagda 5000 seat ki chand rows
-pe hai, aur ek row ka lock ek hi machine pe hota hai. Machine 10 kar do, A1 ki row phir bhi ek hi hai. Bheed ko
-DB tak pahunchne se pehle hi rokna padta hai.
+Doosra kyun nahi, "SQL ki aur machine laga do"? Machine badhane se nahi chalega. Jhagda 5000 seat ki chand
+rows pe hai, aur ek row ka lock ek hi machine pe hota hai. Machine 10 kar do, A1 ki row phir bhi ek hi hai.
+Bheed ko DB tak pahunchne se pehle hi rokna padta hai.
 
 Ek aadmi 50 tab khol ke line me 50 baar lage? Token user ke login se juda hai, ek user ek token. Bot ki bheed
 ke liye wahi rate limiter jo rate limiter file me hai.
