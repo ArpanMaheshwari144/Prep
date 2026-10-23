@@ -90,7 +90,11 @@ ab tweet karte waqt ek baar, har feed pe nahi. Dekhne wale 50 guna zyada, to kaa
 sahi.
 
 Inbox me poora tweet nahi, sirf tweet id (`T-901`). Text ek baar tweets table me; 200 jagah poora text rakhte
-to jagah 200 guna.
+to jagah 200 guna. To feed do kadam me banti: inbox se upar ki 50 id, phir un 50 id ka poora tweet (text,
+photo ka link) tweets DB / tweet cache se ek saath (ek multi-get, jod nahi).
+
+DB ki copy (read replica) kyun nahi? Copy bhi har feed pe wahi 200 logon ka jod karegi, bas bojh baant degi.
+Jod hi bhaari hai; feed pehle se banake rakhna usse hata deta.
 
 Par Arpan ka dost Mohan chhota influencer hai, 5,000 follower. Mohan ne tweet dabaya, aur Tweet Svc 5,000
 inbox me likh raha, uske baad hi "tweet ho gaya" bolega. Mohan ka button 5 second ghoomta raha.
@@ -206,6 +210,9 @@ Crore sawaal machine ki memory se nipat jaate, DB tak sirf 100 machine x 2 sec m
 2 sec purana chalega? Haan, NFR: feed 2-5 sec purani chalegi. Virat ka naya tweet kisi ko 2 sec der se dikhe,
 to chalega.
 
+DB ki copy badha do? Copy bhi disk se padhti, aur crore padhai ek hi garam cheez (Virat ke 20) pe hai, koi
+copy nahi jhelti. Memory me rakhna hi ilaaj.
+
 Beech me Redis kyun nahi? Local cache akela hi DB ko bacha leta. Celebrity gine-chune (kuch hazaar), to unke
 aakhri 20 tweet har machine ki memory me aaraam se aa jaate. Redis is design me sirf inbox ke liye (Kadam 2).
 
@@ -216,7 +223,8 @@ mehngi hai.
 
 ### Kadam 6: inbox chhota rakho (3 chhoti baatein)
 
-**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Ek id lagbhag 8 byte ki, poora tweet nahi.
+**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Id khud 8 byte ki, par Redis sorted set me har entry
+apna kharcha jod ke ~60-100 byte leti. Poora tweet rakhte to kai KB.
 
 **2. Har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya tweet aaya to sabse
 purana kaat do (sorted set trim).
@@ -227,7 +235,7 @@ aur inbox phir se bhar do. Bas pehli feed thodi dheemi khulti.
 
 ```
 pehle:  50 crore inbox x hazaron id                      -> RAM bhar gayi
-ab:     ~10 crore active inbox x 800 id x 8 byte = ~640 GB -> kai Redis machine me baant do (user_id se)
+ab:     ~10 crore active inbox x 800 id x ~80 byte = ~6 TB -> kai Redis machine me baant do (user_id se)
         purana / inactive -> inbox nahi, wapas aaye to ek baar banao
 ```
 
@@ -241,10 +249,14 @@ flowchart LR
     style R3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-(10 crore active aur 8 byte, dono mera andaza. Asli number Redis ke apne extra kharche ke saath thoda zyada
-aayega.)
+(10 crore active aur ~80 byte, dono andaza.)
 
-**Ab kya theek hua:** Redis me sirf wahi jo sach me dekha jaata hai. 640 GB kai Redis machine me baant dete,
+Redis me machine jodte jao? Soye hue crore logon ka inbox bhi RAM khaata, kharcha badhta, dikkat wahi.
+
+Redis gira to? Uski copy sambhalti. Copy bhi gayi to inbox dheere-dheere DB se bharo (Kadam 1 wala jod),
+tab tak kuch feed thodi dheemi.
+
+**Ab kya theek hua:** Redis me sirf wahi jo sach me dekha jaata hai. ~6 TB kai Redis machine me baant dete,
 jaise [URL me shard](../01_url_shortener/01_url_shortener.md#kadam-5-data-bahut-bada-db-ke-tukde--shard) kiya tha.
 
 Par roz 50 crore naye tweet tweets DB me jaate: 5,000 likhai / sec, saal bhar me sau TB. Ek SQL DB machine ye
