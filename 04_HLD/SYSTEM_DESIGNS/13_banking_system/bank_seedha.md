@@ -31,7 +31,8 @@ scope ke bahar (poochh ke hatao): doosra bank, loan, byaaj, card, KYC
 - 120 / sec = ek Postgres ka dasva hissa
 ```
 
-Bheed badi dikkat nahi, SAHI hona badi dikkat. Isliye shard nahi, ek SQL DB kaafi. (URL se ulta: wahan speed + size.)
+Bheed badi dikkat nahi, SAHI hona badi dikkat. Isliye shard nahi, ek SQL DB kaafi.
+(URL se ulta: wahan speed + size.)
 
 ---
 
@@ -54,7 +55,8 @@ flowchart LR
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-SQL kyun, NoSQL kyun nahi? Ek transfer me DO row ek saath badalni: dono ya koi nahi. Kai row ek saath pakka badalna
-SQL ka seedha kaam (ACID). Bheed bhi chhoti, NoSQL ki "bahut bada data" wali taakat chahiye hi nahi.
+SQL kyun, NoSQL kyun nahi? Ek transfer me DO row ek saath badalni: dono ya koi nahi. Kai row ek saath
+pakka badalna SQL ka seedha kaam (ACID). Bheed bhi chhoti, NoSQL ki "bahut bada data" taakat chahiye hi nahi.
 
-Par pehla UPDATE hua (Arpan -500), doosre se pehle server gira. Arpan ke 500 kate, Ravi ko kuch nahi. Paisa gayab.
+Par pehla UPDATE hua (Arpan -500), doosre se pehle server gira.
+Arpan ke 500 kate, Ravi ko kuch nahi. Paisa gayab.
