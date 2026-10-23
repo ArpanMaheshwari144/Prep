@@ -15,7 +15,7 @@ seedha (server + DB) -> counter + base62 -> Redis -> LB + counter range -> shard
 Interviewer se pehle poochho, phir scope tay karo.
 
 ```
-1. Arpan lamba link deta hai, use 7 akshar ka chhota code milta hai (short.ly/aB3x9)
+1. Arpan lamba link deta hai, use chhota code milta hai, zyada se zyada 7 akshar (short.ly/aB3x9)
 2. koi bhi chhota link khole, use asli lambe link pe bhej do (redirect)
 scope ke bahar (poochh ke hata do): apni pasand ka code, link kitni baar khula uski ginti
 ```
@@ -295,6 +295,7 @@ flowchart LR
     LB --> S2["App 2<br/>local: match link (10 sec)"]
     S1 & S2 -- "10 sec me ek baar" --> R[("Redis")]
     R --> RR[("Redis copy")]
+    S1 & S2 -. "garam key padho" .-> RR
     style S1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style RR fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -346,7 +347,7 @@ padho). Mil gaya to 302.
 
 ```
 kholna tez         -> Redis + local cache, DB tak kam hi jaata
-hamesha chale      -> kai app + LB, har link ki 3 copy, quorum
+hamesha chale      -> kai app + LB, har link ki 3 copy, quorum (3 me se 2 pe likho / padho)
 ek code = ek link  -> counter range, takkar kabhi nahi
 ```
 
@@ -364,7 +365,7 @@ link bana, dost ko turant 404?
 
 entry expire hui, sab DB pe toot pade?
   -> STAMPEDE. Ilaaj = LOCK (single flight): pehli request Redis me lock le (SET lock:aB3x9 NX, 2 sec)
-     aur DB se laaye, baaki 50 ms ruk ke Redis dekhein. TTL me thoda random (1 ghanta + 0-5 min).
+     aur DB se laaye, baaki 50 ms ruk ke Redis dekhein. Umar (TTL) me thoda random (1 ghanta + 0-5 min).
 
 lock wala hi dheema pada?
   -> PURANA JAWAB: Redis me soft time (1 ghanta) aur hard time (1 din). Soft nikla to ek request peeche
@@ -386,5 +387,5 @@ click ginti chahiye?  -> redirect turant karo, click ki khabar Kafka me daalo, A
 duniya bhar se log?   -> Route 53 user ko uske paas wale region pe bhejta hai (geo-routing)
 10 guna traffic?      -> app server badhao · Redis me garam link rakho (LRU) · Cassandra ki machine badhao
 kaunsa DB kitne tak?  -> MySQL ~1 arab row tak aaram se · Cassandra / DynamoDB usse bahut aage
-chal raha, kaise pata? -> redirect ka time (p99), galtiyon ki ginti, alert
+chal raha, kaise pata? -> redirect ka time (p99 = 100 me se 99 request isse tez), galtiyon ki ginti, alert
 ```

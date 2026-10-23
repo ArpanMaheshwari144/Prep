@@ -7,7 +7,7 @@ file me ek hi kahani hai: Arpan ne Swiggy pe order kiya. Concepts kahani se padh
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 seedha call (dheema) -> Kafka topic (disk, padhne se mitta nahi) -> 10 tukde + key = userId
--> team (consumer group) -> pehle kaam phir commit + eventId -> 3 copy + acks=all + min.insync
+-> team (consumer group) -> pehle kaam phir commit + eventId -> 3 copy + acks=all + min.insync.replicas
 -> outbox -> DLQ
 
 ---
@@ -129,8 +129,8 @@ flowchart LR
 ```
 
 Tukde 10 se 20 kiye to? Tukda = hash(key) % ginti hai. Ginti badli to key ka tukda badal jaata hai: Arpan ki
-purani khabar P1 me rahegi, nayi kahin aur, thodi der kram toot sakta hai. Isliye shuru me hi zaroorat se
-2-3 guna tukde rakhte hain.
+purani khabar P1 me rahegi, nayi kahin aur, thodi der kram toot sakta hai. Isliye asli system me shuru me hi
+zaroorat se 2-3 guna tukde rakh lete hain (yahan samjhane ke liye 10).
 
 Par SMS Service ki 3 machine lagayi taaki 10 tukde jaldi padhe jaayein. Teeno machine saare tukde padhne lagin,
 aur Arpan ko ek order ke 3 SMS chale gaye.
@@ -214,15 +214,15 @@ flowchart LR
 Par Arpan ki khabar P1 me thi, aur P1 Kafka ki ek machine (broker) pe tha. Us machine ki disk mar gayi. P1
 sirf wahin tha, to Arpan ki saari khabar hamesha ke liye gayi.
 
-### Kadam 6: Kafka ki machine mari (3 copy, acks=all, min.insync)
+### Kadam 6: Kafka ki machine mari (3 copy, acks=all, min.insync.replicas)
 
 Ilaaj: har tukde ki **3 copy**, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo **leader**
-hai, baaki do copy. P1 ka leader machine B pe, copy A aur C pe. B ki disk mari to A ya C naya leader ban
+hai, baaki do copy. P1 ka leader broker 2 pe, copy broker 1 aur 3 pe. Broker 2 ki disk mari to 1 ya 3 naya leader ban
 jaata hai, aur Arpan ki khabar bach jaati hai. Naya leader kaun banega, ye Kafka ki ek machine tay karti hai
 jo sab pe nazar rakhti hai: **Controller**.
 
-Par ek pench: leader B ne khabar likhi aur turant Order Service ko "ho gaya" bol diya, aur copy tak khabar
-pahunchne se pehle hi B mar gayi. Copy ke paas wo khabar thi hi nahi, to khabar gayi.
+Par ek pench: leader (broker 2) ne khabar likhi aur turant Order Service ko "ho gaya" bol diya, aur copy tak khabar
+pahunchne se pehle hi broker 2 mar gaya. Copy ke paas wo khabar thi hi nahi, to khabar gayi.
 
 Ilaaj: **acks=all**. Leader "ho gaya" tabhi bolta hai jab pakki copies pe bhi likh jaaye.
 
@@ -232,18 +232,18 @@ acks=1    sirf leader ne likha to "ho gaya" (leader mara to aakhri khabar gayi)
 acks=all  saari pakki copies pe likha tab "ho gaya"     <- order / paisa ke liye
 ```
 
-"Pakki copy" wo hai jo leader ke saath bilkul taaza chal rahi hai. Unki list ko **ISR** kehte hain. Peeche
+"Pakki copy" wo hai jo leader ke saath bilkul taaza chal rahi hai. Unki list ko **ISR** (in-sync replicas) kehte hain. Peeche
 chal rahi copy ko leader nahi banate, warna aakhri khabar kho jaayegi.
 
 Sab copies gir gayi aur sirf leader bacha, to `acks=all` me "saari pakki copy" sirf leader khud hai, aur wo
-"ho gaya" bol dega jabki copy ek bhi nahi. Isliye saath me **min.insync = 2**: kam se kam 2 pakki copy na
+"ho gaya" bol dega jabki copy ek bhi nahi. Isliye saath me **min.insync.replicas = 2**: kam se kam 2 pakki copy na
 hon to likhna hi band. Khabar khone se behtar hai thodi der ruk jaana.
 
 ```mermaid
 flowchart LR
-    O["Order Service"] -- "acks=all" --> L[("machine B<br/>P1 leader")]
-    L -- "copy" --> A[("machine A<br/>P1 copy")]
-    L -- "copy" --> C[("machine C<br/>P1 copy")]
+    O["Order Service"] -- "acks=all" --> L[("broker 2<br/>P1 leader")]
+    L -- "copy" --> A[("broker 1<br/>P1 copy")]
+    L -- "copy" --> C[("broker 3<br/>P1 copy")]
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -273,8 +273,8 @@ dobara dabayega. Transaction ke baad gira to khabar outbox me padi hai, relay bh
 `sent = true` likhne se pehle gira, to relay dobara bhejega, aur SMS Service us dohri khabar ko eventId se pakad
 lega (kadam 5). Ye banking kadam 6 wala outbox hi hai.
 
-Relay DB ko baar-baar poochta rahe to DB pe bojh? Bahut bada scale ho to relay ki jagah **CDC (Debezium)**
-lagate hain, jo DB ka apna log (WAL / binlog) padh ke khabar Kafka ko deta hai, table ko poochhna hi nahi
+Relay DB ko baar-baar poochta rahe to DB pe bojh? Bahut bada scale ho to relay ki jagah **CDC (change data capture, jaise Debezium)**
+lagate hain, jo DB ka apna log (Postgres ka WAL / MySQL ka binlog) padh ke khabar Kafka ko deta hai, table ko poochhna hi nahi
 padta.
 
 ```mermaid
@@ -287,7 +287,7 @@ flowchart LR
     style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Ab teeno jagah bachav: bhejne wala = outbox · Kafka = 3 copy + acks=all + min.insync · padhne wala = pehle
+Ab teeno jagah bachav: bhejne wala = outbox · Kafka = 3 copy + acks=all + min.insync.replicas · padhne wala = pehle
 kaam phir commit + eventId.
 
 Par ek khabar me galti thi (Arpan ka phone number hi galat). SMS Service use bhejne ki koshish karta raha, fail
@@ -297,7 +297,7 @@ hota raha, commit nahi kiya, aur P1 ki baaki saari khabar uske peeche atak gayi.
 
 Ek tukde me kram se padhna hota hai, aur machine agli khabar tabhi uthati hai jab pichhli ka commit ho
 jaaye. Arpan ki khabar me phone number galat tha, to SMS kabhi jaayega hi nahi. SMS Service baar-baar koshish
-karta raha, aur P1 ki baaki khabar (Ravi, Sita ...) uske peeche atak gayi.
+karta raha, aur P1 wale baaki users ki khabar uske peeche atak gayi.
 
 Ilaaj: **DLQ (dead letter queue)**, kharab khabar ki alag line. Khabar fail hui to 3-4 baar ruk-ruk ke
 koshish karo. Phir bhi fail to use ek alag topic (`sms-dlq`) me daal do, commit karo, aur agli khabar pe
@@ -323,13 +323,13 @@ flowchart LR
 
 Order Service order aur khabar ek transaction me DB me likhta hai (outbox), relay khabar Kafka ko bhejta hai
 (acks=all). Kafka me topic `order-events` 10 tukdon me hai, key = userId taaki ek user ki khabar kram me
-rahe, aur har tukde ki 3 copy hain (min.insync = 2). SMS, Fraud aur Analytics alag-alag team hain, har team
+rahe, aur har tukde ki 3 copy hain (min.insync.replicas = 2). SMS, Fraud aur Analytics alag-alag team hain, har team
 ko poori khabar milti hai, aur team ke andar ek tukda ek machine ko. Padhne wala pehle kaam karta hai phir
 commit, dobara aayi khabar eventId se pakadta hai, aur baar-baar fail hone wali khabar DLQ me jaati hai.
 
 ```
 intezaar nahi        -> Order Service khabar daal ke aage, sab apni speed se padhte
-khabar na khoye      -> outbox (bhejne wala) · 3 copy + acks=all + min.insync (Kafka) · pehle kaam phir commit
+khabar na khoye      -> outbox (bhejne wala) · 3 copy + acks=all + min.insync.replicas (Kafka) · pehle kaam phir commit
 kram                 -> key = userId, ek tukde me kram
 bheed                -> 10 tukde, team me tukde baant ke padhna
 ek dheema, baaki chalein -> har team ka apna bookmark
@@ -367,7 +367,7 @@ AWS naam                 -> MSK (Managed Kafka)
 ## HANDS-ON — EVENT KAHAN KHOTA HAI: 3 jagah crash karwa ke dekha
 
 Grill sawaal (bank): "paisa kata -> event SMS / fraud / statement tak. Ek bhi event kho na jaaye, kaise?"
-SAGA nahi: saga = faile kaam ko ULTA karna. Yahan ulta nahi, event RASTE me kho raha. Sahi soch jo thi:
+SAGA nahi: saga = fail hue kaam ko ULTA karna. Yahan ulta nahi, event RASTE me kho raha. Sahi soch jo thi:
 "pehle pakka likho" = OUTBOX. CODE: `04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java` (nakli, Docker nahi)
 · line 24 `FIX = false / true` -> `java EventLossDemo.java`
 
@@ -400,7 +400,7 @@ ROUND 2  FIX = true
                FIX = false                                   FIX = true
 e3 producer    debit hua, bhejne se pehle crash -> KHOYA     debit + outbox ek transaction, relay bheje -> BACHA
 e4 Kafka       acks=1 leader "OK", replica se pehle -> KHOYA acks=all replica ke baad "OK" -> BACHA
-e2 consumer    pehle commit, SMS se pehle crash -> KHOYA     pehle SMS, baad commit, phir aaya, dedup -> BACHA
+e2 consumer    pehle commit, SMS se pehle crash -> KHOYA     pehle SMS, baad commit, phir aaya, eventId se pakda -> BACHA
 
 EK NIYAM: "ho gaya" tabhi bolo jab sach me PAKKA
 OUTBOX      chhota LEDGER: "ye bhejna hai" debit ke SAATH, USI ek transaction

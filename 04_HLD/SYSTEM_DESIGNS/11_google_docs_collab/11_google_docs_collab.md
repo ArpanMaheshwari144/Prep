@@ -241,7 +241,7 @@ Ab owner pe sirf editor hain, jo kam hote hain. Viewers saare servers me bant ga
 Doosra kyun nahi: **Kafka**. Kafka operation ko disk pe likhta hai aur baad me dobara padhne deta hai. Yahan
 iski zarurat nahi, kyunki har operation pehle se DB ke operation log me hai. Pub/sub sirf "abhi bata do" ka
 kaam karta hai, aur tez hai. Agar kisi viewer ka operation chhoot gaya (v8 ke baad seedha v10 aaya), to uski
-app version ka gap dekh ke beech ke operation DB se maang leti hai.
+app version ka gap dekh ke beech ke operation server se maang leti hai.
 
 Par har akshar ek operation hai, aur har operation pe DB me ek likhai ho rahi hai. Lakhon log type kar rahe
 hain, to DB pe har second lakhon likhai pad rahi hain. Raat 3 baje alert aaya ki DB baith gaya.
@@ -257,7 +257,7 @@ Dikkat ye hai ki likhai bahut zyada hai, har akshar ek row. Ilaaj ke do hisse ha
    key = (docId, version)  ->  docId se partition (ek doc ek jagah), version se sort
    ```
 2. **Batch.** Owner server har akshar pe alag likhai nahi karta. ~100 ms ke saare operation jama karta hai aur
-   ek saath likhta hai. Arpan ne ek second me 5 akshar likhe to 5 ki jagah 1 likhai hoti hai.
+   ek saath likhta hai. Arpan ne 100 ms me 5 akshar likhe to 5 ki jagah 1 likhai hoti hai.
 
 ```mermaid
 flowchart LR
@@ -272,7 +272,7 @@ flowchart LR
 Doosra kyun nahi: **Postgres**. Ek machine ki likhai ki ek had hoti hai. Uske upar sharding khud karni padti,
 aur join ya transaction ki yahan zarurat hi nahi hai. Sirf jodna hai aur docId se padhna hai, to Cassandra.
 
-Par batch ke 100 ms ke operation abhi owner server ki memory me hain. Server ne Arpan ko "mil gaya" (ACK) bol
+Par batch ke 100 ms ke operation abhi owner server ki memory me hain. Server ne Arpan ko "mil gaya" (ACK = acknowledgement) bol
 diya tha. Usi pal Server 3 gir gaya. Arpan ki aakhri line na DB me gayi, na kahin aur. Wo line kho gayi.
 
 ### Kadam 8: ACK tabhi jab operation kahin pakka likh gaya (Redis buffer + copy)
@@ -280,7 +280,8 @@ diya tha. Usi pal Server 3 gir gaya. Arpan ki aakhri line na DB me gayi, na kahi
 Dikkat ye thi ki server ne operation sirf apni memory me rakh ke ACK de diya. Ilaaj ke teen hisse hain:
 
 1. **Owner server operation ko turant Redis buffer me likhta hai, aur Redis ki ek copy (replica) bhi hoti
-   hai.** Dono me likh jaane ke baad hi Arpan ko ACK jaata hai. Redis memory me hai, to ye kuch millisecond ka
+   hai.** Dono me likh jaane ke baad hi Arpan ko ACK jaata hai (Redis copy apne aap baad me bharta hai, isliye
+   `WAIT` command se copy tak pahunchne ka intezaar karte hain). Redis memory me hai, to ye kuch millisecond ka
    kaam hai aur typing nahi rukti.
 2. **Batch ab Redis se Cassandra jaata hai.** Server gira, to buffer Redis me pada hai. Ring pe agla server
    doc-42 ka naya owner banta hai, buffer se bacha hua kaam utha leta hai.
@@ -300,7 +301,7 @@ flowchart LR
     LB --> S3["Server 3: owner, OT"]
     S3 -- "1. operation likho" --> B[("Redis buffer + copy")]
     B -- "2. likh gaya, tab ACK" --> S3
-    B -- "100 ms batch" --> C[("Cassandra: operation log")]
+    S3 -- "100 ms batch (Redis se utha ke)" --> C[("Cassandra: operation log")]
     S3 -- "publish operation" --> P["Redis pub/sub: doc-42"]
     P --> V["Server 1, 5 -> viewers"]
     style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -358,7 +359,7 @@ flowchart LR
     LB --> S3["Server 3: owner, OT"]
     S3 -- "check" --> Q[("SQL: permission")]
     S3 --> B[("Redis buffer + copy")]
-    B -- "batch" --> C[("Cassandra: operation log")]
+    S3 -- "batch (Redis se utha ke)" --> C[("Cassandra: operation log")]
     S3 -- "publish operation" --> P["Redis pub/sub: doc-42"]
     P --> V["Server 1, 5 -> viewers"]
     style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -387,7 +388,7 @@ me hai, har operation pe check (CP).
   -> har 1,000 operation pe SNAPSHOT (poora text + version). Kholo = snapshot + uske baad ke operation.
      Banking ka balance jaisa.
 viewer ka operation chhoot gaya?
-  -> version ka gap dikha (v8 ke baad v10), beech ke operation DB se maang lo
+  -> version ka gap dikha (v8 ke baad v10), beech ke operation server se maang lo
 app ki JS / CSS?
   -> CDN
 API

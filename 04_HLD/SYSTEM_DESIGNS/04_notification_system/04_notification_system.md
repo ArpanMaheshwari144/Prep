@@ -130,7 +130,7 @@ Arpan ko ek order ke do email aate hain.
 ### Kadam 4: key se ek hi baar (Redis me khabar ki id + haal)
 
 Har khabar ki apni id hoti hai: order 999 ka email = `999:email`. Worker bhejne se pehle **Redis** me is id
-ki key likhta hai: `SET 999:email BHEJ_RAHA NX` (NX = sirf tab likho jab key pehle se na ho).
+ki key likhta hai: `SET 999:email BHEJ_RAHA NX EX 60` (NX = sirf tab likho jab key pehle se na ho, EX 60 = 60 sec ki umar).
 
 - key nahi thi, likh di gayi = ye worker pehla hai. Wo email bhejta hai, phir key ko `BHEJ_DIYA` kar deta hai.
 - machine mari, naya worker wahi khabar uthata hai, Redis me dekhta hai `BHEJ_DIYA`, to chhod deta hai.
@@ -139,16 +139,16 @@ ki key likhta hai: `SET 999:email BHEJ_RAHA NX` (NX = sirf tab likho jab key peh
 ```mermaid
 flowchart LR
     LE[("email line")] --> WE["email worker"]
-    WE -- "SET 999:email BHEJ_RAHA NX" --> R[("Redis + replica")]
+    WE -- "SET 999:email BHEJ_RAHA NX EX 60" --> R[("Redis + replica")]
     WE -- "pehla hai to hi bhejo" --> C["Email company"]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Do haal kyun, ek kyun nahi: maan lo worker ne bhejne se pehle hi seedha `BHEJ_DIYA` likh diya aur bhejne se
-pehle mar gaya. Naya worker dekhega "bhej diya" aur chhod dega, Arpan ka OTP kabhi aayega hi nahi. Isliye
+pehle mar gaya. Naya worker dekhega "bhej diya" aur chhod dega, Arpan ka email kabhi aayega hi nahi. Isliye
 pehle `BHEJ_RAHA` likho, uspe 60 sec ki umar (TTL), aur bhejne ke baad hi `BHEJ_DIYA`. Worker beech me mara to
 60 sec baad `BHEJ_RAHA` mit jaata hai aur naya worker dobara bhej deta hai. Kabhi-kabhar do email ho sakte
-hain, par OTP khoyega nahi. Khona dohraav se bura hai.
+hain, par email khoyega nahi. Khona dohraav se bura hai.
 
 Redis hi mar gaya to? Uski replica (copy) primary ban jaati hai (Sentinel / ElastiCache Multi-AZ). Copy
 thodi peeche chalti hai, to aakhri kuch key shayad pahunchi na hon, aur un khabron ke do message ja
@@ -303,7 +303,7 @@ Ilaaj, 3 hisse:
    `POST /webhook { msgId: TW-555, status: DELIVERED }`.
    Hum TW-555 dhoondh ke haal badal dete hain: BHEJA se MILA, ya FAIL.
    Phone off hai to SMS fail nahi hota: operator use rakh leta hai aur koshish karta rehta hai, phone on hote
-   hi SMS pahunchta hai, tab DELIVERED aata hai. FAILED tab aata hai jab number band / galat ho, DND ho, ya
+   hi SMS pahunchta hai, tab DELIVERED aata hai. FAILED tab aata hai jab number band / galat ho, DND (Do Not Disturb) ho, ya
    phone kai din (aksar 1-3 din) off raha aur operator ne koshish band kar di.
 3. **Hastakshar (signature) jaancho.** Webhook bahar se aata hai, koi bhi nakli "DELIVERED" bhej sakta hai.
    Company har webhook pe apni secret key se signature lagati hai. Hum check karte hain, match nahi to phenko.
@@ -407,7 +407,7 @@ Redis gira
 Ek hi dikkat, par faisla darje se badalta: OTP me khona bura (bhejte raho), offer me dohraav bura (ruk jao).
 
 Par offer ka SMS raat 2 baje chala gaya, jabki Arpan ne offer wale SMS band kiye the. Aur har khabar pe
-Notification Service DB se pasand + saancha padh raha hai: 1.75 lakh / sec padhna, DB ghut raha hai.
+Notification Service DB se pasand + saancha padh raha hai: ~58,000 / sec padhna, DB ghut raha hai.
 
 ### Kadam 11: pasand + saancha, aur unka cache
 
@@ -422,7 +422,7 @@ khabar --> [1 pasand]  Arpan: push chalu, email chalu, offer SMS BAND
                                   (ye kanoon hai: unsubscribe ke baad bheja to jurmana)
 ```
 
-Ab bheed: har khabar pe pasand aur saancha DB se padhna, sale me 1.75 lakh / sec padhna, DB ghut jaata hai.
+Ab bheed: har khabar pe pasand aur saancha DB se padhna, sale me ~58,000 / sec padhna, DB ghut jaata hai.
 
 ```
 Notification Service --pasand padho--> [Redis cache] --mila--> turant (DB tak gaye hi nahi)
@@ -465,7 +465,7 @@ company ki had me. Company ka webhook Tracking DB (Cassandra) me "mila / fail" l
 
 ```
 API?
-  -> Kafka pe { event: "ORDER_PLACED", userId: 123, orderId: 999 }. Andar ke liye REST bhi:
+  -> Kafka pe { event: "ORDER_PLACED", userId: Arpan, orderId: 999 }. Andar ke liye REST bhi:
      POST /notify { userId, type, channel?, payload }
 
 Raaste kaunse?
@@ -477,10 +477,10 @@ Arpan ki "order hua" aur "ship hua" ulti kram me na pahunche?
      aur tukde ke andar kram bana rehta.
 
 Kafka me khabar khoye hi nahi, pakka?
-  -> saari copy ne li tab hi OK (acks=all), aur worker offset kaam ke BAAD commit karta.
+  -> saari copy ne li tab hi OK (acks=all), aur worker offset (kahan tak padha) kaam ke BAAD commit karta.
 
 Raat 2 baje offer ka SMS?
-  -> kanoon (TRAI) kehta offer wala (promotional) SMS sirf din me, OTP / order kabhi bhi. Asal me loopholes
+  -> kanoon (TRAI, telecom regulator) kehta offer wala (promotional) SMS sirf din me, OTP / order kabhi bhi. Asal me loopholes
      hain: push / WhatsApp pe koi rok nahi, company "pehle schedule kiya tha, der se gaya" bol sakti.
      Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana, isliye Kadam 11 me pasand check.
 
@@ -489,7 +489,7 @@ Raat 2 baje offer ka SMS?
      (ek ~1000 / sec) · pasand / saancha cache · company ki had saanjha bucket se.
 
 Data 3 saal baad (Tracking DB ~90 TB / saal)?
-  -> har row ki umar (jaise 90 din), purani rows sasti jagah (cold storage). Roz wali table chhoti rehti.
+  -> 90 din baad rows sasti jagah (S3) me copy, phir umar (TTL) se Cassandra se mitao. Roz wali table chhoti rehti.
 
 Chal raha hai, kaise pata?
   -> webhook se delivered / failed ginti, Kafka me kitna pending (lag), DLQ kitna bhara -> alert.

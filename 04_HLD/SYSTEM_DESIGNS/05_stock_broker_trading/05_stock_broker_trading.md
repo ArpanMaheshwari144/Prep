@@ -5,7 +5,7 @@ se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me pe
 file me ek hi kahani hai: Arpan TCS ke 10 share 3500 pe kharidna chahta hai, Suresh apne 10 TCS 3500 pe
 bechna chahta hai.
 
-Ye paise wali tikdi ka chautha design hai: jo [banking](../13_banking_system/13_banking_system.md),
+Ye paise wale designs me chautha design hai: jo [banking](../13_banking_system/13_banking_system.md),
 [payment](../06_payment_system/06_payment_system.md) ya [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me pehle
 se hai, wahan bas ek line + link. Poora sirf wahi jo stock ka apna hai (order book, matching, 9:15 ki bheed).
 
@@ -95,23 +95,23 @@ flowchart LR
 Ye bilkul [banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) hai, bas paise ki jagah order. Order book me jaane se pehle ye check, to dohra
 order kabhi book tak pahunchta hi nahi.
 
-Par Arpan ke wallet me 50,000 hain. Usne ek saath do order daale: TCS 30,000 ka aur INFY 30,000 ka. Dono
-Order Service pe saath pahunche, dono ne dekha "50k hai, chalega", dono lag gaye. 60,000 ke order, paisa 50,000.
+Par Arpan ke wallet me 50,000 hain. Usne ek saath do order daale: TCS 35,000 ka aur INFY 30,000 ka. Dono
+Order Service pe saath pahunche, dono ne dekha "50,000 hai, chalega", dono lag gaye. 65,000 ke order, paisa 50,000.
 
-### Kadam 3: paisa BLOCK (BMS ka seat HOLD, bas balance pe)
+### Kadam 3: paisa BLOCK (BookMyShow ka seat HOLD, bas balance pe)
 
 Wallet me do khaane: **available** (khula paisa) aur **blocked** (order ke liye ruka paisa). Engine tak
 jaane se pehle us order ka paisa block, ek hi query me:
 
 ```sql
-UPDATE wallet SET available = available - 30000, blocked = blocked + 30000
-WHERE user = 'Arpan' AND available >= 30000;
+UPDATE wallet SET available = available - 35000, blocked = blocked + 35000
+WHERE user = 'Arpan' AND available >= 35000;
 ```
 
 ```
 shuru:  available 50,000 | blocked 0
-TCS  :  50k >= 30k -> 1 row badli -> available 20,000 | blocked 30,000 -> order book me
-INFY :  20k >= 30k? nahi -> 0 row -> "paisa kam hai", order lagta hi nahi
+TCS  :  50,000 >= 35,000 -> 1 row badli -> available 15,000 | blocked 35,000 -> order book me
+INFY :  15,000 >= 30,000? nahi -> 0 row -> "paisa kam hai", order lagta hi nahi
 ```
 
 ```mermaid
@@ -121,12 +121,12 @@ flowchart LR
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Ye [BMS kadam 3](../09_bookmyshow/09_bookmyshow.md#kadam-3-seat-hold-5-minute-umar-ke-saath-bms-ka-apna) jaisa: wahan seat HELD, yahan paisa BLOCKED. Query wahi
+Ye [BookMyShow kadam 3](../09_bookmyshow/09_bookmyshow.md#kadam-3-seat-hold-5-minute-umar-ke-saath-bms-ka-apna) jaisa: wahan seat HELD, yahan paisa BLOCKED. Query wahi
 [banking kadam 4](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) wali: "check + kaato ek query me".
 
 Aage kya:
 - sauda hua: blocked se paisa Suresh ko (Kadam 7).
-- order cancel / din khatam, bika nahi: blocked wapas available (BMS ka "hold mara to seat FREE").
+- order cancel / din khatam, bika nahi: blocked wapas available (BookMyShow ka "hold mara to seat FREE").
 
 Bechne wale pe bhi yahi: Suresh ke paas 10 TCS. Usne do jagah "sell 10" daala. Pehle pe 10 share block, doosre
 pe "share kam hain". Ek share do baar nahi bik sakta.
@@ -218,6 +218,9 @@ naya standby aakhri photo + uske baad ka chhota log padhta hai.
 Kafka kyun nahi yahan: Kafka me log rakhna bhi chalta, par har order pe uska chakkar milli-second ka hai, apna
 log + seedha copy usse kahin tez (andaza: ~100 micro-second vs 2-5 ms). Exchange ke liye ye farak bada hai.
 
+Par sauda S-88 ho gaya. Ab paisa, share, SMS, audit, bhaav: kai kaam baaki, aur TCS ki line kisi ka intezaar
+nahi kar sakti.
+
 ### Kadam 6: sauda hua, kai logon ko batana (yahan Kafka asli wajah se)
 
 Dikkat: sauda S-88 hua (Arpan ne Suresh se 10 TCS 3500 pe liye). Ab ek saath kai kaam baaki:
@@ -284,7 +287,7 @@ Settlement worker: Kafka trades se "SAUDA S-88" uthaya
   2. wallet DB:    paisa move      -> S-88 paisa = DONE
   3. portfolio DB: share move      -> BAND hai!
        -> ruk-ruk ke dobara (1s, 2s, 4s) -- sauda ulta NAHI
-       -> 10 min tak band -> ALERT, ops team dekhe
+       -> 10 min tak band -> ALERT, operations team dekhe
        -> Arpan ko app me: "share aa rahe hain (PENDING)"
   4. portfolio wapas -> share move -> S-88 = DONE
 raat ka milaan: saare sauda vs wallet vs portfolio -> farak = alert
@@ -374,14 +377,14 @@ Order book DB me kyun nahi?
   -> DB = har order pe milli-second, RAM = micro-second. 9:15 ki bheed me yahi farak.
 
 Aadha bhara (partial fill)?
-  -> Arpan ko 10 chahiye, Suresh 6 bech raha: 6 ka sauda, Arpan ke 4 book me khade. Blocked paisa bhi utna hi
-     chhoota.
+  -> Arpan ko 10 chahiye, Suresh 6 bech raha: 6 ka sauda, Arpan ke 4 book me khade. 6 share ka blocked paisa (21,000)
+     Suresh ko gaya, baaki 4 ka (14,000) blocked hi rehta.
 
 Din khatam, order bika nahi?
   -> order cancel, blocked paisa / share wapas available (Kadam 3).
 
 Chal raha hai, kaise pata?
-  -> order se sauda tak ka time (p99), Kafka trades ka lag, settlement PENDING kitne, standby kitna peeche.
+  -> order se sauda tak ka time (p99 = 100 me se 99 order isse jaldi), Kafka trades ka lag, settlement PENDING kitne, standby kitna peeche.
 
 "Zerodha sach me aise karta?"
   -> mat bolo "Zerodha aise karta". Bolo "a common pattern for matching engines", andar ka pata nahi. Asal me

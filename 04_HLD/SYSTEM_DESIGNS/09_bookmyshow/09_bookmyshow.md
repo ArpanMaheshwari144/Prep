@@ -8,14 +8,14 @@ file me ek hi kahani hai: Arpan ko Ravi ke saath PVR ka 9 baje wala show dekhna 
 padho phir likho (do log ek seat) -> ek query UPDATE ... WHERE FREE -> HELD 5 min (hold_until)
 -> seat map Redis cache -> waiting room (token, signed parchi) -> pay: idempotency key + PSP webhook -> BOOKED
 
-**Teeno ka jod (banking, payment, BMS):** andar ka dhaancha ek hi hai. Jo kadam banking / payment me pehle
+**Teeno ka jod (banking, payment, BookMyShow = BMS):** andar ka dhaancha ek hi hai. Jo kadam banking / payment me pehle
 se hai, wahan bas ek line "ye wahi hai"; poora sirf wahi jo BMS ka apna hai.
 
 ```
 dikkat                         banking            payment             BMS
 do log ek saath, ek cheez      kadam 4: balance   (banking wala)      seat A1: UPDATE ... WHERE status = FREE
                                check + kaato
-network gaya, dobara bheja     kadam 3: idem key  (banking wala)      pay dobara -> wahi idempotency key
+network gaya, dobara bheja     kadam 3: idempotency key (banking wala)      pay dobara -> wahi idempotency key
 bahar ka paisa (bank / PSP)    -                  kadam 2-4: PSP,     ticket ka paisa = payment file poori
                                                   PENDING, webhook
 BMS ka APNA                    -                  -                   seat HOLD 5 min (umar ke saath),
@@ -188,7 +188,7 @@ phans jaata hai, sab ka app ghoomta rehta hai.
 
 ```
 12:00:00  2 lakh log "Book" --> [WAITING ROOM: Redis line]
-                                  Arpan: "aap 45,000 number pe ho, ~8 min"
+                                  Arpan: "aap 45,000 number pe ho, ~22 min"
                                     |
                                     | har minute sirf 2,000 ko token (andar aane ki parchi)
                                     v
@@ -254,12 +254,13 @@ dobara Pay : B-77 -> row pehle se  -> "ho chuka", wahi purana jawab. Paisa dobar
 ```
 
 **2. Paisa bank se ([payment file](../06_payment_system/06_payment_system.md#kadam-2-bank-se-wallet-me-2000-psp) wala hi):** BMS khud bank se baat nahi karta. Payment file ka raasta: PSP
-(Razorpay), pehle PENDING, phir PSP ka webhook "SUCCESS".
+(payment company, jaise Razorpay), pehle PENDING, phir PSP ka webhook "SUCCESS".
 
 **3. Webhook aaya, tab seat pakki (BMS ka jod):**
 
 ```
-PSP webhook "B-77 SUCCESS" --> Kadam 3 wali query: A1 HELD -> BOOKED (sirf agar umar baaki)
+PSP webhook --> Payment Service (PENDING -> SUCCESS) --> BMS
+               --> Kadam 3 wali query: A1 HELD -> BOOKED (sirf agar umar baaki)
                                    |-- 1 row badli -> ticket pakka, Arpan ko SMS / email (notification file)
                                    |-- 0 row badli -> hold mar chuka tha, seat gayi -> paisa wapas (refund)
 ```
@@ -269,7 +270,8 @@ flowchart LR
     U["Arpan"] -- "Pay (key B-77)" --> S["BMS Service"]
     S --> P["Payment Service<br/>(PENDING, UNIQUE booking_id)"]
     P --> G["PSP -> bank"]
-    G -- "webhook: B-77 SUCCESS" --> S
+    G -- "webhook" --> P
+    P -- "B-77 SUCCESS" --> S
     S -- "A1 HELD -> BOOKED" --> D[("SQL DB: seats")]
     S -- "ticket ka SMS" --> N["Notification"]
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

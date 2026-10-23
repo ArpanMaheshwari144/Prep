@@ -81,7 +81,7 @@ flowchart LR
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Yahan ek asli choice hai: har bank se khud judein, ya PSP lagayein? Khud judna matlab har bank, UPI (NPCI) aur
+Yahan ek asli choice hai: har bank se khud judein, ya PSP lagayein? Khud judna matlab har bank, UPI (NPCI, jo UPI chalata hai) aur
 card network se alag-alag judna, NPCI ki manzoori lena, aur card ke data ke kade niyam (PCI-DSS) maanna. Ye
 saalon ka kaam hai. PSP ek hi API deta hai, aur sab bank, UPI aur card khud sambhalta hai, bas thodi fees leta
 hai. **Isliye PSP.** Paytm aur PhonePe jaise bade khiladi baad me khud bhi judte hain, par shuru me sab PSP se
@@ -176,16 +176,16 @@ ke andar chalta hai, bank ka DB usme shaamil nahi ho sakta.
 Ilaaj: **saga**, yaani kaam kadam-kadam karo, aur koi kadam fail ho to pichhla kaam ulta kar do.
 
 ```
-Kadam 1 (hamare DB me, ek transaction):
+Step 1 (hamare DB me, ek transaction):
    Arpan ke wallet se 500 nikaalo, ek "beech ke khaate" (hold) me 500 daalo, ledger me dono line likho,
    aur payout t-60 ko PENDING likho.
    Ab paisa Arpan se nikal gaya hai, par dukaan tak abhi nahi pahuncha, beech me ruka hai.
 
-Kadam 2: PSP ko payout call (t-60), taaki dukaan ke bank me 500 jaayein.
+Step 2: PSP ko payout call (t-60), taaki dukaan ke bank me 500 jaayein.
    Iska jawab waise hi aata hai jaise kadam 4 me: PSP ka webhook, ya hamara poochne wala job.
 
-Kadam 3a, SUCCESS aaya: beech ke khaate se 500 hata do (ledger line), t-60 = SUCCESS. Kaam poora.
-Kadam 3b, FAILED aaya (galat IFSC, ya bank band): ULTA kaam karo.
+Step 3a, SUCCESS aaya: beech ke khaate se 500 hata do (ledger line), t-60 = SUCCESS. Kaam poora.
+Step 3b, FAILED aaya (galat IFSC bank code, ya bank band): ULTA kaam karo.
    Beech ke khaate se 500 hatao, Arpan ke wallet me 500 wapas daalo (nayi ledger lines),
    t-60 = FAILED, aur Arpan ko batao "paisa wapas aa gaya".
 ```
@@ -193,7 +193,7 @@ Kadam 3b, FAILED aaya (galat IFSC, ya bank band): ULTA kaam karo.
 "Ulta karna" ka matlab mitaana nahi hai. Nayi line daal ke paisa wapas karte hain, kyunki khaate me sirf
 INSERT hota hai ([banking kadam 5](../13_banking_system/13_banking_system.md#kadam-5-mere-500-kahan-gaye-kab-khaata--ledger)).
 
-Beech ka khaata isliye chahiye kyunki kadam 2 ke dauraan paisa kahin to dikhna chahiye. Wo Arpan ke wallet se
+Beech ka khaata isliye chahiye kyunki step 2 ke dauraan paisa kahin to dikhna chahiye. Wo Arpan ke wallet se
 nikal chuka hai par dukaan ke bank nahi pahuncha. Isse har waqt poore hisaab ka jod 0 rehta hai.
 
 ```mermaid
@@ -266,14 +266,14 @@ nahi chal sakta. Iska ilaaj hum kadam 5 me padh chuke hain, saga:
 Bas farak itna hai ki kadam 5 me doosri taraf bank tha, yahan doosra shard hai.
 
 Account id se isliye baanta kyunki ek insaan ka saara kaam (balance check, kataai, history) ek hi shard pe ho
-jaata hai. Sirf do alag logon ke beech transfer me saga lagta hai. Date ya shehar se baant-te to Diwali ke din
-saari likhai ek hi shard pe girti.
+jaata hai. Sirf do alag logon ke beech transfer me saga lagta hai. Date se baant-te to aaj ki saari likhai ek hi
+shard pe girti.
 
 ```mermaid
 flowchart LR
     S["Payment Service"] -- "Arpan -500, hold" --> S1[("Shard 1<br/>Arpan")]
     S -- "dukaan +500" --> S3[("Shard 3<br/>dukaan")]
-    S3 -. "fail -> ulta" .-> S1
+    S -. "shard 3 fail: ulta, Arpan +500" .-> S1
     style S1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -307,8 +307,8 @@ key kab banti?  -> payment screen khulte hi. Arpan ne do alag payment kiye to do
                    key = cheque number. Do cheque dono cash hote hain, ek hi number do baar nahi
 haal            -> payment: INITIATED -> PENDING -> SUCCESS / FAILED. Niyam: jitna kata, utna hi juda
 owner check     -> userId JWT se lo, body se nahi. Kisi aur ke wallet se bhejne ki koshish = 403
-SPOF?           -> DB primary (sync copy) · PSP (doosra PSP)
-chal raha, kaise pata? -> hisaab ka farak (milaan), p99, errors, kitne PENDING atke, har payment ka trace id
+SPOF (ek cheez giri to sab ruka)? -> DB primary (sync copy) · PSP (doosra PSP)
+chal raha, kaise pata? -> hisaab ka farak (milaan), p99 (100 me se 99 payment isse jaldi), errors, kitne PENDING atke, har payment ka trace id
 AWS naam        -> RDS (Postgres) Multi-AZ · Razorpay / Cashfree (PSP) ·
                    SQS / Kafka (webhook baad me sambhalna)
 ```
@@ -318,7 +318,7 @@ thi. Use badla ja sakta tha, nakli banayi ja sakti thi, aur turant koi jaanch na
 BR se beech ka paisa market me gaya, aur der se pakda gaya (~Rs. 4000 crore). Aaj ka ilaaj wahi hai jo humne
 banaya: kabhi na badalne wala double-entry ledger, "saare kate == saare jude" ka niyam, sab-ya-kuch-nahi
 transaction, aur turant milaan. Baad me SEBI ko kanooni taakat (1992), NSE ki screen trading (1994), NSDL
-demat (1996), aur T+2 / T+1 settlement aaye.
+demat (1996), aur T+2 / T+1 (sauda ke 2 / 1 din baad) settlement aaye.
 
 ---
 
@@ -365,7 +365,7 @@ SEQUENTIAL:  A key abc-123, 100 -> OK Order #1, total 1
 RACE:        naive containsKey + put = 2 step, GAP -> A "nahi", B "nahi" -> dono order = DOUBLE
              putIfAbsent = 1 ATOMIC step -> sirf ek jeet-ta
              atomicity NAAM se nahi, ConcurrentHashMap se (bucket
-             lock / CAS). plain HashMap = thread-safe nahi
+             lock / CAS = compare-and-swap). plain HashMap = thread-safe nahi
 
 20 PARALLEL, same key "race-1":
              1..20 | ForEach-Object { Start-Job { curl.exe -s -X POST ".../pay?amount=100"
@@ -374,7 +374,7 @@ RACE:        naive containsKey + put = 2 step, GAP -> A "nahi", B "nahi" -> dono
              ATOMIC (putIfAbsent) -> 1 OK, 19 DUPLICATE -> total 1
              pehli DUPLICATE "-> PROCESSING" = reserve-then-fill live dikha
 
-PROD:        Redis / DB unique constraint (memory restart pe udti) + key TTL · PROCESSING placeholder
+PRODUCTION:  Redis / DB unique constraint (memory restart pe udti) + key ki umar (TTL) · PROCESSING placeholder
 JAWAB:    Pehle 'key hai?' dekhna aur phir 'daalna' do alag kadam the, beech me doosri request ghus
           gayi. ConcurrentHashMap ka putIfAbsent dono ek hi kadam me karta, to ek hi jeetti.
           Asli system me ye kaam Redis ya DB ka unique karta. 20 request ek saath maari: purane code ne

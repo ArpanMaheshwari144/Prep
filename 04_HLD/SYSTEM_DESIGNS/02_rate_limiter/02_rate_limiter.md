@@ -115,8 +115,8 @@ Token bharta kaun hai? Koi background job nahi. Request aane pe hi hisaab lagta 
 
 ```
 tokens = min(5, tokens + (abhi - aakhri baar) x raftaar)
-          ^ baalti se zyada nahi   ^ beeche time me jitne bane
-Arpan 1 ghanta baad aaya: beeche time me 300 bante, par baalti 5 ki hai, to 5 hi
+          ^ baalti se zyada nahi   ^ beete time me jitne bane
+Arpan 1 ghanta baad aaya: beete time me 300 bante, par baalti 5 ki hai, to 5 hi
 ```
 
 ```mermaid
@@ -127,7 +127,7 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par bot ne ek saath 20 login bheje. 20 app server ne ek saath Redis se padha "tokens = 5", sabne socha "bache
+Par bot ne ek saath 20 login bheje. 10 app server pe 20 request ne ek saath Redis se padha "tokens = 5", sabne socha "bache
 hain", aur sabne 1 ghata ke likh diya. 20 andar chale gaye, jabki 5 hi jaane chahiye the.
 
 ### Kadam 4: 20 ek saath aaye, sab andar (Lua script, ek jhatke me)
@@ -136,10 +136,10 @@ Har request 3 kaam karti hai: padho, jaancho, likho. Ye teen alag kadam the, aur
 gayi:
 
 ```
-App 1:  padha 5 -> "bache hain" -> likha 4
-App 2:  padha 5 -> "bache hain" -> likha 4      (App 1 ka likha hua abhi dikha hi nahi)
+Request 1:  padha 5 -> "bache hain" -> likha 4
+Request 2:  padha 5 -> "bache hain" -> likha 4      (Request 1 ka likha hua abhi dikha hi nahi)
 ...
-App 20: padha 5 -> "bache hain" -> likha 4      -> 20 andar, jabki had 5 thi
+Request 20: padha 5 -> "bache hain" -> likha 4     -> 20 andar, jabki had 5 thi
 ```
 
 Ilaaj: teeno kaam **ek hi kadam** me karo. Redis me ek chhoti **Lua script** bhejo, jo token bharna, jaanchna
@@ -149,7 +149,7 @@ ko token mile, baaki 15 ko 429.
 
 ```mermaid
 flowchart LR
-    B["bot: 20 ek saath"] --> S["App x 20"]
+    B["bot: 20 ek saath"] --> S["App x 10"]
     S -- "Lua: padho + jaancho + likho<br/>ek jhatke me" --> R[("Redis<br/>ek-ek karke chalata")]
     R -- "5 haan, 15 na" --> S
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -215,7 +215,7 @@ din bhar yahi chalta hai.
 ### Kadam 7: wahi bot baar-baar (pattern pakdo, ban karo)
 
 Ilaaj: har 429 ki khabar **Kafka** me daalo. Peeche ek Pattern Service dekhta hai: "ye 1 ghante me 50 baar had
-paar kar chuka hai", to use **ban** kar deta hai. Ban list gateway ya WAF pe hoti hai, to ban wala darwaze pe
+paar kar chuka hai", to use **ban** kar deta hai. Ban list gateway ya WAF (Web Application Firewall, darwaze ka chowkidar) pe hoti hai, to ban wala darwaze pe
 hi ruk jaata hai, Redis tak bhi nahi pahunchta.
 
 Kafka isliye ki 429 dena tez rahe (1 ms). Pattern dhoondhna peeche chalta hai, gateway ko roke bina.
@@ -366,7 +366,7 @@ tumhe kisi ne 429 diya to?       -> Retry-After maano, ruk-ruk ke dobara (backof
 100 halki vs 100 bhaari?         -> limiter ke liye dono "100". Bhaari (report) pe kadi had, ya wazan do
                                     (report = 50 token, login = 1)
 10 guna traffic?                 -> gateway machine badhao · Redis ko user ke hisaab se shard karo + copy
-chal raha, kaise pata?           -> limiter ka time (p99), kitne 429 / 503, Redis ki galtiyan, alert
+chal raha, kaise pata?           -> limiter ka time (p99 = 100 me se 99 request isse tez), kitne 429 / 503, Redis ki galtiyan, alert
 AWS naam                         -> Redis = ElastiCache · gateway = API Gateway (throttling) · WAF = AWS WAF
 ```
 
@@ -376,7 +376,7 @@ AWS naam                         -> Redis = ElastiCache · gateway = API Gateway
 
 ```
 docker run -d --name rl -p 8080:80 -v "<path>\nginx.conf:/etc/nginx/nginx.conf:ro" nginx
-   -d background · --name rl · -p laptop 8080 -> container 80 · -v apni conf andar MOUNT (ro) · nginx = image
+   -d background · --name rl · -p laptop 8080 -> container 80 · -v apni conf andar MOUNT (read-only) · nginx = image
 
 nginx.conf ki 2 asli line:
    limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/m;    <- har IP ka bucket, refill 1 / min
@@ -396,7 +396,7 @@ LOG:     (Docker Desktop -> Containers -> rl -> Logs) "GET / HTTP/1.1" 503 197
 
 GOTCHA:  1. 503 tabhi jab ARRIVAL > rate (rate=2r/s pe dheere loop -> sab 200, refill pakad leta)
          2. burst=N -> spike me N+1 pass (burst=5 -> 6, 100 ->
-            101); textbook N, nginx N+1, timing se 21 / 22 bhi
+            101); textbook N, nginx N+1, timing se kabhi ek-do zyada bhi
          3. 1 IP = 1 bucket
          4. config badla -> docker restart rl
 CHALAO:  docker start rl · curl http://localhost:8080 · docker logs rl · docker restart rl · docker stop rl
@@ -430,8 +430,8 @@ public class RateLimitController {
 LIVE:  1..10 | % { curl.exe -s http://localhost:8080/rate-demo; "" }
        OK #1..#5 · 429 (6..10) · 1 sec baad window reset -> phir OK
 EDGE:  fixed window boundary: 999ms pe 5 + 1001ms pe 5 = ~2ms me 10
-PROD:  single node memory -> restart pe reset + har server apna count -> Redis INCR + EXPIRE
-       per user / IP -> map<key, counter> · lib: Bucket4j (token bucket) / Redis + Lua
+PRODUCTION:  single node memory -> restart pe reset + har server apna count -> Redis INCR + EXPIRE
+       per user / IP -> map<key, counter> · library: Bucket4j (token bucket) / Redis + Lua
 JAWAB:    usercrud me khud banaya: 5 request theek, chhathi pe 429.
           Asli system me token bucket (Bucket4j library) + sab servers ka saanjha Redis counter. Nginx
           bhi ye kaam sabse aage kar sakta (limit_req).

@@ -172,8 +172,8 @@ copy ke paas wo khabar thi hi nahi. Isliye "ho gaya" tabhi bolte hain jab copy p
 kehte hain.
 
 Koi copy peeche chal rahi ho to use leader nahi banate, warna aakhri khabar kho jaayegi. Sirf poori taaza copy
-"pakki" maani jaati hai, aur pakki copies ki list ko **ISR** kehte hain. Aur agar sirf leader bacha ho, koi pakki
-copy nahi, to likhna hi rok dete hain (**min.insync = 2**). Khabar khone se behtar thodi der rukna hai.
+"pakki" maani jaati hai, aur pakki copies ki list ko **ISR** (in-sync replicas) kehte hain. Aur agar sirf leader bacha ho, koi pakki
+copy nahi, to likhna hi rok dete hain (**min.insync.replicas = 2**). Khabar khone se behtar thodi der rukna hai.
 
 Ab Kafka bhi pakka tha aur padhne wala bhi. Bacha ek: bhejne wala, Order Service khud.
 

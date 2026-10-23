@@ -166,7 +166,7 @@ flowchart LR
     TS -- "sirf save, fanout nahi" --> T[("tweets DB<br/>index: author_id + time")]
     U["Arpan: feed"] --> F["Feed Service"]
     F -- "1. aam logon ke" --> IN[("Redis: inbox:Arpan")]
-    F -- "2. 5 celeb ke aakhri 20" --> T
+    F -- "2. 5 celebrity ke aakhri 20" --> T
     style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -178,7 +178,7 @@ Doosra kyun nahi (asli choice):
 - sabke liye fanout on read: har feed pe 200 logon ka jod, Kadam 1 wapas, feed dheemi.
 - dono ka mel (hybrid): kam follower wale ka likhte waqt baanto, bahut wale ka padhte waqt jodo.
 
-To kaun kahan se? (Arpan ka sawaal)
+To kaun kahan se?
 
 ```
 aam logon ke tweet  -> Redis (inbox:Arpan, pehle se bana)
@@ -187,7 +187,7 @@ celebrity ke tweet  -> tweets DB (padhte waqt), unke liye koi Redis nahi
 
 Celebrity kaun? Ek had tay hoti (jaise 1 lakh se zyada follower). Ye faisla hai, pakka niyam nahi.
 
-Par (Arpan ka sawaal: "crore log seedha DB pe?") match khatam, Virat ke tweet pe 1 crore log ek saath feed
+Par match khatam, Virat ke tweet pe 1 crore log ek saath feed
 khol rahe. Sabki feed tweets DB se wahi ek query chala rahi: "Virat ke aakhri 20". DB pe ek hi jagah crore
 padhai, DB garam.
 
@@ -339,7 +339,7 @@ Virat ne tweet kiya (India) -> Mumbai Cassandra me likha -> peeche se US Cassand
 flowchart LR
     A["Arpan (India)"] --> M["Mumbai region<br/>Feed Service + Redis inbox + Cassandra"]
     J["John (US)"] --> U["US region<br/>wahi sab"]
-    M -. "tweet ki copy, peeche se" .-> U
+    M <-. "tweet ki copy, dono taraf, peeche se" .-> U
     style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
