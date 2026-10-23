@@ -11,8 +11,41 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+bool solve(vector<int> &weights, int D, int mid)
+{
+    int days = 1;
+    int sum = 0;
+    for (auto &w : weights)
+    {
+        if (sum + w > mid)
+        {
+            days++;
+            sum = 0;
+        }
+        sum += w;
+    }
+    return days <= D;
+}
+
 int shipWithinDays(vector<int> &weights, int days)
 {
+    int low = *max_element(begin(weights), end(weights));
+    int high = accumulate(begin(weights), end(weights), 0);
+    int ans = -1;
+    while (low <= high)
+    {
+        int mid = low + (high - low) / 2;
+        if (solve(weights, days, mid))
+        {
+            ans = mid;
+            high = mid - 1;
+        }
+        else
+        {
+            low = mid + 1;
+        }
+    }
+    return ans;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
