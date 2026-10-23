@@ -6,7 +6,7 @@ me ek hi kahani hai: Arpan ka app, aur uske login pe hamla karta ek bot.
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 server me ginti -> Redis (ek ginti) -> token bucket -> Lua (ek saath 20) -> gateway pe
--> copy + fail-open / closed -> local had / N -> Kafka + ban -> userId (login pe IP)
+-> copy + fail-open / closed -> Kafka + ban -> userId (login pe IP)
 -> global cap 503 -> home region
 
 ---
@@ -209,38 +209,10 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par raat ko attack aaya, aur usi waqt Redis aur uski copy, dono gir gaye. Fail-open se saari aam API bina had
-ke khul gayi, aur bot andar ghus gaya.
-
-### Kadam 7: Redis aur copy dono gaye (har gateway apni ginti)
-
-Ilaaj: jab tak Redis wapas na aaye, har gateway machine **apni memory me khud ginti** rakhe, aur had ko
-machines me baant de:
-
-```
-asli had = 100 / min, gateway machine = 10  ->  har machine apni memory me 100 / 10 = 10 / min   (had / N)
-```
-
-LB request ko barabar baantta hai, to Arpan ki request bhi lagbhag 10 machine me batt jaati hain. Kul milaake
-had lagbhag 100 hi rehti hai. Poori sahi nahi, par lagbhag sahi, aur site bhi chalti rehti hai. Fail-open me
-had hi nahi lagti thi, yahan lagbhag sahi lagti hai. Redis wapas aaya to sab machines phir Redis se ginne
-lagti hain.
-
-```mermaid
-flowchart LR
-    U["Arpan / bot"] --> LB["LB"]
-    LB --> G1["Gateway 1<br/>apni ginti: 10 / min"] & G2["Gateway 2<br/>apni ginti: 10 / min"]
-    G1 -. "Redis + copy gaye" .-> R[("Redis (gira)")]
-    G2 -.-> R
-    style G1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style G2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style R fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
-```
-
 Par wahi bot har 60 second baad wapas aa jaata hai. 429 khaata hai, minute khatam hote hi phir aata hai, aur
 din bhar yahi chalta hai.
 
-### Kadam 8: wahi bot baar-baar (pattern pakdo, ban karo)
+### Kadam 7: wahi bot baar-baar (pattern pakdo, ban karo)
 
 Ilaaj: har 429 ki khabar **Kafka** me daalo. Peeche ek Pattern Svc dekhta hai: "ye 1 ghante me 50 baar had
 paar kar chuka hai", to use **ban** kar deta hai. Ban list gateway ya WAF pe hoti hai, to ban wala darwaze pe
@@ -267,7 +239,7 @@ flowchart LR
 Par had IP pe lagayi thi. Office ki night shift me 1,000 log ek hi IP se aate hain (office ka internet). Sab
 milke 100 / min paar kar gaye, aur poora office atak gaya.
 
-### Kadam 9: had kis naam pe (IP ya userId)
+### Kadam 8: had kis naam pe (IP ya userId)
 
 IP pe had lagane me do dikkat hain. Office ke 1,000 log ek IP pe hain, to sab atak gaye. Aur ulta, bot har
 request alag IP se bheje to IP wali had kabhi lagti hi nahi.
@@ -299,7 +271,7 @@ flowchart LR
 Par shaam ko sale hai. Har user apni had ke andar hai, par 1 crore log ek saath aa gaye. Sab "had me" hain,
 phir bhi server bhar ke gir gaya.
 
-### Kadam 10: sab had me, phir bhi server gira (global cap + 503)
+### Kadam 9: sab had me, phir bhi server gira (global cap + 503)
 
 User ki had har insaan ko alag rokti hai. Par 1 crore log ek saath aaye, to kul bojh server ki taakat se zyada
 ho gaya.
@@ -333,7 +305,7 @@ flowchart LR
 Par Arpan ki script 3 region se chali: Mumbai, Singapore aur US. Har region ka apna Redis tha, har ek ne 100
 gine. Had 100 thi, par 300 nikal gayi.
 
-### Kadam 11: 3 region se 300 nikal gayi (home region)
+### Kadam 10: 3 region se 300 nikal gayi (home region)
 
 Ye kadam 2 wali hi dikkat hai, bas ab server ki jagah region alag-alag gin rahe hain. Teen raaste hain:
 
@@ -372,8 +344,7 @@ Retry-After. Har 429 ki khabar Kafka se Pattern Svc tak, jo baar-baar wale ko ba
 TEZ (1 ms)            -> Redis RAM me, gateway pe, ek Lua jhatka
 ginti EK              -> Redis (kai server ke liye) + home region (kai region ke liye)
                          + Lua (ek saath 20 ke liye)
-gire to site chale    -> Redis ki copy, fail-open (aam API) / fail-closed (login),
-                         Redis poora gaya to local had / N
+gire to site chale    -> Redis ki copy, fail-open (aam API) / fail-closed (login)
 ```
 
 ---
@@ -381,6 +352,10 @@ gire to site chale    -> Redis ki copy, fail-open (aam API) / fail-closed (login
 ## Pooche to (ek line)
 
 ```
+Redis + copy dono gaye?          -> har gateway apni memory me ginti rakhe, had baant ke: 100 / min aur
+                                    10 machine -> har machine 10 / min (had / N). LB barabar baantta, to kul
+                                    lagbhag 100. Fail-open me had hi nahi thi, yahan lagbhag sahi. Redis
+                                    wapas aaya to phir Redis se ginti. (Naya dabba nahi, isliye kadam nahi)
 had kahan se aati (free / pro)?  -> DB me user ka plan (bina login 60 / ghanta, free 5,000, pro 10,000).
                                     Gateway cache kare, Redis me usi had se milaye
 had badalni ho?                  -> niyam config me (DB / AppConfig), gateway ~30 sec me padhe. Naya code nahi

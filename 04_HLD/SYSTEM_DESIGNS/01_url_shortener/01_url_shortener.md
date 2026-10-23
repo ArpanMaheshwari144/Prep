@@ -6,7 +6,7 @@ me ek hi kahani hai: Arpan ka Amazon wala link.
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 seedha (server + DB) -> counter + base62 -> Redis -> LB + counter range -> shard -> ring -> 3 copy
--> quorum -> local cache (viral link) -> lock + purana jawab (stampede) -> rate limit (bot)
+-> local cache (viral link) -> rate limit (bot)
 
 ---
 
@@ -268,47 +268,10 @@ flowchart LR
 taur pe yahi chalta hai. Copy alag rack ya alag zone me rakhte hain, taaki ek rack ki bijli jaaye to teeno ek
 saath na jaayein.
 
-Par Arpan ne abhi link banaya, aur dost ne turant khola. Likhai DB-C pe pahunchi thi, par copy DB-D tak abhi
-nahi pahunchi. Dost ki request DB-D pe gayi, aur use 404 mila, jabki link ban chuka tha.
-
-### Kadam 8: link ban gaya, par dost ko 404 (quorum)
-
-Ilaaj: **quorum**, matlab zyadatar. 3 copy me se 2 ko zyadatar maante hain.
-
-```
-LIKHO:  3 me se kam se kam 2 copy pe likh jaaye, tabhi Arpan ko "ban gaya"   (W = 2)
-PADHO:  3 me se 2 copy se poochho, jo naya ho wo lo                         (R = 2)
-```
-
-Ye kyun kaam karta hai? Likhai 2 copy pe hui, aur padhai bhi 2 copy se ho rahi hai. Teen me se do-do chuno to
-kam se kam ek copy dono me common aayegi hi, aur uske paas naya link hai. Isliye 404 nahi aata.
-
-```
-copy:      C     D     A
-likha:     haan  -     haan     (W = 2)
-padha:     haan  haan  -        (R = 2)  -> C dono me hai, naya link mil gaya
-```
-
-```mermaid
-flowchart LR
-    S["App"] -- "likha" --> C[("DB-C<br/>naya")]
-    S -- "likha" --> A[("DB-A<br/>naya")]
-    S -. "copy baad me" .-> D[("DB-D<br/>abhi purana")]
-    F["Dost"] -- "padha 2 se" --> C
-    F --> D
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Teeno pe likhte (W = 3) to ek machine girte hi likhna band ho jaata, aur dheema bhi hota. Ek se padhte (R = 1)
-to tez hota, par 404 wali dikkat wapas aa jaati. Shart bas itni hai: W + R > 3, tabhi common copy pakki hai.
-
-Ek aur aasan madad: link banate hi use Redis me bhi daal do. Dost turant khole to Redis se hi mil jaayega.
-
 Par ek link viral ho gaya. Cricket match ka link 1 crore log ek saath khol rahe hain, aur sab ek hi Redis
 machine pe ja rahe hain.
 
-### Kadam 9: ek link viral (local cache)
+### Kadam 8: ek link viral (local cache)
 
 Redis bhi key ke hisaab se baant ke rakhta hai, to ek link ki key Redis ki ek hi machine pe hoti hai. Saara
 bojh usi ek machine pe gira. Wo dheemi padi, aur us pe pade baaki link bhi atak gaye.
@@ -343,45 +306,11 @@ spam nikla aur use band karna ho, to bhi browser purane pe bhejta rahega. 302 ka
 yahin", to har click hamare paas aata hai aur control hamare paas rehta hai. Interview me bolo: "302, kyunki
 control hamare paas rehta hai. Bojh cache se sambhal liya."
 
-Par match link ki Redis entry ka time khatam hua, aur usi pal 10,000 request ne Redis me dekha, kuch nahi
-mila, aur sab ek saath DB pe toot padi (**stampede**).
+Par ek bot har second hazaron link bana raha hai.
 
-### Kadam 10: entry expire hui, sab DB pe toot pade (stampede)
+### Kadam 9: bot spam link bana raha hai (rate limit + link ki jaanch)
 
-Ilaaj 1: **sirf ek request DB pe jaaye, baaki rukein (lock / single flight)**.
-
-```
-pehli request  -> Redis me lock lagao (SET lock:aB3x9 NX, 2 sec)
-                  lock mila -> DB se lao, Redis me rakho, lock hatao
-baaki 9,999    -> lock nahi mila -> 50 ms ruko, phir Redis dekho -> mil gaya
-DB pe 10,000 ki jagah sirf 1 request gayi
-```
-
-```mermaid
-flowchart LR
-    A["10,000 request"] --> R[("Redis<br/>aB3x9 nahi")]
-    A -- "sirf 1 (lock mila)" --> D[("DB")]
-    A -. "9,999 ruko, phir Redis" .-> R
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Agar lock wali request hi dheemi pad gayi (DB dheema hai, ya wo server atak gaya), to baaki 9,999 khade
-intezaar karte rahenge. Iska ilaaj: kisi ko intezaar hi mat karao, purana jawab de do. Redis me link ke saath
-do time rakho. Soft time (1 ghanta) ke baad entry "purani" maani jaati hai, aur hard time (1 din) ke baad hi
-Redis se asal me hatti hai. Soft time nikal gaya to pehli request lock leke peeche se DB se taaza link laati
-hai, aur baaki sabko turant Redis ka purana link de diya jaata hai. URL me link badalta hi nahi, to purana bhi
-sahi hai.
-
-Phir bhi do suraksha rakho: lock me time lagao (2 second), taaki lock wala atak ya gir jaaye to lock apne aap
-hat jaaye. Aur DB call me timeout lagao (500 ms), taaki dheema DB sabko na roke. Agar purana link bhi nahi hai
-(pehli baar khula aur DB dheema), to baaki requests 2-3 baar 50 ms ruk ke Redis dekhengi, phir bhi na mile to
-khud DB pe jaayengi. Ye kabhi-kabhi hi hota hai.
-
-Ilaaj 2: sab entry ek saath expire na hon. TTL me thoda random jodo (1 ghanta + 0-5 minute).
-
-### Kadam 11: bot spam link bana raha hai (rate limit + link ki jaanch)
-
-Ek bot har second hazaron link bana raha hai. Counter aur DB faltu bhar rahe hain, aur hamare chhote link pe
+Counter aur DB faltu bhar rahe hain, aur hamare chhote link pe
 dhokhe wali site (phishing) khul rahi hai.
 
 Ilaaj 1: **rate limit**, sirf link banane pe. Ek user ya IP ek minute me sirf 10 link bana sakta hai, usse
@@ -390,7 +319,7 @@ Link kholne pe rate limit nahi lagate, kyunki kholna hi hamara asli kaam hai (1 
 aata hai.
 
 Ilaaj 2: **link ki jaanch**. Link banate waqt lambe link ko ek kaali list se milao (jaise Google Safe
-Browsing). Bura nikla to banne hi mat do. Baad me koi report kare to us code ko DB me "band" kar do. Kadam 9
+Browsing). Bura nikla to banne hi mat do. Baad me koi report kare to us code ko DB me "band" kar do. Kadam 8
 me 302 rakha tha, wo yahin kaam aata hai: har click hamare paas aata hai, to band link pe chetavani page dikha
 dete hain. 301 hota to browser seedha phishing site pe le jaata.
 
@@ -412,8 +341,8 @@ Link banana: request LB pe aati hai, rate limit lagta hai, phir kisi app server 
 agla number leta hai, use base62 me code banata hai, aur Cassandra me likhta hai (ring se machine tay, 3 copy,
 2 pe likhna pakka) aur Redis me bhi daal deta hai.
 
-Link kholna: LB se app pe. Pehle app ki apni memory (garam link), phir Redis (stampede pe lock + purana
-jawab), phir Cassandra (2 copy se padho). Mil gaya to 302.
+Link kholna: LB se app pe. Pehle app ki apni memory (garam link), phir Redis, phir Cassandra (2 copy se
+padho). Mil gaya to 302.
 
 ```
 kholna tez         -> Redis + local cache, DB tak kam hi jaata
@@ -424,6 +353,24 @@ ek code = ek link  -> counter range, takkar kabhi nahi
 ---
 
 ## Pooche to (ek line)
+
+Ye sawaal bahut aate hain. Design nahi badalte (naya dabba nahi), isliye kadam nahi, par jawab pata ho:
+
+```
+link bana, dost ko turant 404?
+  -> likhai C pe pahunchi, copy D pe abhi nahi, dost D se padh gaya. Ilaaj = QUORUM (zyadatar, 3 me se 2):
+     2 copy pe likho (W=2), 2 se padho (R=2). W + R > 3, to ek copy dono me common, naya link mil jaata.
+     Ye Cassandra ki setting hai. Saath me link banate hi Redis me daal do, dost wahin se pa le.
+
+entry expire hui, sab DB pe toot pade?
+  -> STAMPEDE. Ilaaj = LOCK (single flight): pehli request Redis me lock le (SET lock:aB3x9 NX, 2 sec)
+     aur DB se laaye, baaki 50 ms ruk ke Redis dekhein. TTL me thoda random (1 ghanta + 0-5 min).
+
+lock wala hi dheema pada?
+  -> PURANA JAWAB: Redis me soft time (1 ghanta) aur hard time (1 din). Soft nikla to ek request peeche
+     se taaza laaye, baaki sabko purana link turant. Link badalta nahi, to purana bhi sahi.
+     Lock pe 2 sec ka time, DB call pe 500 ms timeout.
+```
 
 Koi bhi dabba gira to? Aaj ke system me koi dabba akela nahi chalta, har ek ki copy hoti hai.
 

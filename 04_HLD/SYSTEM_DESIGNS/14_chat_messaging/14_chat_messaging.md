@@ -18,6 +18,7 @@ WebSocket -> 200 server + event loop -> Redis map (kaun kahan) -> pehle DB + ack
 2. purani history server pe rahe (naya phone liya to bhi purane message mil jaayein)
 3. tick: bheja / pahuncha / padha
 4. Ravi offline ho to message baad me mile
+5. photo / video bhejna, online / last seen dikhana
 scope ke bahar (poochh ke hata do): end-to-end encryption, voice / video call, lakhon wale broadcast
 ```
 
