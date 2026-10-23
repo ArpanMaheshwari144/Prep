@@ -138,27 +138,27 @@ Do tarah ke log, do raaste:
 
 ```
 aam log (jaise Mohan, 5,000 follower)  -> fanout on WRITE: tweet sabke inbox me (Kadam 2-3)
-celebrity (jaise Virat, 10 crore)      -> fanout NAHI. Tweet bas Virat ki apni list me (Redis):
-                                          celeb:Virat = [T-777, T-760 ...]  (sabke liye ek hi)
+celebrity (jaise Virat, 10 crore)      -> fanout NAHI. Tweet bas tweets DB me (jaise har tweet jaata)
 
 Arpan ne feed kholi:
-  1. inbox:Arpan se aam logon ke tweet          (pehle se bane)
-  2. Arpan jin 5 celebrity ko follow karta, unki list se aakhri tweet (abhi padhe)
+  1. inbox:Arpan se aam logon ke tweet                         (pehle se bane, Redis)
+  2. Arpan jin 5 celebrity ko follow karta, tweets DB se unke aakhri 20 (abhi padhe;
+     tweets table me author_id + time ka index, to ye saada query)
   3. dono milao -> time se sort -> upar ke 50
 ```
 
 ```mermaid
 flowchart LR
     V["Virat: tweet"] --> TS["Tweet Svc"]
-    TS -- "fanout nahi" --> CL[("Redis: celeb:Virat<br/>sabke liye ek list")]
+    TS -- "sirf save, fanout nahi" --> T[("tweets DB<br/>index: author_id + time")]
     U["Arpan: feed"] --> F["Feed Svc"]
     F -- "1. aam logon ke" --> IN[("Redis: inbox:Arpan")]
-    F -- "2. 5 celeb ki list" --> CL
-    style CL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    F -- "2. 5 celeb ke aakhri 20" --> T
+    style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Ab kya theek hua: Virat ka tweet ek hi jagah likha, 10 crore jagah nahi, to fanout line nahi atakti. Arpan ki
-feed me bas 5 celebrity ki list padhni, 200 logon ki nahi, to feed tez rehti.
+feed me bas 5 celebrity ke tweet padhte waqt jodne, 200 logon ke nahi, to feed tez rehti.
 
 Doosra kyun nahi (asli choice):
 - sabke liye fanout on write: Virat ka ek tweet = 10 crore likhai, line ghanton atakti (Kadam 3 wali).
@@ -167,30 +167,31 @@ Doosra kyun nahi (asli choice):
 
 Celebrity kaun? Ek had tay hoti (jaise 1 lakh se zyada follower). Ye faisla hai, pakka niyam nahi.
 
-Par match khatam, Virat ke tweet pe 1 crore log ek saath feed khol rahe. Sab ek hi Redis key `celeb:Virat`
-padh rahe, aur wo ek Redis machine garam ho ke dheemi pad gayi.
+Par match khatam, Virat ke tweet pe 1 crore log ek saath feed khol rahe. Sabki feed tweets DB se wahi ek query
+chala rahi: "Virat ke aakhri 20". DB pe ek hi jagah crore padhai, DB garam.
 
-### Kadam 5: Virat ka tweet viral, ek Redis key garam (local cache)
+### Kadam 5: Virat viral, DB pe ek hi query crore baar (local cache)
 
-Dikkat: 1 crore log ek saath `celeb:Virat` padh rahe, aur ye key sirf ek Redis machine pe.
-
-Ilaaj: har Feed Svc machine celebrity ki list **apni memory me** 1-2 second ke liye rakh leti (local cache).
+Ilaaj: har Feed Svc machine "Virat ke aakhri 20" ka jawab **apni memory me** 2 second rakh leti (local cache).
 
 ```
-pehle: 1 crore feed --> sab ek hi Redis machine pe "celeb:Virat" --> garam
-ab:    1 crore feed --> 100 Feed Svc machine, har ek ki apni memory me celeb:Virat (umar 2 sec)
-                        --> Redis tak har machine 2 sec me sirf ek baar = 100 / 2 sec, crore nahi
+pehle: 1 crore feed --> sab tweets DB se "Virat ke aakhri 20" --> DB garam
+ab:    1 crore feed --> 100 Feed Svc machine, har ek ki memory me Virat ke 20 (umar 2 sec)
+                        --> DB tak har machine 2 sec me ek baar = 100 / 2 sec, crore nahi
 ```
 
 ```mermaid
 flowchart LR
-    U["1 crore feed"] --> F["100 Feed Svc machine<br/>(apni memory: celeb:Virat, 2 sec)"]
-    F -. "2 sec me ek baar" .-> CL[("Redis: celeb:Virat")]
+    U["1 crore feed"] --> F["100 Feed Svc machine<br/>(apni memory: Virat ke 20, 2 sec)"]
+    F -. "2 sec me ek baar" .-> T[("tweets DB")]
     style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 2 second purana chalega? Haan, NFR: feed 2-5 sec purani chalegi. Ye bilkul [URL kadam 8](../01_url_shortener/01_url_shortener.md#kadam-8-ek-link-viral-local-cache) hai: wahan viral
 link, yahan viral celebrity. Ilaaj wahi, apni memory me thodi der.
+
+Beech me Redis kyun nahi? Local cache akela hi DB ko bacha leta. Redis is design me sirf inbox ke liye hai
+(Kadam 2): wahan har user ki alag feed pehle se banake rakhni hai.
 
 Par Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. Redis ki RAM bhar rahi, aur Redis RAM
 mehngi hai.
