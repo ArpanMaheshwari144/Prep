@@ -159,7 +159,7 @@ flowchart LR
     S["Payment Svc"] -- "1. t-50 PENDING (pehle)" --> D[("SQL DB")]
     S -- "2. call t-50" --> P["PSP"]
     P -- "webhook: t-50 SUCCESS" --> S
-    J["Job, har 5 min"] -- "PENDING purane?" --> D
+    J["Job, har 5 min<br/>DB me purane PENDING dekho"] --> D
     J -- "t-50 ka kya hua?" --> P
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
