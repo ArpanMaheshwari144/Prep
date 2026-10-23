@@ -245,9 +245,11 @@ Par ek DB machine gir gayi, to us pe pade saare link 404.
 
 ### Kadam 7: ek DB machine giri (copy = replication)
 
-DB-C giri. Arpan ka `aB3x9` usi pe tha: link 404. Disk mari to hamesha ke liye gaya. NFR "hamesha chale" toota.
+DB-C giri. Arpan ka `aB3x9` usi pe tha: link 404. Disk mari to hamesha ke liye gaya.
+NFR "hamesha chale" toota.
 
-Ilaaj: har link ki **3 copy**, teen alag machine pe. Cassandra khud karta: ring pe maalik machine + ghadi me agli 2.
+Ilaaj: har link ki **3 copy**, teen alag machine pe. Cassandra khud karta:
+ring pe maalik machine + ghadi me agli 2.
 
 ```
 aB3x9 -> DB-C (maalik) + DB-D + DB-A
