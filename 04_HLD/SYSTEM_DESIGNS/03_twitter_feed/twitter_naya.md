@@ -219,7 +219,7 @@ mehngi hai.
 
 ### Kadam 6: inbox chhota rakho (3 chhoti baatein)
 
-**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Ek id lagbhag 8 byte ki, poora tweet nahi.
+**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka), poora tweet nahi.
 
 **2. Har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya tweet aaya to sabse
 purana kaat do (sorted set trim).
@@ -229,9 +229,8 @@ se mit jaata). Wo wapas aaya to pehli baar uski feed Kadam 1 wale tareeke se ek 
 aur inbox phir se bhar do. Bas pehli feed thodi dheemi khulti.
 
 ```
-pehle:  50 crore inbox x hazaron id                      -> RAM bhar gayi
-ab:     ~10 crore active inbox x 800 id x 8 byte = ~640 GB -> kai Redis machine me baant do (user_id se)
-        purana / inactive -> inbox nahi, wapas aaye to ek baar banao
+sirf active log ke inbox, aakhri 800 id -> phir bhi kai TB, ek Redis machine me nahi samata
+-> user_id se kai Redis machine me baanto (jaise URL me shard kiya)
 ```
 
 ```mermaid
@@ -244,10 +243,7 @@ flowchart LR
     style R3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-(10 crore active aur 8 byte, dono mera andaza. Asli number Redis ke apne extra kharche ke saath thoda zyada
-aayega.)
-
-**Ab kya theek hua:** Redis me sirf wahi jo sach me dekha jaata hai. 640 GB kai Redis machine me baant dete,
+**Ab kya theek hua:** Redis me sirf wahi jo sach me dekha jaata hai, aur wo kai Redis machine me bata hua,
 jaise [URL me shard](../01_url_shortener/01_url_shortener.md#kadam-5-data-bahut-bada-db-ke-tukde--shard) kiya tha.
 
 Par roz 50 crore naye tweet tweets DB me jaate: 5,000 likhai / sec, saal bhar me sau TB. Ek SQL DB machine ye
