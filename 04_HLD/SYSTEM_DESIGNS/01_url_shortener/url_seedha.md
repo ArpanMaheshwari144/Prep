@@ -97,3 +97,33 @@ Abhi ek hi server, to counter bhi ek (DB ka apna auto-increment id bhi chal jaat
 
 Ab link ban rahe hain. Par har second 1 lakh log link khol rahe hain, aur har baar DB me
 dhoondhna pad raha hai. DB itna bojh nahi jhel paayega.
+
+### Kadam 3: kholne ka bojh (cache)
+
+Har baar DB me dhoondhna dheema (DB disk se padhta). Par zyadatar log wahi kuch link baar-baar kholte hain: Arpan ne
+Amazon sale ka link group me bheja, 1,000 log wahi ek link khol rahe. Har baar DB se wahi jawab laana bekaar.
+
+Ilaaj: beech me **Redis** (memory me rakhta, bahut tez).
+
+```
+KHOLO:  aB3x9 aaya -> pehle Redis me dekho
+          mila   -> turant redirect (DB ko chhua hi nahi)
+          nahi   -> DB se lao, Redis me rakh do, redirect (agli baar Redis se)
+```
+
+```mermaid
+flowchart LR
+    U["Arpan"] --> S["App server"]
+    S -- "1. pehle yahan" --> R[("Redis<br/>aB3x9 -> amazon...")]
+    S -- "2. nahi mila to" --> D[("DB")]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+Redis bhar gaya?           -> memory DB se chhoti, saare 180 arab link nahi aate. Jo link sabse der se nahi
+                              khula, use hatao (LRU). Garam link Redis me, thande DB me
+server ki memory me kyun?  -> aage server kai honge: har ek ka cache alag, restart pe khaali.
+                              Redis sabke liye ek jagah
+```
+
+Par 1 lakh log kholne aa rahe hain, aur app server abhi bhi ek hi hai. Akela itna bojh nahi jhel paayega.
