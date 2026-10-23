@@ -288,3 +288,30 @@ kaam phir commit + eventId.
 Par ek khabar me galti thi (Arpan ka phone number hi galat). SMS Svc use bhejne ki koshish karta raha, fail
 hota raha, commit nahi kiya, aur P1 ki baaki saari khabar uske peeche atak gayi.
 
+### Kadam 8: ek kharab khabar ne line rok di (DLQ)
+
+Ek tukde me kram se padhna hota hai, aur machine agli khabar tabhi uthati hai jab pichhli ka commit ho
+jaaye. Arpan ki khabar me phone number galat tha, to SMS kabhi jaayega hi nahi. SMS Svc baar-baar koshish
+karta raha, aur P1 ki baaki khabar (Ravi, Sita ...) uske peeche atak gayi.
+
+Ilaaj: **DLQ (dead letter queue)**, kharab khabar ki alag line. Khabar fail hui to 3-4 baar ruk-ruk ke
+koshish karo. Phir bhi fail to use ek alag topic (`sms-dlq`) me daal do, commit karo, aur agli khabar pe
+badho. DLQ pe alert jaata hai, insaan dekhta hai, number theek karke dobara chalata hai. Ek kharab khabar
+poori line nahi rokti, aur khabar khoti bhi nahi.
+
+Turant DLQ kyun nahi, 3-4 baar koshish kyun? Kai baar fail hona kuch der ka hota hai (SMS company ek second
+ke liye dheemi thi), do-teen baar try karne pe chal jaata hai. Galat number jaisi galti har baar fail hogi,
+wahi DLQ me jaati hai.
+
+```mermaid
+flowchart LR
+    P1[("P1")] --> S["TEAM sms"]
+    S -- "3-4 baar fail" --> Q[("sms-dlq<br/>alag line")]
+    S -- "baaki khabar" --> OK["SMS chale gaye"]
+    Q -. "alert, insaan dekhe" .-> H["theek karke dobara"]
+    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par sale me SMS Svc dheema pad gaya. Khabar aa rahi 5,000 / sec, SMS Svc padh raha 3,000 / sec. Bookmark
+peeche chhoot-ta ja raha hai, Arpan ko SMS 10 minute late, aur kisi ko pata hi nahi chala.
+
