@@ -90,3 +90,43 @@ flowchart LR
 Par Diwali sale me har second 5,000 order. Saari khabar ek topic me, aur topic ek hi machine pe. Upar se SMS
 ka ek worker sirf 500 / sec sambhal paata hai. Line lambi hoti ja rahi hai.
 
+### Kadam 3: bheed (topic ke tukde = partition, aur key)
+
+Ilaaj: topic `order-events` ko andar se **10 tukdon** me baanto, har tukda alag machine pe. Ek tukde ko
+**partition** kehte hain. 10 isliye ki numbers me nikla tha: sale me 5,000 / sec, ek worker 500 / sec, to
+5,000 / 500 = 10. Ek tukda ek worker padhega, to 10 tukde = 10 worker ek saath.
+
+Par tukde karte hi nayi dikkat aati hai: kram. Arpan ki 3 khabar (order, pay, cancel) alag-alag tukdon me
+gayi, to padhne wala kis kram me padhe, koi bharosa nahi. "cancel" pehle padh liya to gadbad. Kafka me kram
+sirf ek tukde ke andar pakka hota hai, poore topic me nahi.
+
+Ilaaj: **key**. Order Svc har khabar ke saath ek key deta hai, `userId`. Same key hamesha same tukde me
+jaati hai:
+
+```
+tukda = hash(arpan) % 10 = 1   -> Arpan ki teeno khabar P1 me, kram se: order, pay, cancel
+Ravi ki khabar                -> P6 me (alag tukda, Arpan se koi lena-dena nahi)
+```
+
+Ye chat wali baat hi hai: wahan kram sirf ek chat ke andar chahiye tha, yahan sirf ek user ke andar.
+
+```mermaid
+flowchart LR
+    O["Order Svc<br/>key = userId"] --> P0 & P1 & P9
+    subgraph T["KAFKA · topic order-events · 10 tukde"]
+        P0[("P0")]
+        P1[("P1 · Arpan<br/>order, pay, cancel")]
+        P9[("P9")]
+    end
+    style P0 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style P9 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Tukde 10 se 20 kiye to? Tukda = hash(key) % ginti hai. Ginti badli to key ka tukda badal jaata hai: Arpan ki
+purani khabar P1 me rahegi, nayi kahin aur, thodi der kram toot sakta hai. Isliye shuru me hi zaroorat se
+2-3 guna tukde rakhte hain.
+
+Par SMS Svc ki 3 machine lagayi taaki 10 tukde jaldi padhe jaayein. Teeno machine saare tukde padhne lagin,
+aur Arpan ko ek order ke 3 SMS chale gaye.
+
