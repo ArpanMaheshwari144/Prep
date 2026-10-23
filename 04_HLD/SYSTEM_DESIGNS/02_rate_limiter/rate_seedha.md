@@ -193,3 +193,46 @@ flowchart LR
     style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+Par raat ko attack, aur usi waqt Redis + copy dono gaye. Fail-open se aam API bina had, bot andar.
+
+### Kadam 7: Redis + copy dono gaye (har gateway apni ginti)
+
+Ilaaj: Redis wapas aane tak har gateway machine **apni memory me ginti**, had baant ke:
+
+```
+asli had = 100 / min, gateway = 10 machine  ->  har machine 100 / 10 = 10 / min   (had / N)
+LB barabar baantta, to kul milaake lagbhag 100. Poori sahi nahi, lagbhag sahi
+fail-open    -> site chalti, had hi nahi (bot ghusa)
+local had/N  -> site chalti, had lagbhag sahi    <- ISLIYE YE
+Redis wapas  -> sab phir Redis se
+```
+
+Par wahi bot har 60 sec baad wapas: 429 khaata, minute khatam, phir aata. Din bhar.
+
+### Kadam 8: wahi bot baar-baar (pattern -> ban)
+
+Ilaaj: har 429 ki khabar **Kafka** me. Peeche ek Pattern Svc dekhta:
+"ye 1 ghante me 50 baar had paar kar chuka" -> **ban**. Ban list gateway / WAF pe, ban wala darwaze pe hi ruk jaata (Redis tak bhi nahi).
+
+```
+Kafka kyun?      -> 429 dena tez rahe (1 ms). Pattern dhoondhna peeche, gateway ruke bina
+ban kitni der?   -> hamesha nahi, kuch der (TTL, jaise 1 ghanta, baar-baar aaya to badhao)
+IP pe kyun der?  -> IP badalte rehte / ek IP pe kai log (office, mobile network). Hamesha ka ban
+                    = kal wahi IP kisi asli user ko mila to wo atka
+```
+
+```mermaid
+flowchart LR
+    U["bot"] --> W["WAF / gateway<br/>ban list (TTL)"]
+    W --> G["API Gateway<br/>limiter"]
+    G -- "429 ki khabar" --> K[("Kafka")]
+    K --> P["Pattern Svc<br/>baar-baar? -> ban"]
+    P -- "ban (1 ghanta)" --> W
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par had IP pe lagayi thi. Office ki night shift: 1,000 log ek hi IP se (office ka internet).
+Sab milke 100 / min paar, poora office atka.
