@@ -140,3 +140,30 @@ sirf INCR?    -> atomic hai par sirf ginti. Token bucket me refill phir ghatana 
 
 Par limiter App ke andar. Bot ki 15 mana wali bhi LB se App tak aayi, App ne Redis poochha, tab 429.
 Mana karne me bhi hamare App ka time aur machine kharch.
+
+### Kadam 5: mana wali bhi andar tak aayi (limiter darwaze pe)
+
+Ilaaj: limiter **sabse aage, API Gateway** pe. Mana wali App tak pahunchti hi nahi.
+
+```
+pehle:  bot -> LB -> App (Redis poochha) -> 429      App ka time gaya
+ab:     bot -> API Gateway (Redis poochha) -> 429    App tak pahunchi hi nahi
+```
+
+```mermaid
+flowchart LR
+    U["Arpan / bot"] --> G["API Gateway<br/>limiter yahan"]
+    G -- "had me" --> LB["LB"] --> S["App x 10"]
+    G -- "had paar" --> X["429"]
+    G -- "Lua" --> R[("Redis")]
+    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+har App me library kyun nahi?  -> har service (login, payment, search) apna code likhe. Gateway = ek jagah, sab pe
+                                  chale, aur bot ka bojh App pe nahi
+AWS pe                         -> API Gateway me throttling pehle se. Har user ki alag had = apna limiter +
+                                  Redis (ElastiCache)
+```
+
+Par sab Redis pe tika. Dopahar Redis gira. Limiter haan bole ya na? Sabko 429 = poori site band.
