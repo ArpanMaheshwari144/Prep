@@ -3,9 +3,9 @@
 Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
 me ek hi kahani hai: Arpan ne Ravi ko 500 bheje. Ye JP ka sabse sambhavit HLD hai. Paisa bank ke bahar jaaye
-(PSP, doosra bank) to [payment](../06_payment_system/06_payment_system.md) dekho.
-Yahi dhaancha [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me bhi: kadam 3 (key) = [BMS kadam 6](../09_bookmyshow/09_bookmyshow.md#kadam-6-pay-dobara--paisa-banking-kadam-3--payment-file),
-kadam 4 (ek query) = [BMS kadam 2](../09_bookmyshow/09_bookmyshow.md#kadam-2-padhna-aur-likhna-ek-hi-query-me-banking-kadam-4-wala-hi) (balance ki jagah seat).
+(PSP = payment company jaise Razorpay, doosra bank) to [payment](../06_payment_system/06_payment_system.md) dekho.
+Yahi dhaancha [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me bhi: kadam 3 (key) = [BookMyShow kadam 6](../09_bookmyshow/09_bookmyshow.md#kadam-6-pay-dobara--paisa-banking-kadam-3--payment-file),
+kadam 4 (ek query) = [BookMyShow kadam 2](../09_bookmyshow/09_bookmyshow.md#kadam-2-padhna-aur-likhna-ek-hi-query-me-banking-kadam-4-wala-hi) (balance ki jagah seat).
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 service + SQL -> ek transaction (WAL) -> idempotency key -> check + kaato ek query -> ledger (double-entry)
@@ -169,7 +169,7 @@ flowchart LR
 
 Do transfer ulti disha me ek saath aaye (Arpan dukaan ko bheje, aur usi second dukaan Arpan ko refund kare) to
 deadlock ho sakta hai. Jo SQL DB liya hai, wahi use khud pakad ke tod deta hai: ek transfer fail hota hai
-(MySQL me error 1213), app use dobara chalati hai, aur idempotency key ki wajah se paisa dohra nahi katta.
+(Postgres me "deadlock detected" error), app use dobara chalati hai, aur idempotency key ki wajah se paisa dohra nahi katta.
 Hone hi na dena ho to dono row ko hamesha chhoti account id pehle lock karo.
 
 Par Arpan ne app kholi: "mere 500 kahan gaye, kab gaye?" DB me sirf `balance = 100` likha hai. Kab kata, kisko
@@ -401,10 +401,10 @@ tables           -> account (balance) · ledger (sirf INSERT, mahine ke tukde) �
                     outbox · snapshot
 CP ya AP?        -> transfer / balance = CP (galat balance dikhane se mana karna behtar) ·
                     SMS / statement = AP (2 sec late chalega)
-SPOF?            -> DB primary (sync copy) · Banking Service (LB + kai machine)
+SPOF (ek dabba gira to sab band)? -> DB primary (sync copy) · Banking Service (LB + kai machine)
 10 guna traffic? -> padhai badhi: replica · jagah badhi: tukde + S3 · likhai badhi: tab account_id se shard
                     (do shard ke beech transfer = saga). 120 / sec pe ye sawaal hi nahi
-chal raha, kaise pata? -> milaan ka alert, p99, error rate, outbox me kitni sent = false,
+chal raha, kaise pata? -> milaan ka alert, p99 (100 me se 99 transfer kitni der me), error rate, outbox me kitni sent = false,
                           har transfer ka trace id
 AWS naam         -> RDS (Postgres) Multi-AZ · S3 Object Lock · Athena
 round kis pe tay -> idempotency, transaction, queue, reconciliation, audit. Paise me ACID, eventual nahi,

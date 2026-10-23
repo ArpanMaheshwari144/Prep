@@ -189,7 +189,7 @@ flowchart LR
     S5 -- "1. pehle likho (42)" --> D[("DB")]
     S5 -- "2. ravi online?" --> R[("Redis map")]
     S5 -- "3. offline: notification" --> P["Push (FCM / APNs)"] --> RV["Ravi ka phone"]
-    RV -. "wapas juda: 41 ke baad sab do" .-> D
+    RV -. "wapas juda: 41 ke baad sab do" .-> S5
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -296,7 +296,7 @@ time se lagaya: Ravi ka jawab upar, Arpan ka sawaal neeche. Ulta
 Har phone ki ghadi alag hoti hai, isliye phone ke time pe bharosa nahi kar sakte.
 
 Ilaaj: kram **server** de. Message server pe pahunchte hi us chat ka agla number milta hai (`INCR
-seq:arpan-ravi` Redis me): "kal milein?" = 42, "haan, 5 baje" = 43. Kram number se lagta hai, phone ki ghadi
+seq:arpan-ravi` Redis me): "kal milein?" = 44, "haan, 5 baje" = 45. Kram number se lagta hai, phone ki ghadi
 kuch bhi kahe. Number har chat ka alag hai, kyunki kram sirf ek chat ke andar chahiye. Kadam 4 ka "mere paas
 aakhri 41 hai, uske baad ke do" isi number se chalta hai.
 
@@ -305,12 +305,12 @@ pahuncha, use agla number:
 
 ```
 server pe pahuncha   message                  number (INCR seq:arpan-ravi)
-pehle                Arpan: "kal milein?"     42
-uske baad            Ravi:  "haan, 5 baje"    43
+pehle                Arpan: "kal milein?"     44
+uske baad            Ravi:  "haan, 5 baje"    45
 ```
 
 Ghadi ki zaroorat hi nahi, bas ek counter hai jo har message pe +1 hota hai. Dono ek hi pal me pahunche to
-bhi Redis ek baar me ek hi kaam karta hai, ek ko 42 milega aur doosre ko 43, kabhi same nahi (rate limiter
+bhi Redis ek baar me ek hi kaam karta hai, ek ko 44 milega aur doosre ko 45, kabhi same nahi (rate limiter
 ki Lua wali baat).
 
 Message ke neeche jo "10:02" dikhta hai, wo sirf dikhane ke liye hai. Server message pe apna time likhta
@@ -329,8 +329,8 @@ scope se bahar hai, to server khud kram de sakta hai. Interview me itna hi bolo.
 flowchart LR
     A["Arpan: kal milein?"] --> S["Chat server"]
     RV["Ravi: haan, 5 baje"] --> S
-    S -- "INCR seq:arpan-ravi" --> R[("Redis<br/>42, phir 43")]
-    S --> D[("Cassandra<br/>42 · 43, number se kram")]
+    S -- "INCR seq:arpan-ravi" --> R[("Redis<br/>44, phir 45")]
+    S --> D[("Cassandra<br/>44 · 45, number se kram")]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -384,22 +384,22 @@ nishaan.
 Ilaaj: har user ka har chat me bas **ek number**, ki wo kahan tak pahuncha aur kahan tak padha:
 
 ```
-Ravi, chat arpan-ravi:   pahuncha_upto = 43    padha_upto = 41
+Ravi, chat arpan-ravi:   pahuncha_upto = 45    padha_upto = 41
 ```
 
-Ek tick (server ke paas pahuncha) kadam 4 wala ack hai. Do grey tick: Ravi ki app ne bola "43 tak mil gaye",
-to `pahuncha_upto = 43`, aur Arpan ko batate hain ki 43 tak ke message pe do tick. Neeli tick: Ravi ne chat
-kholi aur 43 tak dekhe, to `padha_upto = 43`, aur Arpan ko 43 tak neela. Unread ginti: chat ka aakhri number
-980, Ravi ka `padha_upto` 930, to 980 - 930 = 50 unread. Kuch ginna nahi pada, bas ek ghatana.
+Ek tick (server ke paas pahuncha) kadam 4 wala ack hai. Do grey tick: Ravi ki app ne bola "45 tak mil gaye",
+to `pahuncha_upto = 45`, aur Arpan ko batate hain ki 45 tak ke message pe do tick. Neeli tick: Ravi ne chat
+kholi aur 45 tak dekhe, to `padha_upto = 45`, aur Arpan ko 45 tak neela. Unread ginti: College Gang ka aakhri number
+980, wahan Ravi ka `padha_upto` 930, to 980 - 930 = 50 unread. Kuch ginna nahi pada, bas ek ghatana.
 
 Kadam 7 ka number yahan bhi kaam aaya: ek number se "kahan tak" bata dete hain, har message ke liye alag
 nishaan nahi chahiye.
 
 ```mermaid
 flowchart LR
-    RV["Ravi ne chat kholi"] -- "padha_upto = 43" --> S["Chat server"]
-    S --> D[("DB<br/>ravi, arpan-ravi: padha_upto 43")]
-    S -- "43 tak neeli tick" --> A["Arpan"]
+    RV["Ravi ne chat kholi"] -- "padha_upto = 45" --> S["Chat server"]
+    S --> D[("DB<br/>ravi, arpan-ravi: padha_upto 45")]
+    S -- "45 tak neeli tick" --> A["Arpan"]
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -417,7 +417,8 @@ copy ek hi hai.
 flowchart LR
     A["Arpan app"] -- "video seedha" --> S3[("S3")]
     A -- "message: sirf link" --> S["Chat server"] --> RV["Ravi"]
-    RV -- "tap kiya to video" --> S3
+    RV -- "tap kiya to video" --> CDN["CDN"]
+    CDN --> S3
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -428,7 +429,7 @@ offline badalta rehta hai.
 
 Kadam 3 wala heartbeat hi kaam aata hai. Arpan ki app har 30 sec "main zinda hoon" bhejti hai, aur Redis me
 `online:arpan` ki entry 60 sec ki umar ke saath rehti hai (har heartbeat pe umar wapas 60). Arpan ne app
-band ki to heartbeat band, 60 sec me entry gayab, yaani offline, aur us waqt `last_seen = 10:30` likh do.
+band ki to heartbeat band, 60 sec me entry gayab, yaani offline. `last_seen` har heartbeat ke saath likhte hain, to aakhri heartbeat ka time (10:30) hi last seen hai.
 Ravi Arpan ki chat kholta hai to Redis se poochhta hai: entry hai to "online", nahi to "last seen 10:30".
 
 Har badlaav sabko kyun nahi batate? Arpan ke 500 contact hain. Uska har online / offline sab 500 ko bhejte,
@@ -477,7 +478,7 @@ Redis gira?        -> Redis ki copy (replica), alag zone me
 push fail?         -> Google / Apple bahar ki service hai, apna retry + line (queue)
 E2E chahiye?       -> server message padh hi nahi sakta: server pe search khatam, naya member purane message
                       nahi dekh sakta, chaabiyon ka poora system. Sabse bada scope badalne wala sawaal
-chal raha, kaise pata? -> message pahunchne ka p99, har server pe khuli connection, dobara judne ki dar,
+chal raha, kaise pata? -> message pahunchne ka p99 (100 me se 99 kitni der me), har server pe khuli connection, dobara judne ki dar,
                       push fail, alert
 AWS naam           -> Cassandra = Keyspaces / EC2 · Redis = ElastiCache · video = S3 + CloudFront
 ```
