@@ -228,3 +228,32 @@ Wahi outbox jo Kafka file me (wahan Order Svc, yahan Banking Svc).
 
 Par 11 baje sabki salary ek saath. Ek Banking Svc machine nahi jheli. Aur DB ek hi: gira to poora bank band.
 
+### Kadam 7: salary ki bheed + ek hi DB (kai machine + DB ki sync copy)
+
+Ilaaj 1: kai Banking Svc + aage LB. Chalta kyunki Banking Svc kuch yaad nahi rakhta (**stateless**), sach DB
+me.
+
+Ilaaj 2: DB ki **copy doosri building me** (RDS Multi-AZ). Primary gira -> copy primary.
+
+```
+ASYNC copy  -> primary "ho gaya" turant, copy baad me.
+               Primary gira = aakhri transfer copy tak nahi = hisaab gaya
+SYNC copy   -> "ho gaya" tabhi jab copy pe bhi likha.
+               Thoda dheema, par ek bhi transfer nahi khota  <- ISLIYE YE
+paise me "thoda dheema" chalta, "transfer kho gaya" nahi. Likhai sirf 120 / sec, dheemapan dikhta bhi nahi
+```
+
+```mermaid
+flowchart LR
+    U["sab log, 11 baje"] --> LB["LB"]
+    LB --> S1["Banking Svc 1"] & S2["Banking Svc 2"]
+    S1 & S2 --> P[("Primary DB")]
+    P -- "sync copy" --> C[("Copy, doosri building")]
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par salary aate hi sab balance + history dekh rahe. Padhna likhne se kahin zyada, aur sab primary pe.
+Primary bhara, transfer dheeme.
+
