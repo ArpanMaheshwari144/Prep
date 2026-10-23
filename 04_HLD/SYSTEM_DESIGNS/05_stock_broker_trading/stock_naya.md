@@ -208,11 +208,13 @@ flowchart LR
 Ye [banking kadam 2](../13_banking_system/13_banking_system.md#kadam-2-beech-me-server-gira-paisa-gayab-ek-transaction) jaisa: wahan DB pehle WAL (apna log) likhta, phir kaam, aur crash ke baad log padh ke
 wapas khada. Yahan bhi wahi soch: RAM bhool sakti hai, log nahi bhoolta.
 
-Dono machine ek saath milaan karein to tez nahi? Nahi. Ek waqt me milaan sirf primary karti hai, standby bas log
-padh ke book taiyaar rakhti hai. Dono milayein to ek hi Suresh do baar bik jaayega (Kadam 4 wali dikkat wapas).
+Dono machine ek saath milaan karein to tez nahi? Nahi. Ek waqt me milaan sirf primary karti hai, standby bas
+log padh ke book taiyaar rakhti hai. Dono milayein to ek hi Suresh do baar bik jaayega (Kadam 4 wali dikkat
+wapas).
 
 Standby ne log ka koi order dobara padh liya to? Har order aur sauda ka apna number (#1041, S-88). Same log se
-same book banti hai, aur sauda S-88 aage do baar nahi chalta, kyunki Kadam 6 me sauda id se hi paisa move hota.
+same book banti hai, aur sauda S-88 aage do baar nahi chalta, kyunki Kadam 6 me sauda id se hi paisa move
+hota.
 
 Par sauda S-88 ho gaya. Ab paisa Arpan se Suresh, share Suresh se Arpan. Arpan ka paisa wallet DB me, share
 portfolio DB me. Paisa kat gaya, aur share likhne se pehle portfolio DB band ho gaya. Arpan ke 35,000 gaye,
