@@ -204,3 +204,23 @@ Ye [URL kadam 8](../01_url_shortener/01_url_shortener.md#kadam-8-ek-link-viral-l
 
 Par Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. Redis ki RAM bhar rahi, aur Redis RAM
 mehngi hai.
+
+### Kadam 6: Redis ki RAM bhar rahi (inbox chhota karo)
+
+Ilaaj, 3 chhoti baatein:
+1. **inbox me sirf tweet id** (Kadam 2 se). Ek id ~8 byte, poora tweet nahi.
+2. **har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya aaya to sabse purana kaato.
+3. **sirf active logon ka inbox.** Jo 30 din se nahi aaya, uska inbox Redis me nahi (TTL se mit jaata). Wo wapas
+   aaye to pehli feed Kadam 1 wale tareeke se ek baar banao (DB se jod), aur inbox phir se bhar do.
+
+```
+pehle: 50 crore inbox x hazaron id                       -> RAM bhar gayi
+ab:    ~10 crore active x 800 id x 8 byte = ~640 GB         -> kai Redis machine me baant do (user_id se)
+```
+
+(10 crore active aur 8 byte, dono andaza.)
+
+Ek line: Redis me sirf wahi rakho jo sach me dekha jaata hai.
+
+Par roz 50 crore naye tweet tweets DB me jaate: 5,000 likhai / sec, saal bhar me sau TB. Ek SQL DB machine ye
+likhai aur jagah nahi jhel paayegi.
