@@ -55,3 +55,28 @@ Ek server tak chalta: tez, aur sab ek hi jagah gina ja raha.
 
 Par bheed badhi, 10 App server lage, aage LB. Arpan ki 5 login App 1 pe, 5 App 2 pe. Dono ne alag gina
 ("5 hi to hain"), 10 andar. Had toot gayi.
+
+### Kadam 2: kai server, ginti ek jagah (Redis)
+
+Ilaaj: ginti sabki EK jagah, **Redis**. Har App har request pe Redis se poochhe.
+
+```
+key   = rl:arpan:login          (kaun user + kaunsa kaam)
+INCR  -> 1, 2, 3 ...            (Redis me +1, nayi ginti wapas)
+umar  = 60 sec (TTL)            -> minute khatam, key khud gayab = ginti reset, safai ka job nahi
+6 aayi -> 429
+```
+
+```mermaid
+flowchart LR
+    U["Arpan"] --> LB["LB"]
+    LB --> S1["App 1"] & S2["App 2"]
+    S1 & S2 -- "INCR rl:arpan:login" --> R[("Redis<br/>arpan:login = 6")]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Redis kyun, DB kyun nahi? NFR: ~1 ms, 10,000 / sec. DB disk pe, har baar kai ms, site dheemi. Redis RAM me ~1 ms,
+aur data sirf 500 MB, RAM me aa jaata.
+
+Par "har minute 5" = ghadi ka minute (10:00 - 10:01). Bot ne 10:00:59 pe 5 bheji, 10:01:00 pe phir 5. Ek second me 10
+andar, kyunki minute badalte hi ginti 0.
