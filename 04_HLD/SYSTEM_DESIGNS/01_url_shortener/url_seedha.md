@@ -435,3 +435,19 @@ tez               -> Redis + local cache, DB tak kam hi jaata
 hamesha chale     -> kai App + LB, 3 copy, quorum
 ek code = ek link -> counter range, takkar kabhi nahi
 ```
+
+---
+
+## Pooche to (ek line)
+
+Koi bhi dabba gira? Har dabba akela nahi chalta, uski copy hoti hai (SPOF kahin nahi).
+
+```
+LB gira?          -> AWS ka LB (ALB), kai zone me, AWS khud sambhalta
+counter gira?     -> counter ki copy. Range ke bache number thodi der chala lete
+Redis gira?       -> Redis ki copy. Tab tak DB se, thoda dheema, link chalta
+AWS naam          -> Cassandra = Keyspaces / EC2 (RDS sirf SQL, Cassandra RDS pe NAHI)
+                     · Redis = ElastiCache · key-value = DynamoDB
+API               -> POST /api/shorten { long_url } -> { short_url } · GET /aB3x9 -> 302
+row               -> code (isi se machine tay) · long_url · created_at · band?
+```
