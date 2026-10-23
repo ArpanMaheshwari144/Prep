@@ -92,3 +92,39 @@ order kabhi book tak pahunchta hi nahi.
 
 Par Arpan ke wallet me 50,000 hain. Usne ek saath do order daale: TCS 30,000 ka aur INFY 30,000 ka. Dono
 Order Svc pe saath pahunche, dono ne dekha "50k hai, chalega", dono lag gaye. 60,000 ke order, paisa 50,000.
+
+### Kadam 3: paisa BLOCK (BMS ka seat HOLD, bas balance pe)
+
+Wallet me do khaane: **available** (khula paisa) aur **blocked** (order ke liye ruka paisa). Order book me
+jaane se pehle us order ka paisa block, ek hi query me:
+
+```sql
+UPDATE wallet SET available = available - 30000, blocked = blocked + 30000
+WHERE user = 'Arpan' AND available >= 30000;
+```
+
+```
+shuru:  available 50,000 | blocked 0
+TCS  :  50k >= 30k -> 1 row badli -> available 20,000 | blocked 30,000 -> order book me
+INFY :  20k >= 30k? nahi -> 0 row -> "paisa kam hai", order lagta hi nahi
+```
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "paisa BLOCK (ek query)" --> W[("Wallet<br/>available | blocked")]
+    O -- "1 row badli to hi" --> M["Matching engine"]
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ye [BMS kadam 3](../09_bookmyshow/09_bookmyshow.md#kadam-3-seat-hold-5-minute-umar-ke-saath-bms-ka-apna) jaisa: wahan seat HELD, yahan paisa BLOCKED. Query wahi
+[banking kadam 4](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) wali: "check + kaato ek query me".
+
+Aage kya:
+- sauda hua: blocked se paisa Suresh ko (Kadam 6).
+- order cancel / din khatam, bika nahi: blocked wapas available (BMS ka "hold mara to seat FREE").
+
+Bechne wale pe bhi yahi: Suresh ke paas 10 TCS. Usne do jagah "sell 10" daala. Pehle pe 10 share block, doosre
+pe "share kam hain". Ek share do baar nahi bik sakta.
+
+Par 9:15 baje market khula, 10,000 order / sec, aadhe sirf TCS pe. Ek hi TCS order book pe kai thread ek saath
+haath daal rahe hain. Do thread ne ek hi Suresh ko do kharidne walon se mila diya, book bigad gayi.
