@@ -1,8 +1,0 @@
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_P["Producer"]
-    n_B["Brokers A / B / C<br/>(partition)"]
-    n_C["Consumer"]
-    n_P --> n_B
-    n_B --> n_C
-    style n_B fill:#f9a825,color:#000

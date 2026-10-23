@@ -1,260 +1,378 @@
-# Design a Message Queue (Kafka-jaisa)
+# Message queue (Kafka): shuru se, ek kahani
 
-> **Pehle ye padh: [Kafka shuru se, dabbe aur teer se](kafka_seedha.md)**
+Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe
+se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
+file me ek hi kahani hai: Arpan ne Swiggy pe order kiya. Concepts kahani se padhne hon to
+[kafka_concepts.md](kafka_concepts.md).
 
-> Ek dabba jo khabar (event) le le aur kai services ko unki apni speed se de de, bina kisi ko roke, bina kuch khoye.
-> Dil: kisi ko roko mat (bahut saari khabar har second), kuch khoye nahi, aur ek user ki khabar kram me.
->
-> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
-> Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
-
----
-
-## Poori tasveer (aakhir me design aisa banta hai)
-
-![poora design](img/c10_2-56b5dd98.svg)
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+seedha call (dheema) -> Kafka topic (disk, padhne se mitta nahi) -> 10 tukde + key = userId
+-> team (consumer group) -> pehle kaam phir commit + eventId -> 3 copy + acks=all + min.insync
+-> outbox -> DLQ
 
 ---
 
-
-## Shuru
+## 1. FR: kya karna hai
 
 ```
-FR      producer daale, consumer uthaye. Ek message kai service tak jaaye (email + dashboard + analytics).
-        Purana dobara padh sakein. Ek user ki khabar kram me aaye
-NFR     kuch khoye nahi. Ek machine gire to bhi chale. Lakhon message har second (dil). Daalna ms me.
-        Ek key ka kram. 7 din rakho (replay). Consumer thoda peeche chale (lag) to theek hai
-NUMBERS 10 crore message roz / ~86,400 sec = ~1,200 / sec, bheed me 3-5 guna, ~5,000 / sec.
-        ~1 KB ka message -> ~100 GB roz, 7 din ~700 GB, 3 copy ~2 TB
-PEHLE   sabse simple = ek machine, uski memory me ek queue. Producer daale, consumer uthaye
+1. Order Svc ki khabar ("Arpan ne order kiya") kai service tak pahunche: SMS, Fraud, Analytics
+2. Order Svc kisi ka intezaar na kare
+3. ek user ki khabar kram me pahunche (order, phir pay, phir cancel)
+scope ke bahar (poochh ke hata do): duniya bhar ke region, exactly-once (Kafka se bahar)
 ```
 
-> [!IMPORTANT]
-> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
-> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
->
-> | rail | is design me | card |
-> |---|---|---|
-> | 1 kaam chala | Arpan ka order email tak · Arpan ka order 3 service ko (email, analytics, dashboard) | 1, 5 |
-> | 2 bheed aayi | 10 baje sale, 5,000 / sec, ek worker 500 | 2 |
-> | 3 machine giri | queue restart, 500 gayab · Broker A ki disk mari (**is design ka khaas: kuch khoye nahi**) · Kafka se pehle server gira | 1, 6, 8 |
-> | 4 do log ek saath | Arpan ne naam do baar badla · 3 machine, 3 email · email bheja, commit se pehle crash | 3, 4, 7 |
-> | 5 kuch dheema | C2 mara, lag badhta · ek khabar dheemi, tukda atka (card 9 ka cross-Q) | 9 |
-> | 6 data bada | disk bharti ja rahi, 7 din ~700 GB | 10 |
-> | 7 door ke log | nahi aata | - |
-> | 8 bahar ka hamla | nahi aata | - |
-
-
-> [!NOTE]
-> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
->
-> - Kafka khud → **Amazon MSK** (managed Kafka): broker, copy, Controller AWS sambhalta
-
----
-
-*ab tootega kahan? sabse pehle machine restart pe, kyunki sab RAM me hai*
-
-## 1. Subah queue machine restart hui, Arpan ka order + 499 aur gayab
-
-**Rail 3 MACHINE GIRI (restart)** · Cue: LOG disk pe + OFFSET
-
-<img src="img/c1_poster.png?v=5" width="1000" alt="card 1: kya toota, kaise bacha">
-
-
----
-
-*ab sale aayi, ek worker kitna jhelega?*
-
-## 2. 10 baje sale shuru, 5,000 / sec aaye, ek worker 500 hi bhej paata
-
-**Rail 2 BHEED AAYI** · Cue: PARTITION (tukde, alag machine)
-
-<img src="img/c2_poster.png?v=5c" width="1000" alt="card 2: kya toota, kaise bacha">
-
-
----
-
-*ab tukde ho gaye, par Arpan ki khabar kram me?*
-
-## 3. Arpan ne naam do baar badla, purana naam reh gaya
-
-**Rail 4 DO LOG EK SAATH (kram)** · Cue: KEY = userId (ek partition, kram)
-
-<img src="img/c3_poster.png?v=5" width="1000" alt="card 3: kya toota, kaise bacha">
-
-
----
-
-*ab ek service ki kai machine padh rahi*
-
-## 4. Email service ki 3 machine, Arpan ko 3 order email
-
-**Rail 4 DO LOG EK SAATH (group)** · Cue: CONSUMER GROUP (ek team)
-
-<img src="img/c4_poster.png?v=5" width="1000" alt="card 4: kya toota, kaise bacha">
-
-
----
-
-*ab group me baant diya, par doosri service ko bhi wahi khabar chahiye*
-
-## 5. Arpan ka order analytics aur dashboard ko bhi chahiye
-
-**Rail 1 KAAM CHALA (kai service)** · Cue: HAR SERVICE KA APNA GROUP
-
-<img src="img/c5_poster.png?v=5" width="1000" alt="card 5: kya toota, kaise bacha">
-
-
----
-
-*ab machine hi mar gayi to?*
-
-## 6. Dopahar Broker A ki disk mar gayi, data gaya
-
-**Rail 3 MACHINE GIRI (khaas)** · Cue: LEADER + ISR, acks=all
-
-<img src="img/c6_poster.png?v=5" width="1000" alt="card 6: kya toota, kaise bacha">
-
-
----
-
-*ab broker pe to bach gaya, consumer pe kho sakta?*
-
-## 7. Email bheja, "padh liya" bolne se pehle crash
-
-**Rail 4 DO LOG EK SAATH (dobara)** · Cue: PEHLE KAAM PHIR COMMIT + IDEMPOTENT
-
-<img src="img/c7_poster.png?v=5" width="1000" alt="card 7: kya toota, kaise bacha">
-
-
----
-
-*ab consumer sambhal gaya, par producer khud bhejne se pehle gira to?*
-
-## 8. Order #101 DB me bana, Kafka bhejne se pehle server gira
-
-**Rail 3 MACHINE GIRI (producer)** · Cue: OUTBOX + relay
-
-<img src="img/c8_poster.png?v=5" width="1000" alt="card 8: kya toota, kaise bacha">
-
-
----
-
-*ab sab bach gaya, par ek consumer mara to?*
-
-## 9. Shaam ko C2 mar gaya, lag badhta ja raha
-
-**Rail 5 KUCH DHEEMA (lag)** · Cue: REBALANCE + LAG alert + DLQ
-
-<img src="img/c9_poster.png?v=5" width="1000" alt="card 9: kya toota, kaise bacha">
-
-
----
-
-*ab khabar padi rehti hai, disk ka kya?*
-
-## 10. Raat ko broker ki disk bharti ja rahi
-
-**Rail 6 DATA BADA (disk)** · Cue: RETENTION 7 din + COMPACTION
-
-<img src="img/c10_poster.png?v=5" width="1000" alt="card 10: kya toota, kaise bacha">
-
-
----
-
-## Poora design ek saans me
+## 2. NFR: kaisa chalna chahiye
 
 ```
-Producer (key + acks, outbox) -> key se partition -> LEADER broker pe jodo (offset) -> follower copy (ISR)
--> har consumer group apne offset se padhe -> kaam -> commit · khabar retention tak padi (replay)
-Controller (KRaft) = naksha, do leader na banein · Redis = eventId dedup · DLQ = kharab message alag
-message = append-only file (segment ~1 GB + index), DB nahi · offset = __consumer_offsets
+- khabar kabhi na khoye
+- bheed me bhi chale (sale me 5,000 / sec)
+- ek service dheemi ho to baaki na rukein
 ```
 
-Bolne ke liye: bhejne wala khabar key ke saath bhejta, key se tukda tay hota, tukde ke andar kram. Har tukde ki
-copy, leader gira to saath chal rahi copy leader. Zaroori khabar tabhi done jab saath chal rahi saari copy (ISR) me
-likh gayi. Har service ki apni team, to ek khabar sab tak. Worker kaam ke baad "padh liya" bolta, id se dobara skip,
-kharab khabar DLQ me. 7 din rakhte, dobara padh sakte.
+## 3. Numbers
+
+```
+- roz 10 crore khabar -> ~1,200 / sec, sale me ~5,000 / sec
+- ek worker ~500 khabar / sec sambhal paata hai -> 5,000 / 500 = 10 tukde chahiye
+- ek khabar ~1 KB -> roz ~100 GB -> 7 din rakho to ~700 GB -> 3 copy = ~2 TB disk
+```
+
+"10 tukde" kadam 3 me kaam aayega, aur "7 din, 3 copy" baad me.
 
 ---
 
-## 10 guna traffic
+## 4. Design
 
-- **Partition**: consumer badhaye par partition 10 hi, to extra khaali baithe, lag badhta. Partition badhao. Par
-  partition badhane se hash(key) % n badalta, purani key doosre tukde pe ja sakti, kram toot sakta. Isliye shuru me
-  kuch extra partition.
-- **Dheema consumer**: aage wala (email API / DB) dheema. Consumer badhao (partition tak), batch, bhaari kaam alag topic.
-- **Garam partition**: ek bade customer ki key pe saara bojh. Key todo (userId#1..4), us key ka pakka kram chhodo. Ya
-  us customer ka alag topic. Consistent hashing ek garam key ko nahi bachata.
-- **Broker disk**: 2 TB tha, 10 guna = 20 TB. Retention 7 se 2-3 din, compaction, broker jodo, tiered storage / S3.
-- **Rebalance ki aandhi**: baar-baar deploy. Session-timeout theek karo, static membership, ek-ek karke deploy.
-- **Producer**: har jagah acks=all = dheema. Khabar ke hisaab se (payment = all, log = 1).
+### Kadam 1: sabse seedha (Order Svc seedha sabko call kare)
 
-**Pooche: garam key / garam partition?** Pehle machine badi karo, phir usi dabbe ko kai hisson me todo. Todna sahi
-direction. Badi machine kaafi kyun nahi? Group me ek partition ko ek hi consumer padhta, machine badi, padhne wala
-phir bhi ek. Misaal: user-9 ke saare event P2 pe. Key = "user-9#" + (eventId % 4), to 4 partition, 4 consumer saath
-padhein. Keemat: user-9 ka poora pakka kram gaya (har tukde ke andar bacha). Kram sach me chahiye to key chhoti cheez
-pe rakho (orderId / accountId), jahan kram chahiye bas wahan.
+Arpan ne order kiya. Order Svc order banata hai, phir khud SMS Svc, Fraud Svc aur Analytics ko ek-ek karke
+call karta hai, har ek ke jawab ka intezaar karta hai, aur tab jaake Arpan ko "order ho gaya" bolta hai.
 
-**Pooche: 10 guna kaise?** Message ka raasta chalo.
+```mermaid
+flowchart LR
+    U["Arpan"] --> O["Order Svc"]
+    O -- "call, intezaar" --> S["SMS Svc"]
+    O -- "call, intezaar" --> F["Fraud Svc"]
+    O -- "call, intezaar" --> A["Analytics"]
+    style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
-**Pooche: kahan se sab gir sakta?** Leader (ISR se promote), controller (KRaft quorum).
+Dikkat: SMS Svc dheema hai to Arpan ka order bhi dheema ho jaata hai. SMS Svc gira to order hi fail, jabki
+order ka SMS se koi lena-dena nahi. Aur kal koi naya Coupon Svc aaya, to Order Svc ka code badalna padega.
 
-**Pooche: chal raha hai, kaise pata?** Consumer lag, under-replicated partitions, DLQ size, alert.
+Order Svc ko kisi ka intezaar nahi karna. Wo khabar kahin daal de aur aage badh jaaye, aur jise chahiye wo
+wahan se le le. Par "kahin" ka matlab kahan?
+
+### Kadam 2: khabar kahan daalein (Kafka topic, disk pe)
+
+Order Svc khabar ek line (queue) me daal deta hai aur aage badh jaata hai. SMS, Fraud aur Analytics usi line
+se padhte hain. Par line kaisi ho? Ye asli choice hai:
+
+```
+SERVER KI MEMORY ME LIST  -> server restart = saari khabar gayab. NFR "kabhi na khoye" toota
+RABBITMQ (aam queue)      -> khabar ek ne padhi to line se nikal gayi (mit gayi).
+                             SMS ne padhi to Fraud ko mili hi nahi. Har service ke liye alag line banao
+KAFKA (topic, disk pe)    -> khabar disk pe likhi jaati hai, padhne se mit-ti NAHI.
+                             SMS, Fraud, Analytics teeno wahi khabar padhte hain, apni-apni jagah se
+```
+
+**Isliye Kafka.** Line ko Kafka me **topic** kehte hain (`order-events`). Padhne se khabar mit-ti nahi,
+isliye ek hi khabar teen service padh leti hain, aur kal Coupon Svc aaya to wo bas padhna shuru kar degi,
+Order Svc me ek line nahi badalti. Har service apna bookmark rakhti hai ki kahan tak padha (**offset**), to
+Fraud dheema hua to bas wo peeche rahega, SMS nahi rukega. Disk pe hai, to kuch din (jaise 7 din) rakhi
+rehti hai, aur kisi service me bug tha to bookmark peeche karke dobara padh sakte hain.
+
+```mermaid
+flowchart LR
+    U["Arpan"] --> O["Order Svc"]
+    O -- "khabar daali, aage badha" --> T[("KAFKA<br/>topic order-events")]
+    T --> S["SMS Svc"]
+    T --> F["Fraud Svc"]
+    T --> A["Analytics"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Diwali sale me har second 5,000 order. Saari khabar ek topic me, aur topic ek hi machine pe. Upar se SMS
+ka ek worker sirf 500 / sec sambhal paata hai. Line lambi hoti ja rahi hai.
+
+### Kadam 3: bheed (topic ke tukde = partition, aur key)
+
+Ilaaj: topic `order-events` ko andar se **10 tukdon** me baanto, har tukda alag machine pe. Ek tukde ko
+**partition** kehte hain. 10 isliye ki numbers me nikla tha: sale me 5,000 / sec, ek worker 500 / sec, to
+5,000 / 500 = 10. Ek tukda ek worker padhega, to 10 tukde = 10 worker ek saath.
+
+Par tukde karte hi nayi dikkat aati hai: kram. Arpan ki 3 khabar (order, pay, cancel) alag-alag tukdon me
+gayi, to padhne wala kis kram me padhe, koi bharosa nahi. "cancel" pehle padh liya to gadbad. Kafka me kram
+sirf ek tukde ke andar pakka hota hai, poore topic me nahi.
+
+Ilaaj: **key**. Order Svc har khabar ke saath ek key deta hai, `userId`. Same key hamesha same tukde me
+jaati hai:
+
+```
+tukda = hash(arpan) % 10 = 1   -> Arpan ki teeno khabar P1 me, kram se: order, pay, cancel
+Ravi ki khabar                -> P6 me (alag tukda, Arpan se koi lena-dena nahi)
+```
+
+Ye chat wali baat hi hai: wahan kram sirf ek chat ke andar chahiye tha, yahan sirf ek user ke andar.
+
+```mermaid
+flowchart LR
+    O["Order Svc<br/>key = userId"] --> P0 & P1 & P9
+    subgraph T["KAFKA · topic order-events · 10 tukde"]
+        P0[("P0")]
+        P1[("P1 · Arpan<br/>order, pay, cancel")]
+        P9[("P9")]
+    end
+    style P0 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style P9 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Tukde 10 se 20 kiye to? Tukda = hash(key) % ginti hai. Ginti badli to key ka tukda badal jaata hai: Arpan ki
+purani khabar P1 me rahegi, nayi kahin aur, thodi der kram toot sakta hai. Isliye shuru me hi zaroorat se
+2-3 guna tukde rakhte hain.
+
+Par SMS Svc ki 3 machine lagayi taaki 10 tukde jaldi padhe jaayein. Teeno machine saare tukde padhne lagin,
+aur Arpan ko ek order ke 3 SMS chale gaye.
+
+### Kadam 4: 3 machine, 3 SMS (consumer group)
+
+Teeno machine saare tukde padh rahi thi, to Arpan ki khabar teeno ke paas pahunchi aur teeno ne SMS bhej diya.
+
+Ilaaj: teeno machine ko ek **team** bana do, sabko ek hi team ka naam do (`group.id = "sms"`). Isse
+**consumer group** kehte hain. Kafka ka niyam hai: ek team ke andar har tukda sirf ek machine ko milta hai.
+
+```
+TEAM sms (3 machine), 10 tukde:
+  machine A -> P0, P1, P2, P3     (P1 = Arpan, to Arpan ka SMS sirf A bhejegi)
+  machine B -> P4, P5, P6
+  machine C -> P7, P8, P9
+```
+
+Arpan ko ab ek hi SMS jaata hai. Fraud alag team hai (`group.id = "fraud"`), to use apni poori copy milti
+hai, aur har team apna bookmark (offset) alag rakhti hai. Machine B gir gayi to Kafka uske tukde (P4, P5,
+P6) A aur C me baant deta hai, ise **rebalance** kehte hain.
+
+11vi machine lagayi to? 10 hi tukde hain, aur ek tukda ek hi machine ko milta hai. 11vi machine ke liye koi
+tukda bacha hi nahi, wo khaali baithegi. Tez karna hai to pehle tukde badhao.
+
+```mermaid
+flowchart LR
+    subgraph T["topic order-events"]
+        P1[("P1 · Arpan")]
+        P5[("P5")]
+        P8[("P8")]
+    end
+    subgraph S["TEAM sms"]
+        A["machine A"]
+        B["machine B"]
+        C["machine C"]
+    end
+    P1 --> A
+    P5 --> B
+    P8 --> C
+    T -. "poori copy" .-> F["TEAM fraud"]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par machine A ne Arpan ka SMS bheja, aur bookmark aage karne se pehle gir gayi. P1 machine B ke paas gaya, B
+ne bookmark dekha (abhi bhi purana), aur wahi khabar dobara padhi. Arpan ko 2 SMS.
+
+### Kadam 5: bookmark se pehle gira, 2 SMS (pehle kaam phir commit + eventId)
+
+Machine A ka kaam teen kadam ka tha: khabar padho, SMS bhejo, phir Kafka ko batao "yahan tak padh liya"
+(bookmark aage karna = **commit**). SMS bheja aur commit se pehle gir gayi. Bookmark purana hi raha, to B ne
+wahi khabar dobara padhi.
+
+Ulta karte (pehle commit, phir SMS) to commit hua aur SMS se pehle gira, bookmark aage chala gaya, aur ye
+SMS kabhi jaata hi nahi. Ye usse bhi bura hai. Isliye kram pakka hai: **pehle kaam, phir commit**. Khabar
+kabhi khoti nahi, bas kabhi-kabhi dobara aa jaati hai. Iska naam hai **at-least-once**: kam se kam ek baar,
+kabhi do baar.
+
+Dobara aayi khabar pakadne ke liye har khabar ki apni id hoti hai (**eventId**, jaise `E-6`). SMS bhejne se
+pehle machine dekhti hai ki ye id pehle ho chuki ya nahi:
+
+```
+E-6 aayi -> Redis / DB me dekho: E-6 ho chuki?
+             nahi -> SMS bhejo, E-6 likh do, commit
+             haan -> chhod do (dobara SMS nahi), commit
+```
+
+Ye chat wala `clientMsgId` aur banking wali idempotency key hi hai: dobara aaye to id se pehchaano. Ye
+pehchaanna padhne wale (SMS Svc) ka kaam hai, Kafka ka nahi.
+
+Exactly-once (theek ek baar) Kafka sirf Kafka se Kafka tak deta hai. SMS bahar ki cheez hai, wahan eventId
+hi rasta hai. Interview me bolo: "at-least-once + eventId se dohra kaam nahi."
+
+```mermaid
+flowchart LR
+    P1[("P1 · Arpan")] -- "E-6 cancel" --> A["TEAM sms<br/>1. SMS 2. commit"]
+    A -- "E-6 pehle ho chuki?" --> R[("Redis / DB<br/>eventId")]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan ki khabar P1 me thi, aur P1 Kafka ki ek machine (broker) pe tha. Us machine ki disk mar gayi. P1
+sirf wahin tha, to Arpan ki saari khabar hamesha ke liye gayi.
+
+### Kadam 6: Kafka ki machine mari (3 copy, acks=all, min.insync)
+
+Ilaaj: har tukde ki **3 copy**, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo **leader**
+hai, baaki do copy. P1 ka leader machine B pe, copy A aur C pe. B ki disk mari to A ya C naya leader ban
+jaata hai, aur Arpan ki khabar bach jaati hai. Naya leader kaun banega, ye Kafka ki ek machine tay karti hai
+jo sab pe nazar rakhti hai: **Controller**.
+
+Par ek pench: leader B ne khabar likhi aur turant Order Svc ko "ho gaya" bol diya, aur copy tak khabar
+pahunchne se pehle hi B mar gayi. Copy ke paas wo khabar thi hi nahi, to khabar gayi.
+
+Ilaaj: **acks=all**. Leader "ho gaya" tabhi bolta hai jab pakki copies pe bhi likh jaaye.
+
+```
+acks=0    bhej ke bhool jao (sabse tez, khabar kho sakti)
+acks=1    sirf leader ne likha to "ho gaya" (leader mara to aakhri khabar gayi)
+acks=all  saari pakki copies pe likha tab "ho gaya"     <- order / paisa ke liye
+```
+
+"Pakki copy" wo hai jo leader ke saath bilkul taaza chal rahi hai. Unki list ko **ISR** kehte hain. Peeche
+chal rahi copy ko leader nahi banate, warna aakhri khabar kho jaayegi.
+
+Sab copies gir gayi aur sirf leader bacha, to `acks=all` me "saari pakki copy" sirf leader khud hai, aur wo
+"ho gaya" bol dega jabki copy ek bhi nahi. Isliye saath me **min.insync = 2**: kam se kam 2 pakki copy na
+hon to likhna hi band. Khabar khone se behtar hai thodi der ruk jaana.
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "acks=all" --> L[("machine B<br/>P1 leader")]
+    L -- "copy" --> A[("machine A<br/>P1 copy")]
+    L -- "copy" --> C[("machine C<br/>P1 copy")]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par ab bhejne wala bacha. Arpan ne order cancel kiya. Order Svc ne DB me likha "order = cancel", aur Kafka
+ko khabar bhejne se pehle gir gaya. DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala.
+
+### Kadam 7: bhejne wala gira (outbox)
+
+Order Svc ko do kaam karne the: DB me "order = cancel" likhna, aur Kafka ko khabar dena. DB aur Kafka do
+alag cheezein hain, dono me ek saath, ek hi baar me likhne ka koi tareeka nahi. Pehla kaam hua, doosre se
+pehle Order Svc gira.
+
+Ilaaj: **outbox**. Khabar bhi usi DB me likh do, cancel ke saath, ek transaction me. Khabar jis table me
+jaati hai use outbox kehte hain. Ek chhota program **relay** har second outbox me `sent = false` wali khabar
+dhoondhta hai, Kafka ko bhejta hai (acks=all), aur Kafka "OK" bole to `sent = true` likh deta hai.
+
+```
+BEGIN
+  UPDATE orders SET status = cancel WHERE id = 101
+  INSERT outbox (E-6, "arpan ne cancel kiya", sent = false)
+COMMIT                      -> dono likhe gaye, ya koi nahi
+```
+
+Ab Order Svc kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha na khabar, Arpan
+dobara dabayega. Transaction ke baad gira to khabar outbox me padi hai, relay bhej dega. Relay ne bheja aur
+`sent = true` likhne se pehle gira, to relay dobara bhejega, aur SMS Svc us dohri khabar ko eventId se pakad
+lega (kadam 5). Ye banking kadam 6 wala outbox hi hai.
+
+Relay DB ko baar-baar poochta rahe to DB pe bojh? Bahut bada scale ho to relay ki jagah **CDC (Debezium)**
+lagate hain, jo DB ka apna log (WAL / binlog) padh ke khabar Kafka ko deta hai, table ko poochhna hi nahi
+padta.
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6")]
+    RL["Relay"] -- "sent = false" --> DB
+    RL -- "acks=all" --> K[("KAFKA")]
+    K --> S["TEAM sms<br/>eventId"]
+    style DB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab teeno jagah bachav: bhejne wala = outbox · Kafka = 3 copy + acks=all + min.insync · padhne wala = pehle
+kaam phir commit + eventId.
+
+Par ek khabar me galti thi (Arpan ka phone number hi galat). SMS Svc use bhejne ki koshish karta raha, fail
+hota raha, commit nahi kiya, aur P1 ki baaki saari khabar uske peeche atak gayi.
+
+### Kadam 8: ek kharab khabar ne line rok di (DLQ)
+
+Ek tukde me kram se padhna hota hai, aur machine agli khabar tabhi uthati hai jab pichhli ka commit ho
+jaaye. Arpan ki khabar me phone number galat tha, to SMS kabhi jaayega hi nahi. SMS Svc baar-baar koshish
+karta raha, aur P1 ki baaki khabar (Ravi, Sita ...) uske peeche atak gayi.
+
+Ilaaj: **DLQ (dead letter queue)**, kharab khabar ki alag line. Khabar fail hui to 3-4 baar ruk-ruk ke
+koshish karo. Phir bhi fail to use ek alag topic (`sms-dlq`) me daal do, commit karo, aur agli khabar pe
+badho. DLQ pe alert jaata hai, insaan dekhta hai, number theek karke dobara chalata hai. Ek kharab khabar
+poori line nahi rokti, aur khabar khoti bhi nahi.
+
+Turant DLQ kyun nahi, 3-4 baar koshish kyun? Kai baar fail hona kuch der ka hota hai (SMS company ek second
+ke liye dheemi thi), do-teen baar try karne pe chal jaata hai. Galat number jaisi galti har baar fail hogi,
+wahi DLQ me jaati hai.
+
+```mermaid
+flowchart LR
+    P1[("P1")] --> S["TEAM sms"]
+    S -- "3-4 baar fail" --> Q[("sms-dlq<br/>alag line")]
+    S -- "baaki khabar" --> OK["SMS chale gaye"]
+    Q -. "alert, insaan dekhe" .-> H["theek karke dobara"]
+    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par sale me SMS Svc dheema pad gaya. Khabar aa rahi 5,000 / sec, SMS Svc padh raha 3,000 / sec. Bookmark
+peeche chhoot-ta ja raha hai, Arpan ko SMS 10 minute late, aur kisi ko pata hi nahi chala.
 
 ---
 
-## Pooche to (kisi card me nahi baitha)
+## 5. Wrap (30 second me poora design, NFR se milao)
 
-API: producer send(topic, key, value) -> (partition, offset) ki rasid, acks = 0 / 1 / all. Consumer subscribe(topic,
-groupId), poll(timeout) ek saath kai, commit(offset), seek(partition, offset) = replay. Admin createTopic(name,
-partitions, replicationFactor) / deleteTopic / describeTopic. send() ek saath kai bhejta (batch), isliye bahut tez.
-Queue ki apni API jaan-boojh ke chhoti hai: send, poll, commit, seek. Saara business logic consumer me, broker me
-nahi. Isliye broker itna tez.
+Order Svc order aur khabar ek transaction me DB me likhta hai (outbox), relay khabar Kafka ko bhejta hai
+(acks=all). Kafka me topic `order-events` 10 tukdon me hai, key = userId taaki ek user ki khabar kram me
+rahe, aur har tukde ki 3 copy hain (min.insync = 2). SMS, Fraud aur Analytics alag-alag team hain, har team
+ko poori khabar milti hai, aur team ke andar ek tukda ek machine ko. Padhne wala pehle kaam karta hai phir
+commit, dobara aayi khabar eventId se pakadta hai, aur baar-baar fail hone wali khabar DLQ me jaati hai.
 
-Pull hai, push nahi: consumer apni speed se maangta, dheema consumer dab ke nahi marta. Keemat: agle poll tak thodi
-der. Push hota to broker dhakelta, dheema consumer doob jaata.
+```
+intezaar nahi        -> Order Svc khabar daal ke aage, sab apni speed se padhte
+khabar na khoye      -> outbox (bhejne wala) · 3 copy + acks=all + min.insync (Kafka) · pehle kaam phir commit
+kram                 -> key = userId, ek tukde me kram
+bheed                -> 10 tukde, team me tukde baant ke padhna
+ek dheema, baaki chalein -> har team ka apna bookmark
+```
 
-Message: offset (broker deta), timestamp, key (hash(key) % n), value (JSON / Avro), headers (traceId, eventType,
-retryCount).
+---
 
-Disk pe: /order-events/partition-0/ ke andar 00000000000000000000.log (message, sirf jodte, segment ~1 GB),
-00000000000000000000.index (offset se file me jagah). Segment bhara to naya, jaise 00000000000512340000.log.
+## Pooche to (ek line)
 
-Data 3 kism ka. Message (bahut, tez): append-only file, DB nahi, bachav = copy + acks. Naksha (kam, 100% sahi: topic /
-partition / leader / ISR): pakka sahi jagah (Zookeeper / KRaft-Raft), kyunki do broker khud ko ek partition ka leader
-samjhein to split-brain, data kharab. Consumer offset: __consumer_offsets.
-
-Kab Kafka: bhejne wale ko jawab ka intezaar nahi (order ke baad email / analytics), ek khabar kai service, bahut
-saari khabar + replay (log, clickstream, audit), bhejne / lene wale ki speed alag (bheed ka buffer).
-
-Kab nahi: turant jawab chahiye to REST / gRPC. Poore system ka pakka kram, ya simple kaam ki line + har message ka
-retry, to RabbitMQ / SQS (Kafka bahut bhaari). Chhota system, 2 service, to ek aur cheez sambhaalna mehnga.
-
-Keemat: "thodi der baad sahi" (lag), duplicate sambhaalna padta, debug mushkil (flow bikhra), ek aur cluster paalna
-(partition / retention / lag dekhna).
-
-Shabd atke to seedhi baat bolo. Partition = topic kai hisson me, har hissa alag machine pe. Offset = har hissa ek
-numbered list, har consumer yaad rakhta kis number tak padha. Consumer group = consumers ki ek team jo hisse aapas me
-baant leti. ISR = wo copy jo leader ke saath poori barabar chal rahi. Idempotent = wahi event do baar aaye to bhi kaam
-ek hi baar, kyunki event id rakhi hai. Compaction = har key ki sirf aakhri value rakho, purani phenko.
-
-Chhe baat, poora design ek-ek line me:
-1. Kyun: ek doosre ka intezaar todna. Producer bhej ke aage, consumer apni speed.
-2. Topic / partition: partition = scale, append-only log + offset. Key se kram EK partition me, poore topic me nahi.
-3. Group: group ke andar baanto, alag group = sabko. Kitne ek saath = partition ginti tak.
-4. Copy: leader / follower, naya leader sirf ISR se. acks 0 / 1 / all = tezi vs bachav.
-5. Delivery: at-least-once + idempotent consumer = asar exactly-once. Retention se replay.
-6. Trade-off: async + sabko + replay to Kafka. Turant jawab / poora kram to Kafka nahi.
+```
+chal raha, kaise pata?   -> lag naapo (tukde ki aakhri khabar - team ka bookmark), had se zyada = alert,
+                            machine badhao (tukdon ki ginti tak).
+                            Saath me DLQ ka size, peeche chal rahi copies
+machine badhi / giri?    -> rebalance: Kafka tukde dobara baant-ta hai.
+                            Naye tareeke (cooperative) me sirf wahi machine rukti jiske tukde badle
+kaam lamba, poll nahi kiya? -> Kafka machine ko mara samajh ke uske tukde le leta hai (max.poll.interval.ms).
+                            Ek baar me kam khabar uthao, ya time badhao
+disk bhar rahi?          -> 7 din se purani khabar hatao (retention)
+sirf aakhri value chahiye? -> compaction: har key ki sirf aakhri khabar rakho (jaise user ka aakhri pata)
+garam key?               -> ek user ki bahut khabar: key me number jodo (user-9#1 .. #4), 4 tukde, 4 machine.
+                            Keemat: us user ka poora kram gaya, har tukde ke andar bacha
+Kafka kab, kab nahi?     -> kab: intezaar todna, ek khabar kai service, replay, bheed ka buffer.
+                            Nahi: turant jawab chahiye (REST / gRPC),
+                            chhota system (ek aur cheez paalna mehnga)
+pull ya push?            -> pull: padhne wala apni speed se maangta, dheema padhne wala doobta nahi
+kahan se gir sakta?      -> leader (pakki copy naya leader) ·
+                            Controller (Kafka me kai machine ka group, KRaft)
+API                      -> send(topic, key, value) -> (tukda, number) · poll() · commit(offset) ·
+                            seek(offset) = dobara padhna
+AWS naam                 -> MSK (Managed Kafka)
+```
 
 ---
 
 ## HANDS-ON — EVENT KAHAN KHOTA HAI: 3 jagah crash karwa ke dekha
 
 Grill sawaal (bank): "paisa kata -> event SMS / fraud / statement tak. Ek bhi event kho na jaaye, kaise?"
-SAGA nahi: saga = faile kaam ko ULTA karna. Yahan ulta nahi, event RASTE me kho raha.
-Sahi soch jo thi: "pehle pakka likho" = OUTBOX.
-CODE: `04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java` (nakli, Docker nahi) · line 24 `FIX = false / true` -> `java EventLossDemo.java`
+SAGA nahi: saga = faile kaam ko ULTA karna. Yahan ulta nahi, event RASTE me kho raha. Sahi soch jo thi:
+"pehle pakka likho" = OUTBOX. CODE: `04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java` (nakli, Docker nahi)
+· line 24 `FIX = false / true` -> `java EventLossDemo.java`
 
 ```
 [Bank DB] --1--> [Kafka] --2--> (replica) --3--> [SMS service]
@@ -305,4 +423,3 @@ JAWAB:    Teen jagah se khabar khoti thi, teeno band ki:
 
 ---
 
-ARCHETYPE B/F · CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [sharding/partition](../../FOUNDATIONS/06_database_sharding.md) · saath: [notification](../04_notification_system/04_notification_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
