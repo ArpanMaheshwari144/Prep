@@ -242,3 +242,32 @@ Bolo: "Data simple hai, code se link. Join / transaction nahi, par 90 TB baantna
 isliye NoSQL key-value. AWS pe ho to DynamoDB, apna setup ho to Cassandra. Main Cassandra le raha hoon."
 
 Par ek DB machine gir gayi, to us pe pade saare link 404.
+
+### Kadam 7: ek DB machine giri (copy = replication)
+
+DB-C giri. Arpan ka `aB3x9` usi pe tha: link 404. Disk mari to hamesha ke liye gaya. NFR "hamesha chale" toota.
+
+Ilaaj: har link ki **3 copy**, teen alag machine pe. Cassandra khud karta: ring pe maalik machine + ghadi me agli 2.
+
+```
+aB3x9 -> DB-C (maalik) + DB-D + DB-A
+DB-C giri -> DB-D ya DB-A se padho, link chalta rahe
+```
+
+```mermaid
+flowchart LR
+    S["App"] --> C[("DB-C<br/>aB3x9 (gira)")]
+    S --> D[("DB-D<br/>aB3x9 copy")]
+    S --> A[("DB-A<br/>aB3x9 copy")]
+    style C fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+3 hi kyun?            -> 1 = machine gayi to link gaya. 3 = ek giri phir bhi 2 bachi. Aam taur pe yahi
+copy alag rack / zone -> ek rack ki bijli gayi to teeno ek saath na jaayein
+```
+
+Par Arpan ne abhi link banaya, dost ne turant khola. Likhai DB-C pe pahunchi, copy DB-D tak abhi nahi. Dost ki
+request DB-D pe gayi: 404, jabki link ban chuka tha.
