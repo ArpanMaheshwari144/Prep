@@ -125,7 +125,7 @@ Ye [BMS kadam 3](../09_bookmyshow/09_bookmyshow.md#kadam-3-seat-hold-5-minute-um
 [banking kadam 4](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) wali: "check + kaato ek query me".
 
 Aage kya:
-- sauda hua: blocked se paisa Suresh ko (Kadam 6).
+- sauda hua: blocked se paisa Suresh ko (Kadam 7).
 - order cancel / din khatam, bika nahi: blocked wapas available (BMS ka "hold mara to seat FREE").
 
 Bechne wale pe bhi yahi: Suresh ke paas 10 TCS. Usne do jagah "sell 10" daala. Pehle pe 10 share block, doosre
@@ -376,6 +376,14 @@ Order book DB me kyun nahi?
 Aadha bhara (partial fill)?
   -> Arpan ko 10 chahiye, Suresh 6 bech raha: 6 ka sauda, Arpan ke 4 book me khade. Blocked paisa bhi utna hi
      chhoota.
+
+Cancel kaise, aur cancel + sauda ek saath aa gaye to?
+  -> cancel bhi usi TCS line me jaata hai, wahi akela thread uthata (Kadam 4). Jo pehle line me, wahi pehle:
+     sauda pehle hua to cancel ka jawab "order bik chuka"; cancel pehle aaya to order book se hata, paisa wapas.
+
+MARKET order pe paisa kitna block?
+  -> bhaav pehle se pata nahi, to aakhri bhaav + thoda upar (jaise 5%) block. Sauda ke baad jo farak bacha,
+     wapas available me.
 
 Din khatam, order bika nahi?
   -> order cancel, blocked paisa / share wapas available (Kadam 3).
