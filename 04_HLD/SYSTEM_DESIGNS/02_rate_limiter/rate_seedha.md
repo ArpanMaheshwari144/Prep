@@ -109,3 +109,34 @@ bharta kaun?        -> koi job nahi. Request aane pe hisaab (lazy refill):
 Par bot ne ek saath 20 login bheje. 20 App ne ek saath padha "tokens = 5",
 sabne socha "bache hain", sabne 1 ghata ke likha.
 20 andar, jabki 5 jaane the.
+
+### Kadam 4: 20 ek saath aaye, sab andar (atomic, Lua script)
+
+Har request 3 kaam: padho -> jaancho -> likho. 20 ek saath:
+
+```
+App 1:  padha 5 -> "bache hain" -> likha 4
+App 2:  padha 5 -> "bache hain" -> likha 4      (App 1 ka likha abhi dikha hi nahi)
+...
+App 20: padha 5 -> "bache hain" -> likha 4      -> 20 andar, had 5
+```
+
+Ilaaj: teeno kaam EK kadam me (**atomic**). Redis me **Lua script**: refill + jaanch + ghatao, ek jhatke me.
+Redis ek baar me ek hi command chalata (single thread), script ke beech koi ghus nahi sakta.
+20 line me: pehli 5 ko token, baaki 15 ko 429.
+
+```mermaid
+flowchart LR
+    B["bot: 20 ek saath"] --> S["App x 20"]
+    S -- "Lua: padho + jaancho + likho<br/>ek jhatke me" --> R[("Redis<br/>ek-ek karke chalata")]
+    R -- "5 haan, 15 na" --> S
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+lock lagao?   -> har request pe lock lo + chhodo = 2 extra chakkar, lock wala atka to sab ruke. 1 ms toota
+sirf INCR?    -> atomic hai par sirf ginti. Token bucket me refill phir ghatana = do kaam, isliye Lua
+```
+
+Par limiter App ke andar. Bot ki 15 mana wali bhi LB se App tak aayi, App ne Redis poochha, tab 429.
+Mana karne me bhi hamare App ka time aur machine kharch.
