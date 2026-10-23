@@ -100,8 +100,8 @@ dhoondhna pad raha hai. DB itna bojh nahi jhel paayega.
 
 ### Kadam 3: kholne ka bojh (cache)
 
-Har baar DB me dhoondhna dheema (DB disk se padhta). Par zyadatar log wahi kuch link baar-baar kholte hain: Arpan ne
-Amazon sale ka link group me bheja, 1,000 log wahi ek link khol rahe. Har baar DB se wahi jawab laana bekaar.
+Har baar DB me dhoondhna dheema (DB disk se padhta). Par zyadatar log wahi kuch link baar-baar kholte hain:
+Arpan ne Amazon sale ka link group me bheja, 1,000 log wahi ek link khol rahe. Har baar DB se wahi jawab laana bekaar.
 
 Ilaaj: beech me **Redis** (memory me rakhta, bahut tez).
 
