@@ -285,3 +285,46 @@ maara to 1000 me se 700 SMS gaye hi nahi. Had me bheja aur ruk ke dobara koshish
 
 Par company ne "bhej diya" (200) bola. Kya Arpan ke phone tak pahuncha? Number band ho, ya phone off ho, to
 humein pata hi nahi chalta.
+
+### Kadam 9: company se "pahuncha ya nahi" (webhook + Tracking DB)
+
+Worker ne SMS company ko bheja, company ne turant 200 bola = "le liya". Par 200 ka matlab "Arpan ke phone
+tak pahunch gaya" nahi. Company abhi bhejegi. Arpan bole "OTP aaya hi nahi", to humare paas koi jawab nahi.
+
+Ilaaj, 3 hisse:
+
+1. **Company ki id rakho.** Company 200 ke saath apni id bhi deti hai: `msgId: TW-555`. Worker ise **Tracking
+   DB** me likhta hai: "order 999 ka SMS, company id TW-555, haal = BHEJA".
+2. **Webhook.** Baad me company khud humein call karti hai: `POST /webhook { msgId: TW-555, status: DELIVERED }`.
+   Hum TW-555 dhoondh ke haal badal dete hain: BHEJA se MILA, ya FAIL.
+   Phone off hai to SMS fail nahi hota: operator use rakh leta hai aur koshish karta rehta hai, phone on hote
+   hi SMS pahunchta hai, tab DELIVERED aata hai. FAILED tab aata hai jab number band / galat ho, DND ho, ya
+   phone kai din (aksar 1-3 din) off raha aur operator ne koshish band kar di.
+3. **Hastakshar (signature) jaancho.** Webhook bahar se aata hai, koi bhi nakli "DELIVERED" bhej sakta hai.
+   Company har webhook pe apni secret key se signature lagati hai. Hum check karte hain, match nahi to phenko.
+
+```mermaid
+flowchart LR
+    WS["SMS worker"] -- "bheja" --> C["SMS company"]
+    C -- "200 + msgId TW-555" --> WS
+    WS -- "999 | TW-555 | BHEJA" --> T[("Tracking DB<br/>(Cassandra)")]
+    C -- "webhook + signature:<br/>TW-555 DELIVERED" --> H["Webhook handler"]
+    H -- "haal = MILA" --> T
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+**Tracking DB = Cassandra, MySQL kyun nahi (asli choice):**
+- har message ki row likhni hai, aur har webhook pe ek update. 50 crore message / din = likhna hi likhna.
+- saal bhar me ~90 TB.
+- padhna seedha: "message 999 ka haal kya?", koi JOIN nahi.
+- ek row thodi der purani dikhe to chalega, paise ka hisaab nahi hai.
+
+Cassandra isi kaam ke liye bana: bahut likhna, machine jodte jao aur jagah badhti jaaye. MySQL ek machine pe
+90 TB / saal ke likhne me ghut jaayega, aur use todna (shard) humein khud karna padega.
+
+Ab kya theek hua: Arpan bole "OTP nahi aaya", to support dekh sakta hai: BHEJA tha, company ne FAIL bola,
+number DND pe tha.
+
+Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Svc ek hi baar me 1 crore
+khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.
