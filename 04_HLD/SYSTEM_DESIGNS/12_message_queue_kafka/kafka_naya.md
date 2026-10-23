@@ -130,3 +130,46 @@ purani khabar P1 me rahegi, nayi kahin aur, thodi der kram toot sakta hai. Isliy
 Par SMS Svc ki 3 machine lagayi taaki 10 tukde jaldi padhe jaayein. Teeno machine saare tukde padhne lagin,
 aur Arpan ko ek order ke 3 SMS chale gaye.
 
+### Kadam 4: 3 machine, 3 SMS (consumer group)
+
+Teeno machine saare tukde padh rahi thi, to Arpan ki khabar teeno ke paas pahunchi aur teeno ne SMS bhej diya.
+
+Ilaaj: teeno machine ko ek **team** bana do, sabko ek hi team ka naam do (`group.id = "sms"`). Isse
+**consumer group** kehte hain. Kafka ka niyam hai: ek team ke andar har tukda sirf ek machine ko milta hai.
+
+```
+TEAM sms (3 machine), 10 tukde:
+  machine A -> P0, P1, P2, P3     (P1 = Arpan, to Arpan ka SMS sirf A bhejegi)
+  machine B -> P4, P5, P6
+  machine C -> P7, P8, P9
+```
+
+Arpan ko ab ek hi SMS jaata hai. Fraud alag team hai (`group.id = "fraud"`), to use apni poori copy milti
+hai, aur har team apna bookmark (offset) alag rakhti hai. Machine B gir gayi to Kafka uske tukde (P4, P5,
+P6) A aur C me baant deta hai, ise **rebalance** kehte hain.
+
+11vi machine lagayi to? 10 hi tukde hain, aur ek tukda ek hi machine ko milta hai. 11vi machine ke liye koi
+tukda bacha hi nahi, wo khaali baithegi. Tez karna hai to pehle tukde badhao.
+
+```mermaid
+flowchart LR
+    subgraph T["topic order-events"]
+        P1[("P1 · Arpan")]
+        P5[("P5")]
+        P8[("P8")]
+    end
+    subgraph S["TEAM sms"]
+        A["machine A"]
+        B["machine B"]
+        C["machine C"]
+    end
+    P1 --> A
+    P5 --> B
+    P8 --> C
+    T -. "poori copy" .-> F["TEAM fraud"]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par machine A ne Arpan ka SMS bheja, aur bookmark aage karne se pehle gir gayi. P1 machine B ke paas gaya, B
+ne bookmark dekha (abhi bhi purana), aur wahi khabar dobara padhi. Arpan ko 2 SMS.
+
