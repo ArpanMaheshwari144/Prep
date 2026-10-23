@@ -197,15 +197,15 @@ flowchart LR
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Ack ka intezaar kyun: engine ne bheja aur turant gira, standby tak pahuncha hi nahi. Agar engine pehle hi milaan
-kar chuka hota, to wo sauda standby ko pata hi nahi. Ack = standby ke paas order pakka.
+Ack ka intezaar kyun: engine ne bheja aur turant gira, standby tak pahuncha hi nahi. Agar engine pehle hi
+milaan kar chuka hota, to wo sauda standby ko pata hi nahi. Ack = standby ke paas order pakka.
 
 Standby ko order kyun, book kyun nahi: standby wahi program chala raha, wahi order usi kram me milata hai, to
 uski RAM me apne aap wahi book banti hai. Ye [banking kadam 7](../13_banking_system/13_banking_system.md#kadam-7-salary-ki-bheed--ek-hi-db-kai-machine--db-ki-sync-copy) ki sync copy jaisa hi.
 
 Ek waqt me ek hi engine: heartbeat se tay hota hai ki primary mar gaya, tabhi standby kaam shuru karta hai.
-Purana primary wapas aaye to wo standby ban ke baithta hai. Do engine ek book pe chal gaye to ek Suresh do baar
-bik jaayega (**split brain**, sabse bada khatra).
+Purana primary wapas aaye to wo standby ban ke baithta hai. Do engine ek book pe chal gaye to ek Suresh do
+baar bik jaayega (**split brain**, sabse bada khatra).
 
 Snapshot: naya standby subah 9:15 se poora log padhe to minute lagenge. Har minute book ki photo (snapshot);
 naya standby aakhri photo + uske baad ka chhota log padhta hai.
