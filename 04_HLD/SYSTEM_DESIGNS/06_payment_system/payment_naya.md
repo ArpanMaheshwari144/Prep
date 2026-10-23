@@ -110,3 +110,35 @@ flowchart LR
 Par PENDING ka pakka kaise pata chale? Aur PSP ko call kiya, jawab se pehle HAMARA server gira. Restart pe
 yaad hi nahi call gayi thi ya nahi.
 
+### Kadam 4: pakka kaise pata chale + hamara server gira (PENDING pehle, webhook, poochne wala job)
+
+Ilaaj 1: PSP call se **PEHLE** DB me `t-50 = PENDING` (COMMIT). Server gira to restart pe DB me t-50 dikhta
+= pata kis ka pata karna. `t-50` PSP ke liye idempotency key bhi: dobara call pe bhi PSP ek hi baar kaate.
+
+Ilaaj 2: pakka jawab = **dono taraf se baat**:
+
+```
+WEBHOOK (PSP -> hum)   PSP khud message bhejta: "t-50 SUCCESS"
+                       sign ke saath: koi nakli "2000 daal do" na bheje, PSP ki secret chaabi se jaancho
+                       "PENDING hai TABHI SUCCESS karo" -> webhook do baar aaya to doosri baar kuch nahi,
+                       +2000 ek hi baar
+JOB (hum -> PSP)       har 5 min: jo 5 min se PENDING -> PSP se "t-50 ka kya hua?" (status API)
+                       message kho gaya / hamara server us waqt gira tha, tab bhi pakda
+RAAT                   PSP ki din bhar ki file se milaan (banking kadam 9 jaisa), farak = ALERT
+```
+
+Ek line: PSP khud bataye (tez) + hum khud poochhein (message kho gaya to) + raat ka milaan (pakka).
+
+```mermaid
+flowchart LR
+    S["Payment Svc"] -- "1. t-50 PENDING (pehle)" --> D[("SQL DB")]
+    S -- "2. call t-50" --> P["PSP"]
+    P -- "webhook: t-50 SUCCESS" --> S
+    J["Job, har 5 min"] -- "PENDING purane?" --> D
+    J -- "t-50 ka kya hua?" --> P
+    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan ne dukaan ko 500 bheje, aur dukaan ko paisa wallet me nahi, seedha apne BANK me chahiye (payout).
+Arpan ka wallet hamare DB me, dukaan ka bank bahar. Ek transaction nahi chalega.
+
