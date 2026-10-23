@@ -4,6 +4,10 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
 file me ek hi kahani hai: Arpan ko Ravi ke saath PVR ka 9 baje wala show dekhna hai, seat A1.
 
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+padho phir likho (do log ek seat) -> ek query UPDATE ... WHERE FREE -> HELD 5 min (hold_until)
+-> seat map Redis cache -> waiting room (token, signed parchi) -> pay: idempotency key + PSP webhook -> BOOKED
+
 **Teeno ka jod (banking, payment, BMS):** andar ka dhaancha ek hi hai. Jo kadam banking / payment me pehle
 se hai, wahan bas ek line "ye wahi hai"; poora sirf wahi jo BMS ka apna hai.
 
@@ -205,4 +209,120 @@ Bheed ko DB tak pahunchne se pehle hi rokna padta hai.
 Ek aadmi 50 tab khol ke line me 50 baar lage? Token user ke login se juda hai, ek user ek token. Bot ki bheed
 ke liye wahi rate limiter jo rate limiter file me hai.
 
+**Redis primary + copy dono gaye, to?** Pehle ek baat pakki: dil (ek seat ek hi ticket) SQL me hai, Redis me
+nahi. HOLD, BOOKED, payment sab SQL me. Redis poora gaya to system dheema ya ruka ho sakta, galat nahi.
+
+```
+1. SEAT MAP (dikhane wala cache) gaya
+   -> har BMS Svc apni memory me aakhri map 5 sec rakhta (chhota local cache)
+   -> lakhon "dekho" usi se, SQL tak sirf 5 sec me ek baar
+   -> map thoda purana dikhe to chalega (Kadam 4: faisla SQL karta)
+
+2. WAITING ROOM (line) gaya, concert ke beech
+   -> jo andar hain: unka token ek SIGNED parchi hai (umar ke saath)
+      BMS Svc parchi ka signature khud check karta, Redis nahi chahiye -> wo booking poori karte
+   -> jo line me the: line ka kram kho gaya
+      -> darwaza BAND (fail-closed): "booking thodi der me, ruko" page
+      -> seedha 2 lakh ko andar nahi chhodte, warna SQL ghut jaayega (Kadam 5 ki dikkat wapas)
+   -> Redis wapas -> line naye sire se
+```
+
+Darwaza band kyun, khula kyun nahi: rate limiter me fail-open = "Redis gira to sabko jaane do". Yahan khula
+chhoda to 2 lakh seedhe SQL pe, sabki booking atak jaayegi. Band rakha to kuch der koi book nahi karega, par
+jo andar hain unki booking poori, aur galat kuch nahi.
+
+Ek line: Redis gaya to raftaar aur line ki barabari gayi, sahi-galat nahi. Map local memory se, andar walon ki
+signed parchi chalti rahe, line ke liye darwaza band jab tak Redis wapas na aaye.
+
 Par Arpan andar gaya, A1 HOLD ki, Pay dabaya. Network gaya, app ne apne aap dobara bheja. Paisa do baar kata.
+
+### Kadam 6: pay dobara + paisa (banking kadam 3 + payment file)
+
+Naya kuch nahi, teen padhe hue tukde BMS me judte hain.
+
+**1. Idempotency key (banking kadam 3 wala hi):** app har "Pay" ke saath ek key bhejta hai,
+yahan wo key booking ki id hi hai: `booking B-77`. Payments table me `UNIQUE(booking_id)`.
+
+```
+pehla Pay  : B-77 -> table me nahi -> paisa kaato, row likho
+dobara Pay : B-77 -> row pehle se  -> "ho chuka", wahi purana jawab. Paisa dobara nahi kata
+```
+
+**2. Paisa bank se (payment file wala hi):** BMS khud bank se baat nahi karta. Payment file ka raasta: PSP
+(Razorpay), pehle PENDING, phir PSP ka webhook "SUCCESS".
+
+**3. Webhook aaya, tab seat pakki (BMS ka jod):**
+
+```
+PSP webhook "B-77 SUCCESS" --> Kadam 3 wali query: A1 HELD -> BOOKED (sirf agar umar baaki)
+                                   |-- 1 row badli -> ticket pakka, Arpan ko SMS / email (notification file)
+                                   |-- 0 row badli -> hold mar chuka tha, seat gayi -> paisa wapas (refund)
+```
+
+```mermaid
+flowchart LR
+    U["Arpan"] -- "Pay (key B-77)" --> S["BMS Svc"]
+    S --> P["Payment Svc<br/>(PENDING, UNIQUE booking_id)"]
+    P --> G["PSP -> bank"]
+    G -- "webhook: B-77 SUCCESS" --> S
+    S -- "A1 HELD -> BOOKED" --> D[("SQL DB: seats")]
+    S -- "ticket ka SMS" --> N["Notification"]
+    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Yahan teeno files ek saath judti hain: banking se key, payment se PSP + webhook, notification se ticket
+ka SMS.
+
+---
+
+## Wrap: 30 sec me poora design
+
+```
+Seat ka faisla SQL me ek query se: UPDATE ... WHERE status = FREE (banking kadam 4 wala), to ek seat kabhi do
+ko nahi. Seat chuni = HELD 5 min (hold_until), pay pe BOOKED, umar khatam to apne aap wapas. Seat map lakhon
+dekhte, isliye Redis cache (purana chalega, faisla SQL karta). Concert ki bheed: waiting room, har minute
+thode token, signed parchi. Pay pe idempotency key (booking id) + payment file ka PSP / webhook; webhook pe
+seat pakki, hold mar chuka to refund. Redis poora gaya to dheema, galat nahi.
+```
+
+---
+
+## Pooche to
+
+```
+API?
+  -> GET /shows/{id}/seats (FREE / HELD / BOOKED)
+     · POST /bookings { showId, seats } -> HOLD -> bookingId + umar
+     · POST /bookings/{id}/pay. User JWT se lo, body se nahi (warna kisi aur ke naam se book).
+
+Tables?
+  -> seats = show_id, seat_id, status, user_id, hold_until
+     bookings = booking_id, user_id, show_id, seats, status · payments = booking_id (UNIQUE), status
+
+SQL kyun, NoSQL kyun nahi?
+  -> sahi hona hi dil hai. Row lock + ek query se ek seat do ko bikna namumkin. NoSQL ka "thodi der baad sahi"
+     = do machine alag-alag "FREE" bol sakti, khatra. Data chhota (aaj + agla hafta), to shard bhi nahi.
+
+App machine giri to?
+  -> App kuch yaad nahi rakhta (stateless), hold SQL me. LB doosri machine pe bhej deta, kuch nahi gaya.
+
+SQL primary gira to?
+  -> sync copy (Multi-AZ) ~30-120 sec me primary banti. Booking = paisa, isliye copy sync. App wahi key se
+     dobara bheje (idempotent).
+
+2 seat ek saath (A1 + A2), ek mili ek nahi?
+  -> dono UPDATE ek hi transaction me. Dono ki "1 row badli" tabhi commit, warna rollback: dono milein ya
+     koi nahi.
+
+Chal raha hai, kaise pata?
+  -> booking p99, "0 row badli" (seat ja chuki) ginti, kitne hold umar se khatam,
+     waiting room me line kitni lambi.
+
+"BookMyShow sach me aise karta?"
+  -> mat bolo "BMS aise karta". Bolo "a common pattern for flash sales", unka andar ka pata nahi.
+```
+
+CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) ·
+[CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../06_payment_system/06_payment_system.md) ·
+[banking](../13_banking_system/13_banking_system.md) ·
+[<- MASTER SHEET](../../00_MASTER_SHEET.md)
