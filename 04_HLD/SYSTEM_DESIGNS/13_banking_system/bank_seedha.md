@@ -128,3 +128,28 @@ wahi k-77, amount 5000?      -> key ke saath request ka hash (amount + kisko).
 Par wallet me 600. Raat 9 baje Netflix ka 500 auto-debit aur Arpan ka 500 UPI ek saath. Dono ne padha 600,
 dono ko "chalega", dono kate. Balance -400.
 
+### Kadam 4: do kataai ek saath, balance -400 (check + kaato ek query me)
+
+Dono ne pehle padha (600), phir jaancha ("500 hai"), phir kaata. Teen alag kadam, beech me doosra ghus gaya.
+
+Ilaaj: jaanch + kataai **EK query** me:
+
+```
+UPDATE account SET balance = balance - 500
+WHERE id = 'arpan' AND balance >= 500
+-> 1 row badli = kat gaya · 0 row badli = paisa kam, mana
+```
+
+Kyun chalta: UPDATE jis row ko chhuta, us pe lock (row lock). Netflix pehle: 600 -> 100. UPI ruk ke
+intezaar, lock khulne pe `balance >= 500` NAYE number (100) pe jaanchti: fail, 0 row, mana.
+
+```mermaid
+flowchart LR
+    N["Netflix 500"] -- "pehle pahuncha" --> D[("arpan: 600 -> 100<br/>row lock")]
+    P["UPI 500"] -. "ruka, phir jaancha: 100 >= 500? nahi" .-> D
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan ne app kholi: "mere 500 kahan gaye, kab?" DB me sirf `balance = 100`. Kab, kisko, kuch pata nahi.
+NFR "har paisa trace ho" toota.
+
