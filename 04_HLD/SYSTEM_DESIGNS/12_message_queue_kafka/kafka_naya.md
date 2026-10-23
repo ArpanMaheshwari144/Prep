@@ -246,3 +246,45 @@ flowchart LR
 Par ab bhejne wala bacha. Arpan ne order cancel kiya. Order Svc ne DB me likha "order = cancel", aur Kafka
 ko khabar bhejne se pehle gir gaya. DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala.
 
+### Kadam 7: bhejne wala gira (outbox)
+
+Order Svc ko do kaam karne the: DB me "order = cancel" likhna, aur Kafka ko khabar dena. DB aur Kafka do
+alag cheezein hain, dono me ek saath, ek hi baar me likhne ka koi tareeka nahi. Pehla kaam hua, doosre se
+pehle Order Svc gira.
+
+Ilaaj: **outbox**. Khabar bhi usi DB me likh do, cancel ke saath, ek transaction me. Khabar jis table me
+jaati hai use outbox kehte hain. Ek chhota program **relay** har second outbox me `sent = false` wali khabar
+dhoondhta hai, Kafka ko bhejta hai (acks=all), aur Kafka "OK" bole to `sent = true` likh deta hai.
+
+```
+BEGIN
+  UPDATE orders SET status = cancel WHERE id = 101
+  INSERT outbox (E-6, "arpan ne cancel kiya", sent = false)
+COMMIT                      -> dono likhe gaye, ya koi nahi
+```
+
+Ab Order Svc kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha na khabar, Arpan
+dobara dabayega. Transaction ke baad gira to khabar outbox me padi hai, relay bhej dega. Relay ne bheja aur
+`sent = true` likhne se pehle gira, to relay dobara bhejega, aur SMS Svc us dohri khabar ko eventId se pakad
+lega (kadam 5). Ye banking kadam 6 wala outbox hi hai.
+
+Relay DB ko baar-baar poochta rahe to DB pe bojh? Bahut bada scale ho to relay ki jagah **CDC (Debezium)**
+lagate hain, jo DB ka apna log (WAL / binlog) padh ke khabar Kafka ko deta hai, table ko poochhna hi nahi
+padta.
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6")]
+    RL["Relay"] -- "sent = false" --> DB
+    RL -- "acks=all" --> K[("KAFKA")]
+    K --> S["TEAM sms<br/>eventId"]
+    style DB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab teeno jagah bachav: bhejne wala = outbox · Kafka = 3 copy + acks=all + min.insync · padhne wala = pehle
+kaam phir commit + eventId.
+
+Par ek khabar me galti thi (Arpan ka phone number hi galat). SMS Svc use bhejne ki koshish karta raha, fail
+hota raha, commit nahi kiya, aur P1 ki baaki saari khabar uske peeche atak gayi.
+
