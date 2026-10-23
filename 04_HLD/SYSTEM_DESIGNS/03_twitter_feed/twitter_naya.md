@@ -92,3 +92,41 @@ jagah 200 guna.
 
 Par Arpan ka dost Mohan chhota influencer hai, 5,000 follower. Mohan ne tweet dabaya, aur Tweet Svc 5,000 inbox
 me likh raha, uske baad hi "tweet ho gaya" bolega. Mohan ka button 5 second ghoomta raha.
+
+### Kadam 3: tweet turant, fanout peeche se (Kafka + fanout worker)
+
+Dikkat: tweet karne wala ruke nahi, 5,000 inbox me likhna peeche se ho, aur beech me kuch khoye nahi. Yahi
+notification kadam 2 wali dikkat hai, to wahi ilaaj.
+
+```
+Mohan: tweet --> Tweet Svc --1. tweets DB me save--> "tweet ho gaya" (turant)
+                           --2. khabar "T-950 by Mohan"--> [Kafka: tweets]
+                                                              |
+                                          fanout worker (kai machine) uthata
+                                          -> Mohan ke 5,000 follower nikaalo
+                                          -> har inbox me T-950 daalo
+```
+
+```mermaid
+flowchart LR
+    M["Mohan: tweet"] --> TS["Tweet Svc"]
+    TS -- "save + outbox" --> DB[("tweets DB")]
+    DB -- "relay" --> K[("Kafka: tweets")]
+    K --> FW["Fanout worker<br/>(kai machine)"]
+    FW -- "5,000 inbox me" --> IN[("Redis: inbox")]
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style FW fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab kya theek hua:
+- Mohan ka button turant ruk jaata hai.
+- 5,000 inbox me likhna worker peeche se karte. 2-3 sec lagein to chalega (NFR: feed 2-5 sec purani chalegi).
+- worker gira to khabar Kafka me padi, wapas aake wahin se uthata.
+- 5,000 tweet / sec ki bheed: worker badha do.
+
+Ek chhed: Tweet Svc ne DB me tweet save kiya, aur Kafka ko bhejne se pehle gira. Tweet DB me hai, par kisi ke
+inbox me nahi. Ilaaj wahi **outbox** ([Kafka file kadam 7](../12_message_queue_kafka/12_message_queue_kafka.md#kadam-7-bhejne-wala-gira-outbox)): khabar bhi usi transaction me outbox table me,
+relay use Kafka me daale.
+
+Par Virat Kohli ne match ke baad tweet kiya, 10 crore follower. Fanout worker 10 crore inbox me likhne baitha,
+ghanton lag gaye. Uske peeche Arpan, Mohan, sabke tweet line me atke.
