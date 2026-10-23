@@ -88,3 +88,36 @@ badalta hai, Order Svc nahi.
 
 Par Notification Svc ek hi line me teeno raaste bhej raha hai. SMS company dheemi hui to uske peeche Arpan
 ka push aur email bhi atak jaata hai.
+
+### Kadam 3: har raaste ki alag line (topic) aur apne worker
+
+Notification Svc ab company ko khud call nahi karta. Wo bas tay karta hai ki Arpan ko kis raaste bhejna hai,
+aur har raaste ki **alag Kafka line** me khabar daal deta hai: push wali line, email wali line, SMS wali line.
+Har line ke apne **worker** hain: push worker sirf push company ko bhejte, email worker sirf email company
+ko, SMS worker sirf SMS company ko.
+
+```mermaid
+flowchart LR
+    K[("Kafka")] --> N["Notification Svc<br/>(pasand + saancha)"]
+    N --> LP[("push line")]
+    N --> LE[("email line")]
+    N --> LS[("SMS line")]
+    LP --> WP["push worker"]
+    LE --> WE["email worker"]
+    LS --> WS["SMS worker"]
+    WP & WE & WS --> C["Push / Email / SMS company"]
+    style LP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style LE fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style LS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style WP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style WE fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style WS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab SMS company dheemi hui to sirf SMS line ruki. Arpan ka push aur email apni-apni line me aage nikal gaye.
+
+Ek fayda aur: har line ke worker alag-alag badha sakte hain. Sale me push zyada jaata hai, to push worker 100
+kar do, SMS ke 20 hi rehne do. Numbers wala "~175 worker" yahin baithta hai.
+
+Par email worker ne Arpan ko email bheja, aur Kafka ko "ho gaya" (commit) bolne se pehle hi wo machine mar
+gayi. Naya worker wahi khabar dobara uthata hai aur dobara bhejta hai. Arpan ko ek order ke do email aate hain.
