@@ -92,8 +92,8 @@ Par seat book karte hi paisa nahi aata, Arpan ko pay karne me 3 minute lagte hai
 
 ### Kadam 3: seat HOLD 5 minute, umar ke saath (BMS ka apna)
 
-Na pehle BOOKED, na pehle pay. Beech ka ek haal: **HELD** = "Arpan ke liye 5 min ruki hui". Seat 5 min Arpan ki;
-pay kiya to pakki, nahi kiya to apne aap wapas FREE.
+Na pehle BOOKED, na pehle pay. Beech ka ek haal: **HELD** = "Arpan ke liye 5 min ruki hui".
+Seat 5 min Arpan ki; pay kiya to pakki, nahi kiya to apne aap wapas FREE.
 
 ```sql
 -- seat chuni: HOLD (Kadam 2 wali ek query, bas haal HELD + umar)
@@ -127,9 +127,9 @@ flowchart LR
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Koi job chahiye jo 5 min baad seat FREE kare? Zaroori nahi. Shart query me hi likhi hai (`hold_until < now()`),
-to mara hua hold apne aap gina hi nahi jaata. Ek chhota job har minute purane HELD saaf kar deta hai, bas
-taaki seat map pe A1 jaldi khaali dikhe.
+Koi job chahiye jo 5 min baad seat FREE kare? Zaroori nahi. Shart query me hi likhi hai
+(`hold_until < now()`), to mara hua hold apne aap gina hi nahi jaata.
+Ek chhota job har minute purane HELD saaf kar deta hai, bas taaki seat map pe A1 jaldi khaali dikhe.
 
 Arpan ne 5:30 min pe pay kiya, hold mar chuka tha, aur seat Ravi le gaya? Paisa kat chuka, seat nahi mili ->
 paisa wapas (refund). Ye payment file wala hi hissa hai (PSP, PENDING, webhook).
