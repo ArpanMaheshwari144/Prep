@@ -153,3 +153,37 @@ flowchart LR
 Par Arpan ne app kholi: "mere 500 kahan gaye, kab?" DB me sirf `balance = 100`. Kab, kisko, kuch pata nahi.
 NFR "har paisa trace ho" toota.
 
+### Kadam 5: "mere 500 kahan gaye, kab?" (khaata = ledger)
+
+Balance sirf aakhri number, itihaas nahi.
+
+Ilaaj: har paisa hilne pe **khaata (ledger)** me line, usi transaction me, **double-entry** (ek se gaya, ek
+me aaya):
+
+```
+txn   account  amount  time       kisko / kisse
+t-91  arpan    -500    21:00:03   ravi
+t-91  ravi     +500    21:00:03   arpan
+
+BEGIN
+  idem k-77 · arpan -500 (check ke saath) · ravi +500
+  INSERT ledger (t-91, arpan, -500) · INSERT ledger (t-91, ravi, +500)
+COMMIT
+```
+
+```
+sirf INSERT       -> kabhi UPDATE / DELETE nahi. Galti = ulti line (+500 wapas), purani nahi mitti. Audit isi se
+double-entry kyun -> har transfer ki dono line jod = 0. Poore khaate ka jod 0 nahi = galti. Paisa na bana na gaya
+khaata = sach      -> balance = us account ki saari lines ka jod. Balance column bas tez padhne ki copy
+```
+
+```mermaid
+flowchart LR
+    U["Arpan"] --> S["Banking Svc"]
+    S -- "ek transaction" --> D[("SQL DB<br/>account (balance)<br/>ledger (sirf INSERT)<br/>idem")]
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Ravi ko SMS jaana chahiye ("500 aaye"). SMS service transaction ke andar call ki, aur wo giri hui thi.
+Ya poora transfer ruke, ya transfer ho aur SMS kabhi na jaaye.
+
