@@ -9,6 +9,12 @@ Zyadatar tukde pehle se padhe hue: Kafka worker ([notification](../04_notificati
 Redis ([URL](../01_url_shortener/01_url_shortener.md)), Cassandra + S3 ([chat](../14_chat_messaging/14_chat_messaging.md)).
 Iska apna: ek tweet laakhon logon ki feed me kaise pahunche (fanout), aur celebrity pe wo kaise mudta hai.
 
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+do table, har feed pe jod -> inbox pehle se (fanout) -> Kafka + fanout worker (+ outbox)
+-> celebrity: fanout nahi, padhte waqt DB se (hybrid) -> viral: har server ka apna cache
+-> inbox chhota (id, 800, sirf active: worker last_active dekhe) -> tweets Cassandra (author_id)
+-> video S3 + CDN -> India region (Kafka topic ki copy, har region apne inbox bhare)
+
 ---
 
 ## 1. FR: kya karna hai
@@ -355,3 +361,15 @@ Mohan (India) tweet --> Mumbai Kafka: tweets --copy--> US Kafka: tweets
 
 Copy peeche se (US tak kuch second) kyun chalta: NFR, feed 2-5 sec purani chalegi. US wale ko Virat ka tweet
 2 sec baad dikhe to dikkat nahi; bank jaisa "abhi ka abhi pakka" yahan nahi chahiye.
+
+---
+
+## Wrap: 30 sec me poora design
+
+```
+Tweet aaya: Tweet Svc use Cassandra me save karta (author_id se baanta), outbox se Kafka me khabar, turant
+"ho gaya". Fanout worker aam logon ke tweet ki id unke active followers ke Redis inbox me daalte (aakhri 800,
+soye hue ko chhod ke). Celebrity ka fanout nahi: feed padhte waqt unke aakhri tweet DB se, har server ke apne
+cache se 2 sec. Feed = inbox ki 50 id + celebrity ke tweet, milao, poora tweet DB se. Video S3 me, dekhne wale
+CDN se. Har desh ka apna region; Kafka topic ki copy doosre region jaati, wahan ka worker wahan ke inbox bhare.
+```
