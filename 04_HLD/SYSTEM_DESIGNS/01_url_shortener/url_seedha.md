@@ -283,9 +283,8 @@ LIKHO:  3 me se kam se kam 2 copy pe likh jaaye, tabhi Arpan ko "ban gaya"   (W 
 PADHO:  3 me se 2 copy se poochho, jo naya ho wo lo                         (R = 2)
 ```
 
-Kyun chalta: likhai 2 pe, padhai 2 se. Teen me se do-do chuno to ek copy dono me common aayegi hi, aur
-uske paas
-naya link hai.
+Kyun chalta: likhai 2 pe, padhai 2 se. Teen me se do-do chuno to ek copy dono me common aayegi hi,
+aur uske paas naya link hai.
 
 ```
 copy:      C     D     A
