@@ -171,3 +171,37 @@ tez.
 Par 12 baje Arijit Singh ke concert ki booking khuli. 2 lakh log ek hi second me, ek hi show pe "Book" daba
 rahe hain, seat sirf 5000. Saari HOLD query ek hi table ki chand rows pe toot padti hain. SQL lock ki line me
 phans jaata hai, sab ka app ghoomta rehta hai.
+
+### Kadam 5: waiting room (line me lagao, thode-thode andar bhejo)
+
+2 lakh log seedhe booking pe nahi jaate. Pehle ek **line** me lagte hain (Redis me line, jo pehle aaya wo aage).
+
+```
+12:00:00  2 lakh log "Book" --> [WAITING ROOM: Redis line]
+                                  Arpan: "aap 45,000 number pe ho, ~8 min"
+                                    |
+                                    | har minute sirf 2,000 ko token (andar aane ki parchi)
+                                    v
+                        token wale --> seat map --> HOLD query (Kadam 3) --> pay
+                        token ki umar 10 min, fir dobara line
+```
+
+```mermaid
+flowchart LR
+    B["2 lakh log<br/>Book dabaya"] --> W[("WAITING ROOM<br/>Redis line")]
+    W -- "har minute 2,000 ko token" --> S["BMS Svc"]
+    S -- "HOLD query" --> D[("SQL DB: seats")]
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+SQL pe ek waqt me sirf 2,000 log, 2 lakh nahi. Lock ki line chhoti, query tez. Aur jo pehle aaya wo pehle
+andar, to sabke saath barabari.
+
+Doosra kyun nahi, "SQL ki aur machine laga do"? Machine badhane se nahi chalega. Jhagda 5000 seat ki chand rows
+pe hai, aur ek row ka lock ek hi machine pe hota hai. Machine 10 kar do, A1 ki row phir bhi ek hi hai. Bheed ko
+DB tak pahunchne se pehle hi rokna padta hai.
+
+Ek aadmi 50 tab khol ke line me 50 baar lage? Token user ke login se juda hai, ek user ek token. Bot ki bheed
+ke liye wahi rate limiter jo rate limiter file me hai.
+
+Par Arpan andar gaya, A1 HOLD ki, Pay dabaya. Network gaya, app ne apne aap dobara bheja. Paisa do baar kata.
