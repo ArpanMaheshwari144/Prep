@@ -1,44 +1,43 @@
 # URL shortener: shuru se, ek kahani
 
-Kram video jaisa: **FR -> NFR -> numbers -> design**. Design sabse seedhe dabbe se shuru,
-har dikkat pe ek dabba judta. Peela = abhi juda. Kahani ek hi: Arpan ka Amazon link.
+Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se shuru
+hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file me ek hi
+kahani hai: Arpan ka Amazon wala link.
 
-**CUE (yahi kahani, yahi kram):** seedha (server + DB) -> counter + base62 -> Redis -> LB + counter range ->
-shard -> ring -> 3 copy -> quorum -> local cache (viral) -> lock + purana (stampede)
--> rate limit (bot)
+**CUE (yahi shabd yaad rakhne hain, kram se):** seedha (server + DB) -> counter + base62 -> Redis -> LB + counter range
+-> shard -> ring -> 3 copy -> quorum -> local cache (viral link) -> lock + purana jawab (stampede) -> rate limit (bot)
 
 ---
 
 ## 1. FR: kya karna hai
 
-Interviewer se pehle poochho, phir scope tay karo:
+Interviewer se pehle poochho, phir scope tay karo.
 
 ```
-1. lamba link do     -> 7 akshar ka chhota code milta hai (short.ly/aB3x9)
-2. chhota link kholo -> asli lambe link pe bhej do (redirect)
-scope ke bahar (poochh ke hatao): apna naam wala code, kitni baar khula ki ginti
+1. Arpan lamba link deta hai, use 7 akshar ka chhota code milta hai (short.ly/aB3x9)
+2. koi bhi chhota link khole, use asli lambe link pe bhej do (redirect)
+scope ke bahar (poochh ke hata do): apni pasand ka code, link kitni baar khula uski ginti
 ```
 
 ## 2. NFR: kaisa chalna chahiye
 
 ```
-- kholna TEZ ho        : click pe turant Amazon khule
-- hamesha chale        : link toota to Arpan ka bheja link bekaar
-- ek code = ek link    : do logon ko kabhi same code na mile
+- kholna TEZ ho: click karte hi turant Amazon khule
+- hamesha chale: link toot gaya to Arpan ka bheja hua link bekaar
+- ek code = ek link: do logon ko kabhi same code na mile
 ```
 
 ## 3. Numbers: sirf wo jo design badlein
 
 ```
-- roz 10 crore naye link        -> ~1,000 / sec banana
-- har link ~100 baar khulta     -> ~1 lakh / sec kholna
-- ek link ~500 byte, 5 saal     -> ~180 arab link -> ~90 TB
-- 7 akshar, 62 tarah ke         -> ~3.5 lakh crore code, kaafi
+- roz 10 crore naye link bante hain      -> ~1,000 link har second banane hain
+- har link ~100 baar khulta hai          -> ~1 lakh link har second kholne hain
+- ek link ~500 byte, 5 saal ka data      -> ~180 arab link -> ~90 TB
+- 7 akshar, har akshar 62 tarah ka       -> ~3.5 lakh crore code bante hain, kaafi hain
 ```
 
-Kholna banane se 100 guna, isliye aage cache aayega.
-90 TB ek machine me nahi aata, isliye aage DB ke tukde (shard).
-62 tarah = a-z (26) + A-Z (26) + 0-9 (10).
+Link kholna banane se 100 guna zyada hai, isliye aage cache aayega. 90 TB ek machine me nahi samata, isliye aage DB ke
+tukde (shard) aayenge. 62 tarah ke akshar matlab a-z (26), A-Z (26) aur 0-9 (10).
 
 ---
 
@@ -46,8 +45,8 @@ Kholna banane se 100 guna, isliye aage cache aayega.
 
 ### Kadam 1: sabse seedha (ek server, ek DB)
 
-Arpan ke paas lamba link hai (`amazon.in/dp/B0C...?ref=xyz`). Wo hamari site pe daalta hai,
-use `short.ly/aB3x9` milta hai. Koi bhi chhota link khole, hum use Amazon pe bhej dete hain.
+Arpan ke paas ek lamba link hai (`amazon.in/dp/B0C...?ref=xyz`). Wo hamari site pe daalta hai aur use `short.ly/aB3x9`
+milta hai. Koi bhi ye chhota link khole, hum use Amazon pe bhej dete hain.
 
 ```mermaid
 flowchart LR
@@ -59,36 +58,31 @@ flowchart LR
 
 ```
 BANAO:  lamba link aaya -> chhota code banao (aB3x9) -> DB me dono saath likho
-KHOLO:  aB3x9 aaya      -> DB me dhoondho -> browser ko bolo "is lambe link pe jao"
-                           (redirect, 302)
+KHOLO:  aB3x9 aaya -> DB me dhoondho -> browser ko bolo "is lambe link pe jao" (redirect, HTTP 302)
 ```
 
-DB kyun, server ki memory (Java HashMap) kyun nahi? Memory me rakhte to server restart hote hi
-saare link gayab. Link saalon chalna chahiye, isliye disk wala DB.
+DB kyun, server ki memory (jaise Java ka HashMap) kyun nahi? Memory me rakhte to server restart hote hi saare link
+gayab ho jaate. Link saalon chalna chahiye, isliye disk wala DB.
 
-Par chhota code `aB3x9` banega kaise, aur do logon ko same code na mile ye kaise pakka?
+Par chhota code `aB3x9` banega kaise? Aur do logon ko kabhi same code na mile, ye pakka kaise hoga?
 
 ### Kadam 2: code banana (counter + base62)
 
-Teen tareeke ho sakte the:
+Code banane ke teen tareeke ho sakte hain:
 
 ```
-(a) RANDOM:   7 akshar ulte-seedhe chuno (aB3x9Qz)
-(b) HASH:     lambe link ka MD5 nikaalo, uske pehle 7 akshar lo
-(c) COUNTER:  har naye link ko ek badhta number do (1, 2, 3 ...),
-              us number ko 62 akshar me likh do (base62)
+RANDOM:   7 akshar ulte-seedhe chun lo (aB3x9Qz)
+HASH:     lambe link ka MD5 nikaalo, uske pehle 7 akshar le lo
+COUNTER:  har naye link ko ek badhta number do (1, 2, 3 ...), aur us number ko 62 akshar me likh do (base62)
 ```
 
-```
-(a) random  -> do logon ko same code mil sakta. Har baar DB me dekho "pehle se hai?",
-               mila to dobara.
-               Link badhte gaye to takkar bhi badhti
-(b) hash    -> do alag link ke pehle 7 akshar same aa sakte. Wahi DB check, wahi dobara
-(c) counter -> har number naya, to code kabhi same nahi. DB check hi nahi chahiye. ISLIYE YE
-```
+Random me do logon ko same code mil sakta hai. Har baar DB me jaake dekhna padega ki ye code pehle se hai ya nahi,
+aur mila to dobara banana padega. Jaise-jaise link badhte hain, aisi takkar bhi badhti hai. Hash me bhi yahi dikkat
+hai: do alag link ke pehle 7 akshar same aa sakte hain. Counter me har number naya hota hai, to code kabhi same aata
+hi nahi, aur DB me jaanchne ki zaroorat bhi nahi. **Isliye counter.**
 
-Base62 = jaise 10 ko binary me `1010` likhte, waise number ko 62 akshar (a-z, A-Z, 0-9) me likho.
-1 arab bhi sirf 6 akshar me. 7 akshar me ~3.5 lakh crore number.
+Base62 aise samjho: jaise 10 ko binary me `1010` likhte hain, waise hi number ko 62 akshar (a-z, A-Z, 0-9) me likhte
+hain. 1 arab bhi sirf 6 akshar me aa jaata hai, aur 7 akshar me ~3.5 lakh crore number aate hain.
 
 ```mermaid
 flowchart LR
@@ -97,23 +91,23 @@ flowchart LR
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Abhi ek hi server, to counter bhi ek (DB ka apna auto-increment id bhi chal jaata).
+Abhi ek hi server hai, to counter bhi ek hi hai. Ye DB ka apna auto-increment id bhi ho sakta hai.
 
-Ab link ban rahe hain. Par har second 1 lakh log link khol rahe hain, aur har baar DB me
-dhoondhna pad raha hai. DB itna bojh nahi jhel paayega.
+Link ban rahe hain. Par har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna pad raha hai. DB itna
+bojh nahi jhel payega.
 
-### Kadam 3: kholne ka bojh (cache)
+### Kadam 3: kholne ka bojh (Redis cache)
 
-Har baar DB me dhoondhna dheema (DB disk se padhta). Par zyadatar log wahi kuch link baar-baar kholte hain:
-Arpan ne Amazon sale ka link group me bheja, 1,000 log wahi ek link khol rahe.
-Har baar DB se wahi jawab laana bekaar.
+DB disk se padhta hai, isliye har baar DB me dhoondhna dheema hai. Aur zyadatar log wahi kuch link baar-baar kholte
+hain. Arpan ne Amazon sale ka link group me bheja, to 1,000 log wahi ek link khol rahe hain. Har baar DB se wahi jawab
+laana bekaar hai.
 
-Ilaaj: beech me **Redis** (memory me rakhta, bahut tez).
+Ilaaj: beech me **Redis** lagao. Ye memory me rakhta hai, isliye bahut tez hai.
 
 ```
-KHOLO:  aB3x9 aaya -> pehle Redis me dekho
-          mila   -> turant redirect (DB ko chhua hi nahi)
-          nahi   -> DB se lao, Redis me rakh do, redirect (agli baar Redis se)
+aB3x9 aaya -> pehle Redis me dekho
+   mila   -> turant redirect, DB ko chhua hi nahi
+   nahi   -> DB se lao, Redis me rakh do, redirect. Agli baar Redis se hi milega
 ```
 
 ```mermaid
@@ -124,20 +118,21 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-```
-Redis bhar gaya?           -> memory DB se chhoti, saare 180 arab link nahi aate. Jo link sabse der se nahi
-                              khula, use hatao (LRU). Garam link Redis me, thande DB me
-server ki memory me kyun?  -> aage server kai honge: har ek ka cache alag, restart pe khaali.
-                              Redis sabke liye ek jagah
-```
+Redis bhar gaya to? Memory DB se chhoti hoti hai, saare 180 arab link usme nahi aate. Isliye jo link sabse der se nahi
+khula, use hata dete hain (LRU). Garam link Redis me rehte hain, thande link DB me.
 
-Par 1 lakh log kholne aa rahe hain, aur app server abhi bhi ek hi hai. Akela itna bojh nahi jhel paayega.
+Server ki apni memory me cache kyun nahi? Aage server ek se zyada honge. Har server ka cache alag hoga, aur restart pe
+khaali ho jaayega. Redis sab servers ke liye ek jagah hai.
 
-### Kadam 4: ek server kam pada (LB + kai server, counter range)
+Par 1 lakh log kholne aa rahe hain, aur unhe sambhalne wala app server abhi bhi ek hi hai. Wo akela ye bojh nahi
+jhelega.
 
-1 lakh log aur app server ek. Wo bojh nahi jhelega, aur wo gira to poori site band.
+### Kadam 4: ek server kam pad gaya (LB + kai server, counter range)
 
-Ilaaj: kai app server (maan lo 10), aage **Load Balancer (LB)**. LB har request kisi khaali server ko deta.
+Ek server bojh nahi jhelega, aur agar wo gira to poori site band ho jaayegi.
+
+Ilaaj: kai app server chalao (maan lo 10), aur unke aage ek **Load Balancer (LB)**. LB har request ko kisi khaali
+server pe bhej deta hai.
 
 ```mermaid
 flowchart LR
@@ -152,37 +147,34 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Server badhe to counter ki dikkat. Kadam 2 me counter ek tha, ab 10 server:
+Server badhate hi counter ki dikkat aati hai. Kadam 2 me counter ek tha, ab 10 server hain. Agar har server ka apna
+counter ho, to App 1 aur App 2 dono "number 5" de denge, yaani same code, aur NFR toot gaya. Agar har link pe sab
+server ek hi counter se poochhein, to wo ek counter hi bheed ban jaayega.
+
+Ilaaj: **counter range**. Ek beech ka counter (Redis me `INCRBY`, ya ZooKeeper) numbers ke dabbe baantta hai:
 
 ```
-har server ka apna counter   -> App 1 aur App 2 dono "number 5" denge = same code. NFR toota
-har link pe ek counter se    -> wo ek counter hi bheed ban jaata
-poochho
+App 1 ko: 1 - 1,000          App 1 khud 1, 2, 3 ... 1,000 deta jaata hai
+App 2 ko: 1,001 - 2,000      dabba khatam hone pe hi agla dabba maangta hai
+App 3 ko: 2,001 - 3,000      matlab beech wale se baat 1,000 link me sirf ek baar
 ```
 
-Ilaaj: **counter RANGE**. Ek beech ka counter (Redis `INCRBY` ya ZooKeeper) numbers ke dabbe baantta:
+Har server ki range alag hai, isliye do server kabhi same number nahi denge, aur beech wale counter pe bojh bhi nahi
+padta. App 1 beech me gir gaya to uske bache number (jaise 501 - 1,000) bekaar chale jaate hain. Koi dikkat nahi, 3.5
+lakh crore number hain.
 
-```
-App 1 ko: 1 - 1,000          App 1 khud 1, 2, 3 ... 1,000 deta jaata
-App 2 ko: 1,001 - 2,000      khatam hone pe hi agla dabba maangta
-App 3 ko: 2,001 - 3,000      -> beech wale se baat 1,000 link me ek baar
-```
-
-Range alag, to same number kabhi nahi. Beech wale pe bojh bhi nahi. App 1 beech me gira to uske bache number
-(501 - 1,000) bekaar: koi baat nahi, 3.5 lakh crore number hain.
-
-Par 5 saal me data ~90 TB. Itna ek DB machine me nahi aata.
+Par 5 saal me data ~90 TB ho jaayega. Itna ek DB machine me nahi samata.
 
 ### Kadam 5: data bahut bada (DB ke tukde = shard)
 
-5 saal me ~90 TB. Ek DB machine me nahi aata, aur ek machine itni padhai-likhai bhi nahi jhelti.
+90 TB ek DB machine me nahi aata, aur ek machine itni padhai-likhai bhi nahi jhel paati.
 
-Ilaaj: data kai DB machine me baanto (**shard**). Kaunsa link kis machine pe, ye code se tay:
+Ilaaj: data ko kai DB machine me baanto (**shard**). Kaunsa link kis machine pe jaayega, ye code se tay hota hai:
 
 ```
-machine = hash(aB3x9) % 10      -> maan lo 3
+machine = hash(aB3x9) % 10      -> maan lo 3 nikla
 BANAO:  aB3x9 -> DB machine 3 pe likho
-KHOLO:  aB3x9 -> wahi hash -> seedha machine 3 (baaki 9 ko chhuna hi nahi)
+KHOLO:  aB3x9 -> wahi hash -> seedha machine 3 se poochho, baaki 9 ko chhuna hi nahi
 ```
 
 ```mermaid
@@ -194,19 +186,19 @@ flowchart LR
     style D9 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Code se kyun baanta? Kholte waqt hamare paas sirf code hota hai. Code se hi machine nikal aati,
-to dhoondhna seedha ek machine pe.
+Code se hi kyun baanta? Kyunki link kholte waqt hamare paas sirf code hota hai. Code se hi machine nikal aati hai, to
+dhoondhna seedha ek machine pe hota hai.
 
-Par data aur badha, 10 se 11 machine kiye. Ab `% 10` ki jagah `% 11`,
-aur lagbhag har link ki machine badal gayi. Arpan ka `aB3x9` machine 3 me pada hai,
-par app use machine 7 me dhoondh raha: link 404.
+Par data aur badha, to 10 se 11 machine kar di. Ab `% 10` ki jagah `% 11` ho gaya, aur lagbhag har link ki machine
+badal gayi. Arpan ka `aB3x9` machine 3 me pada hai, par app use machine 7 me dhoondh raha hai. Link 404 dega.
 
 ### Kadam 6: machine badhi to link kho gaye (ring = consistent hashing)
 
-`% 10` se `% 11` kiya to lagbhag har link ki machine badli. Saara 90 TB idhar-udhar, tab tak link 404.
+`% 10` se `% 11` karte hi lagbhag saara 90 TB idhar-udhar shift karna padta, aur tab tak link 404 dete.
 
-Ilaaj: **ring**. Ek gol ghadi, 0 se 360 tak. Har DB machine ghadi pe ek jagah baithti. Har link ka code bhi
-hash hoke ghadi pe girta. Wahan se ghadi ki disha me chalo, jo pehli machine mile, link usi ka.
+Ilaaj: **ring**. Ek gol ghadi socho jisme 0 se 360 tak number hain. Har DB machine ghadi pe ek jagah baithti hai. Har
+link ka code bhi hash hoke ghadi pe ek jagah girta hai. Wahan se ghadi ki disha me chalo, jo pehli machine mile, link
+usi ka hai.
 
 ```mermaid
 flowchart LR
@@ -215,45 +207,43 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-```
-nayi machine DB-E juda (95 pe)  -> sirf 60 se 95 ke beech wale link DB-C se DB-E pe.
-                                   Baaki apni jagah.
-                                   % me lagbhag sab hilte, ring me sirf ek tukda (~1/11)
-ek machine pe zyada bojh        -> har machine ko ghadi pe kai jagah bithao (virtual nodes), bojh barabar
-```
+Nayi machine DB-E juda aur 95 pe baithi, to sirf 60 se 95 ke beech wale link DB-C se DB-E pe jaate hain. Baaki saare
+link apni jagah rehte hain. `%` me lagbhag sab hilte the, ring me sirf ek tukda hilta hai (11 machine ho to ~1/11).
+
+Kisi ek machine pe zyada bojh aa gaya to har machine ko ghadi pe ek ki jagah kai jagah bithao (virtual nodes). Tab
+bojh barabar batt jaata hai.
 
 ### DB kaunsa: SQL ya NoSQL?
 
-```
-data:  aB3x9 -> amazon.in/dp/B0C...   (bas code aur link)
-kaam:  code do, link lo               (na join, na transaction)
-size:  90 TB, kai machine pe baantna (shard + ring)
-```
+Data dekho: bas code aur link (`aB3x9 -> amazon.in/...`). Kaam bhi bas itna: code do, link lo. Na join chahiye, na
+transaction. Par 90 TB ko kai machine me baantna hai.
 
-```
-SQL (Postgres / MySQL)  -> taakat join + transaction, yahan chahiye hi nahi. Ek machine pe sabse achha.
-                           Baantna, ring, data shift = sab haath se. Jo chahiye nahi wo mila, jo chahiye
-                           wo khud banao. ISLIYE NAHI
-NoSQL key-value         -> kaam hi "key do, value lo". Ring + baantna + copy KHUD karta. ISLIYE YE
-DynamoDB                -> AWS chalata: machine, copy, baantna sab unka. Par AWS se bandhe, bada traffic
-                           = bhaari bill
-Cassandra               -> apni machines pe (ya AWS Keyspaces). Kisi se bandhe nahi, par chalana /
-                           dekhbhaal hamari team ka
-MongoDB?                -> chal jaata, par document DB. Document wali cheez chahiye hi nahi
-```
+SQL (Postgres / MySQL) ki taakat join, transaction aur pakke rishte hain, jo yahan chahiye hi nahi. SQL ek machine pe
+sabse achha chalta hai. 90 TB baantna, ring, aur machine judne pe data shift karna, ye sab SQL me haath se karna
+padta. Matlab jo taakat chahiye nahi wo mil rahi hai, aur jo chahiye wo khud banani padegi.
 
-Bolo: "Data simple hai, code se link. Join / transaction nahi, par 90 TB baantna hai. SQL me baantna haath se,
-isliye NoSQL key-value. AWS pe ho to DynamoDB, apna setup ho to Cassandra. Main Cassandra le raha hoon."
+NoSQL key-value ka kaam hi "key do, value lo" hai, jo hamara poora kaam hai. Ye data ko kai machine me khud baantta
+hai, ring khud chalata hai, aur har link ki copy bhi khud rakhta hai. **Isliye NoSQL.**
 
-Par ek DB machine gir gayi, to us pe pade saare link 404.
+Cassandra ya DynamoDB? Dono key-value hain, dono chalenge, bas farak ye hai ki chalata kaun hai. DynamoDB AWS chalata
+hai: machine, copy, baantna sab unka sar-dard, hum bas table banate hain. Par hum AWS se bandh jaate hain, aur bahut
+traffic pe bill bhaari hota hai. Cassandra apni machines pe khud chalate hain (ya AWS Keyspaces pe). Kisi company se
+bandhe nahi, par chalana aur dekhbhaal hamari team ka kaam hai. MongoDB bhi chal jaata, par wo document DB hai, aur
+hume document wali koi cheez chahiye hi nahi.
 
-### Kadam 7: ek DB machine giri (copy = replication)
+Interview me aise bolo: "Data simple hai, code se link. Join ya transaction nahi chahiye, par 90 TB kai machine me
+baantna hai. SQL me ye haath se karna padta, isliye NoSQL key-value. AWS pe ho to DynamoDB, apna setup ho to
+Cassandra. Main Cassandra le raha hoon."
 
-DB-C giri. Arpan ka `aB3x9` usi pe tha: link 404. Disk mari to hamesha ke liye gaya.
-NFR "hamesha chale" toota.
+Par ek DB machine gir gayi, to us pe pade saare link 404 denge.
 
-Ilaaj: har link ki **3 copy**, teen alag machine pe. Cassandra khud karta:
-ring pe maalik machine + ghadi me agli 2.
+### Kadam 7: ek DB machine giri (har link ki 3 copy)
+
+DB-C gir gayi. Arpan ka `aB3x9` usi pe tha, to link 404. Disk mari to link hamesha ke liye gaya. NFR "hamesha chale"
+toot gaya.
+
+Ilaaj: har link ki **3 copy**, teen alag machine pe. Cassandra ye khud karta hai: ring pe jo machine link ki maalik
+hai uske paas ek copy, aur ghadi ki disha me agli 2 machine pe ek-ek copy.
 
 ```
 aB3x9 -> DB-C (maalik) + DB-D + DB-A
@@ -270,30 +260,28 @@ flowchart LR
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-```
-3 hi kyun?            -> 1 = machine gayi to link gaya. 3 = ek giri phir bhi 2 bachi. Aam taur pe yahi
-copy alag rack / zone -> ek rack ki bijli gayi to teeno ek saath na jaayein
-```
+3 hi kyun? Ek copy ho to machine gayi to link gaya. Teen ho to ek gir bhi jaaye, phir bhi do bachti hain. Aam taur pe
+yahi chalta hai. Copy alag rack ya alag zone me rakhte hain, taaki ek rack ki bijli jaaye to teeno ek saath na jaayein.
 
-Par Arpan ne abhi link banaya, dost ne turant khola. Likhai DB-C pe pahunchi, copy DB-D tak abhi nahi. Dost ki
-request DB-D pe gayi: 404, jabki link ban chuka tha.
+Par Arpan ne abhi link banaya, aur dost ne turant khola. Likhai DB-C pe pahunchi thi, par copy DB-D tak abhi nahi
+pahunchi. Dost ki request DB-D pe gayi, aur use 404 mila, jabki link ban chuka tha.
 
 ### Kadam 8: link ban gaya, par dost ko 404 (quorum)
 
-Ilaaj: **quorum** = zyadatar (3 me se 2).
+Ilaaj: **quorum**, matlab zyadatar. 3 copy me se 2 ko zyadatar maante hain.
 
 ```
 LIKHO:  3 me se kam se kam 2 copy pe likh jaaye, tabhi Arpan ko "ban gaya"   (W = 2)
 PADHO:  3 me se 2 copy se poochho, jo naya ho wo lo                         (R = 2)
 ```
 
-Kyun chalta: likhai 2 pe, padhai 2 se. Teen me se do-do chuno to ek copy dono me common aayegi hi,
-aur uske paas naya link hai.
+Ye kyun kaam karta hai? Likhai 2 copy pe hui, aur padhai bhi 2 copy se ho rahi hai. Teen me se do-do chuno to kam se
+kam ek copy dono me common aayegi hi, aur uske paas naya link hai. Isliye 404 nahi aata.
 
 ```
 copy:      C     D     A
 likha:     haan  -     haan     (W = 2)
-padha:     haan  haan  -        (R = 2)  -> C dono me, naya link mila
+padha:     haan  haan  -        (R = 2)  -> C dono me hai, naya link mil gaya
 ```
 
 ```mermaid
@@ -307,36 +295,30 @@ flowchart LR
     style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-```
-W = 3 (teeno pe likho)?  -> ek machine giri to likhna band. Dheema bhi
-R = 1 (ek se padho)?     -> tez, par 404 wapas
-shart                    -> W + R > 3, tabhi common copy pakki
-aasan madad              -> link banate hi Redis me bhi daalo,
-                            dost turant khole to Redis se mil jaaye
-```
+Teeno pe likhte (W = 3) to ek machine girte hi likhna band ho jaata, aur dheema bhi hota. Ek se padhte (R = 1) to tez
+hota, par 404 wali dikkat wapas aa jaati. Shart bas itni hai: W + R > 3, tabhi common copy pakki hai.
 
-Par ek link viral ho gaya: cricket match ka link 1 crore log ek saath khol rahe, sab ek hi Redis machine pe.
+Ek aur aasan madad: link banate hi use Redis me bhi daal do. Dost turant khole to Redis se hi mil jaayega.
 
-### Kadam 9: ek link viral (hot link)
+Par ek link viral ho gaya. Cricket match ka link 1 crore log ek saath khol rahe hain, aur sab ek hi Redis machine pe ja
+rahe hain.
 
-Cricket match ka link 1 crore log ek saath. Ek link ki key Redis ki ek hi machine pe
-(Redis bhi key se baantta), to saara bojh usi pe. Wo dheemi, aur us pe pade baaki link bhi atke.
+### Kadam 9: ek link viral (local cache)
 
-Ilaaj 1: **app server ki apni memory me chhota cache (local cache)**.
-Bahut garam link har server 5-10 sec rakhe. Mila to request Redis tak jaati hi nahi.
-10 server = Redis tak 10 sec me bas 10 request.
+Redis bhi key ke hisaab se baant ke rakhta hai, to ek link ki key Redis ki ek hi machine pe hoti hai. Saara bojh usi
+ek machine pe gira. Wo dheemi padi, aur us pe pade baaki link bhi atak gaye.
 
-```
-local cache ki dikkat:
-  memory chhoti     -> saare 180 arab nahi, sirf kuch garam link
-  har server alag   -> App 1 me hai, App 2 me nahi
-  purana ho sakta   -> link band / badla, server 10 sec tak purana deta
-  restart = khaali  -> phir Redis se bharega
-URL me chaaron chhoti: link badalta nahi, 10 sec me taaza.
-Kadam 3 me "saare link" ki baat thi, yahan sirf garam, sirf thodi der
-```
+Ilaaj 1: **app server ki apni memory me chhota cache (local cache)**. Bahut garam link ko har app server apni memory
+me 5-10 second ke liye rakh leta hai. Link wahan mil gaya to request Redis tak jaati hi nahi. 10 app server hain, to
+Redis tak 10 second me bas 10 request jaati hain.
 
-Ilaaj 2: **Redis ki copy (replica)**, garam key 2-3 copy se padho.
+Kadam 3 me kaha tha "server ki memory me cache kyun nahi". Wahan saare link ki baat thi, jo memory me samate nahi, aur
+har server ka cache alag hota. Yahan sirf kuch garam link hain, aur sirf thodi der ke liye. Local cache ki chhoti
+dikkatein ye hain: memory chhoti hai, har server ka alag hai, link band ya badla to server 10 second tak purana
+deta rahega, aur restart pe khaali ho jaata hai. URL me ye chaaron chhoti hain, kyunki link badalta hi nahi aur 10
+second me sab taaza ho jaata hai.
+
+Ilaaj 2: **Redis ki copy (replica)**. Garam key ko Redis ki 2-3 copy se padho, taaki bojh batt jaaye.
 
 ```mermaid
 flowchart LR
@@ -350,32 +332,24 @@ flowchart LR
     style RR fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Browser hi yaad rakhe (301)?
+Browser hi link yaad rakh le to (301)? 301 ka matlab hai "hamesha ke liye yahin". Browser link yaad kar leta hai aur
+dobara hamare paas aata hi nahi, to bojh sabse kam hota hai. Par control chala jaata hai: koi link spam nikla aur use
+band karna ho, to bhi browser purane pe bhejta rahega. 302 ka matlab hai "abhi ke liye yahin", to har click hamare
+paas aata hai aur control hamare paas rehta hai. Interview me bolo: "302, kyunki control hamare paas rehta hai. Bojh
+cache se sambhal liya."
 
-```
-                       bojh bachaya        control (band / badlo)
-browser (301)          sabse zyada         nahi, browser ke haath (spam link band nahi, ginti nahi)
-local cache (10 sec)   bahut               haan, 10 sec me taaza
-Redis                  thoda               haan, turant
-```
-
-Bolo: "302, kyunki control hamare paas. Bojh cache se sambhal liya."
-
-Par match link ki Redis entry expire hui, aur usi pal 10,000 request ek saath "Redis me nahi"
-dekh ke DB pe toot padi (**stampede**).
+Par match link ki Redis entry ka time khatam hua, aur usi pal 10,000 request ne Redis me dekha, kuch nahi mila, aur
+sab ek saath DB pe toot padi (**stampede**).
 
 ### Kadam 10: entry expire hui, sab DB pe toot pade (stampede)
 
-Match link ki Redis entry ka time (TTL) khatam.
-Usi pal 10,000 request ko Redis me nahi mila, sab ek saath DB pe.
-
-Ilaaj 1: **sirf ek jaaye (lock / single flight)**.
+Ilaaj 1: **sirf ek request DB pe jaaye, baaki rukein (lock / single flight)**.
 
 ```
-pehli request  -> Redis me lock (SET lock:aB3x9 NX, 2 sec)
-                  mila -> DB se lao, Redis me rakho, lock hatao
-baaki 9,999    -> lock nahi mila -> 50 ms ruko, phir Redis -> mil gaya
-DB pe 10,000 ki jagah 1
+pehli request  -> Redis me lock lagao (SET lock:aB3x9 NX, 2 sec)
+                  lock mila -> DB se lao, Redis me rakho, lock hatao
+baaki 9,999    -> lock nahi mila -> 50 ms ruko, phir Redis dekho -> mil gaya
+DB pe 10,000 ki jagah sirf 1 request gayi
 ```
 
 ```mermaid
@@ -386,32 +360,32 @@ flowchart LR
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Lock wali request hi dheemi (DB dheema / server atka)? Baaki 9,999 khade rahenge. Ilaaj: **intezaar mat karao,
-purana do**. Redis me do time:
+Agar lock wali request hi dheemi pad gayi (DB dheema hai, ya wo server atak gaya), to baaki 9,999 khade intezaar karte
+rahenge. Iska ilaaj: kisi ko intezaar hi mat karao, purana jawab de do. Redis me link ke saath do time rakho. Soft
+time (1 ghanta) ke baad entry "purani" maani jaati hai, aur hard time (1 din) ke baad hi Redis se asal me hatti hai.
+Soft time nikal gaya to pehli request lock leke peeche se DB se taaza link laati hai, aur baaki sabko turant Redis ka
+purana link de diya jaata hai. URL me link badalta hi nahi, to purana bhi sahi hai.
 
-```
-soft time 1 ghanta  -> iske baad "purani"      soft nikla:  pehli -> lock, peeche se DB se taaza
-hard time 1 din     -> iske baad hi hatt-ti                 baaki  -> intezaar NAHI, purana link turant
-URL me link badalta hi nahi, to purana bhi sahi
-lock me time (2 sec)  -> lock wala atka / gira to lock khud hate
-DB call me timeout    -> 500 ms me nahi to chhodo, purana chalta rahe
-purana bhi nahi       -> 2-3 baar 50 ms ruk ke Redis, phir khud DB (timeout ke saath). Kabhi-kabhi hi
-```
+Phir bhi do suraksha rakho: lock me time lagao (2 second), taaki lock wala atak ya gir jaaye to lock apne aap hat
+jaaye. Aur DB call me timeout lagao (500 ms), taaki dheema DB sabko na roke. Agar purana link bhi nahi hai (pehli baar
+khula aur DB dheema), to baaki requests 2-3 baar 50 ms ruk ke Redis dekhengi, phir bhi na mile to khud DB pe jaayengi.
+Ye kabhi-kabhi hi hota hai.
 
-Ilaaj 2: sab ek saath expire na hon: TTL me thoda random (1 ghanta + 0-5 min).
+Ilaaj 2: sab entry ek saath expire na hon. TTL me thoda random jodo (1 ghanta + 0-5 minute).
 
-### Kadam 11: bot spam link bana raha (rate limit + link jaanch)
+### Kadam 11: bot spam link bana raha hai (rate limit + link ki jaanch)
 
-Bot har second hazaron link: counter / DB faltu bhar rahe,
-aur hamare chhote link pe dhokhe wali site (phishing).
+Ek bot har second hazaron link bana raha hai. Counter aur DB faltu bhar rahe hain, aur hamare chhote link pe dhokhe
+wali site (phishing) khul rahi hai.
 
-Ilaaj 1: **rate limit** sirf BANAO pe. Ek user / IP 1 min me 10 link, zyada pe `429`.
-LB / API gateway pe, Redis me ginti (token bucket).
-KHOLO pe nahi: kholna hi asli kaam (1 lakh / sec), spam banane se aata.
+Ilaaj 1: **rate limit**, sirf link banane pe. Ek user ya IP ek minute me sirf 10 link bana sakta hai, usse zyada pe
+`429 Too Many Requests`. Ye LB ya API gateway pe lagta hai, Redis me ginti rakh ke (token bucket). Link kholne pe rate
+limit nahi lagate, kyunki kholna hi hamara asli kaam hai (1 lakh / sec), spam banane se aata hai.
 
-Ilaaj 2: **link jaanch**. Banate waqt lamba link kaali list se milao (Google Safe Browsing).
-Baad me report aaye to DB me "band". 302 isliye kaam aaya: har click hamare paas, band link pe
-chetavani page (301 hota to browser seedha phishing pe).
+Ilaaj 2: **link ki jaanch**. Link banate waqt lambe link ko ek kaali list se milao (jaise Google Safe Browsing). Bura
+nikla to banne hi mat do. Baad me koi report kare to us code ko DB me "band" kar do. Kadam 9 me 302 rakha tha, wo
+yahin kaam aata hai: har click hamare paas aata hai, to band link pe chetavani page dikha dete hain. 301 hota to
+browser seedha phishing site pe le jaata.
 
 ```mermaid
 flowchart LR
@@ -425,35 +399,38 @@ flowchart LR
 
 ---
 
-## 5. Wrap (30 sec, NFR se milao)
+## 5. Wrap (30 second me poora design, NFR se milao)
+
+Link banana: request LB pe aati hai, rate limit lagta hai, phir kisi app server pe. App apni counter range se agla
+number leta hai, use base62 me code banata hai, aur Cassandra me likhta hai (ring se machine tay, 3 copy, 2 pe likhna
+pakka) aur Redis me bhi daal deta hai.
+
+Link kholna: LB se app pe. Pehle app ki apni memory (garam link), phir Redis (stampede pe lock + purana jawab), phir
+Cassandra (2 copy se padho). Mil gaya to 302.
 
 ```
-BANAO:  LB (rate limit) -> App: counter range -> base62 code -> Cassandra (ring, 3 copy, W=2) + Redis
-KHOLO:  LB -> App: local cache -> Redis (lock + purana) -> Cassandra (R=2) -> 302
-
-tez               -> Redis + local cache, DB tak kam hi jaata
-hamesha chale     -> kai App + LB, 3 copy, quorum
-ek code = ek link -> counter range, takkar kabhi nahi
+kholna tez         -> Redis + local cache, DB tak kam hi jaata
+hamesha chale      -> kai app + LB, har link ki 3 copy, quorum
+ek code = ek link  -> counter range, takkar kabhi nahi
 ```
 
 ---
 
 ## Pooche to (ek line)
 
-Koi bhi dabba gira? Har dabba akela nahi chalta, uski copy hoti hai (SPOF kahin nahi).
+Koi bhi dabba gira to? Aaj ke system me koi dabba akela nahi chalta, har ek ki copy hoti hai.
 
 ```
-LB gira?          -> AWS ka LB (ALB), kai zone me, AWS khud sambhalta
-counter gira?     -> counter ki copy. Range ke bache number thodi der chala lete
-Redis gira?       -> Redis ki copy. Tab tak DB se, thoda dheema, link chalta
-AWS naam          -> Cassandra = Keyspaces / EC2 (RDS sirf SQL, Cassandra RDS pe NAHI)
-                     · Redis = ElastiCache · key-value = DynamoDB
-API               -> POST /api/shorten { long_url } -> { short_url } · GET /aB3x9 -> 302
-row               -> code (isi se machine tay) · long_url · created_at · band?
-click ginti chahiye -> redirect turant, click ki khabar Kafka me, Analytics peeche gine (redirect ruke nahi)
-duniya bhar        -> Route 53 user ko paas wale region pe (geo-routing)
-10 guna            -> App badhao (padhne wale ~20, likhne wale 2 alag) · Redis garam rakho (LRU)
-                     · Cassandra machine / copy badhao
-kaunsa DB kitne tak -> MySQL ~1 arab row aaram se · Cassandra / DynamoDB usse bahut aage
-kaise pata chal raha -> redirect ka time (p99), galti ginti, alert
+LB gira?              -> AWS ka LB (ALB) kai zone me chalta hai, AWS khud sambhalta hai
+counter gira?         -> counter ki copy. Tab tak har app ki range ke bache number kaam chala lete hain
+Redis gira?           -> Redis ki copy. Tab tak DB se padho, thoda dheema, par link chalta rahega
+AWS naam              -> Cassandra = Keyspaces ya EC2 pe khud (RDS sirf SQL hai, Cassandra RDS pe NAHI chalta)
+                         · Redis = ElastiCache · key-value = DynamoDB
+API                   -> POST /api/shorten { long_url } -> { short_url } · GET /aB3x9 -> 302
+row                   -> code (isi se machine tay) · long_url · created_at · band?
+click ginti chahiye?  -> redirect turant karo, click ki khabar Kafka me daalo, Analytics peeche gine
+duniya bhar se log?   -> Route 53 user ko uske paas wale region pe bhejta hai (geo-routing)
+10 guna traffic?      -> app server badhao · Redis me garam link rakho (LRU) · Cassandra ki machine badhao
+kaunsa DB kitne tak?  -> MySQL ~1 arab row tak aaram se · Cassandra / DynamoDB usse bahut aage
+chal raha, kaise pata? -> redirect ka time (p99), galtiyon ki ginti, alert
 ```
