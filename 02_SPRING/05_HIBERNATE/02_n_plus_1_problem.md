@@ -319,12 +319,12 @@ SCALE: 1000 authors -> BAD = 1001 queries (DB tabaah) | GOOD = 1 query. Yehi sil
 3. DETECT = SQL logs (show-sql=true) me "same select repeat" dikhe -> N+1 hai. (interview: "kaise pakadoge?" -> logs.)
 4. distinct: Hibernate 5 me zaroori (join se parent duplicate). Hibernate 6+ (Boot 3+, tera usercrud)
    fetch-join ke duplicate parent KHUD hata deta -> DISTINCT likhna nuksaan nahi, par zaroori nahi.
+5. Connect: ye query-COUNT ka masla hai (kitni queries), INDEXING = per-query SPEED ka. Dono = DB performance.
 6. ★ @ManyToOne DEFAULT EAGER hai (@OneToMany LAZY). books.findAll() -> har book ka author alag
    query = ULTA N+1. Fix: @ManyToOne(fetch = FetchType.LAZY) + zaroorat pe JOIN FETCH.
 7. ★ JOIN FETCH (collection) + Pageable = Hibernate saari rows memory me laake page karta
    (log warning "firstResult/maxResults specified with collection fetch"). Fix: pehle parent ids
    ka page, phir un ids pe JOIN FETCH — ya @BatchSize.
-5. Connect: ye query-COUNT ka masla hai (kitni queries), INDEXING = per-query SPEED ka. Dono = DB performance.
 ```
 
 ### 7. Dobara kaise chalaye
