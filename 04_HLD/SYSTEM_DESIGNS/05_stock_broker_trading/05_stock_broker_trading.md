@@ -1,192 +1,394 @@
-# Stock Broker / Trading Platform
+# Stock trading (Groww / Zerodha): shuru se, ek kahani
 
-> User BUY / SELL order deta hai, system order match karta hai, paisa aur share sahi jagah pahunchte hain, sabko live price dikhta hai.
-> Dil do cheezein: paisa kabhi galat nahi (strong consistency), aur matching bahut tez (RAM me, microseconds). Finance interview me (JP / GS) yahi poochte: consistency, ACID, idempotency, ledger, audit.
->
-> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
-> Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
+Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe
+se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
+file me ek hi kahani hai: Arpan TCS ke 10 share 3500 pe kharidna chahta hai, Suresh apne 10 TCS 3500 pe
+bechna chahta hai.
+
+Ye paise wali tikdi ka chautha design hai: jo [banking](../13_banking_system/13_banking_system.md),
+[payment](../06_payment_system/06_payment_system.md) ya [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me pehle
+se hai, wahan bas ek line + link. Poora sirf wahi jo stock ka apna hai (order book, matching, 9:15 ki bheed).
+
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+order book + matching engine -> client_order_id UNIQUE -> paisa / share BLOCK -> ek share ek thread
+-> log + standby (ack ke baad milaan) -> Kafka trades (kai sunne wale) -> settlement (ulta nahi, PENDING)
+-> Price Svc + Redis pub/sub + WebSocket
 
 ---
 
-## Poori tasveer (aakhir me design aisa banta hai)
-
-![poora design](img/c8_2-41340ea6.svg)
-
----
-
-
-## Shuru
+## 1. FR: kya karna hai
 
 ```
-FR      scope pehle poochho (matching, price feed, risk, settlement). Hum karenge: buy / sell (LIMIT + MARKET,
-        aadha bhara / partial fill bhi), order match, paisa + share move (settlement), live price,
-        cancel / status. Scope ke bahar: risk / margin / IPO / mutual fund
-NFR     paisa hamesha sahi (strong, "thodi der baad sahi" nahi). Tez. Imaandar (jo pehle aaya wo pehle).
-        Har cheez ka record (audit)
-NUMBERS ~50 lakh user, ~50 lakh order roz, market ~6 ghante (~20,000 sec) -> ~250 order / sec.
-        9:15 pe jhatka, 10,000+ / sec. Price: ~10 lakh logon ka app khula, har second naya price
-        -> ~10 lakh / sec. Isliye matching RAM me, aur price PUSH (har user ka baar-baar poochhna nahi)
+1. buy / sell order dalna (LIMIT: "3500 pe hi", MARKET: "jo bhaav abhi hai")
+2. order milana (Arpan ka buy + Suresh ka sell = sauda)
+3. sauda hua to paisa Arpan se Suresh, share Suresh se Arpan
+4. live price dikhana, order ka haal (cancel bhi)
+scope ke bahar: margin / risk, IPO, mutual fund
 ```
 
-> [!IMPORTANT]
-> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
-> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
->
-> | rail | is design me | card |
-> |---|---|---|
-> | 1 kaam chala | buy / sell order, book me match, paisa + share move, live price | Shuru |
-> | 2 bheed aayi | 9:15 sab TCS pe · 10 lakh log price poochh rahe | 4, 8 |
-> | 3 machine giri | matching server gira, book gayab · settlement beech me gira · Portfolio DB band | 5, 6, 7 |
-> | 4 do log ek saath | ek tap do order · 50k me 30k + 30k · 10 share, do khareedar (**is design ka khaas: ek stock ek thread**) | 1, 2, 3 |
-> | 5 kuch dheema | alag nahi: har order pe DB lock = dheema, isliye matching RAM me | 4 |
-> | 6 data bada | nahi aata: ~250 order / sec, chhota | - |
-> | 7 door ke log | nahi aata | - |
-> | 8 bahar ka hamla | is file me nahi: rate limit = 02_rate_limiter | - |
-
-
-> [!NOTE]
-> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
->
-> - Paisa / order (SQL) → **AWS RDS (Postgres / MySQL)**: ACID: paisa aur order kabhi aadha nahi
-> - Order book → RAM me: DB nahi, log se wapas banti
-
----
-
-*ab tootega kahan? sabse pehle darwaze pe, jab ek tap do baar pahunche*
-
-## 1. Maine ek baar dabaya, order do lag gaye
-
-**Rail 4 DO LOG EK SAATH (retry)** · Cue: IDEMPOTENCY KEY (wahi id dobara)
-
-<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
-
-
----
-
-*ab order ek hai, par paisa do order me baant diya to?*
-
-## 2. Wallet me 50k the, phir bhi 30k-30k ke dono order lag gaye
-
-**Rail 4 DO LOG EK SAATH (wallet)** · Cue: check + block EK atomic query
-
-<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
-
-
----
-
-*ab paisa theek, par ek hi share do khareedaron ko?*
-
-## 3. Suresh ke paas 10 the, mujhe aur Mohan dono ko 10 mil gaye
-
-**Rail 4 DO LOG EK SAATH (khaas)** · Cue: ek symbol ek thread, book RAM me
-
-<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
-
-
----
-
-*ab ek thread hai, par 9:15 pe bheed aayi to?*
-
-## 4. 9:15 baje sab TCS pe toot pade
-
-**Rail 2 BHEED AAYI** · Cue: baanto mat, ek thread kaafi, line
-
-<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
-
-
----
-
-*ab sab RAM me hai, server gira to?*
-
-## 5. Server gira, poori order book gayab
-
-**Rail 3 MACHINE GIRI (book)** · Cue: pehle log, phir book; gira = replay
-
-<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
-
-
----
-
-*ab sauda hua, par paisa aadha pahuncha to?*
-
-## 6. Mera paisa kat gaya, Suresh ko mila hi nahi
-
-**Rail 3 MACHINE GIRI (settlement)** · Cue: ek transaction: chaaron ya koi nahi
-
-<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
-
-
----
-
-*ab paisa ek DB me, share doosre me, ek transaction nahi ban sakti to?*
-
-## 7. Dopahar: paisa Wallet DB me, share Portfolio DB me — INFY ka 20k kata, share nahi aaye
-
-**Rail 3 MACHINE GIRI (do DB)** · Cue: har step ka haal, aage badho
-
-<img src="img/c7_poster.png?v=4" width="1000" alt="card 7: kya toota, kaise bacha">
-
-
----
-
-*ab andar sab theek, par bahar 10 lakh log price maang rahe*
-
-## 8. 10 lakh log ek saath price poochh rahe, server baith gaya
-
-**Rail 2 BHEED AAYI (price)** · Cue: push (TV jaisa), WebSocket
-
-<img src="img/c8_poster.png?v=4" width="1000" alt="card 8: kya toota, kaise bacha">
-
-
----
-
-## Poora design ek saans me
+## 2. NFR: kaisa chalna chahiye
 
 ```
-User -> Order Svc (check + idempotency key) -> Wallet (paisa BLOCK)
--> Event Log / Kafka (number lagta, key = stock) -> Matching engine (ek stock ek thread, book RAM me)
--> Settlement (ek transaction, ya alag DB ho to step-step, aage hi) -> Wallet DB + Portfolio DB
-price: Matching -> Pub/Sub -> WebSocket -> users
-DB: paisa / order = SQL + ACID · order book = RAM · ledger = append-only (sirf jodo)
-    portfolio / history = read replica
+- paisa aur share hamesha sahi ("thodi der baad sahi" nahi)
+- imaandar: jo pehle aaya, wo pehle mile
+- 9:15 ki bheed jhele, har cheez ka record (audit)
 ```
 
-Bolne ke liye: order service check karti aur dobara order rokti (id se). Wallet paisa block karta. Order number ke
-saath log me jaata, phir har stock ka ek-thread matching engine RAM wali book me match karta. Sauda ek transaction,
-alag DB ho to step-step, match ke baad sirf aage. Price WebSocket se. Log se crash ke baad book wapas, aur hisaab ka
-record bhi. Aage: stop-loss, risk check, regulator ki report.
+## 3. Numbers
+
+```
+- 50 lakh order / din, market ~6 ghante (~20,000 sec) -> ~250 order / sec aam
+- 9:15 pe jhatka: 10,000+ order / sec
+- live price: ~10 lakh logon ka app khula, har second naya bhaav -> poochhne ki jagah PUSH
+```
 
 ---
 
-## 10 guna traffic
+## 4. Design
 
-- **Order Service**: stateless, kuch yaad nahi rakhti. Machine badhao + load balancer.
-- **Portfolio / history**: read replica (padhne ke liye DB ki copy).
-- **Matching**: book RAM me, yaad rakhta. Do chalti copy nahi (do book = ek share do baar bike). Standby log padhta
-  khada rehta, sirf pehla gire tab chalta. Stock ke hisaab se baanto: TCS ek engine pe, INFY doosre pe.
-- **Kafka**: partition pehle se zyada rakho (jaise 64). Beech me badhaya to key ki jagah badalti, ek stock ke order do
-  partition me, kram tootta.
-- **Price**: WebSocket server badhao.
+### Kadam 1: sabse seedha (Order Svc + matching engine + DB)
 
-**Pooche: 10 guna users ho gaye to kaise badhaoge?** Jo service kuch yaad nahi rakhti (order service), uski machine
-badhao + load balancer. Padhne wale data (portfolio, history) ki copy. Matching engine book yaad rakhta, do chalti
-copy nahi bana sakte (do book = gadbad), standby bas khada rehta. Engine ko stock ke hisaab se baanto: TCS ek machine,
-INFY doosri.
+Stock ka dil hai **order book**: har share ki do list.
+
+```
+TCS order book
+  KHARIDNE WALE (buy)          BECHNE WALE (sell)
+  Arpan  10 @ 3500             Suresh 10 @ 3500   <- bhaav mila -> SAUDA
+  Mohan   5 @ 3490             Ravi    8 @ 3510
+```
+
+Arpan ne order dala. Order Svc use **matching engine** ko deta hai. Engine dekhta hai: koi bechne wala 3500 ya
+usse kam pe hai? Suresh hai, sauda ho gaya. Phir DB me likha jaata hai: Arpan ka paisa ghata, share badhe;
+Suresh ka ulta. Kram ka niyam: ek hi bhaav pe do bechne wale hon, to jo pehle aaya usse pehle (price-time
+priority).
+
+```mermaid
+flowchart LR
+    U["Arpan: buy TCS 10 @ 3500"] --> O["Order Svc"]
+    O --> M["Matching engine<br/>(TCS order book)"]
+    M -- "sauda" --> D[("SQL DB<br/>paisa + share")]
+    style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Dikkat: Arpan ne "Buy" dabaya, network atka, app ne dobara bheja (ya do baar tap). Order book me Arpan ke do
+order lag gaye, 20 share kharid liye gaye, jabki use 10 chahiye the.
+
+### Kadam 2: ek tap, ek order ([banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) wali key)
+
+App har order ke saath apni ek id bhejta hai: `client_order_id = A-501`. Orders table me
+`UNIQUE(client_order_id)`.
+
+```
+pehla Buy  : A-501 -> table me nahi -> order likho -> order book me
+dobara Buy : A-501 -> pehle se hai  -> "ho chuka", wahi purana order lautao. Book me dusra nahi
+```
+
+```mermaid
+flowchart LR
+    U["Arpan: Buy (A-501)"] --> O["Order Svc"]
+    O -- "UNIQUE client_order_id" --> T[("Orders table")]
+    O -- "sirf pehli baar" --> M["Matching engine"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ye bilkul [banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) hai, bas paise ki jagah order. Order book me jaane se pehle ye check, to dohra
+order kabhi book tak pahunchta hi nahi.
+
+Par Arpan ke wallet me 50,000 hain. Usne ek saath do order daale: TCS 30,000 ka aur INFY 30,000 ka. Dono
+Order Svc pe saath pahunche, dono ne dekha "50k hai, chalega", dono lag gaye. 60,000 ke order, paisa 50,000.
+
+### Kadam 3: paisa BLOCK (BMS ka seat HOLD, bas balance pe)
+
+Wallet me do khaane: **available** (khula paisa) aur **blocked** (order ke liye ruka paisa). Engine tak
+jaane se pehle us order ka paisa block, ek hi query me:
+
+```sql
+UPDATE wallet SET available = available - 30000, blocked = blocked + 30000
+WHERE user = 'Arpan' AND available >= 30000;
+```
+
+```
+shuru:  available 50,000 | blocked 0
+TCS  :  50k >= 30k -> 1 row badli -> available 20,000 | blocked 30,000 -> order book me
+INFY :  20k >= 30k? nahi -> 0 row -> "paisa kam hai", order lagta hi nahi
+```
+
+```mermaid
+flowchart LR
+    O["Order Svc"] -- "paisa BLOCK (ek query)" --> W[("Wallet<br/>available | blocked")]
+    O -- "1 row badli to hi" --> M["Matching engine"]
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ye [BMS kadam 3](../09_bookmyshow/09_bookmyshow.md#kadam-3-seat-hold-5-minute-umar-ke-saath-bms-ka-apna) jaisa: wahan seat HELD, yahan paisa BLOCKED. Query wahi
+[banking kadam 4](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) wali: "check + kaato ek query me".
+
+Aage kya:
+- sauda hua: blocked se paisa Suresh ko (Kadam 6).
+- order cancel / din khatam, bika nahi: blocked wapas available (BMS ka "hold mara to seat FREE").
+
+Bechne wale pe bhi yahi: Suresh ke paas 10 TCS. Usne do jagah "sell 10" daala. Pehle pe 10 share block, doosre
+pe "share kam hain". Ek share do baar nahi bik sakta.
+
+Par 9:15 baje market khula, 10,000 order / sec, aadhe sirf TCS pe. Ek hi TCS order book pe kai thread ek saath
+haath daal rahe hain. Do thread ne ek hi Suresh ko do kharidne walon se mila diya, book bigad gayi.
+
+### Kadam 4: ek share ki book, ek hi thread (stock ka apna)
+
+Har share ki apni order book, aur har book ko **sirf ek thread** chalata hai. Us share ke saare order ek line
+(queue) me lagte hain (abhi engine ki RAM me; Kadam 5 me yahi line log banegi: disk + standby), thread
+unhe ek-ek karke uthata hai.
+
+```
+TCS ke order  --> [TCS line] --> TCS thread (akela) --> TCS order book
+INFY ke order --> [INFY line] --> INFY thread (akela) --> INFY order book
+RELIANCE ...  --> [RELIANCE line] --> RELIANCE thread --> ...
+
+line me kram = jo pehle aaya wo pehle milta (imaandari, NFR wala)
+```
+
+```mermaid
+flowchart LR
+    O["Order Svc"] --> LT[("TCS line")]
+    O --> LI[("INFY line")]
+    LT --> TT["TCS thread (akela)<br/>TCS order book"]
+    LI --> TI["INFY thread (akela)<br/>INFY order book"]
+    style LT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style LI fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab kya theek hua:
+- ek book pe ek hi haath, to Suresh do logon se kabhi nahi milta. Lock bhi nahi chahiye.
+- kram line se tay: jo pehle line me laga, wo pehle milega.
+- alag share alag thread pe (ya alag machine pe), to TCS aur INFY saath-saath chalte hain.
+
+Lock kyun nahi (asli choice): book pe lock bhi chal jaata, par 9:15 pe saare thread usi ek lock ki line me
+khade honge, aur lock pehle kise mile ye tay nahi, to "pehle aaya pehle mila" toot jaata. Akela thread RAM me
+bahut tez, aur kram apne aap sahi.
+
+RAM matlab? Matching engine wali machine ki apni memory (Java program ka heap). Order book wahin ek data
+structure: buy aur sell ki do sorted list (bhaav + time ke kram se). Redis ya DB nahi, warna har milaan pe
+network ka chakkar, aur 9:15 pe wahi dheema. Isi wajah se machine giri to book bhi gayi (agla kadam).
+
+Ek thread TCS ki bheed jhel lega? Haan. Book RAM me, ek order milana microseconds ka kaam. Ek thread ek second
+me lakhon order nipta sakta (mera andaza, asli number exchange pe nirbhar). TCS ke 5,000 / sec usse bahut kam.
+
+Par order book RAM me hai. Dopahar 12 baje matching machine gir gayi, poori TCS order book gayab. Kisne kis
+bhaav pe kharidne ka order dala tha, kuch nahi bacha.
+
+### Kadam 5: engine giri (log + standby, ack ke baad milaan)
+
+Dikkat: order book engine ki RAM me hai. Machine giri to book gayi, aur restart tak TCS ka trading ruka.
+
+Ilaaj: engine har aane wala **order** (book nahi) pehle pakka karta hai, phir milata hai, isi kram me:
+
+```
+order 501 "Arpan buy 10 @ 3500"
+  1. apni disk pe LOG me likho
+  2. STANDBY machine ko bhejo
+  3. standby bole "mil gaya" (ack)  <- iske BAAD hi milao
+  4. milao
+12:00 primary gira -> standby ke paas 1..501 sab, usi kram me -> book wahi -> standby primary ban gaya
+```
+
+```mermaid
+flowchart LR
+    O["Order Svc"] --> P["Primary engine<br/>(RAM book)"]
+    P -- "1. likho" --> L[("apni disk: LOG")]
+    P -- "2. order bhejo" --> S["Standby engine<br/>(wahi book banti)"]
+    S -- "3. ack" --> P
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ack ka intezaar kyun: engine ne bheja aur turant gira, standby tak pahuncha hi nahi. Agar engine pehle hi
+milaan kar chuka hota, to wo sauda standby ko pata hi nahi. Ack = standby ke paas order pakka.
+
+Standby ko order kyun, book kyun nahi: standby wahi program chala raha, wahi order usi kram me milata hai, to
+uski RAM me apne aap wahi book banti hai. Ye [banking kadam 7](../13_banking_system/13_banking_system.md#kadam-7-salary-ki-bheed--ek-hi-db-kai-machine--db-ki-sync-copy) ki sync copy jaisa hi.
+
+Ek waqt me ek hi engine: heartbeat se tay hota hai ki primary mar gaya, tabhi standby kaam shuru karta hai.
+Purana primary wapas aaye to wo standby ban ke baithta hai. Do engine ek book pe chal gaye to ek Suresh do
+baar bik jaayega (**split brain**, sabse bada khatra).
+
+Snapshot: naya standby subah 9:15 se poora log padhe to minute lagenge. Har minute book ki photo (snapshot);
+naya standby aakhri photo + uske baad ka chhota log padhta hai.
+
+Kafka kyun nahi yahan: Kafka me log rakhna bhi chalta, par har order pe uska chakkar milli-second ka hai, apna
+log + seedha copy usse kahin tez (andaza: ~100 micro-second vs 2-5 ms). Exchange ke liye ye farak bada hai.
+
+### Kadam 6: sauda hua, kai logon ko batana (yahan Kafka asli wajah se)
+
+Dikkat: sauda S-88 hua (Arpan ne Suresh se 10 TCS 3500 pe liye). Ab ek saath kai kaam baaki:
+
+```
+sauda S-88 --> 1. Arpan ka paisa kaato, Suresh ko do     (settlement)
+           --> 2. Arpan ke portfolio me 10 TCS           (settlement)
+           --> 3. Arpan ko "10 TCS mil gaye" SMS / push  (notification)
+           --> 4. audit / record                         (NFR "har cheez ka record")
+           --> 5. TCS ka naya bhaav 3500                 (aage)
+```
+
+TCS thread 9:15 pe in paanchon ka intezaar nahi kar sakta, warna milaan dheema. Par sauda khona bhi nahi.
+
+Galat raaste:
+- engine khud har kaam kare: har sauda pe 5 jagah call, thread wahin atka.
+- engine seedha Kafka ko bheje: ms-ms ka intezaar, aur milaan ke baad bhejne se pehle gira to sauda kahin
+  likha hi nahi.
+
+Sahi: engine sauda bhi usi Kadam 5 wale log me likhta (jaise order likhta tha). Ek chhota **relay** log padh
+ke sauda **Kafka** ke `trades` topic me daalta. Paanchon kaam karne wale wahin se padhte.
+
+```mermaid
+flowchart LR
+    E["Engine"] -- "sauda S-88" --> L[("apna LOG")]
+    L --> R["Relay"]
+    R --> K[("Kafka: trades")]
+    K --> ST["Settlement"]
+    K --> N["Notification"]
+    K --> A["Audit"]
+    K --> PS["Price Svc"]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Kafka hi kyun: dikkat thi "ek baat, kai sunne wale, aur bolne wala ruke nahi". Kafka yahi karta: ek baar
+likha, sab apni raftaar se padhte, padhne se khabar mitti nahi. Ye [banking kadam 6](../13_banking_system/13_banking_system.md#kadam-6-sms-service-giri-outbox) / Kafka file ka **outbox**
+hi hai, bas outbox table ki jagah engine ka apna log.
+
+Par settlement worker ne S-88 uthaya. Arpan ka paisa wallet DB me, share portfolio DB me. Paisa kat gaya, aur
+share likhne se pehle portfolio DB band ho gaya. Arpan ke 35,000 gaye, share aaye nahi.
+
+### Kadam 7: sauda ke baad paisa + share (settlement)
+
+Pakka niyam: **sauda ho gaya to ulta nahi hota.** Exchange me Suresh ka share bik chuka. Humari taraf koi DB
+band ho, tab bhi sauda cancel nahi karte, bas use poora karte hain.
+
+Sabse seedha: wallet aur portfolio ek hi DB me. Tab paisa + share ek hi transaction me
+([banking kadam 2](../13_banking_system/13_banking_system.md#kadam-2-beech-me-server-gira-paisa-gayab-ek-transaction)):
+
+```sql
+BEGIN
+  wallet:    Arpan blocked -35,000      Suresh available +35,000
+  portfolio: Arpan TCS +10              Suresh TCS (blocked) -10
+  settlement: S-88 = DONE               -- sauda id UNIQUE, do baar nahi
+COMMIT          -- ya sab hua, ya kuch nahi
+```
+
+Agar dono alag DB me (badi company me aksar):
+
+```
+Settlement worker: Kafka trades se "SAUDA S-88" uthaya
+  1. settlement table: S-88 = PENDING
+  2. wallet DB:    paisa move      -> S-88 paisa = DONE
+  3. portfolio DB: share move      -> BAND hai!
+       -> ruk-ruk ke dobara (1s, 2s, 4s) -- sauda ulta NAHI
+       -> 10 min tak band -> ALERT, ops dekhe
+       -> Arpan ko app me: "share aa rahe hain (PENDING)"
+  4. portfolio wapas -> share move -> S-88 = DONE
+raat ka milaan: saare sauda vs wallet vs portfolio -> farak = alert
+```
+
+```mermaid
+flowchart LR
+    L[("Kafka: trades<br/>SAUDA S-88")] --> W["Settlement worker"]
+    W --> ST[("settlement: S-88<br/>PENDING / DONE")]
+    W -- "paisa" --> WD[("Wallet DB")]
+    W -- "share (band to dobara)" --> PD[("Portfolio DB")]
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style ST fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Har step `S-88` se pehchana jaata: worker beech me mara aur dobara chala, to "S-88 paisa = DONE" dekh ke paisa
+dobara nahi kaatta. Wahi idempotency, bas key sauda id. Raat ka milaan [banking kadam 9](../13_banking_system/13_banking_system.md#kadam-9-balance-aur-khaata-alag-ho-gaye-raat-ka-milaan--reconciliation) wala hi.
+
+Arpan ko "retry karo" kyun nahi: Arpan dobara Buy dabayega to wo naya order, 20 share aa jaayenge. Galti
+humari taraf ki, to theek bhi hum karte: PENDING dikhao, khud poora karo.
+
+Par 10 lakh logon ka app khula, sab ko har second TCS ka naya bhaav dekhna. Har app har second server se
+poochh raha "TCS kitna?". 10 lakh sawaal / sec, server baith gaya.
+
+### Kadam 8: bhaav 10 lakh logon tak (Price Svc + Redis pub/sub + WebSocket)
+
+Dikkat: 10 lakh app har second "TCS kitna?" poochh rahe, server baith gaya.
+
+```
+[Kafka: trades] --> Price Svc --> [Redis pub/sub: channel "TCS"] --> 20 WebSocket machine --> 10 lakh app
+                   (har share ka                                   (har machine apne logon ke
+                    1 bhaav / sec)                                  share sunti, unhe push)
+```
+
+1. **Price Svc:** Kadam 6 wala `trades` topic hi padhta. TCS ke ek second me 5,000 sauda, to bhi us second ka
+   sirf aakhri bhaav, har share ka 1 bhaav / sec. Aankh ko itna hi chahiye.
+2. **Redis pub/sub:** Price Svc ko nahi pata Arpan 20 me se kis WebSocket machine pe juda hai. To bhaav ek
+   channel pe chilla deta hai ("TCS 3502"). Har WebSocket machine sirf un share ke channel sunti jo uske log
+   dekh rahe.
+3. **WebSocket:** machine wo bhaav apne logon ko push karti. App ko poochhna hi nahi
+   (chat file wala khula taar).
+
+```mermaid
+flowchart LR
+    K[("Kafka: trades")] --> PS["Price Svc<br/>(1 bhaav / sec)"]
+    PS --> RP[("Redis pub/sub<br/>channel TCS")]
+    RP --> W["20 WebSocket machine"]
+    W -- "push" --> U["10 lakh app"]
+    style PS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style RP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Yahan Kafka kyun nahi, Redis pub/sub kyun: ek bhaav kho gaya to koi baat nahi, agle second naya aa jaayega.
+Bhaav ko disk pe pakka rakhne ki zaroorat nahi, bas tez pahunche. Redis pub/sub halka, tez, kuch yaad nahi
+rakhta. Sauda (Kadam 6) khona mana tha, isliye wahan Kafka. Bhaav kho sakta hai, isliye yahan Redis. Faisla
+is baat se: khabar khona chalega ya nahi.
 
 ---
 
-## Pooche to (kisi card me nahi baitha)
+## Wrap: 30 sec me poora design
 
-LIMIT = "3000 ya isse behtar, warna rukunga", daam pakka. MARKET = "jo bhav hai, abhi do", waqt pakka. Sahi daam
-chahiye, jaldi nahi, to LIMIT. Turant ghusna / nikalna, to MARKET.
-
-API: POST /order {stock, side, qty, price, type, idempotencyKey} · DELETE /order/{id} · GET /order/{id} ·
-WS /prices?symbol=
-
-Book me BUY 2998 aaya, top SELL 3000 hai? Sauda nahi, wo book me khada rehta (khareedne wale mehnga upar).
-
-Order book DB me kyun nahi? DB = har order pe milliseconds, RAM = microseconds. Isliye book RAM me.
+```
+Order Svc: client_order_id UNIQUE (dohra nahi) + paisa / share BLOCK ek query me. Matching engine: har share
+ki ek line, ek thread, RAM me order book (pehle aaya pehle mila, lock nahi). Har order pehle log + standby ko,
+ack ke baad milaan; primary gira to standby (ek waqt ek hi, snapshot). Sauda log me -> relay -> Kafka trades
+-> settlement (sauda ulta nahi, PENDING + dobara, trade_id se ek baar), notification, audit, Price Svc.
+Bhaav: 1 / sec, Redis pub/sub, WebSocket push.
+```
 
 ---
 
-ARCHETYPE C (transactional) · CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) · [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../06_payment_system/06_payment_system.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
+## Pooche to
+
+```
+LIMIT vs MARKET?
+  -> LIMIT = "3500 ya isse behtar, warna rukunga" (daam pakka). MARKET = "jo bhaav hai, abhi do" (waqt pakka).
+
+API?
+  -> POST /order { stock, side, qty, price, type, clientOrderId } · DELETE /order/{id} · GET /order/{id}
+     · WS /prices (subscribe TCS, INFY)
+
+BUY 3498 aaya, sabse sasta SELL 3500 hai?
+  -> sauda nahi, BUY book me khada rehta (kharidne wale: sabse mehnga upar, bechne wale: sabse sasta upar).
+
+Order book DB me kyun nahi?
+  -> DB = har order pe milli-second, RAM = micro-second. 9:15 ki bheed me yahi farak.
+
+Aadha bhara (partial fill)?
+  -> Arpan ko 10 chahiye, Suresh 6 bech raha: 6 ka sauda, Arpan ke 4 book me khade. Blocked paisa bhi utna hi
+     chhoota.
+
+Din khatam, order bika nahi?
+  -> order cancel, blocked paisa / share wapas available (Kadam 3).
+
+Chal raha hai, kaise pata?
+  -> order se sauda tak ka time (p99), Kafka trades ka lag, settlement PENDING kitne, standby kitna peeche.
+
+"Zerodha sach me aise karta?"
+  -> mat bolo "Zerodha aise karta". Bolo "a common pattern for matching engines", andar ka pata nahi. Asal me
+     broker order exchange (NSE) ko bhejta hai, milaan wahan hota; ye design wo milaan wala hissa hai.
+```
+
+CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) ·
+[CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [banking](../13_banking_system/13_banking_system.md) ·
+[payment](../06_payment_system/06_payment_system.md) · [BookMyShow](../09_bookmyshow/09_bookmyshow.md) ·
+[Kafka](../12_message_queue_kafka/12_message_queue_kafka.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)

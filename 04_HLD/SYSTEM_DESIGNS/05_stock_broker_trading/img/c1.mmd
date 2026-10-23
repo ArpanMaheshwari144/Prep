@@ -1,8 +1,0 @@
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Order_Service["Order Service<br/>(idempotency key)"]
-    n_DB["DB"]
-    n_USER --> n_Order_Service
-    n_Order_Service --> n_DB
-    style n_Order_Service fill:#f9a825,color:#000
