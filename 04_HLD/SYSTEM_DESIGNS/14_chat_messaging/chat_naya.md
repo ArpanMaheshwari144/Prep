@@ -103,3 +103,47 @@ flowchart LR
 Par Arpan chat server 5 se juda hai, aur Ravi chat server 9 se. Arpan ka "hi" server 5 pe aaya. Ab server 5
 ko kaise pata ki Ravi 200 me se kis server pe baitha hai?
 
+### Kadam 3: Ravi kis server pe hai? (map Redis me)
+
+200 chat server hain, aur har server sirf apne jude logon ko jaanta hai:
+
+```
+server 5 ki memory:  arpan, mohan, sita      (ye log server 5 se jude hain)
+server 9 ki memory:  ravi, geeta             (ye log server 9 se jude hain)
+```
+
+Arpan ka "hi" server 5 pe aaya. Server 5 apni memory me dekhta hai "ravi?", nahi milta, kyunki Ravi server 9
+se juda hai. Server 5 ko ye pata hi nahi ki Ravi server 9 pe hai. 200 server me se har ek se poochhe "ravi
+tumhare paas hai?", to bahut dheema.
+
+Ilaaj: ek **sabka saanjha register**, jahan har server likhe ki uske paas kaun juda hai. Ye register
+**Redis** me hai. Jaise bade hotel me har floor ka receptionist sirf apne floor ke mehmaanon ko jaanta hai,
+aur kisi aur floor ka mehmaan dhoondhna ho to neeche main reception ka register dekhte hain. Redis wahi main
+register hai.
+
+```
+Ravi ne app khola, server 9 se juda  -> Redis me likho:  ravi -> server 9
+Arpan ka "hi" server 5 pe aaya       -> server 5 Redis se poochhe "ravi kahan?" -> server 9
+server 5 "hi" server 9 ko bheje      -> server 9 Ravi ki khuli connection pe bhej de
+```
+
+Server 9 achanak gir gaya to? Redis me abhi bhi likha hai "ravi -> server 9", jo ab galat hai. Isliye har
+entry ki **umar** rakho (TTL, jaise 60 sec). Ravi ka app har 30 sec ek chhota "main zinda hoon" bhejta hai
+(**heartbeat**), aur server us entry ki umar badha deta hai. Server gira to heartbeat band, aur 60 sec me
+entry apne aap mit jaati hai. Ravi ka app dobara kisi aur server se judta hai aur nayi entry likh deta hai.
+
+Ek user ke kai device ho sakte hain (phone bhi, laptop bhi). To map me list rakho: `ravi -> [server 9
+(phone), server 14 (laptop)]`, aur "hi" dono pe jaata hai.
+
+```mermaid
+flowchart LR
+    A["Arpan"] --> S5["Chat server 5"]
+    S5 -- "ravi kahan?" --> R[("Redis map<br/>ravi -> server 9 (umar 60 sec)")]
+    S5 -- "hi" --> S9["Chat server 9"]
+    S9 --> RV["Ravi"]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Ravi ka phone band hai. Redis me Ravi ki koi entry hi nahi. Arpan ka "hi" kahan jaaye? Phone 2 ghante
+baad on hoga, tab use ye message milna chahiye.
+
