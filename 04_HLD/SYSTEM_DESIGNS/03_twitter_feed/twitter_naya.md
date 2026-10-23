@@ -211,8 +211,8 @@ Dikkat: Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. RAM bha
 
 **1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Ek id lagbhag 8 byte ki, poora tweet nahi.
 
-**2. Har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya tweet aaya to sabse purana
-kaat do (sorted set trim).
+**2. Har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya tweet aaya to sabse
+purana kaat do (sorted set trim).
 
 **3. Sirf active logon ka inbox.** Jo 30 din se app nahi khola, uska inbox Redis me rakhte hi nahi (umar / TTL
 se mit jaata). Wo wapas aaya to pehli baar uski feed Kadam 1 wale tareeke se ek baar banao (200 logon ka jod),
