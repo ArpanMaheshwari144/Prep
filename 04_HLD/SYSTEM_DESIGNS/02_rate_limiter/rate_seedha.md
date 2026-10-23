@@ -213,7 +213,8 @@ Par wahi bot har 60 sec baad wapas: 429 khaata, minute khatam, phir aata. Din bh
 ### Kadam 8: wahi bot baar-baar (pattern -> ban)
 
 Ilaaj: har 429 ki khabar **Kafka** me. Peeche ek Pattern Svc dekhta:
-"ye 1 ghante me 50 baar had paar kar chuka" -> **ban**. Ban list gateway / WAF pe, ban wala darwaze pe hi ruk jaata (Redis tak bhi nahi).
+"ye 1 ghante me 50 baar had paar kar chuka" -> **ban**.
+Ban list gateway / WAF pe, ban wala darwaze pe hi ruk jaata (Redis tak bhi nahi).
 
 ```
 Kafka kyun?      -> 429 dena tez rahe (1 ms). Pattern dhoondhna peeche, gateway ruke bina
