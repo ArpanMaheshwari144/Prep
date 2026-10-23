@@ -3,6 +3,10 @@
 Kram: **FR -> NFR -> numbers -> design**. Design sabse seedhe dabbe se shuru, har dikkat pe ek dabba judta.
 Peela = abhi juda. Kahani ek hi: Arpan ne Ravi ko 500 bheje.
 
+**CUE (yahi kahani, yahi kram):** service + SQL -> ek transaction (WAL) -> idempotency key
+-> check + kaato ek query -> ledger (double-entry) -> outbox + Kafka (SMS) -> LB + sync copy
+-> read replica -> raat ka milaan -> mahine ke tukde + S3
+
 ---
 
 ## 1. FR: kya karna hai
@@ -289,7 +293,7 @@ flowchart LR
 ```
 history scroll    -> "jahan pichhla page khatam, wahan se aage" (keyset: time + id, index),
                      OFFSET nahi (door ke page dheeme)
-saal ka statement -> background job file banaye -> S3 -> link / email. Replica pe chale
+statement         -> app me turant, replica se (bahut lamba range ho to kuch bank email pe bhejte)
 ```
 
 Par balance ek column, khaata alag lines. Kisi bug / haath ke galat UPDATE se dono me farak: balance 600
@@ -319,5 +323,74 @@ Asli bank me yahi: **end of day (EOD)** batch (SBI = TCS BaNCS, HDFC = Finacle m
 settlement file se apna khaata milaana. Bolo: "Banks me EOD reconciliation: khaate se balance milao, farak
 pe alert."
 
-Par 5 saal ka khaata ek table me: roz 1 crore transfer x 2 line = 5 saal me ~36 arab line.
-Table + index RAM me nahi, har query dheemi. Aur purana phenk bhi nahi sakte (RBI / audit maangte).
+Par 5 saal ka khaata ek table me: roz 1 crore transfer x 2 line = 5 saal me ~36 arab line. Table + index RAM
+me nahi, har query dheemi. Aur purana phenk bhi nahi sakte (RBI / audit maangte).
+
+### Kadam 10: 5 saal ka khaata, ~36 arab line (mahine ke tukde + S3)
+
+Ilaaj 1: table ko **mahine ke tukdon** me (partition, Postgres `PARTITION BY RANGE (time)`). Bahar se ek hi
+`ledger`.
+
+```
+ledger_2026_10 · ledger_2026_09 · ...
+"Arpan ki is mahine ki history" -> sirf ledger_2026_10, baaki tukde chhue hi nahi
+har tukde ka index chhota -> RAM me aa jaata · naya mahina = naya tukda
+```
+
+Ilaaj 2: purane mahine **S3** pe.
+
+```
+1 saal se purane  -> S3 me file (sasta), DB se hatao
+S3 Object Lock    -> likhne ke baad koi badal / mita nahi sakta (audit)
+kabhi chahiye     -> S3 se padho (Athena), dheema, roz ka kaam nahi
+balance sahi?     -> kadam 9 ka snapshot + uske baad ki lines. Purani lines chahiye hi nahi
+```
+
+```
+SHARD     -> data alag MACHINE pe. Tab jab ek machine likhai na jhele
+PARTITION -> ek DB, table ke andar tukde. Likhai 120 / sec, ek machine kaafi   <- ISLIYE YE
+shard karte to Arpan ek machine, Ravi doosri: ek transaction nahi, kadam 2 ka bharosa toota
+```
+
+```mermaid
+flowchart LR
+    S["Banking Svc"] --> P[("Primary<br/>ledger: mahine ke tukde")]
+    P -- "1 saal se purane" --> S3[("S3 + Object Lock")]
+    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+---
+
+## 5. Wrap (30 sec, NFR se milao)
+
+```
+User -> LB -> Banking Svc (kai, stateless)
+     -> SQL Primary: EK transaction = idem key + check-kaato query + dono balance + ledger 2 line + outbox
+        (sync copy doosri building · read replica padhai ke liye · ledger mahine ke tukde, purane S3)
+     -> Relay -> Kafka (key = account_id) -> SMS / fraud / statement
+Raat: milaan job (snapshot + lines vs balance, sab ka jod 0) -> ALERT
+
+SAHI (na gum na bane)  -> ek transaction (WAL) · check + kaato ek query · double-entry ledger · raat ka milaan
+trace ho               -> ledger sirf INSERT · S3 Object Lock
+dobara na kate         -> idempotency key (UNIQUE)
+balance tez            -> read replica (apna abhi-kiya primary se)
+```
+
+---
+
+## Pooche to (ek line)
+
+```
+API             -> POST /transfers {from, to, amount} + Idempotency-Key header · GET /accounts/{id}/balance ·
+                   GET /accounts/{id}/transactions?cursor=..
+owner check     -> userId JWT se, body / URL se nahi. from_account ka maalik nahi -> 403
+tables          -> account (balance) · ledger (sirf INSERT, mahine ke tukde) · idem (UNIQUE) ·
+                   outbox · snapshot
+CP ya AP?       -> transfer / balance = CP (galat balance dikhane se mana behtar) · SMS / statement = AP
+SPOF?           -> DB primary (sync copy) · Banking Svc (LB + kai machine)
+10 guna         -> padhai: replica · jagah: tukde + S3 · likhai: tab shard by account_id (do shard ke beech
+                   transfer = SAGA). 120 / sec pe ye sawaal hi nahi
+pata kaise?     -> milaan ka alert + p99 + error rate + Kafka lag + har transfer ka trace id
+AWS naam        -> RDS (Postgres) Multi-AZ · S3 Object Lock · Athena · MSK (Kafka)
+```
+

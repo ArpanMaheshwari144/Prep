@@ -40,7 +40,7 @@ queue me   "ABSORB karne wali cheez ne spike JAMA karke BADA karke chhoda"
 |---|---|---|
 | Load balancer | CHHE TARIKE JINSE LB KHUD SYSTEM KO MAARTA HAI | [03_load_balancing.md](03_load_balancing.md) |
 | Cache / Redis | "REDIS LAGATE HI SERVER DOWN HO GAYA" | [04_caching.md](04_caching.md) |
-| Rate limiter | "LIMITER LAGA THA, PHIR BHI NAHI BACHA" | [../SYSTEM_DESIGNS/02_rate_limiter/rate_seedha.md](../SYSTEM_DESIGNS/02_rate_limiter/rate_seedha.md) |
+| Rate limiter | "LIMITER LAGA THA, PHIR BHI NAHI BACHA" | [../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
 | Queue / Kafka | "QUEUE NE SPIKE ABSORB NAHI KIYA" | [07_message_queues.md](07_message_queues.md) |
 | CAP / consistency | "CHHE TARIKE JINSE CONSISTENCY KI CHOICE KHUD SYSTEM TODTI HAI" (25-Sep) | [08_cap_theorem.md](08_cap_theorem.md) |
 | SPOF / redundancy | "CHHE TARIKE JINSE REDUNDANCY KHUD FAIL HOTI HAI" (25-Sep) | [11_reliability_spof_cloud.md](11_reliability_spof_cloud.md) |

@@ -1,6 +1,6 @@
 # WAF — Web Application Firewall
 
-> **NAV** — KYA: WAF (OWASP, rules, WAF + rate limiter). UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/rate_seedha.md)
+> **NAV** — KYA: WAF (OWASP, rules, WAF + rate limiter). UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
 
 ---
 
