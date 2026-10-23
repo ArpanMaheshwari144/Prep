@@ -65,3 +65,27 @@ flowchart LR
 Dikkat: Ravi ne bhi usi second me A1 dabaya. Dono ne padha "FREE", dono ne likha "BOOKED". Dono ko ticket,
 ek seat pe do log. Ye banking ke "do kataai ek saath, balance -400" jaisi hi dikkat hai: pehle padho, phir
 likho, aur beech ke pal me koi aur ghus jaata hai.
+
+### Kadam 2: padhna aur likhna ek hi query me (banking kadam 4 wala hi)
+
+"Pehle padho, phir likho" do alag kaam hain, aur dono ke beech Ravi ghus gaya. Ilaaj: dono ko ek hi query me.
+
+```sql
+UPDATE seats SET status = 'BOOKED', user = 'Arpan'
+WHERE show = '9pm' AND seat = 'A1' AND status = 'FREE';
+```
+
+DB is row pe lock lagata hai, to Arpan aur Ravi ki query ek ke baad ek chalti hai, saath nahi:
+
+```
+Arpan ki query pehle: A1 FREE hai -> BOOKED, user = Arpan  -> "1 row badli" -> Arpan ko seat mili
+Ravi ki query baad me: A1 ab FREE nahi, WHERE match nahi  -> "0 row badli" -> Ravi: "seat chali gayi"
+```
+
+Banking me yahi tha: `UPDATE ... SET balance = balance - 500 WHERE balance >= 500`. Wahan shart "balance
+hai?", yahan shart "seat FREE hai?". Baaki sab same.
+
+Par seat book karte hi paisa nahi aata, Arpan ko pay karne me 3 minute lagte hain. Do raaste, dono kharab:
+- pehle seat BOOKED, phir pay: Arpan ne pay hi nahi kiya, app band kar di, to A1 hamesha ke liye BOOKED padi
+  rahegi, kisi ko nahi milegi.
+- pehle pay, phir seat: 3 minute me Ravi le gaya, to Arpan ka paisa kat gaya aur seat nahi mili.
