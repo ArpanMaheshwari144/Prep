@@ -170,28 +170,37 @@ Celebrity kaun? Ek had tay hoti (jaise 1 lakh se zyada follower). Ye faisla hai,
 Par match khatam, Virat ke tweet pe 1 crore log ek saath feed khol rahe. Sabki feed tweets DB se wahi ek query
 chala rahi: "Virat ke aakhri 20". DB pe ek hi jagah crore padhai, DB garam.
 
-### Kadam 5: Virat viral, DB pe ek hi query crore baar (local cache)
+### Kadam 5: crore log, sab DB se "Virat ke aakhri 20" (har server ka apna cache)
 
-Ilaaj: har Feed Svc machine "Virat ke aakhri 20" ka jawab **apni memory me** 2 second rakh leti (local cache).
+Dikkat: match ke baad 1 crore log feed khol rahe. Har feed tweets DB se wahi ek sawaal poochh rahi: "Virat ke
+aakhri 20 tweet". DB pe ek hi jagah crore padhai, DB garam.
+
+Ilaaj: har Feed Svc machine ye jawab **apni memory me** 2 second rakhti hai (local cache). Matlab har server
+ka apna chhota cache, uske andar hi; koi alag Redis nahi.
 
 ```
-pehle: 1 crore feed --> sab tweets DB se "Virat ke aakhri 20" --> DB garam
-ab:    1 crore feed --> 100 Feed Svc machine, har ek ki memory me Virat ke 20 (umar 2 sec)
-                        --> DB tak har machine 2 sec me ek baar = 100 / 2 sec, crore nahi
+pehle: 1 crore feed --> sab tweets DB pe "Virat ke aakhri 20"          --> DB garam
+ab:    1 crore feed --> 100 Feed Svc machine
+                        har machine ki memory me "Virat ke 20" (umar 2 sec)
+                        --> DB tak har machine 2 sec me sirf 1 baar = 100 sawaal / 2 sec, crore nahi
 ```
 
 ```mermaid
 flowchart LR
-    U["1 crore feed"] --> F["100 Feed Svc machine<br/>(apni memory: Virat ke 20, 2 sec)"]
+    U["1 crore feed"] --> F["100 Feed Svc machine<br/>(har ek ka apna cache: Virat ke 20, 2 sec)"]
     F -. "2 sec me ek baar" .-> T[("tweets DB")]
     style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-2 second purana chalega? Haan, NFR: feed 2-5 sec purani chalegi. Ye bilkul [URL kadam 8](../01_url_shortener/01_url_shortener.md#kadam-8-ek-link-viral-local-cache) hai: wahan viral
-link, yahan viral celebrity. Ilaaj wahi, apni memory me thodi der.
+Crore sawaal machine ki memory se nipat jaate, DB tak sirf 100 machine x 2 sec me ek baar.
 
-Beech me Redis kyun nahi? Local cache akela hi DB ko bacha leta. Redis is design me sirf inbox ke liye hai
-(Kadam 2): wahan har user ki alag feed pehle se banake rakhni hai.
+2 sec purana chalega? Haan, NFR: feed 2-5 sec purani chalegi. Virat ka naya tweet kisi ko 2 sec der se dikhe,
+to chalega.
+
+Beech me Redis kyun nahi? Local cache akela hi DB ko bacha leta. Celebrity gine-chune (kuch hazaar), to unke
+aakhri 20 tweet har machine ki memory me aaraam se aa jaate. Redis is design me sirf inbox ke liye (Kadam 2).
+
+Ye [URL kadam 8](../01_url_shortener/01_url_shortener.md#kadam-8-ek-link-viral-local-cache) wala viral link hi hai: wahan ek link, yahan ek celebrity.
 
 Par Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. Redis ki RAM bhar rahi, aur Redis RAM
 mehngi hai.
