@@ -113,13 +113,13 @@ SAFAR (March: khaali folder)  ->  aaj
   dikkat ──► dabba ──► nayi dikkat ──► dabba ──► ...
 
   url:   seedha (server + DB) ──► counter + base62 ──► Redis ──► LB + counter range ──► shard ──► ring
-         ──► 3 copy ──► quorum ──► local cache (viral) ──► lock + purana (stampede) ──► rate limit (bot)
+         ──► 3 copy ──► local cache (viral) ──► rate limit (bot)
 
 ★ HAR FILE KI SHAKAL (naya saancha, 23-Oct)
 
   upar CUE kram (sirf shabd) → 1 FR → 2 NFR → 3 numbers → 4 design:
      Kadam 1 sabse seedha → har kadam: dikkat → ilaaj (dabba) → kyun ye, doosra kyun nahi → mermaid diagram
-     (peela = abhi juda) → "Par ..." agli dikkat
+     (peela = abhi juda) → "Par ..." agli dikkat. Kadam sirf jo design badle (naya dabba); baaki Pooche to
   → 5 Wrap (30 sec, NFR se milao) → Pooche to (ek line) → HANDS-ON (jahan hai)
 
 ★ INTERVIEW: CUE kram ka ek-ek shabd bolo, har shabd pe uski chhoti kahani. Cross-Q = jo dabba bola wahi
