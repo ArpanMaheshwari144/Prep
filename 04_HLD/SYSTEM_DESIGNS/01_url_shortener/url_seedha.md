@@ -312,3 +312,49 @@ aasan madad              -> link banate hi Redis me bhi daalo,
 ```
 
 Par ek link viral ho gaya: cricket match ka link 1 crore log ek saath khol rahe, sab ek hi Redis machine pe.
+
+### Kadam 9: ek link viral (hot link)
+
+Cricket match ka link 1 crore log ek saath. Ek link ki key Redis ki ek hi machine pe
+(Redis bhi key se baantta), to saara bojh usi pe. Wo dheemi, aur us pe pade baaki link bhi atke.
+
+Ilaaj 1: **app server ki apni memory me chhota cache (local cache)**.
+Bahut garam link har server 5-10 sec rakhe. Mila to request Redis tak jaati hi nahi. 10 server = Redis tak 10 sec me bas 10 request.
+
+```
+local cache ki dikkat:
+  memory chhoti     -> saare 180 arab nahi, sirf kuch garam link
+  har server alag   -> App 1 me hai, App 2 me nahi
+  purana ho sakta   -> link band / badla, server 10 sec tak purana deta
+  restart = khaali  -> phir Redis se bharega
+URL me chaaron chhoti: link badalta nahi, 10 sec me taaza.
+Kadam 3 me "saare link" ki baat thi, yahan sirf garam, sirf thodi der
+```
+
+Ilaaj 2: **Redis ki copy (replica)**, garam key 2-3 copy se padho.
+
+```mermaid
+flowchart LR
+    U["1 crore log"] --> LB["LB"]
+    LB --> S1["App 1<br/>local: match link (10 sec)"]
+    LB --> S2["App 2<br/>local: match link (10 sec)"]
+    S1 & S2 -- "10 sec me ek baar" --> R[("Redis")]
+    R --> RR[("Redis copy")]
+    style S1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style RR fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Browser hi yaad rakhe (301)?
+
+```
+                       bojh bachaya        control (band / badlo)
+browser (301)          sabse zyada         nahi, browser ke haath (spam link band nahi, ginti nahi)
+local cache (10 sec)   bahut               haan, 10 sec me taaza
+Redis                  thoda               haan, turant
+```
+
+Bolo: "302, kyunki control hamare paas. Bojh cache se sambhal liya."
+
+Par match link ki Redis entry expire hui, aur usi pal 10,000 request ek saath "Redis me nahi"
+dekh ke DB pe toot padi (**stampede**).
