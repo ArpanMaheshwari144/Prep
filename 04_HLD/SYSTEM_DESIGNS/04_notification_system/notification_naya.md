@@ -54,3 +54,37 @@ order ka email se koi lena-dena nahi. Aur kal SMS aur push bhi jodne hain, to Or
 company ki call aa jaayengi.
 
 Par Order Svc ko kisi ka intezaar nahi karna. Wo bas khabar kahin daal de aur aage badh jaaye.
+
+### Kadam 2: khabar Kafka me daalo, Notification Svc uthaye
+
+Ab Order Svc order banata hai, ek chhoti khabar `{ ORDER_PLACED, userId: Arpan, orderId: 999 }` Kafka ke
+topic me daalta hai, aur turant Arpan ko "order ho gaya" bol deta hai. Kisi company ka intezaar nahi.
+
+Ek naya dabba judta hai: **Notification Svc**. Ye Kafka se khabar uthata hai, Arpan ki pasand dekhta hai
+(push chalu, email chalu, SMS band), saancha bharta hai ("Hi Arpan, order 999 ho gaya"), phir email aur push
+company ko call karta hai.
+
+```mermaid
+flowchart LR
+    U["Arpan"] --> O["Order Svc"]
+    O -- "khabar" --> K[("Kafka topic")]
+    O -. "turant: order ho gaya" .-> U
+    K --> N["Notification Svc<br/>(pasand + saancha)"]
+    N --> E["Email company"]
+    N --> P["Push company"]
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style N fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Kafka kyun:
+- khabar disk pe likhi jaati hai, to Notification Svc gira ho tab bhi khabar khoti nahi. Wo wapas aake wahin
+  se padh leta hai.
+- sale me 58,000 khabar / sec aayein to Kafka unhe pakad ke rakhta hai, Notification Svc apni raftaar se
+  nikalta hai.
+- wahi khabar kal Analytics bhi padh sakta hai, kyunki padhne se khabar mitti nahi.
+
+Ab kya theek hua: email company band hai to bhi order chal jaata hai. SMS jodna ho to sirf Notification Svc
+badalta hai, Order Svc nahi.
+
+Par Notification Svc ek hi line me teeno raaste bhej raha hai. SMS company dheemi hui to uske peeche Arpan
+ka push aur email bhi atak jaata hai.
