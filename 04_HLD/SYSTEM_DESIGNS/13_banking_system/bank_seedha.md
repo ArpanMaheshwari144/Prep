@@ -189,3 +189,42 @@ flowchart LR
 Par Ravi ko SMS jaana chahiye ("500 aaye"). SMS service transaction ke andar call ki, aur wo giri hui thi.
 Ya poora transfer ruke, ya transfer ho aur SMS kabhi na jaaye.
 
+### Kadam 6: SMS service giri (outbox + Kafka)
+
+```
+SMS transaction ke ANDAR    -> SMS dheema / gira = transfer bhi ruka
+COMMIT ke BAAD seedha SMS   -> COMMIT hua, SMS se pehle server gira = SMS kabhi nahi gaya
+```
+
+Ilaaj: **outbox**. SMS ki khabar usi transaction me DB ki outbox table me. **Relay** outbox se utha ke
+**Kafka** me, SMS Svc Kafka se padh ke bhejta.
+
+```
+BEGIN
+  idem · arpan -500 · ravi +500 · ledger 2 line
+  INSERT outbox ("ravi ko 500 aaye", sent = false)
+COMMIT
+relay -> sent = false -> Kafka -> SMS Svc -> SMS
+
+transfer hua = khabar bhi pakki (ek saath)
+SMS Svc gira  -> khabar Kafka me padi, uthne pe bhejega. Transfer pe asar nahi
+key = account_id -> Ravi ki SMS kram se ("500 aaye", phir "200 gaye")
+wahi khabar     -> fraud jaanch, analytics, statement bhi padhte
+```
+
+```mermaid
+flowchart LR
+    S["Banking Svc"] -- "ek transaction" --> D[("SQL DB<br/>... + outbox")]
+    RL["Relay"] -- "sent = false" --> D
+    RL --> K[("Kafka<br/>key = account_id")]
+    K --> SMS["SMS Svc"]
+    K --> F["Fraud / statement"]
+    style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style SMS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Wahi outbox jo Kafka file me (wahan Order Svc, yahan Banking Svc).
+
+Par 11 baje sabki salary ek saath. Ek Banking Svc machine nahi jheli. Aur DB ek hi: gira to poora bank band.
+
