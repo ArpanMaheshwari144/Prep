@@ -160,8 +160,8 @@ flowchart LR
 ```
 
 ```
-har App me library kyun nahi?  -> har service (login, payment, search) apna code likhe. Gateway = ek jagah, sab pe
-                                  chale, aur bot ka bojh App pe nahi
+har App me library kyun nahi?  -> har service (login, payment, search) apna code likhe.
+                                  Gateway = ek jagah, sab pe chale, aur bot ka bojh App pe nahi
 AWS pe                         -> API Gateway me throttling pehle se. Har user ki alag had = apna limiter +
                                   Redis (ElastiCache)
 ```
