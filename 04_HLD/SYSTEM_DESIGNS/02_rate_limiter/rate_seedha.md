@@ -75,8 +75,10 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Redis kyun, DB kyun nahi? NFR: ~1 ms, 10,000 / sec. DB disk pe, har baar kai ms, site dheemi. Redis RAM me ~1 ms,
+Redis kyun, DB kyun nahi? NFR: ~1 ms, 10,000 / sec. DB disk pe, har baar kai ms, site dheemi. Redis
+RAM me ~1 ms,
 aur data sirf 500 MB, RAM me aa jaata.
 
-Par "har minute 5" = ghadi ka minute (10:00 - 10:01). Bot ne 10:00:59 pe 5 bheji, 10:01:00 pe phir 5. Ek second me 10
+Par "har minute 5" = ghadi ka minute (10:00 - 10:01). Bot ne 10:00:59 pe 5 bheji, 10:01:00 pe phir
+5. Ek second me 10
 andar, kyunki minute badalte hi ginti 0.
