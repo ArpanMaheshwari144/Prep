@@ -90,7 +90,7 @@ ab tweet karte waqt ek baar, har feed pe nahi. Dekhne wale 50 guna zyada, to kaa
 sahi.
 
 Inbox me poora tweet nahi, sirf tweet id (`T-901`). Text ek baar tweets table me; 200 jagah poora text rakhte
-to jagah 200 guna.
+to jagah 200 guna. Feed pe un 50 id ka poora tweet DB se ek saath aata.
 
 Par Arpan ka dost Mohan chhota influencer hai, 5,000 follower. Mohan ne tweet dabaya, aur Tweet Svc 5,000
 inbox me likh raha, uske baad hi "tweet ho gaya" bolega. Mohan ka button 5 second ghoomta raha.
