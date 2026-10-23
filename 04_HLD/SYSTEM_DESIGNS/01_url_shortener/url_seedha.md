@@ -183,7 +183,8 @@ KHOLO:  aB3x9 -> wahi hash -> seedha machine 3 (baaki 9 ko chhuna hi nahi)
 
 ```mermaid
 flowchart LR
-    S["App servers"] -- "hash(code) % 10" --> D0[("DB 0")] & D3[("DB 3<br/>aB3x9")] & D9[("DB 9")]
+    S["App servers"] --> H{{"hash(code) % 10"}}
+    H --> D0[("DB 0")] & D3[("DB 3<br/>aB3x9")] & D9[("DB 9")]
     style D0 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style D3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style D9 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
