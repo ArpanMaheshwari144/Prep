@@ -60,6 +60,7 @@ flowchart LR
 
 Par har feed kholne pe 200 logon ke tweet DB se nikaal ke sort karna. Feed dekhne wale likhne walon se 50
 guna zyada, to DB har second laakhon baar yahi bhaari jod. Feed 3 sec me khulti, DB thak ke baith gaya.
+Ek line: feed padhte waqt banti hai, aur padhne wale bahut zyada hain.
 
 ### Kadam 2: har user ka pehle se bana inbox (fanout on write)
 
@@ -119,6 +120,9 @@ flowchart LR
     style FW fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+Kafka yahan isliye, ki dikkat khud maang rahi: likhne wala ruke nahi, peeche ka kaam khoye nahi, aur bheed
+aaye to worker badha sakein.
+
 Ab kya theek hua:
 - Mohan ka button turant ruk jaata hai.
 - 5,000 inbox me likhna worker peeche se karte. 2-3 sec lagein to chalega (NFR: feed 2-5 sec purani chalegi).
@@ -165,15 +169,20 @@ Doosra kyun nahi (asli choice):
 - sabke liye fanout on read: har feed pe 200 logon ka jod, Kadam 1 wapas, feed dheemi.
 - dono ka mel (hybrid): kam follower wale ka likhte waqt baanto, bahut wale ka padhte waqt jodo.
 
+To kaun kahan se? (Arpan ka sawaal)
+
+```
+aam logon ke tweet  -> Redis (inbox:Arpan, pehle se bana)
+celebrity ke tweet  -> tweets DB (padhte waqt), unke liye koi Redis nahi
+```
+
 Celebrity kaun? Ek had tay hoti (jaise 1 lakh se zyada follower). Ye faisla hai, pakka niyam nahi.
 
-Par match khatam, Virat ke tweet pe 1 crore log ek saath feed khol rahe. Sabki feed tweets DB se wahi ek query
-chala rahi: "Virat ke aakhri 20". DB pe ek hi jagah crore padhai, DB garam.
+Par (Arpan ka sawaal: "crore log seedha DB pe?") match khatam, Virat ke tweet pe 1 crore log ek saath feed
+khol rahe. Sabki feed tweets DB se wahi ek query chala rahi: "Virat ke aakhri 20". DB pe ek hi jagah crore
+padhai, DB garam.
 
 ### Kadam 5: crore log, sab DB se "Virat ke aakhri 20" (har server ka apna cache)
-
-Dikkat: match ke baad 1 crore log feed khol rahe. Har feed tweets DB se wahi ek sawaal poochh rahi: "Virat ke
-aakhri 20 tweet". DB pe ek hi jagah crore padhai, DB garam.
 
 Ilaaj: har Feed Svc machine ye jawab **apni memory me** 2 second rakhti hai (local cache). Matlab har server
 ka apna chhota cache, uske andar hi; koi alag Redis nahi.
@@ -206,8 +215,6 @@ Par Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. Redis ki RA
 mehngi hai.
 
 ### Kadam 6: inbox chhota rakho (3 chhoti baatein)
-
-Dikkat: Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. RAM bhar rahi, aur Redis RAM mehngi.
 
 **1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Ek id lagbhag 8 byte ki, poora tweet nahi.
 
