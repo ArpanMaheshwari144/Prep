@@ -23,6 +23,11 @@ BMS ka APNA                    -                  -                   seat HOLD 
                                                                       concert ki line (waiting room)
 ```
 
+Click karke wahi kadam: [banking kadam 3 (key)](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) ·
+[banking kadam 4 (ek query)](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) ·
+[payment kadam 2 (PSP)](../06_payment_system/06_payment_system.md#kadam-2-bank-se-wallet-me-2000-psp) ·
+[payment kadam 4 (webhook)](../06_payment_system/06_payment_system.md#kadam-4-pakka-kaise-pata-chale--hamara-server-gira-pending-pehle-webhook-poochne-wala-job)
+
 ---
 
 ## 1. FR: kya karna hai
@@ -67,7 +72,7 @@ flowchart LR
 ```
 
 Dikkat: Ravi ne bhi usi second me A1 dabaya. Dono ne padha "FREE", dono ne likha "BOOKED". Dono ko ticket,
-ek seat pe do log. Ye banking ke "do kataai ek saath, balance -400" jaisi hi dikkat hai: pehle padho, phir
+ek seat pe do log. Ye banking ke ["do kataai ek saath, balance -400"](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) jaisi hi dikkat hai: pehle padho, phir
 likho, aur beech ke pal me koi aur ghus jaata hai.
 
 ### Kadam 2: padhna aur likhna ek hi query me (banking kadam 4 wala hi)
@@ -86,7 +91,7 @@ Arpan ki query pehle: A1 FREE hai -> BOOKED, user = Arpan  -> "1 row badli" -> A
 Ravi ki query baad me: A1 ab FREE nahi, WHERE match nahi  -> "0 row badli" -> Ravi: "seat chali gayi"
 ```
 
-Banking me yahi tha: `UPDATE ... SET balance = balance - 500 WHERE balance >= 500`. Wahan shart "balance
+[Banking me yahi tha](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me): `UPDATE ... SET balance = balance - 500 WHERE balance >= 500`. Wahan shart "balance
 hai?", yahan shart "seat FREE hai?". Baaki sab same.
 
 Par seat book karte hi paisa nahi aata, Arpan ko pay karne me 3 minute lagte hain. Do raaste, dono kharab:
@@ -136,7 +141,7 @@ Koi job chahiye jo 5 min baad seat FREE kare? Zaroori nahi. Shart query me hi li
 Ek chhota job har minute purane HELD saaf kar deta hai, bas taaki seat map pe A1 jaldi khaali dikhe.
 
 Arpan ne 5:30 min pe pay kiya, hold mar chuka tha, aur seat Ravi le gaya? Paisa kat chuka, seat nahi mili ->
-paisa wapas (refund). Ye payment file wala hi hissa hai (PSP, PENDING, webhook).
+paisa wapas (refund). Ye [payment file](../06_payment_system/06_payment_system.md#kadam-4-pakka-kaise-pata-chale--hamara-server-gira-pending-pehle-webhook-poochne-wala-job) wala hi hissa hai (PSP, PENDING, webhook).
 
 Par 9 baje ke show ka seat map lakhon log dekh rahe hain, book koi-koi kar raha hai. Har "map dekho" pe SQL DB
 se 200 seat padhna. DB padhne me hi ghut raha hai, aur Arpan ki booking query bhi dheemi ho gayi.
@@ -166,7 +171,7 @@ flowchart LR
 
 Map 2-5 sec purana dikhe to chalega? Haan. Map sirf dikhane ke liye hai, faisla nahi karta. Ravi ko cache me
 A1 FREE dikha, jabki asal me Arpan le chuka tha. Ravi ne A1 dabaya, Kadam 3 wali query SQL pe chali: "0 row
-badli, seat chali gayi". Sach hamesha SQL me, cache sirf aankh ke liye. Yahi banking ke read replica me tha:
+badli, seat chali gayi". Sach hamesha SQL me, cache sirf aankh ke liye. Yahi banking ke [read replica](../13_banking_system/13_banking_system.md#kadam-8-sab-balance-dekh-rahe-transfer-dheeme-read-replica) me tha:
 balance dekhna copy se, paisa kaatna hamesha primary se. Yahan map dekhna cache se, seat lena hamesha SQL se.
 
 Ab kya theek hua: lakhon "dekho" Redis jhel leta hai, SQL sirf booking ki query dekhta hai, Arpan ki booking
@@ -207,7 +212,7 @@ rows pe hai, aur ek row ka lock ek hi machine pe hota hai. Machine 10 kar do, A1
 Bheed ko DB tak pahunchne se pehle hi rokna padta hai.
 
 Ek aadmi 50 tab khol ke line me 50 baar lage? Token user ke login se juda hai, ek user ek token. Bot ki bheed
-ke liye wahi rate limiter jo rate limiter file me hai.
+ke liye wahi rate limiter jo [rate limiter file](../02_rate_limiter/02_rate_limiter.md) me hai.
 
 **Redis primary + copy dono gaye, to?** Pehle ek baat pakki: dil (ek seat ek hi ticket) SQL me hai, Redis me
 nahi. HOLD, BOOKED, payment sab SQL me. Redis poora gaya to system dheema ya ruka ho sakta, galat nahi.
@@ -240,7 +245,7 @@ Par Arpan andar gaya, A1 HOLD ki, Pay dabaya. Network gaya, app ne apne aap doba
 
 Naya kuch nahi, teen padhe hue tukde BMS me judte hain.
 
-**1. Idempotency key (banking kadam 3 wala hi):** app har "Pay" ke saath ek key bhejta hai,
+**1. Idempotency key ([banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) wala hi):** app har "Pay" ke saath ek key bhejta hai,
 yahan wo key booking ki id hi hai: `booking B-77`. Payments table me `UNIQUE(booking_id)`.
 
 ```
@@ -248,7 +253,7 @@ pehla Pay  : B-77 -> table me nahi -> paisa kaato, row likho
 dobara Pay : B-77 -> row pehle se  -> "ho chuka", wahi purana jawab. Paisa dobara nahi kata
 ```
 
-**2. Paisa bank se (payment file wala hi):** BMS khud bank se baat nahi karta. Payment file ka raasta: PSP
+**2. Paisa bank se ([payment file](../06_payment_system/06_payment_system.md#kadam-2-bank-se-wallet-me-2000-psp) wala hi):** BMS khud bank se baat nahi karta. Payment file ka raasta: PSP
 (Razorpay), pehle PENDING, phir PSP ka webhook "SUCCESS".
 
 **3. Webhook aaya, tab seat pakki (BMS ka jod):**
@@ -270,7 +275,7 @@ flowchart LR
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Yahan teeno files ek saath judti hain: banking se key, payment se PSP + webhook, notification se ticket
+Yahan teeno files ek saath judti hain: banking se key, payment se PSP + webhook, [notification](../04_notification_system/04_notification_system.md) se ticket
 ka SMS.
 
 ---

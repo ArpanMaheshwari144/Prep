@@ -4,6 +4,7 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
 me ek hi kahani hai: Arpan ne kirana dukaan (merchant) ko 500 bheje. Dono ka wallet hamare app me hai, Paytm /
 PhonePe wallet jaisa. Andar ka core [banking](../13_banking_system/13_banking_system.md) jaisa hi hai.
+Movie ticket ka paisa bhi isi raaste se jaata hai: [BookMyShow kadam 6](../09_bookmyshow/09_bookmyshow.md#kadam-6-pay-dobara--paisa-banking-kadam-3--payment-file).
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 wallet se wallet = banking ka core -> PSP (bahar ka paisa) -> PENDING + timeout -> breaker + doosra PSP
@@ -52,7 +53,7 @@ BEGIN
 COMMIT
 ```
 
-Ye pura hum banking me kar chuke hain (kadam 2 se 5). Interview me yahan ek line bolo: "Wallet se wallet
+Ye pura hum banking me kar chuke hain ([kadam 2 se 5](../13_banking_system/13_banking_system.md#kadam-2-beech-me-server-gira-paisa-gayab-ek-transaction)). Interview me yahan ek line bolo: "Wallet se wallet
 hamare DB ke andar hai, to ek transaction, idempotency key, check karke kaatna ek query me, aur ledger,
 banking jaisa." Payment ka asli naya hissa yahan se shuru hota hai: paisa bahar se aana aur bahar jaana.
 
@@ -149,7 +150,7 @@ Use t-50 mila, to wo PSP se poochta hai "t-50 ka kya hua?", PSP bolta hai "SUCCE
 kar dete hain. Matlab PSP ne bataya ho ya nahi, 5 minute me hum khud pata kar lete hain.
 
 **Raat ka milaan.** Raat ko PSP ek file deta hai ki aaj kaun-kaun se payment hue aur kitna paisa. Hum use apne
-DB se milaate hain, kahin farak mila to ALERT. Ye banking kadam 9 wala milaan hi hai.
+DB se milaate hain, kahin farak mila to ALERT. Ye [banking kadam 9](../13_banking_system/13_banking_system.md#kadam-9-balance-aur-khaata-alag-ho-gaye-raat-ka-milaan--reconciliation) wala milaan hi hai.
 
 Ek line me: PSP khud bataye (webhook, tez), hum khud poochhein (job, agar message kho gaya), aur raat ka
 milaan (pakka).
@@ -190,7 +191,7 @@ Kadam 3b, FAILED aaya (galat IFSC, ya bank band): ULTA kaam karo.
 ```
 
 "Ulta karna" ka matlab mitaana nahi hai. Nayi line daal ke paisa wapas karte hain, kyunki khaate me sirf
-INSERT hota hai (banking kadam 5).
+INSERT hota hai ([banking kadam 5](../13_banking_system/13_banking_system.md#kadam-5-mere-500-kahan-gaye-kab-khaata--ledger)).
 
 Beech ka khaata isliye chahiye kyunki kadam 2 ke dauraan paisa kahin to dikhna chahiye. Wo Arpan ke wallet se
 nikal chuka hai par dukaan ke bank nahi pahuncha. Isse har waqt poore hisaab ka jod 0 rehta hai.
@@ -215,7 +216,7 @@ bikri" report baar-baar khol rahe hain, jo isi DB pe chalti hai. Arpan ka paymen
 
 Ek Payment Svc machine 3000 payment / sec nahi jhel paayi. Ilaaj: kai Payment Svc machine, aage LB. Ye isliye
 chalta hai kyunki Payment Svc apne andar kuch yaad nahi rakhta. Saara haal (PENDING, SUCCESS, wallet) DB me
-hai, to koi bhi machine koi bhi payment sambhal sakti hai (banking kadam 7 jaisa).
+hai, to koi bhi machine koi bhi payment sambhal sakti hai ([banking kadam 7](../13_banking_system/13_banking_system.md#kadam-7-salary-ki-bheed--ek-hi-db-kai-machine--db-ki-sync-copy) jaisa).
 
 Dukaan wale "aaj ki bikri" report baar-baar khol rahe hain. Ye bhaari query hai, din bhar ke payment jod ke
 total nikalti hai, aur usi primary DB pe chal rahi thi jahan payment likhe ja rahe hain. Isliye Arpan ka
