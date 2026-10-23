@@ -225,8 +225,17 @@ mehngi hai.
 purana kaat do (sorted set trim).
 
 **3. Sirf active logon ka inbox.** Jo 30 din se app nahi khola, uska inbox Redis me rakhte hi nahi (umar / TTL
-se mit jaata). Wo wapas aaya to pehli baar uski feed Kadam 1 wale tareeke se ek baar banao (200 logon ka jod),
-aur inbox phir se bhar do. Bas pehli feed thodi dheemi khulti.
+se mit jaata). Par sirf TTL kaafi nahi: fanout worker har naye tweet pe `inbox:X` me likhta rahega to key phir
+ban jaati, TTL taaza. Isliye worker likhne se pehle follower ka `last_active` dekhe:
+
+```
+fanout worker: follower X ke inbox me likhun?
+   X 30 din se nahi aaya -> chhodo (inbox nahi banta)
+   X active hai          -> likho
+```
+
+Wo wapas aaya to pehli baar uski feed Kadam 1 wale tareeke se ek baar banao (200 logon ka jod), aur inbox phir
+se bhar do. Bas pehli feed thodi dheemi khulti.
 
 ```
 sirf active log ke inbox, aakhri 800 id -> phir bhi kai TB, ek Redis machine me nahi samata
@@ -331,6 +340,18 @@ flowchart LR
 
 Kiska inbox kahan: har user ka inbox uske apne region me banta, jaise [rate limiter](../02_rate_limiter/02_rate_limiter.md#kadam-10-3-region-se-300-nikal-gayi-home-region) me "home region".
 Fanout worker Arpan ka inbox Mumbai ke Redis me bharta.
+
+India ka tweet, US ka follower? Mohan (India) ne tweet kiya, uska follower John US me, John ka inbox US Redis me.
+Har tweet pe samundar paar ke Redis me likhna dheema aur toot sakta. Isliye tweets wale Kafka topic ki copy
+doosre region me bhi jaati (Kafka ka tool, MirrorMaker), aur har region ka apna fanout worker sirf apne region
+ke followers ke inbox bharta:
+
+```
+Mohan (India) tweet --> Mumbai Kafka: tweets --copy--> US Kafka: tweets
+                           |                              |
+                   Mumbai worker                     US worker
+                   -> India wale followers ke inbox  -> John (US) ka inbox
+```
 
 Copy peeche se (US tak kuch second) kyun chalta: NFR, feed 2-5 sec purani chalegi. US wale ko Virat ka tweet
 2 sec baad dikhe to dikkat nahi; bank jaisa "abhi ka abhi pakka" yahan nahi chahiye.
