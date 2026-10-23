@@ -77,5 +77,5 @@ KHUD har bank se  -> har bank, UPI (NPCI), card network alag-alag. NPCI manzoori
 PSP               -> ek API, sab bank / UPI / card PSP sambhale. Thoda fees     <- ISLIYE YE
 ```
 
-Par PSP ko call kiya, PSP dheema, 30 sec jawab nahi. Arpan ka paisa kata ya nahi, pata hi nahi. Fail dikhayein ya
-success?
+Par PSP ko call kiya, PSP dheema, 30 sec jawab nahi.
+Arpan ka paisa kata ya nahi, pata hi nahi. Fail dikhayein ya success?
