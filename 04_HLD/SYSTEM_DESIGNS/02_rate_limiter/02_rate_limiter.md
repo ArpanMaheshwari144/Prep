@@ -1,10 +1,12 @@
 # Rate limiter: shuru se, ek kahani
 
-Kram: **FR -> NFR -> numbers -> design**. Design sabse seedhe dabbe se shuru, har dikkat pe ek dabba judta.
-Peela = abhi juda. Kahani ek hi: Arpan ka app, login pe ek bot.
+Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
+shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
+me ek hi kahani hai: Arpan ka app, aur uske login pe hamla karta ek bot.
 
-**CUE (yahi kahani, yahi kram):** server me ginti -> Redis (ek ginti) -> token bucket -> Lua (atomic) ->
-gateway pe -> copy + fail-open / closed -> local had / N -> Kafka + ban -> userId (login pe IP)
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+server me ginti -> Redis (ek ginti) -> token bucket -> Lua (ek saath 20) -> gateway pe
+-> copy + fail-open / closed -> local had / N -> Kafka + ban -> userId (login pe IP)
 -> global cap 503 -> home region
 
 ---
@@ -12,27 +14,28 @@ gateway pe -> copy + fail-open / closed -> local had / N -> Kafka + ban -> userI
 ## 1. FR: kya karna hai
 
 ```
-1. har user ki had: login 5 / min, baaki API 100 / min
-2. had paar -> 429 (Too Many Requests) + "kitni der baad aao" (Retry-After)
-scope ke bahar (poochh ke hatao): plan ke hisaab se alag had (free / pro)
+1. har user ki had: login 5 baar / minute, baaki API 100 / minute
+2. had paar ho to 429 (Too Many Requests), saath me "kitni der baad aao" (Retry-After)
+scope ke bahar (poochh ke hata do): plan ke hisaab se alag had (free / pro), ye baad me
 ```
 
 ## 2. NFR: kaisa chalna chahiye
 
 ```
-- TEZ           : har request ke aage baitha, ~1 ms me haan / na. Dheema = poori site dheemi
-- ginti EK      : 10 server hon, ginti sabki ek hi jagah
+- TEZ: limiter har request ke aage baitha hai, ~1 ms me haan ya na. Ye dheema to poori site dheemi
+- ginti EK: 10 server hon tab bhi har user ki ginti ek hi jagah
 - limiter gire to site na gire
 ```
 
 ## 3. Numbers
 
 ```
-- ~1 crore user, peak ~10,000 request / sec
-- har user ke 2 chhote number (kitne bache, aakhri baar kab) -> 1 crore x ~50 byte = ~500 MB
+- ~1 crore user, sabse bheed wale waqt ~10,000 request har second
+- har user ke liye sirf 2 chhote number (kitne bache, aakhri baar kab) -> 1 crore x ~50 byte = ~500 MB
 ```
 
-Dikkat jagah ki nahi, SPEED ki. 500 MB ek machine ki RAM me aa jaata, isliye aage RAM wala Redis, DB nahi.
+Matlab dikkat jagah ki nahi, SPEED ki hai. 500 MB ek machine ki RAM me aa jaata hai. Isliye aage RAM wala
+Redis aayega, DB nahi.
 
 ---
 
@@ -40,11 +43,11 @@ Dikkat jagah ki nahi, SPEED ki. 500 MB ek machine ki RAM me aa jaata, isliye aag
 
 ### Kadam 1: sabse seedha (server ke andar ginti)
 
-App server ki memory me ek map: `user -> is minute kitni request`.
+App server ki memory me ek map rakho: `user -> is minute kitni request aayi`.
 
 ```
-request aayi -> map[arpan]++ -> 5 se zyada? -> 429
-                                nahi        -> aage jaane do
+request aayi -> map[arpan] me +1 -> 5 se zyada? -> 429
+                                    nahi        -> aage jaane do
 minute badla -> map saaf
 ```
 
@@ -55,20 +58,20 @@ flowchart LR
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Ek server tak chalta: tez, aur sab ek hi jagah gina ja raha.
+Jab tak server ek hai, ye chalta hai: tez hai, aur sab ek hi jagah gina ja raha hai.
 
-Par bheed badhi, 10 App server lage, aage LB. Arpan ki 5 login App 1 pe, 5 App 2 pe. Dono ne alag gina
-("5 hi to hain"), 10 andar. Had toot gayi.
+Par bheed badhi to 10 app server lag gaye, aur aage LB. Ab Arpan ki 5 login App 1 pe gayi aur 5 App 2 pe. Dono
+ne alag-alag gina, dono ko laga "5 hi to hain", aur 10 andar chali gayi. Had toot gayi.
 
 ### Kadam 2: kai server, ginti ek jagah (Redis)
 
-Ilaaj: ginti sabki EK jagah, **Redis**. Har App har request pe Redis se poochhe.
+Ilaaj: sabki ginti **ek jagah** rakho, yaani Redis me. Har app server har request pe Redis se poochhta hai.
 
 ```
 key   = rl:arpan:login          (kaun user + kaunsa kaam)
-INCR  -> 1, 2, 3 ...            (Redis me +1, nayi ginti wapas)
-umar  = 60 sec (TTL)            -> minute khatam, key khud gayab = ginti reset, safai ka job nahi
-6 aayi -> 429
+INCR  -> 1, 2, 3 ...            (Redis me ginti +1 karo, nayi ginti wapas aati hai)
+umar  = 60 sec (TTL)            -> minute khatam hote hi key apne aap gayab = ginti reset
+6vi aayi -> 429
 ```
 
 ```mermaid
@@ -79,35 +82,41 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Redis kyun, DB kyun nahi? NFR: ~1 ms, 10,000 / sec. DB disk pe, har baar kai ms, site dheemi.
-Redis RAM me ~1 ms, aur data sirf 500 MB, RAM me aa jaata.
+Redis kyun, DB kyun nahi? NFR kehta hai ~1 ms, aur har second 10,000 request. DB disk pe likhta hai, har baar
+kai ms lagte, poori site dheemi ho jaati. Redis RAM me hai, ~1 ms. Aur numbers me nikla tha ki data sirf 500
+MB hai, RAM me aa jaata hai.
 
-Par "har minute 5" = ghadi ka minute (10:00 - 10:01). Bot ne 10:00:59 pe 5 bheji, 10:01:00 pe phir 5.
-Ek second me 10 andar, kyunki minute badalte hi ginti 0.
+Umar (TTL) isliye ki minute khatam hote hi key khud mit jaaye, safai ke liye koi job na chalana pade.
+
+Par "har minute 5" ka matlab ghadi ka minute hai (10:00 se 10:01). Bot ne 10:00:59 pe 5 bheji aur 10:01:00 pe
+phir 5. Ek second ke andar 10 andar chali gayi, kyunki minute badalte hi ginti 0 ho gayi.
 
 ### Kadam 3: minute ke kinare pe dugni (kaunsa tareeka gine)
 
-Ab tak ghadi ka minute (**fixed window**): 10:00:59 pe 5 + 10:01:00 pe 5 = ek second me 10.
+Ab tak ghadi ka minute gin rahe the (isse **fixed window** kehte hain). Gin-ne ke chaar tareeke hain:
 
 ```
-SLIDING LOG     har request ka time likho, nayi aaye to pichhle 60 sec wale gino
-                -> sabse sahi, par har request ka time = memory bahut (1 crore user)
-SLIDING COUNTER is minute ki ginti + pichhle minute ka bacha hissa (2 number)
-                -> lagbhag sahi, sasta
-LEAKY BUCKET    request line me, fix raftaar se nikalti (nal se boond)
-                -> smooth, par jhatka (burst) nahi nikalne deta
-TOKEN BUCKET    baalti me max 5 token, har 12 sec 1 bharta, har request 1 leti, khaali -> 429
-                -> ISLIYE YE
+SLIDING LOG      har request ka time likh lo, nayi aaye to pichhle 60 sec wale gino
+                 -> sabse sahi, par har request ka time rakhna = 1 crore user pe bahut memory
+SLIDING COUNTER  is minute ki ginti + pichhle minute ka bacha hissa (2 number)
+                 -> lagbhag sahi, sasta
+LEAKY BUCKET     request ek line me lagti hain aur fix raftaar se nikalti hain (nal se boond jaisi)
+                 -> smooth hai, par jhatke me aayi request (burst) ko nahi nikalne deta
+TOKEN BUCKET     ek baalti me max 5 token. Har 12 sec me 1 token bharta. Har request 1 token leti.
+                 Baalti khaali -> 429
 ```
 
+**Token bucket isliye:** isme sirf 2 number rakhne padte hain (kitne token bache, aakhri baar kab dekha), jo
+wahi 500 MB hai. Jhatka bhi chalta hai: Arpan 1 ghanta baad aaya to baalti bhari mili, aur wo 5 ek saath bhej
+sakta hai, asli user aise hi bhejta hai. Aur kinare wali dikkat nahi aati: baalti khaali hui to agla token 12
+sec baad hi aata hai, minute badalne se kuch reset nahi hota. AWS aur Stripe bhi yahi lagate hain.
+
+Token bharta kaun hai? Koi background job nahi. Request aane pe hi hisaab lagta hai (lazy refill):
+
 ```
-token bucket kyun?  -> sirf 2 number (tokens, aakhri baar) = wahi 500 MB
-                    -> jhatka chalta: 1 ghanta baad aaya to 5 ek saath (asli user aise hi)
-                    -> kinara nahi: khaali hui to agla token 12 sec baad, minute se reset nahi
-                    -> AWS / Stripe yahi
-bharta kaun?        -> koi job nahi. Request aane pe hisaab (lazy refill):
-                       tokens = min(5, tokens + (abhi - aakhri baar) x raftaar)
-                       1 ghanta baad: 300 bante, par baalti 5 ki -> 5
+tokens = min(5, tokens + (abhi - aakhri baar) x raftaar)
+          ^ baalti se zyada nahi   ^ beeche time me jitne bane
+Arpan 1 ghanta baad aaya: beeche time me 300 bante, par baalti 5 ki hai, to 5 hi
 ```
 
 ```mermaid
@@ -118,24 +127,25 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par bot ne ek saath 20 login bheje. 20 App ne ek saath padha "tokens = 5",
-sabne socha "bache hain", sabne 1 ghata ke likha.
-20 andar, jabki 5 jaane the.
+Par bot ne ek saath 20 login bheje. 20 app server ne ek saath Redis se padha "tokens = 5", sabne socha "bache
+hain", aur sabne 1 ghata ke likh diya. 20 andar chale gaye, jabki 5 hi jaane chahiye the.
 
-### Kadam 4: 20 ek saath aaye, sab andar (atomic, Lua script)
+### Kadam 4: 20 ek saath aaye, sab andar (Lua script, ek jhatke me)
 
-Har request 3 kaam: padho -> jaancho -> likho. 20 ek saath:
+Har request 3 kaam karti hai: padho, jaancho, likho. Ye teen alag kadam the, aur beech me doosri request ghus
+gayi:
 
 ```
 App 1:  padha 5 -> "bache hain" -> likha 4
-App 2:  padha 5 -> "bache hain" -> likha 4      (App 1 ka likha abhi dikha hi nahi)
+App 2:  padha 5 -> "bache hain" -> likha 4      (App 1 ka likha hua abhi dikha hi nahi)
 ...
-App 20: padha 5 -> "bache hain" -> likha 4      -> 20 andar, had 5
+App 20: padha 5 -> "bache hain" -> likha 4      -> 20 andar, jabki had 5 thi
 ```
 
-Ilaaj: teeno kaam EK kadam me (**atomic**). Redis me **Lua script**: refill + jaanch + ghatao, ek jhatke me.
-Redis ek baar me ek hi command chalata (single thread), script ke beech koi ghus nahi sakta.
-20 line me: pehli 5 ko token, baaki 15 ko 429.
+Ilaaj: teeno kaam **ek hi kadam** me karo. Redis me ek chhoti **Lua script** bhejo, jo token bharna, jaanchna
+aur ghatana, teeno ek jhatke me karti hai. Redis ek baar me ek hi command chalata hai (single thread), to jab
+script chal rahi hai, koi doosri request beech me ghus hi nahi sakti. 20 request line me lagti hain: pehli 5
+ko token mile, baaki 15 ko 429.
 
 ```mermaid
 flowchart LR
@@ -145,21 +155,16 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-```
-lock lagao?   -> har request pe lock lo + chhodo = 2 extra chakkar, lock wala atka to sab ruke. 1 ms toota
-sirf INCR?    -> atomic hai par sirf ginti. Token bucket me refill phir ghatana = do kaam, isliye Lua
-```
+Par limiter app ke andar hai. Bot ki 15 mana wali request bhi LB se hoti hui app tak aayi, app ne Redis se
+poochha, aur tab jaake 429 diya. Mana karne me bhi hamare app ki machine aur time kharch hua.
 
-Par limiter App ke andar. Bot ki 15 mana wali bhi LB se App tak aayi, App ne Redis poochha, tab 429.
-Mana karne me bhi hamare App ka time aur machine kharch.
+### Kadam 5: mana wali request bhi andar tak aayi (limiter darwaze pe)
 
-### Kadam 5: mana wali bhi andar tak aayi (limiter darwaze pe)
-
-Ilaaj: limiter **sabse aage, API Gateway** pe. Mana wali App tak pahunchti hi nahi.
+Ilaaj: limiter ko **sabse aage, API Gateway pe** lagao. Mana wali request app tak pahunchti hi nahi.
 
 ```
-pehle:  bot -> LB -> App (Redis poochha) -> 429      App ka time gaya
-ab:     bot -> API Gateway (Redis poochha) -> 429    App tak pahunchi hi nahi
+pehle:  bot -> LB -> App (Redis se poochha) -> 429      app ka time gaya
+ab:     bot -> API Gateway (Redis se poochha) -> 429    app tak pahunchi hi nahi
 ```
 
 ```mermaid
@@ -171,29 +176,27 @@ flowchart LR
     style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-```
-har App me library kyun nahi?  -> har service (login, payment, search) apna code likhe.
-                                  Gateway = ek jagah, sab pe chale, aur bot ka bojh App pe nahi
-AWS pe                         -> API Gateway me throttling pehle se. Har user ki alag had = apna limiter +
-                                  Redis (ElastiCache)
-```
+Har app ke andar library kyun nahi? Tab har service (login, payment, search) ko apna limiter code likhna
+padta, aur bot ka bojh fir bhi app pe padta. Gateway pe ek jagah lagao, sab pe chalega. AWS pe API Gateway me
+throttling pehle se hoti hai. Par har user ki alag had chahiye to apna limiter Redis (ElastiCache) ke saath
+lagate hain.
 
-Par sab Redis pe tika. Dopahar Redis gira. Limiter haan bole ya na? Sabko 429 = poori site band.
+Par ab sab kuch Redis pe tika hai. Dopahar ko Redis gir gaya. Ab limiter kisi request ko haan bole ya na?
+Sabko 429 diya to poori site band.
 
 ### Kadam 6: Redis gira (copy + fail-open / fail-closed)
 
-Ilaaj 1: **Redis ki copy**. Redis gira to copy jagah leti (ElastiCache khud, kuch second me).
+Ilaaj 1: **Redis ki copy**. Redis gira to copy turant uski jagah le leti hai. AWS ElastiCache ye apne aap kar
+deta hai, kuch second me.
 
-Un kuch second me?
+Phir bhi un kuch second me kya karein? Do raaste hain. **Fail-open** matlab Redis nahi mila to sabko jaane do:
+site chalti rahi, bas kuch second bina had ke. **Fail-closed** matlab Redis nahi mila to sabko 429: koi bot
+nahi ghusa, par poori site band.
 
-```
-FAIL-OPEN    Redis nahi -> sabko jaane do    -> site chalti, bas kuch second bina had
-FAIL-CLOSED  Redis nahi -> sabko 429         -> bot nahi ghusa, par site band
-
-aam API (search, feed) -> fail-open. Bina had chhota nuksaan, site band bada
-                          (NFR: limiter gire to site na gire)
-login / OTP            -> fail-closed. Yahin bot password ka andaza lagata, OTP pe SMS ka paisa
-```
+Aam API (search, feed) pe fail-open, kyunki kuch second bina had ke chal jaana chhota nuksaan hai, site band
+hona bada. NFR bhi kehta hai "limiter gire to site na gire". Login aur OTP pe fail-closed, kyunki yahin bot
+password ka andaza lagata hai, aur OTP pe SMS ka paisa lagta hai. Inhe kuch second band rakhna sasta padta
+hai.
 
 ```mermaid
 flowchart LR
@@ -206,19 +209,22 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par raat ko attack, aur usi waqt Redis + copy dono gaye. Fail-open se aam API bina had, bot andar.
+Par raat ko attack aaya, aur usi waqt Redis aur uski copy, dono gir gaye. Fail-open se saari aam API bina had
+ke khul gayi, aur bot andar ghus gaya.
 
-### Kadam 7: Redis + copy dono gaye (har gateway apni ginti)
+### Kadam 7: Redis aur copy dono gaye (har gateway apni ginti)
 
-Ilaaj: Redis wapas aane tak har gateway machine **apni memory me ginti**, had baant ke:
+Ilaaj: jab tak Redis wapas na aaye, har gateway machine **apni memory me khud ginti** rakhe, aur had ko
+machines me baant de:
 
 ```
-asli had = 100 / min, gateway = 10 machine  ->  har machine 100 / 10 = 10 / min   (had / N)
-LB barabar baantta, to kul milaake lagbhag 100. Poori sahi nahi, lagbhag sahi
-fail-open    -> site chalti, had hi nahi (bot ghusa)
-local had/N  -> site chalti, had lagbhag sahi    <- ISLIYE YE
-Redis wapas  -> sab phir Redis se
+asli had = 100 / min, gateway machine = 10  ->  har machine apni memory me 100 / 10 = 10 / min   (had / N)
 ```
+
+LB request ko barabar baantta hai, to Arpan ki request bhi lagbhag 10 machine me batt jaati hain. Kul milaake
+had lagbhag 100 hi rehti hai. Poori sahi nahi, par lagbhag sahi, aur site bhi chalti rehti hai. Fail-open me
+had hi nahi lagti thi, yahan lagbhag sahi lagti hai. Redis wapas aaya to sab machines phir Redis se ginne
+lagti hain.
 
 ```mermaid
 flowchart LR
@@ -231,20 +237,20 @@ flowchart LR
     style R fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
-Par wahi bot har 60 sec baad wapas: 429 khaata, minute khatam, phir aata. Din bhar.
+Par wahi bot har 60 second baad wapas aa jaata hai. 429 khaata hai, minute khatam hote hi phir aata hai, aur
+din bhar yahi chalta hai.
 
-### Kadam 8: wahi bot baar-baar (pattern -> ban)
+### Kadam 8: wahi bot baar-baar (pattern pakdo, ban karo)
 
-Ilaaj: har 429 ki khabar **Kafka** me. Peeche ek Pattern Svc dekhta:
-"ye 1 ghante me 50 baar had paar kar chuka" -> **ban**.
-Ban list gateway / WAF pe, ban wala darwaze pe hi ruk jaata (Redis tak bhi nahi).
+Ilaaj: har 429 ki khabar **Kafka** me daalo. Peeche ek Pattern Svc dekhta hai: "ye 1 ghante me 50 baar had
+paar kar chuka hai", to use **ban** kar deta hai. Ban list gateway ya WAF pe hoti hai, to ban wala darwaze pe
+hi ruk jaata hai, Redis tak bhi nahi pahunchta.
 
-```
-Kafka kyun?      -> 429 dena tez rahe (1 ms). Pattern dhoondhna peeche, gateway ruke bina
-ban kitni der?   -> hamesha nahi, kuch der (TTL, jaise 1 ghanta, baar-baar aaya to badhao)
-IP pe kyun der?  -> IP badalte rehte / ek IP pe kai log (office, mobile network). Hamesha ka ban
-                    = kal wahi IP kisi asli user ko mila to wo atka
-```
+Kafka isliye ki 429 dena tez rahe (1 ms). Pattern dhoondhna peeche chalta hai, gateway ko roke bina.
+
+Ban hamesha ke liye nahi, kuch der ke liye hota hai (TTL, jaise 1 ghanta, aur baar-baar aaya to badhao).
+Khaaskar IP ka ban, kyunki IP badalte rehte hain, aur ek IP pe kai log hote hain (office, mobile network).
+Hamesha ka ban lagaya to kal wahi IP kisi asli user ko mila to wo atak jaayega.
 
 ```mermaid
 flowchart LR
@@ -258,20 +264,24 @@ flowchart LR
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par had IP pe lagayi thi. Office ki night shift: 1,000 log ek hi IP se (office ka internet).
-Sab milke 100 / min paar, poora office atka.
+Par had IP pe lagayi thi. Office ki night shift me 1,000 log ek hi IP se aate hain (office ka internet). Sab
+milke 100 / min paar kar gaye, aur poora office atak gaya.
 
 ### Kadam 9: had kis naam pe (IP ya userId)
 
-IP pe had: office ke 1,000 log ek IP, sab atke. Ulta, bot har request alag IP se, had kabhi nahi lagti.
+IP pe had lagane me do dikkat hain. Office ke 1,000 log ek IP pe hain, to sab atak gaye. Aur ulta, bot har
+request alag IP se bheje to IP wali had kabhi lagti hi nahi.
 
-Ilaaj: had **userId** pe (login ke baad JWT se). Har insaan ki apni had, IP ek ho ya hazaar.
+Ilaaj: had **userId** pe lagao, jo login ke baad JWT token se milta hai. Har insaan ki apni had, chahe IP ek
+ho ya hazaar.
+
+Par login se pehle to userId hota hi nahi. Isliye login pe had **IP** pe, aur jis account pe koshish ho rahi
+hai us account pe lagao. Login ki had chhoti hoti hai (5 / min), to office ke log alag-alag login karte hue
+bhi aaram se nikal jaate hain. Ban me bhi yahi: userId pe lamba ban, IP pe chhota.
 
 ```
 login se pehle   -> IP + jis account pe koshish   (rl:ip:1.2.3.4:login, rl:acct:arpan:login)
-                    login ki had chhoti (5 / min), office ke log alag-alag login karte nikal jaate
 login ke baad    -> userId                       (rl:arpan:search)
-ban (kadam 8)    -> userId pe lamba, IP pe chhota (TTL)
 ```
 
 ```mermaid
@@ -286,24 +296,28 @@ flowchart LR
     style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par shaam ki sale: har user apni had ke andar, par 1 crore log ek saath.
-Sab "had me", phir bhi server bhar ke gira.
+Par shaam ko sale hai. Har user apni had ke andar hai, par 1 crore log ek saath aa gaye. Sab "had me" hain,
+phir bhi server bhar ke gir gaya.
 
 ### Kadam 10: sab had me, phir bhi server gira (global cap + 503)
 
-Ilaaj: **poore system ki ek had (global cap)**. Servers maan lo 50,000 / sec jhelte.
-Gateway pe ek aur ginti: is second KUL kitni aayi. Upar wali ko **503** (abhi bhare hain, baad me aao).
+User ki had har insaan ko alag rokti hai. Par 1 crore log ek saath aaye, to kul bojh server ki taakat se zyada
+ho gaya.
+
+Ilaaj: **poore system ki ek had (global cap)**. Maan lo servers 50,000 request / second jhel sakte hain.
+Gateway pe ek aur ginti lagao: is second kul kitni request aayi. Uske upar wali request ko **503** do (abhi
+bhar gaye hain, thodi der baad aao).
 
 ```
-user ki had   (429)  -> "TU zyada bhej raha"     ek insaan ko rokta
-global cap    (503)  -> "HUM abhi bhare hain"    poore system ko bachata
-
-kaun pehle kate (load shedding):
-  pehle kato    -> search suggestion, recommendation, analytics
-  aakhri tak    -> payment, order, login
-aur             -> sale ka time pata, to pehle se server badhao (pre-scale)
-                   phir bhi zyada -> line / waiting room ("aap line me 2,000ve")
+user ki had   (429)  -> "TU zyada bhej raha hai"     ek insaan ko rokta hai
+global cap    (503)  -> "HUM abhi bhare hain"         poore system ko bachata hai
 ```
+
+Sab ek barabar nahi hain, to bhar gaye to pehle kam zaroori kaam chhodo (load shedding): search suggestion,
+recommendation aur analytics pehle kato, payment, order aur login aakhri tak chalao. Matlab sale me "aapke
+liye suggestion" band ho gaya, par Arpan ka payment chalta raha. Sale ka time pehle se pata hota hai, to
+servers pehle se badha do. Phir bhi zyada aaye to line (waiting room), jaise ticket sale me: "aap line me
+2,000ve hain".
 
 ```mermaid
 flowchart LR
@@ -316,25 +330,23 @@ flowchart LR
     style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par Arpan ki script 3 region se chali (Mumbai, Singapore, US). Har region ka apna Redis, har ek ne 100 gine.
-Had 100, nikal gayi 300.
+Par Arpan ki script 3 region se chali: Mumbai, Singapore aur US. Har region ka apna Redis tha, har ek ne 100
+gine. Had 100 thi, par 300 nikal gayi.
 
 ### Kadam 11: 3 region se 300 nikal gayi (home region)
 
-Kadam 2 wali dikkat, bas server ki jagah region alag-alag gin rahe.
+Ye kadam 2 wali hi dikkat hai, bas ab server ki jagah region alag-alag gin rahe hain. Teen raaste hain:
 
 ```
-sab ek Redis se poochhein    -> sahi, par US se Mumbai = ~200 ms har request. 1 ms toota
-had baant do (100 / 3 = 33)  -> tez, par sirf Mumbai se aaye to bhi 33 hi (kadam 7 jaisa had / N)
-HOME REGION                  -> har user ka ek ghar region (jahan account bana), ginti sirf wahin
-                                <- ISLIYE YE
+sab region ek hi Redis se poochhein  -> sahi ginti, par US se Mumbai Redis = ~200 ms har request. 1 ms toota
+had baant do (100 / 3 = 33)          -> tez, par Arpan sirf Mumbai se aaye to bhi use 33 hi milenge
+HOME REGION                          -> har user ka ek ghar region (jahan account bana), ginti sirf wahin
 ```
 
-```
-Arpan (ghar Mumbai) Mumbai se  -> Mumbai Redis, 1 ms
-Arpan ki script US se          -> US gateway Mumbai Redis se poochhe (~200 ms)
-asli user zyadatar apne region se (1 ms). Bahar se kabhi-kabhi, aur wahi aksar bot, uska dheema chalta
-```
+**Home region isliye:** Arpan ka ghar Mumbai hai. Wo Mumbai se aaya to Mumbai Redis, 1 ms. Uski script US se
+aayi to US gateway Mumbai Redis se poochhta hai, ~200 ms. Asli user zyadatar apne hi region se aata hai, to
+uske liye 1 ms hi rehta hai. Bahar se aana kabhi-kabhi hota hai, aur aksar wahi bot hota hai, to uska dheema
+hona chalta hai.
 
 ```mermaid
 flowchart LR
@@ -344,21 +356,24 @@ flowchart LR
     style RM fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Bolo: "Har user ka home region. Ginti wahin. Bahar se aaye to home se poochho, thoda dheema, par sahi."
+Interview me bolo: "Har user ka home region. Ginti wahin. Bahar se aaye to home se poochho, thoda dheema, par
+sahi."
 
 ---
 
-## 5. Wrap (30 sec, NFR se milao)
+## 5. Wrap (30 second me poora design, NFR se milao)
+
+Request pehle WAF pe aati hai, jahan ban list hai. Phir API Gateway pe limiter: user ki had (429) aur poore
+system ki had (503). Ginti Redis me hai, token bucket ki Lua script se ek jhatke me, key = userId (login pe
+IP), user ke home region me, aur Redis ki copy ke saath. Had ke andar hai to app pe, warna 429 aur
+Retry-After. Har 429 ki khabar Kafka se Pattern Svc tak, jo baar-baar wale ko ban karta hai.
 
 ```
-User -> WAF (ban list, TTL) -> API Gateway: user had (429) + global cap (503)
-     -> Lua token bucket in Redis (key = userId, login pe IP · home region · copy)
-     -> had me? App : 429 + Retry-After
-429 ki khabar -> Kafka -> Pattern Svc -> ban -> WAF
-
-TEZ (1 ms)          -> Redis RAM me, gateway pe, ek Lua jhatka
-ginti EK            -> Redis (kai server) + home region (kai region) + Lua (ek saath 20)
-gire to site chale  -> copy, fail-open (aam) / fail-closed (login), local had / N
+TEZ (1 ms)            -> Redis RAM me, gateway pe, ek Lua jhatka
+ginti EK              -> Redis (kai server ke liye) + home region (kai region ke liye)
+                         + Lua (ek saath 20 ke liye)
+gire to site chale    -> Redis ki copy, fail-open (aam API) / fail-closed (login),
+                         Redis poora gaya to local had / N
 ```
 
 ---
@@ -366,17 +381,17 @@ gire to site chale  -> copy, fail-open (aam) / fail-closed (login), local had / 
 ## Pooche to (ek line)
 
 ```
-had kahan se aati (free / pro)?  -> DB me user ka plan (bina login 60 / ghanta, free 5,000, pro 10,000),
-                                    gateway cache kare. Redis me usi had se milao
+had kahan se aati (free / pro)?  -> DB me user ka plan (bina login 60 / ghanta, free 5,000, pro 10,000).
+                                    Gateway cache kare, Redis me usi had se milaye
 had badalni ho?                  -> niyam config me (DB / AppConfig), gateway ~30 sec me padhe. Naya code nahi
-429 pe kya bhejein?              -> Retry-After (kitne sec baad, thoda aage-peeche 28 / 33 taaki sab ek saath
-                                    na lautein) + X-RateLimit-Remaining (kitne bache)
+429 pe kya bhejein?              -> Retry-After (kitne sec baad aao; thoda aage-peeche jaise 28 / 33,
+                                    taaki sab ek saath na lautein) + X-RateLimit-Remaining (kitne bache)
 tumhe kisi ne 429 diya to?       -> Retry-After maano, ruk-ruk ke dobara (backoff + jitter),
                                     apni raftaar ghatao
-100 halki vs 100 bhaari?         -> limiter ko dono "100". Bhaari (report) pe kadi had, ya wazan (report =
-                                    50 token, login = 1)
-10 guna traffic?                 -> gateway machine badhao · Redis shard (user ke hisaab se) + copy
-kaise pata chal raha?            -> limiter ka time (p99), kitne 429 / 503, Redis galtiyan, alert
+100 halki vs 100 bhaari?         -> limiter ke liye dono "100". Bhaari (report) pe kadi had, ya wazan do
+                                    (report = 50 token, login = 1)
+10 guna traffic?                 -> gateway machine badhao · Redis ko user ke hisaab se shard karo + copy
+chal raha, kaise pata?           -> limiter ka time (p99), kitne 429 / 503, Redis ki galtiyan, alert
 AWS naam                         -> Redis = ElastiCache · gateway = API Gateway (throttling) · WAF = AWS WAF
 ```
 
@@ -451,9 +466,9 @@ JAWAB:    usercrud me khud banaya: 5 request theek, chhathi pe 429.
 
 ## HANDS-ON #3 — Redis KHUD maara: kaise tootta
 
-CODE: `04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java`
-· `04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java`
-(koi library nahi, socket se Redis, `java File.java`)
+CODE: `04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java` ·
+`04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java` (koi library nahi, socket se Redis, `java
+File.java`)
 
 ```
 docker run -d --name demo-redis -p 6390:6379 redis:7 redis-server --save "" --appendonly no
