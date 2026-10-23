@@ -196,3 +196,49 @@ to dhoondhna seedha ek machine pe.
 Par data aur badha, 10 se 11 machine kiye. Ab `% 10` ki jagah `% 11`,
 aur lagbhag har link ki machine badal gayi. Arpan ka `aB3x9` machine 3 me pada hai,
 par app use machine 7 me dhoondh raha: link 404.
+
+### Kadam 6: machine badhi to link kho gaye (ring = consistent hashing)
+
+`% 10` se `% 11` kiya to lagbhag har link ki machine badli. Saara 90 TB idhar-udhar, tab tak link 404.
+
+Ilaaj: **ring**. Ek gol ghadi, 0 se 360 tak. Har DB machine ghadi pe ek jagah baithti. Har link ka code bhi
+hash hoke ghadi pe girta. Wahan se ghadi ki disha me chalo, jo pehli machine mile, link usi ka.
+
+```mermaid
+flowchart LR
+    A[("DB-A · 0")] --> B[("DB-B · 60")] --> C[("DB-C · 120")] --> D[("DB-D · 240")] --> A
+    K["aB3x9<br/>hash = 100"] -. "ghadi ki disha me<br/>pehli machine" .-> C
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+nayi machine DB-E juda (95 pe)  -> sirf 60 se 95 ke beech wale link DB-C se DB-E pe.
+                                   Baaki apni jagah.
+                                   % me lagbhag sab hilte, ring me sirf ek tukda (~1/11)
+ek machine pe zyada bojh        -> har machine ko ghadi pe kai jagah bithao (virtual nodes), bojh barabar
+```
+
+### DB kaunsa: SQL ya NoSQL?
+
+```
+data:  aB3x9 -> amazon.in/dp/B0C...   (bas code aur link)
+kaam:  code do, link lo               (na join, na transaction)
+size:  90 TB, kai machine pe baantna (shard + ring)
+```
+
+```
+SQL (Postgres / MySQL)  -> taakat join + transaction, yahan chahiye hi nahi. Ek machine pe sabse achha.
+                           Baantna, ring, data shift = sab haath se. Jo chahiye nahi wo mila, jo chahiye
+                           wo khud banao. ISLIYE NAHI
+NoSQL key-value         -> kaam hi "key do, value lo". Ring + baantna + copy KHUD karta. ISLIYE YE
+DynamoDB                -> AWS chalata: machine, copy, baantna sab unka. Par AWS se bandhe, bada traffic
+                           = bhaari bill
+Cassandra               -> apni machines pe (ya AWS Keyspaces). Kisi se bandhe nahi, par chalana /
+                           dekhbhaal hamari team ka
+MongoDB?                -> chal jaata, par document DB. Document wali cheez chahiye hi nahi
+```
+
+Bolo: "Data simple hai, code se link. Join / transaction nahi, par 90 TB baantna hai. SQL me baantna haath se,
+isliye NoSQL key-value. AWS pe ho to DynamoDB, apna setup ho to Cassandra. Main Cassandra le raha hoon."
+
+Par ek DB machine gir gayi, to us pe pade saare link 404.
