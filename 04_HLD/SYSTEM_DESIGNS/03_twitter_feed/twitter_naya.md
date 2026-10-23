@@ -205,22 +205,40 @@ Ye [URL kadam 8](../01_url_shortener/01_url_shortener.md#kadam-8-ek-link-viral-l
 Par Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. Redis ki RAM bhar rahi, aur Redis RAM
 mehngi hai.
 
-### Kadam 6: Redis ki RAM bhar rahi (inbox chhota karo)
+### Kadam 6: inbox chhota rakho (3 chhoti baatein)
 
-Ilaaj, 3 chhoti baatein:
-1. **inbox me sirf tweet id** (Kadam 2 se). Ek id ~8 byte, poora tweet nahi.
-2. **har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya aaya to sabse purana kaato.
-3. **sirf active logon ka inbox.** Jo 30 din se nahi aaya, uska inbox Redis me nahi (TTL se mit jaata). Wo wapas
-   aaye to pehli feed Kadam 1 wale tareeke se ek baar banao (DB se jod), aur inbox phir se bhar do.
+Dikkat: Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. RAM bhar rahi, aur Redis RAM mehngi.
+
+**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Ek id lagbhag 8 byte ki, poora tweet nahi.
+
+**2. Har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya tweet aaya to sabse purana
+kaat do (sorted set trim).
+
+**3. Sirf active logon ka inbox.** Jo 30 din se app nahi khola, uska inbox Redis me rakhte hi nahi (umar / TTL
+se mit jaata). Wo wapas aaya to pehli baar uski feed Kadam 1 wale tareeke se ek baar banao (200 logon ka jod),
+aur inbox phir se bhar do. Bas pehli feed thodi dheemi khulti.
 
 ```
-pehle: 50 crore inbox x hazaron id                       -> RAM bhar gayi
-ab:    ~10 crore active x 800 id x 8 byte = ~640 GB         -> kai Redis machine me baant do (user_id se)
+pehle:  50 crore inbox x hazaron id                      -> RAM bhar gayi
+ab:     ~10 crore active inbox x 800 id x 8 byte = ~640 GB -> kai Redis machine me baant do (user_id se)
+        purana / inactive -> inbox nahi, wapas aaye to ek baar banao
 ```
 
-(10 crore active aur 8 byte, dono andaza.)
+```mermaid
+flowchart LR
+    FW["Fanout worker"] -- "sirf active ke inbox,<br/>aakhri 800 id" --> R1[("Redis 1")]
+    FW --> R2[("Redis 2")]
+    FW --> R3[("Redis ... (user_id se baante)")]
+    style R1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style R2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style R3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
-Ek line: Redis me sirf wahi rakho jo sach me dekha jaata hai.
+(10 crore active aur 8 byte, dono mera andaza. Asli number Redis ke apne extra kharche ke saath thoda zyada
+aayega.)
+
+**Ab kya theek hua:** Redis me sirf wahi jo sach me dekha jaata hai. 640 GB kai Redis machine me baant dete,
+jaise [URL me shard](../01_url_shortener/01_url_shortener.md#kadam-5-data-bahut-bada-db-ke-tukde--shard) kiya tha.
 
 Par roz 50 crore naye tweet tweets DB me jaate: 5,000 likhai / sec, saal bhar me sau TB. Ek SQL DB machine ye
 likhai aur jagah nahi jhel paayegi.
