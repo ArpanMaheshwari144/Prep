@@ -209,9 +209,6 @@ Crore sawaal machine ki memory se nipat jaate, DB tak sirf 100 machine x 2 sec m
 2 sec purana chalega? Haan, NFR: feed 2-5 sec purani chalegi. Virat ka naya tweet kisi ko 2 sec der se dikhe,
 to chalega.
 
-DB ki copy badha do? Copy bhi disk se padhti, aur crore padhai ek hi cheez (Virat ke 20) pe hai, koi copy nahi
-jhelti. Ilaaj memory me rakhna hi.
-
 Beech me Redis kyun nahi? Local cache akela hi DB ko bacha leta. Celebrity gine-chune (kuch hazaar), to unke
 aakhri 20 tweet har machine ki memory me aaraam se aa jaate. Redis is design me sirf inbox ke liye (Kadam 2).
 
@@ -222,8 +219,7 @@ mehngi hai.
 
 ### Kadam 6: inbox chhota rakho (3 chhoti baatein)
 
-**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Id khud 8 byte ki, par Redis har entry ke saath apna kharcha
-jodta (score, pointer), to ek entry ~60-100 byte padti. Poora tweet nahi.
+**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Ek id lagbhag 8 byte ki, poora tweet nahi.
 
 **2. Har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya tweet aaya to sabse
 purana kaat do (sorted set trim).
@@ -234,7 +230,7 @@ aur inbox phir se bhar do. Bas pehli feed thodi dheemi khulti.
 
 ```
 pehle:  50 crore inbox x hazaron id                      -> RAM bhar gayi
-ab:     ~10 crore active inbox x 800 id x ~80 byte = ~6 TB -> kai Redis machine me baant do (user_id se)
+ab:     ~10 crore active inbox x 800 id x 8 byte = ~640 GB -> kai Redis machine me baant do (user_id se)
         purana / inactive -> inbox nahi, wapas aaye to ek baar banao
 ```
 
@@ -248,9 +244,10 @@ flowchart LR
     style R3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-(10 crore active aur ~80 byte, dono andaza. 6 TB bhi kai machine me baant ke chal jaata, design nahi badalta.)
+(10 crore active aur 8 byte, dono mera andaza. Asli number Redis ke apne extra kharche ke saath thoda zyada
+aayega.)
 
-**Ab kya theek hua:** Redis me sirf wahi jo sach me dekha jaata hai. ~6 TB kai Redis machine me baant dete,
+**Ab kya theek hua:** Redis me sirf wahi jo sach me dekha jaata hai. 640 GB kai Redis machine me baant dete,
 jaise [URL me shard](../01_url_shortener/01_url_shortener.md#kadam-5-data-bahut-bada-db-ke-tukde--shard) kiya tha.
 
 Par roz 50 crore naye tweet tweets DB me jaate: 5,000 likhai / sec, saal bhar me sau TB. Ek SQL DB machine ye
