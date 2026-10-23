@@ -329,3 +329,78 @@ number DND pe tha.
 
 Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Svc ek hi baar me 1 crore
 khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.
+
+### Kadam 10: 1 crore ka campaign, 1000 ke tukdon me
+
+PEHLE (tukde nahi): ek hi baar me 1 crore
+
+```
+Campaign Svc:  user 1, 2, 3 ... 40,00,000  X gir gaya
+                                          |
+               kisko gaya? kisko nahi? -> PATA NAHI
+               shuru se chalao -> 40 lakh ko DO offer
+```
+
+AB: 1000-1000 ke tukde, har tukde pe tick
+
+```
+1 crore user  =  10,000 tukde (har tukde me 1000 user)
+
+campaign 77 ki DB row (register):
+ +---------+-----------------+-----------+
+ | tukda   | user            | haal      |
+ +---------+-----------------+-----------+
+ | 1       | 1 - 1000        | HO GAYA   |  <- worker A ne kiya
+ | 2       | 1001 - 2000     | HO GAYA   |  <- worker B ne kiya
+ | 3       | 2001 - 3000     | ...       |  <- worker C beech me MARA (400 ko gaya)
+ | 4       | 3001 - 4000     | BAAKI     |
+ | ...     | ...             | ...       |
+ | 10,000  | ... - 1 crore   | BAAKI     |
+ +---------+-----------------+-----------+
+```
+
+Worker C mara, to:
+
+```
+tukda 3 pe tick nahi laga -> doosra worker tukda 3 dobara uthata
+     |
+     +-- pehle 400 user: Redis key "BHEJ_DIYA" (Kadam 4) -> chhod do, dohra nahi
+     +-- baaki 600 user: bhejo -> tukda 3 pe tick
+tukda 1, 2 ko koi chhoota bhi nahi (tick laga hai)
+```
+
+```mermaid
+flowchart LR
+    CS["Campaign Svc"] --> DB[("campaign register<br/>tukda | haal")]
+    CS --> K[("Kafka: 10,000 tukde")]
+    K --> TW["tukda worker<br/>(pasand dekho)"]
+    TW --> D[("DHEEMI line")]
+    TW -- "tukda ho gaya: tick" --> DB
+    style DB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style TW fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ek line: 1 crore ka kaam 10,000 chhote tukdon me baanto, har tukda khatam hone pe register me tick. Koi gira
+to sirf uska adhoora tukda dobara chalta hai, aur dohra jaane se Redis key rokti hai.
+
+**Redis me 1 crore key? Itni jagah?** Ek key chhoti si, jaise `77:Arpan:sms = BHEJ_DIYA`, lagbhag 100 byte
+(andaza, Redis thoda extra bhi leta hai). 1 crore x 100 byte = ~1-2 GB, Redis ke liye kuch nahi. Aur har key
+pe umar (TTL) 1 din: campaign khatam, 1 din baad saari key apne aap mit jaati hain, Redis bharta nahi rehta.
+
+**Redis gir gaya to?**
+
+```
+Redis gira
+   |
+   +-- pehle: replica (copy) primary ban jaati (Kadam 4 wala)
+   |
+   +-- dono gaye? -> darja dekho:
+         OTP (TEZ)      -> bhejte raho. do OTP chalenge, khoya OTP nahi
+         offer (DHEEMI) -> campaign ROKO jab tak Redis wapas na aaye
+                           offer 1 ghanta ruk sakta, par 1 crore ko do-do offer = bura
+```
+
+Ek hi dikkat, par faisla darje se badalta: OTP me khona bura (bhejte raho), offer me dohraav bura (ruk jao).
+
+Par offer ka SMS raat 2 baje chala gaya, jabki Arpan ne offer wale SMS band kiye the. Aur har khabar pe
+Notification Svc DB se pasand + saancha padh raha hai: 1.75 lakh / sec padhna, DB ghut raha hai.
