@@ -317,8 +317,8 @@ flowchart LR
     style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Design yahin poora hota hai. SMS Svc dheema pade to kaise pata chale (lag), wo design nahi badalta, isliye
-"Pooche to" me.
+Par sale me SMS Svc dheema pad gaya. Khabar aa rahi 5,000 / sec, SMS Svc padh raha 3,000 / sec. Bookmark
+peeche chhoot-ta ja raha hai, Arpan ko SMS 10 minute late, aur kisi ko pata hi nahi chala.
 
 ---
 

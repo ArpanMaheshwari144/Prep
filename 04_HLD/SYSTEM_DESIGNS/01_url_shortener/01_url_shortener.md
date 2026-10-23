@@ -164,9 +164,6 @@ Har server ki range alag hai, isliye do server kabhi same number nahi denge, aur
 bhi nahi padta. App 1 beech me gir gaya to uske bache number (jaise 501 - 1,000) bekaar chale jaate hain. Koi
 dikkat nahi, 3.5 lakh crore number hain.
 
-Beech wala counter kaunsa? ZooKeeper dheema par pakka, aur 1,000 link me ek hi call hai, to chalega. Redis tez
-hai, par gira to purani range dobara na de de, isliye `INCRBY` ke saath AOF (har likha hua disk pe).
-
 Par 5 saal me data ~90 TB ho jaayega. Itna ek DB machine me nahi samata.
 
 ### Kadam 5: data bahut bada (DB ke tukde = shard)
