@@ -128,3 +128,43 @@ server ki memory me kyun?  -> aage server kai honge: har ek ka cache alag, resta
 ```
 
 Par 1 lakh log kholne aa rahe hain, aur app server abhi bhi ek hi hai. Akela itna bojh nahi jhel paayega.
+
+### Kadam 4: ek server kam pada (LB + kai server, counter range)
+
+1 lakh log aur app server ek. Wo bojh nahi jhelega, aur wo gira to poori site band.
+
+Ilaaj: kai app server (maan lo 10), aage **Load Balancer (LB)**. LB har request kisi khaali server ko deta.
+
+```mermaid
+flowchart LR
+    U["Arpan"] --> LB["Load Balancer"]
+    LB --> S1["App 1"] & S2["App 2"] & S3["App 3"]
+    S1 & S2 & S3 --> R[("Redis")]
+    S1 & S2 & S3 --> D[("DB")]
+    C[("Counter<br/>range baantta")] -.-> S1 & S2 & S3
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Server badhe to counter ki dikkat. Kadam 2 me counter ek tha, ab 10 server:
+
+```
+har server ka apna counter   -> App 1 aur App 2 dono "number 5" denge = same code. NFR toota
+har link pe ek counter se    -> wo ek counter hi bheed ban jaata
+poochho
+```
+
+Ilaaj: **counter RANGE**. Ek beech ka counter (Redis `INCRBY` ya ZooKeeper) numbers ke dabbe baantta:
+
+```
+App 1 ko: 1 - 1,000          App 1 khud 1, 2, 3 ... 1,000 deta jaata
+App 2 ko: 1,001 - 2,000      khatam hone pe hi agla dabba maangta
+App 3 ko: 2,001 - 3,000      -> beech wale se baat 1,000 link me ek baar
+```
+
+Range alag, to same number kabhi nahi. Beech wale pe bojh bhi nahi. App 1 beech me gira to uske bache number
+(501 - 1,000) bekaar: koi baat nahi, 3.5 lakh crore number hain.
+
+Par 5 saal me data ~90 TB. Itna ek DB machine me nahi aata.
