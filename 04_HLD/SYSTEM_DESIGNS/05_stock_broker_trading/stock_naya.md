@@ -9,6 +9,11 @@ Ye paise wali tikdi ka chautha design hai: jo [banking](../13_banking_system/13_
 [payment](../06_payment_system/06_payment_system.md) ya [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me pehle
 se hai, wahan bas ek line + link. Poora sirf wahi jo stock ka apna hai (order book, matching, 9:15 ki bheed).
 
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+order book + matching engine -> client_order_id UNIQUE -> paisa / share BLOCK -> ek share ek thread
+-> log + standby (ack ke baad milaan) -> Kafka trades (kai sunne wale) -> settlement (ulta nahi, PENDING)
+-> Price Svc + Redis pub/sub + WebSocket
+
 ---
 
 ## 1. FR: kya karna hai
@@ -303,3 +308,87 @@ humari taraf ki, to theek bhi hum karte: PENDING dikhao, khud poora karo.
 
 Par 10 lakh logon ka app khula, sab ko har second TCS ka naya bhaav dekhna. Har app har second server se
 poochh raha "TCS kitna?". 10 lakh sawaal / sec, server baith gaya.
+
+### Kadam 8: bhaav 10 lakh logon tak (Price Svc + Redis pub/sub + WebSocket)
+
+Dikkat: 10 lakh app har second "TCS kitna?" poochh rahe, server baith gaya.
+
+```
+[Kafka: trades] --> Price Svc --> [Redis pub/sub: channel "TCS"] --> 20 WebSocket machine --> 10 lakh app
+                   (har share ka                                   (har machine apne logon ke
+                    1 bhaav / sec)                                  share sunti, unhe push)
+```
+
+1. **Price Svc:** Kadam 6 wala `trades` topic hi padhta. TCS ke ek second me 5,000 sauda, to bhi us second ka
+   sirf aakhri bhaav, har share ka 1 bhaav / sec. Aankh ko itna hi chahiye.
+2. **Redis pub/sub:** Price Svc ko nahi pata Arpan 20 me se kis WebSocket machine pe juda hai. To bhaav ek
+   channel pe chilla deta hai ("TCS 3502"). Har WebSocket machine sirf un share ke channel sunti jo uske log
+   dekh rahe.
+3. **WebSocket:** machine wo bhaav apne logon ko push karti. App ko poochhna hi nahi
+   (chat file wala khula taar).
+
+```mermaid
+flowchart LR
+    K[("Kafka: trades")] --> PS["Price Svc<br/>(1 bhaav / sec)"]
+    PS --> RP[("Redis pub/sub<br/>channel TCS")]
+    RP --> W["20 WebSocket machine"]
+    W -- "push" --> U["10 lakh app"]
+    style PS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style RP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Yahan Kafka kyun nahi, Redis pub/sub kyun: ek bhaav kho gaya to koi baat nahi, agle second naya aa jaayega.
+Bhaav ko disk pe pakka rakhne ki zaroorat nahi, bas tez pahunche. Redis pub/sub halka, tez, kuch yaad nahi
+rakhta. Sauda (Kadam 6) khona mana tha, isliye wahan Kafka. Bhaav kho sakta hai, isliye yahan Redis. Faisla
+is baat se: khabar khona chalega ya nahi.
+
+---
+
+## Wrap: 30 sec me poora design
+
+```
+Order Svc: client_order_id UNIQUE (dohra nahi) + paisa / share BLOCK ek query me. Matching engine: har share
+ki ek line, ek thread, RAM me order book (pehle aaya pehle mila, lock nahi). Har order pehle log + standby ko,
+ack ke baad milaan; primary gira to standby (ek waqt ek hi, snapshot). Sauda log me -> relay -> Kafka trades
+-> settlement (sauda ulta nahi, PENDING + dobara, trade_id se ek baar), notification, audit, Price Svc.
+Bhaav: 1 / sec, Redis pub/sub, WebSocket push.
+```
+
+---
+
+## Pooche to
+
+```
+LIMIT vs MARKET?
+  -> LIMIT = "3500 ya isse behtar, warna rukunga" (daam pakka). MARKET = "jo bhaav hai, abhi do" (waqt pakka).
+
+API?
+  -> POST /order { stock, side, qty, price, type, clientOrderId } · DELETE /order/{id} · GET /order/{id}
+     · WS /prices (subscribe TCS, INFY)
+
+BUY 3498 aaya, sabse sasta SELL 3500 hai?
+  -> sauda nahi, BUY book me khada rehta (kharidne wale: sabse mehnga upar, bechne wale: sabse sasta upar).
+
+Order book DB me kyun nahi?
+  -> DB = har order pe milli-second, RAM = micro-second. 9:15 ki bheed me yahi farak.
+
+Aadha bhara (partial fill)?
+  -> Arpan ko 10 chahiye, Suresh 6 bech raha: 6 ka sauda, Arpan ke 4 book me khade. Blocked paisa bhi utna hi
+     chhoota.
+
+Din khatam, order bika nahi?
+  -> order cancel, blocked paisa / share wapas available (Kadam 3).
+
+Chal raha hai, kaise pata?
+  -> order se sauda tak ka time (p99), Kafka trades ka lag, settlement PENDING kitne, standby kitna peeche.
+
+"Zerodha sach me aise karta?"
+  -> mat bolo "Zerodha aise karta". Bolo "a common pattern for matching engines", andar ka pata nahi. Asal me
+     broker order exchange (NSE) ko bhejta hai, milaan wahan hota; ye design wo milaan wala hissa hai.
+```
+
+CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) ·
+[CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [banking](../13_banking_system/13_banking_system.md) ·
+[payment](../06_payment_system/06_payment_system.md) · [BookMyShow](../09_bookmyshow/09_bookmyshow.md) ·
+[Kafka](../12_message_queue_kafka/12_message_queue_kafka.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
