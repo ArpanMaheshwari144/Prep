@@ -306,3 +306,35 @@ flowchart LR
 
 Ab kya theek hua: bhaari video kabhi Tweet Svc / Cassandra se nahi guzarti, tweet chhota (sirf link),
 crore log CDN se dekhte. Ye bilkul [chat kadam 10](../14_chat_messaging/14_chat_messaging.md#kadam-10-200-mb-ka-video-s3-me-message-me-sirf-link) wala: wahan bhi message me sirf link, video S3 me.
+
+Par Arpan Bangalore me, aur saare server, Redis, Cassandra US me. Har feed ko US jaana aur aana, akela safar
+hi ~300 ms. NFR "feed 200 ms" toot gaya.
+
+### Kadam 9: Arpan India me, server US me (India me apna region)
+
+```
+India region (Mumbai):  Feed Svc + Tweet Svc + Redis inbox + Cassandra ki copy
+US region:              wahi sab, apne logon ke liye
+
+Arpan (India) --feed--> Mumbai region -> inbox:Arpan Mumbai ke Redis me -> ~50 ms
+Virat ne tweet kiya (India) -> Mumbai Cassandra me likha -> peeche se US Cassandra me copy (kuch second)
+```
+
+```mermaid
+flowchart LR
+    A["Arpan (India)"] --> M["Mumbai region<br/>Feed Svc + Redis inbox + Cassandra"]
+    J["John (US)"] --> U["US region<br/>wahi sab"]
+    M -. "tweet ki copy, peeche se" .-> U
+    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Kiska inbox kahan: har user ka inbox uske apne region me banta, jaise [rate limiter](../02_rate_limiter/02_rate_limiter.md#kadam-10-3-region-se-300-nikal-gayi-home-region) me "home region".
+Fanout worker Arpan ka inbox Mumbai ke Redis me bharta.
+
+Copy peeche se (US tak kuch second) kyun chalta: NFR, feed 2-5 sec purani chalegi. US wale ko Virat ka tweet
+2 sec baad dikhe to dikkat nahi; bank jaisa "abhi ka abhi pakka" yahan nahi chahiye.
+
+Region vs edge server: edge = CDN ki machine (Kadam 8), sirf video / photo jaisi files paas rakhti, feed nahi
+banati. Region = poora data center (Feed Svc, Tweet Svc, Redis, Cassandra ki copy). Video edge se, feed region
+se.
