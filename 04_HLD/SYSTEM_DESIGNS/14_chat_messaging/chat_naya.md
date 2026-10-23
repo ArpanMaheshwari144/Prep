@@ -295,6 +295,27 @@ seq:arpan-ravi` Redis me): "kal milein?" = 42, "haan, 5 baje" = 43. Kram number 
 kuch bhi kahe. Number har chat ka alag hai, kyunki kram sirf ek chat ke andar chahiye. Kadam 4 ka "mere paas
 aakhri 41 hai, uske baad ke do" isi number se chalta hai.
 
+Server kram ke liye time dekhta hi nahi. Wo dekhta hai ki message uske paas pehle kaun pahuncha. Jo pehle
+pahuncha, use agla number:
+
+```
+server pe pahuncha   message                  number (INCR seq:arpan-ravi)
+pehle                Arpan: "kal milein?"     42
+uske baad            Ravi:  "haan, 5 baje"    43
+```
+
+Ghadi ki zaroorat hi nahi, bas ek counter hai jo har message pe +1 hota hai. Dono ek hi pal me pahunche to
+bhi Redis ek baar me ek hi kaam karta hai, ek ko 42 milega aur doosre ko 43, kabhi same nahi (rate limiter
+ki Lua wali baat).
+
+Message ke neeche jo "10:02" dikhta hai, wo sirf dikhane ke liye hai. Server message pe apna time likhta
+hai, aur server ki ghadi internet se mila ke sahi rakhi jaati hai (NTP), to wo phone ki ghadi se zyada
+bharose ki hai. Par kram number se lagta hai, time se nahi.
+
+Arpan ne pehle bheja par uska net dheema tha, aur Ravi ka message server pe pehle pahunch gaya, to Ravi ko
+chhota number milega. Server ke liye "pehle" ka matlab hai "jo mere paas pehle aaya". Ye chalta hai, kyunki
+dono ko ek hi kram dikhta hai, aur ulta-pulta sirf ek-do second ka hota hai.
+
 WhatsApp pe kabhi-kabhi message aage-peeche dikhte hain. Wo andar se kram kaise lagata hai, ye kisi ke paas
 pakka nahi hai. Wahan end-to-end encryption hai, to server message dekh hi nahi sakta. Hamare design me E2E
 scope se bahar hai, to server khud kram de sakta hai. Interview me itna hi bolo.
@@ -310,4 +331,43 @@ flowchart LR
 
 Par "College Gang" group me 500 log hain. Arpan ne ek message bheja. Kya ye 500 baar DB me likhein, har
 member ke liye ek?
+
+### Kadam 8: 500 logon ka group (message ek baar likho)
+
+Har member ke liye alag copy likhein to ek message = 500 likhai. Roz hazaaron group me hazaaron message, DB
+bhar jaayega.
+
+Ilaaj: message DB me **sirf ek baar** likho, group ki chat me (`chat_id = college-gang`, number 980). Group
+bhi bas ek chat hai, bas usme 2 ki jagah 500 log hain.
+
+Server ko 500 members kaise pata? Group banate waqt hi members ek alag table me likh dete hain:
+`group_members: college-gang -> arpan, ravi, sita ... (500)`. Message ke saath `chat_id = college-gang` aata
+hai, server us id se list nikaalta hai. Ye list har message pe chahiye, aur badalti kam hai, isliye Redis me
+bhi rakh lete hain. Koi member juda ya nikla to dono jagah badal do.
+
+```
+1. DB me EK baar:  college-gang, #980, "kal party?"
+2. college-gang ke 500 members ki list lo (Redis / group_members)
+3. har member ke liye Redis map dekho (kadam 3):
+     online  -> uske server pe bhejo
+     offline -> push notification, aur wapas aane pe "979 ke baad sab do" (kadam 4)
+```
+
+Likhai ek baar hui, sirf bhejna 500 jagah. Har member khud yaad rakhta hai ki usne kahan tak padha.
+
+500 hi tak kyun? Har message pe sabko bhejna hota hai. Lakhon logon ka group (broadcast channel) alag design
+hai, jo humne FR me scope se bahar rakha tha.
+
+```mermaid
+flowchart LR
+    A["Arpan"] --> S["Chat server"]
+    S -- "1. ek baar likho #980" --> D[("Cassandra<br/>college-gang")]
+    S -- "2. members kaun, kahan?" --> R[("Redis<br/>group_members + map")]
+    S -- "3. online ko" --> M["members ke chat servers"]
+    S -- "offline ko" --> P["Push"]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Ravi ne message padh liye. Arpan ke phone pe neeli tick kaise aaye? Aur Ravi ki app pe "College Gang (50
+unread)" kaise gina jaaye?
 
