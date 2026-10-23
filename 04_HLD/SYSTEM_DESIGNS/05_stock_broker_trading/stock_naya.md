@@ -173,3 +173,47 @@ me lakhon order nipta sakta (mera andaza, asli number exchange pe nirbhar). TCS 
 
 Par order book RAM me hai. Dopahar 12 baje matching machine gir gayi, poori TCS order book gayab. Kisne kis
 bhaav pe kharidne ka order dala tha, kuch nahi bacha.
+
+### Kadam 5: pehle log likho, phir milao + standby machine
+
+Matching engine order milane se **pehle** har order ek **log** me likhta hai: disk pe, sirf aage judta, kabhi
+mitta nahi (Kafka ka topic ya engine ki apni log file). Milaan ke baad jo sauda bana, wo bhi log me.
+
+```
+order aaya --> 1. LOG me likho (disk, pakka)  #1041 Arpan buy TCS 10 @ 3500
+           --> 2. RAM book me milao            -> sauda S-88: Arpan <- Suresh 10 @ 3500
+           --> 3. sauda bhi LOG me              #1042 SAUDA S-88
+```
+
+Machine giri to? Ek **standby** machine pehle se wahi log live padh rahi hai, aur apni RAM me wahi book banati
+ja rahi hai. **Primary** = jo abhi milaan kar rahi hai, **standby** = jo taiyaar baithi hai.
+
+```
+12:00:00  primary machine giri
+12:00:02  standby ko 2 sec se primary ki aawaz nahi aayi -> standby khud primary ban gayi
+          book pehle se bani hui thi (log #1042 tak padh chuki thi)
+          naye order ab ye nayi primary legi. kuch khoya nahi
+```
+
+```mermaid
+flowchart LR
+    O["Order Svc"] --> L[("LOG (disk)<br/>#1041 order, #1042 sauda")]
+    L --> P["Primary<br/>(milaan karti)"]
+    L --> S["Standby<br/>(log padh ke book taiyaar)"]
+    S -. "primary giri: khud primary" .-> P
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ye [banking kadam 2](../13_banking_system/13_banking_system.md#kadam-2-beech-me-server-gira-paisa-gayab-ek-transaction) jaisa: wahan DB pehle WAL (apna log) likhta, phir kaam, aur crash ke baad log padh ke
+wapas khada. Yahan bhi wahi soch: RAM bhool sakti hai, log nahi bhoolta.
+
+Dono machine ek saath milaan karein to tez nahi? Nahi. Ek waqt me milaan sirf primary karti hai, standby bas log
+padh ke book taiyaar rakhti hai. Dono milayein to ek hi Suresh do baar bik jaayega (Kadam 4 wali dikkat wapas).
+
+Standby ne log ka koi order dobara padh liya to? Har order aur sauda ka apna number (#1041, S-88). Same log se
+same book banti hai, aur sauda S-88 aage do baar nahi chalta, kyunki Kadam 6 me sauda id se hi paisa move hota.
+
+Par sauda S-88 ho gaya. Ab paisa Arpan se Suresh, share Suresh se Arpan. Arpan ka paisa wallet DB me, share
+portfolio DB me. Paisa kat gaya, aur share likhne se pehle portfolio DB band ho gaya. Arpan ke 35,000 gaye,
+share aaye nahi.
