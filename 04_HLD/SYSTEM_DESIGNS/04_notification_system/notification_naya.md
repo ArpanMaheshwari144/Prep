@@ -153,3 +153,27 @@ Aur dono gaye to bhi worker bhejna band nahi karte: do message chalenge, khoya h
 
 Par SMS company ne fail lauta diya. Worker turant dobara bhejta hai, phir fail, phir turant. Wo pehle se
 pareshaan company ko har second dhakka maar raha hai.
+
+### Kadam 5: ruk-ruk ke dobara, phir bhi na jaaye to DLQ
+
+SMS company ne fail lauta diya. Worker ab turant dobara nahi maarta. Khabar ko ek **retry line** me daal deta
+hai, wait ke saath: pehli baar 1 sec baad, phir 2, phir 4, phir 8. Har baar wait dugna, aur usme thoda random
+(jitter), taaki saare worker ek hi second pe company pe toot ke na padein. 5 baar ke baad bhi fail, to khabar
+**DLQ** (dead letter queue) me: wahan alert bajta hai aur koi insaan dekhta hai. Khabar khoti nahi, aur SMS
+line bhi nahi rukti.
+
+```mermaid
+flowchart LR
+    LS[("SMS line")] --> WS["SMS worker"]
+    WS -- "fail" --> RT[("retry line<br/>1s, 2s, 4s, 8s + thoda random")]
+    RT --> WS
+    WS -- "5 baar fail" --> D[("DLQ")]
+    D --> AL["alert, insaan dekhe"]
+    style RT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Retry line alag kyun: worker wahin baith ke wait kare to uske peeche Arpan ke baaki SMS bhi atak jaate hain.
+
+Par SMS company band nahi, bas dheemi hai: har call 30 sec me jawab de rahi hai. Saare SMS worker usi intezaar
+me phanse baithe hain.
