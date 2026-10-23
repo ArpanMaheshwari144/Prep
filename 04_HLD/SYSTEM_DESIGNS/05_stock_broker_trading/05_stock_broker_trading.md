@@ -379,8 +379,7 @@ Aadha bhara (partial fill)?
 
 Cancel kaise, aur cancel + sauda ek saath aa gaye to?
   -> cancel bhi usi TCS line me jaata hai, wahi akela thread uthata (Kadam 4). Jo pehle line me, wahi pehle:
-     sauda pehle hua to cancel ka jawab "order bik chuka"; cancel pehle aaya to order book se hata,
-     paisa wapas.
+     sauda pehle hua to cancel ka jawab "order bik chuka"; cancel pehle aaya to order book se hata, paisa wapas.
 
 MARKET order pe paisa kitna block?
   -> bhaav pehle se pata nahi, to aakhri bhaav + thoda upar (jaise 5%) block. Sauda ke baad jo farak bacha,
