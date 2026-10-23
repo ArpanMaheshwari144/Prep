@@ -273,3 +273,42 @@ copy alag rack / zone -> ek rack ki bijli gayi to teeno ek saath na jaayein
 
 Par Arpan ne abhi link banaya, dost ne turant khola. Likhai DB-C pe pahunchi, copy DB-D tak abhi nahi. Dost ki
 request DB-D pe gayi: 404, jabki link ban chuka tha.
+
+### Kadam 8: link ban gaya, par dost ko 404 (quorum)
+
+Ilaaj: **quorum** = zyadatar (3 me se 2).
+
+```
+LIKHO:  3 me se kam se kam 2 copy pe likh jaaye, tabhi Arpan ko "ban gaya"   (W = 2)
+PADHO:  3 me se 2 copy se poochho, jo naya ho wo lo                         (R = 2)
+```
+
+Kyun chalta: likhai 2 pe, padhai 2 se. Teen me se do-do chuno to ek copy dono me common aayegi hi, aur uske paas
+naya link hai.
+
+```
+copy:      C     D     A
+likha:     haan  -     haan     (W = 2)
+padha:     haan  haan  -        (R = 2)  -> C dono me, naya link mila
+```
+
+```mermaid
+flowchart LR
+    S["App"] -- "likha" --> C[("DB-C<br/>naya")]
+    S -- "likha" --> A[("DB-A<br/>naya")]
+    S -. "copy baad me" .-> D[("DB-D<br/>abhi purana")]
+    F["Dost"] -- "padha 2 se" --> C
+    F --> D
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+W = 3 (teeno pe likho)?  -> ek machine giri to likhna band. Dheema bhi
+R = 1 (ek se padho)?     -> tez, par 404 wapas
+shart                    -> W + R > 3, tabhi common copy pakki
+aasan madad              -> link banate hi Redis me bhi daalo,
+                            dost turant khole to Redis se mil jaaye
+```
+
+Par ek link viral ho gaya: cricket match ka link 1 crore log ek saath khol rahe, sab ek hi Redis machine pe.
