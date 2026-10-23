@@ -219,3 +219,52 @@ hota.
 Par sauda S-88 ho gaya. Ab paisa Arpan se Suresh, share Suresh se Arpan. Arpan ka paisa wallet DB me, share
 portfolio DB me. Paisa kat gaya, aur share likhne se pehle portfolio DB band ho gaya. Arpan ke 35,000 gaye,
 share aaye nahi.
+
+### Kadam 6: sauda ke baad paisa + share (settlement)
+
+Pakka niyam: **sauda ho gaya to ulta nahi hota.** Exchange me Suresh ka share bik chuka. Humari taraf koi DB
+band ho, tab bhi sauda cancel nahi karte, bas use poora karte hain.
+
+Sabse seedha: wallet aur portfolio ek hi DB me. Tab paisa + share ek hi transaction me
+([banking kadam 2](../13_banking_system/13_banking_system.md#kadam-2-beech-me-server-gira-paisa-gayab-ek-transaction)):
+
+```sql
+BEGIN
+  wallet:    Arpan blocked -35,000      Suresh available +35,000
+  portfolio: Arpan TCS +10              Suresh TCS (blocked) -10
+  settlement: S-88 = DONE               -- sauda id UNIQUE, do baar nahi
+COMMIT          -- ya sab hua, ya kuch nahi
+```
+
+Agar dono alag DB me (badi company me aksar):
+
+```
+Settlement worker: log se "SAUDA S-88" uthaya
+  1. settlement table: S-88 = PENDING
+  2. wallet DB:    paisa move      -> S-88 paisa = DONE
+  3. portfolio DB: share move      -> BAND hai!
+       -> ruk-ruk ke dobara (1s, 2s, 4s) -- sauda ulta NAHI
+       -> 10 min tak band -> ALERT, ops dekhe
+       -> Arpan ko app me: "share aa rahe hain (PENDING)"
+  4. portfolio wapas -> share move -> S-88 = DONE
+raat ka milaan: saare sauda vs wallet vs portfolio -> farak = alert
+```
+
+```mermaid
+flowchart LR
+    L[("LOG: SAUDA S-88")] --> W["Settlement worker"]
+    W --> ST[("settlement: S-88<br/>PENDING / DONE")]
+    W -- "paisa" --> WD[("Wallet DB")]
+    W -- "share (band to dobara)" --> PD[("Portfolio DB")]
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style ST fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Har step `S-88` se pehchana jaata: worker beech me mara aur dobara chala, to "S-88 paisa = DONE" dekh ke paisa
+dobara nahi kaatta. Wahi idempotency, bas key sauda id. Raat ka milaan [banking kadam 9](../13_banking_system/13_banking_system.md#kadam-9-balance-aur-khaata-alag-ho-gaye-raat-ka-milaan--reconciliation) wala hi.
+
+Arpan ko "retry karo" kyun nahi: Arpan dobara Buy dabayega to wo naya order, 20 share aa jaayenge. Galti
+humari taraf ki, to theek bhi hum karte: PENDING dikhao, khud poora karo.
+
+Par 10 lakh logon ka app khula, sab ko har second TCS ka naya bhaav dekhna. Har app har second server se poochh
+raha "TCS kitna?". 10 lakh sawaal / sec, server baith gaya.
