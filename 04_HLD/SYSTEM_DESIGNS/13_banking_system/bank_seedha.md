@@ -150,6 +150,12 @@ flowchart LR
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+```
+do transfer ulti disha me ek saath (Arpan -> dukaan, dukaan -> Arpan) = deadlock?
+-> jo SQL DB liya (kadam 1) wahi khud pakad ke todta (ek fail, error 1213). App dobara chalaye,
+   idempotency key (kadam 3) se dohra nahi. Hone hi na de: chhoti account id pehle lock
+```
+
 Par Arpan ne app kholi: "mere 500 kahan gaye, kab?" DB me sirf `balance = 100`. Kab, kisko, kuch pata nahi.
 NFR "har paisa trace ho" toota.
 
@@ -280,6 +286,5 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par Arpan ne dukaan ko 500 bheje, usi second dukaan ne Arpan ko 200 refund. Pehla: Arpan lock, phir dukaan
-maange. Doosra: dukaan lock, phir Arpan maange. Dono ek doosre ka intezaar (**deadlock**).
-
+Par balance ek column, khaata alag lines. Kisi bug / haath ke galat UPDATE se dono me farak: balance 600 dikha raha,
+khaate ka jod 100. Kisi ko pata nahi chala.
