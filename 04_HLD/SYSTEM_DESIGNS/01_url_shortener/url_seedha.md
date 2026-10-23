@@ -168,3 +168,30 @@ Range alag, to same number kabhi nahi. Beech wale pe bojh bhi nahi. App 1 beech 
 (501 - 1,000) bekaar: koi baat nahi, 3.5 lakh crore number hain.
 
 Par 5 saal me data ~90 TB. Itna ek DB machine me nahi aata.
+
+### Kadam 5: data bahut bada (DB ke tukde = shard)
+
+5 saal me ~90 TB. Ek DB machine me nahi aata, aur ek machine itni padhai-likhai bhi nahi jhelti.
+
+Ilaaj: data kai DB machine me baanto (**shard**). Kaunsa link kis machine pe, ye code se tay:
+
+```
+machine = hash(aB3x9) % 10      -> maan lo 3
+BANAO:  aB3x9 -> DB machine 3 pe likho
+KHOLO:  aB3x9 -> wahi hash -> seedha machine 3 (baaki 9 ko chhuna hi nahi)
+```
+
+```mermaid
+flowchart LR
+    S["App servers"] -- "hash(code) % 10" --> D0[("DB 0")] & D3[("DB 3<br/>aB3x9")] & D9[("DB 9")]
+    style D0 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style D3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style D9 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Code se kyun baanta? Kholte waqt hamare paas sirf code hota hai. Code se hi machine nikal aati,
+to dhoondhna seedha ek machine pe.
+
+Par data aur badha, 10 se 11 machine kiye. Ab `% 10` ki jagah `% 11`,
+aur lagbhag har link ki machine badal gayi. Arpan ka `aB3x9` machine 3 me pada hai,
+par app use machine 7 me dhoondh raha: link 404.
