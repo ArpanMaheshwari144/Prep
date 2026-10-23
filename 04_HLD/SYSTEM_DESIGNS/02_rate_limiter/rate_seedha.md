@@ -284,3 +284,33 @@ flowchart LR
 
 Par shaam ki sale: har user apni had ke andar, par 1 crore log ek saath.
 Sab "had me", phir bhi server bhar ke gira.
+
+### Kadam 10: sab had me, phir bhi server gira (global cap + 503)
+
+Ilaaj: **poore system ki ek had (global cap)**. Servers maan lo 50,000 / sec jhelte. Gateway pe ek aur ginti: is
+second KUL kitni aayi. Upar wali ko **503** (abhi bhare hain, thodi der baad aao).
+
+```
+user ki had   (429)  -> "TU zyada bhej raha"     ek insaan ko rokta
+global cap    (503)  -> "HUM abhi bhare hain"    poore system ko bachata
+
+kaun pehle kate (load shedding):
+  pehle kato    -> search suggestion, recommendation, analytics
+  aakhri tak    -> payment, order, login
+aur             -> sale ka time pata, to pehle se server badhao (pre-scale)
+                   phir bhi zyada -> line / waiting room ("aap line me 2,000ve")
+```
+
+```mermaid
+flowchart LR
+    U["1 crore log"] --> W["WAF"]
+    W --> G["API Gateway<br/>1. user had (429)<br/>2. global cap (503)"]
+    G -- "zaroori: payment" --> S["App x 10"]
+    G -- "bhara: suggestion" --> X["503 / baad me"]
+    G -- "Lua" --> R[("Redis + copy")]
+    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan ki script 3 region se chali (Mumbai, Singapore, US). Har region ka apna Redis, har ek ne 100 gine.
+Had 100, nikal gayi 300.
