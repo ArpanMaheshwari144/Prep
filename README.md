@@ -9,7 +9,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ```
 SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 14 design (naye saanche me: URL, rate limiter; baaki roz ek) + 19 foundation + master sheet
+  HLD: 14 design (naye saanche me: URL, rate limiter, payment, banking; baaki roz ek) + 19 foundation + master sheet
   DSA: 18 pattern · 175 problem + 126 REDO = 301 .cpp · pattern sheet
   STAR 11 kahani · PR review framework · DB internals
 ```
@@ -126,7 +126,7 @@ SAFAR (March: khaali folder)  ->  aaj
   gira / dheema / do baar → jawab usi kadam me
 ```
 
-- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design. **Naye saanche me ho gaye: 01 URL, 02 rate limiter** (purani poster wali file hata di, git history me hai). Baaki 12 purane poster saanche me, roz ek naye me badlegi. Kram: chat · banking · payment · kafka · notification · cache · twitter · BMS · stock · file upload · news · docs.
+- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — 14 poore design. **Naye saanche me ho gaye: 01 URL, 02 rate limiter, 06 payment, 13 banking** (purani poster wali file hata di, git history me hai). Baaki 10 purane poster saanche me, roz ek naye me badlegi. Kram: chat · kafka · notification · cache · twitter · BMS · stock · file upload · news · docs.
   [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator_INTERVIEW.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow_INTERVIEW.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) ([interview page](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_seedha.md) · [concepts kahani se](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md)) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
 
 - ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md)** — doubt aaye to yahan dhoondho: sabse upar **clickable INDEX + DOUBT DHOONDHO** (doubt likha -> click -> seedha jawab; Alex Xu ke chapter ka map bhi) · 8 dabbe x 4 line · 6 archetype · universal rail · block-menu · A-ya-B trade-off jode · 14 design ka DIL + KHAAS hissa · anjaan-design recipe · kaise bolna · SHABD (word atke to). Cross-question (Q1-Q22) ab yahan nahi, design files me (4-Oct).
