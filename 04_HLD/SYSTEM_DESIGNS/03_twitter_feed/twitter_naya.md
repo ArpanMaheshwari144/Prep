@@ -265,8 +265,8 @@ Pehle tweets ka kaam dekho:
 - padhai seedhi: "ye 50 id ke tweet do" ya "Virat ke aakhri 20".
 - koi jod nahi chahiye, bank jaisa transaction bhi nahi.
 
-Ilaaj: tweets ko **Cassandra** me rakho, aur `author_id` se baanto. Virat ke saare tweet ek hi machine pe, time
-ke kram me. "Virat ke aakhri 20" ek hi jagah se seedha.
+Ilaaj: tweets ko **Cassandra** me rakho, aur `author_id` se baanto. Virat ke saare tweet ek hi machine pe,
+time ke kram me. "Virat ke aakhri 20" ek hi jagah se seedha.
 
 ```
 Tweet Svc --likho--> [Cassandra: kai machine, author_id se baanta]
@@ -341,8 +341,8 @@ flowchart LR
 Kiska inbox kahan: har user ka inbox uske apne region me banta, jaise [rate limiter](../02_rate_limiter/02_rate_limiter.md#kadam-10-3-region-se-300-nikal-gayi-home-region) me "home region".
 Fanout worker Arpan ka inbox Mumbai ke Redis me bharta.
 
-India ka tweet, US ka follower? Mohan (India) ne tweet kiya, uska follower John US me, John ka inbox US Redis me.
-Har tweet pe samundar paar ke Redis me likhna dheema aur toot sakta. Isliye tweets wale Kafka topic ki copy
+India ka tweet, US ka follower? Mohan (India) ne tweet kiya, uska follower John US me, John ka inbox US Redis
+me. Har tweet pe samundar paar ke Redis me likhna dheema aur toot sakta. Isliye tweets wale Kafka topic ki copy
 doosre region me bhi jaati (Kafka ka tool, MirrorMaker), aur har region ka apna fanout worker sirf apne region
 ke followers ke inbox bharta:
 
