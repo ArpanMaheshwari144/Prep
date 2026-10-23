@@ -295,7 +295,8 @@ Ilaaj, 3 hisse:
 
 1. **Company ki id rakho.** Company 200 ke saath apni id bhi deti hai: `msgId: TW-555`. Worker ise **Tracking
    DB** me likhta hai: "order 999 ka SMS, company id TW-555, haal = BHEJA".
-2. **Webhook.** Baad me company khud humein call karti hai: `POST /webhook { msgId: TW-555, status: DELIVERED }`.
+2. **Webhook.** Baad me company khud humein call karti hai:
+   `POST /webhook { msgId: TW-555, status: DELIVERED }`.
    Hum TW-555 dhoondh ke haal badal dete hain: BHEJA se MILA, ya FAIL.
    Phone off hai to SMS fail nahi hota: operator use rakh leta hai aur koshish karta rehta hai, phone on hote
    hi SMS pahunchta hai, tab DELIVERED aata hai. FAILED tab aata hai jab number band / galat ho, DND ho, ya
