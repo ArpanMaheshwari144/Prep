@@ -304,5 +304,5 @@ flowchart LR
     style CDN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Ab kya theek hua: bhaari video kabhi Tweet Svc / Cassandra se nahi guzarti, tweet chhota (sirf link), crore log
-CDN se dekhte. Ye bilkul [chat kadam 10](../14_chat_messaging/14_chat_messaging.md#kadam-10-200-mb-ka-video-s3-me-message-me-sirf-link) wala: wahan bhi message me sirf link, video S3 me.
+Ab kya theek hua: bhaari video kabhi Tweet Svc / Cassandra se nahi guzarti, tweet chhota (sirf link),
+crore log CDN se dekhte. Ye bilkul [chat kadam 10](../14_chat_messaging/14_chat_messaging.md#kadam-10-200-mb-ka-video-s3-me-message-me-sirf-link) wala: wahan bhi message me sirf link, video S3 me.
