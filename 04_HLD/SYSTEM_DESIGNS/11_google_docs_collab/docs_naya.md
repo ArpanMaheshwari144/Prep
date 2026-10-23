@@ -260,3 +260,98 @@ aur join ya transaction ki yahan zarurat hi nahi hai. Sirf jodna hai aur docId s
 
 Par batch ke 100 ms ke op abhi owner server ki memory me hain. Server ne Arpan ko "mil gaya" (ACK) bol diya
 tha. Usi pal Server 3 gir gaya. Arpan ki aakhri line na DB me gayi, na kahin aur. Wo line kho gayi.
+
+### Kadam 8: ACK tabhi jab op kahin pakka likh gaya (Redis buffer + copy)
+
+Dikkat ye thi ki server ne op sirf apni memory me rakh ke ACK de diya. Ilaaj ke teen hisse hain:
+
+1. **Owner server op ko turant Redis buffer me likhta hai, aur Redis ki ek copy (replica) bhi hoti hai.** Dono
+   me likh jaane ke baad hi Arpan ko ACK jaata hai. Redis memory me hai, to ye kuch millisecond ka kaam hai aur
+   typing nahi rukti.
+2. **Batch ab Redis se Cassandra jaata hai.** Server gira, to buffer Redis me pada hai. Ring pe agla server
+   doc-42 ka naya owner banta hai, buffer se bacha hua kaam utha leta hai.
+3. **Arpan ki app bhi apna op tab tak sambhal ke rakhti hai jab tak ACK na aaye.** ACK nahi aaya to wo naye
+   owner ko dobara bhej deti hai.
+
+```
+Arpan --op--> Server 3 (owner) --> [ Redis buffer + copy ] --likh gaya--> ACK Arpan ko
+                                         |
+                                         +--100 ms batch--> [( Cassandra: op log )]
+Server 3 gira --> ring: Server 4 naya owner --> Redis buffer se bacha hua utha liya
+```
+
+```mermaid
+flowchart LR
+    A["Arpan (editor)"] --> LB["LB: docId se ring"]
+    LB --> S3["Server 3: owner, OT"]
+    S3 -- "1. op likho" --> B[("Redis buffer + copy")]
+    B -- "2. likh gaya, tab ACK" --> S3
+    B -- "100 ms batch" --> C[("Cassandra: op log")]
+    S3 -- "publish op" --> P["Redis pub/sub: doc-42"]
+    P --> V["Server 1, 5 -> viewers"]
+    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Server 3 op aate hi gira, Redis tak pahuncha hi nahi, to Arpan ko dobara likhna padega? Nahi. Ye kaam app
+karti hai, server nahi. ACK nahi aaya, to op app ki queue me hai aur screen pe bhi dikh raha hai:
+
+```
+Arpan --op5--> Server 3  X gira (Redis tak nahi pahuncha, ACK nahi aaya)
+app: op5 abhi queue me, ACK nahi aaya
+     -> WebSocket toota -> dobara judo -> LB -> ring -> Server 4 (naya owner)
+     -> op5 dobara bhejo (wahi baseVersion) -> Server 4 lagata -> Redis -> ACK
+Arpan ko kuch pata bhi nahi chala
+```
+
+Isme ek chhupi dikkat hai: Server 3 ne op5 Redis me likh diya, aur ACK bhejne se theek pehle gira. App ko ACK
+nahi mila, to wo op5 dobara bhejegi, aur "WORLD" do baar lag jaayega ("WORLDWORLD"). Ilaaj: har op ka apna id,
+`opId = (Arpan ki app, 5)`. Naya owner pehle dekhta hai ki ye opId buffer me pehle se hai ya nahi. Hai to
+dobara nahi lagata, bas ACK bhej deta hai. Ye payment wali idempotency hi hai.
+
+Doosra kyun nahi: **seedha Cassandra me likh ke ACK**. Har akshar pe phir se ek likhai hogi, aur kadam 7 wali
+bheed wapas aa jaayegi. Kafka bhi buffer ka kaam kar sakta hai, par Redis ka ACK zyada tez hai, aur typing me
+har millisecond dikhta hai.
+
+Par Arpan metro me hai. 1 second ke liye net gaya. Kya uski typing ruk jaayegi?
+
+### Kadam 9: typing kabhi na ruke (AP), par permission hamesha sahi (CP, SQL)
+
+Dikkat ye hai ki net gaya to kya typing ruk jaaye? Nahi. NFR me pehli line yahi thi.
+
+**Typing = AP (chalta rahe, baad me sab same ho jaaye).** Arpan ki app har akshar pehle apni screen pe laga deti
+hai aur op ko ek local line (queue) me rakh leti hai. Net aate hi saare op `baseVersion` ke saath bhej deti hai.
+Beech me Ravi ne jo likha tha, uske hisaab se server OT se khiska deta hai. Ye kadam 4 wala hi kaam hai, naya
+kuch nahi chahiye.
+
+```
+net gaya:  Arpan likhta raha -> screen pe dikhta raha -> queue: [op1, op2, op3]  (base v20)
+net aaya:  queue bheja --> owner: v20 ke baad Ravi ke op lage the -> OT se khiskao -> sab same
+```
+
+**Permission = CP (galat kabhi nahi chalega).** Doc ke owner ne Ravi ka edit access hata diya. Iske baad Ravi
+ka ek bhi op lagna nahi chahiye, chahe thodi der ke liye "abhi nahi ho sakta" bolna pade. Isliye permission ek
+alag **SQL DB** me rakhte hain: kaun, kis doc pe, kya kar sakta (rishte + pakka sahi). Owner server har
+connection pe aur har op pe ye check karta hai.
+
+```
+Ravi offline me likhta raha --> beech me owner ne access hataya (SQL me)
+net aaya, op bheje --> owner server: SQL check -> access nahi -> op reject, Ravi ki screen wapas
+```
+
+```mermaid
+flowchart LR
+    A["Arpan (editor)"] --> LB["LB: docId se ring"]
+    LB --> S3["Server 3: owner, OT"]
+    S3 -- "check" --> Q[("SQL: permission")]
+    S3 --> B[("Redis buffer + copy")]
+    B -- "batch" --> C[("Cassandra: op log")]
+    S3 -- "publish op" --> P["Redis pub/sub: doc-42"]
+    P --> V["Server 1, 5 -> viewers"]
+    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Doosra kyun nahi: **sab CP**. Har akshar pe "pakka hai?" ka intezaar karna padta, aur net jaate hi typing ruk
+jaati. Isliye ek hi system me do alag faisle hain: likhna AP, permission CP.
+
+Par raat ko Arpan ne 2 saal purana doc khola. Usme 10 lakh op hain. Doc dikhane ke liye server shuru se 10 lakh
+op laga raha hai, aur doc 20 second baad khula.
