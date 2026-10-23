@@ -222,8 +222,8 @@ mehngi hai.
 
 ### Kadam 6: inbox chhota rakho (3 chhoti baatein)
 
-**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Id khud 8 byte ki, par Redis har entry ke saath
-apna kharcha jodta (score, pointer), to ek entry ~60-100 byte padti. Poora tweet nahi.
+**1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka). Id khud 8 byte ki, par Redis har entry ke saath apna kharcha
+jodta (score, pointer), to ek entry ~60-100 byte padti. Poora tweet nahi.
 
 **2. Har inbox me sirf aakhri 800 tweet.** Koi 800 se neeche scroll nahi karta. Naya tweet aaya to sabse
 purana kaat do (sorted set trim).
