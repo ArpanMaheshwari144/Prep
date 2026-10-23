@@ -287,8 +287,8 @@ Sab "had me", phir bhi server bhar ke gira.
 
 ### Kadam 10: sab had me, phir bhi server gira (global cap + 503)
 
-Ilaaj: **poore system ki ek had (global cap)**. Servers maan lo 50,000 / sec jhelte. Gateway pe ek aur ginti: is
-second KUL kitni aayi. Upar wali ko **503** (abhi bhare hain, thodi der baad aao).
+Ilaaj: **poore system ki ek had (global cap)**. Servers maan lo 50,000 / sec jhelte.
+Gateway pe ek aur ginti: is second KUL kitni aayi. Upar wali ko **503** (abhi bhare hain, baad me aao).
 
 ```
 user ki had   (429)  -> "TU zyada bhej raha"     ek insaan ko rokta
