@@ -122,3 +122,33 @@ kar do, SMS ke 20 hi rehne do. Numbers wala "~175 worker" yahin baithta hai.
 Par email worker ne Arpan ko email bheja, aur Kafka ko "ho gaya" (commit) bolne se pehle hi wo machine mar
 gayi. Naya worker wahi khabar dobara uthata hai aur dobara bhejta hai.
 Arpan ko ek order ke do email aate hain.
+
+### Kadam 4: key se ek hi baar (Redis me khabar ki id + haal)
+
+Har khabar ki apni id hoti hai: order 999 ka email = `999:email`. Worker bhejne se pehle **Redis** me is id
+ki key likhta hai: `SET 999:email BHEJ_RAHA NX` (NX = sirf tab likho jab key pehle se na ho).
+
+- key nahi thi, likh di gayi = ye worker pehla hai. Wo email bhejta hai, phir key ko `BHEJ_DIYA` kar deta hai.
+- machine mari, naya worker wahi khabar uthata hai, Redis me dekhta hai `BHEJ_DIYA`, to chhod deta hai.
+  Arpan ko ek hi email aata hai.
+
+```mermaid
+flowchart LR
+    LE[("email line")] --> WE["email worker"]
+    WE -- "SET 999:email BHEJ_RAHA NX" --> R[("Redis + replica")]
+    WE -- "pehla hai to hi bhejo" --> C["Email company"]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Do haal kyun, ek kyun nahi: maan lo worker ne bhejne se pehle hi seedha `BHEJ_DIYA` likh diya aur bhejne se
+pehle mar gaya. Naya worker dekhega "bhej diya" aur chhod dega, Arpan ka OTP kabhi aayega hi nahi. Isliye
+pehle `BHEJ_RAHA` likho, uspe 60 sec ki umar (TTL), aur bhejne ke baad hi `BHEJ_DIYA`. Worker beech me mara to
+60 sec baad `BHEJ_RAHA` mit jaata hai aur naya worker dobara bhej deta hai. Kabhi-kabhar do email ho sakte
+hain, par OTP khoyega nahi. Khona dohraav se bura hai.
+
+Redis hi mar gaya to? Uski replica (copy) primary ban jaati hai (Sentinel / ElastiCache Multi-AZ). Copy
+thodi peeche chalti hai, to aakhri kuch key shayad pahunchi na hon, aur un khabron ke do message ja sakte hain.
+Aur dono gaye to bhi worker bhejna band nahi karte: do message chalenge, khoya hua OTP nahi.
+
+Par SMS company ne fail lauta diya. Worker turant dobara bhejta hai, phir fail, phir turant. Wo pehle se
+pareshaan company ko har second dhakka maar raha hai.
