@@ -1,8 +1,0 @@
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_Payment_Svc["Payment Svc"]
-    n_DB["SQL DB<br/>(atomic UPDATE)"]
-    n_USER --> n_Payment_Svc
-    n_Payment_Svc --> n_DB
-    style n_DB fill:#f9a825,color:#000

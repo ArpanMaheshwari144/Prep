@@ -1,8 +1,0 @@
----
-title: "WAPAS: COMMIT ke baad gira -> DB log dekh ke kaam poora, kuch nahi khota"
----
-flowchart LR
-  A["Arpan<br/>-500"]:::good -->|"1. -500"| P["Payment Svc<br/>2. COMMIT ke baad gira"]:::bad
-  P -->|"1. +500"| K["Kirana<br/>+500"]:::good
-  W["WAL (DB ka log)<br/>BEGIN, -500, +500, COMMIT"]:::good -->|"3. DB utha: COMMIT hai -> kaam poora"| K
-  K ~~~ R["kata 500 == juda 500<br/>kuch nahi khoya"]:::good
