@@ -1,8 +1,0 @@
-%%{init: {"flowchart": {"wrappingWidth": 450}}}%%
-flowchart LR
-    n_USER["USER"]
-    n_SVC["Banking Svc (+ idempotency)"]
-    n_DB["SQL DB<br/>(ledger)"]
-    n_USER --> n_SVC
-    n_SVC --> n_DB
-    style n_DB fill:#f9a825,color:#000
