@@ -228,3 +228,53 @@ flowchart LR
 Par wo jo kadam 4 me khula tha: server ne DB me likh liya, ack bhejne se pehle gira. App ne dobara bheja,
 aur Ravi ko "hi" do baar dikha.
 
+### Kadam 6: Ravi ko "hi" do baar dikha (message ki apni id)
+
+Ye sawaal kadam 4 ke sawaal se hi khula: "DB se pehle server gira to?" ka jawab tha "app dobara bhejti hai".
+Ab us dobara bhejne se nayi dikkat aati hai. Server do alag jagah gir sakta hai, aur dono me farak hai:
+
+```
+HAALAT A: DB me likhne se PEHLE gira
+  Arpan ne bheja -> server ko mila -> [GIRA] -> DB me kuch nahi
+  app ko ack nahi mila -> app dobara bhejti -> is baar DB me likha -> Ravi ko 1 baar "hi"     SAHI
+
+HAALAT B: DB me likhne ke BAAD, ack bhejne se PEHLE gira
+  Arpan ne bheja -> server ne DB me likh diya ("hi" #42) -> [GIRA] -> ack nahi gaya
+  app ko lagta "pahuncha nahi" (ack nahi aaya) -> app dobara bhejti
+  server ke liye ye naya message -> DB me phir likha ("hi" #43)
+  Ravi ke phone pe:  hi
+                     hi          <- DO BAAR. Yahi dikkat
+```
+
+"hi" Arpan ke phone pe hai, isliye khota nahi. Dikkat khone ki nahi, Ravi ko do baar dikhne ki hai. Haalat B
+me Arpan ki app ko pata hi nahi ki pehla "hi" DB me pahunch chuka hai, kyunki ack nahi aaya. Aur server ko
+pata nahi ki ye wahi purana "hi" hai.
+
+Ilaaj: har message ki apni id, jo **phone banata hai**, Send dabate hi (`clientMsgId`, jaise `m-501`).
+Dobara bhejne pe bhi wahi `m-501` jaata hai. Server pehle dekhta hai "m-501 pehle aa chuka?":
+
+```
+pehli baar:  m-501 aaya -> pehle aaya? nahi -> DB me likho (#42), yaad rakho "m-501 = #42" -> ack
+dobara:      m-501 aaya -> pehle aaya? haan, #42 -> DB me dobara NAHI likho, bas ack wapas
+```
+
+"Pehle aaya?" wali yaad Redis me rakhte hain, 1 din ki umar ke saath. Dobara bhejna kuch second ya minute me
+hi hota hai, to 1 din kaafi hai.
+
+Id phone kyun banaye, server kyun nahi? Dobara phone hi bhejta hai. Id pehle se phone pe hogi tabhi dobara
+bhejne pe wahi jaayegi. Server banata to har baar nayi id deta, aur dobara bhejna naya message ban jaata. Ye
+banking ki idempotency key hi hai: wahan paisa do baar kat-ta, yahan message do baar dikhta.
+
+```mermaid
+flowchart LR
+    A["Arpan app<br/>m-501"] -- "1. bheja (ack kho gaya)" --> S["Chat server"]
+    A -- "2. dobara, wahi m-501" --> S
+    S -- "m-501 pehle aaya?" --> R[("Redis<br/>m-501 = #42 (1 din)")]
+    S --> D[("Cassandra")]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Arpan ki ghadi 5 minute aage chal rahi thi. Usne sawaal poochha, phir Ravi ne jawab diya. Message ka
+kram phone ke time se lagaya, to Arpan ka sawaal Ravi ke jawab ke neeche chala gaya. Chat ulti padh rahi
+hai.
+
