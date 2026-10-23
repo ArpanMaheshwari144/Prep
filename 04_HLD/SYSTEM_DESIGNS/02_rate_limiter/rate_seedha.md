@@ -237,3 +237,19 @@ flowchart LR
 
 Par had IP pe lagayi thi. Office ki night shift: 1,000 log ek hi IP se (office ka internet).
 Sab milke 100 / min paar, poora office atka.
+
+### Kadam 9: had kis naam pe (IP ya userId)
+
+IP pe had: office ke 1,000 log ek IP, sab atke. Ulta, bot har request alag IP se, had kabhi nahi lagti.
+
+Ilaaj: had **userId** pe (login ke baad JWT se). Har insaan ki apni had, IP ek ho ya hazaar.
+
+```
+login se pehle   -> IP + jis account pe koshish   (rl:ip:1.2.3.4:login, rl:acct:arpan:login)
+                    login ki had chhoti (5 / min), office ke log alag-alag login karte nikal jaate
+login ke baad    -> userId                       (rl:arpan:search)
+ban (kadam 8)    -> userId pe lamba, IP pe chhota (TTL)
+```
+
+Par shaam ki sale: har user apni had ke andar, par 1 crore log ek saath.
+Sab "had me", phir bhi server bhar ke gira.
