@@ -120,4 +120,5 @@ Ek fayda aur: har line ke worker alag-alag badha sakte hain. Sale me push zyada 
 kar do, SMS ke 20 hi rehne do. Numbers wala "~175 worker" yahin baithta hai.
 
 Par email worker ne Arpan ko email bheja, aur Kafka ko "ho gaya" (commit) bolne se pehle hi wo machine mar
-gayi. Naya worker wahi khabar dobara uthata hai aur dobara bhejta hai. Arpan ko ek order ke do email aate hain.
+gayi. Naya worker wahi khabar dobara uthata hai aur dobara bhejta hai.
+Arpan ko ek order ke do email aate hain.
