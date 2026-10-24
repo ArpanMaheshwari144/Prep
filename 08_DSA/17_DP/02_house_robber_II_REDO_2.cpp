@@ -55,6 +55,10 @@ int rob1(vector<int> &nums)
 int rob(vector<int> &nums)
 {
     int n = nums.size();
+    if (n == 1)
+    {
+        return nums[0];
+    }
     vector<int> temp1, temp2;
 
     for (int i = 0; i < n; i++)
