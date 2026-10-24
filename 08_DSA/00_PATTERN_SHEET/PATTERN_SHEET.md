@@ -803,207 +803,139 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── FAMILY: 2-MAP BIJECTION (mp1 + mp2 dono taraf; koi ek clash -> false, ek map kaafi nahi) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ ISOMORPHIC STRINGS
- └──────────────────────────────────────────────────────────────
+ ▸ ISOMORPHIC STRINGS
      // s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false
-     bool isIsomorphic(string s, string t) {
-         unordered_map<char, char> mp1;          // s -> t
-         unordered_map<char, char> mp2;          // t -> s ("ab"->"aa" clash sirf ULTI taraf pakadta)
-         for (int i = 0; i < s.size(); i++) {
-             if ((mp1.count(s[i]) == 1 && mp1[s[i]] != t[i]) ||   // count() pehle: seedha mp1[x] khaali key
-                 (mp2.count(t[i]) == 1 && mp2[t[i]] != s[i]))     //   bana ke galat clash deta
-                 return false;                   // || : kisi bhi EK taraf clash = 1-to-1 nahi
-             else {
-                 mp1[s[i]] = t[i];               // check ke BAAD dono taraf mapping save
-                 mp2[t[i]] = s[i];
-             }
-         }
-         return true;                            // bina clash poora chala = isomorphic
-     }
+     unordered_map<char, char> mp1;          // s -> t
+     unordered_map<char, char> mp2;          // t -> s ("ab"->"aa" clash sirf ULTI taraf pakadta)
+     for (int i = 0; i < s.size(); i++)
+         if ((mp1.count(s[i]) == 1 && mp1[s[i]] != t[i]) ||   // count() pehle: seedha mp1[x] khaali key
+             (mp2.count(t[i]) == 1 && mp2[t[i]] != s[i]))     //   bana ke galat clash deta
+             return false;                   // || : kisi bhi EK taraf clash = 1-to-1 nahi
+         else  mp1[s[i]] = t[i]; mp2[t[i]] = s[i];   // check ke BAAD dono taraf mapping save
+     return true;                            // bina clash poora chala = isomorphic
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ WORD PATTERN
- └──────────────────────────────────────────────────────────────
-     bool wordPattern(string pattern, string s) {   // = ISOMORPHIC, bas char <-> WORD
-         unordered_map<char, string> mp1;
-         unordered_map<string, char> mp2;
-         stringstream ss(s);                     // delta 1: input = word-stream (<sstream>)
-         string word;
-         int i = 0;                              // i = pattern ka index
-         int j = 0;                              // j = words ki ginti
-         while (ss >> word) {
-             if (i < pattern.size()) {           // i<size: words zyada hon to pattern[i] bahar na padhe
-                 if ((mp1.count(pattern[i]) == 1 && mp1[pattern[i]] != word) ||   // delta 2: key =
-                     (mp2.count(word) == 1 && mp2[word] != pattern[i]))           //   pattern[i] <-> word
-                     return false;               // ISOMORPHIC ki EXACT clash line
-                 else {
-                     mp1[pattern[i]] = word;     // check ke BAAD save
-                     mp2[word] = pattern[i];
-                 }
-                 i++;                            // agla pattern char
-             }
-             j++;                                // if ke BAHAR: har word gino, extra word bhi
-         }
-         return (pattern.size() == j) ? true : false;   // delta 3: words ki ginti == pattern length
-     }                                           //   warna "a","dog cat" galat true
+ ▸ WORD PATTERN
+     // = ISOMORPHIC, bas char <-> WORD
+     unordered_map<char, string> mp1; unordered_map<string, char> mp2;
+     stringstream ss(s); string word;        // delta 1: input = word-stream (<sstream>)
+     int i = 0; int j = 0;                   // i = pattern ka index · j = words ki ginti
+     while (ss >> word)
+         if (i < pattern.size())             // i<size: words zyada hon to pattern[i] bahar na padhe
+             if ((mp1.count(pattern[i]) == 1 && mp1[pattern[i]] != word) ||   // delta 2: key =
+                 (mp2.count(word) == 1 && mp2[word] != pattern[i]))           //   pattern[i] <-> word
+                 return false;               // ISOMORPHIC ki EXACT clash line
+             else  mp1[pattern[i]] = word; mp2[word] = pattern[i];   // check ke BAAD save
+             i++;                            // agla pattern char
+         j++;                                // if ke BAHAR: har word gino, extra word bhi
+     return (pattern.size() == j) ? true : false;   // delta 3: words ki ginti == pattern length
+     //   warna "a","dog cat" galat true
 
 ── (STANDALONE — apni alag trick) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ TWO SUM
- └──────────────────────────────────────────────────────────────
-     vector<int> twoSum(vector<int> &nums, int target) {
-         unordered_map<int, int> mp;             // {value -> index}
-         for (int i = 0; i < nums.size(); i++) {
-             if (mp.find(target - nums[i]) != mp.end())   // CHECK pehle: (target - num) pehle dekha?
-                 return {mp[target - nums[i]], i};        // mila -> dono index
-             mp[nums[i]] = i;                    // daalo BAAD: taaki num khud se match na kare
-         }
-         return {-1, -1};
-     }
+ ▸ TWO SUM
+     unordered_map<int, int> mp;             // {value -> index}
+     for (int i = 0; i < nums.size(); i++)
+         if (mp.find(target - nums[i]) != mp.end())   // CHECK pehle: (target - num) pehle dekha?
+             return {mp[target - nums[i]], i};        // mila -> dono index
+         mp[nums[i]] = i;                    // daalo BAAD: taaki num khud se match na kare
+     return {-1, -1};
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ VALID ANAGRAM
- └──────────────────────────────────────────────────────────────
-     bool isAnagram(string s, string t) {        // har char ka count barabar? (count[26] ya map)
-         if (s.size() != t.size())
-             return 0;                           // length alag -> turant false
-         unordered_map<char, int> mp;
-         for (auto &it : s)
-             mp[it]++;                           // s se ++
-         for (auto &it : t)
-             mp[it]--;                           // t se --
-         for (auto &it : mp) {
-             if (it.second != 0)                 // != 0 (sirf > 0 nahi, -ve bhi aata)
-                 return false;
-         }
-         return true;                            // sab ZERO -> anagram
-     }
+ ▸ VALID ANAGRAM
+     // har char ka count barabar? (count[26] ya map)
+     if (s.size() != t.size())
+         return 0;                           // length alag -> turant false
+     unordered_map<char, int> mp;
+     for (auto &it : s)
+         mp[it]++;                           // s se ++
+     for (auto &it : t)
+         mp[it]--;                           // t se --
+     for (auto &it : mp)
+         if (it.second != 0)                 // != 0 (sirf > 0 nahi, -ve bhi aata)
+             return false;
+     return true;                            // sab ZERO -> anagram
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ GROUP ANAGRAMS
- └──────────────────────────────────────────────────────────────
+ ▸ GROUP ANAGRAMS
      // "eat","tea","ate" -> teeno ka SORTED roop "aet" = same. Yahi KEY.
      // brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CACHE -> O(n · k log k)
-     vector<vector<string>> groupAnagrams(vector<string> &strs) {
-         unordered_map<string, vector<string>> mp;   // KEY = sorted(word) -> us group ke words
-         for (auto &it : strs) {
-             string key = it;                    // copy lo: asli word sort hua to group me galat word jaata
-             sort(begin(key), end(key));         // "tea" -> "aet"
-             mp[key].push_back(it);              // same key = same group
-         }
-         vector<vector<string>> ans;
-         for (auto &it : mp)
-             ans.push_back(it.second);           // map ki har list = ek group
-         return ans;
-     }
+     unordered_map<string, vector<string>> mp;   // KEY = sorted(word) -> us group ke words
+     for (auto &it : strs)
+         string key = it;                    // copy lo: asli word sort hua to group me galat word jaata
+         sort(begin(key), end(key)); mp[key].push_back(it);   // "tea" -> "aet" · same key = same group
+     for (auto &it : mp)
+         ans.push_back(it.second);           // map ki har list = ek group
      // KEY ka doosra roop (sirf a-z): 26 ki ginti "1#0#0#...#" -> sort nahi, O(n · k)
      //   (separator "#" zaroori: bina uske a=1,b=11 aur a=11,b=1 dono "111")
      // "" (khaali string) bhi chalta: sorted("") = "" -> ek hi group
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SUBARRAY SUM = K
- └──────────────────────────────────────────────────────────────
-     int subarraySum(vector<int> &nums, int k) { // prefix-sum + hashmap {prefixSum -> count}
-         unordered_map<int, int> mp;
-         int sum = 0, count = 0;
-         mp[0] = 1;                              // START zaroori: jab sum khud == k, tab prefix-0 chahiye
-         for (int i = 0; i < nums.size(); i++) {
-             sum += nums[i];                     // running sum
-             count += mp[sum - k];               // sum - k (k - sum NAHI): abhi 15 km - aakhri tukda 5 =
-                                                 //   10 pe tukda shuru -> "10 kitni baar dikha?" BADA pehle
-                                                 //   (two sum ka "target - x" ulta yahan mat lagao)
-             mp[sum]++;                          // check ke BAAD daalo
-         }
-         return count;
-     }
+ ▸ SUBARRAY SUM = K
+     // prefix-sum + hashmap {prefixSum -> count}
+     unordered_map<int, int> mp; int sum = 0, count = 0;
+     mp[0] = 1;                              // START zaroori: jab sum khud == k, tab prefix-0 chahiye
+     for (int i = 0; i < nums.size(); i++)
+         sum += nums[i];                     // running sum
+         count += mp[sum - k];               // sum - k (k - sum NAHI): abhi 15 km - aakhri tukda 5 =
+                                             //   10 pe tukda shuru -> "10 kitni baar dikha?" BADA pehle
+                                             //   (two sum ka "target - x" ulta yahan mat lagao)
+         mp[sum]++;                          // check ke BAAD daalo
+     return count;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ COUNT DIVISIBLE PAIRS  = two-sum/hashmap-complement, par KEY = REMAINDER
- └──────────────────────────────────────────────────────────────
+ ▸ COUNT DIVISIBLE PAIRS  = two-sum/hashmap-complement, par KEY = REMAINDER
      // pairs (i<j): (A[i]+A[j])%k==0. brute O(n²) -> "partner pehle aaya?" ko hashmap me CACHE -> O(n)
      // A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har element ka apna rem
-     int countDivisiblePairs(vector<int> &nums, int k) {
-         unordered_map<int, int> mp;             // {remainder -> kitne aaye}
-         int count = 0;
-         for (auto &it : nums) {
-             int rem = (((it % k) + k) % k);     // +k phir %k: C++ me negative ka % negative aata, key galat
-             count += mp[(k - rem) % k];         // partner rem: it=1,k=3 -> 1+? = 3 -> 2. rem=0 -> 3%3 = 0
-                                                 //   isliye (k-rem)%k. mp[2] jitne = utne pair
-             mp[rem]++;                          // lookup PEHLE, insert BAAD: khud-se-pair na gine
-         }
-         return count;                           // [1,2,3,4,5],k=3 -> 4 (it=5 pe mp[1]=2 -> ek saath 2 pair)
-     }
+     unordered_map<int, int> mp; int count = 0;   // {remainder -> kitne aaye}
+     for (auto &it : nums)
+         int rem = (((it % k) + k) % k);     // +k phir %k: C++ me negative ka % negative aata, key galat
+         count += mp[(k - rem) % k];         // partner rem: it=1,k=3 -> 1+? = 3 -> 2. rem=0 -> 3%3 = 0
+                                             //   isliye (k-rem)%k. mp[2] jitne = utne pair
+         mp[rem]++;                          // lookup PEHLE, insert BAAD: khud-se-pair na gine
+     return count;                           // [1,2,3,4,5],k=3 -> 4 (it=5 pe mp[1]=2 -> ek saath 2 pair)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ LONGEST CONSECUTIVE SEQ (LC-128)
- └──────────────────────────────────────────────────────────────
+ ▸ LONGEST CONSECUTIVE SEQ (LC-128)
      // unsorted -> sabse LAMBI consecutive chain ki LENGTH. [100,4,200,1,3,2] -> 4 (1,2,3,4)
      // sort (n log n) mat karo -> SET me O(1) lookup, har CHAIN sirf uske START se gino -> O(n)
-     int longestConsecutive(vector<int> &nums) {
-         int ans = INT_MIN;
-         unordered_set<int> st;                  // set: O(1) lookup + duplicate apne aap hat jaate
-         for (auto &it : nums)
-             st.insert(it);
-         for (int i = 0; i < nums.size(); i++) { // set pe ghoomna behtar: nums pe duplicate START baar-baar
-             int num = nums[i];
-             if (!st.count(num - 1)) {           // START tabhi jab num-1 set me NAHI, warna beech ka: skip
-                 int currNum = num;
-                 int count = 1;                  // count=1: START khud chain me
-                 while (st.count(currNum + 1)) { // agla set me hai tab tak chain lambi
-                     currNum++;
-                     count++;
-                 }
-                 ans = max(ans, count);          // while ke BAAD: poori chain gin ke record
-             }
-         }
-         return ans == INT_MIN ? 0 : ans;        // khaali array -> 0
-     }                                           // 100 START(1) · 4 skip · 200 START(1) · 1 -> 1,2,3,4 = 4
+     int ans = INT_MIN; unordered_set<int> st;   // set: O(1) lookup + duplicate apne aap hat jaate
+     for (auto &it : nums)
+         st.insert(it);
+     for (int i = 0; i < nums.size(); i++)   // set pe ghoomna behtar: nums pe duplicate START baar-baar
+         int num = nums[i];
+         if (!st.count(num - 1))             // START tabhi jab num-1 set me NAHI, warna beech ka: skip
+             int currNum = num; int count = 1;   // count=1: START khud chain me
+             while (st.count(currNum + 1))   // agla set me hai tab tak chain lambi
+                 currNum++; count++;
+             ans = max(ans, count);          // while ke BAAD: poori chain gin ke record
+     return ans == INT_MIN ? 0 : ans;        // khaali array -> 0
+     // 100 START(1) · 4 skip · 200 START(1) · 1 -> 1,2,3,4 = 4
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAJORITY ELEMENT (LC-169, >n/2)
- └──────────────────────────────────────────────────────────────
+ ▸ MAJORITY ELEMENT (LC-169, >n/2)
      // map se: mp[x]++, count > n/2 wala return -> O(n) time, O(n) space (seedha)
-     int majorityElement(vector<int> &nums) {    // BOYER-MOORE VOTING, O(1) space
-         int count = 1;                          // majority > n/2 -> baaki sab milke bhi kam ->
-         int candidate = nums[0];                //   do ALAG element CANCEL karo, majority bachega
-         for (int i = 1; i < nums.size(); i++) {
-             if (candidate == nums[i])
-                 count++;                        // == candidate -> count++
-             else if (candidate != nums[i]) {
-                 count--;                        // != candidate -> count--
-                 if (count == 0) {               // 0 pe RESET (chhoda to -1 me jaata, reset kabhi nahi = BUG)
-                     candidate = nums[i];
-                     count = 1;
-                 }
-             }
-         }
-         return candidate;                       // end: candidate = ans
-     }
+     // BOYER-MOORE VOTING, O(1) space
+     int count = 1;                          // majority > n/2 -> baaki sab milke bhi kam ->
+     int candidate = nums[0];                //   do ALAG element CANCEL karo, majority bachega
+     for (int i = 1; i < nums.size(); i++)
+         if (candidate == nums[i])  count++;   // == candidate -> count++
+         else if (candidate != nums[i])
+             count--;                        // != candidate -> count--
+             if (count == 0)                 // 0 pe RESET (chhoda to -1 me jaata, reset kabhi nahi = BUG)
+                 candidate = nums[i]; count = 1;
+     return candidate;                       // end: candidate = ans
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ FIND DISAPPEARED NUMBERS (LC-448)  = ARRAY-KHUD-hashmap · index-negation, O(1) space
- └──────────────────────────────────────────────────────────────
+ ▸ FIND DISAPPEARED NUMBERS (LC-448)  = ARRAY-KHUD-hashmap · index-negation, O(1) space
      // size n, values 1..n (repeat ho sakte). jo MISSING wo sab. [4,3,2,7,8,2,3,1] -> [5,6]
      // extra set/map nahi: value v ka ghar = index v-1 -> dikha to us index ko NEGATIVE mark
-     vector<int> findDisappearedNumbers(vector<int> &nums) {
-         vector<int> ans;
-         for (int i = 0; i < nums.size(); i++) {
-             int index = abs(nums[i]) - 1;       // abs(): value pehle hi -ve ho chuki ho sakti
-             if (nums[index] > 0)                // >0 check: duplicate pe dobara minus = wapas plus
-                 nums[index] = -nums[index];
-         }
-         for (int i = 0; i < nums.size(); i++) {
-             if (nums[i] > 0)                    // abhi bhi +ve = index+1 kabhi mark nahi hua = MISSING
-                 ans.push_back(i + 1);           // i+1: index i ka ghar value i+1 ka (1-based)
-         }
-         return ans;
-     }
+     for (int i = 0; i < nums.size(); i++)
+         int index = abs(nums[i]) - 1;       // abs(): value pehle hi -ve ho chuki ho sakti
+         if (nums[index] > 0)                // >0 check: duplicate pe dobara minus = wapas plus
+             nums[index] = -nums[index];
+     for (int i = 0; i < nums.size(); i++)
+         if (nums[i] > 0)                    // abhi bhi +ve = index+1 kabhi mark nahi hua = MISSING
+             ans.push_back(i + 1);           // i+1: index i ka ghar value i+1 ka (1-based)
      // SAME trick: find-duplicate (287, sirf jab array badal sakte; asli 287 = Floyd) · first-missing-
      //   positive (41) · single-in-pairs. "values 1..n + O(1) space" = index-marking ka signal
      //   (array modify NA kar sakte -> Floyd cycle)
+
 ```
+
+---
 
 ---
 
