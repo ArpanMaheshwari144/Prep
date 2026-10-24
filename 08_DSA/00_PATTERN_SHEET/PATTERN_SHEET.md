@@ -2964,18 +2964,19 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ```
 
- BROAD IDEA: XOR ki 2 property -> a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
+ BROAD IDEA: XOR: a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
 
-┌── FAMILY: XOR-cancel ─────────────────────────────────────────
-│ KYUN SAATH: pair-wise cheezein XOR se KHUD cancel (a^a=0); jo "akela / missing" bacha wahi answer. no map, O(1) space.
-└───────────────────────────────────────────────────────────────
+── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number, Single-Number-II bhi) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SINGLE NUMBER (LC-136)
  └──────────────────────────────────────────────────────────────
-     TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
-       XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)   // nums[0] se shuru isliye loop 1 se; a^a=0 se pairs kat jaate
-     FAMILY (aage isi daabe me aayenge): Missing-Number · Single-Number-II bhi XOR-based.
+     int singleNumber(vector<int> &nums) {       // sab 2 baar, ek 1 baar -> sab XOR = wahi ek
+         int XORR = nums[0];                     // nums[0] se shuru, isliye loop 1 se
+         for (int i = 1; i < nums.size(); i++)
+             XORR ^= nums[i];                    // a^a = 0 pair kat jaata, a^0 = a
+         return XORR;                            // O(n), O(1), koi map nahi
+     }
 ```
 
 ---
