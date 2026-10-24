@@ -299,8 +299,7 @@ Server 3 gira --> ring: Server 4 naya owner --> Redis buffer se bacha hua utha l
 flowchart LR
     A["Arpan (editor)"] --> LB["LB: docId se ring"]
     LB --> S3["Server 3: owner, OT"]
-    S3 -- "1. operation likho" --> B[("Redis buffer + copy")]
-    B -- "2. likh gaya, tab ACK" --> S3
+    S3 <-->|"1. operation likho<br/>2. wapas: likh gaya, tab ACK"| B[("Redis buffer + copy")]
     S3 -- "100 ms batch (Redis se utha ke)" --> C[("Cassandra: operation log")]
     S3 -- "publish operation" --> P["Redis pub/sub: doc-42"]
     P --> V["Server 1, 5 -> viewers"]

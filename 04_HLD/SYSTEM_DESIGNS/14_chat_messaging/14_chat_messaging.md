@@ -74,9 +74,8 @@ WEBSOCKET     Ravi ek baar connection khole, wo band hi na ho, dono taraf baat h
 ```mermaid
 flowchart LR
     A["Arpan"] -- "WebSocket (khuli)" --> S["Chat server"]
-    R["Ravi"] -- "WebSocket (khuli)" --> S
+    R["Ravi"] <-->|"WebSocket (khuli)<br/>hi (server khud bheje)"| S
     S --> D[("DB")]
-    S -- "hi (server khud bheje)" --> R
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -272,8 +271,7 @@ banking ki idempotency key hi hai: wahan paisa do baar kat-ta, yahan message do 
 
 ```mermaid
 flowchart LR
-    A["Arpan app<br/>m-501"] -- "1. bheja (ack kho gaya)" --> S["Chat server"]
-    A -- "2. dobara, wahi m-501" --> S
+    A["Arpan app<br/>m-501"] -- "1. bheja (ack kho gaya)<br/>2. dobara, wahi m-501" --> S["Chat server"]
     S -- "m-501 pehle aaya?" --> R[("Redis<br/>m-501 = #42 (1 din)")]
     S --> D[("Cassandra")]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

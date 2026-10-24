@@ -169,8 +169,7 @@ line bhi nahi rukti.
 ```mermaid
 flowchart LR
     LS[("SMS line")] --> WS["SMS worker"]
-    WS -- "fail" --> RT[("retry line<br/>1s, 2s, 4s, 8s + thoda random")]
-    RT --> WS
+    WS <-->|"fail hua to yahan<br/>wait ke baad wapas worker pe"| RT[("retry line<br/>1s, 2s, 4s, 8s + thoda random")]
     WS -- "5 baar fail" --> D[("DLQ")]
     D --> AL["alert, insaan dekhe"]
     style RT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -310,8 +309,7 @@ Ilaaj, 3 hisse:
 
 ```mermaid
 flowchart LR
-    WS["SMS worker"] -- "bheja" --> C["SMS company"]
-    C -- "200 + msgId TW-555" --> WS
+    WS["SMS worker"] <-->|"jaata: bheja<br/>wapas: 200 + msgId TW-555"| C["SMS company"]
     WS -- "999 | TW-555 | BHEJA" --> T[("Tracking DB<br/>(Cassandra)")]
     C -- "webhook + signature:<br/>TW-555 DELIVERED" --> H["Webhook handler"]
     H -- "haal = MILA" --> T

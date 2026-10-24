@@ -74,9 +74,8 @@ Ilaaj: beech me **PSP (Payment Service Provider)**, jaise Razorpay, Juspay ya St
 ```mermaid
 flowchart LR
     U["Arpan"] --> S["Payment Service"]
-    S -- "1. order t-50" --> P["PSP<br/>(Razorpay)"]
+    S <-->|"1. order t-50<br/>3. wapas: t-50 SUCCESS"| P["PSP<br/>(Razorpay)"]
     U -- "2. UPI se pay" --> P
-    P -- "3. t-50 SUCCESS" --> S
     S -- "4. +2000 + ledger" --> D[("SQL DB")]
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -158,8 +157,7 @@ milaan (pakka).
 ```mermaid
 flowchart LR
     S["Payment Service"] -- "1. t-50 PENDING (pehle)" --> D[("SQL DB")]
-    S -- "2. call t-50" --> P["PSP"]
-    P -- "webhook: t-50 SUCCESS" --> S
+    S <-->|"2. call t-50<br/>wapas webhook: t-50 SUCCESS"| P["PSP"]
     J["Job, har 5 min<br/>DB me purane PENDING dekho"] --> D
     J -- "t-50 ka kya hua?" --> P
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -199,9 +197,8 @@ nikal chuka hai par dukaan ke bank nahi pahuncha. Isse har waqt poore hisaab ka 
 ```mermaid
 flowchart LR
     S["Payment Service"] -- "1. Arpan -500, hold +500" --> D[("SQL DB")]
-    S -- "2. payout t-60" --> P["PSP"] --> B["dukaan ka bank"]
-    P -- "3a SUCCESS: hold -500" --> S
-    P -- "3b FAILED: ulta, Arpan +500" --> S
+    S <-->|"2. payout t-60<br/>wapas 3a SUCCESS: hold -500<br/>wapas 3b FAILED: ulta, Arpan +500"| P["PSP"]
+    P --> B["dukaan ka bank"]
     style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 

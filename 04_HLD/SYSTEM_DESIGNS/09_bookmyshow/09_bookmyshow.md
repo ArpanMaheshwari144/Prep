@@ -127,10 +127,9 @@ dusri kahani: Arpan ne pay kiya hi nahi
 ```mermaid
 flowchart LR
     U["Arpan"] -- "A1 chuni" --> S["BMS Service"]
-    S -- "HELD, Arpan, 9:05 tak" --> D[("SQL DB: seats<br/>status + hold_until")]
+    S -- "pehle: HELD, Arpan, 9:05 tak<br/>pay ke baad: HELD -> BOOKED" --> D[("SQL DB: seats<br/>status + hold_until")]
     U -- "pay" --> P["Payment<br/>(payment file)"]
     P -- "pay ho gaya" --> S
-    S -- "HELD -> BOOKED" --> D
     J["safai job (har minute)"] -. "purane HELD -> FREE" .-> D
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -268,10 +267,8 @@ PSP webhook --> Payment Service (PENDING -> SUCCESS) --> BMS
 ```mermaid
 flowchart LR
     U["Arpan"] -- "Pay (key B-77)" --> S["BMS Service"]
-    S --> P["Payment Service<br/>(PENDING, UNIQUE booking_id)"]
-    P --> G["PSP -> bank"]
-    G -- "webhook" --> P
-    P -- "B-77 SUCCESS" --> S
+    S <-->|"jaata: pay<br/>wapas: B-77 SUCCESS"| P["Payment Service<br/>(PENDING, UNIQUE booking_id)"]
+    P <-->|"jaata: pay<br/>wapas: webhook"| G["PSP -> bank"]
     S -- "A1 HELD -> BOOKED" --> D[("SQL DB: seats")]
     S -- "ticket ka SMS" --> N["Notification"]
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

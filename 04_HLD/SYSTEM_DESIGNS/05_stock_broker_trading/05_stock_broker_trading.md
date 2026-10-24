@@ -196,8 +196,7 @@ order 501 "Arpan buy 10 @ 3500"
 flowchart LR
     O["Order Service"] --> P["Primary engine<br/>(RAM book)"]
     P -- "1. likho" --> L[("apni disk: LOG")]
-    P -- "2. order bhejo" --> S["Standby engine<br/>(wahi book banti)"]
-    S -- "3. ack" --> P
+    P <-->|"2. order bhejo<br/>3. wapas: ack"| S["Standby engine<br/>(wahi book banti)"]
     style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```

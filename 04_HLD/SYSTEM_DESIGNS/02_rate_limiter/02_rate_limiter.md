@@ -150,8 +150,7 @@ ko token mile, baaki 15 ko 429.
 ```mermaid
 flowchart LR
     B["bot: 20 ek saath"] --> S["App x 10"]
-    S -- "Lua: padho + jaancho + likho<br/>ek jhatke me" --> R[("Redis<br/>ek-ek karke chalata")]
-    R -- "5 haan, 15 na" --> S
+    S <-->|"jaata: Lua (padho + jaancho + likho) ek jhatke me<br/>wapas: 5 haan, 15 na"| R[("Redis<br/>ek-ek karke chalata")]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 

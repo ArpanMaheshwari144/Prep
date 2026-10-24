@@ -121,8 +121,7 @@ dobara k-77 aaya -> INSERT fail (UNIQUE) -> paisa nahi kata, purana jawab wapas 
 
 ```mermaid
 flowchart LR
-    U["Arpan app<br/>key k-77"] -- "1. bheja (jawab kho gaya)" --> S["Banking Service"]
-    U -- "2. dobara, wahi k-77" --> S
+    U["Arpan app<br/>key k-77"] -- "1. bheja (jawab kho gaya)<br/>2. dobara, wahi k-77" --> S["Banking Service"]
     S --> D[("SQL DB<br/>idem: k-77 UNIQUE")]
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
