@@ -345,3 +345,47 @@ saath bheed aayegi. Isliye 1 ghanta + 0-5 minute random.
 Ab key khatam hone wali bheed sambhal li. Par raat ko IPL final hai, aur "live:score" wali ek hi key pe 1 crore
 log ek saath aa rahe hain. Key khatam nahi hui, wo cache me padi hai. Par wo ek hi machine pe hai, aur saari
 bheed usi ek machine pe gir rahi hai. Wo machine dheemi padi, aur us pe padi baaki key bhi atak gayi.
+
+### Kadam 8: IPL final, ek key pe 1 crore log (LOCAL CACHE + key ki copies)
+
+"live:score" key cache me padi hai. Par ring ke hisaab se ek key hamesha ek hi machine pe jaati hai. 1 crore log
+ek saath us ek machine pe aa gaye. Wo machine dheemi padi, aur us pe jo baaki key padi thi (offer, cart), wo bhi
+atak gayi.
+
+Yahan machine badhane se kaam nahi chalta, kyunki ek key ek hi machine pe rehti hai, chahe kitni bhi machine
+laga do. Isko **hot key** (garam key) kehte hain.
+
+**Ilaaj 1: LOCAL CACHE (har app server apni memory me rakhe)**
+
+Har app server "live:score" ko apni hi memory me 1-2 second ke liye rakh leta hai. Request aayi to pehle apni
+memory me dekho, wahan mil gaya to cache machine tak jaana hi nahi.
+
+```mermaid
+flowchart LR
+    U["1 crore log"] --> A["100 App server<br/>har ek ki apni memory me<br/>live:score 1-2 sec (LOCAL CACHE)"]
+    A -->|"har server 1 sec me 1 baar"| M["10 alag cache machine<br/>har ek pe ek COPY: live:score#1 ... #10"]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+pehle:  1 crore request -> sab ek cache machine pe
+ab:     100 app server, har ek 1 second me sirf 1 baar cache machine se poochhta
+        -> cache machine pe 1 second me sirf 100 request, baaki sab app ki apni memory se
+```
+
+Score 1 second purana dikhe to chalta hai. NFR me pehle se likha hai ki thoda purana chalega.
+
+**Local cache sab key ke liye kyun nahi:** app server ki memory chhoti hoti hai, 1 TB isme nahi aata. Har server
+ka cache alag hota hai, to ek pe naya aur doosre pe purana dikh sakta hai. Isliye sirf kuch garam key, aur sirf
+1-2 second ke liye.
+
+**Ilaaj 2: garam key ki COPIES**
+
+Ek key ko kai machine pe rakh do: "live:score#1", "live:score#2" ... "live:score#10". Har app server inme se koi
+ek random chunta hai. Ek machine ka bojh ab 10 machine me batt gaya.
+
+```
+local cache        -> pehla ilaaj, sabse sasta: request cache machine tak jaati hi nahi
+key ki copies      -> jab local cache ke baad bhi ek machine pe bojh zyada ho
+```
