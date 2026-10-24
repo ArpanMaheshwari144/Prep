@@ -1734,233 +1734,152 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  BROAD IDEA: data-structure ko khud banao (built-in ke bina) -> array + pointers/nodes se.
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ DESIGN HASHMAP (LLD)
- └──────────────────────────────────────────────────────────────
-     struct Entry {                              // Entry = | key | value | next |
-         string key;
-         int value;
-         Entry *next;
+ ▸ DESIGN HASHMAP (LLD)
+     struct Entry                                // Entry = | key | value | next |
+         string key; int value; Entry *next;
          Entry(string k, int v) : key(k), value(v), next(nullptr) {}
-     };
 
-     class MyHashMap {                           // ARRAY (buckets), har slot ek CHAIN
-         int count;                              // kitne pairs
-         int cap;                                // slots = 16
+     class MyHashMap                             // ARRAY (buckets), har slot ek CHAIN
+         int count; int cap;                     // kitne pairs · slots = 16
          vector<Entry *> buckets;                // buckets[i] = chain ka HEAD, khud POINTER: isliye
-                                                 //   array-assign (buckets[i] = X) + node-link (X->next) MIX
+                                                 // array-assign (buckets[i] = X) + node-link (X->next) MIX
 
      public:
-         MyHashMap() {
-             count = 0;
-             cap = 16;
-             buckets.resize(cap);                // resize -> sab slot nullptr
-         }
+         MyHashMap()
+             count = 0; cap = 16; buckets.resize(cap);   // resize -> sab slot nullptr
 
-         void put(string key, int val) {
+         void put(string key, int val)
              int index = hash<string>{}(key) % cap;   // % cap: hash bada number, slot 0..cap-1 me laana
              Entry *node = new Entry(key, val);
-             if (buckets[index] == nullptr) {    // khaali slot: naya node hi chain ka head
-                 buckets[index] = node;
-                 count++;
-             }
-             else {                              // same index (collision) -> chain me jodo
+             if (buckets[index] == nullptr)      // khaali slot: naya node hi chain ka head
+                 buckets[index] = node; count++;
+             else                                // same index (collision) -> chain me jodo
                  Entry *curr = buckets[index];
-                 while (curr != NULL) {
-                     if (curr->key == key) {
+                 while (curr != NULL)
+                     if (curr->key == key)
                          curr->value = val;      // key MILI -> value update
                          return;                 // TURANT return: warna END pe DUPLICATE node + count++
-                     }                           // (chain ke ANDAR update pe phat-ta; test-pass != code-sahi)
-                     else {
-                         if (curr->next == nullptr) {   // next null = chain ka END: yahin jodo
-                             curr->next = node;  //   (agle round naya node match hoke return)
-                             count++;
-                         }
-                     }
-                     curr = curr->next;
-                 }
-             }
-         }
-
-         int get(string key) {
-             int index = hash<string>{}(key) % cap;
-             Entry *curr = buckets[index];
-             while (curr != NULL) {
-                 if (curr->key == key)
-                     return curr->value;
-                 curr = curr->next;
-             }
-             return -1;                          // poori chain dekh li, key nahi mili
-         }
-
-         void remove(string key) {
-             int index = hash<string>{}(key) % cap;
-             Entry *curr = buckets[index];
-             Entry *prev = NULL;                 // prev=NULL: head ke peeche koi node nahi
-             while (curr != NULL) {
-                 if (curr->key == key) {
-                     if (prev != NULL)
-                         prev->next = curr->next;        // BEECH: [A]->[B]->[C], B hata -> A->next = C
+                     // (chain ke ANDAR update pe phat-ta; test-pass != code-sahi)
                      else
-                         buckets[index] = curr->next;    // prev NULL = HEAD hi hata: bucket ka head badlo
-                     count--;
-                 }
-                 prev = curr;                    // prev = prev->next NAHI: prev NULL -> crash
+                         if (curr->next == nullptr)   // next null = chain ka END: yahin jodo
+                             curr->next = node; count++;   // (agle round naya node match hoke return)
+                     curr = curr->next;
+
+         int get(string key)
+             int index = hash<string>{}(key) % cap; Entry *curr = buckets[index];
+             while (curr != NULL)
+                 if (curr->key == key) return curr->value;
                  curr = curr->next;
-             }
-         }
+             return -1;                          // poori chain dekh li, key nahi mili
 
-         int size() {
+         void remove(string key)
+             int index = hash<string>{}(key) % cap; Entry *curr = buckets[index];
+             Entry *prev = NULL;                 // prev=NULL: head ke peeche koi node nahi
+             while (curr != NULL)
+                 if (curr->key == key)
+                     if (prev != NULL)
+                         prev->next = curr->next;   // BEECH: [A]->[B]->[C], B hata -> A->next = C
+                     else buckets[index] = curr->next;   // prev NULL = HEAD hi hata: bucket ka head badlo
+                     count--;
+                 prev = curr; curr = curr->next;   // prev = prev->next NAHI: prev NULL -> crash
+
+         int size()
              return count;
-         }
-     };
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ DESIGN HASHSET (LLD)
- └──────────────────────────────────────────────────────────────
-     struct Entry {                              // HashMap ka EXACT code, bas VALUE nahi: | key | next |
-         string key;
-         Entry *next;
+ ▸ DESIGN HASHSET (LLD)
+     struct Entry                                // HashMap ka EXACT code, bas VALUE nahi: | key | next |
+         string key; Entry *next;
          Entry(string k) : key(k), next(nullptr) {}
-     };
 
-     class MyHashSet {
-         int sz;
-         int cap;
-         vector<Entry *> buckets;
+     class MyHashSet
+         int sz; int cap; vector<Entry *> buckets;
 
      public:
-         MyHashSet() {
-             sz = 0;
-             cap = 16;
-             buckets.resize(cap);
-         }
+         MyHashSet()
+             sz = 0; cap = 16; buckets.resize(cap);
 
-         void add(string key) {                  // HashMap ke put() jaisa
-             int index = hash<string>{}(key) % cap;
-             Entry *node = new Entry(key);
-             if (buckets[index] == nullptr) {    // bucket khaali -> node laga + sz++
-                 buckets[index] = node;
-                 sz++;
-             }
-             else {
+         void add(string key)                    // HashMap ke put() jaisa
+             int index = hash<string>{}(key) % cap; Entry *node = new Entry(key);
+             if (buckets[index] == nullptr)      // bucket khaali -> node laga + sz++
+                 buckets[index] = node; sz++;
+             else
                  Entry *curr = buckets[index];
-                 while (curr != nullptr) {
-                     if (curr->key == key)
-                         return;                 // mili -> kuch nahi (duplicate skip)
-                     else {
-                         if (curr->next == nullptr) {
-                             curr->next = node;  // na-mili -> chain END me append + sz++ (HashMap jaisa)
-                             sz++;
-                         }
-                     }
-                     curr = curr->next;
-                 }
-             }
-         }
-
-         bool contains(string key) {             // get() jaisa, value ki jagah true / false
-             int index = hash<string>{}(key) % cap;
-             Entry *curr = buckets[index];
-             while (curr != nullptr) {
-                 if (curr->key == key)
-                     return true;
-                 curr = curr->next;
-             }
-             return false;
-         }
-
-         void remove(string key) {               // HashMap ka remove HUBAHU
-             int index = hash<string>{}(key) % cap;
-             Entry *curr = buckets[index];
-             Entry *prev = NULL;
-             while (curr != nullptr) {
-                 if (curr->key == key) {
-                     if (prev == nullptr)
-                         buckets[index] = curr->next;    // HEAD hata -> bucket ko curr->next se jodo
+                 while (curr != nullptr)
+                     if (curr->key == key) return;   // mili -> kuch nahi (duplicate skip)
                      else
-                         prev->next = curr->next;        // beech: prev->next = curr->next
+                         if (curr->next == nullptr)
+                             curr->next = node;   // na-mili -> chain END me append + sz++ (HashMap jaisa)
+                             sz++;
+                     curr = curr->next;
+
+         bool contains(string key)               // get() jaisa, value ki jagah true / false
+             int index = hash<string>{}(key) % cap; Entry *curr = buckets[index];
+             while (curr != nullptr)
+                 if (curr->key == key) return true;
+                 curr = curr->next;
+             return false;
+
+         void remove(string key)                 // HashMap ka remove HUBAHU
+             int index = hash<string>{}(key) % cap; Entry *curr = buckets[index]; Entry *prev = NULL;
+             while (curr != nullptr)
+                 if (curr->key == key)
+                     if (prev == nullptr)
+                         buckets[index] = curr->next;   // HEAD hata -> bucket ko curr->next se jodo
+                     else prev->next = curr->next;   // beech: prev->next = curr->next
                      sz--;
                      return;
-                 }
-                 prev = curr;                    // prev = prev->next NAHI: NULL->next CRASH
-                 curr = curr->next;
-             }
+                 prev = curr; curr = curr->next;   // prev = prev->next NAHI: NULL->next CRASH
              return;
-         }
 
-         int size() {
+         int size()
              return sz;
-         }
-     };
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ LRU CACHE (LC146) — COMBO: hashmap + doubly-linked-list
- └──────────────────────────────────────────────────────────────
-     struct Node {                               // Node = | key | val | prev | next |
-         int key, val;
-         Node *prev, *next;
+ ▸ LRU CACHE (LC146) — COMBO: hashmap + doubly-linked-list
+     struct Node                                 // Node = | key | val | prev | next |
+         int key, val; Node *prev, *next;
          Node(int k, int v) : key(k), val(v), prev(nullptr), next(nullptr) {}
-     };
 
-     class LRUCache {                            // get + put DONO O(1): hashmap (KAHAN) + DLL (ORDER)
-         int cap;
-         unordered_map<int, Node *> mp;          // key -> DLL node ka POINTER (find O(1))
+     class LRUCache                              // get + put DONO O(1): hashmap (KAHAN) + DLL (ORDER)
+         int cap; unordered_map<int, Node *> mp;   // key -> DLL node ka POINTER (find O(1))
          Node *head, *tail;                      // dummy [HEAD] <-> MRU .. LRU <-> [TAIL] dummy (edge clean)
 
      public:
-         LRUCache(int capacity) {
+         LRUCache(int capacity)
              cap = capacity;
              head = new Node(-1, -1);            // TRAP: yahan "Node *head =" likha = shadowing (naya local)
-             tail = new Node(-1, -1);
-             head->next = tail;
-             tail->prev = head;
-         }
+             tail = new Node(-1, -1); head->next = tail; tail->prev = head;
 
-         void removeNode(Node *node) {           // beech se nikal, O(1)
-             node->next->prev = node->prev;
-             node->prev->next = node->next;
-         }
+         void removeNode(Node *node)             // beech se nikal, O(1)
+             node->next->prev = node->prev; node->prev->next = node->next;
 
-         void addFront(Node *node) {
+         void addFront(Node *node)
              Node *nxt = head->next;             // nxt PEHLE pakdo: head->next overwrite se pehle (TRAP)
-             head->next = node;
-             node->prev = head;
+             head->next = node; node->prev = head;
 
-             node->next = nxt;
-             nxt->prev = node;                   // node ab head ke turant baad = sabse naya (MRU)
-         }
+             node->next = nxt; nxt->prev = node;   // node ab head ke turant baad = sabse naya (MRU)
 
-         int get(int key) {
-             if (mp.count(key) > 0) {            // count se: mp[key] chup-chaap entry bana deta
-                 Node *node = mp[key];
-                 removeNode(node);
-                 addFront(node);                 // access = recent -> front pe
+         int get(int key)
+             if (mp.count(key) > 0)              // count se: mp[key] chup-chaap entry bana deta
+                 Node *node = mp[key]; removeNode(node); addFront(node);   // access = recent -> front pe
                  return node->val;
-             }
              return -1;
-         }
 
-         void put(int key, int value) {
-             if (mp.count(key) > 0) {
-                 Node *node = mp[key];
-                 node->val = value;
+         void put(int key, int value)
+             if (mp.count(key) > 0)
+                 Node *node = mp[key]; node->val = value;
                  removeNode(node);               // DONO, get() jaisa. sirf addFront = node purani
-                 addFront(node);                 //   jagah bhi juda -> wahi evict (put1 put2
-             }                                   //   put(1,10) put3 -> get(1) = -1, sahi 10)
-             else {
-                 if (mp.size() == cap) {         // FULL: pehle evict, phir naya (check add se PEHLE)
-                     Node *toBeRemoved = tail->prev;     // tail->prev = sabse purana (tail khud dummy)
+                 addFront(node);                 // jagah bhi juda -> wahi evict (put1 put2
+             // put(1,10) put3 -> get(1) = -1, sahi 10)
+             else
+                 if (mp.size() == cap)           // FULL: pehle evict, phir naya (check add se PEHLE)
+                     Node *toBeRemoved = tail->prev;   // tail->prev = sabse purana (tail khud dummy)
                      removeNode(toBeRemoved);
-                     mp.erase(toBeRemoved->key); // KEY se (->val NAHI: wo key hi nahi,
-                 }                               //   kuch nahi hatta; test me key != val, 1,100)
-                 Node *newNode = new Node(key, value);
-                 addFront(newNode);
-                 mp[key] = newNode;
-             }
-         }
-     };
+                     mp.erase(toBeRemoved->key);   // KEY se (->val NAHI: wo key hi nahi,
+                 // kuch nahi hatta; test me key != val, 1,100)
+                 Node *newNode = new Node(key, value); addFront(newNode); mp[key] = newNode;
 ```
+
+---
 
 ---
 
