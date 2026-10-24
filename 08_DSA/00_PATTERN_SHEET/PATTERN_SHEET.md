@@ -296,7 +296,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // mixed char: sirf alnum ginna, case ignore (<cctype>)
      int left = 0; int right = s.size() - 1;   // aakhri index, size nahi
      while (left <= right)
-         if (tolower(s[left]) == tolower(s[right]))  left++; right--;   // 1. match -> dono andar
+         if (tolower(s[left]) == tolower(s[right]))   // 1. match -> dono andar
+             left++; right--;
          else if (!isalnum(s[left]))  left++;   // 2. left alnum nahi -> skip
          else if (!isalnum(s[right]))  right--;   // 3. right alnum nahi -> skip
          else
@@ -378,7 +379,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      while (i >= 0 && j >= 0)                // && (|| nahi -> -1 index crash)
          if (nums1[i] < nums2[j])            // jo bada wahi peeche (aage se bharo to zinda element mitta)
              nums1[k] = nums2[j]; j--; k--;
-         else  nums1[k] = nums1[i]; i--; k--;   // nums1[i] bada ya barabar -> wahi aakhri khaali slot pe
+         else                                // nums1[i] bada ya barabar -> wahi aakhri khaali slot pe
+             nums1[k] = nums1[i]; i--; k--;
      while (i >= 0)                          // optional: nums1 ke bache pehle se apni jagah pe hain
          nums1[k] = nums1[i]; i--; k--;
      while (j >= 0)                          // zaroori: nums2[j] (nums1[j] NAHI), ye abhi copy nahi hue
@@ -433,7 +435,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // s, t me order se hai? beech ke char skip chalega
      int i = 0, j = 0;                       // i -> s, j -> t
      while (i < s.size() && j < t.size())    // koi ek khatam -> ruko
-         if (s[i] == t[j])  i++; j++;        // char mila -> dono aage
+         if (s[i] == t[j])                   // char mila -> dono aage
+             i++; j++;
          else  j++;                          // nahi mila -> sirf t aage
      if (i >= s.size())                      // s ke saare char order me mil gaye
          return true;
@@ -754,7 +757,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      int sum = 0; int minSum = INT_MAX; int i = 0, j = 0;   // INT_MAX se: min ghatega
      while (j < nums.size())
          sum += nums[j];
-         if (j - i + 1 >= k)  minSum = min(minSum, sum); sum -= nums[i]; i++;
+         if (j - i + 1 >= k)
+             minSum = min(minSum, sum); sum -= nums[i]; i++;
          j++;
      return minSum;
 
@@ -777,7 +781,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      while (j < nums.size())
          if (st.count(nums[j]) > 0)
              return true;                    // window me pehle se -> mil gaya (within k)
-         if (j - i + 1 > k)  st.erase(nums[i]); i++;   // window k se badi -> oldest hatao
+         if (j - i + 1 > k)                  // window k se badi -> oldest hatao
+             st.erase(nums[i]); i++;
          st.insert(nums[j]); j++;            // check ke BAAD insert: warna khud se match
      return false;                           // [1,2,3,1] k=3 -> true · [1,2,3,1,2,3] k=2 -> false
 
@@ -811,7 +816,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          if ((mp1.count(s[i]) == 1 && mp1[s[i]] != t[i]) ||   // count() pehle: seedha mp1[x] khaali key
              (mp2.count(t[i]) == 1 && mp2[t[i]] != s[i]))     //   bana ke galat clash deta
              return false;                   // || : kisi bhi EK taraf clash = 1-to-1 nahi
-         else  mp1[s[i]] = t[i]; mp2[t[i]] = s[i];   // check ke BAAD dono taraf mapping save
+         else                                // check ke BAAD dono taraf mapping save
+             mp1[s[i]] = t[i]; mp2[t[i]] = s[i];
      return true;                            // bina clash poora chala = isomorphic
 
  ▸ WORD PATTERN
@@ -824,7 +830,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if ((mp1.count(pattern[i]) == 1 && mp1[pattern[i]] != word) ||   // delta 2: key =
                  (mp2.count(word) == 1 && mp2[word] != pattern[i]))           //   pattern[i] <-> word
                  return false;               // ISOMORPHIC ki EXACT clash line
-             else  mp1[pattern[i]] = word; mp2[word] = pattern[i];   // check ke BAAD save
+             else                                // check ke BAAD save
+                 mp1[pattern[i]] = word; mp2[word] = pattern[i];
              i++;                            // agla pattern char
          j++;                                // if ke BAHAR: har word gino, extra word bhi
      return (pattern.size() == j) ? true : false;   // delta 3: words ki ginti == pattern length
@@ -1021,8 +1028,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      return count;
 
  ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)
-     │   = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II, PATTERN 15) ka sagaa bhai
-     └──────────────────────────────────────────────────────────────
+     // = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II, PATTERN 15) ka sagaa bhai
      // KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
      // har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
      // n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
@@ -1115,7 +1121,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      vector<int> colCount(n, 0);
      for (int i = 0; i < m; i++)             // pass-1: poori ginti, tabhi pass-2 me pata akela ya nahi
          for (int j = 0; j < n; j++)
-             if (grid[i][j] == 1)  rowCount[i]++; colCount[j]++;
+             if (grid[i][j] == 1)
+                 rowCount[i]++; colCount[j]++;
      int count = 0;
      for (int i = 0; i < m; i++)             // pass-2: check
          for (int j = 0; j < n; j++)
@@ -1372,7 +1379,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      low = 0, high = nums.size() - 1;            // RESET, warna PASS 2 galat jagah se shuru
      while (low <= high)                         // PASS 2 = LAST
          int mid = low + (high - low) / 2;
-         if (nums[mid] == target) ans[1] = mid; low = mid + 1;   // mila -> aur RIGHT (sirf EK pointer hilao)
+         if (nums[mid] == target)            // mila -> aur RIGHT (sirf EK pointer hilao)
+             ans[1] = mid; low = mid + 1;
          else if (nums[mid] < target) low = mid + 1;
          else high = mid - 1;
      return ans;                                 // PASS 1: mid 4 -> 3 = FIRST 3 · PASS 2: mid 4 -> LAST 4
@@ -1429,14 +1437,16 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int ans = -1;                           // [3,6,7,11], h=8 -> 4
          while (low <= high)
              int mid = low + (high - low) / 2;
-             if (solve(piles, h, mid)) ans = mid; high = mid - 1;   // feasible -> chhota try
+             if (solve(piles, h, mid))           // feasible -> chhota try
+                 ans = mid; high = mid - 1;
              else low = mid + 1;
 
  ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
      bool solve(vector<int> &weights, int D, int mid)
          int days = 1; int sum = 0;              // day=1: aakhri din ka load bhi gino
          for (auto &w : weights)
-             if (sum + w > mid) days++; sum = 0;   // aaj w chadhaya to capacity tooti -> agla din
+             if (sum + w > mid)                  // aaj w chadhaya to capacity tooti -> agla din
+                 days++; sum = 0;
              sum += w;
          return days <= D;
 
@@ -1445,7 +1455,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int high = accumulate(begin(weights), end(weights), 0); int ans = -1;   // high=sum: ek din me sab
          while (low <= high)                     // SHELL wahi
              int mid = low + (high - low) / 2;
-             if (solve(weights, days, mid)) ans = mid; high = mid - 1;
+             if (solve(weights, days, mid))
+                 ans = mid; high = mid - 1;
              else low = mid + 1;
 
  ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
@@ -1462,7 +1473,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int high = accumulate(begin(nums), end(nums), 0); int ans = -1;   // high=sum: k=1 poora
          while (low <= high)                     // SHELL wahi
              int mid = low + (high - low) / 2;
-             if (solve(nums, k, mid)) ans = mid; high = mid - 1;
+             if (solve(nums, k, mid))
+                 ans = mid; high = mid - 1;
              else low = mid + 1;
 
 ── FAMILY: HALF-DISCARD (array pura sorted nahi, phir bhi ek comparison se aadha safe discard) ──
@@ -1594,7 +1606,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      bool cycle = false;                         // flag: 1 node pe bina cycle bhi slow==fast hota
      while (fast != NULL && fast->next != NULL)
          slow = slow->next; fast = fast->next->next;
-         if (slow == fast) cycle = true; break;   // break: fast meet point pe hi ruke
+         if (slow == fast)                   // break: fast meet point pe hi ruke
+             cycle = true; break;
      if (!cycle)                                 // flag se decide, `slow != fast` se NAHI:
          return NULL;                            // 1 node pe loop chalta hi nahi, dono head pe = galat head
      slow = head;                                // sirf slow head pe, fast meet point pe
@@ -1609,7 +1622,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      Node *mid = middleNode(head);               // slow / fast
      Node *rev = reverseList(mid);               // 2nd half ulta (rev = naya head)
      while (head != NULL && rev != NULL)         // && : even me rev half chhota, jo pehle NULL wahin ruko
-         if (head->val == rev->val) head = head->next; rev = rev->next;
+         if (head->val == rev->val)
+             head = head->next; rev = rev->next;
          else return false;
      return true;                                // khaali list -> true
      // list TOOTI nahi: pehle half ka ->next nahi badla, odd me middle SHARED -> bina cut odd + even dono
@@ -1642,10 +1656,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      Node *dummy = new Node(0);                  // dummy: head ka special case nahi
      Node *tail = dummy;                         // tail dummy se shuru
      while (a != NULL && b != NULL)              // && : ek list khatam hote hi ruko, baaki neeche jodte
-         if (a->val <= b->val) tail->next = a; a = a->next; tail = tail->next;
-         else if (b->val < a->val) tail->next = b; b = b->next; tail = tail->next;
-     while (a != NULL) tail->next = a; a = a->next; tail = tail->next;   // baaki a jod do (already sorted)
-     while (b != NULL) tail->next = b; b = b->next; tail = tail->next;   // baaki b jod do
+         if (a->val <= b->val)
+             tail->next = a; a = a->next; tail = tail->next;
+         else if (b->val < a->val)
+             tail->next = b; b = b->next; tail = tail->next;
+     while (a != NULL)                   // baaki a jod do (already sorted)
+         tail->next = a; a = a->next; tail = tail->next;
+     while (b != NULL)                   // baaki b jod do
+         tail->next = b; b = b->next; tail = tail->next;
      return dummy->next;                         // dummy skip -> asli head
 
  ▸ ADD TWO NUMBERS
@@ -1654,8 +1672,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      Node *dummy = new Node(0); Node *tail = dummy; int carry = 0;   // dummy + tail (MERGE jaisa) + ek CARRY
      while (a != NULL || b != NULL || carry > 0)   // || carry: 999 + 1 -> list khatam, carry 1 bacha
          int sum = 0;                            // -> ek aur node (leading 1)
-         if (a != nullptr) sum += a->val; a = a->next;   // a hai to jodo, a aage
-         if (b != nullptr) sum += b->val; b = b->next;   // b hai to jodo, b aage
+         if (a != nullptr)                   // a hai to jodo, a aage
+             sum += a->val; a = a->next;
+         if (b != nullptr)                   // b hai to jodo, b aage
+             sum += b->val; b = b->next;
          sum += carry; tail->next = new Node(sum % 10);   // pichhle step ka carry · digit jodo
          tail = tail->next; carry = sum / 10;    // agle ke liye
      return dummy->next;                         // dummy nakli, asli head uske next pe
@@ -1712,7 +1732,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          Node *temp = new Node(curr->val); mp[curr] = temp;   // 7 => 7'
          if (newHead == NULL)                    // pehla clone = naya head, peeche jodne ko koi nahi
              newHead = temp; prev = newHead;
-         else prev->next = temp; prev = temp;    // pehle prev->next pe jodo, phir prev aage
+         else                                // pehle prev->next pe jodo, phir prev aage
+             prev->next = temp; prev = temp;
          curr = curr->next;
      curr = head; Node *currRand = newHead;      // PASS 2: random set; dono list shuru se, same position
      while (curr)
@@ -1939,12 +1960,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL - min
      int maxKadaneK(vector<int> &nums)
          int sum = nums[0]; int maxSum = nums[0];   // init sum = maxSum = nums[0], loop 1 se (ya 0 + INT_MIN)
-         for (int i = 1; i < nums.size(); i++) sum = max(sum + nums[i], nums[i]); maxSum = max(maxSum, sum);
+         for (int i = 1; i < nums.size(); i++)
+             sum = max(sum + nums[i], nums[i]); maxSum = max(maxSum, sum);
          return maxSum;
 
      int minKadaneK(vector<int> &nums)           // Kadane ka MIN version (prefix-sum se NAHI)
          int sum = nums[0]; int minSum = nums[0];   // init nums[0], loop 1 se (ya 0 + INT_MAX)
-         for (int i = 1; i < nums.size(); i++) sum = min(sum + nums[i], nums[i]); minSum = min(minSum, sum);
+         for (int i = 1; i < nums.size(); i++)
+             sum = min(sum + nums[i], nums[i]); minSum = min(minSum, sum);
          return minSum;
 
      int maxSubarraySumCircular(vector<int> &nums)
@@ -2711,24 +2734,19 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ── FAMILY: MIN-heap of current candidates (har baar sabse chhota nikaalo, uska agla daalo) ──
 
  ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
-     struct Compare {                            // ListNode* ko khud compare karna nahi aata
-         bool operator()(ListNode *a, ListNode *b) {
-             return a->val > b->val;             // > likha to MIN-heap (pq ka comparator ulta chalta)
-         }
-     };
+     // struct Compare: ListNode* ko khud compare karna nahi aata
+     return a->val > b->val;                 // > likha to MIN-heap (pq ka comparator ulta chalta)
 
-     ListNode *mergeKLists(vector<ListNode *> &lists) {
-         priority_queue<ListNode *, vector<ListNode *>, Compare> minHeap;
-         for (auto &l : lists)
-             if (l) minHeap.push(l);         // saare heads; NULL skip (warna ->val pe crash)
-         ListNode *dummy = new ListNode(0); ListNode *tail = dummy;   // merge-2-lists jaisa: dummy + tail
-         while (!minHeap.empty()) {
-             ListNode *curr = minHeap.top(); minHeap.pop(); tail->next = curr;   // sabse chhota · jodo
-             tail = curr;
-             if (curr->next) minHeap.push(curr->next);   // uska next; khatam list ka NULL mat daalo
-         }
-         return dummy->next;                     // ->next: dummy khud nakli node
-     }   // heap me max k node (1 per list) -> O(N log k)
+     priority_queue<ListNode *, vector<ListNode *>, Compare> minHeap;
+     for (auto &l : lists)
+         if (l) minHeap.push(l);             // saare heads; NULL skip (warna ->val pe crash)
+     ListNode *dummy = new ListNode(0); ListNode *tail = dummy;   // merge-2-lists jaisa: dummy + tail
+     while (!minHeap.empty())
+         ListNode *curr = minHeap.top(); minHeap.pop(); tail->next = curr;   // sabse chhota · jodo
+         tail = curr;
+         if (curr->next) minHeap.push(curr->next);   // uska next; khatam list ka NULL mat daalo
+     return dummy->next;                     // ->next: dummy khud nakli node
+     // heap me max k node (1 per list) -> O(N log k)
 
  ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
      // har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
@@ -2737,7 +2755,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          pq.push(arr[i]);   // pehle daalo, phir size dekho
          if (pq.size() > k + 1)   // k+1 se bada: tab tak sahi MIN buffer me aa chuka
              int tp = pq.top(); pq.pop(); ans.push_back(tp);   // buffer bhara -> MIN nikaal
-     while (!pq.empty()) int tp = pq.top(); pq.pop(); ans.push_back(tp);   // bache = sorted tail
+     while (!pq.empty())                 // bache = sorted tail
+         int tp = pq.top(); pq.pop(); ans.push_back(tp);
  // [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]. O(n log k). kth-largest ka cousin (sliding buffer)
 
 ── FAMILY: TWO-HEAPS (do team, dono top = beech ke border) ──
@@ -2746,30 +2765,25 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
      // TRAP: heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
      //   bada -> BADI team -> minHeap. naam bhool, team soch.
-     class MedianFinder {
-     public:
-         priority_queue<double> maxHeap;         // CHHOTI team: top = chhoto ka sabse bada (border)
-         priority_queue<double, vector<double>, greater<double>> minHeap;   // BADI team: top = bado ka min
+     // class MedianFinder
+     priority_queue<double> maxHeap;         // CHHOTI team: top = chhoto ka sabse bada (border)
+     priority_queue<double, vector<double>, greater<double>> minHeap;   // BADI team: top = bado ka min
 
-         void addNum(int num) {
-             if (maxHeap.empty() || maxHeap.top() >= num)   // empty() pehle: khaali pe top() crash
-                 maxHeap.push(num);              // 1. PLACEMENT: chhota -> chhoti team
-             else minHeap.push(num);         // bada -> badi team (minHeap)
-             if (maxHeap.size() < minHeap.size()) {   // 2. BALANCE (dono if zaroori: num kisi bhi heap me)
-                 double it = minHeap.top();      // minHeap bada: extra hamesha maxHeap me -> ek wapas
-                 minHeap.pop(), maxHeap.push(it);
-             }
-             else if (maxHeap.size() > minHeap.size() + 1) {   // 2 ka farak: maxHeap sirf 1 aage chalta
-                 double it = maxHeap.top(); maxHeap.pop(); minHeap.push(it);
-             }
-         }
+     // addNum
+     if (maxHeap.empty() || maxHeap.top() >= num)   // empty() pehle: khaali pe top() crash
+         maxHeap.push(num);                  // 1. PLACEMENT: chhota -> chhoti team
+     else minHeap.push(num);                 // bada -> badi team (minHeap)
+     if (maxHeap.size() < minHeap.size())    // 2. BALANCE (dono if zaroori: num kisi bhi heap me)
+         double it = minHeap.top();          // minHeap bada: extra hamesha maxHeap me -> ek wapas
+         minHeap.pop(), maxHeap.push(it);
+     else if (maxHeap.size() > minHeap.size() + 1)   // 2 ka farak: maxHeap sirf 1 aage chalta
+         double it = maxHeap.top(); maxHeap.pop(); minHeap.push(it);
 
-         double findMedian() {
-             if (maxHeap.size() == minHeap.size())
-                 return (maxHeap.top() + minHeap.top()) / 2.0;   // even: dono border ka average
-             return maxHeap.top();               // odd: extra maxHeap me, uska top = median
-         }
-     };   // 5 -> 5 · 15 -> 10 · 1 -> 5 · 3 -> farak 2, 5 minHeap me -> {3,1} {5,15} -> 4
+     // findMedian
+     if (maxHeap.size() == minHeap.size())
+         return (maxHeap.top() + minHeap.top()) / 2.0;   // even: dono border ka average
+     return maxHeap.top();                   // odd: extra maxHeap me, uska top = median
+     // 5 -> 5 · 15 -> 10 · 1 -> 5 · 3 -> farak 2, 5 minHeap me -> {3,1} {5,15} -> 4
 
 ── FAMILY: MAX-heap + greedy (har round sabse zyada wala lagao) ──
 
@@ -2942,10 +2956,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      // ALT FORM (start-loop), same output:
      void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp)
-     ans.push_back(temp);   // HAR node = ek subset (alag base-case NAHI)
-     for (int i = index; i < nums.size(); i++)   // index se: peeche wale dobara nahi
-         temp.push_back(nums[i]), solve(nums, ans, i + 1, temp);   // CHOOSE · EXPLORE: i+1 -> agla aage se
-         temp.pop_back();   // UN-CHOOSE agle i se pehle: wahi jagah agle element ko mile
+         ans.push_back(temp);   // HAR node = ek subset (alag base-case NAHI)
+         for (int i = index; i < nums.size(); i++)   // index se: peeche wale dobara nahi
+             temp.push_back(nums[i]), solve(nums, ans, i + 1, temp);   // CHOOSE · EXPLORE: i+1 -> agla aage se
+             temp.pop_back();   // UN-CHOOSE agle i se pehle: wahi jagah agle element ko mile
      // tree [1,2,3]: har edge pe neeche jaate PUSH, wapas aate POP. undo na karo -> galat subset
      // ([1,2,3] -> pop3 -> [1,2] -> pop2 -> [1] -> loop aage +3 -> [1,3]). right side patli: node sirf aage
      //   pe branch
@@ -2990,7 +3004,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int index,
                  vector<int> &temp)
          if (target < 0) return;             // prune
-         if (target == 0) ans.push_back(temp); return;   // for-loop form: target==0 pe turant record
+         if (target == 0)                    // for-loop form: target==0 pe turant record
+             ans.push_back(temp); return;
          for (int i = index; i < candidates.size(); i++)   // start se: peeche wale nahi, combo repeat nahi
              temp.push_back(candidates[i]);   // CHOOSE
              solve2(candidates, target - candidates[i], ans, i, temp);   // 'i' (i+1 NAHI) -> REUSE allowed
@@ -3045,7 +3060,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // "23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
      void solve(int index, string &temp, unordered_map<char, string> &mp, vector<string> &ans,
                 string &digits)
-         if (index >= digits.size()) ans.push_back(temp); return;   // saare ank ho gaye
+         if (index >= digits.size())         // saare ank ho gaye
+             ans.push_back(temp); return;
          string str = mp[digits[index]];   // is ank ke akshar
          for (int i = 0; i < str.size(); i++)   // har akshar ek alag branch
              temp.push_back(str[i]), solve(index + 1, temp, mp, ans, digits);   // choose · explore (agla ank)
@@ -3169,14 +3185,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      // ── FORM B: FOR-LOOP (saare coins, 1D dp[amount]) ── SAME idea, likhawat alag (03_coin_change_REDO_1)
      int solve(vector<int> &coins, int amount, int i, vector<int> &dp)
-     if (amount < 0) return INT_MAX;         // overshoot: ye raasta nahi banta
-     if (amount == 0) return 0;              // theek ban gaya
-     if (dp[amount] != -1) return dp[amount];
-     int Take = INT_MAX;   // koi coin kaam na aaye -> nahi-banta signal
-     for (int i = 0; i < coins.size(); i++)   // har coin TRY (choose khud loop me)
-         if (solve(coins, amount - coins[i], i, dp) != INT_MAX)   // overflow guard
-             Take = min(Take, 1 + solve(coins, amount - coins[i], i, dp));   // sabme se MIN
-     return dp[amount] = Take;   // caller: dp(amount+1, -1); INT_MAX -> -1
+         if (amount < 0) return INT_MAX;         // overshoot: ye raasta nahi banta
+         if (amount == 0) return 0;              // theek ban gaya
+         if (dp[amount] != -1) return dp[amount];
+         int Take = INT_MAX;   // koi coin kaam na aaye -> nahi-banta signal
+         for (int i = 0; i < coins.size(); i++)   // har coin TRY (choose khud loop me)
+             if (solve(coins, amount - coins[i], i, dp) != INT_MAX)   // overflow guard
+                 Take = min(Take, 1 + solve(coins, amount - coins[i], i, dp));   // sabme se MIN
+         return dp[amount] = Take;   // caller: dp(amount+1, -1); INT_MAX -> -1
      // dono SAME: TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = sirf take, NOT-TAKE apne aap (loop chunta)
      //   for-loop me 'i' state nahi -> 1D dp; 2D me state = (i, amount)
 
