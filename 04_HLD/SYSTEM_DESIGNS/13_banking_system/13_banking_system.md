@@ -237,7 +237,7 @@ taaki Ravi ki SMS kram se jaayein ("500 aaye", phir "200 gaye").
 ```mermaid
 flowchart LR
     S["Banking Service"] -- "ek transaction" --> D[("SQL DB<br/>... + outbox")]
-    RL["Relay"] -- "sent = false" --> D
+    RL["Relay"] -- "sent = false padhta" --> D
     RL -- "bhejo, gira to dobara" --> SMS["SMS Service"]
     style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style SMS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

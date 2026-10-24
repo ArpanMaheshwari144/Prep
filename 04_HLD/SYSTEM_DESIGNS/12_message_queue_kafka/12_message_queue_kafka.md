@@ -280,7 +280,7 @@ padta.
 ```mermaid
 flowchart LR
     O["Order Service"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6")]
-    RL["Relay"] -- "sent = false" --> DB
+    RL["Relay"] -- "sent = false padhta" --> DB
     RL -- "acks=all" --> K[("KAFKA")]
     K --> S["TEAM sms<br/>eventId"]
     style DB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
