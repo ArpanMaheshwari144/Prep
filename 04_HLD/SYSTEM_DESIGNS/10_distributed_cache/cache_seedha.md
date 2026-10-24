@@ -130,3 +130,37 @@ taaza aati hai.
 
 Ab ek machine me jagah ka hisaab ho gaya. Par data hi 1 TB hai, aur ek machine ki RAM sirf 64 GB. Itna data ek
 machine me aata hi nahi.
+
+### Kadam 3: data 1 TB, ek machine me nahi aata (baanto)
+
+1 TB data hai aur ek machine ki RAM 64 GB. To kai cache machine lagao, maan lo 20, aur data unme baant do. Har
+machine pe data ka ek hissa.
+
+Ab sawaal ye hai ki "user:42" kis machine pe hai, ye kaise pata chale? Agar har baar saari 20 machine se
+poochein, to 1 ms wali tezi khatam ho jaayegi.
+
+Ilaaj: key se hi machine nikaal lo.
+
+```
+machine = hash("user:42") % 20      -> maan lo 7 aaya
+PUT  "user:42" -> seedha machine 7 pe rakho
+GET  "user:42" -> wahi hash -> seedha machine 7 se poochho, baaki 19 ko chhuna hi nahi
+```
+
+Ye hisaab kaun karta hai? App ke andar ek chhoti library hoti hai, **cache client**. Usko pata hota hai ki
+kitni machine hain, aur wahi key se machine nikaal ke seedha us machine pe jaata hai. Beech me koi alag dabba
+nahi, isliye tezi bani rehti hai.
+
+```mermaid
+flowchart LR
+    A["App<br/>+ cache client: hash(key) % 20"] -->|"user:42"| M7["Cache machine 7"]
+    A -->|"offer:diwali"| M3["Cache machine 3"]
+    A -.->|"nahi mila"| D[("DB")]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M7 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Diwali sale aayi, data aur badha, to 20 se 21 machine kar di. Ab `% 20` ki jagah `% 21` ho gaya, aur
+lagbhag har key ki machine badal gayi. "user:42" machine 7 me pada hai, par client ab use machine 15 me
+dhoondh raha hai. Lagbhag saare cache ek saath MISS hone lage, aur saari bheed seedha DB pe gir padi.
