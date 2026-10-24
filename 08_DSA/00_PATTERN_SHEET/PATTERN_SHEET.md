@@ -1146,297 +1146,178 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // (2) ans me kya: VALUE (next greater / smaller) · DISTANCE i - top (daily temp) · INDEX (histogram)
      // (3) disha: next = 0..n-1 · prev = n-1..0 (loop ulta) · circular = 2n loop, i % n
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ NEXT GREATER ELEMENT
- └──────────────────────────────────────────────────────────────
+ ▸ NEXT GREATER ELEMENT
      // har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
-     vector<int> nextGreater(vector<int> &nums) {
-         vector<int> ans(nums.size(), -1);       // -1 init: daaye bada na mile wo -1 hi rahe
-         stack<int> st;                          // INDEX rakho: ans[topp] me likhne ko position chahiye
-         for (int i = 0; i < nums.size(); i++) { // left->right: daaye wala bada aage aayega
-             while (!st.empty() && nums[st.top()] < nums[i]) {   // !empty pehle (warna top() crash)
-                 int topp = st.top();            // < : curr BADA -> top ko jawab mila (barabar = bada nahi)
-                 st.pop();                       // top pehle bachao: pop ke baad top() badal jaata
-                 ans[topp] = nums[i];
-             }
-             st.push(i);                         // while ke BAAD push: curr ab apne jawab ka intezaar kare
-         }
-         return ans;                             // stack me bache = koi bada nahi = -1 (init)
-     }
+     vector<int> ans(nums.size(), -1);       // -1 init: daaye bada na mile wo -1 hi rahe
+     stack<int> st;                          // INDEX rakho: ans[topp] me likhne ko position chahiye
+     for (int i = 0; i < nums.size(); i++)   // left->right: daaye wala bada aage aayega
+         while (!st.empty() && nums[st.top()] < nums[i])     // !empty pehle (warna top() crash)
+             int topp = st.top();            // < : curr BADA -> top ko jawab mila (barabar = bada nahi)
+             st.pop(); ans[topp] = nums[i];   // top pehle bachao: pop ke baad top() badal jaata
+         st.push(i);                         // while ke BAAD push: curr ab apne jawab ka intezaar kare
+     return ans;                             // stack me bache = koi bada nahi = -1 (init)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ NEXT SMALLER ELEMENT
- └──────────────────────────────────────────────────────────────
-     vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition ULTI
-         vector<int> ans(nums.size(), -1);
-         stack<int> st;
-         for (int i = 0; i < nums.size(); i++) {
-             while (!st.empty() && nums[st.top()] > nums[i]) {   // > strict (>= nahi): [2,2,2] -> saare -1
-                 int topp = st.top();
-                 st.pop();
-                 ans[topp] = nums[i];
-             }
-             st.push(i);
-         }
-         return ans;
-     }
+ ▸ NEXT SMALLER ELEMENT
+     // = next greater, sirf condition ULTI
+     vector<int> ans(nums.size(), -1); stack<int> st;
+     for (int i = 0; i < nums.size(); i++)
+         while (!st.empty() && nums[st.top()] > nums[i])     // > strict (>= nahi): [2,2,2] -> saare -1
+             int topp = st.top(); st.pop(); ans[topp] = nums[i];
+         st.push(i);
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ PREVIOUS SMALLER ELEMENT
- └──────────────────────────────────────────────────────────────
-     vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA (condition wahi >)
-         vector<int> ans(nums.size(), -1);
-         stack<int> st;
-         for (int i = nums.size() - 1; i >= 0; i--) {   // right->left: right ka next smaller = left ka prev
-             while (!st.empty() && nums[st.top()] > nums[i]) {
-                 int topp = st.top();
-                 st.pop();
-                 ans[topp] = nums[i];
-             }
-             st.push(i);
-         }
-         return ans;
-     }
+ ▸ PREVIOUS SMALLER ELEMENT
+     // = next smaller, sirf LOOP ULTA (condition wahi >)
+     vector<int> ans(nums.size(), -1); stack<int> st;
+     for (int i = nums.size() - 1; i >= 0; i--)     // right->left: right ka next smaller = left ka prev
+         while (!st.empty() && nums[st.top()] > nums[i])
+             int topp = st.top(); st.pop(); ans[topp] = nums[i];
+         st.push(i);
      // prev smaller + next smaller = histogram ka building block
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
- └──────────────────────────────────────────────────────────────
+ ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
      // har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = dono STOPPER
      // [2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
-     vector<int> nextSmaller(vector<int> &heights) {
-         int n = heights.size();
-         stack<int> st;
-         vector<int> ans(n, n);                  // default n (-1 NAHI): right ki bahar deewar
-         for (int i = 0; i < n; i++) {
-             while (!st.empty() && heights[st.top()] > heights[i]) {   // > strict: [3,3,3,3] >= -> 3, > -> 12
-                 int tp = st.top();
-                 st.pop();
-                 ans[tp] = i;                    // INDEX store, value nahi: width index se banti
-             }
-             st.push(i);
-         }
-         return ans;
-     }
+     // nextSmaller
+     stack<int> st; vector<int> ans(n, n);   // default n (-1 NAHI): right ki bahar deewar
+     for (int i = 0; i < n; i++)
+         while (!st.empty() && heights[st.top()] > heights[i])     // > strict: [3,3,3,3] >= -> 3, > -> 12
+             int tp = st.top(); st.pop(); ans[tp] = i;   // INDEX store, value nahi: width index se banti
+         st.push(i);
 
-     vector<int> prevSmaller(vector<int> &heights) {
-         int n = heights.size();
-         stack<int> st;
-         vector<int> ans(n, -1);                 // default -1: left ki bahar deewar (index 0 se pehle)
-         for (int i = n - 1; i >= 0; i--) {
-             while (!st.empty() && heights[st.top()] > heights[i]) {
-                 int tp = st.top();
-                 st.pop();
-                 ans[tp] = i;
-             }
-             st.push(i);
-         }
-         return ans;
-     }
+     // prevSmaller
+     stack<int> st; vector<int> ans(n, -1);   // default -1: left ki bahar deewar (index 0 se pehle)
+     for (int i = n - 1; i >= 0; i--)
+         while (!st.empty() && heights[st.top()] > heights[i])
+             int tp = st.top(); st.pop(); ans[tp] = i;
+         st.push(i);
 
-     int largestRectangleArea(vector<int> &heights) {
-         int n = heights.size();
-         vector<int> ns = nextSmaller(heights);
-         vector<int> ps = prevSmaller(heights);
-         int ans = INT_MIN;                      // INT_MIN: pehla area bhi max me aaye (0 bhi chalega)
-         for (int i = 0; i < n; i++) {           // har bar pe khade ho: wahi is rectangle ki height
-             int width = ns[i] - ps[i] - 1;      // bars ps+1 .. ns-1; stopper khud andar nahi
-             ans = max(ans, heights[i] * width); // heights[i] : range me ye bar sabse chhota
-         }
-         return ans;
-     }
+     // largestRectangleArea
+     vector<int> ns = nextSmaller(heights); vector<int> ps = prevSmaller(heights);
+     int ans = INT_MIN;                      // INT_MIN: pehla area bhi max me aaye (0 bhi chalega)
+     for (int i = 0; i < n; i++)             // har bar pe khade ho: wahi is rectangle ki height
+         int width = ns[i] - ps[i] - 1;      // bars ps+1 .. ns-1; stopper khud andar nahi
+         ans = max(ans, heights[i] * width);   // heights[i] : range me ye bar sabse chhota
      // [2,4]: nS default -1 hota to bar0 width = -1-(-1)-1 = -1 (galat); n=2 se width 2 -> area 4 (sahi)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAXIMAL RECTANGLE (LC-85, 2D)
- └──────────────────────────────────────────────────────────────
+ ▸ MAXIMAL RECTANGLE (LC-85, 2D)
      // = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
-     int maximalRectangle(vector<vector<int>> &matrix) {
-         int row = matrix.size();
-         int col = matrix[0].size();
-         vector<int> heights(col, 0);            // COL size (row nahi): har column ki running height
-         int maxi = INT_MIN;
-         for (int i = 0; i < row; i++) {         // outer i = row
-             for (int j = 0; j < col; j++) {     // inner j = col
-                 if (matrix[i][j] == 1)
-                     heights[j] += 1;            // upar wale 1s ke saath build-up
-                 else
-                     heights[j] = 0;             // column toot gaya -> RESET
-             }
-             maxi = max(maxi, largestRectangleArea(heights));   // call j-loop ke BAHAR, har row ke baad
-         }
-         return maxi;
-     }
+     int row = matrix.size(); int col = matrix[0].size();
+     vector<int> heights(col, 0); int maxi = INT_MIN;   // COL size (row nahi): har column ki running height
+     for (int i = 0; i < row; i++)           // outer i = row
+         for (int j = 0; j < col; j++)       // inner j = col
+             if (matrix[i][j] == 1)  heights[j] += 1;   // upar wale 1s ke saath build-up
+             else  heights[j] = 0;           // column toot gaya -> RESET
+         maxi = max(maxi, largestRectangleArea(heights));   // call j-loop ke BAHAR, har row ke baad
+     return maxi;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ DAILY TEMPERATURES
- └──────────────────────────────────────────────────────────────
-     vector<int> dailyTemperatures(vector<int> &temps) {
-         int n = temps.size();
-         vector<int> ans(n, 0);                  // 0 init (-1 nahi): garam din na mile to 0
-         stack<int> st;
-         for (int i = 0; i < n; i++) {
-             while (!st.empty() && temps[st.top()] < temps[i]) {   // < strict: barabar = garam nahi
-                 int tp = st.top();
-                 st.pop();
-                 ans[tp] = i - tp;               // VALUE nahi, DISTANCE (kitne din baad)
-             }
-             st.push(i);
-         }
-         return ans;
-     }
+ ▸ DAILY TEMPERATURES
+     vector<int> ans(n, 0); stack<int> st;   // 0 init (-1 nahi): garam din na mile to 0
+     for (int i = 0; i < n; i++)
+         while (!st.empty() && temps[st.top()] < temps[i])     // < strict: barabar = garam nahi
+             int tp = st.top(); st.pop(); ans[tp] = i - tp;   // VALUE nahi, DISTANCE (kitne din baad)
+         st.push(i);
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ NEXT GREATER ELEM II
- └──────────────────────────────────────────────────────────────
-     vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka greater shuru me bhi
-         if (nums.size() == 0)
-             return {};
-         int n = nums.size();
-         stack<int> st;                          // INDEX (0..n-1) jinka greater abhi nahi mila
-         vector<int> ans(n, -1);                 // size n (2n nahi); na mile -> -1
-         for (int i = 0; i < 2 * n; i++) {       // 2n: doosre chakkar me aakhri elements ko shuru wale dikhte
-             while (!st.empty() && nums[st.top()] < nums[i % n]) {   // i % n = asli index (i 2n tak)
-                 int tp = st.top();
-                 st.pop();
-                 ans[tp] = nums[i % n];          // jawab TOP ka -> ans[tp] (ans[i] nahi)
-             }
-             st.push(i % n);                     // i % n push, i nahi (i >= n pe index bahar)
-         }
-         return ans;
-     }
+ ▸ NEXT GREATER ELEM II
+     // CIRCULAR: aakhri ka greater shuru me bhi
+     if (nums.size() == 0)
+         return {};
+     stack<int> st;                          // INDEX (0..n-1) jinka greater abhi nahi mila
+     vector<int> ans(n, -1);                 // size n (2n nahi); na mile -> -1
+     for (int i = 0; i < 2 * n; i++)         // 2n: doosre chakkar me aakhri elements ko shuru wale dikhte
+         while (!st.empty() && nums[st.top()] < nums[i % n])     // i % n = asli index (i 2n tak)
+             int tp = st.top(); st.pop(); ans[tp] = nums[i % n];   // jawab TOP ka -> ans[tp] (ans[i] nahi)
+         st.push(i % n);                     // i % n push, i nahi (i >= n pe index bahar)
      // [1,2,1]: aakhri 1 (idx 2) pehle chakkar me bacha -> i=4 -> 4%3=1 -> nums[1]=2 -> ans[2]=2. isliye 2n
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
- └──────────────────────────────────────────────────────────────
+ ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
      // STREAMING next(price). span = aaj samet peeche kitne LAGATAAR din price <= aaj
      // next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
-     class StockSpanner {
-     public:
-         stack<pair<int, int>> st;               // INDEX nahi, PAIR {price, span}
-         StockSpanner() {}
+     // class StockSpanner
+     stack<pair<int, int>> st;               // INDEX nahi, PAIR {price, span}
+     StockSpanner() {}
 
-         int next(int price) {
-             int span = 1;                       // 1 se: aaj ka din khud bhi span me
-             while (!st.empty() && st.top().first <= price) {   // <= : barabar price wala din bhi span me
-                 span += st.top().second;        // pop wale ka span JODO: wo apne peeche ke din nigal chuka
-                 st.pop();
-             }
-             st.push({price, span});             // poora span saath push: aage bada din ise nigle to sab jude
-             return span;
-         }
-     };
+     // next
+     int span = 1;                       // 1 se: aaj ka din khud bhi span me
+     while (!st.empty() && st.top().first <= price)     // <= : barabar price wala din bhi span me
+         span += st.top().second; st.pop();   // pop wale ka span JODO: wo apne peeche ke din nigal chuka
+     st.push({price, span});             // poora span saath push: aage bada din ise nigle to sab jude
+     return span;
      // 75 aaya, top pe ...60,70,60: 60 -> span 2 · 70 -> span 4 · 80 > 75 ruko -> push {75,4}
 
 ── (STANDALONE — apni alag trick) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ VALID PARENTHESES
- └──────────────────────────────────────────────────────────────
-     bool isValid(string s) {
-         stack<int> st;
-         for (auto &it : s) {
-             if (it == '(' || it == '[' || it == '{')
-                 st.push(it);                    // opening -> push
-             else {
-                 if (st.empty())
-                     return false;               // closing aaya, stack khaali -> false
-                 char ch = st.top();             // top + pop PEHLE, phir match
-                 st.pop();
-                 if ((ch == '(' && it == ')') || (ch == '[' && it == ']') || (ch == '{' && it == '}'))
-                     continue;
-                 else
-                     return false;               // match nahi -> turant false
-             }
-         }
-         return st.empty();                      // end me stack KHAALI = valid ("" -> true)
-     }
+ ▸ VALID PARENTHESES
+     stack<int> st;
+     for (auto &it : s)
+         if (it == '(' || it == '[' || it == '{')  st.push(it);   // opening -> push
+         else
+             if (st.empty())
+                 return false;               // closing aaya, stack khaali -> false
+             char ch = st.top(); st.pop();   // top + pop PEHLE, phir match
+             if ((ch == '(' && it == ')') || (ch == '[' && it == ']') || (ch == '{' && it == '}'))
+                 continue;
+             else
+                 return false;               // match nahi -> turant false
+     return st.empty();                      // end me stack KHAALI = valid ("" -> true)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MIN STACK
- └──────────────────────────────────────────────────────────────
-     class MinStack {                            // push / pop / top / getMin sab O(1)
-     public:
-         stack<pair<int, int>> st;               // {val, yahan tak ka MIN}: min hamesha ready, scan nahi
-         MinStack() {}
+ ▸ MIN STACK
+     // class MinStack: push / pop / top / getMin sab O(1)
+     stack<pair<int, int>> st;               // {val, yahan tak ka MIN}: min hamesha ready, scan nahi
+     MinStack() {}
 
-         void push(int val) {
-             int minVal = st.empty() ? val : min(st.top().second, val);   // empty pehle: pehle pe top() nahi
-             st.push({val, minVal});
-         }
-         void pop() { st.pop(); }
-         int top() { return st.top().first; }
-         int getMin() { return st.top().second; }   // O(1), koi loop nahi
-     };
+     // push
+     int minVal = st.empty() ? val : min(st.top().second, val);   // empty pehle: pehle pe top() nahi
+     st.push({val, minVal});
+     void pop() { st.pop(); }
+     int top() { return st.top().first; }
+     int getMin() { return st.top().second; }   // O(1), koi loop nahi
      // ek single min var kyun NAHI: pop pe purana min WAPAS aata, single var wo history nahi rakhta
      // push 5,3,7 -> min 3 · pop 7 -> 3 · pop 3 -> 5 WAPAS (pair me neeche wala min apne aap sahi)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MIN ADD MAKE VALID
- └──────────────────────────────────────────────────────────────
-     int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')')
-         if (s.empty())
-             return 0;
-         int open_needed = 0;                    // kitne ')' UNMATCHED aaye (inhe pehle '(' chahiye tha)
-         int close_needed = 0;                   // kitne '(' abhi UNMATCHED khade (inhe aage ')' chahiye)
-         for (auto &it : s) {
-             if (it == '(')
-                 close_needed++;                 // ek open, iska close pending
-             else {
-                 if (close_needed > 0)
-                     close_needed--;             // pending open se MATCH = 0 insertion ("(())" -> 0)
-                 else
-                     open_needed++;              // koi open nahi -> ye ')' extra
-             }
-         }
-         return open_needed + close_needed;      // dono bache = utne insert
-     }
+ ▸ MIN ADD MAKE VALID
+     // COUNTER, stack nahi (sirf '(' ')')
+     if (s.empty())
+         return 0;
+     int open_needed = 0;                    // kitne ')' UNMATCHED aaye (inhe pehle '(' chahiye tha)
+     int close_needed = 0;                   // kitne '(' abhi UNMATCHED khade (inhe aage ')' chahiye)
+     for (auto &it : s)
+         if (it == '(')  close_needed++;     // ek open, iska close pending
+         else
+             if (close_needed > 0)  close_needed--;   // pending open se MATCH = 0 insertion ("(())" -> 0)
+             else  open_needed++;            // koi open nahi -> ye ')' extra
+     return open_needed + close_needed;      // dono bache = utne insert
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
- └──────────────────────────────────────────────────────────────
-     class MyQueue {
-     public:
-         stack<int> input;                       // push yahan
-         stack<int> output;                      // pop / peek yahan se
-         MyQueue() {}
+ ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
+     // class MyQueue
+     stack<int> input; stack<int> output;    // push yahan · pop / peek yahan se
+     MyQueue() {}
 
-         void push(int x) {
-             input.push(x);
-         }
+     // push
+     input.push(x);
 
-         int pop() {
-             if (output.empty()) {               // KHAALI ho tabhi palto: har element ek hi baar input -> output
-                 while (!input.empty()) {        // -> amortized O(1) (har pop pe palatna = O(n))
-                     output.push(input.top());
-                     input.pop();
-                 }
-             }
-             int x = output.top();               // x bachao, phir pop, phir return
-             output.pop();
-             return x;
-         }
+     // pop
+     if (output.empty())                 // KHAALI ho tabhi palto: har element ek hi baar input -> output
+         while (!input.empty())          // -> amortized O(1) (har pop pe palatna = O(n))
+             output.push(input.top()); input.pop();
+     int x = output.top(); output.pop();     // x bachao, phir pop, phir return
+     return x;
 
-         int peek() {
-             if (output.empty()) {               // TRAP: output me kuch bacha ho tab palta -> kram toot jaata
-                 while (!input.empty()) {
-                     output.push(input.top());
-                     input.pop();
-                 }
-             }
-             return output.top();
-         }
+     // peek
+     if (output.empty())                 // TRAP: output me kuch bacha ho tab palta -> kram toot jaata
+         while (!input.empty())
+             output.push(input.top()); input.pop();
+     return output.top();
 
-         bool empty() {
-             if (input.empty() && output.empty())   // dono khaali
-                 return true;
-             return false;
-         }
-     };
+     // empty
+     if (input.empty() && output.empty())   // dono khaali
+         return true;
+     return false;
 
- broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
+     broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
+
 ```
+
+---
 
 ---
 
