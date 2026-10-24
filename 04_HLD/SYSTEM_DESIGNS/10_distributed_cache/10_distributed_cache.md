@@ -1,175 +1,391 @@
-# Distributed Cache (Redis-jaisa)
+# Distributed cache: shuru se, ek kahani
 
-> Tez RAM wala key-value store, jo ek machine se bada ho aur ek machine mare to bhi chale. Concept detail = FOUNDATIONS/04_caching.md
-> Dil do cheezein: tez (<1 ms), aur machine mare to bhi chale. BookMyShow ka ulta: wahan sahi hona dil tha, yahan tezi.
->
-> Mock me sirf heading + Cue + poster. Poster me sab: upar "Pehle aisa tha", tasveer (ilaaj), hara "Kyun chalta", laal number = kya toot sakta + kaise bacha, peela = doosra tareeka kyun nahi, grey = baaki.
-> Cross-Q: hal ke har bade shabd pe socho -> gira? · dheema / bheed? · do ek saath? · galat hua? · kaise / kitna?
+Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
+shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
+me ek hi kahani hai: Arpan ka shopping app.
 
 ---
 
-## Poori tasveer (aakhir me design aisa banta hai)
+## Cache hai kya, aur kyun chahiye
 
-![poora design](img/c6_2-4533d6f5.svg)
+Arpan ka ek shopping app hai. Har baar koi home page kholta hai, to app DB se poochhta hai: "user 42 ka naam
+kya hai, cart me kya hai, aaj ke offer kya hain". DB ye sab disk se padhta hai, aur ek baar padhne me
+lagbhag 10 ms lagte hain.
 
----
+Ab shaam ki bheed me har second 10 lakh baar ye sawaal aate hain. Zyadatar sawaal wahi ke wahi hote hain:
+wahi offer, wahi user. DB har baar disk se wahi jawab dobara la raha hai, aur itni bheed me wo ghutno pe aa
+jaata hai.
 
+Ilaaj ye hai ki jo cheez baar-baar maangi ja rahi hai, use ek baar laake **RAM me rakh lo**. RAM se jawab 1 ms
+se bhi kam me aata hai. Isi RAM wale dabbe ko **cache** kehte hain, jaise Redis.
 
-## Shuru
+Ye design "distributed" isliye hai kyunki ek machine kaafi nahi padti. Iske teen kaaran hain, aur ye teeno aage
+ke kadam ban jaayenge:
 
 ```
-FR      get(key), put(key, value, ttl), delete(key). Disk pe bachana, pub/sub aur transactions scope se bahar
-NFR     <1 ms (yahi dil hai), ek machine mare to bhi chale, TB bhar data. "Thodi der baad sahi" (eventual)
-        chalega, asli sach DB me hai
-NUMBERS ~1 TB data, ~10 lakh read / sec, padhai zyada. DB se ~10 ms lagta hai (disk), 10 lakh / sec pe DB
-        ghutno pe aa jaata hai, isliye aage RAM cache
-        1 TB ek machine ki RAM (64 GB) me nahi aata, to baanto (sharding)
-        10 lakh / sec ek machine nahi deti, to machines me baanto
-        machine mari to saara bojh DB pe, isliye har machine ki copy (replication)
-        teeno ne "ek machine kaafi" khaarij kar diya, isliye distributed
-PEHLE   sabse simple: ek machine, uski RAM me ek HashMap, get / put O(1)
+DATA     1 TB data hai, aur ek machine ki RAM 64 GB. Saara ek machine me nahi aata  -> BAANTNA padega
+BHEED    10 lakh request har second ek machine nahi jhel paati                     -> kai machine
+GIRNA    ek hi machine ho aur wo mar jaaye, to saara bojh wapas DB pe              -> COPY rakhni padegi
 ```
 
-> [!IMPORTANT]
-> **RAIL: har design isi kram me chalta (8 dabbe, sab file me same)**
-> kaam chala → bheed aayi → machine giri → do log ek saath → kuch dheema → data bada → door ke log → bahar ka hamla
->
-> | rail | is design me | card |
-> |---|---|---|
-> | 1 kaam chala | get / put, RAM bhar gayi, kya hatayein | 1 |
-> | 2 bheed aayi | 7 baje home key khatam, 1000 log DB pe · IPL final, ek key pe crore log | 5, 6 |
-> | 3 machine giri | machine B mari, uski key DB pe (**is design ka khaas: machine mare to bhi chale**) | 3 |
-> | 4 do log ek saath | Ravi ne naam badla, DB me naya, cache me purana · delete ke beech purana wapas bhara (card 4 ka cross-Q) | 4 |
-> | 5 kuch dheema | alag nahi: DB ~10 ms, isliye aage cache (Shuru) | - |
-> | 6 data bada | 1 TB, "user:42" kis machine pe | 2 |
-> | 7 door ke log | nahi aata | - |
-> | 8 bahar ka hamla | jo key DB me hai hi nahi, baar-baar maango (card 5 ka cross-Q) | 5 |
-
-
-> [!NOTE]
-> **AWS pe kaunsa DB (interview me naam bolna ho to)** · SQL wala = RDS, Cassandra RDS pe nahi chalta
->
-> - Ye khud cache hai → **ElastiCache (Redis)**: AWS pe Redis jaisa managed cache yahi
-
----
-
-*ab tootega kahan? sabse pehle RAM pe, kyunki RAM chhoti hai*
-
-## 1. Subah cache machine ki RAM bhar gayi, kya hatayein
-
-**Rail 1 KAAM CHALA** · Cue: LRU + TTL (HashMap + DLL)
-
-<img src="img/c1_poster.png?v=4" width="1000" alt="card 1: kya toota, kaise bacha">
-
-
----
-
-*ab ek machine me jagah ka hisaab ho gaya, par data hi ek machine se bada*
-
-## 2. Subah 11 tak data 1 TB: "user:42" kis machine pe?
-
-**Rail 6 DATA BADA** · Cue: CONSISTENT HASHING + virtual nodes
-
-<img src="img/c2_poster.png?v=4" width="1000" alt="card 2: kya toota, kaise bacha">
-
-
----
-
-*ab data baant diya, par ek machine mari to?*
-
-## 3. Dopahar machine B mar gayi, uski key ka bojh DB pe
-
-**Rail 3 MACHINE GIRI (khaas)** · Cue: REPLICA (async) + quorum failover
-
-<img src="img/c3_poster.png?v=4" width="1000" alt="card 3: kya toota, kaise bacha">
-
-
----
-
-*ab machine marne se nahi girta, par data purana dikh raha*
-
-## 4. Ravi ne naam badla, sabko purana dikh raha
-
-**Rail 4 DO LOG EK SAATH** · Cue: DB me likho, cache key DELETE
-
-<img src="img/c4_poster.png?v=4" width="1000" alt="card 4: kya toota, kaise bacha">
-
-
----
-
-*ab data taaza, par key khatam hote hi bheed*
-
-## 5. 7 baje "home page" key khatam, 1000 log ek saath DB pe
-
-**Rail 2 BHEED AAYI (key khaali)** · Cue: LOCK: SET NX EX, sirf pehla DB jaaye
-
-<img src="img/c5_poster.png?v=4" width="1000" alt="card 5: kya toota, kaise bacha">
-
-
----
-
-*ab key khaali hone ki bheed sambhal li, par ek key pe hi crore log*
-
-## 6. Raat IPL final, "live:score" key ki machine akeli mar rahi
-
-**Rail 2 BHEED AAYI (garam key)** · Cue: L1 LOCAL CACHE + key ki copies
-
-<img src="img/c6_poster.png?v=4" width="1000" alt="card 6: kya toota, kaise bacha">
-
-
----
-
-## Poora design ek saans me
+## 1. FR: kya karna hai
 
 ```
-App + L1 local cache (nano-sec, hot key ka pehla ilaaj) -> Cache client (consistent hashing: key -> machine)
--> Machine (HashMap + DLL = LRU, + TTL) primary + copy (alag AZ) -> miss pe DB (asli sach)
-PADHNA = cache-aside (~90% hit, DB pe bojh 10 guna kam) · PURANA = TTL + likhne pe delete
-STAMPEDE = lock / soft-TTL · HOT KEY = copies / L1 local
+get(key), put(key, value, kitni der rakhna), delete(key). Bas itna.
+scope ke bahar: disk pe bachana. Asli sach DB me hai, cache sirf tez copy hai.
 ```
 
-Bolne ke liye: cache = RAM me rakhi key-value, kai machines me baanti (ring se), har machine ki copy. App pehle cache
-se poochhta, na mile to DB se laake cache me rakhta. RAM bhare to purani key nikalti, har key ki umar hoti. Do dikkat
-dhyaan rakhni: purana data (badalne pe key hatao + umar), aur key khatam hote hi bheed (ek laaye, baaki ruke). Bahut
-garam key: har app server apne paas 1-2 second rakhe.
+## 2. NFR: kaisa chalna chahiye
+
+```
+- TEZ: 1 ms se kam (cache ka poora kaam yahi hai)
+- ek machine mare to bhi chale
+- thodi der purana data chal jaata hai, asli sach DB me hai
+```
+
+## 3. Numbers
+
+```
+- 1 TB data
+- 10 lakh read har second, padhna likhne se bahut zyada
+```
+
+Ek baat jo URL design se farak hai: URL me "link hamesha chale" sabse zaroori tha. Yahan sabse zaroori
+**tezi** hai, kyunki cache isi kaam ke liye bana hai.
 
 ---
 
-## 10 guna traffic
+## 4. Design
 
-- **Cache client**: machine judi / gayi to consistent hashing + virtual nodes.
-- **Machine**: RAM bhari to LRU + TTL. Mari to copy promote. Data badha to machine jodo.
-- **Hot key**: copies + L1 local cache.
-- **Umar khatam**: lock, soft-TTL, kabhi khatam nahi, ya pehle se bharo.
-- **DB**: purana data, to likhne pe delete + TTL.
-- **Aage**: write-back (likhna bahut ho to), kai region me cache.
+### Kadam 1: sabse seedha (ek cache machine)
 
-**Pooche: 10 guna kaise?** Request ka raasta chalo.
+Ek cache machine lagao, jiski RAM me ek HashMap ho: key se value. App ko jab bhi kuch chahiye, wo is kram me
+chalta hai:
 
-**Pooche: kahan se sab gir sakta?** Machine (copy hai), cache client ka config (sab App me copy).
+```mermaid
+flowchart LR
+    A["App"] -->|"1. pehle cache se poochho"| C[("Cache<br/>RAM, HashMap")]
+    A -->|"2. nahi mila to DB se lao"| D[("DB")]
+    A -->|"3. laake cache me bhi rakho"| C
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
-**Pooche: chal raha hai, kaise pata?** Hit ratio sabse zaroori (achanak gira = kuch toota), p99, evictions, alert.
+```
+App: "offer:diwali" chahiye
+  -> pehle CACHE se poochho
+       mila (HIT)    -> turant le lo, DB ko chhua bhi nahi          ~1 ms se kam
+       nahi (MISS)   -> DB se lao, cache me bhi rakh do, phir do     ~10 ms, sirf pehli baar
+  -> agli baar wahi key maangi to cache me mil jaayegi
+```
 
----
+Is tareeke ka naam **cache-aside** hai, kyunki cache DB ke bagal me baitha hai. App khud dono se baat karta
+hai: pehle cache, aur na mile to DB.
 
-## Pooche to (kisi card me nahi baitha)
+Asar ye hota hai ki zyadatar request (lagbhag 90%) cache se hi nikal jaati hain. DB tak sirf 10% pahunchti
+hain, to DB ka bojh 10 guna kam ho gaya.
 
-API: GET key, PUT key value ttl, DELETE key. Jaan-boojh ke chhoti: query nahi, sirf key se, to index / planner nahi,
-isiliye tez.
+Par cache machine ki RAM sirf 64 GB hai, aur roz naye offer, naye user, naye cart judte ja rahe hain.
+Dopahar tak RAM bhar gayi. Ab nayi key rakhni hai, to purani me se kaunsi hatayein?
 
-Machine ke andar: HashMap key -> value (O(1)). LRU = HashMap + DLL. TTL lazy + active dono.
+### Kadam 2: RAM bhar gayi, kaunsi key hatayein (LRU + TTL)
 
-Kaunsa store: RAM wala key-value (Redis-jaisa), DB peeche asli sach. <1 ms chahiye to RAM (disk nahi). Join nahi
-chahiye, to key-value kaafi.
+RAM bhar gayi aur nayi key aayi. Kisi purani key ko nikalna padega. Sawaal ye hai ki kise.
 
-Trade-off: tezi vs sahi hona. Cache AP ki taraf, "thodi der baad sahi" chalta (CAP).
+Seedhi baat: jo key **sabse der se kisi ne nahi maangi**, use hatao. Jo abhi-abhi maangi gayi, wo shayad phir
+maangi jaayegi, use rakho. Isko **LRU** (Least Recently Used) kehte hain.
 
-- **Pehle poochho:** ek machine ka cache (kya hatayein, TTL) ya kai machine wala (baantna, copy), kis pe focus?
-- **Pehle poochho:** kaisa data, padhai zyada?
-- **Pehle poochho:** kitna purana chalega, 5 min? -> isi se tay hota cache kab saaf karna
-- **Pehle poochho:** hatane ka tareeka kya (LRU / LFU)?
-- **Pehle poochho:** cache DB ke aage hai ya khud asli store?
+```mermaid
+flowchart LR
+    A["App"] --> C["Cache machine<br/>HashMap: key se seedha node<br/>+ list: aage = abhi maangi, peeche = purani<br/>RAM bhari -> peeche wali hatao (LRU)<br/>har key ki umar (TTL)"]
+    A -.->|"nahi mila"| D[("DB")]
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
----
+```
+RAM me 4 key, aage = abhi maangi, peeche = sabse der se nahi maangi
+   aage  [offer:diwali] [user:42] [cart:42] [offer:holi]  peeche
+nayi key "user:99" aayi, RAM bhari  -> peeche wali "offer:holi" hatao, "user:99" aage lagao
+"cart:42" maangi gayi               -> use uthake sabse aage rakh do
+```
 
-ARCHETYPE F · CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [sharding](../../FOUNDATIONS/06_database_sharding.md) · [replication](../../FOUNDATIONS/05_database_replication.md) · [← MASTER SHEET](../../00_MASTER_SHEET.md)
+**Ye tez kaise hota hai:** cache 1 ms me jawab deta hai, to "sabse purani kaunsi" dhoondhne me poori RAM scan
+nahi kar sakte. Isliye do cheezein saath rakhte hain:
+
+```
+HashMap             key se seedha uske node tak pahuncho           O(1)
+Doubly linked list  key ka kram: aage = abhi, peeche = purani      aage lagana / peeche se hatana O(1)
+```
+
+Matlab dhoondhna, aage khiskaana aur hatana, teeno O(1). Ye wahi LRU cache hai jo DSA me design pattern me
+banaya hai (LC 146).
+
+**Doosra tareeka LFU kyun nahi** (jo sabse kam BAAR maangi gayi, wo hatao): Holi ka offer March me lakhon baar
+khula tha, uski ginti bahut badi hai. October me use koi nahi kholta, par LFU use kabhi nahi hatayega kyunki
+uski purani ginti badi hai. LRU me wo apne aap peeche khisak ke nikal jaata hai.
+
+**Iske saath TTL (har key ki umar):** LRU sirf jagah ki dikkat sambhalta hai. Par Diwali ka offer raat 12 baje
+khatam ho gaya. RAM khaali ho tab bhi wo key cache me padi rahegi aur log purana offer dekhte rahenge. Isliye
+har key ke saath umar likhte hain (jaise 1 ghanta). Umar khatam hote hi key mit jaati hai, aur agli baar DB se
+taaza aati hai.
+
+Ab ek machine me jagah ka hisaab ho gaya. Par data hi 1 TB hai, aur ek machine ki RAM sirf 64 GB. Itna data ek
+machine me aata hi nahi.
+
+### Kadam 3: data 1 TB, ek machine me nahi aata (baanto)
+
+1 TB data hai aur ek machine ki RAM 64 GB. To kai cache machine lagao, maan lo 20, aur data unme baant do. Har
+machine pe data ka ek hissa.
+
+Ab sawaal ye hai ki "user:42" kis machine pe hai, ye kaise pata chale? Agar har baar saari 20 machine se
+poochein, to 1 ms wali tezi khatam ho jaayegi.
+
+Ilaaj: key se hi machine nikaal lo.
+
+```
+machine = hash("user:42") % 20      -> maan lo 7 aaya
+PUT  "user:42" -> seedha machine 7 pe rakho
+GET  "user:42" -> wahi hash -> seedha machine 7 se poochho, baaki 19 ko chhuna hi nahi
+```
+
+Ye hisaab kaun karta hai? App ke andar ek chhoti library hoti hai, **cache client**. Usko pata hota hai ki
+kitni machine hain, aur wahi key se machine nikaal ke seedha us machine pe jaata hai. Beech me koi alag dabba
+nahi, isliye tezi bani rehti hai.
+
+```mermaid
+flowchart LR
+    A["App<br/>+ cache client: hash(key) % 20"] -->|"user:42"| M7["Cache machine 7"]
+    A -->|"offer:diwali"| M3["Cache machine 3"]
+    A -.->|"nahi mila"| D[("DB")]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M7 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Par Diwali sale aayi, data aur badha, to 20 se 21 machine kar di. Ab `% 20` ki jagah `% 21` ho gaya, aur
+lagbhag har key ki machine badal gayi. "user:42" machine 7 me pada hai, par client ab use machine 15 me
+dhoondh raha hai. Lagbhag saare cache ek saath MISS hone lage, aur saari bheed seedha DB pe gir padi.
+
+### Kadam 4: machine judi to saare MISS (ring = consistent hashing)
+
+Wahi ring jo URL me thi. Ek gol ghadi socho, 0 se 360 tak. Har cache machine ghadi pe ek jagah baithti hai.
+Har key bhi hash hoke ghadi pe ek jagah girti hai, aur wahan se ghadi ki disha me chalte hue jo pehli machine
+mile, key usi ki hai.
+
+21vi machine aayi aur 95 pe baithi. Ab sirf 60 se 95 ke beech wali key nayi machine pe jaati hain, baaki sab
+apni jagah rehti hain. `%` me lagbhag saari key hilti thi, ring me sirf ek tukda (lagbhag 1/21) hilta hai.
+Matlab sirf thodi key MISS hoti hain, aur DB pe bas thoda bojh aata hai.
+
+```mermaid
+flowchart LR
+    A["App<br/>+ cache client: RING<br/>(har machine ghadi pe 100-200 jagah)"] --> M7["Cache machine 7"]
+    A --> M3["Cache machine 3"]
+    A --> M21["Cache machine 21 (nayi)<br/>sirf 60-95 wali key isme aayi"]
+    A -.->|"nahi mila"| D[("DB")]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M21 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+**Virtual nodes:** sirf 21 machine ghadi pe baithi hon to unke beech ki doori barabar nahi hoti. Kisi machine
+ke hisse me bada tukda aata hai aur wo zyada bhar jaati hai. Isliye har machine ko ghadi pe ek jagah nahi,
+100-200 jagah bithate hain. Tab har machine ke hisse me lagbhag barabar key aati hain.
+
+Cache me ye URL se zyada zaroori kyun hai: URL me machine judne pe data shift hota tha. Cache me data shift
+nahi hota, key bas MISS hoti hai aur DB se dobara aati hai. Isliye jitni kam key hilen, DB pe utni kam bheed
+girti hai.
+
+Ab data baant diya. Par dopahar ko cache machine 7 mar gayi. Uske hisse ki saari key ab MISS ho rahi hain, aur
+un sabka bojh ek saath DB pe aa gaya.
+
+### Kadam 5: cache machine 7 mari (copy + failover)
+
+Machine 7 mari to uski saari key MISS hone lagi, aur un sab ka bojh ek saath DB pe aa gaya. Shaam ki bheed me
+ye DB ko gira sakta hai.
+
+Ilaaj: har cache machine ki ek **COPY (replica)** rakho, alag jagah (alag zone), taaki ek zone ki bijli jaaye
+to dono saath na jaayein. Machine 7 me jo bhi likha jaata hai, wo uski copy me bhi pahunchta hai. Machine 7
+mari to copy uski jagah le leti hai, aur key MISS hi nahi hoti.
+
+```mermaid
+flowchart LR
+    A["App + cache client (ring)"] --> M7["Cache machine 7 (main)"]
+    M7 -->|"likha hua peeche se bhejti (async)"| R7["Machine 7 ki COPY<br/>doosra zone<br/>main mari -> ye main ban jaati"]
+    S["3 chowkidar (Sentinel)<br/>3 me se 2 bolein 'mari' tabhi copy main"] -.-> M7
+    A -.->|"nahi mila"| D[("DB")]
+    style R7 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+App ──> machine 7 (main) ──likha hua bhejti──> machine 7 ki copy (doosra zone)
+machine 7 mari  ->  copy ko main bana do  ->  cache client ab copy se poochhta
+```
+
+**Copy ko likha hua turant kyun nahi (async):** agar har PUT pe ruk ke copy se "likh liya" ka jawab maangein,
+to har likhna dheema ho jaayega, aur cache ka kaam tezi hai. Isliye main pehle App ko "ho gaya" bolti hai, aur
+copy ko peeche se bhejti hai. Agar main beech me mari to copy me aakhri kuch key nahi pahunchi hongi. Koi baat
+nahi, wo key bas MISS hongi aur DB se aa jaayengi, kyunki asli sach DB me hai. Payment jaisi jagah ye nahi
+chalta, cache me chalta hai.
+
+**Kaun tay karega ki machine 7 sach me mari:** kabhi network ek pal ke liye atka, aur kisi ek ne galti se "mar
+gayi" maan liya, to bina wajah copy ko main bana diya. Phir ek hi hisse ki do main ban jaati hain. Isliye 3
+chowkidar (Redis Sentinel) machine 7 pe nazar rakhte hain, aur 3 me se 2 "haan, mari" bolein tabhi copy main
+banti hai. Yahi **quorum** hai, jo URL me bhi tha.
+
+Ab machine marne se kuch nahi girta. Par Ravi ne app me apna naam "Ravi" se "Ravi Kumar" kiya. DB me naya naam
+aa gaya, par cache me purana "Ravi" pada hai, aur 1 ghante tak sabko purana hi dikh raha hai.
+
+### Kadam 6: Ravi ka naam badla, sabko purana dikh raha (DB me likho, cache key DELETE)
+
+Ravi ne naam badla. DB me "Ravi Kumar" aa gaya, par cache me abhi bhi "Ravi" pada hai, aur TTL khatam hone tak
+(1 ghanta) sabko purana naam dikhega.
+
+Ilaaj: jab bhi DB me kuch badlo, uske turant baad **cache se wo key DELETE** kar do. Agli baar koi "user:ravi"
+maangega to cache me MISS hoga, aur DB se naya naam aake cache me baith jaayega.
+
+```mermaid
+flowchart LR
+    A["App (Ravi ne naam badla)"] -->|"1. naya naam likho"| D[("DB<br/>Ravi Kumar")]
+    A -->|"2. phir key DELETE"| C["Cache<br/>user:ravi hata"]
+    A -.->|"3. agla GET: MISS -> DB se naya"| D
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+Ravi ne naam badla
+  1. DB me likho:   name = "Ravi Kumar"
+  2. cache se:      DELETE user:ravi
+  3. agla GET:      MISS -> DB se "Ravi Kumar" -> cache me rakho
+```
+
+**Cache me naya naam seedha likh kyun nahi dete (update), delete kyun:** maan lo do log ek saath naam badal
+rahe hain, pehle A ne "Ravi K" kiya, phir B ne "Ravi Kumar". DB me aakhri "Ravi Kumar" pahuncha, par network ki
+der se cache me pehle B ka likha pahuncha aur baad me A ka. Ab cache me "Ravi K" reh gaya, jo galat hai. Delete
+me ye dikkat nahi aati: cache khaali hota hai, aur agli baar DB se jo sach hai wahi aata hai.
+
+**Pehle DB, phir delete (ulta kyun nahi):** agar pehle cache delete karte aur phir DB me likhte, to beech ke us
+pal me koi GET aata, cache me MISS paata, DB se purana "Ravi" laata aur cache me bhar deta. Phir DB me naya
+likha jaata, par cache me purana hi pada rehta.
+
+Ek chhota chhed phir bhi rehta hai, kyunki do kaam (DB me likhna aur cache se delete) ek saath nahi hote. Isliye
+TTL bhi rakhte hain, jo aakhri suraksha hai: kuch bhi chhoota to zyada se zyada 1 ghante me apne aap theek ho
+jaata hai. NFR me pehle hi likha tha ki thodi der purana chalega.
+
+Ab data taaza rehta hai. Par shaam 7 baje "home page" wali key ki umar khatam hui, aur us pal 1,000 log ek saath
+home page khol rahe the. Sabko MISS mila, aur 1,000 request ek saath DB pe pahunchi.
+
+### Kadam 7: 7 baje home page key khatam, 1,000 log ek saath DB pe (LOCK = single flight + soft / hard)
+
+Key ki umar khatam hui aur us pal 1,000 log home page khol rahe the. Sabko MISS mila, aur sab DB se wahi home
+page laane daud pade. Ek hi cheez 1,000 baar ban rahi hai, aur DB pe ek saath 1,000 bhaari query aa gayi. Isko
+**stampede** (bheed ka toot padna) kehte hain.
+
+Ilaaj: sirf **pehli** request DB jaaye, baaki ruk jaayein (**single flight**).
+
+```
+MISS mila -> cache me ek LOCK lene ki koshish (lock ki umar 2 second)
+   lock mil gaya (pehli request) -> DB se home page lao, cache me rakho, lock hatao
+   lock nahi mila (baaki 999)    -> 50 ms ruko, phir cache dekho. Tab tak pehli wali bhar chuki hogi
+DB pe 1,000 ki jagah sirf 1 query gayi
+```
+
+```mermaid
+flowchart LR
+    U["1,000 log<br/>sabko MISS"] --> A["App"]
+    A -->|"sirf pehli request (lock mila)"| D[("DB")]
+    A -->|"baaki 999: 50 ms ruko, phir cache dekho"| C["Cache<br/>LOCK (2 sec umar)<br/>+ SOFT / HARD umar"]
+    D -->|"pehli wali laake cache me rakhti"| C
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+**Lock wali pehli request beech me MAR gayi, to kya hota hai:**
+
+```
+7:00:00   pehli request ne lock liya, DB gayi ... aur wahin mar gayi
+7:00:00   baaki 999 har 50 ms cache dekhte rehte hain, cache khaali hai, wo ruke rehte hain
+7:00:02   lock ki umar (2 sec) khatam, lock apne aap khul gaya
+7:00:02   baaki 999 me se jo pehle pahuncha, usne lock le liya, wo DB gaya, cache bhara
+7:00:02+  baaki sabko cache se mil gaya
+```
+
+User ko 2 second ki der hui, par DB pe bheed phir bhi nahi aayi, kyunki ek waqt pe ek hi request DB ja rahi
+thi.
+
+**Lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha hai):**
+
+Yahan dikkat ye hai ki baaki 999 log poore 5 second tak ruke hain, aur sabko home page late dikhta hai. Lock ne
+DB to bacha liya, par users ruk gaye.
+
+Soft / hard isi ka ilaaj hai. Seedhi baat: **key ko kabhi poora khaali hone hi mat do.**
+
+```
+key ke saath do umar:  SOFT = 1 ghanta   HARD = 1 din
+cache key ko 1 din tak rakhta hai, par 1 ghante baad usse "thodi purani" maan leta hai
+
+8:00 baje (soft nikal gaya, hard nahi):
+   key cache me abhi bhi padi hai, purana home page
+   request aayi -> purana home page turant de do, user ruka hi nahi
+   saath me ek request (lock ke saath) peeche se DB jaati hai, naya laake cache me rakh deti hai
+```
+
+Ab wo peeche wali request 5 second le, ya mar bhi jaaye, kisi user ko farak nahi padta. Sab purana home page
+dekh rahe hain, jo 1 ghanta purana hai, aur NFR me pehle hi likha tha ki thoda purana chalta hai. Agli request
+phir se peeche se laane ki koshish kar legi.
+
+HARD (1 din) bas isliye hai ki agar peeche se laana baar-baar fail ho, to bahut purana maal hamesha cache me na
+pada rahe.
+
+```
+lock (single flight)  -> DB ko bachata hai: 1,000 ki jagah 1 query
+soft / hard           -> users ko bachata hai: koi ruke hi nahi, purana turant mile
+```
+
+**Umar me thoda random:** saari key ki umar ek jaisi (theek 1 ghanta) ho, to sab ek hi pal khatam hongi aur ek
+saath bheed aayegi. Isliye 1 ghanta + 0-5 minute random.
+
+Ab key khatam hone wali bheed sambhal li. Par raat ko IPL final hai, aur "live:score" wali ek hi key pe 1 crore
+log ek saath aa rahe hain. Key khatam nahi hui, wo cache me padi hai. Par wo ek hi machine pe hai, aur saari
+bheed usi ek machine pe gir rahi hai. Wo machine dheemi padi, aur us pe padi baaki key bhi atak gayi.
+
+### Kadam 8: IPL final, ek key pe 1 crore log (LOCAL CACHE + key ki copies)
+
+"live:score" key cache me padi hai. Par ring ke hisaab se ek key hamesha ek hi machine pe jaati hai. 1 crore log
+ek saath us ek machine pe aa gaye. Wo machine dheemi padi, aur us pe jo baaki key padi thi (offer, cart), wo bhi
+atak gayi.
+
+Yahan machine badhane se kaam nahi chalta, kyunki ek key ek hi machine pe rehti hai, chahe kitni bhi machine
+laga do. Isko **hot key** (garam key) kehte hain.
+
+**Ilaaj 1: LOCAL CACHE (har app server apni memory me rakhe)**
+
+Har app server "live:score" ko apni hi memory me 1-2 second ke liye rakh leta hai. Request aayi to pehle apni
+memory me dekho, wahan mil gaya to cache machine tak jaana hi nahi.
+
+```mermaid
+flowchart LR
+    U["1 crore log"] --> A["100 App server<br/>har ek ki apni memory me<br/>live:score 1-2 sec (LOCAL CACHE)"]
+    A -->|"har server 1 sec me 1 baar"| M["10 alag cache machine<br/>har ek pe ek COPY: live:score#1 ... #10"]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+pehle:  1 crore request -> sab ek cache machine pe
+ab:     100 app server, har ek 1 second me sirf 1 baar cache machine se poochhta
+        -> cache machine pe 1 second me sirf 100 request, baaki sab app ki apni memory se
+```
+
+Score 1 second purana dikhe to chalta hai. NFR me pehle se likha hai ki thoda purana chalega.
+
+**Local cache sab key ke liye kyun nahi:** app server ki memory chhoti hoti hai, 1 TB isme nahi aata. Har server
+ka cache alag hota hai, to ek pe naya aur doosre pe purana dikh sakta hai. Isliye sirf kuch garam key, aur sirf
+1-2 second ke liye.
+
+**Ilaaj 2: garam key ki COPIES**
+
+Ek key ko kai machine pe rakh do: "live:score#1", "live:score#2" ... "live:score#10". Har app server inme se koi
+ek random chunta hai. Ek machine ka bojh ab 10 machine me batt gaya.
+
+```
+local cache        -> pehla ilaaj, sabse sasta: request cache machine tak jaati hi nahi
+key ki copies      -> jab local cache ke baad bhi ek machine pe bojh zyada ho
+```
