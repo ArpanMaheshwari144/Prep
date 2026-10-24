@@ -4,6 +4,10 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
 me ek hi kahani hai: Arpan ka shopping app.
 
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+cache-aside (ek machine) -> LRU + TTL -> baanto (hash % N) -> ring + virtual nodes -> copy + quorum
+-> likho DB, cache DELETE -> lock (single flight) + soft / hard -> local cache + key ki copies (garam key)
+
 ---
 
 ## Cache hai kya, aur kyun chahiye
@@ -64,9 +68,8 @@ chalta hai:
 
 ```mermaid
 flowchart LR
-    A["App"] -->|"1. pehle cache se poochho"| C[("Cache<br/>RAM, HashMap")]
+    A["App"] -->|"1. pehle cache se poochho<br/>3. DB se laaya to cache me bhi rakho"| C[("Cache<br/>RAM, HashMap")]
     A -->|"2. nahi mila to DB se lao"| D[("DB")]
-    A -->|"3. laake cache me bhi rakho"| C
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -244,9 +247,8 @@ maangega to cache me MISS hoga, aur DB se naya naam aake cache me baith jaayega.
 
 ```mermaid
 flowchart LR
-    A["App (Ravi ne naam badla)"] -->|"1. naya naam likho"| D[("DB<br/>Ravi Kumar")]
+    A["App (Ravi ne naam badla)"] -->|"1. naya naam likho<br/>3. agla GET: MISS -> yahan se naya"| D[("DB<br/>Ravi Kumar")]
     A -->|"2. phir key DELETE"| C["Cache<br/>user:ravi hata"]
-    A -.->|"3. agla GET: MISS -> DB se naya"| D
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -388,4 +390,42 @@ ek random chunta hai. Ek machine ka bojh ab 10 machine me batt gaya.
 ```
 local cache        -> pehla ilaaj, sabse sasta: request cache machine tak jaati hi nahi
 key ki copies      -> jab local cache ke baad bhi ek machine pe bojh zyada ho
+```
+
+---
+
+## 5. Wrap (30 second me poora design, NFR se milao)
+
+```
+App ko key chahiye -> pehle apni memory (local cache, sirf garam key, 1-2 sec)
+-> nahi mili to cache client ring se machine nikaalta -> us cache machine se poochho
+   (RAM: HashMap + LRU, har key ki umar)
+-> wahan bhi nahi (MISS) -> lock leke ek hi request DB jaati, laake cache me rakhti
+-> DB me kuch badla -> pehle DB me likho, phir cache se key DELETE
+-> har cache machine ki copy alag zone me, 3 me se 2 chowkidar bolein tabhi copy main bane
+```
+
+```
+TEZ (1 ms se kam)    -> RAM + key se seedha machine (ring) + garam key local cache me
+MACHINE MARE TO BHI  -> copy alag zone me + quorum
+PURANA THODA CHALEGA -> likhne pe delete + umar (TTL) + soft / hard
+```
+
+---
+
+## Pooche to (design nahi badalta, bas jawab pata ho)
+
+```
+jo key DB me hai hi nahi, use koi bot baar-baar maange?
+  -> har baar MISS, har baar DB. Ilaaj: "ye key nahi hai" bhi cache me 1-2 minute ke liye rakh do
+hit ratio kya hai, kaise pata system theek chal raha?
+  -> 100 me se kitni request cache se nikli (~90 achha). Achanak gira = kuch toota. Saath me p99 aur
+     kitni key RAM bhari hone se hati (evictions), aur alert
+umar khatam hui key ko kaun hatata?
+  -> do tareeke saath: koi us key ko maange tab dekh ke hatao, aur peeche se thodi-thodi key check karke hatao
+AWS naam?
+  -> ElastiCache (Redis)
+10 guna traffic?
+  -> cache machine badhao (ring me thodi hi key hilti), garam key ke liye local cache + copies,
+     DB pe bojh hit ratio se kam
 ```
