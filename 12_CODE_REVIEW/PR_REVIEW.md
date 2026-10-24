@@ -1,23 +1,69 @@
 # PR REVIEW — JP SUPERDAY
 
-Code upar se neeche chalo. Har JAGAH pe ruko, neeche uska section dekho.
-Har bug ki pehchaan = code ki SHAKAL. Shakal dikhi -> naam bolo -> asar bolo -> sahi bolo.
-★ = drills me chhoota tha.
-
-DRILL ME KYA AAYEGA:
-★ AGLI PR ME SIRF YE (jo CHHOOT rahe; 21-Oct claim payout me chhoote). Jo pakda jaata wo PR me NAHI:
-   - fail pe 200 (`catch` me `ok("FAILED")`) -> 502 / 4xx + status FAILED
-   - bahar ki call (bank / SMS) @Transactional ke andar + timeout nahi -> txn ke bahar, timeout, PENDING
-   - double payout (check-then-act: status dekha -> pay -> PAID) -> atomic UPDATE ... WHERE status=? + idempotency key
-   - ENUM pe `==` SAHI hai (bug NAHI). Sirf String pe `==` galat -> equals. Pehle dekho: type enum hai ya String?
-PR ME MAT DO (pakde jaate, koi matlab nahi): body se userId (21-Oct pakda) · owner check (22 + 24-Oct pakda) · CI / DI constructor ·
-   String == · log me sensitive (account / card) · amount client se · @Transactional private ·
-   SQL injection · catch nigalna · singleton me field · FAISLA line · entity seedha bahar
-- Upar wala 2 drill lagaataar pakda jaaye -> "MAT DO" me. "MAT DO" wala kabhi chhoote -> wapas upar.
+Drill se pehle sirf ye page ka upar wala hissa padho: pehle CHHOOT RAHE, phir PAKDE JAA RAHE pe ek nazar.
 
 ---
 
-## 0. MOCK CUE — drill se pehle SIRF ye padho (number click = wo section)
+## A. CHHOOT RAHE — har PR me inhe pehle dhoondo
+
+```
+1  DOUBLE PAYOUT (check-then-act)
+   CODE ME DIKHE:  if (status == ACTIVE) { bank / pay ... ; setStatus(CLOSED); save }
+   ASAR:           do click / retry -> dono request ko ACTIVE dikha -> do baar paisa gaya
+   SAHI:           UPDATE t SET status='CLOSING' WHERE id=? AND status='ACTIVE'  (1 row update hui tabhi aage)
+                   + idempotency key
+   chhoota:        21-Oct · 22-Oct · 24-Oct
+```
+
+```
+2  FAIL PE 200
+   CODE ME DIKHE:  catch (Exception e) { return ResponseEntity.ok("FAILED"); }
+   ASAR:           app ko 200 mila -> samjha kaam ho gaya, asal me fail
+   SAHI:           502 / 4xx + status FAILED
+   chhoota:        20-Oct · 21-Oct · 22-Oct · 24-Oct  (24-Oct isi line pe "hard code string" pakda, 200 nahi)
+```
+
+```
+3  BAHAR KI CALL @Transactional ke ANDAR
+   CODE ME DIKHE:  @Transactional method me bankClient.post(...) / rt.postForObject(...)
+   ASAR:           bank jawab de tab tak DB connection pakda; bank dheema -> pool khatam -> app giri
+   SAHI:           call transaction ke BAHAR + timeout + status PENDING
+   chhoota:        21-Oct · 22-Oct · 24-Oct  (24-Oct TIMEOUT pakda, "txn ke bahar" nahi bola)
+```
+
+```
+4  FAISLA LINE
+   LIKHO:          "Request changes: <bhaari 1>, <bhaari 2>, <bhaari 3>. Chhote: <naam>, <println>, ..."
+   chhoota:        24-Oct  (pehle pakda jaata tha, wapas upar)
+```
+
+---
+
+## B. PAKDE JAA RAHE — PR me mat do, bas ek nazar
+
+```
+OWNER CHECK (IDOR, 403)            22-Oct · 24-Oct pakda
+body se userId (spoof)             21-Oct pakda
+TIMEOUT bahar ki call pe           24-Oct pakda
+enum pe == SAHI hai (bug nahi)     24-Oct sahi chhoda · String pe == galat -> equals
+BigDecimal (paisa double me nahi)  24-Oct pakda
+println -> logger                  24-Oct pakda
+magic string -> enum / constant    24-Oct pakda
+@Transactional private / self call
+DI constructor (field injection nahi)
+SQL injection
+catch nigalna
+singleton bean me field
+log me PII (card / account)
+amount client se
+entity seedha bahar (DTO)
+```
+
+Niyam: A wala do drill lagaataar pakda jaaye -> B me. B wala kabhi chhoote -> wapas A me.
+
+---
+
+## C. POORI CHECKLIST — PR upar se neeche, har jagah ruko (number click = wo section)
 
 | # | sawaal | kya dekhna (cue) |
 |---|--------|------------------|
@@ -63,10 +109,6 @@ CODE ME DIKHE:   private String currentUser;   (koi bhi non-final field: userId,
 NAAM:            singleton bean me state
 ASAR:            controller/service ek hi object, saare user share -> do user ka data mix
 SAHI:            local variable
-★ 7-Oct chhoota (Transfer): tune L5 static final URL pakda, wo constant hai, theek hai.
-  Asli dikkat non-final field hoti hai.
-★ 13-Oct chhoota (KYC: private KycRequest current; current = r;)
-★ 14-Oct (Loan: private Loan loan) dekha tha, LIKHNA bhoola -> jo dikhe usi line pe turant comment
 ```
 
 ```
@@ -84,7 +126,6 @@ NAAM:            visibility / non-atomic
 ASAR:            doosre thread ko dikhega nahi; ++ me ginti khoyegi
 SAHI:            flag -> volatile · counter -> AtomicInteger
                  (volatile int ++ / -- = ab bhi race, volatile sirf DIKHATA hai, atomic nahi banata)
-★ 13-Oct chhoota (KYC: volatile pendingCount++ / --)
 ```
 
 ```
@@ -101,11 +142,10 @@ SAHI:            finally { flag = false; }
 
 ```
 CODE ME DIKHE:   @GetMapping("/{accountId}")  ·  r.getFromAccountId()  ·  walletId  ·  orderId
-NAAM:            ★ OWNER CHECK nahi (IDOR)
+NAAM:            OWNER CHECK nahi (IDOR)
 ASAR:            koi bhi kisi ka bhi account dekh / paisa nikaal sakta
 SAHI:            token se user lo, ye ID usi ki hai? nahi to 403. HAR method pe alag dekho.
 BOL:             "I don't see an owner check here — is it handled in a filter?"
-★ 14-Oct: GET /loan/{id} pe pakda · doPrepay(loanId) + close(id) pe chhoota -> HAR method alag
 ```
 
 ```
@@ -120,7 +160,6 @@ CODE ME DIKHE:   @RequestBody TransferRequest r      (@Valid nahi)
 NAAM:            validation band
 ASAR:            DTO ke @NotNull / @Positive likhe hain par chalenge hi nahi
 SAHI:            @Valid @RequestBody
-★ 7-Oct chhoota (Transfer)
 ```
 
 ```
@@ -132,10 +171,9 @@ SAHI:            body ya header me
 
 ```
 CODE ME DIKHE:   double amt = r.getAmount();   (amount · qty · days)
-NAAM:            ★ -ve / 0 check nahi
+NAAM:            -ve / 0 check nahi
 ASAR:            -ve withdraw = balance BADHTA; -ve transfer = ulta paisa
 SAHI:            @Positive / if (amt <= 0) 400
-★ 7-Oct chhoota (Transfer)
 ```
 
 ```
@@ -150,16 +188,14 @@ CODE ME DIKHE:   @Transactional controller pe  ·  private method pe  ·  this.s
 NAAM:            galat jagah transaction
 ASAR:            private / this.save() = proxy bypass -> transaction chala hi nahi · controller pe = chalta hai, par galat layer
 SAHI:            service pe, public method, doosri bean se call
-★ 12-Oct chhoota (Beneficiary: @Transactional private updateLimit)
 ```
 
 ```
 CODE ME DIKHE:   /approve  ·  /admin/...  ·  status / limit / role badalne wala endpoint   (@PreAuthorize nahi)
-NAAM:            ★ ROLE CHECK nahi
+NAAM:            ROLE CHECK nahi
 ASAR:            normal user apna hi KYC / refund / limit khud approve kar le
 SAHI:            @PreAuthorize("hasRole('ADMIN')") / maker-checker (banane wala approve na kare)
 BOL:             "Who is allowed to call approve? I don't see a role check."
-★ 13-Oct chhoota (KYC: approveKyc)
 ```
 
 ---
@@ -169,7 +205,7 @@ BOL:             "Who is allowed to call approve? I don't see a role check."
 
 ```
 CODE ME DIKHE:   "SELECT * FROM t WHERE note LIKE '%" + q + "%'"   (delete / update me bhi)
-NAAM:            ★ SQL INJECTION
+NAAM:            SQL INJECTION
 ASAR:            q = "' OR 1=1 --" -> poori table; drop bhi
 SAHI:            PreparedStatement + ?   /   jdbc.query(sql, args)
 ```
@@ -205,22 +241,19 @@ CODE ME DIKHE:   if (from.getBalance() >= amt) {
                      from.setBalance(from.getBalance() - amt);
                      save(from);
                  }
-NAAM:            ★ CHECK-THEN-ACT -> DOUBLE SPEND
+NAAM:            CHECK-THEN-ACT -> DOUBLE SPEND
 ASAR:            2 request ek saath -> dono ko poora balance dikha -> dono ne kaata
 SAHI:            UPDATE acc SET bal = bal - ? WHERE id = ? AND bal >= ?   (rows = 0 -> fail)
                  ya @Version (optimistic) / SELECT .. FOR UPDATE
 YAAD:            ye RETRY wali idempotency se ALAG hai. Idempotency = same request do baar.
                  Ye = do alag request ek hi waqt.
-★ 7-Oct chhoota (Transfer)
-★ 14-Oct chhoota (Loan: if (acc.getBalance() >= amt) -> setBalance)
 ```
 
 ```
 CODE ME DIKHE:   if (repo.existsByUserId(id)) return "already";  ...  repo.save(new X(id));
-NAAM:            ★ CHECK-THEN-ACT (insert wala)
+NAAM:            CHECK-THEN-ACT (insert wala)
 ASAR:            2 request ek saath -> dono ko "nahi hai" dikha -> 2 row ban gayi
 SAHI:            DB UNIQUE(user_id) + DuplicateKey pakdo -> 409
-★ 13-Oct chhoota (KYC: existsByUserId -> save)
 ```
 
 ```
@@ -228,7 +261,6 @@ CODE ME DIKHE:   if (status == "ACTIVE")  ·  Integer a == Integer b  ·  Long =
 NAAM:            == se object compare
 ASAR:            reference compare -> chup-chaap false (Integer 127 ke upar false)
 SAHI:            "ACTIVE".equals(status) / enum / equals()
-★ 12-Oct chhoota (Beneficiary: otp == lastOtp -> hamesha FAILED)
 ```
 
 ```
@@ -254,26 +286,23 @@ SAHI:            strategy pattern
 CODE ME DIKHE:   repo.save(from);
                  repo.save(to);
                  transferRepo.save(t);          (method pe @Transactional nahi)
-NAAM:            ★ @Transactional nahi
+NAAM:            @Transactional nahi
 ASAR:            beech me fail -> from se kata, to me nahi pahuncha = aadha likha
 SAHI:            service method pe @Transactional
-★ 7-Oct: dimaag me aaya, likha nahi -> PR me jo likha wahi gina jaata
 ```
 
 ```
 CODE ME DIKHE:   POST /transfer  ·  /pay  ·  /refund   (request me koi unique key nahi)
-NAAM:            ★ idempotency nahi
+NAAM:            idempotency nahi
 ASAR:            retry / double click -> do baar charge
 SAHI:            Idempotency-Key header, DB me unique -> doosri baar wahi purana jawab
-★ 14-Oct chhoota (Loan: POST /doPrepay)
 ```
 
 ```
 CODE ME DIKHE:   otpService.send(...);  b.setActive(true);  repo.save(b);   (verify alag endpoint pe)
-NAAM:            ★ status PEHLE, verify BAAD
+NAAM:            status PEHLE, verify BAAD
 ASAR:            OTP verify hone se pehle hi beneficiary / payee ACTIVE -> bina OTP paisa bhej do
 SAHI:            PENDING save, verify sahi ho tab ACTIVE
-★ 12-Oct chhoota (Beneficiary)
 ```
 
 ```
@@ -306,16 +335,14 @@ CODE ME DIKHE:   rt.postForObject(SMS_URL, ...)    (timeout set nahi)
 NAAM:            timeout nahi
 ASAR:            vendor atka -> thread atka -> pool khatam -> app giri
 SAHI:            timeout + retry limit + circuit breaker
-★ 7-Oct chhoota (Transfer)
 ```
 
 ```
 CODE ME DIKHE:   save(from); save(to);  rt.post(SMS...);   (sab ek try / ek txn me)
-NAAM:            ★ bahar ki call paisa wale flow ke andar
+NAAM:            bahar ki call paisa wale flow ke andar
 ASAR:            txn me ho: DB connection pakda rehta; rollback pe SMS wapas nahi aata
                  try me ho: SMS fail -> catch -> transfer fail bata diya jabki paisa gaya
 SAHI:            commit ke BAAD / @Async / outbox
-★ 7-Oct chhoota (Transfer)
 ```
 
 ```
@@ -323,7 +350,6 @@ CODE ME DIKHE:   s3.putObject(...);  repo.save(k);     (file pehle, DB baad)
 NAAM:            bahar likha, DB fail
 ASAR:            save fail -> S3 me file anaath padi, kisi row se judi nahi
 SAHI:            DB pehle (PENDING) phir upload, ya fail pe file delete / cleanup job
-★ 13-Oct chhoota (KYC)
 ```
 
 ```
@@ -339,7 +365,7 @@ SAHI:            Executor / @Async
 
 ```
 CODE ME DIKHE:   for (Transfer t : list) { repo.findById(t.getToId()); }
-NAAM:            ★ N+1
+NAAM:            N+1
 ASAR:            100 transfer = 101 query
 SAHI:            ek query: IN (...) / JOIN / batch fetch
 ```
@@ -371,10 +397,9 @@ SAHI:            rethrow
 
 ```
 CODE ME DIKHE:   } catch (Exception e) { ...; return "SUCCESS"; }
-NAAM:            ★ fail pe bhi OK
+NAAM:            fail pe bhi OK
 ASAR:            client samjha ho gaya, paisa phansa
 SAHI:            500 / rethrow
-★ 13-Oct chhoota (KYC: catch printStackTrace, phir bhi "approved")
 ```
 
 ---
@@ -409,10 +434,9 @@ SAHI:            ResponseEntity + sahi status
 
 ```
 CODE ME DIKHE:   return "FAILED";   /   kam balance pe bhi normal return
-NAAM:            ★ kaam na hua phir bhi 200
+NAAM:            kaam na hua phir bhi 200
 ASAR:            client ne 200 dekha, samjha ho gaya
 SAHI:            400 / 422
-★ 7-Oct chhoota (Transfer)
 ```
 
 ```
@@ -420,8 +444,6 @@ CODE ME DIKHE:   return List<Transfer>  ·  return userEntity  ·  list bina Pag
 NAAM:            entity bahar / pagination nahi
 ASAR:            saare field bahar (password hash bhi); 10 lakh row ek saath
 SAHI:            DTO + Pageable
-★ 7-Oct chhoota (Transfer, history)
-★ 13-Oct chhoota (KYC: poora Kyc entity, full Aadhaar ke saath -> DTO + mask)
 ```
 
 ```
