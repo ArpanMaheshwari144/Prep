@@ -1910,10 +1910,15 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE NTH FROM END
  └──────────────────────────────────────────────────────────────
-     FAST/SLOW GAP: fast ko PEHLE aage bhejo (loop i=1; i<=n). ab fast & slow me n ka gap.   // slow=fast=head se (dummy nahi); fast n kadam aage
-     agar fast==NULL -> head hi hatana hai -> return head->next.
-     warna dono SAATH chalao (gap constant) jab tak fast->next NULL -> slow "hatane wale ke PEHLE" baith jaata.
-     slow->next us node ko point kar raha -> slow->next = slow->next->next. done.   // phir return head (head nahi hata)
+     FAST/SLOW GAP: pehle fast ko n kadam aage, phir dono saath.
+     Node *slow = head, *fast = head;                     // dummy nahi, dono head se
+     for (int i = 1; i <= n; i++) fast = fast->next;      // fast n kadam aage -> dono me n ka gap
+     if (fast == NULL) return head->next;                 // fast list se bahar = head hi hatana hai
+     while (fast->next != NULL) {                         // fast AAKHRI node pe ruke -> slow hatane wale ke PEHLE
+         slow = slow->next; fast = fast->next;            // dono saath, gap wahi
+     }
+     slow->next = slow->next->next;                       // while ke BAHAR: loop khatam, ek hi baar hatao
+     return head;                                         // head nahi hata
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ REMOVE ELEMENTS (delete by val, LC-203)
