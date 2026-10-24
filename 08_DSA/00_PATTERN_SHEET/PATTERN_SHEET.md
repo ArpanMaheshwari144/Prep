@@ -3882,7 +3882,19 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
         answer = max( RUN-A , RUN-B ) = 3
 
-        robI = purana House Robber, bina badle. // code: temp1 (0 hata), temp2 (n-1 hata) naye array, har run ka dp alag
+        robI = purana House Robber, bina badle.
+
+     CODE  (rob1 = House Robber I, waisa hi)
+        int rob(vector<int> &nums) {
+            int n = nums.size();
+            if (n == 1) return nums[0];                // ek ghar: dono temp khaali rehte -> 0 aata, galat
+            vector<int> temp1, temp2;
+            for (int i = 0; i < n; i++) {
+                if (i != 0)     temp1.push_back(nums[i]);   // RUN-A: pehla ghar hata
+                if (i != n - 1) temp2.push_back(nums[i]);   // RUN-B: aakhri ghar hata
+            }
+            return max(rob1(temp1), rob1(temp2));      // har run ka dp alag (rob1 ke andar naya)
+        }
 
      KYUN CHALTA
         ek ghar hatao -> gol toot ke seedhi line -> normal House Robber.

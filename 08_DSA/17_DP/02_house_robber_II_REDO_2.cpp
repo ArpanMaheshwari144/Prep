@@ -21,9 +21,55 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int solve(vector<int> &nums, int i, vector<int> &dp)
+{
+    if (i < 0)
+    {
+        return 0;
+    }
+
+    if (i == 0)
+    {
+        return nums[0];
+    }
+
+    if (dp[i] != -1)
+    {
+        return dp[i];
+    }
+
+    int notTake = 0 + solve(nums, i - 1, dp);
+    int Take = nums[i] + solve(nums, i - 2, dp);
+
+    return dp[i] = max(notTake, Take);
+}
+
+int rob1(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> dp(n + 1, -1);
+    return solve(nums, n - 1, dp);
+}
+
 // ---- kaam: yeh function ----
 int rob(vector<int> &nums)
 {
+    int n = nums.size();
+    vector<int> temp1, temp2;
+
+    for (int i = 0; i < n; i++)
+    {
+        if (i != 0)
+        {
+            temp1.push_back(nums[i]);
+        }
+        if (i != n - 1)
+        {
+            temp2.push_back(nums[i]);
+        }
+    }
+
+    return max(rob1(temp1), rob1(temp2));
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
