@@ -372,6 +372,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              k--;                            // likho, phir peeche
          else
              ans[k] = nums[left] * nums[left]; left++; k--;   // left bada (negative tha), uska square peeche
+     return ans;
 
  ▸ MERGE SORTED ARRAY
      // nums1 ke end me n khaali
@@ -415,6 +416,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
      // saare UNIQUE triplet jinka sum 0
+     vector<vector<int>> ans;
      sort(begin(nums), end(nums));           // sort PEHLE: 2 pointer + duplicate skip sorted pe hi
      for (int i = 0; i < nums.size(); i++)   // har number ek baar FIX
          if (i > 0 && nums[i] == nums[i - 1])
@@ -430,6 +432,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  low++; high--;              // skip ke baad bhi 1 kadam: abhi purane number pe khade
              else if (nums[low] + nums[high] < sum)  low++;   // chhota -> low aage
              else  high--;                   // bada -> high peeche
+     return ans;
 
  ▸ IS SUBSEQUENCE
      // s, t me order se hai? beech ke char skip chalega
@@ -446,6 +449,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // bar i ke upar paani = min(leftMax[i], rightMax[i]) - height[i]   (min: chhoti side se bah jaata)
      // O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - height[i]
      // O(1) space, two pointer
+     int n = height.size();
      int left = 0, right = n - 1;
      int leftMax = 0, rightMax = 0, ans = 0;   // max 0 se: abhi koi deewar dekhi nahi; empty -> 0
      while (left < right)                    // < : milne wali cell sabse unchi deewar, uspe paani nahi
@@ -459,6 +463,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  ans += rightMax - height[right];   // chhota -> paani (rightMax tak)
              else  rightMax = height[right];   // bada -> nayi deewar
              right--;
+     return ans;
 
  ▸ PALINDROMIC SUBSTRINGS (LC-647)  = EXPAND AROUND CENTER
      // kitne substring palindrome (single char bhi; alag position = alag count). har CENTER se phailo
@@ -608,6 +613,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          while (cost > maxCost)              // INVALID -> WHILE shrink
              cost -= abs(s[i] - t[i]); i++;
          ans = max(ans, j - i + 1); j++;
+     return ans;
 
 ── FAMILY: variable-SHORTEST (ULTA: VALID ho tab tak shrink, ans = MIN length) ──
 
@@ -709,6 +715,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      return true;
 
      // findAnagrams: s me p ke SAARE anagram ki START-INDEX
+     vector<int> ans;
      int i = 0, j = 0;
      while (j < s.size())
          while (j - i + 1 > p.size())
@@ -716,6 +723,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          if (j - i + 1 == p.size())          // == : window poora p-size hua tabhi check (shuru me chhota)
              if (isAnagram(s.substr(i, j - i + 1), p))  ans.push_back(i);   // anagram -> START-index push
          j++;                                // check ke BAAD aage
+     return ans;
 
  ▸ PERMUTATION IN STRING (LC-567)  = FIND-ALL-ANAGRAMS ka EXACT same code
      // isAnagram = upar wala hi
@@ -737,6 +745,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  ▸ SLIDING WINDOW MAXIMUM (LC-239)  = monotonic DEQUE of INDICES
      // har k-window ka MAX, O(n)
+     vector<int> ans;
      deque<int> dq;                          // INDICES, values DECREASING -> front = max
      for (int i = 0; i < nums.size(); i++)
          if (!dq.empty() && dq.front() == i - k)   // 1) EXPIRY: == i-k window se bahar
@@ -748,6 +757,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          dq.push_back(i);                    // value nahi INDEX: expiry check ke liye
          if (i >= k - 1)                     // 3) record hamesha LAST; k-1 = pehle poore window ka aakhri
              ans.push_back(nums[dq.front()]);   // ORDER: expiry -> clean + push -> record (warna galat)
+     return ans;
 
  ▸ MAX POINTS FROM CARDS (LC-1423)  = MAX-SUM-SIZE-K (01) + COMPLEMENT-twist
      // DONO ends se TOTAL k cards (har end se k nahi) -> sum MAX. [1,2,3,4,5,6,1], k=3 -> 12 (back se 5,6,1)
@@ -868,8 +878,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      for (auto &it : strs)
          string key = it;                    // copy lo: asli word sort hua to group me galat word jaata
          sort(begin(key), end(key)); mp[key].push_back(it);   // "tea" -> "aet" · same key = same group
+     vector<vector<string>> ans;
      for (auto &it : mp)
          ans.push_back(it.second);           // map ki har list = ek group
+     return ans;
      // KEY ka doosra roop (sirf a-z): 26 ki ginti "1#0#0#...#" -> sort nahi, O(n · k)
      //   (separator "#" zaroori: bina uske a=1,b=11 aur a=11,b=1 dono "111")
      // "" (khaali string) bhi chalta: sorted("") = "" -> ek hi group
@@ -929,6 +941,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ▸ FIND DISAPPEARED NUMBERS (LC-448)  = ARRAY-KHUD-hashmap · index-negation, O(1) space
      // size n, values 1..n (repeat ho sakte). jo MISSING wo sab. [4,3,2,7,8,2,3,1] -> [5,6]
      // extra set/map nahi: value v ka ghar = index v-1 -> dikha to us index ko NEGATIVE mark
+     vector<int> ans;
      for (int i = 0; i < nums.size(); i++)
          int index = abs(nums[i]) - 1;       // abs(): value pehle hi -ve ho chuki ho sakti
          if (nums[index] > 0)                // >0 check: duplicate pe dobara minus = wapas plus
@@ -936,6 +949,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      for (int i = 0; i < nums.size(); i++)
          if (nums[i] > 0)                    // abhi bhi +ve = index+1 kabhi mark nahi hua = MISSING
              ans.push_back(i + 1);           // i+1: index i ka ghar value i+1 ka (1-based)
+     return ans;
      // SAME trick: find-duplicate (287, sirf jab array badal sakte; asli 287 = Floyd) · first-missing-
      //   positive (41) · single-in-pairs. "values 1..n + O(1) space" = index-marking ka signal
      //   (array modify NA kar sakte -> Floyd cycle)
@@ -969,6 +983,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ▸ PRODUCT EXCEPT SELF (LC-238)
      // ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
      // O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
+     int n = nums.size();
      vector<int> left(n, 1); vector<int> right(n, 1); vector<int> ans(n, 1);
      int prod = 1;                           // prod=1 se: index 0 ke left me koi nahi
      for (int i = 0; i < n; i++)
@@ -979,6 +994,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          right[i] = prod; prod *= nums[i];   // yahan bhi assign PEHLE
      for (int i = 0; i < n; i++)
          ans[i] = left[i] * right[i];        // combine
+     return ans;
 
 ── (STANDALONE — apni alag trick) ──
 
@@ -1036,9 +1052,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      for (auto &it : bookings)
          int start = it[0]; int end = it[1]; int count = it[2]; diff[start] += count;   // yahan se shuru
          diff[end + 1] -= count;             // +1: last din bhi inclusive, uske AGLE din se hatao
+     vector<int> ans;
      int cummSum = 0;                        // chalti-sum abhi khaali
      for (int i = 1; i <= n; i++)            // 1..n: flights 1-based, diff[0] / diff[n+1] answer me nahi
          cummSum += diff[i]; ans.push_back(cummSum);
+     return ans;
      // SWEEP-LINE se farak (machine EK, teen cheez badalti):
      //   rakho : meeting rooms = map (time bada / bikhra, 10^9) · yahan = plain array (index chhota, 1..n)
      //   ghatao: meeting rooms [start,end) exclusive -> -1 at end
@@ -1086,6 +1104,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
      int row = matrix.size(); int col = matrix[0].size();
      int top = 0, bottom = row - 1, left = 0, right = col - 1;   // -1 : inclusive, isliye loop <=
+     vector<int> ans;
      while (top <= bottom && left <= right)     // <= : ek akeli row / col bachi ho tab bhi chhaapni hai
          for (int i = left; i <= right; i++)
              ans.push_back(matrix[top][i]);  // top row L->R : [top][i]
@@ -1101,6 +1120,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              for (int i = bottom; i >= top; i--)
                  ans.push_back(matrix[i][left]);     // left col B->T : [i][left]
          left++;
+     return ans;
      // guard sirf 3rd / 4th loop pe: 1st / 2nd ko while(top<=bottom && left<=right) bacha leta
      // [[1,2,3]]: top row 1 2 3 -> top=1 > bottom=0 -> bottom row skip (warna 2 1 dobara)
      // [[1],[2],[3]]: right col ke baad right=-1 < left=0 -> left col skip (warna 2 dobara)
@@ -1111,6 +1131,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      for (int i = 0; i < col; i++)           // outer i < col
          for (int j = 0; j < row; j++)       // inner j < row
              ans[i][j] = matrix[j][i];
+     return ans;
 
  ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
      // 1 = server. communicate = uski ROW ya COL me koi DOOSRA server. row + col dono me akela -> nahi gino
@@ -1171,6 +1192,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          while (!st.empty() && nums[st.top()] > nums[i])     // > strict (>= nahi): [2,2,2] -> saare -1
              int topp = st.top(); st.pop(); ans[topp] = nums[i];
          st.push(i);
+     return ans;
 
  ▸ PREVIOUS SMALLER ELEMENT
      // = next smaller, sirf LOOP ULTA (condition wahi >)
@@ -1179,31 +1201,38 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          while (!st.empty() && nums[st.top()] > nums[i])
              int topp = st.top(); st.pop(); ans[topp] = nums[i];
          st.push(i);
+     return ans;
      // prev smaller + next smaller = histogram ka building block
 
  ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
      // har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = dono STOPPER
      // [2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
      // nextSmaller
+     int n = heights.size();
      stack<int> st; vector<int> ans(n, n);   // default n (-1 NAHI): right ki bahar deewar
      for (int i = 0; i < n; i++)
          while (!st.empty() && heights[st.top()] > heights[i])     // > strict: [3,3,3,3] >= -> 3, > -> 12
              int tp = st.top(); st.pop(); ans[tp] = i;   // INDEX store, value nahi: width index se banti
          st.push(i);
+     return ans;
 
      // prevSmaller
+     int n = heights.size();
      stack<int> st; vector<int> ans(n, -1);   // default -1: left ki bahar deewar (index 0 se pehle)
      for (int i = n - 1; i >= 0; i--)
          while (!st.empty() && heights[st.top()] > heights[i])
              int tp = st.top(); st.pop(); ans[tp] = i;
          st.push(i);
+     return ans;
 
      // largestRectangleArea
+     int n = heights.size();
      vector<int> ns = nextSmaller(heights); vector<int> ps = prevSmaller(heights);
      int ans = INT_MIN;                      // INT_MIN: pehla area bhi max me aaye (0 bhi chalega)
      for (int i = 0; i < n; i++)             // har bar pe khade ho: wahi is rectangle ki height
          int width = ns[i] - ps[i] - 1;      // bars ps+1 .. ns-1; stopper khud andar nahi
          ans = max(ans, heights[i] * width);   // heights[i] : range me ye bar sabse chhota
+     return ans;
      // [2,4]: nS default -1 hota to bar0 width = -1-(-1)-1 = -1 (galat); n=2 se width 2 -> area 4 (sahi)
 
  ▸ MAXIMAL RECTANGLE (LC-85, 2D)
@@ -1218,22 +1247,26 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      return maxi;
 
  ▸ DAILY TEMPERATURES
+     int n = temps.size();
      vector<int> ans(n, 0); stack<int> st;   // 0 init (-1 nahi): garam din na mile to 0
      for (int i = 0; i < n; i++)
          while (!st.empty() && temps[st.top()] < temps[i])     // < strict: barabar = garam nahi
              int tp = st.top(); st.pop(); ans[tp] = i - tp;   // VALUE nahi, DISTANCE (kitne din baad)
          st.push(i);
+     return ans;
 
  ▸ NEXT GREATER ELEM II
      // CIRCULAR: aakhri ka greater shuru me bhi
      if (nums.size() == 0)
          return {};
+     int n = nums.size();
      stack<int> st;                          // INDEX (0..n-1) jinka greater abhi nahi mila
      vector<int> ans(n, -1);                 // size n (2n nahi); na mile -> -1
      for (int i = 0; i < 2 * n; i++)         // 2n: doosre chakkar me aakhri elements ko shuru wale dikhte
          while (!st.empty() && nums[st.top()] < nums[i % n])     // i % n = asli index (i 2n tak)
              int tp = st.top(); st.pop(); ans[tp] = nums[i % n];   // jawab TOP ka -> ans[tp] (ans[i] nahi)
          st.push(i % n);                     // i % n push, i nahi (i >= n pe index bahar)
+     return ans;
      // [1,2,1]: aakhri 1 (idx 2) pehle chakkar me bacha -> i=4 -> 4%3=1 -> nums[1]=2 -> ans[2]=2. isliye 2n
 
  ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
@@ -1440,6 +1473,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if (solve(piles, h, mid))           // feasible -> chhota try
                  ans = mid; high = mid - 1;
              else low = mid + 1;
+         return ans;
 
  ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
      bool solve(vector<int> &weights, int D, int mid)
@@ -1458,6 +1492,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if (solve(weights, days, mid))
                  ans = mid; high = mid - 1;
              else low = mid + 1;
+         return ans;
 
  ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
      bool solve(vector<int> &nums, int k, int mid)
@@ -1476,6 +1511,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if (solve(nums, k, mid))
                  ans = mid; high = mid - 1;
              else low = mid + 1;
+         return ans;
 
 ── FAMILY: HALF-DISCARD (array pura sorted nahi, phir bhi ek comparison se aadha safe discard) ──
 
@@ -1940,6 +1976,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int temp = max({nums[i], mini * nums[i], maxi * nums[i]});   // 3 candidate, temp me:
          mini = min({nums[i], mini * nums[i], maxi * nums[i]});   // FREEZE: min purane max se
          maxi = temp; ans = max(ans, maxi);      // max min ke BAAD
+     return ans;
 
  ▸ MAX ABSOLUTE SUM (LC-1749)
      // = MAX PRODUCT skeleton, 2 tweak: * -> +, ans me ABS
@@ -1989,24 +2026,28 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          ans[0] = nums[0];                       // index 0 pe khatam = sirf nums[0], isliye loop 1 se
          for (int i = 1; i < n; i++)
              ans[i] = max(ans[i - 1] + nums[i], nums[i]);   // pichhle me judo ya akela naya shuru, jo bada
+         return ans;
 
      vector<int> bestLeftPrefix(vector<int> &nums)   // STEP 2: STEP 1 ka running max (aage)
          int n = nums.size(); vector<int> temp = maxEndingAtForLeft(nums); vector<int> ans(n, 0);
          ans[0] = temp[0];                       // 0 tak ka best = khud temp[0]
          for (int i = 1; i < n; i++)
              ans[i] = max(ans[i - 1], temp[i]);   // 0..i ka best = pichhla best ya temp[i]
+         return ans;
 
      vector<int> maxEndingAtForRight(vector<int> &nums)   // STEP 3: STEP 1 ka mirror (peeche)
          int n = nums.size(); vector<int> ans(n, 0);
          ans[n - 1] = nums[n - 1];               // last pe khatam = sirf wahi; right part peeche se banta
          for (int i = n - 2; i >= 0; i--)
              ans[i] = max(ans[i + 1] + nums[i], nums[i]);   // agle (i+1) me judo ya akela shuru
+         return ans;
 
      vector<int> bestRightPrefix(vector<int> &nums)   // STEP 4: STEP 3 ka running max (peeche)
          int n = nums.size(); vector<int> temp = maxEndingAtForRight(nums); vector<int> ans(n, 0);
          ans[n - 1] = temp[n - 1];
          for (int i = n - 2; i >= 0; i--)        // peeche bharo: ans[i+1] pehle se ready chahiye
              ans[i] = max(ans[i + 1], temp[i]);   // i..n-1 ka best = agla best ya temp[i]
+         return ans;
 
      int maxTwoNonOverlap(vector<int> &nums)     // STEP 5: WALL
          int n = nums.size(); vector<int> bestForleft = bestLeftPrefix(nums);
@@ -2226,6 +2267,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  ▸ LEVEL ORDER (LC-102)
      // har level ki alag list. FIFO -> L-to-R apne aap
+     vector<vector<int>> ans;
      if (!root) return ans;   // warna NULL push hota, phir node->val crash
      queue<TreeNode *> q;
      q.push(root);                           // level-0 (root) se BFS shuru
@@ -2237,12 +2279,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              if (curr->left != NULL) q.push(curr->left);   // bachche -> AGLE level me
              if (curr->right != NULL) q.push(curr->right);
          ans.push_back(temp);                // level poora tab push (for ke bahar)
+     return ans;
      // TEMPLATE: right view · level average · zigzag · min depth -> isi skeleton pe, bas "level me kya"
 
  ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
      // daaye se har level ka SIRF right-most dikhta
      if (!root) return {};
      queue<TreeNode *> q; q.push(root);
+     vector<int> ans;
      while (!q.empty())
          int sz = q.size();                  // snapshot (level-order jaisa)
          for (int i = 0; i < sz; i++)
@@ -2252,9 +2296,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                                              //   left side view: i == 0
              if (curr->left != NULL) q.push(curr->left);
              if (curr->right != NULL) q.push(curr->right);
+     return ans;
 
  ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
      // 0: L->R · 1: R->L · 2: L->R ...
+     vector<vector<int>> ans;
      if (!root) return ans;
      queue<TreeNode *> q; q.push(root);
      int levelCounter = 0;                   // 0 se: root level seedha
@@ -2269,6 +2315,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              reverse(begin(temp), end(temp));    // (alt: deque / front insert, reverse simplest)
          levelCounter++;                     // reverse check ke BAAD ++: warna root level ulta
          ans.push_back(temp);
+     return ans;
 
  ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
      // root se sabse PAAS wale LEAF tak
@@ -2298,6 +2345,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      inorder(root->right, res);              // phir RIGHT (bade)
 
      // kthSmallest
+     vector<int> ans;
      inorder(root, ans);                     // saari values SORTED
      return ans[k - 1];                      // k-1 TRAP: k 1-based, vector 0-based
      // optimize: counter, k-va node pe EARLY-STOP
@@ -2459,6 +2507,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          for (int j = 0; j < n; j++)
              if (grid[i][j] == 1)
                  ans = max(ans, DFS(grid, i, j, m, n));   // har island ka area, sabse bada rakho
+     return ans;
 
 ── FAMILY: MULTI-SOURCE / level-BFS (saare sources EK saath queue; sz-snapshot = ek level = ek minute) ──
 
@@ -2499,6 +2548,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          adj[u].push_back(v);
          indegree[v]++;                      // v ka ek prereq aur
      queue<int> q;
+     vector<int> ans;
      for (int i = 0; i < numCourses; i++)    // har course check: kai ek saath start ho sakte
          if (indegree[i] == 0) q.push(i);   // koi prereq nahi -> queue
      while (!q.empty())
@@ -2716,7 +2766,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                                              // {dist, point}: dist PEHLE (pair first pe compare)
                                              // dist = x²+y², √ NAHI (order same)
          if (maxHeap.size() > k) maxHeap.pop();   // sabse door EVICT -> k paas bache
+     vector<vector<int>> ans;
      while (maxHeap.size() > 0) ans.push_back(maxHeap.top().second), maxHeap.pop();   // .second = {x,y} poora
+     return ans;
 
  ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
      // KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
@@ -2727,8 +2779,10 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      for (auto &it : mp)
          minHeap.push({it.second, it.first});   // {freq, num}: freq PEHLE -> heap freq pe sort
          if (minHeap.size() > k) minHeap.pop();   // chhoti freq EVICT -> top-k bache
+     vector<int> ans;
      while (!minHeap.empty())
          int tp = minHeap.top().second; minHeap.pop(); ans.push_back(tp);   // .second = actual number
+     return ans;
  // O(n log k). max-heap me saare push -> k baar pop = O(n log n), slow
 
 ── FAMILY: MIN-heap of current candidates (har baar sabse chhota nikaalo, uska agla daalo) ──
@@ -2750,6 +2804,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
      // har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
+     vector<int> ans;
      priority_queue<int, vector<int>, greater<int>> pq;   // MIN: sorted output me chhota pehle
      for (int i = 0; i < arr.size(); i++)
          pq.push(arr[i]);   // pehle daalo, phir size dekho
@@ -2757,6 +2812,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              int tp = pq.top(); pq.pop(); ans.push_back(tp);   // buffer bhara -> MIN nikaal
      while (!pq.empty())                 // bache = sorted tail
          int tp = pq.top(); pq.pop(); ans.push_back(tp);
+     return ans;
  // [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]. O(n log k). kth-largest ka cousin (sliding buffer)
 
 ── FAMILY: TWO-HEAPS (do team, dono top = beech ke border) ──
@@ -2813,6 +2869,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
      // BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
      //   yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
+     int n = responseTimes.size();
      vector<bool> vis(n, false); long long ans = 0;   // 1e9 x lakh -> long long
      priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;   // MIN
      for (int i = 0; i < n; i++) pq.push({responseTimes[i], i});   // pair: tie pe chhota idx apne aap pehle
@@ -2822,6 +2879,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              ans += responseTimes[index], vis[index] = true;   // khud bhi hatao, dobara na uthe
              if (index - 1 >= 0) vis[index - 1] = true;   // >=0: pehle ka left padosi nahi
              if (index + 1 < n) vis[index + 1] = true;   // < n: aakhri index n-1
+     return ans;
  // O(n log n). heap se beech ka element nikaal nahi sakte -> vis[] se pop pe skip
 ```
 
@@ -2852,6 +2910,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
      sort(begin(intervals), end(intervals));   // default FIRST element (start) se. HAMESHA pehla step
+     vector<vector<int>> ans;
      ans.push_back(intervals[0]);   // pehla baseline
      for (int i = 1; i < intervals.size(); i++)   // 1 se: [0] pehle hi ans me
          if (ans.back()[1] >= intervals[i][0])   // OVERLAP: curr.start <= last.END
@@ -2865,6 +2924,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      // MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end me true
      if (intervals.empty()) return true;     // EDGE: warna intervals[0] pe crash
      sort(intervals.begin(), intervals.end());   // start se sort
+     vector<vector<int>> ans;
      ans.push_back(intervals[0]);   // pehla baseline
      for (int i = 1; i < intervals.size(); i++)
          if (intervals[i][0] < ans.back()[1])   // < (<= NAHI): ek khatam usi pal doosri shuru = chalta
@@ -2875,6 +2935,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
      // pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
+     vector<vector<int>> ans;
      int count = 0;   // kitne process hue, doosra loop wahin se
      for (int i = 0; i < intervals.size(); i++)
          if (intervals[i][1] < newInterval[0])   // 1. new se PEHLE khatam -> push
@@ -2887,12 +2948,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          count++;   // break wala yahan nahi aata -> count se doosra loop
      ans.push_back(newInterval);   // 4. bada hua new daalo
      for (int i = count; i < intervals.size(); i++) ans.push_back(intervals[i]);   // phir count se aage baaki
+     return ans;
 
 ── FAMILY: SWEEP LINE (events + running count: kitna overlap, sirf "hai?" nahi) ──
 
  ▸ MEETING ROOMS II (LC-253)  = SWEEP LINE / event-count
      // min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 / -1 GINTI
      map<int, int> mp;   // ORDERED map: time -> delta, keys khud sorted
+     int n = start.size();
      for (int i = 0; i < n; i++)
          mp[start[i]]++;   // shuru = +1 (room bhara)
          mp[end[i]]--;   // khatam = -1. same time pe +1 -1 kat -> room REUSE
@@ -2950,6 +3013,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          temp.pop_back();   // UN-CHOOSE, exclude se PEHLE: warna exclude me bhi chipka rehta
          solve(nums, ans, index + 1, temp);   // EXCLUDE: element chhod ke aage
 
+     vector<vector<int>> ans;
      vector<int> temp;   // BAHAR banao, by-ref pass: helper me banate to har call naya
      solve(nums, ans, 0, temp);   //   (ek SHARED path pe push / pop -> tabhi backtrack chalta)
      return ans;   // 2^n subsets (har element in / out = power set)
@@ -3073,6 +3137,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      mp['6'] = "mno";  mp['7'] = "pqrs"; mp['8'] = "tuv";  mp['9'] = "wxyz";
      vector<string> ans;   // ans GLOBAL mat rakho: function do baar bula to pichhle jawab
      string temp = ""; solve(0, temp, mp, ans, digits);   // bhi jud jaate ("2" pe 3 ki jagah 12)
+     return ans;
 ```
 
 ---
@@ -3125,6 +3190,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
                  count += solve(i + 2, s, n, dp);
          return dp[i] = count;
 
+     int n = s.size();
      vector<int> dp(n + 1, -1); return solve(0, s, n, dp);
      // KAB: string ko TUKDON me kaato + har tukda RULE pass kare + kitne tareeke -> index pe DP
      //   (word-break bhi yahi shakl: wahan rule "dictionary me hai?", yahan "1..26 me hai?")
@@ -3137,6 +3203,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          int notTake = 0 + solve(A, i - 1, dp);   // SKIP: pichhle ghar tak ka best
          return dp[i] = max(take, notTake);
 
+     int n = A.size();
      vector<int> dp(n + 1, -1);
      return solve(A, n - 1, dp);   // n-1 = LAST index (0..n-1); climbing me n = step-count tha
      // climbing se FARAK: wahan sirf ADD; yahan har step CHOICE -> max(take, skip)
@@ -3152,9 +3219,11 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          return dp[i] = max(notTake, Take);
 
      int rob1(vector<int> &nums)
+         int n = nums.size();
          vector<int> dp(n + 1, -1);   // har run ka dp alag (rob1 ke andar naya)
          return solve(nums, n - 1, dp);
 
+     int n = nums.size();
      if (n == 1) return nums[0];             // ek ghar: dono temp khaali rehte -> 0 aata, galat
      vector<int> temp1, temp2;
      for (int i = 0; i < n; i++)
@@ -3180,6 +3249,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              take = 1 + solve(coins, amount - coins[i], i, dp);   // coin i liya, i SAME = reuse
          return dp[i][amount] = min(take, notTake);
 
+     int n = coins.size();
      vector<vector<int>> dp(n + 1, vector<int>(amount + 1, -1));   // amount+1: dp[..][amount] tak
      int ans = solve(coins, amount, n - 1, dp); return ans == INT_MAX ? -1 : ans;   // na ban sake -> -1
 
@@ -3207,6 +3277,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              Take = 1 + solve(index + 1, index, nums, dp);   // liya -> ab prev = index
          return dp[index][prevIndex + 1] = max(Take, notTake);
 
+     int n = nums.size();
      vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));   // n+1 column: prev -1..n-1 shift -> 0..n
      return solve(0, -1, nums, dp);
      // coin change se TWIST: (1) state me PREV bhi (2) take pe CONDITION (nums[i] > nums[prev])
@@ -3251,6 +3322,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          return dp[i][j] = max(solve(s1, s2, i - 1, j, dp), solve(s1, s2, i, j - 1, dp));   // ek char chhodo
 
      int m = s1.size();
+     int n = s2.size();
      vector<vector<int>> dp(m + 1, vector<int>(n + 1, -1));
      return solve(s1, s2, m - 1, n - 1, dp);
      // "2-string DP" ka base (edit distance isi pe)
@@ -3267,6 +3339,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      int longestCommonSubsequence(string s1, string s2)   // LCS wala caller hi reuse
          int m = s1.size();
+         int n = s2.size();
          vector<vector<int>> dp(m + 1, vector<int>(n + 1, -1));
          return solve(m - 1, n - 1, s1, s2, dp);
 
@@ -3287,6 +3360,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              take = val[i] + solve(wt, val, W - wt[i], i - 1, dp);   // liya -> i-1 (ONCE)
          return dp[i][W] = max(take, notTake);
 
+     int n = wt.size();
      vector<vector<int>> dp(n + 1, vector<int>(W + 1, -1));
      return solve(wt, val, W, n - 1, dp);
      // coin change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same)
@@ -3304,6 +3378,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              take = solve(nums, target - nums[index], index - 1, dp);
          return dp[index][target] = take || notTake;   // koi ek raasta true -> true
 
+     int n = nums.size();
      vector<vector<int>> dp(n + 1, vector<int>(target + 1, -1));
      return solve(nums, target, n - 1, dp);
      // BASE-ORDER TRAP: target==0 UPAR nahi to index==0 wale case me target 0 aaya -> nums[0]==0 = false
@@ -3317,6 +3392,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
      int S = 0;
      for (int i = 0; i < nums.size(); i++) S += nums[i];
+     int n = nums.size();
      vector<vector<int>> dp(n + 1, vector<int>((S / 2) + 1, -1));   // column S/2+1: target ab S/2
      if (S % 2 != 0) return false;           // ODD -> aadha ho hi nahi sakta
      return subsetSum(nums, S / 2, n, dp);   // target = S/2 -> wahi boolean subset sum
@@ -3342,6 +3418,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          bool none = solve(s, index + 1, open, dp);   // '*' khaali
          return dp[index][open] = open_for_astrisk || close_for_astrisk || none;
 
+     int n = s.size();
      vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));   // open 0..n (worst = saare '(')
      return solve(s, 0, 0, dp);
      // = coin change ka cousin (choice + memo); DELTA: state me 'open' + '*' pe 3 branch OR (true/false)
@@ -3361,6 +3438,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          // left p[i-1]xp[k] guna right p[k]xp[j]
          return dp[i][j] = ans;
 
+     int n = p.size();
      vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
      return solve(1, n - 1, p, dp);   // 1 se: i=0 pe p[i-1] = p[-1] crash; n-1 = matrices
      // p[i-1] = poore left ka baayaan chhor · p[k] = WALL · p[j] = poore right ka daayaan chhor
@@ -3446,6 +3524,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
      // N pump CIRCLE me. gas[i] = pump i pe milta, cost[i] = i se i+1 tak kharcha. khaali tank, kahan se
      //   chalu ki poora ghoom ke wapas aa jau? koi nahi -> -1. har pump ka NET = gas[i] - cost[i]
+     int n = gas.size();
      int index = 0, meriGaddiKaTank = 0, kyeNegativeHua = 0;   // 0: pehle pump ko start maano, tank khaali
      for (int i = 0; i < n; i++)
          meriGaddiKaTank += gas[i] - cost[i];   // abhi wale start se tank -> doobe to reset ("start
