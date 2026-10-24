@@ -1339,117 +1339,71 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── FAMILY: BASIC / BOUNDARY (target ko mid se compare, low<=high, mid±1; mila to ruko mat = boundary) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ BINARY SEARCH (BASIC)
- └──────────────────────────────────────────────────────────────
-     int search(vector<int> &nums, int target) {
-         int low = 0, high = nums.size() - 1;
-         while (low <= high) {                   // <= : 1 element bacha tab bhi check
-             int mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe overflow
-             if (nums[mid] == target)
-                 return mid;
-             else if (nums[mid] < target)
-                 low = mid + 1;                  // target right me; mid khud nahi -> +1
-             else
-                 high = mid - 1;                 // target left me; mid khud nahi -> -1
-         }
-         return -1;                              // loop ke bahar: nahi mila
-     }
+ ▸ BINARY SEARCH (BASIC)
+     int low = 0, high = nums.size() - 1;
+     while (low <= high)                         // <= : 1 element bacha tab bhi check
+         int mid = low + (high - low) / 2;       // (low+high)/2 nahi: bade low+high pe overflow
+         if (nums[mid] == target) return mid;
+         else if (nums[mid] < target) low = mid + 1;   // target right me; mid khud nahi -> +1
+         else high = mid - 1;                    // target left me; mid khud nahi -> -1
+     return -1;                                  // loop ke bahar: nahi mila
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SEARCH INSERT POSITION
- └──────────────────────────────────────────────────────────────
-     int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 3 ke beech)
-         int low = 0, high = nums.size() - 1;
-         while (low <= high) {                   // basic BS hubahu
-             int mid = low + (high - low) / 2;
-             if (nums[mid] == target)
-                 return mid;
-             else if (nums[mid] < target)
-                 low = mid + 1;
-             else
-                 high = mid - 1;
-         }
-         return low;                             // na mila: low = pehla nums >= target = insert jagah
-     }
+ ▸ SEARCH INSERT POSITION
+     // [1,3,5,6], 2 -> 1 (1 aur 3 ke beech)
+     int low = 0, high = nums.size() - 1;
+     while (low <= high)                         // basic BS hubahu
+         int mid = low + (high - low) / 2;
+         if (nums[mid] == target) return mid;
+         else if (nums[mid] < target) low = mid + 1;
+         else high = mid - 1;
+     return low;                                 // na mila: low = pehla nums >= target = insert jagah
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ FIRST & LAST POSITION (LC-34)
- └──────────────────────────────────────────────────────────────
+ ▸ FIRST & LAST POSITION (LC-34)
      // sorted (duplicate ho sakte) me target ka PEHLA aur AAKHRI index; nahi -> {-1,-1}, O(log n)
      // [5,7,7,8,8,10], 8 -> {3,4}. normal BS, bas MILNE pe RUKO MAT -> ans likho, ek taraf aur chalo. 2 BS
-     vector<int> searchRange(vector<int> &nums, int target) {
-         vector<int> ans(2, -1);                 // size fixed 2 -> ans(2,-1) + index set, push_back NAHI
-         int low = 0, high = nums.size() - 1;    // n-1: aakhri valid index, dono sire inclusive
-         while (low <= high) {                   // PASS 1 = FIRST
-             int mid = low + (high - low) / 2;
-             if (nums[mid] == target) {
-                 ans[0] = mid;
-                 high = mid - 1;                 // mila -> aur LEFT (mid save, usse pehle wala dhoondo)
-             }
-             else if (nums[mid] < target)
-                 low = mid + 1;
-             else
-                 high = mid - 1;
-         }
-         low = 0, high = nums.size() - 1;        // RESET, warna PASS 2 galat jagah se shuru
-         while (low <= high) {                   // PASS 2 = LAST
-             int mid = low + (high - low) / 2;
-             if (nums[mid] == target) {
-                 ans[1] = mid;
-                 low = mid + 1;                  // mila -> aur RIGHT (sirf EK pointer hilao)
-             }
-             else if (nums[mid] < target)
-                 low = mid + 1;
-             else
-                 high = mid - 1;
-         }
-         return ans;                             // PASS 1: mid 4 -> 3 = FIRST 3 · PASS 2: mid 4 -> LAST 4
-     }
+     vector<int> ans(2, -1);                     // size fixed 2 -> ans(2,-1) + index set, push_back NAHI
+     int low = 0, high = nums.size() - 1;        // n-1: aakhri valid index, dono sire inclusive
+     while (low <= high)                         // PASS 1 = FIRST
+         int mid = low + (high - low) / 2;
+         if (nums[mid] == target)
+             ans[0] = mid; high = mid - 1;       // mila -> aur LEFT (mid save, usse pehle wala dhoondo)
+         else if (nums[mid] < target) low = mid + 1;
+         else high = mid - 1;
+     low = 0, high = nums.size() - 1;            // RESET, warna PASS 2 galat jagah se shuru
+     while (low <= high)                         // PASS 2 = LAST
+         int mid = low + (high - low) / 2;
+         if (nums[mid] == target) ans[1] = mid; low = mid + 1;   // mila -> aur RIGHT (sirf EK pointer hilao)
+         else if (nums[mid] < target) low = mid + 1;
+         else high = mid - 1;
+     return ans;                                 // PASS 1: mid 4 -> 3 = FIRST 3 · PASS 2: mid 4 -> LAST 4
 
 ── FAMILY: ROTATED (ek comparison se kaunsa half sorted / pivot kidhar, wahi half rakho) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)
- └──────────────────────────────────────────────────────────────
-     int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka index, nahi -> -1
-         int n = nums.size();
-         int low = 0;
-         int high = n - 1;
-         while (low <= high) {                   // <= : akela element bacha tab bhi check
-             int mid = low + (high - low) / 2;
-             if (nums[mid] == target)
-                 return mid;
-             if (nums[low] <= nums[mid]) {       // LEFT half sorted (<= : low==mid pe akela bhi sorted)
-                 if (target >= nums[low] && target <= nums[mid])   // >= nums[low] ZARURI: target low pe
-                     high = mid - 1;             //   khud ho sakta, warna miss ([5,1,3], 5)
-                 else
-                     low = mid + 1;
-             }
-             else {                              // warna RIGHT half sorted
-                 if (target >= nums[mid] && target <= nums[high])  // <= nums[high]: target high pe ho sakta
-                     low = mid + 1;
-                 else
-                     high = mid - 1;
-             }
-         }
-         return -1;                              // har baar aadha kaata -> O(log n)
-     }
+ ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)
+     // [4,5,6,7,0,1,2] me target ka index, nahi -> -1
+     int n = nums.size(); int low = 0; int high = n - 1;
+     while (low <= high)                         // <= : akela element bacha tab bhi check
+         int mid = low + (high - low) / 2;
+         if (nums[mid] == target) return mid;
+         if (nums[low] <= nums[mid])             // LEFT half sorted (<= : low==mid pe akela bhi sorted)
+             if (target >= nums[low] && target <= nums[mid])   // >= nums[low] ZARURI: target low pe
+                 high = mid - 1;                 // khud ho sakta, warna miss ([5,1,3], 5)
+             else low = mid + 1;
+         else                                    // warna RIGHT half sorted
+             if (target >= nums[mid] && target <= nums[high])   // <= nums[high]: target high pe ho sakta
+                 low = mid + 1;
+             else high = mid - 1;
+     return -1;                                  // har baar aadha kaata -> O(log n)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ FIND MIN IN ROTATED
- └──────────────────────────────────────────────────────────────
-     int findMin(vector<int> &nums) {            // target nahi, khud MIN -> mid ko HIGH se compare
-         int low = 0, high = nums.size() - 1;
-         while (low < high) {                    // low<high: high=mid ke saath <= = infinite loop
-             int mid = low + (high - low) / 2;
-             if (nums[mid] > nums[high])
-                 low = mid + 1;                  // mid bada -> min right me, mid khud nahi
-             else
-                 high = mid;                     // high=MID (mid-1 NAHI): mid khud min ho sakta
-         }                                       //   ([3,1,2] pe mid-1 se galat 3 aata)
-         return nums[low];
-     }
+ ▸ FIND MIN IN ROTATED
+     // target nahi, khud MIN -> mid ko HIGH se compare
+     int low = 0, high = nums.size() - 1;
+     while (low < high)                          // low<high: high=mid ke saath <= = infinite loop
+         int mid = low + (high - low) / 2;
+         if (nums[mid] > nums[high]) low = mid + 1;   // mid bada -> min right me, mid khud nahi
+         else high = mid;                        // high=MID (mid-1 NAHI): mid khud min ho sakta
+         // ([3,1,2] pe mid-1 se galat 3 aata)
+     return nums[low];
 
 ── FAMILY: BS-on-ANSWER (koko · ship · split: SHELL same, sirf RANGE + solve(mid) alag) ──
 
@@ -1461,201 +1415,126 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      //        solve(mid) ? (ans = mid, high = mid - 1) : low = mid + 1   // feasible nahi: mid bekaar
      // FARAK sirf 2: (a) RANGE (low, high)  (b) solve(mid) ka formula (greedy count <= limit?)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ KOKO BANANAS (LC-875) -- min eating-speed
- └──────────────────────────────────────────────────────────────
-     bool solve(vector<int> &piles, int h, int mid) {
+ ▸ KOKO BANANAS (LC-875) -- min eating-speed
+     bool solve(vector<int> &piles, int h, int mid)
          long long hours = 0;                    // long long: bade piles pe sum overflow
          for (int i = 0; i < piles.size(); i++)
              hours += ceil((double)piles[i] / mid);   // double cast PEHLE: int/int pehle hi floor (7/3=2)
-                                                 //   ya integer: (piles[i] + mid - 1) / mid (safe, prefer)
+                                                 // ya integer: (piles[i] + mid - 1) / mid (safe, prefer)
          return hours <= h;                      // hours = sum ceil(piles[i] / mid) <= h ?
-     }
 
-     int minEatingSpeed(vector<int> &piles, int h) {
+     int minEatingSpeed(vector<int> &piles, int h)
          int low = 1;                            // low=1: 0 pe piles[i]/mid = divide by zero
          int high = *max_element(begin(piles), end(piles));   // high = max: ek ghante me sabse badi dheri
          int ans = -1;                           // [3,6,7,11], h=8 -> 4
-         while (low <= high) {
+         while (low <= high)
              int mid = low + (high - low) / 2;
-             if (solve(piles, h, mid)) {
-                 ans = mid;
-                 high = mid - 1;                 // feasible -> chhota try
-             }
-             else
-                 low = mid + 1;
-         }
-         return ans;
-     }
+             if (solve(piles, h, mid)) ans = mid; high = mid - 1;   // feasible -> chhota try
+             else low = mid + 1;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
- └──────────────────────────────────────────────────────────────
-     bool solve(vector<int> &weights, int D, int mid) {
-         int days = 1;                           // day=1: aakhri din ka load bhi gino
-         int sum = 0;
-         for (auto &w : weights) {
-             if (sum + w > mid) {                // aaj w chadhaya to capacity tooti -> agla din
-                 days++;
-                 sum = 0;
-             }
+ ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
+     bool solve(vector<int> &weights, int D, int mid)
+         int days = 1; int sum = 0;              // day=1: aakhri din ka load bhi gino
+         for (auto &w : weights)
+             if (sum + w > mid) days++; sum = 0;   // aaj w chadhaya to capacity tooti -> agla din
              sum += w;
-         }
          return days <= D;
-     }
 
-     int shipWithinDays(vector<int> &weights, int days) {
+     int shipWithinDays(vector<int> &weights, int days)
          int low = *max_element(begin(weights), end(weights));   // low=max: sabse bhaari packet akela chadhe
-         int high = accumulate(begin(weights), end(weights), 0); // high=sum: ek din me sab
-         int ans = -1;
-         while (low <= high) {                   // SHELL wahi
+         int high = accumulate(begin(weights), end(weights), 0); int ans = -1;   // high=sum: ek din me sab
+         while (low <= high)                     // SHELL wahi
              int mid = low + (high - low) / 2;
-             if (solve(weights, days, mid)) {
-                 ans = mid;
-                 high = mid - 1;
-             }
-             else
-                 low = mid + 1;
-         }
-         return ans;
-     }
+             if (solve(weights, days, mid)) ans = mid; high = mid - 1;
+             else low = mid + 1;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
- └──────────────────────────────────────────────────────────────
-     bool solve(vector<int> &nums, int k, int mid) {
+ ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
+     bool solve(vector<int> &nums, int k, int mid)
          int sum = 0, count = 1;                 // count=1 se START: warna aakhri tukda chhoot jaata
-         for (int i = 0; i < nums.size(); i++) {
+         for (int i = 0; i < nums.size(); i++)
              sum += nums[i];
-             if (sum > mid) {
-                 count++;
-                 sum = nums[i];                  // sum = x (0 nahi): limit todne wala x naye tukde ka pehla
-             }
-         }
+             if (sum > mid)
+                 count++; sum = nums[i];         // sum = x (0 nahi): limit todne wala x naye tukde ka pehla
          return count <= k;
-     }
 
-     int splitArray(vector<int> &nums, int k) {
+     int splitArray(vector<int> &nums, int k)
          int low = *max_element(begin(nums), end(nums));   // low=max: bada element akela
-         int high = accumulate(begin(nums), end(nums), 0); // high=sum: k=1 poora
-         int ans = -1;
-         while (low <= high) {                   // SHELL wahi
+         int high = accumulate(begin(nums), end(nums), 0); int ans = -1;   // high=sum: k=1 poora
+         while (low <= high)                     // SHELL wahi
              int mid = low + (high - low) / 2;
-             if (solve(nums, k, mid)) {
-                 ans = mid;
-                 high = mid - 1;
-             }
-             else
-                 low = mid + 1;
-         }
-         return ans;
-     }
+             if (solve(nums, k, mid)) ans = mid; high = mid - 1;
+             else low = mid + 1;
 
 ── FAMILY: HALF-DISCARD (array pura sorted nahi, phir bhi ek comparison se aadha safe discard) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ FIND PEAK ELEMENT (LC-162)
- └──────────────────────────────────────────────────────────────
-     int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges ke bahar -inf
-         int n = nums.size();
-         int low = 0, high = n - 1;
-         while (low < high) {                    // low<high: high=mid se atke nahi, aur mid+1 hamesha andar
-             int mid = low + (high - low) / 2;
-             if (nums[mid] < nums[mid + 1])
-                 low = mid + 1;                  // CHADHAAI -> peak RIGHT me (mid peak nahi, right bada)
-             else if (nums[mid] > nums[mid + 1])
-                 high = mid;                     // DHALAAN -> mid KHUD ya left: high = mid (mid-1 NAHI)
-         }
-         return low;                             // low==high pe converge = peak, edges apne aap
-     }
+ ▸ FIND PEAK ELEMENT (LC-162)
+     // peak = dono padosi se bada; edges ke bahar -inf
+     int n = nums.size(); int low = 0, high = n - 1;
+     while (low < high)                          // low<high: high=mid se atke nahi, aur mid+1 hamesha andar
+         int mid = low + (high - low) / 2;
+         if (nums[mid] < nums[mid + 1])
+             low = mid + 1;                      // CHADHAAI -> peak RIGHT me (mid peak nahi, right bada)
+         else if (nums[mid] > nums[mid + 1])
+             high = mid;                         // DHALAAN -> mid KHUD ya left: high = mid (mid-1 NAHI)
+     return low;                                 // low==high pe converge = peak, edges apne aap
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
- └──────────────────────────────────────────────────────────────
+ ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
      // har element 2x, sirf EK akela. O(log n) (XOR = O(n), yahan log n chahiye)
      // single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 se compare
-     int singleNonDuplicate(vector<int> &nums) {
-         if (nums.size() == 1)
-             return nums[0];                     // akela element hi single, BS ki zarurat nahi
-         int n = nums.size();
-         int low = 0;
-         int high = n - 1;                       // poori array inclusive
-         while (low <= high) {                   // <= : low>high pe hi ruko, tab high single pe
-             int mid = low + (high - low) / 2;
-             if (mid == 0)
-                 return nums[mid];               // edge: mid-1 = -1 bahar; yahan aaye to single idx 0 pe
-             if (mid % 2 == 0) {                 // even mid: single se pehle iska saathi AAGE hota
-                 if (nums[mid] == nums[mid - 1])
-                     high = mid - 1;             // saathi peeche = pairing shift ho chuki -> single PEECHE
-                 else
-                     low = mid + 1;              // pairing theek -> single aage
-             }
-             else {                              // odd mid: single se pehle iska saathi PEECHE hota
-                 if (nums[mid] != nums[mid - 1])
-                     high = mid - 1;             // saathi peeche nahi = shift ho chuki -> single PEECHE
-                 else
-                     low = mid + 1;              // saathi peeche mila = theek -> single aage
-             }
-         }
-         return nums[high];                      // HIGH (low nahi): dono branch mid reject, high single pe
-     }                                           // [1,1,2,3,3,4,4,8,8]: mid 4 -> 1 -> 2 -> 3 -> high=2 -> 2
+     if (nums.size() == 1) return nums[0];       // akela element hi single, BS ki zarurat nahi
+     int n = nums.size(); int low = 0; int high = n - 1;   // poori array inclusive
+     while (low <= high)                         // <= : low>high pe hi ruko, tab high single pe
+         int mid = low + (high - low) / 2;
+         if (mid == 0) return nums[mid];         // edge: mid-1 = -1 bahar; yahan aaye to single idx 0 pe
+         if (mid % 2 == 0)                       // even mid: single se pehle iska saathi AAGE hota
+             if (nums[mid] == nums[mid - 1])
+                 high = mid - 1;                 // saathi peeche = pairing shift ho chuki -> single PEECHE
+             else low = mid + 1;                 // pairing theek -> single aage
+         else                                    // odd mid: single se pehle iska saathi PEECHE hota
+             if (nums[mid] != nums[mid - 1])
+                 high = mid - 1;                 // saathi peeche nahi = shift ho chuki -> single PEECHE
+             else low = mid + 1;                 // saathi peeche mila = theek -> single aage
+     return nums[high];                          // HIGH (low nahi): dono branch mid reject, high single pe
+     // [1,1,2,3,3,4,4,8,8]: mid 4 -> 1 -> 2 -> 3 -> high=2 -> 2
 
 ── FAMILY: 2D-index-map (2D matrix = 1D sorted array, index -> (row, col)) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SEARCH 2D MATRIX
- └──────────────────────────────────────────────────────────────
-     bool searchMatrix(vector<vector<int>> &matrix, int target) {
-         int row = matrix.size();
-         int col = matrix[0].size();             // col = matrix[0].size(), row nahi
-         int low = 0, high = row * col - 1;      // poore matrix ko 1D maano
-         while (low <= high) {
-             int mid = low + (high - low) / 2;
-             if (matrix[mid / col][mid % col] == target)   // row = mid / col, col = mid % col
-                 return true;
-             else if (matrix[mid / col][mid % col] < target)
-                 low = mid + 1;
-             else
-                 high = mid - 1;
-         }
-         return false;
-     }
+ ▸ SEARCH 2D MATRIX
+     int row = matrix.size(); int col = matrix[0].size();   // col = matrix[0].size(), row nahi
+     int low = 0, high = row * col - 1;          // poore matrix ko 1D maano
+     while (low <= high)
+         int mid = low + (high - low) / 2;
+         if (matrix[mid / col][mid % col] == target) return true;   // row = mid / col, col = mid % col
+         else if (matrix[mid / col][mid % col] < target) low = mid + 1;
+         else high = mid - 1;
+     return false;
 
 ── FAMILY: BS-on-PARTITION / CUT (value pe nahi, 2 sorted array me CUT-position pe BS) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)
- └──────────────────────────────────────────────────────────────
+ ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)
      // MERGE mat karo -> CUT: LEFT aadha | RIGHT aadha, left ka HAR <= right ka HAR. 4 kinaare = median
      // A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> Px=4 (1 3 8 9 | 15), Py=2 (7 11 | 18 ..) -> max(9,11) = 11
      // Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wahan VALUE pe)
-     double findMedianSortedArrays(vector<int> &A, vector<int> &B) {
-         int m = A.size();
-         int n = B.size();
-         if (m > n)
-             return findMedianSortedArrays(B, A);   // chhote pe BS -> Py kabhi -ve nahi, O(log(min(m,n)))
-         int low = 0, high = m;                  // high=m: A ke 0 se m tak kitne bhi left me
-         while (low <= high) {                   // <= : Px=low==high wala cut bhi try
-             int Px = low + (high - low) / 2;    // Px = A-left count (BS isi pe)
-             int Py = ((m + n + 1) / 2) - Px;    // +1: odd total pe left me ek zyada
-             int x1 = (Px == 0) ? INT_MIN : A[Px - 1];   // left khaali -> -INF (A[-1] bahar)
-             int x2 = (Py == 0) ? INT_MIN : B[Py - 1];
-             int x3 = (Px == m) ? INT_MAX : A[Px];       // right khaali -> +INF (A[m] bahar)
-             int x4 = (Py == n) ? INT_MAX : B[Py];
-             if (x1 <= x4 && x2 <= x3) {         // && : dono cross-check sahi tabhi cut valid
-                 if ((m + n) % 2 == 0)
-                     return (max(x1, x2) + min(x3, x4)) / 2.0;   // /2.0: int division se .5 kat jaata
-                 else
-                     return max(x1, x2);         // odd -> left ka max
-             }
-             if (x1 > x4)
-                 high = Px - 1;                  // A ne ZYADA liya -> cut left khiskao
-             else
-                 low = Px + 1;                   // A ne kam liya
-         }
-         return 0.0;
-     }
+     int m = A.size(); int n = B.size();
+     if (m > n) return findMedianSortedArrays(B, A);   // chhote pe BS -> Py kabhi -ve nahi, O(log(min(m,n)))
+     int low = 0, high = m;                      // high=m: A ke 0 se m tak kitne bhi left me
+     while (low <= high)                         // <= : Px=low==high wala cut bhi try
+         int Px = low + (high - low) / 2;        // Px = A-left count (BS isi pe)
+         int Py = ((m + n + 1) / 2) - Px;        // +1: odd total pe left me ek zyada
+         int x1 = (Px == 0) ? INT_MIN : A[Px - 1];   // left khaali -> -INF (A[-1] bahar)
+         int x2 = (Py == 0) ? INT_MIN : B[Py - 1];
+         int x3 = (Px == m) ? INT_MAX : A[Px];   // right khaali -> +INF (A[m] bahar)
+         int x4 = (Py == n) ? INT_MAX : B[Py];
+         if (x1 <= x4 && x2 <= x3)               // && : dono cross-check sahi tabhi cut valid
+             if ((m + n) % 2 == 0)
+                 return (max(x1, x2) + min(x3, x4)) / 2.0;   // /2.0: int division se .5 kat jaata
+             else return max(x1, x2);            // odd -> left ka max
+         if (x1 > x4) high = Px - 1;             // A ne ZYADA liya -> cut left khiskao
+         else low = Px + 1;                      // A ne kam liya
+     return 0.0;
 ```
+
+---
 
 ---
 
