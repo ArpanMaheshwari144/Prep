@@ -650,417 +650,440 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
 
- 2 TYPE:
-   (a) FIXED window   -> size k DIYA hai. i/j pointer: sum += nums[j]; jab (j-i+1) >= k -> track + left hatao (sum -= nums[i], i++).
-   (b) VARIABLE window-> size condition se. TEMPLATE:
-          for j in arr:  window me arr[j] add (update tracker)
-                         while (INVALID): left[i] hatao (tracker update), i++
-                         ans update  (length = j-i+1, ya count += j-i+1)
+ ONE SKELETON (fixed + variable DONO isi pe):
+     int i = 0, j = 0;                       // dono 0 se: shuru me window khaali
+     while (j < n) {                         // EXPAND: j hamesha aage (for(j..) = while(j<n){..; j++} SAME)
+         arr[j] window me ADD;               // track: sum · freq-map (mp.size()) · zeros · prod · maxFreq
+         while (WINDOW BAD) {                // SIZE fix (k / p.length()) -> IF (ek add, ek remove)
+                                             // SIZE condition pe (sum / distinct / repeat / product) -> WHILE
+                                             // TRAP: max-sum-K me k = SIZE (IF); product<K me k = LIMIT
+             arr[i] REMOVE;                  // remove PEHLE, phir i++ (warna agla element hat jaata)
+             i++;
+         }
+         ans UPDATE;                         // shrink ke BAAD valid -> ans UNCONDITIONAL (if(==k) nahi)
+                                             // length -> max(ans, j-i+1) · subarray COUNT -> count += j-i+1
+         j++;                                // ans ke BAAD j++: warna j-i+1 galat
+     }
+     // sirf 2 cheez badalti: (1) inner IF ya WHILE  (2) "WINDOW BAD" kya + kya track. baaki SAME.
+     // LONGEST  -> shrink jab INVALID (majboori), record shrink ke BAAD, ans = MAX
+     // SHORTEST -> shrink jab tak VALID, record shrink loop ke ANDAR, ans = MIN
 
- KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
-
- KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
-
- LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
-
- IF vs WHILE (ye confusion CLEAR kar) -> SAWAAL: "window ka SIZE fix hai, ya condition pe depend?"
-     · SIZE fix (koi number diya: k-elements ya p.length()) -> IF (ek add, ek remove, size wahi rehta).   [Max-Sum-of-K · Anagram]
-     · SIZE condition pe (sum/distinct/repeat/product) -> WHILE (jab tak invalid, ek se zyada nikal sakte).  [baaki sab]
-     TRAP -- `k` ka matlab dekh: Max-Sum-size-K me k = SIZE (fix -> IF); Subarray-Product<K me k = product LIMIT (size NAHI -> WHILE). same letter `k`, alag matlab.
- [track] · [INVALID kab -> shrink] · [ans]
-
- ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel):
-    i = 0, j = 0   // dono 0 se: shuru me window khaali
-    while (j < n):                     // EXPAND (j HAMESHA aage). [for(j..) == while(j<n){..;j++} -- SAME]
-        arr[j] window me ADD           (tracker update: sum / map / zeros / product)
-        while / if  (WINDOW BAD):      // SHRINK (i aage)
-            arr[i] REMOVE (tracker update);  i++   // remove PEHLE, phir i++ (warna agla element hat jaata)
-        ans UPDATE   // shrink ke BAAD: window ab valid, seedha record
-        j++   // ans ke BAAD j++: warna j-i+1 length galat aati
-    -> sirf 2 cheez badalti: (1) inner IF (fixed, ek remove) ya WHILE (variable, jab tak invalid)
-                             (2) "WINDOW BAD" kya + kya track. baaki dhaancha har baar SAME.
-
-┌── FAMILY: variable-LONGEST ───────────────────────────────────
-│ KYUN SAATH: window expand; jab INVALID ho tab left se shrink (WHILE); ans = MAX length. (kya track alag: freq/maxFreq/zeros/distinct.)
-└───────────────────────────────────────────────────────────────
+── FAMILY: variable-LONGEST (INVALID pe WHILE shrink, ans = MAX length) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST SUBSTRING NO-REPEAT (LC-3)  = variable window + freq-map
  └──────────────────────────────────────────────────────────────
-     SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
-     TEMPLATE:
-         unordered_map<char,int> mp;  int i=0, j=0, maxLen=INT_MIN;   // INT_MIN: end me check karke khaali string pe 0
-         while(j < s.size()){
-             mp[s[j]]++;                          // window me add
-             while(mp[s[j]] > 1){                 // INVALID: current char (s[j]) repeat (while: repeat wala char nikalne tak kai char hatane padte)
-                 mp[s[i]]--; i++;                 // left shrink jab tak repeat khatam
+     int lengthOfLongestSubstring(string s) {   // longest substring jisme koi char REPEAT na ho
+         if (s.empty())
+             return 0;
+         int ans = INT_MIN;                      // INT_MIN: end me check karke khaali pe 0
+         unordered_map<char, int> mp;
+         int i = 0, j = 0;
+         while (j < s.size()) {
+             mp[s[j]]++;                         // window me add
+             while (mp[s[j]] > 1) {              // INVALID: jo abhi add hua (s[j]) wahi repeat
+                 mp[s[i]]--;                     // while: repeat wala char nikalne tak kai char hatane padte
+                 i++;                            // left shrink jab tak repeat khatam
              }
-             maxLen = max(maxLen, j - i + 1);     // valid window length (shrink ke BAAD record, ab window valid)
-             j++;   // record ke BAAD aage badho
+             ans = max(ans, j - i + 1);          // shrink ke BAAD record: window ab valid
+             j++;                                // record ke BAAD aage
          }
-         return maxLen==INT_MIN ? 0 : maxLen;     // khaali string -> INT_MIN reh jaata -> 0
-     INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
+         return ans == INT_MIN ? 0 : ans;        // khaali string -> INT_MIN reh jaata -> 0
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CHAR REPLACEMENT (LONGEST, LC-424)  = variable window + freq-map (k badal sakte)
  └──────────────────────────────────────────────────────────────
-     SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
-     KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
-     j pe : mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).   // maxFreq update PEHLE, phir windowLen-maxFreq check
-     VALID   (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
-     INVALID (windowLen - maxFreq > k)   -> left shrink:
-                 mp[s[i]]--;   // left wala char window se bahar, uski ginti kam
-                 if (mp[s[i]] == 0) mp.erase(s[i]);   // 0 hua to key hatao (DISTINCT gino to zaroori)
-                 i++;   // ginti kam karne ke BAAD hi left aage
-     CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
-        se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
+     int characterReplacement(string s, int k) {   // longest window jisme <= k char badal ke sab SAME
+         unordered_map<char, int> mp;
+         int maxLen = INT_MIN, maxFreq = INT_MIN, i = 0, j = 0;
+         while (j < s.size()) {
+             mp[s[j]]++;
+             maxFreq = max(maxFreq, mp[s[j]]);   // maxFreq update PEHLE, phir check
+             while (j - i + 1 - maxFreq > k) {   // windowLen - maxFreq = kitne badalne; > k -> INVALID
+                 mp[s[i]]--;                     // left wala char bahar, ginti kam
+                 if (mp[s[i]] == 0)
+                     mp.erase(s[i]);             // 0 -> key hatao (distinct gino to zaroori)
+                 i++;                            // ginti kam karne ke BAAD hi left aage
+             }                                   // CORE: maxFreq kabhi GHATAO mat (shrink pe recompute nahi);
+                                                 // window best-length se chhota nahi -> purana maxFreq theek
+             if (j - i + 1 - maxFreq <= k)       // <= k -> VALID
+                 maxLen = max(maxLen, j - i + 1);
+             j++;
+         }
+         return maxLen;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX CONSECUTIVE ONES III (LC-1004)  = variable window + zeros-count (k flips)
  └──────────────────────────────────────────────────────────────
-     SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
-     TEMPLATE:
-         int ans=INT_MIN, zeroCount=0, i=0, j=0;   // INT_MIN: end me check karke khaali array pe 0
-         while(j < nums.size()){
-             if(nums[j]==0) zeroCount++;          // window me zero add
-             while(zeroCount > k){                // INVALID: k se zyada zero (flip nahi kar sakte)
-                 if(nums[i]==0) zeroCount--;      // left ka zero nikla to count kam
-                 i++;   // zero check ke BAAD aage (pehle i++ to galat element dekhta)
+     int longestOnes(vector<int> &nums, int k) {   // max k zero FLIP -> longest all-1; sirf zeroCount
+         int ans = INT_MIN;                      // INT_MIN: end me check karke khaali pe 0
+         int zeroCount = 0;
+         int i = 0, j = 0;
+         while (j < nums.size()) {
+             if (nums[j] == 0)
+                 zeroCount++;                    // window me zero add
+             while (zeroCount > k) {             // INVALID: k se zyada zero
+                 if (nums[i] == 0)
+                     zeroCount--;                // sirf zero nikla tabhi kam (1 nikalne pe nahi)
+                 i++;                            // check ke BAAD aage (pehle i++ to galat element dekhta)
              }
-             ans = max(ans, j - i + 1);           // UNCONDITIONAL (koi if nahi)
-             j++;   // record ke BAAD aage badho
+             ans = max(ans, j - i + 1);          // UNCONDITIONAL: if(zeroCount==k) MAT lagao, shrink ke baad
+                                                 // window valid; ==k = sirf exactly-k, k=0 / k>zeros toot-te
+             j++;
          }
-         return ans==INT_MIN ? 0 : ans;
-     CORE LEARNING: ans UNCONDITIONAL update -> if(zeroCount==k) MAT lagao.
-        kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
-        (galti thi: if(zeroCount==k) -> sirf exactly-k ginta -> k=0 / k>zeros case toot jaate.)
-     shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
+         return ans == INT_MIN ? 0 : ans;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FRUIT INTO BASKETS
  └──────────────────────────────────────────────────────────────
-     SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW skeleton + map<type,count>.
-     DELTA (SW skeleton pe -- sirf ye badalta):
-         mp[nums[j]]++;                              // window me add
-         while(mp.size() > 2){                       // INVALID: 2 se zyada distinct (while: ek type poora khatam hone tak kai element hatane padte)
-                                                     // IF bhi chalta (sirf LONGEST): ek aaya ek gaya, size best se bada nahi
-                                                     //   -> len sahi. COUNT / SHORTEST me sirf while.
-             mp[nums[i]]--;   // left wala fruit window se bahar, uski ginti kam
-             if(mp[nums[i]]==0) mp.erase(nums[i]);   // count 0 -> ERASE
-             i++;   // erase check ke BAAD hi left aage
+     int totalFruit(vector<int> &fruits) {       // = longest subarray, AT MOST 2 DISTINCT (fruit = kahani)
+         int ans = INT_MIN;
+         unordered_map<int, int> mp;
+         int i = 0, j = 0;
+         while (j < fruits.size()) {
+             mp[fruits[j]]++;                    // window me add
+             while (mp.size() > 2) {             // INVALID: > 2 distinct (while: ek type khatam hone tak)
+                                                 // IF bhi chalta sirf LONGEST me; COUNT / SHORTEST = while
+                 mp[fruits[i]]--;                // left wala bahar, ginti kam
+                 if (mp[fruits[i]] == 0)
+                     mp.erase(fruits[i]);        // CRUX erase-on-0: warna 0 wali key bhi mp.size() me
+                 i++;                            // erase check ke BAAD hi left aage
+             }
+             ans = max(ans, j - i + 1);          // shrink ke BAAD record: window ab <= 2 distinct
+             j++;
          }
-         ans = max(ans, j - i + 1);   // shrink ke BAAD record: window ab <=2 distinct · ans=INT_MIN se, return ans==INT_MIN ? 0 : ans
-     CRUX = erase-on-0: count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
+         return ans == INT_MIN ? 0 : ans;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST AT-MOST-K DISTINCT
  └──────────────────────────────────────────────────────────────
-     FRUIT-INTO-BASKETS ka GENERAL version. wahi variable window + map<char,count>,
-     distinct (mp.size()) > k ho -> left se shrink (erase-on-0). ans = max length.
-     farak: fruit me "2" hardcoded tha, yahan wahi jagah "k" (mp.size() > k).
+     int totalFruit(string &s, int k) {          // FRUIT ka GENERAL version: wahan "2", yahan "k"
+         int ans = INT_MIN;
+         unordered_map<int, int> mp;
+         int i = 0, j = 0;
+         while (j < s.size()) {
+             mp[s[j]]++;
+             while (mp.size() > k) {             // distinct > k -> left se shrink
+                 mp[s[i]]--;
+                 if (mp[s[i]] == 0)
+                     mp.erase(s[i]);             // erase-on-0 (fruit jaisa)
+                 i++;
+             }
+             ans = max(ans, j - i + 1);          // ans = max length
+             j++;
+         }
+         return ans == INT_MIN ? 0 : ans;
+     }
+
+     int longestKDistinct(string s, int k) {
+         return totalFruit(s, k);
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBARRAYS WITH K DISTINCT (LC-992)  = FRUIT (atMost-k) x2, ghata do  [exactly-K trick]
  └──────────────────────────────────────────────────────────────
-     SAAR : kitne SUBARRAYS jinme EXACTLY k different numbers.  [1,2,1,2,3],k=2 -> 7
-
-     CHAAL: "exactly K" seedha SW se count ganda (boundary saaf nahi).
-            => exactly(k) = atMost(k) - atMost(k-1).
-               atMost(k) = "0..k distinct wale SAB" ; atMost(k-1) = "0..k-1 wale sab" ; ghata do -> exactly k.
-               (jaise  <=5  -  <=1  =  2..5)
-
-     TEMPLATE: atMost(K) = FRUIT ka template, bas ans = COUNT (max nahi):
-
-         int atMost(nums, K){
-             int i = 0, j = 0, ans = 0;  map<int,int> mp;   // ans=0: yahan count jod rahe, max nahi (INT_MIN = garbage)
-             while(j < nums.size()){
-                 mp[nums[j]]++;   // naya number window me
-                 while(mp.size() > K){                     // K se zyada distinct -> shrink
-                     mp[nums[i]]--;   // left wala number bahar, uski ginti kam
-                     if(mp[nums[i]] == 0) mp.erase(nums[i]);   // erase: warna 0-count key bhi mp.size() me ginti
-                     i++;   // erase check ke BAAD hi left aage
-                 }
-                 ans += j - i + 1;                         // is j pe khatam hone wale valid subarray
-                 j++;   // count jodne ke BAAD aage badho
+     // kitne SUBARRAYS jinme EXACTLY k different. [1,2,1,2,3], k=2 -> 7
+     // exactly(k) seedha SW se ganda (boundary saaf nahi) -> exactly(k) = atMost(k) - atMost(k-1)
+     int atMostK(vector<int> &fruits, int k) {   // = FRUIT ka template, bas ans = COUNT (max nahi)
+         int i = 0, j = 0, count = 0;            // count = 0: ginti (max-template ka INT_MIN = garbage)
+         unordered_map<int, int> mp;
+         while (j < fruits.size()) {
+             mp[fruits[j]]++;                    // naya number window me
+             while (mp.size() > k) {             // k se zyada distinct -> shrink
+                 mp[fruits[i]]--;
+                 if (mp[fruits[i]] == 0)
+                     mp.erase(fruits[i]);        // erase: warna 0-count key bhi mp.size() me ginti
+                 i++;
              }
-             return ans;
+             count += j - i + 1;                 // is j pe khatam hone wale saare valid subarray
+             j++;
          }
-         exactly = atMost(k) - atMost(k-1);   // <=k me se <=k-1 hatao, sirf exactly k bache
+         return count;
+     }
 
-     WHY (bucket): atMost(k) = CUMULATIVE dabba = (distinct=1) + (distinct=2) + ... + (distinct=k).
-                   atMost(k-1) = wahi bina aakhri layer.  ghata do -> sirf (distinct=k) bacha (baaki cancel).
-                   jaise bade dabbe me se chhota nikaalo -> extra layer = exactly k.
-
-     DRY  : [1,2,1,2,3], k=2   -- atMost(2) = konse subarray?
-                distinct=1 (5):  [1] [2] [1] [2] [3]
-                distinct=2 (7):  [1,2] [2,1] [1,2] [2,3] [1,2,1] [2,1,2] [1,2,1,2]   <- ANSWER
-                atMost(2) = 5 + 7 = 12  (distinct 1 aur 2 dono gine)
-                atMost(1) = 5           (sirf distinct=1)
-                12 - 5 = 7 ✓            (distinct=1 dono me tha -> cancel, sirf exactly-2 bache)
-
-     ★ k=1 pe special-case NAHI: atMost(0) naturally 0 -> subtraction rehne do.
-     ★ TRAP: atMost me ans = 0 (max-template se copy karo to INT_MIN reh jaata -> k=1 pe garbage).
-
-     FAMILY: fruit-into-baskets · longest-k-distinct · (koi bhi "exactly K" -> atMost(k)-atMost(k-1))
+     int subarraysWithKDistinct(vector<int> &nums, int k) {
+         return atMostK(nums, k) - atMostK(nums, k - 1);   // atMost(k) = distinct 1 + 2 + .. + k ka dabba;
+                                                            // atMost(k-1) bina aakhri layer -> exactly k
+                                                            // [1,2,1,2,3]: atMost(2) 12 - atMost(1) 5 = 7
+                                                            // k=1 pe special case NAHI: atMost(0) apne aap 0
+     }
+     // koi bhi "exactly K" -> atMost(k) - atMost(k-1)   (fruit · longest-k-distinct isi family)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ EQUAL SUBSTR WITHIN BUDGET (LC-1208)  = longest-subarray-sum <= k (string ke bhes me)
  └──────────────────────────────────────────────────────────────
-     SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cost-SUM <= maxCost.
-     KEY  : cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
-     j pe : cost += abs(s[j]-t[j]).
-     INVALID (cost > maxCost) -> WHILE shrink: cost -= abs(s[i]-t[i]), i++.
-     ans  : max(ans, j-i+1).  track sirf cost (koi map nahi).
+     int equalSubstring(string s, string t, int maxCost) {   // cost = |s[i]-t[i]|, SUM <= maxCost
+         int i = 0, j = 0, cost = 0, ans = INT_MIN;          // track sirf cost (koi map nahi)
+         while (j < t.size()) {                  // s="abcd", t="cdef", maxCost=3 -> 1
+             cost += abs(s[j] - t[j]);
+             while (cost > maxCost) {            // INVALID -> WHILE shrink
+                 cost -= abs(s[i] - t[i]);
+                 i++;
+             }
+             ans = max(ans, j - i + 1);
+             j++;
+         }
+         return ans;
+     }
 
-┌── FAMILY: variable-SHORTEST ──────────────────────────────────
-│ KYUN SAATH: ULTA — jab VALID ho tab shrink (WHILE) karke chhota karo; ans = MIN length.
-└───────────────────────────────────────────────────────────────
+── FAMILY: variable-SHORTEST (ULTA: VALID ho tab tak shrink, ans = MIN length) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIN SUBARRAY LEN (>=TARGET, LC-209)  = SHORTEST window (longest se ULTA)
  └──────────────────────────────────────────────────────────────
-     SAAR : positive nums, sum >= target wala SABSE CHHOTA subarray ki length (nahi mile -> 0).
-     TEMPLATE:
-         int sum=0, minLen=INT_MAX, i=0, j=0;   // INT_MAX: min se ghatega; koi window na bani to end me 0
-         while(j < nums.size()){
-             sum += nums[j];                       // window add (expand)
-             while(sum >= target){                 // VALID hote hi -> record + SHRINK (aur chhota dhoondo)
-                 minLen = min(minLen, j - i + 1);   //   record ANDAR (shrink loop ke andar)
-                 sum -= nums[i]; i++;               //   left shrink
+     int minSubArrayLen(int target, vector<int> &nums) {   // positive; sum >= target SABSE CHHOTA
+         int sum = 0;
+         int size = INT_MAX;                     // INT_MAX: min se ghatega; koi window na bani to end me 0
+         int i = 0, j = 0;
+         while (j < nums.size()) {
+             sum += nums[j];                     // expand
+             while (sum >= target) {             // VALID hote hi -> record + SHRINK (aur chhota dhoondo)
+                 size = min(size, j - i + 1);    // record ANDAR (SHORTEST); LONGEST me record shrink ke BAAD
+                 sum -= nums[i];
+                 i++;
              }
-             j++;   // shrink loop ke BAHAR: har j pe ek baar aage
+             j++;                                // shrink loop ke BAHAR: har j pe ek baar
          }
-         return minLen==INT_MAX ? 0 : minLen;      // koi valid window nahi -> 0
-     LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):
-        LONGEST  (jaise no-repeat): window BADA chahiye -> shrink SIRF jab INVALID ho (validity wapas laane ko) ->
-                 record BAAHAR (shrink ke BAAD, valid window ki length).
-        SHORTEST (ye / min-window):  window CHHOTA chahiye -> VALID hote hi record + shrink (chhota karte jao jab tak valid) ->
-                 record ANDAR (shrink loop ke andar, har step).   <- YE wahi.
-        1-line: LONGEST = shrink-jab-MAJBOORI(invalid), record-baad  ·  SHORTEST = shrink-jab-tak-VALID, record-andar.
-     char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
+         return size == INT_MAX ? 0 : size;      // koi valid window nahi -> 0
+     }
+     // char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche need-map family
 
-┌── FAMILY: FIXED window ───────────────────────────────────────
-│ KYUN SAATH: window ka size k pehle se DIYA hai; slide karte jao.
-└───────────────────────────────────────────────────────────────
+── FAMILY: FIXED window (size k pehle se diya, slide) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX SUM OF K (FIXED)  = fixed window size-k + running sum
  └──────────────────────────────────────────────────────────────
-     SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
-     KEY  : variable nahi -- size fix k, isliye IF (ek hi remove).
-     j pe : sum += nums[j].   // sum=0, maxSum=INT_MIN (sab negative ho to bhi sahi max)
-     FULL (j-i+1 >= k) -> maxSum = max(maxSum, sum); phir 1 remove (sum -= nums[i], i++).
-     WHY IF-not-WHILE : fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
-     ans  : maxSum. window k-size pe slide.
+     int maxSumK(vector<int> &nums, int k) {     // har k-size window ka sum -> MAX
+         int sum = 0;
+         int maxSum = INT_MIN;                   // INT_MIN: sab negative ho to bhi sahi max
+         int i = 0, j = 0;
+         while (j < nums.size()) {
+             sum += nums[j];
+             if (j - i + 1 >= k) {               // IF (WHILE nahi): size fix -> har step 1 add + 1 remove
+                 maxSum = max(maxSum, sum);      // FULL window -> record
+                 sum -= nums[i];                 // phir 1 remove
+                 i++;
+             }
+             j++;
+         }
+         return maxSum;
+     }
 
-┌── FAMILY: COUNT (length nahi) ────────────────────────────────
-│ KYUN SAATH: subarray GINTI chahiye (length nahi); valid window pe count += (j-i+1).
-└───────────────────────────────────────────────────────────────
+── FAMILY: COUNT (length nahi; valid window pe count += j-i+1) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBARRAY PRODUCT < K  = variable window + COUNT (running product)
  └──────────────────────────────────────────────────────────────
-     SAAR : kitne subarray jinka product < k.   (lambai nahi, GINTI chahiye)
-
-     TEMPLATE:
-         if (k == 0) return 0;   // nums >=1: product kabhi < 0 nahi, koi subarray nahi
-         int count = 0, prod = 1;   // prod=1: guna ka shuru 1 (0 rakha to sab 0)
-         int i = 0, j = 0;
+     int numSubarrayProductLessThanK(vector<int> &nums, int k) {   // kitne subarray jinka product < k (GINTI)
+         if (k == 0)
+             return 0;                           // nums >= 1: product < 0 kabhi nahi, koi subarray nahi
+         int count = 0;
+         int i = 0, j = 0, prod = 1;             // prod = 1: guna ka shuru 1 (0 rakha to sab 0)
          while (j < nums.size()) {
-             prod *= nums[j];                      // naya element window me
-             while (prod >= k && i <= j) {         // zyada ho gaya -> baayi taraf se chhoto (i <= j: k=1 pe khaali window ka prod 1, i bahar bhaagta)
-                 prod /= nums[i];   // left wala guna se bahar: divide karo
-                 i++;   // divide ke BAAD hi left aage
+             prod *= nums[j];                    // naya element window me
+             while (prod >= k && i <= j) {       // i <= j: k=1 pe khaali window prod 1, i bahar bhaagta
+                 prod /= nums[i];                // left wala guna se bahar: divide
+                 i++;                            // divide ke BAAD hi left aage
              }
-             count += j - i + 1;                   // j pe khatam hone wale saare valid subarray
-             j++;   // count ke BAAD aage badho
+             count += j - i + 1;                 // j pe khatam: [j], [j-1..j] .. [i..j] = j-i+1
+             j++;
          }
-         return count;
+         return count;                           // [10,5,2,6], k=100 -> 1+2+2+3 = 8 · [1], k=1 -> 0
+     }
 
-     GINTI KYUN (j-i+1):  window [i..j] valid hai, to j pe KHATAM hone wale ye sab bhi valid:
-                          [j], [j-1..j], ... [i..j]  =  j-i+1 subarray
-
-     DRY-RUN [10,5,2,6], k=100:
-         j=0  prod 10               window [10]          +1   count 1
-         j=1  prod 50               window [10,5]        +2   count 3
-         j=2  prod 100 >= 100 -> 10 hatao, prod 10       +2   count 5   ([5,2],[2])
-         j=3  prod 60               window [5,2,6]       +3   count 8
-
-     ★ EDGE: shrink ki shart me `&& i <= j` zaroori.
-         k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
-         aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
-         k = 0 alag, upar hi return 0.
-
-┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
-│ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
-└───────────────────────────────────────────────────────────────
-
- SHARED SKELETON (expand + shrink -- dono me same):
-      need-map(t);  count = t.size();                 // count==0 => window me t ke SAARE char (VALID) · need-map: t ke har char pe mp[c]++
-      while (j < n) {                                  // OUTER: j (right) aage
-          if (mp[s[j]] > 0) count--;                  // t-char mila -> ek zaroorat puri
-          mp[s[j]]--;                                 // IF ke BAHAR: non-t char -ve -> count me "invisible"
-                                                      //   (andar rakha to D-ASYMMETRY BUG: shrink me count++ galat)
-          while (count == 0) {                         // INNER: VALID -> shrink (i++)
-              mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // MIRROR: aana = -- , jaana = ++
-          }
-          j++;   // shrink ke BAAD agla char lo
-      }
+── FAMILY: need-map + COUNT (t ke SAARE char chahiye; aana = --, jaana = ++ MIRROR) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer = MIN-track, loop ke ANDAR
  └──────────────────────────────────────────────────────────────
-     s ka sabse CHHOTA window jisme t ke saare char.  count = t.size().   // minLen=INT_MAX, index=0 (substr ka start), i=j=0
-     while (j < n) {                          // OUTER: j (right) aage
-         if(mp[s[j]]>0) count--;  mp[s[j]]--; // EXPAND
-         while (count == 0) {                 // INNER: VALID -> shrink + SAVE (answer andar)
-             len=j-i+1; if(len<minLen){minLen=len; index=i;}   // record PEHLE: abhi [i..j] valid, i++ ke baad shayad nahi
-             mp[s[i]]++; if>0 count++; i++;   // wapas ++; >0 hua = t ka zaroori char gaya, count++
+     string minWindow(string s, string t) {      // s ka sabse CHHOTA window jisme t ke saare char
+         unordered_map<char, int> mp;
+         for (auto &it : t)
+             mp[it]++;                           // need-map: t ke har char pe ++
+         int i = 0, j = 0, count = t.size(), minLen = INT_MAX, index = 0;   // count==0 VALID; index=start
+         while (j < s.size()) {                  // OUTER: j aage
+             if (mp[s[j]] > 0)
+                 count--;                        // t-char mila -> ek zaroorat puri
+             mp[s[j]]--;                         // IF ke BAHAR: non-t char -ve -> count me "invisible"
+                                                 // (andar rakha to shrink me count++ galat = asymmetry bug)
+             while (count == 0) {                // INNER: VALID -> shrink + SAVE (answer ANDAR)
+                 int len = j - i + 1;
+                 if (len < minLen) {             // record PEHLE: abhi [i..j] valid, i++ ke baad shayad nahi
+                     minLen = len;
+                     index = i;
+                 }
+                 mp[s[i]]++;                     // MIRROR: wapas ++
+                 if (mp[s[i]] > 0)
+                     count++;                    // > 0 hua = t ka zaroori char gaya
+                 i++;
+             }
+             j++;                                // shrink ke BAAD agla char
          }
-         j++;   // shrink ke BAAD agla char lo
-     }
-     return minLen==INT_MAX ? "" : s.substr(index, minLen).   // INT_MAX bacha = koi valid window nahi mila -> khaali string
-     DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
+         return minLen == INT_MAX ? "" : s.substr(index, minLen);   // INT_MAX = koi valid nahi -> ""
+     }                                           // "ADOBECODEBANC", "ABC" -> "BANC"
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
  └──────────────────────────────────────────────────────────────
-     IDEA:
-        = LC-76 ka SAME code reuse:  numberOfSubstrings(s) = minWindow(s, "abc")
-          farak sirf answer ki line:
-              LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (sabse chhoti)
-              LC-1358 : while ke BAAD  -> ans += i                        (ginti)
-        ans += i KYUN: shrink window ko invalid hone tak le jaata -> 0 se i-1 tak har start valid tha -> i substring.
-           "abcabc": har j pe i = 0,0,1,2,3,4 -> jod 10
+     int minWindow(string s, string t) {         // LC-76 ka SAME code; farak sirf answer ki line
+         unordered_map<char, int> mp;
+         for (auto &it : t)
+             mp[it]++;
+         int i = 0, j = 0, count = t.size(), ans = 0;   // ans = 0: ginti jod rahe
+         while (j < s.size()) {
+             if (mp[s[j]] > 0)
+                 count--;                        // EXPAND (same)
+             mp[s[j]]--;
+             while (count == 0) {                // INNER: shrink jab tak INVALID na ho
+                 mp[s[i]]++;
+                 if (mp[s[i]] > 0)
+                     count++;
+                 i++;
+             }
+             ans += i;                           // inner-while ke BAAD, har j pe: start 0..i-1 sab valid the
+             j++;
+         }
+         return ans;                             // "abcabc": i = 0,0,1,2,3,4 -> 10
+     }
 
-     TEMPLATE:
-        t = "abc"  (count = 3 = t.size()).   // ans=0 se (count jod rahe)
-        while (j < n) {                                 // OUTER: j (right) aage
-            if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
-            while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // INNER: shrink to INVALID
-            ans += i;                                   // outer ke ANDAR, inner-while ke BAAD -> har j pe
-            j++;
-        }
-        CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
+     int numberOfSubstrings(string s) {
+         return minWindow(s, "abc");             // wahi function, bas t = "abc"
+     }
 
-┌── FAMILY: ANAGRAM-window ─────────────────────────────────────
-│ KYUN SAATH: fixed p-length window + har position pe anagram-check (isAnagram helper reuse).
-└───────────────────────────────────────────────────────────────
+── FAMILY: ANAGRAM-window (fixed p-length window + isAnagram helper reuse) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ FIND ALL ANAGRAMS (LC-438)  = ANAGRAM-check + FIXED window (PARENT)
  └──────────────────────────────────────────────────────────────
-     SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
-     TEMPLATE:
-         bool isAnagram(a,b): size same + har char count barabar (map: a se ++, b se --, sab 0 -> true).
-         int i=0, j=0;
-         while(j < s.size()){
-             while(j-i+1 > p.size()) i++;                          // window ko p-size pe rakho (FIXED)
-             if(j-i+1 == p.size())   // == : window poora p-size hua tabhi check (shuru me chhota)
-                 if(isAnagram(s.substr(i, j-i+1), p)) ans.push_back(i);  // anagram -> START-index push
-             j++;   // check ke BAAD aage badho
+     bool isAnagram(string s, string t) {        // valid-anagram helper reuse
+         if (s.size() != t.size())
+             return 0;                           // size same chahiye
+         unordered_map<char, int> mp;
+         for (auto &it : s)
+             mp[it]++;                           // a se ++
+         for (auto &it : t)
+             mp[it]--;                           // b se --
+         for (auto &it : mp)
+             if (it.second != 0)
+                 return false;                   // sab 0 -> anagram
+         return true;
+     }
+
+     vector<int> findAnagrams(string s, string p) {   // s me p ke SAARE anagram ki START-INDEX
+         vector<int> ans;
+         int i = 0, j = 0;
+         while (j < s.size()) {
+             while (j - i + 1 > p.size())
+                 i++;                            // window ko p-size pe rakho (FIXED)
+             if (j - i + 1 == p.size())          // == : window poora p-size hua tabhi check (shuru me chhota)
+                 if (isAnagram(s.substr(i, j - i + 1), p))
+                     ans.push_back(i);           // anagram -> START-index push
+             j++;                                // check ke BAAD aage
          }
-     valid-anagram helper reuse. fixed-window slide + har full-window pe check.
+         return ans;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PERMUTATION IN STRING (LC-567)  = FIND-ALL-ANAGRAMS ka EXACT same code
  └──────────────────────────────────────────────────────────────
-     SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
-     = FIND-ALL-ANAGRAMS ka SAME code -- REUSE: checkInclusion(s1,s2) = findAnagrams(s2, s1).
-       farak SIRF answer-line:
-           LC-438 : isAnagram mila -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
-           LC-567 : isAnagram mila -> return true        ... loop-baad: return false  (pehla match = bool)
-     CODE (findAnagrams; skeleton LC-438 wala, sirf answer-handle badla):
-         while(j < s.size()){
-             while(j-i+1 > p.size()) i++;                  // window ko p-size pe rakho (FIXED)
-             if(j-i+1 == p.size())   // == : window poora p-size hua tabhi check (shuru me chhota)
-                 if(isAnagram(s.substr(i,j-i+1), p))
-                     return true;                          // <- DELTA: push ki jagah return true
-             j++;   // check ke BAAD aage badho
+     // isAnagram = upar wala hi
+     bool findAnagrams(string s, string p) {     // LC-438 ka skeleton, sirf answer-handle badla
+         int i = 0, j = 0;
+         while (j < s.size()) {
+             while (j - i + 1 > p.size())
+                 i++;                            // FIXED p-size
+             if (j - i + 1 == p.size())
+                 if (isAnagram(s.substr(i, j - i + 1), p))
+                     return true;                // DELTA: push ki jagah return true (pehla match = bool)
+             j++;
          }
-         return false;                                     // loop-baad: koi na mila
-     checkInclusion(s1,s2) = findAnagrams(s2, s1).
+         return false;                           // loop-baad: koi na mila
+     }
 
- LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
+     bool checkInclusion(string s1, string s2) { // s2 me s1 ka koi permutation (= anagram) substring?
+         return findAnagrams(s2, s1);            // dhyaan: ulta order (s2, s1)
+     }
 
-┌── FAMILY: MONOTONIC DEQUE (window max/min) ───────────────────
-│ KYUN ALAG: expand/shrink+tracker NAHI. har window ka MAX/MIN O(n) -> deque me INDICES (values decreasing), front = answer.
-└───────────────────────────────────────────────────────────────
+── FAMILY: MONOTONIC DEQUE (window max/min; deque me INDICES, front = answer) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SLIDING WINDOW MAXIMUM (LC-239)  = monotonic DEQUE of INDICES
  └──────────────────────────────────────────────────────────────
-     SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING) -> front = window ka max.
-     CONNECT : back-pop (nums[back]<=nums[i]) = MONOTONIC banana -- ye UNIVERSAL (stack ho ya deque, wahi cheez; isi se monotonic).
-               DEQUE lene ki ASLI (aur AKELI) wajah = WINDOW-EXPIRY: front se purana index hatana (dq.front()==i-k -> pop_front).
-               = monotonic STACK + bas wahi 1 window-front-expiry delta. (front-pop hamesha EXISTING element hota, naya nahi.) order dono me matter.
-     CORE : nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo max ban hi nahi sakte) -> pop_back.
-     ★ ORDER MATTERS (warna galat ans): (1) front-expiry -> (2) monotonic-clean + push -> (3) record. record hamesha LAST.
-     TEMPLATE:
-         deque<int> dq;  vector<int> ans;                              // dq = INDICES, front = MAX
-         for(int i=0; i<nums.size(); i++){
-             if(!dq.empty() && dq.front()==i-k) dq.pop_front();        // 1) front-index window se bahar (==i-k) -> hata (!dq.empty() pehle: khaali deque pe front() crash)
-             while(!dq.empty() && nums[dq.back()]<=nums[i]) dq.pop_back(); // 2) chhote bekaar -> pop (<= : barabar wala purana bhi bekaar, naya zyada der tikega)
-             dq.push_back(i);   // value nahi INDEX daalo: expiry check ke liye index chahiye
-             if(i>=k-1) ans.push_back(nums[dq.front()]);               // 3) window poora -> front=max (k-1 = pehle poore window ka aakhri index)
+     vector<int> maxSlidingWindow(vector<int> &nums, int k) {   // har k-window ka MAX, O(n)
+         vector<int> ans;
+         deque<int> dq;                          // INDICES, values DECREASING -> front = max
+         for (int i = 0; i < nums.size(); i++) {
+             if (!dq.empty() && dq.front() == i - k)   // 1) EXPIRY: == i-k window se bahar
+                 dq.pop_front();                 //    !dq.empty() pehle: khaali pe front() crash
+                                                 //    deque ki AKELI wajah yahi; baaki monotonic STACK
+             while (!dq.empty() && nums[dq.back()] <= nums[i])   // 2) chhote back-wale BEKAAR (nums[i] zinda,
+                 dq.pop_back();                  //    wo max nahi ban sakte); <= : barabar purana bhi
+                                                 //    MIN chahiye -> condition ULTA (nums[back] >= nums[i])
+             dq.push_back(i);                    // value nahi INDEX: expiry check ke liye
+             if (i >= k - 1)                     // 3) record hamesha LAST; k-1 = pehle poore window ka aakhri
+                 ans.push_back(nums[dq.front()]);   // ORDER: expiry -> clean + push -> record (warna galat)
          }
-     TRAP: deque me INDICES (values nahi -- expiry ke liye index chahiye) · front-expiry ==i-k kaafi (har step check) · record sirf i>=k-1.
-     FAMILY: MIN chahiye -> pop_back condition ULTA (nums[back] >= nums[i]).
+         return ans;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MAX POINTS FROM CARDS (LC-1423)  = MAX-SUM-SIZE-K (01) + COMPLEMENT-twist
  └──────────────────────────────────────────────────────────────
-     Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
-     INPUT: [1,2,3,4,5,6,1], k=3 -> 12   (back se 5,6,1)
+     // DONO ends se TOTAL k cards (har end se k nahi) -> sum MAX. [1,2,3,4,5,6,1], k=3 -> 12 (back se 5,6,1)
+     // sirf back se k galat: [100,1,1,1,1] k=2 -> front 101. liye cards contiguous NAHI -> seedha SW fail
+     // FLIP: jo NAHI liye = beech ka CONTIGUOUS window, size L-k. taken MAX = untaken MIN -> Total - min
+     int minSumK(vector<int> &nums, int k) {     // = max_sum_k ka MIN version (fixed window)
+         int sum = 0;
+         int minSum = INT_MAX;                   // INT_MAX se: min ghatega
+         int i = 0, j = 0;
+         while (j < nums.size()) {
+             sum += nums[j];
+             if (j - i + 1 >= k) {
+                 minSum = min(minSum, sum);
+                 sum -= nums[i];
+                 i++;
+             }
+             j++;
+         }
+         return minSum;
+     }
 
-     ★ RECOGNITION (jab question AISE sound kare): "dono end se k cards lo, sum MAX" -> ye SIGNAL hai.
-        k UTHANE ki tension MAT lo -> ULTA jo BACHTA hai (beech ka L-k) usko MIN kardo -> answer apne-aap.
-        flip ke baad "ye problem THA HI NAHI" -> plain MAX-SUM-K ki MIN-version + (Total - min). bas.
+     int maxScore(vector<int> &nums, int k) {
+         int Total = 0;                          // saare cards ka sum: isme se beech ka min ghatayenge
+         for (int i = 0; i < nums.size(); i++)
+             Total += nums[i];
+         if (nums.size() - k == 0)
+             return Total;                       // k == L -> saare cards (window size 0)
+         int minSum = minSumK(nums, nums.size() - k);   // window size = L-k
+         return Total - minSum;                  // 22 - 10 = 12 (min window [1,2,3,4])
+     }
 
-     DERIVE (kaise pahuncha -- yahin GADBAD ki thi, dobara padho to soch-ki-raah + galtiyan):
-       (0) "sirf back se k" -> galat: [100,1,1,1,1] k=2 -> front-2=101 best.
-       (1) "front se k + back se k" -> galat: wo 2k cards; problem = k TOTAL (dono end milake). [yahin atka: L-2k nikaal raha tha]
-       (2) taken cards DONO end pe -> contiguous NAHI -> seedha SW fail.
-       (3) FLIP (aha): untaken = beech ka CONTIGUOUS window, size L-k.
-       (4) taken MAX = untaken MIN -> answer = Total - min.  ("hard" flip ke baad TRIVIAL.)
-
-     TWIST (yahi hard part): taken cards DONO end pe (contiguous NAHI) -> seedha SW nahi chalta.
-          ULTA socho -> jo NAHI liye = beech ka CONTIGUOUS window, size L-k.
-          taken MAX  <=>  untaken MIN.   answer = Total - min(window).
-     = MAX-SUM-SIZE-K (pattern-01) ka cousin -- SAME fixed-window mechanic, bas 3 DELTA:
-          (a) window size = L-k  (b) MAX ki jagah MIN dhundo  (c) answer = Total - min.
-     ★ COLD nahi hota (combo-twist) -- library me daalke revise -> next time instant.
-
-     TEMPLATE:
-       int Total = accumulate(nums, 0);   // saare cards ka sum: isme se beech ka min ghatayenge
-       if (L - k == 0) return Total;              // k==L -> saare cards (window size 0)
-       int minSum = minSumK(nums, L-k);           // fixed-window MIN (= max_sum_k, min-version)
-       return Total - minSum;   // liye cards ka max = total - na liye (beech) ka min
-     minSumK (fixed window, MIN): sum += nums[j]; jab (j-i+1 >= size) -> minSum=min(minSum,sum); sum-=nums[i]; i++.   // minSum=INT_MAX se
-
-     DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
-     FAMILY: fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
+── FAMILY: FIXED window (size k) + HASHSET ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CONTAINS DUPLICATE II (LC-219)  = FIXED window (size k) + HASHSET
  └──────────────────────────────────────────────────────────────
-     Q: koi 2 index i,j jaha nums[i]==nums[j] AND |i-j| <= k ? true/false.
-     ★ RECOGNITION: "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
-        KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
-        -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
-     TEMPLATE:
-         if (k <= 0) return false;   // k=0: |i-j|<=0 matlab same index, jodi ban hi nahi sakti
-         unordered_set<int> st;  int i=0, j=0;
-         while(j < nums.size()){
-             if(st.count(nums[j])) return true;   // window me pehle se hai -> mil gaya (within k)
-             if(j - i + 1 > k){ st.erase(nums[i]); i++; }   // window k se badi -> oldest hatao
-             st.insert(nums[j]); j++;   // check ke BAAD insert: warna khud se hi match ho jaata
+     bool containsNearbyDuplicate(vector<int> &nums, int k) {   // nums[i]==nums[j] AND |i-j| <= k ?
+         if (k <= 0)
+             return false;                       // k=0: check shrink se PEHLE -> [4,4] k=0 galat true
+         int i = 0, j = 0;
+         unordered_set<int> st;                  // sirf LAST k element -> dup mila = farak apne aap <= k
+         while (j < nums.size()) {
+             if (st.count(nums[j]) > 0)
+                 return true;                    // window me pehle se -> mil gaya (within k)
+             if (j - i + 1 > k) {                // window k se badi -> oldest hatao
+                 st.erase(nums[i]);
+                 i++;
+             }
+             st.insert(nums[j]);                 // check ke BAAD insert: warna khud se match
+             j++;
          }
-         return false;
-     DRY-RUN [1,2,3,1] k=3: 1,2,3 add -> j=3 nums=1 set me hai -> true. | [1,2,3,1,2,3] k=2: har baar window<=2, kabhi dup nahi -> false.
-     ★ k=0 kyun alag: check (st.count) window CHHOTI hone se PEHLE hota hai -> k=0 pe pichhla element
-        abhi set me hota, [4,4] k=0 pe true aa jaata (sahi false).
-     FAMILY: fixed-window (size k) + HashSet (seen-check). value-equal -> set; within-k -> window size k.
+         return false;                           // [1,2,3,1] k=3 -> true · [1,2,3,1,2,3] k=2 -> false
+     }
 ```
 
 ---
