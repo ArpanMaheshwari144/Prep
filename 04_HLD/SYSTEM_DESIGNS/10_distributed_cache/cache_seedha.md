@@ -86,3 +86,47 @@ hain, to DB ka bojh 10 guna kam ho gaya.
 
 Par cache machine ki RAM sirf 64 GB hai, aur roz naye offer, naye user, naye cart judte ja rahe hain.
 Dopahar tak RAM bhar gayi. Ab nayi key rakhni hai, to purani me se kaunsi hatayein?
+
+### Kadam 2: RAM bhar gayi, kaunsi key hatayein (LRU + TTL)
+
+RAM bhar gayi aur nayi key aayi. Kisi purani key ko nikalna padega. Sawaal ye hai ki kise.
+
+Seedhi baat: jo key **sabse der se kisi ne nahi maangi**, use hatao. Jo abhi-abhi maangi gayi, wo shayad phir
+maangi jaayegi, use rakho. Isko **LRU** (Least Recently Used) kehte hain.
+
+```mermaid
+flowchart LR
+    A["App"] --> C["Cache machine<br/>HashMap: key se seedha node<br/>+ list: aage = abhi maangi, peeche = purani<br/>RAM bhari -> peeche wali hatao (LRU)<br/>har key ki umar (TTL)"]
+    A -.->|"nahi mila"| D[("DB")]
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+RAM me 4 key, aage = abhi maangi, peeche = sabse der se nahi maangi
+   aage  [offer:diwali] [user:42] [cart:42] [offer:holi]  peeche
+nayi key "user:99" aayi, RAM bhari  -> peeche wali "offer:holi" hatao, "user:99" aage lagao
+"cart:42" maangi gayi               -> use uthake sabse aage rakh do
+```
+
+**Ye tez kaise hota hai:** cache 1 ms me jawab deta hai, to "sabse purani kaunsi" dhoondhne me poori RAM scan
+nahi kar sakte. Isliye do cheezein saath rakhte hain:
+
+```
+HashMap             key se seedha uske node tak pahuncho           O(1)
+Doubly linked list  key ka kram: aage = abhi, peeche = purani      aage lagana / peeche se hatana O(1)
+```
+
+Matlab dhoondhna, aage khiskaana aur hatana, teeno O(1). Ye wahi LRU cache hai jo DSA me design pattern me
+banaya hai (LC 146).
+
+**Doosra tareeka LFU kyun nahi** (jo sabse kam BAAR maangi gayi, wo hatao): Holi ka offer March me lakhon baar
+khula tha, uski ginti bahut badi hai. October me use koi nahi kholta, par LFU use kabhi nahi hatayega kyunki
+uski purani ginti badi hai. LRU me wo apne aap peeche khisak ke nikal jaata hai.
+
+**Iske saath TTL (har key ki umar):** LRU sirf jagah ki dikkat sambhalta hai. Par Diwali ka offer raat 12 baje
+khatam ho gaya. RAM khaali ho tab bhi wo key cache me padi rahegi aur log purana offer dekhte rahenge. Isliye
+har key ke saath umar likhte hain (jaise 1 ghanta). Umar khatam hote hi key mit jaati hai, aur agli baar DB se
+taaza aati hai.
+
+Ab ek machine me jagah ka hisaab ho gaya. Par data hi 1 TB hai, aur ek machine ki RAM sirf 64 GB. Itna data ek
+machine me aata hi nahi.
