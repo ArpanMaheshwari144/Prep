@@ -2445,383 +2445,257 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      //   (2) base + 2-3 node ka chhota tree haath se check (3) print: enter-print null-check ke BAAD
      //   (warna null->val crash), result variable me lo -> print + return dono
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ 3 DFS TRAVERSALS (LC-144 / 94 / 145)
- └──────────────────────────────────────────────────────────────
-     void preorder(TreeNode *root, vector<int> &res) {    // PRE = VISIT -> left -> right (root pehle)
-         if (!root)
-             return;
-         res.push_back(root->val);               // VISIT
-         preorder(root->left, res);
-         preorder(root->right, res);
-     }
+ ▸ 3 DFS TRAVERSALS (LC-144 / 94 / 145)
+     // preorder: PRE = VISIT -> left -> right (root pehle)
+     if (!root) return;
+     res.push_back(root->val);               // VISIT
+     preorder(root->left, res), preorder(root->right, res);
 
-     void inorder(TreeNode *root, vector<int> &res) {     // IN = left -> VISIT -> right (beech)
-         if (!root)
-             return;
-         inorder(root->left, res);
-         res.push_back(root->val);               // VISIT
-         inorder(root->right, res);
-     }
+     // inorder: IN = left -> VISIT -> right (beech)
+     if (!root) return;
+     inorder(root->left, res);
+     res.push_back(root->val);               // VISIT
+     inorder(root->right, res);
 
-     void postorder(TreeNode *root, vector<int> &res) {   // POST = left -> right -> VISIT (baad)
-         if (!root)
-             return;
-         postorder(root->left, res);
-         postorder(root->right, res);
-         res.push_back(root->val);               // VISIT
-     }                                           // teeno SAME recursion, sirf VISIT ki JAGAH badalti
+     // postorder: POST = left -> right -> VISIT (baad)
+     if (!root) return;
+     postorder(root->left, res), postorder(root->right, res);
+     res.push_back(root->val);               // VISIT
+     // teeno SAME recursion, sirf VISIT ki JAGAH badalti
 
 ── FAMILY: recurse + COMBINE (answer = return-value; jo combine karo wahi return) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX DEPTH (LC-104)
- └──────────────────────────────────────────────────────────────
-     int maxDepth(TreeNode *root) {
-         if (!root)
-             return 0;                           // base: null -> 0
-         int left = maxDepth(root->left);
-         int right = maxDepth(root->right);
-         return 1 + max(left, right);            // khud = 1 + gehri branch
-     }
+ ▸ MAX DEPTH (LC-104)
+     if (!root) return 0;   // base: null -> 0
+     int left = maxDepth(root->left); int right = maxDepth(root->right);
+     return 1 + max(left, right);            // khud = 1 + gehri branch
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ INVERT TREE (LC-226)
- └──────────────────────────────────────────────────────────────
-     TreeNode *invertTree(TreeNode *root) {
-         if (!root)
-             return nullptr;                     // base: null -> null
-         invertTree(root->left);                 // recurse dono (order FREE)
-         invertTree(root->right);
-         swap(root->left, root->right);          // TRAP: POINTERS swap (poori branch badalti), values NAHI
-         return root;                            //   value-swap = sirf 2 number + leaf pe null->val CRASH
-     }
+ ▸ INVERT TREE (LC-226)
+     if (!root) return nullptr;   // base: null -> null
+     invertTree(root->left);                 // recurse dono (order FREE)
+     invertTree(root->right);
+     swap(root->left, root->right);          // TRAP: POINTERS swap (poori branch badalti), values NAHI
+     return root;                            //   value-swap = sirf 2 number + leaf pe null->val CRASH
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SAME TREE (LC-100)
- └──────────────────────────────────────────────────────────────
-     bool isSameTree(TreeNode *p, TreeNode *q) {
-         if (p == NULL && q == NULL)
-             return true;                        // dono null -> true
-         if (p == NULL && q != NULL)             // null checks PEHLE: warna null->val crash
-             return false;                       // ek null -> false
-         if (p != NULL && q == NULL)             //   (clean base: if (!p || !q) return p == q;)
-             return false;
-         if (p->val != q->val)
-             return false;                       // val alag -> yahin false, recurse nahi
-         else if (p->val == q->val)
-             return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);   // && : DONO side match
-         return false;
-     }
+ ▸ SAME TREE (LC-100)
+     if (p == NULL && q == NULL) return true;   // dono null -> true
+     if (p == NULL && q != NULL)             // null checks PEHLE: warna null->val crash
+         return false;                       // ek null -> false
+     if (p != NULL && q == NULL) return false;   //   (clean base: if (!p || !q) return p == q;)
+     if (p->val != q->val) return false;   // val alag -> yahin false, recurse nahi
+     else if (p->val == q->val)
+         return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);   // && : DONO side match
+     return false;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS
- └──────────────────────────────────────────────────────────────
-     bool isSameTree(TreeNode *p, TreeNode *q) { // same tree ka hi base (dono null / ek null / val alag)
-         if (p == NULL && q == NULL)
-             return true;
-         if (p == NULL && q != NULL)             // null checks PEHLE: warna null->val crash
-             return false;
-         if (p != NULL && q == NULL)
-             return false;
-         if (p->val != q->val)
-             return false;
-         else if (p->val == q->val)
-             return isSameTree(p->left, q->right) && isSameTree(p->right, q->left);   // CROSS = mirror
-         return false;
-     }
+ ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS
+     // isSameTree: same tree ka hi base (dono null / ek null / val alag)
+     if (p == NULL && q == NULL) return true;
+     if (p == NULL && q != NULL) return false;   // null checks PEHLE: warna null->val crash
+     if (p != NULL && q == NULL) return false;
+     if (p->val != q->val) return false;
+     else if (p->val == q->val)
+         return isSameTree(p->left, q->right) && isSameTree(p->right, q->left);   // CROSS = mirror
+     return false;
 
-     bool isSymmetric(TreeNode *root) {
-         if (!root)
-             return true;
-         return isSameTree(root->left, root->right);   // root khud nahi, uske dono bachche aapas me mirror
-     }
+     // isSymmetric
+     if (!root) return true;
+     return isSameTree(root->left, root->right);   // root khud nahi, uske dono bachche aapas me mirror
 
 ── FAMILY: return-ONE + track-ANOTHER (parent ko HEIGHT return, asli ANSWER global / ref me; post-order) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ DIAMETER (LC-543)  = MAX-DEPTH + 1 line
- └──────────────────────────────────────────────────────────────
-     int height(TreeNode *root, int &maxDia) {   // max-depth ka height(), maxDia by-REFERENCE
-         if (!root)
-             return 0;                           // null ki height 0: uske neeche koi edge nahi
-         int left = height(root->left, maxDia);  // recurse PEHLE: kaam peeche aate hue (post-order)
-         int right = height(root->right, maxDia);
-         maxDia = max(maxDia, left + right);     // EXTRA line: is node se guzarti diameter = leftH + rightH
-                                                 //   MAX (overwrite NAHI: test pass != code sahi)
-         return 1 + max(left, right);            // HEIGHT return (parent ko yahi chahiye)
-     }
+ ▸ DIAMETER (LC-543)  = MAX-DEPTH + 1 line
+     // height: max-depth ka height(), maxDia by-REFERENCE
+     if (!root) return 0;   // null ki height 0: uske neeche koi edge nahi
+     int left = height(root->left, maxDia);  // recurse PEHLE: kaam peeche aate hue (post-order)
+     int right = height(root->right, maxDia);
+     maxDia = max(maxDia, left + right);     // EXTRA line: is node se guzarti diameter = leftH + rightH
+                                             //   MAX (overwrite NAHI: test pass != code sahi)
+     return 1 + max(left, right);            // HEIGHT return (parent ko yahi chahiye)
 
-     int diameterOfBinaryTree(TreeNode *root) {
-         int maxDia = 0;                         // 0 se theek: diameter edge-ginti hai, kabhi minus nahi
-         height(root, maxDia);
-         return maxDia;                          // diameter = BYPRODUCT -> global maxDia (return nahi)
-     }
+     // diameterOfBinaryTree
+     int maxDia = 0;                         // 0 se theek: diameter edge-ginti hai, kabhi minus nahi
+     height(root, maxDia);
+     return maxDia;                          // diameter = BYPRODUCT -> global maxDia (return nahi)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
- └──────────────────────────────────────────────────────────────
+ ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
      // skeleton HUBAHU diameter (return EK arm / record DONO arm / post-order / global max). SIRF 3 badle:
      //   (1) arm = height -> GAIN (sum): return me 1 ki jagah root->val
      //   (2) record me + root->val: junction pe node bhi ginta
      //   (3) max(0, ..): minus arm SKIP (diameter me sab positive the)
-     int maxDepth(TreeNode *root, int &maxSum) {
-         if (!root)
-             return 0;                           // base: null -> 0
-         int left = max(0, maxDepth(root->left, maxSum));     // (3) minus arm -> 0 (lene se sum ghatta)
-         int right = max(0, maxDepth(root->right, maxSum));
-         maxSum = max(maxSum, root->val + left + right);      // (2) answer: junction pe DONO sadak + node
-         return root->val + max(left, right);    // (1) parent ko: node + EK sadak (upar ek hi ja sakti)
-     }
+     // maxDepth
+     if (!root) return 0;   // base: null -> 0
+     int left = max(0, maxDepth(root->left, maxSum));     // (3) minus arm -> 0 (lene se sum ghatta)
+     int right = max(0, maxDepth(root->right, maxSum));
+     maxSum = max(maxSum, root->val + left + right);      // (2) answer: junction pe DONO sadak + node
+     return root->val + max(left, right);    // (1) parent ko: node + EK sadak (upar ek hi ja sakti)
 
-     int maxPathSum(TreeNode *root) {
-         int maxSum = INT_MIN;                   // INT_MIN (0 NAHI): akela -3 bhi valid path
-         maxDepth(root, maxSum);
-         return maxSum;                          // [-10,9,20,_,_,15,7]: @20 -> 15+20+7 = 42 (answer), upar 35
-     }
+     // maxPathSum
+     int maxSum = INT_MIN;                   // INT_MIN (0 NAHI): akela -3 bhi valid path
+     maxDepth(root, maxSum);
+     return maxSum;                          // [-10,9,20,_,_,15,7]: @20 -> 15+20+7 = 42 (answer), upar 35
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ BUILD TREE from PREORDER + INORDER (LC-105)
- └──────────────────────────────────────────────────────────────
+ ▸ BUILD TREE from PREORDER + INORDER (LC-105)
      // preorder[rootIndex] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part, recurse
      TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder, int l, int r,
-                     unordered_map<int, int> &mp) {   // &rootIndex: ek pointer SAB calls me shared (neeche)
-         if (l > r)
-             return NULL;                        // > (>= nahi): l==r pe ek node bacha, wo banana hai
+                     unordered_map<int, int> &mp)     // &rootIndex: ek pointer SAB calls me shared (neeche)
+         if (l > r) return NULL;   // > (>= nahi): l==r pe ek node bacha, wo banana hai
          int pivot = mp[preorder[rootIndex]];    // inorder me root kahan (map = O(1))
          rootIndex++;                            // ++ turant: agla preorder element = agla root
          TreeNode *newNode = new TreeNode(inorder[pivot]);
          newNode->left = solve(rootIndex, preorder, inorder, l, pivot - 1, mp);    // LEFT pehle: preorder
          newNode->right = solve(rootIndex, preorder, inorder, pivot + 1, r, mp);   //   = Root, Left, Right
          return newNode;
-     }
 
-     TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
-         int rootIndex = 0;                      // 0: preorder ka pehla = root
-         unordered_map<int, int> mp;
-         for (int i = 0; i < inorder.size(); i++)
-             mp[inorder[i]] = i;                 // value -> inorder index (ek baar)
-         return solve(rootIndex, preorder, inorder, 0, inorder.size() - 1, mp);   // 0..n-1 = poora inorder
-     }
+     int rootIndex = 0;                      // 0: preorder ka pehla = root
+     unordered_map<int, int> mp;
+     for (int i = 0; i < inorder.size(); i++) mp[inorder[i]] = i;   // value -> inorder index (ek baar)
+     return solve(rootIndex, preorder, inorder, 0, inorder.size() - 1, mp);   // 0..n-1 = poora inorder
      // rootIndex by-REFERENCE (&): LEFT poora consume hone ke BAAD hi RIGHT ko sahi agla root milta.
      //   value-pass -> copy -> galat tree. pre [3,9,20,15,7] in [9,3,15,20,7] -> 3 (9) (20 (15) (7))
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
- └──────────────────────────────────────────────────────────────
+ ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
      // HAR node pe abs(leftH - rightH) <= 1? alag "balanced?" pass nahi -> height nikaalte-nikaalte HI check
-     int maxDepth(TreeNode *root) {              // return = HEIGHT, ya -1 (neeche kahin imbalance)
-         if (!root)
-             return 0;                           // null ki height 0 (balanced hai, -1 nahi)
-         int left = maxDepth(root->left);
-         if (left == -1)
-             return -1;                          // left me imbalance -> -1 UPAR bhejo, aage mat dekho
-         int right = maxDepth(root->right);
-         if (right == -1)
-             return -1;                          // right me imbalance -> turant -1 upar
-         if (abs(left - right) > 1)
-             return -1;                          // IS node pe imbalance (har node pe check, sirf root nahi:
-                                                 //   root balanced par andar imbalanced ho sakta)
-         int result = 1 + max(left, right);      // balanced -> asli HEIGHT
-         return result;
-     }
+     // maxDepth: return = HEIGHT, ya -1 (neeche kahin imbalance)
+     if (!root) return 0;   // null ki height 0 (balanced hai, -1 nahi)
+     int left = maxDepth(root->left);
+     if (left == -1) return -1;   // left me imbalance -> -1 UPAR bhejo, aage mat dekho
+     int right = maxDepth(root->right);
+     if (right == -1) return -1;   // right me imbalance -> turant -1 upar
+     if (abs(left - right) > 1)
+         return -1;                          // IS node pe imbalance (har node pe check, sirf root nahi:
+                                             //   root balanced par andar imbalanced ho sakta)
+     int result = 1 + max(left, right);      // balanced -> asli HEIGHT
+     return result;
 
-     bool isBalanced(TreeNode *root) {
-         if (!root)
-             return true;                        // redundant (maxDepth(null)=0 != -1), saaf padhne ko
-         return maxDepth(root) != -1 ? true : false;   // -1 nahi aaya = kahin imbalance nahi. O(n) ek pass
-     }
+     // isBalanced
+     if (!root) return true;   // redundant (maxDepth(null)=0 != -1), saaf padhne ko
+     return maxDepth(root) != -1 ? true : false;   // -1 nahi aaya = kahin imbalance nahi. O(n) ek pass
 
 ── FAMILY: search + BUBBLE-UP (jise dhundh rahe wo mila -> UPAR return; DONO taraf se mila = answer) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ LCA -- Lowest Common Ancestor (LC-236)
- └──────────────────────────────────────────────────────────────
-     TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // p, q ALAG side split
-         if (!root)
-             return NULL;                        // khaali subtree -> p/q yahan nahi
-         if (root == p || root == q)
-             return root;                        // mil gaya -> UPAR bhejo
-         TreeNode *left = lowestCommonAncestor(root->left, p, q);
-         TreeNode *right = lowestCommonAncestor(root->right, p, q);
-         if (left == NULL)                       // ek side khali -> doosri return. DO case ek saath:
-             return right;                       //   left khali + right mila · dono khali -> NULL (sahi)
-                                                 //   "&& right != NULL" jodo to dono-khali pe root = GALAT
-         else if (right == NULL)
-             return left;                        // right khali -> dono left me, left wala hi jawab
-         else if (left == p && right == q)
-             return root;
-         else if (left == q && right == p)
-             return root;
-         return root;                            // DONO non-null -> yahi split point = LCA
-     }
+ ▸ LCA -- Lowest Common Ancestor (LC-236)
+     // p, q ALAG side split
+     if (!root) return NULL;   // khaali subtree -> p/q yahan nahi
+     if (root == p || root == q) return root;   // mil gaya -> UPAR bhejo
+     TreeNode *left = lowestCommonAncestor(root->left, p, q);
+     TreeNode *right = lowestCommonAncestor(root->right, p, q);
+     if (left == NULL)                       // ek side khali -> doosri return. DO case ek saath:
+         return right;                       //   left khali + right mila · dono khali -> NULL (sahi)
+                                             //   "&& right != NULL" jodo to dono-khali pe root = GALAT
+     else if (right == NULL) return left;   // right khali -> dono left me, left wala hi jawab
+     else if (left == p && right == q) return root;
+     else if (left == q && right == p) return root;
+     return root;                            // DONO non-null -> yahi split point = LCA
 
 ── FAMILY: carry-value DOWN + root-to-LEAF (target ghatao, LEAF pe check, combine = OR) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ PATH SUM (LC-112)
- └──────────────────────────────────────────────────────────────
-     bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == target?
-         if (!root)
-             return false;                       // base: null -> false
-         if (!root->left && !root->right)        // LEAF = ACTUAL bachche (root->left), recursion-result nahi
-             return root->val == targetSum;      // leaf pe hi check: beech me mile to path adhoora
-         return hasPathSum(root->left, targetSum - root->val) ||    // value NEECHE carry (target ghatao)
-                hasPathSum(root->right, targetSum - root->val);     // || : koi ek path bana de to kaafi
-     }
+ ▸ PATH SUM (LC-112)
+     // root se LEAF tak sum == target?
+     if (!root) return false;   // base: null -> false
+     if (!root->left && !root->right)        // LEAF = ACTUAL bachche (root->left), recursion-result nahi
+         return root->val == targetSum;      // leaf pe hi check: beech me mile to path adhoora
+     return hasPathSum(root->left, targetSum - root->val) ||    // value NEECHE carry (target ghatao)
+            hasPathSum(root->right, targetSum - root->val);     // || : koi ek path bana de to kaafi
 
 ── FAMILY: BFS / LEVEL-ORDER (QUEUE FIFO, recursion nahi; while ka ek chakkar = ek LEVEL) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ LEVEL ORDER (LC-102)
- └──────────────────────────────────────────────────────────────
-     vector<vector<int>> levelOrder(TreeNode *root) {   // har level ki alag list. FIFO -> L-to-R apne aap
-         vector<vector<int>> ans;
-         if (!root)
-             return ans;                         // warna NULL push hota, phir node->val crash
-         queue<TreeNode *> q;
-         q.push(root);                           // level-0 (root) se BFS shuru
-         while (!q.empty()) {
-             int sz = q.size();                  // SNAPSHOT for se PEHLE: loop me push se size badalta,
-             vector<int> temp;                   //   warna agle level ke node is level me ghus jaate
-             for (int i = 0; i < sz; i++) {      // sirf sz baar: isi level ke node
-                 TreeNode *curr = q.front();
-                 q.pop();
-                 temp.push_back(curr->val);
-                 if (curr->left != NULL)
-                     q.push(curr->left);         // bachche -> AGLE level me
-                 if (curr->right != NULL)
-                     q.push(curr->right);
-             }
-             ans.push_back(temp);                // level poora tab push (for ke bahar)
-         }
-         return ans;
-     }
+ ▸ LEVEL ORDER (LC-102)
+     // har level ki alag list. FIFO -> L-to-R apne aap
+     if (!root) return ans;   // warna NULL push hota, phir node->val crash
+     queue<TreeNode *> q;
+     q.push(root);                           // level-0 (root) se BFS shuru
+     while (!q.empty())
+         int sz = q.size();                  // SNAPSHOT for se PEHLE: loop me push se size badalta,
+         vector<int> temp;                   //   warna agle level ke node is level me ghus jaate
+         for (int i = 0; i < sz; i++)        // sirf sz baar: isi level ke node
+             TreeNode *curr = q.front(); q.pop(); temp.push_back(curr->val);
+             if (curr->left != NULL) q.push(curr->left);   // bachche -> AGLE level me
+             if (curr->right != NULL) q.push(curr->right);
+         ans.push_back(temp);                // level poora tab push (for ke bahar)
      // TEMPLATE: right view · level average · zigzag · min depth -> isi skeleton pe, bas "level me kya"
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
- └──────────────────────────────────────────────────────────────
-     vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-most dikhta
-         if (!root)
-             return {};
-         queue<TreeNode *> q;
-         q.push(root);
-         vector<int> ans;
-         while (!q.empty()) {
-             int sz = q.size();                  // snapshot (level-order jaisa)
-             for (int i = 0; i < sz; i++) {
-                 TreeNode *curr = q.front();
-                 q.pop();
-                 if (i == sz - 1)                // level ka LAST: FIFO me L-to-R -> aakhri = sabse RIGHT
-                     ans.push_back(curr->val);   //   (1-based "position sz" = 0-based i == sz-1)
-                                                 //   left side view: i == 0
-                 if (curr->left != NULL)
-                     q.push(curr->left);
-                 if (curr->right != NULL)
-                     q.push(curr->right);
-             }
-         }
-         return ans;
-     }
+ ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
+     // daaye se har level ka SIRF right-most dikhta
+     if (!root) return {};
+     queue<TreeNode *> q; q.push(root);
+     while (!q.empty())
+         int sz = q.size();                  // snapshot (level-order jaisa)
+         for (int i = 0; i < sz; i++)
+             TreeNode *curr = q.front(); q.pop();
+             if (i == sz - 1)                // level ka LAST: FIFO me L-to-R -> aakhri = sabse RIGHT
+                 ans.push_back(curr->val);   //   (1-based "position sz" = 0-based i == sz-1)
+                                             //   left side view: i == 0
+             if (curr->left != NULL) q.push(curr->left);
+             if (curr->right != NULL) q.push(curr->right);
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
- └──────────────────────────────────────────────────────────────
-     vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L · 2: L->R ...
-         vector<vector<int>> ans;
-         if (!root)
-             return ans;
-         queue<TreeNode *> q;
-         q.push(root);
-         int levelCounter = 0;                   // 0 se: root level seedha
-         while (!q.empty()) {
-             int sz = q.size();
-             vector<int> temp;                   // level HAMESHA normal L->R banao
-             for (int i = 0; i < sz; i++) {
-                 TreeNode *curr = q.front();
-                 q.pop();
-                 temp.push_back(curr->val);
-                 if (curr->left != NULL)
-                     q.push(curr->left);
-                 if (curr->right != NULL)
-                     q.push(curr->right);
-             }
-             if (levelCounter % 2 != 0)          // DELTA (inner loop ke BAAD): ODD level -> ulta
-                 reverse(begin(temp), end(temp));    // (alt: deque / front insert, reverse simplest)
-             levelCounter++;                     // reverse check ke BAAD ++: warna root level ulta
-             ans.push_back(temp);
-         }
-         return ans;
-     }
+ ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
+     // 0: L->R · 1: R->L · 2: L->R ...
+     if (!root) return ans;
+     queue<TreeNode *> q; q.push(root);
+     int levelCounter = 0;                   // 0 se: root level seedha
+     while (!q.empty())
+         int sz = q.size();
+         vector<int> temp;                   // level HAMESHA normal L->R banao
+         for (int i = 0; i < sz; i++)
+             TreeNode *curr = q.front(); q.pop(); temp.push_back(curr->val);
+             if (curr->left != NULL) q.push(curr->left);
+             if (curr->right != NULL) q.push(curr->right);
+         if (levelCounter % 2 != 0)          // DELTA (inner loop ke BAAD): ODD level -> ulta
+             reverse(begin(temp), end(temp));    // (alt: deque / front insert, reverse simplest)
+         levelCounter++;                     // reverse check ke BAAD ++: warna root level ulta
+         ans.push_back(temp);
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
- └──────────────────────────────────────────────────────────────
-     int minDepth(TreeNode *root) {              // root se sabse PAAS wale LEAF tak
-         if (!root)
-             return 0;                           // khaali tree -> 0 (warna NULL push)
-         queue<TreeNode *> q;
-         q.push(root);
-         int depth = 0;                          // ab tak POORE hue level (current = depth+1)
-         while (!q.empty()) {
-             int sz = q.size();                  // for se PEHLE pakdo
-             for (int i = 0; i < sz; i++) {
-                 TreeNode *curr = q.front();
-                 q.pop();
-                 if (!curr->left && !curr->right)
-                     return depth + 1;           // PEHLA leaf = sabse paas -> turant return
-                 if (curr->left != NULL)
-                     q.push(curr->left);
-                 if (curr->right != NULL)
-                     q.push(curr->right);
-             }
-             depth++;                            // level POORA -> depth++ (for ke BAHAR)
-         }
-         return -1;                              // yahan pahunchte nahi (root hai to leaf milega)
-     }
+ ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
+     // root se sabse PAAS wale LEAF tak
+     if (!root) return 0;   // khaali tree -> 0 (warna NULL push)
+     queue<TreeNode *> q; q.push(root);
+     int depth = 0;                          // ab tak POORE hue level (current = depth+1)
+     while (!q.empty())
+         int sz = q.size();                  // for se PEHLE pakdo
+         for (int i = 0; i < sz; i++)
+             TreeNode *curr = q.front(); q.pop();
+             if (!curr->left && !curr->right)
+                 return depth + 1;           // PEHLA leaf = sabse paas -> turant return
+             if (curr->left != NULL) q.push(curr->left);
+             if (curr->right != NULL) q.push(curr->right);
+         depth++;                            // level POORA -> depth++ (for ke BAHAR)
+     return -1;                              // yahan pahunchte nahi (root hai to leaf milega)
      // DFS TRAP (isliye BFS): "1 + min(leftD, rightD)" GALAT -> NULL child ko depth 0 maan ke
      //   skew tree (2->3->4) pe galat deta
 
 ── FAMILY: BST (left < node < right; INORDER = SORTED -> "sorted / kth chahiye? -> INORDER") ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ KTH SMALLEST IN BST (LC-230)
- └──────────────────────────────────────────────────────────────
-     void inorder(TreeNode *root, vector<int> &res) {   // BST pe inorder = SORTED (ascending)
-         if (!root)
-             return;
-         inorder(root->left, res);               // pehle poora LEFT (chhote)
-         res.push_back(root->val);               // phir NODE
-         inorder(root->right, res);              // phir RIGHT (bade)
-     }
+ ▸ KTH SMALLEST IN BST (LC-230)
+     // inorder: BST pe inorder = SORTED (ascending)
+     if (!root) return;
+     inorder(root->left, res);               // pehle poora LEFT (chhote)
+     res.push_back(root->val);               // phir NODE
+     inorder(root->right, res);              // phir RIGHT (bade)
 
-     int kthSmallest(TreeNode *root, int k) {
-         vector<int> ans;
-         inorder(root, ans);                     // saari values SORTED
-         return ans[k - 1];                      // k-1 TRAP: k 1-based, vector 0-based
-     }                                           // optimize: counter, k-va node pe EARLY-STOP
+     // kthSmallest
+     inorder(root, ans);                     // saari values SORTED
+     return ans[k - 1];                      // k-1 TRAP: k 1-based, vector 0-based
+     // optimize: counter, k-va node pe EARLY-STOP
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN
- └──────────────────────────────────────────────────────────────
+ ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN
      // TRAP: sirf turant child check KAAFI NAHI -> node ko SAARE ancestors ka rule maanna
      //   -> har node ki WINDOW (mini, maxi), neeche jaate tight hoti
-     bool solve(TreeNode *root, long long mini, long long maxi) {
-         if (root == NULL)
-             return true;                        // khaali subtree valid
-         if (root->val <= mini || root->val >= maxi)
-             return false;                       // <= aur >= : barabar bhi galat (BST me duplicate nahi)
-         bool left = solve(root->left, mini, root->val);    // LEFT jao -> maxi = val (chhota hona)
-         bool right = solve(root->right, root->val, maxi);  // RIGHT jao -> mini = val (bada hona)
-         return left && right;                   // && : dono subtree valid tabhi valid
-     }
+     // solve
+     if (root == NULL) return true;   // khaali subtree valid
+     if (root->val <= mini || root->val >= maxi)
+         return false;                       // <= aur >= : barabar bhi galat (BST me duplicate nahi)
+     bool left = solve(root->left, mini, root->val);    // LEFT jao -> maxi = val (chhota hona)
+     bool right = solve(root->right, root->val, maxi);  // RIGHT jao -> mini = val (bada hona)
+     return left && right;                   // && : dono subtree valid tabhi valid
 
-     bool isValidBST(TreeNode *root) {
-         return solve(root, LLONG_MIN, LLONG_MAX);   // long long: INT_MIN / INT_MAX se shuru kiya to node
-     }                                           //   khud INT_MAX ho ([2147483647]) -> strict = galat false
+     // isValidBST
+     return solve(root, LLONG_MIN, LLONG_MAX);   // long long: INT_MIN / INT_MAX se shuru kiya to node
+     //   khud INT_MAX ho ([2147483647]) -> strict = galat false
      // alt: inorder strictly increasing? -> BST (kth smallest ka near-transfer)
+
 ```
+
+---
 
 ---
 
