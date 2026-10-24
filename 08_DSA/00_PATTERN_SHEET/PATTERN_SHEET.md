@@ -1291,122 +1291,156 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
 
-┌── FAMILY: "assign PEHLE, update BAAD" ────────────────────────
-│ KYUN SAATH: current index ke liye pehle result store karo (left/right sum), PHIR running value update. order galat = bug.
-└───────────────────────────────────────────────────────────────
+── FAMILY: "assign PEHLE, update BAAD" (pehle current index ka result rakho, PHIR running value badlo) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PIVOT INDEX
  └──────────────────────────────────────────────────────────────
-     total nikaalo; leftSum chalao. order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
+     int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum (khud kisi taraf nahi)
+         int totalSum = 0;
+         int leftSum = 0;
+         for (int &it : nums)
+             totalSum += it;                     // pehle poora total
+         for (int i = 0; i < nums.size(); i++) {
+             int rightSum = totalSum - leftSum - nums[i];   // right = total - left - khud
+             if (leftSum == rightSum)
+                 return i;                       // pehla aisa index
+             leftSum += nums[i];                 // leftSum BAAD me: check ke baad hi khud ko left me jodo
+         }
+         return -1;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PRODUCT EXCEPT SELF (LC-238)
  └──────────────────────────────────────────────────────────────
-     ans[i] = (i se PEHLE sabka product) × (i ke BAAD sabka product).  no division, O(n).
-     running `prod` se 2 pass (assign-BEFORE-update dono me):
-        left-pass  (aage):    left[i]  = prod;  prod *= nums[i];   // prod=1 se shuru: index 0 ke left me koi nahi
-        right-pass (peeche):  prod=1;  right[i] = prod;  prod *= nums[i];   // prod=1 reset: left-pass ka bacha product saath mat lao · loop i=n-1 se i>=0 tak
-        combine:              ans[i] = left[i] * right[i].
-     ORDER TRAP: pehle ASSIGN (left[i]=prod), PHIR UPDATE (prod*=nums[i]) -> warna khud ka element bhi product me ghus jaata.
-     O(1) extra (follow-up poochhe to): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi).
+     // ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
+     // O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
+     vector<int> productExceptSelf(vector<int> &nums) {
+         int n = nums.size();
+         vector<int> left(n, 1);
+         vector<int> right(n, 1);
+         vector<int> ans(n, 1);
+         int prod = 1;                           // prod=1 se: index 0 ke left me koi nahi
+         for (int i = 0; i < n; i++) {
+             left[i] = prod;                     // ASSIGN PEHLE
+             prod *= nums[i];                    // UPDATE BAAD: warna khud ka element bhi product me
+         }
+         prod = 1;                               // reset: left-pass ka bacha product saath mat lao
+         for (int i = n - 1; i >= 0; i--) {      // peeche se: n-1 se 0 tak
+             right[i] = prod;                    // yahan bhi assign PEHLE
+             prod *= nums[i];
+         }
+         for (int i = 0; i < n; i++)
+             ans[i] = left[i] * right[i];        // combine
+         return ans;
+     }
 
-┌── (STANDALONE — apni alag trick) ─────────────────────────────
-└───────────────────────────────────────────────────────────────
+── (STANDALONE — apni alag trick) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ HIGHEST ALTITUDE
  └──────────────────────────────────────────────────────────────
-     running sum chalao, max track. (simple prefix)   // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
+     int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (simple prefix)
+         int sum = 0;
+         int maxi = 0;                           // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
+         for (int i = 0; i < gain.size(); i++) {
+             sum += gain[i];
+             maxi = max(maxi, sum);
+         }
+         return maxi;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ SUBARRAY SUMS DIVISIBLE BY K (LC-974)  = SUBARRAY-SUM-K + REMAINDER-key
  └──────────────────────────────────────────────────────────────
-     count subarrays: sum%k==0.
-     DERIVE: brute har subarray ka sum baar-baar -> redundancy -> running PREFIX sum -> do prefix ka remainder same = beech ka subarray %k==0.
-     ★ PREFIX KYUN, single A[i] NAHI: subarray = CONTIGUOUS range -> poore range ka sum chahiye -> do prefix ka farak = wahi subarray.
-     rem = ((sum%k)+k)%k;   count += mp[rem];   mp[rem]++;   // +k phir %k: negative sum ka % negative aata, alag bucket me jaata
-        mp[0]=1 SEED (khaali-prefix) · = subarray-sum-k, bas KEY = remainder (sum ki jagah).   // har step pehle sum += A[i], PHIR rem nikaalo
+     // brute: har subarray sum baar-baar -> PREFIX -> do prefix ka remainder same = beech wala %k==0
+     // PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
+     int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum % k == 0
+         unordered_map<int, int> mp;
+         int sum = 0, count = 0;
+         mp[0] = 1;                              // SEED (khaali prefix): shuru se hi divisible wala bhi gino
+         for (auto &it : nums) {
+             sum += it;                          // pehle sum += , PHIR rem nikaalo
+             int rem = ((sum) % k + k) % k;      // +k phir %k: negative sum ka % negative aata
+             count += mp[rem];                   // = subarray-sum-k, bas KEY = remainder (sum ki jagah)
+             mp[rem]++;
+         }
+         return count;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COUNT SUBARRAYS WITH XOR = K  = SUBARRAY-SUM-K, bas + ki jagah ^
  └──────────────────────────────────────────────────────────────
-     count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
-     ★ CHAABI:  x ^ x = 0   (same number khud se XOR = gayab)
-        isliye  (shuru se j tak ka XOR) ^ (shuru se i tak ka XOR) = beech wala subarray ka XOR   (common hissa kat gaya)
-        chahiye beech wala = k  ->  pichhla XOR = abhi ka XOR ^ k  ->  map me dekho kitni baar aaya
-     mp[0] = 1;                    // shuru se hi XOR == k wala subarray bhi gino
-     xorr ^= it;                   // abhi tak ka XOR
-     count += mp[xorr ^ k];        // pichhla XOR jo chahiye, kitni baar dikha
-     mp[xorr]++;                   // abhi wala map me, lookup ke BAAD
+     // [4,2,2,6,4], k=6 -> 4.   CHAABI: x ^ x = 0 (same number khud se XOR = gayab)
+     // (shuru se j tak XOR) ^ (shuru se i tak XOR) = beech ka XOR (common hissa kat gaya)
+     // beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni baar aaya
+     int subarrayXorK(vector<int> &nums, int k) {
+         unordered_map<int, int> mp;
+         mp[0] = 1;                              // shuru se hi XOR == k wala subarray bhi gino
+         int xorr = 0, count = 0;
+         for (auto &it : nums) {
+             xorr ^= it;                         // abhi tak ka XOR
+             count += mp[xorr ^ k];              // pichhla XOR jo chahiye, kitni baar dikha
+             mp[xorr]++;                         // abhi wala map me, lookup ke BAAD
+         }
+         return count;
+     }
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
  └──────────────────────────────────────────────────────────────
-     Q: kitne subarrays jinka MAXIMUM element bilkul K ho. [8,2,1,3,4,5,1,10],K=3 -> 3 ([2,1,3],[1,3],[3]).
-     valid = (har element <= K) AND (>=1 element == K).
-
-     ★ TRAP-instinct (jo dhoka deta): "subarray"->SW · "max"->monotonic STACK · "count"->PQ.
-        SAB galat -> max FIXED-K se compare (relative nahi) -> stack/SW ki zaroorat NAHI. SIMPLE LINEAR scan.
-
-     KEY INSIGHT: K se BADE elements = WALL (array ko todte). segment ke andar K-wale subarrays gino.
-     do INDEX track (dono init -1):   // -1: abhi koi wall/K nahi, start index 0 se gino
-        lastWall = aakhri index jahan arr[i] > K
-        lastK    = aakhri index jahan arr[i] == K
-     har i pe:  if (lastK > lastWall)  count += (lastK - lastWall);   // start-choices = lastWall+1 .. lastK · pehle lastWall/lastK update, PHIR count
-     ★ guard lastK > lastWall KYUN: warna (lastK - lastWall) NEGATIVE (K kisi wall ke peeche dab gaya) -> count galat. ([5,3,5] pe dikhta)
-     ★ count ~n^2/2 (5e9) -> LONG LONG (int overflow).
-
- common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
-
- ┌────────────────────────────────────────────────────────────
- │ ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)
- │   = prefix-sum ka ULTA · aur SWEEP-LINE ka sagaa bhai (MEETING ROOMS II, PATTERN 15)
- └────────────────────────────────────────────────────────────
-     KAB : "har RANGE pe kuch ADD karo" — aur aise 20,000 range hain.
-           seedha karo to har range pe loop = O(range × length). Chahiye O(n + ranges).
-     SAAR: har element ko CHHUO MAT. Sirf DO jagah nishaan lagao — jahan se shuru, aur jahan se khatam.
-           phir ek baar chal ke chalti-sum lo — wahi asli value hai.
-
-     TEMPLATE:
-         vector<int> diff(n + 2, 0);                   // ★ n+2 (end+1 ka max n+1 ho sakta)
-         for (auto &it : bookings) {
-             diff[ it[0] ]     += it[2];               // yahan se shuru
-             diff[ it[1] + 1 ] -= it[2];               // yahan ke BAAD khatam (+1: last din bhi inclusive, uske agle din se hatao)
+     // kitne subarray jinka MAX bilkul K. [8,2,1,3,4,5,1,10],K=3 -> 3 ([2,1,3],[1,3],[3])
+     // valid = (har element <= K) AND (>=1 element == K)
+     // TRAP: "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
+     // K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
+     long long countSubarraysMaxK(vector<int> &arr, int K) {
+         int lastWall = -1;                      // aakhri index jahan arr[i] > K  (-1: abhi koi wall nahi)
+         int lastK = -1;                         // aakhri index jahan arr[i] == K (-1: abhi koi K nahi)
+         long long count = 0;                    // LONG LONG: count ~n^2/2 (5e9) -> int overflow
+         for (int i = 0; i < arr.size(); i++) {
+             if (arr[i] > K)
+                 lastWall = i;                   // pehle lastWall / lastK update, PHIR count
+             if (arr[i] == K)
+                 lastK = i;
+             if (lastK > lastWall)               // guard: warna lastK - lastWall NEGATIVE ([5,3,5] pe dikhta)
+                 count += lastK - lastWall;      // start choices = lastWall+1 .. lastK
          }
-         vector<int> ans;  int run = 0;   // run=0: chalti-sum abhi khaali
-         for (int i = 1; i <= n; i++) { run += diff[i]; ans.push_back(run); }   // 1..n: flights 1-based, diff[0] aur diff[n+1] answer me nahi
+         return count;
+     }
 
-     DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
-         diff:   idx  1    2    3    4    5    6
-                     +10  +20  -10  -20   .   -25
-                          +25
-                 ---------------------------------
-                 net  +10  +45  -10  -20   0   -25
-         run :        10   55   45   25   25
-         ans = [10, 55, 45, 25, 25]
-
-     ★★ SWEEP-LINE se RISHTA (Arpan ne khud jod diya — "dono same hain, bas do farak"):
-     ```
-                          MEETING ROOMS II            DIFFERENCE ARRAY (yahan)
-        rakhte kahan  ->  map<int,int>                plain array
-                          (time BADI/bikhri: 10^9)    (index CHHOTI+ghani: 1..n)
-
-        interval      ->  [start, end)  EXCLUSIVE     [first, last]  INCLUSIVE
-        ghatate kahan ->  -1 at  end                  -count at  end+1
-                          ★ +1 isliye, kyunki AAKHRI wala bhi SHAAMIL hai.
-                            inclusive me `end` pe ghataya = aakhri element CHHOOT gaya.
-
-        nikaalte kya  ->  chalti-sum ka MAX            chalti-sum ka POORA array
-                          ("kitne kamre")              ("har flight ka total")
-     ```
-     -> MACHINE EK HAI. Sirf teen cheez badalti: kahan rakho · kahan ghatao · kya nikaalo.
-
-     ★ EDGE: `diff` ka size `n+2` — `end+1` sabse bada `n+1` ho sakta hai. `n+1` rakha to crash.
-
-     FAMILY: range-add · range-flip · car-pooling · "kitne ek-saath" — sab isi machine pe.
-             (JP OA bank me ye family 3-4 baar aayi hai — "Interval Flip Operations",
-              "Minimum Cores", "Maximum Concurrent Tasks")
+ ┌──────────────────────────────────────────────────────────────
+ │ ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)
+ │   = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II, PATTERN 15) ka sagaa bhai
+ └──────────────────────────────────────────────────────────────
+     // KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
+     // har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
+     // n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
+     vector<int> corpFlightBookings(vector<vector<int>> &bookings, int n) {
+         vector<int> diff(n + 2);                // n+2: end+1 sabse bada n+1 ho sakta (n+1 rakha to crash)
+         for (auto &it : bookings) {
+             int start = it[0];
+             int end = it[1];
+             int count = it[2];
+             diff[start] += count;               // yahan se shuru
+             diff[end + 1] -= count;             // +1: last din bhi inclusive, uske AGLE din se hatao
+         }
+         vector<int> ans;
+         int cummSum = 0;                        // chalti-sum abhi khaali
+         for (int i = 1; i <= n; i++) {          // 1..n: flights 1-based, diff[0] / diff[n+1] answer me nahi
+             cummSum += diff[i];
+             ans.push_back(cummSum);
+         }
+         return ans;
+     }
+     // SWEEP-LINE se farak (machine EK, teen cheez badalti):
+     //   rakho : meeting rooms = map (time bada / bikhra, 10^9) · yahan = plain array (index chhota, 1..n)
+     //   ghatao: meeting rooms [start,end) exclusive -> -1 at end
+     //           yahan [first,last] inclusive -> -count at end+1
+     //           (inclusive me end pe ghataya = aakhri element chhoot gaya)
+     //   nikalo: meeting rooms = chalti-sum ka MAX ("kitne kamre")
+     //           yahan = poora array ("har flight ka total")
+     // FAMILY: range-add · range-flip · car-pooling · "kitne ek-saath"
+     //   (JP OA bank me 3-4 baar: "Interval Flip Operations", "Minimum Cores", "Maximum Concurrent Tasks")
 ```
 
 ---
