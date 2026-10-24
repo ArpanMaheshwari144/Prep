@@ -1,5 +1,7 @@
 # URL shortener: shuru se, ek kahani
 
+**Mock se pehle hand notes:** [URL_HAND_NOTES.md](URL_HAND_NOTES.md)
+
 Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
 me ek hi kahani hai: Arpan ka Amazon wala link.
