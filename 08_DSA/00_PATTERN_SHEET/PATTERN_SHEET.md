@@ -1064,93 +1064,68 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── (STANDALONE — har ek apni index-navigation) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SET MATRIX ZEROES
- └──────────────────────────────────────────────────────────────
-     void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m+n) space
-         int row = matrix.size();
-         int col = matrix[0].size();
-         vector<int> zeroRow(row, -1);           // -1 = unmarked
-         vector<int> zeroCol(col, -1);
-         for (int i = 0; i < row; i++)           // pass-1: sirf MARK karo
-             for (int j = 0; j < col; j++)
-                 if (matrix[i][j] == 0) {        // 2 pass: ek hi pass me 0 kiya to naye 0 bhi mark ho jaate
-                     zeroRow[i] = 0;
-                     zeroCol[j] = 0;
-                 }
-         for (int i = 0; i < row; i++)           // pass-2: marked ho to 0
-             for (int j = 0; j < col; j++)
-                 if (zeroRow[i] == 0 || zeroCol[j] == 0)   // || : row ya col koi ek bhi marked -> 0
-                     matrix[i][j] = 0;
-     }
+ ▸ SET MATRIX ZEROES
+     // in-place, 2 marker array, O(m+n) space
+     int row = matrix.size(); int col = matrix[0].size(); vector<int> zeroRow(row, -1);   // -1 = unmarked
+     vector<int> zeroCol(col, -1);
+     for (int i = 0; i < row; i++)           // pass-1: sirf MARK karo
+         for (int j = 0; j < col; j++)
+             if (matrix[i][j] == 0)          // 2 pass: ek hi pass me 0 kiya to naye 0 bhi mark ho jaate
+                 zeroRow[i] = 0; zeroCol[j] = 0;
+     for (int i = 0; i < row; i++)           // pass-2: marked ho to 0
+         for (int j = 0; j < col; j++)
+             if (zeroRow[i] == 0 || zeroCol[j] == 0)   // || : row ya col koi ek bhi marked -> 0
+                 matrix[i][j] = 0;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
- └──────────────────────────────────────────────────────────────
-     vector<int> spiralOrder(vector<vector<int>> &matrix) {
-         int row = matrix.size();
-         int col = matrix[0].size();
-         int top = 0, bottom = row - 1, left = 0, right = col - 1;   // -1 : inclusive, isliye loop <=
-         vector<int> ans;
-         while (top <= bottom && left <= right) {   // <= : ek akeli row / col bachi ho tab bhi chhaapni hai
-             for (int i = left; i <= right; i++)
-                 ans.push_back(matrix[top][i]);  // top row L->R : [top][i]
-             top++;                              // turant: right col wala loop ye corner dobara na le
-             for (int i = top; i <= bottom; i++)
-                 ans.push_back(matrix[i][right]);   // right col T->B : [i][right]
-             right--;                            // turant: bottom row wala loop ye corner dobara na le
-             if (top <= bottom)                  // GUARD: bottom row bachi? (ek hi row -> ulti dobara)
-                 for (int i = right; i >= left; i--)
-                     ans.push_back(matrix[bottom][i]);   // bottom row R->L : [bottom][i]
-             bottom--;
-             if (left <= right)                  // GUARD: left col bachi? (ek hi col -> dobara)
-                 for (int i = bottom; i >= top; i--)
-                     ans.push_back(matrix[i][left]);     // left col B->T : [i][left]
-             left++;
-         }
-         return ans;
-     }
+ ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
+     int row = matrix.size(); int col = matrix[0].size();
+     int top = 0, bottom = row - 1, left = 0, right = col - 1;   // -1 : inclusive, isliye loop <=
+     while (top <= bottom && left <= right)     // <= : ek akeli row / col bachi ho tab bhi chhaapni hai
+         for (int i = left; i <= right; i++)
+             ans.push_back(matrix[top][i]);  // top row L->R : [top][i]
+         top++;                              // turant: right col wala loop ye corner dobara na le
+         for (int i = top; i <= bottom; i++)
+             ans.push_back(matrix[i][right]);   // right col T->B : [i][right]
+         right--;                            // turant: bottom row wala loop ye corner dobara na le
+         if (top <= bottom)                  // GUARD: bottom row bachi? (ek hi row -> ulti dobara)
+             for (int i = right; i >= left; i--)
+                 ans.push_back(matrix[bottom][i]);   // bottom row R->L : [bottom][i]
+         bottom--;
+         if (left <= right)                  // GUARD: left col bachi? (ek hi col -> dobara)
+             for (int i = bottom; i >= top; i--)
+                 ans.push_back(matrix[i][left]);     // left col B->T : [i][left]
+         left++;
      // guard sirf 3rd / 4th loop pe: 1st / 2nd ko while(top<=bottom && left<=right) bacha leta
      // [[1,2,3]]: top row 1 2 3 -> top=1 > bottom=0 -> bottom row skip (warna 2 1 dobara)
      // [[1],[2],[3]]: right col ke baad right=-1 < left=0 -> left col skip (warna 2 dobara)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ TRANSPOSE
- └──────────────────────────────────────────────────────────────
-     vector<vector<int>> transpose(vector<vector<int>> &matrix) {
-         int row = matrix.size();
-         int col = matrix[0].size();
-         vector<vector<int>> ans(col, vector<int>(row, -1));   // naya col x row size (non-square bhi)
-         for (int i = 0; i < col; i++)           // outer i < col
-             for (int j = 0; j < row; j++)       // inner j < row
-                 ans[i][j] = matrix[j][i];
-         return ans;
-     }
+ ▸ TRANSPOSE
+     int row = matrix.size(); int col = matrix[0].size();
+     vector<vector<int>> ans(col, vector<int>(row, -1));   // naya col x row size (non-square bhi)
+     for (int i = 0; i < col; i++)           // outer i < col
+         for (int j = 0; j < row; j++)       // inner j < row
+             ans[i][j] = matrix[j][i];
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
- └──────────────────────────────────────────────────────────────
+ ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
      // 1 = server. communicate = uski ROW ya COL me koi DOOSRA server. row + col dono me akela -> nahi gino
      // [[1,0],[1,1]] -> 3  ·  [[1,0],[0,1]] -> 0
-     int countServers(vector<vector<int>> &grid) {   // set zeroes ki 2 marker trick, MARK ki jagah COUNT
-         int m = grid.size();
-         int n = grid[0].size();
-         vector<int> rowCount(m, 0);             // 0 se: abhi kisi row / col me koi server gina nahi
-         vector<int> colCount(n, 0);
-         for (int i = 0; i < m; i++)             // pass-1: poori ginti, tabhi pass-2 me pata akela ya nahi
-             for (int j = 0; j < n; j++)
-                 if (grid[i][j] == 1) {
-                     rowCount[i]++;
-                     colCount[j]++;
-                 }
-         int count = 0;
-         for (int i = 0; i < m; i++)             // pass-2: check
-             for (int j = 0; j < n; j++)
-                 if (grid[i][j] == 1 && (rowCount[i] > 1 || colCount[j] > 1))   // >1 : khud ke alawa koi aur
-                     count++;                    // || : row ya col koi ek kaafi
-         return count;                           // O(m*n)
-     }
+     // set zeroes ki 2 marker trick, MARK ki jagah COUNT
+     int m = grid.size(); int n = grid[0].size();
+     vector<int> rowCount(m, 0);             // 0 se: abhi kisi row / col me koi server gina nahi
+     vector<int> colCount(n, 0);
+     for (int i = 0; i < m; i++)             // pass-1: poori ginti, tabhi pass-2 me pata akela ya nahi
+         for (int j = 0; j < n; j++)
+             if (grid[i][j] == 1)  rowCount[i]++; colCount[j]++;
+     int count = 0;
+     for (int i = 0; i < m; i++)             // pass-2: check
+         for (int j = 0; j < n; j++)
+             if (grid[i][j] == 1 && (rowCount[i] > 1 || colCount[j] > 1))   // >1 : khud ke alawa koi aur
+                 count++;                    // || : row ya col koi ek kaafi
+     return count;                           // O(m*n)
+
 ```
+
+---
 
 ---
 
