@@ -78,7 +78,7 @@ KAFKA (topic, disk pe)    -> khabar disk pe likhi jaati hai, padhne se mit-ti NA
 
 **Isliye Kafka.** Line ko Kafka me **topic** kehte hain (`order-events`). Padhne se khabar mit-ti nahi,
 isliye ek hi khabar teen service padh leti hain, aur kal Coupon Service aaya to wo bas padhna shuru kar degi,
-Order Service me ek line nahi badalti. Har service apna bookmark rakhti hai ki kahan tak padha (**offset**), to
+Order Service me ek line nahi badalti. Har service apna bookmark rakhti hai ki agla kaunsa padhna (**offset**), to
 Fraud dheema hua to bas wo peeche rahega, SMS nahi rukega. Disk pe hai, to kuch din (jaise 7 din) rakhi
 rehti hai, aur kisi service me bug tha to bookmark peeche karke dobara padh sakte hain.
 
@@ -180,7 +180,7 @@ ne bookmark dekha (abhi bhi purana), aur wahi khabar dobara padhi. Arpan ko 2 SM
 
 ### Kadam 5: bookmark se pehle gira, 2 SMS (pehle kaam phir commit + eventId)
 
-Machine A ka kaam teen kadam ka tha: khabar padho, SMS bhejo, phir Kafka ko batao "yahan tak padh liya"
+Machine A ka kaam teen kadam ka tha: khabar padho, SMS bhejo, phir Kafka ko batao "agli baar yahan se"
 (bookmark aage karna = **commit**). SMS bheja aur commit se pehle gir gayi. Bookmark purana hi raha, to B ne
 wahi khabar dobara padhi.
 

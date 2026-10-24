@@ -92,9 +92,9 @@ flowchart LR
 ```
 
 P1 sirf banda-B ke paas hai, to Arpan ko ek hi SMS jaata hai. Fraud Service alag team hai ("fraud"), use apni poori
-copy milti hai. Har team apna bookmark rakhti hai ki kahan tak padha, ise **offset** kehte hain. Isliye Fraud
-dheema chale to bhi SMS nahi rukta. Aur banda-B gir jaaye to Kafka uska tukda P1 banda-A ya banda-C ko de deta
-hai, ise **rebalance** kehte hain.
+copy milti hai. Har team apna bookmark rakhti hai ki agli baar kaunsa number padhna hai, ise **offset** kehte
+hain. Isliye Fraud dheema chale to bhi SMS nahi rukta. Aur banda-B gir jaaye to Kafka uska tukda P1 banda-A ya
+banda-C ko de deta hai, ise **rebalance** kehte hain.
 
 Par banda-B girta kab hai, ye bhi maayne rakhta hai. Ek din wo kaam karte-karte beech me gir gaya.
 
@@ -103,22 +103,23 @@ Par banda-B girta kab hai, ye bhi maayne rakhta hai. Ek din wo kaam karte-karte 
 ## 4. Commit
 
 banda-B ka kaam teen kadam ka hai: P1 se agli khabar uthao ("2 cancel"), Arpan ko SMS bhejo, phir Kafka ko batao
-"2 tak padh liya". Ye aakhri kadam, bookmark aage karna, **commit** kehlata hai.
+"agli baar 3 se padhna". Ye aakhri kadam, bookmark aage karna, **commit** kehlata hai. Bookmark pe hamesha **agla**
+number hota hai: "2 cancel" ho gaya to bookmark 3.
 
 ```mermaid
 flowchart LR
     O["Order Service"] --> P1
     subgraph T["topic order-events"]
-        P1[("P1 · Arpan<br/>0 order · 1 pay · 2 cancel<br/>bookmark: 1")]
+        P1[("P1 · Arpan<br/>0 order · 1 pay · 2 cancel<br/>bookmark: 2")]
     end
-    P1 -- "2 cancel" --> B["TEAM sms: banda-B<br/>1. SMS bheja<br/>2. commit (bookmark 2)"]
+    P1 -- "2 cancel" --> B["TEAM sms: banda-B<br/>1. SMS bheja<br/>2. commit (bookmark 3)"]
     style B fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-banda-B ne SMS bheja aur commit se pehle gir gaya. Bookmark abhi 1 pe hai. P1 banda-A ko mila, usne bookmark dekha
+banda-B ne SMS bheja aur commit se pehle gir gaya. Bookmark abhi 2 pe hai. P1 banda-A ko mila, usne bookmark dekha
 aur "2 cancel" dobara padha. Arpan ko 2 SMS chale gaye.
 
-Ulta karte (pehle commit, phir SMS) to aur bura hota: bookmark 2 pe chala jaata, banda-A 3 se padhta, aur "2 cancel"
+Ulta karte (pehle commit, phir SMS) to aur bura hota: bookmark 3 pe chala jaata, banda-A 3 se padhta, aur "2 cancel"
 ka SMS kabhi jaata hi nahi.
 
 Isliye kram pakka hai: pehle kaam, phir commit. Khabar kabhi khoti nahi, bas kabhi dobara aa jaati hai. Dobara aayi
