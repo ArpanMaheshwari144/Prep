@@ -164,3 +164,34 @@ flowchart LR
 Par Diwali sale aayi, data aur badha, to 20 se 21 machine kar di. Ab `% 20` ki jagah `% 21` ho gaya, aur
 lagbhag har key ki machine badal gayi. "user:42" machine 7 me pada hai, par client ab use machine 15 me
 dhoondh raha hai. Lagbhag saare cache ek saath MISS hone lage, aur saari bheed seedha DB pe gir padi.
+
+### Kadam 4: machine judi to saare MISS (ring = consistent hashing)
+
+Wahi ring jo URL me thi. Ek gol ghadi socho, 0 se 360 tak. Har cache machine ghadi pe ek jagah baithti hai.
+Har key bhi hash hoke ghadi pe ek jagah girti hai, aur wahan se ghadi ki disha me chalte hue jo pehli machine
+mile, key usi ki hai.
+
+21vi machine aayi aur 95 pe baithi. Ab sirf 60 se 95 ke beech wali key nayi machine pe jaati hain, baaki sab
+apni jagah rehti hain. `%` me lagbhag saari key hilti thi, ring me sirf ek tukda (lagbhag 1/21) hilta hai.
+Matlab sirf thodi key MISS hoti hain, aur DB pe bas thoda bojh aata hai.
+
+```mermaid
+flowchart LR
+    A["App<br/>+ cache client: RING<br/>(har machine ghadi pe 100-200 jagah)"] --> M7["Cache machine 7"]
+    A --> M3["Cache machine 3"]
+    A --> M21["Cache machine 21 (nayi)<br/>sirf 60-95 wali key isme aayi"]
+    A -.->|"nahi mila"| D[("DB")]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M21 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+**Virtual nodes:** sirf 21 machine ghadi pe baithi hon to unke beech ki doori barabar nahi hoti. Kisi machine
+ke hisse me bada tukda aata hai aur wo zyada bhar jaati hai. Isliye har machine ko ghadi pe ek jagah nahi,
+100-200 jagah bithate hain. Tab har machine ke hisse me lagbhag barabar key aati hain.
+
+Cache me ye URL se zyada zaroori kyun hai: URL me machine judne pe data shift hota tha. Cache me data shift
+nahi hota, key bas MISS hoti hai aur DB se dobara aati hai. Isliye jitni kam key hilen, DB pe utni kam bheed
+girti hai.
+
+Ab data baant diya. Par dopahar ko cache machine 7 mar gayi. Uske hisse ki saari key ab MISS ho rahi hain, aur
+un sabka bojh ek saath DB pe aa gaya.
