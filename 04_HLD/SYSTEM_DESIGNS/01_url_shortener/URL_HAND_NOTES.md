@@ -8,7 +8,7 @@ Kaam do hi hain: lamba link do to 7 akshar ka chhota code milta hai, aur koi chh
 
 2. Ab sawaal ye hai ki code bane kaise aur do logon ko same na mile. Iske liye COUNTER + BASE62 lagaya: har link ko ek naya number milta hai, aur us number ko 62 akshar me likhte hain. Random ya hash me do logon ko same code mil sakta hai, aur har baar DB me jaanchna padta. Counter me number kabhi dohraata hi nahi.
 
-3. Har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna dheema hai. Isliye beech me REDIS lagaya, jo memory me rakhta hai. Redis bhar jaaye to jo link sabse der se nahi khula, use hata dete hain (LRU).
+3. Har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna dheema hai. Isliye beech me REDIS lagaya, jo memory me rakhta hai. Redis bhar jaaye to jo link sabse der se nahi khula, use hata dete hain (LRU). Dhyaan: LRU ka matlab sabse DER se use nahi hua; "sabse kam BAAR use hua" LFU hota hai.
 
 4. Ek app server itna bojh nahi jhelta, aur wo gira to poori site band. Isliye kai server lagaye aur aage LB (load balancer). Par ab har server ka apna counter ho to do server same number de denge. Isliye COUNTER RANGE: beech ka counter har server ko 1,000 number ka alag dabba deta hai.
 
@@ -20,15 +20,25 @@ DB kaunsa lein? Data bas code se link hai. Join ya transaction nahi chahiye, par
 
 7. Ek DB machine giri to us pe pade link 404 dene lage. Isliye har link ki 3 COPY teen alag machine pe rakhte hain. Ek gire tab bhi do bachi rehti hain.
 
-8. Ek link viral hua, 1 crore log ek saath khol rahe hain, aur sab Redis ki ek hi machine pe ja rahe hain. Isliye har app server apni memory me us garam link ko 5-10 second rakh leta hai (LOCAL CACHE). 302 hi rakhte hain, 301 nahi, taaki har click hamare paas aaye aur bura link band kar sakein.
+8. Ek link viral hua, 1 crore log ek saath khol rahe hain, aur sab Redis ki ek hi machine pe ja rahe hain. Isliye har app server apni memory me us garam link ko 5-10 second rakh leta hai (LOCAL CACHE). Yahan Redis giri nahi, sirf bheed se dheemi hai, isliye replica ko main banane se kaam nahi chalta: bojh nayi main pe chala jaata. Request Redis tak pahunchne se pehle hi rokni hai. 302 hi rakhte hain, 301 nahi, taaki har click hamare paas aaye aur bura link band kar sakein.
 
-9. Ek bot har second hazaron link bana raha hai. Isliye link banane pe RATE LIMIT lagaya, ek user ek minute me 10 link, usse zyada pe 429. Saath me bure link ko kaali list se jaanch ke banne hi nahi dete.
+9. Ek bot har second hazaron link bana raha hai. Isliye link banane pe RATE LIMIT lagaya, ek user ek minute me 10 link, usse zyada pe 429. Limit user pe lagate hain, IP pe nahi, kyunki ek office ke saare log ek hi IP se aate hain. Jo bot baar-baar aaye, use WAF me block kar do. Saath me bure link ko kaali list se jaanch ke banne hi nahi dete.
 
 ### Agar Pooche
 
-- Link bana aur dost ko turant 404 mila: QUORUM. 3 me se 2 copy pe likho aur 2 se padho, to naya link kam se kam ek copy pe zaroor milega.
+- Link bana aur dost ko turant 404 mila: QUORUM. Har link teeno copy pe likha jaata hai, par 3 me se 2 copy se "haan" aate hi aage badh jaate hain. Padhte waqt bhi 2 copy se padhte hain. Isliye likhne wali 2 aur padhne wali 2 me kam se kam ek copy common hoti hai, aur naya link mil jaata hai.
 
 - Redis ki entry expire hui aur sab ek saath DB pe toot pade: LOCK (single flight). Sirf pehli request DB jaati hai, baaki thoda ruk ke Redis se lete hain.
+
+- Lock wali request hi dheemi pad gayi: Redis me do time rakho, SOFT (1 ghanta) aur HARD (1 din). Soft nikla to ek request peeche se taaza link laati hai, baaki sabko purana link turant milta hai. Link badalta nahi, isliye purana bhi sahi hai. Lock pe 2 second ka time, DB call pe 500 ms ka timeout.
+
+- Koi bhi dabba gira: har dabbe ki copy hai. LB (AWS ALB) kai zone me chalta hai, counter ki copy hai, Redis ki copy hai. Cassandra AWS pe Keyspaces ya EC2 pe khud chalate hain.
+
+- Click ki ginti chahiye: redirect turant karo, click ki khabar Kafka me daalo, Analytics peeche se ginta hai.
+
+- Duniya bhar se log aaye: Route 53 har user ko uske paas wale region pe bhejta hai.
+
+- Traffic 10 guna ho gaya: app server badhao, garam link Redis me rakho, Cassandra ki machine badhao.
 
 ### Wrap
 
