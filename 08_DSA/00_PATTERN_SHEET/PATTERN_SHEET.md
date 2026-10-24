@@ -1889,169 +1889,115 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  BROAD IDEA: ek value AAGE carry karo (min/sum), har step MAX update. single pass, O(1) space.
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ BUY/SELL STOCK (LC-121)
- └──────────────────────────────────────────────────────────────
-     int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab tak ka sasta
-         int ans = INT_MIN;
-         int minSoFar = INT_MAX;                 // INT_MAX: pehla din hi sasta ban jaaye
-         for (int i = 0; i < prices.size(); i++) {
-             minSoFar = min(minSoFar, prices[i]);        // min PEHLE: diff minus nahi, sell buy ke BAAD
-             ans = max(ans, prices[i] - minSoFar);
-         }
-         return ans < 0 ? 0 : ans;
-     }
+ ▸ BUY/SELL STOCK (LC-121)
+     // aaj becho = aaj ka daam MINUS ab tak ka sasta
+     int ans = INT_MIN; int minSoFar = INT_MAX;   // INT_MAX: pehla din hi sasta ban jaaye
+     for (int i = 0; i < prices.size(); i++)
+         minSoFar = min(minSoFar, prices[i]);    // min PEHLE: diff minus nahi, sell buy ke BAAD
+         ans = max(ans, prices[i] - minSoFar);
+     return ans < 0 ? 0 : ans;
      // brute = saare pair (i<j), O(n^2). REDUNDANCY = har sell-din pe peeche ka sasta baar-baar
-     //   scan -> us min ko VARIABLE me CACHE -> O(n) (redundancy -> cache = running min)
+     // scan -> us min ko VARIABLE me CACHE -> O(n) (redundancy -> cache = running min)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX SUBARRAY SUM (LC-53)
- └──────────────────────────────────────────────────────────────
-     int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> sum = 0
-         int maxSum = INT_MIN;                   // INT_MIN: all-negative [-1] bhi pakde
-         int sum = 0;                            // 0 se: abhi tak kuch joda nahi
-         for (auto &it : nums) {
-             sum += it;
-             maxSum = max(maxSum, sum);          // max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
-             if (sum < 0)
-                 sum = 0;
-         }
-         return maxSum;
-     }
+ ▸ MAX SUBARRAY SUM (LC-53)
+     // running sum NEGATIVE = bojh -> sum = 0
+     int maxSum = INT_MIN;                       // INT_MIN: all-negative [-1] bhi pakde
+     int sum = 0;                                // 0 se: abhi tak kuch joda nahi
+     for (auto &it : nums)
+         sum += it; maxSum = max(maxSum, sum);   // max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
+         if (sum < 0) sum = 0;
+     return maxSum;
 
 ── FAMILY: flip ho to MIN bhi + 3 candidate + FREEZE (temp) · 53 sum · 152 product · 1749 abs ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX PRODUCT SUBARRAY (LC-152)
- └──────────────────────────────────────────────────────────────
-     int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
-         int mini = 1;                           // SHURUAAT: mini = maxi = 1, ans = INT_MIN, loop 0 se
-         int maxi = 1;                           //   (loop 1 se ho to ans bhi nums[0] se; warna [4,-3] pe 0)
-         int ans = INT_MIN;                      // INT_MIN: 0 se [-2] pe 0 aata, sahi -2
-         for (int i = 0; i < nums.size(); i++) {
-             int temp = max({nums[i], mini * nums[i], maxi * nums[i]});   // 3 candidate, temp me:
-             mini = min({nums[i], mini * nums[i], maxi * nums[i]});       // FREEZE: min purane max se
-             maxi = temp;                        // max min ke BAAD
-             ans = max(ans, maxi);
-         }
-         return ans;
-     }
+ ▸ MAX PRODUCT SUBARRAY (LC-152)
+     // neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
+     int mini = 1;                               // SHURUAAT: mini = maxi = 1, ans = INT_MIN, loop 0 se
+     int maxi = 1;                               // (loop 1 se ho to ans bhi nums[0] se; warna [4,-3] pe 0)
+     int ans = INT_MIN;                          // INT_MIN: 0 se [-2] pe 0 aata, sahi -2
+     for (int i = 0; i < nums.size(); i++)
+         int temp = max({nums[i], mini * nums[i], maxi * nums[i]});   // 3 candidate, temp me:
+         mini = min({nums[i], mini * nums[i], maxi * nums[i]});   // FREEZE: min purane max se
+         maxi = temp; ans = max(ans, maxi);      // max min ke BAAD
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX ABSOLUTE SUM (LC-1749)
- └──────────────────────────────────────────────────────────────
-     int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: * -> +, ans me ABS
-         int n = nums.size();
-         if (n == 1)
-             return abs(nums[0]);                // n==1 pe abs ([-7] -> 7)
-         int mini = 0;                           // SHURUAAT: 0, 0, 0, loop 0 se: + me 0 kuch nahi jodta, abs
-         int maxi = 0;                           //   kabhi minus nahi (loop 1 se tha to [9,-6] pe 6, sahi 9)
-         int ans = 0;
-         for (int i = 0; i < n; i++) {
-             int temp = max({nums[i], mini + nums[i], maxi + nums[i]});
-             mini = min({nums[i], mini + nums[i], maxi + nums[i]});       // temp FREEZE, product jaisa
-             maxi = temp;
-             ans = max(ans, max(abs(mini), abs(maxi)));   // answer minSum se bhi aa sakta -> abs dono
-         }
-         return ans;                             // [2,-5,1,-4,3,-2] -> [-5,1,-4] = -8 -> 8
-     }
+ ▸ MAX ABSOLUTE SUM (LC-1749)
+     // = MAX PRODUCT skeleton, 2 tweak: * -> +, ans me ABS
+     int n = nums.size();
+     if (n == 1) return abs(nums[0]);            // n==1 pe abs ([-7] -> 7)
+     int mini = 0;                               // SHURUAAT: 0, 0, 0, loop 0 se: + me 0 kuch nahi jodta, abs
+     int maxi = 0; int ans = 0;                  // kabhi minus nahi (loop 1 se tha to [9,-6] pe 6, sahi 9)
+     for (int i = 0; i < n; i++)
+         int temp = max({nums[i], mini + nums[i], maxi + nums[i]});
+         mini = min({nums[i], mini + nums[i], maxi + nums[i]}); maxi = temp;   // temp FREEZE, product jaisa
+         ans = max(ans, max(abs(mini), abs(maxi)));   // answer minSum se bhi aa sakta -> abs dono
+     return ans;                                 // [2,-5,1,-4,3,-2] -> [-5,1,-4] = -8 -> 8
 
 ── (STANDALONE — apni alag trick) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
- └──────────────────────────────────────────────────────────────
+ ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
      // circular (end -> start wrap), max-sum NON-EMPTY subarray. TRICK: PATA hona chahiye
      // A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL - min
-     int maxKadaneK(vector<int> &nums) {
-         int sum = nums[0];                      // init sum = maxSum = nums[0], loop 1 se (ya 0 + INT_MIN)
-         int maxSum = nums[0];
-         for (int i = 1; i < nums.size(); i++) {
-             sum = max(sum + nums[i], nums[i]);
-             maxSum = max(maxSum, sum);
-         }
+     int maxKadaneK(vector<int> &nums)
+         int sum = nums[0]; int maxSum = nums[0];   // init sum = maxSum = nums[0], loop 1 se (ya 0 + INT_MIN)
+         for (int i = 1; i < nums.size(); i++) sum = max(sum + nums[i], nums[i]); maxSum = max(maxSum, sum);
          return maxSum;
-     }
 
-     int minKadaneK(vector<int> &nums) {         // Kadane ka MIN version (prefix-sum se NAHI)
-         int sum = nums[0];                      // init nums[0], loop 1 se (ya 0 + INT_MAX)
-         int minSum = nums[0];
-         for (int i = 1; i < nums.size(); i++) {
-             sum = min(sum + nums[i], nums[i]);
-             minSum = min(minSum, sum);
-         }
+     int minKadaneK(vector<int> &nums)           // Kadane ka MIN version (prefix-sum se NAHI)
+         int sum = nums[0]; int minSum = nums[0];   // init nums[0], loop 1 se (ya 0 + INT_MAX)
+         for (int i = 1; i < nums.size(); i++) sum = min(sum + nums[i], nums[i]); minSum = min(minSum, sum);
          return minSum;
-     }
 
-     int maxSubarraySumCircular(vector<int> &nums) {
+     int maxSubarraySumCircular(vector<int> &nums)
          int totalSum = 0;
-         for (int i = 0; i < nums.size(); i++)
-             totalSum += nums[i];
-         int maxSum = maxKadaneK(nums);
-         int minSum = minKadaneK(nums);
+         for (int i = 0; i < nums.size(); i++) totalSum += nums[i];
+         int maxSum = maxKadaneK(nums); int minSum = minKadaneK(nums);
          int circularSum = totalSum - minSum;    // wrap = poora - sabse bura (min) beech ka chunk
          if (maxSum > 0)
              return max(circularSum, maxSum);    // normal: dono me bada. [5,-3,5]: 7, 7-(-3)=10 -> 10
          return maxSum;                          // sab non-positive: total-min = 0 = EMPTY, galat
-     }
      // house robber II jaisa "circular twist", par mechanism alag (HR-II = pehla / aakhri chhodo)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = bestLeft + bestRight + WALL
- └──────────────────────────────────────────────────────────────
+ ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = bestLeft + bestRight + WALL
      // har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
      // = KADANE (per index) + PREFIX / SUFFIX max
      // [2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
-     vector<int> maxEndingAtForLeft(vector<int> &nums) {      // STEP 1: kadane per index (aage)
-         int n = nums.size();
-         vector<int> ans(n, 0);
+     vector<int> maxEndingAtForLeft(vector<int> &nums)   // STEP 1: kadane per index (aage)
+         int n = nums.size(); vector<int> ans(n, 0);
          ans[0] = nums[0];                       // index 0 pe khatam = sirf nums[0], isliye loop 1 se
          for (int i = 1; i < n; i++)
              ans[i] = max(ans[i - 1] + nums[i], nums[i]);   // pichhle me judo ya akela naya shuru, jo bada
-         return ans;
-     }
 
-     vector<int> bestLeftPrefix(vector<int> &nums) {          // STEP 2: STEP 1 ka running max (aage)
-         int n = nums.size();
-         vector<int> temp = maxEndingAtForLeft(nums);
-         vector<int> ans(n, 0);
+     vector<int> bestLeftPrefix(vector<int> &nums)   // STEP 2: STEP 1 ka running max (aage)
+         int n = nums.size(); vector<int> temp = maxEndingAtForLeft(nums); vector<int> ans(n, 0);
          ans[0] = temp[0];                       // 0 tak ka best = khud temp[0]
          for (int i = 1; i < n; i++)
-             ans[i] = max(ans[i - 1], temp[i]);  // 0..i ka best = pichhla best ya temp[i]
-         return ans;
-     }
+             ans[i] = max(ans[i - 1], temp[i]);   // 0..i ka best = pichhla best ya temp[i]
 
-     vector<int> maxEndingAtForRight(vector<int> &nums) {     // STEP 3: STEP 1 ka mirror (peeche)
-         int n = nums.size();
-         vector<int> ans(n, 0);
+     vector<int> maxEndingAtForRight(vector<int> &nums)   // STEP 3: STEP 1 ka mirror (peeche)
+         int n = nums.size(); vector<int> ans(n, 0);
          ans[n - 1] = nums[n - 1];               // last pe khatam = sirf wahi; right part peeche se banta
          for (int i = n - 2; i >= 0; i--)
              ans[i] = max(ans[i + 1] + nums[i], nums[i]);   // agle (i+1) me judo ya akela shuru
-         return ans;
-     }
 
-     vector<int> bestRightPrefix(vector<int> &nums) {         // STEP 4: STEP 3 ka running max (peeche)
-         int n = nums.size();
-         vector<int> temp = maxEndingAtForRight(nums);
-         vector<int> ans(n, 0);
+     vector<int> bestRightPrefix(vector<int> &nums)   // STEP 4: STEP 3 ka running max (peeche)
+         int n = nums.size(); vector<int> temp = maxEndingAtForRight(nums); vector<int> ans(n, 0);
          ans[n - 1] = temp[n - 1];
          for (int i = n - 2; i >= 0; i--)        // peeche bharo: ans[i+1] pehle se ready chahiye
-             ans[i] = max(ans[i + 1], temp[i]);  // i..n-1 ka best = agla best ya temp[i]
-         return ans;
-     }
+             ans[i] = max(ans[i + 1], temp[i]);   // i..n-1 ka best = agla best ya temp[i]
 
-     int maxTwoNonOverlap(vector<int> &nums) {   // STEP 5: WALL
-         int n = nums.size();
-         vector<int> bestForleft = bestLeftPrefix(nums);
+     int maxTwoNonOverlap(vector<int> &nums)     // STEP 5: WALL
+         int n = nums.size(); vector<int> bestForleft = bestLeftPrefix(nums);
          vector<int> bestForRight = bestRightPrefix(nums);
          int ans = INT_MIN;                      // INT_MIN: sab minus ho to jod bhi minus, 0 se galat
          for (int i = 0; i < n - 1; i++)         // n-2 tak: i+1 bahar na jaaye; aakhri split (right = akela
-             ans = max(ans, bestForleft[i] + bestForRight[i + 1]);   //   last) bhi aaye: [-5,10,10] -> 20
+             ans = max(ans, bestForleft[i] + bestForRight[i + 1]);   // last) bhi aaye: [-5,10,10] -> 20
          return ans;                             // i+1 = NON-OVERLAP: bestRight[i] liya to index i dono me =
-     }                                           //   do baar gina ([..,8,..] + [14..] = 22 jhootha)
+     // do baar gina ([..,8,..] + [14..] = 22 jhootha)
      // [1,2,-7,8,6,-4]: maxEndAt [1,3,-4,8,14,10] · bestLeft [1,3,3,8,14,14]
-     //   bestRight [14,14,14,14,6,-4] · i=1: 3 + 14 = 17
+     // bestRight [14,14,14,14,6,-4] · i=1: 3 + 14 = 17
 ```
+
+---
 
 ---
 
