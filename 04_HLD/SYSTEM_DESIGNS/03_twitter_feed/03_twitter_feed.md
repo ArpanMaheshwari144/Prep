@@ -311,9 +311,9 @@ saath me sabke tweet atkenge. Aur 1 crore log dekhenge, to har baar wahi 100 MB 
 
 ```mermaid
 flowchart LR
-    U["Arpan: video"] -- "1. upload link do" --> TS["Tweet Service"]
+    U["Arpan: video"] -- "1. upload link do<br/>3. tweet me sirf link" --> TS["Tweet Service"]
     U -- "2. video seedha" --> S3[("S3")]
-    S3 --> CDN["CDN (paas wali machine)"]
+    S3 -- "paas nahi to S3 se laata" --> CDN["CDN (paas wali machine)"]
     CDN -- "4. dekhne wale" --> V["1 crore log"]
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style CDN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
