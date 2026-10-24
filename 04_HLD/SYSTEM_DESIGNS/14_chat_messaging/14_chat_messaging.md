@@ -416,7 +416,7 @@ flowchart LR
     A["Arpan app"] -- "video seedha" --> S3[("S3")]
     A -- "message: sirf link" --> S["Chat server"] --> RV["Ravi"]
     RV -- "tap kiya to video" --> CDN["CDN"]
-    CDN --> S3
+    CDN -- "paas nahi to S3 se laata" --> S3
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
