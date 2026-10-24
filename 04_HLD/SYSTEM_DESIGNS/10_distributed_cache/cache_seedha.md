@@ -195,3 +195,41 @@ girti hai.
 
 Ab data baant diya. Par dopahar ko cache machine 7 mar gayi. Uske hisse ki saari key ab MISS ho rahi hain, aur
 un sabka bojh ek saath DB pe aa gaya.
+
+### Kadam 5: cache machine 7 mari (copy + failover)
+
+Machine 7 mari to uski saari key MISS hone lagi, aur un sab ka bojh ek saath DB pe aa gaya. Shaam ki bheed me
+ye DB ko gira sakta hai.
+
+Ilaaj: har cache machine ki ek **COPY (replica)** rakho, alag jagah (alag zone), taaki ek zone ki bijli jaaye
+to dono saath na jaayein. Machine 7 me jo bhi likha jaata hai, wo uski copy me bhi pahunchta hai. Machine 7
+mari to copy uski jagah le leti hai, aur key MISS hi nahi hoti.
+
+```mermaid
+flowchart LR
+    A["App + cache client (ring)"] --> M7["Cache machine 7 (main)"]
+    M7 -->|"likha hua peeche se bhejti (async)"| R7["Machine 7 ki COPY<br/>doosra zone<br/>main mari -> ye main ban jaati"]
+    S["3 chowkidar (Sentinel)<br/>3 me se 2 bolein 'mari' tabhi copy main"] -.-> M7
+    A -.->|"nahi mila"| D[("DB")]
+    style R7 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+App ──> machine 7 (main) ──likha hua bhejti──> machine 7 ki copy (doosra zone)
+machine 7 mari  ->  copy ko main bana do  ->  cache client ab copy se poochhta
+```
+
+**Copy ko likha hua turant kyun nahi (async):** agar har PUT pe ruk ke copy se "likh liya" ka jawab maangein,
+to har likhna dheema ho jaayega, aur cache ka kaam tezi hai. Isliye main pehle App ko "ho gaya" bolti hai, aur
+copy ko peeche se bhejti hai. Agar main beech me mari to copy me aakhri kuch key nahi pahunchi hongi. Koi baat
+nahi, wo key bas MISS hongi aur DB se aa jaayengi, kyunki asli sach DB me hai. Payment jaisi jagah ye nahi
+chalta, cache me chalta hai.
+
+**Kaun tay karega ki machine 7 sach me mari:** kabhi network ek pal ke liye atka, aur kisi ek ne galti se "mar
+gayi" maan liya, to bina wajah copy ko main bana diya. Phir ek hi hisse ki do main ban jaati hain. Isliye 3
+chowkidar (Redis Sentinel) machine 7 pe nazar rakhte hain, aur 3 me se 2 "haan, mari" bolein tabhi copy main
+banti hai. Yahi **quorum** hai, jo URL me bhi tha.
+
+Ab machine marne se kuch nahi girta. Par Ravi ne app me apna naam "Ravi" se "Ravi Kumar" kiya. DB me naya naam
+aa gaya, par cache me purana "Ravi" pada hai, aur 1 ghante tak sabko purana hi dikh raha hai.
