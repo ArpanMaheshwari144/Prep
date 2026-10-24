@@ -233,3 +233,42 @@ banti hai. Yahi **quorum** hai, jo URL me bhi tha.
 
 Ab machine marne se kuch nahi girta. Par Ravi ne app me apna naam "Ravi" se "Ravi Kumar" kiya. DB me naya naam
 aa gaya, par cache me purana "Ravi" pada hai, aur 1 ghante tak sabko purana hi dikh raha hai.
+
+### Kadam 6: Ravi ka naam badla, sabko purana dikh raha (DB me likho, cache key DELETE)
+
+Ravi ne naam badla. DB me "Ravi Kumar" aa gaya, par cache me abhi bhi "Ravi" pada hai, aur TTL khatam hone tak
+(1 ghanta) sabko purana naam dikhega.
+
+Ilaaj: jab bhi DB me kuch badlo, uske turant baad **cache se wo key DELETE** kar do. Agli baar koi "user:ravi"
+maangega to cache me MISS hoga, aur DB se naya naam aake cache me baith jaayega.
+
+```mermaid
+flowchart LR
+    A["App (Ravi ne naam badla)"] -->|"1. naya naam likho"| D[("DB<br/>Ravi Kumar")]
+    A -->|"2. phir key DELETE"| C["Cache<br/>user:ravi hata"]
+    A -.->|"3. agla GET: MISS -> DB se naya"| D
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+Ravi ne naam badla
+  1. DB me likho:   name = "Ravi Kumar"
+  2. cache se:      DELETE user:ravi
+  3. agla GET:      MISS -> DB se "Ravi Kumar" -> cache me rakho
+```
+
+**Cache me naya naam seedha likh kyun nahi dete (update), delete kyun:** maan lo do log ek saath naam badal
+rahe hain, pehle A ne "Ravi K" kiya, phir B ne "Ravi Kumar". DB me aakhri "Ravi Kumar" pahuncha, par network ki
+der se cache me pehle B ka likha pahuncha aur baad me A ka. Ab cache me "Ravi K" reh gaya, jo galat hai. Delete
+me ye dikkat nahi aati: cache khaali hota hai, aur agli baar DB se jo sach hai wahi aata hai.
+
+**Pehle DB, phir delete (ulta kyun nahi):** agar pehle cache delete karte aur phir DB me likhte, to beech ke us
+pal me koi GET aata, cache me MISS paata, DB se purana "Ravi" laata aur cache me bhar deta. Phir DB me naya
+likha jaata, par cache me purana hi pada rehta.
+
+Ek chhota chhed phir bhi rehta hai, kyunki do kaam (DB me likhna aur cache se delete) ek saath nahi hote. Isliye
+TTL bhi rakhte hain, jo aakhri suraksha hai: kuch bhi chhoota to zyada se zyada 1 ghante me apne aap theek ho
+jaata hai. NFR me pehle hi likha tha ki thodi der purana chalega.
+
+Ab data taaza rehta hai. Par shaam 7 baje "home page" wali key ki umar khatam hui, aur us pal 1,000 log ek saath
+home page khol rahe the. Sabko MISS mila, aur 1,000 request ek saath DB pe pahunchi.
