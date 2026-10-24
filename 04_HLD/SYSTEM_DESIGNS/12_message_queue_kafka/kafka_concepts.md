@@ -112,9 +112,7 @@ flowchart LR
         P1[("P1 · Arpan<br/>0 order · 1 pay · 2 cancel<br/>bookmark: 1")]
     end
     P1 -- "2 cancel" --> B["TEAM sms: banda-B<br/>1. SMS bheja<br/>2. commit (bookmark 2)"]
-    B -- "E-6 pehle ho chuki?" --> R[("Redis<br/>eventId")]
     style B fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
 banda-B ne SMS bheja aur commit se pehle gir gaya. Bookmark abhi 1 pe hai. P1 banda-A ko mila, usne bookmark dekha
