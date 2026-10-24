@@ -4490,524 +4490,466 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ## PATTERN 17 — DP (dynamic programming = recursion + memo)
 
 ```
- ESSENCE: "DP kuch ALAG nahi -- RECURSION ko SMART way me karna. plain recursion
-      sabko BAAR-BAAR calculate karta (waste); DP bolti = jo ek baar nikala use ARRAY me STORE karlo, dobara maango
-      to wahan se uthao. bas. DP = recursion ka smart tareeka." (kaam TABHI karta jab OVERLAP ho -- same subproblem repeat.)
- ──────────────────────────────────────────────────────────────
- ESSENCE-2 (DP me flow aane ke baad): "DP = FULL-TEMPLATE based, sabse template-able topic. har DP me wahi 3-part
-      SKELETON: base + TRANSITION (solve(i-1)/solve(j-1)/... = choices) + memo. SIRF base+transition badalti, skeleton SAME.
-      aur ye transition wahi RECURSION hai jo TREES (left/right=2) / DFS-grid (4-dir) / grid-DP (up/left=2) me thi -- bas
-      BRANCH-ginti alag. DP = purani recursion + MEMO chipka di. 'naya' nahi laga kyunki tha hi nahi." => naya DP = bas "transition kya?" socho.
- ──────────────────────────────────────────────────────────────
- BASE-CASE = asli FIDDLY part: RELATION (take/not-take, min/max) lagbhag SAME rehta, aasaan.
-      MUSHKIL = BASE + invalid-handling, jo har problem me ALAG. climbing/robber = base SIMPLE (i==0 -> value) -> jaldi ho gaye;
-      coin-change = base AJEEB (i<0 vs i==0, INVALID=INT_MAX, -1) -> wahi phasaya. => relation easy likho, BASE pe RUK ke socho.
 
- ──────────────────────────────────────────────────────────────
- BROAD IDEA: same SUBPROBLEM baar-baar aaye (OVERLAPPING) -> dobara compute mat karo -> ek baar karke YAAD rakho.
-   DP = RECURSION + memo. (recursion tu jaanta -- DP usi pe "cache" add karta.)
-   ARC (har DP isi tarah crack karo): 1) plain RECURSION likho (relation + base) -> 2) OVERLAP dekho (dry-run: same call 2x)
-      -> 3) MEMOIZE (dp[] cache) -> [optional] 4) BOTTOM-UP (loop se table bharo).
-   2 STYLE:
-      TOP-DOWN (memoization) = recursion + dp[] cache. sochne me aasaan (relation seedha).
-      BOTTOM-UP (tabulation) = base bharo -> loop chhote-se-bade dp[i] bharo. no recursion-stack.
-   MEMO ka pattern (har DP me SAME 3 cheez):
-      1. dp[] ko -1 (ya kisi "nahi-nikala" marker) se init.  // -1 kyun: 0 bhi asli jawab ho sakta
-      2. function start: if(dp[state]!=-1) return dp[state];   // cache HIT
-      3. compute + STORE: return dp[state] = <relation>;
-   KAB DP: "kitne WAYS" · "min/max cost" · "kya possible" + har step CHOICE + subproblems OVERLAP.
+ BROAD IDEA: same SUBPROBLEM baar-baar aaye (OVERLAP) -> dobara mat nikaalo, ek baar karke dp[] me rakho.
+   DP = RECURSION + memo (recursion ko smart tareeke se). OVERLAP na ho to DP ka fayda nahi.
+   har DP me wahi 3-part skeleton: BASE + TRANSITION (choices = solve(i-1) / solve(j-1) / ...) + MEMO.
+   transition = wahi recursion jo trees (left/right) / DFS-grid (4 dir) me thi -- bas branch ki ginti alag.
+   ARC: 1) plain recursion (relation + base) -> 2) overlap dekho (same call 2x) -> 3) memo -> [4) bottom-up]
+   TOP-DOWN = recursion + dp[] cache (sochne me aasaan) · BOTTOM-UP = base bharo, loop se dp[i] chhote se bade
+   KAB DP: "kitne WAYS" · "min/max cost" · "kya possible" + har step CHOICE + subproblem OVERLAP.
+
+ MEMO SKELETON (har DP me SAME 3 line):
+     vector<int> dp(n + 1, -1);                  // -1 = abhi nahi nikala (0 bhi asli jawab ho sakta)
+     if (dp[state] != -1) return dp[state];      // cache HIT
+     return dp[state] = <relation>;              // compute + STORE
+ // RELATION lagbhag same (take/not-take, min/max), aasaan. MUSHKIL = BASE + invalid handling, har problem
+ //   me ALAG (climbing / robber = base simple; coin change = i<0 vs i==0, INT_MAX, -1 -> wahi phasaya).
+ //   => relation likho, BASE pe RUK ke socho.
+
+── FAMILY: 1D index DP (Fibonacci shape / take-skip) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ CLIMBING STAIRS (LC-70)  = Fibonacci-shape (ways = ways(n-1)+ways(n-2))
  └──────────────────────────────────────────────────────────────
-     SAAR : n steps, ek baar 1 ya 2 step -> top tak kitne tareeke. step n pe -> (n-1) se 1-step YA (n-2) se 2-step.
-        => solve(n) = solve(n-1) + solve(n-2).  base: n==0 || n==1 -> 1.  (= Fibonacci)
-     TEMPLATE (top-down memo):
-         int solve(int n, vector<int>& dp){
-             if(n==0 || n==1) return 1;              // base (n==0 bhi 1: 2-step se seedha top = ek tareeka)
-             if(dp[n]!=-1) return dp[n];             // cache HIT
-             return dp[n] = solve(n-1,dp) + solve(n-2,dp);   // compute + STORE
-         }
-         // caller: vector<int> dp(n+1, -1); return solve(n, dp); (n+1: dp[n] tak index chahiye)
-         BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].  // 2 se: 0 aur 1 base pehle bhar diye
-     plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n).
+     int solve(int n, vector<int> &dp) {         // step n pe: (n-1) se 1 step YA (n-2) se 2 step
+         if (n == 0 || n == 1)
+             return 1;                           // base: n==0 bhi 1 (2-step se seedha top = ek tareeka)
+         if (dp[n] != -1)
+             return dp[n];                       // cache HIT
+         return dp[n] = solve(n - 1, dp) + solve(n - 2, dp);   // compute + STORE (= Fibonacci)
+     }
+
+     int climbStairs(int n) {
+         vector<int> dp(n + 1, -1);              // n+1: dp[n] tak index chahiye
+         return solve(n, dp);
+     }
+     // BOTTOM-UP: dp[0]=dp[1]=1; for (i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n]  (0,1 base pehle bhare)
+     // plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ DECODE WAYS (LC-91)  = climbing-stairs ka bhai, par har STEP pe VALIDITY check
  └──────────────────────────────────────────────────────────────
-     QUESTION KYA MAANG RAHA:
-        code: A=1, B=2, ... Z=26. kisi ne shabd ko ANKON me badal diya, beech ke khaane hata diye.
-        ab sirf ank mile "226". wapas kitne alag shabd ban sakte? -> GINTI do (shabd nahi).
-
-           "226"   2 | 2 | 6   ->  B B F
-                   22 | 6      ->  V F
-                   2 | 26      ->  B Z            => answer 3
-
-     SAAR : "226" -> 1..26 = A..Z. kitne tareeke se decode ho sakta?
-        har index i pe 2 CHOICE (climbing-stairs jaisa):  1 ANK lo -> solve(i+1)   ·   2 ANK lo -> solve(i+2)
-        FARAK climbing-stairs se: wahan dono choice HAMESHA valid thi.
-                                  yahan har choice pehle VALID honi chahiye (neeche 2 rule).
-
-     ★ DO ZERO-RULE (yahi poora question hai, baaki climbing-stairs hai):
-        RULE-1  s[i]=='0'  -> is index se koi decode SHURU hota hi nahi -> ye raasta MARA (return 0).
-                             kyunki 0 ka koi letter nahi, aur "01" bhi A nahi (leading zero).
-        RULE-2  2 ANK tabhi lo jab wo 10..26 me ho ->  s[i]=='1'  ya  (s[i]=='2' && s[i+1]<='6')
-                             ("27" -> 2 ank invalid, sirf 1-ank raasta bachta)
-
-     TREE ("226") -- har node = jo string abhi BACHI hai, har edge = kitne ank uthaye:
-
-                            "226"
-                    ┌─────────┴──────────┐
-                  2 liya              22 liya
-                    │                    │
-                  "26"                  "6"
-              ┌─────┴──────┐             │
-            2 liya      26 liya        6 liya
-              │            │             │
-             "6"          ""             ""
-              │          KHATAM        KHATAM
-            6 liya
-              │
-             ""
-           KHATAM
-
-        neeche "" = string khatam = EK poora decoding ban gaya. teen KHATAM = answer 3.
-        "6" wala node DO jagah aaya (left me aur right me) -- dusri baar memo se seedha utha,
-        dobara neeche nahi gaya. yahi dp[] ka poora kaam.
-        do base: i==n -> 1 (khatam tak pahunchna HI ek valid tareeka hai, isliye 1 na 0)
-                 s[i]=='0' -> 0 (raasta mara)
-
-     TEMPLATE (top-down memo on index):
-         int solve(int i, string &s, int n, vector<int> &dp){
-             if(i == n)      return 1;                 // ★ KRAM: i==n PEHLE (warna s[n] padhta; khatam = ek poora decoding, isliye 1)
-             if(s[i] == '0') return 0;                 //    s[i] BAAD me (0 se koi letter shuru nahi, raasta mara)
-             if(dp[i] != -1) return dp[i];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             int ans = solve(i+1, s, n, dp);           // 1 ank: hamesha valid (0 upar hi kat gaya)
-             if(i+1 < n && (s[i]=='1' || (s[i]=='2' && s[i+1]<='6')))   // pehle i+1<n: aakhri char pe aage mat padho
-                 ans += solve(i+2, s, n, dp);          // 2 ank (tabhi jab 10..26)
-             return dp[i] = ans;
+     // A=1 .. Z=26. sirf ank mile ("226") -> kitne alag shabd? GINTI. 2|2|6=BBF · 22|6=VF · 2|26=BZ -> 3
+     // har i pe 2 choice (1 ank -> i+1 · 2 ank -> i+2); FARAK: yahan har choice pehle VALID honi chahiye
+     // "226" ka tree: "6" do jagah aata -> dusri baar memo se seedha (yahi dp[] ka kaam)
+     int solve(int i, string s, int n, vector<int> &dp) {
+         if (i == n)
+             return 1;                           // i==n PEHLE (warna s[n] padhta); khatam = ek poora decoding
+         if (s[i] == '0')
+             return 0;                           // RULE-1: 0 se letter shuru nahi ("01" bhi A nahi) -> mara
+         if (dp[i] != -1)
+             return dp[i];                       // -1 = abhi nahi nikala
+         int count = solve(i + 1, s, n, dp);     // 1 ank: hamesha valid (0 upar hi kat gaya)
+         if (i + 1 < n) {                        // pehle i+1<n: aakhri char pe aage mat padho
+             if (s[i] == '1' || (s[i] == '2' && s[i + 1] <= '6'))   // RULE-2: 2 ank sirf 10..26
+                 count += solve(i + 2, s, n, dp);
          }
-         // caller: vector<int> dp(n+1, -1); return solve(0, s, n, dp);
+         return dp[i] = count;
+     }
 
-     KAB YE PATTERN: string ko TUKDON me kaato + har tukda ek RULE pass kare + kitne tareeke/kam-se-kam
-        -> index pe DP. (word-break bhi yahi shakl -- wahan rule "dictionary me hai kya", yahan "1..26 me hai kya".)
+     int numDecodings(string s) {
+         int n = s.size();
+         vector<int> dp(n + 1, -1);
+         return solve(0, s, n, dp);
+     }
+     // KAB: string ko TUKDON me kaato + har tukda RULE pass kare + kitne tareeke -> index pe DP
+     //   (word-break bhi yahi shakl: wahan rule "dictionary me hai?", yahan "1..26 me hai?")
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ HOUSE ROBBER (LC-198)  = har step pe TAKE/SKIP choice + max
  └──────────────────────────────────────────────────────────────
-     SAAR : adjacent ghar loot nahi sakte -> max paisa. har ghar i pe 2 CHOICE:
-        LOOT i : nums[i] + solve(i-2)   (i-1 skip -- adjacent nahi)  ·  SKIP i : solve(i-1)
-        => solve(i) = max(LOOT, SKIP).  base: i<0 -> 0 · i==0 -> nums[0].
-     TEMPLATE (top-down memo, LAST index se):
-         int solve(nums, i, dp){
-             if(i<0) return 0;  // i<0: i-2 se array ke bahar, koi ghar nahi
-             if(i==0) return nums[0];  // sirf pehla ghar bacha: use loot lo
-             if(dp[i]!=-1) return dp[i];                          // cache HIT
-             int LOOT = nums[i] + solve(nums, i-2, dp);  // i-2: loota to padosi i-1 chhodna padega
-             int SKIP =           solve(nums, i-1, dp);   // skip: ghar i chhoda, pichhle ghar tak ka best
-             return dp[i] = max(LOOT, SKIP);                      // compute + STORE
-         }
-         // caller: dp(n,-1); return solve(nums, n-1, dp);        // n-1 = array ka LAST index (0..n-1)
-     climbing-stairs se FARAK: wahan sirf ADD (ways(n-1)+ways(n-2)); yahan har step CHOICE -> max(take, skip).
-     n-1 kyu: ye TOP-DOWN hi hai (bottom-up nahi). nums[] ke index 0..n-1 -> LAST ghar = n-1 -> "last tak max" = solve(n-1).
-        (climbing me 'n' = step-count 1..n tha, array nahi; yahan index hai -> n-1. sirf naming, direction nahi.)
+     int solve(vector<int> &A, int i, vector<int> &dp) {   // LAST index se peeche (top-down)
+         if (i < 0)
+             return 0;                           // i-2 se array ke bahar: koi ghar nahi
+         if (dp[i] != -1)
+             return dp[i];                       // cache HIT
+         int take = A[i] + solve(A, i - 2, dp);  // LOOT: padosi i-1 chhodna padega -> i-2
+         int notTake = 0 + solve(A, i - 1, dp);  // SKIP: pichhle ghar tak ka best
+         return dp[i] = max(take, notTake);
+     }
+
+     int rob(vector<int> &A) {
+         int n = A.size();
+         vector<int> dp(n + 1, -1);
+         return solve(A, n - 1, dp);             // n-1 = LAST index (0..n-1); climbing me n = step-count tha
+     }
+     // climbing se FARAK: wahan sirf ADD; yahan har step CHOICE -> max(take, skip)
+     // base i==0 -> nums[0] bhi likh sakte (robber II wala); i<0 -> 0 ke saath zaroori nahi, nateeja same
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ HOUSE ROBBER II (LC-213)  = House Robber I + CIRCLE -> I ko 2 baar chala
  └──────────────────────────────────────────────────────────────
-     SAAR
-        ghar GOL (circle) me lage hain.
-        isliye pehla ghar (0) aur aakhri ghar (n-1) PADOSI ban gaye -> dono ek saath nahi loot sakte.
+     // ghar GOL: pehla (0) aur aakhri (n-1) PADOSI -> dono saath nahi. [2,3,2] -> 3 (2+2=4 GALAT)
+     int solve(vector<int> &nums, int i, vector<int> &dp) {   // = House Robber I, bina badle
+         if (i < 0)
+             return 0;
+         if (i == 0)
+             return nums[0];
+         if (dp[i] != -1)
+             return dp[i];
+         int notTake = 0 + solve(nums, i - 1, dp);
+         int Take = nums[i] + solve(nums, i - 2, dp);
+         return dp[i] = max(notTake, Take);
+     }
 
-     TASVEER  [2,3,2]
+     int rob1(vector<int> &nums) {
+         int n = nums.size();
+         vector<int> dp(n + 1, -1);              // har run ka dp alag (rob1 ke andar naya)
+         return solve(nums, n - 1, dp);
+     }
 
-              ghar0(2)
-             /        \
-        ghar2(2) ---- ghar1(3)          0 aur 2 bhi jude hain (gol hai)
+     int rob(vector<int> &nums) {
+         int n = nums.size();
+         if (n == 1)
+             return nums[0];                     // ek ghar: dono temp khaali rehte -> 0 aata, galat
+         vector<int> temp1, temp2;
+         for (int i = 0; i < n; i++) {
+             if (i != 0)
+                 temp1.push_back(nums[i]);       // RUN-A: pehla ghar hata
+             if (i != n - 1)
+                 temp2.push_back(nums[i]);       // RUN-B: aakhri ghar hata
+         }
+         return max(rob1(temp1), rob1(temp2));   // ek ghar hatao -> gol toot ke seedhi line -> normal robber
+     }
 
-     TWIST  (gol ko seedhi line me todo)
-
-        RUN-A :  ghar 0 HATAO   ->  index 1 .. n-1   ->  [3,2]  ->  robI = 3
-        RUN-B :  ghar n-1 HATAO ->  index 0 .. n-2   ->  [2,3]  ->  robI = 3
-
-        answer = max( RUN-A , RUN-B ) = 3
-
-        robI = purana House Robber, bina badle.
-
-     CODE  (rob1 = House Robber I, waisa hi)
-        int rob(vector<int> &nums) {
-            int n = nums.size();
-            if (n == 1) return nums[0];                // ek ghar: dono temp khaali rehte -> 0 aata, galat
-            vector<int> temp1, temp2;
-            for (int i = 0; i < n; i++) {
-                if (i != 0)     temp1.push_back(nums[i]);   // RUN-A: pehla ghar hata
-                if (i != n - 1) temp2.push_back(nums[i]);   // RUN-B: aakhri ghar hata
-            }
-            return max(rob1(temp1), rob1(temp2));      // har run ka dp alag (rob1 ke andar naya)
-        }
-
-     KYUN CHALTA
-        ek ghar hatao -> gol toot ke seedhi line -> normal House Robber.
-        0 aur n-1 dono kabhi saath nahi chahiye -> ek ko hata ke dono case dekh liye.
-
-        seedha 2 + 2 = 4  GALAT  (ghar 0 aur ghar 2 padosi hain)
-
-     EDGE
-        n == 1  ->  return nums[0]
-        (warna dono run khaali -> 0 aa jaata, galat)
+── FAMILY: TAKE / NOT-TAKE on index (coin / LIS / knapsack / subset) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
  └──────────────────────────────────────────────────────────────
-     SAAR : amount banane ko MIN coins (har coin UNLIMITED = reuse). na ban sake -> -1.
-     amount==0 vs amount<0 (THEEK utna, na kam na zyada): amount==0 -> THEEK bana (11 = theek 11) -> SUCCESS -> 0 coins ·
-        amount<0 -> 0 ke NEECHE (coin bada le liya, overshoot) -> INVALID. (ban-na = theek 0 pe RUKNA, cross nahi.)
-     3 TRAP (yahi phasaate): (1) INT_MAX = "ban nahi sakta" signal -> min me apne-aap HAAR jaata.
-        (2) OVERFLOW: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX -> negative -> min galat).
-        (3) caller: answer INT_MAX -> return -1.
+     // amount banane ko MIN coins (har coin UNLIMITED). na ban sake -> -1
+     // amount==0 = THEEK bana -> 0 coins · amount<0 = overshoot -> INVALID (ban-na = theek 0 pe rukna)
+     // 3 TRAP: (1) INT_MAX = "ban nahi sakta" (min me haarta) (2) overflow guard (3) caller INT_MAX -> -1
+     // ── FORM A: TAKE / NOT-TAKE (index i, 2D dp[i][amount]) ──
+     int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp) {
+         if (amount < 0)
+             return INT_MAX;                     // INVALID (INT_MAX: min me apne aap haar jaata)
+         if (i < 0)
+             return amount == 0 ? 0 : INT_MAX;   // koi coin nahi bacha (i<0, NA i==0 -- coin[0] usable)
+         if (dp[i][amount] != -1)
+             return dp[i][amount];
+         int notTake = solve(coins, amount, i - 1, dp);   // coin i chhoda -> agla
+         int take = INT_MAX;                     // INT_MAX se: na le paaye to min pe asar nahi
+         if (solve(coins, amount - coins[i], i, dp) != INT_MAX)   // overflow guard (1+INT_MAX -> negative)
+             take = 1 + solve(coins, amount - coins[i], i, dp);   // coin i liya, i SAME = reuse
+         return dp[i][amount] = min(take, notTake);
+     }
 
-     ── FORM A: TAKE / NOT-TAKE (index i, 2D dp[i][amount]) ──
-         int solve(coins, amount, i, dp):
-             if(amount < 0) return INT_MAX;                       // INVALID (INT_MAX: min me apne-aap haar jaata)
-             if(i < 0) return amount==0 ? 0 : INT_MAX;            // koi coin nahi bacha (i<0, NA i==0 -- coin[0] usable)
-             if(dp[i][amount]!=-1) return dp[i][amount];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             int notTake = solve(coins, amount, i-1, dp);         // coin i chhoda -> agla
-             int Take = INT_MAX;  // INT_MAX se: na le paaye to min pe asar nahi
-             if(solve(coins, amount-coins[i], i, dp) != INT_MAX)  // overflow guard
-                 Take = 1 + solve(coins, amount-coins[i], i, dp); // coin i liya (i SAME = reuse)
-             return dp[i][amount] = min(notTake, Take);
-         // caller: dp(n+1, vec(amount+1,-1)); ans=solve(..,n-1,..); return ans==INT_MAX?-1:ans; (amount+1: dp[amount] tak index chahiye)
+     int coinChange(vector<int> &coins, int amount) {
+         int n = coins.size();
+         vector<vector<int>> dp(n + 1, vector<int>(amount + 1, -1));   // amount+1: dp[..][amount] tak
+         int ans = solve(coins, amount, n - 1, dp);
+         return ans == INT_MAX ? -1 : ans;       // na ban sake -> -1
+     }
 
-     ── FORM B: FOR-LOOP (saare coins, 1D dp[amount]) ──  SAME idea, likhawat alag
-         int solve(coins, amount, dp):
-             if(amount < 0) return INT_MAX;  // overshoot: INT_MAX = ye raasta nahi banta
-             if(amount == 0) return 0;  // theek ban gaya: aur koi coin nahi chahiye
-             if(dp[amount]!=-1) return dp[amount];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             int Take = INT_MAX;  // INT_MAX: koi coin kaam na aaye to nahi-banta signal
-             for(int i=0; i<coins.size(); i++)                              // har coin TRY (choose khud loop me)
-                 if(solve(coins, amount-coins[i], dp) != INT_MAX)           // overflow guard
-                     Take = min(Take, 1 + solve(coins, amount-coins[i], dp)); // sabme se MIN
-             return dp[amount] = Take; // caller: dp(amount+1,-1); ans==INT_MAX ? -1 : ans
-     dono form SAME (backtracking jaisa): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
-        (loop me "kaunsa coin" khud choose). for-loop me 'i' index nahi -> 1D dp; 2D me state = (i, amount).
+     // ── FORM B: FOR-LOOP (saare coins, 1D dp[amount]) ── SAME idea, likhawat alag (03_coin_change_REDO_1)
+     int solve(vector<int> &coins, int amount, int i, vector<int> &dp) {
+         if (amount < 0)
+             return INT_MAX;                     // overshoot: ye raasta nahi banta
+         if (amount == 0)
+             return 0;                           // theek ban gaya
+         if (dp[amount] != -1)
+             return dp[amount];
+         int Take = INT_MAX;                     // koi coin kaam na aaye -> nahi-banta signal
+         for (int i = 0; i < coins.size(); i++) {   // har coin TRY (choose khud loop me)
+             if (solve(coins, amount - coins[i], i, dp) != INT_MAX)   // overflow guard
+                 Take = min(Take, 1 + solve(coins, amount - coins[i], i, dp));   // sabme se MIN
+         }
+         return dp[amount] = Take;               // caller: dp(amount+1, -1); INT_MAX -> -1
+     }
+     // dono SAME: TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = sirf take, NOT-TAKE apne aap (loop chunta)
+     //   for-loop me 'i' state nahi -> 1D dp; 2D me state = (i, amount)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST INCREASING SUBSEQUENCE (LC-300)  = TAKE/NOT-TAKE + prev-track
  └──────────────────────────────────────────────────────────────
-     SAAR : sabse lambi STRICTLY-increasing subsequence ki LENGTH. coin-change family (take/not-take), ek twist = prev.
-     TEMPLATE:
-         int solve(index, prevIndex, nums, dp):
-             if(index == n) return 0;                                   // base (saaf -- no INT_MAX/overflow/-1)
-             if(dp[index][prevIndex+1] != -1) return dp[index][prevIndex+1];  // +1: prevIndex -1 se shuru, dp[-1] crash hota
-             int notTake = solve(index+1, prevIndex, nums, dp);         // chhoda -> prev wahi
-             int Take = 0;
-             if(prevIndex==-1 || nums[index] > nums[prevIndex])         // increasing rahe TABHI take
-                 Take = 1 + solve(index+1, index, nums, dp);            // liya -> ab prev = index
-             return dp[index][prevIndex+1] = max(Take, notTake);
-         // caller: dp(n+1, vec(n+1,-1)); return solve(0, -1, nums, dp); (n+1 column: prev -1..n-1 shift ho ke 0..n)
-     TWIST vs coin-change: (1) state me PREV bhi (kya-liya, taaki increasing check ho) (2) take pe CONDITION (nums[i]>nums[prev]).
-     MEMO offset: prevIndex -1 se shuru -> dp[index][prevIndex + 1] (+1 se index 0..n valid).
-     LIS EASY kyu (Arpan): base sirf index==n -> 0 (coin-change ka i<0/INT_MAX/overflow/-1 ganda tha; yahan saaf).
+     int solve(int index, int prevIndex, vector<int> &nums, vector<vector<int>> &dp) {
+         if (index == nums.size())
+             return 0;                           // base saaf (coin change jaisa INT_MAX / -1 nahi)
+         if (dp[index][prevIndex + 1] != -1)     // +1: prevIndex -1 se shuru, dp[-1] crash hota
+             return dp[index][prevIndex + 1];
+         int notTake = 0 + solve(index + 1, prevIndex, nums, dp);   // chhoda -> prev wahi
+         int Take = 0;
+         if (prevIndex == -1 || nums[index] > nums[prevIndex])     // STRICTLY increasing rahe TABHI take
+             Take = 1 + solve(index + 1, index, nums, dp);          // liya -> ab prev = index
+         return dp[index][prevIndex + 1] = max(Take, notTake);
+     }
+
+     int lengthOfLIS(vector<int> &nums) {
+         int n = nums.size();
+         vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));   // n+1 column: prev -1..n-1 shift -> 0..n
+         return solve(0, -1, nums, dp);
+     }
+     // coin change se TWIST: (1) state me PREV bhi (2) take pe CONDITION (nums[i] > nums[prev])
+
+── FAMILY: 2D GRID DP (up + left) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ UNIQUE PATHS (LC-62)  = 2D DP intro (climbing-stairs ka 2D cousin)
  └──────────────────────────────────────────────────────────────
-     SAAR : m x n grid, robot (0,0) -> (m-1,n-1), sirf RIGHT/DOWN. kitne raaste? cell pe = UPAR se + LEFT se.
-     TEMPLATE:
-         int solve(i, j, dp):
-             if(i<0 || j<0) return 0;                       // grid ke bahar -> koi raasta nahi
-             if(i==0 && j==0) return 1;                     // start cell
-             if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             int up   = solve(i-1, j, dp);   // upar se aaye (robot sirf down chalta)
-             int left = solve(i, j-1, dp);   // left se aaye (robot sirf right chalta)
-             return dp[i][j] = up + left;   // dono taraf ke raaste jodo
-         // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, dp);
-     climbing-stairs se CONNECT: 1D -> 2D. ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). dp[n] -> dp[i][j].
-     2D DP ka pehla: state = (i,j) do coordinate. base do (out-of-grid=0, start=1). memo 2D array.
+     int solve(int i, int j, vector<vector<int>> &dp) {   // robot (0,0) -> (m-1,n-1), sirf RIGHT / DOWN
+         if (i < 0 || j < 0)
+             return 0;                           // grid ke bahar -> koi raasta nahi
+         if (i == 0 && j == 0)
+             return 1;                           // start cell
+         if (dp[i][j] != -1)
+             return dp[i][j];
+         int up = solve(i - 1, j, dp);           // upar se aaye (robot sirf down chalta)
+         int left = solve(i, j - 1, dp);         // left se aaye (robot sirf right chalta)
+         return dp[i][j] = up + left;            // dono taraf ke raaste jodo
+     }
+
+     int uniquePaths(int m, int n) {
+         vector<vector<int>> dp(m + 1, vector<int>(n + 1, -1));
+         return solve(m - 1, n - 1, dp);
+     }
+     // climbing se CONNECT: ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). state (i,j), base do, memo 2D
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MIN PATH SUM (LC-64)  = UNIQUE-PATHS reuse, bas MIN + cost
  └──────────────────────────────────────────────────────────────
-     SAAR : grid me har cell cost. (0,0)->(m-1,n-1), right/down. MIN-sum path. = unique-paths code, 2 tweak.
+     int solve(int i, int j, vector<vector<int>> &dp, vector<vector<int>> &grid) {
+         if (i < 0 || j < 0)
+             return INT_MAX;                     // unique paths me 0 tha -> ab INVALID, min ignore karega
+         if (i == 0 && j == 0)
+             return grid[0][0];                  // unique paths me 1 tha -> ab start ki COST
+         if (dp[i][j] != -1)
+             return dp[i][j];
+         int up = solve(i - 1, j, dp, grid);     // sirf upar aur left se aa sakte (right / down chaal)
+         int left = solve(i, j - 1, dp, grid);
+         return dp[i][j] = grid[i][j] + min(up, left);   // up + left ki jagah: apni cost + CHHOTA raasta
+     }
 
-     unique-paths se CONNECT (SAME template, sirf 3 line badli):
-        return 0          ->  return INT_MAX             // base out-of-grid: count me 0 tha, ab INVALID -> min ignore karega
-        return 1          ->  return grid[0][0]          // base start: count nahi -> start ki COST
-        return up + left  ->  grid[i][j] + min(up,left)  // count-JOD -> apni cost + CHHOTA rasta
-     KYUN: count problem -> cost-MIN problem. baaki structure (memo + 2 base + 2-dir) bilkul SAME.
-     INT_MAX = coin-change INVALID-signal (min me haar jaata; real cell pe >=1 dir valid -> overflow nahi).
+     int minPathSum(vector<vector<int>> &grid) {
+         int m = grid.size();
+         int n = grid[0].size();
+         vector<vector<int>> dp(m + 1, vector<int>(n + 1, -1));
+         return solve(m - 1, n - 1, dp, grid);
+     }
+     // INT_MAX = coin change ka INVALID signal (asli cell pe >=1 taraf valid -> overflow nahi)
 
-     TEMPLATE:
-         int solve(i, j, grid, dp): // caller: dp(m+1, vec(n+1,-1)); return solve(m-1, n-1, grid, dp)
-             if(i<0 || j<0) return INT_MAX;                 // INVALID (grid ke bahar) -> min ignore karega
-             if(i==0 && j==0) return grid[0][0];            // start ki cost
-             if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             int up = solve(i-1, j, ...), left = solve(i, j-1, ...);   // sirf upar aur left se aa sakte (right/down chaal)
-             return dp[i][j] = grid[i][j] + min(up, left);  // apni cost + upar/left me CHHOTA
+── FAMILY: 2 STRING DP (i, j peeche se) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ LONGEST COMMON SUBSEQUENCE (LC-1143)  = 2D DP on 2 STRINGS (match/no-match)
  └──────────────────────────────────────────────────────────────
-     SAAR : do string me sabse lambi COMMON subsequence ki length. state = (i,j) = s1 index-i-tak, s2 index-j-tak.
-     TEMPLATE:
-         int solve(i, j, s1, s2, dp):
-             if(i<0 || j<0) return 0;                              // koi string khatam -> common kuch nahi, 0
-             if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             if(s1[i] == s2[j])                                    // char MATCH
-                 return dp[i][j] = 1 + solve(i-1, j-1, ...);       //   liya -> DONO se peeche (diagonal)
-             return dp[i][j] = max(solve(i-1, j, ...), solve(i, j-1, ...));  // no-match -> ek char chhodo (2 side)
-         // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, s1, s2, dp);
-     MATCH -> diagonal (i-1,j-1) +1 · NO-MATCH -> max of 2 side (i-1,j)/(i,j-1). base i<0||j<0 -> 0.
-     grid nahi (2 string) par same 2D soch; ye "2-string DP" ka base (edit-distance, etc. isi pe).
+     int solve(string s1, string s2, int i, int j, vector<vector<int>> &dp) {   // s1 i tak, s2 j tak
+         if (i < 0 || j < 0)
+             return 0;                           // koi string khatam -> common kuch nahi
+         if (dp[i][j] != -1)
+             return dp[i][j];
+         if (s1[i] == s2[j])
+             return dp[i][j] = 1 + solve(s1, s2, i - 1, j - 1, dp);   // MATCH -> DONO peeche (diagonal)
+         return dp[i][j] = max(solve(s1, s2, i - 1, j, dp), solve(s1, s2, i, j - 1, dp));   // ek char chhodo
+     }
+
+     int longestCommonSubsequence(string s1, string s2) {
+         int m = s1.size();
+         int n = s2.size();
+         vector<vector<int>> dp(m + 1, vector<int>(n + 1, -1));
+         return solve(s1, s2, m - 1, n - 1, dp);
+     }
+     // "2-string DP" ka base (edit distance isi pe)
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ EDIT DISTANCE (LC-72, Hard)  = LCS reuse -- no-match 3-choice + base 2-sided
  └──────────────────────────────────────────────────────────────
-     SAAR : w1 -> w2 min ops (insert/delete/replace). = LCS code, transition badli. (HARD par template = easy)
-     TEMPLATE:
-         int solve(i, j, w1, w2, dp): // caller: dp(m+1, vec(n+1,-1)); return solve(m-1, n-1, w1, w2, dp)
-             if(i<0) return j+1;                          // w1 khatam -> bache w2 ke j+1 char INSERT
-             if(j<0) return i+1;                          // w2 khatam -> w1 ke i+1 char DELETE
-             if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             if(w1[i] == w2[j]) return dp[i][j] = solve(i-1, j-1, ...);   // MATCH -> koi op nahi
-             return dp[i][j] = 1 + min({ solve(i-1, j-1, ...),   // REPLACE
-                                         solve(i-1, j,   ...),   // DELETE (w1 peeche)
-                                         solve(i,   j-1, ...) }); // INSERT (w2 peeche)
-     LCS se FARAK: (1) no-match = 1 + MIN-of-3 (LCS me max-of-2 tha) (2) base = j+1/i+1 (LCS me 0).
-     3-choice matlab: replace=diagonal · delete=i-1 · insert=j-1. base 2-sided (dono string ke bache char count).
+     int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp) {   // s1 -> s2 min ops
+         if (i < 0)
+             return j + 1;                       // s1 khatam -> bache s2 ke j+1 char INSERT
+         if (j < 0)
+             return i + 1;                       // s2 khatam -> s1 ke i+1 char DELETE
+         if (dp[i][j] != -1)
+             return dp[i][j];
+         if (s1[i] == s2[j])
+             return dp[i][j] = 0 + solve(i - 1, j - 1, s1, s2, dp);   // MATCH -> koi op nahi
+         return dp[i][j] = 1 + min({solve(i - 1, j, s1, s2, dp),       // DELETE: s1 ka char NIKAALA -> i--
+                                    solve(i, j - 1, s1, s2, dp),       // INSERT: s2 ke liye DAALA -> j--
+                                    solve(i - 1, j - 1, s1, s2, dp)}); // REPLACE: dono nipte -> i--, j--
+     }
 
-     VISUAL (pointer PEECHE se: i=w1 last, j=w2 last, X != Y -> 1 op lagega):
-        SETUP:   w1: . . X          w2: . . Y
-                         ^i                  ^j
+     int longestCommonSubsequence(string s1, string s2) {   // LCS wala caller hi reuse
+         int m = s1.size();
+         int n = s2.size();
+         vector<vector<int>> dp(m + 1, vector<int>(n + 1, -1));
+         return solve(m - 1, n - 1, s1, s2, dp);
+     }
 
-        REPLACE -- X ko Y bana do (dono match ho jaate):
-           w1: . . X   ->   w1: . . Y        w2: . . Y
-                   ^i               ^                ^j
-           ab dono ka last = Y (MATCH) -> DONO peeche
-           => solve(i-1, j-1)     [i--, j--]
+     int minDistance(string w1, string w2) {
+         return longestCommonSubsequence(w1, w2);
+     }
+     // LCS se FARAK: (1) no-match = 1 + MIN of 3 (LCS me max of 2) (2) base = j+1 / i+1 (LCS me 0)
+     // CRUX: DELETE = s1 se nikaala (i ghata) · INSERT = s2 ke liye daala (j ghata) -> ulta index
 
-        DELETE -- X hata do (w1 me ye extra tha):
-           w1: . . X   ->   w1: . .          w2: . . Y   (chhua nahi)
-                   ^i             ^i-1                ^j
-           w1 ka X nikaala -> i peeche; w2 wahi ka wahi
-           => solve(i-1, j)       [i--, j same]
-
-        INSERT -- Y ko w1 me DAALO (w2 ka Y match karne ko):
-           w1: . . X   ->   w1: . . X [Y]    w2: . . Y
-                   ^i               ^i(wahi)          ^j-1
-           naya [Y] daala -> w2 ka Y NIPAT gaya -> j peeche
-           par w1 ka apna X abhi bacha (naya daala, purana nahi chhua) -> i WAHI
-           => solve(i, j-1)       [j--, i same]
-
-        Ek nazar me:
-           REPLACE : X badla->Y          -> dono nipte -> i--, j--
-           DELETE  : X NIKAALA (w1)      -> w1 nipta   -> i--, j same
-           INSERT  : Y DAALA (w2 ke liye) -> w2 nipta  -> j--, i same
-     CRUX: DELETE = w1 ka char NIKAALA (i ghata) · INSERT = w2 ke liye naya char DAALA (j ghata). ek nikaal ek daal -> ulta index.
+── FAMILY: 0/1 KNAPSACK (item ONCE -> i-1) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ 0/1 KNAPSACK (classic)  = PURE take/not-take (item ONCE)
  └──────────────────────────────────────────────────────────────
-     SAAR : items (wt,val) + bag capacity W. har item ek baar (0/1). MAX value, weight<=W. (chor: bag me best chura)
-     TEMPLATE:
-         int solve(wt, val, W, i, dp): // caller: dp(n+1, vec(W+1,-1)); return solve(wt, val, W, n-1, dp)
-             if(i<0) return 0;                                       // koi item nahi
-             if(dp[i][W] != -1) return dp[i][W];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             int notTake = solve(wt, val, W, i-1, dp);               // item chhoda
-             int take = 0;   // 0 se: fit na ho to take ka koi value nahi
-             if(wt[i] <= W)                                          // fit hota hai tabhi (warna W negative -> dp index crash)
-                 take = val[i] + solve(wt, val, W - wt[i], i-1, dp); // liya -> value+ , weight ghata, i-1 (ONCE)
-             return dp[i][W] = max(take, notTake);
-     coin-change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same tha). yehi 0/1 ka matlab.
-     BASE i<0 vs i==0 (dono valid, same jawab): i<0 -> index-0 NORMAL item (recursion + i<0-base khud sambhaale, CLEANER);
-        i==0 -> item-0 explicit-handle (recursion 1 level pehle rukti, zyada code). i<0 = "sach me khatam", index-0 = normal.
+     // MAX value, weight <= W, har item ek baar
+     int solve(vector<int> &wt, vector<int> &val, int W, int i, vector<vector<int>> &dp) {
+         if (i < 0)
+             return 0;                           // koi item nahi (i<0: index-0 normal item, cleaner)
+         if (dp[i][W] != -1)
+             return dp[i][W];
+         int notTake = 0 + solve(wt, val, W, i - 1, dp);   // item chhoda
+         int take = 0;                           // fit na ho to take ka koi value nahi
+         if (wt[i] <= W)                         // fit tabhi (warna W negative -> dp index crash)
+             take = val[i] + solve(wt, val, W - wt[i], i - 1, dp);   // liya -> i-1 (ONCE)
+         return dp[i][W] = max(take, notTake);
+     }
+
+     int knapsack(vector<int> &wt, vector<int> &val, int W) {
+         int n = wt.size();
+         vector<vector<int>> dp(n + 1, vector<int>(W + 1, -1));
+         return solve(wt, val, W, n - 1, dp);
+     }
+     // coin change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same)
 
  ┌──────────────────────────────────────────────────────────────
- │ ▸ SUBSET SUM (boolean)  = 0/1 KNAPSACK ka BOOLEAN bhai (literally knapsack call)
+ │ ▸ SUBSET SUM (boolean)  = 0/1 KNAPSACK ka BOOLEAN bhai
  └──────────────────────────────────────────────────────────────
-     SAAR : nums[] + target. kya koi SUBSET exactly target tak jode? true/false.
-     RECOGNITION : subsetSum ne KNAPSACK function ko HI call kiya -- naya kuch nahi likha.
-        FARAK = solve() me max-VALUE ki jagah TRUE/FALSE (take || notTake), target ghatao.
-     TEMPLATE (teen function -- solve + knapsack wrapper + subsetSum call):
-         bool solve(wt, W, i, dp):
-             if(W == 0)  return true;              // target ban gaya -> SUCCESS (sabse PEHLE) (upar rakho: neeche wale base W==0 pe galat false dete)
-             if(i < 0)   return false;             // numbers khatam, target bacha
-             if(i == 0)  return wt[0] == W;        // aakhri number: sirf isse W ban sakta?
-             if(dp[i][W] != -1) return dp[i][W];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             int notTake = solve(wt, W, i-1, dp);              // number chhoda -> W same
-             int take = 0;   // 0 = false: fit na hua to ye raasta nahi
-             if(wt[i] <= W) take = solve(wt, W - wt[i], i-1, dp);  // liya -> W ghata (wt<=W tabhi: warna W negative, dp crash)
-             return dp[i][W] = (take || notTake);              // koi ek raasta true -> true
+     // knapsack ka max-value ki jagah true/false
+     bool solve(vector<int> &nums, int target, int index, vector<vector<int>> &dp) {
+         if (target == 0)
+             return true;                        // SUCCESS -- SABSE UPAR (BASE-ORDER TRAP, neeche dekh)
+         if (index < 0)
+             return false;                       // numbers khatam, target bacha
+         if (index == 0)
+             return nums[0] == target;           // aakhri number: sirf isse target ban sakta?
+         if (dp[index][target] != -1)
+             return dp[index][target];           // -1 = nahi nikala (0 = asli false)
+         bool notTake = solve(nums, target, index - 1, dp);
+         bool take = false;
+         if (nums[index] <= target)              // warna target negative -> dp crash
+             take = solve(nums, target - nums[index], index - 1, dp);
+         return dp[index][target] = take || notTake;   // koi ek raasta true -> true
+     }
 
-         bool knapsack(wt, W):                     // wrapper: dp banao + solve(n-1)
-             int n = wt.size();
-             vector<vector<int>> dp(n+1, vector<int>(W+1, -1));  // W+1: dp[i][W] tak; -1 = abhi nahi nikala (0 = false asli)
-             return solve(wt, W, n-1, dp);   // n-1: aakhri index se peeche chalo
-
-         bool subsetSum(nums, target):
-             return knapsack(nums, target);        // bas knapsack ko hi bula liya
-     ★ BASE-ORDER TRAP: W==0 sabse UPAR. warna i==0 wale case me W==0 aaya to wt[0]==0=false ->
-        success MISS. eg [5,3],T=3 -> {3} true hona chahiye par galat false. (base-order = DP ka fiddly part.)
-     FAMILY: PARTITION EQUAL SUBSET SUM (LC-416) = ISKA delta -> target=totalSum/2, sum odd->false, phir yahi subsetSum.
+     bool subsetSum(vector<int> &nums, int target) {
+         int n = nums.size();
+         vector<vector<int>> dp(n + 1, vector<int>(target + 1, -1));
+         return solve(nums, target, n - 1, dp);
+     }
+     // BASE-ORDER TRAP: target==0 UPAR nahi to index==0 wale case me target 0 aaya -> nums[0]==0 = false
+     //   -> success MISS. [5,3], T=3 -> {3} true hona chahiye, galat false aata
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ PARTITION EQUAL SUBSET SUM (LC-416)  = SUBSET-SUM ka delta
  └──────────────────────────────────────────────────────────────
-     SAAR : array ko DO barabar-sum subset me baant sakte? true/false.
-     [1,5,11,5] -> S=22 -> har hissa 22/2 = 11
-          {11} = 11    aur    {1,5,5} = 11    -> DONO barabar -> true
-     RECOGNITION : ek subset S/2 bana le -> baaki apne-aap barabar (S - S/2).
-        => "kya subset S/2 banaye?" = bilkul SUBSET-SUM.
-     DELTA (subsetSum ke upar 2 line):
-         int S = sum(nums);
-         if (S % 2) return false;        // ODD -> aadha ho hi nahi sakta
-         return subsetSum(nums, S/2);     // target = S/2 -> wahi boolean subset-sum · dp ka column S/2+1 (target ab S/2 hai)
+     // [1,5,11,5] -> S=22 -> {11} = {1,5,5} = 11 -> true. ek subset S/2 bana -> baaki apne aap S - S/2
+     // solve() = upar SUBSET SUM wala, hubahu
+     bool subsetSum(vector<int> &nums, int target, int n, vector<vector<int>> &dp) {
+         return solve(nums, target, n - 1, dp);
+     }
+
+     bool canPartition(vector<int> &nums) {
+         int S = 0;
+         for (int i = 0; i < nums.size(); i++)
+             S += nums[i];
+         int n = nums.size();
+         vector<vector<int>> dp(n + 1, vector<int>((S / 2) + 1, -1));   // column S/2+1: target ab S/2
+         if (S % 2 != 0)
+             return false;                       // ODD -> aadha ho hi nahi sakta
+         return subsetSum(nums, S / 2, n, dp);   // target = S/2 -> wahi boolean subset sum
+     }
+
+── FAMILY: STATE me COUNTER (choice per char) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ VALID PAREN with '*' (LC-678)  = choice-per-char, 2D dp[index][open]
  └──────────────────────────────────────────────────────────────
-     SAAR : '*' = '(' YA ')' YA khaali. valid ban SAKTI hai? har '*' pe 3-choice -> try-all -> state repeat -> memo.
-     TRACK : ek counter open = ab tak kitne '(' UNMATCHED. state = (index, open). '(' 1 raasta, ')' 1, '*' 3 (choice).
-     TEMPLATE:
-         bool solve(s, index, open, dp):
-             if(index == s.size()) return open == 0;                     // base: sab '(' match ho gaye?
-             if(dp[index][open] != -1) return dp[index][open];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
-             if(s[index]=='(') return dp[index][open] = solve(s, index+1, open+1, dp);   // '(' : ek hi raasta, open badhao
-             if(s[index]==')') return dp[index][open] = (open>0) ? solve(s, index+1, open-1, dp) : false;  // open>0: band karne ko koi khula chahiye
-             bool a = solve(s, index+1, open+1, dp);                      // '*' as '('
-             bool b = (open>0) ? solve(s, index+1, open-1, dp) : false;   // '*' as ')'  (GUARD) (open 0 pe ')' = invalid, dp[-1] crash)
-             bool c = solve(s, index+1, open, dp);                        // '*' khaali
-             return dp[index][open] = a || b || c;   // koi ek raasta valid -> true
-         // caller: dp(n+1, vec(n+1,-1)); return solve(s, 0, 0, dp);   -- open 0..n (worst = saare '(')
-     ★ GUARD : jahan bhi open-1 -> pehle open>0 (warna open<0 -> dp[-1] crash + galat). '*' pe direct return-false MAT (baaki 2 option zinda).
-     = COIN-CHANGE ka cousin (choice + memo), DELTA: state me 'open' (balance) + '*' pe 3-branch OR (true/false, min nahi).
+     // '*' = '(' YA ')' YA khaali. open = ab tak kitne '(' UNMATCHED. state = (index, open)
+     bool solve(string &s, int index, int open, vector<vector<int>> &dp) {
+         if (index == s.size())
+             return open == 0;                   // sab '(' match ho gaye?
+         if (dp[index][open] != -1)
+             return dp[index][open];
+         if (s[index] == '(')
+             return dp[index][open] = solve(s, index + 1, open + 1, dp);   // ek hi raasta, open badhao
+         else if (s[index] == ')') {
+             if (open > 0)                       // band karne ko koi khula chahiye
+                 return dp[index][open] = solve(s, index + 1, open - 1, dp);
+             else
+                 return false;
+         }
+         bool open_for_astrisk = solve(s, index + 1, open + 1, dp);    // '*' as '('
+         bool close_for_astrisk;
+         if (open > 0)                           // GUARD: open-1 se pehle open>0 (warna dp[-1] crash)
+             close_for_astrisk = solve(s, index + 1, open - 1, dp);    // '*' as ')'
+         else
+             close_for_astrisk = false;          // '*' pe seedha return false MAT: baaki 2 option zinda
+         bool none = solve(s, index + 1, open, dp);                     // '*' khaali
+         return dp[index][open] = open_for_astrisk || close_for_astrisk || none;
+     }
+
+     bool checkValidString(string s) {
+         int n = s.size();
+         vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));   // open 0..n (worst = saare '(')
+         return solve(s, 0, 0, dp);
+     }
+     // = coin change ka cousin (choice + memo); DELTA: state me 'open' + '*' pe 3 branch OR (true/false)
+
+── FAMILY: INTERVAL DP (range (i, j), WALL k pe loop + recurse) ──
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ MATRIX CHAIN MULT / MCM  = INTERVAL-DP  = two_max WALL + loop + recurse
  └──────────────────────────────────────────────────────────────
-     SAAR : matrices chain multiply -> result SAME, COST order-pe badalti -> MIN scalar-mult nikaalo.
+     // chain multiply: result SAME, COST order pe -> MIN. p[] = dims, matrix A_i = p[i-1] x p[i] (i = 1..n)
+     //   p = [10,30,5,60]: A1 = 10x30, A2 = 30x5 (p1 = 30 SHARED), A3 = 5x60
+     // = two_max ka WALL; FARAK: wahan left/right precomputed, yahan ranges overlap -> loop + recurse + memo
+     int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp) {   // A_i..A_j ko 1 banane ka MIN cost
+         if (i == j)
+             return 0;                           // ek hi matrix bacha -> multiply ko kuch nahi
+         if (dp[i][j] != -1)
+             return dp[i][j];
+         int ans = INT_MAX;                      // MIN chahiye: bade se shuru
+         for (int k = i; k <= j - 1; k++) {      // k = WALL: (i..k)|(k+1..j), har side >=1 -> k max j-1
+             ans = min(ans, solve(i, k, p, dp) + solve(k + 1, j, p, dp) + p[i - 1] * p[k] * p[j]);
+         }                                       // left p[i-1]xp[k] guna right p[k]xp[j]
+         return dp[i][j] = ans;
+     }
 
-     INPUT p[]: chain ki dims. consecutive PAIR = ek matrix ka ROW x COL. adjacent matrices ek number SHARE karti.
-        p[] :   10  --  30  --  5  --  60
-        idx :   p0      p1     p2     p3
-                 \__A1__/\__A2_/\_A3__/
-        A1 = p0 x p1 = 10 x 30
-        A2 = p1 x p2 = 30 x 5     <- p1=30 SHARED (A1 ka COL = A2 ka ROW -> isliye multiply hoti)
-        A3 = p2 x p3 = 5  x 60
-        => matrix A_i = p[i-1] x p[i]   (i = 1..n ;  n = p.size()-1 = 3 matrices)
-
-     = two_max (Google) ka WALL hi. FARAK: two_max me left/right PRECOMPUTED (O(1)); yahan ranges OVERLAP
-       -> har wall LOOP + har side RECURSE + memo (interval-DP, state = RANGE (i,j) -> 2D dp).
-     TEMPLATE:
-         solve(i, j):                              // A_i..A_j ko 1 matrix banane ka MIN cost
-             if i == j: return 0                   // base: ek hi matrix bacha -> multiply ko kuch nahi -> 0  (2+ matrix hon tabhi mult)
-             if dp[i][j] != -1: return dp[i][j]
-             ans = INT_MAX  // MIN chahiye: bade se shuru, pehla cost hi jeete
-
-             // k = i se j-1 KYUN: k = WALL, chain ko (i..k)|(k+1..j) me todti; har side >=1 matrix chahiye.
-             //   k=j pe RIGHT block khaali = invalid -> isliye max k = j-1.
-             //   eg {10,30,5,60}: k=j-1 pe right single, recursion sambhaal leta.
-             for k = i .. j-1:  // j-1 tak: right block khaali na rahe
-                 cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]  // left p[i-1]xp[k] guna right p[k]xp[j]
-                 ans = min(ans, cost)
-             return dp[i][j] = ans
-         // caller: solve(1, n) [n=p.size()-1].   i=0 MAT karo (p[i-1]=p[-1] crash). · dp(p.size()+1, vec(p.size()+1,-1))
-     COMBINE (a*b*c): block A_i..A_k -> size p[i-1] x p[k]. wall pe LEFT=p[i-1]xp[k], RIGHT=p[k]xp[j] -> mult = p[i-1]*p[k]*p[j].
-              number-line: p[i-1]=poore-left baayaan chhor · p[k]=WALL · p[j]=poore-right dayaan chhor.
-
-     DRY-RUN (combine = p[i-1]*p[k]*p[j]):   p=[10,30,5,60], solve(1,3), wall k=1
-             val:    10    30    5    60
-             idx:    p0    p1    p2   p3
-                     |LEFT|    |__RIGHT__|
-                     (A1)       (A2..A3)
-         LEFT  (A1):    10x30                          -> 1 matrix:  10 x 30   (= p0 x p1)
-         RIGHT (A2,A3): 30x5 , 5x60   --recursion-->      1 matrix:  30 x 60   (= p1 x p3)
-         COMBINE do result-matrix: (10x30) x (30x60) -> 10 * 30 * 60
-                     = p0 * p1 * p3  =  p[i-1] * p[k] * p[j]   (i=1, k=1, j=3)
-         (3 matrices -> ek side single, ek block. 4 hote -> dono block. formula wahi.)
-
-     real: DB JOIN-order optimization · ML/graphics compute. interval-DP FAMILY: burst-balloons, stone-merge, optimal-BST.
+     int matrixChain(vector<int> &p) {
+         int n = p.size();
+         vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
+         return solve(1, n - 1, p, dp);          // 1 se: i=0 pe p[i-1] = p[-1] crash; n-1 = matrices
+     }
+     // p[i-1] = poore left ka baayaan chhor · p[k] = WALL · p[j] = poore right ka daayaan chhor
+     // [10,30,5,60], k=1: left A1 = 10x30, right A2A3 -> 30x60, combine = 10*30*60 = p0*p1*p3
+     // real: DB JOIN-order. interval-DP family: burst balloons, stone merge, optimal BST
 
  ┌──────────────────────────────────────────────────────────────
  │ ▸ BURST BALLOONS (LC 312)  = INTERVAL-DP  = MCM WALL + loop + recurse
  └──────────────────────────────────────────────────────────────
-     SAAR : balloons ek-ek phodo. phodne pe coins = left * khud * right (padosi = us waqt ZINDA) -> saare phod ke MAX total.
-     Q: balloons row, har pe number. ek-ek phodo; balloon i pe coins = nums[i-1]*nums[i]*nums[i+1]
-        (padosi = us waqt zinda; array-bahar = 1). saare phod ke MAX total coins?
+     // phodne pe coins = left * khud * right (padosi = us waqt ZINDA) -> saare phod ke MAX
+     // k = range me SABSE AAKHRI phootne wala -> baaki sab phoot chuke -> padosi = range ke BAHAR: i-1, j+1
+     //   [1,3,1,5,8,1], solve(1,4), k=3 (5) aakhri -> coins = p[0]*p[3]*p[5] = 1*5*1
+     int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp) {   // i..j sab phodne ka MAX coins
+         if (i > j)
+             return 0;                           // khaali range. i==j base NAHI: wo balloon abhi phootega
+         if (dp[i][j] != -1)
+             return dp[i][j];
+         int ans = INT_MIN;                      // MAX chahiye: chhote se shuru
+         for (int k = i; k <= j; k++) {          // j TAK: har balloon aakhri ban sakta (MCM me j-1)
+             ans = max(ans, solve(i, k - 1, p, dp) + solve(k + 1, j, p, dp) + p[i - 1] * p[k] * p[j + 1]);
+         }                                       // k REMOVED -> dono side se bahar: (i,k-1) + (k+1,j)
+         return dp[i][j] = ans;
+     }
 
-     INPUT p[]: balloons row; dono taraf 1 PAD (kinaare ka gaayab padosi = 1).
-        pad = 1 KYUN (na 0): 1 = MULTIPLY ki identity -> kinaare wala phoote, gaayab-padosi ko 1 se guna = coin waisa ka waisa
-           (edge saaf handle). 0 se pad karte -> coin = x*0 = 0 -> poora coin gayab (galat).
+     int matrixChain(vector<int> &p, int n, vector<vector<int>> &dp) {   // MCM jaisa caller naam
+         return solve(1, n, p, dp);              // asli balloon idx 1..n
+     }
 
-            .-.    .-.    .-.    .-.    .-.    .-.
-           ( 1 )  ( 3 )  ( 1 )  ( 5 )  ( 8 )  ( 1 )
-            `-'    `-'    `-'    `-'    `-'    `-'
-           p0     p1     p2     p3     p4     p5        <- indexing (p0 & p[n+1] = pad)
-           pad    \_________ asli _________/    pad
-
-        PHOD  k=2 (the (1)):   padosi (3) & (5)
-             .-.    .-.    .-.
-            ( 3 )  ( 1 )  ( 5 )          coins = 3 * 1 * 5 = 15
-             `-'   *POP*   `-'
-             .-.           .-.
-            ( 3 )         ( 5 )     ->   (1) gaya, ab (3) aur (5) adjacent
-             `-'           `-'
-
-        => phodne pe coin = (left) * (khud) * (right) ;  caller solve(1, n)  (n = asli count)
-
-     Q (yahan): "k ko phodun to coins kitne milenge?"  ->  question ke hisaab se: coin = (left-padosi) * k * (right-padosi)
-     FORMULA  p[i-1]*p[k]*p[j+1]  kaise banti: k phoda -> uske padosi = range ke BAAHAR wale 2 balloons:
-              .-.                    .-.                    .-.
-           (p[i-1])               ( p[k] )              (p[j+1])
-              `-'                    `-'                    `-'
-            baahar-L               k phoota               baahar-R
-                       coin = p[i-1] * p[k] * p[j+1]
-
-     = MCM ka WALL hi. FARAK: MCM me k = WALL (block ka part, MIN); yahan k = jo LAST phoota
-       (REMOVED, dono side se BAHAR) -> solve(i,k-1)+solve(k+1,j), MAX, + PAD.
-     TEMPLATE:
-         solve(i, j):                              // A_i..A_j sab phodne ka MAX coins
-             if i > j: return 0                    // base: khaali range (single balloon base NAHI -> wo phoodta)
-             if dp[i][j] != -1: return dp[i][j]
-             ans = INT_MIN  // MAX chahiye: sabse chhote se shuru
-
-             // k = i se j KYUN: har balloon ko baari-baari phod-ke try karo -> unme se MAX = answer.
-             //   eg {3,1,5,8}: 3 phodo, ya 1, ya 5, ya 8 -> har ek try -> MAX nikaalo.
-             //   MCM se ULTA: wahan matrix ke PAIRS the (wall pairs) -> j-1; yahan pair nahi -> k poora i..j.
-             for k = i .. j:  // j tak: har balloon aakhri phootne wala ban sakta
-                 coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]  // i-1, j+1: k aakhri, padosi range ke bahar wale
-                 ans = max(ans, coins)
-             return dp[i][j] = ans
-         // caller:
-         //   int n = balloons.size();                      // n PAD se PEHLE (asli count)
-         //   dp(n+1, vector<int>(n+1, -1)); (n+1: asli idx 1..n)
-         //   balloons.insert(balloons.begin(), 1);         // left pad
-         //   balloons.push_back(1);                        // right pad
-         //   return solve(1, n);                           // asli balloon idx 1..n
-
-     ★ KYUN p[i-1] aur p[j+1]  (k-1, k+1 nahi):
-        k = range i..j me SABSE AAKHRI phootne wala.
-        k ki baari aate hi range ke baaki sab phoot chuke -> range ke andar koi padosi nahi bacha.
-        padosi = jo range ke BAHAR khade:  i-1 (left)  ·  j+1 (right).
-
-           p = [1, 3, 1, 5, 8, 1]     solve(1,4), k=3 (val 5) aakhri
-           pehle :   [1] | 3  1  5  8 | [1]
-                     i-1               j+1
-           3,1,8 phoote -> [1]  5  [1]   ->  coins = p[0] * p[3] * p[5] = 1 * 5 * 1
-
-     DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(p1,p3), k=p2 phoda
-             val:    1     3     2     5     1
-             idx:    p0    p1    p2    p3    p4
-                          |LEFT| (k) |RIGHT|
-                          (p1)       (p3)
-         k=p2 phoda -> range TOOTI:  LEFT = solve(i,k-1) = solve(p1,p1)  |  k = p2  |  RIGHT = solve(k+1,j) = solve(p3,p3)
-         phir teeno ka coin JODO:
-         LEFT  solve(p1,p1):   1*3*2 = 6     (= p0*p1*p2)   -> p1(3) phoota, bacha:  1 _ 2 5 1
-         RIGHT solve(p3,p3):   2*5*1 = 10    (= p2*p3*p4)   -> p3(5) phoota, bacha:  1 _ 2 _ 1
-         k=p2  phoota:         1*2*1 = 2     (= p0*p2*p4 = p[i-1]*p[k]*p[j+1])   -> p2(2) phoota, bacha:  1 _ _ _ 1
-         uske baad JODO: 6 + 10 + 2 = 18    (MCM me result MULTIPLY hote; yahan coins ADD)
-
-     real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
+     int burstBalloons(vector<int> &balloons) {
+         int n = balloons.size();                // n PAD se PEHLE (asli count)
+         vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
+         balloons.insert(balloons.begin(), 1);   // dono taraf 1 PAD: kinaare ka gaayab padosi = 1
+         balloons.push_back(1);                  //   (1 = guna ki identity; 0 se pad -> coin 0, galat)
+         return matrixChain(balloons, n, dp);
+     }
+     // [1,3,2,5,1], solve(1,3), k=2: left 1*3*2=6 + right 2*5*1=10 + k 1*2*1=2 = 18 (MCM me guna, yahan JOD)
 ```
 
 ---
