@@ -2009,16 +2009,14 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number, Single-Number-II bhi) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SINGLE NUMBER (LC-136)
- └──────────────────────────────────────────────────────────────
-     int singleNumber(vector<int> &nums) {       // sab 2 baar, ek 1 baar -> sab XOR = wahi ek
-         int XORR = nums[0];                     // nums[0] se shuru, isliye loop 1 se
-         for (int i = 1; i < nums.size(); i++)
-             XORR ^= nums[i];                    // a^a = 0 pair kat jaata, a^0 = a
-         return XORR;                            // O(n), O(1), koi map nahi
-     }
+ ▸ SINGLE NUMBER (LC-136)
+     // sab 2 baar, ek 1 baar -> sab XOR = wahi ek
+     int XORR = nums[0];                         // nums[0] se shuru, isliye loop 1 se
+     for (int i = 1; i < nums.size(); i++) XORR ^= nums[i];   // a^a = 0 pair kat jaata, a^0 = a
+     return XORR;                                // O(n), O(1), koi map nahi
 ```
+
+---
 
 ---
 
