@@ -15,6 +15,14 @@ do table, har feed pe jod -> inbox pehle se (fanout) -> Kafka + fanout worker (+
 -> inbox chhota (id, 800, sirf active: worker last_active dekhe) -> tweets Cassandra (author_id)
 -> video S3 + CDN -> India region (Kafka topic ki copy, har region apne inbox bhare)
 
+> **Baad me padhna (abhi mock me nahi): video upload ke peeche kya hota hai (media converter / transcoding)**
+> Arpan ki 100 MB video S3 me aa gayi, par wo ek hi quality me hai. Dheeme net wale ke liye wo atkegi.
+> Isliye upload hote hi peeche ek kaam chalta hai: S3 khabar deta hai ("nayi video aayi") -> ek worker
+> (FFmpeg ya AWS MediaConvert) video ko alag-alag quality me badalta hai (360p, 720p, 1080p) aur har ek ko
+> chhote tukdon (kuch second ke) me kaatta hai -> ye sab wapas S3 me, CDN se bante hain.
+> Tab tak tweet pe "video process ho rahi" dikhta hai; kaam khatam hone pe READY. Dekhne wale ka player net
+> dekh ke apne aap quality badalta hai: net dheema to 360p ke tukde, tez to 1080p.
+
 ---
 
 ## 1. FR: kya karna hai
