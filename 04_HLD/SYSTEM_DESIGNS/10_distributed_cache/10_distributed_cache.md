@@ -416,6 +416,8 @@ PURANA THODA CHALEGA -> likhne pe delete + umar (TTL) + soft / hard
 ## Pooche to (design nahi badalta, bas jawab pata ho)
 
 ```
+Redis me lock kaise lete? (khud mat bolo, poochhe tabhi)
+  -> SET lock:home 1 NX EX 2   (NX = sirf tab bane jab pehle se na ho, EX 2 = 2 second me apne aap hat jaaye)
 jo key DB me hai hi nahi, use koi bot baar-baar maange?
   -> har baar MISS, har baar DB. Ilaaj: "ye key nahi hai" bhi cache me 1-2 minute ke liye rakh do
 hit ratio kya hai, kaise pata system theek chal raha?

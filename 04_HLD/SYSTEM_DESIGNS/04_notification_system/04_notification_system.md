@@ -130,7 +130,8 @@ Arpan ko ek order ke do email aate hain.
 ### Kadam 4: key se ek hi baar (Redis me khabar ki id + haal)
 
 Har khabar ki apni id hoti hai: order 999 ka email = `999:email`. Worker bhejne se pehle **Redis** me is id
-ki key likhta hai: `SET 999:email BHEJ_RAHA NX EX 60` (NX = sirf tab likho jab key pehle se na ho, EX 60 = 60 sec ki umar).
+ki key likhta hai: 999:email = BHEJ_RAHA. Ye sirf tab likhi jaati hai jab key pehle se na ho, aur iski umar 60
+second hoti hai.
 
 - key nahi thi, likh di gayi = ye worker pehla hai. Wo email bhejta hai, phir key ko `BHEJ_DIYA` kar deta hai.
 - machine mari, naya worker wahi khabar uthata hai, Redis me dekhta hai `BHEJ_DIYA`, to chhod deta hai.
@@ -139,7 +140,7 @@ ki key likhta hai: `SET 999:email BHEJ_RAHA NX EX 60` (NX = sirf tab likho jab k
 ```mermaid
 flowchart LR
     LE[("email line")] --> WE["email worker"]
-    WE -- "SET 999:email BHEJ_RAHA NX EX 60" --> R[("Redis + replica")]
+    WE -- "999:email = BHEJ_RAHA<br/>(sirf pehla likh paata, 60 sec umar)" --> R[("Redis + replica")]
     WE -- "pehla hai to hi bhejo" --> C["Email company"]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -462,6 +463,8 @@ company ki had me. Company ka webhook Tracking DB (Cassandra) me "mila / fail" l
 ## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
+Redis me "sirf pehla likh paata, 60 sec umar" kaise? (khud mat bolo, poochhe tabhi)
+  -> SET 999:email BHEJ_RAHA NX EX 60   (NX = sirf tab likho jab key pehle se na ho, EX 60 = 60 sec ki umar)
 API?
   -> Kafka pe { event: "ORDER_PLACED", userId: Arpan, orderId: 999 }. Andar ke liye REST bhi:
      POST /notify { userId, type, channel?, payload }
