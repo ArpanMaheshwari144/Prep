@@ -439,7 +439,7 @@ Redis gira to? Redis ki copy (replica) hai. Koi dabba akela nahi.
 flowchart LR
     A["Arpan app"] -- "har 30 sec: zinda hoon" --> S["Chat server"]
     S --> R[("Redis<br/>online:arpan (umar 60 sec)")]
-    RV["Ravi ne chat kholi"] -- "arpan online?" --> R
+    RV["Ravi ne chat kholi"] -- "arpan online?" --> S
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
