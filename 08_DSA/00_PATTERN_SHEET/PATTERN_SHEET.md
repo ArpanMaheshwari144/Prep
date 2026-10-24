@@ -2927,148 +2927,100 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── FAMILY: SUBSETS-family (start-aage = kaunse; used[] = kis order) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
- └──────────────────────────────────────────────────────────────
-     void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp) {
-         if (index >= nums.size()) {             // har element pe faisla ho gaya -> ek poora subset
-             ans.push_back(temp);
-             return;
-         }
-         temp.push_back(nums[index]);            // INCLUDE: le liya
-         solve(nums, ans, index + 1, temp);      // index+1: agle element pe faisla
-         temp.pop_back();  // UN-CHOOSE, exclude se PEHLE: warna exclude me bhi chipka rehta
-         solve(nums, ans, index + 1, temp);      // EXCLUDE: element chhod ke aage
-     }
+ ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
+     void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp)
+         if (index >= nums.size())   // har element pe faisla ho gaya -> ek poora subset
+             ans.push_back(temp); return;
+         temp.push_back(nums[index]);   // INCLUDE: le liya
+         solve(nums, ans, index + 1, temp);   // index+1: agle element pe faisla
+         temp.pop_back();   // UN-CHOOSE, exclude se PEHLE: warna exclude me bhi chipka rehta
+         solve(nums, ans, index + 1, temp);   // EXCLUDE: element chhod ke aage
 
-     vector<vector<int>> subsets(vector<int> &nums) {
-         vector<vector<int>> ans;
-         vector<int> temp;  // BAHAR banao, by-ref pass: helper me banate to har call naya
-         solve(nums, ans, 0, temp);              //   (ek SHARED path pe push / pop -> tabhi backtrack chalta)
-         return ans;                             // 2^n subsets (har element in / out = power set)
-     }
+     vector<int> temp;   // BAHAR banao, by-ref pass: helper me banate to har call naya
+     solve(nums, ans, 0, temp);   //   (ek SHARED path pe push / pop -> tabhi backtrack chalta)
+     return ans;   // 2^n subsets (har element in / out = power set)
 
      // ALT FORM (start-loop), same output:
-     void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp) {
-         ans.push_back(temp);                    // HAR node = ek subset (alag base-case NAHI)
-         for (int i = index; i < nums.size(); i++) {   // index se: peeche wale dobara nahi
-             temp.push_back(nums[i]);            // CHOOSE
-             solve(nums, ans, i + 1, temp);      // EXPLORE: i+1 -> agla aage se
-             temp.pop_back();                    // UN-CHOOSE agle i se pehle: wahi jagah agle element ko mile
-         }
-     }
+     void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp)
+     ans.push_back(temp);   // HAR node = ek subset (alag base-case NAHI)
+     for (int i = index; i < nums.size(); i++)   // index se: peeche wale dobara nahi
+         temp.push_back(nums[i]), solve(nums, ans, i + 1, temp);   // CHOOSE · EXPLORE: i+1 -> agla aage se
+         temp.pop_back();   // UN-CHOOSE agle i se pehle: wahi jagah agle element ko mile
      // tree [1,2,3]: har edge pe neeche jaate PUSH, wapas aate POP. undo na karo -> galat subset
      // ([1,2,3] -> pop3 -> [1,2] -> pop2 -> [1] -> loop aage +3 -> [1,3]). right side patli: node sirf aage
      //   pe branch
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
- └──────────────────────────────────────────────────────────────
-     void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vector<int>> &ans) {
-         if (temp.size() == nums.size()) {       // base = full length (poora arrangement)
-             ans.push_back(temp);
-             return;
-         }
-         for (int i = 0; i < nums.size(); i++) {  // 0 se, start NAHI: order matter, peeche wala bhi kisi
+ ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
+     void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vector<int>> &ans)
+         if (temp.size() == nums.size())   // base = full length (poora arrangement)
+             ans.push_back(temp); return;
+         for (int i = 0; i < nums.size(); i++)   // 0 se, start NAHI: order matter, peeche wala bhi kisi
                                                  //   position pe
-             if (used[i])
-                 continue;                       // already liya -> skip
-             temp.push_back(nums[i]);            // CHOOSE
-             used[i] = true;
-             solve(nums, temp, used, ans);       // EXPLORE (i+1 nahi -> phir 0 se, used skip karta)
-             temp.pop_back();                    // UN-CHOOSE: DONO undo
-             used[i] = false;                    //   used false bhi: warna aage ke arrangements me ye band
-         }
-     }
+             if (used[i]) continue;          // already liya -> skip
+             temp.push_back(nums[i]), used[i] = true;   // CHOOSE
+             solve(nums, temp, used, ans);   // EXPLORE (i+1 nahi -> phir 0 se, used skip karta)
+             temp.pop_back();   // UN-CHOOSE: DONO undo
+             used[i] = false;   //   used false bhi: warna aage ke arrangements me ye band
      // caller: temp + used(n, false) BAHAR bana ke by-ref. n! permutations.
      // SUBSETS = 'start' (sirf AAGE, [1,2]==[2,1] repeat nahi) · PERMUTATION = used[] + loop 0 se, start NAHI
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ COMBINATIONS (LC-77)  = SUBSETS ka start-loop, bas base size==k
- └──────────────────────────────────────────────────────────────
-     void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp) {
-         if (temp.size() == k) {  // fixed-size combo poora (subsets har node pe, yahan sirf ==k)
-             ans.push_back(temp);
-             return;
-         }
-         for (int i = index; i <= n; i++) {     // 1..n numbers, index se aage (<= n: n khud bhi number)
-             temp.push_back(i);                  // CHOOSE
-             solve(n, k, ans, i + 1, temp);      // EXPLORE (i+1 -> order nahi, aage hi)
-             temp.pop_back();                    // UN-CHOOSE: agla i try karne se pehle path saaf
-         }
-     }
+ ▸ COMBINATIONS (LC-77)  = SUBSETS ka start-loop, bas base size==k
+     void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
+         if (temp.size() == k)   // fixed-size combo poora (subsets har node pe, yahan sirf ==k)
+             ans.push_back(temp); return;
+         for (int i = index; i <= n; i++)   // 1..n numbers, index se aage (<= n: n khud bhi number)
+             temp.push_back(i);   // CHOOSE
+             solve(n, k, ans, i + 1, temp);   // EXPLORE (i+1 -> order nahi, aage hi)
+             temp.pop_back();   // UN-CHOOSE: agla i try karne se pehle path saaf
      // caller: solve(n, k, ans, 1, temp)  (1 se: numbers 1..n hain, 0 nahi)
      // SUBSETS = start-aage, har node · COMBINATIONS = start-aage, size==k · PERM = used[] + loop 0, size==n
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ COMBINATION SUM (LC-39)  = REUSE allowed + TARGET-base
- └──────────────────────────────────────────────────────────────
-     void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp, int target) {
-         if (target < 0)
-             return;                             // overshoot: aage jaana bekaar (prune)
-         if (index >= nums.size()) {             // end pe check
-             if (target == 0)
-                 ans.push_back(temp);
+ ▸ COMBINATION SUM (LC-39)  = REUSE allowed + TARGET-base
+     void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp, int target)
+         if (target < 0) return;             // overshoot: aage jaana bekaar (prune)
+         if (index >= nums.size())   // end pe check
+             if (target == 0) ans.push_back(temp);
              return;
-         }
-         temp.push_back(nums[index]);            // INCLUDE
+         temp.push_back(nums[index]);   // INCLUDE
          solve(nums, ans, index, temp, target - nums[index]);   // index SAME: yahi element dobara le sakte
-         temp.pop_back();                        // exclude se pehle undo: warna exclude path me bhi rehta
+         temp.pop_back();   // exclude se pehle undo: warna exclude path me bhi rehta
          solve(nums, ans, index + 1, temp, target);   // EXCLUDE: is candidate ko ab chhod diya
-     }
 
      // ALT FORM (for-loop), same output:
      void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int index,
-                 vector<int> &temp) {
-         if (target < 0)
-             return;                             // prune
-         if (target == 0) {                      // for-loop form: target==0 pe turant record
-             ans.push_back(temp);
-             return;
-         }
-         for (int i = index; i < candidates.size(); i++) {   // start se: peeche wale nahi, combo repeat nahi
-             temp.push_back(candidates[i]);      // CHOOSE
+                 vector<int> &temp)
+         if (target < 0) return;             // prune
+         if (target == 0) ans.push_back(temp); return;   // for-loop form: target==0 pe turant record
+         for (int i = index; i < candidates.size(); i++)   // start se: peeche wale nahi, combo repeat nahi
+             temp.push_back(candidates[i]);   // CHOOSE
              solve2(candidates, target - candidates[i], ans, i, temp);   // 'i' (i+1 NAHI) -> REUSE allowed
-             temp.pop_back();                    // UN-CHOOSE
-         }
-     }
+             temp.pop_back();   // UN-CHOOSE
      // combinations se FARAK: (1) recurse 'i' na i+1 (2) base = target (0 = record, <0 = prune), size==k nahi
      // candidates positive -> target ghatta -> infinite nahi
 
 ── FAMILY: GRID PATH (element choose / skip nahi, grid pe raasta: mark -> recurse -> un-mark) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ WORD SEARCH (LC-79)  = grid-DFS + BACKTRACKING
- └──────────────────────────────────────────────────────────────
+ ▸ WORD SEARCH (LC-79)  = grid-DFS + BACKTRACKING
      bool solve(vector<vector<char>> &board, string word, int index, int i, int j, int m, int n,
-                vector<vector<bool>> &vis) {     // vis REFERENCE (&), copy nahi
+                vector<vector<bool>> &vis)   // vis REFERENCE (&), copy nahi
          if (i < 0 || i >= m || j < 0 || j >= n || vis[i][j] || board[i][j] != word[index])
-             return false;  // bounds PEHLE (warna board[i][j] bahar), visited bhi isi if me
-         vis[i][j] = true;                       // mark PEHLE: is raaste me ye cell dobara na aaye
-         index++;
+             return false;   // bounds PEHLE (warna board[i][j] bahar), visited bhi isi if me
+         vis[i][j] = true, index++;          // mark PEHLE: is raaste me ye cell dobara na aaye
          if (solve(board, word, index, i + 1, j, m, n, vis) ||   // || : ek true -> baaki call nahi
              solve(board, word, index, i, j + 1, m, n, vis) ||
              solve(board, word, index, i - 1, j, m, n, vis) ||
              solve(board, word, index, i, j - 1, m, n, vis))
              return true;
-         vis[i][j] = false;                      // BACKTRACK (un-mark): doosre raaste ke liye cell free
+         vis[i][j] = false;   // BACKTRACK (un-mark): doosre raaste ke liye cell free
          return index == word.size() ? true : false;   // base: aakhri char match tabhi == size
-     }
 
-     bool exist(vector<vector<char>> &board, string word) {
-         int m = board.size();
-         int n = board[0].size();
-         vector<vector<bool>> vis(m + 1, vector<bool>(n + 1, false));   // m x n kaafi (m+1 zaroori nahi)
-         for (int i = 0; i < m; i++) {
-             for (int j = 0; j < n; j++) {
-                 if (board[i][j] == word[0]) {   // pehla char mile tabhi DFS
-                     if (solve(board, word, 0, i, j, m, n, vis) == true)
-                         return true;            // KOI EK mila = kaafi
-                 }
-             }
-         }
-         return false;                           // SAARE start try, kahin nahi -> tab false
-     }
+     int m = board.size(); int n = board[0].size();
+     vector<vector<bool>> vis(m + 1, vector<bool>(n + 1, false));   // m x n kaafi (m+1 zaroori nahi)
+     for (int i = 0; i < m; i++)
+         for (int j = 0; j < n; j++)
+             if (board[i][j] == word[0])   // pehla char mile tabhi DFS
+                 if (solve(board, word, 0, i, j, m, n, vis) == true) return true;   // KOI EK mila = kaafi
+     return false;   // SAARE start try, kahin nahi -> tab false
      // BUG-TRAP: loop me `if (solve(..) == false) return false;` -> pehla start fail hote hi poora false.
      //   "AAB" on [CAA / AAA / BCD]: (0,1) ka A fail, par (1,1)->(1,0)->(2,0) = AAB tha. + ulta bug: word[0]
      //   kahin na mila aur end me `return true` = jhootha "mila"
@@ -3078,52 +3030,36 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── FAMILY: CONSTRAINT / LEVEL choices (har step pe choice, rule ya level se) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ GENERATE PARENTHESES (LC-22)  = CONSTRAINT-guided (open / close count)
- └──────────────────────────────────────────────────────────────
+ ▸ GENERATE PARENTHESES (LC-22)  = CONSTRAINT-guided (open / close count)
      // n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
-     void solve(int open, int close, string path, vector<string> &ans, int n) {   // path BY VALUE: path+'('
-         if (open == n && close == n) {          //   naya copy -> pop_back nahi chahiye
-             ans.push_back(path);                // base: saare khule + band (= path.size() == 2*n)
-             return;
-         }
-         if (open < n)                           // '(' : n se zyada '(' nahi
-             solve(open + 1, close, path + '(', ans, n);
-         if (close < open)                       // ')' : band utne hi jitne khule. ALAG if, else if NAHI:
+     void solve(int open, int close, string path, vector<string> &ans, int n)   // path BY VALUE: path+'('
+         if (open == n && close == n)   //   naya copy -> pop_back nahi chahiye
+             ans.push_back(path); return;    // base: saare khule + band (= path.size() == 2*n)
+         if (open < n) solve(open + 1, close, path + '(', ans, n);   // '(' : n se zyada '(' nahi
+         if (close < open)   // ')' : band utne hi jitne khule. ALAG if, else if NAHI:
              solve(open, close + 1, path + ')', ans, n);   //   dono sach ho sakti, tab DONO chalni chahiye
-     }  // return solve(..) MAT: '(' ke return se ')' branch kabhi nahi
+     // return solve(..) MAT: '(' ke return se ')' branch kabhi nahi
      // caller: solve(0, 0, "", ans, n). n=3 -> 5, n=4 -> 14 (kam aaye = koi branch kat rahi)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)
- └──────────────────────────────────────────────────────────────
+ ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)
      // "23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
      void solve(int index, string &temp, unordered_map<char, string> &mp, vector<string> &ans,
-                string &digits) {
-         if (index >= digits.size()) {           // saare ank ho gaye
-             ans.push_back(temp);
-             return;
-         }
-         string str = mp[digits[index]];         // is ank ke akshar
-         for (int i = 0; i < str.size(); i++) {  // har akshar ek alag branch
-             temp.push_back(str[i]);             // choose
-             solve(index + 1, temp, mp, ans, digits);   // explore (agla ank)
-             temp.pop_back();                    // un-choose: agle akshar se pehle path saaf
-         }
-     }
+                string &digits)
+         if (index >= digits.size()) ans.push_back(temp); return;   // saare ank ho gaye
+         string str = mp[digits[index]];   // is ank ke akshar
+         for (int i = 0; i < str.size(); i++)   // har akshar ek alag branch
+             temp.push_back(str[i]), solve(index + 1, temp, mp, ans, digits);   // choose · explore (agla ank)
+             temp.pop_back();   // un-choose: agle akshar se pehle path saaf
 
-     vector<string> letterCombinations(string digits) {
-         if (digits.size() == 0)
-             return {};                          // EDGE: "" -> khaali LIST, [""] nahi
-         unordered_map<char, string> mp;         // key = char ('2'): digits[index] char hai -> seedha chalta
-         mp['2'] = "abc";  mp['3'] = "def";  mp['4'] = "ghi";  mp['5'] = "jkl";
-         mp['6'] = "mno";  mp['7'] = "pqrs"; mp['8'] = "tuv";  mp['9'] = "wxyz";
-         vector<string> ans;  // ans GLOBAL mat rakho: function do baar bula to pichhle jawab
-         string temp = "";                       //   bhi jud jaate ("2" pe 3 ki jagah 12)
-         solve(0, temp, mp, ans, digits);
-         return ans;
-     }
+     if (digits.size() == 0) return {};      // EDGE: "" -> khaali LIST, [""] nahi
+     unordered_map<char, string> mp;   // key = char ('2'): digits[index] char hai -> seedha chalta
+     mp['2'] = "abc";  mp['3'] = "def";  mp['4'] = "ghi";  mp['5'] = "jkl";
+     mp['6'] = "mno";  mp['7'] = "pqrs"; mp['8'] = "tuv";  mp['9'] = "wxyz";
+     vector<string> ans;   // ans GLOBAL mat rakho: function do baar bula to pichhle jawab
+     string temp = ""; solve(0, temp, mp, ans, digits);   // bhi jud jaate ("2" pe 3 ki jagah 12)
 ```
+
+---
 
 ---
 
