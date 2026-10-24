@@ -320,7 +320,7 @@ uske liye 1 ms hi rehta hai. Bahar se aana kabhi-kabhi hota hai, aur aksar wahi 
 hona chalta hai.
 
 ```mermaid
-flowchart LR
+flowchart TB
     M["Mumbai gateway"] --> RM[("Mumbai Redis<br/>Arpan ki ginti")]
     S["Singapore gateway"] -- "Arpan? ghar Mumbai" --> RM
     US["US gateway"] -- "Arpan? ghar Mumbai" --> RM

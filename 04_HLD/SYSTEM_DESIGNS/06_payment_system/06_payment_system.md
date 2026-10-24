@@ -268,9 +268,8 @@ shard pe girti.
 
 ```mermaid
 flowchart LR
-    S["Payment Service"] -- "Arpan -500, hold" --> S1[("Shard 1<br/>Arpan")]
+    S["Payment Service"] -- "Arpan -500, hold<br/>shard 3 fail: ulta, Arpan +500" --> S1[("Shard 1<br/>Arpan")]
     S -- "dukaan +500" --> S3[("Shard 3<br/>dukaan")]
-    S -. "shard 3 fail: ulta, Arpan +500" .-> S1
     style S1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```

@@ -156,7 +156,7 @@ nahi, isliye tezi bani rehti hai.
 
 ```mermaid
 flowchart LR
-    A["App<br/>+ cache client: hash(key) % 20"] -->|"user:42"| M7["Cache machine 7"]
+    A["App<br/>+ cache client:<br/>hash(key) % 20"] -->|"user:42"| M7["Cache machine 7"]
     A -->|"offer:diwali"| M3["Cache machine 3"]
     A -.->|"nahi mila"| D[("DB")]
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -180,7 +180,7 @@ Matlab sirf thodi key MISS hoti hain, aur DB pe bas thoda bojh aata hai.
 
 ```mermaid
 flowchart LR
-    A["App<br/>+ cache client: RING<br/>(har machine ghadi pe 100-200 jagah)"] --> M7["Cache machine 7"]
+    A["App<br/>+ cache client: RING<br/>(har machine ghadi pe<br/>100-200 jagah)"] --> M7["Cache machine 7"]
     A --> M3["Cache machine 3"]
     A --> M21["Cache machine 21 (nayi)<br/>sirf 60-95 wali key isme aayi"]
     A -.->|"nahi mila"| D[("DB")]
