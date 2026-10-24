@@ -258,9 +258,9 @@ DB-C giri -> DB-D ya DB-A se padho, link chalta rahe
 
 ```mermaid
 flowchart LR
-    S["App"] --> C[("DB-C<br/>aB3x9 (gira)")]
-    S --> D[("DB-D<br/>aB3x9 copy")]
-    S --> A[("DB-A<br/>aB3x9 copy")]
+    S["App"] -. "jawab nahi" .-> C[("DB-C<br/>aB3x9 (gira)")]
+    S -- "yahan se padho" --> D[("DB-D<br/>aB3x9 copy")]
+    S -- "yahan se padho" --> A[("DB-A<br/>aB3x9 copy")]
     style C fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
