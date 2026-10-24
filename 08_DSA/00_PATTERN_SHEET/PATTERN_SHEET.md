@@ -254,393 +254,227 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── FAMILY: slow/fast OVERWRITE (fast scan, rakhne wala slow pe; teeno same skeleton) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MOVE ZEROES
- └──────────────────────────────────────────────────────────────
-     void moveZeroes(vector<int> &nums) {
-         int slow = 0;                           // slow = agli jagah jahan non-zero rakhna hai
-         int fast = 0;                           // fast = scan karta
-         while (fast < nums.size()) {
-             if (nums[fast] != 0) {
-                 swap(nums[slow], nums[fast]);   // swap PEHLE
-                 slow++;                         // slow++ BAAD: non-zero apni jagah lag gaya tabhi aage
-             }
-             fast++;                             // fast++ har baar (if ke BAHAR)
-         }
-     }
+ ▸ MOVE ZEROES
+     int slow = 0;                           // slow = agli jagah jahan non-zero rakhna hai
+     int fast = 0;                           // fast = scan karta
+     while (fast < nums.size())
+         if (nums[fast] != 0)
+             swap(nums[slow], nums[fast]);   // swap PEHLE
+             slow++;                         // slow++ BAAD: non-zero apni jagah lag gaya tabhi aage
+         fast++;                             // fast++ har baar (if ke BAHAR)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ REMOVE DUP (SORTED)
- └──────────────────────────────────────────────────────────────
-     int removeDuplicates(vector<int> &nums) {
-         int slow = 0;                           // slow = last UNIQUE ka index; 0 se: pehla khud unique
-         int fast = 0;
-         while (fast < nums.size()) {
-             if (nums[slow] != nums[fast]) {     // naya unique mila (compare nums[slow] se)
-                 slow++;                         // slow++ PEHLE: duplicate slot pe (move zeroes se ULTA)
-                 nums[slow] = nums[fast];        // overwrite BAAD
-             }
-             fast++;                             // fast har baar
-         }
-         return slow + 1;                        // unique count = slow + 1 (slow index hai)
-     }
+ ▸ REMOVE DUP (SORTED)
+     int slow = 0; int fast = 0;             // slow = last UNIQUE ka index; 0 se: pehla khud unique
+     while (fast < nums.size())
+         if (nums[slow] != nums[fast])       // naya unique mila (compare nums[slow] se)
+             slow++;                         // slow++ PEHLE: duplicate slot pe (move zeroes se ULTA)
+             nums[slow] = nums[fast];        // overwrite BAAD
+         fast++;                             // fast har baar
+     return slow + 1;                        // unique count = slow + 1 (slow index hai)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ REMOVE ELEMENT
- └──────────────────────────────────────────────────────────────
-     int removeElement(vector<int> &nums, int val) {
-         int slow = 0, fast = 0;                 // slow = agli keep-jagah, fast scan
-         while (fast < nums.size()) {
-             if (nums[fast] != val) {
-                 nums[slow] = nums[fast];        // write PEHLE
-                 slow++;                         // slow++ BAAD (move zeroes jaisa)
-             }                                   // nums[fast] == val -> skip, sirf fast++
-             fast++;
-         }
-         return slow;                            // slow = k, bache hue shuru ke k me
-     }
+ ▸ REMOVE ELEMENT
+     int slow = 0, fast = 0;                 // slow = agli keep-jagah, fast scan
+     while (fast < nums.size())
+         if (nums[fast] != val)
+             nums[slow] = nums[fast]; slow++;   // write PEHLE · slow++ BAAD (move zeroes jaisa)
+         // nums[fast] == val -> skip, sirf fast++
+         fast++;
+     return slow;                            // slow = k, bache hue shuru ke k me
 
 ── FAMILY: left/right COMPARE-CONVERGE (dono chhor se andar, har step compare) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ VALID PALINDROME (SIMPLE)
- └──────────────────────────────────────────────────────────────
-     bool isPalindrome(string s) {               // sirf lowercase letters wala aasan version
-         int left = 0;
-         int right = s.size() - 1;               // size() - 1 : aakhri index, size nahi
-         while (left <= right) {
-             if (s[left] != s[right])
-                 return false;                   // mismatch pe turant false
-             left++;
-             right--;
-         }
-         return true;
-     }
+ ▸ VALID PALINDROME (SIMPLE)
+     // sirf lowercase letters wala aasan version
+     int left = 0; int right = s.size() - 1;   // size() - 1 : aakhri index, size nahi
+     while (left <= right)
+         if (s[left] != s[right])
+             return false;                   // mismatch pe turant false
+         left++; right--;
+     return true;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ VALID PALINDROME (FULL, LC-125)
- └──────────────────────────────────────────────────────────────
-     bool isPalindrome(string s) {               // mixed char: sirf alnum ginna, case ignore (<cctype>)
-         int left = 0;
-         int right = s.size() - 1;               // aakhri index, size nahi
-         while (left <= right) {
-             if (tolower(s[left]) == tolower(s[right])) {   // 1. match -> dono andar
-                 left++;
-                 right--;
-             }
-             else if (!isalnum(s[left]))         // 2. left alnum nahi -> skip
-                 left++;
-             else if (!isalnum(s[right]))        // 3. right alnum nahi -> skip
-                 right--;
-             else
-                 return false;                   // 4. dono alnum PAR alag -> false
-         }
-         return true;                            // koi alnum na ho / khaali -> true
-     }
+ ▸ VALID PALINDROME (FULL, LC-125)
+     // mixed char: sirf alnum ginna, case ignore (<cctype>)
+     int left = 0; int right = s.size() - 1;   // aakhri index, size nahi
+     while (left <= right)
+         if (tolower(s[left]) == tolower(s[right]))  left++; right--;   // 1. match -> dono andar
+         else if (!isalnum(s[left]))  left++;   // 2. left alnum nahi -> skip
+         else if (!isalnum(s[right]))  right--;   // 3. right alnum nahi -> skip
+         else
+             return false;                   // 4. dono alnum PAR alag -> false
+     return true;                            // koi alnum na ho / khaali -> true
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ VALID PALINDROME II
- └──────────────────────────────────────────────────────────────
-     bool isPalindrome(string s, int left, int right) {   // helper: l..r palindrome hai?
-         while (left <= right) {
-             if (s[left] != s[right])
-                 return false;
-             left++;
-             right--;
-         }
-         return true;
-     }
+ ▸ VALID PALINDROME II
+     // isPalindrome: helper: l..r palindrome hai?
 
-     bool validPalindrome(string s) {            // palindrome YA ek char delete karke ban jaaye
-         int left = 0;
-         int right = s.size() - 1;
-         while (left <= right) {
-             if (s[left] != s[right])            // mismatch: left delete YA right delete, koi ek bane -> true
-                 return isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1);
-             left++;
-             right--;
-         }
-         return true;                            // koi mismatch nahi = pehle se palindrome
-     }
+     // validPalindrome: palindrome YA ek char delete karke ban jaaye
+     int left = 0; int right = s.size() - 1;
+     while (left <= right)
+         if (s[left] != s[right])            // mismatch: left delete YA right delete, koi ek bane -> true
+             return isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1);
+         left++; right--;
+     return true;                            // koi mismatch nahi = pehle se palindrome
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ REVERSE VOWELS
- └──────────────────────────────────────────────────────────────
-     bool isVowel(char ch) {                     // a e i o u, lower + upper dono
-         if ((ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') ||
-             (ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U'))
-             return true;
-         return false;
-     }
+ ▸ REVERSE VOWELS
+     // isVowel: a e i o u, lower + upper dono
 
-     string reverseVowels(string s) {            // sirf vowels aapas me ulte, baaki char apni jagah
-         int left = 0;
-         int right = s.size() - 1;
-         while (left < right) {                  // < : milte hi ruko, beech ka akela char swap nahi
-             if (isVowel(s[left]) && isVowel(s[right])) {   // dono vowel -> swap + dono andar
-                 swap(s[left], s[right]);
-                 left++;
-                 right--;
-             }
-             else if (!isVowel(s[left]))         // left vowel nahi -> left aage
-                 left++;
-             else                                // warna right peeche
-                 right--;
-         }
-         return s;
-     }
+     // reverseVowels: sirf vowels aapas me ulte, baaki char apni jagah
+     int left = 0; int right = s.size() - 1;
+     while (left < right)                    // < : milte hi ruko, beech ka akela char swap nahi
+         if (isVowel(s[left]) && isVowel(s[right]))     // dono vowel -> swap + dono andar
+             swap(s[left], s[right]); left++; right--;
+         else if (!isVowel(s[left]))  left++;   // left vowel nahi -> left aage
+         else  right--;                      // warna right peeche
+     return s;
 
 ── FAMILY: left/right by-VALUE decision (sum / area ki value dekh ke kaunsa pointer chale) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ CONTAINER MOST WATER
- └──────────────────────────────────────────────────────────────
-     int maxArea(vector<int> &height) {
-         int low = 0;
-         int high = height.size() - 1;
-         int max_area = INT_MIN;
-         while (low < high) {                    // < : same index pe width 0
-             int width = high - low;
-             int area = width * min(height[low], height[high]);   // area = chhoti height x width
-             max_area = max(max_area, area);
-             if (height[low] < height[high])     // CHHOTI height wala andar (wahi bottleneck)
-                 low++;
-             else                                // barabar height -> high-- (else)
-                 high--;
-         }
-         return max_area;
-     }
+ ▸ CONTAINER MOST WATER
+     int low = 0; int high = height.size() - 1; int max_area = INT_MIN;
+     while (low < high)                      // < : same index pe width 0
+         int width = high - low;
+         int area = width * min(height[low], height[high]);   // area = chhoti height x width
+         max_area = max(max_area, area);
+         if (height[low] < height[high])  low++;   // CHHOTI height wala andar (wahi bottleneck)
+         else  high--;                       // barabar height -> high-- (else)
+     return max_area;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ TWO SUM II (SORTED)
- └──────────────────────────────────────────────────────────────
-     vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hashmap; SORTED = 2 pointer
-         int left = 0, right = nums.size() - 1;
-         while (left < right) {                  // < : ek hi index do baar nahi
-             if (nums[left] + nums[right] == target)
-                 return {left + 1, right + 1};   // 1-based lautao
-             else if (nums[left] + nums[right] < target)
-                 left++;                         // chhota -> bada chahiye
-             else
-                 right--;                        // bada -> chhota chahiye
-         }
-         return {-1, -1};                        // na mile; O(1) space
-     }
+ ▸ TWO SUM II (SORTED)
+     // UNSORTED two sum = hashmap; SORTED = 2 pointer
+     int left = 0, right = nums.size() - 1;
+     while (left < right)                    // < : ek hi index do baar nahi
+         if (nums[left] + nums[right] == target)
+             return {left + 1, right + 1};   // 1-based lautao
+         else if (nums[left] + nums[right] < target)  left++;   // chhota -> bada chahiye
+         else  right--;                      // bada -> chhota chahiye
+     return {-1, -1};                        // na mile; O(1) space
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SUM OF SQUARE NUMBERS
- └──────────────────────────────────────────────────────────────
-     bool judgeSquareSum(long long c) {          // a² + b² == c ? (LC 633) 2 number ki jodi -> two pointer
-         int low = 0, high = sqrt(c);
-         while (low <= high) {                   // <= : c=0 me 0+0 jaisa ek hi point bhi check ho
-             long long ans = (long long)low * low + (long long)high * high;   // guna se PEHLE cast: overflow
-             if (ans == c)
-                 return true;
-             else if (ans < c)
-                 low++;
-             else
-                 high--;
-         }
-         return false;
-     }
+ ▸ SUM OF SQUARE NUMBERS
+     // a² + b² == c ? (LC 633) 2 number ki jodi -> two pointer
+     int low = 0, high = sqrt(c);
+     while (low <= high)                     // <= : c=0 me 0+0 jaisa ek hi point bhi check ho
+         long long ans = (long long)low * low + (long long)high * high;   // guna se PEHLE cast: overflow
+         if (ans == c)
+             return true;
+         else if (ans < c)  low++;
+         else  high--;
+     return false;
 
 ── FAMILY: fill-from-END (result peeche se bharo, bada element end me) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SQUARES OF SORTED ARR
- └──────────────────────────────────────────────────────────────
-     vector<int> sortedSquares(vector<int> &nums) {   // sabse BADA square dono chhor pe (negative)
-         vector<int> ans(nums.size(), -1);       // size n pehle se: k-- se index pe likho; O(n), sort nahi
-         int left = 0, right = nums.size() - 1, k = nums.size() - 1;   // k = n-1 : sabse bada aakhri slot me
-         while (left <= right) {                 // <= : aakhri bacha 1 element bhi daalna hai
-             if (nums[left] * nums[left] <= nums[right] * nums[right]) {
-                 ans[k] = nums[right] * nums[right];   // bada square aakhri khaali slot pe
-                 right--;
-                 k--;                            // likho, phir peeche
-             }
-             else {
-                 ans[k] = nums[left] * nums[left];     // left bada (negative tha), uska square peeche
-                 left++;
-                 k--;
-             }
-         }
-         return ans;
-     }
+ ▸ SQUARES OF SORTED ARR
+     // sabse BADA square dono chhor pe (negative)
+     vector<int> ans(nums.size(), -1);       // size n pehle se: k-- se index pe likho; O(n), sort nahi
+     int left = 0, right = nums.size() - 1, k = nums.size() - 1;   // k = n-1 : sabse bada aakhri slot me
+     while (left <= right)                   // <= : aakhri bacha 1 element bhi daalna hai
+         if (nums[left] * nums[left] <= nums[right] * nums[right])
+             ans[k] = nums[right] * nums[right]; right--;   // bada square aakhri khaali slot pe
+             k--;                            // likho, phir peeche
+         else
+             ans[k] = nums[left] * nums[left]; left++; k--;   // left bada (negative tha), uska square peeche
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MERGE SORTED ARRAY
- └──────────────────────────────────────────────────────────────
-     void merge(vector<int> &nums1, int m, vector<int> &nums2, int n) {   // nums1 ke end me n khaali
-         int i = m - 1;
-         int j = n - 1;
-         int k = m + n - 1;                      // k = m+n-1 (m*n-1 NAHI) : nums1 ka aakhri index
-         while (i >= 0 && j >= 0) {              // && (|| nahi -> -1 index crash)
-             if (nums1[i] < nums2[j]) {          // jo bada wahi peeche (aage se bharo to zinda element mitta)
-                 nums1[k] = nums2[j];
-                 j--;
-                 k--;
-             }
-             else {                              // nums1[i] bada ya barabar -> wahi aakhri khaali slot pe
-                 nums1[k] = nums1[i];
-                 i--;
-                 k--;
-             }
-         }
-         while (i >= 0) {                        // optional: nums1 ke bache pehle se apni jagah pe hain
-             nums1[k] = nums1[i];
-             i--;
-             k--;
-         }
-         while (j >= 0) {                        // zaroori: nums2[j] (nums1[j] NAHI), ye abhi copy nahi hue
-             nums1[k] = nums2[j];
-             j--;
-             k--;
-         }
-     }                                           // in-place: naya array nahi -> O(1) extra, O(m+n)
+ ▸ MERGE SORTED ARRAY
+     // nums1 ke end me n khaali
+     int i = m - 1; int j = n - 1; int k = m + n - 1;   // k = m+n-1 (m*n-1 NAHI) : nums1 ka aakhri index
+     while (i >= 0 && j >= 0)                // && (|| nahi -> -1 index crash)
+         if (nums1[i] < nums2[j])            // jo bada wahi peeche (aage se bharo to zinda element mitta)
+             nums1[k] = nums2[j]; j--; k--;
+         else  nums1[k] = nums1[i]; i--; k--;   // nums1[i] bada ya barabar -> wahi aakhri khaali slot pe
+     while (i >= 0)                          // optional: nums1 ke bache pehle se apni jagah pe hain
+         nums1[k] = nums1[i]; i--; k--;
+     while (j >= 0)                          // zaroori: nums2[j] (nums1[j] NAHI), ye abhi copy nahi hue
+         nums1[k] = nums2[j]; j--; k--;
+     // in-place: naya array nahi -> O(1) extra, O(m+n)
 
 ── FAMILY: PARTITION / swap-in-place (category me baanto, galat jagah pe swap) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SORT COLORS (0,1,2)
- └──────────────────────────────────────────────────────────────
-     void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
-         int low = 0;
-         int mid = 0;
-         int high = nums.size() - 1;
-         while (mid <= high) {                   // <= : high wala abhi dekha nahi, use bhi check
-             if (nums[mid] == 0) {
-                 swap(nums[low], nums[mid]);
-                 low++;
-                 mid++;                          // mid++ bhi: low se aaya element pehle hi check ho chuka
-             }
-             else if (nums[mid] == 1)
-                 mid++;                          // sirf mid++
-             else if (nums[mid] == 2) {
-                 swap(nums[mid], nums[high]);
-                 high--;                         // mid++ NAHI: high se aaya element unknown, dobara check
-             }
-         }
-     }
+ ▸ SORT COLORS (0,1,2)
+     // Dutch flag, 3 pointer
+     int low = 0; int mid = 0; int high = nums.size() - 1;
+     while (mid <= high)                     // <= : high wala abhi dekha nahi, use bhi check
+         if (nums[mid] == 0)
+             swap(nums[low], nums[mid]); low++;
+             mid++;                          // mid++ bhi: low se aaya element pehle hi check ho chuka
+         else if (nums[mid] == 1)  mid++;    // sirf mid++
+         else if (nums[mid] == 2)
+             swap(nums[mid], nums[high]); high--;   // mid++ NAHI: high se aaya element unknown, dobara check
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SORT ARRAY BY PARITY
- └──────────────────────────────────────────────────────────────
-     vector<int> sortArrayByParity(vector<int> nums) {   // even pehle, odd baad (aapas ka order koi bhi)
-         int left = 0;
-         int right = nums.size() - 1;
-         while (left < right) {
-             if (nums[left] % 2 != 0 && nums[right] % 2 == 0) {   // dono galat jagah -> swap + dono andar
-                 swap(nums[left], nums[right]);
-                 left++;
-                 right--;
-             }
-             else if (nums[left] % 2 == 0)       // left even = sahi -> left aage
-                 left++;
-             else                                // warna right peeche
-                 right--;
-         }                                       // TRAP: left even + right odd = dono sahi, swap MAT
-         return nums;
-     }
+ ▸ SORT ARRAY BY PARITY
+     // even pehle, odd baad (aapas ka order koi bhi)
+     int left = 0; int right = nums.size() - 1;
+     while (left < right)
+         if (nums[left] % 2 != 0 && nums[right] % 2 == 0)     // dono galat jagah -> swap + dono andar
+             swap(nums[left], nums[right]); left++; right--;
+         else if (nums[left] % 2 == 0)  left++;   // left even = sahi -> left aage
+         else  right--;                      // warna right peeche
+     // TRAP: left even + right odd = dono sahi, swap MAT
+     return nums;
 
 ── (STANDALONE — apni alag trick) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
- └──────────────────────────────────────────────────────────────
-     vector<vector<int>> threeSum(vector<int> &nums) {   // saare UNIQUE triplet jinka sum 0
-         vector<vector<int>> ans;
-         sort(begin(nums), end(nums));           // sort PEHLE: 2 pointer + duplicate skip sorted pe hi
-         for (int i = 0; i < nums.size(); i++) { // har number ek baar FIX
-             if (i > 0 && nums[i] == nums[i - 1])
-                 continue;                       // skip 1/3: duplicate FIXED (i>0 pehle, warna nums[-1])
-             int low = i + 1, high = nums.size() - 1, sum = -nums[i];   // low=i+1 : fixed ke baad wale hi
-             while (low < high) {                // < : low==high ek element; sum=-fixed = 2SUM-II
-                 if (nums[low] + nums[high] == sum) {
-                     ans.push_back({nums[low], nums[high], nums[i]});
-                     while (low < high && nums[low] == nums[low + 1])
-                         low++;                  // skip 2/3: duplicate LOW (low<high pehle: low+1 bahar)
-                     while (low < high && nums[high] == nums[high - 1])
-                         high--;                 // skip 3/3: duplicate HIGH (low<high pehle)
-                     low++;                      // skip ke baad bhi 1 kadam: abhi purane number pe khade
-                     high--;
-                 }
-                 else if (nums[low] + nums[high] < sum)
-                     low++;                      // chhota -> low aage
-                 else
-                     high--;                     // bada -> high peeche
-             }
-         }
-         return ans;
-     }
+ ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
+     // saare UNIQUE triplet jinka sum 0
+     sort(begin(nums), end(nums));           // sort PEHLE: 2 pointer + duplicate skip sorted pe hi
+     for (int i = 0; i < nums.size(); i++)   // har number ek baar FIX
+         if (i > 0 && nums[i] == nums[i - 1])
+             continue;                       // skip 1/3: duplicate FIXED (i>0 pehle, warna nums[-1])
+         int low = i + 1, high = nums.size() - 1, sum = -nums[i];   // low=i+1 : fixed ke baad wale hi
+         while (low < high)                  // < : low==high ek element; sum=-fixed = 2SUM-II
+             if (nums[low] + nums[high] == sum)
+                 ans.push_back({nums[low], nums[high], nums[i]});
+                 while (low < high && nums[low] == nums[low + 1])
+                     low++;                  // skip 2/3: duplicate LOW (low<high pehle: low+1 bahar)
+                 while (low < high && nums[high] == nums[high - 1])
+                     high--;                 // skip 3/3: duplicate HIGH (low<high pehle)
+                 low++; high--;              // skip ke baad bhi 1 kadam: abhi purane number pe khade
+             else if (nums[low] + nums[high] < sum)  low++;   // chhota -> low aage
+             else  high--;                   // bada -> high peeche
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ IS SUBSEQUENCE
- └──────────────────────────────────────────────────────────────
-     bool isSubsequence(string s, string t) {    // s, t me order se hai? beech ke char skip chalega
-         int i = 0, j = 0;                       // i -> s, j -> t
-         while (i < s.size() && j < t.size()) {  // koi ek khatam -> ruko
-             if (s[i] == t[j]) {                 // char mila -> dono aage
-                 i++;
-                 j++;
-             }
-             else                                // nahi mila -> sirf t aage
-                 j++;
-         }
-         if (i >= s.size())                      // s ke saare char order me mil gaye
-             return true;
-         return false;
-     }
+ ▸ IS SUBSEQUENCE
+     // s, t me order se hai? beech ke char skip chalega
+     int i = 0, j = 0;                       // i -> s, j -> t
+     while (i < s.size() && j < t.size())    // koi ek khatam -> ruko
+         if (s[i] == t[j])  i++; j++;        // char mila -> dono aage
+         else  j++;                          // nahi mila -> sirf t aage
+     if (i >= s.size())                      // s ke saare char order me mil gaye
+         return true;
+     return false;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ TRAPPING RAIN WATER (LC-42)
- └──────────────────────────────────────────────────────────────
+ ▸ TRAPPING RAIN WATER (LC-42)
      // bar i ke upar paani = min(leftMax[i], rightMax[i]) - height[i]   (min: chhoti side se bah jaata)
      // O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - height[i]
-     int trap(vector<int> &height) {             // O(1) space, two pointer
-         int n = height.size();
-         int left = 0, right = n - 1;
-         int leftMax = 0, rightMax = 0, ans = 0; // max 0 se: abhi koi deewar dekhi nahi; empty -> 0
-         while (left < right) {                  // < : milne wali cell sabse unchi deewar, uspe paani nahi
-             if (height[left] <= height[right]) {    // DEEWAR pe faisla, max pe NAHI ([4,1,4,1] -> 0)
-                 if (leftMax > height[left])     // chhoti deewar wali taraf niptao: doosri taraf badi pakki
-                     ans += leftMax - height[left];  // chhota -> paani
-                 else
-                     leftMax = height[left];     // bada -> nayi deewar
-                 left++;
-             }
-             else {
-                 if (rightMax > height[right])
-                     ans += rightMax - height[right];   // chhota -> paani (rightMax tak)
-                 else
-                     rightMax = height[right];   // bada -> nayi deewar
-                 right--;
-             }
-         }
-         return ans;
-     }
+     // O(1) space, two pointer
+     int left = 0, right = n - 1;
+     int leftMax = 0, rightMax = 0, ans = 0;   // max 0 se: abhi koi deewar dekhi nahi; empty -> 0
+     while (left < right)                    // < : milne wali cell sabse unchi deewar, uspe paani nahi
+         if (height[left] <= height[right])      // DEEWAR pe faisla, max pe NAHI ([4,1,4,1] -> 0)
+             if (leftMax > height[left])     // chhoti deewar wali taraf niptao: doosri taraf badi pakki
+                 ans += leftMax - height[left];  // chhota -> paani
+             else  leftMax = height[left];   // bada -> nayi deewar
+             left++;
+         else
+             if (rightMax > height[right])
+                 ans += rightMax - height[right];   // chhota -> paani (rightMax tak)
+             else  rightMax = height[right];   // bada -> nayi deewar
+             right--;
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ PALINDROMIC SUBSTRINGS (LC-647)  = EXPAND AROUND CENTER
- └──────────────────────────────────────────────────────────────
+ ▸ PALINDROMIC SUBSTRINGS (LC-647)  = EXPAND AROUND CENTER
      // kitne substring palindrome (single char bhi; alag position = alag count). har CENTER se phailo
      // "abcba": c -> bcb -> abcba = ek center se 3. ODD center = ek char, EVEN center = do char jodi
-     void solve(int i, int j, string s, int &count) {   // &count : warna bahar count badhta hi nahi
-         while (i >= 0 && j < s.size() && s[i] == s[j]) {   // range check PEHLE, phir s[i]==s[j]
-             i--;                                // dono taraf phailo
-             j++;
-             count++;                            // HAR match = ek naya palindrome (ant me ek baar nahi)
-         }
-     }
+     // solve: &count : warna bahar count badhta hi nahi
+     while (i >= 0 && j < s.size() && s[i] == s[j])     // range check PEHLE, phir s[i]==s[j]
+         i--; j++;                           // dono taraf phailo
+         count++;                            // HAR match = ek naya palindrome (ant me ek baar nahi)
 
-     int countSubstrings(string s) {
-         int count = 0;
-         for (int i = 0; i < s.size(); i++) {    // n odd center + (n-1) even center
-             solve(i, i, s, count);              // odd: center ek char (khud bhi palindrome)
-             solve(i, i + 1, s, count);          // even: i+1 == n bhi theek, while me j < n pehle check
-         }
-         return count;                           // O(n²), O(1); DP nahi: substring contiguous, choice nahi
-     }
+     // countSubstrings
+     int count = 0;
+     for (int i = 0; i < s.size(); i++)      // n odd center + (n-1) even center
+         solve(i, i, s, count);              // odd: center ek char (khud bhi palindrome)
+         solve(i, i + 1, s, count);          // even: i+1 == n bhi theek, while me j < n pehle check
+     return count;                           // O(n²), O(1); DP nahi: substring contiguous, choice nahi
+
 ```
+
+---
 
 ---
 
