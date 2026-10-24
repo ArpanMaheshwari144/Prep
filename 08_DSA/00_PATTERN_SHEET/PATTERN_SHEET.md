@@ -2665,88 +2665,52 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── FAMILY: heap of size k / top-K (size > k pe top EVICT, k bache) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
- └──────────────────────────────────────────────────────────────
-     int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
-         priority_queue<int> pq;                 // MAX: har turn 2 sabse BHAARI chahiye
-         for (int i = 0; i < stones.size(); i++)
-             pq.push(stones[i]);
-         while (pq.size() > 1) {                 // >1: smash ko 2 pathar chahiye
-             int x = pq.top();                   // sabse bada
-             pq.pop();
-             int y = pq.top();                   // doosra sabse bada
-             pq.pop();
-             int diff = abs(y - x);
-             if (diff > 0)                       // barabar -> 0 = dono khatam
-                 pq.push(diff);                  // bacha pathar wapas heap me
-         }
-         return pq.empty() ? 0 : pq.top();       // empty pehle: sab khatam to top() crash
-     }   // heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max"
+ ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
+     // har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
+     priority_queue<int> pq;   // MAX: har turn 2 sabse BHAARI chahiye
+     for (int i = 0; i < stones.size(); i++) pq.push(stones[i]);
+     while (pq.size() > 1)   // >1: smash ko 2 pathar chahiye
+         int x = pq.top(); pq.pop(); int y = pq.top(); pq.pop();   // sabse bada · doosra sabse bada
+         int diff = abs(y - x);
+         if (diff > 0) pq.push(diff);        // barabar -> 0 = dono khatam · bacha pathar wapas heap me
+     return pq.empty() ? 0 : pq.top();   // empty pehle: sab khatam to top() crash
+ // heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max"
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
- └──────────────────────────────────────────────────────────────
-     int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
-         priority_queue<int, vector<int>, greater<int>> pq;   // MIN: size>k pe sabse CHHOTA evict
-         for (auto &it : nums) {
-             pq.push(it);
-             if (pq.size() > k)
-                 pq.pop();                       // sabse chhota nikaalo -> sirf k SABSE BADE bache
-         }
-         return pq.top();                        // k bade me se sabse chhota = k-th largest
-     }   // O(n log k) (sort O(n log n) se behtar)
+ ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
+     // top-K ka core
+     priority_queue<int, vector<int>, greater<int>> pq;   // MIN: size>k pe sabse CHHOTA evict
+     for (auto &it : nums)
+         pq.push(it);
+         if (pq.size() > k) pq.pop();        // sabse chhota nikaalo -> sirf k SABSE BADE bache
+     return pq.top();   // k bade me se sabse chhota = k-th largest
+ // O(n log k) (sort O(n log n) se behtar)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
- └──────────────────────────────────────────────────────────────
+ ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
      // KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap, sabse BADI evict)
-     vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
-         priority_queue<pair<int, vector<int>>> maxHeap;   // MAX: sabse door top pe, size>k pe wahi nikle
-         for (int i = 0; i < points.size(); i++) {
-             maxHeap.push({{points[i][0] * points[i][0] + points[i][1] * points[i][1]}, {points[i]}});
-                                                 // {dist, point}: dist PEHLE (pair first pe compare)
-                                                 // dist = x²+y², √ NAHI (order same)
-             if (maxHeap.size() > k)
-                 maxHeap.pop();                  // sabse door EVICT -> k paas bache
-         }
-         vector<vector<int>> ans;
-         while (maxHeap.size() > 0) {
-             ans.push_back(maxHeap.top().second);   // .second = {x,y} poora
-             maxHeap.pop();
-         }
-         return ans;
-     }
+     priority_queue<pair<int, vector<int>>> maxHeap;   // MAX: sabse door top pe, size>k pe wahi nikle
+     for (int i = 0; i < points.size(); i++)
+         maxHeap.push({{points[i][0] * points[i][0] + points[i][1] * points[i][1]}, {points[i]}});
+                                             // {dist, point}: dist PEHLE (pair first pe compare)
+                                             // dist = x²+y², √ NAHI (order same)
+         if (maxHeap.size() > k) maxHeap.pop();   // sabse door EVICT -> k paas bache
+     while (maxHeap.size() > 0) ans.push_back(maxHeap.top().second), maxHeap.pop();   // .second = {x,y} poora
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
- └──────────────────────────────────────────────────────────────
+ ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
      // KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
-     vector<int> topKFrequent(vector<int> &nums, int k) {
-         unordered_map<int, int> mp;
-         for (int i = 0; i < nums.size(); i++)
-             mp[nums[i]]++;                      // STEP 1: freq gino
-         priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> minHeap;
-                                                 // MIN: size>k pe sabse KAM freq bahar
-         for (auto &it : mp) {
-             minHeap.push({it.second, it.first});   // {freq, num}: freq PEHLE -> heap freq pe sort
-             if (minHeap.size() > k)
-                 minHeap.pop();                  // chhoti freq EVICT -> top-k bache
-         }
-         vector<int> ans;
-         while (!minHeap.empty()) {
-             int tp = minHeap.top().second;      // .second = actual number
-             minHeap.pop();
-             ans.push_back(tp);
-         }
-         return ans;
-     }   // O(n log k). max-heap me saare push -> k baar pop = O(n log n), slow
+     unordered_map<int, int> mp;
+     for (int i = 0; i < nums.size(); i++) mp[nums[i]]++;   // STEP 1: freq gino
+     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> minHeap;
+                                             // MIN: size>k pe sabse KAM freq bahar
+     for (auto &it : mp)
+         minHeap.push({it.second, it.first});   // {freq, num}: freq PEHLE -> heap freq pe sort
+         if (minHeap.size() > k) minHeap.pop();   // chhoti freq EVICT -> top-k bache
+     while (!minHeap.empty())
+         int tp = minHeap.top().second; minHeap.pop(); ans.push_back(tp);   // .second = actual number
+ // O(n log k). max-heap me saare push -> k baar pop = O(n log n), slow
 
 ── FAMILY: MIN-heap of current candidates (har baar sabse chhota nikaalo, uska agla daalo) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
- └──────────────────────────────────────────────────────────────
+ ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
      struct Compare {                            // ListNode* ko khud compare karna nahi aata
          bool operator()(ListNode *a, ListNode *b) {
              return a->val > b->val;             // > likha to MIN-heap (pq ka comparator ulta chalta)
@@ -2756,49 +2720,29 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
      ListNode *mergeKLists(vector<ListNode *> &lists) {
          priority_queue<ListNode *, vector<ListNode *>, Compare> minHeap;
          for (auto &l : lists)
-             if (l)
-                 minHeap.push(l);                // saare heads; NULL skip (warna ->val pe crash)
-         ListNode *dummy = new ListNode(0);      // merge-2-lists jaisa: dummy + tail
-         ListNode *tail = dummy;
+             if (l) minHeap.push(l);         // saare heads; NULL skip (warna ->val pe crash)
+         ListNode *dummy = new ListNode(0); ListNode *tail = dummy;   // merge-2-lists jaisa: dummy + tail
          while (!minHeap.empty()) {
-             ListNode *curr = minHeap.top();     // sabse chhota
-             minHeap.pop();
-             tail->next = curr;                  // jodo
+             ListNode *curr = minHeap.top(); minHeap.pop(); tail->next = curr;   // sabse chhota · jodo
              tail = curr;
-             if (curr->next)
-                 minHeap.push(curr->next);       // uska next; khatam list ka NULL mat daalo
+             if (curr->next) minHeap.push(curr->next);   // uska next; khatam list ka NULL mat daalo
          }
          return dummy->next;                     // ->next: dummy khud nakli node
      }   // heap me max k node (1 per list) -> O(N log k)
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
- └──────────────────────────────────────────────────────────────
+ ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
      // har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
-     vector<int> sortKSorted(vector<int> &arr, int k) {
-         vector<int> ans;
-         priority_queue<int, vector<int>, greater<int>> pq;   // MIN: sorted output me chhota pehle
-         for (int i = 0; i < arr.size(); i++) {
-             pq.push(arr[i]);                    // pehle daalo, phir size dekho
-             if (pq.size() > k + 1) {            // k+1 se bada: tab tak sahi MIN buffer me aa chuka
-                 int tp = pq.top();
-                 pq.pop();
-                 ans.push_back(tp);              // buffer bhara -> MIN nikaal
-             }
-         }
-         while (!pq.empty()) {                   // bache = sorted tail
-             int tp = pq.top();
-             pq.pop();
-             ans.push_back(tp);
-         }
-         return ans;
-     }   // [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]. O(n log k). kth-largest ka cousin (sliding buffer)
+     priority_queue<int, vector<int>, greater<int>> pq;   // MIN: sorted output me chhota pehle
+     for (int i = 0; i < arr.size(); i++)
+         pq.push(arr[i]);   // pehle daalo, phir size dekho
+         if (pq.size() > k + 1)   // k+1 se bada: tab tak sahi MIN buffer me aa chuka
+             int tp = pq.top(); pq.pop(); ans.push_back(tp);   // buffer bhara -> MIN nikaal
+     while (!pq.empty()) int tp = pq.top(); pq.pop(); ans.push_back(tp);   // bache = sorted tail
+ // [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]. O(n log k). kth-largest ka cousin (sliding buffer)
 
 ── FAMILY: TWO-HEAPS (do team, dono top = beech ke border) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ FIND MEDIAN FROM DATA STREAM (LC-295)  = TWO-HEAPS balanced
- └──────────────────────────────────────────────────────────────
+ ▸ FIND MEDIAN FROM DATA STREAM (LC-295)  = TWO-HEAPS balanced
      // stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
      // TRAP: heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
      //   bada -> BADI team -> minHeap. naam bhool, team soch.
@@ -2810,17 +2754,13 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
          void addNum(int num) {
              if (maxHeap.empty() || maxHeap.top() >= num)   // empty() pehle: khaali pe top() crash
                  maxHeap.push(num);              // 1. PLACEMENT: chhota -> chhoti team
-             else
-                 minHeap.push(num);              //    bada -> badi team (minHeap)
+             else minHeap.push(num);         // bada -> badi team (minHeap)
              if (maxHeap.size() < minHeap.size()) {   // 2. BALANCE (dono if zaroori: num kisi bhi heap me)
                  double it = minHeap.top();      // minHeap bada: extra hamesha maxHeap me -> ek wapas
-                 minHeap.pop();
-                 maxHeap.push(it);
+                 minHeap.pop(), maxHeap.push(it);
              }
              else if (maxHeap.size() > minHeap.size() + 1) {   // 2 ka farak: maxHeap sirf 1 aage chalta
-                 double it = maxHeap.top();
-                 maxHeap.pop();
-                 minHeap.push(it);
+                 double it = maxHeap.top(); maxHeap.pop(); minHeap.push(it);
              }
          }
 
@@ -2833,74 +2773,45 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
 ── FAMILY: MAX-heap + greedy (har round sabse zyada wala lagao) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME
- └──────────────────────────────────────────────────────────────
+ ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME
      // koi 2 ADJACENT same na ho, na bane -> "". top-k-frequent ka cousin: har round 2 nikaalo
      // possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
      //   (alag check na bhi rakho: aakhri bacha count>1 khud pakad leta)
-     string reorganizeString(string s) {
-         string ans = "";
-         unordered_map<char, int> mp;
-         for (auto &it : s)
-             mp[it]++;
-         priority_queue<pair<int, char>> maxHeap;   // {count, char}: count PEHLE, us pe sort
-         for (auto &it : mp)
-             maxHeap.push({it.second, it.first});
-         while (maxHeap.size() > 1) {            // >1: har round 2 ALAG char (1 nikaal wapas = "aa")
-             auto it1 = maxHeap.top();
-             maxHeap.pop();
-             auto it2 = maxHeap.top();
-             maxHeap.pop();
-             ans += it1.second;
-             ans += it2.second;
-             it1.first -= 1;                     // -- pehle, phir check
-             it2.first -= 1;
-             if (it1.first >= 1)                 // 0 bacha to wapas mat daalo
-                 maxHeap.push(it1);
-             if (it2.first >= 1)
-                 maxHeap.push(it2);
-         }
-         if (!maxHeap.empty()) {
-             if (maxHeap.top().first > 1)        // akela bacha count>1: do same paas aayenge, impossible
-                 return "";
-             else
-                 ans += maxHeap.top().second;
-         }
-         return ans;                             // heap khaali: saare char lag gaye
-     }   // "aaabbb" -> ab, abab, ababab · "aaab" -> ab, (2,a) akela count 2 -> ""
+     string ans = ""; unordered_map<char, int> mp;
+     for (auto &it : s) mp[it]++;
+     priority_queue<pair<int, char>> maxHeap;   // {count, char}: count PEHLE, us pe sort
+     for (auto &it : mp) maxHeap.push({it.second, it.first});
+     while (maxHeap.size() > 1)   // >1: har round 2 ALAG char (1 nikaal wapas = "aa")
+         auto it1 = maxHeap.top(); maxHeap.pop(); auto it2 = maxHeap.top(); maxHeap.pop();
+         ans += it1.second, ans += it2.second, it1.first -= 1, it2.first -= 1;   // -- pehle, phir check
+         if (it1.first >= 1) maxHeap.push(it1);   // 0 bacha to wapas mat daalo
+         if (it2.first >= 1) maxHeap.push(it2);
+     if (!maxHeap.empty())
+         if (maxHeap.top().first > 1) return "";   // akela bacha count>1: do same paas aayenge, impossible
+         else ans += maxHeap.top().second;
+     return ans;   // heap khaali: saare char lag gaye
+ // "aaabbb" -> ab, abab, ababab · "aaab" -> ab, (2,a) akela count 2 -> ""
 
 ── FAMILY: MIN-heap + vis[] (lazy delete) ──
 
- ┌──────────────────────────────────────────────────────────────
- │ ▸ THROTTLING — MIN UTHAO, PADOSI HATAO (Amazon OA)  = MIN-HEAP {val,idx} + vis[] (lazy skip)
- └──────────────────────────────────────────────────────────────
+ ▸ THROTTLING — MIN UTHAO, PADOSI HATAO (Amazon OA)  = MIN-HEAP {val,idx} + vis[] (lazy skip)
      // har step bache me SABSE CHHOTA (tie -> chhota index), jodo, khud + ORIGINAL padosi (i-1, i+1) hatao
      // [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
      // BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
      //   yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
-     long long totalResponseTime(vector<int> &responseTimes) {
-         int n = responseTimes.size();
-         vector<bool> vis(n, false);
-         long long ans = 0;                      // 1e9 x lakh -> long long
-         priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;   // MIN
-         for (int i = 0; i < n; i++)
-             pq.push({responseTimes[i], i});     // pair: tie pe chhota idx apne aap pehle
-         while (!pq.empty()) {
-             int index = pq.top().second;        // .second = index (first sirf sort ke liye)
-             pq.pop();
-             if (vis[index] == false) {          // hat chuka -> chhodo (LAZY delete, Dijkstra stale-skip)
-                 ans += responseTimes[index];
-                 vis[index] = true;              // khud bhi hatao, dobara na uthe
-                 if (index - 1 >= 0)             // >=0: pehle ka left padosi nahi
-                     vis[index - 1] = true;
-                 if (index + 1 < n)              // < n: aakhri index n-1
-                     vis[index + 1] = true;
-             }
-         }
-         return ans;
-     }   // O(n log n). heap se beech ka element nikaal nahi sakte -> vis[] se pop pe skip
+     vector<bool> vis(n, false); long long ans = 0;   // 1e9 x lakh -> long long
+     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;   // MIN
+     for (int i = 0; i < n; i++) pq.push({responseTimes[i], i});   // pair: tie pe chhota idx apne aap pehle
+     while (!pq.empty())
+         int index = pq.top().second; pq.pop();   // .second = index (first sirf sort ke liye)
+         if (vis[index] == false)   // hat chuka -> chhodo (LAZY delete, Dijkstra stale-skip)
+             ans += responseTimes[index], vis[index] = true;   // khud bhi hatao, dobara na uthe
+             if (index - 1 >= 0) vis[index - 1] = true;   // >=0: pehle ka left padosi nahi
+             if (index + 1 < n) vis[index + 1] = true;   // < n: aakhri index n-1
+ // O(n log n). heap se beech ka element nikaal nahi sakte -> vis[] se pop pe skip
 ```
+
+---
 
 ---
 
