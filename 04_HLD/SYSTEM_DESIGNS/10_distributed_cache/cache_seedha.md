@@ -272,3 +272,76 @@ jaata hai. NFR me pehle hi likha tha ki thodi der purana chalega.
 
 Ab data taaza rehta hai. Par shaam 7 baje "home page" wali key ki umar khatam hui, aur us pal 1,000 log ek saath
 home page khol rahe the. Sabko MISS mila, aur 1,000 request ek saath DB pe pahunchi.
+
+### Kadam 7: 7 baje home page key khatam, 1,000 log ek saath DB pe (LOCK = single flight + soft / hard)
+
+Key ki umar khatam hui aur us pal 1,000 log home page khol rahe the. Sabko MISS mila, aur sab DB se wahi home
+page laane daud pade. Ek hi cheez 1,000 baar ban rahi hai, aur DB pe ek saath 1,000 bhaari query aa gayi. Isko
+**stampede** (bheed ka toot padna) kehte hain.
+
+Ilaaj: sirf **pehli** request DB jaaye, baaki ruk jaayein (**single flight**).
+
+```
+MISS mila -> cache me ek LOCK lene ki koshish (lock ki umar 2 second)
+   lock mil gaya (pehli request) -> DB se home page lao, cache me rakho, lock hatao
+   lock nahi mila (baaki 999)    -> 50 ms ruko, phir cache dekho. Tab tak pehli wali bhar chuki hogi
+DB pe 1,000 ki jagah sirf 1 query gayi
+```
+
+```mermaid
+flowchart LR
+    U["1,000 log<br/>sabko MISS"] --> A["App"]
+    A -->|"sirf pehli request (lock mila)"| D[("DB")]
+    A -->|"baaki 999: 50 ms ruko, phir cache dekho"| C["Cache<br/>LOCK (2 sec umar)<br/>+ SOFT / HARD umar"]
+    D -->|"pehli wali laake cache me rakhti"| C
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+**Lock wali pehli request beech me MAR gayi, to kya hota hai:**
+
+```
+7:00:00   pehli request ne lock liya, DB gayi ... aur wahin mar gayi
+7:00:00   baaki 999 har 50 ms cache dekhte rehte hain, cache khaali hai, wo ruke rehte hain
+7:00:02   lock ki umar (2 sec) khatam, lock apne aap khul gaya
+7:00:02   baaki 999 me se jo pehle pahuncha, usne lock le liya, wo DB gaya, cache bhara
+7:00:02+  baaki sabko cache se mil gaya
+```
+
+User ko 2 second ki der hui, par DB pe bheed phir bhi nahi aayi, kyunki ek waqt pe ek hi request DB ja rahi
+thi.
+
+**Lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha hai):**
+
+Yahan dikkat ye hai ki baaki 999 log poore 5 second tak ruke hain, aur sabko home page late dikhta hai. Lock ne
+DB to bacha liya, par users ruk gaye.
+
+Soft / hard isi ka ilaaj hai. Seedhi baat: **key ko kabhi poora khaali hone hi mat do.**
+
+```
+key ke saath do umar:  SOFT = 1 ghanta   HARD = 1 din
+cache key ko 1 din tak rakhta hai, par 1 ghante baad usse "thodi purani" maan leta hai
+
+8:00 baje (soft nikal gaya, hard nahi):
+   key cache me abhi bhi padi hai, purana home page
+   request aayi -> purana home page turant de do, user ruka hi nahi
+   saath me ek request (lock ke saath) peeche se DB jaati hai, naya laake cache me rakh deti hai
+```
+
+Ab wo peeche wali request 5 second le, ya mar bhi jaaye, kisi user ko farak nahi padta. Sab purana home page
+dekh rahe hain, jo 1 ghanta purana hai, aur NFR me pehle hi likha tha ki thoda purana chalta hai. Agli request
+phir se peeche se laane ki koshish kar legi.
+
+HARD (1 din) bas isliye hai ki agar peeche se laana baar-baar fail ho, to bahut purana maal hamesha cache me na
+pada rahe.
+
+```
+lock (single flight)  -> DB ko bachata hai: 1,000 ki jagah 1 query
+soft / hard           -> users ko bachata hai: koi ruke hi nahi, purana turant mile
+```
+
+**Umar me thoda random:** saari key ki umar ek jaisi (theek 1 ghanta) ho, to sab ek hi pal khatam hongi aur ek
+saath bheed aayegi. Isliye 1 ghanta + 0-5 minute random.
+
+Ab key khatam hone wali bheed sambhal li. Par raat ko IPL final hai, aur "live:score" wali ek hi key pe 1 crore
+log ek saath aa rahe hain. Key khatam nahi hui, wo cache me padi hai. Par wo ek hi machine pe hai, aur saari
+bheed usi ek machine pe gir rahi hai. Wo machine dheemi padi, aur us pe padi baaki key bhi atak gayi.

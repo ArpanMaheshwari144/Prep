@@ -366,13 +366,25 @@ link bana, dost ko turant 404?
      Ye Cassandra ki setting hai. Saath me link banate hi Redis me daal do, dost wahin se pa le.
 
 entry expire hui, sab DB pe toot pade?
-  -> STAMPEDE. Ilaaj = LOCK (single flight): pehli request Redis me lock le (SET lock:aB3x9 NX, 2 sec)
-     aur DB se laaye, baaki 50 ms ruk ke Redis dekhein. Umar (TTL) me thoda random (1 ghanta + 0-5 min).
+  -> STAMPEDE. Ilaaj = LOCK (single flight): sirf pehli request lock le (lock ki umar 2 second) aur DB se
+     laaye, baaki 50 ms ruk ke Redis dekhein. DB pe 1,000 ki jagah 1 query.
+     Umar (TTL) me thoda random (1 ghanta + 0-5 min), taaki saari key ek hi pal khatam na hon.
 
-lock wala hi dheema pada?
-  -> PURANA JAWAB: Redis me soft time (1 ghanta) aur hard time (1 din). Soft nikla to ek request peeche
-     se taaza laaye, baaki sabko purana link turant. Link badalta nahi, to purana bhi sahi.
-     Lock pe 2 sec ka time, DB call pe 500 ms timeout.
+lock wali pehli request beech me MAR gayi?
+  -> 7:00:00 pehli ne lock liya, DB gayi aur mar gayi. Baaki 999 har 50 ms Redis dekhte, khaali, ruke rehte.
+     7:00:02 lock ki umar khatam, lock apne aap khula. Baaki me se jo pehle pahuncha, usne lock liya, DB
+     gaya, Redis bhara, baaki sabko mil gaya. User ko 2 second der, par DB pe bheed phir bhi nahi.
+
+lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha)?
+  -> Baaki 999 poore 5 second ruke rehte, sabko link late. Lock ne DB bachaya, par users ruk gaye.
+     Ilaaj = SOFT / HARD umar: key ko kabhi poora khaali hone hi mat do. SOFT = 1 ghanta, HARD = 1 din.
+     Redis key ko 1 din rakhta hai, 1 ghante baad use "thodi purani" maan leta hai.
+     8:00 (soft nikla, hard nahi): purana link turant de do, user ruka hi nahi. Saath me ek request
+     (lock ke saath) peeche se DB jaati hai, naya laake Redis me rakh deti hai. Wo 5 second le ya mar
+     jaaye, kisi user ko farak nahi. Link badalta nahi, to purana bhi sahi. HARD (1 din) bas isliye ki
+     peeche se laana baar-baar fail ho to bahut purana hamesha na pada rahe.
+     lock (single flight) -> DB ko bachata · soft / hard -> users ko bachata, koi ruke hi nahi.
+     DB call pe 500 ms ka timeout.
 ```
 
 Koi bhi dabba gira to? Aaj ke system me koi dabba akela nahi chalta, har ek ki copy hoti hai.

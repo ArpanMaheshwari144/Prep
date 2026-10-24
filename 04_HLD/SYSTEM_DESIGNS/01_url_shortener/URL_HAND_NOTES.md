@@ -28,9 +28,11 @@ DB kaunsa lein? Data bas code se link hai. Join ya transaction nahi chahiye, par
 
 - Link bana aur dost ko turant 404 mila: QUORUM. Har link teeno copy pe likha jaata hai, par 3 me se 2 copy se "haan" aate hi aage badh jaate hain. Padhte waqt bhi 2 copy se padhte hain. Isliye likhne wali 2 aur padhne wali 2 me kam se kam ek copy common hoti hai, aur naya link mil jaata hai.
 
-- Redis ki entry expire hui aur sab ek saath DB pe toot pade: LOCK (single flight). Sirf pehli request DB jaati hai, baaki thoda ruk ke Redis se lete hain.
+- Redis ki entry expire hui aur sab ek saath DB pe toot pade: LOCK (single flight). Sirf pehli request lock leti hai (lock ki umar 2 second) aur DB jaati hai, baaki 50 ms ruk ke Redis dekhte hain. DB pe 1,000 ki jagah 1 query.
 
-- Lock wali request hi dheemi pad gayi: Redis me do time rakho, SOFT (1 ghanta) aur HARD (1 din). Soft nikla to ek request peeche se taaza link laati hai, baaki sabko purana link turant milta hai. Link badalta nahi, isliye purana bhi sahi hai. Lock pe 2 second ka time, DB call pe 500 ms ka timeout.
+- Lock wali pehli request beech me MAR gayi: baaki 999 Redis dekhte rehte hain, khaali milta hai, ruke rehte hain. 2 second baad lock ki umar khatam, lock apne aap khul jaata hai. Baaki me se jo pehle pahuncha wo lock leta hai, DB jaata hai, Redis bharta hai, aur baaki sabko mil jaata hai. User ko 2 second der hui, par DB pe bheed phir bhi nahi aayi.
+
+- Lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha): baaki 999 poore 5 second ruke rehte hain. Lock ne DB bachaya, par users ruk gaye. Ilaaj SOFT / HARD umar: key ko kabhi poora khaali hone hi mat do. SOFT 1 ghanta, HARD 1 din. 1 ghante baad key "thodi purani" maani jaati hai, par Redis me padi rehti hai. Request aayi to purana link turant de do, aur saath me ek request (lock ke saath) peeche se DB se naya laake Redis me rakh deti hai. Wo dheemi ho ya mar jaaye, kisi user ko farak nahi, kyunki link badalta nahi to purana bhi sahi hai. HARD (1 din) bas isliye ki bahut purana maal hamesha na pada rahe. Lock DB ko bachata hai, soft / hard users ko. DB call pe 500 ms ka timeout.
 
 - Koi bhi dabba gira: har dabbe ki copy hai. LB (AWS ALB) kai zone me chalta hai, counter ki copy hai, Redis ki copy hai. Cassandra AWS pe Keyspaces ya EC2 pe khud chalate hain.
 
