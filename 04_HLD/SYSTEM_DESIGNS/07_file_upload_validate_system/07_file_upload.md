@@ -364,7 +364,7 @@ safe                -> parchi (upload / download), maalik check
 
 ---
 
-## Pooche to (design nahi badalta, bas jawab pata ho)
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 - **Naam `report.pdf`, andar EXE:** Worker file ke pehle kuch byte padh ke asli type dekhta hai (magic bytes). Naam
   pe bharosa nahi.

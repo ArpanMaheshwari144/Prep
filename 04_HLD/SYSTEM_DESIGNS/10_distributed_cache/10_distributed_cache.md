@@ -413,7 +413,7 @@ PURANA THODA CHALEGA -> likhne pe delete + umar (TTL) + soft / hard
 
 ---
 
-## Pooche to (design nahi badalta, bas jawab pata ho)
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
 
 ```
 Redis me lock kaise lete? (khud mat bolo, poochhe tabhi)
