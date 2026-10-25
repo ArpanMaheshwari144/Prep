@@ -250,11 +250,12 @@ Worker --> asli Redis + asli DB (likhna sirf yahan)
 ```
 
 ```mermaid
-flowchart LR
+flowchart TB
     A["Arpan + lakhon"] --> LB["LB"]
     LB --> FS["Feed Service<br/>(10 machine)"]
     FS -- "feed" --> RC[("Redis copies")]
     FS -. "nahi mila" .-> DR[("DB read replica")]
+    RC ~~~ DR
     W["Worker"] --> R[("asli Redis")]
     W --> D[("asli DB")]
     R -. "copy" .-> RC
