@@ -248,13 +248,15 @@ request alag IP se bheje to IP wali had kabhi lagti hi nahi.
 Ilaaj: had **userId** pe lagao, jo login ke baad JWT token se milta hai. Har insaan ki apni had, chahe IP ek
 ho ya hazaar.
 
-Par login se pehle to userId hota hi nahi. Isliye login pe had **IP** pe, aur jis account pe koshish ho rahi
-hai us account pe lagao. Login ki had chhoti hoti hai (5 / min), to office ke log alag-alag login karte hue
-bhi aaram se nikal jaate hain. Ban me bhi yahi: userId pe lamba ban, IP pe chhota.
+Par login se pehle to userId hota hi nahi. Isliye login pe do had: **IP** pe, aur jis account pe koshish ho
+rahi hai us **account** pe. IP wali dheeli (jaise 500 / min), taaki poora office aaram se login kare, bas ek IP
+se hazaaron ki baadh ruke. Account wali kadi (5 / min), taaki ek account pe password guess karne wala ruke.
+Office ke 1,000 log alag-alag account hain, har ek ki apni 5, to koi nahi atakta. Ban me bhi yahi: userId pe
+lamba ban, IP pe chhota.
 
 ```
-login se pehle   -> IP + jis account pe koshish   (rl:ip:1.2.3.4:login, rl:acct:arpan:login)
-login ke baad    -> userId                       (rl:arpan:search)
+login se pehle   -> IP (dheeli, 500 / min) + account (kadi, 5 / min)   (rl:ip:1.2.3.4:login, rl:acct:arpan:login)
+login ke baad    -> userId                                            (rl:arpan:search)
 ```
 
 ```mermaid
