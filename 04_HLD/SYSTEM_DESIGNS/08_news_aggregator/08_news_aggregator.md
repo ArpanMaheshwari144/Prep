@@ -45,3 +45,32 @@ matlab : padhna likhne se ~500 guna zyada -> padhne ka raasta tez banana hai, li
 ---
 
 ## 4. Design
+
+### Kadam 1: sabse seedha (Fetcher DB me bhare, Feed Service DB se padhe)
+
+```
+Fetcher (har 5 min) --> 1000 source se nayi khabar laao --> DB me likho
+Arpan --feed kholi--> Feed Service --> DB: "taazi 20 do" (ORDER BY published_at DESC LIMIT 20) --> Arpan
+```
+
+Do hi dabbe hain. Fetcher peeche chalta rehta hai aur DB me khabar bharta hai. Feed Service har baar DB se taazi
+20 khabar padh ke deta hai.
+
+```mermaid
+flowchart LR
+    S["1000 source"] --> F["Fetcher<br/>(har 5 min)"]
+    F -- "nayi khabar" --> D[("SQL DB")]
+    A["Arpan"] --> FS["Feed Service"]
+    FS -- "taazi 20" --> D
+```
+
+Par subah 8 baje lakhon log ek saath app kholte hain, ~500 feed / sec. Har feed pe DB wahi "taazi 20" sort karke
+de raha hai, aur sabko lagbhag ek hi jawab chahiye. DB ghutne laga.
+
+### DB kaunsa: SQL ya NoSQL?
+
+Data dekho: har khabar ek row: title, url, source, category, published_at. Data chhota hai (~1 lakh roz). Kaam:
+"taazi 20" time ke kram me, category se chhaanna, aur ek url ek hi baar (UNIQUE).
+
+Ye sab SQL me index aur UNIQUE se seedha ho jaata hai. Likhai bas ~1 / sec hai, to SQL aaram se jhel leta hai.
+Isliye SQL (Postgres).
