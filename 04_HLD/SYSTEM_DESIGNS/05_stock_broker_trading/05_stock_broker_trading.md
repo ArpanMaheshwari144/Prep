@@ -391,6 +391,14 @@ Aadha bhara (partial fill)?
 Din khatam, order bika nahi?
   -> order cancel, blocked paisa / share wapas available (Kadam 3).
 
+Arpan ne cancel dabaya, usi pal kisi ne wahi share bech diya. Pehle kya, cancel ya sauda?
+  -> cancel bhi usi TCS ki line me jaata, jise ek hi thread chalata (Kadam 4). Jo line me pehle aaya, wahi pehle:
+     sauda pehle -> cancel ka jawab "order bik chuka"; cancel pehle -> order book se hata, blocked paisa wapas.
+
+MARKET order pe kitna paisa block karein? (bhaav pehle se pata nahi)
+  -> aakhri bhaav + thoda upar (jaise 5%) block. Sauda ke baad jo bacha, wapas available.
+     (kitna % = broker ka apna niyam, pakka nahi; design ki baat sirf itni: andaze se block, baad me hisaab)
+
 Chal raha hai, kaise pata?
   -> order se sauda tak ka time (p99 = 100 me se 99 order isse jaldi), Kafka trades ka lag, settlement PENDING kitne, standby kitna peeche.
 
