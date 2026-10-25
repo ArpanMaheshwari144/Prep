@@ -229,3 +229,42 @@ chhua bhi nahi jaata. Achhi site ki baari time pe aati hai. NFR ka "ek source ba
 
 Par raat 8 baje election ka result aaya. Log 40 guna zyada app khol rahe hain, aur ek Feed Service ki machine itni
 request nahi jhel paa rahi.
+
+### Kadam 6: 8 baje result, 40 guna bheed (LB + Feed Service kai machine + copies)
+
+Dikkat ye hai ki ek Feed Service ki machine itni request nahi jhel paa rahi. Ilaaj: Feed Service ko kai machine
+pe chalao, aur aage ek **LB** (load balancer) lagao jo request baant de.
+
+Ye aasaan isliye hai kyunki Feed Service apne paas kuch yaad nahi rakhta. Feed Redis me hai. To koi bhi machine
+kisi ka bhi request utha sakti hai, aur bheed badhe to bas machine jod do.
+
+Ab bheed Redis pe pahunchti hai, isliye Redis ki **copies** rakhte hain. Likhna sirf asli Redis pe hota hai
+(Worker), aur padhna copies se. Aur jo request Redis me nahi milti (restart ke baad, ya 30 page neeche ki purani
+khabar), wo DB ki **read replica** (padhne wali copy) pe jaati hai, asli DB pe nahi.
+
+```
+Arpan --> LB --> Feed Service (10 machine, kisi pe bhi)
+                    |--> Redis copy se feed           (99%)
+                    |--> nahi mila -> DB read replica  (1%)
+Worker --> asli Redis + asli DB (likhna sirf yahan)
+```
+
+```mermaid
+flowchart LR
+    A["Arpan + lakhon"] --> LB["LB"]
+    LB --> FS["Feed Service<br/>(10 machine)"]
+    FS -- "feed" --> RC[("Redis copies")]
+    FS -. "nahi mila" .-> DR[("DB read replica")]
+    W["Worker"] --> R[("asli Redis")]
+    W --> D[("asli DB")]
+    R -. "copy" .-> RC
+    D -. "copy" .-> DR
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style RC fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style DR fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Copy thodi peeche ho to? Copy asli se ek-do second peeche chal sakti hai. Matlab nayi khabar Arpan ko ek-do second
+der se dikhegi. NFR me "5-10 minute purani nahi" tha, to ek-do second ka farak chalta hai.
+
+Par shaam ko Arpan ko saari khabar nahi chahiye, sirf tech aur sports. Abhi sabke liye ek hi feed hai.
