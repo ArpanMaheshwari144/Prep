@@ -8,13 +8,14 @@ ek hi kahani hai: Arpan income tax ki site pe apni `report.pdf` daalta hai.
 
 ## File upload hai kya, aur kyun chahiye
 
-Arpan income tax ki site pe apni `report.pdf` daalta hai. Site ko teen kaam karne hain:
+Arpan income tax ki site pe apni `report.pdf` daalta hai. Site ko us file ke saath teen kaam karne hain: file
+lena aur sambhal ke rakhna, file ki jaanch karna, aur Arpan ko batate rehna ki file kahan tak pahunchi.
 
-```
-1. file lena aur sambhal ke rakhna (S3 me)
-2. file ki jaanch: ye bahar ki ek company karti hai, ~2-3 sec leti hai (virus to nahi, format sahi hai?)
-3. Arpan ko batate rehna ki file kahan tak pahunchi (tracking number, jaise T-101)
-```
+Jaanch hamari site khud nahi karti. Ye kaam bahar ki ek company karti hai (Validator): file me virus to nahi,
+format sahi hai ya nahi. Ek file jaanchne me use lagbhag 2-3 second lagte hain.
+
+Arpan ko haal batane ke liye har file ko ek tracking number milta hai, jaise `T-101`. Is number se wo kabhi bhi
+dekh sakta hai ki uski file kahan tak pahunchi.
 
 Ye JP ne sach me poocha tha (SDE-3 writeup). Aam product design hai, finance nahi.
 
