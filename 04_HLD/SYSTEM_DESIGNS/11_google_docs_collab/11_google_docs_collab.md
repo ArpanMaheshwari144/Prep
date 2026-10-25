@@ -269,8 +269,8 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Doosra kyun nahi: **Postgres**. Ek machine ki likhai ki ek had hoti hai. Uske upar sharding khud karni padti,
-aur join ya transaction ki yahan zarurat hi nahi hai. Sirf jodna hai aur docId se padhna hai, to Cassandra.
+Postgres kyun nahi, Cassandra kyun? Ek machine ki likhai ki ek had hoti hai, uske upar sharding khud karni
+padti. Join ya transaction ki yahan zarurat hi nahi, sirf jodna hai aur docId se padhna hai. Isliye Cassandra.
 
 Par batch ke 100 ms ke operation abhi owner server ki memory me hain. Server ne Arpan ko "mil gaya" (ACK = acknowledgement) bol
 diya tha. Usi pal Server 3 gir gaya. Arpan ki aakhri line na DB me gayi, na kahin aur. Wo line kho gayi.

@@ -318,14 +318,14 @@ flowchart LR
     style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Tracking DB = Cassandra, MySQL kyun nahi (asli choice):**
-- har message ki row likhni hai, aur har webhook pe ek update. 50 crore message / din = likhna hi likhna.
-- saal bhar me ~90 TB.
-- padhna seedha: "message 999 ka haal kya?", koi JOIN nahi.
-- ek row thodi der purani dikhe to chalega, paise ka hisaab nahi hai.
+### DB kaunsa: SQL ya NoSQL? (Tracking DB)
 
-Cassandra isi kaam ke liye bana: bahut likhna, machine jodte jao aur jagah badhti jaaye. MySQL ek machine pe
-90 TB / saal ke likhne me ghut jaayega, aur use todna (shard) humein khud karna padega.
+Data dekho: har message ki ek row, aur har webhook pe us row ka update. 50 crore message / din, saal bhar me
+~90 TB. Kaam: "message 999 ka haal kya?", seedha, koi JOIN nahi. Ek row thodi der purani dikhe to chalega,
+paise ka hisaab nahi hai.
+
+MySQL ek machine pe itna likhne me ghut jaayega, aur use todna (shard) khud karna padega. Cassandra isi kaam
+ke liye bana hai: bahut likhna, machine jodte jao aur jagah badhti jaaye. Isliye Cassandra.
 
 Ab kya theek hua: Arpan bole "OTP nahi aaya", to support dekh sakta hai: BHEJA tha, company ne FAIL bola,
 number DND pe tha.
