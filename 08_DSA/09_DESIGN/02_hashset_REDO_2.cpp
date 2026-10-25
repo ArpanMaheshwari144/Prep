@@ -39,7 +39,7 @@ class MyHashSet
 {
     int sz;
     int cap;
-    vector<Entry *> buckets;   // buckets[i] = us chain ka pehla node (ya nullptr)
+    vector<Entry *> buckets; // buckets[i] = us chain ka pehla node (ya nullptr)
 
 public:
     MyHashSet()
@@ -51,20 +51,77 @@ public:
 
     void add(string key)
     {
+        int index = hash<string>{}(key) % cap;
+        Entry *newNode = new Entry(key);
+        if (buckets[index] == NULL)
+        {
+            buckets[index] = newNode;
+            sz++;
+        }
+        else
+        {
+            Entry *node = buckets[index];
+            while (node != NULL)
+            {
+                if (node->key == key)
+                {
+                    return;
+                }
+                else
+                {
+                    if (node->next == NULL)
+                    {
+                        node->next = newNode;
+                        sz++;
+                    }
+                }
+                node = node->next;
+            }
+        }
     }
 
     bool contains(string key)
     {
+        int index = hash<string>{}(key) % cap;
+        Entry *node = buckets[index];
+        while (node != NULL)
+        {
+            if (node->key == key)
+            {
+                return true;
+            }
+            node = node->next;
+        }
         return false;
     }
 
     void remove(string key)
     {
+        int index = hash<string>{}(key) % cap;
+        Entry *node = buckets[index];
+        Entry *prev = NULL;
+        while (node != NULL)
+        {
+            if (node->key == key)
+            {
+                if (prev == NULL)
+                {
+                    buckets[index] = node->next;
+                }
+                else
+                {
+                    prev->next = node->next;
+                }
+                sz--;
+            }
+            prev = node;
+            node = node->next;
+        }
     }
 
     int size()
     {
-        return 0;
+        return sz;
     }
 };
 
@@ -73,7 +130,8 @@ int pass = 0, total = 0;
 void check(bool ok, string name)
 {
     total++;
-    if (ok) pass++;
+    if (ok)
+        pass++;
     cout << (ok ? "PASS " : "FAIL ") << name << "\n";
 }
 
@@ -82,7 +140,9 @@ int main()
     MyHashSet s;
     check(s.size() == 0 && !s.contains("apple"), "1 naya set khaali");
 
-    s.add("apple"); s.add("banana"); s.add("apple");
+    s.add("apple");
+    s.add("banana");
+    s.add("apple");
     check(s.size() == 2, "2 duplicate nahi, size 2");
     check(s.contains("apple") && s.contains("banana"), "3 apple, banana hain");
     check(!s.contains("grape"), "4 grape nahi");
@@ -99,21 +159,27 @@ int main()
     s.add("apple");
     check(s.contains("apple") && s.size() == 2, "8 apple wapas, size 2");
 
-    for (int i = 0; i < 100; i++) s.add("k" + to_string(i));
+    for (int i = 0; i < 100; i++)
+        s.add("k" + to_string(i));
     bool all = true;
-    for (int i = 0; i < 100; i++) all = all && s.contains("k" + to_string(i));
+    for (int i = 0; i < 100; i++)
+        all = all && s.contains("k" + to_string(i));
     check(all && s.size() == 102, "9 100 key, sab mili, size 102");
 
-    for (int i = 0; i < 100; i += 2) s.remove("k" + to_string(i));
+    for (int i = 0; i < 100; i += 2)
+        s.remove("k" + to_string(i));
     bool ok10 = true;
     for (int i = 0; i < 100; i++)
     {
         bool hai = s.contains("k" + to_string(i));
-        if (i % 2 == 0 && hai) ok10 = false;
-        if (i % 2 == 1 && !hai) ok10 = false;
+        if (i % 2 == 0 && hai)
+            ok10 = false;
+        if (i % 2 == 1 && !hai)
+            ok10 = false;
     }
     check(ok10 && s.size() == 52, "10 har doosri hati, size 52");
 
-    cout << "\n" << pass << "/" << total << " PASS\n";
+    cout << "\n"
+         << pass << "/" << total << " PASS\n";
     return 0;
 }
