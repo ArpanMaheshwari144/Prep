@@ -22,6 +22,15 @@ using namespace std;
 
 int maxProduct(vector<int> &nums)
 {
+    int maxi = 1, mini = 1, ans = INT_MIN;
+    for (int i = 0; i < nums.size(); i++)
+    {
+        int temp = max({nums[i], maxi * nums[i], mini * nums[i]});
+        mini = min({nums[i], maxi * nums[i], mini * nums[i]});
+        maxi = temp;
+        ans = max(maxi, ans);
+    }
+    return ans;
 }
 
 // ---- tests (ise mat chhedo) ----
