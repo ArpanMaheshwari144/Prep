@@ -147,3 +147,54 @@ DB dheema ho to fetcher bhi ruk jaate. Kafka beech me ek line hai, jo dono ko ek
 
 Par dopahar me "India ne match jeeta" ki khabar 5 alag site se aayi. Arpan ki feed me wahi khabar 5 baar dikh rahi
 hai.
+
+### Kadam 4: wahi khabar 5 baar (ek khabar ek baar: url UNIQUE + title ki chhaap)
+
+Ek hi khabar do tarah se dobara aati hai, aur dono ka ilaaj alag hai.
+
+**1. Wahi site, wahi khabar, dobara aayi.** Fetcher har 5 minute wahi site padhta hai, to purani khabar phir aa
+jaati hai. Ya Worker ne DB me likh diya, aur Kafka ko "ho gaya" bolne se pehle gir gaya, to naya Worker wahi
+khabar phir uthata hai.
+
+```
+ilaaj: DB me url UNIQUE
+  Worker likhta: "ye khabar daalo, url pehle se hai to kuch mat karo"
+  pehli baar  -> row bani
+  dobara aayi -> DB khud mana kar deta, dohra nahi bana
+```
+
+**2. Alag site, alag url, par khabar wahi.** "India ne match jeeta" NDTV pe bhi hai, TOI pe bhi. Dono ka url alag
+hai, to UNIQUE ise nahi rokta.
+
+```
+ilaaj: title ki chhaap (hash)
+  title saaf karo: chhote akshar, chinh hatao -> "india ne match jeeta"
+  uski chhaap banao -> pehle se hai? -> wahi khabar, feed me dobara mat daalo
+  (title thoda alag ho to "milta-julta" pakadne wala hash: SimHash)
+```
+
+```mermaid
+flowchart LR
+    K[("Kafka")] --> W["Worker<br/>title ki chhaap: pehle aayi?"]
+    W -- "nayi hai to" --> D[("SQL DB<br/>url UNIQUE")]
+    W -- "nayi hai to" --> R[("Redis feed")]
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ye perfect nahi hai. Title ki chhaap sirf tab pakadti hai jab title same ho ya thoda sa badla ho. Agar doosri site
+ne poora vakya apne shabdon me likh diya ("Bharat ne match apne naam kiya"), to chhaap alag banegi aur wo khabar
+phir feed me aa jaayegi. Asli apps me bhi aisa dikhta hai.
+
+```
+url UNIQUE        -> wahi khabar dobara: 100% rokta
+title ki chhaap   -> same / milta-julta title: zyadatar rokta
+poora alag vakya  -> nahi rukta. thoda dohraav chalta hai, feed tootti nahi.
+                     (pakadna ho to khabar ke matlab se milaana padta hai, ML ka kaam, scope se bahar)
+```
+
+Worker ke andar "pehle aayi?" ki yaad kyun nahi rakhte? Worker kai machine pe chalte hain, aur gir bhi sakte hain.
+Yaad DB me rakho (UNIQUE), taaki koi bhi Worker ho, faisla ek hi jagah ho.
+
+Par ek chhoti site band pad gayi hai. Har 5 minute uska Fetcher 30 second tak jawab ka intezaar karta hai, aur aise
+50 band site hain. Fetcher ke thread inhi me phanse rehte hain, aur achhi site ki baari der se aati hai.
