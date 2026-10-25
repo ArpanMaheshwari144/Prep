@@ -342,9 +342,3 @@ chal raha, kaise pata? -> hisaab ka farak (milaan), p99 (100 me se 99 payment is
 AWS naam        -> RDS (Postgres) Multi-AZ · Razorpay / Cashfree (PSP) ·
                    SQS / Kafka (webhook baad me sambhalna)
 ```
-
----
-
-## Hands-on: idempotency live
-
-Alag file me: [HANDS_ON/06_idempotency_map](../../HANDS_ON/06_idempotency_map/README.md)

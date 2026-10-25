@@ -417,13 +417,7 @@ CHALAO:  docker start rl · curl http://localhost:8080 · docker logs rl · dock
 
 ---
 
-## HANDS-ON #2 — App ke andar fixed window
-
-Alag file me: [HANDS_ON/05_fixed_window_spring](../../HANDS_ON/05_fixed_window_spring/README.md)
-
----
-
-## HANDS-ON #3 — Redis KHUD maara: kaise tootta
+## HANDS-ON #2 — Redis KHUD maara: kaise tootta
 
 CODE: `04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java` ·
 `04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java` (koi library nahi, socket se Redis, `java
