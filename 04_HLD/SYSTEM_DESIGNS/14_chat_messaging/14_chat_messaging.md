@@ -261,10 +261,27 @@ pata nahi ki ye wahi purana "hi" hai.
 Ilaaj: har message ki apni id, jo **phone banata hai**, Send dabate hi (`clientMsgId`, jaise `m-501`).
 Dobara bhejne pe bhi wahi `m-501` jaata hai. Server pehle dekhta hai "m-501 pehle aa chuka?":
 
+Par yaad rakhna aur DB me likhna do alag kaam hain, aur server dono ke beech me bhi gir sakta hai. Agar
+pehle DB me likhein aur phir yaad rakhein:
+
 ```
-pehli baar:  m-501 aaya -> pehle aaya? nahi -> DB me likho (#42), yaad rakho "m-501 = #42" -> ack
-dobara:      m-501 aaya -> pehle aaya? haan, #42 -> DB me dobara NAHI likho, bas ack wapas
+m-501 aaya -> DB me likha (#42) -> [GIRA] -> Redis me "m-501" likha hi nahi gaya
+app dobara bhejti: m-501 -> Redis me dekha "pehle aaya?" -> nahi mila
+-> DB me phir likha (#43) -> Ravi ko phir do baar "hi"
 ```
+
+Isliye kram ulta: pehle Redis me yaad rakho, phir DB me likho.
+
+```
+m-501 aaya -> Redis me "m-501 = #42" -> DB me #42 likho -> ack
+
+beech me gira, app ne dobara bheja:
+m-501 aaya -> Redis: "haan, #42" -> DB me #42 DOBARA likho -> ack
+```
+
+Dobara likhne se dohra kyun nahi banta? Cassandra me #42 us message ki key hai. Same key pe dobara likho to
+wo purane ke upar likh deta hai, naya row nahi banta. Isliye pehli baar DB tak pahuncha ho ya nahi, dobara
+likhne pe Ravi ko ek hi "hi" dikhega.
 
 "Pehle aaya?" wali yaad Redis me rakhte hain, 1 din ki umar ke saath. Dobara bhejna kuch second ya minute me
 hi hota hai, to 1 din kaafi hai.
