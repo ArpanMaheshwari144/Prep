@@ -63,9 +63,13 @@ flowchart LR
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-SQL kyun, NoSQL kyun nahi? Ek transfer me do row ek saath badalni hain, aur dono badlein ya koi nahi. Kai row
-ek saath pakka badalna SQL ka seedha kaam hai (ACID). Aur bheed bhi chhoti hai, to NoSQL ki "bahut bada data"
-wali taakat yahan chahiye hi nahi.
+### DB kaunsa: SQL ya NoSQL?
+
+Data dekho: account aur unka balance. Kaam: ek transfer me do row ek saath badalni hain (Arpan -500, Ravi
++500), aur dono badlein ya koi nahi.
+
+Kai row ek saath pakka badalna SQL ka seedha kaam hai (ACID). Bheed chhoti hai (120 likhai / second), to NoSQL
+ki "bahut bada data, kai machine" wali taakat yahan chahiye hi nahi. Isliye SQL (Postgres).
 
 Par pehla UPDATE hua (Arpan se 500 kat gaye), aur doosre se pehle server gir gaya. Ravi ko kuch nahi mila.
 Paisa gayab.
