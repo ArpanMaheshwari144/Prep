@@ -301,8 +301,9 @@ flowchart LR
 
 Ye [chat kadam 5](../14_chat_messaging/14_chat_messaging.md#kadam-5-roz-12-tb-cassandra-chat-ke-hisaab-se-baanto) wala hi faisla: wahan message `chat_id` se baante, yahan tweet `author_id` se.
 
-SQL kyun nahi: SQL ki taakat jod aur transaction, yahan dono nahi chahiye. Itni likhai ke liye SQL ko haath se
-baantna padta. Cassandra likhai ke liye hi bana, khud kai machine me baant leta.
+SQL kyun nahi, Cassandra kyun? SQL ki taakat jod aur transaction hai, yahan dono nahi chahiye. 5,000 likhai /
+sec aur saal bhar me sau TB, ye SQL ko kai machine me haath se baantna padta. Cassandra likhai ke liye hi bana
+hai, khud kai machine me baant leta hai. Isliye Cassandra.
 
 Par Arpan ne match ki 100 MB video daali. Video Tweet Service aur Cassandra ke raaste gayi to dono bhar jaayenge,
 saath me sabke tweet atkenge. Aur 1 crore log dekhenge, to har baar wahi 100 MB humare server se jaayega.
