@@ -118,11 +118,11 @@ it.remove() →  aakhri next() ne jo diya (S101) hata do — SAFE
                                  └────┴────┴────┴────┘
                                   ▲
 
-  it.add(S105)    →  current position pe naya daalo
+  it.add(S105)    →  current position pe naya daalo, cursor uske AAGE
                                  ┌────┬────┬────┬────┬────┐
                                  │S105│S100│S101│S102│S103│
                                  └────┴────┴────┴────┴────┘
-                                  ▲
+                                       ▲   (agla next() = S100)
 
   it.set(S99)     →  aakhri next()/previous() wala element replace
                      ★ yahan (add ke turant baad) set = IllegalStateException.
