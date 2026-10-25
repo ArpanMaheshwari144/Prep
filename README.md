@@ -122,15 +122,15 @@ SAFAR (March: khaali folder)  ->  aaj
 
 - ★ **[HANDS_ON](04_HLD/HANDS_ON)** — cross-question ka "kya tootta" **chala ke dekha** (30-Sep). Code sirf demo hai (yaad nahi rakhna); asli output + nichod har folder ke README me (design file me nahi):
 
-| Demo (chalao) | Kya dekha | Notes (asli output) |
-|---------------|-----------|---------------------|
-| [01 rate limiter + asli Redis](04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java) | Redis maara → fail-open · wapas aaya → ginti gaayab, blocked user phir allow | [README](04_HLD/HANDS_ON/01_rate_limiter_redis/README.md) |
-| [02 INCR ke baad crash](04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java) | TTL -1 → user hamesha block · Lua se INCR+EXPIRE ek saath → theek | [README](04_HLD/HANDS_ON/01_rate_limiter_redis/README.md) |
-| [03 provider ka 429](04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java) | naive retry: 1000 me 700 SMS phenke · throttle + backoff + queue: 1000/1000 | [README](04_HLD/HANDS_ON/03_provider_429/README.md) |
-| [04 event kahan khota](04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java) | producer / Kafka / consumer pe crash → 5 me 3 khoye · outbox + acks=all + offset baad me + idempotent → 0 | [README](04_HLD/HANDS_ON/04_event_loss/README.md) |
-| [05 app ke andar fixed window](04_HLD/HANDS_ON/05_fixed_window_spring/README.md) | usercrud me 1 sec me 5 ki had, Spring controller me, 6th pe 429 | isi file me |
-| [06 idempotency map](04_HLD/HANDS_ON/06_idempotency_map/README.md) | 20 request ek saath: check-phir-daal = 2 order · putIfAbsent = 1 | isi file me |
-| [07 Nginx limiter](04_HLD/HANDS_ON/07_nginx_limiter/README.md) | nginx.conf se limit, burst=N pe N+1 pass, 503 | isi file me |
+| Demo (folder khulte hi README dikhega) | Kya dekha |
+|---|---|
+| [01 rate limiter + asli Redis](04_HLD/HANDS_ON/01_rate_limiter_redis) | Redis maara → fail-open · wapas aaya → ginti gaayab, blocked user phir allow |
+| [02 INCR ke baad crash](04_HLD/HANDS_ON/02_incr_expire_crash) | TTL -1 → user hamesha block · Lua se INCR+EXPIRE ek saath → theek |
+| [03 provider ka 429](04_HLD/HANDS_ON/03_provider_429) | naive retry: 1000 me 700 SMS phenke · throttle + backoff + queue: 1000/1000 |
+| [04 event kahan khota](04_HLD/HANDS_ON/04_event_loss) | producer / Kafka / consumer pe crash → 5 me 3 khoye · outbox + acks=all + offset baad me + idempotent → 0 |
+| [05 app ke andar fixed window](04_HLD/HANDS_ON/05_fixed_window_spring) | usercrud me 1 sec me 5 ki had, Spring controller me, 6th pe 429 |
+| [06 idempotency map](04_HLD/HANDS_ON/06_idempotency_map) | 20 request ek saath: check-phir-daal = 2 order · putIfAbsent = 1 |
+| [07 Nginx limiter](04_HLD/HANDS_ON/07_nginx_limiter) | nginx.conf se limit, burst=N pe N+1 pass, 503 |
 
 - **[tools](04_HLD/tools)** — purane poster saanche ke script (`gen_clean.py`, `poster2png.js`, `anim_build.py`). Naye saanche me diagram mermaid hain, GitHub khud banata; check `mermaid_cfg.json` se.
 
