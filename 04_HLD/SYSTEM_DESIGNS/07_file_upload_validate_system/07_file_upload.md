@@ -122,3 +122,36 @@ me padi hai. Validator wapas aaya to Worker uthake jaanch kar dega. Arpan ko bas
 
 Par Arpan ne `report.pdf` nahi, apni 5 GB ki video daali. Ye poori 5 GB pehle hamare Upload Server pe aati hai, phir
 wahan se S3 jaati hai. Server ki memory aur net, dono isi ek file ne gher liye, aur baaki sab ka upload atak gaya.
+
+### Kadam 3: 5 GB video hamare server ke raaste ja rahi (file seedha S3 pe)
+
+Hamara server file ko sirf aage S3 tak pahuncha raha tha, beech ka daakiya ban gaya tha. Jab file ko S3 hi jaana
+hai, to seedha S3 kyun nahi?
+
+Par S3 kisi ko bhi file daalne nahi deta, warna koi bhi kachra bhar dega. Isliye server ek **parchi** deta hai,
+ek khaas link, jo sirf 10 minute chalta hai, sirf is ek file ke liye, aur sirf 5 GB tak ka. Isko **presigned URL**
+kehte hain.
+
+```mermaid
+flowchart LR
+    A["Arpan"] <-->|"1. 5 GB daalni hai -> T-102 + parchi (10 min)<br/>3. T-102 pahunch gayi"| U["Upload Server"]
+    A -->|"2. 5 GB seedha"| S3[("S3")]
+    U --> D[("DB")]
+    U -->|"T-102 jaancho"| K[("Kafka")]
+    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+1. Arpan --"5 GB video daalni hai"--> Upload Server
+   Upload Server --> DB: T-102 = UPLOAD HO RAHI
+   Upload Server --> Arpan: "T-102 + parchi (S3 ka link, 10 min)"
+2. Arpan --5 GB seedha--> S3        (hamare server ke beech se nahi)
+3. Arpan --"T-102 pahunch gayi"--> Upload Server --> DB: JAANCH HO RAHI + Kafka: "T-102 jaancho"
+```
+
+Ab hamara server sirf chhoti-chhoti baatein karta hai: parchi dena, aur "pahunch gayi" sunna. 5 GB ka ek byte bhi
+uske paas se nahi guzarta. Server halka rehta hai aur baaki sabke upload chalte rehte hain. S3 badi file ke liye
+hi bana hai.
+
+Par Arpan ghar ke wifi pe tha. 5 GB me se 4.5 GB chadh chuki thi, aur wifi chala gaya. Wifi wapas aaya to upload
+phir 0 se shuru.
