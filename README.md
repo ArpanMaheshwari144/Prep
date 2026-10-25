@@ -23,7 +23,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | 14 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + master sheet + 19 foundations + HANDS_ON (4 demo) | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | 14 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + master sheet + 19 foundations + HANDS_ON (7 demo, design file se alag) | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
@@ -120,16 +120,17 @@ SAFAR (March: khaali folder)  ->  aaj
 > · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) — eviction (`allkeys-lru` vs `volatile-lru`) · replication · read-only replica · haath-se failover → **split brain** · `stop` vs `kill` (RDB) · replica ≠ backup · **Sentinel se khud-b-khud failover 800ms me**
 > · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) — Kafka **replay** (offset reset) · **rebalance** (1→2→3→4 consumer, chautha khaali) · partition = parallelism ki chhat
 
-- ★ **[HANDS_ON](04_HLD/HANDS_ON)** — cross-question ka "kya tootta" **chala ke dekha** (30-Sep). Code sirf demo hai (yaad nahi rakhna); asli output + nichod + interview line design file me:
+- ★ **[HANDS_ON](04_HLD/HANDS_ON)** — cross-question ka "kya tootta" **chala ke dekha** (30-Sep). Code sirf demo hai (yaad nahi rakhna); asli output + nichod har folder ke README me (design file me nahi):
 
 | Demo (chalao) | Kya dekha | Notes (asli output) |
 |---------------|-----------|---------------------|
-| [01 rate limiter + asli Redis](04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java) | Redis maara → fail-open · wapas aaya → ginti gaayab, blocked user phir allow | [rate limiter — HANDS-ON #2](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
-| [02 INCR ke baad crash](04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java) | TTL -1 → user hamesha block · Lua se INCR+EXPIRE ek saath → theek | [rate limiter — HANDS-ON #2](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) |
-| [03 provider ka 429](04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java) | naive retry: 1000 me 700 SMS phenke · throttle + backoff + queue: 1000/1000 | [notification — HANDS-ON](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) |
-| [04 event kahan khota](04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java) | producer / Kafka / consumer pe crash → 5 me 3 khoye · outbox + acks=all + offset baad me + idempotent → 0 | [Kafka — HANDS-ON](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) |
+| [01 rate limiter + asli Redis](04_HLD/HANDS_ON/01_rate_limiter_redis/RateLimiterDemo.java) | Redis maara → fail-open · wapas aaya → ginti gaayab, blocked user phir allow | [README](04_HLD/HANDS_ON/01_rate_limiter_redis/README.md) |
+| [02 INCR ke baad crash](04_HLD/HANDS_ON/02_incr_expire_crash/IncrExpireCrash.java) | TTL -1 → user hamesha block · Lua se INCR+EXPIRE ek saath → theek | [README](04_HLD/HANDS_ON/01_rate_limiter_redis/README.md) |
+| [03 provider ka 429](04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java) | naive retry: 1000 me 700 SMS phenke · throttle + backoff + queue: 1000/1000 | [README](04_HLD/HANDS_ON/03_provider_429/README.md) |
+| [04 event kahan khota](04_HLD/HANDS_ON/04_event_loss/EventLossDemo.java) | producer / Kafka / consumer pe crash → 5 me 3 khoye · outbox + acks=all + offset baad me + idempotent → 0 | [README](04_HLD/HANDS_ON/04_event_loss/README.md) |
 | [05 app ke andar fixed window](04_HLD/HANDS_ON/05_fixed_window_spring/README.md) | usercrud me 1 sec me 5 ki had, Spring controller me, 6th pe 429 | isi file me |
 | [06 idempotency map](04_HLD/HANDS_ON/06_idempotency_map/README.md) | 20 request ek saath: check-phir-daal = 2 order · putIfAbsent = 1 | isi file me |
+| [07 Nginx limiter](04_HLD/HANDS_ON/07_nginx_limiter/README.md) | nginx.conf se limit, burst=N pe N+1 pass, 503 | isi file me |
 
 - **[tools](04_HLD/tools)** — purane poster saanche ke script (`gen_clean.py`, `poster2png.js`, `anim_build.py`). Naye saanche me diagram mermaid hain, GitHub khud banata; check `mermaid_cfg.json` se.
 

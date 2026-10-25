@@ -318,7 +318,7 @@ Hum 1000 / sec ki had me bhej rahe the, par company ne beech me khud apni had 50
 tha). To kuch SMS pe 429 aayega. Tab Kadam 5 wala tareeka: khabar retry line me, 1, 2, 4 sec ruk ke dobara.
 Company jawab me `Retry-After: 3` bheje ("3 sec baad aana") to utna hi ruko.
 
-Ye chala ke dekha hai, nateeja neeche HANDS-ON me.
+Ye chala ke dekha hai: [HANDS_ON/03_provider_429](../../HANDS_ON/03_provider_429/README.md).
 
 Par company ne "bhej diya" (200) bola. Kya Arpan ke phone tak pahuncha? Number band ho, ya phone off ho, to
 humein pata hi nahi chalta.
@@ -532,29 +532,6 @@ Chal raha hai, kaise pata?
 AWS pe naam?
   -> Tracking (Cassandra) = Amazon Keyspaces (ya EC2 pe khud) · Redis = ElastiCache · Kafka = MSK.
 ```
-
----
-
-## HANDS-ON: company ne 429 diya, chala ke dekha
-
-Galti jo hui thi: 429 pe "fail-open" bola. Fail-open HUMARE limiter ka faisla hai (Redis gira to). Yahan had
-COMPANY ki hai, uska darwaza hum nahi khol sakte, dheema HUMEIN hona padega.
-
-CODE: `04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java` (Docker nahi, time nakli)
-· line 21 `SMART = false / true`
--> `java Sms429Demo.java`
-
-```
-SETUP:  1000 SMS ek saath · company 100 / sec · t=3,4 pe 50 / sec
-NAIVE:  sab ek saath, 429 pe agle second turant dobara, 3 fail -> PHENK DO
-SMART:  apni taraf 100 / sec (token bucket) · 429 pe 1s, 2s, 4s · kabhi phenko mat
-
-NAIVE   PAHUNCHE 300 / 1000 · CHHODE 700 · call 2700 (429 = 2400) · 3 sec me khatam
-SMART   PAHUNCHE 1000 / 1000 · CHHODE 0 · call 1100 (429 = 100) · 11 sec, dheere par sab pahunche
-```
-
-Jawab: chala ke dekha, company ki had ka dhyaan na rakha aur turant dobara bheja to 1000 me se 700 gaye hi
-nahi. Had me bheja aur ruk-ruk ke dobara koshish ki to poore 1000 pahunche.
 
 CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) ·
 [ms-communication](../../FOUNDATIONS/10_ms_communication.md) ·
