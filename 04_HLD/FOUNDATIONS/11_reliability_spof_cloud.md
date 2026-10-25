@@ -1,6 +1,6 @@
 # Reliability / SPOF / Cloud reality (doubt-clear note)
 
-> **NAV** — KYA: SPOF / reliability basics. UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [file-upload](../SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload_INTERVIEW.md) · [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
+> **NAV** — KYA: SPOF / reliability basics. UP: [MASTER](../00_MASTER_SHEET.md) · lagta hai: [file-upload](../SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md) · [rate-limiter](../SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
 
 > Sawaal: "AWS bhi to physical machine, girta hoga na?"
 
