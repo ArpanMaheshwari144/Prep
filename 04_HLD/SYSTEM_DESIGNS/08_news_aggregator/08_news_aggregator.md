@@ -304,3 +304,36 @@ chalta hai. Asli sach DB hi rehta hai, aur Elasticsearch bigde to DB se dobara b
 
 Par 6 mahine ho gaye. Roz 1 lakh khabar, to DB me ~2 crore row ho gayi. DB bhaari ho raha hai aur kharcha badh
 raha hai, jabki 1 hafte se purani khabar koi padhta hi nahi.
+
+### Kadam 8: 6 mahine me 2 crore row (mahine ke tukde + purana archive)
+
+Dikkat ye hai ki DB me saari khabar ek hi badi table me hai, jabki padhi sirf taazi jaati hai. Purani khabar jagah
+aur paisa kha rahi hai, aur index bhi bhaari ho raha hai.
+
+**Ilaaj 1: table ko mahine ke tukdon me baanto (partition).** Bahar se table ek hi dikhti hai, par andar har mahine
+ka alag tukda hota hai.
+
+```
+khabar table:  [Oct ka tukda] [Sep ka tukda] [Aug ka tukda] ...
+"taazi 20"   -> sirf Oct ke tukde me dhoondhta, baaki chhoota hi nahi -> tez
+```
+
+**Ilaaj 2: purana tukda sasti jagah bhejo (archive).** 3 mahine se purana tukda poora utha ke S3 me daal do, jo
+sasta storage hai. DB se wo tukda hata do. Ye ek jhatke me hota hai, ek-ek row mitaani nahi padti.
+
+```
+Jan ka tukda (3 mahine purana) --> S3 (sasta) --> DB se tukda hataya
+koi purani khabar maange (bahut kam) --> S3 se laao, thoda dheema chalta hai
+```
+
+```mermaid
+flowchart LR
+    W["Worker"] --> D[("SQL DB<br/>mahine ke tukde<br/>sirf 3 mahine")]
+    D -- "purana tukda" --> S3[("S3 archive<br/>sasta")]
+    FS["Feed Service"] -. "bahut purani khabar" .-> S3
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab kya theek hua: DB me hamesha sirf 3 mahine ki khabar rehti hai. DB chhota aur tez rehta hai, aur purani khabar
+sasti jagah padi hai.
