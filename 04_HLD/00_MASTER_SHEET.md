@@ -195,7 +195,7 @@
 ```
                               PAYMENT                              GOOGLE DOCS
 1. ye GIRA to?                beech me crash -> transaction,       server gira -> ops log/buffer,
-                              PENDING pehle                        snapshot + ops
+                              INITIATED pehle                      snapshot + ops
 2. DOBARA aaya to?            retry -> idempotency key             same op do baar -> op-id, dobara chhodo
 3. do EK SAATH aaye to?       race -> UNIQUE, WHERE balance >= x   ek jagah do log type -> OT / CRDT
 4. bahar wala SLOW / band?    PSP -> status + timeout + recon      user offline -> likhne do, baad me merge
@@ -888,7 +888,7 @@ TRADE-OFF bolna ho -> neeche "A ya B — TRADE-OFF JODE" section (jode + ready E
 06 PAYMENT         DIL: paisa DO BAAR na kate
    . IDEMPOTENCY KEY: client har tap pe UUID, retry pe same; server STORED RESULT lautaye (reject nahi)
      claim = UNIQUE constraint / SETNX, IN_PROGRESS -> DONE, key ~24h
-   . PENDING pehle likho, phir PSP call -> webhook (push) + reconciliation (pull) dono
+   . INITIATED pehle likho, phir PSP call -> webhook (push) + reconciliation (pull) dono
    . LEDGER double-entry, immutable (galti = nayi correction entry) · SAGA (compensate) vs 2PC (lock, coordinator atke)
 
 ```
