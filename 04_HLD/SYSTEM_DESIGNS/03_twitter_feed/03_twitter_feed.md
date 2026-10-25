@@ -415,3 +415,15 @@ server ke apne cache se 2 sec. Feed = inbox ki 50 id + celebrity ke tweet, milao
 S3 me, dekhne wale CDN se. Har desh ka apna region; Kafka topic ki copy doosre region jaati, wahan ka worker
 wahan ke inbox bhare.
 ```
+
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
+
+```
+unfollow         -> inbox me author hai (kadam 7), to worker peeche se inbox:Arpan se "by Ravi" wale hata deta.
+                    Tab tak feed banate waqt follow list se filter: jise follow nahi karta, uska mat dikhao.
+tweet delete     -> 5,000 inbox se dhoondh ke hatana mehnga. Cassandra me tweet pe "deleted" nishaan.
+                    Feed banate waqt poora tweet laate hain, wahi nishaan dikha to chhod do.
+apna tweet turant
+nahi dikha       -> Kafka pehle hai (kadam 7), Cassandra tak ek pal lagta. App apna naya tweet khud upar
+                    laga deta, server ka intezaar nahi.
+```
