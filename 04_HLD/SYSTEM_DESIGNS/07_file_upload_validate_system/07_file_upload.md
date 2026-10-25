@@ -251,3 +251,35 @@ ke baad bhi purana haal dikh sakta hai.
 
 Par Arpan ne ek file nahi, poora folder daala, 1,000 file ka. Ab use 1,000 tracking number to nahi chahiye. Use ek
 hi baat jaanni hai: "mera folder kahan tak pahuncha?"
+
+### Kadam 7: poora folder, 1,000 file (folder ka ek number + ginti)
+
+Arpan ko 1,000 alag tracking number nahi chahiye. Isliye folder ko apna ek number milta hai, `F-500`. Har file ka
+apna `T-` number bhi hota hai, par wo folder ke andar hota hai. DB me folder ki ek line banti hai:
+
+```
+F-500:  kul = 1000 · ho gayi = 0 · fail = 0
+```
+
+Har file ki jaanch khatam hone pe Worker folder ki ginti ek badha deta hai. Arpan "F-500 ka haal?" poochhta hai to
+jawab aata hai: "1000 me se 640 ho gayi, 2 fail". Jab `ho gayi + fail = 1000`, folder DONE.
+
+```mermaid
+flowchart LR
+    A["Arpan"] -->|"F-500 ka haal?"| D[("DB<br/>F-500: kul 1000 · ho gayi 640 · fail 2<br/>T-101..T-1100 = har file")]
+    W["Worker x 10"] -->|"har file khatam: ho_gayi + 1 (ek query)"| D
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+**Do Worker ek saath:** 10 Worker alag-alag file jaanch rahe hain, aur do ek hi pal me khatam karte hain. Agar dono
+pehle padhein "640" aur phir likhein "641", to ek ginti kho jaati hai, aur folder kabhi 1000 tak pahunchta hi
+nahi. Isliye padhna aur badhana ek hi query me, DB khud karta hai:
+
+```
+UPDATE folders SET ho_gayi = ho_gayi + 1 WHERE id = 'F-500'
+```
+
+DB is ek line ko ek jhatke me karta hai, to dono +1 bachte hain. Ye banking wala atomic query ka hi tareeka hai.
+
+Par Ravi ne Arpan ka tracking number `T-101` kahin dekh liya. Usne apne app me "T-101 download karo" daala, aur
+Arpan ki income tax ki file Ravi ke phone pe aa gayi.
