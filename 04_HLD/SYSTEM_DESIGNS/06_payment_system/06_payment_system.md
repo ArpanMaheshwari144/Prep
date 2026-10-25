@@ -161,9 +161,20 @@ SUCCESS karo". Pehle message pe PENDING tha, to SUCCESS kiya aur +2000. Doosre m
 to kuch nahi kiya. Paisa ek hi baar juda.
 
 **Poochne wala job = hum khud poochte hain.** Agar PSP ka message raaste me kho gaya, ya jab aaya tab hamara
-server gira hua tha, to hamara job har 5 minute chalta hai: "kaun se payment 5 minute se INITIATED / PENDING
+server gira hua tha, to hamara job har 1 minute chalta hai: "kaun se payment 2 minute se INITIATED / PENDING
 pade hain?" Use t-50 mila, to wo PSP se poochta hai "t-50 ka kya hua?", PSP bolta hai "SUCCESS", aur hum
-t-50 ko SUCCESS kar dete hain. Matlab PSP ne bataya ho ya nahi, 5 minute me hum khud pata kar lete hain.
+t-50 ko SUCCESS kar dete hain. Matlab PSP ne bataya ho ya nahi, 2-3 minute me hum khud pata kar lete hain.
+
+Job ka time Arpan ko diye wade (kadam 3: "2-3 minute me pakka") se bandha hai. Job har 5 minute chale aur 5
+minute purane uthaye, to webhook khone pe jawab ~10 minute me aata, wada toot jaata:
+
+```
+10:00  t-50 PENDING
+10:02 / 10:03 ka job utha leta -> PSP se poocha -> pakka
+```
+
+Zyaadatar webhook 3 second me aa jaata hai. Job sirf tab kaam aata jab webhook kho gaya, aur tab bhi 2-3 minute
+ka wada nibhta.
 
 **Raat ka milaan.** Raat ko PSP ek file deta hai ki aaj kaun-kaun se payment hue aur kitna paisa. Hum use apne
 DB se milaate hain, kahin farak mila to ALERT. Ye [banking kadam 9](../13_banking_system/13_banking_system.md#kadam-9-balance-aur-khaata-alag-ho-gaye-raat-ka-milaan--reconciliation) wala milaan hi hai.
@@ -175,7 +186,7 @@ milaan (pakka).
 flowchart LR
     S["Payment Service"] -- "1. t-50 INITIATED (pehle)" --> D[("SQL DB")]
     S <-->|"2. call t-50<br/>wapas webhook: t-50 SUCCESS"| P["PSP"]
-    J["Job, har 5 min<br/>DB me purane INITIATED / PENDING dekho"] --> D
+    J["Job, har 1 min<br/>DB me purane INITIATED / PENDING dekho"] --> D
     J -- "t-50 ka kya hua?" --> P
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
