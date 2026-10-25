@@ -169,8 +169,8 @@ Job ka time Arpan ko diye wade (kadam 3: "2-3 minute me pakka") se bandha hai. J
 minute purane uthaye, to webhook khone pe jawab ~10 minute me aata, wada toot jaata:
 
 ```
-10:00  t-50 PENDING
-10:02 / 10:03 ka job utha leta -> PSP se poocha -> pakka
+job har 5 min, 5 min purane:   10:00 PENDING -> 10:05 job: abhi 5 min purana nahi, chhoda -> 10:10 utha liya
+job har 1 min, 2 min purane:   10:00 PENDING -> 10:02 / 10:03 ka job utha leta -> PSP se poocha -> pakka
 ```
 
 Zyaadatar webhook 3 second me aa jaata hai. Job sirf tab kaam aata jab webhook kho gaya, aur tab bhi 2-3 minute
