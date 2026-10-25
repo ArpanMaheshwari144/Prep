@@ -70,7 +70,7 @@ Ilaaj: sabki ginti **ek jagah** rakho, yaani Redis me. Har app server har reques
 ```
 key   = rl:arpan:login          (kaun user + kaunsa kaam)
 INCR  -> 1, 2, 3 ...            (Redis me ginti +1 karo, nayi ginti wapas aati hai)
-umar  = 60 sec (TTL)            -> minute khatam hote hi key apne aap gayab = ginti reset
+umar  = 60 sec (TTL)            -> pehli request pe lagti; 60 sec baad key apne aap gayab = ginti reset
 6vi aayi -> 429
 ```
 
@@ -86,14 +86,15 @@ Redis kyun, DB kyun nahi? NFR kehta hai ~1 ms, aur har second 10,000 request. DB
 kai ms lagte, poori site dheemi ho jaati. Redis RAM me hai, ~1 ms. Aur numbers me nikla tha ki data sirf 500
 MB hai, RAM me aa jaata hai.
 
-Umar (TTL) isliye ki minute khatam hote hi key khud mit jaaye, safai ke liye koi job na chalana pade.
+Umar (TTL) isliye ki 60 sec baad key khud mit jaaye, safai ke liye koi job na chalana pade.
 
-Par "har minute 5" ka matlab ghadi ka minute hai (10:00 se 10:01). Bot ne 10:00:59 pe 5 bheji aur 10:01:00 pe
-phir 5. Ek second ke andar 10 andar chali gayi, kyunki minute badalte hi ginti 0 ho gayi.
+Ye "minute" ghadi ka nahi, Arpan ki pehli request se shuru hota hai (10:00:20 pe pehli aayi to 10:01:20 tak).
+Par kinare pe dikkat wahi: bot ne 10:01:19 pe 5 bheji (window ka aakhri second) aur 10:01:20 pe phir 5 (nayi window
+ka pehla second). Ek second ke andar 10 andar chali gayi, kyunki umar khatam hote hi ginti 0 ho gayi.
 
 ### Kadam 3: minute ke kinare pe dugni (kaunsa tareeka gine)
 
-Ab tak ghadi ka minute gin rahe the (isse **fixed window** kehte hain). Gin-ne ke chaar tareeke hain:
+Ab tak ek band khidki (60 sec) me gin rahe the, jo khatam hote hi 0 se shuru hoti hai (isse **fixed window** kehte hain). Gin-ne ke chaar tareeke hain:
 
 ```
 SLIDING LOG      har request ka time likh lo, nayi aaye to pichhle 60 sec wale gino
