@@ -364,6 +364,18 @@ paise ka hisaab nahi hai.
 MySQL ek machine pe itna likhne me ghut jaayega, aur use todna (shard) khud karna padega. Cassandra isi kaam
 ke liye bana hai: bahut likhna, machine jodte jao aur jagah badhti jaaye. Isliye Cassandra.
 
+Par Cassandra sirf us cheez se tez dhoondhta hai jisse data baanta gaya. Yahan do log do alag id se dhoondhte:
+webhook `TW-555` (company ki id) se, support "order 999" (hamari id) se. Isliye do table:
+
+```
+table 1 (asli):  999:sms     -> TW-555, haal BHEJA / MILA / FAIL      (support isse dhoondhta)
+table 2 (pata):  TW-555      -> 999:sms                                (webhook isse dhoondhta)
+
+webhook TW-555 aaya -> table 2: "ye 999:sms hai" -> table 1 me haal = MILA
+```
+
+Worker bhejte waqt dono me likh deta hai. Cassandra ka aam tareeka: jitni tarah se dhoondhna, utni table.
+
 Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Service ek hi baar me 1 crore
 khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.
 
