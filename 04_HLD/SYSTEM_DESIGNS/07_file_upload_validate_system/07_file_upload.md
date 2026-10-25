@@ -113,6 +113,12 @@ Arpan --"T-101 ka haal?"--> DB --> "DONE"
 
 Is tareeke ko **async + tracking ID** kehte hain: kaam peeche hota hai, aur haal dekhne ke liye ek number milta hai.
 
+**Kafka aur Worker do alag cheezein hain.** Kafka ek line (register) hai: isme khabar likhi padi rehti hai ("T-101
+jaancho"), disk pe, taaki koi mare to bhi bachi rahe. Kafka khud koi kaam nahi karta. Worker humara apna program
+hai (jaise ek Spring Boot service): ye Kafka se khabar uthata hai aur asli kaam karta hai, Validator ko bhejna aur
+DB me DONE likhna. Bank jaisa: Kafka = token wali line, Worker = counter pe baitha clerk. Clerk chhutti pe gaya to
+token line me pade rehte hain. Bheed badhi to 10 clerk (10 Worker) bitha do, line wahi ek.
+
 **Line (queue) kyun, server ke andar hi peeche thread kyun nahi:** thread server ki memory me hota hai. Server
 restart hua to jo 500 file jaanch ka intezaar kar rahi thi, wo sab bhool jaata. Kafka me khabar disk pe likhi hoti
 hai, server mare tab bhi bachi rehti hai.
