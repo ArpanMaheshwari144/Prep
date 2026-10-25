@@ -238,9 +238,10 @@ flowchart LR
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par ek baat chhooti: login ke waqt userId hota hi nahi (abhi login hua hi nahi), to wahan humne IP pe gina
-tha. Office ki night shift me 1,000 log ek hi IP se aate hain (office ka internet). Sab milke had paar kar gaye,
-aur poora office atak gaya.
+Par ek naya bot aaya. Uske paas leak hui password list thi. Usne 1,000 alag account pe 4-4 password try kiye
+(credential stuffing). Har account pe sirf 4, to account wali had (5 / min) kabhi lagi hi nahi. Isliye IP pe
+bhi had jodi. Par office ki night shift me 1,000 log ek hi IP se aate hain (office ka internet), sab milke had
+paar kar gaye, aur poora office atak gaya.
 
 ### Kadam 8: had kis naam pe (IP ya userId)
 
@@ -264,7 +265,7 @@ login ke baad    -> userId                                            (rl:arpan:
 ```mermaid
 flowchart LR
     U["Arpan / bot"] --> W["WAF<br/>ban list (TTL)"]
-    W --> G["API Gateway<br/>key = userId (login pe IP)<br/>Lua token bucket"]
+    W --> G["API Gateway<br/>key = userId (login pe IP + account)<br/>Lua token bucket"]
     G -- "Lua" --> R[("Redis + copy")]
     G -- "had me" --> S["App x 10"]
     G -- "429 ki khabar" --> K[("Kafka")]
