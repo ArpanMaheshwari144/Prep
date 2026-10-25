@@ -236,8 +236,9 @@ flowchart LR
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par had IP pe lagayi thi. Office ki night shift me 1,000 log ek hi IP se aate hain (office ka internet). Sab
-milke 100 / min paar kar gaye, aur poora office atak gaya.
+Par ek baat chhooti: login ke waqt userId hota hi nahi (abhi login hua hi nahi), to wahan humne IP pe gina
+tha. Office ki night shift me 1,000 log ek hi IP se aate hain (office ka internet). Sab milke had paar kar gaye,
+aur poora office atak gaya.
 
 ### Kadam 8: had kis naam pe (IP ya userId)
 
