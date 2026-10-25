@@ -3,7 +3,7 @@
 Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe
 se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
 file me ek hi kahani hai: Arpan ne Swiggy pe order kiya. Concepts kahani se padhne hon to
-[kafka_concepts.md](kafka_concepts.md).
+[kafka_concepts.md](kafka_concepts.md). Kafka kyun bana aur RabbitMQ se farak: [kafka_vs_rabbitmq.md](kafka_vs_rabbitmq.md).
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 seedha call (dheema) -> Kafka topic (disk, padhne se mitta nahi) -> 10 tukde + key = userId
