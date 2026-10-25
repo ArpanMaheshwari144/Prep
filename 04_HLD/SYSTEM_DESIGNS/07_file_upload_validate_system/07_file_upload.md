@@ -205,31 +205,51 @@ shuru hi nahi hui.
 ### Kadam 5: app "pahunch gayi" bolne se pehle mar gaya (S3 khud bataye + safai)
 
 Dikkat ye thi ki hum app ki ek khabar pe tike the. App mara, khabar nahi aayi, aur file atak gayi. Ilaaj: app pe
-bharosa mat karo. **S3 khud batata hai.** Jaise hi file poori ho jaati hai, S3 ek khabar bhejta hai: "T-102 aa
-gayi". Ise **S3 event** kehte hain. Ye khabar seedha Kafka me jaati hai, Worker DB me "JAANCH HO RAHI" likhta hai
-aur jaanch shuru kar deta hai. Ab app ka "pahunch gayi" bolna zaroori hi nahi raha.
+bharosa mat karo. **S3 khud batata hai.** Jaise hi file ban jaati hai (tukde jod diye gaye), S3 ek khabar
+bhejta hai: "T-102 aa gayi". Ise **S3 event** kehte hain. S3 ye khabar seedha Kafka me nahi daal sakta, wo SQS /
+Lambda ko deta hai, aur ek chhota Lambda use Kafka me daal deta hai. Worker DB me "JAANCH HO RAHI" likhta hai
+aur jaanch shuru kar deta hai.
+
+Par multipart me tukde aa jaane se file nahi banti. File tab banti hai jab koi S3 ko **"jodo"** bole, aur kadam
+4 me ye app bolta hai. To do haalat:
+
+```
+A: app ne "jodo" bola, phir "pahunch gayi" bolne se pehle mara
+   -> S3 ne file bana li -> S3 event aaya -> jaanch shuru            THEEK
+B: saare 50 tukde S3 pe, par app "jodo" bolne se PEHLE mara
+   -> file bani hi nahi -> S3 event aata hi nahi -> atka              ise safai job sambhalti (neeche)
+```
 
 ```mermaid
 flowchart LR
     A["Arpan"] -->|"tukde"| S3[("S3")]
-    S3 -->|"T-102 poori aa gayi (S3 event)"| K[("Kafka")]
+    S3 -->|"T-102 poori aa gayi (S3 event)"| L["SQS / Lambda"]
+    L --> K[("Kafka")]
     K --> W["Worker"]
     W -->|"JAANCH HO RAHI, phir DONE"| D[("DB")]
-    J["Safai job (har 10 min)<br/>1 ghante se atki? S3 dekho"] --> D
+    J["Safai job (har 10 min)<br/>1 ghante se atki? tukde poore -> jodo"] --> D
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 ```
 pehle:  Arpan ka app --"pahunch gayi"--> Server      (app mara = khabar gayi)
-ab:     S3 --"T-102 poori aa gayi" (S3 event)--> Kafka --> Worker --> DB + jaanch
+ab:     S3 --"T-102 poori aa gayi" (S3 event)--> SQS / Lambda --> Kafka --> Worker --> DB + jaanch
 ```
 
 **Adhoori file ka kachra.** Kisi ne 50 me se 20 tukde bheje aur chhod diya. Wo tukde S3 me pade jagah kha rahe
 hain. Iske liye do safai hain. Pehli, **S3 ka niyam (lifecycle)**: jo adhoora upload 1 din se pada hai, S3 use apne
 aap mita deta hai, hamein kuch nahi karna padta. Doosri, **safai wali job (sweeper)**: har 10 minute chalti hai.
-DB me jo file 1 ghante se "UPLOAD HO RAHI" pe atki hai, uska S3 dekhti hai. File poori hai to jaanch shuru karti
-hai, nahi hai to FAILED likh deti hai. Ye aakhri jaal hai, agar S3 ki khabar bhi kabhi chhoot jaaye.
+DB me jo file 1 ghante se "UPLOAD HO RAHI" pe atki hai, uske liye S3 se poochhti hai "kaunse tukde aaye?":
+
+```
+saare 50 hain   -> sweeper khud S3 ko "jodo" bole -> file bani -> S3 event aaya -> jaanch     (haalat B ka hal)
+saare nahi hain -> FAILED (adhoore tukde S3 ka 1 din wala niyam mita dega)
+```
+
+Ye aakhri jaal hai, agar S3 ki khabar bhi kabhi chhoot jaaye. Sweeper beech me mara to agli baar wahi file phir
+uthata hai, kyunki haal DB me hai, sweeper ke dimaag me nahi. "Jodo" se pehle dekhta hai ki file ban to nahi
+gayi, ban chuki ho to dobara nahi jodta.
 
 Par 31 March aaya. 2 lakh log file daal ke har 2 second app refresh kar rahe hain: "T-101 ka haal?". Har baar DB
 se poochha ja raha hai. Likhna kam hai, par padhna itna zyada ki DB ghutno pe aa gaya.
