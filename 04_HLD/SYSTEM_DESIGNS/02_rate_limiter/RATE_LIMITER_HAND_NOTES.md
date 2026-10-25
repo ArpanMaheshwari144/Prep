@@ -58,6 +58,8 @@ Kaam do hain: har user ki ek had (login pe 5 baar / minute, baaki API pe 100 / m
 
 - Traffic 10 guna: gateway machine badhao, Redis ko user ke hisaab se shard karo.
 
+- Login pe password guess (brute force): koi ek perfect hal nahi. Asli deewar MFA / passkey (password mil bhi gaya to bina phone ke bekaar). Galat password pe block nahi, CAPTCHA, taaki asli user na atke. WAF pe cloud / badnaam IP band (cloud wale apni IP list publish karte hain). IP pe had kamzor nishaan hai, kyunki office ka size pata nahi.
+
 ### Wrap
 
 tez = Redis + gateway + Lua · ginti ek = Redis + home region · gire to site chale = copy + fail-open (login pe closed) · bot = Kafka + ban
