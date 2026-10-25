@@ -345,18 +345,29 @@ net aaya:  queue bheja --> owner: v20 ke baad Ravi ke operation lage the -> OT s
 **Permission = CP (galat kabhi nahi chalega).** Doc ke owner ne Ravi ka edit access hata diya. Iske baad Ravi
 ka ek bhi operation lagna nahi chahiye, chahe thodi der ke liye "abhi nahi ho sakta" bolna pade. Isliye
 permission ek alag **SQL DB** me rakhte hain: kaun, kis doc pe, kya kar sakta (rishte + pakka sahi). Owner
-server har connection pe aur har operation pe ye check karta hai.
+server ye check karta hai, par har akshar pe SQL nahi (har akshar ek operation hai, lakhon log type kar rahe,
+SQL ghut jaayega):
+
+```
+connection khula -> SQL se permission padho -> server ki memory me rakho (30 sec)
+har akshar        -> memory se check, SQL tak nahi jaata
+owner ne Ravi ka access hataya -> SQL update + pub/sub pe khabar "Ravi hata"
+                               -> owner server turant memory se Ravi hata de, connection band
+```
+
+30 sec wali umar ek jaal hai, agar pub/sub ki khabar kabhi chhoot jaaye. Tab bhi zyada se zyada 30 sec baad naya
+padh lega.
 
 ```
 Ravi offline me likhta raha --> beech me owner ne access hataya (SQL me)
-net aaya, operation bheje --> owner server: SQL check -> access nahi -> operation reject, Ravi ki screen wapas
+net aaya, operation bheje --> owner server: memory me Ravi hat chuka -> access nahi -> operation reject, Ravi ki screen wapas
 ```
 
 ```mermaid
 flowchart LR
     A["Arpan (editor)"] --> LB["LB: docId se ring"]
     LB --> S3["Server 3: owner, OT"]
-    S3 -- "check" --> Q[("SQL: permission")]
+    S3 -- "connection pe padho<br/>(memory me 30 sec)" --> Q[("SQL: permission")]
     S3 --> B[("Redis buffer + copy")]
     S3 -- "batch (Redis se utha ke)" --> C[("Cassandra: operation log")]
     S3 -- "publish operation" --> P["Redis pub/sub: doc-42"]
