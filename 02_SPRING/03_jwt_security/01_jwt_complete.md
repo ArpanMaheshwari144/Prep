@@ -975,6 +975,37 @@ public class JwtFilter extends OncePerRequestFilter {
 
 ---
 
+## ★ Controller me logged-in user kaise milta: `@AuthenticationPrincipal`
+
+**Kahani (usercrud wala locker):** Rahul token ke saath request bhejta. Tomcat ne Thread-7 diya. JwtFilter ne token
+check karke Thread-7 ke locker me rakha "ye Rahul hai" (`SecurityContextHolder...setAuthentication`). Ab controller
+ko jaanna hai ye kaun hai. Do tareeke:
+- **Lamba:** khud locker kholo: `SecurityContextHolder.getContext().getAuthentication().getPrincipal()`
+- **Chhota:** method ke parameter pe `@AuthenticationPrincipal UserPrincipal user` likho. Spring khud locker khol ke user haath me de deta.
+
+```
+Request + token
+   |
+JwtFilter: token sahi -> locker me "Rahul" rakha
+   |
+Controller: @AuthenticationPrincipal user  <- Spring ne locker se Rahul nikaal ke diya
+   |
+user.getId() = Rahul ki id (TOKEN se aayi, body se nahi)
+```
+
+**Khaas baat:**
+1. userId token se aata (token signed hai), isliye koi doosre ki id nahi bhej sakta. Body se userId lena = spoof.
+2. Token nahi / galat -> request controller tak pahunchti hi nahi, pehle hi 401. Controller me "user hai ya nahi" dobara check nahi chahiye.
+3. User mil gaya matlab ye nahi ki RD / order bhi usi ka hai. Owner check (`rd.getUserId().equals(userId)`) phir bhi chahiye.
+
+**Interview line:**
+```
+Logged-in user ko main @AuthenticationPrincipal se leta hoon. Spring use SecurityContext se nikaal ke deta hai,
+jo JwtFilter ne token verify karke set kiya tha. Isliye userId token se aata hai, request body se kabhi nahi.
+```
+
+---
+
 ## ★ "Bearer" kya hai + prefix kyu? (brainstorm 16-Jul)
 
 `Authorization: Bearer <token>` — **"Bearer" ek STANDARD auth-scheme naam hai** (HTTP spec / OAuth2, RFC 6750).
