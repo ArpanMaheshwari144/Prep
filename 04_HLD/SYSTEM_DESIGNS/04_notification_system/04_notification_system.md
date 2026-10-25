@@ -318,6 +318,9 @@ flowchart LR
     style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+Ab kya theek hua: Arpan bole "OTP nahi aaya", to support dekh sakta hai: BHEJA tha, company ne FAIL bola,
+number DND pe tha.
+
 ### DB kaunsa: SQL ya NoSQL? (Tracking DB)
 
 Data dekho: har message ki ek row, aur har webhook pe us row ka update. 50 crore message / din, saal bhar me
@@ -326,9 +329,6 @@ paise ka hisaab nahi hai.
 
 MySQL ek machine pe itna likhne me ghut jaayega, aur use todna (shard) khud karna padega. Cassandra isi kaam
 ke liye bana hai: bahut likhna, machine jodte jao aur jagah badhti jaaye. Isliye Cassandra.
-
-Ab kya theek hua: Arpan bole "OTP nahi aaya", to support dekh sakta hai: BHEJA tha, company ne FAIL bola,
-number DND pe tha.
 
 Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Service ek hi baar me 1 crore
 khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.
