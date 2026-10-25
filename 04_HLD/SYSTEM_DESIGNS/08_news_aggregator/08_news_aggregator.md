@@ -268,4 +268,5 @@ flowchart TB
 Copy thodi peeche ho to? Copy asli se ek-do second peeche chal sakti hai. Matlab nayi khabar Arpan ko ek-do second
 der se dikhegi. NFR me "5-10 minute purani nahi" tha, to ek-do second ka farak chalta hai.
 
-Par shaam ko Arpan ko saari khabar nahi chahiye, sirf tech aur sports. Abhi sabke liye ek hi feed hai.
+Par raat ko Arpan ne "cricket" dhoondha. DB ko poori table ki har khabar ka title padhna pada, aur jawab aane me 5
+second lag gaye.
