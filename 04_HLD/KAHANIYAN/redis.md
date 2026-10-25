@@ -1,13 +1,7 @@
-# Tech ki kahaniyan: ye cheez bani kyun
+# Redis kaise bana
 
-Halki padhai. Har kahani me ek hi baat: kya dikkat thi, aur uske hal se ye tool bana. Design me ye tool kyun lagate
-hain, uska jawab yahi kahani hai.
+[<- saari kahaniyan](README.md)
 
-- Kafka (LinkedIn) + RabbitMQ farak: [kafka_vs_rabbitmq.md](SYSTEM_DESIGNS/12_message_queue_kafka/kafka_vs_rabbitmq.md)
-
----
-
-## Redis kaise bana
 
 2009 me Italy me ek developer tha, Salvatore Sanfilippo. Log use "antirez" naam se jaante hain. Wo ek chhota sa tool
 bana raha tha, jo websites pe aane wale logon ko live dikhata tha: abhi kaun aaya, kis page pe, kahan se. Har website
