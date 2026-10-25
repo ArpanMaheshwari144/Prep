@@ -207,10 +207,14 @@ Ilaaj: **Cassandra**, aur data **chat ke hisaab se baanto (chat_id)**. Chat arpa
 hi machine pe, number ke kram me rakhe hote hain. "41 ke baad sab do" ek machine se, ek jagah se seedha padh
 liya.
 
-SQL kyun nahi, Cassandra kyun? Yahan likhai bahut zyada hai, data roz badhta hai, aur padhai seedhi hai.
-Cassandra isi kaam ke liye bana hai: tez likhai, kai machine me khud baantna, aur har cheez ki copy. SQL ki
-taakat (join, transaction) yahan chahiye hi nahi, aur itni likhai ke liye SQL me baantna haath se karna
-padta. Ye URL wali soch hi hai.
+### DB kaunsa: SQL ya NoSQL?
+
+Data dekho: messages. Har second ~46,000 naye message aate hain, aur roz ~1.2 TB data badhta hai. Kaam: "is chat
+ke aakhri 50 message" do, bas. Koi join nahi, koi transaction nahi.
+
+SQL ki taakat (join, transaction) yahan chahiye hi nahi, aur itni likhai ke liye SQL ko kai machine me haath se
+baantna padta. Cassandra isi kaam ke liye bana hai: tez likhai, kai machine me khud baantna, aur har cheez ki
+copy. Isliye Cassandra. Ye URL wali soch hi hai.
 
 chat_id se hi kyun baanta? Ek chat ke saare message ek jagah rahein, to "aakhri 50 do" ek hi machine se mil
 jaata hai. User id se baant-te to Arpan aur Ravi ki ek hi chat do machine me batt jaati.
