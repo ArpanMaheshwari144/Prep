@@ -209,8 +209,8 @@ liya.
 
 ### DB kaunsa: SQL ya NoSQL?
 
-Data dekho: messages. Har second ~46,000 naye message aate hain, aur roz ~1.2 TB data badhta hai. Kaam: "is chat
-ke aakhri 50 message" do, bas. Koi join nahi, koi transaction nahi.
+Data dekho: messages. Har second ~46,000 naye message aate hain, aur roz ~1.2 TB data badhta hai. Kaam:
+"is chat ke aakhri 50 message" do, bas. Koi join nahi, koi transaction nahi.
 
 SQL ki taakat (join, transaction) yahan chahiye hi nahi, aur itni likhai ke liye SQL ko kai machine me haath se
 baantna padta. Cassandra isi kaam ke liye bana hai: tez likhai, kai machine me khud baantna, aur har cheez ki
