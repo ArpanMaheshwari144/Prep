@@ -289,6 +289,25 @@ Tweet Service --likho--> [Cassandra: kai machine, author_id se baanta]
                         ...
 ```
 
+Par inbox me abhi sirf tweet id hai (`inbox:Arpan = [T-901, ...]`). Cassandra machine tab dhoondhta hai jab
+baantne wali cheez, yaani `author_id`, pata ho. Sirf `T-901` se pata nahi chalta kis author ka hai, to ye bhi
+nahi pata kis machine pe jaana hai. Saari machine me dhoondhna padega, bahut dheema.
+
+```
+inbox:Arpan = [T-901, ...]
+Feed: "T-901 do" -> Cassandra: author kaun? pata nahi -> kis machine pe? pata nahi
+```
+
+Isliye inbox me tweet id ke saath author bhi rakho:
+
+```
+inbox:Arpan = [T-901 by Ravi, T-880 by Mohan, ...]
+Feed: "Ravi ka T-901 do" -> Ravi wali machine -> seedha mil gaya
+```
+
+Kadam 3 me fanout worker ko Kafka se khabar pehle se "T-950 by Mohan" aati hai, author uske paas hai hi. Bas
+inbox me daalte waqt saath rakhna hai. Jagah me farak chhota, ek id aur.
+
 ```mermaid
 flowchart LR
     TS["Tweet Service"] --> C1[("Cassandra 1<br/>Virat ke tweet")]
