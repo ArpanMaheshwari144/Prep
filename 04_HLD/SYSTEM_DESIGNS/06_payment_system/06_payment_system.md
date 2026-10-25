@@ -57,6 +57,10 @@ Ye pura hum banking me kar chuke hain ([kadam 2 se 5](../13_banking_system/13_ba
 hamare DB ke andar hai, to ek transaction, idempotency key, check karke kaatna ek query me, aur ledger,
 banking jaisa." Payment ka asli naya hissa yahan se shuru hota hai: paisa bahar se aana aur bahar jaana.
 
+SQL kyun, NoSQL kyun nahi? Banking wali hi baat: ek payment me Arpan ka wallet, dukaan ka wallet aur ledger,
+teeno ek saath badalne hain, ya koi nahi (ACID). Bheed badi dikkat nahi hai, sahi hona badi dikkat hai, aur ye
+SQL ka seedha kaam hai.
+
 ### Kadam 2: bank se wallet me 2000 (PSP)
 
 Arpan ke wallet me paisa nahi hai. Use apne HDFC account se 2000 daalne hain. Par HDFC hamara DB nahi hai, wo

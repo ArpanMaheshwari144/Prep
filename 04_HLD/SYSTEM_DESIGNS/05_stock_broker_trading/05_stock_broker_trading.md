@@ -71,6 +71,11 @@ flowchart LR
     style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+SQL kyun, NoSQL kyun nahi? Sauda hote hi chaar cheez ek saath badalti hain: Arpan ka paisa ghata, share badhe,
+Suresh ke share ghate, paisa badha. Ya to chaaron badlein ya koi nahi (ACID), ye SQL ka seedha kaam hai. Paisa
+aur share kabhi galat nahi ho sakte, to yahan "sahi hona" dil hai, aur NoSQL ki "thodi der baad sahi" chal hi
+nahi sakti.
+
 Dikkat: Arpan ne "Buy" dabaya, network atka, app ne dobara bheja (ya do baar tap). Order book me Arpan ke do
 order lag gaye, 20 share kharid liye gaye, jabki use 10 chahiye the.
 
