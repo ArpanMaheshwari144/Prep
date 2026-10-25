@@ -57,6 +57,15 @@ Ye pura hum banking me kar chuke hain ([kadam 2 se 5](../13_banking_system/13_ba
 hamare DB ke andar hai, to ek transaction, idempotency key, check karke kaatna ek query me, aur ledger,
 banking jaisa." Payment ka asli naya hissa yahan se shuru hota hai: paisa bahar se aana aur bahar jaana.
 
+```mermaid
+flowchart LR
+    U["Arpan"] -- "dukaan ko 500" --> S["Payment Service"]
+    S -- "ek transaction:<br/>Arpan -500 · dukaan +500 · ledger" --> D[("SQL DB")]
+```
+
+Par Arpan ke wallet me paisa hi nahi hai. Use apne HDFC account se 2000 daalne hain, aur HDFC hamara DB
+nahi hai, wo bahar hai.
+
 ### DB kaunsa: SQL ya NoSQL?
 
 Data dekho: Arpan ka wallet, dukaan ka wallet, aur ledger. Kaam: ek payment me teeno ek saath badalne hain,
@@ -66,9 +75,6 @@ Banking wali hi baat (ACID), SQL ka seedha kaam. Bheed badi dikkat nahi hai, sah
 Isliye SQL (Postgres).
 
 ### Kadam 2: bank se wallet me 2000 (PSP)
-
-Arpan ke wallet me paisa nahi hai. Use apne HDFC account se 2000 daalne hain. Par HDFC hamara DB nahi hai, wo
-bahar hai.
 
 Ilaaj: beech me **PSP (Payment Service Provider)**, jaise Razorpay, Juspay ya Stripe.
 
