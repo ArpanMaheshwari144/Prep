@@ -259,7 +259,8 @@ me Arpan ki app ko pata hi nahi ki pehla "hi" DB me pahunch chuka hai, kyunki ac
 pata nahi ki ye wahi purana "hi" hai.
 
 Ilaaj: har message ki apni id, jo **phone banata hai**, Send dabate hi (`clientMsgId`, jaise `m-501`).
-Dobara bhejne pe bhi wahi `m-501` jaata hai. Server pehle dekhta hai "m-501 pehle aa chuka?":
+Dobara bhejne pe bhi wahi `m-501` jaata hai. Server yaad rakhta hai kaunsi id aa chuki: naya `m-501` aaya to
+DB me likho, pehle aa chuka to dobara mat likho, bas ack wapas.
 
 Par yaad rakhna aur DB me likhna do alag kaam hain, aur server dono ke beech me bhi gir sakta hai. Agar
 pehle DB me likhein aur phir yaad rakhein:
