@@ -4,6 +4,11 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file me
 ek hi kahani hai: Arpan income tax ki site pe apni `report.pdf` daalta hai.
 
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+server sab kare -> peeche bhejo (Kafka + Worker, tracking number) -> parchi se seedha S3 (presigned)
+-> tukdon me (multipart) -> S3 khud bataye (event) + safai (lifecycle + job) -> haal Redis me
+-> folder ka ek number + atomic ginti -> maalik check + chhota download link
+
 ---
 
 ## File upload hai kya, aur kyun chahiye
@@ -311,3 +316,38 @@ Arpan --"T-101 download"--> Server: maalik check OK -> parchi (S3 link, 5 min) -
 
 Upload me parchi (kadam 3) aur download me parchi, dono me file hamare server se nahi guzarti, aur dono ki umar
 chhoti hai.
+
+---
+
+## 5. Wrap (30 second me poora design, NFR se milao)
+
+Arpan ko server se parchi milti hai, aur file seedha S3 pe jaati hai, badi ho to tukdon me. S3 khud batata hai ki
+file aa gayi, khabar Kafka me jaati hai, Worker Validator se jaanch karata hai aur DB me haal likhta hai. Arpan ko
+turant tracking number mil jaata hai, aur haal Redis se dekhta hai. Folder ki ginti ek query me badhti hai.
+Download pe maalik check hota hai aur 5 minute ki parchi milti hai. Adhoori file S3 ke niyam aur safai job se saaf
+hoti hai.
+
+```
+user ruke nahi      -> Kafka + Worker, turant tracking number
+file khoye nahi     -> S3 + S3 event + safai job
+haal hamesha pata   -> DB me haal, Redis me copy
+safe                -> parchi (upload / download), maalik check
+```
+
+---
+
+## Pooche to (design nahi badalta, bas jawab pata ho)
+
+- **Naam `report.pdf`, andar EXE:** Worker file ke pehle kuch byte padh ke asli type dekhta hai (magic bytes). Naam
+  pe bharosa nahi.
+- **Validator baar-baar fail / dheema:** Worker dobara koshish karta hai, ruk-ruk ke. Bahut fail ho to us pe call
+  band (circuit breaker), aur doosri company ya baad me. Khabar Kafka me padi rehti hai, khoti nahi.
+- **Ek hi file do baar daali:** file ka hash (SHA-256). Pehle se hai to dobara store nahi. Ye sirf usi user ke
+  andar, warna doosre ki file ka pata chal jaata.
+- **Chal raha hai, kaise pata:** teen number dekho: Kafka ki line kitni lambi hai, Validator kitni der me jawab de
+  raha hai aur kitni baar fail, aur kitni file 10 minute se "jaanch ho rahi" pe atki hain. Had paar ho to alert.
+- **10 guna traffic:** Upload Server badhao (stateless). S3 khud badhta hai. Worker badhao (line ki lambai dekh ke).
+  Haal ke liye Redis. Bahut file hon to DB ko tracking number se shard karo.
+- **API:** `POST /upload/init` (parchi + T-101) · `GET /status/T-101` · `GET /download/T-101` (maalik check + parchi).
+- **DB kaunsa:** Postgres. Tracking number se seedha dhoondhna hai aur haal ka badalna ACID se chahiye. Bas key se
+  dhoondhna hai, isliye bahut bada ho to NoSQL bhi chal jaata.
