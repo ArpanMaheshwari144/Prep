@@ -170,10 +170,31 @@ hai, wait ke saath: pehli baar 1 sec baad, phir 2, phir 4, phir 8. Har baar wait
 **DLQ** (dead letter queue) me: wahan alert bajta hai aur koi insaan dekhta hai. Khabar khoti nahi, aur SMS
 line bhi nahi rukti.
 
+Par Kafka line me aage-peeche nahi karta, jo pehle aaya wahi pehle nikalta. Ek hi retry line me alag-alag wait
+nahi chal sakta:
+
+```
+retry line:  [khabar A: 8 sec ruko] [khabar B: 1 sec ruko]
+worker pehle A uthata -> 8 sec rukta -> tab tak B bhi 8 sec ruki, jabki use 1 sec rukna tha
+```
+
+Isliye har wait ki apni alag line:
+
+```
+pehli fail  -> retry-1s line  (isme sab 1 sec wale)
+doosri fail -> retry-2s line  (sab 2 sec wale)
+teesri fail -> retry-4s line
+chauthi     -> retry-8s line
+paanchvi    -> DLQ
+```
+
+Ek line me sabka wait same, to jo khabar aage hai uska wait hamesha sabse pehle khatam hota. Koi kisi ko nahi
+rokta. Worker line ke aage wali khabar dekhta: time aa gaya to bhejo, nahi aaya to utna ruko.
+
 ```mermaid
 flowchart LR
     LS[("SMS line")] --> WS["SMS worker"]
-    WS <-->|"fail hua to yahan<br/>wait ke baad wapas worker pe"| RT[("retry line<br/>1s, 2s, 4s, 8s + thoda random")]
+    WS <-->|"fail hua to yahan<br/>wait ke baad wapas worker pe"| RT[("retry-1s · retry-2s<br/>retry-4s · retry-8s<br/>(har wait ki alag line)")]
     WS -- "5 baar fail" --> D[("DLQ")]
     D --> AL["alert, insaan dekhe"]
     style RT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
