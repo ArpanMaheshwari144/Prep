@@ -110,11 +110,12 @@ for (String s : list) {
 
 ### Iterator ka Kaam — Photographer Wala
 
-Iterator ek **photographer** hai. Tu bola "list ek-ek karke dikha" → photographer ne **snapshot** li.
+Iterator ek **photographer** hai. Tu bola "list ek-ek karke dikha" → photographer ne data ki copy NAHI li, bas
+list ki **ginti (modCount)** note kar li, aur asli list pe hi chalta hai.
 
-Beech mein koi list modify kar de → snapshot **invalid** → galat result aayega.
+Beech mein koi list modify kar de → ginti mel nahi khaati → aage chalta to galat result aata.
 
-Java ka solution: **"Snapshot toot gayi → exception, galat data mat do."**
+Java ka solution: **"Ginti badli → exception, galat data mat do."** (Copy pe chalna = CopyOnWriteArrayList, upar.)
 
 ### `modCount` — ArrayList ka Internal Counter
 
@@ -122,7 +123,7 @@ Java ka solution: **"Snapshot toot gayi → exception, galat data mat do."**
 public class ArrayList<E> {
     private Object[] elementData;
     private int size;
-    protected transient int modCount = 0;    // ← ye internal counter
+    protected transient int modCount = 0;    // ← ye internal counter (asal me AbstractList me declared, ArrayList ko wahi milta)
 }
 ```
 
