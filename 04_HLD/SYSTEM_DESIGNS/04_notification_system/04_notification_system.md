@@ -318,8 +318,7 @@ Hum 1000 / sec ki had me bhej rahe the, par company ne beech me khud apni had 50
 tha). To kuch SMS pe 429 aayega. Tab Kadam 5 wala tareeka: khabar retry line me, 1, 2, 4 sec ruk ke dobara.
 Company jawab me `Retry-After: 3` bheje ("3 sec baad aana") to utna hi ruko.
 
-Chala ke dekha (`04_HLD/HANDS_ON/03_provider_429/Sms429Demo.java`): had ka dhyaan na rakha aur turant dobara
-maara to 1000 me se 700 SMS gaye hi nahi. Had me bheja aur ruk ke dobara koshish ki to poore 1000 pahunche.
+Ye chala ke dekha hai, nateeja neeche HANDS-ON me.
 
 Par company ne "bhej diya" (200) bola. Kya Arpan ke phone tak pahuncha? Number band ho, ya phone off ho, to
 humein pata hi nahi chalta.
