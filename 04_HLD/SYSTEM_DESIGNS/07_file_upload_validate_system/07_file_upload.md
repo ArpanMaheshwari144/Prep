@@ -283,3 +283,31 @@ DB is ek line ko ek jhatke me karta hai, to dono +1 bachte hain. Ye banking wala
 
 Par Ravi ne Arpan ka tracking number `T-101` kahin dekh liya. Usne apne app me "T-101 download karo" daala, aur
 Arpan ki income tax ki file Ravi ke phone pe aa gayi.
+
+### Kadam 8: Ravi ne Arpan ka T-101 daala aur file le li (maalik check + chhota download link)
+
+Galti ye thi ki server ne bas number dekha, ye nahi dekha ki maang kaun raha hai. Ilaaj do kadam ka hai.
+
+**1. Maalik check.** DB me har file ke saath likha hai ki uska maalik kaun hai (`T-101 -> maalik = arpan`). Ravi ne
+maanga to server login se uska userId dekhta hai (JWT se), aur userId `ravi` hai, `arpan` nahi. Jawab milta hai
+**403, ye tumhari file nahi**. Ye wahi "owner check" hai jo PR drill me aata hai.
+
+**2. Download bhi parchi se.** S3 ka bucket band rehta hai, koi seedha link kaam nahi karta. Maalik check pass
+hua, tab server ek chhoti parchi deta hai: S3 ka link jo sirf 5 minute chalta hai. Arpan ne wo link WhatsApp pe
+bhej bhi diya, to bhi 5 minute baad wo bekaar ho jaata hai.
+
+```mermaid
+flowchart LR
+    R["Ravi"] <-->|"T-101 download -> 403: ye tumhari file nahi"| U["Upload Server<br/>maalik check (JWT userId)"]
+    A["Arpan"] <-->|"T-101 download -> parchi (5 min)"| U
+    A -->|"seedha le"| S3[("S3<br/>bucket band")]
+    style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+Ravi  --"T-101 download"--> Server: maalik = arpan, tu ravi -> 403
+Arpan --"T-101 download"--> Server: maalik check OK -> parchi (S3 link, 5 min) -> Arpan seedha S3 se le
+```
+
+Upload me parchi (kadam 3) aur download me parchi, dono me file hamare server se nahi guzarti, aur dono ki umar
+chhoti hai.
