@@ -26,12 +26,27 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---- kaam: ye class ----
+// ---- diya hua (LeetCode jaisa) ----
+struct Entry
+{
+    string key;
+    Entry *next;
+    Entry(string k) : key(k), next(nullptr) {}
+};
+
+// ---- kaam: neeche ke 4 method ----
 class MyHashSet
 {
+    int sz;
+    int cap;
+    vector<Entry *> buckets;   // buckets[i] = us chain ka pehla node (ya nullptr)
+
 public:
     MyHashSet()
     {
+        sz = 0;
+        cap = 16;
+        buckets.resize(cap, nullptr);
     }
 
     void add(string key)
