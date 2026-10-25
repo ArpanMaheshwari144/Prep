@@ -77,3 +77,48 @@ Jab tak din me thodi file aati hain, ye chalta hai. Seedha hai aur sab ek jagah 
 Par 31 March aaya. Aakhri ghante me har second 200 log file daal rahe hain, aur har upload server ko 3 second
 rokta hai. Matlab kisi bhi pal ~600 upload sirf Validator ke jawab ka intezaar karte khade hain. Server ke dhaage
 bhar gaye, nayi file lene ki jagah hi nahi bachi. Arpan ki screen ghoomti reh gayi, aur aakhir me "time out" aa gaya.
+
+### Kadam 2: Arpan 3 sec ghoomti screen dekh raha (jaanch peeche bhejo + tracking number)
+
+Server Arpan ko jaanch khatam hone tak kyun roke? Arpan ko jaanch ka nateeja abhi nahi chahiye, use bas ye pata
+hona chahiye ki file pahunch gayi.
+
+To server ab sirf do kaam karta hai. File S3 me rakhta hai, aur DB me likhta hai `T-101 = JAANCH HO RAHI`. Phir ek
+line (queue, jaise Kafka) me khabar daalta hai: "T-101 jaancho". Aur Arpan ko turant `T-101` de deta hai, lagbhag
+100 ms me. Screen ghoomna band.
+
+Peeche ek **Worker** line se khabar uthata hai, Validator ko bhejta hai, 3 sec rukta hai, aur DB me `T-101 = DONE`
+(ya `FAILED`) likh deta hai. Arpan jab chahe `T-101` se haal dekh leta hai.
+
+```mermaid
+flowchart LR
+    A["Arpan"] -->|"file"| U["Upload Server"]
+    U --> S3[("S3")]
+    U -->|"T-101 = JAANCH HO RAHI"| D[("DB")]
+    U -->|"T-101 jaancho"| K[("Kafka<br/>(line)")]
+    K --> W["Worker"]
+    W -->|"3 sec"| V["Validator"]
+    W -->|"T-101 = DONE"| D
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+Arpan --file--> Upload Server --> S3 (file) + DB (T-101 = JAANCH HO RAHI)
+                     |--"T-101 jaancho"--> Kafka (line)
+Arpan <-- "T-101" (turant, ~100 ms)
+                     Worker <-- line se uthao --> Validator (3 sec) --> DB: T-101 = DONE
+Arpan --"T-101 ka haal?"--> DB --> "DONE"
+```
+
+Is tareeke ko **async + tracking ID** kehte hain: kaam peeche hota hai, aur haal dekhne ke liye ek number milta hai.
+
+**Line (queue) kyun, server ke andar hi peeche thread kyun nahi:** thread server ki memory me hota hai. Server
+restart hua to jo 500 file jaanch ka intezaar kar rahi thi, wo sab bhool jaata. Kafka me khabar disk pe likhi hoti
+hai, server mare tab bhi bachi rehti hai.
+
+Ek fayda aur: Validator 1 ghanta band ho gaya, tab bhi Arpan ki file kahin nahi gayi. File S3 me hai, khabar line
+me padi hai. Validator wapas aaya to Worker uthake jaanch kar dega. Arpan ko bas thodi der "jaanch ho rahi" dikhega.
+
+Par Arpan ne `report.pdf` nahi, apni 5 GB ki video daali. Ye poori 5 GB pehle hamare Upload Server pe aati hai, phir
+wahan se S3 jaati hai. Server ki memory aur net, dono isi ek file ne gher liye, aur baaki sab ka upload atak gaya.
