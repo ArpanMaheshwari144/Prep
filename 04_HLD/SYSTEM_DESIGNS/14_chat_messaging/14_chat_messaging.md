@@ -502,7 +502,3 @@ chal raha, kaise pata? -> message pahunchne ka p99 (100 me se 99 kitni der me), 
                       push fail, alert
 AWS naam           -> Cassandra = Keyspaces / EC2 · Redis = ElastiCache · video = S3 + CloudFront
 ```
-
-Hands-on: ye design ek chhota server aur do browser tab chala ke bana tha (21-Sep). Demo ka code repo me
-nahi rakha.
-
