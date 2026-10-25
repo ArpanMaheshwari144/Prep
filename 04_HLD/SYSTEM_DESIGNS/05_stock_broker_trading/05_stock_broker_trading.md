@@ -71,10 +71,14 @@ flowchart LR
     style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-SQL kyun, NoSQL kyun nahi? Sauda hote hi chaar cheez ek saath badalti hain: Arpan ka paisa ghata, share badhe,
-Suresh ke share ghate, paisa badha. Ya to chaaron badlein ya koi nahi (ACID), ye SQL ka seedha kaam hai. Paisa
-aur share kabhi galat nahi ho sakte, to yahan "sahi hona" dil hai, aur NoSQL ki "thodi der baad sahi" chal hi
-nahi sakti.
+### DB kaunsa: SQL ya NoSQL?
+
+Data dekho: har user ka paisa aur share. Kaam: sauda hote hi chaar cheez ek saath badalti hain: Arpan ka paisa
+ghata, share badhe, Suresh ke share ghate, paisa badha.
+
+Ya to chaaron badlein ya koi nahi (ACID), ye SQL ka seedha kaam hai. Paisa aur share kabhi galat nahi ho
+sakte, to NoSQL ki "thodi der baad sahi" chal hi nahi sakti. Isliye SQL. (Order book DB me nahi, RAM me hai,
+wo kadam 4 me.)
 
 Dikkat: Arpan ne "Buy" dabaya, network atka, app ne dobara bheja (ya do baar tap). Order book me Arpan ke do
 order lag gaye, 20 share kharid liye gaye, jabki use 10 chahiye the.

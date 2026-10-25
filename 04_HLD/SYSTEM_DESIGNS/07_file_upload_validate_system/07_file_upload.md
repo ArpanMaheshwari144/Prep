@@ -77,11 +77,15 @@ Arpan --file--> Upload Server --1. file bhejo, jawab ruko--> Validator (2-3 sec)
 Arpan <-- "ho gaya" (3+ sec baad)
 ```
 
-SQL (Postgres) kyun, NoSQL kyun nahi? Har file ki ek line hai jiska haal badalta hai (UPLOAD HO RAHI, phir
-JAANCH HO RAHI, phir DONE), aur aage folder ki ginti ek query me badhni hai. Ye SQL ka seedha kaam hai. Data
-bhi chhota hai, roz 1 lakh line, to NoSQL ki "bahut bada data" wali taakat yahan chahiye hi nahi.
-
 Jab tak din me thodi file aati hain, ye chalta hai. Seedha hai aur sab ek jagah hai.
+
+### DB kaunsa: SQL ya NoSQL?
+
+Data dekho: har file ki ek line (tracking number, maalik, haal). Roz 1 lakh line, data chhota hai. Kaam:
+file ka haal badalna (UPLOAD HO RAHI, phir JAANCH HO RAHI, phir DONE), aur aage folder ki ginti ek query me
+badhana.
+
+Ye SQL ka seedha kaam hai. NoSQL ki "bahut bada data" wali taakat yahan chahiye hi nahi. Isliye SQL (Postgres).
 
 Par 31 March aaya. Aakhri ghante me har second 200 log file daal rahe hain, aur har upload server ko 3 second
 rokta hai. Matlab kisi bhi pal ~600 upload sirf Validator ke jawab ka intezaar karte khade hain. Server ke dhaage
