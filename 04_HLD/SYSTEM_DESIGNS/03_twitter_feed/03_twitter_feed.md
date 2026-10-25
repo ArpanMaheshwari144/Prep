@@ -12,7 +12,7 @@ Iska apna: ek tweet laakhon logon ki feed me kaise pahunche (fanout), aur celebr
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 do table, har feed pe jod -> inbox pehle se (fanout) -> Kafka + fanout worker (+ outbox)
 -> celebrity: fanout nahi, padhte waqt DB se (hybrid) -> viral: har server ka apna cache
--> inbox chhota (id, 800, sirf active: worker last_active dekhe) -> tweets Cassandra (author_id)
+-> inbox chhota (id, 800, sirf active: worker last_active dekhe) -> tweets Cassandra (author_id) + Kafka pehle (outbox gaya)
 -> video S3 + CDN -> India region (Kafka topic ki copy, har region apne inbox bhare)
 
 > **Baad me padhna (abhi mock me nahi): video upload ke peeche kya hota hai (media converter / transcoding)**
@@ -308,6 +308,19 @@ Feed: "Ravi ka T-901 do" -> Ravi wali machine -> seedha mil gaya
 Kadam 3 me fanout worker ko Kafka se khabar pehle se "T-950 by Mohan" aati hai, author uske paas hai hi. Bas
 inbox me daalte waqt saath rakhna hai. Jagah me farak chhota, ek id aur.
 
+Ek cheez aur tooti: kadam 3 ka **outbox**. Wahan tweet aur outbox ki khabar ek hi transaction me likhte the.
+Ab tweets DB Cassandra hai, wahan ye transaction aur outbox me "abhi nahi bheje" wali dhoondh, dono theek se
+nahi chalte. Isliye ab **Kafka pehle**:
+
+```
+Arpan ka tweet -> Tweet Service -> Kafka "tweets" me likho (acks=all, saari copy ne li) -> tab Arpan ko "ho gaya"
+                                   Kafka "tweets" --> consumer 1: Cassandra me save
+                                                  --> consumer 2: fanout (followers ke inbox)
+```
+
+Kafka hi pehli aur pakki jagah jahan tweet likha jaata. Ek hi jagah likha, to "DB me gaya par khabar nahi
+gayi" wali dikkat hoti hi nahi, outbox ki zaroorat khatam.
+
 ```mermaid
 flowchart LR
     TS["Tweet Service"] --> C1[("Cassandra 1<br/>Virat ke tweet")]
@@ -395,8 +408,8 @@ Copy peeche se (US tak kuch second) kyun chalta: NFR, feed 2-5 sec purani chaleg
 ## Wrap: 30 sec me poora design
 
 ```
-Tweet aaya: Tweet Service use Cassandra me save karta (author_id se baanta), outbox se Kafka me khabar,
-turant "ho gaya". Fanout worker aam logon ke tweet ki id unke active followers ke Redis inbox me daalte
+Tweet aaya: Tweet Service use Kafka "tweets" me likhta (acks=all), turant "ho gaya". Ek consumer Cassandra
+me save karta (author_id se baanta), fanout worker aam logon ke tweet ki id unke active followers ke Redis inbox me daalte
 (aakhri 800, soye hue ko chhod ke). Celebrity ka fanout nahi: feed padhte waqt unke aakhri tweet DB se, har
 server ke apne cache se 2 sec. Feed = inbox ki 50 id + celebrity ke tweet, milao, poora tweet DB se. Video
 S3 me, dekhne wale CDN se. Har desh ka apna region; Kafka topic ki copy doosre region jaati, wahan ka worker
