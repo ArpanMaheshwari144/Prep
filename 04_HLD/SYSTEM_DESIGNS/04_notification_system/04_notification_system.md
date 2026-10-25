@@ -69,6 +69,9 @@ Ek naya dabba judta hai: **Notification Service**. Ye Kafka se khabar uthata hai
 (push chalu, email chalu, SMS band), saancha bharta hai ("Hi Arpan, order 999 ho gaya"), phir email aur push
 company ko call karta hai.
 
+OTP / order hamesha bhejo (Arpan ne khud maanga). Offer SMS band kiya ya DND pe hai to bhejo hi mat
+(kanoon: unsubscribe ke baad bheja to jurmana).
+
 ```mermaid
 flowchart LR
     U["Arpan"] --> O["Order Service"]
@@ -405,23 +408,12 @@ Redis gira
 
 Ek hi dikkat, par faisla darje se badalta: OTP me khona bura (bhejte raho), offer me dohraav bura (ruk jao).
 
-Par offer ka SMS raat 2 baje chala gaya, jabki Arpan ne offer wale SMS band kiye the. Aur har khabar pe
-Notification Service DB se pasand + saancha padh raha hai: ~58,000 / sec padhna, DB ghut raha hai.
+Par sale me har khabar pe Notification Service DB se pasand + saancha padh raha hai: ~58,000 / sec,
+DB ghut raha hai.
 
-### Kadam 11: pasand + saancha, aur unka cache
+### Kadam 11: pasand + saancha ka cache
 
-Notification Service bhejne se pehle 2 cheez dekhta hai:
-
-```
-khabar --> [1 pasand]  Arpan: push chalu, email chalu, offer SMS BAND
-       --> [2 saancha] "Hi {{name}}, {{offer}}" bharo
-
-   OTP / order (transactional) -> hamesha bhejo, Arpan ne khud maanga
-   offer SMS (promotional)     -> Arpan ne BAND kiya / DND pe hai -> bhejo hi mat
-                                  (ye kanoon hai: unsubscribe ke baad bheja to jurmana)
-```
-
-Ab bheed: har khabar pe pasand aur saancha DB se padhna, sale me ~58,000 / sec padhna, DB ghut jaata hai.
+Ilaaj: pasand aur saancha Redis cache me rakho, DB tak sirf tab jao jab cache me na mile.
 
 ```
 Notification Service --pasand padho--> [Redis cache] --mila--> turant (DB tak gaye hi nahi)
@@ -483,7 +475,7 @@ Kafka me khabar khoye hi nahi, pakka?
 Raat 2 baje offer ka SMS?
   -> kanoon (TRAI, telecom regulator) kehta offer wala (promotional) SMS sirf din me, OTP / order kabhi bhi. Asal me loopholes
      hain: push / WhatsApp pe koi rok nahi, company "pehle schedule kiya tha, der se gaya" bol sakti.
-     Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana, isliye Kadam 11 me pasand check.
+     Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana, isliye Kadam 2 me pasand check.
 
 10 guna traffic?
   -> Kafka me tukde (partition) pehle se zyada · Notification Service ki machine badhao · worker badhao
