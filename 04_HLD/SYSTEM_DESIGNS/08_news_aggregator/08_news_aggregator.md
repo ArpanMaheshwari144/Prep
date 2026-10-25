@@ -74,3 +74,37 @@ Data dekho: har khabar ek row: title, url, source, category, published_at. Data 
 
 Ye sab SQL me index aur UNIQUE se seedha ho jaata hai. Likhai bas ~1 / sec hai, to SQL aaram se jhel leta hai.
 Isliye SQL (Postgres).
+
+### Kadam 2: subah sab ek saath, sabko wahi 20 khabar (Redis me feed pehle se bani)
+
+Dikkat ye hai ki sabko lagbhag ek hi feed chahiye, phir bhi har baar DB sort kar raha hai. Ilaaj: feed pehle se
+bana ke **Redis** me rakho. Redis RAM me hai, ~1 ms me jawab deta hai.
+
+Feed ko **sorted set** me rakhte hain. Ye aisi list hai jisme har khabar ke saath uska time likha hota hai, aur
+list hamesha time ke kram me rehti hai.
+
+```
+nayi khabar aayi (Fetcher)  --> DB me likho + Redis ki feed me bhi daal do (time ke saath)
+                                feed me sirf aakhri 500 rakho, purani kaat do
+Arpan ne feed kholi         --> Redis se taazi 20, ~1 ms. DB tak gaye hi nahi
+```
+
+```mermaid
+flowchart LR
+    S["1000 source"] --> F["Fetcher<br/>(har 5 min)"]
+    F -- "nayi khabar" --> D[("SQL DB")]
+    F -- "feed me daalo" --> R[("Redis<br/>feed: taazi 500")]
+    A["Arpan"] --> FS["Feed Service"]
+    FS -- "taazi 20" --> R
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Sorted set kyun, simple list kyun nahi? Khabar hamesha time ke kram me nahi aati. Kisi source ki 10 minute purani
+khabar ab aa sakti hai. Sorted set use apne aap sahi jagah rakh deta hai. Simple list me har baar khud sort karna
+padta.
+
+Redis restart hua aur feed khaali ho gayi? Feed Service ko Redis me kuch nahi milta, to wo DB se taazi 500 padh ke
+Redis phir bhar deta hai. Tab tak kuch request DB pe jaati hain, uske baad phir sab Redis se.
+
+Par ek source ki site dheemi hai. Fetcher usi pe 30 second atka rehta hai, aur saari khabar ek-ek karke DB me
+likhta hai. Arpan ki feed me khabar 20 minute purani dikh rahi hai.
