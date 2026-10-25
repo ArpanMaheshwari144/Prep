@@ -36,6 +36,8 @@ Kaam do hain: har user ki ek had (login pe 5 baar / minute, baaki API pe 100 / m
 
 8. Login ke waqt userId hota hi nahi, to wahan IP pe gin rahe the. Office ke 1,000 log ek IP pe the, sab atak gaye. Isliye login ke baad had **USERID** pe lagti hai, jo JWT se milta hai. Login pe do had hain: IP pe dheeli (500 / min), taaki office aaram se login kare, aur account pe kadi (5 / min), taaki password guess karne wala ruke.
 
+Humne kya socha aur kya tay kiya (login pe): pehle login pe IP ki had lagayi thi, par dikkat ye nikli ki office me kitne log hain ye pata nahi (100 bhi ho sakte, TCS jaise lakh bhi). Had kadi rakho to asli log atakte, dheeli rakho to bot nikal jaata. Isliye tay kiya: IP pe had nahi (ya bahut dheeli). Asli deewar MFA / passkey, kyunki password mil bhi gaya to bina phone ke bekaar. Galat password pe block nahi, CAPTCHA, taaki asli user na atke. Aur cloud / badnaam IP ko WAF pe band kiya. Koi ek perfect hal nahi hai, isliye parat-dar-parat.
+
 &nbsp;
 
 9. Sale me 1 crore log aaye. Har koi apni had me tha, phir bhi server bhar gaya. Isliye poore system ki ek had bhi hai, **GLOBAL CAP**: uske upar **503** ("hum bhare hain"), jabki 429 ka matlab hai "tu zyada bhej raha". Bhar jaayein to pehle kam zaroori kaam kaato (suggestion, analytics), aur payment / login aakhri tak chalao.
