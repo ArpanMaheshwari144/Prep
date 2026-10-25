@@ -108,3 +108,42 @@ Redis phir bhar deta hai. Tab tak kuch request DB pe jaati hain, uske baad phir 
 
 Par ek source ki site dheemi hai. Fetcher usi pe 30 second atka rehta hai, aur saari khabar ek-ek karke DB me
 likhta hai. Arpan ki feed me khabar 20 minute purani dikh rahi hai.
+
+### Kadam 3: khabar 20 minute purani (laana aur likhna alag: Kafka + Worker)
+
+Dikkat ye hai ki ek hi Fetcher saara kaam ek ke baad ek kar raha hai: site se laana, khabar saaf karna, DB me
+likhna, Redis me daalna. Ek site atki, to uske peeche ki 999 bhi ruki.
+
+Ilaaj: kaam do hisson me baant do.
+
+```
+Fetcher (kai machine)  --> sirf site se laao, kachchi khabar Kafka me daal do. Bas itna.
+Kafka                  --> khabar ki line (bheed aaye to line me khadi rahe, khoye nahi)
+Worker (kai machine)   --> line se uthao, saaf karo, DB me likho + Redis feed me daalo
+```
+
+```mermaid
+flowchart LR
+    S["1000 source"] --> F["Fetcher<br/>(kai machine, sirf laao)"]
+    F -- "kachchi khabar" --> K[("Kafka")]
+    K --> W["Worker<br/>(saaf karo, likho)"]
+    W --> D[("SQL DB")]
+    W --> R[("Redis feed")]
+    A["Arpan"] --> FS["Feed Service"]
+    FS -- "taazi 20" --> R
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab kya theek hua:
+- Ek site atki to bas ek Fetcher ruka. Baaki apni site se laate rahe.
+- 8 baje sab site ek saath nayi khabar dein, to wo Kafka ki line me khadi rehti hain. Worker apni raftaar se
+  uthate hain, DB pe ek saath dhakka nahi lagta.
+- Worker beech me gira to khabar Kafka me padi hai. Naya worker wahin se utha leta hai.
+- Likhna dheema lage to bas worker badha do.
+
+Kafka kyun, Fetcher seedha DB me kyun nahi likhe? Seedha likhe to 1000 fetcher ka dhakka seedha DB pe padta. Aur
+DB dheema ho to fetcher bhi ruk jaate. Kafka beech me ek line hai, jo dono ko ek doosre se alag kar deti hai.
+
+Par dopahar me "India ne match jeeta" ki khabar 5 alag site se aayi. Arpan ki feed me wahi khabar 5 baar dikh rahi
+hai.
