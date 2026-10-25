@@ -198,3 +198,34 @@ Yaad DB me rakho (UNIQUE), taaki koi bhi Worker ho, faisla ek hi jagah ho.
 
 Par ek chhoti site band pad gayi hai. Har 5 minute uska Fetcher 30 second tak jawab ka intezaar karta hai, aur aise
 50 band site hain. Fetcher ke thread inhi me phanse rehte hain, aur achhi site ki baari der se aati hai.
+
+### Kadam 5: band site pe Fetcher phansa (timeout + circuit breaker)
+
+Dikkat ye hai ki band site jawab hi nahi deti, aur Fetcher 30 second tak uska intezaar karta rehta hai. 50 band
+site = Fetcher ka bahut sa time barbaad.
+
+**Timeout:** kisi site ko sirf 5 second do. Jawab nahi aaya to chhodo aur agli site pe jao.
+
+**Circuit breaker:** jo site baar-baar fail ho rahi hai, use har 5 minute try karna hi bekaar hai.
+
+```
+site lagaataar 5 baar fail  -> breaker OPEN: is site ko 30 minute tak try hi mat karo
+30 minute baad              -> ek baar try (HALF-OPEN)
+  chal gayi                 -> CLOSED, wapas har 5 minute
+  phir fail                 -> 30 minute aur ruko
+```
+
+```mermaid
+flowchart LR
+    F["Fetcher<br/>timeout 5 sec"] --> CB{"har site ka<br/>breaker"}
+    CB -- "CLOSED" --> S["achhi site"]
+    CB -. "OPEN: 30 min skip" .-> B["band site"]
+    F -- "kachchi khabar" --> K[("Kafka")]
+    style CB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Ab kya theek hua: band site pe ab 5 second se zyada nahi lagte, aur baar-baar fail hone wali ko 30 minute tak
+chhua bhi nahi jaata. Achhi site ki baari time pe aati hai. NFR ka "ek source band ho to baaki na ruke" yahi hai.
+
+Par raat 8 baje election ka result aaya. Log 40 guna zyada app khol rahe hain, aur ek Feed Service ki machine itni
+request nahi jhel paa rahi.
