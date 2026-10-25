@@ -62,7 +62,8 @@ Internal Object[] elementData (heap):
   └────┴────┴────┴────┴────┴────┴────┴────┴────┴────┘
    0    1    2    3    4    5    6    7    8    9
 
-   size = 0    (abhi koi element nahi)
+   ye 10 ki jagah pehle add() ke ANDAR banti (new ke waqt array khaali {} tha).
+   element rakhte hi size = 1.
 
 
 ╔════════════════════════════════════════════════════════════╗
@@ -122,7 +123,7 @@ Shift karna padta (saare elements 1 right):
 | Operation | Time | Kyu? |
 |-----------|------|------|
 | `get(index)` | **O(1)** | Direct index access — instant |
-| `add(end)` | **O(1)** | Last position pe daalo |
+| `add(end)` | **O(1)** (amortized) | Last position pe daalo; kabhi-kabhi bharne pe 1.5x copy |
 | `add(middle)` | **O(n)** | Shift karna padega |
 | `remove(middle)` | **O(n)** | Shift karna padega |
 | `search(value)` | **O(n)** | Ek-ek check |
