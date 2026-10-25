@@ -235,15 +235,25 @@ lag gaya. OTP 5 min me bekaar ho jaata hai, offer 1 ghanta baad bhi chalega.
 ### Kadam 7: OTP ki alag tez line
 
 Notification Service har khabar ko ek darja deta hai: **TEZ** (OTP, password reset), **BEECH** (order hua, ship
-hua), **DHEEMI** (offer, sale ki khabar). Har darje ki apni alag line, aur **apne alag worker**.
-OTP wale worker kabhi offer nahi uthate. Sale me 50,000 offer DHEEMI line me khade rehte hain,
-Arpan ka OTP TEZ line se turant nikal jaata hai.
+hua), **DHEEMI** (offer, sale ki khabar). Kadam 3 wali raaste ki lines hat-ti nahi: SMS line ke andar bhi
+darje se alag line, aur **apne alag worker**. Line = raasta x darja:
+
+```
+              TEZ           BEECH           DHEEMI
+SMS     ->  sms-tez       sms-beech       sms-dheemi
+email   ->  email-tez     email-beech     email-dheemi
+push    ->  push-tez      push-beech      push-dheemi
+```
+
+Dono fayde bache rehte hain:
+- SMS company dheemi hui to sirf SMS ki lines rukti, push aur email chalte rehte (kadam 3).
+- Sale me 50,000 offer `sms-dheemi` me khade, Arpan ka OTP `sms-tez` se turant nikal jaata (ye kadam).
 
 ```mermaid
 flowchart LR
-    N["Notification Service<br/>(darja)"] --> T[("TEZ line: OTP")]
-    N --> B[("BEECH line: order")]
-    N --> D[("DHEEMI line: offer")]
+    N["Notification Service<br/>(darja)"] --> T[("sms-tez: OTP")]
+    N --> B[("sms-beech: order")]
+    N --> D[("sms-dheemi: offer")]
     T --> WT["OTP worker (sirf ye)"]
     B --> WB["order worker"]
     D --> WD["offer worker<br/>(bheed yahan ruke, chalega)"]
