@@ -49,3 +49,31 @@ Turant nahi chahiye, to aage async + tracking aayega.
 ---
 
 ## 4. Design
+
+### Kadam 1: sabse seedha (server khud sab kare)
+
+Ek Upload Server lagao. Arpan app me `report.pdf` chunta hai, aur app poori file is server ko bhej deta hai.
+Server ek ke baad ek teen kaam karta hai: file Validator ko bhejta hai aur jawab ka intezaar karta hai, phir file
+S3 me rakhta hai, aur DB me likhta hai ki file ho gayi. Uske baad hi Arpan ko "ho gaya" bolta hai.
+
+```mermaid
+flowchart LR
+    A["Arpan"] -->|"file"| U["Upload Server"]
+    U -->|"1. file bhejo, jawab ruko (2-3 sec)"| V["Validator<br/>(bahar ki company)"]
+    U -->|"2. file rakho"| S3[("S3")]
+    U -->|"3. ho gayi likho"| D[("DB")]
+    style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+Arpan --file--> Upload Server --1. file bhejo, jawab ruko--> Validator (2-3 sec)
+                     |--2. file rakho--> S3
+                     |--3. "ho gayi" likho--> DB
+Arpan <-- "ho gaya" (3+ sec baad)
+```
+
+Jab tak din me thodi file aati hain, ye chalta hai. Seedha hai aur sab ek jagah hai.
+
+Par 31 March aaya. Aakhri ghante me har second 200 log file daal rahe hain, aur har upload server ko 3 second
+rokta hai. Matlab kisi bhi pal ~600 upload sirf Validator ke jawab ka intezaar karte khade hain. Server ke dhaage
+bhar gaye, nayi file lene ki jagah hi nahi bachi. Arpan ki screen ghoomti reh gayi, aur aakhir me "time out" aa gaya.
