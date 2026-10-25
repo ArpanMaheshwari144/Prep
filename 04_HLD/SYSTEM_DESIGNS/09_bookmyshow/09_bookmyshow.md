@@ -71,6 +71,15 @@ flowchart LR
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+### DB kaunsa: SQL ya NoSQL?
+
+Data dekho: har show ki seats (`show 9pm | A1 | FREE`). Data chhota hai, bas aaj aur agle hafte ke show. Kaam:
+ek seat do logon ko kabhi na bike.
+
+Yahan sahi hona hi dil hai. SQL me row lock aur ek query se ek seat do ko bikna namumkin hai. NoSQL ki "thodi
+der baad sahi" me do machine alag-alag "FREE" bol sakti hain, aur seat do baar bik jaayegi. Data chhota hai,
+to shard bhi nahi chahiye. Isliye SQL.
+
 Dikkat: Ravi ne bhi usi second me A1 dabaya. Dono ne padha "FREE", dono ne likha "BOOKED". Dono ko ticket,
 ek seat pe do log. Ye banking ke ["do kataai ek saath, balance -400"](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) jaisi hi dikkat hai: pehle padho, phir
 likho, aur beech ke pal me koi aur ghus jaata hai.
@@ -302,10 +311,6 @@ API?
 Tables?
   -> seats = show_id, seat_id, status, user_id, hold_until
      bookings = booking_id, user_id, show_id, seats, status · payments = booking_id (UNIQUE), status
-
-SQL kyun, NoSQL kyun nahi?
-  -> sahi hona hi dil hai. Row lock + ek query se ek seat do ko bikna namumkin. NoSQL ka "thodi der baad sahi"
-     = do machine alag-alag "FREE" bol sakti, khatra. Data chhota (aaj + agla hafta), to shard bhi nahi.
 
 App machine giri to?
   -> App kuch yaad nahi rakhta (stateless), hold SQL me. LB doosri machine pe bhej deta, kuch nahi gaya.
