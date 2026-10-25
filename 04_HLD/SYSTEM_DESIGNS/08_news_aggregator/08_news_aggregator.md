@@ -270,3 +270,37 @@ der se dikhegi. NFR me "5-10 minute purani nahi" tha, to ek-do second ka farak c
 
 Par raat ko Arpan ne "cricket" dhoondha. DB ko poori table ki har khabar ka title padhna pada, aur jawab aane me 5
 second lag gaye.
+
+### Kadam 7: "cricket" dhoondhne me 5 second (Elasticsearch)
+
+Dikkat ye hai ki DB me "title me kahin bhi cricket" dhoondhne ke liye har row ka title padhna padta hai. Normal
+index yahan kaam nahi aata, kyunki shabd title ke beech me kahin bhi ho sakta hai. Lakhon khabar = 5 second.
+
+Ilaaj: **Elasticsearch**. Ye kitaab ke peeche wale index jaisa hai: har shabd ke saamne likha hota hai ki wo kin
+khabron me aata hai. Ise **inverted index** kehte hain.
+
+```
+"cricket" -> khabar 12, 45, 980 ...
+"match"   -> khabar 12, 77 ...
+"cricket" dhoondha -> seedha list mil gayi, saari khabar padhni nahi padi -> ~50 ms
+```
+
+Worker jab khabar DB me likhta hai, saath me Elasticsearch me bhi daal deta hai. Feed Redis se aati hai, aur search
+Elasticsearch se.
+
+```mermaid
+flowchart LR
+    K[("Kafka")] --> W["Worker"]
+    W --> D[("SQL DB")]
+    W --> R[("Redis feed")]
+    W --> ES[("Elasticsearch<br/>shabd -> khabar")]
+    A["Arpan: cricket"] --> FS["Feed Service"]
+    FS -- "search" --> ES
+    style ES fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Elasticsearch ki copy DB se thodi peeche ho to? Nayi khabar search me ek-do second baad dikhegi. News ke liye ye
+chalta hai. Asli sach DB hi rehta hai, aur Elasticsearch bigde to DB se dobara bhar sakte hain.
+
+Par 6 mahine ho gaye. Roz 1 lakh khabar, to DB me ~2 crore row ho gayi. DB bhaari ho raha hai aur kharcha badh
+raha hai, jabki 1 hafte se purani khabar koi padhta hi nahi.
