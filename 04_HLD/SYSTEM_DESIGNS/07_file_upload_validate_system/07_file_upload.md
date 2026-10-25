@@ -155,3 +155,30 @@ hi bana hai.
 
 Par Arpan ghar ke wifi pe tha. 5 GB me se 4.5 GB chadh chuki thi, aur wifi chala gaya. Wifi wapas aaya to upload
 phir 0 se shuru.
+
+### Kadam 4: 4.5 GB chadh chuki thi, wifi gaya (tukdon me upload)
+
+5 GB ek hi baar me bhejna yaani ek lamba dhaaga. Beech me kahin bhi toota to sab gaya. To file ko **chhote
+tukdon** me kaat do, jaise 100 MB ke 50 tukde. Har tukda alag se S3 pe jaata hai, aur S3 yaad rakhta hai ki
+kaunsa tukda aa gaya.
+
+```mermaid
+flowchart LR
+    A["Arpan<br/>5 GB = 50 tukde"] -->|"tukda 1..45 OK, wifi gaya<br/>wapas: sirf 46..50"| S3[("S3<br/>yaad: 1-45 aa gaye<br/>sab aaye -> jodo")]
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+5 GB -> 50 tukde (har ek 100 MB)
+tukda 1 OK, tukda 2 OK ... tukda 45 OK  -> wifi gaya
+wifi wapas -> S3 se poochho "kaunse aa gaye?" -> 1-45 -> sirf 46-50 bhejo
+sab aa gaye -> S3 ko "jodo" bolo -> S3 50 tukde jod ke ek file bana deta hai
+```
+
+Isko **multipart upload** kehte hain, S3 me ye pehle se bana hai. Do fayde hain. Wifi gaya to bas aakhri adhoora
+tukda dobara jaata hai, 4.5 GB nahi. Aur tukde ek saath bhi bhej sakte hain (jaise 4-5 ek saath), to upload tez
+hota hai. Har tukde ki apni chhoti parchi (presigned URL) hoti hai, wahi kadam 3 wala tareeka.
+
+Par Arpan ka phone beech me band ho gaya. Saare 50 tukde S3 pe pahunch gaye the, par app "T-102 pahunch gayi"
+bolne se pehle hi mar gaya. Hamare DB me T-102 hamesha ke liye "UPLOAD HO RAHI" pe atka hai, aur jaanch kabhi
+shuru hi nahi hui.
