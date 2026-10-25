@@ -102,8 +102,15 @@ humein pata hi nahi. Ab Arpan ko kya dikhayein: fail ya success?
 Agar "FAILED" dikha diya, to Arpan sochega paisa nahi gaya aur dobara 2000 daalega. Agar pehla bhi kat chuka
 tha, to 4000 kat gaye. Aur galti se "SUCCESS" dikha diya, to bina paise ke wallet me nakli paisa aa gaya.
 
-Ilaaj: jo pata nahi, use **PENDING** bolo. Payment ka haal aise chalta hai: INITIATED, phir PENDING, phir
-SUCCESS ya FAILED. PSP ne jawab nahi diya to PENDING, aur Arpan ko dikhao "processing, 2-3 minute me pakka
+Ilaaj: jo pata nahi, use **PENDING** bolo. Payment ka haal aise chalta hai:
+
+```
+INITIATED        = humne DB me likh diya, PSP ko call abhi nahi gayi
+PENDING          = PSP ko call chali gayi, pakka jawab abhi nahi aaya (timeout / Arpan pay kar raha)
+SUCCESS / FAILED = pakka jawab aa gaya
+```
+
+PSP ne jawab nahi diya to PENDING, aur Arpan ko dikhao "processing, 2-3 minute me pakka
 batayenge".
 
 Timeout chhota rakho (jaise 5 second). Hamari har request ek thread pakad ke baithi hai. Agar PSP dheema hua
@@ -136,8 +143,10 @@ pehle hamara hi server gir gaya. Restart pe humein yaad bhi nahi ki call gayi th
 
 ### Kadam 4: pakka kaise pata chale + hamara server gira (PENDING pehle, webhook, poochne wala job)
 
-Ilaaj 1: PSP ko call karne se **pehle** DB me likho `t-50 = PENDING` (COMMIT), phir call karo. Ab server call
-ke beech gira, to restart pe DB me t-50 PENDING dikhta hai, matlab pata hai ki kis payment ka pata karna hai.
+Ilaaj 1: PSP ko call karne se **pehle** DB me likho `t-50 = INITIATED` (COMMIT), phir call karo. Ab server call
+ke beech gira, to restart pe DB me t-50 INITIATED dikhta hai. Pata nahi call gayi ya nahi, par ye pata hai ki
+kis payment ka pata karna hai. Job PSP se poochta "t-50 ka kya hua?": call gayi hi nahi thi to PSP bolta
+"aisa koi order nahi", hum FAILED kar dete; gayi thi to PSP jawab de deta.
 Aur `t-50` hi PSP ke liye idempotency key ka kaam karta hai: call dobara gayi to bhi PSP ek hi baar paisa
 kaatega.
 
@@ -147,14 +156,14 @@ Ilaaj 2: pakka jawab teen tarah se aata hai.
 bhejta hai: "t-50 SUCCESS". Hum PENDING ko SUCCESS karte hain, wallet me +2000 aur ledger me line. Koi bhi
 hamare server ko nakli message bhej sakta hai ("t-50 SUCCESS, 2000 daal do"), isliye PSP har message pe apni
 secret chaabi se sign lagata hai, aur hum sign jaanch ke nakli message phenk dete hain. PSP kabhi-kabhi wahi
-message dobara bhej deta hai, isliye hum likhte hain "PENDING hai **tabhi** SUCCESS karo". Pehle message pe
-PENDING tha, to SUCCESS kiya aur +2000. Doosre message pe wo ab PENDING nahi hai, to kuch nahi kiya. Paisa ek
-hi baar juda.
+message dobara bhej deta hai, isliye hum likhte hain "abhi pakka nahi hua (INITIATED / PENDING) **tabhi**
+SUCCESS karo". Pehle message pe PENDING tha, to SUCCESS kiya aur +2000. Doosre message pe wo ab SUCCESS hai,
+to kuch nahi kiya. Paisa ek hi baar juda.
 
 **Poochne wala job = hum khud poochte hain.** Agar PSP ka message raaste me kho gaya, ya jab aaya tab hamara
-server gira hua tha, to hamara job har 5 minute chalta hai: "kaun se payment 5 minute se PENDING pade hain?"
-Use t-50 mila, to wo PSP se poochta hai "t-50 ka kya hua?", PSP bolta hai "SUCCESS", aur hum t-50 ko SUCCESS
-kar dete hain. Matlab PSP ne bataya ho ya nahi, 5 minute me hum khud pata kar lete hain.
+server gira hua tha, to hamara job har 5 minute chalta hai: "kaun se payment 5 minute se INITIATED / PENDING
+pade hain?" Use t-50 mila, to wo PSP se poochta hai "t-50 ka kya hua?", PSP bolta hai "SUCCESS", aur hum
+t-50 ko SUCCESS kar dete hain. Matlab PSP ne bataya ho ya nahi, 5 minute me hum khud pata kar lete hain.
 
 **Raat ka milaan.** Raat ko PSP ek file deta hai ki aaj kaun-kaun se payment hue aur kitna paisa. Hum use apne
 DB se milaate hain, kahin farak mila to ALERT. Ye [banking kadam 9](../13_banking_system/13_banking_system.md#kadam-9-balance-aur-khaata-alag-ho-gaye-raat-ka-milaan--reconciliation) wala milaan hi hai.
@@ -164,9 +173,9 @@ milaan (pakka).
 
 ```mermaid
 flowchart LR
-    S["Payment Service"] -- "1. t-50 PENDING (pehle)" --> D[("SQL DB")]
+    S["Payment Service"] -- "1. t-50 INITIATED (pehle)" --> D[("SQL DB")]
     S <-->|"2. call t-50<br/>wapas webhook: t-50 SUCCESS"| P["PSP"]
-    J["Job, har 5 min<br/>DB me purane PENDING dekho"] --> D
+    J["Job, har 5 min<br/>DB me purane INITIATED / PENDING dekho"] --> D
     J -- "t-50 ka kya hua?" --> P
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
