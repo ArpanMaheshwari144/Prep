@@ -4,6 +4,12 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file me
 ek hi kahani hai: Arpan subah news app kholta hai aur taazi khabar dekhta hai.
 
+**CUE (yahi shabd yaad rakhne hain, kram se):**
+Fetcher DB me bhare, Feed Service DB se padhe -> feed Redis me pehle se (sorted set)
+-> laana aur likhna alag (Kafka + Worker) -> ek khabar ek baar (url UNIQUE + title ki chhaap)
+-> band site (timeout + breaker) -> bheed (LB + kai machine + copies)
+-> search (Elasticsearch) -> data bada (mahine ke tukde + S3 archive)
+
 ---
 
 ## News aggregator hai kya, aur kyun mushkil
@@ -337,3 +343,42 @@ flowchart LR
 
 Ab kya theek hua: DB me hamesha sirf 3 mahine ki khabar rehti hai. DB chhota aur tez rehta hai, aur purani khabar
 sasti jagah padi hai.
+
+---
+
+## Wrap: 30 sec me poora design
+
+```
+Khabar laana aur dikhana do alag raaste hain. Peeche Fetcher 1000 site se khabar laata hai (har site pe 5 sec
+timeout, baar-baar fail ho to breaker), aur kachchi khabar Kafka me daal deta hai. Worker use saaf karta hai,
+dohra hatata hai (url UNIQUE + title ki chhaap), category lagata hai, aur DB (Postgres), Redis feed aur
+Elasticsearch me likhta hai. Sabko lagbhag ek hi feed chahiye, isliye wo Redis me pehle se bani rehti hai
+(sorted set), aur 99% feed wahin se jaati hai. Feed Service LB ke peeche kai machine pe chalta hai, Redis aur DB
+ki copies se padhta hai. Search Elasticsearch se, aur 3 mahine se purani khabar S3 me.
+```
+
+## Pooche to (design nahi badalta, bas ek baar dekh lo)
+
+```
+Category (tech, sports) kaise?
+  -> Worker khabar pe category laga deta, Redis me har category ki alag feed (~20).
+     Arpan ki pasand (tech + sports) -> dono se taazi 20 laao, time ke kram me milao.
+     Har user ki alag feed nahi (twitter jaisi), kyunki sirf ~20 category hain, 10 lakh alag feed faltu.
+
+API?
+  -> GET /feed?category=tech&cursor=..  · GET /search?q=cricket · GET /article/{id}
+
+Source 100 guna ho gaye, likhai ek DB pe nahi samaati?
+  -> DB ko article_id se baanto (shard). Abhi ~1 likhai / sec hai, to aaj iski zaroorat nahi.
+
+Chal raha hai, kaise pata?
+  -> feed ka time (p99), Redis me kitni baar mila (hit rate), Kafka me kitni khabar line me (lag),
+     kis site ka breaker khula.
+
+AWS pe naam?
+  -> Postgres = RDS · Redis = ElastiCache · Kafka = MSK (AWS ka chalaya hua Kafka) · Elasticsearch = OpenSearch · archive = S3
+```
+
+CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [message-queues](../../FOUNDATIONS/07_message_queues.md) ·
+[elasticsearch](../../FOUNDATIONS/12_elasticsearch_search.md) · saath: [twitter-feed](../03_twitter_feed/03_twitter_feed.md) ·
+[<- MASTER SHEET](../../00_MASTER_SHEET.md)
