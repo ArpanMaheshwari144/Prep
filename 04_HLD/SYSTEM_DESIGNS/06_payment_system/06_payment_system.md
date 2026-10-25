@@ -8,7 +8,7 @@ Movie ticket ka paisa bhi isi raaste se jaata hai: [BookMyShow kadam 6](../09_bo
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 wallet se wallet = banking ka core -> PSP (bahar ka paisa) -> PENDING + timeout -> breaker + doosra PSP
--> PENDING pehle + webhook + poochne wala job -> saga (dukaan ka bank) -> LB + read replica
+-> INITIATED pehle + webhook + poochne wala job -> saga (dukaan ka bank) -> LB + read replica
 -> shard by account (phir se saga)
 
 ---
@@ -147,7 +147,7 @@ flowchart LR
 Par PENDING ka pakka jawab kaise pata chale? Aur ek aur haalat: humne PSP ko call kiya, aur jawab aane se
 pehle hamara hi server gir gaya. Restart pe humein yaad bhi nahi ki call gayi thi ya nahi.
 
-### Kadam 4: pakka kaise pata chale + hamara server gira (PENDING pehle, webhook, poochne wala job)
+### Kadam 4: pakka kaise pata chale + hamara server gira (INITIATED pehle, webhook, poochne wala job)
 
 Ilaaj 1: PSP ko call karne se **pehle** DB me likho `t-50 = INITIATED` (COMMIT), phir call karo. Ab server call
 ke beech gira, to restart pe DB me t-50 INITIATED dikhta hai. Pata nahi call gayi ya nahi, par ye pata hai ki
@@ -210,7 +210,7 @@ Ilaaj: **saga**, yaani kaam kadam-kadam karo, aur koi kadam fail ho to pichhla k
 ```
 Step 1 (hamare DB me, ek transaction):
    Arpan ke wallet se 500 nikaalo, ek "beech ke khaate" (hold) me 500 daalo, ledger me dono line likho,
-   aur payout t-60 ko PENDING likho.
+   aur payout t-60 ko INITIATED likho (PSP call se pehle).
    Ab paisa Arpan se nikal gaya hai, par dukaan tak abhi nahi pahuncha, beech me ruka hai.
 
 Step 2: PSP ko payout call (t-60), taaki dukaan ke bank me 500 jaayein.
@@ -314,7 +314,7 @@ flowchart LR
 
 Arpan app se payment karta hai. Request LB se kisi bhi Payment Service machine pe jaati hai. Wallet se wallet ho
 to hamare DB me ek transaction: idempotency key, check karke kaatna, dono taraf ka balance aur ledger. Paisa
-bahar se aana ya bahar jaana ho (top-up, dukaan ka bank) to PSP: pehle DB me PENDING likho, phir PSP ko call,
+bahar se aana ya bahar jaana ho (top-up, dukaan ka bank) to PSP: pehle DB me INITIATED likho, phir PSP ko call,
 aur jawab webhook se ya hamare poochne wale job se aata hai. Dukaan ke bank me bhejna saga se: pehle Arpan se
 kaat ke beech ke khaate me, fail hua to wapas. PSP dheema ho to timeout pe PENDING, band ho to breaker aur
 doosra PSP. Report replica se, aur bahut bada hua to account id se shard.
@@ -322,7 +322,7 @@ doosra PSP. Report replica se, aur bahut bada hua to account id se shard.
 ```
 do baar na kate      -> idempotency key (UNIQUE), PSP ko bhi wahi transaction id
 dono taraf ek saath  -> hamare DB me ek transaction, bahar / doosre shard ke saath saga
-paisa na khoye       -> PENDING pehle likho, webhook + poochne wala job + raat ka milaan
+paisa na khoye       -> INITIATED pehle likho, webhook + poochne wala job + raat ka milaan
 har paisa trace ho   -> ledger (sirf INSERT, double-entry)
 ```
 

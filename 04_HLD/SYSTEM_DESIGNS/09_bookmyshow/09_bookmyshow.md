@@ -26,7 +26,7 @@ BMS ka APNA                    -                  -                   seat HOLD 
 Click karke wahi kadam: [banking kadam 3 (key)](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) ·
 [banking kadam 4 (ek query)](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) ·
 [payment kadam 2 (PSP)](../06_payment_system/06_payment_system.md#kadam-2-bank-se-wallet-me-2000-psp) ·
-[payment kadam 4 (webhook)](../06_payment_system/06_payment_system.md#kadam-4-pakka-kaise-pata-chale--hamara-server-gira-pending-pehle-webhook-poochne-wala-job)
+[payment kadam 4 (webhook)](../06_payment_system/06_payment_system.md#kadam-4-pakka-kaise-pata-chale--hamara-server-gira-initiated-pehle-webhook-poochne-wala-job)
 
 ---
 
@@ -149,7 +149,7 @@ Koi job chahiye jo 5 min baad seat FREE kare? Zaroori nahi. Shart query me hi li
 Ek chhota job har minute purane HELD saaf kar deta hai, bas taaki seat map pe A1 jaldi khaali dikhe.
 
 Arpan ne 5:30 min pe pay kiya, hold mar chuka tha, aur seat Ravi le gaya? Paisa kat chuka, seat nahi mili ->
-paisa wapas (refund). Ye [payment file](../06_payment_system/06_payment_system.md#kadam-4-pakka-kaise-pata-chale--hamara-server-gira-pending-pehle-webhook-poochne-wala-job) wala hi hissa hai (PSP, PENDING, webhook).
+paisa wapas (refund). Ye [payment file](../06_payment_system/06_payment_system.md#kadam-4-pakka-kaise-pata-chale--hamara-server-gira-initiated-pehle-webhook-poochne-wala-job) wala hi hissa hai (PSP, PENDING, webhook).
 
 Par 9 baje ke show ka seat map lakhon log dekh rahe hain, book koi-koi kar raha hai. Har "map dekho" pe SQL DB
 se 200 seat padhna. DB padhne me hi ghut raha hai, aur Arpan ki booking query bhi dheemi ho gayi.
@@ -262,7 +262,7 @@ dobara Pay : B-77 -> row pehle se  -> "ho chuka", wahi purana jawab. Paisa dobar
 ```
 
 **2. Paisa bank se ([payment file](../06_payment_system/06_payment_system.md#kadam-2-bank-se-wallet-me-2000-psp) wala hi):** BMS khud bank se baat nahi karta. Payment file ka raasta: PSP
-(payment company, jaise Razorpay), pehle PENDING, phir PSP ka webhook "SUCCESS".
+(payment company, jaise Razorpay), pehle INITIATED, call ke baad PENDING, phir PSP ka webhook "SUCCESS".
 
 **3. Webhook aaya, tab seat pakki (BMS ka jod):**
 
