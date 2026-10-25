@@ -70,13 +70,6 @@ flowchart LR
     style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-```
-Arpan --file--> Upload Server --1. file bhejo, jawab ruko--> Validator (2-3 sec)
-                     |--2. file rakho--> S3
-                     |--3. "ho gayi" likho--> DB
-Arpan <-- "ho gaya" (3+ sec baad)
-```
-
 Jab tak din me thodi file aati hain, ye chalta hai. Seedha hai aur sab ek jagah hai.
 
 ### DB kaunsa: SQL ya NoSQL?
@@ -114,14 +107,6 @@ flowchart LR
     W -->|"T-101 = DONE"| D
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-```
-Arpan --file--> Upload Server --> S3 (file) + DB (T-101 = JAANCH HO RAHI)
-                     |--"T-101 jaancho"--> Kafka (line)
-Arpan <-- "T-101" (turant, ~100 ms)
-                     Worker <-- line se uthao --> Validator (3 sec) --> DB: T-101 = DONE
-Arpan --"T-101 ka haal?"--> DB --> "DONE"
 ```
 
 Is tareeke ko **async + tracking ID** kehte hain: kaam peeche hota hai, aur haal dekhne ke liye ek number milta hai.
@@ -270,11 +255,6 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-```
-Arpan --"T-101 ka haal?"--> Redis: T-101 = JAANCH HO RAHI    (~1 ms, DB ko chhua bhi nahi)
-Worker: jaanch khatam --> DB: T-101 = DONE  +  Redis: T-101 = DONE   (dono saath badlo)
-```
-
 Ek dhyaan rakhna hai: haal jab badle, Worker **DB ke saath Redis bhi** badle. Warna Arpan ko DB me DONE ke baad
 bhi Redis se purana "JAANCH HO RAHI" dikhta rahega. Ye cache wala hi sabak hai.
 
@@ -335,11 +315,6 @@ flowchart LR
     A["Arpan"] <-->|"T-101 download -> parchi (5 min)"| U
     A -->|"seedha le"| S3[("S3<br/>bucket band")]
     style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-```
-Ravi  --"T-101 download"--> Server: maalik = arpan, tu ravi -> 403
-Arpan --"T-101 download"--> Server: maalik check OK -> parchi (S3 link, 5 min) -> Arpan seedha S3 se le
 ```
 
 Upload me parchi (kadam 3) aur download me parchi, dono me file hamare server se nahi guzarti, aur dono ki umar
