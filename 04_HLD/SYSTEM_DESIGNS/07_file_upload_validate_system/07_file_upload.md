@@ -220,3 +220,34 @@ hai, nahi hai to FAILED likh deti hai. Ye aakhri jaal hai, agar S3 ki khabar bhi
 
 Par 31 March aaya. 2 lakh log file daal ke har 2 second app refresh kar rahe hain: "T-101 ka haal?". Har baar DB
 se poochha ja raha hai. Likhna kam hai, par padhna itna zyada ki DB ghutno pe aa gaya.
+
+### Kadam 6: 31 March, sab har 2 sec haal poochh rahe (Redis me haal)
+
+2 lakh log har 2 second "T-101 ka haal?" poochh rahe hain. Ye har second 1 lakh sawaal hain, sab DB pe. Par haal
+badalta kitni baar hai? Ek file ka poore safar me sirf 3-4 baar: UPLOAD HO RAHI, JAANCH HO RAHI, DONE. Baaki sab
+sawaal wahi purana jawab dobara maang rahe hain.
+
+Ilaaj: haal **Redis** me rakho (RAM, ~1 ms). "T-101 ka haal?" ab Redis se jawab paata hai, DB tak jaata hi nahi.
+
+```mermaid
+flowchart LR
+    A["Arpan"] -->|"T-101 ka haal? (har 2 sec)"| R[("Redis<br/>T-101 = JAANCH HO RAHI")]
+    W["Worker"] -->|"T-101 = DONE"| D[("DB")]
+    W -->|"saath me T-101 = DONE"| R
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+```
+Arpan --"T-101 ka haal?"--> Redis: T-101 = JAANCH HO RAHI    (~1 ms, DB ko chhua bhi nahi)
+Worker: jaanch khatam --> DB: T-101 = DONE  +  Redis: T-101 = DONE   (dono saath badlo)
+```
+
+Ek dhyaan rakhna hai: haal jab badle, Worker **DB ke saath Redis bhi** badle. Warna Arpan ko DB me DONE ke baad
+bhi Redis se purana "JAANCH HO RAHI" dikhta rahega. Ye cache wala hi sabak hai.
+
+**Redis kyun, DB ki copy (read replica) kyun nahi:** copy bhi madad karti hai, aur saath me rakh sakte hain. Par
+1 lakh / sec ke liye RAM wala Redis sasta aur tez hai. Copy thodi der peeche bhi chal sakti hai, to Arpan ko DONE
+ke baad bhi purana haal dikh sakta hai.
+
+Par Arpan ne ek file nahi, poora folder daala, 1,000 file ka. Ab use 1,000 tracking number to nahi chahiye. Use ek
+hi baat jaanni hai: "mera folder kahan tak pahuncha?"
