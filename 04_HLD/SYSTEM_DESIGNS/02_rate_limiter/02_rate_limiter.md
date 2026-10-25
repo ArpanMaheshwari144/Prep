@@ -473,7 +473,8 @@ CASE D  INCR ke baad, EXPIRE se pehle crash (USE_LUA = false)
                       RUN 1: count 1, CRASH · TTL -> -1
                       RUN 2: count 2..5 ALLOW, 6..7 429, har baar TTL
                              -1 -> key KABHI nahi mitegi, HAMESHA block
-FIX D   USE_LUA = true   request 10..14: count 10 TTL 58 · 11/57 · 12/56 · 13/56 · 14/55 -> 1 min me free
+FIX D   USE_LUA = true   pehle phansi key ek baar DEL (Lua purani phansi key theek nahi karta: umar sirf c == 1 pe),
+                         phir count 1 TTL 60 · 2 · 3 ... -> nayi key kabhi bina umar ke nahi banegi
 
 TTL:  -1 = key hai, timer nahi · -2 = key hi nahi · 58 = 58 sec baaki
 ```
@@ -481,7 +482,8 @@ TTL:  -1 = key hai, timer nahi · -2 = key hi nahi · 58 = 58 sec baaki
 FIX:  B -> faisla pehle se: fail-open (aam API) / fail-closed (login, OTP) + replica
       C -> replica / AOF on. limiter me aksar chalne do (1 min ki ginti, paisa nahi). paisa hota to nahi.
       D -> Lua: INCR + EXPIRE ek command, Redis single-thread -> script beech me nahi rukti
-           (EXPIRE NX se nahi bachta: wo bhi alag call hai, beech me crash wahi)
+           (doosra raasta: HAR request pe INCR ke baad EXPIRE key 60 NX -> umar na ho to lagti, phansi key
+            agli request pe theek. Sirf pehli request pe bheja to wahi crash wali dikkat.)
            pehle:  app --INCR--> Redis  [crash]  app --EXPIRE--> Redis
            Lua:    app --EVAL(INCR + EXPIRE)--> Redis
 ```
