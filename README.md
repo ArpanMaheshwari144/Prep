@@ -3,7 +3,7 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase, build done):** roz HLD ek design (hand notes + mock) · DSA 1 redo + grill 5 · Java / Spring DIN (7 din ka chakkar) · PR drill (ek din chhod ke) · apply. STAR hafte me ek kahani.
+> ★ **Abhi (DELIVERY + APPLY phase, build done):** roz HLD ek design (hand notes + mock) · DSA 1 redo + grill 5 · Java / Spring DIN (7 din ka chakkar) · PR drill (hafte me ek baar, 26-Oct) · apply. STAR hafte me ek kahani.
 > HLD = ek kahani: har dikkat ka ek shabd (CUE) yaad, kahani apne aap ban jaati. Interview me wahi shabd bolte jao.
 
 ```
