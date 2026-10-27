@@ -1,5 +1,19 @@
 <h1 align="center">DSA PATTERN SHEET</h1>
 
+## ★ PEHLE YE — har problem pe (30 sec)
+
+```
+1. INPUT dekho, story nahi: sorted? "K"? negatives? grid? tree/node? intervals? edges? -> family shortlist
+2. Shabd pakdo: SUBARRAY / SUBSEQUENCE / SUBSET ?  ·  MAX / MIN / COUNT / EXACT ?
+3. Kisi ka LABEL mat lo ("reel ne SW bola") -> khud dekho: sach me aisa hai?
+4. Pattern nahi aaya -> BRUTE likho -> "baar-baar SAME kya nikal raha?" -> use STORE karo -> wo DS = pattern
+5. "X jaisa hai, bas ye badla" laga -> poochho: X me jo THI HI NAHI, wo line kya hai? (edge wahin)
+6. Code ke BAAD, submit se pehle: us pattern block ki ★ EDGE line + ek chhota dushman-example chalao
+```
+> Detail neeche: DECISION (input + signal table) · EDGE kyun fisalta · NAAM-SE-CONFUSE (A-D).
+
+---
+
 ## ★★★ DECISION — kaunsa DS/technique KAB aur KYUN (11-Aug, Arpan-diagnosed; sabse-upar)
 
 > Neeche wali sheet PATTERNS deti hai (kya hote hain). Ye section DERIVATION deta hai — *"naya problem dekh ke kaise pata karun kaunsa lagega."*
@@ -90,88 +104,9 @@
 > dushman-example chalao. Sheet dekh lene me koi ghaata nahi — ye DERIVE hone wali cheezein
 > hain hi nahi, PATA honi chahiye — aur PATA-hui cheez sirf REPETITION se tikti hai.
 
-```
-PROBLEM / TEMPLATE            EDGE — wo EK line                        kyun (chhota dushman-case)
------------------------------------------------------------------------------------------------
-max path sum (tree)           left = max(0, left)                      2 ke neeche -1:
-                              right = max(0, right)                    arm lene se 1, chhodne se 2
-                              "0 = wo arm li hi nahi"                  -> negative arm LENA nuksaan
-
-min/max koi bhi DP            min le raha  -> init INT_MAX             coin-change: take=0 daala
-                              max le raha  -> init INT_MIN             -> 0 hamesha min jeet gaya
-                              0 sirf tab jab 0 VALID answer ho
-                              ★ init likhte waqt HAATH RUKE:            aankh se code padhne pe
-                                "min le raha -> default MAX?"           ye bug DIKHTA HI NAHI
-
-circular subarray (Kadane)    answer = max( normal-Kadane,             sab negative ho to
-                                            total - minSubarray )      total-min = 0 aa jaata
-                              ★ all-negative case alag se dekho        -> normal-Kadane hi sahi
-
-prefix + hashmap (sum == K)   map[0] = 1  SE SHURU karo                [3], K=3: bina is line ke
-                              (running-K milne se pehle)               poore-array wala case chhoot jaata
-
-binary search ON ANSWER       lo = max(arr)   (isse kam me sabse        ship-in-D-days:
-                              hi bhaari item uth nahi payega)          lo=0 rakha to GALAT ans
-                              hi = sum(arr)                            ([3,10], D=2 -> 5 aata, sahi 10)
-
-sliding window (variable)     shrink ke baad map se ERASE karo         count 0 ho gaya par key
-                              jab count 0 ho jaye                      padi rahi -> map.size() jhooth
-                                                                       bolegi -> window galat
-
-two pointer (sorted)          duplicate skip karna hai kya?            3-sum: bina skip ke
-                              (3-sum haan, 2-sum nahi)                 ek hi triplet kai baar
-
-fast-slow (linked list)       loop ka SHURU nikalna ho ->              sirf "loop hai ya nahi"
-                              milne ke baad slow ko HEAD pe            poocha to ye step nahi chahiye
-                              bhejo, dono 1-1 step
-
-monotonic stack               stack me INDEX rakho, value nahi         daily temperatures:
-                              (kyunki DOORI chahiye hoti hai)          i - stack.top() chahiye
-
-BFS grid / word ladder        visited ka kaam ANDAR-DAALTE-WAQT        nikaalte waqt mark kiya to
-                              karo, nikaalte waqt nahi                 ek node kai baar queue me
-
-heap — top K                  MIN-heap of size k                      max-heap me sab daal ke
-                              (max-heap of everything NAHI)            k pop = O(n log n), haar gaye
-
-heap — COMPARATOR ka chihn    ★ B KO DEKHO:                           a<b likha -> sabse BADA
-                                 b BADA wala   ->  MAX-heap           top pe aa gaya -> merge-k
-                                 b CHHOTA wala ->  MIN-heap           ne ulta order de diya
-                                 a < b -> b bada   -> MAX
-                                 a > b -> b chhota -> MIN
-
-heap — pointer/object daalo   push se PEHLE null check                 merge-k: khaali list
-                              (khaali list, khaali node)                push ho gayi -> top()->val
-                                                                        pe SEGFAULT, test tak
-                                                                        pahuncha hi nahi
-```
-
-> ★★ **COMPARATOR — "B KO DEKHO" (Arpan ka apna rule, ratta nahi):**
-> ```
-> comparator me sirf ye dekho ki  b  kis taraf pada hai:
->
->     return a < b;      ->  b BADA wala hai     ->  MAX-heap
->     return a > b;      ->  b CHHOTA wala hai   ->  MIN-heap
-> ```
-> **Ye sirf trick nahi, theek bhi hai.** Comparator asal me poochta hai *"kya `a` ki priority `b`
-> se KAM hai?"*. `a < b` likhne ka matlab hua "chhota = kam priority" -> **bada upar** = max-heap.
-> "b ko dekho" seedha wahi baat pakad leta hai, bina poora vaakya sochre.
->
-> Bade objects pe bhi wahi:
-> ```
-> return a->val > b->val;      ->  b chhota  ->  MIN-heap
-> return a.dist  < b.dist;     ->  b bada    ->  MAX-heap
->
-> priority_queue<int>                             -> max-heap (default)
-> priority_queue<int, vector<int>, greater<int>>  -> min-heap
-> ```
-> (Doosra tareeka, agar kabhi shak ho: comparator = SORT ka niyam. `a<b` = ascending `[1,3,5,9]`.
-> `sort()` **shuru** se padhta hai, `priority_queue` **aakhir** se uthata hai -> 9 top pe = max-heap.
-> Dono raaste ek hi jagah pahunchte hain.)
-
-> **ISE KAISE USE KARNA:** code likhne se PEHLE nahi — code likhne ke BAAD, submit se pehle,
-> ek nazar. "meri problem is list me hai? to wo line daali maine?"
-> Aur nayi edge mile to yahin ek line jodo — nayi file kabhi nahi.
+> **AB EDGE KAHAN HAI:** har edge apne pattern block me, `★ EDGE:` line pe (code block ke andar, BROAD IDEA ke
+> neeche). Redo se pehle block padhte hi saamne aayegi. Code likhne ke BAAD, submit se pehle, us line pe ek nazar.
+> Nayi edge mile to usi block me ek `★ EDGE:` line jodo — nayi file kabhi nahi.
 
 ---
 
@@ -273,6 +208,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ```
 
  BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
+ ★ EDGE (sorted 2-ptr): duplicate skip karna hai kya? 3-sum HAAN, 2-sum nahi (bina skip ek triplet kai baar).
+ ★ MILTE-JULTE (container / trapping / histogram): upar "NAAM-SE-CONFUSE" -> A dekh.
 
 ── FAMILY: slow/fast OVERWRITE (fast scan, rakhne wala slow pe; teeno same skeleton) ──
 
@@ -513,6 +450,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ```
 
  KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
+ ★ EDGE (variable window): shrink me count 0 ho jaye to map se ERASE karo, warna map.size() jhooth bolega.
 
  ONE SKELETON (fixed + variable DONO isi pe):
      int i = 0, j = 0;                       // dono 0 se: shuru me window khaali
@@ -829,6 +767,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ```
 
  BROAD IDEA: hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
+ ★ MILTE-JULTE (longest consecutive vs LIS): upar "NAAM-SE-CONFUSE" -> B dekh.
 
  COMMON SKELETON (seen / complement / count family -- ek pass):
     map/set banao                      // kabhi PRELOAD: two-sum khaali · subarray-sum-k -> mp{0:1}
@@ -987,6 +926,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ```
 
  BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
+ ★ EDGE (prefix + hashmap, sum == K): map[0] = 1 se SHURU karo. [3], K=3: bina iske poora-array wala case chhoot jaata.
+ ★ MILTE-JULTE (max sum vs count sum == K): upar "NAAM-SE-CONFUSE" -> C dekh.
 
 ── FAMILY: "assign PEHLE, update BAAD" (pehle current index ka result rakho, PHIR running value badlo) ──
 
@@ -1189,6 +1130,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ```
 
  BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
+ ★ EDGE (monotonic stack): stack me INDEX rakho, value nahi (DOORI chahiye: i - st.top()).
+ ★ MILTE-JULTE (histogram vs container / trapping): upar "NAAM-SE-CONFUSE" -> A dekh.
 
 ── FAMILY: MONOTONIC stack (INDEX stack, curr vs top compare -> pop + us index ka ans) ──
      // ek hi skeleton, sirf 3 cheez badalti:
@@ -1391,6 +1334,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  BS ko poori sorted array nahi chahiye: bas ek comparison se "kaunsa half phenko" tay ho (find-peak bhi).
  BOUNDARY RULE: jis boundary pe element KHUD answer ho sakta -> equality INCLUDE (>= / <=).
     jahan mid==target pehle hi return ho gaya -> < ya <= farak nahi. galat >/< = off-by-one -> chhota dry-run.
+ ★ EDGE (BS on answer): lo = max(arr) (isse kam me bhaari item uthta hi nahi), hi = sum(arr).
+         ship-in-D-days [3,10], D=2: lo=0 rakha -> 5 aata, sahi 10.
 
  high=mid  vs  high=mid-1 (EK SAWAAL: "mid KHUD answer ho sakta abhi bhi?"):
     TARGET-REJECT (basic / rotated search: mid != target pakka)   -> high = mid-1  + while (low <= high)
@@ -1619,6 +1564,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ```
 
  BROAD IDEA: pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
+ ★ EDGE (fast-slow): loop ka SHURU chahiye -> milne ke baad slow ko HEAD pe, dono 1-1 step.
+         sirf "loop hai ya nahi" poocha to ye step nahi chahiye.
 
  LOOP-CONDITION (while me kya likhun) -- ek sawaal: aakhri node ka bhi kaam hai, ya sirf uske NEXT ko dekhna?
      while (curr != NULL)        // har node ka apna kaam (get / remove / count / print) -> ZYADATAR yahi
@@ -1967,6 +1914,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ```
 
  BROAD IDEA: ek value AAGE carry karo (min/sum), har step MAX update. single pass, O(1) space.
+ ★ EDGE (circular): ans = max(normal kadane, total - minSubarray). SAB NEGATIVE -> total-min = 0 aata,
+         tab normal kadane hi sahi (alag se dekho).
+ ★ MILTE-JULTE (max sum vs count sum == K): upar "NAAM-SE-CONFUSE" -> C dekh.
 
  ▸ BUY/SELL STOCK (LC-121)
      // aaj becho = aaj ka daam MINUS ab tak ka sasta
@@ -2113,6 +2063,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 
  BROAD IDEA: har tree-Q = RECURSION on TreeNode(val, left, right).
              3 cheez -> BASE (null pe return) · dono taraf RECURSE · COMBINE.
+ ★ EDGE (max path sum): left = max(0, left) · right = max(0, right) -> "0 = wo arm li hi nahi".
+         2 ke neeche -1: arm lo to 1, chhodo to 2 -> negative arm LENA nuksaan.
 
  ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
 
@@ -2402,6 +2354,8 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
  BROAD IDEA: graph = nodes + edges. TREE bhi ek graph hai (special) -> Graph = Tree + 2 cheez:
    (1) CYCLE ho sakti -> VISITED chahiye (warna A->B->C->A infinite loop)
    (2) pointers ki jagah ADJACENCY LIST.
+ ★ EDGE (BFS grid / word ladder): visited ANDAR DAALTE waqt mark karo, nikaalte waqt nahi
+         (warna ek node kai baar queue me).
 
  TREE se transfer: BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]).
    bas 'visited' add.
@@ -2751,6 +2705,29 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 >       BST ka INORDER khud sorted deta hai -> k-1 wala element, heap ki zaroorat nahi
 > ``` (priority_queue: min/max top pe)
 
+> ★★ **COMPARATOR — "B KO DEKHO" (Arpan ka apna rule, ratta nahi):**
+> ```
+> comparator me sirf ye dekho ki  b  kis taraf pada hai:
+>
+>     return a < b;      ->  b BADA wala hai     ->  MAX-heap
+>     return a > b;      ->  b CHHOTA wala hai   ->  MIN-heap
+> ```
+> **Ye sirf trick nahi, theek bhi hai.** Comparator asal me poochta hai *"kya `a` ki priority `b`
+> se KAM hai?"*. `a < b` likhne ka matlab hua "chhota = kam priority" -> **bada upar** = max-heap.
+> "b ko dekho" seedha wahi baat pakad leta hai, bina poora vaakya sochre.
+>
+> Bade objects pe bhi wahi:
+> ```
+> return a->val > b->val;      ->  b chhota  ->  MIN-heap
+> return a.dist  < b.dist;     ->  b bada    ->  MAX-heap
+>
+> priority_queue<int>                             -> max-heap (default)
+> priority_queue<int, vector<int>, greater<int>>  -> min-heap
+> ```
+> (Doosra tareeka, agar kabhi shak ho: comparator = SORT ka niyam. `a<b` = ascending `[1,3,5,9]`.
+> `sort()` **shuru** se padhta hai, `priority_queue` **aakhir** se uthata hai -> 9 top pe = max-heap.
+> Dono raaste ek hi jagah pahunchte hain.)
+
 ```
  BROAD IDEA: baar-baar MIN ya MAX + data BADALTA -> HEAP (sort mahenga). top O(1), push/pop O(log n).
    C++ syntax:  priority_queue<int> = MAX-heap  ·  priority_queue<int, vector<int>, greater<int>> = MIN-heap.
@@ -2758,6 +2735,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
    REAL: emergency-room (severity top pe).
    KAB: top-K · k-th largest/smallest · merge-k-lists · Dijkstra · median-stream.
    MIRROR-RULE: "k sabse BADE" -> MIN-heap size k ; "k sabse CHHOTE" -> MAX-heap size k. O(n log k).
+ ★ EDGE (top K): MIN-heap of size k (sab max-heap me daal ke k pop = O(n log n), haar gaye).
+ ★ EDGE (comparator): B KO DEKHO -> a < b = b bada = MAX-heap · a > b = b chhota = MIN-heap (neeche poora).
+ ★ EDGE (pointer push): push se PEHLE null check (merge-k: khaali list push -> top()->val pe SEGFAULT).
 
 ── FAMILY: heap of size k / top-K (size > k pe top EVICT, k bache) ──
 
@@ -3178,6 +3158,9 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
    ARC: 1) plain recursion (relation + base) -> 2) overlap dekho (same call 2x) -> 3) memo -> [4) bottom-up]
    TOP-DOWN = recursion + dp[] cache (sochne me aasaan) · BOTTOM-UP = base bharo, loop se dp[i] chhote se bade
    KAB DP: "kitne WAYS" · "min/max cost" · "kya possible" + har step CHOICE + subproblem OVERLAP.
+ ★ EDGE (min / max DP): min le raha -> init INT_MAX · max le raha -> INT_MIN · 0 sirf jab 0 VALID answer ho.
+         coin change: take = 0 daala -> 0 hamesha min jeet gaya. ★ init likhte waqt HAATH RUKE.
+ ★ MILTE-JULTE (LIS vs longest consecutive): upar "NAAM-SE-CONFUSE" -> B dekh.
 
  MEMO SKELETON (har DP me SAME 3 line):
      vector<int> dp(n + 1, -1);                  // -1 = abhi nahi nikala (0 bhi asli jawab ho sakta)
