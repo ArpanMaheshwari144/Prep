@@ -281,6 +281,335 @@ for (int fast = 0; fast < n; fast++) {
 
 ---
 
+## 02 SLIDING WINDOW
+
+**KAB:** CONTIGUOUS subarray / substring + "sabse lambi / sabse chhoti / max / count" maanga
+
+**CODE (ek hi dhaancha, fixed + variable dono):**
+```cpp
+int i = 0, j = 0, ans = 0;
+while (j < n) {
+    // arr[j] window me ADD (sum / freq-map / zeros ...)
+    while (window KHARAB) {          // size fixed (k) ho to IF, condition pe ho to WHILE
+        // arr[i] window se REMOVE
+        i++;
+    }
+    ans = max(ans, j - i + 1);       // LONGEST: shrink ke BAAD record
+    j++;
+}
+// SHORTEST: jab tak VALID hai tab tak shrink, aur record shrink loop ke ANDAR (ans = min)
+// COUNT:    count += j - i + 1
+```
+
+**DHYAAN:**
+- shrink me count 0 ho jaaye to map se ERASE karo, warna `mp.size()` galat bolega
+- NEGATIVE numbers ho to SW nahi chalti -> PREFIX + MAP
+- "lagaataar" par har server / user ka alag -> upar NAAM-SE-CONFUSE E (map + ginti)
+
+**POORA:** [PATTERN 2](PATTERN_SHEET.md#pattern-2--sliding-window)
+
+---
+
+## 03 HASHING
+
+**KAB:** "pehle dekha?" · "jodi / complement hai?" · "kitni baar aaya?" · grouping (anagram)
+
+**CODE (seen / complement / count, ek pass):**
+```cpp
+unordered_map<int, int> mp;          // kabhi PRELOAD: subarray-sum-k me mp[0] = 1
+for (int i = 0; i < n; i++) {
+    if (mp.count(target - nums[i]))  // CHECK pehle
+        return {mp[target - nums[i]], i};
+    mp[nums[i]] = i;                 // UPDATE baad (warna x khud se match)
+}
+```
+
+**CODE (per-key ginti, jaise server streak):**
+```cpp
+unordered_map<string, int> mp;       // key = kiska (server / user)
+for (auto &s : logs) {
+    stringstream ss(s);
+    string server, code, msg;
+    ss >> server >> code >> msg;
+    if (msg == "error") {
+        mp[server]++;
+        if (mp[server] >= 3) { count++; mp[server] = 0; }
+    }
+    else mp[server] = 0;             // toota = 0, ghatao nahi
+}
+```
+
+**DHYAAN:**
+- 1-to-1 mapping (isomorphic / word pattern) -> DO map, ek kaafi nahi
+- longest consecutive vs LIS -> upar NAAM-SE-CONFUSE B
+
+**POORA:** [PATTERN 3](PATTERN_SHEET.md#pattern-3--hashing)
+
+---
+
+## 04 PREFIX SUM
+
+**KAB:** range sum baar-baar · "kitne subarray ka sum = K" (negative bhi) · left sum = right sum
+
+**CODE (prefix + map, sum == K):**
+```cpp
+unordered_map<int, int> mp;
+mp[0] = 1;                           // SHURU se: poora prefix khud K ho to
+int sum = 0, count = 0;
+for (int x : nums) {
+    sum += x;
+    if (mp.count(sum - k)) count += mp[sum - k];
+    mp[sum]++;
+}
+```
+
+**DHYAAN:**
+- `mp[0] = 1` bhoolna nahi ([3], K=3)
+- divisible by k: C++ me minus % minus deta -> `((sum % k) + k) % k`
+- max sum vs count sum == K -> upar NAAM-SE-CONFUSE C
+
+**POORA:** [PATTERN 4](PATTERN_SHEET.md#pattern-4--prefix-sum)
+
+---
+
+## 05 MATRIX
+
+**KAB:** 2D matrix pe index ka khel: spiral, transpose, set zeroes, row / col ginti
+
+**CODE (spiral, 4 boundary):**
+```cpp
+int top = 0, bottom = m - 1, left = 0, right = n - 1;
+while (top <= bottom && left <= right) {
+    for (int j = left; j <= right; j++) ans.push_back(mat[top][j]);
+    top++;
+    for (int i = top; i <= bottom; i++) ans.push_back(mat[i][right]);
+    right--;
+    if (top <= bottom) {
+        for (int j = right; j >= left; j--) ans.push_back(mat[bottom][j]);
+        bottom--;
+    }
+    if (left <= right) {
+        for (int i = bottom; i >= top; i--) ans.push_back(mat[i][left]);
+        left++;
+    }
+}
+```
+
+**DHYAAN:**
+- islands / rotting / max area matrix jaise dikhte hain par GRAPH (BFS / DFS) hain -> 13
+- search 2D matrix = sorted -> BINARY SEARCH (07)
+- copy-pen pe grid bana ke index chalao
+
+**POORA:** [PATTERN 5](PATTERN_SHEET.md#pattern-5--matrix)
+
+---
+
+## 06 STACK
+
+**KAB:** brackets match · "har element ka agla / pichhla bada ya chhota" · span · histogram
+
+**CODE (monotonic stack, next greater):**
+```cpp
+stack<int> st;                       // INDEX rakho
+vector<int> ans(n, -1);
+for (int i = 0; i < n; i++) {
+    while (!st.empty() && nums[st.top()] < nums[i]) {   // < = GREATER dhoondh rahe
+        ans[st.top()] = nums[i];     // ya doori: i - st.top()
+        st.pop();
+    }
+    st.push(i);
+}
+// SMALLER -> > · PREVIOUS -> loop ulta · CIRCULAR -> 2n loop, i % n
+```
+
+**DHYAAN:**
+- stack me INDEX rakho, value nahi (doori chahiye hoti hai)
+- histogram vs container / trapping -> upar NAAM-SE-CONFUSE A
+- generate parentheses stack nahi, BACKTRACKING (16)
+
+**POORA:** [PATTERN 6](PATTERN_SHEET.md#pattern-6--stack)
+
+---
+
+## 07 BINARY SEARCH
+
+**KAB:** SORTED + ek jagah / threshold dhoondhna · "MIN / MAX value jisme condition sach" (answer pe BS)
+
+**CODE (basic):**
+```cpp
+int low = 0, high = n - 1;
+while (low <= high) {
+    int mid = low + (high - low) / 2;
+    if (nums[mid] == target) return mid;
+    else if (nums[mid] < target) low = mid + 1;
+    else high = mid - 1;
+}
+```
+
+**CODE (answer pe BS, jaise koko / ship):**
+```cpp
+int low = *max_element(...), high = accumulate(...);   // lo = max, hi = sum
+while (low < high) {
+    int mid = low + (high - low) / 2;
+    if (possible(mid)) high = mid;   // mid khud answer ho sakta
+    else low = mid + 1;
+}
+return low;
+```
+
+**DHYAAN:**
+- mid KHUD answer ho sakta -> `high = mid` + `while (low < high)` · nahi -> `high = mid - 1` + `<=`
+- `high = mid` ke saath `<=` = infinite loop
+- answer pe BS: `lo = max(arr)`, 0 nahi
+
+**POORA:** [PATTERN 7](PATTERN_SHEET.md#pattern-7--binary-search)
+
+---
+
+## 08 LINKED LIST
+
+**KAB:** node / next diya · middle · cycle · ulta karo · nth from end · do list jodo
+
+**CODE (reverse):**
+```cpp
+ListNode *prev = NULL, *curr = head;
+while (curr != NULL) {
+    ListNode *next = curr->next;     // pehle aage ka bachao
+    curr->next = prev;
+    prev = curr;
+    curr = next;
+}
+return prev;
+```
+
+**CODE (fast / slow):**
+```cpp
+ListNode *slow = head, *fast = head;
+while (fast != NULL && fast->next != NULL) {
+    slow = slow->next;
+    fast = fast->next->next;
+    if (slow == fast) return true;   // cycle
+}
+```
+
+**DHYAAN:**
+- cycle ka SHURU chahiye -> milne ke baad slow ko head pe, dono 1-1 step
+- jodna / hatana -> DUMMY node (head bhi badal sakta)
+- har node ka kaam -> `curr != NULL` · aakhri pe rukna -> `curr->next != NULL`
+
+**POORA:** [PATTERN 8](PATTERN_SHEET.md#pattern-8--linked-list)
+
+---
+
+## 09 DESIGN
+
+**KAB:** "class banao": HashMap / HashSet built-in ke bina · LRU cache · get / put O(1)
+
+**CODE (LRU ka dhaancha):**
+```cpp
+// list<pair<int,int>> dll;                          // aage = taaza, peeche = purana
+// unordered_map<int, list<pair<int,int>>::iterator> mp;   // key -> list me jagah
+// get(key): nahi -> -1 · hai -> uthake AAGE rakho, value lautao
+// put(key, val): hai -> hatao · bhar gaya -> PEECHE wala hatao (mp se bhi) · naya AAGE
+```
+
+**DHYAAN:**
+- HashMap: array of buckets, har bucket ek list · `index = hash(key) % size` · same key aaye to update
+- LRU me map se bhi hatana mat bhoolna
+
+**POORA:** [PATTERN 9](PATTERN_SHEET.md#pattern-9--design-data-structure)
+
+---
+
+## 10 KADANE
+
+**KAB:** subarray ka MAX sum / product · stock ka ek baar kharido-becho
+
+**CODE (max sum):**
+```cpp
+int sum = 0, maxi = INT_MIN;
+for (int x : nums) {
+    sum += x;
+    maxi = max(maxi, sum);
+    if (sum < 0) sum = 0;            // minus me gaya -> naya shuru
+}
+```
+
+**CODE (max product: min bhi saath):**
+```cpp
+int maxP = nums[0], minP = nums[0], ans = nums[0];
+for (int i = 1; i < n; i++) {
+    if (nums[i] < 0) swap(maxP, minP);   // minus x minus = bada
+    maxP = max(nums[i], maxP * nums[i]);
+    minP = min(nums[i], minP * nums[i]);
+    ans = max(ans, maxP);
+}
+```
+
+**DHYAAN:**
+- circular: `max(normal, total - minSubarray)`, par SAB negative ho to sirf normal
+- max sum vs count sum == K -> upar NAAM-SE-CONFUSE C
+
+**POORA:** [PATTERN 10](PATTERN_SHEET.md#pattern-10--kadane-running-value--max-update)
+
+---
+
+## 11 BIT MANIPULATION
+
+**KAB:** har number 2 baar, ek akela · extra memory nahi
+
+**CODE:**
+```cpp
+int x = 0;
+for (int n : nums) x ^= n;           // a ^ a = 0, a ^ 0 = a
+return x;
+```
+
+**DHYAAN:**
+- sorted / 1..n / dohra -> XOR se pehle upar NAAM-SE-CONFUSE D dekh
+
+**POORA:** [PATTERN 11](PATTERN_SHEET.md#pattern-11--bit-manipulation-xor)
+
+---
+
+## 12 TREES
+
+**KAB:** TreeNode diya · depth / height / path / same / mirror · level-wise · BST
+
+**CODE (har tree sawaal ka dhaancha):**
+```cpp
+int solve(TreeNode *root) {
+    if (root == NULL) return BASE;   // null pe ruko
+    int left = solve(root->left);
+    int right = solve(root->right);
+    return COMBINE(left, right);     // max / && / + ...
+}
+```
+
+**CODE (level order):**
+```cpp
+queue<TreeNode*> q;
+q.push(root);
+while (!q.empty()) {
+    int sz = q.size();               // is level ke kitne
+    for (int i = 0; i < sz; i++) {
+        TreeNode *node = q.front();
+        q.pop();
+        if (node->left) q.push(node->left);
+        if (node->right) q.push(node->right);
+    }
+}
+```
+
+**DHYAAN:**
+- max path sum: `left = max(0, left)` (minus wali arm mat lo)
+- parent ko height chahiye aur answer kuch aur -> height RETURN, answer GLOBAL (diameter)
+- BST ka inorder = sorted
+
+**POORA:** [PATTERN 12](PATTERN_SHEET.md#pattern-12--trees-recursion)
+
+---
+
 ## 13 GRAPHS
 
 **KAB:** edges / adjacency list / grid diya · "kitne group?" · "A se B pahunch sakte?" · "kam se kam kitne step?"
@@ -331,3 +660,126 @@ for (int i = 0; i < n; i++) {
 - dependency / kram -> topo (indegree + queue) · weight wale raaste -> Dijkstra (min-heap + dist[])
 
 **POORA:** [PATTERN 13](PATTERN_SHEET.md#pattern-13--graphs-bfsdfs--visited)
+
+---
+
+## 14 HEAP
+
+**KAB:** top K / k-th sabse bada ya chhota · baar-baar min / max aur data badal raha · merge K list · median stream
+
+**CODE (top K bade = MIN-heap size k):**
+```cpp
+priority_queue<int, vector<int>, greater<int>> pq;   // MIN-heap
+for (int x : nums) {
+    pq.push(x);
+    if (pq.size() > k) pq.pop();     // sabse chhota bahar, k bade bache
+}
+return pq.top();                     // k-th largest
+```
+
+**DHYAAN:**
+- k sabse BADE -> MIN-heap · k sabse CHHOTE -> MAX-heap
+- comparator: B KO DEKHO -> `a < b` = MAX-heap · `a > b` = MIN-heap
+- pointer push se pehle NULL check (merge K)
+- median stream = DO heap (max + min), size barabar rakho
+
+**POORA:** [PATTERN 14](PATTERN_SHEET.md#pattern-14--heap)
+
+---
+
+## 15 INTERVALS
+
+**KAB:** [start, end] diye · merge · meeting · kitne room · insert
+
+**CODE (merge):**
+```cpp
+sort(intervals.begin(), intervals.end());          // START pe sort
+vector<vector<int>> ans;
+for (auto &it : intervals) {
+    if (ans.empty() || ans.back()[1] < it[0])      // overlap nahi
+        ans.push_back(it);
+    else
+        ans.back()[1] = max(ans.back()[1], it[1]); // overlap -> end badhao
+}
+```
+
+**DHYAAN:**
+- MERGE -> start pe sort · MAX pick / MIN hatao -> END pe sort (greedy) · kitne ek saath -> line sweep
+- touching (2 aur 2) overlap hai ya nahi -> `<` ya `<=` sawaal se tay karo
+
+**POORA:** [PATTERN 15](PATTERN_SHEET.md#pattern-15--intervals)
+
+---
+
+## 16 BACKTRACKING
+
+**KAB:** "SAARE" subsets / permutations / combinations · grid me word dhoondo · N-queens
+
+**CODE (choose -> explore -> un-choose):**
+```cpp
+void solve(int start, vector<int> &temp) {
+    ans.push_back(temp);                 // subsets: har node pe record
+    for (int i = start; i < n; i++) {
+        temp.push_back(nums[i]);         // CHOOSE
+        solve(i + 1, temp);              // EXPLORE (combination sum me reuse -> i)
+        temp.pop_back();                 // UN-CHOOSE
+    }
+}
+// permutations: start nahi, used[] + temp.size() == n pe record
+```
+
+**DHYAAN:**
+- beech me `return solve(...)` doosri branch maar deta hai
+- `else if` mat lagao, dono branch alag `if`
+- grid: visit mark -> explore -> UNMARK
+
+**POORA:** [PATTERN 16](PATTERN_SHEET.md#pattern-16--backtracking-choose--explore--un-choose)
+
+---
+
+## 17 DP
+
+**KAB:** "kitne tareeke" · "min / max cost" · "ho sakta hai?" + har step pe choice + same sawaal baar-baar
+
+**CODE (memo, 3 line):**
+```cpp
+vector<int> dp(n + 1, -1);           // -1 = abhi nahi nikala
+int solve(int i) {
+    if (i < 0) return BASE;          // BASE pe ruk ke socho
+    if (dp[i] != -1) return dp[i];
+    int take = nums[i] + solve(i - 2);
+    int skip = solve(i - 1);
+    return dp[i] = max(take, skip);
+}
+```
+
+**DHYAAN:**
+- min le raha -> invalid = INT_MAX · max -> INT_MIN · 0 sirf tab jab 0 sach me valid ho (coin change)
+- recursion me `string` / `vector` `&` se bhejo, warna har call pe copy (bade test pe TLE)
+- 2 string (LCS / edit distance) -> `dp[i][j]`
+- LIS vs longest consecutive -> upar NAAM-SE-CONFUSE B
+
+**POORA:** [PATTERN 17](PATTERN_SHEET.md#pattern-17--dp-dynamic-programming--recursion--memo)
+
+---
+
+## 18 GREEDY
+
+**KAB:** har step pe abhi ka best chuno aur wo aage bhi best rahe · aksar pehle SORT, phir ek pass
+
+**CODE (jump game: kahan tak pahunch sakte):**
+```cpp
+int reach = 0;
+for (int i = 0; i < n; i++) {
+    if (i > reach) return false;     // yahan tak pahunche hi nahi
+    reach = max(reach, i + nums[i]);
+}
+return true;
+```
+
+**DHYAAN:**
+- greedy tabhi jab abhi ka best = aage ka best, warna DP
+- intervals me "kam se kam hatao" -> END pe sort
+- gas station: tank minus hua -> agla station naya start
+
+**POORA:** [PATTERN 18](PATTERN_SHEET.md#pattern-18--greedy)
