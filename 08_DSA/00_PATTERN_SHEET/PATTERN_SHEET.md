@@ -219,6 +219,24 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
    1-line: sorted = BS · 1..n = index ka khel (gayab = minus, dohra = Floyd) · baaki "jodi" = XOR.
 ```
 
+### E. "LAGAATAAR" sun ke SLIDING WINDOW? pehle 2 sawaal (Wise OA 27-Oct)
+```
+   "lagaataar / consecutive" = SW ka signal LAGTA hai, par SW tabhi jab dono jawab "haan":
+
+   1. KISKA lagaataar?   EK hi line ka (array / string)          -> SW socho
+                         alag-alag KEY (server / user / card) ki,
+                         sab ek line me MILE hue                    -> HASHMAP: har key ki APNI ginti
+   2. KYA maanga?        sabse LAMBI / CHHOTI window, window ka SUM -> SW (window khiskao)
+                         bas "k tak pahuncha?" (streak)             -> chalti GINTI: ++ , toota to = 0
+
+   misaal: SERVER ERROR STREAK (03/11)
+     "s1 error, s2 success, s1 error, s3 error, s1 error" -> s1 ke 3 lagaataar
+     ek window lagao to s2, s3 beech me ginti tod dete -> GALAT. map[server]++ , success pe 0 -> SAHI
+   (test me khud pakda tha: "i++ kis condition pe? baith nahi raha" = yahi signal, SW chhodo)
+
+   1-line: lagaataar EK line ka + window chahiye = SW · har KEY ka apna lagaataar = MAP + ginti.
+```
+
 ---
 
 ## PATTERN 1 — TWO POINTER
@@ -521,6 +539,7 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ```
 
  KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
+ ★ MILTE-JULTE ("lagaataar" par har server / user ka ALAG): upar "NAAM-SE-CONFUSE" -> E dekh, SW se PEHLE.
  ★ EDGE (variable window): shrink me count 0 ho jaye to map se ERASE karo, warna map.size() jhooth bolega.
 
  ONE SKELETON (fixed + variable DONO isi pe):
@@ -1074,7 +1093,7 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   e.g. ["s1 500 error","s2 200 success","s1 500 error","s3 500 error","s1 500 error"] -> 1
      //   kyun: s1 ke 3 error (s2, s3 beech me aaye par s1 ki ginti nahi todte) -> 1 alert; s3 ka sirf 1 error
      // logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
-     // pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server
+     // pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (upar NAAM-SE-CONFUSE -> E)
      unordered_map<string, int> mp;          // server -> abhi tak lagaataar error
      int count = 0;
      for (auto &s : logs)
