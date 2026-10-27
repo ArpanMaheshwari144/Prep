@@ -12,6 +12,24 @@
 ```
 > Detail neeche: DECISION (input + signal table) · EDGE kyun fisalta · NAAM-SE-CONFUSE (A-D).
 
+## ★ OA KE TOOLS — C++ syntax jo DSA nahi, par OA me aata (27-Oct Wise se)
+
+```cpp
+// STRING TODNA (log "s1 200 success", "name:score", CSV)
+#include <sstream>
+stringstream ss(line);  string a, b, c;
+ss >> a >> b >> c;                       // space se tukde: a="s1", b="200", c="success"
+int x = stoi(b);                         // string -> int
+string part; stringstream ss2(line);
+while (getline(ss2, part, ','))  { }     // comma (ya ':') se tukde
+int pos = line.find(' ');                // pehla space
+string left = line.substr(0, pos), right = line.substr(pos + 1);
+
+// MINUS % (C++ me -2 % 26 = -2, 24 NAHI)
+int r = ((x % m) + m) % m;               // hamesha 0..m-1  (Caesar peeche khiskana, remainder)
+char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
+```
+
 ---
 
 ## ★★★ DECISION — kaunsa DS/technique KAB aur KYUN (11-Aug, Arpan-diagnosed; sabse-upar)
@@ -928,6 +946,7 @@
  BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
  ★ EDGE (prefix + hashmap, sum == K): map[0] = 1 se SHURU karo. [3], K=3: bina iske poora-array wala case chhoot jaata.
  ★ MILTE-JULTE (max sum vs count sum == K): upar "NAAM-SE-CONFUSE" -> C dekh.
+ ★ EDGE (C++ %): minus % minus deta (-2 % 5 = -2) -> ((x % m) + m) % m  (divisible-by-k remainder).
 
 ── FAMILY: "assign PEHLE, update BAAD" (pehle current index ka result rakho, PHIR running value badlo) ──
 
