@@ -20,6 +20,11 @@
      //   e.g. [0,1,0,3,12] -> [1,3,12,0,0]
      //   kyun: non-zero 1,3,12 usi kram me aage aa gaye, dono 0 peeche
 
+     // CHAABI:
+     //   1. slow = 0, fast = 0                         (slow = agli jagah jahan non-zero rakhna)
+     //   2. while (fast < n): nums[fast] != 0 ho to swap(nums[slow], nums[fast]), PHIR slow++
+     //   3. fast++ har baar                            (if ke BAHAR)
+
      void moveZeroes(vector<int> &nums) {
          int slow = 0;                           // slow = agli jagah jahan non-zero rakhna hai
          int fast = 0;                           // fast = scan karta
@@ -36,6 +41,13 @@
      // SAWAAL: SORTED array. duplicate IN-PLACE hatao, har number ek baar. naya length k lautao (pehle k unique).
      //   e.g. [0,0,1,1,1,2,2,3,3,4] -> k=5, [0,1,2,3,4,...]
      //   kyun: alag numbers sirf 0,1,2,3,4 = 5. sorted hai to dohra hamesha bagal me hota
+
+     // CHAABI:
+     //   1. slow = 0, fast = 0                         (slow = aakhri UNIQUE ka index; pehla khud unique)
+     //   2. while (fast < n): nums[slow] != nums[fast] ho to PEHLE slow++, PHIR nums[slow] = nums[fast]
+     //      (move zeroes se ULTA kram)
+     //   3. fast++ har baar
+     //   4. return slow + 1                            (slow index hai, ginti nahi)
 
      int removeDuplicates(vector<int> &nums) {
          int slow = 0;                           // slow = last UNIQUE ka index; 0 se: pehla khud unique
@@ -54,6 +66,12 @@
      // SAWAAL: array + val. saare val IN-PLACE hatao, naya length k lautao (pehle k me koi val nahi, order kuch bhi).
      //   e.g. [0,1,2,2,3,0,4,2], val=2 -> k=5, {0,1,3,0,4}
      //   kyun: teen 2 hate, baaki 5 bache
+
+     // CHAABI:
+     //   1. slow = 0, fast = 0
+     //   2. while (fast < n): nums[fast] != val ho to nums[slow] = nums[fast], PHIR slow++   (move zeroes jaisa)
+     //   3. val mila to kuch nahi, sirf fast++
+     //   4. return slow
 
      int removeElement(vector<int> &nums, int val) {
          int slow = 0, fast = 0;                 // slow = agli keep-jagah, fast scan
@@ -76,6 +94,12 @@
 
      // TAREEKA: sirf lowercase letters wala aasan version
 
+     // CHAABI:
+     //   1. left = 0, right = s.size() - 1             (aakhri index, size nahi)
+     //   2. while (left <= right): s[left] != s[right] -> turant false
+     //   3. warna left++, right--
+     //   4. loop ke baad return true
+
      bool isPalindrome(string s) {               // sirf lowercase letters wala aasan version
          int left = 0;
          int right = s.size() - 1;               // size() - 1 : aakhri index, size nahi
@@ -94,6 +118,13 @@
      //   kyun: filter + lower = "amanaplanacanalpanama" (palindrome) · "raceacar" (nahi)
 
      // TAREEKA: mixed char: sirf alnum ginna, case ignore (<cctype>)
+
+     // CHAABI:
+     //   1. left = 0, right = s.size() - 1, while (left <= right) me 4 raaste:
+     //   2. tolower(s[left]) == tolower(s[right]) -> dono andar
+     //   3. else if !isalnum(s[left]) -> left++ ; else if !isalnum(s[right]) -> right--
+     //   4. else (dono alnum par alag) -> return false
+     //   5. loop ke baad return true                   (khaali / koi alnum nahi -> true)
 
      bool isPalindrome(string s) {               // mixed char: sirf alnum ginna, case ignore (<cctype>)
          int left = 0;
@@ -121,6 +152,13 @@
      // TAREEKA: isPalindrome: helper: l..r palindrome hai?
 
      // validPalindrome: palindrome YA ek char delete karke ban jaaye
+
+     // CHAABI:
+     //   1. helper isPalindrome(s, left, right): simple wala hi, bas range di hui
+     //   2. main: left = 0, right = n - 1, while (left <= right)
+     //   3. mismatch pe return isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1)
+     //      (left hatao YA right hatao)
+     //   4. match -> left++, right--; loop ke baad true
 
      bool isPalindrome(string s, int left, int right) {   // helper: l..r palindrome hai?
          while (left <= right) {
@@ -153,6 +191,13 @@
 
      // reverseVowels: sirf vowels aapas me ulte, baaki char apni jagah
 
+     // CHAABI:
+     //   1. helper isVowel(ch): a e i o u, lower + UPPER dono
+     //   2. left = 0, right = n - 1, while (left < right)   (< : beech ka akela swap nahi)
+     //   3. dono vowel -> swap + left++ right--
+     //   4. else if left vowel nahi -> left++ ; else -> right--
+     //   5. return s
+
      bool isVowel(char ch) {                     // a e i o u, lower + upper dono
          if ((ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') ||
              (ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U'))
@@ -184,6 +229,13 @@
      //   e.g. [1,8,6,2,5,4,8,3,7] -> 49
      //   kyun: index 1 (8) aur index 8 (7): min 7 x doori 7 = 49
 
+     // CHAABI:
+     //   1. low = 0, high = n - 1, max_area = INT_MIN
+     //   2. while (low < high): width = high - low, area = width * min(height[low], height[high])
+     //   3. max_area = max(max_area, area)
+     //   4. CHHOTI height wala andar: height[low] < height[high] -> low++, warna high--   (barabar -> high--)
+     //   5. return max_area
+
      int maxArea(vector<int> &height) {
          int low = 0;
          int high = height.size() - 1;
@@ -207,6 +259,12 @@
 
      // TAREEKA: UNSORTED two sum = hashmap; SORTED = 2 pointer
 
+     // CHAABI:
+     //   1. left = 0, right = n - 1, while (left < right)
+     //   2. jod == target -> return {left + 1, right + 1}
+     //   3. jod < target -> left++ ; bada -> right--
+     //   4. loop ke baad {-1, -1}
+
      vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hashmap; SORTED = 2 pointer
          int left = 0, right = nums.size() - 1;
          while (left < right) {                  // < : ek hi index do baar nahi
@@ -226,6 +284,13 @@
      //   kyun: 5 = 1*1 + 2*2. 3 kisi bhi do square ka jod nahi
 
      // TAREEKA: a² + b² == c ? (LC 633) 2 number ki jodi -> two pointer
+
+     // CHAABI:
+     //   1. low = 0, high = sqrt(c)
+     //   2. while (low <= high)                        (<= : c=0 jaisa ek hi point bhi)
+     //   3. ans = (long long)low * low + (long long)high * high   (guna se PEHLE cast, overflow)
+     //   4. == c -> true ; < c -> low++ ; > c -> high--
+     //   5. loop ke baad false
 
      bool judgeSquareSum(long long c) {          // a² + b² == c ? (LC 633) 2 number ki jodi -> two pointer
          int low = 0, high = sqrt(c);
@@ -249,6 +314,13 @@
      //   kyun: -4 ka square 16 hai, isliye sabse bade square dono SIRE pe hote, beech me nahi
 
      // TAREEKA: sabse BADA square dono chhor pe (negative)
+
+     // CHAABI:
+     //   1. ans(n, -1), left = 0, right = n - 1, k = n - 1    (k = aakhri slot)
+     //   2. while (left <= right)                     (<= : aakhri bacha ek bhi daalna)
+     //   3. left ka square <= right ka square -> ans[k] = right ka square, right--, k--
+     //   4. warna ans[k] = left ka square, left++, k--
+     //   5. return ans
 
      vector<int> sortedSquares(vector<int> &nums) {   // sabse BADA square dono chhor pe (negative)
          vector<int> ans(nums.size(), -1);       // size n pehle se: k-- se index pe likho; O(n), sort nahi
@@ -275,6 +347,12 @@
      //   kyun: peeche se bharo (khaali jagah peeche hai), sabse bada pehle rakh do
 
      // TAREEKA: nums1 ke end me n khaali
+
+     // CHAABI:
+     //   1. i = m - 1, j = n - 1, k = m + n - 1        (m*n-1 NAHI)
+     //   2. while (i >= 0 && j >= 0): jo bada wo nums1[k] pe, uska pointer-- aur k--   (&& , || nahi)
+     //   3. while (i >= 0): nums1 ke bache copy        (optional, pehle se jagah pe)
+     //   4. while (j >= 0): nums1[k] = nums2[j]        (ZAROORI, nums2 se, nums1 se nahi)
 
      void merge(vector<int> &nums1, int m, vector<int> &nums2, int n) {   // nums1 ke end me n khaali
          int i = m - 1;
@@ -312,6 +390,12 @@
 
      // TAREEKA: Dutch flag, 3 pointer
 
+     // CHAABI:
+     //   1. low = 0, mid = 0, high = n - 1, while (mid <= high)   (<= : high wala bhi dekhna)
+     //   2. nums[mid] == 0 -> swap(low, mid), low++, mid++
+     //   3. nums[mid] == 1 -> sirf mid++
+     //   4. nums[mid] == 2 -> swap(mid, high), high--  (mid++ NAHI, aaya hua unknown)
+
      void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
          int low = 0;
          int mid = 0;
@@ -336,6 +420,13 @@
      //   e.g. [3,1,2,4] -> [2,4,3,1] (ya [4,2,1,3], koi bhi jisme even pehle)
 
      // TAREEKA: even pehle, odd baad (aapas ka order koi bhi)
+
+     // CHAABI:
+     //   1. left = 0, right = n - 1, while (left < right)
+     //   2. left ODD aur right EVEN (dono galat) -> swap + left++ right--
+     //   3. else if left even -> left++ ; else -> right--
+     //      (left even + right odd = dono sahi, swap MAT)
+     //   4. return nums
 
      vector<int> sortArrayByParity(vector<int> nums) {   // even pehle, odd baad (aapas ka order koi bhi)
          int left = 0;
@@ -362,6 +453,14 @@
      //   kyun: -1 do baar hai, par [-1,0,1] sirf ek baar likhna hai
 
      // TAREEKA: saare UNIQUE triplet jinka sum 0
+
+     // CHAABI:
+     //   1. sort PEHLE
+     //   2. for (i = 0..n-1): i > 0 && nums[i] == nums[i-1] -> continue   (skip 1: fixed ka dohra)
+     //   3. andar low = i + 1, high = n - 1, sum = -nums[i], while (low < high)
+     //   4. jod == sum -> push {nums[low], nums[high], nums[i]},
+     //      phir while (low < high && dohra) low++ , same high--   (skip 2, 3), phir low++ high-- ek aur
+     //   5. jod < sum -> low++ ; bada -> high--
 
      vector<vector<int>> threeSum(vector<int> &nums) {   // saare UNIQUE triplet jinka sum 0
          vector<vector<int>> ans;
@@ -396,6 +495,12 @@
 
      // TAREEKA: s, t me order se hai? beech ke char skip chalega
 
+     // CHAABI:
+     //   1. i = 0 (s pe), j = 0 (t pe)
+     //   2. while (i < s.size() && j < t.size())       (koi ek khatam -> ruko)
+     //   3. s[i] == t[j] -> i++, j++ ; warna sirf j++
+     //   4. i >= s.size() -> true, warna false
+
      bool isSubsequence(string s, string t) {    // s, t me order se hai? beech ke char skip chalega
          int i = 0, j = 0;                       // i -> s, j -> t
          while (i < s.size() && j < t.size()) {  // koi ek khatam -> ruko
@@ -419,6 +524,14 @@
      // TAREEKA: bar i ke upar paani = min(leftMax[i], rightMax[i]) - height[i]   (min: chhoti side se bah jaata)
      // O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - height[i]
      // O(1) space, two pointer
+
+     // CHAABI:
+     //   1. left = 0, right = n - 1, leftMax = 0, rightMax = 0, ans = 0
+     //   2. while (left < right): faisla DEEWAR pe -> height[left] <= height[right]
+     //      (max pe NAHI)
+     //   3. left wali taraf: leftMax > height[left] -> ans += leftMax - height[left], warna leftMax = height[left]; left++
+     //   4. else right wali taraf same, rightMax ke saath; right--
+     //   5. return ans
 
      int trap(vector<int> &height) {             // O(1) space, two pointer
          int n = height.size();
@@ -451,6 +564,13 @@
      // TAREEKA: kitne substring palindrome (single char bhi; alag position = alag count). har CENTER se phailo
      // "abcba": c -> bcb -> abcba = ek center se 3. ODD center = ek char, EVEN center = do char jodi
      // solve: &count : warna bahar count badhta hi nahi
+
+     // CHAABI:
+     //   1. helper solve(i, j, s, &count): while (i >= 0 && j < n && s[i] == s[j]) -> i--, j++, count++
+     //      (&count, warna bahar badhta nahi; range check PEHLE)
+     //   2. main: count = 0, for (i = 0..n-1)
+     //   3. solve(i, i) odd center + solve(i, i + 1) even center
+     //   4. return count
 
      void solve(int i, int j, string s, int &count) {   // &count : warna bahar count badhta hi nahi
          while (i >= 0 && j < s.size() && s[i] == s[j]) {   // range check PEHLE, phir s[i]==s[j]
@@ -509,6 +629,13 @@
 
      // TAREEKA: longest substring jisme koi char REPEAT na ho
 
+     // CHAABI:
+     //   1. khaali -> 0; ans = INT_MIN, mp, i = 0, j = 0
+     //   2. while (j < n): mp[s[j]]++
+     //   3. while (mp[s[j]] > 1): mp[s[i]]--, i++     (jo abhi aaya wahi repeat; WHILE)
+     //   4. shrink ke BAAD ans = max(ans, j - i + 1), phir j++
+     //   5. return ans == INT_MIN ? 0 : ans
+
      int lengthOfLongestSubstring(string s) {   // longest substring jisme koi char REPEAT na ho
          if (s.empty())
              return 0;
@@ -533,6 +660,14 @@
      //   kyun: "AABA" (index 0..3) me ek B ko A banao -> "AAAA" = 4
 
      // TAREEKA: longest window jisme <= k char badal ke sab SAME
+
+     // CHAABI:
+     //   1. mp, maxLen = INT_MIN, maxFreq = INT_MIN, i = 0, j = 0
+     //   2. while (j < n): mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]])   (update PEHLE)
+     //   3. while (j - i + 1 - maxFreq > k): mp[s[i]]--, 0 hua to erase, i++
+     //      (maxFreq kabhi GHATAO mat)
+     //   4. j - i + 1 - maxFreq <= k -> maxLen = max(...), phir j++
+     //   5. return maxLen
 
      int characterReplacement(string s, int k) {   // longest window jisme <= k char badal ke sab SAME
          unordered_map<char, int> mp;
@@ -561,6 +696,13 @@
 
      // TAREEKA: max k zero FLIP -> longest all-1; sirf zeroCount
 
+     // CHAABI:
+     //   1. ans = INT_MIN, zeroCount = 0, i = 0, j = 0
+     //   2. while (j < n): nums[j] == 0 -> zeroCount++
+     //   3. while (zeroCount > k): nums[i] == 0 ho to zeroCount--, PHIR i++
+     //   4. ans = max(ans, j - i + 1) UNCONDITIONAL (if (==k) mat), j++
+     //   5. return ans == INT_MIN ? 0 : ans
+
      int longestOnes(vector<int> &nums, int k) {   // max k zero FLIP -> longest all-1; sirf zeroCount
          int ans = INT_MIN;                      // INT_MIN: end me check karke khaali pe 0
          int zeroCount = 0;
@@ -587,6 +729,13 @@
 
      // TAREEKA: = longest subarray, AT MOST 2 DISTINCT (fruit = kahani)
 
+     // CHAABI:
+     //   1. ans = INT_MIN, mp, i = 0, j = 0
+     //   2. while (j < n): mp[fruits[j]]++
+     //   3. while (mp.size() > 2): mp[fruits[i]]--, 0 hua to mp.erase (CRUX), PHIR i++
+     //   4. ans = max(ans, j - i + 1), j++
+     //   5. return ans == INT_MIN ? 0 : ans
+
      int totalFruit(vector<int> &fruits) {       // = longest subarray, AT MOST 2 DISTINCT (fruit = kahani)
          int ans = INT_MIN;
          unordered_map<int, int> mp;
@@ -612,6 +761,11 @@
      //   kyun: "ece" me sirf e,c (2 alag) = 3; "eceb" me 3 alag ho jaate
 
      // TAREEKA: totalFruit: FRUIT ka GENERAL version: wahan "2", yahan "k"
+
+     // CHAABI:
+     //   1. fruit wala hi code (totalFruit(s, k)), bas while (mp.size() > k)
+     //   2. erase-on-0 wahi
+     //   3. longestKDistinct(s, k) = return totalFruit(s, k)
 
      int totalFruit(string &s, int k) {          // FRUIT ka GENERAL version: wahan "2", yahan "k"
          int ans = INT_MIN;
@@ -643,6 +797,12 @@
      // TAREEKA: kitne SUBARRAYS jinme EXACTLY k different. [1,2,1,2,3], k=2 -> 7
      // exactly(k) seedha SW se ganda (boundary saaf nahi) -> exactly(k) = atMost(k) - atMost(k-1)
      // atMostK: = FRUIT ka template, bas ans = COUNT (max nahi)
+
+     // CHAABI:
+     //   1. atMostK = fruit ka template, bas count = 0 (INT_MIN nahi)
+     //   2. while (j < n): mp[x]++ ; while (mp.size() > k): --, erase-on-0, i++
+     //   3. max ki jagah count += j - i + 1, j++
+     //   4. main: return atMostK(nums, k) - atMostK(nums, k - 1)   (k=1 pe atMost(0) apne aap 0)
 
      int atMostK(vector<int> &fruits, int k) {   // = FRUIT ka template, bas ans = COUNT (max nahi)
          int i = 0, j = 0, count = 0;            // count = 0: ginti (max-template ka INT_MIN = garbage)
@@ -676,6 +836,13 @@
 
      // TAREEKA: cost = |s[i]-t[i]|, SUM <= maxCost
 
+     // CHAABI:
+     //   1. i = 0, j = 0, cost = 0, ans = INT_MIN      (map nahi, sirf cost)
+     //   2. while (j < n): cost += abs(s[j] - t[j])
+     //   3. while (cost > maxCost): cost -= abs(s[i] - t[i]), i++
+     //   4. ans = max(ans, j - i + 1), j++
+     //   5. return ans
+
      int equalSubstring(string s, string t, int maxCost) {   // cost = |s[i]-t[i]|, SUM <= maxCost
          int i = 0, j = 0, cost = 0, ans = INT_MIN;          // track sirf cost (koi map nahi)
          while (j < t.size()) {                  // s="abcd", t="cdef", maxCost=3 -> 1
@@ -698,6 +865,13 @@
      //   kyun: [4,3] = 7 >= 7, length 2; akela koi number 7 tak nahi pahunchta
 
      // TAREEKA: positive; sum >= target SABSE CHHOTA
+
+     // CHAABI:
+     //   1. sum = 0, size = INT_MAX, i = 0, j = 0
+     //   2. while (j < n): sum += nums[j]
+     //   3. while (sum >= target): size = min(size, j - i + 1) PEHLE, phir sum -= nums[i], i++
+     //   4. j++ (shrink loop ke bahar)
+     //   5. return size == INT_MAX ? 0 : size
 
      int minSubArrayLen(int target, vector<int> &nums) {   // positive; sum >= target SABSE CHHOTA
          int sum = 0;
@@ -725,6 +899,12 @@
 
      // TAREEKA: har k-size window ka sum -> MAX
 
+     // CHAABI:
+     //   1. sum = 0, maxSum = INT_MIN, i = 0, j = 0
+     //   2. while (j < n): sum += nums[j]
+     //   3. if (j - i + 1 >= k): maxSum = max(maxSum, sum), phir sum -= nums[i], i++
+     //   4. j++ ; return maxSum
+
      int maxSumK(vector<int> &nums, int k) {     // har k-size window ka sum -> MAX
          int sum = 0;
          int maxSum = INT_MIN;                   // INT_MIN: sab negative ho to bhi sahi max
@@ -749,6 +929,13 @@
      //   kyun: 4 akele + [10,5]=50, [5,2]=10, [2,6]=12, [5,2,6]=60 = 8; [10,5,2]=100 kam nahi
 
      // TAREEKA: kitne subarray jinka product < k (GINTI)
+
+     // CHAABI:
+     //   1. k == 0 -> return 0 ; count = 0, i = 0, j = 0, prod = 1   (1, 0 nahi)
+     //   2. while (j < n): prod *= nums[j]
+     //   3. while (prod >= k && i <= j): prod /= nums[i], i++   (i <= j : k=1 pe bachav)
+     //   4. count += j - i + 1, j++
+     //   5. return count
 
      int numSubarrayProductLessThanK(vector<int> &nums, int k) {   // kitne subarray jinka product < k (GINTI)
          if (k == 0)
@@ -775,6 +962,13 @@
      //   kyun: "ADOBEC" (6) bhi A,B,C rakhta, par "BANC" (4) sabse chhota
 
      // TAREEKA: s ka sabse CHHOTA window jisme t ke saare char
+
+     // CHAABI:
+     //   1. pehla loop: t ke har char pe mp[c]++ ; i = 0, j = 0, count = t.size(), minLen = INT_MAX, index = 0
+     //   2. while (j < n): mp[s[j]] > 0 ho to count-- ; phir mp[s[j]]-- (IF ke BAHAR)
+     //   3. while (count == 0): len < minLen -> minLen = len, index = i (record PEHLE)
+     //   4. phir mp[s[i]]++, > 0 hua to count++, i++   (aana --, jaana ++ MIRROR)
+     //   5. j++ ; return minLen == INT_MAX ? "" : s.substr(index, minLen)
 
      string minWindow(string s, string t) {      // s ka sabse CHHOTA window jisme t ke saare char
          unordered_map<char, int> mp;
@@ -809,6 +1003,13 @@
 
      // TAREEKA: minWindow: LC-76 ka SAME code; farak sirf answer ki line
 
+     // CHAABI:
+     //   1. min window wala need-map + count, ans = 0, t = "abc"
+     //   2. while (j < n): expand same (count--, mp--)
+     //   3. while (count == 0): mp[s[i]]++, > 0 to count++, i++   (record nahi)
+     //   4. inner while ke BAAD ans += i, j++
+     //   5. numberOfSubstrings(s) = minWindow(s, "abc")
+
      int minWindow(string s, string t) {         // LC-76 ka SAME code; farak sirf answer ki line
          unordered_map<char, int> mp;
          for (auto &it : t)
@@ -842,6 +1043,13 @@
      //   kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
 
      // TAREEKA: isAnagram: valid-anagram helper reuse
+
+     // CHAABI:
+     //   1. helper isAnagram: size alag -> false ; s pe ++, t pe -- ; koi != 0 -> false
+     //   2. i = 0, j = 0, while (j < n)
+     //   3. while (j - i + 1 > p.size()) i++          (window p-size pe)
+     //   4. j - i + 1 == p.size() aur isAnagram(s.substr(i, j - i + 1), p) -> ans.push_back(i)
+     //   5. j++ ; return ans
 
      bool isAnagram(string s, string t) {        // valid-anagram helper reuse
          if (s.size() != t.size())
@@ -879,6 +1087,11 @@
      // TAREEKA: isAnagram = upar wala hi
      // findAnagrams: LC-438 ka skeleton, sirf answer-handle badla
 
+     // CHAABI:
+     //   1. find anagrams wala hi loop, push ki jagah return true
+     //   2. loop ke baad return false
+     //   3. checkInclusion(s1, s2) = findAnagrams(s2, s1)   (ulta order)
+
      bool findAnagrams(string s, string p) {     // LC-438 ka skeleton, sirf answer-handle badla
          int i = 0, j = 0;
          while (j < s.size()) {
@@ -904,6 +1117,13 @@
      //   kyun: [1,3,-1]->3, [3,-1,-3]->3, [-1,-3,5]->5, [-3,5,3]->5, [5,3,6]->6, [3,6,7]->7
 
      // TAREEKA: har k-window ka MAX, O(n)
+
+     // CHAABI:
+     //   1. ans, deque dq ; for (i = 0..n-1)
+     //   2. EXPIRY: !dq.empty() && dq.front() == i - k -> pop_front
+     //   3. while (!dq.empty() && nums[dq.back()] <= nums[i]) -> pop_back   (chhote bekaar)
+     //   4. dq.push_back(i)                            (index, value nahi)
+     //   5. i >= k - 1 -> ans.push_back(nums[dq.front()])   (kram: expiry -> clean + push -> record)
 
      vector<int> maxSlidingWindow(vector<int> &nums, int k) {   // har k-window ka MAX, O(n)
          vector<int> ans;
@@ -931,6 +1151,12 @@
      // sirf back se k galat: [100,1,1,1,1] k=2 -> front 101. liye cards contiguous NAHI -> seedha SW fail
      // FLIP: jo NAHI liye = beech ka CONTIGUOUS window, size L-k. taken MAX = untaken MIN -> Total - min
      // minSumK: = max_sum_k ka MIN version (fixed window)
+
+     // CHAABI:
+     //   1. helper minSumK = max sum of k ka MIN version (minSum = INT_MAX, IF window)
+     //   2. pehla loop: Total = saare cards ka sum
+     //   3. n - k == 0 -> return Total                 (saare liye)
+     //   4. minSum = minSumK(nums, n - k) ; return Total - minSum
 
      int minSumK(vector<int> &nums, int k) {     // = max_sum_k ka MIN version (fixed window)
          int sum = 0;
@@ -966,6 +1192,13 @@
      //   kyun: index 0 aur 3 dono pe 1, farak 3 <= 3
 
      // TAREEKA: nums[i]==nums[j] AND |i-j| <= k ?
+
+     // CHAABI:
+     //   1. k <= 0 -> false ; i = 0, j = 0, unordered_set st
+     //   2. while (j < n): st.count(nums[j]) -> return true   (check PEHLE)
+     //   3. j - i + 1 > k -> st.erase(nums[i]), i++
+     //   4. st.insert(nums[j]) (check ke BAAD), j++
+     //   5. loop ke baad false
 
      bool containsNearbyDuplicate(vector<int> &nums, int k) {   // nums[i]==nums[j] AND |i-j| <= k ?
          if (k <= 0)
@@ -1015,6 +1248,13 @@
 
      // TAREEKA: s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false
 
+     // CHAABI:
+     //   1. mp1 (char -> char) aur mp2 (char -> char) banao
+     //   2. ek loop i = 0..s.size()-1: pehle CHECK -> mp1 me s[i] hai aur != t[i], YA mp2 me t[i] hai aur != s[i] -> return false
+     //      (count() pehle, seedha mp1[x] khaali key bana deta · || : kisi bhi EK taraf clash kaafi)
+     //   3. else: dono taraf save -> mp1[s[i]] = t[i], mp2[t[i]] = s[i]          (check ke BAAD)
+     //   4. loop poora chala -> return true                                      ("ab"->"aa" sirf ulti taraf pakadta)
+
      bool isIsomorphic(string s, string t) {
          unordered_map<char, char> mp1;          // s -> t
          unordered_map<char, char> mp2;          // t -> s ("ab"->"aa" clash sirf ULTI taraf pakadta)
@@ -1036,6 +1276,13 @@
      //   kyun: a->dog, b->cat; a b b a = dog cat cat dog, mapping kahin nahi tooti
 
      // TAREEKA: = ISOMORPHIC, bas char <-> WORD
+
+     // CHAABI:
+     //   1. stringstream ss(s), string word, i = 0 (pattern index), j = 0 (words ki ginti)
+     //   2. while (ss >> word): andar if (i < pattern.size()) -> isomorphic wali EXACT clash line (pattern[i] <-> word)
+     //      clash -> return false, warna dono map me save, phir i++
+     //   3. j++ if ke BAHAR                                                       (har word gino, extra word bhi)
+     //   4. return pattern.size() == j                                            (warna "a","dog cat" galat true)
 
      bool wordPattern(string pattern, string s) {   // = ISOMORPHIC, bas char <-> WORD
          unordered_map<char, string> mp1;
@@ -1067,6 +1314,12 @@
      //   e.g. [2,7,11,15], target=9 -> [0,1]
      //   kyun: nums[0] + nums[1] = 2 + 7 = 9
 
+     // CHAABI:
+     //   1. unordered_map<int,int> mp
+     //   2. ek loop i = 0..n-1: CHECK pehle -> mp.find(target - nums[i]) mila -> return {mp[target - nums[i]], i}
+     //   3. daalo BAAD -> mp[nums[i]] = i                                        (taaki num khud se match na kare)
+     //   4. loop ke baad return {-1, -1}
+
      vector<int> twoSum(vector<int> &nums, int target) {
          unordered_map<int, int> mp;             // {value -> index}
          for (int i = 0; i < nums.size(); i++) {
@@ -1083,6 +1336,13 @@
      //   kyun: dono me a=3, n=1, g=1, r=1, m=1
 
      // TAREEKA: har char ka count barabar? (count[26] ya map)
+
+     // CHAABI:
+     //   1. s.size() != t.size() -> turant false
+     //   2. pehla loop s pe: mp[it]++
+     //   3. doosra loop t pe: mp[it]--
+     //   4. teesra loop map pe: koi it.second != 0 -> false                       (!= 0, sirf > 0 nahi, -ve bhi aata)
+     //   5. return true
 
      bool isAnagram(string s, string t) {        // har char ka count barabar? (count[26] ya map)
          if (s.size() != t.size())
@@ -1107,6 +1367,13 @@
      // TAREEKA: "eat","tea","ate" -> teeno ka SORTED roop "aet" = same. Yahi KEY.
      // brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CACHE -> O(n · k log k)
 
+     // CHAABI:
+     //   1. unordered_map<string, vector<string>> mp
+     //   2. loop har word pe: string key = it (COPY lo) -> sort(key) -> mp[key].push_back(it)
+     //      (asli word sort kiya to group me galat word jaata)
+     //   3. doosra loop map pe: ans.push_back(it.second)                          (map ki har list = ek group)
+     //   4. return ans
+
      vector<vector<string>> groupAnagrams(vector<string> &strs) {
          unordered_map<string, vector<string>> mp;   // KEY = sorted(word) -> us group ke words
          for (auto &it : strs) {
@@ -1130,6 +1397,13 @@
 
      // TAREEKA: prefix-sum + hashmap {prefixSum -> count}
 
+     // CHAABI:
+     //   1. mp, sum = 0, count = 0, aur mp[0] = 1                                 (START: jab sum khud == k)
+     //   2. ek loop i = 0..n-1: sum += nums[i]
+     //   3. count += mp[sum - k]                                                  (sum - k, k - sum NAHI)
+     //   4. mp[sum]++                                                             (check ke BAAD daalo)
+     //   5. return count
+
      int subarraySum(vector<int> &nums, int k) { // prefix-sum + hashmap {prefixSum -> count}
          unordered_map<int, int> mp;
          int sum = 0, count = 0;
@@ -1152,6 +1426,13 @@
      // TAREEKA: pairs (i<j): (A[i]+A[j])%k==0. brute O(n²) -> "partner pehle aaya?" ko hashmap me CACHE -> O(n)
      // A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har element ka apna rem
 
+     // CHAABI:
+     //   1. mp {remainder -> kitne aaye}, count = 0
+     //   2. loop har it pe: rem = ((it % k) + k) % k                              (C++ me minus ka % minus)
+     //   3. count += mp[(k - rem) % k]                                            (rem = 0 -> partner bhi 0, isliye % k)
+     //   4. mp[rem]++                                                             (lookup PEHLE, insert BAAD)
+     //   5. return count
+
      int countDivisiblePairs(vector<int> &nums, int k) {
          unordered_map<int, int> mp;             // {remainder -> kitne aaye}
          int count = 0;
@@ -1171,6 +1452,13 @@
 
      // TAREEKA: unsorted -> sabse LAMBI consecutive chain ki LENGTH. [100,4,200,1,3,2] -> 4 (1,2,3,4)
      // sort (n log n) mat karo -> SET me O(1) lookup, har CHAIN sirf uske START se gino -> O(n)
+
+     // CHAABI:
+     //   1. ans = INT_MIN, unordered_set st, pehle loop me saare nums insert
+     //   2. doosra loop i = 0..n-1: num = nums[i]; START tabhi jab st me num-1 NAHI (warna beech ka, skip)
+     //   3. START pe: currNum = num, count = 1 -> while (st.count(currNum + 1)) currNum++, count++
+     //   4. while ke BAAD: ans = max(ans, count)
+     //   5. return ans == INT_MIN ? 0 : ans                                       (khaali array -> 0)
 
      int longestConsecutive(vector<int> &nums) {
          int ans = INT_MIN;
@@ -1200,6 +1488,12 @@
      // TAREEKA: map se: mp[x]++, count > n/2 wala return -> O(n) time, O(n) space (seedha)
      // BOYER-MOORE VOTING, O(1) space
 
+     // CHAABI:
+     //   1. count = 1, candidate = nums[0]
+     //   2. loop i = 1 se: candidate == nums[i] -> count++
+     //   3. else -> count--, aur count == 0 hua to candidate = nums[i], count = 1   (0 pe RESET, warna -1 me jaata)
+     //   4. return candidate
+
      int majorityElement(vector<int> &nums) {    // BOYER-MOORE VOTING, O(1) space
          int count = 1;                          // majority > n/2 -> baaki sab milke bhi kam ->
          int candidate = nums[0];                //   do ALAG element CANCEL karo, majority bachega
@@ -1224,6 +1518,12 @@
 
      // TAREEKA: size n, values 1..n (repeat ho sakte). jo MISSING wo sab. [4,3,2,7,8,2,3,1] -> [5,6]
      // extra set/map nahi: value v ka ghar = index v-1 -> dikha to us index ko NEGATIVE mark
+
+     // CHAABI:
+     //   1. pehla loop i = 0..n-1: index = abs(nums[i]) - 1                       (abs: pehle hi -ve ho chuki ho sakti)
+     //   2. nums[index] > 0 ho tabhi nums[index] = -nums[index]                   (duplicate pe dobara minus = wapas plus)
+     //   3. doosra loop i = 0..n-1: nums[i] > 0 -> ans.push_back(i + 1)           (+ve bacha = kabhi mark nahi = missing)
+     //   4. return ans
 
      vector<int> findDisappearedNumbers(vector<int> &nums) {
          vector<int> ans;
@@ -1251,6 +1551,14 @@
 
      // TAREEKA: logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
      // pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (EK_NAZAR -> NAAM-SE-CONFUSE E)
+
+     // CHAABI:
+     //   1. mp {server -> lagaataar error}, count = 0
+     //   2. loop har line s pe: stringstream ss(s); string server, code, msg; ss >> server >> code >> msg
+     //      (ek LINE do, poora vector nahi)
+     //   3. msg == "error" -> mp[server]++, aur mp[server] >= 3 -> count++, mp[server] = 0   (faisla msg se, code se nahi)
+     //   4. else if msg == "success" -> mp[server] = 0                            (= 0, -- NAHI)
+     //   5. return count
 
      int countAlerts(vector<string> &logs) {
          unordered_map<string, int> mp;          // server -> abhi tak lagaataar error
@@ -1297,6 +1605,13 @@
 
      // TAREEKA: index jahan left sum == right sum (khud kisi taraf nahi)
 
+     // CHAABI:
+     //   1. totalSum = 0, leftSum = 0; pehle loop me poora totalSum
+     //   2. doosra loop i = 0..n-1: rightSum = totalSum - leftSum - nums[i]
+     //   3. leftSum == rightSum -> return i
+     //   4. leftSum += nums[i]                                                    (BAAD me: check ke baad khud ko left me jodo)
+     //   5. loop ke baad return -1
+
      int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum (khud kisi taraf nahi)
          int totalSum = 0;
          int leftSum = 0;
@@ -1318,6 +1633,13 @@
 
      // TAREEKA: ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
      // O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
+
+     // CHAABI:
+     //   1. left(n,1), right(n,1), ans(n,1), prod = 1
+     //   2. loop i = 0..n-1 aage: left[i] = prod (ASSIGN PEHLE), phir prod *= nums[i] (UPDATE BAAD)
+     //   3. prod = 1 RESET, loop i = n-1..0 peeche: right[i] = prod, phir prod *= nums[i]
+     //   4. teesra loop i = 0..n-1: ans[i] = left[i] * right[i]
+     //   5. return ans
 
      vector<int> productExceptSelf(vector<int> &nums) {
          int n = nums.size();
@@ -1348,6 +1670,11 @@
 
      // TAREEKA: running sum chalao, max track (simple prefix)
 
+     // CHAABI:
+     //   1. sum = 0, maxi = 0                                                     (shuru ki altitude 0 bhi gino)
+     //   2. ek loop: sum += gain[i], maxi = max(maxi, sum)
+     //   3. return maxi
+
      int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (simple prefix)
          int sum = 0;
          int maxi = 0;                           // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
@@ -1366,6 +1693,13 @@
      // TAREEKA: brute: har subarray sum baar-baar -> PREFIX -> do prefix ka remainder same = beech wala %k==0
      // PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
      // count subarrays jinka sum % k == 0
+
+     // CHAABI:
+     //   1. mp, sum = 0, count = 0, mp[0] = 1                                     (SEED: shuru se hi divisible wala)
+     //   2. loop har it pe: sum += it PEHLE
+     //   3. phir rem = (sum % k + k) % k                                          (negative sum ka % negative)
+     //   4. count += mp[rem], phir mp[rem]++
+     //   5. return count
 
      int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum % k == 0
          unordered_map<int, int> mp;
@@ -1389,6 +1723,13 @@
      // (shuru se j tak XOR) ^ (shuru se i tak XOR) = beech ka XOR (common hissa kat gaya)
      // beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni baar aaya
 
+     // CHAABI:
+     //   1. mp, mp[0] = 1, xorr = 0, count = 0
+     //   2. loop har it pe: xorr ^= it
+     //   3. count += mp[xorr ^ k]                                                 (pichhla XOR jo chahiye)
+     //   4. mp[xorr]++                                                            (lookup ke BAAD)
+     //   5. return count
+
      int subarrayXorK(vector<int> &nums, int k) {
          unordered_map<int, int> mp;
          mp[0] = 1;                              // shuru se hi XOR == k wala subarray bhi gino
@@ -1410,6 +1751,13 @@
      // valid = (har element <= K) AND (>=1 element == K)
      // TRAP: "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
      // K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
+
+     // CHAABI:
+     //   1. lastWall = -1, lastK = -1, long long count = 0                        (LONG LONG: n^2 ginti overflow)
+     //   2. ek loop i = 0..n-1: arr[i] > K -> lastWall = i
+     //   3. arr[i] == K -> lastK = i                                              (pehle dono update, PHIR count)
+     //   4. lastK > lastWall ho tabhi count += lastK - lastWall                   (guard: warna negative)
+     //   5. return count
 
      long long countSubarraysMaxK(vector<int> &arr, int K) {
          int lastWall = -1;                      // aakhri index jahan arr[i] > K  (-1: abhi koi wall nahi)
@@ -1435,6 +1783,13 @@
      // KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
      // har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
      // n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
+
+     // CHAABI:
+     //   1. diff(n + 2)                                                           (end+1 sabse bada n+1)
+     //   2. loop har booking pe: start = it[0], end = it[1], count = it[2] -> diff[start] += count, diff[end + 1] -= count
+     //      (+1: last din bhi inclusive)
+     //   3. cummSum = 0, loop i = 1..n (<= n): cummSum += diff[i], ans.push_back(cummSum)   (1-based)
+     //   4. return ans
 
      vector<int> corpFlightBookings(vector<vector<int>> &bookings, int n) {
          vector<int> diff(n + 2);                // n+2: end+1 sabse bada n+1 ho sakta (n+1 rakha to crash)
@@ -1491,6 +1846,12 @@
 
      // TAREEKA: in-place, 2 marker array, O(m+n) space
 
+     // CHAABI:
+     //   1. row, col; zeroRow(row, -1), zeroCol(col, -1)                          (-1 = unmarked)
+     //   2. pass-1 do loop (i row, j col): matrix[i][j] == 0 -> zeroRow[i] = 0, zeroCol[j] = 0   (sirf MARK)
+     //   3. pass-2 do loop: zeroRow[i] == 0 || zeroCol[j] == 0 -> matrix[i][j] = 0
+     //      (ek hi pass me 0 kiya to naye 0 bhi mark ho jaate)
+
      void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m+n) space
          int row = matrix.size();
          int col = matrix[0].size();
@@ -1512,6 +1873,14 @@
      // SAWAAL: m x n matrix. saare elements SPIRAL order me (bahar se andar, clockwise) vector me lautao.
      //   e.g. [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
      //   kyun: upar 1,2,3 -> right col 6,9 -> neeche ulta 8,7 -> left col upar 4 -> beech 5
+
+     // CHAABI:
+     //   1. top = 0, bottom = row-1, left = 0, right = col-1                      (inclusive, isliye loop <=)
+     //   2. while (top <= bottom && left <= right), andar 4 loop:
+     //   3. top row i = left..right [top][i] -> top++ ; right col i = top..bottom [i][right] -> right--
+     //   4. if (top <= bottom): bottom row i = right..left ulta [bottom][i]; bottom-- if ke BAHAR
+     //   5. if (left <= right): left col i = bottom..top ulta [i][left]; left++ if ke BAHAR   (guard sirf 3rd, 4th loop pe)
+     //   6. return ans
 
      vector<int> spiralOrder(vector<vector<int>> &matrix) {
          int row = matrix.size();
@@ -1545,6 +1914,12 @@
      //   e.g. [[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]
      //   kyun: pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
 
+     // CHAABI:
+     //   1. ans(col, vector<int>(row, -1))                                        (col x row: non-square bhi)
+     //   2. outer loop i = 0..col-1, inner loop j = 0..row-1
+     //   3. ans[i][j] = matrix[j][i]
+     //   4. return ans
+
      vector<vector<int>> transpose(vector<vector<int>> &matrix) {
          int row = matrix.size();
          int col = matrix[0].size();
@@ -1563,6 +1938,13 @@
      // TAREEKA: 1 = server. communicate = uski ROW ya COL me koi DOOSRA server. row + col dono me akela -> nahi gino
      // [[1,0],[1,1]] -> 3  ·  [[1,0],[0,1]] -> 0
      // set zeroes ki 2 marker trick, MARK ki jagah COUNT
+
+     // CHAABI:
+     //   1. rowCount(m, 0), colCount(n, 0)
+     //   2. pass-1 do loop: grid[i][j] == 1 -> rowCount[i]++, colCount[j]++       (poori ginti pehle)
+     //   3. count = 0; pass-2 do loop: grid[i][j] == 1 && (rowCount[i] > 1 || colCount[j] > 1) -> count++
+     //      (> 1 : khud ke alawa koi aur)
+     //   4. return count
 
      int countServers(vector<vector<int>> &grid) {   // set zeroes ki 2 marker trick, MARK ki jagah COUNT
          int m = grid.size();
@@ -1615,6 +1997,14 @@
 
      // TAREEKA: har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 
+     // CHAABI:
+     //   1. ans(n, -1), stack<int> st (INDEX)
+     //   2. loop i = 0..n-1 (left -> right)
+     //   3. andar while (!st.empty() && nums[st.top()] < nums[i]): topp = st.top(), pop, ans[topp] = nums[i]
+     //      (!empty pehle · < : barabar = bada nahi · top pehle bachao phir pop)
+     //   4. while ke BAAD st.push(i)
+     //   5. return ans                                                            (stack me bache = -1 hi)
+
      vector<int> nextGreater(vector<int> &nums) {
          vector<int> ans(nums.size(), -1);       // -1 init: daaye bada na mile wo -1 hi rahe
          stack<int> st;                          // INDEX rakho: ans[topp] me likhne ko position chahiye
@@ -1636,6 +2026,12 @@
 
      // TAREEKA: = next greater, sirf condition ULTI
 
+     // CHAABI:
+     //   1. ans(n, -1), stack<int> st
+     //   2. loop i = 0..n-1
+     //   3. while (!st.empty() && nums[st.top()] > nums[i]): topp = top, pop, ans[topp] = nums[i]   (> strict, >= nahi)
+     //   4. st.push(i), return ans
+
      vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition ULTI
          vector<int> ans(nums.size(), -1);
          stack<int> st;
@@ -1656,6 +2052,12 @@
      //   kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
 
      // TAREEKA: = next smaller, sirf LOOP ULTA (condition wahi >)
+
+     // CHAABI:
+     //   1. ans(n, -1), stack<int> st
+     //   2. loop i = n-1..0 (right -> left)
+     //   3. while (!st.empty() && nums[st.top()] > nums[i]): topp = top, pop, ans[topp] = nums[i]
+     //   4. st.push(i), return ans
 
      vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA (condition wahi >)
          vector<int> ans(nums.size(), -1);
@@ -1679,6 +2081,14 @@
 
      // TAREEKA: har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = dono STOPPER
      // [2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
+
+     // CHAABI:
+     //   1. nextSmaller(): ans(n, n) DEFAULT n, loop 0..n-1, while top > curr -> ans[tp] = i (INDEX store)
+     //   2. prevSmaller(): ans(n, -1) DEFAULT -1, loop n-1..0 ulta, wahi while, ans[tp] = i
+     //      (> strict dono me: [3,3,3,3] me >= se galat)
+     //   3. main: ns = nextSmaller, ps = prevSmaller, ans = INT_MIN
+     //   4. loop i = 0..n-1: width = ns[i] - ps[i] - 1 -> ans = max(ans, heights[i] * width)
+     //   5. return ans
 
      vector<int> nextSmaller(vector<int> &heights) {
          int n = heights.size();
@@ -1730,6 +2140,13 @@
 
      // TAREEKA: = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
 
+     // CHAABI:
+     //   1. heights(col, 0) (COL size), maxi = INT_MIN
+     //   2. outer loop i = 0..row-1, inner loop j = 0..col-1:
+     //      matrix[i][j] == 1 -> heights[j] += 1, warna heights[j] = 0 (column toota -> RESET)
+     //   3. j-loop ke BAHAR (har row ke baad): maxi = max(maxi, largestRectangleArea(heights))
+     //   4. return maxi
+
      int maximalRectangle(vector<vector<int>> &matrix) {
          int row = matrix.size();
          int col = matrix[0].size();
@@ -1752,6 +2169,12 @@
      //   e.g. [73,74,75,71,69,72,76,73] -> [1,1,4,2,1,1,0,0]
      //   kyun: 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
 
+     // CHAABI:
+     //   1. ans(n, 0) (0 init, -1 nahi), stack<int> st
+     //   2. loop i = 0..n-1
+     //   3. while (!st.empty() && temps[st.top()] < temps[i]): tp = top, pop, ans[tp] = i - tp   (< strict)
+     //   4. st.push(i), return ans
+
      vector<int> dailyTemperatures(vector<int> &temps) {
          int n = temps.size();
          vector<int> ans(n, 0);                  // 0 init (-1 nahi): garam din na mile to 0
@@ -1773,6 +2196,13 @@
      //   kyun: aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
 
      // TAREEKA: CIRCULAR: aakhri ka greater shuru me bhi
+
+     // CHAABI:
+     //   1. khaali -> return {}; stack<int> st, ans(n, -1)                        (size n, 2n nahi)
+     //   2. loop i = 0..2n-1
+     //   3. while (!st.empty() && nums[st.top()] < nums[i % n]): tp = top, pop, ans[tp] = nums[i % n]
+     //   4. st.push(i % n)                                                        (i nahi: i >= n pe bahar)
+     //   5. return ans
 
      vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka greater shuru me bhi
          if (nums.size() == 0)
@@ -1800,6 +2230,12 @@
      // TAREEKA: STREAMING next(price). span = aaj samet peeche kitne LAGATAAR din price <= aaj
      // next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
 
+     // CHAABI:
+     //   1. class StockSpanner, stack<pair<int,int>> st                           ({price, span})
+     //   2. next(price): span = 1                                                 (aaj khud bhi)
+     //   3. while (!st.empty() && st.top().first <= price): span += st.top().second, pop   (<= : barabar bhi span me)
+     //   4. st.push({price, span}), return span
+
      class StockSpanner {
      public:
          stack<pair<int, int>> st;               // INDEX nahi, PAIR {price, span}
@@ -1823,6 +2259,13 @@
      // SAWAAL: string s me sirf ( ) [ ] { }. TRUE agar har bracket sahi type se aur sahi kram me band ho, warna FALSE.
      //   e.g. "{[]}" -> true · "([)]" -> false
      //   kyun: "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
+
+     // CHAABI:
+     //   1. stack st
+     //   2. loop har char it pe: opening ( [ { -> push
+     //   3. else (closing): st.empty() -> false; ch = st.top(), pop PEHLE
+     //   4. ch aur it ka jodi match -> continue, warna return false
+     //   5. loop ke baad return st.empty()                                        ("" -> true)
 
      bool isValid(string s) {
          stack<int> st;
@@ -1850,6 +2293,12 @@
 
      // TAREEKA: class MinStack: push / pop / top / getMin sab O(1)
 
+     // CHAABI:
+     //   1. stack<pair<int,int>> st
+     //   2. push(val): minVal = st.empty() ? val : min(st.top().second, val) -> st.push({val, minVal})   (empty pehle)
+     //   3. pop() = st.pop() · top() = st.top().first · getMin() = st.top().second
+     //      (single min var nahi: pop pe history chahiye)
+
      class MinStack {                            // push / pop / top / getMin sab O(1)
      public:
          stack<pair<int, int>> st;               // {val, yahan tak ka MIN}: min hamesha ready, scan nahi
@@ -1873,6 +2322,12 @@
 
      // TAREEKA: COUNTER, stack nahi (sirf '(' ')')
 
+     // CHAABI:
+     //   1. khaali -> 0; open_needed = 0, close_needed = 0
+     //   2. loop har char: '(' -> close_needed++
+     //   3. ')' -> close_needed > 0 ho to close_needed-- (match), warna open_needed++ (extra ')')
+     //   4. return open_needed + close_needed
+
      int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')')
          if (s.empty())
              return 0;
@@ -1895,6 +2350,14 @@
      // SAWAAL: sirf stack (push/pop/top/empty) se QUEUE (FIFO) banao: push(x) peeche, pop() aage wala nikaalo, peek(), empty().
      //   e.g. push(1) push(2) peek() -> 1 · pop() -> 1 · push(3) pop() -> 2 · pop() -> 3 · empty() -> true
      //   kyun: queue me jo pehle aaya wahi pehle nikalta -> 1, phir 2, phir 3, ab khaali
+
+     // CHAABI:
+     //   1. push(x) -> input.push(x)
+     //   2. pop(): output.empty() HO TABHI while input khaali na ho -> output.push(input.top()), input.pop()
+     //      (khaali ho tabhi palto: warna kram toot jaata)
+     //   3. pop: x = output.top(), output.pop(), return x
+     //   4. peek(): wahi palatne wala if + while, phir return output.top()
+     //   5. empty() -> input.empty() && output.empty()
 
      class MyQueue {
      public:
@@ -1968,6 +2431,12 @@
      //   e.g. [-1,0,3,5,9,12], target=9 -> 4
      //   kyun: 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
 
+     // CHAABI:
+     //   1. low = 0, high = n - 1
+     //   2. while (low <= high) loop: mid = low + (high - low) / 2      (<= : akela element bhi check; (low+high)/2 nahi = overflow)
+     //   3. loop ke andar: nums[mid] == target -> return mid · chhota -> low = mid + 1 · bada -> high = mid - 1
+     //   4. loop ke bahar return -1                                    (nahi mila)
+
      int search(vector<int> &nums, int target) {
          int low = 0, high = nums.size() - 1;
          while (low <= high) {                   // <= : 1 element bacha tab bhi check
@@ -1988,6 +2457,10 @@
      //   kyun: 2 na mila, 1 aur 3 ke beech jaayega -> index 1
 
      // TAREEKA: [1,3,5,6], 2 -> 1 (1 aur 3 ke beech)
+
+     // CHAABI:
+     //   1. basic BS hubahu: low = 0, high = n - 1, while (low <= high), mid, == pe return mid, mid +- 1
+     //   2. loop ke bahar return low                                   (na mila: low = pehla nums >= target = insert jagah)
 
      int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 3 ke beech)
          int low = 0, high = nums.size() - 1;
@@ -2010,6 +2483,13 @@
 
      // TAREEKA: sorted (duplicate ho sakte) me target ka PEHLA aur AAKHRI index; nahi -> {-1,-1}, O(log n)
      // [5,7,7,8,8,10], 8 -> {3,4}. normal BS, bas MILNE pe RUKO MAT -> ans likho, ek taraf aur chalo. 2 BS
+
+     // CHAABI:
+     //   1. vector<int> ans(2, -1)                                     (size fixed 2, push_back nahi)
+     //   2. PASS 1 (FIRST): basic BS loop, par == pe ans[0] = mid aur high = mid - 1   (aur LEFT dhoondho)
+     //   3. low = 0, high = n - 1 dobara RESET                         (warna pass 2 galat jagah se)
+     //   4. PASS 2 (LAST): wahi loop, == pe ans[1] = mid aur low = mid + 1             (aur RIGHT)
+     //   5. return ans
 
      vector<int> searchRange(vector<int> &nums, int target) {
          vector<int> ans(2, -1);                 // size fixed 2 -> ans(2,-1) + index set, push_back NAHI
@@ -2049,6 +2529,14 @@
 
      // TAREEKA: [4,5,6,7,0,1,2] me target ka index, nahi -> -1
 
+     // CHAABI:
+     //   1. low = 0, high = n - 1, while (low <= high), mid; nums[mid] == target -> return mid
+     //   2. if (nums[low] <= nums[mid]) = LEFT half sorted             (<= : low == mid pe akela bhi sorted)
+     //        target >= nums[low] && target <= nums[mid] -> high = mid - 1, warna low = mid + 1
+     //   3. else = RIGHT half sorted:
+     //        target >= nums[mid] && target <= nums[high] -> low = mid + 1, warna high = mid - 1
+     //   4. loop ke bahar return -1                                    (>= nums[low] zaroori: [5,1,3], 5 miss hota)
+
      int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka index, nahi -> -1
          int n = nums.size();
          int low = 0;
@@ -2080,6 +2568,12 @@
 
      // TAREEKA: target nahi, khud MIN -> mid ko HIGH se compare
 
+     // CHAABI:
+     //   1. low = 0, high = n - 1
+     //   2. while (low < high) loop                                    (< , <= NAHI: high = mid ke saath infinite loop)
+     //   3. nums[mid] > nums[high] -> low = mid + 1 (min right me) · warna high = mid   (mid-1 NAHI: mid khud min ho sakta)
+     //   4. return nums[low]
+
      int findMin(vector<int> &nums) {            // target nahi, khud MIN -> mid ko HIGH se compare
          int low = 0, high = nums.size() - 1;
          while (low < high) {                    // low<high: high=mid ke saath <= = infinite loop
@@ -2106,6 +2600,13 @@
      // SAWAAL: piles[] me kele, h ghante. har ghante ek pile se k kele (kam ho to bas wo pile). sab khane ki MIN speed k lautao.
      //   e.g. piles=[3,6,7,11], h=8 -> 4
      //   kyun: k=4 -> 1+2+2+3 = 8 ghante, chal gaya · k=3 -> 1+2+3+4 = 10 > 8, nahi chalega
+
+     // CHAABI:
+     //   1. solve(piles, h, mid): long long hours = 0; har pile pe loop: hours += ceil((double)piles[i] / mid)
+     //      -> return hours <= h                                       (double cast PEHLE, warna int/int floor)
+     //   2. low = 1 (0 = divide by zero), high = *max_element(piles), ans = -1
+     //   3. while (low <= high), mid: solve(mid) sach -> ans = mid, high = mid - 1 (chhota try) · warna low = mid + 1
+     //   4. return ans
 
      bool solve(vector<int> &piles, int h, int mid) {
          long long hours = 0;                    // long long: bade piles pe sum overflow
@@ -2135,6 +2636,13 @@
      // SAWAAL: weights[] ko ORDER me D din me bhejna. ek din ka total <= capacity. MIN capacity lautao.
      //   e.g. weights=[3,2,2,4,1,4], D=3 -> 6
      //   kyun: 6 se [3,2] [2,4] [1,4] = 3 din · 5 se [3,2] [2] [4,1] [4] = 4 din, zyada
+
+     // CHAABI:
+     //   1. solve(weights, D, mid): days = 1, sum = 0; har w pe loop: sum + w > mid -> days++, sum = 0; phir sum += w
+     //      -> return days <= D                                        (days = 1: aakhri din bhi gino)
+     //   2. low = *max_element (sabse bhaari akela chadhe), high = accumulate = sum, ans = -1   (lo = 0 rakha -> galat 5)
+     //   3. while (low <= high): solve(mid) -> ans = mid, high = mid - 1 · warna low = mid + 1
+     //   4. return ans
 
      bool solve(vector<int> &weights, int D, int mid) {
          int days = 1;                           // day=1: aakhri din ka load bhi gino
@@ -2169,6 +2677,13 @@
      // SAWAAL: nums[] ko k LAGATAAR hisson me baanto. har split ka sabse bada hissa-sum dekho, us ka MIN lautao.
      //   e.g. [7,2,5,10,8], k=2 -> 18
      //   kyun: splits ke bade-sum 25,23,18,24 -> sabse chhota 18 ([7,2,5]=14 | [10,8]=18)
+
+     // CHAABI:
+     //   1. solve(nums, k, mid): sum = 0, count = 1; har nums[i] pe loop: sum += nums[i]; sum > mid -> count++, sum = nums[i]
+     //      -> return count <= k                                       (count = 1 se; sum = nums[i], 0 nahi)
+     //   2. low = *max_element, high = accumulate (sum), ans = -1
+     //   3. while (low <= high): solve(mid) -> ans = mid, high = mid - 1 · warna low = mid + 1
+     //   4. return ans
 
      bool solve(vector<int> &nums, int k, int mid) {
          int sum = 0, count = 1;                 // count=1 se START: warna aakhri tukda chhoot jaata
@@ -2207,6 +2722,13 @@
 
      // TAREEKA: peak = dono padosi se bada; edges ke bahar -inf
 
+     // CHAABI:
+     //   1. low = 0, high = n - 1
+     //   2. while (low < high) loop, mid                               (< : mid + 1 hamesha andar)
+     //   3. nums[mid] < nums[mid + 1] -> low = mid + 1 (chadhaai, peak right)
+     //      else if nums[mid] > nums[mid + 1] -> high = mid             (dhalaan: mid khud ho sakta, mid-1 NAHI)
+     //   4. return low
+
      int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges ke bahar -inf
          int n = nums.size();
          int low = 0, high = n - 1;
@@ -2227,6 +2749,13 @@
 
      // TAREEKA: har element 2x, sirf EK akela. O(log n) (XOR = O(n), yahan log n chahiye)
      // single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 se compare
+
+     // CHAABI:
+     //   1. size == 1 -> return nums[0]; low = 0, high = n - 1
+     //   2. while (low <= high), mid; mid == 0 -> return nums[mid]     (mid - 1 bahar na jaaye)
+     //   3. mid EVEN: nums[mid] == nums[mid - 1] -> high = mid - 1, warna low = mid + 1
+     //      mid ODD:  nums[mid] != nums[mid - 1] -> high = mid - 1, warna low = mid + 1
+     //   4. loop ke bahar return nums[high]                            (HIGH, low nahi)
 
      int singleNonDuplicate(vector<int> &nums) {
          if (nums.size() == 1)
@@ -2261,6 +2790,13 @@
      //   e.g. [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true
      //   kyun: 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
 
+     // CHAABI:
+     //   1. row = matrix.size(), col = matrix[0].size()
+     //   2. low = 0, high = row * col - 1
+     //   3. while (low <= high), mid: cell = matrix[mid / col][mid % col]
+     //      == target -> true · chhota -> low = mid + 1 · bada -> high = mid - 1
+     //   4. return false
+
      bool searchMatrix(vector<vector<int>> &matrix, int target) {
          int row = matrix.size();
          int col = matrix[0].size();             // col = matrix[0].size(), row nahi
@@ -2287,6 +2823,14 @@
      // TAREEKA: MERGE mat karo -> CUT: LEFT aadha | RIGHT aadha, left ka HAR <= right ka HAR. 4 kinaare = median
      // A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> Px=4 (1 3 8 9 | 15), Py=2 (7 11 | 18 ..) -> max(9,11) = 11
      // Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wahan VALUE pe)
+
+     // CHAABI:
+     //   1. m > n -> return findMedianSortedArrays(B, A)               (chhote pe BS)
+     //   2. low = 0, high = m; while (low <= high): Px = mid, Py = (m + n + 1) / 2 - Px
+     //   3. x1 = A[Px-1] (Px == 0 -> INT_MIN), x2 = B[Py-1] (Py == 0 -> INT_MIN),
+     //      x3 = A[Px] (Px == m -> INT_MAX), x4 = B[Py] (Py == n -> INT_MAX)
+     //   4. x1 <= x4 && x2 <= x3 -> even: (max(x1,x2) + min(x3,x4)) / 2.0 · odd: max(x1,x2)
+     //   5. warna x1 > x4 -> high = Px - 1, else low = Px + 1; bahar return 0.0
 
      double findMedianSortedArrays(vector<int> &A, vector<int> &B) {
          int m = A.size();
@@ -2349,6 +2893,12 @@
 
      // TAREEKA: fast end pe -> slow MIDDLE pe
 
+     // CHAABI:
+     //   1. slow = head, fast = head                                   (dono head se -> even me 2nd middle)
+     //   2. while (fast != NULL && fast->next != NULL) loop            (fast pehle check, warna NULL->next crash)
+     //   3. andar: slow = slow->next, fast = fast->next->next
+     //   4. return slow
+
      Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
          Node *slow = head;                      // dono head se: even list me 2nd middle milta
          Node *fast = head;
@@ -2365,6 +2915,12 @@
      //   kyun: -4 ke baad phir 2 pe aa gaye -> 2,0,-4,2,... chakkar kabhi NULL nahi aata
 
      // TAREEKA: Floyd: cycle ho to tez-dheema MILENGE
+
+     // CHAABI:
+     //   1. slow = head, fast = head
+     //   2. while (fast != NULL && fast->next != NULL): slow 1 kadam, fast 2 kadam
+     //   3. move ke BAAD check: slow == fast -> return true            (pehle check karte to turant true)
+     //   4. loop ke bahar return false
 
      bool hasCycle(Node *head) {                 // Floyd: cycle ho to tez-dheema MILENGE
          Node *slow = head;                      // dono head se: cycle ho to fast ghoom ke slow ko pakdega
@@ -2388,6 +2944,13 @@
      // values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = duplicate
      // [3,1,3,4,2]: 0->3->4->2->3->4->2... (loop, entry 3 = dup)
 
+     // CHAABI:
+     //   1. slow = 0, fast = 0; PEHLE ek kadam: slow = nums[slow], fast = nums[nums[fast]]   (warna loop chale hi nahi)
+     //   2. PHASE 1: while (slow != fast): slow = nums[slow], fast = nums[nums[fast]]
+     //   3. slow = 0 wapas (fast meet point pe hi)
+     //   4. PHASE 2: while (slow != fast): dono 1-1 kadam (slow = nums[slow], fast = nums[fast])
+     //   5. return slow                                                (cycle ki entry = duplicate)
+
      int findDuplicate(vector<int> &nums) {
          int slow = 0, fast = 0;                 // 0 se: value 1..n, koi 0 pe point nahi -> 0 cycle ke bahar
          slow = nums[slow], fast = nums[nums[fast]];   // PEHLE ek kadam: 0 pe hi rahe to loop chalega nahi
@@ -2409,6 +2972,13 @@
      //   kyun: chakkar 2,0,-4,2,... hai, bahar se andar pehla kadam 2 pe padta -> entry 2
 
      // TAREEKA: cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* version (->next)
+
+     // CHAABI:
+     //   1. head == NULL -> NULL; slow = head, fast = head, bool cycle = false
+     //   2. while (fast != NULL && fast->next != NULL): slow 1, fast 2; slow == fast -> cycle = true, break
+     //   3. !cycle -> return NULL                                      (flag se, slow != fast se nahi: 1 node wala case)
+     //   4. slow = head; while (slow != fast): dono 1-1 kadam
+     //   5. return slow
 
      ListNode *detectCycle(ListNode *head) {
          if (head == NULL)
@@ -2442,6 +3012,12 @@
      // TAREEKA: COMBO: middle -> 2nd half REVERSE -> head (aage se) & rev (peeche se) saath compare
      // middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
 
+     // CHAABI:
+     //   1. mid = middleNode(head)                                     (upar wala fast / slow)
+     //   2. rev = reverseList(mid)                                     (neeche wala 3-pointer)
+     //   3. while (head != NULL && rev != NULL): val barabar -> dono aage, warna return false
+     //   4. return true                                                (&& : jo pehle NULL wahin ruko)
+
      bool isPalindrome(Node *head) {
          Node *mid = middleNode(head);           // slow / fast
          Node *rev = reverseList(mid);           // 2nd half ulta (rev = naya head)
@@ -2462,6 +3038,13 @@
      //   kyun: end se gino 5 (1st), 4 (2nd) -> 4 hata
 
      // TAREEKA: FAST/SLOW GAP: pehle fast n kadam aage, phir dono saath
+
+     // CHAABI:
+     //   1. slow = head, fast = head                                   (dummy nahi)
+     //   2. for (i = 1..n) loop: fast = fast->next                     (fast n kadam aage)
+     //   3. fast == NULL -> return head->next                          (head hi hatana hai)
+     //   4. while (fast->next != NULL): dono 1-1 kadam                  (slow hatane wale ke PEHLE ruke)
+     //   5. loop ke bahar: slow->next = slow->next->next; return head
 
      Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam aage, phir dono saath
          Node *slow = head;                      // dummy nahi, dono head se
@@ -2484,6 +3067,15 @@
      //   kyun: dono 6 wale node (beech wala aur aakhri) nikal gaye, baaki kram waisa hi
 
      // TAREEKA: val wale SAARE node hatao
+
+     // CHAABI:
+     //   1. !head -> NULL; prev = NULL, curr = head
+     //   2. while (curr != NULL && head != NULL) loop:
+     //   3.   curr->val == val && prev == NULL -> head = head->next     (head hata)
+     //        curr->val == val && prev != NULL -> prev->next = curr->next   (prev aage NAHI)
+     //        else -> prev = curr                                      (prev SIRF no-match pe aage)
+     //   4.   har case ke end me curr = curr->next
+     //   5. return head
 
      Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
          if (!head)
@@ -2508,6 +3100,13 @@
      // SAWAAL: do SORTED linked list diye. dono ko jod ke ek SORTED list banao, uska head lautao.
      //   e.g. a: 1->2->4, b: 1->3->4 -> 1->1->2->3->4->4
      //   kyun: har baar dono ke aage wale me se chhota uthao: 1,1,2,3,4,4
+
+     // CHAABI:
+     //   1. dummy = new Node(0), tail = dummy
+     //   2. while (a != NULL && b != NULL): a->val <= b->val -> tail->next = a, a aage · warna b jodo, b aage; tail aage
+     //   3. while (a != NULL): baaki a jodo, tail aage
+     //   4. while (b != NULL): baaki b jodo, tail aage
+     //   5. return dummy->next
 
      Node *mergeTwoLists(Node *a, Node *b) {
          Node *dummy = new Node(0);              // dummy: head ka special case nahi
@@ -2545,6 +3144,13 @@
      // TAREEKA: number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala right-to-left add
      // (2->4->3) + (5->6->4) = 342 + 465 = 807 -> (7->0->8)
 
+     // CHAABI:
+     //   1. dummy = new Node(0), tail = dummy, carry = 0
+     //   2. while (a != NULL || b != NULL || carry > 0) loop           (|| carry: 999 + 1 wala leading 1)
+     //   3. andar: sum = 0; a hai -> sum += a->val, a aage; b hai -> sum += b->val, b aage; sum += carry
+     //   4. tail->next = new Node(sum % 10), tail aage, carry = sum / 10
+     //   5. return dummy->next
+
      Node *addTwoNumbers(Node *a, Node *b) {
          Node *dummy = new Node(0);              // dummy + tail (MERGE jaisa) + ek CARRY
          Node *tail = dummy;
@@ -2574,6 +3180,14 @@
 
      // TAREEKA: har do adjacent NODE ki jodi swap (values nahi, pointer)
 
+     // CHAABI:
+     //   1. !head -> nullptr; dummy = new Node(0), prev = dummy, prev->next = head, first = head
+     //   2. while (prev->next != nullptr && first->next != nullptr) loop:
+     //   3.   second = first->next, temp = second->next                (temp PEHLE bachao)
+     //   4.   second->next = first, first->next = temp, prev->next = second
+     //   5.   prev = first, first = temp                               (agli jodi)
+     //   6. return dummy->next
+
      Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap (values nahi, pointer)
          if (!head)
              return nullptr;                     // khaali list: swap ko kuch nahi
@@ -2600,6 +3214,12 @@
      //   e.g. 1->2->3->4->5 -> 5->4->3->2->1
      //   kyun: har node ka teer ulta, purana aakhri (5) naya head
 
+     // CHAABI:
+     //   1. prev = NULL, curr = head, nextt = head
+     //   2. while (curr != NULL) loop:
+     //   3.   nextt = curr->next (PEHLE bachao), curr->next = prev, prev = curr, curr = nextt
+     //   4. return prev                                                (curr NULL pe ruka, prev = naya head)
+
      Node *reverseList(Node *head) {
          Node *prev = NULL;                      // prev=NULL: purana head naya tail, uska next NULL
          Node *curr = head;
@@ -2620,6 +3240,13 @@
 
      // TAREEKA: har k-node group ulta (NODES), k se KAM bache -> waise hi. 1->2->3->4->5, k=2 -> 2->1->4->3->5
      // PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALAG: ulatna, naya nahi)
+
+     // CHAABI:
+     //   1. head == NULL -> NULL
+     //   2. pehle GINO: while (currNode && countNode < k) aage; countNode != k -> return head   (kam bache = waise hi)
+     //   3. prev = NULL, curr = head, nextt = NULL; while (curr && count < k): 3 pointer reverse, count++
+     //   4. nextt != NULL -> head->next = reverseKGroup(nextt, k)      (head ab is group ka tail)
+     //   5. return prev                                                (is group ka naya head)
 
      Node *reverseKGroup(Node *head, int k) {
          if (head == NULL)
@@ -2658,6 +3285,14 @@
      // TAREEKA: har node me val + next + RANDOM (kahin bhi / NULL). DEEP copy: copy ke random COPY ke andar
      // 2 PASS kyun: random aage bhi ho sakta, 1 pass me target abhi bana hi na ho -> pehle sab bana lo (+map)
      // PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
+
+     // CHAABI:
+     //   1. head == NULL -> NULL; unordered_map<Node*, Node*> mp; curr = head, prev = NULL, newHead = NULL
+     //   2. PASS 1 while (curr): temp = new Node(curr->val), mp[curr] = temp;
+     //      newHead NULL -> newHead = temp, prev = newHead · warna prev->next = temp, prev = temp; curr aage
+     //   3. curr = head, currRand = newHead
+     //   4. PASS 2 while (curr): curr->random NULL -> NULL · warna currRand->random = mp[curr->random]; dono aage
+     //   5. return newHead                                             (random ORIGINAL se padho, copy se nahi)
 
      Node *copyRandomList(Node *head) {
          if (head == NULL)
@@ -2708,6 +3343,18 @@
      // SAWAAL: built-in map ke bina apna HashMap (string -> int): put(key,val) (hai to update), get(key) (nahi -> -1), remove, size.
      //   e.g. put("a",1) put("b",2) put("a",5) get("a") -> 5 · size() -> 2 · remove("b") get("b") -> -1
      //   kyun: "a" dobara aaya to naya node nahi, value 5 ho gayi -> keys sirf a,b = 2 · b hata to -1
+
+     // CHAABI:
+     //   1. class: count, cap, vector<Entry*> buckets; constructor -> count = 0, cap = 16, buckets.resize(cap)
+     //   2. put(key, val): index = hash<string>{}(key) % cap, node = new Entry(key, val)
+     //      bucket khaali -> buckets[index] = node, count++
+     //      warna while (curr != NULL): key mili -> value update + TURANT return (warna duplicate node)
+     //      curr->next == nullptr -> curr->next = node, count++; phir curr = curr->next
+     //   3. get(key): index nikaalo, chain pe while -> key mili return value; poori chain ke baad -1
+     //   4. remove(key): curr = head, prev = NULL; while: key mili -> prev != NULL ? prev->next = curr->next
+     //      : buckets[index] = curr->next (HEAD hata), count--; phir prev = curr, curr = curr->next
+     //      (prev = prev->next NAHI: NULL pe crash)
+     //   5. size() -> count
 
      struct Entry {                              // Entry = | key | value | next |
          string key;
@@ -2792,6 +3439,15 @@
      //   e.g. add("apple") add("banana") add("apple") · contains("apple") -> true · size() -> 2 · remove("apple") -> contains false
      //   kyun: doosra "apple" pehle se tha, kuch nahi juda -> 2 key · remove ke baad apple gayab
 
+     // CHAABI:
+     //   1. class: sz, cap, buckets; constructor -> sz = 0, cap = 16, buckets.resize(cap)
+     //   2. add(key): bucket khaali -> node lagao + sz++; warna chain pe while: key mili -> return (duplicate skip)
+     //      curr->next == nullptr -> curr->next = node, sz++; curr = curr->next
+     //   3. contains(key): chain pe while, mili -> true; end -> false
+     //   4. remove(key): prev = NULL; mili -> prev == nullptr ? buckets[index] = curr->next : prev->next = curr->next
+     //      sz--, return; phir prev = curr, curr = curr->next
+     //   5. size() -> sz
+
      struct Entry {                              // HashMap ka EXACT code, bas VALUE nahi: | key | next |
          string key;
          Entry *next;
@@ -2872,6 +3528,16 @@
      // SAWAAL: fixed capacity cache. get(key) (nahi -> -1) aur put(key,val) dono O(1). bhar jaaye to sabse PURANA chhua (LRU) hatao.
      //   e.g. cap=2: put(1,1) put(2,2) get(1) -> 1 · put(3,3) · get(2) -> -1 · put(4,4) · get(1) -> -1 · get(3) -> 3 · get(4) -> 4
      //   kyun: get(1) se 1 taaza, put(3) pe 2 sabse purana -> hata · put(4) pe ab 1 purana -> hata, bache 3,4
+
+     // CHAABI:
+     //   1. constructor: cap = capacity, head = new Node(-1,-1), tail = new Node(-1,-1), head->next = tail, tail->prev = head
+     //      ("Node *head =" likha = shadowing TRAP)
+     //   2. removeNode(node): node->next->prev = node->prev, node->prev->next = node->next
+     //   3. addFront(node): nxt = head->next PEHLE pakdo -> head->next = node, node->prev = head, node->next = nxt, nxt->prev = node
+     //   4. get(key): mp.count(key) > 0 -> node = mp[key], removeNode + addFront, return node->val; warna -1
+     //   5. put(key, value): hai -> val update, removeNode + addFront (DONO)
+     //      nahi -> mp.size() == cap ho to toBeRemoved = tail->prev, removeNode, mp.erase(toBeRemoved->key) (KEY se)
+     //      phir newNode = new Node(key, value), addFront, mp[key] = newNode
 
      struct Node {                               // Node = | key | val | prev | next |
          int key, val;
@@ -2959,6 +3625,13 @@
 
      // TAREEKA: aaj becho = aaj ka daam MINUS ab tak ka sasta
 
+     // CHAABI:
+     //   1. ans = INT_MIN, minSoFar = INT_MAX
+     //   2. for (i = 0..n-1) loop:
+     //   3.   minSoFar = min(minSoFar, prices[i])                      (min PEHLE)
+     //   4.   ans = max(ans, prices[i] - minSoFar)
+     //   5. return ans < 0 ? 0 : ans
+
      int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab tak ka sasta
          int ans = INT_MIN;
          int minSoFar = INT_MAX;                 // INT_MAX: pehla din hi sasta ban jaaye
@@ -2977,6 +3650,13 @@
      //   kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
 
      // TAREEKA: running sum NEGATIVE = bojh -> sum = 0
+
+     // CHAABI:
+     //   1. maxSum = INT_MIN (all negative bhi pakde), sum = 0
+     //   2. har it pe loop: sum += it
+     //   3. maxSum = max(maxSum, sum)                                  (max PEHLE, reset BAAD)
+     //   4. sum < 0 -> sum = 0
+     //   5. return maxSum
 
      int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> sum = 0
          int maxSum = INT_MIN;                   // INT_MIN: all-negative [-1] bhi pakde
@@ -2999,6 +3679,14 @@
 
      // TAREEKA: neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
 
+     // CHAABI:
+     //   1. mini = 1, maxi = 1, ans = INT_MIN                          (loop 0 se)
+     //   2. for (i = 0..n-1) loop:
+     //   3.   temp = max({nums[i], mini * nums[i], maxi * nums[i]})     (3 candidate, temp me FREEZE)
+     //   4.   mini = min({nums[i], mini * nums[i], maxi * nums[i]})     (purane maxi se)
+     //   5.   maxi = temp, ans = max(ans, maxi)
+     //   6. return ans
+
      int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
          int mini = 1;                           // SHURUAAT: mini = maxi = 1, ans = INT_MIN, loop 0 se
          int maxi = 1;                           //   (loop 1 se ho to ans bhi nums[0] se; warna [4,-3] pe 0)
@@ -3018,6 +3706,14 @@
      //   kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
 
      // TAREEKA: = MAX PRODUCT skeleton, 2 tweak: * -> +, ans me ABS
+
+     // CHAABI:
+     //   1. n == 1 -> return abs(nums[0])
+     //   2. mini = 0, maxi = 0, ans = 0; for (i = 0..n-1) loop:
+     //   3.   temp = max({nums[i], mini + nums[i], maxi + nums[i]})
+     //   4.   mini = min({nums[i], mini + nums[i], maxi + nums[i]}), maxi = temp
+     //   5.   ans = max(ans, max(abs(mini), abs(maxi)))                (minSum se bhi aa sakta)
+     //   6. return ans
 
      int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: * -> +, ans me ABS
          int n = nums.size();
@@ -3044,6 +3740,13 @@
 
      // TAREEKA: circular (end -> start wrap), max-sum NON-EMPTY subarray. TRICK: PATA hona chahiye
      // A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL - min
+
+     // CHAABI:
+     //   1. maxKadaneK: sum = maxSum = nums[0]; loop 1 se: sum = max(sum + nums[i], nums[i]), maxSum = max(...)
+     //   2. minKadaneK: wahi, min ke saath (sum = min(sum + nums[i], nums[i]), minSum = min(...))
+     //   3. totalSum = poore array ka jod; circularSum = totalSum - minSum
+     //   4. maxSum > 0 -> return max(circularSum, maxSum)
+     //   5. warna return maxSum                                        (sab minus: total - min = 0 = khaali, galat)
 
      int maxKadaneK(vector<int> &nums) {
          int sum = nums[0];                      // init sum = maxSum = nums[0], loop 1 se (ya 0 + INT_MIN)
@@ -3086,6 +3789,13 @@
      // TAREEKA: har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
      // = KADANE (per index) + PREFIX / SUFFIX max
      // [2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
+
+     // CHAABI:
+     //   1. maxEndingAtForLeft: ans[0] = nums[0]; loop 1 se: ans[i] = max(ans[i-1] + nums[i], nums[i])
+     //   2. bestLeftPrefix: ans[0] = temp[0]; loop 1 se: ans[i] = max(ans[i-1], temp[i])   (running max)
+     //   3. right ke dono mirror: ans[n-1] se shuru, loop n-2 se 0 tak, ans[i+1] use
+     //   4. wall loop for (i = 0; i < n - 1): ans = max(ans, bestLeft[i] + bestRight[i + 1])   (ans = INT_MIN)
+     //   5. return ans                                                 (i + 1 = non-overlap, i nahi)
 
      vector<int> maxEndingAtForLeft(vector<int> &nums) {      // STEP 1: kadane per index (aage)
          int n = nums.size();
@@ -3159,6 +3869,11 @@
 
      // TAREEKA: sab 2 baar, ek 1 baar -> sab XOR = wahi ek
 
+     // CHAABI:
+     //   1. XORR = nums[0]                                                        (nums[0] se, isliye loop 1 se)
+     //   2. loop i = 1..n-1: XORR ^= nums[i]
+     //   3. return XORR
+
      int singleNumber(vector<int> &nums) {       // sab 2 baar, ek 1 baar -> sab XOR = wahi ek
          int XORR = nums[0];                     // nums[0] se shuru, isliye loop 1 se
          for (int i = 1; i < nums.size(); i++)
@@ -3208,6 +3923,12 @@
 
      // TAREEKA: preorder: PRE = VISIT -> left -> right (root pehle)
 
+     // CHAABI:
+     //   1. teeno function (root, res &): base -> if (!root) return
+     //   2. PRE:  res.push_back(root->val) -> left call -> right call     (root pehle)
+     //   3. IN:   left call -> push_back -> right call                     (beech)
+     //   4. POST: left call -> right call -> push_back                     (baad)
+
      void preorder(TreeNode *root, vector<int> &res) {    // PRE = VISIT -> left -> right (root pehle)
          if (!root)
              return;
@@ -3239,6 +3960,11 @@
      //   e.g. [3,9,20,null,null,15,7] -> 3
      //   kyun: sabse lamba rasta 3 -> 20 -> 15 (ya 7) = 3 node
 
+     // CHAABI:
+     //   1. base: if (!root) return 0
+     //   2. left = maxDepth(root->left), right = maxDepth(root->right)
+     //   3. return 1 + max(left, right)                                    (khud = 1 + gehri branch)
+
      int maxDepth(TreeNode *root) {
          if (!root)
              return 0;                           // base: null -> 0
@@ -3251,6 +3977,12 @@
      // SAWAAL: binary tree ka root diya. HAR node ke left aur right child SWAP karo (mirror), root lautao.
      //   e.g. [4,2,7,1,3,6,9] -> [4,7,2,9,6,3,1]
      //   kyun: 4 ke bachche 2,7 -> 7,2; 2 ke 1,3 -> 3,1; 7 ke 6,9 -> 9,6
+
+     // CHAABI:
+     //   1. base: if (!root) return nullptr
+     //   2. invertTree(root->left), invertTree(root->right)               (order free)
+     //   3. swap(root->left, root->right)                                  (POINTER swap, value nahi)
+     //   4. return root
 
      TreeNode *invertTree(TreeNode *root) {
          if (!root)
@@ -3265,6 +3997,11 @@
      // SAWAAL: do tree p, q diye. structure aur values dono bilkul same? true/false.
      //   e.g. p=[1,2], q=[1,null,2] -> false
      //   kyun: values same (1,2) par p me 2 LEFT child, q me RIGHT child; structure alag
+
+     // CHAABI:
+     //   1. dono NULL -> true · ek NULL -> false                           (null checks PEHLE, warna null->val crash)
+     //   2. p->val != q->val -> false
+     //   3. return isSameTree(p->left, q->left) && isSameTree(p->right, q->right)
 
      bool isSameTree(TreeNode *p, TreeNode *q) {
          if (p == NULL && q == NULL)
@@ -3286,6 +4023,11 @@
      //   kyun: left 2 ke bachche 3,4 aur right 2 ke 4,3; bahar-bahar 3=3, andar-andar 4=4
 
      // TAREEKA: isSameTree: same tree ka hi base (dono null / ek null / val alag)
+
+     // CHAABI:
+     //   1. isSameTree ka wahi base (dono null / ek null / val alag)
+     //   2. return isSameTree(p->left, q->right) && isSameTree(p->right, q->left)   (CROSS = mirror)
+     //   3. isSymmetric: if (!root) true · return isSameTree(root->left, root->right)
 
      bool isSameTree(TreeNode *p, TreeNode *q) { // same tree ka hi base (dono null / ek null / val alag)
          if (p == NULL && q == NULL)
@@ -3316,6 +4058,13 @@
 
      // TAREEKA: height: max-depth ka height(), maxDia by-REFERENCE
 
+     // CHAABI:
+     //   1. height(root, int &maxDia): base if (!root) return 0
+     //   2. left = height(left), right = height(right)                     (recurse PEHLE, post-order)
+     //   3. maxDia = max(maxDia, left + right)                             (is node se guzarti diameter)
+     //   4. return 1 + max(left, right)                                    (parent ko height)
+     //   5. main: maxDia = 0 -> height(root, maxDia) -> return maxDia
+
      int height(TreeNode *root, int &maxDia) {   // max-depth ka height(), maxDia by-REFERENCE
          if (!root)
              return 0;                           // null ki height 0: uske neeche koi edge nahi
@@ -3342,6 +4091,13 @@
      //   (2) record me + root->val: junction pe node bhi ginta
      //   (3) max(0, ..): minus arm SKIP (diameter me sab positive the)
 
+     // CHAABI:
+     //   1. maxDepth(root, int &maxSum): base if (!root) return 0
+     //   2. left = max(0, call(left)), right = max(0, call(right))         (minus arm -> 0, lo hi mat)
+     //   3. maxSum = max(maxSum, root->val + left + right)                 (junction pe DONO arm + node)
+     //   4. return root->val + max(left, right)                            (upar EK hi arm ja sakti)
+     //   5. main: maxSum = INT_MIN (0 nahi, akela -3 bhi valid) -> call -> return maxSum
+
      int maxDepth(TreeNode *root, int &maxSum) {
          if (!root)
              return 0;                           // base: null -> 0
@@ -3363,6 +4119,13 @@
      //   kyun: pre[0]=3 root; inorder me 3 ke baaye [9] = left, daaye [15,20,7] = right; right ka root 20 (agla pre)
 
      // TAREEKA: preorder[rootIndex] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part, recurse
+
+     // CHAABI:
+     //   1. buildTree: map mp (inorder value -> index) ek loop me, rootIndex = 0
+     //   2. solve(int &rootIndex, pre, in, l, r, mp): base if (l > r) return NULL
+     //   3. pivot = mp[preorder[rootIndex]] -> rootIndex++ -> newNode(inorder[pivot])
+     //   4. newNode->left = solve(l, pivot - 1) PEHLE, phir ->right = solve(pivot + 1, r) -> return newNode
+     //   5. call: solve(rootIndex, ..., 0, n - 1, mp)                      (rootIndex & se: sab calls me shared)
 
      TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder, int l, int r,
                      unordered_map<int, int> &mp) {   // &rootIndex: ek pointer SAB calls me shared (neeche)
@@ -3393,6 +4156,13 @@
 
      // TAREEKA: HAR node pe abs(leftH - rightH) <= 1? alag "balanced?" pass nahi -> height nikaalte-nikaalte HI check
      // maxDepth: return = HEIGHT, ya -1 (neeche kahin imbalance)
+
+     // CHAABI:
+     //   1. maxDepth: base if (!root) return 0
+     //   2. left = call(left) -> -1 hai to turant return -1
+     //   3. right = call(right) -> -1 hai to turant return -1
+     //   4. abs(left - right) > 1 -> return -1 · warna return 1 + max(left, right)
+     //   5. isBalanced: if (!root) return true · return maxDepth(root) != -1
 
      int maxDepth(TreeNode *root) {              // return = HEIGHT, ya -1 (neeche kahin imbalance)
          if (!root)
@@ -3425,6 +4195,12 @@
 
      // TAREEKA: p, q ALAG side split
 
+     // CHAABI:
+     //   1. if (!root) return NULL · if (root == p || root == q) return root
+     //   2. left = LCA(root->left), right = LCA(root->right)
+     //   3. left NULL -> return right · right NULL -> return left
+     //   4. dono non-null -> return root                                   (yahi split point)
+
      TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // p, q ALAG side split
          if (!root)
              return NULL;                        // khaali subtree -> p/q yahan nahi
@@ -3453,6 +4229,11 @@
 
      // TAREEKA: root se LEAF tak sum == target?
 
+     // CHAABI:
+     //   1. if (!root) return false
+     //   2. leaf (!root->left && !root->right) -> return root->val == targetSum
+     //   3. return call(left, targetSum - root->val) || call(right, targetSum - root->val)
+
      bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == target?
          if (!root)
              return false;                       // base: null -> false
@@ -3470,6 +4251,12 @@
      //   kyun: level 0 = 3, level 1 = 9,20, level 2 = 15,7
 
      // TAREEKA: har level ki alag list. FIFO -> L-to-R apne aap
+
+     // CHAABI:
+     //   1. if (!root) return ans · q.push(root)
+     //   2. while (!q.empty()): sz = q.size() PEHLE pakdo, temp khaali
+     //   3. for (i = 0; i < sz): curr = front, pop, temp me val, left / right ho to push
+     //   4. for ke BAHAR ans.push_back(temp)                               (level poora tab)
 
      vector<vector<int>> levelOrder(TreeNode *root) {   // har level ki alag list. FIFO -> L-to-R apne aap
          vector<vector<int>> ans;
@@ -3502,6 +4289,11 @@
 
      // TAREEKA: daaye se har level ka SIRF right-most dikhta
 
+     // CHAABI:
+     //   1. level order wala hi dhaancha (while -> sz -> for i < sz)
+     //   2. for ke andar: if (i == sz - 1) ans.push_back(curr->val)        (aakhri = sabse right; left view = i == 0)
+     //   3. bachche push waise hi
+
      vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-most dikhta
          if (!root)
              return {};
@@ -3531,6 +4323,11 @@
      //   kyun: level 1 ka [9,20] ulta = [20,9]; level 2 seedha [15,7]
 
      // TAREEKA: 0: L->R · 1: R->L · 2: L->R ...
+
+     // CHAABI:
+     //   1. levelCounter = 0, level order ka dhaancha, temp hamesha normal L->R banao
+     //   2. for ke BAAD: if (levelCounter % 2 != 0) reverse(temp)
+     //   3. phir levelCounter++ -> ans.push_back(temp)                      (++ check ke baad, warna root ulta)
 
      vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L · 2: L->R ...
          vector<vector<int>> ans;
@@ -3566,6 +4363,12 @@
 
      // TAREEKA: root se sabse PAAS wale LEAF tak
 
+     // CHAABI:
+     //   1. if (!root) return 0 · q.push(root) · depth = 0
+     //   2. while -> sz -> for (i < sz): curr = front, pop
+     //   3. leaf mila (!left && !right) -> turant return depth + 1
+     //   4. bachche push · for ke BAHAR depth++
+
      int minDepth(TreeNode *root) {              // root se sabse PAAS wale LEAF tak
          if (!root)
              return 0;                           // khaali tree -> 0 (warna NULL push)
@@ -3600,6 +4403,11 @@
 
      // TAREEKA: inorder: BST pe inorder = SORTED (ascending)
 
+     // CHAABI:
+     //   1. inorder(root, res): left -> push_back(val) -> right
+     //   2. kthSmallest: ans vector me inorder bharo
+     //   3. return ans[k - 1]                                              (k 1-based, vector 0-based)
+
      void inorder(TreeNode *root, vector<int> &res) {   // BST pe inorder = SORTED (ascending)
          if (!root)
              return;
@@ -3621,6 +4429,13 @@
 
      // TAREEKA: TRAP: sirf turant child check KAAFI NAHI -> node ko SAARE ancestors ka rule maanna
      //   -> har node ki WINDOW (mini, maxi), neeche jaate tight hoti
+
+     // CHAABI:
+     //   1. solve(root, long long mini, long long maxi): if NULL -> true
+     //   2. root->val <= mini || root->val >= maxi -> false                (barabar bhi galat)
+     //   3. left = solve(left, mini, root->val), right = solve(right, root->val, maxi)
+     //   4. return left && right
+     //   5. call: solve(root, LLONG_MIN, LLONG_MAX)                        (INT se nahi: node khud INT_MAX ho sakta)
 
      bool solve(TreeNode *root, long long mini, long long maxi) {
          if (root == NULL)
@@ -3712,6 +4527,13 @@
      // TAREEKA: = tree LEVEL-ORDER ka skeleton + 3 ADD: (1) neighbours = adj[node] (edges se banao)
      //   (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
 
+     // CHAABI:
+     //   1. edges loop: adj[u].push_back(v), adj[v].push_back(u)          (undirected dono taraf)
+     //   2. vis(n, false) · q.push(source) · vis[source] = true
+     //   3. while: node = front, pop · node == destination -> return true   (pop pe check)
+     //   4. adj[node] loop: !vis -> vis = true + push                       (push ke saath mark)
+     //   5. queue khaali -> return false
+
      bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
          unordered_map<int, vector<int>> adj;
          for (auto &it : edges) {
@@ -3746,6 +4568,12 @@
      //   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 2
      //   kyun: (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
 
+     // CHAABI:
+     //   1. DFS(grid, i, j, m, n): base ek hi if -> bounds bahar || grid[i][j] == '0' -> return   (bounds PEHLE)
+     //   2. grid[i][j] = '0' (sink = visited) -> 4 call: i+1, i-1, j+1, j-1
+     //   3. numIslands: do loop (i < m, j < n) -> grid[i][j] == '1' -> DFS + count++
+     //   4. return count
+
      void DFS(vector<vector<char>> &grid, int i, int j, int m, int n) {
          if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')   // BASE ek hi if, sab || se
              return;                             // bounds PEHLE, '0' baad: bahar index pe grid padhne se
@@ -3778,6 +4606,12 @@
      //   kyun: {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
 
      // TAREEKA: ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BFS (islands DFS)
+
+     // CHAABI:
+     //   1. adj banao (dono taraf) · vis(n, false) · count = 0
+     //   2. OUTER loop i = 0..n-1: if (!vis[i]) -> push(i), vis[i] = true, count++
+     //   3. usi if ke andar while (BFS): node = front, pop -> adj[node] me !vis -> mark + push
+     //   4. return count                                                   (count++ aur BFS dono if ke ANDAR)
 
      int countComponents(int n, vector<vector<int>> &edges) {
          unordered_map<int, vector<int>> adj;
@@ -3817,6 +4651,12 @@
 
      // TAREEKA: ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer count++ nahi, MAX
 
+     // CHAABI:
+     //   1. DFS int: bounds bahar || grid == 0 -> return 0
+     //   2. grid[i][j] = 0 -> neeche, upar, right, left = 4 call ka area
+     //   3. return 1 + left + right + upar + neeche
+     //   4. main: ans = 0 · do loop -> grid == 1 -> ans = max(ans, DFS(...)) · return ans
+
      int DFS(vector<vector<int>> &grid, int i, int j, int m, int n) {
          if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0)
              return 0;                           // bounds / paani -> 0 (bounds PEHLE)
@@ -3849,6 +4689,14 @@
      //   kyun: min 1: (0,1),(1,0) · min 2: (0,2),(1,1) · min 3: (2,1) · min 4: (2,2); sab sad gaye
 
      // TAREEKA: tree LEVEL-ORDER grid pe; har level = 1 minute
+
+     // CHAABI:
+     //   1. do loop: grid == 2 wale saare q me (level 0) · dirs 4 · mins = 0
+     //   2. while (!q.empty()): sz = q.size() -> while (sz--)
+     //   3. row = q.front().first, col = q.front().second -> PHIR pop     (pehle padho, phir pop)
+     //   4. dirs loop: nR, nC bounds andar && grid == 1 -> grid = 2 + push (push ke saath 2)
+     //   5. while (sz--) ke BAHAR mins++
+     //   6. phir do loop: koi 1 bacha -> -1 · return mins == 0 ? mins : mins - 1   (aakhri level extra)
 
      int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; har level = 1 minute
          queue<pair<int, int>> q;
@@ -3898,6 +4746,12 @@
      // TAREEKA: "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false
      // [[1,0],[2,1],[3,2]]: har [a,b] = a lene se pehle b -> edge b -> a
 
+     // CHAABI:
+     //   1. har [a,b] pe: edge b -> a, aur a ka indegree++        (pehla loop: graph banao)
+     //   2. SAARE course pe loop (0..n-1): indegree 0 wale queue me  (kai course ek saath shuru ho sakte)
+     //   3. queue se nikaalo -> ans me daalo -> padosi ka indegree-- -> 0 hua to queue
+     //   4. return ans.size() == numCourses                          (cycle wale kabhi 0 nahi hote)
+
      bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
          unordered_map<int, vector<int>> adj;
          vector<int> indegree(numCourses, 0);    // indegree = kitne prereq BACHE; 0 = ready
@@ -3937,6 +4791,13 @@
      //   lexicographic" -> MIN-HEAP. topo ke KAI sahi order ([5->2,5->0,4->0,4->1,2->3,3->1]: "4 5 0 2 3 1"
      //   aur "5 4 2 0 3 1" dono sahi) -> khaas order = heap. queue = jo pehle ready · heap = ready me chhota
      // BADLAAV bas itna: queue -> min-heap, front() -> top(). indegree / adj / ghatana / end-check SAME
+
+     // CHAABI:
+     //   1. deps loop: u = it[0], v = it[1] -> adj[u].push_back(v), indegree[v]++
+     //   2. pq = min-heap (greater<int>) · loop 0..n-1: indegree 0 wale pq me
+     //   3. ans KHAALI se (ans(n, 0) nahi) · while: node = top, pop, ans me
+     //   4. adj[node] loop: indegree-- -> 0 hua to pq.push
+     //   5. ans.size() == n -> ans, warna {}
 
      vector<int> buildOrder(int n, vector<vector<int>> &deps) {
          vector<int> indegree(n, 0);
@@ -3979,6 +4840,13 @@
      //   (a) clone BANANA (if ke ANDAR, sirf naye pe)  (b) JODNA push_back (if ke BAHAR, har edge pe)
      //   bina jodna -> loose clones -> adhoora graph
 
+     // CHAABI:
+     //   1. if (!node) nullptr · clone banao, mp[node] = clone, q.push(node)   (seed bhi map me)
+     //   2. while: curr = front, pop -> curr->neighbors loop
+     //   3. mp.find(it) == end -> naya clone, mp[it] = newClone, q.push(it)    (BANANA, sirf naye pe)
+     //   4. if ke BAHAR har nbr pe: mp[curr]->neighbors.push_back(mp[it])       (JODNA)
+     //   5. return mp[node]
+
      Node *cloneGraph(Node *node) {
          if (!node)
              return nullptr;                     // khaali graph
@@ -4017,6 +4885,13 @@
      //   = 2 rang. DSU ULTA hai: DSU me jude -> SAME group, yahan jude -> ALAG
      // graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]] -> true (square)
      //   [[1,2,3],[0,2],[0,1,3],[0,2]] -> false (0-1-2 triangle)
+
+     // CHAABI:
+     //   1. color(m, -1) · OUTER loop i: color[i] == -1 -> BFS false aaya to return false
+     //   2. BFS(graph, color, node): push(node), color[node] = 0               (start ko rang zaroori)
+     //   3. while: node = front, pop -> graph[node] loop
+     //   4. color == -1 -> color = 1 - color[node] + push · warna same rang -> return false
+     //   5. BFS end true · main end true
 
      bool BFS(vector<vector<int>> &graph, vector<int> &color, int node) {
          queue<int> q;
@@ -4063,6 +4938,13 @@
      // negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford. REAL: Maps / GPS, routing
      // pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
 
+     // CHAABI:
+     //   1. adj[u].push_back({v, w}), adj[v].push_back({u, w})
+     //   2. pq min-heap of {dist, node} · dist(n, 1e9), dist[src] = 0, push({0, src})
+     //   3. while: wt = top.first, node = top.second, pop · wt > dist[node] -> continue (stale)
+     //   4. adj[node] loop: wt + it.second < dist[it.first] -> dist update, PHIR push
+     //   5. return dist
+
      vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
          unordered_map<int, vector<pair<int, int>>> adj;
          for (auto &it : edges) {
@@ -4102,6 +4984,13 @@
      // TAREEKA: KAB: groups / connected / same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn
      //   · MST-Kruskal
      // REAL: dost-circle ("A-B same circle?"), accounts merge
+
+     // CHAABI:
+     //   1. class: parent, rnk · constructor: parent[i] = i, rnk 0
+     //   2. find(x): x == parent[x] -> x · warna return parent[x] = find(parent[x])   (path compression)
+     //   3. unite(x, y): u_x = find(x), u_y = find(y), same -> return
+     //   4. chhota rnk bade ke neeche · barabar -> parent[u_y] = u_x, rnk[u_x]++
+     //   5. countComponents: har edge pe unite -> loop i: find(i) == i -> count++
 
      class DSU {
      public:
@@ -4155,6 +5044,13 @@
      // word = NODE · edge = ek letter farak + dict me. graph IMPLICIT (words), islands / Kahn's wali family
      // hit -> hot -> dot / lot -> dog / log -> cog = 5 WORDS (begin = 1, steps nahi)
      // level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora layer khatam pe)
+
+     // CHAABI:
+     //   1. set st(wordList) (dict + visited dono) · q.push({beginWord, 1}) · st.erase(beginWord)
+     //   2. while: word, steps = front, pop · word == endWord -> return steps
+     //   3. loop i har letter: original = word[i] -> loop ch 'a'..'z': word[i] = ch
+     //   4. st me mila -> st.erase(word) + push({word, steps + 1})          (erase = visited)
+     //   5. ch loop ke baad word[i] = original (restore) · end me return 0
 
      int ladderLength(string beginWord, string endWord, vector<string> &wordList) {
          unordered_set<string> st(begin(wordList), end(wordList));   // dict = lookup + visited dono
@@ -4240,6 +5136,12 @@
 
      // TAREEKA: har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
 
+     // CHAABI:
+     //   1. priority_queue<int> pq (MAX); loop se saare stones push
+     //   2. while (pq.size() > 1): x = top, pop · y = top, pop          (smash ko 2 pathar chahiye)
+     //   3. diff = abs(y - x); diff > 0 tabhi wapas push               (barabar = dono khatam)
+     //   4. return pq.empty() ? 0 : pq.top()                            (empty PEHLE check, warna top() crash)
+
      int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
          priority_queue<int> pq;                 // MAX: har turn 2 sabse BHAARI chahiye
          for (int i = 0; i < stones.size(); i++)
@@ -4263,6 +5165,11 @@
 
      // TAREEKA: top-K ka core
 
+     // CHAABI:
+     //   1. priority_queue<int, vector<int>, greater<int>> pq (MIN)
+     //   2. har num pe loop: push, phir if (pq.size() > k) pop            (sabse chhota bahar, k bade bache)
+     //   3. return pq.top()                                              (k bade me sabse chhota = k-th largest)
+
      int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
          priority_queue<int, vector<int>, greater<int>> pq;   // MIN: size>k pe sabse CHHOTA evict
          for (auto &it : nums) {
@@ -4279,6 +5186,12 @@
      //   kyun: [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
 
      // TAREEKA: KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap, sabse BADI evict)
+
+     // CHAABI:
+     //   1. priority_queue<pair<int, vector<int>>> maxHeap               (MAX: sabse door top pe)
+     //   2. har point pe loop: push {x*x + y*y, point}                   (dist PEHLE, root NAHI)
+     //   3. usi loop me: if (maxHeap.size() > k) pop                     (sabse door bahar)
+     //   4. while heap khaali na ho: ans me top().second, pop -> return ans
 
      vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
          priority_queue<pair<int, vector<int>>> maxHeap;   // MAX: sabse door top pe, size>k pe wahi nikle
@@ -4303,6 +5216,12 @@
      //   kyun: 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
 
      // TAREEKA: KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
+
+     // CHAABI:
+     //   1. pehla loop: mp[nums[i]]++                                    (freq gino)
+     //   2. MIN-heap of pair<int,int> (greater<pair<int,int>>)
+     //   3. mp pe loop: push {it.second, it.first} (freq PEHLE); size > k -> pop
+     //   4. while heap khaali na ho: top().second (number) ans me, pop -> return ans
 
      vector<int> topKFrequent(vector<int> &nums, int k) {
          unordered_map<int, int> mp;
@@ -4332,6 +5251,14 @@
      //   kyun: har baar teeno ke current head me sabse chhota uthao: 1,1,2,3,4,4,5,6
 
      // TAREEKA: struct Compare: ListNode* ko khud compare karna nahi aata
+
+     // CHAABI:
+     //   1. struct Compare: return a->val > b->val                       (b chhota -> MIN-heap)
+     //   2. lists pe loop: if (l) push                                    (NULL mat daalo, ->val pe crash)
+     //   3. dummy = new ListNode(0), tail = dummy
+     //   4. while heap khaali na ho: curr = top, pop -> tail->next = curr, tail = curr
+     //      -> if (curr->next) push(curr->next)
+     //   5. return dummy->next
 
      struct Compare {                            // ListNode* ko khud compare karna nahi aata
          bool operator()(ListNode *a, ListNode *b) {
@@ -4364,6 +5291,12 @@
 
      // TAREEKA: har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
 
+     // CHAABI:
+     //   1. MIN-heap (greater<int>), ans vector
+     //   2. arr pe loop: pehle push, phir if (pq.size() > k + 1): top ans me, pop
+     //   3. loop ke baad: while heap khaali na ho -> top ans me, pop       (bache = sorted tail)
+     //   4. return ans
+
      vector<int> sortKSorted(vector<int> &arr, int k) {
          vector<int> ans;
          priority_queue<int, vector<int>, greater<int>> pq;   // MIN: sorted output me chhota pehle
@@ -4393,6 +5326,14 @@
      // TAREEKA: stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
      // TRAP: heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
      //   bada -> BADI team -> minHeap. naam bhool, team soch.
+
+     // CHAABI:
+     //   1. maxHeap = priority_queue<double> (CHHOTI team) · minHeap = MIN of double (BADI team)
+     //   2. addNum PLACEMENT: if (maxHeap.empty() || maxHeap.top() >= num) maxHeap me, warna minHeap me
+     //   3. addNum BALANCE: maxHeap.size() < minHeap.size() -> minHeap ka top maxHeap me
+     //      · else if maxHeap.size() > minHeap.size() + 1 -> maxHeap ka top minHeap me
+     //   4. findMedian: size barabar -> (dono top) / 2.0 · warna maxHeap.top()
+     //      (naam ka TRAP: bada number -> BADI team -> minHeap)
 
      class MedianFinder {
      public:
@@ -4433,6 +5374,13 @@
      // TAREEKA: koi 2 ADJACENT same na ho, na bane -> "". top-k-frequent ka cousin: har round 2 nikaalo
      // possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
      //   (alag check na bhi rakho: aakhri bacha count>1 khud pakad leta)
+
+     // CHAABI:
+     //   1. mp[char]++ freq · priority_queue<pair<int,char>> maxHeap me {count, char}
+     //   2. while (maxHeap.size() > 1): it1 = top, pop · it2 = top, pop -> ans += it1.second, it2.second
+     //   3. dono ka first -= 1; jiska >= 1 bacha wahi wapas push
+     //   4. loop ke baad heap me ek bacha: count > 1 -> return "" · warna uska char ans me
+     //   5. return ans
 
      string reorganizeString(string s) {
          string ans = "";
@@ -4476,6 +5424,14 @@
      // [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
      // BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
      //   yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
+
+     // CHAABI:
+     //   1. vis(n, false), long long ans = 0                            (1e9 x lakh -> long long)
+     //   2. MIN-heap of pair<int,int>; loop se push {responseTimes[i], i}   (tie pe chhota idx apne aap)
+     //   3. while heap khaali na ho: index = top().second, pop
+     //   4. if (vis[index] == false): ans += responseTimes[index], vis[index] = true,
+     //      index-1 >= 0 ho to vis[index-1] = true, index+1 < n ho to vis[index+1] = true
+     //   5. return ans                                                   (hata hua pop ho -> chhod do)
 
      long long totalResponseTime(vector<int> &responseTimes) {
          int n = responseTimes.size();
@@ -4531,6 +5487,14 @@
      //   e.g. [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]
      //   kyun: 2 <= 3 -> [1,3] aur [2,6] overlap -> [1,6]; baaki alag
 
+     // CHAABI:
+     //   1. sort(intervals)                                            (start pe)
+     //   2. ans.push_back(intervals[0])                                (pehla baseline)
+     //   3. for (i = 1..n-1) loop: ans.back()[1] >= intervals[i][0] -> ans.back()[1] = max(ans.back()[1], intervals[i][1])
+     //                             (>= : touching bhi merge; max zaroori: [1,10],[2,3])
+     //   4.   warna ans.push_back(intervals[i])
+     //   5. return ans
+
      vector<vector<int>> merge(vector<vector<int>> &intervals) {
          sort(begin(intervals), end(intervals)); // default FIRST element (start) se. HAMESHA pehla step
          vector<vector<int>> ans;
@@ -4551,6 +5515,12 @@
      //   kyun: 5-10 shuru hui jab 0-30 abhi chal rahi (5 < 30) -> overlap
 
      // TAREEKA: MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end me true
+
+     // CHAABI:
+     //   1. empty -> true; sort(intervals); ans.push_back(intervals[0])
+     //   2. for (i = 1..n-1) loop: intervals[i][0] < ans.back()[1] -> return false   (< : touching chalta)
+     //   3.   warna ans.push_back(intervals[i])
+     //   4. return true
 
      bool canAttendMeetings(vector<vector<int>> &intervals) {
          if (intervals.empty())
@@ -4573,6 +5543,14 @@
      //   kyun: [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
 
      // TAREEKA: pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
+
+     // CHAABI:
+     //   1. ans, count = 0; for (i = 0..n-1) loop:
+     //   2.   intervals[i][1] < newInterval[0] -> ans.push_back            (new se PEHLE khatam)
+     //   3.   else if intervals[i][0] > newInterval[1] -> break             (new ke AAGE)
+     //   4.   else OVERLAP -> newInterval[0] = min(...start), newInterval[1] = max(...end)
+     //   5.   count++ (break wala yahan nahi aata)
+     //   6. loop ke bahar ans.push_back(newInterval); phir for (i = count..n-1) baaki push; return ans
 
      vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval) {
          vector<vector<int>> ans;
@@ -4602,6 +5580,12 @@
      //   kyun: t=9 pe [9,12] aur [6,10] dono chal rahi -> 2 room
 
      // TAREEKA: min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 / -1 GINTI
+
+     // CHAABI:
+     //   1. map<int,int> mp                                            (ORDERED map, time sorted)
+     //   2. for (i = 0..n-1) loop: mp[start[i]]++, mp[end[i]]--
+     //   3. overlap = 0, maxOverlap = 0; map pe loop: overlap += it.second, maxOverlap = max
+     //   4. return maxOverlap
 
      int minMeetingRooms(vector<int> &start, vector<int> &end) {
          map<int, int> mp;                       // ORDERED map: time -> delta, keys khud sorted
@@ -4663,6 +5647,14 @@
      //   e.g. [1,2] -> [], [1], [2], [1,2]
      //   kyun: har element lo ya chhodo -> 2 x 2 = 4 subset
 
+     // CHAABI:
+     //   1. solve(nums, ans, index, temp): if (index >= nums.size()) -> ans me temp, return
+     //   2. INCLUDE: temp.push_back(nums[index]) -> solve(index + 1)
+     //   3. temp.pop_back()                                              (EXCLUDE se PEHLE undo)
+     //   4. EXCLUDE: solve(index + 1)
+     //   5. caller: ans, temp BAHAR banao, & se bhejo -> solve(nums, ans, 0, temp)
+     //      (ALT: har node pe ans me temp, phir for (i = index..) push -> solve(i+1) -> pop)
+
      void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp) {
          if (index >= nums.size()) {             // har element pe faisla ho gaya -> ek poora subset
              ans.push_back(temp);
@@ -4699,6 +5691,12 @@
      //   e.g. [1,2,3] -> [1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]
      //   kyun: pehli jagah 3 choice, doosri 2, teesri 1 -> 3x2x1 = 6
 
+     // CHAABI:
+     //   1. base: temp.size() == nums.size() -> ans me temp, return
+     //   2. for (i = 0; i < n) loop, 0 SE (start nahi): used[i] ho to continue
+     //   3. CHOOSE: temp.push_back(nums[i]), used[i] = true -> solve(...)
+     //   4. UN-CHOOSE dono: temp.pop_back(), used[i] = false
+
      void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vector<int>> &ans) {
          if (temp.size() == nums.size()) {       // base = full length (poora arrangement)
              ans.push_back(temp);
@@ -4723,6 +5721,12 @@
      //   e.g. n=4, k=2 -> [1,2],[1,3],[1,4],[2,3],[2,4],[3,4]
      //   kyun: [2,1] = [1,2] same -> sirf aage wale chuno -> C(4,2) = 6
 
+     // CHAABI:
+     //   1. base: temp.size() == k -> ans me temp, return
+     //   2. for (i = index; i <= n; i++) loop                            (<= n: n khud bhi number)
+     //   3. temp.push_back(i) -> solve(n, k, ans, i + 1, temp) -> temp.pop_back()
+     //   4. caller: solve(n, k, ans, 1, temp)                            (1 se shuru, 0 nahi)
+
      void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp) {
          if (temp.size() == k) {  // fixed-size combo poora (subsets har node pe, yahan sirf ==k)
              ans.push_back(temp);
@@ -4741,6 +5745,13 @@
      // SAWAAL: candidates[] (distinct, positive) + target. saare unique combos jinka SUM == target, ek number kitni bhi baar.
      //   e.g. [2,3,6,7], target=7 -> [[2,2,3],[7]]
      //   kyun: 2+2+3 = 7 (2 dobara liya) · 7 akela = 7
+
+     // CHAABI:
+     //   1. if (target < 0) return                                      (overshoot, prune)
+     //   2. if (index >= nums.size()): target == 0 ho to ans me temp; return
+     //   3. INCLUDE: push(nums[index]) -> solve(index SAME, target - nums[index])   (dobara le sakte)
+     //   4. pop_back -> EXCLUDE: solve(index + 1, target)
+     //      (ALT for-loop: target == 0 pe record; for (i = index..) push -> solve(i, target - c[i]) -> pop)
 
      void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp, int target) {
          if (target < 0)
@@ -4780,6 +5791,14 @@
      // SAWAAL: char grid + word. kya word bagal-bagal cells (up/down/left/right) se banta, har cell ek hi baar? true/false.
      //   e.g. board ABCE/SFCS/ADEE: "ABCCED" -> true, "ABCB" -> false
      //   kyun: A,B,C (row 0) -> C neeche -> E neeche -> D left · ABCB me wahi B dobara lagta
+
+     // CHAABI:
+     //   1. solve ka pehla if: bounds bahar || vis[i][j] || board[i][j] != word[index] -> false   (bounds PEHLE)
+     //   2. vis[i][j] = true, index++
+     //   3. chaaron disha ki solve || se jodo -> koi true to return true
+     //   4. vis[i][j] = false (UN-MARK) -> return index == word.size()
+     //   5. exist: vis BAHAR bana ke &, do loop (i, j) har cell pe: board[i][j] == word[0] ho to solve;
+     //      true -> return true · loop ke BAAD return false        (pehla fail pe false MAT, saare start try)
 
      bool solve(vector<vector<char>> &board, string word, int index, int i, int j, int m, int n,
                 vector<vector<bool>> &vis) {     // vis REFERENCE (&), copy nahi
@@ -4826,6 +5845,12 @@
 
      // TAREEKA: n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
 
+     // CHAABI:
+     //   1. solve(open, close, path, ans, n): open == n && close == n -> ans me path, return
+     //   2. if (open < n) solve(open + 1, close, path + '(')
+     //   3. if (close < open) solve(open, close + 1, path + ')')       (ALAG if, else if NAHI, return NAHI)
+     //   4. path BY VALUE (path + '(' naya copy -> pop nahi) · caller: solve(0, 0, "", ans, n)
+
      void solve(int open, int close, string path, vector<string> &ans, int n) {   // path BY VALUE: path+'('
          if (open == n && close == n) {          //   naya copy -> pop_back nahi chahiye
              ans.push_back(path);                // base: saare khule + band (= path.size() == 2*n)
@@ -4844,6 +5869,13 @@
      //   kyun: 2 = abc, 3 = def -> har akshar ke saath har akshar = 3 x 3 = 9
 
      // TAREEKA: "23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
+
+     // CHAABI:
+     //   1. base: index >= digits.size() -> ans me temp, return
+     //   2. str = mp[digits[index]]; for (i = 0; i < str.size()) loop
+     //   3. temp.push_back(str[i]) -> solve(index + 1) -> temp.pop_back()
+     //   4. caller: digits khaali -> return {} (pehle hi) · mp['2'] = "abc" ... '9' = "wxyz"
+     //      · ans aur temp function ke ANDAR banao (global nahi) -> solve(0, temp, mp, ans, digits)
 
      void solve(int index, string &temp, unordered_map<char, string> &mp, vector<string> &ans,
                 string &digits) {
@@ -4907,6 +5939,12 @@
      //   e.g. n=3 -> 3
      //   kyun: 1+1+1, 1+2, 2+1
 
+     // CHAABI:
+     //   1. base: n == 0 || n == 1 -> return 1
+     //   2. memo: dp[n] != -1 -> return dp[n]
+     //   3. return dp[n] = solve(n - 1) + solve(n - 2)
+     //   4. caller: dp(n + 1, -1) -> solve(n, dp)
+
      int solve(int n, vector<int> &dp) {         // step n pe: (n-1) se 1 step YA (n-2) se 2 step
          if (n == 0 || n == 1)
              return 1;                           // base: n==0 bhi 1 (2-step se seedha top = ek tareeka)
@@ -4930,6 +5968,12 @@
      // TAREEKA: A=1 .. Z=26. sirf ank mile ("226") -> kitne alag shabd? GINTI. 2|2|6=BBF · 22|6=VF · 2|26=BZ -> 3
      // har i pe 2 choice (1 ank -> i+1 · 2 ank -> i+2); FARAK: yahan har choice pehle VALID honi chahiye
      // "226" ka tree: "6" do jagah aata -> dusri baar memo se seedha (yahi dp[] ka kaam)
+
+     // CHAABI:
+     //   1. base kram: i == n -> 1 (PEHLE) · s[i] == '0' -> 0 · dp[i] != -1 -> dp[i]
+     //   2. count = solve(i + 1)                                         (1 ank hamesha valid)
+     //   3. if (i + 1 < n) aur (s[i] == '1' || (s[i] == '2' && s[i+1] <= '6')) -> count += solve(i + 2)
+     //   4. return dp[i] = count · caller: dp(n + 1, -1) -> solve(0, s, n, dp)
 
      int solve(int i, string s, int n, vector<int> &dp) {
          if (i == n)
@@ -4959,6 +6003,12 @@
      //   e.g. [2,7,9,3,1] -> 12
      //   kyun: ghar 0, 2, 4 = 2+9+1 = 12, koi do padosi nahi
 
+     // CHAABI:
+     //   1. solve(A, i, dp): i < 0 -> 0 · dp[i] != -1 -> dp[i]
+     //   2. take = A[i] + solve(i - 2)  · notTake = 0 + solve(i - 1)
+     //   3. return dp[i] = max(take, notTake)
+     //   4. caller: dp(n + 1, -1) -> solve(A, n - 1, dp)                (LAST index se peeche)
+
      int solve(vector<int> &A, int i, vector<int> &dp) {   // LAST index se peeche (top-down)
          if (i < 0)
              return 0;                           // i-2 se array ke bahar: koi ghar nahi
@@ -4983,6 +6033,13 @@
      //   kyun: ghar 0 aur 2 gol me padosi -> dono nahi; best = beech wala 3
 
      // TAREEKA: ghar GOL: pehla (0) aur aakhri (n-1) PADOSI -> dono saath nahi. [2,3,2] -> 3 (2+2=4 GALAT)
+
+     // CHAABI:
+     //   1. solve = robber I (i < 0 -> 0, i == 0 -> nums[0], memo, notTake / Take, max)
+     //   2. rob1(nums): dp(n + 1, -1) ANDAR naya -> solve(nums, n - 1, dp)
+     //   3. rob: n == 1 -> nums[0] (pehle hi)
+     //   4. ek loop: i != 0 -> temp1 me · i != n-1 -> temp2 me
+     //   5. return max(rob1(temp1), rob1(temp2))
 
      int solve(vector<int> &nums, int i, vector<int> &dp) {   // = House Robber I, bina badle
          if (i < 0)
@@ -5028,6 +6085,15 @@
      // 3 TRAP: (1) INT_MAX = "ban nahi sakta" (min me haarta) (2) overflow guard (3) caller INT_MAX -> -1
      // ── FORM A: TAKE / NOT-TAKE (index i, 2D dp[i][amount]) ──
 
+     // CHAABI:
+     //   1. FORM A solve(coins, amount, i, dp): amount < 0 -> INT_MAX · i < 0 -> amount == 0 ? 0 : INT_MAX
+     //      · dp[i][amount] != -1 -> wahi
+     //   2. notTake = solve(amount, i - 1) · take = INT_MAX
+     //   3. if (solve(amount - coins[i], i) != INT_MAX) take = 1 + wahi     (i SAME = reuse, overflow guard)
+     //   4. return dp[i][amount] = min(take, notTake)
+     //   5. caller: dp(n + 1, vector<int>(amount + 1, -1)) -> ans = solve(n - 1) -> INT_MAX ho to -1
+     //      (FORM B: 1D dp[amount], amount == 0 -> 0, for loop har coin pe Take = min(Take, 1 + solve))
+
      int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp) {
          if (amount < 0)
              return INT_MAX;                     // INVALID (INT_MAX: min me apne aap haar jaata)
@@ -5072,6 +6138,13 @@
      //   e.g. [0,1,0,3,2,3] -> 4
      //   kyun: 0,1,2,3 chuno (beech ka 0 aur 3 skip) -> 4
 
+     // CHAABI:
+     //   1. base: index == n -> 0 · memo dp[index][prevIndex + 1]          (+1: prev -1 se shuru)
+     //   2. notTake = solve(index + 1, prevIndex)
+     //   3. Take = 0; if (prevIndex == -1 || nums[index] > nums[prevIndex]) Take = 1 + solve(index + 1, index)
+     //   4. return dp[index][prevIndex + 1] = max(Take, notTake)
+     //   5. caller: dp(n + 1, vector<int>(n + 1, -1)) -> solve(0, -1, nums, dp)
+
      int solve(int index, int prevIndex, vector<int> &nums, vector<vector<int>> &dp) {
          if (index == nums.size())
              return 0;                           // base saaf (coin change jaisa INT_MAX / -1 nahi)
@@ -5098,6 +6171,12 @@
      //   e.g. m=3, n=2 -> 3
      //   kyun: 2 down + 1 right ka order: R D D, D R D, D D R
 
+     // CHAABI:
+     //   1. solve(i, j): i < 0 || j < 0 -> 0 · i == 0 && j == 0 -> 1 · dp[i][j] memo
+     //   2. up = solve(i - 1, j) · left = solve(i, j - 1)
+     //   3. return dp[i][j] = up + left
+     //   4. caller: dp(m + 1, vector<int>(n + 1, -1)) -> solve(m - 1, n - 1, dp)
+
      int solve(int i, int j, vector<vector<int>> &dp) {   // robot (0,0) -> (m-1,n-1), sirf RIGHT / DOWN
          if (i < 0 || j < 0)
              return 0;                           // grid ke bahar -> koi raasta nahi
@@ -5120,6 +6199,12 @@
      // SAWAAL: m x n grid, har cell ka cost. (0,0) se (m-1,n-1), sirf RIGHT/DOWN. sabse KAM sum lautao.
      //   e.g. [[1,2],[1,1]] -> 3
      //   kyun: neeche phir right = 1+1+1 = 3 · right phir neeche = 1+2+1 = 4
+
+     // CHAABI:
+     //   1. i < 0 || j < 0 -> INT_MAX (INVALID) · i == 0 && j == 0 -> grid[0][0] · memo
+     //   2. up = solve(i - 1, j) · left = solve(i, j - 1)
+     //   3. return dp[i][j] = grid[i][j] + min(up, left)
+     //   4. caller: m, n -> dp(m + 1, n + 1, -1) -> solve(m - 1, n - 1, dp, grid)
 
      int solve(int i, int j, vector<vector<int>> &dp, vector<vector<int>> &grid) {
          if (i < 0 || j < 0)
@@ -5148,6 +6233,12 @@
      //   e.g. "abcde", "ace" -> 3
      //   kyun: a, c, e dono me isi order me -> "ace" = 3
 
+     // CHAABI:
+     //   1. i < 0 || j < 0 -> 0 · memo dp[i][j]
+     //   2. s1[i] == s2[j] -> dp[i][j] = 1 + solve(i - 1, j - 1)          (MATCH: dono peeche)
+     //   3. warna dp[i][j] = max(solve(i - 1, j), solve(i, j - 1))
+     //   4. caller: dp(m + 1, vector<int>(n + 1, -1)) -> solve(s1, s2, m - 1, n - 1, dp)
+
      int solve(string s1, string s2, int i, int j, vector<vector<int>> &dp) {   // s1 i tak, s2 j tak
          if (i < 0 || j < 0)
              return 0;                           // koi string khatam -> common kuch nahi
@@ -5170,6 +6261,12 @@
      // SAWAAL: word1 ko word2 banane ke MIN operations. insert / delete / replace, har ek = 1.
      //   e.g. "horse", "ros" -> 3
      //   kyun: horse -> rorse (h ko r) -> rose (r hatao) -> ros (e hatao)
+
+     // CHAABI:
+     //   1. base: i < 0 -> j + 1 (INSERT) · j < 0 -> i + 1 (DELETE) · memo
+     //   2. s1[i] == s2[j] -> 0 + solve(i - 1, j - 1)
+     //   3. warna 1 + min({ solve(i - 1, j) DELETE, solve(i, j - 1) INSERT, solve(i - 1, j - 1) REPLACE })
+     //   4. caller (LCS wala reuse): dp(m + 1, n + 1, -1) -> solve(m - 1, n - 1, s1, s2, dp)
 
      int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp) {   // s1 -> s2 min ops
          if (i < 0)
@@ -5207,6 +6304,12 @@
 
      // TAREEKA: MAX value, weight <= W, har item ek baar
 
+     // CHAABI:
+     //   1. i < 0 -> 0 · memo dp[i][W]
+     //   2. notTake = solve(W, i - 1) · take = 0
+     //   3. if (wt[i] <= W) take = val[i] + solve(W - wt[i], i - 1)        (fit tabhi, warna index crash)
+     //   4. return dp[i][W] = max(take, notTake) · caller: dp(n + 1, W + 1, -1) -> solve(..., n - 1, dp)
+
      int solve(vector<int> &wt, vector<int> &val, int W, int i, vector<vector<int>> &dp) {
          if (i < 0)
              return 0;                           // koi item nahi (i<0: index-0 normal item, cleaner)
@@ -5232,6 +6335,12 @@
      //   kyun: {5} ya {2,3} = 5 · 1,2,7 se 6 ka koi jod nahi
 
      // TAREEKA: knapsack ka max-value ki jagah true/false
+
+     // CHAABI:
+     //   1. base KRAM: target == 0 -> true (SABSE UPAR) · index < 0 -> false · index == 0 -> nums[0] == target
+     //   2. memo dp[index][target] (-1 = nahi nikala)
+     //   3. notTake = solve(target, index - 1) · take = false; nums[index] <= target ho to take = solve(target - nums[index], index - 1)
+     //   4. return dp = take || notTake · caller: dp(n + 1, target + 1, -1) -> solve(nums, target, n - 1, dp)
 
      bool solve(vector<int> &nums, int target, int index, vector<vector<int>> &dp) {
          if (target == 0)
@@ -5265,6 +6374,12 @@
      // TAREEKA: [1,5,11,5] -> S=22 -> {11} = {1,5,5} = 11 -> true. ek subset S/2 bana -> baaki apne aap S - S/2
      // solve() = upar SUBSET SUM wala, hubahu
 
+     // CHAABI:
+     //   1. loop se total S nikaalo
+     //   2. dp(n + 1, vector<int>(S / 2 + 1, -1))
+     //   3. S % 2 != 0 -> false
+     //   4. return subsetSum(nums, S / 2, n, dp) -> andar solve(nums, target, n - 1, dp) (subset sum wala hubahu)
+
      bool subsetSum(vector<int> &nums, int target, int n, vector<vector<int>> &dp) {
          return solve(nums, target, n - 1, dp);
      }
@@ -5288,6 +6403,13 @@
      //   kyun: * ko '(' maano -> "(())" valid · ")(" me ')' pehle aa gaya
 
      // TAREEKA: '*' = '(' YA ')' YA khaali. open = ab tak kitne '(' UNMATCHED. state = (index, open)
+
+     // CHAABI:
+     //   1. index == s.size() -> open == 0 · memo dp[index][open]
+     //   2. '(' -> solve(index + 1, open + 1)
+     //   3. ')' -> open > 0 ho to solve(index + 1, open - 1), warna false
+     //   4. '*' -> teen: open + 1 · (open > 0 ho to) open - 1 warna false · open wahi -> teeno ka ||
+     //   5. caller: dp(n + 1, vector<int>(n + 1, -1)) -> solve(s, 0, 0, dp)
 
      bool solve(string &s, int index, int open, vector<vector<int>> &dp) {
          if (index == s.size())
@@ -5330,6 +6452,12 @@
      //   p = [10,30,5,60]: A1 = 10x30, A2 = 30x5 (p1 = 30 SHARED), A3 = 5x60
      // = two_max ka WALL; FARAK: wahan left/right precomputed, yahan ranges overlap -> loop + recurse + memo
 
+     // CHAABI:
+     //   1. i == j -> 0 · memo dp[i][j] · ans = INT_MAX
+     //   2. for (k = i; k <= j - 1; k++) loop                            (k = deewar, j-1 TAK)
+     //   3. ans = min(ans, solve(i, k) + solve(k + 1, j) + p[i-1] * p[k] * p[j])
+     //   4. return dp[i][j] = ans · caller: dp(n + 1, n + 1, -1) -> solve(1, n - 1, p, dp)   (1 se: p[i-1])
+
      int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp) {   // A_i..A_j ko 1 banane ka MIN cost
          if (i == j)
              return 0;                           // ek hi matrix bacha -> multiply ko kuch nahi
@@ -5359,6 +6487,14 @@
      // TAREEKA: phodne pe coins = left * khud * right (padosi = us waqt ZINDA) -> saare phod ke MAX
      // k = range me SABSE AAKHRI phootne wala -> baaki sab phoot chuke -> padosi = range ke BAHAR: i-1, j+1
      //   [1,3,1,5,8,1], solve(1,4), k=3 (5) aakhri -> coins = p[0]*p[3]*p[5] = 1*5*1
+
+     // CHAABI:
+     //   1. i > j -> 0 (khaali range) · memo dp[i][j] · ans = INT_MIN
+     //   2. for (k = i; k <= j; k++) loop                                (j TAK, MCM me j-1)
+     //   3. ans = max(ans, solve(i, k - 1) + solve(k + 1, j) + p[i-1] * p[k] * p[j+1])
+     //   4. return dp[i][j] = ans
+     //   5. caller: n = size PEHLE, dp(n + 1, n + 1, -1), phir dono taraf 1 pad (insert begin + push_back)
+     //      -> matrixChain(balloons, n, dp) -> solve(1, n, p, dp)
 
      int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp) {   // i..j sab phodne ka MAX coins
          if (i > j)
@@ -5407,6 +6543,12 @@
      // TAREEKA: g[] = bachhe ki GREED, s[] = cookie SIZE. s[j] >= g[i] -> khush. max kitne khush?
      // chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi cookies bade greed ko
 
+     // CHAABI:
+     //   1. i = 0 (bachha), j = 0 (cookie), count = 0; s khaali -> 0
+     //   2. sort(g), sort(s)
+     //   3. while (i < n && j < m) loop: s[j] >= g[i] -> i++, j++, count++ · warna j++ (badi cookie dhoondho)
+     //   4. return count
+
      int findContentChildren(vector<int> &g, vector<int> &s) {
          int n = g.size(), m = s.size(), count = 0, i = 0, j = 0;   // i = bachha, j = cookie
          if (s.size() == 0)
@@ -5432,6 +6574,12 @@
 
      // TAREEKA: nums[i] = us index se max kitna kood sakte. last tak pahunche?
 
+     // CHAABI:
+     //   1. maxReach = 0
+     //   2. for (i = 0..n-1) loop: i > maxReach -> return false        (yahan tak pahunche hi nahi)
+     //   3.   maxReach = max(maxReach, i + nums[i])                    (i jodo: absolute index)
+     //   4. return maxReach >= n - 1
+
      bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte. last tak pahunche?
          int maxReach = 0;                       // ab tak sabse DOOR kahan tak pahunch sakte (0 se)
          for (int i = 0; i < nums.size(); i++) {
@@ -5451,6 +6599,13 @@
      //   kyun: [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
 
      // TAREEKA: MIN kitne HATAO ki overlap na bache
+
+     // CHAABI:
+     //   1. sort(intervals) (start pe); start = 0 (rakha hua), end = 1 (candidate), count = 0
+     //   2. while (end < n) loop:
+     //   3.   intervals[start][1] <= intervals[end][0] -> no overlap: start = end, end++   (<= : chhoona overlap nahi)
+     //   4.   warna OVERLAP: count++; intervals[start][1] > intervals[end][1] -> start = end; end++
+     //   5. return count                                               (overlap pe blindly start rakha -> galat)
 
      int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO ki overlap na bache
          sort(begin(intervals), end(intervals)); // default sort (start pe)
@@ -5481,6 +6636,12 @@
      // TAREEKA: N pump CIRCLE me. gas[i] = pump i pe milta, cost[i] = i se i+1 tak kharcha. khaali tank, kahan se
      //   chalu ki poora ghoom ke wapas aa jau? koi nahi -> -1. har pump ka NET = gas[i] - cost[i]
 
+     // CHAABI:
+     //   1. index = 0, meriGaddiKaTank = 0, kyeNegativeHua = 0
+     //   2. for (i = 0..n-1) loop: dono me += gas[i] - cost[i]          (tank reset hota, total kabhi nahi)
+     //   3.   meriGaddiKaTank < 0 -> tank = 0, index = i + 1             (agle pump se naya start)
+     //   4. return kyeNegativeHua < 0 ? -1 : index
+
      int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
          int n = gas.size();
          int index = 0, meriGaddiKaTank = 0, kyeNegativeHua = 0;  // 0: pehle pump ko start maano, tank khaali
@@ -5506,6 +6667,12 @@
      // TAREEKA: SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldown" + "minimum time"
      //   -> greedy (most-frequent frame) YA max-heap. sabse ZYADA wala task (maxFreq) DHANCHA banata,
      //   beech ke gaps doosre tasks se bharo, khaali bache = IDLE
+
+     // CHAABI:
+     //   1. vector<int> mp(26); har task pe mp[t - 'A']++; sort(mp)     (maxFreq = mp[25])
+     //   2. gadde = maxFreq - 1, idleSlotes = n * gadde                (gap sirf BEECH me)
+     //   3. for (i = 24 se 0 tak) loop: idleSlotes -= min(mp[i], gadde)
+     //   4. idleSlotes > 0 -> return tasks.size() + idleSlotes · warna return tasks.size()
 
      int leastInterval(vector<char> &tasks, int n) {
          vector<int> mp(26);
