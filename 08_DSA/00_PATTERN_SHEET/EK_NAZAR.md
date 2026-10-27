@@ -741,15 +741,28 @@ void solve(int start, vector<int> &temp) {
 
 **KAB:** "kitne tareeke" · "min / max cost" · "ho sakta hai?" + har step pe choice + same sawaal baar-baar
 
-**CODE (memo, 3 line):**
+**CODE (house robber: paas-paas ke 2 ghar nahi loot sakte, MAX paisa):**
 ```cpp
-vector<int> dp(n + 1, -1);           // -1 = abhi nahi nikala
-int solve(int i) {
-    if (i < 0) return BASE;          // BASE pe ruk ke socho
-    if (dp[i] != -1) return dp[i];
-    int take = nums[i] + solve(i - 2);
-    int skip = solve(i - 1);
-    return dp[i] = max(take, skip);
+// [2,7,9,3,1] -> 12 (2 + 9 + 1)
+int solve(vector<int> &nums, int i, vector<int> &dp)
+{
+    if (i < 0)
+        return 0;                                // koi ghar nahi bacha
+    if (i == 0)
+        return nums[0];
+    if (dp[i] != -1)                             // -1 = abhi nahi nikala
+    {
+        return dp[i];
+    }
+    int LOOT = nums[i] + solve(nums, i - 2, dp); // ye loota -> bagal wala chhodo
+    int SKIP = 0 + solve(nums, i - 1, dp);       // ye chhoda -> pichhla khula
+    return dp[i] = max(LOOT, SKIP);
+}
+int rob(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> dp(n + 1, -1);
+    return solve(nums, n - 1, dp);
 }
 ```
 
