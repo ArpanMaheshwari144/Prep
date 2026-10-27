@@ -260,7 +260,7 @@ double limit = BankConfig.INSTANCE.getMaxTransactionLimit();
 **Why enum singleton chosen:**
 - Bank-wide config — sirf ek instance pure app mein
 - Thread-safe automatic — multiple services concurrently access kar sakte
-- Serialization-safe — DB se restore ho ya naya banaye, same instance
+- Serialization-safe — file / network se deserialize ho to bhi wahi instance (naya nahi banta)
 - No `synchronized` boilerplate, no `volatile` worry — JVM handles all
 
 **Interview line:**
@@ -366,7 +366,7 @@ Different classloaders = different `Config.class` = different singletons.
 
 > *"Singleton creational pattern jo class ka **single instance** ensure karta poore application mein. Constructor private rakhke `getInstance()` method se controlled access dete. Use cases — configuration, connection pools, caches, loggers — jahaan single source of truth chahiye.
 >
-> Implementation 4 ways: Eager (class load pe), Lazy (sync nahi), Double-Checked Locking (industry standard), aur **Enum (Bloch's recommended best)** — thread-safe + serialization-safe + reflection-safe automatic. Mere SimpleBankSystem mein `BankConfig` enum singleton use kiya — 1 line mein production-grade."*
+> Implementation 5 ways: Eager (class load pe), Lazy (sync nahi), Double-Checked Locking (industry standard), Holder (lazy, bina lock), aur **Enum (Bloch's recommended best)** — thread-safe + serialization-safe + reflection-safe automatic. Mere SimpleBankSystem mein `BankConfig` enum singleton use kiya — 1 line mein production-grade."*
 
 **Q: "DCL kyu volatile chahiye?"**
 
@@ -396,7 +396,7 @@ Singleton = "One President per country"
             • Static getInstance() (controlled access)
             • Same instance always returned
 
-4 implementations:
+5 implementations:
    1. Eager     → class load pe — simple, not lazy
    2. Lazy      → on-demand — NOT thread-safe
    3. DCL       → industry standard — verbose, needs volatile
