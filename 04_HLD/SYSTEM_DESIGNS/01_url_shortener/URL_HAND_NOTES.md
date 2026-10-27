@@ -60,11 +60,13 @@ Ek link viral hua, 1 crore log ek saath khol rahe hain, aur sab Redis ki ek hi m
 
 **9. RATE LIMIT**
 
-Ek bot har second hazaron link bana raha hai. Isliye link banane pe RATE LIMIT lagaya, ek user ek minute me 10 link, usse zyada pe 429. Limit user pe lagate hain, IP pe nahi, kyunki ek office ke saare log ek hi IP se aate hain. Jo bot baar-baar aaye, use WAF me block kar do. Saath me bure link ko kaali list se jaanch ke banne hi nahi dete.
+Ek bot har second hazaron link bana raha hai. Isliye link banane pe RATE LIMIT lagaya, ek user ek minute me 10 link, usse zyada pe 429. Limit user pe lagate hain, IP pe nahi, kyunki ek office ke saare log ek hi IP se aate hain. Jo bot baar-baar aaye, use WAF me block kar do. Saath me bure link ko kaali list (jaise Google Safe Browsing) se jaanch ke banne hi nahi dete.
 
 &nbsp;
 
 ### Agar Pooche
+
+- 302 kyun, 301 kyun nahi: 301 = "hamesha ke liye yahin", browser link yaad kar leta aur dobara hamare paas aata hi nahi. Bojh kam, par control gaya: link spam nikla to bhi browser purane pe bhejta rahega. 302 = "abhi ke liye", har click hamare paas aata hai, band link pe chetavani page dikha sakte hain. Isliye 302, bojh cache se sambhala.
 
 - Link bana aur dost ko turant 404 mila: QUORUM. Har link teeno copy pe likha jaata hai, par 3 me se 2 copy se "haan" aate hi aage badh jaate hain. Padhte waqt bhi 2 copy se padhte hain. Isliye likhne wali 2 aur padhne wali 2 me kam se kam ek copy common hoti hai, aur naya link mil jaata hai.
 
