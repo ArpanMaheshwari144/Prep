@@ -175,12 +175,13 @@ deadlock ho sakta hai. Jo SQL DB liya hai, wahi use khud pakad ke tod deta hai: 
 (Postgres me "deadlock detected" error), app use dobara chalati hai, aur idempotency key ki wajah se paisa dohra nahi katta.
 Hone hi na dena ho to dono row ko hamesha chhoti account id pehle lock karo.
 
-Par Arpan ne app kholi: "mere 500 kahan gaye, kab gaye?" DB me sirf `balance = 100` likha hai. Kab kata, kisko
-gaya, kuch pata nahi. NFR "har paisa trace ho" toot gaya.
+Par Ravi ne complaint daali: "500 nahi mile". Bank ko saboot dena hai ki 500 kab, kahan se, kahan gaye.
+DB me sirf `balance = 100` hai, kyunki UPDATE ne purana number mita diya. NFR "har paisa trace ho" toot gaya.
 
-### Kadam 5: "mere 500 kahan gaye, kab?" (khaata = ledger)
+### Kadam 5: "500 nahi mile" pe saboot nahi (khaata = ledger)
 
-Balance sirf aakhri number batata hai, uska itihaas nahi.
+Balance column UPDATE hota hai, to purana number mit jaata hai aur itihaas kahin nahi bachta. Logs bhi kuch
+din me mit jaate hain, aur transaction ke saath pakke nahi likhe jaate.
 
 Ilaaj: har paisa hilne pe ek **khaata (ledger)** me line likho. Usi transaction me, aur **double-entry**: har
 transfer ki do line, ek jagah se gaya aur ek jagah aaya.
@@ -204,6 +205,13 @@ na aaye, to pakka koi galti hai. Paisa na bana, na gaya, ye ek jod se pata chal 
 
 Khaata hi sach hai. Balance us account ki saari lines ka jod hai, balance column bas tez padhne ke liye ek
 copy hai.
+
+To do table alag kaam karti hain: account table me balance UPDATE hota hai (tez padhne aur kadam 4 wale check
+ke liye). Ledger ek alag table hai jo kabhi badli nahi jaati, usme sirf nayi line judti hai (append).
+
+Ledger isi DB ki ek alag table hai, poori DB nahi. Is ek kitaab se teen cheezein banti hain: app ki history
+aur PDF statement, raat ka milaan (kadam 9), aur RBI / audit ki report. Report RBI ke format me ledger se
+(job ya query se) banti hai. Poori DB ki copy kisi ko nahi jaati.
 
 ```mermaid
 flowchart LR

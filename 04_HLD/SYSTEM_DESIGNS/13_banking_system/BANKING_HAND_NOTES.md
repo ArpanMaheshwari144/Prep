@@ -22,7 +22,7 @@ Kaam: account me paisa daalo, nikaalo, balance aur history dekho, aur ek account
 
 &nbsp;
 
-5. Arpan ne poocha "mere 500 kahan gaye, kab?" DB me sirf aakhri balance tha, itihaas nahi. Isliye **LEDGER (khaata)**, **DOUBLE-ENTRY** me, usi transaction me: har transfer ki do line, -500 Arpan, +500 Ravi. Khaate me sirf INSERT hota hai. Galti ho to ulti line daalo, mitao nahi, isi se audit hota hai. Poore khaate ka jod hamesha 0 aana chahiye. Khaata hi sach hai, balance column bas tez padhne ki copy hai.
+5. Ravi ne complaint daali "500 nahi mile", aur bank ko saboot dena tha ki 500 kab, kahan se, kahan gaye. DB me sirf aakhri balance tha, kyunki UPDATE purana number mita deta hai, aur logs kuch din me mit jaate hain. Isliye **LEDGER (khaata)**, **DOUBLE-ENTRY** me, usi transaction me: har transfer ki do line, -500 Arpan, +500 Ravi. Balance column UPDATE hota hai, par ledger ek alag table hai jo kabhi badli nahi jaati, usme sirf nayi line judti hai (append). Galti ho to ulti line daalo, mitao nahi. Poore khaate ka jod hamesha 0 aana chahiye. Khaata hi sach hai, balance column bas tez padhne ki copy hai. Ledger isi DB ki ek table hai, poori DB nahi. Isi ek kitaab se app ki history aur PDF statement, raat ka milaan, aur RBI / audit ki report banti hai (RBI ke format me, ledger se). Poori DB ki copy kisi ko nahi jaati.
 
 &nbsp;
 
