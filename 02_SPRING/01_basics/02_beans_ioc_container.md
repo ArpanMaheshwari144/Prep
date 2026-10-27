@@ -128,6 +128,15 @@ class UserCache {
 
 **Rule:** Singleton beans **stateless** rakho. State immutable / thread-safe banao.
 
+**Ilaaj (kaam ke hisaab se):**
+```
+1 request ka data      -> field nahi, LOCAL variable / parameter (har thread ka apna stack, koi share nahi)
+2 kai layer me chahiye -> parameter pass, ya SecurityContextHolder / ThreadLocal (finally me remove())
+3 sach me saajhi cheez -> AtomicInteger / ConcurrentHashMap (saadha int++ / HashMap = update kho jaata)
+4 bean hi alag chahiye -> @Scope("request") / prototype (kam hota)
+Field me sirf wo jo kabhi nahi badalta: doosre bean (repo, client), config.
+```
+
 ---
 
 ## ★ Bean KAB MARTA (scope-wise lifespan) — 8-Sep
