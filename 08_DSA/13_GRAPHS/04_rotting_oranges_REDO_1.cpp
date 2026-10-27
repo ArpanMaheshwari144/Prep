@@ -46,7 +46,7 @@ int orangesRotting(vector<vector<int>> &grid)
         int sz = q.size();
         while (sz--)
         {
-            auto &it = q.front();
+            auto it = q.front();
             q.pop();
 
             int row = it.first;
