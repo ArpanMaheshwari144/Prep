@@ -244,6 +244,28 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
              negative aate hi window ka shrink-rule toot jaata -> tabhi prefix+hash zaroori.
 ```
 
+### D. SINGLE vs SINGLE-SORTED vs DISAPPEARED vs DUPLICATE (charon me "ek number alag hai")
+```
+                    SINGLE NUMBER        SINGLE ELEMENT       DISAPPEARED          FIND DUPLICATE
+                    (LC-136)             (LC-540)             (LC-448)             (LC-287)
+   ─────────────────────────────────────────────────────────────────────────────────────────────────
+   shart            har num 2 baar,      SORTED, har num      values 1..n,         values 1..n,
+                    ek 1 baar            2 baar, ek 1 baar    size n, kuch repeat  size n+1, ek repeat
+   maang raha       AKELA                AKELA                GAYAB (sab)          DOHRA
+   time / space     O(n), O(1)           O(log n)             O(n), O(1)           O(1), array MAT BADLO
+   technique        XOR                  BINARY SEARCH        index ko MINUS       FLOYD cycle
+                                         (jodi ka index)      (array khud map)     (value = pointer)
+   teri file        11/01                07/10                03/10                08/12
+
+   PEHCHAAN KA KRAM (3 shabd dhoondho):
+     1. "SORTED" + log n        -> binary search (XOR bhi chalta, par O(n) = jo maanga wo nahi)
+     2. "VALUES 1..n"           -> value hi index ban sakti
+                                   GAYAB maanga -> index pe minus · DOHRA + array mat badlo -> Floyd
+     3. range nahi, sorted nahi, bas "2 baar aata" -> jodi apne aap kat jaati = XOR
+
+   1-line: sorted = BS · 1..n = index ka khel (gayab = minus, dohra = Floyd) · baaki "jodi" = XOR.
+```
+
 ---
 
 ## PATTERN 1 — TWO POINTER
@@ -2070,6 +2092,7 @@ heap — pointer/object daalo   push se PEHLE null check                 merge-k
 ```
 
  BROAD IDEA: XOR: a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
+ ★ MILTE-JULTE (sorted / 1..n / dohra): upar "NAAM-SE-CONFUSE" -> D dekh, XOR lagane se PEHLE.
 
 ── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number, Single-Number-II bhi) ──
 
