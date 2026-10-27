@@ -145,7 +145,7 @@ public class AccountFactory {
 
     // Add new type at runtime — true OCP!
     public static void register(String type, Function<AccountParams, Account> creator) {
-        REGISTRY.put(type, creator);
+        REGISTRY.put(type.toLowerCase(), creator);   // create() lowercase se dhoondhta, yahan bhi wahi
     }
 }
 
