@@ -232,6 +232,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: slow/fast OVERWRITE (fast scan, rakhne wala slow pe; teeno same skeleton) ──
 
  ▸ MOVE ZEROES
+     // SAWAAL: saare 0 ko END me bhejo, baaki numbers ka ORDER wahi rahe. IN-PLACE (naya array nahi).
+     //   e.g. [0,1,0,3,12] -> [1,3,12,0,0]
+     //   kyun: non-zero 1,3,12 usi kram me aage aa gaye, dono 0 peeche
      int slow = 0;                           // slow = agli jagah jahan non-zero rakhna hai
      int fast = 0;                           // fast = scan karta
      while (fast < nums.size())
@@ -241,6 +244,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
          fast++;                             // fast++ har baar (if ke BAHAR)
 
  ▸ REMOVE DUP (SORTED)
+     // SAWAAL: SORTED array. duplicate IN-PLACE hatao, har number ek baar. naya length k lautao (pehle k unique).
+     //   e.g. [0,0,1,1,1,2,2,3,3,4] -> k=5, [0,1,2,3,4,...]
+     //   kyun: alag numbers sirf 0,1,2,3,4 = 5. sorted hai to dohra hamesha bagal me hota
      int slow = 0; int fast = 0;             // slow = last UNIQUE ka index; 0 se: pehla khud unique
      while (fast < nums.size())
          if (nums[slow] != nums[fast])       // naya unique mila (compare nums[slow] se)
@@ -250,6 +256,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return slow + 1;                        // unique count = slow + 1 (slow index hai)
 
  ▸ REMOVE ELEMENT
+     // SAWAAL: array + val. saare val IN-PLACE hatao, naya length k lautao (pehle k me koi val nahi, order kuch bhi).
+     //   e.g. [0,1,2,2,3,0,4,2], val=2 -> k=5, {0,1,3,0,4}
+     //   kyun: teen 2 hate, baaki 5 bache
      int slow = 0, fast = 0;                 // slow = agli keep-jagah, fast scan
      while (fast < nums.size())
          if (nums[fast] != val)
@@ -261,6 +270,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: left/right COMPARE-CONVERGE (dono chhor se andar, har step compare) ──
 
  ▸ VALID PALINDROME (SIMPLE)
+     // SAWAAL: string (sirf lowercase). aage se aur peeche se same padhe = palindrome? true / false.
+     //   e.g. "racecar" -> true   "abca" -> false
+     //   kyun: abca: pehla 'a' = aakhri 'a', par 'b' != 'c'
      // sirf lowercase letters wala aasan version
      int left = 0; int right = s.size() - 1;   // size() - 1 : aakhri index, size nahi
      while (left <= right)
@@ -270,6 +282,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return true;
 
  ▸ VALID PALINDROME (FULL, LC-125)
+     // SAWAAL: string me kuch bhi (space, comma, UPPER, digit). sirf letter + digit gino, case ignore. palindrome?
+     //   e.g. "A man, a plan, a canal: Panama" -> true     "race a car" -> false
+     //   kyun: filter + lower = "amanaplanacanalpanama" (palindrome) · "raceacar" (nahi)
      // mixed char: sirf alnum ginna, case ignore (<cctype>)
      int left = 0; int right = s.size() - 1;   // aakhri index, size nahi
      while (left <= right)
@@ -282,6 +297,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return true;                            // koi alnum na ho / khaali -> true
 
  ▸ VALID PALINDROME II
+     // SAWAAL: string. palindrome hai, YA zyada se zyada EK char hata ke palindrome ban sakti? true / false.
+     //   e.g. "abca" -> true    "abc" -> false
+     //   kyun: abca se 'c' hatao -> "aba". abc se koi bhi ek hatao, palindrome nahi banta
      // isPalindrome: helper: l..r palindrome hai?
 
      // validPalindrome: palindrome YA ek char delete karke ban jaaye
@@ -293,6 +311,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return true;                            // koi mismatch nahi = pehle se palindrome
 
  ▸ REVERSE VOWELS
+     // SAWAAL: string me SIRF vowels (a e i o u, upper bhi) ko aapas me ulta karo, baaki char apni jagah.
+     //   e.g. "hello" -> "holle"
+     //   kyun: vowels e, o -> ulte o, e. h l l jahan the wahin
      // isVowel: a e i o u, lower + upper dono
 
      // reverseVowels: sirf vowels aapas me ulte, baaki char apni jagah
@@ -307,6 +328,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: left/right by-VALUE decision (sum / area ki value dekh ke kaunsa pointer chale) ──
 
  ▸ CONTAINER MOST WATER
+     // SAWAAL: height[] = khadi lines. koi 2 line chuno, beech me paani = min(dono) x doori. MAX paani lautao.
+     //   e.g. [1,8,6,2,5,4,8,3,7] -> 49
+     //   kyun: index 1 (8) aur index 8 (7): min 7 x doori 7 = 49
      int low = 0; int high = height.size() - 1; int max_area = INT_MIN;
      while (low < high)                      // < : same index pe width 0
          int width = high - low;
@@ -317,6 +341,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return max_area;
 
  ▸ TWO SUM II (SORTED)
+     // SAWAAL: SORTED array + target. do number jinka jod = target; unke 1-BASED index lautao.
+     //   e.g. [2,7,11,15], target=9 -> [1,2]
+     //   kyun: 2 + 7 = 9, wo 1st aur 2nd number hain
      // UNSORTED two sum = hashmap; SORTED = 2 pointer
      int left = 0, right = nums.size() - 1;
      while (left < right)                    // < : ek hi index do baar nahi
@@ -327,6 +354,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return {-1, -1};                        // na mile; O(1) space
 
  ▸ SUM OF SQUARE NUMBERS
+     // SAWAAL: number c. kya do integer a, b hain jinke liye a*a + b*b == c? true / false.
+     //   e.g. 5 -> true    3 -> false
+     //   kyun: 5 = 1*1 + 2*2. 3 kisi bhi do square ka jod nahi
      // a² + b² == c ? (LC 633) 2 number ki jodi -> two pointer
      int low = 0, high = sqrt(c);
      while (low <= high)                     // <= : c=0 me 0+0 jaisa ek hi point bhi check ho
@@ -340,6 +370,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: fill-from-END (result peeche se bharo, bada element end me) ──
 
  ▸ SQUARES OF SORTED ARR
+     // SAWAAL: SORTED array (minus bhi). har number ka SQUARE, aur result bhi SORTED. O(n), dobara sort nahi.
+     //   e.g. [-4,-1,0,3,10] -> [0,1,9,16,100]
+     //   kyun: -4 ka square 16 hai, isliye sabse bade square dono SIRE pe hote, beech me nahi
      // sabse BADA square dono chhor pe (negative)
      vector<int> ans(nums.size(), -1);       // size n pehle se: k-- se index pe likho; O(n), sort nahi
      int left = 0, right = nums.size() - 1, k = nums.size() - 1;   // k = n-1 : sabse bada aakhri slot me
@@ -352,6 +385,10 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ MERGE SORTED ARRAY
+     // SAWAAL: nums1 (m asli number + peeche n khaali 0) aur nums2 (n number), dono sorted. nums2 ko nums1 me
+     //   IN-PLACE milao, nums1 poora sorted.
+     //   e.g. nums1=[1,2,3,0,0,0] m=3, nums2=[2,5,6] -> nums1=[1,2,2,3,5,6]
+     //   kyun: peeche se bharo (khaali jagah peeche hai), sabse bada pehle rakh do
      // nums1 ke end me n khaali
      int i = m - 1; int j = n - 1; int k = m + n - 1;   // k = m+n-1 (m*n-1 NAHI) : nums1 ka aakhri index
      while (i >= 0 && j >= 0)                // && (|| nahi -> -1 index crash)
@@ -368,6 +405,8 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: PARTITION / swap-in-place (category me baanto, galat jagah pe swap) ──
 
  ▸ SORT COLORS (0,1,2)
+     // SAWAAL: array me sirf 0, 1, 2. IN-PLACE sort karo (0 phir 1 phir 2), sort() nahi, ek pass me.
+     //   e.g. [2,0,2,1,1,0] -> [0,0,1,1,2,2]
      // Dutch flag, 3 pointer
      int low = 0; int mid = 0; int high = nums.size() - 1;
      while (mid <= high)                     // <= : high wala abhi dekha nahi, use bhi check
@@ -379,6 +418,8 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
              swap(nums[mid], nums[high]); high--;   // mid++ NAHI: high se aaya element unknown, dobara check
 
  ▸ SORT ARRAY BY PARITY
+     // SAWAAL: saare EVEN pehle, phir saare ODD (aapas ka order kuch bhi chalega).
+     //   e.g. [3,1,2,4] -> [2,4,3,1] (ya [4,2,1,3], koi bhi jisme even pehle)
      // even pehle, odd baad (aapas ka order koi bhi)
      int left = 0; int right = nums.size() - 1;
      while (left < right)
@@ -392,6 +433,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── (STANDALONE — apni alag trick) ──
 
  ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
+     // SAWAAL: array. saare UNIQUE triplet [a,b,c] jinka jod = 0 (ek hi triplet dobara nahi).
+     //   e.g. [-1,0,1,2,-1,-4] -> [-1,-1,2], [-1,0,1]
+     //   kyun: -1 do baar hai, par [-1,0,1] sirf ek baar likhna hai
      // saare UNIQUE triplet jinka sum 0
      vector<vector<int>> ans;
      sort(begin(nums), end(nums));           // sort PEHLE: 2 pointer + duplicate skip sorted pe hi
@@ -412,6 +456,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ IS SUBSEQUENCE
+     // SAWAAL: s aur t. kya t me se kuch char HATA ke (order wahi) s ban sakta? true / false.
+     //   e.g. s="abc", t="ahbgdc" -> true     s="axc" -> false
+     //   kyun: a..b..c t me usi kram me mil gaye. 'x' t me hai hi nahi
      // s, t me order se hai? beech ke char skip chalega
      int i = 0, j = 0;                       // i -> s, j -> t
      while (i < s.size() && j < t.size())    // koi ek khatam -> ruko
@@ -423,6 +470,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return false;
 
  ▸ TRAPPING RAIN WATER (LC-42)
+     // SAWAAL: height[] = buildings (width 1). baarish ke baad gaddhon me KUL kitna paani rukega?
+     //   e.g. [4,2,0,3,2,5] -> 9
+     //   kyun: beech wale bars ke upar paani = min(left ka max, right ka max) - apni height. 2+4+1+2 = 9
      // bar i ke upar paani = min(leftMax[i], rightMax[i]) - height[i]   (min: chhoti side se bah jaata)
      // O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - height[i]
      // O(1) space, two pointer
@@ -443,6 +493,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ PALINDROMIC SUBSTRINGS (LC-647)  = EXPAND AROUND CENTER
+     // SAWAAL: string. kitne SUBSTRING (jude hue) palindrome hain? ek char bhi gino; alag jagah = alag.
+     //   e.g. "aaa" -> 6
+     //   kyun: a, a, a (3) + aa, aa (2) + aaa (1) = 6
      // kitne substring palindrome (single char bhi; alag position = alag count). har CENTER se phailo
      // "abcba": c -> bcb -> abcba = ek center se 3. ODD center = ek char, EVEN center = do char jodi
      // solve: &count : warna bahar count badhta hi nahi
@@ -2576,6 +2629,11 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   nahi -> size < n -> false
 
  ▸ BUILD ORDER — ready me se SABSE CHHOTA pehle (topo + MIN-HEAP)
+     // SAWAAL: n module (0..n-1). [a->b] = "a ke BAAD hi b ban sakta". ek baar me ek module banta.
+     //   jo READY hain (saari dependency ban chuki) unme SABSE CHHOTA number pehle. poora kram lautao; loop ho to KHAALI.
+     //   e.g. n=4, [0->1]  ->  0 1 2 3
+     //   kyun: shuru me ready = {0, 2, 3} (1 ko 0 chahiye) -> sabse chhota 0 -> ab 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
+     //   (queue lagate to 0 2 3 1 aata: 1 baad me ready hua to line me peeche lagta)
      // PEHCHAAN: dependency -> TOPO. output line padho: "koi bhi valid order" -> queue · "sabse chhota /
      //   lexicographic" -> MIN-HEAP. topo ke KAI sahi order ([5->2,5->0,4->0,4->1,2->3,3->1]: "4 5 0 2 3 1"
      //   aur "5 4 2 0 3 1" dono sahi) -> khaas order = heap. queue = jo pehle ready · heap = ready me chhota
