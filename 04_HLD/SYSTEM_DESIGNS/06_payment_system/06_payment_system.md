@@ -223,7 +223,7 @@ Step 3b, FAILED aaya (galat IFSC bank code, ya bank band): ULTA kaam karo.
 ```
 
 "Ulta karna" ka matlab mitaana nahi hai. Nayi line daal ke paisa wapas karte hain, kyunki khaate me sirf
-INSERT hota hai ([banking kadam 5](../13_banking_system/13_banking_system.md#kadam-5-mere-500-kahan-gaye-kab-khaata--ledger)).
+INSERT hota hai ([banking kadam 5](../13_banking_system/13_banking_system.md#kadam-5-500-nahi-mile-pe-saboot-nahi-khaata--ledger)).
 
 Beech ka khaata isliye chahiye kyunki step 2 ke dauraan paisa kahin to dikhna chahiye. Wo Arpan ke wallet se
 nikal chuka hai par dukaan ke bank nahi pahuncha. Isse har waqt poore hisaab ka jod 0 rehta hai.
