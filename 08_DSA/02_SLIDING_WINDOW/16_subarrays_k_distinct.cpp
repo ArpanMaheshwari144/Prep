@@ -5,7 +5,7 @@
 // EXACTLY k DIFFERENT (distinct) numbers ho.
 //
 //   nums = [1,2,1,2,3], k=2  -> 7
-//     ([1,2],[2,1],[1,2],[1,2,1],[2,1,2],[1,2,1,2] ... exactly-2-distinct wale)
+//     ([1,2],[2,1],[1,2],[2,3],[1,2,1],[2,1,2],[1,2,1,2] = 7, exactly-2-distinct wale)
 //
 // ---- TEST CASES (nums, k -> expected) ----
 //   [1,2,1,2,3],     k=2  -> 7

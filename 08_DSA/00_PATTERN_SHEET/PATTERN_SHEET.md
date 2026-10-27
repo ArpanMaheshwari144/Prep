@@ -543,6 +543,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: variable-LONGEST (INVALID pe WHILE shrink, ans = MAX length) ──
 
  ▸ LONGEST SUBSTRING NO-REPEAT (LC-3)  = variable window + freq-map
+     // SAWAAL: string s. sabse LAMBI substring ki LENGTH lautao jisme koi char REPEAT na ho.
+     //   e.g. "abcabcbb" -> 3
+     //   kyun: "abc" me teeno alag = 3; agla a aate hi repeat, isse lamba koi substring nahi
      // longest substring jisme koi char REPEAT na ho
      if (s.empty())
          return 0;
@@ -557,6 +560,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans == INT_MIN ? 0 : ans;        // khaali string -> INT_MIN reh jaata -> 0
 
  ▸ CHAR REPLACEMENT (LONGEST, LC-424)  = variable window + freq-map (k badal sakte)
+     // SAWAAL: string s (UPPERCASE) + k. max k char badal sakte. sabse lambi substring jisme sab char SAME -> LENGTH.
+     //   e.g. "AABABBA", k=1 -> 4
+     //   kyun: "AABA" (index 0..3) me ek B ko A banao -> "AAAA" = 4
      // longest window jisme <= k char badal ke sab SAME
      unordered_map<char, int> mp; int maxLen = INT_MIN, maxFreq = INT_MIN, i = 0, j = 0;
      while (j < s.size())
@@ -572,6 +578,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return maxLen;
 
  ▸ MAX CONSECUTIVE ONES III (LC-1004)  = variable window + zeros-count (k flips)
+     // SAWAAL: binary nums[] (0/1) + k. max k zero ko 1 me FLIP kar sakte. sabse lambi lagaatar 1s ki LENGTH lautao.
+     //   e.g. [1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6
+     //   kyun: index 4..9 = 0,0,1,1,1,1: do zero flip -> 6 lagaatar 1
      // max k zero FLIP -> longest all-1; sirf zeroCount
      int ans = INT_MIN; int zeroCount = 0; int i = 0, j = 0;   // INT_MIN: end me check karke khaali pe 0
      while (j < nums.size())
@@ -585,6 +594,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans == INT_MIN ? 0 : ans;
 
  ▸ FRUIT INTO BASKETS
+     // SAWAAL: fruits[] = pedon ki line, har number ek type. 2 basket (ek me ek type). lagaatar pedon ki sabse lambi window ki LENGTH.
+     //   e.g. [1,2,3,2,2] -> 4
+     //   kyun: [2,3,2,2] me sirf 2 type (2,3) = 4; aage 1 jodo to 3 type ho jaate
      // = longest subarray, AT MOST 2 DISTINCT (fruit = kahani)
      int ans = INT_MIN; unordered_map<int, int> mp; int i = 0, j = 0;
      while (j < fruits.size())
@@ -599,6 +611,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans == INT_MIN ? 0 : ans;
 
  ▸ LONGEST AT-MOST-K DISTINCT
+     // SAWAAL: string s + k. sabse lambi substring ki LENGTH jisme ZYADA SE ZYADA k alag char hon.
+     //   e.g. "eceba", k=2 -> 3
+     //   kyun: "ece" me sirf e,c (2 alag) = 3; "eceb" me 3 alag ho jaate
      // totalFruit: FRUIT ka GENERAL version: wahan "2", yahan "k"
      int ans = INT_MIN; unordered_map<int, int> mp; int i = 0, j = 0;
      while (j < s.size())
@@ -614,6 +629,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return totalFruit(s, k);
 
  ▸ SUBARRAYS WITH K DISTINCT (LC-992)  = FRUIT (atMost-k) x2, ghata do  [exactly-K trick]
+     // SAWAAL: nums[] + k. kitne lagaatar SUBARRAY jinme EXACTLY k alag numbers -> GINTI.
+     //   e.g. [1,2,1,2,3], k=2 -> 7
+     //   kyun: [1,2],[2,1],[1,2],[2,3],[1,2,1],[2,1,2],[1,2,1,2] = 7; [1,2,3] wale me 3 alag
      // kitne SUBARRAYS jinme EXACTLY k different. [1,2,1,2,3], k=2 -> 7
      // exactly(k) seedha SW se ganda (boundary saaf nahi) -> exactly(k) = atMost(k) - atMost(k-1)
      // atMostK: = FRUIT ka template, bas ans = COUNT (max nahi)
@@ -637,6 +655,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // koi bhi "exactly K" -> atMost(k) - atMost(k-1)   (fruit · longest-k-distinct isi family)
 
  ▸ EQUAL SUBSTR WITHIN BUDGET (LC-1208)  = longest-subarray-sum <= k (string ke bhes me)
+     // SAWAAL: s, t same length + maxCost. s[i]->t[i] cost = |s[i]-t[i]|. sabse lamba window jiska total cost <= maxCost -> LENGTH.
+     //   e.g. s="abcd", t="bcdf", maxCost=3 -> 3
+     //   kyun: cost = [1,1,1,2]; pehle 3 ka 1+1+1 = 3 <= 3; chaaron ka 5 > 3
      // cost = |s[i]-t[i]|, SUM <= maxCost
      int i = 0, j = 0, cost = 0, ans = INT_MIN;          // track sirf cost (koi map nahi)
      while (j < t.size())                    // s="abcd", t="cdef", maxCost=3 -> 1
@@ -649,6 +670,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: variable-SHORTEST (ULTA: VALID ho tab tak shrink, ans = MIN length) ──
 
  ▸ MIN SUBARRAY LEN (>=TARGET, LC-209)  = SHORTEST window (longest se ULTA)
+     // SAWAAL: positive nums[] + target. sabse CHHOTI length ka subarray jiska sum >= target; koi na ho to 0.
+     //   e.g. target=7, [2,3,1,2,4,3] -> 2
+     //   kyun: [4,3] = 7 >= 7, length 2; akela koi number 7 tak nahi pahunchta
      // positive; sum >= target SABSE CHHOTA
      int sum = 0; int size = INT_MAX;        // INT_MAX: min se ghatega; koi window na bani to end me 0
      int i = 0, j = 0;
@@ -664,6 +688,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: FIXED window (size k pehle se diya, slide) ──
 
  ▸ MAX SUM OF K (FIXED)  = fixed window size-k + running sum
+     // SAWAAL: array + k. har size-k lagaatar subarray ka sum dekho, sabse BADA sum lautao.
+     //   e.g. [2,1,5,1,3,2], k=3 -> 9
+     //   kyun: window sums 8, 7, 9, 6 -> max 9 (5+1+3)
      // har k-size window ka sum -> MAX
      int sum = 0; int maxSum = INT_MIN; int i = 0, j = 0;   // INT_MIN: sab negative ho to bhi sahi max
      while (j < nums.size())
@@ -676,6 +703,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: COUNT (length nahi; valid window pe count += j-i+1) ──
 
  ▸ SUBARRAY PRODUCT < K  = variable window + COUNT (running product)
+     // SAWAAL: positive nums[] + k. kitne lagaatar subarray jinka PRODUCT strictly k se kam -> GINTI.
+     //   e.g. [10,5,2,6], k=100 -> 8
+     //   kyun: 4 akele + [10,5]=50, [5,2]=10, [2,6]=12, [5,2,6]=60 = 8; [10,5,2]=100 kam nahi
      // kitne subarray jinka product < k (GINTI)
      if (k == 0)
          return 0;                           // nums >= 1: product < 0 kabhi nahi, koi subarray nahi
@@ -690,6 +720,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: need-map + COUNT (t ke SAARE char chahiye; aana = --, jaana = ++ MIRROR) ──
 
  ▸ MIN WINDOW SUBSTRING (LC-76, Hard) -- answer = MIN-track, loop ke ANDAR
+     // SAWAAL: s, t. s ka sabse CHHOTA substring jisme t ke saare char (count ke saath) aa jaayein; na ho to "".
+     //   e.g. s="ADOBECODEBANC", t="ABC" -> "BANC"
+     //   kyun: "ADOBEC" (6) bhi A,B,C rakhta, par "BANC" (4) sabse chhota
      // s ka sabse CHHOTA window jisme t ke saare char
      unordered_map<char, int> mp;
      for (auto &it : t)
@@ -711,6 +744,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // "ADOBECODEBANC", "ABC" -> "BANC"
 
  ▸ SUBSTRINGS CONTAINING ALL (LC-1358) -- answer = COUNT, loop ke BAAD
+     // SAWAAL: s me sirf a, b, c. kitne substrings jinme a, b, c TEENO kam se kam ek baar -> GINTI.
+     //   e.g. "aaacb" -> 3
+     //   kyun: "aaacb", "aacb", "acb" me teeno; "cb" ya usse chhote me a nahi = 3
      // minWindow: LC-76 ka SAME code; farak sirf answer ki line
      unordered_map<char, int> mp;
      for (auto &it : t)
@@ -732,6 +768,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: ANAGRAM-window (fixed p-length window + isAnagram helper reuse) ──
 
  ▸ FIND ALL ANAGRAMS (LC-438)  = ANAGRAM-check + FIXED window (PARENT)
+     // SAWAAL: s, p. s me p ke saare ANAGRAM (same char, order koi bhi) ki START index lautao.
+     //   e.g. s="cbaebabacd", p="abc" -> [0,6]
+     //   kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
      // isAnagram: valid-anagram helper reuse
      if (s.size() != t.size())
          return 0;                           // size same chahiye
@@ -757,6 +796,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ PERMUTATION IN STRING (LC-567)  = FIND-ALL-ANAGRAMS ka EXACT same code
+     // SAWAAL: s1, s2. kya s2 me s1 ka koi PERMUTATION (anagram) lagaatar substring ban ke maujood hai? true/false.
+     //   e.g. s1="ab", s2="eidbaooo" -> true
+     //   kyun: s2[3..4]="ba" = "ab" ka permutation
      // isAnagram = upar wala hi
      // findAnagrams: LC-438 ka skeleton, sirf answer-handle badla
      int i = 0, j = 0;
@@ -775,6 +817,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: MONOTONIC DEQUE (window max/min; deque me INDICES, front = answer) ──
 
  ▸ SLIDING WINDOW MAXIMUM (LC-239)  = monotonic DEQUE of INDICES
+     // SAWAAL: nums[] + k. har size-k window ka MAX nikaalo (left se right slide), vector lautao.
+     //   e.g. [1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]
+     //   kyun: [1,3,-1]->3, [3,-1,-3]->3, [-1,-3,5]->5, [-3,5,3]->5, [5,3,6]->6, [3,6,7]->7
      // har k-window ka MAX, O(n)
      vector<int> ans;
      deque<int> dq;                          // INDICES, values DECREASING -> front = max
@@ -791,6 +836,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ MAX POINTS FROM CARDS (LC-1423)  = MAX-SUM-SIZE-K (01) + COMPLEMENT-twist
+     // SAWAAL: cardPoints[] + k. EXACTLY k card lo, sirf dono ENDS se (front/back mix chalega). max SUM lautao.
+     //   e.g. [1,2,3,4,5,6,1], k=3 -> 12
+     //   kyun: back se 3 = 1+6+5 = 12; front 3 = 6, mix (1+2+1 = 4, 1+1+6 = 8) kam
      // DONO ends se TOTAL k cards (har end se k nahi) -> sum MAX. [1,2,3,4,5,6,1], k=3 -> 12 (back se 5,6,1)
      // sirf back se k galat: [100,1,1,1,1] k=2 -> front 101. liye cards contiguous NAHI -> seedha SW fail
      // FLIP: jo NAHI liye = beech ka CONTIGUOUS window, size L-k. taken MAX = untaken MIN -> Total - min
@@ -815,6 +863,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: FIXED window (size k) + HASHSET ──
 
  ▸ CONTAINS DUPLICATE II (LC-219)  = FIXED window (size k) + HASHSET
+     // SAWAAL: nums[] + k. kya do index i, j hain jahan nums[i]==nums[j] aur |i-j| <= k? true/false.
+     //   e.g. [1,2,3,1], k=3 -> true
+     //   kyun: index 0 aur 3 dono pe 1, farak 3 <= 3
      // nums[i]==nums[j] AND |i-j| <= k ?
      if (k <= 0)
          return false;                       // k=0: check shrink se PEHLE -> [4,4] k=0 galat true
@@ -851,6 +902,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: 2-MAP BIJECTION (mp1 + mp2 dono taraf; koi ek clash -> false, ek map kaafi nahi) ──
 
  ▸ ISOMORPHIC STRINGS
+     // SAWAAL: s, t same length. s ke har char ko ek FIXED char se badal ke t ban sakta (one-to-one)? true/false.
+     //   e.g. "paper", "title" -> true
+     //   kyun: p->t, a->i, e->l, r->e: har jagah wahi mapping, do char ek hi char pe nahi gaye
      // s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false
      unordered_map<char, char> mp1;          // s -> t
      unordered_map<char, char> mp2;          // t -> s ("ab"->"aa" clash sirf ULTI taraf pakadta)
@@ -863,6 +917,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return true;                            // bina clash poora chala = isomorphic
 
  ▸ WORD PATTERN
+     // SAWAAL: pattern (chars) + s (space wale words). har char ek hi word se, har word ek hi char se bandha? true/false.
+     //   e.g. "abba", "dog cat cat dog" -> true
+     //   kyun: a->dog, b->cat; a b b a = dog cat cat dog, mapping kahin nahi tooti
      // = ISOMORPHIC, bas char <-> WORD
      unordered_map<char, string> mp1; unordered_map<string, char> mp2;
      stringstream ss(s); string word;        // delta 1: input = word-stream (<sstream>)
@@ -882,6 +939,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── (STANDALONE — apni alag trick) ──
 
  ▸ TWO SUM
+     // SAWAAL: nums[] + target. do INDEX lautao jinka sum = target (ek hi jawab, same element do baar nahi).
+     //   e.g. [2,7,11,15], target=9 -> [0,1]
+     //   kyun: nums[0] + nums[1] = 2 + 7 = 9
      unordered_map<int, int> mp;             // {value -> index}
      for (int i = 0; i < nums.size(); i++)
          if (mp.find(target - nums[i]) != mp.end())   // CHECK pehle: (target - num) pehle dekha?
@@ -890,6 +950,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return {-1, -1};
 
  ▸ VALID ANAGRAM
+     // SAWAAL: s, t. kya t, s ka ANAGRAM hai (same char, same COUNT, bas order alag)? true/false.
+     //   e.g. "anagram", "nagaram" -> true
+     //   kyun: dono me a=3, n=1, g=1, r=1, m=1
      // har char ka count barabar? (count[26] ya map)
      if (s.size() != t.size())
          return 0;                           // length alag -> turant false
@@ -904,6 +967,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return true;                            // sab ZERO -> anagram
 
  ▸ GROUP ANAGRAMS
+     // SAWAAL: strings ka array. jo aapas me ANAGRAM hain unhe ek group me daalo, saare groups lautao.
+     //   e.g. ["eat","tea","tan","ate","nat","bat"] -> [eat,tea,ate] [tan,nat] [bat]
+     //   kyun: sorted key: eat/tea/ate = "aet", tan/nat = "ant", bat = "abt" -> 3 key = 3 group
      // "eat","tea","ate" -> teeno ka SORTED roop "aet" = same. Yahi KEY.
      // brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CACHE -> O(n · k log k)
      unordered_map<string, vector<string>> mp;   // KEY = sorted(word) -> us group ke words
@@ -919,6 +985,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // "" (khaali string) bhi chalta: sorted("") = "" -> ek hi group
 
  ▸ SUBARRAY SUM = K
+     // SAWAAL: nums[] + k. kitne lagaatar subarray jinka sum EXACTLY k -> GINTI.
+     //   e.g. [1,2,3], k=3 -> 2
+     //   kyun: [1,2] = 3 aur [3] = 3; baaki [1],[2],[2,3],[1,2,3] nahi
      // prefix-sum + hashmap {prefixSum -> count}
      unordered_map<int, int> mp; int sum = 0, count = 0;
      mp[0] = 1;                              // START zaroori: jab sum khud == k, tab prefix-0 chahiye
@@ -931,6 +1000,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;
 
  ▸ COUNT DIVISIBLE PAIRS  = two-sum/hashmap-complement, par KEY = REMAINDER
+     // SAWAAL: nums[] + k. kitne PAIR (i<j) jinka (nums[i] + nums[j]) % k == 0 -> GINTI.
+     //   e.g. [1,2,3,4,5], k=3 -> 4
+     //   kyun: 1+2=3, 1+5=6, 2+4=6, 4+5=9 -> chaaron 3 se divide; baaki pair nahi
      // pairs (i<j): (A[i]+A[j])%k==0. brute O(n²) -> "partner pehle aaya?" ko hashmap me CACHE -> O(n)
      // A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har element ka apna rem
      unordered_map<int, int> mp; int count = 0;   // {remainder -> kitne aaye}
@@ -942,6 +1014,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;                           // [1,2,3,4,5],k=3 -> 4 (it=5 pe mp[1]=2 -> ek saath 2 pair)
 
  ▸ LONGEST CONSECUTIVE SEQ (LC-128)
+     // SAWAAL: unsorted array. sabse lambi CONSECUTIVE numbers ki chain ki LENGTH (sort nahi, O(n)).
+     //   e.g. [100,4,200,1,3,2] -> 4
+     //   kyun: 1,2,3,4 sab maujood = chain 4; 100 aur 200 akele
      // unsorted -> sabse LAMBI consecutive chain ki LENGTH. [100,4,200,1,3,2] -> 4 (1,2,3,4)
      // sort (n log n) mat karo -> SET me O(1) lookup, har CHAIN sirf uske START se gino -> O(n)
      int ans = INT_MIN; unordered_set<int> st;   // set: O(1) lookup + duplicate apne aap hat jaate
@@ -958,6 +1033,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // 100 START(1) · 4 skip · 200 START(1) · 1 -> 1,2,3,4 = 4
 
  ▸ MAJORITY ELEMENT (LC-169, >n/2)
+     // SAWAAL: nums[] me ek element n/2 se ZYADA baar aata hai (hamesha hota hai). wahi lautao.
+     //   e.g. [2,2,1,1,1,2,2] -> 2
+     //   kyun: n = 7, 2 aaya 4 baar > 7/2 = 3
      // map se: mp[x]++, count > n/2 wala return -> O(n) time, O(n) space (seedha)
      // BOYER-MOORE VOTING, O(1) space
      int count = 1;                          // majority > n/2 -> baaki sab milke bhi kam ->
@@ -971,6 +1049,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return candidate;                       // end: candidate = ans
 
  ▸ FIND DISAPPEARED NUMBERS (LC-448)  = ARRAY-KHUD-hashmap · index-negation, O(1) space
+     // SAWAAL: size n, har value 1..n (repeat ho sakte). 1..n me jo MISSING, sab lautao (O(1) extra space).
+     //   e.g. [4,3,2,7,8,2,3,1] -> [5,6]
+     //   kyun: n = 8, maujood 1,2,3,4,7,8; 5 aur 6 kahin nahi
      // size n, values 1..n (repeat ho sakte). jo MISSING wo sab. [4,3,2,7,8,2,3,1] -> [5,6]
      // extra set/map nahi: value v ka ghar = index v-1 -> dikha to us index ko NEGATIVE mark
      vector<int> ans;
@@ -989,6 +1070,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: PER-KEY STREAK (log line todo -> har KEY ki apni chalti ginti; Wise OA 27-Oct) ──
 
  ▸ SERVER ERROR STREAK  (03/11)
+     // SAWAAL: logs "<server> <code> <msg>". server ke LAGAATAAR 3 "error" -> alert++ aur ginti 0; "success" -> ginti 0. kul alerts.
+     //   e.g. ["s1 500 error","s2 200 success","s1 500 error","s3 500 error","s1 500 error"] -> 1
+     //   kyun: s1 ke 3 error (s2, s3 beech me aaye par s1 ki ginti nahi todte) -> 1 alert; s3 ka sirf 1 error
      // logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
      // pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server
      unordered_map<string, int> mp;          // server -> abhi tak lagaataar error
@@ -1024,6 +1108,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: "assign PEHLE, update BAAD" (pehle current index ka result rakho, PHIR running value badlo) ──
 
  ▸ PIVOT INDEX
+     // SAWAAL: nums[]. pehla INDEX jahan left sum == right sum (index khud kisi taraf nahi); koi na ho to -1.
+     //   e.g. [1,7,3,6,5,6] -> 3
+     //   kyun: index 3 (6): left 1+7+3 = 11, right 5+6 = 11
      // index jahan left sum == right sum (khud kisi taraf nahi)
      int totalSum = 0; int leftSum = 0;
      for (int &it : nums)
@@ -1036,6 +1123,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return -1;
 
  ▸ PRODUCT EXCEPT SELF (LC-238)
+     // SAWAAL: nums[]. ans[i] = nums[i] ko chhod ke baaki sabka PRODUCT. division nahi, O(n).
+     //   e.g. [1,2,3,4] -> [24,12,8,6]
+     //   kyun: ans[1] = left 1 x right 3x4=12 -> 12; ans[0] = 2x3x4 = 24
      // ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
      // O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
      int n = nums.size();
@@ -1054,6 +1144,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── (STANDALONE — apni alag trick) ──
 
  ▸ HIGHEST ALTITUDE
+     // SAWAAL: gain[i] = agle point tak altitude ka change, shuru 0 se. sabse UNCHI altitude lautao.
+     //   e.g. [-5,1,5,0,-7] -> 1
+     //   kyun: altitude 0, -5, -4, 1, 1, -6 -> max 1
      // running sum chalao, max track (simple prefix)
      int sum = 0; int maxi = 0;              // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
      for (int i = 0; i < gain.size(); i++)
@@ -1061,6 +1154,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return maxi;
 
  ▸ SUBARRAY SUMS DIVISIBLE BY K (LC-974)  = SUBARRAY-SUM-K + REMAINDER-key
+     // SAWAAL: nums[] (+/- dono) + k. kitne lagaatar subarray jinka sum % k == 0 -> GINTI.
+     //   e.g. [1,2,3], k=3 -> 3
+     //   kyun: [3]=3, [1,2]=3, [1,2,3]=6 -> teeno 3 se divide; [1],[2],[2,3]=5 nahi
      // brute: har subarray sum baar-baar -> PREFIX -> do prefix ka remainder same = beech wala %k==0
      // PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
      // count subarrays jinka sum % k == 0
@@ -1073,6 +1169,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;
 
  ▸ COUNT SUBARRAYS WITH XOR = K  = SUBARRAY-SUM-K, bas + ki jagah ^
+     // SAWAAL: nums[] + k. kitne lagaatar subarray jinke saare elements ka XOR = k -> GINTI.
+     //   e.g. [4,2,2,6,4], k=6 -> 4
+     //   kyun: [4,2]=6, [2,2,6]=6, [6]=6, [4,2,2,6,4]=6 (4^4 aur 2^2 kat gaye) = 4
      // [4,2,2,6,4], k=6 -> 4.   CHAABI: x ^ x = 0 (same number khud se XOR = gayab)
      // (shuru se j tak XOR) ^ (shuru se i tak XOR) = beech ka XOR (common hissa kat gaya)
      // beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni baar aaya
@@ -1084,6 +1183,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;
 
  ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
+     // SAWAAL: arr[] + K. kitne lagaatar subarray jinka MAX bilkul K (na zyada na kam) -> GINTI.
+     //   e.g. [8,2,1,3,4,5,1,10], K=3 -> 3
+     //   kyun: [2,1,3], [1,3], [3]; 8 aur 4 K se bade = deewar, unhe chhoo nahi sakte
      // kitne subarray jinka MAX bilkul K. [8,2,1,3,4,5,1,10],K=3 -> 3 ([2,1,3],[1,3],[3])
      // valid = (har element <= K) AND (>=1 element == K)
      // TRAP: "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
@@ -1099,6 +1201,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;
 
  ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)
+     // SAWAAL: n flights (1..n), booking [first,last,seats] = first se last tak har flight pe seats. har flight ki kul seats.
+     //   e.g. n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
+     //   kyun: flight 2 = 10+20+25 = 55; flight 3 = 20+25 = 45; flight 4, 5 = sirf 25
      // = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II, PATTERN 15) ka sagaa bhai
      // KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
      // har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
@@ -1144,6 +1249,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── (STANDALONE — har ek apni index-navigation) ──
 
  ▸ SET MATRIX ZEROES
+     // SAWAAL: m x n matrix. koi cell 0 ho to uski POORI row aur POORI col 0 kar do, IN-PLACE.
+     //   e.g. [[1,1,1],[1,0,1],[1,1,1]] -> [[1,0,1],[0,0,0],[1,0,1]]
+     //   kyun: 0 cell (1,1) pe -> row 1 aur col 1 poore 0, baaki same
      // in-place, 2 marker array, O(m+n) space
      int row = matrix.size(); int col = matrix[0].size(); vector<int> zeroRow(row, -1);   // -1 = unmarked
      vector<int> zeroCol(col, -1);
@@ -1157,6 +1265,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
                  matrix[i][j] = 0;
 
  ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
+     // SAWAAL: m x n matrix. saare elements SPIRAL order me (bahar se andar, clockwise) vector me lautao.
+     //   e.g. [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
+     //   kyun: upar 1,2,3 -> right col 6,9 -> neeche ulta 8,7 -> left col upar 4 -> beech 5
      int row = matrix.size(); int col = matrix[0].size();
      int top = 0, bottom = row - 1, left = 0, right = col - 1;   // -1 : inclusive, isliye loop <=
      vector<int> ans;
@@ -1181,6 +1292,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // [[1],[2],[3]]: right col ke baad right=-1 < left=0 -> left col skip (warna 2 dobara)
 
  ▸ TRANSPOSE
+     // SAWAAL: m x n matrix. TRANSPOSE lautao: matrix[i][j] -> res[j][i] (naya n x m).
+     //   e.g. [[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]
+     //   kyun: pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
      int row = matrix.size(); int col = matrix[0].size();
      vector<vector<int>> ans(col, vector<int>(row, -1));   // naya col x row size (non-square bhi)
      for (int i = 0; i < col; i++)           // outer i < col
@@ -1189,6 +1303,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
+     // SAWAAL: grid, 1 = server. same ROW ya COL me doosra server ho to communicate. aise server ki GINTI.
+     //   e.g. [[1,1,0,0],[0,0,1,0],[0,0,1,1]] -> 5
+     //   kyun: (0,0)-(0,1) row 0, (1,2)-(2,2) col 2, (2,3)-(2,2) row 2 -> paanchon ka saathi = 5
      // 1 = server. communicate = uski ROW ya COL me koi DOOSRA server. row + col dono me akela -> nahi gino
      // [[1,0],[1,1]] -> 3  ·  [[1,0],[0,1]] -> 0
      // set zeroes ki 2 marker trick, MARK ki jagah COUNT
@@ -3064,6 +3181,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: heap of size k / top-K (size > k pe top EVICT, k bache) ──
 
  ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
+     // SAWAAL: stones[]. har turn 2 sabse bhaari ladao: barabar -> dono gaye, warna diff bache. aakhri bacha lautao (warna 0).
+     //   e.g. [3,7,2] -> 2
+     //   kyun: 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
      // har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
      priority_queue<int> pq;   // MAX: har turn 2 sabse BHAARI chahiye
      for (int i = 0; i < stones.size(); i++) pq.push(stones[i]);
@@ -3075,6 +3195,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
  // heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max"
 
  ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
+     // SAWAAL: nums[] + k. k-th SABSE BADA element lautao.
+     //   e.g. [3,2,1,5,6,4], k=2 -> 5
+     //   kyun: bade se gino 6, 5 -> 2nd = 5
      // top-K ka core
      priority_queue<int, vector<int>, greater<int>> pq;   // MIN: size>k pe sabse CHHOTA evict
      for (auto &it : nums)
@@ -3084,6 +3207,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
  // O(n log k) (sort O(n log n) se behtar)
 
  ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
+     // SAWAAL: points[] = [x,y]. origin (0,0) ke sabse PAAS wale k points lautao (doori = x*x+y*y), order koi bhi.
+     //   e.g. [[1,3],[-2,2]], k=1 -> [[-2,2]]
+     //   kyun: [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
      // KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap, sabse BADI evict)
      priority_queue<pair<int, vector<int>>> maxHeap;   // MAX: sabse door top pe, size>k pe wahi nikle
      for (int i = 0; i < points.size(); i++)
@@ -3096,6 +3222,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
+     // SAWAAL: nums[] + k. wo k elements lautao jo SABSE ZYADA baar aate (order koi bhi).
+     //   e.g. [1,1,1,2,2,3], k=2 -> [1,2]
+     //   kyun: 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
      // KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
      unordered_map<int, int> mp;
      for (int i = 0; i < nums.size(); i++) mp[nums[i]]++;   // STEP 1: freq gino
@@ -3113,6 +3242,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: MIN-heap of current candidates (har baar sabse chhota nikaalo, uska agla daalo) ──
 
  ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
+     // SAWAAL: k sorted linked lists. sabko jod ke EK sorted list lautao.
+     //   e.g. [[1,4,5],[1,3,4],[2,6]] -> [1,1,2,3,4,4,5,6]
+     //   kyun: har baar teeno ke current head me sabse chhota uthao: 1,1,2,3,4,4,5,6
      // struct Compare: ListNode* ko khud compare karna nahi aata
      return a->val > b->val;                 // > likha to MIN-heap (pq ka comparator ulta chalta)
 
@@ -3128,6 +3260,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // heap me max k node (1 per list) -> O(N log k)
 
  ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
+     // SAWAAL: arr[] me har element apni sahi (sorted) jagah se max k door. poora sorted array lautao.
+     //   e.g. [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]
+     //   kyun: 2 abhi index 3 pe, sahi jagah index 0 -> 3 door = k ke andar
      // har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
      vector<int> ans;
      priority_queue<int, vector<int>, greater<int>> pq;   // MIN: sorted output me chhota pehle
@@ -3143,6 +3278,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: TWO-HEAPS (do team, dono top = beech ke border) ──
 
  ▸ FIND MEDIAN FROM DATA STREAM (LC-295)  = TWO-HEAPS balanced
+     // SAWAAL: number ek-ek aate (addNum). kabhi bhi findMedian() = ab tak sab ka beech wala (even -> beech ke 2 ka average).
+     //   e.g. add 5, 15, 1, 3 -> findMedian = 4.0
+     //   kyun: sorted 1,3,5,15 -> beech ke do 3,5 -> (3+5)/2 = 4
      // stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
      // TRAP: heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
      //   bada -> BADI team -> minHeap. naam bhool, team soch.
@@ -3169,6 +3307,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: MAX-heap + greedy (har round sabse zyada wala lagao) ──
 
  ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME
+     // SAWAAL: string s ke akshar aise lagao ki koi 2 PADOSI same na ho. koi bhi ek valid lautao, na bane -> "".
+     //   e.g. "aab" -> "aba" · "aaab" -> ""
+     //   kyun: aab: b dono a ke beech · aaab: 3 a alag karne 2 diwaar chahiye, b sirf 1
      // koi 2 ADJACENT same na ho, na bane -> "". top-k-frequent ka cousin: har round 2 nikaalo
      // possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
      //   (alag check na bhi rakho: aakhri bacha count>1 khud pakad leta)
@@ -3190,6 +3331,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: MIN-heap + vis[] (lazy delete) ──
 
  ▸ THROTTLING — MIN UTHAO, PADOSI HATAO (Amazon OA)  = MIN-HEAP {val,idx} + vis[] (lazy skip)
+     // SAWAAL: responseTimes[]. har step bache me SABSE CHHOTA uthao (tie -> chhota index), jodo, use + i-1, i+1 hatao. total?
+     //   e.g. [4,2,9,1,7,3] -> 6
+     //   kyun: 1 uthaya (9,7 hate) · 2 uthaya (4 hata) · 3 uthaya -> 1+2+3 = 6
      // har step bache me SABSE CHHOTA (tie -> chhota index), jodo, khud + ORIGINAL padosi (i-1, i+1) hatao
      // [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
      // BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
@@ -3234,6 +3378,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: sort-by-start + overlap check (bas overlap pe ACTION aur boundary < / <= badalta) ──
 
  ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
+     // SAWAAL: intervals[] = [start,end]. saare overlap wale jod do, merged list lautao (touching bhi jud jaate).
+     //   e.g. [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]
+     //   kyun: 2 <= 3 -> [1,3] aur [2,6] overlap -> [1,6]; baaki alag
      sort(begin(intervals), end(intervals));   // default FIRST element (start) se. HAMESHA pehla step
      vector<vector<int>> ans;
      ans.push_back(intervals[0]);   // pehla baseline
@@ -3246,6 +3393,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
  // [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]
 
  ▸ MEETING ROOMS (LC-252, Easy)  = Merge ka SAME template, bas action alag
+     // SAWAAL: meetings[] = [start,end]. kya ek insaan SAARI attend kar sakta (koi 2 overlap nahi)? true/false.
+     //   e.g. [[0,30],[5,10],[15,20]] -> false
+     //   kyun: 5-10 shuru hui jab 0-30 abhi chal rahi (5 < 30) -> overlap
      // MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end me true
      if (intervals.empty()) return true;     // EDGE: warna intervals[0] pe crash
      sort(intervals.begin(), intervals.end());   // start se sort
@@ -3259,6 +3409,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
  // boundary farak: Merge touching = MERGE (<=) · Meeting touching = OK (<)
 
  ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
+     // SAWAAL: intervals[] pehle se sorted + non-overlap. newInterval daalo (overlap ho to merge), sorted list lautao.
+     //   e.g. [[1,3],[6,9]], new=[2,5] -> [[1,5],[6,9]]
+     //   kyun: [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
      // pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
      vector<vector<int>> ans;
      int count = 0;   // kitne process hue, doosra loop wahin se
@@ -3278,6 +3431,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: SWEEP LINE (events + running count: kitna overlap, sirf "hai?" nahi) ──
 
  ▸ MEETING ROOMS II (LC-253)  = SWEEP LINE / event-count
+     // SAWAAL: start[], end[] = meetings. MIN kitne room chahiye (start == kisi ka end -> wahi room chalega).
+     //   e.g. start=[2,9,6], end=[4,12,10] -> 2
+     //   kyun: t=9 pe [9,12] aur [6,10] dono chal rahi -> 2 room
      // min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 / -1 GINTI
      map<int, int> mp;   // ORDERED map: time -> delta, keys khud sorted
      int n = start.size();
@@ -3330,6 +3486,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: SUBSETS-family (start-aage = kaunse; used[] = kis order) ──
 
  ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
+     // SAWAAL: nums[] (sab unique). SAARE subsets lautao, order koi bhi.
+     //   e.g. [1,2] -> [], [1], [2], [1,2]
+     //   kyun: har element lo ya chhodo -> 2 x 2 = 4 subset
      void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp)
          if (index >= nums.size())   // har element pe faisla ho gaya -> ek poora subset
              ans.push_back(temp); return;
@@ -3354,6 +3513,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   pe branch
 
  ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
+     // SAWAAL: nums[] (sab unique). SAARE permutations (har possible order) lautao.
+     //   e.g. [1,2,3] -> [1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]
+     //   kyun: pehli jagah 3 choice, doosri 2, teesri 1 -> 3x2x1 = 6
      void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vector<int>> &ans)
          if (temp.size() == nums.size())   // base = full length (poora arrangement)
              ans.push_back(temp); return;
@@ -3368,6 +3530,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // SUBSETS = 'start' (sirf AAGE, [1,2]==[2,1] repeat nahi) · PERMUTATION = used[] + loop 0 se, start NAHI
 
  ▸ COMBINATIONS (LC-77)  = SUBSETS ka start-loop, bas base size==k
+     // SAWAAL: 1..n me se k number ke SAARE combinations lautao (order matter nahi).
+     //   e.g. n=4, k=2 -> [1,2],[1,3],[1,4],[2,3],[2,4],[3,4]
+     //   kyun: [2,1] = [1,2] same -> sirf aage wale chuno -> C(4,2) = 6
      void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
          if (temp.size() == k)   // fixed-size combo poora (subsets har node pe, yahan sirf ==k)
              ans.push_back(temp); return;
@@ -3379,6 +3544,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // SUBSETS = start-aage, har node · COMBINATIONS = start-aage, size==k · PERM = used[] + loop 0, size==n
 
  ▸ COMBINATION SUM (LC-39)  = REUSE allowed + TARGET-base
+     // SAWAAL: candidates[] (distinct, positive) + target. saare unique combos jinka SUM == target, ek number kitni bhi baar.
+     //   e.g. [2,3,6,7], target=7 -> [[2,2,3],[7]]
+     //   kyun: 2+2+3 = 7 (2 dobara liya) · 7 akela = 7
      void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp, int target)
          if (target < 0) return;             // overshoot: aage jaana bekaar (prune)
          if (index >= nums.size())   // end pe check
@@ -3405,6 +3573,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: GRID PATH (element choose / skip nahi, grid pe raasta: mark -> recurse -> un-mark) ──
 
  ▸ WORD SEARCH (LC-79)  = grid-DFS + BACKTRACKING
+     // SAWAAL: char grid + word. kya word bagal-bagal cells (up/down/left/right) se banta, har cell ek hi baar? true/false.
+     //   e.g. board ABCE/SFCS/ADEE: "ABCCED" -> true, "ABCB" -> false
+     //   kyun: A,B,C (row 0) -> C neeche -> E neeche -> D left · ABCB me wahi B dobara lagta
      bool solve(vector<vector<char>> &board, string word, int index, int i, int j, int m, int n,
                 vector<vector<bool>> &vis)   // vis REFERENCE (&), copy nahi
          if (i < 0 || i >= m || j < 0 || j >= n || vis[i][j] || board[i][j] != word[index])
@@ -3435,6 +3606,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: CONSTRAINT / LEVEL choices (har step pe choice, rule ya level se) ──
 
  ▸ GENERATE PARENTHESES (LC-22)  = CONSTRAINT-guided (open / close count)
+     // SAWAAL: n jode brackets. saare VALID (balanced) strings lautao.
+     //   e.g. n=2 -> ["(())", "()()"]
+     //   kyun: 2 '(' + 2 ')' ke sirf yahi 2 jahan ')' kabhi '(' se aage nahi nikalta ("())(" galat)
      // n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
      void solve(int open, int close, string path, vector<string> &ans, int n)   // path BY VALUE: path+'('
          if (open == n && close == n)   //   naya copy -> pop_back nahi chahiye
@@ -3446,6 +3620,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // caller: solve(0, 0, "", ans, n). n=3 -> 5, n=4 -> 14 (kam aaye = koi branch kat rahi)
 
  ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)
+     // SAWAAL: digits (2-9) ki string. phone keypad ke aksharon se saare shabd lautao, khaali -> [].
+     //   e.g. "23" -> [ad,ae,af,bd,be,bf,cd,ce,cf]
+     //   kyun: 2 = abc, 3 = def -> har akshar ke saath har akshar = 3 x 3 = 9
      // "23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
      void solve(int index, string &temp, unordered_map<char, string> &mp, vector<string> &ans,
                 string &digits)
@@ -3495,6 +3672,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: 1D index DP (Fibonacci shape / take-skip) ──
 
  ▸ CLIMBING STAIRS (LC-70)  = Fibonacci-shape (ways = ways(n-1)+ways(n-2))
+     // SAWAAL: n steps ki seedhi, ek baar me 1 ya 2 step. top tak kitne ALAG tareeke?
+     //   e.g. n=3 -> 3
+     //   kyun: 1+1+1, 1+2, 2+1
      int solve(int n, vector<int> &dp)   // step n pe: (n-1) se 1 step YA (n-2) se 2 step
          if (n == 0 || n == 1) return 1;     // base: n==0 bhi 1 (2-step se seedha top = ek tareeka)
          if (dp[n] != -1) return dp[n];      // cache HIT
@@ -3505,6 +3685,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n)
 
  ▸ DECODE WAYS (LC-91)  = climbing-stairs ka bhai, par har STEP pe VALIDITY check
+     // SAWAAL: digit string, 1=A .. 26=Z. kitne alag tareeke se decode ho sakti? (akela '0' kuch nahi)
+     //   e.g. "226" -> 3
+     //   kyun: 2 2 6 = BBF · 22 6 = VF · 2 26 = BZ
      // A=1 .. Z=26. sirf ank mile ("226") -> kitne alag shabd? GINTI. 2|2|6=BBF · 22|6=VF · 2|26=BZ -> 3
      // har i pe 2 choice (1 ank -> i+1 · 2 ank -> i+2); FARAK: yahan har choice pehle VALID honi chahiye
      // "226" ka tree: "6" do jagah aata -> dusri baar memo se seedha (yahi dp[] ka kaam)
@@ -3524,6 +3707,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   (word-break bhi yahi shakl: wahan rule "dictionary me hai?", yahan "1..26 me hai?")
 
  ▸ HOUSE ROBBER (LC-198)  = har step pe TAKE/SKIP choice + max
+     // SAWAAL: nums[] = har ghar ka paisa. 2 PADOSI ghar nahi loot sakte. MAX loot lautao.
+     //   e.g. [2,7,9,3,1] -> 12
+     //   kyun: ghar 0, 2, 4 = 2+9+1 = 12, koi do padosi nahi
      int solve(vector<int> &A, int i, vector<int> &dp)   // LAST index se peeche (top-down)
          if (i < 0) return 0;                // i-2 se array ke bahar: koi ghar nahi
          if (dp[i] != -1) return dp[i];      // cache HIT
@@ -3538,6 +3724,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // base i==0 -> nums[0] bhi likh sakte (robber II wala); i<0 -> 0 ke saath zaroori nahi, nateeja same
 
  ▸ HOUSE ROBBER II (LC-213)  = House Robber I + CIRCLE -> I ko 2 baar chala
+     // SAWAAL: House Robber jaisa, par ghar GOL me -> pehla aur aakhri bhi padosi. MAX loot lautao.
+     //   e.g. [2,3,2] -> 3
+     //   kyun: ghar 0 aur 2 gol me padosi -> dono nahi; best = beech wala 3
      // ghar GOL: pehla (0) aur aakhri (n-1) PADOSI -> dono saath nahi. [2,3,2] -> 3 (2+2=4 GALAT)
      int solve(vector<int> &nums, int i, vector<int> &dp)   // = House Robber I, bina badle
          if (i < 0) return 0;
@@ -3562,6 +3751,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: TAKE / NOT-TAKE on index (coin / LIS / knapsack / subset) ──
 
  ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
+     // SAWAAL: coins[] (har coin unlimited) + amount. exact amount banane ko MIN coins, na bane -> -1.
+     //   e.g. coins=[1,2,5], amount=11 -> 3
+     //   kyun: 5+5+1 = 11, 3 coin
      // amount banane ko MIN coins (har coin UNLIMITED). na ban sake -> -1
      // amount==0 = THEEK bana -> 0 coins · amount<0 = overshoot -> INVALID (ban-na = theek 0 pe rukna)
      // 3 TRAP: (1) INT_MAX = "ban nahi sakta" (min me haarta) (2) overflow guard (3) caller INT_MAX -> -1
@@ -3595,6 +3787,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   for-loop me 'i' state nahi -> 1D dp; 2D me state = (i, amount)
 
  ▸ LONGEST INCREASING SUBSEQUENCE (LC-300)  = TAKE/NOT-TAKE + prev-track
+     // SAWAAL: nums[]. sabse lambi STRICTLY badhti subsequence (order same, beech skip chalega) ki LENGTH.
+     //   e.g. [0,1,0,3,2,3] -> 4
+     //   kyun: 0,1,2,3 chuno (beech ka 0 aur 3 skip) -> 4
      int solve(int index, int prevIndex, vector<int> &nums, vector<vector<int>> &dp)
          if (index == nums.size()) return 0; // base saaf (coin change jaisa INT_MAX / -1 nahi)
          if (dp[index][prevIndex + 1] != -1)   // +1: prevIndex -1 se shuru, dp[-1] crash hota
@@ -3613,6 +3808,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: 2D GRID DP (up + left) ──
 
  ▸ UNIQUE PATHS (LC-62)  = 2D DP intro (climbing-stairs ka 2D cousin)
+     // SAWAAL: m x n grid, (0,0) se (m-1,n-1) tak, sirf RIGHT ya DOWN. kitne alag raaste?
+     //   e.g. m=3, n=2 -> 3
+     //   kyun: 2 down + 1 right ka order: R D D, D R D, D D R
      int solve(int i, int j, vector<vector<int>> &dp)   // robot (0,0) -> (m-1,n-1), sirf RIGHT / DOWN
          if (i < 0 || j < 0) return 0;       // grid ke bahar -> koi raasta nahi
          if (i == 0 && j == 0) return 1;     // start cell
@@ -3626,6 +3824,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // climbing se CONNECT: ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). state (i,j), base do, memo 2D
 
  ▸ MIN PATH SUM (LC-64)  = UNIQUE-PATHS reuse, bas MIN + cost
+     // SAWAAL: m x n grid, har cell ka cost. (0,0) se (m-1,n-1), sirf RIGHT/DOWN. sabse KAM sum lautao.
+     //   e.g. [[1,2],[1,1]] -> 3
+     //   kyun: neeche phir right = 1+1+1 = 3 · right phir neeche = 1+2+1 = 4
      int solve(int i, int j, vector<vector<int>> &dp, vector<vector<int>> &grid)
          if (i < 0 || j < 0) return INT_MAX; // unique paths me 0 tha -> ab INVALID, min ignore karega
          if (i == 0 && j == 0) return grid[0][0];   // unique paths me 1 tha -> ab start ki COST
@@ -3642,6 +3843,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: 2 STRING DP (i, j peeche se) ──
 
  ▸ LONGEST COMMON SUBSEQUENCE (LC-1143)  = 2D DP on 2 STRINGS (match/no-match)
+     // SAWAAL: do string s1, s2. dono me common subsequence (order same, skip chalega) ki sabse lambi LENGTH.
+     //   e.g. "abcde", "ace" -> 3
+     //   kyun: a, c, e dono me isi order me -> "ace" = 3
      int solve(string s1, string s2, int i, int j, vector<vector<int>> &dp)   // s1 i tak, s2 j tak
          if (i < 0 || j < 0) return 0;       // koi string khatam -> common kuch nahi
          if (dp[i][j] != -1) return dp[i][j];
@@ -3656,6 +3860,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // "2-string DP" ka base (edit distance isi pe)
 
  ▸ EDIT DISTANCE (LC-72, Hard)  = LCS reuse -- no-match 3-choice + base 2-sided
+     // SAWAAL: word1 ko word2 banane ke MIN operations. insert / delete / replace, har ek = 1.
+     //   e.g. "horse", "ros" -> 3
+     //   kyun: horse -> rorse (h ko r) -> rose (r hatao) -> ros (e hatao)
      int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp)   // s1 -> s2 min ops
          if (i < 0) return j + 1;            // s1 khatam -> bache s2 ke j+1 char INSERT
          if (j < 0) return i + 1;            // s2 khatam -> s1 ke i+1 char DELETE
@@ -3678,6 +3885,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: 0/1 KNAPSACK (item ONCE -> i-1) ──
 
  ▸ 0/1 KNAPSACK (classic)  = PURE take/not-take (item ONCE)
+     // SAWAAL: n item (weight[i], value[i]), bag capacity W. har item ek hi baar. weight <= W rakh ke MAX value.
+     //   e.g. wt=[1,2,3], val=[6,10,12], W=5 -> 22
+     //   kyun: item 2+3: wt 2+3 = 5, val 10+12 = 22 (teeno = wt 6, fit nahi)
      // MAX value, weight <= W, har item ek baar
      int solve(vector<int> &wt, vector<int> &val, int W, int i, vector<vector<int>> &dp)
          if (i < 0) return 0;                // koi item nahi (i<0: index-0 normal item, cleaner)
@@ -3694,6 +3904,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // coin change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same)
 
  ▸ SUBSET SUM (boolean)  = 0/1 KNAPSACK ka BOOLEAN bhai
+     // SAWAAL: nums[] (positive) + target. kya koi subset exactly target jodta? true/false.
+     //   e.g. [2,3,5], T=5 -> true · [1,2,7], T=6 -> false
+     //   kyun: {5} ya {2,3} = 5 · 1,2,7 se 6 ka koi jod nahi
      // knapsack ka max-value ki jagah true/false
      bool solve(vector<int> &nums, int target, int index, vector<vector<int>> &dp)
          if (target == 0) return true;       // SUCCESS -- SABSE UPAR (BASE-ORDER TRAP, neeche dekh)
@@ -3713,6 +3926,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   -> success MISS. [5,3], T=3 -> {3} true hona chahiye, galat false aata
 
  ▸ PARTITION EQUAL SUBSET SUM (LC-416)  = SUBSET-SUM ka delta
+     // SAWAAL: nums[] (positive). kya do hisse me baant sakte jinka SUM barabar ho? true/false.
+     //   e.g. [1,5,11,5] -> true
+     //   kyun: total 22 -> {11} = 11 aur {1,5,5} = 11
      // [1,5,11,5] -> S=22 -> {11} = {1,5,5} = 11 -> true. ek subset S/2 bana -> baaki apne aap S - S/2
      // solve() = upar SUBSET SUM wala, hubahu
      bool subsetSum(vector<int> &nums, int target, int n, vector<vector<int>> &dp)
@@ -3728,6 +3944,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: STATE me COUNTER (choice per char) ──
 
  ▸ VALID PAREN with '*' (LC-678)  = choice-per-char, 2D dp[index][open]
+     // SAWAAL: s me sirf '(' ')' '*'. '*' = '(' ya ')' ya khaali. kya s valid bracket string ban sakti? true/false.
+     //   e.g. "(*))" -> true · ")(" -> false
+     //   kyun: * ko '(' maano -> "(())" valid · ")(" me ')' pehle aa gaya
      // '*' = '(' YA ')' YA khaali. open = ab tak kitne '(' UNMATCHED. state = (index, open)
      bool solve(string &s, int index, int open, vector<vector<int>> &dp)
          if (index == s.size()) return open == 0;   // sab '(' match ho gaye?
@@ -3754,6 +3973,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: INTERVAL DP (range (i, j), WALL k pe loop + recurse) ──
 
  ▸ MATRIX CHAIN MULT / MCM  = INTERVAL-DP  = two_max WALL + loop + recurse
+     // SAWAAL: p[] = chain ki dims (A_i = p[i-1] x p[i]). multiply ka order chuno ki total scalar multiplications MIN ho.
+     //   e.g. p=[10,30,5,60] -> 4500
+     //   kyun: (A1A2) = 10*30*5 = 1500, phir x A3 = 10*5*60 = 3000 -> 4500 (doosra order 27000)
      // chain multiply: result SAME, COST order pe -> MIN. p[] = dims, matrix A_i = p[i-1] x p[i] (i = 1..n)
      //   p = [10,30,5,60]: A1 = 10x30, A2 = 30x5 (p1 = 30 SHARED), A3 = 5x60
      // = two_max ka WALL; FARAK: wahan left/right precomputed, yahan ranges overlap -> loop + recurse + memo
@@ -3774,6 +3996,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // real: DB JOIN-order. interval-DP family: burst balloons, stone merge, optimal BST
 
  ▸ BURST BALLOONS (LC 312)  = INTERVAL-DP  = MCM WALL + loop + recurse
+     // SAWAAL: balloons[]. ek-ek phodo, coins = left padosi * khud * right padosi (kinaare pe padosi = 1). MAX total coins.
+     //   e.g. [1,5] -> 10
+     //   kyun: pehle 1 phodo = 1*1*5 = 5, phir 5 = 1*5*1 = 5 -> 10 (ulta order sirf 6)
      // phodne pe coins = left * khud * right (padosi = us waqt ZINDA) -> saare phod ke MAX
      // k = range me SABSE AAKHRI phootne wala -> baaki sab phoot chuke -> padosi = range ke BAHAR: i-1, j+1
      //   [1,3,1,5,8,1], solve(1,4), k=3 (5) aakhri -> coins = p[0]*p[3]*p[5] = 1*5*1
@@ -3810,6 +4035,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
    SIGNATURE: aksar pehle SORT (kisi key pe: size / finish-time) -> phir ek LINEAR pass me pick / skip.
 
  ▸ ASSIGN COOKIES (LC-455)  = greedy intro (sort + 2-pointer)
+     // SAWAAL: g[] = bachhe ki greed, s[] = cookie size. s[j] >= g[i] to khush, ek bachha max ek cookie. MAX khush bachhe.
+     //   e.g. g=[1,2,3], s=[1,1] -> 1
+     //   kyun: dono cookie size 1 -> sirf greed-1 wala khush
      // g[] = bachhe ki GREED, s[] = cookie SIZE. s[j] >= g[i] -> khush. max kitne khush?
      // chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi cookies bade greed ko
      int n = g.size(), m = s.size(), count = 0, i = 0, j = 0;   // i = bachha, j = cookie
@@ -3821,6 +4049,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;   // [10,9,8,7], [5,6,7,8] -> 2 (7->7, 8->8)
 
  ▸ JUMP GAME (LC-55)  = greedy REACHABILITY (farthest-reach track)
+     // SAWAAL: nums[i] = index i se max kitna kood sakte. index 0 se last index tak pahunch sakte? true/false.
+     //   e.g. [2,3,1,1,4] -> true · [3,2,1,0,4] -> false
+     //   kyun: 0->1->4 pahunche · doosre me har raasta index 3 (value 0) pe atakta
      // nums[i] = us index se max kitna kood sakte. last tak pahunche?
      int maxReach = 0;   // ab tak sabse DOOR kahan tak pahunch sakte (0 se)
      for (int i = 0; i < nums.size(); i++)
@@ -3833,6 +4064,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   rang)
 
  ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END)
+     // SAWAAL: intervals[]. MIN kitne hatao ki baaki koi overlap na kare (touching chalta).
+     //   e.g. [[1,2],[2,3],[3,4],[1,3]] -> 1
+     //   kyun: [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
      // MIN kitne HATAO ki overlap na bache
      sort(begin(intervals), end(intervals));   // default sort (start pe)
      int start = 0, end = 1, count = 0;   // start = rakha hua, end = candidate
@@ -3850,6 +4084,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   (alt: END pe sort -> pehla wala hamesha chhota-end -> ye if gayab)
 
  ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
+     // SAWAAL: N pump gol me. gas[i] = milta, cost[i] = agle tak kharcha. kis index se poora chakkar lagega? na lage -> -1.
+     //   e.g. gas=[1,2,3,4,5], cost=[3,4,5,1,2] -> 3
+     //   kyun: index 3 se tank 3, 6, 4, 2, 0 -> kabhi minus nahi, chakkar poora
      // N pump CIRCLE me. gas[i] = pump i pe milta, cost[i] = i se i+1 tak kharcha. khaali tank, kahan se
      //   chalu ki poora ghoom ke wapas aa jau? koi nahi -> -1. har pump ka NET = gas[i] - cost[i]
      int n = gas.size();
@@ -3867,6 +4104,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // cookies / jump / interval se FARAK: sort NAHI. circular + 2 accumulator (possible? + start kahan)
 
  ▸ TASK SCHEDULER (LC-621)  = greedy IDLE-SLOTS (most-frequent frame)
+     // SAWAAL: tasks (letters), har task 1 unit. same task dobara se pehle n gap. MIN total time (idle bhi gino).
+     //   e.g. [A,A,A,B,B,B], n=2 -> 8
+     //   kyun: A B idle A B idle A B = 8 unit
      // SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldown" + "minimum time"
      //   -> greedy (most-frequent frame) YA max-heap. sabse ZYADA wala task (maxFreq) DHANCHA banata,
      //   beech ke gaps doosre tasks se bharo, khaali bache = IDLE
