@@ -1,7 +1,245 @@
 <h1 align="center">DSA PATTERN SHEET</h1>
 
-> OA / interview se pehli raat ke liye (PEHLE YE · OA tools · DECISION · EDGE kyun · NAAM-SE-CONFUSE A-E · 18 pattern ek nazar)
-> = [EK_NAZAR.md](EK_NAZAR.md). Ye sheet = roz ka redo: har pattern ka poora block.
+> Upar: PEHLE YE · OA tools · DECISION · EDGE kyun · NAAM-SE-CONFUSE A-E. Neeche: 18 pattern, har sawaal = SAWAAL + TAREEKA + CHAABI + code.
+
+---
+
+## ★ PEHLE YE — har problem pe (30 sec)
+
+```
+1. INPUT dekho, story nahi: sorted? "K"? negatives? grid? tree/node? intervals? edges? -> family shortlist
+2. Shabd pakdo: SUBARRAY / SUBSEQUENCE / SUBSET ?  ·  MAX / MIN / COUNT / EXACT ?
+3. Kisi ka LABEL mat lo ("reel ne SW bola") -> khud dekho: sach me aisa hai?
+4. Pattern nahi aaya -> BRUTE likho -> "baar-baar SAME kya nikal raha?" -> use STORE karo -> wo DS = pattern
+5. "X jaisa hai, bas ye badla" laga -> poochho: X me jo THI HI NAHI, wo line kya hai? (edge wahin)
+6. Code ke BAAD, submit se pehle: us pattern block ki ★ EDGE line + ek chhota dushman-example chalao
+```
+> Detail neeche: DECISION (input + signal table) · EDGE kyun fisalta · NAAM-SE-CONFUSE (A-E) · phir 18 pattern.
+
+## ★ OA KE TOOLS — C++ syntax jo DSA nahi, par OA me aata (27-Oct Wise se)
+
+```cpp
+// STRING TODNA (log "s1 200 success", "name:score", CSV)
+#include <sstream>
+stringstream ss(line);  string a, b, c;
+ss >> a >> b >> c;                       // space se tukde: a="s1", b="200", c="success"
+int x = stoi(b);                         // string -> int
+string part; stringstream ss2(line);
+while (getline(ss2, part, ','))  { }     // comma (ya ':') se tukde
+int pos = line.find(' ');                // pehla space
+string left = line.substr(0, pos), right = line.substr(pos + 1);
+
+// MINUS % (C++ me -2 % 26 = -2, 24 NAHI)
+int r = ((x % m) + m) % m;               // hamesha 0..m-1  (Caesar peeche khiskana, remainder)
+char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
+```
+
+---
+
+## ★★★ DECISION — kaunsa DS/technique KAB aur KYUN (11-Aug, Arpan-diagnosed; sabse-upar)
+
+> Neeche wali sheet PATTERNS deti hai (kya hote hain). Ye section DERIVATION deta hai — *"naya problem dekh ke kaise pata karun kaunsa lagega."*
+> Arpan-diagnosis: abhi tak "WHAT hashmap hai" pata tha, "WHEN/WHY lagta hai" kabhi nahi. Ye wahi bharta. Recognition pe depend NAHI — REASON karo.
+
+**STEP-0 — INPUT-SHAPE padho (story se PEHLE; disguise ke against #1 hathiyaar):**
+
+> Story jhooth bol sakti (disguise), input-shape aksar nahi. Input dekh ke family SHORTLIST karo, phir story ka transform kholo.
+
+| INPUT diya                           | → shortlist pattern |
+|--------------------------------------|---------------------|
+| **SORTED** array                     | two-pointer / binary-search (SORTED-FORK dekho) |
+| **"K"** (largest/closest/frequent)   | **HEAP** |
+| array + **target sum/relation**      | hashmap (unsorted) / two-pointer (sorted) |
+| **NEGATIVES** + subarray-sum         | **PREFIX+HASHMAP** (SW nahi — window toot-ta) |
+| **2D grid / matrix**                 | DFS/BFS (islands) / DP (paths) |
+| **tree / linked-list NODE**          | recursion/DFS / BFS / fast-slow |
+| **intervals [[s,e]]**                | sort + merge/sweep |
+| **prices/stock** + span/next-bigger  | monotonic STACK / kadane |
+| **"MIN/MAX value jo condition sach"**| **BINARY SEARCH on ANSWER** |
+| **edges / adjacency**                | graph BFS/DFS/topo |
+| string + **dictionary/words**        | DP (break) / Trie |
+
+> 2-LAYER method: (1) input-shape → family shortlist, (2) phir story ka transform kholo. **Input pehle, story baad me.** (6-Sep, Arpan-derived — disguised-problems ke live-test se.)
+
+**THE METHOD (har NAYE problem pe 4 step):**
+1. **BRUTE FORCE likho** — hamesha hota hai (partial answer + waqt).
+2. **Poocho:** *"main baar-baar SAME kya compute kar raha?"* → **REDUNDANCY** dhoondo.
+3. Us redundancy ko **CACHE/STORE** karo → recompute ki jagah **LOOK UP**.
+4. **Cache-ka-DS hi PATTERN hai** (guess nahi — DERIVE).
+> + "STORY hatao — structure kya? pairs? range? next-bigger/smaller? min/max? subproblems?"
+
+**KAUNSA DS LAGEGA — SIGNAL se DERIVE karo** (pehchan se nahi; in sabka koi template hota hi nahi):
+
+| Jab ye SIGNAL dikhe | Brute me REDUNDANCY | → DS | KYUN |
+|---|---|---|---|
+| do element **sum/diff/relation = target** (UNSORTED) | "partner pehle dekha?" scan | **HASHMAP** | seen store, O(1) lookup |
+| **SORTED** + pair dhoondo | dono end scan | **TWO-POINTER** | sorted → converge |
+| **CONTIGUOUS** + longest/max (saare **POSITIVE**) | window-sum baar-baar | **SLIDING WINDOW** | expand/shrink monotonic |
+| subarray-sum / sum=k (**NEGATIVES** ho sakte) | prefix baar-baar | **PREFIX + HASHMAP** | prefix seen → O(1) |
+| har element **"pehla bada/chhota kaun"** | aage/peeche scan | **MONOTONIC STACK** | chhote-bekaar pop |
+| **"abhi tak min/max / top-k"** stream | baar-baar sort | **HEAP** | ordered store, log n |
+| **"running median / do halves balance"** | baar-baar sort | **TWO HEAPS** | max-heap + min-heap |
+| lookups by **prefix / word-set** | string scan baar-baar | **TRIE** | char-by-char tree |
+
+> ★ **"SORTED" FORK** (5-Sep, drill se): sorted dekh ke seedha BS mat firing karo — **DUSRA cue** padho:
+> pair / sum from **TWO ENDS** → **TWO-POINTER** (converge, O(n)) · **single position / threshold / "min X jisme condition sach"** → **BINARY SEARCH**. (two-sum-sorted = 2-pointer, NA BS.)
+
+---
+
+## ESSENCE — LABEL pe bharosa mat karo (31-Jul, Arpan-derived)
+
+> Problem samjho -> phir pattern -> phir code. Par asli baat ye:
+> **kisi aur ka LABEL blindly mat lo** — "reel ne SW bola" ka matlab SW nahi.
+> Khud examine karo: *"sach me aisa hai?"*
+
+---
+
+## ★★ EDGE LIST — har template ke saath uski EK line
+
+> **KYUN ye section hai:** template har problem me lagta hai -> 50 baar chhua -> baith gaya.
+> Edge sirf us EK shakal me lagta hai -> 3-4 baar chhua -> fisal jaata. Mushkil hone ki wajah
+> se nahi, **kam baar saamne aane** ki wajah se.
+>
+> Doosri wajah: template ka DHAANCHA hota hai — ek tukda yaad aaya, baaki chain khud kheech
+> aayi. Edge AKELA padta hai, ek line, uske aage-peeche kuch nahi jo use upar kheenche.
+>
+> Teesri: code likhte waqt dimaag SHAKAL pe hota hai; edge sirf tab dikhta hai jab koi KHAAS
+> input chalao. Isliye ye sochne se nahi, **DRY-RUN se** nikalte hain.
+>
+> ★★ **CHAUTHI — aur yahi sabse asli hai (Arpan ne khud pakdi):** hum problem ko aksar DIFF me
+> rakhte hain — *"X jaisa hi hai, bas ye badla"*. Dimaag poora X yaad rakh leta hai + wo diff.
+> Par jo line X me **THI HI NAHI**, uske latakne ki koi jagah nahi bachti — wo bhooli nahi
+> jaati, wo **andar jaati hi nahi**.
+> ```
+> max-path-sum ko store kiya:  "DIAMETER/maxDepth wala hi hai, bas  1 +  ki jagah  node->val"
+>
+> DIAMETER me   left/right = DEPTH  ->  kabhi negative ho hi nahi sakti
+>                                   ->  clamp ki zaroorat hi nahi  ->  template me wo line NAHI
+> MAX-PATH-SUM  left/right = SUM    ->  negative ho sakti
+>                                   ->  tabhi  max(0, ...)  paida hota hai
+> ```
+> **NIYAM:** jab bhi kuch "X jaisa hai, bas ye badla" karke rakho, ek sawaal aur poochho —
+> **"X me jo cheez THI HI NAHI, wo kya hai?"** Edge hamesha wahin chhupa hota hai.
+>
+> ★ Ye theek karne wali "kami" nahi hai — koi saare edges sar me le kar nahi ghoomta, log inhe
+> CHALA KE pakadte hain. Ilaaj = ye list roz aankh ke saamne se guzre + har code pe ek chhota
+> dushman-example chalao. Sheet dekh lene me koi ghaata nahi — ye DERIVE hone wali cheezein
+> hain hi nahi, PATA honi chahiye — aur PATA-hui cheez sirf REPETITION se tikti hai.
+
+> **AB EDGE KAHAN HAI:** har edge PATTERN_SHEET ke apne pattern block me, `★ EDGE:` line pe (code block ke andar, BROAD IDEA ke
+> neeche). Redo se pehle block padhte hi saamne aayegi. Code likhne ke BAAD, submit se pehle, us line pe ek nazar.
+> Nayi edge mile to usi block me ek `★ EDGE:` line jodo — nayi file kabhi nahi.
+
+---
+
+## NAAM-SE-CONFUSE MAT HO — ek-jaisi DIKHNE wali jodiyaan
+
+> ★ Ye section knowledge ka nahi, QUESTION-PADHNE ka hai. Har entry wo jagah hai jahan keyword sun ke
+> sabse KAREEB wala pattern upar aa gaya, par sawaal kuch aur poochh raha tha.
+> Pattern bolne se PEHLE do shabd khud se poochho:
+> ```
+> 1. SUBARRAY (jud-hua) · SUBSEQUENCE (tod sakte, order wahi) · SUBSET (order bekaar) ?
+> 2. MAX / MIN / COUNT / EXACT — kya maang raha ?
+> ```
+
+### A. Container vs Trapping vs Histogram
+```
+                    CONTAINER Most Water    TRAPPING Rain Water      LARGEST Rectangle (Histogram)
+                    (LC-11)                 (LC-42)                  (LC-84)
+   ───────────────────────────────────────────────────────────────────────────────────────────────
+   kya poochha       2 line chuno -> MAX     baarish -> dips me       sabse BADA SOLID rectangle
+                     paani BEECH me          kitna paani TRAP         (paani NAHI!)
+   paani ya solid?   PAANI (2 walls beech)   PAANI (har dip me)       SOLID block (paani nahi)
+   kitne bar use     sirf 2 (chuni hui)      SAARE bar                har bar apna rectangle
+   formula           min(L,R) * width        min(leftMax,rightMax)    height * (NS - PS - 1)
+                                              - height[i]
+   SUM ya MAX?       MAX area                SUM (total paani)        MAX area
+   technique         two-pointer             two-ptr O(1) / prefix    MONOTONIC stack
+                     (CHHOTI wall andar)     leftMax/rightMax         (prev + next smaller)
+
+   1-line: Container = 2-deewar-BEECH-max-paani · Trapping = har-gaddha-SUM · Histogram = SOLID-block-MAX (paani nahi).
+   bada farak: Container/Trapping = PAANI · Histogram = SOLID.   Trapping = SUM · baaki dono = MAX.
+```
+
+### B. LIS vs LONGEST CONSECUTIVE (dono me "longest" + "badhta hua")
+```
+                    LIS                             LONGEST CONSECUTIVE
+                    (LC-300)                        (LC-128)
+   ────────────────────────────────────────────────────────────────────────────────
+   kya poochha       sabse lambi BADHTI chain        sabse lambi chain of
+                                                     CONSECUTIVE integers (+1, +1)
+   kitna badhna      bas BADA ho ( > )               exactly +1
+   ORDER matter?     HAAN — left se right            NAHI — shuffle karo, jawab wahi
+   array shuffle     jawab BADAL jaata               jawab SAME rehta
+   technique         DP  O(n^2)                      SET  O(n)
+                     ya tails+lower_bound O(n log n)  (num-1 set me nahi -> wahi start)
+
+   ★ TELL (question me ye shabd = LIS):  "order aage ka hi rahe" · "beech ke chhod sakte ho"
+   ★ TELL (= consecutive):               "+1" · "lagataar numbers" · order ka zikr HI nahi
+
+   CHECK: [10, 9, 2, 5, 3, 7, 101, 18]
+          LIS = 4  (2,3,7,18)          consecutive = 2  (2,3  ya  9,10)
+          -> ek hi array, do alag jawab. Yahi jodi drill me phansi thi — isliye yahan likhi hai.
+```
+
+### C. KADANE vs PREFIX+HASHMAP (dono me "subarray" + "sum")
+```
+                    KADANE                          PREFIX + HASHMAP
+                    (LC-53)                         (LC-560)
+   ────────────────────────────────────────────────────────────────────────────────
+   kya poochha       MAXIMUM sum wala subarray       KITNE subarray ka sum == K
+   jawab ka type     ek VALUE (max)                  ek COUNT
+   target diya hai?  NAHI — khud max dhoondhna       HAAN — exact K diya hua
+   negative allowed  haan (isi ke liye bana hai)     haan — aur isliye SW nahi chalti
+   technique         running sum, 0 se neeche        running sum + map[running-K]
+                     gaya to reset                   map[0] = 1 se shuru (ye line chhoot-ti hai)
+
+   ★ TELL: "MAX/sabse-bada sum"   -> Kadane
+   ★ TELL: "KITNE / count"  ya  "= K / exactly"  -> prefix + hashmap
+
+   ★ AUR EK: agar saare number POSITIVE hon aur "sum = K" poochhe -> SLIDING WINDOW bhi chalti.
+             negative aate hi window ka shrink-rule toot jaata -> tabhi prefix+hash zaroori.
+```
+
+### D. SINGLE vs SINGLE-SORTED vs DISAPPEARED vs DUPLICATE (charon me "ek number alag hai")
+```
+                    SINGLE NUMBER        SINGLE ELEMENT       DISAPPEARED          FIND DUPLICATE
+                    (LC-136)             (LC-540)             (LC-448)             (LC-287)
+   ─────────────────────────────────────────────────────────────────────────────────────────────────
+   shart            har num 2 baar,      SORTED, har num      values 1..n,         values 1..n,
+                    ek 1 baar            2 baar, ek 1 baar    size n, kuch repeat  size n+1, ek repeat
+   maang raha       AKELA                AKELA                GAYAB (sab)          DOHRA
+   time / space     O(n), O(1)           O(log n)             O(n), O(1)           O(1), array MAT BADLO
+   technique        XOR                  BINARY SEARCH        index ko MINUS       FLOYD cycle
+                                         (jodi ka index)      (array khud map)     (value = pointer)
+   teri file        11/01                07/10                03/10                08/12
+
+   PEHCHAAN KA KRAM (3 shabd dhoondho):
+     1. "SORTED" + log n        -> binary search (XOR bhi chalta, par O(n) = jo maanga wo nahi)
+     2. "VALUES 1..n"           -> value hi index ban sakti
+                                   GAYAB maanga -> index pe minus · DOHRA + array mat badlo -> Floyd
+     3. range nahi, sorted nahi, bas "2 baar aata" -> jodi apne aap kat jaati = XOR
+
+   1-line: sorted = BS · 1..n = index ka khel (gayab = minus, dohra = Floyd) · baaki "jodi" = XOR.
+```
+
+### E. "LAGAATAAR" sun ke SLIDING WINDOW? pehle 2 sawaal (Wise OA 27-Oct)
+```
+   "lagaataar / consecutive" = SW ka signal LAGTA hai, par SW tabhi jab dono jawab "haan":
+
+   1. KISKA lagaataar?   EK hi line ka (array / string)          -> SW socho
+                         alag-alag KEY (server / user / card) ki,
+                         sab ek line me MILE hue                    -> HASHMAP: har key ki APNI ginti
+   2. KYA maanga?        sabse LAMBI / CHHOTI window, window ka SUM -> SW (window khiskao)
+                         bas "k tak pahuncha?" (streak)             -> chalti GINTI: ++ , toota to = 0
+
+   misaal: SERVER ERROR STREAK (03/11)
+     "s1 error, s2 success, s1 error, s3 error, s1 error" -> s1 ke 3 lagaataar
+     ek window lagao to s2, s3 beech me ginti tod dete -> GALAT. map[server]++ , success pe 0 -> SAHI
+   (test me khud pakda tha: "i++ kis condition pe? baith nahi raha" = yahi signal, SW chhodo)
+
+   1-line: lagaataar EK line ka + window chahiye = SW · har KEY ka apna lagaataar = MAP + ginti.
+```
 
 ---
 
@@ -11,9 +249,11 @@
 
  BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
  ★ EDGE (sorted 2-ptr): duplicate skip karna hai kya? 3-sum HAAN, 2-sum nahi (bina skip ek triplet kai baar).
- ★ MILTE-JULTE (container / trapping / histogram): EK_NAZAR -> NAAM-SE-CONFUSE A dekh.
+ ★ MILTE-JULTE (container / trapping / histogram): upar NAAM-SE-CONFUSE A dekh.
 
 ── FAMILY: slow/fast OVERWRITE (fast scan, rakhne wala slow pe; teeno same skeleton) ──
+
+ KAB: array SORTED hai aur do number ki jodi chahiye · ya array me IN-PLACE kuch hatana / aage karna hai
 
  ▸ MOVE ZEROES
      // SAWAAL: saare 0 ko END me bhejo, baaki numbers ka ORDER wahi rahe. IN-PLACE (naya array nahi).
@@ -600,7 +840,7 @@
 ```
 
  KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
- ★ MILTE-JULTE ("lagaataar" par har server / user ka ALAG): EK_NAZAR -> NAAM-SE-CONFUSE E dekh, SW se PEHLE.
+ ★ MILTE-JULTE ("lagaataar" par har server / user ka ALAG): upar NAAM-SE-CONFUSE E dekh, SW se PEHLE.
  ★ EDGE (variable window): shrink me count 0 ho jaye to map se ERASE karo, warna map.size() jhooth bolega.
 
  ONE SKELETON (fixed + variable DONO isi pe):
@@ -621,6 +861,8 @@
      // SHORTEST -> shrink jab tak VALID, record shrink loop ke ANDAR, ans = MIN
 
 ── FAMILY: variable-LONGEST (INVALID pe WHILE shrink, ans = MAX length) ──
+
+ ★ DHYAAN: NEGATIVE numbers ho to SW nahi chalti -> PREFIX + MAP
 
  ▸ LONGEST SUBSTRING NO-REPEAT (LC-3)  = variable window + freq-map
      // SAWAAL: string s. sabse LAMBI substring ki LENGTH lautao jisme koi char REPEAT na ho.
@@ -1229,7 +1471,7 @@
 ```
 
  BROAD IDEA: hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
- ★ MILTE-JULTE (longest consecutive vs LIS): EK_NAZAR -> NAAM-SE-CONFUSE B dekh.
+ ★ MILTE-JULTE (longest consecutive vs LIS): upar NAAM-SE-CONFUSE B dekh.
 
  COMMON SKELETON (seen / complement / count family -- ek pass):
     map/set banao                      // kabhi PRELOAD: two-sum khaali · subarray-sum-k -> mp{0:1}
@@ -1240,6 +1482,9 @@
     // longest-consec = set-membership. ye skeleton sirf "seen/complement/count" family ke liye.
 
 ── FAMILY: 2-MAP BIJECTION (mp1 + mp2 dono taraf; koi ek clash -> false, ek map kaafi nahi) ──
+
+ KAB: "pehle dekha?" · "jodi / complement hai?" · "kitni baar aaya?" · grouping (anagram)
+ ★ DHYAAN: 1-to-1 mapping (isomorphic / word pattern) -> DO map, ek kaafi nahi
 
  ▸ ISOMORPHIC STRINGS
      // SAWAAL: s, t same length. s ke har char ko ek FIXED char se badal ke t ban sakta (one-to-one)? true/false.
@@ -1550,7 +1795,7 @@
      //   kyun: s1 ke 3 error (s2, s3 beech me aaye par s1 ki ginti nahi todte) -> 1 alert; s3 ka sirf 1 error
 
      // TAREEKA: logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
-     // pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (EK_NAZAR -> NAAM-SE-CONFUSE E)
+     // pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (upar NAAM-SE-CONFUSE E)
 
      // CHAABI:
      //   1. mp {server -> lagaataar error}, count = 0
@@ -1593,10 +1838,13 @@
 
  BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
  ★ EDGE (prefix + hashmap, sum == K): map[0] = 1 se SHURU karo. [3], K=3: bina iske poora-array wala case chhoot jaata.
- ★ MILTE-JULTE (max sum vs count sum == K): EK_NAZAR -> NAAM-SE-CONFUSE C dekh.
+ ★ MILTE-JULTE (max sum vs count sum == K): upar NAAM-SE-CONFUSE C dekh.
  ★ EDGE (C++ %): minus % minus deta (-2 % 5 = -2) -> ((x % m) + m) % m  (divisible-by-k remainder).
 
 ── FAMILY: "assign PEHLE, update BAAD" (pehle current index ka result rakho, PHIR running value badlo) ──
+
+ KAB: range sum baar-baar · "kitne subarray ka sum = K" (negative bhi) · left sum = right sum
+ ★ DHYAAN: mp[0] = 1 bhoolna nahi ([3], K=3)
 
  ▸ PIVOT INDEX
      // SAWAAL: nums[]. pehla INDEX jahan left sum == right sum (index khud kisi taraf nahi); koi na ho to -1.
@@ -1839,6 +2087,8 @@
 
 ── (STANDALONE — har ek apni index-navigation) ──
 
+ KAB: 2D matrix pe index ka khel: spiral, transpose, set zeroes, row / col ginti
+
  ▸ SET MATRIX ZEROES
      // SAWAAL: m x n matrix. koi cell 0 ho to uski POORI row aur POORI col 0 kar do, IN-PLACE.
      //   e.g. [[1,1,1],[1,0,1],[1,1,1]] -> [[1,0,1],[0,0,0],[1,0,1]]
@@ -1982,13 +2232,15 @@
 
  BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
  ★ EDGE (monotonic stack): stack me INDEX rakho, value nahi (DOORI chahiye: i - st.top()).
- ★ MILTE-JULTE (histogram vs container / trapping): EK_NAZAR -> NAAM-SE-CONFUSE A dekh.
+ ★ MILTE-JULTE (histogram vs container / trapping): upar NAAM-SE-CONFUSE A dekh.
 
 ── FAMILY: MONOTONIC stack (INDEX stack, curr vs top compare -> pop + us index ka ans) ──
      // ek hi skeleton, sirf 3 cheez badalti:
      // (1) cmp: `<` = GREATER dhoondh rahe, `>` = SMALLER (ulta lagta: top ko jab curr hara de)
      // (2) ans me kya: VALUE (next greater / smaller) · DISTANCE i - top (daily temp) · INDEX (histogram)
      // (3) disha: next = 0..n-1 · prev = n-1..0 (loop ulta) · circular = 2n loop, i % n
+
+ KAB: brackets match · "har element ka agla / pichhla bada ya chhota" · span · histogram
 
  ▸ NEXT GREATER ELEMENT
      // SAWAAL: nums[] diya. har element ke DAAYE jo PEHLA bada element ho wo lautao, koi bada nahi -> -1.
@@ -2425,6 +2677,8 @@
  3 broad trick: BS-on-ANSWER (koko) · sorted-half-check (rotated) · 2D-index-map (matrix).
 
 ── FAMILY: BASIC / BOUNDARY (target ko mid se compare, low<=high, mid±1; mila to ruko mat = boundary) ──
+
+ KAB: SORTED + ek jagah / threshold dhoondhna · "MIN / MAX value jisme condition sach" (answer pe BS)
 
  ▸ BINARY SEARCH (BASIC)
      // SAWAAL: SORTED nums[] aur target. target ka INDEX lautao, nahi mile -> -1. O(log n).
@@ -2886,6 +3140,9 @@
 
 ── FAMILY: FAST/SLOW (slow 1 kadam, fast 2 kadam ya gap; middle / cycle / palindrome / nth-from-end) ──
 
+ KAB: node / next diya · middle · cycle · ulta karo · nth from end · do list jodo
+ ★ DHYAAN: jodna / hatana -> DUMMY node (head bhi badal sakta)
+
  ▸ MIDDLE OF LIST
      // SAWAAL: linked list ka head diya. BEECH wala node lautao; do beech ho (even length) to DOOSRA.
      //   e.g. 1->2->3->4->5->6 -> 4
@@ -3339,6 +3596,10 @@
 
  BROAD IDEA: data-structure ko khud banao (built-in ke bina) -> array + pointers/nodes se.
 
+ KAB: "class banao": HashMap / HashSet built-in ke bina · LRU cache · get / put O(1)
+ ★ DHYAAN: HashMap: array of buckets, har bucket ek list · index = hash(key) % size · same key aaye to update
+ ★ DHYAAN: LRU me map se bhi hatana mat bhoolna
+
  ▸ DESIGN HASHMAP (LLD)
      // SAWAAL: built-in map ke bina apna HashMap (string -> int): put(key,val) (hai to update), get(key) (nahi -> -1), remove, size.
      //   e.g. put("a",1) put("b",2) put("a",5) get("a") -> 5 · size() -> 2 · remove("b") get("b") -> -1
@@ -3616,7 +3877,9 @@
  BROAD IDEA: ek value AAGE carry karo (min/sum), har step MAX update. single pass, O(1) space.
  ★ EDGE (circular): ans = max(normal kadane, total - minSubarray). SAB NEGATIVE -> total-min = 0 aata,
          tab normal kadane hi sahi (alag se dekho).
- ★ MILTE-JULTE (max sum vs count sum == K): EK_NAZAR -> NAAM-SE-CONFUSE C dekh.
+ ★ MILTE-JULTE (max sum vs count sum == K): upar NAAM-SE-CONFUSE C dekh.
+
+ KAB: subarray ka MAX sum / product · stock ka ek baar kharido-becho
 
  ▸ BUY/SELL STOCK (LC-121)
      // SAWAAL: prices[i] = din i ka daam. ek din kharido, BAAD ke kisi din becho. max profit lautao (na ho to 0).
@@ -3858,9 +4121,11 @@
 ```
 
  BROAD IDEA: XOR: a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
- ★ MILTE-JULTE (sorted / 1..n / dohra): EK_NAZAR -> NAAM-SE-CONFUSE D dekh, XOR lagane se PEHLE.
+ ★ MILTE-JULTE (sorted / 1..n / dohra): upar NAAM-SE-CONFUSE D dekh, XOR lagane se PEHLE.
 
 ── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number, Single-Number-II bhi) ──
+
+ KAB: har number 2 baar, ek akela · extra memory nahi
 
  ▸ SINGLE NUMBER (LC-136)
      // SAWAAL: array me har number DO baar, sirf EK number ek baar. wo lautao. O(n) time, O(1) space.
@@ -3915,6 +4180,9 @@
      // DEBUG: poora trace mat karo. (1) maano left/right mil gaya, bas "is node pe kya" socho
      //   (2) base + 2-3 node ka chhota tree haath se check (3) print: enter-print null-check ke BAAD
      //   (warna null->val crash), result variable me lo -> print + return dono
+
+ KAB: TreeNode diya · depth / height / path / same / mirror · level-wise · BST
+ ★ DHYAAN: BST ka inorder = sorted
 
  ▸ 3 DFS TRAVERSALS (LC-144 / 94 / 145)
      // SAWAAL: binary tree ka root diya. preorder, inorder, postorder teeno order me node values lautao.
@@ -4518,6 +4786,8 @@
    visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
 
 ── FAMILY: single-source traversal (ek source se ek BFS, target mila? koi OUTER-loop nahi) ──
+
+ KAB: edges / adjacency list / grid diya · "kitne group?" · "A se B pahunch sakte?" · "kam se kam kitne step?"
 
  ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
      // SAWAAL: n node (0..n-1), undirected edges, source aur destination diye. source se destination tak rasta? true/false.
@@ -5129,6 +5399,8 @@
 
 ── FAMILY: heap of size k / top-K (size > k pe top EVICT, k bache) ──
 
+ KAB: top K / k-th sabse bada ya chhota · baar-baar min / max aur data badal raha · merge K list · median stream
+
  ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
      // SAWAAL: stones[]. har turn 2 sabse bhaari ladao: barabar -> dono gaye, warna diff bache. aakhri bacha lautao (warna 0).
      //   e.g. [3,7,2] -> 2
@@ -5482,6 +5754,8 @@
 
 ── FAMILY: sort-by-start + overlap check (bas overlap pe ACTION aur boundary < / <= badalta) ──
 
+ KAB: [start, end] diye · merge · meeting · kitne room · insert
+
  ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
      // SAWAAL: intervals[] = [start,end]. saare overlap wale jod do, merged list lautao (touching bhi jud jaate).
      //   e.g. [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]
@@ -5641,6 +5915,9 @@
                           (index == n -> loop chalta hi nahi -> khud ruk jaata)
 
 ── FAMILY: SUBSETS-family (start-aage = kaunse; used[] = kis order) ──
+
+ KAB: "SAARE" subsets / permutations / combinations · grid me word dhoondo · N-queens
+ ★ DHYAAN: grid: visit mark -> explore -> UNMARK
 
  ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
      // SAWAAL: nums[] (sab unique). SAARE subsets lautao, order koi bhi.
@@ -5922,7 +6199,7 @@
    KAB DP: "kitne WAYS" · "min/max cost" · "kya possible" + har step CHOICE + subproblem OVERLAP.
  ★ EDGE (min / max DP): min le raha -> init INT_MAX · max le raha -> INT_MIN · 0 sirf jab 0 VALID answer ho.
          coin change: take = 0 daala -> 0 hamesha min jeet gaya. ★ init likhte waqt HAATH RUKE.
- ★ MILTE-JULTE (LIS vs longest consecutive): EK_NAZAR -> NAAM-SE-CONFUSE B dekh.
+ ★ MILTE-JULTE (LIS vs longest consecutive): upar NAAM-SE-CONFUSE B dekh.
 
  MEMO SKELETON (har DP me SAME 3 line):
      vector<int> dp(n + 1, -1);                  // -1 = abhi nahi nikala (0 bhi asli jawab ho sakta)
@@ -5933,6 +6210,10 @@
  //   => relation likho, BASE pe RUK ke socho.
 
 ── FAMILY: 1D index DP (Fibonacci shape / take-skip) ──
+
+ KAB: "kitne tareeke" · "min / max cost" · "ho sakta hai?" + har step pe choice + same sawaal baar-baar
+ ★ DHYAAN: recursion me string / vector & se bhejo, warna har call pe copy (bade test pe TLE)
+ ★ DHYAAN: 2 string (LCS / edit distance) -> dp[i][j]
 
  ▸ CLIMBING STAIRS (LC-70)  = Fibonacci-shape (ways = ways(n-1)+ways(n-2))
      // SAWAAL: n steps ki seedhi, ek baar me 1 ya 2 step. top tak kitne ALAG tareeke?
@@ -6534,6 +6815,10 @@
  BROAD IDEA: har step pe ABHI-KA-BEST choice pakdo (local best), aage ki poori planning nahi.
    Kaam karta SIRF jab abhi-ka-best = aage-bhi-best (greedy-choice property); warna DP (jo sab explore kare).
    SIGNATURE: aksar pehle SORT (kisi key pe: size / finish-time) -> phir ek LINEAR pass me pick / skip.
+
+ KAB: har step pe abhi ka best chuno aur wo aage bhi best rahe · aksar pehle SORT, phir ek pass
+ ★ DHYAAN: intervals me "kam se kam hatao" -> END pe sort
+ ★ DHYAAN: gas station: tank minus hua -> agla station naya start
 
  ▸ ASSIGN COOKIES (LC-455)  = greedy intro (sort + 2-pointer)
      // SAWAAL: g[] = bachhe ki greed, s[] = cookie size. s[j] >= g[i] to khush, ek bachha max ek cookie. MAX khush bachhe.
