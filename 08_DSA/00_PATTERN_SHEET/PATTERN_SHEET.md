@@ -933,6 +933,26 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   positive (41) · single-in-pairs. "values 1..n + O(1) space" = index-marking ka signal
      //   (array modify NA kar sakte -> Floyd cycle)
 
+── FAMILY: PER-KEY STREAK (log line todo -> har KEY ki apni chalti ginti; Wise OA 27-Oct) ──
+
+ ▸ SERVER ERROR STREAK  (03/11)
+     // logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
+     // pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server
+     unordered_map<string, int> mp;          // server -> abhi tak lagaataar error
+     int count = 0;
+     for (auto &s : logs)
+         stringstream ss(s);                 // ek LINE do (poora vector nahi -> compile error)
+         string server, code, msg;
+         ss >> server >> code >> msg;        // space se 3 tukde
+         if (msg == "error")                 // faisla msg se (code kuch bhi ho sakta)
+             mp[server]++;
+             if (mp[server] >= 3)            // 3 pura -> alert, aur ginti 0 (warna 4th, 5th bhi ginta)
+                 count++; mp[server] = 0;
+         else if (msg == "success")
+             mp[server] = 0;                 // = 0, -- NAHI (lagaataar TOOTA, ghata nahi)
+     return count;
+     // SAME shakal: "user ke lagaataar 3 galat password -> lock", "card ke lagaataar fail" -> key = user / card
+
 ```
 
 ---
