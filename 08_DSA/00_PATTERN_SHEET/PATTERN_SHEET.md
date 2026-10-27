@@ -2011,6 +2011,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
  ★ MILTE-JULTE (max sum vs count sum == K): upar "NAAM-SE-CONFUSE" -> C dekh.
 
  ▸ BUY/SELL STOCK (LC-121)
+     // SAWAAL: prices[i] = din i ka daam. ek din kharido, BAAD ke kisi din becho. max profit lautao (na ho to 0).
+     //   e.g. [7,1,5,3,6,4] -> 5
+     //   kyun: din 1 pe 1 me kharida, din 4 pe 6 me becha = 5; pehle-chhota baad-bada ka isse bada farak nahi
      // aaj becho = aaj ka daam MINUS ab tak ka sasta
      int ans = INT_MIN; int minSoFar = INT_MAX;   // INT_MAX: pehla din hi sasta ban jaaye
      for (int i = 0; i < prices.size(); i++)
@@ -2021,6 +2024,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // scan -> us min ko VARIABLE me CACHE -> O(n) (redundancy -> cache = running min)
 
  ▸ MAX SUBARRAY SUM (LC-53)
+     // SAWAAL: int array diya. CONTIGUOUS subarray (kam se kam 1 element) jiska SUM sabse bada, wo sum lautao.
+     //   e.g. [-2,1,-3,4,-1,2,1,-5,4] -> 6
+     //   kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
      // running sum NEGATIVE = bojh -> sum = 0
      int maxSum = INT_MIN;                       // INT_MIN: all-negative [-1] bhi pakde
      int sum = 0;                                // 0 se: abhi tak kuch joda nahi
@@ -2032,6 +2038,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: flip ho to MIN bhi + 3 candidate + FREEZE (temp) · 53 sum · 152 product · 1749 abs ──
 
  ▸ MAX PRODUCT SUBARRAY (LC-152)
+     // SAWAAL: int array diya. CONTIGUOUS subarray jiska PRODUCT (guna) sabse bada, wo product lautao.
+     //   e.g. [-2,3,-4] -> 24
+     //   kyun: -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
      // neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
      int mini = 1;                               // SHURUAAT: mini = maxi = 1, ans = INT_MIN, loop 0 se
      int maxi = 1;                               // (loop 1 se ho to ans bhi nums[0] se; warna [4,-3] pe 0)
@@ -2043,6 +2052,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ MAX ABSOLUTE SUM (LC-1749)
+     // SAWAAL: int array diya. kisi bhi CONTIGUOUS subarray ka sum lo, uska |sum| sabse bada lautao.
+     //   e.g. [2,-5,1,-4,3,-2] -> 8
+     //   kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
      // = MAX PRODUCT skeleton, 2 tweak: * -> +, ans me ABS
      int n = nums.size();
      if (n == 1) return abs(nums[0]);            // n==1 pe abs ([-7] -> 7)
@@ -2057,6 +2069,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── (STANDALONE — apni alag trick) ──
 
  ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
+     // SAWAAL: nums[] CIRCULAR (end ke baad start). NON-EMPTY contiguous subarray (wrap bhi chalega) ka max sum lautao.
+     //   e.g. [5,-3,5] -> 10
+     //   kyun: wrap: last 5 + first 5 = 10; total 7 - min-subarray (-3) = 10
      // circular (end -> start wrap), max-sum NON-EMPTY subarray. TRICK: PATA hona chahiye
      // A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL - min
      int maxKadaneK(vector<int> &nums)
@@ -2082,6 +2097,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // house robber II jaisa "circular twist", par mechanism alag (HR-II = pehla / aakhri chhodo)
 
  ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = bestLeft + bestRight + WALL
+     // SAWAAL: int array diya. 2 subarray chuno (contiguous, non-empty, NON-OVERLAPPING). dono ke sum ka max JOD lautao.
+     //   e.g. [1,2,-7,8,6,-4] -> 17
+     //   kyun: [1,2] = 3 aur [8,6] = 14, beech ka -7 chhoda; 3 + 14 = 17
      // har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
      // = KADANE (per index) + PREFIX / SUFFIX max
      // [2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
@@ -2139,6 +2157,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number, Single-Number-II bhi) ──
 
  ▸ SINGLE NUMBER (LC-136)
+     // SAWAAL: array me har number DO baar, sirf EK number ek baar. wo lautao. O(n) time, O(1) space.
+     //   e.g. [4,1,2,1,2] -> 4
+     //   kyun: 4^1^2^1^2: 1^1 = 0, 2^2 = 0, bacha 4
      // sab 2 baar, ek 1 baar -> sab XOR = wahi ek
      int XORR = nums[0];                         // nums[0] se shuru, isliye loop 1 se
      for (int i = 1; i < nums.size(); i++) XORR ^= nums[i];   // a^a = 0 pair kat jaata, a^0 = a
@@ -2179,6 +2200,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   (warna null->val crash), result variable me lo -> print + return dono
 
  ▸ 3 DFS TRAVERSALS (LC-144 / 94 / 145)
+     // SAWAAL: binary tree ka root diya. preorder, inorder, postorder teeno order me node values lautao.
+     //   e.g. [1,2,3,4,5] -> pre 1 2 4 5 3 · in 4 2 5 1 3 · post 4 5 2 3 1
+     //   kyun: pre = root pehle (1, phir 2 ka subtree 2 4 5, phir 3); in = left-root-right; post = root sabse baad
      // preorder: PRE = VISIT -> left -> right (root pehle)
      if (!root) return;
      res.push_back(root->val);               // VISIT
@@ -2199,11 +2223,17 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: recurse + COMBINE (answer = return-value; jo combine karo wahi return) ──
 
  ▸ MAX DEPTH (LC-104)
+     // SAWAAL: binary tree ka root diya. root se sabse door leaf tak kitne NODE, wo lautao (null -> 0).
+     //   e.g. [3,9,20,null,null,15,7] -> 3
+     //   kyun: sabse lamba rasta 3 -> 20 -> 15 (ya 7) = 3 node
      if (!root) return 0;   // base: null -> 0
      int left = maxDepth(root->left); int right = maxDepth(root->right);
      return 1 + max(left, right);            // khud = 1 + gehri branch
 
  ▸ INVERT TREE (LC-226)
+     // SAWAAL: binary tree ka root diya. HAR node ke left aur right child SWAP karo (mirror), root lautao.
+     //   e.g. [4,2,7,1,3,6,9] -> [4,7,2,9,6,3,1]
+     //   kyun: 4 ke bachche 2,7 -> 7,2; 2 ke 1,3 -> 3,1; 7 ke 6,9 -> 9,6
      if (!root) return nullptr;   // base: null -> null
      invertTree(root->left);                 // recurse dono (order FREE)
      invertTree(root->right);
@@ -2211,6 +2241,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return root;                            //   value-swap = sirf 2 number + leaf pe null->val CRASH
 
  ▸ SAME TREE (LC-100)
+     // SAWAAL: do tree p, q diye. structure aur values dono bilkul same? true/false.
+     //   e.g. p=[1,2], q=[1,null,2] -> false
+     //   kyun: values same (1,2) par p me 2 LEFT child, q me RIGHT child; structure alag
      if (p == NULL && q == NULL) return true;   // dono null -> true
      if (p == NULL && q != NULL)             // null checks PEHLE: warna null->val crash
          return false;                       // ek null -> false
@@ -2221,6 +2254,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return false;
 
  ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS
+     // SAWAAL: root diya. tree apne center ke around MIRROR hai? true/false.
+     //   e.g. [1,2,2,3,4,4,3] -> true
+     //   kyun: left 2 ke bachche 3,4 aur right 2 ke 4,3; bahar-bahar 3=3, andar-andar 4=4
      // isSameTree: same tree ka hi base (dono null / ek null / val alag)
      if (p == NULL && q == NULL) return true;
      if (p == NULL && q != NULL) return false;   // null checks PEHLE: warna null->val crash
@@ -2237,6 +2273,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: return-ONE + track-ANOTHER (parent ko HEIGHT return, asli ANSWER global / ref me; post-order) ──
 
  ▸ DIAMETER (LC-543)  = MAX-DEPTH + 1 line
+     // SAWAAL: binary tree diya. kinhi DO node ke beech sabse lamba path, EDGES me lautao (root se guzre ya na guzre).
+     //   e.g. [1,2,3,4,5] -> 3
+     //   kyun: path 4 -> 2 -> 1 -> 3 = 3 edge; isse lamba koi rasta nahi
      // height: max-depth ka height(), maxDia by-REFERENCE
      if (!root) return 0;   // null ki height 0: uske neeche koi edge nahi
      int left = height(root->left, maxDia);  // recurse PEHLE: kaam peeche aate hue (post-order)
@@ -2251,6 +2290,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return maxDia;                          // diameter = BYPRODUCT -> global maxDia (return nahi)
 
  ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
+     // SAWAAL: binary tree diya. koi bhi connected path (kam se kam 1 node, root zaroori nahi). max node-sum lautao.
+     //   e.g. [-10,9,20,null,null,15,7] -> 42
+     //   kyun: 15 + 20 + 7 = 42; root -10 jodne se sum ghatta, isliye chhoda
      // skeleton HUBAHU diameter (return EK arm / record DONO arm / post-order / global max). SIRF 3 badle:
      //   (1) arm = height -> GAIN (sum): return me 1 ki jagah root->val
      //   (2) record me + root->val: junction pe node bhi ginta
@@ -2268,6 +2310,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return maxSum;                          // [-10,9,20,_,_,15,7]: @20 -> 15+20+7 = 42 (answer), upar 35
 
  ▸ BUILD TREE from PREORDER + INORDER (LC-105)
+     // SAWAAL: preorder aur inorder diye (values unique). original binary tree bana ke root lautao.
+     //   e.g. pre=[3,9,20,15,7], in=[9,3,15,20,7] -> [3,9,20,null,null,15,7]
+     //   kyun: pre[0]=3 root; inorder me 3 ke baaye [9] = left, daaye [15,20,7] = right; right ka root 20 (agla pre)
      // preorder[rootIndex] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part, recurse
      TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder, int l, int r,
                      unordered_map<int, int> &mp)     // &rootIndex: ek pointer SAB calls me shared (neeche)
@@ -2287,6 +2332,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      //   value-pass -> copy -> galat tree. pre [3,9,20,15,7] in [9,3,15,20,7] -> 3 (9) (20 (15) (7))
 
  ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
+     // SAWAAL: tree diya. HAR node pe left aur right subtree ki height ka farak <= 1? true/false.
+     //   e.g. [1,2,2,3,3,null,null,4,4] -> false
+     //   kyun: root pe left height 3 (2 -> 3 -> 4), right height 1; farak 2 > 1
      // HAR node pe abs(leftH - rightH) <= 1? alag "balanced?" pass nahi -> height nikaalte-nikaalte HI check
      // maxDepth: return = HEIGHT, ya -1 (neeche kahin imbalance)
      if (!root) return 0;   // null ki height 0 (balanced hai, -1 nahi)
@@ -2307,6 +2355,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: search + BUBBLE-UP (jise dhundh rahe wo mila -> UPAR return; DONO taraf se mila = answer) ──
 
  ▸ LCA -- Lowest Common Ancestor (LC-236)
+     // SAWAAL: root aur do node p, q diye. sabse GEHRA node lautao jiske neeche p aur q dono hon (khud bhi ho sakta).
+     //   e.g. [3,5,1,6,2,0,8,null,null,7,4], p=5, q=4 -> 5
+     //   kyun: 4 to 5 ke subtree me hai (5 -> 2 -> 4); 5 khud p hai, to 5 hi sabse gehra common
      // p, q ALAG side split
      if (!root) return NULL;   // khaali subtree -> p/q yahan nahi
      if (root == p || root == q) return root;   // mil gaya -> UPAR bhejo
@@ -2323,6 +2374,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: carry-value DOWN + root-to-LEAF (target ghatao, LEAF pe check, combine = OR) ──
 
  ▸ PATH SUM (LC-112)
+     // SAWAAL: root aur targetSum diye. koi ROOT se LEAF tak path jiske nodes ka sum = target? true/false.
+     //   e.g. [5,4,8,11,null,13,4], target=20 -> true
+     //   kyun: 5 + 4 + 11 = 20 aur 11 leaf hai; baaki paths 26 (5,8,13) aur 17 (5,8,4)
      // root se LEAF tak sum == target?
      if (!root) return false;   // base: null -> false
      if (!root->left && !root->right)        // LEAF = ACTUAL bachche (root->left), recursion-result nahi
@@ -2333,6 +2387,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: BFS / LEVEL-ORDER (QUEUE FIFO, recursion nahi; while ka ek chakkar = ek LEVEL) ──
 
  ▸ LEVEL ORDER (LC-102)
+     // SAWAAL: root diya. har LEVEL ke nodes left se right, alag-alag list me lautao (list of lists).
+     //   e.g. [3,9,20,null,null,15,7] -> [[3],[9,20],[15,7]]
+     //   kyun: level 0 = 3, level 1 = 9,20, level 2 = 15,7
      // har level ki alag list. FIFO -> L-to-R apne aap
      vector<vector<int>> ans;
      if (!root) return ans;   // warna NULL push hota, phir node->val crash
@@ -2350,6 +2407,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // TEMPLATE: right view · level average · zigzag · min depth -> isi skeleton pe, bas "level me kya"
 
  ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
+     // SAWAAL: tree ke DAAYE khade ho ke upar se neeche jo dikhe wo lautao = har level ka sabse right node.
+     //   e.g. [1,2,3,null,5,null,4] -> [1,3,4]
+     //   kyun: level 0 = 1; level 1 = 2,3 me right 3; level 2 = 5,4 me right 4
      // daaye se har level ka SIRF right-most dikhta
      if (!root) return {};
      queue<TreeNode *> q; q.push(root);
@@ -2366,6 +2426,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
+     // SAWAAL: level-order jaisa, par direction ulti-palti: level 0 L->R, level 1 R->L, level 2 L->R ...
+     //   e.g. [3,9,20,null,null,15,7] -> [[3],[20,9],[15,7]]
+     //   kyun: level 1 ka [9,20] ulta = [20,9]; level 2 seedha [15,7]
      // 0: L->R · 1: R->L · 2: L->R ...
      vector<vector<int>> ans;
      if (!root) return ans;
@@ -2385,6 +2448,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
+     // SAWAAL: root se sabse PAAS wale LEAF tak kitne node, lautao (leaf = dono bachche null; null root -> 0).
+     //   e.g. [3,9,20,null,null,15,7] -> 2
+     //   kyun: 3 -> 9, aur 9 leaf hai = 2 node; 20 wali taraf 3 node lagte
      // root se sabse PAAS wale LEAF tak
      if (!root) return 0;   // khaali tree -> 0 (warna NULL push)
      queue<TreeNode *> q; q.push(root);
@@ -2405,6 +2471,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: BST (left < node < right; INORDER = SORTED -> "sorted / kth chahiye? -> INORDER") ──
 
  ▸ KTH SMALLEST IN BST (LC-230)
+     // SAWAAL: BST aur k diye. k-va sabse chhota value lautao (1-indexed).
+     //   e.g. [5,3,6,2,4,null,null,1], k=3 -> 3
+     //   kyun: inorder (sorted) = 1,2,3,4,5,6; teesra = 3
      // inorder: BST pe inorder = SORTED (ascending)
      if (!root) return;
      inorder(root->left, res);               // pehle poora LEFT (chhote)
@@ -2418,6 +2487,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // optimize: counter, k-va node pe EARLY-STOP
 
  ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN
+     // SAWAAL: tree diya. valid BST? har node pe POORE left subtree < node < POORE right subtree (strict). true/false.
+     //   e.g. [5,4,6,null,null,3,7] -> false
+     //   kyun: 3 node 6 ke left me (3 < 6 theek), par 6 to 5 ke right me, to 3 > 5 hona chahiye tha
      // TRAP: sirf turant child check KAAFI NAHI -> node ko SAARE ancestors ka rule maanna
      //   -> har node ki WINDOW (mini, maxi), neeche jaate tight hoti
      // solve
@@ -2499,6 +2571,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: single-source traversal (ek source se ek BFS, target mila? koi OUTER-loop nahi) ──
 
  ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
+     // SAWAAL: n node (0..n-1), undirected edges, source aur destination diye. source se destination tak rasta? true/false.
+     //   e.g. n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], src=0, dst=5 -> false
+     //   kyun: 0 ke saath sirf 1,2 jude; 5 alag group {3,4,5} me, beech me koi edge nahi
      // = tree LEVEL-ORDER ka skeleton + 3 ADD: (1) neighbours = adj[node] (edges se banao)
      //   (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
      unordered_map<int, vector<int>> adj;
@@ -2519,6 +2594,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: COUNT components (outer-loop + FLOOD each; Islands = grid, CC = adj-list, bas neighbour badla) ──
 
  ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
+     // SAWAAL: grid me '1' = zameen, '0' = paani. 4-direction se jude '1' = ek island. kitne island?
+     //   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 2
+     //   kyun: (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
      // DFS
      if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')   // BASE ek hi if, sab || se
          return;                             // bounds PEHLE, '0' baad: bahar index pe grid padhne se
@@ -2539,6 +2617,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;
 
  ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
+     // SAWAAL: n node (0..n-1), undirected edges diye. graph me kitne alag group (connected components)?
+     //   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
+     //   kyun: {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
      // ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BFS (islands DFS)
      unordered_map<int, vector<int>> adj;
      for (auto &it : edges)
@@ -2560,6 +2641,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;
 
  ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
+     // SAWAAL: grid me 1 = zameen, 0 = paani (4-direction jude 1 = island). SABSE BADE island ke cells lautao, na ho to 0.
+     //   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 3
+     //   kyun: island {(0,0),(0,1),(1,0)} = 3 cell, island {(2,2)} = 1 cell; max 3
      // ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer count++ nahi, MAX
      // DFS
      if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0)
@@ -2581,6 +2665,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: MULTI-SOURCE / level-BFS (saare sources EK saath queue; sz-snapshot = ek level = ek minute) ──
 
  ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
+     // SAWAAL: grid: 0 khali, 1 fresh, 2 rotten. har minute rotten apne 4 fresh padosi sadaata. sab sadne me kitne min? na ho -1.
+     //   e.g. [[2,1,1],[1,1,0],[0,1,1]] -> 4
+     //   kyun: min 1: (0,1),(1,0) · min 2: (0,2),(1,1) · min 3: (2,1) · min 4: (2,2); sab sad gaye
      // tree LEVEL-ORDER grid pe; har level = 1 minute
      queue<pair<int, int>> q; int m = grid.size(); int n = grid[0].size();
      for (int i = 0; i < m; i++)
@@ -2607,6 +2694,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: TOPO-SORT / cycle-detect (DIRECTED; prereq + can-finish -> Kahn's = BFS + indegree) ──
 
  ▸ COURSE SCHEDULE (LC-207)  = TOPO-SORT (Kahn's), cycle-detect
+     // SAWAAL: numCourses aur prerequisites diye ([a,b] = a se pehle b). saare course khatam ho sakte? true/false.
+     //   e.g. numCourses=2, prereq=[[1,0],[0,1]] -> false
+     //   kyun: 1 ke liye 0 pehle, 0 ke liye 1 pehle = CYCLE; dono ek doosre ka wait karte
      // "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false
      // [[1,0],[2,1],[3,2]]: har [a,b] = a lene se pehle b -> edge b -> a
      unordered_map<int, vector<int>> adj;
@@ -2658,6 +2748,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: CLONE / deep-copy (BFS + map purana -> naya; map = cycle-rok + clone-dhundo) ──
 
  ▸ CLONE GRAPH (LC-133)  = BFS/DFS + map(old->new)
+     // SAWAAL: connected undirected graph ka ek node diya. poora graph DEEP COPY karo (naye node, naye neighbours), clone lautao.
+     //   e.g. adjList [[2,4],[1,3],[2,4],[1,3]] -> [[2,4],[1,3],[2,4],[1,3]] (sab naye node)
+     //   kyun: square 1-2-3-4-1; har node ka naya clone, aur clone ke neighbours bhi clone hi, purane nahi
      // saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 kaam:
      //   (a) clone BANANA (if ke ANDAR, sirf naye pe)  (b) JODNA push_back (if ke BAHAR, har edge pe)
      //   bina jodna -> loose clones -> adhoora graph
@@ -2680,6 +2773,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: GRAPH-COLOURING / bipartite (2 group me baant sakte? odd-cycle? -> 2-COLOUR BFS) ──
 
  ▸ IS BIPARTITE (LC-785)  = 2-colour BFS + outer-loop (CC jaisa)
+     // SAWAAL: adjacency list graph diya. nodes ko 2 group me baant sakte ki HAR edge alag group ke beech ho? true/false.
+     //   e.g. [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
+     //   kyun: 0-1-2 triangle: 0 red, 1 blue, 2 dono ka padosi, koi rang nahi bachta
      // har node ko rang 0/1; koi 2 JUDE node SAME rang na hon. odd cycle (triangle) -> false
      // PEHCHAAN: "DO team me baanto + jo JUDE (dushman / edge) wo ek group me NAHI". output "team A / team B"
      //   = 2 rang. DSU ULTA hai: DSU me jude -> SAME group, yahan jude -> ALAG
@@ -2709,6 +2805,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: WEIGHTED shortest-path (edges pe weight -> Dijkstra; kam edges != kam weight, BFS kaafi nahi) ──
 
  ▸ DIJKSTRA  = BFS template + 2 swap + relaxation
+     // SAWAAL: n node, undirected WEIGHTED edges {u,v,w}, source diya. har node tak ka sabse kam total weight lautao.
+     //   e.g. n=4, edges 0-1(4), 0-2(1), 1-2(2), 1-3(1), 2-3(5), src=0 -> [0,3,1,4]
+     //   kyun: node 1: seedha 4 se sasta 0->2->1 = 3; node 3: 0->2->1->3 = 4 (0->2->3 = 6)
      // BFS ka WEIGHTED bhai: queue -> MIN-HEAP (chhoti dist pehle) · visited[] -> dist[] (INF, src=0) + RELAX
      // visited kyun nahi: dist[] + STALE-skip = visited ka kaam; strict relax -> undirected me bhi loop nahi
      // negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford. REAL: Maps / GPS, routing
@@ -2734,6 +2833,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: DSU / Union-Find (groups / same-set + edges ek-ek MERGE; BFS = pura traverse, DSU = incremental) ──
 
  ▸ DSU (Union-Find)  = parent[] + find + unite
+     // SAWAAL: n node (0..n-1), undirected edges. Union-Find se batao kitne alag groups (components).
+     //   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
+     //   kyun: unite 0-1, 1-2 -> ek leader; 3-4 -> doosra leader; parent[i]==i wale 2 bache
      // KAB: groups / connected / same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn
      //   · MST-Kruskal
      // REAL: dost-circle ("A-B same circle?"), accounts merge
@@ -2766,6 +2868,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return count;
 
  ▸ WORD LADDER (LC-127)  = BFS shortest-path (unweighted)
+     // SAWAAL: beginWord se endWord, har step EK letter badlo, beech ka har word wordList me ho. shortest me kitne word? na ho 0.
+     //   e.g. hit -> cog, list=[hot,dot,dog,lot,log,cog] -> 5
+     //   kyun: hit -> hot -> dot -> dog -> cog = 5 word (begin aur end dono gine)
      // begin -> end, har step EK letter badlo, beech ka har word dict me. "min steps" -> BFS level-by-level
      // word = NODE · edge = ek letter farak + dict me. graph IMPLICIT (words), islands / Kahn's wali family
      // hit -> hot -> dot / lot -> dog / log -> cog = 5 WORDS (begin = 1, steps nahi)

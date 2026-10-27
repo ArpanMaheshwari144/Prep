@@ -20,7 +20,7 @@
 //     LEAF tak jaana hai, NULL-child ko "depth 0" mat maano. BFS me ye dikkat hi nahi (first leaf pe ruk jao).
 //
 //   [3,9,20,null,null,15,7]  -> 2
-//   [2,null,3,null,4]        -> 4
+//   [2,null,3,null,4]        -> 3   (2 -> 3 -> 4 = 3 node)
 //   [1]                      -> 1
 //   []  (null root)          -> 0
 // ============================================================
