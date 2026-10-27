@@ -3886,6 +3886,8 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
    (2) pointers ki jagah ADJACENCY LIST.
  ★ EDGE (BFS grid / word ladder): visited ANDAR DAALTE waqt mark karo, nikaalte waqt nahi
          (warna ek node kai baar queue me).
+ ★ EDGE (queue / stack / heap se nikaalna): "auto &it = q.front(); q.pop();" = TOOTA reference (pop ke baad it kachra).
+         copy lo (auto it = q.front()) ya pehle padho phir pop. tests sanyog se pass ho jaate, isliye chhupa rehta (rotting REDO_1).
 
  TREE se transfer: BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]).
    bas 'visited' add.
