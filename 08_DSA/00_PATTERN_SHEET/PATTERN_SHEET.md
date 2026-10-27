@@ -1232,6 +1232,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // (3) disha: next = 0..n-1 · prev = n-1..0 (loop ulta) · circular = 2n loop, i % n
 
  ▸ NEXT GREATER ELEMENT
+     // SAWAAL: nums[] diya. har element ke DAAYE jo PEHLA bada element ho wo lautao, koi bada nahi -> -1.
+     //   e.g. [2,1,2,4,3] -> [4,2,4,-1,-1]
+     //   kyun: 2 ke aage pehla bada 4 · 1 ke aage 2 · 2 ke aage 4 · 4 aur 3 ke aage koi bada nahi -> -1
      // har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
      vector<int> ans(nums.size(), -1);       // -1 init: daaye bada na mile wo -1 hi rahe
      stack<int> st;                          // INDEX rakho: ans[topp] me likhne ko position chahiye
@@ -1243,6 +1246,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;                             // stack me bache = koi bada nahi = -1 (init)
 
  ▸ NEXT SMALLER ELEMENT
+     // SAWAAL: nums[] diya. har element ke DAAYE jo PEHLA strictly chhota ho wo lautao, koi nahi -> -1.
+     //   e.g. [4,5,2,10,8] -> [2,2,-1,8,-1]
+     //   kyun: 4 aur 5 ke aage pehla chhota 2 · 2 ke aage sab bade -> -1 · 10 ke aage 8 · 8 aakhri -> -1
      // = next greater, sirf condition ULTI
      vector<int> ans(nums.size(), -1); stack<int> st;
      for (int i = 0; i < nums.size(); i++)
@@ -1252,6 +1258,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ PREVIOUS SMALLER ELEMENT
+     // SAWAAL: nums[] diya. har element ke BAAYE jo PEHLA strictly chhota ho wo lautao, koi nahi -> -1.
+     //   e.g. [4,5,2,10,8] -> [-1,4,-1,2,2]
+     //   kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
      // = next smaller, sirf LOOP ULTA (condition wahi >)
      vector<int> ans(nums.size(), -1); stack<int> st;
      for (int i = nums.size() - 1; i >= 0; i--)     // right->left: right ka next smaller = left ka prev
@@ -1262,6 +1271,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // prev smaller + next smaller = histogram ka building block
 
  ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
+     // SAWAAL: heights[] = bars, har bar ki width 1. lagatar bars pe banne wala SABSE BADA rectangle ka AREA lautao.
+     //   e.g. [2,1,5,6,2,3] -> 10
+     //   kyun: bars 5 aur 6 -> height min(5,6)=5 x width 2 = 10, baaki koi bada nahi banta
      // har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = dono STOPPER
      // [2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
      // nextSmaller
@@ -1293,6 +1305,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // [2,4]: nS default -1 hota to bar0 width = -1-(-1)-1 = -1 (galat); n=2 se width 2 -> area 4 (sahi)
 
  ▸ MAXIMAL RECTANGLE (LC-85, 2D)
+     // SAWAAL: 0/1 ki 2D matrix diya. SIRF 1 se bhara SABSE BADA rectangle ka AREA lautao.
+     //   e.g. [[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]] -> 6
+     //   kyun: row 1 aur row 2 me col 2,3,4 sab 1 -> 2 row x 3 col = 6
      // = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
      int row = matrix.size(); int col = matrix[0].size();
      vector<int> heights(col, 0); int maxi = INT_MIN;   // COL size (row nahi): har column ki running height
@@ -1304,6 +1319,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return maxi;
 
  ▸ DAILY TEMPERATURES
+     // SAWAAL: temps[] = har din ka temp. har din ke liye kitne DIN BAAD pehla garam (zyada) din aata, nahi aata -> 0.
+     //   e.g. [73,74,75,71,69,72,76,73] -> [1,1,4,2,1,1,0,0]
+     //   kyun: 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
      int n = temps.size();
      vector<int> ans(n, 0); stack<int> st;   // 0 init (-1 nahi): garam din na mile to 0
      for (int i = 0; i < n; i++)
@@ -1313,6 +1331,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return ans;
 
  ▸ NEXT GREATER ELEM II
+     // SAWAAL: nums[] CIRCULAR hai (end ke baad phir shuru). har element ka next greater lautao, nahi -> -1.
+     //   e.g. [1,2,3,4,3] -> [2,3,4,-1,4]
+     //   kyun: aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
      // CIRCULAR: aakhri ka greater shuru me bhi
      if (nums.size() == 0)
          return {};
@@ -1327,6 +1348,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // [1,2,1]: aakhri 1 (idx 2) pehle chakkar me bacha -> i=4 -> 4%3=1 -> nums[1]=2 -> ans[2]=2. isliye 2n
 
  ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
+     // SAWAAL: prices ek-ek aate (next(price)). har call pe SPAN lautao = aaj samet peeche kitne LAGATAAR din price <= aaj.
+     //   e.g. next: 100,80,60,70,60,75,85 -> 1,1,1,2,1,4,6
+     //   kyun: 75 aaya -> peeche 60,70,60 sab <= 75, phir 80 bada -> ruk -> 75,60,70,60 = 4
      // STREAMING next(price). span = aaj samet peeche kitne LAGATAAR din price <= aaj
      // next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
      // class StockSpanner
@@ -1344,6 +1368,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── (STANDALONE — apni alag trick) ──
 
  ▸ VALID PARENTHESES
+     // SAWAAL: string s me sirf ( ) [ ] { }. TRUE agar har bracket sahi type se aur sahi kram me band ho, warna FALSE.
+     //   e.g. "{[]}" -> true · "([)]" -> false
+     //   kyun: "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
      stack<int> st;
      for (auto &it : s)
          if (it == '(' || it == '[' || it == '{')  st.push(it);   // opening -> push
@@ -1358,6 +1385,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return st.empty();                      // end me stack KHAALI = valid ("" -> true)
 
  ▸ MIN STACK
+     // SAWAAL: ek stack banao jisme push(val), pop(), top(), getMin() SAB O(1). getMin = andar ka abhi ka sabse chhota.
+     //   e.g. push(-2) push(0) push(-3) getMin() -> -3 · pop() · top() -> 0 · getMin() -> -2
+     //   kyun: -3 pop hone ke baad stack me [-2,0] bacha -> upar 0, sabse chhota -2
      // class MinStack: push / pop / top / getMin sab O(1)
      stack<pair<int, int>> st;               // {val, yahan tak ka MIN}: min hamesha ready, scan nahi
      MinStack() {}
@@ -1372,6 +1402,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // push 5,3,7 -> min 3 · pop 7 -> 3 · pop 3 -> 5 WAPAS (pair me neeche wala min apne aap sahi)
 
  ▸ MIN ADD MAKE VALID
+     // SAWAAL: string s me sirf '(' aur ')'. kam se kam kitne bracket JODNE padenge taaki string valid ho? count lautao.
+     //   e.g. "()))((" -> 4
+     //   kyun: pehla () theek · agle do ')' ka koi '(' nahi -> 2 · aakhri do '(' band nahi hue -> 2 · total 4
      // COUNTER, stack nahi (sirf '(' ')')
      if (s.empty())
          return 0;
@@ -1385,6 +1418,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return open_needed + close_needed;      // dono bache = utne insert
 
  ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
+     // SAWAAL: sirf stack (push/pop/top/empty) se QUEUE (FIFO) banao: push(x) peeche, pop() aage wala nikaalo, peek(), empty().
+     //   e.g. push(1) push(2) peek() -> 1 · pop() -> 1 · push(3) pop() -> 2 · pop() -> 3 · empty() -> true
+     //   kyun: queue me jo pehle aaya wahi pehle nikalta -> 1, phir 2, phir 3, ab khaali
      // class MyQueue
      stack<int> input; stack<int> output;    // push yahan · pop / peek yahan se
      MyQueue() {}
@@ -1439,6 +1475,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: BASIC / BOUNDARY (target ko mid se compare, low<=high, mid±1; mila to ruko mat = boundary) ──
 
  ▸ BINARY SEARCH (BASIC)
+     // SAWAAL: SORTED nums[] aur target. target ka INDEX lautao, nahi mile -> -1. O(log n).
+     //   e.g. [-1,0,3,5,9,12], target=9 -> 4
+     //   kyun: 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
      int low = 0, high = nums.size() - 1;
      while (low <= high)                         // <= : 1 element bacha tab bhi check
          int mid = low + (high - low) / 2;       // (low+high)/2 nahi: bade low+high pe overflow
@@ -1448,6 +1487,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return -1;                                  // loop ke bahar: nahi mila
 
  ▸ SEARCH INSERT POSITION
+     // SAWAAL: SORTED nums[] (distinct) aur target. mile to uska index, na mile to jahan DAALNE se sorted rahe wo index.
+     //   e.g. [1,3,5,6], target=2 -> 1
+     //   kyun: 2 na mila, 1 aur 3 ke beech jaayega -> index 1
      // [1,3,5,6], 2 -> 1 (1 aur 3 ke beech)
      int low = 0, high = nums.size() - 1;
      while (low <= high)                         // basic BS hubahu
@@ -1458,6 +1500,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return low;                                 // na mila: low = pehla nums >= target = insert jagah
 
  ▸ FIRST & LAST POSITION (LC-34)
+     // SAWAAL: SORTED nums[] (duplicate ho sakte) aur target. target ka PEHLA aur AAKHRI index lautao, nahi -> {-1,-1}. O(log n).
+     //   e.g. [5,7,7,8,8,10], target=8 -> {3,4}
+     //   kyun: 8 index 3 aur 4 pe hai -> pehla 3, aakhri 4
      // sorted (duplicate ho sakte) me target ka PEHLA aur AAKHRI index; nahi -> {-1,-1}, O(log n)
      // [5,7,7,8,8,10], 8 -> {3,4}. normal BS, bas MILNE pe RUKO MAT -> ans likho, ek taraf aur chalo. 2 BS
      vector<int> ans(2, -1);                     // size fixed 2 -> ans(2,-1) + index set, push_back NAHI
@@ -1480,6 +1525,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: ROTATED (ek comparison se kaunsa half sorted / pivot kidhar, wahi half rakho) ──
 
  ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)
+     // SAWAAL: sorted array kisi jagah se ghuma diya (distinct). target ka INDEX lautao, nahi -> -1. O(log n).
+     //   e.g. [4,5,6,7,0,1,2], target=0 -> 4
+     //   kyun: [0,1,2,4,5,6,7] ghum ke [4,5,6,7,0,1,2] bana, 0 ab index 4 pe hai
      // [4,5,6,7,0,1,2] me target ka index, nahi -> -1
      int n = nums.size(); int low = 0; int high = n - 1;
      while (low <= high)                         // <= : akela element bacha tab bhi check
@@ -1496,6 +1544,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return -1;                                  // har baar aadha kaata -> O(log n)
 
  ▸ FIND MIN IN ROTATED
+     // SAWAAL: sorted array kisi jagah se ghuma diya (distinct). SABSE CHHOTA element lautao. O(log n).
+     //   e.g. [3,4,5,1,2] -> 1
+     //   kyun: 3,4,5 badhte gaye, 1 pe gira -> wahi ghumne ki jagah, wahi min
      // target nahi, khud MIN -> mid ko HIGH se compare
      int low = 0, high = nums.size() - 1;
      while (low < high)                          // low<high: high=mid ke saath <= = infinite loop
@@ -1516,6 +1567,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // FARAK sirf 2: (a) RANGE (low, high)  (b) solve(mid) ka formula (greedy count <= limit?)
 
  ▸ KOKO BANANAS (LC-875) -- min eating-speed
+     // SAWAAL: piles[] me kele, h ghante. har ghante ek pile se k kele (kam ho to bas wo pile). sab khane ki MIN speed k lautao.
+     //   e.g. piles=[3,6,7,11], h=8 -> 4
+     //   kyun: k=4 -> 1+2+2+3 = 8 ghante, chal gaya · k=3 -> 1+2+3+4 = 10 > 8, nahi chalega
      bool solve(vector<int> &piles, int h, int mid)
          long long hours = 0;                    // long long: bade piles pe sum overflow
          for (int i = 0; i < piles.size(); i++)
@@ -1535,6 +1589,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
          return ans;
 
  ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
+     // SAWAAL: weights[] ko ORDER me D din me bhejna. ek din ka total <= capacity. MIN capacity lautao.
+     //   e.g. weights=[3,2,2,4,1,4], D=3 -> 6
+     //   kyun: 6 se [3,2] [2,4] [1,4] = 3 din · 5 se [3,2] [2] [4,1] [4] = 4 din, zyada
      bool solve(vector<int> &weights, int D, int mid)
          int days = 1; int sum = 0;              // day=1: aakhri din ka load bhi gino
          for (auto &w : weights)
@@ -1554,6 +1611,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
          return ans;
 
  ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
+     // SAWAAL: nums[] ko k LAGATAAR hisson me baanto. har split ka sabse bada hissa-sum dekho, us ka MIN lautao.
+     //   e.g. [7,2,5,10,8], k=2 -> 18
+     //   kyun: splits ke bade-sum 25,23,18,24 -> sabse chhota 18 ([7,2,5]=14 | [10,8]=18)
      bool solve(vector<int> &nums, int k, int mid)
          int sum = 0, count = 1;                 // count=1 se START: warna aakhri tukda chhoot jaata
          for (int i = 0; i < nums.size(); i++)
@@ -1575,6 +1635,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: HALF-DISCARD (array pura sorted nahi, phir bhi ek comparison se aadha safe discard) ──
 
  ▸ FIND PEAK ELEMENT (LC-162)
+     // SAWAAL: nums[] me PEAK = dono padosi se strictly bada (bahar -infinity). kisi bhi ek peak ka INDEX lautao. O(log n).
+     //   e.g. [1,2,1,3,5,6,4] -> 5 (ya 1)
+     //   kyun: index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
      // peak = dono padosi se bada; edges ke bahar -inf
      int n = nums.size(); int low = 0, high = n - 1;
      while (low < high)                          // low<high: high=mid se atke nahi, aur mid+1 hamesha andar
@@ -1586,6 +1649,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return low;                                 // low==high pe converge = peak, edges apne aap
 
  ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
+     // SAWAAL: SORTED nums[] me har element theek 2 baar, sirf EK akela 1 baar. wo akela lautao. O(log n).
+     //   e.g. [1,1,2,3,3,4,4,8,8] -> 2
+     //   kyun: 1,1 jodi · 2 ka jodidaar nahi · baaki 3,3 4,4 8,8 jodi -> 2
      // har element 2x, sirf EK akela. O(log n) (XOR = O(n), yahan log n chahiye)
      // single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 se compare
      if (nums.size() == 1) return nums[0];       // akela element hi single, BS ki zarurat nahi
@@ -1607,6 +1673,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: 2D-index-map (2D matrix = 1D sorted array, index -> (row, col)) ──
 
  ▸ SEARCH 2D MATRIX
+     // SAWAAL: matrix ki har row sorted, har row ka pehla > pichhli row ka aakhri (poora ek sorted line). target hai? true/false.
+     //   e.g. [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true
+     //   kyun: 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
      int row = matrix.size(); int col = matrix[0].size();   // col = matrix[0].size(), row nahi
      int low = 0, high = row * col - 1;          // poore matrix ko 1D maano
      while (low <= high)
@@ -1619,6 +1688,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: BS-on-PARTITION / CUT (value pe nahi, 2 sorted array me CUT-position pe BS) ──
 
  ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)
+     // SAWAAL: do SORTED array A, B. dono ko mila ke MEDIAN lautao (odd -> beech wala, even -> beech ke do ka average). O(log).
+     //   e.g. A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> 11.0
+     //   kyun: mila ke 1,3,7,8,9,11,15,18,19,21,25 = 11 number -> beech wala (6th) = 11
      // MERGE mat karo -> CUT: LEFT aadha | RIGHT aadha, left ka HAR <= right ka HAR. 4 kinaare = median
      // A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> Px=4 (1 3 8 9 | 15), Py=2 (7 11 | 18 ..) -> max(9,11) = 11
      // Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wahan VALUE pe)
@@ -1667,6 +1739,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: FAST/SLOW (slow 1 kadam, fast 2 kadam ya gap; middle / cycle / palindrome / nth-from-end) ──
 
  ▸ MIDDLE OF LIST
+     // SAWAAL: linked list ka head diya. BEECH wala node lautao; do beech ho (even length) to DOOSRA.
+     //   e.g. 1->2->3->4->5->6 -> 4
+     //   kyun: 6 node me beech ke do 3 aur 4 -> doosra = 4 (odd 1->2->3->4->5 hota to 3)
      // fast end pe -> slow MIDDLE pe
      Node *slow = head; Node *fast = head;       // dono head se: even list me 2nd middle milta
      while (fast != NULL && fast->next != NULL)   // fast pehle check (NULL->next crash);
@@ -1674,6 +1749,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return slow;                                // [1,2,3,4] -> 3 (2nd middle) · [1,2,3] -> 2
 
  ▸ DETECT CYCLE
+     // SAWAAL: linked list ka head diya. TRUE agar list me CYCLE hai (koi node wapas pichhle node pe point kare), warna FALSE.
+     //   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> true
+     //   kyun: -4 ke baad phir 2 pe aa gaye -> 2,0,-4,2,... chakkar kabhi NULL nahi aata
      // Floyd: cycle ho to tez-dheema MILENGE
      Node *slow = head; Node *fast = head;       // dono head se: cycle ho to fast ghoom ke slow ko pakdega
      while (fast != NULL && fast->next != NULL)
@@ -1683,6 +1761,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return false;                               // fast NULL tak pahuncha = list ka end, cycle nahi
 
  ▸ FIND DUPLICATE NUMBER (LC-287)   [= DETECT CYCLE ka ARRAY-application]
+     // SAWAAL: nums[] me n+1 number, har value 1..n. EK number repeat hai, wo lautao. O(1) space, array badalna mana.
+     //   e.g. [1,3,4,2,2] -> 2
+     //   kyun: n=4, values 1..4 me 2 do baar aaya
      // n+1 numbers, values 1..n, ek repeat. O(1) space + array READ-ONLY
      // PEHCHAN: "array + duplicate + O(1) space + no-modify" -> value = POINTER (i -> nums[i])
      // values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = duplicate
@@ -1697,6 +1778,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return slow;                                // jahan mile wahi cycle entry = duplicate
 
  ▸ LINKED LIST CYCLE II (LC-142)   [= DETECT CYCLE + phase-2 ENTRY]
+     // SAWAAL: linked list ka head diya. cycle ho to cycle ka START (entry) node lautao, nahi to NULL.
+     //   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> node 2
+     //   kyun: chakkar 2,0,-4,2,... hai, bahar se andar pehla kadam 2 pe padta -> entry 2
      // cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* version (->next)
      if (head == NULL) return NULL;
      ListNode *slow = head; ListNode *fast = head;
@@ -1714,6 +1798,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // detect cycle + find dup + cycle II = teeno wahi Floyd
 
  ▸ PALINDROME LL (LC-234)
+     // SAWAAL: linked list ka head diya. TRUE agar aage se aur peeche se SAME padhi jaaye, warna FALSE.
+     //   e.g. 1->2->2->1 -> true · 1->2->3 -> false
+     //   kyun: 1,2,2,1 ulta bhi 1,2,2,1 · 1,2,3 ulta 3,2,1 alag
      // COMBO: middle -> 2nd half REVERSE -> head (aage se) & rev (peeche se) saath compare
      // middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
      Node *mid = middleNode(head);               // slow / fast
@@ -1726,6 +1813,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // list TOOTI nahi: pehle half ka ->next nahi badla, odd me middle SHARED -> bina cut odd + even dono
 
  ▸ REMOVE NTH FROM END
+     // SAWAAL: linked list ka head aur n diya. END se n-va node hatao, naya head lautao.
+     //   e.g. 1->2->3->4->5, n=2 -> 1->2->3->5
+     //   kyun: end se gino 5 (1st), 4 (2nd) -> 4 hata
      // FAST/SLOW GAP: pehle fast n kadam aage, phir dono saath
      Node *slow = head; Node *fast = head;       // dummy nahi, dono head se
      for (int i = 1; i <= n; i++) fast = fast->next;   // fast n kadam aage -> dono me n ka gap
@@ -1736,6 +1826,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return head;                                // head nahi hata
 
  ▸ REMOVE ELEMENTS (delete by val, LC-203)
+     // SAWAAL: linked list ka head aur val diya. jitne node ka value == val, SAB hatao (head bhi ho sakta). naya head lautao.
+     //   e.g. 1->2->6->3->4->5->6, val=6 -> 1->2->3->4->5
+     //   kyun: dono 6 wale node (beech wala aur aakhri) nikal gaye, baaki kram waisa hi
      // val wale SAARE node hatao
      if (!head) return NULL;
      Node *prev = NULL; Node *curr = head;       // prev=NULL: head ke peeche koi node nahi
@@ -1750,6 +1843,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: DUMMY node (nakli head + tail; naye node jodte jao; ans = dummy->next; head ka case apne aap) ──
 
  ▸ MERGE TWO SORTED (LC-21)
+     // SAWAAL: do SORTED linked list diye. dono ko jod ke ek SORTED list banao, uska head lautao.
+     //   e.g. a: 1->2->4, b: 1->3->4 -> 1->1->2->3->4->4
+     //   kyun: har baar dono ke aage wale me se chhota uthao: 1,1,2,3,4,4
      Node *dummy = new Node(0);                  // dummy: head ka special case nahi
      Node *tail = dummy;                         // tail dummy se shuru
      while (a != NULL && b != NULL)              // && : ek list khatam hote hi ruko, baaki neeche jodte
@@ -1764,6 +1860,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return dummy->next;                         // dummy skip -> asli head
 
  ▸ ADD TWO NUMBERS
+     // SAWAAL: do linked list, har node ek digit, number ULTA rakha (units pehle). dono jodo, jawab bhi ulta list me.
+     //   e.g. 2->4->3 + 5->6->4 -> 7->0->8
+     //   kyun: 342 + 465 = 807 · 2+5=7, 4+6=10 (0, carry 1), 3+4+1=8
      // number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala right-to-left add
      // (2->4->3) + (5->6->4) = 342 + 465 = 807 -> (7->0->8)
      Node *dummy = new Node(0); Node *tail = dummy; int carry = 0;   // dummy + tail (MERGE jaisa) + ek CARRY
@@ -1778,6 +1877,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return dummy->next;                         // dummy nakli, asli head uske next pe
 
  ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
+     // SAWAAL: linked list diya. har do paas-paas wale NODE ki jodi aapas me badlo (value nahi, node). naya head lautao.
+     //   e.g. 1->2->3->4->5 -> 2->1->4->3->5
+     //   kyun: (1,2) -> 2,1 · (3,4) -> 4,3 · 5 akela, waise hi
      // har do adjacent NODE ki jodi swap (values nahi, pointer)
      if (!head) return nullptr;                  // khaali list: swap ko kuch nahi
      Node *dummy = new Node(0);                  // dummy: head bhi badlega, usse pehle ek node chahiye
@@ -1794,6 +1896,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: REVERSE (3-pointer: prev / curr / next se link ulta; reverse khud + palindrome ka 2nd half) ──
 
  ▸ REVERSE LINKED LIST
+     // SAWAAL: linked list ka head diya. poori list ULTI karo, naya head lautao.
+     //   e.g. 1->2->3->4->5 -> 5->4->3->2->1
+     //   kyun: har node ka teer ulta, purana aakhri (5) naya head
      Node *prev = NULL; Node *curr = head;       // prev=NULL: purana head naya tail, uska next NULL
      Node *nextt = head;
      while (curr != NULL)
@@ -1802,6 +1907,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      return prev;                                // curr NULL pe ruka, prev = aakhri node = naya head
 
  ▸ REVERSE NODES IN K-GROUP (LC-25)  = REVERSE-LL (3-ptr) + RECURSION
+     // SAWAAL: linked list aur k diya. har k node ka group ULTA karo (node, value nahi). aakhir me k se kam bache -> waise hi.
+     //   e.g. 1->2->3->4->5, k=3 -> 3->2->1->4->5
+     //   kyun: pehla group 1,2,3 -> 3,2,1 · bache 4,5 sirf 2 (< 3) -> waise hi
      // har k-node group ulta (NODES), k se KAM bache -> waise hi. 1->2->3->4->5, k=2 -> 2->1->4->3->5
      // PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALAG: ulatna, naya nahi)
      if (head == NULL) return NULL;
@@ -1819,6 +1927,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: HASHMAP-AS-GLUE (map<old*, new*> = purane node ko naye se jodne wala gond; LRU me bhi) ──
 
  ▸ COPY LIST w/ RANDOM POINTER (LC-138) = HASHMAP old->new + 2 PASS
+     // SAWAAL: list ke har node me val + next + RANDOM (kisi bhi node pe ya NULL). DEEP copy banao, copy ke random copy me hi.
+     //   e.g. vals=[7,13,11,10,1], random index=[-1,0,4,2,0] -> naye node, wahi structure
+     //   kyun: copy ke 13 ka random copy wale 7 pe (original 7 pe nahi) · 7 ka random NULL hi
      // har node me val + next + RANDOM (kahin bhi / NULL). DEEP copy: copy ke random COPY ke andar
      // 2 PASS kyun: random aage bhi ho sakta, 1 pass me target abhi bana hi na ho -> pehle sab bana lo (+map)
      // PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
@@ -1853,6 +1964,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
  BROAD IDEA: data-structure ko khud banao (built-in ke bina) -> array + pointers/nodes se.
 
  ▸ DESIGN HASHMAP (LLD)
+     // SAWAAL: built-in map ke bina apna HashMap (string -> int): put(key,val) (hai to update), get(key) (nahi -> -1), remove, size.
+     //   e.g. put("a",1) put("b",2) put("a",5) get("a") -> 5 · size() -> 2 · remove("b") get("b") -> -1
+     //   kyun: "a" dobara aaya to naya node nahi, value 5 ho gayi -> keys sirf a,b = 2 · b hata to -1
      struct Entry                                // Entry = | key | value | next |
          string key; int value; Entry *next;
          Entry(string k, int v) : key(k), value(v), next(nullptr) {}
@@ -1905,6 +2019,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
              return count;
 
  ▸ DESIGN HASHSET (LLD)
+     // SAWAAL: built-in set ke bina apna HashSet (sirf string key): add (duplicate nahi), contains (true/false), remove, size.
+     //   e.g. add("apple") add("banana") add("apple") · contains("apple") -> true · size() -> 2 · remove("apple") -> contains false
+     //   kyun: doosra "apple" pehle se tha, kuch nahi juda -> 2 key · remove ke baad apple gayab
      struct Entry                                // HashMap ka EXACT code, bas VALUE nahi: | key | next |
          string key; Entry *next;
          Entry(string k) : key(k), next(nullptr) {}
@@ -1953,6 +2070,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
              return sz;
 
  ▸ LRU CACHE (LC146) — COMBO: hashmap + doubly-linked-list
+     // SAWAAL: fixed capacity cache. get(key) (nahi -> -1) aur put(key,val) dono O(1). bhar jaaye to sabse PURANA chhua (LRU) hatao.
+     //   e.g. cap=2: put(1,1) put(2,2) get(1) -> 1 · put(3,3) · get(2) -> -1 · put(4,4) · get(1) -> -1 · get(3) -> 3 · get(4) -> 4
+     //   kyun: get(1) se 1 taaza, put(3) pe 2 sabse purana -> hata · put(4) pe ab 1 purana -> hata, bache 3,4
      struct Node                                 // Node = | key | val | prev | next |
          int key, val; Node *prev, *next;
          Node(int k, int v) : key(k), val(v), prev(nullptr), next(nullptr) {}
