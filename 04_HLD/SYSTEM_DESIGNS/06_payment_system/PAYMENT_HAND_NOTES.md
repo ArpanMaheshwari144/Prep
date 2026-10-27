@@ -52,6 +52,8 @@ Dukaan ko paisa apne bank me chahiye, aur bank bahar hai, to ek transaction nahi
 2. PSP ko payout call.
 3. SUCCESS aaya to hold -500. FAILED aaya to ulta: hold -500, Arpan +500, nayi ledger line.
 
+Step 1 ke baad, PSP call se pehle server gira: t-60 INITIATED pada hai, to job use uthata hai (webhook nahi aayega, call gayi hi nahi). PSP bolta "aisa koi order nahi", to wahi key se dobara bhejo ya FAILED karke ulta. 500 hold me atakte nahi.
+
 Hold isliye ki paisa har waqt kahin dikhe. **2PC nahi**, kyunki bank / PSP uske "taiyaar hoon" round me aa hi nahi sakte, aur ek ruka to sab ruk jaate.
 
 &nbsp;

@@ -222,6 +222,11 @@ Step 3b, FAILED aaya (galat IFSC bank code, ya bank band): ULTA kaam karo.
    t-60 = FAILED, aur Arpan ko batao "paisa wapas aa gaya".
 ```
 
+Step 1 ke baad, PSP ko call jaane se pehle hi hamara server gir gaya to? t-60 INITIATED COMMIT ho chuka hai, to
+kadam 4 wala poochne wala job use uthata hai. Webhook nahi aayega, kyunki call gayi hi nahi thi. Job PSP se poochta
+hai, PSP bolta hai "aisa koi order nahi". Ab ya to wahi t-60 key se dobara bhejo (key ki wajah se do baar nahi
+jaayega), ya FAILED karke ulta (hold -500, Arpan +500). Arpan ke 500 hold me hamesha ke liye nahi atakte.
+
 "Ulta karna" ka matlab mitaana nahi hai. Nayi line daal ke paisa wapas karte hain, kyunki khaate me sirf
 INSERT hota hai ([banking kadam 5](../13_banking_system/13_banking_system.md#kadam-5-500-nahi-mile-pe-saboot-nahi-khaata--ledger)).
 
