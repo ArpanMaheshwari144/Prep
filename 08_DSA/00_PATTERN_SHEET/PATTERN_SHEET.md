@@ -3306,7 +3306,7 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      // negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford. REAL: Maps / GPS, routing
      // pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
 
-     const int INF = 1e9; unordered_map<int, vector<pair<int, int>>> adj;
+     unordered_map<int, vector<pair<int, int>>> adj;
      for (auto &it : edges)
          int u = it[0]; int v = it[1]; int w = it[2]; adj[u].push_back({v, w});
          adj[v].push_back({u, w});           // undirected DONO taraf
