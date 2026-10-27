@@ -6,27 +6,39 @@ Kaam do hi hain: lamba link do to 7 akshar ka chhota code milta hai, aur koi chh
 
 &nbsp;
 
-1. Sabse seedha design hai ek SERVER aur ek DB. Link aaya to code banao, dono ko DB me likho. Koi link khole to DB se lambe link dhoondho aur 302 se wahan bhej do. Memory me nahi rakhte, kyunki server restart hote hi saare link gayab ho jaate.
+**1. SERVER + DB**
+
+Sabse seedha design hai ek SERVER aur ek DB. Link aaya to code banao, dono ko DB me likho. Koi link khole to DB se lambe link dhoondho aur 302 se wahan bhej do. Memory me nahi rakhte, kyunki server restart hote hi saare link gayab ho jaate.
 
 &nbsp;
 
-2. Ab sawaal ye hai ki code bane kaise aur do logon ko same na mile. Iske liye COUNTER + BASE62 lagaya: har link ko ek naya number milta hai, aur us number ko 62 akshar me likhte hain. Random ya hash me do logon ko same code mil sakta hai, aur har baar DB me jaanchna padta. Counter me number kabhi dohraata hi nahi.
+**2. COUNTER + BASE62**
+
+Ab sawaal ye hai ki code bane kaise aur do logon ko same na mile. Iske liye COUNTER + BASE62 lagaya: har link ko ek naya number milta hai, aur us number ko 62 akshar me likhte hain. Random ya hash me do logon ko same code mil sakta hai, aur har baar DB me jaanchna padta. Counter me number kabhi dohraata hi nahi.
 
 &nbsp;
 
-3. Har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna dheema hai. Isliye beech me REDIS lagaya, jo memory me rakhta hai. Redis bhar jaaye to jo link sabse der se nahi khula, use hata dete hain (LRU). Dhyaan: LRU ka matlab sabse DER se use nahi hua; "sabse kam BAAR use hua" LFU hota hai.
+**3. REDIS**
+
+Har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna dheema hai. Isliye beech me REDIS lagaya, jo memory me rakhta hai. Redis bhar jaaye to jo link sabse der se nahi khula, use hata dete hain (LRU). Dhyaan: LRU ka matlab sabse DER se use nahi hua; "sabse kam BAAR use hua" LFU hota hai.
 
 &nbsp;
 
-4. Ek app server itna bojh nahi jhelta, aur wo gira to poori site band. Isliye kai server lagaye aur aage LB (load balancer). Par ab har server ka apna counter ho to do server same number de denge. Isliye COUNTER RANGE: beech ka counter har server ko 1,000 number ka alag dabba deta hai.
+**4. LB + COUNTER RANGE**
+
+Ek app server itna bojh nahi jhelta, aur wo gira to poori site band. Isliye kai server lagaye aur aage LB (load balancer). Par ab har server ka apna counter ho to do server same number de denge. Isliye COUNTER RANGE: beech ka counter har server ko 1,000 number ka alag dabba deta hai.
 
 &nbsp;
 
-5. 90 TB ek DB machine me nahi aata. Isliye data kai machine me baanta (SHARD), aur link kis machine pe jaayega ye code se tay hota hai, kyunki link kholte waqt hamare paas sirf code hota hai.
+**5. SHARD**
+
+90 TB ek DB machine me nahi aata. Isliye data kai machine me baanta (SHARD), aur link kis machine pe jaayega ye code se tay hota hai, kyunki link kholte waqt hamare paas sirf code hota hai.
 
 &nbsp;
 
-6. Machine 10 se 11 ki to % 11 se lagbhag har link ki jagah badal gayi, aur link 404 dene lage. Isliye RING (consistent hashing): nayi machine aaye to sirf ek chhota hissa hilta hai, baaki apni jagah.
+**6. RING (consistent hashing)**
+
+Machine 10 se 11 ki to % 11 se lagbhag har link ki jagah badal gayi, aur link 404 dene lage. Isliye RING (consistent hashing): nayi machine aaye to sirf ek chhota hissa hilta hai, baaki apni jagah.
 
 &nbsp;
 
@@ -34,15 +46,21 @@ DB kaunsa lein? Data bas code se link hai. Join ya transaction nahi chahiye, par
 
 &nbsp;
 
-7. Ek DB machine giri to us pe pade link 404 dene lage. Isliye har link ki 3 COPY teen alag machine pe rakhte hain. Ek gire tab bhi do bachi rehti hain.
+**7. 3 COPY**
+
+Ek DB machine giri to us pe pade link 404 dene lage. Isliye har link ki 3 COPY teen alag machine pe rakhte hain. Ek gire tab bhi do bachi rehti hain.
 
 &nbsp;
 
-8. Ek link viral hua, 1 crore log ek saath khol rahe hain, aur sab Redis ki ek hi machine pe ja rahe hain. Isliye har app server apni memory me us garam link ko 5-10 second rakh leta hai (LOCAL CACHE). Yahan Redis giri nahi, sirf bheed se dheemi hai, isliye replica ko main banane se kaam nahi chalta: bojh nayi main pe chala jaata. Request Redis tak pahunchne se pehle hi rokni hai. 302 hi rakhte hain, 301 nahi, taaki har click hamare paas aaye aur bura link band kar sakein.
+**8. LOCAL CACHE**
+
+Ek link viral hua, 1 crore log ek saath khol rahe hain, aur sab Redis ki ek hi machine pe ja rahe hain. Isliye har app server apni memory me us garam link ko 5-10 second rakh leta hai (LOCAL CACHE). Yahan Redis giri nahi, sirf bheed se dheemi hai, isliye replica ko main banane se kaam nahi chalta: bojh nayi main pe chala jaata. Request Redis tak pahunchne se pehle hi rokni hai. 302 hi rakhte hain, 301 nahi, taaki har click hamare paas aaye aur bura link band kar sakein.
 
 &nbsp;
 
-9. Ek bot har second hazaron link bana raha hai. Isliye link banane pe RATE LIMIT lagaya, ek user ek minute me 10 link, usse zyada pe 429. Limit user pe lagate hain, IP pe nahi, kyunki ek office ke saare log ek hi IP se aate hain. Jo bot baar-baar aaye, use WAF me block kar do. Saath me bure link ko kaali list se jaanch ke banne hi nahi dete.
+**9. RATE LIMIT**
+
+Ek bot har second hazaron link bana raha hai. Isliye link banane pe RATE LIMIT lagaya, ek user ek minute me 10 link, usse zyada pe 429. Limit user pe lagate hain, IP pe nahi, kyunki ek office ke saare log ek hi IP se aate hain. Jo bot baar-baar aaye, use WAF me block kar do. Saath me bure link ko kaali list se jaanch ke banne hi nahi dete.
 
 &nbsp;
 
