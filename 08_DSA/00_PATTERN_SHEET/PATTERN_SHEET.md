@@ -4097,7 +4097,7 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
          while (!q.empty()) {
              int sz = q.size();                  // while se PEHLE pakdo: andar push se size badalta
              while (sz--) {                      // sz baar = sirf is minute wale rotten
-                 auto &it = q.front();
+                 auto it = q.front();            // COPY (& nahi): pop ke baad reference toota hua (REDO_1 me & tha)
                  q.pop();
                  int row = it.first;
                  int col = it.second;
