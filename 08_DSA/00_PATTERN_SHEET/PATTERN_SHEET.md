@@ -1,6 +1,6 @@
 <h1 align="center">DSA PATTERN SHEET</h1>
 
-> Upar: PEHLE YE · OA tools · DECISION · EDGE kyun · NAAM-SE-CONFUSE A-E. Neeche: 18 pattern, har sawaal = SAWAAL + TAREEKA + CHAABI + code.
+> Upar: PEHLE YE · OA tools · DECISION · EDGE kyun · NAAM-SE-CONFUSE A-E · MATHS KA KHEL. Neeche: 18 pattern, har sawaal = SAWAAL + TAREEKA + CHAABI + code.
 
 ---
 
@@ -239,6 +239,54 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
    (test me khud pakda tha: "i++ kis condition pe? baith nahi raha" = yahi signal, SW chhodo)
 
    1-line: lagaataar EK line ka + window chahiye = SW · har KEY ka apna lagaataar = MAP + ginti.
+```
+
+---
+
+## MATHS KA KHEL (pattern nahi, competitive programming wali maths)
+
+```
+
+ BROAD IDEA: koi DS / pattern nahi, seedha loop. pench maths ka: % ka gol ghoomna, minus %, bada number.
+ ★ EDGE (C++ %): -2 % 26 = -2 (24 NAHI) -> +26 jodo, phir % 26.
+
+ KAB: alphabet / ghadi / din jaisa GOL ghoomna · "k jagah aage / peeche" · k bahut bada (1e9)
+
+
+
+ █████████████████████████ ▸ CAESAR: K PEECHE  (03/12, Wise OA) █████████████████████████
+     ═════════════════════════ SAWAAL ═════════════════════════════════════
+     A-Z ke har akshar ko k jagah PEECHE khiskao, A se peeche = Z (gol). Space waisa hi. naya string lautao.
+       e.g. "ABC", 3 -> "XYZ"
+       kyun: A -> Z -> Y -> X (A se peeche gaya to Z pe aaya), B -> Y, C -> Z
+
+     ═════════════════════════ TAREEKA ════════════════════════════════════
+     koi pattern nahi, seedha loop. pench sirf do: minus ka % (C++ me -2 % 26 = -2) aur bada k.
+
+     ═════════════════════════ CHAABI ═════════════════════════════════════
+       1. k bada (1e9) -> pehle k ko 26 ke andar lao (poore chakkar hatao)
+       2. loop har akshar pe: space -> waisa hi daalo, continue
+       3. akshar -> 0..25 number: s[i] - 'A'
+       4. peeche khiskao + 26 jodo + % 26 -> hamesha 0..25   (+26 minus ke liye, % 26 plus wale ke liye)
+       5. wapas akshar: + 'A'
+
+     ═════════════════════════ CODE ═══════════════════════════════════════
+     string shiftBack(string s, int k) {
+         if (s.size() == 0)
+             return "";
+         while (k > 26)
+             k = k % 26;                              // 1e9 -> bache kadam (poore chakkar hatao)
+         string ans = "";
+         for (int i = 0; i < s.size(); i++) {
+             if (s[i] == ' ') {                       // space waisa hi
+                 ans += ' ';
+                 continue;
+             }
+             ans += ((((s[i] - 'A') - k) + 26) % 26) + 'A';   // +26: minus bachao · %26: 0..25 me rakho
+         }
+         return ans;
+     }
+
 ```
 
 ---
