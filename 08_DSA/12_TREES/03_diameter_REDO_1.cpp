@@ -31,10 +31,22 @@ struct TreeNode
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
+int solve(TreeNode *root, int &maxDia)
+{
+     if (root == NULL)
+        return 0;
+
+    int left = solve(root->left, maxDia);
+    int right = solve(root->right, maxDia);
+    maxDia = max(maxDia, left + right);
+    return 1 + max(left, right);
+}
+
 int diameterOfBinaryTree(TreeNode *root)
 {
-    // tera code yahan
-    return 0;
+    int maxDia = 0;
+    solve(root, maxDia);
+    return maxDia;
 }
 
 // --- build helper (mat chhED — tera kaam sirf diameterOfBinaryTree) ---
