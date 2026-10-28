@@ -9,8 +9,8 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ```
 SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 14 design (saare naye saanche me) + hand notes (URL, rate limiter) + 19 foundation + master sheet
-  DSA: 18 pattern · 177 problem + 131 REDO = 308 .cpp · pattern sheet
+  HLD: 14 design (saare naye saanche me) + hand notes 6 (URL, rate limiter, banking, payment, chat, BMS) + 19 foundation + master sheet
+  DSA: 18 pattern · 179 problem + 133 REDO = 312 .cpp · pattern sheet (174 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
 
@@ -27,7 +27,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 177 problem + 131 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 179 problem + 133 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -109,7 +109,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)**
   [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) · [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) · [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md) · [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md) · [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md) · [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md) · [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md) · [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator.md) · [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow.md) · [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md) · [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md) · [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) ([concepts kahani se](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md) · [Kafka ya RabbitMQ: kab kaunsa](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_ya_rabbitmq_kab_kaunsa.md)) · [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) · [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
-  <br>&nbsp;&nbsp;↳ *hand notes (mock se pehle):* [URL](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md) · [rate limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/RATE_LIMITER_HAND_NOTES.md)
+  <br>&nbsp;&nbsp;↳ *hand notes (mock se pehle):* [URL](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md) · [rate limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/RATE_LIMITER_HAND_NOTES.md) · [payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/PAYMENT_HAND_NOTES.md) · [BMS](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/BMS_HAND_NOTES.md) (nayi bolne wali bhasha + diagram) · [banking](04_HLD/SYSTEM_DESIGNS/13_banking_system/BANKING_HAND_NOTES.md) · [chat](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/CHAT_HAND_NOTES.md)
 
 - ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md)** — doubt aaye to yahan dhoondho: sabse upar **clickable INDEX + DOUBT DHOONDHO** (doubt likha -> click -> seedha jawab; Alex Xu ke chapter ka map bhi) · 8 dabbe x 4 line · 6 archetype · universal rail · block-menu · A-ya-B trade-off jode · 14 design ka DIL + KHAAS hissa · anjaan-design recipe · kaise bolna · SHABD (word atke to). Cross-question (Q1-Q22) ab yahan nahi, design files me (4-Oct).
 
@@ -187,7 +187,7 @@ SAFAR (March: khaali folder)  ->  aaj
 ## [08_DSA](08_DSA) — 18 pattern · 175 problem + 126 REDO = 301 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
-- ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi": sabse upar DECISION (brute → redundancy → cache → DS = pattern), phir har pattern ka template, "kyun" usi code line pe comment.
+- ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi": sabse upar DECISION (brute → redundancy → cache → DS = pattern) + OA tools + MATHS KA KHEL (% gol ghoomna, Caesar), phir har sawaal SAWAAL / TAREEKA / CHAABI / CODE patti me, "kyun" usi code line pe comment.
 
 ```
 ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disguised: kahani badli, shart wahi)
