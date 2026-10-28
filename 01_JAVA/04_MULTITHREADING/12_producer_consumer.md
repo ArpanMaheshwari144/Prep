@@ -19,6 +19,29 @@ PRODUCER ──> [ ][ ][ ][ ][ ] (fixed jagah) ──> CONSUMER
      Order o = q.take();    // consumer: khaali ho to ruko
      ```
    - `ReentrantLock + Condition`: do alag bench-line, `notFull` aur `notEmpty`. Isse sirf sahi waale thread jaagte hain, file 09 wali galat-thread-jagne ki dikkat khatam.
+
+   ```
+                     ┌────────────────────────┐
+                     │  Producer-Consumer ka  │
+                     │  implementation chahiye│
+                     └────────────┬───────────┘
+                    ┌─────────────┴─────────────┐
+             Production code?           Interview / Learning?
+                    │                           │
+                    ▼                           ▼
+           ┌──────────────────┐       ┌──────────────────────┐
+           │  BlockingQueue   │       │ synchronized +       │
+           │  (default)       │       │ wait/notify          │
+           └────────┬─────────┘       │ (classic answer)     │
+                    │                 └──────────────────────┘
+           Custom signaling chahiye?
+                    ▼
+           ┌──────────────────────┐
+           │ ReentrantLock +      │
+           │ Condition (notFull,  │
+           │ notEmpty)            │
+           └──────────────────────┘
+   ```
 2. Saada `Queue` ek thread ke liye hai (BFS jaisa). Kai thread share karein to `BlockingQueue`. Chala ke dekha tha: 2 thread x 1 lakh add, LinkedList pe 197868 aaye, BlockingQueue pe 200000.
 3. Ye pattern har jagah hai:
    - `ExecutorService` ka bench file 10 wala hi hai.
