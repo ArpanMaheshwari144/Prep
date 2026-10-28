@@ -94,3 +94,47 @@ volatile = VISIBILITY (cache->RAM, latest dikhe) + ORDERING (reorder rok, "pehle
 volatile != ATOMICITY (count++ race rahega -> AtomicInteger/synchronized)
 DCL singleton -> instance ko volatile (warna partially-constructed object dikh sakta)
 ```
+
+## Visualization — CPU Cache Problem
+```
+                   MAIN MEMORY (RAM)
+                   running = true
+                          ↑
+                          │
+        ┌─────────────────┴─────────────────┐
+        ▼                                   ▼
+   Thread 1                             Thread 2
+   L1 Cache: running = true             L1 Cache: running = true
+
+  Thread 2 ne main memory mein false kiya:
+   MAIN: running = false
+   T1 cache: running = true  (purana!)
+   T2 cache: running = false
+
+  Thread 1 ko PATA HI NAHI CHALA — loop chalta raha!
+```
+
+## synchronized vs volatile vs AtomicInteger
+| | volatile | synchronized | AtomicInteger |
+|--|---------|-------------|---------------|
+| **Visibility** | YES | YES | YES |
+| **Atomicity** | NO | YES | YES |
+| **Lock?** | NO | YES | NO (CAS — hardware) |
+| **Performance** | Fastest | Slowest | Fast (counters ke liye best) |
+| **Use case** | Flag (read-mostly) | Critical sections | Counters/numbers |
+
+## ★ TRIO CONNECT — volatile / atomic / synchronized (ek jagah)
+```
+volatile      -> sirf VISIBILITY (cache -> RAM)          | flag/boolean | Fastest | lock NAHI, atomic NAHI
+AtomicInteger -> VISIBILITY + ATOMICITY (CAS)            | counter      | Fast    | lock NAHI (optimistic)
+synchronized  -> VISIBILITY + ATOMICITY (lock)          | multi-line   | Slowest | LOCK (pessimistic)
+```
+
+### ★ 4-Oct: WAHI MACHINE, plain Java (Spring ke bina) -> is baar HANG HUA
+```
+1) plain flag = false kiya
+   3 sec baad worker zinda? true          <- HANG, flag ka badalna dikha hi nahi
+2) volatile flag = false kiya
+   volatile worker RUKA, count=1701657563
+   3 sec baad worker zinda? false         <- turant ruka
+```

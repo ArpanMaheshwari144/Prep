@@ -56,3 +56,48 @@ because of spurious wakeups."
 | **Wake up kaise?** | `notify()` / `notifyAll()` / timeout / `interrupt()` | Time khatam hote hi automatic, ya `interrupt()` (InterruptedException) |
 | **Use case** | **Inter-thread communication** (producer-consumer) | **Just delay** (timer, polling) |
 | **Kahaan call?** | **`synchronized` block ke andar MUST** | Kahin bhi |
+
+## ★ TRAP — `sleep()` synchronized ke andar = LOCK RELEASE NAHI hota (Bathroom analogy)
+```java
+public class Bathroom {
+
+    // sleep — lock held, others blocked
+    public synchronized void useBathroomSleep() throws InterruptedException {
+        System.out.println("In bathroom, taking 5 sec nap");
+        Thread.sleep(5000);                  // ← lock HELD during nap
+        System.out.println("Done");
+    }
+
+    // wait — lock released, others can enter
+    public synchronized void useBathroomWait() throws InterruptedException {
+        System.out.println("Waiting for signal");
+        wait();                              // ← lock RELEASED
+        System.out.println("Got signal, proceeding");
+    }
+}
+```
+
+## ★ TRAP — `sleep()` synchronized ke andar = LOCK RELEASE NAHI hota (Bathroom analogy)
+| Property | `Thread.sleep()` | `Object.wait()` |
+|---|---|---|
+| **Throws** | `InterruptedException` | `InterruptedException` + `IllegalMonitorStateException` if not synced |
+| **Resume on** | Same line, sleep duration ke baad | Pehle lock RE-ACQUIRE, phir resume |
+
+## ★ TRAP — `sleep()` synchronized ke andar = LOCK RELEASE NAHI hota (Bathroom analogy)
+```
+Trap: "wait() infinite block"        → wait(timeout) overload hai — wait(5000) = max 5 sec
+Trap: "sleep(0) = immediate return"  → scheduler ko hint, yield jaisa — sleep(0) ≈ Thread.yield() approximately
+Trap: "InterruptedException ignore"  → anti-pattern — catch mein Thread.currentThread().interrupt() se flag restore karo
+
+sleep()  → "Selfish nap"    → Thread class → Lock HELD
+wait()   → "Generous wait"  → Object class → Lock RELEASED
+```
+
+## ★ TRAP — `sleep()` synchronized ke andar = LOCK RELEASE NAHI hota (Bathroom analogy)
+```java
+// API rate limiter — sleep
+for (Request req : requests) {
+    callApi(req);
+    Thread.sleep(100);  // 100ms gap
+}
+```

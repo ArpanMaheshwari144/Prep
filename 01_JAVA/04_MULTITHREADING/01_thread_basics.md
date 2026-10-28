@@ -60,3 +60,14 @@ class MyTask implements Runnable {
 Thread t = new Thread(new MyTask());
 t.start();
 ```
+
+## WHY — Thread Kya Hai?
+```
+// Without Thread:
+Task1 → Task2 → Task3   (ek ke baad ek — sequential)
+
+// With Thread:
+Task1 ┐
+Task2 ├→ sab ek saath (parallel)
+Task3 ┘
+```

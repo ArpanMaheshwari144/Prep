@@ -243,3 +243,76 @@ Trap 4: "ArrayList use kiya BlockingQueue ke bajaye"
 Trap 5: "InterruptedException swallow kar diya"
          Restore flag: Thread.currentThread().interrupt()
 ```
+
+## Visual — The Pattern
+```
+   ┌─────────────┐                                ┌──────────────┐
+   │  PRODUCER   │  ──→ [ buffer ] [ buffer ]──→  │  CONSUMER    │
+   │  (Order)    │      [ buffer ] [ buffer ]     │  (Processor) │
+   │             │      ↑ FIXED CAPACITY ↑        │              │
+   └─────────────┘                                └──────────────┘
+
+   Rules:
+   • Producer adds to buffer  → if FULL, WAIT
+   • Consumer takes from buffer → if EMPTY, WAIT
+   • Both notify each other when state changes
+```
+
+### Queue vs BlockingQueue (saada line vs chaukidaar wali line)
+```
+                  Queue (LinkedList / ArrayDeque)   BlockingQueue (ArrayBlockingQueue / LinkedBlockingQueue)
+thread-safe?      NAHI                              HAAN (andar lock)
+khaali pe nikalo  poll() -> turant null             take() -> RUKTA jab tak item na aaye
+bhari pe daalo    limit nahi, badhta jaata          put() -> RUKTA jab tak jagah na bane (fixed size)
+kahan             ek thread (BFS, DSA)              kai thread (producer-consumer, thread pool)
+```
+
+### Production example
+```java
+BlockingQueue<Order> orderQueue = new LinkedBlockingQueue<>(1000);
+
+// Producer thread
+new Thread(() -> {
+    while (true) {
+        try {
+            Order order = receiveOrder();
+            orderQueue.put(order);   // blocks if 1000 full (InterruptedException checked hai)
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            break;
+        }
+    }
+}).start();
+
+// Multiple consumer threads
+for (int i = 0; i < 5; i++) {
+    new Thread(() -> {
+        while (true) {
+            try {
+                Order order = orderQueue.take();
+                processOrder(order);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }).start();
+}
+```
+
+## MEMORY HOOKS
+```
+Producer-Consumer    =  "Fast factory, slow worker — buffer mein items"
+
+while (condition)    =  "Defensive — spurious wakeup proof"
+notifyAll()          =  "Sab wake — no wrong-thread issue"
+
+BlockingQueue        =  "Production weapon — put/take blocks"
+   put()             =  "Blocks if FULL"
+   take()            =  "Blocks if EMPTY"
+   offer()/poll()    =  "Non-blocking variants — return false/null"
+
+ReentrantLock+Cond   =  "Granular — multiple wait queues"
+   notFull.await()   =  "Wait until space"
+   notEmpty.signal() =  "Wake one consumer"
+```

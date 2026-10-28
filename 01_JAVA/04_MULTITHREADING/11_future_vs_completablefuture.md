@@ -113,3 +113,124 @@ thenApplyAsync(fn)  -> fn ALAG thread pe (default ForkJoinPool.commonPool, ya jo
 ```
 Anchor: `thenApply` = "jo bhi banda kaam khatam kare, wahi agla step bhi kar de" · `Async` = "naye banda ko de do".
 GRILL-line: "Async variant shifts the continuation to a thread pool; non-Async runs it on whichever thread completed the previous stage."
+
+## Visualization — Chain Operations
+```
+              Future vs CompletableFuture — Chain Diagram
+
+╔════════════════════════════════════════════════════════════╗
+║ Future — Blocking (Java 5)                                 ║
+╚════════════════════════════════════════════════════════════╝
+
+   Main Thread                          Worker Thread
+       │                                     │
+       ├─── pool.submit(task) ──────────────►│ task start
+       │                                     │   ...
+       │  (other work...)                    │
+       │                                     │
+       │                                     │
+       ├─── future.get() ───────────────────►│
+       │                                     │
+       │     BLOCKED                      │
+       │     (wait kar raha)                 │
+       │                                     │   ...
+       │                                     │ task done
+       │◄────── return 42 ───────────────────┤
+       │                                     │
+       │  result = 42                        │
+
+   "Async ka faayda gone — main thread ruka hua"
+
+
+╔════════════════════════════════════════════════════════════╗
+║ CompletableFuture — Non-Blocking + Chain (Java 8)          ║
+╚════════════════════════════════════════════════════════════╝
+
+  Main Thread continues, worker handles task
+
+   ┌──────────────────┐
+   │ supplyAsync()    │  → Worker thread mein chala
+   │ fetchUser(101)   │
+   └────────┬─────────┘
+            │
+            ▼ result aaya
+   ┌──────────────────┐
+   │ thenApply()      │  → User → name (transform)
+   │ user → user.name │
+   └────────┬─────────┘
+            │
+            ▼ name aaya
+   ┌──────────────────┐
+   │ thenAccept()     │  → name pe action (no return)
+   │ name → print     │
+   └──────────────────┘
+
+   Pipeline! Main thread block nahi hua, callbacks chain mein
+
+
+╔════════════════════════════════════════════════════════════╗
+║ Combine Multiple Futures — Parallel                        ║
+╚════════════════════════════════════════════════════════════╝
+
+   userF (300ms)         orderF (300ms)         settingsF (300ms)
+       │                      │                       │
+       │ parallel             │ parallel              │ parallel
+       ▼                      ▼                       ▼
+   ┌─────────┐            ┌─────────┐             ┌─────────┐
+   │ User    │            │ Order   │             │Settings │
+   └────┬────┘            └────┬────┘             └────┬────┘
+        │                      │                       │
+        └──────── thenCombine ─┴────── thenCombine ────┘
+                              │
+                              ▼
+                       ┌─────────────┐
+                       │   Profile   │
+                       └─────────────┘
+
+   Sequential time:  900ms (300 + 300 + 300)
+   Parallel time:    ~300ms (sab saath)
+
+
+╔════════════════════════════════════════════════════════════╗
+║ Exception Handling                                         ║
+╚════════════════════════════════════════════════════════════╝
+
+   ┌──────────────────┐
+   │ supplyAsync()    │
+   │   riskyCall()    │
+   └────────┬─────────┘
+            │
+       success ──────► thenApply()
+            │
+       exception ────► exceptionally(ex -> "fallback")
+                                │
+                                ▼
+                         (catch + recover)
+```
+
+### 2. thenApply vs thenCompose  (VALUE vs CF -> flatMap)
+```
+thenApply(fn)   : fn return karta ek VALUE      -> CF<Value>
+thenCompose(fn) : fn return karta ek CompletableFuture -> agar thenApply lagate to CF<CF<Value>> (NESTED, ganda)
+                  -> thenCompose FLATTEN kar deta -> CF<Value>.
+```
+
+### 3. exceptionally vs handle vs whenComplete  (error handling — 3 alag)
+```
+exceptionally(ex -> fallback)      -> SIRF error pe chale -> fallback VALUE de (recover). success pe skip.
+handle((res, ex) -> newVal)        -> DONO (result AUR ex) milte -> ek jagah handle -> naya value DE sakta (recover+transform).
+whenComplete((res, ex) -> {...})   -> DONO milte par value BADAL nahi sakta -> side-effect only (log/cleanup) -> value wahi aage.
+```
+
+### 3. exceptionally vs handle vs whenComplete  (error handling — 3 alag)
+```
+exceptionally = try-catch ka async (error-only recover)
+handle        = result-YA-error -> naya value (recover + transform dono)
+whenComplete  = PEEK (log/cleanup) -> value untouched aage
+```
+
+### thenCombine vs thenCompose (dependent vs parallel — quick)
+```
+thenCompose = ek ke BAAD doosra (B ko A ka result chahiye = DEPENDENT chain)
+thenCombine = do INDEPENDENT CF parallel chalein -> dono done -> jodo
+```

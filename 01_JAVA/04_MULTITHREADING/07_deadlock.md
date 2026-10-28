@@ -86,3 +86,21 @@ synchronized(lockA) {
 // Ab circular wait IMPOSSIBLE — dono A ke liye compete karenge
 // jo pehle lega wo B bhi le lega. NO DEADLOCK.
 ```
+
+## Visualization
+```
+        ┌───────────┐         ┌───────────┐
+        │ Thread A  │         │ Thread B  │
+        │ holds: 1  │ ◄──┐    │ holds: 2  │
+        │ waits: 2  │    │    │ waits: 1  │
+        └─────┬─────┘    │    └─────┬─────┘
+              │          │          │
+              ▼          │          ▼
+        ┌──────────┐     │    ┌──────────┐
+        │ Lock 2   │     └────│ Lock 1   │
+        │ (held by │          │ (held by │
+        │  B)      │          │   A)     │
+        └──────────┘          └──────────┘
+
+        CIRCULAR WAIT — koi release nahi karega
+```

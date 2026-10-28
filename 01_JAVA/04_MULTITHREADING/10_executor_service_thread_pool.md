@@ -127,3 +127,88 @@ timeUnit            -> keepAliveTime ki unit (sec/ms)
 CPU-bound kaam (calc/loop)  -> ~ cores jitne (zyada thread = sirf context-switch waste)
 IO-bound kaam (DB/API wait) -> cores se ZYADA (thread waise bhi wait me, doosra kaam kar le)
 ```
+
+## Visualization — Pool with Reusable Threads
+```
+              ExecutorService — Thread Pool Visualization
+
+╔════════════════════════════════════════════════════════════╗
+║ Without Pool — har request pe new Thread                   ║
+╚════════════════════════════════════════════════════════════╝
+
+  Request 1  →  new Thread()  →  task done  →  thread DESTROY
+  Request 2  →  new Thread()  →  task done  →  thread DESTROY
+  Request 3  →  new Thread()  →  task done  →  thread DESTROY
+   ...
+  hazaaron reqs  →  utne threads create + destroy  →  native-thread OOM / context-switch me CPU barbaad
+
+
+╔════════════════════════════════════════════════════════════╗
+║ With Pool — 5 threads, REUSE                               ║
+╚════════════════════════════════════════════════════════════╝
+
+  ExecutorService pool = Executors.newFixedThreadPool(5);
+
+       Pool (heap)
+       ┌─────────────────────────────────────────┐
+       │  ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐    │
+       │  │ T1 │ │ T2 │ │ T3 │ │ T4 │ │ T5 │    │   ← 5 reusable threads
+       │  └────┘ └────┘ └────┘ └────┘ └────┘    │
+       └─────────────────────────────────────────┘
+                          ▲
+                          │ submit()
+                          │
+       Task Queue
+       ┌─────────────────────────────────────────┐
+       │  task1  task2  task3  ... task1000      │
+       └─────────────────────────────────────────┘
+
+  Task aaya → free thread mile → assign → done → thread WAPAS pool mein
+                                                    (DESTROY nahi, REUSE)
+
+
+╔════════════════════════════════════════════════════════════╗
+║ Pool Types                                                 ║
+╚════════════════════════════════════════════════════════════╝
+
+  FixedThreadPool(N)     ┌─────────┐
+                         │ N fixed │  ← predictable load (production)
+                         └─────────┘
+
+  CachedThreadPool       ┌─────────────────┐
+                         │ unbounded grows │  ← OOM risk under load!
+                         └─────────────────┘
+
+  SingleThreadExecutor   ┌─────┐
+                         │  1  │  ← FIFO sequential
+                         └─────┘
+
+  ScheduledThreadPool    ┌─────────┐
+                         │ N + cron │  ← delayed/periodic tasks
+                         └─────────┘
+
+
+╔════════════════════════════════════════════════════════════╗
+║ Lifecycle                                                  ║
+╚════════════════════════════════════════════════════════════╝
+
+  pool.submit(task)           ──►  task chala
+  pool.shutdown()             ──►  naya kaam nahi loga, current finish karega
+  pool.shutdownNow()          ──►  running tasks ko interrupt() (best effort, ignore kare to chalta rahega) + queue ke pending tasks ki list lautata
+  pool.awaitTermination(...)  ──►  wait jab tak sab khatam
+```
+
+### ★ KYUN queue PEHLE, naya thread BAAD me? (asli samajh)
+```
+Bench pe bithana   -> bas list me ek reference daala. lagbhag FREE.
+Naya thread banana -> OS se thread maango -> ~1 MB stack + context-switch. MEHNGA.
+```
+
+### ★ OOM TRAP — bench INFINITE (unbounded queue)
+```
+newFixedThreadPool ki queue = UNBOUNDED (LinkedBlockingQueue, no limit).
+T3,T4,...T10000 -> sab bench pe baithte jaate (bench kabhi FULL nahi hoti)
+   -> temp-thread KABHI hire nahi hote (bench full hui hi nahi)
+   -> sirf core threads kaam karein, bench pe laakhon ka dher -> MEMORY phatt = OOM.
+   -> aur maximumPoolSize bekaar pada raha (kabhi use hi nahi hua).
+```

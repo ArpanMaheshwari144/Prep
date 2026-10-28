@@ -28,3 +28,13 @@ join only blocks the caller. It fixes timing, not race conditions - for that you
 synchronized or atomics. In production I use join(timeout) or future.get(timeout)
 so a stuck thread can't hang the request forever."
 ```
+
+---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
+
+## TRAP 3 — join() akele CORRECT count nahi deta
+| | kaam | bina iske |
+|--|------|-----------|
+| **join** | dono khatam hone ka WAIT (timing) | main pehle padh leta -> **adhoora** |
+| **synchronized/CAS** | increment ATOMIC (no lost update) | count **racy** (kam) -- chahe join ho |

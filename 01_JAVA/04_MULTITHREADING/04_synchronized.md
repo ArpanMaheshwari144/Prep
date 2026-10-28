@@ -189,3 +189,21 @@ Pessimistic DB lock   -> SELECT...FOR UPDATE (row lock pehle)     | pessimistic
 
 > Idempotency me `count.incrementAndGet()` = CAS (counter), `putIfAbsent` = bucket-atomic (map).
 > Agar poore 3-4 line ek atomic block chahiye hote to `synchronized` lagta.
+
+## Race Condition Visualization
+```
+                MAIN MEMORY (RAM)
+                     count = 1000
+                    ↑          ↑
+                    │          │
+        ┌───────────┘          └───────────┐
+        ▼                                  ▼
+   Thread 1                            Thread 2
+   padha: count = 1000                 padha: count = 1000     (dono ne SAME purana value padha)
+   count++ = 1001                      count++ = 1001
+   write                               write
+
+   MAIN MEMORY = 1001  (galat — 1002 hona chahiye!)
+   EK update LOST.
+   (asli jad = read -> +1 -> write teen alag kadam, beech me doosra ghus gaya. cache na bhi ho to ye hota.)
+```

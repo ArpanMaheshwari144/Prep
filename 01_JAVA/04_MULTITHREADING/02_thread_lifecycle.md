@@ -50,3 +50,20 @@ BLOCKED       -> synchronized MONITOR-lock ka intezaar (koi aur held kiye hai)
 WAITING       -> wait()/join() bina time -> jab tak notify/end na ho
 TIMED_WAITING -> sleep(ms)/wait(ms)/join(ms) -> time khatam hote hi khud wapas
 ```
+
+## Visualization
+```
+┌─────────┐ start() ┌────────────┐        ┌──────────────┐
+│   NEW   │────────►│  RUNNABLE  │        │  TERMINATED  │
+│(created)│         │(ready + on │ run()  │  (khatam)    │
+└─────────┘         │  CPU dono) │───────►└──────────────┘
+                    └─────┬──────┘
+        ┌─────────────────┼──────────────────┐
+        ▼                 ▼                  ▼
+  ┌───────────┐    ┌────────────┐    ┌──────────────────┐
+  │  BLOCKED  │    │  WAITING   │    │  TIMED_WAITING   │
+  │(lock ke   │    │(wait()/    │    │(sleep(ms)/       │
+  │ liye ruka)│    │ join() —   │    │ wait(ms)/        │
+  │           │    │ no timeout)│    │ join(ms))        │
+  └───────────┘    └────────────┘    └──────────────────┘
+```

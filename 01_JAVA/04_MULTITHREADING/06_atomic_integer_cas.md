@@ -60,3 +60,34 @@ Aata kahan: **lock-free stack/queue (Treiber), object/memory POOLS (freed addres
 A(v1) -> A(v3): value wapas A, par stamp 1 != 3 -> change PAKAD liya.  (₹5 note pe serial-number)
 ```
 ★ HONEST (interview me bhi): day-to-day Spring/backend me tu raw CAS-on-pointer khud NAHI likhta (ConcurrentHashMap/queues andar handle karte). ABA = mostly interview-depth / library-internals + lock-free-structure/pool likhne walon ka. Counter-level ignore, pointer/pool-level critical.
+
+### Step-by-step (count = 5, +1 karna)
+```
+   1. padha current          ->  5
+   2. nayi value soch        ->  6
+   3. CAS: "agar abhi bhi 5 hai -> 6 likh do"
+        - haan 5 hai  -> 6 ho gaya, SUCCESS ✓ -> done
+        - koi aur thread beech mein 7 kar gaya -> "5 nahi hai" -> likha NAHI -> FAIL
+   4. FAIL -> RETRY: dobara padho (7), soch (8), CAS "agar 7 -> 8" ... jab tak success
+```
+
+## Taala vs CAS — yehi asli farak
+```
+   synchronized -> taala lo, baaki thread BLOCK ho ke wait karein   (slow, blocking)
+   CAS          -> taala NAHI. "try karo, koi beat kar gaya -> dobara try"
+                   koi block nahi, koi wait nahi                     (FAST, lock-free)
+```
+
+## ★ LongAdder — high-contention counter (8-Sep)
+```
+AtomicLong -> ek counter, 100 log line -> dhakka-mukki (CAS retries) -> slow
+LongAdder  -> 10 counter (CELLS) khol do -> log alag-alag pe (kam bheed) -> tez
+              total chahiye -> sab cells ka SUM.
+```
+
+## Kab Kya Use Karein (yaad rakh)
+| Situation | Tool | Kyun |
+|-----------|------|------|
+| **FLAG** (true/false, ek thread likhta) | `volatile` | sirf visibility chahiye |
+| **COUNTER** (`count++`, numbers) | `AtomicInteger` (CAS) | fast, lock-free, atomic |
+| **MULTI-LINE critical section** | `synchronized` | poora block atomic chahiye |

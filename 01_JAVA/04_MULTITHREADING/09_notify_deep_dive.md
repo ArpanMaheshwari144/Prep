@@ -42,3 +42,32 @@ consumers I use notifyAll, or better, a BlockingQueue."
 | `notify()` ke baad notifier ka lock release? | **NAHI** — notifier sync block khatam hone tak lock pakda rahega |
 | Thread `wait()` se kaha resume karega? | **`wait()` ke just baad** — wahin se while loop dobara check |
 | `notify()` vs `notifyAll()`? | `notify()` = **ek** thread jagao. `notifyAll()` = **sab** wait set ke threads jagao |
+
+### Step 2: `wait()` ka 3 kaam
+```
+Buffer's Wait Set:  [P]   ← Producer yahan baitha hai
+P state:            WAITING
+P holding lock?     NO (release kar diya)
+```
+
+## Visual Summary
+```
+WAITING SET                  CHAL RAHA                 LOCK
+
+┌──────────┐                                         ┌──────┐
+│   P      │  ◄── wait()      C: lock liya          │  C   │
+│ WAITING  │                  C: poll()              └──────┘
+└──────────┘                  C: notify()
+
+                   ↓ notify() picks P
+
+┌──────────┐                                         ┌──────┐
+│  empty   │      P: BLOCKED                         │  C   │
+└──────────┘      (wait set se nikla)                └──────┘
+
+                   ↓ C exits sync (lock release)
+
+                                                     ┌──────┐
+                  P: BLOCKED → RUNNABLE              │  P   │
+                  P: wait() ke baad chala            └──────┘
+```
