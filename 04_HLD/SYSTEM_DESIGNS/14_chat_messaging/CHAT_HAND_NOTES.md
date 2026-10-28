@@ -8,49 +8,69 @@ Kaam: 1-to-1 chat aur 500 tak ke group, history server pe, tick (bheja / pahunch
 
 **1. WEBSOCKET**
 
-Ek chat server + DB. Arpan ne "hi" bheja, DB me gaya. Par Ravi ne kuch maanga hi nahi, to use kaise mile? HTTP me server sirf jawab deta hai, khud nahi bolta. Polling = har 2 sec "kuch aaya?", bekaar bheed aur late. Long polling = behtar, par har message pe nayi request. Isliye **WEBSOCKET**: Ravi ek baar connection khole, wo khuli rahe, server jab chahe bhej de.
+Ek chat server + DB. Arpan ne "hi" bheja, DB me gaya. Par Ravi ne to kuch maanga hi nahi, use kaise mile? HTTP me server sirf jawab deta hai, khud nahi bolta. Polling = har 2 sec "kuch aaya?", bekaar bheed aur late. Long polling = behtar, par har message pe nayi request. Isliye **WEBSOCKET**: Ravi ek baar connection khole, wo khuli rahe, server jab chahe bhej de.
+
+Par ye connection khuli rehti hai, aur subah 2 crore log ek saath app khol ke baith gaye.
 
 &nbsp;
 
-**2. 200 SERVER + EVENT LOOP**
+**2. 200 SERVER + EVENT LOOP + BACKOFF**
 
-Subah 2 crore log ek saath app khol ke baithe, ek server ki memory nahi jhel paayi. Ek machine ~1 lakh connection, to ~**200 CHAT SERVER** + LB. Aur har connection ko ek thread nahi, kyunki zyadatar khaali baithe rehte hain. **EVENT LOOP** (Netty / Node): kuch hi thread, jis connection pe message aaya sirf use sambhalo.
+Ek server ki memory 2 crore khuli connection nahi jhel paayi. Ek machine ~1 lakh connection, to ~**200 CHAT SERVER** + LB. Aur har connection ko ek thread nahi, kyunki zyadatar khaali baithe rehte hain. **EVENT LOOP** (Netty / Node): kuch hi thread, jis connection pe message aaya sirf use sambhalo.
+
+Chat server khud kuch yaad nahi rakhta (sab DB aur Redis me hai), isliye iski copy (replica) nahi hoti. Server 9 gira to uske 1 lakh log ek hi second me dobara judne aaye, aur us dhakke se baaki server bhi hil gaye. Isliye app ruk-ruk ke jude, har baar thoda zyada ruke (1, 2, 4 sec = **BACKOFF**) + thoda random (**JITTER**), taaki 1 lakh log kai second me phail ke aayein aur LB unhe baaki ~199 server pe baant de.
+
+Par ab 200 server hain. Arpan server 5 pe, Ravi server 9 pe.
 
 &nbsp;
 
 **3. REDIS MAP (KAUN KAHAN)**
 
-Arpan server 5 pe, Ravi server 9 pe. Server 5 ko pata hi nahi Ravi kahan hai, aur 200 server se poochhna dheema. Isliye **REDIS MAP**: ravi -> server 9 (hotel ka main register). Server gira to entry galat reh jaati, isliye **UMAR (TTL 60 sec)** + app ka har 30 sec **HEARTBEAT**. Kai device = list: ravi -> [server 9 phone, server 14 laptop].
+Server 5 ko pata hi nahi Ravi kahan hai, aur 200 server se poochhna dheema. Isliye **REDIS MAP**: ravi -> server 9 (hotel ka main register). Server gira to entry galat reh jaati, isliye **UMAR (TTL 60 sec)** + app ka har 30 sec **HEARTBEAT**. Kai device = list: ravi -> [server 9 phone, server 14 laptop]. Redis gira to uski copy (replica).
+
+Par Ravi ka phone band hai, Redis me uski entry hi nahi. "hi" kahan jaaye?
 
 &nbsp;
 
 **4. PEHLE DB, PHIR BHEJO + ACK + PUSH**
 
-Ravi ka phone band, Redis me entry hi nahi, "hi" kahan jaaye? Isliye **PEHLE DB ME LIKHO, PHIR BHEJO**: pehle bhejte aur DB se pehle girte to message hamesha ke liye gaya. DB me likh ke **ACK** = ek grey tick. Ack se pehle gira to app khud dobara bhejti hai. Offline ko **PUSH** (FCM / APNs). Wapas juda to app bole "mere paas 41 tak hai", server 42 se aage bheje.
+Isliye **PEHLE DB ME LIKHO, PHIR BHEJO**: pehle bhejte aur DB se pehle girte to message hamesha ke liye gaya. DB me likh ke **ACK** = ek grey tick. Ack se pehle gira to app khud dobara bhejti hai. Offline ko **PUSH** (FCM / APNs). Wapas juda to app bole "mere paas 41 tak hai", server 42 se aage bheje.
+
+Yahi tab bhi bachata hai jab Ravi ka server gira: message DB me hai, Ravi naye server se juda, nayi Redis entry likhi, aur "41 ke baad sab do".
+
+Par ab har message DB me jaata hai: roz 1.2 TB, 46,000 likhai har second.
 
 &nbsp;
 
 **5. CASSANDRA (CHAT_ID)**
 
-Roz 1.2 TB, 46,000 likhai / sec, ek DB nahi jhel paaya. Message ek baar likha, kabhi badalta nahi, padhai hamesha "is chat ke aakhri 50" ya "41 ke baad". Join / transaction chahiye hi nahi. Isliye **CASSANDRA**, **CHAT_ID** se baanto, taaki ek chat ke saare message ek machine pe number ke kram me rahein. User id se baant-te to ek chat do machine me batt jaati. Paisa / join / search = Cassandra nahi.
+Ek DB nahi jhel paaya. Message ek baar likha, kabhi badalta nahi, padhai hamesha "is chat ke aakhri 50" ya "41 ke baad". Join / transaction chahiye hi nahi. Isliye **CASSANDRA**, **CHAT_ID** se baanto, taaki ek chat ke saare message ek machine pe number ke kram me rahein. User id se baant-te to ek chat do machine me batt jaati. Paisa / join / search = Cassandra nahi.
+
+Par server ne DB me likha, ack se pehle gira, app ne dobara bheja.
 
 &nbsp;
 
 **6. CLIENTMSGID (DO BAAR NAHI)**
 
-Server ne DB me likha, ack se pehle gira, app ne dobara bheja, Ravi ko "hi" do baar. Isliye **CLIENTMSGID**: phone Send pe id banata hai (m-501), dobara pe bhi wahi. Kram: pehle Redis me "m-501 = #42", phir DB me #42. Dobara aaya to wahi #42 dobara likho, aur Cassandra same key pe upar likh deta hai, naya row nahi. Id phone kyun banaye? Dobara phone hi bhejta hai. Ye banking ki idempotency key hai.
+Ravi ko "hi" do baar dikha. Isliye **CLIENTMSGID**: phone Send pe id banata hai (m-501), dobara pe bhi wahi. Kram: pehle Redis me "m-501 = #42", phir DB me #42. Dobara aaya to wahi #42 dobara likho, aur Cassandra same key pe upar likh deta hai, naya row nahi. Id phone kyun banaye? Dobara phone hi bhejta hai. Ye banking ki idempotency key hai.
+
+Par Arpan ki ghadi 5 min aage thi.
 
 &nbsp;
 
 **7. SERVER KA NUMBER (KRAM)**
 
-Arpan ki ghadi 5 min aage thi, sawaal Ravi ke jawab ke neeche chala gaya. Phone ki ghadi pe bharosa nahi. Isliye **SERVER KA NUMBER**: pahunchte hi `INCR seq:arpan-ravi` (44, 45). Jo server pe pehle aaya use agla number. Redis ek baar me ek kaam karta hai, to do ko same number kabhi nahi. Dikhne wala time server ka (NTP), par kram number se.
+Arpan ka sawaal Ravi ke jawab ke neeche chala gaya. Phone ki ghadi pe bharosa nahi. Isliye **SERVER KA NUMBER**: pahunchte hi `INCR seq:arpan-ravi` (44, 45). Jo server pe pehle aaya use agla number. Redis ek baar me ek kaam karta hai, to do ko same number kabhi nahi. Dikhne wala time server ka (NTP), par kram number se.
+
+Par College Gang me 500 log hain.
 
 &nbsp;
 
 **8. GROUP: EK BAAR LIKHO**
 
-College Gang me 500 log. Har member ki copy = 500 likhai. Isliye message **EK BAAR LIKHO** (college-gang, #980). Members ki list group_members table me + Redis me. Online ko unke server pe, offline ko push. Lakhon wala broadcast scope ke bahar.
+Har member ki copy = 500 likhai. Isliye message **EK BAAR LIKHO** (college-gang, #980). Members ki list group_members table me + Redis me. Online ko unke server pe, offline ko push. Lakhon wala broadcast scope ke bahar.
+
+Par neeli tick aur "50 unread" kaise dikhe?
 
 &nbsp;
 
@@ -58,17 +78,21 @@ College Gang me 500 log. Har member ki copy = 500 likhai. Isliye message **EK BA
 
 Har message pe padha / nahi padha = 980 x 500 nishaan, bahut bhaari. Isliye har user ka har chat me **EK NUMBER**: pahuncha_upto = 45 (do grey tick), padha_upto = 45 (neeli). Unread = aakhri 980 - padha 930 = 50, bas ek ghatana.
 
+Par Arpan ne 200 MB ka video bheja.
+
 &nbsp;
 
 **10. VIDEO S3**
 
-200 MB ka video chat server aur Cassandra se gaya, baaki sab atak gaye. Isliye app video seedha **S3** me (presigned URL, 10 min ki chaabi), message me sirf link. Ravi tap kare to **CDN** se.
+Video chat server aur Cassandra se gaya, baaki sab atak gaye. Isliye app video seedha **S3** me (presigned URL, 10 min ki chaabi), message me sirf link. Ravi tap kare to **CDN** se.
+
+Par "Arpan online" kaise dikhe? 2 crore log ka online / offline badalta rehta hai.
 
 &nbsp;
 
 **11. ONLINE = UMAR WALI ENTRY**
 
-2 crore log ka online / offline badalta rehta hai. Wahi heartbeat: `online:arpan` 60 sec ki umar ke saath, last_seen har heartbeat pe. Ravi chat khole tab hi poochho. Har badlaav 500 contacts ko bhejna = bheed. Redis ki copy alag zone me.
+Wahi heartbeat: `online:arpan` 60 sec ki umar ke saath, last_seen har heartbeat pe. 60 sec heartbeat nahi aaya to entry mit gayi = offline. Ravi chat khole tab hi poochho. Har badlaav 500 contacts ko bhejna = bheed. Redis gira to uski copy.
 
 &nbsp;
 
@@ -76,7 +100,7 @@ Har message pe padha / nahi padha = 980 x 500 nishaan, bahut bhaari. Isliye har 
 
 - API: `GET /connect` (WebSocket) · `POST /messages { chatId, text, clientMsgId }` · `GET /messages?chatId=&after=41` · `POST /chats/{chatId}/read { padha_upto }`
 
-- Chat server gira: uske 1 lakh log dobara judte hain, ruk-ruk ke + random (backoff + jitter). Deploy pe server dheere khaali karo.
+- Deploy: server dheere-dheere khaali karo, sab ek saath restart nahi.
 
 - Push fail: Google / Apple bahar ki service, apna retry + queue.
 
@@ -88,7 +112,7 @@ Har message pe padha / nahi padha = 980 x 500 nishaan, bahut bhaari. Isliye har 
 
 ### Wrap
 
-turant = WebSocket + Redis map · kabhi na khoye = pehle DB, ack, app ka dobara bhejna, push + "aakhri ke baad sab" · kram = server ka number · do baar nahi = clientMsgId · group = ek baar likho · tick = kahan tak number · video = S3
+turant = WebSocket + Redis map · kabhi na khoye = pehle DB, ack, app ka dobara bhejna, push + "aakhri ke baad sab" · server gira = backoff + jitter, LB baaki pe baante · kram = server ka number · do baar nahi = clientMsgId · group = ek baar likho · tick = kahan tak number · video = S3
 
 
 Poora design (har kadam ka diagram aur "kyun") = [14_chat_messaging.md](14_chat_messaging.md)

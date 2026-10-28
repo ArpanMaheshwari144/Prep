@@ -105,6 +105,13 @@ flowchart LR
     style S9 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+Chat server khud kuch yaad nahi rakhta (sab DB aur Redis me hai), isliye iski copy (replica) nahi hoti. Par ek
+server gira to kya? Server 9 pe 1 lakh log jude the. Sabki app ko connection toota dikha, aur sab ek hi second
+me dobara judne aaye. Is ek dhakke se LB aur baaki server bhi hil jaate hain (isse thundering herd kehte hain).
+Ilaaj: app ruk-ruk ke jude, aur har baar thoda zyada ruke: 1 sec, phir 2, phir 4 (**backoff**). Saath me har
+app apne rukne me thoda random jode, kisi ka 1.3 sec, kisi ka 0.7 sec (**jitter**). Isse 1 lakh log ek second
+me nahi, kai second me phail ke aate hain, aur LB unhe baaki ~199 server pe baant deta hai.
+
 Par Arpan chat server 5 se juda hai, aur Ravi chat server 9 se. Arpan ka "hi" server 5 pe aaya. Ab server 5
 ko kaise pata ki Ravi 200 me se kis server pe baitha hai?
 
@@ -469,8 +476,8 @@ flowchart LR
 
 ## 5. Wrap (30 second me poora design, NFR se milao)
 
-Har user ~200 chat server me se kisi ek se WebSocket se juda hai (event loop), aur Redis me likha hai kaun
-kis server pe hai. Arpan ne message bheja: phone ki id (clientMsgId) se dohra nahi, server ne us chat ka
+Har user ~200 chat server me se kisi ek se WebSocket se juda hai (event loop); server gira to app backoff +
+jitter se baaki server pe judti hai, aur Redis me likha hai kaun kis server pe hai. Arpan ne message bheja: phone ki id (clientMsgId) se dohra nahi, server ne us chat ka
 agla number diya, pehle Cassandra me likha (chat_id se baanta), ack bheja (ek tick), phir Redis se dekh ke
 Ravi ke server tak. Ravi offline ho to push, aur wapas aane pe "aakhri number ke baad sab". Group me message
 ek baar likho, members ko bhejo. Tick aur unread har user ka ek "kahan tak" number. Video S3 me, message me
@@ -491,9 +498,7 @@ do baar na dikhe  -> clientMsgId
 API                -> GET /connect (WebSocket, band nahi hoti) ·
                       POST /messages { chatId, text, clientMsgId } · GET /messages?chatId=&after=41 ·
                       POST /chats/{chatId}/read { padha_upto }
-chat server gira?  -> uske 1 lakh log dobara judte hain kisi aur server se. Sab ek saath na aayein, isliye
-                      ruk-ruk ke aur thoda random (backoff + jitter).
-                      Deploy pe server dheere-dheere khaali karo
+deploy?            -> server dheere-dheere khaali karo, sab ek saath restart nahi (chat server gira = kadam 2)
 Redis gira?        -> Redis ki copy (replica), alag zone me
 push fail?         -> Google / Apple bahar ki service hai, apna retry + line (queue)
 E2E chahiye?       -> server message padh hi nahi sakta: server pe search khatam, naya member purane message
