@@ -143,6 +143,10 @@ Padhne wali taraf ab pakki thi. Phir ek din Kafka ki apni machine hi mar gayi.
 ## 5. Leader aur copy
 
 Arpan ki teeno khabar P1 me thi, aur P1 Kafka ki machine B pe tha. Kafka ki har machine ko **broker** kehte hain.
+Broker khabar RAM me nahi rakhta, **disk** pe ek file ke aakhir me jodta jaata hai (beech me kuch badalta nahi, jaise
+ledger). Isliye machine restart ho to file wahin hai, khabar bachi. Padhne se bhi file se nahi mitti, kuch din
+(**retention**, aam taur pe 7 din) baad hi hat-ti hai.
+
 Machine B ki disk mar gayi. Agar P1 sirf wahin hota, to Arpan ki khabar hamesha ke liye chali jaati.
 
 Isliye har tukde ki 3 copy rakhte hain, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo **leader**
@@ -173,6 +177,11 @@ kehte hain.
 Koi copy peeche chal rahi ho to use leader nahi banate, warna aakhri khabar kho jaayegi. Sirf poori taaza copy
 "pakki" maani jaati hai, aur pakki copies ki list ko **ISR** (in-sync replicas) kehte hain. Aur agar sirf leader bacha ho, koi pakki
 copy nahi, to likhna hi rok dete hain (**min.insync.replicas = 2**). Khabar khone se behtar thodi der rukna hai.
+
+Ek baat aur: broker har khabar ko usi pal disk pe pakka nahi karta, pehle OS ki memory me jaati hai, thodi der baad
+disk pe. To khabar ek disk ke bharose nahi bachti, **teen machine ki copy** se bachti hai. Teeno ek saath giren,
+ye bahut kam hota hai. Ek line: disk pe likha (restart se bacha) + 3 copy (machine mari to bhi bacha) + acks=all
+(copy hone ke baad hi "ho gaya").
 
 Ab Kafka bhi pakka tha aur padhne wala bhi. Bacha ek: bhejne wala, Order Service khud.
 
