@@ -1,96 +1,31 @@
 # Thread Kya Hai + Banane Ke 2 Tarike
 
-> **V90 — Multithreading: Topic 39**
-
----
-
-## STORY — API Slow Tha
-
-→ API ke 3 DB calls the — **user fetch, orders fetch, recommendations fetch**
-→ Ek ke baad ek — **300ms + 300ms + 300ms = 900ms** response time
-→ Manager ne bola **"too slow."** Teen threads banaye, **teeno parallel chale**
-→ **300ms total**
-→ Multithreading ke bina modern backend slow hai
-→ Lekin **shared state pe careful** rehna padta — **race condition aur deadlock** ka darr hamesha rehta
-
----
-
-## WHY — Thread Kya Hai?
-
-→ Restaurant mein **ek waiter = ek kaam ek time pe**
-→ **Teen waiters = teeno alag customers ek saath**
-→ **Thread = alag-alag kaam parallel mein**
+**Kahani:** tera ek API 3 DB call karta hai: user, orders, recommendations. Har call 300ms ki hai. Ek ke baad ek chalein to 900ms lagte hain, aur manager bolta hai "slow hai". Teen thread banake teeno call ek saath bhejo, to 300ms me sab aa jaata hai.
 
 ```
-// Without Thread:
-Task1 → Task2 → Task3   (ek ke baad ek — sequential)
+Bina thread:  user ──> orders ──> recommendations     = 900ms
 
-// With Thread:
-Task1 ┐
-Task2 ├→ sab ek saath (parallel)
-Task3 ┘
+Thread ke saath:
+              user ┐
+            orders ├──> teeno ek saath                = 300ms
+   recommendations ┘
 ```
 
----
+**Khaas baat:**
+1. Thread do tarah se banta hai: `extends Thread` ya `implements Runnable`.
+2. Runnable lena behtar hai. Java me class sirf ek hi class extend kar sakti hai, to Thread extend kar diya to aur kuch extend nahi hoga. Runnable lene se class free rehti hai.
+3. Aaj kal seedha lambda likhte hain: `new Thread(() -> { ... }).start()`.
 
-## Thread Banane Ke 2 Tarike
-
-### Tarika 1 — `Thread` extend karo
+**Prod wala trap:** `run()` aur `start()` ka farak.
 ```java
-class MyThread extends Thread {
-    public void run() {
-        System.out.println("Thread chal raha hai!");
-    }
-}
-
-MyThread t = new MyThread();
-t.start();    // ← start() likho, run() NAHI!
+Thread t1 = new Thread(kaam, "worker-1");
+t1.run();     // kaam chala: main      <- naya thread bana hi nahi
+t2.start();   // kaam chala: worker-2  <- asli naya thread
 ```
+`run()` likhne pe koi error nahi aata, code chal bhi jaata hai. Par sab kuch main thread pe ek ke baad ek hota hai, to API ab bhi 900ms leta hai. Ye bug code dekh ke nahi pakda jaata, sirf response time se pata chalta hai.
 
-### Tarika 2 — `Runnable` implement karo (PREFER karo)
-```java
-class MyTask implements Runnable {
-    public void run() {
-        System.out.println("Task chal raha hai!");
-    }
-}
-
-Thread t = new Thread(new MyTask());
-t.start();
 ```
-
----
-
-## TRAP 1 — `t.run()` vs `t.start()`
-
-> **`t.run()` likha toh NAYA thread NAHI banega** — normal method call hoga **same thread mein**.
-> **HAMESHA `t.start()` likho** — JVM naya thread create karta.
-
-```java
-t.run();      // same thread — sequential, no parallel
-t.start();    // naya thread — parallel
+Interview: "Thread can be created by extending Thread or implementing Runnable. Runnable is preferred
+because Java has single inheritance, so the class stays free to extend something else.
+Always call start(), not run() - run() just executes on the current thread, no new thread."
 ```
-
----
-
-## TRAP 2 — Runnable Prefer Karo
-
-> **`Thread` extend kiya toh koi aur class extend nahi kar sakte (Java single inheritance).**
-> `Runnable` implement kiya toh class **free** rehti — kuch aur bhi extend kar sakte.
-
-```java
-class MyTask extends Thread { }              // ab kuch aur extend nahi
-class MyTask extends BaseClass implements Runnable { }   // flexibility
-```
-
----
-
-## POWER PHRASE
-
-> *"Thread can be created by extending Thread class or implementing Runnable. Runnable is preferred because Java doesn't support multiple inheritance — implementing Runnable keeps the class free to extend others."*
-
-> **Yaad rakh:**
-> Thread extend = inheritance use, lekin koi aur extend nahi
-> Runnable implement = flexibility
-> `t.start()` likho, `t.run()` NAHI
-> Modern: `new Thread(() -> { ... }).start()` lambda se 1-line

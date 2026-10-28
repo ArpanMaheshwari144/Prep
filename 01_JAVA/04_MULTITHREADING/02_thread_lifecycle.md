@@ -1,102 +1,29 @@
-# Thread Lifecycle — 6 States (Thread.State enum)
+# Thread Lifecycle — 6 States (Thread.State)
 
-> **V90 — Multithreading: Topic 40**
-> ★ FIX (9-Sep): pehle "RUNNING" state likha tha — **Java me RUNNING state hota hi NAHI.** Sahi = 6 states (`Thread.State` enum).
-
----
-
-## WHY — Thread States Kyu?
-
-→ **OS + JVM ko thread manage karna hai** — kab CPU de, kab wait karwaye
-→ Java me `Thread.State` enum = **exactly 6 states** — `t.getState()` se milta
-
----
-
-## ★ 6 STATES (yaad rakh — RUNNING NAHI hota)
-```
-NEW · RUNNABLE · BLOCKED · WAITING · TIMED_WAITING · TERMINATED
-```
-★ **"RUNNING" alag state NAHI** — wo RUNNABLE ke ANDAR hi hai. Java "ready-to-run" aur "actually-on-CPU" ko alag nahi ginta — **dono RUNNABLE**. (OS-level running/ready dono ek hi Java-state me.)
-
----
-
-## Visualization
+**Kahani:** file 01 wala thread hi lo, jo orders laane jaata hai. `new Thread()` likha, to thread sirf bana hai, abhi chala nahi (NEW). `start()` hua to wo line me lag gaya, kabhi CPU milta hai kabhi nahi, Java dono ko ek hi naam deta hai: RUNNABLE. Beech me wo ruk sakta hai, aur rukne ki 3 wajah hoti hain. Kaam poora hua to TERMINATED, aur ye thread ab dobara nahi chalega.
 
 ```
-┌─────────┐ start() ┌────────────┐        ┌──────────────┐
-│   NEW   │────────►│  RUNNABLE  │        │  TERMINATED  │
-│(created)│         │(ready + on │ run()  │  (khatam)    │
-└─────────┘         │  CPU dono) │───────►└──────────────┘
-                    └─────┬──────┘
-        ┌─────────────────┼──────────────────┐
-        ▼                 ▼                  ▼
-  ┌───────────┐    ┌────────────┐    ┌──────────────────┐
-  │  BLOCKED  │    │  WAITING   │    │  TIMED_WAITING   │
-  │(lock ke   │    │(wait()/    │    │(sleep(ms)/       │
-  │ liye ruka)│    │ join() —   │    │ wait(ms)/        │
-  │           │    │ no timeout)│    │ join(ms))        │
-  └───────────┘    └────────────┘    └──────────────────┘
+NEW --start()--> RUNNABLE --run() poora--> TERMINATED
+                    |
+     ┌──────────────┼─────────────────┐
+  BLOCKED        WAITING         TIMED_WAITING
+  lock ke liye   wait() / join()  sleep(ms) / wait(ms)
+  ruka           koi jagaye tab   time khatam to khud uthe
 ```
 
----
+**Khaas baat:**
+1. Java me kul 6 state hain. RUNNING naam ki alag state nahi hai, wo RUNNABLE ke andar hi aati hai.
+2. Teen tarah ka rukna:
+   - BLOCKED: `synchronized` ka lock chahiye, par wo kisi aur thread ke paas hai.
+   - WAITING: bina time ka intezaar, koi jagaye tabhi uthega.
+   - TIMED_WAITING: time wala intezaar, time khatam hote hi khud uth jaata hai.
+3. Ek baar TERMINATED ho gaya to us thread pe dobara `start()` nahi chalta (`IllegalThreadStateException`). Naya Thread object banana padta hai.
 
-## State Table (6 — sahi)
+**Prod wala trap:** maan le app hang ho gaya aur request ka jawab nahi aa raha. Tab thread dump nikaalte hain (`jstack <pid>`). Agar 200 thread BLOCKED dikhein aur sab ek hi lock pe ruke hon, to koi ek thread wo lock pakad ke baitha hai, ya phir deadlock hai (file 07). Agar sab thread WAITING me hon aur pool se connection maang rahe hon, to connection pool khatam ho gaya hai, tera HikariCP wala kissa. Matlab ye 6 state ratne ki cheez nahi hain, hang debug karte waqt thread dump me yahi padhte hain.
 
-| State | Kaise pahuncho | Matlab |
-|-------|---------------|--------|
-| **NEW** | `new Thread()` banaya | Bana, `start()` nahi kiya |
-| **RUNNABLE** | `start()` call kiya | CPU ke liye ready YA CPU pe chal raha (dono isi me) |
-| **BLOCKED** | `synchronized` lock ka wait | Monitor-lock chahiye, doosre ke paas hai |
-| **WAITING** | `wait()` / `join()` / `park()` (bina timeout) | INDEFINITE wait — koi jagayega tabhi |
-| **TIMED_WAITING** | `sleep(ms)` / `wait(ms)` / `join(ms)` | Timeout-wala wait — waqt-baad khud uthta |
-| **TERMINATED** | `run()` complete | Khatam |
-
-★ **BLOCKED vs WAITING vs TIMED_WAITING** (grill favourite):
 ```
-BLOCKED       -> synchronized MONITOR-lock ka intezaar (koi aur held kiye hai)
-WAITING       -> wait()/join() bina time -> jab tak notify/end na ho
-TIMED_WAITING -> sleep(ms)/wait(ms)/join(ms) -> time khatam hote hi khud wapas
+Interview: "A Java thread has 6 states: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED.
+There is no separate RUNNING state - RUNNABLE covers both ready and on-CPU.
+BLOCKED = waiting for a monitor lock, WAITING = no timeout, TIMED_WAITING = with timeout.
+In production I read these states in a thread dump to debug hangs."
 ```
-
----
-
-## Code
-
-```java
-Runnable task = new MyTask();
-Thread t = new Thread(task);          // NEW
-System.out.println(t.getState());     // NEW
-
-t.start();                             // RUNNABLE (ready + on-CPU dono isi me)
-// JVM/OS decide karta kab CPU
-// run() complete → TERMINATED
-```
-
----
-
-## TRAP 1 — `start()` = RUNNABLE (RUNNING naam ki koi cheez nahi)
-
-> **`start()` kiya = thread RUNNABLE me gaya. "RUNNING" alag state Java me hai HI NAHI** — on-CPU bhi RUNNABLE hi hai.
-
-## TRAP 2 — Ek Baar TERMINATED, Dobara Nahi
-
-> **TERMINATED thread `start()` dobara nahi → `IllegalThreadStateException`.** Naya `Thread` object banao.
-
-```java
-Thread t = new Thread(...);
-t.start();
-// ... thread khatam (TERMINATED)
-t.start();    // IllegalThreadStateException
-```
-
----
-
-## POWER PHRASE
-
-> *"A Java thread has exactly 6 states in `Thread.State`: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED. There is no separate RUNNING state — RUNNABLE covers both ready-to-run and actually-running-on-CPU. BLOCKED means waiting for a synchronized monitor lock, WAITING is an indefinite wait (wait()/join() with no timeout), and TIMED_WAITING is a timed wait (sleep(ms)/wait(ms))."*
-
-> **Yaad rakh:**
-> 6 states: NEW → RUNNABLE → (BLOCKED / WAITING / TIMED_WAITING) → TERMINATED
-> RUNNING = NAHI hota (RUNNABLE ke andar)
-> BLOCKED=lock · WAITING=no-timeout · TIMED_WAITING=timeout
-> Terminated = dobara `start()` impossible
