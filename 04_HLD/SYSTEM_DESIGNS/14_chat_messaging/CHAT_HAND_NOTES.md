@@ -34,7 +34,7 @@ Par ab 200 server hain. Arpan server 5 pe, Ravi server 9 pe.
 
 Server 5 ko pata hi nahi Ravi kahan hai, aur 200 server se poochhna dheema. Isliye **REDIS MAP**: ravi -> server 9 (hotel ka main register). Server gira to entry galat reh jaati, isliye **UMAR (TTL 60 sec)** + app ka har 30 sec **HEARTBEAT**. Kai device = list: ravi -> [server 9 phone, server 14 laptop].
 
-**Maan lo Redis hi gir gaya:** uski copy (replica) alag zone me hai, wo turant jagah le leti hai. AWS pe ye ElastiCache hai.
+**AWS pe:** Redis = ElastiCache.
 
 Par Ravi ka phone band hai, Redis me uski entry hi nahi. "hi" kahan jaaye?
 
@@ -109,8 +109,6 @@ Par "Arpan online" kaise dikhe? 2 crore log ka online / offline badalta rehta ha
 **11. ONLINE = UMAR WALI ENTRY**
 
 Wahi heartbeat: `online:arpan` 60 sec ki umar ke saath, last_seen har heartbeat pe. 60 sec heartbeat nahi aaya to entry mit gayi = offline. Ravi chat khole tab hi poochho. Har badlaav 500 contacts ko bhejna = bheed.
-
-**Maan lo Redis gir gaya:** uski copy jagah le leti hai.
 
 &nbsp;
 

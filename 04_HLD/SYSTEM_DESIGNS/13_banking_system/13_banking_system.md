@@ -295,8 +295,6 @@ flowchart LR
 
 **Maan lo CP ya AP poochha:** transfer / balance = CP (galat balance dikhane se mana karna behtar) · SMS / statement = AP (2 sec late chalega).
 
-**Maan lo SPOF poochha (ek dabba gira to sab band):** DB primary (sync copy) · Banking Service (LB + kai machine).
-
 **AWS pe:** RDS (Postgres) Multi-AZ.
 
 Par salary aate hi sab apna balance aur history dekh rahe hain. Padhna likhne se kahin zyada hai, aur saari

@@ -162,8 +162,6 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo Redis gira:** Redis ki copy (replica), alag zone me.
-
 **AWS pe:** Redis = ElastiCache.
 
 Par Ravi ka phone band hai. Redis me Ravi ki koi entry hi nahi. Arpan ka "hi" kahan jaaye? Phone 2 ghante

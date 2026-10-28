@@ -270,8 +270,6 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo poochha kahan se gir sakta:** leader (pakki copy naya leader) · Controller (Kafka me kai machine ka group, KRaft).
-
 Par ab bhejne wala bacha. Arpan ne order cancel kiya. Order Service ne DB me likha "order = cancel", aur Kafka
 ko khabar bhejne se pehle gir gaya. DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala.
 

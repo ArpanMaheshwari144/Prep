@@ -71,8 +71,6 @@ flowchart LR
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo app machine giri:** App kuch yaad nahi rakhta (stateless), hold SQL me. LB doosri machine pe bhej deta, kuch nahi gaya.
-
 ### DB kaunsa: SQL ya NoSQL?
 
 Data dekho: har show ki seats (`show 9pm | A1 | FREE`). Data chhota hai, bas aaj aur agle hafte ke show. Kaam:

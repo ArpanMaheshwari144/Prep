@@ -147,8 +147,6 @@ kisi user ko farak nahi. Link badalta nahi, to purana bhi sahi. HARD (1 din) bas
 baar-baar fail ho to bahut purana hamesha na pada rahe. lock (single flight) -> DB ko bachata · soft / hard ->
 users ko bachata, koi ruke hi nahi. DB call pe 500 ms ka timeout.
 
-**Maan lo Redis gira:** Redis ki copy. Tab tak DB se padho, thoda dheema, par link chalta rahega.
-
 **AWS pe:** Redis = ElastiCache.
 
 Par 1 lakh log kholne aa rahe hain, aur unhe sambhalne wala app server abhi bhi ek hi hai. Wo akela ye bojh
@@ -189,9 +187,6 @@ App 3 ko: 2,001 - 3,000      matlab beech wale se baat 1,000 link me sirf ek baa
 Har server ki range alag hai, isliye do server kabhi same number nahi denge, aur beech wale counter pe bojh
 bhi nahi padta. App 1 beech me gir gaya to uske bache number (jaise 501 - 1,000) bekaar chale jaate hain. Koi
 dikkat nahi, 3.5 lakh crore number hain.
-
-**Maan lo LB gira:** aaj ke system me koi dabba akela nahi chalta, har ek ki copy hoti hai. AWS ka LB (ALB) kai
-zone me chalta hai, AWS khud sambhalta hai.
 
 **Maan lo counter gira:** counter ki copy. Tab tak har app ki range ke bache number kaam chala lete hain.
 
