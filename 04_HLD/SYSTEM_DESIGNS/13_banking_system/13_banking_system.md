@@ -36,7 +36,7 @@ scope ke bahar (poochh ke hata do): doosra bank, loan, byaaj, card, KYC
 
 ```
 - 50 lakh account, roz 1 crore transaction -> ~120 likhai har second, padhna isse kahin zyada
-- 120 likhai / second ek Postgres ki taakat ka dasva hissa hai
+- 120 likhai / second bahut kam hai, ek Postgres hazaaron likhai / second aaraam se karta hai
 ```
 
 Matlab yahan bheed badi dikkat nahi hai, **sahi hona** badi dikkat hai. Isliye shard nahi chahiye, ek SQL DB
@@ -91,8 +91,8 @@ COMMIT se pehle server gira to DB pehla UPDATE bhi ulta kar deta hai (rollback).
 Ravi ke 1000 waise hi 1000. Paisa na gaya, na bana.
 
 DB ko kaise pata ki kya ulta karna hai? **WAL (write-ahead log)** se. DB asli table badalne se pehle har
-badlaav ek log me likhta hai. Restart hone pe DB log padhta hai: jo transaction COMMIT nahi hua tha use ulta
-kar deta hai, aur jo COMMIT ho gaya tha wo pakka rehta hai, bijli jaane pe bhi.
+badlaav ek log me likhta hai. Restart hone pe DB log padhta hai: jiska COMMIT ka record log me nahi, wo badlaav
+kabhi dikhta hi nahi (adhoora transaction gayab), aur jo COMMIT ho gaya tha wo pakka rehta hai, bijli jaane pe bhi.
 
 ```mermaid
 flowchart LR
@@ -273,8 +273,7 @@ hi hai: wo gira to poora bank band.
 Ilaaj 1: kai Banking Service machine, aur aage LB. Ye isliye chalta hai kyunki Banking Service apne andar kuch yaad
 nahi rakhta (stateless). Saara sach DB me hai, to koi bhi machine koi bhi request le sakti hai.
 
-Ilaaj 2: DB ki **copy doosri building me** (AWS RDS Multi-AZ). Primary gira to copy turant primary ban jaati
-hai.
+Ilaaj 2: DB ki **copy doosri building me** (AWS RDS Multi-AZ).
 
 Yahan ek asli choice hai: copy sync ho ya async? Async copy me primary likh ke turant "ho gaya" bol deta hai
 aur copy baad me pakadti hai. Primary gira to aakhri kuch transfer copy tak pahunche hi nahi, paise ka hisaab

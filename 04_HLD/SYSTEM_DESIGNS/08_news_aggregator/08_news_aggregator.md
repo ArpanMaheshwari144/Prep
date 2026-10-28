@@ -72,9 +72,6 @@ flowchart LR
 
 **API:** GET /feed?category=tech&cursor=..  · GET /search?q=cricket · GET /article/{id}
 
-Par subah 8 baje lakhon log ek saath app kholte hain, ~500 feed / sec. Har feed pe DB wahi "taazi 20" sort karke
-de raha hai, aur sabko lagbhag ek hi jawab chahiye. DB ghutne laga.
-
 ### DB kaunsa: SQL ya NoSQL?
 
 Data dekho: har khabar ek row: title, url, source, category, published_at. Data chhota hai (~1 lakh roz). Kaam:
@@ -84,6 +81,9 @@ Ye sab SQL me index aur UNIQUE se seedha ho jaata hai. Likhai bas ~1 / sec hai, 
 Isliye SQL (Postgres).
 
 **AWS pe:** Postgres AWS ka **RDS** lete hain: machine, backup, copy AWS sambhalta hai, hum bas table aur query.
+
+Par subah 8 baje lakhon log ek saath app kholte hain, ~500 feed / sec. Har feed pe DB wahi "taazi 20" sort karke
+de raha hai, aur sabko lagbhag ek hi jawab chahiye. DB ghutne laga.
 
 ### Kadam 2: subah sab ek saath, sabko wahi 20 khabar (Redis me feed pehle se bani)
 

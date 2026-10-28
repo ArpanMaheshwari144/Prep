@@ -150,6 +150,8 @@ Ek chhed: Tweet Service ne DB me tweet save kiya, aur Kafka ko bhejne se pehle g
 inbox me nahi. Ilaaj wahi **outbox** ([Kafka file kadam 7](../12_message_queue_kafka/12_message_queue_kafka.md#kadam-7-bhejne-wala-gira-outbox)): khabar bhi usi transaction me outbox table me,
 relay use Kafka me daale.
 
+**AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker, copy, gira to naya leader, ye AWS sambhalta hai. Topic aur partition hum tay karte hain.
+
 Par Virat Kohli ne match ke baad tweet kiya, 10 crore follower. Fanout worker 10 crore inbox me likhne baitha,
 ghanton lag gaye. Uske peeche Arpan, Mohan, sabke tweet line me atke.
 
@@ -346,6 +348,8 @@ Feed banate waqt poora tweet laate hain, wahi nishaan dikha to chhod do.
 **Maan lo apna tweet turant nahi dikha:** Kafka pehle hai (kadam 7), Cassandra tak ek pal lagta. App apna naya
 tweet khud upar laga deta, server ka intezaar nahi.
 
+**AWS pe:** Cassandra AWS ka **Keyspaces** (machine, copy AWS sambhalta), ya EC2 pe khud chalao (tab sab hamara sar-dard).
+
 Par Arpan ne match ki 100 MB video daali. Video Tweet Service aur Cassandra ke raaste gayi to dono bhar jaayenge,
 saath me sabke tweet atkenge. Aur 1 crore log dekhenge, to har baar wahi 100 MB humare server se jaayega.
 
@@ -371,6 +375,8 @@ flowchart LR
 
 Ab kya theek hua: bhaari video kabhi Tweet Service / Cassandra se nahi guzarti, tweet chhota (sirf link),
 crore log CDN se dekhte. Ye bilkul [chat kadam 10](../14_chat_messaging/14_chat_messaging.md#kadam-10-200-mb-ka-video-s3-me-message-me-sirf-link) wala: wahan bhi message me sirf link, video S3 me.
+
+**AWS pe:** video **S3** me (AWS rakhta, copy bhi), aur log tak **CloudFront** (AWS ka CDN) se paas wali jagah se.
 
 Par Arpan Bangalore me, aur saare server, Redis, Cassandra US me. Har feed ko US jaana aur aana, akela safar
 hi ~300 ms. NFR "feed 200 ms" toot gaya.

@@ -206,8 +206,7 @@ Sabko 429 diya to poori site band.
 
 ### Kadam 6: Redis gira (copy + fail-open / fail-closed)
 
-Ilaaj 1: **Redis ki copy**. Redis gira to copy turant uski jagah le leti hai. AWS ElastiCache ye apne aap kar
-deta hai, kuch second me.
+Ilaaj 1: **Redis ki copy** AWS ElastiCache khud rakhta hai.
 
 Phir bhi un kuch second me kya karein? Do raaste hain. **Fail-open** matlab Redis nahi mila to sabko jaane do:
 site chalti rahi, bas kuch second bina had ke. **Fail-closed** matlab Redis nahi mila to sabko 429: koi bot
@@ -272,14 +271,14 @@ paar kar gaye, aur poora office atak gaya.
 IP pe had lagane me do dikkat hain. Office ke 1,000 log ek IP pe hain, to sab atak gaye. Aur ulta, bot har
 request alag IP se bheje to IP wali had kabhi lagti hi nahi.
 
-Ilaaj: had **userId** pe lagao, jo login ke baad JWT token se milta hai. Har insaan ki apni had, chahe IP ek
-ho ya hazaar.
+**Login ke BAAD:** had **userId** pe lagao, jo JWT token se milta hai. Har insaan ki apni had, chahe IP ek
+ho ya hazaar. Office ki dikkat yahin khatam.
 
-Par login se pehle to userId hota hi nahi. Isliye login pe do had: **IP** pe, aur jis account pe koshish ho
-rahi hai us **account** pe. IP wali dheeli (jaise 500 / min), taaki poora office aaram se login kare, bas ek IP
-se hazaaron ki baadh ruke. Account wali kadi (5 / min), taaki ek account pe password guess karne wala ruke.
-Office ke 1,000 log alag-alag account hain, har ek ki apni 5, to koi nahi atakta. Ban me bhi yahi: userId pe
-lamba ban, IP pe chhota.
+**Login PE** userId hota hi nahi. Isliye do had: jis **account** pe koshish ho rahi hai us pe kadi (5 / min),
+taaki ek account pe password guess karne wala ruke. Aur **IP** pe bas bahut dheeli (jaise 500 / min), sirf ek
+IP se hazaaron ki baadh rokne ke liye. Ye asli deewar nahi, kyunki office me kitne log hain pata nahi (100 bhi
+ho sakte, TCS jaise lakh bhi), aur bot kai IP se aata hai. Office ke 1,000 log alag-alag account hain, har ek
+ki apni 5, to koi nahi atakta.
 
 ```
 login se pehle   -> IP (dheeli, 500 / min) + account (kadi, 5 / min)   (rl:ip:1.2.3.4:login, rl:acct:arpan:login)
@@ -298,12 +297,14 @@ flowchart LR
     style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Humne kya socha aur kya tay kiya (login pe): pehle login pe IP ki had lagayi thi, par dikkat ye nikli ki
-office me kitne log hain ye pata nahi (100 bhi ho sakte, TCS jaise lakh bhi). Had kadi rakho to asli log
-atakte, dheeli rakho to bot nikal jaata. Isliye tay kiya: IP pe had nahi (ya bahut dheeli). Asli deewar MFA /
-passkey, kyunki password mil bhi gaya to bina phone ke bekaar. Galat password pe block nahi, CAPTCHA, taaki
-asli user na atke. Aur cloud / badnaam IP ko WAF pe band kiya. Koi ek perfect hal nahi hai, isliye parat-dar-
-parat.
+**Par credential stuffing (har account pe sirf 4, kai IP) in dono had se nahi rukta.** Asli ilaaj parat-dar-parat
+hai, kyunki koi ek perfect hal nahi:
+
+- **MFA / passkey:** password mil bhi gaya, to bina phone ke bekaar. Ye asli deewar hai.
+- **CAPTCHA:** shaq wali koshish pe CAPTCHA dikhao. Galat password pe account block nahi, taaki asli user na atke.
+- **WAF:** cloud / badnaam IP band (cloud wale apni IP list publish karte hain).
+
+Ban me bhi yahi: userId pe lamba ban, IP pe chhota.
 
 Par shaam ko sale hai. Har user apni had ke andar hai, par 1 crore log ek saath aa gaye. Sab "had me" hain,
 phir bhi server bhar ke gir gaya.

@@ -69,9 +69,6 @@ flowchart LR
 
 **Maan lo koi kisi aur ke wallet se bheje (owner check):** userId JWT se lo, body se nahi. Kisi aur ke wallet se bhejne ki koshish = 403.
 
-Par Arpan ke wallet me paisa hi nahi hai. Use apne HDFC account se 2000 daalne hain, aur HDFC hamara DB
-nahi hai, wo bahar hai.
-
 ### DB kaunsa: SQL ya NoSQL?
 
 Data dekho: Arpan ka wallet, dukaan ka wallet, aur ledger. Kaam: ek payment me teeno ek saath badalne hain,
@@ -81,6 +78,9 @@ Banking wali hi baat (ACID), SQL ka seedha kaam. Bheed badi dikkat nahi hai, sah
 Isliye SQL (Postgres).
 
 **AWS pe:** Postgres AWS ka **RDS** lete hain, **Multi-AZ** ke saath: doosri building me sync copy AWS rakhta hai, primary gira to wo khud copy ko primary banata hai. Sync rakhna (paisa hai) hamara faisla tha.
+
+Par Arpan ke wallet me paisa hi nahi hai. Use apne HDFC account se 2000 daalne hain, aur HDFC hamara DB
+nahi hai, wo bahar hai.
 
 ### Kadam 2: bank se wallet me 2000 (PSP)
 
@@ -287,7 +287,7 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo pooche SPOF (ek cheez giri to sab ruka)?** DB primary (sync copy) · PSP (doosra PSP).
+**Maan lo PSP hi gir gaya:** doosra PSP (DB = RDS Multi-AZ, wo AWS sambhalta hai).
 
 Par saal bhar me ~1000 crore payment ki lines ho gayi. Ek hi primary pe itni likhai aur itna data, primary
 dheema pad gaya. Banking se farak: wahan 120 likhai / sec thi, yahan Diwali pe 3000 / sec.

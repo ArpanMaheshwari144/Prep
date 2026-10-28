@@ -2,7 +2,11 @@
 
 ### Shuru
 
-Kaam do hain: har user ki ek had (login pe 5 baar / minute, baaki API pe 100 / minute), aur had paar ho to 429 ke saath "kitni der baad aao" (Retry-After). Limiter har request ke aage baitha hai, isliye ~1 ms me haan ya na bolna chahiye. 10 server hon tab bhi user ki ginti ek hi jagah honi chahiye, aur limiter gire to site nahi girni chahiye. 1 crore user hain, sabse bheed ke waqt ~10,000 request har second. Har user ke liye sirf 2 chhote number rakhne hain, to kul ~500 MB banta hai. Matlab dikkat jagah ki nahi, speed ki hai, isliye aage RAM wala Redis aayega.
+**Kaam:** do hain: har user ki ek had (login pe 5 baar / minute, baaki API pe 100 / minute), aur had paar ho to 429 ke saath "kitni der baad aao" (Retry-After).
+
+**Sabse upar:** limiter har request ke aage baitha hai, isliye ~1 ms me haan ya na bolna chahiye. 10 server hon tab bhi user ki ginti ek hi jagah honi chahiye, aur limiter gire to site nahi girni chahiye.
+
+**Numbers:** 1 crore user hain, sabse bheed ke waqt ~10,000 request har second. Har user ke liye sirf 2 chhote number rakhne hain, to kul ~500 MB banta hai. Matlab dikkat jagah ki nahi, speed ki hai, isliye aage RAM wala Redis aayega.
 
 **Maan lo tujhe kisi aur ne 429 diya:** Retry-After maano, aur ruk-ruk ke dobara bhejo (backoff + jitter).
 
@@ -64,11 +68,18 @@ Wahi bot har minute wapas aata hai. Isliye har 429 ki khabar **KAFKA** me jaati 
 
 **8. USERID + LOGIN PE DO HAD**
 
-Ek naya bot leak hui password list leke 1,000 alag account pe 4-4 password try karta hai (credential stuffing). Har account pe sirf 4, to account wali had kabhi nahi lagti. Isliye IP pe bhi had jodi, par office ke 1,000 log ek IP pe the, sab atak gaye. Isliye login ke baad had **USERID** pe lagti hai, jo JWT se milta hai. Login pe do had hain: IP pe dheeli (500 / min), taaki office aaram se login kare, aur account pe kadi (5 / min), taaki password guess karne wala ruke.
+Ek naya bot leak hui password list leke 1,000 alag account pe 4-4 password try karta hai, kai IP se (credential stuffing). Humne IP pe had lagayi, par office ke 1,000 log ek IP pe the, poora office atak gaya.
 
-Humne kya socha aur kya tay kiya (login pe): pehle login pe IP ki had lagayi thi, par dikkat ye nikli ki office me kitne log hain ye pata nahi (100 bhi ho sakte, TCS jaise lakh bhi). Had kadi rakho to asli log atakte, dheeli rakho to bot nikal jaata. Isliye tay kiya: IP pe had nahi (ya bahut dheeli). Asli deewar MFA / passkey, kyunki password mil bhi gaya to bina phone ke bekaar. Galat password pe block nahi, CAPTCHA, taaki asli user na atke. Aur cloud / badnaam IP ko WAF pe band kiya. Koi ek perfect hal nahi hai, isliye parat-dar-parat.
+**Login ke BAAD:** had **USERID** pe (JWT se). Har insaan ki apni had, IP ek ho ya hazaar. Office ki dikkat yahin khatam.
 
-**Maan lo login pe password guess (brute force):** koi ek perfect hal nahi. Asli deewar MFA / passkey (password mil bhi gaya to bina phone ke bekaar). Galat password pe block nahi, CAPTCHA, taaki asli user na atke. WAF pe cloud / badnaam IP band (cloud wale apni IP list publish karte hain). IP pe had kamzor nishaan hai, kyunki office ka size pata nahi.
+**Login PE** userId hota hi nahi, to do had: **ACCOUNT** pe kadi (5 / min), taaki ek account pe password guess karne wala ruke. **IP** pe bas bahut dheeli (jaise 500 / min), sirf ek IP se hazaaron ki baadh rokne ke liye. Ye asli deewar nahi, kyunki office me kitne log hain pata nahi (100 bhi, TCS jaise lakh bhi), aur bot kai IP se aata hai.
+
+**Par credential stuffing (har account pe sirf 4, kai IP) in had se nahi rukta.** Asli ilaaj, parat-dar-parat:
+- **MFA / passkey:** password mil bhi gaya, to bina phone ke bekaar.
+- **CAPTCHA:** shaq wali koshish pe CAPTCHA, galat password pe account block nahi, taaki asli user na atke.
+- **WAF:** cloud / badnaam IP band (cloud wale apni IP list publish karte hain).
+
+Ban me bhi yahi: userId pe lamba ban, IP pe chhota.
 
 **AWS pe:** **AWS WAF** lete hain: rules hum likhte hain (kaunsi IP band), chalana AWS ka kaam.
 

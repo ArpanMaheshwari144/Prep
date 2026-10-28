@@ -10,7 +10,7 @@ Ye paise wale designs me chautha design hai: jo [banking](../13_banking_system/1
 se hai, wahan bas ek line + link. Poora sirf wahi jo stock ka apna hai (order book, matching, 9:15 ki bheed).
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
-order book + matching engine -> client_order_id UNIQUE -> paisa / share BLOCK -> ek share ek thread
+order book + matching engine -> (user_id, client_order_id) UNIQUE -> paisa / share BLOCK -> ek share ek thread
 -> log + standby (ack ke baad milaan) -> Kafka trades (kai sunne wale) -> settlement (ulta nahi, PENDING)
 -> Price Service + Redis pub/sub + WebSocket
 
@@ -93,13 +93,15 @@ Ya to chaaron badlein ya koi nahi (ACID), ye SQL ka seedha kaam hai. Paisa aur s
 sakte, to NoSQL ki "thodi der baad sahi" chal hi nahi sakti. Isliye SQL. (Order book DB me nahi, RAM me hai,
 wo kadam 4 me.)
 
+**AWS pe:** SQL (Postgres) AWS ka **RDS** lete hain: machine, backup, copy AWS sambhalta hai, hum bas table aur query.
+
 Dikkat: Arpan ne "Buy" dabaya, network atka, app ne dobara bheja (ya do baar tap). Order book me Arpan ke do
 order lag gaye, 20 share kharid liye gaye, jabki use 10 chahiye the.
 
 ### Kadam 2: ek tap, ek order ([banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) wali key)
 
 App har order ke saath apni ek id bhejta hai: `client_order_id = A-501`. Orders table me
-`UNIQUE(client_order_id)`.
+`UNIQUE(user_id, client_order_id)`. Sirf client_order_id nahi, kyunki alag users ke app same id bana sakte hain.
 
 ```
 pehla Buy  : A-501 -> table me nahi -> order likho -> order book me
@@ -109,7 +111,7 @@ dobara Buy : A-501 -> pehle se hai  -> "ho chuka", wahi purana order lautao. Boo
 ```mermaid
 flowchart LR
     U["Arpan: Buy (A-501)"] --> O["Order Service"]
-    O -- "UNIQUE client_order_id" --> T[("Orders table")]
+    O -- "UNIQUE (user_id, client_order_id)" --> T[("Orders table")]
     O -- "sirf pehli baar" --> M["Matching engine"]
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -297,6 +299,8 @@ Kafka hi kyun: dikkat thi "ek baat, kai sunne wale, aur bolne wala ruke nahi". K
 likha, sab apni raftaar se padhte, padhne se khabar mitti nahi. Ye [banking kadam 6](../13_banking_system/13_banking_system.md#kadam-6-sms-service-giri-outbox) / Kafka file ka **outbox**
 hi hai, bas outbox table ki jagah engine ka apna log.
 
+**AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker, copy, gira to naya leader, ye AWS sambhalta hai. Topic aur partition hum tay karte hain.
+
 Par settlement worker ne S-88 uthaya. Arpan ka paisa wallet DB me, share portfolio DB me. Paisa kat gaya, aur
 share likhne se pehle portfolio DB band ho gaya. Arpan ke 35,000 gaye, share aaye nahi.
 
@@ -383,12 +387,14 @@ Bhaav ko disk pe pakka rakhne ki zaroorat nahi, bas tez pahunche. Redis pub/sub 
 rakhta. Sauda (Kadam 6) khona mana tha, isliye wahan Kafka. Bhaav kho sakta hai, isliye yahan Redis. Faisla
 is baat se: khabar khona chalega ya nahi.
 
+**AWS pe:** Redis pub/sub ke liye AWS ka **ElastiCache** (machine aur copy AWS sambhalta). WebSocket server hum chalate hain.
+
 ---
 
 ## Wrap: 30 sec me poora design
 
 ```
-Order Service: client_order_id UNIQUE (dohra nahi) + paisa / share BLOCK ek query me. Matching engine: har
+Order Service: (user_id, client_order_id) UNIQUE (dohra nahi) + paisa / share BLOCK ek query me. Matching engine: har
 share ki ek line, ek thread, RAM me order book (pehle aaya pehle mila, lock nahi). Har order pehle log +
 standby ko, ack ke baad milaan; primary gira to standby (ek waqt ek hi, snapshot). Sauda log me -> relay ->
 Kafka trades -> settlement (sauda ulta nahi, PENDING + dobara, trade_id se ek baar), notification, audit,

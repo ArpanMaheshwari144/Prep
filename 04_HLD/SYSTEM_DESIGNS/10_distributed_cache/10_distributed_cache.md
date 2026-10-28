@@ -89,7 +89,7 @@ hain, to DB ka bojh 10 guna kam ho gaya.
 
 **Maan lo jo key DB me hai hi nahi, use koi bot baar-baar maange:** har baar MISS, har baar DB. Ilaaj: "ye key nahi hai" bhi cache me 1-2 minute ke liye rakh do.
 
-**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
+**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain. Sirf USE karna ho to ElastiCache; ye design us dabbe ke andar ka hai (copy, Sentinel hum khud samajh rahe hain).
 
 Par cache machine ki RAM sirf 64 GB hai, aur roz naye offer, naye user, naye cart judte ja rahe hain.
 Dopahar tak RAM bhar gayi. Ab nayi key rakhni hai, to purani me se kaunsi hatayein?
@@ -238,7 +238,7 @@ chalta, cache me chalta hai.
 **Kaun tay karega ki machine 7 sach me mari:** kabhi network ek pal ke liye atka, aur kisi ek ne galti se "mar
 gayi" maan liya, to bina wajah copy ko main bana diya. Phir ek hi hisse ki do main ban jaati hain. Isliye 3
 chowkidar (Redis Sentinel) machine 7 pe nazar rakhte hain, aur 3 me se 2 "haan, mari" bolein tabhi copy main
-banti hai. Yahi **quorum** hai, jo URL me bhi tha.
+banti hai. Ye bhi "zyada log maane" (majority) wali soch hai, par URL ka R/W **quorum** alag cheez hai.
 
 Ab machine marne se kuch nahi girta. Par Ravi ne app me apna naam "Ravi" se "Ravi Kumar" kiya. DB me naya naam
 aa gaya, par cache me purana "Ravi" pada hai, aur 1 ghante tak sabko purana hi dikh raha hai.

@@ -35,7 +35,8 @@ Click karke wahi kadam: [banking kadam 3 (key)](../13_banking_system/13_banking_
 ```
 1. movie / show dekhna, seat map dekhna
 2. seat chuno -> pay karo -> ticket pakka
-scope ke bahar: refund, review, recommendation
+scope ke bahar: user ka maanga hua refund (cancel karke paisa wapas), review, recommendation
+andar: booking fail hui to kata hua paisa apne aap wapas (auto-reversal)
 ```
 
 ## 2. NFR: kaisa chalna chahiye
@@ -80,7 +81,7 @@ Yahan sahi hona hi dil hai. Pay hua to seat BOOKED + booking row + payment row, 
 Kai row ka ek saath badalna (transaction) SQL ka seedha kaam hai; NoSQL me ye mushkil ya seemit. Data chhota
 hai, NoSQL ki taakat (bahut bada data, bahut likhai) chahiye hi nahi. Isliye SQL.
 
-**Maan lo SQL primary gira:** sync copy (Multi-AZ) ~30-120 sec me primary banti. Booking = paisa, isliye copy sync. App wahi key se dobara bheje (idempotent).
+**Booking ka DB:** RDS Multi-AZ, copy sync rakhi kyunki booking = paisa (sync rakhna hamara faisla, failover AWS ka kaam).
 
 Dikkat: Ravi ne bhi usi second me A1 dabaya. Dono ne padha "FREE", dono ne likha "BOOKED". Dono ko ticket,
 ek seat pe do log. Ye banking ke ["do kataai ek saath, balance -400"](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) jaisi hi dikkat hai: pehle padho, phir
@@ -230,7 +231,7 @@ Bheed ko DB tak pahunchne se pehle hi rokna padta hai.
 Ek aadmi 50 tab khol ke line me 50 baar lage? Token user ke login se juda hai, ek user ek token. Bot ki bheed
 ke liye wahi rate limiter jo [rate limiter file](../02_rate_limiter/02_rate_limiter.md) me hai.
 
-**Redis primary + copy dono gaye, to?** Pehle ek baat pakki: dil (ek seat ek hi ticket) SQL me hai, Redis me
+**Maan lo Redis aur uski copy dono gaye:** Pehle ek baat pakki: dil (ek seat ek hi ticket) SQL me hai, Redis me
 nahi. HOLD, BOOKED, payment sab SQL me. Redis poora gaya to system dheema ya ruka ho sakta, galat nahi.
 
 ```

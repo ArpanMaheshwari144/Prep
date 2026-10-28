@@ -188,7 +188,7 @@ Har server ki range alag hai, isliye do server kabhi same number nahi denge, aur
 bhi nahi padta. App 1 beech me gir gaya to uske bache number (jaise 501 - 1,000) bekaar chale jaate hain. Koi
 dikkat nahi, 3.5 lakh crore number hain.
 
-**Maan lo counter gira:** counter ki copy. Tab tak har app ki range ke bache number kaam chala lete hain.
+**Maan lo counter thodi der na mile:** har app ke paas apni range ke bache number hain, unse kaam chalta rehta hai.
 
 **Maan lo duniya bhar se log aa rahe:** Route 53 user ko uske paas wale region pe bhejta hai (geo-routing).
 

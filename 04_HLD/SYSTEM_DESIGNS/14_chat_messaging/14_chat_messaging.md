@@ -482,8 +482,6 @@ Ravi Arpan ki chat kholta hai to Redis se poochhta hai: entry hai to "online", n
 Har badlaav sabko kyun nahi batate? Arpan ke 500 contact hain. Uska har online / offline sab 500 ko bhejte,
 to 2 crore log x 500 = bahut bheed. Isliye online sirf tab poochho jab koi Arpan ki chat kholta hai.
 
-Redis gira to? Redis ki copy (replica) hai. Koi dabba akela nahi.
-
 ```mermaid
 flowchart LR
     A["Arpan app"] -- "har 30 sec: zinda hoon" --> S["Chat server"]

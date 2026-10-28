@@ -71,7 +71,8 @@ se padhte hain. Par line kaisi ho? Ye asli choice hai:
 ```
 SERVER KI MEMORY ME LIST  -> server restart = saari khabar gayab. NFR "kabhi na khoye" toota
 RABBITMQ (aam queue)      -> khabar ek ne padhi to line se nikal gayi (mit gayi).
-                             SMS ne padhi to Fraud ko mili hi nahi. Har service ke liye alag line banao
+                             SMS ne padhi to Fraud ko mili hi nahi. Exchange se har service ki apni
+                             queue ban jaati hai, par padhne ke baad message hat jaata hai, replay nahi
 KAFKA (topic, disk pe)    -> khabar disk pe likhi jaati hai, padhne se mit-ti NAHI.
                              SMS, Fraud, Analytics teeno wahi khabar padhte hain, apni-apni jagah se
 ```

@@ -2,7 +2,11 @@
 
 ### Shuru
 
-Kaam do hi hain: lamba link do to 7 akshar ka chhota code milta hai, aur koi chhota link khole to use asli link pe bhej dete hain. System tez chalna chahiye, hamesha chalna chahiye, aur do logon ko kabhi ek hi code nahi milna chahiye. Har second 1,000 link bante hain aur 1 lakh khulte hain. Kholna banane se 100 guna zyada hai, isliye aage CACHE lagega. 5 saal me data 90 TB ho jaata hai, jo ek machine me nahi aata, isliye aage SHARD lagega.
+**Kaam:** do hi hain: lamba link do to 7 akshar ka chhota code milta hai, aur koi chhota link khole to use asli link pe bhej dete hain.
+
+**Sabse upar (NFR):** system tez chalna chahiye, hamesha chalna chahiye, aur do logon ko kabhi ek hi code nahi milna chahiye.
+
+**Numbers:** har second 1,000 link bante hain aur 1 lakh khulte hain. Kholna banane se 100 guna zyada hai, isliye aage CACHE lagega. 5 saal me data 90 TB ho jaata hai, jo ek machine me nahi aata, isliye aage SHARD lagega.
 
 &nbsp;
 
@@ -26,7 +30,17 @@ Har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna dheema h
 
 **Maan lo lock wali pehli request beech me MAR gayi:** baaki 999 Redis dekhte rehte hain, khaali milta hai, ruke rehte hain. 2 second baad lock ki umar khatam, lock apne aap khul jaata hai. Baaki me se jo pehle pahuncha wo lock leta hai, DB jaata hai, Redis bharta hai, aur baaki sabko mil jaata hai. User ko 2 second der hui, par DB pe bheed phir bhi nahi aayi.
 
-**Maan lo lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha):** baaki 999 poore 5 second ruke rehte hain. Lock ne DB bachaya, par users ruk gaye. Ilaaj SOFT / HARD umar: key ko kabhi poora khaali hone hi mat do. SOFT 1 ghanta, HARD 1 din. 1 ghante baad key "thodi purani" maani jaati hai, par Redis me padi rehti hai. Request aayi to purana link turant de do, aur saath me ek request (lock ke saath) peeche se DB se naya laake Redis me rakh deti hai. Wo dheemi ho ya mar jaaye, kisi user ko farak nahi, kyunki link badalta nahi to purana bhi sahi hai. HARD (1 din) bas isliye ki bahut purana maal hamesha na pada rahe. Lock DB ko bachata hai, soft / hard users ko. DB call pe 500 ms ka timeout.
+**Maan lo lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha):** baaki 999 poore 5 second ruke rehte hain. Lock ne DB bachaya, par users ruk gaye.
+
+**Ilaaj SOFT / HARD umar:** key ko kabhi poora khaali hone hi mat do. SOFT 1 ghanta, HARD 1 din.
+
+**SOFT umar (1 ghanta):** 1 ghante baad key "thodi purani" maani jaati hai, par Redis me padi rehti hai. Request aayi to purana link turant de do, aur saath me ek request (lock ke saath) peeche se DB se naya laake Redis me rakh deti hai.
+
+**Purana kyun theek:** wo dheemi ho ya mar jaaye, kisi user ko farak nahi, kyunki link badalta nahi to purana bhi sahi hai.
+
+**HARD umar (1 din):** bas isliye ki bahut purana maal hamesha na pada rahe.
+
+**Kaun kisko bachata:** lock DB ko bachata hai, soft / hard users ko. DB call pe 500 ms ka timeout.
 
 &nbsp;
 
@@ -36,7 +50,7 @@ Ek app server itna bojh nahi jhelta, aur wo gira to poori site band. Isliye kai 
 
 **Maan lo duniya bhar se log aaye:** Route 53 har user ko uske paas wale region pe bhejta hai.
 
-**Maan lo traffic 10 guna ho gaya:** app server badhao, garam link Redis me rakho, Cassandra ki machine badhao.
+**Maan lo traffic 10 guna ho gaya:** app server badhao, garam link Redis me rakho, DB ki machine badhao.
 
 &nbsp;
 
@@ -51,6 +65,8 @@ Ek app server itna bojh nahi jhelta, aur wo gira to poori site band. Isliye kai 
 Machine 10 se 11 ki to % 11 se lagbhag har link ki jagah badal gayi, aur link 404 dene lage. Isliye RING (consistent hashing): nayi machine aaye to sirf ek chhota hissa hilta hai, baaki apni jagah.
 
 &nbsp;
+
+**DB kaunsa: SQL ya NoSQL?**
 
 DB kaunsa lein? Data bas code se link hai. Join ya transaction nahi chahiye, par 90 TB baantna hai. SQL me ye sab haath se karna padta, isliye NoSQL liya: CASSANDRA (AWS pe ho to DynamoDB).
 

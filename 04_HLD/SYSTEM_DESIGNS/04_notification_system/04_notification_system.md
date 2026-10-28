@@ -172,10 +172,11 @@ pehle mar gaya. Naya worker dekhega "bhej diya" aur chhod dega, Arpan ka email k
 pehle `BHEJ_RAHA` likho, uspe 60 sec ki umar (TTL), aur bhejne ke baad hi `BHEJ_DIYA`. Worker beech me mara to
 60 sec baad `BHEJ_RAHA` mit jaata hai aur naya worker dobara bhej deta hai. Kabhi-kabhar do email ho sakte
 hain, par email khoyega nahi. Khona dohraav se bura hai.
+Aur aakhri `BHEJ_DIYA` wali key ki umar 1 din rakhte hain, kyunki Kafka wahi khabar baad me dobara de sakta
+hai (rebalance / retry). Umar 60 sec hoti to tab tak key mit chuki hoti aur email dobara chala jaata.
 
-Redis hi mar gaya to? Uski replica (copy) primary ban jaati hai (Sentinel / ElastiCache Multi-AZ). Copy
-thodi peeche chalti hai, to aakhri kuch key shayad pahunchi na hon, aur un khabron ke do message ja
-sakte hain.
+**Maan lo Redis ki aakhri key copy tak nahi pahunchi:** copy async hai (thodi peeche chalti hai), to aakhri
+kuch key chhoot sakti hain, aur un khabron ka ek message do baar ja sakta hai. Khoya koi nahi.
 Aur dono gaye to bhi worker bhejna band nahi karte: do message chalenge, khoya hua OTP nahi.
 
 **Maan lo poochhe Redis me "sirf pehla likh paata, 60 sec umar" kaise (khud mat bolo, poochhe tabhi):**

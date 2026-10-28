@@ -138,7 +138,8 @@ hai, to seedha S3 kyun nahi?
 
 Par S3 kisi ko bhi file daalne nahi deta, warna koi bhi kachra bhar dega. Isliye server ek **parchi** deta hai,
 ek khaas link, jo sirf 10 minute chalta hai, sirf is ek file ke liye, aur sirf 5 GB tak ka. Isko **presigned URL**
-kehte hain.
+kehte hain. Size ki shart bhi parchi me sign hoti hai (S3 POST policy ka content-length-range), warna akeli PUT
+parchi size nahi rokti.
 
 ```mermaid
 flowchart LR
@@ -160,6 +161,9 @@ flowchart LR
 Ab hamara server sirf chhoti-chhoti baatein karta hai: parchi dena, aur "pahunch gayi" sunna. 5 GB ka ek byte bhi
 uske paas se nahi guzarta. Server halka rehta hai aur baaki sabke upload chalte rehte hain. S3 badi file ke liye
 hi bana hai.
+
+Ab file seedha S3 me hai, to Worker Validator ko file nahi bhejta. Wo S3 ka pata (ya padhne ki parchi, presigned
+GET) deta hai, aur Validator wahan se file padhta hai.
 
 **Maan lo ek hi file do baar daali:** file ka hash (SHA-256). Pehle se hai to dobara store nahi. Ye sirf usi user ke andar, warna doosre ki file ka pata chal jaata.
 
@@ -243,6 +247,8 @@ saare nahi hain -> FAILED (adhoore tukde S3 ka 1 din wala niyam mita dega)
 Ye aakhri jaal hai, agar S3 ki khabar bhi kabhi chhoot jaaye. Sweeper beech me mara to agli baar wahi file phir
 uthata hai, kyunki haal DB me hai, sweeper ke dimaag me nahi. "Jodo" se pehle dekhta hai ki file ban to nahi
 gayi, ban chuki ho to dobara nahi jodta.
+
+**AWS pe:** S3 ka event (file pahunchi to khabar) aur lifecycle rule (adhoore tukde X din me saaf) **AWS khud** chalata hai. Worker aur sweeper (atke hue record saaf karna) **hum** chalate hain.
 
 Par 31 March aaya. 2 lakh log file daal ke har 2 second app refresh kar rahe hain: "T-101 ka haal?". Har baar DB
 se poochha ja raha hai. Likhna kam hai, par padhna itna zyada ki DB ghutno pe aa gaya.

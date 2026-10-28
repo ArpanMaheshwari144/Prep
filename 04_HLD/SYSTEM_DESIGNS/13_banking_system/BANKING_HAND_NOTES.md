@@ -2,7 +2,11 @@
 
 ### Shuru
 
-Kaam: account me paisa daalo, nikaalo, balance aur history dekho, aur ek account se doosre me transfer, dono isi bank me. Doosra bank, loan, card scope ke bahar hain, ye pehle hi poochh ke hata do. Sabse upar SAHI hona hai: paisa na gum ho, na bane, har paisa trace ho, dobara bhejne pe dobara na kate, aur balance dekhna tez ho. 50 lakh account aur roz 1 crore transaction hain, yaani ~120 likhai har second. Ye ek Postgres ki taakat ka dasva hissa hai. Matlab yahan bheed badi dikkat nahi, sahi hona badi dikkat hai, isliye shard nahi, ek SQL DB.
+**Kaam:** account me paisa daalo, nikaalo, balance aur history dekho, aur ek account se doosre me transfer, dono isi bank me. Doosra bank, loan, card scope ke bahar hain, ye pehle hi poochh ke hata do.
+
+**Sabse upar:** SAHI hona hai: paisa na gum ho, na bane, har paisa trace ho, dobara bhejne pe dobara na kate, aur balance dekhna tez ho.
+
+**Numbers:** 50 lakh account aur roz 1 crore transaction hain, yaani ~120 likhai har second. Ye bahut kam hai, ek Postgres hazaaron likhai / second aaraam se karta hai. Matlab yahan bheed badi dikkat nahi, sahi hona badi dikkat hai, isliye shard nahi, ek SQL DB.
 
 &nbsp;
 
@@ -16,13 +20,21 @@ Sabse seedha: ek Banking Service aur ek SQL DB. Arpan ne Ravi ko 500 bheje, to d
 
 **2. TRANSACTION (WAL)**
 
-Pehla UPDATE hua, aur doosre se pehle server gir gaya. Arpan ke 500 kate, Ravi ko kuch nahi mila. Isliye dono UPDATE ek **TRANSACTION** me: ya dono, ya koi nahi. DB ko ulta karna **WAL** se pata chalta hai. DB har badlaav pehle log me likhta hai, restart pe jo COMMIT nahi hua use ulta kar deta hai. Saga nahi lagaya, kyunki saga tab chahiye jab paisa do alag DB me ho, aur yahan dono account ek hi DB me hain.
+Pehla UPDATE hua, aur doosre se pehle server gir gaya. Arpan ke 500 kate, Ravi ko kuch nahi mila. Isliye dono UPDATE ek **TRANSACTION** me: ya dono, ya koi nahi. DB ko ulta karna **WAL** se pata chalta hai. DB har badlaav pehle log me likhta hai, restart pe jiska COMMIT ka record log me nahi, wo badlaav kabhi dikhta hi nahi. Saga nahi lagaya, kyunki saga tab chahiye jab paisa do alag DB me ho, aur yahan dono account ek hi DB me hain.
 
 &nbsp;
 
 **3. IDEMPOTENCY KEY**
 
-Transfer ho gaya, par jawab aane se pehle metro me network gaya. App ne dobara bheja, aur 1000 kat gaye. Isliye **IDEMPOTENCY KEY**: app Send wali screen khulte hi ek id (k-77) banati hai, aur dobara bhejne pe bhi wahi id jaati hai (`POST /transfers` + Idempotency-Key header). Server use usi transaction me UNIQUE wali table me likhta hai. Dobara aaya to INSERT fail, paisa nahi katta, purana jawab wapas. UNIQUE isliye ki "pehle dekho phir likho" me do retry ek saath "nahi hai" dekh lete. Amount ke hisaab se block nahi, kyunki Arpan sach me do baar 500 bhej sakta hai.
+Transfer ho gaya, par jawab aane se pehle metro me network gaya. App ne dobara bheja, aur 1000 kat gaye. Isliye **IDEMPOTENCY KEY**.
+
+**Key kab banti:** app Send wali screen khulte hi ek id (k-77) banati hai, aur dobara bhejne pe bhi wahi id jaati hai (`POST /transfers` + Idempotency-Key header).
+
+**Server kya karta:** server use usi transaction me UNIQUE wali table me likhta hai. Dobara aaya to INSERT fail, paisa nahi katta, purana jawab wapas.
+
+**UNIQUE kyun:** "pehle dekho phir likho" me do retry ek saath "nahi hai" dekh lete.
+
+**Amount se kyun nahi:** amount ke hisaab se block nahi, kyunki Arpan sach me do baar 500 bhej sakta hai.
 
 **Maan lo wahi key, amount alag aaya:** key ke saath request ka hash rakho, mel nahi khaata to 422.
 
@@ -36,7 +48,17 @@ Arpan ke paas 600 the. Netflix ka 500 auto-debit aur 500 ka UPI ek saath aaye. D
 
 **5. LEDGER (DOUBLE-ENTRY)**
 
-Ravi ne complaint daali "500 nahi mile", aur bank ko saboot dena tha ki 500 kab, kahan se, kahan gaye. DB me sirf aakhri balance tha, kyunki UPDATE purana number mita deta hai, aur logs kuch din me mit jaate hain. Isliye **LEDGER (khaata)**, **DOUBLE-ENTRY** me, usi transaction me: har transfer ki do line, -500 Arpan, +500 Ravi. Balance column UPDATE hota hai, par ledger ek alag table hai jo kabhi badli nahi jaati, usme sirf nayi line judti hai (append). Galti ho to ulti line daalo, mitao nahi. Poore khaate ka jod hamesha 0 aana chahiye. Khaata hi sach hai, balance column bas tez padhne ki copy hai. Ledger isi DB ki ek table hai, poori DB nahi. Isi ek kitaab se app ki history aur PDF statement, raat ka milaan, aur RBI / audit ki report banti hai (RBI ke format me, ledger se). Poori DB ki copy kisi ko nahi jaati.
+Ravi ne complaint daali "500 nahi mile", aur bank ko saboot dena tha ki 500 kab, kahan se, kahan gaye.
+
+**Kyun:** DB me sirf aakhri balance tha, kyunki UPDATE purana number mita deta hai, aur logs kuch din me mit jaate hain.
+
+**Double-entry:** isliye **LEDGER (khaata)**, **DOUBLE-ENTRY** me, usi transaction me: har transfer ki do line, -500 Arpan, +500 Ravi. Poore khaate ka jod hamesha 0 aana chahiye.
+
+**Append-only:** balance column UPDATE hota hai, par ledger ek alag table hai jo kabhi badli nahi jaati, usme sirf nayi line judti hai (append). Galti ho to ulti line daalo, mitao nahi.
+
+**Sach kaun:** khaata hi sach hai, balance column bas tez padhne ki copy hai. Ledger isi DB ki ek table hai, poori DB nahi.
+
+**Kis kaam aata:** isi ek kitaab se app ki history aur PDF statement, raat ka milaan, aur RBI / audit ki report banti hai (RBI ke format me, ledger se). Poori DB ki copy kisi ko nahi jaati.
 
 &nbsp;
 

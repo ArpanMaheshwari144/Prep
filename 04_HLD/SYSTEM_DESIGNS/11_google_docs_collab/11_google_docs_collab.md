@@ -58,8 +58,6 @@ flowchart LR
 
 Ek aadmi ke liye ye chal jaata hai.
 
-**Maan lo app ki JS / CSS kahan se aaye:** CDN.
-
 Par Arpan aur Ravi dono ne doc khola. Text tha "HELLO". Arpan ne aage "WORLD" joda aur save kiya. Ravi ki
 screen pe abhi bhi purana "HELLO" tha. Usne beech me "!" joda aur Arpan ke baad save kiya. Ab DB me Ravi ka
 poora text hai, "HEL!LO". Arpan ka "WORLD" mit gaya, aur kisi ko error bhi nahi aaya.
@@ -244,10 +242,11 @@ Ab owner pe sirf editor hain, jo kam hote hain. Viewers saare servers me bant ga
 
 Doosra kyun nahi: **Kafka**. Kafka operation ko disk pe likhta hai aur baad me dobara padhne deta hai. Yahan
 iski zarurat nahi, kyunki har operation pehle se DB ke operation log me hai. Pub/sub sirf "abhi bata do" ka
-kaam karta hai, aur tez hai. Agar kisi viewer ka operation chhoot gaya (v8 ke baad seedha v10 aaya), to uski
-app version ka gap dekh ke beech ke operation server se maang leti hai.
+kaam karta hai, aur tez hai.
 
 **Maan lo viewer ka operation chhoot gaya:** version ka gap dikha (v8 ke baad v10), beech ke operation server se maang lo.
+
+**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
 
 Par har akshar ek operation hai, aur har operation pe DB me ek likhai ho rahi hai. Lakhon log type kar rahe
 hain, to DB pe har second lakhon likhai pad rahi hain. Raat 3 baje alert aaya ki DB baith gaya.
@@ -282,6 +281,8 @@ padti. Join ya transaction ki yahan zarurat hi nahi, sirf jodna hai aur docId se
 
 **API:** GET /docs/{id} (snapshot + baad ke operation).
 
+**AWS pe:** Cassandra AWS ka **Keyspaces** (machine, copy AWS sambhalta), ya EC2 pe khud chalao (tab sab hamara sar-dard).
+
 Par batch ke 100 ms ke operation abhi owner server ki memory me hain. Server ne Arpan ko "mil gaya" (ACK = acknowledgement) bol
 diya tha. Usi pal Server 3 gir gaya. Arpan ki aakhri line na DB me gayi, na kahin aur. Wo line kho gayi.
 
@@ -294,7 +295,9 @@ Dikkat ye thi ki server ne operation sirf apni memory me rakh ke ACK de diya. Il
    `WAIT` command se copy tak pahunchne ka intezaar karte hain). Redis memory me hai, to ye kuch millisecond ka
    kaam hai aur typing nahi rukti.
 2. **Batch ab Redis se Cassandra jaata hai.** Server gira, to buffer Redis me pada hai. Ring pe agla server
-   doc-42 ka naya owner banta hai, buffer se bacha hua kaam utha leta hai.
+   doc-42 ka naya owner banta hai, buffer se bacha hua kaam utha leta hai. Jo operation Cassandra me likh
+   gaya, use Redis buffer se hata dete hain. Naya owner version se pehchanta hai ki kaunse pehle hi likhe ja
+   chuke hain, unhe dobara nahi likhta.
 3. **Arpan ki app bhi apna operation tab tak sambhal ke rakhti hai jab tak ACK na aaye.** ACK nahi aaya to wo
    naye owner ko dobara bhej deti hai.
 

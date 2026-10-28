@@ -2,11 +2,13 @@
 
 ### Shuru
 
-Kaam: 1-to-1 chat aur 500 tak ke group, history server pe, tick (bheja / pahuncha / padha), Ravi offline ho to baad me mile, photo / video, online / last seen. Bahar: E2E encryption, call, lakhon wale broadcast. E2E zaroor poochho, kyunki haan bola to server message padh hi nahi sakta: poora design badal jaata hai.
+**Kaam:** 1-to-1 chat aur 500 tak ke group, history server pe, tick (bheja / pahuncha / padha), Ravi offline ho to baad me mile, photo / video, online / last seen. Bahar: E2E encryption, call, lakhon wale broadcast. E2E zaroor poochho, kyunki haan bola to server message padh hi nahi sakta: poora design badal jaata hai.
+
+**Sabse upar:** turant pahunche (1 sec se kam), kabhi na khoye, chat ke andar kram na bigde, do baar na dikhe.
+
+**Numbers:** 50 crore user, roz ~400 crore message = ~46,000 likhai har second, roz ~1.2 TB. Par asli paimana ye nahi: asli hai ek saath ~2 crore khuli connection, kyunki har khuli connection memory khaati hai.
 
 **Maan lo E2E chahiye:** server pe search khatam, naya member purane message nahi dekh sakta, chaabiyon ka poora system.
-
- Sabse upar: turant pahunche (1 sec se kam), kabhi na khoye, chat ke andar kram na bigde, do baar na dikhe. 50 crore user, roz ~400 crore message = ~46,000 likhai har second, roz ~1.2 TB. Par asli paimana ye nahi: asli hai ek saath ~2 crore khuli connection, kyunki har khuli connection memory khaati hai.
 
 &nbsp;
 
@@ -48,7 +50,7 @@ Isliye **PEHLE DB ME LIKHO, PHIR BHEJO**: pehle bhejte aur DB se pehle girte to 
 
 Wapas juda to app bole "mere paas 41 tak hai" (`GET /messages?chatId=&after=41`), server 42 se aage bheje.
 
-**Maan lo Ravi ka server gira:** message DB me hai, Ravi naye server se juda, nayi Redis entry likhi, aur "41 ke baad sab do".
+**Maan lo Ravi ka server gira:** message DB me pakka hai, Ravi naye server se judta hai aur "41 ke baad sab do".
 
 Par ab har message DB me jaata hai: roz 1.2 TB, 46,000 likhai har second.
 
@@ -98,7 +100,7 @@ Par Arpan ne 200 MB ka video bheja.
 
 **10. VIDEO S3**
 
-Video chat server aur Cassandra se gaya, baaki sab atak gaye. Isliye app video seedha **S3** me (presigned URL, 10 min ki chaabi), message me sirf link. Ravi tap kare to **CDN** se
+Video chat server aur Cassandra se gaya, baaki sab atak gaye. Isliye app video seedha **S3** me (presigned URL, 10 min ki chaabi), message me sirf link. Ravi tap kare to video **CDN** se aata hai, S3 ya server se nahi.
 
 **AWS pe:** video **S3** me (AWS rakhta, copy bhi), aur log tak **CloudFront** (AWS ka CDN) se paas wali jagah se.
 

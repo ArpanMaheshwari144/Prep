@@ -30,13 +30,25 @@ PSP 30 sec chup raha. "FAILED" dikhate to Arpan dobara daalta aur 4000 kat jaate
 
 **3. CIRCUIT BREAKER + DOOSRA PSP**
 
-PSP-1 poora band hai. **Breaker** ka matlab: 1 min me 50% call fail hui to PSP-1 ko call hi band, 30 sec baad 1-2 call try karo. (Ye rate limiter wala fail-open nahi hai, yahan matlab PSP ko call rokna hai.) Naye top-up **PSP-2** se jaate hain. Par jo payment PSP-1 pe PENDING atka hai, wo **PSP-2 pe dobara nahi** jaata, kyunki ho sakta hai PSP-1 ne paisa kaat liya ho. Wo PSP-1 ke jawab se hi pakka hoga.
+PSP-1 poora band hai.
+
+**Breaker:** iska matlab: 1 min me 50% call fail hui to PSP-1 ko call hi band, 30 sec baad 1-2 call try karo. (Ye rate limiter wala fail-open nahi hai, yahan matlab PSP ko call rokna hai.)
+
+**Doosra PSP:** naye top-up **PSP-2** se jaate hain.
+
+**PENDING wala nahi:** par jo payment PSP-1 pe PENDING atka hai, wo **PSP-2 pe dobara nahi** jaata, kyunki ho sakta hai PSP-1 ne paisa kaat liya ho. Wo PSP-1 ke jawab se hi pakka hoga.
 
 &nbsp;
 
 **4. INITIATED PEHLE**
 
-PSP ko call ke beech hamara server gira, to restart pe yaad nahi ki call gayi ya nahi. Isliye call se **pehle** DB me `t-50 = INITIATED` likho aur COMMIT karo. Call se pehle gira, to DB me kuch nahi hai, dobara bhejo. Baad me gira, to INITIATED dikhta hai aur pata hai kiska pata karna hai. t-50 hi PSP ke liye idempotency key hai.
+PSP ko call ke beech hamara server gira, to restart pe yaad nahi ki call gayi ya nahi. Isliye call se **pehle** DB me `t-50 = INITIATED` likho aur COMMIT karo.
+
+**INITIATED likhne se pehle gira:** DB me kuch nahi, paisa kahin nahi gaya, app dobara bheje (wahi key).
+
+**INITIATED likhne ke baad, PSP call se pehle / beech me gira:** row INITIATED pe padi hai, poochne wala job use uthata hai aur PSP se poochh ke aage badhata hai.
+
+t-50 hi PSP ke liye idempotency key hai.
 
 &nbsp;
 
@@ -76,7 +88,15 @@ Diwali pe 3000 payment / sec aaye, to kai service machine aur aage LB. Dukaan ki
 
 **8. SHARD BY ACCOUNT (hamare DB ke tukde, bank nahi)**
 
-Wallet sab **hamare** DB me hain. Diwali pe 3000 likhai / sec aur saal bhar me ~1000 crore line, ek primary nahi jhel paaya. Banking me 120 / sec thi, isliye wahan shard nahi kiya tha. Isliye hamare DB ko **account id** se tukdon me baanta: Arpan ka wallet, ledger aur payment, sab ek shard pe. Date se nahi baanta, warna aaj ki saari likhai ek shard pe girti. Pench: Arpan shard 1 pe hai, dukaan shard 3 pe, to ek transaction nahi chalega, phir se saga.
+Wallet sab **hamare** DB me hain.
+
+**Dikkat:** Diwali pe 3000 likhai / sec aur saal bhar me ~1000 crore line, ek primary nahi jhel paaya. Banking me 120 / sec thi, isliye wahan shard nahi kiya tha.
+
+**Account id se:** isliye hamare DB ko **account id** se tukdon me baanta: Arpan ka wallet, ledger aur payment, sab ek shard pe.
+
+**Date se kyun nahi:** date se nahi baanta, warna aaj ki saari likhai ek shard pe girti.
+
+**Pench:** Arpan shard 1 pe hai, dukaan shard 3 pe, to ek transaction nahi chalega, phir se saga.
 
 &nbsp;
 
