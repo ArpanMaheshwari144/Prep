@@ -62,7 +62,7 @@ Ek DB machine giri to us pe pade link 404 dene lage. Isliye har link ki 3 COPY t
 
 **Maan lo link bana aur dost ko turant 404 mila:** QUORUM. Har link teeno copy pe likha jaata hai, par 3 me se 2 copy se "haan" aate hi aage badh jaate hain. Padhte waqt bhi 2 copy se padhte hain. Isliye likhne wali 2 aur padhne wali 2 me kam se kam ek copy common hoti hai, aur naya link mil jaata hai.
 
-**AWS pe:** Cassandra = Keyspaces ya EC2 pe khud chalao · Redis = ElastiCache · LB = ALB.
+**AWS pe:** in dabbon ko hum khud nahi sambhalte, AWS ki service lete hain: Cassandra = **Keyspaces** (ya EC2 pe khud chalao), Redis = **ElastiCache**, LB = **ALB**. Machine, copy, gira to badalna, ye AWS ka kaam hai.
 
 &nbsp;
 

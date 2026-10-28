@@ -34,7 +34,7 @@ Par ab 200 server hain. Arpan server 5 pe, Ravi server 9 pe.
 
 Server 5 ko pata hi nahi Ravi kahan hai, aur 200 server se poochhna dheema. Isliye **REDIS MAP**: ravi -> server 9 (hotel ka main register). Server gira to entry galat reh jaati, isliye **UMAR (TTL 60 sec)** + app ka har 30 sec **HEARTBEAT**. Kai device = list: ravi -> [server 9 phone, server 14 laptop].
 
-**AWS pe:** Redis = ElastiCache.
+**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine lagana, uski copy rakhna, gira to copy ko aage karna, ye sab AWS ka kaam hai. Hum bas use karte hain.
 
 Par Ravi ka phone band hai, Redis me uski entry hi nahi. "hi" kahan jaaye?
 
