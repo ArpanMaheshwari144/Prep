@@ -2,7 +2,11 @@
 
 ### Shuru
 
-Kaam: 1-to-1 chat aur 500 tak ke group, history server pe, tick (bheja / pahuncha / padha), Ravi offline ho to baad me mile, photo / video, online / last seen. Bahar: E2E encryption, call, lakhon wale broadcast. E2E zaroor poochho, kyunki haan bola to server message padh hi nahi sakta: server pe search khatam, naya member purane message nahi dekh sakta, chaabiyon ka poora system, yaani poora design badal jaata hai. Sabse upar: turant pahunche (1 sec se kam), kabhi na khoye, chat ke andar kram na bigde, do baar na dikhe. 50 crore user, roz ~400 crore message = ~46,000 likhai har second, roz ~1.2 TB. Par asli paimana ye nahi: asli hai ek saath ~2 crore khuli connection, kyunki har khuli connection memory khaati hai.
+Kaam: 1-to-1 chat aur 500 tak ke group, history server pe, tick (bheja / pahuncha / padha), Ravi offline ho to baad me mile, photo / video, online / last seen. Bahar: E2E encryption, call, lakhon wale broadcast. E2E zaroor poochho, kyunki haan bola to server message padh hi nahi sakta: poora design badal jaata hai.
+
+**Maan lo E2E chahiye:** server pe search khatam, naya member purane message nahi dekh sakta, chaabiyon ka poora system.
+
+ Sabse upar: turant pahunche (1 sec se kam), kabhi na khoye, chat ke andar kram na bigde, do baar na dikhe. 50 crore user, roz ~400 crore message = ~46,000 likhai har second, roz ~1.2 TB. Par asli paimana ye nahi: asli hai ek saath ~2 crore khuli connection, kyunki har khuli connection memory khaati hai.
 
 &nbsp;
 
@@ -18,7 +22,9 @@ Par ye connection khuli rehti hai, aur subah 2 crore log ek saath app khol ke ba
 
 Ek server ki memory 2 crore khuli connection nahi jhel paayi. Ek machine ~1 lakh connection, to ~**200 CHAT SERVER** + LB. Aur har connection ko ek thread nahi, kyunki zyadatar khaali baithe rehte hain. **EVENT LOOP** (Netty / Node): kuch hi thread, jis connection pe message aaya sirf use sambhalo.
 
-Chat server khud kuch yaad nahi rakhta (sab DB aur Redis me hai), isliye iski copy (replica) nahi hoti. Server 9 gira to uske 1 lakh log ek hi second me dobara judne aaye, aur us dhakke se baaki server bhi hil gaye. Isliye app ruk-ruk ke jude, har baar thoda zyada ruke (1, 2, 4 sec = **BACKOFF**) + thoda random (**JITTER**), taaki 1 lakh log kai second me phail ke aayein aur LB unhe baaki ~199 server pe baant de. Deploy pe bhi isi wajah se server dheere-dheere khaali karte hain, sab ek saath restart nahi.
+**Maan lo chat server 9 gir gaya:** chat server khud kuch yaad nahi rakhta (sab DB aur Redis me hai), isliye iski copy (replica) nahi hoti. Server 9 gira to uske 1 lakh log ek hi second me dobara judne aaye, aur us dhakke se baaki server bhi hil gaye. Isliye app ruk-ruk ke jude, har baar thoda zyada ruke (1, 2, 4 sec = **BACKOFF**) + thoda random (**JITTER**), taaki 1 lakh log kai second me phail ke aayein aur LB unhe baaki ~199 server pe baant de.
+
+**Maan lo deploy karna hai:** isi wajah se server dheere-dheere khaali karo, sab ek saath restart nahi.
 
 Par ab 200 server hain. Arpan server 5 pe, Ravi server 9 pe.
 
@@ -26,7 +32,9 @@ Par ab 200 server hain. Arpan server 5 pe, Ravi server 9 pe.
 
 **3. REDIS MAP (KAUN KAHAN)**
 
-Server 5 ko pata hi nahi Ravi kahan hai, aur 200 server se poochhna dheema. Isliye **REDIS MAP**: ravi -> server 9 (hotel ka main register). Server gira to entry galat reh jaati, isliye **UMAR (TTL 60 sec)** + app ka har 30 sec **HEARTBEAT**. Kai device = list: ravi -> [server 9 phone, server 14 laptop]. Maan lo Redis hi gir gaya: uski copy (replica) alag zone me hai, wo turant jagah le leti hai. AWS pe ye ElastiCache hai.
+Server 5 ko pata hi nahi Ravi kahan hai, aur 200 server se poochhna dheema. Isliye **REDIS MAP**: ravi -> server 9 (hotel ka main register). Server gira to entry galat reh jaati, isliye **UMAR (TTL 60 sec)** + app ka har 30 sec **HEARTBEAT**. Kai device = list: ravi -> [server 9 phone, server 14 laptop].
+
+**Maan lo Redis hi gir gaya:** uski copy (replica) alag zone me hai, wo turant jagah le leti hai. AWS pe ye ElastiCache hai.
 
 Par Ravi ka phone band hai, Redis me uski entry hi nahi. "hi" kahan jaaye?
 
@@ -34,9 +42,13 @@ Par Ravi ka phone band hai, Redis me uski entry hi nahi. "hi" kahan jaaye?
 
 **4. PEHLE DB, PHIR BHEJO + ACK + PUSH**
 
-Isliye **PEHLE DB ME LIKHO, PHIR BHEJO**: pehle bhejte aur DB se pehle girte to message hamesha ke liye gaya. DB me likh ke **ACK** = ek grey tick. Ack se pehle gira to app khud dobara bhejti hai. Offline ko **PUSH** (FCM / APNs). Maan lo push fail hua: Google / Apple bahar ki service hai, to apna retry + queue. Wapas juda to app bole "mere paas 41 tak hai" (`GET /messages?chatId=&after=41`), server 42 se aage bheje.
+Isliye **PEHLE DB ME LIKHO, PHIR BHEJO**: pehle bhejte aur DB se pehle girte to message hamesha ke liye gaya. DB me likh ke **ACK** = ek grey tick. Ack se pehle gira to app khud dobara bhejti hai. Offline ko **PUSH** (FCM / APNs).
 
-Yahi tab bhi bachata hai jab Ravi ka server gira: message DB me hai, Ravi naye server se juda, nayi Redis entry likhi, aur "41 ke baad sab do".
+**Maan lo push fail hua:** Google / Apple bahar ki service hai, to apna retry + queue.
+
+ Wapas juda to app bole "mere paas 41 tak hai" (`GET /messages?chatId=&after=41`), server 42 se aage bheje.
+
+**Maan lo Ravi ka server gira:** message DB me hai, Ravi naye server se juda, nayi Redis entry likhi, aur "41 ke baad sab do".
 
 Par ab har message DB me jaata hai: roz 1.2 TB, 46,000 likhai har second.
 
@@ -44,7 +56,9 @@ Par ab har message DB me jaata hai: roz 1.2 TB, 46,000 likhai har second.
 
 **5. CASSANDRA (CHAT_ID)**
 
-Ek DB nahi jhel paaya. Message ek baar likha, kabhi badalta nahi, padhai hamesha "is chat ke aakhri 50" ya "41 ke baad". Join / transaction chahiye hi nahi. Isliye **CASSANDRA**, **CHAT_ID** se baanto, taaki ek chat ke saare message ek machine pe number ke kram me rahein. User id se baant-te to ek chat do machine me batt jaati. Paisa / join / search = Cassandra nahi. AWS pe Cassandra = Keyspaces, ya EC2 pe khud chalao.
+Ek DB nahi jhel paaya. Message ek baar likha, kabhi badalta nahi, padhai hamesha "is chat ke aakhri 50" ya "41 ke baad". Join / transaction chahiye hi nahi. Isliye **CASSANDRA**, **CHAT_ID** se baanto, taaki ek chat ke saare message ek machine pe number ke kram me rahein. User id se baant-te to ek chat do machine me batt jaati. Paisa / join / search = Cassandra nahi.
+
+**AWS pe:** Cassandra = Keyspaces, ya EC2 pe khud chalao.
 
 Par server ne DB me likha, ack se pehle gira, app ne dobara bheja.
 
@@ -84,7 +98,9 @@ Par Arpan ne 200 MB ka video bheja.
 
 **10. VIDEO S3**
 
-Video chat server aur Cassandra se gaya, baaki sab atak gaye. Isliye app video seedha **S3** me (presigned URL, 10 min ki chaabi), message me sirf link. Ravi tap kare to **CDN** se (AWS pe S3 + CloudFront).
+Video chat server aur Cassandra se gaya, baaki sab atak gaye. Isliye app video seedha **S3** me (presigned URL, 10 min ki chaabi), message me sirf link. Ravi tap kare to **CDN** se
+
+**AWS pe:** S3 + CloudFront.
 
 Par "Arpan online" kaise dikhe? 2 crore log ka online / offline badalta rehta hai.
 
@@ -92,7 +108,9 @@ Par "Arpan online" kaise dikhe? 2 crore log ka online / offline badalta rehta ha
 
 **11. ONLINE = UMAR WALI ENTRY**
 
-Wahi heartbeat: `online:arpan` 60 sec ki umar ke saath, last_seen har heartbeat pe. 60 sec heartbeat nahi aaya to entry mit gayi = offline. Ravi chat khole tab hi poochho. Har badlaav 500 contacts ko bhejna = bheed. Redis gira to uski copy.
+Wahi heartbeat: `online:arpan` 60 sec ki umar ke saath, last_seen har heartbeat pe. 60 sec heartbeat nahi aaya to entry mit gayi = offline. Ravi chat khole tab hi poochho. Har badlaav 500 contacts ko bhejna = bheed.
+
+**Maan lo Redis gir gaya:** uski copy jagah le leti hai.
 
 &nbsp;
 
@@ -100,7 +118,7 @@ Wahi heartbeat: `online:arpan` 60 sec ki umar ke saath, last_seen har heartbeat 
 
 turant = WebSocket + Redis map · kabhi na khoye = pehle DB, ack, app ka dobara bhejna, push + "aakhri ke baad sab" · server gira = backoff + jitter, LB baaki pe baante · kram = server ka number · do baar nahi = clientMsgId · group = ek baar likho · tick = kahan tak number · video = S3
 
-Chal raha kaise pata: message pahunchne ka p99, har server pe khuli connection, dobara judne ki dar, push fail, alert.
+**Chal raha kaise pata:** message pahunchne ka p99, har server pe khuli connection, dobara judne ki dar, push fail, alert.
 
 
 Poora design (har kadam ka diagram aur "kyun") = [14_chat_messaging.md](14_chat_messaging.md)
