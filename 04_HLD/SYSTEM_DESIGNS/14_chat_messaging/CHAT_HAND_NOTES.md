@@ -58,7 +58,7 @@ Par ab har message DB me jaata hai: roz 1.2 TB, 46,000 likhai har second.
 
 Ek DB nahi jhel paaya. Message ek baar likha, kabhi badalta nahi, padhai hamesha "is chat ke aakhri 50" ya "41 ke baad". Join / transaction chahiye hi nahi. Isliye **CASSANDRA**, **CHAT_ID** se baanto, taaki ek chat ke saare message ek machine pe number ke kram me rahein. User id se baant-te to ek chat do machine me batt jaati. Paisa / join / search = Cassandra nahi.
 
-**AWS pe:** Cassandra = Keyspaces, ya EC2 pe khud chalao.
+**AWS pe:** Cassandra AWS ka **Keyspaces** (machine, copy AWS sambhalta), ya EC2 pe khud chalao (tab sab hamara sar-dard).
 
 Par server ne DB me likha, ack se pehle gira, app ne dobara bheja.
 
@@ -100,7 +100,7 @@ Par Arpan ne 200 MB ka video bheja.
 
 Video chat server aur Cassandra se gaya, baaki sab atak gaye. Isliye app video seedha **S3** me (presigned URL, 10 min ki chaabi), message me sirf link. Ravi tap kare to **CDN** se
 
-**AWS pe:** S3 + CloudFront.
+**AWS pe:** video **S3** me (AWS rakhta, copy bhi), aur log tak **CloudFront** (AWS ka CDN) se paas wali jagah se.
 
 Par "Arpan online" kaise dikhe? 2 crore log ka online / offline badalta rehta hai.
 

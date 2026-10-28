@@ -102,7 +102,7 @@ flowchart LR
 
 **API:** seek(offset) = dobara padhna.
 
-**AWS pe:** MSK (Managed Kafka).
+**AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker, copy, gira to naya leader, ye AWS sambhalta hai. Topic aur partition hum tay karte hain.
 
 Par Diwali sale me har second 5,000 order. Saari khabar ek topic me, aur topic ek hi machine pe. Upar se SMS
 ka ek worker sirf 500 / sec sambhal paata hai. Line lambi hoti ja rahi hai.

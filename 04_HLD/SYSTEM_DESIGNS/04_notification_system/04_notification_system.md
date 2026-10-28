@@ -107,7 +107,7 @@ sirf din me, OTP / order kabhi bhi. Asal me loopholes hain: push / WhatsApp pe k
 schedule kiya tha, der se gaya" bol sakti. Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana,
 isliye Kadam 2 me pasand check.
 
-**AWS pe:** Kafka = MSK.
+**AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker, copy, gira to naya leader, ye AWS sambhalta hai. Topic aur partition hum tay karte hain.
 
 Par Notification Service ek hi line me teeno raaste bhej raha hai. SMS company dheemi hui to uske peeche Arpan
 ka push aur email bhi atak jaata hai.
@@ -181,7 +181,7 @@ Aur dono gaye to bhi worker bhejna band nahi karte: do message chalenge, khoya h
 **Maan lo poochhe Redis me "sirf pehla likh paata, 60 sec umar" kaise (khud mat bolo, poochhe tabhi):**
 `SET 999:email BHEJ_RAHA NX EX 60` (NX = sirf tab likho jab key pehle se na ho, EX 60 = 60 sec ki umar)
 
-**AWS pe:** Redis = ElastiCache.
+**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
 
 Par SMS company ne fail lauta diya. Worker turant dobara bhejta hai, phir fail, phir turant. Wo pehle se
 pareshaan company ko har second dhakka maar raha hai.
@@ -402,7 +402,7 @@ Worker bhejte waqt dono me likh deta hai. Cassandra ka aam tareeka: jitni tarah 
 **Maan lo data 3 saal baad (Tracking DB ~90 TB / saal):** 90 din baad rows sasti jagah (S3) me copy, phir umar
 (TTL) se Cassandra se mitao. Roz wali table chhoti rehti.
 
-**AWS pe:** Tracking (Cassandra) = Amazon Keyspaces (ya EC2 pe khud).
+**AWS pe:** Cassandra AWS ka **Keyspaces** (machine, copy AWS sambhalta), ya EC2 pe khud chalao (tab sab hamara sar-dard).
 
 Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Service ek hi baar me 1 crore
 khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.

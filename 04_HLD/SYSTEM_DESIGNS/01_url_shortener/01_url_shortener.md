@@ -147,7 +147,7 @@ kisi user ko farak nahi. Link badalta nahi, to purana bhi sahi. HARD (1 din) bas
 baar-baar fail ho to bahut purana hamesha na pada rahe. lock (single flight) -> DB ko bachata · soft / hard ->
 users ko bachata, koi ruke hi nahi. DB call pe 500 ms ka timeout.
 
-**AWS pe:** Redis = ElastiCache.
+**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
 
 Par 1 lakh log kholne aa rahe hain, aur unhe sambhalne wala app server abhi bhi ek hi hai. Wo akela ye bojh
 nahi jhelega.

@@ -295,7 +295,7 @@ flowchart LR
 
 **Maan lo CP ya AP poochha:** transfer / balance = CP (galat balance dikhane se mana karna behtar) · SMS / statement = AP (2 sec late chalega).
 
-**AWS pe:** RDS (Postgres) Multi-AZ.
+**AWS pe:** Postgres AWS ka **RDS** lete hain, **Multi-AZ** ke saath: doosri building me sync copy AWS rakhta hai, primary gira to wo khud copy ko primary banata hai. Sync rakhna (paisa hai) hamara faisla tha.
 
 Par salary aate hi sab apna balance aur history dekh rahe hain. Padhna likhne se kahin zyada hai, aur saari
 padhai bhi primary pe ho rahi hai. Primary bhar gaya, aur transfer dheeme ho gaye.
@@ -396,7 +396,7 @@ flowchart LR
 
 **Maan lo tables poochhi:** account (balance) · ledger (sirf INSERT, mahine ke tukde) · idem (UNIQUE) · outbox · snapshot.
 
-**AWS pe:** S3 Object Lock · Athena.
+**AWS pe:** purani lines **S3** me **Object Lock** ke saath (koi badal ya mita na sake), aur kabhi padhna ho to **Athena** se seedha S3 pe query.
 
 ---
 

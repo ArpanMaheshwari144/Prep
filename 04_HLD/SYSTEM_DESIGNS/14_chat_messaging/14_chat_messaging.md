@@ -162,7 +162,7 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**AWS pe:** Redis = ElastiCache.
+**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
 
 Par Ravi ka phone band hai. Redis me Ravi ki koi entry hi nahi. Arpan ka "hi" kahan jaaye? Phone 2 ghante
 baad on hoga, tab use ye message milna chahiye.
@@ -252,7 +252,7 @@ flowchart LR
     style C3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**AWS pe:** Cassandra = Keyspaces / EC2.
+**AWS pe:** Cassandra AWS ka **Keyspaces** (machine, copy AWS sambhalta), ya EC2 pe khud chalao (tab sab hamara sar-dard).
 
 Par server ne DB me likh liya, aur ack bhejne se pehle gira. App ne dobara bheja,
 aur Ravi ko "hi" do baar dikha.
@@ -467,7 +467,7 @@ flowchart LR
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**AWS pe:** video = S3 + CloudFront.
+**AWS pe:** video **S3** me (AWS rakhta, copy bhi), aur log tak **CloudFront** (AWS ka CDN) se paas wali jagah se.
 
 Par Ravi ki app pe "Arpan online" ya "last seen 10:30" kaise dikhe? 2 crore log hain, aur har ek ka online /
 offline badalta rehta hai.

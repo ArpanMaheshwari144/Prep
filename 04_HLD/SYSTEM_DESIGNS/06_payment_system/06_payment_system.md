@@ -80,7 +80,7 @@ ya koi nahi.
 Banking wali hi baat (ACID), SQL ka seedha kaam. Bheed badi dikkat nahi hai, sahi hona badi dikkat hai.
 Isliye SQL (Postgres).
 
-**AWS pe:** RDS (Postgres) Multi-AZ.
+**AWS pe:** Postgres AWS ka **RDS** lete hain, **Multi-AZ** ke saath: doosri building me sync copy AWS rakhta hai, primary gira to wo khud copy ko primary banata hai. Sync rakhna (paisa hai) hamara faisla tha.
 
 ### Kadam 2: bank se wallet me 2000 (PSP)
 
@@ -209,7 +209,7 @@ flowchart LR
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**AWS pe:** SQS / Kafka (webhook baad me sambhalna).
+**AWS pe:** webhook aate hi line me daal do, AWS ka **SQS** (ya Kafka), aur baad me sambhalo. Line AWS chalata hai.
 
 Par Arpan ne dukaan ko 500 bheje, aur dukaan ko paisa wallet me nahi, seedha apne bank me chahiye (payout).
 Arpan ka wallet hamare DB me hai, dukaan ka bank bahar. Ek transaction se kaam nahi chalega.

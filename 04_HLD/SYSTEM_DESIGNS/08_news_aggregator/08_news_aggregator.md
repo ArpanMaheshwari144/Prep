@@ -83,7 +83,7 @@ Data dekho: har khabar ek row: title, url, source, category, published_at. Data 
 Ye sab SQL me index aur UNIQUE se seedha ho jaata hai. Likhai bas ~1 / sec hai, to SQL aaram se jhel leta hai.
 Isliye SQL (Postgres).
 
-**AWS pe:** Postgres = RDS.
+**AWS pe:** Postgres AWS ka **RDS** lete hain: machine, backup, copy AWS sambhalta hai, hum bas table aur query.
 
 ### Kadam 2: subah sab ek saath, sabko wahi 20 khabar (Redis me feed pehle se bani)
 
@@ -118,7 +118,7 @@ Redis phir bhar deta hai. Tab tak kuch request DB pe jaati hain, uske baad phir 
 
 **Maan lo pooche category (tech, sports) kaise:** Worker khabar pe category laga deta, Redis me har category ki alag feed (~20). Arpan ki pasand (tech + sports) -> dono se taazi 20 laao, time ke kram me milao. Har user ki alag feed nahi (twitter jaisi), kyunki sirf ~20 category hain, 10 lakh alag feed faltu.
 
-**AWS pe:** Redis = ElastiCache.
+**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
 
 Par ek source ki site dheemi hai. Fetcher usi pe 30 second atka rehta hai, aur saari khabar ek-ek karke DB me
 likhta hai. Arpan ki feed me khabar 20 minute purani dikh rahi hai.
@@ -159,7 +159,7 @@ Ab kya theek hua:
 Kafka kyun, Fetcher seedha DB me kyun nahi likhe? Seedha likhe to 1000 fetcher ka dhakka seedha DB pe padta. Aur
 DB dheema ho to fetcher bhi ruk jaate. Kafka beech me ek line hai, jo dono ko ek doosre se alag kar deti hai.
 
-**AWS pe:** Kafka = MSK (AWS ka chalaya hua Kafka).
+**AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker, copy, gira to naya leader, ye AWS sambhalta hai. Topic aur partition hum tay karte hain.
 
 Par dopahar me "India ne match jeeta" ki khabar 5 alag site se aayi. Arpan ki feed me wahi khabar 5 baar dikh rahi
 hai.
@@ -318,7 +318,7 @@ flowchart LR
 Elasticsearch ki copy DB se thodi peeche ho to? Nayi khabar search me ek-do second baad dikhegi. News ke liye ye
 chalta hai. Asli sach DB hi rehta hai, aur Elasticsearch bigde to DB se dobara bhar sakte hain.
 
-**AWS pe:** Elasticsearch = OpenSearch.
+**AWS pe:** Elasticsearch AWS ka **OpenSearch** naam se milta hai: machine aur copy AWS sambhalta hai.
 
 Par 6 mahine ho gaye. Roz 1 lakh khabar, to DB me ~2 crore row ho gayi. DB bhaari ho raha hai aur kharcha badh
 raha hai, jabki 1 hafte se purani khabar koi padhta hi nahi.
@@ -358,7 +358,7 @@ sasti jagah padi hai.
 
 **Maan lo source 100 guna ho gaye, likhai ek DB pe nahi samaati:** DB ko article_id se baanto (shard). Abhi ~1 likhai / sec hai, to aaj iski zaroorat nahi.
 
-**AWS pe:** archive = S3.
+**AWS pe:** purana maal **S3** me: sasta, aur copy AWS khud rakhta hai.
 
 ---
 
