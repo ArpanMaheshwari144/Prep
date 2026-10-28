@@ -1919,7 +1919,7 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 
 ── FAMILY: PER-KEY STREAK (log line todo -> har KEY ki apni chalti ginti; Wise OA 27-Oct) ──
 
- ▸ SERVER ERROR STREAK  (03/11)
+ ███████████ ▸ SERVER ERROR STREAK  (03/11) ███████████
      ═══════════ SAWAAL ═══════════
      logs "<server> <code> <msg>". server ke LAGAATAAR 3 "error" -> alert++ aur ginti 0; "success" -> ginti 0. kul alerts.
        e.g. ["s1 500 error","s2 200 success","s1 500 error","s3 500 error","s1 500 error"] -> 1
