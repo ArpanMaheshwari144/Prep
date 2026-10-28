@@ -10,6 +10,8 @@ Kaam: account me paisa daalo, nikaalo, balance aur history dekho, aur ek account
 
 Sabse seedha: ek Banking Service aur ek SQL DB. Arpan ne Ravi ko 500 bheje, to do UPDATE chale: Arpan -500, Ravi +500. SQL isliye ki ek transfer me do row ek saath pakka badalni hain (ACID), aur bheed itni chhoti hai ki NoSQL ki "kai machine" wali taakat chahiye hi nahi.
 
+**Owner check:** userId JWT se lo, body se nahi. from_account ka maalik nahi to 403.
+
 &nbsp;
 
 **2. TRANSACTION (WAL)**
@@ -20,7 +22,9 @@ Pehla UPDATE hua, aur doosre se pehle server gir gaya. Arpan ke 500 kate, Ravi k
 
 **3. IDEMPOTENCY KEY**
 
-Transfer ho gaya, par jawab aane se pehle metro me network gaya. App ne dobara bheja, aur 1000 kat gaye. Isliye **IDEMPOTENCY KEY**: app Send wali screen khulte hi ek id (k-77) banati hai, aur dobara bhejne pe bhi wahi id jaati hai. Server use usi transaction me UNIQUE wali table me likhta hai. Dobara aaya to INSERT fail, paisa nahi katta, purana jawab wapas. UNIQUE isliye ki "pehle dekho phir likho" me do retry ek saath "nahi hai" dekh lete. Amount ke hisaab se block nahi, kyunki Arpan sach me do baar 500 bhej sakta hai.
+Transfer ho gaya, par jawab aane se pehle metro me network gaya. App ne dobara bheja, aur 1000 kat gaye. Isliye **IDEMPOTENCY KEY**: app Send wali screen khulte hi ek id (k-77) banati hai, aur dobara bhejne pe bhi wahi id jaati hai (`POST /transfers` + Idempotency-Key header). Server use usi transaction me UNIQUE wali table me likhta hai. Dobara aaya to INSERT fail, paisa nahi katta, purana jawab wapas. UNIQUE isliye ki "pehle dekho phir likho" me do retry ek saath "nahi hai" dekh lete. Amount ke hisaab se block nahi, kyunki Arpan sach me do baar 500 bhej sakta hai.
+
+**Maan lo wahi key, amount alag aaya:** key ke saath request ka hash rakho, mel nahi khaata to 422.
 
 &nbsp;
 
@@ -50,7 +54,9 @@ Ravi ko SMS jaana tha, aur SMS service giri hui thi. Transaction ke andar bhejo 
 
 **8. READ REPLICA**
 
-Salary aate hi sab balance dekh rahe the, padhai bhi primary pe thi, aur transfer dheeme ho gaye. Isliye **READ REPLICA** (async), balance aur history wahan se. Pench ye hai ki Arpan ne abhi bheja aur replica peeche thi, to purana balance dikha. Ilaaj: jisne abhi transfer kiya uska balance kuch second primary se padho, ya transfer ke jawab me hi naya balance bhej do.
+Salary aate hi sab balance dekh rahe the, padhai bhi primary pe thi, aur transfer dheeme ho gaye. Isliye **READ REPLICA** (async), balance aur history wahan se (`GET /accounts/{id}/balance` · history me cursor (keyset, OFFSET nahi)). Pench ye hai ki Arpan ne abhi bheja aur replica peeche thi, to purana balance dikha. Ilaaj: jisne abhi transfer kiya uska balance kuch second primary se padho, ya transfer ke jawab me hi naya balance bhej do.
+
+**CP ya AP:** transfer / balance CP hain (galat balance dikhane se mana karna behtar). SMS / statement AP hain (2 sec late chalega).
 
 &nbsp;
 
@@ -64,25 +70,15 @@ Kisi bug ya haath ke UPDATE se balance 600 dikha raha tha, par khaate ka jod 100
 
 5 saal me ~36 arab line ho gayi, index RAM me nahi samaata, aur RBI ki wajah se phenk bhi nahi sakte. Isliye **MAHINE KE TUKDE (partition)**: query sirf us mahine ka tukda dekhti hai. 1 saal se purane tukde **S3** me, Object Lock ke saath, taaki koi badal na sake. Shard nahi kiya, kyunki likhai 120 / sec hai, ek machine kaafi hai. Aur shard me Arpan aur Ravi alag machine pe ho jaate, to ek transaction hi nahi chalta.
 
+**Maan lo 10 guna traffic:** padhai badhi to replica, jagah badhi to tukde + S3, likhai badhi tab account_id se shard (do shard ke beech transfer = saga).
+
 &nbsp;
-
-### Agar Pooche
-
-- API: `POST /transfers` + Idempotency-Key header · `GET /accounts/{id}/balance` · history me cursor (keyset, OFFSET nahi).
-
-- Owner check: userId JWT se lo, body se nahi. from_account ka maalik nahi to 403.
-
-- Wahi key, amount alag: key ke saath request ka hash rakho, mel nahi khaata to 422.
-
-- CP ya AP: transfer / balance CP hain (galat balance dikhane se mana karna behtar). SMS / statement AP hain (2 sec late chalega).
-
-- 10 guna traffic: padhai badhi to replica, jagah badhi to tukde + S3, likhai badhi tab account_id se shard (do shard ke beech transfer = saga).
-
-- Chal raha hai kaise pata: milaan ka alert, p99, outbox me kitni sent = false, har transfer ka trace id.
 
 ### Wrap
 
 sahi = transaction + ek query + double-entry + milaan · trace = ledger sirf INSERT + S3 lock · dobara na kate = idempotency key · tez = read replica · gire to chale = LB + sync copy + outbox
+
+**Chal raha hai kaise pata:** milaan ka alert, p99, outbox me kitni sent = false, har transfer ka trace id.
 
 
 Poora design (har kadam ka diagram aur "kyun") = [13_banking_system.md](13_banking_system.md)

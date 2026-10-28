@@ -67,6 +67,8 @@ KHOLO:  aB3x9 aaya -> DB me dhoondho -> browser ko bolo "is lambe link pe jao" (
 DB kyun, server ki memory (jaise Java ka HashMap) kyun nahi? Memory me rakhte to server restart hote hi saare
 link gayab ho jaate. Link saalon chalna chahiye, isliye disk wala DB.
 
+**API:** POST /api/shorten { long_url } -> { short_url } · GET /aB3x9 -> 302
+
 Par chhota code `aB3x9` banega kaise? Aur do logon ko kabhi same code na mile, ye pakka kaise hoga?
 
 ### Kadam 2: code banana (counter + base62)
@@ -127,6 +129,28 @@ se nahi khula, use hata dete hain (LRU). Garam link Redis me rehte hain, thande 
 Server ki apni memory me cache kyun nahi? Aage server ek se zyada honge. Har server ka cache alag hoga, aur
 restart pe khaali ho jaayega. Redis sab servers ke liye ek jagah hai.
 
+**Maan lo Redis ki entry expire hui, aur sab DB pe toot pade:** STAMPEDE. Ilaaj = LOCK (single flight): sirf
+pehli request lock le (lock ki umar 2 second) aur DB se laaye, baaki 50 ms ruk ke Redis dekhein. DB pe 1,000 ki
+jagah 1 query. Umar (TTL) me thoda random (1 ghanta + 0-5 min), taaki saari key ek hi pal khatam na hon.
+
+**Maan lo lock wali pehli request beech me MAR gayi:** 7:00:00 pehli ne lock liya, DB gayi aur mar gayi. Baaki
+999 har 50 ms Redis dekhte, khaali, ruke rehte. 7:00:02 lock ki umar khatam, lock apne aap khula. Baaki me se jo
+pehle pahuncha, usne lock liya, DB gaya, Redis bhara, baaki sabko mil gaya. User ko 2 second der, par DB pe
+bheed phir bhi nahi.
+
+**Maan lo lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha):** Baaki 999 poore 5 second ruke
+rehte, sabko link late. Lock ne DB bachaya, par users ruk gaye. Ilaaj = SOFT / HARD umar: key ko kabhi poora
+khaali hone hi mat do. SOFT = 1 ghanta, HARD = 1 din. Redis key ko 1 din rakhta hai, 1 ghante baad use "thodi
+purani" maan leta hai. 8:00 (soft nikla, hard nahi): purana link turant de do, user ruka hi nahi. Saath me ek
+request (lock ke saath) peeche se DB jaati hai, naya laake Redis me rakh deti hai. Wo 5 second le ya mar jaaye,
+kisi user ko farak nahi. Link badalta nahi, to purana bhi sahi. HARD (1 din) bas isliye ki peeche se laana
+baar-baar fail ho to bahut purana hamesha na pada rahe. lock (single flight) -> DB ko bachata · soft / hard ->
+users ko bachata, koi ruke hi nahi. DB call pe 500 ms ka timeout.
+
+**Maan lo Redis gira:** Redis ki copy. Tab tak DB se padho, thoda dheema, par link chalta rahega.
+
+**AWS pe:** Redis = ElastiCache.
+
 Par 1 lakh log kholne aa rahe hain, aur unhe sambhalne wala app server abhi bhi ek hi hai. Wo akela ye bojh
 nahi jhelega.
 
@@ -165,6 +189,13 @@ App 3 ko: 2,001 - 3,000      matlab beech wale se baat 1,000 link me sirf ek baa
 Har server ki range alag hai, isliye do server kabhi same number nahi denge, aur beech wale counter pe bojh
 bhi nahi padta. App 1 beech me gir gaya to uske bache number (jaise 501 - 1,000) bekaar chale jaate hain. Koi
 dikkat nahi, 3.5 lakh crore number hain.
+
+**Maan lo LB gira:** aaj ke system me koi dabba akela nahi chalta, har ek ki copy hoti hai. AWS ka LB (ALB) kai
+zone me chalta hai, AWS khud sambhalta hai.
+
+**Maan lo counter gira:** counter ki copy. Tab tak har app ki range ke bache number kaam chala lete hain.
+
+**Maan lo duniya bhar se log aa rahe:** Route 53 user ko uske paas wale region pe bhejta hai (geo-routing).
 
 Par 5 saal me data ~90 TB ho jaayega. Itna ek DB machine me nahi samata.
 
@@ -241,6 +272,13 @@ Interview me aise bolo: "Data simple hai, code se link. Join ya transaction nahi
 machine me baantna hai. SQL me ye haath se karna padta, isliye NoSQL key-value. AWS pe ho to DynamoDB, apna
 setup ho to Cassandra. Main Cassandra le raha hoon."
 
+**Row me kya:** code (isi se machine tay) · long_url · created_at · band?
+
+**AWS pe:** Cassandra = Keyspaces ya EC2 pe khud (RDS sirf SQL hai, Cassandra RDS pe NAHI chalta) · key-value =
+DynamoDB.
+
+**Maan lo poochhe kaunsa DB kitne tak:** MySQL ~1 arab row tak aaram se · Cassandra / DynamoDB usse bahut aage.
+
 Par ek DB machine gir gayi, to us pe pade saare link 404 denge.
 
 ### Kadam 7: ek DB machine giri (har link ki 3 copy)
@@ -269,6 +307,11 @@ flowchart LR
 3 hi kyun? Ek copy ho to machine gayi to link gaya. Teen ho to ek gir bhi jaaye, phir bhi do bachti hain. Aam
 taur pe yahi chalta hai. Copy alag rack ya alag zone me rakhte hain, taaki ek rack ki bijli jaaye to teeno ek
 saath na jaayein.
+
+**Maan lo link bana, aur dost ko turant 404 mila:** likhai C pe pahunchi, copy D pe abhi nahi, dost D se padh
+gaya. Ilaaj = QUORUM (zyadatar, 3 me se 2): 2 copy pe likho (W=2), 2 se padho (R=2). W + R > 3, to ek copy dono
+me common, naya link mil jaata. Ye Cassandra ki setting hai. Saath me link banate hi Redis me daal do, dost
+wahin se pa le.
 
 Par ek link viral ho gaya. Cricket match ka link 1 crore log ek saath khol rahe hain, aur sab ek hi Redis
 machine pe ja rahe hain.
@@ -308,6 +351,8 @@ hai aur dobara hamare paas aata hi nahi, to bojh sabse kam hota hai. Par control
 spam nikla aur use band karna ho, to bhi browser purane pe bhejta rahega. 302 ka matlab hai "abhi ke liye
 yahin", to har click hamare paas aata hai aur control hamare paas rehta hai. Interview me bolo: "302, kyunki
 control hamare paas rehta hai. Bojh cache se sambhal liya."
+
+**Maan lo click ginti chahiye:** redirect turant karo, click ki khabar Kafka me daalo, Analytics peeche gine.
 
 Par ek bot har second hazaron link bana raha hai.
 
@@ -353,53 +398,7 @@ hamesha chale      -> kai app + LB, har link ki 3 copy, quorum (3 me se 2 pe lik
 ek code = ek link  -> counter range, takkar kabhi nahi
 ```
 
----
+**Maan lo 10 guna traffic aa gaya:** app server badhao · Redis me garam link rakho (LRU) · Cassandra ki machine
+badhao.
 
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-Ye sawaal bahut aate hain. Design nahi badalte (naya dabba nahi), isliye kadam nahi, par jawab pata ho:
-
-```
-link bana, dost ko turant 404?
-  -> likhai C pe pahunchi, copy D pe abhi nahi, dost D se padh gaya. Ilaaj = QUORUM (zyadatar, 3 me se 2):
-     2 copy pe likho (W=2), 2 se padho (R=2). W + R > 3, to ek copy dono me common, naya link mil jaata.
-     Ye Cassandra ki setting hai. Saath me link banate hi Redis me daal do, dost wahin se pa le.
-
-entry expire hui, sab DB pe toot pade?
-  -> STAMPEDE. Ilaaj = LOCK (single flight): sirf pehli request lock le (lock ki umar 2 second) aur DB se
-     laaye, baaki 50 ms ruk ke Redis dekhein. DB pe 1,000 ki jagah 1 query.
-     Umar (TTL) me thoda random (1 ghanta + 0-5 min), taaki saari key ek hi pal khatam na hon.
-
-lock wali pehli request beech me MAR gayi?
-  -> 7:00:00 pehli ne lock liya, DB gayi aur mar gayi. Baaki 999 har 50 ms Redis dekhte, khaali, ruke rehte.
-     7:00:02 lock ki umar khatam, lock apne aap khula. Baaki me se jo pehle pahuncha, usne lock liya, DB
-     gaya, Redis bhara, baaki sabko mil gaya. User ko 2 second der, par DB pe bheed phir bhi nahi.
-
-lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha)?
-  -> Baaki 999 poore 5 second ruke rehte, sabko link late. Lock ne DB bachaya, par users ruk gaye.
-     Ilaaj = SOFT / HARD umar: key ko kabhi poora khaali hone hi mat do. SOFT = 1 ghanta, HARD = 1 din.
-     Redis key ko 1 din rakhta hai, 1 ghante baad use "thodi purani" maan leta hai.
-     8:00 (soft nikla, hard nahi): purana link turant de do, user ruka hi nahi. Saath me ek request
-     (lock ke saath) peeche se DB jaati hai, naya laake Redis me rakh deti hai. Wo 5 second le ya mar
-     jaaye, kisi user ko farak nahi. Link badalta nahi, to purana bhi sahi. HARD (1 din) bas isliye ki
-     peeche se laana baar-baar fail ho to bahut purana hamesha na pada rahe.
-     lock (single flight) -> DB ko bachata · soft / hard -> users ko bachata, koi ruke hi nahi.
-     DB call pe 500 ms ka timeout.
-```
-
-Koi bhi dabba gira to? Aaj ke system me koi dabba akela nahi chalta, har ek ki copy hoti hai.
-
-```
-LB gira?              -> AWS ka LB (ALB) kai zone me chalta hai, AWS khud sambhalta hai
-counter gira?         -> counter ki copy. Tab tak har app ki range ke bache number kaam chala lete hain
-Redis gira?           -> Redis ki copy. Tab tak DB se padho, thoda dheema, par link chalta rahega
-AWS naam              -> Cassandra = Keyspaces ya EC2 pe khud (RDS sirf SQL hai, Cassandra RDS pe NAHI chalta)
-                         · Redis = ElastiCache · key-value = DynamoDB
-API                   -> POST /api/shorten { long_url } -> { short_url } · GET /aB3x9 -> 302
-row                   -> code (isi se machine tay) · long_url · created_at · band?
-click ginti chahiye?  -> redirect turant karo, click ki khabar Kafka me daalo, Analytics peeche gine
-duniya bhar se log?   -> Route 53 user ko uske paas wale region pe bhejta hai (geo-routing)
-10 guna traffic?      -> app server badhao · Redis me garam link rakho (LRU) · Cassandra ki machine badhao
-kaunsa DB kitne tak?  -> MySQL ~1 arab row tak aaram se · Cassandra / DynamoDB usse bahut aage
-chal raha, kaise pata? -> redirect ka time (p99 = 100 me se 99 request isse tez), galtiyon ki ginti, alert
-```
+**Chal raha kaise pata:** redirect ka time (p99 = 100 me se 99 request isse tez), galtiyon ki ginti, alert.

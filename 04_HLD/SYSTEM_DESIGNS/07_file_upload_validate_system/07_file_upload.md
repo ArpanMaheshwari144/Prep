@@ -124,6 +124,10 @@ hai, server mare tab bhi bachi rehti hai.
 Ek fayda aur: Validator 1 ghanta band ho gaya, tab bhi Arpan ki file kahin nahi gayi. File S3 me hai, khabar line
 me padi hai. Validator wapas aaya to Worker uthake jaanch kar dega. Arpan ko bas thodi der "jaanch ho rahi" dikhega.
 
+**Maan lo naam `report.pdf`, andar EXE:** Worker file ke pehle kuch byte padh ke asli type dekhta hai (magic bytes). Naam pe bharosa nahi.
+
+**Maan lo Validator baar-baar fail / dheema:** Worker dobara koshish karta hai, ruk-ruk ke. Bahut fail ho to us pe call band (circuit breaker), aur doosri company ya baad me. Khabar Kafka me padi rehti hai, khoti nahi.
+
 Par Arpan ne `report.pdf` nahi, apni 5 GB ki video daali. Ye poori 5 GB pehle hamare Upload Server pe aati hai, phir
 wahan se S3 jaati hai. Server ki memory aur net, dono isi ek file ne gher liye, aur baaki sab ka upload atak gaya.
 
@@ -156,6 +160,10 @@ flowchart LR
 Ab hamara server sirf chhoti-chhoti baatein karta hai: parchi dena, aur "pahunch gayi" sunna. 5 GB ka ek byte bhi
 uske paas se nahi guzarta. Server halka rehta hai aur baaki sabke upload chalte rehte hain. S3 badi file ke liye
 hi bana hai.
+
+**Maan lo ek hi file do baar daali:** file ka hash (SHA-256). Pehle se hai to dobara store nahi. Ye sirf usi user ke andar, warna doosre ki file ka pata chal jaata.
+
+**API:** `POST /upload/init` (parchi + T-101) · `GET /status/T-101` · `GET /download/T-101` (maalik check + parchi).
 
 Par Arpan ghar ke wifi pe tha. 5 GB me se 4.5 GB chadh chuki thi, aur wifi chala gaya. Wifi wapas aaya to upload
 phir 0 se shuru.
@@ -262,6 +270,8 @@ bhi Redis se purana "JAANCH HO RAHI" dikhta rahega. Ye cache wala hi sabak hai.
 1 lakh / sec ke liye RAM wala Redis sasta aur tez hai. Copy thodi der peeche bhi chal sakti hai, to Arpan ko DONE
 ke baad bhi purana haal dikh sakta hai.
 
+**Maan lo 10 guna traffic:** Upload Server badhao (stateless). S3 khud badhta hai. Worker badhao (line ki lambai dekh ke). Haal ke liye Redis. Bahut file hon to DB ko tracking number se shard karo.
+
 Par Arpan ne ek file nahi, poora folder daala, 1,000 file ka. Ab use 1,000 tracking number to nahi chahiye. Use ek
 hi baat jaanni hai: "mera folder kahan tak pahuncha?"
 
@@ -337,18 +347,4 @@ haal hamesha pata   -> DB me haal, Redis me copy
 safe                -> parchi (upload / download), maalik check
 ```
 
----
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-- **Naam `report.pdf`, andar EXE:** Worker file ke pehle kuch byte padh ke asli type dekhta hai (magic bytes). Naam
-  pe bharosa nahi.
-- **Validator baar-baar fail / dheema:** Worker dobara koshish karta hai, ruk-ruk ke. Bahut fail ho to us pe call
-  band (circuit breaker), aur doosri company ya baad me. Khabar Kafka me padi rehti hai, khoti nahi.
-- **Ek hi file do baar daali:** file ka hash (SHA-256). Pehle se hai to dobara store nahi. Ye sirf usi user ke
-  andar, warna doosre ki file ka pata chal jaata.
-- **Chal raha hai, kaise pata:** teen number dekho: Kafka ki line kitni lambi hai, Validator kitni der me jawab de
-  raha hai aur kitni baar fail, aur kitni file 10 minute se "jaanch ho rahi" pe atki hain. Had paar ho to alert.
-- **10 guna traffic:** Upload Server badhao (stateless). S3 khud badhta hai. Worker badhao (line ki lambai dekh ke).
-  Haal ke liye Redis. Bahut file hon to DB ko tracking number se shard karo.
-- **API:** `POST /upload/init` (parchi + T-101) · `GET /status/T-101` · `GET /download/T-101` (maalik check + parchi).
+**Chal raha hai, kaise pata:** teen number dekho: Kafka ki line kitni lambi hai, Validator kitni der me jawab de raha hai aur kitni baar fail, aur kitni file 10 minute se "jaanch ho rahi" pe atki hain. Had paar ho to alert.

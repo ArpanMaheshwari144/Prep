@@ -71,6 +71,8 @@ Data dekho: account aur unka balance. Kaam: ek transfer me do row ek saath badal
 Kai row ek saath pakka badalna SQL ka seedha kaam hai (ACID). Bheed chhoti hai (120 likhai / second), to NoSQL
 ki "bahut bada data, kai machine" wali taakat yahan chahiye hi nahi. Isliye SQL (Postgres).
 
+**Maan lo owner check poochha:** userId JWT se lo, body / URL se nahi. from_account ka maalik nahi to 403.
+
 Par pehla UPDATE hua (Arpan se 500 kat gaye), aur doosre se pehle server gir gaya. Ravi ko kuch nahi mila.
 Paisa gayab.
 
@@ -141,6 +143,8 @@ chahe (do alag cheez kharidi), to wo bhi ruk jaata. Pehchaan request ki id se ho
 
 Koi wahi `k-77` le ke amount 5000 bhej de to? Key ke saath request ka hash bhi rakho (amount + kisko). Key
 same hai par amount alag, to mana kar do (422).
+
+**API:** POST /transfers { from, to, amount } + Idempotency-Key header.
 
 Par Arpan ke wallet me 600 hain. Raat 9 baje Netflix ka 500 ka auto-debit aur Arpan ka 500 ka UPI, dono ek
 saath aaye. Dono ne balance padha (600), dono ko laga "chalega", aur dono kat gaye. Balance -400.
@@ -289,6 +293,12 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo CP ya AP poochha:** transfer / balance = CP (galat balance dikhane se mana karna behtar) · SMS / statement = AP (2 sec late chalega).
+
+**Maan lo SPOF poochha (ek dabba gira to sab band):** DB primary (sync copy) · Banking Service (LB + kai machine).
+
+**AWS pe:** RDS (Postgres) Multi-AZ.
+
 Par salary aate hi sab apna balance aur history dekh rahe hain. Padhna likhne se kahin zyada hai, aur saari
 padhai bhi primary pe ho rahi hai. Primary bhar gaya, aur transfer dheeme ho gaye.
 
@@ -318,6 +328,8 @@ flowchart LR
 History me neeche scroll karo to agla page "jahan pichhla page khatam hua, wahan se aage" aata hai (keyset:
 time + id, index ke saath). OFFSET nahi lagate, kyunki door ke page dheeme ho jaate hain. Statement app me
 turant replica se banta hai, bahut lamba range ho to kuch bank email pe bhejte hain.
+
+**API:** GET /accounts/{id}/balance · GET /accounts/{id}/transactions?cursor=..
 
 Par balance ek column hai aur khaata alag lines me. Kisi bug ya haath se kiye galat UPDATE se dono me farak aa
 gaya: balance 600 dikha raha hai, par khaate ka jod 100 hai. Kisi ko pata hi nahi chala.
@@ -382,6 +394,12 @@ flowchart LR
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo 10 guna traffic:** padhai badhi: replica · jagah badhi: tukde + S3 · likhai badhi: tab account_id se shard (do shard ke beech transfer = saga). 120 / sec pe ye sawaal hi nahi.
+
+**Maan lo tables poochhi:** account (balance) · ledger (sirf INSERT, mahine ke tukde) · idem (UNIQUE) · outbox · snapshot.
+
+**AWS pe:** S3 Object Lock · Athena.
+
 ---
 
 ## 5. Wrap (30 second me poora design, NFR se milao)
@@ -400,24 +418,6 @@ dobara na kate          -> idempotency key (UNIQUE)
 balance tez             -> read replica (jisne abhi transfer kiya, wo primary se)
 ```
 
----
+**Chal raha kaise pata:** milaan ka alert, p99 (100 me se 99 transfer kitni der me), error rate, outbox me kitni sent = false, har transfer ka trace id.
 
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-API              -> POST /transfers { from, to, amount } + Idempotency-Key header ·
-                    GET /accounts/{id}/balance · GET /accounts/{id}/transactions?cursor=..
-owner check      -> userId JWT se lo, body / URL se nahi. from_account ka maalik nahi to 403
-tables           -> account (balance) · ledger (sirf INSERT, mahine ke tukde) · idem (UNIQUE) ·
-                    outbox · snapshot
-CP ya AP?        -> transfer / balance = CP (galat balance dikhane se mana karna behtar) ·
-                    SMS / statement = AP (2 sec late chalega)
-SPOF (ek dabba gira to sab band)? -> DB primary (sync copy) · Banking Service (LB + kai machine)
-10 guna traffic? -> padhai badhi: replica · jagah badhi: tukde + S3 · likhai badhi: tab account_id se shard
-                    (do shard ke beech transfer = saga). 120 / sec pe ye sawaal hi nahi
-chal raha, kaise pata? -> milaan ka alert, p99 (100 me se 99 transfer kitni der me), error rate, outbox me kitni sent = false,
-                          har transfer ka trace id
-AWS naam         -> RDS (Postgres) Multi-AZ · S3 Object Lock · Athena
-round kis pe tay -> idempotency, transaction, queue, reconciliation, audit. Paise me ACID, eventual nahi,
-                    aur asli khaate ke liye SQL, NoSQL nahi
-```
+**Maan lo poochha round kis pe tay hota:** idempotency, transaction, queue, reconciliation, audit. Paise me ACID, eventual nahi, aur asli khaate ke liye SQL, NoSQL nahi.

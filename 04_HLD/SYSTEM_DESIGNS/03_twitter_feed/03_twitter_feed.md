@@ -337,6 +337,15 @@ SQL kyun nahi, Cassandra kyun? SQL ki taakat jod aur transaction hai, yahan dono
 sec aur saal bhar me sau TB, ye SQL ko kai machine me haath se baantna padta. Cassandra likhai ke liye hi bana
 hai, khud kai machine me baant leta hai. Isliye Cassandra.
 
+**Maan lo Arpan ne Ravi ko unfollow kiya:** inbox me author hai (kadam 7), to worker peeche se inbox:Arpan se
+"by Ravi" wale hata deta. Tab tak feed banate waqt follow list se filter: jise follow nahi karta, uska mat dikhao.
+
+**Maan lo tweet delete hua:** 5,000 inbox se dhoondh ke hatana mehnga. Cassandra me tweet pe "deleted" nishaan.
+Feed banate waqt poora tweet laate hain, wahi nishaan dikha to chhod do.
+
+**Maan lo apna tweet turant nahi dikha:** Kafka pehle hai (kadam 7), Cassandra tak ek pal lagta. App apna naya
+tweet khud upar laga deta, server ka intezaar nahi.
+
 Par Arpan ne match ki 100 MB video daali. Video Tweet Service aur Cassandra ke raaste gayi to dono bhar jaayenge,
 saath me sabke tweet atkenge. Aur 1 crore log dekhenge, to har baar wahi 100 MB humare server se jaayega.
 
@@ -414,16 +423,4 @@ me save karta (author_id se baanta), fanout worker aam logon ke tweet ki id unke
 server ke apne cache se 2 sec. Feed = inbox ki 50 id + celebrity ke tweet, milao, poora tweet DB se. Video
 S3 me, dekhne wale CDN se. Har desh ka apna region; Kafka topic ki copy doosre region jaati, wahan ka worker
 wahan ke inbox bhare.
-```
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-unfollow         -> inbox me author hai (kadam 7), to worker peeche se inbox:Arpan se "by Ravi" wale hata deta.
-                    Tab tak feed banate waqt follow list se filter: jise follow nahi karta, uska mat dikhao.
-tweet delete     -> 5,000 inbox se dhoondh ke hatana mehnga. Cassandra me tweet pe "deleted" nishaan.
-                    Feed banate waqt poora tweet laate hain, wahi nishaan dikha to chhod do.
-apna tweet turant
-nahi dikha       -> Kafka pehle hai (kadam 7), Cassandra tak ek pal lagta. App apna naya tweet khud upar
-                    laga deta, server ka intezaar nahi.
 ```

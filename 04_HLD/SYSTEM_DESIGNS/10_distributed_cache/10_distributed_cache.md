@@ -87,6 +87,10 @@ hai: pehle cache, aur na mile to DB.
 Asar ye hota hai ki zyadatar request (lagbhag 90%) cache se hi nikal jaati hain. DB tak sirf 10% pahunchti
 hain, to DB ka bojh 10 guna kam ho gaya.
 
+**Maan lo jo key DB me hai hi nahi, use koi bot baar-baar maange:** har baar MISS, har baar DB. Ilaaj: "ye key nahi hai" bhi cache me 1-2 minute ke liye rakh do.
+
+**AWS pe:** ElastiCache (Redis).
+
 Par cache machine ki RAM sirf 64 GB hai, aur roz naye offer, naye user, naye cart judte ja rahe hain.
 Dopahar tak RAM bhar gayi. Ab nayi key rakhni hai, to purani me se kaunsi hatayein?
 
@@ -130,6 +134,8 @@ uski purani ginti badi hai. LRU me wo apne aap peeche khisak ke nikal jaata hai.
 khatam ho gaya. RAM khaali ho tab bhi wo key cache me padi rahegi aur log purana offer dekhte rahenge. Isliye
 har key ke saath umar likhte hain (jaise 1 ghanta). Umar khatam hote hi key mit jaati hai, aur agli baar DB se
 taaza aati hai.
+
+**Maan lo pooche umar khatam hui key ko kaun hatata:** do tareeke saath: koi us key ko maange tab dekh ke hatao, aur peeche se thodi-thodi key check karke hatao.
 
 Ab ek machine me jagah ka hisaab ho gaya. Par data hi 1 TB hai, aur ek machine ki RAM sirf 64 GB. Itna data ek
 machine me aata hi nahi.
@@ -344,6 +350,8 @@ soft / hard           -> users ko bachata hai: koi ruke hi nahi, purana turant m
 **Umar me thoda random:** saari key ki umar ek jaisi (theek 1 ghanta) ho, to sab ek hi pal khatam hongi aur ek
 saath bheed aayegi. Isliye 1 ghanta + 0-5 minute random.
 
+**Maan lo pooche Redis me lock kaise lete (khud mat bolo, poochhe tabhi):** `SET lock:home 1 NX EX 2` (NX = sirf tab bane jab pehle se na ho, EX 2 = 2 second me apne aap hat jaaye).
+
 Ab key khatam hone wali bheed sambhal li. Par raat ko IPL final hai, aur "live:score" wali ek hi key pe 1 crore
 log ek saath aa rahe hain. Key khatam nahi hui, wo cache me padi hai. Par wo ek hi machine pe hai, aur saari
 bheed usi ek machine pe gir rahi hai. Wo machine dheemi padi, aur us pe padi baaki key bhi atak gayi.
@@ -392,6 +400,8 @@ local cache        -> pehla ilaaj, sabse sasta: request cache machine tak jaati 
 key ki copies      -> jab local cache ke baad bhi ek machine pe bojh zyada ho
 ```
 
+**Maan lo 10 guna traffic:** cache machine badhao (ring me thodi hi key hilti), garam key ke liye local cache + copies, DB pe bojh hit ratio se kam.
+
 ---
 
 ## 5. Wrap (30 second me poora design, NFR se milao)
@@ -411,23 +421,4 @@ MACHINE MARE TO BHI  -> copy alag zone me + quorum
 PURANA THODA CHALEGA -> likhne pe delete + umar (TTL) + soft / hard
 ```
 
----
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-Redis me lock kaise lete? (khud mat bolo, poochhe tabhi)
-  -> SET lock:home 1 NX EX 2   (NX = sirf tab bane jab pehle se na ho, EX 2 = 2 second me apne aap hat jaaye)
-jo key DB me hai hi nahi, use koi bot baar-baar maange?
-  -> har baar MISS, har baar DB. Ilaaj: "ye key nahi hai" bhi cache me 1-2 minute ke liye rakh do
-hit ratio kya hai, kaise pata system theek chal raha?
-  -> 100 me se kitni request cache se nikli (~90 achha). Achanak gira = kuch toota. Saath me p99 aur
-     kitni key RAM bhari hone se hati (evictions), aur alert
-umar khatam hui key ko kaun hatata?
-  -> do tareeke saath: koi us key ko maange tab dekh ke hatao, aur peeche se thodi-thodi key check karke hatao
-AWS naam?
-  -> ElastiCache (Redis)
-10 guna traffic?
-  -> cache machine badhao (ring me thodi hi key hilti), garam key ke liye local cache + copies,
-     DB pe bojh hit ratio se kam
-```
+**Hit ratio kya hai, kaise pata system theek chal raha:** 100 me se kitni request cache se nikli (~90 achha). Achanak gira = kuch toota. Saath me p99 aur kitni key RAM bhari hone se hati (evictions), aur alert.

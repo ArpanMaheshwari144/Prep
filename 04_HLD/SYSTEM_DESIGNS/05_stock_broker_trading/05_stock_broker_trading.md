@@ -71,6 +71,19 @@ flowchart LR
     style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo poochhe LIMIT vs MARKET:** LIMIT = "3500 ya isse behtar, warna rukunga" (daam pakka). MARKET = "jo
+bhaav hai, abhi do" (waqt pakka).
+
+**API:** POST /order { stock, side, qty, price, type, clientOrderId } · DELETE /order/{id} · GET /order/{id}
+· WS /prices (subscribe TCS, INFY)
+
+**Maan lo BUY 3498 aaya, aur sabse sasta SELL 3500 hai:** sauda nahi, BUY book me khada rehta (kharidne wale:
+sabse mehnga upar, bechne wale: sabse sasta upar).
+
+**Maan lo poochhe "Zerodha sach me aise karta?":** mat bolo "Zerodha aise karta". Bolo "a common pattern for
+matching engines", andar ka pata nahi. Asal me broker order exchange (NSE) ko bhejta hai, milaan wahan hota; ye
+design wo milaan wala hissa hai.
+
 ### DB kaunsa: SQL ya NoSQL?
 
 Data dekho: har user ka paisa aur share. Kaam: sauda hote hi chaar cheez ek saath badalti hain: Arpan ka paisa
@@ -140,6 +153,15 @@ Aage kya:
 Bechne wale pe bhi yahi: Suresh ke paas 10 TCS. Usne do jagah "sell 10" daala. Pehle pe 10 share block, doosre
 pe "share kam hain". Ek share do baar nahi bik sakta.
 
+**Maan lo aadha bhara (partial fill):** Arpan ko 10 chahiye, Suresh 6 bech raha: 6 ka sauda, Arpan ke 4 book me
+khade. 6 share ka blocked paisa (21,000) Suresh ko gaya, baaki 4 ka (14,000) blocked hi rehta.
+
+**Maan lo din khatam, order bika nahi:** order cancel, blocked paisa / share wapas available (Kadam 3).
+
+**Maan lo MARKET order hai, kitna paisa block karein (bhaav pehle se pata nahi):** aakhri bhaav + thoda upar
+(jaise 5%) block. Sauda ke baad jo bacha, wapas available. (kitna % = broker ka apna niyam, pakka nahi; design
+ki baat sirf itni: andaze se block, baad me hisaab)
+
 Par 9:15 baje market khula, 10,000 order / sec, aadhe sirf TCS pe. Ek hi TCS order book pe kai thread ek saath
 haath daal rahe hain. Do thread ne ek hi Suresh ko do kharidne walon se mila diya, book bigad gayi.
 
@@ -182,6 +204,13 @@ network ka chakkar, aur 9:15 pe wahi dheema. Isi wajah se machine giri to book b
 
 Ek thread TCS ki bheed jhel lega? Haan. Book RAM me, ek order milana microseconds ka kaam. Ek thread ek second
 me lakhon order nipta sakta (mera andaza, asli number exchange pe nirbhar). TCS ke 5,000 / sec usse bahut kam.
+
+**Maan lo poochhe order book DB me kyun nahi:** DB = har order pe milli-second, RAM = micro-second. 9:15 ki
+bheed me yahi farak.
+
+**Maan lo Arpan ne cancel dabaya, usi pal kisi ne wahi share bech diya. Pehle kya, cancel ya sauda:** cancel bhi
+usi TCS ki line me jaata, jise ek hi thread chalata (Kadam 4). Jo line me pehle aaya, wahi pehle: sauda pehle ->
+cancel ka jawab "order bik chuka"; cancel pehle -> order book se hata, blocked paisa wapas.
 
 Par order book RAM me hai. Dopahar 12 baje matching machine gir gayi, poori TCS order book gayab. Kisne kis
 bhaav pe kharidne ka order dala tha, kuch nahi bacha.
@@ -366,46 +395,10 @@ Kafka trades -> settlement (sauda ulta nahi, PENDING + dobara, trade_id se ek ba
 Price Service. Bhaav: 1 / sec, Redis pub/sub, WebSocket push.
 ```
 
+**Chal raha kaise pata:** order se sauda tak ka time (p99 = 100 me se 99 order isse jaldi), Kafka trades ka
+lag, settlement PENDING kitne, standby kitna peeche.
+
 ---
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-LIMIT vs MARKET?
-  -> LIMIT = "3500 ya isse behtar, warna rukunga" (daam pakka). MARKET = "jo bhaav hai, abhi do" (waqt pakka).
-
-API?
-  -> POST /order { stock, side, qty, price, type, clientOrderId } · DELETE /order/{id} · GET /order/{id}
-     · WS /prices (subscribe TCS, INFY)
-
-BUY 3498 aaya, sabse sasta SELL 3500 hai?
-  -> sauda nahi, BUY book me khada rehta (kharidne wale: sabse mehnga upar, bechne wale: sabse sasta upar).
-
-Order book DB me kyun nahi?
-  -> DB = har order pe milli-second, RAM = micro-second. 9:15 ki bheed me yahi farak.
-
-Aadha bhara (partial fill)?
-  -> Arpan ko 10 chahiye, Suresh 6 bech raha: 6 ka sauda, Arpan ke 4 book me khade. 6 share ka blocked paisa (21,000)
-     Suresh ko gaya, baaki 4 ka (14,000) blocked hi rehta.
-
-Din khatam, order bika nahi?
-  -> order cancel, blocked paisa / share wapas available (Kadam 3).
-
-Arpan ne cancel dabaya, usi pal kisi ne wahi share bech diya. Pehle kya, cancel ya sauda?
-  -> cancel bhi usi TCS ki line me jaata, jise ek hi thread chalata (Kadam 4). Jo line me pehle aaya, wahi pehle:
-     sauda pehle -> cancel ka jawab "order bik chuka"; cancel pehle -> order book se hata, blocked paisa wapas.
-
-MARKET order pe kitna paisa block karein? (bhaav pehle se pata nahi)
-  -> aakhri bhaav + thoda upar (jaise 5%) block. Sauda ke baad jo bacha, wapas available.
-     (kitna % = broker ka apna niyam, pakka nahi; design ki baat sirf itni: andaze se block, baad me hisaab)
-
-Chal raha hai, kaise pata?
-  -> order se sauda tak ka time (p99 = 100 me se 99 order isse jaldi), Kafka trades ka lag, settlement PENDING kitne, standby kitna peeche.
-
-"Zerodha sach me aise karta?"
-  -> mat bolo "Zerodha aise karta". Bolo "a common pattern for matching engines", andar ka pata nahi. Asal me
-     broker order exchange (NSE) ko bhejta hai, milaan wahan hota; ye design wo milaan wala hissa hai.
-```
 
 CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) ·
 [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [banking](../13_banking_system/13_banking_system.md) ·

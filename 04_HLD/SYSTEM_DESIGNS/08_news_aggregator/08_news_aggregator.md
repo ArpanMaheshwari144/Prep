@@ -70,6 +70,8 @@ flowchart LR
     FS -- "taazi 20" --> D
 ```
 
+**API:** GET /feed?category=tech&cursor=..  · GET /search?q=cricket · GET /article/{id}
+
 Par subah 8 baje lakhon log ek saath app kholte hain, ~500 feed / sec. Har feed pe DB wahi "taazi 20" sort karke
 de raha hai, aur sabko lagbhag ek hi jawab chahiye. DB ghutne laga.
 
@@ -80,6 +82,8 @@ Data dekho: har khabar ek row: title, url, source, category, published_at. Data 
 
 Ye sab SQL me index aur UNIQUE se seedha ho jaata hai. Likhai bas ~1 / sec hai, to SQL aaram se jhel leta hai.
 Isliye SQL (Postgres).
+
+**AWS pe:** Postgres = RDS.
 
 ### Kadam 2: subah sab ek saath, sabko wahi 20 khabar (Redis me feed pehle se bani)
 
@@ -111,6 +115,10 @@ padta.
 
 Redis restart hua aur feed khaali ho gayi? Feed Service ko Redis me kuch nahi milta, to wo DB se taazi 500 padh ke
 Redis phir bhar deta hai. Tab tak kuch request DB pe jaati hain, uske baad phir sab Redis se.
+
+**Maan lo pooche category (tech, sports) kaise:** Worker khabar pe category laga deta, Redis me har category ki alag feed (~20). Arpan ki pasand (tech + sports) -> dono se taazi 20 laao, time ke kram me milao. Har user ki alag feed nahi (twitter jaisi), kyunki sirf ~20 category hain, 10 lakh alag feed faltu.
+
+**AWS pe:** Redis = ElastiCache.
 
 Par ek source ki site dheemi hai. Fetcher usi pe 30 second atka rehta hai, aur saari khabar ek-ek karke DB me
 likhta hai. Arpan ki feed me khabar 20 minute purani dikh rahi hai.
@@ -150,6 +158,8 @@ Ab kya theek hua:
 
 Kafka kyun, Fetcher seedha DB me kyun nahi likhe? Seedha likhe to 1000 fetcher ka dhakka seedha DB pe padta. Aur
 DB dheema ho to fetcher bhi ruk jaate. Kafka beech me ek line hai, jo dono ko ek doosre se alag kar deti hai.
+
+**AWS pe:** Kafka = MSK (AWS ka chalaya hua Kafka).
 
 Par dopahar me "India ne match jeeta" ki khabar 5 alag site se aayi. Arpan ki feed me wahi khabar 5 baar dikh rahi
 hai.
@@ -308,6 +318,8 @@ flowchart LR
 Elasticsearch ki copy DB se thodi peeche ho to? Nayi khabar search me ek-do second baad dikhegi. News ke liye ye
 chalta hai. Asli sach DB hi rehta hai, aur Elasticsearch bigde to DB se dobara bhar sakte hain.
 
+**AWS pe:** Elasticsearch = OpenSearch.
+
 Par 6 mahine ho gaye. Roz 1 lakh khabar, to DB me ~2 crore row ho gayi. DB bhaari ho raha hai aur kharcha badh
 raha hai, jabki 1 hafte se purani khabar koi padhta hi nahi.
 
@@ -344,6 +356,10 @@ flowchart LR
 Ab kya theek hua: DB me hamesha sirf 3 mahine ki khabar rehti hai. DB chhota aur tez rehta hai, aur purani khabar
 sasti jagah padi hai.
 
+**Maan lo source 100 guna ho gaye, likhai ek DB pe nahi samaati:** DB ko article_id se baanto (shard). Abhi ~1 likhai / sec hai, to aaj iski zaroorat nahi.
+
+**AWS pe:** archive = S3.
+
 ---
 
 ## Wrap: 30 sec me poora design
@@ -357,27 +373,7 @@ Elasticsearch me likhta hai. Sabko lagbhag ek hi feed chahiye, isliye wo Redis m
 ki copies se padhta hai. Search Elasticsearch se, aur 3 mahine se purani khabar S3 me.
 ```
 
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-Category (tech, sports) kaise?
-  -> Worker khabar pe category laga deta, Redis me har category ki alag feed (~20).
-     Arpan ki pasand (tech + sports) -> dono se taazi 20 laao, time ke kram me milao.
-     Har user ki alag feed nahi (twitter jaisi), kyunki sirf ~20 category hain, 10 lakh alag feed faltu.
-
-API?
-  -> GET /feed?category=tech&cursor=..  · GET /search?q=cricket · GET /article/{id}
-
-Source 100 guna ho gaye, likhai ek DB pe nahi samaati?
-  -> DB ko article_id se baanto (shard). Abhi ~1 likhai / sec hai, to aaj iski zaroorat nahi.
-
-Chal raha hai, kaise pata?
-  -> feed ka time (p99), Redis me kitni baar mila (hit rate), Kafka me kitni khabar line me (lag),
-     kis site ka breaker khula.
-
-AWS pe naam?
-  -> Postgres = RDS · Redis = ElastiCache · Kafka = MSK (AWS ka chalaya hua Kafka) · Elasticsearch = OpenSearch · archive = S3
-```
+**Chal raha hai, kaise pata:** feed ka time (p99), Redis me kitni baar mila (hit rate), Kafka me kitni khabar line me (lag), kis site ka breaker khula.
 
 CONCEPTS: [caching](../../FOUNDATIONS/04_caching.md) · [message-queues](../../FOUNDATIONS/07_message_queues.md) ·
 [elasticsearch](../../FOUNDATIONS/12_elasticsearch_search.md) · saath: [twitter-feed](../03_twitter_feed/03_twitter_feed.md) ·

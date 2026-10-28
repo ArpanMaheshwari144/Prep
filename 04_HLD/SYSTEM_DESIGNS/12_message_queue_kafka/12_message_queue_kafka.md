@@ -92,6 +92,18 @@ flowchart LR
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo Kafka kab, kab nahi poochha:** kab: intezaar todna, ek khabar kai service, replay, bheed ka buffer. Nahi: turant jawab chahiye (REST / gRPC), chhota system (ek aur cheez paalna mehnga).
+
+**Maan lo pull ya push poochha:** pull: padhne wala apni speed se maangta, dheema padhne wala doobta nahi.
+
+**Maan lo disk bhar rahi:** 7 din se purani khabar hatao (retention).
+
+**Maan lo sirf aakhri value chahiye:** compaction: har key ki sirf aakhri khabar rakho (jaise user ka aakhri pata).
+
+**API:** seek(offset) = dobara padhna.
+
+**AWS pe:** MSK (Managed Kafka).
+
 Par Diwali sale me har second 5,000 order. Saari khabar ek topic me, aur topic ek hi machine pe. Upar se SMS
 ka ek worker sirf 500 / sec sambhal paata hai. Line lambi hoti ja rahi hai.
 
@@ -131,6 +143,10 @@ flowchart LR
 Tukde 10 se 20 kiye to? Tukda = hash(key) % ginti hai. Ginti badli to key ka tukda badal jaata hai: Arpan ki
 purani khabar P1 me rahegi, nayi kahin aur, thodi der kram toot sakta hai. Isliye asli system me shuru me hi
 zaroorat se 2-3 guna tukde rakh lete hain (yahan samjhane ke liye 10).
+
+**Maan lo garam key (ek user ki bahut khabar):** key me number jodo (user-9#1 .. #4), 4 tukde, 4 machine. Keemat: us user ka poora kram gaya, har tukde ke andar bacha.
+
+**API:** send(topic, key, value) -> (tukda, number).
 
 Par SMS Service ki 3 machine lagayi taaki 10 tukde jaldi padhe jaayein. Teeno machine saare tukde padhne lagin,
 aur Arpan ko ek order ke 3 SMS chale gaye.
@@ -175,6 +191,10 @@ flowchart LR
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo machine badhi / giri:** rebalance: Kafka tukde dobara baant-ta hai. Naye tareeke (cooperative) me sirf wahi machine rukti jiske tukde badle.
+
+**Maan lo kaam lamba, poll nahi kiya:** Kafka machine ko mara samajh ke uske tukde le leta hai (max.poll.interval.ms). Ek baar me kam khabar uthao, ya time badhao.
+
 Par machine A ne Arpan ka SMS bheja, aur bookmark aage karne se pehle gir gayi. P1 machine B ke paas gaya, B
 ne bookmark dekha (abhi bhi purana), aur wahi khabar dobara padhi. Arpan ko 2 SMS.
 
@@ -210,6 +230,8 @@ flowchart LR
     A -- "E-6 pehle ho chuki?" --> R[("Redis / DB<br/>eventId")]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**API:** poll() · commit(offset).
 
 Par Arpan ki khabar P1 me thi, aur P1 Kafka ki ek machine (broker) pe tha. Us machine ki disk mar gayi. P1
 sirf wahin tha, to Arpan ki saari khabar hamesha ke liye gayi.
@@ -247,6 +269,8 @@ flowchart LR
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**Maan lo poochha kahan se gir sakta:** leader (pakki copy naya leader) · Controller (Kafka me kai machine ka group, KRaft).
 
 Par ab bhejne wala bacha. Arpan ne order cancel kiya. Order Service ne DB me likha "order = cancel", aur Kafka
 ko khabar bhejne se pehle gir gaya. DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala.
@@ -335,29 +359,4 @@ bheed                -> 10 tukde, team me tukde baant ke padhna
 ek dheema, baaki chalein -> har team ka apna bookmark
 ```
 
----
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-chal raha, kaise pata?   -> lag naapo (tukde ki aakhri khabar - team ka bookmark), had se zyada = alert,
-                            machine badhao (tukdon ki ginti tak).
-                            Saath me DLQ ka size, peeche chal rahi copies
-machine badhi / giri?    -> rebalance: Kafka tukde dobara baant-ta hai.
-                            Naye tareeke (cooperative) me sirf wahi machine rukti jiske tukde badle
-kaam lamba, poll nahi kiya? -> Kafka machine ko mara samajh ke uske tukde le leta hai (max.poll.interval.ms).
-                            Ek baar me kam khabar uthao, ya time badhao
-disk bhar rahi?          -> 7 din se purani khabar hatao (retention)
-sirf aakhri value chahiye? -> compaction: har key ki sirf aakhri khabar rakho (jaise user ka aakhri pata)
-garam key?               -> ek user ki bahut khabar: key me number jodo (user-9#1 .. #4), 4 tukde, 4 machine.
-                            Keemat: us user ka poora kram gaya, har tukde ke andar bacha
-Kafka kab, kab nahi?     -> kab: intezaar todna, ek khabar kai service, replay, bheed ka buffer.
-                            Nahi: turant jawab chahiye (REST / gRPC),
-                            chhota system (ek aur cheez paalna mehnga)
-pull ya push?            -> pull: padhne wala apni speed se maangta, dheema padhne wala doobta nahi
-kahan se gir sakta?      -> leader (pakki copy naya leader) ·
-                            Controller (Kafka me kai machine ka group, KRaft)
-API                      -> send(topic, key, value) -> (tukda, number) · poll() · commit(offset) ·
-                            seek(offset) = dobara padhna
-AWS naam                 -> MSK (Managed Kafka)
-```
+**Chal raha kaise pata:** lag naapo (tukde ki aakhri khabar - team ka bookmark), had se zyada = alert, machine badhao (tukdon ki ginti tak). Saath me DLQ ka size, peeche chal rahi copies.

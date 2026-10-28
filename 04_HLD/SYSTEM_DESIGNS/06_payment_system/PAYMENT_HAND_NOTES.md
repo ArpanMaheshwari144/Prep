@@ -8,7 +8,11 @@ Kaam: wallet se wallet paisa (Arpan se dukaan), bank se wallet me daalna (top-up
 
 **BANKING SE AAYA (yahan sirf ek line bolo)**
 
-Wallet se wallet = dono wallet hamare hi DB me hain. To banking jaisa: SQL, ek transaction, idempotency key, `balance >= 500` check aur kaatna ek query me, aur ledger. Payment ka naya hissa ye hai: **paisa bahar (bank) se aana aur bahar jaana.**
+Wallet se wallet (`POST /pay { from, to, amount }` + Idempotency-Key header -> `{ status, txn_id }`) = dono wallet hamare hi DB me hain. To banking jaisa: SQL, ek transaction, idempotency key, `balance >= 500` check aur kaatna ek query me, aur ledger. Payment ka naya hissa ye hai: **paisa bahar (bank) se aana aur bahar jaana.**
+
+**Key kab banti hai:** payment screen khulte hi banti hai. Cheque number jaisi.
+
+**Owner check:** userId JWT se lo, body se nahi, warna 403.
 
 &nbsp;
 
@@ -62,6 +66,8 @@ Hold isliye ki paisa har waqt kahin dikhe. **2PC nahi**, kyunki bank / PSP uske 
 
 Diwali pe 3000 payment / sec aaye, to kai service machine aur aage LB. Dukaan ki "aaj ki bikri" report bhaari hai, isliye wo **read replica** se chalti hai. Paisa kaatne ka faisla hamesha primary se.
 
+**SPOF kahan:** DB primary (sync copy) · PSP (doosra PSP).
+
 &nbsp;
 
 **8. SHARD BY ACCOUNT (hamare DB ke tukde, bank nahi)**
@@ -70,21 +76,11 @@ Wallet sab **hamare** DB me hain. Diwali pe 3000 likhai / sec aur saal bhar me ~
 
 &nbsp;
 
-### Agar Pooche
-
-- API: `POST /pay { from, to, amount }` + Idempotency-Key header -> `{ status, txn_id }`.
-
-- Key payment screen khulte hi banti hai. Cheque number jaisi.
-
-- Owner check: userId JWT se lo, body se nahi, warna 403.
-
-- SPOF: DB primary (sync copy) · PSP (doosra PSP).
-
-- Kaise pata chale ki theek chal raha hai: milaan ka farak, p99, kitne PENDING atke hain, trace id.
-
 ### Wrap
 
 bahar ka paisa = PSP · pata nahi = PENDING · PSP band = breaker + PSP-2 (PENDING wala nahi) · server gira = INITIATED pehle · pakka jawab = webhook + job + milaan · bank ko paisa = saga + hold · bheed = LB + replica · likhai = shard by account + saga
+
+**Kaise pata chale ki theek chal raha hai:** milaan ka farak, p99, kitne PENDING atke hain, trace id.
 
 
 Poora design (har kadam ka diagram aur "kyun") = [06_payment_system.md](06_payment_system.md)

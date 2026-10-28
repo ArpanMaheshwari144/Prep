@@ -58,6 +58,8 @@ flowchart LR
 
 Ek aadmi ke liye ye chal jaata hai.
 
+**Maan lo app ki JS / CSS kahan se aaye:** CDN.
+
 Par Arpan aur Ravi dono ne doc khola. Text tha "HELLO". Arpan ne aage "WORLD" joda aur save kiya. Ravi ki
 screen pe abhi bhi purana "HELLO" tha. Usne beech me "!" joda aur Arpan ke baad save kiya. Ab DB me Ravi ka
 poora text hai, "HEL!LO". Arpan ka "WORLD" mit gaya, aur kisi ko error bhi nahi aaya.
@@ -124,6 +126,8 @@ Doosra kyun nahi (asli choice):
   ki faaltu requests banti hain, aur 1 sec ki der bhi rehti hai.
 - **SSE** (sirf server se app ki taraf): Docs me dono taraf har akshar chalta hai. SSE ke saath bhejne ke liye
   har akshar pe alag HTTP request lagani padti.
+
+**API:** WebSocket /docs/{id} (operation dono taraf).
 
 Par doc me "ABC" likha hai. Ek hi pal me Arpan ne "A" mitaya, aur Ravi ne B aur C ke beech "X" daala (position
 2 pe).
@@ -243,6 +247,8 @@ iski zarurat nahi, kyunki har operation pehle se DB ke operation log me hai. Pub
 kaam karta hai, aur tez hai. Agar kisi viewer ka operation chhoot gaya (v8 ke baad seedha v10 aaya), to uski
 app version ka gap dekh ke beech ke operation server se maang leti hai.
 
+**Maan lo viewer ka operation chhoot gaya:** version ka gap dikha (v8 ke baad v10), beech ke operation server se maang lo.
+
 Par har akshar ek operation hai, aur har operation pe DB me ek likhai ho rahi hai. Lakhon log type kar rahe
 hain, to DB pe har second lakhon likhai pad rahi hain. Raat 3 baje alert aaya ki DB baith gaya.
 
@@ -271,6 +277,10 @@ flowchart LR
 
 Postgres kyun nahi, Cassandra kyun? Ek machine ki likhai ki ek had hoti hai, uske upar sharding khud karni
 padti. Join ya transaction ki yahan zarurat hi nahi, sirf jodna hai aur docId se padhna hai. Isliye Cassandra.
+
+**Maan lo 2 saal purana doc hai, 10 lakh operation:** har 1,000 operation pe SNAPSHOT (poora text + version). Kholo = snapshot + uske baad ke operation. Banking ka balance jaisa.
+
+**API:** GET /docs/{id} (snapshot + baad ke operation).
 
 Par batch ke 100 ms ke operation abhi owner server ki memory me hain. Server ne Arpan ko "mil gaya" (ACK = acknowledgement) bol
 diya tha. Usi pal Server 3 gir gaya. Arpan ki aakhri line na DB me gayi, na kahin aur. Wo line kho gayi.
@@ -389,19 +399,4 @@ isliye sabka doc same rehta hai. Operation pehle Redis buffer + copy me jaata ha
 Cassandra ke operation log me (docId, version). Viewers kisi bhi server pe hote hain, operation unhe Redis
 pub/sub se milta hai. Net jaaye to app likhti rehti hai, queue baad me bhejti hai (AP). Permission alag SQL
 me hai, har operation pe check (CP).
-```
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-2 saal purana doc, 10 lakh operation?
-  -> har 1,000 operation pe SNAPSHOT (poora text + version). Kholo = snapshot + uske baad ke operation.
-     Banking ka balance jaisa.
-viewer ka operation chhoot gaya?
-  -> version ka gap dikha (v8 ke baad v10), beech ke operation server se maang lo
-app ki JS / CSS?
-  -> CDN
-API
-  -> GET /docs/{id} (snapshot + baad ke operation)
-  -> WebSocket /docs/{id} (operation dono taraf)
 ```

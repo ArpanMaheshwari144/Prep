@@ -71,6 +71,8 @@ flowchart LR
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo app machine giri:** App kuch yaad nahi rakhta (stateless), hold SQL me. LB doosri machine pe bhej deta, kuch nahi gaya.
+
 ### DB kaunsa: SQL ya NoSQL?
 
 Data dekho: har show ki seats (`show 9pm | A1 | FREE`). Data chhota hai, bas aaj aur agle hafte ke show. Kaam:
@@ -79,6 +81,8 @@ ek seat do logon ko kabhi na bike.
 Yahan sahi hona hi dil hai. Pay hua to seat BOOKED + booking row + payment row, teeno ek saath, ya koi nahi.
 Kai row ka ek saath badalna (transaction) SQL ka seedha kaam hai; NoSQL me ye mushkil ya seemit. Data chhota
 hai, NoSQL ki taakat (bahut bada data, bahut likhai) chahiye hi nahi. Isliye SQL.
+
+**Maan lo SQL primary gira:** sync copy (Multi-AZ) ~30-120 sec me primary banti. Booking = paisa, isliye copy sync. App wahi key se dobara bheje (idempotent).
 
 Dikkat: Ravi ne bhi usi second me A1 dabaya. Dono ne padha "FREE", dono ne likha "BOOKED". Dono ko ticket,
 ek seat pe do log. Ye banking ke ["do kataai ek saath, balance -400"](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) jaisi hi dikkat hai: pehle padho, phir
@@ -102,6 +106,8 @@ Ravi ki query baad me: A1 ab FREE nahi, WHERE match nahi  -> "0 row badli" -> Ra
 
 [Banking me yahi tha](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me): `UPDATE ... SET balance = balance - 500 WHERE balance >= 500`. Wahan shart "balance
 hai?", yahan shart "seat FREE hai?". Baaki sab same.
+
+**Maan lo 2 seat ek saath (A1 + A2), ek mili ek nahi:** dono UPDATE ek hi transaction me. Dono ki "1 row badli" tabhi commit, warna rollback: dono milein ya koi nahi.
 
 Par seat book karte hi paisa nahi aata, Arpan ko pay karne me 3 minute lagte hain. Do raaste, dono kharab:
 - pehle seat BOOKED, phir pay: Arpan ne pay hi nahi kiya, app band kar di, to A1 hamesha ke liye BOOKED padi
@@ -150,6 +156,10 @@ Ek chhota job har minute purane HELD saaf kar deta hai, bas taaki seat map pe A1
 
 Arpan ne 5:30 min pe pay kiya, hold mar chuka tha, aur seat Ravi le gaya? Paisa kat chuka, seat nahi mili ->
 paisa wapas (refund). Ye [payment file](../06_payment_system/06_payment_system.md#kadam-4-pakka-kaise-pata-chale--hamara-server-gira-initiated-pehle-webhook-poochne-wala-job) wala hi hissa hai (PSP, PENDING, webhook).
+
+**API:** GET /shows/{id}/seats (FREE / HELD / BOOKED) · POST /bookings { showId, seats } -> HOLD -> bookingId + umar · POST /bookings/{id}/pay. User JWT se lo, body se nahi (warna kisi aur ke naam se book).
+
+**Tables:** seats = show_id, seat_id, status, user_id, hold_until · bookings = booking_id, user_id, show_id, seats, status · payments = booking_id (UNIQUE), status
 
 Par 9 baje ke show ka seat map lakhon log dekh rahe hain, book koi-koi kar raha hai. Har "map dekho" pe SQL DB
 se 200 seat padhna. DB padhne me hi ghut raha hai, aur Arpan ki booking query bhi dheemi ho gayi.
@@ -247,6 +257,8 @@ jo andar hain unki booking poori, aur galat kuch nahi.
 Ek line: Redis gaya to raftaar aur line ki barabari gayi, sahi-galat nahi. Map local memory se, andar walon ki
 signed parchi chalti rahe, line ke liye darwaza band jab tak Redis wapas na aaye.
 
+**Maan lo pooche "BookMyShow sach me aise karta?":** mat bolo "BMS aise karta". Bolo "a common pattern for flash sales", unka andar ka pata nahi.
+
 Par Arpan andar gaya, A1 HOLD ki, Pay dabaya. Network gaya, app ne apne aap dobara bheja. Paisa do baar kata.
 
 ### Kadam 6: pay dobara + paisa (banking kadam 3 + payment file)
@@ -298,38 +310,7 @@ thode token, signed parchi. Pay pe idempotency key (booking id) + payment file k
 seat pakki, hold mar chuka to refund. Redis poora gaya to dheema, galat nahi.
 ```
 
----
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-API?
-  -> GET /shows/{id}/seats (FREE / HELD / BOOKED)
-     · POST /bookings { showId, seats } -> HOLD -> bookingId + umar
-     · POST /bookings/{id}/pay. User JWT se lo, body se nahi (warna kisi aur ke naam se book).
-
-Tables?
-  -> seats = show_id, seat_id, status, user_id, hold_until
-     bookings = booking_id, user_id, show_id, seats, status · payments = booking_id (UNIQUE), status
-
-App machine giri to?
-  -> App kuch yaad nahi rakhta (stateless), hold SQL me. LB doosri machine pe bhej deta, kuch nahi gaya.
-
-SQL primary gira to?
-  -> sync copy (Multi-AZ) ~30-120 sec me primary banti. Booking = paisa, isliye copy sync. App wahi key se
-     dobara bheje (idempotent).
-
-2 seat ek saath (A1 + A2), ek mili ek nahi?
-  -> dono UPDATE ek hi transaction me. Dono ki "1 row badli" tabhi commit, warna rollback: dono milein ya
-     koi nahi.
-
-Chal raha hai, kaise pata?
-  -> booking p99, "0 row badli" (seat ja chuki) ginti, kitne hold umar se khatam,
-     waiting room me line kitni lambi.
-
-"BookMyShow sach me aise karta?"
-  -> mat bolo "BMS aise karta". Bolo "a common pattern for flash sales", unka andar ka pata nahi.
-```
+**Chal raha hai, kaise pata:** booking p99, "0 row badli" (seat ja chuki) ginti, kitne hold umar se khatam, waiting room me line kitni lambi.
 
 CONCEPTS: [db-what-when](../../FOUNDATIONS/09_databases_what_when.md) ·
 [CAP](../../FOUNDATIONS/08_cap_theorem.md) · saath: [payment](../06_payment_system/06_payment_system.md) ·

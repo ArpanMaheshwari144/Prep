@@ -93,6 +93,22 @@ Kafka kyun:
 Ab kya theek hua: email company band hai to bhi order chal jaata hai. SMS jodna ho to sirf Notification Service
 badalta hai, Order Service nahi.
 
+**API:** Kafka pe { event: "ORDER_PLACED", userId: Arpan, orderId: 999 }. Andar ke liye REST bhi:
+POST /notify { userId, type, channel?, payload }
+
+**Maan lo Arpan ki "order hua" aur "ship hua" ulti kram me pahunch jaayein:** Kafka key = userId. Ek user ki
+saari khabar ek hi tukde (partition) me, aur tukde ke andar kram bana rehta.
+
+**Maan lo poochhe Kafka me khabar khoye hi nahi, pakka:** saari copy ne li tab hi OK (acks=all), aur worker
+offset (kahan tak padha) kaam ke BAAD commit karta.
+
+**Maan lo raat 2 baje offer ka SMS jaaye:** kanoon (TRAI, telecom regulator) kehta offer wala (promotional) SMS
+sirf din me, OTP / order kabhi bhi. Asal me loopholes hain: push / WhatsApp pe koi rok nahi, company "pehle
+schedule kiya tha, der se gaya" bol sakti. Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana,
+isliye Kadam 2 me pasand check.
+
+**AWS pe:** Kafka = MSK.
+
 Par Notification Service ek hi line me teeno raaste bhej raha hai. SMS company dheemi hui to uske peeche Arpan
 ka push aur email bhi atak jaata hai.
 
@@ -126,6 +142,9 @@ Ab SMS company dheemi hui to sirf SMS line ruki. Arpan ka push aur email apni-ap
 Ek fayda aur: har line ke worker alag-alag badha sakte hain. Sale me push zyada jaata hai, to push worker 100
 kar do, SMS ke 20 hi rehne do. Numbers wala "~175 worker" yahin baithta hai.
 
+**Raaste kaunse:** Push = FCM (Android) / APNs (iPhone). Email = SES / SendGrid. SMS = Twilio / MSG91. App ke
+andar = DB + WebSocket.
+
 Par email worker ne Arpan ko email bheja, aur Kafka ko "ho gaya" (commit) bolne se pehle hi wo machine mar
 gayi. Naya worker wahi khabar dobara uthata hai aur dobara bhejta hai.
 Arpan ko ek order ke do email aate hain.
@@ -158,6 +177,11 @@ Redis hi mar gaya to? Uski replica (copy) primary ban jaati hai (Sentinel / Elas
 thodi peeche chalti hai, to aakhri kuch key shayad pahunchi na hon, aur un khabron ke do message ja
 sakte hain.
 Aur dono gaye to bhi worker bhejna band nahi karte: do message chalenge, khoya hua OTP nahi.
+
+**Maan lo poochhe Redis me "sirf pehla likh paata, 60 sec umar" kaise (khud mat bolo, poochhe tabhi):**
+`SET 999:email BHEJ_RAHA NX EX 60` (NX = sirf tab likho jab key pehle se na ho, EX 60 = 60 sec ki umar)
+
+**AWS pe:** Redis = ElastiCache.
 
 Par SMS company ne fail lauta diya. Worker turant dobara bhejta hai, phir fail, phir turant. Wo pehle se
 pareshaan company ko har second dhakka maar raha hai.
@@ -375,6 +399,11 @@ webhook TW-555 aaya -> table 2: "ye 999:sms hai" -> table 1 me haal = MILA
 
 Worker bhejte waqt dono me likh deta hai. Cassandra ka aam tareeka: jitni tarah se dhoondhna, utni table.
 
+**Maan lo data 3 saal baad (Tracking DB ~90 TB / saal):** 90 din baad rows sasti jagah (S3) me copy, phir umar
+(TTL) se Cassandra se mitao. Roz wali table chhoti rehti.
+
+**AWS pe:** Tracking (Cassandra) = Amazon Keyspaces (ya EC2 pe khud).
+
 Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Service ek hi baar me 1 crore
 khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.
 
@@ -492,46 +521,13 @@ company ki had me. Company ka webhook Tracking DB (Cassandra) me "mila / fail" l
 1000 ke tukdon me, register me tick. OTP ki alag tez line, sale ki bheed me nahi phansta.
 ```
 
+**Maan lo 10 guna traffic aa gaya:** Kafka me tukde (partition) pehle se zyada · Notification Service ki machine
+badhao · worker badhao (ek ~1000 / sec) · pasand / saancha cache · company ki had saanjha bucket se.
+
+**Chal raha kaise pata:** webhook se delivered / failed ginti, Kafka me kitna pending (lag), DLQ kitna bhara ->
+alert.
+
 ---
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-Redis me "sirf pehla likh paata, 60 sec umar" kaise? (khud mat bolo, poochhe tabhi)
-  -> SET 999:email BHEJ_RAHA NX EX 60   (NX = sirf tab likho jab key pehle se na ho, EX 60 = 60 sec ki umar)
-API?
-  -> Kafka pe { event: "ORDER_PLACED", userId: Arpan, orderId: 999 }. Andar ke liye REST bhi:
-     POST /notify { userId, type, channel?, payload }
-
-Raaste kaunse?
-  -> Push = FCM (Android) / APNs (iPhone). Email = SES / SendGrid. SMS = Twilio / MSG91.
-     App ke andar = DB + WebSocket.
-
-Arpan ki "order hua" aur "ship hua" ulti kram me na pahunche?
-  -> Kafka key = userId. Ek user ki saari khabar ek hi tukde (partition) me,
-     aur tukde ke andar kram bana rehta.
-
-Kafka me khabar khoye hi nahi, pakka?
-  -> saari copy ne li tab hi OK (acks=all), aur worker offset (kahan tak padha) kaam ke BAAD commit karta.
-
-Raat 2 baje offer ka SMS?
-  -> kanoon (TRAI, telecom regulator) kehta offer wala (promotional) SMS sirf din me, OTP / order kabhi bhi. Asal me loopholes
-     hain: push / WhatsApp pe koi rok nahi, company "pehle schedule kiya tha, der se gaya" bol sakti.
-     Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana, isliye Kadam 2 me pasand check.
-
-10 guna traffic?
-  -> Kafka me tukde (partition) pehle se zyada · Notification Service ki machine badhao · worker badhao
-     (ek ~1000 / sec) · pasand / saancha cache · company ki had saanjha bucket se.
-
-Data 3 saal baad (Tracking DB ~90 TB / saal)?
-  -> 90 din baad rows sasti jagah (S3) me copy, phir umar (TTL) se Cassandra se mitao. Roz wali table chhoti rehti.
-
-Chal raha hai, kaise pata?
-  -> webhook se delivered / failed ginti, Kafka me kitna pending (lag), DLQ kitna bhara -> alert.
-
-AWS pe naam?
-  -> Tracking (Cassandra) = Amazon Keyspaces (ya EC2 pe khud) · Redis = ElastiCache · Kafka = MSK.
-```
 
 CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) ·
 [ms-communication](../../FOUNDATIONS/10_ms_communication.md) ·

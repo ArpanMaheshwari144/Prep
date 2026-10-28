@@ -25,6 +25,8 @@ scope ke bahar (poochh ke hata do): end-to-end encryption, voice / video call, l
 End-to-end encryption (E2E) zaroor poochhna. Haan bola to server message padh hi nahi sakta: server pe
 search khatam ho jaata hai, aur poora design badal jaata hai.
 
+**Maan lo E2E chahiye:** server message padh hi nahi sakta: server pe search khatam, naya member purane message nahi dekh sakta, chaabiyon ka poora system. Sabse bada scope badalne wala sawaal.
+
 ## 2. NFR: kaisa chalna chahiye
 
 ```
@@ -79,6 +81,8 @@ flowchart LR
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**API:** `GET /connect` (WebSocket, band nahi hoti).
+
 Par subah 2 crore log ek saath app khol ke baithe hain. Har ek ki connection khuli hai, aur ek server ki
 memory itni connection nahi sambhal paati.
 
@@ -111,6 +115,8 @@ me dobara judne aaye. Is ek dhakke se LB aur baaki server bhi hil jaate hain (is
 Ilaaj: app ruk-ruk ke jude, aur har baar thoda zyada ruke: 1 sec, phir 2, phir 4 (**backoff**). Saath me har
 app apne rukne me thoda random jode, kisi ka 1.3 sec, kisi ka 0.7 sec (**jitter**). Isse 1 lakh log ek second
 me nahi, kai second me phail ke aate hain, aur LB unhe baaki ~199 server pe baant deta hai.
+
+**Maan lo deploy karna hai:** server dheere-dheere khaali karo, sab ek saath restart nahi.
 
 Par Arpan chat server 5 se juda hai, aur Ravi chat server 9 se. Arpan ka "hi" server 5 pe aaya. Ab server 5
 ko kaise pata ki Ravi 200 me se kis server pe baitha hai?
@@ -156,6 +162,10 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo Redis gira:** Redis ki copy (replica), alag zone me.
+
+**AWS pe:** Redis = ElastiCache.
+
 Par Ravi ka phone band hai. Redis me Ravi ki koi entry hi nahi. Arpan ka "hi" kahan jaaye? Phone 2 ghante
 baad on hoga, tab use ye message milna chahiye.
 
@@ -199,6 +209,10 @@ flowchart LR
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**API:** `GET /messages?chatId=&after=41`.
+
+**Maan lo push fail hua:** Google / Apple bahar ki service hai, apna retry + line (queue).
+
 Par ab har message DB me jaata hai: roz ~400 crore message, yaani roz ~1.2 TB. Ek DB itna likhna aur
 rakhna nahi jhel paayega.
 
@@ -239,6 +253,8 @@ flowchart LR
     style C2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style C3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**AWS pe:** Cassandra = Keyspaces / EC2.
 
 Par server ne DB me likh liya, aur ack bhejne se pehle gira. App ne dobara bheja,
 aur Ravi ko "hi" do baar dikha.
@@ -305,6 +321,8 @@ flowchart LR
     S --> D[("Cassandra")]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**API:** `POST /messages { chatId, text, clientMsgId }`.
 
 Par Arpan ki ghadi 5 minute aage chal rahi thi. Usne sawaal poochha, phir Ravi ne jawab diya. Message ka
 kram phone ke time se lagaya, to Arpan ka sawaal Ravi ke jawab ke neeche chala gaya. Chat ulti padh rahi
@@ -430,6 +448,8 @@ flowchart LR
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**API:** `POST /chats/{chatId}/read { padha_upto }`.
+
 Par Arpan ne shaadi ka 200 MB ka video bheja. Ye chat server aur Cassandra ke raaste gaya, to dono bhar
 jaayenge, aur baaki sabke message atak jaayenge.
 
@@ -448,6 +468,8 @@ flowchart LR
     CDN -- "paas nahi to S3 se laata" --> S3
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**AWS pe:** video = S3 + CloudFront.
 
 Par Ravi ki app pe "Arpan online" ya "last seen 10:30" kaise dikhe? 2 crore log hain, aur har ek ka online /
 offline badalta rehta hai.
@@ -490,20 +512,4 @@ kram na bigde     -> har chat ka server wala number (time nahi)
 do baar na dikhe  -> clientMsgId
 ```
 
----
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-API                -> GET /connect (WebSocket, band nahi hoti) ·
-                      POST /messages { chatId, text, clientMsgId } · GET /messages?chatId=&after=41 ·
-                      POST /chats/{chatId}/read { padha_upto }
-deploy?            -> server dheere-dheere khaali karo, sab ek saath restart nahi (chat server gira = kadam 2)
-Redis gira?        -> Redis ki copy (replica), alag zone me
-push fail?         -> Google / Apple bahar ki service hai, apna retry + line (queue)
-E2E chahiye?       -> server message padh hi nahi sakta: server pe search khatam, naya member purane message
-                      nahi dekh sakta, chaabiyon ka poora system. Sabse bada scope badalne wala sawaal
-chal raha, kaise pata? -> message pahunchne ka p99 (100 me se 99 kitni der me), har server pe khuli connection, dobara judne ki dar,
-                      push fail, alert
-AWS naam           -> Cassandra = Keyspaces / EC2 · Redis = ElastiCache · video = S3 + CloudFront
-```
+**Chal raha kaise pata:** message pahunchne ka p99 (100 me se 99 kitni der me), har server pe khuli connection, dobara judne ki dar, push fail, alert.

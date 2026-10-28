@@ -63,6 +63,12 @@ flowchart LR
     S -- "ek transaction:<br/>Arpan -500 · dukaan +500 · ledger" --> D[("SQL DB")]
 ```
 
+**API:** POST /pay { from, to, amount } + header Idempotency-Key -> { status, txn_id }
+
+**Maan lo pooche key kab banti:** payment screen khulte hi. Arpan ne do alag payment kiye to do screen, do key, do payment, sahi hai. Ek tap aur network ne dobara bheja to wahi key, ek hi payment. Cheque jaisa: key = cheque number. Do cheque dono cash hote hain, ek hi number do baar nahi.
+
+**Maan lo koi kisi aur ke wallet se bheje (owner check):** userId JWT se lo, body se nahi. Kisi aur ke wallet se bhejne ki koshish = 403.
+
 Par Arpan ke wallet me paisa hi nahi hai. Use apne HDFC account se 2000 daalne hain, aur HDFC hamara DB
 nahi hai, wo bahar hai.
 
@@ -73,6 +79,8 @@ ya koi nahi.
 
 Banking wali hi baat (ACID), SQL ka seedha kaam. Bheed badi dikkat nahi hai, sahi hona badi dikkat hai.
 Isliye SQL (Postgres).
+
+**AWS pe:** RDS (Postgres) Multi-AZ.
 
 ### Kadam 2: bank se wallet me 2000 (PSP)
 
@@ -99,6 +107,8 @@ card network se alag-alag judna, NPCI ki manzoori lena, aur card ke data ke kade
 saalon ka kaam hai. PSP ek hi API deta hai, aur sab bank, UPI aur card khud sambhalta hai, bas thodi fees leta
 hai. **Isliye PSP.** Paytm aur PhonePe jaise bade khiladi baad me khud bhi judte hain, par shuru me sab PSP se
 hi chalte hain.
+
+**Naam (PSP):** Razorpay / Cashfree.
 
 Par humne PSP ko call kiya, aur PSP dheema tha. 30 second tak jawab hi nahi aaya. Arpan ka paisa kata ya nahi,
 humein pata hi nahi. Ab Arpan ko kya dikhayein: fail ya success?
@@ -143,6 +153,8 @@ flowchart LR
     style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**Maan lo pooche payment ka haal:** payment: INITIATED -> PENDING -> SUCCESS / FAILED. Niyam: jitna kata, utna hi juda.
 
 Par PENDING ka pakka jawab kaise pata chale? Aur ek aur haalat: humne PSP ko call kiya, aur jawab aane se
 pehle hamara hi server gir gaya. Restart pe humein yaad bhi nahi ki call gayi thi ya nahi.
@@ -196,6 +208,8 @@ flowchart LR
     J -- "t-50 ka kya hua?" --> P
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**AWS pe:** SQS / Kafka (webhook baad me sambhalna).
 
 Par Arpan ne dukaan ko 500 bheje, aur dukaan ko paisa wallet me nahi, seedha apne bank me chahiye (payout).
 Arpan ka wallet hamare DB me hai, dukaan ka bank bahar. Ek transaction se kaam nahi chalega.
@@ -273,6 +287,8 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo pooche SPOF (ek cheez giri to sab ruka)?** DB primary (sync copy) · PSP (doosra PSP).
+
 Par saal bhar me ~1000 crore payment ki lines ho gayi. Ek hi primary pe itni likhai aur itna data, primary
 dheema pad gaya. Banking se farak: wahan 120 likhai / sec thi, yahan Diwali pe 3000 / sec.
 
@@ -331,19 +347,4 @@ paisa na khoye       -> INITIATED pehle likho, webhook + poochne wala job + raat
 har paisa trace ho   -> ledger (sirf INSERT, double-entry)
 ```
 
----
-
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-API             -> POST /pay { from, to, amount } + header Idempotency-Key -> { status, txn_id }
-key kab banti?  -> payment screen khulte hi. Arpan ne do alag payment kiye to do screen, do key, do payment,
-                   sahi hai. Ek tap aur network ne dobara bheja to wahi key, ek hi payment. Cheque jaisa:
-                   key = cheque number. Do cheque dono cash hote hain, ek hi number do baar nahi
-haal            -> payment: INITIATED -> PENDING -> SUCCESS / FAILED. Niyam: jitna kata, utna hi juda
-owner check     -> userId JWT se lo, body se nahi. Kisi aur ke wallet se bhejne ki koshish = 403
-SPOF (ek cheez giri to sab ruka)? -> DB primary (sync copy) · PSP (doosra PSP)
-chal raha, kaise pata? -> hisaab ka farak (milaan), p99 (100 me se 99 payment isse jaldi), errors, kitne PENDING atke, har payment ka trace id
-AWS naam        -> RDS (Postgres) Multi-AZ · Razorpay / Cashfree (PSP) ·
-                   SQS / Kafka (webhook baad me sambhalna)
-```
+**Chal raha, kaise pata:** hisaab ka farak (milaan), p99 (100 me se 99 payment isse jaldi), errors, kitne PENDING atke, har payment ka trace id.

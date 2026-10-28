@@ -62,6 +62,12 @@ flowchart LR
 
 Jab tak server ek hai, ye chalta hai: tez hai, aur sab ek hi jagah gina ja raha hai.
 
+**Maan lo poochhe 429 pe kya bhejein:** Retry-After (kitne sec baad aao; thoda aage-peeche jaise 28 / 33, taaki
+sab ek saath na lautein) + X-RateLimit-Remaining (kitne bache).
+
+**Maan lo tumhe kisi ne 429 diya:** Retry-After maano, ruk-ruk ke dobara (backoff + jitter), apni raftaar
+ghatao.
+
 Par bheed badhi to 10 app server lag gaye, aur aage LB. Ab Arpan ki 5 login App 1 pe gayi aur 5 App 2 pe. Dono
 ne alag-alag gina, dono ko laga "5 hi to hain", aur 10 andar chali gayi. Had toot gayi.
 
@@ -89,6 +95,8 @@ kai ms lagte, poori site dheemi ho jaati. Redis RAM me hai, ~1 ms. Aur numbers m
 MB hai, RAM me aa jaata hai.
 
 Umar (TTL) isliye ki 60 sec baad key khud mit jaaye, safai ke liye koi job na chalana pade.
+
+**AWS pe:** Redis = ElastiCache.
 
 Ye "minute" ghadi ka nahi, Arpan ki pehli request se shuru hota hai (10:00:20 pe pehli aayi to 10:01:20 tak).
 Par kinare pe dikkat wahi: bot ne 10:01:19 pe 5 bheji (window ka aakhri second) aur 10:01:20 pe phir 5 (nayi window
@@ -129,6 +137,9 @@ flowchart LR
     R -- "khaali" --> X["429"]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**Maan lo 100 halki request vs 100 bhaari:** limiter ke liye dono "100". Bhaari (report) pe kadi had, ya wazan
+do (report = 50 token, login = 1).
 
 Par bot ne ek saath 20 login bheje. 10 app server pe 20 request ne ek saath Redis se padha "tokens = 5", sabne socha "bache
 hain", aur sabne 1 ghata ke likh diya. 20 andar chale gaye, jabki 5 hi jaane chahiye the.
@@ -183,6 +194,13 @@ padta, aur bot ka bojh fir bhi app pe padta. Gateway pe ek jagah lagao, sab pe c
 throttling pehle se hoti hai. Par har user ki alag had chahiye to apna limiter Redis (ElastiCache) ke saath
 lagate hain.
 
+**Maan lo poochhe had kahan se aati (free / pro):** DB me user ka plan (bina login 60 / ghanta, free 5,000, pro
+10,000). Gateway cache kare, Redis me usi had se milaye.
+
+**Maan lo had badalni ho:** niyam config me (DB / AppConfig), gateway ~30 sec me padhe. Naya code nahi.
+
+**AWS pe:** gateway = API Gateway (throttling).
+
 Par ab sab kuch Redis pe tika hai. Dopahar ko Redis gir gaya. Ab limiter kisi request ko haan bole ya na?
 Sabko 429 diya to poori site band.
 
@@ -211,6 +229,10 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo Redis + copy dono gaye:** har gateway apni memory me ginti rakhe, had baant ke: 100 / min aur 10
+machine -> har machine 10 / min (had / N). LB barabar baantta, to kul lagbhag 100. Fail-open me had hi nahi
+thi, yahan lagbhag sahi. Redis wapas aaya to phir Redis se ginti. (Naya dabba nahi, isliye kadam nahi)
+
 Par wahi bot har 60 second baad wapas aa jaata hai. 429 khaata hai, minute khatam hote hi phir aata hai, aur
 din bhar yahi chalta hai.
 
@@ -237,6 +259,8 @@ flowchart LR
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**AWS pe:** WAF = AWS WAF.
 
 Par ek naya bot aaya. Uske paas leak hui password list thi. Usne 1,000 alag account pe 4-4 password try kiye
 (credential stuffing). Har account pe sirf 4, to account wali had (5 / min) kabhi lagi hi nahi. Isliye IP pe
@@ -360,25 +384,7 @@ ginti EK              -> Redis (kai server ke liye) + home region (kai region ke
 gire to site chale    -> Redis ki copy, fail-open (aam API) / fail-closed (login)
 ```
 
----
+**Maan lo 10 guna traffic aa gaya:** gateway machine badhao · Redis ko user ke hisaab se shard karo + copy.
 
-## Pooche to (design nahi badalta, bas ek baar dekh lo)
-
-```
-Redis + copy dono gaye?          -> har gateway apni memory me ginti rakhe, had baant ke: 100 / min aur
-                                    10 machine -> har machine 10 / min (had / N). LB barabar baantta, to kul
-                                    lagbhag 100. Fail-open me had hi nahi thi, yahan lagbhag sahi. Redis
-                                    wapas aaya to phir Redis se ginti. (Naya dabba nahi, isliye kadam nahi)
-had kahan se aati (free / pro)?  -> DB me user ka plan (bina login 60 / ghanta, free 5,000, pro 10,000).
-                                    Gateway cache kare, Redis me usi had se milaye
-had badalni ho?                  -> niyam config me (DB / AppConfig), gateway ~30 sec me padhe. Naya code nahi
-429 pe kya bhejein?              -> Retry-After (kitne sec baad aao; thoda aage-peeche jaise 28 / 33,
-                                    taaki sab ek saath na lautein) + X-RateLimit-Remaining (kitne bache)
-tumhe kisi ne 429 diya to?       -> Retry-After maano, ruk-ruk ke dobara (backoff + jitter),
-                                    apni raftaar ghatao
-100 halki vs 100 bhaari?         -> limiter ke liye dono "100". Bhaari (report) pe kadi had, ya wazan do
-                                    (report = 50 token, login = 1)
-10 guna traffic?                 -> gateway machine badhao · Redis ko user ke hisaab se shard karo + copy
-chal raha, kaise pata?           -> limiter ka time (p99 = 100 me se 99 request isse tez), kitne 429 / 503, Redis ki galtiyan, alert
-AWS naam                         -> Redis = ElastiCache · gateway = API Gateway (throttling) · WAF = AWS WAF
-```
+**Chal raha kaise pata:** limiter ka time (p99 = 100 me se 99 request isse tez), kitne 429 / 503, Redis ki
+galtiyan, alert.
