@@ -72,6 +72,8 @@ Kisi bug ya haath ke UPDATE se balance 600 dikha raha tha, par khaate ka jod 100
 
 **Maan lo 10 guna traffic:** padhai badhi to replica, jagah badhi to tukde + S3, likhai badhi tab account_id se shard (do shard ke beech transfer = saga).
 
+**AWS pe:** purani lines **S3** me **Object Lock** ke saath (koi badal ya mita na sake), aur kabhi padhna ho to **Athena** se seedha S3 pe query.
+
 &nbsp;
 
 ### Wrap

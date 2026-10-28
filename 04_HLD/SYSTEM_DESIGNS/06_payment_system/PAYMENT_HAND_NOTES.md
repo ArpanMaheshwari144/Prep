@@ -47,6 +47,8 @@ Pakka jawab teen raaste se aata hai:
 - **Job**: har 1 min chalta hai, 2 min purane INITIATED / PENDING uthata hai aur PSP se poochta hai.
 - **Raat ka milaan**: PSP ki file se DB milao.
 
+**AWS pe:** webhook aate hi line me daal do, AWS ka **SQS** (ya Kafka), aur baad me sambhalo. Line AWS chalata hai.
+
 &nbsp;
 
 **6. SAGA + BEECH KA KHAATA**
@@ -67,6 +69,8 @@ Hold isliye ki paisa har waqt kahin dikhe. **2PC nahi**, kyunki bank / PSP uske 
 Diwali pe 3000 payment / sec aaye, to kai service machine aur aage LB. Dukaan ki "aaj ki bikri" report bhaari hai, isliye wo **read replica** se chalti hai. Paisa kaatne ka faisla hamesha primary se.
 
 **SPOF kahan:** DB primary (sync copy) · PSP (doosra PSP).
+
+**AWS pe:** Postgres AWS ka **RDS** lete hain, **Multi-AZ** ke saath: doosri building me sync copy AWS rakhta hai, primary gira to wo khud copy ko primary banata hai. Sync rakhna (paisa hai) hamara faisla tha.
 
 &nbsp;
 

@@ -18,6 +18,8 @@ Sabse seedha: app server apni memory me map rakhe, "arpan ne is minute kitni bhe
 
 Bheed badhi to 10 server lage. Arpan ki 5 request App 1 pe gayi aur 5 App 2 pe, dono ne alag gina, aur 10 andar chali gayi. Isliye ginti ek jagah rakhi, **REDIS** me. Har request pe INCR karte hain, aur pehli request pe 60 sec ki umar lagti hai. DB nahi liya, kyunki DB disk pe hai aur har baar kai ms lagte, jabki Redis RAM me hai aur ~1 ms leta hai.
 
+**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
+
 &nbsp;
 
 **3. TOKEN BUCKET**
@@ -42,6 +44,8 @@ Limiter app ke andar tha, to mana wali request bhi app tak aa ke uska time kha r
 
 **Maan lo traffic 10 guna:** gateway machine badhao, Redis ko user ke hisaab se shard karo.
 
+**AWS pe:** gateway khud nahi banate, AWS ka **API Gateway** lete hain, usme had (throttling) ki setting pehle se hai. Machine aur bheed AWS sambhalta hai.
+
 &nbsp;
 
 **6. COPY + FAIL-OPEN / CLOSED**
@@ -65,6 +69,8 @@ Ek naya bot leak hui password list leke 1,000 alag account pe 4-4 password try k
 Humne kya socha aur kya tay kiya (login pe): pehle login pe IP ki had lagayi thi, par dikkat ye nikli ki office me kitne log hain ye pata nahi (100 bhi ho sakte, TCS jaise lakh bhi). Had kadi rakho to asli log atakte, dheeli rakho to bot nikal jaata. Isliye tay kiya: IP pe had nahi (ya bahut dheeli). Asli deewar MFA / passkey, kyunki password mil bhi gaya to bina phone ke bekaar. Galat password pe block nahi, CAPTCHA, taaki asli user na atke. Aur cloud / badnaam IP ko WAF pe band kiya. Koi ek perfect hal nahi hai, isliye parat-dar-parat.
 
 **Maan lo login pe password guess (brute force):** koi ek perfect hal nahi. Asli deewar MFA / passkey (password mil bhi gaya to bina phone ke bekaar). Galat password pe block nahi, CAPTCHA, taaki asli user na atke. WAF pe cloud / badnaam IP band (cloud wale apni IP list publish karte hain). IP pe had kamzor nishaan hai, kyunki office ka size pata nahi.
+
+**AWS pe:** **AWS WAF** lete hain: rules hum likhte hain (kaunsi IP band), chalana AWS ka kaam.
 
 &nbsp;
 
