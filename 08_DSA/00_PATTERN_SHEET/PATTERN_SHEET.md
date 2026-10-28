@@ -1790,21 +1790,21 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 ── FAMILY: PER-KEY STREAK (log line todo -> har KEY ki apni chalti ginti; Wise OA 27-Oct) ──
 
  ▸ SERVER ERROR STREAK  (03/11)
-     ┌─ SAWAAL ──────────────────────────────────
-     │ logs "<server> <code> <msg>". server ke LAGAATAAR 3 "error" -> alert++ aur ginti 0; "success" -> ginti 0. kul alerts.
-     │   e.g. ["s1 500 error","s2 200 success","s1 500 error","s3 500 error","s1 500 error"] -> 1
-     │   kyun: s1 ke 3 error (s2, s3 beech me aaye par s1 ki ginti nahi todte) -> 1 alert; s3 ka sirf 1 error
-     ├─ TAREEKA ─────────────────────────────────
-     │ logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
-     │ pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (upar NAAM-SE-CONFUSE E)
-     ├─ CHAABI ──────────────────────────────────
-     │   1. mp {server -> lagaataar error}, count = 0
-     │   2. loop har line s pe: stringstream ss(s); string server, code, msg; ss >> server >> code >> msg
-     │      (ek LINE do, poora vector nahi)
-     │   3. msg == "error" -> mp[server]++, aur mp[server] >= 3 -> count++, mp[server] = 0   (faisla msg se, code se nahi)
-     │   4. else if msg == "success" -> mp[server] = 0                            (= 0, -- NAHI)
-     │   5. return count
-     └───────────────────────────────────────────
+     // SAWAAL: logs "<server> <code> <msg>". server ke LAGAATAAR 3 "error" -> alert++ aur ginti 0; "success" -> ginti 0. kul alerts.
+     //   e.g. ["s1 500 error","s2 200 success","s1 500 error","s3 500 error","s1 500 error"] -> 1
+     //   kyun: s1 ke 3 error (s2, s3 beech me aaye par s1 ki ginti nahi todte) -> 1 alert; s3 ka sirf 1 error
+
+     // TAREEKA: logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
+     // pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (upar NAAM-SE-CONFUSE E)
+
+     // CHAABI:
+     //   1. mp {server -> lagaataar error}, count = 0
+     //   2. loop har line s pe: stringstream ss(s); string server, code, msg; ss >> server >> code >> msg
+     //      (ek LINE do, poora vector nahi)
+     //   3. msg == "error" -> mp[server]++, aur mp[server] >= 3 -> count++, mp[server] = 0   (faisla msg se, code se nahi)
+     //   4. else if msg == "success" -> mp[server] = 0                            (= 0, -- NAHI)
+     //   5. return count
+
      int countAlerts(vector<string> &logs) {
          unordered_map<string, int> mp;          // server -> abhi tak lagaataar error
          int count = 0;
