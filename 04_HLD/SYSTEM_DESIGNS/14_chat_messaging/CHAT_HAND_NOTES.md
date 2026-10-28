@@ -46,7 +46,7 @@ Isliye **PEHLE DB ME LIKHO, PHIR BHEJO**: pehle bhejte aur DB se pehle girte to 
 
 **Maan lo push fail hua:** Google / Apple bahar ki service hai, to apna retry + queue.
 
- Wapas juda to app bole "mere paas 41 tak hai" (`GET /messages?chatId=&after=41`), server 42 se aage bheje.
+Wapas juda to app bole "mere paas 41 tak hai" (`GET /messages?chatId=&after=41`), server 42 se aage bheje.
 
 **Maan lo Ravi ka server gira:** message DB me hai, Ravi naye server se juda, nayi Redis entry likhi, aur "41 ke baad sab do".
 
