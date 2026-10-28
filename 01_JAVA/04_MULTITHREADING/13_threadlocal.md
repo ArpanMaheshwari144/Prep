@@ -1,8 +1,50 @@
-# ThreadLocal — per-thread private variable
+# ThreadLocal — Har Thread Ka Apna Locker
 
-> **Multithreading: per-thread isolated state.** finance/web me request-scoped context (userId, traceId, SecurityContext) carry karne ka standard tareeka. (11-Sep deep-grill)
+**Kahani:** server pe ek saath 3 request aayin: Arpan, Rahul, Sita. Teeno alag thread pe chal rahi hain. Ek shared `String currentUser` rakha, to sab ek hi whiteboard pe likh rahe hain. Arpan ki request padhne gayi aur use "Rahul" mila, kyunki beech me Rahul wale thread ne upar likh diya tha. Bank me iska matlab hai ki kisi aur ka account dikh gaya. `ThreadLocal` = naam ek, par har thread ka apna alag locker. Har thread ko sirf apni value dikhti hai.
+
+```
+ThreadLocal<String> currentUser
+   Thread-A locker: "Arpan"   -> A ka get() = Arpan
+   Thread-B locker: "Rahul"   -> B ka get() = Rahul
+   Thread-C locker: "Sita"    -> C ka get() = Sita
+```
+
+**Tera practical:** [ThreadLocalDemo](practical/ThreadLocalDemo.java)
+```
+DEMO 1:  [T-A] Arpan · [T-B] Rahul · [T-C] Sita          <- har thread apni value
+DEMO 2a: pool reuse, NO remove()   -> readOnly sees = Arpan   <- LEAK
+DEMO 2b: pool reuse, WITH remove() -> readOnly sees = null    <- saaf
+```
+
+**Khaas baat:**
+1. Do fayde: (a) ek variable, kai thread, koi takkar nahi. (b) userId / traceId har method me parameter bana ke 10 layer tak bhejna nahi padta, jahan chahiye `get()`.
+2. Methods: `set()`, `get()`, `remove()`, aur shuru ki value ke liye `ThreadLocal.withInitial(() -> 0)`.
+3. Sabse bada trap pool hai. Thread naya nahi banta, wahi thread dobara aata hai. `remove()` nahi kiya to Rahul ki request ko Arpan ki value mil jaati hai (DEMO 2a). Ilaaj:
+   ```java
+   try { currentUser.set(userId); /* kaam */ }
+   finally { currentUser.remove(); }   // pool me wapas jaane se pehle locker saaf
+   ```
+4. Spring andar se yahi use karta hai: `SecurityContextHolder` (logged-in user), `@Transactional` ka transaction, logs ka MDC traceId. Tera JWT filter SecurityContext set karta hai, aur request khatam hone pe filter use saaf karta hai. Ye wahi `remove()` hai.
+
+**Prod wala trap:** kaam ko `@Async` ya `CompletableFuture` pe bheja (file 10 aur 11), to wo doosre thread pe chala gaya. Doosre thread ka locker khaali hota hai.
+```java
+user.set("Arpan");
+user.get();                                          // request thread: Arpan
+CompletableFuture.supplyAsync(() -> user.get());     // async thread:   null
+```
+Async me `SecurityContextHolder.getContext()` khaali aata hai, aur log me traceId gayab ho jaata hai. Ilaaj: zaroori value pehle variable me nikaal ke async ko pass karo, ya Spring ka `TaskDecorator` lagao jo context copy kare.
+
+```
+Interview: "ThreadLocal gives each thread its own copy behind one reference - used for request context
+like userId, traceId, SecurityContext without passing it through every method. With thread pools
+I always remove() in finally, otherwise a reused thread leaks the previous request's value.
+And it doesn't cross threads - in @Async or CompletableFuture I pass the value explicitly
+or use a TaskDecorator."
+```
 
 ---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
 
 ## 1. PROBLEM pehle (kyun aaya)
 
