@@ -33,8 +33,27 @@ using namespace std;
 
 string shiftBack(string s, int k)
 {
-    // yahan likho
-    return "";
+    if (s.size() == 0)
+    {
+        return "";
+    }
+
+    while (k > 26)
+    {
+        k = k % 26;
+    }
+
+    string ans = "";
+    for (int i = 0; i < s.size(); i++)
+    {
+        if (s[i] == ' ')
+        {
+            ans += ' ';
+            continue;
+        }
+        ans += ((((s[i] - 'A') - k) + 26) % 26) + 'A';
+    }
+    return ans;
 }
 
 // ---- test helper ----
