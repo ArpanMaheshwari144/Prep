@@ -48,3 +48,68 @@ thenCombine or allOf to run independent calls in parallel, exceptionally or hand
 In production I always pass my own executor instead of the common pool, and add orTimeout
 with a fallback so one slow dependency can't hang the whole request."
 ```
+
+
+---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
+
+## Future vs CompletableFuture
+
+| | `Future` (Java 5) | `CompletableFuture` (Java 8) |
+|--|------------------|-------------------------------|
+| **Blocking?** | YES (`get()` blocks) | NO — callbacks |
+| **Chain operations?** | NO | YES (`thenApply`, `thenCompose`) |
+| **Combine multiple?** | NO | YES (`thenCombine`, `allOf`) |
+| **Exception handling?** | `get()` throws | `exceptionally()`, `handle()` |
+| **Manually complete?** | NO | YES (`complete()`) |
+
+## CompletableFuture — Non-Blocking + Chain
+
+### Async + chain
+```java
+CompletableFuture
+    .supplyAsync(() -> fetchUser(101))         // async start
+    .thenApply(user -> user.getName())          // transform
+    .thenAccept(name -> System.out.println(name));   // consume — no return
+```
+
+### Combine 2 futures
+```java
+CompletableFuture<User> userF  = CompletableFuture.supplyAsync(() -> fetchUser(101));
+CompletableFuture<Order> orderF = CompletableFuture.supplyAsync(() -> fetchOrder(101));
+
+userF.thenCombine(orderF, (user, order) -> user.getName() + " ordered " + order.getId())
+     .thenAccept(System.out::println);
+```
+
+### Wait for ALL
+```java
+CompletableFuture<Void> all = CompletableFuture.allOf(future1, future2, future3);
+all.join();           // wait for all
+```
+
+### Exception handling
+```java
+CompletableFuture
+    .supplyAsync(() -> riskyCall())
+    .exceptionally(ex -> {
+        System.err.println("Error: " + ex);
+        return "fallback";
+    });
+```
+
+## TRAP 3 — `Future.cancel()` Best Effort
+
+> **Cancellation guarantee nahi** — `cancel(true)` pe running task ko sirf interrupt bheja jaata (`cancel(false)` = chal raha task chalta rahega), task ko khud interrupt check karna padta. Abrupt stop nahi hota.
+> (CompletableFuture me `cancel(true)` chalte task ko interrupt bhi NAHI karta — sirf CF ko "cancelled" mark karta.)
+
+### 1. thenApply vs thenApplyAsync  (kaun-sa thread?)
+```
+thenApply(fn)       -> fn us SAME thread pe chalta jisne pichhla stage COMPLETE kiya
+                       (ya agar CF already-done ho to CALLING thread pe). = lightweight, no thread-switch.
+thenApplyAsync(fn)  -> fn ALAG thread pe (default ForkJoinPool.commonPool, ya jo executor do).
+                       = jab kaam BHAARI ho, ya completing-thread ko free rakhna ho.
+```
+Anchor: `thenApply` = "jo bhi banda kaam khatam kare, wahi agla step bhi kar de" · `Async` = "naye banda ko de do".
+GRILL-line: "Async variant shifts the continuation to a thread pool; non-Async runs it on whichever thread completed the previous stage."

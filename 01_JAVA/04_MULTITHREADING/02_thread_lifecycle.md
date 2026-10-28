@@ -27,3 +27,26 @@ There is no separate RUNNING state - RUNNABLE covers both ready and on-CPU.
 BLOCKED = waiting for a monitor lock, WAITING = no timeout, TIMED_WAITING = with timeout.
 In production I read these states in a thread dump to debug hangs."
 ```
+
+
+---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
+
+## State Table (6 — sahi)
+
+| State | Kaise pahuncho | Matlab |
+|-------|---------------|--------|
+| **NEW** | `new Thread()` banaya | Bana, `start()` nahi kiya |
+| **RUNNABLE** | `start()` call kiya | CPU ke liye ready YA CPU pe chal raha (dono isi me) |
+| **BLOCKED** | `synchronized` lock ka wait | Monitor-lock chahiye, doosre ke paas hai |
+| **WAITING** | `wait()` / `join()` / `park()` (bina timeout) | INDEFINITE wait — koi jagayega tabhi |
+| **TIMED_WAITING** | `sleep(ms)` / `wait(ms)` / `join(ms)` | Timeout-wala wait — waqt-baad khud uthta |
+| **TERMINATED** | `run()` complete | Khatam |
+
+★ **BLOCKED vs WAITING vs TIMED_WAITING** (grill favourite):
+```
+BLOCKED       -> synchronized MONITOR-lock ka intezaar (koi aur held kiye hai)
+WAITING       -> wait()/join() bina time -> jab tak notify/end na ho
+TIMED_WAITING -> sleep(ms)/wait(ms)/join(ms) -> time khatam hote hi khud wapas
+```

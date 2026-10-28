@@ -28,3 +28,17 @@ wait set. notify() moves one waiting thread to BLOCKED - it still has to reacqui
 which happens only after the notifier exits synchronized. With multiple producers and
 consumers I use notifyAll, or better, a BlockingQueue."
 ```
+
+
+---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
+
+## Key Insights
+
+| Confusion | Reality |
+|-----------|---------|
+| `notify()` = thread immediately wake up? | **NAHI** — sirf BLOCKED state mein move karta. Lock ke liye line mein khada |
+| `notify()` ke baad notifier ka lock release? | **NAHI** — notifier sync block khatam hone tak lock pakda rahega |
+| Thread `wait()` se kaha resume karega? | **`wait()` ke just baad** — wahin se while loop dobara check |
+| `notify()` vs `notifyAll()`? | `notify()` = **ek** thread jagao. `notifyAll()` = **sab** wait set ke threads jagao |

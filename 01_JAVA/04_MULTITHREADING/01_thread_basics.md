@@ -29,3 +29,34 @@ Interview: "Thread can be created by extending Thread or implementing Runnable. 
 because Java has single inheritance, so the class stays free to extend something else.
 Always call start(), not run() - run() just executes on the current thread, no new thread."
 ```
+
+
+---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
+
+## Thread Banane Ke 2 Tarike
+
+### Tarika 1 — `Thread` extend karo
+```java
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread chal raha hai!");
+    }
+}
+
+MyThread t = new MyThread();
+t.start();    // ← start() likho, run() NAHI!
+```
+
+### Tarika 2 — `Runnable` implement karo (PREFER karo)
+```java
+class MyTask implements Runnable {
+    public void run() {
+        System.out.println("Task chal raha hai!");
+    }
+}
+
+Thread t = new Thread(new MyTask());
+t.start();
+```

@@ -41,3 +41,48 @@ It needs 4 conditions; breaking any one prevents it. Simplest fix is a global lo
 e.g. always lock the lower account id first in a transfer. tryLock with timeout also works.
 It doesn't throw - it silently hangs, so I detect it with a thread dump (jstack)."
 ```
+
+
+---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
+
+## Code — Deadlock Banana
+
+```java
+// DEADLOCK — alag order mein lock le rahe
+// Thread 1:
+synchronized(lockA) {
+    synchronized(lockB) {     // B chahiye — T2 ke paas hai
+        // ...
+    }
+}
+
+// Thread 2:
+synchronized(lockB) {
+    synchronized(lockA) {     // A chahiye — T1 ke paas hai
+        // ...
+    }
+}
+// Dono wait — DEADLOCK
+```
+
+---
+
+## Fix — Same Order Mein Lock Lo
+
+```java
+// FIX — dono threads SAME order mein
+// Thread 1:
+synchronized(lockA) {
+    synchronized(lockB) { /* kaam */ }
+}
+
+// Thread 2 — same order (A pehle, B baad):
+synchronized(lockA) {
+    synchronized(lockB) { /* kaam */ }
+}
+
+// Ab circular wait IMPOSSIBLE — dono A ke liye compete karenge
+// jo pehle lega wo B bhi le lega. NO DEADLOCK.
+```

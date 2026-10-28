@@ -41,3 +41,18 @@ called inside synchronized - it releases the lock and resumes after notify, re-a
 sleep is for delays, wait is for thread coordination. Always wait in a while loop
 because of spurious wakeups."
 ```
+
+
+---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
+
+## Sabse Bada Fark — Lock Behaviour
+
+| | `wait()` | `sleep()` |
+|--|---------|-----------|
+| **Class** | `Object` (lock pe call) | `Thread` (thread pe call) |
+| **Lock release?** | **YES** — chhod deta | **NO** — pakad ke rakhta |
+| **Wake up kaise?** | `notify()` / `notifyAll()` / timeout / `interrupt()` | Time khatam hote hi automatic, ya `interrupt()` (InterruptedException) |
+| **Use case** | **Inter-thread communication** (producer-consumer) | **Just delay** (timer, polling) |
+| **Kahaan call?** | **`synchronized` block ke andar MUST** | Kahin bhi |
