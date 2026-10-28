@@ -231,6 +231,10 @@ Bheed ko DB tak pahunchne se pehle hi rokna padta hai.
 Ek aadmi 50 tab khol ke line me 50 baar lage? Token user ke login se juda hai, ek user ek token. Bot ki bheed
 ke liye wahi rate limiter jo [rate limiter file](../02_rate_limiter/02_rate_limiter.md) me hai.
 
+**Maan lo pay ke beech token ki umar (10 min) khatam:** seat pe koi asar nahi. Do alag ghadiyan hain: TOKEN = darwaze ki
+parchi (andar aao, HOLD karo), HOLD = seat ki ghadi (SQL me, 5 min). HOLD ho gaya to seat ka faisla sirf hold ki ghadi se.
+Hold 5 min ka, token 10 ka, to hold hamesha pehle khatam. Token khatam = bas nayi seat HOLD nahi kar sakta, dobara line.
+
 **Maan lo Redis aur uski copy dono gaye:** Pehle ek baat pakki: dil (ek seat ek hi ticket) SQL me hai, Redis me
 nahi. HOLD, BOOKED, payment sab SQL me. Redis poora gaya to system dheema ya ruka ho sakta, galat nahi.
 
@@ -293,6 +297,10 @@ flowchart LR
     S -- "ticket ka SMS" --> N["Notification"]
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
+
+**Maan lo server dheema, Arpan ko pata nahi seat bani ya nahi:** app server kuch yaad nahi rakhta, sach SQL me hai. App
+wahi booking id ke saath dobara poochhe / bheje (backoff + jitter), LB dheeme server ko hata ke kisi aur pe bheje, wo SQL dekh
+ke batata A1 HELD / BOOKED Arpan ki. Dobara bheja to bhi dohra nahi (key + WHERE FREE). App server ki replica nahi hoti.
 
 Yahan teeno files ek saath judti hain: banking se key, payment se PSP + webhook, [notification](../04_notification_system/04_notification_system.md) se ticket
 ka SMS.
