@@ -35,8 +35,42 @@ const int INF = 1e9;
 
 vector<int> dijkstra(int n, vector<vector<int>> &edges, int src)
 {
-    // tera code
-    return {};
+    unordered_map<int, vector<pair<int, int>>> adj;
+    for (auto &it : edges)
+    {
+        int u = it[0];
+        int v = it[1];
+        int w = it[2];
+
+        adj[u].push_back({v, w});
+        adj[v].push_back({u, w});
+    }
+
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    vector<int> dist(n, 1e9);
+    dist[src] = 0;
+    pq.push({0, src});
+    while (!pq.empty())
+    {
+        int wt = pq.top().first;
+        int node = pq.top().second;
+        pq.pop();
+
+        if (wt > dist[node])
+        {
+            continue;
+        }
+
+        for (auto &it : adj[node])
+        {
+            if (wt + it.second < dist[it.first])
+            {
+                dist[it.first] = wt + it.second;
+                pq.push({wt + it.second, it.first});
+            }
+        }
+    }
+    return dist;
 }
 
 // ---- test helper ----
