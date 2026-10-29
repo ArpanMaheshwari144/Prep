@@ -1,110 +1,64 @@
-# Payment: hand notes (mock se pehle ye padho)
+# Payment: hand notes (dukaan pe pay)
 
-### Shuru
+Sirf block ki heading padho, scene aur hal khud bolo. Atke to neeche dekho.
 
-Kaam: wallet se wallet paisa (Arpan se dukaan), bank se wallet me daalna (top-up), aur wallet se bank me nikaalna (payout). Fail ho to paisa wapas aaye, aur har paisa ka hisaab mile. Fraud, kai currency aur chargeback scope ke bahar hain. ~10 crore user hain. Aam din kuch sau payment / sec, Diwali pe kuch hazaar. Sahi hona bheed se badi dikkat hai.
+**Scene:** Arpan dukaan pe khade ho ke app se pay karta hai. Uska paisa HDFC me, dukaan ka ICICI me. Hamara app kisi bank ka nahi.
+**Shabd:** parchi / register = hamara DB · beech ki company = PSP · ladka = poochne wala job · beech ka khaata = hold
 
-&nbsp;
-
-**BANKING SE AAYA (yahan sirf ek line bolo)**
-
-Wallet se wallet (`POST /pay { from, to, amount }` + Idempotency-Key header -> `{ status, txn_id }`) = dono wallet hamare hi DB me hain. To banking jaisa: SQL, ek transaction, idempotency key, `balance >= 500` check aur kaatna ek query me, aur ledger. Payment ka naya hissa ye hai: **paisa bahar (bank) se aana aur bahar jaana.**
-
-**Key kab banti hai:** payment screen khulte hi banti hai. Cheque number jaisi.
-
-**Owner check:** userId JWT se lo, body se nahi, warna 403.
+Wallet se wallet = banking jaisa hi (ek transaction, parchi ka number, ek query, ledger). Naya sirf: paisa bahar ke bank se aana aur jaana.
 
 &nbsp;
 
-**1. PSP**
+**1. App HDFC ka nahi, HDFC hamari sunta nahi**
+Har bank se khud judna saalon ka kaam. Beech me ek centralized company jo sab bankon se judi hai, bas uski API use karo.
+**PSP (Razorpay, Juspay)**
+Interview: "Bank se seedha nahi judte, PSP ki API se. Wo thodi fees leta hai, hume NPCI / PCI ki manzoori nahi chahiye."
 
-Arpan ko HDFC se wallet me 2000 daalne hain, aur HDFC hamara DB nahi hai. Beech me PSP (Razorpay / Juspay): hum order t-50 dete hain, Arpan UPI se pay karta hai, PSP batata hai SUCCESS, aur hum wallet +2000 karte hain. Har bank se khud nahi jude, kyunki usme NPCI ki manzoori aur PCI-DSS lagta, jo saalon ka kaam hai. PSP ek API deta hai aur thodi fees leta hai.
+**2. PSP 30 second chup**
+Apne paas ek parchi rakho: pay dabate hi INITIATED, jawab nahi to PENDING. App pe FAILED ya SUCCESS nahi, "pakka hote hi batayenge".
+**INITIATED, PENDING, timeout**
+Interview: "Unknown = PENDING. FAILED dikhaya to user dobara pay karega, SUCCESS dikhaya to nakli paisa. PSP call pe 5 sec timeout."
 
-&nbsp;
+**3. PSP batana bhool gaya, payment hamesha PENDING**
+Beech me ek banda bitha do jo PSP se poochhta rahe "hua ya nahi". Aur PSP khud bhi batata hai.
+**poochne wala job + webhook**
+Interview: "Webhook se PSP batata hai, aur har minute job PENDING utha ke PSP se poochhta hai. Raat ko PSP ki file se milaan."
 
-**2. PENDING + TIMEOUT**
+**4. PSP-1 poora band**
+Naye payment PSP-2 pe bhej do. Jo PSP-1 pe atke hain unhe roko, "thodi der me batayenge", unhe PSP-2 pe dobara mat bhejo.
+**circuit breaker, fallback PSP**
+Interview: "Fail badhe to breaker PSP-1 ko call rokta hai, naye PSP-2 pe. PENDING wala PSP-2 pe nahi, warna do baar kat sakta."
 
-PSP 30 sec chup raha. "FAILED" dikhate to Arpan dobara daalta aur 4000 kat jaate. "SUCCESS" dikhate to nakli paisa aa jaata. Isliye jo pata nahi, wo **PENDING** hai: "2-3 min me pakka batayenge". Timeout 5 sec ka, warna Diwali pe saare thread PSP ke intezaar me phans jaate.
+**5. Server PSP ko call ke beech gira**
+Pehle register me likho, phir bhejo. Restart pe likha mila to PSP se poochho. Dobara bhejna pade to wahi key, PSP do baar nahi kaatega.
+**INITIATED pehle + idempotency key**
+Interview: "PSP call se pehle INITIATED commit. Job INITIATED uthata hai, payment id hi PSP ki idempotency key."
 
-&nbsp;
+**6. Dukaan ke 500 ICICI me jodte waqt FAILED**
+Sab ulta kar do: wallet me wapas, register me ulti line, jaise bank wala "aaj nahi, kal aana" bole to paise lauta deta hai.
+**saga (compensate)**
+Interview: "Bahar ka bank ek transaction me nahi aata, isliye saga: kadam-dar-kadam, fail pe ulta kadam."
 
-**3. CIRCUIT BREAKER + DOOSRA PSP**
+**7. Beech ke 2 minute me 500 gayab dikh rahe**
+Wallet se kaatte hi likh lo ki 500 abhi kahan hain. Koi pooche to bata do.
+**hold (beech ka khaata)**
+Interview: "Wallet -500, hold +500, payout INITIATED. SUCCESS pe hold se nikalo, FAILED pe wapas wallet. Paisa har waqt kahin dikhe."
 
-PSP-1 poora band hai.
+**8. "Sabse pehle poochh lo, sab taiyaar ho?"**
+Ek dheema hua to sab uske liye ruke, jaise cheating me dost dheema likhe to dono ka paper chhoot jaaye.
+**2PC nahi**
+Interview: "2PC me ek ruka to sab ruke, aur bank / PSP us round me aate hi nahi. Isliye saga + hold."
 
-**Breaker:** iska matlab: 1 min me 50% call fail hui to PSP-1 ko call hi band, 30 sec baad 1-2 call try karo. (Ye rate limiter wala fail-open nahi hai, yahan matlab PSP ko call rokna hai.)
+**9. Diwali pe 3,000 payment / sec, register nahi jhel raha**
+Register ke tukde, har tukde ka apna likhne wala. Kaam baant do.
+**shard by account**
+Interview: "Account id se shard: ek user ka wallet, ledger, payment ek shard pe. Date se nahi, warna aaj ki saari likhai ek pe."
 
-**Doosra PSP:** naye top-up **PSP-2** se jaate hain.
-
-**PENDING wala nahi:** par jo payment PSP-1 pe PENDING atka hai, wo **PSP-2 pe dobara nahi** jaata, kyunki ho sakta hai PSP-1 ne paisa kaat liya ho. Wo PSP-1 ke jawab se hi pakka hoga.
-
-&nbsp;
-
-**4. INITIATED PEHLE**
-
-PSP ko call ke beech hamara server gira, to restart pe yaad nahi ki call gayi ya nahi. Isliye call se **pehle** DB me `t-50 = INITIATED` likho aur COMMIT karo.
-
-**INITIATED likhne se pehle gira:** DB me kuch nahi, paisa kahin nahi gaya, app dobara bheje (wahi key).
-
-**INITIATED likhne ke baad, PSP call se pehle / beech me gira:** row INITIATED pe padi hai, poochne wala job use uthata hai aur PSP se poochh ke aage badhata hai.
-
-t-50 hi PSP ke liye idempotency key hai.
-
-&nbsp;
-
-**5. WEBHOOK + POOCHNE WALA JOB + MILAAN**
-
-Pakka jawab teen raaste se aata hai:
-- **Webhook**: PSP khud bhejta hai, sign ke saath, taaki nakli message phenk sakein. Dohra message aaye to "abhi pakka nahi hua tabhi SUCCESS karo", isliye paisa ek baar.
-- **Job**: har 1 min chalta hai, 2 min purane INITIATED / PENDING uthata hai aur PSP se poochta hai.
-- **Raat ka milaan**: PSP ki file se DB milao.
-
-**AWS pe:** webhook aate hi line me daal do, AWS ka **SQS** (ya Kafka), aur baad me sambhalo. Line AWS chalata hai.
-
-&nbsp;
-
-**6. SAGA + BEECH KA KHAATA**
-
-Dukaan ko paisa apne bank me chahiye, aur bank bahar hai, to ek transaction nahi chal sakta. **Saga**:
-1. Hamare DB me: Arpan -500, beech ka khaata (hold) +500, payout t-60 = INITIATED.
-2. PSP ko payout call.
-3. SUCCESS aaya to hold -500. FAILED aaya to ulta: hold -500, Arpan +500, nayi ledger line.
-
-Step 1 ke baad, PSP call se pehle server gira: t-60 INITIATED pada hai, to job use uthata hai (webhook nahi aayega, call gayi hi nahi). PSP bolta "aisa koi order nahi", to wahi key se dobara bhejo ya FAILED karke ulta. 500 hold me atakte nahi.
-
-Hold isliye ki paisa har waqt kahin dikhe. **2PC nahi**, kyunki bank / PSP uske "taiyaar hoon" round me aa hi nahi sakte, aur ek ruka to sab ruk jaate.
+**10. Arpan tukda 1, dukaan tukda 3**
+Ek ladka 500 aur diary le ke jaata hai. Pahuncha to hisaab poora, gadbad hui to diary dekh ke paise wapas.
+**saga do shard ke beech**
+Interview: "Cross-shard transfer bhi saga + hold se. Ek transaction do shard pe nahi chalta."
 
 &nbsp;
 
-**7. LB + READ REPLICA**
-
-Diwali pe 3000 payment / sec aaye, to kai service machine aur aage LB. Dukaan ki "aaj ki bikri" report bhaari hai, isliye wo **read replica** se chalti hai. Paisa kaatne ka faisla hamesha primary se.
-
-**SPOF kahan:** DB primary (sync copy) · PSP (doosra PSP).
-
-**AWS pe:** Postgres AWS ka **RDS** lete hain, **Multi-AZ** ke saath: doosri building me sync copy AWS rakhta hai, primary gira to wo khud copy ko primary banata hai. Sync rakhna (paisa hai) hamara faisla tha.
-
-&nbsp;
-
-**8. SHARD BY ACCOUNT (hamare DB ke tukde, bank nahi)**
-
-Wallet sab **hamare** DB me hain.
-
-**Dikkat:** Diwali pe 3000 likhai / sec aur saal bhar me ~1000 crore line, ek primary nahi jhel paaya. Banking me 120 / sec thi, isliye wahan shard nahi kiya tha.
-
-**Account id se:** isliye hamare DB ko **account id** se tukdon me baanta: Arpan ka wallet, ledger aur payment, sab ek shard pe.
-
-**Date se kyun nahi:** date se nahi baanta, warna aaj ki saari likhai ek shard pe girti.
-
-**Pench:** Arpan shard 1 pe hai, dukaan shard 3 pe, to ek transaction nahi chalega, phir se saga.
-
-&nbsp;
-
-### Wrap
-
-bahar ka paisa = PSP · pata nahi = PENDING · PSP band = breaker + PSP-2 (PENDING wala nahi) · server gira = INITIATED pehle · pakka jawab = webhook + job + milaan · bank ko paisa = saga + hold · bheed = LB + replica · likhai = shard by account + saga
-
-**Kaise pata chale ki theek chal raha hai:** milaan ka farak, p99, kitne PENDING atke hain, trace id.
-
-
-Poora design (har kadam ka diagram aur "kyun") = [06_payment_system.md](06_payment_system.md)
+Poora design = [06_payment_system.md](06_payment_system.md)

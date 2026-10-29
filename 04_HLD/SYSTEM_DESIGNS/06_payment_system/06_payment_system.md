@@ -6,6 +6,8 @@ me ek hi kahani hai: Arpan ne kirana dukaan (merchant) ko 500 bheje. Dono ka wal
 PhonePe wallet jaisa. Andar ka core [banking](../13_banking_system/13_banking_system.md) jaisa hi hai.
 Movie ticket ka paisa bhi isi raaste se jaata hai: [BookMyShow kadam 6](../09_bookmyshow/09_bookmyshow.md#kadam-6-pay-dobara--paisa-banking-kadam-3--payment-file).
 
+**Dukaan pe pay (poori file me yahi):** Arpan dukaan pe app se pay karta hai, uska paisa HDFC me, dukaan ka ICICI me · parchi / register = hamara DB · beech ki company = PSP · ladka = poochne wala job
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 wallet se wallet = banking ka core -> PSP (bahar ka paisa) -> PENDING + timeout -> breaker + doosra PSP
 -> INITIATED pehle + webhook + poochne wala job -> saga (dukaan ka bank) -> LB + read replica
@@ -44,6 +46,8 @@ Banking jaisa hi: bheed badi dikkat nahi hai, **sahi hona** badi dikkat hai.
 ## 4. Design
 
 ### Kadam 1: wallet se wallet = banking ka core
+
+**Dukaan pe pay:** dono wallet hamare hi register me, to banking jaisa: ek transaction, parchi ka number, ek query, ledger.
 
 Arpan aur dukaan, dono ka wallet hamare hi DB me hai. To ye bilkul banking wala transfer hai:
 
@@ -84,6 +88,8 @@ nahi hai, wo bahar hai.
 
 ### Kadam 2: bank se wallet me 2000 (PSP)
 
+**Dukaan pe pay:** app na HDFC ka na ICICI ka -> beech me ek company jo sab bankon se judi hai, uski API use karo (PSP).
+
 Ilaaj: beech me **PSP (Payment Service Provider)**, jaise Razorpay, Juspay ya Stripe.
 
 ```
@@ -114,6 +120,8 @@ Par humne PSP ko call kiya, aur PSP dheema tha. 30 second tak jawab hi nahi aaya
 humein pata hi nahi. Ab Arpan ko kya dikhayein: fail ya success?
 
 ### Kadam 3: PSP dheema ya band (PENDING, timeout, breaker, doosra PSP)
+
+**Dukaan pe pay:** PSP 30 sec chup -> parchi pe haal likho, app pe PENDING. PSP-1 band -> naye PSP-2 pe, PSP-1 pe atke wale ruko.
 
 Agar "FAILED" dikha diya, to Arpan sochega paisa nahi gaya aur dobara 2000 daalega. Agar pehla bhi kat chuka
 tha, to 4000 kat gaye. Aur galti se "SUCCESS" dikha diya, to bina paise ke wallet me nakli paisa aa gaya.
@@ -160,6 +168,8 @@ Par PENDING ka pakka jawab kaise pata chale? Aur ek aur haalat: humne PSP ko cal
 pehle hamara hi server gir gaya. Restart pe humein yaad bhi nahi ki call gayi thi ya nahi.
 
 ### Kadam 4: pakka kaise pata chale + hamara server gira (INITIATED pehle, webhook, poochne wala job)
+
+**Dukaan pe pay:** beech me ek banda jo PSP se poochhta rahe "hua ya nahi". Server gira -> pehle register me INITIATED likho phir bhejo, dobara bhejna ho to wahi key.
 
 Ilaaj 1: PSP ko call karne se **pehle** DB me likho `t-50 = INITIATED` (COMMIT), phir call karo. Ab server call
 ke beech gira, to restart pe DB me t-50 INITIATED dikhta hai. Pata nahi call gayi ya nahi, par ye pata hai ki
@@ -216,6 +226,8 @@ Arpan ka wallet hamare DB me hai, dukaan ka bank bahar. Ek transaction se kaam n
 
 ### Kadam 5: dukaan ka paisa uske bank me (saga)
 
+**Dukaan pe pay:** ICICI me jodte waqt FAILED -> sab ulta karo, paisa wapas. Beech me paisa gayab na dikhe -> beech ke khaate me likho. Sabse "taiyaar?" poochna (2PC) nahi: ek dheema dost poora paper rok deta.
+
 Arpan ka wallet hamare DB me hai, aur dukaan ka bank bahar. Ek transaction (BEGIN ... COMMIT) sirf hamare DB
 ke andar chalta hai, bank ka DB usme shaamil nahi ho sakta.
 
@@ -264,6 +276,8 @@ bikri" report baar-baar khol rahe hain, jo isi DB pe chalti hai. Arpan ka paymen
 
 ### Kadam 6: Diwali ki bheed + report ne payment dheema kiya (kai machine + read replica)
 
+**Dukaan pe pay:** banking jaisa: cashier badhao, padhne walon ke liye photocopy ka desk.
+
 Ek Payment Service machine 3000 payment / sec nahi jhel paayi. Ilaaj: kai Payment Service machine, aage LB. Ye isliye
 chalta hai kyunki Payment Service apne andar kuch yaad nahi rakhta. Saara haal (PENDING, SUCCESS, wallet) DB me
 hai, to koi bhi machine koi bhi payment sambhal sakti hai ([banking kadam 7](../13_banking_system/13_banking_system.md#kadam-7-salary-ki-bheed--ek-hi-db-kai-machine--db-ki-sync-copy) jaisa).
@@ -293,6 +307,8 @@ Par saal bhar me ~1000 crore payment ki lines ho gayi. Ek hi primary pe itni lik
 dheema pad gaya. Banking se farak: wahan 120 likhai / sec thi, yahan Diwali pe 3000 / sec.
 
 ### Kadam 7: likhai aur data ek primary ke bas ka nahi (shard by account)
+
+**Dukaan pe pay:** register Diwali ki likhai nahi jhel raha -> tukde, har tukde ka likhne wala. Arpan tukda 1, dukaan tukda 3 -> ladka 500 aur diary le ke jaata hai (saga).
 
 Replica sirf padhai ka bojh baantti hai. Likhai (har payment) abhi bhi ek hi primary pe jaa rahi hai, aur data
 saal bhar me ~1000 crore line ho gaya.
