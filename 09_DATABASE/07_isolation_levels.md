@@ -1,10 +1,55 @@
 # Isolation Levels — kitna "alag" 2 transactions chalein (+ concurrency anomalies)
 
-> ACID ka **I** = Isolation. "kitna strict" = ISOLATION LEVEL.
-> (06_acid.md ne isi file ko point kiya tha — ye wahi deep-dive.)
-> 2 transaction ek saath -> ek doosre ka aadha-kaam kitna dikhe? Level decide karta.
+**Kahani:** Ravi ka account, balance 100. Do transaction ek saath: A badal raha, B padh raha. Isolation level = B ko A ka adhoora kaam kitna dikhe.
+
+```
+1. DIRTY READ
+   A: balance = 999 (commit NAHI)     B: padha 999  -> loan pass kar diya
+   A: ROLLBACK                        -> 999 kabhi tha hi nahi
+
+2. NON-REPEATABLE READ
+   B: padha 100 ... A: 500 kiya + COMMIT ... B: dobara padha 500
+   -> same row, ek hi txn me do alag jawab
+
+3. PHANTOM
+   B: "balance > 50 wale accounts" = 10 ... A ne naya account INSERT + COMMIT
+   B: wahi query = 11  -> nayi row "bhoot" ki tarah aa gayi
+```
+
+```
+LEVEL              dirty   non-repeat   phantom
+READ UNCOMMITTED   ho      ho           ho        <- kuch nahi rokta
+READ COMMITTED     ROKA    ho           ho        <- Postgres / Oracle default
+REPEATABLE READ    ROKA    ROKA         ho*       <- MySQL InnoDB default
+SERIALIZABLE       ROKA    ROKA         ROKA      <- sabse kada, sabse dheema
+* MySQL InnoDB isme bhi phantom zyadatar rok leta (MVCC + next-key lock)
+```
+
+**Khaas baat:**
+1. Jitna kada level, utne zyada lock, utna dheema. Banking = kada, reporting = dheela chalega.
+2. Default DB pe: MySQL REPEATABLE READ, Postgres READ COMMITTED. DB badla to default badla.
+3. 21-Aug khud dekha (neeche HANDS-ON): READ UNCOMMITTED pe B ko 999 dikha, READ COMMITTED pe gayab. Workbench ke 2 tab = ek hi session, 2 alag connection chahiye.
+
+**Prod wala trap:**
+```java
+@Transactional                                   // isolation = DB ka default (Postgres: READ COMMITTED)
+public void withdraw(long id, int amt) {
+    int bal = repo.getBalance(id);               // dono request ne 100 padha
+    if (bal >= amt) repo.setBalance(id, bal - amt);   // dono ne 100-80 = 20 likha -> 160 nikle, ek update kho gaya
+}
+```
+`@Transactional` lagane se race nahi rukti (LOST UPDATE). Ilaaj = banking mock wala: ek query `UPDATE ... SET balance = balance - 80 WHERE id = ? AND balance >= 80` (0 row = mana), ya pehle `SELECT ... FOR UPDATE`.
+
+```
+Interview: "Isolation level decide karta do concurrent txn ek doosre ka kitna dekhein. Teen anomaly:
+dirty read, non-repeatable read, phantom. Ladder READ UNCOMMITTED se SERIALIZABLE: jitna kada,
+utna safe par dheema. MySQL default REPEATABLE READ, Postgres READ COMMITTED. Paise wale
+read-then-write me level pe bharosa nahi: atomic conditional UPDATE ya SELECT FOR UPDATE."
+```
 
 ---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
 
 ## 3 ANOMALIES (jo isolation kam hone pe hoti — inhe roken)
 
