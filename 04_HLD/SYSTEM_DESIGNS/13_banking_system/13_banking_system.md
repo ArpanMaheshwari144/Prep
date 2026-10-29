@@ -7,6 +7,8 @@ me ek hi kahani hai: Arpan ne Ravi ko 500 bheje. Ye JP ka sabse sambhavit HLD ha
 Yahi dhaancha [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me bhi: kadam 3 (key) = [BookMyShow kadam 6](../09_bookmyshow/09_bookmyshow.md#kadam-6-pay-dobara--paisa-banking-kadam-3--payment-file),
 kadam 4 (ek query) = [BookMyShow kadam 2](../09_bookmyshow/09_bookmyshow.md#kadam-2-padhna-aur-likhna-ek-hi-query-me-banking-kadam-4-wala-hi) (balance ki jagah seat).
 
+**Branch (poori file me yahi):** mohalle ki bank branch · cashier = service machine · register = DB · diary = ledger · photocopy = read replica · ladka = relay · godown = S3
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 service + SQL -> ek transaction (WAL) -> idempotency key -> check + kaato ek query -> ledger (double-entry)
 -> outbox (SMS) -> LB + sync copy -> read replica -> raat ka milaan -> mahine ke tukde + S3
@@ -48,6 +50,8 @@ kaafi hai. Ye URL se ulta hai: wahan dikkat speed aur size ki thi.
 
 ### Kadam 1: sabse seedha (Banking Service + SQL DB)
 
+**Branch:** Arpan cashier ko parchi deta hai, cashier register me Arpan -500, Ravi +500 likhta hai.
+
 Ek Banking Service aur peeche ek SQL DB. Arpan ne Ravi ko 500 bheje:
 
 ```
@@ -77,6 +81,8 @@ Par pehla UPDATE hua (Arpan se 500 kat gaye), aur doosre se pehle server gir gay
 Paisa gayab.
 
 ### Kadam 2: beech me server gira, paisa gayab (ek transaction)
+
+**Branch:** bijli gayi, Arpan ke kate, Ravi ko nahi mile -> mere 500 wapas do (ya dono ya koi nahi), kaam se pehle diary me likh lo (WAL).
 
 Ilaaj: dono UPDATE ko ek **transaction** me band karo. Matlab ya to dono honge, ya koi nahi.
 
@@ -109,6 +115,8 @@ Par Arpan ne Send dabaya, transaction ho bhi gaya, par jawab aane se pehle metro
 socha fail hua aur dobara bhej diya. 1000 kat gaye.
 
 ### Kadam 3: network gaya, app ne dobara bheja (idempotency key)
+
+**Branch:** line kati, Arpan ne wahi parchi dobara di -> parchi ka number jo badle nahi, pehle aa chuka to mana.
 
 Server ke liye dono request bilkul alag thi. Use pata hi nahi chala ki doosri request pehli ka hi dobara
 bhejna hai.
@@ -151,6 +159,8 @@ saath aaye. Dono ne balance padha (600), dono ko laga "chalega", aur dono kat ga
 
 ### Kadam 4: do kataai ek saath, balance -400 (check + kaato ek query me)
 
+**Branch:** 600 the, do counter pe ek saath 500-500 -> dekhna aur kaatna ek kaam me, doosre ko 100 dikhe.
+
 Dono ne pehle padha (600), phir jaancha ("500 hai"), phir kaata. Ye teen alag kadam the, aur beech me doosra
 ghus gaya.
 
@@ -183,6 +193,8 @@ Par Ravi ne complaint daali: "500 nahi mile". Bank ko saboot dena hai ki 500 kab
 DB me sirf `balance = 100` hai, kyunki UPDATE ne purana number mita diya. NFR "har paisa trace ho" toot gaya.
 
 ### Kadam 5: "500 nahi mile" pe saboot nahi (khaata = ledger)
+
+**Branch:** Ravi ki shikayat, register me sirf aaj ka balance -> alag diary, kaato mat, neeche likhte jao.
 
 Balance column UPDATE hota hai, to purana number mit jaata hai aur itihaas kahin nahi bachta. Logs bhi kuch
 din me mit jaate hain, aur transaction ke saath pakke nahi likhe jaate.
@@ -230,6 +242,8 @@ SMS kabhi nahi jaata.
 
 ### Kadam 6: SMS service giri (outbox)
 
+**Branch:** khabar dene wala ladka nahi aaya, cashier bhool jaata -> usi register me likh do, koi bhi ladka pahuncha de.
+
 SMS ko transaction ke andar bhejo to SMS dheema ya gira hua ho to transfer bhi ruk jaata hai, paise ka kaam
 SMS pe atak gaya. COMMIT ke baad seedha SMS bhejo to COMMIT hua aur SMS bhejne se pehle server gira, to SMS
 kabhi nahi gaya.
@@ -270,6 +284,8 @@ hi hai: wo gira to poora bank band.
 
 ### Kadam 7: salary ki bheed + ek hi DB (kai machine + DB ki sync copy)
 
+**Branch:** salary ka din, line sadak tak -> 10 cashier. Register jal gaya -> laptop me copy, turant likho tab pakka (sync).
+
 Ilaaj 1: kai Banking Service machine, aur aage LB. Ye isliye chalta hai kyunki Banking Service apne andar kuch yaad
 nahi rakhta (stateless). Saara sach DB me hai, to koi bhi machine koi bhi request le sakti hai.
 
@@ -300,6 +316,8 @@ Par salary aate hi sab apna balance aur history dekh rahe hain. Padhna likhne se
 padhai bhi primary pe ho rahi hai. Primary bhar gaya, aur transfer dheeme ho gaye.
 
 ### Kadam 8: sab balance dekh rahe, transfer dheeme (read replica)
+
+**Branch:** sab balance dekhne aaye -> padhne walon ke liye photocopy ka alag desk. Abhi bheja to thodi der main register se.
 
 Ilaaj: **read replica**, yaani primary ki ek aur copy, sirf padhne ke liye. Balance aur history wahan se
 padho, primary sirf transfer sambhale. Padhai aur badhe to replica 2-3 kar do.
@@ -333,6 +351,8 @@ gaya: balance 600 dikha raha hai, par khaate ka jod 100 hai. Kisi ko pata hi nah
 
 ### Kadam 9: balance aur khaata alag ho gaye (raat ka milaan = reconciliation)
 
+**Branch:** kisi ne haath se balance badla -> sach diary hai, raat ko balance diary se milao. 5 saal jodna bhaari -> mahine ka total.
+
 Ilaaj: raat ko ek **milaan ka job** chalao, read replica pe, taaki primary pe bojh na pade:
 
 ```
@@ -365,6 +385,8 @@ aur index RAM me nahi samate, har query dheemi. Aur purana khaata phenk bhi nahi
 hain.
 
 ### Kadam 10: 5 saal ka khaata (mahine ke tukde + S3)
+
+**Branch:** diary itni moti, almari bhar gayi -> mahine-mahine tod do, purani head office ke godown me, kohinoor jaisa taala (koi badal na sake).
 
 Ilaaj 1: table ko **mahine ke hisaab se tukdon** me baanto (partition, Postgres me `PARTITION BY RANGE
 (time)`). Bahar se table ek hi dikhti hai (`ledger`), tukde DB khud sambhalta hai. "Arpan ki is mahine ki
