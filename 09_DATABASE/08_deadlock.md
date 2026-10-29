@@ -1,9 +1,44 @@
 # DB Deadlock — 2 transactions ek-doosre ka lock, circular wait
 
-> 2 txn ek-doosre ki row ka lock maangein -> koi aage nahi badh sakta = DEADLOCK.
-> MySQL khud detect karke ek ko maar deta (victim rollback). Concurrency ka classic issue.
+**Kahani:** banking, ek hi second me Arpan -> Ravi 100 aur Ravi -> Arpan 50. Dono txn apni pehli row lock karte, phir doosre ki maangte.
+
+```
+TXN-1 (Arpan -> Ravi)          TXN-2 (Ravi -> Arpan)
+lock row ARPAN                 lock row RAVI
+maange row RAVI  ... ruka      maange row ARPAN ... ruka
+        \_____________ circular wait ____________/
+
+MySQL detector cycle pakadta -> ek ko VICTIM bana ke ROLLBACK (error 1213)
+doosra aage badh jaata
+```
+
+**Khaas baat:**
+1. Wahi deadlock jo multithreading file 07 me (2 thread, 2 lock ulte kram me). Yahan resource = DB rows.
+2. Asli fix = sab EK HI KRAM me lock (chhoti id pehle): dono pehle ARPAN row maangenge -> cycle ban hi nahi sakti. Saath me txn chhoti rakho (lock kam der).
+3. Deadlock != lock-wait-timeout: deadlock = circular, turant pakda jaata; timeout = der tak line me khade rahe, haar gaye. 22-Aug khud dekha (neeche HANDS-ON): Session B pe `ERROR 1213`, A bach gaya.
+
+**Prod wala trap:**
+```java
+@Transactional
+public void transfer(...) {
+    try {
+        debit(from); credit(to);
+    } catch (CannotAcquireLockException e) {   // 1213 Spring me aise aata
+        debit(from); credit(to);               // retry ISI txn me -> bekaar, txn to rollback ho chuki
+    }
+}
+```
+Victim ki poori txn DB ne rollback kar di. Retry BAHAR se, NAYI txn me (caller 1-2 baar dobara bulaye, ya `@Retryable` us method pe jo `@Transactional` method ko call kare). Retry safe tabhi jab idempotency key ho (banking me hai).
+
+```
+Interview: "Deadlock tab jab do txn ek doosre ki lock ki hui row maangein: circular wait. MySQL detect
+karke ek ko victim bana ke rollback karta (1213). Prevention: rows hamesha ek kram me lock (chhoti id
+pehle), txn chhoti. Phir bhi 1213 aaye to nayi txn me retry, idempotency key ke saath."
+```
 
 ---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
 
 ## CONCEPT
 
