@@ -7184,8 +7184,10 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      ═════════════════════════ TAREEKA ════════════════════════════════════
      amount banane ko MIN coins (har coin UNLIMITED). na ban sake -> -1
      amount==0 = THEEK bana -> 0 coins · amount<0 = overshoot -> INVALID (ban-na = theek 0 pe rukna)
-     3 TRAP: (1) INT_MAX = "ban nahi sakta" (min me haarta) (2) overflow guard (3) caller INT_MAX -> -1
      ── FORM A: TAKE / NOT-TAKE (index i, 2D dp[i][amount]) ──
+
+     ═════════════════════════ ★ EDGE ═════════════════════════════════════
+     (1) INT_MAX = "ban nahi sakta" (min me haarta) (2) overflow guard (3) caller INT_MAX -> -1
 
      ═════════════════════════ CHAABI ═════════════════════════════════════
        1. FORM A solve(coins, amount, i, dp): amount < 0 -> INT_MAX · i < 0 -> amount == 0 ? 0 : INT_MAX
