@@ -31,8 +31,8 @@ Bagal me doosra chowkidar wahi list le ke khada tha. Usne mic uthaya aur wahin s
 **replica**
 Interview: "Har partition ki 3 replica. Leader gira to in-sync replica leader ban jaati hai."
 
-**6. Fan seat pe baith gaya, par register me likhne se pehle chowkidar gira**
-Naya chowkidar wahi fan dobara bhejta hai. Counter pe pehle dekho: ye fan pehle aa chuka hai? Haan, to dobara mat baithao.
+**6. Checker ne ticket punch kiya, par register me likhne se pehle gir gaya**
+Uski jagah aaya checker register dekhta hai, wahan likha hi nahi, to wahi fan dobara uske paas aata hai. Counter pe pehle dekho: ye fan pehle aa chuka hai? Haan, to dobara mat baithao.
 **idempotency (eventId)**
 Interview: "Pehle kaam, phir offset commit. Isliye khabar kabhi dobara aa sakti hai, use eventId se pakad ke chhod deta hoon."
 

@@ -45,14 +45,16 @@ scope ke bahar (poochh ke hata do): duniya bhar ke region, exactly-once (Kafka s
 
 ### Kadam 1: sabse seedha (Order Service seedha sabko call kare)
 
+**Stadium:** ticket counter khud har andar ke counter tak bhaag ke intezaar karta hai, line wahin ruk jaati hai.
+
 Arpan ne order kiya. Order Service order banata hai, phir khud SMS Service, Fraud Service aur Analytics ko ek-ek karke
 call karta hai, har ek ke jawab ka intezaar karta hai, aur tab jaake Arpan ko "order ho gaya" bolta hai.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> O["Order Service"]
-    O -- "call, intezaar" --> S["SMS Service"]
-    O -- "call, intezaar" --> F["Fraud Service"]
+    U["Arpan"] --> O["Order Service<br/>(ticket counter)"]
+    O -- "call, intezaar" --> S["SMS Service<br/>(SMS counter)"]
+    O -- "call, intezaar" --> F["Fraud Service<br/>(security)"]
     O -- "call, intezaar" --> A["Analytics"]
     style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -64,6 +66,8 @@ Order Service ko kisi ka intezaar nahi karna. Wo khabar kahin daal de aur aage b
 wahan se le le. Par "kahin" ka matlab kahan?
 
 ### Kadam 2: khabar kahan daalein (Kafka topic, disk pe)
+
+**Stadium:** ek saath bahut bheed -> chowkidar ne line lagwa di. Fan bahar gaya to seat booked, wapas aaya to wahin se (bookmark).
 
 Order Service khabar ek line (queue) me daal deta hai aur aage badh jaata hai. SMS, Fraud aur Analytics usi line
 se padhte hain. Par line kaisi ho? Ye asli choice hai:
@@ -85,8 +89,8 @@ rehti hai, aur kisi service me bug tha to bookmark peeche karke dobara padh sakt
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> O["Order Service"]
-    O -- "khabar daali, aage badha" --> T[("KAFKA<br/>topic order-events")]
+    U["Arpan"] --> O["Order Service<br/>(ticket counter)"]
+    O -- "khabar daali, aage badha" --> T[("KAFKA<br/>topic order-events<br/>(chowkidar ki line)")]
     T --> S["SMS Service"]
     T --> F["Fraud Service"]
     T --> A["Analytics"]
@@ -110,6 +114,8 @@ ka ek worker sirf 500 / sec sambhal paata hai. Line lambi hoti ja rahi hai.
 
 ### Kadam 3: bheed (topic ke tukde = partition, aur key)
 
+**Stadium:** ek gate se bheed nahi sambhli -> kai gate, ticket number se fan ka gate tay, ek parivaar ek hi gate se.
+
 Ilaaj: topic `order-events` ko andar se **10 tukdon** me baanto, har tukda alag machine pe. Ek tukde ko
 **partition** kehte hain. 10 isliye ki numbers me nikla tha: sale me 5,000 / sec, ek worker 500 / sec, to
 5,000 / 500 = 10. Ek tukda ek worker padhega, to 10 tukde = 10 worker ek saath.
@@ -131,10 +137,10 @@ Ye chat wali baat hi hai: wahan kram sirf ek chat ke andar chahiye tha, yahan si
 ```mermaid
 flowchart LR
     O["Order Service<br/>key = userId"] --> P0 & P1 & P9
-    subgraph T["KAFKA · topic order-events · 10 tukde"]
-        P0[("P0")]
-        P1[("P1 · Arpan<br/>order, pay, cancel")]
-        P9[("P9")]
+    subgraph T["KAFKA · topic order-events · 10 tukde (10 gate)"]
+        P0[("P0<br/>(gate 0)")]
+        P1[("P1 · Arpan<br/>order, pay, cancel<br/>(gate 1)")]
+        P9[("P9<br/>(gate 9)")]
     end
     style P0 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style P1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -153,6 +159,8 @@ Par SMS Service ki 3 machine lagayi taaki 10 tukde jaldi padhe jaayein. Teeno ma
 aur Arpan ko ek order ke 3 SMS chale gaye.
 
 ### Kadam 4: 3 machine, 3 SMS (consumer group)
+
+**Stadium:** ek fan ka ticket 3 baar punch -> teeno checker ek kamre me, har fan ek ke paas. Security alag kamra, har fan ki talaashi.
 
 Teeno machine saare tukde padh rahi thi, to Arpan ki khabar teeno ke paas pahunchi aur teeno ne SMS bhej diya.
 
@@ -176,19 +184,19 @@ tukda bacha hi nahi, wo khaali baithegi. Tez karna hai to pehle tukde badhao.
 ```mermaid
 flowchart LR
     subgraph T["topic order-events"]
-        P1[("P1 · Arpan")]
-        P5[("P5")]
-        P8[("P8")]
+        P1[("P1 · Arpan<br/>(gate 1)")]
+        P5[("P5<br/>(gate 5)")]
+        P8[("P8<br/>(gate 8)")]
     end
-    subgraph S["TEAM sms"]
-        A["machine A"]
-        B["machine B"]
-        C["machine C"]
+    subgraph S["TEAM sms (ticket checker ka kamra)"]
+        A["machine A<br/>(checker A)"]
+        B["machine B<br/>(checker B)"]
+        C["machine C<br/>(checker C)"]
     end
     P1 --> A
     P5 --> B
     P8 --> C
-    T -. "poori copy" .-> F["TEAM fraud"]
+    T -. "poori copy" .-> F["TEAM fraud<br/>(security ka kamra)"]
     style S fill:none,stroke:#f59f00,stroke-width:2px
 ```
 
@@ -202,6 +210,8 @@ Par machine A ne Arpan ka SMS bheja, aur bookmark aage karne se pehle gir gayi. 
 ne bookmark dekha (abhi bhi purana), aur wahi khabar dobara padhi. Arpan ko 2 SMS.
 
 ### Kadam 5: bookmark se pehle gira, 2 SMS (pehle kaam phir commit + eventId)
+
+**Stadium:** checker ne punch kiya, register me likhne se pehle gira, fan dobara aaya -> pehle dekho, ye pehle aa chuka?
 
 Machine A ka kaam teen kadam ka tha: khabar padho, SMS bhejo, phir Kafka ko batao "agli baar yahan se"
 (bookmark aage karna = **commit**). SMS bheja aur commit se pehle gir gayi. Bookmark purana hi raha, to B ne
@@ -229,8 +239,8 @@ hi rasta hai. Interview me bolo: "at-least-once + eventId se dohra kaam nahi."
 
 ```mermaid
 flowchart LR
-    P1[("P1 · Arpan")] -- "E-6 cancel" --> A["TEAM sms<br/>1. SMS 2. commit"]
-    A -- "E-6 pehle ho chuki?" --> R[("Redis / DB<br/>eventId")]
+    P1[("P1 · Arpan")] -- "E-6 cancel" --> A["TEAM sms (checker)<br/>1. SMS 2. commit"]
+    A -- "E-6 pehle ho chuki?" --> R[("Redis / DB<br/>eventId<br/>(punch wali list)")]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -240,6 +250,8 @@ Par Arpan ki khabar P1 me thi, aur P1 Kafka ki ek machine (broker) pe tha. Us ma
 sirf wahin tha, to Arpan ki saari khabar hamesha ke liye gayi.
 
 ### Kadam 6: Kafka ki machine mari (3 copy, acks=all, min.insync.replicas)
+
+**Stadium:** chowkidar gira -> doosra chowkidar wahi list le ke taiyaar. "Likh liya" tabhi bolo jab doosre ki list me bhi naam ho.
 
 Ilaaj: har tukde ki **3 copy**, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo **leader**
 hai, baaki do copy. P1 ka leader broker 2 pe, copy broker 1 aur 3 pe. Broker 2 ki disk mari to 1 ya 3 naya leader ban
@@ -268,9 +280,9 @@ hon to likhna hi band. Khabar khone se behtar hai thodi der ruk jaana.
 
 ```mermaid
 flowchart LR
-    O["Order Service"] -- "acks=all" --> L[("broker 2<br/>P1 leader")]
-    L -- "copy" --> A[("broker 1<br/>P1 copy")]
-    L -- "copy" --> C[("broker 3<br/>P1 copy")]
+    O["Order Service<br/>(ticket counter)"] -- "acks=all" --> L[("broker 2<br/>P1 leader<br/>(chowkidar)")]
+    L -- "copy" --> A[("broker 1<br/>P1 copy<br/>(doosre chowkidar ki list)")]
+    L -- "copy" --> C[("broker 3<br/>P1 copy<br/>(teesre chowkidar ki list)")]
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -279,6 +291,8 @@ Par ab bhejne wala bacha. Arpan ne order cancel kiya. Order Service ne DB me lik
 ko khabar bhejne se pehle gir gaya. DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala.
 
 ### Kadam 7: bhejne wala gira (outbox)
+
+**Stadium:** ticket counter wala pehle register me likhta hai, phir runner gate tak le jaata hai. Runner gira to register se doosra runner.
 
 Order Service ko do kaam karne the: DB me "order = cancel" likhna, aur Kafka ko khabar dena. DB aur Kafka do
 alag cheezein hain, dono me ek saath, ek hi baar me likhne ka koi tareeka nahi. Pehla kaam hua, doosre se
@@ -308,9 +322,9 @@ padta.
 
 ```mermaid
 flowchart LR
-    O["Order Service"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6")]
-    RL["Relay"] -- "sent = false padhta" --> DB
-    RL -- "acks=all" --> K[("KAFKA")]
+    O["Order Service<br/>(ticket counter)"] -- "ek transaction" --> DB[("DB<br/>cancel + outbox E-6<br/>(register)")]
+    RL["Relay<br/>(runner)"] -- "sent = false padhta" --> DB
+    RL -- "acks=all" --> K[("KAFKA<br/>(gate)")]
     K --> S["TEAM sms<br/>eventId"]
     style DB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -323,6 +337,8 @@ Par ek khabar me galti thi (Arpan ka phone number hi galat). SMS Service use bhe
 hota raha, commit nahi kiya, aur P1 ki baaki saari khabar uske peeche atak gayi.
 
 ### Kadam 8: ek kharab khabar ne line rok di (DLQ)
+
+**Stadium:** galat ticket wala fan baar-baar ghus raha, line atki -> use side ki alag line me. Andar ka counter hi band ho to sabko mat hatao, ruko aur check karo.
 
 Ek tukde me kram se padhna hota hai, aur machine agli khabar tabhi uthati hai jab pichhli ka commit ho
 jaaye. Arpan ki khabar me phone number galat tha, to SMS kabhi jaayega hi nahi. SMS Service baar-baar koshish
@@ -342,7 +358,7 @@ wahi DLQ me jaati hai.
 ```mermaid
 flowchart LR
     P1[("P1")] --> S["TEAM sms"]
-    S -- "3-4 baar fail" --> Q[("sms-dlq<br/>alag line")]
+    S -- "3-4 baar fail" --> Q[("sms-dlq<br/>(side ki alag line)")]
     S -- "baaki khabar" --> OK["SMS chale gaye"]
     Q -. "alert, insaan dekhe" .-> H["theek karke dobara"]
     style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
