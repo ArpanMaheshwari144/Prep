@@ -145,7 +145,7 @@ Tukde 10 se 20 kiye to? Tukda = hash(key) % ginti hai. Ginti badli to key ka tuk
 purani khabar P1 me rahegi, nayi kahin aur, thodi der kram toot sakta hai. Isliye asli system me shuru me hi
 zaroorat se 2-3 guna tukde rakh lete hain (yahan samjhane ke liye 10).
 
-**Maan lo garam key (ek user ki bahut khabar):** key me number jodo (user-9#1 .. #4), 4 tukde, 4 machine. Keemat: us user ka poora kram gaya, har tukde ke andar bacha.
+**Maan lo ek hi key pe itni khabar ki uska ek tukda akela na sambhale (garam key):** key ke peeche #1 se #4 jod do, khabar 4 tukdon me bat jaati hai. Keemat: us key ka kram toot jaata hai. Isliye ye sirf wahan jahan kram zaroori nahi, jaise Analytics.
 
 **API:** send(topic, key, value) -> (tukda, number).
 
@@ -189,10 +189,12 @@ flowchart LR
     P5 --> B
     P8 --> C
     T -. "poori copy" .-> F["TEAM fraud"]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S fill:none,stroke:#f59f00,stroke-width:2px
 ```
 
 **Maan lo machine badhi / giri:** rebalance: Kafka tukde dobara baant-ta hai. Naye tareeke (cooperative) me sirf wahi machine rukti jiske tukde badle.
+
+**Maan lo Fraud dheema hai, roz peeche ja raha, 6 din peeche pahunch gaya:** 7 din pe khabar disk se mit jaayegi aur Fraud ke liye hamesha ke liye kho jaayegi ("kabhi na khoye" toota). Isliye **lag** naapo: tukde ki aakhri khabar aur Fraud ke bookmark ka farak. Lag 1 ghante se zyada to alert, aur Fraud ki machine badhao (10 tukde = 10 machine tak). Usse aage chahiye to tukde badhao. Retention badhana sirf waqt kharidna hai, Fraud dheema raha to 14 din me bhi peeche.
 
 **Maan lo kaam lamba, poll nahi kiya:** Kafka machine ko mara samajh ke uske tukde le leta hai (max.poll.interval.ms). Ek baar me kam khabar uthao, ya time badhao.
 
@@ -262,6 +264,8 @@ Sab copies gir gayi aur sirf leader bacha, to `acks=all` me "saari pakki copy" s
 "ho gaya" bol dega jabki copy ek bhi nahi. Isliye saath me **min.insync.replicas = 2**: kam se kam 2 pakki copy na
 hon to likhna hi band. Khabar khone se behtar hai thodi der ruk jaana.
 
+**Maan lo likhna band hua aur usi waqt Arpan ne order kiya:** order fail nahi hota, kyunki khabar pehle DB ke outbox me jaati hai (agla kadam).
+
 ```mermaid
 flowchart LR
     O["Order Service"] -- "acks=all" --> L[("broker 2<br/>P1 leader")]
@@ -295,6 +299,8 @@ Ab Order Service kahin bhi gire, kuch nahi khota. Transaction se pehle gira to n
 dobara dabayega. Transaction ke baad gira to khabar outbox me padi hai, relay bhej dega. Relay ne bheja aur
 `sent = true` likhne se pehle gira, to relay dobara bhejega, aur SMS Service us dohri khabar ko eventId se pakad
 lega (kadam 5). Ye banking kadam 6 wala outbox hi hai.
+
+**Maan lo Kafka ne likhna band kiya (min.insync):** Arpan ka order fail nahi. Order DB me ho chuka, khabar outbox me `sent = false` padi hai, Kafka theek hote hi relay bhej dega.
 
 Relay DB ko baar-baar poochta rahe to DB pe bojh? Bahut bada scale ho to relay ki jagah **CDC (change data capture, jaise Debezium)**
 lagate hain, jo DB ka apna log (Postgres ka WAL / MySQL ka binlog) padh ke khabar Kafka ko deta hai, table ko poochhna hi nahi
@@ -331,6 +337,8 @@ Turant DLQ kyun nahi, 3-4 baar koshish kyun? Kai baar fail hona kuch der ka hota
 ke liye dheemi thi), do-teen baar try karne pe chal jaata hai. Galat number jaisi galti har baar fail hogi,
 wahi DLQ me jaati hai.
 
+**Maan lo SMS company hi 10 minute band ho gayi:** ab har khabar 3-4 try ke baad fail hogi aur lakhon khabar DLQ me chali jaayengi. Galti khabar ki nahi, company ki hai. Isliye jab lagaataar sab fail hone lage, padhna rok do (**circuit breaker**). Khabar topic me hi padi rehti hai, commit nahi hua. Har kuch second ek check (heartbeat): company wapas aayi to wahin se padhna shuru. DLQ sirf us khabar ke liye jo akeli fail ho, jaise galat number.
+
 ```mermaid
 flowchart LR
     P1[("P1")] --> S["TEAM sms"]
@@ -358,4 +366,3 @@ bheed                -> 10 tukde, team me tukde baant ke padhna
 ek dheema, baaki chalein -> har team ka apna bookmark
 ```
 
-**Chal raha kaise pata:** lag naapo (tukde ki aakhri khabar - team ka bookmark), had se zyada = alert, machine badhao (tukdon ki ginti tak). Saath me DLQ ka size, peeche chal rahi copies.
