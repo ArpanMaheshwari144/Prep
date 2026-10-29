@@ -37,8 +37,29 @@ using namespace std;
 
 int countAlerts(vector<string> &logs)
 {
-    // tera code
-    return 0;
+    unordered_map<string, int> mp;
+    int count = 0;
+    for (auto &s : logs)
+    {
+        stringstream ss(s);
+        string server, code, msg;
+        ss >> server >> code >> msg;
+
+        if (msg == "error")
+        {
+            mp[server]++;
+            if (mp[server] >= 3)
+            {
+                count++;
+                mp[server] = 0;
+            }
+        }
+        else if (msg == "success")
+        {
+            mp[server] = 0;
+        }
+    }
+    return count;
 }
 
 // ---- test helper ----
