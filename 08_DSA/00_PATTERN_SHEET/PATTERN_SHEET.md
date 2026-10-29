@@ -5886,7 +5886,8 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford. REAL: Maps / GPS, routing
      pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
 
-     ★ EDGE: {node, dist} ULTA likha to bhi test PASS ho jaate (relax baar-baar theek karta), par Dijkstra NAHI raha
+     ═════════════════════════ ★ EDGE ═════════════════════════════════════
+     {node, dist} ULTA likha to bhi test PASS ho jaate (relax baar-baar theek karta), par Dijkstra NAHI raha
        kyun {dist, node}: chhoti DIST wala node nikla = uski dist PAKKI (weight >= 0, aage sasta raasta aa hi nahi sakta)
        upar wale e.g. pe:
          {node, dist} ->  0 nikla -> node1 (dist 4) pehle nikla, kyunki node NUMBER chhota
