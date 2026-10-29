@@ -2299,8 +2299,10 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
      ═════════════════════════ TAREEKA ════════════════════════════════════
      kitne subarray jinka MAX bilkul K. [8,2,1,3,4,5,1,10],K=3 -> 3 ([2,1,3],[1,3],[3])
      valid = (har element <= K) AND (>=1 element == K)
-     TRAP: "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
      K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
+
+     ═════════════════════════ ★ EDGE ═════════════════════════════════════
+     "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
 
      ═════════════════════════ CHAABI ═════════════════════════════════════
        1. lastWall = -1, lastK = -1, long long count = 0                        (LONG LONG: n^2 ginti overflow)
@@ -5324,8 +5326,10 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
        kyun: 3 node 6 ke left me (3 < 6 theek), par 6 to 5 ke right me, to 3 > 5 hona chahiye tha
 
      ═════════════════════════ TAREEKA ════════════════════════════════════
-     TRAP: sirf turant child check KAAFI NAHI -> node ko SAARE ancestors ka rule maanna
-       -> har node ki WINDOW (mini, maxi), neeche jaate tight hoti
+     node ko SAARE ancestors ka rule maanna -> har node ki WINDOW (mini, maxi), neeche jaate tight hoti
+
+     ═════════════════════════ ★ EDGE ═════════════════════════════════════
+     sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 5 -> galat)
 
      ═════════════════════════ CHAABI ═════════════════════════════════════
        1. solve(root, long long mini, long long maxi): if NULL -> true
@@ -6329,7 +6333,9 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 
      ═════════════════════════ TAREEKA ════════════════════════════════════
      stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
-     TRAP: heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
+
+     ═════════════════════════ ★ EDGE ═════════════════════════════════════
+     heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
        bada -> BADI team -> minHeap. naam bhool, team soch.
 
      ═════════════════════════ CHAABI ═════════════════════════════════════
