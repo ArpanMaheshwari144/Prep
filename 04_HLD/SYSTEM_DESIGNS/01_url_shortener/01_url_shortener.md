@@ -188,9 +188,16 @@ Har server ki range alag hai, isliye do server kabhi same number nahi denge, aur
 bhi nahi padta. App 1 beech me gir gaya to uske bache number (jaise 501 - 1,000) bekaar chale jaate hain. Koi
 dikkat nahi, 3.5 lakh crore number hain.
 
-**Maan lo counter thodi der na mile:** har app ke paas apni range ke bache number hain, unse kaam chalta rehta hai.
+**Maan lo beech ka counter gir gaya:** har app ke paas apni range ke bache number hain, unse kaam chalta rehta hai.
+Tab tak counter ki copy (replica) aage aa jaati hai.
+
+**Maan lo traffic 10 guna ho gaya:** app server badhao · Redis me garam link rakho (LRU) · Cassandra ki machine
+badhao.
 
 **Maan lo duniya bhar se log aa rahe:** Route 53 user ko uske paas wale region pe bhejta hai (geo-routing).
+
+**Maan lo pooche chal raha kaise pata:** redirect ka time (p99 = 100 me se 99 request isse tez), galtiyon ki
+ginti, aur had paar ho to alert.
 
 Par 5 saal me data ~90 TB ho jaayega. Itna ek DB machine me nahi samata.
 
@@ -356,10 +363,11 @@ Par ek bot har second hazaron link bana raha hai.
 Counter aur DB faltu bhar rahe hain, aur hamare chhote link pe
 dhokhe wali site (phishing) khul rahi hai.
 
-Ilaaj 1: **rate limit**, sirf link banane pe. Ek user ya IP ek minute me sirf 10 link bana sakta hai, usse
-zyada pe `429 Too Many Requests`. Ye LB ya API gateway pe lagta hai, Redis me ginti rakh ke (token bucket).
+Ilaaj 1: **rate limit**, sirf link banane pe. Ek user ek minute me sirf 10 link bana sakta hai, usse zyada pe
+`429 Too Many Requests`. Ye LB ya API gateway pe lagta hai, Redis me ginti rakh ke (token bucket).
+Limit user pe lagta hai, IP pe nahi, kyunki ek office ke saare log ek hi IP se aate hain.
 Link kholne pe rate limit nahi lagate, kyunki kholna hi hamara asli kaam hai (1 lakh / sec), spam banane se
-aata hai.
+aata hai. Jo bot baar-baar aaye, use WAF me block kar do.
 
 Ilaaj 2: **link ki jaanch**. Link banate waqt lambe link ko ek kaali list se milao (jaise Google Safe
 Browsing). Bura nikla to banne hi mat do. Baad me koi report kare to us code ko DB me "band" kar do. Kadam 8
@@ -392,8 +400,3 @@ kholna tez         -> Redis + local cache, DB tak kam hi jaata
 hamesha chale      -> kai app + LB, har link ki 3 copy, quorum (3 me se 2 pe likho / padho)
 ek code = ek link  -> counter range, takkar kabhi nahi
 ```
-
-**Maan lo 10 guna traffic aa gaya:** app server badhao · Redis me garam link rakho (LRU) · Cassandra ki machine
-badhao.
-
-**Chal raha kaise pata:** redirect ka time (p99 = 100 me se 99 request isse tez), galtiyon ki ginti, alert.

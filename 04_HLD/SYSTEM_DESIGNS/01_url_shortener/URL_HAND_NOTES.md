@@ -1,106 +1,203 @@
 # URL shortener: hand notes (mock se pehle ye padho)
 
+Har line waise likhi hai jaise interview me bolni hai. Padho, aur waise hi bolo.
+
 ### Shuru
 
-**Kaam:** do hi hain: lamba link do to 7 akshar ka chhota code milta hai, aur koi chhota link khole to use asli link pe bhej dete hain.
+**Kaam:** lamba link do to 7 akshar ka chhota code milta hai. Koi chhota link khole to use asli link pe bhej do.
 
-**Sabse upar (NFR):** system tez chalna chahiye, hamesha chalna chahiye, aur do logon ko kabhi ek hi code nahi milna chahiye.
+**Sabse upar:** kholna tez ho, hamesha chale, aur do logon ko kabhi ek code na mile.
 
-**Numbers:** har second 1,000 link bante hain aur 1 lakh khulte hain. Kholna banane se 100 guna zyada hai, isliye aage CACHE lagega. 5 saal me data 90 TB ho jaata hai, jo ek machine me nahi aata, isliye aage SHARD lagega.
+**Numbers:** har second 1,000 link bante hain aur 1 lakh khulte hain. Kholna 100 guna zyada hai, isliye cache lagega. 5 saal me 90 TB, jo ek machine me nahi aata, isliye shard lagega.
 
 &nbsp;
 
 **1. SERVER + DB**
 
-Sabse seedha design hai ek SERVER aur ek DB. Link aaya to code banao, dono ko DB me likho. Koi link khole to DB se lambe link dhoondho aur 302 se wahan bhej do. Memory me nahi rakhte, kyunki server restart hote hi saare link gayab ho jaate.
+```mermaid
+flowchart LR
+    U["Arpan"] --> S["App server"]
+    S --> D[("DB<br/>aB3x9 -> amazon.in/...")]
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Link aaya to code banao, dono DB me likh do. Koi khole to DB se lamba link nikaalo aur 302 se wahan bhej do.
+Memory me nahi rakhta, kyunki restart pe saare link gayab ho jaate.
+Par code banega kaise, aur do logon ko same na mile, ye kaise pakka?
 
 &nbsp;
 
 **2. COUNTER + BASE62**
 
-Ab sawaal ye hai ki code bane kaise aur do logon ko same na mile. Iske liye COUNTER + BASE62 lagaya: har link ko ek naya number milta hai, aur us number ko 62 akshar me likhte hain. Random ya hash me do logon ko same code mil sakta hai, aur har baar DB me jaanchna padta. Counter me number kabhi dohraata hi nahi.
+```mermaid
+flowchart LR
+    S["App server<br/>counter 125 -> base62 -> aB3x9"] --> D[("DB")]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Har link ko naya number deta hoon, aur use 62 akshar (a-z, A-Z, 0-9) me likhta hoon.
+Random ya hash me do logon ko same code mil sakta hai, aur har baar DB me jaanchna padta. Counter kabhi dohraata nahi.
+Par har second 1 lakh log khol rahe hain, aur har baar DB me jaana dheema hai.
 
 &nbsp;
 
 **3. REDIS**
 
-Har second 1 lakh log link khol rahe hain, aur har baar DB me dhoondhna dheema hai. Isliye beech me REDIS lagaya, jo memory me rakhta hai. Redis bhar jaaye to jo link sabse der se nahi khula, use hata dete hain (LRU). Dhyaan: LRU ka matlab sabse DER se use nahi hua; "sabse kam BAAR use hua" LFU hota hai.
+```mermaid
+flowchart LR
+    S["App"] --> R[("Redis<br/>pehle yahan")]
+    S --> D[("DB<br/>nahi mila to")]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
-**Maan lo Redis ki entry expire hui aur sab ek saath DB pe toot pade:** LOCK (single flight). Sirf pehli request lock leti hai (lock ki umar 2 second) aur DB jaati hai, baaki 50 ms ruk ke Redis dekhte hain. DB pe 1,000 ki jagah 1 query.
+Beech me Redis lagata hoon, jo memory me rakhta hai. Mila to turant bhej deta hoon, nahi mila to DB se laake Redis me rakh deta hoon.
+Redis bhar jaaye to jo link sabse der se nahi khula, use hata deta hoon (LRU). "Sabse kam baar khula" wala LFU hota hai.
 
-**Maan lo lock wali pehli request beech me MAR gayi:** baaki 999 Redis dekhte rehte hain, khaali milta hai, ruke rehte hain. 2 second baad lock ki umar khatam, lock apne aap khul jaata hai. Baaki me se jo pehle pahuncha wo lock leta hai, DB jaata hai, Redis bharta hai, aur baaki sabko mil jaata hai. User ko 2 second der hui, par DB pe bheed phir bhi nahi aayi.
+**Maan lo Redis ki entry khatam hui aur 1,000 log ek saath DB pe toot pade (stampede):** lock (single flight). Pehli request lock leti hai (umar 2 second) aur DB jaati hai, baaki 50 ms ruk ke Redis dekhti hain. DB pe 1 hi query.
 
-**Maan lo lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha):** baaki 999 poore 5 second ruke rehte hain. Lock ne DB bachaya, par users ruk gaye.
+**Maan lo lock wali request mar gayi:** 2 second me lock apne aap khul jaata hai, agli request DB jaati hai. User ko 2 second der, par DB bach gaya.
 
-**Ilaaj SOFT / HARD umar:** key ko kabhi poora khaali hone hi mat do. SOFT 1 ghanta, HARD 1 din.
+**Maan lo lock wali mari nahi, bas DB 5 second le raha:** sab 5 second ruke rehte. Isliye soft / hard umar. 1 ghante baad key "purani" maani jaati hai par Redis me rehti hai: purana link turant de do, ek request peeche se naya le aati hai. Link badalta nahi, to purana bhi sahi hai. Hard umar 1 din, taaki bahut purana maal na pada rahe.
 
-**SOFT umar (1 ghanta):** 1 ghante baad key "thodi purani" maani jaati hai, par Redis me padi rehti hai. Request aayi to purana link turant de do, aur saath me ek request (lock ke saath) peeche se DB se naya laake Redis me rakh deti hai.
-
-**Purana kyun theek:** wo dheemi ho ya mar jaaye, kisi user ko farak nahi, kyunki link badalta nahi to purana bhi sahi hai.
-
-**HARD umar (1 din):** bas isliye ki bahut purana maal hamesha na pada rahe.
-
-**Kaun kisko bachata:** lock DB ko bachata hai, soft / hard users ko. DB call pe 500 ms ka timeout.
+Lock DB ko bachata hai, soft / hard users ko.
+Par 1 lakh log aur server ek hi. Wo gira to poori site band.
 
 &nbsp;
 
 **4. LB + COUNTER RANGE**
 
-Ek app server itna bojh nahi jhelta, aur wo gira to poori site band. Isliye kai server lagaye aur aage LB (load balancer). Par ab har server ka apna counter ho to do server same number de denge. Isliye COUNTER RANGE: beech ka counter har server ko 1,000 number ka alag dabba deta hai.
+```mermaid
+flowchart LR
+    U["Arpan"] --> LB["LB"]
+    LB --> A1["App 1<br/>1 - 1,000"]
+    LB --> A2["App 2<br/>1,001 - 2,000"]
+    C["Counter"] --> A1
+    C --> A2
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
-**Maan lo duniya bhar se log aaye:** Route 53 har user ko uske paas wale region pe bhejta hai.
+Kai server lagata hoon, aage LB.
+Par har server ka apna counter ho to do server same number de denge.
+Isliye beech ka counter har server ko 1,000 number ka alag dabba deta hai: App 1 ko 1 se 1,000, App 2 ko 1,001 se 2,000.
 
-**Maan lo traffic 10 guna ho gaya:** app server badhao, garam link Redis me rakho, DB ki machine badhao.
+**Maan lo beech ka counter gir gaya:** har app ke paas apni range ke bache number hain, kaam chalta rehta hai. Counter ki copy (replica) aage aa jaati hai.
+
+**Maan lo App 1 gira:** uske bache number bekaar gaye. Koi dikkat nahi, 3.5 lakh crore number hain.
+
+**Maan lo traffic 10 guna ho gaya:** app server badhao, garam link Redis me, DB ki machine badhao.
+
+**Maan lo duniya bhar se log aaye:** Route 53 har user ko paas wale region pe bhejta hai.
+
+Par 90 TB ek DB machine me nahi aata.
 
 &nbsp;
 
 **5. SHARD**
 
-90 TB ek DB machine me nahi aata. Isliye data kai machine me baanta (SHARD), aur link kis machine pe jaayega ye code se tay hota hai, kyunki link kholte waqt hamare paas sirf code hota hai.
+```mermaid
+flowchart LR
+    S["App<br/>hash(aB3x9) % 10 = 3"] --> D0[("DB 0")]
+    S --> D3[("DB 3<br/>aB3x9")]
+    S --> D9[("DB 9")]
+    style D3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Data 10 machine me baant-ta hoon. Machine code se tay hoti hai, kyunki kholte waqt mere paas sirf code hota hai.
+Par 10 se 11 machine ki to % 11 se lagbhag har link ki jagah badal gayi, link 404 dene lage.
 
 &nbsp;
 
-**6. RING (consistent hashing)**
+**6. RING (CONSISTENT HASHING)**
 
-Machine 10 se 11 ki to % 11 se lagbhag har link ki jagah badal gayi, aur link 404 dene lage. Isliye RING (consistent hashing): nayi machine aaye to sirf ek chhota hissa hilta hai, baaki apni jagah.
+```mermaid
+flowchart LR
+    A[("DB-A 0")] --> B[("DB-B 60")] --> C[("DB-C 120")] --> D[("DB-D 240")] --> A
+    K["aB3x9<br/>hash 100"] --> C
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
-&nbsp;
-
-**DB kaunsa: SQL ya NoSQL?**
-
-DB kaunsa lein? Data bas code se link hai. Join ya transaction nahi chahiye, par 90 TB baantna hai. SQL me ye sab haath se karna padta, isliye NoSQL liya: CASSANDRA (AWS pe ho to DynamoDB).
-
-&nbsp;
-
-**7. 3 COPY**
-
-Ek DB machine giri to us pe pade link 404 dene lage. Isliye har link ki 3 COPY teen alag machine pe rakhte hain. Ek gire tab bhi do bachi rehti hain.
-
-**Maan lo link bana aur dost ko turant 404 mila:** QUORUM. Har link teeno copy pe likha jaata hai, par 3 me se 2 copy se "haan" aate hi aage badh jaate hain. Padhte waqt bhi 2 copy se padhte hain. Isliye likhne wali 2 aur padhne wali 2 me kam se kam ek copy common hoti hai, aur naya link mil jaata hai.
-
-**AWS pe:** in dabbon ko hum khud nahi sambhalte, AWS ki service lete hain: Cassandra = **Keyspaces** (ya EC2 pe khud chalao), Redis = **ElastiCache**, LB = **ALB**. Machine, copy, gira to badalna, ye AWS ka kaam hai.
+Machine aur code dono ek gol ghadi pe. Code se ghadi ki disha me chalo, jo pehli machine mile, link usi ka.
+Nayi machine aaye to sirf ek chhota hissa hilta hai, baaki apni jagah.
 
 &nbsp;
 
-**8. LOCAL CACHE**
+**DB KAUNSA: SQL YA NoSQL?**
 
-Ek link viral hua, 1 crore log ek saath khol rahe hain, aur sab Redis ki ek hi machine pe ja rahe hain. Isliye har app server apni memory me us garam link ko 5-10 second rakh leta hai (LOCAL CACHE). Yahan Redis giri nahi, sirf bheed se dheemi hai, isliye replica ko main banane se kaam nahi chalta: bojh nayi main pe chala jaata. Request Redis tak pahunchne se pehle hi rokni hai. 302 hi rakhte hain, 301 nahi, taaki har click hamare paas aaye aur bura link band kar sakein.
+Data bas code se link. Join ya transaction nahi chahiye, par 90 TB baantna hai. SQL me ye haath se karna padta, isliye NoSQL: Cassandra (AWS pe DynamoDB).
 
-**302 kyun, 301 kyun nahi:** 301 = "hamesha ke liye yahin", browser link yaad kar leta aur dobara hamare paas aata hi nahi. Bojh kam, par control gaya: link spam nikla to bhi browser purane pe bhejta rahega. 302 = "abhi ke liye", har click hamare paas aata hai, band link pe chetavani page dikha sakte hain. Isliye 302, bojh cache se sambhala.
+**Maan lo pooche RDS pe Cassandra:** RDS sirf SQL. Cassandra = AWS Keyspaces, ya EC2 pe khud chalao.
 
-**Maan lo click ki ginti chahiye:** redirect turant karo, click ki khabar Kafka me daalo, Analytics peeche se ginta hai.
+Par ek DB machine giri to us pe pade link 404 dene lage.
 
 &nbsp;
 
-**9. RATE LIMIT**
+**7. 3 COPY + QUORUM**
 
-Ek bot har second hazaron link bana raha hai. Isliye link banane pe RATE LIMIT lagaya, ek user ek minute me 10 link, usse zyada pe 429. Limit user pe lagate hain, IP pe nahi, kyunki ek office ke saare log ek hi IP se aate hain. Jo bot baar-baar aaye, use WAF me block kar do. Saath me bure link ko kaali list (jaise Google Safe Browsing) se jaanch ke banne hi nahi dete.
+```mermaid
+flowchart LR
+    S["App"] --> C[("DB-C<br/>gira")]
+    S --> D[("DB-D<br/>copy")]
+    S --> A[("DB-A<br/>copy")]
+    style C fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Har link ki 3 copy, teen alag machine pe. Ek gire to do bachi rehti hain.
+
+**Maan lo link bana aur dost ko turant 404 mila:** likhai C pe hui, D pe abhi pahunchi nahi. Isliye quorum: teeno pe likho, 2 ki "haan" pe aage badho, aur padho bhi 2 se. Likhne wali 2 aur padhne wali 2 me ek copy common hoti hi hai, to naya link mil jaata.
+
+AWS pe: Cassandra = Keyspaces, Redis = ElastiCache, LB = ALB.
+Par ek link viral hua, 1 crore log ek saath, sab Redis ki ek machine pe.
+
+&nbsp;
+
+**8. LOCAL CACHE + 302**
+
+```mermaid
+flowchart LR
+    U["1 crore log"] --> LB["LB"]
+    LB --> S1["App 1<br/>local: match link 10 sec"]
+    LB --> S2["App 2<br/>local: match link 10 sec"]
+    S1 --> R[("Redis<br/>10 sec me ek baar")]
+    S2 --> R
+    style S1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Har app server us garam link ko apni memory me 5-10 second rakh leta hai, request Redis tak jaati hi nahi.
+Redis giri nahi, bheed se dheemi hai. Isliye replica ko main banana kaam nahi aata, bojh nayi main pe chala jaata.
+
+**302 kyun, 301 kyun nahi:** 301 pe browser link yaad kar leta, dobara hamare paas aata hi nahi. Bojh kam, par link spam nikla to band nahi kar sakte. 302 me har click hamare paas aata hai. Isliye 302, bojh cache se sambhala.
+
+**Maan lo click ginti chahiye:** redirect turant, click ki khabar Kafka me, Analytics peeche gin leta hai.
+
+Par ek bot har second hazaron link bana raha hai.
+
+&nbsp;
+
+**9. RATE LIMIT + KAALI LIST**
+
+```mermaid
+flowchart LR
+    U["bot"] --> LB["LB<br/>rate limit (Redis ginti)"]
+    LB --> S["App<br/>kaali list jaanch"]
+    LB --> X["429"]
+    S --> D[("DB")]
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+Link banane pe rate limit: ek user ek minute me 10 link, usse zyada pe 429.
+Limit user pe, IP pe nahi, kyunki ek office ke saare log ek IP se aate hain.
+Kholne pe limit nahi, kholna hi asli kaam hai.
+Bura link kaali list (Google Safe Browsing) se jaanch ke banne hi nahi deta. Baad me report aaye to code "band", aur 302 ki wajah se chetavani page dikha deta hoon.
+Jo bot baar-baar aaye, use WAF me block.
 
 &nbsp;
 
 ### Wrap
 
-tez = Redis + local cache · hamesha chale = LB + 3 copy + quorum · ek code ek link = counter range
+Banana: LB, rate limit, phir app. App counter range se number, base62 code, Cassandra me likhta hai (ring, 3 copy, quorum) aur Redis me bhi.
+Kholna: pehle local cache, phir Redis, phir Cassandra, aur 302.
 
-
-Poora design (har kadam ka diagram aur "kyun") = [01_url_shortener.md](01_url_shortener.md)
+Poora design = [01_url_shortener.md](01_url_shortener.md)
