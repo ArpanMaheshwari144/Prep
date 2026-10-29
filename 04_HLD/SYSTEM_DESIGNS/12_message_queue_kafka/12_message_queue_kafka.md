@@ -5,6 +5,8 @@ se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me pe
 file me ek hi kahani hai: Arpan ne Swiggy pe order kiya. Concepts kahani se padhne hon to
 [kafka_concepts.md](kafka_concepts.md). Kafka ya RabbitMQ, farak aur kab kaunsa: [kafka_ya_rabbitmq_kab_kaunsa.md](kafka_ya_rabbitmq_kab_kaunsa.md). Kafka kaise bana: [kahani](../../KAHANIYAN/kafka.md).
 
+**Stadium (poori file me yahi):** fan = khabar · chowkidar = Kafka broker · gate = partition · checker = padhne wali machine (consumer) · kamra = consumer group · ticket counter = Order Service · register = DB · runner = relay
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 seedha call (dheema) -> Kafka topic (disk, padhne se mitta nahi) -> 10 tukde + key = userId
 -> team (consumer group) -> pehle kaam phir commit + eventId -> 3 copy + acks=all + min.insync.replicas
@@ -81,11 +83,11 @@ KAFKA (topic, disk pe)    -> khabar disk pe likhi jaati hai, padhne se mit-ti NA
                              SMS, Fraud, Analytics teeno wahi khabar padhte hain, apni-apni jagah se
 ```
 
-**Isliye Kafka.** Line ko Kafka me **topic** kehte hain (`order-events`). Padhne se khabar mit-ti nahi,
+**Isliye Kafka.** Line ko Kafka me **topic** kehte hain (`order-events`), stadium me ye chowkidar ki line hai. Padhne se khabar mit-ti nahi,
 isliye ek hi khabar teen service padh leti hain, aur kal Coupon Service aaya to wo bas padhna shuru kar degi,
-Order Service me ek line nahi badalti. Har service apna bookmark rakhti hai ki agla kaunsa padhna (**offset**), to
+Order Service me ek line nahi badalti. Har service apna bookmark rakhti hai ki agla kaunsa padhna (**offset**, jaise fan ki booked seat: bahar gaya, wapas aaya to wahin se), to
 Fraud dheema hua to bas wo peeche rahega, SMS nahi rukega. Disk pe hai, to kuch din (jaise 7 din) rakhi
-rehti hai, aur kisi service me bug tha to bookmark peeche karke dobara padh sakte hain.
+rehti hai (**retention**: 7 din baad chowkidar list ka purana panna phaad deta hai), aur kisi service me bug tha to bookmark peeche karke dobara padh sakte hain.
 
 ```mermaid
 flowchart LR
@@ -117,14 +119,14 @@ ka ek worker sirf 500 / sec sambhal paata hai. Line lambi hoti ja rahi hai.
 **Stadium:** ek gate se bheed nahi sambhli -> kai gate, ticket number se fan ka gate tay, ek parivaar ek hi gate se.
 
 Ilaaj: topic `order-events` ko andar se **10 tukdon** me baanto, har tukda alag machine pe. Ek tukde ko
-**partition** kehte hain. 10 isliye ki numbers me nikla tha: sale me 5,000 / sec, ek worker 500 / sec, to
+**partition** kehte hain (stadium ka ek gate). 10 isliye ki numbers me nikla tha: sale me 5,000 / sec, ek worker 500 / sec, to
 5,000 / 500 = 10. Ek tukda ek worker padhega, to 10 tukde = 10 worker ek saath.
 
 Par tukde karte hi nayi dikkat aati hai: kram. Arpan ki 3 khabar (order, pay, cancel) alag-alag tukdon me
 gayi, to padhne wala kis kram me padhe, koi bharosa nahi. "cancel" pehle padh liya to gadbad. Kafka me kram
 sirf ek tukde ke andar pakka hota hai, poore topic me nahi.
 
-Ilaaj: **key**. Order Service har khabar ke saath ek key deta hai, `userId`. Same key hamesha same tukde me
+Ilaaj: **key** (ticket number dekh ke fan ka gate tay, ek parivaar hamesha ek hi gate se). Order Service har khabar ke saath ek key deta hai, `userId`. Same key hamesha same tukde me
 jaati hai:
 
 ```
@@ -165,7 +167,7 @@ aur Arpan ko ek order ke 3 SMS chale gaye.
 Teeno machine saare tukde padh rahi thi, to Arpan ki khabar teeno ke paas pahunchi aur teeno ne SMS bhej diya.
 
 Ilaaj: teeno machine ko ek **team** bana do, sabko ek hi team ka naam do (`group.id = "sms"`). Isse
-**consumer group** kehte hain. Kafka ka niyam hai: ek team ke andar har tukda sirf ek machine ko milta hai.
+**consumer group** kehte hain (teeno checker ek kamre me, har fan ek hi checker ke paas). Kafka ka niyam hai: ek team ke andar har tukda sirf ek machine ko milta hai.
 
 ```
 TEAM sms (3 machine), 10 tukde:
@@ -176,7 +178,7 @@ TEAM sms (3 machine), 10 tukde:
 
 Arpan ko ab ek hi SMS jaata hai. Fraud alag team hai (`group.id = "fraud"`), to use apni poori copy milti
 hai, aur har team apna bookmark (offset) alag rakhti hai. Machine B gir gayi to Kafka uske tukde (P4, P5,
-P6) A aur C me baant deta hai, ise **rebalance** kehte hain.
+P6) A aur C me baant deta hai, ise **rebalance** kehte hain (checker gira, uske gate baaki checkers me bat gaye).
 
 11vi machine lagayi to? 10 hi tukde hain, aur ek tukda ek hi machine ko milta hai. 11vi machine ke liye koi
 tukda bacha hi nahi, wo khaali baithegi. Tez karna hai to pehle tukde badhao.
@@ -202,7 +204,7 @@ flowchart LR
 
 **Maan lo machine badhi / giri:** rebalance: Kafka tukde dobara baant-ta hai. Naye tareeke (cooperative) me sirf wahi machine rukti jiske tukde badle.
 
-**Maan lo Fraud dheema hai, roz peeche ja raha, 6 din peeche pahunch gaya:** 7 din pe khabar disk se mit jaayegi aur Fraud ke liye hamesha ke liye kho jaayegi ("kabhi na khoye" toota). Isliye **lag** naapo: tukde ki aakhri khabar aur Fraud ke bookmark ka farak. Lag 1 ghante se zyada to alert, aur Fraud ki machine badhao (10 tukde = 10 machine tak). Usse aage chahiye to tukde badhao. Retention badhana sirf waqt kharidna hai, Fraud dheema raha to 14 din me bhi peeche.
+**Maan lo Fraud dheema hai, roz peeche ja raha, 6 din peeche pahunch gaya:** 7 din pe khabar disk se mit jaayegi aur Fraud ke liye hamesha ke liye kho jaayegi ("kabhi na khoye" toota). Isliye **lag** naapo (line kitni peeche chal rahi hai): tukde ki aakhri khabar aur Fraud ke bookmark ka farak. Lag 1 ghante se zyada to alert, aur Fraud ki machine badhao (10 tukde = 10 machine tak). Usse aage chahiye to tukde badhao. Retention badhana sirf waqt kharidna hai, Fraud dheema raha to 14 din me bhi peeche.
 
 **Maan lo kaam lamba, poll nahi kiya:** Kafka machine ko mara samajh ke uske tukde le leta hai (max.poll.interval.ms). Ek baar me kam khabar uthao, ya time badhao.
 
@@ -214,7 +216,7 @@ ne bookmark dekha (abhi bhi purana), aur wahi khabar dobara padhi. Arpan ko 2 SM
 **Stadium:** checker ne punch kiya, register me likhne se pehle gira, fan dobara aaya -> pehle dekho, ye pehle aa chuka?
 
 Machine A ka kaam teen kadam ka tha: khabar padho, SMS bhejo, phir Kafka ko batao "agli baar yahan se"
-(bookmark aage karna = **commit**). SMS bheja aur commit se pehle gir gayi. Bookmark purana hi raha, to B ne
+(bookmark aage karna = **commit**, jaise checker register me likhe "ye fan ho gaya"). SMS bheja aur commit se pehle gir gayi. Bookmark purana hi raha, to B ne
 wahi khabar dobara padhi.
 
 Ulta karte (pehle commit, phir SMS) to commit hua aur SMS se pehle gira, bookmark aage chala gaya, aur ye
@@ -222,7 +224,7 @@ SMS kabhi jaata hi nahi. Ye usse bhi bura hai. Isliye kram pakka hai: **pehle ka
 kabhi khoti nahi, bas kabhi-kabhi dobara aa jaati hai. Iska naam hai **at-least-once**: kam se kam ek baar,
 kabhi do baar.
 
-Dobara aayi khabar pakadne ke liye har khabar ki apni id hoti hai (**eventId**, jaise `E-6`). SMS bhejne se
+Dobara aayi khabar pakadne ke liye har khabar ki apni id hoti hai (**eventId**, jaise `E-6`; stadium me checker ki punch wali list). SMS bhejne se
 pehle machine dekhti hai ki ye id pehle ho chuki ya nahi:
 
 ```
@@ -254,14 +256,14 @@ sirf wahin tha, to Arpan ki saari khabar hamesha ke liye gayi.
 **Stadium:** chowkidar gira -> doosra chowkidar wahi list le ke taiyaar. "Likh liya" tabhi bolo jab doosre ki list me bhi naam ho.
 
 Ilaaj: har tukde ki **3 copy**, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo **leader**
-hai, baaki do copy. P1 ka leader broker 2 pe, copy broker 1 aur 3 pe. Broker 2 ki disk mari to 1 ya 3 naya leader ban
+hai (gate ka chowkidar), baaki do copy (doosre chowkidaron ke paas wahi list). P1 ka leader broker 2 pe, copy broker 1 aur 3 pe. Broker 2 ki disk mari to 1 ya 3 naya leader ban
 jaata hai, aur Arpan ki khabar bach jaati hai. Naya leader kaun banega, ye Kafka ki ek machine tay karti hai
-jo sab pe nazar rakhti hai: **Controller**.
+jo sab pe nazar rakhti hai: **Controller** (head chowkidar, jo tay kare kaun aage aayega).
 
 Par ek pench: leader (broker 2) ne khabar likhi aur turant Order Service ko "ho gaya" bol diya, aur copy tak khabar
 pahunchne se pehle hi broker 2 mar gaya. Copy ke paas wo khabar thi hi nahi, to khabar gayi.
 
-Ilaaj: **acks=all**. Leader "ho gaya" tabhi bolta hai jab pakki copies pe bhi likh jaaye.
+Ilaaj: **acks=all** ("likh liya" tabhi bolo jab doosre chowkidar ki list me bhi naam aa jaaye). Leader "ho gaya" tabhi bolta hai jab pakki copies pe bhi likh jaaye.
 
 ```
 acks=0    bhej ke bhool jao (sabse tez, khabar kho sakti)
@@ -269,11 +271,11 @@ acks=1    sirf leader ne likha to "ho gaya" (leader mara to aakhri khabar gayi)
 acks=all  saari pakki copies pe likha tab "ho gaya"     <- order / paisa ke liye
 ```
 
-"Pakki copy" wo hai jo leader ke saath bilkul taaza chal rahi hai. Unki list ko **ISR** (in-sync replicas) kehte hain. Peeche
+"Pakki copy" wo hai jo leader ke saath bilkul taaza chal rahi hai. Unki list ko **ISR** (in-sync replicas) kehte hain: jin chowkidaron ki list bilkul taaza hai. Peeche
 chal rahi copy ko leader nahi banate, warna aakhri khabar kho jaayegi.
 
 Sab copies gir gayi aur sirf leader bacha, to `acks=all` me "saari pakki copy" sirf leader khud hai, aur wo
-"ho gaya" bol dega jabki copy ek bhi nahi. Isliye saath me **min.insync.replicas = 2**: kam se kam 2 pakki copy na
+"ho gaya" bol dega jabki copy ek bhi nahi. Isliye saath me **min.insync.replicas = 2** (kam se kam 2 chowkidar ki list me naam ho): kam se kam 2 pakki copy na
 hon to likhna hi band. Khabar khone se behtar hai thodi der ruk jaana.
 
 **Maan lo likhna band hua aur usi waqt Arpan ne order kiya:** order fail nahi hota, kyunki khabar pehle DB ke outbox me jaati hai (agla kadam).
@@ -298,8 +300,8 @@ Order Service ko do kaam karne the: DB me "order = cancel" likhna, aur Kafka ko 
 alag cheezein hain, dono me ek saath, ek hi baar me likhne ka koi tareeka nahi. Pehla kaam hua, doosre se
 pehle Order Service gira.
 
-Ilaaj: **outbox**. Khabar bhi usi DB me likh do, cancel ke saath, ek transaction me. Khabar jis table me
-jaati hai use outbox kehte hain. Ek chhota program **relay** har second outbox me `sent = false` wali khabar
+Ilaaj: **outbox** (ticket counter ka register). Khabar bhi usi DB me likh do, cancel ke saath, ek transaction me. Khabar jis table me
+jaati hai use outbox kehte hain. Ek chhota program **relay** (runner) har second outbox me `sent = false` wali khabar
 dhoondhta hai, Kafka ko bhejta hai (acks=all), aur Kafka "OK" bole to `sent = true` likh deta hai.
 
 ```
@@ -344,7 +346,7 @@ Ek tukde me kram se padhna hota hai, aur machine agli khabar tabhi uthati hai ja
 jaaye. Arpan ki khabar me phone number galat tha, to SMS kabhi jaayega hi nahi. SMS Service baar-baar koshish
 karta raha, aur P1 wale baaki users ki khabar uske peeche atak gayi.
 
-Ilaaj: **DLQ (dead letter queue)**, kharab khabar ki alag line. Khabar fail hui to 3-4 baar ruk-ruk ke
+Stadium me: galat ticket wala fan baar-baar ghus raha hai aur poori line atki hai. Use side ki alag line me khada kar do, baaki fan chalein. Kafka me ye alag line **DLQ (dead letter queue)** hai. Khabar fail hui to 3-4 baar ruk-ruk ke
 koshish karo. Phir bhi fail to use ek alag topic (`sms-dlq`) me daal do, commit karo, aur agli khabar pe
 badho. DLQ pe alert jaata hai, insaan dekhta hai, number theek karke dobara chalata hai. Ek kharab khabar
 poori line nahi rokti, aur khabar khoti bhi nahi.
@@ -353,7 +355,7 @@ Turant DLQ kyun nahi, 3-4 baar koshish kyun? Kai baar fail hona kuch der ka hota
 ke liye dheemi thi), do-teen baar try karne pe chal jaata hai. Galat number jaisi galti har baar fail hogi,
 wahi DLQ me jaati hai.
 
-**Maan lo SMS company hi 10 minute band ho gayi:** ab har khabar 3-4 try ke baad fail hogi aur lakhon khabar DLQ me chali jaayengi. Galti khabar ki nahi, company ki hai. Isliye jab lagaataar sab fail hone lage, padhna rok do (**circuit breaker**). Khabar topic me hi padi rehti hai, commit nahi hua. Har kuch second ek check (heartbeat): company wapas aayi to wahin se padhna shuru. DLQ sirf us khabar ke liye jo akeli fail ho, jaise galat number.
+**Maan lo SMS company hi 10 minute band ho gayi:** ab har khabar 3-4 try ke baad fail hogi aur lakhon khabar DLQ me chali jaayengi. Galti khabar ki nahi, company ki hai. Isliye jab lagaataar sab fail hone lage, padhna rok do (**circuit breaker**: andar ka counter hi band hai, to fan ko wahin rok do, alag line me mat bhejo). Khabar topic me hi padi rehti hai, commit nahi hua. Har kuch second ek check (heartbeat: dekho counter khula ya nahi): company wapas aayi to wahin se padhna shuru. DLQ sirf us khabar ke liye jo akeli fail ho, jaise galat number.
 
 ```mermaid
 flowchart LR
