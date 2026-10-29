@@ -4,6 +4,8 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
 file me ek hi kahani hai: Arpan ko Ravi ke saath PVR ka 9 baje wala show dekhna hai, seat A1.
 
+**Do counter, ek seat (poori file me yahi):** do counter ek hi seat bech rahe · parchi = hold · gate ki line = waiting room · token = gate ka pass
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 padho phir likho (do log ek seat) -> ek query UPDATE ... WHERE FREE -> HELD 5 min (hold_until)
 -> seat map Redis cache -> waiting room (token, signed parchi) -> pay: idempotency key + PSP webhook -> BOOKED
@@ -89,6 +91,8 @@ likho, aur beech ke pal me koi aur ghus jaata hai.
 
 ### Kadam 2: padhna aur likhna ek hi query me (banking kadam 4 wala hi)
 
+**Do counter:** dono counter ne D5 khaali dekhi aur dono ne bech di -> dekhna aur parchi lagana ek saath, doosra counter parchi dekh ke mana kare.
+
 "Pehle padho, phir likho" do alag kaam hain, aur dono ke beech Ravi ghus gaya. Ilaaj: dono ko ek hi query me.
 
 ```sql
@@ -114,6 +118,8 @@ Par seat book karte hi paisa nahi aata, Arpan ko pay karne me 3 minute lagte hai
 - pehle pay, phir seat: 3 minute me Ravi le gaya, to Arpan ka paisa kat gaya aur seat nahi mili.
 
 ### Kadam 3: seat HOLD 5 minute, umar ke saath (BMS ka apna)
+
+**Do counter:** Arpan parchi laga ke chai peene chala gaya -> parchi 5 minute ki, phir phaad do. Phaadne wala chhutti pe -> parchi pe hi waqt likho, naya aadmi aaye to counter khud dekh le.
 
 Na pehle BOOKED, na pehle pay. Beech ka ek haal: **HELD** = "Arpan ke liye 5 min ruki hui".
 Seat 5 min Arpan ki; pay kiya to pakki, nahi kiya to apne aap wapas FREE.
@@ -199,6 +205,8 @@ rahe hain, seat sirf 5000. Saari HOLD query ek hi table ki chand rows pe toot pa
 phans jaata hai, sab ka app ghoomta rehta hai.
 
 ### Kadam 5: waiting room (line me lagao, thode-thode andar bhejo)
+
+**Do counter:** 10 lakh log, 50 hazaar seat -> hall jitni jagah, utne andar, baaki line me number. Token gate ka pass hai, seat ki parchi ki ghadi alag: andar aa gaya to pay parchi ki ghadi se.
 
 2 lakh log seedhe booking pe nahi jaate. Pehle ek **line** me lagte hain
 (Redis me line, jo pehle aaya wo aage).
