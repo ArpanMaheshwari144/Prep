@@ -6,6 +6,8 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
 me ek hi kahani hai: Arpan ka Amazon wala link.
 
+**Token counter (poori file me yahi):** lamba pata = lamba link · token = chhota code · mota register = DB · chhota register = Redis · counter wala = app server · almari = DB machine (shard) · manager = beech ka counter
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 seedha (server + DB) -> counter + base62 -> Redis -> LB + counter range -> shard -> ring -> 3 copy
 -> local cache (viral link) -> rate limit (bot)
@@ -48,6 +50,8 @@ aage DB ke tukde (shard) aayenge. 62 tarah ke akshar matlab a-z (26), A-Z (26) a
 
 ### Kadam 1: sabse seedha (ek server, ek DB)
 
+**Token counter:** log lamba pata dete hain, counter wala chhota token deta hai aur mote register me likh leta hai. Token dikhao, pata lo.
+
 Arpan ke paas ek lamba link hai (`amazon.in/dp/B0C...?ref=xyz`). Wo hamari site pe daalta hai aur use
 `short.ly/aB3x9` milta hai. Koi bhi ye chhota link khole, hum use Amazon pe bhej dete hain.
 
@@ -72,6 +76,8 @@ link gayab ho jaate. Link saalon chalna chahiye, isliye disk wala DB.
 Par chhota code `aB3x9` banega kaise? Aur do logon ko kabhi same code na mile, ye pakka kaise hoga?
 
 ### Kadam 2: code banana (counter + base62)
+
+**Token counter:** apne man se token = do logon ko same -> ek line me agla number (counter). Number lamba -> number plate jaise akshar bhi (base62).
 
 Code banane ke teen tareeke ho sakte hain:
 
@@ -102,6 +108,8 @@ Link ban rahe hain. Par har second 1 lakh log link khol rahe hain, aur har baar 
 DB itna bojh nahi jhel payega.
 
 ### Kadam 3: kholne ka bojh (Redis cache)
+
+**Token counter:** mota register palatna dheema -> saamne chhota register. Bhara to waqt ki had + jo poochha nahi jaata hatao. 1,000 ek saath -> ek ladka jaaye, baaki ruken; ladka gira -> timeline, agla jaaye, tab tak purana pata de do.
 
 DB disk se padhta hai, isliye har baar DB me dhoondhna dheema hai. Aur zyadatar log wahi kuch link baar-baar
 kholte hain. Arpan ne Amazon sale ka link group me bheja, to 1,000 log wahi ek link khol rahe hain. Har baar
@@ -154,6 +162,8 @@ nahi jhelega.
 
 ### Kadam 4: ek server kam pad gaya (LB + kai server, counter range)
 
+**Token counter:** 5 counter, dono ne token "10" diya -> har counter ka apna dabba (1-100, 101-200). Dabba dene wala manager chhutti pe -> duplicate manager.
+
 Ek server bojh nahi jhelega, aur agar wo gira to poori site band ho jaayegi.
 
 Ilaaj: kai app server chalao (maan lo 10), aur unke aage ek **Load Balancer (LB)**. LB har request ko kisi
@@ -203,6 +213,8 @@ Par 5 saal me data ~90 TB ho jaayega. Itna ek DB machine me nahi samata.
 
 ### Kadam 5: data bahut bada (DB ke tukde = shard)
 
+**Token counter:** register ek almari me nahi aata -> tukde, hash se token ki almari tay.
+
 90 TB ek DB machine me nahi aata, aur ek machine itni padhai-likhai bhi nahi jhel paati.
 
 Ilaaj: data ko kai DB machine me baanto (**shard**). Kaunsa link kis machine pe jaayega, ye code se tay hota
@@ -231,6 +243,8 @@ machine badal gayi. Arpan ka `aB3x9` machine 3 me pada hai, par app use machine 
 404 dega.
 
 ### Kadam 6: machine badhi to link kho gaye (ring = consistent hashing)
+
+**Token counter:** 10vi almari aayi, sab token galat almari me dhoondhe gaye -> almaariyan gol chakkar pe, toofan me paas wala shelter jaisa, sirf aas-paas hile.
 
 `% 10` se `% 11` karte hi lagbhag saara 90 TB idhar-udhar shift karna padta, aur tab tak link 404 dete.
 
@@ -285,6 +299,8 @@ Par ek DB machine gir gayi, to us pe pade saare link 404 denge.
 
 ### Kadam 7: ek DB machine giri (har link ki 3 copy)
 
+**Token counter:** almari jal gayi -> copy alag jagah, "likh liya" tab jab copy bhi haan bole. Dost ne peeche wali copy se padha -> 2 se padho.
+
 DB-C gir gayi. Arpan ka `aB3x9` usi pe tha, to link 404. Disk mari to link hamesha ke liye gaya. NFR "hamesha
 chale" toot gaya.
 
@@ -319,6 +335,8 @@ Par ek link viral ho gaya. Cricket match ka link 1 crore log ek saath khol rahe 
 machine pe ja rahe hain.
 
 ### Kadam 8: ek link viral (local cache)
+
+**Token counter:** viral token, sab ek chhote register pe -> uski copies, aur counter wala parchi apne paas rakhe. Phone me pata likhne hi mat do (302), warna dhokhe wala band nahi hoga.
 
 Redis bhi key ke hisaab se baant ke rakhta hai, to ek link ki key Redis ki ek hi machine pe hoti hai. Saara
 bojh usi ek machine pe gira. Wo dheemi padi, aur us pe pade baaki link bhi atak gaye.
@@ -359,6 +377,8 @@ control hamare paas rehta hai. Bojh cache se sambhal liya."
 Par ek bot har second hazaron link bana raha hai.
 
 ### Kadam 9: bot spam link bana raha hai (rate limit + link ki jaanch)
+
+**Token counter:** machine se hazaar chit -> har aadmi pe had (office ka WiFi ek, isliye user pe, IP pe nahi), baar-baar wala gate pe roko, bura pata pehle hi jaancho.
 
 Counter aur DB faltu bhar rahe hain, aur hamare chhote link pe
 dhokhe wali site (phishing) khul rahi hai.
