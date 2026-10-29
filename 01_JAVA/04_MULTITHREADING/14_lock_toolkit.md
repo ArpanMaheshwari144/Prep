@@ -1,14 +1,56 @@
 # Lock Toolkit — ReadWriteLock · Semaphore · CountDownLatch · CyclicBarrier
 
-> **NAV** — KYA: jab ek saada taala kaafi na ho. UP: [04_synchronized.md](04_synchronized.md) (taala + ReentrantLock) ·
-> saath: [06_atomic_integer_cas.md](06_atomic_integer_cas.md) · [10_executor_service_thread_pool.md](10_executor_service_thread_pool.md) ·
-> [11_future_vs_completablefuture.md](11_future_vs_completablefuture.md) · [12_producer_consumer.md](12_producer_consumer.md)
+**Kahani:** BMS ka theatre. Normal taala (`synchronized`) = andar sirf EK banda. Par theatre me har jagah ek-ek ko bhejna bekaar. Isliye 4 auzaar:
 
-> **★ IS FILE KA MAQSAD:** ye TAALE nahi hain — ye **COORDINATION** hain.
-> Taala poochta hai *"andar kaun jaayega?"* · Ye poochte hain *"kitne jaa sakte hain?"* aur *"kab tak ruko?"*
-> (`ReentrantLock` taala hai — wo [04_synchronized.md](04_synchronized.md) me hai, kyunki wo `synchronized` ka upgrade hai.)
+```
+1. SEAT MAP (ReadWriteLock)
+   dekhne wale 1000, sab ek saath dekh sakte      -> readLock  (shared)
+   book karne wala aaya, map badlega              -> writeLock (akela, sab ruko)
+
+2. TICKET PRINTER (Semaphore(3))
+   printer sirf 3 ek saath jhel sakta
+   T1 T2 T3 andar   T4 T5 ruko   T1 nikla -> T4 andar
+   lock = "EK ya koi nahi"   semaphore = "ITNE, bas itne"
+
+3. THEATRE KHULNA (CountDownLatch(3))
+   AC, projector, sound teeno ready -> darwaza khula
+   manager bahar wait karta (await), staff ginti ghatata (countDown)
+   ek baar khula = hamesha khula, reset nahi
+
+4. TEEN DOST (CyclicBarrier(3))
+   teeno gate pe milte, phir saath andar
+   agle show pe phir wahi -> apne aap reset (isliye "cyclic")
+```
+
+**Khaas baat:**
+1. ReadWriteLock tabhi fayda jab padhna zyada, likhna kam (seat map, config, cache). Barabar ho to iska hisaab-kitaab bhaari, saada `synchronized` tez.
+2. Read pakad ke write maanga = DEADLOCK (tu read chhodne ka intezaar kar raha, aur read tu hi pakde hai).
+3. Latch = bahar wala wait kare, ek baar ka. Barrier = wahi workers ek doosre ka wait, har round reset.
+4. Ek party pahunchi hi nahi -> baaki hamesha ruke. Isliye `await` ka timeout version. Barrier me kisi ka timeout -> baaki sabko `BrokenBarrierException`.
+
+**Prod wala trap:**
+```java
+try {
+    slots.tryAcquire();      // false aaya (printer full)...
+    printTicket();
+} finally {
+    slots.release();         // ...phir bhi release -> Semaphore(3) chupke se 4 ka ho gaya
+}
+```
+Semaphore ka maalik nahi hota, koi bhi `release()` kar sakta. Ilaaj: `release()` sirf tab jab `tryAcquire()` ne `true` diya.
+
+**Tera project:** `usercrud` RateLimitController = "ek saath kitne" wali soch (semaphore). "Ek second me kitne" = token bucket, semaphore nahi.
+
+```
+Interview: "Jahan resource limited ho (connection pool, ya downstream jo sirf N concurrent jhele)
+wahan Semaphore, kyunki lock sab ek-ek karke chalata. Read-heavy state pe ReadWriteLock, taaki
+readers aapas me na rukein. N kaam khatam hone ka intezaar = CountDownLatch, round-by-round sab
+milein = CyclicBarrier. Har await ka timeout version, aur release / countDown hamesha finally me."
+```
 
 ---
+
+## GEHRA HISSA (purani file se, interview me kaam ka)
 
 ## ★★ PEHLE YE — kya taala chahiye BHI?
 
