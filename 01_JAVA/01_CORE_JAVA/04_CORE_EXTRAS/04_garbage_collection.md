@@ -1,265 +1,56 @@
 # Garbage Collection
 
-> **V90 — Core Java Extras: Topic 19**
+## Kahani
 
----
-
-## STORY — C++ vs Java
-
-→ **C++** mein tune object banaya, kaam hua, `delete` karna **bhool gaya** — **memory leak**
-→ Java mein ye tension nahi
-→ **Koi reference nahi = GC eligible**
-→ JVM background mein check karta rehta hai — unreachable objects **saaf kar deta**
-→ `System.gc()` sirf **hint** hai, guarantee nahi
-→ `finalize()` deprecated hai — **use mat karo**
-→ C++: manually delete → bhool gaye → memory leak. **Java: GC khud karta hai**
-→ Object ka koi reference nahi → GC eligible
-→ `System.gc()` = sirf hint, guarantee nahi
-
----
-
-## GC Eligible Kab?
+C++ me `new` se object banao to `delete` khud karna padta hai. Bhool gaye to memory leak. Java me ye kaam JVM ka safai wala (GC) karta hai. Uska ek hi sawaal hota hai: **"is object tak koi pahunch sakta hai?"**
 
 ```java
-// Case 1 — reference null kar diya
-Student s = new Student("Arpan");
-s = null;                              // koi point nahi kar raha → GC le jaayega
-
-// Case 2 — reference reassign kiya
-Student s = new Student("Arpan");
-s = new Student("Rahul");              // "Arpan" wala ORPHAN → GC
-
-// Case 3 — method khatam hua
-void method() {
-    Student s = new Student("Arpan");
-}                                      // method khatam → s scope se bahar → GC
-// ★ par agar method ne object RETURN kiya ya kisi field/list me daal diya -> abhi bhi reachable, GC nahi
+Patient p = new Patient("Arpan");
+p = new Patient("Ravi");   // "Arpan" tak ab koi nahi pahunchta -> kachra
 ```
 
----
+## Tasveer
 
-## Visualization — Reachable vs Unreachable
-
-```
-              Garbage Collection — Reachable vs Unreachable
-
-╔════════════════════════════════════════════════════════════╗
-║ Reachable Objects — GC Safe                                ║
-╚════════════════════════════════════════════════════════════╝
-
-  GC Roots (stack, static refs, etc.)
-       │
-       ▼
-  ┌─────────┐
-  │   s     │  (Stack reference, alive)
-  └────┬────┘
-       │
-       ▼
-  ┌─────────────┐
-  │  Student    │   ← reachable, GC ne touch nahi karega
-  │ "Arpan"     │
-  └─────────────┘
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Case 1 — Reference null kar diya                           ║
-╚════════════════════════════════════════════════════════════╝
-
-  Student s = new Student("Arpan");
-  s = null;                              ← reference disconnect
-
-  GC Roots
-       │
-       ▼
-  ┌─────────┐                  ┌─────────────┐
-  │  s=null │     ──── ──── │  Student    │  ← orphan
-  └─────────┘                  │ "Arpan"     │   GC eligible
-                               └─────────────┘   ↓
-                                              GC clean kar dega
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Case 2 — Reference reassign                                ║
-╚════════════════════════════════════════════════════════════╝
-
-  Student s = new Student("Arpan");      ┌─────────────┐
-  s = new Student("Rahul");               │ "Arpan"     │  ← orphan, GC
-                                          └─────────────┘
-  s ─────────────────────►┌─────────────┐
-                          │ "Rahul"     │  ← reachable, alive
-                          └─────────────┘
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Case 3 — Method khatam = local var scope se bahar          ║
-╚════════════════════════════════════════════════════════════╝
-
-  void method() {
-      Student s = new Student("Arpan");
-  }   // ← method end, s ka scope khatam
-
-  Stack frame removed → GC Roots se disconnect → orphan → GC clean
-
-
-╔════════════════════════════════════════════════════════════╗
-║ System.gc() — Sirf Hint                                    ║
-╚════════════════════════════════════════════════════════════╝
-
-  System.gc()  ─── (request) ───► JVM
-                                   │
-                                   ▼
-                                "Theek hai, kabhi karunga..."
-                                (no guarantee, JVM decide karta)
-```
-
----
-
-## MARK AND SWEEP — GC garbage kaise dhoondhta (algorithm)
+Kaun zinda hai, kaun kachra:
 
 ```
-   STACK = references/locals | HEAP = saare objects (new se bane)
+GC ROOTS (stack ke variable, static field)
+   |
+   v
+ [ p ] --> [ Ravi ]           pahunch hai = zinda (MARK)
 
-   2 step:
-   1. MARK  -> GC ROOTS (stack locals, static vars) se shuru -> jitne object tak pahuncha ja sake
-              sabko MARK (reachable = zinda). roots -> A -> B -> C ... sab mark.
-   2. SWEEP -> jo MARK nahi hue (kisi root se pahunch nahi) = garbage -> memory FREE.
-
-   reachable = zinda | unreachable = garbage.
-   (circular reference bhi handle: A<->B ek doosre ko point karein par root se koi na pahunche -> dono garbage.
-    isi liye Java reference-COUNTING nahi, reachability use karta.)
+           [ Arpan ]          koi teer nahi = kachra (SWEEP)
 ```
 
----
-
-## GENERATIONAL GC (young/old) — JP yahan deep jaata
+Heap ke do hisse:
 
 ```
-   NEEV: "zyadatar object JALDI marte" (method ke temp object -> method khatam -> turant garbage).
-         thode object LAMBa chalte (config/cache/connection).
-
-   HEAP age-wise baanta:
-   ┌──────────────────────┬──────────────────┐
-   │  YOUNG (naye object)  │  OLD (bach gaye)  │
-   └──────────────────────┴──────────────────┘
-   - naya object -> YOUNG. Young ke kai GC bach jaaye -> OLD mein PROMOTE.
-
-   YOUNG ke andar 3 dabbe:
-      EDEN  ->  S0  <->  S1  ->  OLD
-      naya object EDEN me · minor GC pe zinda wale ek SURVIVOR (S0/S1) me copy
-      har minor GC pe S0 <-> S1 me ghoomte, umar badhti · umar ~15 (default) paar -> OLD
-
-   MINOR GC -> sirf YOUNG saaf. CHHOTA+FAST+frequent (90% kachra yahin).
-               ye bhi STOP-THE-WORLD hai, par pause bahut chhota (young chhota hai).
-   MAJOR GC -> OLD/poora heap saaf. BADA+SLOW+kam-baar. STOP-THE-WORLD ka LAMBA pause yahin dikhta.
-
-   KYUN smart: chote Young ko baar-baar scan (jahan zyada kachra) = fast.
-               bada Old kam scan (yahan kam kachra) = mehnga kaam kam baar. -> performance behtar.
+[ YOUNG: Eden -> S0 <-> S1 ]  -->  [ OLD ]
+  naye object, jaldi marte          kai baar bach gaye to yahan aate
+  minor GC: chhota, tez, baar-baar  major GC: bada, dheema, kam baar
 ```
 
-**Chala ke dekha** (30 lakh chhote `byte[1024]`, har ek turant kachra, heap 64MB, `-Xlog:gc`):
-```
-Using G1                                                   <- Java 9+ default
-GC(0) Pause Young (Normal) ... 2M->1M(10M)    1.038ms
-GC(4) Pause Young (Normal) ... 18M->1M(30M)   0.809ms
-GC(6) Pause Young (Normal) ... 18M->1M(30M)   0.685ms
-kul 8 Pause Young, MAJOR ek bhi nahi
-```
-`18M->1M` = young me 18MB tha, saafi ke baad 1MB bacha. Pause 1ms se kam.
-Saara kachra YOUNG me hi mar gaya = "zyadatar object jaldi marte" ka live saboot.
+## 4 khaas baat
 
----
+1. **GC ginti nahi karta, pahunch dekhta hai** (mark and sweep). Roots se chal ke jahan tak pahuncha, wo zinda hai. Baaki sab kachra hai. Isliye do object ek-doosre ko pakde baithe hon, par root se unka koi raasta na ho, to dono saaf ho jaate hain.
+2. **Zyadatar object jaldi mar jaate hain, isliye heap umar ke hisaab se bata hota hai.** Chala ke dekha tha: 30 lakh chhote object banaye, `18M->1M`, pause 1ms se kam, 8 minor GC hue aur major ek bhi nahi. Saara kachra Young me hi mar gaya.
+3. **GC hone ke baad bhi Java me leak hota hai.** Object ki zaroorat khatam ho gayi par reference zinda reh gaya, to GC use zinda hi maanega. Isi ka trap neeche hai.
+4. **Collector ka faisla do cheezon ke beech hota hai: kitna kaam nikla (throughput) aur app kitni der ruki (pause).** Java 8 tak Parallel GC default tha: throughput zyada, par pause dikhta tha. Java 9 se G1 default hai: heap ko regions me baant ke sabse gande region ko pehle saaf karta hai, aur pause target diya ja sakta hai. ZGC bahut bade heap pe bhi pause 10ms se kam rakhta hai.
 
-## MEMORY LEAK in JAVA (GC hai phir bhi leak kaise? — JP twist)
+## Prod wala trap
 
-```
-   GC sirf UNREACHABLE uthata. Leak tab: object ki zaroorat NAHI, par reference galti se ZINDA
-   -> GC reachable samajh ke saaf NAHI karta -> memory bharti.
-
-   Classic causes:
-   1. static collection mein add karte raho, remove nahi (static = GC root -> sab zinda)
-   2. cache/Map mein daala, kabhi nikaala nahi (reference zinda)
-   3. listener/callback register kiya, unregister nahi
-   Asli wajah: "logically zaroorat khatam, par reference physically zinda."
-
-   FIX: kaam khatam -> reference HATAO (remove/null) | cache -> size-limit+LRU eviction ya WeakHashMap | listener -> unregister.
+```java
+static Map<String, Session> cache = new HashMap<>();
+cache.put(id, session);   // har login pe daala, kabhi remove nahi kiya
 ```
 
-**Chala ke dekha** (static List me har baar 1MB daala, remove kabhi nahi, heap 64MB):
-```
-static list me 31 MB pada, kabhi remove nahi -> java.lang.OutOfMemoryError: Java heap space
-```
-static = GC root -> list zinda -> andar ka sab zinda -> GC kuch utha hi nahi saka -> crash.
+`static` field ek GC root hai. Uske andar ka sab kuch hamesha zinda rehta hai, isliye GC kuch utha hi nahi paata. Chala ke dekha tha: 31 MB jama hua aur `OutOfMemoryError: Java heap space`. Ilaaj: kaam khatam ho to remove karo, ya cache me size ki had + LRU rakho (wahi distributed cache wala LRU + TTL).
 
----
+## Tera kaam
 
-## ★ GC COLLECTORS — safai-crew ka TAREEKA (8-Sep, deep-grill)
+Prod me heap graph ka "aari" (sawtooth) pattern normal hai: memory badhti hai aur GC aate hi girti hai. Dikkat tab hai jab har GC ke baad wala neeche ka point bhi dheere-dheere upar chadhta jaaye. Wo leak ki pehchaan hai.
 
-> Heap = bada hall (kachra). Collector = safai ka TAREEKA. Sabka ek trade-off:
-> **throughput (kitna kaam ho) vs pause (app kitni der FREEZE = "stop-the-world").**
-
-```
-Serial GC    -> AKELA safai-wala. poora hall BAND karke akela jhaadu.
-                chhota app / single-core. pause LAMBA.        (-XX:+UseSerialGC)
-
-Parallel GC  -> KAI safai-wale ek saath, par hall abhi bhi BAND (stop-the-world).
-                kai log = tez. THROUGHPUT max, par pause dikhta.
-                Java 8 tak DEFAULT.                            (-XX:+UseParallelGC)
-
-CMS          -> app-ke-CHALTE-CHALTE saaf (mostly concurrent), hall kam band.
-                pause chhota. PAR fragmentation + Java 14 me HATA diya (dead).
-
-G1 (Garbage  -> hall ko chhote REGIONS me baanta. jis region me SABSE ZYADA
-   First)       kachra usko PEHLE saaf ("garbage-first").
-                pause-target de sakte: -XX:MaxGCPauseMillis=10. Java 9+ DEFAULT.
-
-ZGC/Shenandoah-> ultra-low pause (<1-10ms), BADE heap (TB) pe bhi. lagbhag poora
-                concurrent. latency-critical (trading/low-latency) apps.
-```
-
-**Ek line:** purane (Serial/Parallel) = hall BAND karke saaf (pause zyada, throughput accha) · naye (G1/ZGC) = app-ke-chalte + region-wise (pause chhota, predictable). **G1 = aaj ka default sweet-spot.**
-
----
-
-## ★ REFERENCE TYPES — object ko kitna KASke pakda (8-Sep, deep-grill)
-
-> GC ka behaviour reference ki "grip" pe: **Strong = mutthi kaske · Soft = jeb me · Weak = haath dheela · Phantom = gir-chuka, sirf parchi.**
-
-```
-STRONG  -> normal `Student s = new Student()`. MUTTHI me kaske pakda.
-           jab tak strong-ref zinda -> GC HAATH NAHI lagata. (99% code)
-
-SOFT    -> "rakho jab tak memory hai; memory KAM padi -> hata do."
-           GC tabhi uthata jab MEMORY-PRESSURE ho. -> perfect for CACHE.
-
-WEAK    -> "dheela pakda — agli GC me agar sirf weak-ref bacha -> hata do."
-           -> WeakHashMap ki keys (auto-remove jab key kahin aur use na ho).
-
-PHANTOM -> object MAR chuka, bas "mar gaya" ki parchi (cleanup hook).
-           post-mortem cleanup. rarely-directly-used.
-```
-
-**GC-aggressiveness order:** Strong (kabhi nahi) → Soft (memory-pressure pe) → Weak (agli GC) → Phantom (already gaya).
-
-**Chala ke dekha** (ek strong, ek WeakReference, beech me `System.gc()`):
-```
-GC se pehle: strong=true  weak.get()=java.lang.Object@2b2fa4f7
-GC ke baad : strong=true  weak.get()=null      <- weak utha liya, strong ko haath nahi
-```
-(`System.gc()` hint hi hai — is run me JVM ne maan liya, har baar ki guarantee nahi.)
-
----
-
-## TRAP
-
-> **`System.gc()` sirf request hai — guarantee nahi. JVM decide karta hai kab chalega.**
-> **Production code mein `System.gc()` kabhi mat likho.**
-> **`finalize()` deprecated hai Java 9+ mein.**
-
----
-
-## POWER PHRASE
-
-> *"Garbage Collector automatically frees memory of objects with no live references — you cannot force GC, `System.gc()` is just a hint to the JVM."*
+## Interview line
 
 ```
 GC frees objects that are no longer reachable from GC roots like stack
