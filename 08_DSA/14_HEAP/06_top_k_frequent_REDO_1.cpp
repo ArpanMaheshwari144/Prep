@@ -32,9 +32,29 @@ using namespace std;
 
 vector<int> topKFrequent(vector<int> &nums, int k)
 {
-    // yahan likho
+    unordered_map<int, int> mp;
+    for (auto &it : nums)
+    {
+        mp[it]++;
+    }
 
-    return {};
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> minHeap;
+    for (auto &it : mp)
+    {
+        minHeap.push({it.second, it.first});
+        if (minHeap.size() > k)
+        {
+            minHeap.pop();
+        }
+    }
+
+    vector<int> ans;
+    while (!minHeap.empty())
+    {
+        ans.push_back(minHeap.top().second);
+        minHeap.pop();
+    }
+    return ans;
 }
 
 // ---- test helper (ise mat chhed) -- order matter nahi ----
