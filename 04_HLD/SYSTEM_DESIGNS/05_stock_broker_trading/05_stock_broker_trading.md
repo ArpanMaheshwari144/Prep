@@ -2,12 +2,14 @@
 
 Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe
 se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
-file me ek hi kahani hai: Arpan TCS ke 10 share 3500 pe kharidna chahta hai, Suresh apne 10 TCS 3500 pe
+file me ek hi kahani hai: Arpan TCS ke 10 share 3500 pe kharidna chahta hai, Ravi apne 10 TCS 3500 pe
 bechna chahta hai.
 
 Ye paise wale designs me chautha design hai: jo [banking](../13_banking_system/13_banking_system.md),
 [payment](../06_payment_system/06_payment_system.md) ya [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me pehle
 se hai, wahan bas ek line + link. Poora sirf wahi jo stock ka apna hai (order book, matching, 9:15 ki bheed).
+
+**Arpan aur Ravi (poori file me yahi):** beech ka aadmi = matching engine · do list = order book · chaabi = client_order_id · paisa hold = BLOCK · ek line = ek share ek thread · parchi = order log · 10 ladkon ki fauj = Kafka
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 order book + matching engine -> (user_id, client_order_id) UNIQUE -> paisa / share BLOCK -> ek share ek thread
@@ -20,8 +22,8 @@ order book + matching engine -> (user_id, client_order_id) UNIQUE -> paisa / sha
 
 ```
 1. buy / sell order dalna (LIMIT: "3500 pe hi", MARKET: "jo bhaav abhi hai")
-2. order milana (Arpan ka buy + Suresh ka sell = sauda)
-3. sauda hua to paisa Arpan se Suresh, share Suresh se Arpan
+2. order milana (Arpan ka buy + Ravi ka sell = sauda)
+3. sauda hua to paisa Arpan se Ravi, share Ravi se Arpan
 4. live price dikhana, order ka haal (cancel bhi)
 scope ke bahar: margin / risk, IPO, mutual fund
 ```
@@ -48,18 +50,20 @@ scope ke bahar: margin / risk, IPO, mutual fund
 
 ### Kadam 1: sabse seedha (Order Service + matching engine + DB)
 
+**Arpan-Ravi:** dono ek-doosre ko jaante nahi. Beech me ek aadmi baitha do jo kharidne wale ko aur bechne wale ko behtar bhaav pe mila de.
+
 Stock ka dil hai **order book**: har share ki do list.
 
 ```
 TCS order book
   KHARIDNE WALE (buy)          BECHNE WALE (sell)
-  Arpan  10 @ 3500             Suresh 10 @ 3500   <- bhaav mila -> SAUDA
-  Mohan   5 @ 3490             Ravi    8 @ 3510
+  Arpan  10 @ 3500             Ravi 10 @ 3500   <- bhaav mila -> SAUDA
+  Mohan   5 @ 3490             Geeta   8 @ 3510
 ```
 
 Arpan ne order dala. Order Service use **matching engine** ko deta hai. Engine dekhta hai: koi bechne wala 3500 ya
-usse kam pe hai? Suresh hai, sauda ho gaya. Phir DB me likha jaata hai: Arpan ka paisa ghata, share badhe;
-Suresh ka ulta. Kram ka niyam: ek hi bhaav pe do bechne wale hon, to jo pehle aaya usse pehle (price-time
+usse kam pe hai? Ravi hai, sauda ho gaya. Phir DB me likha jaata hai: Arpan ka paisa ghata, share badhe;
+Ravi ka ulta. Kram ka niyam: ek hi bhaav pe do bechne wale hon, to jo pehle aaya usse pehle (price-time
 priority).
 
 ```mermaid
@@ -87,7 +91,7 @@ design wo milaan wala hissa hai.
 ### DB kaunsa: SQL ya NoSQL?
 
 Data dekho: har user ka paisa aur share. Kaam: sauda hote hi chaar cheez ek saath badalti hain: Arpan ka paisa
-ghata, share badhe, Suresh ke share ghate, paisa badha.
+ghata, share badhe, Ravi ke share ghate, paisa badha.
 
 Ya to chaaron badlein ya koi nahi (ACID), ye SQL ka seedha kaam hai. Paisa aur share kabhi galat nahi ho
 sakte, to NoSQL ki "thodi der baad sahi" chal hi nahi sakti. Isliye SQL. (Order book DB me nahi, RAM me hai,
@@ -99,6 +103,8 @@ Dikkat: Arpan ne "Buy" dabaya, network atka, app ne dobara bheja (ya do baar tap
 order lag gaye, 20 share kharid liye gaye, jabki use 10 chahiye the.
 
 ### Kadam 2: ek tap, ek order ([banking kadam 3](../13_banking_system/13_banking_system.md#kadam-3-network-gaya-app-ne-dobara-bheja-idempotency-key) wali key)
+
+**Arpan-Ravi:** net gaya, app ne "Buy 10" dobara bheja. Chaabi lagao, wahi chaabi dobara aaye to "nikal, ye ho chuka".
 
 App har order ke saath apni ek id bhejta hai: `client_order_id = A-501`. Orders table me
 `UNIQUE(user_id, client_order_id)`. Sirf client_order_id nahi, kyunki alag users ke app same id bana sakte hain.
@@ -123,6 +129,8 @@ Par Arpan ke wallet me 50,000 hain. Usne ek saath do order daale: TCS 35,000 ka 
 Order Service pe saath pahunche, dono ne dekha "50,000 hai, chalega", dono lag gaye. 65,000 ke order, paisa 50,000.
 
 ### Kadam 3: paisa BLOCK (BookMyShow ka seat HOLD, bas balance pe)
+
+**Arpan-Ravi:** 35,000 se do order. Paisa hold kar lo jaise EMI ke liye bank hold karta, kahin aur kharch hi na ho.
 
 Wallet me do khaane: **available** (khula paisa) aur **blocked** (order ke liye ruka paisa). Engine tak
 jaane se pehle us order ka paisa block, ek hi query me:
@@ -149,14 +157,14 @@ Ye [BookMyShow kadam 3](../09_bookmyshow/09_bookmyshow.md#kadam-3-seat-hold-5-mi
 [banking kadam 4](../13_banking_system/13_banking_system.md#kadam-4-do-kataai-ek-saath-balance--400-check--kaato-ek-query-me) wali: "check + kaato ek query me".
 
 Aage kya:
-- sauda hua: blocked se paisa Suresh ko (Kadam 7).
+- sauda hua: blocked se paisa Ravi ko (Kadam 7).
 - order cancel / din khatam, bika nahi: blocked wapas available (BookMyShow ka "hold mara to seat FREE").
 
-Bechne wale pe bhi yahi: Suresh ke paas 10 TCS. Usne do jagah "sell 10" daala. Pehle pe 10 share block, doosre
+Bechne wale pe bhi yahi: Ravi ke paas 10 TCS. Usne do jagah "sell 10" daala. Pehle pe 10 share block, doosre
 pe "share kam hain". Ek share do baar nahi bik sakta.
 
-**Maan lo aadha bhara (partial fill):** Arpan ko 10 chahiye, Suresh 6 bech raha: 6 ka sauda, Arpan ke 4 book me
-khade. 6 share ka blocked paisa (21,000) Suresh ko gaya, baaki 4 ka (14,000) blocked hi rehta.
+**Maan lo aadha bhara (partial fill):** Arpan ko 10 chahiye, Ravi 6 bech raha: 6 ka sauda, Arpan ke 4 book me
+khade. 6 share ka blocked paisa (21,000) Ravi ko gaya, baaki 4 ka (14,000) blocked hi rehta.
 
 **Maan lo din khatam, order bika nahi:** order cancel, blocked paisa / share wapas available (Kadam 3).
 
@@ -165,9 +173,11 @@ khade. 6 share ka blocked paisa (21,000) Suresh ko gaya, baaki 4 ka (14,000) blo
 ki baat sirf itni: andaze se block, baad me hisaab)
 
 Par 9:15 baje market khula, 10,000 order / sec, aadhe sirf TCS pe. Ek hi TCS order book pe kai thread ek saath
-haath daal rahe hain. Do thread ne ek hi Suresh ko do kharidne walon se mila diya, book bigad gayi.
+haath daal rahe hain. Do thread ne ek hi Ravi ko do kharidne walon se mila diya, book bigad gayi.
 
 ### Kadam 4: ek share ki book, ek hi thread (stock ka apna)
+
+**Arpan-Ravi:** do thread ne Ravi ke wahi 10 share do logon ko bech diye. Sab ek line me, ek jagah, baanto mat.
 
 Har share ki apni order book, aur har book ko **sirf ek thread** chalata hai. Us share ke saare order ek line
 (queue) me lagte hain (abhi engine ki RAM me; Kadam 5 me yahi line log banegi: disk + standby), thread
@@ -192,7 +202,7 @@ flowchart LR
 ```
 
 Ab kya theek hua:
-- ek book pe ek hi haath, to Suresh do logon se kabhi nahi milta. Lock bhi nahi chahiye.
+- ek book pe ek hi haath, to Ravi do logon se kabhi nahi milta. Lock bhi nahi chahiye.
 - kram line se tay: jo pehle line me laga, wo pehle milega.
 - alag share alag thread pe (ya alag machine pe), to TCS aur INFY saath-saath chalte hain.
 
@@ -218,6 +228,8 @@ Par order book RAM me hai. Dopahar 12 baje matching machine gir gayi, poori TCS 
 bhaav pe kharidne ka order dala tha, kuch nahi bacha.
 
 ### Kadam 5: engine giri (log + standby, ack ke baad milaan)
+
+**Arpan-Ravi:** machine mari, book RAM ke saath udi. Subah se ek parchi me sab likha ho (jaise bag ki list), to bag khaali karke parchi se dobara jamao.
 
 Dikkat: order book engine ki RAM me hai. Machine giri to book gayi, aur restart tak TCS ka trading ruka.
 
@@ -248,7 +260,7 @@ Standby ko order kyun, book kyun nahi: standby wahi program chala raha, wahi ord
 uski RAM me apne aap wahi book banti hai. Ye [banking kadam 7](../13_banking_system/13_banking_system.md#kadam-7-salary-ki-bheed--ek-hi-db-kai-machine--db-ki-sync-copy) ki sync copy jaisa hi.
 
 Ek waqt me ek hi engine: heartbeat se tay hota hai ki primary mar gaya, tabhi standby kaam shuru karta hai.
-Purana primary wapas aaye to wo standby ban ke baithta hai. Do engine ek book pe chal gaye to ek Suresh do
+Purana primary wapas aaye to wo standby ban ke baithta hai. Do engine ek book pe chal gaye to ek Ravi do
 baar bik jaayega (**split brain**, sabse bada khatra).
 
 Snapshot: naya standby subah 9:15 se poora log padhe to minute lagenge. Har minute book ki photo (snapshot);
@@ -262,10 +274,12 @@ nahi kar sakti.
 
 ### Kadam 6: sauda hua, kai logon ko batana (yahan Kafka asli wajah se)
 
-Dikkat: sauda S-88 hua (Arpan ne Suresh se 10 TCS 3500 pe liye). Ab ek saath kai kaam baaki:
+**Arpan-Ravi:** sauda hua, sabko batana hai. Engine khud nahi jaata, 10 ladkon ki fauj ko de deta hai.
+
+Dikkat: sauda S-88 hua (Arpan ne Ravi se 10 TCS 3500 pe liye). Ab ek saath kai kaam baaki:
 
 ```
-sauda S-88 --> 1. Arpan ka paisa kaato, Suresh ko do     (settlement)
+sauda S-88 --> 1. Arpan ka paisa kaato, Ravi ko do     (settlement)
            --> 2. Arpan ke portfolio me 10 TCS           (settlement)
            --> 3. Arpan ko "10 TCS mil gaye" SMS / push  (notification)
            --> 4. audit / record                         (NFR "har cheez ka record")
@@ -306,7 +320,9 @@ share likhne se pehle portfolio DB band ho gaya. Arpan ke 35,000 gaye, share aay
 
 ### Kadam 7: sauda ke baad paisa + share (settlement)
 
-Pakka niyam: **sauda ho gaya to ulta nahi hota.** Exchange me Suresh ka share bik chuka. Humari taraf koi DB
+**Arpan-Ravi:** portfolio DB band. Sauda ulta nahi (match ho chuka, warna consumer court), Arpan ko "thodi der me dikhega", DB aaye to parchi de do.
+
+Pakka niyam: **sauda ho gaya to ulta nahi hota.** Exchange me Ravi ka share bik chuka. Humari taraf koi DB
 band ho, tab bhi sauda cancel nahi karte, bas use poora karte hain.
 
 Sabse seedha: wallet aur portfolio ek hi DB me. Tab paisa + share ek hi transaction me
@@ -314,8 +330,8 @@ Sabse seedha: wallet aur portfolio ek hi DB me. Tab paisa + share ek hi transact
 
 ```sql
 BEGIN
-  wallet:    Arpan blocked -35,000      Suresh available +35,000
-  portfolio: Arpan TCS +10              Suresh TCS (blocked) -10
+  wallet:    Arpan blocked -35,000      Ravi available +35,000
+  portfolio: Arpan TCS +10              Ravi TCS (blocked) -10
   settlement: S-88 = DONE               -- sauda id UNIQUE, do baar nahi
 COMMIT          -- ya sab hua, ya kuch nahi
 ```
@@ -354,6 +370,8 @@ Par 10 lakh logon ka app khula, sab ko har second TCS ka naya bhaav dekhna. Har 
 poochh raha "TCS kitna?". 10 lakh sawaal / sec, server baith gaya.
 
 ### Kadam 8: bhaav 10 lakh logon tak (Price Service + Redis pub/sub + WebSocket)
+
+**Arpan-Ravi:** 10 lakh screen pe TCS ka bhaav. Wahi chat wala: taar khula (WebSocket), beech ka chhota ladka (Redis pub/sub).
 
 Dikkat: 10 lakh app har second "TCS kitna?" poochh rahe, server baith gaya.
 
