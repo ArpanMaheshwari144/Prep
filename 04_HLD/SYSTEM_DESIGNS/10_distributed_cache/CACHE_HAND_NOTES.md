@@ -31,6 +31,7 @@ Interview: "Ring pe key ghadi ki disha me pehli machine pe. Nayi machine aaye to
 
 **5. Ravi ne naam badla "Ravi Kumar", parchi pe abhi bhi "Ravi"**
 Naam badla to apni parchi se "Ravi" kaat do, DB me "Ravi Kumar" likh do. Agli request ko parchi pe kuch nahi milega, wo DB se "Ravi Kumar" utha ke parchi pe likh degi. DB hi sach hai. Beech me koi purana utha le to ek job hai jo parchi aur DB milata rehta hai, farak mila to parchi theek. Profile ka naam paisa nahi, thodi der purana dikh gaya to chalega. TTL alag cheez hai: thodi der wala data (adhoora form) chhote TTL se apne aap hate; baar-baar badalne wala data sync job taaza rakhe.
+Teeno ek hi thaali ke chatte-batte: DELETE = hum khud turant kaatte, TTL = kuch time baad apne aap kat-ti, sync job = parchi ko DB se mila ke theek karta.
 **cache DELETE + sync job (DB = sach)**
 Interview: "Update pe cache key delete, DB update. Beech ki purani parchi sync job DB se mila ke theek karta. Profile me thodi der purana chalega, paise jaisi kadi consistency nahi chahiye."
 
