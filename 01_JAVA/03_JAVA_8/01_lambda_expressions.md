@@ -47,7 +47,7 @@ Wajah ye hai ki lambda variable ki copy leta hai. Ye wahi `int bal = w.balance` 
 
 ## Tera project
 
-usercrud ya todoapp me `new Thread(() -> {...})` ya `list.forEach(...)` jahan bhi likha hai, wahan `Runnable` ka ek khaana lambda se bhara gaya hai.
+Multithreading practical (`DeadlockDemo`, `ProducerConsumer`) me `new Thread(() -> {...})` likha hai. Wahan `Runnable` ka ek khaana (`run`) lambda se bhara gaya hai.
 
 ## Interview line
 
