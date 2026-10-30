@@ -1,240 +1,63 @@
-# Streams API — Pipeline Banao, Loop Hatao
+# Streams API
 
-> **V90 — Java 8: Topic 37**
+## Kahani
 
----
+Manager bola: "60 se upar wale patients chuno, unke naam nikalo, A-Z sort karo, pehle 5 do."
 
-## STORY — Active Patients ki List
-
-→ Manager ne bola — *"saare panelists mein se sirf **active wale** dhoondho, unke **naam nikalo, alphabetical sort karo, ek list bana do**."*
-→ Purana style mein for loop, `if` condition, naya list, `Collections.sort()`
-→ — **5 lines, 3 alag operations, loop mein sab ghusa hua**
-→ Streams ne socha — **ye sab operations chain karo. Ek pipeline banao.**
-→ Data ek side se jaaye, operations beech mein hon, **result doosri side se aaye**
-
----
-
-## WHY — Streams Kya Solve Karta?
-
-→ Loop mein **filter + transform + sort** sab mix ho jaate
-→ Streams = **declarative pipeline** — jo karna chahiye wo bolo, kaise nahi
-→ **`filter` → `map` → `sorted` → `collect`** — ek chain, readable
-
----
-
-## Streams Ka Core Flow (Yaad Rakh!)
-
-```
-1. SOURCE        →  data lao (findAll, list, set, anything)
-2. .stream()     →  pipeline mein daalo
-3. INTERMEDIATE  →  filter, map, sorted, limit, distinct, skip...
-                    (jitne chahiye, chain karo — LAZY)
-4. TERMINAL      →  collect / forEach / count / sum / reduce
-                    (yahin actual EXECUTE hota — TRIGGER)
-```
-
-**LAZY = bina terminal kuch nahi hota.** Terminal aate hi pura pipeline run.
-
-### Real Example — Sab Operations Saath
+Loop se karo to pehle naya list, phir `for`, uske andar `if`, phir `add`, aur end me `Collections.sort`. Saare kaam ek hi loop me ghuse hote hain. Stream me har kaam ek station hai:
 
 ```java
-repository.findAll()                          // 1. SOURCE
-    .stream()                                  // 2. pipeline
-    .filter(a -> a.getBalance() > 10000)       // 3a. condition
-    .sorted(Comparator.comparing(Account::getBalance).reversed())  // 3b. sort
-    .limit(5)                                  // 3c. top 5
-    .map(Account::getHolderName)               // 3d. transform
-    .collect(Collectors.toList());             // 4. TERMINAL — list pakdo
+List<String> top5 = patients.stream()       // belt pe daalo
+        .filter(p -> p.getAge() > 60)        // station 1: chuno
+        .map(Patient::getName)               // station 2: naam nikalo
+        .sorted()                            // station 3: A-Z
+        .limit(5)                            // station 4: pehle 5
+        .collect(Collectors.toList());       // maal utha lo
 ```
 
-**Kahani:** "saare accounts mein se balance > 10k wale chuno → balance descending sort → top 5 → unke naam → list bana"
+## Tasveer
+
+Stream ek conveyor belt hai. Har item ek-ek karke **poori line** guzarta hai. Pehle saare items filter nahi hote, phir saare map nahi hote.
 
 ```
-   ┌─────────┐    ┌─────────────────────────────┐    ┌──────────┐
-   │ SOURCE  │ → │  intermediate ops (LAZY)    │ → │ TERMINAL │
-   │ (data)  │    │  filter • map • sorted      │    │ (TRIGGER)│
-   │         │    │  limit • skip • distinct    │    │ collect  │
-   │         │    │                              │    │ count    │
-   └─────────┘    └─────────────────────────────┘    └──────────┘
+patient1:  filter -> map -> ...
+patient2:  filter -> map -> ...
+            (station)  (station)          collect = belt ke end pe maal uthane wala
 ```
 
----
+## 3 khaas baat
 
-## Pipeline Pattern
+1. **Belt tabhi chalti hai jab end pe koi maal uthane wala ho.** `filter`, `map` aur `sorted` sirf naksha banate hain (intermediate). `collect`, `count` ya `forEach` (terminal) aaye tabhi kuch chalta hai. Terminal na ho to `filter` ke andar ka `println` ek baar bhi nahi chhapega.
+2. **Item ek-ek karke poori line guzarta hai, isliye jawab milte hi belt ruk jaati hai.** `findFirst()`, `anyMatch()` ya `limit(5)` lagao to baaki items chhue bhi nahi jaate. `sorted()` iska apvaad hai: sort karne ke liye use saare items pehle jama karne padte hain.
+3. **Ek stream ek hi baar chalti hai.** Wahi stream dobara use karo to `IllegalStateException` aata hai. Har baar `list.stream()` se nayi stream banao.
 
-```
-SOURCE              INTERMEDIATE (LAZY)            TERMINAL (TRIGGER)
-                    ┌─────────────────────────┐
-List<User>   ──►   │ .filter()  .map()        │ ──►  .collect()
-[source]            │ .sorted()                │      toList()
-                    └─────────────────────────┘
-
-Source > filter > map > sorted (LAZY) > collect (TERMINAL = trigger)
-```
-
-**LAZY:** filter/map/sorted **kuch nahi karte** jab tak `collect()` na call ho. Terminal = trigger.
-
----
-
-## Old vs New
+## Prod wala trap
 
 ```java
-// Purana style — 5 lines
-List<String> result = new ArrayList<>();
-for (Panelist p : panelists) {
-    if (p.isActive()) {
-        result.add(p.getName());
-    }
-}
-Collections.sort(result);
-
-// Streams — ek pipeline
-List<String> result = panelists.stream()
-    .filter(p -> p.isActive())          // sirf active
-    .map(p -> p.getName())              // naam nikalo
-    .sorted()                            // alphabetical
-    .collect(Collectors.toList());       // list banao
+orders.parallelStream()
+      .map(o -> paymentApi.check(o))   // har item pe API call (rukne wala kaam)
+      .collect(...);
 ```
 
----
+Saari `parallelStream` poori JVM me ek hi chhota thread pool share karti hain (common ForkJoinPool, size = cores - 1). Usme API ya DB jaisa rukne wala kaam daala to pool ke saare thread intezaar me baith jaate hain, aur app ki baaki har `parallelStream` bhi atak jaati hai. Ye wahi thread pool ki kahani hai jo multithreading me dekhi thi. `parallelStream` sirf tab lagao jab data bada ho, kaam CPU wala ho aur items ek-doosre se alag hon.
 
-## Important Operations — PFCS Connection
+## Tera project
 
-| Operation | Kya leta | Kya karta |
-|-----------|----------|-----------|
-| `filter()` | **Predicate** (boolean) | Chhaan ke nikalo |
-| `map()` | **Function** (transform) | Ek type se doosra |
-| `sorted()` | Comparable / Comparator | Sort karo |
-| `forEach()` | **Consumer** (void) | Har ek pe action |
-| `collect()` | Collector | Final result pakdo |
-| `reduce()` | BinaryOperator (do same-type -> ek same-type) | Sab ko ek value mein milao |
-| `distinct()` | — | Duplicates hatao |
-| `limit(n)` / `skip(n)` | — | Pagination |
-| `count()` | — | Kitne hain |
-
----
-
-## Common Patterns
-
-### filter + map + collect
-```java
-panelists.stream()
-    .filter(p -> p.isActive())
-    .map(p -> p.getName())
-    .collect(Collectors.toList());
-```
-
-### sorted with custom Comparator
-```java
-panelists.stream()
-    .sorted(Comparator.comparing(Panelist::getAge).reversed())
-    .collect(Collectors.toList());
-```
-
-### reduce — sab milao
-```java
-List<Integer> nums = List.of(10, 20, 30);
-int total = nums.stream()
-    .reduce(0, (a, b) -> a + b);    // 0+10=10, 10+20=30, 30+30=60
-```
-
-### Top-5 active panelists
-```java
-panelists.stream()
-    .filter(p -> p.isActive())
-    .map(p -> p.getName())
-    .sorted()
-    .limit(5)
-    .collect(Collectors.toList());
-```
-
----
-
-## Collectors — Result Format
+SimpleBankSystem `AccountService.getAccountHolderNames()`:
 
 ```java
-.collect(Collectors.toList())                       // List
-.collect(Collectors.toSet())                        // Set (duplicates gone)
-.collect(Collectors.joining(", "))                  // "Arpan, Rahul, Priya"
-.collect(Collectors.toMap(p -> p.getId(), p -> p.getName()))   // Map
-.collect(Collectors.groupingBy(p -> p.getCity()))   // Map<City, List<P>>
+return repository.findAll()          // source
+        .stream()
+        .map(Account::getHolderName) // intermediate
+        .collect(Collectors.toList()); // terminal
 ```
 
----
+## Interview line
 
-## TRAP 1 — Stream Ek Baar Use
-
-> **Stream ek baar use ho sakta — dobara `.filter()` ya `.map()` call kiya toh `IllegalStateException`. Naya stream banao.**
-
-```java
-Stream<Panelist> s = panelists.stream();
-s.filter(p -> p.isActive()).count();    // first use
-s.map(p -> p.getName());                // IllegalStateException — already used
 ```
-
-## TRAP 2 — Lazy Operations
-
-> **Intermediate operations (filter, map, sorted) LAZY hain — jab tak terminal (`collect`, `forEach`, `count`) na aaye, kuch nahi hota.**
-
-```java
-panelists.stream().filter(p -> {
-    System.out.println("filter called");
-    return true;
-});
-// kuch print nahi hoga — koi terminal nahi
+A stream is a lazy pipeline: intermediate operations like filter and map only build it,
+and nothing runs until a terminal operation like collect or count.
+Elements flow one by one, so findFirst or limit can stop early.
+A stream can be used only once, and parallelStream uses the shared common pool,
+so it should not be used for blocking calls.
 ```
-
----
-
-## POWER PHRASE
-
-> *"Streams API provides a declarative pipeline for data processing — filter, map, sort, collect in a chain. Intermediate operations are lazy and only execute when a terminal operation like `collect()` or `forEach()` is called. Collectors determine the output format — `toList()`, `toSet()`, `toMap()`, `groupingBy()`, or `joining()`."*
-
-> **Yaad rakh:**
-> filter = chhaan, map = transform, sorted = sort, forEach = action,
-> reduce = combine, distinct = unique, limit/skip = pagination, collect = result pakdo
-> **Stream ek baar use, dobara nahi**
-> **Intermediate = LAZY, Terminal = TRIGGER**
-
----
-
-## ★ HARD-LAYER (grill differentiator, 9-Sep) — assembly-line analogy
-
-> Stream = LAZY assembly-line (conveyor belt). Har station (map/filter) item process karta; end pe terminal-op maal uthata.
-
-**1. LAZY — terminal-op ke bina belt CHALTI HI NAHI:**
-```java
-list.stream().filter(x->x>2).map(x->x*10);  // kuch nahi hua! sirf BLUEPRINT. filter/map RUN nahi.
-```
-Intermediate (filter/map/sorted) = setup only. Terminal (collect/count/forEach) aane pe POORI belt chalti.
-
-**2. Item EK-EK poori line guzarta (VERTICAL na horizontal):**
-```
-item1: filter->map->collect | item2: filter->map->collect ...   (NA: saare filter phir saare map)
-```
-Isi wajah se short-circuit possible.
-
-**3. SHORT-CIRCUIT — answer milte hi belt STOP:**
-```java
-stream.filter(x->x>2).findFirst();  // pehla mila -> STOP, baaki items chhue bhi nahi
-```
-findFirst / anyMatch / limit(n) -> aage process hi nahi hota. (infinite stream pe limit isliye chalta.)
-
-**4. STATELESS vs STATEFUL:**
-```
-STATELESS (map, filter)      -> har item AKELA. pichhle ka pata nahi chahiye. sasta.
-STATEFUL  (sorted, distinct) -> POORA data chahiye (sorted=buffer saare, distinct=set-yaad). parallel me MEHNGA.
-```
-
-**5. PARALLEL STREAM + COMMON-POOL TRAP (grill favourite):**
-```java
-list.parallelStream().map(...);   // kai lane/worker, tez (bade CPU-work pe)
-```
-★ Saare parallelStream ek hi JVM-wide **COMMON ForkJoinPool** share karte (size=cores-1, chhota).
-   parallel-stream me BLOCKING kaam (DB/API/IO) -> pool-thread block -> poori app ke baaki parallelStream STARVE.
-```
-Rule: parallelStream SIRF -> (a) BADA data (b) CPU-bound (c) independent items.
-      chhota / IO-blocking / order-dependent -> parallelStream MAT.
-```
-
-> **Ek line:** lazy assembly-line (intermediate=blueprint, terminal=chalu) · item ek-ek poori line -> short-circuit · stateless(map/filter) sasta / stateful(sorted/distinct) poora-data · parallelStream = ek common-pool sab share -> blocking daali to sab STARVE -> sirf CPU+bada+independent.
