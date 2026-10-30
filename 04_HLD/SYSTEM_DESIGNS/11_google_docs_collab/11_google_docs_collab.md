@@ -9,6 +9,8 @@ Zyadatar tukde pehle se padhe hue: ring ([cache](../10_distributed_cache/10_dist
 ([payment](../06_payment_system/06_payment_system.md)). Iska apna: do log ek hi jagah ek saath likhein to bhi
 sabka doc same kaise rahe (OT).
 
+**Arpan aur Ravi, "Trip plan" (poori file me yahi):** badlaav = operation · shabd khiskana = OT · doc ka maalik server = owner (ring) · chhota register = Redis buffer · central authority = permission SQL · tez bachcha = pub/sub
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 poora text overwrite -> operation + baseVersion (text nahi) -> WebSocket (dono taraf push)
 -> OT (server kram, operation khiskao) -> docId se owner server (ring) -> viewer kahin bhi (Redis pub/sub)
@@ -46,6 +48,8 @@ scope ke bahar: comments, version history, formatting
 
 ### Kadam 1: sabse seedha (poora text, Save pe overwrite)
 
+**Arpan-Ravi:** Ravi ke Save ne Arpan ki "Goa jaayenge" mita di. Last write wins nahi chalega.
+
 Ek server hai aur ek DB. Doc ka poora text DB me ek row me pada hai. Arpan "Save" dabata hai to app poora text
 bhej deti hai, aur server purane text ke upar likh deta hai (overwrite).
 
@@ -63,6 +67,8 @@ screen pe abhi bhi purana "HELLO" tha. Usne beech me "!" joda aur Arpan ke baad 
 poora text hai, "HEL!LO". Arpan ka "WORLD" mit gaya, aur kisi ko error bhi nahi aaya.
 
 ### Kadam 2: poora text nahi, sirf BADLAAV bhejo (operation + version)
+
+**Arpan-Ravi:** poora text mat bhejo, sirf badlaav (yahan joda, yahan hataya) + kaunsa version dekh ke.
 
 Dikkat ye thi ki poora text upar likhne se doosre ka kaam mit jaata hai. Ilaaj: app poora text nahi bhejti,
 sirf **kya badla** wo bhejti hai. Isko **operation** kehte hain.
@@ -100,6 +106,8 @@ nahi raha.
 
 ### Kadam 3: Ravi ko turant dikhe (WebSocket)
 
+**Arpan-Ravi:** Ravi ko turant dikhe = chat wala khula taar (WebSocket).
+
 Dikkat ye hai ki Ravi ko Arpan ka likha tabhi dikhta hai jab wo khud server se maange (refresh). Ilaaj: app
 aur server ke beech ek **khula connection** rakho jo dono taraf chalta hai. Isko **WebSocket** kehte hain.
 
@@ -136,6 +144,8 @@ Par doc me "ABC" likha hai. Ek hi pal me Arpan ne "A" mitaya, aur Ravi ne B aur 
 Dono ki screen pe alag doc hai. Ek ke paas "BCX", doosre ke paas "BXC".
 
 ### Kadam 4: dono ka doc same karo (OT: server kram tay kare, operation khiskao)
+
+**Arpan-Ravi:** Arpan ne "Hum " joda, Ravi ne "Goa" ke baad " kal". Shabd khiska do: `Hum Goa kal jaayenge`.
 
 Dikkat ye thi ki dono ne apna operation pehle lagaya aur doosre ka baad me. Doosre ka operation purani
 position wala tha, isliye galat jagah laga. Ilaaj ke do hisse hain:
@@ -179,6 +189,8 @@ machine itne khule connection nahi sambhal sakti.
 
 ### Kadam 5: kai server, par ek doc ka ek hi OWNER server (docId se ring)
 
+**Arpan-Ravi:** do server, do kram, doc ki do shakal. Har doc ka ek maalik server, aur maalik ki copy.
+
 Dikkat ye hai ki 50 lakh connection ek machine pe nahi aate, to kai Doc Server lagane padenge. Lekin OT ka
 niyam hai ki ek doc ke saare operation ek hi jagah se guzrein. Agar Arpan server 1 pe hai aur Ravi server 2
 pe, to do jagah alag kram banega aur doc phir se alag ho jaayega.
@@ -212,6 +224,8 @@ Par company ka "All-hands" doc hai. Ek aadmi likh raha hai aur 50,000 log padh r
 Server 3 pe aaye, to wo akela server phir se bhar gaya.
 
 ### Kadam 6: padhne wale kisi bhi server pe (Redis pub/sub)
+
+**Arpan-Ravi:** padhne wale kahin bhi = chat wala chhota ladka (Redis pub/sub).
 
 Dikkat ye hai ki 50,000 padhne wale (viewer) owner server pe aa gaye. Lekin viewer koi operation nahi bhejta,
 to use OT ki zarurat nahi hai. Use bas naye operation milne chahiye.
@@ -253,6 +267,8 @@ hain, to DB pe har second lakhon likhai pad rahi hain. Raat 3 baje alert aaya ki
 
 ### Kadam 7: operation log Cassandra me, aur ek-ek nahi, jama karke (batch)
 
+**Arpan-Ravi:** har akshar pe DB bhaari. Chhote register me jama karo, thodi der me ek saath DB me.
+
 Dikkat ye hai ki likhai bahut zyada hai, har akshar ek row. Ilaaj ke do hisse hain:
 
 1. **Cassandra.** Operation log me hum sirf aage jodte hain, purana kabhi badalte nahi. Aur padhna bhi hamesha
@@ -287,6 +303,8 @@ Par batch ke 100 ms ke operation abhi owner server ki memory me hain. Server ne 
 diya tha. Usi pal Server 3 gir gaya. Arpan ki aakhri line na DB me gayi, na kahin aur. Wo line kho gayi.
 
 ### Kadam 8: ACK tabhi jab operation kahin pakka likh gaya (Redis buffer + copy)
+
+**Arpan-Ravi:** register me tha, "Saved" dikha, server gira. Alag dabbe me likho + copy, tabhi "Saved".
 
 Dikkat ye thi ki server ne operation sirf apni memory me rakh ke ACK de diya. Ilaaj ke teen hisse hain:
 
@@ -342,6 +360,8 @@ har millisecond dikhta hai.
 Par Arpan metro me hai. 1 second ke liye net gaya. Kya uski typing ruk jaayegi?
 
 ### Kadam 9: typing kabhi na ruke (AP), par permission hamesha sahi (CP, SQL)
+
+**Arpan-Ravi:** Ravi ko hataya par server ki memory me purana note. Sach central authority (SQL) me, tez bachcha (pub/sub) sabko bataye.
 
 Dikkat ye hai ki net gaya to kya typing ruk jaaye? Nahi. NFR me pehli line yahi thi.
 
