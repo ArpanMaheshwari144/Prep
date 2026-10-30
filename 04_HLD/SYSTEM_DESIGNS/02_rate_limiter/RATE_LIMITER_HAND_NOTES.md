@@ -1,105 +1,64 @@
-# Rate limiter: hand notes (mock se pehle ye padho)
+# Rate limiter: hand notes (Arpan aur Ravi, "OTP bhejo" button)
 
-### Shuru
+Sirf block ki heading padho, scene aur hal khud bolo. Atke to neeche dekho.
 
-**Kaam:** do hain: har user ki ek had (login pe 5 baar / minute, baaki API pe 100 / minute), aur had paar ho to 429 ke saath "kitni der baad aao" (Retry-After).
+**Scene:** Arpan ki app me "OTP bhejo" ka button hai, har OTP pe SMS company ka bill. Ravi ne mazaak me script chala di jo har second 1000 baar button dabati hai.
+**Shabd:** ek bande ki had = rate limit · sabki ginti rakhne wala = Redis · apni raftaar se bharta dabba = token bucket · ek jhatke me check + nikaalo = Lua · gate ka guard = API gateway · papa ke dost vs chor = fail-open / fail-closed · alag dabba = ban list · ghar ka region = home region
 
-**Sabse upar:** limiter har request ke aage baitha hai, isliye ~1 ms me haan ya na bolna chahiye. 10 server hon tab bhi user ki ginti ek hi jagah honi chahiye, aur limiter gire to site nahi girni chahiye.
-
-**Numbers:** 1 crore user hain, sabse bheed ke waqt ~10,000 request har second. Har user ke liye sirf 2 chhote number rakhne hain, to kul ~500 MB banta hai. Matlab dikkat jagah ki nahi, speed ki hai, isliye aage RAM wala Redis aayega.
-
-**Maan lo tujhe kisi aur ne 429 diya:** Retry-After maano, aur ruk-ruk ke dobara bhejo (backoff + jitter).
+Banking se aaya: check + update ek hi jhatke me (yahan Lua). Kafka / notification se: line (queue). Naya: had, token bucket, gate, ban, home region.
 
 &nbsp;
 
-**1. MEMORY ME MAP**
+**1. Ravi ki script, dhadadhad SMS, bekaar ka bill**
+Ek bande ke liye ek threshold hona chahiye. Aisa nahi ki 1000, 10,000, 20,000 chal le. Limit lagao.
+**rate limit (per user)**
+Interview: "Har bande ki had, jaise 10 minute me 5 OTP. Had paar to wahin mana, 429 (Too Many Requests)."
 
-Sabse seedha: app server apni memory me map rakhe, "arpan ne is minute kitni bheji". Ek server tak ye chalta hai.
+**2. 10 server, har server ke paas Ravi ki ginti alag, 5 ki jagah 50 OTP**
+Har server galat bata raha hai "abhi had me hai". Unse bolo tu chhod, mujhe bata, ginti main ek jagah rakhunga: 1 + 2 + 3 ...
+**Redis (central counter)**
+Interview: "Saare server apni ginti chhod ke Redis se poochhte: ravi ki ginti +1 karo, kitni hui? Ginti ek hi jagah."
 
-&nbsp;
+**3. Ghadi wala khaata, 10:09:58 pe 5 aur 10:10:01 pe 5, 3 second me 10**
+Ek dabbe me had rakho. Dabba apni raftaar se bharta (3 second me ek token), user apni raftaar se aata, aata hai to token nikaal ke aage. User kuch der na aaye to dabbe me kai token jama, ek saath le sakta hai, koi dikkat nahi.
+**token bucket**
+Interview: "Dabba raftaar se bharta, khaata badalne ka kinara hi nahi. Jama token se burst allow, par raftaar ki had bani rehti."
 
-**2. REDIS**
+**4. Ek token bacha, 20 request ek saath, sab ne padha "1", sab andar**
+Redis ek waqt me ek command chalata hai, par app do command bhejta hai: padho, phir nikaalo. Beech me doosre ka "padho" ghus gaya. Sab ek hi jhatke me kar do, andar koi ghus hi na paaye. Banking me check + update ek query, yahan wahi.
+**Lua script**
+Interview: "Check aur token nikaalna ek Lua script me, Redis use ek hi command ki tarah chalata. Beech me koi nahi."
 
-Bheed badhi to 10 server lage. Arpan ki 5 request App 1 pe gayi aur 5 App 2 pe, dono ne alag gina, aur 10 andar chali gayi. Isliye ginti ek jagah rakhi, **REDIS** me. Har request pe INCR karte hain, aur pehli request pe 60 sec ki umar lagti hai. DB nahi liya, kyunki DB disk pe hai aur har baar kai ms lagte, jabki Redis RAM me hai aur ~1 ms leta hai.
+**5. Limiter OTP Service ke andar, 1000 request saare raaste ka bojh utha ke andar jaake mana**
+Guard ghar ke andar kamre me baitha hai, 1000 log ghar me ghus chuke. Guard ko bahar gate pe bithao, andar koi pahunche hi nahi.
+**limiter API gateway pe**
+Interview: "Limiter sabse aage gateway pe. Mana wali request wahin laut jaati, andar ke server tak bojh nahi."
 
-**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
+**6. Guard ki ginti Redis me, Redis gira**
+Pehle to guard ka saathi rakho, ek gaya to doosra (replica). Dono gaye to papa ke khaas dost (dekh ke chale jaayenge) aane do, tijori lootne wale chor rok do.
+**replica + fail-open / fail-closed**
+Interview: "Pehle replica. Wo bhi gaya to feed / home page jaise kaam fail-open (sabko jaane do), OTP jaise paise wale kaam fail-closed (sabko roko)."
 
-&nbsp;
+**7. Script ruki nahi, din-raat 429 khaati, gate pe karodon "mana"**
+Ek baar mana, do baar mana, teesri baar aaya to pakad ke alag dabbe me bitha do: tu yahan se hil nahi sakta, is site ke liye band.
+**pattern pakdo, ban list**
+Interview: "Baar-baar had todne ka pattern dikhe to naam ban list me. Ban wala gate pe bina gine lautta."
 
-**3. TOKEN BUCKET**
+**8. Ravi har baar naya number, number pe had bekaar; IP pe lagai to office ke 500 log atke**
+Login ke baad userId hamare paas, wahan koi dikkat nahi, kadi had. Login se pehle thodi dheeli had, par itni dheeli nahi ki script hazaar baar maare. Insaan hazaar baar password haath se nahi daalta. Ek IP se roz wahi hazaar request, ek second me 10,000, ye insaan nahi, us IP ko WAF me daal do. Office ke saare log ek saath roz password nahi bhoolte, isliye pattern dekhte hain. Perfect design koi nahi, Google bhi kabhi toot-ta hai.
+**IP pe dheeli had + userId pe kadi had + WAF**
+Interview: "Login se pehle IP pe dheeli had taaki office ki jagah bane, login ke baad userId pe kadi. Script jaisa pattern wali IP WAF me."
 
-Ye 60 sec ki khidki pehli request se shuru hoti hai, aur khatam hote hi ginti 0 ho jaati hai. Bot khidki ke aakhri second pe 5 bhejta hai aur nayi khidki ke pehle second pe 5, to ek second me 10 andar. Isliye **TOKEN BUCKET** lagaya: baalti me max 5 token, har 12 sec me ek naya token, har request ek token leti hai, baalti khaali ho to 429. Isme sirf 2 number rakhne padte hain, aur kinare wali dikkat nahi aati. Token bharne ke liye koi job nahi chalti, request aane pe hi hisaab lagta hai ki beete time me kitne bane.
+**9. Result ka din, 1 crore bachche, sab had me, phir bhi OTP Service aur SMS company gire**
+Apne server badha do, wo apne haath me. SMS company haath me nahi. To bheed ko seedha mat jaane do, line lagwao: aaram se, ek-ek karke. Beech me ek cheez fit karo jo spike rok le.
+**queue (line) + global had (SMS company ki raftaar)**
+Interview: "OTP request line (Kafka) me, worker SMS company ki raftaar se ek-ek bhejte. Bheed kitni bhi ho, aage utna hi jaata jitna wo jhel sake. Line bhi bhar jaaye to baaki ko 503, thodi der baad aao."
 
-**Maan lo bhaari request (jaise report):** uspe kadi had, ya use zyada token ka maano.
-
-&nbsp;
-
-**4. LUA SCRIPT**
-
-Bot ne ek saath 20 bheji. Sabne ek saath padha "5 bache hain", aur sab andar chali gayi. Isliye padhna, jaanchna aur ghatana teeno ek **LUA SCRIPT** me, ek jhatke me karte hain. Redis ek baar me ek hi command chalata hai, to beech me koi ghus nahi sakta. Pehli 5 ko token milte hain, baaki 15 ko 429.
-
-&nbsp;
-
-**5. API GATEWAY**
-
-Limiter app ke andar tha, to mana wali request bhi app tak aa ke uska time kha rahi thi. Isliye limiter sabse aage, **API GATEWAY** pe lagaya. Mana wali request app tak pahunchti hi nahi, aur har service ko apna limiter code nahi likhna padta.
-
-**Had kahan se aati hai:** DB me user ka plan (free / pro). Had badalni ho to config me, gateway ~30 sec me padh leta hai, naya code nahi chahiye.
-
-**Maan lo traffic 10 guna:** gateway machine badhao, Redis ko user ke hisaab se shard karo.
-
-**AWS pe:** gateway khud nahi banate, AWS ka **API Gateway** lete hain, usme had (throttling) ki setting pehle se hai. Machine aur bheed AWS sambhalta hai.
-
-&nbsp;
-
-**6. COPY + FAIL-OPEN / CLOSED**
-
-Redis gir gaya. Isliye Redis ki **COPY** rakhi, jo kuch second me uski jagah le leti hai. Un kuch second ke liye faisla pehle se tay hai: aam API pe **FAIL-OPEN** (sabko jaane do, site chalti rahe), aur login / OTP pe **FAIL-CLOSED** (sabko 429), kyunki wahan bot password guess karta hai aur OTP pe SMS ka paisa lagta hai.
-
-**Maan lo Redis aur uski copy dono gaye:** har gateway apni memory me gine, had baant ke (100 / 10 gateway = har ek pe 10).
-
-&nbsp;
-
-**7. KAFKA + BAN**
-
-Wahi bot har minute wapas aata hai. Isliye har 429 ki khabar **KAFKA** me jaati hai. Peeche ek Pattern Service dekhti hai ki "ye ghante me 50 baar had paar kar chuka", aur use **BAN** kar deti hai. Ban list WAF pe hoti hai, to ban wala darwaze pe hi ruk jaata hai. Ban kuch der ka hota hai, hamesha ka nahi, kyunki IP badalte rehte hain.
+**10. 3 region, har region ka apna Redis, Ravi VPN se 15 OTP le gaya**
+Uska ek region tay karo. Ravi India ka, to ginti India ke Redis me. 3 jagah se maare ya 10 jagah se, ginti wahi ek jagah.
+**home region**
+Interview: "Har user ka ghar region. Request kisi bhi region me aaye, ginti ghar ke Redis me."
 
 &nbsp;
 
-**8. USERID + LOGIN PE DO HAD**
-
-Ek naya bot leak hui password list leke 1,000 alag account pe 4-4 password try karta hai, kai IP se (credential stuffing). Humne IP pe had lagayi, par office ke 1,000 log ek IP pe the, poora office atak gaya.
-
-**Login ke BAAD:** had **USERID** pe (JWT se). Har insaan ki apni had, IP ek ho ya hazaar. Office ki dikkat yahin khatam.
-
-**Login PE** userId hota hi nahi, to do had: **ACCOUNT** pe kadi (5 / min), taaki ek account pe password guess karne wala ruke. **IP** pe bas bahut dheeli (jaise 500 / min), sirf ek IP se hazaaron ki baadh rokne ke liye. Ye asli deewar nahi, kyunki office me kitne log hain pata nahi (100 bhi, TCS jaise lakh bhi), aur bot kai IP se aata hai.
-
-**Par credential stuffing (har account pe sirf 4, kai IP) in had se nahi rukta.** Asli ilaaj, parat-dar-parat:
-- **MFA / passkey:** password mil bhi gaya, to bina phone ke bekaar.
-- **CAPTCHA:** shaq wali koshish pe CAPTCHA, galat password pe account block nahi, taaki asli user na atke.
-- **WAF:** cloud / badnaam IP band (cloud wale apni IP list publish karte hain).
-
-Ban me bhi yahi: userId pe lamba ban, IP pe chhota.
-
-**AWS pe:** **AWS WAF** lete hain: rules hum likhte hain (kaunsi IP band), chalana AWS ka kaam.
-
-&nbsp;
-
-**9. GLOBAL CAP (503)**
-
-Sale me 1 crore log aaye. Har koi apni had me tha, phir bhi server bhar gaya. Isliye poore system ki ek had bhi hai, **GLOBAL CAP**: uske upar **503** ("hum bhare hain"), jabki 429 ka matlab hai "tu zyada bhej raha". Bhar jaayein to pehle kam zaroori kaam kaato (suggestion, analytics), aur payment / login aakhri tak chalao.
-
-&nbsp;
-
-**10. HOME REGION**
-
-Arpan ki script 3 region se chali, har region ne alag 100 gine, to 300 nikal gayi. Isliye **HOME REGION** rakha: har user ka ek ghar region hota hai, aur ginti sirf wahin hoti hai. Ghar se aaya to 1 ms. Bahar se aaya to ghar se poochho, ~200 ms. Bahar se aksar bot hi aata hai, to uska dheema hona chalta hai.
-
-&nbsp;
-
-### Wrap
-
-tez = Redis + gateway + Lua · ginti ek = Redis + home region · gire to site chale = copy + fail-open (login pe closed) · bot = Kafka + ban
-
-
-Poora design (har kadam ka diagram aur "kyun") = [02_rate_limiter.md](02_rate_limiter.md)
+Poora design = [02_rate_limiter.md](02_rate_limiter.md)

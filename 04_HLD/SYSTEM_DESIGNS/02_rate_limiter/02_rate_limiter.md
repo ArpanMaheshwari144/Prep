@@ -6,6 +6,8 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
 me ek hi kahani hai: Arpan ka app, aur uske login pe hamla karta ek bot.
 
+**Arpan aur Ravi (OTP button wala scene):** ek bande ki had = rate limit · sabki ginti = Redis · apni raftaar se bharta dabba = token bucket · ek jhatke me = Lua · gate ka guard = gateway · papa ke dost vs chor = fail-open / closed · alag dabba = ban list · ghar ka region = home region
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 server me ginti -> Redis (ek ginti) -> token bucket -> Lua (ek saath 20) -> gateway pe
 -> copy + fail-open / closed -> Kafka + ban -> userId (login pe IP)
@@ -45,6 +47,8 @@ Redis aayega, DB nahi.
 
 ### Kadam 1: sabse seedha (server ke andar ginti)
 
+**Arpan-Ravi:** Ravi ki script, dhadadhad SMS, bekaar ka bill. Ek bande ki ek had lagao, paar hui to 429.
+
 App server ki memory me ek map rakho: `user -> is minute kitni request aayi`.
 
 ```
@@ -72,6 +76,8 @@ Par bheed badhi to 10 app server lag gaye, aur aage LB. Ab Arpan ki 5 login App 
 ne alag-alag gina, dono ko laga "5 hi to hain", aur 10 andar chali gayi. Had toot gayi.
 
 ### Kadam 2: kai server, ginti ek jagah (Redis)
+
+**Arpan-Ravi:** 10 server, har ek ke paas Ravi ki ginti alag. Server ginti chhodein, ek jagah (Redis) hisaab rakhe.
 
 Ilaaj: sabki ginti **ek jagah** rakho, yaani Redis me. Har app server har request pe Redis se poochhta hai.
 
@@ -103,6 +109,8 @@ Par kinare pe dikkat wahi: bot ne 10:01:19 pe 5 bheji (window ka aakhri second) 
 ka pehla second). Ek second ke andar 10 andar chali gayi, kyunki umar khatam hote hi ginti 0 ho gayi.
 
 ### Kadam 3: minute ke kinare pe dugni (kaunsa tareeka gine)
+
+**Arpan-Ravi:** ghadi wala khaata badla, 3 second me 10 OTP. Had dabbe me: dabba apni raftaar se bhare, user aaye to token nikaale (token bucket).
 
 Ab tak ek band khidki (60 sec) me gin rahe the, jo khatam hote hi 0 se shuru hoti hai (isse **fixed window** kehte hain). Gin-ne ke chaar tareeke hain:
 
@@ -146,6 +154,8 @@ hain", aur sabne 1 ghata ke likh diya. 20 andar chale gaye, jabki 5 hi jaane cha
 
 ### Kadam 4: 20 ek saath aaye, sab andar (Lua script, ek jhatke me)
 
+**Arpan-Ravi:** ek token, 20 ek saath, sab ne padha "1". Padho aur nikaalo ek hi jhatke me (Lua), banking ki check + update ek query jaisa.
+
 Har request 3 kaam karti hai: padho, jaancho, likho. Ye teen alag kadam the, aur beech me doosri request ghus
 gayi:
 
@@ -172,6 +182,8 @@ Par limiter app ke andar hai. Bot ki 15 mana wali request bhi LB se hoti hui app
 poochha, aur tab jaake 429 diya. Mana karne me bhi hamare app ki machine aur time kharch hua.
 
 ### Kadam 5: mana wali request bhi andar tak aayi (limiter darwaze pe)
+
+**Arpan-Ravi:** guard ghar ke andar kamre me, 1000 log ghar me ghus chuke. Guard ko gate pe bithao (gateway).
 
 Ilaaj: limiter ko **sabse aage, API Gateway pe** lagao. Mana wali request app tak pahunchti hi nahi.
 
@@ -206,6 +218,8 @@ Sabko 429 diya to poori site band.
 
 ### Kadam 6: Redis gira (copy + fail-open / fail-closed)
 
+**Arpan-Ravi:** guard ki ginti wala Redis gira. Pehle saathi (replica); dono gaye to papa ke dost aane do (fail-open), tijori ke chor roko (fail-closed, OTP).
+
 Ilaaj 1: **Redis ki copy** AWS ElastiCache khud rakhta hai.
 
 Phir bhi un kuch second me kya karein? Do raaste hain. **Fail-open** matlab Redis nahi mila to sabko jaane do:
@@ -237,6 +251,8 @@ din bhar yahi chalta hai.
 
 ### Kadam 7: wahi bot baar-baar (pattern pakdo, ban karo)
 
+**Arpan-Ravi:** script din-raat 429 khaati rahi. Teesri baar pakad ke alag dabbe me bitha do, site ke liye band (ban list).
+
 Ilaaj: har 429 ki khabar **Kafka** me daalo. Peeche ek Pattern Service dekhta hai: "ye 1 ghante me 50 baar had
 paar kar chuka hai", to use **ban** kar deta hai. Ban list gateway ya WAF (Web Application Firewall, darwaze ka chowkidar) pe hoti hai, to ban wala darwaze pe
 hi ruk jaata hai, Redis tak bhi nahi pahunchta.
@@ -267,6 +283,8 @@ bhi had jodi. Par office ki night shift me 1,000 log ek hi IP se aate hain (offi
 paar kar gaye, aur poora office atak gaya.
 
 ### Kadam 8: had kis naam pe (IP ya userId)
+
+**Arpan-Ravi:** login se pehle IP pe dheeli had (office ke log), login ke baad userId pe kadi. Hazaar request wali IP WAF me.
 
 IP pe had lagane me do dikkat hain. Office ke 1,000 log ek IP pe hain, to sab atak gaye. Aur ulta, bot har
 request alag IP se bheje to IP wali had kabhi lagti hi nahi.
@@ -311,6 +329,8 @@ phir bhi server bhar ke gir gaya.
 
 ### Kadam 9: sab had me, phir bhi server gira (global cap + 503)
 
+**Arpan-Ravi:** result ka din, 1 crore had me, phir bhi SMS company giri. Line lagwao, ek-ek karke uski raftaar se (queue + global had).
+
 User ki had har insaan ko alag rokti hai. Par 1 crore log ek saath aaye, to kul bojh server ki taakat se zyada
 ho gaya.
 
@@ -344,6 +364,8 @@ Par Arpan ki script 3 region se chali: Mumbai, Singapore aur US. Har region ka a
 gine. Had 100 thi, par 300 nikal gayi.
 
 ### Kadam 10: 3 region se 300 nikal gayi (home region)
+
+**Arpan-Ravi:** Ravi VPN se 3 region, 15 OTP. Uska ek ghar region, ginti wahi (home region).
 
 Ye kadam 2 wali hi dikkat hai, bas ab server ki jagah region alag-alag gin rahe hain. Teen raaste hain:
 
