@@ -46,7 +46,7 @@ Supplier<String> s2 = u::getName;          // isi line pe NPE
 
 ## Tera project
 
-SimpleBankSystem me `AccountService` ke notes me tune khud likha hai: `.map(Account::getHolderName)`. Wo teesra type hai: jo `Account` aaya, usi pe `getHolderName()`.
+SimpleBankSystem `AccountService.getAccountHolderNames()` me tune likha hai: `.map(Account::getHolderName)`. Wo teesra type hai: jo `Account` aaya, usi pe `getHolderName()`.
 
 ## Interview line
 
