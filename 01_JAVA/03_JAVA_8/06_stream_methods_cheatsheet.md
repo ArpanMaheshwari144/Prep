@@ -1,112 +1,67 @@
-# Stream API — Methods Cheatsheet
+# Stream methods cheatsheet
 
-> Poora toolkit ek jagah. Practice = 01_JAVA/07_STREAM_API_WRITE (Q1-Q17 + REDO).
-> **CORE mantra:** stream = for + if. Sab methods 3 category: **BADLO → AGGREGATE → COLLECT**. Naam alag, kaam wahi 3.
+> Practice = 01_JAVA/07_STREAM_API_WRITE (Q1-Q17 + REDO).
 
----
+## Kahani
 
-## 1. INTERMEDIATE ops (Stream lautate, LAZY — gate lagate, chalte nahi jab tak terminal na aaye)
-
-| method | kya karta | connect |
-|--|--|--|
-| `filter(pred)` | chhaanta (rakh / hata) | = `if` |
-| `map(fn)` | har element BADLO (1 → 1) | transform |
-| `mapToInt / mapToLong / mapToDouble` | Stream<Integer> → **IntStream** (aggregate ke liye) | boxed ka ulta |
-| `boxed()` | IntStream → **Stream<Integer>** (primitive → object) | List<Integer> ke liye |
-| `flatMap(fn)` | nested (list-of-list) → **flat** stream | 2 nested loop = 1 |
-| `distinct()` | duplicates hatao | Set jaisa |
-| `sorted() / sorted(Comparator)` | sort (natural / custom) | Comparator chaining |
-| `limit(n) / skip(n)` | pehle-n lo / pehle-n chhodo | top-K / pagination |
-| `peek(fn)` | har element DEKHO (debug, side-effect) | print-debug |
-
----
-
-## 2. TERMINAL ops (result lautate, chain CHALATE — inke bina kuch nahi hota)
-
-| method | kya | connect |
-|--|--|--|
-| `collect(Collectors…)` | List / Set / Map banao | sabse common |
-| `forEach(fn)` | har element pe action (print/save) | loop-body |
-| `count()` | kitne (long) | size |
-| `sum() / max() / min() / average()` | IntStream pe aggregate | jod / bada / chhota |
-| `reduce(identity, (acc,x)->…)` | custom fold (product etc) | `acc = acc OP x` |
-| `anyMatch / allMatch / noneMatch(pred)` | **boolean** (koi / sab / koi-nahi match?) | early-exit |
-| `findFirst() / findAny()` | pehla match → **Optional** | search |
-| `toArray()` | array me | — |
-
----
-
-## 3. COLLECTORS (`collect()` ke andar)
-
-| collector | kya | connect |
-|--|--|--|
-| `toList() / toSet()` | list / set | — |
-| `toMap(keyFn, valFn[, mergeFn])` | Map (dup-key → mergeFn) | ek key ek value |
-| `groupingBy(keyFn[, downstream])` | key → buckets | HashMap<k, List> |
-| `partitioningBy(pred)` | true / false 2 bucket (hamesha dono keys) | boolean split |
-| `counting()` | bucket me count (Long) | freq |
-| `summingInt(fn) / averagingDouble(fn)` | bucket me sum / avg | aggregate |
-| `mapping(fn, downstream)` | bucket me transform + collect | value badlo |
-| `joining(", ")` | strings ko JODO (CSV) | String.join |
-
-**Nested downstream:** `groupingBy(k1, groupingBy(k2, mapping(fn, toList())))` = 2-level buckets.
-
-**Downstream = groupingBy ka DOOSRA argument -> har bucket ke ANDAR kya banega.** Ek hi slot, collector badlo:
-```
-data: (arpan,eng,100) (bob,sales,200) (cara,eng,150) (dev,sales,50)
-
-groupingBy(dept)                          -> eng=[Emp, Emp]       poori list (default)
-groupingBy(dept, counting())              -> eng=2                ginti      (Q6)
-groupingBy(dept, mapping(name, toList())) -> eng=[arpan, cara]    sirf naam  (Q13)
-groupingBy(dept, summingInt(salary))      -> eng=250              jod        (Q14)
-groupingBy(dept, averagingInt(salary))    -> eng=125.0            average (Double)
-```
-Loop me = `map[dept] += salary`; stream me ek line.
-
-**mapping kyun AAKHRI me?** Na lagao to bucket me POORA object aata:
-```
-groupingBy(dept, groupingBy(gender))                          -> eng={M=[Person, Person], F=[Person]}
-groupingBy(dept, groupingBy(gender, mapping(name, toList()))) -> eng={M=[arpan, bob], F=[cara]}
-```
-collect se PEHLE `.map(p -> p.name)` nahi: stream me sirf String bachega, dept/gender kho jaayenge -> group kis pe?
-Pehle POORE object pe group, naam sirf bucket ke ANDAR (mapping) nikaalo.
-
----
-
-## 4. Bonus — number range (for-loop ka stream roop)
-- `IntStream.range(0, n)` → 0..n-1
-- `IntStream.rangeClosed(1, n)` → 1..n
-
----
-
-## 5. TYPE INFERENCE (yaad rakh)
-- **Stream ke andar** (`map/filter`) → lambda param ka type **stream se aata** → likhna nahi (`e -> e.name`).
-- **Comparator/collector jo ALAG + chained ban raha** → context nahi → type khud likho (`Comparator.comparing((Emp e) -> e.dept)`).
-- Rule: context (stream) hai → na likho; standalone+chained → likho. (= C++ `auto`)
-- **`reversed()` kahan lage:** `thenComparing(comparingInt(salary).reversed())` = sirf salary ulti ·
-  `thenComparing(comparingInt(salary)).reversed()` = POORI chain ulti (dept bhi Z-A). (Q16)
-
-## 6. boxed vs mapToInt (confuse mat)
-```
-int[]  → Arrays.stream → IntStream  --.boxed()-->  Stream<Integer>   (List ke liye)
-Stream<Integer>  --.mapToInt(x->x)-->  IntStream                      (sum/max ke liye)
-```
-IntStream = primitive (fast, .sum() milta) · Stream<Integer> = object (collect/List milta).
-
----
-
-## Power Phrase
-
-> **"Stream = for + if. 3 category: BADLO (filter/map/flatMap) → AGGREGATE (sum/reduce/count) → COLLECT (toList/groupingBy). Intermediate = lazy (gate), terminal = chalao. Fast/parallel bonus = parallelStream + lazy short-circuit; baaki readability."**
-
----
-
-## Memory Hook
+HR bola: "har department ki total salary batao." Data ye hai:
 
 ```
-BADLO:     filter(if) · map(1→1) · flatMap(nested→flat) · mapToInt/boxed · distinct · sorted · limit/skip
-AGGREGATE: count · sum/max/min · reduce · anyMatch/allMatch · findFirst
-COLLECT:   toList/toSet · toMap · groupingBy(+counting/mapping/summingInt) · partitioningBy · joining
+(arpan, eng, 100)  (bob, sales, 200)  (cara, eng, 150)  (dev, sales, 50)
+```
 
-lazy (intermediate) → gate lagao;  terminal → belt chalao (warna kuch nahi hota)
+Loop se karo to `map[dept] += salary`. Stream me ye kaam ek line ka hai:
+
+```java
+emps.stream().collect(groupingBy(e -> e.dept, summingInt(e -> e.salary)));
+// {eng=250, sales=250}
+```
+
+## Tasveer
+
+`groupingBy` ka pehla argument batata hai ki **dabbe kis cheez pe banenge**. Doosra argument batata hai ki **har dabbe ke andar kya banega**. Slot ek hi hai, bas usme collector badalte raho:
+
+```
+groupingBy(dept)                          -> eng=[Emp, Emp]       poora object (default)
+groupingBy(dept, counting())              -> eng=2                ginti
+groupingBy(dept, mapping(name, toList())) -> eng=[arpan, cara]    sirf naam
+groupingBy(dept, summingInt(salary))      -> eng=250              jod
+```
+
+## 4 khaas baat
+
+1. **Saare methods 3 dabbon me aate hain, isliye kaam pata ho to naam mil jaata hai:**
+   ```
+   BADLO:     filter · map · flatMap · distinct · sorted · limit / skip
+   AGGREGATE: count · sum / max · reduce · anyMatch · findFirst
+   COLLECT:   toList · toMap · groupingBy · partitioningBy · joining
+   ```
+2. **Naam sirf dabbe ke andar nikalo (`mapping`), collect se pehle `.map(name)` mat lagao.** Pehle hi naam bana diya to stream me sirf String bachegi, dept kho jaayega. Phir group kis cheez pe karoge?
+3. **`IntStream` aur `Stream<Integer>` alag cheezein hain.** `.sum()` sirf `IntStream` pe milta hai, wahan pahunchne ke liye `mapToInt` lagao. List banani ho to `.boxed()` se wapas `Stream<Integer>` banao.
+4. **`reversed()` jahan lagaoge, wahin tak ka sab ulta hoga.** `thenComparing(comparingInt(salary).reversed())` me sirf salary ulti hoti hai. Chain ke end me `.reversed()` lagao to poori chain ulti ho jaati hai, dept bhi Z-A.
+
+## Prod wala trap
+
+```java
+emps.stream().collect(toMap(e -> e.dept, e -> e.name));
+// eng do baar aaya -> IllegalStateException: Duplicate key eng
+```
+
+Test data me har dept ek hi baar tha, isliye sab chal gaya. Prod me ek dept me doosra banda aate hi crash. Isliye `toMap` me teesra argument (merge) do, jaise `(a, b) -> a + ", " + b`. Ek key ki kai values chahiye to `toMap` ki jagah `groupingBy` lagao.
+
+## Loop ya stream
+
+Seedha kaam (filter, map, group, ginti) ho to stream chhoti padti hai. Logic bhaari ho (beech me `break`, kai if-else, checked exception, debug me breakpoint chahiye) to loop behtar hai. Dono sahi hain, jo padhne me saaf lage wahi likho.
+
+## Tera hands-on
+
+`07_STREAM_API_WRITE` me Q6 (`counting`), Q13 (`mapping`), Q14 (`summingInt`) aur Q16 (`reversed`) tune khud likhe hain. Upar ki tasveer wahi chaar sawaal hain.
+
+## Interview line
+
+```
+groupingBy takes a key function and an optional downstream collector that decides
+what each group holds: counting, mapping, summingInt and so on.
+toMap throws on duplicate keys unless you pass a merge function.
+mapToInt gives an IntStream for sum and max, boxed converts back to objects.
 ```
