@@ -1,185 +1,60 @@
-# Optional — NullPointerException Se Bachao
+# Optional
 
-> **V90 — Java 8: Topic 38**
+## Kahani
 
----
+Doctor ne bola: "patient 101 ka naam do." Tune `findPatient(101)` chalaya. Patient mila hi nahi, `null` aaya, aur seedha `p.getName()` likha tha. Nateeja: `NullPointerException`, prod crash. Har jagah `if (p != null)` lagao to code bhaari ho jaata hai, aur kahin na kahin chhoot bhi jaata hai.
 
-## STORY — Production Crash
-
-→ Ek din **user profile fetch** karna tha — `getUserById(101)`
-→ **User nahi mila — `null` aaya**
-→ Tune seedha `user.getName()` call kiya — **`NullPointerException`. Production crash.**
-→ Har jagah `if (user != null)` likhne laga — **code ugly, phir bhi kahin miss ho jaata**
-→ **Java 8 ne socha — `null` ki jagah ek dabba do**
-→ **Dabba khali bhi ho sakta, bhara bhi**. Lekin **kholne se pehle CHECK karna padega**
-
----
-
-## WHY — Optional?
-
-→ **`Optional` = dabba (container).** Andar value ho bhi sakti, na bhi
-→ Kholne se pehle check karo. **`null` ka safe replacement**
-→ `orElse()` = khali toh default. `orElseThrow()` = khali toh exception
-
----
-
-## Old vs New
+Java 8 ne `null` ki jagah ek **dabba** de diya:
 
 ```java
-// Purana style — null check bhool gaye = crash
-User user = getUserById(101);     // null aa sakta hai
-user.getName();                    // CRASH — NullPointerException
+Optional<Patient> p = findPatient(101);
 
-// Optional style — dabba diya, safe access
-Optional<User> user = findById(101);
-String name = user
-    .map(u -> u.getName())          // andar hai toh naam nikalo
-    .orElse("Unknown");             // khali toh default
-
-// Khali toh exception
-User u = user.orElseThrow(() -> new RuntimeException("User nahi mila!"));
+String name = p.map(Patient::getName)    // andar hai to naam nikalo, khaali hai to aage badho
+               .orElse("Unknown");        // khaali nikla to default de do
 ```
 
----
-
-## Visualization — Optional = Dabba
+## Tasveer
 
 ```
-                Optional — Dabba Hai (Value Hold Karta)
-
-╔════════════════════════════════════════════════════════════╗
-║ 3 Tarike Optional Banane Ke                                ║
-╚════════════════════════════════════════════════════════════╝
-
-  Optional.of("Arpan")              Optional.ofNullable(name)         Optional.empty()
-  ┌────────────────┐                ┌────────────────┐                ┌────────────────┐
-  │  Optional      │                │  Optional      │                │  Optional      │
-  │  ┌──────────┐  │                │  ┌──────────┐  │                │  ┌──────────┐  │
-  │  │ "Arpan"  │  │                │  │ ?  ya    │  │                │  │  EMPTY   │  │
-  │  └──────────┘  │                │  │ EMPTY    │  │                │  │  (khali) │  │
-  └────────────────┘                │  └──────────┘  │                │  └──────────┘  │
-   GUARANTEED                       └────────────────┘                └────────────────┘
-   value hai                         null bhi ho sakta                  jaante hain khali
-                                     (90% yahi use)
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Safe Access                                                ║
-╚════════════════════════════════════════════════════════════╝
-
-  Optional<User> u = findById(101);
-                     ↓
-                ┌─────────┐
-                │ User    │  ya  EMPTY
-                └─────────┘
-
-  u.map(User::getName).orElse("Unknown")   ← khali toh default (orElse ko User chahiye, isliye pehle naam nikala)
-  u.orElseThrow(() -> ...)     ← khali toh exception
-  u.map(x -> x.getName())      ← bhara hai toh transform, khali toh skip  (lambda me naam "u" nahi: bahar u pehle se hai = compile error)
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Trap — get() Direct Use                                    ║
-╚════════════════════════════════════════════════════════════╝
-
-  Optional<User> u = Optional.empty();
-       │
-       ▼
-  ┌─────────┐
-  │  EMPTY  │
-  └─────────┘
-       │
-       ▼
-  u.get();        NoSuchElementException — khali dabba kholne ki koshish
-
-  Safe:
-  u.orElse(default)        ← khali toh default mil jayega
-  u.isPresent() ? u.get() : default
+Optional.of(x)          [ x ]       value pakki hai (null diya to wahin NPE)
+Optional.ofNullable(x)  [ x / -- ]  null ho sakta hai (zyadatar yahi)
+Optional.empty()        [ -- ]      pata hai ki khaali hai
 ```
 
----
+## 3 khaas baat
 
-## Optional Banane Ke 3 Tarike
+1. **Optional bolta hai ki "yahan kuch na mile, aisa ho sakta hai".** Method ka return type `Optional<Patient>` dekhte hi call karne wala samajh jaata hai ki khaali case sambhalna padega. Isliye ye return type me lagta hai. Parameter ya field me nahi lagta.
+2. **`get()` seedha mat karo.** Khaali dabbe pe `get()` karoge to `NoSuchElementException` aayega, yaani wahi crash bas naye naam se. Iski jagah `orElse`, `orElseThrow` ya `map` lagao.
+3. **`map` aur `filter` khaali dabbe pe kuch nahi karte, khaali dabba aage bhej dete hain.** Isliye poori chain me ek bhi null check nahi likhna padta.
 
-| Method | Use case |
-|--------|----------|
-| `Optional.of("Arpan")` | **GUARANTEE:** andar value hai. Null diya toh **NullPointerException** |
-| `Optional.ofNullable(name)` | **SHAYAD:** null bhi ho sakta, safe. **90% time YAHI use** |
-| `Optional.empty()` | **KHALI:** jaante hain kuch nahi hai |
+## Prod wala trap
+
+Pichhli file ka Supplier yahan kaam aata hai:
 
 ```java
-Optional.of("Arpan");          // guaranteed value
-Optional.of(null);             // NPE — crash
-
-Optional.ofNullable(name);     // null safe (90% yahi)
-Optional.empty();              // explicitly empty
+p.orElse(dbSeDefaultLao());            // dabba bhara ho tab bhi DB call chali
+p.orElseGet(() -> dbSeDefaultLao());   // sirf khaali hone pe chalegi
 ```
 
----
+`orElse(x)` me Java pehle `x` banata hai, phir method chalata hai. Isliye DB call har baar hoti hai. `orElseGet` ek Supplier leta hai, jo sirf khaali dabbe pe chalta hai. Default sasta ho (`"Unknown"`) to `orElse` theek hai. Default mehnga ho (DB / API) to `orElseGet` lagao.
 
-## Important Methods
+## Tera project
+
+InsuranceManagementSystem `ClaimService`:
 
 ```java
-optional.isPresent();                       // andar kuch hai? true/false
-optional.orElse("default");                 // khali toh default
-optional.orElseThrow(() -> new RuntimeException("..."));  // khali toh exception
-optional.map(u -> u.getName());             // transform — khali toh skip
-optional.filter(u -> u.isActive());         // condition — false toh empty
-optional.get();                             // DANGEROUS — khali toh crash
+Claim c = claimRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Claim Not Found " + id));
 ```
 
----
+`findById` Optional deta hai. Claim mila to wahi milta hai, nahi mila to saaf exception aata hai, NPE nahi.
 
-## TRAP 1 — `optional.get()` Seedha Mat Karo
+## Interview line
 
-> **Khali ho toh `NoSuchElementException`. Hamesha `orElse()` ya `orElseThrow()` use karo.**
-
-```java
-optional.get();                          // crash if empty
-optional.orElse("default");              // safe
-optional.orElseThrow(() -> new ...);     // safe with exception
 ```
-
-## TRAP 2 — Method Parameter Mein Optional Mat Do
-
-> **Optional sirf RETURN type mein use karo — parameter mein nahi.**
-> ```java
-> void process(Optional<User> u) { ... }    // bad practice
-> Optional<User> findById(Long id) { ... }  // sahi use
-> ```
-
-## TRAP 3 — `orElse()` vs `orElseGet()` (interview favourite)
-
-→ `orElse(x)` me **x HAMESHA pehle ban jaata** — dabba bhara ho tab bhi. Java pehle argument banata, phir method chalata.
-→ `orElseGet(() -> x)` me x ek **lambda (Supplier)** hai — wo **sirf dabba KHAALI ho tabhi** chalta.
-→ Default sasta ho (`"Unknown"`, `0`) → `orElse` theek. Default MEHNGA ho (DB call, API call, naya object) → `orElseGet`.
-
-```java
-Optional<String> bhara = Optional.of("Arpan");
-
-bhara.orElse(dbSeLao());            // dabba bhara hai, phir bhi dbSeLao() CHALA -> DB call bekaar
-bhara.orElseGet(() -> dbSeLao());   // dabba bhara hai -> lambda chala hi nahi
+Optional is a container that may or may not hold a value, used as a return type
+to make "not found" explicit instead of returning null.
+Use map, orElse or orElseThrow instead of get().
+orElse always evaluates its default, orElseGet only when empty,
+so use orElseGet when the default is expensive.
 ```
-Chala ke dekha (dbSeLao() andar "DB call chali" print karta):
-```
-orElse:
-  DB call chali      <- bekaar call
-  Arpan
-orElseGet:
-  Arpan              <- koi call nahi
-```
-
----
-
-## POWER PHRASE
-
-> *"Optional is a container that may or may not hold a value — it replaces null checks with a fluent API. Use `orElse()` for defaults, `orElseThrow()` for exceptions, and `map()` to transform safely. Never call `get()` directly. `orElse()` always evaluates its default, `orElseGet()` only when empty, so use `orElseGet()` for an expensive default. Use `ofNullable()` when the value might be null, `of()` when guaranteed non-null."*
-
-> **Yaad rakh:**
-> Optional = null ka safe replacement
-> `of()` = guaranteed
-> `ofNullable()` = maybe null (90% yahi)
-> `orElse / orElseThrow` = safe access
-> `get()` seedha = dangerous
-> `orElse(x)` = x hamesha banta · `orElseGet(() -> x)` = sirf khaali pe (mehnga default)
-> Sirf return type mein use karo, parameter mein nahi
