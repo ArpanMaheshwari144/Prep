@@ -4,6 +4,8 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
 me ek hi kahani hai: Arpan ka shopping app.
 
+**Arpan aur Ravi (profile page wala scene):** DB se pehle dabba = cache-aside · purani parchi nikalo = LRU · tod do = sharding · kho-kho me paas wala = consistent hashing · parchi kaato + milane wala job = cache DELETE + sync job · chhotu = single flight · ek machine pe bheed = key ki copies
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 cache-aside (ek machine) -> LRU + TTL -> baanto (hash % N) -> ring + virtual nodes -> copy + quorum
 -> likho DB, cache DELETE -> lock (single flight) + soft / hard -> local cache + key ki copies (garam key)
@@ -63,6 +65,8 @@ Ek baat jo URL design se farak hai: URL me "link hamesha chale" sabse zaroori th
 
 ### Kadam 1: sabse seedha (ek cache machine)
 
+**Arpan-Ravi:** Ravi ka profile har second hazaaron baar, har baar DB. DB se pehle dabba, mila to wahin se, nahi to DB se laao aur rakho.
+
 Ek cache machine lagao, jiski RAM me ek HashMap ho: key se value. App ko jab bhi kuch chahiye, wo is kram me
 chalta hai:
 
@@ -95,6 +99,8 @@ Par cache machine ki RAM sirf 64 GB hai, aur roz naye offer, naye user, naye car
 Dopahar tak RAM bhar gayi. Ab nayi key rakhni hai, to purani me se kaunsi hatayein?
 
 ### Kadam 2: RAM bhar gayi, kaunsi key hatayein (LRU + TTL)
+
+**Arpan-Ravi:** Dabba bhara, viral Priya ki jagah nahi. Jo sabse lambe waqt se kisi ne nahi chhua wo nikalo (LRU).
 
 RAM bhar gayi aur nayi key aayi. Kisi purani key ko nikalna padega. Sawaal ye hai ki kise.
 
@@ -142,6 +148,8 @@ machine me aata hi nahi.
 
 ### Kadam 3: data 1 TB, ek machine me nahi aata (baanto)
 
+**Arpan-Ravi:** 10 crore users, 1 TB. Tod do, kai dabbe, key ka hash batata hai kaunsa dabba.
+
 1 TB data hai aur ek machine ki RAM 64 GB. To kai cache machine lagao, maan lo 20, aur data unme baant do. Har
 machine pe data ka ek hissa.
 
@@ -175,6 +183,8 @@ lagbhag har key ki machine badal gayi. "user:42" machine 7 me pada hai, par clie
 dhoondh raha hai. Lagbhag saare cache ek saath MISS hone lage, aur saari bheed seedha DB pe gir padi.
 
 ### Kadam 4: machine judi to saare MISS (ring = consistent hashing)
+
+**Arpan-Ravi:** 11vi machine judi, % 11 se sab key ki jagah badli. Ring: key sabse paas wali machine pe, jaise kho-kho me paas wale ko dhakka.
 
 Wahi ring jo URL me thi. Ek gol ghadi socho, 0 se 360 tak. Har cache machine ghadi pe ek jagah baithti hai.
 Har key bhi hash hoke ghadi pe ek jagah girti hai, aur wahan se ghadi ki disha me chalte hue jo pehli machine
@@ -245,6 +255,8 @@ aa gaya, par cache me purana "Ravi" pada hai, aur 1 ghante tak sabko purana hi d
 
 ### Kadam 6: Ravi ka naam badla, sabko purana dikh raha (DB me likho, cache key DELETE)
 
+**Arpan-Ravi:** Ravi Kumar bana, parchi pe Ravi. Parchi kaato, DB likho, agla DB se naya utha leta; beech ki purani parchi sync job milata. Naam paisa nahi, thodi der purana chalega.
+
 Ravi ne naam badla. DB me "Ravi Kumar" aa gaya, par cache me abhi bhi "Ravi" pada hai, aur TTL khatam hone tak
 (1 ghanta) sabko purana naam dikhega.
 
@@ -282,6 +294,8 @@ Ab data taaza rehta hai. Par shaam 7 baje "home page" wali key ki umar khatam hu
 home page khol rahe the. Sabko MISS mila, aur 1,000 request ek saath DB pe pahunchi.
 
 ### Kadam 7: 7 baje home page key khatam, 1,000 log ek saath DB pe (LOCK = single flight + soft / hard)
+
+**Arpan-Ravi:** Priya ki parchi cache me nahi, 10,000 log ek saath. Ek chhotu DB jaaye, baaki ruke; chhotu gira to kuch second baad bheed me se ek ko bhejo.
 
 Key ki umar khatam hui aur us pal 1,000 log home page khol rahe the. Sabko MISS mila, aur sab DB se wahi home
 page laane daud pade. Ek hi cheez 1,000 baar ban rahi hai, aur DB pe ek saath 1,000 bhaari query aa gayi. Isko
@@ -357,6 +371,8 @@ log ek saath aa rahe hain. Key khatam nahi hui, wo cache me padi hai. Par wo ek 
 bheed usi ek machine pe gir rahi hai. Wo machine dheemi padi, aur us pe padi baaki key bhi atak gayi.
 
 ### Kadam 8: IPL final, ek key pe 1 crore log (LOCAL CACHE + key ki copies)
+
+**Arpan-Ravi:** Priya ki key sirf machine 4 pe, 1 crore log. Machine 8, 9 bhi dekho: key ki copies, bheed bat gayi.
 
 "live:score" key cache me padi hai. Par ring ke hisaab se ek key hamesha ek hi machine pe jaati hai. 1 crore log
 ek saath us ek machine pe aa gaye. Wo machine dheemi padi, aur us pe jo baaki key padi thi (offer, cart), wo bhi
