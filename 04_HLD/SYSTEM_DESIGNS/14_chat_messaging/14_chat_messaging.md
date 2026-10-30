@@ -4,6 +4,8 @@ Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**.
 se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
 file me ek hi kahani hai: Arpan apne dost Ravi ko message bhejta hai.
 
+**Arpan, Ravi aur college-gang (poori file me yahi):** taar = WebSocket connection · dabba = DB · map = Redis · chhota ladka = pub/sub · chaabi = clientMsgId · number = server ka sequence
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 WebSocket -> 200 server + event loop -> Redis map (kaun kahan) -> pehle DB + ack + push -> Cassandra (chat_id)
 -> clientMsgId (do baar nahi) -> server ka number (kram) -> group ek baar likho -> "kahan tak" number (tick)
@@ -53,6 +55,8 @@ message aaye ya na aaye.
 ## 4. Design
 
 ### Kadam 1: sabse seedha, aur pehli dikkat (server khud nahi bol sakta)
+
+**Arpan-Ravi:** Ravi ka phone har second "kuch aaya?" poochh raha. Poochne ka mauka mat do, aate hi beech wala dabba bhej de.
 
 Ek chat server aur ek DB. Arpan ne "hi" bheja, server ne DB me likh diya.
 
@@ -123,6 +127,8 @@ ko kaise pata ki Ravi 200 me se kis server pe baitha hai?
 
 ### Kadam 3: Ravi kis server pe hai? (map Redis me)
 
+**Arpan-Ravi:** server 3 ko pata nahi Ravi kis server pe. Map rakh lo (Redis), aur ek chhota ladka address le ke server 71 tak message pahunchaye (Redis pub/sub: har server apna channel sunta).
+
 200 chat server hain, aur har server sirf apne jude logon ko jaanta hai:
 
 ```
@@ -168,6 +174,8 @@ Par Ravi ka phone band hai. Redis me Ravi ki koi entry hi nahi. Arpan ka "hi" ka
 baad on hoga, tab use ye message milna chahiye.
 
 ### Kadam 4: Ravi ka phone band (pehle DB, phir bhejo + push)
+
+**Arpan-Ravi:** Ravi ka phone band. Message sambhaal ke rakho jaise uncle na mile to paise jeb me, Ravi aaye to de do.
 
 Ravi offline hai, Redis me uski entry nahi. Arpan ka "hi" kahin to rukna chahiye, warna kho jaayega.
 
@@ -259,6 +267,8 @@ aur Ravi ko "hi" do baar dikha.
 
 ### Kadam 6: Ravi ko "hi" do baar dikha (message ki apni id)
 
+**Arpan-Ravi:** lift me "hi" dobara gaya. Har message pe ek chaabi, wahi chaabi dobara aaye to mana.
+
 Ye sawaal kadam 4 ke sawaal se hi khula: "DB se pehle server gira to?" ka jawab tha "app dobara bhejti hai".
 Ab us dobara bhejne se nayi dikkat aati hai. Server do alag jagah gir sakta hai, aur dono me farak hai:
 
@@ -328,6 +338,8 @@ hai.
 
 ### Kadam 7: kram ulta ho gaya (phone ki ghadi nahi, server ka number)
 
+**Arpan-Ravi:** "kahan?" pehle dikha, "kal party" baad me. Number server lagaye, phone nahi.
+
 Message ka kram phone ke time se lag raha tha. Arpan ki ghadi 5 minute aage thi:
 
 ```
@@ -382,6 +394,8 @@ member ke liye ek?
 
 ### Kadam 8: 500 logon ka group (message ek baar likho)
 
+**Arpan-Ravi:** college-gang me ek message = 500 kaam. Ek dabbe me rakh do, 500 log wahin se sunein.
+
 Har member ke liye alag copy likhein to ek message = 500 likhai. Roz hazaaron group me hazaaron message, DB
 bhar jaayega.
 
@@ -421,6 +435,8 @@ unread)" kaise gina jaaye?
 
 ### Kadam 9: neeli tick aur unread ginti (har user ka "kahan tak" nishaan)
 
+**Arpan-Ravi:** Ravi ka ek number "968 tak padha". Unread = 980 - 968, aur #975 padha = number >= 975 (Sita 978 haan, Ravi nahi).
+
 Har message pe "padha / nahi padha" likhna bahut bhaari hai: group ke 980 message x 500 member = 4.9 lakh
 nishaan.
 
@@ -453,6 +469,8 @@ jaayenge, aur baaki sabke message atak jaayenge.
 
 ### Kadam 10: 200 MB ka video (S3 me, message me sirf link)
 
+**Arpan-Ravi:** 200 MB video se chat ke taar jam. Video alag dabbe me, sabko chhota link.
+
 Video chat server ke raaste mat bhejo. App video seedha **S3** me daalti hai (server ek presigned URL deta
 hai, yaani 10 minute ki chaabi), aur message me sirf uska link jaata hai. Ravi tap karta hai tab video CDN
 se aata hai. Chat server ke raaste bas chhota message gaya, aur group ke 500 log bhi dekhein to video ki
@@ -473,6 +491,8 @@ Par Ravi ki app pe "Arpan online" ya "last seen 10:30" kaise dikhe? 2 crore log 
 offline badalta rehta hai.
 
 ### Kadam 11: online aur last seen (heartbeat + umar wali entry)
+
+**Arpan-Ravi:** Ravi lift me band par "online". Har kuch second hilao, 2-3 baar jawab nahi to register se naam kaato.
 
 Kadam 3 wala heartbeat hi kaam aata hai. Arpan ki app har 30 sec "main zinda hoon" bhejti hai, aur Redis me
 `online:arpan` ki entry 60 sec ki umar ke saath rehti hai (har heartbeat pe umar wapas 60). Arpan ne app
