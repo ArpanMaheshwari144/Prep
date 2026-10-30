@@ -1,40 +1,9 @@
-# Lambda Expressions — Anonymous Function
+# Lambda Expressions
 
-> **V90 — Java 8: Topic 34**
+## Kahani
 
----
+Manager bola, "100 patients ki list naam se sort karo." Java 7 me iske liye ek poori anonymous class likhni padti thi, sirf ek tulna (compare) ke liye:
 
-## STORY — Comparator Boilerplate
-
-→ Ek din manager ne bola — **"100 patients ki list naam se sort karo."**
-→ Purana style mein Comparator likhne baitha
-→ — anonymous inner class, `@Override`, `compare` method, **10 lines sirf sorting ke liye**
-→ Sochne laga — itna code sirf ek kaam ke liye? **Tab Lambda aaya**
-→ **Ek line mein** kaam ho gaya
-→ Lambda ke bina **Streams nahi chalti** — isliye pehle ye
-
----
-
-## WHY — Lambda Kyu?
-
-→ Purana style — Comparator likhne mein **10 lines boilerplate**
-→ Anonymous inner class, `@Override`, return statement — **sab ek kaam ke liye**
-→ Lambda ne ye sab **hata diya**
-→ **Naam nahi, class nahi, seedha logic**
-→ **Lambda = anonymous function** — naam nahi, class nahi, sirf `(parameters) -> { body }`
-→ Boilerplate hatao → code readable banao → **Streams API** use kar pao
-
-### ★ ASLI FARAK — line ginti NAHI
-→ Lambda koi nayi taakat nahi deti (jo lambda kare, anonymous class bhi kar leti). Tez bhi nahi chalta.
-→ "5 line ki jagah 1 line" sirf chhote example me. Asli code (group + average + sort + top 3) me loop ~16 line, stream ~10 line — farak kam.
-→ Asli fayda = **LOGIC ko argument ki tarah bhejo** (filter / groupingBy / sorted) -> temp map, index, `Math.min` jaisi cheezein library sambhalti -> bug ki jagah kam.
-→ Nuksaan bhi sach: lambi stream chain debug mushkil (`peek` lagana padta, loop me seedha breakpoint) · generic syntax bhaari (`Map.Entry.<String, Double>comparingByValue()`). Chain lambi ho to loop / helper method me todo.
-
----
-
-## Old vs New
-
-### Java 7 — 10 lines boilerplate
 ```java
 Collections.sort(patients, new Comparator<Patient>() {
     @Override
@@ -44,84 +13,46 @@ Collections.sort(patients, new Comparator<Patient>() {
 });
 ```
 
-### Java 8 Lambda — 1 line
+Java 8 me wahi kaam ek line me:
+
 ```java
 Collections.sort(patients, (a, b) -> a.getName().compareTo(b.getName()));
 ```
 
----
+## Tasveer
 
-## Lambda Syntax — 4 Forms
+Comparator ek form hai jisme sirf **ek khaali khaana** hai: `compare`. Lambda bas us khaane ko bharta hai, form ka naam aur `@Override` dobara nahi likhna padta.
 
-```java
-// 1. Zero parameter
-() -> System.out.println("Hello")
-
-// 2. Ek parameter — brackets optional
-name -> System.out.println(name)
-(name) -> System.out.println(name)        // same
-
-// 3. Do parameters — return implicit
-(a, b) -> a + b
-
-// 4. Multiple lines — curly braces + explicit return
-(a, b) -> {
-    int sum = a + b;
-    return sum;
-}
+```
+Comparator  [ compare(a, b) : ______ ]   <- sirf ek khaana
+lambda           (a, b) -> a.getName().compareTo(b.getName())
 ```
 
----
+## 3 khaas baat
 
-## ★ KYUN CHALTA + BODY (samajh — 3 point)
+1. **Lambda tabhi chalti hai jab interface me sirf ek abstract method ho** (functional interface). Do khaali khaane hon to compiler ko pata hi nahi chalega ki kaunsa bharna hai. Default aur static method gine nahi jaate, kyunki unki body pehle se bhari hoti hai.
+2. **"Ek method" ka matlab "ek line" nahi hai.** `{}` ke andar loop, if-else, jitna chahe code likh sakte ho. Lambda us ek method ki poori body hai.
+3. **Asli fayda line kam karna nahi, logic ko argument ki tarah bhejna hai** (`filter(x -> ...)`, `sorted(...)`). Lambda koi nayi taakat nahi deti aur tez bhi nahi chalti. Bas ye logic bhejne ka aasaan tareeka hai, aur Streams isi pe tike hain.
 
-### 1. Lambda KYUN chalta → FUNCTIONAL INTERFACE (sirf 1 method)
-→ Lambda tabhi likh sakte jab interface pe **sirf EK abstract method** ho (= **functional interface**).
-→ Lambda us **akele method ka BODY** deta.
-   `Runnable` → 1 method `run()` → `() -> {...}` = us `run()` ka body.
-→ **2 ABSTRACT method** hote → lambda **NAHI** chalti (compiler confuse: kaun sa method?).
-   (default / static method kitne bhi ho sakte — wo gine nahi jaate, unka body pehle se hai.)
+## Prod wala trap
 
-### 2. Lambda body `{}` = normal code block (kitne bhi operations)
-→ `{}` ke andar **jo chahe, jitna chahe** — statements, loops, if-else, synchronized. **ek-operation ki limit NAHI.**
+Lambda ke andar bahar ka local variable badal nahi sakte.
+
 ```java
-() -> {
-    op1();  op2();  int x = calc();
-    for (int i=0;i<100;i++) count++;    // 10-20 operation, sab EK lambda me
-}
-```
-→ ★ "1 method" ka matlab: lambda ek **METHOD** fill karta — **NA ki 1 operation.** body me unlimited.
-
-### 3. Type INFERENCE — Runnable alag se likhna zaroori nahi
-→ `new Thread(() -> {...})` — yahan `Runnable` likha hi nahi.
-→ compiler `Thread` constructor ke **param-type** se INFER kar leta (wo Runnable maangta) → lambda = Runnable.
-```java
-Runnable r = () -> {...};  new Thread(r);   // explicit
-new Thread(() -> {...});                    // inferred (short) -- dono SAME
+int count = 0;
+list.forEach(p -> count++);   // compile error: count "effectively final" hona chahiye
 ```
 
----
+Wajah ye hai ki lambda variable ki copy leta hai. Ye wahi `int bal = w.balance` wali copy ki kahani hai jo pass by value me dekhi thi. Ginti karni ho to `list.size()` ya `stream().count()` lo.
 
-## TRAP — Java mein `=>` NAHI hota
+## Tera project
 
-> **Java = `->` (dash arrow). JavaScript = `=>` (fat arrow). Java mein `=>` EXIST nahi karta.**
-> Sawaal: lambda syntax? `->` chun. `=>` dikhe = **GALAT**.
+usercrud ya todoapp me `new Thread(() -> {...})` ya `list.forEach(...)` jahan bhi likha hai, wahan `Runnable` ka ek khaana lambda se bhara gaya hai.
 
----
+## Interview line
 
-## TRAP — Lambda Ke Bina Streams Nahi
-
-> **Streams API har jagah Lambda use karti — `filter`, `map`, `forEach` sab Lambdas leti hain.**
-> Pehle Lambda samjho, fir Streams.
-
----
-
-## POWER PHRASE
-
-> *"Lambda expressions are anonymous functions that reduce boilerplate by replacing anonymous inner classes with a concise syntax — `(parameters) -> body`. They enable functional programming in Java and are the foundation for Streams API."*
-
-> **Yaad rakh:**
-> Lambda = anonymous function, no name no class
-> `(params) -> { body }`
-> `->` (Java) ≠ `=>` (JS)
-> Lambda = boilerplate killer + Streams ka foundation
+```
+Lambda is a short way to implement a functional interface (one abstract method).
+It lets us pass behaviour as an argument, which is what Streams are built on.
+Local variables used inside must be effectively final.
+```
