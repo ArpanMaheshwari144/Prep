@@ -1,63 +1,50 @@
 # Payment: hand notes (dukaan pe pay)
 
-Sirf block ki heading padho, scene aur hal khud bolo. Atke to neeche dekho.
+Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
-**Scene:** Arpan dukaan pe khade ho ke app se pay karta hai. Uska paisa HDFC me, dukaan ka ICICI me. Hamara app kisi bank ka nahi.
-**Shabd:** parchi / register = hamara DB · beech ki company = PSP · ladka = poochne wala job · beech ka khaata = hold
-
-Wallet se wallet = banking jaisa hi (ek transaction, parchi ka number, ek query, ledger). Naya sirf: paisa bahar ke bank se aana aur jaana.
+**Scene:** Arpan dukaan pe khade ho ke app se pay karta hai. Uska paisa HDFC me, dukaan wale ka ICICI me. Hamara app na HDFC ka, na ICICI ka.
 
 &nbsp;
 
-**1. App HDFC ka nahi, HDFC hamari sunta nahi**
-Har bank se khud judna saalon ka kaam. Beech me ek centralized company jo sab bankon se judi hai, bas uski API use karo.
-**PSP (Razorpay, Juspay)**
-Interview: "Bank se seedha nahi judte, PSP ki API se. Wo thodi fees leta hai, bank / NPCI se judna aur card ka data (PCI) wo sambhalta. Wallet me paisa rakhne ka RBI PPI licence phir bhi hamara."
+**1. Arpan ne "pay 500" dabaya, app ko HDFC khaate se 500 nikalne hain. Par app HDFC ka hissa nahi, HDFC hamari sunta hi nahi. Har bank se khud judne jaayein to alag manzoori, saalon lag jaayenge.**
+Arpan: Ek aisa system bana do, aisi API jo ye kaam khud kare. Har cheez ke liye alag-alag nahi, sirf ek centralized tareeka ho, koi centralized authority jo ye kaam khud kare. Bas hum uski cheez use karein.
+Technical me: "centralized authority jo ye kaam khud kare" = PSP (Razorpay, Juspay), "bas hum uski cheez use karein" = PSP ki API.
 
-**2. PSP 30 second chup**
-Apne paas ek parchi rakho: pay dabate hi INITIATED, jawab nahi to PENDING. App pe FAILED ya SUCCESS nahi, "pakka hote hi batayenge".
-**INITIATED, PENDING, timeout**
-Interview: "Unknown = PENDING. FAILED dikhaya to user dobara pay karega, SUCCESS dikhaya to nakli paisa. PSP call pe 5 sec timeout."
+**2. App ne PSP ko bola "500 kaato", aur PSP 30 second se chup. FAILED dikhaya to Arpan dobara pay karega aur 1,000 kat sakte. SUCCESS dikhaya to ho sakta paisa kata hi na ho, aur dukaan wala bina paise saamaan de de.**
+Arpan: Hum apne paas ek parchi rakh lein, jisse dekh sakein PSP pe kya ho raha. Pay dabaya, to maine apne paas parchi rakh di: INITIATED ho gaya. Parchi pe likha rahega kya-kya hua: PSP ne ye kara, ab ye kara. Fail ho gaya to FAIL mark kar do, pass ho gaya to PASS mark kar do.
+Technical me: "apne paas ek parchi" = payment table me status, "INITIATED ho gaya" = INITIATED status, "fail hua to FAIL, pass hua to PASS mark" = pakka jawab aane pe hi SUCCESS / FAILED.
 
-**3. PSP batana bhool gaya, payment hamesha PENDING**
-Beech me ek banda bitha do jo PSP se poochhta rahe "hua ya nahi". Aur PSP khud bhi batata hai.
-**poochne wala job + webhook**
-Interview: "Webhook se PSP batata hai, aur har minute job PENDING utha ke PSP se poochhta hai. Raat ko PSP ki file se milaan."
+**3. Parchi pe jawab ka intezaar hai. PSP ka pakka jawab pata kaise chale? Aur PSP batana bhool jaaye, ya uska message raste me kho jaaye, to payment hamesha atka rahega?**
+Arpan: Beech me ek aisa banda bitha do jo humein batata rahe: PSP hua ya nahi hua, bata do. Beech me ek aisa system bithao jo permanent dono se baat karta rahe: haan bhai, hua, nahi hua.
+Technical me: "beech me banda jo batata rahe hua ya nahi" = poochne wala job (PENDING utha ke PSP se status poochhe), "permanent dono se baat karta rahe" = PSP aur hamare DB ka milaan.
 
-**4. PSP-1 poora band**
-Naye payment PSP-2 pe bhej do. Jo PSP-1 pe atke hain unhe roko, "thodi der me batayenge", unhe PSP-2 pe dobara mat bhejo.
-**circuit breaker, fallback PSP**
-Interview: "Fail badhe to breaker PSP-1 ko call rokta hai, naye PSP-2 pe. PENDING wala PSP-2 pe nahi, warna do baar kat sakta."
+**4. Aaj PSP-1 poora band, uski har call fail. Dukaan pe log pay kar rahe aur sabka payment ruk raha.**
+Arpan: PSP-1 band ho gaya to unka payment alag PSP-2 pe bhej do. Hamare paas fallback tareeka hoga na koi, unhe intezaar kyun karwana. Aur maan lo PSP-1 band hai lekin kuch log apna status jaanna chah rahe, to unhe thodi der rok do: "bhai abhi thoda down hai, aate-jaate hum tumhe bata denge."
+Technical me: "PSP-2 pe bhej do, fallback tareeka" = fallback PSP, "status wale ko thodi der rok do" = PSP-1 pe atke payment wahin PENDING, PSP-2 pe dobara nahi.
 
-**5. Server PSP ko call ke beech gira**
-Pehle register me likho, phir bhejo. Restart pe likha mila to PSP se poochho. Dobara bhejna pade to wahi key, PSP do baar nahi kaatega.
-**INITIATED pehle + idempotency key**
-Interview: "PSP call se pehle INITIATED commit. Job INITIATED uthata hai, payment id hi PSP ki idempotency key."
+**5. Server parchi pe INITIATED likh chuka tha, aur PSP ko call bhejte waqt hi gir gaya. Restart pe yaad nahi ki call PSP tak pahunchi ya nahi.**
+Arpan: Beech me ek register rakho, usme likh lo "initiate hua". Server gira to aake dekhega: haan yaar, ye cheez likhi hui hai, chalo PSP se dobara poochte hain, "bata PSP, iska kya hua". To pehle register me likho, phir bhejo. Aur agar dobara bhejna pade to idempotency key laga denge, us key se pata pad jaayega ki do baar hua. Key process ho chuki to do baar nahi hoga.
+Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATED commit, "aake dekhega, PSP se dobara poochte" = restart pe job INITIATED utha ke status poochhe, "idempotency key" = payment id hi PSP ki idempotency key.
 
-**6. Dukaan ke 500 ICICI me jodte waqt FAILED**
-Sab ulta kar do: wallet me wapas, register me ulti line, jaise bank wala "aaj nahi, kal aana" bole to paise lauta deta hai.
-**saga (compensate)**
-Interview: "Bahar ka bank ek transaction me nahi aata, isliye saga: kadam-dar-kadam, fail pe ulta kadam."
+**6. Dukaan ke 500 wallet se ICICI me nikalne hain. ICICI hamara DB nahi, to ek transaction me nahi. Wallet se kaat liye, aur ICICI me jodte waqt PSP bola "FAILED".**
+Arpan: Ulta kar do, sab ulta kar do, sab wapas paise bhej do. Maan le main HDFC bank hoon, bagal wale bank ko bhejne gaya, usne mana kar diya: "nahi bhai, bank band ho gaya, kal aana, abhi server bekaar hai." Fail ho gaya, baatcheet khatam. To main apne register me sab kaat dunga: "maine yahan se paise liye the, ise wapas kar raha hoon", aur sab wapas paise bhej dunga.
+Technical me: "sab ulta kar do" = saga (fail pe ulta kadam), "register me sab kaat diya" = ledger me ulti line, "wapas paise bhej dunga" = 500 wapas dukaan ke wallet me.
 
-**7. Beech ke 2 minute me 500 gayab dikh rahe**
-Wallet se kaatte hi likh lo ki 500 abhi kahan hain. Koi pooche to bata do.
-**hold (beech ka khaata)**
-Interview: "Wallet -500, hold +500, payout INITIATED. SUCCESS pe hold se nikalo, FAILED pe wapas wallet. Paisa har waqt kahin dikhe."
+**7. Wallet se 500 kaate, PSP ka jawab aane me 2 minute lage. Us 2 minute me 500 na dukaan ke wallet me, na ICICI me. Hisaab wala kahega 500 gayab.**
+Arpan: Hum likh lenge na bhai: "wallet se 500 kate", sabse pehle kahin likh lo. Apne ek log ya ledger me kahin bhi likh lo, to wo gayab nahi honge. Koi kuch kahe to bata denge: "haan bhai, tere paise abhi yahan hain."
+Technical me: "ledger me likh lo" = ledger entry, "tere paise abhi yahan hain" = hold (beech ka khaata): SUCCESS pe hold se nikle, FAILED pe wapas wallet.
 
-**8. "Sabse pehle poochh lo, sab taiyaar ho?"**
-Ek dheema hua to sab uske liye ruke, jaise cheating me dost dheema likhe to dono ka paper chhoot jaaye.
-**2PC nahi**
-Interview: "2PC me ek ruka to sab ruke, aur bank / PSP us round me aate hi nahi. Isliye saga + hold."
+**8. Kisi ne kaha: saga ka jhanjhat kyun? Sabse pehle wallet, PSP, ICICI sabse poochh lo "taiyaar ho?", sab haan bolein tab ek saath kaat do aur jod do.**
+Arpan: Aisa kar sakte hain, lekin maan le ICICI ki service dheemi pad gayi. Mere paas paanch bande hain, main poochh raha "sab taiyaar ho?". Teesra banda thoda slow hai, chaar taiyaar hain, par ek ki wajah se sab khade. Ye wahi baat hai: main ek dost ko cheating karwa raha, par wo likhne me bahut slow hai, to uski wajah se mera bhi paper chhoot jaayega.
+Technical me: "sab taiyaar ho?" = 2PC (prepare round), "ek slow ki wajah se sab khade, mera bhi paper chhoot jaayega" = 2PC me ek dheema to sab ruke, isliye 2PC nahi, saga + hold.
 
-**9. Diwali pe 3,000 payment / sec, register nahi jhel raha**
-Register ke tukde, har tukde ka apna likhne wala. Kaam baant do.
-**shard by account**
-Interview: "Account id se shard: ek user ka wallet, ledger, payment ek shard pe. Date se nahi, warna aaj ki saari likhai ek pe."
+**9. Diwali pe har second 3,000 payment, saare wallet ek hi register (DB) me. Register itni likhai nahi jhel pa raha.**
+Arpan: Us register ko kaat do, chhote-chhote tukde kar do. "Le bhai, tu yahan likh, tu ye likh, tu ye likh." Kaam baant diya, dikkat khatam. Ab aaram se sab apna-apna likh rahe.
+Technical me: "register ke chhote tukde" = shard, "tu ye likh, kaam baant diya" = har shard ka apna likhne wala, likhai bant gayi.
 
-**10. Arpan tukda 1, dukaan tukda 3**
-Ek ladka 500 aur diary le ke jaata hai. Pahuncha to hisaab poora, gadbad hui to diary dekh ke paise wapas.
-**saga do shard ke beech**
-Interview: "Cross-shard transfer bhi saga + hold se. Ek transaction do shard pe nahi chalta."
+**10. Arpan ka wallet tukda 1 me, dukaan ka tukda 3 me. Ek se kaatna, doosre me jodna. Do alag register, ek transaction me nahi hoga.**
+Arpan: Apne office se ek ladka pakdunga: "ye 500 mera hai, us tukde me jaana hai, use de ke aa ja, aur jo hua mujhe aake bata." Saath me ek diary rakh, usme likh "ye 500 Arpan ne diye, is tukde me dene hain". Beech me koi dikkat aaye to diary me likhta jaaye kya-kya hua. Hisaab poora hua to theek, nahi to wapas aake mere paise de dega.
+Technical me: "ladka 500 le ke us tukde me" = saga do shard ke beech, "diary" = saga ka har kadam likha (beech ka khaata, hold), "wapas aake paise de dega" = fail pe ulta kadam.
 
 &nbsp;
 

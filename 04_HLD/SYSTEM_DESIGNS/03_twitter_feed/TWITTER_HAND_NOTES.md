@@ -1,62 +1,56 @@
 # Twitter feed: hand notes (Arpan, Ravi aur King Kohli)
 
-Sirf block ki heading padho, scene aur hal khud bolo. Atke to neeche dekho.
+Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
 **Scene:** Arpan ne tweet kiya "aaj ka mock 5/5". Ravi Arpan ko follow karta hai, aur King Kohli ko bhi (27 crore followers). Ravi app kholta hai to home feed pe sabke naye tweet, naye pehle.
-**Shabd:** taiyaar dabba = inbox, fanout on write · Kohli ki ek parchi = celeb pe fanout nahi, padhte waqt lao (hybrid) · sab milake sort = merge at read · beech ka dabba = Kafka + outbox · parchi ki 15 copy = hot key replicas · aakhri 500 + mota register purana = inbox chhota + S3 · 30 din wala = inactive ka dabba nahi · bada bhai = Cassandra (user id se tod do), follow ka hisaab = Neo4j · apni branch = region · branches ki baatcheet = cross-region copy
-
-Kafka se aaya: beech ka dabba, outbox. Cache se: copy, ek key ek jagah. Banking se: branch. Naya: fanout, hybrid celeb, merge at read.
-Video upload: kal padh ke isi scene me (Arpan ne video daala).
 
 &nbsp;
 
-**1. Ravi app khole, server 500 logon ke tweet DB se nikaale, milaye, sort kare; 8 baje 5 crore log, feed 6-7 second, DB hile**
-Har baar ek hi kaam, har baar DB kyun khodna. Doston se kaho tum apna mujhe de do, main apne paas rakh lunga aur Ravi aaye to apne paas se turant de dunga. DB dobara hit nahi.
-**har user ka taiyaar dabba (inbox), fanout on write**
-Interview: "Har user ki feed pehle se Redis inbox me. Tweet aate hi followers ke inbox me jaata hai, Ravi khole to seedha inbox se, DB nahi."
+**1. Ravi app khole to server dhoondhe wo kis-kis ko follow karta (500 log), sabke tweet DB se nikaale, milaye, sort kare. Shaam 8 baje 5 crore log ek saath, feed 6-7 second ghoome, DB hil jaaye.**
+Arpan: Baar-baar DB jaana padta. Mere 10 dost hain, roz apna hisaab maang rahe. Har baar unke paas kyun jaun jab roz yahi karna hai? Main kahunga tum teeno idhar aao, mujhe apna de do, main apne paas rakhunga aur apne paas se bhej dunga. Dobara DB hit nahi. Unhone app khola, unhe turant mila. Har baar mote register me nahi jaana pada.
+Technical me: "apne paas rakhunga, apne paas se bhej dunga" = har user ka pehle se bana inbox (Redis), "dost apna mujhe de do" = tweet aate hi followers ke inbox me (fanout on write), "dobara DB hit nahi" = feed seedha inbox se.
 
-**2. Kohli ne tweet kiya, 27 crore dabbon me daalna, ghante lage, Ravi ko 2 ghante baad dikha, baaki sabke tweet bhi peeche atke**
-27 crore ek bahut bada number hai, aur kal 28, 29, 30 crore honge, dikkat badhti rahegi. 100-200, 2000-3000 ke liye dabba theek, Kohli ke liye nahi. Kohli ne century ka tweet kiya to ek chhoti parchi pe likh ke laga do, 27 crore wahi se padh lenge. Na 27 crore dabbe, na DB.
-**celeb pe fanout nahi, ek parchi (hybrid fanout)**
-Interview: "Bade account ka tweet followers ke inbox me nahi jaata. Uski apni list hoti hai, padhne wala feed khole tab wahan se aata hai."
+**2. Kohli ne tweet kiya "Century for India". 27 crore dabbon me daalna, ghanton lagte. Ravi ko 2 ghante baad dikha, match khatam. Tab tak baaki sabke tweet bhi line me peeche atke.**
+Arpan: 27 crore ko nahi de pa raha. Aur agli baar 28 crore, 29 crore honge, dabbe badhte rahenge, dikkat nahi rukegi. 100-200, 2,000-3,000 ke liye theek hai. 27 crore bahut bada number hai, daalte-daalte system thak jaayega. Kohli ne century banayi aur likh di, to lo bhai, maine ek chhoti parchi pe likh di, yahan laga di. Na DB, na kuch. 27 crore yahin se padh lenge.
+Technical me: "27 crore dabbe" = fanout on write, "100-200 ke liye theek, 27 crore ke liye nahi" = followers ki had se do raaste, "ek chhoti parchi, sab yahin se padhein" = celeb ka tweet uski apni list me, feed khulne pe wahan se (fanout on read). Dono saath = hybrid fanout.
 
-**3. Ravi ke dabbe me doston ke tweet, par Kohli, Dhoni, SRK ki parchiyan alag; feed ek chahiye, time ke kram me**
-Ravi aaye tab sab ek saath lao: uska dabba, aur jin bade logon ko wo follow karta hai unki parchiyan. Jaise DSA me sort karte, sabko time se sort karo aur Ravi ko de do: "le, ye tera aaj ka poora samachar."
-**merge at read (inbox + celeb parchiyan, time se sort)**
-Interview: "Feed = apna inbox + follow kiye celeb ke naye tweet, dono milake time se sort, phir user ko."
+**3. Ravi ke dabbe me doston ke tweet hain, par Kohli, Dhoni, SRK... 15 bade logon ki parchiyan alag. Ravi ko ek hi feed chahiye, sab apne time ke kram me.**
+Arpan: Sabko ek saath lao. Ek parchi pe likh diya: ye Dhoni ka, ye Kohli ka, ye Arpan ka. Ab sabko sort karte hain, jaise DSA me sort karte, aur Ravi ki feed pe push. Ravi ne app khola: "le, ye tera aaj ka poora twitter ka samachar, jinko tune follow kar rakha tha, sort kar diya hai, dekh le."
+Technical me: "sabko ek saath lao, ek parchi pe" = inbox + follow kiye celeb ki list, "DSA jaisa sort" = time se merge, "Ravi ki feed pe push" = merge at read.
 
-**4. Arpan ke 8,000 followers, "Post" ghoomta rahe jab tak sab dabbe na bharein; 3,000 pe server gira, 5,000 ko kabhi nahi mila**
-Pehle ek had rakho: followers had ke paar gaye to Arpan bhi Kohli wale raaste pe. Phir beech me dabba lagao, mera favourite stadium wala bhai Kafka. Post dabate hi bol do "ho gaya, nikal", peeche Kafka dabbe bharta rahe. Server gira to parchi (outbox) pe pehle se likha hai, kuch nahi khoya. Kafka gira to uski copy hai.
-**had (threshold) + Kafka async fanout + outbox + copy**
-Interview: "Tweet save karke turant OK. Fanout Kafka se peeche hota hai, outbox se crash pe bhi nahi khota. Had ke upar wale account celeb raaste pe."
+**4. Arpan ke 8,000 followers (abhi bhi chhota user). "Post" dabaya, server ek-ek karke 8,000 dabbe bhar raha, button ghoomta rahe. 3,000 pe server gira, baaki 5,000 ko kabhi nahi mila, Arpan ko pata bhi nahi.**
+Arpan: Sabse pehle ek threshold rakho, itne followers paar gaye to inbox me push nahi, Kohli wala tareeka. Bheed sambhalne ke liye ek dabba laga do, mera favourite stadium wala bhai Kafka. Maine post dabaya to "tera post ho gaya, nikal", peeche Kafka sab karta rahega. Kuch gira to outbox me rakh lo, ek parchi pe likha hai. Wo dabba gira to replica hai, copiyan hain. Koi nayi baat nahi.
+Technical me: "threshold, Kohli wala tareeka" = had ke upar celeb raasta, "stadium wala bhai" = Kafka (async fanout), "post ho gaya, nikal" = turant OK, "parchi pe likha" = outbox, "dabba gira to replica" = Kafka ki copy.
 
-**5. Kohli ne 99 se six maara, 1 minute me 5 crore refresh, sabko wahi ek parchi chahiye, wo ek machine pe, machine hili, Dhoni-SRK bhi atke**
-Parchi pe lakhon ki bheed hai to us parchi ki 10-15 copy bana do, alag-alag machine pe, aur padhne wale bant jaayein. Ek machine pe 5 crore nahi aayenge.
-**hot key ki copies (replicas), padhne wale bant jaayein**
-Interview: "Viral tweet ek key pe bheed laata hai. Us key ki kai copy alag machine pe, read unme baant do."
-**Maan lo Kohli ne "Inida" likh ke 10 second me "India" kar diya, kuch copies purana dikha rahi:** thodi der galat dikhega, chalega. System nahi rokna. Peeche ek ladka (job) sab copies ko naya pahuncha deta, kuch second me sab theek.
+**5. Kohli ne 99 se six maara aur tweet kiya. 1 minute me 5 crore log refresh, sabko wahi ek parchi chahiye. Wo parchi ek machine pe, wo machine hil gayi, Dhoni-SRK ki parchiyan bhi atki.**
+Arpan: Us waqt wo cheez famous ho gayi to log aayenge. Use alag-alag machine pe baant do, 5 crore ek machine pe na aayein. Main dekh raha lakhon log is parchi ko padhne aa rahe. Main iski 10-15 copy bana dunga: le tu bhi ye copy le, sabko padhwa. Bheed badh rahi to baant do, copiyan bana do, clone kar do.
+Technical me: "famous ho gayi, log aayenge" = hot key, "10-15 copy alag machine pe" = key ki replicas, "baant do" = read unme bantna.
+**Maan lo Kohli ne "Inida" likh ke 10 second me "India" kar diya, kuch copies purana dikha rahi.**
+Arpan: thodi der galat dikhega na. Peeche ek job chala do, ek ladka laga do, wo jaldi-jaldi sabko theek information pass kar dega. Kuch second lagenge. System rok nahi sakte, ye nahi keh sakte ki nahi dekhne denge.
+Technical me: "thodi der galat" = eventual consistency, "peeche ek job" = background job copies update kare.
 
-**6. 50 crore dabbe memory me, Ravi ke dabbe me 3 saal ke tweet; 30 crore log mahino se aaye nahi, unke dabbe bhi roz bhar rahe; memory ka bill aasmaan pe**
-Dabbe me sirf aakhri 500. Koi itna neeche scroll karta nahi, karega to DB se le aayenge. Saal bhar se purana mote register me mat rakho, alag permanent diary (S3, archive) me. Aur jo 30 din se nahi aaya, us pe mehnat bekaar, uska dabba banana band. Wo 40 din baad aaya to "ruk, 2-3 second me la raha", DB se dabba bana ke wapas Redis me.
-**inbox me aakhri ~500, purana S3, 30 din se inactive ka dabba nahi (lautne pe DB se banao)**
-Interview: "Inbox chhota, sirf aakhri kuch sau. Inactive user ka inbox nahi bharte, wapas aaye to DB se bana dete. Purana data S3 archive me."
+**6. Har account ka dabba memory me. Ravi ke dabbe me 3 saal ke tweet. 30 crore log mahino se app nahi khol rahe, par unke dabbe bhi roz bhar rahe. Memory ka bill aasmaan pe.**
+Arpan: Parchi chhoti karo: bas last 500. Itna koi scroll nahi karta, karega bhi to DB se query karke Redis me rakhne me koi bada teer nahi lagta. 3 saal, 4 saal purana mote register me mat rakho, alag permanent diary me, jise aam bhasha me S3 kehte, archive. Aur jo 30 log aa hi nahi rahe: main unki parchi taiyaar kar raha, wo saale 10 din, 20 din, 30 din se aa nahi rahe, bekaar ki mehnat. Threshold: 30 din se app nahi khola to Redis me kuch taiyaar nahi. 40 din baad aaya to "thodi der ruk, 2 second me teri parchi la raha", DB se laake Redis me daal denge, thodi loading chalegi.
+Technical me: "last 500" = inbox ki had, "DB se query karke Redis me" = cache miss pe DB, "permanent diary, S3, archive" = purana data S3, "30 din se nahi khola to kuch taiyaar nahi" = inactive user ka inbox nahi, "lautne pe DB se Redis me" = on-demand inbox banana.
 
-**7. Saare tweet ek SQL DB me, din me 50 crore naye, likhai ki line lambi; aur har baar "Arpan ke naye 500" ke liye poori table**
-Likhai bahut hai to bade bhai Cassandra ko bulao, wo bhaari likhai jhel leta hai, copy bhi khud rakhta hai. Tweet naam se nahi, user id se todo (do Arpan ho sakte hain): ek id ka saara maal ek jagah, to "Arpan ke naye 500" seedha wahin se. Kaun kisko follow karta hai, uska hisaab Neo4j bhai rakhega.
-**Cassandra (user id se partition, naye pehle) + follow graph Neo4j**
-Interview: "Tweets Cassandra me, partition key = author id, andar time se, to ek user ke naye tweet ek jagah se. Follow relation alag graph DB me."
+**7. Saare tweet ek SQL DB me, din me 50 crore naye, likhne ki line itni lambi ki machine hile. Aur dabba banane ke liye har baar "Arpan ke naye 500" poori table me dhoondhna.**
+Arpan: Likhai bahut zyada hai to alag machine, technical naam Cassandra, mera bade bhai. "Bhai Cassandra, mera system bahut likh raha, tu bada bhai hai, dekh le." Replica bhi wo kar leta. Kaun kisko follow kar raha, wo Cassandra me rakhne ka matlab nahi, uske liye ek aur bada bhai Neo4j: "ye aadmi isko follow kar raha, iska track rakhna."
+Aur Arpan ke saare tweet ek jagah: naam se todo, par naam do logon ke same ho sakte (doosra Arpan), to id me baant do. Meri id har baar same, to mera saara data ek jagah.
+Technical me: "likhai bahut, bada bhai" = Cassandra (write-heavy), "replica bhi wo kar leta" = Cassandra ki apni copy, "naam se nahi, id se baant do" = partition key = user id, "mera saara data ek jagah" = ek partition, "follow ka track" = graph DB Neo4j.
 
-**8. Saare server America me, Ravi Delhi me, har request samundar paar; IPL pe India ke 10 crore America ki machine hilayein**
-Ravi India me hai to baat India me hi rakho. Lajpat Nagar ke log doosri branch me jaake bheed kar rahe to Lajpat Nagar me hi branch khol do.
-**India me apna region**
-Interview: "India region me apni Feed / Tweet Service, Redis aur DB ki copy. Indian user ki request India me hi nipat jaati."
+**8. Saare server America me. Ravi Delhi me, har request samundar paar, har kaam me aadha second upar se. IPL pe India ke 10 crore America ki machine hila rahe.**
+Arpan: Ravi India se kar raha to har baar America kyun bhejna, bekaar ka travel. India me hai to baatcheet India me rakh. Ye bank jaisa hai: Lajpat Nagar ke log doosri branch me aa rahe, us bank pe dabaav. Lajpat Nagar me branch nahi hai? To wahan branch khol do, wahi chale jaayenge.
+Technical me: "baatcheet India me rakh" = India region, "Lajpat Nagar me branch khol do" = user ke paas wala region.
 
-**9. Arpan ne India branch me tweet kiya, follower John New York me, America branch ko pata hi nahi; ulta Kohli America se tweet kare to Ravi ko nahi dikhe**
-Do branch hain to unhe aapas me baat karni padegi, jaise SBI ki Delhi aur Mumbai branch: Ravi ne Mumbai me 500 daale, Arpan Delhi me poochhe "mere liye kuch aaya?" to bata dete. Tweet apni branch ke register me likho aur doosri branch ko bhi bhej do.
-**cross-region copy (branches aapas me tweet bhejti hain)**
-Interview: "Har region apne tweet doosre region ko bhi bhejta hai, taaki follower kisi bhi region me ho, feed me aaye."
-**Maan lo dono branch ki baat thodi der ruk gayi aur Arpan ne beech me 5 tweet kiye:** ek banda unhe sambhal ke rakhta hai aur dekhta rehta "doosri taraf aaya?". Judte hi bache 5 bhej deta hai, ek bhi nahi chhootta.
+**9. Arpan ne India branch me tweet kiya. Follower John New York me, America branch se baat karta, use pata hi nahi. Ulta Kohli America se tweet kare to Ravi ko nahi dikhta.**
+Arpan: Do register hain, mera is wale se baat karta, John us wale se, par dono register ek-doosre ko nahi jaante. To unhe bhi baat karni padegi. Jab ye kuch likhe to apne register me to theek, aur us register pe bhi bhej do jahan se Arpan padhta. Jaise SBI ki do branch: dost ne Mumbai wali me 500 daale, main Delhi wali me jaake poochhta "mere liye kuch aaya?", branches aapas me baat karti hain to bata deti.
+Technical me: "register aapas me baat karein" = cross-region replication, "us register pe bhi bhej do" = tweet doosre region ko copy.
+**Maan lo dono branch ki baat 10 minute ruki aur Arpan ne beech me 5 tweet kiye.**
+Arpan: ek banda bithao jo pal-pal dekhta rahe: "America wala dost aaya?" Nahi aaya, nahi aaya, ab aa gaya. "Le, Arpan ke 5 tweet, teri feed me push kar diye." Mujhe bas dekhna tha ki tu hai ya nahi, tu aa gaya to le tera kaam.
+Technical me: "banda sambhal ke rakhe" = queue me pending, "pal-pal dekhta" = retry, "judte hi bhej" = link wapas aane pe replay.
 
 &nbsp;
+
+Video upload: kal padh ke isi scene me.
 
 Poora design = [03_twitter_feed.md](03_twitter_feed.md)

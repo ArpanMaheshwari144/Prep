@@ -1,85 +1,80 @@
 # URL shortener: hand notes (token counter)
 
-Sirf block ki heading padho, scene aur hal khud bolo. Atke to neeche dekho.
+Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
-**Shabd (poore notes me yahi):** lamba pata = lamba link · token = chhota code · mota register = DB · chhota register = Redis · counter wala = app server · almari = DB machine · manager = beech ka counter
+**Scene:** Token counter. Log aate hain aur bahut lamba pata likhi chit dete hain ("amazon.in/products/xyz/..."). Counter wala unhe chhota token deta hai, jaise aB3x9. Jo bhi token dikhaye, use wo lamba pata mil jaata hai.
 
 &nbsp;
 
-**1. Counter wale ne do logon ko same token de diya**
-Token ek line me banao: agla number, phir agla. Number kabhi dohraata nahi.
-**counter**
-Interview: "Har link ko naya number, isliye takrav nahi. Random ya hash me takrav aur har baar DB jaanch."
+**1. Counter wala token apne man se bana raha, kuch bhi chhota likh deta. Ek din do alag logon ko same token de diya. Chhota bhi rahe aur do logon ko kabhi same na mile, kaise?**
+Arpan: Uska token ek line wala kar do. Jaise abhi number hai 9, to agla 10. Matlab ek line me wo token banayega. Counter kar do, counter: ye ban gaya to aage badhao, phir ye ban gaya to aage badhao. Aise wo number kabhi repeat nahi hoga. Counter service.
+Technical me: "ek line me, aage badhao" = counter (har link ko agla number), "kabhi repeat nahi" = takrav nahi.
 
-**2. 10 arab pe token 11 akshar ka ho gaya**
-Number plate jaisa: har khaane me sirf 0-9 nahi, akshar bhi. Kam khaane, bahut token.
-**base62**
-Interview: "Number ko base62 me likhta hoon (0-9, a-z, A-Z). 7 akshar = ~3.5 lakh crore code."
+**2. Saal bhar me counter 10 arab pe. Token "10000000000", 11 akshar, aur lamba hota jaayega. Number wahi rakhte hue token chhota kaise? (Sawaal: gaadi ki number plate "DL 3C AB 1234" me sirf number nahi, akshar bhi.)**
+Arpan: Uske peeche kuch laga do, kuch aisi algorithm set kar do ki wo number apna bhi chhota kar de. Technical terms me kuch hota hoga. Jaise DL 3C, phir agla aa jaayega 4C, 5C, phir 5D, phir A, AB ke baad CB, ye aata rahega. 1 2 3 4 ki jagah aisa kuch, hum combination bana sakte hain. 7 character hain to kaafi combination ho sakte hain.
+Technical me: "number plate jaise akshar bhi, combination" = base62 (0-9, a-z, A-Z), "7 character, kaafi combination" = 62^7, ~3.5 lakh crore code.
 
-**3. Har second 1 lakh log, mota register palatna dheema**
-Saamne chhota register, baar-baar poochhe jaane wale token wahan. Nahi mila to mote se laao, chhote me likho.
-**cache (Redis)**
-Interview: "Pehle Redis, nahi mila to DB se laake Redis me. Padhai likhai se 100 guna zyada hai."
+**3. Token lene kam aate, token dikha ke pata lene wale bahut: har second 1 lakh. Counter wala har baar mota register palat ke dhoondhta, line ruk jaati. Kuch token din me hazaar baar aate.**
+Arpan: Unhe chhote register me rakh lo. Jo bhi log dekhne aa rahe, bas usi register se wapas kar do. Mota register to rakh lo, koi dikkat nahi, ek chhota pehla register rakh lo, usme wahi wale token rakh lo. Jo log bahut baar poochhne aa rahe, wo wahin se chale jaayenge.
+Technical me: "chhota pehla register" = cache (Redis), "mota register" = DB, "bahut baar poochhe jaane wale" = garam / baar-baar padhe link.
 
-**4. Chhota register bhar gaya**
-Waqt ki had laga do, aur jo token poochha hi nahi ja raha wo hatao.
-**TTL, LRU**
-Interview: "Har key pe TTL, bhara to LRU: jo sabse der se nahi padha gaya wo hatao."
+**4. Chhota register bhar gaya. Naya token likhna hai, kisi purane ko hatana padega. Kise?**
+Arpan: Purana hata denge, hamare paas kuch tareeke hain. Time laga lo na, ki ye token itni der tak rahega register me, uske baad hata do. Ya jo sabse kam use hua, jo ab poochha hi nahi ja raha, wo token hata do. Wo likha hi kyun ja raha hai, hatao use.
+Technical me: "itni der tak rahega, phir hata do" = TTL, "jo poochha hi nahi ja raha, hatao" = LRU.
 
-**5. Token ka waqt khatam, 1,000 log ek saath mote register pe**
-Ek ladka mote register tak jaaye, baaki 999 yahin ruken. Ladka laaye to sabko mil jaaye.
-**lock (single flight)**
-Interview: "Stampede pe lock: ek request DB jaati, baaki thoda ruk ke Redis dekhti hain. DB pe 1 query."
+**5. Ek mashhoor token ka waqt theek 7 baje khatam, chhote register se hat gaya. Usi pal 1,000 log wahi token le ke aaye, saare ek saath mote register pe toot pade.**
+Arpan: Mere paas ek ladka hai, chhota ladka. Main kahunga: bhai chupchap bhaag ke ja, aur us mote register se wo information nikaal ke la, aur isme la kar rakh de, to sab yahin ruk jaayenge. Tu ja, patapat, jaldi se jaldi nikaal ke la aur turant chhote register me rakh de. Khatam kahani, ho gaya kaam.
+Technical me: "ek ladka jaaye, sab yahin ruken" = lock (single flight), "la ke chhote register me rakh de" = DB se laake Redis bharna.
 
-**6. Ladka raste me gir gaya**
-Ladke ki timeline rakho, itni der me nahi aaya to 999 me se agla jaaye. Aur tab tak purana pata de do, baad me taaza kar denge.
-**lock TTL, soft / hard TTL**
-Interview: "Lock pe umar, mara to khud khulta. Soft TTL pe purana do aur peeche se taaza laao, link badalta nahi."
+**6. Ladka bhaaga aur raste me gir gaya, kabhi wapas nahi aayega. Baaki 999 "ladka laayega" soch ke ruke khade.**
+Arpan: Yahan thoda decision lena padega. Yahan hum purani information de sakte hain, unko baad me update kar denge. Main intezaar kab tak karunga? 999 me se ek aadmi ko bolunga: bhai le idhar aa, tu ek kaam kar, mote register me se information la ke mujhe de de, mera wo ladka pata nahi kahan chala gaya, uska koi naamo-nishaan nahi. Matlab main us ladke ki timeline rakhunga: agar itni der tak nahi aaya, to 999 me se jo bhi hai use bulaunga.
+Technical me: "ladke ki timeline, nahi aaya to agla" = lock TTL (umar khatam to lock khulta), "purani information do, baad me update" = soft / hard TTL.
 
-**7. 5 counter, dono ne token "10" de diya**
-Har counter ko apna dabba: 1-100, 101-200, aur aage.
-**counter range**
-Interview: "Kai app server, aage LB. Beech ka counter har server ko 1,000 number ki range deta hai."
+**7. Ek counter se bheed nahi sambhli, 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha. Counter 1 aur 2 dono ne apne 10ve aadmi ko token "10" de diya.**
+Arpan: Counter ko kahunga ki tum apni-apni range le lo. Un paanch counter ko tod dunga: tu 1 se 100 karega, tu 101 se 200, tu 201 se 300, tu 301 se 400. Aise sabko range me baant dunga.
+Technical me: "apni-apni range" = counter range (beech ka counter har app server ko number ka dabba deta).
 
-**8. Dabba dene wala manager chhutti pe**
-Uska duplicate rakho, jaise company me doosra manager sambhaal leta hai.
-**replica**
-Interview: "Counter ki replica aage aati hai. Tab tak har server ke paas apni range ke bache number hain."
+**8. Beech ka manager, jo har counter ko naya dabba deta hai, achanak chhutti pe. Dabba khatam hoga to naya kaun dega?**
+Arpan: Uski jagah ek aur manager rakh le, uska ek duplicate, ek replica. Wo chhutti pe gaya to doosra manager hai hamare paas, wo sambhaal lega. Jaise company me hota hai, ek manager chhutti pe jaaye to doosra manager sambhaal leta hai. Same to same yahan.
+Technical me: "duplicate manager" = range dene wale counter ki replica.
 
-**9. Register ek almari me nahi aata (90 TB)**
-Register ke tukde, alag almari. Hash se token ki almari tay, wahi token hamesha wahi almari.
-**shard**
-Interview: "Data code ke hash se 10 machine me. Kholte waqt sirf code hota hai, isliye code se baanta."
+**9. 5 saal me mote register me itne token (90 TB) ki wo ek almari me aata hi nahi.**
+Arpan: Shard kar do, chhote-chhote tukde bana do. 90 TB kab tak sambhaal loge, wo bharta jaayega. 10 TB ke 9 tukde kar do, aur sab tukde alag-alag rakh do: ye yahan, ye yahan. Aur use hash se baant do, ki ab kabhi aayega to wo is tukde pe chala jaayega, phir same aayega to phir usi tukde pe.
+Technical me: "chhote tukde, alag almari" = shard, "hash se baant do, same aaye to usi tukde pe" = code ke hash se machine tay.
 
-**10. 10vi almari aayi, sab token galat almari me dhoondhe gaye**
-Almaariyan gol chakkar pe doori par. Token jahan gire, paas wali almari me, jaise toofan me paas wala shelter. Nayi almari se sirf aas-paas hilte hain.
-**ring (consistent hashing)**
-Interview: "% N badla to sab hilte. Ring pe nayi machine aaye to sirf ek tukda hilta hai."
+**10. 9 almari bhar gayi, 10vi laga di. Hisaab "9 me se kaunsi" se "10 me se kaunsi" ho gaya, lagbhag har token galat almari me dhoondha ja raha, sab "nahi mila".**
+Arpan: Almari ko gol chakkar me baant de. Main soch raha hoon iska jawab bina technical word ke kaise doon, haalanki technical word hume pata hai, padh chuke hain. Almari ko thoda door-door rakho, ek almari aur doosri almari me kuch distance hai. Kuch bhi token aaya to dekho wo kis distance pe gira, jo uske paas ki almari hai usme thoos do. Jaise main gaadi chala raha hoon, beech me toofan aa gaya, to main apne paas ka shelter dhoondhunga na. Same to same yahan. Kal ke din 9vi almari se 10vi pe gaye, to jo uske paas gira wahi thoda badlega, poore 9 ya 10 ko alag-alag nahi karna padega.
+Technical me: "gol chakkar, door-door almari" = ring (consistent hashing), "paas ka shelter" = ghadi ki disha me pehli machine, "sirf paas wala thoda badlega" = nayi machine pe sirf ek tukda hilta hai.
 
-**11. Almari jal gayi**
-Har almari ki copy alag jagah. "Likh liya" tabhi jab copies bhi haan bolein.
-**3 copy + quorum (W=2)**
-Interview: "Har link ki 3 copy. Teeno pe likho, 2 ki haan pe aage."
+**11. Almari number 3 me aag lagi, uske saare token jal gaye.**
+Arpan: Ek almari mat rakho, unhi ki copy bana do. 3 number ki almari gir gayi to uski ek aur copy hai. Ab isme dikkat ye aa sakti hai ki copy thodi si peeche ho sakti hai, to wahi acknowledge wala kar lo: jab tak acknowledge nahi hota wo wahin rahega, "haan bhai maine likh liya, tu acknowledge bhej". Same dikkat ka same solution ho gaya.
+Technical me: "almari ki copy" = 3 copy (replica), "acknowledge aaye tab pakka" = quorum write (W=2).
 
-**12. Dost ne peeche wali copy se padha, "nahi mila"**
-Ek se mat padho, 2 se padho. 2 ki haan se likha, 2 se padha, to ek copy common.
-**R=2**
-Interview: "W=2, R=2, W + R > 3, isliye naya link hamesha mil jaata."
+**12. Teen copy A, B, C. Arpan ne naya token banaya, A aur B ne haan bola, C peeche. Turant dost ne token dikhaya, counter wale ne C se padha, "nahi mila".**
+Arpan: Humne A, B pe likha na, to token ko do se hi padhwao. Agar do likh rahe hain to do hi padhenge, ek nahi padhega. Mere dost ne token maanga, to use B aur C se padhwao, ya A aur C se, single-single se nahi. Maan lo ek copy peeche bhi reh gayi, to atleast ek ke paas to hai na. C nahi hai to B ke paas to hai.
+Technical me: "do se hi padhwao" = R=2, "ek ke paas to hai" = W + R > 3, ek copy common.
 
-**13. Viral token, sab ek chhote register pe**
-Chhote register ki copies bana do aur bheed baant do. Aur counter wala garam token ki parchi apne paas rakhe, baar-baar uth ke kyun jaaye.
-**Redis replica, local cache**
-Interview: "Garam key har app server ki memory me 5-10 second. Redis tak jaata hi nahi."
+**13. Cricket match ka token viral, 1 crore log ek saath. Sab counter wale us token ke liye ek hi chhote register ki taraf bhaag rahe, wo itna dheema ki uske baaki token bhi atke.**
+Arpan: Sabko wahi token chahiye. To us chhote register ko bahut saaron me baant do. Ek hi kyun hai wo register, 10 register bana de, uski photocopy bana de aur divide kar de. Ek hi chhote register pe ek saath itne log nahi aa rahe, wo bat gaya. 10 kar do, 100 kar do.
+Technical me: "chhote register ki photocopy, divide" = Redis replica (padhai copies me bantna).
+**Maan lo copy 10 ho ya 100, har baar counter wale ko kursi se uth ke register tak jaana padta. 1 crore log, 1 crore chakkar.**
+Arpan: Us counter wale ko bol: ye information tu rakh le, baar-baar uth ke kyun ja raha hai. Ek chhoti parchi le, uska token aur information apne paas rakh. Maan le roz 100 log aaye, ek hi information maang rahe, aur wo mere se pachaas kadam door hai, mujhe har baar wahin jaana padta. Main wo information utha ke apne paas ek page pe likh lunga, aur apni kursi pe baith gaya. Ab koi poochhe to "le bhai, teri information ye rahi". Mujhe dobara kahin jaana nahi padta.
+Technical me: "counter wala apne paas parchi rakhe" = local cache (app server ki memory me garam link kuch second).
 
-**14. Log pata phone me likh ke aana band, dhokhe wala pata band nahi ho raha**
-Phone me likhne hi mat do. Har baar counter pe aao, to band token pe chetavani de sakte hain.
-**302, 301 nahi**
-Interview: "301 pe browser cache kar leta, control gaya. 302 se har click hamare paas, bojh local cache sambhale."
+**14. Kisi ka idea: har aadmi pata apne phone me hi likh le, counter pe aaye hi nahi. Hafte baad pata chala ek token ka pata dhokhe wali site ka hai, use band karna hai, par log seedha phone wale pate pe ja rahe.**
+Arpan: Token radd kar do, ki ab wo galat site pe nahi jaayega. Doosri cheez, aisi kisi cheez ko hum pehle se hi dekh lenge ki wo theek bhi hai: user ko dene se pehle khud check kar lo ki jo wo bana raha hai wo theek bana raha hai ya nahi. Galat bana raha hai to mana kar do banane se, aur us token ko radd kar do.
+Technical me: "token radd" = code band, "dene se pehle khud check" = kaali list (Google Safe Browsing).
+**Maan lo token radd kiya, par log counter pe aa hi nahi rahe. Unhe kaise pata chale? Shuru me phone me likhne dena tha ya nahi?**
+Arpan: Unke phone me wo cheez update kar do na. Wo cookies aur cache se aa rahe honge, to unka cache radd kar do, hata do, to agli request seedha yahan aayegi. Phir (jab poocha ki phone uske haath me hai, tu kaise mitayega): To phir phone pe likho mat na bhai. Phone pe likhega nahi to wo hamare counter pe dobara aayega, dobara hum use theek token de denge. Agar aisi phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai.
+Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte hain, lekin hum technical nahi, aam dikkat ka solution bol rahe the, isliye thodi der me samjha.
+Technical me: "phone me likhna hi mat do, har baar counter pe aaye" = 302 (301 nahi), "phone me likh le" = 301 (browser cache), "phone cache pe TTL" = browser cache ki umar.
 
-**15. Machine se har second hazaar nakli chit**
-Bura pata pehle hi jaancho. Baar-baar wala gate pe roko. Aur har aadmi pe had, group pe nahi, kyunki office ka WiFi ek hai.
-**kaali list, WAF, rate limit (user pe, 429)**
-Interview: "Link banane pe rate limit user pe, IP pe nahi. Safe Browsing se bura link banne hi nahi. Repeat bot WAF me."
+**15. Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka number faltu khatam, register bhar raha, asli log atke.**
+Arpan: Jaanch padtaal karenge ki script laga di. Ek-do baar to aisa hoga hi, teen baar, chaar baar, phir pattern pata lag jaayega ki ye banda to har baar aa raha hai, har baar ye drama karke chala jaata hai. To us bande ko rok do, andar ghusne hi mat do, wo kamre me hi nahi aayega, use bahar gate pe hi bhaga do.
+Technical me: "pattern pata lag jaayega, gate pe bhaga do" = WAF block.
+**Maan lo pakadne me 3-4 chakkar lagte, tab tak wo laakhon chit de chuka. Shuru se har aadmi ke liye kya niyam?**
+Arpan: Yahan thoda pench hai. Had ek user, ek aadmi pe rakhenge. Kyunki maan lo ek office hai, wahan wo log unke WiFi se aa rahe hain, to dikkat ho jaayegi. Ek group ek saath aa gaya, lekin wo sab legit users hain, unko to token dena padega. To per user pe lagao, group pe nahi: ye ek banda hai, ek baar me 5 hi lagayega, usse zyada nahi.
+Technical me: "per user had, group pe nahi" = rate limit user pe (IP pe nahi), "office ka WiFi" = ek IP ke peeche kai asli user, "5 se zyada nahi" = had paar pe 429.
 
 &nbsp;
 
