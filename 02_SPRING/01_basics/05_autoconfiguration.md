@@ -1,88 +1,54 @@
-# Spring Boot Auto-Configuration (starter ka "magic" — jo magic nahi)
+# Spring Boot Auto-Configuration
 
-> **Spring 101: Topic 5** — "dependency daali, sab khud chal gaya" ka andar. [[04_proxy_jdk_cglib]] (koi jaadu nahi theme)
+## Kahani
 
----
+Naya naukar (Spring Boot) app start hote hi teri almari (pom / classpath) kholta hai. Almari me bat dikha to samajh jaata hai ki sahab cricket khelte hain, aur ground aur kit khud taiyaar kar deta hai. Bat nahi dikha to cricket ka koi setup nahi karta.
 
-## Core: naukar jo tera SAAMAN dekh ke khud setup kar deta
+## Tasveer
 
-Ek naya naukar (Spring Boot) app-start pe teri **almari (classpath/pom) kholta** — "is ghar me kya-kya saaman (libraries) pada?" — aur uske hisaab se zaroori cheezein KHUD set kar deta.
-
-```
-Almari me BAT dikha  -> "sir cricket khelte honge" -> khud ground+kit taiyaar
-Almari me BAT nahi   -> cricket ka koi setup NAHI (zaroorat hi nahi)
-```
-
-Asli me:
-```
-pom me MySQL library daali  -> Spring "database chahiye" samajh ke connection-setup khud
-MySQL library nahi          -> wo setup nahi karega
-```
-
----
-
-## ★ TERE usercrud pom.xml se — turant click (real project)
-
-Har `<dependency>` = almari me ek saaman. Spring ne start pe har ek dekh ke KHUD setup kiya:
+Tera usercrud pom:
 
 ```
-ALMARI ME (pom)                    ->  SPRING NE KHUD KYA BANAYA
-─────────────────────────────────────────────────────────────────────────
-starter-data-jpa                   ->  DataSource + HikariCP pool + EntityManager + Hibernate
-                                       (tu bas @Entity/@Repository likhta)
-starter-webmvc                     ->  embedded TOMCAT (port 8080 khud chalu) + DispatcherServlet + JSON
-                                       (tu bas @RestController)
-h2 + mysql-connector-j             ->  DB driver dekh ke DataSource us DB ka (properties me url daalo -> wahi)
-starter-validation                 ->  @Valid/@NotNull/@Email chalne lage
-starter-graphql                    ->  GraphQL endpoint + schema wiring
-starter-cache + @EnableCaching     ->  CacheManager auto-config, @Cacheable chalne laga
-starter-kafka                      ->  KafkaTemplate + listener-container
-starter-actuator + prometheus      ->  /actuator/health, /actuator/prometheus endpoints khud
-starter-security                   ->  filter-chain + default login (generated password wala user)
-                                       (BCrypt Spring ne NAHI diya — tere SecurityConfig ka apna @Bean hai)
+almari me (pom)            ->  Spring ne khud banaya
+starter-data-jpa           ->  DataSource + HikariCP pool + Hibernate
+starter-webmvc             ->  Tomcat (8080) + DispatcherServlet + JSON
+starter-kafka              ->  KafkaTemplate + listener
+starter-actuator           ->  /actuator/health
+starter-security           ->  filter chain + default login
 ```
-**PUNCH:** tune kisi ka manual setup-code NAHI likha — na Tomcat start, na DB-connection, na Kafka wiring. Bas starter pom me daala, Spring ne almari dekh ke sab khud kiya. **Yahi auto-configuration.**
 
----
+Tune Tomcat chalane ya DB connection banane ka ek bhi line code nahi likha.
 
-## "Khud peeche hat jaata" (tune apna diya to)
+## 4 khaas baat
+
+1. **Starter bas dependencies ka bundle hai.** Wo sahi jars ek saath le aata hai. Kaam auto-configuration karta hai.
+2. **`@SpringBootApplication` = `@Configuration` + `@ComponentScan` + `@EnableAutoConfiguration`.** Teesra wala har jar me rakhi ek list padhta hai: Boot 2.7 / 3 me `AutoConfiguration.imports`, purane Boot me `spring.factories`. Us list me `DataSourceAutoConfiguration` jaisi classes hoti hain.
+3. **Har auto-config class ek shart (`@Conditional`) ke peeche hai:**
+   - `@ConditionalOnClass`: wo library classpath pe hai, tabhi chalo.
+   - `@ConditionalOnMissingBean`: tune apna bean nahi banaya, tabhi apna banao.
+   - `@ConditionalOnProperty`: wo property set hai, tabhi chalo.
+4. **Tune apna diya to Spring peeche hat jaata hai.** Kuch nahi diya to Spring ka default chalta hai (jaise H2). Tune `spring.datasource.url` di ya apna bean banaya, to Spring tera wala use karta hai.
+
+## Prod wala trap
+
+```java
+@Bean
+DataSource dataSource() {               // apna bana liya
+    return new HikariDataSource(...);
+}
+```
+
+Tune apna DataSource bean banaya, to `@ConditionalOnMissingBean` ki wajah se Spring ka bean nahi banta. Iske saath `application.properties` ki `spring.datasource.hikari.maximum-pool-size` jaisi settings bhi chup-chaap lagna band ho jaati hain, aur pool default size pe chalta hai. Ye wahi HikariCP pool exhaustion wali kahani hai jo tune prod me pakdi thi. Kaunsi auto-config chali aur kaunsi nahi, ye dekhna ho to app `--debug` se chalao: "condition evaluation report" saaf bata deta hai.
+
+## Tera project
+
+usercrud ke pom me 8 starter hain: data-jpa, webmvc, validation, graphql, cache, kafka, actuator aur security. Inke liye setup code tune kahin nahi likha. BCrypt Spring ne nahi diya, wo tere `SecurityConfig` ka apna `@Bean` hai.
+
+## Interview line
 
 ```
-Tune kuch nahi diya   -> Spring apna DEFAULT setup (jaise H2 in-memory)
-Tune value/bean diya  -> Spring TERA use karta, apna peeche hata leta
+Spring Boot auto-configuration looks at the classpath and creates beans conditionally:
+@EnableAutoConfiguration loads auto-config classes listed in each jar, each guarded by
+@ConditionalOnClass and @ConditionalOnMissingBean, so if I define my own bean, Boot backs off.
+A starter is just a curated bundle of dependencies.
 ```
-(usercrud pom comment: `application.properties` me `spring.datasource.url=...` diya -> Spring wahi value use karta, default chhod deta.)
-
----
-
-## Andar ka mechanism (interview naam — halka)
-
-```
-1. @SpringBootApplication = @Configuration + @ComponentScan + @EnableAutoConfiguration
-2. @EnableAutoConfiguration -> har jar me ek LIST-file dhoondhta:
-      purana (Boot 2.6-): META-INF/spring.factories
-      naya (Boot 2.7+/3): META-INF/spring/...AutoConfiguration.imports
-   -> usme "auto-config classes" (jaise DataSourceAutoConfiguration)
-3. Har class @Conditional se GUARDED:
-      @ConditionalOnClass(...)              -> sirf jab wo class classpath pe (dependency daali)
-      @ConditionalOnMissingBean             -> sirf jab TU ne apna bean na banaya ho
-      @ConditionalOnProperty("...")         -> sirf jab wo property set ho
-4. starter-data-jpa daali -> spring-jdbc ki class (EmbeddedDatabaseType) classpath pe aayi -> @ConditionalOnClass match
-   (javax.sql.DataSource to JDK me HAMESHA hai — asli trigger spring-jdbc ki class hai;
-    Boot 2/3 me DataSourceAutoConfiguration = @ConditionalOnClass({DataSource.class, EmbeddedDatabaseType.class}).
-    Boot 4 (tera usercrud 4.0.6) me ye class alag module me gayi — exact source check nahi kiya.)
-   -> DataSourceAutoConfiguration fire -> DataSource bean bana
-   -> par tune apna banaya to @ConditionalOnMissingBean -> Spring peeche hat gaya
-```
-STARTER = bas dependencies ka BUNDLE (sahi jars ek saath kheech leta). "Convention over configuration."
-
----
-
-## POWER PHRASE
-
-> *"Spring Boot auto-configuration reads what's on the classpath and conditionally creates the beans you'd otherwise configure by hand. @EnableAutoConfiguration loads auto-config classes listed in each jar (spring.factories, or AutoConfiguration.imports in Boot 2.7+/3.x), each guarded by @Conditional — @ConditionalOnClass (dependency present) and @ConditionalOnMissingBean (you haven't defined your own). A starter is just a curated bundle of dependencies; adding it makes auto-config wire everything."*
-
-> **Yaad rakh:**
-> Auto-config = "classpath pe kya hai" dekh ke @Conditional-guarded beans banana. Koi jaadu nahi.
-> @ConditionalOnClass (dependency hai?) + @ConditionalOnMissingBean (tune khud to nahi banaya?)
-> List = spring.factories (purana) -> AutoConfiguration.imports (Boot 2.7+/3). Starter = dependency bundle.
