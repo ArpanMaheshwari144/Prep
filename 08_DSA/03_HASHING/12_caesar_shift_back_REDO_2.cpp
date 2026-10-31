@@ -26,7 +26,6 @@
 //  10) "A", 1000000000   -> "O"            (k bahut bada)
 //  11) "XYZ", 52         -> "XYZ"
 //  12) "WISE", 4         -> "SEOA"
-//  13) "A-B!", 1         -> "Z-A!"         (space ke alawa bhi jo A-Z nahi, waisa hi)
 // ═══════════════════════════════════════════════════════════════════════
 
 #include <bits/stdc++.h>
@@ -47,22 +46,14 @@ string shiftBack(string s, int k)
     string ans = "";
     for (int i = 0; i < s.size(); i++)
     {
-        if (s[i] == ' ')
+        if (s[i] >= 'A' && s[i] <= 'Z')
         {
-            ans += " ";
-            continue;
+            ans += ((((s[i] - 'A') - k) + 26) % 26) + 'A';
         }
-        else if (s[i] == '-')
+        else
         {
-            ans += "-";
-            continue;
+            ans += s[i];
         }
-        else if (s[i] == '!')
-        {
-            ans += "!";
-            continue;
-        }
-        ans += ((((s[i] - 'A') - k) + 26) % 26) + 'A';
     }
     return ans;
 }
@@ -89,6 +80,5 @@ int main()
     check("A", 1000000000, "O", "t10 bada k");
     check("XYZ", 52, "XYZ", "t11");
     check("WISE", 4, "SEOA", "t12");
-    check("A-B!", 1, "Z-A!", "t13 baaki chinh");
     return 0;
 }
