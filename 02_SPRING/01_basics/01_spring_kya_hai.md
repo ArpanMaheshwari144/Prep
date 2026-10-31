@@ -1,219 +1,68 @@
-# Spring — Kya Hai, Kyu Aaya?
+# Spring: kya hai, kyun aaya
 
-> **V90 — Spring 101 Foundation**
+## Kahani
 
----
-
-## STORY — Pre-Spring Era Ka Dard
-
-**2002 ka Java enterprise dev:**
+2002 ka Java dev OrderService likh raha hai:
 
 ```java
 class OrderService {
-    OrderRepository repo = new MySQLOrderRepository();   // tightly coupled
-    EmailService email = new SendGridEmailService();      // tightly coupled
-    Logger logger = new FileLogger();                     // tightly coupled
+    OrderRepository repo = new MySQLOrderRepository();
+    EmailService email  = new SendGridEmailService();
 }
 ```
 
-### Problems `new` karne se:
-1. **Tight coupling** — Service ko **specific class** ka naam pata
-2. **Test mein nightmare** — `new` se hardcoded, mock kaise karu?
-3. **DB change** kal MongoDB chahiye → service rewrite
-4. **Object creation manual** — har class apne dependencies khud bana raha
-5. **Configuration scattered** — har jagah `new`, central control nahi
+Kal MongoDB pe jaana pada, to service ka code hi badalna padega. Test me nakli repo daalna ho, to `new` beech me aa jaata hai. Har class apne auzaar khud bana rahi hai, isliye ek chhota badlaav 50 jagah karna padta hai.
 
-Code maintainable nahi raha — chhota change = 50 jagah update.
+Spring ne kaha: "Tu sirf kaam ka logic likh. Object banana, unhe jodna aur sambhalna mera kaam hai."
 
----
+## Tasveer
 
-## WHY — Spring Aaya (2003)
-
-> *"Developer, tu sirf BUSINESS logic likh. Objects banao, inject karo, lifecycle manage karo — ye sab MERA kaam."*
-
-3 core problems solve kiye:
-1. **Object creation** — Spring banayega
-2. **Object wiring (DI)** — Spring connect karega
-3. **Object lifecycle** — Spring manage karega
-
----
-
-## IoC — Inversion of Control (Spring Ka Heart)
-
-**"Inversion"** matlab **REVERSE.**
-
-### Old Way — Tu Control Karta
+Pizza counter. Pehle tu khud kitchen jaata tha: atta goondho, oven jalao. Ab counter pe bas bolta hai "Margherita chahiye", aur bana-banaya mil jaata hai.
 
 ```
-    Tu (Class)                             Dependency
-       │
-       │  new MySQLRepo()       ◄────  Tu khud banaya
-       │  email.send(...)        ◄────  Tu khud manage karta
-       │
-       ▼
-    Tight coupling, manual control
+pehle:   OrderService --new--> MySQLRepo            (tu banata)
+Spring:  Container --banata + daalta--> OrderService (tu sirf maangta)
 ```
 
-### Spring Way — Container Control Karta
+## 4 khaas baat
 
-```
-    Spring IoC Container
-        ↓ creates objects
-        ↓ injects dependencies
-        ↓ manages lifecycle
+1. **IoC (Inversion of Control) ka matlab hai control ulta ho gaya.** Object tu nahi banata, Spring ka container (ApplicationContext) app start hote hi banata hai. Andar wo bhi `new` / reflection hi use karta hai, koi jaadu nahi hai.
+2. **DI (Dependency Injection) ek pattern hai, Spring ka apna feature nahi.** Haath se bhi kar sakte ho: `new AccountService(repo)`. Spring bas ye kaam apne aap kar deta hai. Constructor injection sabse sahi tareeka hai, aur ek hi constructor ho to `@Autowired` likhna bhi zaroori nahi.
+3. **`new` chhodne ke 2 gehre fayde aur hain:**
+   - **Ek hi copy sab use karte hain (singleton).** 10 service ke liye 10 DB pool nahi khulte, ek hi share hota hai.
+   - **Proxy milta hai.** Spring object ko ek cover me lapet ke deta hai, aur isi cover ki wajah se `@Transactional` aur `@Async` chalte hain.
+4. **Spring Boot = Spring + apne aap ki config + andar ka server (Tomcat).** Server alag install nahi karna padta, `java -jar app.jar` se app chal jaati hai.
 
-    Tera Class
-       │
-       │  Spring ne injection se de diya
-       │  Tu sirf USE kar — banane ka tension nahi
-```
-
-**Control inverse ho gaya** — tu nahi, **Spring** kar raha. Tu sirf kaam batata "**Repository chahiye**" — Spring suitable wala laake de deta.
-
----
-
-## Real-World Analogy
-
-| Without IoC (manual) | With IoC (Spring) |
-|----------------------|-------------------|
-| Khud kitchen jao | Counter pe order |
-| Dough banao | "Margherita chahiye" |
-| Oven jalao | Counter sab handle |
-| Bake + serve khud | Tu sirf eat |
-
-**Spring = Pizza counter.** Tu kaam batata, wo behind-the-scenes manage karta.
-
----
-
-## DI — Dependency Injection
-
-**IoC** = principle (concept).
-**DI** = technique (how to achieve IoC).
-
-```
-Service ne bola: "Mujhe Repository chahiye"
-Spring ne bola: "Le, ye Repository — main inject kar diya"
-
-Service ne kabhi `new MySQLRepo()` nahi likha.
-Repository OUTSIDE se inject ki gayi.
-```
-
-**3 types of DI:**
-1. **Constructor Injection** (best practice)
-2. Setter Injection
-3. Field Injection (`@Autowired` on field — discouraged)
-
----
-
-## Spring Ka 3-Word Summary
-
-```
-1. Container   →  Spring ke andar ek IoC container hai
-2. Beans       →  Wo "managed objects" — Spring inhe banata, manage karta
-3. Wiring      →  Beans ko ek doosre se connect karna (DI)
-```
-
----
-
-## Spring vs Spring Boot
-
-| | Spring | Spring Boot |
-|--|--------|-------------|
-| **Kya** | Framework (DI, AOP, MVC, etc.) | Spring + auto-config + embedded server |
-| **Setup** | Manual XML / config classes | Just dependencies, kuch nahi karna |
-| **Server** | Tomcat alag install | Embedded — `java -jar app.jar` |
-| **Config** | Verbose | Convention over configuration |
-
-**Boot = Spring ka "ready-to-run" wrapper.** Aaj ke zyada tar naye apps Boot pe hi bante.
-
----
-
-## Big Picture Visualization
-
-```
-         ┌─────────────────────────────────────────────┐
-         │     Spring IoC Container (ApplicationContext)│
-         │                                              │
-         │  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
-         │  │ Service  │  │ Repository│  │ Config   │   │
-         │  │  Bean    │  │   Bean    │  │  Bean    │   │
-         │  └─────┬────┘  └─────▲────┘  └──────────┘   │
-         │        │             │                       │
-         │        └─── injects ─┘                       │
-         │                                              │
-         │  Spring ne sab beans banaye, connect kiye   │
-         └─────────────────────────────────────────────┘
-                            │
-                            ▼ tera code use karta
-                       Business logic
-```
-
----
-
-## ★ 2 AUR REASON new-chhodne ke (deep) — 8-Sep
-
-> Upar wale (coupling/test/swap) ke alaawa 2 aur, jo interview me kholta:
-
-**Reason: SHARED singleton (resource bachana).**
-```
-new DataSource() har service me -> 10 service = 10 DB connection-POOL khul jaate (barbaad).
-Spring: 1 hi DataSource banata (singleton), sabko WAHI deta -> resource bacha.
-```
-
-**Reason (SABSE BADA): PROXY.**
-```
-new -> RAW object milta. @Transactional/@Async/security tabhi chalte jab object ek COVER (proxy) me lipta ho.
-new me koi cover nahi -> @Transactional chup-chaap kaam hi NAHI karega.
-Spring bean ko proxy me lapet ke deta -> isiliye ye annotations kaam karte.
-```
-(ye [[proxy-jdk-vs-cglib]] topic se judega)
-
-## ★ "KAHA aur KAISE banta" (magic nahi) — 8-Sep
-```
-KAHA:  ek dabbe me = ApplicationContext (IoC container), app STARTUP pe.
-KAISE: Spring bhi andar-andar `new`/REFLECTION hi use karta -- koi jaadu se nahi banta.
-FARAK banane me NAHI; farak = kaun MANAGE karta + kya WIRE karta + kya LAPET (proxy) ke deta.
-```
-Ek line: **`new` galat nahi — bas coupling + no-sharing + no-test + no-proxy deta. Spring ne wiring haath le li -> decoupled + shared + testable + proxy-wrapped. Yahi IoC.**
-
----
-
-## ★ PROJECT CONNECT — usercrud UserController (IoC/DI LIVE, 8-Sep)
-
-> Theory ("new nahi likha, bahar se mila") tere apne project me kaha hai:
+## Prod wala trap
 
 ```java
-// 07_PROJECTS/usercrud/.../controller/UserController.java
-@RestController
-@RequestMapping("/users")
-public class UserController {
-    private final UserService service;            // <- ye chahiye (dependency)
-    public UserController(UserService service) {  // <- "mujhe UserService do" (constructor injection)
-        this.service = service;
-    }
-    // service.create(user);  <- USE karta, kahin `new UserService(...)` NAHI likha
+@Service
+class OrderService {
+    PaymentService pay = new PaymentService();   // khud bana liya
+    // PaymentService ke andar @Transactional laga hai
 }
 ```
+
+`new` se raw object milta hai, Spring ka cover (proxy) nahi. Isliye `@Transactional` bina koi error diye kaam hi nahi karega: aadha save hoga aur rollback nahi hoga. Ye wahi singleton aur proxy wali kahani hai jo multithreading aur design patterns me dekhi thi.
+
+## Tera project
+
+usercrud ka `UserController`:
+
+```java
+private final UserService service;
+public UserController(UserService service) {   // maanga, Spring ne de diya
+    this.service = service;
+}
 ```
-1. UserController ko UserService chahiye -> kahin `new UserService()` NAHI.
-2. Constructor me maang liya.
-3. App-start pe Spring ne container se ready UserService bean nikaal ke constructor me DE diya (INJECT).
-4. Controller bas service.create() use karta -> banane ka tension zero.
+
+Kahin bhi `new UserService()` nahi likha. Ye constructor injection hai, bilkul live.
+
+## Interview line
+
 ```
-- **"new nahi, bahar se mila"** = ye constructor injection LIVE
-- **Constructor injection (best type)** = `final UserService` + constructor
-- **IoC** = control Controller ne nahi, Spring ne liya
-
----
-
-## TRAP
-
-> **Common confusion:** "DI = Dependency Injection = Spring's feature."
-> **Reality:** DI is a **PATTERN** — exists outside Spring. (Manually bhi DI ho sakta — like Java project mein `new AccountService(repo, publisher)` kiya).
-> **Spring just AUTOMATES it** — container khud bean dhoondh ke inject karta. Ek hi constructor ho to `@Autowired` likhna bhi zaroori nahi (Spring 4.3+).
-
----
-
-## POWER PHRASE
-
-> *"Spring is an IoC container that manages object creation, dependency wiring, and lifecycle. The developer focuses on business logic — Spring handles the wiring through Dependency Injection. Spring Boot adds auto-configuration and an embedded server, making setup trivial."*
+Spring is an IoC container: it creates objects (beans), wires their dependencies
+through Dependency Injection, and manages their lifecycle, so my code only has business logic.
+Beans are shared singletons and can be wrapped in proxies, which is how @Transactional works.
+Spring Boot adds auto-configuration and an embedded server.
+```
