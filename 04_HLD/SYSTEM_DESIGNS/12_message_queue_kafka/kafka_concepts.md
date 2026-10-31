@@ -30,7 +30,7 @@ Sab theek chal raha tha. Phir Diwali sale aayi.
 
 ## 2. Partition
 
-Sale me har second lakhon order aane lage. Saare isi ek topic order-events me ja rahe the, aur ye topic ek hi
+Sale me har second hazaaron order (~5,000) aane lage. Saare isi ek topic order-events me ja rahe the, aur ye topic ek hi
 machine pe tha. Wo machine itna bojh nahi jhel paayi, line lambi hoti gayi, Arpan ka order bhi atak gaya.
 
 To humne topic badla nahi. Isi order-events ko andar se 3 tukdon me baant diya, aur har tukda alag machine pe

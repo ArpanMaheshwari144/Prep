@@ -2,12 +2,12 @@
 
 Sirf block ki heading padho, scene aur hal khud bolo. Atke to neeche dekho.
 
-**Shabd (poore notes me yahi):** branch = Banking Service · cashier = service machine · register = DB · diary = ledger · photocopy = read replica · ladka = relay · godown = S3
+**Shabd (poore notes me yahi):** branch = Banking Service · cashier = service machine · register = DB · diary = ledger · rough copy = WAL · photocopy = read replica · ladka = relay · godown = S3
 
 &nbsp;
 
 **1. Bijli gayi, Arpan ke 500 kate, Ravi ko nahi mile**
-Mere 500 wapas de do: ya dono kaam honge, ya ek bhi nahi. Aur cashier ko yaad nahi rehta, to kaam shuru karne se pehle diary me likh lo. Wapas aaye to diary dekh ke adhoora ulta kar de.
+Mere 500 wapas de do: ya dono kaam honge, ya ek bhi nahi. Aur cashier ko yaad nahi rehta, to kaam shuru karne se pehle rough copy me likh lo. Wapas aaye to rough copy dekh ke adhoora ulta kar de.
 **transaction, WAL**
 Interview: "Dono UPDATE ek transaction me. Crash ke baad WAL se adhoora kaam rollback ho jaata hai."
 
@@ -69,7 +69,7 @@ Interview: "Saal purana ledger S3 me. Padhna ho to Athena se."
 **13. Godown me koi purani line badal de**
 Kohinoor heera: ijazat wala bhi na badal sake, taala laga do. Aur kai copy alag jagah, koi ek badle to mila ke pakad lo.
 **Object Lock, versioning**
-Interview: "S3 Object Lock, yaani koi badal ya mita nahi sakta. RBI ke liye 10 saal tak."
+Interview: "S3 Object Lock compliance mode, yaani admin bhi badal ya mita nahi sakta, RBI ke liye 10 saal tak. Versioning on, aur copy doosre region me bhi, taaki koi ek jagah chhed ho to doosri se mila ke pakad lein."
 
 &nbsp;
 

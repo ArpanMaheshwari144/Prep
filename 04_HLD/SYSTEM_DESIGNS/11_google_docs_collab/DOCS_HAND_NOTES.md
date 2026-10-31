@@ -17,7 +17,7 @@ Interview: "App insert / delete bhejti hai saath me baseVersion ('maine v7 dekh 
 **2. Har chhote badlaav pe DB me likhna bhaari** (ye dikkat khud uthayi)
 Chhote register me jama karo, thodi der me ek saath DB me daal do.
 **buffer + batch write**
-Interview: "Operation pehle Redis me, har kuch second Cassandra me ek saath. DB pe har akshar ki query nahi."
+Interview: "Operation pehle Redis me, har ~100 ms Cassandra me ek saath. DB pe har akshar ki query nahi."
 
 **3. Arpan ne "Hum " joda, Ravi ne "Goa" ke baad " kal", Ravi ka kal galat jagah**
 Shabd khiska do. Arpan ka "Hum" pehle laga, to Ravi ki jagah utni aage. Ban gaya `Hum Goa kal jaayenge`.
@@ -37,7 +37,7 @@ Interview: "'Saved' tabhi jab op Redis (copy ke saath) me likh gaya. Naya owner 
 **6. Ravi ko hataya, par uske server ki memory me purana "editor" note**
 Ek central authority sach rakhe. Badla to tez bachcha sab servers pe chilla de "Ravi editor nahi".
 **permission SQL me (CP) + pub/sub invalidation**
-Interview: "Permission ka sach SQL me. Badlaav pe pub/sub se sab server note phaadein. Bachav: memory copy ki umar 30 sec. Typing AP, permission CP."
+Interview: "Permission ka sach SQL me. Badlaav pe pub/sub se sab server note phaadein. Bachav: khabar chhoot jaaye to memory copy ki umar 30 sec, usse zyada purana nahi. Typing AP, permission CP."
 
 &nbsp;
 

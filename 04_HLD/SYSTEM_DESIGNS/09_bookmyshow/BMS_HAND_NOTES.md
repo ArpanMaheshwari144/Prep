@@ -24,7 +24,7 @@ Parchi pe hi waqt likh do, naya aadmi aaye to counter khud dekh le ki waqt nikal
 **shart query me (hold_until < now)**
 Interview: "HOLD query: seat FREE ho YA hold_until nikal chuka ho. Safai job band ho tab bhi seat milti hai, job sirf map saaf karta."
 
-**4. 10 lakh log, 50 hazaar seat, server dub gaye**
+**4. 2 lakh log, 5000 seat, server dub gaye**
 Hall jitni jagah, utne andar. Baaki line me lagao, "agla number tera". Counter badhana kaafi nahi, seat utni hi hain aur sab unhi pe toot padte.
 **waiting room + token**
 Interview: "Pehle Redis line, har minute kuch hazaar ko token. Sirf token wale HOLD karte. Jhagda chand rows pe hai, machine badhane se lock nahi batt-ta."

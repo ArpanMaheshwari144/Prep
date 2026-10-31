@@ -10,7 +10,7 @@ Movie ticket ka paisa bhi isi raaste se jaata hai: [BookMyShow kadam 6](../09_bo
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 wallet se wallet = banking ka core -> PSP (bahar ka paisa) -> PENDING + timeout -> breaker + doosra PSP
--> INITIATED pehle + webhook + poochne wala job -> saga (dukaan ka bank) -> LB + read replica
+-> INITIATED pehle + webhook + poochne wala job -> saga + hold (dukaan ka bank) -> LB + read replica
 -> shard by account (phir se saga)
 
 ---
@@ -114,6 +114,9 @@ saalon ka kaam hai. PSP ek hi API deta hai, aur sab bank, UPI aur card khud samb
 hai. **Isliye PSP.** Paytm aur PhonePe jaise bade khiladi baad me khud bhi judte hain, par shuru me sab PSP se
 hi chalte hain.
 
+Ek baat saaf: PSP se bank / UPI / card ka jhanjhat hatta hai, par wallet me logon ka paisa rakhne ke liye RBI ka
+PPI licence (prepaid wallet ki manzoori) phir bhi chahiye. Ye kaanooni kaam hai, design nahi badalta.
+
 **Naam (PSP):** Razorpay / Cashfree.
 
 Par humne PSP ko call kiya, aur PSP dheema tha. 30 second tak jawab hi nahi aaya. Arpan ka paisa kata ya nahi,
@@ -143,11 +146,10 @@ wallet wale payment bhi ruk jaayenge, jo PSP ko chhute hi nahi. Isliye 5 second 
 thread chhod do.
 
 PSP poora hi band ho to **circuit breaker**: pichhle 1 minute me 50% call fail hui, to breaker khul jaata hai.
-Ab PSP ko call hi mat karo, turant bolo "top-up abhi band hai, thodi der baad". 30 second baad 1-2 call try
-karo, chal gaya to breaker band, sab normal. Isse band PSP pe baar-baar call karke thread barbaad nahi hote.
-
-Aur badi apps do PSP se judi rehti hain (jaise Razorpay aur Cashfree). PSP-1 band hua to naye top-up PSP-2 se
-bhejo. Dono band hon tab "top-up abhi band", par wallet se wallet chalta rehta hai.
+Ab PSP-1 ko call hi mat karo. Badi apps do PSP se judi rehti hain (jaise Razorpay aur Cashfree), to naye top-up
+seedha PSP-2 pe bhejo. 30 second baad PSP-1 pe 1-2 call try karo, chal gaya to breaker band, sab wapas PSP-1 pe.
+Isse band PSP pe baar-baar call karke thread barbaad nahi hote. Dono PSP band hon tab hi "top-up abhi band,
+thodi der baad", par wallet se wallet tab bhi chalta rehta hai.
 
 Ek bada dhyaan: jo payment PSP-1 pe PENDING atka tha, use PSP-2 pe dobara mat bhejo. Ho sakta hai PSP-1 ne
 paisa kaat liya ho, bas jawab nahi aaya. PSP-2 pe bheja to paisa do baar katega. Wo PENDING wala PSP-1 ke
@@ -301,8 +303,6 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo PSP hi gir gaya:** doosra PSP (DB = RDS Multi-AZ, wo AWS sambhalta hai).
-
 Par saal bhar me ~1000 crore payment ki lines ho gayi. Ek hi primary pe itni likhai aur itna data, primary
 dheema pad gaya. Banking se farak: wahan 120 likhai / sec thi, yahan Diwali pe 3000 / sec.
 
@@ -326,9 +326,10 @@ Ab ek pench aata hai: Arpan shard 1 pe hai aur dukaan shard 3 pe. Dono alag DB h
 nahi chal sakta. Iska ilaaj hum kadam 5 me padh chuke hain, saga:
 
 ```
-1. shard 1: Arpan -500, beech ke khaate me +500 (ek transaction)
-2. shard 3: dukaan +500
-3. shard 3 pe fail hua to ulta: shard 1 pe beech ke khaate se -500, Arpan +500
+1. shard 1: Arpan -500, beech ke khaate me +500 (ek transaction), transfer t-70 = INITIATED
+2. shard 3: dukaan +500, key t-70 ke saath (dobara aaye to shard 3 dekh leta "t-70 ho chuka", dobara nahi jodta)
+3a. shard 3 pe ho gaya: shard 1 pe beech ke khaate se -500 (hold khatam), t-70 = SUCCESS
+3b. shard 3 pe fail hua to ulta: shard 1 pe beech ke khaate se -500, Arpan +500, t-70 = FAILED
 ```
 
 Bas farak itna hai ki kadam 5 me doosri taraf bank tha, yahan doosra shard hai.
@@ -339,8 +340,8 @@ shard pe girti.
 
 ```mermaid
 flowchart LR
-    S["Payment Service"] -- "Arpan -500, hold<br/>shard 3 fail: ulta, Arpan +500" --> S1[("Shard 1<br/>Arpan")]
-    S -- "dukaan +500" --> S3[("Shard 3<br/>dukaan")]
+    S["Payment Service"] -- "1. Arpan -500, hold +500<br/>3a. ho gaya: hold -500<br/>3b. fail: ulta, Arpan +500" --> S1[("Shard 1<br/>Arpan")]
+    S -- "2. dukaan +500 (key t-70)" --> S3[("Shard 3<br/>dukaan")]
     style S1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```

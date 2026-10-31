@@ -7,7 +7,7 @@ file me ek hi kahani hai: Arpan apne dost Ravi ko message bhejta hai.
 **Arpan, Ravi aur college-gang (poori file me yahi):** taar = WebSocket connection · dabba = DB · map = Redis · chhota ladka = pub/sub · chaabi = clientMsgId · number = server ka sequence
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
-WebSocket -> 200 server + event loop -> Redis map (kaun kahan) -> pehle DB + ack + push -> Cassandra (chat_id)
+WebSocket -> 200 server + event loop -> Redis map (kaun kahan) -> pub/sub (server se server) -> pehle DB + ack + push -> Cassandra (chat_id)
 -> clientMsgId (do baar nahi) -> server ka number (kram) -> group ek baar likho -> "kahan tak" number (tick)
 -> video S3 -> online (umar wali entry)
 
@@ -148,8 +148,20 @@ register hai.
 ```
 Ravi ne app khola, server 9 se juda  -> Redis me likho:  ravi -> server 9
 Arpan ka "hi" server 5 pe aaya       -> server 5 Redis se poochhe "ravi kahan?" -> server 9
-server 5 "hi" server 9 ko bheje      -> server 9 Ravi ki khuli connection pe bhej de
 ```
+
+Ab server 5 ko pata hai Ravi server 9 pe hai. Par "hi" server 9 tak pahunchaye kaise? Har server ka har server se
+apna taar rakhein to 200 x 199 taar ban jaate hain, aur naya server juda to sabko naya taar. Ilaaj: ek **chhota
+ladka** jo address le ke message wahan pahuncha de. Ye **Redis pub/sub** hai. Har chat server apne naam ka ek
+channel sunta hai (`server-9`). Server 5 bas us channel pe "hi" daal deta hai (publish), aur server 9, jo us
+channel ko sun raha hai (subscribe), use Ravi ki khuli connection pe bhej deta hai.
+
+```
+server 5 --publish "hi"--> [ Redis channel: server-9 ] --> server 9 --> Ravi ki khuli connection
+```
+
+Taar toota to map se hatao: Ravi ne app band ki ya net gaya, to server 9 usi waqt Redis se "ravi -> server 9"
+mita deta hai. Warna doosre server purane pate pe message bhejte rahenge.
 
 Server 9 achanak gir gaya to? Redis me abhi bhi likha hai "ravi -> server 9", jo ab galat hai. Isliye har
 entry ki **umar** rakho (TTL, jaise 60 sec). Ravi ka app har 30 sec ek chhota "main zinda hoon" bhejta hai
@@ -163,9 +175,11 @@ Ek user ke kai device ho sakte hain (phone bhi, laptop bhi). To map me list rakh
 flowchart LR
     A["Arpan"] --> S5["Chat server 5"]
     S5 -- "ravi kahan?" --> R[("Redis map<br/>ravi -> server 9 (umar 60 sec)")]
-    S5 -- "hi" --> S9["Chat server 9"]
+    S5 -- "publish hi" --> PS["Redis pub/sub<br/>channel server-9"]
+    PS --> S9["Chat server 9"]
     S9 --> RV["Ravi"]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style PS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 **AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
@@ -291,7 +305,8 @@ pata nahi ki ye wahi purana "hi" hai.
 
 Ilaaj: har message ki apni id, jo **phone banata hai**, Send dabate hi (`clientMsgId`, jaise `m-501`).
 Dobara bhejne pe bhi wahi `m-501` jaata hai. Server yaad rakhta hai kaunsi id aa chuki: naya `m-501` aaya to
-DB me likho, pehle aa chuka to dobara mat likho, bas ack wapas.
+DB me likho. Pehle aa chuka to **dusri copy chhod do, aur bas "pahuncha" (ack) dobara bhej do**. Arpan ki app
+ko ab ack mil gaya, ek tick ban gayi, aur Ravi ko ek hi "hi" dikha.
 
 Par yaad rakhna aur DB me likhna do alag kaam hain, aur server dono ke beech me bhi gir sakta hai. Agar
 pehle DB me likhein aur phir yaad rakhein:
@@ -307,13 +322,14 @@ Isliye kram ulta: pehle Redis me yaad rakho, phir DB me likho.
 ```
 m-501 aaya -> Redis me "m-501 = #42" -> DB me #42 likho -> ack
 
-beech me gira, app ne dobara bheja:
-m-501 aaya -> Redis: "haan, #42" -> DB me #42 DOBARA likho -> ack
+app ne dobara bheja:
+m-501 aaya -> Redis: "haan, #42" -> dusri copy chhodo -> bas ack dobara
 ```
 
-Dobara likhne se dohra kyun nahi banta? Cassandra me #42 us message ki key hai. Same key pe dobara likho to
-wo purane ke upar likh deta hai, naya row nahi banta. Isliye pehli baar DB tak pahuncha ho ya nahi, dobara
-likhne pe Ravi ko ek hi "hi" dikhega.
+**Maan lo Redis me "m-501 = #42" likha aur DB me likhne se pehle server gira:** retry pe Redis kehta "#42 aa
+chuka", par DB me #42 hai hi nahi. Seedha chhod diya to message kho jaata. Isliye chhodne se pehle ek nazar: #42
+DB me hai to chhodo, nahi hai to wahi #42 likh do. Cassandra me #42 us message ki key hai, same key pe likhna
+purane ke upar likhta hai, naya row nahi banta. Dono haalat me Ravi ko ek hi "hi".
 
 "Pehle aaya?" wali yaad Redis me rakhte hain, 1 din ki umar ke saath. Dobara bhejna kuch second ya minute me
 hi hota hai, to 1 din kaafi hai.
@@ -367,6 +383,10 @@ uske baad            Ravi:  "haan, 5 baje"    45
 Ghadi ki zaroorat hi nahi, bas ek counter hai jo har message pe +1 hota hai. Dono ek hi pal me pahunche to
 bhi Redis ek baar me ek hi kaam karta hai, ek ko 44 milega aur doosre ko 45, kabhi same nahi (rate limiter
 ki Lua wali baat).
+
+**Maan lo Redis gira aur copy pe counter thoda peeche tha (45 ki jagah 43):** naya message phir 44 le lega, aur
+44 pe pehle se message hai, wo upar likh ke mit jaayega. Ilaaj: copy ke aage aate hi counter ko Cassandra me us
+chat ke aakhri number se aage set karo, aur DB me naya number "pehle se nahi hai to hi" likho.
 
 Message ke neeche jo "10:02" dikhta hai, wo sirf dikhane ke liye hai. Server message pe apna time likhta
 hai, aur server ki ghadi internet se mila ke sahi rakhi jaati hai (NTP), to wo phone ki ghadi se zyada
@@ -430,12 +450,12 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par Ravi ne message padh liye. Arpan ke phone pe neeli tick kaise aaye? Aur Ravi ki app pe "College Gang (50
+Par Ravi ne message padh liye. Arpan ke phone pe neeli tick kaise aaye? Aur Ravi ki app pe "College Gang (12
 unread)" kaise gina jaaye?
 
 ### Kadam 9: neeli tick aur unread ginti (har user ka "kahan tak" nishaan)
 
-**Arpan-Ravi:** Ravi ka ek number "968 tak padha". Unread = 980 - 968, aur #975 padha = number >= 975 (Sita 978 haan, Ravi nahi).
+**Arpan-Ravi:** Ravi ka ek number "968 tak padha". Unread = 980 - 968 = 12, aur #975 padha = number >= 975 (Sita 978 haan, Ravi nahi).
 
 Har message pe "padha / nahi padha" likhna bahut bhaari hai: group ke 980 message x 500 member = 4.9 lakh
 nishaan.
@@ -449,7 +469,12 @@ Ravi, chat arpan-ravi:   pahuncha_upto = 45    padha_upto = 41
 Ek tick (server ke paas pahuncha) kadam 4 wala ack hai. Do grey tick: Ravi ki app ne bola "45 tak mil gaye",
 to `pahuncha_upto = 45`, aur Arpan ko batate hain ki 45 tak ke message pe do tick. Neeli tick: Ravi ne chat
 kholi aur 45 tak dekhe, to `padha_upto = 45`, aur Arpan ko 45 tak neela. Unread ginti: College Gang ka aakhri number
-980, wahan Ravi ka `padha_upto` 930, to 980 - 930 = 50 unread. Kuch ginna nahi pada, bas ek ghatana.
+980, wahan Ravi ka `padha_upto` 968, to 980 - 968 = 12 unread. Kuch ginna nahi pada, bas ek ghatana.
+
+Group me tick kaise? Arpan ne college-gang me #975 bheja. Har member ka apna number hai, to 500 member ke 500
+number, 4.9 lakh nishaan nahi. Jiska `padha_upto` 975 ya usse aage, usne padha: Sita 978 = padha, Ravi 968 =
+nahi. Do grey tick tab jab sabka `pahuncha_upto >= 975`, aur neeli tick tab jab sabka `padha_upto >= 975`.
+Arpan message pe "Info" khole to har member ka number dekh ke dikha do kisne padha, kisne nahi.
 
 Kadam 7 ka number yahan bhi kaam aaya: ek number se "kahan tak" bata dete hain, har message ke liye alag
 nishaan nahi chahiye.
@@ -516,13 +541,13 @@ flowchart LR
 
 Har user ~200 chat server me se kisi ek se WebSocket se juda hai (event loop); server gira to app backoff +
 jitter se baaki server pe judti hai, aur Redis me likha hai kaun kis server pe hai. Arpan ne message bheja: phone ki id (clientMsgId) se dohra nahi, server ne us chat ka
-agla number diya, pehle Cassandra me likha (chat_id se baanta), ack bheja (ek tick), phir Redis se dekh ke
-Ravi ke server tak. Ravi offline ho to push, aur wapas aane pe "aakhri number ke baad sab". Group me message
-ek baar likho, members ko bhejo. Tick aur unread har user ka ek "kahan tak" number. Video S3 me, message me
+agla number diya, pehle Cassandra me likha (chat_id se baanta), ack bheja (ek tick), phir Redis map se dekha
+Ravi kahan, aur pub/sub se Ravi ke server tak. Ravi offline ho to push, aur wapas aane pe "aakhri number ke baad sab". Group me message
+ek baar likho, members ko bhejo. Tick aur unread har user ka ek "kahan tak" number; group me neeli tab jab sabka number aage. Video S3 me, message me
 sirf link. Online = Redis me umar wali entry.
 
 ```
-turant pahunche   -> WebSocket, Redis map se seedha Ravi ke server tak
+turant pahunche   -> WebSocket, Redis map (kahan) + pub/sub se Ravi ke server tak
 kabhi na khoye    -> pehle DB phir bhejo, ack aur app ka dobara bhejna, push + "aakhri ke baad sab"
 kram na bigde     -> har chat ka server wala number (time nahi)
 do baar na dikhe  -> clientMsgId

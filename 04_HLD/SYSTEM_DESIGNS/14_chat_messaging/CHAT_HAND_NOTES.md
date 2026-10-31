@@ -19,7 +19,7 @@ Server message sambhaal ke rakhe, jaise papa ke diye paise uncle na mile to jeb 
 **pehle DB, phir bhejo (offline delivery)**
 Interview: "Har message pehle DB me, phir bhejo. Ravi offline to push notification. Wapas aaye to phone bataye 'mera aakhri #N', server uske baad ke sab bhej de."
 
-**3. 100 server, server 3 ko pata nahi Ravi kahan**
+**3. 200 server, server 3 ko pata nahi Ravi kahan**
 Ek map rakh lo, DSA wala: kaun kis server pe. Dhoondhna nahi, O(1) me mil gaya.
 **Redis session map**
 Interview: "Redis me userId -> server. Taar juda to likho, toota to hatao, umar (TTL) ke saath, taaki server gire to purani entry khud mit jaaye."
@@ -27,7 +27,7 @@ Interview: "Redis me userId -> server. Taar juda to likho, toota to hatao, umar 
 **4. Server 3 se server 71 tak message kaise jaaye**
 Ek chhota ladka: use address do, wo le jaake wahan wale ko pakda de. Har server ka har server se taar nahi.
 **Redis pub/sub**
-Interview: "Har chat server apna channel sunta (server-71). Server 3 us channel pe daalta, server 71 Ravi ke taar pe bhej deta. 100 x 99 taar nahi."
+Interview: "Har chat server apna channel sunta (server-71). Server 3 us channel pe daalta, server 71 Ravi ke taar pe bhej deta. 200 x 199 taar nahi."
 
 **5. 500 logon ka group, ek message = 500 kaam**
 Message ek dabbe me rakh do, 500 log wahin se sunenge.

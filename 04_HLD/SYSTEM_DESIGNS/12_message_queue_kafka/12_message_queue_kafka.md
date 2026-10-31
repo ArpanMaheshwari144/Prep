@@ -10,7 +10,7 @@ file me ek hi kahani hai: Arpan ne Swiggy pe order kiya. Concepts kahani se padh
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 seedha call (dheema) -> Kafka topic (disk, padhne se mitta nahi) -> 10 tukde + key = userId
 -> team (consumer group) -> pehle kaam phir commit + eventId -> 3 copy + acks=all + min.insync.replicas
--> outbox -> DLQ
+-> outbox -> DLQ (counter band = breaker, doosri SMS company) -> lag alert
 
 ---
 
@@ -109,7 +109,7 @@ flowchart LR
 
 **API:** seek(offset) = dobara padhna.
 
-**AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker, copy, gira to naya leader, ye AWS sambhalta hai. Topic aur partition hum tay karte hain.
+**AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker machine, disk, patch aur mari machine badalna AWS sambhalta hai. Leader gira to naya leader Kafka ka apna Controller chunta hai (kadam 6). Topic aur partition hum tay karte hain.
 
 Par Diwali sale me har second 5,000 order. Saari khabar ek topic me, aur topic ek hi machine pe. Upar se SMS
 ka ek worker sirf 500 / sec sambhal paata hai. Line lambi hoti ja rahi hai.
@@ -162,7 +162,7 @@ aur Arpan ko ek order ke 3 SMS chale gaye.
 
 ### Kadam 4: 3 machine, 3 SMS (consumer group)
 
-**Stadium:** ek fan ka ticket 3 baar punch -> teeno checker ek kamre me, har fan ek ke paas. Security alag kamra, har fan ki talaashi.
+**Stadium:** ek fan ka ticket 3 baar punch -> teeno checker ek kamre me, har fan ek ke paas. Security alag kamra, har fan ki talaashi. Ek gate ki line 7 din peeche -> pehle hi alert, us gate pe aur checker (lag).
 
 Teeno machine saare tukde padh rahi thi, to Arpan ki khabar teeno ke paas pahunchi aur teeno ne SMS bhej diya.
 
@@ -340,7 +340,7 @@ hota raha, commit nahi kiya, aur P1 ki baaki saari khabar uske peeche atak gayi.
 
 ### Kadam 8: ek kharab khabar ne line rok di (DLQ)
 
-**Stadium:** galat ticket wala fan baar-baar ghus raha, line atki -> use side ki alag line me. Andar ka counter hi band ho to sabko mat hatao, ruko aur check karo.
+**Stadium:** galat ticket wala fan baar-baar ghus raha, line atki -> use side ki alag line me, ya bouncer gate pe hi galat ticket rok de. Andar ka counter hi band ho to sabko mat hatao, ruko aur check karo, ya doosre counter pe bhejo.
 
 Ek tukde me kram se padhna hota hai, aur machine agli khabar tabhi uthati hai jab pichhli ka commit ho
 jaaye. Arpan ki khabar me phone number galat tha, to SMS kabhi jaayega hi nahi. SMS Service baar-baar koshish
@@ -355,7 +355,10 @@ Turant DLQ kyun nahi, 3-4 baar koshish kyun? Kai baar fail hona kuch der ka hota
 ke liye dheemi thi), do-teen baar try karne pe chal jaata hai. Galat number jaisi galti har baar fail hogi,
 wahi DLQ me jaati hai.
 
-**Maan lo SMS company hi 10 minute band ho gayi:** ab har khabar 3-4 try ke baad fail hogi aur lakhon khabar DLQ me chali jaayengi. Galti khabar ki nahi, company ki hai. Isliye jab lagaataar sab fail hone lage, padhna rok do (**circuit breaker**: andar ka counter hi band hai, to fan ko wahin rok do, alag line me mat bhejo). Khabar topic me hi padi rehti hai, commit nahi hua. Har kuch second ek check (heartbeat: dekho counter khula ya nahi): company wapas aayi to wahin se padhna shuru. DLQ sirf us khabar ke liye jo akeli fail ho, jaise galat number.
+Aur jitna ho sake, galat khabar gate pe hi rok do (bouncer): Order Service khabar bhejne se pehle number aur format
+jaanch le. Jo khabar shuru se hi galat hai, wo topic me aaye hi nahi, to DLQ tak jaane ki naubat kam aati hai.
+
+**Maan lo SMS company hi 10 minute band ho gayi:** ab har khabar 3-4 try ke baad fail hogi aur lakhon khabar DLQ me chali jaayengi. Galti khabar ki nahi, company ki hai. Isliye jab lagaataar sab fail hone lage, padhna rok do (**circuit breaker**: andar ka counter hi band hai, to fan ko wahin rok do, alag line me mat bhejo). Khabar topic me hi padi rehti hai, commit nahi hua. Har kuch second ek check (heartbeat: dekho counter khula ya nahi): company wapas aayi to wahin se padhna shuru. Intezaar nahi karna (OTP jaisa zaroori SMS) to breaker khulte hi doosri SMS company pe bhej do (fallback, jaise doosra counter khula ho). DLQ sirf us khabar ke liye jo akeli fail ho, jaise galat number.
 
 ```mermaid
 flowchart LR
@@ -374,13 +377,16 @@ Order Service order aur khabar ek transaction me DB me likhta hai (outbox), rela
 (acks=all). Kafka me topic `order-events` 10 tukdon me hai, key = userId taaki ek user ki khabar kram me
 rahe, aur har tukde ki 3 copy hain (min.insync.replicas = 2). SMS, Fraud aur Analytics alag-alag team hain, har team
 ko poori khabar milti hai, aur team ke andar ek tukda ek machine ko. Padhne wala pehle kaam karta hai phir
-commit, dobara aayi khabar eventId se pakadta hai, aur baar-baar fail hone wali khabar DLQ me jaati hai.
+commit, dobara aayi khabar eventId se pakadta hai, aur baar-baar fail hone wali khabar DLQ me jaati hai. SMS company hi
+band ho to breaker padhna rokta hai (ya doosri company pe bhejta hai), aur har team ke lag pe alert hai, taaki koi
+team 7 din peeche ja ke khabar na khoye.
 
 ```
 intezaar nahi        -> Order Service khabar daal ke aage, sab apni speed se padhte
 khabar na khoye      -> outbox (bhejne wala) · 3 copy + acks=all + min.insync.replicas (Kafka) · pehle kaam phir commit
 kram                 -> key = userId, ek tukde me kram
 bheed                -> 10 tukde, team me tukde baant ke padhna
-ek dheema, baaki chalein -> har team ka apna bookmark
+ek dheema, baaki chalein -> har team ka apna bookmark · lag alert
+kharab khabar / band company -> DLQ · circuit breaker + doosri SMS company
 ```
 

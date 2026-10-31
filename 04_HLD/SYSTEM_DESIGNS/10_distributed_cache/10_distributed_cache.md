@@ -8,7 +8,7 @@ me ek hi kahani hai: Arpan ka shopping app.
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 cache-aside (ek machine) -> LRU + TTL -> baanto (hash % N) -> ring + virtual nodes -> copy + quorum
--> likho DB, cache DELETE -> lock (single flight) + soft / hard -> local cache + key ki copies (garam key)
+-> cache DELETE + DB likho + sync job -> lock (single flight) + soft / hard -> local cache + key ki copies (garam key)
 
 ---
 
@@ -184,7 +184,7 @@ dhoondh raha hai. Lagbhag saare cache ek saath MISS hone lage, aur saari bheed s
 
 ### Kadam 4: machine judi to saare MISS (ring = consistent hashing)
 
-**Arpan-Ravi:** 11vi machine judi, % 11 se sab key ki jagah badli. Ring: key sabse paas wali machine pe, jaise kho-kho me paas wale ko dhakka.
+**Arpan-Ravi:** 21vi machine judi, % 20 se % 21, sab key ki jagah badli. Ring: key sabse paas wali machine pe, jaise kho-kho me paas wale ko dhakka.
 
 Wahi ring jo URL me thi. Ek gol ghadi socho, 0 se 360 tak. Har cache machine ghadi pe ek jagah baithti hai.
 Har key bhi hash hoke ghadi pe ek jagah girti hai, aur wahan se ghadi ki disha me chalte hue jo pehli machine
@@ -251,30 +251,35 @@ chowkidar (Redis Sentinel) machine 7 pe nazar rakhte hain, aur 3 me se 2 "haan, 
 banti hai. Ye bhi "zyada log maane" (majority) wali soch hai, par URL ka R/W **quorum** alag cheez hai.
 
 Ab machine marne se kuch nahi girta. Par Ravi ne app me apna naam "Ravi" se "Ravi Kumar" kiya. DB me naya naam
-aa gaya, par cache me purana "Ravi" pada hai, aur 1 ghante tak sabko purana hi dikh raha hai.
+aa gaya, par cache me purana "Ravi" pada hai, aur sabko purana hi dikh raha hai.
 
-### Kadam 6: Ravi ka naam badla, sabko purana dikh raha (DB me likho, cache key DELETE)
+### Kadam 6: Ravi ka naam badla, sabko purana dikh raha (cache key DELETE + DB likho + sync job)
 
 **Arpan-Ravi:** Ravi Kumar bana, parchi pe Ravi. Parchi kaato, DB likho, agla DB se naya utha leta; beech ki purani parchi sync job milata. Naam paisa nahi, thodi der purana chalega.
 
-Ravi ne naam badla. DB me "Ravi Kumar" aa gaya, par cache me abhi bhi "Ravi" pada hai, aur TTL khatam hone tak
-(1 ghanta) sabko purana naam dikhega.
+Ravi ne naam badla. DB me "Ravi Kumar" jaana hai, par cache me abhi bhi "Ravi" pada hai, aur jab tak koi use
+hataye nahi, sabko purana naam hi dikhega.
 
-Ilaaj: jab bhi DB me kuch badlo, uske turant baad **cache se wo key DELETE** kar do. Agli baar koi "user:ravi"
-maangega to cache me MISS hoga, aur DB se naya naam aake cache me baith jaayega.
+Ilaaj: naam badla to pehle apni parchi se "Ravi" kaat do, yaani **cache se wo key DELETE** kar do, aur phir DB me
+"Ravi Kumar" likh do. Agli baar koi "user:ravi" maangega to cache me MISS hoga, wo DB se naya naam laayega aur
+cache me rakh dega. DB hi sach hai, cache bas uski tez copy hai.
 
 ```mermaid
 flowchart LR
-    A["App (Ravi ne naam badla)"] -->|"1. naya naam likho<br/>3. agla GET: MISS -> yahan se naya"| D[("DB<br/>Ravi Kumar")]
-    A -->|"2. phir key DELETE"| C["Cache<br/>user:ravi hata"]
+    A["App (Ravi ne naam badla)"] -->|"1. pehle key DELETE"| C["Cache<br/>user:ravi hata"]
+    A -->|"2. phir naya naam likho<br/>3. agla GET: MISS -> yahan se naya"| D[("DB = sach<br/>Ravi Kumar")]
+    J["SYNC JOB<br/>thodi-thodi der me cache aur DB milata<br/>farak mila -> cache theek"] -.-> C
+    J -.-> D
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 ```
 Ravi ne naam badla
-  1. DB me likho:   name = "Ravi Kumar"
-  2. cache se:      DELETE user:ravi
+  1. cache se:      DELETE user:ravi
+  2. DB me likho:   name = "Ravi Kumar"
   3. agla GET:      MISS -> DB se "Ravi Kumar" -> cache me rakho
+  peeche se:        sync job cache aur DB milata, farak mila to cache theek
 ```
 
 **Cache me naya naam seedha likh kyun nahi dete (update), delete kyun:** maan lo do log ek saath naam badal
@@ -282,39 +287,43 @@ rahe hain, pehle A ne "Ravi K" kiya, phir B ne "Ravi Kumar". DB me aakhri "Ravi 
 der se cache me pehle B ka likha pahuncha aur baad me A ka. Ab cache me "Ravi K" reh gaya, jo galat hai. Delete
 me ye dikkat nahi aati: cache khaali hota hai, aur agli baar DB se jo sach hai wahi aata hai.
 
-**Pehle DB, phir delete (ulta kyun nahi):** agar pehle cache delete karte aur phir DB me likhte, to beech ke us
-pal me koi GET aata, cache me MISS paata, DB se purana "Ravi" laata aur cache me bhar deta. Phir DB me naya
-likha jaata, par cache me purana hi pada rehta.
+**Maan lo beech me koi padh le (chhota chhed):** parchi kaati, aur DB me naya naam likhne se pehle ke us pal me
+ek GET aaya. Use cache me MISS mila, wo DB se abhi ka purana "Ravi" laaya aur cache me wapas baitha diya. Phir DB
+me "Ravi Kumar" likha gaya, par cache me purana pada reh gaya. Ye chhed isliye hai kyunki do kaam (cache se
+kaatna aur DB me likhna) ek saath nahi hote. Isi ke liye **sync job** hai: wo thodi-thodi der me cache aur DB ko
+milata hai, farak mila to cache theek kar deta hai. Profile ka naam paisa nahi hai, thodi der purana dikh gaya to
+chalega. NFR me pehle hi likha tha ki thodi der purana chalega.
 
-Ek chhota chhed phir bhi rehta hai, kyunki do kaam (DB me likhna aur cache se delete) ek saath nahi hote. Isliye
-TTL bhi rakhte hain, jo aakhri suraksha hai: kuch bhi chhoota to zyada se zyada 1 ghante me apne aap theek ho
-jaata hai. NFR me pehle hi likha tha ki thodi der purana chalega.
+**TTL yahan kyun nahi:** TTL alag cheez hai. Wo thodi der wale data ke liye hai, jaise adhoora form ya raat 12
+baje khatam hone wala offer, jo chhoti umar ke saath apne aap hat jaata hai. Profile jaisa data jo baar-baar
+badalta hai, use sync job taaza rakhta hai. Teeno ek hi thaali ke chatte-batte hain: DELETE = hum khud turant
+kaatte, TTL = kuch time baad apne aap kat-ti, sync job = cache ko DB se mila ke theek karta.
 
-Ab data taaza rehta hai. Par shaam 7 baje "home page" wali key ki umar khatam hui, aur us pal 1,000 log ek saath
-home page khol rahe the. Sabko MISS mila, aur 1,000 request ek saath DB pe pahunchi.
+Ab data taaza rehta hai. Par shaam 7 baje Priya ke profile wali key ki umar khatam hui, aur usi pal Priya viral thi, 10,000 log ek
+saath uska profile khol rahe the. Sabko MISS mila, aur 10,000 request ek saath DB pe pahunchi.
 
-### Kadam 7: 7 baje home page key khatam, 1,000 log ek saath DB pe (LOCK = single flight + soft / hard)
+### Kadam 7: 7 baje Priya ki key khatam, 10,000 log ek saath DB pe (LOCK = single flight + soft / hard)
 
 **Arpan-Ravi:** Priya ki parchi cache me nahi, 10,000 log ek saath. Ek chhotu DB jaaye, baaki ruke; chhotu gira to kuch second baad bheed me se ek ko bhejo.
 
-Key ki umar khatam hui aur us pal 1,000 log home page khol rahe the. Sabko MISS mila, aur sab DB se wahi home
-page laane daud pade. Ek hi cheez 1,000 baar ban rahi hai, aur DB pe ek saath 1,000 bhaari query aa gayi. Isko
+Key ki umar khatam hui aur us pal 10,000 log Priya ka profile khol rahe the. Sabko MISS mila, aur sab DB se
+wahi profile laane daud pade. Ek hi cheez 10,000 baar ban rahi hai, aur DB pe ek saath 10,000 query aa gayi. Isko
 **stampede** (bheed ka toot padna) kehte hain.
 
 Ilaaj: sirf **pehli** request DB jaaye, baaki ruk jaayein (**single flight**).
 
 ```
 MISS mila -> cache me ek LOCK lene ki koshish (lock ki umar 2 second)
-   lock mil gaya (pehli request) -> DB se home page lao, cache me rakho, lock hatao
-   lock nahi mila (baaki 999)    -> 50 ms ruko, phir cache dekho. Tab tak pehli wali bhar chuki hogi
-DB pe 1,000 ki jagah sirf 1 query gayi
+   lock mil gaya (pehli request) -> DB se Priya ka profile lao, cache me rakho, lock hatao
+   lock nahi mila (baaki 9,999)    -> 50 ms ruko, phir cache dekho. Tab tak pehli wali bhar chuki hogi
+DB pe 10,000 ki jagah sirf 1 query gayi
 ```
 
 ```mermaid
 flowchart LR
-    U["1,000 log<br/>sabko MISS"] --> A["App"]
+    U["10,000 log<br/>sabko MISS"] --> A["App"]
     A -->|"sirf pehli request (lock mila)"| D[("DB")]
-    A -->|"baaki 999: 50 ms ruko, phir cache dekho"| C["Cache<br/>LOCK (2 sec umar)<br/>+ SOFT / HARD umar"]
+    A -->|"baaki 9,999: 50 ms ruko, phir cache dekho"| C["Cache<br/>LOCK (2 sec umar)<br/>+ SOFT / HARD umar"]
     D -->|"pehli wali laake cache me rakhti"| C
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -323,9 +332,9 @@ flowchart LR
 
 ```
 7:00:00   pehli request ne lock liya, DB gayi ... aur wahin mar gayi
-7:00:00   baaki 999 har 50 ms cache dekhte rehte hain, cache khaali hai, wo ruke rehte hain
+7:00:00   baaki 9,999 har 50 ms cache dekhte rehte hain, cache khaali hai, wo ruke rehte hain
 7:00:02   lock ki umar (2 sec) khatam, lock apne aap khul gaya
-7:00:02   baaki 999 me se jo pehle pahuncha, usne lock le liya, wo DB gaya, cache bhara
+7:00:02   baaki 9,999 me se jo pehle pahuncha, usne lock le liya, wo DB gaya, cache bhara
 7:00:02+  baaki sabko cache se mil gaya
 ```
 
@@ -334,7 +343,7 @@ thi.
 
 **Lock wali request mari nahi, par DHEEMI padi (DB 5 second le raha hai):**
 
-Yahan dikkat ye hai ki baaki 999 log poore 5 second tak ruke hain, aur sabko home page late dikhta hai. Lock ne
+Yahan dikkat ye hai ki baaki 9,999 log poore 5 second tak ruke hain, aur sabko profile late dikhta hai. Lock ne
 DB to bacha liya, par users ruk gaye.
 
 Soft / hard isi ka ilaaj hai. Seedhi baat: **key ko kabhi poora khaali hone hi mat do.**
@@ -344,12 +353,12 @@ key ke saath do umar:  SOFT = 1 ghanta   HARD = 1 din
 cache key ko 1 din tak rakhta hai, par 1 ghante baad usse "thodi purani" maan leta hai
 
 8:00 baje (soft nikal gaya, hard nahi):
-   key cache me abhi bhi padi hai, purana home page
-   request aayi -> purana home page turant de do, user ruka hi nahi
+   key cache me abhi bhi padi hai, purana profile
+   request aayi -> purana profile turant de do, user ruka hi nahi
    saath me ek request (lock ke saath) peeche se DB jaati hai, naya laake cache me rakh deti hai
 ```
 
-Ab wo peeche wali request 5 second le, ya mar bhi jaaye, kisi user ko farak nahi padta. Sab purana home page
+Ab wo peeche wali request 5 second le, ya mar bhi jaaye, kisi user ko farak nahi padta. Sab purana profile
 dekh rahe hain, jo 1 ghanta purana hai, aur NFR me pehle hi likha tha ki thoda purana chalta hai. Agli request
 phir se peeche se laane ki koshish kar legi.
 
@@ -357,14 +366,14 @@ HARD (1 din) bas isliye hai ki agar peeche se laana baar-baar fail ho, to bahut 
 pada rahe.
 
 ```
-lock (single flight)  -> DB ko bachata hai: 1,000 ki jagah 1 query
+lock (single flight)  -> DB ko bachata hai: 10,000 ki jagah 1 query
 soft / hard           -> users ko bachata hai: koi ruke hi nahi, purana turant mile
 ```
 
 **Umar me thoda random:** saari key ki umar ek jaisi (theek 1 ghanta) ho, to sab ek hi pal khatam hongi aur ek
 saath bheed aayegi. Isliye 1 ghanta + 0-5 minute random.
 
-**Maan lo pooche Redis me lock kaise lete (khud mat bolo, poochhe tabhi):** `SET lock:home 1 NX EX 2` (NX = sirf tab bane jab pehle se na ho, EX 2 = 2 second me apne aap hat jaaye).
+**Maan lo pooche Redis me lock kaise lete (khud mat bolo, poochhe tabhi):** `SET lock:user:priya 1 NX EX 2` (NX = sirf tab bane jab pehle se na ho, EX 2 = 2 second me apne aap hat jaaye).
 
 Ab key khatam hone wali bheed sambhal li. Par raat ko IPL final hai, aur "live:score" wali ek hi key pe 1 crore
 log ek saath aa rahe hain. Key khatam nahi hui, wo cache me padi hai. Par wo ek hi machine pe hai, aur saari
@@ -427,14 +436,14 @@ App ko key chahiye -> pehle apni memory (local cache, sirf garam key, 1-2 sec)
 -> nahi mili to cache client ring se machine nikaalta -> us cache machine se poochho
    (RAM: HashMap + LRU, har key ki umar)
 -> wahan bhi nahi (MISS) -> lock leke ek hi request DB jaati, laake cache me rakhti
--> DB me kuch badla -> pehle DB me likho, phir cache se key DELETE
+-> DB me kuch badla -> pehle cache se key DELETE, phir DB me likho, beech ka farak sync job theek karta
 -> har cache machine ki copy alag zone me, 3 me se 2 chowkidar bolein tabhi copy main bane
 ```
 
 ```
 TEZ (1 ms se kam)    -> RAM + key se seedha machine (ring) + garam key local cache me
 MACHINE MARE TO BHI  -> copy alag zone me + quorum
-PURANA THODA CHALEGA -> likhne pe delete + umar (TTL) + soft / hard
+PURANA THODA CHALEGA -> likhne pe delete + sync job + thodi der wale data pe umar (TTL) + soft / hard
 ```
 
 **Hit ratio kya hai, kaise pata system theek chal raha:** 100 me se kitni request cache se nikli (~90 achha). Achanak gira = kuch toota. Saath me p99 aur kitni key RAM bhari hone se hati (evictions), aur alert.

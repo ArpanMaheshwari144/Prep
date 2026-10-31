@@ -7,7 +7,7 @@ me ek hi kahani hai: Arpan ne Ravi ko 500 bheje. Ye JP ka sabse sambhavit HLD ha
 Yahi dhaancha [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me bhi: kadam 3 (key) = [BookMyShow kadam 6](../09_bookmyshow/09_bookmyshow.md#kadam-6-pay-dobara--paisa-banking-kadam-3--payment-file),
 kadam 4 (ek query) = [BookMyShow kadam 2](../09_bookmyshow/09_bookmyshow.md#kadam-2-padhna-aur-likhna-ek-hi-query-me-banking-kadam-4-wala-hi) (balance ki jagah seat).
 
-**Branch (poori file me yahi):** mohalle ki bank branch · cashier = service machine · register = DB · diary = ledger · photocopy = read replica · ladka = relay · godown = S3
+**Branch (poori file me yahi):** mohalle ki bank branch · cashier = service machine · register = DB · diary = ledger · rough copy = WAL · photocopy = read replica · ladka = relay · godown = S3
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 service + SQL -> ek transaction (WAL) -> idempotency key -> check + kaato ek query -> ledger (double-entry)
@@ -82,7 +82,7 @@ Paisa gayab.
 
 ### Kadam 2: beech me server gira, paisa gayab (ek transaction)
 
-**Branch:** bijli gayi, Arpan ke kate, Ravi ko nahi mile -> mere 500 wapas do (ya dono ya koi nahi), kaam se pehle diary me likh lo (WAL).
+**Branch:** bijli gayi, Arpan ke kate, Ravi ko nahi mile -> mere 500 wapas do (ya dono ya koi nahi), kaam se pehle rough copy me likh lo (WAL).
 
 Ilaaj: dono UPDATE ko ek **transaction** me band karo. Matlab ya to dono honge, ya koi nahi.
 
@@ -394,8 +394,10 @@ history" sirf is mahine wala tukda dekhti hai, baaki tukde chhuti hi nahi. Har t
 RAM me aa jaata hai. Naya mahina shuru hone pe naya tukda ban jaata hai.
 
 Ilaaj 2: purane mahine sasti jagah pe, **S3** me. 1 saal se purane tukde S3 me file ban ke chale jaate hain
-aur DB se hat jaate hain. S3 Object Lock lagate hain, taaki likhne ke baad koi unhe badal ya mita na sake
-(audit ke liye). Kabhi zaroorat pade to S3 se padh lo (Athena se), dheema chalega, par ye roz ka kaam nahi
+aur DB se hat jaate hain. S3 Object Lock lagate hain, compliance mode me, taaki likhne ke baad koi unhe badal ya mita na sake,
+admin bhi nahi (kohinoor wala taala). RBI ko purana hisaab ~10 saal tak chahiye, isliye lock bhi 10 saal ka. Saath
+me versioning on rakhte hain aur copy doosre region me bhi bhejte hain: koi ek copy kharab ho ya badli dikhe, to
+doosri se mila ke turant pakad lo. Kabhi zaroorat pade to S3 se padh lo (Athena se), dheema chalega, par ye roz ka kaam nahi
 hai.
 
 Purani lines hat gayi, to balance sahi kaise rahega? Kadam 9 ka snapshot isi kaam aata hai: balance = pichhla
@@ -417,7 +419,7 @@ flowchart LR
 
 **Maan lo tables poochhi:** account (balance) · ledger (sirf INSERT, mahine ke tukde) · idem (UNIQUE) · outbox · snapshot.
 
-**AWS pe:** purani lines **S3** me **Object Lock** ke saath (koi badal ya mita na sake), aur kabhi padhna ho to **Athena** se seedha S3 pe query.
+**AWS pe:** purani lines **S3** me **Object Lock** (compliance mode, 10 saal, admin bhi badal ya mita na sake) + versioning + doosre region me copy, aur kabhi padhna ho to **Athena** se seedha S3 pe query.
 
 ---
 

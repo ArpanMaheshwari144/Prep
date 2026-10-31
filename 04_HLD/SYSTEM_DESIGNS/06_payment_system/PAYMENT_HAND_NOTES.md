@@ -12,7 +12,7 @@ Wallet se wallet = banking jaisa hi (ek transaction, parchi ka number, ek query,
 **1. App HDFC ka nahi, HDFC hamari sunta nahi**
 Har bank se khud judna saalon ka kaam. Beech me ek centralized company jo sab bankon se judi hai, bas uski API use karo.
 **PSP (Razorpay, Juspay)**
-Interview: "Bank se seedha nahi judte, PSP ki API se. Wo thodi fees leta hai, hume NPCI / PCI ki manzoori nahi chahiye."
+Interview: "Bank se seedha nahi judte, PSP ki API se. Wo thodi fees leta hai, bank / NPCI se judna aur card ka data (PCI) wo sambhalta. Wallet me paisa rakhne ka RBI PPI licence phir bhi hamara."
 
 **2. PSP 30 second chup**
 Apne paas ek parchi rakho: pay dabate hi INITIATED, jawab nahi to PENDING. App pe FAILED ya SUCCESS nahi, "pakka hote hi batayenge".

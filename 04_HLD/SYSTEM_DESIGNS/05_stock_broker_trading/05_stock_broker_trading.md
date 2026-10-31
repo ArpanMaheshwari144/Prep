@@ -269,6 +269,10 @@ naya standby aakhri photo + uske baad ka chhota log padhta hai.
 Kafka kyun nahi yahan: Kafka me log rakhna bhi chalta, par har order pe uska chakkar milli-second ka hai, apna
 log + seedha copy usse kahin tez (andaza: ~100 micro-second vs 2-5 ms). Exchange ke liye ye farak bada hai.
 
+Pehle numbers poochho: bheed kam ho (chhota broker, kuch sau order / sec) to order book DB me rakh ke bhi kaam
+chal jaata hai, machine giri to DB me sab bacha hai. RAM + log + standby ka jhanjhat tab, jab NSE jaisi 9:15 ki
+bheed ho.
+
 Par sauda S-88 ho gaya. Ab paisa, share, SMS, audit, bhaav: kai kaam baaki, aur TCS ki line kisi ka intezaar
 nahi kar sakti.
 
@@ -288,30 +292,31 @@ sauda S-88 --> 1. Arpan ka paisa kaato, Ravi ko do     (settlement)
 
 TCS thread 9:15 pe in paanchon ka intezaar nahi kar sakta, warna milaan dheema. Par sauda khona bhi nahi.
 
-Galat raaste:
-- engine khud har kaam kare: har sauda pe 5 jagah call, thread wahin atka.
-- engine seedha Kafka ko bheje: ms-ms ka intezaar, aur milaan ke baad bhejne se pehle gira to sauda kahin
-  likha hi nahi.
+Engine khud har kaam kare to har sauda pe 5 jagah call, aur thread wahin atka rehta.
 
-Sahi: engine sauda bhi usi Kadam 5 wale log me likhta (jaise order likhta tha). Ek chhota **relay** log padh
-ke sauda **Kafka** ke `trades` topic me daalta. Paanchon kaam karne wale wahin se padhte.
+Isliye engine sauda **Kafka** ke `trades` topic me ek baar daal deta hai aur aage badh jaata hai. Wo Kafka ke
+"mil gaya" ka intezaar nahi karta (async bhejta), isliye TCS ki line nahi rukti. Paanchon kaam karne wale apne
+consumer group se wahin se padhte hain. SMS dheema ho to bas SMS peeche rehta hai.
+
+**Maan lo engine ne sauda kiya aur Kafka me daalne se pehle hi gir gaya:** sauda khoya nahi. Order to Kadam 5
+me pehle hi log aur standby ke paas pakka tha. Standby wahi order usi kram me dobara milata hai, wahi S-88 banta
+hai, aur wo use Kafka me daal deta hai. Kabhi S-88 do baar pahunch jaaye to settlement trade_id dekh ke doosri
+baar chhod deta hai (Kadam 7).
 
 ```mermaid
 flowchart LR
-    E["Engine"] -- "sauda S-88" --> L[("apna LOG")]
-    L --> R["Relay"]
-    R --> K[("Kafka: trades")]
+    E["Engine"] -- "sauda S-88<br/>(ek baar, ruke bina)" --> K[("Kafka: trades")]
     K --> ST["Settlement"]
     K --> N["Notification"]
     K --> A["Audit"]
     K --> PS["Price Service"]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Kafka hi kyun: dikkat thi "ek baat, kai sunne wale, aur bolne wala ruke nahi". Kafka yahi karta: ek baar
-likha, sab apni raftaar se padhte, padhne se khabar mitti nahi. Ye [banking kadam 6](../13_banking_system/13_banking_system.md#kadam-6-sms-service-giri-outbox) / Kafka file ka **outbox**
-hi hai, bas outbox table ki jagah engine ka apna log.
+likha, sab apni raftaar se padhte, padhne se khabar mitti nahi. Banking me sauda khone se bachane ke liye
+[outbox](../13_banking_system/13_banking_system.md#kadam-6-sms-service-giri-outbox) lagaya tha. Yahan alag
+outbox nahi chahiye, kyunki engine ka order log + standby pehle se wahi kaam kar raha hai.
 
 **AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker, copy, gira to naya leader, ye AWS sambhalta hai. Topic aur partition hum tay karte hain.
 
@@ -414,8 +419,8 @@ is baat se: khabar khona chalega ya nahi.
 ```
 Order Service: (user_id, client_order_id) UNIQUE (dohra nahi) + paisa / share BLOCK ek query me. Matching engine: har
 share ki ek line, ek thread, RAM me order book (pehle aaya pehle mila, lock nahi). Har order pehle log +
-standby ko, ack ke baad milaan; primary gira to standby (ek waqt ek hi, snapshot). Sauda log me -> relay ->
-Kafka trades -> settlement (sauda ulta nahi, PENDING + dobara, trade_id se ek baar), notification, audit,
+standby ko, ack ke baad milaan; primary gira to standby (ek waqt ek hi, snapshot). Sauda seedha
+Kafka trades (gira to standby replay se dobara) -> settlement (sauda ulta nahi, PENDING + dobara, trade_id se ek baar), notification, audit,
 Price Service. Bhaav: 1 / sec, Redis pub/sub, WebSocket push.
 ```
 

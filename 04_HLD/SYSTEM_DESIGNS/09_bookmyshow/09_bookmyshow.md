@@ -171,6 +171,8 @@ se 200 seat padhna. DB padhne me hi ghut raha hai, aur Arpan ki booking query bh
 
 ### Kadam 4: seat map ka cache (Redis)
 
+**Do counter:** lakhon log sirf khidki pe aake poochh rahe "kaunsi seat khaali hai", book koi-koi kar raha. Har baar register (SQL) kholne ki jagah counter ke bahar ek board laga do, jo har 5 second me register se update hota. Dekhne wale board padhein, register sirf bechne ke liye.
+
 Har "map dekho" pe SQL tak jaana band. Redis me har show ka seat map ek key me:
 `map:9pm = { A1: HELD, A2: FREE, ... 200 seat }`.
 
@@ -206,7 +208,7 @@ phans jaata hai, sab ka app ghoomta rehta hai.
 
 ### Kadam 5: waiting room (line me lagao, thode-thode andar bhejo)
 
-**Do counter:** 10 lakh log, 50 hazaar seat -> hall jitni jagah, utne andar, baaki line me number. Token gate ka pass hai, seat ki parchi ki ghadi alag: andar aa gaya to pay parchi ki ghadi se.
+**Do counter:** 2 lakh log, 5000 seat -> hall jitni jagah, utne andar, baaki line me number. Token gate ka pass hai, seat ki parchi ki ghadi alag: andar aa gaya to pay parchi ki ghadi se.
 
 2 lakh log seedhe booking pe nahi jaate. Pehle ek **line** me lagte hain
 (Redis me line, jo pehle aaya wo aage).

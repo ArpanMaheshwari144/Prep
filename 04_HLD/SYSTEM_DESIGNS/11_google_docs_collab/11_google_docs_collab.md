@@ -13,10 +13,10 @@ sabka doc same kaise rahe (OT).
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 poora text overwrite -> operation + baseVersion (text nahi) -> WebSocket (dono taraf push)
--> OT (server kram, operation khiskao) -> docId se owner server (ring) -> viewer kahin bhi (Redis pub/sub)
+-> OT (server kram, operation khiskao) -> docId se owner server (ring) + owner ki copy -> viewer kahin bhi (Redis pub/sub)
 -> operation log Cassandra (docId, version) + batch
 -> ACK tab jab Redis buffer + copy me likh gaya (operationId)
--> typing AP (app ki queue), permission CP (SQL)
+-> typing AP (app ki queue), permission ka sach SQL (CP) + badlaav pe pub/sub se sab server
 
 ---
 
@@ -215,6 +215,10 @@ flowchart LR
     style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+**Maan lo Server 3 (doc-42 ka owner) gira:** har owner ki ek copy server pehle se tay hoti hai, jo owner ke saath-saath
+doc-42 ka haal rakhti hai. Owner gira to wahi copy naya owner banti hai, aur LB ab doc-42 ke editor usi pe bhejta hai.
+Kadam 8 me dekhenge ki adhoora kaam kahan se uthata hai.
+
 Doosra kyun nahi:
 - **Round robin** (jo server khaali ho): Arpan aur Ravi alag server pe pahunch jaate, aur OT do jagah chalta.
 - **hash % N**: ek server badhaya ya gira to lagbhag saare doc ka owner badal jaata, aur sab connection ek
@@ -312,8 +316,8 @@ Dikkat ye thi ki server ne operation sirf apni memory me rakh ke ACK de diya. Il
    hai.** Dono me likh jaane ke baad hi Arpan ko ACK jaata hai (Redis copy apne aap baad me bharta hai, isliye
    `WAIT` command se copy tak pahunchne ka intezaar karte hain). Redis memory me hai, to ye kuch millisecond ka
    kaam hai aur typing nahi rukti.
-2. **Batch ab Redis se Cassandra jaata hai.** Server gira, to buffer Redis me pada hai. Ring pe agla server
-   doc-42 ka naya owner banta hai, buffer se bacha hua kaam utha leta hai. Jo operation Cassandra me likh
+2. **Batch ab Redis se Cassandra jaata hai.** Server gira, to buffer Redis me pada hai. Owner ki copy (kadam 5)
+   doc-42 ki naya owner banti hai, aur buffer se bacha hua kaam utha leti hai. Jo operation Cassandra me likh
    gaya, use Redis buffer se hata dete hain. Naya owner version se pehchanta hai ki kaunse pehle hi likhe ja
    chuke hain, unhe dobara nahi likhta.
 3. **Arpan ki app bhi apna operation tab tak sambhal ke rakhti hai jab tak ACK na aaye.** ACK nahi aaya to wo
@@ -323,7 +327,7 @@ Dikkat ye thi ki server ne operation sirf apni memory me rakh ke ACK de diya. Il
 Arpan --operation--> Server 3 (owner) --> [ Redis buffer + copy ] --likh gaya--> ACK Arpan ko
                                                 |
                                                 +--100 ms batch--> [( Cassandra: operation log )]
-Server 3 gira --> ring: Server 4 naya owner --> Redis buffer se bacha hua utha liya
+Server 3 gira --> uski copy Server 4 naya owner --> Redis buffer se bacha hua utha liya
 ```
 
 ```mermaid
@@ -343,7 +347,7 @@ app karti hai, server nahi. ACK nahi aaya, to operation app ki queue me hai aur 
 ```
 Arpan --operation 5--> Server 3  X gira (Redis tak nahi pahuncha, ACK nahi aaya)
 app: operation 5 abhi queue me, ACK nahi aaya
-     -> WebSocket toota -> dobara judo -> LB -> ring -> Server 4 (naya owner)
+     -> WebSocket toota -> dobara judo -> LB -> Server 4 (copy, ab naya owner)
      -> operation 5 dobara bhejo (wahi baseVersion) -> Server 4 lagata -> Redis -> ACK
 Arpan ko kuch pata bhi nahi chala
 ```
@@ -375,21 +379,24 @@ net gaya:  Arpan likhta raha -> screen pe dikhta raha -> queue: [operation 1, 2,
 net aaya:  queue bheja --> owner: v20 ke baad Ravi ke operation lage the -> OT se khiskao -> sab same
 ```
 
-**Permission = CP (galat kabhi nahi chalega).** Doc ke owner ne Ravi ka edit access hata diya. Iske baad Ravi
-ka ek bhi operation lagna nahi chahiye, chahe thodi der ke liye "abhi nahi ho sakta" bolna pade. Isliye
-permission ek alag **SQL DB** me rakhte hain: kaun, kis doc pe, kya kar sakta (rishte + pakka sahi). Owner
-server ye check karta hai, par har akshar pe SQL nahi (har akshar ek operation hai, lakhon log type kar rahe,
-SQL ghut jaayega):
+**Permission = CP (sach ek hi jagah, pakka).** Doc ke owner ne Ravi ka edit access hata diya. Iske baad Ravi
+ka operation lagna nahi chahiye. Isliye permission ka sach ek alag **SQL DB** me rakhte hain: kaun, kis doc pe,
+kya kar sakta (rishte + pakka sahi). Servers ye check karte hain, par har akshar pe SQL nahi (har akshar ek
+operation hai, lakhon log type kar rahe, SQL ghut jaayega). Isliye server apni memory me ek note rakhta hai, aur
+badlaav hote hi pub/sub se SAB server ko khabar jaati hai:
 
 ```
 connection khula -> SQL se permission padho -> server ki memory me rakho (30 sec)
 har akshar        -> memory se check, SQL tak nahi jaata
-owner ne Ravi ka access hataya -> SQL update + pub/sub pe khabar "Ravi hata"
-                               -> owner server turant memory se Ravi hata de, connection band
+owner ne Ravi ka access hataya -> SQL update + pub/sub pe khabar "Ravi editor nahi"
+                               -> SAB server (owner bhi, Ravi jahan viewer bana baitha wo bhi) memory se note phaadte
+                               -> owner server Ravi ka connection band, aage ka har operation reject
 ```
 
-30 sec wali umar ek jaal hai, agar pub/sub ki khabar kabhi chhoot jaaye. Tab bhi zyada se zyada 30 sec baad naya
-padh lega.
+Pub/sub se ye turant ho jaata hai. Par pub/sub khabar ek baar bolta hai, kahin likh ke nahi rakhta. Kisi server
+tak khabar chhoot gayi to bachav 30 sec wali umar hai: zyada se zyada 30 sec me wo server SQL se naya padh
+lega. Matlab sach (SQL) hamesha sahi, aur server ki memory sabse bura bhi 30 sec peeche. Interview me ye saaf
+bolna: "permission ka sach CP hai, cache ki had 30 sec hai".
 
 ```
 Ravi offline me likhta raha --> beech me owner ne access hataya (SQL me)
@@ -417,9 +424,9 @@ jaati. Isliye ek hi system me do alag faisle hain: likhna AP, permission CP.
 
 ```
 Har badlaav ek operation hai, version ke saath. Doc ke editor LB se docId dekh ke ring pe ek hi owner server
-pe jaate hain, WebSocket se. Wahan OT kram tay karta hai aur ek saath bane operation khiska ke lagata hai,
+pe jaate hain, WebSocket se. Owner gira to uski copy owner banti hai. Wahan OT kram tay karta hai aur ek saath bane operation khiska ke lagata hai,
 isliye sabka doc same rehta hai. Operation pehle Redis buffer + copy me jaata hai, tab ACK. Phir batch me
 Cassandra ke operation log me (docId, version). Viewers kisi bhi server pe hote hain, operation unhe Redis
 pub/sub se milta hai. Net jaaye to app likhti rehti hai, queue baad me bhejti hai (AP). Permission alag SQL
-me hai, har operation pe check (CP).
+me hai (CP). Server memory me 30 sec rakhta hai, badlaav pe pub/sub se sab server turant note phaadte.
 ```

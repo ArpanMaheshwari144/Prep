@@ -2,7 +2,7 @@
 
 Sirf block ki heading padho, scene aur hal khud bolo. Atke to neeche dekho.
 
-**Shabd (poore notes me yahi):** fan = khabar · chowkidar = Kafka broker · gate = partition · counter / kamra = andar ki service (SMS, Fraud) · ticket counter = Order Service
+**Shabd (poore notes me yahi):** fan = khabar · chowkidar = Kafka broker · gate = partition · checker = padhne wali machine (consumer) · kamra = consumer group · andar ka counter = andar ki service (SMS, Fraud) · ticket counter = Order Service
 
 &nbsp;
 

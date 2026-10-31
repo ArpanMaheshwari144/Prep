@@ -62,7 +62,7 @@ Har almari ki copy alag jagah. "Likh liya" tabhi jab copies bhi haan bolein.
 Interview: "Har link ki 3 copy. Teeno pe likho, 2 ki haan pe aage."
 
 **12. Dost ne peeche wali copy se padha, "nahi mila"**
-Ek se mat padho, 2 se padho. 2 pe likha, 2 se padha, to ek copy common.
+Ek se mat padho, 2 se padho. 2 ki haan se likha, 2 se padha, to ek copy common.
 **R=2**
 Interview: "W=2, R=2, W + R > 3, isliye naya link hamesha mil jaata."
 

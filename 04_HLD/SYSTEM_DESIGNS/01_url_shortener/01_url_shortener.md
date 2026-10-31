@@ -201,8 +201,8 @@ dikkat nahi, 3.5 lakh crore number hain.
 **Maan lo beech ka counter gir gaya:** har app ke paas apni range ke bache number hain, unse kaam chalta rehta hai.
 Tab tak counter ki copy (replica) aage aa jaati hai.
 
-**Maan lo traffic 10 guna ho gaya:** app server badhao · Redis me garam link rakho (LRU) · Cassandra ki machine
-badhao.
+**Maan lo traffic 10 guna ho gaya:** app server badhao · Redis me garam link rakho (LRU) · DB ki machine badhao
+(DB ke tukde kaise bante, ye agle kadam me).
 
 **Maan lo duniya bhar se log aa rahe:** Route 53 user ko uske paas wale region pe bhejta hai (geo-routing).
 
@@ -327,8 +327,8 @@ taur pe yahi chalta hai. Copy alag rack ya alag zone me rakhte hain, taaki ek ra
 saath na jaayein.
 
 **Maan lo link bana, aur dost ko turant 404 mila:** likhai C pe pahunchi, copy D pe abhi nahi, dost D se padh
-gaya. Ilaaj = QUORUM (zyadatar, 3 me se 2): 2 copy pe likho (W=2), 2 se padho (R=2). W + R > 3, to ek copy dono
-me common, naya link mil jaata. Ye Cassandra ki setting hai. Saath me link banate hi Redis me daal do, dost
+gaya. Ilaaj = QUORUM (zyadatar, 3 me se 2): likhai teeno copy pe bhejo, par "ho gaya" tab bolo jab 2 ki haan aa
+jaaye (W=2). Padhte waqt 2 copy se padho (R=2). W + R > 3, to ek copy dono me common, naya link mil jaata. Ye Cassandra ki setting hai. Saath me link banate hi Redis me daal do, dost
 wahin se pa le.
 
 Par ek link viral ho gaya. Cricket match ka link 1 crore log ek saath khol rahe hain, aur sab ek hi Redis
@@ -409,8 +409,8 @@ flowchart LR
 ## 5. Wrap (30 second me poora design, NFR se milao)
 
 Link banana: request LB pe aati hai, rate limit lagta hai, phir kisi app server pe. App apni counter range se
-agla number leta hai, use base62 me code banata hai, aur Cassandra me likhta hai (ring se machine tay, 3 copy,
-2 pe likhna pakka) aur Redis me bhi daal deta hai.
+agla number leta hai, use base62 me code banata hai, aur Cassandra me likhta hai (ring se machine tay, teeno copy pe likho,
+2 ki haan pe pakka) aur Redis me bhi daal deta hai.
 
 Link kholna: LB se app pe. Pehle app ki apni memory (garam link), phir Redis, phir Cassandra (2 copy se
 padho). Mil gaya to 302.

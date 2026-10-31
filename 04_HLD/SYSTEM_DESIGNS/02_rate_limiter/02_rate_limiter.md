@@ -11,14 +11,14 @@ me ek hi kahani hai: Arpan ka app, aur uske login pe hamla karta ek bot.
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 server me ginti -> Redis (ek ginti) -> token bucket -> Lua (ek saath 20) -> gateway pe
 -> copy + fail-open / closed -> Kafka + ban -> userId (login pe IP)
--> global cap 503 -> home region
+-> line (queue) + SMS ki raftaar, line bhari to 503 -> home region
 
 ---
 
 ## 1. FR: kya karna hai
 
 ```
-1. har user ki had: login 5 baar / minute, baaki API 100 / minute
+1. har user ki had: login 5 baar / minute, OTP 10 minute me 5, baaki API 100 / minute
 2. had paar ho to 429 (Too Many Requests), saath me "kitni der baad aao" (Retry-After)
 scope ke bahar (poochh ke hata do): plan ke hisaab se alag had (free / pro), ye baad me
 ```
@@ -129,6 +129,9 @@ TOKEN BUCKET     ek baalti me max 5 token. Har 12 sec me 1 token bharta. Har req
 wahi 500 MB hai. Jhatka bhi chalta hai: Arpan 1 ghanta baad aaya to baalti bhari mili, aur wo 5 ek saath bhej
 sakta hai, asli user aise hi bhejta hai. Aur kinare wali dikkat nahi aati: baalti khaali hui to agla token 12
 sec baad hi aata hai, minute badalne se kuch reset nahi hota. AWS aur Stripe bhi yahi lagate hain.
+
+OTP pe bhi yahi baalti, bas raftaar alag: max 5 token, har 2 minute me 1 token bharta, yaani 10 minute me 5 OTP.
+Ravi ne abhi 5 le liye to chhathe ke liye 2 minute rukna padega.
 
 Token bharta kaun hai? Koi background job nahi. Request aane pe hi hisaab lagta hai (lazy refill):
 
@@ -242,9 +245,13 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo Redis + copy dono gaye:** har gateway apni memory me ginti rakhe, had baant ke: 100 / min aur 10
-machine -> har machine 10 / min (had / N). LB barabar baantta, to kul lagbhag 100. Fail-open me had hi nahi
-thi, yahan lagbhag sahi. Redis wapas aaya to phir Redis se ginti. (Naya dabba nahi, isliye kadam nahi)
+**Maan lo Redis + copy dono gaye:** tab bhi faisla yahi rehta hai, jaise papa ke dost aur chor. Feed / home
+page jaise kaam pe fail-open, sabko jaane do, kyunki kuch der bina had ke chalna chhota nuksaan hai. OTP aur
+login pe fail-closed, sabko roko, kyunki yahan har request pe SMS ka paisa aur password ka khatra hai. Redis
+wapas aaya to phir Redis se ginti.
+
+Ek aur raasta bhi hai (faisla upar wala hi): har gateway apni memory me thodi ginti rakhe, had baant ke (100 / min
+aur 10 machine -> har machine 10 / min). Ye lagbhag sahi hai, par isme har gateway pe alag code aur jhamela hai.
 
 Par wahi bot har 60 second baad wapas aa jaata hai. 429 khaata hai, minute khatam hote hi phir aata hai, aur
 din bhar yahi chalta hai.
@@ -289,24 +296,26 @@ paar kar gaye, aur poora office atak gaya.
 IP pe had lagane me do dikkat hain. Office ke 1,000 log ek IP pe hain, to sab atak gaye. Aur ulta, bot har
 request alag IP se bheje to IP wali had kabhi lagti hi nahi.
 
-**Login ke BAAD:** had **userId** pe lagao, jo JWT token se milta hai. Har insaan ki apni had, chahe IP ek
-ho ya hazaar. Office ki dikkat yahin khatam.
+Number ya account pe had bhi bekaar hai, kyunki Ravi har baar naya number daal deta hai, aur bot har baar naya
+account. Had us cheez pe lagao jo wo badal na sake.
 
-**Login PE** userId hota hi nahi. Isliye do had: jis **account** pe koshish ho rahi hai us pe kadi (5 / min),
-taaki ek account pe password guess karne wala ruke. Aur **IP** pe bas bahut dheeli (jaise 500 / min), sirf ek
-IP se hazaaron ki baadh rokne ke liye. Ye asli deewar nahi, kyunki office me kitne log hain pata nahi (100 bhi
-ho sakte, TCS jaise lakh bhi), aur bot kai IP se aata hai. Office ke 1,000 log alag-alag account hain, har ek
-ki apni 5, to koi nahi atakta.
+**Login ke BAAD:** userId hamare paas hai (JWT token se), wahan koi dikkat nahi, to userId pe **kadi had**. Har
+insaan ki apni had, chahe IP ek ho ya hazaar. Office ki dikkat yahin khatam.
+
+**Login se PEHLE** userId hota hi nahi, to **IP pe thodi dheeli had** (jaise 500 / min), taaki office ke log ek IP
+se aa sakein. Par itni dheeli nahi ki script hazaar baar maare, kyunki insaan hazaar baar password haath se nahi
+daalta. Aur jo IP roz wahi hazaar request maare, ya ek second me 10,000, wo insaan nahi hai. Us IP ko **WAF** me
+daal do. Office ke saare log ek saath roz password nahi bhoolte, isliye ginti ki jagah pattern dekhte hain.
 
 ```
-login se pehle   -> IP (dheeli, 500 / min) + account (kadi, 5 / min)   (rl:ip:1.2.3.4:login, rl:acct:arpan:login)
-login ke baad    -> userId                                            (rl:arpan:search)
+login se pehle   -> IP pe dheeli had (500 / min) + script jaisa pattern -> WAF   (rl:ip:1.2.3.4:login)
+login ke baad    -> userId pe kadi had                                          (rl:arpan:search)
 ```
 
 ```mermaid
 flowchart LR
     U["Arpan / bot"] --> W["WAF<br/>ban list (TTL)"]
-    W --> G["API Gateway<br/>key = userId (login pe IP + account)<br/>Lua token bucket"]
+    W --> G["API Gateway<br/>key = userId (login se pehle IP)<br/>Lua token bucket"]
     G -- "Lua" --> R[("Redis + copy")]
     G -- "had me" --> S["App x 10"]
     G -- "429 ki khabar" --> K[("Kafka")]
@@ -324,40 +333,47 @@ hai, kyunki koi ek perfect hal nahi:
 
 Ban me bhi yahi: userId pe lamba ban, IP pe chhota.
 
-Par shaam ko sale hai. Har user apni had ke andar hai, par 1 crore log ek saath aa gaye. Sab "had me" hain,
-phir bhi server bhar ke gir gaya.
+Par result ka din aaya. 1 crore bachche ek saath OTP maang rahe hain, har ek apni had ke andar hai. Sab "had me"
+hain, phir bhi OTP Service aur SMS company dono gir gaye.
 
-### Kadam 9: sab had me, phir bhi server gira (global cap + 503)
+### Kadam 9: sab had me, phir bhi SMS company giri (line + SMS ki raftaar)
 
 **Arpan-Ravi:** result ka din, 1 crore had me, phir bhi SMS company giri. Line lagwao, ek-ek karke uski raftaar se (queue + global had).
 
-User ki had har insaan ko alag rokti hai. Par 1 crore log ek saath aaye, to kul bojh server ki taakat se zyada
-ho gaya.
+User ki had har insaan ko alag rokti hai. Par 1 crore log ek saath aaye, to kul bojh us cheez ki taakat se zyada
+ho gaya jo peeche baithi hai.
 
-Ilaaj: **poore system ki ek had (global cap)**. Maan lo servers 50,000 request / second jhel sakte hain.
-Gateway pe ek aur ginti lagao: is second kul kitni request aayi. Uske upar wali request ko **503** do (abhi
-bhar gaye hain, thodi der baad aao).
+Apne server to badha sakte hain, wo hamare haath me hain (aur result ka din pehle se pata hota hai, to pehle se
+badha do). Par SMS company hamare haath me nahi. Wo maan lo 1,000 SMS / second hi leti hai, usse zyada bhejo to
+429 deti hai, ya gir jaati hai. Isliye bheed ko seedha SMS company tak mat jaane do, **line lagwao**.
+
+Ilaaj: OTP Service request ko seedha SMS company ko nahi bhejta. "OTP bhejo" ki khabar **Kafka (line)** me daalta
+hai aur user ko turant "OTP aa raha hai" bol deta hai. Peeche **worker** line se ek-ek uthate hain aur SMS company
+ki raftaar se bhejte hain. Worker kitne bhi hon, sab ek saanjhi had (Redis ka ek token bucket, 1,000 / second)
+se token lete hain, to company tak utna hi jaata hai jitna wo jhel sake. Bheed kitni bhi ho, line beech me spike
+rok leti hai.
+
+Line bhi ek had tak hi lambi theek hai. Line itni bhar gayi ki OTP 10 minute baad pahunchega (tab tak OTP bekaar),
+to nayi request ko gateway pe hi **503** do: abhi bhare hain, thodi der baad aao.
 
 ```
-user ki had   (429)  -> "TU zyada bhej raha hai"     ek insaan ko rokta hai
-global cap    (503)  -> "HUM abhi bhare hain"         poore system ko bachata hai
+user ki had   (429)  -> "TU zyada bhej raha hai"           ek insaan ko rokta hai
+line + raftaar       -> "sab aao, par ek-ek karke"         SMS company ko bachata hai
+line bhari    (503)  -> "HUM abhi bhare hain, baad me"     poore system ko bachata hai
 ```
 
-Sab ek barabar nahi hain, to bhar gaye to pehle kam zaroori kaam chhodo (load shedding): search suggestion,
-recommendation aur analytics pehle kato, payment, order aur login aakhri tak chalao. Matlab sale me "aapke
-liye suggestion" band ho gaya, par Arpan ka payment chalta raha. Sale ka time pehle se pata hota hai, to
-servers pehle se badha do. Phir bhi zyada aaye to line (waiting room), jaise ticket sale me: "aap line me
-2,000ve hain".
+Ek aur baat: sab kaam ek barabar nahi hain. Bhar gaye to pehle kam zaroori kaam chhodo (load shedding): search
+suggestion, recommendation aur analytics pehle kato, OTP, payment aur login aakhri tak chalao.
 
 ```mermaid
 flowchart LR
-    U["1 crore log"] --> W["WAF"]
-    W --> G["API Gateway<br/>1. user had (429)<br/>2. global cap (503)"]
-    G -- "zaroori: payment" --> S["App x 10"]
-    G -- "bhara: suggestion" --> X["503 / baad me"]
-    G -- "Lua" --> R[("Redis + copy")]
-    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    U["1 crore bachche"] --> G["API Gateway<br/>user had (429)<br/>line bhari? (503)"]
+    G -- "had me" --> O["OTP Service"]
+    O -- "OTP bhejo" --> K[("Kafka<br/>line")]
+    K --> WK["Worker x N<br/>saanjhi had 1,000 / sec"]
+    WK --> SMS["SMS company"]
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style WK fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 Par Arpan ki script 3 region se chali: Mumbai, Singapore aur US. Har region ka apna Redis tha, har ek ne 100
@@ -395,16 +411,17 @@ sahi."
 
 ## 5. Wrap (30 second me poora design, NFR se milao)
 
-Request pehle WAF pe aati hai, jahan ban list hai. Phir API Gateway pe limiter: user ki had (429) aur poore
-system ki had (503). Ginti Redis me hai, token bucket ki Lua script se ek jhatke me, key = userId (login pe
-IP), user ke home region me, aur Redis ki copy ke saath. Had ke andar hai to app pe, warna 429 aur
-Retry-After. Har 429 ki khabar Kafka se Pattern Service tak, jo baar-baar wale ko ban karta hai.
+Request pehle WAF pe aati hai, jahan ban list hai. Phir API Gateway pe limiter: user ki had (429). Ginti Redis me
+hai, token bucket ki Lua script se ek jhatke me, key = userId (login se pehle IP pe dheeli had), user ke home
+region me, aur Redis ki copy ke saath. Had ke andar hai to app pe, warna 429 aur Retry-After. Har 429 ki khabar
+Kafka se Pattern Service tak, jo baar-baar wale ko ban karta hai. OTP jaise bahar ki company wale kaam line
+(Kafka) me jaate hain, worker company ki raftaar se bhejte hain, aur line bhar jaaye to 503.
 
 ```
 TEZ (1 ms)            -> Redis RAM me, gateway pe, ek Lua jhatka
 ginti EK              -> Redis (kai server ke liye) + home region (kai region ke liye)
                          + Lua (ek saath 20 ke liye)
-gire to site chale    -> Redis ki copy, fail-open (aam API) / fail-closed (login)
+gire to site chale    -> Redis ki copy; dono gaye to fail-open (aam API) / fail-closed (login, OTP)
 ```
 
 **Maan lo 10 guna traffic aa gaya:** gateway machine badhao · Redis ko user ke hisaab se shard karo + copy.

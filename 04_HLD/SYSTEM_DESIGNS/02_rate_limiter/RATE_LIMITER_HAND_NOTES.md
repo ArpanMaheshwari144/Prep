@@ -20,7 +20,7 @@ Har server galat bata raha hai "abhi had me hai". Unse bolo tu chhod, mujhe bata
 Interview: "Saare server apni ginti chhod ke Redis se poochhte: ravi ki ginti +1 karo, kitni hui? Ginti ek hi jagah."
 
 **3. Ghadi wala khaata, 10:09:58 pe 5 aur 10:10:01 pe 5, 3 second me 10**
-Ek dabbe me had rakho. Dabba apni raftaar se bharta (3 second me ek token), user apni raftaar se aata, aata hai to token nikaal ke aage. User kuch der na aaye to dabbe me kai token jama, ek saath le sakta hai, koi dikkat nahi.
+Ek dabbe me had rakho: dabbe me max 5 token, aur wo apni raftaar se bharta (har 2 minute me ek token, yaani 10 minute me 5), user apni raftaar se aata, aata hai to token nikaal ke aage. User kuch der na aaye to dabbe me kai token jama, ek saath le sakta hai, koi dikkat nahi.
 **token bucket**
 Interview: "Dabba raftaar se bharta, khaata badalne ka kinara hi nahi. Jama token se burst allow, par raftaar ki had bani rehti."
 
