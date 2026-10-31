@@ -1,385 +1,65 @@
-# Spring REST Flow — Visual Revision
+# Spring REST Flow
 
----
+## Kahani
 
-## 1 Typical Request Flow (Pizza Restaurant)
-
-```
-ANALOGY: Tu Domino's app pe pizza order karta
-
-   YOU (browser)
-        │
-        ▼
-   ┌──────────────┐
-   │  Receptionist │  ← Controller (takes order)
-   │  (@Controller)│
-   └──────┬───────┘
-          │
-          ▼
-   ┌──────────────┐
-   │  Manager     │  ← Service (business logic)
-   │  (@Service)   │     decides flow
-   └──────┬───────┘
-          │
-          ▼
-   ┌──────────────┐
-   │  Kitchen     │  ← Repository (DB access)
-   │  (@Repository)│     fetches data
-   └──────┬───────┘
-          │
-          ▼
-   ┌──────────────┐
-   │  PANTRY      │  ← Database
-   │  (MySQL)      │     stores stuff
-   └──────────────┘
-```
-
----
-
-## 2 4 Layers — Visual
+Tu Domino's app pe pizza order karta hai:
 
 ```
-   USER REQUEST
-        │
-        ▼
-   ┌─────────────────────────────────┐
-   │  CONTROLLER (REST API)          │  ← Handle HTTP
-   │  @RestController                 │     URL mapping
-   └────────────┬────────────────────┘     Validation
-                │
-                ▼
-   ┌─────────────────────────────────┐
-   │  SERVICE (Business Logic)       │  ← Decide flow
-   │  @Service                        │     Coordinate
-   └────────────┬────────────────────┘     Transactions
-                │
-                ▼
-   ┌─────────────────────────────────┐
-   │  REPOSITORY (Data Access)       │  ← DB queries
-   │  @Repository / JpaRepository     │     CRUD
-   └────────────┬────────────────────┘
-                │
-                ▼
-   ┌─────────────────────────────────┐
-   │  DATABASE (MySQL/Postgres)      │
-   └─────────────────────────────────┘
+Tu -> Receptionist (Controller) -> Manager (Service) -> Kitchen (Repository) -> Pantry (DB)
 ```
 
----
+- **Receptionist:** order leta hai aur check karta hai ki order poora likha hai ya nahi.
+- **Manager:** tay karta hai ki kaam kaise hoga.
+- **Kitchen:** pantry se saamaan nikaalta hai.
+- **Customer ko kya milta hai:** plate me saja hua pizza (DTO), kitchen ka kachcha saamaan (Entity) nahi.
 
-## 3 Code Reality — User Endpoint
+## Tasveer
 
-### Controller Layer
-```java
-@RestController
-@RequestMapping("/api/users")
-public class UserController {
-
-    private final UserService service;                 // constructor injection (field @Autowired nahi)
-    public UserController(UserService service) { this.service = service; }
-
-    @GetMapping("/{id}")
-    public UserResponse getUser(@PathVariable Long id) {   // DTO lautao, entity nahi (section 6)
-        return service.findById(id);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)                    // bina iske POST bhi 200 deta
-    public UserResponse create(@RequestBody @Valid UserRequest req) {
-        return service.create(req);
-    }
-}
-```
-
-### Service Layer
-```java
-@Service
-public class UserService {
-
-    private final UserRepository repo;
-    public UserService(UserRepository repo) { this.repo = repo; }
-
-    @Transactional(readOnly = true)
-    public UserResponse findById(Long id) {
-        User user = repo.findById(id)
-                        .orElseThrow(() -> new UserNotFound(id));
-        return UserResponse.from(user);                    // entity -> DTO (password bahar nahi jaata)
-    }
-
-    @Transactional
-    public UserResponse create(UserRequest req) {
-        // Business logic yahan
-        User user = new User(req.name(), req.email());
-        return UserResponse.from(repo.save(user));
-    }
-}
-```
-
-### Repository Layer
-```java
-@Repository
-public interface UserRepository
-        extends JpaRepository<User, Long> {
-
-    Optional<User> findByEmail(String email);
-    // Spring Data JPA = auto-implementation
-}
-```
-
----
-
-## 4 HTTP Annotations Cheat
+Ek POST request ka poora safar:
 
 ```
-┌─────────────────────┬──────────────────────┐
-│  Annotation         │  HTTP Method         │
-├─────────────────────┼──────────────────────┤
-│  @GetMapping        │  GET (read)          │
-│  @PostMapping       │  POST (create)       │
-│  @PutMapping        │  PUT (full update)   │
-│  @PatchMapping      │  PATCH (partial)     │
-│  @DeleteMapping     │  DELETE              │
-└─────────────────────┴──────────────────────┘
+Postman POST /api/users
+ -> Tomcat
+ -> Filter chain (JwtFilter: token galat? 401)       <- Spring MVC se PEHLE
+ -> DispatcherServlet (URL se controller method dhoondha)
+ -> JSON -> UserRequest + @Valid (galat? 400)
+ -> Controller -> Service (@Transactional) -> Repository -> DB INSERT
+ -> Entity -> DTO -> Jackson JSON -> 201
+ kahin bhi exception -> @RestControllerAdvice -> saaf error JSON
 ```
 
----
+## 4 khaas baat
 
-## 5 Path Variable vs Request Param vs Body
+1. **Request me data teen jagah se aata hai:**
+   - `/users/123` → `@PathVariable` (URL ka hissa)
+   - `?active=true` → `@RequestParam` (query)
+   - JSON body → `@RequestBody`
+2. **Bahar hamesha DTO bhejo, entity kabhi nahi.** Entity me password, role aur andar ke fields hote hain. `UserResponse { id, name, email }` me sirf wahi jaata hai jo dikhna chahiye.
+3. **`@Valid` method me ghusne se pehle hi rok deta hai.** Galat email ya khaali naam aaya to 400 jaata hai, aur tera code chalta hi nahi.
+4. **Har controller me try-catch nahi likhna padta.** `@RestControllerAdvice` me ek jagah likho: `UserNotFound` aaye to 404, validation fail ho to 400. Aur security ka filter DispatcherServlet se bhi pehle chalta hai, isliye galat token wali request controller tak pahunchti hi nahi.
 
-```
-URL:  GET /api/users/123?active=true
-
-   /api/users/123       ← @PathVariable
-                         (part of URL path)
-
-   ?active=true         ← @RequestParam
-                         (query string)
-
-
-URL:  POST /api/users
-Body: { "name": "Arpan", "email": "..." }
-
-   Body content         ← @RequestBody
-                         (JSON in body)
-```
+## Prod wala trap
 
 ```java
 @GetMapping("/{id}")
-public User get(
-    @PathVariable Long id,                    // 123
-    @RequestParam(required=false) Boolean active  // true
-) { ... }
-
-@PostMapping
-public User create(@RequestBody UserRequest req) { ... }
-```
-
----
-
-## 6 DTO Pattern — Why?
-
-```
-PROBLEM:
-   Tu ne User entity expose ki API mein:
-      User { id, name, email, password, role, createdAt }
-   = Password leak
-   = Internal fields exposed
-```
-
-```
-SOLUTION: DTO (Data Transfer Object)
-
-   ┌─────────────────────────────────┐
-   │  USER ENTITY (DB)                │
-   │  id, name, email, password, role │
-   └────────────────────────────────┘
-              │
-              │ map (only safe fields)
-              ▼
-   ┌─────────────────────────────────┐
-   │  USER DTO (API response)         │
-   │  id, name, email                 │
-   └────────────────────────────────┘
-              │
-              ▼
-        Sent to client
-```
-
-```
-INPUT DTOs:
-   LoginRequest    { email, password }
-   RegisterRequest { name, email, password }
-
-OUTPUT DTOs:
-   UserResponse   { id, name, email }  ← password chhupa
-   TokenResponse  { accessToken, refreshToken }
-
-ERROR DTOs:
-   ErrorResponse  { code, message, timestamp }
-```
-
----
-
-## 7 Validation — @Valid
-
-```java
-public record UserRequest(
-    @NotBlank
-    @Size(min=2, max=50)
-    String name,
-
-    @Email
-    @NotBlank
-    String email,
-
-    @Size(min=8)
-    String password
-) {}
-
-// Controller:
-@PostMapping
-public User create(@RequestBody @Valid UserRequest req) {
-    // Spring validates BEFORE entering method
-    // Invalid? throws MethodArgumentNotValidException
+public User get(@PathVariable Long id) {    // seedha entity lauta di
+    return repo.findById(id).orElseThrow();
 }
 ```
 
-```
-VALIDATION ANNOTATIONS:
-   @NotBlank   → string not empty/whitespace
-   @NotNull    → not null
-   @Size       → length check
-   @Min/@Max   → number range
-   @Email      → email format
-   @Pattern    → regex
-```
+Jackson poori entity JSON bana deta hai, aur `password` (hash) bhi response me chala jaata hai. Agar entity me doosri entity ka link ho (User → Orders → User), to JSON gol-gol ghoom ke `StackOverflowError` bhi de deta hai. Ilaaj: DTO lautao. Aur POST pe `@ResponseStatus(HttpStatus.CREATED)` lagao, warna wo bhi 200 hi deta hai.
 
----
+## Tera project
 
-## 8 Exception Handler — Global
+usercrud me poora yahi dhaancha hai: `UserController` → `UserService` → `BookRepository` / `UserRepository`. Global error ke liye `GlobalExceptionHandler` (`@RestControllerAdvice`) hai, aur controller se pehle `JwtFilter` chalta hai.
+
+## Interview line
 
 ```
-PROBLEM:
-   Har controller mein try-catch?
-   = Repetitive
-   = DRY principle break
-
-SOLUTION:
-   @RestControllerAdvice = global exception handler
-```
-
-```java
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-
-    @ExceptionHandler(UserNotFound.class)
-    public ResponseEntity<ErrorResponse> handle(UserNotFound e) {
-        return ResponseEntity
-                .status(404)
-                .body(new ErrorResponse(404, e.getMessage()));
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidation(...) {
-        // Validation errors
-    }
-}
-```
-
-```
-FLOW:
-   Anywhere in code:
-      throw new UserNotFound(id)
-                  │
-                  ▼
-   Spring intercepts
-                  │
-                  ▼
-   GlobalExceptionHandler ka matching method
-                  │
-                  ▼
-   Return clean error response (404)
-```
-
----
-
-## 9 Full Request Flow (End-to-End)
-
-```
-   Postman: POST /api/users
-   Body: { name: "Arpan", email: "..." }
-        │
-        ▼
-   ┌─────────────────────────┐
-   │ Tomcat (embedded)       │  ← HTTP request aayi
-   └────────────┬────────────┘
-                ▼
-   ┌─────────────────────────┐
-   │ Filter chain            │  ← Security (JwtFilter) yahin — Spring MVC se PEHLE
-   │ token galat? → 401      │
-   └────────────┬────────────┘
-                ▼
-   ┌─────────────────────────┐
-   │ DispatcherServlet       │  ← Spring MVC ka front controller
-   │ HandlerMapping          │     URL + method se kaunsa controller method? dhoondha
-   └────────────┬────────────┘
-                ▼
-   ┌─────────────────────────┐
-   │ Argument resolve        │  ← JSON body -> UserRequest (Jackson)
-   │ + Validation (@Valid)   │
-   │ Invalid? → 400 Bad Req  │
-   └────────────┬────────────┘
-                │ valid
-                ▼
-   ┌─────────────────────────┐
-   │ UserController.create() │
-   └────────────┬────────────┘
-                │
-                ▼
-   ┌─────────────────────────┐
-   │ UserService.create()    │  ← business logic
-   │ @Transactional starts   │
-   └────────────┬────────────┘
-                │
-                ▼
-   ┌─────────────────────────┐
-   │ UserRepository.save()   │
-   └────────────┬────────────┘
-                │
-                ▼
-   ┌─────────────────────────┐
-   │ DB INSERT               │
-   └────────────┬────────────┘
-                │
-                ▼
-   ┌─────────────────────────┐
-   │ Entity → DTO mapping    │  ← service me (UserResponse.from)
-   └────────────┬────────────┘
-                │
-                ▼
-   ┌─────────────────────────┐
-   │ Jackson: DTO → JSON     │  ← HttpMessageConverter
-   │ 201 (@ResponseStatus    │     bina iske 200
-   │      CREATED ki wajah)  │
-   └─────────────────────────┘
-
-   Kahin bhi exception -> @RestControllerAdvice -> saaf error JSON (404 / 400 ...)
-```
-
----
-
-## Memory Hook
-
-```
-Receptionist = Controller
-Manager     = Service
-Kitchen     = Repository
-Pantry      = Database
-
-DTO = Plate (presented)
-Entity = Raw ingredient (kitchen)
-@Valid = Quality check at receptionist
-@RestControllerAdvice = Manager handles ALL complaints
+A request goes through the filter chain (security), then DispatcherServlet maps it to a controller.
+Spring binds path variables, query params and the JSON body, runs @Valid, and the controller calls
+the service, which owns the transaction and calls the repository. I return DTOs, never entities,
+and handle errors centrally with @RestControllerAdvice.
 ```
 
 [← Back to SPRING](../)
