@@ -9,6 +9,8 @@ Zyadatar tukde pehle se padhe hue: Kafka worker ([notification](../04_notificati
 Redis ([URL](../01_url_shortener/01_url_shortener.md)), Cassandra + S3 ([chat](../14_chat_messaging/14_chat_messaging.md)).
 Iska apna: ek tweet laakhon logon ki feed me kaise pahunche (fanout), aur celebrity pe wo kaise mudta hai.
 
+**Arpan (Ravi + King Kohli wala scene, [hand notes](TWITTER_HAND_NOTES.md)):** taiyaar dabba = inbox · Kohli ki ek parchi = celeb pe fanout nahi · sab milake sort = merge at read · stadium wala bhai = Kafka + outbox · parchi ki 15 copy = hot key replicas · aakhri 500 + 30 din wala = inbox chhota · bada bhai = Cassandra, user id se · apni branch = region · branches ki baat = cross-region copy
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 do table, har feed pe jod -> inbox pehle se (fanout) -> Kafka + fanout worker (+ outbox)
 -> celebrity: fanout nahi, padhte waqt DB se (hybrid) -> viral: har server ka apna cache
@@ -78,6 +80,8 @@ Ek line: feed padhte waqt banti hai, aur padhne wale bahut zyada hain.
 
 ### Kadam 2: har user ka pehle se bana inbox (fanout on write)
 
+**Arpan:** Har baar DB kyun khodna. Dost apna mujhe de do, main apne paas rakhunga, Ravi aaye to turant de dunga.
+
 Har user ka Redis me ek **inbox** = uski taiyaar feed (sorted set, naya sabse upar). Koi tweet kare to wo
 tweet usi waqt uske saare followers ke inbox me daal do. Isi ko **fanout** kehte hain: ek tweet, kai inbox me
 bikhra.
@@ -113,6 +117,8 @@ Par Arpan ka dost Mohan chhota influencer hai, 5,000 follower. Mohan ne tweet da
 inbox me likh raha, uske baad hi "tweet ho gaya" bolega. Mohan ka button 5 second ghoomta raha.
 
 ### Kadam 3: tweet turant, fanout peeche se (Kafka + fanout worker)
+
+**Arpan:** 8,000 dabbe bharne tak "Post" ghoome. Beech me stadium wala bhai Kafka, "ho gaya" bolo, peeche bharta rahe; gira to outbox ki parchi.
 
 Dikkat: tweet karne wala ruke nahi, 5,000 inbox me likhna peeche se ho, aur beech me kuch khoye nahi. Yahi
 notification kadam 2 wali dikkat hai, to wahi ilaaj.
@@ -156,6 +162,8 @@ Par Virat Kohli ne match ke baad tweet kiya, 10 crore follower. Fanout worker 10
 ghanton lag gaye. Uske peeche Arpan, Mohan, sabke tweet line me atke.
 
 ### Kadam 4: celebrity ka alag raasta (hybrid fanout, twitter ka apna)
+
+**Arpan:** 27 crore dabbe nahi. Kohli ki ek parchi, sab wahi se padhein; Ravi aaye to dabba + parchiyan milao, time se sort.
 
 Do tarah ke log, do raaste:
 
@@ -203,6 +211,8 @@ padhai, DB garam.
 
 ### Kadam 5: crore log, sab DB se "Virat ke aakhri 20" (har server ka apna cache)
 
+**Arpan:** Six ke baad 5 crore ek parchi pe. Us parchi ki 10-15 copy, padhne wale bant jaayein; edit hua to ladka (job) sab copy theek kare.
+
 Ilaaj: har Feed Service machine ye jawab **apni memory me** 2 second rakhti hai (local cache). Matlab har server
 ka apna chhota cache, uske andar hi; koi alag Redis nahi.
 
@@ -234,6 +244,8 @@ Par Redis me 50 crore logon ka inbox, har inbox me hazaron tweet id. Redis ki RA
 mehngi hai.
 
 ### Kadam 6: inbox chhota rakho (3 chhoti baatein)
+
+**Arpan:** Dabbe me aakhri 500, purana S3 me. 30 din se nahi aaya to dabba nahi, lauta to DB se bana do.
 
 **1. Inbox me sirf tweet id** (ye Kadam 2 me ho chuka), poora tweet nahi.
 
@@ -275,6 +287,8 @@ Par roz 50 crore naye tweet tweets DB me jaate: 5,000 likhai / sec, saal bhar me
 likhai aur jagah nahi jhel paayegi.
 
 ### Kadam 7: tweets DB pe likhai bahut (Cassandra, author_id se baanto)
+
+**Arpan:** Likhai bahut to bada bhai Cassandra. Naam se nahi, user id se todo, Arpan ka sab ek jagah. Follow ka hisaab Neo4j.
 
 Pehle tweets ka kaam dekho:
 - tweet ek baar likha jaata, phir badalta nahi.
@@ -382,6 +396,8 @@ Par Arpan Bangalore me, aur saare server, Redis, Cassandra US me. Har feed ko US
 hi ~300 ms. NFR "feed 200 ms" toot gaya.
 
 ### Kadam 9: Arpan India me, server US me (India me apna region)
+
+**Arpan:** Lajpat Nagar me hi branch khol do. Branches aapas me baat karein; baat ruki to banda sambhal ke rakhe, judte hi bheje.
 
 ```
 India region (Mumbai):  Feed Service + Tweet Service + Redis inbox + Cassandra ki copy
