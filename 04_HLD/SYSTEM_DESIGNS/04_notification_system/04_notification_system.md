@@ -5,6 +5,8 @@ se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me pe
 file me ek hi kahani hai: Arpan ne Amazon pe order kiya, use push bhi aana chahiye aur email bhi, aur login
 ke waqt OTP ka SMS turant.
 
+**Arpan (order wala scene):** beech ka dabba = Kafka · alag line = topic + consumer group · parchi = idempotency · thodi der baad / alag dabba = retry + DLQ · backup company + VIP line = circuit breaker + OTP line · saanjha dabba = token bucket · "le liya" ke baad = webhook · tukde + parchi = chunks + checkpoint · ek saancha = template cache
+
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 seedha call -> Kafka + Notification Service -> har raaste ki line + worker -> key BHEJ_RAHA / BHEJ_DIYA (Redis)
 -> retry line + DLQ -> timeout + circuit breaker + doosri company -> OTP ki tez line -> saanjha token bucket
@@ -62,6 +64,8 @@ Par Order Service ko kisi ka intezaar nahi karna. Wo bas khabar kahin daal de au
 
 ### Kadam 2: khabar Kafka me daalo, Notification Service uthaye
 
+**Arpan:** "Place Order" 8 second ghooma. Beech me dabba: sab mere paas aao, main aaram se bhejta rahunga.
+
 Ab Order Service order banata hai, ek chhoti khabar `{ ORDER_PLACED, userId: Arpan, orderId: 999 }` Kafka ke
 topic me daalta hai, aur turant Arpan ko "order ho gaya" bol deta hai. Kisi company ka intezaar nahi.
 
@@ -114,6 +118,8 @@ ka push aur email bhi atak jaata hai.
 
 ### Kadam 3: har raaste ki alag line (topic) aur apne worker
 
+**Arpan:** SMS ke peeche bill atka. Mandir / airport jaisi alag-alag line, sab apni sambhalein.
+
 Notification Service ab company ko khud call nahi karta. Wo bas tay karta hai ki Arpan ko kis raaste bhejna hai,
 aur har raaste ki **alag Kafka line** me khabar daal deta hai: push wali line, email wali line, SMS wali line.
 Har line ke apne **worker** hain: push worker sirf push company ko bhejte, email worker sirf email company
@@ -150,6 +156,8 @@ gayi. Naya worker wahi khabar dobara uthata hai aur dobara bhejta hai.
 Arpan ko ek order ke do email aate hain.
 
 ### Kadam 4: key se ek hi baar (Redis me khabar ki id + haal)
+
+**Arpan:** Commit se pehle crash, do SMS. Kaam hua to parchi pe likho, dobara aaye to parchi dekho.
 
 Har khabar ki apni id hoti hai: order 999 ka email = `999:email`. Worker bhejne se pehle **Redis** me is id
 ki key likhta hai: 999:email = BHEJ_RAHA. Ye sirf tab likhi jaati hai jab key pehle se na ho, aur iski umar 60
@@ -188,6 +196,8 @@ Par SMS company ne fail lauta diya. Worker turant dobara bhejta hai, phir fail, 
 pareshaan company ko har second dhakka maar raha hai.
 
 ### Kadam 5: ruk-ruk ke dobara, phir bhi na jaaye to DLQ
+
+**Arpan:** "Baad me try karo." Alag rakh do, thodi der baad (papa busy hain to baad me). Galat number alag dabbe me.
 
 SMS company ne fail lauta diya. Worker ab turant dobara nahi maarta. Khabar ko ek **retry line** me daal deta
 hai, wait ke saath: pehli baar 1 sec baad, phir 2, phir 4, phir 8. Har baar wait dugna, aur usme thoda random
@@ -233,6 +243,8 @@ me phanse baithe hain.
 
 ### Kadam 6: timeout + circuit breaker + doosri company
 
+**Arpan:** Company band. Teen-chaar company, do-teen fail pe backup, beech-beech me main ko "tu theek hai?".
+
 **Timeout:** worker SMS company ko sirf 2 sec deta hai. Jawab nahi aaya to call chhod ke khabar retry line
 (Kadam 5) me. Ab koi worker 30 sec phansa nahi rehta.
 
@@ -258,6 +270,8 @@ Par 12 baje sale shuru hui, aur 50,000 offer SMS line me pehle se khade hain. Ar
 lag gaya. OTP 5 min me bekaar ho jaata hai, offer 1 ghanta baad bhi chalega.
 
 ### Kadam 7: OTP ki alag tez line
+
+**Arpan:** OTP VIP hai, mandir ke VIP darshan jaisi alag jaldi wali line.
 
 Notification Service har khabar ko ek darja deta hai: **TEZ** (OTP, password reset), **BEECH** (order hua, ship
 hua), **DHEEMI** (offer, sale ki khabar). Kadam 3 wali raaste ki lines hat-ti nahi: SMS line ke andar bhi
@@ -296,6 +310,8 @@ Par sale me ek saath laakhon SMS. Humare worker tez hain, par SMS company ki had
 bheja to wo **429** (Too Many Requests) lauta deti hai.
 
 ### Kadam 8: company ki had, saanjha token bucket (Redis)
+
+**Arpan:** 20 worker, had 100. Saanjha dabba: ek jagah se guzro, ginti wahin.
 
 SMS company ki had 1000 / sec hai, aur humare 20 SMS worker hain. Har worker apne hisaab se bhejega to milake
 1000 se upar chala jaayega, aur company **429** (Too Many Requests) lauta degi.
@@ -349,6 +365,8 @@ Par company ne "bhej diya" (200) bola. Kya Arpan ke phone tak pahuncha? Number b
 humein pata hi nahi chalta.
 
 ### Kadam 9: company se "pahuncha ya nahi" (webhook + Tracking DB)
+
+**Arpan:** "Le liya" != bheja. Company baad me bheja / fail batati, tab parchi me likho.
 
 Worker ne SMS company ko bheja, company ne turant 200 bola = "le liya". Par 200 ka matlab "Arpan ke phone
 tak pahunch gaya" nahi. Company abhi bhejegi. Arpan bole "OTP aaya hi nahi", to humare paas koi jawab nahi.
@@ -409,6 +427,8 @@ Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Camp
 khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.
 
 ### Kadam 10: 1 crore ka campaign, 1000 ke tukdon me
+
+**Arpan:** Ek worker 1 crore nahi. Range baanto, DB me mark, koi gira to baaki backup bheje.
 
 PEHLE (tukde nahi): ek hi baar me 1 crore
 
@@ -484,6 +504,8 @@ Par sale me har khabar pe Notification Service DB se pasand + saancha padh raha 
 DB ghut raha hai.
 
 ### Kadam 11: pasand + saancha ka cache
+
+**Arpan:** Diwali saancha ek, apne paas rakh lo. Pasand DB me, token bucket se load chhota; naap ke hi cache.
 
 Ilaaj: pasand aur saancha Redis cache me rakho, DB tak sirf tab jao jab cache me na mile.
 
