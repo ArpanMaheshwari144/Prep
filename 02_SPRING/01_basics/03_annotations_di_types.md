@@ -1,244 +1,56 @@
 # Spring Annotations + DI Types
 
-> **V90 — Spring 101: Topic 3**
+## Kahani
 
----
+2005 me har bean XML me likhna padta tha:
 
-## WHY — Annotations Kyu?
-
-**Pre Spring 2.5:** XML mein bean definitions:
 ```xml
-<bean id="userService" class="com.app.UserService">
+<bean id="userService" class="UserService">
     <property name="userRepo" ref="userRepo"/>
 </bean>
 ```
-**Har bean ke liye XML ki lines — bade app me hazaaron lines ka XML.**
 
-**Spring 2.5+:** Annotations — same kaam, bahut kam code, Java mein hi sab.
+Bade app me hazaaron lines ka XML ho jaata tha. Spring 2.5 me annotations aaye. Ab class ke upar `@Service` likh do, aur Spring use apne aap dhoondh ke bean bana leta hai.
 
----
-
-## Component Annotations — Family Tree
+## Tasveer
 
 ```
-                @Component
-                (generic — Spring-managed bean)
-                     │
-                     │ specializations
-                     ▼
-        ┌────────────┼────────────┬────────────┐
-        ▼            ▼            ▼            ▼
-   @Service    @Repository   @Controller   @RestController
-   (business)  (DB layer)    (HTTP MVC)    (REST API)
+            @Component  (sabka baap)
+     ┌──────────┼───────────┬──────────────┐
+  @Service  @Repository  @Controller  @RestController
+  (sirf     (DB exception (MVC request  (@Controller +
+   label)    badalta)      handler)      @ResponseBody, JSON)
 ```
 
-**Sab internally `@Component`** — isliye sab bean bante. Par sab sirf label NAHI: `@Service` = sirf label, `@Repository` aur `@Controller` me extra kaam hai (neeche table).
+## 4 khaas baat
 
----
+1. **`@Component` teri apni class pe lagta hai, `@Bean` doosre ki class ke liye.** `RestTemplate` jaisi library class ka code tu badal nahi sakta, isliye `@Configuration` class me ek `@Bean` method likh ke `return new RestTemplate();` karte hain.
+2. **Injection ke 3 tareeke hain, aur constructor injection sabse sahi hai.** Field `final` rehta hai, test me `new UserService(mockRepo)` seedha likh sakte ho, aur zaroori dependency chhoot nahi sakti. Field `@Autowired` isliye kharab hai ki usme na `final` milta hai, na aasaan test, aur dependencies chhupi rehti hain. Wajah reflection nahi hai, constructor injection bhi reflection use karta hai.
+3. **Ek interface ke do bean hon to Spring ulajh jaata hai.** `@Primary` lagao to wo default ban jaata hai, `@Qualifier("naam")` lagao to tu khud chun leta hai.
+4. **Circular dependency:** A ko B chahiye aur B ko A, darwaze pe do dost "pehle tu, pehle tu" karte khade hain. Constructor injection me ye fail hota hai (`BeanCurrentlyInCreationException`), aur Boot 2.6 se field injection me bhi by default band hai. Ilaaj:
+   - **Sabse sahi:** teesri class nikaal ke cycle hatao, kyunki ye aksar design ki galti hoti hai.
+   - **Ya:** ek param pe `@Lazy` lagao.
 
-## Specialization Table
-
-| Annotation | Layer | Extra Behavior |
-|-----------|-------|----------------|
-| `@Component` | Generic / utility | None — basic bean |
-| `@Service` | Business logic | None — just semantic |
-| `@Repository` | DB / data access | **Auto translates DB exceptions** to Spring's `DataAccessException` |
-| `@Controller` | Web MVC (returns view names) | Spring MVC isko request handler maanta (`@RequestMapping` methods dhoondhta) |
-| `@RestController` | REST API (returns JSON) | `@Controller + @ResponseBody` |
-
-**`@Service` aur `@Component` = sirf label.** `@Repository` = exception translation. `@Controller` / `@RestController` = MVC handler (+ `@ResponseBody`).
-
----
-
-## `@Component` vs `@Bean`
-
-### `@Component` — class-level (TUMHARI class)
-```java
-@Component
-class MyService { }     // tumhari class
-```
-
-### `@Bean` — method-level (3rd party class)
-```java
-@Configuration
-class AppConfig {
-    @Bean
-    RestTemplate restTemplate() {        // 3rd party class
-        return new RestTemplate();
-    }
-}
-```
-
-**`RestTemplate`** Spring/library ka class — **source modify nahi kar sakte**. Toh `@Bean` method banao.
-
----
-
-## `@Autowired` — 3 Types of DI
-
-### 1. Field Injection (DISCOURAGED)
-```java
-@Service
-class UserService {
-    @Autowired
-    private UserRepository userRepo;
-}
-```
-- `final` field nahi
-- Test mein mock pass mushkil
-- Hidden dependencies
-
-### 2. Setter Injection (Rare)
-```java
-@Service
-class UserService {
-    private UserRepository userRepo;
-
-    @Autowired
-    public void setUserRepo(UserRepository userRepo) {
-        this.userRepo = userRepo;
-    }
-}
-```
-**Use case:** Optional dependencies.
-
-### 3. Constructor Injection (BEST)
-```java
-@Service
-class UserService {
-    private final UserRepository userRepo;     // final
-
-    public UserService(UserRepository userRepo) {
-        this.userRepo = userRepo;
-    }
-}
-```
-- `final` fields
-- Test easy (`new UserService(mockRepo)`)
-- Required deps enforced
-- Spring official recommendation
-
----
-
-## DI Comparison Table
-
-| Feature | Field | Setter | Constructor |
-|---------|-------|--------|-------------|
-| `final` field | Nahi | Nahi | Haan |
-| Test without Spring | Mushkil | OK | Easy |
-| Required deps enforced | Nahi | Nahi | Haan |
-| Industry standard | Nahi | Nahi | Haan |
-
----
-
-## ★ PROJECT CONNECT — usercrud (constructor-injection everywhere) (8-Sep)
-
-> Theory ("constructor = best") tere project me har jagah:
-```
-CONSTRUCTOR INJECTION EVERYWHERE (field injection ek jagah nahi):
-  UserController -> private final UserService
-  UserService    -> private final UserRepository   (comment: "single-ctor -> @Autowired implicit")
-  AuthController -> 5 deps: UserRepository, RefreshTokenRepository, JwtService,
-                    AuthenticationManager, PasswordEncoder
-  JwtFilter      -> private final JwtService, CustomUserDetailsService
-```
-- `private final X` + constructor = "constructor injection = best" LIVE (final = immutable, guaranteed-set)
-- ek hi constructor -> `@Autowired` likhne ki zaroorat nahi, Spring khud samajhta (UserService comment)
-
-**★ Honest note (interview me aise bolo):**
-```
-@Qualifier/@Primary mere project me NAHI -> har type ka EK hi impl -> ambiguity aayi hi nahi.
-2 impl hote (JpaUserRepo + MongoUserRepo) tab @Qualifier/@Primary lagta.
-```
-Reality: **@Qualifier/@Primary bade real projects me KAM use hota** — mostly ek clean impl, sab ko pata kab/kaise -> koi bada scene nahi. Interview me theory bolna kaafi; har baar "maine project me" ghusana zaroori nahi.
-
----
-
-## ★ CIRCULAR DEPENDENCY — A ko B chahiye, B ko A (8-Sep, deep-grill)
-
-> Do bean ek doosre pe depend: `A(B b)` aur `B(A a)`. Kaun pehle bane?
-
-**CONSTRUCTOR injection pe FAIL (deadlock):**
-```
-Rule: A tabhi bane jab HAATH me B ho; B tabhi bane jab HAATH me A ho.
-Spring: "A banau -> B chahiye -> B banau -> A chahiye -> A banau..." GOL-GOL -> BeanCurrentlyInCreationException.
-
-   A ──needs──► B
-   ▲           │
-   └──needs────┘     dono ek-doosre ka intezaar -> koi paida nahi -> DEADLOCK
-```
-Darwaze pe do dost: "pehle TU aa" / "nahi pehle TU". Koi andar nahi aata.
-
-**KYUN fail:** constructor me "paida hona" aur "dependency milna" EK step hai -> khaali paida ho hi nahi sakta -> cycle todne ka mauka hi nahi.
-
-**SETTER/FIELD injection pe TOOT jaata (movie):**
-Yahan paida-hona pehle, inject baad me. Spring ek DIARY (cache) me aadha-bana pata likhta:
-```
-1. A ka KHAALI shell paida (constructor bina B ke chal gaya)     A=[khaali, B missing]
-2. Spring diary me likha: "A yahan hai -> [address]"             DIARY:{A->addr}
-3. Ab B banao. B ko A chahiye -> diary dekha -> "A to yaha hai" -> B ko A ka address diya. B READY.
-4. Wapas A ke khaali haath me ready-B pakda diya (setter).        A READY.
-5. DONO ready -> cycle TOOT gaya.
-```
-
-**★ 3-LEVEL CACHE (interviewer kholega) = wahi DIARY, 3 khaane:**
-```
-1. singletonObjects       -> poore READY bean
-2. earlySingletonObjects  -> aadhe-bane (expose ho chuke, init baaki)
-3. singletonFactories     -> factory jo "early reference" bana ke deti
-```
-Level-3 sirf isliye: agar A ko PROXY (cover) me lapetna ho (@Transactional), to B ko jo early-reference mile wo PROXY ho, raw nahi. [[proxy-jdk-vs-cglib]]
-
-**FIX (order):**
-```
-1. @Lazy ek constructor-param pe -> Spring nakli-lazy proxy inject, asli bean pehli use pe -> chicken-egg toota
-2. REFACTOR (BEST) -> teesri class nikaal ke cycle hatao (cycle aksar DESIGN-SMELL)
-3. setter/field injection -> Spring diary-trick se todta (PAR Boot 2.6+ me by-default BAND ->
-   spring.main.allow-circular-references=true chahiye; LAST option)
-```
-★ NOTE: field/setter cycle todta ZAROOR, par "field injection accha" NAHI -> general best abhi bhi CONSTRUCTOR; cycle pe pehle @Lazy/refactor, field-injection last.
-
----
-
-## Multiple Beans Resolution
+## Prod wala trap
 
 ```java
-@Service class JpaUserRepo implements UserRepository { }
-@Service class MongoUserRepo implements UserRepository { }
+@Service class SmsSender implements Sender { }
+@Service class EmailSender implements Sender { }   // naya joda
+
+public OrderService(Sender sender) { ... }          // app start hi nahi hua
 ```
 
-**Ambiguity!** Spring confused — kaunsa inject kare?
+Kal tak ek hi `Sender` tha, aaj teammate ne doosra jod diya. Ab startup pe `NoUniqueBeanDefinitionException` aata hai aur poori app nahi uthti. Ilaaj `@Primary` ya `@Qualifier` hai.
 
-### Solution 1: `@Primary` (default pick)
-```java
-@Primary
-@Service class JpaUserRepo implements UserRepository { }
+## Tera project
+
+usercrud ke main code me field `@Autowired` ek bhi nahi hai, har jagah constructor injection hai. `AuthController` ki 5 dependencies sab `private final` hain: `UserRepository`, `RefreshTokenRepository`, `JwtService`, `AuthenticationManager` aur `PasswordEncoder`. Ek hi constructor hai, isliye `@Autowired` likhna bhi nahi pada.
+
+## Interview line
+
 ```
-
-### Solution 2: `@Qualifier` (explicit)
-```java
-@Autowired
-@Qualifier("mongoUserRepo")
-private UserRepository userRepo;
+@Component marks my class as a bean; @Service, @Repository and @Controller are specializations,
+where @Repository adds exception translation. @Bean is for third-party classes.
+I use constructor injection: final fields, easy testing, required dependencies.
+Two beans of one type need @Primary or @Qualifier; circular dependencies are best fixed by refactoring.
 ```
-
----
-
-## POWER PHRASES
-
-> *"`@Component` is the generic Spring-managed bean. `@Service`, `@Repository`, `@Controller` are specializations — `@Service` is purely semantic, `@Repository` adds exception translation to Spring's DataAccessException, and `@Controller` marks the class as a Spring MVC request handler."*
-
-> *"Constructor injection is recommended in Spring — final fields, easy testing, required dependencies enforced. Field injection via `@Autowired` is discouraged for immutability/testability/null-safety reasons — it hides dependencies and can mask circular-dependency design smells."*
-
-> ★ FIX (8-Sep): "field injection discouraged kyunki reflection" GALAT tha — constructor injection bhi reflection use karta. Asli reason = **immutability (final), testability (`new UserService(mock)`), null-safety, hidden-deps, circular-dep masking** — reflection nahi.
-
----
-
-## TRAPS
-
-| Trap | Reality |
-|------|---------|
-| "@Component vs @Bean — same hai" | NO — Component class-level, Bean method-level for 3rd party |
-| "Field injection easy" | Yes but discouraged — final, testing, required-check fail |
-| "Multiple beans = error" | Solve via `@Primary` ya `@Qualifier` |
-| "@Repository = just label" | NO — adds exception translation, real value |
-| "@Controller = just label" | NO — MVC isi se class ko request handler maanta |
