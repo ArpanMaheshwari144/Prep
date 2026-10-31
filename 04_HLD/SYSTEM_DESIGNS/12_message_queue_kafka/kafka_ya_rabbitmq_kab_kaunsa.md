@@ -41,9 +41,11 @@ me likhta hai, aur disk pe seedha aage-aage, isliye bahut tez hai.
 ko chahiye tha ki search abhi padhe, aur Hadoop raat ko wahi saara data padhe. Ek naya system aaye to wo bhi
 purana data padh sake. Kafka me message kuch din pada rehta hai, aur jo chahe, jab chahe padh leta hai.
 
-**3. Hisaab kiske paas rahe.** RabbitMQ me broker yaad rakhta hai ki har padhne wale ne kahan tak padha. Padhne
-wale badhe, to broker ka bojh bhi badha. Kafka me har padhne wala apna bookmark (offset) khud rakhta hai, broker
-bas register sambhalta hai. Isliye 10 naye padhne wale aa jaayein, to bhi broker pe farak nahi padta.
+**3. Hisaab kiske paas rahe.** RabbitMQ me broker har message ka hisaab rakhta hai: kaunsa message kis padhne wale
+ko diya, kisne "mil gaya" (ack) bola. Padhne wale badhe, to broker ka bojh bhi badha. Kafka me har padhne wale group
+ka bas ek number hota hai, bookmark (offset): "yahan tak padh liya". Shuru me ye number padhne wala khud (ZooKeeper me)
+rakhta tha, aaj broker ek chhote topic me rakhta hai. Par hai sirf ek number, har message ka hisaab nahi. Isliye 10
+naye padhne wale aa jaayein, to bhi broker pe farak nahi padta.
 
 ```
 LinkedIn ko chahiye tha:  bahut data + kai padhne wale + dobara padhna + raat ko Hadoop

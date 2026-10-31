@@ -241,7 +241,7 @@ ke liye wahi rate limiter jo [rate limiter file](../02_rate_limiter/02_rate_limi
 
 **Maan lo pay ke beech token ki umar (10 min) khatam:** seat pe koi asar nahi. Do alag ghadiyan hain: TOKEN = darwaze ki
 parchi (andar aao, HOLD karo), HOLD = seat ki ghadi (SQL me, 5 min). HOLD ho gaya to seat ka faisla sirf hold ki ghadi se.
-Hold 5 min ka, token 10 ka, to hold hamesha pehle khatam. Token khatam = bas nayi seat HOLD nahi kar sakta, dobara line.
+Token andar aate hi chalu hota hai, hold seat chunte waqt, isliye koi pehle bhi khatam ho sakta hai. Token khatam = bas nayi seat HOLD nahi kar sakta, dobara line.
 
 **Maan lo Redis aur uski copy dono gaye:** Pehle ek baat pakki: dil (ek seat ek hi ticket) SQL me hai, Redis me
 nahi. HOLD, BOOKED, payment sab SQL me. Redis poora gaya to system dheema ya ruka ho sakta, galat nahi.
