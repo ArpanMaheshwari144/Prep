@@ -29,7 +29,7 @@ Ye design "distributed" isliye hai kyunki ek machine kaafi nahi padti. Iske teen
 ke kadam ban jaayenge:
 
 ```
-DATA     1 TB data hai, aur ek machine ki RAM 64 GB. Saara ek machine me nahi aata  -> BAANTNA padega
+DATA     1 TB data hai, aur ek machine ki RAM 128 GB. Saara ek machine me nahi aata  -> BAANTNA padega
 BHEED    10 lakh request har second ek machine nahi jhel paati                     -> kai machine
 GIRNA    ek hi machine ho aur wo mar jaaye, to saara bojh wapas DB pe              -> COPY rakhni padegi
 ```
@@ -95,7 +95,7 @@ hain, to DB ka bojh 10 guna kam ho gaya.
 
 **AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain. Sirf USE karna ho to ElastiCache; ye design us dabbe ke andar ka hai (copy, Sentinel hum khud samajh rahe hain).
 
-Par cache machine ki RAM sirf 64 GB hai, aur roz naye offer, naye user, naye cart judte ja rahe hain.
+Par cache machine ki RAM sirf 128 GB hai, aur roz naye offer, naye user, naye cart judte ja rahe hain.
 Dopahar tak RAM bhar gayi. Ab nayi key rakhni hai, to purani me se kaunsi hatayein?
 
 ### Kadam 2: RAM bhar gayi, kaunsi key hatayein (LRU + TTL)
@@ -143,25 +143,25 @@ taaza aati hai.
 
 **Maan lo pooche umar khatam hui key ko kaun hatata:** do tareeke saath: koi us key ko maange tab dekh ke hatao, aur peeche se thodi-thodi key check karke hatao.
 
-Ab ek machine me jagah ka hisaab ho gaya. Par data hi 1 TB hai, aur ek machine ki RAM sirf 64 GB. Itna data ek
+Ab ek machine me jagah ka hisaab ho gaya. Par data hi 1 TB hai, aur ek machine ki RAM sirf 128 GB. Itna data ek
 machine me aata hi nahi.
 
 ### Kadam 3: data 1 TB, ek machine me nahi aata (baanto)
 
 **Arpan-Ravi:** 10 crore users, 1 TB. Tod do, kai dabbe, key ka hash batata hai kaunsa dabba.
 
-1 TB data hai aur ek machine ki RAM 64 GB. To kai cache machine lagao, maan lo 20, aur data unme baant do. Har
+1 TB data hai aur ek machine ki RAM 128 GB. To kai cache machine lagao, maan lo 10, aur data unme baant do. Har
 machine pe data ka ek hissa.
 
-Ab sawaal ye hai ki "user:42" kis machine pe hai, ye kaise pata chale? Agar har baar saari 20 machine se
+Ab sawaal ye hai ki "user:42" kis machine pe hai, ye kaise pata chale? Agar har baar saari 10 machine se
 poochein, to 1 ms wali tezi khatam ho jaayegi.
 
 Ilaaj: key se hi machine nikaal lo.
 
 ```
-machine = hash("user:42") % 20      -> maan lo 7 aaya
+machine = hash("user:42") % 10      -> maan lo 7 aaya
 PUT  "user:42" -> seedha machine 7 pe rakho
-GET  "user:42" -> wahi hash -> seedha machine 7 se poochho, baaki 19 ko chhuna hi nahi
+GET  "user:42" -> wahi hash -> seedha machine 7 se poochho, baaki 9 ko chhuna hi nahi
 ```
 
 Ye hisaab kaun karta hai? App ke andar ek chhoti library hoti hai, **cache client**. Usko pata hota hai ki
@@ -170,7 +170,7 @@ nahi, isliye tezi bani rehti hai.
 
 ```mermaid
 flowchart LR
-    A["App<br/>+ cache client:<br/>hash(key) % 20"] -->|"user:42"| M7["Cache machine 7"]
+    A["App<br/>+ cache client:<br/>hash(key) % 10"] -->|"user:42"| M7["Cache machine 7"]
     A -->|"offer:diwali"| M3["Cache machine 3"]
     A -.->|"nahi mila"| D[("DB")]
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -178,33 +178,33 @@ flowchart LR
     style M3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par Diwali sale aayi, data aur badha, to 20 se 21 machine kar di. Ab `% 20` ki jagah `% 21` ho gaya, aur
-lagbhag har key ki machine badal gayi. "user:42" machine 7 me pada hai, par client ab use machine 15 me
+Par Diwali sale aayi, data aur badha, to 10 se 11 machine kar di. Ab `% 10` ki jagah `% 11` ho gaya, aur
+lagbhag har key ki machine badal gayi. "user:42" machine 7 me pada hai, par client ab use machine 4 me
 dhoondh raha hai. Lagbhag saare cache ek saath MISS hone lage, aur saari bheed seedha DB pe gir padi.
 
 ### Kadam 4: machine judi to saare MISS (ring = consistent hashing)
 
-**Arpan-Ravi:** 21vi machine judi, % 20 se % 21, sab key ki jagah badli. Ring: key sabse paas wali machine pe, jaise kho-kho me paas wale ko dhakka.
+**Arpan-Ravi:** 11vi machine judi, % 10 se % 11, sab key ki jagah badli. Ring: key sabse paas wali machine pe, jaise kho-kho me paas wale ko dhakka.
 
 Wahi ring jo URL me thi. Ek gol ghadi socho, 0 se 360 tak. Har cache machine ghadi pe ek jagah baithti hai.
 Har key bhi hash hoke ghadi pe ek jagah girti hai, aur wahan se ghadi ki disha me chalte hue jo pehli machine
 mile, key usi ki hai.
 
-21vi machine aayi aur 95 pe baithi. Ab sirf 60 se 95 ke beech wali key nayi machine pe jaati hain, baaki sab
-apni jagah rehti hain. `%` me lagbhag saari key hilti thi, ring me sirf ek tukda (lagbhag 1/21) hilta hai.
+11vi machine aayi aur 95 pe baithi. Ab sirf 60 se 95 ke beech wali key nayi machine pe jaati hain, baaki sab
+apni jagah rehti hain. `%` me lagbhag saari key hilti thi, ring me sirf ek tukda (lagbhag 1/11) hilta hai.
 Matlab sirf thodi key MISS hoti hain, aur DB pe bas thoda bojh aata hai.
 
 ```mermaid
 flowchart LR
     A["App<br/>+ cache client: RING<br/>(har machine ghadi pe<br/>100-200 jagah)"] --> M7["Cache machine 7"]
     A --> M3["Cache machine 3"]
-    A --> M21["Cache machine 21 (nayi)<br/>sirf 60-95 wali key isme aayi"]
+    A --> M11["Cache machine 11 (nayi)<br/>sirf 60-95 wali key isme aayi"]
     A -.->|"nahi mila"| D[("DB")]
     style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style M21 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style M11 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Virtual nodes:** sirf 21 machine ghadi pe baithi hon to unke beech ki doori barabar nahi hoti. Kisi machine
+**Virtual nodes:** sirf 11 machine ghadi pe baithi hon to unke beech ki doori barabar nahi hoti. Kisi machine
 ke hisse me bada tukda aata hai aur wo zyada bhar jaati hai. Isliye har machine ko ghadi pe ek jagah nahi,
 100-200 jagah bithate hain. Tab har machine ke hisse me lagbhag barabar key aati hain.
 

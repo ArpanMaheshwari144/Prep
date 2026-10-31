@@ -4,7 +4,7 @@
 
 Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
 shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
-me ek hi kahani hai: Arpan ka app, aur uske login pe hamla karta ek bot.
+me ek hi kahani hai: Arpan ki app ka "OTP bhejo" button, aur Ravi ki script jo use dhadadhad dabati hai.
 
 **Arpan aur Ravi (OTP button wala scene):** ek bande ki had = rate limit · sabki ginti = Redis · apni raftaar se bharta dabba = token bucket · ek jhatke me = Lua · gate ka guard = gateway · papa ke dost vs chor = fail-open / closed · alag dabba = ban list · ghar ka region = home region
 
@@ -49,17 +49,17 @@ Redis aayega, DB nahi.
 
 **Arpan-Ravi:** Ravi ki script, dhadadhad SMS, bekaar ka bill. Ek bande ki ek had lagao, paar hui to 429.
 
-App server ki memory me ek map rakho: `user -> is minute kitni request aayi`.
+App server ki memory me ek map rakho: `user -> in 10 minute me kitne OTP`.
 
 ```
-request aayi -> map[arpan] me +1 -> 5 se zyada? -> 429
+request aayi -> map[ravi] me +1 -> 5 se zyada? -> 429
                                     nahi        -> aage jaane do
-minute badla -> map saaf
+10 minute poore -> map saaf
 ```
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> S["App server<br/>map: arpan -> 3"]
+    U["Ravi"] --> S["App server<br/>map: ravi -> 3"]
     S --> K["kaam"]
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -72,8 +72,8 @@ sab ek saath na lautein) + X-RateLimit-Remaining (kitne bache).
 **Maan lo tumhe kisi ne 429 diya:** Retry-After maano, ruk-ruk ke dobara (backoff + jitter), apni raftaar
 ghatao.
 
-Par bheed badhi to 10 app server lag gaye, aur aage LB. Ab Arpan ki 5 login App 1 pe gayi aur 5 App 2 pe. Dono
-ne alag-alag gina, dono ko laga "5 hi to hain", aur 10 andar chali gayi. Had toot gayi.
+Par bheed badhi to 10 app server lag gaye, aur aage LB. Ab Ravi ki script ke 5 OTP App 1 pe gaye aur 5 App 2 pe. Dono
+ne alag-alag gina, dono ko laga "5 hi to hain", aur 10 OTP chale gaye. Had toot gayi.
 
 ### Kadam 2: kai server, ginti ek jagah (Redis)
 
@@ -82,17 +82,17 @@ ne alag-alag gina, dono ko laga "5 hi to hain", aur 10 andar chali gayi. Had too
 Ilaaj: sabki ginti **ek jagah** rakho, yaani Redis me. Har app server har request pe Redis se poochhta hai.
 
 ```
-key   = rl:arpan:login          (kaun user + kaunsa kaam)
+key   = rl:ravi:otp             (kaun user + kaunsa kaam)
 INCR  -> 1, 2, 3 ...            (Redis me ginti +1 karo, nayi ginti wapas aati hai)
-umar  = 60 sec (TTL)            -> pehli request pe lagti; 60 sec baad key apne aap gayab = ginti reset
+umar  = 10 min (TTL)            -> pehli request pe lagti; 10 min baad key apne aap gayab = ginti reset
 6vi aayi -> 429
 ```
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> LB["LB"]
+    U["Ravi"] --> LB["LB"]
     LB --> S1["App 1"] & S2["App 2"]
-    S1 & S2 -- "INCR rl:arpan:login" --> R[("Redis<br/>arpan:login = 6")]
+    S1 & S2 -- "INCR rl:ravi:otp" --> R[("Redis<br/>ravi:otp = 6")]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -100,19 +100,19 @@ Redis kyun, DB kyun nahi? NFR kehta hai ~1 ms, aur har second 10,000 request. DB
 kai ms lagte, poori site dheemi ho jaati. Redis RAM me hai, ~1 ms. Aur numbers me nikla tha ki data sirf 500
 MB hai, RAM me aa jaata hai.
 
-Umar (TTL) isliye ki 60 sec baad key khud mit jaaye, safai ke liye koi job na chalana pade.
+Umar (TTL) isliye ki 10 min baad key khud mit jaaye, safai ke liye koi job na chalana pade.
 
 **AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
 
-Ye "minute" ghadi ka nahi, Arpan ki pehli request se shuru hota hai (10:00:20 pe pehli aayi to 10:01:20 tak).
-Par kinare pe dikkat wahi: bot ne 10:01:19 pe 5 bheji (window ka aakhri second) aur 10:01:20 pe phir 5 (nayi window
-ka pehla second). Ek second ke andar 10 andar chali gayi, kyunki umar khatam hote hi ginti 0 ho gayi.
+Ye 10 minute ghadi ke nahi, Ravi ki pehli request se shuru hote hain (10:00:00 pe pehli aayi to 10:10:00 tak).
+Par kinare pe dikkat wahi: Ravi ki script ne 10:09:58 pe 5 maange (window ke aakhri second) aur 10:10:01 pe phir 5 (nayi window
+ke pehle second). 3 second ke andar 10 OTP chale gaye, kyunki umar khatam hote hi ginti 0 ho gayi.
 
 ### Kadam 3: minute ke kinare pe dugni (kaunsa tareeka gine)
 
 **Arpan-Ravi:** ghadi wala khaata badla, 3 second me 10 OTP. Had dabbe me: dabba apni raftaar se bhare, user aaye to token nikaale (token bucket).
 
-Ab tak ek band khidki (60 sec) me gin rahe the, jo khatam hote hi 0 se shuru hoti hai (isse **fixed window** kehte hain). Gin-ne ke chaar tareeke hain:
+Ab tak ek band khidki (10 min) me gin rahe the, jo khatam hote hi 0 se shuru hoti hai (isse **fixed window** kehte hain). Gin-ne ke chaar tareeke hain:
 
 ```
 SLIDING LOG      har request ka time likh lo, nayi aaye to pichhle 60 sec wale gino
@@ -121,16 +121,16 @@ SLIDING COUNTER  is minute ki ginti + pichhle minute ka bacha hissa (2 number)
                  -> lagbhag sahi, sasta
 LEAKY BUCKET     request ek line me lagti hain aur fix raftaar se nikalti hain (nal se boond jaisi)
                  -> smooth hai, par jhatke me aayi request (burst) ko nahi nikalne deta
-TOKEN BUCKET     ek baalti me max 5 token. Har 12 sec me 1 token bharta. Har request 1 token leti.
+TOKEN BUCKET     ek baalti me max 5 token. Har 2 minute me 1 token bharta. Har OTP 1 token leti.
                  Baalti khaali -> 429
 ```
 
 **Token bucket isliye:** isme sirf 2 number rakhne padte hain (kitne token bache, aakhri baar kab dekha), jo
-wahi 500 MB hai. Jhatka bhi chalta hai: Arpan 1 ghanta baad aaya to baalti bhari mili, aur wo 5 ek saath bhej
-sakta hai, asli user aise hi bhejta hai. Aur kinare wali dikkat nahi aati: baalti khaali hui to agla token 12
-sec baad hi aata hai, minute badalne se kuch reset nahi hota. AWS aur Stripe bhi yahi lagate hain.
+wahi 500 MB hai. Jhatka bhi chalta hai: Arpan 1 ghanta baad aaya to baalti bhari mili, aur wo 5 ek saath maang
+sakta hai, asli user aise hi bhejta hai. Aur kinare wali dikkat nahi aati: baalti khaali hui to agla token 2
+minute baad hi aata hai, khidki badalne se kuch reset nahi hota. AWS aur Stripe bhi yahi lagate hain.
 
-OTP pe bhi yahi baalti, bas raftaar alag: max 5 token, har 2 minute me 1 token bharta, yaani 10 minute me 5 OTP.
+Yaani 10 minute me 5 OTP. Login jaise doosre kaam pe bhi yahi baalti, bas raftaar alag (login: max 5, har 12 sec me 1).
 Ravi ne abhi 5 le liye to chhathe ke liye 2 minute rukna padega.
 
 Token bharta kaun hai? Koi background job nahi. Request aane pe hi hisaab lagta hai (lazy refill):
@@ -138,21 +138,21 @@ Token bharta kaun hai? Koi background job nahi. Request aane pe hi hisaab lagta 
 ```
 tokens = min(5, tokens + (abhi - aakhri baar) x raftaar)
           ^ baalti se zyada nahi   ^ beete time me jitne bane
-Arpan 1 ghanta baad aaya: beete time me 300 bante, par baalti 5 ki hai, to 5 hi
+Arpan 1 ghanta baad aaya: beete time me 30 bante, par baalti 5 ki hai, to 5 hi
 ```
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> G["App x 10"]
-    G -- "token lo" --> R[("Redis<br/>arpan:login<br/>tokens = 4 · aakhri = 10:00:05")]
+    U["Ravi"] --> G["App x 10"]
+    G -- "token lo" --> R[("Redis<br/>ravi:otp<br/>tokens = 4 · aakhri = 10:00:05")]
     R -- "khaali" --> X["429"]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 **Maan lo 100 halki request vs 100 bhaari:** limiter ke liye dono "100". Bhaari (report) pe kadi had, ya wazan
-do (report = 50 token, login = 1).
+do (report = 50 token, OTP = 1).
 
-Par bot ne ek saath 20 login bheje. 10 app server pe 20 request ne ek saath Redis se padha "tokens = 5", sabne socha "bache
+Par Ravi ki script ne ek saath 20 OTP request bheji. 10 app server pe 20 request ne ek saath Redis se padha "tokens = 5", sabne socha "bache
 hain", aur sabne 1 ghata ke likh diya. 20 andar chale gaye, jabki 5 hi jaane chahiye the.
 
 ### Kadam 4: 20 ek saath aaye, sab andar (Lua script, ek jhatke me)

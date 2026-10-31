@@ -316,56 +316,56 @@ Isliye alag line hi raasta hai.
 OTP ki umar: OTP me 5 min ki expiry likhi hoti hai. Kisi wajah se 5 min baad worker tak pahuncha, to wo
 bhejta hi nahi, kyunki bekaar OTP bhejna faltu hai.
 
-Par sale me ek saath laakhon SMS. Humare worker tez hain, par SMS company ki had hai: 1000 / sec. Usse zyada
+Par sale me ek saath laakhon SMS. Humare worker tez hain, par SMS company ki had hai: 100 / sec. Usse zyada
 bheja to wo **429** (Too Many Requests) lauta deti hai.
 
 ### Kadam 8: company ki had, saanjha token bucket (Redis)
 
 **Arpan:** 20 worker, had 100. Saanjha dabba: ek jagah se guzro, ginti wahin.
 
-SMS company ki had 1000 / sec hai, aur humare 20 SMS worker hain. Har worker apne hisaab se bhejega to milake
-1000 se upar chala jaayega, aur company **429** (Too Many Requests) lauta degi.
+SMS company ki had 100 / sec hai, aur humare 20 SMS worker hain. Har worker apne hisaab se bhejega to milake
+100 se upar chala jaayega, aur company **429** (Too Many Requests) lauta degi.
 
 Isliye Redis me ek **saanjha token bucket**. Wahi token bucket jo rate limiter me padha, bas ulta: wahan had
 humari thi, yahan had company ki.
-- bucket me har second 1000 token bharte hain.
+- bucket me har second 100 token bharte hain.
 - har worker SMS bhejne se pehle Redis se ek token leta hai (Lua script me, taaki do worker ek hi token na le
   lein).
 - token mila to bhejo. Nahi mila to thoda ruko, khabar line me hi rehti hai, khoti nahi.
 
 ```mermaid
 flowchart LR
-    W["20 SMS worker"] -- "ek token do" --> R[("Redis: sms_bucket<br/>1000 token / sec")]
-    W -- "token mila" --> C["SMS company<br/>(kabhi 1000 / sec se upar nahi)"]
+    W["20 SMS worker"] -- "ek token do" --> R[("Redis: sms_bucket<br/>100 token / sec")]
+    W -- "token mila" --> C["SMS company<br/>(kabhi 100 / sec se upar nahi)"]
     W -. "token nahi mila" .-> Z["thoda ruko,<br/>khabar line me hi"]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 **Doosra tareeka kyun nahi: "har worker apni had"**
 
-Ek seedha tareeka ye ho sakta tha: Redis mat lagao, bas har worker ko pehle se bol do "tu 50 / sec se zyada
-mat bhejna". 20 x 50 = 1000, hisaab barabar. Par isme do dikkat hain:
+Ek seedha tareeka ye ho sakta tha: Redis mat lagao, bas har worker ko pehle se bol do "tu 5 / sec se zyada
+mat bhejna". 20 x 5 = 100, hisaab barabar. Par isme do dikkat hain:
 
 - Dikkat 1, worker badhe to hisaab toota: sale aayi, worker 20 se 60 kar diye. Har worker abhi bhi 50 / sec
-  bhej raha hai. 60 x 50 = 3000 / sec, jabki company ki had 1000. Company 429 dene lagti hai. Har baar worker
-  badhao to sabko naya number batana padega ("ab tu 1000 / 60 = 16 bhej").
-- Dikkat 2, khaali worker ka hissa barbaad: 20 me se 10 worker ke paas abhi koi SMS hi nahi. Unka 50-50 ka
-  hissa yunhi pada hai. Baaki 10 ke paas SMS ka dher hai, par wo bhi sirf 50-50 bhej sakte hain. Kul gaye
-  10 x 50 = 500 / sec, jabki company 1000 le sakti thi. Aadha hissa bekaar.
+  bhej raha hai. 60 x 5 = 300 / sec, jabki company ki had 100. Company 429 dene lagti hai. Har baar worker
+  badhao to sabko naya number batana padega ("ab tu 100 / 60 = 1.6 bhej").
+- Dikkat 2, khaali worker ka hissa barbaad: 20 me se 10 worker ke paas abhi koi SMS hi nahi. Unka 5-5 ka
+  hissa yunhi pada hai. Baaki 10 ke paas SMS ka dher hai, par wo bhi sirf 5-5 bhej sakte hain. Kul gaye
+  10 x 5 = 50 / sec, jabki company 100 le sakti thi. Aadha hissa bekaar.
 
-Saanjha bucket me dono dikkat nahi: Redis me ek hi bucket, 1000 token / sec. Worker 20 hon ya 60, sab usi ek
-bucket se lete hain, to kul kabhi 1000 se upar nahi. Aur jiske paas kaam hai wahi token leta hai, to khaali
+Saanjha bucket me dono dikkat nahi: Redis me ek hi bucket, 100 token / sec. Worker 20 hon ya 60, sab usi ek
+bucket se lete hain, to kul kabhi 100 se upar nahi. Aur jiske paas kaam hai wahi token leta hai, to khaali
 worker ka hissa barbaad nahi hota.
 
 ```
-har worker apni had (50):            saanjha bucket (Redis, 1000 / sec):
- 60 worker x 50 = 3000  -> 429        60 worker, ek hi bucket -> kul 1000, kabhi upar nahi
- 10 khaali, 10 x 50 = 500 gaye        jiske paas kaam, wahi le -> poore 1000 gaye
+har worker apni had (5):            saanjha bucket (Redis, 100 / sec):
+ 60 worker x 5 = 300   -> 429        60 worker, ek hi bucket -> kul 100, kabhi upar nahi
+ 10 khaali, 10 x 5 = 50 gaye        jiske paas kaam, wahi le -> poore 100 gaye
 ```
 
 **Phir bhi 429 aaya to?**
 
-Hum 1000 / sec ki had me bhej rahe the, par company ne beech me khud apni had 500 kar di (unke yahan load
+Hum 100 / sec ki had me bhej rahe the, par company ne beech me khud apni had 50 kar di (unke yahan load
 tha). To kuch SMS pe 429 aayega. Tab Kadam 5 wala tareeka: khabar retry line me, 1, 2, 4 sec ruk ke dobara.
 Company jawab me `Retry-After: 3` bheje ("3 sec baad aana") to utna hi ruko.
 
@@ -527,7 +527,7 @@ key DELETE, agli khabar pe naya padh liya.
 
 **Pasand (preference):** har user ki alag. Ise DB me hi rakhte hain, cache nahi. Kyun: worker pasand bhejne se
 theek pehle padhta hai, token milne ke baad (Kadam 8). To DB pe query utni hi jitni company le sakti: SMS ke
-liye ~1000 / sec, 58,000 / sec nahi. Itna DB aaram se jhel leta hai. Aur OTP ki apni chhoti line hai (Kadam 7),
+liye ~100 / sec, 58,000 / sec nahi. Itna DB aaram se jhel leta hai. Aur OTP ki apni chhoti line hai (Kadam 7),
 uska load alag aur kam. Fayda ye bhi: bhejte waqt hamesha taazi pasand. Arpan ne abhi offer band kiya to abhi
 se nahi jaayega, cache me purani pasand ka khatra hi nahi.
 
@@ -535,7 +535,7 @@ se nahi jaayega, cache me purani pasand ka khatra hi nahi.
 Notification Service --saancha--> [cache] --mila--> turant
                                    | nahi mila -> DB -> cache me rakho
 
-worker --token mila (Kadam 8)--> pasand DB se padho (~1000 / sec) --> chalu hai to bhejo, band to chhodo
+worker --token mila (Kadam 8)--> pasand DB se padho (~100 / sec) --> chalu hai to bhejo, band to chhodo
 ```
 
 ```mermaid
