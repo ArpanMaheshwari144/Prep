@@ -6,15 +6,15 @@ Drill se pehle: table 1 (chhoot rahe) padho, table 2 pe ek nazar. Baaki table PR
 
 | # | Code me dikhe | Asar | Sahi | Chhoota |
 |---|---|---|---|---|
-| 1 | `if (status == ACTIVE) { pay(); setStatus(CLOSED); save }` | do click / retry = do baar paisa | `UPDATE .. SET status='CLOSING' WHERE id=? AND status='ACTIVE'` (1 row tabhi aage) + idempotency key | 21, 22, 24 Oct (25 PAKDA) |
-| 2 | `catch (Exception e) { return ok("FAILED"); }` | app ko 200 mila, samjha kaam ho gaya | 502 / 4xx + status FAILED | 20, 21, 22, 24, 25 Oct |
-| 3 | `@Transactional` method me `bankClient.post(..)` | bank dheema = DB connection pakda, pool khatam | call txn ke BAHAR + timeout + PENDING | 21, 22, 24 Oct (24 ko timeout pakda, "bahar" nahi; 25 PAKDA) |
-| 4 | review ke end me FAISLA line nahi | review adhoora | "Request changes: bhaari 1, 2, 3. Chhote: .." | 24 Oct (25 PAKDA) |
+| 1 | `if (status == ACTIVE) { pay(); setStatus(CLOSED); save }` | do click / retry = do baar paisa | `UPDATE .. SET status='CLOSING' WHERE id=? AND status='ACTIVE'` (1 row tabhi aage) + idempotency key | 21, 22, 24, 31 Oct (25 PAKDA) |
+| 2 | `catch (Exception e) { return ok("FAILED"); }` | app ko 200 mila, samjha kaam ho gaya | 502 / 4xx + status FAILED | 20, 21, 22, 24, 25, 31 Oct |
 
 ## 2. PAKDE JAA RAHE — PR me mat do
 
 | Cheez | Pakda |
 |---|---|
+| bahar ki call `@Transactional` ke andar (bank / gateway) | 25, 31 Oct |
+| review ke end me FAISLA line | 25, 31 Oct |
 | owner check nahi (IDOR, 403) | 22, 24 Oct |
 | request body se userId (spoof) | 21 Oct |
 | bahar ki call pe timeout nahi | 24 Oct |
