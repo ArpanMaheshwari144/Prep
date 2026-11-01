@@ -1,231 +1,71 @@
-# Custom @Query + DTO Projection (Repository → Service → Controller)
+# Custom @Query + DTO Projection
 
-> Real-project reference: badi query kaise likhi + result kaise return (DTO/projection).
-> **Core rule:** query kitni bhi badi (10-table JOIN) ho — return-mechanism WAHI. `SELECT col AS alias` + matching getter wala interface/DTO → Spring khud bhar deta.
+## Kahani: PA ko parchi pe sirf 3 cheez
 
----
+Arpan ko dashboard pe sirf naam, umar, shehar chahiye. PA ko bola "user lao" to wo poori file laaya: password, phone,
+address sab. Bojh bhi, khatra bhi (dirty checking wala password trap). Isliye PA ko parchi: "record room se sirf ye 3
+cheez likh ke lana" = **DTO**. Faaltu data nahi, password bahar nahi, aur entity nahi to PA track nahi karta (na chupi
+write, na LazyInit).
 
-## 0. Layered flow (ek line)
-Client → **Controller** (`@GetMapping`, params) → **Service** (logic) → **Repository** (`@Query` DB) → answer ulta same raste client tak.
+## Tasveer
 
----
-
-## 1. Entity vs DTO (kyun DTO?)
-- **Entity** = poori table-row (saari columns).
-- **DTO** = sirf jo fields client ko dena (10 me se 3). Extra/sensitive fields (password etc.) chhup jaate.
-- Jab poori entity nahi, chuni fields / aggregation chahiye → DTO/projection.
-
----
-
-## 2. @Query ke 2 flavour
-
-| | JPQL | Native |
-|--|--|--|
-| Likha kis pe | **Entity + field** naam (`User`, `u.age`) | **Asli table + column** (`users`, `age`) |
-| Flag | (default) | `nativeQuery = true` |
-| DTO kaise | `SELECT new pkg.DTO(...)` constructor-expr (interface projection bhi chalta, alias se) | **interface projection** (`new DTO()` NAHI chalta) |
-
-Named param dono me: `:age` + `@Param("age")`.
-
----
-
-## 3. Simple query + full flow
-
-```java
-// ENTITY
-@Entity @Table(name = "users")
-public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private int age;
-    private String city;
-    // getters/setters
-}
-
-// REPOSITORY
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-
-    // JPQL -- entity/field naam
-    @Query("SELECT u FROM User u WHERE u.age > :age AND u.city = :city")
-    List<User> findOlderInCity(@Param("age") int age, @Param("city") String city);
-
-    // NATIVE -- asli table/column
-    @Query(value = "SELECT * FROM users WHERE age > :age ORDER BY age DESC",
-           nativeQuery = true)
-    List<User> findOlderNative(@Param("age") int age);
-
-    // single value
-    @Query("SELECT COUNT(u) FROM User u WHERE u.city = :city")
-    long countByCity(@Param("city") String city);
-}
-
-// SERVICE
-@Service
-public class UserService {
-    private final UserRepository repo;
-    public UserService(UserRepository repo) { this.repo = repo; }   // constructor injection
-    public List<User> getOlder(int age, String city) {
-        return repo.findOlderInCity(age, city);
-    }
-}
-
-// CONTROLLER
-@RestController
-@RequestMapping("/users")
-public class UserController {
-    private final UserService service;
-    public UserController(UserService service) { this.service = service; }
-
-    @GetMapping("/older")   // GET /users/older?age=25&city=Delhi
-    public List<User> older(@RequestParam int age, @RequestParam String city) {
-        return service.getOlder(age, city);
-    }
-}
+```
+Controller -> Service -> Repository (@Query) -> DB
+                              |
+             SELECT u.name, u.age, u.city ...   <- sirf 3 column
+                              |
+             UserSummary (getName, getAge, getCity)  <- parchi, Spring khud bharta
 ```
 
----
+## Dikkat -> kyun
 
-## 4. DTO return -- 2 tareeke
+Entity seedha bahar = password leak · 10 me se 7 column faaltu · JSON banate waqt LAZY chhua to LazyInit · dono taraf
+rishta to StackOverflow. Sab ek saath kaatne ko DTO.
 
-### (A) NATIVE query → INTERFACE projection
-Native me `new DTO()` nahi chalta → interface banao, getter = column **alias** se match.
+Query kitni bhi badi (10 table JOIN) ho, lautane ka tareeka ek: `SELECT col AS alias` + interface jiske getter alias se
+milein -> Spring khud bharta, hath se mapping nahi.
 
 ```java
-public interface UserSummary {          // getters
-    String getName();
-    int    getAge();
-    String getCity();
-}
+public interface UserSummary { String getName(); int getAge(); String getCity(); }
 
-@Query(value = "SELECT name AS name, age AS age, city AS city " +
-               "FROM users WHERE age > :age ORDER BY age DESC",
+@Query(value = "SELECT name AS name, age AS age, city AS city FROM users WHERE age > :age",
        nativeQuery = true)
-List<UserSummary> findOlderSummaryNative(@Param("age") int age);
-```
-> **Alias ↔ getter match = jaadu.** `col AS name` ↔ `getName()`.
+List<UserSummary> findOlder(@Param("age") int age);
 
-### (B) JPQL query → DTO class (constructor expression)
-```java
-public class UserSummaryDTO {
-    private String name; private int age; private String city;
-    public UserSummaryDTO(String name, int age, String city) {   // ZAROORI, SELECT ke order me (u.name, u.age, u.city)
-        this.name = name; this.age = age; this.city = city;
-    }
-    // getters
-}
-
-@Query("SELECT new com.example.dto.UserSummaryDTO(u.name, u.age, u.city) " +
-       "FROM User u WHERE u.age > :age")
-List<UserSummaryDTO> findOlderSummaryJpql(@Param("age") int age);
-```
-> **Full package path** + matching **constructor** chahiye.
-
----
-
-## 5. BADI query (JOIN + aggregation) → interface projection
-
-```java
-public interface CustomerOrderSummary {
-    Long          getUserId();
-    String        getName();
-    String        getEmail();
-    Long          getTotalOrders();
-    BigDecimal    getTotalSpent();     // paisa -> BigDecimal, Double nahi
-    LocalDateTime getLastOrderDate();
-}
-
-@Query(value =
-    "SELECT u.id                                  AS userId, " +
-    "       u.name                                AS name, " +
-    "       u.email                               AS email, " +
-    "       COUNT(DISTINCT o.id)                  AS totalOrders, " +
-    "       COALESCE(SUM(oi.quantity * p.price),0) AS totalSpent, " +
-    "       MAX(o.created_at)                     AS lastOrderDate " +
-    "FROM users u " +
-    "LEFT JOIN orders      o  ON o.user_id   = u.id AND o.created_at >= :fromDate " +
-    "LEFT JOIN order_items oi ON oi.order_id = o.id " +
-    "LEFT JOIN products    p  ON p.id        = oi.product_id " +
-    "WHERE u.city = :city " +
-    "GROUP BY u.id, u.name, u.email " +
-    "HAVING COUNT(DISTINCT o.id) > :minOrders " +
-    "ORDER BY totalSpent DESC",
-    nativeQuery = true)
-List<CustomerOrderSummary> getCustomerSummaries(@Param("city") String city,
-                                                @Param("fromDate") LocalDateTime fromDate,
-                                                @Param("minOrders") int minOrders);
+// JPQL me class DTO bhi: SELECT new com.example.dto.UserSummaryDTO(u.name, u.age, u.city) FROM User u
 ```
 
-**Badi query ke tukde:**
-- **JOINs** — kai tables jodo.
-- **Aggregation** `COUNT/SUM/MAX` — count, total, last-date.
-- **GROUP BY** — per-user ek row · **HAVING** — group-level filter (`WHERE`=row-level).
-- **COALESCE(...,0)** — NULL → 0.
-- ★ **LEFT JOIN ka trap** -> neeche 5b (misaal se).
-
-## 5b. LEFT JOIN trap — shart ON me kyun, WHERE me kyun nahi
+## Trade-off: JPQL ya Native
 
 ```
-users                    orders
-id | name                id | user_id | created_at
- 1 | Arpan                1 |    1    | 20-Oct
- 2 | Ravi                 2 |    1    | 01-Jan
- 3 | Sita     (Sita ka koi order nahi)
+JPQL (entity + field naam)              Native (asli table + column)
+DB badlo, query chalti                  DB ki poori taakat (window fn, DB ke khaas function)
+app start pe hi check, galti turant     typo tab pakda jaata jab query chale
+DTO: new pkg.UserDto(u.name, ...)       DTO: sirf interface projection (alias = getter)
 ```
 
-Sawaal: "SAARE users dikhao, aur unke 1-Oct ke baad wale order gino (jinka nahi, unka 0)."
-LEFT JOIN = left table (users) ke SAB log aayenge; jiska order nahi mila, uske order wale khaane NULL.
+Roz ka kaam JPQL, bhaari report / aggregation jo JPQL me na likhe -> native.
+UPDATE / DELETE query -> `@Modifying` + `@Transactional`.
 
-**GALAT: shart WHERE me**
+## Prod wala trap
+
 ```sql
 FROM users u LEFT JOIN orders o ON o.user_id = u.id
-WHERE o.created_at >= '1-Oct'
+WHERE o.created_at >= '1-Oct'          -- jinka order nahi (Ravi, Sita) wo GAAYAB
 ```
+
+WHERE ki shart NULL rows kaat deti, LEFT JOIN chupchaap INNER ban jaata. Shart `ON ... AND o.created_at >= ...` me,
+tab bina order wale 0 ke saath aate.
+
+## Tera project
+
+usercrud `UserRepository`: `@Query("FROM User u WHERE u.age >= :minAge")` · `AuthorRepository`: N+1 wala `LEFT JOIN FETCH`.
+
+## Interview line
+
 ```
-Pehle join:                 Phir WHERE har row pe ("created_at >= 1-Oct?"):
-Arpan | 20-Oct              haan -> bachi
-Arpan | 01-Jan              nahi -> hati
-Ravi  | NULL                NULL ki tulna kuch nahi deti -> hati
-Sita  | NULL                hati
+Custom @Query JPQL me entity naam pe likhta hoon, start pe check hoti aur DB se nahi bandhti;
+bhaari report ho to native. Client ko entity nahi, DTO deta hoon: SELECT alias + interface
+projection ya JPQL constructor expression, taaki sirf zaroori column jaayein, password jaisa
+kuch leak na ho, aur LAZY / chupi write ka jhanjhat na rahe.
 ```
-Bacha sirf Arpan. Ravi aur Sita GAAYAB, jabki unhe 0 ke saath aana tha.
-LEFT JOIN ne bina-order wale rakhe the, WHERE ne kaat diye = result INNER JOIN jaisa.
-**Isi ko "LEFT JOIN chupchaap INNER ban jaata" kehte hain.**
-
-**SAHI: shart ON me**
-```sql
-FROM users u LEFT JOIN orders o
-  ON o.user_id = u.id AND o.created_at >= '1-Oct'
-```
-ON sirf ye tay karta hai ki join karte waqt kaunsa order kis user se JUDEGA. User ko hatata nahi.
-```
-Arpan | 20-Oct    (01-Jan wala juda hi nahi)
-Ravi  | NULL      -> count 0
-Sita  | NULL      -> count 0
-```
-Teeno user bache, Ravi / Sita ke aage 0. Yahi chahiye tha.
-
-**WHERE vs HAVING**
-- WHERE = join ke baad har ek ROW pe filter (row fail -> hat jaati).
-- HAVING = GROUP BY ke baad poore GROUP pe filter ("jinke 2 se zyada order", `HAVING COUNT(o.id) > 2`).
-
-**Ek line:** LEFT JOIN me right table (orders) ki shart **ON** me daalo. WHERE me daali to bina-match wale log kat jaate.
-
----
-
-## 6. Yaad-rakh (crux)
-- Query 10-table JOIN ho ya simple → **return-mechanism NAHI badalta**: `SELECT col AS alias` + matching getter wala DTO/interface → Spring bhar deta, **manual mapping nahi**.
-- **Native → interface projection** (alias = getter). **JPQL → `new pkg.DTO(...)`** (full path + constructor).
-- Entity heavy/private → DTO se sirf zaroori fields expose.
-- **UPDATE/DELETE query** → `@Modifying` + `@Transactional` chahiye (`@Query("UPDATE User u SET u.city=:c WHERE u.id=:id")`).
-
----
-
-## ★ PROJECT CONNECT — usercrud repositories (8-Sep)
-```java
-UserRepository:   @Query("FROM User u WHERE u.age >= :minAge")                     // custom JPQL + named param
-AuthorRepository: @Query("Select Distinct a from Author a left join fetch a.books") // JOIN FETCH (N+1 fix) + DISTINCT
-```
-Real `@Query` LIVE — JPQL custom queries. AuthorRepository ka JOIN FETCH N+1-note se bhi juda (DISTINCT duplicate hataata).
-QueryDSL vs @Query: **QueryDSL = runtime DYNAMIC** (conditions code me build) · **@Query = FIXED JPQL** (pehle se likhi, app start pe check hoti). usercrud me dono side-by-side.
