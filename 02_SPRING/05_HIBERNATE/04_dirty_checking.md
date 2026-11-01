@@ -1,300 +1,83 @@
-# Dirty Checking — Hibernate Hidden Magic
+# Dirty Checking
 
----
+## Kahani: PA ki photocopy
 
-## 1 Concept (Smart Notebook Analogy)
+PA lekhak ki file laata aur chupke se ek photocopy apne paas rakhta (snapshot). Arpan file me naam kaat ke "Arpan"
+likh deta (`u.setName("Arpan")`), "save karo" nahi bolta. Shaam ko office band hone se pehle (commit) PA file ko
+photocopy se milata, naam badla dikha to khud record room jaake `UPDATE`. Ye milaan = **dirty checking**.
 
-```
-Imagine SMART notebook:
-   Tu likhta, edit karta
-   Notebook KHUD detect karta "ye change hua"
-   Tu "save" button press NAHI karta
-   Notebook auto-save karta jab tu band karta
+Trap: PA pehle hi ghar chala gaya (method pe `@Transactional` nahi) to file pe kuch bhi likho, milane wala koi nahi,
+badlaav kho jaata. Entity **detached**.
 
-   = Hibernate Dirty Checking
-```
-
----
-
-## 2 Without Dirty Checking (Normal Code)
-
-```java
-User u = userRepo.findById(1L).orElseThrow();
-u.setName("Arpan");
-
-// To save changes:
-userRepo.save(u);   // ek MANUAL call
-
-// OR explicit JDBC:
-// UPDATE users SET name='Arpan' WHERE id=1;
-```
-
----
-
-## 3 WITH Dirty Checking (Magic)
-
-```java
-@Transactional
-public void updateName(Long id, String name) {
-    User u = userRepo.findById(id).orElseThrow();
-    u.setName(name);
-
-    // NO save() call needed!
-    // Transaction commit pe HIBERNATE khud UPDATE chalata
-}
-```
+## Tasveer
 
 ```
-Magic kya hua?
-   Hibernate ne track kiya: "u.name change hua"
-   Transaction commit pe: UPDATE users SET name=? WHERE id=?
-   Tu explicitly bola hi nahi
+findById  -> file + photocopy (name = Suresh)
+setName   -> file me "Arpan"
+commit    -> PA milata: Suresh != Arpan -> DIRTY
+          -> UPDATE users SET name='Arpan' WHERE id=1
 ```
 
----
+## 4 khaas baat
 
-## 4 Visual — Internal Flow
+1. Sirf **managed** (persistent) entity pe. 4 haalat: transient (`new User()`, PA ko pata nahi) · persistent (PA
+   track kar raha) · detached (PA ghar gaya) · removed (hatane ka mark).
+2. Spring Data `repo.save()`: nayi entity pe `persist`, purani pe `merge`. `merge` nayi managed copy lautata, isliye
+   hamesha `user = repo.save(user)`.
+3. Default UPDATE har column likhta, `@DynamicUpdate` = sirf badle column.
+4. Ek jad, teen dikkat = "session band": LazyInit (parchi khuli nahi) · detached (badlaav kho gaya) · opt-lock
+   (purani version, aage aayega).
 
-```
-   @Transactional method shuru
-        │
-        ▼
-   findById(1L) → User entity load
-        │
-        ▼
-   Hibernate SNAPSHOT le leta:
-      "User#1: name='Suresh', email='s@x.com'"
-        │
-        ▼
-   Tera code: u.setName("Arpan")
-        │
-        ▼
-   Method end → Transaction commit phase
-        │
-        ▼
-   Hibernate compare:
-      Original: name='Suresh'
-      Current:  name='Arpan'
-      → DIFFERENT → DIRTY!
-        │
-        ▼
-   AUTO-FIRE: UPDATE users SET name='Arpan' WHERE id=1;
-        │
-        ▼
-   Commit + return
-```
+## Flush kya hai
 
-> **Matlab (1-line):** entity load hote hi Hibernate ek SNAPSHOT rakhta. Commit pe compare — badla = auto UPDATE. (SNAPSHOT = asli key step.)
-
----
-
-## 5 When Hibernate Flushes Changes?
+PA ke paas din bhar ke badlaav jama hote (Java memory me). Flush = PA record room jaake SQL chala de.
 
 ```
-1. Transaction COMMIT (most common)
-   @Transactional method end
-
-2. Explicit em.flush()
-   Rarely used
-
-3. Before next QUERY in same session
-   Auto-flush mode
-
-(★ save() khud FLUSH nahi karta — sirf entity ko managed banata. Turant DB me chahiye to
-   saveAndFlush() / em.flush(). Warna UPDATE commit pe hi jaata.)
+flush  = SQL DB me chala diya, par transaction abhi khuli   -> pencil se likha (rollback pe mit jaayega)
+commit = pakka                                               -> pen se likha
 ```
 
----
+Commit pe Hibernate pehle khud flush karta, phir commit. Flush teen jagah: commit pe · `em.flush()` · usi session me
+agli query se pehle. `save()` khud flush nahi karta, beech me hi DB tak bhejna ho (ID chahiye, UNIQUE galti yahin
+pakadni) to `saveAndFlush()`.
 
-## 6 Behind Scenes SQL
+## Bina save ke DB kyun badla (Unit of Work)
+
+1. **save bhoolna:** order + 5 item + address badla, har ek pe save yaad rakhna padta, ek bhoola to aadha data badla.
+   PA khud dekh leta kya-kya badla.
+2. **Kram + bojh:** saare badlaav commit pe ek saath, sahi kram me (parent pehle, child baad, FK ke hisaab se).
+3. **ORM ka maqsad:** entity ko normal Java object ki tarah use karo, DB tak pahunchana Hibernate ka kaam.
+
+Trade-off: fayda = kam code, koi badlaav chhootta nahi. Nuksaan = chupi write + snapshot ka memory / CPU.
+
+**`@Transactional` + `save()` dono:** koi dikkat nahi. Managed entity pe `save()` = `merge` jo kuch nahi karta, UPDATE
+commit pe ek hi baar. **Phir bhi `save()` likho** (Arpan): Hibernate ke jaadu pe mat tiko, padhne wale ko saaf dikhe ki
+yahan likha ja raha.
+
+## Prod wala trap
 
 ```java
 @Transactional
-public void updateUser(Long id, String newEmail) {
-    User u = userRepo.findById(id).orElseThrow();
-    u.setEmail(newEmail);
-    // method end
-}
+public User getProfile(Long id) {
+    User u = repo.findById(id).get();
+    u.setPassword(null);     // JSON me password hash na jaaye, isliye hataya
+    return u;
+}                            // commit pe DB me bhi password NULL -> user login nahi kar paata
 ```
 
-```sql
--- Hibernate auto-fires:
-1. SELECT * FROM users WHERE id=1;
-2. (Java mein change in memory)
-3. UPDATE users SET email='new@x.com' WHERE id=1;
-4. COMMIT;
-```
+Iraada sirf response se hatana tha, DB nahi. Normal Java me object badalne se DB nahi badalta, yahan badal jaata.
+Hal: response ke liye DTO (`new UserDto(u.getName(), u.getEmail())`), entity ko haath mat lagao · ya `readOnly = true`.
 
----
+## Tera project
 
-## 7 Common Trap — "Detached" Entity
+usercrud `UserService.update()` `@Transactional`: entity load, setter se field badla, koi `save()` nahi, phir bhi commit
+pe Hibernate ne khud UPDATE bheja.
 
-```java
-@Service
-public class UserService {
-
-    public void updateUser(Long id, String name) {
-        // NO @Transactional!
-        User u = userRepo.findById(id).orElseThrow();
-        // session band ho gayi
-
-        u.setName(name);    // entity now DETACHED
-        // change tracked NAHI — koi session nahi
-    }
-}
-```
+## Interview line
 
 ```
-Reason:
-   Transaction band = session closed
-   User detached from Hibernate
-   Changes lost!
-
-Fix:
-   1. @Transactional add karo
-   2. OR explicit userRepo.save(u) call karo
+Dirty checking: entity load hote hi Hibernate snapshot rakhta, commit / flush pe compare karke
+badle field ka UPDATE khud bhejta (Unit of Work). Ye sirf managed entity pe; detached pe change
+kho jaata, wahan merge / save. Main phir bhi save() likhta hoon taaki write saaf dikhe, aur read
+path pe DTO / readOnly taaki entity galti se badle to DB me na jaaye.
 ```
-
----
-
-## 8 Dirty Checking vs save()
-
-```
-DIRTY CHECKING (within @Transactional):
-   Modify entity → auto-save on commit
-   Less code, cleaner
-   Only works inside session
-
-EXPLICIT save():
-   Works anywhere (detached too)
-   Explicit control
-   Verbose
-```
-
----
-
-## 9 Performance Implication
-
-```
-Hibernate's snapshot tracking:
-   Memory cost — saare entities ka snapshot rakhna
-   CPU cost — compare on flush
-
-   For LARGE entities — measurable overhead
-
-Tweaking:
-   @DynamicUpdate — only update changed columns
-                    (default = update all columns)
-```
-
-```java
-@Entity
-@DynamicUpdate
-class User { ... }
-
-// Update SQL:
-//   Default:        UPDATE users SET name=?, email=?, ... WHERE id=?;   (id ke alawa SAARE column)
-//   @DynamicUpdate: UPDATE users SET name=? WHERE id=?;
-//                   (sirf changed columns)
-```
-
----
-
-## Interview Power Phrase
-
-```
-"Dirty checking — Hibernate tracks changes to managed entities
- within transaction. When entity loaded, Hibernate takes snapshot.
- On commit, compares current state with snapshot — if dirty (modified),
- auto-fires UPDATE.
-
- Benefit: no explicit save() call needed for updates.
-
- Catch: only works for entities in active session.
- Detached entities need explicit save() or merge()."
-```
-
----
-
-## Memory Hook
-
-```
-Dirty Checking = smart notebook (auto-save changes)
-
-Inside @Transactional:
-   findById → modify → method end → AUTO UPDATE
-   No save() call
-
-Outside @Transactional:
-   findById → modify → session closed
-   Changes LOST (must call save() explicitly)
-```
-
----
-
-## ★ CONNECT (Hibernate concepts ek-doosre se jude — ye interview me depth dikhata)
-
-```
-1. dirty-check auto-UPDATE = EK entity ke liye. Loop me 100 entity modify karo -> 100 UPDATE
-   = wahi "one-by-one write" issue (N+1 ka write-side cousin).  FIX = JPQL bulk @Modifying UPDATE.
-
-2. detached-entity trap (yahan) = LAZY ka LazyInitException = opt-lock ka stale-version —
-   TEENO ki EK jad: "session / transaction band ho gayi".
-      LAZY:     session band -> child load nahi ho paaya   -> LazyInitException
-      dirty:    session band -> change track nahi hua       -> update LOST
-      opt-lock: purani version padhi, beech me badal gayi   -> stale -> reject
-   -> yaad rakhne ka 1 sutra: "managed (session ke andar) vs detached (bahar)" — half Hibernate isi pe.
-
-3. @Transactional (jo tune padha) = ye SAB ko baandhne wala dhaaga —
-   wahi session/txn zinda rakhta jisse dirty-check, LAZY-load, sab kaam karte.
-```
-
----
-
-## ★ PROJECT CONNECT — usercrud UserService.update (8-Sep)
-```
-update() @Transactional:  entity load -> setter se field badla -> koi explicit save()/repository.save() NAHI
-   -> commit pe Hibernate ne KHUD dirty-check karke UPDATE bheja (managed entity ka snapshot compare).
-```
-Tera note ka "managed entity, save bina UPDATE" LIVE — @Transactional (session zinda) ise possible banata.
-
----
-
-## ★ ENTITY LIFECYCLE — 4 STATES (employee-HR analogy, 9-Sep)
-
-> Object ka "state" = wo Hibernate SESSION (manager) se kaise juda. (dirty-checking sirf PERSISTENT pe chalti.)
-
-```
-1. TRANSIENT  -> abhi `new User()`. Hibernate ko pata NAHI. = raah-chalta banda, payroll pe nahi.
-2. PERSISTENT -> session me ATTACHED (persist/save YA txn me find). Hibernate TRACK karta ->
-                 change -> AUTO-save (dirty-checking!). = payroll-employee, HR sab track.
-3. DETACHED   -> pehle persistent, ab session BAND. track NAHI -> change save NAHI. = ex-employee (record hai, tracking nahi).
-4. REMOVED    -> delete ke liye MARK (remove) -> flush pe DB-delete. = termination-scheduled.
-```
-
-**Transitions:**
-```
-new User()           -> TRANSIENT
-persist()/save()     -> TRANSIENT -> PERSISTENT   (ab tracked)
-find()/get()         -> load -> PERSISTENT
-remove()             -> PERSISTENT -> REMOVED
-session close/detach -> PERSISTENT -> DETACHED
-merge(detached)      -> DETACHED -> PERSISTENT (copy)
-```
-
-**save vs persist vs merge (grill):**
-```
-persist (JPA)   -> TRANSIENT -> PERSISTENT, return void
-save (Hibernate)-> ~same, generated ID return   (Hibernate 6 me DEPRECATED — persist use karo)
-merge           -> DETACHED ki state ek PERSISTENT COPY me daal deta, MANAGED copy RETURN karta
-                   (argument khud detached rehta!). detached-changes DB me chahiye -> merge.
-saveOrUpdate    -> detached attach YA transient save (Hibernate-native, Hibernate 6 me DEPRECATED)
-
-★ SPRING DATA ka repository.save() (tu yahi use karta hai):
-   entity NAYI hai (id null / isNew)  -> em.persist()
-   nahi to                            -> em.merge()  -> MANAGED copy LAUTATA hai
-   -> isliye hamesha `user = repo.save(user);` — return wala object use karo
-```
-★ merge crux (galti-prone): `User managed = session.merge(detached);` -> aage `managed` pe kaam karo, `detached` pe NAHI (wo abhi bhi detached). merge ka RETURN use karo.
-
-> **Ek line:** TRANSIENT(new,unknown) -persist-> PERSISTENT(tracked, dirty-check auto-save) -close-> DETACHED(untracked) -merge-> PERSISTENT-copy · remove -> REMOVED. dirty-checking sirf PERSISTENT pe.
