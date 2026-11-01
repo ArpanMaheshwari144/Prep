@@ -1,239 +1,52 @@
-# First-Level Cache (L1) — Session Cache
+# First-Level Cache (L1)
 
----
+## Kahani: PA ki almaari (N+1 wali)
 
-## 1 Concept (Office Filing Cabinet Analogy)
+Arpan lekhak #1 ki file maangta, PA record room jaata (DB query), file laata, ek copy apni almaari me rakhta.
+Usi din dobara lekhak #1 maange to PA record room nahi jaata, almaari se wahi file (koi query nahi, `u1 == u2` true,
+ek hi object). Shaam ko PA ghar (session band) -> almaari khaali. Agle din nayi almaari.
 
-```
-Imagine office cabinet — sirf TERI desk pe rakhi:
-
-   Pehli baar file maange? → Storage room jaake la kar
-   Phir desk pe rakhi
-
-   Doosri baar same file? → Desk se utha le, no storage trip
-   Teesri baar?           → Desk se utha le
-
-   Tera shift khatam?     → Desk khali
-```
+## Tasveer
 
 ```
-Hibernate Session = Tera desk
-   L1 cache = same session mein DB se ek baar fetch
-              → memory mein cache
-              → ID se dobara maango (findById / em.find) to DB hit NAHI
+@Transactional shuru -> almaari khaali
+findById(1)  -> almaari me? nahi -> SELECT ... -> almaari me rakha
+findById(1)  -> almaari me? haan -> wahi object, NO query
+method khatam -> almaari khaali
 ```
 
-★ TRAP: L1 sirf **ID wale lookup** bachata hai. `findByEmail`, `findAll`, koi bhi JPQL / @Query
-**har baar DB pe jaati hai** (query result L1 me nahi rakhta) — bas lautayi gayi entity agar pehle se
-session me hai to wahi same object milta. "same query 5 baar = 1 DB hit" sirf findById pe sach.
+## 4 khaas baat
 
----
+1. Almaari ek session (ek `@Transactional`) ki. Doosri request = alag almaari. Automatic, band nahi hoti.
+2. Sirf **ID se maangne** pe bachati (`findById`). `findByEmail`, `findAll`, koi bhi `@Query` har baar DB jaati; bas
+   lauti entity pehle se almaari me ho to wahi object milta.
+3. **Purana data:** beech me kisi aur ne DB me row badli to almaari wala object purana. Hal: `em.refresh(u)` (ek file
+   record room se dobara) ya `em.clear()` (poori almaari khaali).
+4. Teen cache alag: **L1** = PA ki almaari (Hibernate, automatic) · **L2** = poore office ki saanjhi almaari
+   (Hibernate, khud lagani, EhCache / Redis) · **@Cacheable** = Spring ka, method ka result, entity nahi.
 
-## 2 Visual Flow
-
-```
-   @Transactional method shuru → Session OPEN
-        │
-        ▼
-   userRepo.findById(1L)
-        │
-        ├── L1 cache check
-        │   "User#1 already cache mein?"
-        │
-        │   NAHI → DB query: SELECT * FROM users WHERE id=1
-        │           Cache mein store
-        │   HAAN → cache se return (NO DB hit)
-        │
-        ▼
-   Same method mein:
-   userRepo.findById(1L)
-        │
-        ├── L1 cache check
-        │   HAAN → cache se return
-        │   = NO DB query!
-        │
-        ▼
-   Method end → Session CLOSE
-        │
-        ▼
-   Cache CLEARED
-   Next request fresh start
-```
-
----
-
-## 3 Code Demo
+## Prod wala trap
 
 ```java
 @Transactional
-public void demo(Long id) {
-    User u1 = userRepo.findById(id).orElseThrow();
-    // → DB query: SELECT * FROM users WHERE id=?
-
-    User u2 = userRepo.findById(id).orElseThrow();
-    // → NO DB query — cache se return
-
-    User u3 = userRepo.findById(id).orElseThrow();
-    // → NO DB query
-
-    u1 == u2;     // TRUE (same object reference)
-    u2 == u3;     // TRUE
+public void waitForPayment(Long id) {
+    while (repo.findById(id).get().getStatus() != PAID) {   // har baar almaari se -> purana PENDING
+        Thread.sleep(1000);                                  // webhook ne DB me PAID kiya, yahan kabhi nahi dikhega
+    }
 }
 ```
 
-```
-3 calls, 1 DB query
-   = L1 cache magic
-```
+Loop kabhi nahi rukta. Hal: loop transaction ke bahar, ya `em.refresh()`. Aur lambi transaction me intezaar = HikariCP
+wali dikkat (connection pakda).
 
----
+## Tera project
 
-## 4 Important Properties
+usercrud: ek `@Transactional` method me `getById(1)` do baar -> DB query sirf ek baar, dono baar same object.
 
-```
-1. PER-SESSION (per @Transactional — aur OSIV ON ho to poori REQUEST)
-   Different session = different cache
-   No sharing across sessions
-
-2. AUTOMATIC
-   No setup needed
-   Built-in to Hibernate
-
-3. CANNOT DISABLE
-   It's how Hibernate works internally
-   (bina L1 ke chahiye to StatelessSession — bulk jobs me)
-
-4. CLEARED on session close
-   Transaction end → cache gone
-```
-
----
-
-## 5 Visual — Per Session Cache
+## Interview line
 
 ```
-   Request 1 — Method A    Request 2 — Method B
-   ────────────────────    ─────────────────────
-
-   Session 1 OPEN          Session 2 OPEN
-        │                       │
-        ▼                       ▼
-   ┌─────────────┐         ┌─────────────┐
-   │  L1 Cache   │         │  L1 Cache   │
-   │  User#1   │         │  User#1   │  ← separate
-   │  User#2   │         │             │     cache
-   └─────────────┘         └─────────────┘
-        │                       │
-   Session CLOSE           Session CLOSE
-   Cache deleted           Cache deleted
+First-level cache session ka hota hai: ek transaction me same ID dobara maango to DB nahi
+jaata, wahi object milta. Automatic hai, band nahi hota, session ke saath khaali. Dhyaan: sirf
+ID lookup bachta, JPQL har baar DB; aur beech me DB badla to purana data, wahan refresh / clear.
 ```
-
----
-
-## 6 Useful Use Case
-
-```java
-@Transactional
-public void transfer(Long fromId, Long toId, BigDecimal amt) {
-    Account from = accountRepo.findById(fromId).orElseThrow();
-
-    // ... business logic, multiple operations
-
-    Account fromAgain = accountRepo.findById(fromId).orElseThrow();
-    // No DB query! L1 cache return karta
-
-    from == fromAgain;   // TRUE (same object)
-}
-```
-
----
-
-## 7 Common Gotcha — Stale Data
-
-```
-Inside same transaction:
-   1. findById(1L) → User name "Suresh"
-   2. SQL update from elsewhere — name now "Arpan"
-   3. findById(1L) → STILL returns "Suresh" (cached!)
-
-   = L1 cache doesn't auto-refresh
-   = Stale data
-```
-
-```java
-// Fix:
-entityManager.refresh(user);   // force DB re-read
-// OR
-entityManager.clear();          // empty entire cache
-```
-
----
-
-## 8 L1 vs L2 Cache (Bonus)
-
-```
-┌──────────────────┬───────────────┬─────────────────┐
-│  Aspect          │  L1 Cache     │  L2 Cache       │
-├──────────────────┼───────────────┼─────────────────┤
-│ Scope            │ Per session   │ Across sessions │
-│ Default          │ Always ON     │ Disabled        │
-│ Configuration    │ None          │ Explicit setup  │
-│ Tools            │ Built-in      │ EHCache, Redis  │
-│ Use case         │ Within tx     │ App-wide cache  │
-└──────────────────┴───────────────┴─────────────────┘
-```
-
-```
-L2 cache = optional, app-level (read-mostly entities)
-L1 cache = automatic, transaction-level
-```
-
----
-
-## Interview Power Phrase
-
-```
-"Session-scoped cache that's automatic and built-in.
- Same entity fetched twice in same transaction = 1 DB query
- (second fetch returns from cache, returns SAME Java object).
-
- Cleared on session close (transaction commit/rollback).
-
- Caveats: stale data if external SQL updates the row.
- Refresh with entityManager.refresh() or clear cache when needed."
-```
-
----
-
-## Memory Hook
-
-```
-L1 Cache = desk drawer (per session)
-
-Same ID 5 baar (findById) in transaction = 1 DB hit  (JPQL / findByX har baar DB)
-Session end = cache cleared
-Cannot disable, automatic
-```
-
----
-
-## ★ L1 vs L2 vs @Cacheable — 3 ALAG cheezein (confuse mat ho, 8-Sep)
-
-> Teeno ko "cache" bolte, isliye ghichpich hoti. Ye teen bilkul alag hain:
-```
-L1 (first-level)  -> 1 TRANSACTION bhar · entity · AUTOMATIC (kuch nahi karna, band nahi kar sakte) · Hibernate
-L2 (second-level) -> poori APP, transactions ke BEECH share · entity · tum CONFIGURE karo (EhCache/Redis provider) · Hibernate
-@Cacheable        -> METHOD ka RESULT · tum ANNOTATION lagate · requests ke beech, TTL tak · Spring (Hibernate ka NAHI, alag layer)
-```
-- **L1** = fully automatic; **L2** = Hibernate ka par tum on/configure karte; **@Cacheable** = Spring ka apna, method-result.
-- Common trap: "cache = @Cacheable" samajhna. L1/L2 = ENTITY cache (Hibernate); @Cacheable = METHOD-result cache (Spring).
-
----
-
-## ★ PROJECT CONNECT — usercrud (8-Sep)
-```
-Ek @Transactional method ke andar getById(1) 2 baar -> DB query SIRF EK baar,
-doosri baar Hibernate session (L1) cache se SAME object reference.
-Method/txn khatam -> session band -> L1 cache clear.
-```
-Tera note ka "same txn, 1 DB hit, same object" LIVE. (usercrud har service method @Transactional -> ek session = ek L1 cache.)
