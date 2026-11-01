@@ -30,10 +30,28 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+void solve(int index, int n, int k, vector<vector<int>> &ans, vector<int> &temp)
+{
+    if (temp.size() == k)
+    {
+        ans.push_back(temp);
+        return;
+    }
+
+    for (int i = index; i <= n; i++)
+    {
+        temp.push_back(i);
+        solve(i + 1, n, k, ans, temp);
+        temp.pop_back();
+    }
+}
+
 vector<vector<int>> combine(int n, int k)
 {
-    // yahan likh
-    return {};
+    vector<vector<int>> ans;
+    vector<int> temp;
+    solve(1, n, k, ans, temp);
+    return ans;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
@@ -69,6 +87,7 @@ int main()
     check(5, 1, {{1}, {2}, {3}, {4}, {5}}, 10);
     check(6, 5, {{1, 2, 3, 4, 5}, {1, 2, 3, 4, 6}, {1, 2, 3, 5, 6}, {1, 2, 4, 5, 6}, {1, 3, 4, 5, 6}, {2, 3, 4, 5, 6}}, 11);
     check(3, 2, {{1, 2}, {1, 3}, {2, 3}}, 12);
-    cout << "\n" << passed << "/" << total << " PASS\n";
+    cout << "\n"
+         << passed << "/" << total << " PASS\n";
     return 0;
 }
