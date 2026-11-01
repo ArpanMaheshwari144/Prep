@@ -78,6 +78,8 @@ Technical me: "copy me kaunsa page kahan" = manifest (tukdon ki list), "hisaab, 
 **Maan lo 1 crore log dekh rahe, har ek ke ~150 tukde. Kya har tukda humare server ki API se jaayega?**
 Arpan: Tukda dene me sochna kuch nahi, bas file hai, to CDN pe rakh do. Pehle socha har reader ke paas ek bachcha khada karun jo yaad rakhe kaunse page pe hai, par 1 crore log = 1 crore bachche. Book me koi bachcha nahi hota, mere paas bookmark hota: 50 pe hoon to 51 khud palat leta. Sab client side, server pe aane ki zaroorat hi nahi.
 Technical me: "bas file" = tukde CDN se seedhe (static), "bookmark" = phone ka player khud yaad rakhta kahan hai, "51 khud palto" = manifest se agle tukde ka link, server sirf shuru me ek baar (manifest + link).
+Arpan: Baat 10-20 crore ki nahi. AWS jaise server bahut kuch sambhal lete hain, dikkat wo nahi. Baat ye hai ki kaam kahan aasaan ho sakta hai. Yahan phone pe aasaan ho gaya to wahin kar diya. Kisi ne phone ka socha hi na hota to wahi bachche wala tareeka chal raha hota. Dikkat aayi, solution ban gaya.
+Technical me: "kahan aasaan" = kaam wahan karo jahan sabse sasta + seedha (yahan client), server pe bojh + kharcha bina wajah nahi.
 
 **15. Six viral, 1 crore log India, US, Australia se; saare tukde US ke S3 me, samundar paar, bill aasmaan pe, India me atke.**
 Arpan: Samundar paar kyun? Europe wala dost bole "video mere Europe me aa jaaye". Iski copy bana do, tu apne paas rakh, tu apne paas, teeno copy same, jo jahan se dekhe paas se khule.

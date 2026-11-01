@@ -374,7 +374,7 @@ Ravi ka phone 1 GB kheench hi nahi paata. Isliye video 4K, 1080p, 480p, 240p me 
 tukdon (segments) me kat-ta hai. Saath me ek list (manifest, HLS `.m3u8`): kaunsa size, kaunsa tukda kis link pe.
 
 **3. Phone khud chunta hai (ABR).** Ravi ka phone poora video nahi, pehle manifest, phir tukda-tukda maangta. Pichhla tukda
-jaldi aaya to agla bada size, net gira to chhota. Server kuch nahi sochta. Ravi 2:00 pe khiskaye to phone hisaab lagata:
+jaldi aaya to agla bada size, net gira to chhota. Server kuch nahi sochta: wo karodon logon ka hisaab rakh sakta hai, par jab phone khud yaad rakh sakta hai to server pe bojh aur kharcha kyun. Ravi 2:00 pe khiskaye to phone hisaab lagata:
 120 / 4 = tukda #31, seedha wahi maangta, 0 se 2:00 tak kuch nahi (seek).
 
 **4. Bhaari kaam kai workers pe.** Ek machine pe 4 size banana 20 minute, aur 50,000 video line me. Isliye S3 me video
