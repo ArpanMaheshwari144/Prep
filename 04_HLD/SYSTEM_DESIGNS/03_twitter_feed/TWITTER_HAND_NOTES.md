@@ -51,6 +51,36 @@ Technical me: "banda sambhal ke rakhe" = queue me pending, "pal-pal dekhta" = re
 
 &nbsp;
 
-Video upload: kal padh ke isi scene me.
+**Video (Arpan stadium se King Kohli ke six ka 1 GB 4K video daalta hai)**
+
+**10. Stadium se 50,000 log 1 GB ke video daal rahe, sab Tweet Service se guzarte, server ki memory-net bhari, text tweet bhi atke.**
+Arpan: Jo video aa rahi hai use kahin aur bhej de, apne server pe na la. Bhai tu yahan apne server se nahi, alag is route pe chala ja, tujhe phir ek URL se access kar lenge.
+Technical me: "kahin aur bhej, apne server pe na la" = video seedha S3 me (presigned URL), "URL se access" = tweet me sirf link.
+
+**11. S3 me ek hi 4K file. John WiFi + TV pe mast, Ravi gaon me 3G phone pe, 1 GB kheench nahi paata, video chalta hi nahi.**
+Arpan: 1 GB kyun kheench rahe, thoda-thoda kheench lo, kuch-kuch second ka. Chhote size bhi rakho. Phone bole "mera net bekaar, 240p de", net achha to 4K. Ferrari highway ke liye, Alto gaon ke liye: 4K achhe net pe, 240p-360p kharab net pe.
+Technical me: "kai size" = transcoding, "thoda-thoda kuch second ka" = segments (chhote tukde), "phone net dekh ke maange" = ABR (adaptive bitrate).
+
+**12. Ek machine 4K se 4 size banaye, 20 minute; Arpan ka tweet atka, aur 50,000 video usi ek machine ke peeche.**
+Arpan: Ek machine kyun, kai machine kar de, kaam baant do. Video ki ek id rakh lo, parchi pe likh do, taaki repeat na ho. 10 log isi id pe kaam karein, aur kisi id pe nahi.
+Technical me: "kai machine, kaam baanto" = video ke hisse, transcoding workers (parallel), "id ki parchi" = har hissa video id + hissa number se.
+
+**13. 10 worker, 9 ka hissa bana, worker 7 beech me gira; video na taiyaar na koi batata, "processing" ghanton se.**
+Arpan: Har worker ka status. 9 ne bata diya, ek nahi bata paaya to dekhunga, heartbeat: "tu hai kya?" Jawab nahi to ise ghar bhejo, naya banda. Uske paas parchi: "maine yahan tak kar liya", naya wahin se uthaye. Save se pehle gira to shuru se.
+Technical me: "har worker ka status" = DB me hisson ki ginti, "tu hai kya" = heartbeat, "naya banda" = job dobara (retry), "yahan tak parchi" = checkpoint.
+**Maan lo worker 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam.**
+Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
+Technical me: "atka to replacement" = timeout pe slow worker ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
+
+**14. Ravi 2:00 pe khiskata hai six dekhne, par phone 0:00 se 2:00 tak sab kheench raha, faaltu data, six late.**
+Arpan: 0 se 2 dikhane ka fayda nahi. Kisi ne copy di aur bola seedha 51wa page dikha. Main copy dekhunga, kahan 50 khatam, 51 kahan shuru, hisaab lagaunga, aur seedha 51 khol dunga.
+Technical me: "copy me kaunsa page kahan" = manifest (tukdon ki list), "hisaab, seedha 51" = seek: time se tukda number, seedha wahi tukda.
+
+**15. Six viral, 1 crore log India, US, Australia se; saare tukde US ke S3 me, samundar paar, bill aasmaan pe, India me atke.**
+Arpan: Samundar paar kyun? Europe wala dost bole "video mere Europe me aa jaaye". Iski copy bana do, tu apne paas rakh, tu apne paas, teeno copy same, jo jahan se dekhe paas se khule.
+Technical me: "copy paas me rakho" = CDN (edge cache).
+**Maan lo private video (10 dost), Ravi ne CDN link bade WhatsApp group me daal diya.**
+Arpan: Taala-chaabi mere paas. Kamra mera, 10 log hi aa sakte. 11wa aaye, dost ka dost ho, access nahi.
+Technical me: "taala-chaabi maalik ke paas" = har request pe access check, "10 log hi" = allow list (sirf link kaafi nahi).
 
 Poora design = [03_twitter_feed.md](03_twitter_feed.md)

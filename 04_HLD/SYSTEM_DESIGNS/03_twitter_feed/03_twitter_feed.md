@@ -9,21 +9,13 @@ Zyadatar tukde pehle se padhe hue: Kafka worker ([notification](../04_notificati
 Redis ([URL](../01_url_shortener/01_url_shortener.md)), Cassandra + S3 ([chat](../14_chat_messaging/14_chat_messaging.md)).
 Iska apna: ek tweet laakhon logon ki feed me kaise pahunche (fanout), aur celebrity pe wo kaise mudta hai.
 
-**Arpan (Ravi + King Kohli wala scene, [hand notes](TWITTER_HAND_NOTES.md)):** taiyaar dabba = inbox · Kohli ki ek parchi = celeb pe fanout nahi · sab milake sort = merge at read · stadium wala bhai = Kafka + outbox · parchi ki 15 copy = hot key replicas · aakhri 500 + 30 din wala = inbox chhota · bada bhai = Cassandra, user id se · apni branch = region · branches ki baat = cross-region copy
+**Arpan (Ravi + King Kohli wala scene, [hand notes](TWITTER_HAND_NOTES.md)):** taiyaar dabba = inbox · Kohli ki ek parchi = celeb pe fanout nahi · sab milake sort = merge at read · stadium wala bhai = Kafka + outbox · parchi ki 15 copy = hot key replicas · aakhri 500 + 30 din wala = inbox chhota · bada bhai = Cassandra, user id se · apni branch = region · branches ki baat = cross-region copy · Ferrari / Alto = kai size + ABR · copy ka 51wa page = manifest + seek · kai machine + id ki parchi = transcoding workers · copy dekhne walon ke paas = CDN
 
 **CUE (yahi shabd yaad rakhne hain, kram se):**
 do table, har feed pe jod -> inbox pehle se (fanout) -> Kafka + fanout worker (+ outbox)
 -> celebrity: fanout nahi, padhte waqt DB se (hybrid) -> viral: har server ka apna cache
 -> inbox chhota (id, 800, sirf active: worker last_active dekhe) -> tweets Cassandra (author_id) + Kafka pehle (outbox gaya)
--> video S3 + CDN -> India region (Kafka topic ki copy, har region apne inbox bhare)
-
-> **Baad me padhna (abhi mock me nahi): video upload ke peeche kya hota hai (media converter / transcoding)**
-> Arpan ki 100 MB video S3 me aa gayi, par wo ek hi quality me hai. Dheeme net wale ke liye wo atkegi.
-> Isliye upload hote hi peeche ek kaam chalta hai: S3 khabar deta hai ("nayi video aayi") -> ek worker
-> (FFmpeg ya AWS MediaConvert) video ko alag-alag quality me badalta hai (360p, 720p, 1080p) aur har ek ko
-> chhote tukdon (kuch second ke) me kaatta hai -> ye sab wapas S3 me, CDN se bante hain.
-> Tab tak tweet pe "video process ho rahi" dikhta hai; kaam khatam hone pe READY. Dekhne wale ka player net
-> dekh ke apne aap quality badalta hai: net dheema to 360p ke tukde, tez to 1080p.
+-> video: S3 seedha + kai size ke 4 sec tukde (manifest, ABR) + kai workers + CDN -> India region (Kafka topic ki copy, har region apne inbox bhare)
 
 ---
 
@@ -364,33 +356,60 @@ tweet khud upar laga deta, server ka intezaar nahi.
 
 **AWS pe:** Cassandra AWS ka **Keyspaces** (machine, copy AWS sambhalta), ya EC2 pe khud chalao (tab sab hamara sar-dard).
 
-Par Arpan ne match ki 100 MB video daali. Video Tweet Service aur Cassandra ke raaste gayi to dono bhar jaayenge,
-saath me sabke tweet atkenge. Aur 1 crore log dekhenge, to har baar wahi 100 MB humare server se jaayega.
+Par Arpan ne stadium se King Kohli ke six ka 1 GB 4K video daala. Video Tweet Service aur Cassandra ke raaste gaya to
+dono bhar jaayenge, saath me sabke tweet atkenge. Aur 1 crore log dekhenge, kuch WiFi pe, kuch gaon ke 3G pe.
 
-### Kadam 8: 100 MB ki video (S3 + CDN, tweet me sirf link)
+### Kadam 8: King Kohli ke six ka 1 GB video (S3 seedha, kai size, tukde, workers, CDN)
 
-```
-1. app Tweet Service se poochhta: "upload kahan karun?"
-   -> Tweet Service deta: S3 ka ek link, 10 min ke liye (presigned URL)
-2. app video seedha S3 pe daalta (humare server ke beech se nahi)
-3. tweet me sirf link: "T-990: Arpan: 'kya catch!' + video: s3/.../v1.mp4"
-4. dekhne wale video CDN se lete (paas wali machine se), S3 / humare server se nahi
-```
+**Arpan:** Video apne server pe mat la, alag raaste se. Ferrari highway ke liye, Alto gaon ke liye. Kai machine, kaam baanto, id ki parchi. Copy dekhne walon ke paas.
+
+Arpan stadium se six ka 4K video daalta hai, 1 GB. Video pe paanch dikkat aati hain, har ek ka hal:
+
+**1. Video Tweet Service se mat guzaaro.** Match ke din 50,000 log bhaari video daalte hain; agar sab Tweet Service se jaaye
+to uski memory aur net bhar jaate, chhote text tweet bhi atak jaate. Isliye app pehle Tweet Service se ek S3 link maangta
+(presigned URL, 10 min ka), aur video seedha S3 me tukdon me (multipart) daalta. Tweet me sirf video ki id / link.
+
+**2. Ek file nahi, kai size (transcoding).** John New York me WiFi + TV pe, Ravi gaon me 3G phone pe. Sirf 4K file ho to
+Ravi ka phone 1 GB kheench hi nahi paata. Isliye video 4K, 1080p, 480p, 240p me banta hai, aur har size 4-4 second ke
+tukdon (segments) me kat-ta hai. Saath me ek list (manifest, HLS `.m3u8`): kaunsa size, kaunsa tukda kis link pe.
+
+**3. Phone khud chunta hai (ABR).** Ravi ka phone poora video nahi, pehle manifest, phir tukda-tukda maangta. Pichhla tukda
+jaldi aaya to agla bada size, net gira to chhota. Server kuch nahi sochta. Ravi 2:00 pe khiskaye to phone hisaab lagata:
+120 / 4 = tukda #31, seedha wahi maangta, 0 se 2:00 tak kuch nahi (seek).
+
+**4. Bhaari kaam kai workers pe.** Ek machine pe 4 size banana 20 minute, aur 50,000 video line me. Isliye S3 me video
+aate hi event -> Kafka -> video ko hisson me kaato -> kai transcoding worker ek saath, har hissa `video id + hissa number`
+ki parchi ke saath, S3 me usi naam ke raste pe (`videos/v-555/480p/seg_031`). DB me ginti: "20 me se 17 hisse bane".
+Sab ban gaye to manifest + DB me `READY`. Tab tak tweet pe "processing...", aur 240p pehle bana ke chalu kar do.
+**Maan lo worker 7 gira:** heartbeat band, uska hissa naye worker ko, uski parchi (checkpoint) se wahin se. Same naam se
+likhta, to double nahi (idempotent). **Maan lo worker 7 zinda par atka (1 ghanta, baaki 2 min):** timeout pe hissa
+replacement ko, wo checkpoint se uthaye.
+
+**5. Dekhne wale paas se (CDN).** Six viral, 1 crore log India, US, Australia se. Har tukda US ke S3 se samundar paar
+mangana = bill aasmaan pe aur India me atkna. Isliye tukde CDN pe (paas wali machine), S3 tak sirf pehli baar.
+**Maan lo private video (10 dost) aur Ravi ne CDN link WhatsApp group me daal diya:** sirf link kaafi nahi. Har request
+pe access check (allow list: sirf wo 10), link signed + thodi der ka, video id random.
 
 ```mermaid
 flowchart LR
-    U["Arpan: video"] -- "1. upload link do<br/>3. tweet me sirf link" --> TS["Tweet Service"]
-    U -- "2. video seedha" --> S3[("S3")]
-    S3 -- "paas nahi to S3 se laata" --> CDN["CDN (paas wali machine)"]
-    CDN -- "4. dekhne wale" --> V["1 crore log"]
-    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    U["Arpan: 4K video"] -- "1. upload link do<br/>tweet me sirf video id" --> TS["Tweet Service"]
+    U -- "2. video seedha (multipart)" --> S3[("S3 asli + tukde")]
+    S3 -- "3. naya video aaya" --> K["Kafka"]
+    K -- "4. hisse baanto" --> W["Transcoding workers<br/>(4K/1080/480/240, 4 sec tukde)"]
+    W -- "5. tukde + manifest" --> S3
+    W -- "6. ginti / READY" --> DB[("DB: video ka haal")]
+    S3 -- "paas nahi to S3 se" --> CDN["CDN (paas wali machine)"]
+    CDN -- "7. manifest + tukde (ABR)" --> V["Ravi / John / 1 crore"]
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style CDN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Ab kya theek hua: bhaari video kabhi Tweet Service / Cassandra se nahi guzarti, tweet chhota (sirf link),
-crore log CDN se dekhte. Ye bilkul [chat kadam 10](../14_chat_messaging/14_chat_messaging.md#kadam-10-200-mb-ka-video-s3-me-message-me-sirf-link) wala: wahan bhi message me sirf link, video S3 me.
+Ab kya theek hua: bhaari video kabhi Tweet Service / Cassandra se nahi guzarti, har net pe chalti (kai size + ABR),
+skip turant (manifest + seek), lamba video bhi jaldi taiyaar (kai worker), aur crore log paas se dekhte (CDN).
+Upload ka hissa [chat kadam 10](../14_chat_messaging/14_chat_messaging.md#kadam-10-200-mb-ka-video-s3-me-message-me-sirf-link) aur file upload jaisa hi hai.
 
-**AWS pe:** video **S3** me (AWS rakhta, copy bhi), aur log tak **CloudFront** (AWS ka CDN) se paas wali jagah se.
+**AWS pe:** video **S3** me, transcoding **AWS Elemental MediaConvert** (ya apne workers ECS / EC2 pe), log tak **CloudFront** (CDN, signed URL / cookie).
 
 Par Arpan Bangalore me, aur saare server, Redis, Cassandra US me. Har feed ko US jaana aur aana, akela safar
 hi ~300 ms. NFR "feed 200 ms" toot gaya.
@@ -443,6 +462,6 @@ Tweet aaya: Tweet Service use Kafka "tweets" me likhta (acks=all), turant "ho ga
 me save karta (author_id se baanta), fanout worker aam logon ke tweet ki id unke active followers ke Redis inbox me daalte
 (aakhri 800, soye hue ko chhod ke). Celebrity ka fanout nahi: feed padhte waqt unke aakhri tweet DB se, har
 server ke apne cache se 2 sec. Feed = inbox ki 50 id + celebrity ke tweet, milao, poora tweet DB se. Video
-S3 me, dekhne wale CDN se. Har desh ka apna region; Kafka topic ki copy doosre region jaati, wahan ka worker
+seedha S3, kai workers kai size ke 4 sec tukde banate (manifest), phone net dekh ke tukda chunta (ABR), dekhne wale CDN se. Har desh ka apna region; Kafka topic ki copy doosre region jaati, wahan ka worker
 wahan ke inbox bhare.
 ```
