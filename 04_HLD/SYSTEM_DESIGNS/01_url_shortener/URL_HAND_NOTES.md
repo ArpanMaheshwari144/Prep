@@ -76,6 +76,10 @@ Technical me: "pattern pata lag jaayega, gate pe bhaga do" = WAF block.
 Arpan: Yahan thoda pench hai. Had ek user, ek aadmi pe rakhenge. Kyunki maan lo ek office hai, wahan wo log unke WiFi se aa rahe hain, to dikkat ho jaayegi. Ek group ek saath aa gaya, lekin wo sab legit users hain, unko to token dena padega. To per user pe lagao, group pe nahi: ye ek banda hai, ek baar me 5 hi lagayega, usse zyada nahi.
 Technical me: "per user had, group pe nahi" = rate limit user pe (IP pe nahi), "office ka WiFi" = ek IP ke peeche kai asli user, "5 se zyada nahi" = had paar pe 429.
 
+**Maan lo bina login ke bhi link banta, script har second hazaar link bana rahi, userId hai hi nahi.**
+Arpan: Sabse pehle login laga do: bina login link nahi. Isse dashboard / tracking bhi chalega. Login nahi rakhna to tracking bhool ja, aur IP pe had: IP ki had thodi zyada, userId ki thodi kam. Script hazaar link nahi bana paayegi. Baar-baar aaye to IP ban. Naye-naye IP se phir bhi aaye to peeche investigate karo, aur ek hi desh se aa raha to us desh ko thodi der WAF ki block list me daal do.
+Technical me: "login laga do" = auth zaroori (tab userId pe had + tracking), "bina login IP pe dheeli had" = anonymous rate limit per IP, "IP ban, desh block" = WAF block list / geo-block.
+
 &nbsp;
 
 Poora design = [01_url_shortener.md](01_url_shortener.md)

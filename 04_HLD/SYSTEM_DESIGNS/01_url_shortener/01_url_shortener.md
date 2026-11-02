@@ -176,6 +176,11 @@ ye ek banda hai, ek baar me 5 hi lagayega, usse zyada nahi.
 **Asli naam:** per user had = rate limit user pe (IP pe nahi, office WiFi = ek IP ke peeche kai asli user), had paar =
 429.
 
+**Maan lo bina login ke link banta, aur script har second hazaar bana rahi, userId hai hi nahi:** pehla raasta, login
+laga do, tab userId pe had bhi aur dashboard / tracking bhi. Login nahi rakhna to tracking chhodo, IP pe thodi dheeli
+had (userId pe kadi). Baar-baar aaye to IP ban, ek hi desh se naye-naye IP aayein to thodi der us desh ko WAF block me.
+**Asli naam:** auth zaroori ya anonymous rate limit per IP, WAF block list / geo-block.
+
 ---
 
 Notes (Arpan ke shabd) = [URL_HAND_NOTES.md](URL_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
