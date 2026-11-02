@@ -96,16 +96,16 @@ poora para uda. To use ek chhoti memory me likho. Maan le mere paas ek dabba hai
 kar raha. Kal wo dabba mar jaaye ya gir jaaye, to us dabbe ki ek aur copy bana dunga. Ya main dabbe ko bolunga: ye
 meri information tu bhi store kar le. Kal mujhe kuch ho jaaye to tu hai, tujhe kuch ho jaaye to main hoon. Dabbe aur
 copy me likh gaya, tabhi "Saved".
-**Asli naam:** dabba = Redis buffer (server ki apni memory nahi), dabbe ki copy = Redis replica, "Saved" = ACK tabhi
-jab buffer + copy me likh gaya, mujhe kuch ho to tu hai = owner gira to naya owner (copy) buffer se bacha kaam utha ke
-Cassandra me likhta.
+**Asli naam:** dabba = Redis buffer (tez, chalta doc), dabbe ki copy = pakki jagah: ops chhote batch me (~1 sec)
+Cassandra me (3 copy). Redis ki apni copy der se bharti, us pe "Saved" ka bharosa nahi. "Saved" = ACK tabhi jab
+Cassandra ne likh liya. Mujhe kuch ho to tu hai = owner gira to naya owner (copy) Cassandra se doc utha ke aage chalta.
 
 ```mermaid
 flowchart LR
     A["Arpan"] --> LB["Banda<br/>(LB: docId se ring)"]
     LB --> O["Maalik<br/>(Owner server, OT)"]
-    O --> B[("Dabba + copy<br/>(Redis buffer + replica)")]
-    B --> D[("Diary<br/>(Cassandra: op log)")]
+    O --> B[("Dabba<br/>(Redis buffer, tez)")]
+    O --> D[("Pakki copy<br/>(Cassandra op log, Saved iske baad)")]
     O --> C["Copy<br/>(Standby owner)"]
     style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

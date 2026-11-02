@@ -115,7 +115,8 @@ to bas bhejne wala banda hai. Server ko pata hai kaunsa pehle aaya, server lagay
 
 **Asli naam:** numbering = sequence number, server ka, har chat ka apna (`#980`, `#981`; Redis `INCR seq:college-gang`,
 ek saath aaye to bhi do alag number). Phone ki ghadi pe bharosa nahi. Wapas jude Ravi ko "mere paas aakhri #979, uske
-baad sab do" bhi isi number se.
+baad sab do" bhi isi number se. Redis restart hua to ginti peeche se shuru na ho: us chat ka aakhri number
+Cassandra se padh ke wahin se aage.
 
 ## 7. "12 naye message" aur kisne padha (ek ginti)
 

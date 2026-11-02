@@ -58,7 +58,7 @@ Dobara chala, Kafka ne wahi khabar phir di, SMS do baar. OTP ya "5000 debited" p
 parchi rakh lo apne paas. Kaam ho gaya to likh liya aur kahin rakh liya. 10 din baad wahi khabar dobara aayi, parchi
 dekhi: ye to ho chuka, chhod do. Kabhi bhi kuch ho jaaye, parchi hai.
 
-**Asli naam:** parchi = idempotency. Khabar ki id (jaise 999:sms) ka "ho gaya" record DB me (id UNIQUE), bhejne se
+**Asli naam:** parchi = idempotency. Khabar ki id (jaise 999:sms) ka "ho gaya" record Postgres me (id UNIQUE; Cassandra me UNIQUE nahi hota), bhejne se
 pehle check, mila to skip.
 
 ## 4. "Abhi bheed hai, baad me aana" (thodi der baad dobara)

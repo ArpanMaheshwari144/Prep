@@ -52,12 +52,12 @@ favourite stadium wala bhai Kafka. Maine post dabaya to "tera post ho gaya, nika
 gira to outbox me ek parchi pe likha hai. Wo dabba gira to replica hai, copiyan hain.
 
 **Asli naam:** threshold = had ke upar celeb raasta, stadium wala bhai = Kafka (async fanout, peeche fanout workers),
-post ho gaya, nikal = turant OK, parchi pe likha = outbox ki soch: parchi tweet ki row me hi (status "feed me bheja:
-nahi"), peeche job "nahi" wale utha ke Kafka me daale aur tick kare. Dabba gira to = Kafka ki copy (replica).
+post ho gaya, nikal = turant OK, parchi pe likha = outbox ki soch; yahan Kafka hi pakki parchi: Tweet Service pehle
+Kafka me daale (acks=all), peeche workers tweet Cassandra me aur inbox me likhein. Dabba gira to = Kafka ki copy (replica).
 
 ```mermaid
 flowchart LR
-    A["Arpan: post"] --> TS["Tweet Service<br/>(tweet + status parchi)"]
+    A["Arpan: post"] --> TS["Tweet Service<br/>(pehle Kafka me)"]
     TS --> K[("Stadium wala bhai<br/>(Kafka)")]
     K --> FW["Peeche bharne wale<br/>(Fanout workers)"]
     FW --> IN[("Har bande ka dabba<br/>(Redis inbox)")]
@@ -106,15 +106,16 @@ copy), id se baanto = partition key = user id (author ke saare tweet ek partitio
 graph DB Neo4j.
 
 **Maan lo tweet Cassandra me likha aur parchi likhne se pehle server gira:** Cassandra me tweet aur parchi do alag
-table me ek saath (dono ya koi nahi) nahi likhe jaate. Isliye parchi tweet ki row me hi hai: ek row ek baar me likhi
-jaati, to tweet bacha to parchi bhi bachi. Peeche job "feed me bheja: nahi" wale utha ke Kafka me daalta hai.
-**Asli naam:** outbox ki soch, status column tweet row me (single row write atomic), relay job.
+table me ek saath (dono ya koi nahi) nahi likhe jaate. Isliye ulta karo: Tweet Service pehle Kafka me daalta hai, aur
+Kafka "likh liya" bole tabhi "post ho gaya". Kafka hi pakki parchi hai. Peeche workers tweet Cassandra me aur followers
+ke inbox me likhte; worker gira to Kafka wahi khabar dobara deta, tweet_id same, to dobara likhna bhi upar hi likhta.
+**Asli naam:** outbox ki jagah Kafka (durable log, acks=all), consumer Cassandra + inbox likhe, tweet_id se idempotent.
 
 ```mermaid
 flowchart LR
-    TS["Tweet Service"] --> C[("Bada bhai<br/>(Cassandra, user id se, status parchi)")]
-    TS --> K[("Stadium wala bhai<br/>(Kafka)")]
-    K --> FW["Peeche bharne wale<br/>(Fanout workers)"]
+    TS["Tweet Service"] --> K[("Stadium wala bhai<br/>(Kafka, pakki parchi)")]
+    K --> FW["Peeche bharne wale<br/>(Workers)"]
+    FW --> C[("Bada bhai<br/>(Cassandra, user id se)")]
     FW --> G[("Follow ka track<br/>(Neo4j)")]
     FW --> IN[("Dabba<br/>(Redis inbox, last 500)")]
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

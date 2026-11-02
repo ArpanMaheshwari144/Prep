@@ -28,8 +28,9 @@ chahiye, Ravi ko is bhaav me, dono ka bhaav theek hai to dono ka sauda kar do. K
 jaana na Ravi ne Arpan ko, bas beech me ek aadmi baitha tha.
 
 **Asli naam:** beech ka aadmi = matching engine, har share ki do list (kharidne wale, bechne wale) = order book,
-bhaav mila = match (ek bhaav pe do log to jo pehle aaya wo pehle: price-time priority). Paisa aur share = SQL DB
-(Postgres; sauda pe chaar cheez ek saath badalti, ya sab ya kuch nahi = ACID).
+bhaav mila = match (ek bhaav pe do log to jo pehle aaya wo pehle: price-time priority). Paisa aur hold = SQL DB
+(Postgres; ek user ka paisa kaatna / hold ek transaction me = ACID). Portfolio (share dikhana) alag service ka DB, sauda
+wahan Kafka se pahunchta (kadam 6-7).
 
 ```mermaid
 flowchart LR
@@ -87,8 +88,8 @@ utni hai, wo dekh ke dobara jama lo.
 
 **Asli naam:** permanent dabba = DB (primary + replica / standby), tukde = shard (share ke hisaab se), pehle numbers =
 numbers se RAM ya DB ka faisla (bahut kam traffic pe DB pe hi chal jaata; RAM + micro-second wala jhanjhat tab jab
-NSE jaisi bheed ho), subah se parchi = order log (append-only, sirf jodna), parchi dekh ke bag = log replay se book
-wapas.
+NSE jaisi bheed ho), subah se parchi = order log (append-only, sirf jodna): har order pehle parchi pe, phir book (DB) me; DB ki copy bhi
+hil jaaye to parchi dekh ke bag = log replay se book wapas.
 
 ```mermaid
 flowchart LR

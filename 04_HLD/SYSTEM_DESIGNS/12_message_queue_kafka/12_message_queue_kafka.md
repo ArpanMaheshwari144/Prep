@@ -15,7 +15,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 FR      Order Service ki khabar SMS, Fraud, Analytics tak pahunche · Order Service kisi ka intezaar na kare
         · ek user ki khabar kram me (order, pay, cancel)
 NFR     khabar kabhi na khoye · sale ki bheed me bhi chale · ek service dheemi ho to baaki na rukein
-Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~500 / sec -> 10 gate
+Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~500 / sec -> 10 checker, gate 30 (aage checker badhane ki jagah)
         ek khabar ~1 KB -> roz ~100 GB, 7 din x 3 copy = ~2 TB disk
 ```
 
@@ -54,8 +54,8 @@ SMS nahi rukega.
 ## 3. Ek admin se bheed nahi sambhal rahi (aur gate + hash)
 
 Diwali sale, har second 5,000 fan, akela admin nahi sambhal pa raha, aur andar ek checker 500 / sec hi punch kar
-paata hai. To aur gate khade karo, har gate ke andar apni line. 5,000 / 500 = 10 gate, taaki 10 checker ek saath
-punch kar sakein. Kaun kis gate pe jaaye, wahan hash aa gaya: Arpan ki teeno khabar (order, pay, cancel) hamesha ek
+paata hai. To aur gate khade karo, har gate ke andar apni line. 5,000 / 500 = 10 checker chahiye. Gate 30 rakho:
+abhi ek checker 3 gate sambhale, bheed badhe to checker 30 tak badha sakte, gate badalne nahi padte. Kaun kis gate pe jaaye, wahan hash aa gaya: Arpan ki teeno khabar (order, pay, cancel) hamesha ek
 hi gate se jaayengi, to unka kram nahi bigdega.
 
 **Asli naam:** gate = partition (10, alag broker pe), hash = key se partition (`hash(userId) % 10`). Kram sirf ek
@@ -68,7 +68,7 @@ ke 3 SMS, line teen guna dheemi. To un teeno ko mila de, ek bana de, ek kamre me
 koi bhi fan aaye, bas in 3 me se ek pe bhej. Jisne punch kar diya, baaki 2 usko dekhe hi nahi.
 
 **Asli naam:** kamra = consumer group (`group.id = sms`), checker = consumer, 3 me se ek pe = ek partition group me
-ek hi consumer ko. 10 gate hain to 11va checker khaali baithega. Checker gira to uske gate baaki checkers me bat jaate
+ek hi consumer ko. 30 gate hain to 31va checker khaali baithega. Checker gira to uske gate baaki checkers me bat jaate
 hain (rebalance).
 
 **Maan lo har fan ki talaashi bhi honi hai, 2 security wale aaye:** unhe checker ke kamre me bitha diya to "sirf ek
@@ -78,7 +78,7 @@ security ka room. Ek ko paar karo, phir doosre room me jao.
 
 ```mermaid
 flowchart LR
-    O["Ticket counter<br/>(Producer, key = userId)"] --> G[("10 gate<br/>(Partitions)")]
+    O["Ticket counter<br/>(Producer, key = userId)"] --> G[("30 gate<br/>(Partitions)")]
     G --> C["Checker ka kamra<br/>(Consumer group sms)"]
     G --> T["Security ka kamra<br/>(Consumer group fraud)"]
     style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -167,7 +167,7 @@ uski khabar hamesha ke liye gayi. Wahan bheed bahut zyada hai, to us gate pe aur
 rehne hi mat do na, aisa karo ki wo bheed 7 din tak peeche na rahe.
 
 **Asli naam:** 7 din ka panna = retention, kitna peeche = consumer lag (gate ki aakhri khabar minus uska offset), aur
-checker = consumer badhao (partition ki ginti tak, yahan 10). Retention badhana bas waqt kharidna hai.
+checker = consumer badhao (partition ki ginti tak, yahan 30; baad me gate badhao to hash badal ke kram bigad sakta, isliye shuru se zyada). Retention badhana bas waqt kharidna hai.
 
 **Maan lo wo dheere-dheere peeche ja raha, aaj 1 din, kal 2 din:** alert laga do. Wo peeche ja raha, alert aa gaya,
 aur alert aise bolta: "abe ye bahut peeche hai, jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."
