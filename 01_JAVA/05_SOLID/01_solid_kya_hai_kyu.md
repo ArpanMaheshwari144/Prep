@@ -1,76 +1,27 @@
-# SOLID Principles — Kya Hai, Kyu Aaya?
+# SOLID: ek misaal (tera payment app) pe paanchon
 
-> **V90 — SOLID: Topic 61 (foundation)**
+SOLID = 5 aadatein jisse code badalna aasaan rahe: naya kaam jodo to purana na toote, test me mock lag jaaye.
+Paanchon ek hi kahani pe: tera payment app (paisa kaato, DB me likho, SMS bhejo).
 
----
-
-## STORY — OrderService Sab Kuch Kar Rahi Thi
-
-→ Ek baar **OrderService** likhi — order ka **sab kuch** ek hi class mein
-→ Order logic + DB mein save + Email bhejo + PDF generate + log + audit
-→ **Sab ek jagah, sab handle hoga.** Kya badiya code hai!
-→ **Kal Marketing ne email format badla** — OrderService **toot gayi**
-→ **Parso DB team ne schema badla** — phir **toot gayi**
-→ **Tarso Audit team ne log format badla** — **phir toot gayi**
-→ Realize hua: ek class = **3 alag teams toot sakti hain**
-→ Bug fix karne mein 10 jagah change karna padta — testing nightmare
-→ **SOLID = ye dard avoid karne ke 5 principles**
-
----
-
-## WHY SOLID — Pehle Yeh Dard Samjho
-
-### Bina SOLID = Spaghetti Code
+## Ek nazar
 
 ```
-class OrderService {
-    saveOrder()         ← DB team ka code
-    sendEmail()         ← Marketing ka code
-    generatePDF()       ← Audit ka code
-    calculateTax()      ← Finance ka code
-    notifyAdmin()       ← Operations ka code
-}
+S  ek class ek kaam         -> Controller / Service / Repository alag
+O  naya = nayi class         -> PaymentMethod interface (Strategy)
+L  bachcha baap ki jagah     -> FD withdraw me exception = galat
+I  chhote interface          -> read-only ko delete() mat thopo
+D  interface pe tiko         -> constructor injection (Spring DI)
 ```
 
-**Problems:**
-1. **TIGHT coupling** — sab interconnected, ek change = doosra toota
-2. **Hard to test** — mock karna mushkil (sab ek saath chalta)
-3. **Hard to extend** — naya feature = existing code chedo
-4. **Multiple reasons to change** — har team ke liye ek hi class
+Har letter ki poori kahani: [S](02_S_single_responsibility.md) · [O](03_O_open_closed.md) ·
+[L](04_L_liskov_substitution.md) · [I](05_I_interface_segregation.md) · [D](06_D_dependency_inversion.md)
 
-### SOLID Aaya — 5 Principles, 5 Solutions
+## Interview line
 
 ```
-S — Single Responsibility   →  ek class, ek kaam
-O — Open / Closed           →  extension OK, modification NO
-L — Liskov Substitution     →  child parent ki jagah safe use ho
-I — Interface Segregation   →  fat interface mat banao
-D — Dependency Inversion    →  abstraction pe depend, concrete nahi
+In my payment code I keep one responsibility per class: controller, service, repository. New payment
+methods come in as new classes behind a PaymentMethod interface, so I extend without touching tested
+code. Subclasses must honour the parent contract, so a fixed deposit does not inherit withdraw.
+Interfaces stay small, and services depend on interfaces with the implementation injected by Spring,
+which also makes them easy to mock in tests.
 ```
-
-**5 problems → 5 solutions. Maintainable code.**
-
----
-
-## SOLID = Robert C. Martin (Uncle Bob) ka invention
-
-→ 2000 mein paper publish kiya (principles unke; "SOLID" naam baad me Michael Feathers ne diya, ~2004)
-→ Industry-standard ban gaya
-→ **Modern frameworks** (Spring, Angular, etc.) **already SOLID follow karte**
-→ Spring Boot mein:
-  - `@Service` — SRP
-  - `@Repository` interface — OCP, DIP
-  - `@Autowired` — DIP achieve karne ka tool
-
----
-
-## POWER PHRASE
-
-> *"SOLID is five design principles for maintainable and scalable code. Bina SOLID, ek class mein multiple responsibilities ghus jaate, multiple teams se changes aate, code spaghetti ban jata. SOLID solves this with clear separation: one reason to change, extension over modification, substitutability, focused interfaces, and dependency on abstractions. Spring Boot ki entire architecture SOLID-driven hai."*
-
----
-
-## Bottom Line
-
-> **SOLID = 5 rules jo "ek change = sab kuch toot gaya" wala dard rokta.**
-> Pehle ek-ek principle deeply samjho, fir project mein apply.

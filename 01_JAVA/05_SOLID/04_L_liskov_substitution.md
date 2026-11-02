@@ -1,134 +1,35 @@
-# L = Liskov Substitution Principle (LSP)
+# L: Liskov Substitution (bachcha baap ki jagah lag sake)
 
-> **V90 — SOLID: Topic 64**
+**Niyam:** jahan parent chalta hai, wahan child daalo to kuch na toote.
 
----
+## Kahani
 
-## Definition
-
-> **Child class ko parent ki jagah use kar pao — bina kuch break.**
-
-Matlab: agar `Account` use ho raha hai, **`SavingsAccount` daalna safe** hona chahiye. Code crash nahi hona chahiye.
-
----
-
-## ★ REAL-LIFE ANALOGY (JP: "real-life use batao")
-
-> **Bird** ke paas `fly()` hai. **Penguin** bhi Bird hai — par ud NAHI sakta.
-> Penguin ko Bird (jo fly maanta) ki jagah lagaya → `fly()` par TOOTA = LSP violation.
-> **Fix:** `Bird` → `FlyingBird` / `NonFlyingBird` → Penguin = NonFlyingBird.
-> (finance: `FixedDeposit` ko `Account.withdraw()` ki jagah lagana → toota — same baat.)
-
----
-
-## STORY — FixedDeposit ki Galti
-
-→ `Account` class banayi — har account ka `withdraw()` method
-→ Saare account types extend kiye:
-   - `SavingsAccount` — withdraw normal kaam
-   - `CurrentAccount` — withdraw normal kaam
-   - `FixedDeposit` — **kaam:** "FD mein withdraw nahi hota maturity se pehle"
-   - Toh FixedDeposit mein **`withdraw()` ne exception throw kar diya**
+`Account.withdraw()` sabke paas. `SavingsAccount`, `CurrentAccount` theek. `FixedDeposit extends Account` ne socha
+"FD se maturity se pehle nikaal nahi sakte" aur `withdraw()` me exception phenk di.
 
 ```java
-class Account {
-    void withdraw(double amount) { /* normal logic */ }
-}
-
 class FixedDeposit extends Account {
-    @Override
-    void withdraw(double amount) {
-        throw new RuntimeException("FD se withdraw nahi hota!");  // LSP violation
-    }
+    @Override void withdraw(double amt) { throw new RuntimeException("FD se withdraw nahi"); }
 }
+void payBill(Account a) { a.withdraw(500); }   // FD aaya to yahin toota
 ```
 
-→ **NotificationService** sab accounts pe `withdraw()` chala raha tha
-→ Jab FD aaya — **CRASH **
-→ **Caller ne `Account` expect kiya — Account ki guarantee thi `withdraw()` chalega**
-→ FD ne us guarantee tod di — **LSP violation**
-→ **Fix:** Hierarchy galat hai — FD ko Account ka child nahi banana chahiye
+Jo code "koi bhi Account" maan ke withdraw karta, wo FD pe toot gaya. Bird / Penguin jaisa: Penguin Bird hai par ud nahi sakta.
 
----
-
-## Fix — Hierarchy Sahi Karo
+## Fix
 
 ```java
-interface Withdrawable {
-    void withdraw(double amount);
-}
-
-class SavingsAccount implements Withdrawable { /* withdraw kar sakta */ }
-class CurrentAccount implements Withdrawable { /* withdraw kar sakta */ }
-
-// FixedDeposit Withdrawable NAHI — alag class
-class FixedDeposit {
-    /* withdraw nahi hota */
-    void closeAtMaturity() { ... }
-}
+class Account { double balance; }
+class WithdrawableAccount extends Account { void withdraw(double amt) { ... } }
+class SavingsAccount extends WithdrawableAccount { }
+class FixedDeposit extends Account { }   // withdraw hai hi nahi
 ```
 
-→ Ab `Withdrawable` interface se kaam karne wala code **safe** — koi crash nahi
-→ FD apna alag interface follow karta
+Seedha pehchaan: "extends kiya aur override me exception phenk di / kuch nahi kiya" = LSP toota.
 
----
-
-## LSP Visualization
+## Interview line
 
 ```
-              BAD — Child breaks parent contract
-
-  Account (parent)
-    withdraw() — promise: chalega
-        │
-        ▼ extends
-  ┌─────────────┬──────────────┐
-  ▼             ▼              ▼
-Savings    Current       FixedDeposit
-withdraw   withdraw      withdraw → throw exception
-kaam    kaam        (parent ka contract toot gaya!)
-
-
-  Code:  for (Account a : accounts) a.withdraw(100);
-                                            │
-                                            ▼
-                                       FD pe crash
-
-
-              GOOD — sahi hierarchy
-
-  Withdrawable (interface)
-    withdraw()
-        │
-        ▼ implements
-  ┌─────────┬──────────┐
-  ▼         ▼
-Savings    Current
-safe    safe
-
-  FixedDeposit — alag class, alag contract
-                 (Withdrawable implement nahi karta)
+A subclass must keep the parent promise; if a fixed deposit cannot withdraw, it should not inherit
+withdraw, so I split the hierarchy instead of throwing an exception in the override.
 ```
-
----
-
-## LSP Trap — Common Violation
-
-> **Child class mein parent ke method ka behavior weaken nahi karna chahiye.**
-
-Examples:
-1. Child throws unexpected exception (jaisa upar)
-2. Child input pe ZYADA shart lagaye (parent kuch bhi le, child sirf positive) = precondition kadi
-3. Child parent ke WAADE se kam de (parent: "list kabhi null nahi", child null lautaye) = postcondition kamzor
-
-★ (30-Sep sudhaar) Child ka return type ZYADA specific hona (parent Map, child TreeMap) violation NAHI —
-  ye covariant return hai, Java allow karta aur LSP ke hisaab se safe (TreeMap bhi ek Map hi hai).
-  Pehle yahan ise galti likha tha.
-
-**Fix:** Hierarchy redesign — agar child parent ki jagah safely nahi use ho sakti, **wo child hai hi nahi** us parent ki.
-
----
-
-## POWER PHRASE
-
-> *"Liskov Substitution means a child class must be substitutable for its parent without breaking anything. If FixedDeposit throws an exception on `withdraw()` which Account promises to support, that's a design violation — fix the hierarchy, not the caller."*

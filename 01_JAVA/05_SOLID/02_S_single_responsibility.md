@@ -1,111 +1,39 @@
-# S = Single Responsibility Principle (SRP)
+# S: Single Responsibility (ek class, ek kaam)
 
-> **V90 — SOLID: Topic 62**
+**Niyam:** class ke badalne ki sirf EK wajah ho.
 
----
+## Kahani
 
-## Definition
-
-> **Ek class ka SIRF EK reason to change hona chahiye.**
-
-Matlab: ek class **ek hi kaam** ke liye responsible — ek hi cheez badle toh class touch ho.
-
----
-
-## ★ REAL-LIFE ANALOGY (JP: "real-life use batao")
-
-> Ek hi banda **cook + waiter + cashier** sab kare → ek gadbad, poora system atke.
-> Har banda **ek kaam** → cook badle to waiter/cashier pe asar nahi.
-> **Code:** ek class DB + email + logic sab kare → koi ek badle to sab toote. Split → har class ek kaam.
-
----
-
-## STORY — ShoppingCart Bug
-
-→ ShoppingCart class banayi — ek dum smart, **3 kaam** karti thi:
-   1. Cart logic (add item, remove item, total)
-   2. DB save (Cart save karna database mein)
-   3. Email bhejo (order confirmation email)
+`PaymentService` me teen kaam the: paisa kaatna, DB me save karna, SMS bhejna. Marketing ne SMS ka format badla ->
+PaymentService chhedni padi. DB team ne schema badla -> phir chhedni padi. Teen alag log, teen wajah, ek class. Ek
+jagah badla aur doosra kaam toot gaya.
 
 ```java
-class ShoppingCart {
-    void addItem(Item i) { ... }
-    void calculateTotal() { ... }
-    void saveToDB() { ... }       // DB team ka kaam
-    void sendEmail() { ... }      // Marketing ka kaam
+class PaymentService {            // galat: teen kaam
+    void pay(...)     { ... }     // paisa
+    void saveToDb()   { ... }     // DB team ka
+    void sendSms()    { ... }     // marketing ka
 }
 ```
 
-→ **Marketing ne email format badla** → ShoppingCart **toot gayi**
-→ **DB team ne schema badla** → ShoppingCart **phir toot gayi**
-→ **3 alag reasons to change** = SRP violation
-→ **Fix:** Split kar do — har class ka apna kaam
-
----
-
-## Fix — Split Karo
+## Fix
 
 ```java
-// Cart logic only
-class CartService {
-    void addItem(Item i) { ... }
-    void calculateTotal() { ... }
-}
-
-// DB ka kaam
-class CartRepository {
-    void save(Cart c) { ... }
-}
-
-// Email ka kaam
-class EmailService {
-    void sendOrderConfirmation(Cart c) { ... }
-}
+class PaymentService      { void pay(...) { ... } }        // sirf paisa
+class PaymentRepository   { void save(Payment p) { ... } } // sirf DB
+class NotificationService { void sendSms(...) { ... } }    // sirf SMS
 ```
 
-**Ab:**
-- Marketing email change kare → **EmailService** touch
-- DB team schema change kare → **CartRepository** touch
-- Cart logic change ho → **CartService** touch
-- **Teen alag reasons, teen alag classes — koi cross-impact nahi**
+Ab SMS badla to sirf `NotificationService` khuli. Restaurant jaisa: cook, waiter, cashier alag; cook badla to cashier pe asar nahi.
 
----
+## Tera project
 
-## SRP TRAP — "One Method Per Class" GALAT
+Controller (HTTP), Service (logic), Repository (DB) ki teen parat isi wajah se. PR drill me "controller me hi DB
+query" pakadta hai = yahi.
 
-> **SRP ≠ "ek method per class"**
-> **SRP = "ek REASON TO CHANGE"**
+## Interview line
 
-```java
-// SAHI — multiple methods, ONE reason to change
-class CartService {
-    void addItem() { }
-    void removeItem() { }
-    void calculateTotal() { }
-    void applyDiscount() { }
-}
-// Ye sab "cart logic" hi hai — ONE reason to change (cart business rules)
 ```
-
----
-
-## SRP Spring Boot Mein
-
-```java
-@Controller   ← HTTP request handle (web layer)
-class OrderController { ... }
-
-@Service      ← business logic (calculate, validate)
-class OrderService { ... }
-
-@Repository   ← DB ka kaam
-class OrderRepository { ... }
+Each class has one reason to change: the controller handles HTTP, the service holds business logic and
+the repository talks to the DB, so a change in one area does not break another.
 ```
-
-**Spring ne pre-built SRP layers diye** — har annotation ka ek hi kaam.
-
----
-
-## POWER PHRASE
-
-> *"Single Responsibility means a class should have only one reason to change. If ShoppingCart handles cart logic, DB saving, and email notifications — three different teams can break it for three different reasons — split them."*

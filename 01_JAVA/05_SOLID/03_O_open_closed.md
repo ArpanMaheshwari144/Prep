@@ -1,148 +1,37 @@
-# O = Open / Closed Principle (OCP)
+# O: Open / Closed (naya jodo, purana mat chhedo)
 
-> **V90 — SOLID: Topic 63**
+**Niyam:** class naye kaam ke liye khuli (extend), par purana tested code chhedne ke liye band.
 
----
+## Kahani
 
-## Definition
-
-> **Class extension ke liye OPEN, modification ke liye CLOSED.**
-
-Matlab: naya feature add karo **naya class likh ke** — existing tested code ko **chhedo mat**.
-
----
-
-## ★ REAL-LIFE ANALOGY (JP: "real-life use batao")
-
-> Electric board me **naya appliance** lagana → naya **socket** add karo, poori building ki wiring mat kholo.
-> (extension = naya socket | modification = poori wiring redo → galat.)
-> **Code:** naya payment mode → nayi class (`CryptoPayment`), purani `Payment` class chhuo mat.
-
----
-
-## STORY — Payment Processor Mess
-
-→ Pehle PayPal payment tha. Code:
+Pehle sirf UPI tha. Phir Card aaya, phir Wallet, phir Crypto. Har baar wahi file khuli aur `else if` badhta gaya,
+aur har baar purane tested raaste me bug ka darr.
 
 ```java
-class PaymentService {
-    void process(String type) {
-        if (type.equals("paypal")) {
-            // paypal logic
-        }
-    }
-}
+if (type.equals("UPI"))         { ... }
+else if (type.equals("CARD"))   { ... }
+else if (type.equals("WALLET")) { ... }   // har naye mode pe tested code chhedo
 ```
 
-→ **Stripe add karna tha** — `else if` lagaya:
+## Fix
 
 ```java
-if (type.equals("paypal")) { ... }
-else if (type.equals("stripe")) { ... }
+interface PaymentMethod { void pay(double amount); }
+class UpiPayment  implements PaymentMethod { public void pay(double a) { ... } }
+class CardPayment implements PaymentMethod { public void pay(double a) { ... } }
+// kal Crypto: bas nayi class CryptoPayment, purani koi file nahi khuli
 ```
 
-→ **Phir Razorpay aaya, UPI aaya, Crypto aaya** — har baar `if-else` ladder badhta gaya
-→ Existing **tested code chhedna pad raha** — bug ka risk
-→ **OCP violation** — class **extend karne ke liye open**, **modification karne ke liye closed nahi tha**
+Bijli ka board jaisa: naya appliance = naya socket, poori building ki wiring nahi kholte.
 
----
+## Tera project
 
-## Fix — Interface + Naya Class Add
+Ye wahi Strategy pattern hai (design patterns me padha). Spring me saare `PaymentMethod` bean ek `Map` me inject ho
+jaate, type se utha lo, `if-else` khatam.
 
-```java
-// 1. Interface define karo
-interface PaymentProcessor {
-    void process(double amount);
-}
-
-// 2. Har payment ka apna class
-class PayPalProcessor implements PaymentProcessor {
-    public void process(double amount) { /* paypal logic */ }
-}
-
-class StripeProcessor implements PaymentProcessor {
-    public void process(double amount) { /* stripe logic */ }
-}
-
-// 3. Service ne sirf interface dekhi
-class PaymentService {
-    void process(PaymentProcessor processor, double amount) {
-        processor.process(amount);
-    }
-}
-```
-
-**Ab Razorpay add karna hai?**
-```java
-class RazorpayProcessor implements PaymentProcessor {
-    public void process(double amount) { /* razorpay logic */ }
-}
-```
-
-→ **Naya class banao**. Existing PayPal/Stripe **untouched**, PaymentService **untouched**
-→ Tested code mein **ZERO change** — sirf naya class add hua
-
----
-
-## OCP Visualization
+## Interview line
 
 ```
-                BAD — if-else chain
-
-                  PaymentService
-                ┌──────────────────┐
-                │ if(paypal)       │  ← naya add = chhedo
-                │ else if(stripe)  │
-                │ else if(upi)     │
-                │ else if(razor)   │     ← bug risk har baar
-                └──────────────────┘
-
-
-                GOOD — interface + new class
-
-                  PaymentProcessor (interface)
-                          │
-                ┌─────────┼──────────┬─────────┐
-                ▼         ▼          ▼         ▼
-              PayPal   Stripe       UPI    Razorpay
-              (class)  (class)    (class)  (class)
-
-              Naya add? Naya class. Existing UNTOUCHED.
+New behaviour comes in as a new class behind an interface, like a new PaymentMethod, so I extend the
+system without editing tested code; it is the Strategy pattern.
 ```
-
----
-
-## OCP Spring Boot Mein
-
-```java
-// Interface
-interface OrderRepository {
-    Order save(Order o);
-}
-
-// MySQL impl
-@Repository
-class MySQLOrderRepository implements OrderRepository { ... }
-
-// Kal MongoDB chahiye? Naya class:
-@Repository
-class MongoOrderRepository implements OrderRepository { ... }
-
-// OrderService UNTOUCHED — sirf interface se kaam karta
-@Service
-class OrderService {
-    @Autowired OrderRepository repo;    // interface, koi specific impl nahi
-}
-```
-
-**Spring `@Repository` interface + `@Autowired` = OCP** — App never knows DB impl.
-
-★ TRAP: dono (`MySQL...` aur `Mongo...`) ek saath bean bane to `@Autowired OrderRepository` pe Spring
-  confuse -> `NoUniqueBeanDefinitionException`. Ek chuno: `@Primary`, `@Qualifier("mongo")`, ya
-  `@Profile` se sirf ek hi bean bane.
-
----
-
-## POWER PHRASE
-
-> *"Open/Closed means you should add new features by writing new classes — not by editing existing tested code. Use interfaces so new implementations can plug in without touching the existing logic."*

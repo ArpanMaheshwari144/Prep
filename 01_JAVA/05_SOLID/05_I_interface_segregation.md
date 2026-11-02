@@ -1,144 +1,34 @@
-# I = Interface Segregation Principle (ISP)
+# I: Interface Segregation (chhote interface)
 
-> **V90 — SOLID: Topic 65**
+**Niyam:** kisi class ko wo method likhne pe majboor mat karo jo uske kaam ke nahi.
 
----
+## Kahani
 
-## Definition
-
-> **Class ko unneeded methods implement karne pe FORCE mat karo.**
-> Fat interfaces mat banao — **chhoti, focused interfaces** banao.
-
----
-
-## STORY — Fat Repository Interface
-
-→ Ek baar **`Repository` interface** banayi — har class ke liye:
+Ek mota interface sabke liye bana diya. Read-only report wali class ko sirf padhna tha, par interface ki wajah se
+`delete()`, `update()` bhi likhne pade: khaali ya khatarnak.
 
 ```java
-interface Repository {
-    void save();
-    void delete();
-    void update();
-    void generatePDF();
-    void sendEmail();
+interface Repository { void save(); void delete(); void update(); void generatePdf(); void sendEmail(); }
+class ReportRepository implements Repository {
+    public void delete() { }   // bekaar + khatarnak, koi galti se bula de to?
+    ...
 }
 ```
 
-→ Ek class banayi — **`ReadOnlyRepository`** — **sirf padhna** chahiye, modify nahi
-→ Lekin interface implement karna padta — `delete()` likhna padta!
+## Fix
 
 ```java
-class ReadOnlyRepository implements Repository {
-    public void save()       { /* dangerous + useless */ }
-    public void delete()     { /* dangerous! */ }
-    public void update()     { /* dangerous! */ }
-    public void generatePDF() { ... }
-    public void sendEmail()   { ... }
-}
-// (interface ke method implement karte waqt `public` zaroori — bina public compile error: weaker access)
+interface Readable { List<Payment> findAll(); }
+interface Writable { void save(Payment p); void delete(Long id); }
+class ReportRepository  implements Readable { ... }              // sirf padhna
+class PaymentRepository implements Readable, Writable { ... }    // dono
 ```
 
-→ **Useless + dangerous methods implement karne pad rahe** — fat interface ka dard
-→ ISP violation
-→ **Fix:** Interface chhoti, focused karo
+Jisko jo chahiye, wahi le. Remote jaisa: TV ke remote me AC ke button nahi.
 
----
-
-## Fix — Split Karo
-
-```java
-interface ReadRepo {
-    Object find(String id);
-}
-
-interface WriteRepo {
-    void save(Object o);
-    void delete(String id);
-    void update(Object o);
-}
-
-interface PDFExporter {
-    byte[] generatePDF(Object o);
-}
-
-interface EmailNotifier {
-    void sendEmail(Object o);
-}
-```
-
-**Ab:**
-
-```java
-// Sirf padhna chahta? Sirf ReadRepo implement
-class ReadOnlyRepository implements ReadRepo { /* find() likhi */ }
-
-// Read + Write chahta? Dono
-class FullRepository implements ReadRepo, WriteRepo { /* dono methods */ }
-
-// Sirf PDF wala? Sirf PDFExporter
-class ReportExporter implements PDFExporter { /* generatePDF() */ }
-```
-
-→ Class ko **sirf relevant methods** implement karne padte
-→ Useless code gone
-
----
-
-## ISP Visualization
+## Interview line
 
 ```
-                BAD — Fat interface
-
-                  Repository (fat)
-                  ┌──────────────┐
-                  │ save()       │
-                  │ delete()     │
-                  │ update()     │
-                  │ generatePDF()│
-                  │ sendEmail()  │
-                  └──────┬───────┘
-                         │ implements
-              ┌──────────┴──────────┐
-              ▼                     ▼
-        ReadOnlyRepo            FullRepo
-        saare 5 likhne       sab kuch
-           padte (useless +
-           dangerous)
-
-
-                GOOD — Focused interfaces
-
-  ReadRepo     WriteRepo     PDFExporter    EmailNotifier
-  (find)       (save,        (generatePDF)  (sendEmail)
-                delete,
-                update)
-       │           │              │              │
-       └───────────┼──────────────┘              │
-                   │                              │
-              ┌────┴─────┐                       │
-              ▼          ▼                       ▼
-      ReadOnlyRepo   FullRepo               ReportExporter
-      ↑              ↑ ↑                     (sirf PDF)
-      sirf find     dono
+I keep interfaces small and focused, so a read-only report repository implements only Readable and is
+never forced to carry a delete method it should not have.
 ```
-
----
-
-## ISP Spring Boot Mein
-
-Spring Data JPA pre-built focused interfaces:
-
-```java
-CrudRepository              ← basic save, find, delete
-JpaRepository               ← Crud + JPA-specific
-PagingAndSortingRepository  ← pagination + sorting
-```
-
-**Tu chahe wo extend kar — fat interface nahi.**
-
----
-
-## POWER PHRASE
-
-> *"Interface Segregation means do not force a class to implement methods it does not need. Split fat interfaces into smaller focused ones. Spring's `CrudRepository`, `JpaRepository`, and `PagingAndSortingRepository` are perfect real-world examples."*
