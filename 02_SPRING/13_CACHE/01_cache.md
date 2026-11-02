@@ -1,181 +1,67 @@
-# Caching — request tez karo (manual + @Cacheable) [Spring]
+# Cache (Spring: @Cacheable)
 
-> "Baar-baar wahi mehnga kaam (DB call) mat karo — pehli baar ka result yaad rakho, agli baar seedha do."
-> usercrud pe live kiya (25-Aug): ek endpoint 2 baar — pehli baar DB (200ms), doosri baar cache (turant).
+## Kahani: HLD wala Ravi ka profile
 
----
+Ravi ka profile har second hazaaron log kholte, har baar DB tak 50 ms. HLD me DB se pehle ek dabba rakha tha
+(04_HLD/SYSTEM_DESIGNS/10_distributed_cache). Spring me wo dabba ek annotation se lagta.
 
-## 1-LINE KYA
+## Tasveer
+
 ```
-CACHE = beech me ek tez dabba (memory). request -> cache dekho:
-          HIT  (mila)     -> seedha wapas, DB tak gaye hi nahi   (fast)
-          MISS (nahi mila) -> DB jao -> result cache me daalo -> wapas  (slow, sirf pehli baar)
-use: baar-baar padha jaane wala + kam badalne wala data (user profile, product, config).
-```
+@Cacheable("users") getUser(id)
 
----
+call aayi -> Spring PEHLE "users" dabbe me id dhoondhta
+   mila (HIT)    -> method me ghusta hi nahi, seedha value
+   nahi (MISS)   -> method chalao (DB), jo aaya dabbe me daal do
 
-## ═══ FLOW (asli picture) ═══
-```
-        ┌─────────┐  HIT (fast)   ┌─────────┐
- req -> │  CACHE  │ ------------> │ return  │
-        └────┬────┘               └─────────┘
-             │ MISS
-             v
-        ┌─────────┐  data   ┌──────────────┐
-        │   DB    │ ------> │ cache me daal │ -> return
-        └─────────┘         └──────────────┘
-   agli baar same req -> CACHE me mil jaata -> DB skip.
+naam badla    -> @CacheEvict  (dabbe se hatao)      <- HLD wala "parchi kaato"
+update pe     -> @CachePut    (method chalao + dabba taaza)
 ```
 
----
+## Dikkat -> kyun
 
-## ═══ TAREEKA 1 — MANUAL (mechanism samajhne ke liye) ═══
-Cache = ek `HashMap`. Khud check-store karo (guts khule):
+Manual me har method me khud: "map me hai? do, warna DB se laao, map me daalo". Har jagah wahi if-else. `@Cacheable`
+wahi kaam proxy se karta, method ke aage khada ho ke. Chahiye: `@EnableCaching` + `spring-boot-starter-cache`.
+
+## Trade-off
+
+```
+local (default, app ki memory)            Redis (alag server)
+sabse tez, network nahi                   ~1 ms, ek hop
+sirf usi server ka, restart pe gaya       saare server ek copy dekhte, bacha rehta
+TTL nahi (Caffeine me haan)               TTL + eviction
+```
+
+3 server pe local: Ravi ne naam badla, A ka cache saaf, B aur C purana dikhate. Isliye multi-server me Redis, aur
+bahut garam key (IPL score) pe Redis ke aage 1-2 sec ka local cache. Cache = kaam, Redis = ek tool (Redis lock,
+counter, pub/sub bhi karta).
+
+## Asli kaam wala trap
 
 ```java
-private Map<Long, String> cache = new HashMap<>();
-
-@GetMapping("/cache-demo/{id}")
-public String getUser(@PathVariable Long id) throws InterruptedException {
-    if (cache.containsKey(id)) {                     // 1. cache check
-        return cache.get(id);                        //    HIT -> seedha (DB skip)
-    }
-    Thread.sleep(200);                               // 2. MISS -> DB (slow)
-    String nameFromDb = "User-" + id;
-    cache.put(id, nameFromDb);                        // 3. cache me daalo
-    return nameFromDb;
-}
-```
-Live dikha: pehli hit MISS (200ms atka), doosri hit HIT (turant).
-
-★ (29-Sep, PR drill 3 wala hi jaal) Controller SINGLETON hai -> ye `HashMap` saare request-thread share karte ->
-  thread-safe NAHI, aur kabhi saaf nahi hota (memory badhti). Demo ke liye theek; asli me
-  `ConcurrentHashMap` + size/TTL limit, ya seedha `@Cacheable` (neeche).
-
----
-
-## ═══ TAREEKA 2 — @Cacheable (production ka asli tarika) ═══
-Same kaam, par tu koi if-check nahi likhta — Spring karta:
-
-```java
-// main class: @EnableCaching   (warna @Cacheable silently ignore)
-// pom.xml: spring-boot-starter-cache   (warna koi CacheManager nahi milta)
-
 @Service
-public class CacheDemoService {
+public class UserService {
+    public String profile(Long id) { return this.getUser(id); }   // cache KABHI nahi chalega
 
-    @Cacheable("users")                              // <-- yehi sab kuch
-    public String getUser(Long id) throws InterruptedException {
-        System.out.println(">> METHOD CHAL RAHA -- sirf MISS pe dikhega");
-        Thread.sleep(200);                            // DB slow
-        return "User-" + id;
-    }
+    @Cacheable("users")
+    public String getUser(Long id) { ... }
 }
 ```
 
-`@Cacheable("users")` ka matlab: **method chalane se PEHLE** Spring `users` dabbe me `id` dhoondhta —
-- HIT -> method me ghusta hi nahi, cached value seedha deta.
-- MISS -> method chalao, return-value dabbe me daal do.
+`@Cacheable` proxy se chalta. Same class ke andar `this.getUser()` = proxy bypass, har baar DB. Wahi `@Transactional`
+wala self-invocation jaal. Isliye usercrud me cache wala method alag bean (`CacheDemoService`) me, controller usse bulata.
+Aur: `@EnableCaching` bhoole to annotation chupchaap kuch nahi karta. Manual demo ka `HashMap` singleton controller me
+= saare thread share, thread-safe nahi, kabhi saaf nahi.
 
-Controller sirf service ko call karta (koi cache-logic nahi):
-```java
-@Autowired private CacheDemoService svc;
-@GetMapping("/cache-demo/anno/{id}")
-public String anno(@PathVariable Long id) throws InterruptedException { return svc.getUser(id); }
-```
+## Tera project (usercrud)
 
-**LIVE PROOF (jo dekha):** 2nd call pe `METHOD CHAL RAHA` line PRINT hi nahi hui — matlab `@Cacheable`
-ne method me ghusne se pehle hi cached value laut di. Manual `if(containsKey) return` ka kaam annotation ne kiya.
+`/cache-demo/anno/{id}`: doosri call pe "METHOD CHAL RAHA" print hi nahi hua = cache ne method se pehle jawab de diya.
 
----
+## Interview line
 
-## ★ TRAP / GOTCHA (interview me poochte)
 ```
-1. SELF-INVOCATION (sabse-asked, @Async jaisa): @Cacheable PROXY se chalta. SAME class ke andar se
-   this.getUser() call -> proxy bypass -> cache NAHI chalta. isliye method ALAG bean (@Service) me,
-   dusre bean se call. [maine isi liye service banaya]
-2. @EnableCaching bhoole -> annotation silently ignore.
-3. spring-boot-starter-cache dep na ho -> koi CacheManager nahi -> error / cache nahi banta.
-4. STALE data: data badla par cache purana de raha -> @CacheEvict / @CachePut se hatao/update karo, ya TTL do.
-   ★ TTL default cache (ConcurrentHashMap) me HOTA HI NAHI — entry hamesha rehti. TTL chahiye to
-     Caffeine (expireAfterWrite) ya Redis (spring.cache.redis.time-to-live) lagao.
-5. default cache = in-memory (ConcurrentHashMap), single-node. multi-node -> REDIS (sab servers ek cache share karein).
+I use @Cacheable so Spring checks the cache before running the method and only hits the DB on a miss;
+@CacheEvict on update keeps it fresh. It works through a proxy, so a call from inside the same class
+skips the cache, which is why the cached method lives in a separate bean. The default in-memory cache is
+per-server, so with multiple instances I use Redis as the shared cache.
 ```
-
-## ★ RELATED annotations
-```
-@Cacheable  -> HIT? return cached : method chalao + store   (padhne wale GET pe)
-@CacheEvict -> cache se hatao (jab data badle/delete ho)     (update/delete pe)
-@CachePut   -> method HAMESHA chalao + result cache me daalo  (update pe fresh rakho)
-```
-
-## ★ CONNECT (HLD se jodo)
-```
-in-app cache (@Cacheable, ek server ki memory)  -> chhota, single-node.
-distributed cache (REDIS/Memcached)             -> saare servers ek cache share -> HLD me yahi.
-LB + cache: request -> LB -> koi server -> cache-check -> (miss) DB.  (aage full HLD me jodenge)
-```
-
-## ★ CACHE vs REDIS — koi pooche "dono me farak? dono kyun?"
-Seedha jawab: cache ek KAAM hai, Redis ek TOOL hai. Dono ek hi level ki cheez nahi.
-```
-CACHE = role / concept: "mehnga result kahin tez jagah rakh lo, agli baar wahi se do"
-REDIS = ek alag server (in-memory key-value store) jo ye role nibha sakta hai, aur bhi kaam kar sakta hai
-```
-Misaal: "gaadi" aur "Maruti". Gaadi ek kaam hai (le jaana), Maruti ek cheez hai jo ye kaam karti hai.
-Cache = gaadi, Redis = Maruti.
-
-Cache kahan-kahan rakh sakte hain:
-```
-1 app ki apni memory    @Cacheable default (ConcurrentHashMap), Caffeine    -> local / L1
-2 alag cache server     Redis, Memcached                                     -> distributed / L2
-3 aur bhi               browser cache, CDN
-```
-
-Local cache vs Redis (jab dono cache ka kaam kar rahe hon):
-```
-                     local (app memory)           Redis (alag server)
-speed                sabse tez (network nahi)     tez (~1 ms, network ek hop)
-kitne server share   sirf wahi ek server          SAARE servers ek hi copy dekhte
-server restart       sab udd gaya                 bacha rehta
-TTL / eviction       default me nahi (Caffeine me haan)   haan (EX, LRU)
-size                 us server ki RAM tak         alag machine, cluster se badha sakte
-```
-
-Dono saath kyun:
-```
-3 server, local cache only -> user ne naam badla -> server A ka cache evict hua, B aur C purana dikha rahe
-Redis                      -> sab ek hi jagah dekhte -> evict ek baar, sab ko fresh
-dono (L1 + L2)             -> hot key (IPL score) pe Redis bhi garam ho jaaye -> 1-2 sec ka L1 aage lagao
-```
-
-Redis sirf cache nahi (isliye rate limiter / chat / notification me bhi aata):
-```
-cache · rate limiter counter (INCR) · lock (SET NX EX) · dedup / idempotency key
-leaderboard (sorted set) · pub/sub · session store
-```
-
-BOL:
-```
-"Cache is the idea, Redis is one tool to do it. An in-process cache like Caffeine is fastest but
- per-server and lost on restart, so with many servers they go stale. Redis is a separate in-memory
- server all instances share, with TTL and eviction, so it's our distributed cache, and for very hot
- keys we put a short-TTL local cache in front of it."
-```
-
-## INTERVIEW LINE
-```
-"Caching se baar-baar wahi mehnga read (DB call) bachta -- pehli baar ka result memory me rakh lete,
- agli baar HIT pe DB skip. Spring me @Cacheable + @EnableCaching; gotcha self-invocation (proxy bypass)
- isliye alag bean se call. Stale ke liye @CacheEvict/TTL, aur multi-node pe Redis distributed cache.
- Maine usercrud pe kiya -- 2nd call pe method chala hi nahi, cache ne short-circuit kiya."
-```
-
-### Dobara kaise
-```
-main: @EnableCaching + pom starter-cache -> service method pe @Cacheable("name") -> ALAG bean se call.
-run -> 2nd same request pe method-body log nahi aata (HIT) + turant response.
-```
-
-[← repo README](../../README.md)
