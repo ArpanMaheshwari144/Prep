@@ -36,6 +36,10 @@ Technical me: "10,000 ek saath DB pe" = cache stampede, "ek chhotu bhejo, baaki 
 Arpan: Baaki machine pe baant de. Machine 4 ka replica bana de, teen jagah ho gayi, to bat gaya. Ya ring me aur jagah bitha de: machine 8 tu bhi dekh le, machine 9 tu bhi dekh le. Jaise bheed zyada ho gayi to ek aur gaadi extra kar lo. Ek gaadi me sab nahi aa sakte, to ek-do chhoti gaadi kar lo.
 Technical me: "machine 4 ka replica, 8 aur 9 tu bhi dekh" = hot key ki copies kai machines pe, "ek aur gaadi" = padhne ki bheed copies me bat-ti.
 
+**Maan lo cache me 1 TB, crore-on key. Sync job ko kaise pata kaunsi key check karni hai? Har key roz DB se milana sambhav nahi.**
+Arpan: Wahi key dekho jo update hui, baaki se lena-dena nahi. Ek saath 1 TB update nahi hota. Sync job ko time de do: pichhle ek ghante me kaunsi row update hui, sirf unki parchi DB se milao. Phir agla ghanta. Dikkat lage to 2-3 ghante ya ek din ka kar do.
+Technical me: "pichhle ghante me update hui" = DB me updated_at pe query (index), sirf un key ka cache milao / theek karo; "time badha do" = window chhoti-badi.
+
 &nbsp;
 
 Poora design = [10_distributed_cache.md](10_distributed_cache.md)

@@ -100,6 +100,10 @@ raha: yahan Ravi, wahan Ravi Kumar, to parchi pe Ravi Kumar kar do, kyunki DB ha
 kuch second Ravi dikhe, par ye koi paisa thodi hai jo ekdum consistency chahiye. Chahiye hoti to lock laga lete.
 **Asli naam:** banda = background sync (reconciliation) job, kuch second purana chalega = eventual consistency.
 
+**Maan lo cache me 1 TB, sync job ko kaise pata kaunsi key dekhni hai:** wahi jo update hui. Job ko time do: pichhle ek
+ghante me DB me jo row badli, sirf unki parchi milao. Ek saath 1 TB nahi badalta. Dikkat lage to window 2-3 ghante.
+**Asli naam:** DB me `updated_at` pe query (index), sirf badli key ka cache theek, chhoti time window.
+
 **Maan lo TTL laga ke chhod dein:** TTL alag cheez hai. Sync job tab lagaunga jab data baar-baar update hota ho (din me
 100-200 baar), jaise profile. TTL tab jab data thodi der ke liye hi rakhna ho, jaise koi form bhar raha: chhota TTL
 laga do, form khaali chhod diya to apne aap gaayab. Har baar TTL se kaam nahi chala sakte, TTL kabhi-kabhi dhokha de
