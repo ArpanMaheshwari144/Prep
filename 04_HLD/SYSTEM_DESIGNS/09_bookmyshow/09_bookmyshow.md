@@ -118,6 +118,13 @@ ghadiyan: token gate ki, hold seat ki; pay ka faisla sirf hold ki ghadi karti. T
 kar sakta, dobara line. Pay ka raasta banking / payment wali kahani se aaya: dobara bheja to idempotency key (booking
 id), paisa PSP se, webhook aaya tab D5 HELD -> BOOKED.
 
+**Maan lo Arpan ne 4:30 pe Pay dabaya, PSP dheema, 5:00 pe parchi ki umar nikli aur 5:10 pe Priya D5 maang rahi:** time
+ke andar pay shuru hua to seat Arpan ki, vaada ho chuka, warna consumer court ka case. PSP dheema hai to galti hamari
+taraf ki. To Pay dabate hi parchi pe status likh do "pay chal raha, PSP ka jawab baaki", aur jab tak ye likha hai umar
+badhi rahe, seat kisi ko na dikhe.
+**Asli naam:** HELD -> PAYMENT_PENDING (Pay dabate hi), is status pe na query na safai job hold hataye; PSP ka SUCCESS
+-> BOOKED, FAILED / timeout -> FREE.
+
 ```mermaid
 flowchart LR
     A["Arpan"] --> W["Number ki parchi<br/>(Token, 10 min)"]
