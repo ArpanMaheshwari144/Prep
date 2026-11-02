@@ -88,4 +88,8 @@ Technical me: "copy paas me rakho" = CDN (edge cache).
 Arpan: Taala-chaabi mere paas. Kamra mera, 10 log hi aa sakte. 11wa aaye, dost ka dost ho, access nahi.
 Technical me: "taala-chaabi maalik ke paas" = har request pe access check, "10 log hi" = allow list (sirf link kaafi nahi).
 
+**Maan lo tukde CDN se seedha jaate hain, CDN ko allow list pata hi nahi, aur link leak ho gaya.**
+Arpan: CDN ke paas bhi taala-chaabi ho, har request US tak nahi jaayegi. In 10 ki user id do: ye 10 aayein to link do, nahi to mat do. Aur link ki umar 5 minute, uske baad kisi ke liye nahi khulega. Leak bhi hua to 11wa nahi ghusega. Mohar kaise jaanchi jaati, wo AWS ka kaam.
+Technical me: "CDN ke paas bhi taala" = CDN signature jaanchta (signed URL / cookie), "10 user id" = server allow list dekh ke hi link deta, "5 minute umar" = short expiry. Hamara faisla: kisko aur kitni der ka.
+
 Poora design = [03_twitter_feed.md](03_twitter_feed.md)

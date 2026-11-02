@@ -180,6 +180,10 @@ paas se khule.
 mera, 10 log hi aa sakte, 11wa dost ka dost ho to bhi access nahi.
 **Asli naam:** har request pe access check, 10 log hi = allow list (sirf link kaafi nahi).
 
+**Maan lo tukde CDN se seedha jaate, CDN allow list nahi jaanta, aur link leak ho gaya:** CDN ke paas bhi taala ho. Link sirf
+un 10 user id ko do, aur umar 5 minute. Leak hua to 11wa nahi ghusega, 5 minute baad link kisi ke liye nahi khulega.
+**Asli naam:** signed URL / cookie (CDN mohar jaanchta, AWS ka kaam), server allow list dekh ke hi deta, short expiry.
+
 ```mermaid
 flowchart LR
     A["Arpan: 4K video"] --> S3[("Alag raasta<br/>(S3, presigned URL)")]
