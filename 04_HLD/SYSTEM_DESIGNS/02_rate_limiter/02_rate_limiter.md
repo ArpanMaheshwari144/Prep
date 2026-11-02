@@ -162,6 +162,10 @@ hoga, US aur Europe pe nahi. Wahi se count karo, wahi se dekho.
 **Asli naam:** ek particular region = home region, ginti ghar region ke Redis me. Bahar se aaye to gateway ghar ke
 Redis se poochhta, thoda dheema, par asli user zyadatar apne hi region se aata, uske liye 1 ms hi rehta.
 
+**Maan lo OTP login se pehle hai, sirf phone number aata, aur Ravi VPN se US gateway pe:** number ka desh code dekho.
++91 hai to ghar India, ginti India ke Redis me. VPN IP badal sakta hai, number nahi.
+**Asli naam:** country code se home region, alag mapping register ki zaroorat nahi.
+
 ---
 
 Notes (Arpan ke shabd) = [RATE_LIMITER_HAND_NOTES.md](RATE_LIMITER_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)

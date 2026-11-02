@@ -46,6 +46,10 @@ Technical me: "log badha do, server badha do" = apne server scale, "line lagwa, 
 Arpan: VPN se aa raha ho to uska ek particular region decide kar lete hain. Suppose uska region Mumbai, India ke servers. 3 se maara ya 10 se, uska main region India hai to count India ke Redis pe hoga, US aur Europe pe nahi. Wahi se count karo, wahi se dekho, uske hisaab se aage badhenge.
 Technical me: "ek particular region decide" = home region, "count India ke Redis pe" = ginti ghar region ke Redis me.
 
+**Maan lo OTP login se pehle, sirf phone number aata. Ravi VPN se US gateway pe. US ko kaise pata is number ka ghar Mumbai?**
+Arpan: Phone number har desh ka alag hota hai, hamara +91 se shuru. VPN IP badal sakta hai, number nahi; VPN chala ke call karun to bhi +91 hi jaata. To +91 dekh ke ghar India, ginti India ke Redis me. Ravi sach me US shift hua aur wahan ka number liya, to uska ghar US hi hai.
+Technical me: "+91 se pata" = phone number ka country code se home region (koi alag register nahi chahiye), "IP badle, number nahi" = VPN se bachav.
+
 &nbsp;
 
 Poora design = [02_rate_limiter.md](02_rate_limiter.md)
