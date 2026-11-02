@@ -159,6 +159,10 @@ pehle se hain. Baad me naap ke lage ki faltu queries bahut badh gayi, tab sochun
 **Asli naam:** ek saancha apne paas = template cache (saancha badla to key DELETE), pasand = user preference DB se
 (taazi, cache nahi), queries badhi tab = naap ke hi preference cache.
 
+**Maan lo Diwali ki bheed se DB ki saans phooli, aur OTP worker bhi pasand padhne usi DB pe gaya, OTP 40 second late:**
+OTP ka worker DB me pasand padhne jaaye kyun? Offer thodi bhej rahe. Seedha OTP bhejo. Pasand sirf offer pe dekho.
+**Asli naam:** OTP pe preference check skip (OTP opt-out nahi hota), OTP path pe DB nahi, line ke saath DB se bhi alag.
+
 ```mermaid
 flowchart LR
     K[("Kafka")] --> N["Notification Service"]

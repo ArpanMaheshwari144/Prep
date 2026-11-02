@@ -46,6 +46,10 @@ Arpan: Wo baar-baar wahi cheez padh raha hai, use apne paas rakh lo. Diwali pe s
 User ki pasand uski settings hai, wo DB me hai, DB se hi uthayenge. Hamari company bhi aise hi karti hai, email template banate waqt code DB se khud padh leta hai. Crore users hain, sabki setting cache me kaise rakhenge. OTP itna late nahi hoga, kyunki OTP ki priority pehle se set hai, worker bhi hain, rate limit bhi hai. Baad me kabhi lage ki faltu queries bahut badh gayi, tab sochunga cache me rakhun, aur tab har user ke liye.
 Technical me: "ek hi saancha apne paas, bas naam badlo" = template cache, "settings DB se hi" = user preference DB se, "OTP ki priority pehle se" = OTP ki alag line, "queries badhi tab cache" = naap ke hi preference cache.
 
+**Maan lo Diwali pe 1 crore offer, har ek se pehle DB me pasand, DB ki saans phooli. OTP worker bhi pasand padhne usi DB pe gaya, OTP 40 second late.**
+Arpan: OTP ka worker DB me pasand padhne jaayega kyun? Diwali ka offer thodi bhej rahe, OTP bhej rahe. Seedha OTP bhejo, DB se lena-dena hi nahi. Offer bhejte to pasand padhna banta.
+Technical me: "OTP seedha bhejo" = OTP pe preference check skip (OTP band nahi kiya ja sakta), to OTP path pe DB hi nahi; pasand sirf offer / marketing pe.
+
 &nbsp;
 
 Poora design = [04_notification_system.md](04_notification_system.md)
