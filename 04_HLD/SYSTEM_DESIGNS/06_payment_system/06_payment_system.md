@@ -1,367 +1,149 @@
-# Payment system (UPI / wallet): shuru se, ek kahani
+# Payment system: dukaan pe pay ki kahani
 
-Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
-shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
-me ek hi kahani hai: Arpan ne kirana dukaan (merchant) ko 500 bheje. Dono ka wallet hamare app me hai, Paytm /
-PhonePe wallet jaisa. Andar ka core [banking](../13_banking_system/13_banking_system.md) jaisa hi hai.
-Movie ticket ka paisa bhi isi raaste se jaata hai: [BookMyShow kadam 6](../09_bookmyshow/09_bookmyshow.md#kadam-6-pay-dobara--paisa-banking-kadam-3--payment-file).
+Arpan dukaan pe khade ho ke app se 500 pay karta hai. Uska paisa HDFC me, dukaan wale ka ICICI me, aur hamara app na
+HDFC ka, na ICICI ka. Kaam: paisa do baar na kate, beech me gayab na dikhe, aur kuch bhi gire to hisaab mile. (Wallet
+ke andar ka hisaab, ek transaction aur ledger, banking wali kahani se aaya.)
 
-**Dukaan pe pay (poori file me yahi):** Arpan dukaan pe app se pay karta hai, uska paisa HDFC me, dukaan ka ICICI me · parchi / register = hamara DB · beech ki company = PSP · ladka = poochne wala job
-
-**CUE (yahi shabd yaad rakhne hain, kram se):**
-wallet se wallet = banking ka core -> PSP (bahar ka paisa) -> PENDING + timeout -> breaker + doosra PSP
--> INITIATED pehle + webhook + poochne wala job -> saga + hold (dukaan ka bank) -> LB + read replica
--> shard by account (phir se saga)
+Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
+(kahani ka shabd, bracket me asli naam).
 
 ---
 
-## 1. FR: kya karna hai
+## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-1. A se B / dukaan ko paisa bhejo (wallet se wallet)
-2. bank se wallet me paisa daalo (top-up), wallet se bank me nikaalo (payout)
-3. fail ho to paisa wapas, aur har paisa ka hisaab mile
-scope ke bahar (poochh ke hata do): fraud engine, kai currency, chargeback
+FR      dukaan ko pay (bank se, PSP ke zariye) · dukaan ka paisa wallet se uske bank me · fail ho to paisa wapas
+NFR     do baar na kate · paisa kabhi gayab na dikhe · kuch gire to bhi payment atka na rahe · har paisa trace ho
+Numbers ~10 crore user, aam din kuch sau payment / sec, Diwali pe ~3,000 / sec
+        -> bheed badi dikkat nahi, sahi hona badi dikkat
 ```
-
-## 2. NFR: kaisa chalna chahiye
-
-```
-- do baar na kate
-- dono taraf ek saath badle (Arpan -500 aur dukaan +500, dono ya koi nahi)
-- kuch gire to bhi paisa na khoye, aur payment atka na rahe
-- har paisa trace ho
-```
-
-## 3. Numbers
-
-```
-- ~10 crore user, aam din kuch sau payment har second, Diwali / sale pe kuch hazaar har second
-```
-
-Banking jaisa hi: bheed badi dikkat nahi hai, **sahi hona** badi dikkat hai.
 
 ---
 
-## 4. Design
+## 1. HDFC hamari sunta hi nahi (beech ki centralized company)
 
-### Kadam 1: wallet se wallet = banking ka core
+Arpan ne "pay 500" dabaya, app ko HDFC khaate se 500 nikalne hain. Par app HDFC ka hissa nahi, HDFC hamari sunta hi
+nahi. Har bank se khud judne jaayein to alag manzoori, saalon lag jaayenge. To ek aisa system ho, aisi API jo ye kaam
+khud kare. Har bank ke liye alag-alag nahi, ek centralized authority jo sab bankon se judi ho. Hum bas uski cheez use
+karein.
 
-**Dukaan pe pay:** dono wallet hamare hi register me, to banking jaisa: ek transaction, parchi ka number, ek query, ledger.
-
-Arpan aur dukaan, dono ka wallet hamare hi DB me hai. To ye bilkul banking wala transfer hai:
-
-```
-BEGIN
-  idempotency key (UNIQUE) · Arpan -500 WHERE balance >= 500 · dukaan +500 · ledger me 2 line
-COMMIT
-```
-
-Ye pura hum banking me kar chuke hain ([kadam 2 se 5](../13_banking_system/13_banking_system.md#kadam-2-beech-me-server-gira-paisa-gayab-ek-transaction)). Interview me yahan ek line bolo: "Wallet se wallet
-hamare DB ke andar hai, to ek transaction, idempotency key, check karke kaatna ek query me, aur ledger,
-banking jaisa." Payment ka asli naya hissa yahan se shuru hota hai: paisa bahar se aana aur bahar jaana.
+**Asli naam:** centralized authority = PSP (Razorpay, Juspay), uski cheez use karna = PSP ki API (bank, UPI, card PSP
+sambhalta, hum thodi fees dete). Hamara paisa ka hisaab = SQL DB (Postgres; dono taraf ek saath badle = ACID).
 
 ```mermaid
 flowchart LR
-    U["Arpan"] -- "dukaan ko 500" --> S["Payment Service"]
-    S -- "ek transaction:<br/>Arpan -500 · dukaan +500 · ledger" --> D[("SQL DB")]
-```
-
-**API:** POST /pay { from, to, amount } + header Idempotency-Key -> { status, txn_id }
-
-**Maan lo pooche key kab banti:** payment screen khulte hi. Arpan ne do alag payment kiye to do screen, do key, do payment, sahi hai. Ek tap aur network ne dobara bheja to wahi key, ek hi payment. Cheque jaisa: key = cheque number. Do cheque dono cash hote hain, ek hi number do baar nahi.
-
-**Maan lo koi kisi aur ke wallet se bheje (owner check):** userId JWT se lo, body se nahi. Kisi aur ke wallet se bhejne ki koshish = 403.
-
-### DB kaunsa: SQL ya NoSQL?
-
-Data dekho: Arpan ka wallet, dukaan ka wallet, aur ledger. Kaam: ek payment me teeno ek saath badalne hain,
-ya koi nahi.
-
-Banking wali hi baat (ACID), SQL ka seedha kaam. Bheed badi dikkat nahi hai, sahi hona badi dikkat hai.
-Isliye SQL (Postgres).
-
-**AWS pe:** Postgres AWS ka **RDS** lete hain, **Multi-AZ** ke saath: doosri building me sync copy AWS rakhta hai, primary gira to wo khud copy ko primary banata hai. Sync rakhna (paisa hai) hamara faisla tha.
-
-Par Arpan ke wallet me paisa hi nahi hai. Use apne HDFC account se 2000 daalne hain, aur HDFC hamara DB
-nahi hai, wo bahar hai.
-
-### Kadam 2: bank se wallet me 2000 (PSP)
-
-**Dukaan pe pay:** app na HDFC ka na ICICI ka -> beech me ek company jo sab bankon se judi hai, uski API use karo (PSP).
-
-Ilaaj: beech me **PSP (Payment Service Provider)**, jaise Razorpay, Juspay ya Stripe.
-
-```
-1. Arpan: "2000 daalo"  -> hum PSP ko bolte hain: "2000 ka order banao" (apna transaction id: t-50)
-2. Arpan apne UPI / bank app me 2000 pay karta hai (paisa PSP ke paas)
-3. PSP humein batata hai: "t-50 SUCCESS"
-4. hum ek transaction me: wallet +2000, aur ledger me line ("PSP se aaya")
-```
-
-```mermaid
-flowchart LR
-    U["Arpan"] --> S["Payment Service"]
-    S <-->|"1. order t-50<br/>3. wapas: t-50 SUCCESS"| P["PSP<br/>(Razorpay)"]
-    U -- "2. UPI se pay" --> P
-    S -- "4. +2000 + ledger" --> D[("SQL DB")]
+    A["Arpan"] --> S["Payment Service"]
+    S --> P["Beech ki company<br/>(PSP)"]
+    P --> H["HDFC"]
+    S --> D[("Register<br/>(Postgres)")]
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Yahan ek asli choice hai: har bank se khud judein, ya PSP lagayein? Khud judna matlab har bank, UPI (NPCI, jo UPI chalata hai) aur
-card network se alag-alag judna, NPCI ki manzoori lena, aur card ke data ke kade niyam (PCI-DSS) maanna. Ye
-saalon ka kaam hai. PSP ek hi API deta hai, aur sab bank, UPI aur card khud sambhalta hai, bas thodi fees leta
-hai. **Isliye PSP.** Paytm aur PhonePe jaise bade khiladi baad me khud bhi judte hain, par shuru me sab PSP se
-hi chalte hain.
+## 2. PSP 30 second se chup (apni parchi)
 
-Ek baat saaf: PSP se bank / UPI / card ka jhanjhat hatta hai, par wallet me logon ka paisa rakhne ke liye RBI ka
-PPI licence (prepaid wallet ki manzoori) phir bhi chahiye. Ye kaanooni kaam hai, design nahi badalta.
+App ne PSP ko bola "500 kaato", aur PSP 30 second se chup. FAILED dikhaya to Arpan dobara pay karega aur 1,000 kat
+sakte. SUCCESS dikhaya to ho sakta paisa kata hi na ho, aur dukaan wala bina paise saamaan de de. To apne paas ek
+parchi rakho, jisse dekh sakein PSP pe kya ho raha. Pay dabaya, parchi pe likha: INITIATED. Phir likhte raho kya-kya
+hua: PSP ne ye kara, ab ye kara. Fail hua to FAIL mark, pass hua to PASS mark. Tab tak Arpan ko "processing" dikhao.
 
-**Naam (PSP):** Razorpay / Cashfree.
+**Asli naam:** parchi = payment table me status, INITIATED / PENDING jab tak pata nahi, pakka jawab aane pe hi SUCCESS
+/ FAILED.
 
-Par humne PSP ko call kiya, aur PSP dheema tha. 30 second tak jawab hi nahi aaya. Arpan ka paisa kata ya nahi,
-humein pata hi nahi. Ab Arpan ko kya dikhayein: fail ya success?
+## 3. PSP ka pakka jawab kaise pata chale? (beech ka banda)
 
-### Kadam 3: PSP dheema ya band (PENDING, timeout, breaker, doosra PSP)
+Parchi pe jawab ka intezaar hai. PSP khud batata hai, par batana bhool jaaye ya uska message raste me kho jaaye, to
+payment hamesha atka rahega. To beech me ek aisa banda bitha do jo batata rahe: PSP hua ya nahi hua. Wo permanent dono
+se baat karta rahe, PSP se bhi aur hamari parchi se bhi: haan bhai hua, nahi hua.
 
-**Dukaan pe pay:** PSP 30 sec chup -> parchi pe haal likho, app pe PENDING. PSP-1 band -> naye PSP-2 pe, PSP-1 pe atke wale ruko.
+**Asli naam:** PSP khud batata = webhook (sign jaanch ke), beech ka banda = poochne wala job (har minute purane
+INITIATED / PENDING uthata, PSP se status poochhta), dono se baat = PSP aur hamare DB ka milaan (raat ko poora
+reconciliation).
 
-Agar "FAILED" dikha diya, to Arpan sochega paisa nahi gaya aur dobara 2000 daalega. Agar pehla bhi kat chuka
-tha, to 4000 kat gaye. Aur galti se "SUCCESS" dikha diya, to bina paise ke wallet me nakli paisa aa gaya.
-
-Ilaaj: jo pata nahi, use **PENDING** bolo. Payment ka haal aise chalta hai:
-
-```
-INITIATED        = humne DB me likh diya, PSP ko call abhi nahi gayi
-PENDING          = PSP ko call chali gayi, pakka jawab abhi nahi aaya (timeout / Arpan pay kar raha)
-SUCCESS / FAILED = pakka jawab aa gaya
-```
-
-PSP ne jawab nahi diya to PENDING, aur Arpan ko dikhao "processing, 2-3 minute me pakka
-batayenge".
-
-Timeout chhota rakho (jaise 5 second). Hamari har request ek thread pakad ke baithi hai. Agar PSP dheema hua
-aur hum 30 second rukte rahe, to Diwali pe saare thread PSP ke intezaar me phans jaayenge, aur phir wallet se
-wallet wale payment bhi ruk jaayenge, jo PSP ko chhute hi nahi. Isliye 5 second ke baad PENDING likho aur
-thread chhod do.
-
-PSP poora hi band ho to **circuit breaker**: pichhle 1 minute me 50% call fail hui, to breaker khul jaata hai.
-Ab PSP-1 ko call hi mat karo. Badi apps do PSP se judi rehti hain (jaise Razorpay aur Cashfree), to naye top-up
-seedha PSP-2 pe bhejo. 30 second baad PSP-1 pe 1-2 call try karo, chal gaya to breaker band, sab wapas PSP-1 pe.
-Isse band PSP pe baar-baar call karke thread barbaad nahi hote. Dono PSP band hon tab hi "top-up abhi band,
-thodi der baad", par wallet se wallet tab bhi chalta rehta hai.
-
-Ek bada dhyaan: jo payment PSP-1 pe PENDING atka tha, use PSP-2 pe dobara mat bhejo. Ho sakta hai PSP-1 ne
-paisa kaat liya ho, bas jawab nahi aaya. PSP-2 pe bheja to paisa do baar katega. Wo PENDING wala PSP-1 ke
-wapas aane pe hi pakka hoga.
+**Maan lo server parchi pe INITIATED likh chuka tha, aur PSP ko call bhejte waqt hi gir gaya:** restart pe yaad nahi
+call pahunchi ya nahi. Isliye register me pehle "initiate hua" likho, phir bhejo. Server aake dekhega: haan yaar, ye
+likha hai, chalo PSP se poochte hain "bata, iska kya hua". Dobara bhejna pade to idempotency key laga denge, key process
+ho chuki to do baar nahi hoga.
+**Asli naam:** PSP call se pehle INITIATED commit, restart pe job INITIATED utha ke status poochhta, payment id hi PSP
+ki idempotency key.
 
 ```mermaid
 flowchart LR
-    S["Payment Service<br/>timeout 5 sec -> PENDING"] -. "PSP-1 band (breaker khula)" .-> P1["PSP-1"]
-    S -- "naye top-up" --> P2["PSP-2"]
-    S --> D[("SQL DB<br/>payment: PENDING")]
-    style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-**Maan lo pooche payment ka haal:** payment: INITIATED -> PENDING -> SUCCESS / FAILED. Niyam: jitna kata, utna hi juda.
-
-Par PENDING ka pakka jawab kaise pata chale? Aur ek aur haalat: humne PSP ko call kiya, aur jawab aane se
-pehle hamara hi server gir gaya. Restart pe humein yaad bhi nahi ki call gayi thi ya nahi.
-
-### Kadam 4: pakka kaise pata chale + hamara server gira (INITIATED pehle, webhook, poochne wala job)
-
-**Dukaan pe pay:** beech me ek banda jo PSP se poochhta rahe "hua ya nahi". Server gira -> pehle register me INITIATED likho phir bhejo, dobara bhejna ho to wahi key.
-
-Ilaaj 1: PSP ko call karne se **pehle** DB me likho `t-50 = INITIATED` (COMMIT), phir call karo. Ab server call
-ke beech gira, to restart pe DB me t-50 INITIATED dikhta hai. Pata nahi call gayi ya nahi, par ye pata hai ki
-kis payment ka pata karna hai. Job PSP se poochta "t-50 ka kya hua?": call gayi hi nahi thi to PSP bolta
-"aisa koi order nahi", hum FAILED kar dete; gayi thi to PSP jawab de deta.
-Aur `t-50` hi PSP ke liye idempotency key ka kaam karta hai: call dobara gayi to bhi PSP ek hi baar paisa
-kaatega.
-
-Ilaaj 2: pakka jawab teen tarah se aata hai.
-
-**Webhook = PSP khud batata hai.** Arpan ne pay kiya, aur 3 second baad PSP hamare server ko khud message
-bhejta hai: "t-50 SUCCESS". Hum PENDING ko SUCCESS karte hain, wallet me +2000 aur ledger me line. Koi bhi
-hamare server ko nakli message bhej sakta hai ("t-50 SUCCESS, 2000 daal do"), isliye PSP har message pe apni
-secret chaabi se sign lagata hai, aur hum sign jaanch ke nakli message phenk dete hain. PSP kabhi-kabhi wahi
-message dobara bhej deta hai, isliye hum likhte hain "abhi pakka nahi hua (INITIATED / PENDING) **tabhi**
-SUCCESS karo". Pehle message pe PENDING tha, to SUCCESS kiya aur +2000. Doosre message pe wo ab SUCCESS hai,
-to kuch nahi kiya. Paisa ek hi baar juda.
-
-**Poochne wala job = hum khud poochte hain.** Agar PSP ka message raaste me kho gaya, ya jab aaya tab hamara
-server gira hua tha, to hamara job har 1 minute chalta hai: "kaun se payment 2 minute se INITIATED / PENDING
-pade hain?" Use t-50 mila, to wo PSP se poochta hai "t-50 ka kya hua?", PSP bolta hai "SUCCESS", aur hum
-t-50 ko SUCCESS kar dete hain. Matlab PSP ne bataya ho ya nahi, 2-3 minute me hum khud pata kar lete hain.
-
-Job ka time Arpan ko diye wade (kadam 3: "2-3 minute me pakka") se bandha hai. Job har 5 minute chale aur 5
-minute purane uthaye, to webhook khone pe jawab ~10 minute me aata, wada toot jaata:
-
-```
-job har 5 min, 5 min purane:   10:00 PENDING -> 10:05 job: abhi 5 min purana nahi, chhoda -> 10:10 utha liya
-job har 1 min, 2 min purane:   10:00 PENDING -> 10:02 / 10:03 ka job utha leta -> PSP se poocha -> pakka
-```
-
-Zyaadatar webhook 3 second me aa jaata hai. Job sirf tab kaam aata jab webhook kho gaya, aur tab bhi 2-3 minute
-ka wada nibhta.
-
-**Raat ka milaan.** Raat ko PSP ek file deta hai ki aaj kaun-kaun se payment hue aur kitna paisa. Hum use apne
-DB se milaate hain, kahin farak mila to ALERT. Ye [banking kadam 9](../13_banking_system/13_banking_system.md#kadam-9-balance-aur-khaata-alag-ho-gaye-raat-ka-milaan--reconciliation) wala milaan hi hai.
-
-Ek line me: PSP khud bataye (webhook, tez), hum khud poochhein (job, agar message kho gaya), aur raat ka
-milaan (pakka).
-
-```mermaid
-flowchart LR
-    S["Payment Service"] -- "1. t-50 INITIATED (pehle)" --> D[("SQL DB")]
-    S <-->|"2. call t-50<br/>wapas webhook: t-50 SUCCESS"| P["PSP"]
-    J["Job, har 1 min<br/>DB me purane INITIATED / PENDING dekho"] --> D
-    J -- "t-50 ka kya hua?" --> P
+    S["Payment Service"] --> D[("Parchi<br/>(payment: INITIATED)")]
+    S --> P["PSP"]
+    J["Beech ka banda<br/>(Poochne wala job)"] --> D
+    J --> P
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**AWS pe:** webhook aate hi line me daal do, AWS ka **SQS** (ya Kafka), aur baad me sambhalo. Line AWS chalata hai.
+## 4. PSP-1 poora band (doosra raasta)
 
-Par Arpan ne dukaan ko 500 bheje, aur dukaan ko paisa wallet me nahi, seedha apne bank me chahiye (payout).
-Arpan ka wallet hamare DB me hai, dukaan ka bank bahar. Ek transaction se kaam nahi chalega.
+Aaj PSP-1 poora band, uski har call fail. Dukaan pe log pay kar rahe aur sabka payment ruk raha. To PSP-1 band hai to
+naye payment PSP-2 pe bhej do, hamare paas fallback tareeka hai, logon ko intezaar kyun karwana. Aur jo log PSP-1 pe
+pehle se atke hain aur apna status jaanna chah rahe, unhe thodi der rok do: bhai abhi thoda down hai, aate hi bata
+denge. Unhe PSP-2 pe dobara nahi bhejte, ho sakta PSP-1 ne paisa kaat liya ho.
 
-### Kadam 5: dukaan ka paisa uske bank me (saga)
-
-**Dukaan pe pay:** ICICI me jodte waqt FAILED -> sab ulta karo, paisa wapas. Beech me paisa gayab na dikhe -> beech ke khaate me likho. Sabse "taiyaar?" poochna (2PC) nahi: ek dheema dost poora paper rok deta.
-
-Arpan ka wallet hamare DB me hai, aur dukaan ka bank bahar. Ek transaction (BEGIN ... COMMIT) sirf hamare DB
-ke andar chalta hai, bank ka DB usme shaamil nahi ho sakta.
-
-Ilaaj: **saga**, yaani kaam kadam-kadam karo, aur koi kadam fail ho to pichhla kaam ulta kar do.
-
-```
-Step 1 (hamare DB me, ek transaction):
-   Arpan ke wallet se 500 nikaalo, ek "beech ke khaate" (hold) me 500 daalo, ledger me dono line likho,
-   aur payout t-60 ko INITIATED likho (PSP call se pehle).
-   Ab paisa Arpan se nikal gaya hai, par dukaan tak abhi nahi pahuncha, beech me ruka hai.
-
-Step 2: PSP ko payout call (t-60), taaki dukaan ke bank me 500 jaayein.
-   Iska jawab waise hi aata hai jaise kadam 4 me: PSP ka webhook, ya hamara poochne wala job.
-
-Step 3a, SUCCESS aaya: beech ke khaate se 500 hata do (ledger line), t-60 = SUCCESS. Kaam poora.
-Step 3b, FAILED aaya (galat IFSC bank code, ya bank band): ULTA kaam karo.
-   Beech ke khaate se 500 hatao, Arpan ke wallet me 500 wapas daalo (nayi ledger lines),
-   t-60 = FAILED, aur Arpan ko batao "paisa wapas aa gaya".
-```
-
-Step 1 ke baad, PSP ko call jaane se pehle hi hamara server gir gaya to? t-60 INITIATED COMMIT ho chuka hai, to
-kadam 4 wala poochne wala job use uthata hai. Webhook nahi aayega, kyunki call gayi hi nahi thi. Job PSP se poochta
-hai, PSP bolta hai "aisa koi order nahi". Ab ya to wahi t-60 key se dobara bhejo (key ki wajah se do baar nahi
-jaayega), ya FAILED karke ulta (hold -500, Arpan +500). Arpan ke 500 hold me hamesha ke liye nahi atakte.
-
-"Ulta karna" ka matlab mitaana nahi hai. Nayi line daal ke paisa wapas karte hain, kyunki khaate me sirf
-INSERT hota hai ([banking kadam 5](../13_banking_system/13_banking_system.md#kadam-5-500-nahi-mile-pe-saboot-nahi-khaata--ledger)).
-
-Beech ka khaata isliye chahiye kyunki step 2 ke dauraan paisa kahin to dikhna chahiye. Wo Arpan ke wallet se
-nikal chuka hai par dukaan ke bank nahi pahuncha. Isse har waqt poore hisaab ka jod 0 rehta hai.
+**Asli naam:** PSP-2 = fallback PSP (naye payment), PSP-1 pe atke = wahin PENDING, PSP-1 wapas aaye tab pakka, PSP-2
+pe dobara nahi (warna do baar kata).
 
 ```mermaid
 flowchart LR
-    S["Payment Service"] -- "1. Arpan -500, hold +500" --> D[("SQL DB")]
-    S <-->|"2. payout t-60<br/>wapas 3a SUCCESS: hold -500<br/>wapas 3b FAILED: ulta, Arpan +500"| P["PSP"]
-    P --> B["dukaan ka bank"]
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    S["Payment Service"] --> P1["PSP-1<br/>(band: atke PENDING)"]
+    S --> P2["Doosra raasta<br/>(Fallback PSP-2)"]
+    S --> D[("Parchi<br/>(Postgres)")]
+    style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Yahan ek asli choice hai: saga ya 2PC (two-phase commit)? 2PC me saare DB pehle "taiyaar hoon" bolte hain,
-phir sab ek saath commit karte hain. Par bank ya PSP ka DB isme hissa le hi nahi sakta, aur ek bhi ruk gaya to
-sab ruk jaate hain. Bahar wale ke saath saga hi chalta hai.
+## 5. Dukaan ka paisa ICICI me, wahan FAILED (sab ulta)
 
-Par Diwali ki shaam, har second 3000 payment. Ek Payment Service machine nahi jheli. Aur dukaan wale apni "aaj ki
-bikri" report baar-baar khol rahe hain, jo isi DB pe chalti hai. Arpan ka payment dheema ho gaya.
+Dukaan ke 500 uske wallet se ICICI me nikalne hain. ICICI hamara DB nahi, to ek transaction me nahi hoga. Wallet se
+kaat liye, aur ICICI me jodte waqt PSP bola "FAILED". To ulta kar do, sab wapas. Maan le main HDFC bank hoon, bagal
+wale bank ko bhejne gaya, usne mana kar diya: "bhai, bank band hai, kal aana". Fail ho gaya, baatcheet khatam. To main
+apne register me likhunga: maine yahan se paise liye the, ise wapas kar raha hoon, aur paise wapas bhej dunga.
 
-### Kadam 6: Diwali ki bheed + report ne payment dheema kiya (kai machine + read replica)
+**Asli naam:** sab ulta = saga (kadam-kadam kaam, fail pe ulta kadam), register me wapas = ledger me ulti line (mitana
+nahi, nayi line), 500 wapas dukaan ke wallet me.
 
-**Dukaan pe pay:** banking jaisa: cashier badhao, padhne walon ke liye photocopy ka desk.
+## 6. 2 minute tak 500 kahin nahi (pehle likh lo)
 
-Ek Payment Service machine 3000 payment / sec nahi jhel paayi. Ilaaj: kai Payment Service machine, aage LB. Ye isliye
-chalta hai kyunki Payment Service apne andar kuch yaad nahi rakhta. Saara haal (PENDING, SUCCESS, wallet) DB me
-hai, to koi bhi machine koi bhi payment sambhal sakti hai ([banking kadam 7](../13_banking_system/13_banking_system.md#kadam-7-salary-ki-bheed--ek-hi-db-kai-machine--db-ki-sync-copy) jaisa).
+Wallet se 500 kaate, PSP ka jawab aane me 2 minute lage. Us 2 minute me 500 na dukaan ke wallet me, na ICICI me.
+Hisaab wala kahega 500 gayab. To sabse pehle likh lo: "wallet se 500 kate". Apne ledger me likh lo, to wo gayab nahi
+honge. Koi kuch kahe to bata denge: haan bhai, tere paise abhi yahan hain.
 
-Dukaan wale "aaj ki bikri" report baar-baar khol rahe hain. Ye bhaari query hai, din bhar ke payment jod ke
-total nikalti hai, aur usi primary DB pe chal rahi thi jahan payment likhe ja rahe hain. Isliye Arpan ka
-payment dheema hua.
+**Asli naam:** ledger entry + hold (beech ka khaata): SUCCESS pe hold se nikle, FAILED pe wapas wallet. Har waqt poore
+hisaab ka jod barabar.
 
-Ilaaj: **read replica**. Report sirf padhti hai, to DB ki copy se chalao. Primary sirf payment likhne ke liye
-bachta hai. Copy kuch second peeche ho sakti hai, matlab abhi aaya payment report me 2 second baad dikhega.
-Report ke liye ye chal jaata hai. Paisa kaatne ka faisla hamesha primary se hota hai.
+**Maan lo koi kahe saga ka jhanjhat kyun, sabse pehle poochh lo "taiyaar ho?", sab haan bolein tab ek saath kaat do aur
+jod do:** aisa kar sakte, par maan le ICICI ki service dheemi pad gayi. Mere paas paanch bande hain, main poochh raha
+"sab taiyaar ho?". Chaar taiyaar, teesra slow, aur uski wajah se sab khade. Jaise main ek dost ko cheating karwa raha
+aur wo likhne me bahut slow, to uski wajah se mera bhi paper chhoot jaayega.
+**Asli naam:** "sab taiyaar ho?" = 2PC (prepare round), ek dheema to sab ruke, isliye 2PC nahi, saga + hold.
+
+## 7. Diwali pe 3,000 / sec, ek register nahi jhel raha (tukde + ladka)
+
+Diwali pe har second 3,000 payment, saare wallet ek hi register me, register itni likhai nahi jhel pa raha. To us
+register ko kaat do, chhote-chhote tukde kar do: le bhai, tu yahan likh, tu ye likh. Kaam baant diya, ab sab
+aaram se apna-apna likh rahe.
+
+Par ab Arpan ka wallet tukda 1 me, dukaan ka tukda 3 me. Ek se kaatna, doosre me jodna, do alag register, ek
+transaction me nahi hoga. To apne office se ek ladka pakdunga: ye 500 mera hai, us tukde me jaana hai, de ke aa ja aur
+jo hua aake bata. Saath me ek diary rakh, usme likh "ye 500 Arpan ne diye, is tukde me dene hain", aur beech me jo hua
+wo bhi. Hisaab poora hua to theek, nahi to wapas aake mere paise de dega.
+
+**Asli naam:** register ke tukde = shard (account id se, ek insaan ka saara kaam ek tukde pe), har tukde ka apna
+likhne wala = likhai bant gayi. Ladka = do shard ke beech saga, diary = saga ka har kadam likha (hold), wapas paise =
+fail pe ulta kadam. Wahi kadam 5 wala saga, bas doosri taraf bank ki jagah doosra tukda.
 
 ```mermaid
 flowchart LR
-    U["3000 payment / sec"] --> LB["LB"]
-    LB --> S1["Payment Service 1"] & S2["Payment Service 2"]
-    S1 & S2 -- "payment likho" --> P[("Primary")]
-    P -- "copy" --> R[("Read replica")]
-    M["dukaan ki report"] --> R
-    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Par saal bhar me ~1000 crore payment ki lines ho gayi. Ek hi primary pe itni likhai aur itna data, primary
-dheema pad gaya. Banking se farak: wahan 120 likhai / sec thi, yahan Diwali pe 3000 / sec.
-
-### Kadam 7: likhai aur data ek primary ke bas ka nahi (shard by account)
-
-**Dukaan pe pay:** register Diwali ki likhai nahi jhel raha -> tukde, har tukde ka likhne wala. Arpan tukda 1, dukaan tukda 3 -> ladka 500 aur diary le ke jaata hai (saga).
-
-Replica sirf padhai ka bojh baantti hai. Likhai (har payment) abhi bhi ek hi primary pe jaa rahi hai, aur data
-saal bhar me ~1000 crore line ho gaya.
-
-Ilaaj: wallets ko kai DB machine me baanto (**shard**), account id ke hisaab se. Arpan ka wallet, uski ledger
-lines aur uske payment, sab ek hi shard pe rahenge. Har shard ki apni copy (failover ke liye) aur apni replica
-(report ke liye).
-
-```
-shard = hash(account_id) % 4
-Arpan -> shard 1,  dukaan -> shard 3
-```
-
-Ab ek pench aata hai: Arpan shard 1 pe hai aur dukaan shard 3 pe. Dono alag DB hain, to ek transaction dono pe
-nahi chal sakta. Iska ilaaj hum kadam 5 me padh chuke hain, saga:
-
-```
-1. shard 1: Arpan -500, beech ke khaate me +500 (ek transaction), transfer t-70 = INITIATED
-2. shard 3: dukaan +500, key t-70 ke saath (dobara aaye to shard 3 dekh leta "t-70 ho chuka", dobara nahi jodta)
-3a. shard 3 pe ho gaya: shard 1 pe beech ke khaate se -500 (hold khatam), t-70 = SUCCESS
-3b. shard 3 pe fail hua to ulta: shard 1 pe beech ke khaate se -500, Arpan +500, t-70 = FAILED
-```
-
-Bas farak itna hai ki kadam 5 me doosri taraf bank tha, yahan doosra shard hai.
-
-Account id se isliye baanta kyunki ek insaan ka saara kaam (balance check, kataai, history) ek hi shard pe ho
-jaata hai. Sirf do alag logon ke beech transfer me saga lagta hai. Date se baant-te to aaj ki saari likhai ek hi
-shard pe girti.
-
-```mermaid
-flowchart LR
-    S["Payment Service"] -- "1. Arpan -500, hold +500<br/>3a. ho gaya: hold -500<br/>3b. fail: ulta, Arpan +500" --> S1[("Shard 1<br/>Arpan")]
-    S -- "2. dukaan +500 (key t-70)" --> S3[("Shard 3<br/>dukaan")]
-    style S1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    S["Payment Service"] --> T1[("Tukda 1: Arpan<br/>(Shard 1)")]
+    S --> L["Ladka + diary<br/>(Saga + hold)"]
+    L --> T3[("Tukda 3: dukaan<br/>(Shard 3)")]
+    L --> T1
+    style T1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style T3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 ---
 
-## 5. Wrap (30 second me poora design, NFR se milao)
-
-Arpan app se payment karta hai. Request LB se kisi bhi Payment Service machine pe jaati hai. Wallet se wallet ho
-to hamare DB me ek transaction: idempotency key, check karke kaatna, dono taraf ka balance aur ledger. Paisa
-bahar se aana ya bahar jaana ho (top-up, dukaan ka bank) to PSP: pehle DB me INITIATED likho, phir PSP ko call,
-aur jawab webhook se ya hamare poochne wale job se aata hai. Dukaan ke bank me bhejna saga se: pehle Arpan se
-kaat ke beech ke khaate me, fail hua to wapas. PSP dheema ho to timeout pe PENDING, band ho to breaker aur
-doosra PSP. Report replica se, aur bahut bada hua to account id se shard.
-
-```
-do baar na kate      -> idempotency key (UNIQUE), PSP ko bhi wahi transaction id
-dono taraf ek saath  -> hamare DB me ek transaction, bahar / doosre shard ke saath saga
-paisa na khoye       -> INITIATED pehle likho, webhook + poochne wala job + raat ka milaan
-har paisa trace ho   -> ledger (sirf INSERT, double-entry)
-```
-
-**Chal raha, kaise pata:** hisaab ka farak (milaan), p99 (100 me se 99 payment isse jaldi), errors, kitne PENDING atke, har payment ka trace id.
+Notes (Arpan ke shabd) = [PAYMENT_HAND_NOTES.md](PAYMENT_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)

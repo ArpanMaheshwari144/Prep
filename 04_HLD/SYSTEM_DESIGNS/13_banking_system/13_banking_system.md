@@ -1,444 +1,192 @@
-# Mini banking: shuru se, ek kahani
+# Banking: mohalle ki bank branch ki kahani
 
-Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
-shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
-me ek hi kahani hai: Arpan ne Ravi ko 500 bheje. Ye JP ka sabse sambhavit HLD hai. Paisa bank ke bahar jaaye
-(PSP = payment company jaise Razorpay, doosra bank) to [payment](../06_payment_system/06_payment_system.md) dekho.
-Yahi dhaancha [BookMyShow](../09_bookmyshow/09_bookmyshow.md) me bhi: kadam 3 (key) = [BookMyShow kadam 6](../09_bookmyshow/09_bookmyshow.md#kadam-6-pay-dobara--paisa-banking-kadam-3--payment-file),
-kadam 4 (ek query) = [BookMyShow kadam 2](../09_bookmyshow/09_bookmyshow.md#kadam-2-padhna-aur-likhna-ek-hi-query-me-banking-kadam-4-wala-hi) (balance ki jagah seat).
+Mohalle ki bank branch: ek cashier, aur ek register jisme sabke khaate likhe hain. Arpan apne khaate se Ravi ko 500
+bhejta hai, dono ek hi bank me. Kaam: paisa na gum ho, na do baar kate, aur har paise ka hisaab mile.
 
-**Branch (poori file me yahi):** mohalle ki bank branch · cashier = service machine · register = DB · diary = ledger · rough copy = WAL · photocopy = read replica · ladka = relay · godown = S3
-
-**CUE (yahi shabd yaad rakhne hain, kram se):**
-service + SQL -> ek transaction (WAL) -> idempotency key -> check + kaato ek query -> ledger (double-entry)
--> outbox (SMS) -> LB + sync copy -> read replica -> raat ka milaan -> mahine ke tukde + S3
+Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
+(kahani ka shabd, bracket me asli naam).
 
 ---
 
-## 1. FR: kya karna hai
+## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-1. account: paisa daalo, nikaalo, balance dekho, history dekho
-2. transfer A se B, DONO isi bank me
-scope ke bahar (poochh ke hata do): doosra bank, loan, byaaj, card, KYC
+FR      paisa daalo, nikaalo, balance + history dekho · transfer A se B, DONO isi bank me (doosra bank scope se bahar)
+NFR     paisa na gum ho, na bane, na do baar kate · har paise ka hisaab mile (audit) · balance dekhna tez
+Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna isse kahin zyada
+        -> bheed chhoti, asli dikkat SAHI hona: ek SQL DB kaafi, shard nahi
 ```
-
-"Dono isi bank" ye ek shabd poora design badal deta hai, isliye ye pehle poochho.
-
-## 2. NFR: kaisa chalna chahiye
-
-```
-- SAHI sabse upar: paisa na gum ho, na bane. Hisaab har waqt barabar
-- har paisa trace ho (audit)
-- dobara bhejne pe dobara na kate
-- balance dekhna tez ho
-```
-
-## 3. Numbers
-
-```
-- 50 lakh account, roz 1 crore transaction -> ~120 likhai har second, padhna isse kahin zyada
-- 120 likhai / second bahut kam hai, ek Postgres hazaaron likhai / second aaraam se karta hai
-```
-
-Matlab yahan bheed badi dikkat nahi hai, **sahi hona** badi dikkat hai. Isliye shard nahi chahiye, ek SQL DB
-kaafi hai. Ye URL se ulta hai: wahan dikkat speed aur size ki thi.
 
 ---
 
-## 4. Design
+## 1. Bijli gayi, Arpan ke kate, Ravi ko nahi mile (500 wapas + rough copy)
 
-### Kadam 1: sabse seedha (Banking Service + SQL DB)
+Arpan ne parchi di "Ravi ko 500 bhej do". Cashier ne Arpan ke 500 kaate, Ravi me jodne jaata usi pal bijli chali
+gayi. Mere 500 kat gaye, Ravi ko kuch nahi mila, to mujhe mere 500 wapas de do na, dikkat hi khatam. Ya dono kaam
+honge, ya koi nahi.
 
-**Branch:** Arpan cashier ko parchi deta hai, cashier register me Arpan -500, Ravi +500 likhta hai.
+**Asli naam:** cashier = Banking Service (server), register = DB (Postgres), 500 wapas = transaction rollback (BEGIN,
+Arpan -500, Ravi +500, COMMIT; COMMIT se pehle gira to dono ulte). SQL isliye: ek transfer me do row ek saath pakki
+badalni hain (ACID), aur 120 likhai / sec ke liye NoSQL ki kai-machine wali taakat chahiye hi nahi.
 
-Ek Banking Service aur peeche ek SQL DB. Arpan ne Ravi ko 500 bheje:
-
-```
-UPDATE account SET balance = balance - 500 WHERE id = arpan
-UPDATE account SET balance = balance + 500 WHERE id = ravi
-```
-
-```mermaid
-flowchart LR
-    U["Arpan"] --> S["Banking Service"]
-    S --> D[("SQL DB<br/>arpan: 2000 · ravi: 1000")]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-### DB kaunsa: SQL ya NoSQL?
-
-Data dekho: account aur unka balance. Kaam: ek transfer me do row ek saath badalni hain (Arpan -500, Ravi
-+500), aur dono badlein ya koi nahi.
-
-Kai row ek saath pakka badalna SQL ka seedha kaam hai (ACID). Bheed chhoti hai (120 likhai / second), to NoSQL
-ki "bahut bada data, kai machine" wali taakat yahan chahiye hi nahi. Isliye SQL (Postgres).
-
-**Maan lo owner check poochha:** userId JWT se lo, body / URL se nahi. from_account ka maalik nahi to 403.
-
-Par pehla UPDATE hua (Arpan se 500 kat gaye), aur doosre se pehle server gir gaya. Ravi ko kuch nahi mila.
-Paisa gayab.
-
-### Kadam 2: beech me server gira, paisa gayab (ek transaction)
-
-**Branch:** bijli gayi, Arpan ke kate, Ravi ko nahi mile -> mere 500 wapas do (ya dono ya koi nahi), kaam se pehle rough copy me likh lo (WAL).
-
-Ilaaj: dono UPDATE ko ek **transaction** me band karo. Matlab ya to dono honge, ya koi nahi.
-
-```
-BEGIN
-  UPDATE account SET balance = balance - 500 WHERE id = arpan
-  UPDATE account SET balance = balance + 500 WHERE id = ravi
-COMMIT
-```
-
-COMMIT se pehle server gira to DB pehla UPDATE bhi ulta kar deta hai (rollback). Arpan ke 2000 wapas 2000,
-Ravi ke 1000 waise hi 1000. Paisa na gaya, na bana.
-
-DB ko kaise pata ki kya ulta karna hai? **WAL (write-ahead log)** se. DB asli table badalne se pehle har
-badlaav ek log me likhta hai. Restart hone pe DB log padhta hai: jiska COMMIT ka record log me nahi, wo badlaav
-kabhi dikhta hi nahi (adhoora transaction gayab), aur jo COMMIT ho gaya tha wo pakka rehta hai, bijli jaane pe bhi.
+**Maan lo bijli wapas aayi, cashier ko kuch yaad nahi, register me Arpan ka -500 hai par Ravi ka +500 nahi:** kahin
+likh do na. Cashier ko kuch yaad nahi rehta, to kaam se pehle aisi jagah likh do, ek rough copy, ki cashier wapas
+aaya to apne aap dekh le kya adhoora tha.
+**Asli naam:** rough copy = WAL (write-ahead log): DB table badalne se pehle log me likhta, restart pe jiska COMMIT
+nahi wo ulta, jo COMMIT hua wo pakka.
 
 ```mermaid
 flowchart LR
-    U["Arpan"] --> S["Banking Service"]
-    S -- "BEGIN · -500 · +500 · COMMIT" --> D[("SQL DB<br/>WAL: commit nahi = ulta")]
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Saga yahan kyun nahi? Saga (kadam-kadam kaam, fail pe pichhla ulta) tab lagta hai jab paisa do alag DB me ho,
-jaise doosra bank. Yahan dono account ek hi DB me hain, to ek transaction seedha aur pakka hai. Payment wali
-file me doosra bank aata hai, wahan saga hai.
-
-Par Arpan ne Send dabaya, transaction ho bhi gaya, par jawab aane se pehle metro me network chala gaya. App ne
-socha fail hua aur dobara bhej diya. 1000 kat gaye.
-
-### Kadam 3: network gaya, app ne dobara bheja (idempotency key)
-
-**Branch:** line kati, Arpan ne wahi parchi dobara di -> parchi ka number jo badle nahi, pehle aa chuka to mana.
-
-Server ke liye dono request bilkul alag thi. Use pata hi nahi chala ki doosri request pehli ka hi dobara
-bhejna hai.
-
-Ilaaj: har payment pe ek pehchaan, **idempotency key**. App Send wali screen khulte hi ek id bana leti hai
-(UUID, jaise `k-77`). Har request ke saath wahi id jaati hai, dobara bhejne pe bhi wahi `k-77`. Server ye id
-usi transaction me ek table me likhta hai, aur us table pe **UNIQUE** laga hota hai.
-
-```
-BEGIN
-  INSERT INTO idem (key, result) VALUES ('k-77', ...)    <- UNIQUE
-  Arpan -500 · Ravi +500
-COMMIT
-dobara k-77 aaya -> INSERT fail (UNIQUE) -> paisa nahi kata, purana jawab wapas ("ho gaya")
-```
-
-```mermaid
-flowchart LR
-    U["Arpan app<br/>key k-77"] -- "1. bheja (jawab kho gaya)<br/>2. dobara, wahi k-77" --> S["Banking Service"]
-    S --> D[("SQL DB<br/>idem: k-77 UNIQUE")]
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Key screen khulte hi kyun, Send dabane pe kyun nahi? Retry app hi karti hai. Id pehle se bani ho tabhi dobara
-bhejne pe wahi jaayegi. Send pe har baar nayi banti to dobara bhejna bhi naya payment ban jaata.
-
-UNIQUE kyun? "Pehle dekho hai ya nahi, phir likho" kyun nahi? Kyunki do retry ek saath aaye to dono dekhenge
-"nahi hai", aur dono paisa kaat denge. UNIQUE ka niyam DB khud lagata hai, to do mein se ek hi jeetta hai.
-
-Aur "same insaan, same amount, 1 minute me dobara = block" kyun nahi? Kyunki Arpan sach me do baar 500 bhejna
-chahe (do alag cheez kharidi), to wo bhi ruk jaata. Pehchaan request ki id se honi chahiye, amount se nahi.
-
-Koi wahi `k-77` le ke amount 5000 bhej de to? Key ke saath request ka hash bhi rakho (amount + kisko). Key
-same hai par amount alag, to mana kar do (422).
-
-**API:** POST /transfers { from, to, amount } + Idempotency-Key header.
-
-Par Arpan ke wallet me 600 hain. Raat 9 baje Netflix ka 500 ka auto-debit aur Arpan ka 500 ka UPI, dono ek
-saath aaye. Dono ne balance padha (600), dono ko laga "chalega", aur dono kat gaye. Balance -400.
-
-### Kadam 4: do kataai ek saath, balance -400 (check + kaato ek query me)
-
-**Branch:** 600 the, do counter pe ek saath 500-500 -> dekhna aur kaatna ek kaam me, doosre ko 100 dikhe.
-
-Dono ne pehle padha (600), phir jaancha ("500 hai"), phir kaata. Ye teen alag kadam the, aur beech me doosra
-ghus gaya.
-
-Ilaaj: jaanch aur kataai **ek hi query** me karo:
-
-```
-UPDATE account SET balance = balance - 500
-WHERE id = 'arpan' AND balance >= 500
--> 1 row badli = kat gaya
--> 0 row badli = paisa kam tha, mana
-```
-
-Ye kyun chalta hai? UPDATE jis row ko chhuta hai, us pe lock lagta hai (row lock). Netflix ki query pehle
-pahunchi, row lock hui, 600 se 100 hua. UPI ki query tab tak ruk ke intezaar karti hai. Lock khulne pe wo
-`balance >= 500` ko naye number (100) pe jaanchti hai: jaanch fail, 0 row, mana.
-
-```mermaid
-flowchart LR
-    N["Netflix 500"] -- "pehle pahuncha" --> D[("arpan: 600 -> 100<br/>row lock")]
-    P["UPI 500"] -. "ruka, phir jaancha: 100 >= 500? nahi" .-> D
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Do transfer ulti disha me ek saath aaye (Arpan dukaan ko bheje, aur usi second dukaan Arpan ko refund kare) to
-deadlock ho sakta hai. Jo SQL DB liya hai, wahi use khud pakad ke tod deta hai: ek transfer fail hota hai
-(Postgres me "deadlock detected" error), app use dobara chalati hai, aur idempotency key ki wajah se paisa dohra nahi katta.
-Hone hi na dena ho to dono row ko hamesha chhoti account id pehle lock karo.
-
-Par Ravi ne complaint daali: "500 nahi mile". Bank ko saboot dena hai ki 500 kab, kahan se, kahan gaye.
-DB me sirf `balance = 100` hai, kyunki UPDATE ne purana number mita diya. NFR "har paisa trace ho" toot gaya.
-
-### Kadam 5: "500 nahi mile" pe saboot nahi (khaata = ledger)
-
-**Branch:** Ravi ki shikayat, register me sirf aaj ka balance -> alag diary, kaato mat, neeche likhte jao.
-
-Balance column UPDATE hota hai, to purana number mit jaata hai aur itihaas kahin nahi bachta. Logs bhi kuch
-din me mit jaate hain, aur transaction ke saath pakke nahi likhe jaate.
-
-Ilaaj: har paisa hilne pe ek **khaata (ledger)** me line likho. Usi transaction me, aur **double-entry**: har
-transfer ki do line, ek jagah se gaya aur ek jagah aaya.
-
-```
-transaction  account  amount  time       kisko / kisse
-t-91         arpan    -500    21:00:03   ravi
-t-91         ravi     +500    21:00:03   arpan
-
-BEGIN
-  idem k-77 · Arpan -500 (check ke saath) · Ravi +500
-  INSERT ledger (t-91, arpan, -500) · INSERT ledger (t-91, ravi, +500)
-COMMIT
-```
-
-Khaate me sirf INSERT hota hai, kabhi UPDATE ya DELETE nahi. Galti hui to ulti line daalo (+500 wapas), purani
-line mat mitao. Isi se audit hota hai.
-
-Double-entry isliye ki har transfer ki dono line jod ke 0 aati hain (-500 + 500). Poore khaate ka jod kabhi 0
-na aaye, to pakka koi galti hai. Paisa na bana, na gaya, ye ek jod se pata chal jaata hai.
-
-Khaata hi sach hai. Balance us account ki saari lines ka jod hai, balance column bas tez padhne ke liye ek
-copy hai.
-
-To do table alag kaam karti hain: account table me balance UPDATE hota hai (tez padhne aur kadam 4 wale check
-ke liye). Ledger ek alag table hai jo kabhi badli nahi jaati, usme sirf nayi line judti hai (append).
-
-Ledger isi DB ki ek alag table hai, poori DB nahi. Is ek kitaab se teen cheezein banti hain: app ki history
-aur PDF statement, raat ka milaan (kadam 9), aur RBI / audit ki report. Report RBI ke format me ledger se
-(job ya query se) banti hai. Poori DB ki copy kisi ko nahi jaati.
-
-```mermaid
-flowchart LR
-    U["Arpan"] --> S["Banking Service"]
-    S -- "ek transaction" --> D[("SQL DB<br/>account (balance)<br/>ledger (sirf INSERT)<br/>idem")]
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Par paisa Ravi ko chala gaya, ab Ravi ko SMS jaana chahiye: "500 aaye". SMS service ko transaction ke andar
-call kiya, aur SMS service giri hui thi. Ab ya to poora transfer ruk jaata hai, ya transfer ho jaata hai aur
-SMS kabhi nahi jaata.
-
-### Kadam 6: SMS service giri (outbox)
-
-**Branch:** khabar dene wala ladka nahi aaya, cashier bhool jaata -> usi register me likh do, koi bhi ladka pahuncha de.
-
-SMS ko transaction ke andar bhejo to SMS dheema ya gira hua ho to transfer bhi ruk jaata hai, paise ka kaam
-SMS pe atak gaya. COMMIT ke baad seedha SMS bhejo to COMMIT hua aur SMS bhejne se pehle server gira, to SMS
-kabhi nahi gaya.
-
-Ilaaj: **outbox**. SMS ki khabar bhi usi transaction me DB ki ek table (outbox) me likh do. Ek chhota
-**relay** program outbox se `sent = false` wali khabar uthata hai aur SMS Service ko bhejta hai. Gaya to
-`sent = true`. SMS Service gira hai to relay ruk-ruk ke dobara koshish karta hai; tab tak khabar table me padi.
-
-```
-BEGIN
-  idem · Arpan -500 · Ravi +500 · ledger 2 line
-  INSERT outbox ("ravi ko 500 aaye", sent = false)
-COMMIT
-relay -> outbox se sent = false wali khabar -> SMS Service -> SMS -> sent = true
-```
-
-Transfer hua to khabar bhi pakki likhi gayi, dono ek saath. SMS Service gira to khabar outbox me padi rehti hai,
-uthne pe relay bhej dega, transfer pe koi asar nahi. Relay ek account ki khabar `id` ke kram se uthata hai,
-taaki Ravi ki SMS kram se jaayein ("500 aaye", phir "200 gaye").
-
-```mermaid
-flowchart LR
-    S["Banking Service"] -- "ek transaction" --> D[("SQL DB<br/>... + outbox")]
-    RL["Relay"] -- "sent = false padhta" --> D
-    RL -- "bhejo, gira to dobara" --> SMS["SMS Service"]
-    style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style SMS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Kafka kyun nahi yahan? Dikkat sirf itni thi "SMS gira to transfer na ruke, SMS khoye nahi", aur outbox ye
-akela kar deta hai. Kafka tab aata jab yahi khabar kai service ko chahiye (fraud jaanch, statement): tab relay
-khabar Kafka me daale (key = `account_id`) aur sab wahan se padhein. Abhi FR me sirf SMS hai.
-
-Ye wahi outbox hai jo Kafka wali file me padha tha. Wahan Order Service tha, yahan Banking Service.
-
-Par subah 11 baje sabki salary ek saath aayi. Ek Banking Service machine itni requests nahi jhel paayi. Aur DB ek
-hi hai: wo gira to poora bank band.
-
-### Kadam 7: salary ki bheed + ek hi DB (kai machine + DB ki sync copy)
-
-**Branch:** salary ka din, line sadak tak -> 10 cashier. Register jal gaya -> laptop me copy, turant likho tab pakka (sync).
-
-Ilaaj 1: kai Banking Service machine, aur aage LB. Ye isliye chalta hai kyunki Banking Service apne andar kuch yaad
-nahi rakhta (stateless). Saara sach DB me hai, to koi bhi machine koi bhi request le sakti hai.
-
-Ilaaj 2: DB ki **copy doosri building me** (AWS RDS Multi-AZ).
-
-Yahan ek asli choice hai: copy sync ho ya async? Async copy me primary likh ke turant "ho gaya" bol deta hai
-aur copy baad me pakadti hai. Primary gira to aakhri kuch transfer copy tak pahunche hi nahi, paise ka hisaab
-gaya. Sync copy me "ho gaya" tabhi bolte hain jab copy pe bhi likh gaya. Thoda dheema hai, par ek bhi transfer
-nahi khota. **Isliye sync.** Paise me "thoda dheema" chalta hai, "transfer kho gaya" nahi chalta. Aur likhai
-sirf 120 / sec hai, to dheemapan dikhta bhi nahi.
-
-```mermaid
-flowchart LR
-    U["sab log, 11 baje"] --> LB["LB"]
-    LB --> S1["Banking Service 1"] & S2["Banking Service 2"]
-    S1 & S2 --> P[("Primary DB")]
-    P -- "sync copy" --> C[("Copy, doosri building")]
-    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    A["Arpan"] --> C["Cashier<br/>(Banking Service)"]
+    C --> R[("Register<br/>(Postgres + WAL)")]
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-**Maan lo CP ya AP poochha:** transfer / balance = CP (galat balance dikhane se mana karna behtar) · SMS / statement = AP (2 sec late chalega).
-
-**AWS pe:** Postgres AWS ka **RDS** lete hain, **Multi-AZ** ke saath: doosri building me sync copy AWS rakhta hai, primary gira to wo khud copy ko primary banata hai. Sync rakhna (paisa hai) hamara faisla tha.
-
-Par salary aate hi sab apna balance aur history dekh rahe hain. Padhna likhne se kahin zyada hai, aur saari
-padhai bhi primary pe ho rahi hai. Primary bhar gaya, aur transfer dheeme ho gaye.
-
-### Kadam 8: sab balance dekh rahe, transfer dheeme (read replica)
-
-**Branch:** sab balance dekhne aaye -> padhne walon ke liye photocopy ka alag desk. Abhi bheja to thodi der main register se.
-
-Ilaaj: **read replica**, yaani primary ki ek aur copy, sirf padhne ke liye. Balance aur history wahan se
-padho, primary sirf transfer sambhale. Padhai aur badhe to replica 2-3 kar do.
-
-Ye copy async hai (kadam 7 wali sync copy failover ke liye thi, ye alag hai). Ye kuch ms peeche chal sakti
-hai. Sirf padhne ke liye hai, to thoda peeche hona chalta hai, aur isse primary dheema nahi hota.
-
-Par ek pench: Arpan ne abhi Ravi ko 500 bheje aur turant balance khola. Replica abhi peeche thi, to purana
-balance dikha (600). Arpan ghabra gaya: "paisa gaya ya nahi?" Iska ilaaj (read-your-own-writes): jisne abhi
-transfer kiya, uska balance kuch second primary se padho, baaki sab replica se. Ya transfer ke jawab me hi
-naya balance bhej do.
-
-```mermaid
-flowchart LR
-    S["Banking Service"] -- "transfer" --> P[("Primary")]
-    P -- "sync" --> C[("Copy (failover)")]
-    P -- "async" --> R[("Read replica")]
-    S -- "balance / history" --> R
-    S -. "abhi transfer kiya? primary se" .-> P
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-History me neeche scroll karo to agla page "jahan pichhla page khatam hua, wahan se aage" aata hai (keyset:
-time + id, index ke saath). OFFSET nahi lagate, kyunki door ke page dheeme ho jaate hain. Statement app me
-turant replica se banta hai, bahut lamba range ho to kuch bank email pe bhejte hain.
+## 2. Receipt se pehle line kati, wahi parchi dobara (parchi ki key)
 
-**API:** GET /accounts/{id}/balance · GET /accounts/{id}/transactions?cursor=..
+Ravi ko 500 pahunch gaye, par receipt milne se pehle Arpan ki line kat gayi. Use pata nahi chala, usne wahi parchi
+dobara di. Wo cheez hamare paas hai na, humne register me likh di thi. Hum dekh lenge ki 500 chale gaye, to mana kar
+do: "nahi bhai, 500 tumhare already bhej diye hain."
 
-Par balance ek column hai aur khaata alag lines me. Kisi bug ya haath se kiye galat UPDATE se dono me farak aa
-gaya: balance 600 dikha raha hai, par khaate ka jod 100 hai. Kisi ko pata hi nahi chala.
+**Maan lo agle din Arpan sach me Ravi ko phir 500 bhejna chahta hai:** register me pehle se "Arpan se Ravi, 500" hai,
+to cashier use bhi mana kar dega. To ek key bana do. Maine ek parchi pe likh diya ki Ravi ko 500 bhejne hain, aur
+parchi bank wale ko de di. Mujhe nahi pata gaye ki nahi, to main dobara wahi same parchi dunga, key thodi badli. Wo
+dekhega: "abe yaar ye to same hi hai, hatao." Nayi baar bhejna hai to nayi parchi, nayi key.
 
-### Kadam 9: balance aur khaata alag ho gaye (raat ka milaan = reconciliation)
+**Asli naam:** parchi ki key = idempotency key (app Send screen khulte hi UUID banati, jaise `k-77`, dobara bhejne pe
+wahi). Server key usi transaction me ek table me likhta jispe UNIQUE hai: key pehle aa chuki to paisa nahi kat-ta,
+purana jawab wapas. Amount se pehchaan nahi, kyunki Arpan sach me do baar 500 bhej sakta hai.
 
-**Branch:** kisi ne haath se balance badla -> sach diary hai, raat ko balance diary se milao. 5 saal jodna bhaari -> mahine ka total.
+## 3. Do counter, 600 the, dono ne kaat diya (dekhna aur kaatna ek kram me)
 
-Ilaaj: raat ko ek **milaan ka job** chalao, read replica pe, taaki primary pe bojh na pade:
+Branch me do counter. Arpan ke khaate me 600. Ek hi pal me do parchi, Netflix 500 aur UPI 500, alag counter pe. Dono
+cashier ne 600 dekha, dono ne kaat diya, balance -400. To dekhna aur kaatna ek hi kram me kar lo. Jisne pehle 600
+dekha, wo pehle kaat de: Netflix ke 500 turant kat gaye, ab account me 100 hain, to agla counter 600 nahi, 100
+dekhega. Doosre wale ko 600 dikhne hi nahi chahiye.
 
-```
-har account:   balance column == khaate ki lines ka jod ?     nahi -> ALERT
-poora bank:    saari lines ka jod == 0 ? (double-entry)        nahi -> ALERT
-```
+**Asli naam:** ek kram = ek hi query me check + kaato (`UPDATE ... SET balance = balance - 500 WHERE id = arpan AND
+balance >= 500`: 1 row badli = kata, 0 row = paisa kam, mana). Doosre ko 600 na dikhe = row lock: UPI ki query ruk ke
+naye 100 pe jaanchti hai.
 
-Galti mili to khud se theek mat karo, ALERT do. Insaan dekhe ki galti kahan hai, phir ulti line daal ke theek
-kare (kadam 5 ka niyam: kuch mitta nahi).
+## 4. Ravi bola "500 mile hi nahi" (alag diary, kaato mat)
 
-5 saal ki saari lines roz jodna bahut bhaari hai. Isliye har mahine ke end me har account ka pakka balance
-likh lo (**snapshot**). Aaj ka sahi balance = pichhla snapshot + uske baad ki lines ka jod. 5 saal nahi, bas
-ek mahine ki lines jodni padti hain.
+Hafte baad Ravi aaya: "Arpan ke 500 mile hi nahi". Register me sirf aaj ka balance hai, purana number har baar kaat
+ke naya likha. Saabit kaise karein? To ek alag diary rakh lo, usme kaato mat, bas neeche likhte jao, jodte jao: Ravi
+me +500 hua, yahan se -500 hua. Register ka balance wala column update hota rahe, koi dikkat nahi, par diary me kabhi
+mat kaato. Do alag cheez rakho.
 
-```mermaid
-flowchart LR
-    J["Raat ka milaan job"] -- "snapshot + baad ki lines" --> R[("Read replica")]
-    J -- "balance == jod ? · sab ka jod == 0 ?" --> X{"farak?"}
-    X -- "haan" --> A["ALERT, insaan dekhe"]
-    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
+**Asli naam:** diary = ledger (append-only: sirf INSERT, kabhi UPDATE / DELETE nahi; galti hui to ulti line daalo),
++500 / -500 = double-entry (har transfer ki do line, jod 0). Balance column alag, bas tez padhne ke liye. Dono usi
+transaction me likhe jaate hain, ledger isi DB ki ek alag table hai.
 
-Asli bank me bhi yahi hota hai. Din khatam hone pe **end of day (EOD)** batch chalta hai, jisme hisaab band
-hota hai, snapshot banta hai aur milaan hota hai (SBI ka TCS BaNCS, HDFC ka Finacle, dono me ye roz hota hai).
-Aur har bank NPCI ki settlement file se apna khaata milaata hai. Interview me bolo: "Banks me end of day
-reconciliation hota hai: khaate se balance milao, farak pe alert."
+## 5. Khabar dene wala ladka nahi aaya (doosra ladka + likh lo)
 
-Par 5 saal ka khaata ek hi table me hai. Roz 1 crore transfer ki 2 line, yaani 5 saal me ~36 arab line. Table
-aur index RAM me nahi samate, har query dheemi. Aur purana khaata phenk bhi nahi sakte, RBI aur audit maangte
-hain.
+Paisa jaate hi Ravi ko khabar deni thi, aur khabar dene wala ladka aaj aaya hi nahi. Cashier ruke to line ruke, na
+ruke to bhool jaata hai. To us ladke ka ek backup rakh lo. Wo nahi aaya to koi dikkat nahi, doosra ladka hai.
 
-### Kadam 10: 5 saal ka khaata (mahine ke tukde + S3)
-
-**Branch:** diary itni moti, almari bhar gayi -> mahine-mahine tod do, purani head office ke godown me, kohinoor jaisa taala (koi badal na sake).
-
-Ilaaj 1: table ko **mahine ke hisaab se tukdon** me baanto (partition, Postgres me `PARTITION BY RANGE
-(time)`). Bahar se table ek hi dikhti hai (`ledger`), tukde DB khud sambhalta hai. "Arpan ki is mahine ki
-history" sirf is mahine wala tukda dekhti hai, baaki tukde chhuti hi nahi. Har tukde ka index chhota hai, to
-RAM me aa jaata hai. Naya mahina shuru hone pe naya tukda ban jaata hai.
-
-Ilaaj 2: purane mahine sasti jagah pe, **S3** me. 1 saal se purane tukde S3 me file ban ke chale jaate hain
-aur DB se hat jaate hain. S3 Object Lock lagate hain, compliance mode me, taaki likhne ke baad koi unhe badal ya mita na sake,
-admin bhi nahi (kohinoor wala taala). RBI ko purana hisaab ~10 saal tak chahiye, isliye lock bhi 10 saal ka. Saath
-me versioning on rakhte hain aur copy doosre region me bhi bhejte hain: koi ek copy kharab ho ya badli dikhe, to
-doosri se mila ke turant pakad lo. Kabhi zaroorat pade to S3 se padh lo (Athena se), dheema chalega, par ye roz ka kaam nahi
-hai.
-
-Purani lines hat gayi, to balance sahi kaise rahega? Kadam 9 ka snapshot isi kaam aata hai: balance = pichhla
-snapshot + uske baad ki lines. Purani lines ki zaroorat hi nahi padti.
-
-Yahan bhi ek asli choice hai: partition ya shard? Shard me data alag-alag machine pe jaata hai, wo tab chahiye
-jab ek machine likhai na jhel sake. Partition me ek hi DB rehta hai, bas table ke andar tukde. Hamari likhai
-sirf 120 / sec hai, ek machine kaafi hai, **isliye partition**. Shard karte to Arpan ek machine pe aur Ravi
-doosri pe ho sakte the, tab ek transaction nahi chalta, aur kadam 2 ka saara bharosa toot jaata.
+**Maan lo cashier ne paisa bheja, aur ladke ko "Ravi ko khabar do" bolne se pehle bijli chali gayi:** ladka ek ho ya
+do, unhe pata hi nahi ki kisko khabar deni hai. Jo kisi ko yaad nahi rehta, to likh lo na bhai. Hum bhi to yahan
+likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Ab cashier kabhi bhi aaye ya
+jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
+**Asli naam:** likh lo = outbox (khabar usi transaction me ek table me, `sent = false`), ladka = relay (outbox se utha
+ke SMS Service ko bheje, gaya to `sent = true`, SMS gira to dobara try), backup ladka = relay ki doosri copy. Transfer
+SMS pe nahi atakta, aur SMS khota bhi nahi.
 
 ```mermaid
 flowchart LR
-    S["Banking Service"] --> P[("Primary<br/>ledger: mahine ke tukde")]
-    P -- "1 saal se purane" --> S3[("S3 + Object Lock")]
-    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    C["Cashier<br/>(Banking Service)"] --> R[("Register<br/>(DB + outbox)")]
+    R --> L["Khabar wala ladka<br/>(Relay)"]
+    L --> S["Ravi ka SMS<br/>(SMS Service)"]
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo 10 guna traffic:** padhai badhi: replica · jagah badhi: tukde + S3 · likhai badhi: tab account_id se shard (do shard ke beech transfer = saga). 120 / sec pe ye sawaal hi nahi.
+## 6. Salary ka din, register jal gaya (10 counter + laptop me copy)
 
-**Maan lo tables poochhi:** account (balance) · ledger (sirf INSERT, mahine ke tukde) · idem (UNIQUE) · outbox · snapshot.
+Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Ek hi cashier, line sadak tak. To cashier badha do: ek
+tha, 10 kar do, 10 counter kar do. Aam taur pe bhi yahi hota hai, bank me ek counter pe bheed ho to hum doosre
+counter pe jaate hain.
 
-**AWS pe:** purani lines **S3** me **Object Lock** (compliance mode, 10 saal, admin bhi badal ya mita na sake) + versioning + doosre region me copy, aur kabhi padhna ho to **Athena** se seedha S3 pe query.
+Par cashier 10 ho gaye, register abhi bhi ek hi. Raat ko branch me aag lagi, register jal gaya. To use kai jagah
+store karo. Jaise meri ek important copy hai, main use office me chhod gaya, raat me aag lagi to notes kho jaayenge.
+Main aisa nahi karunga: use laptop me save karke laptop ghar le jaaunga.
+
+**Asli naam:** 10 cashier = kai Banking Service machine (stateless, sach DB me), doosre counter pe bhejna = load
+balancer, laptop ghar = DB ki copy doosri building me (RDS Multi-AZ, primary gira to copy primary banti).
+
+**Maan lo laptop me shaam ko ek baar save karta hai, 2 baje zaroori line likhi, 3 baje aag:** jaise hi copy pe likha,
+turant laptop pe likh lo, dikkat hi khatam. Wo cheez tab tak pakki nahi jab tak laptop me nahi aati.
+**Asli naam:** turant laptop pe, tabhi pakka = sync copy (thoda dheema, par ek bhi transfer nahi khota; 120 / sec pe
+dheemapan dikhta bhi nahi). Shaam ko ek baar = async (aakhri likha kho jaata), paise me nahi chalta.
+
+```mermaid
+flowchart LR
+    U["Poora mohalla"] --> LB["Counter dikhane wala<br/>(Load balancer)"]
+    LB --> C["10 cashier<br/>(Banking Service)"]
+    C --> R[("Register<br/>(Primary DB)")]
+    R --> L[("Laptop ghar pe<br/>(Sync copy, Multi-AZ)")]
+    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 7. Sab sirf balance dekhne aaye (photocopy ka alag desk)
+
+Salary ke din sab sirf balance dekhne aa rahe. Saare cashier register pe jhuke, jo sach me paisa bhejne aaya uska
+kaam atka. To alag-alag baant do: jo sirf dekhne aa rahe unko sirf dikhao, jo karne aa rahe unko sirf karao. Register
+ki photocopy bana do, photocopy ek alag desk pe rakh lo. Jo sirf padh raha, use photocopy pe bhejo. Jo kuch likh
+raha, use main register pe le aao.
+
+**Asli naam:** photocopy alag desk = read replica (async, balance / history wahan se), main register = primary (sirf
+transfer).
+
+**Maan lo photocopy thodi peeche chalti hai, Arpan ne abhi 500 bheje aur turant photocopy desk pe purana balance
+dekh ke ghabra ke dobara bhej diya:** jisne update kiya, use thodi der main register se padhao. Thodi der baad jab
+photocopy sync ho jaaye, phir wahin se.
+**Asli naam:** read-your-writes (abhi transfer kiya to kuch second primary se, baaki sab replica se).
+
+## 8. Haath se balance badla, 5 saal jodna bhaari (diary se milao + mahine ka jod)
+
+Raat ko kisi bank wale ne main register me Arpan ka balance haath se 100 ki jagah 600 kar diya, diary me koi line
+nahi. Agle din Arpan ne 600 nikaal liye. To use diary se milwao na. Asli to diary hai: usme hum sab likh rahe, -500
++500, ye hai asli sach, na ki wo column jo koi bhi galti se update kar de.
+
+Par Arpan ka khaata 5 saal purana, diary me hazaaron line. Har raat 5 saal ki line shuru se jodna bhaari, raat khatam
+par jod poora nahi. To data tod do: 10 mahine purana kharcha ab badlega thodi. Mahine ke mahine tod do. January se
+March itna kharch kiya, jud gaya, mil gaya, likh do. Pichhle mahine ka khaata change nahi hota, agle mahine ka hota
+rehta hai.
+
+**Asli naam:** diary se milao = raat ka milaan (reconciliation job, read replica pe: balance == ledger ka jod? poore
+bank ka jod == 0? nahi to ALERT, insaan ulti line se theek kare). Ledger = source of truth, balance bas copy. Mahine
+ke mahine = ledger ke mahine ke partition, pichhla jud gaya = snapshot (balance = pichhla snapshot + uske baad ki
+lines), purani line immutable.
+
+## 9. Diary almari me nahi samati, godown ka taala (head office + kohinoor)
+
+5 saal me diary itni moti ki branch ki almari me jagah nahi, aur RBI ka niyam: purani line phenk nahi sakte, 10 saal
+rakhni hain. To use bank ki jagah head office bhej do, wahan safe rahega. Data kahin gaya nahi. Aur godown me har koi
+thodi ja sakta hai: mere baap ka godown hai, usme har raah chalta thodi ghusa dunga. Wahan wahi jaayega jo authorized
+hoga.
+
+**Asli naam:** head office = S3 (1 saal se purane mahine wahan, sasta, lambe samay ke liye; archive, phenka nahi).
+Sirf authorized = IAM (darwaze ka taala).
+
+**Maan lo ijazat wala aadmi hi andar ja ke "Arpan -500" ko "Arpan -50" kar de:** uski 3-4 copy alag-alag chupchap
+kahin aur kone me daba do, taaki wo sab na badal paaye. Aakhir me saari copy milao: ek me hi -50 hai, baaki me -500,
+matlab isne chhedchhaad ki. Aur ek aur: version ka lock laga do. Wo kohinoor heera hai, na koi chhoo sakta, na badal
+sakta. Use taala maar do, wo chupchap wahin pada rahega.
+**Asli naam:** kai copy chhupa ke milao = copies doosri jagah (doosra region), version ka lock = versioning, kohinoor
+= S3 Object Lock (compliance mode, 10 saal, admin bhi badal ya mita na sake).
+
+```mermaid
+flowchart LR
+    C["Cashier<br/>(Banking Service)"] --> R[("Diary, mahine ke tukde<br/>(Ledger partitions)")]
+    R --> H[("Head office godown<br/>(S3 + Object Lock)")]
+    H --> X[("Chhupi copy<br/>(Doosra region)")]
+    style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
 ---
 
-## 5. Wrap (30 second me poora design, NFR se milao)
-
-Request LB se kisi bhi Banking Service machine pe jaati hai. Transfer SQL primary pe ek transaction me hota hai:
-idempotency key, check karke kaatna (ek query), dono balance, ledger ki 2 line, aur outbox me SMS ki khabar.
-Primary ki sync copy doosri building me hai, aur read replica balance / history ke liye. Ledger mahine ke
-tukdon me hai, purane mahine S3 me. Relay outbox se SMS Service ko bhejta hai (gira to dobara). Raat ko milaan
-job: snapshot + lines ko balance se milao, sabka jod 0, farak pe alert.
-
-```
-SAHI (na gum, na bane)  -> ek transaction (WAL) · check + kaato ek query · double-entry ledger ·
-                           raat ka milaan
-trace ho                -> ledger me sirf INSERT · S3 Object Lock
-dobara na kate          -> idempotency key (UNIQUE)
-balance tez             -> read replica (jisne abhi transfer kiya, wo primary se)
-```
-
-**Chal raha kaise pata:** milaan ka alert, p99 (100 me se 99 transfer kitni der me), error rate, outbox me kitni sent = false, har transfer ka trace id.
-
-**Maan lo poochha round kis pe tay hota:** idempotency, transaction, queue, reconciliation, audit. Paise me ACID, eventual nahi, aur asli khaate ke liye SQL, NoSQL nahi.
+Notes (Arpan ke shabd) = [BANKING_HAND_NOTES.md](BANKING_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)

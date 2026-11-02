@@ -1,430 +1,167 @@
-# Rate limiter: shuru se, ek kahani
+# Rate limiter: Arpan aur Ravi ke "OTP bhejo" button ki kahani
 
-**Mock se pehle hand notes:** [RATE_LIMITER_HAND_NOTES.md](RATE_LIMITER_HAND_NOTES.md)
+Arpan ki app me "OTP bhejo" ka button hai, aur har OTP pe SMS company ka bill. Ravi ne mazaak me script chala di jo
+har second 1000 baar button dabati hai. Kaam: ek bande ki ek had, paar ho to mana, asli log na atkein, aur limiter
+khud site ko dheema na kare.
 
-Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe se
-shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori file
-me ek hi kahani hai: Arpan ki app ka "OTP bhejo" button, aur Ravi ki script jo use dhadadhad dabati hai.
-
-**Arpan aur Ravi (OTP button wala scene):** ek bande ki had = rate limit · sabki ginti = Redis · apni raftaar se bharta dabba = token bucket · ek jhatke me = Lua · gate ka guard = gateway · papa ke dost vs chor = fail-open / closed · alag dabba = ban list · ghar ka region = home region
-
-**CUE (yahi shabd yaad rakhne hain, kram se):**
-server me ginti -> Redis (ek ginti) -> token bucket -> Lua (ek saath 20) -> gateway pe
--> copy + fail-open / closed -> Kafka + ban -> userId (login pe IP)
--> line (queue) + SMS ki raftaar, line bhari to 503 -> home region
+Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
+(kahani ka shabd, bracket me asli naam).
 
 ---
 
-## 1. FR: kya karna hai
+## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-1. har user ki had: login 5 baar / minute, OTP 10 minute me 5, baaki API 100 / minute
-2. had paar ho to 429 (Too Many Requests), saath me "kitni der baad aao" (Retry-After)
-scope ke bahar (poochh ke hata do): plan ke hisaab se alag had (free / pro), ye baad me
+FR      har user ki had (OTP 10 minute me 5, login 5 / minute, baaki API 100 / minute) · paar ho to 429 + Retry-After
+NFR     tez: har request ke aage, ~1 ms me haan / na · ginti EK: 10 server hon tab bhi ek jagah · limiter gire to site na gire
+Numbers ~1 crore user, bheed me ~10,000 request / sec · har user ke 2 chhote number = ~500 MB
+        -> dikkat jagah ki nahi, speed ki: RAM wala Redis, DB nahi
 ```
-
-## 2. NFR: kaisa chalna chahiye
-
-```
-- TEZ: limiter har request ke aage baitha hai, ~1 ms me haan ya na. Ye dheema to poori site dheemi
-- ginti EK: 10 server hon tab bhi har user ki ginti ek hi jagah
-- limiter gire to site na gire
-```
-
-## 3. Numbers
-
-```
-- ~1 crore user, sabse bheed wale waqt ~10,000 request har second
-- har user ke liye sirf 2 chhote number (kitne bache, aakhri baar kab) -> 1 crore x ~50 byte = ~500 MB
-```
-
-Matlab dikkat jagah ki nahi, SPEED ki hai. 500 MB ek machine ki RAM me aa jaata hai. Isliye aage RAM wala
-Redis aayega, DB nahi.
 
 ---
 
-## 4. Design
+## 1. Ravi ki script, dhadadhad SMS (ek bande ki had)
 
-### Kadam 1: sabse seedha (server ke andar ginti)
+Mera ek app hai, ek service hai jiska main roz bill de raha. Ravi ne aake script chala di, ab dhadadhad SMS ja rahe,
+bematlab, server dab gaya aur SMS company ka bill chadh raha. To limit lagao. Aisa nahi ki 1000 hai, 10,000 hai, 20,000
+chal le; ek bande ke liye ek threshold hona chahiye. Rate limit ka kaam yahi hai, limit lagana.
 
-**Arpan-Ravi:** Ravi ki script, dhadadhad SMS, bekaar ka bill. Ek bande ki ek had lagao, paar hui to 429.
+**Asli naam:** ek bande ka threshold = rate limit per user, had paar to mana = 429 (saath me Retry-After: kitni der
+baad aao).
 
-App server ki memory me ek map rakho: `user -> in 10 minute me kitne OTP`.
+## 2. 10 server, har ek ke paas ginti alag (hisaab main rakhunga)
 
-```
-request aayi -> map[ravi] me +1 -> 5 se zyada? -> 429
-                                    nahi        -> aage jaane do
-10 minute poore -> map saaf
-```
+Ginti server apni memory me rakh raha tha. App 10 server pe, load balancer Ravi ki requests baant deta. Har server ke
+paas Ravi ki ginti kam, har server sochta "had me hai", aur Ravi 5 ki jagah 50 OTP le gaya. Maan le mere paas 5 aadmi
+khade, har ek bol raha "abhi had me hai, ek aur bhej sakta". Ye to galat bata rahe. To main inko kahunga: tu chhod, tu
+mujhe bata, phir main bataunga kitni request hain. Ek ne bataya 1, doosre ne 2, main count karta rahunga 1 + 2 + 3 +
+4. Hisaab-kitaab main apne paas rakhunga.
 
-```mermaid
-flowchart LR
-    U["Ravi"] --> S["App server<br/>map: ravi -> 3"]
-    S --> K["kaam"]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Jab tak server ek hai, ye chalta hai: tez hai, aur sab ek hi jagah gina ja raha hai.
-
-**Maan lo poochhe 429 pe kya bhejein:** Retry-After (kitne sec baad aao; thoda aage-peeche jaise 28 / 33, taaki
-sab ek saath na lautein) + X-RateLimit-Remaining (kitne bache).
-
-**Maan lo tumhe kisi ne 429 diya:** Retry-After maano, ruk-ruk ke dobara (backoff + jitter), apni raftaar
-ghatao.
-
-Par bheed badhi to 10 app server lag gaye, aur aage LB. Ab Ravi ki script ke 5 OTP App 1 pe gaye aur 5 App 2 pe. Dono
-ne alag-alag gina, dono ko laga "5 hi to hain", aur 10 OTP chale gaye. Had toot gayi.
-
-### Kadam 2: kai server, ginti ek jagah (Redis)
-
-**Arpan-Ravi:** 10 server, har ek ke paas Ravi ki ginti alag. Server ginti chhodein, ek jagah (Redis) hisaab rakhe.
-
-Ilaaj: sabki ginti **ek jagah** rakho, yaani Redis me. Har app server har request pe Redis se poochhta hai.
-
-```
-key   = rl:ravi:otp             (kaun user + kaunsa kaam)
-INCR  -> 1, 2, 3 ...            (Redis me ginti +1 karo, nayi ginti wapas aati hai)
-umar  = 10 min (TTL)            -> pehli request pe lagti; 10 min baad key apne aap gayab = ginti reset
-6vi aayi -> 429
-```
+**Asli naam:** hisaab main rakhunga = central counter (Redis), har request pe ek hi jagah ginti +1. Redis isliye ki
+RAM me hai, ~1 ms, aur data sirf 500 MB.
 
 ```mermaid
 flowchart LR
-    U["Ravi"] --> LB["LB"]
-    LB --> S1["App 1"] & S2["App 2"]
-    S1 & S2 -- "INCR rl:ravi:otp" --> R[("Redis<br/>ravi:otp = 6")]
+    U["Ravi ki script"] --> LB["Load balancer"]
+    LB --> S["10 server<br/>(App servers)"]
+    S --> R[("Hisaab wala<br/>(Redis counter)")]
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Redis kyun, DB kyun nahi? NFR kehta hai ~1 ms, aur har second 10,000 request. DB disk pe likhta hai, har baar
-kai ms lagte, poori site dheemi ho jaati. Redis RAM me hai, ~1 ms. Aur numbers me nikla tha ki data sirf 500
-MB hai, RAM me aa jaata hai.
+## 3. Khaata badla, 3 second me 10 OTP (token ka dabba)
 
-Umar (TTL) isliye ki 10 min baad key khud mit jaaye, safai ke liye koi job na chalana pade.
+Ginti ka khaata ghadi se tha: 10:00-10:10 ek khaata, 10:10-10:20 agla, har khaate me 5. Ravi ne 10:09:58 pe 5 liye,
+khaata badla, 10:10:01 pe phir 5, 3 second me 10. To had ek dabbe me rakh lo, har bande ka apna dabba: is dabbe se
+token nikaalo aur aage badho. Dabbe ki ek raftaar hoti hai, itne second me ek token. Dabba apni raftaar se bharta,
+user apni raftaar se aata, khaata badalne se kuch reset nahi hota. User der tak nahi aaya to uske dabbe me bahut
+token, to ek saath kai le sakta, koi dikkat nahi.
 
-**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
+**Asli naam:** ghadi ka khaata = fixed window (kinare pe dugni), token ka dabba = token bucket, apni raftaar se bhare =
+refill rate (OTP: max 5, har 2 minute me 1, request aane pe hi hisaab = lazy refill), der baad aaya to bahut token =
+burst allow. Sirf 2 number rakhne padte (kitne bache, aakhri baar kab), wahi 500 MB.
 
-Ye 10 minute ghadi ke nahi, Ravi ki pehli request se shuru hote hain (10:00:00 pe pehli aayi to 10:10:00 tak).
-Par kinare pe dikkat wahi: Ravi ki script ne 10:09:58 pe 5 maange (window ke aakhri second) aur 10:10:01 pe phir 5 (nayi window
-ke pehle second). 3 second ke andar 10 OTP chale gaye, kyunki umar khatam hote hi ginti 0 ho gayi.
+## 4. Ek token, 20 request ek saath (ek hi baari me, Lua)
 
-### Kadam 3: minute ke kinare pe dugni (kaunsa tareeka gine)
+Ravi ke dabbe me 1 token. Script ne ek pal me 20 request maari, 10 server pe. Har server ne Redis se padha "tokens =
+1", har ek ne ek nikaala, 20 andar ghus gayi. Pehle socha Ravi ko 10 alag server pe jaane hi mat do, uska ek home
+server ho. Par asli baat ye: Redis single thread hai, ek waqt me ek hi kaam chalata. To padhna, jaanchna aur nikaalna
+teeno ek hi baari me kar do, beech me koi ghus hi na paaye. Jaise banking me check aur update ek hi me karte hain.
 
-**Arpan-Ravi:** ghadi wala khaata badla, 3 second me 10 OTP. Had dabbe me: dabba apni raftaar se bhare, user aaye to token nikaale (token bucket).
+**Asli naam:** Redis ek command ek waqt (single thread), sab ek hi baari me = Lua script (check + nikaalna atomic).
+20 line me lagti hain: 1 ko token mila, baaki 19 ko 429.
 
-Ab tak ek band khidki (10 min) me gin rahe the, jo khatam hote hi 0 se shuru hoti hai (isse **fixed window** kehte hain). Gin-ne ke chaar tareeke hain:
+## 5. Guard andar kamre me baitha (guard ko gate pe bithao)
 
-```
-SLIDING LOG      har request ka time likh lo, nayi aaye to pichhle 60 sec wale gino
-                 -> sabse sahi, par har request ka time rakhna = 1 crore user pe bahut memory
-SLIDING COUNTER  is minute ki ginti + pichhle minute ka bacha hissa (2 number)
-                 -> lagbhag sahi, sasta
-LEAKY BUCKET     request ek line me lagti hain aur fix raftaar se nikalti hain (nal se boond jaisi)
-                 -> smooth hai, par jhatke me aayi request (burst) ko nahi nikalne deta
-TOKEN BUCKET     ek baalti me max 5 token. Har 2 minute me 1 token bharta. Har OTP 1 token leti.
-                 Baalti khaali -> 429
-```
+Limiter OTP Service ke andar tha. Script ki 1000 request LB se, login check karke OTP Service tak pahunchti, wahan mana.
+SMS nahi gaya, par raaste ke saare server bojh utha rahe. Mere ghar me ek security guard hai jo kehta 10,000 log andar
+nahi aa sakte, par wo main gate pe nahi, andar kamre me baitha hai. Ghar ke andar to 1000 log ghus gaye. To use bahar
+gate pe bitha do, ghar me koi ghuse hi nahi, gate pe hi hata do.
 
-**Token bucket isliye:** isme sirf 2 number rakhne padte hain (kitne token bache, aakhri baar kab dekha), jo
-wahi 500 MB hai. Jhatka bhi chalta hai: Arpan 1 ghanta baad aaya to baalti bhari mili, aur wo 5 ek saath maang
-sakta hai, asli user aise hi bhejta hai. Aur kinare wali dikkat nahi aati: baalti khaali hui to agla token 2
-minute baad hi aata hai, khidki badalne se kuch reset nahi hota. AWS aur Stripe bhi yahi lagate hain.
-
-Yaani 10 minute me 5 OTP. Login jaise doosre kaam pe bhi yahi baalti, bas raftaar alag (login: max 5, har 12 sec me 1).
-Ravi ne abhi 5 le liye to chhathe ke liye 2 minute rukna padega.
-
-Token bharta kaun hai? Koi background job nahi. Request aane pe hi hisaab lagta hai (lazy refill):
-
-```
-tokens = min(5, tokens + (abhi - aakhri baar) x raftaar)
-          ^ baalti se zyada nahi   ^ beete time me jitne bane
-Arpan 1 ghanta baad aaya: beete time me 30 bante, par baalti 5 ki hai, to 5 hi
-```
+**Asli naam:** guard andar kamre me = limiter service ke andar, guard gate pe = limiter API Gateway pe (mana wali request
+app tak pahunchti hi nahi, aur har service ko apna limiter nahi likhna).
 
 ```mermaid
 flowchart LR
-    U["Ravi"] --> G["App x 10"]
-    G -- "token lo" --> R[("Redis<br/>ravi:otp<br/>tokens = 4 · aakhri = 10:00:05")]
-    R -- "khaali" --> X["429"]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-**Maan lo 100 halki request vs 100 bhaari:** limiter ke liye dono "100". Bhaari (report) pe kadi had, ya wazan
-do (report = 50 token, OTP = 1).
-
-Par Ravi ki script ne ek saath 20 OTP request bheji. 10 app server pe 20 request ne ek saath Redis se padha "tokens = 5", sabne socha "bache
-hain", aur sabne 1 ghata ke likh diya. 20 andar chale gaye, jabki 5 hi jaane chahiye the.
-
-### Kadam 4: 20 ek saath aaye, sab andar (Lua script, ek jhatke me)
-
-**Arpan-Ravi:** ek token, 20 ek saath, sab ne padha "1". Padho aur nikaalo ek hi jhatke me (Lua), banking ki check + update ek query jaisa.
-
-Har request 3 kaam karti hai: padho, jaancho, likho. Ye teen alag kadam the, aur beech me doosri request ghus
-gayi:
-
-```
-Request 1:  padha 5 -> "bache hain" -> likha 4
-Request 2:  padha 5 -> "bache hain" -> likha 4      (Request 1 ka likha hua abhi dikha hi nahi)
-...
-Request 20: padha 5 -> "bache hain" -> likha 4     -> 20 andar, jabki had 5 thi
-```
-
-Ilaaj: teeno kaam **ek hi kadam** me karo. Redis me ek chhoti **Lua script** bhejo, jo token bharna, jaanchna
-aur ghatana, teeno ek jhatke me karti hai. Redis ek baar me ek hi command chalata hai (single thread), to jab
-script chal rahi hai, koi doosri request beech me ghus hi nahi sakti. 20 request line me lagti hain: pehli 5
-ko token mile, baaki 15 ko 429.
-
-```mermaid
-flowchart LR
-    B["bot: 20 ek saath"] --> S["App x 10"]
-    S <-->|"jaata: Lua (padho + jaancho + likho) ek jhatke me<br/>wapas: 5 haan, 15 na"| R[("Redis<br/>ek-ek karke chalata")]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Par limiter app ke andar hai. Bot ki 15 mana wali request bhi LB se hoti hui app tak aayi, app ne Redis se
-poochha, aur tab jaake 429 diya. Mana karne me bhi hamare app ki machine aur time kharch hua.
-
-### Kadam 5: mana wali request bhi andar tak aayi (limiter darwaze pe)
-
-**Arpan-Ravi:** guard ghar ke andar kamre me, 1000 log ghar me ghus chuke. Guard ko gate pe bithao (gateway).
-
-Ilaaj: limiter ko **sabse aage, API Gateway pe** lagao. Mana wali request app tak pahunchti hi nahi.
-
-```
-pehle:  bot -> LB -> App (Redis se poochha) -> 429      app ka time gaya
-ab:     bot -> API Gateway (Redis se poochha) -> 429    app tak pahunchi hi nahi
-```
-
-```mermaid
-flowchart LR
-    U["Arpan / bot"] --> G["API Gateway<br/>limiter yahan"]
-    G -- "had me" --> LB["LB"] --> S["App x 10"]
-    G -- "had paar" --> X["429"]
-    G -- "Lua" --> R[("Redis")]
+    U["Ravi ki script"] --> G["Gate ka guard<br/>(API Gateway + limiter)"]
+    G --> R[("Hisaab wala<br/>(Redis, Lua)")]
+    G --> LB["Load balancer"]
+    LB --> O["OTP Service"]
+    O --> SMS["SMS company"]
     style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Har app ke andar library kyun nahi? Tab har service (login, payment, search) ko apna limiter code likhna
-padta, aur bot ka bojh fir bhi app pe padta. Gateway pe ek jagah lagao, sab pe chalega. AWS pe API Gateway me
-throttling pehle se hoti hai. Par har user ki alag had chahiye to apna limiter Redis (ElastiCache) ke saath
-lagate hain.
+## 6. Guard ka Redis gira (replica + papa ke dost aane do, chor roko)
 
-**Maan lo poochhe had kahan se aati (free / pro):** DB me user ka plan (bina login 60 / ghanta, free 5,000, pro
-10,000). Gateway cache kare, Redis me usi had se milaye.
+Gate ka guard ginti Redis se dekhta, aur Redis gir gaya. Ab ya sabko jaane do ya sabko roko? Pehli baat, mera bodyguard
+chala gaya to uska replica hamesha paas rakhunga, wo na aaye to replica aa jaayega. Replica bhi gir gaya to: mere papa
+ke kuch khaas dost hain, unko andar aane do, wo dekh ke chale jaayenge, koi nuksaan nahi. "Papa ji namaste, chalte
+hain." Par beech me kuch chor bhi hain jo hamari tijori lootne aa rahe, unhe rok do.
 
-**Maan lo had badalni ho:** niyam config me (DB / AppConfig), gateway ~30 sec me padhe. Naya code nahi.
+**Asli naam:** bodyguard ka replica = Redis replica, papa ke dost = feed / home page fail-open (kuch der bina had ke
+chalna chhota nuksaan, site band hona bada), tijori ke chor = OTP / login fail-closed (yahan har request pe SMS ka paisa
+aur password ka khatra).
 
-**AWS pe:** gateway khud nahi banate, AWS ka **API Gateway** lete hain, usme had (throttling) ki setting pehle se hai. Machine aur bheed AWS sambhalta hai.
+## 7. Script ruki nahi, aur naya number, office atka (alag dabba + login pe dheeli had)
 
-Par ab sab kuch Redis pe tika hai. Dopahar ko Redis gir gaya. Ab limiter kisi request ko haan bole ya na?
-Sabko 429 diya to poori site band.
+Script gate pe rukti, 429 khaati, par ruki nahi, din-raat har second maarti, gate ko roz karodon "mana", Ravi ko farak
+nahi. Ek baar mana kiya, do baar mana kiya, teesri baar bhi aaya. To "Ravi bhai, tum yahan aao, mere is dabbe se baat
+karo, wo chhoti si toffee dega." Us dabbe me Ravi ko wahin bitha denge: tu ab yahan se hil hi nahi sakta, is site ke
+liye permanent band.
 
-### Kadam 6: Redis gira (copy + fail-open / fail-closed)
+**Asli naam:** teesri baar bhi = baar-baar had todne ka pattern, alag dabba = ban list, permanent band = ban wala gate pe
+bina gine lautta.
 
-**Arpan-Ravi:** guard ki ginti wala Redis gira. Pehle saathi (replica); dono gaye to papa ke dost aane do (fail-open), tijori ke chor roko (fail-closed, OTP).
-
-Ilaaj 1: **Redis ki copy** AWS ElastiCache khud rakhta hai.
-
-Phir bhi un kuch second me kya karein? Do raaste hain. **Fail-open** matlab Redis nahi mila to sabko jaane do:
-site chalti rahi, bas kuch second bina had ke. **Fail-closed** matlab Redis nahi mila to sabko 429: koi bot
-nahi ghusa, par poori site band.
-
-Aam API (search, feed) pe fail-open, kyunki kuch second bina had ke chal jaana chhota nuksaan hai, site band
-hona bada. NFR bhi kehta hai "limiter gire to site na gire". Login aur OTP pe fail-closed, kyunki yahin bot
-password ka andaza lagata hai, aur OTP pe SMS ka paisa lagta hai. Inhe kuch second band rakhna sasta padta
-hai.
-
-```mermaid
-flowchart LR
-    G["API Gateway"] -- "Lua" --> R[("Redis (gira)")]
-    R -.-> RC[("Redis copy<br/>jagah leti")]
-    G -- "Redis nahi: search / feed" --> O["jaane do (fail-open)"]
-    G -- "Redis nahi: login / OTP" --> C["429 (fail-closed)"]
-    style RC fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-**Maan lo Redis + copy dono gaye:** tab bhi faisla yahi rehta hai, jaise papa ke dost aur chor. Feed / home
-page jaise kaam pe fail-open, sabko jaane do, kyunki kuch der bina had ke chalna chhota nuksaan hai. OTP aur
-login pe fail-closed, sabko roko, kyunki yahan har request pe SMS ka paisa aur password ka khatra hai. Redis
-wapas aaya to phir Redis se ginti.
-
-Ek aur raasta bhi hai (faisla upar wala hi): har gateway apni memory me thodi ginti rakhe, had baant ke (100 / min
-aur 10 machine -> har machine 10 / min). Ye lagbhag sahi hai, par isme har gateway pe alag code aur jhamela hai.
-
-Par wahi bot har 60 second baad wapas aa jaata hai. 429 khaata hai, minute khatam hote hi phir aata hai, aur
-din bhar yahi chalta hai.
-
-### Kadam 7: wahi bot baar-baar (pattern pakdo, ban karo)
-
-**Arpan-Ravi:** script din-raat 429 khaati rahi. Teesri baar pakad ke alag dabbe me bitha do, site ke liye band (ban list).
-
-Ilaaj: har 429 ki khabar **Kafka** me daalo. Peeche ek Pattern Service dekhta hai: "ye 1 ghante me 50 baar had
-paar kar chuka hai", to use **ban** kar deta hai. Ban list gateway ya WAF (Web Application Firewall, darwaze ka chowkidar) pe hoti hai, to ban wala darwaze pe
-hi ruk jaata hai, Redis tak bhi nahi pahunchta.
-
-Kafka isliye ki 429 dena tez rahe (1 ms). Pattern dhoondhna peeche chalta hai, gateway ko roke bina.
-
-Ban hamesha ke liye nahi, kuch der ke liye hota hai (TTL, jaise 1 ghanta, aur baar-baar aaya to badhao).
-Khaaskar IP ka ban, kyunki IP badalte rehte hain, aur ek IP pe kai log hote hain (office, mobile network).
-Hamesha ka ban lagaya to kal wahi IP kisi asli user ko mila to wo atak jaayega.
+**Maan lo OTP login se pehle hai, had phone number pe, aur script har baar naya number daalti; had IP pe lagai to subah
+9 baje office ke 500 log ek hi WiFi se, 5 OTP ke baad poora office atka:** user login ho gaya to uski saari information
+aa jaati, userId hamare paas, wahan koi dikkat nahi, kuch kare to ban kar do. Dikkat login se pehle ki hai, to login
+pe thodi dheeli had chhod do, par itni dheeli nahi ki koi script hazaar baar chala de. Google pe password kitni baar
+guess karega, 2, 3, 5 baar. Hazaar baar koi haath se type nahi karta. Ek banda roz hazaar baar password reset kar raha,
+kal phir hazaar, ye insaan ke liye possible nahi, us IP ko WAF me daal do. Office me hazaar log hain par ek saath
+password nahi bhoolte, isliye ginti ki jagah pattern dekhte. Perfect design koi nahi, aaj bhi Google, YouTube toot-te.
+**Asli naam:** login ke baad = userId pe kadi had, login se pehle = IP pe dheeli had, insaan hazaar baar nahi = script
+pattern pakadna, IP ko WAF me daal do = WAF block.
 
 ```mermaid
 flowchart LR
-    U["bot"] --> W["WAF / gateway<br/>ban list (TTL)"]
-    W --> G["API Gateway<br/>limiter"]
-    G -- "429 ki khabar" --> K[("Kafka")]
-    K --> P["Pattern Service<br/>baar-baar? -> ban"]
-    P -- "ban (1 ghanta)" --> W
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    U["Ravi / office"] --> W["Ban wala dabba<br/>(WAF + ban list)"]
+    W --> G["Gate ka guard<br/>(API Gateway: userId, login se pehle IP)"]
+    G --> R[("Hisaab wala<br/>(Redis + replica)")]
+    G --> O["OTP Service"]
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**AWS pe:** **AWS WAF** lete hain: rules hum likhte hain (kaunsi IP band), chalana AWS ka kaam.
+## 8. Result ka din, sab had me, phir bhi SMS company giri (line lagwao)
 
-Par ek naya bot aaya. Uske paas leak hui password list thi. Usne 1,000 alag account pe 4-4 password try kiye
-(credential stuffing). Har account pe sirf 4, to account wali had (5 / min) kabhi lagi hi nahi. Isliye IP pe
-bhi had jodi. Par office ki night shift me 1,000 log ek hi IP se aate hain (office ka internet), sab milke had
-paar kar gaye, aur poora office atak gaya.
+Result ka din, subah 10 baje 1 crore bachche OTP maangte. Har bachcha apni had me, phir bhi OTP Service aur SMS company
+dono gire. Mere paas 2-3 log hain jo 10,000 logon ka kaam kar rahe, koi na koi girega hi. To apne log badha do, server
+badha do. Aur SMS company ko utni bheed mat jaane do, wo apne hisaab se kaam karti. Line lagwa, aaram-aaram se: "jaao
+beta, ek-ek karke; tu nikal, ab tu nikal." Hamare aur SMS company ke beech ek cheez fit kar do jo spike rok le, aur SMS
+ek-ek karke, dheele-dheele jaaye.
 
-### Kadam 8: had kis naam pe (IP ya userId)
-
-**Arpan-Ravi:** login se pehle IP pe dheeli had (office ke log), login ke baad userId pe kadi. Hazaar request wali IP WAF me.
-
-IP pe had lagane me do dikkat hain. Office ke 1,000 log ek IP pe hain, to sab atak gaye. Aur ulta, bot har
-request alag IP se bheje to IP wali had kabhi lagti hi nahi.
-
-Number ya account pe had bhi bekaar hai, kyunki Ravi har baar naya number daal deta hai, aur bot har baar naya
-account. Had us cheez pe lagao jo wo badal na sake.
-
-**Login ke BAAD:** userId hamare paas hai (JWT token se), wahan koi dikkat nahi, to userId pe **kadi had**. Har
-insaan ki apni had, chahe IP ek ho ya hazaar. Office ki dikkat yahin khatam.
-
-**Login se PEHLE** userId hota hi nahi, to **IP pe thodi dheeli had** (jaise 500 / min), taaki office ke log ek IP
-se aa sakein. Par itni dheeli nahi ki script hazaar baar maare, kyunki insaan hazaar baar password haath se nahi
-daalta. Aur jo IP roz wahi hazaar request maare, ya ek second me 10,000, wo insaan nahi hai. Us IP ko **WAF** me
-daal do. Office ke saare log ek saath roz password nahi bhoolte, isliye ginti ki jagah pattern dekhte hain.
-
-```
-login se pehle   -> IP pe dheeli had (500 / min) + script jaisa pattern -> WAF   (rl:ip:1.2.3.4:login)
-login ke baad    -> userId pe kadi had                                          (rl:arpan:search)
-```
+**Asli naam:** log badha do = apne server scale, line = queue (Kafka, OTP Service turant "OTP aa raha" bol deta), ek-ek
+karke = worker SMS company ki raftaar se bhejte, saare worker ek saanjhi had se (global had, Redis ka ek token bucket).
 
 ```mermaid
 flowchart LR
-    U["Arpan / bot"] --> W["WAF<br/>ban list (TTL)"]
-    W --> G["API Gateway<br/>key = userId (login se pehle IP)<br/>Lua token bucket"]
-    G -- "Lua" --> R[("Redis + copy")]
-    G -- "had me" --> S["App x 10"]
-    G -- "429 ki khabar" --> K[("Kafka")]
-    K --> P["Pattern Service"]
-    P -- "ban" --> W
-    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-**Par credential stuffing (har account pe sirf 4, kai IP) in dono had se nahi rukta.** Asli ilaaj parat-dar-parat
-hai, kyunki koi ek perfect hal nahi:
-
-- **MFA / passkey:** password mil bhi gaya, to bina phone ke bekaar. Ye asli deewar hai.
-- **CAPTCHA:** shaq wali koshish pe CAPTCHA dikhao. Galat password pe account block nahi, taaki asli user na atke.
-- **WAF:** cloud / badnaam IP band (cloud wale apni IP list publish karte hain).
-
-Ban me bhi yahi: userId pe lamba ban, IP pe chhota.
-
-Par result ka din aaya. 1 crore bachche ek saath OTP maang rahe hain, har ek apni had ke andar hai. Sab "had me"
-hain, phir bhi OTP Service aur SMS company dono gir gaye.
-
-### Kadam 9: sab had me, phir bhi SMS company giri (line + SMS ki raftaar)
-
-**Arpan-Ravi:** result ka din, 1 crore had me, phir bhi SMS company giri. Line lagwao, ek-ek karke uski raftaar se (queue + global had).
-
-User ki had har insaan ko alag rokti hai. Par 1 crore log ek saath aaye, to kul bojh us cheez ki taakat se zyada
-ho gaya jo peeche baithi hai.
-
-Apne server to badha sakte hain, wo hamare haath me hain (aur result ka din pehle se pata hota hai, to pehle se
-badha do). Par SMS company hamare haath me nahi. Wo maan lo 1,000 SMS / second hi leti hai, usse zyada bhejo to
-429 deti hai, ya gir jaati hai. Isliye bheed ko seedha SMS company tak mat jaane do, **line lagwao**.
-
-Ilaaj: OTP Service request ko seedha SMS company ko nahi bhejta. "OTP bhejo" ki khabar **Kafka (line)** me daalta
-hai aur user ko turant "OTP aa raha hai" bol deta hai. Peeche **worker** line se ek-ek uthate hain aur SMS company
-ki raftaar se bhejte hain. Worker kitne bhi hon, sab ek saanjhi had (Redis ka ek token bucket, 1,000 / second)
-se token lete hain, to company tak utna hi jaata hai jitna wo jhel sake. Bheed kitni bhi ho, line beech me spike
-rok leti hai.
-
-Line bhi ek had tak hi lambi theek hai. Line itni bhar gayi ki OTP 10 minute baad pahunchega (tab tak OTP bekaar),
-to nayi request ko gateway pe hi **503** do: abhi bhare hain, thodi der baad aao.
-
-```
-user ki had   (429)  -> "TU zyada bhej raha hai"           ek insaan ko rokta hai
-line + raftaar       -> "sab aao, par ek-ek karke"         SMS company ko bachata hai
-line bhari    (503)  -> "HUM abhi bhare hain, baad me"     poore system ko bachata hai
-```
-
-Ek aur baat: sab kaam ek barabar nahi hain. Bhar gaye to pehle kam zaroori kaam chhodo (load shedding): search
-suggestion, recommendation aur analytics pehle kato, OTP, payment aur login aakhri tak chalao.
-
-```mermaid
-flowchart LR
-    U["1 crore bachche"] --> G["API Gateway<br/>user had (429)<br/>line bhari? (503)"]
-    G -- "had me" --> O["OTP Service"]
-    O -- "OTP bhejo" --> K[("Kafka<br/>line")]
-    K --> WK["Worker x N<br/>saanjhi had 1,000 / sec"]
+    U["1 crore bachche"] --> G["Gate ka guard<br/>(API Gateway)"]
+    G --> O["OTP Service"]
+    O --> K[("Line<br/>(Kafka)")]
+    K --> WK["Ek-ek karke bhejne wale<br/>(Workers, global had)"]
     WK --> SMS["SMS company"]
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style WK fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Par Arpan ki script 3 region se chali: Mumbai, Singapore aur US. Har region ka apna Redis tha, har ek ne 100
-gine. Had 100 thi, par 300 nikal gayi.
+## 9. VPN se 3 region, 15 OTP (ghar ka region)
 
-### Kadam 10: 3 region se 300 nikal gayi (home region)
+App 3 region me: Mumbai, US, Europe, har region ka apna Redis. Ravi VPN badal-badal ke teeno se OTP maangta, har Redis
+sochta "5 hi hue", aur wo 15 OTP le gaya. Ye wahi kadam 2 wali dikkat hai, bas server ki jagah region. To uska ek
+particular region decide kar lo. Uska region Mumbai hai, India ke servers. 3 se maara ya 10 se, count India ke Redis pe
+hoga, US aur Europe pe nahi. Wahi se count karo, wahi se dekho.
 
-**Arpan-Ravi:** Ravi VPN se 3 region, 15 OTP. Uska ek ghar region, ginti wahi (home region).
-
-Ye kadam 2 wali hi dikkat hai, bas ab server ki jagah region alag-alag gin rahe hain. Teen raaste hain:
-
-```
-sab region ek hi Redis se poochhein  -> sahi ginti, par US se Mumbai Redis = ~200 ms har request. 1 ms toota
-had baant do (100 / 3 = 33)          -> tez, par Arpan sirf Mumbai se aaye to bhi use 33 hi milenge
-HOME REGION                          -> har user ka ek ghar region (jahan account bana), ginti sirf wahin
-```
-
-**Home region isliye:** Arpan ka ghar Mumbai hai. Wo Mumbai se aaya to Mumbai Redis, 1 ms. Uski script US se
-aayi to US gateway Mumbai Redis se poochhta hai, ~200 ms. Asli user zyadatar apne hi region se aata hai, to
-uske liye 1 ms hi rehta hai. Bahar se aana kabhi-kabhi hota hai, aur aksar wahi bot hota hai, to uska dheema
-hona chalta hai.
-
-```mermaid
-flowchart TB
-    M["Mumbai gateway"] --> RM[("Mumbai Redis<br/>Arpan ki ginti")]
-    S["Singapore gateway"] -- "Arpan? ghar Mumbai" --> RM
-    US["US gateway"] -- "Arpan? ghar Mumbai" --> RM
-    style RM fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Interview me bolo: "Har user ka home region. Ginti wahin. Bahar se aaye to home se poochho, thoda dheema, par
-sahi."
+**Asli naam:** ek particular region = home region, ginti ghar region ke Redis me. Bahar se aaye to gateway ghar ke
+Redis se poochhta, thoda dheema, par asli user zyadatar apne hi region se aata, uske liye 1 ms hi rehta.
 
 ---
 
-## 5. Wrap (30 second me poora design, NFR se milao)
-
-Request pehle WAF pe aati hai, jahan ban list hai. Phir API Gateway pe limiter: user ki had (429). Ginti Redis me
-hai, token bucket ki Lua script se ek jhatke me, key = userId (login se pehle IP pe dheeli had), user ke home
-region me, aur Redis ki copy ke saath. Had ke andar hai to app pe, warna 429 aur Retry-After. Har 429 ki khabar
-Kafka se Pattern Service tak, jo baar-baar wale ko ban karta hai. OTP jaise bahar ki company wale kaam line
-(Kafka) me jaate hain, worker company ki raftaar se bhejte hain, aur line bhar jaaye to 503.
-
-```
-TEZ (1 ms)            -> Redis RAM me, gateway pe, ek Lua jhatka
-ginti EK              -> Redis (kai server ke liye) + home region (kai region ke liye)
-                         + Lua (ek saath 20 ke liye)
-gire to site chale    -> Redis ki copy; dono gaye to fail-open (aam API) / fail-closed (login, OTP)
-```
-
-**Maan lo 10 guna traffic aa gaya:** gateway machine badhao · Redis ko user ke hisaab se shard karo + copy.
-
-**Chal raha kaise pata:** limiter ka time (p99 = 100 me se 99 request isse tez), kitne 429 / 503, Redis ki
-galtiyan, alert.
+Notes (Arpan ke shabd) = [RATE_LIMITER_HAND_NOTES.md](RATE_LIMITER_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)

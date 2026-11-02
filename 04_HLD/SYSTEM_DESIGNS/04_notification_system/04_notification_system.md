@@ -1,579 +1,173 @@
-# Notification system: shuru se, ek kahani
+# Notification system: Arpan ke order ki kahani
 
-Kram wahi jo interview me hota hai: **FR, phir NFR, phir numbers, phir design**. Design sabse seedhe dabbe
-se shuru hota hai, aur har dikkat aane pe ek naya dabba judta hai. Diagram me peela dabba = abhi juda. Poori
-file me ek hi kahani hai: Arpan ne Amazon pe order kiya, use push bhi aana chahiye aur email bhi, aur login
-ke waqt OTP ka SMS turant.
+Arpan ek shopping app se order karta hai. Order hote hi app use teen jagah khabar bhejti hai: SMS ("order placed"),
+email (bill) aur phone pe push ("shipped"). Ye khabar bhejne wala system main bana raha hoon. Kaam: order turant ho,
+khabar khoye nahi, do baar na jaaye, aur OTP kabhi bheed me na phanse.
 
-**Arpan (order wala scene):** beech ka dabba = Kafka · alag line = topic + consumer group · parchi = idempotency · thodi der baad / alag dabba = retry + DLQ · backup company + VIP line = circuit breaker + OTP line · saanjha dabba = token bucket · "le liya" ke baad = webhook · tukde + parchi = chunks + checkpoint · ek saancha = template cache
-
-**CUE (yahi shabd yaad rakhne hain, kram se):**
-seedha call -> Kafka + Notification Service -> har raaste ki line + worker -> key BHEJ_RAHA / BHEJ_DIYA (Redis)
--> retry line + DLQ -> timeout + circuit breaker + doosri company -> OTP ki tez line -> saanjha token bucket
--> webhook + Tracking DB (ACCEPTED -> DELIVERED / FAILED) -> campaign tukde + DB me checkpoint -> saancha cache, pasand DB se
+Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
+(kahani ka shabd, bracket me asli naam).
 
 ---
 
-## 1. FR: kya karna hai
+## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-1. ek ghatna (order hua) -> kai raaste: push / email / SMS / app ke andar
-2. user ki pasand maano (SMS band kiya to SMS nahi) + message ka saancha (template: "Hi {{name}}")
-3. OTP turant, offer ruk sakta hai
-scope ke bahar: analytics dashboard
-```
-
-## 2. NFR: kaisa chalna chahiye
-
-```
-- bhejne wala (Order Service) ruke nahi
-- khabar khoye nahi, do baar jaaye nahi
-- sale ki bheed jhele, OTP us bheed me phanse nahi
-```
-
-## 3. Numbers
-
-```
-- 10 crore user x 5 khabar / din = 50 crore / din -> ~5,800 / sec aam din
-- sale = 10 guna ~58,000 / sec, har ek 3 raaste -> ~1.75 lakh / sec
-- ek worker ~1000 / sec -> sale pe ~175 worker
+FR      ek ghatna (order hua) -> SMS / email / push · user ki pasand maano · message ka saancha ("Hi {naam}")
+NFR     Order Service ruke nahi · khabar khoye nahi, do baar na jaaye · OTP turant, offer ruk sakta
+Numbers 10 crore user x 5 khabar = 50 crore roz, ~5,800 / sec · sale pe 10 guna
+        SMS company ki had 100 / sec · Diwali campaign = 1 crore log ek saath
 ```
 
 ---
 
-## 4. Design
+## 1. "Place Order" 8 second ghooma (beech ka dabba)
 
-### Kadam 1: sabse seedha (Order Service seedha email company ko call kare)
+Order Service khud DB me order likhta, phir khud SMS, email, push company ko call karta. SMS company dheemi, har call
+8 second, to button 8 second ghoomta. Aur SMS company band ho to order hi fail dikhta, jabki DB me likha ja chuka. To
+beech me ek dabba rakh lo. Wo dabba kahe: aao bhai aao, sab mere paas aa jao, koi dikkat nahi. Main sabko store kar
+lunga aur dheere-dheere aaram se sabko bhejta rahunga. Order Service khabar dabbe me daal ke turant "order ho gaya"
+bol deta.
 
-Arpan ne order kiya. Order Service order banata hai, phir khud seedha email company (SendGrid) ki API call karta
-hai, uske jawab ka intezaar karta hai, aur tab jaake Arpan ko "order ho gaya" bolta hai.
-
-```mermaid
-flowchart LR
-    U["Arpan"] --> O["Order Service"]
-    O -- "call, intezaar" --> E["Email company"]
-    E --> I["Arpan ka inbox"]
-    style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Dikkat: email company dheemi hai to Arpan ka order bhi dheema. Email company band hui to order hi fail, jabki
-order ka email se koi lena-dena nahi. Aur kal SMS aur push bhi jodne hain, to Order Service ke code me teen
-company ki call aa jaayengi.
-
-Par Order Service ko kisi ka intezaar nahi karna. Wo bas khabar kahin daal de aur aage badh jaaye.
-
-### Kadam 2: khabar Kafka me daalo, Notification Service uthaye
-
-**Arpan:** "Place Order" 8 second ghooma. Beech me dabba: sab mere paas aao, main aaram se bhejta rahunga.
-
-Ab Order Service order banata hai, ek chhoti khabar `{ ORDER_PLACED, userId: Arpan, orderId: 999 }` Kafka ke
-topic me daalta hai, aur turant Arpan ko "order ho gaya" bol deta hai. Kisi company ka intezaar nahi.
-
-Ek naya dabba judta hai: **Notification Service**. Ye Kafka se khabar uthata hai, Arpan ki pasand dekhta hai
-(push chalu, email chalu, SMS band), saancha bharta hai ("Hi Arpan, order 999 ho gaya"), phir email aur push
-company ko call karta hai.
-
-OTP / order hamesha bhejo (Arpan ne khud maanga). Offer SMS band kiya ya DND pe hai to bhejo hi mat
-(kanoon: unsubscribe ke baad bheja to jurmana).
+**Asli naam:** beech ka dabba = queue (Kafka, khabar disk pe, worker gira tab bhi khoti nahi), aaram se bhejna =
+async, order turant.
 
 ```mermaid
 flowchart LR
     U["Arpan"] --> O["Order Service"]
-    O -- "khabar" --> K[("Kafka topic")]
-    O -. "turant: order ho gaya" .-> U
-    K --> N["Notification Service<br/>(pasand + saancha)"]
-    N --> E["Email company"]
-    N --> P["Push company"]
+    O --> K[("Beech ka dabba<br/>(Kafka)")]
+    K --> W["Worker"]
+    W --> C["SMS / email / push company"]
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style N fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Kafka kyun:
-- khabar disk pe likhi jaati hai, to Notification Service gira ho tab bhi khabar khoti nahi. Wo wapas aake wahin
-  se padh leta hai.
-- sale me 58,000 khabar / sec aayein to Kafka unhe pakad ke rakhta hai, Notification Service apni raftaar se
-  nikalta hai.
+## 2. SMS ke peeche bill atka (sabki alag line)
 
-Ab kya theek hua: email company band hai to bhi order chal jaata hai. SMS jodna ho to sirf Notification Service
-badalta hai, Order Service nahi.
+Dabbe me ek hi line thi, SMS, email, push sab ek ke peeche ek, aur ek worker. SMS company 8 second le rahi, to email
+aur push company theek hote hue bhi bill aadhe ghante baad mila. To line alag-alag kar do, sabki apni line. Jaise
+ladies ki alag line, gents ki alag, bachchon ki alag; airport security, mandiron me bhi aise hi hota. Har line apne
+log khud sambhal le. Ab SMS dheema hua to sirf SMS line rukti, bill apni line se nikal jaata.
 
-**API:** Kafka pe { event: "ORDER_PLACED", userId: Arpan, orderId: 999 }. Andar ke liye REST bhi:
-POST /notify { userId, type, channel?, payload }
+**Asli naam:** sabki alag line = SMS, email, push ka alag topic, apni line sambhalna = har topic ka apna consumer
+group (worker alag-alag badha sakte: sale me push ke 100, SMS ke 20).
 
-**Maan lo Arpan ki "order hua" aur "ship hua" ulti kram me pahunch jaayein:** Kafka key = userId. Ek user ki
-saari khabar ek hi tukde (partition) me, aur tukde ke andar kram bana rehta.
+## 3. Ek "order placed" do baar (parchi)
 
-**Maan lo poochhe Kafka me khabar khoye hi nahi, pakka:** saari copy ne li tab hi OK (acks=all), aur worker
-offset (kahan tak padha) kaam ke BAAD commit karta.
+SMS worker ne khabar uthayi, SMS Arpan ke phone pe pahunch gaya, par Kafka ko commit karne se theek pehle crash.
+Dobara chala, Kafka ne wahi khabar phir di, SMS do baar. OTP ya "5000 debited" pe hua to banda ghabra jaayega. To
+parchi rakh lo apne paas. Kaam ho gaya to likh liya aur kahin rakh liya. 10 din baad wahi khabar dobara aayi, parchi
+dekhi: ye to ho chuka, chhod do. Kabhi bhi kuch ho jaaye, parchi hai.
 
-**Maan lo raat 2 baje offer ka SMS jaaye:** kanoon (TRAI, telecom regulator) kehta offer wala (promotional) SMS
-sirf din me, OTP / order kabhi bhi. Asal me loopholes hain: push / WhatsApp pe koi rok nahi, company "pehle
-schedule kiya tha, der se gaya" bol sakti. Pakka sirf itna: unsubscribe / DND ke baad offer bheja to jurmana,
-isliye Kadam 2 me pasand check.
+**Asli naam:** parchi = idempotency. Khabar ki id (jaise 999:sms) ka "ho gaya" record DB me (id UNIQUE), bhejne se
+pehle check, mila to skip.
 
-**AWS pe:** Kafka ki machines hum khud nahi chalate, AWS ka **MSK** (Managed Kafka) lete hain. Broker, copy, gira to naya leader, ye AWS sambhalta hai. Topic aur partition hum tay karte hain.
+## 4. "Abhi bheed hai, baad me aana" (thodi der baad dobara)
 
-Par Notification Service ek hi line me teeno raaste bhej raha hai. SMS company dheemi hui to uske peeche Arpan
-ka push aur email bhi atak jaata hai.
+Company ne OTP pe error lautaya: "abhi bheed hai, baad me try karo". Chhod do to OTP kabhi nahi milega, aur turant
+baar-baar bhejo to company pe bojh aur peeche ki saari SMS line ruki. To use alag rakh do, thodi der baad try karenge.
+Jaise main papa se 100 rupaye maangne gaya aur papa busy hain, to thodi der ruk jaata hoon, baad me jaata hoon. Pattern
+yahi: koi bhi dikkat aayi to likh lo, kahin daal do, line mat roko. Par galat number pe 3 ghante baad bhi kuch nahi
+hoga, use dobara ghumaana bekaar. Wo kaise pehchanein, agle kadam me.
 
-### Kadam 3: har raaste ki alag line (topic) aur apne worker
+**Asli naam:** alag rakh ke thodi der baad = retry queue (ruk ke dobara, wait badhta jaata), main line nahi rukti.
 
-**Arpan:** SMS ke peeche bill atka. Mandir / airport jaisi alag-alag line, sab apni sambhalein.
+## 5. SMS company poori band (teen-chaar company + VIP line)
 
-Notification Service ab company ko khud call nahi karta. Wo bas tay karta hai ki Arpan ko kis raaste bhejna hai,
-aur har raaste ki **alag Kafka line** me khabar daal deta hai: push wali line, email wali line, SMS wali line.
-Har line ke apne **worker** hain: push worker sirf push company ko bhejte, email worker sirf email company
-ko, SMS worker sirf SMS company ko.
+Har call 30 second latki phir fail, saare worker atke, retry line phoolti ja rahi, Arpan ka OTP nahi aaya. To ek
+company nahi, teen-chaar company rakh lo, ek band to doosri. Aur OTP important hai: bank OTP, transfer OTP, Uber ka
+OTP. Unki priority alag kar do, jaise mandir me VIP darshan, VIP ko jaldi.
+
+Band hai kaise samjhun: SMS bheja, fail, apni parchi me note kiya. Doosra fail, teesra fail. Ab jo fail hue unhe backup
+se bhejo. Backup se chal gaye aur main pe 5-6 baar fail, matlab main company band hai: ab traffic backup se guzaaro.
+Beech-beech me main ko try karo: "tu theek hai? chal raha?" Nahi chala to backup chalta rahega, chal gaya to wapas
+main pe. Aur backup bhi wahi fail bole, to dikkat company me nahi, phone number me hai: use seedha alag dabbe me daal
+do, retry me nahi, koi dekhe, number galat hai to hatao.
+
+**Asli naam:** teen-chaar company = failover (backup provider), VIP darshan = OTP ki alag priority line (topic),
+5-6 baar fail to backup = circuit breaker OPEN, "tu theek hai?" = HALF-OPEN, chal gaya = CLOSED, backup bhi fail =
+DLQ (dead letter queue).
 
 ```mermaid
 flowchart LR
-    K[("Kafka")] --> N["Notification Service<br/>(pasand + saancha)"]
-    N --> LP[("push line")]
-    N --> LE[("email line")]
-    N --> LS[("SMS line")]
-    LP --> WP["push worker"]
-    LE --> WE["email worker"]
-    LS --> WS["SMS worker"]
-    WP & WE & WS --> C["Push / Email / SMS company"]
-    style LP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style LE fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style LS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style WP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style WE fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style WS fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Ab SMS company dheemi hui to sirf SMS line ruki. Arpan ka push aur email apni-apni line me aage nikal gaye.
-
-Ek fayda aur: har line ke worker alag-alag badha sakte hain. Sale me push zyada jaata hai, to push worker 100
-kar do, SMS ke 20 hi rehne do. Numbers wala "~175 worker" yahin baithta hai.
-
-**Raaste kaunse:** Push = FCM (Android) / APNs (iPhone). Email = SES / SendGrid. SMS = Twilio / MSG91. App ke
-andar = DB + WebSocket.
-
-Par email worker ne Arpan ko email bheja, aur Kafka ko "ho gaya" (commit) bolne se pehle hi wo machine mar
-gayi. Naya worker wahi khabar dobara uthata hai aur dobara bhejta hai.
-Arpan ko ek order ke do email aate hain.
-
-### Kadam 4: key se ek hi baar (Redis me khabar ki id + haal)
-
-**Arpan:** Commit se pehle crash, do SMS. Kaam hua to parchi pe likho, dobara aaye to parchi dekho.
-
-Har khabar ki apni id hoti hai: order 999 ka email = `999:email`. Worker bhejne se pehle **Redis** me is id
-ki key likhta hai: 999:email = BHEJ_RAHA. Ye sirf tab likhi jaati hai jab key pehle se na ho, aur iski umar 60
-second hoti hai.
-
-- key nahi thi, likh di gayi = ye worker pehla hai. Wo email bhejta hai, phir key ko `BHEJ_DIYA` kar deta hai.
-- machine mari, naya worker wahi khabar uthata hai, Redis me dekhta hai `BHEJ_DIYA`, to chhod deta hai.
-  Arpan ko ek hi email aata hai.
-
-```mermaid
-flowchart LR
-    LE[("email line")] --> WE["email worker"]
-    WE -- "999:email = BHEJ_RAHA<br/>(sirf pehla likh paata, 60 sec umar)" --> R[("Redis + replica")]
-    WE -- "pehla hai to hi bhejo" --> C["Email company"]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Do haal kyun, ek kyun nahi: maan lo worker ne bhejne se pehle hi seedha `BHEJ_DIYA` likh diya aur bhejne se
-pehle mar gaya. Naya worker dekhega "bhej diya" aur chhod dega, Arpan ka email kabhi aayega hi nahi. Isliye
-pehle `BHEJ_RAHA` likho, uspe 60 sec ki umar (TTL), aur bhejne ke baad hi `BHEJ_DIYA`. Worker beech me mara to
-60 sec baad `BHEJ_RAHA` mit jaata hai aur naya worker dobara bhej deta hai. Kabhi-kabhar do email ho sakte
-hain, par email khoyega nahi. Khona dohraav se bura hai.
-Aur aakhri `BHEJ_DIYA` wali key ki umar 1 din rakhte hain, kyunki Kafka wahi khabar baad me dobara de sakta
-hai (rebalance / retry). Umar 60 sec hoti to tab tak key mit chuki hoti aur email dobara chala jaata.
-
-**Maan lo Redis ki aakhri key copy tak nahi pahunchi:** copy async hai (thodi peeche chalti hai), to aakhri
-kuch key chhoot sakti hain, aur un khabron ka ek message do baar ja sakta hai. Khoya koi nahi.
-Aur Redis + copy dono gaye to faisla darje se: OTP bhejte raho (do OTP chal jaayenge, khoya OTP nahi), offer
-ruk jaaye jab tak Redis wapas na aaye (offer der se chalega, do-do offer nahi). Yahi Kadam 10 me campaign pe bhi.
-
-**Maan lo poochhe Redis me "sirf pehla likh paata, 60 sec umar" kaise (khud mat bolo, poochhe tabhi):**
-`SET 999:email BHEJ_RAHA NX EX 60` (NX = sirf tab likho jab key pehle se na ho, EX 60 = 60 sec ki umar)
-
-**AWS pe:** Redis hum khud nahi chalate, AWS ka **ElastiCache** lete hain (Redis jise AWS chalata hai). Machine, copy, gira to copy aage karna, ye AWS ka kaam. Hum bas use karte hain.
-
-Par SMS company ne fail lauta diya. Worker turant dobara bhejta hai, phir fail, phir turant. Wo pehle se
-pareshaan company ko har second dhakka maar raha hai.
-
-### Kadam 5: ruk-ruk ke dobara, phir bhi na jaaye to DLQ
-
-**Arpan:** "Baad me try karo." Alag rakh do, thodi der baad (papa busy hain to baad me). Galat number alag dabbe me.
-
-Pehle dekho fail kis tarah ka hai. Do tarah ke hote hain:
-- **thodi der wala** (company bole "abhi bheed hai", 429, 503, timeout): ye baad me chal jaayega, to dobara try.
-- **kabhi nahi chalega** (galat number, number band, 400 "invalid number"): ise 5 baar try karna bekaar, ye
-  seedha **DLQ** me jaata hai, line nahi rokta.
-
-Thodi der wala fail aaya to worker ab turant dobara nahi maarta. Khabar ko ek **retry line** me daal deta
-hai, wait ke saath: pehli baar 1 sec baad, phir 2, phir 4, phir 8. Har baar wait dugna, aur usme thoda random
-(jitter), taaki saare worker ek hi second pe company pe toot ke na padein. 5 baar ke baad bhi fail, to khabar
-**DLQ** (dead letter queue) me: wahan alert bajta hai aur koi insaan dekhta hai. Khabar khoti nahi, aur SMS
-line bhi nahi rukti.
-
-Par Kafka line me aage-peeche nahi karta, jo pehle aaya wahi pehle nikalta. Ek hi retry line me alag-alag wait
-nahi chal sakta:
-
-```
-retry line:  [khabar A: 8 sec ruko] [khabar B: 1 sec ruko]
-worker pehle A uthata -> 8 sec rukta -> tab tak B bhi 8 sec ruki, jabki use 1 sec rukna tha
-```
-
-Isliye har wait ki apni alag line:
-
-```
-pehli fail  -> retry-1s line  (isme sab 1 sec wale)
-doosri fail -> retry-2s line  (sab 2 sec wale)
-teesri fail -> retry-4s line
-chauthi     -> retry-8s line
-paanchvi    -> DLQ
-```
-
-Ek line me sabka wait same, to jo khabar aage hai uska wait hamesha sabse pehle khatam hota. Koi kisi ko nahi
-rokta. Worker line ke aage wali khabar dekhta: time aa gaya to bhejo, nahi aaya to utna ruko.
-
-```mermaid
-flowchart LR
-    LS[("SMS line")] --> WS["SMS worker"]
-    WS <-->|"fail hua to yahan<br/>wait ke baad wapas worker pe"| RT[("retry-1s · retry-2s<br/>retry-4s · retry-8s<br/>(har wait ki alag line)")]
-    WS -- "5 baar fail<br/>ya galat number seedha" --> D[("DLQ")]
-    D --> AL["alert, insaan dekhe"]
-    style RT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    N["Notification Service"] --> T[("VIP line<br/>(OTP topic)")]
+    N --> S[("SMS line")]
+    T --> W["Worker"]
+    S --> W
+    W --> CB{"Band hai?<br/>(circuit breaker)"}
+    CB --> M["Main company"]
+    CB --> B["Backup company<br/>(failover)"]
+    W --> D[("Alag dabba<br/>(DLQ)")]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style CB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Retry line alag kyun: worker wahin baith ke wait kare to uske peeche Arpan ke baaki SMS bhi atak jaate hain.
+## 6. Company ki had 100 / sec (saanjha dabba)
 
-Par SMS company band nahi, bas dheemi hai: har call 30 sec me jawab de rahi hai. Saare SMS worker usi intezaar
-me phanse baithe hain.
+20 worker apni raftaar se, sab milake 300 / sec, company 429 de rahi aur block ki dhamki. Har worker ko sirf apni
+ginti pata. Main company ko nahi bol sakta ki had badha do, unhe baaki bhi dekhna hai, aur apni SMS company banana
+impossible. To ruk-ruk ke bhejo, peeche lambi kataar lage to koi dikkat nahi, burst ek saath na jaaye. Aur ginti
+saanjha kar lo: 10 log apna-apna kaam kar rahe, tumne kitna kara? +2, tumne +3. Ek dabba jisme ye ginti likhi ho, sab
+usi se guzrein. Main beech me baitha hoon: tune bhej diya, tu bhi bhej raha? Nahi, tu ruk.
 
-### Kadam 6: timeout + circuit breaker + doosri company
+**Asli naam:** had apni taraf se = rate limit, saanjha dabba = shared token bucket (Redis, 100 token / sec, sab worker
+wahi se token lete), token nahi mila = khabar line me wait, khoti nahi.
 
-**Arpan:** Company band. Teen-chaar company, do-teen fail pe backup, beech-beech me main ko "tu theek hai?".
+## 7. Company ne "le liya" bola, SMS pahuncha hi nahi (le liya ke baad)
 
-**Timeout:** worker SMS company ko sirf 2 sec deta hai. Jawab nahi aaya to call chhod ke khabar retry line
-(Kadam 5) me. Ab koi worker 30 sec phansa nahi rehta.
+Company ne turant OK bola, maine record me SENT likha. Par Arpan ka phone network se bahar, SMS pahuncha hi nahi, aur
+support bolta "humne to bhej diya tha". Asal me company ka OK matlab: tera SMS le liya, abhi bheja nahi. Phir company
+dheere-dheere aage badhegi aur kuch der baad khud batayegi: bhej diya ya nahi bheja. Do hi raaste, teesra nahi. Sent
+hua to apni parchi me "sent", fail hua to "fail".
 
-**Circuit breaker:** 100 me se 50 call fail / timeout ho rahi hain, to worker samajh jaata hai company abhi
-bimaar hai, aur kuch der us company ko call karna hi band (breaker OPEN). Har call pe 2 sec barbaad nahi.
-30 sec baad 2-4 call test ki tarah bhejta hai (HALF-OPEN). Chal gayi to wapas CLOSED, normal kaam.
-
-**Doosri company:** breaker open hai to SMS kahan jaaye? Ek nahi, teen-chaar SMS company rakhte hain. Twilio
-bimaar, to MSG91 se bhejo. Arpan ka OTP rukta nahi. Backup se chala gaya, matlab number theek tha, dikkat main
-company me thi: traffic backup pe, aur beech-beech me main ko "tu theek hai?" (HALF-OPEN).
-
-**Maan lo backup se bhi nahi gaya:** do-teen company se fail, to dikkat company me nahi, number me hai (galat /
-band). Khabar DLQ me, koi insaan dekhe. Line nahi rukti.
+**Asli naam:** le liya = ACCEPTED (SENT nahi), company baad me batati = webhook (signature jaanch ke), sent ya fail =
+DELIVERED / FAILED, apni parchi = Tracking DB (Cassandra: har message ek row, bahut likhna, JOIN nahi).
 
 ```mermaid
 flowchart LR
-    WS["SMS worker<br/>(2 sec timeout)"] --> CB{"circuit breaker"}
-    CB -- "CLOSED" --> T["Twilio"]
-    CB -- "OPEN: Twilio bimaar" --> M["MSG91<br/>(doosri company)"]
-    T --> A["Arpan ka OTP"]
-    M --> A
-    style CB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Par 12 baje sale shuru hui, aur 50,000 offer SMS line me pehle se khade hain. Arpan ka login OTP unke peeche
-lag gaya. OTP 5 min me bekaar ho jaata hai, offer 1 ghanta baad bhi chalega.
-
-### Kadam 7: OTP ki alag tez line
-
-**Arpan:** OTP VIP hai, mandir ke VIP darshan jaisi alag jaldi wali line.
-
-Notification Service har khabar ko ek darja deta hai: **TEZ** (OTP, password reset), **BEECH** (order hua, ship
-hua), **DHEEMI** (offer, sale ki khabar). Kadam 3 wali raaste ki lines hat-ti nahi: SMS line ke andar bhi
-darje se alag line, aur **apne alag worker**. Line = raasta x darja:
-
-```
-              TEZ           BEECH           DHEEMI
-SMS     ->  sms-tez       sms-beech       sms-dheemi
-email   ->  email-tez     email-beech     email-dheemi
-push    ->  push-tez      push-beech      push-dheemi
-```
-
-Dono fayde bache rehte hain:
-- SMS company dheemi hui to sirf SMS ki lines rukti, push aur email chalte rehte (kadam 3).
-- Sale me 50,000 offer `sms-dheemi` me khade, Arpan ka OTP `sms-tez` se turant nikal jaata (ye kadam).
-
-```mermaid
-flowchart LR
-    N["Notification Service<br/>(darja)"] --> T[("sms-tez: OTP")]
-    N --> B[("sms-beech: order")]
-    N --> D[("sms-dheemi: offer")]
-    T --> WT["OTP worker (sirf ye)"]
-    B --> WB["order worker"]
-    D --> WD["offer worker<br/>(bheed yahan ruke, chalega)"]
-    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style WT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Ek line + priority kyun nahi: Kafka line me aage-peeche nahi karta, jo pehle aaya wahi pehle nikalta hai.
-Isliye alag line hi raasta hai.
-
-OTP ki umar: OTP me 5 min ki expiry likhi hoti hai. Kisi wajah se 5 min baad worker tak pahuncha, to wo
-bhejta hi nahi, kyunki bekaar OTP bhejna faltu hai.
-
-Par sale me ek saath laakhon SMS. Humare worker tez hain, par SMS company ki had hai: 100 / sec. Usse zyada
-bheja to wo **429** (Too Many Requests) lauta deti hai.
-
-### Kadam 8: company ki had, saanjha token bucket (Redis)
-
-**Arpan:** 20 worker, had 100. Saanjha dabba: ek jagah se guzro, ginti wahin.
-
-SMS company ki had 100 / sec hai, aur humare 20 SMS worker hain. Har worker apne hisaab se bhejega to milake
-100 se upar chala jaayega, aur company **429** (Too Many Requests) lauta degi.
-
-Isliye Redis me ek **saanjha token bucket**. Wahi token bucket jo rate limiter me padha, bas ulta: wahan had
-humari thi, yahan had company ki.
-- bucket me har second 100 token bharte hain.
-- har worker SMS bhejne se pehle Redis se ek token leta hai (Lua script me, taaki do worker ek hi token na le
-  lein).
-- token mila to bhejo. Nahi mila to thoda ruko, khabar line me hi rehti hai, khoti nahi.
-
-```mermaid
-flowchart LR
-    W["20 SMS worker"] -- "ek token do" --> R[("Redis: sms_bucket<br/>100 token / sec")]
-    W -- "token mila" --> C["SMS company<br/>(kabhi 100 / sec se upar nahi)"]
-    W -. "token nahi mila" .-> Z["thoda ruko,<br/>khabar line me hi"]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-**Doosra tareeka kyun nahi: "har worker apni had"**
-
-Ek seedha tareeka ye ho sakta tha: Redis mat lagao, bas har worker ko pehle se bol do "tu 5 / sec se zyada
-mat bhejna". 20 x 5 = 100, hisaab barabar. Par isme do dikkat hain:
-
-- Dikkat 1, worker badhe to hisaab toota: sale aayi, worker 20 se 60 kar diye. Har worker abhi bhi 50 / sec
-  bhej raha hai. 60 x 5 = 300 / sec, jabki company ki had 100. Company 429 dene lagti hai. Har baar worker
-  badhao to sabko naya number batana padega ("ab tu 100 / 60 = 1.6 bhej").
-- Dikkat 2, khaali worker ka hissa barbaad: 20 me se 10 worker ke paas abhi koi SMS hi nahi. Unka 5-5 ka
-  hissa yunhi pada hai. Baaki 10 ke paas SMS ka dher hai, par wo bhi sirf 5-5 bhej sakte hain. Kul gaye
-  10 x 5 = 50 / sec, jabki company 100 le sakti thi. Aadha hissa bekaar.
-
-Saanjha bucket me dono dikkat nahi: Redis me ek hi bucket, 100 token / sec. Worker 20 hon ya 60, sab usi ek
-bucket se lete hain, to kul kabhi 100 se upar nahi. Aur jiske paas kaam hai wahi token leta hai, to khaali
-worker ka hissa barbaad nahi hota.
-
-```
-har worker apni had (5):            saanjha bucket (Redis, 100 / sec):
- 60 worker x 5 = 300   -> 429        60 worker, ek hi bucket -> kul 100, kabhi upar nahi
- 10 khaali, 10 x 5 = 50 gaye        jiske paas kaam, wahi le -> poore 100 gaye
-```
-
-**Phir bhi 429 aaya to?**
-
-Hum 100 / sec ki had me bhej rahe the, par company ne beech me khud apni had 50 kar di (unke yahan load
-tha). To kuch SMS pe 429 aayega. Tab Kadam 5 wala tareeka: khabar retry line me, 1, 2, 4 sec ruk ke dobara.
-Company jawab me `Retry-After: 3` bheje ("3 sec baad aana") to utna hi ruko.
-
-Ye chala ke dekha hai: [HANDS_ON/03_provider_429](../../HANDS_ON/03_provider_429/README.md).
-
-Par company ne "bhej diya" (200) bola. Kya Arpan ke phone tak pahuncha? Number band ho, ya phone off ho, to
-humein pata hi nahi chalta.
-
-### Kadam 9: company se "pahuncha ya nahi" (webhook + Tracking DB)
-
-**Arpan:** "Le liya" != bheja. Company baad me bheja / fail batati, tab parchi me likho.
-
-Worker ne SMS company ko bheja, company ne turant 200 bola = "le liya". Par 200 ka matlab "Arpan ke phone
-tak pahunch gaya" nahi. Company abhi bhejegi. Arpan bole "OTP aaya hi nahi", to humare paas koi jawab nahi.
-
-Ilaaj, 3 hisse:
-
-1. **Company ki id rakho.** Company 200 ke saath apni id bhi deti hai: `msgId: TW-555`. Worker ise **Tracking
-   DB** me likhta hai: "order 999 ka SMS, company id TW-555, haal = ACCEPTED" (company ne le liya, pahuncha abhi pakka nahi;
-   isliye SENT nahi likhte).
-2. **Webhook.** Baad me company khud humein call karti hai:
-   `POST /webhook { msgId: TW-555, status: DELIVERED }`.
-   Hum TW-555 dhoondh ke haal badal dete hain: ACCEPTED se DELIVERED, ya FAILED. Bas yahi do raaste.
-   Phone off hai to SMS fail nahi hota: operator use rakh leta hai aur koshish karta rehta hai, phone on hote
-   hi SMS pahunchta hai, tab DELIVERED aata hai. FAILED tab aata hai jab number band / galat ho, DND (Do Not Disturb) ho, ya
-   phone kai din (aksar 1-3 din) off raha aur operator ne koshish band kar di.
-3. **Hastakshar (signature) jaancho.** Webhook bahar se aata hai, koi bhi nakli "DELIVERED" bhej sakta hai.
-   Company har webhook pe apni secret key se signature lagati hai. Hum check karte hain, match nahi to phenko.
-
-```mermaid
-flowchart LR
-    WS["SMS worker"] <-->|"jaata: bheja<br/>wapas: 200 + msgId TW-555"| C["SMS company"]
-    WS -- "999 | TW-555 | ACCEPTED" --> T[("Tracking DB<br/>(Cassandra)")]
-    C -- "webhook + signature:<br/>TW-555 DELIVERED" --> H["Webhook handler"]
-    H -- "haal = DELIVERED" --> T
+    W["SMS worker"] --> C["SMS company"]
+    W --> T[("Parchi<br/>(Tracking DB: ACCEPTED)")]
+    C --> H["Company batati<br/>(Webhook)"]
+    H --> T
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-Ab kya theek hua: Arpan bole "OTP nahi aaya", to support dekh sakta hai: ACCEPTED tha, company ne FAILED bola,
-number DND pe tha.
+## 8. Diwali: 1 crore ko offer (tukde + moti diary)
 
-### DB kaunsa: SQL ya NoSQL? (Tracking DB)
+Ek khabar "1 crore users ko offer bhejo". Ek worker ne list nikaali, loop me bhejne laga, 40 lakh pe crash. Dobara
+chala to loop shuru se, 40 lakh ko do baar, aur kaam ek worker pe atka, baaki khaali. To thoda todo. 20, 30, 50 worker
+me baant do, sabko alag range: tu yahan se yahan tak. Jo bheje gaye unhe turant DB me mark karo. 1 crore Redis me
+nahi rakhunga, Redis ko befaltu nahi bharna, apni moti diary hai, usme karte jao. Jaise 10 logon ko kaam diya: tu iske
+ghar ja, tu iske ghar, parchi pe likhte raho ye ghar ho gaya. Kal koi bimaar pada to parchi dekho: 10 me se 7 ho gaye,
+backup tu aa ja, baaki 3 tu bhej de.
 
-Data dekho: har message ki ek row, aur har webhook pe us row ka update. 50 crore message / din, saal bhar me
-~90 TB. Kaam: "message 999 ka haal kya?", seedha, koi JOIN nahi. Ek row thodi der purani dikhe to chalega,
-paise ka hisaab nahi hai.
+**Asli naam:** tod ke range = campaign tukde (chunks), turant DB me mark = checkpoint (DB), baaki 3 backup = crash pe
+wahin se. Mark ke baad aur marne ke beech wale kuch log dobara aa jaayein, to kadam 3 wali parchi (idempotency)
+rokti: isko bhej diya tha? Haan, to dobara nahi.
 
-MySQL ek machine pe itna likhne me ghut jaayega, aur use todna (shard) khud karna padega. Cassandra isi kaam
-ke liye bana hai: bahut likhna, machine jodte jao aur jagah badhti jaaye. Isliye Cassandra.
+## 9. Har SMS pe DB, OTP dheema (ek saancha apne paas)
 
-Par Cassandra sirf us cheez se tez dhoondhta hai jisse data baanta gaya. Yahan do log do alag id se dhoondhte:
-webhook `TW-555` (company ki id) se, support "order 999" (hamari id) se. Isliye do table:
+Arpan ne settings me chuna "offer wale SMS mat bhejo". Har SMS se pehle worker DB se user ki pasand aur message ka
+saancha padhta. 1 crore SMS = 1 crore query, DB ki saans phooli. Wo baar-baar wahi cheez padh raha hai, use apne paas
+rakh lo. Diwali pe sabko ek hi offer, "Diwali 50% off". Mote register pe baar-baar kyun jaun? Ek saancha apne paas,
+bas naam badalna hai, bhejta ja. Par user ki pasand uski settings hai, wo DB me hai, DB se hi uthayenge; crore users
+ki setting cache me kaise rakhenge. OTP itna late nahi hoga, kyunki OTP ki apni line, apne worker aur rate limit
+pehle se hain. Baad me naap ke lage ki faltu queries bahut badh gayi, tab sochunga pasand bhi cache me rakhun.
 
-```
-table 1 (asli):  999:sms     -> TW-555, haal ACCEPTED / DELIVERED / FAILED   (support isse dhoondhta)
-table 2 (pata):  TW-555      -> 999:sms                                (webhook isse dhoondhta)
-
-webhook TW-555 aaya -> table 2: "ye 999:sms hai" -> table 1 me haal = DELIVERED
-```
-
-Worker bhejte waqt dono me likh deta hai. Cassandra ka aam tareeka: jitni tarah se dhoondhna, utni table.
-
-**Maan lo data 3 saal baad (Tracking DB ~90 TB / saal):** 90 din baad rows sasti jagah (S3) me copy, phir umar
-(TTL) se Cassandra se mitao. Roz wali table chhoti rehti.
-
-**AWS pe:** Cassandra AWS ka **Keyspaces** (machine, copy AWS sambhalta), ya EC2 pe khud chalao (tab sab hamara sar-dard).
-
-Par ab ek message nahi bhejna. Shaam ko "Diwali offer sabko" = 1 crore log. Campaign Service ek hi baar me 1 crore
-khabar Kafka me daalne baitha, aur beech me gir gaya. Kisko gaya, kisko nahi, kuch pata nahi.
-
-### Kadam 10: 1 crore ka campaign, 1000 ke tukdon me
-
-**Arpan:** Ek worker 1 crore nahi. Range baanto, DB me mark, koi gira to baaki backup bheje.
-
-PEHLE (tukde nahi): ek hi baar me 1 crore
-
-```
-Campaign Service:  user 1, 2, 3 ... 40,00,000  X gir gaya
-                                          |
-               kisko gaya? kisko nahi? -> PATA NAHI
-               shuru se chalao -> 40 lakh ko DO offer
-```
-
-AB: 1000-1000 ke tukde, har tukde pe tick
-
-```
-1 crore user  =  10,000 tukde (har tukde me 1000 user)
-
-campaign 77 ki DB row (register):
- +---------+-----------------+-----------+
- | tukda   | user            | haal      |
- +---------+-----------------+-----------+
- | 1       | 1 - 1000        | HO GAYA   |  <- worker A ne kiya
- | 2       | 1001 - 2000     | HO GAYA   |  <- worker B ne kiya
- | 3       | 2001 - 3000     | 2400 tak  |  <- worker C beech me MARA (har 100 pe DB me mark)
- | 4       | 3001 - 4000     | BAAKI     |
- | ...     | ...             | ...       |
- | 10,000  | ... - 1 crore   | BAAKI     |
- +---------+-----------------+-----------+
-```
-
-Worker C mara, to:
-
-```
-tukda 3 pe tick nahi laga -> doosra worker tukda 3 uthata, register padhta: "2400 tak ho gaya"
-     |
-     +-- 2001 - 2400: chhod do (DB me mark hai)
-     +-- 2401 se aage: bhejo. mark ke baad aur marne ke beech wale kuch user (2401 - 2420)
-     |   dobara aa sakte -> khabar ki id (idempotency, Kadam 4) rokti, dohra nahi
-     +-- 3000 tak pahunche -> tukda 3 pe tick
-tukda 1, 2 ko koi chhoota bhi nahi (tick laga hai)
-```
-
-```mermaid
-flowchart LR
-    CS["Campaign Service"] --> DB[("campaign register<br/>tukda | haal")]
-    CS --> K[("Kafka: 10,000 tukde")]
-    K --> TW["tukda worker<br/>(pasand dekho)"]
-    TW --> D[("DHEEMI line")]
-    TW -- "tukda ho gaya: tick" --> DB
-    style DB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style TW fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
-
-Ek line: 1 crore ka kaam 10,000 chhote tukdon me baanto, bhejte jao aur DB (register) me mark karte jao. Koi
-gira to uska adhoora tukda wahin se chalta hai jahan mark tha, aur beech ke kuch user pe id (idempotency) rokti.
-
-**Progress Redis me kyun nahi, DB me kyun:** Redis me har user ki "bhej diya" key rakhte to 1 crore key ho
-jaati, aur Redis gira to campaign ka poora hisaab gaya. DB (moti diary) me tukde ka mark tikta hai: worker mare,
-Redis gire, register wahi rehta. Aur DB pe bojh chhota: har 100 user pe ek update, 1 crore pe sirf ~1 lakh.
-
-**Redis gir gaya to?**
-
-```
-Redis gira
-   |
-   +-- pehle: replica (copy) primary ban jaati (Kadam 4 wala)
-   |
-   +-- dono gaye? -> darja dekho:
-         OTP (TEZ)      -> bhejte raho. do OTP chalenge, khoya OTP nahi
-         offer (DHEEMI) -> campaign ROKO jab tak Redis wapas na aaye
-                           offer 1 ghanta ruk sakta, par 1 crore ko do-do offer = bura
-```
-
-Ek hi dikkat, par faisla darje se badalta: OTP me khona bura (bhejte raho), offer me dohraav bura (ruk jao).
-Kadam 4 me bhi yahi faisla. Campaign ka mark DB me hai, to Redis wapas aate hi wahin se chalu.
-
-Par har khabar pe DB se pasand + saancha padh rahe hain. Diwali campaign me 1 crore khabar, sabka saancha ek
-hi, phir bhi har baar DB se wahi saancha padha ja raha hai.
-
-### Kadam 11: saancha cache me, pasand DB se
-
-**Arpan:** Diwali saancha ek, apne paas rakh lo. Pasand DB me, token bucket se load chhota; naap ke hi cache.
-
-**Saancha (template):** Diwali ka saancha sabke liye ek hi hai ("Hi {{name}}, Diwali offer..."). Baar-baar DB
-kyun jaana. Use cache me rakh lo, bas naam badlo. Saancha mahine me ek-do baar badalta hai: badla to cache ki
-key DELETE, agli khabar pe naya padh liya.
-
-**Pasand (preference):** har user ki alag. Ise DB me hi rakhte hain, cache nahi. Kyun: worker pasand bhejne se
-theek pehle padhta hai, token milne ke baad (Kadam 8). To DB pe query utni hi jitni company le sakti: SMS ke
-liye ~100 / sec, 58,000 / sec nahi. Itna DB aaram se jhel leta hai. Aur OTP ki apni chhoti line hai (Kadam 7),
-uska load alag aur kam. Fayda ye bhi: bhejte waqt hamesha taazi pasand. Arpan ne abhi offer band kiya to abhi
-se nahi jaayega, cache me purani pasand ka khatra hi nahi.
-
-```
-Notification Service --saancha--> [cache] --mila--> turant
-                                   | nahi mila -> DB -> cache me rakho
-
-worker --token mila (Kadam 8)--> pasand DB se padho (~100 / sec) --> chalu hai to bhejo, band to chhodo
-```
+**Asli naam:** ek saancha apne paas = template cache (saancha badla to key DELETE), pasand = user preference DB se
+(taazi, cache nahi), queries badhi tab = naap ke hi preference cache.
 
 ```mermaid
 flowchart LR
     K[("Kafka")] --> N["Notification Service"]
-    N -- "saancha" --> RC[("saancha cache")]
-    RC -. "nahi mila" .-> SD[("saancha DB")]
-    N --> L[("TEZ / BEECH / DHEEMI line")]
-    L --> W["worker<br/>(token ke baad)"]
-    W -- "pasand" --> PD[("Pasand DB")]
-    style RC fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style PD fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    N --> TC[("Ek saancha<br/>(Template cache)")]
+    N --> L[("SMS / email / push line")]
+    L --> W["Worker"]
+    W --> PD[("Mota register<br/>(Preference DB)")]
+    style TC fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
-
-**Maan lo pasand se DB pe sach me bojh dikha:** pehle naapo. Naap me dikha ki pasand ki query DB ko bhaari pad
-rahi, tab pasand bhi cache me (badle to key DELETE). Bina naape cache lagana = ek aur cheez jo purani ho sakti.
 
 ---
 
-## Wrap: 30 sec me poora design
-
-```
-Order Service khabar Kafka me daal ke aage badh jaata (ruke nahi). Notification Service saancha (cache se)
-bhar ke khabar ko darje (TEZ / BEECH / DHEEMI) aur raaste (push / email / SMS) ki alag line me daalta. Har line ke apne worker: Redis key (BHEJ_RAHA -> BHEJ_DIYA) se do baar nahi, fail pe ruk-ruk ke
-dobara phir DLQ (khoye nahi; galat number seedha DLQ), 2 sec timeout + circuit breaker + teen-chaar company,
-saanjha token bucket se company ki had me, token ke baad pasand DB se. Company ka OK = ACCEPTED, webhook
-Tracking DB (Cassandra) me DELIVERED / FAILED likhta. 1 crore ka campaign 1000 ke tukdon me, progress DB me mark. OTP ki alag tez line, sale ki bheed me nahi phansta.
-```
-
-**Maan lo 10 guna traffic aa gaya:** Kafka me tukde (partition) pehle se zyada · Notification Service ki machine
-badhao · worker badhao (ek ~1000 / sec) · saancha cache (pasand tab hi jab naap ke bhaari dikhe) · company ki had saanjha bucket se.
-
-**Chal raha kaise pata:** webhook se delivered / failed ginti, Kafka me kitna pending (lag), DLQ kitna bhara ->
-alert.
-
----
-
-CONCEPTS: [message-queues](../../FOUNDATIONS/07_message_queues.md) ·
-[ms-communication](../../FOUNDATIONS/10_ms_communication.md) ·
-saath: [12 message-queue](../12_message_queue_kafka/12_message_queue_kafka.md) ·
-[<- MASTER SHEET](../../00_MASTER_SHEET.md)
+Notes (Arpan ke shabd) = [NOTIFICATION_HAND_NOTES.md](NOTIFICATION_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
