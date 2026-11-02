@@ -9,8 +9,8 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ```
 SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 14 design (saare naye saanche me) + scene-mock + hand notes 11 (Kafka, banking, URL, payment, BMS, chat, stock, docs, rate limiter, cache, notification) + 19 foundation + master sheet
-  DSA: 18 pattern · 177 problem + 139 REDO = 316 .cpp · pattern sheet (174 sawaal + MATHS KA KHEL)
+  HLD: 15 design (14 + Uber; 14 kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 14 (sab, file upload chhod ke) + 19 foundation + master sheet
+  DSA: 18 pattern · 179 problem + 141 REDO = 320 .cpp · pattern sheet (174 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
 
@@ -27,7 +27,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 179 problem + 133 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 179 problem + 141 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -105,9 +105,9 @@ SAFAR (March: khaali folder)  ->  aaj
 ---
 
 ## [04_HLD](04_HLD) — tera strong zone
-**Kya:** 14 poore design (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + master sheet + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
+**Kya:** 15 poore design (14 + Uber) (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + master sheet + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
-- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design (FR, NFR, numbers, kadam, wrap)
+- ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
   - [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md)
   - [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
   - [03 twitter-feed](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/03_twitter_feed.md)
@@ -122,6 +122,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) ([concepts kahani se](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md) · [Kafka ya RabbitMQ: kab kaunsa](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_ya_rabbitmq_kab_kaunsa.md))
   - [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md)
   - [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
+  - [15 uber (Connaught Place se ghar)](04_HLD/SYSTEM_DESIGNS/15_uber/15_uber.md)
 
 - ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> hal -> naam -> interview line. Revision yahin se; main design file me bhi har kadam pe wahi scene line.
   - [01 URL (token counter)](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md)
@@ -130,13 +131,15 @@ SAFAR (March: khaali folder)  ->  aaj
   - [04 notification (Arpan ka order)](04_HLD/SYSTEM_DESIGNS/04_notification_system/NOTIFICATION_HAND_NOTES.md)
   - [05 stock (Arpan-Ravi)](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/STOCK_HAND_NOTES.md)
   - [06 payment (dukaan pe pay)](04_HLD/SYSTEM_DESIGNS/06_payment_system/PAYMENT_HAND_NOTES.md)
+  - [08 news (Arpan News)](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/NEWS_HAND_NOTES.md)
   - [09 BMS (do counter, ek seat)](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/BMS_HAND_NOTES.md)
   - [10 cache (profile page)](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/CACHE_HAND_NOTES.md)
   - [11 docs (trip plan doc)](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/DOCS_HAND_NOTES.md)
   - [12 Kafka (stadium)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/KAFKA_HAND_NOTES.md)
   - [13 banking (bank branch)](04_HLD/SYSTEM_DESIGNS/13_banking_system/BANKING_HAND_NOTES.md)
   - [14 chat (Arpan, Ravi, college-gang)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/CHAT_HAND_NOTES.md)
-  - *baaki 2 (scene-mock abhi):* 07 file upload · 08 news
+  - [15 Uber (Connaught Place se ghar)](04_HLD/SYSTEM_DESIGNS/15_uber/UBER_HAND_NOTES.md)
+  - *baaki 1 (scene-mock abhi):* 07 file upload
 
 - ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md)** — doubt aaye to yahan dhoondho: sabse upar **clickable INDEX + DOUBT DHOONDHO** (doubt likha -> click -> seedha jawab; Alex Xu ke chapter ka map bhi) · 8 dabbe x 4 line · 6 archetype · universal rail · block-menu · A-ya-B trade-off jode · 14 design ka DIL + KHAAS hissa · anjaan-design recipe · kaise bolna · SHABD (word atke to). Cross-question (Q1-Q22) ab yahan nahi, design files me (4-Oct).
 
@@ -211,7 +214,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 177 problem + 139 REDO = 316 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 179 problem + 141 REDO = 320 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
 - ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi": sabse upar DECISION (brute → redundancy → cache → DS = pattern) + OA tools + MATHS KA KHEL (% gol ghoomna, Caesar), phir har sawaal SAWAAL / TAREEKA / CHAABI / CODE patti me, "kyun" usi code line pe comment.
@@ -223,15 +226,15 @@ ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disg
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
-| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 9 | | 10 | [KADANE](08_DSA/10_KADANE) | 8 | 10 |
-| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 11 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 1 |
-| 03 | [HASHING](08_DSA/03_HASHING) | 10 | 12 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 4 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 9 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 9 |
-| 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 5 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 5 |
-| 06 | [STACK](08_DSA/06_STACK) | 12 | 5 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 3 |
-| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 8 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 7 |
-| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 6 | | 17 | [DP](08_DSA/17_DP) | 16 | 15 |
-| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 3 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 4 |
+| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 9 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 10 |
+| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 11 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 2 |
+| 03 | [HASHING](08_DSA/03_HASHING) | 13 | 14 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 5 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 9 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 10 |
+| 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 5 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 6 |
+| 06 | [STACK](08_DSA/06_STACK) | 12 | 6 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 4 |
+| 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 9 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 8 |
+| 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 7 | | 17 | [DP](08_DSA/17_DP) | 16 | 17 |
+| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 5 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 4 |
 
 ---
 
