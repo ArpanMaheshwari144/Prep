@@ -90,7 +90,7 @@ do, unhe pata hi nahi ki kisko khabar deni hai. Jo kisi ko yaad nahi rehta, to l
 likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Ab cashier kabhi bhi aaye ya
 jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
 **Asli naam:** likh lo = outbox (khabar usi transaction me ek table me, `sent = false`), ladka = relay (outbox se utha
-ke SMS Service ko bheje, gaya to `sent = true`, SMS gira to dobara try), backup ladka = relay ki doosri copy. Transfer
+ke SMS Service ko bheje, gaya to `sent = true`, SMS gira to dobara try), backup ladka = relay ka standby (ek waqt me ek hi chalta, doosra intezaar me, pehla gire tabhi uthta). Transfer
 SMS pe nahi atakta, aur SMS khota bhi nahi.
 
 ```mermaid
