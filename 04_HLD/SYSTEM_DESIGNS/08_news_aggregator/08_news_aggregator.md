@@ -13,7 +13,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ```
 FR      5000 site se khabar laao · user ko taazi feed (uski category) · ek khabar ek hi baar
 NFR     feed turant (~200 ms) · khabar 5-10 min se purani nahi · ek site band ho to baaki na ruke
-Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec · nayi khabar ~1 / sec
+Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec · nayi khabar ~1 / sec
         -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta
 ```
 
@@ -123,7 +123,7 @@ iPhone launch: saari bheed tech parchi pe, 10 lakh / sec, ek dabba 1 lakh sambha
 match nahi). To unme bhi tech parchi ki copy rakho, teeno baant lo. World Cup ho to dabbe badhao.
 
 **Asli naam:** banda = load balancer, server = stateless Feed Service, tech parchi = garam key (hot key), copy khaali
-machine pe = key ki copies / read replicas.
+machine pe = key ki copies alag Redis node pe (app khud har copy me likhta, isliye neeche quorum).
 
 **Maan lo copy peeche, Priya ko khabar dikhi aur refresh pe gayab:** 3 copy me se 2 me likho, 2 se padho. Jo bhi do
 padho, ek me taaza zaroor.

@@ -47,8 +47,9 @@ aur push company theek hote hue bhi bill aadhe ghante baad mila. To line alag-al
 ladies ki alag line, gents ki alag, bachchon ki alag; airport security, mandiron me bhi aise hi hota. Har line apne
 log khud sambhal le. Ab SMS dheema hua to sirf SMS line rukti, bill apni line se nikal jaata.
 
-**Asli naam:** sabki alag line = SMS, email, push ka alag topic, apni line sambhalna = har topic ka apna consumer
-group (worker alag-alag badha sakte: sale me push ke 100, SMS ke 20).
+**Asli naam:** sabki alag line = SMS, email, push ka alag topic (beech me ek Notification Service: order ki khabar Kafka
+se utha ke teen line me daalta), apni line sambhalna = har topic ka apna consumer group (worker alag-alag badha sakte:
+sale me push ke 100, SMS ke 20).
 
 ## 3. Ek "order placed" do baar (parchi)
 

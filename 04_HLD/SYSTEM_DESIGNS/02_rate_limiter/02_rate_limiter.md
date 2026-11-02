@@ -53,8 +53,8 @@ flowchart LR
 Ginti ka khaata ghadi se tha: 10:00-10:10 ek khaata, 10:10-10:20 agla, har khaate me 5. Ravi ne 10:09:58 pe 5 liye,
 khaata badla, 10:10:01 pe phir 5, 3 second me 10. To had ek dabbe me rakh lo, har bande ka apna dabba: is dabbe se
 token nikaalo aur aage badho. Dabbe ki ek raftaar hoti hai, itne second me ek token. Dabba apni raftaar se bharta,
-user apni raftaar se aata, khaata badalne se kuch reset nahi hota. User der tak nahi aaya to uske dabbe me bahut
-token, to ek saath kai le sakta, koi dikkat nahi.
+user apni raftaar se aata, khaata badalne se kuch reset nahi hota. User der tak nahi aaya to uska dabba poora bhara
+(had tak, 5 token), to ek saath 5 le sakta, koi dikkat nahi.
 
 **Asli naam:** ghadi ka khaata = fixed window (kinare pe dugni), token ka dabba = token bucket, apni raftaar se bhare =
 refill rate (OTP: max 5, har 2 minute me 1, request aane pe hi hisaab = lazy refill), der baad aaya to bahut token =

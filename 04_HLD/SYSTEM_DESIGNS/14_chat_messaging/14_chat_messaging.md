@@ -138,8 +138,9 @@ jaata. Taar chhote text ke liye bane the, video ne sab jam kar diya. Aaj 200 MB,
 yahan se hatao, alag raaste pe bhej do. Ek alag machine rakh lo: "tu video hai, tu idhar ja", hamari chat block na
 kare. Video wahin pada rahe, uska ek chhota URL bana ke sabme bhej do, wo wahin se dekh lenge.
 
-**Asli naam:** alag machine = S3 (chat server ke bahar; app video seedha S3 me daalti, presigned URL se), chhota URL
-= message me sirf link, wahin se dekh lenge = video S3 / CDN se. 500 log dekhein to bhi video ki copy ek hi.
+**Asli naam:** alag machine = S3 (chat server ke bahar), "video aayi, mere paas aa ja" wala insaan = Media Service
+(app ko S3 ka presigned upload URL deta, app video seedha S3 me daalti, phir chhota link banta), chhota URL = message
+me sirf link, wahin se dekh lenge = video S3 / CDN se. 500 log dekhein to bhi video ki copy ek hi.
 
 ```mermaid
 flowchart LR

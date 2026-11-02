@@ -30,7 +30,8 @@ liye: bheed ko kaabu karne wala banda. Spike aaya, usne rok liya.
 
 **Asli naam:** admin = Kafka (broker), line = topic (`order-events`), fan = khabar (event), ticket counter = producer
 (Order Service), andar ke counter = consumer (SMS, Fraud). Khabar disk pe likhi jaati hai aur padhne se mit-ti nahi,
-isliye ek hi khabar SMS aur Fraud dono padh lete hain (RabbitMQ me padhte hi hat jaati). Async + spike ka buffer.
+isliye ek hi khabar SMS aur Fraud dono padh lete hain, aur peeche ja ke dobara bhi padh sakte hain (RabbitMQ me ack
+hote hi queue se hat jaati, dobara nahi padh sakte). Async + spike ka buffer.
 
 ```mermaid
 flowchart LR
@@ -46,17 +47,16 @@ Maan le line me ek aadmi ruk gaya, wahin se peeche sab disturb ho gaye. Wo line 
 seat booked hai, wapas aaya to wahi baithega, uski seat pe koi aur nahi baith sakta. To line dobara shuru kari, koi
 gum nahi hua, kuch dikkat nahi.
 
-**Asli naam:** seat booked = offset (har padhne wale ka bookmark), wapas aaya to wahin se = restart ke baad offset se
-padhna. Khabar padhne se mit-ti nahi, 7 din disk pe rehti hai (retention). Fraud dheema hua to bas wo peeche rahega,
+**Asli naam:** ruka hua aadmi = consumer (SMS counter) gir gaya ya dheema hua, seat booked = offset (har padhne wale
+ka bookmark), wapas aaya to wahin se = restart ke baad offset se padhna. Khabar padhne se mit-ti nahi, 7 din disk pe rehti hai (retention). Fraud dheema hua to bas wo peeche rahega,
 SMS nahi rukega.
 
 ## 3. Ek admin se bheed nahi sambhal rahi (aur gate + hash)
 
 Diwali sale, har second 5,000 fan, akela admin nahi sambhal pa raha, aur andar ek checker 500 / sec hi punch kar
 paata hai. To aur gate khade karo, har gate ke andar apni line. 5,000 / 500 = 10 gate, taaki 10 checker ek saath
-punch kar sakein. Kaun
-kis gate pe jaaye, wahan hash aa gaya: Arpan ki teeno khabar (order, pay, cancel) hamesha ek hi gate se jaayengi, to
-unka kram nahi bigdega.
+punch kar sakein. Kaun kis gate pe jaaye, wahan hash aa gaya: Arpan ki teeno khabar (order, pay, cancel) hamesha ek
+hi gate se jaayengi, to unka kram nahi bigdega.
 
 **Asli naam:** gate = partition (10, alag broker pe), hash = key se partition (`hash(userId) % 10`). Kram sirf ek
 partition ke andar pakka hai, poore topic me nahi, isliye key = userId.

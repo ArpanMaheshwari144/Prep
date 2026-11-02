@@ -112,8 +112,8 @@ jaati, to tweet bacha to parchi bhi bachi. Peeche job "feed me bheja: nahi" wale
 
 ```mermaid
 flowchart LR
-    TS["Tweet Service"] --> K[("Stadium wala bhai<br/>(Kafka)")]
-    K --> C[("Bada bhai<br/>(Cassandra, user id se)")]
+    TS["Tweet Service"] --> C[("Bada bhai<br/>(Cassandra, user id se, status parchi)")]
+    TS --> K[("Stadium wala bhai<br/>(Kafka)")]
     K --> FW["Peeche bharne wale<br/>(Fanout workers)"]
     FW --> G[("Follow ka track<br/>(Neo4j)")]
     FW --> IN[("Dabba<br/>(Redis inbox, last 500)")]

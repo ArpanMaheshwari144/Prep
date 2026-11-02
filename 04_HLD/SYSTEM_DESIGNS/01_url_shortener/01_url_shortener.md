@@ -27,7 +27,8 @@ Counter wala token apne man se bana raha tha, kuch bhi chhota likh deta, to ek d
 token ek line wala kar do: abhi number 9 hai to agla 10. Ye ban gaya to aage badhao, phir ye ban gaya to aage badhao,
 aise number kabhi repeat nahi hoga. Par saal bhar me counter 10 arab pe, token "10000000000", 11 akshar, aur lamba
 hota jaayega. To gaadi ki number plate jaisa karo: DL 3C, phir 4C, 5C, phir 5D, sirf number nahi, akshar bhi.
-Combination bana lo, 7 character me kaafi combination aa jaate.
+Combination bana lo, 7 character me kaafi combination aa jaate. Token aur uska lamba pata ek mote register me likh lo,
+token dikhaye to wahi se pata nikle.
 
 **Asli naam:** ek line ka number = counter (har link ko agla number, takrav kabhi nahi), number plate = base62 (0-9,
 a-z, A-Z), 7 character = 62^7, ~3.5 lakh crore code. Mota register = DB (Cassandra: data bas code -> link, na join na
@@ -78,7 +79,7 @@ soft / hard TTL (soft nikla to purana turant do, peeche se naya lao).
 
 Ek counter se bheed nahi sambhli, 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha, to counter 1 aur 2
 dono ne apne 10ve aadmi ko token "10" de diya. To paanchon ko range me baant do: tu 1 se 100 karega, tu 101 se 200,
-tu 201 se 300, tu 301 se 400. Beech me ek manager hai jo har counter ko naya dabba deta. Ek ka dabba kabhi doosre se
+tu 201 se 300, tu 301 se 400, tu 401 se 500. Beech me ek manager hai jo har counter ko naya dabba deta. Ek ka dabba kabhi doosre se
 nahi milta, to same token kabhi nahi.
 
 **Asli naam:** 5 counter = kai app server + aage load balancer, apni-apni range = counter range (beech ka counter har
@@ -152,7 +153,8 @@ Kisi ka idea tha ki har aadmi pata apne phone me hi likh le, counter pe aaye hi 
 ka pata dhokhe wali site ka hai. To token radd kar do, ki ab wo galat site pe nahi jaayega. Aur aage se pehle hi dekh
 lo: user ko dene se pehle khud check karo ki jo wo bana raha wo theek hai, galat ho to banane se hi mana kar do.
 
-**Asli naam:** token radd = code band (DB me "band" nishaan), dene se pehle check = kaali list (Google Safe Browsing).
+**Asli naam:** token radd = code band (DB me "band" nishaan, aur chhote register se bhi hatao, warna TTL tak purana pata
+deta rahega), dene se pehle check = kaali list (Google Safe Browsing).
 
 **Maan lo token radd kiya, par log counter pe aa hi nahi rahe, phone me likha pata seedha khol rahe:** phone mere haath
 me nahi, main use mita nahi sakta. To phone pe likhne hi mat do. Likhega nahi to wo har baar hamare counter pe aayega,
