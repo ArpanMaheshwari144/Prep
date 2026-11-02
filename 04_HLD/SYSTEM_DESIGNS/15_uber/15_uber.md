@@ -116,6 +116,37 @@ nahi wo ruk jaate ya metro le lete.
 **Asli naam:** 500 andar, baaki line = virtual queue (waiting room), kiraya badhao = surge pricing (cab badhti,
 bheed ghatti).
 
+
+## 6. Gaadi naksha pe khisakti dikhe (khula taar + seedha raasta)
+
+Raju aa raha, Arpan ko gaadi khisakti dikhni chahiye. Phone har second "Raju kahan?" poochhe to shaam 7 baje 10 lakh
+phone har second, 99% jawab "wahin", server poochne walon se dab gaya. To poochne ka mauka hi mat do: Raju hila to
+turant Arpan ko dikha do. Par Arpan ka taar server 12 pe hai aur Raju ki jagah server 57 pe aati. 100 me dhoondhna
+nahi: store karwa lo "Arpan server 12 pe", "Raju ki ride Arpan ke saath", aur seedha usi raaste bhejo.
+
+**Asli naam:** push = WebSocket (polling band), session map (user -> server, Redis) + ride map (driver -> rider),
+server 57 seedha server 12 ko = pub/sub channel. Chat wala DSA map + chhota ladka hi.
+
+```mermaid
+flowchart LR
+    R["Raju ka phone<br/>(har 4 sec jagah)"] --> S57["Server 57<br/>(Location Service)"]
+    S57 --> M[("Map<br/>(Redis: Raju -> Arpan -> server 12)")]
+    S57 --> L["Chhota ladka<br/>(pub/sub)"]
+    L --> S12["Server 12<br/>(Arpan ka taar)"]
+    S12 --> A["Arpan<br/>(WebSocket)"]
+    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 7. 250 dikha, 500 kate (jo dikhaya wahi + tip)
+
+Book pe ₹250 dikha, Arpan ne haan kiya. Ride ke beech surge 2 guna, aakhir me ₹500. Jo dikhaya wahi lena meri
+zimmedari: 250 hi lo. Traffic me phase aur mehnat zyada lagi to rider ki marzi pe tip, 50-100 de de, na de to jitna
+dikhaya utna. (Uber / Rapido asal me badha deti hain, par main banata to aise.)
+
+**Asli naam:** upfront fare: book pe quote banta aur ride ki row me save (lock), aakhir me wahi kaato; tip alag,
+rider ki marzi.
+
 ---
 
 Notes (Arpan ke shabd) = [UBER_HAND_NOTES.md](UBER_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)

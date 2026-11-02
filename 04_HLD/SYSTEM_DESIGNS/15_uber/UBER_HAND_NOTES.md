@@ -42,6 +42,18 @@ Technical me: "taaza jagah dekho" = assign se pehle driver ki latest location ch
 Arpan: Jagah ke hisaab se baant do: Connaught Place me itne driver, Janpath me itne, AIIMS ke paas itne. 5 lakh ki jagah utni hi line jitne us jagah me. Raju us jagah se nikla to wahan se hata do, naye panne me daal do. Raju booked hai to list se nikaal do, ab wo kisi ko nahi milna. Booked nahi aur ghoom raha to kaat ke nayi list me, U-turn le ke wapas aaya to phir purani list me. Booked Raju ne Connaught Place pe sawari utaari to pata hai thodi der me khaali hoga, phir list me daal do.
 Technical me: "jagah ke hisaab se panna" = geohash -> drivers (Redis set har dabbe ka), "nikla to hata do, naye me daal do" = har location update pe purane set se remove + naye me add (driver ki row me pichhla dabba yaad), "booked to list se bahar" = sirf khaali driver set me, sawari khatam pe wapas.
 
+**10. Raju aa raha, Arpan ko gaadi naksha pe khisakti dikhni chahiye. 10 lakh phone har second "Raju kahan?" poochh rahe, 99% jawab "wahin", server dab gaya.**
+Arpan: Server poochh kyun raha, poochne ka mauka hi mat do. Ek aisa dabba bitha do ki Raju hila to turant Arpan ko dikha de, hila to dikha de. Asal me hilta hai, jhooth nahi dikhate.
+Technical me: "poochne ka mauka mat do, khud dikha do" = push (WebSocket, khula taar), polling band.
+
+**11. Arpan ka taar server 12 pe, Raju ki jagah server 57 pe aati. 57 ko pata hi nahi Arpan kahan.**
+Arpan: 100 server me dhoondhna nahi. Store karwa lo: Arpan server 12 pe, Raju ki ride Arpan ke saath. Raju aur Arpan ke taar jodo, Raju ko sirf Arpan se lena-dena. Jaise ghar ka raasta pata ho to seedha usi raaste.
+Technical me: "store karwa lo" = session map (user -> server, Redis) + ride map (driver -> rider), "seedha usi raaste" = server 57 seedha server 12 ko (pub/sub channel), wahan se Arpan ke taar pe.
+
+**12. Book pe ₹250 dikha, ride ke beech surge 2 guna, aakhir me ₹500 kate. Arpan: "maine 250 dekh ke haan kiya tha."**
+Arpan: Jo dikhaya wahi lena meri zimmedari. 250 hi lo. Traffic me phase aur driver ki mehnat zyada lagi to rider ki marzi pe tip: 50-100 de de, na de to jitna dikhaya utna. (Uber / Rapido asal me badha deti hain, par main banata to aise.)
+Technical me: "jo dikhaya wahi" = upfront fare: quote ride ke saath save (lock), aakhir me wahi kaato; "zyada mehnat" = tip alag, rider ki marzi.
+
 &nbsp;
 
 Poora design = [15_uber.md](15_uber.md)
