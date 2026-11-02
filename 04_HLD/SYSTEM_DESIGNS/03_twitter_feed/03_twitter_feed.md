@@ -52,11 +52,12 @@ favourite stadium wala bhai Kafka. Maine post dabaya to "tera post ho gaya, nika
 gira to outbox me ek parchi pe likha hai. Wo dabba gira to replica hai, copiyan hain.
 
 **Asli naam:** threshold = had ke upar celeb raasta, stadium wala bhai = Kafka (async fanout, peeche fanout workers),
-post ho gaya, nikal = turant OK, parchi pe likha = outbox, dabba gira to = Kafka ki copy (replica).
+post ho gaya, nikal = turant OK, parchi pe likha = outbox ki soch: parchi tweet ki row me hi (status "feed me bheja:
+nahi"), peeche job "nahi" wale utha ke Kafka me daale aur tick kare. Dabba gira to = Kafka ki copy (replica).
 
 ```mermaid
 flowchart LR
-    A["Arpan: post"] --> TS["Tweet Service<br/>(+ outbox)"]
+    A["Arpan: post"] --> TS["Tweet Service<br/>(tweet + status parchi)"]
     TS --> K[("Stadium wala bhai<br/>(Kafka)")]
     K --> FW["Peeche bharne wale<br/>(Fanout workers)"]
     FW --> IN[("Har bande ka dabba<br/>(Redis inbox)")]
@@ -103,6 +104,11 @@ same, to mera saara data ek jagah.
 **Asli naam:** bada bhai = Cassandra (write-heavy, na join na transaction chahiye, khud kai machine me baant-ta + apni
 copy), id se baanto = partition key = user id (author ke saare tweet ek partition, time ke kram me), follow ka track =
 graph DB Neo4j.
+
+**Maan lo tweet Cassandra me likha aur parchi likhne se pehle server gira:** Cassandra me tweet aur parchi do alag
+table me ek saath (dono ya koi nahi) nahi likhe jaate. Isliye parchi tweet ki row me hi hai: ek row ek baar me likhi
+jaati, to tweet bacha to parchi bhi bachi. Peeche job "feed me bheja: nahi" wale utha ke Kafka me daalta hai.
+**Asli naam:** outbox ki soch, status column tweet row me (single row write atomic), relay job.
 
 ```mermaid
 flowchart LR
