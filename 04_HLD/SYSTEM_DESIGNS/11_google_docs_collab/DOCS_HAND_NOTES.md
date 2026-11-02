@@ -31,6 +31,10 @@ Technical me: "ek dabba, saari information store" = Redis buffer, "us dabbe ki e
 Arpan: Main apni memory me chhota note daal dunga: ye banda editor nahi, iska koi bhi operation aaye, accept nahi karunga. Ravi alag server pe hai, to main ek parchi rakhunga "Ravi ab editor nahi", aur wo parchi ek tez bhaagne wale bachche ko dunga: jahan bhi Ravi ki permission hai wahan sab ja aur bata de "Ravi ab editor nahi". Ek centralized authority hai jo sab likh rahi. Usne mana kiya to chhota banda building ke bahar khada hoke chilla de "suno, Ravi editor nahi", to Ravi jis bhi server pe ho wahan se uska editor note hat chuka hoga. Bahut se answer ho sakte, ek sahi answer nahi: Redis pub/sub bolo ya building ke bahar koi chilla de.
 Technical me: "centralized authority" = permission ka asli sach (SQL), "iska operation accept nahi" = server pe permission check, "tez bhaagne wala bachcha, building ke bahar chilla de" = pub/sub invalidation.
 
+**7. Ladka chillaya "Ravi editor nahi", par server 7 us pal restart / net se bahar tha, awaaz suni hi nahi. Pub/sub dobara nahi chillata. Server 7 ki memory me abhi bhi "Ravi = editor", aur Ravi wahin se likh raha.**
+Arpan: Server akela nahi, uski copy saath khadi hai. Main thodi der bahar ja raha: "kuch bhi ho to note karke likh lena, wapas aake tujhse dekh lunga, tu meri copy hai." Ladka chillaya "Ravi editor nahi", copy ne likh liya. Main wapas aaya: "kya hua?" "Bas ek awaaz thi, Ravi editor nahi." Achha, to Ravi ki permission kaat do, khatam kahani.
+Technical me: "server ki copy jo peeche note kare" = standby / replica server bhi pub/sub sunta, "wapas aake copy se dekh lunga" = reconnect pe chhoote hue badlaav copy (ya SQL) se le ke note theek, phir hi Ravi ka op maano.
+
 &nbsp;
 
 Poora design = [11_google_docs_collab.md](11_google_docs_collab.md)

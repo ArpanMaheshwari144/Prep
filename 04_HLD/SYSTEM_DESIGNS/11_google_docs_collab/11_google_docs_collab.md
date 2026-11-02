@@ -125,6 +125,12 @@ answer nahi, Redis pub/sub bolo ya building ke bahar koi chilla de, baat wahi.
 = server pe permission cache + har op pe check (har akshar pe SQL nahi), iska op accept nahi = op reject, tez bhaagne
 wala bachcha / building ke bahar chilla de = pub/sub invalidation (Redis pub/sub), sab server note hata dete.
 
+**Maan lo ladka chillaya aur server 7 us pal restart / net se bahar tha, awaaz suni hi nahi:** server akela nahi, uski
+copy saath khadi hai aur wo bhi sunti hai. Server bola tha "kuch ho to note kar lena, wapas aake dekh lunga". Wapas
+aaya, copy se poochha "kya hua?", "Ravi editor nahi" mila, note hata diya, ab Ravi ka op reject.
+**Asli naam:** standby server bhi pub/sub sunta (pub/sub ek hi baar bolta, chhoote to khoya), reconnect pe chhoote
+badlaav copy / SQL se le ke cache theek, uske baad hi op maano.
+
 ```mermaid
 flowchart LR
     M["Arpan: Ravi ko hatao"] --> Q[("Centralized authority<br/>(SQL: permission)")]
