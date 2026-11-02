@@ -29,10 +29,32 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int solve(int index, int prevIndex, vector<vector<int>> &dp, vector<int> &nums)
+{
+    if (index == nums.size())
+    {
+        return 0;
+    }
+
+    if (dp[index][prevIndex + 1] != -1)
+    {
+        return dp[index][prevIndex + 1];
+    }
+
+    int notTake = solve(index + 1, prevIndex, dp, nums);
+    int take = 0;
+    if (prevIndex == -1 || nums[index] > nums[prevIndex])
+    {
+        take = 1 + solve(index + 1, index, dp, nums);
+    }
+    return dp[index][prevIndex + 1] = max(take, notTake);
+}
+
 int lengthOfLIS(vector<int> &nums)
 {
-    // yahan likh
-    return 0;
+    int n = nums.size();
+    vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
+    return solve(0, -1, dp, nums);
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
