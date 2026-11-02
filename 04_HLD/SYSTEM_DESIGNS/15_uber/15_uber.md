@@ -147,6 +147,16 @@ dikhaya utna. (Uber / Rapido asal me badha deti hain, par main banata to aise.)
 **Asli naam:** upfront fare: book pe quote banta aur ride ki row me save (lock), aakhir me wahi kaato; tip alag,
 rider ki marzi.
 
+
+## 8. Trip khatam, wallet me ₹40 (poora ya kuch nahi, ride tab tak khuli)
+
+Ghar pahunch ke ₹250 kaatne gaye, wallet me ₹40. Kaatna hai to poora kaato, aadha mat kaato, warna log jaan-boojh ke 1
+rupaya rakhenge. Paisa nahi to app me saaf dikhao "payment nahi hua", Raju ke phone pe bhi. Arpan GPay se de, warna
+cash. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
+
+**Asli naam:** atomic charge (partial nahi), ride status PAYMENT_PENDING jab tak SUCCESS, fallback payment (UPI / cash),
+dono app pe status.
+
 ---
 
 Notes (Arpan ke shabd) = [UBER_HAND_NOTES.md](UBER_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
