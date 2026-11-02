@@ -61,6 +61,13 @@ chalo. Arpan jahan khada wahan se 8 km ka gola khincho; jin dabbon ko gola chhoo
 fasla naap ke sabse paas wala.
 **Asli naam:** apna geohash + aas-paas ke dabbe, phir distance.
 
+**Maan lo register sirf driver ke naam se laga ho ("Raju -> Connaught Place"):** "Connaught Place me kaun-kaun" ke
+liye phir 5 lakh line. To jagah ke hisaab se panna rakho: Connaught Place me itne, Janpath me itne. Raju us jagah se
+nikla to wahan se hata do aur naye panne me daal do; U-turn le ke wapas aaya to phir purane me. Booked hai to list se
+bahar, sawari khatam (Connaught Place pe utaari) to wapas list me.
+**Asli naam:** har geohash ka Redis set (sirf khaali driver), har location update pe purane set se remove + naye me add
+(driver ki row me pichhla dabba), booked = set se bahar.
+
 ```mermaid
 flowchart LR
     A["Arpan: Book"] --> M["Milaane wala<br/>(Matching)"]

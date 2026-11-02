@@ -38,6 +38,10 @@ Technical me: "ghadi server ki" = TTL ka faisla server pe, der se aaya accept re
 Arpan: Sach wahi jo GPS ne abhi bheja: Raju Janpath me. Book pe Raju ki taaza jagah dekho; Arpan ke gole me nahi to use mat do, Arpan ke liye CP me koi aur. Dono ek saath dabaayein to wahi taala.
 Technical me: "taaza jagah dekho" = assign se pehle driver ki latest location check (ek driver ki ek sach jagah), lock double se bachata.
 
+**9. Register driver ke naam se laga hai ("Raju -> Connaught Place"). Booking pe chahiye "Connaught Place me kaun-kaun", to phir 5 lakh line. Aur Raju dabba badle to purane panne me naam pada rehta, shaam tak 2,000 purane naam.**
+Arpan: Jagah ke hisaab se baant do: Connaught Place me itne driver, Janpath me itne, AIIMS ke paas itne. 5 lakh ki jagah utni hi line jitne us jagah me. Raju us jagah se nikla to wahan se hata do, naye panne me daal do. Raju booked hai to list se nikaal do, ab wo kisi ko nahi milna. Booked nahi aur ghoom raha to kaat ke nayi list me, U-turn le ke wapas aaya to phir purani list me. Booked Raju ne Connaught Place pe sawari utaari to pata hai thodi der me khaali hoga, phir list me daal do.
+Technical me: "jagah ke hisaab se panna" = geohash -> drivers (Redis set har dabbe ka), "nikla to hata do, naye me daal do" = har location update pe purane set se remove + naye me add (driver ki row me pichhla dabba yaad), "booked to list se bahar" = sirf khaali driver set me, sawari khatam pe wapas.
+
 &nbsp;
 
 Poora design = [15_uber.md](15_uber.md)
