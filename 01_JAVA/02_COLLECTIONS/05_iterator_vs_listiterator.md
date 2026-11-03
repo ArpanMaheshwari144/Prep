@@ -2,38 +2,49 @@
 
 ## Kahani: expired surveys hatane hain
 
-for-each ke andar `list.remove()` -> `ConcurrentModificationException`.
+Tujhe list me se expired surveys hatane hain. Tune for-each loop chalaya aur uske andar `list.remove()` likh diya. Turant
+`ConcurrentModificationException` aa gaya.
 
-## Exception kyun
+## Exception kyun aata hai
 
-List har badlaav ki ginti rakhti (`modCount`). Iterator bante waqt uski copy rakhta. Seedha list se hataya -> list ki
-ginti badhi, iterator ki copy purani -> agle `next()` pe mel nahi -> exception.
+List apne har badlaav ki ginti rakhti hai, jise `modCount` kehte hain. Iterator jab banta hai, to wo is ginti ki ek copy
+apne paas rakh leta hai. Ab agar tune seedha list se kuch hataya, to list ki ginti badh gayi, par iterator ki copy purani
+reh gayi. Agle `next()` pe iterator dono ginti milata hai, mel nahi khaati, aur exception aa jaata hai.
 
 ```
-list.remove()  -> modCount 5, iterator ki copy 4 -> agle next() pe CME
-it.remove()    -> dono 5 -> SAFE
+list.remove()  -> list ka modCount 5 ho gaya, iterator ki copy abhi 4 -> agle next() pe CME
+it.remove()    -> iterator khud hatata hai, to dono 5 ho jaate hain -> SAFE
 ```
 
-Ilaaj: `it.remove()`, ya seedha `surveys.removeIf(s -> s.isExpired())` (andar se iterator hi).
+Ilaaj ye hai ki `it.remove()` use karo, kyunki wo dono ginti saath me update karta hai. Ya seedha
+`surveys.removeIf(s -> s.isExpired())` likho, jo andar se iterator hi use karta hai.
 
 ## Asli prod trap (1-Oct chala ke dekha)
 
 ```
-[S100, S101, S102, S103]   ->  loop me hataya
-S100 -> CME    S101 -> CME    S102 -> KOI exception nahi, S103 dekha hi nahi    S103 -> CME
+list: [S100, S101, S102, S103]   ->  loop ke andar ek-ek ko hata ke dekha
+S100 hataya -> CME
+S101 hataya -> CME
+S102 hataya -> KOI exception nahi, par S103 dekha hi nahi gaya
+S103 hataya -> CME
 ```
 
-Aakhri se pehla hataya to loop chup-chaap ruk gaya (cursor == size). Exception nahi = code sahi lagta, par ek survey
-bina check ke reh gaya. "Exception nahi aaya" != "code sahi".
+Jab aakhri se pehla element (S102) hataya, to loop chup-chaap ruk gaya, kyunki us waqt cursor size ke barabar ho gaya aur
+loop ko laga ki kaam khatam. Exception nahi aaya, isliye code sahi lagta hai, par ek survey bina check ke reh gaya.
+Yaad rakh: "exception nahi aaya" ka matlab "code sahi hai" nahi hota.
 
 ## ListIterator
 
-Iterator ka bada bhai: aage + peeche, chalte-chalte `add` aur `set`, sirf List pe. Cursor do element ke beech hota;
-`remove` / `set` aakhri lautaye element pe chalte, isliye `next()` ke bina = IllegalStateException.
+ListIterator ko Iterator ka bada bhai samjho. Ye aage bhi chal sakta hai aur peeche bhi, aur chalte-chalte `add` aur `set`
+bhi kar sakta hai. Par ye sirf List pe milta hai.
+
+Iska cursor kisi element pe nahi, do element ke beech me hota hai. `remove` aur `set` us element pe chalte hain jo aakhri
+baar lautaya gaya tha. Isliye agar tune `next()` bulaye bina hi `remove` ya `set` kiya, to IllegalStateException aata hai.
 
 ## Trade-off
 
-for-each = saaf, par hata nahi sakte. Iterator = lamba, hatana safe. Aaj ke code me `removeIf`.
+for-each saaf dikhta hai, par usme element hata nahi sakte. Iterator thoda lamba likhna padta hai, par usse hatana safe
+hai. Aaj ke code me seedha `removeIf` likhte hain.
 
 ## Interview line
 

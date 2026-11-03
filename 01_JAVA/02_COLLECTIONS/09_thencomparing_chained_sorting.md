@@ -2,7 +2,8 @@
 
 ## Leaderboard se
 
-Do khiladi, score barabar 950. Upar kaun? Rule: pehle score bada, barabar ho to jo pehle 950 pe pahuncha.
+Do khiladi hain, aur dono ka score barabar 950 hai. Ab upar kaun aayega? Rule ye hai ki pehle jiska score bada wo upar,
+aur agar score barabar ho, to jo pehle 950 pe pahuncha wo upar.
 
 ```java
 players.sort(
@@ -11,13 +12,13 @@ players.sort(
 );
 ```
 
-Doosra rule tabhi chalta jab pehla 0 de (barabar).
+Doosra rule tabhi chalta hai jab pehla rule 0 de, matlab jab dono score barabar hon.
 
 ## Ye if-else hi hai (Arpan ka nichod)
 
-Andar se bilkul wahi: pehla compare 0 aaya to doosra dekho. Koi naya jaadu nahi, sirf likhne ka andaaz alag. Farak
-bas itna ki if-else me sign ulta likhne jaisi chhoti galti ho sakti, chain me nahi. Jo saaf lage wahi likho (stream
-vs for loop jaisa).
+Andar se ye bilkul wahi kaam karta hai jo if-else karta: pehla compare 0 aaya, to doosra dekho. Koi naya jaadu nahi hai,
+sirf likhne ka andaaz alag hai. Farak bas itna hai ki if-else me sign ulta likhne jaisi chhoti galti ho sakti hai, jabki
+chain me wo galti nahi hoti. Jo tujhe saaf lage wahi likho, jaise stream aur for loop me se jo pasand ho.
 
 ```java
 // wahi cheez if-else me
@@ -34,8 +35,11 @@ Comparator.comparingInt(Player::getScore)
           .reversed()          // POORI chain ulti: reachedAt bhi ulta -> jo BAAD me pahuncha wo upar
 ```
 
-`.reversed()` jahan lagao, wahan tak ki poori chain ulti. Ulta sirf usi rule pe jise chahiye. Test me tabhi pakda
-jaata jab tie wala case ho. `&&` se rule jodna = compile error (compare int deta, boolean nahi).
+`.reversed()` jahan lagate ho, wahan tak ki poori chain ulti ho jaati hai. Yahan aakhir me lagaya, to score ke saath
+reachedAt bhi ulta ho gaya, aur jo baad me pahuncha wo upar aa gaya. Isliye ulta sirf usi rule pe lagao jise chahiye.
+Ye galti test me tabhi pakdi jaati hai jab test me tie wala case ho.
+
+Ek aur baat: rule ko `&&` se jodne ki koshish karoge to compile error aayega, kyunki compare int deta hai, boolean nahi.
 
 ## Interview line
 
