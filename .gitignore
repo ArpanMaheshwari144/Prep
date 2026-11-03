@@ -32,6 +32,7 @@ INTERVIEW/
 # Personal — resume, notes, templates (keep private even in public repo)
 # NOTE: leading slash = ONLY repo-root RESOURCES/ (private). warna nested src/main/resources/ bhi ignore ho jaata (Windows case-insensitive).
 /RESOURCES/
+/ZZ_PURANA/
 
 # Personal planning/state files — ABHI ke liye private (29-Aug, Arpan; baad me decide)
 /DAILY_PLAN.md
