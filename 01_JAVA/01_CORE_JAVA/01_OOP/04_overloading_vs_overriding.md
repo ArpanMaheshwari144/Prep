@@ -10,10 +10,18 @@ Account.calculateInterest()                  System.out.println(200)      -> pri
 kaun chalega: CHALTE waqt, object dekh ke    kaun chalega: COMPILE pe, argument dekh ke
 ```
 
-## Kis dikkat se
+Overriding me naam bhi same hota hai aur parameter bhi same hote hain, bas bachcha parent ka kaam apne tareeke se likh deta hai.
+Kaunsa wala chalega, ye program chalte waqt object dekh ke tay hota hai.
 
-- **Overriding:** parent ka kaam har bachche ke liye alag (byaaj).
-- **Overloading:** ek hi kaam alag input pe. Warna `printInt` / `printString` / `printDouble` alag naam yaad rakho.
+Overloading me naam same hota hai par parameter alag hote hain. Kaunsa wala chalega, ye compile ke waqt hi argument dekh ke tay
+ho jaata hai.
+
+## Ye kis dikkat se bane
+
+**Overriding** isliye hai kyunki parent ka ek kaam har bachche ke liye alag hota hai. Jaise byaaj: Savings ka alag, FD ka alag.
+
+**Overloading** isliye hai kyunki ek hi kaam alag-alag input pe karna hota hai. Agar overloading na hoti, to tujhe `printInt`,
+`printString`, `printDouble` jaise alag-alag naam yaad rakhne padte.
 
 ## Prod trap (Collections se juda)
 
@@ -23,12 +31,17 @@ class User {
 }
 ```
 
-Override nahi, **overload** ho gaya (parent ka `equals(Object o)`, parameter alag). `HashSet` / `HashMap` andar `equals(Object)` bulate,
-tera wala kabhi nahi chalta -> same user do baar set me, koi error nahi. Chala ke dekha: `set size = 2`.
-Bachao: upar `@Override`; galat parameter pe compiler turant: "kuch override nahi kar raha".
+Yahan override nahi hua, **overload** ho gaya. Kyunki parent ka method `equals(Object o)` hai, aur tune parameter `User` likh
+diya, to parameter alag ho gaya aur Java ne ise naya method maan liya. `HashSet` aur `HashMap` andar se `equals(Object)` hi
+bulate hain, isliye tera wala method kabhi chalta hi nahi. Natija ye ki same user set me do baar chala jaata hai, aur koi error
+bhi nahi aata. Ye chala ke dekha tha: `set size = 2` aaya.
 
-**Chhota trap:** `static` method override nahi hota, chhup jaata (hiding). `A ref = new B(); ref.show()` -> static ho to A ka,
-Java reference ka type dekhta, object nahi.
+Bachne ka tareeka: method ke upar `@Override` likho. Agar parameter galat hua, to compiler turant bol dega ki "ye method kuch
+override nahi kar raha".
+
+**Chhota trap:** `static` method override nahi hota, wo bas chhup jaata hai, ise hiding kehte hain. Maan lo `A ref = new B();`
+likha aur phir `ref.show()` bulaya. Agar `show()` static hai, to A wala chalega, B wala nahi. Kyunki static method me Java
+reference ka type dekhta hai, object nahi dekhta.
 
 ## Interview line
 

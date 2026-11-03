@@ -1,6 +1,7 @@
 # 4 Pillars: tere SimpleBankSystem me charon ek saath
 
-Tere bank me 3 account: Savings (4% byaaj), Current (0%), FD (7%).
+Tere bank me 3 tarah ke account hain: Savings jisme 4% byaaj hai, Current jisme 0% hai, aur FD jisme 7% hai. Charon pillar
+isi ek chhote se code me dikh jaate hain.
 
 ```
             Account (abstract)          <- ABSTRACTION: "byaaj kaise" nahi batata, bas
@@ -12,21 +13,30 @@ Tere bank me 3 account: Savings (4% byaaj), Current (0%), FD (7%).
   bal*0.04    0         bal*0.07        <- POLYMORPHISM: ek hi call, teen alag jawab
 ```
 
-`Main.java` me `a1.calculateInterest()` -> 200 · 0 · 3500. Call ek, formula kaunsa chalega ye JVM chalte waqt object dekh ke tay karta.
+`Main.java` me teeno account pe `calculateInterest()` bulaya jaata hai (`a1.calculateInterest()` jaisa). Savings pe 200 aata
+hai, Current pe 0 aata hai, aur FD pe 3500 aata hai. Call ek hi hai, par kaunsa formula chalega, ye JVM chalte waqt (runtime pe) object dekh ke tay karta hai.
 
-## Kis dikkat se bane
+## Ye charon kis dikkat se bane
 
-- **Encapsulation:** koi `balance = 999999` na kar de.
-- **Inheritance:** deposit/withdraw teen jagah copy-paste na karna pade.
-- **Polymorphism:** kal "Senior Citizen 8%" aaye to bas nayi class. Purane code me `if (type == ...)` nahi.
-- **Abstraction:** `Account` ka seedha `new` nahi, aur har bachche ko apna byaaj batana hi padega, warna compile nahi.
+**Encapsulation** isliye hai taaki koi bahar se seedha `balance = 999999` na kar de.
+
+**Inheritance** isliye hai taaki deposit aur withdraw ka code teen jagah copy-paste na karna pade. Ek baar `Account` me likha,
+aur teeno account ko mil gaya.
+
+**Polymorphism** isliye hai taaki kal "Senior Citizen 8%" wala naya account aaye, to bas ek nayi class bana do. Purane code me
+`if (type == ...)` jodne ki zaroorat nahi padti.
+
+**Abstraction** isliye hai taaki `Account` ka seedha `new` na ho sake, aur har bachche ko apna byaaj ka formula batana hi pade.
+Agar koi bachcha nahi batayega, to uska code compile hi nahi hoga.
 
 ## Trade-off (tere code me tha)
 
-`balance` pehle `protected` tha taaki bachche `balance * 0.04` padh sakein. Keemat: darwaza bachchon ke liye khula.
-Koi bachcha `balance = -999` likh de to `withdraw` ka check bypass, compiler kuch nahi rokta.
+Pehle `balance` `protected` tha, taaki bachche seedha `balance * 0.04` padh sakein. Par iski keemat ye thi ki darwaza bachchon
+ke liye khula reh gaya. Koi bachcha `balance = -999` likh deta, to `withdraw` wala check bypass ho jaata, aur compiler use
+bilkul nahi rokta.
 
-Ab: field `private`, bachche `getBalance() * INTEREST_RATE` se sirf padhte. Inheritance code deta hai, par parent ke niyam todne ka raasta bhi.
+Ab field `private` hai, aur bachche `getBalance() * INTEREST_RATE` se balance sirf padhte hain, badal nahi sakte. Seekh ye hai
+ki inheritance tujhe code to deta hai, par saath me parent ke niyam todne ka raasta bhi de deta hai.
 
 ## Interview line
 

@@ -2,10 +2,12 @@
 
 ## Tere SimpleBankSystem se (`model/Account.java`)
 
-`balance` ka koi `setBalance()` nahi. Paisa sirf `deposit()` / `withdraw()` se badalta, aur dono pehle check karte.
+Tere `Account` me `balance` ka koi `setBalance()` hai hi nahi. Paisa sirf `deposit()` aur `withdraw()` se badalta hai, aur
+ye dono badalne se pehle check karte hain ki amount theek hai ya nahi.
 
-Bina OOP: saare account ka balance ek bade array me, `balances[0] = 1000`. Code me kahin se bhi koi
-`balances[0] = 999999` likh de, rokne wala koi nahi. 700 ticket me dekha hai: "data kisne, kahan badla" dhoondhna kitna mushkil.
+Ab soch bina OOP ke kya hota. Saare account ka balance ek bade array me pada hota, jaise `balances[0] = 1000`. Code me kahin
+se bhi koi `balances[0] = 999999` likh deta, aur use rokne wala koi nahi hota. Tune 700 ticket me khud dekha hai ki "ye data
+kisne aur kahan badla" dhoondhna kitna mushkil hota hai.
 
 ```
 BINA OOP                          OOP (tera Account)
@@ -17,25 +19,28 @@ balances[] (sabke liye khula)     ┌──────────────�
                                     sirf darwaze se andar
 ```
 
-## Kis dikkat se bana
+## Ye kis dikkat se bana
 
-Data aur uske niyam ek jagah band (object). Badalna ho to sirf darwaze (method) se, darwaze pe check.
+OOP me data aur us data ke niyam ek hi jagah band rehte hain, aur us band dabbe ko object kehte hain. Agar data badalna hai,
+to sirf darwaze se badlega, aur darwaza matlab method. Us darwaze pe check laga hota hai, isliye koi bhi galat value bina
+check ke andar nahi ja sakti.
 
 ## Trade-off
 
-Har cheez ki class, constructor, getter = code lamba. Badle me: galti sirf ek jagah se ho sakti.
+Har cheez ke liye class, constructor aur getter likhne padte hain, isliye code lamba ho jaata hai. Par badle me fayda ye milta
+hai ki galat value andar aane ka raasta sirf ek hota hai, to galti bhi sirf ek jagah se ho sakti hai.
 
 ## Prod trap (tere hi code me tha)
 
-`withdraw()` sirf `amount > balance` dekhta tha, minus amount nahi:
+Tera `withdraw()` sirf ye dekhta tha ki `amount > balance` to nahi, par ye nahi dekhta tha ki amount minus me to nahi:
 
 ```java
 Account acc = new SavingsAccount("A1", "Arpan", 1000);
 acc.withdraw(-500);   // 1000 - (-500) = 1500.0 -> nikaalne ke naam pe paise ban gaye
 ```
 
-`deposit()` me `amount <= 0` ka check tha, `withdraw()` me nahi. OOP darwaza deta hai, guard kitna pakka ye likhne wale pe.
-Ab `withdraw()` me bhi `amount <= 0` check laga diya.
+`deposit()` me `amount <= 0` ka check tha, par `withdraw()` me ye check nahi tha. Matlab OOP tujhe darwaza to deta hai, par
+darwaze pe guard kitna pakka hai, ye likhne wale pe hai. Ab `withdraw()` me bhi `amount <= 0` ka check laga diya hai.
 
 ## Interview line
 

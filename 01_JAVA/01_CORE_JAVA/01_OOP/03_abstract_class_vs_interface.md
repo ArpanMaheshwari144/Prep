@@ -1,5 +1,8 @@
 # Abstract class vs Interface: dono tere bank me pehle se
 
+Tere bank me dono pehle se maujood hain. `Account` ek abstract class hai, jo batati hai ki ye cheez "kya HAI". `AccountRepository`
+ek interface hai, jo batata hai ki ye cheez "kya KAR SAKTI hai".
+
 ```
 Account (ABSTRACT CLASS)                 AccountRepository (INTERFACE)
 "ye kya HAI"                             "ye kya KAR SAKTA hai"
@@ -10,22 +13,32 @@ Account (ABSTRACT CLASS)                 AccountRepository (INTERFACE)
  Savings / Current / FD                  JpaAccountRepository       (kal, MySQL)
 ```
 
-## Kis dikkat se
+## Ye kis dikkat se bane
 
-- **Abstract class:** teeno account me `balance` + deposit/withdraw ka code ek. Ek baar likho, sab le lein. State (field) aur constructor yahin.
-- **Interface:** `AccountService` ko sirf "save / find ho jaata" jaanna. HashMap ya MySQL, fark nahi. Aaj `InMemory`, kal MySQL,
-  service ki ek line nahi badlegi. `EventListener` me bhi wahi: aaj `EmailListener`, kal `SmsListener`.
-- todoapp: `TodoRepository extends JpaRepository<Todo, Long>`. Spring interface deta, andar ka code khud banata.
+**Abstract class:** teeno account me `balance` bhi same hai aur deposit/withdraw ka code bhi same hai. To use ek baar abstract
+class me likh do, aur sab bachche wahi le lein. State (matlab field) aur constructor bhi yahin rehte hain, kyunki ye sab
+accounts ka saanjha hissa hai.
+
+**Interface:** `AccountService` ko sirf itna jaanna hai ki "save ho jaata hai, find ho jaata hai". Andar HashMap hai ya MySQL,
+isse service ko koi fark nahi padta. Isliye aaj `InMemory` wala chal raha hai, kal MySQL wala laga do, to bhi service ki ek
+line nahi badlegi. Tere `EventListener` me bhi yahi hai: aaj `EmailListener` hai, kal `SmsListener` laga sakte ho.
+
+todoapp me bhi yahi dikhta hai: `TodoRepository extends JpaRepository<Todo, Long>`. Spring tujhe sirf interface deta hai, aur
+uske andar ka code Spring khud bana deta hai.
 
 ## Trade-off
 
-Class sirf EK abstract class extend kar sakti, interface kai. Ulta, interface me state nahi (na field, na constructor, sirf constant).
+Ek class sirf EK abstract class ko extend kar sakti hai, par interface kai saare implement kar sakti hai. Ulta dekho to,
+interface me state nahi hoti: na field, na constructor, sirf constant rakh sakte ho.
 
 ## Prod trap
 
-Interface me naya method joda -> jitni class use implement karti, sab ek saath compile band.
-Java 8 me `Collection` me `stream()` / `forEach()` jodne the, duniya bhar ki list classes toot jaati -> isliye `default` method:
-interface me hi body, purani class bina chhede chalti.
+Agar tune kisi chalte hue interface me naya method jod diya, to jitni bhi classes us interface ko implement karti hain, wo sab
+ek saath compile hona band ho jaati hain, kyunki kisi ne bhi wo naya method likha nahi hai.
+
+Java 8 me yahi dikkat aayi thi. `Collection` me `stream()` aur `forEach()` jodne the, aur seedha jodte to duniya bhar ki list
+classes toot jaatin. Isliye `default` method laaye gaye: method ki body interface me hi likh do, to purani classes bina chhede
+chalti rehti hain.
 
 ```java
 // AccountRepository me count() jodna ho:

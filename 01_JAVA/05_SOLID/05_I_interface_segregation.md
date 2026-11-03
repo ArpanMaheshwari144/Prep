@@ -1,11 +1,12 @@
 # I: Interface Segregation (chhote interface)
 
-**Niyam:** kisi class ko wo method likhne pe majboor mat karo jo uske kaam ke nahi.
+**Niyam:** kisi class ko wo method likhne pe majboor mat karo jo uske kaam ke hi nahi hain.
 
 ## Kahani
 
-Ek mota interface sabke liye bana diya. Read-only report wali class ko sirf padhna tha, par interface ki wajah se
-`delete()`, `update()` bhi likhne pade: khaali ya khatarnak.
+Ek mota interface bana diya jo sabke liye tha. Report wali class read-only thi, use sirf padhna tha. Par interface ki wajah se
+use `delete()` aur `update()` bhi likhne pade. Ye method uske kisi kaam ke nahi, isliye khaali pade hain, jo bekaar hai. Aur
+khatarnak bhi hai, kyunki ye maujood hain to koi galti se bula bhi sakta hai.
 
 ```java
 interface Repository { void save(); void delete(); void update(); void generatePdf(); void sendEmail(); }
@@ -24,7 +25,8 @@ class ReportRepository  implements Readable { ... }              // sirf padhna
 class PaymentRepository implements Readable, Writable { ... }    // dono
 ```
 
-Jisko jo chahiye, wahi le. Remote jaisa: TV ke remote me AC ke button nahi.
+Ab jisko jo chahiye, wo sirf wahi interface leta hai. Report wali class sirf `Readable` leti hai, to uske paas `delete()` hai hi
+nahi. Ye remote jaisa hai: TV ke remote me AC ke button nahi hote.
 
 ## Interview line
 

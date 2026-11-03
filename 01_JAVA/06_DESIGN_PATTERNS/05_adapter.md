@@ -10,11 +10,17 @@ tera code ---send(phone, text)---> SmsAdapter (implements SmsSender)
 ```
 
 **Khaas baat:**
-1. Teen hisse hain: **Target** (jo interface tera code maangta hai), **Adaptee** (jo class pehle se hai, badal nahi sakte), aur **Adapter** (target implement karta hai, andar adaptee rakhta hai aur call aage bhejta hai).
-2. Adaptee ko kabhi chhoona nahi. Adapter sirf lapet ke translate karta hai, composition se.
-3. **Adapter vs Decorator:** adapter interface **badalta** hai (translator). Decorator wahi interface rakh ke kaam **jodta** hai (enhancer).
+
+1. Isme teen hisse hote hain. **Target** wo interface hai jo tera code maangta hai. **Adaptee** wo class hai jo pehle se bani hai aur tu use badal nahi sakta. **Adapter** wo class hai jo target ko implement karti hai, andar adaptee ko rakhti hai, aur har call ko adaptee ki bhasha me badal ke aage bhej deti hai.
+
+2. Adaptee ko kabhi chhoona nahi hai. Adapter use sirf lapet ke rakhta hai aur translate karta hai, aur ye kaam composition se hota hai, matlab adaptee adapter ke andar ek field ki tarah rakha hota hai.
+
+3. **Adapter vs Decorator:** adapter interface ko **badal** deta hai, matlab wo ek translator hai. Decorator interface wahi rakhta hai aur upar se naya kaam **jodta** hai, matlab wo ek enhancer hai.
 
 **Prod wala trap:**
+
+`Arrays.asList(arr)` jo list deta hai, wo asli `ArrayList` nahi hai. Wo array ke upar ek adapter hai, ek "view". Isliye uski size fixed hai, kyunki neeche array hai, aur `add()` karte hi exception aata hai. Par `set()` chal jaata hai, aur wo asli array ko bhi badal deta hai, kyunki list aur array ek hi data pe khade hain.
+
 ```java
 List<String> list = Arrays.asList(arr);   // asli ArrayList NAHI, array ke upar adapter ("view")
 list.add("d");      // UnsupportedOperationException (array ki size fixed)
@@ -22,7 +28,9 @@ list.set(0, "z");   // chalta hai, aur ASLI array bhi badal jaata
 // badalne wali list chahiye -> new ArrayList<>(Arrays.asList(arr))
 ```
 
-**Tera project:** project me seedha adapter nahi bana. Asli kaam me ye wahan aata hai jahan Stripe ya PSP jaisi bahar ki library ko apne `PaymentProcessor` interface ke peeche lapet ke rakhte hain. Kal vendor badla, to sirf adapter badlega.
+Agar tujhe aisi list chahiye jisme add/remove ho sake, to `new ArrayList<>(Arrays.asList(arr))` se nayi list bana lo.
+
+**Tera project:** tere project me seedha adapter nahi bana. Asli kaam me ye wahan aata hai jahan Stripe ya PSP jaisi bahar ki library ko apne `PaymentProcessor` interface ke peeche lapet ke rakhte hain. Kal vendor badla, to sirf adapter badlega, baaki code nahi.
 
 ```
 Interview: "Adapter = do alag interface ke beech translator. Jo class badal nahi sakte (legacy / third-party)
