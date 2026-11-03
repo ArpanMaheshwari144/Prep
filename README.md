@@ -131,6 +131,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [04 notification (Arpan ka order)](04_HLD/SYSTEM_DESIGNS/04_notification_system/NOTIFICATION_HAND_NOTES.md)
   - [05 stock (Arpan-Ravi)](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/STOCK_HAND_NOTES.md)
   - [06 payment (dukaan pe pay)](04_HLD/SYSTEM_DESIGNS/06_payment_system/PAYMENT_HAND_NOTES.md)
+  - [07 file upload (YouTube jaisa peeche)](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/FILE_UPLOAD_HAND_NOTES.md)
   - [08 news (Arpan News)](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/NEWS_HAND_NOTES.md)
   - [09 BMS (do counter, ek seat)](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/BMS_HAND_NOTES.md)
   - [10 cache (profile page)](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/CACHE_HAND_NOTES.md)
