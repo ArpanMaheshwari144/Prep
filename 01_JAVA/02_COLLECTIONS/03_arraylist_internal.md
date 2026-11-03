@@ -1,161 +1,47 @@
-# ArrayList — Andar Se Samjho
+# ArrayList: andar se
 
-> **V90 — Collections: Topic 25**
+## Kahani: active survey IDs
 
----
+Manager ne bola active survey IDs ki list rakho. `int[100]` liya, 101vi ID aayi, jagah khatam. ArrayList isi dikkat se
+bana: andar array hi hai, par khud badhta hai.
 
-## WHY — ArrayList Internals
+```
+new ArrayList<>()   -> andar {} khaali (Java 8+, koi memory nahi)
+pehla add           -> 10 ki jagah
+11va add            -> naya array 15 (1.5x), purana copy
+get(5)              -> seedha index -> O(1)
+add(1, 99)          -> baaki sab ek khiske -> O(n)
+```
 
-→ ArrayList = **internally `Object[]` ARRAY**
-→ **Index se access = O(1) FAST**
-→ Add at end = **O(1) amortized**. Add at start/middle = **O(n) shift**
-→ Full hone pe **1.5x grow + copy**
-→ Use case: **random access = ArrayList**, frequent insert/remove middle = LinkedList
+## Kis dikkat se bana
 
----
+Array ka size fix, ArrayList khud badhta. Kharcha: bharte hi poori copy.
 
-## STORY — Active Survey IDs
+## Trade-off
 
-→ Manager ne bola — **active survey IDs maintain karo**
-→ Array liya, size 100 diya. **101st ID aayi — crash**
-→ Tab ArrayList — internally **dynamic array hai, khud grow karta hai**
-→ Default size 10, full hua toh **1.5x naya array**. Index se access = **O(1) fast**
-→ Beech mein insert/remove = **shift karna padta = O(n) slow**
-→ **Read-heavy kaam ke liye best**
-→ ArrayList andar se ek Array hi hai — bas **smart wrapper** hai uske upar
+Padhna aur end pe jodna tez, beech me daalna / hatana dheema (sab khiskana). Pehle se pata ho 5000 aayenge to
+`new ArrayList<>(5000)`, baar-baar copy nahi.
 
----
-
-## Internal
+## Prod trap
 
 ```java
-// Jab tu likhta: new ArrayList<>()
-// Andar ye hota:
-Object[] elementData = {};                 // Java 8+: KHAALI array (lazy) — abhi 10 nahi bana
-size = 0;                                   // abhi koi element nahi
-// pehla add() hote hi -> array 10 ka banta (DEFAULT_CAPACITY = 10)
-// naya capacity = old + (old >> 1) = 1.5x   (10 -> 15 -> 22 -> 33 ...)
-```
-★ **Trap:** "`new ArrayList<>()` banate hi 10 ki jagah ban jaati" = **galat** (Java 7 tak aisa tha). Java 8+ me khaali list koi memory nahi leti, jab tak pehla element na aaye. Hazaaron khaali list wale app me ye farak bada hai.
-
-**WHY size 10?**
-→ 10 elements ke baad 11th aaya → naya array banao **10 × 1.5 = 15**
-→ Purana copy karo → 11th add karo
-→ Costly operation isliye **agar pata ho: `new ArrayList<>(500)`** — resizing avoid
-
----
-
-## Visualization
-
-```
-                ArrayList Internal — Andar ka Sach
-
-╔════════════════════════════════════════════════════════════╗
-║ Pehle add() ke baad — Default size 10 (banate waqt khaali {})║
-╚════════════════════════════════════════════════════════════╝
-
-ArrayList<Integer> list = new ArrayList<>();
-
-Internal Object[] elementData (heap):
-  ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐
-  │null│null│null│null│null│null│null│null│null│null│   capacity = 10
-  └────┴────┴────┴────┴────┴────┴────┴────┴────┴────┘
-   0    1    2    3    4    5    6    7    8    9
-
-   ye 10 ki jagah pehle add() ke ANDAR banti (new ke waqt array khaali {} tha).
-   element rakhte hi size = 1.
-
-
-╔════════════════════════════════════════════════════════════╗
-║ list.add(5);  list.add(10);  list.add(20);                 ║
-╚════════════════════════════════════════════════════════════╝
-
-  ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐
-  │ 5  │ 10 │ 20 │null│null│null│null│null│null│null│   capacity = 10
-  └────┴────┴────┴────┴────┴────┴────┴────┴────┴────┘
-   0    1    2    3    4    5    6    7    8    9
-
-   size = 3
-
-   list.get(2)  →  index direct access  →  20  →  O(1)
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Full hua — 11th element add karna hai                      ║
-╚════════════════════════════════════════════════════════════╝
-
-Step 1: Naya array banao (1.5x = 10 × 1.5 = 15)
-  ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐
-  │null│null│null│null│null│null│null│null│null│null│null│null│null│null│null│
-  └────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┘
-   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14
-
-Step 2: Purana copy karo
-Step 3: 11th element add karo
-        elementData = naya array (size 15)
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Beech mein insert — O(n) shift                             ║
-╚════════════════════════════════════════════════════════════╝
-
-list.add(1, 99)  // index 1 pe daalo
-
-Before:
-  ┌────┬────┬────┬────┬────┬────┐
-  │ 5  │ 10 │ 20 │ 30 │ 40 │null│
-  └────┴────┴────┴────┴────┴────┘
-
-Shift karna padta (saare elements 1 right):
-  ┌────┬────┬────┬────┬────┬────┐
-  │ 5  │ 99 │ 10 │ 20 │ 30 │ 40 │   ← 4 elements shift hue
-  └────┴────┴────┴────┴────┴────┘
-       ↑    →    →    →    →
-       insert    shifted
-
-  10000 elements? 10000 shifts = SLOW O(n)
+List<Integer> surveyIds = new ArrayList<>(List.of(101, 205, 5));
+surveyIds.remove(5);   // value 5 nahi hati, INDEX 5 -> IndexOutOfBounds
 ```
 
----
+`remove(int)` = index, `remove(Object)` = value. Integer list pe value hatani ho to `remove(Integer.valueOf(5))`.
+Review me aankh se nikal jaata.
 
-## Time Complexity
+## Thread wala hissa (file 02 se juda)
 
-| Operation | Time | Kyu? |
-|-----------|------|------|
-| `get(index)` | **O(1)** | Direct index access — instant |
-| `add(end)` | **O(1)** (amortized) | Last position pe daalo; kabhi-kabhi bharne pe 1.5x copy |
-| `add(middle)` | **O(n)** | Shift karna padega |
-| `remove(middle)` | **O(n)** | Shift karna padega |
-| `search(value)` | **O(n)** | Ek-ek check |
+ArrayList thread-safe nahi. Kai thread me baantni ho: `Collections.synchronizedList` (har call pe ek taala) ya
+`CopyOnWriteArrayList` (har likhai pe poori copy, tabhi jab padhna bahut, likhna kam). Vector = purana, har method
+synchronized, aaj nahi.
 
----
-
-## ArrayList Kab Use?
-
-> **Zyada READ karna ho. End pe add/remove. Index se access.**
-> **Beech mein baar-baar insert/delete — slow.**
-
----
-
-## ★ TRAP — Vector vs ArrayList
+## Interview line
 
 ```
-┌────────────────┬──────────────┬──────────────┐
-│  Aspect        │  Vector      │  ArrayList   │
-├────────────────┼──────────────┼──────────────┤
-│ Thread-safe    │ YES (sync)   │ NO           │
-│ Growth         │ 2x           │ 1.5x         │
-│ Era            │ Java 1.0     │ Java 1.2+    │
-│ Performance    │ Slow         │ Fast         │
-└────────────────┴──────────────┴──────────────┘
-
-Modern: ArrayList always
-   Thread-safe chahiye? → Collections.synchronizedList()  (har call pe ek taala)
-                        → CopyOnWriteArrayList (padhna bahut, likhna kam: har likhai pe POORI copy)
+ArrayList is a resizable array: get by index is O(1), adding at the end is amortised O(1), and
+inserting in the middle is O(n) because everything shifts. When I know the size up front I pass
+the capacity to avoid repeated copying.
 ```
-
----
-
-## POWER PHRASE
-
-> *"ArrayList internally uses a dynamic array with default capacity 10, growing by 1.5x when full. `get()` is O(1) due to index-based access, but add/remove in the middle is O(n) due to shifting. Best for read-heavy operations."*
