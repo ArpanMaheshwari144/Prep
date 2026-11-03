@@ -1,91 +1,46 @@
-# thenComparing() — Chained Sorting
+# thenComparing: tie-breaker
 
-> **V90 — Collections: Topic 31**
+## Leaderboard se
 
----
+Do khiladi, score barabar 950. Upar kaun? Rule: pehle score bada, barabar ho to jo pehle 950 pe pahuncha.
 
-## STORY — Tie-Breaker
-
-→ Employees ki list — **age se sort** karna hai
-→ 2 panelists ki **age same** ho gayi
-→ Manager bola: pehle **age**, tie ho toh **name** se
-→ Comparator ke andar `if-else` lagana padega? **Nahi — `thenComparing()` hai!**
-→ `comparing()` = pehla rule. `thenComparing()` = **tiebreaker**. Jitne chahiye utne lagao
-
----
-
-## WHY — `thenComparing()` Kyu?
-
-→ Ek `Comparator` sirf **EK rule** deta hai
-→ Multiple rules chahiye → **chain karo**
-→ `comparing()` = primary rule
-→ `thenComparing()` = secondary, tertiary, jitne chahiye
-
----
-
-## Code
-
-### Pehle age, tie ho toh name
 ```java
-list.sort(
-    Comparator.comparing((Panelist p) -> p.age)
-              .thenComparing(p -> p.name)
+players.sort(
+    Comparator.comparingInt(Player::getScore).reversed()   // pehla rule: score bada pehle
+              .thenComparing(Player::getReachedAt)          // barabar ho to: jo pehle pahuncha
 );
 ```
 
-### Teen rules — age, then name, then salary
-```java
-list.sort(
-    Comparator.comparing((Panelist p) -> p.age)
-              .thenComparing(p -> p.name)
-              .thenComparing(p -> p.salary)
-);
-```
+Doosra rule tabhi chalta jab pehla 0 de (barabar).
 
----
+## Ye if-else hi hai (Arpan ka nichod)
 
-## TRAP — `&&` Use Karna
-
-> **`&&` operator `int` pe kaam nahi karta!**
+Andar se bilkul wahi: pehla compare 0 aaya to doosra dekho. Koi naya jaadu nahi, sirf likhne ka andaaz alag. Farak
+bas itna ki if-else me sign ulta likhne jaisi chhoti galti ho sakti, chain me nahi. Jo saaf lage wahi likho (stream
+vs for loop jaisa).
 
 ```java
-// GALAT
-list.sort((a, b) -> Integer.compare(a.age, b.age) && a.name.compareTo(b.name));
-// compile error — && Boolean expects, comparison returns int
-
-// SAHI
-list.sort(
-    Comparator.comparing((Panelist p) -> p.age)
-              .thenComparing(p -> p.name)
-);
+// wahi cheez if-else me
+int c = Integer.compare(b.score, a.score);
+if (c != 0) return c;
+return a.reachedAt.compareTo(b.reachedAt);
 ```
 
----
+## Prod trap
 
-## Logic — `thenComparing` Kab Chalta?
-
-```
-comparing(age)      ─── Pehla compare
-       │
-       ▼
-   Result == 0?
-   ╱           ╲
- NO            YES
-  │             │
-  ▼             ▼
-Use this     thenComparing(name)
-result       (tiebreaker chala)
+```java
+Comparator.comparingInt(Player::getScore)
+          .thenComparing(Player::getReachedAt)
+          .reversed()          // POORI chain ulti: reachedAt bhi ulta -> jo BAAD me pahuncha wo upar
 ```
 
-> **Jab tak previous comparison `0` (equal) na de, agla rule chalega hi nahi.**
+`.reversed()` jahan lagao, wahan tak ki poori chain ulti. Ulta sirf usi rule pe jise chahiye. Test me tabhi pakda
+jaata jab tie wala case ho. `&&` se rule jodna = compile error (compare int deta, boolean nahi).
 
----
+## Interview line
 
-## POWER PHRASE
-
-> *"`Comparator.comparing()` sets the primary sort rule. `thenComparing()` adds a tiebreaker applied only when the previous comparison returns zero. Chain as many as needed."*
-
-> **Yaad rakh:**
-> `comparing()` = pehla rule
-> `thenComparing()` = tiebreaker
-> `&&` = compile error — chain karo
+```
+For a leaderboard I sort by score descending and break ties with thenComparing on the time the
+score was reached; I put reversed() only on the score comparator, because reversed() at the end
+flips the whole chain, including the tie-breaker.
+```
