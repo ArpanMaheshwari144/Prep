@@ -53,6 +53,6 @@ public class FixedDeposit extends Account {
 
     @Override
     public double calculateInterest() {
-        return balance * INTEREST_RATE;
+        return getBalance() * INTEREST_RATE;
     }
 }

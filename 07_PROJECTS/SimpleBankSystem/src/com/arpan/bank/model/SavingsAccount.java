@@ -54,7 +54,7 @@ package com.arpan.bank.model;
 //    COMPILE-TIME CONSTANT magic:
 //       Compile time pe value INLINE ho jati
 //       Bytecode mein 0.04 directly likha
-//       Runtime: balance * INTEREST_RATE ≡ balance * 0.04
+//       Runtime: getBalance() * INTEREST_RATE ≡ balance * 0.04
 //       = FASTEST possible (no field lookup)
 //
 //    Memory layout:
@@ -94,6 +94,6 @@ public class SavingsAccount extends Account {
 
     @Override
     public double calculateInterest() {
-        return balance * INTEREST_RATE;   // SavingsAccount ka apna logic
+        return getBalance() * INTEREST_RATE;   // SavingsAccount ka apna logic
     }
 }

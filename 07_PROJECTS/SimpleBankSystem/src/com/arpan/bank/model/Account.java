@@ -49,13 +49,13 @@ import com.arpan.bank.exception.InsufficientFundsException;
 // ACCESS MODIFIERS — Code Mein:
 //    private final accountId   → identity, no change ever
 //    private final holderName  → identity, no change ever
-//    protected double balance  → CHILD ko access chahiye
-//                                (interest calc karne ke liye)
+//    private double balance    → child bhi seedha nahi chhoo sakta
+//                                (interest ke liye getBalance() se padhta)
 //
-//    Why protected NOT private?
-//       SavingsAccount: return balance * INTEREST_RATE;
-//                              ↑ parent ka protected field
-//       Agar private hota → child access nahi kar pata
+//    Pehle protected tha (3-Nov badla). Kyun badla?
+//       protected = child likh sakta: balance = -999;
+//       withdraw() ka check bypass, compiler kuch nahi rokta.
+//       Child ko sirf PADHNA tha -> private field + getBalance() kaafi.
 //
 // GETTERS ONLY, NO SETTERS:
 //    Immutable identity:
@@ -126,7 +126,7 @@ public abstract class Account {
     // Encapsulation — fields private
     private final String accountId;
     private final String holderName;
-    protected double balance;          // protected — child use kare
+    private double balance;            // private — child bhi getBalance() se padhe, likh na sake
 
     public Account(String accountId, String holderName, double balance) {
         this.accountId = accountId;
