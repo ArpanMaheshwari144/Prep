@@ -36,7 +36,7 @@ Technical me: "numbering kar do" = sequence number, "server lagayega number" = s
 
 **8. Ravi ko unread ginti dikhani hai: "12 naye message". Group me 980 message, 500 member.**
 Arpan: Ek ginti rakh lo, Redis me ya map me ya DB me: Ravi ne itne message padh liye. 50 padh liye, ab neeche 12 aur hain, to 12 ke 12 turant uske phone me daal do.
-Technical me: "ek ginti rakh lo, Ravi ne itne padh liye" = last_read_seq (kahan tak padha), "12 aur hain" = unread = aakhri number - last_read_seq.
+Technical me: "ek ginti rakh lo, Ravi ne itne padh liye" = last_read_seq (kahan tak padha), "12 aur hain" = unread = aakhri number - last_read_seq (980 - 968 = 12).
 
 **9. Arpan ne #975 "kal party" bheja, Info me dekhna kis-kis ne padha. Har message x har member ki line = 980 x 500 = 4.9 lakh entry. Ravi ka number 968, Sita ka 978. Kisne padha?**
 Arpan: Group me double tick aata hai, Info me jaake dekhte hain kisne padha. Ravi ne nahi padha, Sita ne padh liya. Maine 975 bheja, Sita ka 978, iska matlab Sita ne 975 padha, tabhi uski ginti 978 hui. Ravi ne 968 padha, matlab wo bahut der se offline hai, ya pahuncha to usne ye message read nahi kiya. Number ghata lo, isse pata pad jaayega kisne padha, kisne nahi.
