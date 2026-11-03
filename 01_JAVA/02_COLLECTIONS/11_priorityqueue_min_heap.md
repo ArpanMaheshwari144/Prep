@@ -1,192 +1,49 @@
-# PriorityQueue — Min-Heap by Default
+# PriorityQueue: min-heap
 
-> **V90 — Collections: Topic 33**
+## Tere DSA se (top k frequent, kth largest, Dijkstra = C++ priority_queue)
 
----
+```
+C++  priority_queue<int>      -> default MAX-heap (bada pehle)
+Java PriorityQueue<Integer>   -> default MIN-heap (chhota pehle)   <- ulta!
+Java max-heap: new PriorityQueue<>(Comparator.reverseOrder())
+C++ top/pop/push  =  Java peek/poll/add
+```
 
-## STORY — Top 5 Highest Rated
+C++ ki aadat se Java likha to "sabse bada" ki jagah "sabse chhota" niklega.
 
-→ Scene: **1000 survey responses** aaye — **top 5 highest-rated** dikhane hain
-→ List sort karein? **Zyada slow** — pura sort kyu jab top 5 chahiye?
-→ **PriorityQueue** seedha min/max efficiently deta — sorting ki zaroorat nahi
+## Kis dikkat se bana: top 5 of 1 lakh
 
----
+Poora sort O(n log n), chahiye sirf 5. 5 ki min-heap: naya daalo, size 5 se upar to sabse chhota nikaalo. Aakhir me 5
+sabse bade, O(n log k). Wahi tera kth largest.
 
-## WHY — PriorityQueue?
+## poll() sorted kyun deta (C++ top + pop jaisa)
 
-→ PriorityQueue **andar se min-heap** hai
-→ `poll()` **hamesha sabse CHHOTA** element deta
-→ Max-heap chahiye → **`Comparator.reverseOrder()`** pass karo
-→ Normal Queue **FIFO**, ye **PRIORITY se nikalta**
+Heap ka ek niyam: har parent apne bachchon se chhota -> root hamesha sabse chhota, baaki kram ki guarantee nahi.
+`poll()`: root nikaalo -> aakhri ko upar rakho -> neeche khiskao jab tak niyam wapas -> phir upar bache hue me
+sabse chhota. Har baar sabse chhota = baar-baar poll = sorted.
 
----
+## Poora sorted kyun nahi rakhte
 
-## Code — Min-Heap (Default — Chhota Pehle)
+Sorted array me har naye pe sab khiskao = O(n). Heap me daalna O(log n) (ek raasta upar, 1 lakh me ~17 kadam).
+Chahiye sirf "abhi sabse chhota kaun", poora kram faltu mehnat.
+Ghar ka ped: har baap bachchon se bada -> dada sabse upar turant dikhte; do chacha me kaun bada, koi niyam nahi.
+
+## Sorted kab NAHI aata (prod trap)
+
+`poll()` ke bina poori queue dekho to andar ka array jaisa hai waisa:
+`System.out.println(pq)` · `for (x : pq)` · `new ArrayList<>(pq)` · `stream()` · `toArray()` -> `[5, 10, 20, 30, 15]`.
 
 ```java
-PriorityQueue<Integer> pq = new PriorityQueue<>();
-pq.add(30);
-pq.add(10);
-pq.add(20);
-
-pq.poll();    // 10  ← sabse chhota pehle
-pq.poll();    // 20
-pq.poll();    // 30
+return new ArrayList<>(top5);   // "top 5" API -> screen pe ulta-seedha kram
 ```
 
-## Max-Heap (Bada Pehle)
+Sorted chahiye = `poll()` ek-ek, ya list sort karo. C++ ka `priority_queue` loop chalane hi nahi deta (sirf top/pop),
+isliye wahan ye kabhi dikha nahi; Java dekhne deta hai, wahi trap.
 
-```java
-PriorityQueue<Integer> maxPQ = new PriorityQueue<>(Comparator.reverseOrder());
-maxPQ.add(30);
-maxPQ.add(10);
-maxPQ.add(20);
+## Interview line
 
-maxPQ.poll();    // 30  ← sabse bada pehle
 ```
-
----
-
-## 3 Important Methods
-
-| Method | Kya karta? |
-|--------|-----------|
-| `pq.add(x)` | Element daalo |
-| `pq.poll()` | **Sabse priority wala nikalo + REMOVE** ← most used |
-| `pq.peek()` | **Sabse priority wala DEKHO** — remove mat karo |
-
-**C++ Mapping (yaad rakhne ke liye):**
-- C++ `top()` = Java `peek()` (sirf dekho)
-- C++ `pop()` = Java `poll()` (nikalo + hatao)
-- C++ `push()` = Java `add()`
-
----
-
-## Konovo Real Use Case — Top-K Pattern
-
-**Scenario:** 1 lakh survey responses, top 5 highest-rated chahiye.
-
-```java
-// Min-heap of size 5 — chote elements bahar throw karte ja
-PriorityQueue<Integer> top5 = new PriorityQueue<>();   // min-heap
-
-for (int rating : ratings) {
-    top5.add(rating);
-    if (top5.size() > 5) {
-        top5.poll();    // chhota nikalo — bade rehte hain
-    }
-}
-// top5 mein hamesha 5 sabse bade ratings
+PriorityQueue in Java is a min-heap by default, unlike C++'s max-heap, so for top-K I keep a min-heap
+of size K and drop the smallest, which is O(n log k); iterating the queue is not sorted, only
+repeated poll() gives sorted order.
 ```
-
-**Time:** O(n log k) instead of O(n log n) full sort.
-
----
-
-## TRAP
-
-> **PriorityQueue iterate karoge toh sorted order mein NAHI dega.**
-> **Heap structure hai — sorted nahi.**
-> **Sirf `poll()` se sorted milta.**
-
----
-
-## POWER PHRASE
-
-> *"PriorityQueue is a min-heap by default — `poll()` always returns the smallest element. Pass `Comparator.reverseOrder()` for max-heap. Best for top-K problems — gives O(n log k) instead of full sort O(n log n)."*
-
-> **Yaad rakh:**
-> Default = min-heap (chhota pehle)
-> Max-heap = `reverseOrder()` pass
-> Top-K problems ka best dost
-> Iteration sorted nahi — sirf `poll()` deta sorted
-
----
-
-## Deep — PQ Internally SORTED Nahi Hai (Important Doubt)
-
-PQ andar se ek **binary heap** structure hai — sorted array NAHI. Heap mein **sirf ek rule**:
-
-> **Parent hamesha child se chhota** (min-heap)
-> **Siblings ke beech koi rule nahi.**
-
-### Example — Add karo: 30, 10, 20, 5, 15
-
-#### Tree Structure (Min-Heap):
-```
-              5             ← root (sabse chhota)
-            /   \
-          10     20
-         /  \
-        30   15
-```
-
-#### Internal Array Storage:
-```
-Index:    0    1    2    3    4
-Array:  [ 5,  10,  20,  30,  15 ]
-          ↑
-     SORTED NAHI — 30 ke baad 15 hai!
-```
-
-> Array **sorted nahi hai**. 15 last mein, 30 beech mein. Bus heap property maintained (parent ≤ children).
-
-### Iteration vs Poll — Output Compare
-
-#### `iterate / print` — Heap Array As-Is (UNSORTED)
-```java
-PriorityQueue<Integer> pq = new PriorityQueue<>();
-pq.add(30); pq.add(10); pq.add(20); pq.add(5); pq.add(15);
-
-System.out.println(pq);
-// Output: [5, 10, 20, 30, 15]   ← HEAP ORDER, NOT SORTED!
-
-for (int x : pq) {
-    System.out.print(x + " ");
-}
-// Output: 5 10 20 30 15   ← SAME unsorted order
-```
-
-#### `poll()` — Sorted Output (Ek-Ek Karke)
-```java
-while (!pq.isEmpty()) {
-    System.out.print(pq.poll() + " ");
-}
-// Output: 5 10 15 20 30   ← SORTED
-```
-
-`poll()` har baar:
-1. Root nikalta (sabse chhota)
-2. Heap **re-balance** karta — next sabse chhota root pe aata
-3. Phir poll → next chhota → poll → ... → sorted output
-
-### Time Complexity
-
-| Operation | Time | Reason |
-|-----------|------|--------|
-| `add()` | O(log n) | Heap re-balance |
-| `poll()` | O(log n) | Root nikalo + re-balance |
-| `peek()` | O(1) | Sirf root dekho |
-| **Sort full PQ** | **O(n log n)** | n polls = n × log(n) |
-| Iteration | O(n) | Lekin **UNSORTED** |
-
-### Bottom Line
-
-| Cheez | State |
-|-------|-------|
-| **PQ ka internal array** | NOT sorted (heap property only) |
-| **iterate / print** | Heap order — unsorted (`[5, 10, 20, 30, 15]`) |
-| **`peek()`** | HAMESHA sabse chhota (root) — `5`. Ye unsorted NAHI. |
-| **`poll()` ek-ek karke** | SORTED (chhota pehle) |
-| **Saare elements poll karo** | Total O(n log n) — fully sorted output |
-
-**Tldr:** PQ **on-demand** sorted deta — jab poll karega tab. Internally storage **lazy-sorted (heap)**, fully sorted NAHI.
-
-### PQ Use Karte Kyu Phir?
-
-Agar full sorting chahiye, `Collections.sort(list)` use karo — same O(n log n).
-
-PQ ka asli use:
-- **Top-K problems** — sirf top 5 chahiye, pura sort waste
-- **Streaming data** — har naye element pe update, full re-sort nahi
-- **Dijkstra, A*** algorithms — minimum repeatedly nikalna
