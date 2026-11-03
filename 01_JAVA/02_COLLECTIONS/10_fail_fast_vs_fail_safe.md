@@ -1,220 +1,35 @@
-# fail-fast vs fail-safe — ConcurrentModificationException
+# fail-fast vs fail-safe
 
-> **V90 — Collections: Topic 32**
+> Ek thread ka hissa (modCount, loop me remove, S102 chup-chaap skip) = [05_iterator_vs_listiterator.md](05_iterator_vs_listiterator.md).
+> Yahan sirf naya: do thread, ek list.
 
----
+## Kahani: do thread, ek list
 
-## WHY — Exception Throw Kyu Karta?
-
-→ Tu list **padh raha** hai (iterator) aur koi beech mein **list badal raha** hai
-→ Iterator ko **consistent view** chahiye
-→ Agar data change ho gaya toh **galat result** ya `ArrayIndexOutOfBounds`
-→ Safe rehne ke liye iterator `modCount` track karta hai — **badla?**
-→ Turant roko — galat data dene se **acha exception** de do
-
----
-
-## STORY
-
-→ Scene: List **iterate** kar raha hai
-→ Aur saath mein **`list.remove()` andar loop mein** — BOOM!
-→ `ConcurrentModificationException`
-→ ArrayList ka iterator ek **internal counter** rakhta — **`modCount`**
-→ Jab bhi list **structurally modify** hoti (add ya remove dono), `modCount` badhta
-→ Iterator start hote waqt `expectedModCount` set hota
-→ Har step pe check: **`modCount` badla? EXCEPTION!**
-→ Ye **fail-fast** hai — turant pakad lo, galat result mat do
-
----
-
-## Code
-
-### fail-fast — Galat Code
-```java
-List<String> list = new ArrayList<>();
-list.add("Rahul");
-list.add("Arpan");
-list.add("Priya");      // ★ 3 element — 2 pe exception AATA HI NAHI (neeche dekho)
-
-for (String s : list) {
-    list.remove(s);     // ConcurrentModificationException!
-                        // modCount badh gaya — iterator ne pakad liya
-}
-```
-★ **Chala ke dekha (1-Oct):**
-```
-[Rahul, Arpan]          loop me remove -> NO CME, list = [Arpan]   <- Rahul hata, size 1, cursor 1
-                                                                       hasNext() false -> next() chala hi nahi
-[Rahul, Arpan, Priya]   loop me remove -> CME
-```
-CME sirf `next()` pe check hota hai. Hatane ke baad `next()` na chale (aakhri se pehla element) to bug CHUPCHAAP — exception nahi, element chhoot jaata. (Poora = `05_iterator_vs_listiterator.md` TRAP)
-
-### fail-fast — Sahi Fix (Iterator.remove())
-```java
-Iterator<String> it = list.iterator();
-while (it.hasNext()) {
-    String s = it.next();
-    it.remove();        // Safe — modCount + expectedModCount dono sync
-}
-```
-
----
-
-## TRAP — `list.remove()` ≠ `it.remove()`
-
-> **`list.remove()`** = bahar se modify → modCount badha, expectedModCount nahi → **CME**
-> **`it.remove()`** = dono ek saath update → safe
-
----
-
-## fail-safe — CopyOnWriteArrayList
-
-```java
-CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
-list.add("Rahul");
-list.add("Arpan");
-
-for (String s : list) {
-    list.remove(s);     // NO exception — copy pe iterate ho raha
-}
-```
-
-→ **Tradeoff:** extra memory lagti hai (copy banane mein)
-→ **Stale data:** loop mein add hua element us iteration mein nahi dikhega
-
----
-
-## fail-fast vs fail-safe
-
-| | fail-fast | fail-safe |
-|--|----------|-----------|
-| **Exception?** | Haan — CME | Nahi |
-| **Collections** | ArrayList, HashMap | CopyOnWriteArrayList, ConcurrentHashMap |
-| **Iterate over** | Original list | CopyOnWrite = **copy (snapshot)** · ConcurrentHashMap = **original, weakly consistent** (copy NAHI) |
-| **Memory** | Less | CopyOnWrite = zyada (har likhai pe poori copy) · CHM = copy nahi banata |
-
----
-
-## POWER PHRASE
-
-> *"fail-fast iterators throw ConcurrentModificationException as soon as they detect a structural modification during iteration. fail-safe iterators don't throw: CopyOnWriteArrayList iterates over a snapshot, while ConcurrentHashMap is weakly consistent — it walks the live map and may or may not see concurrent changes."*
-
-> **Yaad rakh:**
-> fail-fast = ArrayList, HashMap → CME on modify. `it.remove()` = safe.
-> fail-safe = CopyOnWriteArrayList (copy pe chalta) · ConcurrentHashMap (copy NAHI, weakly consistent) → no CME.
-> `it.remove()` = safe. `list.remove()` inside loop = CME.
-
----
-
-## Deep — Exception Aati Kyun? `modCount` ka Pura Khel
-
-### Iterator ka Kaam — Photographer Wala
-
-Iterator ek **photographer** hai. Tu bola "list ek-ek karke dikha" → photographer ne data ki copy NAHI li, bas
-list ki **ginti (modCount)** note kar li, aur asli list pe hi chalta hai.
-
-Beech mein koi list modify kar de → ginti mel nahi khaati → aage chalta to galat result aata.
-
-Java ka solution: **"Ginti badli → exception, galat data mat do."** (Copy pe chalna = CopyOnWriteArrayList, upar.)
-
-### `modCount` — ArrayList ka Internal Counter
-
-```java
-public class ArrayList<E> {
-    private Object[] elementData;
-    private int size;
-    protected transient int modCount = 0;    // ← ye internal counter (asal me AbstractList me declared, ArrayList ko wahi milta)
-}
-```
-
-→ Jab bhi list **STRUCTURALLY modify** ho, ye **+1**
-→ Structural modification = `add()`, `remove()`, `clear()`, `addAll()`
-→ **`set()` ya `get()` modCount nahi badhata** — size change nahi hota
-
-```java
-List<String> list = new ArrayList<>();
-list.add("Rahul");      // modCount: 0 → 1
-list.add("Arpan");      // modCount: 1 → 2
-list.remove("Rahul");   // modCount: 2 → 3
-list.set(0, "Priya");   // modCount: 3  (set NAHI badhata)
-```
-
-### `expectedModCount` — Iterator ka Snapshot
-
-Jab `list.iterator()` call karta hai, iterator **us waqt ka modCount** save kar leta:
-
-```java
-private class Itr implements Iterator<E> {
-    int cursor;
-    int expectedModCount = modCount;   // ← snapshot
-}
-```
-
-`modCount = 5` jab iterator bana → `expectedModCount = 5` lock ho gaya.
-
-### Har Step Pe Check (`checkForComodification`)
-
-`it.next()` call hote hi internally:
-
-```java
-final void checkForComodification() {
-    if (modCount != expectedModCount)
-        throw new ConcurrentModificationException();
-}
-```
-
-**Translation:**
-- "Snapshot meri **5** thi"
-- "Abhi list ka modCount **6** hai"
-- "Beech mein kisi ne **mujhe bina bataye** modify kiya"
-- "BOOM — exception"
-
-### `it.remove()` Safe Kyu Hai?
-
-**`list.remove(s)`** — list ka modCount badha, iterator ko **nahi bataya** → mismatch → CME
-
-**`it.remove()`** — iterator **dono ek saath** update karta:
-
-```java
-public void remove() {
-    // ... element hata
-    modCount++;
-    expectedModCount = modCount;    // ← apna bhi update
-}
-```
-
-Dono sync → koi mismatch nahi → koi CME nahi.
-
-### Visual Flow
+Ek thread active sessions ki list pe loop (report bana raha), usi waqt Tomcat ka doosra thread usi list me naya
+session jodta -> pehle thread ko CME.
 
 ```
-list.add("Rahul")  → modCount = 1
-list.add("Arpan")  → modCount = 2
-list.add("Priya")  → modCount = 3
-
-Iterator banaya:
-   expectedModCount = 3  (yaad rakha)
-
-Loop:
-  it.next()              → modCount(3) == expectedModCount(3)   -> "Rahul"
-  list.remove("Rahul")   → modCount = 4  (BAHAR SE BADLA), size 3 -> 2, cursor 1
-  hasNext()              → cursor(1) != size(2) -> true
-  it.next()              → modCount(4) ≠ expectedModCount(3)  CME
+fail-fast (ArrayList, HashMap)  -> badlaav dikha to turant CME: "galat data se achha exception"
+fail-safe:
+  CopyOnWriteArrayList   -> har likhai pe POORI nayi copy; loop purani copy (snapshot) pe, CME kabhi nahi
+  ConcurrentHashMap      -> copy NAHI; asli map pe chalta, naya badlaav dikh bhi sakta, nahi bhi (weakly consistent)
 ```
 
-Ab `it.remove()` use kiya:
+## Trade-off
+
+CopyOnWriteArrayList: padhna safe + tez, par har `add` pe poori copy. Theek wahan jahan padhna bahut, likhna
+kabhi-kabhar (event listeners). Har second judne wali list pe memory kha jaayega.
+
+## Prod trap
+
+Ye CME local pe kabhi nahi aata (do request ek saath aati hi nahi). Prod pe bheed me kabhi-kabhar, log me random
+stack trace jo dobara karne pe hota hi nahi. List kai thread me baanti dikhe = ArrayList mat rehne do.
+
+## Interview line
 
 ```
-  it.remove()   → modCount = 4, expectedModCount = 4   (DONO update)
-  it.next()     → modCount(4) == expectedModCount(4)   pass
+ArrayList and HashMap iterators are fail-fast: if the collection changes underneath, the next call
+throws ConcurrentModificationException instead of returning wrong data. For a list shared across
+threads that is read far more than written, like listeners, I use CopyOnWriteArrayList, which
+iterates over a snapshot; ConcurrentHashMap walks the live map and is only weakly consistent.
 ```
-
-### Bottom Line
-
-| Field | Kya hai |
-|-------|---------|
-| **`modCount`** | List ka apna counter (kitni baar modify hui) |
-| **`expectedModCount`** | Iterator ka snapshot (jab bana tab kitni thi) |
-| **Mismatch** | Iterator ko bina bataye list badli → CME |
-
-**Production tip:** Multi-thread mein same mechanism — 2 threads ek hi list pe, ek modify kare → doosre ka iterator CME deta. Wahan **`CopyOnWriteArrayList`** ya **`ConcurrentHashMap`** use karo.
