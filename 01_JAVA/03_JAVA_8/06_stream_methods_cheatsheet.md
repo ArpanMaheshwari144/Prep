@@ -1,6 +1,6 @@
 # Stream methods cheatsheet
 
-> Practice = 01_JAVA/07_STREAM_API_WRITE (Q1-Q17 + REDO).
+Iski practice `01_JAVA/07_STREAM_API_WRITE` folder me hai (Q1 se Q17, aur REDO).
 
 ## Kahani
 
@@ -10,7 +10,7 @@ HR bola: "har department ki total salary batao." Data ye hai:
 (arpan, eng, 100)  (bob, sales, 200)  (cara, eng, 150)  (dev, sales, 50)
 ```
 
-Loop se karo to `map[dept] += salary`. Stream me ye kaam ek line ka hai:
+Loop se karo to har employee pe `map[dept] += salary` karna padta hai. Stream me ye kaam ek line ka hai:
 
 ```java
 emps.stream().collect(groupingBy(e -> e.dept, summingInt(e -> e.salary)));
@@ -51,7 +51,7 @@ Test data me har dept ek hi baar tha, isliye sab chal gaya. Prod me ek dept me d
 
 ## Loop ya stream
 
-Seedha kaam (filter, map, group, ginti) ho to stream chhoti padti hai. Logic bhaari ho (beech me `break`, kai if-else, checked exception, debug me breakpoint chahiye) to loop behtar hai. Dono sahi hain, jo padhne me saaf lage wahi likho.
+Agar kaam seedha hai, jaise filter, map, group ya ginti, to stream chhoti aur saaf padti hai. Agar logic bhaari hai, jaise beech me `break` chahiye, kai if-else hain, checked exception aata hai, ya debug me breakpoint lagana hai, to loop behtar hai. Dono sahi hain, jo padhne me saaf lage wahi likho.
 
 ## Tera hands-on
 

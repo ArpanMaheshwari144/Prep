@@ -43,11 +43,11 @@ interface MathOperation {             // @FunctionalInterface nahi lagaya
 }
 ```
 
-Is interface ki khud koi galti nahi dikhti, error poore codebase me har us jagah aata hai jahan `(a, b) -> a + b` likha tha. Annotation laga hota to error usi ek line pe aata jahan `undo` joda gaya.
+Teammate ne `undo` joda, to ab interface me do abstract method ho gaye aur wo functional nahi raha. Par is interface pe khud koi error nahi dikhta. Error poore codebase me har us jagah aata hai jahan `(a, b) -> a + b` likha tha. Agar annotation laga hota, to error usi ek line pe aata jahan `undo` joda gaya.
 
 ## Tera project
 
-InsuranceManagementSystem `ClaimService` me `.orElseThrow(() -> new EntityNotFoundException("Claim Not Found " + id))`. Ye `() -> ...` ek Supplier hai: input kuch nahi, exception bana ke deta hai, aur sirf tab chalta hai jab claim na mile.
+InsuranceManagementSystem ke `ClaimService` me tune likha hai `.orElseThrow(() -> new EntityNotFoundException("Claim Not Found " + id))`. Ye `() -> ...` ek Supplier hai. Ye koi input nahi leta, bas exception bana ke deta hai, aur sirf tab chalta hai jab claim na mile.
 
 ## Interview line
 

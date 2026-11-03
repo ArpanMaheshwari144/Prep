@@ -39,11 +39,11 @@ orders.parallelStream()
       .collect(...);
 ```
 
-Saari `parallelStream` poori JVM me ek hi chhota thread pool share karti hain (common ForkJoinPool, size = cores - 1). Usme API ya DB jaisa rukne wala kaam daala to pool ke saare thread intezaar me baith jaate hain, aur app ki baaki har `parallelStream` bhi atak jaati hai. Ye wahi thread pool ki kahani hai jo multithreading me dekhi thi. `parallelStream` sirf tab lagao jab data bada ho, kaam CPU wala ho aur items ek-doosre se alag hon.
+Saari `parallelStream` poori JVM me ek hi chhota thread pool share karti hain. Iska naam common ForkJoinPool hai, aur iska size cores - 1 hota hai. Usme API ya DB jaisa rukne wala kaam daala to pool ke saare thread intezaar me baith jaate hain, aur app ki baaki har `parallelStream` bhi atak jaati hai. Ye wahi thread pool ki kahani hai jo multithreading me dekhi thi. `parallelStream` sirf tab lagao jab data bada ho, kaam CPU wala ho aur items ek-doosre se alag hon.
 
 ## Tera project
 
-SimpleBankSystem `AccountService.getAccountHolderNames()`:
+SimpleBankSystem ke `AccountService.getAccountHolderNames()` me tune yahi belt lagayi hai. `findAll()` source hai, `map` beech ka station hai, aur `collect` end pe maal uthata hai:
 
 ```java
 return repository.findAll()          // source

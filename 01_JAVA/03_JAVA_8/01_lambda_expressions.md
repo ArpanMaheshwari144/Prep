@@ -13,7 +13,7 @@ Collections.sort(patients, new Comparator<Patient>() {
 });
 ```
 
-Java 8 me wahi kaam ek line me:
+Java 8 me wahi kaam ek line me ho jaata hai:
 
 ```java
 Collections.sort(patients, (a, b) -> a.getName().compareTo(b.getName()));
@@ -47,7 +47,7 @@ Wajah ye hai ki lambda variable ki copy leta hai. Ye wahi `int bal = w.balance` 
 
 ## Tera project
 
-Multithreading practical (`DeadlockDemo`, `ProducerConsumer`) me `new Thread(() -> {...})` likha hai. Wahan `Runnable` ka ek khaana (`run`) lambda se bhara gaya hai.
+Tere multithreading practical (`DeadlockDemo`, `ProducerConsumer`) me `new Thread(() -> {...})` likha hai. Wahan `Runnable` ka ek hi khaana hai (`run`), aur wahi lambda se bhara gaya hai.
 
 ## Interview line
 

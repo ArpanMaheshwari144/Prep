@@ -2,7 +2,7 @@
 
 ## Kahani
 
-Doctor ne bola: "patient 101 ka naam do." Tune `findPatient(101)` chalaya. Patient mila hi nahi, `null` aaya, aur seedha `p.getName()` likha tha. Nateeja: `NullPointerException`, prod crash. Har jagah `if (p != null)` lagao to code bhaari ho jaata hai, aur kahin na kahin chhoot bhi jaata hai.
+Doctor ne bola: "patient 101 ka naam do." Tune `findPatient(101)` chalaya. Patient mila hi nahi, to `null` aaya, aur tune seedha `p.getName()` likha tha. Nateeja ye hua ki `NullPointerException` aaya aur prod crash ho gaya. Har jagah `if (p != null)` lagao to code bhaari ho jaata hai, aur kahin na kahin chhoot bhi jaata hai.
 
 Java 8 ne `null` ki jagah ek **dabba** de diya:
 
@@ -36,11 +36,11 @@ p.orElse(dbSeDefaultLao());            // dabba bhara ho tab bhi DB call chali
 p.orElseGet(() -> dbSeDefaultLao());   // sirf khaali hone pe chalegi
 ```
 
-`orElse(x)` me Java pehle `x` banata hai, phir method chalata hai. Isliye DB call har baar hoti hai. `orElseGet` ek Supplier leta hai, jo sirf khaali dabbe pe chalta hai. Default sasta ho (`"Unknown"`) to `orElse` theek hai. Default mehnga ho (DB / API) to `orElseGet` lagao.
+`orElse(x)` me Java pehle `x` banata hai, phir method chalata hai. Isliye DB call har baar hoti hai. `orElseGet` ek Supplier leta hai, jo sirf khaali dabbe pe chalta hai. Agar default sasta hai (jaise `"Unknown"`), to `orElse` theek hai. Agar default mehnga hai (DB ya API call), to `orElseGet` lagao.
 
 ## Tera project
 
-InsuranceManagementSystem `ClaimService`:
+InsuranceManagementSystem ke `ClaimService` me tune ye likha hai:
 
 ```java
 Claim c = claimRepository.findById(id)
