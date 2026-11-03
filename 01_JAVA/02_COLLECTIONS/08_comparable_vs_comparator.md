@@ -1,189 +1,45 @@
 # Comparable vs Comparator
 
-> **V90 — Collections: Topic 30**
+## Tere DSA se
 
----
+Meeting rooms / merge intervals me C++:
 
-## STORY — Sort Karne Ki Zarurat
-
-→ Panelists ki list **age se sort** karni thi. `Collections.sort()` kiya — **error**
-→ Panelist class mein `compareTo()` nahi tha
-→ **Comparable** = class ke **andar** ek natural ordering define karo
-→ Lekin kal **naam se sort** karna tha, **parso rating se** — ek hi `compareTo()` nahi chalega
-→ **Comparator** = bahar se **alag-alag rules** banao. Class touch nahi karni
-→ **Comparable** = "main age se sort hounga" (class ka apna rule)
-→ **Comparator** = "isko salary se sort karo" (Manager ka rule, bahar se)
-
----
-
-## Visualization
-
-```
-COMPARABLE                          COMPARATOR
-(Natural Order)                     (Custom Order)
-
-class Employee implements           class SalaryComparator implements
-        Comparable                          Comparator
-
-  compareTo(Employee o)               compare(Employee a, Employee b)
-  return Integer.compare(this.age,    return Integer.compare(a.salary,
-                         o.age)                              b.salary)
-  (minus "this.age - o.age" MAT likho — TRAP 1, overflow)
-
-Class ke ANDAR define                ALAG class mein define
-java.lang.Comparable                 java.util.Comparator
-EK default sorting                   MULTIPLE sorting options
-Collections.sort(list)               list.sort(new SalaryComp())
+```cpp
+sort(v.begin(), v.end(), [](auto& a, auto& b){ return a[0] < b[0]; });
 ```
 
----
+Bahar se bataya "start pe sort karo". Java me isi ka naam **Comparator**.
 
-## Code
+## Do cheezein, do jagah
 
-### 1. Comparable — Class Ke Andar
-```java
-class Panelist implements Comparable<Panelist> {
-    String name;
-    int age;
-
-    @Override
-    public int compareTo(Panelist other) {
-        return Integer.compare(this.age, other.age);   // best practice
-    }
-}
-
-List<Panelist> list = new ArrayList<>();
-Collections.sort(list);                                 // compareTo() khud use hoga
-```
-
-**`compareTo()` return:**
-- Negative → `this` pehle
-- Zero → equal
-- Positive → `other` pehle
-
-★ **Return number ka matlab — umar se line (Arpan 25, Rahul 30, Priya 25):**
-```
-Sort do logon ko utha ke poochhta: "inme PEHLE kaun?"  Jawab = number ka SIGN (kitna bada, farak nahi)
-
-compare(Arpan, Rahul) = Integer.compare(25, 30) = -1  MINUS -> Arpan pehle   line: Arpan(25), Rahul(30)
-compare(Rahul, Arpan) = Integer.compare(30, 25) = +1  PLUS  -> Rahul baad me line: Arpan(25), Rahul(30)
-compare(Arpan, Priya) = Integer.compare(25, 25) =  0  ZERO  -> barabar, jaise khade waise
-
-YAAD: compare(a, b) ko "a - b" ki tarah socho (sirf SIGN ke liye, likhna Integer.compare hi):
-   a chhota -> a - b = minus -> a AAGE
-   a bada   -> a - b = plus  -> b AAGE
-   barabar  -> 0
-Ulta (bada pehle) -> a, b ki jagah badlo:  Integer.compare(b.age, a.age)
-```
-
-### 2. Comparator — Class Ke Bahar
-```java
-// Rule 1 — Age se sort
-Comparator<Panelist> byAge = (a, b) -> Integer.compare(a.age, b.age);
-
-// Rule 2 — Name se sort
-Comparator<Panelist> byName = (a, b) -> a.name.compareTo(b.name);
-
-// Use:
-Collections.sort(list, byAge);
-Collections.sort(list, byName);
-```
-
----
-
-## TRAP 1 — `this.age - other.age` ≠ `Integer.compare()`
+- **Comparable:** class ke andar ek default kram (`Panelist implements Comparable`, `compareTo` me age). Bas ek rule.
+- **Comparator:** class ke bahar, jitne chaho rule (aaj naam, kal rating). Class nahi chhedni.
 
 ```java
-return this.age - other.age;        // OVERFLOW risk!
-// age = Integer.MAX_VALUE, other = -1 → subtraction overflow
-
-return Integer.compare(this.age, other.age);   // SAFE — best practice
+list.sort(Comparator.comparing(Panelist::getName));        // naam se
+list.sort(Comparator.comparingInt(Panelist::getAge));      // umar se
 ```
 
-> **HAMESHA `Integer.compare()` use karo. Interview mein yahi best practice.**
+Return number: sort do logon ko utha ke poochhta "pehle kaun?". Minus = pehla aage, plus = doosra aage, 0 = barabar.
+Bada pehle chahiye = a, b ki jagah badlo.
 
----
+## Trade-off
 
-## Comparable vs Comparator
+Comparable seedha, par ek kram. Comparator lachila, par har jagah likhna. Asli kram (id) class me, baaki Comparator se.
 
-| Feature | Comparable | Comparator |
-|---------|-----------|-----------|
-| **Kahan?** | Class ke **andar** | Class ke **bahar** |
-| **Method** | `compareTo(other)` | `compare(a, b)` |
-| **Kitne rules?** | Sirf **EK** — default sorting | **MULTIPLE** |
-| **Class change?** | Haan — implement karo | Nahi — untouched |
-| **Sort kaise?** | `Collections.sort(list)` | `Collections.sort(list, rule)` |
-
----
-
-## POWER PHRASE
-
-> *"Comparable defines natural ordering within the class via `compareTo()`. Comparator defines external, flexible ordering via `compare()` — you can have multiple Comparators for the same class. Use `Integer.compare()` instead of subtraction to avoid overflow."*
-
-> **Yaad rakh:**
-> Comparable = class andar, ek rule, `compareTo()`
-> Comparator = class bahar, multiple rules, `compare()`
-> `Integer.compare()` = overflow safe, best practice
-
----
-
-## Confusion Clear — `compare()` vs `compareTo()` Dono Kyu Aate?
-
-**Pakdi gayi confusion (interview ka classic):**
+## Prod trap
 
 ```java
-Comparator<Panelist> byAge  = (a, b) -> Integer.compare(a.age, b.age);
-Comparator<Panelist> byName = (a, b) -> a.name.compareTo(b.name);
-//                                              ↑
-//                                  ye compareTo kahan se aaya?
+(a, b) -> (int)(a.createdAt - b.createdAt)   // epoch millis, long
 ```
 
-**Asli baat:** `Comparator` interface ne sirf ek demand ki — tu `compare(a, b)` likh aur int return kar. **Beech mein kya tool use karta — tera choice.**
+Do timestamp ka farak `int` me nahi samata (~24 din se zyada ka farak int ki had paar). Number ulta, list chup-chaap
+galat kram me. Ilaaj: `Long.compare(a.createdAt, b.createdAt)`. Int me bhi `a - b` nahi, `Integer.compare`.
 
-### Compare karne ke 3 tools:
+## Interview line
 
-| Tool | Kab use? |
-|------|---------|
-| **`Integer.compare(x, y)`** | int compare karna ho — **safest** (overflow nahi) |
-| **`x.compareTo(y)`** | String, Integer, Double pe — kyunki Java ne ye sab pehle se **Comparable** banaye hain |
-| **`x - y`** | AVOID — overflow risk |
-
-### Code Breakdown:
-
-```java
-// byAge — int compare kar raha
-Comparator<Panelist> byAge = (a, b) -> Integer.compare(a.age, b.age);
-//                            ↑                  ↑
-//              Comparator override      tool: Integer.compare (int safe)
-
-
-// byName — String compare kar raha
-Comparator<Panelist> byName = (a, b) -> a.name.compareTo(b.name);
-//                            ↑                  ↑
-//              Comparator override      tool: String.compareTo()
-//                                       (String pehle se Comparable hai)
 ```
-
-### Saaf Rule:
-
-> **`Comparator` ka `compare(a, b)` = jo TU likh raha (override).**
-> **Andar `compareTo()` ya `Integer.compare()` = compare karne ka TOOL.**
-> Dono alag cheezein hain — ek interface method, doosra utility.
-
-### Quick reference:
-
-```java
-// int field
-(a, b) -> Integer.compare(a.x, b.x)
-
-// String field
-(a, b) -> a.name.compareTo(b.name)
-
-// double field
-(a, b) -> Double.compare(a.salary, b.salary)
-
-// long field
-(a, b) -> Long.compare(a.timestamp, b.timestamp)
+Comparable gives a class one natural order through compareTo, while Comparator lets me sort the same
+objects many ways without touching the class; I always use Integer.compare or Long.compare rather
+than subtraction, because subtracting timestamps can overflow and silently sort in the wrong order.
 ```
-
-**Mantra:** Java ne jo built-in `compareTo` diya, woh **utility** hai. `Comparator` ka `compare(a,b)` woh **interface ka method** hai jo tu override karta. Naam mile-jule sound karte par **alag jagah, alag kaam.**
