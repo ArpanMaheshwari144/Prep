@@ -1,154 +1,49 @@
-# Type Casting — Upcasting & Downcasting
+# Type casting (upcasting aur downcasting)
 
-> **V90 — Core Java Extras: Topic 22**
+Ye `instanceof` wali file ka hi doosra hissa hai.
 
----
+## Tere bank se shuru
 
-## STORY — Animal Reference
+Tere `Main.java` me likha hai `Account a1 = new SavingsAccount(...)`. Object Savings ka hai, par reference `Account` ka. Isko
+upcasting kehte hain: bachche ko parent ke dabbe me rakh diya. Ye apne aap hota hai, cast likhna nahi padta, aur hamesha safe hai,
+kyunki har Savings account ek Account to hai hi.
 
-→ Tune Animal reference mein **Dog store kiya** — Upcasting (automatic, safe)
-→ Ab Dog ke special methods chahiye — `bark()`
-→ Animal mein nahi hai. **Downcast karna padega**
-→ **Lekin bina check ke kiya toh `ClassCastException`** runtime pe aata, compiler nahi pakdta
-→ Isliye **hamesha `instanceof` pehle, phir cast**
-→ `Animal a = new Dog()` → Dog andar hai, **Animal reference**
-→ **Upcasting:** automatic, safe
-→ **Downcasting:** manual, ClassCastException risk → `instanceof` se pehle check
-
----
-
-## Code
-
-### Upcasting — Child → Parent reference. Automatic. Always safe.
-```java
-Animal a = new Dog();      // Upcasting — automatic, koi cast nahi
-a.eat();                   // Animal method — Animal reference se chalega
-a.bark();                  // COMPILE ERROR — bark() Animal mein nahi hai!
-```
-
-### Downcasting — Parent reference → Child type. Manual. Cast likhna padta.
-```java
-Animal a = new Dog();
-Dog d = (Dog) a;           // Downcasting — andar Dog hai, safe
-d.bark();                  // Dog method ab accessible
-
-// TRAP — andar Dog nahi hai
-Animal a = new Animal();
-Dog d = (Dog) a;           // ClassCastException — andar Animal hai!
-
-// Safe tarika — instanceof pehle
-if (a instanceof Dog) {
-    Dog d = (Dog) a;       // safe — confirm karke cast
-    d.bark();
-}
-```
-
----
-
-## Visualization
+Par upcast ke baad tu sirf wahi method bula sakta hai jo `Account` me hain. Savings ka koi khaas method bulana ho, to reference ko
+wapas bachche me badalna padega. Isko downcasting kehte hain: `SavingsAccount s = (SavingsAccount) a1;`. Ye tujhe khud likhna padta
+hai, aur ye risky hai.
 
 ```
-              Type Casting Visualization
-
-╔════════════════════════════════════════════════════════════╗
-║ UPCASTING — Child → Parent (automatic, safe)               ║
-╚════════════════════════════════════════════════════════════╝
-
-      Dog dog = new Dog();
-      Animal a = dog;          ◄── automatic upcast
-
-  STACK            HEAP
-                   ┌────────────┐
-   dog ──────────►│            │
-                   │  Dog obj   │   ← Dog = real object
-   a   ──────────►│   (full)   │     dono SAME object pe point
-                   └────────────┘     (sirf reference type alag)
-
-  a.eat()     (Animal method, accessible)
-  a.bark()    COMPILE ERROR — Animal mein bark() nahi
-
-
-╔════════════════════════════════════════════════════════════╗
-║ DOWNCASTING — Parent → Child (manual, risky)               ║
-╚════════════════════════════════════════════════════════════╝
-
-      Animal a = new Dog();      ← upcast pehle
-      Dog d = (Dog) a;           ← manual downcast
-
-   STACK            HEAP
-                   ┌────────────┐
-   a ────────────►│            │
-                   │  Dog obj   │
-   d ────────────►│            │   ← d ab Dog methods access kar sakta
-                   └────────────┘
-
-  d.bark()    (ab Dog reference, bark accessible)
-
-
-╔════════════════════════════════════════════════════════════╗
-║ DOWNCAST CRASH — andar Dog hai hi nahi                     ║
-╚════════════════════════════════════════════════════════════╝
-
-      Animal a = new Animal();   ← real object Animal
-      Dog d = (Dog) a;           ClassCastException!
-                                   (cast to Dog but object Animal hai)
-
-   STACK            HEAP
-                   ┌────────────┐
-   a ────────────►│ Animal obj │   ← Dog NAHI, simple Animal
-                   └────────────┘
-
-   Dog ka bark() exist hi nahi → runtime crash
-
-
-╔════════════════════════════════════════════════════════════╗
-║ SAFE TARIKA — instanceof check                             ║
-╚════════════════════════════════════════════════════════════╝
-
-      if (a instanceof Dog) {
-          Dog d = (Dog) a;       ← confirm karke cast
-          d.bark();
-      }
+UPCAST   Account a = new SavingsAccount(...)   apne aap hota hai, hamesha safe
+DOWNCAST SavingsAccount s = (SavingsAccount) a  khud likhna padta hai; andar Savings na hua to ClassCastException
 ```
 
----
+## Ye kis dikkat se bana
 
-## Summary
+Upcasting isliye hai taaki saare account ek `List<Account>` me rakh sako aur ek hi loop me `calculateInterest()` bula sako.
+Downcasting isliye hai taaki zaroorat pade to kisi ek type ka khaas kaam kar sako.
 
-| | Upcasting | Downcasting |
-|--|-----------|-------------|
-| **Direction** | Dog → Animal | Animal → Dog |
-| **Cast likhna?** | NO (automatic) | YES (manual) |
-| **Safe?** | Always | Bina check → ClassCastException |
-| **Methods** | Sirf parent ke | Child ke extra access |
+## Do trap
 
----
+Pehla trap: compiler downcast ko rokta nahi, kyunki use nahi pata ki chalte waqt andar kya hoga. Agar andar FD tha aur tune
+`(SavingsAccount)` likh diya, to crash compile pe nahi, chalte waqt hota hai. Isliye pehle `instanceof` se poochho, phir cast karo, ya
+seedha `if (a instanceof SavingsAccount s)` likho.
 
-## TRAP 1
+Doosra trap: bilkul alag type pe cast, jaise `(Account) "hello"`, compile hi nahi hota. Kyunki String aur Account ka koi rishta nahi
+hai, aur Java ko pehle se pata hai ki ye kabhi sahi nahi ho sakta.
 
-> **Upcasting mein child ke extra methods access nahi hote.**
-> `a.bark()` → compile error even if Dog andar hai!
-> ★ Par jo method Dog ne OVERRIDE kiya, wo Dog ka hi chalega: `a.eat()` → Dog.eat()
->   (kaunsa NAAM call ho sakta = reference dekhta · kaunsa CODE chalega = object dekhta)
+## Prod wala trap
 
-## TRAP 2
+Jab JSON ko `Map<String, Object>` me padhte ho, jaise kisi webhook ka body, to Jackson chhote number ko `Integer` bana deta hai, `Long`
+nahi. Phir koi `(Long) map.get("amount")` likhta hai, aur `ClassCastException` aata hai, sirf us din jab amount chhota ho. Bachao:
+`((Number) map.get("amount")).longValue()`, jo Integer aur Long dono pe chalta hai. (Ye Jackson ke default niyam se likha hai, chala ke
+nahi dekha.)
 
-> **`ClassCastException` runtime pe aata hai — compiler nahi pakdta.**
-> Isliye `instanceof` check **mandatory** hai.
+## Interview line
 
-## TRAP 3 — bilkul alag type pe cast = compile error, exception nahi
-
-```java
-Dog d = new Dog();
-String s = (String) d;     // COMPILE ERROR — Dog aur String ka koi rishta nahi
-Cat c = (Cat) d;           // COMPILE ERROR — Dog aur Cat bhai hain, ek doosre ke parent/child nahi
-Animal a = d;  Cat c2 = (Cat) a;   // compile ho jaata, RUNTIME pe ClassCastException
 ```
-
----
-
-## POWER PHRASE
-
-> *"Upcasting is automatic and always safe — a child reference can always be assigned to a parent type. Downcasting is manual and requires an `instanceof` check first — without it you risk a ClassCastException at runtime."*
-
-> **Yaad rakh:** Upcast = automatic. Downcast = manual + `instanceof` check. Bina check → ClassCastException.
+Upcasting is storing a child in a parent reference, automatic and always safe; in my bank,
+Account a1 = new SavingsAccount(...) lets one loop call calculateInterest on all accounts.
+Downcasting goes back to the child type, needs an explicit cast and can throw
+ClassCastException at runtime, so check with instanceof first. Casting unrelated types does
+not even compile.
+```
