@@ -1,151 +1,48 @@
-# HashSet — Andar Se Samjho
+# HashSet: andar se
 
-> **V90 — Collections: Topic 29**
+## Tere STAR se (Email dedup, STAR 10)
 
----
+10,000 panelists, kuch ne ek email do baar register kiya. ArrayList me dono chale jaate; HashSet me duplicate apne
+aap ruk jaata.
 
-## STORY — Duplicate Emails
+## Andar ka raaz: HashSet = HashMap
 
-→ 10,000 panelists — kuch ne **duplicate emails register** kiye
-→ ArrayList mein add karo — **duplicate aa jaata**
-→ **HashSet liya — duplicate automatically reject**
-→ **Kyu?** Andar se HashSet **HashMap hi hai** — tera element key ban jaata hai, value ek dummy object
-→ Same key dobara? **Naya entry nahi banta** — purani KEY wahi rehti, sirf dummy value (PRESENT -> PRESENT) likhi jaati, `add()` **false** lautata. **Isliye duplicate impossible**
-
----
-
-## WHY — HashMap Reuse Kyu Kiya?
-
-→ Duplicate check ke liye **`hashCode()` + `equals()` chahiye**
-→ HashMap **already ye karta hai** keys ke liye
-→ Naya data structure banane ki **zarurat hi nahi**
-→ Clever reuse — `set.add("X")` = `map.put("X", PRESENT)`
-→ Same key dobara? **KEY replace NAHI hoti** (pehla object hi rehta) — naya entry nahi → **duplicate rejected**, `add()` = false
-
----
-
-## Internal — HashSet Source Code
+Element = map ki key, value = ek dummy object.
 
 ```java
-// HashSet andar se ye hai:
-private HashMap<E, Object> map;
-private static final Object PRESENT = new Object();   // dummy value
-
-public boolean add(E e) {
-    return map.put(e, PRESENT) == null;               // element = key, value = dummy
-}
+set.add("arpan@gmail.com")  =  map.put("arpan@gmail.com", PRESENT)
+// dobara add -> key pehle se -> naya entry nahi -> add() = false
 ```
 
-```java
-Set<String> emails = new HashSet<>();
-emails.add("arpan@gmail.com");
-emails.add("rahul@gmail.com");
-emails.add("arpan@gmail.com");                        // duplicate!
+Duplicate rokne ko hashCode + equals chahiye, HashMap ye pehle se karta, to Java ne naya dabba nahi banaya.
 
-System.out.println(emails);
-// [arpan@gmail.com, rahul@gmail.com] — duplicate gone
+## File 01 se juda trap
+
+Apni class `Panelist` me `hashCode` override nahi -> same email wale do object alag khaano me -> `size() = 2`,
+duplicate ghus gaya. equals + hashCode dono, email pe.
+
+## Asli prod trap (1-Oct chala ke dekha): add != update
+
+Set ke liye "same" = same email (equals / hashCode email pe), naam dekhta hi nahi.
+
+1. Arpan register: email `arpan@gmail.com`, naam "Arpan" -> set me.
+2. Kal naam "Arpan M" kiya. Code ne naya Panelist (wahi email, naya naam) bana ke `set.add()` kiya, socha update hoga.
+3. Set: "is email wala pehle se andar" -> naya object liya hi nahi, `false`.
+4. Set me ab bhi purana naam "Arpan". Naya naam kahin nahi gaya, koi error bhi nahi.
+
+Gate pe register jaisa: Arpan andar ja chuka. Naya ID card leke dobara aaya to guard bola "tu andar hai", card wapas.
+Andar purane card wala hi.
+
+Ilaaj: `set.remove(purana)` phir `set.add(naya)`, ya `Map<email, Panelist>` (`put` sach me badalta).
+
+## Trade-off
+
+HashSet add / contains O(1), order nahi. Kram = LinkedHashSet, sorted = TreeSet (O(log n)).
+
+## Interview line
+
 ```
-
----
-
-## Visualization
-
+HashSet is just a HashMap whose keys are the elements and whose values are a dummy object, so
+duplicate detection comes from hashCode and equals; in an email dedup tool this means the key class
+must override both, and a duplicate add keeps the first object and returns false.
 ```
-HashSet = HashMap Ki Keys (Dummy Value)
-
-  set.add("arpan@gmail.com");
-  set.add("rahul@gmail.com");
-  set.add("arpan@gmail.com");    ← duplicate!
-
-  Internally → HashMap mein store:
-
-  ┌──────────────────┬────────────┐
-  │  KEY             │  VALUE     │
-  ├──────────────────┼────────────┤
-  │ "arpan@gmail.com"│  PRESENT   │   ← dummy
-  ├──────────────────┼────────────┤
-  │ "rahul@gmail.com"│  PRESENT   │   ← dummy
-  └──────────────────┴────────────┘
-
-  3rd add → "arpan@gmail.com" pehle se hai (key match)
-          → naya entry NAHI bana. Purani KEY wahi rahi, sirf value PRESENT->PRESENT
-          → map.put ne purani value lautayi (null nahi) -> add() = FALSE
-          → Duplicate avoid
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Custom Class Trap — hashCode + equals BOTH                 ║
-╚════════════════════════════════════════════════════════════╝
-
-  set.add(new Panelist("arpan@gmail.com"));
-  set.add(new Panelist("arpan@gmail.com"));    ← same email, alag object
-
-  Bina hashCode() override:
-  ┌────┐
-  │ 5  │ → [obj1: arpan]    ← hashCode = 12345
-  ├────┤
-  │ 8  │ → [obj2: arpan]    ← hashCode = 67890   ← ALAG bucket!
-  └────┘
-  size = 2  (duplicate ghus gayi)
-
-
-  Sahi — hashCode() + equals() DONO override:
-  ┌────┐
-  │ 5  │ → [obj1: arpan]    ← hashCode same
-  └────┘                       equals true → obj2 ANDAR NAHI GAYA, obj1 hi raha
-  size = 1
-
-  ★ Chala ke dekha (1-Oct):  add(PEHLA) = true · add(DOOSRA, same email) = false · set = [PEHLA]
-    -> set PEHLA object hi rakhta hai. Doosre ka "name" badla tha to wo badlaav set me NAHI aaya.
-```
-
----
-
-## Operations
-
-| Method | Time | Kaise? |
-|--------|------|--------|
-| `add(e)` | O(1) | hashCode → bucket → store |
-| `contains(e)` | O(1) | hashCode → bucket → check |
-| `remove(e)` | O(1) | hashCode → bucket → delete |
-| **Order** | No order | HashMap jaisa — koi guarantee nahi |
-
----
-
-## TRAP — Custom Class: hashCode() + equals() DONO Override
-
-```java
-// GALAT — sirf class likhi, kuch override nahi
-set.add(new Panelist("arpan@gmail.com"));
-set.add(new Panelist("arpan@gmail.com"));
-// set.size() = 2 — duplicate aaya! Alag objects, alag hashCode, alag bucket.
-
-// FIX — DONO override karo
-@Override
-public int hashCode() { return email.hashCode(); }    // same email = same bucket
-
-@Override
-public boolean equals(Object o) {
-    Panelist p = (Panelist) o;
-    return this.email.equals(p.email);                 // same email = equal
-}
-// ab set.size() = 1
-```
-
-> **TRAP 1:** Sirf `equals()` override kiya, `hashCode()` nahi → alag hashCode → alag bucket → `equals()` kabhi call hi nahi hoga → duplicate aa jayega.
-> **RULE:** equals() override → hashCode() **ZAROOR** override. Java ka contract hai.
-
-> **TRAP 2:** HashSet order **guarantee nahi**.
-> Order chahiye → **LinkedHashSet**.
-> Sorted chahiye → **TreeSet**.
-
----
-
-## POWER PHRASE
-
-> *"HashSet internally uses a HashMap — each element becomes a key with a dummy value. Duplicates are prevented because put on an existing key keeps the original key and only overwrites the dummy value, so add returns false. For custom objects, both `hashCode()` and `equals()` must be overridden — without `hashCode()`, two equal objects may land in different buckets and both get stored."*
-
-> **Yaad rakh:**
-> HashSet = HashMap ki keys
-> Duplicate nahi kyunki same key pe naya entry banta hi nahi (purana object rehta, add = false)
-> Custom class mein `hashCode() + equals()` dono override
