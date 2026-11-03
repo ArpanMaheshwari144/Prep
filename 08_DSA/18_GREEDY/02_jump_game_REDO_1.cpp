@@ -31,8 +31,16 @@ using namespace std;
 
 bool canJump(vector<int> &nums)
 {
-    // yahan likh
-    return false;
+    int maxReach = 0;
+    for (int i = 0; i < nums.size(); i++)
+    {
+        if (i > maxReach)
+        {
+            return false;
+        }
+        maxReach = max(maxReach, i + nums[i]);
+    }
+    return maxReach >= nums.size() - 1;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
@@ -62,6 +70,7 @@ int main()
     check({5, 0, 0, 0, 0, 0}, true, 10);
     check({4, 0, 0, 0, 0, 1}, false, 11);
     check({2, 0, 1, 0, 1}, false, 12);
-    cout << "\n" << passed << "/" << total << " PASS\n";
+    cout << "\n"
+         << passed << "/" << total << " PASS\n";
     return 0;
 }
