@@ -1,165 +1,61 @@
-# Immutable Class
+# Immutable class
 
-> **V90 — Core Java Extras: Topic 17**
+## Tere mini_payment se shuru
 
----
+`paymentservice` me `PayRequest` ek `record` hai: `record PayRequest(String orderId, double amount)`. Record Java ka bana-banaya
+immutable class hai. Ek baar object ban gaya, to uska `orderId` ya `amount` koi badal nahi sakta, kyunki usme setter hota hi nahi.
+Isiliye tere controller me `req.orderId()` likha hai, `getOrderId()` nahi.
 
-## WHY — Immutable Class Kyun Banate?
+Immutable class ka matlab hai ki object bante waqt jo value daali, wahi zindagi bhar rahegi. Kuch badalna ho, to naya object banao,
+aur purana waisa hi rahega.
 
-→ **Thread safety FREE** (koi modify nahi kar sakta = no sync)
-→ **HashMap key safe** (hashCode kabhi nahi badle)
-→ **Defensive programming** — object pass karo, koi tamper nahi karega
-→ **HOW:** final class + final fields + no setters + defensive copy
+## Ye kis dikkat se bana
 
----
+Pehli dikkat thread ki hai. Maan lo do thread ek hi `PayRequest` padh rahe hain. Agar use koi badal hi nahi sakta, to dono ke beech
+ladai ka sawaal hi nahi uthta, aur lock lagane ki zaroorat bhi nahi padti.
 
-## STORY — BankAccount Bug
+Doosri dikkat HashMap key ki hai, jo Collections me padha tha. Agar key object ki value baad me badal jaaye, to uska `hashCode` badal
+jaata hai. Phir HashMap use galat bucket me dhoondhta hai, aur tera data map me hote hue bhi nahi milta. Isliye `String` aur `Integer`
+jaisi immutable cheezein sabse achhi key hoti hain.
 
-→ Tune BankAccount class banayi
-→ Kisi function mein pass kiya — us function ne andar `account.setBalance(0)` kar diya
-→ **Bug.**
-→ Agar account **immutable** hota — koi change hi nahi kar sakta tha
-→ **4 rules:** `final` class, `private final` fields, **no setter**, constructor se set karo
-→ Aur andar List ho toh **defensive copy** lagao — warna reference se modify ho jaayega
-→ BankAccount pass kiya, kisi ne balance 0 kar diya!
+Teesri dikkat ye hai ki tune koi object kisi function ko diya aur us function ne chupke se uski value badal di. Immutable object pe
+ye ho hi nahi sakta.
 
----
+## Banane ke 4 niyam
 
-## Code (4 Rules)
+Class `final` ho, taaki koi bachcha class bana ke niyam na tod de. Fields `private final` hon. Value sirf constructor me set ho.
+Aur setter ek bhi na ho.
 
-```java
-public final class BankAccount {              // Rule 1 — final class
-    private final String owner;                // Rule 2 — private + final
-    private final int balance;
+## Prod wala trap: andar List ho to `final` bhi nahi bachata
 
-    public BankAccount(String o, int b) {     // Rule 3 — constructor se set
-        this.owner = o;
-        this.balance = b;
-    }
-
-    public String getOwner() { return owner; } // Rule 4 — sirf getter
-    public int getBalance() { return balance; } // koi setter NAHI
-}
-
-// Badlana ho? Naya object banao — purana safe
-BankAccount old = new BankAccount("Arpan", 5000);
-BankAccount updated = new BankAccount("Arpan", 4000);   // old wahi hai
-```
-
----
-
-## TRAP — List Field Hota Toh?
+Maine scratchpad me ek record banaya jisme ek List hai, aur chala ke dekha:
 
 ```java
-// BAD
-public BankAccount(List<String> txns) {
-    this.txns = txns;                  // bahar wali list ka REFERENCE!
-}                                       // koi bhi modify kar sakta!
+record Order(String orderId, List<String> items) {}
 
-// FIX — defensive copy in constructor + getter
-public BankAccount(List<String> txns) {
-    this.txns = new ArrayList<>(txns); // apni copy banao
-}
-public List<String> getTxns() {
-    return new ArrayList<>(this.txns); // copy return karo
-}
+List<String> list = new ArrayList<>(List.of("Pizza"));
+Order o = new Order("O1", list);
+list.add("Coke");             // bahar wali list me add kiya
+o.items().add("Fries");       // getter se mili list me add kiya
+
+// output: bahar se add ke baad order ke items = [Pizza, Coke]
+//         getter se add ke baad = [Pizza, Coke, Fries]
 ```
 
-> **`final` sirf reassign rokta hai. Andar List ho toh content badal sakta hai!**
+Order "immutable" tha, phir bhi uske items badal gaye. Kyunki `final` sirf itna rokta hai ki `items` kisi doosri list ki taraf na
+mude. List ke andar `add` karna wo nahi rokta. Upar se record ne bahar wali list ka hi reference rakh liya, apni alag copy nahi
+banayi. Isliye bahar se jo add hua, wo order ke andar bhi dikh gaya.
 
-Java 10+ chhota tareeka: `this.txns = List.copyOf(txns);` → copy BHI, aur wo list khud
-unmodifiable (add() pe exception). Phir getter seedha `return txns;` de sakta.
+Bachao: constructor me apni copy rakh lo, jaise `this.items = List.copyOf(items)`. Ye copy bhi banata hai, aur us copy me `add`
+karne pe exception bhi deta hai. Agar `List.copyOf` nahi lagaya, to constructor aur getter dono me `new ArrayList<>(...)` se copy
+deni padti hai.
 
----
-
-## Visualization — Reference Trap
-
-```
-                  Immutable Class — Reference Trap
-
-╔════════════════════════════════════════════════════════════╗
-║ BAD — same reference store                                 ║
-╚════════════════════════════════════════════════════════════╝
-
-STACK              HEAP
-                   ┌─────────────┐
-caller's list ────►│  ["Java"]   │◄──── student.courses
-                   └─────────────┘
-                   DONO SAME object pe point!
-
-caller list.add("Python") → student ki "immutable" state BHI badli!
-
-
-╔════════════════════════════════════════════════════════════╗
-║ FIX — defensive copy                                       ║
-╚════════════════════════════════════════════════════════════╝
-
-STACK              HEAP
-                   ┌─────────────┐
-caller's list ────►│  ["Java"]   │   ← caller ki original
-                   └─────────────┘
-
-                   ┌─────────────┐
-student.courses ──►│  ["Java"]   │   ← Student ki APNI copy
-                   └─────────────┘
-
-ALAG objects → caller modify kare, Student safe.
-```
-
----
-
-## ★ TRAP — "final class + private final" phir bhi toot gayi (Student example, output ke saath)
-
-```java
-final class Student {
-    private final List<String> courses;
-    Student(List<String> c) { this.courses = c; }              // SAME reference!
-    List<String> getCourses() { return courses; }              // SAME reference!
-}
-
-List<String> list = new ArrayList<>();
-list.add("Java");
-Student s = new Student(list);
-list.add("Python");                                             // bahar se andar BADLA!
-s.getCourses().size();    // 2 — Immutable TOOT GAYI!
-```
-
-→ Student ne **kabhi `add()` call nahi kiya** — phir bhi uski list 2 ki ho gayi, kyunki bahar wala caller SAME object modify kar raha tha.
-→ Asli galti constructor mein: `this.courses = c;` = caller ki list ka reference store kar liya. Caller ki list aur Student ki list **EK HI OBJECT**.
-→ Getter bhi same reference de raha → `s.getCourses().add(...)` se bhi andar badlega. Isliye copy **constructor + getter DONO** mein.
-
-> **`final` = reference reassign nahi hota. `final` ≠ object ka content modify nahi hota.**
-> Mutable field (List, Set, Map) ka reference share kiya = "immutable" actually mutable hai bahar ke caller ke through.
-
-**WHY String field mein ye problem nahi?**
-→ String **khud immutable** hai — `add()` jaisi koi method nahi
-→ Reference share ho bhi gaya, content modify hi nahi hota
-→ Lekin **List/Set/Map mutable** — `add/remove` se content badal sakta
-→ Isliye **mutable fields ke liye defensive copy** ZAROOR
-
----
-
-## ★ TRAP — Shallow copy vs Deep copy
+## Interview line
 
 ```
-SHALLOW COPY:
-   Object copy — par andar ke (nested) REFERENCES shared
-   User u1 = ...
-   User u2 = u1.clone()   // shallow (default clone)
-   u2.address.city = "X"   → u1.address.city bhi "X" (dono ka SAME address object)
-   (u2.address = new Address() karte to sirf u2 ka badalta — dikkat ANDAR badalne me hai)
-
-DEEP COPY:
-   Object + SAARE nested objects ki FULL copy
-   u1 aur u2 = INDEPENDENT, koi sharing nahi
+An immutable class sets all state once in the constructor and never changes it: final class,
+private final fields, no setters. In my payment service, PayRequest is a record, which is
+immutable by default. It gives free thread safety and safe HashMap keys. The trap is a mutable
+field like a List: final stops reassignment, not add(), so copy it in the constructor with
+List.copyOf.
 ```
-→ Upar wala defensive copy isi ka kaam hai: reference share mat karo, apni copy rakho.
-
-> *"For immutable classes with mutable fields like List, you must defensive-copy in both the constructor and getter — otherwise the external reference can mutate the internal state. `final` only prevents reference reassignment, not content modification."*
-
-
----
-
-## POWER PHRASE
-
-> *"An immutable class uses final class, private final fields, no setters, and constructor-only initialization. For mutable fields like List, always use defensive copies — otherwise the reference can be modified externally."*
