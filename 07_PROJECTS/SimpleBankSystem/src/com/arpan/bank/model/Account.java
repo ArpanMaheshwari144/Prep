@@ -147,6 +147,8 @@ public abstract class Account {
     }
 
     public synchronized void withdraw(double amount) {
+        // bina is check ke withdraw(-500) -> balance - (-500) = paise BADH jaate
+        if (amount <= 0) throw new IllegalArgumentException("Amount > 0 hona chahiye");
         if (amount > balance) {
             throw new InsufficientFundsException(
                 "Account " + accountId + ": balance " + balance + ", asked " + amount
