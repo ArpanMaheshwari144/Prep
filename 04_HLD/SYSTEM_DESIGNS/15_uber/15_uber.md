@@ -155,6 +155,14 @@ cash. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 **Asli naam:** atomic charge (partial nahi), ride status PAYMENT_PENDING jab tak SUCCESS, fallback payment (GPay / cash),
 dono app pe status.
 
+**Maan lo (socha hua) ride ke beech Raju ka phone hi switch off, GPS band, naksha pe Raju gayab:** phone band hona Uber
+ke haath me nahi, ye design ki dikkat nahi. Phone apni location khud bhejta hai, server poochhta nahi; location aani
+band hui to server ek-do baar dekhega, phir apni taraf se bhi band. Jahan tak aaye utne paise Arpan ki app me dikhte,
+wo de do, aur Uber support ko phone: "driver ka phone band ho gaya". Support ride band kar de, DB me update, Raju
+kahin nahi dikhega.
+**Asli naam:** location timeout (phone push karta, server sirf intezaar), manual close support se, ride status DB me
+update, driver available list se bahar.
+
 ---
 
 Notes (Arpan ke shabd) = [UBER_HAND_NOTES.md](UBER_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)

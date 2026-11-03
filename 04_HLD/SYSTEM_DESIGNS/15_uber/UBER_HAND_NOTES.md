@@ -58,6 +58,10 @@ Technical me: "jo dikhaya wahi" = upfront fare: quote ride ke saath save (lock),
 Arpan: Kaatna hai to poora kaato, aadha mat kaato: 40 kaat ke chhod diya to log jaan-boojh ke 1 rupaya rakhenge. Wallet me 250 nahi to app me saaf dikhao "payment nahi hua", aur Raju ke phone pe bhi dikhe. Arpan GPay se de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak khatam nahi" = ride status PAYMENT_PENDING jab tak SUCCESS, "GPay / cash" = fallback payment method, dono app pe dikhe.
 
+**14. (Socha hua, hypothetical) Ride ke beech Raju ka phone switch off. GPS bhi band, naksha pe Raju gayab. Ride khatam kaun karega?**
+Arpan: Phone band hona Uber ke haath me nahi, design ki dikkat nahi. Phone apni location khud bhejta hai, server poochhta nahi. Location aani band hui to server ek-do baar dekhega, phir apni taraf se bhi band. Jahan tak aaye utne paise Arpan ki app me dikhenge, wo de do. Phir Uber support ko phone: "driver ka phone band ho gaya". Support wahan se ride band kar dega, DB me update, Raju kahin nahi dikhega.
+Technical me: "location aani band, ek-do baar dekha" = location timeout (phone push karta, server sirf intezaar karta), "utne paise" = jahan tak ka kiraya / jo dikhaya, "support ride band kare" = manual close, ride status DB me update, driver available list se bahar.
+
 &nbsp;
 
 Poora design = [15_uber.md](15_uber.md)
