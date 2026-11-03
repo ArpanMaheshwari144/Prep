@@ -63,11 +63,6 @@ ka ek; 1 lakh log to unka ek. Us system ka koi na koi maalik hoga, sab uske hisa
 **Asli naam:** centralized system, ek hi version = ek doc ka kram aur OT ek hi jagah, har doc ka alag maalik = har doc
 ka ek owner server (LB `docId` dekh ke ring pe owner chunta, ek doc ke saare editor wahin).
 
-**Maan lo maalik hi gir gaya:** main wo centralized system hoon, mujhe pata main gira to inka kaam ruk jaayega. To
-apni ek copy bana dunga: kal chhutti pe chala jaaun ya tabiyat kharab ho to thode din tu sambhal lena, tu meri copy
-hai, jo mujhe aata wo tujhe aata.
-**Asli naam:** apni copy = owner ki copy (standby server), owner gira to copy naya owner, LB doc ke editor ab usi pe.
-
 ```mermaid
 flowchart LR
     A["Arpan"] --> LB["Banda<br/>(LB: docId se ring)"]
@@ -96,8 +91,8 @@ poora para uda. To use ek chhoti memory me likho. Maan le mere paas ek dabba hai
 kar raha. Kal wo dabba mar jaaye ya gir jaaye, to us dabbe ki ek aur copy bana dunga. Ya main dabbe ko bolunga: ye
 meri information tu bhi store kar le. Kal mujhe kuch ho jaaye to tu hai, tujhe kuch ho jaaye to main hoon. Dabbe aur
 copy me likh gaya, tabhi "Saved".
-**Asli naam:** dabba = Redis buffer (tez, chalta doc), dabbe ki copy = pakki jagah: ops chhote batch me (~1 sec)
-Cassandra me (3 copy). Redis ki apni copy der se bharti, us pe "Saved" ka bharosa nahi. "Saved" = ACK tabhi jab
+**Asli naam:** dabba = Redis buffer (tez, chalta doc), dabbe ki copy = pakki jagah: har op turant
+Cassandra me bhi (3 copy). Redis ki apni copy der se bharti, us pe "Saved" ka bharosa nahi. "Saved" = ACK tabhi jab
 Cassandra ne likh liya. Mujhe kuch ho to tu hai = owner gira to naya owner (copy) Cassandra se doc utha ke aage chalta.
 
 ```mermaid

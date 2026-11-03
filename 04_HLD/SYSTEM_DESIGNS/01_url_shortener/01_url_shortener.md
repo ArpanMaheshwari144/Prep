@@ -75,7 +75,7 @@ denge.
 **Asli naam:** ladke ki timeline = lock TTL (umar khatam to lock khulta, agla le leta), purani do, baad me update =
 soft / hard TTL (soft nikla to purana turant do, peeche se naya lao).
 
-## 4. 5 counter, dono ne token "10" diya (apni-apni range + duplicate manager)
+## 4. 5 counter, dono ne token "10" diya (apni-apni range)
 
 Ek counter se bheed nahi sambhli, 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha, to counter 1 aur 2
 dono ne apne 10ve aadmi ko token "10" de diya. To paanchon ko range me baant do: tu 1 se 100 karega, tu 101 se 200,
@@ -85,15 +85,11 @@ nahi milta, to same token kabhi nahi.
 **Asli naam:** 5 counter = kai app server + aage load balancer, apni-apni range = counter range (beech ka counter har
 app server ko number ka dabba deta, dabba khatam hone pe hi agla maangta, to us pe bojh bhi nahi).
 
-**Maan lo manager achanak chhutti pe:** uski jagah ek aur manager, uska duplicate rakh lo. Jaise company me ek manager
-chhutti pe jaaye to doosra sambhaal leta, same to same yahan.
-**Asli naam:** duplicate manager = range dene wale counter ki replica.
-
 ```mermaid
 flowchart LR
     U["Log<br/>(User)"] --> LB["Bheed baantne wala<br/>(Load balancer)"]
     LB --> C["5 counter<br/>(App servers)"]
-    M["Manager + duplicate<br/>(Range counter + replica)"] --> C
+    M["Manager<br/>(Range counter)"] --> C
     C --> R[("Chhota register<br/>(Redis)")]
     C --> D[("Mota register<br/>(Cassandra)")]
     style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
@@ -156,8 +152,9 @@ lo: user ko dene se pehle khud check karo ki jo wo bana raha wo theek hai, galat
 **Asli naam:** token radd = code band (DB me "band" nishaan, aur chhote register se bhi hatao, warna TTL tak purana pata
 deta rahega), dene se pehle check = kaali list (Google Safe Browsing).
 
-**Maan lo token radd kiya, par log counter pe aa hi nahi rahe, phone me likha pata seedha khol rahe:** phone mere haath
-me nahi, main use mita nahi sakta. To phone pe likhne hi mat do. Likhega nahi to wo har baar hamare counter pe aayega,
+**Maan lo token radd kiya, par log counter pe aa hi nahi rahe, phone me likha pata seedha khol rahe:** pehla khayal:
+unke phone ka cache radd kar do, agli request seedha hamare paas aayegi. Par phone mere haath me nahi, main use mita
+nahi sakta. To phone pe likhne hi mat do. Likhega nahi to wo har baar hamare counter pe aayega,
 aur hum use theek jawab de denge. Saaf baat hai.
 **Asli naam:** phone me likh le = 301 (browser cache, hamesha ke liye), likhne hi mat do = 302 (har click hamare paas,
 control hamare paas). Phone cache pe TTL bhi lag sakta, par tab tak wo purana hi deta.

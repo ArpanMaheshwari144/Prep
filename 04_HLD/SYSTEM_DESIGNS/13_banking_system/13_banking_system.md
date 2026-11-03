@@ -29,16 +29,10 @@ honge, ya koi nahi.
 Arpan -500, Ravi +500, COMMIT; COMMIT se pehle gira to dono ulte). SQL isliye: ek transfer me do row ek saath pakki
 badalni hain (ACID), aur 120 likhai / sec ke liye NoSQL ki kai-machine wali taakat chahiye hi nahi.
 
-**Maan lo bijli wapas aayi, cashier ko kuch yaad nahi, register me Arpan ka -500 hai par Ravi ka +500 nahi:** kahin
-likh do na. Cashier ko kuch yaad nahi rehta, to kaam se pehle aisi jagah likh do, ek rough copy, ki cashier wapas
-aaya to apne aap dekh le kya adhoora tha.
-**Asli naam:** rough copy = WAL (write-ahead log): DB table badalne se pehle log me likhta, restart pe jiska COMMIT
-nahi wo ulta, jo COMMIT hua wo pakka.
-
 ```mermaid
 flowchart LR
     A["Arpan"] --> C["Cashier<br/>(Banking Service)"]
-    C --> R[("Register<br/>(Postgres + WAL)")]
+    C --> R[("Register<br/>(Postgres)")]
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -80,17 +74,14 @@ mat kaato. Do alag cheez rakho.
 +500 / -500 = double-entry (har transfer ki do line, jod 0). Balance column alag, bas tez padhne ke liye. Dono usi
 transaction me likhe jaate hain, ledger isi DB ki ek alag table hai.
 
-## 5. Khabar dene wala ladka nahi aaya (doosra ladka + likh lo)
+## 5. Khabar dene se pehle bijli gayi (likh lo)
 
-Paisa jaate hi Ravi ko khabar deni thi, aur khabar dene wala ladka aaj aaya hi nahi. Cashier ruke to line ruke, na
-ruke to bhool jaata hai. To us ladke ka ek backup rakh lo. Wo nahi aaya to koi dikkat nahi, doosra ladka hai.
-
-**Maan lo cashier ne paisa bheja, aur ladke ko "Ravi ko khabar do" bolne se pehle bijli chali gayi:** ladka ek ho ya
-do, unhe pata hi nahi ki kisko khabar deni hai. Jo kisi ko yaad nahi rehta, to likh lo na bhai. Hum bhi to yahan
+Paisa jaate hi Ravi ko khabar deni thi. Cashier khabar ke liye ruke to line ruke. Cashier ne paisa bheja, aur ladke ko
+"Ravi ko khabar do" bolne se pehle bijli chali gayi: ladke ko pata hi nahi ki kisko khabar deni hai. Jo kisi ko yaad nahi rehta, to likh lo na bhai. Hum bhi to yahan
 likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Ab cashier kabhi bhi aaye ya
 jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
 **Asli naam:** likh lo = outbox (khabar usi transaction me ek table me, `sent = false`), ladka = relay (outbox se utha
-ke SMS Service ko bheje, gaya to `sent = true`, SMS gira to dobara try), backup ladka = relay ka standby (ek waqt me ek hi chalta, doosra intezaar me, pehla gire tabhi uthta). Transfer
+ke SMS Service ko bheje, gaya to `sent = true`, SMS gira to dobara try). Transfer
 SMS pe nahi atakta, aur SMS khota bhi nahi.
 
 ```mermaid
@@ -161,15 +152,12 @@ bank ka jod == 0? nahi to ALERT, insaan ulti line se theek kare). Ledger = sourc
 ke mahine = ledger ke mahine ke partition, pichhla jud gaya = snapshot (balance = pichhla snapshot + uske baad ki
 lines), purani line immutable.
 
-## 9. Diary almari me nahi samati, godown ka taala (head office + kohinoor)
+## 9. Diary almari me nahi samati, koi line badal de (head office + kohinoor)
 
 5 saal me diary itni moti ki branch ki almari me jagah nahi, aur RBI ka niyam: purani line phenk nahi sakte, 10 saal
-rakhni hain. To use bank ki jagah head office bhej do, wahan safe rahega. Data kahin gaya nahi. Aur godown me har koi
-thodi ja sakta hai: mere baap ka godown hai, usme har raah chalta thodi ghusa dunga. Wahan wahi jaayega jo authorized
-hoga.
+rakhni hain. To use bank ki jagah head office bhej do, wahan safe rahega. Data kahin gaya nahi.
 
 **Asli naam:** head office = S3 (1 saal se purane mahine wahan, sasta, lambe samay ke liye; archive, phenka nahi).
-Sirf authorized = IAM (darwaze ka taala).
 
 **Maan lo ijazat wala aadmi hi andar ja ke "Arpan -500" ko "Arpan -50" kar de:** uski 3-4 copy alag-alag chupchap
 kahin aur kone me daba do, taaki wo sab na badal paaye. Aakhir me saari copy milao: ek me hi -50 hai, baaki me -500,

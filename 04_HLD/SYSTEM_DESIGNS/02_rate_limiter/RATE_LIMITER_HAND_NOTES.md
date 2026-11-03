@@ -16,19 +16,19 @@ Technical me: "tu chhod, mujhe bata, hisaab main rakhunga" = central counter (Re
 
 **3. Ginti ka khaata ghadi se: 10:00-10:10 ek khaata, 10:10-10:20 agla, har khaate me 5. Ravi 10:09:58 pe 5 leta, khaata badla, 10:10:01 pe phir 5. 3 second me 10.**
 Arpan: Iska answer mujhe pehle se pata hai, padha tha tabhi ban pa raha. Had ek dabbe me rakh lete hain, har bande ke liye: is dabbe se token nikaalo aur aage badh jaao. Dabbe pe ek had hoti hai, 5 second me ek token ya 3 second me ek token. Wo apni raftaar se badhega, user apni raftaar se aayega. User aaye nahi to uske paas bahut saare token, to burst allow hai, koi dikkat nahi. Ye token bucket naam ka algorithm hai.
-Technical me: "dabbe se token nikaalo, aage badho" = token bucket, "apni raftaar se badhega" = refill rate, "user aaye nahi to bahut token" = burst allow.
+Technical me: "dabbe se token nikaalo, aage badho" = token bucket, "apni raftaar se badhega" = refill rate (OTP pe: max 5, har 2 minute me 1, taaki 10 min me 5), "user aaye nahi to bahut token" = burst allow.
 
 **4. Ravi ke dabbe me 1 token. Script ne ek pal me 20 request maari, 10 server pe. Har server ne Redis se padha "tokens = 1", ek nikaala, 20 andar ghus gayi.**
-Arpan: Pehle bola: Ravi ko 10 alag server pe jaane hi mat do, uska ek home server, wahi se jaaye. Phir: Redis single thread application hai, wo ek waqt me ek hi chalata, wahan ye ho hi nahi sakta, jaise chhota bachcha gun utha hi nahi sakta. Iska answer bhi pata hai: Lua script. Ye sab cheez ek hi baari me kar de, andar koi ghus hi na paaye. Jaise banking me update aur check ek hi me karte hain, wahi Lua script kar degi.
-Technical me: "Redis single thread" = Redis ek command ek waqt, "sab ek hi baari me, andar koi ghus na paaye" = Lua script (check + nikaalna atomic), "banking me update aur check ek me" = wahi atomic check-and-update.
+Arpan: Pehle bola: Ravi ko 10 alag server pe jaane hi mat do, uska ek home server, wahi se jaaye. Phir: Redis single thread application hai, wo ek waqt me ek hi chalata. Iska answer bhi pata hai: Lua script. Ye sab cheez ek hi baari me kar de, andar koi ghus hi na paaye. Jaise banking me update aur check ek hi me karte hain, wahi Lua script kar degi.
+Technical me: "Redis single thread" = Redis ek command ek waqt (par alag-alag GET aur DECR ke beech doosra server ghus sakta, isliye single thread akela kaafi nahi), "sab ek hi baari me, andar koi ghus na paaye" = Lua script (check + nikaalna atomic), "banking me update aur check ek me" = wahi atomic check-and-update.
 
 **5. Limiter OTP Service ke andar. Script ki 1000 request LB se, login check karke OTP Service tak pahunchti, wahan mana. SMS nahi gaya, par raaste ke saare server bojh utha rahe.**
 Arpan: Mere ghar me ek security guard hai, wo kehta 10,000 log andar nahi aa sakte. Par wo main gate pe nahi, andar kamre me baitha hai. Ghar ke andar to 1000 log ghus gaye, galat ho gaya. Use bahar gate pe bitha de, ghar ke andar koi ghus hi na paaye, gate pe hi hata do.
 Technical me: "guard andar kamre me" = limiter service ke andar, "guard bahar gate pe" = limiter API gateway pe.
 
 **6. Gate ka guard ginti Redis se dekhta, Redis gira. Ya sabko jaane de ya sabko rok de. OTP button ke liye kya, home page (feed) ke liye kya?**
-Arpan: Pehli baat, mera bodyguard chala gaya to main hamesha uska replica uske paas rakhunga, wo kal-parson na aaye to replica aa jaayega. Replica bhi gir gaya: mere papa ke kuch khaas dost hain, unko andar aane do, wo dekh ke chale jaayenge, koi nuksaan nahi. "Papa ji namaste, chalte hain." Par beech me kuch chor bhi hain jo hamari tijori lootne aa rahe, unhe rok do.
-Technical me: "bodyguard ka replica" = Redis replica, "papa ke dost, dekh ke chale jaayenge" = feed / home page fail-open, "tijori lootne wale chor rok do" = OTP fail-closed.
+Arpan: Mere papa ke kuch khaas dost hain, unko andar aane do, wo dekh ke chale jaayenge, koi nuksaan nahi. "Papa ji namaste, chalte hain." Par beech me kuch chor bhi hain jo hamari tijori lootne aa rahe, unhe rok do.
+Technical me: "papa ke dost, dekh ke chale jaayenge" = feed / home page fail-open, "tijori lootne wale chor rok do" = OTP fail-closed.
 
 **7. Script gate pe rukti, 429 khaati, par ruki nahi. Din-raat har second maarti, gate ko roz karodon "mana", Ravi ko farak nahi.**
 Arpan: Ek baar mana kiya, do baar mana kiya, teesri baar bhi aaya. "Ravi bhai, tum yahan aao, mere is dabbe se jaake baat karo, wo kuch samjhaayega, chhoti si toffee dega." Us dabbe me Ravi ka gala pakad ke wahin bitha denge: tu ab kahin nahi ja sakta, yahan se hil hi nahi sakta, is site ke liye tu permanent band.

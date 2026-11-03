@@ -42,8 +42,6 @@ nayi jagah aate hi upar likh do (sirf taaza chahiye).
 flowchart LR
     D["Driver ka phone<br/>(GPS lat/long)"] -- "har 4 sec" --> L["Beech ka dabba<br/>(Location Service)"]
     L --> C[("Bada bhai<br/>(Cassandra)")]
-    A["Arpan: Book"] --> M["Milaane wala<br/>(Matching Service)"]
-    M --> C
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -154,7 +152,7 @@ Ghar pahunch ke ₹250 kaatne gaye, wallet me ₹40. Kaatna hai to poora kaato, 
 rupaya rakhenge. Paisa nahi to app me saaf dikhao "payment nahi hua", Raju ke phone pe bhi. Arpan GPay se de, warna
 cash. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 
-**Asli naam:** atomic charge (partial nahi), ride status PAYMENT_PENDING jab tak SUCCESS, fallback payment (UPI / cash),
+**Asli naam:** atomic charge (partial nahi), ride status PAYMENT_PENDING jab tak SUCCESS, fallback payment (GPay / cash),
 dono app pe status.
 
 ---

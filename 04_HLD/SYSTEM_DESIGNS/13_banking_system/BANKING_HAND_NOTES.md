@@ -9,9 +9,6 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 **1. Arpan ne parchi di "Ravi ko 500 bhej do". Cashier ne Arpan ke 500 kaate, Ravi me jodne jaata usi pal bijli chali gayi. Arpan ke 500 kat gaye, Ravi ko kuch nahi mila.**
 Arpan: Bhai aisa karo na, mere 500 kat gaye to mujhe 500 wapas de do. Ye hai dikkat: mere 500 kate, Ravi ko kuch nahi mila, to mujhe mere 500 wapas de do na, dikkat hi khatam.
 Technical me: "mere 500 wapas de do" = transaction rollback (ya dono kaam, ya koi nahi).
-**Maan lo bijli wapas aayi, cashier ko kuch yaad nahi. Register me Arpan ka -500 hai, Ravi ka +500 nahi. Kaise pata chale ki ye adhoora kaam hai?**
-Arpan: Kahin likh do na. Cashier ko kuch yaad nahi, cashier ko hum yahan server bol rahe hain na. Use DB me likh do, ya kahin bhi likh do. Chalo DB chhodo, abhi technical terms bol hi nahi rahe. Kahin aisi jagah likh do ki cashier wapas aaya to apne aap dekh le.
-Technical me: "aisi jagah likh do jo cashier wapas aake dekh le" = WAL (write-ahead log), "cashier = server" = service machine.
 
 **2. Ravi ko 500 pahunch gaye, par receipt milne se pehle Arpan ki line kat gayi. Use pata nahi chala, usne wahi parchi dobara di.**
 Arpan: Wo cheez hamare paas hai na, humne likh di thi. Bhale hi uski line kati ho, wo dobara bheje, wo log to hamare paas hai. Hum dekh lenge ki 500 chale gaye, to mana kar do: "nahi bhai, 500 tumhare already bhej diye hain."
@@ -28,10 +25,7 @@ Technical me: "dekhna aur kaatna ek kram me" = ek query me check + kaato (`balan
 Arpan: Ek alag diary rakh lo, usme kaato mat, uske neeche bas likhte jao, jodte jao. Ya ek copy me do column bana lo: ek me update likhte ja rahe, koi dikkat nahi, lekin doosre me update mat karo, 500 kaato mat, neeche likhte jao: Ravi me +500 hua, yahan se -500 hua. To kabhi koi dikkat nahi. Main bol raha hoon do alag cheez rakho.
 Technical me: "alag diary, kaato mat, neeche likhte jao" = ledger (append-only), "+500 / -500" = double-entry, "ek column me update" = balance column, alag.
 
-**5. Paisa jaate hi Ravi ko khabar deni thi, khabar dene wala ladka aaj aaya hi nahi. Cashier ruke to line ruke, na ruke to bhool jaata hai.**
-Arpan: Us ladke ka ek backup rakh lo na. Wo ladka nahi aaya to koi dikkat nahi, doosra ladka hai.
-Technical me: "backup ladka" = relay ki doosri copy.
-**Maan lo cashier ne paisa bheja, aur ladke ko "Ravi ko khabar do" bolne se pehle bijli chali gayi. Ladka ek ho ya do, unhe pata hi nahi ki kisko khabar deni hai.**
+**5. Paisa jaate hi Ravi ko khabar deni thi. Cashier ne paisa bheja, aur ladke ko "Ravi ko khabar do" bolne se pehle bijli chali gayi. Ladke ko pata hi nahi ki kisko khabar deni hai.**
 Arpan: Jo kuch yaad nahi rehta kisi ko, to likh lo na bhai. Hum bhi to yahan likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Kahin likh lo, logs me likh lo. Ab cashier kabhi bhi aaye ya jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
 Technical me: "jo yaad nahi rehta, likh lo" = outbox (usi transaction me), "koi bhi ladka aaye, pahuncha dega" = relay.
 
@@ -66,10 +60,7 @@ Technical me: "mahine ke mahine tod do" = mahine ke partition, "pichhla jud gaya
 Arpan: Use apne bank ki jagah main office me bhej do. Hamara chhota bank hai, meri branch mere shehar me hai, uski koi main jagah to hogi na, head office. Use wahan bhej do, wahan safe rahega. Data kahin gaya nahi.
 Technical me: "head office me bhej do" = purana ledger S3 me (sasta, lambe samay ke liye), "data kahin gaya nahi" = archive, phenka nahi.
 
-**13. Godown me koi andar ja ke purani line badal de, ya mita de.**
-Arpan: Secure karo na, godown me har koi thodi ja sakta hai. Godown me sirf security authentication wala jaayega. Maan liya mere baap ka godown hai, usme har raah chalta thodi ghusa dunga. Wahan wahi jaayega jo authorized hoga.
-Technical me: "sirf authorized jaayega" = IAM (darwaze ka taala).
-**Maan lo ijazat wala aadmi hi andar ja ke "Arpan -500" ko "Arpan -50" kar de.**
+**13. Ijazat wala aadmi hi godown me ja ke "Arpan -500" ko "Arpan -50" kar de.**
 Arpan: Uski multiple copies rakh lo. 3-4 copy alag-alag chupchap kahin aur kone me daba do, taaki wo sab na badal paaye, ek hi badal paaye. Usne ek file badal bhi di to doosri copy me same data hoga. Aakhir me paancho file milao: ek me hi -500 ki jagah -50 hai, baaki me nahi, matlab isne chhedchhaad ki hai. Aur ek aur kar sakte hain: version ka lock laga do, ki wo file koi change hi na kar sake. Maan le wo ek tarah se kohinoor heera hai: na koi chhoo sakta, na chhed sakta, na badal sakta. Use aisi jagah taala maar do: ye main data hai, ispe koi na badlega, wo chupchap wahin pada rahega.
 Technical me: "kai copy chhupa ke, milao" = copies (doosri jagah) se chhedchhaad pakadna, "version ka lock" = versioning, "kohinoor, koi badal na sake" = S3 Object Lock.
 

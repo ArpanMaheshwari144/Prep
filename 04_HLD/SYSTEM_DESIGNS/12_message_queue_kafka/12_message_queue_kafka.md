@@ -58,7 +58,7 @@ paata hai. To aur gate khade karo, har gate ke andar apni line. 5,000 / 500 = 10
 abhi ek checker 3 gate sambhale, bheed badhe to checker 30 tak badha sakte, gate badalne nahi padte. Kaun kis gate pe jaaye, wahan hash aa gaya: Arpan ki teeno khabar (order, pay, cancel) hamesha ek
 hi gate se jaayengi, to unka kram nahi bigdega.
 
-**Asli naam:** gate = partition (10, alag broker pe), hash = key se partition (`hash(userId) % 10`). Kram sirf ek
+**Asli naam:** gate = partition (30, alag broker pe), hash = key se partition (`hash(userId) % 30`). Kram sirf ek
 partition ke andar pakka hai, poore topic me nahi, isliye key = userId.
 
 ## 4. Har ticket 3 baar punch (ek kamra, alag kamra)
@@ -86,11 +86,10 @@ flowchart LR
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-## 5. Gate ka admin hi gir gaya (doosra admin + vasiyat ki copy)
+## 5. Admin ne "aa gaya" bola, phir gira (vasiyat ki copy)
 
-Line chalane wala admin bahar chala gaya. Koi dikkat nahi, uski jagah koi aur admin le sakta hai, uske paas wahi list
-ki copy hai, aur wahin se shuru, bookmark se. Par ek pench: admin ne ticket counter ko "aa gaya" bol diya tha, aur
-naye admin ke paas aakhri kuch logon ki list hi nahi thi. Jaise baap ne vasiyat ek hi copy me likhi, ghar walon ko
+Admin ne ticket counter ko "aa gaya" bol diya, phir wo gira, aur uski jagah lene wale admin ke paas aakhri kuch
+logon ki list hi nahi thi. Jaise baap ne vasiyat ek hi copy me likhi, ghar walon ko
 bol diya "likh di", phir wo copy jal gayi. To "likh di" aise bolna ki pehle uski copy aur bana, copy wala bhi likh
 de, wo bole "likh liya", sab bolein, tab "likh di".
 
@@ -160,14 +159,16 @@ divert kar do.
 band? = health check / heartbeat, traffic divert = fallback (doosri SMS company). DLQ sirf us khabar ke liye jo akeli
 fail ho.
 
-## 9. Koi 7 din peeche reh gaya (aur checker + alert)
+## 9. Koi 7 din peeche reh gaya (aur admin + alert)
 
 Gate ki 7 din purani list ka panna phaad diya jaata hai, aur Fraud wala line me 7 din se zyada peeche reh gaya, to
-uski khabar hamesha ke liye gayi. Wahan bheed bahut zyada hai, to us gate pe aur checker bitha do. Use itna peeche
-rehne hi mat do na, aisa karo ki wo bheed 7 din tak peeche na rahe.
+uski khabar hamesha ke liye gayi. Wahan bheed bahut zyada hai, aur admin daalo wahan. Use itna peeche rehne hi mat do
+na, aisa karo ki wo bheed 7 din tak peeche na rahe.
 
 **Asli naam:** 7 din ka panna = retention, kitna peeche = consumer lag (gate ki aakhri khabar minus uska offset), aur
-checker = consumer badhao (partition ki ginti tak, yahan 30; baad me gate badhao to hash badal ke kram bigad sakta, isliye shuru se zyada). Retention badhana bas waqt kharidna hai.
+admin daalo = consumer badhao, partition ki ginti tak (yahan 30). Ek gate pe ek group ka ek hi checker hota hai, to 30
+ke baad gate (partition) bhi badhane padenge; gate badhao to hash badal ke kram bigad sakta, isliye shuru se zyada
+gate. Retention badhana bas waqt kharidna hai.
 
 **Maan lo wo dheere-dheere peeche ja raha, aaj 1 din, kal 2 din:** alert laga do. Wo peeche ja raha, alert aa gaya,
 aur alert aise bolta: "abe ye bahut peeche hai, jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."

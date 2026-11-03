@@ -59,12 +59,15 @@ parchi rakh lo apne paas. Kaam ho gaya to likh liya aur kahin rakh liya. 10 din 
 dekhi: ye to ho chuka, chhod do. Kabhi bhi kuch ho jaaye, parchi hai.
 
 **Asli naam:** parchi = idempotency. Khabar ki id (jaise 999:sms) ka "ho gaya" record Postgres me (id UNIQUE; Cassandra me UNIQUE nahi hota), bhejne se
-pehle check, mila to skip.
+pehle check, mila to skip. Ek chhoti khidki fir bhi bachti: SMS chala gaya aur "ho gaya" likhne se pehle hi crash, to wo
+ek baar dobara ja sakta. Parchi is khidki ko bahut chhota kar deti, poora band nahi karti; ye kabhi-kabhar wala dohra
+maan ke chalte.
 
 ## 4. "Abhi bheed hai, baad me aana" (thodi der baad dobara)
 
 Company ne OTP pe error lautaya: "abhi bheed hai, baad me try karo". Chhod do to OTP kabhi nahi milega, aur turant
-baar-baar bhejo to company pe bojh aur peeche ki saari SMS line ruki. To use alag rakh do, thodi der baad try karenge.
+baar-baar bhejo to company pe bojh aur peeche ki saari SMS line ruki. To use alag rakh do, thodi der baad try karenge;
+zaroori kaam hai to rakh lunga, 3 ghante baad bhi.
 Jaise main papa se 100 rupaye maangne gaya aur papa busy hain, to thodi der ruk jaata hoon, baad me jaata hoon. Pattern
 yahi: koi bhi dikkat aayi to likh lo, kahin daal do, line mat roko. Par galat number pe 3 ghante baad bhi kuch nahi
 hoga, use dobara ghumaana bekaar. Wo kaise pehchanein, agle kadam me.

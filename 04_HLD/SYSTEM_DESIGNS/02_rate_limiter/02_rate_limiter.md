@@ -90,16 +90,14 @@ flowchart LR
     style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-## 6. Guard ka Redis gira (replica + papa ke dost aane do, chor roko)
+## 6. Guard ka Redis gira (papa ke dost aane do, chor roko)
 
-Gate ka guard ginti Redis se dekhta, aur Redis gir gaya. Ab ya sabko jaane do ya sabko roko? Pehli baat, mera bodyguard
-chala gaya to uska replica hamesha paas rakhunga, wo na aaye to replica aa jaayega. Replica bhi gir gaya to: mere papa
-ke kuch khaas dost hain, unko andar aane do, wo dekh ke chale jaayenge, koi nuksaan nahi. "Papa ji namaste, chalte
+Gate ka guard ginti Redis se dekhta, aur Redis gir gaya. Ab ya sabko jaane do ya sabko roko? Mere papa ke kuch khaas
+dost hain, unko andar aane do, wo dekh ke chale jaayenge, koi nuksaan nahi. "Papa ji namaste, chalte
 hain." Par beech me kuch chor bhi hain jo hamari tijori lootne aa rahe, unhe rok do.
 
-**Asli naam:** bodyguard ka replica = Redis replica, papa ke dost = feed / home page fail-open (kuch der bina had ke
-chalna chhota nuksaan, site band hona bada), tijori ke chor = OTP / login fail-closed (yahan har request pe SMS ka paisa
-aur password ka khatra).
+**Asli naam:** papa ke dost = feed / home page fail-open (kuch der bina had ke
+chalna chhota nuksaan, site band hona bada), tijori ke chor = OTP fail-closed (yahan har request pe SMS ka paisa jaata).
 
 ## 7. Script ruki nahi, aur naya number, office atka (alag dabba + login pe dheeli had)
 
@@ -125,7 +123,7 @@ pattern pakadna, IP ko WAF me daal do = WAF block.
 flowchart LR
     U["Ravi / office"] --> W["Ban wala dabba<br/>(WAF + ban list)"]
     W --> G["Gate ka guard<br/>(API Gateway: userId, login se pehle IP)"]
-    G --> R[("Hisaab wala<br/>(Redis + replica)")]
+    G --> R[("Hisaab wala<br/>(Redis)")]
     G --> O["OTP Service"]
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```

@@ -43,9 +43,6 @@ karo: khabar pehle se ek chhoti parchi me taiyaar, app khulte hi wahin se.
 **Asli naam:** bahut chhotu = kai Fetcher parallel, chhoti parchi = Redis me taiyaar feed (sorted set, time ke kram
 me, aakhri 500).
 
-**Maan lo parchi khaali ho gayi (Redis restart):** dabbe se taazi 500 padh ke parchi phir bhar do, tab tak thodi
-request dabbe pe.
-
 ```mermaid
 flowchart LR
     S["5000 site"] --> C["Bahut chhotu<br/>(Fetchers)"]

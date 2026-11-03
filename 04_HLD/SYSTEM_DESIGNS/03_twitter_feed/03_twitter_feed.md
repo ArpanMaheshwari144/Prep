@@ -49,11 +49,11 @@ Arpan ke 8,000 followers, abhi bhi chhota user. "Post" dabaya, server ek-ek kark
 ghoomta rahe. 3,000 pe server gira, baaki 5,000 ko kabhi nahi mila, Arpan ko pata bhi nahi. Sabse pehle ek threshold
 rakho: itne followers paar gaye to dabbe me push nahi, Kohli wala tareeka. Aur bheed sambhalne ke liye beech me mera
 favourite stadium wala bhai Kafka. Maine post dabaya to "tera post ho gaya, nikal", peeche Kafka sab karta rahega. Kuch
-gira to outbox me ek parchi pe likha hai. Wo dabba gira to replica hai, copiyan hain.
+gira to outbox me ek parchi pe likha hai.
 
 **Asli naam:** threshold = had ke upar celeb raasta, stadium wala bhai = Kafka (async fanout, peeche fanout workers),
 post ho gaya, nikal = turant OK, parchi pe likha = outbox ki soch; yahan Kafka hi pakki parchi: Tweet Service pehle
-Kafka me daale (acks=all), peeche workers tweet Cassandra me aur inbox me likhein. Dabba gira to = Kafka ki copy (replica).
+Kafka me daale (acks=all), peeche workers tweet Cassandra me aur inbox me likhein.
 
 ```mermaid
 flowchart LR
@@ -116,7 +116,7 @@ flowchart LR
     TS["Tweet Service"] --> K[("Stadium wala bhai<br/>(Kafka, pakki parchi)")]
     K --> FW["Peeche bharne wale<br/>(Workers)"]
     FW --> C[("Bada bhai<br/>(Cassandra, user id se)")]
-    FW --> G[("Follow ka track<br/>(Neo4j)")]
+    G[("Follow ka track<br/>(Neo4j)")] -- "followers kaun" --> FW
     FW --> IN[("Dabba<br/>(Redis inbox, last 500)")]
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

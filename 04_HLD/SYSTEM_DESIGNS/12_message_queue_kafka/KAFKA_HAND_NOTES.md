@@ -25,33 +25,29 @@ Technical me: "ek kamre me baitha de, ek bana de" = consumer group, "3 me se ek 
 Arpan: To alag baitha do. Matlab pehle ticket checker ka room, phir security ka room. Ek ko paar karo, phir doosre room me jao.
 Technical me: "alag room" = alag consumer group, har group ko saari khabar ki poori copy.
 
-**5. Line chalane wala admin (chowkidar) hi gir gaya / bahar chala gaya.**
-Arpan: Wo admin line se nikla, bahar chala gaya, lekin uski jagah koi aur admin le sakta hai. Koi fail ho jaaye to replica, aur wahin se shuru, bookmark se. Wo to pata hai na.
-Technical me: "uski jagah koi aur admin" = replica leader ban jaati hai, "wahin se shuru, bookmark" = offset se aage padhna.
+**5. Admin ne ticket counter ko "aa gaya" bol diya, phir wo gira, aur uski jagah lene wale ke paas aakhri kuch logon ki list hi nahi thi. Arpan ki vasiyat me: baap ne vasiyat ek hi copy me likhi, ghar walon ko bol diya "likh di", phir wo copy jal gayi. "Likh di" kab bolna tha?**
+Arpan: Bhai "likh di" aise bolna ki uski copy aur bana, aur wo likh de, tab "likh di". Matlab replica hai, replica ne bol diya "likh liya", sab bolein, tab. Ye raha connection.
+Technical me: "copy bhi likh de, tab likh di" = acks=all, "replica ne bol diya likh liya" = in-sync replica ki haan (min.insync = 2).
 
 **6. Checker ne fan ko seat pe baitha diya (ticket punch), par register me likhne se pehle gir gaya. Naya checker wahi fan dobara bhejega.**
 Arpan: Idempotency check kar le ki wo pehle aaya hai. Bas, samajh ja.
 Technical me: "check kar le ki pehle aaya hai" = idempotency (eventId se dobara wali khabar pakad ke chhodna).
 
-**7. Admin gira, aur uski jagah lene wale ke paas aakhri kuch logon ki list hi nahi thi, jabki ticket counter ko "aa gaya" bol diya tha. Arpan ki vasiyat me: baap ne vasiyat ek hi copy me likhi, ghar walon ko bol diya "likh di", phir wo copy jal gayi. "Likh di" kab bolna tha?**
-Arpan: Bhai "likh di" aise bolna ki uski copy aur bana, aur wo likh de, tab "likh di". Matlab replica hai, replica ne bol diya "likh liya", sab bolein, tab. Ye raha connection.
-Technical me: "copy bhi likh de, tab likh di" = acks=all, "replica ne bol diya likh liya" = in-sync replica ki haan (min.insync = 2).
-
-**8. Ticket dene wala (Order Service) gate tak khabar bhejne se pehle hi gir gaya.**
+**7. Ticket dene wala (Order Service) gate tak khabar bhejne se pehle hi gir gaya.**
 Arpan: Yahan pe outbox. Matlab wo pehle kahin likh de ki haan, main ye daal dunga. Kabhi koi mar bhi jaaye, to wo cheez ek jagah mil jaaye. Jaise real life me hota hai: baap marne se pehle apni sampatti likh ke chala jaata hai.
 Technical me: "pehle kahin likh de" = outbox (khabar usi DB transaction me), "baap ki vasiyat, baad me mil jaaye" = relay outbox se utha ke Kafka ko bhejta hai.
 
-**9. Ek fan ka ticket hi galat hai. Wo baar-baar gate pe ghusne ki koshish karta, har baar mana, aur peeche poori line atki.**
+**8. Ek fan ka ticket hi galat hai. Wo baar-baar gate pe ghusne ki koshish karta, har baar mana, aur peeche poori line atki.**
 Arpan: Use line se hata, usko ghusne hi mat de. Tu bahar, tu aayega hi nahi. Matlab mere paas ek aisi cheez ho jo uske gate pe hi rok de, andar hi na aane de. Matlab bouncer, hahaha.
 Technical me: "line se hata" = DLQ (alag line, baaki line chale), "bouncer gate pe hi rok de" = galat khabar ko pehle hi rokna (validation).
 
-**10. Andar ka SMS counter 10 minute ke liye band. Jo fan wahan pahunchta hai sab fail, sab alag line (DLQ) me ja rahe.**
+**9. Andar ka SMS counter 10 minute ke liye band. Jo fan wahan pahunchta hai sab fail, sab alag line (DLQ) me ja rahe.**
 Arpan: Nahi, maan lo 10 minute kuch dikkat hai, wo 11ve minute khul sakta hai. Sab DLQ me nahi bhejunga. Pehle dekhunga ki kya hai, kya waqai wo band hai, main check karunga. Aur ek service nahi, bahut saari services hain. Agar wo waqai band hai to uska traffic kahin aur bhej dunga. Jaise aam road pe: mujhe kahin jaana hai, wo road band hai, to traffic divert kar do.
 Technical me: "sab DLQ me nahi, pehle check" = circuit breaker, "check karunga kya waqai band" = heartbeat / health check, "traffic divert" = fallback (doosri SMS company).
 
-**11. Koi line me 7 din se zyada peeche reh gaya, aur gate ki 7 din purani list ka panna phaad diya jaata hai.**
+**10. Koi line me 7 din se zyada peeche reh gaya, aur gate ki 7 din purani list ka panna phaad diya jaata hai.**
 Arpan: Wahan bheed bahut zyada hai, aur admin daalo wahan. Use itna peeche rehne hi mat do na, wahan aisa karo taaki wo bheed 7 din tak peeche na rahe.
-Technical me: "aur admin daalo" = consumer badhao (partition ki ginti tak), "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
+Technical me: "aur admin daalo" = partition (gate) badhao + utne consumer (checker); ek gate pe ek group ka ek hi checker hota, isliye sirf checker badhane se kaam nahi, "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
 **Maan lo wo dheere-dheere peeche ja raha: aaj 1 din, kal 2 din. 7 din hone se pehle kaise pata chalega?**
 Arpan: Alert laga do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."
 Technical me: "alert laga do" = consumer lag alert.
