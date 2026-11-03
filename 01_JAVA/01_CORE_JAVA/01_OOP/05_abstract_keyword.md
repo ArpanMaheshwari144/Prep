@@ -1,101 +1,61 @@
 # abstract keyword
 
-> **V90 — Core Java Extras: Topic 16**
+## Tere bank se shuru
 
----
+Tere SimpleBankSystem me `Account` abstract class hai. Agar tu kahin `new Account(...)` likhega, to code compile hi nahi hoga.
+Kyunki `Account` adhoora hai: usme byaaj ka formula hai hi nahi. Savings ka 4% hai, FD ka 7% hai, Current ka 0 hai, par "Account"
+ka koi byaaj nahi hota. `abstract` likh ke hum Java ko bata rahe hain ki ye class sirf aage badhane ke liye bani hai, iska seedha
+object mat banane dena.
 
-## STORY — Shape Class
+```
+abstract class Account             new Account(...)   -> compile error, kyunki ye adhoora hai
+  abstract calculateInterest()     new Savings(...)   -> theek, kyunki Savings ne formula bhar diya
+```
 
-→ Tune `Shape` class banayi. `area()` method likhna chahta tha
-→ Lekin `Shape` abstract hai — **kaunsa formula?**
-→ **Circle ka alag, Rectangle ka alag**
-→ `Shape` khud area calculate nahi kar sakti
-→ — **sirf ye guarantee deti hai ki har shape ka area hoga**
-→ **abstract method = body nahi, sirf declaration**
-→ Child implement kare — **warna compile error, jab tak child ko khud `abstract` na likho**
-→ `Shape` → `area()` pata nahi. Circle → `3.14*r*r`. Rectangle → `l*b`
-→ `Shape` abstract → body nahi, child implement kare. `new Shape()` → **error**
+## Ye kis dikkat se bana
 
----
+Pehli dikkat: koi galti se aisa account na bana de jiska byaaj kisi ne likha hi nahi. Abstract class ka object Java banne hi nahi deta.
 
-## Code
+Doosri dikkat: kal koi naya account type banaye aur byaaj ka method likhna bhool jaaye. `calculateInterest()` abstract hai, isliye
+jo bachcha ise nahi likhega, uska code compile pe hi ruk jaayega. Galti prod me nahi, likhte waqt hi pakdi jaati hai.
+
+## Teen jodi jo kabhi saath nahi chalti
+
+**abstract aur final:** `abstract` method ka matlab hai ki iski body abhi nahi hai, bachcha likhega. `final` method ka matlab hai ki
+isko koi bachcha badal nahi sakta. Ek taraf tu bol raha hai ki bachcha zaroor likhe, doosri taraf bol raha hai ki bachcha haath bhi
+na lagaye. Dono ek saath ho hi nahi sakte, isliye Java compile nahi hone deta.
+
+**abstract aur private:** `private` method sirf usi class ke andar dikhta hai, bachche ko dikhta hi nahi. Agar wo `abstract` bhi hai,
+to bachche ko use likhna padega. Par jo method bachche ko dikhta hi nahi, use wo likhega kaise? Isliye ye jodi bhi band hai.
+
+**abstract aur static:** `static` method object ka nahi, class ka hota hai. Use bulane ke liye object nahi chahiye, seedha
+`Account.show()` likh dete ho. Maan lo `show()` static bhi hai aur abstract bhi, aur tune `Account.show()` bulaya. Java kaunsi body
+chalaye? `Account` me body hai nahi, kyunki wo abstract hai. Aur bachche wali body tak Java jaayega hi nahi, kyunki static method me
+Java object nahi dekhta, sirf class ka naam dekhta hai. Na yahan body hai, na wahan tak pahunch sakta hai, isliye Java ye jodi rok deta hai.
+
+## Prod wala trap: parent ke constructor me bachche ka method mat bulao
+
+Maan lo `Account` ke constructor me hi byaaj print karwa diya, aur Savings me rate ek normal (instance) field hai:
 
 ```java
-abstract class Shape {
-    abstract double area();              // body nahi — sirf declaration
-    void display() { /* normal method */ }   // ye likh sakti hai
-}
+Account(double b) { balance = b; System.out.println("Account bana, byaaj = " + calculateInterest()); }
+// Savings me:  double rate = 0.04;
 
-class Circle extends Shape {
-    double r;
-    double area() { return 3.14 * r * r; }   // implement kiya
-}
-
-class Rectangle extends Shape {
-    double l, b;
-    double area() { return l * b; }          // implement kiya
-}
+new Savings(5000);
+// output:  Account bana, byaaj = 0.0     <- galat
+//          baad me byaaj = 200.0        <- sahi
 ```
 
----
+Ye maine chala ke dekha. Galat isliye aata hai kyunki object bante waqt pehle parent ka constructor chalta hai, aur us waqt tak bachche
+ki field (`rate`) set hi nahi hui hoti, to wo 0 hoti hai. Bachche ka method chal to jaata hai, par adhoore bachche pe. Tere asli code me
+`INTEREST_RATE` `static final` hai, aur static cheez pehle hi ban jaati hai, isliye tu is trap se bach gaya. Niyam: parent ke constructor
+me wo method kabhi mat bulao jise bachcha badal sakta hai.
 
-## TRAP 1 — `static abstract` = ILLEGAL Combo
-
-→ `static` = class ka, override nahi hota
-→ `abstract` = child implement kare
-→ Dono **contradictory** — ek saath nahi chal sakte
-
-```java
-abstract class A {
-    static abstract void show();    // COMPILE ERROR
-}
-```
-
----
-
-## TRAP 1b — `abstract` ke saath ye bhi ILLEGAL
+## Interview line
 
 ```
-abstract + final    -> final = override mat karo, abstract = override karo -> ulta
-abstract + private  -> private child ko dikhta hi nahi -> implement kaise karega
-abstract + static   -> upar wala Trap 1
+An abstract class cannot be instantiated; in my bank, Account is abstract because it has no
+interest formula, and each child must provide calculateInterest or it will not compile.
+abstract cannot pair with final, private or static. One trap: never call an overridable
+method from the parent constructor; the child's fields are not set yet, so it returns 0.
 ```
-
----
-
-## TRAP 2 — Interface Mein Private Method (Java 9+)
-
-→ Java 9 se interface mein **private methods allowed**
-→ Sirf **internal helper** ke liye — default/static methods ke andar use hote hain
-→ **Bahar se access nahi hota**
-
-```java
-interface A {
-    private void helper() { ... }                    // Java 9+ valid
-    default void show() { helper(); }                // sirf andar use karo
-}
-```
-
----
-
-## TRAP 3 — Abstract Class ka Object KABHI Nahi Banta
-
-→ Chahe **ek bhi abstract method na ho**
-→ Agar class `abstract` declare ki hai → direct object nahi ban sakta
-→ Hamesha **compile error**
-
-```java
-abstract class A { }                  // koi abstract method nahi
-new A();                              // COMPILE ERROR
-```
-
-**WHY?**
-→ Abstract class = **adhoori hai** ya tu khud ne bola "ye sirf extend karne ke liye hai"
-→ Soch: `Vehicle` ka `start()` abstract hai → `new Vehicle()` pe `start()` mein **kya chalega?**
-→ **Kuch nahi.** Isliye Java rokta hai — **adhoori cheez se real object mat banao**
-
----
-
-## POWER PHRASE
-
-> *"Abstract class is an incomplete blueprint — it can have both abstract methods with no body and normal methods. Subclasses must implement all abstract methods. You cannot instantiate an abstract class directly."*
