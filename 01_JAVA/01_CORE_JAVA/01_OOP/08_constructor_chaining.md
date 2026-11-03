@@ -1,130 +1,55 @@
-# Constructor Chaining
+# Constructor chaining (`this()` aur `super()`)
 
-> **V90 — Core Java Extras: Topic 20**
+## Tere bank se shuru
 
----
+Tere `SavingsAccount` ke constructor ki pehli line hai `super(id, name, balance);`. Iska matlab hai ki pehle parent (`Account`) ka
+constructor chalao, wo `accountId`, `holderName` aur `balance` set karega, uske baad bachcha apna kaam karega. Account ke saare field
+Account hi set karta hai, aur teeno bachche bas `super(...)` bula dete hain. Isi ko constructor chaining kehte hain: ek constructor
+apna kaam doosre constructor ko de deta hai.
 
-## STORY — Student class
+Iske do roop hain. `super(...)` parent ka constructor bulata hai, aur `this(...)` usi class ka doosra constructor bulata hai.
 
-→ Tune Student class banayi — **teen constructors**: naam only, naam+age, naam+age+course
-→ Teeno mein **same initialization code** — validation, defaults
-→ Kal validation badlegi toh **teeno mein change** karna padega
-→ `this()` se **ek constructor doosre ko call** karo — code ek jagah, baaki delegate
-→ `this()` = same class ka constructor call
-→ `super()` = parent class ka constructor call
-→ **Hamesha pehli line mein** hona chahiye. **Dono ek saath ek constructor mein nahi**
-
----
-
-## Code
+Maan lo tujhe Savings account bina balance ke bhi banana hai, jisme shuru me 0 rahe. To naya constructor likh ke wahi teen line
+dobara likhne ki jagah:
 
 ```java
-class Student {
-    String name; int age; String course;
-
-    Student(String name) {
-        this(name, 18);                       // → doosra constructor call
-    }
-
-    Student(String name, int age) {
-        this(name, age, "Java");              // → teesra constructor call
-    }
-
-    Student(String name, int age, String course) {
-        this.name = name;                     // ← actual kaam yahan hota
-        this.age = age;
-        this.course = course;
-    }
-}
-
-Student s = new Student("Arpan");
-// "Arpan" → age default 18 → course default "Java"
-```
-
-```java
-// Parent class mein — super() se
-class Dog extends Animal {
-    String breed;
-    Dog(String name, String breed) {
-        super(name);                          // → Animal ka constructor call
-        this.breed = breed;
-    }
+SavingsAccount(String id, String name) {
+    this(id, name, 0);     // apne hi 3-argument wale constructor ko kaam de diya
 }
 ```
 
----
+Ye bilkul delegation jaisa hai: jaise koi lead asli kaam ek bande ko de deta hai aur har jagah khud dobara nahi karta.
 
-## TRAP
+## Ye kis dikkat se bana
 
-> **`this()` ya `super()` HAMESHA constructor ki PEHLI line!**
+Agar teen constructor hon aur teeno me wahi set karne aur check karne ka code ho, to kal check badalne pe teen jagah badalna padega,
+aur ek bhi jagah bhoole to bug. Chaining se asli kaam ek hi constructor me rehta hai, aur baaki sab usi ko bulate hain.
 
-```java
-Dog(String name, String breed) {
-    System.out.println("hello");              // compile error!
-    super(name);                              // pehli line nahi
-}
-```
+## Do niyam
 
-> **Ek constructor mein dono ek saath nahi aa sakte — ya `this()` ya `super()`.**
+`this()` ya `super()` hamesha constructor ki pehli line honi chahiye. Kyunki object banane me pehle neev (parent ka hissa) padti hai,
+uske baad upar ki manzil banti hai. Neev se pehle kuch karne nahi diya jaata.
 
-(Naya Java: JDK 25 "flexible constructor bodies" — `super()` se pehle kuch statements likh sakte,
- jaise argument validate karna, par `this` use nahi kar sakte. Interview me classic rule bolo,
- naya pooche to ye line.)
+Ek constructor me dono ek saath nahi aa sakte, kyunki dono ko pehli line chahiye aur pehli line ek hi hoti hai.
 
-## ★ TRAP — `super()` na likho to compiler KHUD daal deta
+## Prod wala trap (tere Spring project se juda)
 
-```java
-class Animal {
-    Animal(String name) { }          // sirf ye constructor, no-arg WALA NAHI
-}
-class Dog extends Animal {
-    Dog() { }                        // compiler andar "super();" daalta
-}                                    // -> Animal() hai hi nahi -> COMPILE ERROR
-```
-Fix: `Dog() { super("Tommy"); }` ya Animal me no-arg constructor jodo.
-Kram: `new Dog()` -> pehle Animal ka constructor chalta, phir Dog ka (parent pehle).
+Agar tu `super(...)` nahi likhta, to Java chupke se `super();` khud daal deta hai, matlab parent ka khaali (no-arg) constructor. Tere
+`Account` me khaali constructor hai hi nahi, sirf 3 argument wala hai. Isliye agar koi bachcha `super(...)` likhna bhool jaaye, to
+compile error aata hai ki `Account()` nahi mila.
 
----
+Yahi cheez Spring me doosre roop me kaatti hai. Tere usercrud ke `User` entity pe `@NoArgsConstructor` laga hai, aur tune comment me
+likha hai "JPA REQUIRED". Kyunki Hibernate DB se row padh ke object banata hai, aur wo pehle khaali constructor se object banata hai,
+phir field bharta hai. Jaise hi tu koi argument wala constructor likhta hai, Java ka apne aap wala khaali constructor gayab ho jaata hai.
+Phir agar `@NoArgsConstructor` bhool gaye, to app chalte waqt Hibernate error deta hai ki "No default constructor for entity".
 
-## ★ TRAP — Constructor overload ho sakta, OVERRIDE kabhi nahi
+## Interview line
 
 ```
-Overload constructor:    YES (different params)
-   public User() { ... }
-   public User(String name) { ... }
-   public User(String name, int age) { ... }
-
-Override constructor:    NEVER POSSIBLE — constructors inherit hi nahi hote
+Constructor chaining means one constructor delegating to another: this(...) for the same class,
+super(...) for the parent, and it must be the first line. In my bank project every account
+calls super(id, name, balance), so the common fields are set in one place. If you skip super,
+Java inserts super() with no arguments, which fails when the parent has no empty constructor.
+The same idea bites JPA: an entity needs a no-arg constructor, so in my usercrud User I keep
+@NoArgsConstructor once I add an all-args one.
 ```
-
-**Kyun?** Override ke liye chahiye: (1) method parent se INHERIT hua ho (2) child SAME signature se redefine kare (3) runtime polymorphism.
-Constructor: (1) inherit NAHI hota (2) naam = CLASS ka naam → Parent() aur Child() = alag naam = alag pehchaan.
-
-```java
-class Animal {
-    public Animal() {           // name: Animal
-    }
-}
-class Dog extends Animal {
-    public Dog() {              // name: Dog (NOT Animal!)
-        super();                // parent ka CALL karta, override nahi
-    }
-}
-```
-
-```
-Constructor ka kaam = APNI class ke fields init karna (per-class concern)
-CAN:    OVERLOAD (same class mein kai) · CHAIN via this()/super()
-CANNOT: Override
-
-Side note — ye bhi override nahi hote:
-   • static method  (class-level → hiding hota hai)
-   • final method   (parent ne lock kiya)
-   • private method (child ko dikhta hi nahi)
-```
-
----
-
-## POWER PHRASE
-
-> *"Constructor chaining allows one constructor to call another using `this()` for the same class or `super()` for the parent class — must always be the first statement in the constructor."*
