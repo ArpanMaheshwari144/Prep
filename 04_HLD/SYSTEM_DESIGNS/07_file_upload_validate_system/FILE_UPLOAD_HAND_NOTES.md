@@ -17,7 +17,7 @@ Arpan: Badi file apne server se guzaro hi mat, seedha bade dabbe (S3) me. 10 GB 
 Technical me: "bada dabba" = S3, "tukde" = multipart upload (resume), "safai" = lifecycle rule (adhoora multipart hatao).
 
 **3. Phone seedha S3 me daal raha, par S3 kaise maane ye hamara user hai? App me AWS chaabi rakhi to koi bhi nikaal le.**
-Arpan: Bank jaisa: koi seedha manager ke cabin me nahi ghusta. Pehle receptionist (hamara server) JWT dekh ke tasalli kare, phir ladke ke haath me token de: "ye le, jab teri baari aaye to file de dena". 10 GB ka bora receptionist khud nahi uthata. Badi faltu file pe had ya paisa.
+Arpan: Bank jaisa: koi seedha manager ke cabin me nahi ghusta (cabin = S3). Pehle receptionist (hamara server) JWT dekh ke tasalli kare, phir ladke ke haath me token de (token = presigned URL, sirf is file ke liye, thodi der ka): "ye le, jab teri baari aaye to file de dena". 10 GB ka bora receptionist khud nahi uthata (file hamare server se nahi guzarti, phone seedha S3 me daalta hai). Badi faltu file pe had ya paisa.
 Technical me: "receptionist ka token" = presigned URL (hamara server deta, chaabi phone ko nahi), "had" = size limit / quota.
 
 **4. File S3 me aa gayi, par server ko pata hi nahi, DB me "UPLOADING" pada, scan shuru hi nahi hua.**
@@ -29,15 +29,15 @@ Arpan: Folder ka hisaab alag, apne server me. Ek parent, baaki uske child, ped j
 Technical me: "ped" = DB me folders table (id, parent_id), file ki row me folder_id; S3 key file ki id se, naam se nahi.
 
 **6. Ravi ne URL me 1042 ki jagah 1043 likha aur Priya ka bank statement khul gaya. Download bhi hamare server se ja raha.**
-Arpan: Ravi asli member hai (JWT), par Priya ki statement maange to "Priya ko saath la". Server DB me dekhe file kiski hai / kisse share hui, tabhi link de. Link me chhed-chhaad ki to link bekaar. Download truck seedha ghar: S3 se seedha user ko, hamare bank me nahi aata.
+Arpan: Ravi asli member hai (JWT), par Priya ki statement maange to "Priya ko saath la" (server DB me dekhe file kiski hai / kisse share hui, warna mana). Server DB me dekhe file kiski hai / kisse share hui, tabhi link de. Link me chhed-chhaad ki to link bekaar. Download truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata (hamare server se data nahi guzarta).
 Technical me: "kiski hai" = owner / share check (authorization, JWT sirf pehchaan), "link bekaar" = presigned download URL (signature), "truck seedha ghar" = S3 se direct download.
 
 **7. Ravi ne link 200 logon ke WhatsApp group me daal diya.**
-Arpan: Link ki umar chhoti, file ke hisaab se: bank statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. User khud baante to wo uski zimmedari, system pe har cheez nahi thop sakte.
+Arpan: Link ki umar chhoti (presigned URL expiry), file ke hisaab se: bank statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. User khud baante to wo uski zimmedari, system pe har cheez nahi thop sakte.
 Technical me: "umar" = presigned URL expiry (file ki sensitivity pe).
 
 **8. Scan me 10 minute baaki, Ravi ko download chahiye. Scan me virus nikla to?**
-Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye. Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
+Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
 Technical me: "alag line" = priority queue / alag topic scan ke liye, "link nahi" = status CLEAN tak download band, "lo hi mat" = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 
 &nbsp;

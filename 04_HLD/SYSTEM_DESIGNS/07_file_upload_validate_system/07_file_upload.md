@@ -77,9 +77,9 @@ baad S3 ki safai unhe hata de.
 ## 3. [core] S3 kaise maane ye hamara user hai (receptionist ka token)
 
 Phone seedha S3 me daal raha, par S3 ko kaise pata ki ye Arpan hai aur use ijaazat hai? App me AWS ki chaabi rakhi
-to koi bhi nikaal ke bucket bhar dega ya doosron ki files padh lega. Bank jaisa: koi seedha manager ke cabin me nahi
-ghusta. Pehle receptionist (hamara server) JWT dekh ke tasalli kare, phir ladke ke haath me token de: "ye le, jab
-teri baari aaye to file de dena". 10 GB ka bora receptionist khud nahi uthata, ladka khud andar le jaata.
+to koi bhi nikaal ke bucket bhar dega ya doosron ki files padh lega. Bank jaisa: koi seedha manager ke cabin me nahi ghusta (cabin = S3). Pehle receptionist (hamara server) JWT dekh ke tasalli kare, phir ladke ke haath me token de (token = presigned URL, sirf is file ke liye, thodi der ka): "ye le, jab
+teri baari aaye to file de dena". 10 GB ka bora receptionist khud nahi uthata, ladka khud andar le jaata (file hamare server se nahi
+guzarti, phone seedha S3 me daalta hai).
 
 **Maan lo koi 10 GB ki faltu file daal raha:** size ki had lagao, ya badi file pe paisa lo, S3 ka kharcha bhi hamara.
 
@@ -134,9 +134,9 @@ flowchart TB
 ## 6. [core] Ravi ne 1043 likha, Priya ka statement khula (maalik check + truck seedha ghar)
 
 Arpan ne Ravi ko `app.com/files/1042` bheja. Ravi ne 1043 likha aur Priya ka bank statement khul gaya. Ravi asli
-member hai (JWT sahi), par Priya ki statement maange to "Priya ko saath la". Server DB me dekhe file kiski hai, kisse
+member hai (JWT sahi), par Priya ki statement maange to "Priya ko saath la" (server DB me dekhe file kiski hai / kisse share hui, warna mana). Server DB me dekhe file kiski hai, kisse
 share hui, tabhi link de, warna mana. Link me chhed-chhaad ki to link bekaar. Aur download bhi hamare server se mat
-guzaro: truck seedha ghar, S3 se seedha user ko.
+guzaro: truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata.
 
 **Asli naam:** owner / share check = authorization (JWT sirf pehchaan batata, ijaazat DB batata), presigned download
 URL (signature, badla to bekaar), S3 se direct download.
@@ -151,18 +151,18 @@ flowchart LR
     style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo Ravi ne apna link 200 logon ke WhatsApp group me daal diya:** link ki umar chhoti, file ke hisaab se: bank
+**Maan lo Ravi ne apna link 200 logon ke WhatsApp group me daal diya:** link ki umar chhoti (presigned URL expiry), file ke hisaab se: bank
 statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. User khud baante to wo uski zimmedari,
 system pe har cheez nahi thop sakte.
 **Asli naam:** presigned URL expiry, file ki sensitivity pe.
 
 ## 7. [agar bahar ki file] Scan baaki, Ravi ko download chahiye; virus nikla to (alag line + lo hi mat)
 
-File S3 me aa gayi, scan me 10 minute baaki, aur Ravi download maang raha. Scan ki alag tez line, jaise SMS me OTP ki
-(doctor line me nahi lagta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do.
+File S3 me aa gayi, scan me 10 minute baaki, aur Ravi download maang raha. Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do.
 
 **Maan lo scan me virus nikla:** file lo hi mat, hata do aur user ko batao. Hum antivirus nahi, file system hain;
-mall aur airport ki security jaisa, hum utna jaanchte jitna system ko chahiye. Zaroori ho to bahar wala (third party)
+mall aur airport ki security jaisa, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan,
+poora antivirus nahi). Zaroori ho to bahar wala (third party)
 pehle jaanche, phir hamare paas.
 
 **Asli naam:** scan ke liye alag topic / priority queue, status CLEAN tak download band, INFECTED -> file hatao
