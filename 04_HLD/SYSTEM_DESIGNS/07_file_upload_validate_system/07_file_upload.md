@@ -153,7 +153,8 @@ pehle jaanche, phir hamare paas.
 
 ```mermaid
 flowchart LR
-    S3[("S3: file aayi")] --> K["Scan ki alag line<br/>(priority topic)"]
+    S3[("S3: file aayi")] -- "event" --> U["Upload Server"]
+    U --> K["Scan ki alag line<br/>(priority topic)"]
     K --> W["Scan worker"]
     W -- "CLEAN" --> DB[("DB: CLEAN<br/>ab link milega")]
     W -- "INFECTED" --> X["File hatao<br/>+ user ko batao"]
@@ -172,7 +173,8 @@ pe maalik / share check, phir chhoti umar ka link aur file S3 se seedha.
 ```
 user ruke nahi       -> Kafka + worker, status DB me
 server dabe nahi     -> presigned URL, seedha S3, multipart
-file khoye nahi      -> S3 + S3 event + lifecycle safai
+file khoye nahi      -> S3 + S3 event (status atke nahi)
+kachra na bache      -> lifecycle safai (adhoore tukde)
 doosra na dekhe      -> owner / share check, chhota link, scan tak band
 ```
 
