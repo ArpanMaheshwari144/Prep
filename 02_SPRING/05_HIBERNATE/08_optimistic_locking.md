@@ -2,9 +2,9 @@
 
 ## Kahani: tera Confluence
 
-Tu aur Ravi ek Confluence page khol ke baithe, dono ne version 5 khola. Ravi pehle save -> page version 6. Tu save
-dabata -> "page badal gaya, reload karo". Ye rok na hoti to tera save Ravi ka likha chupchaap mita deta = **lost update**.
-Wahi rok = `@Version`.
+Tu aur Ravi ek hi Confluence page khol ke baithe ho, aur dono ne version 5 khola hai. Ravi ne pehle save kiya, to page version 6 ho gaya. Ab tu save
+dabata hai, to message aata hai "page badal gaya, reload karo". Agar ye rok na hoti, to tera save Ravi ka likha hua chup-chaap mita deta. Isi ko **lost update** kehte hain.
+Wahi rok code me `@Version` hai.
 
 ## Tasveer
 
@@ -16,34 +16,35 @@ B: UPDATE product SET stock=80, version=1 WHERE id=1 AND version=0   -> 0 row  (
    -> OptimisticLockException -> B ko 409 -> B dobara padhe (90, v1) -> 70 bheje
 ```
 
-## Dikkat -> kyun bana
+Row me stock 100 aur version 0 hai, aur A aur B dono ne version 0 padha. A ka UPDATE pehle chala, 1 row badli, aur version 1 ho gaya. Ab B ka UPDATE bhi `version=0` dhoondhta hai, par DB me ab version 1 hai, isliye 0 row badalti hain. Tab `OptimisticLockException` aata hai, B ko 409 milta hai, B dobara padhta hai (90, v1), aur naye data pe hisaab laga ke 70 bhejta hai.
 
-Do log ek saath ek row padhte, apna hisaab laga ke save karte, baad wala pehle wale ka kaam mita deta. Ek hal = pehle
-lock (sab line me). `@Version` ki soch: "clash kabhi-kabhi hota hai, lock mat lagao, likhte waqt check karo ki beech me
+## Dikkat aur ye kyun bana
+
+Do log ek saath ek row padhte hain, apna-apna hisaab lagate hain aur save karte hain, to baad wala pehle wale ka kaam mita deta hai. Ek hal ye hai ki pehle
+lock laga do, taaki sab line me lagein. `@Version` ki soch alag hai: "clash kabhi-kabhi hi hota hai, to lock mat lagao, bas likhte waqt check kar lo ki beech me
 kisi ne badla to nahi."
 
 ## Trade-off
 
-```
-Optimistic (@Version)          Pessimistic (SELECT ... FOR UPDATE)
-lock nahi, tez                 pehle lock, baaki line me
-clash pe ek haarega -> retry   clash pe intezaar, deadlock ka risk
-kam clash (profile, page edit) zyada clash (ek hi seat pe bheed)
-```
+Optimistic (`@Version`) me koi lock nahi lagta, isliye ye tez hai. Clash hone pe ek party haar jaati hai aur use retry karna padta hai. Ye wahan sahi hai jahan clash kam hote hain, jaise profile ya page edit.
 
-Seat / balance ke liye teesra: `UPDATE ... SET x = x - ? WHERE x >= ?` (ek atomic query, BMS / banking me yahi).
+Pessimistic (`SELECT ... FOR UPDATE`) me pehle lock lagta hai aur baaki sab line me intezaar karte hain. Clash pe intezaar hota hai, aur deadlock ka risk bhi rehta hai. Ye wahan sahi hai jahan clash zyada hote hain, jaise ek hi seat pe bheed.
+
+Seat ya balance ke liye ek teesra tareeka bhi hai: `UPDATE ... SET x = x - ? WHERE x >= ?`. Ye ek atomic query hai, aur BMS aur banking me yahi lagta hai.
 
 ## Google Docs OT se jod (Arpan)
 
-Dikkat ek hi: do log ek cheez ek saath badal rahe. Farak nateeje me:
+Dikkat dono jagah ek hi hai: do log ek cheez ek saath badal rahe hain. Farak nateeje me hai:
 
 ```
 @Version (Confluence)   clash pe ek HAARTA: reject, "reload karo", dobara padh ke bhejo
 OT (Google Docs)        koi nahi haarta: dono ka badlaav JOD deta ("shabd khiska do")
 ```
 
-Badlaav jud sakein (text: tu line 1, Ravi line 5) -> OT. Na jud sakein (stock 90 aur 80 dono sach nahi) -> ek haare,
-dobara padh ke bheje -> version check.
+`@Version` me clash pe ek haarta hai: uska save reject hota hai, use "reload karo" milta hai, aur wo dobara padh ke bhejta hai. OT me koi nahi haarta, wo dono ka badlaav jod deta hai, jaise shabd thoda khiska ke dono ki line rakh do.
+
+Agar badlaav jud sakte hain, jaise text me tu line 1 badal raha hai aur Ravi line 5, to OT lagao. Agar nahi jud sakte, jaise stock 90 aur 80 dono ek saath sach nahi ho sakte, to ek ko haarna padega aur
+dobara padh ke bhejna padega, yaani version check.
 
 ## Prod wala trap
 
@@ -54,12 +55,12 @@ catch (ObjectOptimisticLockingFailureException e) {
 }
 ```
 
-Wahi lost update wapas. Version chaabi nahi, "maine sabse nayi row padhi" ka saboot. 409 pe version mat chhedo:
-dobara padho -> naye data pe hisaab -> phir bhejo.
+Isse wahi lost update wapas aa jaata hai. Version koi chaabi nahi hai jise badha ke darwaza khol lo, wo is baat ka saboot hai ki "maine sabse nayi row padhi hai". Isliye 409 aaye to version ko mat chhedo:
+row dobara padho, naye data pe hisaab lagao, phir bhejo.
 
 ## Tera project
 
-usercrud `Product @Version` (22-Aug): `?version=0` -> OK (v -> 1) · dobara `?version=0` -> 409 STALE.
+usercrud me `Product` pe `@Version` hai (22-Aug). `?version=0` bheja to OK aaya aur version 1 ho gaya. Dobara `?version=0` bheja to 409 STALE aaya.
 
 ## Interview line
 

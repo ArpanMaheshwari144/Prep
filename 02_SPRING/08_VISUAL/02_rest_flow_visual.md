@@ -28,12 +28,14 @@ Postman POST /api/users
  kahin bhi exception -> @RestControllerAdvice -> saaf error JSON
 ```
 
+Request pehle Tomcat pe aati hai, phir filter chain se guzarti hai. Yahin `JwtFilter` token jaanchta hai, aur ye Spring MVC se PEHLE hota hai, isliye token galat hai to 401 yahin se laut jaata hai. Phir DispatcherServlet URL dekh ke sahi controller method dhoondhta hai. JSON ko `UserRequest` me badla jaata hai aur `@Valid` chalta hai, galat data hai to 400. Phir Controller, Service (`@Transactional`) aur Repository se hoke DB me INSERT hota hai. Wapsi me Entity ko DTO me badla jaata hai, Jackson use JSON banata hai, aur 201 jaata hai. Raste me kahin bhi exception aayi, to `@RestControllerAdvice` use ek saaf error JSON me badal deta hai.
+
 ## 4 khaas baat
 
 1. **Request me data teen jagah se aata hai:**
-   - `/users/123` → `@PathVariable` (URL ka hissa)
-   - `?active=true` → `@RequestParam` (query)
-   - JSON body → `@RequestBody`
+   - `/users/123` jaisa URL ka hissa `@PathVariable` se milta hai.
+   - `?active=true` jaisi query `@RequestParam` se milti hai.
+   - JSON body `@RequestBody` se milti hai.
 2. **Bahar hamesha DTO bhejo, entity kabhi nahi.** Entity me password, role aur andar ke fields hote hain. `UserResponse { id, name, email }` me sirf wahi jaata hai jo dikhna chahiye.
 3. **`@Valid` method me ghusne se pehle hi rok deta hai.** Galat email ya khaali naam aaya to 400 jaata hai, aur tera code chalta hi nahi.
 4. **Har controller me try-catch nahi likhna padta.** `@RestControllerAdvice` me ek jagah likho: `UserNotFound` aaye to 404, validation fail ho to 400. Aur security ka filter DispatcherServlet se bhi pehle chalta hai, isliye galat token wali request controller tak pahunchti hi nahi.
@@ -47,11 +49,11 @@ public User get(@PathVariable Long id) {    // seedha entity lauta di
 }
 ```
 
-Jackson poori entity JSON bana deta hai, aur `password` (hash) bhi response me chala jaata hai. Agar entity me doosri entity ka link ho (User → Orders → User), to JSON gol-gol ghoom ke `StackOverflowError` bhi de deta hai. Ilaaj: DTO lautao. Aur POST pe `@ResponseStatus(HttpStatus.CREATED)` lagao, warna wo bhi 200 hi deta hai.
+Jackson poori entity JSON bana deta hai, aur `password` (hash) bhi response me chala jaata hai. Agar entity me doosri entity ka link ho (User ke andar Orders, aur Orders ke andar wapas User), to JSON gol-gol ghoom ke `StackOverflowError` bhi de deta hai. Ilaaj: DTO lautao. Aur POST pe `@ResponseStatus(HttpStatus.CREATED)` lagao, warna wo bhi 200 hi deta hai.
 
 ## Tera project
 
-usercrud me poora yahi dhaancha hai: `UserController` → `UserService` → `BookRepository` / `UserRepository`. Global error ke liye `GlobalExceptionHandler` (`@RestControllerAdvice`) hai, aur controller se pehle `JwtFilter` chalta hai.
+usercrud me poora yahi dhaancha hai: `UserController` request leta hai, `UserService` ko deta hai, aur service `BookRepository` ya `UserRepository` se DB tak jaati hai. Global error ke liye `GlobalExceptionHandler` (`@RestControllerAdvice`) hai, aur controller se pehle `JwtFilter` chalta hai.
 
 ## Interview line
 

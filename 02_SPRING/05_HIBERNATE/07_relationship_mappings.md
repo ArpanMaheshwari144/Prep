@@ -2,13 +2,13 @@
 
 ## Kahani: kitaab ke peeche ki mohar
 
-Library me har kitaab ke peeche mohar: "lekhak = 1" (FK `books.author_id`). Lekhak ke register me "meri kitaabein" ki
-list bhi hai, par wo bas aaina. Asli sach kitaab ki mohar me.
+Library me har kitaab ke peeche ek mohar lagi hai: "lekhak = 1". Yahi FK hai, `books.author_id`. Lekhak ke register me bhi "meri kitaabein" ki
+ek list hai, par wo bas ek aaina hai. Asli sach kitaab ki mohar me hai.
 
-- Mohar jiske paas = **owning side** = Book (`@ManyToOne @JoinColumn(name = "author_id")`).
-- Lekhak ki list = aaina = **inverse side** (`@OneToMany(mappedBy = "author")`: "mohar Book ke `author` field me").
+- Mohar jiske paas hai, wo **owning side** hai, yaani Book (`@ManyToOne @JoinColumn(name = "author_id")`).
+- Lekhak ki list aaina hai, isliye wo **inverse side** hai (`@OneToMany(mappedBy = "author")`, jiska matlab hai "mohar Book ke `author` field me hai").
 
-Sirf lekhak ki list me kitaab likhi, mohar nahi lagayi -> DB me `author_id` NULL. Hibernate sirf mohar padhta.
+Agar tune sirf lekhak ki list me kitaab likh di aur kitaab pe mohar nahi lagayi, to DB me `author_id` NULL chala jaata hai, kyunki Hibernate sirf mohar padhta hai.
 
 ## Tasveer
 
@@ -22,15 +22,17 @@ id  name           id  title   author_id
 Student <-> Course (many-to-many) = beech ki teesri table: student_course (student_id, course_id)
 ```
 
-## Dikkat -> kyun
+Books table me har kitaab ke saath `author_id` ki mohar hai: Java aur Spring Arpan ki hain, Python Suresh ki. Many-to-many me, jaise Student aur Course, beech me ek teesri table banti hai, `student_course`, jisme `student_id` aur `course_id` hote hain.
 
-- `mappedBy` kyun: na ho to Hibernate do alag rishte samajhta, faaltu teesri table `author_books` banata.
-- Dono side set karo: helper `addBook(b) { books.add(b); b.setAuthor(this); }` (list + mohar saath).
+## Dikkat aur ye kyun
+
+- `mappedBy` kyun chahiye: agar ye na ho to Hibernate samajhta hai ki ye do alag rishte hain, aur ek faaltu teesri table `author_books` bana deta hai.
+- Dono side set karo. Iske liye helper banao, `addBook(b) { books.add(b); b.setAuthor(this); }`, jo list me bhi daale aur mohar bhi lagaye.
 
 ## Trade-off: @ManyToMany ya junction entity
 
-`@ManyToMany` aasaan, par asli kaam me beech ki table pe extra cheez chahiye (enrolledDate, grade) jo wahan nahi aa
-sakti. Isliye `Enrollment` entity + do `@ManyToOne`: thoda zyada code, par poora control.
+`@ManyToMany` likhna aasaan hai. Par asli kaam me beech ki table pe extra cheez chahiye hoti hai, jaise enrolledDate ya grade, aur wo `@ManyToMany` me nahi aa
+sakti. Isliye `Enrollment` naam ki entity banate hain jisme do `@ManyToOne` hote hain. Code thoda zyada likhna padta hai, par poora control milta hai.
 
 ## Prod wala trap (usercrud me tha)
 
@@ -40,12 +42,12 @@ sakti. Isliye `Enrollment` entity + do `@ManyToOne`: thoda zyada code, par poora
 // log.info(author) -> Author.toString -> books -> Book.toString -> author -> ... StackOverflowError
 ```
 
-Ek line: entity pe `@Data` nahi (`@Getter @Setter`, `toString` me rishta bahar, equals / hashCode id pe), bahar DTO.
-AI bhi entity pe `@Data` lagata hai, PR me ye line pakadna tera kaam.
+`log.info(author)` ne Author ka `toString` bulaya, usne books ka, books ne apne author ka, aur ye chakkar chalta raha jab tak StackOverflowError nahi aaya. Ek line me niyam: entity pe `@Data` mat lagao. Uski jagah `@Getter @Setter` lagao, `toString` me rishte wala field bahar rakho, equals aur hashCode id pe banao, aur bahar bhejne ke liye DTO lo.
+AI bhi entity pe `@Data` laga deta hai, isliye PR me ye line pakadna tera kaam hai.
 
 ## Tera project
 
-usercrud: Book owning (`@JoinColumn author_id`), Author inverse (`mappedBy = "author"`).
+usercrud me Book owning side hai (`@JoinColumn author_id`), aur Author inverse side hai (`mappedBy = "author"`).
 
 ## Interview line
 

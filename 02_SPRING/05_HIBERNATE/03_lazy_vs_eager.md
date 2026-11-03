@@ -3,11 +3,11 @@
 ## Kahani: PA ki parchi
 
 Arpan PA se lekhak #1 ki file maangta hai.
-- **LAZY:** PA lekhak ki file laata, kitaabon ki jagah ek parchi: "maangoge to laaunga" (proxy).
-- **EAGER:** PA saath me sab utha laata: kitaabein, publisher, publisher ka desh. Chahiye ya nahi, nahi dekhta.
+- **LAZY:** PA sirf lekhak ki file laata hai, aur kitaabon ki jagah ek parchi rakh deta hai jis pe likha hai "maangoge to laaunga". Yahi parchi proxy hai.
+- **EAGER:** PA saath me sab kuch utha laata hai: kitaabein, publisher, aur publisher ka desh bhi. Chahiye ya nahi, ye wo nahi dekhta.
 
-Trap: Arpan ne file li, PA ghar chala gaya (session band). Ab parchi dikha ke kitaabein maange to laane wala koi nahi
-= `LazyInitializationException` ("no session").
+Trap ye hai: Arpan ne file le li, aur PA ghar chala gaya (session band ho gaya). Ab Arpan parchi dikha ke kitaabein maangta hai, par laane wala koi nahi hai.
+Isi ko `LazyInitializationException` ("no session") kehte hain.
 
 ## Tasveer
 
@@ -19,14 +19,16 @@ Author #1                          Author #1
   getBooks() -> TAB DB jaata         publisher: {...}  <- bina maange
 ```
 
+LAZY me books ki jagah parchi (proxy) hai, aur jab `getBooks()` bulate ho tabhi DB jaata hai. EAGER me books pehle se bhari hain, aur publisher bhi bina maange aa gaya.
+
 ## 4 khaas baat
 
-1. Default: **"to MANY" = LAZY** (`@OneToMany`, `@ManyToMany`), **"to ONE" = EAGER** (`@ManyToOne`, `@OneToOne`).
-2. Industry niyam: sab LAZY (`@ManyToOne(fetch = LAZY)` bhi), jahan chahiye wahan JOIN FETCH / `@EntityGraph`.
-3. LazyInit ke hal: PA rok ke rakho (`@Transactional`) aur parchi andar hi kholo (`books.size()`, sirf return kaafi
-   nahi) · ya JOIN FETCH · ya DTO (REST ke liye sabse achha).
-4. **OSIV** (Open-Session-In-View): Boot me default ON = PA poori HTTP request tak ruka, isliye controller me LazyInit
-   aata hi nahi. Par PA ke haath me record room ki chaabi (DB connection) bhi tab tak.
+1. Default ye hai: jo rishta **"to MANY"** hai wo LAZY hota hai (`@OneToMany`, `@ManyToMany`), aur jo **"to ONE"** hai wo EAGER hota hai (`@ManyToOne`, `@OneToOne`).
+2. Industry ka niyam hai ki sab kuch LAZY rakho, `@ManyToOne(fetch = LAZY)` bhi. Phir jahan data chahiye, wahan JOIN FETCH ya `@EntityGraph` lagao.
+3. LazyInit ke teen hal hain. Pehla: PA ko rok ke rakho (`@Transactional`) aur parchi andar hi khol lo, jaise `books.size()` bula ke. Sirf list return kar dena kaafi nahi
+   hai, kyunki parchi tab bhi band rehti hai. Doosra: JOIN FETCH. Teesra: DTO, jo REST ke liye sabse achha hai.
+4. **OSIV** (Open-Session-In-View) Boot me default ON hota hai. Iska matlab PA poori HTTP request tak ruka rehta hai, isliye controller me LazyInit
+   aata hi nahi. Par iska matlab ye bhi hai ki PA ke haath me record room ki chaabi (DB connection) bhi tab tak rehti hai.
 
 ## Prod wala trap
 
@@ -34,13 +36,13 @@ Author #1                          Author #1
 spring.jpa.open-in-view=true   # default; DB connection poori request tak pakda
 ```
 
-Wahi HikariCP wali dikkat jo @Transactional me HTTP call ke saath thi: slow client / bada JSON -> connection pakda ->
-pool khaali -> app atki. Prod me `false` + data service layer me explicit.
+Ye wahi HikariCP wali dikkat hai jo @Transactional me HTTP call ke saath thi. Client slow hai ya JSON bada hai, to connection utni der pakda rehta hai. Aisi bahut requests aayi to
+pool khaali ho jaata hai aur app atak jaati hai. Isliye prod me ise `false` rakho, aur data service layer me hi explicit fetch karo.
 
 ## Tera project
 
-usercrud `LazyDemoController` (9-Sep): `open-in-view=false` karke `/lazy/fail` = 500 ("no session") ·
-`/lazy/fix-txn` = `books = 3` (2 query) · `/lazy/fix-fetch` = JOIN FETCH, 1 query.
+usercrud ka `LazyDemoController` (9-Sep). `open-in-view=false` karke `/lazy/fail` chalaya to 500 aaya ("no session").
+`/lazy/fix-txn` pe `books = 3` aaya aur 2 query chali. `/lazy/fix-fetch` me JOIN FETCH tha, to sirf 1 query chali.
 
 ## Interview line
 
