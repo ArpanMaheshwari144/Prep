@@ -1,70 +1,86 @@
 # Producer-Consumer
 
-**Kahani:** Amazon pe ek second me 1000 order aate hain, par processing (DB + email + inventory) ek second me sirf 50 ho paati hai. Beech me ek fixed size ka bench rakh do. Bench bhar jaaye to order lene wala rukta hai, bench khaali ho to process karne wala rukta hai. File 08 aur 09 ka `wait/notify` isi ke liye tha.
+## Kahani: Amazon ke order
+
+Amazon pe ek second me 1000 order aate hain, par processing (DB + email + inventory) ek second me sirf 50 order ki ho paati hai. To beech me ek fixed size ka bench rakh do. Jab bench bhar jaaye, to order lene wala ruk jaata hai. Jab bench khaali ho, to process karne wala ruk jaata hai. File 08 aur 09 ka `wait/notify` isi kaam ke liye tha.
 
 ```
 PRODUCER ──> [ ][ ][ ][ ][ ] (fixed jagah) ──> CONSUMER
-   bhara -> ruko                                  khaali -> ruko
+   bench bhari -> producer ruko                bench khaali -> consumer ruko
 ```
 
-**Tera practical:** [ProducerConsumer](practical/ProducerConsumer.java) (synchronized + wait/notify, LIMIT 5): 10 produce, 10 consume, "Done". Kabhi 2 item ek saath bane, kabhi consumer peeche, par buffer 5 se aage nahi gaya.
+## Tera practical
 
-**Khaas baat:**
-1. Teen tareeke hain:
-   - `synchronized + wait/notifyAll`: interview ka classic. Isme `while` aur `notifyAll` zaroori hain (file 08 aur 09).
-   - `BlockingQueue`: production me yahi. `put()` bhari queue pe rukta hai, `take()` khaali queue pe rukta hai. Koi taala ya `wait` khud nahi likhna padta.
-     ```java
-     BlockingQueue<Order> q = new ArrayBlockingQueue<>(1000);
-     q.put(order);          // producer: bhara ho to ruko
-     Order o = q.take();    // consumer: khaali ho to ruko
-     ```
-   - `ReentrantLock + Condition`: do alag bench-line, `notFull` aur `notEmpty`. Isse sirf sahi waale thread jaagte hain, file 09 wali galat-thread-jagne ki dikkat khatam.
+[ProducerConsumer](practical/ProducerConsumer.java) me synchronized + wait/notify hai, aur LIMIT 5 hai. Chalane pe 10 item produce hue, 10 consume hue, aur end me "Done" aaya. Kabhi 2 item ek saath bane, kabhi consumer peeche reh gaya, par buffer kabhi 5 se aage nahi gaya.
 
-   ```
-                     ┌────────────────────────┐
-                     │  Producer-Consumer ka  │
-                     │  implementation chahiye│
-                     └────────────┬───────────┘
-                    ┌─────────────┴─────────────┐
-             Production code?           Interview / Learning?
-                    │                           │
-                    ▼                           ▼
-           ┌──────────────────┐       ┌──────────────────────┐
-           │  BlockingQueue   │       │ synchronized +       │
-           │  (default)       │       │ wait/notify          │
-           └────────┬─────────┘       │ (classic answer)     │
-                    │                 └──────────────────────┘
-           Custom signaling chahiye?
-                    ▼
-           ┌──────────────────────┐
-           │ ReentrantLock +      │
-           │ Condition (notFull,  │
-           │ notEmpty)            │
-           └──────────────────────┘
-   ```
-2. Saada `Queue` ek thread ke liye hai (BFS jaisa). Kai thread share karein to `BlockingQueue`. Chala ke dekha tha: 2 thread x 1 lakh add, LinkedList pe 197868 aaye, BlockingQueue pe 200000.
-3. Ye pattern har jagah hai:
-   - `ExecutorService` ka bench file 10 wala hi hai.
-   - Async logging.
-   - `@Async`.
-   - Bade level pe Kafka: Producer, topic, Consumer group. Notification aur Kafka design yahi hai, bas kai server pe phaila hua.
+## Khaas baat
 
-**BlockingQueue vs Kafka (idea same, 4 farak):**
+**1. Ise banane ke teen tareeke hain.**
+
+Pehla tareeka `synchronized + wait/notifyAll` hai. Ye interview ka classic jawab hai, aur isme `while` aur `notifyAll` dono zaroori hain (file 08 aur 09).
+
+Doosra tareeka `BlockingQueue` hai, aur production me yahi chalta hai. Isme `put()` bhari queue pe apne aap ruk jaata hai, aur `take()` khaali queue pe apne aap ruk jaata hai. Tujhe koi taala ya `wait` khud nahi likhna padta.
+
+```java
+BlockingQueue<Order> q = new ArrayBlockingQueue<>(1000);
+q.put(order);          // producer: bhara ho to ruko
+Order o = q.take();    // consumer: khaali ho to ruko
 ```
-                    BlockingQueue                Kafka
-kahan rehta         ek JVM ki RAM                disk pe, 3 broker pe copy
-app crash           saara maal gaya              maal bacha rehta
-padhne ke baad      take() = nikal gaya          message rehta, sirf offset aage badhta
-kaun padhe          ek item ek hi consumer       har consumer group apni copy padhe
-```
-Ek JVM ke andar threads ke beech BlockingQueue, services / machines ke beech Kafka. Maal kaise bachta = [kafka_concepts hissa 5](../../04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md).
 
-**Prod wala trap:**
+Teesra tareeka `ReentrantLock + Condition` hai. Isme do alag line (Condition) banti hain, `notFull` aur `notEmpty`. Isse sirf sahi wale thread jaagte hain, aur file 09 wali "galat thread jag gaya" wali dikkat khatam ho jaati hai.
+
+Kaunsa kab chunna hai, ye tasveer me:
+
+```
+                  ┌────────────────────────┐
+                  │  Producer-Consumer ka  │
+                  │  implementation chahiye│
+                  └────────────┬───────────┘
+                 ┌─────────────┴─────────────┐
+          Production code?           Interview / Learning?
+                 │                           │
+                 ▼                           ▼
+        ┌──────────────────┐       ┌──────────────────────┐
+        │  BlockingQueue   │       │ synchronized +       │
+        │  (default)       │       │ wait/notify          │
+        └────────┬─────────┘       │ (classic answer)     │
+                 │                 └──────────────────────┘
+        Custom signaling chahiye?
+                 ▼
+        ┌──────────────────────┐
+        │ ReentrantLock +      │
+        │ Condition (notFull,  │
+        │ notEmpty)            │
+        └──────────────────────┘
+```
+
+**2. Saada `Queue` sirf ek thread ke liye hai.** Jaise BFS me ek hi thread use karta hai. Agar kai thread ek queue share kar rahe hain, to `BlockingQueue` chahiye. Ye chala ke dekha tha: 2 thread ne 1 lakh-1 lakh item add kiye. LinkedList me 197868 item aaye (kuch kho gaye), aur BlockingQueue me poore 200000 aaye.
+
+**3. Ye pattern har jagah hai.** `ExecutorService` ka bench wahi hai jo file 10 me dekha. Async logging bhi yahi hai, aur `@Async` bhi. Bade level pe Kafka bhi yahi hai: Producer, topic, aur Consumer group. Notification aur Kafka ka design yahi idea hai, bas kai server pe phaila hua.
+
+## BlockingQueue vs Kafka: idea same hai, par 4 farak hain
+
+**Kahan rehta hai:** BlockingQueue ek JVM ki RAM me rehti hai. Kafka ka data disk pe rehta hai, aur 3 broker pe uski copy hoti hai.
+
+**App crash ho jaaye to:** BlockingQueue ka saara maal chala jaata hai. Kafka me maal bacha rehta hai.
+
+**Padhne ke baad kya hota hai:** BlockingQueue me `take()` kiya to item queue se nikal gaya. Kafka me message wahin rehta hai, bas consumer ka offset aage badh jaata hai.
+
+**Kaun padhta hai:** BlockingQueue me ek item sirf ek hi consumer ko milta hai. Kafka me har consumer group apni alag copy padhta hai.
+
+Seedhi baat: ek JVM ke andar threads ke beech BlockingQueue lagao, aur services ya machines ke beech Kafka. Kafka me maal kaise bachta hai, wo [kafka_concepts hissa 5](../../04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md) me hai.
+
+## Prod wala trap
+
 ```java
 q.offer(order);    // bhari queue pe false lautata -> check nahi kiya to order chup-chaap gaya
 q.put(order);      // jagah banne tak rukta, order kabhi nahi khota
 new LinkedBlockingQueue<>();   // bina size = koi had nahi = file 10 wala OOM, naya naam
 ```
+
+`offer()` bhari queue pe rukta nahi, bas `false` lauta deta hai. Agar tune wo `false` check nahi kiya, to order chup-chaap kho gaya. `put()` tab tak rukta hai jab tak jagah na ban jaaye, isliye order kabhi nahi khota. Aur bina size ke `LinkedBlockingQueue` banaya, to uski koi had nahi hai. Ye wahi file 10 wala OOM hai, bas naam naya hai.
+
+## Interview line
 
 ```
 Interview: "Producer-consumer decouples a fast producer from a slow consumer with a bounded buffer -
@@ -107,7 +123,9 @@ public class Buffer {
 }
 ```
 
-### Visual — Flow
+### Flow ki tasveer
+
+Producer bhari bench pe `wait()` karke lock chhod deta hai. Consumer item nikaalta hai aur `notifyAll()` se producer ko jagata hai. Ulta bhi waise hi hota hai.
 
 ```
 PRODUCER thread                    CONSUMER thread
@@ -115,32 +133,38 @@ PRODUCER thread                    CONSUMER thread
 synchronized (this) {              synchronized (this) {
   while (FULL) wait() ──┐            while (EMPTY) wait() ──┐
                         │                                    │
-                        │ Lock released, suspend             │ Lock released
+                        │ Lock chhoda, ruk gaya              │ Lock chhoda
                         │                                    │
   items.add(item)       │            int item = remove(0)    │
-  notifyAll() ──────────┴────→ wakes ─────                   │
-                                     ←──── wakes ────────────┴
+  notifyAll() ──────────┴────→ jagata hai ──                 │
+                                     ←──── jagata hai ───────┴
 }                                  }
 ```
 
-### Critical gotchas
+### Teen zaroori gotchas
 
-#### 1. **`while` NOT `if` for wait condition**
+#### 1. Wait ki shart ke liye `while` lagao, `if` nahi
+
 ```java
 while (items.size() == CAPACITY) wait();   // defensive
 if (items.size() == CAPACITY) wait();      // buggy
 ```
-**Why:** **Spurious wakeups** — JVM rare conditions mein `wait()` se return ho jata bina `notify()` ke. `if` use kiya toh stale state mein continue → race condition.
 
-#### 2. **`notifyAll()` not `notify()`**
+Kyun: spurious wakeup ki wajah se. JVM kuch rare halaat me `wait()` se bina `notify()` ke bhi return ho jaata hai. Agar tune `if` lagaya, to thread purani (stale) halat pe hi aage chal dega, aur race condition ho jaayegi.
+
+#### 2. `notify()` nahi, `notifyAll()` lagao
+
 ```java
 notifyAll();   // wake ALL waiting threads
 notify();      // only wakes ONE — could be wrong type (producer when consumer needed)
 ```
-With single condition variable, **wrong thread wake** ho sakta. Always `notifyAll()`.
 
-#### 3. **`InterruptedException`** — checked exception
-Method signature mein declare karna padta. Production mein restore interrupt flag:
+Jab sirf ek hi condition variable ho (sab ek hi wait set me), to `notify()` galat type ke thread ko jaga sakta hai, jaise consumer chahiye tha aur producer jag gaya. Isliye hamesha `notifyAll()` lagao.
+
+#### 3. `InterruptedException` checked exception hai
+
+Ise method signature me declare karna padta hai. Production me catch karo to interrupt ka flag wapas set karo:
+
 ```java
 catch (InterruptedException e) {
     Thread.currentThread().interrupt();
@@ -148,15 +172,13 @@ catch (InterruptedException e) {
 }
 ```
 
-### BlockingQueue variants
+### BlockingQueue ke variants
 
-| Implementation | Use case |
-|---|---|
-| **`ArrayBlockingQueue`** | Fixed capacity, array-backed (Producer-Consumer classic) |
-| **`LinkedBlockingQueue`** | Optional capacity, linked nodes |
-| **`PriorityBlockingQueue`** | Priority-based ordering |
-| **`SynchronousQueue`** | Zero capacity — direct handoff |
-| **`DelayQueue`** | Items only available after delay (scheduling) |
+- **`ArrayBlockingQueue`:** iski capacity fixed hoti hai aur andar array hota hai. Producer-Consumer ke classic case me yahi.
+- **`LinkedBlockingQueue`:** isme capacity dena optional hai, aur andar linked nodes hote hain.
+- **`PriorityBlockingQueue`:** isme item priority ke hisaab se nikalte hain.
+- **`SynchronousQueue`:** iski capacity zero hai. Producer item seedha consumer ke haath me deta hai (direct handoff).
+- **`DelayQueue`:** isme item ek der (delay) ke baad hi nikal sakta hai. Ye scheduling ke kaam aata hai.
 
 ## Approach 3: `ReentrantLock` + `Condition` (GRANULAR)
 
@@ -200,51 +222,41 @@ public class Buffer {
 }
 ```
 
-### Why this is better than `synchronized + wait/notify`
+### Ye `synchronized + wait/notify` se behtar kyun hai
 
-| Feature | `synchronized + wait/notify` | `ReentrantLock + Condition` |
-|---|---|---|
-| Lock granularity | method ya block (JVM khud chhodta) | Explicit lock/unlock (finally me khud chhodo) |
-| Multiple wait conditions | Single `wait()`, shared queue | Multiple `Condition`s — `notFull`, `notEmpty` |
-| Selective wakeup | `notifyAll()` wakes everyone | `notEmpty.signalAll()` wakes only relevant threads |
-| Try-lock / timeout | Not available | `tryLock(timeout)` |
-| Interruptibility | Limited | `lockInterruptibly()` |
-| Performance | Lagbhag same (Java 6+ me synchronized optimize ho gaya) | Lagbhag same — faayda speed nahi, CONTROL hai |
+- **Lock kaise lagta aur chhootta hai:** `synchronized` me lock method ya block pe lagta hai, aur JVM use khud chhod deta hai. `ReentrantLock` me tu khud `lock()` aur `unlock()` karta hai, aur `unlock()` ko `finally` me khud likhna padta hai.
+- **Kitni wait condition:** `synchronized` me ek hi `wait()` hai, aur sab ek hi line me baithte hain. `ReentrantLock` me kai `Condition` bana sakte ho, jaise `notFull` aur `notEmpty`.
+- **Sirf sahi wale ko jagana:** `synchronized` me `notifyAll()` sabko jaga deta hai. `ReentrantLock` me `notEmpty.signalAll()` sirf unhi threads ko jagata hai jinka kaam hai.
+- **Try-lock aur timeout:** `synchronized` me ye nahi hai. `ReentrantLock` me `tryLock(timeout)` hai.
+- **Interrupt:** `synchronized` me ye limited hai. `ReentrantLock` me `lockInterruptibly()` hai.
+- **Speed:** dono lagbhag same hain, kyunki Java 6 ke baad `synchronized` optimize ho gaya. `ReentrantLock` ka faayda speed nahi, CONTROL hai.
 
-**`signalAll()` vs `notifyAll()`** — same concept, different API. Alag Condition = sirf sahi wale jaagte, bekaar wakeup kam.
+`signalAll()` aur `notifyAll()` ka concept same hai, bas API alag hai. Alag Condition hone se sirf sahi wale thread jaagte hain, aur bekaar ke wakeup kam ho jaate hain.
 
 ---
 
-## Comparison Table — Which Approach?
+## Kaunsa approach kab: teeno ka hisaab
 
-| Approach | Boilerplate | Flexibility | Performance | When to use |
-|---|---|---|---|---|
-| **synchronized + wait/notify** | High | Low | Medium | Interview classic, simple cases |
-| **BlockingQueue** | None | Low (preset) | High | **99% production** |
-| **ReentrantLock + Condition** | High | Highest | High (bekaar wakeup kam) | Advanced — custom signaling |
+- **`synchronized + wait/notify`:** boilerplate zyada hai, flexibility kam hai, performance medium hai. Ye interview ka classic hai aur simple case ke liye theek hai.
+- **`BlockingQueue`:** koi boilerplate nahi, flexibility kam hai (jo bana hai wahi milta hai), performance high hai. 99% production me yahi.
+- **`ReentrantLock + Condition`:** boilerplate zyada hai, flexibility sabse zyada hai, performance high hai (kyunki bekaar wakeup kam hote hain). Ye advanced case ke liye hai, jab custom signaling chahiye.
 
-**Production rule:** Default to **`BlockingQueue`**. Custom karna ho only — go to `ReentrantLock`.
+**Production ka niyam:** default me **`BlockingQueue`** lo. Sirf tab `ReentrantLock` pe jao jab kuch custom karna ho.
 
-## TRAP BOX
+## TRAP BOX: paanch galtiyan
 
-```
-Trap 1: "if (FULL) wait()"
-         Spurious wakeup possible — use while
+**Trap 1: `if (FULL) wait()` likh diya.** Spurious wakeup ho sakta hai, isliye `while` lagao.
 
-Trap 2: "notify() instead of notifyAll()"
-         Wrong thread wake possible — deadlock-like
+**Trap 2: `notifyAll()` ki jagah `notify()` lagaya.** Galat thread jag sakta hai, aur sab deadlock jaisa ruk jaata hai.
 
-Trap 3: "Buffer pe synchronized nahi laga"
-         Race condition — modCount issues, data corruption
+**Trap 3: buffer pe `synchronized` hi nahi lagaya.** Race condition aayegi, modCount wali dikkat aayegi, aur data kharab ho jaayega.
 
-Trap 4: "ArrayList use kiya BlockingQueue ke bajaye"
-         Reinventing wheel + bugs guaranteed
+**Trap 4: `BlockingQueue` ki jagah `ArrayList` use kiya.** Ye bana-banaya pahiya dobara banana hai, aur bugs pakke aayenge.
 
-Trap 5: "InterruptedException swallow kar diya"
-         Restore flag: Thread.currentThread().interrupt()
-```
+**Trap 5: `InterruptedException` ko nigal gaye (swallow kar diya).** Flag wapas set karo: `Thread.currentThread().interrupt()`.
 
-## Visual — The Pattern
+## Pattern ki tasveer
+
 ```
    ┌─────────────┐                                ┌──────────────┐
    │  PRODUCER   │  ──→ [ buffer ] [ buffer ]──→  │  CONSUMER    │
@@ -252,22 +264,24 @@ Trap 5: "InterruptedException swallow kar diya"
    │             │      ↑ FIXED CAPACITY ↑        │              │
    └─────────────┘                                └──────────────┘
 
-   Rules:
-   • Producer adds to buffer  → if FULL, WAIT
-   • Consumer takes from buffer → if EMPTY, WAIT
-   • Both notify each other when state changes
+   Niyam:
+   • Producer buffer me daalta hai  → buffer FULL ho to WAIT
+   • Consumer buffer se nikaalta hai → buffer EMPTY ho to WAIT
+   • Halat badalte hi dono ek doosre ko notify karte hain
 ```
 
 ### Queue vs BlockingQueue (saada line vs chaukidaar wali line)
-```
-                  Queue (LinkedList / ArrayDeque)   BlockingQueue (ArrayBlockingQueue / LinkedBlockingQueue)
-thread-safe?      NAHI                              HAAN (andar lock)
-khaali pe nikalo  poll() -> turant null             take() -> RUKTA jab tak item na aaye
-bhari pe daalo    limit nahi, badhta jaata          put() -> RUKTA jab tak jagah na bane (fixed size)
-kahan             ek thread (BFS, DSA)              kai thread (producer-consumer, thread pool)
-```
+
+Saada `Queue` (`LinkedList` ya `ArrayDeque`) thread-safe NAHI hai. `BlockingQueue` (`ArrayBlockingQueue` ya `LinkedBlockingQueue`) thread-safe HAI, kyunki uske andar lock laga hai.
+
+Khaali queue se nikaalne pe: saada Queue me `poll()` turant `null` lauta deta hai. BlockingQueue me `take()` tab tak RUKTA hai jab tak koi item na aa jaaye.
+
+Bhari queue me daalne pe: saade Queue ki koi limit nahi, wo badhti hi jaati hai. BlockingQueue fixed size ki hai, aur `put()` tab tak RUKTA hai jab tak jagah na ban jaaye.
+
+Kahan lagta hai: saada Queue ek thread ke kaam me (BFS, DSA). BlockingQueue kai thread ke kaam me (producer-consumer, thread pool).
 
 ### Production example
+
 ```java
 BlockingQueue<Order> orderQueue = new LinkedBlockingQueue<>(1000);
 
@@ -300,19 +314,14 @@ for (int i = 0; i < 5; i++) {
 }
 ```
 
-## MEMORY HOOKS
-```
-Producer-Consumer    =  "Fast factory, slow worker — buffer mein items"
+## Yaad rakhne wali baatein (memory hooks)
 
-while (condition)    =  "Defensive — spurious wakeup proof"
-notifyAll()          =  "Sab wake — no wrong-thread issue"
+Producer-Consumer ka matlab hai: factory tez hai, worker dheema hai, to beech me buffer me items rakhte hain.
 
-BlockingQueue        =  "Production weapon — put/take blocks"
-   put()             =  "Blocks if FULL"
-   take()            =  "Blocks if EMPTY"
-   offer()/poll()    =  "Non-blocking variants — return false/null"
+`while (condition)` defensive hai, kyunki ye spurious wakeup se bacha leta hai.
 
-ReentrantLock+Cond   =  "Granular — multiple wait queues"
-   notFull.await()   =  "Wait until space"
-   notEmpty.signal() =  "Wake one consumer"
-```
+`notifyAll()` sabko jaga deta hai, isliye galat thread wali dikkat nahi aati.
+
+`BlockingQueue` production ka hathiyaar hai, kyunki `put()` aur `take()` khud ruk jaate hain. `put()` tab rukta hai jab queue FULL ho. `take()` tab rukta hai jab queue EMPTY ho. `offer()` aur `poll()` inke bina ruke wale roop hain, jo rukne ki jagah `false` ya `null` lauta dete hain.
+
+`ReentrantLock + Condition` granular hai, kyunki isme kai alag wait line ban jaati hain. `notFull.await()` matlab jagah banne tak ruko. `notEmpty.signal()` matlab ek consumer ko jagao.

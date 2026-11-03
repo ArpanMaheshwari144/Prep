@@ -1,34 +1,35 @@
-# Lock Toolkit — ReadWriteLock · Semaphore · CountDownLatch · CyclicBarrier
+# Lock Toolkit — ReadWriteLock, Semaphore, CountDownLatch, CyclicBarrier
 
-**Kahani:** BMS ka theatre. Normal taala (`synchronized`) = andar sirf EK banda. Par theatre me har jagah ek-ek ko bhejna bekaar. Isliye 4 auzaar:
+## Kahani: BMS ka theatre
+
+Normal taala (`synchronized`) ka matlab hai ki andar sirf EK banda ja sakta hai. Par theatre me har jagah logon ko ek-ek karke bhejna bekaar hai. Isliye 4 alag auzaar hain, aur har ek theatre ki ek jagah se samajh aata hai.
+
+**1. Seat map (ReadWriteLock).** Seat map dekhne wale 1000 log hain, aur wo sab ek saath dekh sakte hain, kyunki dekhne se kuch nahi bigadta. Ye `readLock` hai, jo shared hai. Par jab koi book karne aata hai, to map badlega. Tab use `writeLock` chahiye, jo akela milta hai, aur us waqt baaki sab ko rukna padta hai.
+
+**2. Ticket printer (Semaphore(3)).** Printer ek saath sirf 3 log jhel sakta hai.
 
 ```
-1. SEAT MAP (ReadWriteLock)
-   dekhne wale 1000, sab ek saath dekh sakte      -> readLock  (shared)
-   book karne wala aaya, map badlega              -> writeLock (akela, sab ruko)
-
-2. TICKET PRINTER (Semaphore(3))
-   printer sirf 3 ek saath jhel sakta
-   T1 T2 T3 andar   T4 T5 ruko   T1 nikla -> T4 andar
-   lock = "EK ya koi nahi"   semaphore = "ITNE, bas itne"
-
-3. THEATRE KHULNA (CountDownLatch(3))
-   AC, projector, sound teeno ready -> darwaza khula
-   manager bahar wait karta (await), staff ginti ghatata (countDown)
-   ek baar khula = hamesha khula, reset nahi
-
-4. TEEN DOST (CyclicBarrier(3))
-   teeno gate pe milte, phir saath andar
-   agle show pe phir wahi -> apne aap reset (isliye "cyclic")
+T1 T2 T3 andar      T4 T5 ruke hue      T1 nikla -> T4 andar
 ```
 
-**Khaas baat:**
-1. ReadWriteLock tabhi fayda jab padhna zyada, likhna kam (seat map, config, cache). Barabar ho to iska hisaab-kitaab bhaari, saada `synchronized` tez.
-2. Read pakad ke write maanga = DEADLOCK (tu read chhodne ka intezaar kar raha, aur read tu hi pakde hai).
-3. Latch = bahar wala wait kare, ek baar ka. Barrier = wahi workers ek doosre ka wait, har round reset.
-4. Ek party pahunchi hi nahi -> baaki hamesha ruke. Isliye `await` ka timeout version. Barrier me kisi ka timeout -> baaki sabko `BrokenBarrierException`.
+Lock kehta hai "EK, ya koi nahi". Semaphore kehta hai "ITNE, aur bas itne".
 
-**Prod wala trap:**
+**3. Theatre khulna (CountDownLatch(3)).** AC, projector aur sound, teeno ready honge tabhi darwaza khulega. Manager bahar khade hoke wait karta hai (`await`), aur staff har kaam hone pe ginti ek ghata deta hai (`countDown`). Ek baar darwaza khul gaya to hamesha khula rehta hai, ye reset nahi hota.
+
+**4. Teen dost (CyclicBarrier(3)).** Teeno dost gate pe milte hain, aur phir saath andar jaate hain. Agle show pe phir wahi hota hai, aur barrier apne aap reset ho jaata hai. Isiliye iska naam "cyclic" hai.
+
+## Khaas baat
+
+**1. ReadWriteLock tabhi faayda deta hai jab padhna zyada aur likhna kam ho.** Jaise seat map, config, ya cache. Agar padhna aur likhna barabar ho, to iska apna hisaab-kitaab bhaari padta hai, aur saada `synchronized` tez nikalta hai.
+
+**2. Read lock pakad ke write lock maanga to DEADLOCK.** Kyunki tu read chhutne ka intezaar kar raha hai, aur wo read tu hi pakde baitha hai.
+
+**3. Latch aur Barrier ka farak.** Latch me koi bahar wala thread wait karta hai, aur ye ek hi baar kaam aata hai. Barrier me wahi workers ek doosre ka wait karte hain, aur har round ke baad ye reset ho jaata hai.
+
+**4. Ek party pahunchi hi nahi, to baaki hamesha ruke rahenge.** Isliye `await` ka timeout wala version lagao. Barrier me agar kisi ek ka timeout ho gaya, to baaki sab ko `BrokenBarrierException` milta hai.
+
+## Prod wala trap: release tab bhi kar diya jab acquire mila hi nahi
+
 ```java
 try {
     slots.tryAcquire();      // false aaya (printer full)...
@@ -37,9 +38,14 @@ try {
     slots.release();         // ...phir bhi release -> Semaphore(3) chupke se 4 ka ho gaya
 }
 ```
-Semaphore ka maalik nahi hota, koi bhi `release()` kar sakta. Ilaaj: `release()` sirf tab jab `tryAcquire()` ne `true` diya.
 
-**Tera project:** `usercrud` RateLimitController = "ek saath kitne" wali soch (semaphore). "Ek second me kitne" = token bucket, semaphore nahi.
+Yahan `tryAcquire()` ne `false` diya, matlab chaabi mili hi nahi, phir bhi `finally` me `release()` ho gaya. Semaphore ka koi maalik nahi hota, isliye koi bhi thread `release()` kar sakta hai, aur Java rokta nahi. Ilaaj: `release()` sirf tab karo jab `tryAcquire()` ne `true` diya ho.
+
+## Tera project
+
+`usercrud` ka RateLimitController "ek saath kitne" wali soch pe hai, jo semaphore wali soch hai. Par "ek second me kitne" wala hisaab token bucket hai, semaphore nahi.
+
+## Interview line
 
 ```
 Interview: "Jahan resource limited ho (connection pool, ya downstream jo sirf N concurrent jhele)
@@ -52,24 +58,21 @@ milein = CyclicBarrier. Har await ka timeout version, aur release / countDown ha
 
 ## GEHRA HISSA (purani file se, interview me kaam ka)
 
-## ★★ PEHLE YE — kya taala chahiye BHI?
+## Sabse pehle ye socho: kya taala chahiye bhi?
 
-> Zyadatar baar jawab yahin mil jaata hai, aur apna lock likhna hi nahi padta.
+Zyadatar baar jawab yahin mil jaata hai, aur apna lock likhna hi nahi padta.
 
-```
-ek counter badhana hai         ->  AtomicInteger       (taala mat lagao)
-ek map share karna hai         ->  ConcurrentHashMap   (taala mat lagao)
-queue se kaam pass karna hai   ->  BlockingQueue       (taala mat lagao)
-value kabhi badalti hi nahi    ->  final / immutable   (taala mat lagao)
-kai async kaam ka intezaar     ->  CompletableFuture.allOf(...)
+- Ek counter badhana hai, to `AtomicInteger` lo, taala mat lagao.
+- Ek map share karna hai, to `ConcurrentHashMap` lo, taala mat lagao.
+- Queue se kaam aage pass karna hai, to `BlockingQueue` lo, taala mat lagao.
+- Value kabhi badalti hi nahi, to use `final` ya immutable bana do, taala mat lagao.
+- Kai async kaam ka intezaar karna hai, to `CompletableFuture.allOf(...)` lo.
 
-ye sab ANDAR se lock sambhal lete hain.
-Apna lock likhna AAKHRI raasta hai, pehla nahi.
-```
+Ye sab ANDAR se lock khud sambhal lete hain. Apna lock likhna AAKHRI raasta hai, pehla nahi.
 
 ---
 
-## 1. `ReadWriteLock` — padhne wale ek doosre ko rokein hi kyun
+## 1. `ReadWriteLock`: padhne wale ek doosre ko rokein hi kyun?
 
 ```
 synchronized me:
@@ -78,14 +81,13 @@ synchronized me:
    T3 sirf PADH raha  ─┘  jabki koi kisi ka kuch bigaad hi nahi raha tha
 ```
 
-> Padhne wale ek doosre ko **nuksaan pahuncha hi nahi sakte**. Nuksaan tabhi hota hai jab koi **likhta** hai.
+Padhne wale ek doosre ko **koi nuksaan pahuncha hi nahi sakte**. Nuksaan tabhi hota hai jab koi **likhta** hai. To padhne walon ko line me khada karna bekaar hai.
+
+READ lock kitne bhi log EK SAATH le sakte hain, ye shared hai. WRITE lock sirf EK banda le sakta hai, aur jab tak wo pakde hai, tab tak koi padh bhi nahi sakta. Ye exclusive hai.
 
 ```
-READ  lock  ->  kitne bhi log EK SAATH        (shared)
-WRITE lock  ->  sirf EK, aur tab koi padh bhi nahi sakta   (exclusive)
-
      padhne wale:  T1  T2  T3  T4      <- sab saath andar
-     likhne wala:  W1                  <- akela, sabko bahar nikal ke
+     likhne wala:  W1                  <- akela, sabko bahar nikaal ke
 ```
 
 ```java
@@ -117,49 +119,25 @@ class Config {
 
 ### Kab faayda, kab NUKSAAN
 
-```
-padhna ~95%, likhna ~5%   ->  BADA faayda. 95% traffic bina ruke chal raha.
-                              (config, cache, reference data, pricing table)
+Agar padhna ~95% hai aur likhna ~5%, to BADA faayda hai, kyunki 95% traffic bina ruke chalta hai. Ye config, cache, reference data, ya pricing table jaisi cheezon me hota hai.
 
-padhna-likhna barabar     ->  FAAYDA NAHI, ULTA NUKSAAN.
-                              RW lock ka apna hisaab-kitaab bhaari hai —
-                              saada synchronized isse TEZ nikal jaayega.
-```
+Agar padhna aur likhna barabar hai, to koi FAAYDA NAHI, balki ULTA NUKSAAN hai. RW lock ka apna hisaab-kitaab bhaari hai, aur saada `synchronized` isse TEZ nikal jaayega.
 
-### ★ Do edge
+### Do edge case
 
-```
-1. WRITER STARVATION
-      readers aate hi ja rahe, lock kabhi khaali hi nahi hota
-      -> writer khada hi reh gaya
-      -> ilaaj: new ReentrantReadWriteLock(true)   (fair mode)
-                writer aane ke baad naye readers line me lagenge
+**1. Writer starvation.** Readers aate hi ja rahe hain, to lock kabhi khaali hi nahi hota, aur writer bechaara khada hi reh jaata hai. Ilaaj hai `new ReentrantReadWriteLock(true)`, yaani fair mode. Fair mode me writer ke aane ke baad jo naye readers aate hain, wo line me lagte hain.
 
-2. DOWNGRADE ho sakta hai, UPGRADE NAHI
-      write -> read   ->  chalega (write pakde hue read lo, phir write chhodo)
-      read  -> write  ->  ★ DEADLOCK. Tu read chhodne ka intezaar kar raha hai,
-                          aur read tu hi pakde hai.
-```
+**2. Downgrade ho sakta hai, upgrade NAHI.** Write se read pe jaana chalega: write pakde-pakde read le lo, phir write chhod do. Par read se write pe jaana DEADLOCK hai. Kyunki tu read chhutne ka intezaar kar raha hai, aur wo read tu hi pakde baitha hai.
 
-### HLD se joint
+### HLD se jod
 
-```
-DB replication  ->  ek leader likhta, kai copies padhti
-ReadWriteLock   ->  ek writer likhta, kai readers padhte
+DB replication me ek leader likhta hai aur kai copies padhti hain. ReadWriteLock me ek writer likhta hai aur kai readers padhte hain. Soch bilkul EK hi hai: padhne wale bahut hain aur likhne wale kam, to padhne walon ko ek doosre se mat roko. (Dekh: `04_HLD/FOUNDATIONS/05_database_replication.md`)
 
-soch bilkul EK hai: padhne wale bahut, likhne wale kam
-                    -> padhne walon ko ek doosre se mat roko
-(dekh: 04_HLD/FOUNDATIONS/05_database_replication.md)
-```
-
-> **BOLNE WALI LINE:** *"Read-heavy shared state pe `ReadWriteLock` lagata hoon — readers aapas me
-> nahi takraate, sirf writer sabko rokta hai. Keemat do hain: writes kam na hon to iska overhead
-> `synchronized` se mehnga pad jaata hai, aur readers ki bheed me writer bhookha reh sakta hai —
-> isliye fair mode."*
+**Bolne wali line:** "Read-heavy shared state pe `ReadWriteLock` lagata hoon — readers aapas me nahi takraate, sirf writer sabko rokta hai. Keemat do hain: writes kam na hon to iska overhead `synchronized` se mehnga pad jaata hai, aur readers ki bheed me writer bhookha reh sakta hai — isliye fair mode."
 
 ---
 
-## 2. `Semaphore` — taala nahi, GINTI
+## 2. `Semaphore`: ye taala nahi, GINTI hai
 
 ```
         SEMAPHORE(3)          <- 3 chaabi, 3 log ek saath andar
@@ -190,6 +168,8 @@ class PdfService {
 }
 ```
 
+Agar rukna nahi hai aur chaabi na mile to turant haar maan leni hai, to `tryAcquire()` lagao:
+
 ```java
 // haarna hai to
 if (slots.tryAcquire()) {                        // turant — mila to true
@@ -201,64 +181,37 @@ if (slots.tryAcquire()) {                        // turant — mila to true
 slots.tryAcquire(2, TimeUnit.SECONDS);           // 2 second ruk ke haar
 ```
 
-### Kis dikkat se paida hua
+### Ye kis dikkat se paida hua
 
-```
-200 thread hain, aur ek BHAARI kaam hai —
-   PDF banana / image resize / kisi purane system ko call karna
-   jo system sirf 10 request ek saath jhel sakta hai
+Maan lo 200 thread hain, aur ek BHAARI kaam hai, jaise PDF banana, image resize karna, ya kisi purane system ko call karna jo ek saath sirf 10 request jhel sakta hai.
 
-synchronized lagaya?   ->  sirf 1 chalega, 199 line me. BAHUT dheema.
-kuch nahi lagaya?      ->  200 saath gaye. Wo system gira, ya memory phati.
-Semaphore(10)          ->  theek 10. Na kam, na zyada.
+Agar `synchronized` lagaya, to sirf 1 thread chalega aur 199 line me khade rahenge. Ye BAHUT dheema hai. Agar kuch nahi lagaya, to 200 ek saath chale jaayenge, aur wo system gir jaayega ya memory phat jaayegi. `Semaphore(10)` lagaya, to theek 10 jaayenge, na kam na zyada.
 
-★ NICHOD:  lock kehta hai "EK ya koi nahi".
-           semaphore kehta hai "ITNE, aur bas itne".
-```
+**Nichod:** lock kehta hai "EK, ya koi nahi". Semaphore kehta hai "ITNE, aur bas itne".
 
-### ★ Teen baatein jo interview me pakadti hain
+### Teen baatein jo interview me pakadti hain
 
-```
-1. SEMAPHORE ka MAALIK NAHI HOTA
-     lock.unlock()  ->  sirf WAHI thread jisne liya tha
-     release()      ->  KOI BHI thread, chahe usne acquire kiya hi na ho
+**1. Semaphore ka MAALIK NAHI HOTA.** `lock.unlock()` sirf wahi thread kar sakta hai jisne lock liya tha. Par `release()` KOI BHI thread kar sakta hai, chahe usne acquire kiya hi na ho. Ye bug bhi ban sakta hai: ek extra `release()` hua to permits BADH gaye, aur `Semaphore(3)` chupke se 4 ka ho gaya, aur tujhe kabhi pata bhi nahi chalega. Aur yahi cheez feature bhi hai: T1 acquire kare aur T2 release kare, to isse signalling ho jaati hai.
 
-     BUG     -> ek extra release() -> permits BADH gaye
-                Semaphore(3) chupke se 4 ka ho gaya, aur kabhi pata nahi chalega
-     FEATURE -> T1 acquire kare, T2 release kare = signalling
+**2. Ye REENTRANT NAHI HAI.** `lock.lock(); lock.lock();` chalega, kyunki lock ka hold count 2 ho jaata hai. Par `sem.acquire(); sem.acquire();` me DO permit chale gaye. Agar `Semaphore(1)` pe ye kiya, to tu KHUD pe hi phans gaya, aur deadlock ho gaya.
 
-2. REENTRANT NAHI HAI
-     lock.lock(); lock.lock();       ->  chalega (hold count 2)
-     sem.acquire(); sem.acquire();   ->  DO permit gaye
-     Semaphore(1) pe ye karo  ->  tu KHUD pe phans gaya. Deadlock.
+**3. Kya `Semaphore(1)` ek mutex hai?** Kaam lagbhag wahi hai, PAR iska maalik nahi hota (upar wali baat). Isliye agar mutual exclusion chahiye, to `ReentrantLock` lo. Semaphore ka asli kaam GINTI hai, taala nahi.
 
-3. Semaphore(1) == mutex?
-     kaam lagbhag wahi, PAR maalik nahi hota (upar wali baat).
-     mutual exclusion chahiye -> ReentrantLock.
-     Semaphore ka asli kaam GINTI hai, taala nahi.
-```
+### Asli duniya me kahan dikhta hai
 
-### Asli duniya me
+**Concurrency limit:** "max 10 request EK SAATH chalein", ye ginti hai. Dhyan rakh, per-SECOND rate token bucket se aata hai, semaphore se nahi. Semaphore sirf "ek saath kitne" ginta hai, "ek second me kitne" nahi.
 
-```
-concurrency limit     ->  "max 10 request EK SAATH chalein"           = ginti
-                          (per-SECOND rate = token bucket, semaphore nahi — semaphore
-                           sirf "ek saath kitne" ginta, "ek second me kitne" nahi)
-DB connection pool    ->  "sirf 20 connection hain"                   = ginti
-BULKHEAD              ->  "payment service ko max 5 thread do, taaki
-                           wo gire to poori app na mare"              = ginti
+**DB connection pool:** "sirf 20 connection hain", ye bhi ginti hai.
 
-★ tere apne project me: usercrud / RateLimitController — wahi soch chal rahi hai
-```
+**Bulkhead:** "payment service ko max 5 thread do, taaki wo gire to poori app na mare", ye bhi ginti hai.
 
-> **BOLNE WALI LINE:** *"Jahan resource limited ho — thread-pool, connection, ya koi downstream
-> system jo sirf N concurrent jhel sakta hai — wahan `Semaphore`. Lock yahan galat auzaar hai:
-> wo sab kuch ek-ek karke chalata, jabki mujhe N chahiye. Keemat ye ki semaphore ka maalik nahi
-> hota — ek galat `release` permits badha deta hai — isliye `release` hamesha `finally` me."*
+Tere apne project me bhi, usercrud ke RateLimitController me, wahi soch chal rahi hai.
+
+**Bolne wali line:** "Jahan resource limited ho — thread-pool, connection, ya koi downstream system jo sirf N concurrent jhel sakta hai — wahan `Semaphore`. Lock yahan galat auzaar hai: wo sab kuch ek-ek karke chalata, jabki mujhe N chahiye. Keemat ye ki semaphore ka maalik nahi hota — ek galat `release` permits badha deta hai — isliye `release` hamesha `finally` me."
 
 ---
 
-## 3. `CountDownLatch` — ek taraf ka darwaza
+## 3. `CountDownLatch`: ek taraf ka darwaza
 
 ```
        main thread          ┌─────────────┐
@@ -293,23 +246,17 @@ latch.await();                      // teeno khatam hone tak ruko
 System.out.println("app ready");
 ```
 
-```
-DO ALAG KIRDAAR:
-   INTEZAAR karne wala  ->  main      (await)
-   GINTI ghatane wale   ->  workers   (countDown)
-   ye alag-alag thread hain
+**Isme do alag kirdaar hain.** Intezaar karne wala main thread hai, jo `await` karta hai. Ginti ghatane wale workers hain, jo `countDown` karte hain. Ye alag-alag thread hote hain.
 
-★ EK BAAR ka auzaar. count 0 hua to khatam — reset nahi hota.
-  Dobara chahiye? Naya latch banao.
-```
+**Ye EK BAAR ka auzaar hai.** Count 0 ho gaya to iska kaam khatam, ye reset nahi hota. Dobara chahiye to naya latch banao.
 
 ---
 
-## 4. `CyclicBarrier` — sab ek jagah milte hain
+## 4. `CyclicBarrier`: sab ek jagah milte hain
 
 ```
    W1 ──► await() ─┐
-   W2 ──► await() ─┼──►  BARRIER (3 parties)   <- teeno pahunche?
+   W2 ──► await() ─┼──►  BARRIER (3 parties)   <- teeno pahunch gaye?
    W3 ──► await() ─┘                              haan -> teeno EK SAATH aage
 
    aur barrier khud ko RESET kar leta hai -> agle round me phir wahi kaam
@@ -328,160 +275,96 @@ for (int round = 0; round < 5; round++) {
 }
 ```
 
-```
-EK HI KIRDAAR:
-   jo intezaar karte hain, WAHI barrier poora karte hain — sab worker.
-   koi bahar khada tamashbeen nahi.
+**Isme ek hi kirdaar hai.** Jo intezaar karte hain, WAHI barrier ko poora bhi karte hain, aur wo sab worker hain. Koi bahar khada tamashbeen nahi hota.
 
-★ BAAR-BAAR chalta hai (isliye "cyclic"). Har round me apne aap reset.
-★ Ek optional KAAM de sakte ho jo har round ke ant me chale (upar wala lambda).
-```
+**Ye BAAR-BAAR chalta hai**, isliye naam "cyclic" hai. Har round ke baad ye apne aap reset ho jaata hai.
+
+**Tu ek optional KAAM bhi de sakta hai** jo har round ke ant me chale, jaise upar wala lambda.
 
 ---
 
-## ★★ LATCH vs BARRIER — saamne-saamne (ye dono confuse hote hain)
+## LATCH vs BARRIER: saamne-saamne (ye dono aksar confuse hote hain)
 
-```
-                     CountDownLatch              CyclicBarrier
-------------------------------------------------------------------------
-kaun rukta           ek/kai BAAHRI thread        khud WORKERS
-kaun poora karta     workers (countDown)         wahi workers (await)
-dobara use           ★ NAHI — ek baar            ★ HAAN — apne aap reset
-ginti                sirf GHATTI hai             har round me bharti hai
-extra kaam           nahi                        barrier action de sakte ho
+**Kaun rukta hai:** latch me ek ya kai BAAHRI thread rukte hain. Barrier me khud WORKERS rukte hain.
 
-TASVEER              rocket launch countdown     trek ka checkpoint
-                     3..2..1..0 -> chhoot gaya   sab pahunche -> saath chale
-                     dobara nahi                 agla checkpoint phir wahi
-```
+**Kaun poora karta hai:** latch me workers `countDown` karke poora karte hain. Barrier me wahi workers `await` karke poora karte hain.
 
-### ★ Sabse bada gotcha — barrier TOOT jaata hai
+**Dobara use:** latch dobara use NAHI hota, ek hi baar ka hai. Barrier dobara use HOTA hai, apne aap reset ho jaata hai.
 
-```
-3 parties chahiye. 2 await() me khade hain.
+**Ginti:** latch me ginti sirf GHATTI hai. Barrier me ginti har round me phir se bhar jaati hai.
 
-(a) teesra await() tak pahuncha hi nahi (CRASH / exception pehle hi)
-       ->  barrier TOOTTA NAHI (isBroken = false)
-       ->  baaki dono HAMESHA ke liye WAITING   <- latch jaisa hi anant intezaar
-(b) khade hue me se kisi ka TIMEOUT ya INTERRUPT hua (await(500ms) wala)
-       ->  BARRIER TOOT GAYA
-       ->  wo: TimeoutException, baaki sab: BrokenBarrierException
-       ->  poora barrier bekaar (reset() se hi wapas)
+**Extra kaam:** latch me nahi hota. Barrier me barrier action de sakte ho.
 
-★ 4-Oct chala ke dekha: crash pe dono WAITING rahe (toota nahi); await(500ms) pe
-  W1 TimeoutException + W2 BrokenBarrierException.
--> ISLIYE: latch ho ya barrier, await ka TIMEOUT version zaroori (+ latch me countDown finally me).
-   Timeout hi wo cheez hai jo "chup-chaap anant intezaar" ko shor wali exception bana deti.
-```
+**Tasveer:** latch ek rocket launch ka countdown hai: 3, 2, 1, 0, aur rocket chhoot gaya, dobara nahi. Barrier ek trek ka checkpoint hai: sab pahunche to saath chale, aur agle checkpoint pe phir wahi.
 
-### Kab kaunsa — asli zindagi me
+### Sabse bada gotcha: barrier TOOT jaata hai
 
-```
-LATCH    ->  app start: 3 service warm-up hon, tab traffic lo
-             test: saare thread ek saath chhodo (count 1 ka "start gate")
-             kai API parallel call karo, sab jawab aane pe aage badho
+Maan lo 3 parties chahiye, aur 2 already `await()` me khade hain.
 
-BARRIER  ->  round-by-round calculation: sab apna hissa karein, sab milein,
-             phir agla round
-             (simulation, image ko tukdo me process karna, game ke turn)
-```
+**Case (a):** teesra `await()` tak pahuncha hi nahi, kyunki wo pehle hi CRASH ho gaya ya exception aa gaya. Tab barrier TOOTTA NAHI (`isBroken = false`), aur baaki dono HAMESHA ke liye WAITING me khade rehte hain. Ye latch jaisa hi anant intezaar hai.
 
-> **Aaj ki duniya me:** `CountDownLatch` ka kaam ab aksar `CompletableFuture.allOf(...)` se hota hai
-> ([11_future_vs_completablefuture.md](11_future_vs_completablefuture.md)). Latch phir bhi poocha
-> jaata hai, aur legacy code me milta hai.
+**Case (b):** jo khade hain unme se kisi ka TIMEOUT ho gaya ya INTERRUPT aa gaya (jaise `await(500ms)` wala). Tab BARRIER TOOT JAATA HAI. Us thread ko `TimeoutException` milta hai, aur baaki sabko `BrokenBarrierException`. Poora barrier bekaar ho jaata hai, aur `reset()` se hi wapas theek hota hai.
 
-> **BOLNE WALI LINE:** *"`CountDownLatch` ek baar ka gate hai — koi baahar khada intezaar karta hai
-> jab tak N kaam khatam na hon, aur uske baad wo dobara use nahi hota. `CyclicBarrier` me wahi
-> thread ek doosre ka intezaar karte hain aur har round ke baad wo apne aap reset ho jaata hai.
-> Dono me ek party na pahunche to baaki hamesha atke rehte — isliye `await` ka timeout version
-> (aur latch me `countDown` `finally` me). Barrier me kisi ka timeout/interrupt ho to baaki sabko
-> `BrokenBarrierException` milta hai."*
+4-Oct ko chala ke dekha tha: crash wale case me dono thread WAITING me rahe aur barrier toota nahi. `await(500ms)` wale case me W1 ko `TimeoutException` mila aur W2 ko `BrokenBarrierException`.
+
+Isliye latch ho ya barrier, `await` ka TIMEOUT wala version zaroori hai, aur latch me `countDown` `finally` me. Timeout hi wo cheez hai jo "chup-chaap anant intezaar" ko ek shor machane wali exception me badal deti hai.
+
+### Asli zindagi me kab kaunsa
+
+**Latch:** app start hote waqt 3 service warm-up ho jaayein, tab traffic lo. Test me saare thread ek saath chhodne ho, to count 1 ka "start gate" bana lo. Kai API parallel call karo, aur sab ka jawab aane pe aage badho.
+
+**Barrier:** round-by-round calculation me, jahan sab apna hissa karte hain, sab milte hain, phir agla round shuru hota hai. Jaise simulation, image ko tukdon me process karna, ya game ke turn.
+
+**Aaj ki duniya me:** `CountDownLatch` ka kaam ab aksar `CompletableFuture.allOf(...)` se ho jaata hai ([11_future_vs_completablefuture.md](11_future_vs_completablefuture.md)). Par latch phir bhi interview me poocha jaata hai, aur legacy code me milta hai.
+
+**Bolne wali line:** "`CountDownLatch` ek baar ka gate hai — koi baahar khada intezaar karta hai jab tak N kaam khatam na hon, aur uske baad wo dobara use nahi hota. `CyclicBarrier` me wahi thread ek doosre ka intezaar karte hain aur har round ke baad wo apne aap reset ho jaata hai. Dono me ek party na pahunche to baaki hamesha atke rehte — isliye `await` ka timeout version (aur latch me `countDown` `finally` me). Barrier me kisi ka timeout/interrupt ho to baaki sabko `BrokenBarrierException` milta hai."
 
 ---
 
-## ★★ KAUNSA KAB — ek sawaal se tay
+## KAUNSA KAB: ek sawaal se tay ho jaata hai
 
-> **"Main kis cheez ko kaabu kar raha hoon?"**
+Khud se poochho: **"Main kis cheez ko kaabu kar raha hoon?"**
 
-```
-EK BANDA andar jaaye                 ->  synchronized
-                                          (haarna/interrupt chahiye -> ReentrantLock)
+- Agar EK BANDA andar jaaye, to `synchronized`. Agar haar maanni ho ya interrupt chahiye, to `ReentrantLock`.
+- Agar PADHNE wale bahut hain aur LIKHNE wale kam, to `ReadWriteLock`.
+- Agar N BANDE ek saath andar ja sakte hain, to `Semaphore`.
+- Agar "N kaam khatam hon, TAB main chalu karun", to `CountDownLatch`.
+- Agar "sab ek doosre ka intezaar karein, phir saath chalein, har round", to `CyclicBarrier`.
 
-PADHNE wale bahut, LIKHNE wale kam   ->  ReadWriteLock
+### Poora naksha: har auzaar ka kaam aur uski keemat
 
-N BANDE andar jaa sakte hain         ->  Semaphore
+**`synchronized`:** ek banda andar, aur JVM sab sambhalta hai. Keemat ye ki na tu haar maan sakta hai, na interrupt kar sakta hai, na kisi alag jagah unlock kar sakta hai.
 
-"N kaam khatam hon TAB main chalu"   ->  CountDownLatch
+**`ReentrantLock`:** wahi kaam, plus `tryLock`, timeout, interrupt aur fairness. Keemat ye ki unlock karna TERI zimmedari hai, isliye `finally` me. Aur fair mode dheema hota hai.
 
-"sab ek doosre ka intezaar karein,
- phir saath chalein — har round"     ->  CyclicBarrier
-```
+**`ReadWriteLock`:** readers saath chalte hain, writer akela. Keemat ye ki agar writes kam na hon to ye ULTA mehnga padta hai. Writer starvation ho sakti hai, jiska ilaaj fair mode hai. Aur read se write ka upgrade DEADLOCK hai.
 
-### Poora naksha (kaam + keemat)
+**`Semaphore`:** N ek saath (ginti). Keemat ye ki iska maalik nahi hota, to ek extra `release()` chupke se permits badha deta hai. Aur ye reentrant NAHI hai, to tu khud pe phans sakta hai.
 
-```
-AUZAAR            KAAM                          KEEMAT / KHATRA
---------------------------------------------------------------------------------
-synchronized      ek andar, JVM sambhale        na haar sakte, na interrupt,
-                                                na alag jagah unlock
+**`CountDownLatch`:** "N khatam hon, tab gate khule". Keemat ye ki ye EK BAAR ka hai, reset nahi hota. Aur agar koi `countDown` chhoot gaya, to ANANT intezaar.
 
-ReentrantLock     wahi + tryLock + timeout      unlock TERI zimmedari -> finally
-                  + interrupt + fairness        fair mode dheema hota hai
+**`CyclicBarrier`:** "sab milein, phir saath chalein", aur har round reset. Keemat ye ki agar ek party pahunchi hi nahi to baaki ANANT ruke rehte hain. Aur timeout ya interrupt hua to SABKO `BrokenBarrierException` milta hai.
 
-ReadWriteLock     readers saath, writer akela   writes kam na hon to ULTA mehnga
-                                                writer starvation -> fair mode
-                                                read->write upgrade = DEADLOCK
+### Teen jode jo confuse hote hain
 
-Semaphore         N ek saath (ginti)            maalik nahi hota — extra release()
-                                                chupke se permits badha deta
-                                                reentrant NAHI — khud pe phans sakte
+**1. `ReentrantLock` vs `Semaphore(1)`.** Dono "ek banda andar" wala kaam karte hain. Farak ye hai ki lock ka MAALIK hota hai, jisne liya wahi chhodega, aur semaphore ka maalik nahi hota, koi bhi release kar sakta hai. Isliye mutual exclusion ke liye Lock, aur ginti ya signal ke liye Semaphore.
 
-CountDownLatch    "N khatam ho, gate khule"     EK BAAR ka — reset nahi
-                                                countDown chhoota -> ANANT intezaar
+**2. `CountDownLatch` vs `CyclicBarrier`.** Latch me intezaar karne wala ALAG banda hota hai, aur ye EK BAAR ka hai. Barrier me wahi log intezaar karte hain jo kaam kar rahe hain, aur ye BAAR-BAAR chalta hai.
 
-CyclicBarrier     "sab mile, phir saath"        ek party pahunchi hi nahi -> baaki ANANT ruke
-                  har round reset                timeout/interrupt -> SABKO BrokenBarrierException
-```
-
-### ★ Teen jode jo confuse hote hain
-
-```
-1. ReentrantLock  vs  Semaphore(1)
-      dono "ek banda andar" karte hain
-      FARAK: lock ka MAALIK hota hai (jisne liya wahi chhodega)
-             semaphore ka nahi (koi bhi release kar sakta)
-      -> mutual exclusion  ->  Lock
-      -> ginti / signal    ->  Semaphore
-
-2. CountDownLatch  vs  CyclicBarrier
-      FARAK: latch me intezaar karne wala ALAG banda, aur EK BAAR ka
-             barrier me wahi log intezaar karte hain, aur BAAR-BAAR chalta hai
-
-3. ReadWriteLock  vs  synchronized
-      FARAK: RW tabhi jeetta jab padhna ~90%+ ho
-             barabar padhna-likhna ho to saada synchronized TEZ nikal jaata
-```
+**3. `ReadWriteLock` vs `synchronized`.** RW lock tabhi jeetta hai jab padhna ~90% se zyada ho. Agar padhna-likhna barabar ho, to saada `synchronized` TEZ nikal jaata hai.
 
 ---
 
-## ★★ EK EDGE SABME COMMON HAI
+## EK EDGE SABME COMMON HAI
+
+Har acquire ke saath ek release hona chahiye, aur wo HAMESHA `finally` me:
 
 ```
-har acquire ke saath ek release, aur wo HAMESHA finally me:
-
    lock.lock()      ->  finally { lock.unlock(); }
    sem.acquire()    ->  finally { sem.release(); }
    latch banaya     ->  finally { latch.countDown(); }
-
-ek bhi chhoota  ->  koi thread HAMESHA ke liye khada reh jaayega,
-                    aur error kahin dikhega bhi nahi.
-                    Bas app dheere-dheere jam jaayegi — ye sabse mehnga bug hai,
-                    kyunki ye chillata nahi.
 ```
 
-> **AAKHRI BOLNE WALI LINE:** *"Pehle dekhta hoon ki lock chahiye bhi ya nahi — `AtomicInteger`,
-> `ConcurrentHashMap`, `BlockingQueue` andar se ye kaam kar dete hain. Zaroorat pade to auzaar
-> sawaal se chunta hoon: ek banda andar chahiye to lock, padhne wale bahut hain to `ReadWriteLock`,
-> N ek saath chahiye to `Semaphore`, aur intezaar karna ho to — ek baar ka ho to `CountDownLatch`,
-> baar-baar ka ho to `CyclicBarrier`. In sab ki ek hi common keemat hai: release ab meri
-> zimmedari hai, isliye hamesha `finally` me."*
+Agar ek bhi chhoot gaya, to koi thread HAMESHA ke liye khada reh jaayega, aur error kahin dikhega bhi nahi. Bas app dheere-dheere jam jaayegi. Ye sabse mehnga bug hai, kyunki ye chillata nahi.
+
+**Aakhri bolne wali line:** "Pehle dekhta hoon ki lock chahiye bhi ya nahi — `AtomicInteger`, `ConcurrentHashMap`, `BlockingQueue` andar se ye kaam kar dete hain. Zaroorat pade to auzaar sawaal se chunta hoon: ek banda andar chahiye to lock, padhne wale bahut hain to `ReadWriteLock`, N ek saath chahiye to `Semaphore`, aur intezaar karna ho to — ek baar ka ho to `CountDownLatch`, baar-baar ka ho to `CyclicBarrier`. In sab ki ek hi common keemat hai: release ab meri zimmedari hai, isliye hamesha `finally` me."
