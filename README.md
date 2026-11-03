@@ -140,7 +140,6 @@ SAFAR (March: khaali folder)  ->  aaj
   - [13 banking (bank branch)](04_HLD/SYSTEM_DESIGNS/13_banking_system/BANKING_HAND_NOTES.md)
   - [14 chat (Arpan, Ravi, college-gang)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/CHAT_HAND_NOTES.md)
   - [15 Uber (Connaught Place se ghar)](04_HLD/SYSTEM_DESIGNS/15_uber/UBER_HAND_NOTES.md)
-  - *baaki 1 (scene-mock abhi):* 07 file upload
 
 - ★★ **[00_MASTER_SHEET](04_HLD/00_MASTER_SHEET.md)** — doubt aaye to yahan dhoondho: sabse upar **clickable INDEX + DOUBT DHOONDHO** (doubt likha -> click -> seedha jawab; Alex Xu ke chapter ka map bhi) · 8 dabbe x 4 line · 6 archetype · universal rail · block-menu · A-ya-B trade-off jode · 14 design ka DIL + KHAAS hissa · anjaan-design recipe · kaise bolna · SHABD (word atke to). Cross-question (Q1-Q22) ab yahan nahi, design files me (4-Oct).
 
