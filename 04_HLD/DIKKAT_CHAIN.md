@@ -280,3 +280,16 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
 17  payment fail, Arpan ghar ke andar       ->  paisa nahi aaya to ride khatam nahi (PAYMENT_PENDING)
 18  Raju ka phone band, naksha pe gayab     ->  location band, ek-do baar dekho (location timeout)
 ```
+
+## 16. Leaderboard   ([notes](SYSTEM_DESIGNS/16_leaderboard/LEADERBOARD_HAND_NOTES.md))
+
+```
+ 1  1 crore sort kiye bina top 10 + rank     ->  apne aap sort wala dabba (Redis sorted set)
+ 2  Ravi, Priya dono 9800                    ->  score phir time, ek number me (thenComparing)
+ 3  lakhon update ek Redis pe                ->  region se baant do, chhotu mila ke badi screen (shard, scatter-gather)
+ 4  India me 3,000, duniya ka rank           ->  race wala: har line me mere upar kitne, jodo (count)
+ 5  poora 1 crore ka board                   ->  referee wala: chhotu har kuch minute (snapshot job)
+ 6  aaj / hafta / all-time                   ->  score teeno dabbon me
+ 7  raat 12 baje aaj wala khaali             ->  alag register, kal wala discard (key me tareekh, TTL)
+ 8  mere aage-peeche ke 5, alag dabbon me    ->  bheed me aas-paas scan (score range, merge)
+```
