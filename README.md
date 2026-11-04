@@ -9,7 +9,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ```
 SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 15 design (14 + Uber; 14 kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 14 (sab, file upload chhod ke) + 19 foundation + master sheet
+  HLD: 15 design (14 + Uber; 14 kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 15 + 19 foundation
   DSA: 18 pattern · 179 problem + 141 REDO = 320 .cpp · pattern sheet (174 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
