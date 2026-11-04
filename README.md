@@ -147,7 +147,6 @@ SAFAR (March: khaali folder)  ->  aaj
 
 - **[KAHANIYAN](04_HLD/KAHANIYAN)** — tool kyun bana (Redis, Kafka ...): upar ek table me har tool ki ek line, poori kahani alag chhoti file
 
-- **[HLD_PRACTICE_LOG](04_HLD/HLD_PRACTICE_LOG.md)** — bolke kiye HLD round ka log (kya khud nikla, kya round me seekha)
 
 > ★ **DO FOUNDATION FILE ME LIVE HANDS-ON HAI** (padha hua nahi — CHALA KE dekha, har command + asli output):
 > · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) — eviction (`allkeys-lru` vs `volatile-lru`) · replication · read-only replica · haath-se failover → **split brain** · `stop` vs `kill` (RDB) · replica ≠ backup · **Sentinel se khud-b-khud failover 800ms me**
