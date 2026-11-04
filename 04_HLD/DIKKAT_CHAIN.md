@@ -217,7 +217,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
 10  galat ticket gate tak aaye hi kyun            ->  bouncer, gate pe hi rok de (validation)
 11  SMS counter 10 min band, sab DLQ me           ->  pehle check, waqai band? (circuit breaker)
 12  counter waqai band hai                        ->  road band, traffic divert (fallback)
-13  7 din peeche, purana panna phat jaata         ->  aur admin daalo (partition + consumer)
+13  7 din peeche, purana panna phat jaata         ->  aur checker daalo, gate bhar gaye to gate bhi (consumer, phir partition)
 14  aaj 1 din, kal 2 din peeche                   ->  alert laga do (consumer lag alert)
 ```
 

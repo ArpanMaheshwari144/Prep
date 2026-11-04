@@ -47,7 +47,7 @@ Technical me: "sab DLQ me nahi, pehle check" = circuit breaker, "check karunga k
 
 **10. Koi line me 7 din se zyada peeche reh gaya, aur gate ki 7 din purani list ka panna phaad diya jaata hai.**
 Arpan: Wahan bheed bahut zyada hai, aur admin daalo wahan. Use itna peeche rehne hi mat do na, wahan aisa karo taaki wo bheed 7 din tak peeche na rahe.
-Technical me: "aur admin daalo" = partition (gate) badhao + utne consumer (checker); ek gate pe ek group ka ek hi checker hota, isliye sirf checker badhane se kaam nahi, "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
+Technical me: "aur admin daalo" = pehle checker (consumer) badhao, gate (30) tak; gate bhar gaye tab gate (partition) bhi badhao, isliye shuru se zyada gate rakhe the, "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
 **Maan lo wo dheere-dheere peeche ja raha: aaj 1 din, kal 2 din. 7 din hone se pehle kaise pata chalega?**
 Arpan: Alert laga do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."
 Technical me: "alert laga do" = consumer lag alert.
