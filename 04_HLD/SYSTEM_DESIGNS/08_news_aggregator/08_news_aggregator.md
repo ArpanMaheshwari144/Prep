@@ -139,4 +139,4 @@ flowchart LR
 
 ---
 
-Notes (Arpan ke shabd) = [NEWS_HAND_NOTES.md](NEWS_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
+Notes (Arpan ke shabd) = [NEWS_HAND_NOTES.md](NEWS_HAND_NOTES.md)

@@ -1,6 +1,6 @@
 # Jab ILAAJ hi BIMARI ban jaaye — cascading / metastable failure
 
-> **NAV** — KYA: HUB — bachane wali cheez hi girane wali (LB · cache · queue · CAP · SPOF · CDN). UP: [MASTER](../00_MASTER_SHEET.md)
+> **NAV** — KYA: HUB — bachane wali cheez hi girane wali (LB · cache · queue · CAP · SPOF · CDN).
 
 > **Ye foundation baaki se alag hai.** Baaki files batati hain ki ek cheez **kaam kaise karti hai**.
 > Ye file ek hi sawaal ki hai: *sab kuch sahi laga hua tha, sab chal raha tha — phir bhi system gir

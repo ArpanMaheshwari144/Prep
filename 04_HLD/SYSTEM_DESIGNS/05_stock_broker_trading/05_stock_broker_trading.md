@@ -146,4 +146,4 @@ se har share ka ek bhaav / sec. Bhaav kho bhi jaaye to agle second naya, isliye 
 
 ---
 
-Notes (Arpan ke shabd) = [STOCK_HAND_NOTES.md](STOCK_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
+Notes (Arpan ke shabd) = [STOCK_HAND_NOTES.md](STOCK_HAND_NOTES.md)

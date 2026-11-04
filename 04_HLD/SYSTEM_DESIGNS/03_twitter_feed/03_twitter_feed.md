@@ -197,4 +197,4 @@ flowchart LR
 
 ---
 
-Notes (Arpan ke shabd) = [TWITTER_HAND_NOTES.md](TWITTER_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
+Notes (Arpan ke shabd) = [TWITTER_HAND_NOTES.md](TWITTER_HAND_NOTES.md)

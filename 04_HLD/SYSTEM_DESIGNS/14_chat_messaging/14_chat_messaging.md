@@ -164,4 +164,4 @@ kaato = entry ki umar (TTL), heartbeat chhoote to apne aap mite. Aakhri heartbea
 
 ---
 
-Notes (Arpan ke shabd) = [CHAT_HAND_NOTES.md](CHAT_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
+Notes (Arpan ke shabd) = [CHAT_HAND_NOTES.md](CHAT_HAND_NOTES.md)

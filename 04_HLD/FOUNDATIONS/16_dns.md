@@ -1,6 +1,6 @@
 # DNS — Domain Name System
 
-> **NAV** — KYA: DNS (resolution, records, TTL, Route 53, anycast). UP: [MASTER](../00_MASTER_SHEET.md) · saath: [load-balancing](03_load_balancing.md) · lagta hai: [browser-journey](19_url_browser_journey.md)
+> **NAV** — KYA: DNS (resolution, records, TTL, Route 53, anycast). saath: [load-balancing](03_load_balancing.md) · lagta hai: [browser-journey](19_url_browser_journey.md)
 
 ---
 
@@ -390,4 +390,3 @@ Caching: Browser → OS → Resolver → NS (TTL-based)
 Anycast = Same IP, many locations (auto-nearest)
 ```
 
-[← MASTER](../00_MASTER_SHEET.md)

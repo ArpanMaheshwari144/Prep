@@ -1,6 +1,6 @@
 # "Type amazon.com -> Enter" — Browser Journey (Visual)
 
-> **NAV** — KYA: Enter dabane ke baad kya hota (concept-walkthrough, design nahi). UP: [MASTER](../00_MASTER_SHEET.md) · CONCEPTS: [load-balancing](03_load_balancing.md) · [DNS](16_dns.md) · [CDN](15_cdn.md)
+> **NAV** — KYA: Enter dabane ke baad kya hota (concept-walkthrough, design nahi). CONCEPTS: [load-balancing](03_load_balancing.md) · [DNS](16_dns.md) · [CDN](15_cdn.md)
 
 Classic interview question (JP / GS / FAANG). What happens between pressing Enter and the page showing up.
 
@@ -239,7 +239,7 @@ KEY: encrypted = scrambled with shared key. Sirf jiske paas key (tu + server) un
        "What's the single point of failure here?"      -> raasta chalo, har box pe "ye gira to?"
        "How do you know the system is working?"        -> p99 · error rate · queue lag · alert
 
-   ► MASTER SHEET SE JODA: SPOF me wo dabbe bhi gino jo dikhte nahi — DNS (step 2)
+   ► JOD: SPOF me wo dabbe bhi gino jo dikhte nahi — DNS (step 2)
        aur TLS cert (step 4). DNS gira ya cert expire = poori site band, server zinda ho tab bhi.
 ```
 

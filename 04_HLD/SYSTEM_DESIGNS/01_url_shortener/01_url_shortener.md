@@ -180,4 +180,4 @@ had (userId pe kadi). Baar-baar aaye to IP ban, ek hi desh se naye-naye IP aayei
 
 ---
 
-Notes (Arpan ke shabd) = [URL_HAND_NOTES.md](URL_HAND_NOTES.md) · [<- MASTER SHEET](../../00_MASTER_SHEET.md)
+Notes (Arpan ke shabd) = [URL_HAND_NOTES.md](URL_HAND_NOTES.md)

@@ -1,6 +1,6 @@
 # Monitoring — Prometheus + Grafana (app ki live metrics + graphs)
 
-> **NAV** — KYA: monitoring (Prometheus + Grafana, usercrud hands-on). UP: [MASTER](../00_MASTER_SHEET.md) · demo files: [MONITORING_DEMO](../../05_INFRA_DEEP/MONITORING_DEMO) · [LOADTEST_SCALE_DEMO](../../05_INFRA_DEEP/LOADTEST_SCALE_DEMO)
+> **NAV** — KYA: monitoring (Prometheus + Grafana, usercrud hands-on). demo files: [MONITORING_DEMO](../../05_INFRA_DEEP/MONITORING_DEMO) · [LOADTEST_SCALE_DEMO](../../05_INFRA_DEEP/LOADTEST_SCALE_DEMO)
 
 > "App theek chal rahi?" ka jawab NUMBERS + GRAPHS se. Actuator metrics deta -> Prometheus scrape+store karta
 > -> Grafana graph banata. Industry ka common open-source monitoring stack. (hands-on: usercrud pe live spike dekha)
@@ -116,4 +116,3 @@ app run (actuator on) -> docker start prom graf -> localhost:3000 -> panel query
 -> load maaro -> line upar.   (targets check: localhost:9090/targets)
 ```
 
-[← MASTER](../00_MASTER_SHEET.md)
