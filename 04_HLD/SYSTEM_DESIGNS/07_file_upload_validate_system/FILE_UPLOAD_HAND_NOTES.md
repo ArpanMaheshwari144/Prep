@@ -4,7 +4,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** ek aam file-sharing app. Arpan 2 GB ki video / 10 GB file / "Goa trip" folder daalta hai, Ravi ke saath share karta hai.
 
-**Pehle poochho kaunsa product** (Arpan: "har file upload alag, koi scan karta koi nahi, koi 10 GB / folder leta hi nahi"): core = 1, 3, 4, 6 har jagah; agar badi file = 2; agar folder = 5; agar bahar ki file = 7.
+**Pehle poochho kaunsa product** (Arpan: "har file upload alag, koi scan karta koi nahi, koi 10 GB / folder leta hi nahi"): core = 1, 3, 4, 6 har jagah (seedha S3 bhi core, kyunki 3, 4, 6 usi pe tike); agar badi file = 2 ka tukde wala hissa; agar folder = 5; agar bahar ki file = 7.
 
 &nbsp;
 

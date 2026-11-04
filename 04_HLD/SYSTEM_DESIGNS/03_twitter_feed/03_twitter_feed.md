@@ -106,7 +106,7 @@ copy), id se baanto = partition key = user id (author ke saare tweet ek partitio
 graph DB Neo4j.
 
 **Maan lo tweet Cassandra me likha aur parchi likhne se pehle server gira:** Cassandra me tweet aur parchi do alag
-table me ek saath (dono ya koi nahi) nahi likhe jaate. Isliye ulta karo: Tweet Service pehle Kafka me daalta hai, aur
+table me ek transaction me nahi likhe jaate. Isliye ulta karo: Tweet Service pehle Kafka me daalta hai, aur
 Kafka "likh liya" bole tabhi "post ho gaya". Kafka hi pakki parchi hai. Peeche workers tweet Cassandra me aur followers
 ke inbox me likhte; worker gira to Kafka wahi khabar dobara deta, tweet_id same, to dobara likhna bhi upar hi likhta.
 **Asli naam:** outbox ki jagah Kafka (durable log, acks=all), consumer Cassandra + inbox likhe, tweet_id se idempotent.

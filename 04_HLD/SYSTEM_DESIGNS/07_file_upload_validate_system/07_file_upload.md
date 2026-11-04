@@ -16,8 +16,8 @@ badi file bhi hai aur folder bhi. To design ek kahani nahi, **tukde** hain: ek c
 "agar" wale tukde, jo product maange tabhi jodo.
 
 ```
-CORE (har jagah)      1 peeche line + status · 3 receptionist ka token · 4 S3 khud bataye · 6 maalik check + seedha download
-AGAR badi file        2 seedha S3 + tukde (multipart) + adhoore ki safai
+CORE (har jagah)      1 peeche line + status · 2 seedha S3 · 3 receptionist ka token · 4 S3 khud bataye · 6 maalik check + seedha download
+AGAR badi file        2 tukde (multipart) + adhoore ki safai
 AGAR folder           5 ped hamare DB me
 AGAR bahar ki file    1 me jaanch + 7 scan ki alag line, scan tak link band
 ```

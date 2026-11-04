@@ -89,7 +89,7 @@ ki. 15 sec tak ruka, phir chala gaya; der se aaya to accept radd, Raju ko "ride 
 aise booking cancel hoti dikhti hai.
 **Asli naam:** TTL ka faisla server ki ghadi se, der se aaya accept reject.
 
-**Maan lo Raju Connaught Place ke dabbe se Janpath ke dabbe me chala gaya, purane dabbe me naam pada:** sach wahi jo
+**Maan lo Raju Connaught Place se Janpath ke dabbe me ghusa, aur agla GPS aane tak purane dabbe me naam abhi bhi pada:** sach wahi jo
 GPS ne abhi bheja, Raju Janpath me. Book pe Raju ki taaza jagah dekho; Arpan ke gole me nahi to use mat do, Arpan ke
 liye CP me koi aur. Dono ek saath dabaayein to wahi taala.
 **Asli naam:** assign se pehle driver ki latest location check (ek driver ki ek sach jagah), lock double se bachata.

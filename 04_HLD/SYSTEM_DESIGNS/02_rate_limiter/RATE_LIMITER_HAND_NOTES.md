@@ -16,7 +16,7 @@ Technical me: "tu chhod, mujhe bata, hisaab main rakhunga" = central counter (Re
 
 **3. Ginti ka khaata ghadi se: 10:00-10:10 ek khaata, 10:10-10:20 agla, har khaate me 5. Ravi 10:09:58 pe 5 leta, khaata badla, 10:10:01 pe phir 5. 3 second me 10.**
 Arpan: Iska answer mujhe pehle se pata hai, padha tha tabhi ban pa raha. Had ek dabbe me rakh lete hain, har bande ke liye: is dabbe se token nikaalo aur aage badh jaao. Dabbe pe ek had hoti hai, 5 second me ek token ya 3 second me ek token. Wo apni raftaar se badhega, user apni raftaar se aayega. User aaye nahi to uske paas bahut saare token, to burst allow hai, koi dikkat nahi. Ye token bucket naam ka algorithm hai.
-Technical me: "dabbe se token nikaalo, aage badho" = token bucket, "apni raftaar se badhega" = refill rate (OTP pe: max 5, har 2 minute me 1, taaki 10 min me 5), "user aaye nahi to bahut token" = burst allow.
+Technical me: "dabbe se token nikaalo, aage badho" = token bucket, "apni raftaar se badhega" = refill rate (OTP pe: max 5, har 2 minute me 1, aam raftaar 10 min me 5, khaali baitha user ek saath 5 le sakta), "user aaye nahi to bahut token" = burst allow.
 
 **4. Ravi ke dabbe me 1 token. Script ne ek pal me 20 request maari, 10 server pe. Har server ne Redis se padha "tokens = 1", ek nikaala, 20 andar ghus gayi.**
 Arpan: Pehle bola: Ravi ko 10 alag server pe jaane hi mat do, uska ek home server, wahi se jaaye. Phir: Redis single thread application hai, wo ek waqt me ek hi chalata. Iska answer bhi pata hai: Lua script. Ye sab cheez ek hi baari me kar de, andar koi ghus hi na paaye. Jaise banking me update aur check ek hi me karte hain, wahi Lua script kar degi.

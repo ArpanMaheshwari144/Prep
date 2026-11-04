@@ -40,7 +40,7 @@ Technical me: "ek tech parchi" = category ka ek feed (ek key), likhna ek baar, p
 
 **9. Tech parchi ek dabbe me. 9 baje iPhone launch, 10 lakh request / sec, dabba 1 lakh sambhalta. Cricket wale dabbe khaali.**
 Arpan: Do tareeke: tech ke dabbe badha do, ya kal match nahi to cricket wale dabbon me bhi tech parchi daal do, aadhi request wahan se. World Cup hota to cricket dabba chahiye tha. Teeno aapas me baant lo.
-Technical me: "dabbe badha do" = aur Redis node, "cricket dabbe me tech ki copy" = garam key ki copies, load baant.
+Technical me: "dabbe badha do" = aur Redis node, par us pe bhi tech ki copy (ek key ek hi node pe rehti, akela node load nahi baant-ta), "cricket dabbe me tech ki copy" = garam key ki copies, load baant.
 
 **10. Tech parchi 3 dabbon me. iPhone khabar sirf A me pahunchi. Priya ko A se dikhi, refresh pe B se gayi to gayab.**
 Arpan: Garam khabar do-teen dabbon me daalo. A ke paas hai, B ke paas nahi, to B bhi rakhe. Do me likho, do se padho: A-B, A-C, B-C, koi bhi do.
