@@ -1,132 +1,60 @@
 # static keyword
 
-> **V90 — Core Java Extras: Topic 11**
+## Scene: har account ko apna number
 
----
-
-## STORY — School ka Naam
-
-→ Tune Student class banayi
-→ School ka naam — har student ka same hai **"DPS"**
-→ Agar har Student object apna alag school field rakhe → **1000 students = 1000 field**, sab me wahi "DPS" (badalna ho to 1000 jagah)
-→ Bekar. **static field = class ka property** — sab share karte hain, **ek baar memory**
-→ **static method = object banaye bina call karo**
-→ `Math.sqrt()` yaad karo — `new Math()` nahi kiya kabhi
-→ **static = class ka** → sab share karte hain
-→ **Non-static = object ka** → har object ka apna
-→ `Student.school` → object ki zarurat nahi
-
----
-
-## Code
+Bank me har naye account ko apna number milna chahiye: ACC1, ACC2, ACC3. Ek bande ne counter normal field me rakha, doosre ne
+`static` me:
 
 ```java
-class Student {
-    static String school = "DPS";   // class ka — sab share
-    String name;                    // student ka — har ek ka apna
-}
-
-Student.school   // object ki zarurat nahi — directly access
+class A1 {        int counter = 0; String id; A1() { counter++; id = "ACC" + counter; } }
+class A2 { static int counter = 0; String id; A2() { counter++; id = "ACC" + counter; } }
 ```
 
----
-
-## Visualization — Class-level vs Instance-level Memory
+Teen-teen account banaye, chala ke dekha:
 
 ```
-              static vs Non-Static — Memory Layout
-
-  class Student {
-      static String school = "DPS";    ← class ka (sab share)
-      String name;                      ← object ka (har ek apna)
-  }
-
-
-  CLASS-LEVEL memory (Java 8+: static field Class object ke saath HEAP me; class ki info METASPACE me)
-  ┌──────────────────────────────────┐
-  │ Student class                    │
-  │   static school = "DPS"   ◄──┐   │   ← ek hi copy, sab access kare
-  └──────────────────────────────┼───┘
-                                 │
-                                 │ shared
-                                 │
-  HEAP (object memory)           │
-  ┌────────────────┐             │
-  │ Student obj 1  │             │
-  │   name="Arpan" │             │
-  │   ──────────── ─┼────────────┤
-  └────────────────┘             │
-                                 │
-  ┌────────────────┐             │
-  │ Student obj 2  │             │
-  │   name="Rahul" │             │
-  │   ──────────── ─┼────────────┤
-  └────────────────┘             │
-                                 │
-  ┌────────────────┐             │
-  │ Student obj 3  │             │
-  │   name="Priya" │             │
-  │   ──────────── ─┼────────────┘
-  └────────────────┘
-
-  → School field 1 jagah, sab objects share karte
-  → Naam field har object ka apna
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Access                                                     ║
-╚════════════════════════════════════════════════════════════╝
-
-  Student.school           class se direct access (no object needed)
-  arpan.name               object se access
-  arpan.school            chalega lekin bad practice — object se mat karo
-  Student.name             static nahi hai, class se access nahi
-
-
-╔════════════════════════════════════════════════════════════╗
-║ Static method mein 'this' nahi                             ║
-╚════════════════════════════════════════════════════════════╝
-
-  static void hello() {
-      this.name;          ← 'this' = object ka reference
-                              static method object se nahi juda
-                              EXIST hi nahi karta object
-  }
+A1:  ACC1 ACC1 ACC1
+A2:  ACC1 ACC2 ACC3
 ```
 
----
-
-## TRAP
-
-> **Static method mein `this` use nahi kar sakte — `this` = object ka reference.**
-> **Static method tab exist karta hai jab object bana hi nahi hota!**
-
----
-
-## ★ TRAP — Initialization order (static block / instance block / constructor)
+Pehle wale me teeno ko ACC1 mila, kyunki normal field har object ka apna hota hai, aur har naya account apna counter 0 se
+shuru karta hai. `static` field class ka hota hai: poori class me uski ek hi copy hoti hai jo saare object share karte hain,
+isliye ginti aage badhti gayi.
 
 ```
-Ek class ke andar:
-   STATIC fields + STATIC blocks   -> class load pe, EK baar, jis KRAM me likhe hain usi kram me
-   INSTANCE fields + INSTANCE blocks -> har object pe, likhe kram me
-   CONSTRUCTOR body                -> uske baad
-
-Parent + Child (new Child() — chala ke dekha):
-   1 Parent static        (sirf pehli baar)
-   2 Child static         (sirf pehli baar)
-   3 Parent instance block
-   4 Parent constructor
-   5 Child instance block
-   6 Child constructor
-
-   doosra new Child()  -> sirf 3,4,5,6 (static dobara nahi)
-   ★ trap: Parent ka CONSTRUCTOR, Child ke instance block se PEHLE chalta (super() pehle)
+A2 class ->  counter = 3   (ek hi copy)
+               ▲    ▲    ▲
+             acc1 acc2 acc3    (har object ka apna sirf id)
 ```
 
-(Static method "override" = hiding, poora = `01_OOP/04_overloading_vs_overriding.md`)
+## Tera project
 
----
+Insurance ke `UserServiceImpl` me `private static final String EMAIL_REGEX` hai, kyunki regex sab user ke liye ek hi hai, to
+har object me alag copy rakhne ka koi matlab nahi. `Helper.checkExcelFormat()` bhi `static` hai, kyunki wo kisi object ki
+cheez nahi padhta, bas file leke jawab deta hai. Isliye use `Helper.checkExcelFormat(file)` se seedha bulate hain, `new
+Helper()` banaye bina, bilkul `Math.sqrt()` ki tarah.
 
-## POWER PHRASE
+## Khaas baat
 
-> *"Static members belong to the class, not to any instance — shared across all objects and accessible without creating an object."*
+`static` method me `this` nahi chalta, kyunki wo object ke bina chalta hai, to wahan "ye object" hai hi nahi.
+
+`static` cheez class load hote hi ek baar banti hai, object banne se pehle. Isliye `new` ke waqt sabse pehle parent ka static
+chalta hai, phir child ka static, aur uske baad hi constructor chalte hain.
+
+## Prod wala trap
+
+Upar wala `static int counter` ek hi JVM ke andar chalta hai. Production me app ke 3 server chal rahe hon to teeno ka apna
+counter hoga, aur teeno ACC1 de denge. Isliye asli id DB sequence ya UUID se aati hai, static counter se nahi.
+
+Doosra trap: `static Map` ya `static SimpleDateFormat` ko saari request ek saath chhooti hain, aur data mix ho jaata hai. Ye
+wahi "shared field" wali galti hai jo StringBuilder wali file me dekhi.
+
+## Interview line
+
+```
+static members belong to the class, not to an object, so there is one shared copy, which is
+why a static counter gave ACC1, ACC2, ACC3 while an instance counter gave ACC1 every time.
+I use static for constants like an EMAIL_REGEX and for stateless helpers. But static state is
+per JVM and shared by all threads, so it is not a real id generator across servers, and a
+mutable static map needs thread safety.
+```
