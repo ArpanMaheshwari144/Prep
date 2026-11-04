@@ -6,8 +6,8 @@ Drill se pehle: table 1 (chhoot rahe) padho, table 2 pe ek nazar. Baaki table PR
 
 | # | Code me dikhe | Asar | Sahi | Chhoota |
 |---|---|---|---|---|
-| 1 | `if (status == ACTIVE) { pay(); setStatus(CLOSED); save }` | do click / retry = do baar paisa | `UPDATE .. SET status='CLOSING' WHERE id=? AND status='ACTIVE'` (1 row tabhi aage) + idempotency key | 21, 22, 24, 31 Oct (25 PAKDA) |
-| 2 | `catch (Exception e) { return ok("FAILED"); }` | app ko 200 mila, samjha kaam ho gaya | 502 / 4xx + status FAILED | 20, 21, 22, 24, 25, 31 Oct |
+| 1 | `if (status == ACTIVE) { pay(); setStatus(CLOSED); save }` | do click / retry = do baar paisa | `UPDATE .. SET status='CLOSING' WHERE id=? AND status='ACTIVE'` (1 row tabhi aage) + idempotency key | 21, 22, 24, 31 Oct (25 Oct, 4 Nov PAKDA) |
+| 2 | `catch (Exception e) { return ok("FAILED"); }` | app ko 200 mila, samjha kaam ho gaya | 502 / 4xx + status FAILED | 20, 21, 22, 24, 25, 31 Oct (4 Nov PAKDA) |
 
 ## 2. PAKDE JAA RAHE — PR me mat do
 
