@@ -1,94 +1,38 @@
-# Enum — Fixed Set of Constants
+# enum
 
-> **V90 — Core Java Extras: Topic 21**
+`enum` matlab gine-chune pakke naam, inke alawa kuch nahi.
 
----
-
-## STORY — Payment System
-
-→ Tune payment system banaya. `PaymentType` int mein — `1=CASH, 2=CARD, 3=UPI`
-→ Koi developer ne `99` pass kar diya — **invalid value, compiler nahi roka**
-→ **Runtime crash**
-→ **Enum banao** — sirf allowed values. **Bahar kuch diya toh compile error**
-→ Switch mein use karo — cleaner, type-safe
-→ `PaymentType = 1 (CASH), 2 (CARD), 3 (UPI)` → koi bhi `99` de sakta hai, **compiler nahi rokta**
-→ **Enum:** sirf allowed values define karo. Bahar kuch diya → compile error
-→ **Type safety**
-
----
-
-## Code
-
-### Basic Enum
 ```java
-enum PaymentType { CASH, CARD, UPI }
-
-PaymentType p = PaymentType.CASH;     // valid
-PaymentType p = PaymentType.EMI;      // compile error — defined nahi
+enum Status { PAID, REFUNDED }
+Status s = Status.EMI;   // compile error, EMI hai hi nahi
 ```
 
-### Enum with fields + constructor
-```java
-enum Day {
-    MON("Weekday"), SAT("Weekend"), SUN("Weekend");
+Agar status `int` me rakhte (1 = PAID, 2 = REFUNDED), to koi `99` bhi bhej deta aur compiler kuch nahi kehta. Enum me jo naam
+likhe hain wahi chalte hain.
 
-    private String type;
-    Day(String type) { this.type = type; }   // private by default
-    public String getType() { return type; }
-}
+## Tera bank
 
-Day.MON.getType();    // "Weekday"
-Day.SAT.getType();    // "Weekend"
+`BankConfig` ek enum hai jisme `INSTANCE` hai, matlab singleton enum se bana hai. JVM khud pakka karta hai ki iska ek hi object
+bane, thread aur reflection dono se safe.
+
+## Prod wala trap
+
+JPA by default enum ko DB me uske number (`ordinal`) se save karta hai. Ek refund wali row DB me `1` ban ke gayi. Baad me kisi
+ne enum ke sabse upar `PENDING` jod diya, aur wahi row aaj padhi:
+
+```
+DB me likha: 1  ->  aaj padha to: PAID
 ```
 
-### Switch mein use
-```java
-switch(p) {
-    case CASH: System.out.println("Cash liya"); break;
-    case CARD: System.out.println("Card swipe"); break;
-    case UPI:  System.out.println("UPI scan"); break;
-}
+Refund wala order ab PAID dikh raha hai, kyunki naya naam aage judne se saare number khisak gaye. Ilaaj:
+`@Enumerated(EnumType.STRING)`, taaki DB me number ki jagah naam `"REFUNDED"` jaaye.
+
+Enum ko `==` se milana sahi hai, kyunki har naam ka ek hi object hota hai. Ye String wala trap nahi hai.
+
+## Interview line
+
 ```
-
-### Built-in methods
-```java
-Day.MON.name();        // "MON"  — string naam
-Day.MON.ordinal();     // 0       — index (0 se start)
-Day.valueOf("SAT");    // Day.SAT — string se enum
-Day.valueOf("XYZ");    // IllegalArgumentException — naam na mile to (user input pe try/catch)
-Day.values();          // [MON, SAT, SUN] — sab values array
+An enum is a fixed set of named constants, so invalid values fail at compile time, and
+each constant is a single object, so == is safe. In JPA I always use EnumType.STRING,
+because the default ordinal breaks old rows when someone adds a new value in between.
 ```
-
----
-
-## TRAP 1
-
-> **Enum constructor `public` / `protected` nahi ho sakta. Modifier na likho tab bhi wo PRIVATE hi hota hai.**
-> (koi bahar se `new Day()` nahi kar sakta — isliye values fixed rehti hain)
-
-## TRAP 2
-
-> **`ordinal()` pe DB mein depend mat karo — order change kiya toh sab values shift!**
-> DB me `name()` rakho — JPA me `@Enumerated(EnumType.STRING)` (default ORDINAL hai, wahi trap).
-
-## TRAP 3
-
-> **Enum `==` se compare karo — har constant ek hi object (singleton), isliye `==` sahi.**
-> `.equals()` bhi chalta (andar `==` hi hai), par `==` behtar: null pe NPE nahi deta, aur
-> galat type compare karo to compile error deta.
-
-## TRAP 4 — Singleton wala best way
-
-> **Enum se Singleton banao — JVM guarantee deta hai ek hi instance.**
-> ```java
-> enum AppConfig { INSTANCE; }
-> ```
-> BEST Singleton implementation.
-
----
-
-## POWER PHRASE
-
-> *"Enum defines a fixed set of named constants with full type safety — the compiler rejects any value not in the enum. Each enum constant is a singleton object so `==` comparison is safe and preferred over `.equals()`."*
-
-> **Yaad rakh:** Enum = type-safe constants. `==` se compare. `ordinal()` pe depend mat karo. Singleton ka best way bhi Enum hai.
