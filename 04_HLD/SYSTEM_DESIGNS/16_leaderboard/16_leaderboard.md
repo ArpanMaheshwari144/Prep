@@ -32,6 +32,10 @@ poori line sorted hai.
 mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. Commands interview me bolni nahi padti, bas "sorted set,
 score ke kram me".
 
+**Maan lo Redis gira:** ekdum DB pe nahi bhaagna. Uska clone, wo bhi gira to ek aur clone. Teeno gaye tab DB, kyunki har
+match ka score pehle DB me likha, wahan se dobara bhar do.
+**Asli naam:** Redis replica (failover), DB = sach, Redis rebuild.
+
 ```mermaid
 flowchart LR
     G["Match khatam<br/>(Game Service)"] -- "arpan +50" --> Z[("Apne aap sort wala dabba<br/>(Redis sorted set)")]

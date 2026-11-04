@@ -30,6 +30,10 @@ Technical me: match jeeta to score teeno dabbon me jodo. "Alag register" = har d
 Arpan: Mera score 5200 hai, to mujhe 10,000 wale se kya lena-dena. Bheed me main apne aas-paas scan karta, poori bheed nahi dekhta. 5200 ke aas-paas wali range dekho; 4000 aur 6000 walon se matlab nahi. Jaise highway pe gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhta hoon.
 Technical me: "apne aas-paas scan" = har shard se mere score ke thoda upar aur thoda neeche wale (score range query), sab mila ke sort, mere upar ke 5 aur neeche ke 5.
 
+**7. Redis gira to saare score?**
+Arpan: Ekdum DB pe nahi bhaagunga. Pehle koshish ki gire hi na; gira to uska clone, wo bhi gira to ek aur clone. Teeno gir gaye tab DB pe jaao, kyunki score pehle DB me likha hai, wahan se dobara bhar do.
+Technical me: "clone" = Redis replica (gira to replica primary), "teeno gaye to DB" = DB sach, Redis wahan se rebuild.
+
 &nbsp;
 
 Poora design = [16_leaderboard.md](16_leaderboard.md)

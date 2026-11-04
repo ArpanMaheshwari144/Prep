@@ -292,4 +292,5 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  6  aaj / hafta / all-time                   ->  score teeno dabbon me
  7  raat 12 baje aaj wala khaali             ->  alag register, kal wala discard (key me tareekh, TTL)
  8  mere aage-peeche ke 5, alag dabbon me    ->  bheed me aas-paas scan (score range, merge)
+ 9  Redis gira                              ->  clone, phir clone, teeno gaye to DB se bharo (replica, DB sach)
 ```
