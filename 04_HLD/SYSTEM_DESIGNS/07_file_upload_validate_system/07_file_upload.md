@@ -101,7 +101,7 @@ File hamare server ke paas se guzri hi nahi, to server ko pata nahi chala ki upl
 pada hai, na Kafka me kuch gaya, na scan shuru hua. S3 ko bol do: "jab file aa jaaye, mujhe bata dena". Hum DB me
 mark kar denge aur ladke ko bata denge. Poori nahi hui to wo dobara try karega.
 
-**Asli naam:** S3 event notification -> hamara server DB me status UPLOADED + Kafka me scan ka kaam.
+**Asli naam:** S3 event notification (SQS ke raaste) -> hamara server DB me status UPLOADED + Kafka me scan ka kaam.
 
 ```mermaid
 flowchart LR
