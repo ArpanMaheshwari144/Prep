@@ -1,273 +1,52 @@
-# Exception Handling — try-catch-finally
+# try-catch-finally
 
-> **V90 — Core Java Extras: Topic 23**
+- **`try`:** jo kaam fail ho sakta hai.
+- **`catch`:** fail hua to kya karna hai.
+- **`finally`:** kuch bhi ho, ye chalega hi. Ye safai ke liye hai, jaise connection ya file band karna.
 
----
-
-## Throwable Hierarchy
-
-```
-                 Throwable
-                /         \
-   ┌───────────┘           └───────────┐
-   │                                   │
-Error (JVM level)                  Exception
-RECOVER NAHI HOTA               /            \
-   │                      Checked         RuntimeException
-   │                  (compiler force)     (UNCHECKED)
-   ├ OutOfMemoryError    │                    │
-   ├ StackOverflowError  ├ IOException        ├ NullPointerException
-                         ├ SQLException       └ ... aur
-```
-
-**Yaad rakh:**
-- **Error** = JVM level — app handle nahi karti
-- **Checked** = compiler pakda, **handle ya declare karo**
-- **Unchecked (RuntimeException)** = runtime bugs, fix karo
-
----
-
-## STORY — DB se Data Fetch
-
-→ Tune DB se data fetch karna tha
-→ Kahin **connection fail**, kahin **query fail**, kahin **result empty**
-→ Sab cases handle karne the
-→ **`try`** mein risky code, **`catch`** mein handle, **`finally`** mein resources close
-→ — chaahe exception aaye ya na aaye, **`finally` = maa ki daant**
-→ ghar se bhaag bhi jaaye toh bhi padegi
-→ **sirf `System.exit()`, JVM crash ya try ka kabhi khatam na hona (infinite loop) rok sakta**
-
----
-
-## Code
-
-### Basic Flow
-```java
-try {
-    int result = 10 / 0;                       // ArithmeticException
-    System.out.println(result);                // skip ho jayega
-} catch (ArithmeticException e) {
-    System.out.println("divide by zero!");     // pakda
-} finally {
-    System.out.println("finally chala");       // HAMESHA
-}
-```
-
-### Multi-catch — ek catch mein multiple exceptions
-```java
-try {
-    // risky code
-} catch (IOException | SQLException e) {       // multi-catch
-    System.out.println(e.getMessage());
-}
-```
-★ Multi-catch me parent-child saath nahi: `catch (IOException | FileNotFoundException e)` -> COMPILE ERROR
-("Alternatives in a multi-catch statement cannot be related by subclassing" — chala ke dekha). Sirf parent likho.
-
----
-
-## TRAP 1 — `finally` after return
+## Scene
 
 ```java
-int test() {
-    try {
-        return 1;                              // return kiya
-    } finally {
-        System.out.println("finally!");        // YE BHI CHALTA HAI
-    }
-}
-// Output: "finally!" print hoga, PHIR 1 return hoga
+static int a() { try { return 1; } finally { print("finally chala"); } }
+static int b() { try { return 1; } finally { return 2; } }
 ```
+
+Chala ke dekha:
+
+```
+finally chala, return ke baad bhi
+a() = 1
+b() = 2
+```
+
+`return` ke baad bhi `finally` chala. Aur `finally` me khud `return` likh diya to try wala return dab gaya aur 2 aaya. Isliye
+`finally` me `return` kabhi mat likho.
+
+## Asli kaam ka tareeka: try-with-resources
+
+DB connection ya file ko `finally` me haath se band karne ki jagah aise likhte hain:
 
 ```java
-int test2() {
-    try { return 1; }
-    finally { return 2; }                      // 2 return hoga, 1 LOST!
-}
+try (Conn c = getConnection()) { ... query ... }
 ```
 
-> **`finally` mein return likhna = `try` ka return overwrite ho jaata. KABHI nahi karna!**
-
----
-
-## ★ TRAP — `finally` ka return = "LAST WORD WINS" (poori variations)
-
-**Analogy:** interview mein — try: "mera answer 1", catch: "ya phir 2", finally: "actually FINAL answer 3". Interviewer: "last said wins — 3." Java mein bhi **`finally` ka `return` last word ban jata, sab override.**
-
-```java
-public int test() {
-    try {
-        return 1;       // STEP 1: 1 ready to return
-    } catch (Exception e) {
-        return 2;       // (would be 2 if exception)
-    } finally {
-        return 3;       // STEP 2: 3 OVERRIDES — 1 ya 2 LOST
-    }
-}
-System.out.println(test());   // Output: 3
+```
+connection band
+pakda: query fail
 ```
 
-Log pehli baar `1` bolte — par `3` return hota. Try ka return **silently lost** = bug source.
+Query fail hui, phir bhi connection apne aap band ho gaya. Band na ho to har fail request ek connection pakad ke rakh leti hai,
+aur thodi der me HikariCP ka pool khaali ho jaata hai, phir naye request ko connection milta hi nahi.
 
-**Variation — exception SWALLOWED by finally return:**
-```java
-int x() {
-    try {
-        throw new RuntimeException("boom");
-    } finally {
-        return 99;   // Exception SUPPRESSED!
-    }
-}
-// Returns: 99 — exception gone, no trace!
-```
-Dangerous — exception silently kha gaya. Production debugging nightmare.
+## Trap
 
-**Variation — reference return hua, finally ne object modify kiya:**
-```java
-List<Integer> list = new ArrayList<>();
-list.add(1);
-list = mutate(list);
-System.out.println(list);  // [1, 99] — finally ne add kiya
+`catch (Exception e)` pehle aur `catch (IOException e)` uske baad likha to compile error aata hai. Chhota (specific) catch
+hamesha upar aata hai.
 
-List<Integer> mutate(List<Integer> input) {
-    try { return input; }
-    finally { input.add(99); }   // Object modified after "return"
-}
-```
-Reference try mein return ho gaya, finally ne underlying object badal diya (mutable type).
-
-**Variation — PRIMITIVE return, finally ne variable badla (chala ke dekha):**
-```java
-int t() {
-    int x = 1;
-    try { return x; }      // return ki VALUE (1) usi waqt copy ho gayi
-    finally { x = 5; }     // x badla, par return wali copy nahi
-}
-// Returns: 1   (5 NAHI)
-```
-primitive = value ki copy -> finally ka badlaav nahi dikhta · object = reference -> andar ka badlaav dikhta (upar wala list).
-
-**Variation — throw in finally:**
-```java
-try { throw new IOException(); }
-finally { throw new RuntimeException(); }   // original exception lost
-```
-
-| Scenario | finally runs? | Effect |
-|---|---|---|
-| Normal try completion | Yes | Cleanup code runs |
-| Exception in try (caught) | Yes | After catch |
-| Exception in try (uncaught) | Yes | Before propagation |
-| try has `return` | Yes | Before actual return |
-| try has `return X`, finally has `return Y` | Yes | Returns Y (overrides X) |
-| try throws, finally has `return` | Yes | Exception SUPPRESSED |
-| `System.exit(0)` in try | NO | JVM kill, finally skipped |
-| JVM crash | NO | Process dies |
-| Infinite loop in try | NO | Never reaches finally |
-
-**Correct — finally sirf cleanup:**
-```java
-Connection conn = null;
-try {
-    conn = ds.getConnection();
-    return processQuery(conn);
-} finally {
-    if (conn != null) conn.close();   // cleanup, no return
-}
-
-// Modern — try-with-resources (preferred)
-try (Connection conn = ds.getConnection()) {
-    return processQuery(conn);
-}
-// close() automatic, no finally needed, no override risk
-```
-
-**Q: "Yeh code kya return karega?" (finally + return)**
-> *"`finally` ka return try ka return override kar deta. Java spec: jab method `return X` se exit hone wala ho, finally PEHLE chalta — agar finally mein bhi `return Y` hai, woh last word ban jata. Original X silently lost. Ye anti-pattern hai — exception bhi suppress kar sakta. Production mein finally sirf cleanup ke liye, return/throw kabhi nahi. Modern Java mein try-with-resources — close() automatic, override risk nahi."*
-
-**Q: "finally mein exception throw kare?"**
-> *"Same problem — original exception poora KHO jaati (plain finally me wo `getSuppressed()` me bhi nahi aati). Java 7+ try-with-resources me close() ka exception original ke `getSuppressed()` me jud jaata — original bachti. Isliye cleanup ke liye try-with-resources; finally se throw mat karo."*
-
-**Q: "Production debugging mein issue?"**
-> *"Log mein result inconsistent dikhta — try ne `return success` kiya, finally ne `return failure` kar diya. Exception suppress hua to stack trace bhi gone. Code review mein pakadte — static analyzers (SonarQube, SpotBugs) ye pattern flag karte hain."*
+## Interview line
 
 ```
-finally ka return = "Last word wins"
-   try return X        →   X ready
-   finally return Y    →   Y OVERRIDES X
-   try throws E1       →   E1 ready to propagate
-   finally throws E2   →   E2 wins, E1 suppressed
-
-Trap: "finally hamesha 100% chalta" → System.exit(), JVM crash, infinite loop → skip
-Trap: "reference returned hai, safe hai" → finally object MODIFY kar sakta (mutable) → defensive copy / immutable
-
-GOLDEN RULE: finally = sirf cleanup, no return, no throw. Modern: try-with-resources.
+finally always runs, even after a return, so it is for cleanup, but never return from
+finally because it overrides the try's result. For connections and files I use
+try-with-resources, which closes them even on failure, so the pool does not leak.
 ```
-
-> **"`finally` mein `return` likhna anti-pattern hai — try ka return silently override karta + exceptions suppress karta. `finally` sirf cleanup ke liye. Modern Java mein `try-with-resources` use karo — automatic close, no override risk."**
-
----
-
-## TRAP 2 — Multi-catch order
-
-> **Parent exception pehle likha toh child catch UNREACHABLE = compile error!**
-
-```java
-catch (Exception e) { ... }              // pehle nahi
-catch (NullPointerException e) { ... }   // unreachable
-```
-
----
-
-## TRAP 3 — `catch(Exception e)` sab pakda?
-
-> **Lekin `Error` (OutOfMemoryError) NAHI pakdega.**
-> **Error = JVM level, recover nahi hota.**
-
----
-
-## throw vs throws — naam same, kaam alag
-
-```
-   throw  -> exception PHENKO (abhi, khud). ek statement.              -> action
-   throws -> "ye method exception phenk SAKTA" — method signature pe.  -> warning/declaration
-```
-
-```java
-// throw — abhi khud phenkna
-void setAge(int age) {
-    if (age < 0)
-        throw new IllegalArgumentException("age galat");   // KHUD phenka, abhi
-    this.age = age;
-}
-
-// throws — method ke signature pe, "warning" (phenkta nahi, batata)
-void readFile() throws IOException {     // "main IOException phenk sakta, caller dhyaan rakhe"
-    FileReader f = new FileReader("a.txt");
-}
-
-// dono saath
-void process() throws IOException {      // throws = declare (caller handle kare)
-    if (badData)
-        throw new IOException("data kharab");   // throw = actual phenkna
-}
-```
-
-| | throw | throws |
-|---|---|---|
-| **kaam** | exception phenkta (abhi) | "phenk sakta" batata (declare) |
-| **kahan** | method ke andar, statement | method signature pe |
-| **kitne** | ek baar mein 1 exception | kai likh sakte (`throws A, B`) |
-| **grammar** | verb (karta hai) | warning label (ho sakta hai) |
-
-> **throw = phenkna (abhi). throws = "phenk sakta" ka warning (signature pe). checked exception ho to throws/try-catch compiler force karta.**
-
----
-
-## POWER PHRASE
-
-> *"The `finally` block always executes regardless of whether an exception was thrown or a return statement was hit — unless the JVM stops (`System.exit()`, a crash) or the try never finishes. Never put a return statement in `finally` as it will silently override the return from `try`."*
-
-> **Sequence:** try → catch → finally (hamesha).
-> **Multi-catch:** `IOException | SQLException`.
-> **`finally` overrides try return.**
