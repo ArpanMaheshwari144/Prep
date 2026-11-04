@@ -1,145 +1,33 @@
-# Wrapper Classes — Autoboxing & Unboxing
+# Wrapper classes (Integer, Long)
 
-> **V90 — Core Java Extras: Topic 15**
+## Scene: owner check, test me pass, prod me 403
 
----
-
-## STORY — List<int>?
-
-→ Tune integers ki list banayi — `List<int>` → **compile error**
-→ **Collections mein sirf objects jaate**, primitives nahi
-→ **Integer wrapper class** use karo
-→ Aur Java itna smart hai ki ye conversion **khud karta** — `Integer a = 10` likhte hi Java ne `Integer.valueOf(10)` kar diya
-→ Ye **autoboxing** hai
-→ **Ek trap** — Integer cache `-128 to 127` tak hai. Uske baad `==` se compare karo toh **false** aayegi
-
----
-
-## WHY — `-128 se 127` Cache?
-
-→ Loop counters, array indexes, age, quantity — **ye numbers BAHUT zyada use hote**
-→ Java ne socha — **har baar naya object banane se memory waste** hogi
-→ **Toh ye common range pehle se cache** kar li
-→ Bahar ka number rare hai, uske liye naya object **theek** hai
-→ Collections mein objects chahiye → int nahi, **Integer chahiye**
-→ **Autoboxing:** Java khud `Integer.valueOf(10)` kar deta
-→ **Unboxing:** Java khud `intValue()` kar deta
-
----
-
-## Mapping
-
-| Primitive | Wrapper |
-|-----------|---------|
-| `byte` | `Byte` |
-| `short` | `Short` |
-| `int` | `Integer` |
-| `long` | `Long` |
-| `float` | `Float` |
-| `double` | `Double` |
-| `char` | `Character` |
-| `boolean` | `Boolean` |
-
-Cache kiska: `Byte` `Short` `Integer` `Long` -> -128..127 · `Character` -> 0..127 · `Boolean` -> TRUE/FALSE
-`Float` / `Double` -> koi cache NAHI (har baar naya)
-
----
-
-## Code
-
-```java
-// Autoboxing — Java khud suit pehna deta hai
-Integer a = 10;        // tune int diya → Java ne Integer.valueOf(10) kiya
-
-// Unboxing — Java khud suit utaar deta hai
-int b = a;             // tune Integer diya → Java ne a.intValue() kiya
-
-// Integer cache: -128 to 127 → SAME object
-Integer x = 127;
-Integer y = 127;
-x == y                 // true — same cached object
-
-// Bahar range — naye objects
-Integer p = 128;
-Integer q = 128;
-p == q                 // false — naye alag objects
-p.equals(q)            // true
-```
-
----
-
-## Visualization — Integer Cache
+Code me likha hai `if (order.getUserId() == currentUser.getId())`, aur dono `Long` hain. Test me user id 100 thi, production
+me 5000. Chala ke dekha:
 
 ```
-              Integer Cache — JVM Pre-Built Range
-
-        -128 ─────────────────────────────────► 127
-        ┌────────────────────────────────────────┐
-        │  cache: same object reuse              │
-        │  Integer.valueOf(127) → SAME instance  │
-        └────────────────────────────────────────┘
-                      ▲
-                      │
-       Integer a = 100;  ─────┐
-                              ├─► dono SAME object (cache se)
-       Integer b = 100;  ─────┘
-                              ▼
-                       a == b  →  TRUE
-
-
-       128, 200, 1000... (cache range bahar)
-       ┌──────────┐    ┌──────────┐
-       │ Integer  │    │ Integer  │   ← naye-naye objects
-       │ p = 200  │    │ q = 200  │     har baar new
-       └──────────┘    └──────────┘
-              ▲              ▲
-              │              │
-          Integer p     Integer q
-
-          p == q       →  FALSE (alag objects)
-          p.equals(q)  →  TRUE  (content same)
+id 100:  true
+id 5000: false   equals: true
 ```
 
----
+Test pass ho gaya, par production me asli maalik ko bhi 403 mil gaya. Java -128 se 127 tak ke chhote number ke object pehle se
+bana ke rakhta hai aur wahi baar-baar deta hai, isliye 100 pe dono same object nikle. 5000 pe har baar naya object banta hai,
+aur `==` sirf object milata hai, number nahi. Ye bilkul String wala `==` trap hai, aur ilaaj bhi wahi hai: `equals()`.
 
-## TRAP
+## Khaas baat
 
-> **Integer compare karne mein bhi HAMESHA `.equals()` use karo.**
-> **`==` kabhi true kabhi false dega!**
-> (upar ki seema JVM flag `-XX:AutoBoxCacheMax` se badh sakti hai — isliye 128 pe "pakka false" bhi mat maano)
+`List<int>` nahi chalta, kyunki collection me sirf object jaate hain, isliye `Integer` chahiye. `int` se `Integer` aur
+`Integer` se `int` ka badlaav Java khud kar deta hai, ise autoboxing aur unboxing kehte hain.
 
-## ★ TRAP — unboxing pe NPE (prod me sabse zyada yahi aata)
+## Trap 2
 
-```java
-Map<String, Integer> count = new HashMap<>();
-int c = count.get("x");        // key nahi -> null -> null.intValue() -> NullPointerException
-Integer safe = count.getOrDefault("x", 0);   // fix
-```
-`new Integer(5)` Java 9 se deprecated -> `Integer.valueOf(5)` likho (cache use karta).
+`int c = map.get("x");` likha aur key thi hi nahi. Map ne `null` diya, Java ne use `int` banane ki koshish ki, to
+`NullPointerException` aaya. Ilaaj: `map.getOrDefault("x", 0)`.
 
----
-
-## ★ TRAP — int vs Integer (quick table)
+## Interview line
 
 ```
-int     = primitive (4 bytes)
-Integer = wrapper class (object)
-
-┌──────────────┬──────────────────────────┬─────────────┐
-│  Aspect      │  int                     │  Integer    │
-├──────────────┼──────────────────────────┼─────────────┤
-│ null         │ NO (null unbox = NPE)    │ YES         │
-│ Collections  │ NO                       │ YES (List)  │
-│ Methods      │ NO                       │ YES         │
-│ Default      │ 0                        │ null        │
-│ Performance  │ Fast                     │ Slower      │
-└──────────────┴──────────────────────────┴─────────────┘
-
-== rule: Strings/Objects → ALWAYS .equals() · Primitives → == hi option
+Wrapper classes like Integer and Long let primitives live in collections, and Java boxes
+and unboxes automatically. Integer caches -128 to 127, so == works for small ids and fails
+for big ones; always use equals. Unboxing a null throws NullPointerException.
 ```
-
----
-
-## POWER PHRASE
-
-> *"Wrapper classes wrap primitives as objects — needed for Collections. Autoboxing converts primitive to wrapper automatically via `Integer.valueOf()`. Unboxing does the reverse via `intValue()`. Integer caches -128 to 127 — always use `.equals()` for comparison."*
