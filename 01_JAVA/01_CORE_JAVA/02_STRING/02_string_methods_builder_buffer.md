@@ -1,101 +1,68 @@
-# String Methods + StringBuilder vs StringBuffer
+# StringBuilder vs StringBuffer
 
-> **V90 Section 1 — Topic 5**
+Ye pichhli file (String immutable) ka hi agla hissa hai.
 
----
+## Scene: report export, 1 lakh ids ek CSV line me
 
-## WHY — String Methods Original Nahi Badalte
-
-→ String **immutable** hai → koi method (concat, toUpperCase, replace) **original nahi badalti**
-→ Hamesha **NEW String return** karte hain
-→ `s.concat(" World")` karo aur result save nahi kiya → **original `s` unchanged**
-→ **Hamesha `s = s.concat(...)`** likhna padta
+DB ki 1 lakh rows ki ids ek line me jodni hain. Ek bande ne `String` se joda, doosre ne `StringBuilder` se:
 
 ```java
-String s = "Hello";
-s.concat(" World");      // ← return value lost!
-System.out.println(s);   // "Hello"  (unchanged)
+String csv = "";
+for (int i = 0; i < 100000; i++) csv += i + ",";
 
-s = s.concat(" World");  // ← ab assign kiya
-System.out.println(s);   // "Hello World"
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 100000; i++) sb.append(i).append(",");
 ```
 
----
-
-## String vs StringBuilder vs StringBuffer
-
-| Class | Detail |
-|-------|--------|
-| **String** | **Immutable**. Har change = naya object. Loop mein = memory waste |
-| **StringBuilder** | **Mutable**. Thread safe NAHI. **Fast** — mostly yahi use karo |
-| **StringBuffer** | **Mutable**. Thread safe HAI. Thoda slow — **sirf multithreading** mein |
+Chala ke dekha:
 
 ```
-StringBuilder andar se : char/byte ka ARRAY, default capacity 16
-bhar gaya             -> naya array (purana*2 + 2), copy   -> isliye loop me String se tez
-StringBuffer          -> wahi, par har method synchronized  -> lock ka kharcha
-ek line ka a + b + c  -> compiler khud theek kar deta, dikkat sirf LOOP me
+String +=      : 3909 ms, length 588890
+StringBuilder  : 1 ms, length 588890
 ```
 
----
-
-## STORY (V90 ka rule)
-
-→ **Loop mein concat** karte ho String se → har iteration nayi object → memory waste
-→ Use **StringBuilder** for string manipulation in loops — it is mutable and faster
-→ Use **StringBuffer** ONLY in multithreaded code where thread safety is needed
-→ String = shared → ek ne badla toh sabka badle → **isliye immutable**
-→ **Compare = `.equals()`**. **Loop = StringBuilder**.
-
----
-
-## ★ TRAP — length / length() / size() — 3 alag cheezein
-
-```java
-int[] arr = {1, 2, 3};
-arr.length;          // 3 — FIELD (no parens)
-
-String s = "Arpan";
-s.length();          // 5 — METHOD (parens)
-
-List<Integer> list = new ArrayList<>();
-list.size();         // METHOD (parens)
-```
+Dono ka nateeja same hai, par ek ko 4 second lage aur doosre ko 1 ms. Wajah pichhli file me hi hai: String badalti nahi. Har
+`+=` pe Java poori purani line copy karke ek nayi String banata hai, matlab 1 lakh baar copy, aur har baar line pehle se
+lambi. StringBuilder ke andar ek badhne wala dabba (array) hota hai jisme tu seedha aage jodta jaata hai. Copy sirf tab hoti
+hai jab dabba bhar jaaye.
 
 ```
-Array  → length      (field, no parens)
-String → length()    (method)
-List   → size()      (method)
-
-Trap: array.length()  → compile error
-      string.length   → compile error
+String +=      : [1,] -> [1,2,] -> [1,2,3,] ...   har baar naya object, poora copy
+StringBuilder  : [1,2,3,4,....______]              ek hi dabba, khaali jagah me aage likho
 ```
 
-**Array ka `length` FIELD kyun, method kyun nahi?**
+## StringBuffer kyun hai
+
+StringBuffer bilkul StringBuilder jaisa hai, bas uska har method `synchronized` hai, matlab ek waqt me ek hi thread andar ja
+sakta hai. Do thread se ek hi dabba bharwaya, dono ne 1-1 lakh "x" joda:
+
 ```
-Array = SPECIAL JVM object — JVM banata, koi "Array class ka source" nahi (internal construct)
-Length: creation pe decide (new int[5]), kabhi NAHI badalti = fixed size
-FIELD:  arr.length   → direct memory read, O(1) — JVM array HEADER mein store karta
-METHOD: arr.length() → invocation overhead (chhota par bekaar)
-
-   int[] arr = new int[5];
-   ┌──────────────────────────────┐
-   │ Array header: length: 5      │  ← stored field
-   │ data: [0, 0, 0, 0, 0]        │
-   └──────────────────────────────┘
-
-String contrast — String proper class hai, encapsulation ke liye method:
-   class String {
-       private final byte[] value;   // Java 8 tak char[], Java 9+ byte[] (compact strings)
-       public int length() { return value.length >> coder(); }   ← andar array ka FIELD hi wrap kiya
-   }
-   (coder: LATIN1=0 -> 1 byte/char · UTF16=1 -> 2 byte/char, isliye >>)
+StringBuilder: 192667   StringBuffer: 200000   (chahiye 200000)
 ```
 
----
+StringBuilder me lagbhag 7 hazaar akshar kho gaye, kyunki dono thread ek saath likh rahe the. StringBuffer me sab pahunche,
+par har append pe lock ka kharcha laga.
 
-## POWER PHRASES
+## Khaas baat
 
-> *"String methods always return a NEW string — original is never modified because String is immutable."*
+Ek line ka `a + b + c` compiler khud theek kar deta hai, isliye dikkat sirf LOOP me aati hai.
 
-> *"Use StringBuilder for string manipulation in loops — it is mutable and faster. Use StringBuffer only in multithreaded code where thread safety is needed."*
+Asal kaam me 99% StringBuilder hi chalta hai, kyunki wo method ke andar ka local variable hota hai aur har thread ka apna hota
+hai. Isliye StringBuffer ka kaam bahut kam padta hai.
+
+## Prod wala trap
+
+Spring ki service singleton hoti hai. Kisi ne class ke field me `private StringBuilder sb = new StringBuilder();` rakh diya
+taaki log ya message banaye. Ab do request ek saath aayi to dono ek hi dabba bharengi, aur ek user ke message me doosre ka
+text chala jaayega. Ye wahi "singleton me field" wali galti hai jo PR drill me pakadte hain. Ilaaj: StringBuilder method ke
+andar banao.
+
+## Interview line
+
+```
+String concatenation inside a loop creates a new object every time, so it is O(n^2) copying;
+StringBuilder appends into one growing buffer, which is why a 1 lakh row CSV went from
+4 seconds to 1 ms. StringBuffer is the same but synchronized, so it is thread safe and slower.
+In practice I keep StringBuilder as a local variable, so each thread has its own and
+StringBuffer is rarely needed; a StringBuilder field in a singleton bean is a bug.
+```
