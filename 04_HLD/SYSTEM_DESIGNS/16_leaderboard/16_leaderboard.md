@@ -28,7 +28,7 @@ jao, aur wo apne aap sort karke rakhe. Top 10 chahiye to upar se 10 utha lo, ran
 kaunse number pe khada hai. Ye priority queue jaisa hi hai, bas wahan sirf upar wala pakka hota (parent-child), yahan
 poori line sorted hai.
 
-**Asli naam:** apne aap sort wala dabba = Redis sorted set. Score daalna / badalna (`ZINCRBY`), top 10 (`ZREVRANGE 0 9`),
+**Asli naam:** apne aap sort wala dabba = Redis sorted set. Score daalna / badalna (`ZINCRBY`), top 10 (`ZRANGE 0 9 REV`),
 mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. Commands interview me bolni nahi padti, bas "sorted set,
 score ke kram me".
 
@@ -112,7 +112,7 @@ kya lena-dena. Bheed me main apne aas-paas scan karta, poori bheed nahi dekhta: 
 wale maango, 4000 aur 6000 wale nahi. Jaise gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhte. Sab dabbon
 se aaye log mila ke sort, mere upar ke 5 aur neeche ke 5.
 
-**Asli naam:** har shard se score range query (mere score ke thoda upar aur neeche, `ZREVRANGEBYSCORE`), merge, 5 + 5.
+**Asli naam:** har shard se score range query (mere score ke thoda upar aur neeche, `ZRANGE BYSCORE REV`), merge, 5 + 5.
 
 ```mermaid
 flowchart LR
