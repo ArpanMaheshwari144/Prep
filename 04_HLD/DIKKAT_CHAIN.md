@@ -167,6 +167,8 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  6  hall 1000 ka, saamne 5000 khade            ->  capacity jitne andar, baaki line (virtual queue, token)
  7  token khatam, parchi ke 3 min baaki        ->  token gate ka, seat ki ghadi parchi ki (do ghadiyan)
  8  Pay daba diya, PSP dheema, umar khatam     ->  parchi pe "pay chal raha", umar badhao (PAYMENT_PENDING)
+ 9  chhotu (PSP) 3-4 baar jagaya, phir bhi chup ->  seat book dikha do, baaki hamara kaam (BOOKED)
+10  baad me chhotu bole "fail ho gaya"         ->  user ko kuch nahi, khud dobara / doosra chhotu (retry, PSP-2)
 ```
 
 ## 10. Distributed cache   ([notes](SYSTEM_DESIGNS/10_distributed_cache/CACHE_HAND_NOTES.md))

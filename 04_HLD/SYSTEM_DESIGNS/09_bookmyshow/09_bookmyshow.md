@@ -123,7 +123,13 @@ ke andar pay shuru hua to seat Arpan ki, vaada ho chuka, warna consumer court ka
 taraf ki. To Pay dabate hi parchi pe status likh do "pay chal raha, PSP ka jawab baaki", aur jab tak ye likha hai umar
 badhi rahe, seat kisi ko na dikhe.
 **Asli naam:** HELD -> PAYMENT_PENDING (Pay dabate hi), is status pe na query na safai job hold hataye; PSP ka SUCCESS
--> BOOKED, FAILED / timeout -> FREE.
+-> BOOKED.
+
+**Maan lo chhotu (PSP) 3-4 baar jagaane pe bhi chup:** user ne pay kar diya, chhotu hamara hai, to uski saza user ko nahi.
+Seat book dikha do. Baad me chhotu "fail" bole to user ko kuch nahi kehna: hum khud dobara koshish karte hain, phir bhi nahi
+to doosra chhotu. Zimmedari hamari.
+**Asli naam:** status job retry -> PAYMENT_PENDING se BOOKED; PSP FAILED -> server khud retry, phir PSP-2 (idempotency key,
+sirf jab PSP-1 pakka FAILED bole, warna do baar katega). User tak FAILED nahi jaata.
 
 ```mermaid
 flowchart LR
