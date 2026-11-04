@@ -195,7 +195,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  3  "Hum" aur "kal", kal galat jagah         ->  shabdon ko khiska do (OT)
  4  do server, ek doc ki do shakal           ->  ek centralized system, ek version
  5  lakhon doc, sab ek hi jagah?             ->  har doc ka alag, uska maalik (owner server)
- 6  "Saved" dikhaya, DB se pehle server gira ->  dabbe ki ek aur copy (Cassandra, 3 copy)
+ 6  "Saved" dikhaya, DB se pehle server gira ->  dabbe ki ek aur copy (Redis copy)
  7  owner server hi gira                     ->  "mujhe kuch ho to tu hai" (naya owner wahin se)
  8  Ravi hataya, server pe purani permission ->  chhota note, uska op accept nahi (permission check)
  9  Ravi doosre server se likh raha          ->  building ke bahar chilla de (pub/sub invalidation)
