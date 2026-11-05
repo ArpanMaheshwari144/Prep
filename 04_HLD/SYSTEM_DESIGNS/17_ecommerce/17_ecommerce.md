@@ -109,6 +109,13 @@ chahe baad me. Asli hal business ka: sale ke liye stock pehle se zyada mangwao (
 API). Doosra raasta: Pay dabaate hi dabba ghadi (10 min) ke saath rok do (BMS jaisa hold), Pay page tabhi khule jab
 dabba mila; refund kam, par dabba ghadi tak kisi ke kaam nahi aata. Dono ki keemat: refund ya ruka dabba.
 
+**Rollback me bhi pech, ghadi me bhi. To Apple store jaisa sale gate:** 500 iPhone, bahar 3000 log. Jitne phone utne andar,
+kisi ka card decline hua ya koi chala gaya to agla batch, jitne bache utne. App pe poora app nahi rok sakte (aata-daal wale
+bhi hain), to ghee ke liye alag counter: sale wala maal us gate se, normal checkout chalta rahe. Us counter se sirf 500 guzarne.
+**Asli naam:** sale gate. Sale item ka "Buy now" (normal cart me nahi). Gate sirf stock jitne logon ko Pay tak jaane de
+(Redis DECR), fail / chala gaya = agla batch. Bahar walon ka paisa katta hi nahi, koi dabba bina bike nahi. Gate ek baar
+banta, har sale pe sirf list (item + ginti + waqt).
+
 **Maan lo net gaya / PSP chup:** Ravi ko laga pay ho gaya, par PSP tak request pahunchi nahi, ya paisa kata aur PSP
 anjaan. Design har jagah se thoda toot-ta hai: chahe 10 minute roko, chahe paisa aane pe kaato, kinaare pe yahi aata.
 Paisa kata to zimmedari hamari, PSP se hum baat karenge.
