@@ -54,6 +54,16 @@ Technical me: (1) agla tukda = sabse sambhav, pakka sahi nahi (hallucination ki 
 Arpan: Cheating galat hai, 1000 log line me hain, unfair. Par tu ye mat bol ki "main nahi karunga", ye bol ki "Anthropic ne mujhe aise train kiya". Sirf ek sawaal ka screenshot ho, na ghadi na proctored, to tu solve kar dega, kyunki pata hi nahi chalega.
 Technical me: faisla poore dher ke andaze se (chalta test dikhe: ghadi, proctored, "jaldi bata" -> mana; na dikhe -> practice maan ke madad; shak -> poochho). Andaza lagane ka tareeka bhi training se. Chhupa ke bheja to pakad nahi sakta, jhooth bhejne wale ka. "Madad" = sabka bhala (company, baaki candidate), jo maanga wo de dena nahi.
 
+**10. GPU mehnga hai, ek-ek request chalaun to? (bus kab chale)**
+Samjha: ek request = auto me ek sawaari, GPU khaali baitha. Isliye kai logon ki request ek saath (batch), bus me 50. GPU sabke saath ek hi kaam karta (har kadam pe sabka agla tukda), isliye 50 ka tukda 1 jitne waqt me.
+Dikkat: bus kab chale? 50 bharne ka intezaar karo to raat 2 baje tu stop pe khada (jawab shuru hi nahi). Turant chala do to bus 3 logon ke saath, GPU phir khaali. Hal: ghadi + seat, jo pehle ho jaaye: seat bhari to turant, warna kuch milliseconds ki ghadi poori hote hi aadhi khaali bhi chal do.
+Technical me: batching. Trade-off = latency vs throughput (jaldi jawab vs bhari gaadi / kharcha), ek badhao to doosra ghatta.
+
+**11. Ek ka jawab 2 tukde, doosre ka 200. Batch me kya?**
+Samjha (dhabe ka tawa): tawe pe 50 roti ki jagah, har round sabki ek-ek roti. Tera order 2 roti, Ravi ka 200. Purana tareeka: tawa tab khaali jab sabse bada order khatam, teri jagah 198 round khaali, bahar grahak khada. Naya: teri 2 roti bante hi us jagah agle grahak ki roti. Tawa hamesha bhara, koi bade order ka intezaar nahi karta.
+Technical me: continuous batching (har kadam pe jiska jawab khatam wo bahar, line wala andar). **Par:** har sawaari ka ek bag (uski chat ka hisaab, block 4 wala cache) GPU memory me rehta. Lambi chat = bada bag = kam seat. Isiliye lambi chat mehngi, aur context ki had bhi isi wajah se.
+Ajeeb kyun lagta: baaki designs me server sasta aur DB pe bojh, yahan GPU sabse mehnga, to poora design GPU ko khaali na baithne dene ke aas-paas ghoomta.
+
 &nbsp;
 
-Aage (baaki): bus kab chale (chhote / lambe jawab ek batch me), poora flow scene-mock me, phir main file.
+Aage (baaki): poora flow scene-mock me, phir main file.
