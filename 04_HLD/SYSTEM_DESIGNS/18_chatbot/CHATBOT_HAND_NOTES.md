@@ -5,7 +5,7 @@ Mock abhi baaki: ye padhai ke notes hain, scene-mock ke baad isi me Arpan ke jaw
 
 ```mermaid
 flowchart LR
-    A["Motu bhai<br/>(User)"] --> APP["App<br/>(Chat Service)"]
+    A["Motu bhai"] --> APP["App<br/>(Chat Service)"]
     APP --> DB[("Chat ka register<br/>(Conversation DB)")]
     DB -- "poori chat dobara" --> D["Dher<br/>(context: hidayatein + tools + files + chat)"]
     D --> C["Bhondu Claude<br/>(model, kai GPU pe)"]
