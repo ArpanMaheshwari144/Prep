@@ -6,6 +6,8 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Faisla FR se (interview me pehle):** Sale me pehle hi bol do: ghee 500 hai to 500 ko hi milega, baaki ko "out of stock" dikhega. Yahan consistency chahiye (500 se ek bhi zyada nahi bikna), availability nahi (sabko milna zaroori nahi). Ye CAP wali baat hai: FR me hi ye cut off kar do, phir design usi hisaab se.
 
+**Nichod (Arpan):** E-commerce me sabse bada kaam inventory management hai. Wo kar liya to 90% design wahin sort, baaki to frontend pe dikhana hai.
+
 &nbsp;
 
 **1. Shelf pe aakhri ek ghee. Ravi ne app pe order kiya, aur usi minute aunty wahi dabba counter pe le gayi.**
