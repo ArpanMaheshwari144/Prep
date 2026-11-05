@@ -26,6 +26,12 @@ ss >> a >> b >> c;                       // space se tukde: a="s1", b="200", c="
 int x = stoi(b);                         // string -> int
 string part; stringstream ss2(line);
 while (getline(ss2, part, ','))  { }     // comma (ya ':') se tukde
+// CSV "ravi,maths,40": >> sirf SPACE pe todta, comma pe nahi -> har tukda getline se (5-Nov grill)
+stringstream ss3(line);  string name, sub, marks;
+getline(ss3, name, ',');                 // "ravi"   (pehle ',' tak)
+getline(ss3, sub, ',');                  // "maths"
+getline(ss3, marks, ',');                // "40"     (aakhri, comma na ho tab bhi bacha utha leta)
+mp[name] += stoi(marks);                 // misaal: CSV MARKS TOTAL (03/13)
 int pos = line.find(' ');                // pehla space
 string left = line.substr(0, pos), right = line.substr(pos + 1);
 
@@ -2098,6 +2104,39 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
          return count;
      }
      // SAME shakal: "user ke lagaataar 3 galat password -> lock", "card ke lagaataar fail" -> key = user / card
+
+
+
+ █████████████████████████ ▸ CSV MARKS TOTAL  (03/13) █████████████████████████
+     ═════════════════════════ SAWAAL ═════════════════════════════════════
+     lines "naam,subject,marks". har student ke KUL marks (naam ke kram me).
+       e.g. ["ravi,maths,40","priya,maths,55","ravi,sci,35","priya,sci,30"] -> priya 85, ravi 75
+       kyun: ravi 40 + 35 = 75, priya 55 + 30 = 85
+
+     ═════════════════════════ TAREEKA ════════════════════════════════════
+     line todo -> naam = key -> map me marks jodte jao. pench: tukde COMMA se, space se nahi -> >> nahi chalega, getline
+
+     ═════════════════════════ CHAABI ═════════════════════════════════════
+       1. map<string,int> mp   (naam ke kram me chahiye -> map, unordered nahi)
+       2. loop har line pe: stringstream ss(line); string name, sub, marks
+       3. getline(ss, name, ','); getline(ss, sub, ','); getline(ss, marks, ',')      (>> NAHI: wo sirf space pe todta)
+       4. mp[name] += stoi(marks)                                               (string -> int)
+       5. return mp
+
+     ═════════════════════════ CODE ═══════════════════════════════════════
+     map<string, int> totalMarks(vector<string> &lines) {
+         map<string, int> mp;
+         for (auto &it : lines) {
+             stringstream ss(it);
+             string name, sub, marks;
+             getline(ss, name, ',');             // comma tak -> "ravi"
+             getline(ss, sub, ',');
+             getline(ss, marks, ',');            // aakhri tukda, comma na ho tab bhi
+             int t = stoi(marks);
+             mp[name] += t;
+         }
+         return mp;
+     }
 
 ```
 
