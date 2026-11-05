@@ -1,150 +1,82 @@
-# Isolation Levels — kitna "alag" 2 transactions chalein (+ concurrency anomalies)
+# Isolation Levels: ek transaction doosre ka kitna dekhe
 
-**Kahani:** Ravi ka account, balance 100. Do transaction ek saath: A badal raha, B padh raha. Isolation level = B ko A ka adhoora kaam kitna dikhe.
+## Scene: munshi likh raha, cashier padh raha
 
-```
-1. DIRTY READ
-   A: balance = 999 (commit NAHI)     B: padha 999  -> loan pass kar diya
-   A: ROLLBACK                        -> 999 kabhi tha hi nahi
-
-2. NON-REPEATABLE READ
-   B: padha 100 ... A: 500 kiya + COMMIT ... B: dobara padha 500
-   -> same row, ek hi txn me do alag jawab
-
-3. PHANTOM
-   B: "balance > 50 wale accounts" = 10 ... A ne naya account INSERT + COMMIT
-   B: wahi query = 11  -> nayi row "bhoot" ki tarah aa gayi
-```
+Mausi ke mart me ghee ka hisaab ek register me hai. Munshi (transaction A) register me likh raha hai, aur cashier (transaction
+B) usi register se padh raha hai. Isolation ka matlab hai ki cashier ko munshi ka adhoora kaam kitna dikhe. Teen gadbad ho
+sakti hain:
 
 ```
-LEVEL              dirty   non-repeat   phantom
-READ UNCOMMITTED   ho      ho           ho        <- kuch nahi rokta
-READ COMMITTED     ROKA    ho           ho        <- Postgres / Oracle default
-REPEATABLE READ    ROKA    ROKA         ho*       <- MySQL InnoDB default
-SERIALIZABLE       ROKA    ROKA         ROKA      <- sabse kada, sabse dheema
-* MySQL InnoDB isme bhi phantom zyadatar rok leta (MVCC + next-key lock)
+1. DIRTY READ           munshi ne pencil se likha "ghee: 999" (commit nahi), cashier ne padh ke 999 ka maal
+                        bech diya, munshi ne mita diya (rollback) -> 999 kabhi tha hi nahi
+2. NON-REPEATABLE READ  cashier ne padha 500, beech me munshi ne 300 likh ke pakka kar diya, cashier ne
+                        dobara dekha 300 -> ek hi bill me ek hi line ke do jawab
+3. PHANTOM              cashier ne gina "500 se zyada wale item: 10", munshi ne naya item jod diya,
+                        dobara gina 11 -> nayi line bhoot ki tarah aa gayi
 ```
 
-**Khaas baat:**
-1. Jitna kada level, utne zyada lock, utna dheema. Banking = kada, reporting = dheela chalega.
-2. Default DB pe: MySQL REPEATABLE READ, Postgres READ COMMITTED. DB badla to default badla.
-3. 21-Aug khud dekha (neeche HANDS-ON): READ UNCOMMITTED pe B ko 999 dikha, READ COMMITTED pe gayab. Workbench ke 2 tab = ek hi session, 2 alag connection chahiye.
+Isolation level batata hai ki inme se kitni gadbad roki jaaye:
 
-**Prod wala trap:**
+```
+READ UNCOMMITTED   kuch nahi rokta
+READ COMMITTED     dirty rokta        <- Postgres / Oracle ka default
+REPEATABLE READ    + non-repeatable   <- MySQL InnoDB ka default (MVCC + next-key lock se phantom bhi zyadatar)
+SERIALIZABLE       sab rokta, sabse dheema
+```
+
+Jitna kada level, utne zyada taale, aur utna dheema. Isliye banking me kada level chahiye, aur reporting me dheela chal jaata
+hai. DB badla to default bhi badal jaata hai.
+
+## Prod wala trap
+
 ```java
-@Transactional                                   // isolation = DB ka default (Postgres: READ COMMITTED)
+@Transactional                                         // isolation = DB ka default
 public void withdraw(long id, int amt) {
-    int bal = repo.getBalance(id);               // dono request ne 100 padha
-    if (bal >= amt) repo.setBalance(id, bal - amt);   // dono ne 100-80 = 20 likha -> 160 nikle, ek update kho gaya
+    int bal = repo.getBalance(id);                     // dono request ne 100 padha
+    if (bal >= amt) repo.setBalance(id, bal - amt);    // dono ne 20 likha -> 160 nikle
 }
 ```
-`@Transactional` lagane se race nahi rukti (LOST UPDATE). Ilaaj = banking mock wala: ek query `UPDATE ... SET balance = balance - 80 WHERE id = ? AND balance >= 80` (0 row = mana), ya pehle `SELECT ... FOR UPDATE`.
 
-```
-Interview: "Isolation level decide karta do concurrent txn ek doosre ka kitna dekhein. Teen anomaly:
-dirty read, non-repeatable read, phantom. Ladder READ UNCOMMITTED se SERIALIZABLE: jitna kada,
-utna safe par dheema. MySQL default REPEATABLE READ, Postgres READ COMMITTED. Paise wale
-read-then-write me level pe bharosa nahi: atomic conditional UPDATE ya SELECT FOR UPDATE."
-```
+`@Transactional` laga diya to log maan lete hain ki safe ho gaya, par nahi hua. Ye MT 04 wala hi "padho, phir likho" jhagda
+hai, bas ab DB me, aur isse lost update kehte hain. Ilaaj wahi hai jo banking aur e-commerce me kiya: ek hi query me shart
+(`0 row` aaye to mana), ya pehle `SELECT ... FOR UPDATE` se row pe taala.
 
----
-
-## GEHRA HISSA (purani file se, interview me kaam ka)
-
-## 3 ANOMALIES (jo isolation kam hone pe hoti — inhe roken)
-
-```
-1. DIRTY READ        = ek txn ne UNCOMMITTED change ki, doosri ne wo padh li -> agar rollback ho gaya
-                       to jo padha wo kabhi tha hi nahi. (paisa 999 padha, phir 100 -> galat faisla)
-
-2. NON-REPEATABLE READ = ek txn ne ek row 2 baar padhi, beech me doosri ne COMMIT kar diya
-                       -> dono baar ALAG value. "same query, alag answer."
-
-3. PHANTOM READ      = ek txn ne ek RANGE query 2 baar chalayi (WHERE age>18), beech me doosri ne
-                       naya row INSERT/DELETE commit kiya -> doosri baar row-COUNT badla. "nayi rows aa gayi."
-```
-
----
-
-## 4 ISOLATION LEVELS (ladder — neeche jitna, utna strict + safe, par slow)
-
-```
-┌────────────────────┬───────────┬──────────────────┬──────────┐
-│  LEVEL             │ Dirty read│ Non-repeatable   │ Phantom  │
-├────────────────────┼───────────┼──────────────────┼──────────┤
-│ READ UNCOMMITTED   │  HO SAKTA │  HO SAKTA        │ HO SAKTA │  <- sabse dheela (koi safety nahi)
-│ READ COMMITTED     │  ROKA     │  ho sakta        │ ho sakta │  <- sirf committed padho
-│ REPEATABLE READ ★  │  ROKA     │  ROKA            │ ho sakta*│  <- MySQL InnoDB DEFAULT
-│ SERIALIZABLE       │  ROKA     │  ROKA            │ ROKA     │  <- sabse strict (jaise serial chale)
-└────────────────────┴───────────┴──────────────────┴──────────┘
-   * MySQL ka REPEATABLE READ (MVCC + next-key locks) practically phantom bhi kaafi rok deta.
-
-   TRADE-OFF: neeche jao -> zyada safe PAR zyada locking -> slow + kam concurrency.
-   -> jitni safety CHAHIYE utni hi lo. (banking = high | analytics/reporting = low chalega)
-```
-
----
-
-## ═══ HANDS-ON — Dirty read LIVE dekha (2 MySQL sessions, 21-Aug) ═══
-
-> account(id, balance=100). 2 ALAG session (A, B). A ne balance badla par commit na kiya ->
-> READ UNCOMMITTED pe B ne wo 999 padh li (DIRTY) -> A ne rollback -> B ne aisi value padhi jo kabhi thi hi nahi.
-> READ COMMITTED pe wahi cheez -> B ne 999 NAHI padha (sirf committed) -> dirty gayab.
-
-### Setup
 ```sql
-CREATE DATABASE demo; USE demo;
-CREATE TABLE account (id INT PRIMARY KEY, balance INT);
-INSERT INTO account VALUES (1, 100);
+UPDATE account SET balance = balance - 80 WHERE id = ? AND balance >= 80;   -- 0 row = mana
 ```
 
-### Dirty read (READ UNCOMMITTED)
+## Tera hands-on (21-Aug, 2 MySQL session)
+
 ```sql
--- Session B:  SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
--- Session A:  START TRANSACTION;  UPDATE account SET balance=999 WHERE id=1;   (COMMIT nahi)
--- Session B:  SELECT balance ...   -> 999   (DIRTY READ! uncommitted padh li)
--- Session A:  ROLLBACK;
--- Session B:  SELECT balance ...   -> 100   (999 kabhi thi hi nahi)
+CREATE TABLE account (id INT PRIMARY KEY, balance INT);  INSERT INTO account VALUES (1, 100);
+
+-- READ UNCOMMITTED (dirty read dikha)
+-- B: SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+-- A: START TRANSACTION; UPDATE account SET balance=999 WHERE id=1;   (commit nahi)
+-- B: SELECT balance ...  -> 999
+-- A: ROLLBACK;
+-- B: SELECT balance ...  -> 100   (999 kabhi tha hi nahi)
+
+-- READ COMMITTED (dirty gaayab)
+-- B: SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-- A: START TRANSACTION; UPDATE account SET balance=555 WHERE id=1;   (commit nahi)
+-- B: SELECT balance ...  -> 100
+-- A: COMMIT;
+-- B: SELECT balance ...  -> 555
 ```
 
-### Fix (READ COMMITTED)
-```sql
--- Session B:  SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
--- Session A:  START TRANSACTION;  UPDATE account SET balance=555 WHERE id=1;   (COMMIT nahi)
--- Session B:  SELECT balance ...   -> 100   (555 NAHI -> sirf committed padha -> dirty GAYAB)
--- Session A:  COMMIT;
--- Session B:  SELECT balance ...   -> 555   (ab committed -> dikha)
-```
+Ek baat jo us din pakdi thi: Workbench ke 2 tab ek hi connection (session) hote hain, aur ek session apna uncommitted badlaav
+hamesha dekh leta hai, isliye isolation test ke liye 2 alag connection chahiye. Aur Workbench me autocommit ON hota hai, to
+`START TRANSACTION` likhna zaroori hai, warna UPDATE turant commit ho jaata hai.
 
-### ★★ GEMS / gotchas
-```
-1. ★ 2 Workbench TABS = ek hi CONNECTION = ek hi SESSION! isolation test ke liye 2 ALAG connection chahiye.
-   (2 mysql CLI windows, ya Workbench me 2 alag connection tabs). same session apne uncommitted change
-   ko hamesha dekh leta -> tab me test "galat" chalta.
-2. "SESSION" = ek connection/login. Har connection ka apna transaction + isolation state.
-3. MySQL InnoDB DEFAULT = REPEATABLE READ (dirty + non-repeatable dono roke).
-   PostgreSQL / Oracle / SQL Server DEFAULT = READ COMMITTED (sirf dirty roke) -> DB badla to default bhi badla.
-4. Level ek SESSION pe set hota: SET SESSION TRANSACTION ISOLATION LEVEL <level>;
-5. TRADE-OFF: strict level = zyada locks = slow. Safety-vs-speed. Jitni chahiye utni lo.
-6. Workbench autocommit ON -> explicit txn ke liye START TRANSACTION zaroori (warna UPDATE turant commit).
-```
+## Interview line
 
-### Dobara kaise
 ```
-2 mysql sessions -> ek me START TRANSACTION + UPDATE (no commit) -> doosre me SELECT.
-level badal ke (UNCOMMITTED vs COMMITTED) SELECT ka result badalta -> yehi isolation.
-```
-
----
-
-## INTERVIEW LINE
-```
-"Isolation levels decide karte 2 concurrent txns ek-doosre ka uncommitted/committed kitna dekhein.
- 3 anomalies: dirty read (uncommitted padh li), non-repeatable read (same row 2 baar alag), phantom (range me nayi rows).
- Ladder: READ UNCOMMITTED (kuch nahi roke) -> READ COMMITTED (dirty roke) -> REPEATABLE READ (MySQL default,
- non-repeatable bhi roke) -> SERIALIZABLE (phantom bhi, sabse strict).
- Trade-off = safety vs speed; strict = zyada locking. Maine 2 sessions me dirty read live dekha:
- READ UNCOMMITTED pe uncommitted value dikhi, READ COMMITTED pe gayab."
+Isolation decides how much two concurrent transactions see of each other. The three
+anomalies are dirty read, non-repeatable read and phantom. Going from READ UNCOMMITTED to SERIALIZABLE
+is safer but slower; MySQL defaults to REPEATABLE READ and Postgres to READ COMMITTED. For
+read-then-write on money I don't rely on the level at all: @Transactional alone still loses updates,
+so I use an atomic conditional UPDATE or SELECT FOR UPDATE.
 ```
 
 [← DATABASE folder](.)
