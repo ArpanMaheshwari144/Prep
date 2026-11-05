@@ -294,3 +294,17 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  8  mere aage-peeche ke 5, alag dabbon me    ->  bheed me aas-paas scan (score range, merge)
  9  Redis gira                              ->  clone, phir clone, teeno gaye to DB se bharo (replica, DB sach)
 ```
+
+## 17. E-commerce   ([notes](SYSTEM_DESIGNS/17_ecommerce/ECOMMERCE_HAND_NOTES.md))
+
+```
+ 0  sale ka maal seemit                     ->  FR me hi cut off: 500 ko hi, baaki out of stock (consistency > availability)
+ 1  aakhri ghee, aunty + Ravi ek saath       ->  online ko godown, counter ko shelf (channel ka alag stock)
+ 2  ladka uthake likhna bhool gaya           ->  uthana + parchi ek hi kaam (atomic transaction)
+ 3  sale ki bheed, aata-daal bhi atka        ->  sale ki alag dukaan (alag service)
+ 4  ek parchi pe 50 hazaar                   ->  10 counter, tez kaatne wala (hot row todo, Redis DECR)
+ 5  counter 3 khatam, counter 7 pe 30        ->  khaali counter band, sold out tab jab sab 0
+ 6  60 ne pay nahi kiya                      ->  cart = list, ginti pay pe, fail to wapas
+ 7  3000 ek second me Pay                    ->  server pe line, 500 ke baad rollback (ya ghadi wala hold, dono ki keemat)
+ 8  net gaya / PSP chup                      ->  BMS wala PAYMENT_PENDING + status job, kinaare pe refund
+```
