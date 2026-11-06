@@ -6462,7 +6462,7 @@ int minMeetingRooms(vector<int> &start, vector<int> &end) {
 ### ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
 
 ```
-nums[] (sab unique). SAARE subsets lautao, order koi bhi.
+Ek array diya hai (sab number alag). Iske saare subsets (khaali bhi) lautao, kram kuch bhi chalega.
   e.g. [1,2] -> [], [1], [2], [1,2]
   kyun: har element lo ya chhodo -> 2 x 2 = 4 subset
 ```
@@ -6475,13 +6475,13 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &
     }
     temp.push_back(nums[index]);            // INCLUDE: le liya
     solve(nums, ans, index + 1, temp);      // index+1: agle element pe faisla
-    temp.pop_back();  // UN-CHOOSE, exclude se PEHLE: warna exclude me bhi chipka rehta
+    temp.pop_back();  // ★ UN-CHOOSE, exclude se PEHLE: warna exclude me bhi chipka rehta
     solve(nums, ans, index + 1, temp);      // EXCLUDE: element chhod ke aage
 }
 
 vector<vector<int>> subsets(vector<int> &nums) {
     vector<vector<int>> ans;
-    vector<int> temp;  // BAHAR banao, by-ref pass: helper me banate to har call naya
+    vector<int> temp;  // ★ BAHAR banao, by-ref pass: helper me banate to har call naya
     solve(nums, ans, 0, temp);              //   (ek SHARED path pe push / pop -> tabhi backtrack chalta)
     return ans;                             // 2^n subsets (har element in / out = power set)
 }
@@ -6503,7 +6503,7 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &
 ### ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
 
 ```
-nums[] (sab unique). SAARE permutations (har possible order) lautao.
+Ek array diya hai (sab number alag). In numbers ko jitne alag-alag kram me laga sakte ho, wo saare kram (permutations) lautao.
   e.g. [1,2,3] -> [1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]
   kyun: pehli jagah 3 choice, doosri 2, teesri 1 -> 3x2x1 = 6
 ```
@@ -6514,7 +6514,7 @@ void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vect
         ans.push_back(temp);
         return;
     }
-    for (int i = 0; i < nums.size(); i++) {  // 0 se, start NAHI: order matter, peeche wala bhi kisi
+    for (int i = 0; i < nums.size(); i++) {  // ★ 0 se, start NAHI: order matter, peeche wala bhi kisi
                                             //   position pe
         if (used[i])
             continue;                       // already liya -> skip
@@ -6522,7 +6522,7 @@ void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vect
         used[i] = true;
         solve(nums, temp, used, ans);       // EXPLORE (i+1 nahi -> phir 0 se, used skip karta)
         temp.pop_back();                    // UN-CHOOSE: DONO undo
-        used[i] = false;                    //   used false bhi: warna aage ke arrangements me ye band
+        used[i] = false;                    // ★   used false bhi: warna aage ke arrangements me ye band
     }
 }
 // caller: temp + used(n, false) BAHAR bana ke by-ref. n! permutations.
@@ -6532,7 +6532,7 @@ void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vect
 ### ▸ COMBINATIONS (LC-77)  = SUBSETS ka start-loop, bas base size==k
 
 ```
-1..n me se k number ke SAARE combinations lautao (order matter nahi).
+Do number n aur k diye hain. 1 se n tak ke numbers me se k number chunne ke saare tareeke lautao. Kram matter nahi karta, [1,2] aur [2,1] ek hi hain.
   e.g. n=4, k=2 -> [1,2],[1,3],[1,4],[2,3],[2,4],[3,4]
   kyun: [2,1] = [1,2] same -> sirf aage wale chuno -> C(4,2) = 6
 ```
@@ -6545,7 +6545,7 @@ void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
     }
     for (int i = index; i <= n; i++) {     // 1..n numbers, index se aage (<= n: n khud bhi number)
         temp.push_back(i);                  // CHOOSE
-        solve(n, k, ans, i + 1, temp);      // EXPLORE (i+1 -> order nahi, aage hi)
+        solve(n, k, ans, i + 1, temp);      // ★ EXPLORE (i+1 -> order nahi, aage hi)
         temp.pop_back();                    // UN-CHOOSE: agla i try karne se pehle path saaf
     }
 }
@@ -6556,7 +6556,7 @@ void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
 ### ▸ COMBINATION SUM (LC-39)  = REUSE allowed + TARGET-base
 
 ```
-candidates[] (distinct, positive) + target. saare unique combos jinka SUM == target, ek number kitni bhi baar.
+candidates[] (sab alag, sab positive) aur ek target diya hai. Wo saare alag combination lautao jinka jod target ke barabar ho. Ek number kitni bhi baar le sakte ho.
   e.g. [2,3,6,7], target=7 -> [[2,2,3],[7]]
   kyun: 2+2+3 = 7 (2 dobara liya) · 7 akela = 7
 ```
@@ -6571,7 +6571,7 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &
         return;
     }
     temp.push_back(nums[index]);            // INCLUDE
-    solve(nums, ans, index, temp, target - nums[index]);   // index SAME: yahi element dobara le sakte
+    solve(nums, ans, index, temp, target - nums[index]);   // ★ index SAME: yahi element dobara le sakte
     temp.pop_back();                        // exclude se pehle undo: warna exclude path me bhi rehta
     solve(nums, ans, index + 1, temp, target);   // EXCLUDE: is candidate ko ab chhod diya
 }
@@ -6587,7 +6587,7 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
     }
     for (int i = index; i < candidates.size(); i++) {   // start se: peeche wale nahi, combo repeat nahi
         temp.push_back(candidates[i]);      // CHOOSE
-        solve2(candidates, target - candidates[i], ans, i, temp);   // 'i' (i+1 NAHI) -> REUSE allowed
+        solve2(candidates, target - candidates[i], ans, i, temp);   // ★ 'i' (i+1 NAHI) -> REUSE allowed
         temp.pop_back();                    // UN-CHOOSE
     }
 }
@@ -6600,7 +6600,7 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
 ### ▸ WORD SEARCH (LC-79)  = grid-DFS + BACKTRACKING
 
 ```
-char grid + word. kya word bagal-bagal cells (up/down/left/right) se banta, har cell ek hi baar? true/false.
+Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar, neeche, daayein, baayein) se chalte hue ye word ban sakta hai? Ek cell ek hi baar use hoga. true ya false lautao.
   e.g. board ABCE/SFCS/ADEE: "ABCCED" -> true, "ABCB" -> false
   kyun: A,B,C (row 0) -> C neeche -> E neeche -> D left · ABCB me wahi B dobara lagta
 ```
@@ -6640,7 +6640,7 @@ bool solve(vector<vector<char>> &board, string word, int index, int i, int j, in
         solve(board, word, index, i - 1, j, m, n, vis) ||
         solve(board, word, index, i, j - 1, m, n, vis))
         return true;
-    vis[i][j] = false;                      // BACKTRACK (un-mark): doosre raaste ke liye cell free
+    vis[i][j] = false;                      // ★ BACKTRACK (un-mark): doosre raaste ke liye cell free
     return index == word.size() ? true : false;   // base: aakhri char match tabhi == size
 }
 
@@ -6656,7 +6656,7 @@ bool exist(vector<vector<char>> &board, string word) {
             }
         }
     }
-    return false;                           // SAARE start try, kahin nahi -> tab false
+    return false;                           // ★ SAARE start try, kahin nahi -> tab false
 }
 // BUG-TRAP: loop me `if (solve(..) == false) return false;` -> pehla start fail hote hi poora false.
 //   "AAB" on [CAA / AAA / BCD]: (0,1) ka A fail, par (1,1)->(1,0)->(2,0) = AAB tha. + ulta bug: word[0]
@@ -6671,7 +6671,7 @@ bool exist(vector<vector<char>> &board, string word) {
 ### ▸ GENERATE PARENTHESES (LC-22)  = CONSTRAINT-guided (open / close count)
 
 ```
-n jode brackets. saare VALID (balanced) strings lautao.
+Ek number n diya hai (n jode bracket). n jodon se banne wale saare sahi (balanced) bracket strings lautao.
   e.g. n=2 -> ["(())", "()()"]
   kyun: 2 '(' + 2 ')' ke sirf yahi 2 jahan ')' kabhi '(' se aage nahi nikalta ("())(" galat)
 
@@ -6686,7 +6686,7 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
     }
     if (open < n)                           // '(' : n se zyada '(' nahi
         solve(open + 1, close, path + '(', ans, n);
-    if (close < open)                       // ')' : band utne hi jitne khule. ALAG if, else if NAHI:
+    if (close < open)                       // ★ ')' : band utne hi jitne khule. ALAG if, else if NAHI:
         solve(open, close + 1, path + ')', ans, n);   //   dono sach ho sakti, tab DONO chalni chahiye
 }  // return solve(..) MAT: '(' ke return se ')' branch kabhi nahi
 // caller: solve(0, 0, "", ans, n). n=3 -> 5, n=4 -> 14 (kam aaye = koi branch kat rahi)
@@ -6695,7 +6695,7 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 ### ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)
 
 ```
-digits (2-9) ki string. phone keypad ke aksharon se saare shabd lautao, khaali -> [].
+2 se 9 tak ke ankon ki ek string di hai. Phone keypad pe har ank ke kuch akshar hote hain (2 = abc, 3 = def ...). In ankon se banne wale saare shabd lautao. Khaali string pe khaali list.
   e.g. "23" -> [ad,ae,af,bd,be,bf,cd,ce,cf]
   kyun: 2 = abc, 3 = def -> har akshar ke saath har akshar = 3 x 3 = 9
 
@@ -6719,11 +6719,11 @@ void solve(int index, string &temp, unordered_map<char, string> &mp, vector<stri
 
 vector<string> letterCombinations(string digits) {
     if (digits.size() == 0)
-        return {};                          // EDGE: "" -> khaali LIST, [""] nahi
+        return {};                          // ★ EDGE: "" -> khaali LIST, [""] nahi
     unordered_map<char, string> mp;         // key = char ('2'): digits[index] char hai -> seedha chalta
     mp['2'] = "abc";  mp['3'] = "def";  mp['4'] = "ghi";  mp['5'] = "jkl";
     mp['6'] = "mno";  mp['7'] = "pqrs"; mp['8'] = "tuv";  mp['9'] = "wxyz";
-    vector<string> ans;  // ans GLOBAL mat rakho: function do baar bula to pichhle jawab
+    vector<string> ans;  // ★ ans GLOBAL mat rakho: function do baar bula to pichhle jawab
     string temp = "";                       //   bhi jud jaate ("2" pe 3 ki jagah 12)
     solve(0, temp, mp, ans, digits);
     return ans;
@@ -6765,7 +6765,7 @@ vector<string> letterCombinations(string digits) {
 ### ▸ CLIMBING STAIRS (LC-70)  = Fibonacci-shape (ways = ways(n-1)+ways(n-2))
 
 ```
-n steps ki seedhi, ek baar me 1 ya 2 step. top tak kitne ALAG tareeke?
+n seedhiyon ki seedhi hai. Ek baar me 1 ya 2 seedhi chadh sakte ho. Upar tak pahunchne ke kitne alag tareeke hain, wo lautao.
   e.g. n=3 -> 3
   kyun: 1+1+1, 1+2, 2+1
 ```
@@ -6773,10 +6773,10 @@ n steps ki seedhi, ek baar me 1 ya 2 step. top tak kitne ALAG tareeke?
 ```cpp
 int solve(int n, vector<int> &dp) {         // step n pe: (n-1) se 1 step YA (n-2) se 2 step
     if (n == 0 || n == 1)
-        return 1;                           // base: n==0 bhi 1 (2-step se seedha top = ek tareeka)
+        return 1;                           // ★ base: n==0 bhi 1 (2-step se seedha top = ek tareeka)
     if (dp[n] != -1)
         return dp[n];                       // cache HIT
-    return dp[n] = solve(n - 1, dp) + solve(n - 2, dp);   // compute + STORE (= Fibonacci)
+    return dp[n] = solve(n - 1, dp) + solve(n - 2, dp);   // ★ compute + STORE (= Fibonacci)
 }
 
 int climbStairs(int n) {
@@ -6790,7 +6790,7 @@ int climbStairs(int n) {
 ### ▸ DECODE WAYS (LC-91)  = climbing-stairs ka bhai, par har STEP pe VALIDITY check
 
 ```
-digit string, 1=A .. 26=Z. kitne alag tareeke se decode ho sakti? (akela '0' kuch nahi)
+Ankon ki ek string di hai, jahan 1 = A, 2 = B ... 26 = Z. Is string ko aksharon me kitne alag tareeke se padha (decode) ja sakta hai, wo lautao. Akela '0' kisi akshar ka nahi hota.
   e.g. "226" -> 3
   kyun: 2 2 6 = BBF · 22 6 = VF · 2 26 = BZ
 
@@ -6804,12 +6804,12 @@ int solve(int i, string s, int n, vector<int> &dp) {
     if (i == n)
         return 1;                           // i==n PEHLE (warna s[n] padhta); khatam = ek poora decoding
     if (s[i] == '0')
-        return 0;                           // RULE-1: 0 se letter shuru nahi ("01" bhi A nahi) -> mara
+        return 0;                           // ★ RULE-1: 0 se letter shuru nahi ("01" bhi A nahi) -> mara
     if (dp[i] != -1)
         return dp[i];                       // -1 = abhi nahi nikala
     int count = solve(i + 1, s, n, dp);     // 1 ank: hamesha valid (0 upar hi kat gaya)
     if (i + 1 < n) {                        // pehle i+1<n: aakhri char pe aage mat padho
-        if (s[i] == '1' || (s[i] == '2' && s[i + 1] <= '6'))   // RULE-2: 2 ank sirf 10..26
+        if (s[i] == '1' || (s[i] == '2' && s[i + 1] <= '6'))   // ★ RULE-2: 2 ank sirf 10..26
             count += solve(i + 2, s, n, dp);
     }
     return dp[i] = count;
@@ -6827,7 +6827,7 @@ int numDecodings(string s) {
 ### ▸ HOUSE ROBBER (LC-198)  = har step pe TAKE/SKIP choice + max
 
 ```
-nums[] = har ghar ka paisa. 2 PADOSI ghar nahi loot sakte. MAX loot lautao.
+nums[] me har ghar me rakha paisa diya hai. Do paas-paas wale ghar ek saath nahi loot sakte. Sabse zyada kitna loot sakte ho, wo lautao.
   e.g. [2,7,9,3,1] -> 12
   kyun: ghar 0, 2, 4 = 2+9+1 = 12, koi do padosi nahi
 ```
@@ -6838,7 +6838,7 @@ int solve(vector<int> &A, int i, vector<int> &dp) {   // LAST index se peeche (t
         return 0;                           // i-2 se array ke bahar: koi ghar nahi
     if (dp[i] != -1)
         return dp[i];                       // cache HIT
-    int take = A[i] + solve(A, i - 2, dp);  // LOOT: padosi i-1 chhodna padega -> i-2
+    int take = A[i] + solve(A, i - 2, dp);  // ★ LOOT: padosi i-1 chhodna padega -> i-2
     int notTake = 0 + solve(A, i - 1, dp);  // SKIP: pichhle ghar tak ka best
     return dp[i] = max(take, notTake);
 }
@@ -6855,7 +6855,7 @@ int rob(vector<int> &A) {
 ### ▸ HOUSE ROBBER II (LC-213)  = House Robber I + CIRCLE -> I ko 2 baar chala
 
 ```
-House Robber jaisa, par ghar GOL me -> pehla aur aakhri bhi padosi. MAX loot lautao.
+House Robber jaisa hi, par ghar gol ghere me hain, isliye pehla aur aakhri ghar bhi padosi hain. Sabse zyada loot lautao.
   e.g. [2,3,2] -> 3
   kyun: ghar 0 aur 2 gol me padosi -> dono nahi; best = beech wala 3
 
@@ -6922,7 +6922,7 @@ int rob1(vector<int> &nums) {
 int rob(vector<int> &nums) {
     int n = nums.size();
     if (n == 1)
-        return nums[0];                     // ek ghar: dono temp khaali rehte -> 0 aata, galat
+        return nums[0];                     // ★ ek ghar: dono temp khaali rehte -> 0 aata, galat
     vector<int> temp1, temp2;
     for (int i = 0; i < n; i++) {
         if (i != 0)
@@ -6930,7 +6930,7 @@ int rob(vector<int> &nums) {
         if (i != n - 1)
             temp2.push_back(nums[i]);       // RUN-B: aakhri ghar hata
     }
-    return max(rob1(temp1), rob1(temp2));   // ek ghar hatao -> gol toot ke seedhi line -> normal robber
+    return max(rob1(temp1), rob1(temp2));   // ★ ek ghar hatao -> gol toot ke seedhi line -> normal robber
 }
 ```
 
@@ -6939,7 +6939,7 @@ int rob(vector<int> &nums) {
 ### ▸ COIN CHANGE (LC-322)  = MIN coins + REUSE (dono form, backtracking jaisa)
 
 ```
-coins[] (har coin unlimited) + amount. exact amount banane ko MIN coins, na bane -> -1.
+coins[] me sikkon ki keemat di hai (har sikka jitni baar chaho) aur ek amount. Theek amount banane ke liye kam se kam kitne sikke lagenge, wo lautao. Na ban sake to -1.
   e.g. coins=[1,2,5], amount=11 -> 3
   kyun: 5+5+1 = 11, 3 coin
 
@@ -6960,8 +6960,8 @@ int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp) {
         return dp[i][amount];
     int notTake = solve(coins, amount, i - 1, dp);   // coin i chhoda -> agla
     int take = INT_MAX;                     // INT_MAX se: na le paaye to min pe asar nahi
-    if (solve(coins, amount - coins[i], i, dp) != INT_MAX)   // overflow guard (1+INT_MAX -> negative)
-        take = 1 + solve(coins, amount - coins[i], i, dp);   // coin i liya, i SAME = reuse
+    if (solve(coins, amount - coins[i], i, dp) != INT_MAX)   // ★ overflow guard (1+INT_MAX -> negative)
+        take = 1 + solve(coins, amount - coins[i], i, dp);   // ★ coin i liya, i SAME = reuse
     return dp[i][amount] = min(take, notTake);
 }
 
@@ -6994,7 +6994,7 @@ int solve(vector<int> &coins, int amount, int i, vector<int> &dp) {
 ### ▸ LONGEST INCREASING SUBSEQUENCE (LC-300)  = TAKE/NOT-TAKE + prev-track
 
 ```
-nums[]. sabse lambi STRICTLY badhti subsequence (order same, beech skip chalega) ki LENGTH.
+Ek array diya hai. Usme sabse lambi strictly badhti hui subsequence kitni lambi hai, wo lautao. Subsequence me kram wahi rehta hai, beech ke number chhod sakte ho.
   e.g. [0,1,0,3,2,3] -> 4
   kyun: 0,1,2,3 chuno (beech ka 0 aur 3 skip) -> 4
 ```
@@ -7003,11 +7003,11 @@ nums[]. sabse lambi STRICTLY badhti subsequence (order same, beech skip chalega)
 int solve(int index, int prevIndex, vector<int> &nums, vector<vector<int>> &dp) {
     if (index == nums.size())
         return 0;                           // base saaf (coin change jaisa INT_MAX / -1 nahi)
-    if (dp[index][prevIndex + 1] != -1)     // +1: prevIndex -1 se shuru, dp[-1] crash hota
+    if (dp[index][prevIndex + 1] != -1)     // ★ +1: prevIndex -1 se shuru, dp[-1] crash hota
         return dp[index][prevIndex + 1];
     int notTake = 0 + solve(index + 1, prevIndex, nums, dp);   // chhoda -> prev wahi
     int Take = 0;
-    if (prevIndex == -1 || nums[index] > nums[prevIndex])     // STRICTLY increasing rahe TABHI take
+    if (prevIndex == -1 || nums[index] > nums[prevIndex])     // ★ STRICTLY increasing rahe TABHI take
         Take = 1 + solve(index + 1, index, nums, dp);          // liya -> ab prev = index
     return dp[index][prevIndex + 1] = max(Take, notTake);
 }
@@ -7025,7 +7025,7 @@ int lengthOfLIS(vector<int> &nums) {
 ### ▸ UNIQUE PATHS (LC-62)  = 2D DP intro (climbing-stairs ka 2D cousin)
 
 ```
-m x n grid, (0,0) se (m-1,n-1) tak, sirf RIGHT ya DOWN. kitne alag raaste?
+m x n grid hai. Robot (0,0) se (m-1, n-1) tak jaana chahta hai aur sirf daayein ya neeche chal sakta hai. Kitne alag raaste hain, wo lautao.
   e.g. m=3, n=2 -> 3
   kyun: 2 down + 1 right ka order: R D D, D R D, D D R
 ```
@@ -7040,7 +7040,7 @@ int solve(int i, int j, vector<vector<int>> &dp) {   // robot (0,0) -> (m-1,n-1)
         return dp[i][j];
     int up = solve(i - 1, j, dp);           // upar se aaye (robot sirf down chalta)
     int left = solve(i, j - 1, dp);         // left se aaye (robot sirf right chalta)
-    return dp[i][j] = up + left;            // dono taraf ke raaste jodo
+    return dp[i][j] = up + left;            // ★ dono taraf ke raaste jodo
 }
 
 int uniquePaths(int m, int n) {
@@ -7053,7 +7053,7 @@ int uniquePaths(int m, int n) {
 ### ▸ MIN PATH SUM (LC-64)  = UNIQUE-PATHS reuse, bas MIN + cost
 
 ```
-m x n grid, har cell ka cost. (0,0) se (m-1,n-1), sirf RIGHT/DOWN. sabse KAM sum lautao.
+m x n grid ke har cell me ek cost likhi hai. (0,0) se (m-1, n-1) tak sirf daayein ya neeche chalte hue jaao. Raste ki sabse kam kul cost lautao.
   e.g. [[1,2],[1,1]] -> 3
   kyun: neeche phir right = 1+1+1 = 3 · right phir neeche = 1+2+1 = 4
 ```
@@ -7061,14 +7061,14 @@ m x n grid, har cell ka cost. (0,0) se (m-1,n-1), sirf RIGHT/DOWN. sabse KAM sum
 ```cpp
 int solve(int i, int j, vector<vector<int>> &dp, vector<vector<int>> &grid) {
     if (i < 0 || j < 0)
-        return INT_MAX;                     // unique paths me 0 tha -> ab INVALID, min ignore karega
+        return INT_MAX;                     // ★ unique paths me 0 tha -> ab INVALID, min ignore karega
     if (i == 0 && j == 0)
         return grid[0][0];                  // unique paths me 1 tha -> ab start ki COST
     if (dp[i][j] != -1)
         return dp[i][j];
     int up = solve(i - 1, j, dp, grid);     // sirf upar aur left se aa sakte (right / down chaal)
     int left = solve(i, j - 1, dp, grid);
-    return dp[i][j] = grid[i][j] + min(up, left);   // up + left ki jagah: apni cost + CHHOTA raasta
+    return dp[i][j] = grid[i][j] + min(up, left);   // ★ up + left ki jagah: apni cost + CHHOTA raasta
 }
 
 int minPathSum(vector<vector<int>> &grid) {
@@ -7085,7 +7085,7 @@ int minPathSum(vector<vector<int>> &grid) {
 ### ▸ LONGEST COMMON SUBSEQUENCE (LC-1143)  = 2D DP on 2 STRINGS (match/no-match)
 
 ```
-do string s1, s2. dono me common subsequence (order same, skip chalega) ki sabse lambi LENGTH.
+Do string s1 aur s2 di hain. Dono me jo sabse lambi common subsequence hai (kram same, beech ke akshar chhod sakte ho), uski lambai lautao.
   e.g. "abcde", "ace" -> 3
   kyun: a, c, e dono me isi order me -> "ace" = 3
 ```
@@ -7097,8 +7097,8 @@ int solve(string s1, string s2, int i, int j, vector<vector<int>> &dp) {   // s1
     if (dp[i][j] != -1)
         return dp[i][j];
     if (s1[i] == s2[j])
-        return dp[i][j] = 1 + solve(s1, s2, i - 1, j - 1, dp);   // MATCH -> DONO peeche (diagonal)
-    return dp[i][j] = max(solve(s1, s2, i - 1, j, dp), solve(s1, s2, i, j - 1, dp));   // ek char chhodo
+        return dp[i][j] = 1 + solve(s1, s2, i - 1, j - 1, dp);   // ★ MATCH -> DONO peeche (diagonal)
+    return dp[i][j] = max(solve(s1, s2, i - 1, j, dp), solve(s1, s2, i, j - 1, dp));   // ★ ek char chhodo
 }
 
 int longestCommonSubsequence(string s1, string s2) {
@@ -7113,7 +7113,8 @@ int longestCommonSubsequence(string s1, string s2) {
 ### ▸ EDIT DISTANCE (LC-72, Hard)  = LCS reuse -- no-match 3-choice + base 2-sided
 
 ```
-word1 ko word2 banane ke MIN operations. insert / delete / replace, har ek = 1.
+Do word diye hain, word1 aur word2. word1 ko word2 banane ke liye kam se kam kitne kaam lagenge, wo lautao.
+Teen kaam kar sakte ho: ek akshar daalo (insert), hatao (delete) ya badlo (replace). Har kaam = 1.
   e.g. "horse", "ros" -> 3
   kyun: horse -> rorse (h ko r) -> rose (r hatao) -> ros (e hatao)
 ```
@@ -7157,14 +7158,14 @@ CRUX: DELETE = w1 ka char NIKAALA (i ghata) · INSERT = w2 ke liye naya char DAA
 ```cpp
 int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp) {   // s1 -> s2 min ops
     if (i < 0)
-        return j + 1;                       // s1 khatam -> bache s2 ke j+1 char INSERT
+        return j + 1;                       // ★ s1 khatam -> bache s2 ke j+1 char INSERT
     if (j < 0)
-        return i + 1;                       // s2 khatam -> s1 ke i+1 char DELETE
+        return i + 1;                       // ★ s2 khatam -> s1 ke i+1 char DELETE
     if (dp[i][j] != -1)
         return dp[i][j];
     if (s1[i] == s2[j])
         return dp[i][j] = 0 + solve(i - 1, j - 1, s1, s2, dp);   // MATCH -> koi op nahi
-    return dp[i][j] = 1 + min({solve(i - 1, j, s1, s2, dp),       // DELETE: s1 ka char NIKAALA -> i--
+    return dp[i][j] = 1 + min({solve(i - 1, j, s1, s2, dp),       // ★ DELETE: s1 ka char NIKAALA -> i--
                                solve(i, j - 1, s1, s2, dp),       // INSERT: s2 ke liye DAALA -> j--
                                solve(i - 1, j - 1, s1, s2, dp)}); // REPLACE: dono nipte -> i--, j--
 }
@@ -7188,7 +7189,7 @@ int minDistance(string w1, string w2) {
 ### ▸ 0/1 KNAPSACK (classic)  = PURE take/not-take (item ONCE)
 
 ```
-n item (weight[i], value[i]), bag capacity W. har item ek hi baar. weight <= W rakh ke MAX value.
+n cheezein hain, har ek ka wazan weight[i] aur keemat value[i]. Bag me zyada se zyada W wazan aa sakta hai, aur har cheez sirf ek baar le sakte ho. Sabse zyada kitni keemat bhar sakte ho, wo lautao.
   e.g. wt=[1,2,3], val=[6,10,12], W=5 -> 22
   kyun: item 2+3: wt 2+3 = 5, val 10+12 = 22 (teeno = wt 6, fit nahi)
 
@@ -7204,7 +7205,7 @@ int solve(vector<int> &wt, vector<int> &val, int W, int i, vector<vector<int>> &
     int notTake = 0 + solve(wt, val, W, i - 1, dp);   // item chhoda
     int take = 0;                           // fit na ho to take ka koi value nahi
     if (wt[i] <= W)                         // fit tabhi (warna W negative -> dp index crash)
-        take = val[i] + solve(wt, val, W - wt[i], i - 1, dp);   // liya -> i-1 (ONCE)
+        take = val[i] + solve(wt, val, W - wt[i], i - 1, dp);   // ★ liya -> i-1 (ONCE)
     return dp[i][W] = max(take, notTake);
 }
 
@@ -7219,7 +7220,7 @@ int knapsack(vector<int> &wt, vector<int> &val, int W) {
 ### ▸ SUBSET SUM (boolean)  = 0/1 KNAPSACK ka BOOLEAN bhai
 
 ```
-nums[] (positive) + target. kya koi subset exactly target jodta? true/false.
+Ek array (positive numbers) aur ek target diya hai. Kya kuch numbers chun ke unka jod theek target ban sakta hai? true ya false lautao.
   e.g. [2,3,5], T=5 -> true · [1,2,7], T=6 -> false
   kyun: {5} ya {2,3} = 5 · 1,2,7 se 6 ka koi jod nahi
 
@@ -7229,7 +7230,7 @@ knapsack ka max-value ki jagah true/false
 ```cpp
 bool solve(vector<int> &nums, int target, int index, vector<vector<int>> &dp) {
     if (target == 0)
-        return true;                        // SUCCESS -- SABSE UPAR (BASE-ORDER TRAP, neeche dekh)
+        return true;                        // ★ SUCCESS -- SABSE UPAR (BASE-ORDER TRAP, neeche dekh)
     if (index < 0)
         return false;                       // numbers khatam, target bacha
     if (index == 0)
@@ -7255,7 +7256,7 @@ bool subsetSum(vector<int> &nums, int target) {
 ### ▸ PARTITION EQUAL SUBSET SUM (LC-416)  = SUBSET-SUM ka delta
 
 ```
-nums[] (positive). kya do hisse me baant sakte jinka SUM barabar ho? true/false.
+Ek array (positive numbers) diya hai. Kya ise do hisson me baant sakte hain jinka jod barabar ho? true ya false lautao.
   e.g. [1,5,11,5] -> true
   kyun: total 22 -> {11} = 11 aur {1,5,5} = 11
 
@@ -7275,8 +7276,8 @@ bool canPartition(vector<int> &nums) {
     int n = nums.size();
     vector<vector<int>> dp(n + 1, vector<int>((S / 2) + 1, -1));   // column S/2+1: target ab S/2
     if (S % 2 != 0)
-        return false;                       // ODD -> aadha ho hi nahi sakta
-    return subsetSum(nums, S / 2, n, dp);   // target = S/2 -> wahi boolean subset sum
+        return false;                       // ★ ODD -> aadha ho hi nahi sakta
+    return subsetSum(nums, S / 2, n, dp);   // ★ target = S/2 -> wahi boolean subset sum
 }
 ```
 
@@ -7285,7 +7286,7 @@ bool canPartition(vector<int> &nums) {
 ### ▸ VALID PAREN with '*' (LC-678)  = choice-per-char, 2D dp[index][open]
 
 ```
-s me sirf '(' ')' '*'. '*' = '(' ya ')' ya khaali. kya s valid bracket string ban sakti? true/false.
+Ek string me sirf '(', ')' aur '*' hain. Har '*' ko '(' ya ')' ya khaali maan sakte ho. Kya string ko sahi bracket string banaya ja sakta hai? true ya false lautao.
   e.g. "(*))" -> true · ")(" -> false
   kyun: * ko '(' maano -> "(())" valid · ")(" me ')' pehle aa gaya
 
@@ -7308,10 +7309,10 @@ bool solve(string &s, int index, int open, vector<vector<int>> &dp) {
     }
     bool open_for_astrisk = solve(s, index + 1, open + 1, dp);    // '*' as '('
     bool close_for_astrisk;
-    if (open > 0)                           // GUARD: open-1 se pehle open>0 (warna dp[-1] crash)
+    if (open > 0)                           // ★ GUARD: open-1 se pehle open>0 (warna dp[-1] crash)
         close_for_astrisk = solve(s, index + 1, open - 1, dp);    // '*' as ')'
     else
-        close_for_astrisk = false;          // '*' pe seedha return false MAT: baaki 2 option zinda
+        close_for_astrisk = false;          // ★ '*' pe seedha return false MAT: baaki 2 option zinda
     bool none = solve(s, index + 1, open, dp);                     // '*' khaali
     return dp[index][open] = open_for_astrisk || close_for_astrisk || none;
 }
@@ -7329,7 +7330,8 @@ bool checkValidString(string s) {
 ### ▸ MATRIX CHAIN MULT / MCM  = INTERVAL-DP  = two_max WALL + loop + recurse
 
 ```
-p[] = chain ki dims (A_i = p[i-1] x p[i]). multiply ka order chuno ki total scalar multiplications MIN ho.
+p[] me matrices ki chain ke size diye hain: matrix A_i ka size p[i-1] x p[i] hai. Result same rehta hai, par multiply kis kram me karo isse gunaon ki ginti badalti hai.
+Aisa kram chuno ki kul guna (scalar multiplications) sabse kam ho, aur wo ginti lautao.
   e.g. p=[10,30,5,60] -> 4500
   kyun: (A1A2) = 10*30*5 = 1500, phir x A3 = 10*5*60 = 3000 -> 4500 (doosra order 27000)
 
@@ -7376,8 +7378,8 @@ int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp) {   // A_i..A_j
     if (dp[i][j] != -1)
         return dp[i][j];
     int ans = INT_MAX;                      // MIN chahiye: bade se shuru
-    for (int k = i; k <= j - 1; k++) {      // k = WALL: (i..k)|(k+1..j), har side >=1 -> k max j-1
-        ans = min(ans, solve(i, k, p, dp) + solve(k + 1, j, p, dp) + p[i - 1] * p[k] * p[j]);
+    for (int k = i; k <= j - 1; k++) {      // ★ k = WALL: (i..k)|(k+1..j), har side >=1 -> k max j-1
+        ans = min(ans, solve(i, k, p, dp) + solve(k + 1, j, p, dp) + p[i - 1] * p[k] * p[j]);   // ★
     }                                       // left p[i-1]xp[k] guna right p[k]xp[j]
     return dp[i][j] = ans;
 }
@@ -7385,7 +7387,7 @@ int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp) {   // A_i..A_j
 int matrixChain(vector<int> &p) {
     int n = p.size();
     vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
-    return solve(1, n - 1, p, dp);          // 1 se: i=0 pe p[i-1] = p[-1] crash; n-1 = matrices
+    return solve(1, n - 1, p, dp);          // ★ 1 se: i=0 pe p[i-1] = p[-1] crash; n-1 = matrices
 }
 // p[i-1] = poore left ka baayaan chhor · p[k] = WALL · p[j] = poore right ka daayaan chhor
 // [10,30,5,60], k=1: left A1 = 10x30, right A2A3 -> 30x60, combine = 10*30*60 = p0*p1*p3
@@ -7395,7 +7397,8 @@ int matrixChain(vector<int> &p) {
 ### ▸ BURST BALLOONS (LC 312)  = INTERVAL-DP  = MCM WALL + loop + recurse
 
 ```
-balloons[]. ek-ek phodo, coins = left padosi * khud * right padosi (kinaare pe padosi = 1). MAX total coins.
+balloons[] diye hain. Ek-ek karke saare phodne hain. Ek balloon phodne pe coins = baayein padosi x khud x daayein padosi (us waqt jo zinda hon, kinaare pe padosi = 1).
+Saare phod ke sabse zyada kitne coins mil sakte hain, wo lautao.
   e.g. [1,5] -> 10
   kyun: pehle 1 phodo = 1*1*5 = 5, phir 5 = 1*5*1 = 5 -> 10 (ulta order sirf 6)
 
@@ -7471,7 +7474,7 @@ int solve(int i, int j, vector<int> &p, vector<vector<int>> &dp) {   // i..j sab
     if (dp[i][j] != -1)
         return dp[i][j];
     int ans = INT_MIN;                      // MAX chahiye: chhote se shuru
-    for (int k = i; k <= j; k++) {          // j TAK: har balloon aakhri ban sakta (MCM me j-1)
+    for (int k = i; k <= j; k++) {          // ★ j TAK: har balloon aakhri ban sakta (MCM me j-1)
         ans = max(ans, solve(i, k - 1, p, dp) + solve(k + 1, j, p, dp) + p[i - 1] * p[k] * p[j + 1]);
     }                                       // k REMOVED -> dono side se bahar: (i,k-1) + (k+1,j)
     return dp[i][j] = ans;
@@ -7484,7 +7487,7 @@ int matrixChain(vector<int> &p, int n, vector<vector<int>> &dp) {   // MCM jaisa
 int burstBalloons(vector<int> &balloons) {
     int n = balloons.size();                // n PAD se PEHLE (asli count)
     vector<vector<int>> dp(n + 1, vector<int>(n + 1, -1));
-    balloons.insert(balloons.begin(), 1);   // dono taraf 1 PAD: kinaare ka gaayab padosi = 1
+    balloons.insert(balloons.begin(), 1);   // ★ dono taraf 1 PAD: kinaare ka gaayab padosi = 1
     balloons.push_back(1);                  //   (1 = guna ki identity; 0 se pad -> coin 0, galat)
     return matrixChain(balloons, n, dp);
 }
