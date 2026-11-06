@@ -1441,7 +1441,8 @@ vector<int> maxSlidingWindow(vector<int> &nums, int k) {
 ### ▸ ISOMORPHIC STRINGS
 
 ```
-s, t same length. s ke har char ko ek FIXED char se badal ke t ban sakta (one-to-one)? true/false.
+Do barabar lambai ki string s aur t di hain. Kya s ke har akshar ko kisi ek pakke akshar se badal ke t ban sakti hai?
+Ek akshar hamesha ek hi akshar banega, aur do alag akshar ek hi akshar nahi ban sakte (one-to-one). true ya false lautao.
   e.g. "paper", "title" -> true
   kyun: p->t, a->i, e->l, r->e: har jagah wahi mapping, do char ek hi char pe nahi gaye
   TRUE wala chal ke: "egg", "add"
@@ -1460,9 +1461,9 @@ s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" fal
 ```cpp
 bool isIsomorphic(string s, string t) {
     unordered_map<char, char> mp1;          // s -> t
-    unordered_map<char, char> mp2;          // t -> s ("ab"->"aa" clash sirf ULTI taraf pakadta)
+    unordered_map<char, char> mp2;          // ★ t -> s ("ab"->"aa" clash sirf ULTI taraf pakadta)
     for (int i = 0; i < s.size(); i++) {
-        if ((mp1.count(s[i]) == 1 && mp1[s[i]] != t[i]) ||   // count() pehle: seedha mp1[x] khaali key
+        if ((mp1.count(s[i]) == 1 && mp1[s[i]] != t[i]) ||   // ★ count() pehle: seedha mp1[x] khaali key
             (mp2.count(t[i]) == 1 && mp2[t[i]] != s[i]))     //   bana ke galat clash deta
             return false;                   // || : kisi bhi EK taraf clash = 1-to-1 nahi
         else {
@@ -1477,7 +1478,8 @@ bool isIsomorphic(string s, string t) {
 ### ▸ WORD PATTERN
 
 ```
-pattern (chars) + s (space wale words). har char ek hi word se, har word ek hi char se bandha? true/false.
+Ek pattern (akshar) aur ek string s (space se alag words) di hai. Kya pattern ka har akshar hamesha ek hi word se juda hai, aur har word hamesha ek hi akshar se?
+Isomorphic jaisa hi, bas akshar ki jagah word. true ya false lautao.
   e.g. "abba", "dog cat cat dog" -> true
   kyun: a->dog, b->cat; a b b a = dog cat cat dog, mapping kahin nahi tooti
 ```
@@ -1486,7 +1488,7 @@ pattern (chars) + s (space wale words). har char ek hi word se, har word ek hi c
 bool wordPattern(string pattern, string s) {   // = ISOMORPHIC, bas char <-> WORD
     unordered_map<char, string> mp1;
     unordered_map<string, char> mp2;
-    stringstream ss(s);                     // delta 1: input = word-stream (<sstream>)
+    stringstream ss(s);                     // ★ delta 1: input = word-stream (<sstream>)
     string word;
     int i = 0;                              // i = pattern ka index
     int j = 0;                              // j = words ki ginti
@@ -1503,7 +1505,7 @@ bool wordPattern(string pattern, string s) {   // = ISOMORPHIC, bas char <-> WOR
         }
         j++;                                // if ke BAHAR: har word gino, extra word bhi
     }
-    return (pattern.size() == j) ? true : false;   // delta 3: words ki ginti == pattern length
+    return (pattern.size() == j) ? true : false;   // ★ delta 3: words ki ginti == pattern length
 }                                           //   warna "a","dog cat" galat true
 
 ── (STANDALONE — apni alag trick) ──
@@ -1512,7 +1514,8 @@ bool wordPattern(string pattern, string s) {   // = ISOMORPHIC, bas char <-> WOR
 ### ▸ TWO SUM
 
 ```
-nums[] + target. do INDEX lautao jinka sum = target (ek hi jawab, same element do baar nahi).
+Ek array aur ek target diya hai. Wo do index lautao jin pe rakhe numbers ka jod target ke barabar ho.
+Jawab hamesha ek hi hai, aur ek hi number do baar nahi le sakte.
   e.g. [2,7,11,15], target=9 -> [0,1]
   kyun: nums[0] + nums[1] = 2 + 7 = 9
 ```
@@ -1521,9 +1524,9 @@ nums[] + target. do INDEX lautao jinka sum = target (ek hi jawab, same element d
 vector<int> twoSum(vector<int> &nums, int target) {
     unordered_map<int, int> mp;             // {value -> index}
     for (int i = 0; i < nums.size(); i++) {
-        if (mp.find(target - nums[i]) != mp.end())   // CHECK pehle: (target - num) pehle dekha?
+        if (mp.find(target - nums[i]) != mp.end())   // ★ CHECK pehle: (target - num) pehle dekha?
             return {mp[target - nums[i]], i};        // mila -> dono index
-        mp[nums[i]] = i;                    // daalo BAAD: taaki num khud se match na kare
+        mp[nums[i]] = i;                    // ★ daalo BAAD: taaki num khud se match na kare
     }
     return {-1, -1};
 }
@@ -1532,7 +1535,7 @@ vector<int> twoSum(vector<int> &nums, int target) {
 ### ▸ VALID ANAGRAM
 
 ```
-s, t. kya t, s ka ANAGRAM hai (same char, same COUNT, bas order alag)? true/false.
+Do string s aur t di hain. Kya t, s ka anagram hai, matlab dono me same akshar utni hi baar hain, bas kram alag ho sakta hai? true ya false lautao.
   e.g. "anagram", "nagaram" -> true
   kyun: dono me a=3, n=1, g=1, r=1, m=1
 ```
@@ -1547,7 +1550,7 @@ bool isAnagram(string s, string t) {        // har char ka count barabar? (count
     for (auto &it : t)
         mp[it]--;                           // t se --
     for (auto &it : mp) {
-        if (it.second != 0)                 // != 0 (sirf > 0 nahi, -ve bhi aata)
+        if (it.second != 0)                 // ★ != 0 (sirf > 0 nahi, -ve bhi aata)
             return false;
     }
     return true;                            // sab ZERO -> anagram
@@ -1557,7 +1560,7 @@ bool isAnagram(string s, string t) {        // har char ka count barabar? (count
 ### ▸ GROUP ANAGRAMS
 
 ```
-strings ka array. jo aapas me ANAGRAM hain unhe ek group me daalo, saare groups lautao.
+Strings ka ek array diya hai. Jo strings aapas me anagram hain (same akshar, kram alag), unhe ek group me daalo. Saare group lautao.
   e.g. ["eat","tea","tan","ate","nat","bat"] -> [eat,tea,ate] [tan,nat] [bat]
   kyun: sorted key: eat/tea/ate = "aet", tan/nat = "ant", bat = "abt" -> 3 key = 3 group
 
@@ -1569,8 +1572,8 @@ brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CA
 vector<vector<string>> groupAnagrams(vector<string> &strs) {
     unordered_map<string, vector<string>> mp;   // KEY = sorted(word) -> us group ke words
     for (auto &it : strs) {
-        string key = it;                    // copy lo: asli word sort hua to group me galat word jaata
-        sort(begin(key), end(key));         // "tea" -> "aet"
+        string key = it;                    // ★ copy lo: asli word sort hua to group me galat word jaata
+        sort(begin(key), end(key));         // ★ "tea" -> "aet"
         mp[key].push_back(it);              // same key = same group
     }
     vector<vector<string>> ans;
@@ -1586,7 +1589,8 @@ vector<vector<string>> groupAnagrams(vector<string> &strs) {
 ### ▸ SUBARRAY SUM = K
 
 ```
-nums[] + k. kitne lagaatar subarray jinka sum EXACTLY k -> GINTI.
+Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinka jod theek k ke barabar ho, wo ginti lautao.
+Array me minus number bhi ho sakte hain.
   e.g. [1,2,3], k=3 -> 2
   kyun: [1,2] = 3 aur [3] = 3; baaki [1],[2],[2,3],[1,2,3] nahi
 ```
@@ -1595,10 +1599,10 @@ nums[] + k. kitne lagaatar subarray jinka sum EXACTLY k -> GINTI.
 int subarraySum(vector<int> &nums, int k) { // prefix-sum + hashmap {prefixSum -> count}
     unordered_map<int, int> mp;
     int sum = 0, count = 0;
-    mp[0] = 1;                              // START zaroori: jab sum khud == k, tab prefix-0 chahiye
+    mp[0] = 1;                              // ★ START zaroori: jab sum khud == k, tab prefix-0 chahiye
     for (int i = 0; i < nums.size(); i++) {
         sum += nums[i];                     // running sum
-        count += mp[sum - k];               // sum - k (k - sum NAHI): abhi 15 km - aakhri tukda 5 =
+        count += mp[sum - k];               // ★ sum - k (k - sum NAHI): abhi 15 km - aakhri tukda 5 =
                                             //   10 pe tukda shuru -> "10 kitni baar dikha?" BADA pehle
                                             //   (two sum ka "target - x" ulta yahan mat lagao)
         mp[sum]++;                          // check ke BAAD daalo
@@ -1610,7 +1614,7 @@ int subarraySum(vector<int> &nums, int k) { // prefix-sum + hashmap {prefixSum -
 ### ▸ COUNT DIVISIBLE PAIRS  = two-sum/hashmap-complement, par KEY = REMAINDER
 
 ```
-nums[] + k. kitne PAIR (i<j) jinka (nums[i] + nums[j]) % k == 0 -> GINTI.
+Ek array aur ek number k diya hai. Kitne jode (i < j) hain jinka jod k se poora kat jaaye, matlab (nums[i] + nums[j]) % k == 0. Wo ginti lautao.
   e.g. [1,2,3,4,5], k=3 -> 4
   kyun: 1+2=3, 1+5=6, 2+4=6, 4+5=9 -> chaaron 3 se divide; baaki pair nahi
 
@@ -1655,8 +1659,8 @@ int countDivisiblePairs(vector<int> &nums, int k) {
     unordered_map<int, int> mp;             // {remainder -> kitne aaye}
     int count = 0;
     for (auto &it : nums) {
-        int rem = (((it % k) + k) % k);     // +k phir %k: C++ me negative ka % negative aata, key galat
-        count += mp[(k - rem) % k];         // partner rem: it=1,k=3 -> 1+? = 3 -> 2. rem=0 -> 3%3 = 0
+        int rem = (((it % k) + k) % k);     // ★ +k phir %k: C++ me negative ka % negative aata, key galat
+        count += mp[(k - rem) % k];         // ★ partner rem: it=1,k=3 -> 1+? = 3 -> 2. rem=0 -> 3%3 = 0
                                             //   isliye (k-rem)%k. mp[2] jitne = utne pair
         mp[rem]++;                          // lookup PEHLE, insert BAAD: khud-se-pair na gine
     }
@@ -1667,7 +1671,8 @@ int countDivisiblePairs(vector<int> &nums, int k) {
 ### ▸ LONGEST CONSECUTIVE SEQ (LC-128)
 
 ```
-unsorted array. sabse lambi CONSECUTIVE numbers ki chain ki LENGTH (sort nahi, O(n)).
+Ek bina sort kiya hua array diya hai. Usme lagaatar numbers ki sabse lambi chain kitni lambi hai (jaise 1, 2, 3, 4), wo lautao.
+Sort nahi karna, O(n) me karna hai.
   e.g. [100,4,200,1,3,2] -> 4
   kyun: 1,2,3,4 sab maujood = chain 4; 100 aur 200 akele
 
@@ -1702,7 +1707,7 @@ int longestConsecutive(vector<int> &nums) {
         st.insert(it);
     for (int i = 0; i < nums.size(); i++) { // set pe ghoomna behtar: nums pe duplicate START baar-baar
         int num = nums[i];
-        if (!st.count(num - 1)) {           // START tabhi jab num-1 set me NAHI, warna beech ka: skip
+        if (!st.count(num - 1)) {           // ★ START tabhi jab num-1 set me NAHI, warna beech ka: skip
             int currNum = num;
             int count = 1;                  // count=1: START khud chain me
             while (st.count(currNum + 1)) { // agla set me hai tab tak chain lambi
@@ -1719,7 +1724,7 @@ int longestConsecutive(vector<int> &nums) {
 ### ▸ MAJORITY ELEMENT (LC-169, >n/2)
 
 ```
-nums[] me ek element n/2 se ZYADA baar aata hai (hamesha hota hai). wahi lautao.
+Ek array me ek number aadhe se zyada baar (n/2 se zyada) aata hai, aur aisa number hamesha hota hai. Wo number lautao.
   e.g. [2,2,1,1,1,2,2] -> 2
   kyun: n = 7, 2 aaya 4 baar > 7/2 = 3
 
@@ -1735,7 +1740,7 @@ int majorityElement(vector<int> &nums) {    // BOYER-MOORE VOTING, O(1) space
             count++;                        // == candidate -> count++
         else if (candidate != nums[i]) {
             count--;                        // != candidate -> count--
-            if (count == 0) {               // 0 pe RESET (chhoda to -1 me jaata, reset kabhi nahi = BUG)
+            if (count == 0) {               // ★ 0 pe RESET (chhoda to -1 me jaata, reset kabhi nahi = BUG)
                 candidate = nums[i];
                 count = 1;
             }
@@ -1748,7 +1753,8 @@ int majorityElement(vector<int> &nums) {    // BOYER-MOORE VOTING, O(1) space
 ### ▸ FIND DISAPPEARED NUMBERS (LC-448)  = ARRAY-KHUD-hashmap · index-negation, O(1) space
 
 ```
-size n, har value 1..n (repeat ho sakte). 1..n me jo MISSING, sab lautao (O(1) extra space).
+n size ka array hai, har value 1 se n ke beech hai aur kuch number dohraye gaye hain. 1 se n tak ke jo number array me nahi hain, wo sab lautao.
+Extra jagah O(1) honi chahiye.
   e.g. [4,3,2,7,8,2,3,1] -> [5,6]
   kyun: n = 8, maujood 1,2,3,4,7,8; 5 aur 6 kahin nahi
 
@@ -1774,8 +1780,8 @@ FAMILY: array-as-hashmap (index-marking). SAME trick: find-duplicate(287, sirf j
 vector<int> findDisappearedNumbers(vector<int> &nums) {
     vector<int> ans;
     for (int i = 0; i < nums.size(); i++) {
-        int index = abs(nums[i]) - 1;       // abs(): value pehle hi -ve ho chuki ho sakti
-        if (nums[index] > 0)                // >0 check: duplicate pe dobara minus = wapas plus
+        int index = abs(nums[i]) - 1;       // ★ abs(): value pehle hi -ve ho chuki ho sakti
+        if (nums[index] > 0)                // ★ >0 check: duplicate pe dobara minus = wapas plus
             nums[index] = -nums[index];
     }
     for (int i = 0; i < nums.size(); i++) {
@@ -1794,7 +1800,8 @@ vector<int> findDisappearedNumbers(vector<int> &nums) {
 ### ▸ SERVER ERROR STREAK  (03/11)
 
 ```
-logs "<server> <code> <msg>". server ke LAGAATAAR 3 "error" -> alert++ aur ginti 0; "success" -> ginti 0. kul alerts.
+Logs ki lines di hain, har line "<server> <code> <msg>". Kisi server ke lagaatar 3 "error" aayein to ek alert gino aur us server ki ginti 0 kar do.
+Beech me "success" aaya to us server ki ginti 0. Kul kitne alert hue, wo lautao.
   e.g. ["s1 500 error","s2 200 success","s1 500 error","s3 500 error","s1 500 error"] -> 1
   kyun: s1 ke 3 error (s2, s3 beech me aaye par s1 ki ginti nahi todte) -> 1 alert; s3 ka sirf 1 error
 
@@ -1809,16 +1816,16 @@ int countAlerts(vector<string> &logs) {
     for (auto &s : logs) {
         stringstream ss(s);                 // ek LINE do (poora vector nahi -> compile error)
         string server, code, msg;
-        ss >> server >> code >> msg;        // space se 3 tukde
+        ss >> server >> code >> msg;        // ★ space se 3 tukde
         if (msg == "error") {               // faisla msg se (code kuch bhi ho sakta)
             mp[server]++;
-            if (mp[server] >= 3) {          // 3 pura -> alert, aur ginti 0 (warna 4th, 5th bhi ginta)
+            if (mp[server] >= 3) {          // ★ 3 pura -> alert, aur ginti 0 (warna 4th, 5th bhi ginta)
                 count++;
                 mp[server] = 0;
             }
         }
         else if (msg == "success")
-            mp[server] = 0;                 // = 0, -- NAHI (lagaataar TOOTA, ghata nahi)
+            mp[server] = 0;                 // ★ = 0, -- NAHI (lagaataar TOOTA, ghata nahi)
     }
     return count;
 }
@@ -1828,7 +1835,7 @@ int countAlerts(vector<string> &logs) {
 ### ▸ CSV MARKS TOTAL  (03/13)
 
 ```
-lines "naam,subject,marks". har student ke KUL marks (naam ke kram me).
+Lines di hain, har line "naam,subject,marks". Har student ke kul marks nikaalo, aur naam ke alphabet kram me lautao.
   e.g. ["ravi,maths,40","priya,maths,55","ravi,sci,35","priya,sci,30"] -> priya 85, ravi 75
   kyun: ravi 40 + 35 = 75, priya 55 + 30 = 85
 
@@ -1841,7 +1848,7 @@ map<string, int> totalMarks(vector<string> &lines) {
     for (auto &it : lines) {
         stringstream ss(it);
         string name, sub, marks;
-        getline(ss, name, ',');             // comma tak -> "ravi"
+        getline(ss, name, ',');             // ★ comma tak -> "ravi"
         getline(ss, sub, ',');
         getline(ss, marks, ',');            // aakhri tukda, comma na ho tab bhi
         int t = stoi(marks);
@@ -1854,12 +1861,17 @@ map<string, int> totalMarks(vector<string> &lines) {
 ### ▸ SHIFT MINUTES  (03/14, HH:MM)
 
 ```
-shift ka start aur end "HH:MM" (24 ghante ki ghadi). shift raat 12 ke paar bhi ja sakti. kitne MINUTE ki?
+Guard ki shift ka start aur end "HH:MM" (24 ghante ki ghadi) me diya hai. Shift raat 12 ke paar bhi ja sakti hai. Shift kitne minute ki hai, wo lautao.
   e.g. "22:30", "01:15" -> 165
   kyun: 22:30 se 24:00 = 90 minute, 00:00 se 01:15 = 75 minute, 90 + 75 = 165
 
 dono time ko MINUTE me badlo, phir ghatao. ghante aur minute alag ghatao to MM ka udhaar lena padta, ulajh jaata.
 pench: raat 12 ke paar end chhota -> minus aata -> ek poora din (1440) jodo.
+
+KYUN 1440: din me 24 * 60 = 1440 minute.
+  minus aaya:   75 - 1350 = -1275 -> +1440 = 165                  (raat 12 paar)
+  minus nahi:   1050 - 540 = 510 -> +1440 = 1950 -> %1440 = 510   (% se extra din wapas hata)
+isliye "+1440 phir %1440" dono case ek line me. Caesar ka "+26 phir %26" bilkul yahi.
 ```
 
 ```cpp
@@ -1873,7 +1885,7 @@ int shiftMinutes(string start, string end) {
     getline(ss2, MM2, ':');
     int mins1 = stoi(HH1) * 60 + stoi(MM1);
     int mins2 = stoi(HH2) * 60 + stoi(MM2);
-    return (mins2 - mins1 + 1440) % 1440;   // start == end -> 0
+    return (mins2 - mins1 + 1440) % 1440;   // ★ +1440 phir %1440 (Caesar ka +26 %26). start == end -> 0
 }
 ```
 
