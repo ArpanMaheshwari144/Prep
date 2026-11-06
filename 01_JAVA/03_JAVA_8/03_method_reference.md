@@ -1,57 +1,70 @@
 # Method Reference (`::`)
 
-## Kahani
+## Scene
 
-Wahi patients ki list hai. Sabke naam print karne hain:
+Mausi boli: "saare dabbon ke naam bade akshar me board pe likh do."
+
+Lambda se likho to har kadam pe beech me ek aadmi hai, jo cheez leta hai aur seedha ek method ko pakda deta hai:
 
 ```java
-names.forEach(name -> System.out.println(name));   // lambda
-names.forEach(System.out::println);                 // method reference
+l.stream().map(i -> i.name()).map(s -> s.toUpperCase()).forEach(s -> System.out.println(s));
 ```
 
-Lambda bas ek method ko aage pass kar rahi thi: jo `name` aaya, wahi `println` ko de diya. Jab lambda ka saara kaam itna hi ho, to `::` se seedha method ka naam de do.
+Jab lambda ka poora kaam bas ek method bulana ho, to us beech wale aadmi ko hata do aur seedha method ka naam de do:
 
-## Tasveer
-
-Lambda ek beech wala aadmi hai jo cheez lekar seedha aage pakda deta hai. `::` me wo aadmi hat jaata hai aur cheez seedha method tak pahunchti hai.
-
-```
-lambda:   name  ->  [ name -> println(name) ]  ->  println
-::        name  ->  println                        (beech wala hata)
+```java
+l.stream().map(Item::name).map(String::toUpperCase).forEach(System.out::println);
 ```
 
-## 3 khaas baat
+Chala ke dekha:
 
-1. **Ye 4 tarah ka hota hai.** Pehchaan ye hai ki `::` ke baayi taraf kya likha hai:
-   ```
-   Math::abs              static method          x -> Math.abs(x)
-   System.out::println    ek khaas object        x -> System.out.println(x)
-   String::toUpperCase    jo object aaya, usi pe  s -> s.toUpperCase()
-   Patient::new           constructor            name -> new Patient(name)
-   ```
-2. **Ye sirf tab chalta hai jab lambda me kaam sirf ek method call ho.** `name -> System.out.println("Hello " + name)` me string jodne ka kaam bhi hai, isliye ye lambda hi rahegi.
-3. **Ye koi naya feature nahi, wahi functional interface hai.** `String::toUpperCase` ko `map` me do to wo `Function<String, String>` ban jaata hai. Pichhli file wali shakal milni chahiye.
+```
+GHEE
+AATA
+DAAL
+```
+
+## Dikkat -> hal
+
+`::` koi naya feature nahi hai. Ye wahi functional interface wala khaana hai, bas likhne ka chhota tareeka. `::` ke baayi taraf jo likha hota hai, usi se uski pehchaan hoti hai:
+
+```
+Math::abs             static method               x -> Math.abs(x)
+System.out::println   ek khaas object             x -> System.out.println(x)
+String::toUpperCase   jo object aaya, usi pe      s -> s.toUpperCase()
+Item::new             constructor                 (n, p) -> new Item(n, p)
+```
+
+Ye sirf tab chalta hai jab kaam sirf ek method call ho. `s -> print("Board: " + s)` me string jodne ka kaam bhi hai, isliye wahan lambda hi rahegi.
 
 ## Prod wala trap
 
-Dono neeche ek jaise dikhte hain, par null pe alag waqt fatte hain.
+Dekhne me dono ek jaise hain, par null hone pe alag waqt pe fatte hain.
 
 ```java
-User u = null;
-Supplier<String> s1 = () -> u.getName();   // abhi kuch nahi, s1.get() pe NPE
-Supplier<String> s2 = u::getName;          // isi line pe NPE
+Item khaali = null;
+Supplier<String> s1 = () -> khaali.name();   // ban gaya, koi error nahi
+Supplier<String> s2 = khaali::name;          // isi line pe NPE
 ```
 
-`u::getName` object ko usi waqt pakad leta hai jab line chalti hai, isliye null ho to wahin fat jaata hai. Lambda `u` ko tab dekhti hai jab use call kiya jaaye.
+Chala ke dekha:
+
+```
+s1 ban gaya, abhi koi error nahi
+s2 wali line pe hi NPE
+s1.get() pe NPE
+```
+
+`khaali::name` object ko usi waqt pakad leta hai jab line chalti hai, isliye null ho to wahin fat jaata hai. Lambda `khaali` ko tab dekhti hai jab use sach me bulaya jaaye. Log me NPE ki line alag aayegi, isliye debug karte waqt ye farak yaad rakhna.
 
 ## Tera project
 
-SimpleBankSystem ke `AccountService.getAccountHolderNames()` me tune likha hai `.map(Account::getHolderName)`. Ye teesra type hai, kyunki jo `Account` stream me aaya, usi pe `getHolderName()` chalta hai.
+SimpleBankSystem ke `getAccountHolderNames()` me `.map(Account::getHolderName)` likha hai. Ye teesra type hai, kyunki stream me jo `Account` aaya, usi pe `getHolderName()` chalta hai.
 
 ## Interview line
 
 ```
 A method reference is a shorter form of a lambda that only calls one existing method.
 There are four kinds: static (Math::abs), a specific object (System.out::println),
-any object of a type (String::toUpperCase), and constructor (Patient::new).
+any object of a type (String::toUpperCase), and constructor (Item::new).
 ```
