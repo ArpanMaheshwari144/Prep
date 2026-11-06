@@ -38,6 +38,12 @@ string left = line.substr(0, pos), right = line.substr(pos + 1);
 // MINUS % (C++ me -2 % 26 = -2, 24 NAHI)
 int r = ((x % m) + m) % m;               // hamesha 0..m-1  (Caesar peeche khiskana, remainder)
 char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
+
+// TIME "HH:MM" (6-Nov grill: shift kitne minute ki, "22:30" -> "01:15" = 165)
+stringstream st(t);  string hh, mm;
+getline(st, hh, ':');  getline(st, mm, ':');
+int mins = stoi(hh) * 60 + stoi(mm);     // sab MINUTE me badlo: 22:30 -> 1350
+int diff = (end - start + 1440) % 1440;  // raat 12 ke paar minus aaye -> ek din (24*60) jodo, Caesar ka +26 jaisa
 ```
 
 ---
