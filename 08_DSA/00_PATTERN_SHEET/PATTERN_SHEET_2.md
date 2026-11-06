@@ -1909,7 +1909,8 @@ int shiftMinutes(string start, string end) {
 ### ▸ PIVOT INDEX
 
 ```
-nums[]. pehla INDEX jahan left sum == right sum (index khud kisi taraf nahi); koi na ho to -1.
+Ek array diya hai. Wo pehla index lautao jahan uske baayi taraf ke sabhi numbers ka jod, daayi taraf ke sabhi numbers ke jod ke barabar ho.
+Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1.
   e.g. [1,7,3,6,5,6] -> 3
   kyun: index 3 (6): left 1+7+3 = 11, right 5+6 = 11
 ```
@@ -1921,10 +1922,10 @@ int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum
     for (int &it : nums)
         totalSum += it;                     // pehle poora total
     for (int i = 0; i < nums.size(); i++) {
-        int rightSum = totalSum - leftSum - nums[i];   // right = total - left - khud
+        int rightSum = totalSum - leftSum - nums[i];   // ★ right = total - left - khud
         if (leftSum == rightSum)
             return i;                       // pehla aisa index
-        leftSum += nums[i];                 // leftSum BAAD me: check ke baad hi khud ko left me jodo
+        leftSum += nums[i];                 // ★ leftSum BAAD me: check ke baad hi khud ko left me jodo
     }
     return -1;
 }
@@ -1933,7 +1934,8 @@ int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum
 ### ▸ PRODUCT EXCEPT SELF (LC-238)
 
 ```
-nums[]. ans[i] = nums[i] ko chhod ke baaki sabka PRODUCT. division nahi, O(n).
+Ek array diya hai. Har index i ke liye ans[i] = baaki sabhi numbers ka guna (nums[i] ko chhod ke).
+Bhaag (division) nahi lagana, O(n) me karna hai.
   e.g. [1,2,3,4] -> [24,12,8,6]
   kyun: ans[1] = left 1 x right 3x4=12 -> 12; ans[0] = 2x3x4 = 24
 
@@ -1949,8 +1951,8 @@ vector<int> productExceptSelf(vector<int> &nums) {
     vector<int> ans(n, 1);
     int prod = 1;                           // prod=1 se: index 0 ke left me koi nahi
     for (int i = 0; i < n; i++) {
-        left[i] = prod;                     // ASSIGN PEHLE
-        prod *= nums[i];                    // UPDATE BAAD: warna khud ka element bhi product me
+        left[i] = prod;                     // ★ ASSIGN PEHLE
+        prod *= nums[i];                    // ★ UPDATE BAAD: warna khud ka element bhi product me
     }
     prod = 1;                               // reset: left-pass ka bacha product saath mat lao
     for (int i = n - 1; i >= 0; i--) {      // peeche se: n-1 se 0 tak
@@ -1968,7 +1970,7 @@ vector<int> productExceptSelf(vector<int> &nums) {
 ### ▸ HIGHEST ALTITUDE
 
 ```
-gain[i] = agle point tak altitude ka change, shuru 0 se. sabse UNCHI altitude lautao.
+Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak altitude kitni badhi ya ghati. Raste me sabse unchi altitude kitni thi, wo lautao.
   e.g. [-5,1,5,0,-7] -> 1
   kyun: altitude 0, -5, -4, 1, 1, -6 -> max 1
 ```
@@ -1976,7 +1978,7 @@ gain[i] = agle point tak altitude ka change, shuru 0 se. sabse UNCHI altitude la
 ```cpp
 int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (simple prefix)
     int sum = 0;
-    int maxi = 0;                           // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
+    int maxi = 0;                           // ★ sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
     for (int i = 0; i < gain.size(); i++) {
         sum += gain[i];
         maxi = max(maxi, sum);
@@ -1988,7 +1990,7 @@ int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (si
 ### ▸ SUBARRAY SUMS DIVISIBLE BY K (LC-974)  = SUBARRAY-SUM-K + REMAINDER-key
 
 ```
-nums[] (+/- dono) + k. kitne lagaatar subarray jinka sum % k == 0 -> GINTI.
+Ek array (plus aur minus dono) aur ek number k diya hai. Kitne lagaatar subarray hain jinka jod k se poora kat jaaye (sum % k == 0), wo ginti lautao.
   e.g. [1,2,3], k=3 -> 3
   kyun: [3]=3, [1,2]=3, [1,2,3]=6 -> teeno 3 se divide; [1],[2],[2,3]=5 nahi
 
@@ -2000,10 +2002,10 @@ PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak =
 int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum % k == 0
     unordered_map<int, int> mp;
     int sum = 0, count = 0;
-    mp[0] = 1;                              // SEED (khaali prefix): shuru se hi divisible wala bhi gino
+    mp[0] = 1;                              // ★ SEED (khaali prefix): shuru se hi divisible wala bhi gino
     for (auto &it : nums) {
         sum += it;                          // pehle sum += , PHIR rem nikaalo
-        int rem = ((sum) % k + k) % k;      // +k phir %k: negative sum ka % negative aata
+        int rem = ((sum) % k + k) % k;      // ★ +k phir %k: negative sum ka % negative aata
         count += mp[rem];                   // = subarray-sum-k, bas KEY = remainder (sum ki jagah)
         mp[rem]++;
     }
@@ -2014,7 +2016,7 @@ int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum %
 ### ▸ COUNT SUBARRAYS WITH XOR = K  = SUBARRAY-SUM-K, bas + ki jagah ^
 
 ```
-nums[] + k. kitne lagaatar subarray jinke saare elements ka XOR = k -> GINTI.
+Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinke saare numbers ka XOR theek k ke barabar ho, wo ginti lautao.
   e.g. [4,2,2,6,4], k=6 -> 4
   kyun: [4,2]=6, [2,2,6]=6, [6]=6, [4,2,2,6,4]=6 (4^4 aur 2^2 kat gaye) = 4
 
@@ -2030,7 +2032,7 @@ int subarrayXorK(vector<int> &nums, int k) {
     int xorr = 0, count = 0;
     for (auto &it : nums) {
         xorr ^= it;                         // abhi tak ka XOR
-        count += mp[xorr ^ k];              // pichhla XOR jo chahiye, kitni baar dikha
+        count += mp[xorr ^ k];              // ★ pichhla XOR jo chahiye, kitni baar dikha
         mp[xorr]++;                         // abhi wala map me, lookup ke BAAD
     }
     return count;
@@ -2040,7 +2042,7 @@ int subarrayXorK(vector<int> &nums, int k) {
 ### ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
 
 ```
-arr[] + K. kitne lagaatar subarray jinka MAX bilkul K (na zyada na kam) -> GINTI.
+Ek array aur ek number K diya hai. Kitne lagaatar subarray hain jinka sabse bada number theek K ho (na zyada, na kam), wo ginti lautao.
   e.g. [8,2,1,3,4,5,1,10], K=3 -> 3
   kyun: [2,1,3], [1,3], [3]; 8 aur 4 K se bade = deewar, unhe chhoo nahi sakte
 
@@ -2055,13 +2057,13 @@ K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 long long countSubarraysMaxK(vector<int> &arr, int K) {
     int lastWall = -1;                      // aakhri index jahan arr[i] > K  (-1: abhi koi wall nahi)
     int lastK = -1;                         // aakhri index jahan arr[i] == K (-1: abhi koi K nahi)
-    long long count = 0;                    // LONG LONG: count ~n^2/2 (5e9) -> int overflow
+    long long count = 0;                    // ★ LONG LONG: count ~n^2/2 (5e9) -> int overflow
     for (int i = 0; i < arr.size(); i++) {
         if (arr[i] > K)
             lastWall = i;                   // pehle lastWall / lastK update, PHIR count
         if (arr[i] == K)
             lastK = i;
-        if (lastK > lastWall)               // guard: warna lastK - lastWall NEGATIVE ([5,3,5] pe dikhta)
+        if (lastK > lastWall)               // ★ guard: warna lastK - lastWall NEGATIVE ([5,3,5] pe dikhta)
             count += lastK - lastWall;      // start choices = lastWall+1 .. lastK
     }
     return count;
@@ -2071,7 +2073,8 @@ long long countSubarraysMaxK(vector<int> &arr, int K) {
 ### ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)
 
 ```
-n flights (1..n), booking [first,last,seats] = first se last tak har flight pe seats. har flight ki kul seats.
+n flights hain (1 se n). Har booking [first, last, seats] ka matlab: first se last tak har flight me itni seats book hui.
+Saari bookings ke baad har flight ki kul booked seats ka array lautao.
   e.g. n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
   kyun: flight 2 = 10+20+25 = 55; flight 3 = 20+25 = 45; flight 4, 5 = sirf 25
 
@@ -2102,13 +2105,13 @@ DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
 
 ```cpp
 vector<int> corpFlightBookings(vector<vector<int>> &bookings, int n) {
-    vector<int> diff(n + 2);                // n+2: end+1 sabse bada n+1 ho sakta (n+1 rakha to crash)
+    vector<int> diff(n + 2);                // ★ n+2: end+1 sabse bada n+1 ho sakta (n+1 rakha to crash)
     for (auto &it : bookings) {
         int start = it[0];
         int end = it[1];
         int count = it[2];
         diff[start] += count;               // yahan se shuru
-        diff[end + 1] -= count;             // +1: last din bhi inclusive, uske AGLE din se hatao
+        diff[end + 1] -= count;             // ★ +1: last din bhi inclusive, uske AGLE din se hatao
     }
     vector<int> ans;
     int cummSum = 0;                        // chalti-sum abhi khaali
@@ -2151,7 +2154,7 @@ vector<int> corpFlightBookings(vector<vector<int>> &bookings, int n) {
 ### ▸ SET MATRIX ZEROES
 
 ```
-m x n matrix. koi cell 0 ho to uski POORI row aur POORI col 0 kar do, IN-PLACE.
+m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do. Isi matrix me badlaav karna hai (in-place).
   e.g. [[1,1,1],[1,0,1],[1,1,1]] -> [[1,0,1],[0,0,0],[1,0,1]]
   kyun: 0 cell (1,1) pe -> row 1 aur col 1 poore 0, baaki same
 ```
@@ -2162,7 +2165,7 @@ void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m
     int col = matrix[0].size();
     vector<int> zeroRow(row, -1);           // -1 = unmarked
     vector<int> zeroCol(col, -1);
-    for (int i = 0; i < row; i++)           // pass-1: sirf MARK karo
+    for (int i = 0; i < row; i++)           // ★ pass-1: sirf MARK karo
         for (int j = 0; j < col; j++)
             if (matrix[i][j] == 0) {        // 2 pass: ek hi pass me 0 kiya to naye 0 bhi mark ho jaate
                 zeroRow[i] = 0;
@@ -2178,7 +2181,7 @@ void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m
 ### ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
 
 ```
-m x n matrix. saare elements SPIRAL order me (bahar se andar, clockwise) vector me lautao.
+m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf, ghadi ki sui ki disha me) ek list me lautao.
   e.g. [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
   kyun: upar 1,2,3 -> right col 6,9 -> neeche ulta 8,7 -> left col upar 4 -> beech 5
 ```
@@ -2196,11 +2199,11 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
         for (int i = top; i <= bottom; i++)
             ans.push_back(matrix[i][right]);   // right col T->B : [i][right]
         right--;                            // turant: bottom row wala loop ye corner dobara na le
-        if (top <= bottom)                  // GUARD: bottom row bachi? (ek hi row -> ulti dobara)
+        if (top <= bottom)                  // ★ GUARD: bottom row bachi? (ek hi row -> ulti dobara)
             for (int i = right; i >= left; i--)
                 ans.push_back(matrix[bottom][i]);   // bottom row R->L : [bottom][i]
         bottom--;
-        if (left <= right)                  // GUARD: left col bachi? (ek hi col -> dobara)
+        if (left <= right)                  // ★ GUARD: left col bachi? (ek hi col -> dobara)
             for (int i = bottom; i >= top; i--)
                 ans.push_back(matrix[i][left]);     // left col B->T : [i][left]
         left++;
@@ -2215,7 +2218,7 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
 ### ▸ TRANSPOSE
 
 ```
-m x n matrix. TRANSPOSE lautao: matrix[i][j] -> res[j][i] (naya n x m).
+m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix[i][j] naye matrix me res[j][i] pe jaayega (naya size n x m).
   e.g. [[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]
   kyun: pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
 ```
@@ -2224,7 +2227,7 @@ m x n matrix. TRANSPOSE lautao: matrix[i][j] -> res[j][i] (naya n x m).
 vector<vector<int>> transpose(vector<vector<int>> &matrix) {
     int row = matrix.size();
     int col = matrix[0].size();
-    vector<vector<int>> ans(col, vector<int>(row, -1));   // naya col x row size (non-square bhi)
+    vector<vector<int>> ans(col, vector<int>(row, -1));   // ★ naya col x row size (non-square bhi)
     for (int i = 0; i < col; i++)           // outer i < col
         for (int j = 0; j < row; j++)       // inner j < row
             ans[i][j] = matrix[j][i];
@@ -2235,7 +2238,8 @@ vector<vector<int>> transpose(vector<vector<int>> &matrix) {
 ### ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
 
 ```
-grid, 1 = server. same ROW ya COL me doosra server ho to communicate. aise server ki GINTI.
+Ek grid di hai jisme 1 = server. Do server baat kar sakte hain agar wo ek hi row ya ek hi column me hon.
+Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
   e.g. [[1,1,0,0],[0,0,1,0],[0,0,1,1]] -> 5
   kyun: (0,0)-(0,1) row 0, (1,2)-(2,2) col 2, (2,3)-(2,2) row 2 -> paanchon ka saathi = 5
 
@@ -2273,7 +2277,7 @@ int countServers(vector<vector<int>> &grid) {   // set zeroes ki 2 marker trick,
     int count = 0;
     for (int i = 0; i < m; i++)             // pass-2: check
         for (int j = 0; j < n; j++)
-            if (grid[i][j] == 1 && (rowCount[i] > 1 || colCount[j] > 1))   // >1 : khud ke alawa koi aur
+            if (grid[i][j] == 1 && (rowCount[i] > 1 || colCount[j] > 1))   // ★ >1 : khud ke alawa koi aur
                 count++;                    // || : row ya col koi ek kaafi
     return count;                           // O(m*n)
 }
@@ -2309,7 +2313,7 @@ int countServers(vector<vector<int>> &grid) {   // set zeroes ki 2 marker trick,
 ### ▸ NEXT GREATER ELEMENT
 
 ```
-nums[] diya. har element ke DAAYE jo PEHLA bada element ho wo lautao, koi bada nahi -> -1.
+Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number hai, wo lautao. Koi bada na mile to -1.
   e.g. [2,1,2,4,3] -> [4,2,4,-1,-1]
   kyun: 2 ke aage pehla bada 4 · 1 ke aage 2 · 2 ke aage 4 · 4 aur 3 ke aage koi bada nahi -> -1
 
@@ -2335,14 +2339,14 @@ FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (nee
 ```cpp
 vector<int> nextGreater(vector<int> &nums) {
     vector<int> ans(nums.size(), -1);       // -1 init: daaye bada na mile wo -1 hi rahe
-    stack<int> st;                          // INDEX rakho: ans[topp] me likhne ko position chahiye
+    stack<int> st;                          // ★ INDEX rakho: ans[topp] me likhne ko position chahiye
     for (int i = 0; i < nums.size(); i++) { // left->right: daaye wala bada aage aayega
-        while (!st.empty() && nums[st.top()] < nums[i]) {   // !empty pehle (warna top() crash)
+        while (!st.empty() && nums[st.top()] < nums[i]) {   // ★ !empty pehle (warna top() crash)
             int topp = st.top();            // < : curr BADA -> top ko jawab mila (barabar = bada nahi)
             st.pop();                       // top pehle bachao: pop ke baad top() badal jaata
             ans[topp] = nums[i];
         }
-        st.push(i);                         // while ke BAAD push: curr ab apne jawab ka intezaar kare
+        st.push(i);                         // ★ while ke BAAD push: curr ab apne jawab ka intezaar kare
     }
     return ans;                             // stack me bache = koi bada nahi = -1 (init)
 }
@@ -2351,7 +2355,7 @@ vector<int> nextGreater(vector<int> &nums) {
 ### ▸ NEXT SMALLER ELEMENT
 
 ```
-nums[] diya. har element ke DAAYE jo PEHLA strictly chhota ho wo lautao, koi nahi -> -1.
+Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
   e.g. [4,5,2,10,8] -> [2,2,-1,8,-1]
   kyun: 4 aur 5 ke aage pehla chhota 2 · 2 ke aage sab bade -> -1 · 10 ke aage 8 · 8 aakhri -> -1
 ```
@@ -2361,7 +2365,7 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
     vector<int> ans(nums.size(), -1);
     stack<int> st;
     for (int i = 0; i < nums.size(); i++) {
-        while (!st.empty() && nums[st.top()] > nums[i]) {   // > strict (>= nahi): [2,2,2] -> saare -1
+        while (!st.empty() && nums[st.top()] > nums[i]) {   // ★ > strict (>= nahi): [2,2,2] -> saare -1
             int topp = st.top();
             st.pop();
             ans[topp] = nums[i];
@@ -2375,7 +2379,7 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
 ### ▸ PREVIOUS SMALLER ELEMENT
 
 ```
-nums[] diya. har element ke BAAYE jo PEHLA strictly chhota ho wo lautao, koi nahi -> -1.
+Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
   e.g. [4,5,2,10,8] -> [-1,4,-1,2,2]
   kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
 ```
@@ -2384,7 +2388,7 @@ nums[] diya. har element ke BAAYE jo PEHLA strictly chhota ho wo lautao, koi nah
 vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA (condition wahi >)
     vector<int> ans(nums.size(), -1);
     stack<int> st;
-    for (int i = nums.size() - 1; i >= 0; i--) {   // right->left: right ka next smaller = left ka prev
+    for (int i = nums.size() - 1; i >= 0; i--) {   // ★ right->left: right ka next smaller = left ka prev
         while (!st.empty() && nums[st.top()] > nums[i]) {
             int topp = st.top();
             st.pop();
@@ -2400,7 +2404,7 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 ### ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
 
 ```
-heights[] = bars, har bar ki width 1. lagatar bars pe banne wala SABSE BADA rectangle ka AREA lautao.
+heights[] me bars ki unchai di hai, har bar ki chaudai 1 hai. Lagaatar bars pe jo sabse bada rectangle ban sakta hai, uska area lautao.
   e.g. [2,1,5,6,2,3] -> 10
   kyun: bars 5 aur 6 -> height min(5,6)=5 x width 2 = 10, baaki koi bada nahi banta
 
@@ -2490,9 +2494,9 @@ FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta)
 vector<int> nextSmaller(vector<int> &heights) {
     int n = heights.size();
     stack<int> st;
-    vector<int> ans(n, n);                  // default n (-1 NAHI): right ki bahar deewar
+    vector<int> ans(n, n);                  // ★ default n (-1 NAHI): right ki bahar deewar
     for (int i = 0; i < n; i++) {
-        while (!st.empty() && heights[st.top()] > heights[i]) {   // > strict: [3,3,3,3] >= -> 3, > -> 12
+        while (!st.empty() && heights[st.top()] > heights[i]) {   // ★ > strict: [3,3,3,3] >= -> 3, > -> 12
             int tp = st.top();
             st.pop();
             ans[tp] = i;                    // INDEX store, value nahi: width index se banti
@@ -2523,7 +2527,7 @@ int largestRectangleArea(vector<int> &heights) {
     vector<int> ps = prevSmaller(heights);
     int ans = INT_MIN;                      // INT_MIN: pehla area bhi max me aaye (0 bhi chalega)
     for (int i = 0; i < n; i++) {           // har bar pe khade ho: wahi is rectangle ki height
-        int width = ns[i] - ps[i] - 1;      // bars ps+1 .. ns-1; stopper khud andar nahi
+        int width = ns[i] - ps[i] - 1;      // ★ bars ps+1 .. ns-1; stopper khud andar nahi
         ans = max(ans, heights[i] * width); // heights[i] : range me ye bar sabse chhota
     }
     return ans;
@@ -2534,7 +2538,7 @@ int largestRectangleArea(vector<int> &heights) {
 ### ▸ MAXIMAL RECTANGLE (LC-85, 2D)
 
 ```
-0/1 ki 2D matrix diya. SIRF 1 se bhara SABSE BADA rectangle ka AREA lautao.
+0 aur 1 ki 2D matrix di hai. Sirf 1 se bhara hua sabse bada rectangle kitna bada hai, uska area lautao.
   e.g. [[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]] -> 6
   kyun: row 1 aur row 2 me col 2,3,4 sab 1 -> 2 row x 3 col = 6
 
@@ -2552,9 +2556,9 @@ int maximalRectangle(vector<vector<int>> &matrix) {
             if (matrix[i][j] == 1)
                 heights[j] += 1;            // upar wale 1s ke saath build-up
             else
-                heights[j] = 0;             // column toot gaya -> RESET
+                heights[j] = 0;             // ★ column toot gaya -> RESET
         }
-        maxi = max(maxi, largestRectangleArea(heights));   // call j-loop ke BAHAR, har row ke baad
+        maxi = max(maxi, largestRectangleArea(heights));   // ★ call j-loop ke BAHAR, har row ke baad
     }
     return maxi;
 }
@@ -2563,7 +2567,7 @@ int maximalRectangle(vector<vector<int>> &matrix) {
 ### ▸ DAILY TEMPERATURES
 
 ```
-temps[] = har din ka temp. har din ke liye kitne DIN BAAD pehla garam (zyada) din aata, nahi aata -> 0.
+temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad pehla usse garam din aata hai. Garam din kabhi na aaye to 0.
   e.g. [73,74,75,71,69,72,76,73] -> [1,1,4,2,1,1,0,0]
   kyun: 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
 ```
@@ -2577,7 +2581,7 @@ vector<int> dailyTemperatures(vector<int> &temps) {
         while (!st.empty() && temps[st.top()] < temps[i]) {   // < strict: barabar = garam nahi
             int tp = st.top();
             st.pop();
-            ans[tp] = i - tp;               // VALUE nahi, DISTANCE (kitne din baad)
+            ans[tp] = i - tp;               // ★ VALUE nahi, DISTANCE (kitne din baad)
         }
         st.push(i);
     }
@@ -2588,7 +2592,7 @@ vector<int> dailyTemperatures(vector<int> &temps) {
 ### ▸ NEXT GREATER ELEM II
 
 ```
-nums[] CIRCULAR hai (end ke baad phir shuru). har element ka next greater lautao, nahi -> -1.
+Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number aata hai. Har number ka agla bada number lautao, na mile to -1.
   e.g. [1,2,3,4,3] -> [2,3,4,-1,4]
   kyun: aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
 ```
@@ -2600,13 +2604,13 @@ vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka gr
     int n = nums.size();
     stack<int> st;                          // INDEX (0..n-1) jinka greater abhi nahi mila
     vector<int> ans(n, -1);                 // size n (2n nahi); na mile -> -1
-    for (int i = 0; i < 2 * n; i++) {       // 2n: doosre chakkar me aakhri elements ko shuru wale dikhte
+    for (int i = 0; i < 2 * n; i++) {       // ★ 2n: doosre chakkar me aakhri elements ko shuru wale dikhte
         while (!st.empty() && nums[st.top()] < nums[i % n]) {   // i % n = asli index (i 2n tak)
             int tp = st.top();
             st.pop();
             ans[tp] = nums[i % n];          // jawab TOP ka -> ans[tp] (ans[i] nahi)
         }
-        st.push(i % n);                     // i % n push, i nahi (i >= n pe index bahar)
+        st.push(i % n);                     // ★ i % n push, i nahi (i >= n pe index bahar)
     }
     return ans;
 }
@@ -2616,7 +2620,7 @@ vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka gr
 ### ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
 
 ```
-prices ek-ek aate (next(price)). har call pe SPAN lautao = aaj samet peeche kitne LAGATAAR din price <= aaj.
+Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao: aaj ko milake peeche kitne lagaatar din ka daam aaj ke daam se kam ya barabar tha.
   e.g. next: 100,80,60,70,60,75,85 -> 1,1,1,2,1,4,6
   kyun: 75 aaya -> peeche 60,70,60 sab <= 75, phir 80 bada -> ruk -> 75,60,70,60 = 4
 ```
@@ -2643,8 +2647,8 @@ public:
 
     int next(int price) {
         int span = 1;                       // 1 se: aaj ka din khud bhi span me
-        while (!st.empty() && st.top().first <= price) {   // <= : barabar price wala din bhi span me
-            span += st.top().second;        // pop wale ka span JODO: wo apne peeche ke din nigal chuka
+        while (!st.empty() && st.top().first <= price) {   // ★ <= : barabar price wala din bhi span me
+            span += st.top().second;        // ★ pop wale ka span JODO: wo apne peeche ke din nigal chuka
             st.pop();
         }
         st.push({price, span});             // poora span saath push: aage bada din ise nigle to sab jude
@@ -2659,7 +2663,7 @@ public:
 ### ▸ VALID PARENTHESES
 
 ```
-string s me sirf ( ) [ ] { }. TRUE agar har bracket sahi type se aur sahi kram me band ho, warna FALSE.
+Ek string me sirf ( ) [ ] { } hain. true lautao agar har khulne wala bracket sahi type ke bracket se aur sahi kram me band hota hai, warna false.
   e.g. "{[]}" -> true · "([)]" -> false
   kyun: "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
 ```
@@ -2681,14 +2685,14 @@ bool isValid(string s) {
                 return false;               // match nahi -> turant false
         }
     }
-    return st.empty();                      // end me stack KHAALI = valid ("" -> true)
+    return st.empty();                      // ★ end me stack KHAALI = valid ("" -> true)
 }
 ```
 
 ### ▸ MIN STACK
 
 ```
-ek stack banao jisme push(val), pop(), top(), getMin() SAB O(1). getMin = andar ka abhi ka sabse chhota.
+Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalein. getMin() stack me abhi ka sabse chhota number deta hai.
   e.g. push(-2) push(0) push(-3) getMin() -> -3 · pop() · top() -> 0 · getMin() -> -2
   kyun: -3 pop hone ke baad stack me [-2,0] bacha -> upar 0, sabse chhota -2
 
@@ -2698,11 +2702,11 @@ class MinStack: push / pop / top / getMin sab O(1)
 ```cpp
 class MinStack {                            // push / pop / top / getMin sab O(1)
 public:
-    stack<pair<int, int>> st;               // {val, yahan tak ka MIN}: min hamesha ready, scan nahi
+    stack<pair<int, int>> st;               // ★ {val, yahan tak ka MIN}: min hamesha ready, scan nahi
     MinStack() {}
 
     void push(int val) {
-        int minVal = st.empty() ? val : min(st.top().second, val);   // empty pehle: pehle pe top() nahi
+        int minVal = st.empty() ? val : min(st.top().second, val);   // ★ empty pehle: pehle pe top() nahi
         st.push({val, minVal});
     }
     void pop() { st.pop(); }
@@ -2716,7 +2720,7 @@ public:
 ### ▸ MIN ADD MAKE VALID
 
 ```
-string s me sirf '(' aur ')'. kam se kam kitne bracket JODNE padenge taaki string valid ho? count lautao.
+Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki string valid ho jaaye, wo ginti lautao.
   e.g. "()))((" -> 4
   kyun: pehla () theek · agle do ')' ka koi '(' nahi -> 2 · aakhri do '(' band nahi hue -> 2 · total 4
 ```
@@ -2734,17 +2738,17 @@ int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')'
             if (close_needed > 0)
                 close_needed--;             // pending open se MATCH = 0 insertion ("(())" -> 0)
             else
-                open_needed++;              // koi open nahi -> ye ')' extra
+                open_needed++;              // ★ koi open nahi -> ye ')' extra
         }
     }
-    return open_needed + close_needed;      // dono bache = utne insert
+    return open_needed + close_needed;      // ★ dono bache = utne insert
 }
 ```
 
 ### ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
 
 ```
-sirf stack (push/pop/top/empty) se QUEUE (FIFO) banao: push(x) peeche, pop() aage wala nikaalo, peek(), empty().
+Sirf stack (push, pop, top, empty) ka use karke ek queue (pehle aaya, pehle gaya) banao: push(x) peeche daalta hai, pop() aage wala nikaalta hai, peek() aur empty() bhi chahiye.
   e.g. push(1) push(2) peek() -> 1 · pop() -> 1 · push(3) pop() -> 2 · pop() -> 3 · empty() -> true
   kyun: queue me jo pehle aaya wahi pehle nikalta -> 1, phir 2, phir 3, ab khaali
 ```
@@ -2761,7 +2765,7 @@ public:
     }
 
     int pop() {
-        if (output.empty()) {               // KHAALI ho tabhi palto: har element ek hi baar input -> output
+        if (output.empty()) {               // ★ KHAALI ho tabhi palto: har element ek hi baar input -> output
             while (!input.empty()) {        // -> amortized O(1) (har pop pe palatna = O(n))
                 output.push(input.top());
                 input.pop();
