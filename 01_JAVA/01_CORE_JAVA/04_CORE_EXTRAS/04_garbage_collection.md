@@ -1,56 +1,54 @@
 # Garbage Collection
 
-## Kahani
+## Scene
 
-C++ me `new` se object banao to `delete` khud karna padta hai. Bhool gaye to memory leak. Java me ye kaam JVM ka safai wala (GC) karta hai. Uska ek hi sawaal hota hai: **"is object tak koi pahunch sakta hai?"**
-
-```java
-Patient p = new Patient("Arpan");
-p = new Patient("Ravi");   // "Arpan" tak ab koi nahi pahunchta -> kachra
-```
-
-## Tasveer
-
-GC, roots se shuru karke teer ke peeche-peeche chalta hai. Jis object tak teer pahunchta hai wo zinda hai, aur jis tak koi teer nahi pahunchta wo kachra hai:
+Mart ke counter pe har bill ke liye ek parchi object banta hai. Din bhar me 30 lakh parchiyan banti hain. C++ hota to har parchi ko `delete` khud karna padta, aur bhool jaate to memory leak hota. Java me ye kaam JVM ka safai wala (GC) karta hai, aur uska bas ek sawaal hota hai: "is object tak koi pahunch sakta hai?"
 
 ```
 GC ROOTS (stack ke variable, static field)
    |
    v
- [ p ] --> [ Ravi ]           pahunch hai = zinda (MARK)
-
-           [ Arpan ]          koi teer nahi = kachra (SWEEP)
+ [ parchi #5 ]          abhi counter pe hai, teer pahunchta = zinda (MARK)
+   [ parchi #1..4 ]     bill ho gaya, koi teer nahi = kachra (SWEEP)
 ```
 
-Heap ke do hisse hote hain. Naye object Young me bante hain, aur jo kai GC ke baad bhi bach jaate hain, wo Old me chale jaate hain:
+Chala ke dekha (heap 32 MB, 30 lakh parchi):
 
 ```
-[ YOUNG: Eden -> S0 <-> S1 ]  -->  [ OLD ]
-  naye object, jaldi marte          kai baar bach gaye to yahan aate
-  minor GC: chhota, tez, baar-baar  major GC: bada, dheema, kam baar
+GC(6) Pause Young ... 11M->1M(19M) 0.802ms
+GC(7) Pause Young ... 11M->1M(19M) 0.690ms
+GC(9) Pause Young ... 15M->1M(25M) 0.575ms
+bill bane: 3000000
 ```
 
-## 4 khaas baat
+## Dikkat -> hal
 
-1. **GC ginti nahi karta, pahunch dekhta hai** (mark and sweep). Roots se chal ke jahan tak pahuncha, wo zinda hai. Baaki sab kachra hai. Isliye do object ek-doosre ko pakde baithe hon, par root se unka koi raasta na ho, to dono saaf ho jaate hain.
-2. **Zyadatar object jaldi mar jaate hain, isliye heap umar ke hisaab se bata hota hai.** Chala ke dekha tha: 30 lakh chhote object banaye, to GC log me `18M->1M` aaya (matlab GC ke baad heap 18 MB se 1 MB pe aa gaya). Pause 1ms se bhi kam tha, 8 minor GC hue, aur major GC ek bhi nahi hua. Saara kachra Young me hi mar gaya.
-3. **GC hone ke baad bhi Java me leak hota hai.** Object ki zaroorat khatam ho gayi par reference zinda reh gaya, to GC use zinda hi maanega. Isi ka trap neeche hai.
-4. **Collector ka faisla do cheezon ke beech hota hai: kitna kaam nikla (throughput) aur app kitni der ruki (pause).** Java 8 tak Parallel GC default tha, jisme throughput zyada tha par pause dikhta tha. Java 9 se G1 default hai, jo heap ko regions me baant ke sabse gande region ko pehle saaf karta hai, aur pause target diya ja sakta hai. ZGC bahut bade heap pe bhi pause 10ms se kam rakhta hai.
+Zyadatar object jaldi mar jaate hain, jaise ye parchiyan. Isliye heap umar ke hisaab se do hisson me bata hota hai. Naye object Young me bante hain, aur jo kai GC ke baad bhi bach jaate hain wo Old me chale jaate hain. Upar har baar `11M->1M` hua, matlab har GC me 10 MB kachra Young me hi saaf ho gaya, aur pause 1 ms se kam raha. Major GC ek baar bhi nahi hua.
+
+GC ginti nahi karta, sirf pahunch dekhta hai, isliye do object ek-doosre ko pakde baithe hon par root se koi raasta na ho, to dono saaf ho jaate hain. Collector chunna ek trade-off hai: kitna kaam nikla (throughput) vs app kitni der ruki (pause). Java 9 se G1 default hai, jo upar log me dikh raha hai.
 
 ## Prod wala trap
 
+GC hone ke baad bhi Java me leak hota hai.
+
 ```java
-static Map<String, Session> cache = new HashMap<>();
-cache.put(id, session);   // har login pe daala, kabhi remove nahi kiya
+static Map<Integer, byte[]> purane = new HashMap<>();
+purane.put(i, new byte[100_000]);   // har bill daala, kabhi remove nahi kiya
 ```
 
-`static` field ek GC root hai. Uske andar ka sab kuch hamesha zinda rehta hai, isliye GC kuch utha hi nahi paata. Chala ke dekha tha: 31 MB jama ho gaya aur `OutOfMemoryError: Java heap space` aa gaya.
+Chala ke dekha:
 
-Ilaaj ye hai ki kaam khatam hote hi entry remove karo, ya cache me size ki ek had rakho aur LRU lagao, taaki purani entry apne aap nikal jaaye. Ye wahi LRU + TTL wala idea hai jo distributed cache me padha tha.
+```
+rakhe: 250
+rakhe: 300
+java.lang.OutOfMemoryError
+```
+
+`static` field ek GC root hai, isliye uske andar ka sab kuch hamesha zinda maana jaata hai aur GC kuch utha hi nahi paata. Ilaaj ye hai ki kaam khatam hote hi entry remove karo, ya cache me size ki had rakho aur LRU lagao, taaki purani entry apne aap nikal jaaye. Ye wahi LRU + TTL wala idea hai jo distributed cache me padha tha.
 
 ## Tera kaam
 
-Prod me heap graph ka "aari" (sawtooth) pattern normal hai: memory badhti hai aur GC aate hi girti hai. Dikkat tab hai jab har GC ke baad wala neeche ka point bhi dheere-dheere upar chadhta jaaye. Wo leak ki pehchaan hai.
+Prod ke heap graph me aari (sawtooth) jaisa pattern normal hai: memory badhti hai aur GC aate hi girti hai. Dikkat tab hai jab har GC ke baad ka neeche wala point bhi dheere-dheere upar chadhta jaaye. Yahi leak ki pehchaan hai.
 
 ## Interview line
 
