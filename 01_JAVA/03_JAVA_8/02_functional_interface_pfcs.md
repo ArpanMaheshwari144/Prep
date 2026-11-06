@@ -1,53 +1,48 @@
 # Functional Interface (PFCS)
 
-## Kahani
+## Scene
 
-Wahi 100 patients aage le chalte hain. Hospital me roz yahi 4 kaam hote hain:
+Mart me wahi 3 dabbe hain: ghee 550, aata 320, daal 140. Mausi boli: "300 se mehnge dabbe chuno, unke naam ki parchi banao, aur ek naya dabba cheeni bhi le aao."
+
+Yahan 4 kaam hain, aur Java 8 me har kaam ka apna khaana bana hua hai:
 
 ```java
-Predicate<Patient> isSerious = p -> p.getAge() > 60;       // chuno: haan ya nahi
-Function<Patient, String> toName = p -> p.getName();        // badlo: Patient se naam
-Consumer<String> sendSms = name -> sms.send(name);          // karo: bhej do, kuch lautana nahi
-Supplier<Patient> newPatient = () -> new Patient();         // banao: input kuch nahi
+Predicate<Item>        mehnga = i -> i.price() > 300;          // chuno: haan ya naa
+Function<Item,String>  naam   = i -> i.name();                 // badlo: dabba -> naam
+Consumer<String>       parchi = s -> print("parchi: " + s);    // karo, kuch lautana nahi
+Supplier<Item>         naya   = () -> new Item("cheeni", 60);  // banao, lena kuch nahi
 
-patients.stream()
-        .filter(isSerious)     // Predicate
-        .map(toName)           // Function
-        .forEach(sendSms);     // Consumer
+l.stream().filter(mehnga).map(naam).forEach(parchi);
 ```
 
-## Tasveer
-
-Har interface ek alag shakal ka khaana hai. Lambda usi khaane me fit hogi jiski shakal mile:
+Chala ke dekha:
 
 ```
-             andar jaata     bahar aata      method
-Predicate     T          ->   true/false      test()
-Function      T          ->   R               apply()
-Consumer      T          ->   (kuch nahi)     accept()
-Supplier      (kuch nahi)->   T               get()
+parchi: ghee
+parchi: aata
+Supplier se: Item[name=cheeni, price=60]
 ```
 
-## 3 khaas baat
+## Dikkat -> hal
 
-1. **Lambda ka koi type nahi hota, wo jis interface me rakhi jaaye wahi uska type ban jaata hai.** `p -> p.getAge() > 60` Predicate me rakho to Predicate hai. Pichhli file ka "ek khaana" yahi interface hai.
-2. **Stream ke methods yahi 4 maangte hain:** `filter` Predicate maangta hai, `map` Function, `forEach` Consumer, aur `orElseGet` / `generate` Supplier. Method ka kaam pata hai to interface apne aap pata chal jaata hai.
-3. **`@FunctionalInterface` sirf ek pehredaar hai.** Iske bina bhi interface functional ho sakta hai. Annotation lagane se bas itna hota hai ki koi doosra abstract method jode to compiler wahin rok deta hai.
+Lambda ka apna koi type nahi hota. Use jis khaane me rakho, wahi uska type ban jaata hai. Stream ke method batate hain ki kaunsa khaana chahiye: `filter` ko Predicate chahiye, `map` ko Function, `forEach` ko Consumer, aur `orElseGet` ko Supplier. Kaam pata ho to interface ka naam apne aap pata chal jaata hai.
 
 ## Prod wala trap
 
-```java
-interface MathOperation {             // @FunctionalInterface nahi lagaya
-    int operate(int a, int b);
-    int undo(int a, int b);           // teammate ne baad me joda
-}
+Teammate ne `Bill` interface me ek doosra method `undo` jod diya. Tab interface me 2 khaali khaane ho gaye.
+
+```
+@FunctionalInterface nahi tha:  G.java:2: error: Bill is not a functional interface
+                                (error har us jagah jahan (p, q) -> p + q likha tha)
+@FunctionalInterface tha:       F.java:1: error: Unexpected @FunctionalInterface annotation
+                                (error usi ek jagah jahan undo joda)
 ```
 
-Teammate ne `undo` joda, to ab interface me do abstract method ho gaye aur wo functional nahi raha. Par is interface pe khud koi error nahi dikhta. Error poore codebase me har us jagah aata hai jahan `(a, b) -> a + b` likha tha. Agar annotation laga hota, to error usi ek line pe aata jahan `undo` joda gaya.
+Annotation ek pehredaar hai. Iske bina bhi code chalta hai, par iske saath galti usi line pe pakdi jaati hai jahan hui thi, poore codebase me bikhar ke nahi aati.
 
 ## Tera project
 
-InsuranceManagementSystem ke `ClaimService` me tune likha hai `.orElseThrow(() -> new EntityNotFoundException("Claim Not Found " + id))`. Ye `() -> ...` ek Supplier hai. Ye koi input nahi leta, bas exception bana ke deta hai, aur sirf tab chalta hai jab claim na mile.
+Insurance ke `ClaimService` me `.orElseThrow(() -> new EntityNotFoundException(...))` likha hai. Ye `() -> ...` ek Supplier hai. Ye kuch leta nahi, bas exception bana ke deta hai, aur sirf tab chalta hai jab claim na mile.
 
 ## Interview line
 
