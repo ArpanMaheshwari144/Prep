@@ -1,14 +1,15 @@
 # Lambda Expressions
 
-## Kahani
+## Scene
 
-Manager bola, "100 patients ki list naam se sort karo." Java 7 me iske liye ek poori anonymous class likhni padti thi, sirf ek tulna (compare) ke liye:
+Mausi ke mart me 3 dabbe hain: ghee 550, aata 320, daal 140. Mausi boli, "list daam ke hisaab se laga."
+
+Java 7 me ek chhoti si tulna ke liye poori anonymous class likhni padti thi:
 
 ```java
-Collections.sort(patients, new Comparator<Patient>() {
-    @Override
-    public int compare(Patient a, Patient b) {
-        return a.getName().compareTo(b.getName());
+Collections.sort(l, new Comparator<Item>() {
+    @Override public int compare(Item x, Item y) {
+        return Integer.compare(x.price(), y.price());
     }
 });
 ```
@@ -16,43 +17,38 @@ Collections.sort(patients, new Comparator<Patient>() {
 Java 8 me wahi kaam ek line me ho jaata hai:
 
 ```java
-Collections.sort(patients, (a, b) -> a.getName().compareTo(b.getName()));
+l.sort((x, y) -> Integer.compare(y.price(), x.price()));
 ```
 
-## Tasveer
-
-Comparator ek form hai jisme sirf **ek khaali khaana** hai: `compare`. Lambda bas us khaane ko bharta hai, form ka naam aur `@Override` dobara nahi likhna padta.
+Chala ke dekha:
 
 ```
-Comparator  [ compare(a, b) : ______ ]   <- sirf ek khaana
-lambda           (a, b) -> a.getName().compareTo(b.getName())
+Java 7 tareeka:         [daal 140, aata 320, ghee 550]
+lambda (mehnga pehle):  [ghee 550, aata 320, daal 140]
 ```
 
-## 3 khaas baat
+## Dikkat -> hal
 
-1. **Lambda tabhi chalti hai jab interface me sirf ek abstract method ho** (functional interface). Do khaali khaane hon to compiler ko pata hi nahi chalega ki kaunsa bharna hai. Default aur static method gine nahi jaate, kyunki unki body pehle se bhari hoti hai.
-2. **"Ek method" ka matlab "ek line" nahi hai.** `{}` ke andar loop, if-else, jitna chahe code likh sakte ho. Lambda us ek method ki poori body hai.
-3. **Asli fayda line kam karna nahi, logic ko argument ki tarah bhejna hai** (`filter(x -> ...)`, `sorted(...)`). Lambda koi nayi taakat nahi deti aur tez bhi nahi chalti. Bas ye logic bhejne ka aasaan tareeka hai, aur Streams isi pe tike hain.
+Comparator ek form hai jisme sirf ek khaali khaana hai (`compare`). Lambda bas wahi khaana bharta hai, baaki form ka dhaancha (`new`, `@Override`) dobara nahi likhna padta. Isliye lambda wahi chalti hai jahan interface me sirf ek abstract method ho (functional interface). Iska asli fayda line kam karna nahi hai, logic ko argument ki tarah bhejna hai (`filter(x -> ...)`, `sort(...)`). Streams isi pe tike hain.
 
 ## Prod wala trap
 
-Lambda ke andar bahar ka local variable badal nahi sakte.
-
 ```java
 int count = 0;
-list.forEach(p -> count++);   // compile error: count "effectively final" hona chahiye
+list.forEach(x -> count++);
+// error: local variables referenced from a lambda expression must be final or effectively final
 ```
 
-Wajah ye hai ki lambda variable ki copy leta hai. Ye wahi `int bal = w.balance` wali copy ki kahani hai jo pass by value me dekhi thi. Ginti karni ho to `list.size()` ya `stream().count()` lo.
+Lambda bahar ke variable ki copy leta hai, ye wahi `int bal = w.balance` wali kahani hai. Isliye use badal nahi sakte. Ginti chahiye to `list.size()` ya `stream().count()` lo.
 
 ## Tera project
 
-Tere multithreading practical (`DeadlockDemo`, `ProducerConsumer`) me `new Thread(() -> {...})` likha hai. Wahan `Runnable` ka ek hi khaana hai (`run`), aur wahi lambda se bhara gaya hai.
+Multithreading practical me `new Thread(() -> {...})` likha hai. Wahan `Runnable` ka ek hi khaana hai (`run`), aur wahi lambda se bhara gaya hai.
 
 ## Interview line
 
 ```
-Lambda is a short way to implement a functional interface (one abstract method).
+Lambda is a short way to implement a functional interface, one with a single abstract method.
 It lets us pass behaviour as an argument, which is what Streams are built on.
-Local variables used inside must be effectively final.
+Local variables used inside it must be effectively final.
 ```
