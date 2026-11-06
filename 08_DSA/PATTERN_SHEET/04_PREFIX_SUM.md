@@ -24,12 +24,6 @@ Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1
   kyun: index 3 (6): left 1+7+3 = 11, right 5+6 = 11
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-total nikaalo; leftSum chalao. order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
-```
-
 ```cpp
 int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum (khud kisi taraf nahi)
     int totalSum = 0;
@@ -58,18 +52,6 @@ ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, 
 O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-ans[i] = (i se PEHLE sabka product) × (i ke BAAD sabka product).  no division, O(n).
-running `prod` se 2 pass (assign-BEFORE-update dono me):
-   left-pass  (aage):    left[i]  = prod;  prod *= nums[i];   // prod=1 se shuru: index 0 ke left me koi nahi
-   right-pass (peeche):  prod=1;  right[i] = prod;  prod *= nums[i];   // prod=1 reset: left-pass ka bacha product saath mat lao · loop i=n-1 se i>=0 tak
-   combine:              ans[i] = left[i] * right[i].
-ORDER TRAP: pehle ASSIGN (left[i]=prod), PHIR UPDATE (prod*=nums[i]) -> warna khud ka element bhi product me ghus jaata.
-O(1) extra (follow-up poochhe to): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi).
-```
-
 ```cpp
 vector<int> productExceptSelf(vector<int> &nums) {
     int n = nums.size();
@@ -90,9 +72,9 @@ vector<int> productExceptSelf(vector<int> &nums) {
         ans[i] = left[i] * right[i];        // combine
     return ans;
 }
+```
 
 ── (STANDALONE — apni alag trick) ──
-```
 
 ### ▸ HIGHEST ALTITUDE
 
@@ -100,12 +82,6 @@ vector<int> productExceptSelf(vector<int> &nums) {
 Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak altitude kitni badhi ya ghati. Raste me sabse unchi altitude kitni thi, wo lautao.
   e.g. [-5,1,5,0,-7] -> 1
   kyun: altitude 0, -5, -4, 1, 1, -6 -> max 1
-```
-
-```
-PURANI SHEET SE (same to same):
-
-running sum chalao, max track. (simple prefix)   // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
 ```
 
 ```cpp
@@ -129,16 +105,6 @@ Ek array (plus aur minus dono) aur ek number k diya hai. Kitne lagaatar subarray
 
 brute: har subarray sum baar-baar -> PREFIX -> do prefix ka remainder same = beech wala %k==0
 PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
-```
-
-```
-PURANI SHEET SE (same to same):
-
-count subarrays: sum%k==0.
-DERIVE: brute har subarray ka sum baar-baar -> redundancy -> running PREFIX sum -> do prefix ka remainder same = beech ka subarray %k==0.
-★ PREFIX KYUN, single A[i] NAHI: subarray = CONTIGUOUS range -> poore range ka sum chahiye -> do prefix ka farak = wahi subarray.
-rem = ((sum%k)+k)%k;   count += mp[rem];   mp[rem]++;   // +k phir %k: negative sum ka % negative aata, alag bucket me jaata
-   mp[0]=1 SEED (khaali-prefix) · = subarray-sum-k, bas KEY = remainder (sum ki jagah).   // har step pehle sum += A[i], PHIR rem nikaalo
 ```
 
 ```cpp
@@ -169,23 +135,9 @@ beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni ba
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
-★ CHAABI:  x ^ x = 0   (same number khud se XOR = gayab)
-   isliye  (shuru se j tak ka XOR) ^ (shuru se i tak ka XOR) = beech wala subarray ka XOR   (common hissa kat gaya)
-   chahiye beech wala = k  ->  pichhla XOR = abhi ka XOR ^ k  ->  map me dekho kitni baar aaya
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
-= SUBARRAY-SUM-K ka HUBAHU copy, sirf sign badle:
+↳ SAME: SUBARRAY SUM = K ka hubahu copy, sirf sign badla:
    sum wale me:  complement = curSum - k      (a+b=c -> c-b=a)
    XOR wale me:  complement = curXor ^ k      (a^b=c -> c^b=a)   [4^2=6 to 4^6=2]
-xorr ^= it;   count += mp[xorr ^ k];   mp[xorr]++;
-   mp[0]=1 SEED · complement mila -> count+ · same complement dobara -> count double (sum jaisa).
-
-common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
 ```
 
 ```cpp
@@ -214,25 +166,6 @@ valid = (har element <= K) AND (>=1 element == K)
 K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 ═════════════════════════ ★ EDGE ═════════════════════════════════════
 "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
-```
-
-```
-PURANI SHEET SE (same to same):
-
-valid = (har element <= K) AND (>=1 element == K).
-
-★ TRAP-instinct (jo dhoka deta): "subarray"->SW · "max"->monotonic STACK · "count"->PQ.
-   SAB galat -> max FIXED-K se compare (relative nahi) -> stack/SW ki zaroorat NAHI. SIMPLE LINEAR scan.
-
-KEY INSIGHT: K se BADE elements = WALL (array ko todte). segment ke andar K-wale subarrays gino.
-do INDEX track (dono init -1):   // -1: abhi koi wall/K nahi, start index 0 se gino
-   lastWall = aakhri index jahan arr[i] > K
-   lastK    = aakhri index jahan arr[i] == K
-har i pe:  if (lastK > lastWall)  count += (lastK - lastWall);   // start-choices = lastWall+1 .. lastK · pehle lastWall/lastK update, PHIR count
-★ guard lastK > lastWall KYUN: warna (lastK - lastWall) NEGATIVE (K kisi wall ke peeche dab gaya) -> count galat. ([5,3,5] pe dikhta)
-★ count ~n^2/2 (5e9) -> LONG LONG (int overflow).
-
-common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
 ```
 
 ```cpp
@@ -266,20 +199,7 @@ har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek b
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-└────────────────────────────────────────────────────────────
-KAB : "har RANGE pe kuch ADD karo" — aur aise 20,000 range hain.
-      seedha karo to har range pe loop = O(range × length). Chahiye O(n + ranges).
-SAAR: har element ko CHHUO MAT. Sirf DO jagah nishaan lagao — jahan se shuru, aur jahan se khatam.
-      phir ek baar chal ke chalti-sum lo — wahi asli value hai.
-
-TEMPLATE:
-    vector<int> diff(n + 2, 0);                   // ★ n+2 (end+1 ka max n+1 ho sakta)
-        diff[ it[0] ]     += it[2];               // yahan se shuru
-        diff[ it[1] + 1 ] -= it[2];               // yahan ke BAAD khatam (+1: last din bhi inclusive, uske agle din se hatao)
-    vector<int> ans;  int run = 0;   // run=0: chalti-sum abhi khaali
-    for (int i = 1; i <= n; i++) { run += diff[i]; ans.push_back(run); }   // 1..n: flights 1-based, diff[0] aur diff[n+1] answer me nahi
+TASVEER:
 
 DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
     diff:   idx  1    2    3    4    5    6
@@ -289,8 +209,6 @@ DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
             net  +10  +45  -10  -20   0   -25
     run :        10   55   45   25   25
     ans = [10, 55, 45, 25, 25]
-
-★★ SWEEP-LINE se RISHTA (Arpan ne khud jod diya — "dono same hain, bas do farak"):
 ```
 
 ```cpp
