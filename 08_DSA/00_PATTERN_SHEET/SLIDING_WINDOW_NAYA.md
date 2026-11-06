@@ -64,7 +64,7 @@ int characterReplacement(string s, int k) {
     return maxLen;
 }
 ```
-`★ maxFreq ko shrink pe kabhi ghatao mat:` purana maxFreq reh gaya to window thodi der sach me kharab bhi ho sakti hai, par uski length pichhle best se zyada nahi badhti. Length tabhi badhti hai jab koi char sach me pehle se zyada baar aaye. Isliye max length sahi aati hai, recompute ki zaroorat nahi.
+`★ maxFreq ko shrink pe kabhi ghatao mat:` maxFreq ab tak ki sabse badi ginti hai, zaroori nahi ki abhi wali window ki ho. Purane maxFreq se ek kharab window thodi der tik sakti hai, par usse best galat bada nahi banta, isliye recompute ki zaroorat nahi. (Best bina maxFreq badhe bhi badhta hai: "AB", k=1 me maxFreq dono baar 1, best 1 -> 2.)
 
 ### ▸ LC-1004 MAX CONSECUTIVE ONES III  
 `[1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6`. Max k zero ko 1 bana ke sabse lambi 1 ki line.
