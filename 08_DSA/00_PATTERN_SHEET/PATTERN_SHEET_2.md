@@ -329,6 +329,14 @@ Naya array nahi banana, isi array me badlaav karna hai (in-place).
   kyun: non-zero 1,3,12 usi kram me aage aa gaye, dono 0 peeche
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+slow = agli jagah jahan non-zero rakhna hai; fast SCAN karta.
+fast pe non-zero mila -> pehle swap(nums[slow], nums[fast]) -> PHIR slow++.   // fast++ har baar (if ke BAHAR) · slow=0, fast=0 se shuru
+ORDER: swap PEHLE, slow++ BAAD (slow tabhi aage jab ek non-zero apni jagah lag gaya).
+```
+
 ```cpp
 void moveZeroes(vector<int> &nums) {
     int slow = 0;                           // slow = agli jagah jahan non-zero rakhna hai
@@ -350,6 +358,14 @@ Ek SORTED array diya hai jisme kuch number dohraye gaye hain. Har number sirf ek
 Kitne unique number bache (k), wo lautao. Array ke pehle k khaane me wahi unique number hone chahiye.
   e.g. [0,0,1,1,1,2,2,3,3,4] -> k=5, [0,1,2,3,4,...]
   kyun: alag numbers sirf 0,1,2,3,4 = 5. sorted hai to dohra hamesha bagal me hota
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+move-zeroes cousin. slow = last-UNIQUE ka index, fast SCAN.   // slow=0, fast=0: pehla element khud unique, compare nums[slow]
+naya unique (nums[slow] != nums[fast]) -> pehle slow++ (slow ab duplicate/khali slot pe) -> PHIR nums[slow] = nums[fast] (overwrite).
+ORDER: yahan slow++ PEHLE, overwrite BAAD (move-zeroes se ULTA). fast har baar++. unique count = slow+1.
 ```
 
 ```cpp
@@ -376,6 +392,14 @@ Kitne number bache (k), wo lautao. Pehle k khaane me val nahi hona chahiye, unka
   kyun: teen 2 hate, baaki 5 bache
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+saare 'val' hata, non-val ki count k lauta (move-zeroes cousin). slow = agli keep-jagah, fast scan.
+nums[fast] != val -> pehle nums[slow] = nums[fast] -> PHIR slow++.   nums[fast] == val -> skip (sirf fast++).
+ORDER: write PEHLE, slow++ BAAD (move-zeroes jaisa). end me slow = k (bache shuru ke k me).
+```
+
 ```cpp
 int removeElement(vector<int> &nums, int val) {
     int slow = 0, fast = 0;                 // slow = agli keep-jagah, fast scan
@@ -400,6 +424,12 @@ Ek string di hai jisme sirf chhote akshar (lowercase) hain. Batao ki ye aage se 
   kyun: abca: pehla 'a' = aakhri 'a', par 'b' != 'c'
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
+```
+
 ```cpp
 bool isPalindrome(string s) {               // sirf lowercase letters wala aasan version
     int left = 0;
@@ -421,6 +451,12 @@ Ek string di hai jisme kuch bhi ho sakta hai: space, comma, bade akshar, digit. 
 Inhe gin ke string palindrome banti hai ya nahi, true ya false lautao.
   e.g. "A man, a plan, a canal: Panama" -> true     "race a car" -> false
   kyun: filter + lower = "amanaplanacanalpanama" (palindrome) · "raceacar" (nahi)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
 ```
 
 ```cpp
@@ -452,6 +488,16 @@ Ek string di hai. Batao ki ye palindrome hai, ya zyada se zyada EK akshar hata k
 
 isPalindrome: helper: l..r palindrome hai?
 validPalindrome: palindrome YA ek char delete karke ban jaaye
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+= palindrome YA ek char DELETE karke palindrome ban jaaye.
+IDEA: two-pointer; MISMATCH pe -> ya LEFT char delete ya RIGHT char delete. koi ek bane -> true, dono na bane -> false.
+TEMPLATE (CLEAN): helper isPalindrome(s,l,r). main loop; mismatch pe seedha ->   // helper bhi while(l<=r), mismatch -> false · match pe l++ r--
+    return isPalindrome(s,l+1,r) || isPalindrome(s,l,r-1);   (left-delete YA right-delete; || = ek se bhi bane -> true)
+    koi mismatch na aaye -> already palindrome -> true.
 ```
 
 ```cpp
@@ -487,6 +533,14 @@ Ek string di hai. Usme sirf vowels (a e i o u, bade bhi) ka kram ulta karna hai.
 
 isVowel: a e i o u, lower + upper dono
 reverseVowels: sirf vowels aapas me ulte, baaki char apni jagah
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
+chhota helper isVowel(ch). left/right pointer:
+dono vowel -> swap + left++ right--.  left vowel nahi -> left++.  warna right--.   // left<right: milte hi ruko, beech ka akela char swap nahi · return s
 ```
 
 ```cpp
@@ -526,6 +580,12 @@ Sabse zyada kitna paani rok sakte ho, wo lautao.
   kyun: index 1 (8) aur index 8 (7): min 7 x doori 7 = 49
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).   // left<right: same index pe width 0 · barabar height -> right-- (else)
+```
+
 ```cpp
 int maxArea(vector<int> &height) {
     int low = 0;
@@ -553,6 +613,14 @@ Index 1 se gine jaate hain (1-based), 0 se nahi.
   kyun: 2 + 7 = 9, wo 1st aur 2nd number hain
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+sorted -> 2 pointer (left,right); sum==target -> mila (return 1-based).
+sum<target -> left++ (bada chahiye); sum>target -> right-- (chhota). O(1) space.   // while(left<right): ek hi index do baar nahi · na mile -> {-1,-1}
+(regular two-sum UNSORTED = hashmap; SORTED = 2-pointer.)
+```
+
 ```cpp
 vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hashmap; SORTED = 2 pointer
     int left = 0, right = nums.size() - 1;
@@ -574,6 +642,14 @@ vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hash
 Ek number c diya hai. Batao ki kya aise do poore number a aur b hain jinke liye a*a + b*b = c ho. true ya false lautao.
   e.g. 5 -> true    3 -> false
   kyun: 5 = 1*1 + 2*2. 3 kisi bhi do square ka jod nahi
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+a²+b²==c possible? (LC 633). RECOGNITION: 2 NUMBER (pair) chahiye -> TWO-POINTER.
+low=0, high=sqrt(c). ans=low²+high²: ==c->true · <c->low++ · >c->high--. low<=high tak, warna false.
+★ low<=high (NOT low<high) -- c=0 ka 0+0 single-point bhi check ho jaaye. OVERFLOW: ans = long long.   // (long long)low*low: guna se PEHLE cast
 ```
 
 ```cpp
@@ -603,6 +679,17 @@ Dobara sort() nahi lagana, ek hi baar me (O(n)) karna hai.
   kyun: -4 ka square 16 hai, isliye sabse bade square dono SIRE pe hote, beech me nahi
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR: sorted arr me negatives ka square order ULTA -> sabse BADA square dono CHHOR pe (beech me nahi). 2-ptr, ans PEECHE se bharo. O(n), no sort.
+TEMPLATE: left=0, right=n-1, k=n-1.   // k=n-1: sabse bada square ans ke aakhri slot me · ans(n) pehle se size n (k-- se index pe likho)
+   while(left<=right):              // <= : aakhri bacha 1 element bhi daalna hai
+      if(left² <= right²) -> ans[k--]=right², right--   // bada square aakhri khaali slot pe; k-- = likho phir peeche
+      else                -> ans[k--]=left²,  left++   // left wala bada (negative tha), uska square peeche daalo
+FAMILY: fill-from-END (result peeche se bharo).
+```
+
 ```cpp
 vector<int> sortedSquares(vector<int> &nums) {   // sabse BADA square dono chhor pe (negative)
     vector<int> ans(nums.size(), -1);       // size n pehle se: k-- se index pe likho; O(n), sort nahi
@@ -630,6 +717,19 @@ Do sorted array hain. nums1 me pehle m asli number hain aur peeche n khaali jaga
 nums2 ko nums1 me hi milana hai (in-place), taaki poora nums1 sorted ho jaaye.
   e.g. nums1=[1,2,3,0,0,0] m=3, nums2=[2,5,6] -> nums1=[1,2,2,3,5,6]
   kyun: peeche se bharo (khaali jagah peeche hai), sabse bada pehle rakh do
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR: 2 sorted arr; nums1 ke END me n khaali. in-place -> PEECHE se bharo (aage se karo to zinda element overwrite). O(m+n).  ★ k=m+n-1 NA m*n-1
+in-place = naya array NAHI banaya; usi nums1 me answer bhara -> O(1) EXTRA space.
+TEMPLATE: i=m-1, j=n-1, k=m+n-1.   // k=m+n-1: nums1 ka aakhri index (total m+n jagah)
+   while(i>=0 && j>=0):                       // ★ && (|| nahi -> -1 index crash)
+      if(nums1[i] < nums2[j]) -> nums1[k--]=nums2[j], j--   // jo bada wahi peeche; barabar pe else (nums1 wala) chalega
+      else                    -> nums1[k--]=nums1[i], i--   // nums1[i] bada ya barabar -> wahi aakhri khaali slot pe
+   while(i>=0): nums1[k--]=nums1[i], i--   // optional: nums1 ke bache pehle se apni jagah pe hi hain
+   while(j>=0): nums1[k--]=nums2[j], j--      // nums2[j] NA nums1[j] (nums2 ke bache abhi copy nahi hue, ye loop zaroori)
 ```
 
 ```cpp
@@ -672,6 +772,22 @@ sort() nahi lagana, ek hi pass me karna hai.
   e.g. [2,0,2,1,1,0] -> [0,0,1,1,2,2]
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+Dutch flag, 3 pointer (low/mid/high).  loop: while(mid <= high)   // <= : high wala abhi dekha nahi, use bhi check · low=mid=0, high=n-1
+nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).   // mid++ bhi: low se aaya element pehle hi check ho chuka
+nums[mid]==1 -> sirf mid++.
+nums[mid]==2 -> swap(mid,high), high-- (mid++ NAHI -> high se aaya element unknown, dobara check).
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+Dutch flag, 3 pointer (low/mid/high):
+nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).
+nums[mid]==1 -> sirf mid++.
+nums[mid]==2 -> swap(mid,high), high-- (mid++ NAHI -> high se aaya element unknown, dobara check).
+```
+
 ```cpp
 void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
     int low = 0;
@@ -698,6 +814,15 @@ void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
 ```
 Ek array diya hai. Saare even number pehle aur saare odd number baad me rakhne hain. Even aapas me ya odd aapas me kis kram me hain, isse farak nahi padta.
   e.g. [3,1,2,4] -> [2,4,3,1] (ya [4,2,1,3], koi bhi jisme even pehle)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+evens pehle, odds baad (aapas order koi bhi). left/right pointer.   // while(left<right) · odd check = nums[x]%2 != 0
+left ODD && right EVEN (dono galat jagah) -> swap + left++ right--.
+left EVEN (sahi) -> left++.  warna -> right--.
+TRAP: left even && right odd pe swap MAT karo -> dono already sahi jagah.
 ```
 
 ```cpp
@@ -728,6 +853,26 @@ Ek array diya hai. Aise saare teen numbers ke group [a, b, c] lautao jinka jod 0
 Ek hi group do baar nahi aana chahiye, chahe array me number dohraye gaye hon.
   e.g. [-1,0,1,2,-1,-4] -> [-1,-1,2], [-1,0,1]
   kyun: -1 do baar hai, par [-1,0,1] sirf ek baar likhna hai
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (sum = -fixed).
+TEMPLATE:
+    sort(begin(nums), end(nums));   // sort PEHLE: 2-pointer aur duplicate skip dono sorted pe hi chalte
+    for(int i=0; i<nums.size(); i++){   // har number ko ek baar FIX karo
+        if(i>0 && nums[i]==nums[i-1]) continue;              // duplicate FIXED skip (i>0 pehle: i=0 pe nums[i-1] bahar padhta)
+        int low=i+1, high=nums.size()-1, sum=-nums[i];   // low=i+1: fixed ke baad wale hi lo, warna wahi element dobara
+        while(low<high){   // < : low==high = ek hi element, jodi nahi banti
+            if(nums[low]+nums[high]==sum){   // jodi mili = fixed ke saath triplet ka sum 0
+                ans.push_back({nums[i],nums[low],nums[high]});
+                while(low<high && nums[low]==nums[low+1]) low++;   // duplicate LOW skip (pehle low<high, warna low+1 bahar)
+                while(low<high && nums[high]==nums[high-1]) high--; // duplicate HIGH skip (pehle low<high, warna high low se neeche khisak jaata)
+                low++; high--;                                       // skip ke baad bhi 1 kadam: abhi purane number pe khade
+            else if(nums[low]+nums[high] < sum) low++;       // chhota -> low aage (bada chahiye)
+CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad LOW (3) match ke baad HIGH.
+sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
 ```
 
 ```cpp
@@ -766,6 +911,14 @@ Do string s aur t di hain. Batao ki kya t me se kuch akshar hata ke (baaki ka kr
   kyun: a..b..c t me usi kram me mil gaye. 'x' t me hai hi nahi
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
+s[i]==t[j] -> i++ AUR j++ (char mila).  nahi mila -> sirf j++ (t aage scan).   // while(i<s.size() && j<t.size()): koi ek khatam -> ruko
+ANT: i >= s.size() -> saare s-char order me mil gaye -> TRUE. warna FALSE.
+```
+
 ```cpp
 bool isSubsequence(string s, string t) {    // s, t me order se hai? beech ke char skip chalega
     int i = 0, j = 0;                       // i -> s, j -> t
@@ -792,6 +945,42 @@ height[] me buildings ki unchai di hai, har building ki chaudai 1 hai. Baarish k
 
 bar i ke upar paani = min(leftMax[i], rightMax[i]) - height[i]   (min: chhoti side se bah jaata)
 O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - height[i]
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+CORE: bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i].  (min kyun: CHHOTI side se paani bah jaata.)
+
+[A] O(n) space: leftMax[] ek pass AAGE se · rightMax[] ek pass PEECHE se · ans += min(leftMax[i], rightMax[i]) - height[i].
+
+[B] O(1) two-pointer (arrays hata, bas 2 var):
+      left=0, right=n-1;   leftMax=0, rightMax=0;   // max 0 se: abhi koi deewar dekhi hi nahi
+      while (left < right):   // < : milne wali cell sabse unchi deewar, uspe paani nahi
+          if (height[left] <= height[right]):          // chhoti ASLI deewar wali taraf niptao: doosri taraf badi pakki
+              if (leftMax > height[left])  ans += leftMax - height[left];   // chhota -> paani
+              left++;   // left ka kaam ho gaya, aage chalo
+          else:
+              if (rightMax > height[right]) ans += rightMax - height[right];   // chhota -> paani (rightMax tak bharega)
+              right--;   // right ka kaam ho gaya, andar aao
+    kyun SAFE: jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi deewar pakka khadi,
+               to had isi chhoti taraf ke max se tay hoti.
+    ★ MILNE KI JAGAH: dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
+      badi deewar apni jagah rukti -> dono SABSE UNCHI deewar pe milte, jahan paani hota hi nahi.
+    ★ TRAP: faisla height[left] <= height[right] (DEEWAR) pe lo, leftMax <= rightMax pe NAHI.
+      max pe liya to ek khamba chhoot jaata: [4,1,4,1] -> 0 aata (sahi 3).
+edge: empty -> 0.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+[B] O(1) two-pointer (arrays hata, bas 2 var):
+      left=0, right=n-1;   leftMax=height[0], rightMax=height[n-1];
+      while (left < right):
+          if (leftMax <= rightMax):  leftMax  = max(leftMax,  height[left]);   ans += leftMax  - height[left];   left++;
+          else:                      rightMax = max(rightMax, height[right]);  ans += rightMax - height[right];  right--;
+    REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
+    kyun SAFE: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already khadi).
+edge: empty -> 0.
 ```
 
 ```cpp
@@ -830,6 +1019,45 @@ Akela akshar bhi palindrome gina jaata hai, aur alag jagah wali same substring a
 kitne substring palindrome (single char bhi; alag position = alag count). har CENTER se phailo
 "abcba": c -> bcb -> abcba = ek center se 3. ODD center = ek char, EVEN center = do char jodi
 solve: &count : warna bahar count badhta hi nahi
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+String me kitne SUBSTRING (contiguous) palindrome hain? COUNT karo.
+single char bhi palindrome · same-dikhne wale par ALAG POSITION wale ALAG count.
+SIGNAL: "count palindromes / palindromic substrings" -> har CENTER pe khade ho ke PHAILO.
+
+★★ EXAMPLE (yahi yaad -> poora recall):   "abcba"
+    a  b  c  b  a
+          ^            "c"        <- center se shuru
+       ^  ^  ^         "bcb"      <- ek kadam phaila (b==b)
+    ^  ^  ^  ^  ^      "abcba"    <- aur phaila (a==a)
+    => ek hi center se 3 palindrome mile -> har phailav pe count++
+
+★ ARPAN-LINE (jisse ye derive hua): "beech wala khada ho ke dono taraf poochta --
+  'tum dono same ho? aa jao mere paas'. same hue -> palindrome bana -> phir agli jodi se poochta."
+
+DO tarah ke CENTER (dono chahiye):
+   ODD  length -> center ek CHAR       ("abcba" -> c)     -> expand(i, i)
+   EVEN length -> center do CHAR jodi  ("abba"  -> bb)    -> expand(i, i+1)
+   n-length string me:  n odd-centers + (n-1) even-centers
+
+TEMPLATE:
+   count = 0
+   for i in 0..n-1:   // har index ko center bana ke dono taraf phailao
+       expand(i, i)        // odd: center ek char (khud bhi palindrome, count hoga)
+       expand(i, i+1)      // even · i+1==n bhi theek: while me j<n pehle check
+   return count
+
+   expand(i, j):   // count by REFERENCE (&count), warna bahar count badhta hi nahi
+       while (i >= 0 && j < n && s[i] == s[j]):   // pehle range check, phir s[i]==s[j] (warna bahar padhega)
+           i--;  j++        // dono taraf phailo
+
+★ count HAR match pe badhta (ant me ek baar nahi) -> kyunki har phailav khud ek palindrome hai.
+★ Complexity: O(n^2) time, O(1) space. Koi DP/recursion NAHI chahiye
+  (substring = CONTIGUOUS -> skip ka option nahi -> choice nahi -> recursion nahi.
+   recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
 ```
 
 ```cpp
@@ -871,6 +1099,37 @@ int countSubstrings(string s) {
 ### ▸ LC-3 NO REPEAT  
 `"abcabcbb" -> 3`. Sabse lambi substring jisme koi char repeat na ho.
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
+TEMPLATE:
+    unordered_map<char,int> mp;  int i=0, j=0, maxLen=INT_MIN;   // INT_MIN: end me check karke khaali string pe 0
+        mp[s[j]]++;                          // window me add
+        while(mp[s[j]] > 1){                 // INVALID: current char (s[j]) repeat (while: repeat wala char nikalne tak kai char hatane padte)
+            mp[s[i]]--; i++;                 // left shrink jab tak repeat khatam
+        maxLen = max(maxLen, j - i + 1);     // valid window length (shrink ke BAAD record, ab window valid)
+        j++;   // record ke BAAD aage badho
+    return maxLen==INT_MIN ? 0 : maxLen;     // khaali string -> INT_MIN reh jaata -> 0
+INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
+TEMPLATE:
+    unordered_map<char,int> mp;  int i=0, j=0, minLen=INT_MIN;
+    while(j < s.size()){
+        mp[s[j]]++;                          // window me add
+        while(mp[s[j]] > 1){                 // INVALID: current char (s[j]) repeat
+            mp[s[i]]--; i++;                 // left shrink jab tak repeat khatam
+        }
+        minLen = max(minLen, j - i + 1);     // valid window length
+        j++;
+    }
+    return minLen==INT_MIN ? 0 : minLen;     // khaali string -> INT_MIN reh jaata -> 0
+INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
+```
+
 ```cpp
 int lengthOfLongestSubstring(string s) {
     if (s.empty())
@@ -894,6 +1153,31 @@ int lengthOfLongestSubstring(string s) {
 
 ### ▸ LC-424 CHAR REPLACEMENT  
 `"AABABBA", k=1 -> 4`. Max k char badal ke sabse lambi window jisme sab same.
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
+KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
+j pe : mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).   // maxFreq update PEHLE, phir windowLen-maxFreq check
+VALID   (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
+INVALID (windowLen - maxFreq > k)   -> left shrink:
+            mp[s[i]]--;   // left wala char window se bahar, uski ginti kam
+            if (mp[s[i]] == 0) mp.erase(s[i]);   // 0 hua to key hatao (DISTINCT gino to zaroori)
+            i++;   // ginti kam karne ke BAAD hi left aage
+CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
+   se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
+KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
+j pe : mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).
+VALID   (windowLen - maxFreq <= k)  -> maxLen = max(maxLen, windowLen).
+INVALID (windowLen - maxFreq > k)   -> left shrink (mp[s[i]]--, i++).
+CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
+   se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
+```
 
 ```cpp
 int characterReplacement(string s, int k) {
@@ -921,6 +1205,24 @@ int characterReplacement(string s, int k) {
 ### ▸ LC-1004 MAX CONSECUTIVE ONES III  
 `[1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6`. Max k zero ko 1 bana ke sabse lambi 1 ki line.
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
+TEMPLATE:
+    int ans=INT_MIN, zeroCount=0, i=0, j=0;   // INT_MIN: end me check karke khaali array pe 0
+        if(nums[j]==0) zeroCount++;          // window me zero add
+        while(zeroCount > k){                // INVALID: k se zyada zero (flip nahi kar sakte)
+            if(nums[i]==0) zeroCount--;      // left ka zero nikla to count kam
+            i++;   // zero check ke BAAD aage (pehle i++ to galat element dekhta)
+        ans = max(ans, j - i + 1);           // UNCONDITIONAL (koi if nahi)
+        j++;   // record ke BAAD aage badho
+CORE LEARNING: ans UNCONDITIONAL update -> if(zeroCount==k) MAT lagao.
+   kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
+   (galti thi: if(zeroCount==k) -> sirf exactly-k ginta -> k=0 / k>zeros case toot jaate.)
+shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
+```
+
 ```cpp
 int longestOnes(vector<int> &nums, int k) {
     int ans = INT_MIN;
@@ -946,6 +1248,22 @@ int longestOnes(vector<int> &nums, int k) {
 ### ▸ FRUIT INTO BASKETS  
 `[1,2,3,2,2] -> 4`. 2 basket, har basket me ek type. Lagaatar pedon ki sabse lambi line.
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW skeleton + map<type,count>.
+DELTA (SW skeleton pe -- sirf ye badalta):
+    mp[nums[j]]++;                              // window me add
+    while(mp.size() > 2){                       // INVALID: 2 se zyada distinct (while: ek type poora khatam hone tak kai element hatane padte)
+                                                // IF bhi chalta (sirf LONGEST): ek aaya ek gaya, size best se bada nahi
+                                                //   -> len sahi. COUNT / SHORTEST me sirf while.
+        mp[nums[i]]--;   // left wala fruit window se bahar, uski ginti kam
+        if(mp[nums[i]]==0) mp.erase(nums[i]);   // count 0 -> ERASE
+        i++;   // erase check ke BAAD hi left aage
+    ans = max(ans, j - i + 1);   // shrink ke BAAD record: window ab <=2 distinct · ans=INT_MIN se, return ans==INT_MIN ? 0 : ans
+CRUX = erase-on-0: count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
+```
+
 ```cpp
 int totalFruit(vector<int> &fruits) {
     int ans = INT_MIN;
@@ -970,6 +1288,14 @@ int totalFruit(vector<int> &fruits) {
 
 ### ▸ LONGEST AT-MOST-K DISTINCT  
 `"eceba", k=2 -> 3`. Sabse lambi substring jisme zyada se zyada k alag char.
+
+```
+TASVEER (purani sheet se, same to same):
+
+FRUIT-INTO-BASKETS ka GENERAL version. wahi variable window + map<char,count>,
+distinct (mp.size()) > k ho -> left se shrink (erase-on-0). ans = max length.
+farak: fruit me "2" hardcoded tha, yahan wahi jagah "k" (mp.size() > k).
+```
 
 ```cpp
 int totalFruit(string &s, int k) {
@@ -999,6 +1325,16 @@ int longestKDistinct(string s, int k) {
 ### ▸ LC-1208 EQUAL SUBSTRING WITHIN BUDGET  
 `s="abcd", t="bcdf", maxCost=3 -> 3`. s ke char ko t me badalne ki cost `|s[i]-t[i]|`. Kul cost budget ke andar, sabse lambi window.
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cost-SUM <= maxCost.
+KEY  : cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
+j pe : cost += abs(s[j]-t[j]).
+INVALID (cost > maxCost) -> WHILE shrink: cost -= abs(s[i]-t[i]), i++.
+ans  : max(ans, j-i+1).  track sirf cost (koi map nahi).
+```
+
 ```cpp
 int equalSubstring(string s, string t, int maxCost) {
     int i = 0, j = 0, cost = 0, ans = INT_MIN;
@@ -1023,6 +1359,27 @@ int equalSubstring(string s, string t, int maxCost) {
 
 ### ▸ LC-209 MIN SUBARRAY LEN  
 `target=7, [2,3,1,2,4,3] -> 2` ([4,3]). Positive numbers, sum >= target wala sabse chhota subarray.
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : positive nums, sum >= target wala SABSE CHHOTA subarray ki length (nahi mile -> 0).
+TEMPLATE:
+    int sum=0, minLen=INT_MAX, i=0, j=0;   // INT_MAX: min se ghatega; koi window na bani to end me 0
+        sum += nums[j];                       // window add (expand)
+        while(sum >= target){                 // VALID hote hi -> record + SHRINK (aur chhota dhoondo)
+            minLen = min(minLen, j - i + 1);   //   record ANDAR (shrink loop ke andar)
+            sum -= nums[i]; i++;               //   left shrink
+        j++;   // shrink loop ke BAHAR: har j pe ek baar aage
+    return minLen==INT_MAX ? 0 : minLen;      // koi valid window nahi -> 0
+LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):
+   LONGEST  (jaise no-repeat): window BADA chahiye -> shrink SIRF jab INVALID ho (validity wapas laane ko) ->
+            record BAAHAR (shrink ke BAAD, valid window ki length).
+   SHORTEST (ye / min-window):  window CHHOTA chahiye -> VALID hote hi record + shrink (chhota karte jao jab tak valid) ->
+            record ANDAR (shrink loop ke andar, har step).   <- YE wahi.
+   1-line: LONGEST = shrink-jab-MAJBOORI(invalid), record-baad  ·  SHORTEST = shrink-jab-tak-VALID, record-andar.
+char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
+```
 
 ```cpp
 int minSubArrayLen(int target, vector<int> &nums) {
@@ -1050,6 +1407,17 @@ int minSubArrayLen(int target, vector<int> &nums) {
 
 ### ▸ MAX SUM OF K  
 `[2,1,5,1,3,2], k=3 -> 9`. Har size-k window ka sum, sabse bada.
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
+KEY  : variable nahi -- size fix k, isliye IF (ek hi remove).
+j pe : sum += nums[j].   // sum=0, maxSum=INT_MIN (sab negative ho to bhi sahi max)
+FULL (j-i+1 >= k) -> maxSum = max(maxSum, sum); phir 1 remove (sum -= nums[i], i++).
+WHY IF-not-WHILE : fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
+ans  : maxSum. window k-size pe slide.
+```
 
 ```cpp
 int maxSumK(vector<int> &nums, int k) {
@@ -1096,10 +1464,24 @@ TWIST (yahi hard part): taken cards DONO end pe (contiguous NAHI) -> seedha SW n
      (a) window size = L-k  (b) MAX ki jagah MIN dhundo  (c) answer = Total - min.
 ★ COLD nahi hota (combo-twist) -- library me daalke revise -> next time instant.
 
+TEMPLATE:
+  int Total = accumulate(nums, 0);   // saare cards ka sum: isme se beech ka min ghatayenge
+  if (L - k == 0) return Total;              // k==L -> saare cards (window size 0)
+  int minSum = minSumK(nums, L-k);           // fixed-window MIN (= max_sum_k, min-version)
+  return Total - minSum;   // liye cards ka max = total - na liye (beech) ka min
 minSumK (fixed window, MIN): sum += nums[j]; jab (j-i+1 >= size) -> minSum=min(minSum,sum); sum-=nums[i]; i++.   // minSum=INT_MAX se
 
 DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
 FAMILY: fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+TEMPLATE:
+  int Total = accumulate(nums, 0);
+  if (L - k == 0) return Total;              // k==L -> saare cards (window size 0)
+  int minSum = minSumK(nums, L-k);           // fixed-window MIN (= max_sum_k, min-version)
+  return Total - minSum;
+minSumK (fixed window, MIN): sum += nums[j]; jab (j-i+1 == size) -> minSum=min(minSum,sum); sum-=nums[i]; i++.
 ```
 
 ```cpp
@@ -1141,6 +1523,12 @@ TASVEER (purani sheet se, same to same):
 ★ RECOGNITION: "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
    KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
    -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
+TEMPLATE:
+    if (k <= 0) return false;   // k=0: |i-j|<=0 matlab same index, jodi ban hi nahi sakti
+    unordered_set<int> st;  int i=0, j=0;
+        if(st.count(nums[j])) return true;   // window me pehle se hai -> mil gaya (within k)
+        if(j - i + 1 > k){ st.erase(nums[i]); i++; }   // window k se badi -> oldest hatao
+        st.insert(nums[j]); j++;   // check ke BAAD insert: warna khud se hi match ho jaata
 DRY-RUN [1,2,3,1] k=3: 1,2,3 add -> j=3 nums=1 set me hai -> true. | [1,2,3,1,2,3] k=2: har baar window<=2, kabhi dup nahi -> false.
 ★ k=0 kyun alag: check (st.count) window CHHOTI hone se PEHLE hota hai -> k=0 pe pichhla element
    abhi set me hota, [4,4] k=0 pe true aa jaata (sahi false).
@@ -1178,6 +1566,19 @@ bool containsNearbyDuplicate(vector<int> &nums, int k) {
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR : kitne subarray jinka product < k.   (lambai nahi, GINTI chahiye)
+
+TEMPLATE:
+    if (k == 0) return 0;   // nums >=1: product kabhi < 0 nahi, koi subarray nahi
+    int count = 0, prod = 1;   // prod=1: guna ka shuru 1 (0 rakha to sab 0)
+    int i = 0, j = 0;
+        prod *= nums[j];                      // naya element window me
+        while (prod >= k && i <= j) {         // zyada ho gaya -> baayi taraf se chhoto (i <= j: k=1 pe khaali window ka prod 1, i bahar bhaagta)
+            prod /= nums[i];   // left wala guna se bahar: divide karo
+            i++;   // divide ke BAAD hi left aage
+        count += j - i + 1;                   // j pe khatam hone wale saare valid subarray
+        j++;   // count ke BAAD aage badho
+
 GINTI KYUN (j-i+1):  window [i..j] valid hai, to j pe KHATAM hone wale ye sab bhi valid:
                      [j], [j-1..j], ... [i..j]  =  j-i+1 subarray
 
@@ -1191,6 +1592,13 @@ DRY-RUN [10,5,2,6], k=100:
     k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
     aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
     k = 0 alag, upar hi return 0.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR : kitne subarray jinka product < k. variable window, COUNT (length nahi).
+j pe : prod *= nums[j].
+INVALID (prod >= k) -> shrink: prod /= nums[i], i++.
+COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarray). (bahut count-Q me)
 ```
 
 ```cpp
@@ -1217,6 +1625,48 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k) {
 
 ### ▸ LC-992 SUBARRAYS WITH EXACTLY K DISTINCT  
 `[1,2,1,2,3], k=2 -> 7`. Kitne lagaatar subarray hain jinme theek k alag number hon.
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : kitne SUBARRAYS jinme EXACTLY k different numbers.  [1,2,1,2,3],k=2 -> 7
+
+CHAAL: "exactly K" seedha SW se count ganda (boundary saaf nahi).
+       => exactly(k) = atMost(k) - atMost(k-1).
+          atMost(k) = "0..k distinct wale SAB" ; atMost(k-1) = "0..k-1 wale sab" ; ghata do -> exactly k.
+          (jaise  <=5  -  <=1  =  2..5)
+
+TEMPLATE: atMost(K) = FRUIT ka template, bas ans = COUNT (max nahi):
+
+    int atMost(nums, K){
+        int i = 0, j = 0, ans = 0;  map<int,int> mp;   // ans=0: yahan count jod rahe, max nahi (INT_MIN = garbage)
+        while(j < nums.size()){
+            mp[nums[j]]++;   // naya number window me
+            while(mp.size() > K){                     // K se zyada distinct -> shrink
+                mp[nums[i]]--;   // left wala number bahar, uski ginti kam
+                if(mp[nums[i]] == 0) mp.erase(nums[i]);   // erase: warna 0-count key bhi mp.size() me ginti
+                i++;   // erase check ke BAAD hi left aage
+            ans += j - i + 1;                         // is j pe khatam hone wale valid subarray
+            j++;   // count jodne ke BAAD aage badho
+        return ans;
+    exactly = atMost(k) - atMost(k-1);   // <=k me se <=k-1 hatao, sirf exactly k bache
+
+WHY (bucket): atMost(k) = CUMULATIVE dabba = (distinct=1) + (distinct=2) + ... + (distinct=k).
+              atMost(k-1) = wahi bina aakhri layer.  ghata do -> sirf (distinct=k) bacha (baaki cancel).
+              jaise bade dabbe me se chhota nikaalo -> extra layer = exactly k.
+
+DRY  : [1,2,1,2,3], k=2   -- atMost(2) = konse subarray?
+           distinct=1 (5):  [1] [2] [1] [2] [3]
+           distinct=2 (7):  [1,2] [2,1] [1,2] [2,3] [1,2,1] [2,1,2] [1,2,1,2]   <- ANSWER
+           atMost(2) = 5 + 7 = 12  (distinct 1 aur 2 dono gine)
+           atMost(1) = 5           (sirf distinct=1)
+           12 - 5 = 7 ✓            (distinct=1 dono me tha -> cancel, sirf exactly-2 bache)
+
+★ k=1 pe special-case NAHI: atMost(0) naturally 0 -> subtraction rehne do.
+★ TRAP: atMost me ans = 0 (max-template se copy karo to INT_MIN reh jaata -> k=1 pe garbage).
+
+FAMILY: fruit-into-baskets · longest-k-distinct · (koi bhi "exactly K" -> atMost(k)-atMost(k-1))
+```
 
 ```cpp
 int atMostK(vector<int> &fruits, int k) {
@@ -1254,6 +1704,8 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
 ```
 TASVEER (purani sheet se, same to same):
 
+TASVEER (purani sheet se, same to same):
+
 ┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
 │ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
 └───────────────────────────────────────────────────────────────
@@ -1269,6 +1721,14 @@ TASVEER (purani sheet se, same to same):
           }
           j++;   // shrink ke BAAD agla char lo
       }
+
+s ka sabse CHHOTA window jisme t ke saare char.  count = t.size().   // minLen=INT_MAX, index=0 (substr ka start), i=j=0
+    if(mp[s[j]]>0) count--;  mp[s[j]]--; // EXPAND
+    while (count == 0) {                 // INNER: VALID -> shrink + SAVE (answer andar)
+        len=j-i+1; if(len<minLen){minLen=len; index=i;}   // record PEHLE: abhi [i..j] valid, i++ ke baad shayad nahi
+        mp[s[i]]++; if>0 count++; i++;   // wapas ++; >0 hua = t ka zaroori char gaya, count++
+return minLen==INT_MAX ? "" : s.substr(index, minLen).   // INT_MAX bacha = koi valid window nahi mila -> khaali string
+DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
 ```
 
 ```cpp
@@ -1301,6 +1761,43 @@ string minWindow(string s, string t) {
 
 ### ▸ LC-1358 SUBSTRINGS WITH ALL THREE (a, b, c)  
 `"abcabc" -> 10`. Kitne substring jinme a, b, c teeno.
+
+```
+TASVEER (purani sheet se, same to same):
+
+IDEA:
+   = LC-76 ka SAME code reuse:  numberOfSubstrings(s) = minWindow(s, "abc")
+     farak sirf answer ki line:
+         LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (sabse chhoti)
+         LC-1358 : while ke BAAD  -> ans += i                        (ginti)
+   ans += i KYUN: shrink window ko invalid hone tak le jaata -> 0 se i-1 tak har start valid tha -> i substring.
+      "abcabc": har j pe i = 0,0,1,2,3,4 -> jod 10
+
+TEMPLATE:
+   t = "abc"  (count = 3 = t.size()).   // ans=0 se (count jod rahe)
+   while (j < n) {                                 // OUTER: j (right) aage
+       if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
+       while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // INNER: shrink to INVALID
+       ans += i;                                   // outer ke ANDAR, inner-while ke BAAD -> har j pe
+   CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+= LC-76 ka SAME minWindow() -- literally REUSE: numberOfSubstrings(s) = minWindow(s, "abc").
+  farak SIRF answer-line:
+      LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
+      LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
+  WHY ans += i: shrink INVALID tak -> i = kitne valid left-starts. hand-trace "abcabc": i = 0,0,1,2,3,4 -> sum 10.
+t = "abc"  (count = 3 = t.size()).
+while (j < n) {                                 // OUTER: j (right) aage
+    if(mp[s[j]]>0) count--;  mp[s[j]]--;        // EXPAND (same)
+    while (count == 0) { mp[s[i]]++; if>0 count++; i++; }   // INNER: shrink to INVALID
+    ans += i;                                   // outer ke ANDAR, inner-while ke BAAD -> har j pe
+    j++;
+}
+WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
+CODE: numberOfSubstrings(s) = minWindow(s, "abc")  -- wahi SW function reuse, bas t="abc" pass.
+```
 
 ```cpp
 // LC-76 se alag file / naam me rakhna: same naam, return type alag -> saath compile nahi hoga
@@ -1339,6 +1836,19 @@ int numberOfSubstrings(string s) {
 ### ▸ LC-438 FIND ALL ANAGRAMS  
 `s="cbaebabacd", p="abc" -> [0,6]`. s me p ke saare anagram ki start index.
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
+TEMPLATE:
+    bool isAnagram(a,b): size same + har char count barabar (map: a se ++, b se --, sab 0 -> true).
+        while(j-i+1 > p.size()) i++;                          // window ko p-size pe rakho (FIXED)
+        if(j-i+1 == p.size())   // == : window poora p-size hua tabhi check (shuru me chhota)
+            if(isAnagram(s.substr(i, j-i+1), p)) ans.push_back(i);  // anagram -> START-index push
+        j++;   // check ke BAAD aage badho
+valid-anagram helper reuse. fixed-window slide + har full-window pe check.
+```
+
 ```cpp
 bool isAnagram(string s, string t) {
     if (s.size() != t.size())
@@ -1373,6 +1883,25 @@ vector<int> findAnagrams(string s, string p) {
 ### ▸ LC-567 PERMUTATION IN STRING  
 `s1="ab", s2="eidbaooo" -> true`. Kya s2 me s1 ka koi anagram (permutation) lagaatar substring ban ke maujood hai? true ya false.
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
+= FIND-ALL-ANAGRAMS ka SAME code -- REUSE: checkInclusion(s1,s2) = findAnagrams(s2, s1).
+  farak SIRF answer-line:
+      LC-438 : isAnagram mila -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
+      LC-567 : isAnagram mila -> return true        ... loop-baad: return false  (pehla match = bool)
+CODE (findAnagrams; skeleton LC-438 wala, sirf answer-handle badla):
+        while(j-i+1 > p.size()) i++;                  // window ko p-size pe rakho (FIXED)
+        if(j-i+1 == p.size())   // == : window poora p-size hua tabhi check (shuru me chhota)
+                return true;                          // <- DELTA: push ki jagah return true
+        j++;   // check ke BAAD aage badho
+    return false;                                     // loop-baad: koi na mila
+checkInclusion(s1,s2) = findAnagrams(s2, s1).
+
+LONGEST vs SHORTEST (yaad rakh): LONGEST -> shrink jab INVALID, ans=MAX. SHORTEST (min-len) -> shrink jab VALID, ans=MIN.
+```
+
 ```cpp
 // LC-438 se alag rakhna: same naam, return type alag
 bool findAnagrams(string s, string p) {
@@ -1401,6 +1930,25 @@ bool checkInclusion(string s1, string s2) {
 
 ### ▸ LC-239 SLIDING WINDOW MAXIMUM  
 `[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`. Har k size ki window ka sabse bada number lautao.
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING) -> front = window ka max.
+CONNECT : back-pop (nums[back]<=nums[i]) = MONOTONIC banana -- ye UNIVERSAL (stack ho ya deque, wahi cheez; isi se monotonic).
+          DEQUE lene ki ASLI (aur AKELI) wajah = WINDOW-EXPIRY: front se purana index hatana (dq.front()==i-k -> pop_front).
+          = monotonic STACK + bas wahi 1 window-front-expiry delta. (front-pop hamesha EXISTING element hota, naya nahi.) order dono me matter.
+CORE : nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo max ban hi nahi sakte) -> pop_back.
+★ ORDER MATTERS (warna galat ans): (1) front-expiry -> (2) monotonic-clean + push -> (3) record. record hamesha LAST.
+TEMPLATE:
+    deque<int> dq;  vector<int> ans;                              // dq = INDICES, front = MAX
+        if(!dq.empty() && dq.front()==i-k) dq.pop_front();        // 1) front-index window se bahar (==i-k) -> hata (!dq.empty() pehle: khaali deque pe front() crash)
+        while(!dq.empty() && nums[dq.back()]<=nums[i]) dq.pop_back(); // 2) chhote bekaar -> pop (<= : barabar wala purana bhi bekaar, naya zyada der tikega)
+        dq.push_back(i);   // value nahi INDEX daalo: expiry check ke liye index chahiye
+        if(i>=k-1) ans.push_back(nums[dq.front()]);               // 3) window poora -> front=max (k-1 = pehle poore window ka aakhri index)
+TRAP: deque me INDICES (values nahi -- expiry ke liye index chahiye) · front-expiry ==i-k kaafi (har step check) · record sirf i>=k-1.
+FAMILY: MIN chahiye -> pop_back condition ULTA (nums[back] >= nums[i]).
+```
 
 ```cpp
 vector<int> maxSlidingWindow(vector<int> &nums, int k) {
@@ -1466,6 +2014,20 @@ Ek akshar hamesha ek hi akshar banega, aur do alag akshar ek hi akshar nahi ban 
 s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : s->t har char ka 1-to-1 mapping (bijection)? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false.
+KEY  : 2 MAP dono taraf -- mp1=s->t, mp2=t->s. ek map kaafi nahi ("ab"->"aa" clash sirf ULTI-taraf pakadta).
+CLASH: mp.count(key)==1 && mp[key]!=val. dono taraf check, || (kisi ek taraf bhi clash -> false).
+TEMPLATE:
+    for(i=0..n-1){
+        if( (mp1.count(s[i]) && mp1[s[i]]!=t[i]) || (mp2.count(t[i]) && mp2[t[i]]!=s[i]) )   // count() pehle: seedha mp1[x] khaali key bana ke galat clash deta
+            return false;   // kisi bhi taraf clash = mapping 1-to-1 nahi
+        mp1[s[i]]=t[i];  mp2[t[i]]=s[i];   // check ke BAAD dono taraf mapping save
+    return true;   // poora chal gaya bina clash = isomorphic
+```
+
 ```cpp
 bool isIsomorphic(string s, string t) {
     unordered_map<char, char> mp1;          // s -> t
@@ -1490,6 +2052,24 @@ Ek pattern (akshar) aur ek string s (space se alag words) di hai. Kya pattern ka
 Isomorphic jaisa hi, bas akshar ki jagah word. true ya false lautao.
   e.g. "abba", "dog cat cat dog" -> true
   kyun: a->dog, b->cat; a b b a = dog cat cat dog, mapping kahin nahi tooti
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+= ISOMORPHIC ka SAME 2-map clash-check. REUSE: wahi mp1/mp2 || check, bas char <-> WORD.
+  farak SIRF 3 delta:
+      (1) INPUT: char[] ki jagah word-stream -> stringstream ss(s); while(ss>>word).
+      (2) KEY  : pattern[i] <-> word  (char<->char nahi).
+      (3) GUARD: end me pattern.size()==j (word-count) -> warna false ("a","dog cat" galat-true se bache).
+TEMPLATE:
+    stringstream ss(s); string word; int i=0, j=0;   // i = pattern ka index, j = words ki ginti
+            if( (mp1.count(pattern[i]) && mp1[pattern[i]]!=word) || (mp2.count(word) && mp2[word]!=pattern[i]) )
+                return false;                       // <- ISOMORPHIC ki EXACT clash-line, bas char->word
+            mp1[pattern[i]]=word; mp2[word]=pattern[i]; i++;   // check ke BAAD save, phir agla pattern char
+        j++;   // if ke BAHAR: har word gino, extra word bhi (end check ke liye)
+    return pattern.size()==j;   // words ki ginti == pattern ki length, warna false
+EDGE: words ki ginti (j) == pattern.size() honi chahiye (warna "a","dog cat" galat true). end me pattern.size()==j -> true.
 ```
 
 ```cpp
@@ -1528,6 +2108,13 @@ Jawab hamesha ek hi hai, aur ek hi number do baar nahi le sakte.
   kyun: nums[0] + nums[1] = 2 + 7 = 9
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+map me {value -> index}. har num pe dekho: (target - num) map me HAI? -> haan to jodi mil gayi (dono index).
+ek pass: pehle CHECK phir daalo (taaki num khud se na match kare).   // mp.find(target-num) se check · mila -> return {mp[target-num], i}
+```
+
 ```cpp
 vector<int> twoSum(vector<int> &nums, int target) {
     unordered_map<int, int> mp;             // {value -> index}
@@ -1546,6 +2133,13 @@ vector<int> twoSum(vector<int> &nums, int target) {
 Do string s aur t di hain. Kya t, s ka anagram hai, matlab dono me same akshar utni hi baar hain, bas kram alag ho sakta hai? true ya false lautao.
   e.g. "anagram", "nagaram" -> true
   kyun: dono me a=3, n=1, g=1, r=1, m=1
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+dono me har char ka count barabar? count-array[26] (ya map): string-1 se ++, string-2 se -- -> sab ZERO -> anagram.
+(length alag -> turant false.)   // end me koi count != 0 -> false (sirf >0 nahi, -ve bhi aata)
 ```
 
 ```cpp
@@ -1576,6 +2170,28 @@ Strings ka ek array diya hai. Jo strings aapas me anagram hain (same akshar, kra
 brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CACHE -> O(n · k log k)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+DERIVE: brute = har jodi check "anagram hai?" O(n² · k) -> baar-baar wahi letters gin rahe
+        -> har word ki ek pehchaan (KEY) bana ke map me CACHE -> O(n · k log k).
+DS = unordered_map<string, vector<string>>   ·   KEY = sorted(word)
+
+  for (auto &w : strs) {
+      string key = w;   // copy lo: asli word sort hua to group me galat word jaata
+      sort(key.begin(), key.end());      // "tea" -> "aet"
+      mp[key].push_back(w);              // same key = same group
+  for (auto &p : mp) ans.push_back(p.second);   // map ki har list = ek group
+
+★ KEY ka doosra roop (sirf a-z ho to): 26 ki ginti  "1#0#0#...#"  -> sort nahi, O(n · k).
+  (separator zaroori: bina "#" ke a=1,b=11 aur a=11,b=1 dono "111" ban jaate)
+★ "" (khaali string) bhi chalta: sorted("") = "" -> ek hi group.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+anagrams ka SORTED-roop same hota -> har word SORT karo = KEY -> map<sortedKey, list<word>> me daalo -> lists hi groups.
+```
+
 ```cpp
 vector<vector<string>> groupAnagrams(vector<string> &strs) {
     unordered_map<string, vector<string>> mp;   // KEY = sorted(word) -> us group ke words
@@ -1601,6 +2217,15 @@ Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinka jod theek 
 Array me minus number bhi ho sakte hain.
   e.g. [1,2,3], k=3 -> 2
   kyun: [1,2] = 3 aur [3] = 3; baaki [1],[2],[2,3],[1,2,3] nahi
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+prefix-sum + hashmap {prefixSum -> count}. running sum chalao; count += mp[sum - k], phir mp[sum]++.
+mp[0]=1 se START zaroori (jab sum khud == k ho, tab prefix-0 chahiye). idea: pichla prefix jahan se ab tak k bana.
+★ mp[sum - k], k - sum NAHI. ODOMETER: abhi 15 km (sum) - aakhri tukda 5 (k) = 10 km pe tukda shuru -> "10 kitni baar dikha?"
+  BADA (jahan hoon) pehle. Two Sum ka "target - x" ulta yahan mat lagao: x + y = target  vs  sum - pichhla = k.
 ```
 
 ```cpp
@@ -1647,7 +2272,7 @@ rem = ((A[i]%k)+k)%k;   count += mp[(k-rem)%k];   mp[rem]++;   // +k phir %k: C+
    yehi hai partner = (k - rem) = 3 - 1 = 2.
    (rem=0 aaya -> partner = 3-0 = 3, par 3%3 = 0 -> partner 0.  isiliye (k-rem)%k.)
 
-   ── DRY-RUN (nums=[1,2,3,4,5], k=3  ->  4 pairs) ──
+── DRY-RUN (nums=[1,2,3,4,5], k=3  ->  4 pairs) ──
  rem = ((it)%k+k)%k :   1->1   2->2   3->0   4->1   5->2
 
  it  rem  partner=(k-rem)%k   mp[partner]   count    mp-after
@@ -1660,6 +2285,14 @@ rem = ((A[i]%k)+k)%k;   count += mp[(k-rem)%k];   mp[rem]++;   // +k phir %k: C+
 
  KEY: it=5 pe mp[1]=2 (element 1 aur 4 dono ka rem 1) -> ek saath 2 pair jude.
  LOOKUP pehle, INSERT baad (khud-se-pair na gine).
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+count pairs (i<j): (A[i]+A[j])%k==0.
+DERIVE: brute O(n²) har pair -> "partner pehle aaya?" baar-baar -> partner ko hashmap me CACHE -> O(n).
+★ A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har element ka apna remainder.
+sum = ((A[i]%k)+k)%k;   count += mp[(k-sum)%k];   mp[sum]++;
+   partner = (k-sum)%k · lookup PEHLE phir insert (warna khud-se-pair).
 ```
 
 ```cpp
@@ -1693,8 +2326,18 @@ TASVEER (purani sheet se, same to same):
 
 INPUT: [100,4,200,1,3,2] -> 4   (1,2,3,4 = chain; 100/200 akele)
 
+SAAR: sort(O(nlogn)) mat karo -> SET me daal ke O(1) lookup. har CHAIN sirf uske START se gino.
 KEY: num START hai TAB HI jab (num-1) set me NAHI -> warna wo kisi chain ke BEECH ka -> skip.
      -> har element zindagi me 1 hi baar visit -> O(n)  (warna har num se ginti = O(n^2)).
+
+TEMPLATE:
+  unordered_set<int> st(nums.begin(), nums.end());   // set: O(1) lookup + duplicate apne aap hat jaate
+  int ans = 0;   // 0 se: khaali array pe koi chain nahi -> 0
+  for (auto &num : st) {     // set pe ghoomo (nums pe = duplicate start baar-baar -> O(n^2))
+     if (!st.count(num-1)) {                 // chain ka START
+        int currNum = num, count = 1;   // count=1: START wala number khud chain me
+        while (st.count(currNum+1)) { currNum++; count++; }   // agla number set me hai tab tak chain lambi karo
+  return ans;                                // khali array -> 0
 
 DRY-RUN [100,4,200,1,3,2]  set={1,2,3,4,100,200}:
   100 -> 99 nahi -> START -> 101? nahi        -> count=1
@@ -1705,6 +2348,20 @@ DRY-RUN [100,4,200,1,3,2]  set={1,2,3,4,100,200}:
   => ans = 4
 
 FAMILY: hashing/SET (O(1) lookup se sort bachao). trick = "har group sirf START se process".
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+TEMPLATE:
+unordered_set<int> st(nums.begin(), nums.end());
+int ans = 0;
+for (auto &num : nums) {
+   if (!st.count(num-1)) {                 // chain ka START
+      int currNum = num, count = 1;
+      while (st.count(currNum+1)) { currNum++; count++; }
+      ans = max(ans, count);
+   }
+}
+return ans;                                // khali array -> 0
 ```
 
 ```cpp
@@ -1736,6 +2393,14 @@ Ek array me ek number aadhe se zyada baar (n/2 se zyada) aata hai, aur aisa numb
   kyun: n = 7, 2 aaya 4 baar > 7/2 = 3
 
 map se: mp[x]++, count > n/2 wala return -> O(n) time, O(n) space (seedha)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+map se: mp[x]++; count > n/2 wala return. O(n) time, O(n) space. (seedha.)
+BOYER-MOORE VOTING (O(1) space): majority n/2 se zyada -> baaki sab milkar bhi kam -> do ALAG element CANCEL karo, majority bachega.
+  candidate + count. ==candidate -> count++ · !=candidate -> count-- · count==0 -> candidate=nums[i], count=1 (0 chhoda to -1 me chala jaayega, reset kabhi nahi -> BUG). end: candidate = ans.
 ```
 
 ```cpp
@@ -1774,8 +2439,13 @@ TASVEER (purani sheet se, same to same):
 
 INPUT: [4,3,2,7,8,2,3,1] -> [5,6]
 
+SAAR: extra set/map nahi -> ARRAY KHUD ko hashmap banao. "value v dikha" ka nishaan = index (v-1) ko NEGATIVE.
 KEY: value v -> uska ghar = index v-1. jo value dikhi us index ko -ve mark. end me jo index abhi bhi +ve
      -> us index+1 kabhi mark nahi hua -> MISSING. (abs() lo kyunki value pehle -ve ho chuki ho sakti.)
+
+TEMPLATE:
+  for (int i=0;i<n;i++){ int idx = abs(nums[i])-1; if (nums[idx]>0) nums[idx] = -nums[idx]; }   // >0 check: duplicate pe dobara minus = wapas plus
+  for (int i=0;i<n;i++) if (nums[i]>0) ans.push_back(i+1);   // i+1: index i ka ghar value i+1 ka (1-based)
 
 DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
   -> +ve bache index 4,5 -> missing = 5,6.
@@ -1922,6 +2592,12 @@ Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1
   kyun: index 3 (6): left 1+7+3 = 11, right 5+6 = 11
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+total nikaalo; leftSum chalao. order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
+```
+
 ```cpp
 int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum (khud kisi taraf nahi)
     int totalSum = 0;
@@ -1948,6 +2624,18 @@ Bhaag (division) nahi lagana, O(n) me karna hai.
 
 ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
 O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+ans[i] = (i se PEHLE sabka product) × (i ke BAAD sabka product).  no division, O(n).
+running `prod` se 2 pass (assign-BEFORE-update dono me):
+   left-pass  (aage):    left[i]  = prod;  prod *= nums[i];   // prod=1 se shuru: index 0 ke left me koi nahi
+   right-pass (peeche):  prod=1;  right[i] = prod;  prod *= nums[i];   // prod=1 reset: left-pass ka bacha product saath mat lao · loop i=n-1 se i>=0 tak
+   combine:              ans[i] = left[i] * right[i].
+ORDER TRAP: pehle ASSIGN (left[i]=prod), PHIR UPDATE (prod*=nums[i]) -> warna khud ka element bhi product me ghus jaata.
+O(1) extra (follow-up poochhe to): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi).
 ```
 
 ```cpp
@@ -1982,6 +2670,12 @@ Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak a
   kyun: altitude 0, -5, -4, 1, 1, -6 -> max 1
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+running sum chalao, max track. (simple prefix)   // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
+```
+
 ```cpp
 int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (simple prefix)
     int sum = 0;
@@ -2003,6 +2697,16 @@ Ek array (plus aur minus dono) aur ek number k diya hai. Kitne lagaatar subarray
 
 brute: har subarray sum baar-baar -> PREFIX -> do prefix ka remainder same = beech wala %k==0
 PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+count subarrays: sum%k==0.
+DERIVE: brute har subarray ka sum baar-baar -> redundancy -> running PREFIX sum -> do prefix ka remainder same = beech ka subarray %k==0.
+★ PREFIX KYUN, single A[i] NAHI: subarray = CONTIGUOUS range -> poore range ka sum chahiye -> do prefix ka farak = wahi subarray.
+rem = ((sum%k)+k)%k;   count += mp[rem];   mp[rem]++;   // +k phir %k: negative sum ka % negative aata, alag bucket me jaata
+   mp[0]=1 SEED (khaali-prefix) · = subarray-sum-k, bas KEY = remainder (sum ki jagah).   // har step pehle sum += A[i], PHIR rem nikaalo
 ```
 
 ```cpp
@@ -2032,6 +2736,26 @@ Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinke saare numb
 beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni baar aaya
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
+★ CHAABI:  x ^ x = 0   (same number khud se XOR = gayab)
+   isliye  (shuru se j tak ka XOR) ^ (shuru se i tak ka XOR) = beech wala subarray ka XOR   (common hissa kat gaya)
+   chahiye beech wala = k  ->  pichhla XOR = abhi ka XOR ^ k  ->  map me dekho kitni baar aaya
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
+= SUBARRAY-SUM-K ka HUBAHU copy, sirf sign badle:
+   sum wale me:  complement = curSum - k      (a+b=c -> c-b=a)
+   XOR wale me:  complement = curXor ^ k      (a^b=c -> c^b=a)   [4^2=6 to 4^6=2]
+xorr ^= it;   count += mp[xorr ^ k];   mp[xorr]++;
+   mp[0]=1 SEED · complement mila -> count+ · same complement dobara -> count double (sum jaisa).
+
+common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
+```
+
 ```cpp
 int subarrayXorK(vector<int> &nums, int k) {
     unordered_map<int, int> mp;
@@ -2058,6 +2782,25 @@ valid = (har element <= K) AND (>=1 element == K)
 K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 ═════════════════════════ ★ EDGE ═════════════════════════════════════
 "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+valid = (har element <= K) AND (>=1 element == K).
+
+★ TRAP-instinct (jo dhoka deta): "subarray"->SW · "max"->monotonic STACK · "count"->PQ.
+   SAB galat -> max FIXED-K se compare (relative nahi) -> stack/SW ki zaroorat NAHI. SIMPLE LINEAR scan.
+
+KEY INSIGHT: K se BADE elements = WALL (array ko todte). segment ke andar K-wale subarrays gino.
+do INDEX track (dono init -1):   // -1: abhi koi wall/K nahi, start index 0 se gino
+   lastWall = aakhri index jahan arr[i] > K
+   lastK    = aakhri index jahan arr[i] == K
+har i pe:  if (lastK > lastWall)  count += (lastK - lastWall);   // start-choices = lastWall+1 .. lastK · pehle lastWall/lastK update, PHIR count
+★ guard lastK > lastWall KYUN: warna (lastK - lastWall) NEGATIVE (K kisi wall ke peeche dab gaya) -> count galat. ([5,3,5] pe dikhta)
+★ count ~n^2/2 (5e9) -> LONG LONG (int overflow).
+
+common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
 ```
 
 ```cpp
@@ -2093,10 +2836,18 @@ har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek b
 ```
 TASVEER (purani sheet se, same to same):
 
- └────────────────────────────────────────────────────────────
+└────────────────────────────────────────────────────────────
 KAB : "har RANGE pe kuch ADD karo" — aur aise 20,000 range hain.
       seedha karo to har range pe loop = O(range × length). Chahiye O(n + ranges).
+SAAR: har element ko CHHUO MAT. Sirf DO jagah nishaan lagao — jahan se shuru, aur jahan se khatam.
       phir ek baar chal ke chalti-sum lo — wahi asli value hai.
+
+TEMPLATE:
+    vector<int> diff(n + 2, 0);                   // ★ n+2 (end+1 ka max n+1 ho sakta)
+        diff[ it[0] ]     += it[2];               // yahan se shuru
+        diff[ it[1] + 1 ] -= it[2];               // yahan ke BAAD khatam (+1: last din bhi inclusive, uske agle din se hatao)
+    vector<int> ans;  int run = 0;   // run=0: chalti-sum abhi khaali
+    for (int i = 1; i <= n; i++) { run += diff[i]; ans.push_back(run); }   // 1..n: flights 1-based, diff[0] aur diff[n+1] answer me nahi
 
 DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
     diff:   idx  1    2    3    4    5    6
@@ -2166,6 +2917,14 @@ m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do
   kyun: 0 cell (1,1) pe -> row 1 aur col 1 poore 0, baaki same
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+TRICK: 2 marker-array -> zeroRow[row], zeroCol[col]. pass-1: cell==0 pe row+col mark; pass-2: marked ho to 0. (in-place, O(m+n) space)
+  pass-1:  for i,j:  if(matrix[i][j]==0){ zeroRow[i]=1; zeroCol[j]=1; }   // init -1 = unmarked · 2 pass: ek me hi 0 kiya to naye 0 bhi mark ho jaate
+  pass-2:  for i,j:  if(zeroRow[i]==1 || zeroCol[j]==1)  matrix[i][j]=0;   // || : row ya col me se koi ek bhi marked ho to 0
+```
+
 ```cpp
 void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m+n) space
     int row = matrix.size();
@@ -2191,6 +2950,61 @@ void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m
 m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf, ghadi ki sui ki disha me) ek list me lautao.
   e.g. [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
   kyun: upar 1,2,3 -> right col 6,9 -> neeche ulta 8,7 -> left col upar 4 -> beech 5
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
+TEMPLATE:
+    int top=0, bottom=row-1, left=0, right=col-1;   // row-1/col-1: boundary inclusive, isliye neeche saare loop <=
+    while(top<=bottom && left<=right){   // <= : ek akeli row ya col bachi ho tab bhi chhaapni hai
+        for(int i=left; i<=right; i++)  ans.push_back(matrix[top][i]);     top++;   // top row L->R (top++ turant: right col wala loop ye corner dobara na le)
+        for(int i=top; i<=bottom; i++)  ans.push_back(matrix[i][right]);   right--; // right col T->B (right-- turant: bottom row wala loop ye corner dobara na le)
+        if(top<=bottom){                                                   // GUARD (ek hi row thi to top++ ke baad wahi row ulti dobara chhap jaati)
+            for(int i=right; i>=left; i--) ans.push_back(matrix[bottom][i]); bottom--; // bottom row ulta R->L; bottom-- : ye row ho gayi
+        if(left<=right){                                                   // GUARD (ek hi col thi to right-- ke baad wahi col ulti dobara chhap jaati)
+            for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col neeche se upar; left++ : ye col ho gayi
+GUARD — jo loop jis row/col pe chal raha, guard USI ka:
+   3rd loop  BOTTOM row chhaap raha  ->  if (top <= bottom)
+             matlab bottom abhi bhi top se NEECHE/barabar hai -> bottom row bachi hai -> chhaapo
+   4th loop  LEFT col chhaap raha    ->  if (left <= right)
+             matlab left abhi bhi right se PEHLE/barabar hai -> left col bachi hai -> chhaapo
+   1st/2nd loop (top row, right col) pe guard NAHI -> while(top<=bottom && left<=right) bacha leta
+
+GUARD — kyun?
+   sawaal: "jo row / col ab chhaapne ja raha, wo ABHI BACHI hai?"
+   ek hi row ya ek hi col bachi ho to ulti disha wala loop WAHI dobara chhaap deta
+
+   [[1,2,3]]  ek row
+      top row:  1 2 3   ->  top++  ->  top=1, bottom=0
+      right col: (i=1..0) kuch nahi  ->  right--  ->  right=1
+      bottom row?  top <= bottom ?  1 <= 0  NO  -> skip   (warna 2 1 dobara)
+
+   [[1],[2],[3]]  ek col
+      top row: 1  ->  top=1  ·  right col: 2 3  ->  right--  ->  left=0, right=-1
+      bottom row: guard paas, par (i=-1..0) kuch nahi  ->  bottom=1
+      left col?    left <= right ?  0 <= -1 NO  -> skip   (warna 2 dobara)
+
+index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
+TEMPLATE:
+    int top=0, bottom=row-1, left=0, right=col-1;
+    while(top<=bottom && left<=right){
+        for(int i=left; i<=right; i++)  ans.push_back(matrix[top][i]);     top++;   // top row L->R
+        for(int i=top; i<=bottom; i++)  ans.push_back(matrix[i][right]);   right--; // right col T->B
+        if(top<=bottom){                                                   // GUARD
+            for(int i=right; i>=left; i--) ans.push_back(matrix[bottom][i]); bottom--; // bottom row R->L
+        }
+        if(left<=right){                                                   // GUARD
+            for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col B->T
+        }
+    }
+GUARD kyun: last 2 loops (bottom-row / left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push.
+index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
 ```
 
 ```cpp
@@ -2230,6 +3044,12 @@ m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix
   kyun: pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+[ans[i][j] = matrix[j][i];] naya matrix col×row size ka.   // ans(col, vector<int>(row)) · outer i<col, inner j<row
+```
+
 ```cpp
 vector<vector<int>> transpose(vector<vector<int>> &matrix) {
     int row = matrix.size();
@@ -2257,6 +3077,8 @@ Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
 ```
 TASVEER (purani sheet se, same to same):
 
+TASVEER (purani sheet se, same to same):
+
    count kitne communicate (jo apni row+col DONO me akela -> nahi ginte).
 INPUT: [[1,0],[1,1]] -> 3   ·   [[1,0],[0,1]] -> 0 (dono akele)
 
@@ -2266,6 +3088,28 @@ DRY-RUN [[1,0],[1,1]]:
     (0,0): row0=1, col0=2>1 -> YES
     (1,0): row1=2>1          -> YES
     (1,1): row1=2>1          -> YES     => 3
+FAMILY: = SET MATRIX ZEROES (zeroRow/zeroCol -> yahan rowCount/colCount). counting-family. O(m*n).
+
+SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
+TEMPLATE:
+    vector<int> rowCount(m,0), colCount(n,0);   // 0 se: abhi kisi row/col me koi server gina nahi
+    for i,j: if(grid[i][j]==1){ rowCount[i]++; colCount[j]++; }              // pass-1: pehle poori ginti, tabhi pass-2 me pata akela hai ya nahi
+    for i,j: if(grid[i][j]==1 && (rowCount[i]>1 || colCount[j]>1)) ans++;    // pass-2 CHECK (>1: khud ke alawa koi aur server; || : row ya col koi ek kaafi)
+DRY-RUN [[1,0],[1,1]]:
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
+    rowCount[i], colCount[j]. akela pehchano -> count==1 dono me.
+TEMPLATE:
+  vector<int> rowCount(m,0), colCount(n,0);
+  for i,j: if(grid[i][j]==1){ rowCount[i]++; colCount[j]++; }              // pass-1 COUNT
+  for i,j: if(grid[i][j]==1 && (rowCount[i]>1 || colCount[j]>1)) ans++;    // pass-2 CHECK
+DRY-RUN [[1,0],[1,1]]:
+  pass-1:  rowCount=[1,2]  colCount=[2,1]
+  (0,0): row0=1, col0=2>1 -> YES
+  (1,0): row1=2>1          -> YES
+  (1,1): row1=2>1          -> YES     => 3
 FAMILY: = SET MATRIX ZEROES (zeroRow/zeroCol -> yahan rowCount/colCount). counting-family. O(m*n).
 ```
 
@@ -2332,7 +3176,15 @@ TASVEER (purani sheet se, same to same):
 
 INPUT: [2,1,2,4,3] -> [4,2,4,-1,-1]
 
+SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
       (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
+TEMPLATE:
+  vector<int> ans(nums.size(), -1);   // -1 init: jisko daaye bada na mile wo -1 hi rahe
+  stack<int> st;                                       // INDEX rakho: ans[st.top()] me likhne ko position chahiye
+     while (!st.empty() && nums[st.top()] < nums[i]) { // top se curr BADA -> top ko answer mila (barabar = bada nahi, isliye sirf <)
+        ans[st.top()] = nums[i];  st.pop();   // pehle ans likho, phir pop: pop ke baad top() badal jaata
+     st.push(i);   // while ke BAAD push: pehle chhote top nipta, phir curr khud intezaar me
+  }                                                    // end tak bache -> koi bada nahi -> -1 (init)
 DRY-RUN [2,1,2,4,3]:
   i0(2): push            st=[0]
   i1(1): 2<1? no; push   st=[0,1]
@@ -2340,6 +3192,28 @@ DRY-RUN [2,1,2,4,3]:
   i3(4): 2<4 ans[2]=4; 2<4 ans[0]=4; push st=[3]
   i4(3): 4<3? no; push   st=[3,4]
   => ans=[4,2,4,-1,-1]
+FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
+    (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
+TEMPLATE:
+vector<int> ans(nums.size(), -1);
+stack<int> st;                                       // INDEX stack
+for (int i = 0; i < nums.size(); i++) {
+   while (!st.empty() && nums[st.top()] < nums[i]) { // top se curr BADA -> top ko answer mila
+      ans[st.top()] = nums[i];  st.pop();
+   }
+   st.push(i);
+}                                                    // end tak bache -> koi bada nahi -> -1 (init)
+DRY-RUN [2,1,2,4,3]:
+i0(2): push            st=[0]
+i1(1): 2<1? no; push   st=[0,1]
+i2(2): 1<2 ans[1]=2 pop; 2<2? no; push  st=[0,2]
+i3(4): 2<4 ans[2]=4; 2<4 ans[0]=4; push st=[3]
+i4(3): 4<3? no; push   st=[3,4]
+=> ans=[4,2,4,-1,-1]
 FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
 ```
 
@@ -2367,6 +3241,13 @@ Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (str
   kyun: 4 aur 5 ke aage pehla chhota 2 · 2 ke aage sab bade -> -1 · 10 ke aage 8 · 8 aakhri -> -1
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+= NEXT GREATER, bas DELTA: condition ULTA -> while nums[st.top()] > nums[i]  (bada -> chhota).
+  strictly (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, left->right, push, init -1) sab wahi.
+```
+
 ```cpp
 vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition ULTI
     vector<int> ans(nums.size(), -1);
@@ -2389,6 +3270,14 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
 Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
   e.g. [4,5,2,10,8] -> [-1,4,-1,2,2]
   kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+= NEXT SMALLER, bas DELTA: for-loop ULTA (right->left, i=n-1..0). condition wahi (>).
+  (peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
+USE: prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ka building block.
 ```
 
 ```cpp
@@ -2424,8 +3313,16 @@ TASVEER (purani sheet se, same to same):
 
 INPUT: [2,1,5,6,2,3] -> 10   (bars 5,6 -> min 5 * width 2)
 
+SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
       = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
 = PREV-SMALLER + NEXT-SMALLER ka WALL, bas DELTA: VALUE nahi INDEX store + combine loop.
+
+TEMPLATE:
+  nS = next-smaller INDEX   init n,   i = 0..n-1,   while h[st.top()] > h[i]   // none -> n (n = right ki bahar deewar, width sahi; > strict: barabar bar stopper nahi)
+  pS = prev-smaller INDEX   init -1,  i = n-1..0,   while h[st.top()] > h[i]   // none -> -1 (-1 = left ki bahar deewar, index 0 se pehle)
+  int ans = INT_MIN;   // INT_MIN: pehla area bhi max me aaye (height >= 0, to 0 bhi chalega)
+     int width = nS[i] - pS[i] - 1;   // -1: dono stopper khud rectangle me nahi
+     ans = max(ans, heights[i] * width);   // height = heights[i]: range me ye bar sabse chhota hai
 
 3 JAGAH DHYAAN:
   1. INDEX store, value nahi (width index se banti).
@@ -2495,6 +3392,37 @@ DRY-RUN (h=[2,1,5,6,2,3]):
 
 FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
         2D bhai = MAXIMAL RECTANGLE (har row = histogram, isi ko call).
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+MENTAL MODEL: HAR height pe KHADE ho -> dono taraf NEAREST-SMALLER (prev+next) -> width=next-prev-1 -> area=height*width -> MAX. bas.
+prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
+width = nS[i] - pS[i] - 1 · area = heights[i]*width · ans = max(ans, area).
+
+CODE = prev-smaller + next-smaller (INDEX version) + combine loop:
+  pS[i] = prev-smaller INDEX (none -> -1)     // left boundary
+  nS[i] = next-smaller INDEX (none -> n)      // right boundary (sentinel n, NA -1!)
+  int ans = INT_MIN;
+  for (int i=0; i<n; i++) {
+     int width = nS[i] - pS[i] - 1;
+     ans = max(ans, heights[i]*width);
+  }
+  (pS/nS = upar ka Next/Prev-Smaller template -- bas VALUE ki jagah INDEX store + NS ka sentinel = n.)
+
+TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
+TRICK 2: next-smaller "koi chhota nahi" -> sentinel = n (right-edge, bar END tak failta), NA -1. (-1 se width negative -> [2,4]: 2-(-1)-1=-1 galat; n=2 se 2-(-1)-1=2 -> area 4 sahi.) prev-smaller "none" = -1 sahi (left boundary).
+
+width=NS-PS-1 KYUN (derive): dono boundary (smaller) rectangle me NAHI -> bars PS+1 se NS-1 tak. count=last-first+1=(NS-1)-(PS+1)+1=NS-PS-1. (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat.)
+
+VISUAL (h=[2,1,5,6,2,3])  -- filled bars; ANSWER = dash-box (bars ke andar):
+
+  ANSWER (dash-box) = height 5 x width 2 = 10  (sabse bada)
+    i3 ka h=6 ka 6th block box ke UPAR (rectangle sirf 5 tall).
+
+TABLE:  idx: 0 1 2 3 4 5 · h: 2 1 5 6 2 3 · PS: -1 -1 1 2 1 4 · NS: 1 6 4 4 6 6 · width(NS-PS-1): 1 6 2 1 4 1 · area: 2 6 [10] 6 8 3 -> MAX 10.
+  bar5(idx2): PS=1(h1),NS=4(h2) -> rectangle DONO stoppers ke BEECH (c2,c3, dono>=5) = 2 chauda. first=PS+1=2, last=NS-1=3 -> 3-2+1=2. stoppers khud andar nahi.
+
+next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
 ```
 
 ```cpp
@@ -2552,6 +3480,17 @@ int largestRectangleArea(vector<int> &heights) {
 = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+= Largest-Rectangle-Histogram (LC-84) ka 2D bhai. HAR ROW ko histogram maano -> us pe LC-84 laga -> saare rows ka MAX.
+heights[] (size = COL, har column ki running height -- upar se neeche):
+   cell == 1 -> heights[j] += 1;    // upar wale 1s ke saath build-up
+   cell == 0 -> heights[j] = 0;     // column toot gaya -> RESET
+har row ke baad:  maxi = max(maxi, largestRectangleArea(heights));   // LC-84 code REUSE (prev/next-smaller + area)
+inner loop j (col), outer i (row).  heights COL-size ka (row nahi).   // heights(col,0), maxi=INT_MIN · call j-loop ke BAHAR
+```
+
 ```cpp
 int maximalRectangle(vector<vector<int>> &matrix) {
     int row = matrix.size();
@@ -2579,6 +3518,12 @@ temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad
   kyun: 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).   // ans(n,0): garam din na mile to 0 (-1 nahi) · < strict: barabar garam nahi
+```
+
 ```cpp
 vector<int> dailyTemperatures(vector<int> &temps) {
     int n = temps.size();
@@ -2602,6 +3547,25 @@ vector<int> dailyTemperatures(vector<int> &temps) {
 Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number aata hai. Har number ka agla bada number lautao, na mile to -1.
   e.g. [1,2,3,4,3] -> [2,3,4,-1,4]
   kyun: aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+same next-greater (monotonic stack), bas array CIRCULAR -> aakhri element ka greater SHURU me bhi ho sakta.
+vector<int> ans(n, -1);                          // size n (2n nahi) · na mile -> -1
+stack<int> st;                                   // INDEX rakho (0..n-1) -- jinka greater abhi nahi mila
+for (int i = 0; i < 2 * n; i++) {                // 2n: doosre chakkar me aakhri elements ko shuru wale dikhte (wrap)
+    while (!st.empty() && nums[st.top()] < nums[i % n]) {   // i % n = asli index (i 2n tak jaata, array n ka)
+        ans[st.top()] = nums[i % n];             // greater TOP ka mila -> ans[top] me likho (ans[i] me nahi)
+    st.push(i % n);                              // push i % n, i nahi (i >= n pe index bahar)
+[1,2,1]: pehle chakkar ke baad aakhri 1 (idx 2) stack me bacha -> doosre chakkar me i=4 -> 4%3=1 -> nums[1]=2
+         -> ans[2] = 2.  Isliye 2n.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+same monotonic, bas array CIRCULAR. trick: loop 2 BAAR (i: 0..2n-1), access i % n (mod).
+doosre chakkar me aakhri elements ko SHURU ka greater mil jaata (wrap). baaki wahi; na mile -> -1.
 ```
 
 ```cpp
@@ -2635,6 +3599,8 @@ Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao:
 ```
 TASVEER (purani sheet se, same to same):
 
+TASVEER (purani sheet se, same to same):
+
 INPUT: next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
 = monotonic stack ka DELTA -- 2 farak: (1) stack me INDEX nahi, PAIR {price, span}.
   (2) top.price <= aaj -> pop karke uska span APNE span me JODO (index-answer nahi, SUM).
@@ -2644,6 +3610,11 @@ FAMILY: monotonic-stack (next-greater base) + "answer = accumulated SPAN" delta 
 
 ┌── (STANDALONE — apni alag trick) ─────────────────────────────
 └───────────────────────────────────────────────────────────────
+
+TEMPLATE:
+     int span = 1;   // 1 se: aaj ka din khud bhi span me ginta
+     while(!st.empty() && st.top().first <= price){ span += st.top().second; st.pop(); }   // <= : barabar price wala din bhi span me; !st.empty() pehle warna top() crash
+     st.push({price, span});   return span;   // poora span saath push: aage bada din ise nigle to sab din jode
 ```
 
 ```cpp
@@ -2673,6 +3644,13 @@ public:
 Ek string me sirf ( ) [ ] { } hain. true lautao agar har khulne wala bracket sahi type ke bracket se aur sahi kram me band hota hai, warna false.
   e.g. "{[]}" -> true · "([)]" -> false
   kyun: "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+opening push; closing aaye to top se match+pop; end me stack KHALI = valid. (closing pe stack empty -> false)
+match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')   // topp=st.top() + pop pehle, phir match; na mile -> turant false
 ```
 
 ```cpp
@@ -2706,6 +3684,18 @@ Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalei
 class MinStack: push / pop / top / getMin sab O(1)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+DESIGN: push/pop/top/getMin SAB O(1). trick = min hamesha "ready" rakho, bina scan kiye.
+har element ke SAATH uska "yahaan tak ka MIN" store karo -> stack<pair<val, minSoFar>>.
+   push:   newMin = empty ? val : min(val, top().second);  push {val, newMin}.   // empty pehle: pehle element pe top() nahi hota, wahi min
+   getMin: top().second (O(1), koi loop nahi).   top: top().first.   pop: normal.
+KYUN pair (ek single min-var kyun NAHI): pop pe min WAPAS badal sakta -> purana min laut aata;
+   single var us history ko recover nahi kar paata. har element apna min saath -> pop pe neeche wala min apne-aap sahi.
+   (e.g. push 5,3,7 -> min 3 · pop 7 -> min still 3 · pop 3 -> min 5 WAPAS aa gaya.)
+```
+
 ```cpp
 class MinStack {                            // push / pop / top / getMin sab O(1)
 public:
@@ -2730,6 +3720,22 @@ public:
 Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki string valid ho jaaye, wo ginti lautao.
   e.g. "()))((" -> 4
   kyun: pehla () theek · agle do ')' ka koi '(' nahi -> 2 · aakhri do '(' band nahi hue -> 2 · total 4
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+COUNTER (stack nahi -- sirf '(' ')'). 2 counter (naam tere code se):
+   close_needed = kitne '(' abhi UNMATCHED khade (inhe aage ')' chahiye).
+   open_needed  = kitne ')' UNMATCHED aaye (inhe pehle '(' chahiye tha).
+'(' aaye  -> close_needed++                                          (ek open, iska close pending).
+')' aaye  -> close_needed > 0 ? close_needed-- (pending open se MATCH) : open_needed++ (koi open nahi -> ye ')' extra).
+ans = open_needed + close_needed                                     (dono bache = utne insert karne).
+TRAP: ')' match ho gaya to open_needed me MAT gino -- match = 0 insertion (nested "(())" -> 0).
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
 
 ```cpp
@@ -2758,6 +3764,18 @@ int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')'
 Sirf stack (push, pop, top, empty) ka use karke ek queue (pehle aaya, pehle gaya) banao: push(x) peeche daalta hai, pop() aage wala nikaalta hai, peek() aur empty() bhi chahiye.
   e.g. push(1) push(2) peek() -> 1 · pop() -> 1 · push(3) pop() -> 2 · pop() -> 3 · empty() -> true
   kyun: queue me jo pehle aaya wahi pehle nikalta -> 1, phir 2, phir 3, ab khaali
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+DESIGN: 2 stack -> input (push yahan) · output (pop / peek yahan se).
+push:        input.push(x).
+pop / peek:  output KHAALI ho tabhi input ka sab ulta karke output me daalo; phir output.top().   // pop: x=top() bachao, phir pop, return x
+empty:       dono khaali.
+KYUN "khaali ho tabhi": har element zindagi me sirf EK baar input -> output jaata
+   -> pop / peek amortized O(1). (har pop pe palatna = O(n), yahi interviewer poochta.)
+TRAP: output me kuch bacha ho aur tab input palat diya -> kram toot jaata (naye purano ke upar).
 ```
 
 ```cpp
@@ -2836,6 +3854,16 @@ Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mi
   kyun: 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+mid; target<mid -> left half, warna right. (low<=high: 1 element bacha tab bhi check; mid±1)   // mid=low+(high-low)/2 · loop ke bahar return -1
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+mid; target<mid -> left half, warna right. (low<=high, mid±1)
+```
+
 ```cpp
 int search(vector<int> &nums, int target) {
     int low = 0, high = nums.size() - 1;
@@ -2859,6 +3887,12 @@ Ek SORTED array (sab alag number) aur ek target diya hai. target mile to uska in
 Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
   e.g. [1,3,5,6], target=2 -> 1
   kyun: 2 na mila, 1 aur 3 ke beech jaayega -> index 1
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+basic BS; na mile to low return (wahi insert jagah).   // loop khatam: low = pehla index jahan nums >= target
 ```
 
 ```cpp
@@ -2891,6 +3925,8 @@ Na mile to {-1, -1}. O(log n) me karna hai.
 ```
 TASVEER (purani sheet se, same to same):
 
+TASVEER (purani sheet se, same to same):
+
    nahi mila -> {-1,-1}. O(log n).
 INPUT: [5,7,7,8,8,10], target 8 -> {3,4}
 
@@ -2912,6 +3948,36 @@ DHYAAN:
   1. dono pass ke beech low/high RESET.
   2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
   3. ans(2,-1) + index set karo, push_back mat milao.
+
+SAAR: normal BS, bas target MILNE pe RUKO MAT -> ans me likho, phir ek taraf aur dhoondo.
+
+TEMPLATE:
+  vector<int> ans(2, -1);                    // size fixed 2 -> ans(2,-1), push_back NAHI
+  int low = 0, high = n - 1;   // n-1: aakhri valid index, dono sire inclusive
+  while (low <= high) {                      // PASS 1 = FIRST (<= : low==high wala akela element bhi check)
+     int mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe int overflow
+     if (nums[mid] == target) { ans[0] = mid; high = mid - 1; }   // mila -> aur LEFT (high=mid-1: mid ans me save, ab usse pehle wala dhoondo)
+     else if (nums[mid] < target) low = mid + 1;   // mid chhota: target right me; mid khud nahi, isliye +1
+     else high = mid - 1;   // mid bada: target left me; mid khud nahi, isliye -1
+  low = 0, high = n - 1;                     // RESET, warna PASS 2 galat jagah se shuru
+  while (low <= high) {                      // PASS 2 = LAST (<= : low==high wala akela element bhi check)
+     int mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe int overflow
+     if (nums[mid] == target) { ans[1] = mid; low = mid + 1; }    // mila -> aur RIGHT (low=mid+1: mid ans me save, ab usse baad wala dhoondo)
+     else if (nums[mid] < target) low = mid + 1;   // mid chhota: target right me; mid khud nahi, isliye +1
+     else high = mid - 1;   // mid bada: target left me; mid khud nahi, isliye -1
+
+  idx :  0  1  2  3  4  5
+  val :  5  7  7  8  8 10
+
+DHYAAN:
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+sorted + duplicates. target ka {first, last} index. 2 BS, ans(2,-1). mila nahi -> {-1,-1}.
+CORE: mid==target pe RUKO MAT -> boundary tak ek side aur dhoondo.
+1st pass (FIRST): nums[mid]==target -> ans[0]=mid; high=mid-1   (aur LEFT dhoondo)
+2nd pass (LAST):  nums[mid]==target -> ans[1]=mid; low=mid+1    (aur RIGHT dhoondo)
+   baaki dono pass me normal: nums[mid] < target -> low=mid+1 · else -> high=mid-1.
 ```
 
 ```cpp
@@ -2955,6 +4021,20 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4
   kyun: [0,1,2,4,5,6,7] ghum ke [4,5,6,7,0,1,2] bana, 0 ab index 4 pe hai
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : sorted array pivot pe rotate ([4,5,6,7,0,1,2]). target ka INDEX, nahi mile -> -1.
+CORE : mid==target? return. warna -> ek half HAMESHA sorted -> wahi se decide:   // while(low<=high): akela element bacha tab bhi check
+    nums[low] <= nums[mid]  ->  LEFT half sorted:   (<= : low==mid ho to akela element bhi sorted)
+         nums[low] <= target <= nums[mid]  ? -> high = mid-1   :  low = mid+1   // nums[low] <= target: target low pe khud ho sakta, warna miss
+    else                    ->  RIGHT half sorted:
+         nums[mid] <= target <= nums[high] ? -> low = mid+1    :  high = mid-1   // target <= nums[high]: target high pe khud ho sakta, warna miss
+    har baar aadha kaat -> O(log n). loop khatam -> -1.
+BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
+         jahaan mid hai (already returned) -> < ya <= farak NAHI.
+```
+
 ```cpp
 int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka index, nahi -> -1
     int n = nums.size();
@@ -2987,6 +4067,14 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sabse chhota number lautao. O(log n) me.
   e.g. [3,4,5,1,2] -> 1
   kyun: 3,4,5 badhte gaye, 1 pe gira -> wahi ghumne ki jagah, wahi min
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+mid ko HIGH se compare (koi target nahi, khud min dhoondna). while(low<high): if(nums[mid]>nums[high]) low=mid+1; else high=MID; -> return nums[low].
+high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
+(ye wahi high=mid vs high=mid-1 rule -- find-peak jaisa: khud-answer-dhoondh -> high=mid+low<high; target-reject -> high=mid-1+low<=high.)
 ```
 
 ```cpp
@@ -3024,6 +4112,12 @@ Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo 
   kyun: k=4 -> 1+2+2+3 = 8 ghante, chal gaya · k=3 -> 1+2+3+4 = 10 > 8, nahi chalega
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+│       ceil-TRAP: int/int FLOOR karta -> use (piles[i]+mid-1)/mid. hours = long (overflow).   // ya ceil((double)piles[i]/mid): cast pehle
+```
+
 ```cpp
 bool solve(vector<int> &piles, int h, int mid) {
     long long hours = 0;                    // long long: bade piles pe sum overflow
@@ -3057,6 +4151,12 @@ weights[] me packet ka wazan diya hai. Inhe isi kram me D din me bhejna hai, aur
 Sabse kam capacity kitni chahiye, wo lautao.
   e.g. weights=[3,2,2,4,1,4], D=3 -> 6
   kyun: 6 se [3,2] [2,4] [1,4] = 3 din · 5 se [3,2] [2] [4,1] [4] = 4 din, zyada
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+│       solve(mid): day=1,sum=0; for w: if(sum+w>mid){day++;sum=0;} sum+=w;  ->  day <= D ?   // day=1: aakhri din ka load bhi gino
 ```
 
 ```cpp
@@ -3099,6 +4199,16 @@ Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
   kyun: splits ke bade-sum 25,23,18,24 -> sabse chhota 18 ([7,2,5]=14 | [10,8]=18)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+│       solve(mid): sum=0,count=1; for x: sum+=x; if(sum>mid){count++;sum=x;}  ->  count <= k ?   // sum=x (0 nahi): jis x ne limit todi wo naye tukde ka pehla
+│       count=1 se START (warna aakhri tukda chhoot jaaye).
+└───────────────────────────────────────────────────────────────
+
+sibling: koko (min speed) · ship (min capacity) · split (min largest-sum) -> teeno IDENTICAL shell.
+```
+
 ```cpp
 bool solve(vector<int> &nums, int k, int mid) {
     int sum = 0, count = 1;                 // ★ count=1 se START: warna aakhri tukda chhoot jaata
@@ -3139,6 +4249,17 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
   kyun: index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
+low=0, high=n-1;   while (low < high):   mid = low+(high-low)/2;   // low<high: high=mid se atke nahi, aur mid+1 hamesha andar
+   nums[mid] < nums[mid+1]        -> CHADHAAI -> peak RIGHT me       -> low = mid+1;   // mid peak nahi (right wala bada), isliye mid+1
+   else (nums[mid] > nums[mid+1]) -> DHALAAN  -> peak mid-KHUD ya LEFT -> high = mid;   // mid (NOT mid-1) (dhalaan pe mid khud peak ho sakta, phenk nahi sakte)
+return low;   (low==high pe converge = peak. edges auto.)
+GOTCHA: dhalaan me high = mid (mid-1 NAHI) -- mid khud peak ho sakta. isliye while low<high (mid+1 hamesha in-bounds, no sentinel).
+```
+
 ```cpp
 int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges ke bahar -inf
     int n = nums.size();
@@ -3168,7 +4289,50 @@ single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid 
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
    idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
+TEMPLATE:
+    if(nums.size()==1) return nums[0];            // akela element hi single hai, BS ki zarurat nahi
+    int low=0, high=n-1;   // n-1: aakhri valid index, poori array inclusive
+    while(low<=high){   // <= : low>high pe hi ruko, tab high single pe hota
+        int mid=low+(high-low)/2;   // (low+high)/2 nahi: overflow se bachne ko
+        if(mid==0) return nums[mid];              // edge (mid-1 = -1 out-of-bounds; yahan tak aaye to single idx 0 pe)
+        if(mid%2==0){                             // even mid: single se pehle even idx ka saathi AAGE hota
+            if(nums[mid]==nums[mid-1]) high=mid-1; //   single PEECHE (even idx ka saathi peeche = pairing shift ho chuki)
+            else low=mid+1;                        // saathi peeche nahi = pairing theek, single aage
+        } else {                                  // odd mid: single se pehle odd idx ka saathi PEECHE hota
+            if(nums[mid]!=nums[mid-1]) high=mid-1; //   single PEECHE (odd idx ka saathi peeche nahi = pairing shift ho chuki)
+            else low=mid+1;                        // saathi peeche mila = pairing theek, single aage
+    return nums[high];   // high, low nahi: dono branch mid reject karte, high single pe rukta
+── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
+   idx:  0  1  2  3  4  5  6  7  8
+   arr:  1  1  2  3  3  4  4  8  8
+   low0 high8 -> mid=4 (EVEN) : nums[4]=3 == nums[3]=3 -> high=4-1=3
+   low0 high3 -> mid=1 (ODD)  : nums[1]=1 == nums[0]=1 -> low=1+1=2
+   low2 high3 -> mid=2 (EVEN) : nums[2]=2 != nums[1]=1 -> low=2+1=3
+   low3 high3 -> mid=3 (ODD)  : nums[3]=3 != nums[2]=2 -> high=3-1=2
+   low3 > high2 -> STOP -> return nums[high]=nums[2]= 2  (sahi)
+return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
+   idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
+TEMPLATE:
+    if(nums.size()==1) return nums[0];            // BASE
+    int low=0, high=n-1;
+    while(low<=high){
+        int mid=low+(high-low)/2;
+        if(mid==0) return nums[mid];              // edge
+        if(mid%2==0){                             // EVEN mid
+            if(nums[mid]==nums[mid-1]) high=mid-1; //   single PEECHE
+            else low=mid+1;                        //   single AAGE
+        } else {                                  // ODD mid
+            if(nums[mid]!=nums[mid-1]) high=mid-1; //   single PEECHE
+            else low=mid+1;                        //   single AAGE
+        }
+    }
+    return nums[high];
 ── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
    idx:  0  1  2  3  4  5  6  7  8
    arr:  1  1  2  3  3  4  4  8  8
@@ -3219,6 +4383,43 @@ Batao target matrix me hai ya nahi, true ya false.
   kyun: 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)   // col = matrix[0].size(), row nahi
+
+3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
+
+┌══ DECISION: high=mid  vs  high=mid-1  (kab konsa) ═══════════════════════════
+│ EK SAWAAL: "mid KHUD answer ho sakta abhi bhi?"
+│──────────────────────────────────────────────────────────────────────────────
+│ TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
+│ KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
+│──────────────────────────────────────────────────────────────────────────────
+│ BUG-CATCH (find-min): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
+│ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
+│──────────────────────────────────────────────────────────────────────────────
+│ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
+│     high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
+│     high=mid   -> high nahi hilta (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
+│     isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
+│     e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
+└──────────────────────────────────────────────────────────────────────────────
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
+ TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
+ KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
+ BUG-CATCH (find-min, 18-Jul): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
+ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
+ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
+     high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
+     high=mid   -> high nahi hilta (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
+     isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
+     e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
+```
+
 ```cpp
 bool searchMatrix(vector<vector<int>> &matrix, int target) {
     int row = matrix.size();
@@ -3255,6 +4456,7 @@ Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wa
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR: 2 sorted arrays ka COMBINED median, O(log). MERGE mat karo -> ek CUT dhoondo:
       LEFT aadha | RIGHT aadha, aur left ka HAR element <= right ka HAR. Cut ke 4 kinaare = median.
 
 CUT idea (chhote array A pe BS -> Px; Py auto):
@@ -3277,6 +4479,17 @@ CUT idea (chhote array A pe BS -> Px; Py auto):
 
    "= BS PAR array-value pe nahi -> CUT-POSITION (Px) pe. condition monotonic -> BS chalti."
    KYUN sirf 4 number: sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
+
+TEMPLATE:
+   if(A.size()>B.size()) return solve(B,A);            // chhote pe BS -> Py kabhi -ve nahi
+   low=0, high=m;                                      // high=m: A ke 0 se m tak kitne bhi left me ja sakte
+   while(low<=high){   // <= : Px=low==high wala cut bhi try ho
+     Px=low+(high-low)/2;  Py=(m+n+1)/2 - Px;   // +1: odd total pe left me ek zyada
+     x1=Px==0?INT_MIN:A[Px-1];  x2=Py==0?INT_MIN:B[Py-1];   // ==0 ? INT_MIN: left khaali, A[-1] out-of-bounds; -INF kabhi compare na bigaade
+     x3=Px==m?INT_MAX:A[Px];    x4=Py==n?INT_MAX:B[Py];   // ==m/n ? INT_MAX: right khaali, A[m] out-of-bounds; +INF compare na bigaade
+     if(x1<=x4 && x2<=x3)   // && : dono cross-check sahi tabhi cut valid; <= kyunki barabar chalega
+        return (m+n)%2==0 ? (max(x1,x2)+min(x3,x4))/2.0 : (double)max(x1,x2);   // /2.0 + (double): int division se .5 kat jaata
+     if(x1>x4) high=Px-1; else low=Px+1;   // x1>x4: A ne zyada liya, cut left khiskao; warna A ne kam liya
 
 ── DRY-RUN (A=[1,3,8,9,15] m=5, B=[7,11,18,19,21,25] n=6, half=6) ──
 
@@ -3360,6 +4573,16 @@ Linked list ka head diya hai. Beech wala node lautao. Agar list ki lambai even h
   kyun: 6 node me beech ke do 3 aur 4 -> doosra = 4 (odd 1->2->3->4->5 hota to 3)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+FAST/SLOW: slow 1 step, fast 2 step; fast end pe -> slow MIDDLE pe.
+   Node *slow=head, *fast=head;   // dono head se: even list me 2nd middle milta
+   while (fast && fast->next) { slow=slow->next; fast=fast->next->next; }   // fast pehle check (NULL->next crash), fast->next se next->next safe
+LOOP-COND `fast && fast->next` dono zaroori: even [1,2,3,4] -> slow=3 (2nd middle); odd [1,2,3] -> slow=2.
+   (fast->next check hataya -> fast->next->next NULL pe crash.)
+```
+
 ```cpp
 Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
     Node *slow = head;                      // dono head se: even list me 2nd middle milta
@@ -3378,6 +4601,16 @@ Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
 Linked list ka head diya hai. Agar list me cycle hai (koi node wapas kisi pichhle node pe point karta hai) to true, warna false.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> true
   kyun: -4 ke baad phir 2 pe aa gaye -> 2,0,-4,2,... chakkar kabhi NULL nahi aata
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
+   Node *slow=head, *fast=head;   // dono head se: cycle ho to fast ghoom ke slow ko pakdega
+   while (fast && fast->next) { slow=slow->next; fast=fast->next->next; if (slow==fast) return true; }   // check move ke BAAD: dono head se shuru, pehle check karte to turant true
+   return false;   // fast NULL tak pahuncha = list ka end hai, cycle nahi
+no-cycle -> fast NULL pe pahunch ke loop khatam -> false.
 ```
 
 ```cpp
@@ -3411,10 +4644,17 @@ values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = dupli
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR: n+1 numbers, values 1..n, ek repeat. dhoondo. O(1) space + array READ-ONLY.
 PEHCHAN: "array + duplicate + O(1)-space + no-modify" -> value ko POINTER samjho (i -> nums[i]).
 = DETECT CYCLE, bas DELTA: (a) array-as-linked-list  (b) detect nahi, cycle-ENTRY chahiye -> PHASE-2.
 KYUN CYCLE: values 1..n + n+1 slots -> koi value 2 baar point -> loop. entry-node = duplicate.
 VISUAL: nums=[3,1,3,4,2]:  0->3->4->2->3->4->2...  (loop; entry=3=dup)
+TEMPLATE:
+   int slow=0, fast=0;   // 0 se: value 1..n, koi 0 pe point nahi karta -> 0 cycle ke bahar ka start
+   slow=nums[slow]; fast=nums[nums[fast]];   // ★ PEHLE ek kadam chalao — dono 0 pe hi rahe to slow==fast, PHASE-1 loop chalega hi nahi
+   while(slow!=fast){ slow=nums[slow]; fast=nums[nums[fast]]; }   // PHASE-1: cycle me tez-dheema milne tak chalao
+   while(slow!=fast){ slow=nums[slow]; fast=nums[fast]; }          // PHASE-2 entry (ab fast bhi 1 kadam, 2 nahi)
+   return slow;   // phase-2 me jahan mile wahi cycle entry = duplicate
 crux: phase-2 = meet aur 0 se entry-tak distance BARABAR (Floyd) -> 0-reset + 1-1 kadam.
 FAMILY: FAST/SLOW (detect_cycle cousin) — wahi Floyd, array pe.
 ```
@@ -3444,6 +4684,25 @@ Linked list ka head diya hai. Agar cycle hai to wo node lautao jahan se cycle sh
   kyun: chakkar 2,0,-4,2,... hai, bahar se andar pehla kadam 2 pe padta -> entry 2
 
 cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* version (->next)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR: cycle ho to uske START (entry) node ka pointer return; warna NULL.
+= DETECT CYCLE (03), bas DELTA: true/false nahi, ENTRY chahiye -> PHASE-2.
+= FIND-DUPLICATE (12) ka Node* version: nums[i] ki jagah ->next. SAME phase-2.
+TEMPLATE:
+   slow=head, fast=head;  bool cycle=false;   // flag: 1 node pe bina cycle bhi slow==fast hota
+   while(fast && fast->next){ slow=slow->next; fast=fast->next->next; if(slow==fast){ cycle=true; break; } }   // break: fast meet point pe hi ruke
+   if(!cycle) return NULL;              // no cycle (flag se decide, slow!=fast se nahi: 1 node pe dono head pe barabar)
+   slow=head;   // sirf slow head pe, fast meet point pe hi rahe
+   while(slow!=fast){ slow=slow->next; fast=fast->next; }   // PHASE-2 entry (dono 1-1 kadam)
+crux: meet aur head se entry-tak distance BARABAR (Floyd) -> head-reset + 1-1 kadam.
+GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
+   1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
+   -> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
+FAMILY: FAST/SLOW TRIPLET — detect_cycle(03) + find-duplicate(12) + cycle-II(13), teeno wahi Floyd.
 ```
 
 ```cpp
@@ -3483,6 +4742,15 @@ COMBO: middle -> 2nd half REVERSE -> head (aage se) & rev (peeche se) saath comp
 middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
+   while (head && rev) { if (head->val != rev->val) return false; head=head->next; rev=rev->next; }   // && : even me rev wala half chhota, jo pehle NULL ho wahin ruko
+   return true;   (khali list -> true)
+list TOOT-ti NAHI: pehle-half node ka ->next kabhi nahi badla -> odd me middle node SHARED (head-se aur rev-se dono beech pe aa ke NULL milte -> while(head&&rev) bina cut ke odd+even dono handle).
+```
+
 ```cpp
 bool isPalindrome(Node *head) {
     Node *mid = middleNode(head);           // slow / fast
@@ -3505,6 +4773,21 @@ bool isPalindrome(Node *head) {
 Linked list ka head aur ek number n diya hai. List ke end se gina hua n-va node hatao aur naya head lautao.
   e.g. 1->2->3->4->5, n=2 -> 1->2->3->5
   kyun: end se gino 5 (1st), 4 (2nd) -> 4 hata
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+FAST/SLOW GAP: pehle fast ko n kadam aage, phir dono saath.
+Node *slow = head, *fast = head;                     // dummy nahi, dono head se
+    slow = slow->next; fast = fast->next;            // dono saath, gap wahi
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+FAST/SLOW GAP: fast ko PEHLE aage bhejo (loop i=1; i<=n). ab fast & slow me n ka gap.
+agar fast==NULL -> head hi hatana hai -> return head->next.
+warna dono SAATH chalao (gap constant) jab tak fast->next NULL -> slow "hatane wale ke PEHLE" baith jaata.
+slow->next us node ko point kar raha -> slow->next = slow->next->next. done.
 ```
 
 ```cpp
@@ -3530,6 +4813,18 @@ Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam
 Linked list ka head aur ek number val diya hai. Jitne bhi node ki value val hai, sab hatao (head bhi ho sakta hai). Naya head lautao.
   e.g. 1->2->6->3->4->5->6, val=6 -> 1->2->3->4->5
   kyun: dono 6 wale node (beech wala aur aakhri) nikal gaye, baaki kram waisa hi
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;   // prev=null: head ke peeche koi node nahi
+while (curr != null && head != null):   // head null = sab node hat gaye, aage kuch nahi
+   curr->val==val && prev==null   -> head = head->next          (HEAD / ya sab-node-same)
+   curr->val==val && prev!=null   -> prev->next = curr->next     (beech)
+   else (no-match)                -> prev = curr   // sirf no-match pe: hata hua node prev nahi ban sakta
+   curr = curr->next              (har case ke end me)
+TRICK: prev SIRF no-match pe aage (removal pe prev=curr NAHI -- curr hata) -> warna consecutive [1,6,6,2] fail.
 ```
 
 ```cpp
@@ -3559,6 +4854,17 @@ Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
 Do SORTED linked list di hain. Dono ko jod ke ek sorted list banao aur uska head lautao.
   e.g. a: 1->2->4, b: 1->3->4 -> 1->1->2->3->4->4
   kyun: har baar dono ke aage wale me se chhota uthao: 1,1,2,3,4,4
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+DUMMY node + tail (dummy = head ka special-case avoid).   // dummy=new Node(0); tail=dummy -> tail dummy se shuru
+   while (a && b): (a->val <= b->val) ? { tail->next=a; a=a->next; } : { tail->next=b; b=b->next; }   tail=tail->next;   // && : ek list khatam hote hi ruko, baaki neeche ke loop jodte
+   while (a) { tail->next=a; a=a->next; tail=tail->next; }    // baaki a jod do (already sorted)
+   while (b) { tail->next=b; b=b->next; tail=tail->next; }    // baaki b jod do
+   return dummy->next;   (dummy skip -> asli head)
+ek list khatam -> doosri ki BAAKI seedha jod do (dono already sorted).
 ```
 
 ```cpp
@@ -3602,6 +4908,35 @@ number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala rig
 (2->4->3) + (5->6->4) = 342 + 465 = 807 -> (7->0->8)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR: 2 number linked-list me ULTA pade (units-digit HEAD pe). Jodo -> naya list.
+      ULTA hai isiliye HEAD-se-HEAD jodo = school-wala right-to-left add (carry aage jaata).
+e.g. (2->4->3) + (5->6->4) = 342 + 465 = 807 -> answer (7->0->8).
+
+dummy + tail (MERGE jaisa) -> naye node peeche jodte jao.  + ek CARRY.
+while (a || b || carry):          <- jab tak koi list bachi HAI, ya carry bacha
+   sum = carry                     (pichhle step ka carry se shuru)
+   if (a) { sum += a->val;  a = a->next; }     (a hai to jodo, a aage)
+   if (b) { sum += b->val;  b = b->next; }     (b hai to jodo, b aage)
+   tail->next = new Node(sum % 10);  tail = tail->next;   (digit jodo)
+   carry = sum / 10;                                      (agle ke liye)
+return dummy->next   // dummy nakli hai, asli head uske next pe
+
+'|| carry' KYUN: 999 + 1 -> dono list khatam, par carry=1 bacha -> ek aur node (leading 1) chahiye.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+dummy + tail (MERGE jaisa) + CARRY. digits ULTA store (units-digit pehle) -> seedha aage-aage jodo.
+while(a || b || carry):              <- koi list bachi HAI ya carry bacha -> chalte raho
+   sum = carry;                        (pichle ka carry se shuru)
+   a hai to sum += a->val (a aage);  b hai to sum += b->val (b aage).
+   naya node = sum % 10 -> tail se jodo, tail aage.   carry = sum / 10 (agle ke liye).
+return dummy->next.
+'|| carry' zaroori: 999 + 1 = 1000 -> dono list khatam par carry bacha -> ek aur node chahiye (leading '1').
+```
+
 ```cpp
 Node *addTwoNumbers(Node *a, Node *b) {
     Node *dummy = new Node(0);              // dummy + tail (MERGE jaisa) + ek CARRY
@@ -3632,6 +4967,21 @@ Node *addTwoNumbers(Node *a, Node *b) {
 Linked list di hai. Har do paas-paas wale node ki jodi aapas me badal do. Value nahi badalni, node ki jagah badalni hai. Naya head lautao.
   e.g. 1->2->3->4->5 -> 2->1->4->3->5
   kyun: (1,2) -> 2,1 · (3,4) -> 4,3 · 5 akela, waise hi
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : har do adjacent NODE ki jodi swap (values nahi, NODES = pointer rewire). DUMMY-node trick.
+TEMPLATE:
+    Node* dummy=new Node(0); dummy->next=head;   // dummy: head bhi badlega, isliye usse pehle ek node chahiye
+    Node* prev=dummy, *first=head;   // prev=dummy: pehli jodi se pehle bhi jodne wala node chahiye
+    while(prev->next && first->next){        // jodi (2 node) bache tab tak (pehle prev->next, warna NULL->next)
+        Node* temp=second->next;             // BACHA lo (warna next line me gum)
+        prev=first;  first=temp;             // ADVANCE (prev=purana first, first=agli jodi ka pehla)
+    return dummy->next;   // naya head = pehli jodi ka second, wo dummy->next pe
+dummy kyu: jodi reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi ke pehle kuch nahi -> dummy.
+rewire ORDER + temp-save = crux. har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
 ```
 
 ```cpp
@@ -3665,6 +5015,15 @@ Linked list ka head diya hai. Poori list ulti karo aur naya head lautao.
   kyun: har node ka teer ulta, purana aakhri (5) naya head
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+3-pointer: prev=NULL, curr=head;   // prev=NULL: purana head naya tail banega, uska next NULL
+   while (curr) { Node *nextt=curr->next; curr->next=prev; prev=curr; curr=nextt; }   // nextt pehle bachao: link ulta karte hi aage ka rasta gum
+   return prev;   // prev: curr NULL pe ruka, prev aakhri node = naya head
+har step: nextt BACHA -> curr ka link ULTA (->prev) -> dono aage. end: prev = naya head.
+```
+
 ```cpp
 Node *reverseList(Node *head) {
     Node *prev = NULL;                      // prev=NULL: purana head naya tail, uska next NULL
@@ -3694,6 +5053,8 @@ PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALA
 
 ```
 TASVEER (purani sheet se, same to same):
+
+SAAR: har k-node group ko reverse (NODES). k se KAM bache -> waise hi.
 
 2 TUKDE (dono pehle se aate):
    REVERSE-LL  = ek group ko 3-pointer se ulta        [engine reuse]
@@ -3766,12 +5127,23 @@ PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR: har node me val+next+RANDOM (kahin bhi ya NULL). DEEP copy banao,
       copy ke random COPY-list ke andar point karein (original pe NAHI).
 KYUN 2 PASS: random aage/peeche kahin bhi -> 1-pass me target abhi bana
       hi na ho. pehle SAARE new node bana lo (+map), PHIR random set.
 
 PEHCHAN: "random pointer / deep copy" sunte hi -> MAP (old->new).
          (k-group se ALAG: yahan naye node BANANA, ulatna NAHI.)
+
+TEMPLATE:
+  curr=head; prev=NULL; newHead=NULL;   // pehle head==NULL -> return NULL · mp = unordered_map<Node*,Node*>
+     Node* temp=new Node(curr->val); mp[curr]=temp;   // mp old->new: pass-2 me random ka naya node yahin se milega
+     if(newHead==NULL){ newHead=temp; prev=temp; }   // pehla clone = naya head, peeche jodne ko koi nahi
+     else { prev->next=temp; prev=temp; }   // pehle prev->next pe jodo, phir prev aage badhao
+  // PASS 2: random set
+  curr=head; currRand=newHead;   // dono list shuru se: same position pe saath chalengi
+     currRand->random = (curr->random==NULL) ? NULL : mp[curr->random];   // random NULL to NULL; warna original target ka naya copy
+     curr=curr->next; currRand=currRand->next;   // dono saath aage: copy aur original same position pe rahein
 
 VISUAL ( [x]=node · -> next · ~> random ):
   ORIG:  [7] -> [13] -> [11] -> [10] -> [1]
@@ -3853,6 +5225,8 @@ get(key): value lautao, na mile to -1. remove(key): key hatao.
 ```
 TASVEER (purani sheet se, same to same):
 
+TASVEER (purani sheet se, same to same):
+
 MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
    index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
 fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).   // ctor: sz=0, cap=16, buckets.resize(cap) -> sab slot nullptr
@@ -3899,6 +5273,19 @@ REMOVE head (prev==null):            REMOVE beech (prev exist):
    buckets[i] = curr->next              prev->next = curr->next
    => buckets[i]->[B]->NULL             => [A]->[C]->NULL
 (redo ke liye poora code: file 08_DSA/09_DESIGN/01_hashmap.cpp)
+
+                    while(head != NULL){
+                       head = head->next;
+                 while(head != NULL){
+
+
+
+   buckets
+   ┌────┐
+ 0 │ - ──┼──> NULL
+   ├────┤
+   ├────┤
+   └────┘
 ```
 
 ```cpp
@@ -4137,6 +5524,17 @@ TRAP: (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()
       (5) mp.erase(lru->val) likha -> map me val naam ki key hi nahi, kuch nahi hata -> gaya hua key
           get() pe wapas milta (100 aata, sahi -1), mp.size() badhta rehta -> aage evict hi band.
           test me key == val ho (1,1 · 2,2) to ye chhup jaata -> test me key != val rakho (1,100).
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+CRUX = 2 DLL helper (yehi asli mechanic, get/put inko call karte):
+   removeNode(n): n->prev->next=n->next;  n->next->prev=n->prev;      // beech se nikal, O(1)
+   addFront(n):   nxt=head->next;  head->next=n; n->prev=head;        // nxt PEHLE pakdo (TRAP-2)
+                  n->next=nxt; nxt->prev=n;                           // n = MRU
+
+get(key):  mp.count(key)==0 -> -1.  warna: Node* node = mp[key]; removeNode(node); addFront(node); return node->val;
+put(k,v):  hai  -> node->val=v  -> removeNode + addFront.
+           naya -> FULL? tail->prev(=LRU) removeNode + mp.erase(uski key); phir new node addFront + mp[k]=node.
 ```
 
 ```cpp
@@ -4224,6 +5622,17 @@ prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din b
   kyun: din 1 pe 1 me kharida, din 4 pe 6 me becha = 5; pehle-chhota baad-bada ka isse bada farak nahi
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+TRICK: aaj becho = aaj ka daam MINUS ab-tak-ka-sasta. bas 2 cheez track: mini + maxProfit.
+  mini = min(mini, prices[i]);   maxProfit = max(maxProfit, prices[i] - mini); // init mini=INT_MAX; mini PEHLE update -> diff kabhi minus nahi
+(sell buy-ke-BAAD auto -- mini hamesha current se pehle ka.)
+BRUTE->OPT (aise pahunche): brute = saare pair (i<j): prices[j]-prices[i], max. O(n^2).
+  REDUNDANCY = har sell-din pe peeche ka "sabse sasta buy" baar-baar scan.
+  us min ko ek VARIABLE me CACHE -> inner loop gayab -> O(n).  (redundancy->cache = running-min)
+```
+
 ```cpp
 int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab tak ka sasta
     int ans = INT_MIN;
@@ -4244,6 +5653,14 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chuno jiska jod sabse bada ho, aur wo jod lautao.
   e.g. [-2,1,-3,4,-1,2,1,-5,4] -> 6
   kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+TRICK: pichhla running sum NEGATIVE = aage bojh -> PHENK do (sum=0), fresh. bas yahi.
+  sum += nums[i];   max_sum = max(max_sum, sum);   if(sum < 0) sum = 0;   // max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
+TRAP: max_sum update RESET se PEHLE + max_sum=INT_MIN start (warna all-negative [-1] miss). // sum=0 se: abhi tak kuch joda nahi
 ```
 
 ```cpp
@@ -4270,6 +5687,18 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
   kyun: -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+TRICK: neg*neg = BADA -> sirf max se nahi banega, MIN bhi track karo (chhota kal sabse bada ban sakta).
+  temp    = max({ num, num*max, num*min });     // 3 candidate ka max (temp me rakho: max pehle badla to min ko naya max milta)
+  min     = min({ num, num*max, num*min });     // FREEZE: min purane max/min se
+  max     = temp;  ans = max(ans, max);         // max min-ke-BAAD, ans me purana bhi
+★ SHURUAAT (24-Sep theek kiya):  max = 1, min = 1, ans = INT_MIN,  loop i = 0 se.   // ans INT_MIN: 0 se [-2] pe 0 aata, sahi -2
+  pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
+  -> [4,-3] pe 0 aata (sahi 4). niyam: loop 1 se ho to ans bhi nums[0] se; loop 0 se to 1 / INT_MIN se.
+```
+
 ```cpp
 int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
     int mini = 1;                           // SHURUAAT: mini = maxi = 1, ans = INT_MIN, loop 0 se
@@ -4291,6 +5720,21 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
 Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value (minus hata ke) dekho. Sabse bada absolute jod lautao.
   e.g. [2,-5,1,-4,3,-2] -> 8
   kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+= MAX PRODUCT SUBARRAY (152) ka HUBAHU same skeleton (temp/min/max freeze, upar dekh), sirf 2 TWEAK:
+   (1) GUNA (*) -> PLUS (+)                    (num*max -> num+max, num*min -> num+min)
+   (2) ans me ABS dono -> ans = max({ ans, |max|, |min| })   (answer minSum se bhi aa sakta -> isliye abs)
+★ SHURUAAT (24-Sep theek kiya): max = 0, min = 0, ans = 0, loop i = 0 se.   n==1 -> return abs(nums[0]).   // 0 se theek: + me 0 kuch nahi jodta, abs kabhi minus nahi
+  pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
+  aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
+dry-run [2,-5,1,-4,3,-2] -> 8: subarray [-5,1,-4]=-8 minSum me -> |-8|=8.
+
+FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
+MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
 ```
 
 ```cpp
@@ -4335,6 +5779,17 @@ IDEA:
       B) WRAP     = end+start juda, BEECH ka chunk chhoda.
    KEY INSIGHT: wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
       wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
+
+TEMPLATE:
+    maxK = maxKadane(nums);   minK = minKadane(nums);   total = sum(nums); // maxK init: cur=maxK=nums[0], loop 1 se (ya cur=0, maxK=INT_MIN)
+    circular = total − minK;   // wrap = poora array minus sabse bura (min) beech ka chunk
+
+    ★ minK Kadane-MIN se:  cur = min(nums[i], cur+nums[i]);   minK = min(minK, cur).  // init cur=minK=nums[0], loop 1 se (ya cur=0, minK=INT_MAX)
+       (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
+
+    ★ RETURN (edge yahin handle -- Arpan-way, saaf):
+         if (maxK > 0)  return max(circular, maxK);   // normal: dono me se bada
+         return maxK;                                 // maxK<=0 = SAB non-positive (all-neg) -> sirf maxK
 
 DRY-RUN [5,-3,5]:  maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
    -> wrap = 7−(−3) = 10  ->  ans = max(7,10) = 10.   (10 sirf WRAP se, seedhe Kadane se nahi.)
@@ -4442,6 +5897,22 @@ EDGE:
      isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
 
    loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+  maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)
+      ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
+         |__ ye jo array RETURN hua  -->  neeche bestLeftPrefix me 'temp' ban jaata
+
+  bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)
+      ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
+
+  maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)
+      ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // 05 ka MIRROR
+         |__ ye jo array RETURN hua  -->  neeche bestRightPrefix me 'temp' ban jaata
+
+  bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)
+      ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
 ```
 
 ```cpp
@@ -4516,6 +5987,14 @@ int maxTwoNonOverlap(vector<int> &nums) {   // STEP 5: WALL
 Array me har number do baar aata hai, sirf ek number ek baar. Wo number lautao. O(n) time aur O(1) extra jagah me.
   e.g. [4,1,2,1,2] -> 4
   kyun: 4^1^2^1^2: 1^1 = 0, 2^2 = 0, bacha 4
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
+  XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)   // nums[0] se shuru isliye loop 1 se; a^a=0 se pairs kat jaate
+FAMILY (aage isi daabe me aayenge): Missing-Number · Single-Number-II bhi XOR-based.
 ```
 
 ```cpp
@@ -4605,6 +6084,13 @@ Binary tree ka root diya hai. Root se sabse door wale leaf tak raste me kitne no
   kyun: sabse lamba rasta 3 -> 20 -> 15 (ya 7) = 3 node
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+base : null -> 0.
+comb : return 1 + max(leftDepth, rightDepth).   (khud=1 + gehri branch)
+```
+
 ```cpp
 int maxDepth(TreeNode *root) {
     if (!root)
@@ -4621,6 +6107,15 @@ int maxDepth(TreeNode *root) {
 Binary tree ka root diya hai. Har node ke left aur right bachche aapas me badal do (tree ka aaina), aur root lautao.
   e.g. [4,2,7,1,3,6,9] -> [4,7,2,9,6,3,1]
   kyun: 4 ke bachche 2,7 -> 7,2; 2 ke 1,3 -> 3,1; 7 ke 6,9 -> 9,6
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+base : null -> null.
+comb : recurse dono (left, right) -> phir children SWAP -> return root.
+TRAP : swap POINTERS (root->left <-> root->right), NA values.
+       pointer-swap = poori BRANCH side badalti · value-swap = sirf 2 number + leaf pe null->val CRASH. order FREE.
 ```
 
 ```cpp
@@ -4640,6 +6135,14 @@ TreeNode *invertTree(TreeNode *root) {
 Do binary tree p aur q diye hain. Kya dono ka dhaancha aur har node ki value bilkul ek jaisi hai? true ya false lautao.
   e.g. p=[1,2], q=[1,null,2] -> false
   kyun: values same (1,2) par p me 2 LEFT child, q me RIGHT child; structure alag
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
+comb : isSame(p->left, q->left) && isSame(p->right, q->right).
+COMBINE = && (dono side match ho tabhi true).   (clean base: if(!p||!q) return p==q;)
 ```
 
 ```cpp
@@ -4666,6 +6169,14 @@ Binary tree ka root diya hai. Kya tree beech se aaine jaisa hai, matlab left his
   kyun: left 2 ke bachche 3,4 aur right 2 ke 4,3; bahar-bahar 3=3, andar-andar 4=4
 
 isSameTree: same tree ka hi base (dono null / ek null / val alag)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
+comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   CROSS = mirror (yehi ek change).
+call : isSymmetric(root) = root null?true : compare(root->left, root->right).   // root khud nahi, uske dono bachche aapas me mirror hone chahiye
 ```
 
 ```cpp
@@ -4700,6 +6211,19 @@ Binary tree diya hai. Kinhi bhi do node ke beech sabse lamba rasta kitna hai, wo
   kyun: path 4 -> 2 -> 1 -> 3 = 3 edge; isse lamba koi rasta nahi
 
 height: max-depth ka height(), maxDia by-REFERENCE
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+= max-depth ka height() helper (maxDia by-REFERENCE), BAS 1 line EXTRA:
+   int height(root, int& maxDia):
+       left = height(root->left, maxDia);   right = height(root->right, maxDia);
+       maxDia = max(maxDia, left + right);   // EXTRA line: is node se guzarne wali diameter = leftH + rightH
+       return 1 + max(left, right);          // HEIGHT return (parent ko yeh chahiye)
+diameterOfBinaryTree: maxDia=0; height(root, maxDia); return maxDia.   // 0 se theek: diameter edge-ginti hai, kabhi minus nahi
+RETURN = height (parent ko chahiye); diameter = BYPRODUCT -> global maxDia (return NAHI).
+maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
 ```
 
 ```cpp
@@ -4801,17 +6325,27 @@ TASVEER (purani sheet se, same to same):
 
 preorder[0] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part. recurse.
 
+TEMPLATE  (MAP wala, O(n))
+
+    buildTree:  mp[inorder[i]] = i  (ek baar) ;  rootIndex = 0 ;  return solve(0, n-1)   // rootIndex 0: preorder ka pehla = root; 0..n-1 = poora inorder
+
+    solve(int &rootIndex, l, r):
+        pivot = mp[preorder[rootIndex]];   rootIndex++;      // inorder me root kahan; ++ turant: agla preorder elem agla root
+        node->left  = solve(l, pivot-1);                     // LEFT pehle (preorder me root ke baad LEFT wale node aate)
+        node->right = solve(pivot+1, r);   // RIGHT baad me: preorder me left ke saare node pehle aate
+        return node;
+
 ★ rootIndex by-REFERENCE (&): ek moving pointer SAB calls me shared -> LEFT poora consume hone ke
    BAAD hi RIGHT ko sahi agla-root milta (= preorder ka Root,Left,Right order). value-pass -> copy -> galat tree.
 
-   VISUAL:   preorder  [3] 9 20 15 7        inorder  9 | 3 | 15 20 7
+VISUAL:   preorder  [3] 9 20 15 7        inorder  9 | 3 | 15 20 7
                    ^root                           L  root   R
         -> tree:       3
                       / \
                      9   20
                         /  \
                       15    7
-   DRY-RUN (rootIndex aage badhta, pivot = inorder me root):
+DRY-RUN (rootIndex aage badhta, pivot = inorder me root):
   solve(0,4): root=3,  pivot=1 | L=solve(0,0)   R=solve(2,4)
     solve(0,0): root=9,  pivot=0 | NULL, NULL   (leaf 9)
     solve(2,4): root=20, pivot=3 | L=solve(2,2)=15   R=solve(4,4)=7
@@ -4852,6 +6386,19 @@ HAR node pe abs(leftH - rightH) <= 1? alag "balanced?" pass nahi -> height nikaa
 maxDepth: return = HEIGHT, ya -1 (neeche kahin imbalance)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
+   int maxDepth(root):
+       left  = maxDepth(root->left);    if (left == -1)  return -1;   // neeche imbalance -> UPAR propagate
+       right = maxDepth(root->right);   if (right == -1) return -1;   // right me imbalance -> turant -1 upar bhejo
+       return 1 + max(left, right);                                   // balanced -> asli HEIGHT
+   isBalanced = (maxDepth(root) != -1).   // -1 nahi aaya = kahin bhi imbalance nahi
+-1 = SENTINEL: imbalance neeche mila -> UPAR propagate -> ek node bhi galat = poora false.
+TRAP: check HAR node pe (sirf root nahi) -- root balanced par ANDAR imbalanced ho sakta [test-pass != code-sahi].
+```
+
 ```cpp
 int maxDepth(TreeNode *root) {              // return = HEIGHT, ya -1 (neeche kahin imbalance)
     if (!root)
@@ -4886,6 +6433,20 @@ Binary tree ka root aur do node p, q diye hain. Wo sabse neeche wala node lautao
   kyun: 4 to 5 ke subtree me hai (5 -> 2 -> 4); 5 khud p hai, to 5 hi sabse gehra common
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+idea : wo node jahan p, q ALAG side split ho jaate (ek left, ek right).
+   TreeNode* lca(root, p, q):
+       if (!root) return NULL;   // khaali subtree -> p/q yahan nahi mile
+       left  = lca(root->left, p, q);
+       right = lca(root->right, p, q);
+       if (!left)  return right;                    // ek side khali -> doosri return
+       if (!right) return left;   // right khali -> dono left me, left wala hi jawab
+       return root;                                 // DONO non-null -> yehi split-point = LCA
+mechanic: found-node UPAR bubble; jahan DONO taraf se kuch mila = LCA. (if(!left) return right dono case sambhaalta: left-khali+right-mila, aur dono-khali->NULL.)
+```
+
 ```cpp
 TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // p, q ALAG side split
     if (!root)
@@ -4917,6 +6478,16 @@ Binary tree ka root aur ek targetSum diya hai. Kya root se kisi leaf tak aisa ra
   kyun: 5 + 4 + 11 = 20 aur 11 leaf hai; baaki paths 26 (5,8,13) aur 17 (5,8,4)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+idea : root-se-LEAF sum == target? value NEECHE carry (target me se ghatao).
+base : null -> false.
+leaf : (!root->left && !root->right) -> return target == root->val.   // leaf pe hi check: beech ke node pe sum mile to path adhoora
+comb : hasPathSum(left, t-val) || hasPathSum(right, t-val).   // || : koi ek path target bana de to kaafi
+TRAP: LEAF = !root->left && !root->right (ACTUAL bachche), NA "!left && !right" (recursion-result) -> warna non-leaf pe galat match. [test-pass != code-sahi]
+```
+
 ```cpp
 bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == target?
     if (!root)
@@ -4936,6 +6507,23 @@ bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == ta
 Binary tree ka root diya hai. Har level ke nodes ko left se right, alag-alag list me lautao (list of lists).
   e.g. [3,9,20,null,null,15,7] -> [[3],[9,20],[15,7]]
   kyun: level 0 = 3, level 1 = 9,20, level 2 = 15,7
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+idea : har level ki alag list -> list-of-lists. queue = FIFO (pehle-aaya-pehle-process) -> level-order + L-to-R apne aap.
+SKELETON (saare BFS-level Q bas isi pe):
+        int sz = q.size();               // SNAPSHOT -- is level ke node (for se PEHLE pakdo)
+        vector<int> level;
+        for (int i = 0; i < sz; i++) {   // sirf sz baar: isi level ke node, naye push wale nahi
+            node = q.front();  q.pop();
+            level.push_back(node->val);
+            if (node->left)  q.push(node->left);    // bachche -> AGLE level me jaayenge
+            if (node->right) q.push(node->right);
+        ans.push_back(level);   // level poora bhar gaya tab push (for ke bahar)
+TRAP: sz ko for se PEHLE pakdo. loop me bachche push -> q.size() badalta -> warna agle level ke node is level me ghus jaate.
+TEMPLATE: right-side-view (level ka LAST) · level-average · zigzag -- sab isi skeleton pe, bas "level me kya karna" badalta.
 ```
 
 ```cpp
@@ -4972,6 +6560,16 @@ Binary tree ke daayi taraf khade ho ke upar se neeche dekho. Jo nodes dikhte hai
   kyun: level 0 = 1; level 1 = 2,3 me right 3; level 2 = 5,4 me right 4
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+idea : daaye khade -> har level ka SIRF right-most node dikhta (baaki peeche chhup jaate).
+LEVEL-ORDER template bilkul SAME (while + sz-snapshot + for + push L/R). FARAK sirf level ke andar 1 line:
+    level-order :  har node ka kaam / sab collect
+    right-view  :  if(i == sz-1) ans.push_back(curr->val);     // level ka LAST hi
+KYUN i==sz-1: nodes L-to-R (FIFO) nikalte -> level ka AAKHRI = sabse RIGHT.  (left-side-view -> i==0 le lo.)
+```
+
 ```cpp
 vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-most dikhta
     if (!root)
@@ -5003,6 +6601,17 @@ vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-
 Level order jaisa hi, par disha har level pe badalti hai: level 0 left se right, level 1 right se left, level 2 phir left se right, aise hi.
   e.g. [3,9,20,null,null,15,7] -> [[3],[20,9],[15,7]]
   kyun: level 1 ka [9,20] ulta = [20,9]; level 2 seedha [15,7]
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+idea : level-order BFS jaisa, par direction ALTERNATE (0:L->R · 1:R->L · 2:L->R...).
+= LEVEL-ORDER ka SAME skeleton (queue + sz-SNAPSHOT + inner-loop -> level) + ek levelCounter.
+DELTA (naya = bas ye, inner-loop ke BAAD -- level HAMESHA normal L->R banao):
+    if (levelCounter % 2 != 0) reverse(level);   // ODD level -> ULTA (R->L) · levelCounter=0 se: root level seedha
+    levelCounter++;  ans.push_back(level);   // reverse check ke BAAD ++: warna root level ulta ho jaata
+even (0,2..) = seedha · odd (1,3..) = reversed.  (alt: deque/front-insert, par reverse simplest.)
 ```
 
 ```cpp
@@ -5040,6 +6649,24 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L �
 Binary tree ka root diya hai. Root se sabse paas wale leaf tak raste me kitne node hain, wo lautao. Leaf = jiske dono bachche null. Khaali tree pe 0.
   e.g. [3,9,20,null,null,15,7] -> 2
   kyun: 3 -> 9, aur 9 leaf hai = 2 node; 20 wali taraf 3 node lagte
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
+TEMPLATE (level-order skeleton + EARLY-STOP):
+    if(!root) return 0;   // khaali tree ki depth 0 (warna NULL push hota)
+    queue<TreeNode*> q; q.push(root);  int depth=0;   // depth = ab tak poore hue level, shuru me koi nahi
+        int sz=q.size();   // for se PEHLE pakdo: loop me push se size badalta
+        for(int i=0;i<sz;i++){   // sirf sz baar: isi level ke node
+            auto curr=q.front(); q.pop();
+            if(!curr->left && !curr->right) return depth+1;  // PEHLA leaf -> turant return (aage mat dekho)
+            if(curr->left)  q.push(curr->left);
+            if(curr->right) q.push(curr->right);
+        depth++;                                             // level POORA -> depth++ (for-loop ke BAAHAR)
+depth = ab tak POORE hue level; leaf is level me mila -> return depth+1.
+DFS-TRAP (isliye BFS): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4) pe galat deta. BFS me ye dikkat nahi.
 ```
 
 ```cpp
@@ -5081,6 +6708,15 @@ Ek BST aur ek number k diya hai. Tree ki values me k-va sabse chhota number laut
 inorder: BST pe inorder = SORTED (ascending)
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+idea : BST inorder = SORTED -> kth smallest = inorder ka k-va element.
+steps: inorder(root) -> sorted vector 'ans' -> return ans[k-1].
+k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
+optimize: k-va pe EARLY-STOP (counter, k-va node pe ruko) -- collect-all bhi gate-theek.
+```
+
 ```cpp
 void inorder(TreeNode *root, vector<int> &res) {   // BST pe inorder = SORTED (ascending)
     if (!root)
@@ -5107,6 +6743,40 @@ Binary tree diya hai. Kya ye sahi BST hai? Har node pe uske poore left subtree k
 node ko SAARE ancestors ka rule maanna -> har node ki WINDOW (mini, maxi), neeche jaate tight hoti
 ═════════════════════════ ★ EDGE ═════════════════════════════════════
 sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 5 -> galat)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+TRAP : local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
+IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.
+TEMPLATE:
+    solve(root, mini, maxi):
+       null -> true   // khaali subtree valid BST hai
+       (val <= mini || val >= maxi) -> false   // <= aur >=: barabar value bhi galat (BST me duplicate nahi)
+       left  = solve(L, mini, val)      // LEFT  jao -> maxi = val (chhota hona)
+       right = solve(R, val, maxi)      // RIGHT jao -> mini = val (bada hona)
+       return left && right   // && : dono subtree valid tabhi poora valid
+CALL : solve(root, LLONG_MIN, LLONG_MAX);   mini/maxi = long long.
+★ EDGE: INT_MIN/INT_MAX se shuru kiya to node ki value KHUD INT_MIN ya INT_MAX ho
+   (LC-98 allow karta) -> strict check (<=, >=) use galat reject kar deta. [2147483647] pe false aata, sahi true.
+(alt: inorder traversal = strictly increasing? -> BST.)
+(2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+TRAP : local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
+IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.
+TEMPLATE:
+    solve(root, mini, maxi):
+       null -> true
+       (val <= mini || val >= maxi) -> false
+       left  = solve(L, mini, val)      // LEFT  jao -> maxi = val (chhota hona)
+       right = solve(R, val, maxi)      // RIGHT jao -> mini = val (bada hona)
+       return left && right
+CALL : solve(root, INT_MIN, INT_MAX).
+(alt: inorder traversal = strictly increasing? -> BST.)
+(2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
 ```
 
 ```cpp
@@ -5203,6 +6873,28 @@ n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destinat
   (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+= tree LEVEL-ORDER (BFS) ka SAME skeleton (queue + pop + push), graph ke liye 3 ADD:
+   (1) NEIGHBOURS : tree me node->left/right built-in · graph me adj[node] (edges se banao).
+   (2) VISITED    : tree me cycle nahi · graph me vis[] chahiye (cycle-rok, dobara na ghoomo).
+   (3) LEVEL-loop NAHI : path-exists level-by-level nahi -> sirf reachability (target mil?).
+
+ADJ build (undirected -- NAYA):
+        adj[it[0]].push_back(it[1]);
+        adj[it[1]].push_back(it[0]);     // undirected -> dono taraf
+
+BFS flow:
+    q.push(src);  vis[src] = true;   // src bhi mark: warna cycle se ghoom ke src dobara push
+    while(!q.empty()):
+        node = pop
+        if(node == dst) return true   // pop pe check: src==dst wala case bhi pakda jaata
+        for(nbr : adj[node])
+            if(!vis[nbr]) { vis[nbr]=true; q.push(nbr); }   // push ke saath hi mark: warna ek node queue me do baar
+    return false;                        // queue khali -> koi path nahi
+```
+
 ```cpp
 bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
     unordered_map<int, vector<int>> adj;
@@ -5242,6 +6934,18 @@ Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayei
   kyun: (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+outer: for(i,j) if(grid[i][j]=='1') { DFS(i,j); count++; }   // har naya '1' = naya island
+DFS(i,j) — code order (upar se neeche), grid ke 3 farak (adj-list nahi):
+   1. BASE (ek hi if, sab || se juda):
+         if( i<0 || i>=m || j<0 || j>=n || grid[i][j]=='0' )  return;   // bounds PEHLE, '0' baad: bahar index pe || grid padhne se pehle ruk jaata
+   2. VISITED   : grid[i][j]='0' (SINK) -> dobara na gino.
+   3. NEIGHBOURS: 4-dir DFS -> (i+1,j)(i-1,j)(i,j+1)(i,j-1).
+'0'-check base me (bounds ke SAATH) -- warna paani/visited pe nahi rukta, poora grid kha jaata.
+```
+
 ```cpp
 void DFS(vector<vector<char>> &grid, int i, int j, int m, int n) {
     if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')   // ★ BASE ek hi if, sab || se
@@ -5278,6 +6982,23 @@ n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag 
   kyun: {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
 
 ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BFS (islands DFS)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : ISLANDS ka SAME skeleton (outer-loop + count), bas 2 farak:
+       (a) graph = ADJ-LIST (grid nahi)   (b) BFS use kiya (islands ne DFS kiya tha).
+input = n nodes + edges[] -> pehle ADJ banao (undirected -> DONO taraf):   -- NAYA
+    for(auto &it : edges){ adj[it[0]].push_back(it[1]); adj[it[1]].push_back(it[0]); }   // undirected -> dono taraf edge
+TEMPLATE:
+    vector<bool> vis(n,false);   int count=0;   // sab unvisited, abhi koi group nahi gina
+    for(i=0..n-1)                                // outer-loop = har node scan -> DISCONNECTED groups bhi cover
+        if(!vis[i]){ count++; bfs(i,adj,vis); }  // har UNVISITED node = naya component
+    bfs(i): q.push i + vis[i]=true;   // start bhi push ke saath mark: warna dobara push hota
+            pop node -> for(auto &it : adj[node]) if(!vis[it]){ vis[it]=true; q.push it; }   // = PATH-EXISTS ka body
+count++ AUR bfs DONO if(!vis[i]) ke ANDAR -- warna har node alag gine (=n galat).
+neighbours = adj[node] (islands me 4-direction tha) -- yahi ek farak, baaki skeleton same.
 ```
 
 ```cpp
@@ -5323,6 +7044,22 @@ Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). S
 ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer count++ nahi, MAX
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+= ISLANDS ka SAME skeleton (base + sink), bas DFS ab void nahi -> AREA return. 2 DELTA:
+
+  (1) DFS ko INT banao -> khud(1) + chaaron dir ka area jodo:
+        int dfs(i,j){
+           if(i<0||i>=m||j<0||j>=n||grid[i][j]==0) return 0;   // base: bounds/paani -> 0 (bounds PEHLE: bahar index pe grid padhne se pehle || ruk jaata)
+           grid[i][j]=0;                                        // sink (visited mark)
+           return 1 + dfs(i+1,j)+dfs(i-1,j)+dfs(i,j+1)+dfs(i,j-1);   // 1 = ye cell khud, + chaaron taraf ka area
+  (2) outer count++ nahi -> har island ka area le ke MAX:
+        for(i,j) if(grid[i][j]==1) ans = max(ans, dfs(i,j));   // har island ka area nikaalo, sabse bada rakho
+
+ans=0 se start (area hamesha >=0; koi island nahi -> ans 0). ISLANDS ka void-DFS = yahi, bas return-value ADD hui.
+```
+
 ```cpp
 int DFS(vector<vector<int>> &grid, int i, int j, int m, int n) {
     if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0)
@@ -5363,6 +7100,8 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
 ```
 TASVEER (purani sheet se, same to same):
 
+TASVEER (purani sheet se, same to same):
+
 = tree LEVEL-ORDER (sz-snapshot) grid pe, MULTI-SOURCE.  har level = 1 minute.
 
 SETUP:
@@ -5388,6 +7127,20 @@ END:
     return mins == 0 ? 0 : mins-1;               // last level extra -> -1
                                                  // ★ EDGE: grid me koi santra hi nahi -> loop
                                                  //   chala hi nahi, mins=0 -> mins-1 = -1 aata, sahi 0
+
+SETUP:
+
+            pop(r,c);
+            for(d : dirs){
+                nr=r+d[0], nc=c+d[1];
+
+END:
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+END:
+    for(i,j): if(grid[i][j]==1) return -1;       // fresh bacha -> impossible
+    return mins-1;                               // last level extra -> -1
 ```
 
 ```cpp
@@ -5452,6 +7205,23 @@ INPUT:
     prerequisites = [[1,0],[2,1],[3,2]]
     har [a,b] = a lene ke liye b pehle  ->  edge b -> a
 
+TEMPLATE (Kahn's = BFS + indegree):
+    ADJ + INDEGREE (khud banao):   // vector<int> indegree(n, 0): sab 0 se, phir ++
+            u = it[1];  v = it[0];                 // edge u -> v  (pre -> course)
+
+    START:
+        for(i=0; i<n; i++)   // har course check: kai course ek saath start ho sakte
+            if(indegree[i]==0) q.push(i);          // koi prereq nahi -> queue me
+
+    BFS:
+            topo.push_back(node);
+            for(nbr : adj[node]){
+                indegree[nbr]--;                   // ek prereq pura
+                if(indegree[nbr]==0) q.push(nbr);  // sab pure -> ready
+
+    END:
+        return topo.size() == numCourses;          // sab process = no cycle
+
 indegree = "kitne prereq BACHE";  0 = ready-to-take.
 cycle wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
 
@@ -5477,6 +7247,19 @@ cycle wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size(
         ans KHAALI se shuru:  vector<int> ans;      (ans(n,0) + push_back = size 2n, galat)
         loop  -> ans.size() < n -> return {}  (khaali)
         self-loop [0->0] -> indegree kabhi 0 nahi -> khaali
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false.
+question deta -> MATRIX:  prerequisites = [[1,0],[2,1],[3,2]]   // har [a,b] = a lene ke liye b pehle (edge b se... u->v)
+TEMPLATE (Kahn's = BFS + indegree):
+    usme se KHUD adj-list + indegree banao:
+    for(it : prerequisites){ u=it[0], v=it[1];  adj[u].push_back(v); indegree[v]++; }   // u->v; v ka prereq++
+    for(i=0;i<n;i++) if(indegree[i]==0) q.push(i);        // jo bhi indegree-0 (koi prereq nahi) -> queue me
+    while(q){ node=pop; topo.push(node);
+              for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); } }  // prereq pura -> ghatao; 0 hua -> push
+    return topo.size() == numCourses;                     // sab process = no cycle
+indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
 ```
 
 ```cpp
@@ -5573,6 +7356,8 @@ saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 ka
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR : "mere GRAPH ke saare node map me clone bana (A->A', B->B'), phir clones ko CONNECT kar (A'--B')." bas.
+
 idea : map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
        2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
        map ki VALUE hi clone -> mp[node] = us node ka clone; map = "clone ho chuka?" + "uska clone kaha".
@@ -5583,11 +7368,30 @@ VISUAL (A-B graph):
     (2) clones ko JODO:      A' --- B'                    // mp[A]->neighbors += mp[B]
     => naya deep-copy graph  A'-B'  taiyaar
 
+TEMPLATE  (normal BFS + map<purana, clone> + 2 kaam)
+
+    // SEED · pehle if(!node) return NULL: khaali graph
+    mp[node] = clone;   q.push(node);   // seed bhi map me: warna cycle pe isi node ka doosra clone banta
+
+    while (q) { curr = pop;
+            if (mp.find(it) == mp.end()) {                          // (a) BANANA (find se check: mp[it] khud khaali entry bana deta)
+            mp[curr]->neighbors.push_back(mp[it]);                 // (b) JODNA (if ke BAHAR: clone pehle se ho tab bhi ye edge jodni hai)
+
 yaad: (a) if ke ANDAR (sirf naya pe) · (b) if ke BAHAR (har edge pe)
       mp[curr] = A' ,  mp[it] = B'  ->  A' ki list me B'
 
 2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
 DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+TEMPLATE (BFS = normal traversal; map<old,new> + 2 special move):
+    mp[node] = clone(node);  q.push(node);          // seed: start ka clone map me + queue
+    BFS(q): curr nikalo -> for(it : curr->neighbors):
+        (a) it clone nahi hua? -> mp[it]=clone(it); q.push(it);   // naya clone banao + push
+        (b) mp[curr]->neighbors.push_back(mp[it]);                // mp[curr]=A', mp[it]=B' -> JODO (crux)
+    return mp[node];
+    (clone(x) = new Node(); ->val = x->val)
 ```
 
 ```cpp
@@ -5637,6 +7441,7 @@ graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR : har node ko 2 me se ek rang (0/1) do; koi bhi 2 JUDE hue (adjacent) node SAME rang ke na hon.
        ho gaya -> true.  kahin do jude hue SAME rang pe phans gaye (odd cycle) -> false.
 
 PEHCHAAN: "DO team / group me baanto + jo JUDE hain (dushman / edge) woh ek group me NAHI" -> bipartite.
@@ -5653,9 +7458,41 @@ idea : color[] = -1 (uncolored), 0 / 1 = do rang.
        START ko 0 do -> har neighbour ko ULTA rang -> pehle se rang hai aur SAME nikla -> false.
        graph TOOTA (disconnected) ho sakta -> outer loop har uncolored node se naya BFS (CC jaisa).
 
+TEMPLATE  (BFS alag function, bool lautata; outer loop uska false pakadta)
+
+    bool BFS(graph, int node, vector<int> &color) {
+        color[node] = 0;                              // START ko rang ZAROORI -- warna flip galat
+            int curr = q.front();  q.pop();
+            for (auto &it : graph[curr]) {
+                    color[it] = 1 - color[curr];      //     0->1, 1->0   (ya !color[curr])
+                else if (color[it] == color[curr])    // (b) pehle se rang + SAME = conflict
+        return true;                                  // is component me koi conflict nahi
+
+    bool isBipartite(graph) {
+        vector<int> color(m, -1);   // -1 = abhi rang nahi (0 aur 1 asli rang hain)
+        for (int i = 0; i < m; i++)   // har node se: graph toota (disconnected) ho sakta
+            if (color[i] == -1 && BFS(graph, i, color) == false)   // -1 check PEHLE: rang wale node pe BFS dobara nahi chalta
+
 DRY-RUN (triangle 0-1-2):
     0 ko 0 diya  -> nbr 1 = 1 · nbr 2 = 1
     curr 1 (rang 1) -> nbr 2 ka rang bhi 1 = SAME -> false        (odd cycle pakda gaya)
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR : har node 2 rang (0/1); koi 2 ADJACENT same-rang na ho -> bipartite. odd-cycle -> false.
+idea : input KHUD adj-list. disconnected -> outer-loop (CC jaisa).
+TRICK (NAYA): 2-COLOUR
+   color[] : -1 = uncolored,  0/1 = do rang.
+   START ko 0 do -> har neighbour OPPOSITE:  color[it] = !color[curr]   (0<->1 flip).
+   neighbour ka rang curr ke SAME nikla -> CONFLICT -> return false.
+TEMPLATE:
+    color[] = -1 (sab uncolored);
+    outer loop har node i: uncolored mila ->
+    phir BFS(i) us current node se shuru:
+        color[i]=0;  q.push(i);        // START ko color ZAROORI -- warna !color[curr] galat
+        curr nikalo -> for(it : graph[curr]):
+            uncolored(-1) -> color[it] = !color[curr];  q.push(it);
+            else color[it]==color[curr]? -> return false;
 ```
 
 ```cpp
@@ -5717,6 +7554,40 @@ pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
     {dist, node} ->  0 -> (1, node2) -> (3, node1) sirf EK baar, seedha sahi -> (4, node3) khatam
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+REAL: Google Maps/GPS (shortest route), network routing, delivery/flights -- roz use hota.
+
+SAAR : BFS ka WEIGHTED bhai. wahi template, 2 swap + relaxation:
+         visited[] -> dist[] (init INF, src=0)
+         + naya    = RELAXATION
+
+NO visited[] kyun:
+   dist[] + "wt > dist[node] continue" (STALE-skip) = visited-ka-kaam (node dobara finalize nahi).
+   strict-relax (naya STRICTLY chhota -> tabhi push) -> undirected me bhi infinite-loop nahi.
+
+TRICK (RELAXATION = "dheela karo"):
+   d = node tak ki dist,  w = us EDGE ka weight (it.second, NA dist[node]).
+   naya rasta (d + w) purane dist[nbr] se kam? -> dist[nbr] = d+w; push.
+
+idea : min-heap kyun -> "kam edges != kam weight" -> greedily sabse-sasti-abhi-tak node uthao.
+
+PAIR-in-HEAP trick:
+   pq me {dist, node} PAIR -> heap FIRST element (dist) se sort (tie -> second).
+   min-heap -> sabse chhoti dist TOP pe. (top-K / value+index saath me bhi: HAMESHA {jispe-sort, saath-wala}.)
+
+TEMPLATE:
+    adj: for(it:edges){ u=it[0],v=it[1],w=it[2]; adj[u]+={v,w}; adj[v]+={u,w}; }  // undirected DONO taraf
+    vector<int> dist(n, INF);  dist[src]=0;   pq.push({0, src});   // INF se: pehla rasta hamesha chhota lage; src khud 0
+        wt = pq.top().first;  node = pq.top().second;  pq.pop();
+        if(wt > dist[node]) continue;                     // STALE skip (sirf > : barabar wala taaza entry hai)
+        for(it : adj[node]){              // it.first = nbr node,  it.second = edge weight
+            if(wt + it.second < dist[it.first]){          // RELAX (naya rasta chhota?) (< strict: barabar pe dobara push bekaar, loop ka khatra)
+                dist[it.first] = wt + it.second;   // chhota rasta mila -> pehle dist update, phir push
+min-heap (pura syntax): priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;  // {dist,node}
+```
+
 ```cpp
 vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
     unordered_map<int, vector<pair<int, int>>> adj;
@@ -5760,6 +7631,33 @@ n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao
 KAB: groups / connected / same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn
   · MST-Kruskal
 REAL: dost-circle ("A-B same circle?"), accounts merge
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+REAL: dost-circle manager ("A-B same circle?"), network/accounts merge.
+
+SAAR : parent[] = har node ka leader. edge -> 2 node UNITE. end me alag ROOT (parent[i]==i) = components.
+KAB  : groups/connected/same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn · MST-Kruskal.
+
+TEMPLATE (class):
+    DSU(n): parent[i]=i;  rnk[i]=0;   // parent[i]=i: shuru me har node khud apna leader
+
+    find(x):
+       return parent[x] = find(parent[x]);          // PATH COMPRESSION (parent[x] me assign: agli baar seedha root mile)
+
+    unite(x,y):
+       ux=find(x), uy=find(y);   // ROOT jodo, x-y khud nahi: warna group toot jaata
+       if(ux==uy) return;                            // already same set
+       if(rnk[ux] < rnk[uy]) parent[ux]=uy;          // UNION BY RANK
+       else if(rnk[uy] < rnk[ux]) parent[uy]=ux;     // chhota bade ke neeche
+       else { parent[uy]=ux; rnk[ux]++; }   // barabar rank: jodne se ek level badha, isliye ++
+
+same group? -> find(x) == find(y)   // root compare karo, parent nahi (parent beech ka ho sakta)
+components  -> count(i where find(i)==i)   // sirf root ka parent khud wahi hota
+
+2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
 ```
 
 ```cpp
@@ -5819,6 +7717,44 @@ begin -> end, har step EK letter badlo, beech ka har word dict me. "min steps" -
 word = NODE · edge = ek letter farak + dict me. graph IMPLICIT (words), islands / Kahn's wali family
 hit -> hot -> dot / lot -> dog / log -> cog = 5 WORDS (begin = 1, steps nahi)
 level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora layer khatam pe)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+beginWord -> endWord, har step EK letter badlo, har beech ka word dict me ho. shortest me kitne WORD?
+SIGNAL: "minimum steps / shortest unweighted path" -> BFS (level-by-level).
+word = NODE · edge = "ek letter farak + dict me maujood".
+
+★★ EXAMPLE (yahi yaad -> poora recall flash):  begin=hit, end=cog, dict={hot,dot,dog,lot,log,cog}
+    Level 1:  hit
+    Level 2:  hot                    (hit->hot)
+    Level 3:  dot, lot               (hot->dot, hot->lot)
+    Level 4:  dog, log               (dot->dog, lot->log)
+    Level 5:  cog == endWord -> 5    [hit hot dot dog cog = 5 WORDS]
+
+TEMPLATE:
+   TERA (level PAIR me)                              │  MERA (per-layer SIZE-loop)
+   ──────────────────────────────────────────────────┼──────────────────────────────────────
+   st = {wordList}   (lookup + visited)              │  st = {wordList}
+   q<pair<string,int>>;  push {beginWord,1}          │  q<string>;  push beginWord;  level=1  // + st.erase(beginWord): begin dobara na aaye
+   while(!q):                                        │  while(!q):
+     word = front.first; steps = front.second; pop   │    sz = q.size();  repeat sz baar:
+     word==endWord -> return steps                   │      word = pop
+     for pos i:  original = word[i]                  │      word==endWord -> return level
+       for ch 'a'..'z':  word[i] = ch                │      for pos i:  original = word[i]
+         word in st? erase(word) +                   │        for ch 'a'..'z':  word[i] = ch
+                     push {word, steps+1}            │          word in st? erase(word) + push word
+       word[i] = original   (RESTORE)                │        word[i] = original   (RESTORE)
+   return 0                                          │    level++   (poora layer khatam)
+                                                     │  return 0
+   FARAK sirf level-track: TERA steps PAIR me (push me steps+1) · MERA size-loop + baad me level++.
+
+★ VISITED trick (Arpan): dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
+                         (ek check "dict me hai?" + "visited nahi?" dono serve).
+★ RETURN = WORDS count (begin = 1), steps nahi -> hit..cog = 5 words.
+★ EDGE: endWord dict me nahi -> 0 (rasta possible hi nahi).
+★ islands/Kahn's wali BFS family; yahan graph IMPLICIT (words). "shortest unweighted = BFS" ka classic.
 ```
 
 ```cpp
@@ -5910,6 +7846,17 @@ Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
   kyun: 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : har turn "2 SABSE BHAARI" pathar smash -> MAX-HEAP. pop 2, diff wapas push, till <=1 bache.
+TEMPLATE:
+    priority_queue<int> pq;  for(s:stones) pq.push(s);        // saare -> max-heap (max: har turn 2 sabse BHAARI chahiye)
+        x=pq.top(); pq.pop();   y=pq.top(); pq.pop();         // 2 sabse bhaari nikaalo
+        diff = abs(x-y);  if(diff>0) pq.push(diff);           // barabar -> 0 (dono khatam)
+heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max" chahiye -> pop O(log n), top O(1).
+```
+
 ```cpp
 int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
     priority_queue<int> pq;                 // ★ MAX: har turn 2 sabse BHAARI chahiye
@@ -5936,6 +7883,18 @@ Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
   kyun: bade se gino 6, 5 -> 2nd = 5
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : k SABSE BADE min-heap me rakho -> unme se sabse chhota (heap TOP) = k-th largest.
+TRICK (top-K ka core): MIN-heap of size k.  (kyun MIN: size>k pe sabse-chhota EVICT karna hai.)
+TEMPLATE:
+    priority_queue<int, vector<int>, greater<int>> pq;   // MIN-heap (min: size>k pe sabse chhota bahar nikle)
+    for(num : nums){ pq.push(num);  if(pq.size() > k) pq.pop(); }   // k se zyada -> chhota nikaal
+    return pq.top();                                      // k bade me se chhota = kth largest
+O(n log k) (sort O(n log n) se behtar jab sirf k-th chahiye).  yehi pattern = "top-K" saare problems.
+```
+
 ```cpp
 int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
     priority_queue<int, vector<int>, greater<int>> pq;   // ★ MIN: size>k pe sabse CHHOTA evict
@@ -5956,6 +7915,24 @@ points[] me [x, y] points diye hain aur ek number k. Origin (0, 0) ke sabse paas
   kyun: [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
 
 KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap, sabse BADI evict)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : origin (0,0) ke k SABSE PAAS points. paas = doori = x*x+y*y (√ NAHI, sirf compare).
+= KTH-LARGEST ka MIRROR-TWIN. wahan k BADE (min-heap, chhota evict);
+  yahan k CHHOTE-dist (MAX-heap, sabse BADI-dist evict). "top-k chhote" -> MAX-heap of size k.
+TEMPLATE (max-heap {dist, point}, size k):
+    priority_queue<pair<int, vector<int>>> pq;   // MAX-heap: sabse BADI dist top pe (taaki size>k pe sabse door wala nikle)
+    for(auto &p : points){
+        int d = p[0]*p[0] + p[1]*p[1];           // √ skip -> compare-safe
+        pq.push({d, p});                          // {dist, point} (dist PEHLE: heap pair ke first pe compare karta)
+        if(pq.size() > k) pq.pop();               // sabse door (top) EVICT -> k paas bache
+    while(!pq.empty()){ ans.push_back(pq.top().second); pq.pop(); }  // .second = {x,y} poora
+KEY : (1) dist = x²+y², √ ki zaroorat nahi (order same).  (2) k CHHOTE chahiye -> MAX-heap
+      (bada evict).  pair<int,vector<int>> = dist PEHLE (compare), point .second me poora.
+O(n log k).  MIRROR-RULE: "k sabse BADE" -> MIN-heap ; "k sabse CHHOTE" -> MAX-heap.
 ```
 
 ```cpp
@@ -5985,6 +7962,23 @@ Ek array aur ek number k diya hai. Wo k numbers lautao jo array me sabse zyada b
   kyun: 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
 
 KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : k sabse ZYADA baar aane wale elements return karo (order matter nahi).
+= KTH-LARGEST ka COUSIN. bas "value" ki jagah "FREQUENCY" pe heap.  FARAK = 2:
+   (1) pehle hashmap se freq gino,  (2) heap me {freq, num} daalo (freq pe sort).
+TEMPLATE:
+    unordered_map<int,int> mp;  for(x:nums) mp[x]++;              // STEP1: freq gino
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;  // MIN-heap (min: size>k pe sabse kam freq bahar nikle)
+    for(auto &it : mp){                                          // it = {num, freq}
+        pq.push({it.second, it.first});                          // {freq, num} -> pair .first=freq pe sort
+        if(pq.size() > k) pq.pop();                              // chhoti freq EVICT -> top-k bache
+    while(!pq.empty()){ ans.push_back(pq.top().second); pq.pop(); }  // .second = actual num
+KEY : pair<freq,num> daalte hain (freq PEHLE) taaki heap FREQUENCY pe compare kare.  O(n log k).
+[maxHeap se bhi: saare push -> k baar top-pop.  par O(n log n), slow. min-heap-k better.]
 ```
 
 ```cpp
@@ -6019,6 +8013,22 @@ k sorted linked list di hain. Sabko jod ke ek sorted linked list banao aur uska 
   kyun: har baar teeno ke current head me sabse chhota uthao: 1,1,2,3,4,4,5,6
 
 struct Compare: ListNode* ko khud compare karna nahi aata
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : min-heap me har list ka current HEAD. pop chhota -> result me jodo -> uska NEXT push. repeat.
+TEMPLATE:
+    struct Compare { bool operator()(ListNode*a, ListNode*b){ return a->val > b->val; } };  // MIN-heap (> likha to MIN: pq ka comparator ulta chalta, chhota top pe)
+    priority_queue<ListNode*, vector<ListNode*>, Compare> pq;   // Compare: ListNode* ko khud compare karna nahi aata
+    for(l:lists) if(l) pq.push(l);                            // saare heads (NULL skip) (NULL push kiya to ->val pe crash)
+    dummy + tail;                                             // merge-2-lists jaisa build · dummy=new ListNode(0); tail=dummy
+    while(!pq.empty()){
+        curr = pq.top(); pq.pop();  tail->next = curr; tail = curr;   // chhota -> jodo
+        if(curr->next) pq.push(curr->next);                  // uska next pq me (NULL check: khatam list ka null mat daalo)
+    return dummy->next; // ->next: dummy khud nakli node hai
+heap me max k nodes (1 per list) -> O(N log k).  ListNode* min-heap = custom Compare (a->val > b->val).
 ```
 
 ```cpp
@@ -6057,6 +8067,22 @@ Ek array diya hai jisme har number apni sahi (sorted) jagah se zyada se zyada k 
 har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : har element sahi position se max k DOOR -> O(n log k) sort (n log n se behtar).
+DERIVE (WHY heap): index-0 pe MIN aayega, wo max index k tak -> "pehle k+1 me se MIN kaun?"
+   -> baar-baar MIN + data badalta -> DECISION-table = HEAP. min chahiye -> MIN-heap.
+TEMPLATE (min-heap, k+1 sliding buffer):
+  priority_queue<int,vector<int>,greater<int>> pq;              // MIN-heap (min: sorted output me chhota pehle chahiye)
+  for (int x : arr) {
+     pq.push(x);   // pehle daalo, phir size dekho
+     if (pq.size() > k+1) { ans.push_back(pq.top()); pq.pop(); } // buffer bhara -> MIN nikaal (k+1 se bada: tab tak sahi MIN buffer me aa chuka)
+  while (!pq.empty()) { ans.push_back(pq.top()); pq.pop(); }     // bache = sorted tail
+EX: arr=[6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]  (buffer hamesha <=4; bharte hi MIN pop).
+= KTH-LARGEST ("heap size k") ka COUSIN: wahan k bade RAKHE, yahan k+1 ka SLIDING buffer.  O(n log k).
+```
+
 ```cpp
 vector<int> sortKSorted(vector<int> &arr, int k) {
     vector<int> ans;
@@ -6092,6 +8118,53 @@ stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
 ═════════════════════════ ★ EDGE ═════════════════════════════════════
 heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
   bada -> BADI team -> minHeap. naam bhool, team soch.
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : stream me numbers aate rehte; kabhi bhi ab-tak ka MEDIAN turant chahiye.
+       add 5,15,1,3 -> median 4.0  ((3+5)/2)
+
+CHAAL: median = beech wala; poora sorted rakhna mehnga. Numbers ko DO team me baanto:
+       maxHeap = CHHOTI team   top = chhoto ka SABSE BADA    <- naam se ULTA (chhote yahan)
+       minHeap = BADI team     top = bado ka SABSE CHHOTA
+       dono top = beech ke 2 border -> median inhi se.
+
+addNum (2 kadam):
+   1. PLACEMENT: num <= maxHeap.top -> maxHeap ; warna minHeap   (maxHeap khaali -> maxHeap)
+   2. BALANCE  : farak max 1, EXTRA hamesha maxHeap me
+                 minHeap bada       -> minHeap.top -> maxHeap
+                 maxHeap 1+ se bada -> maxHeap.top -> minHeap
+findMedian: barabar(even) -> (maxHeap.top+minHeap.top)/2 ; warna(odd) -> maxHeap.top
+
+★ 2 balance-if KYUN (dono zaroori): placement num ko DONO heap me daal sakti (chhota->maxH, bada->minH).
+   FIRST  (maxH < minH)    -> bada-num minH me gaya, minH bada -> ek wapas maxH (extra maxH me rahe)
+   SECOND (maxH > minH+1)  -> chhota-num maxH me gaya, maxH 2 bada -> ek minH
+   dono milke: farak <=1, extra hamesha maxHeap.
+
+TEMPLATE:
+   priority_queue<double> maxHeap;                                    // chhoti team (max: chhoto ka sabse bada top = beech ka border)
+   priority_queue<double,vector<double>,greater<double>> minHeap;     // badi team (min: bado ka sabse chhota top = border)
+
+       if(maxHeap.empty() || maxHeap.top() >= num) maxHeap.push(num);   // pehle empty(): khaali pe top() crash
+       else minHeap.push(num);   // num maxHeap.top se bada -> badi team (minHeap)
+       if(maxHeap.size() < minHeap.size()){ maxHeap.push(minHeap.top()); minHeap.pop(); }  // minHeap bada: extra hamesha maxHeap me, ek wapas bhejo
+       else if(maxHeap.size() > minHeap.size()+1){ minHeap.push(maxHeap.top()); maxHeap.pop(); }  // 2 ka farak: odd me bhi maxHeap sirf 1 aage chalta
+       if(maxHeap.size()==minHeap.size()) return (maxHeap.top()+minHeap.top())/2.0;  // even: beech ke dono border ka average
+       return maxHeap.top();  // odd: extra maxHeap me rakha, uska top hi median
+
+DRY: add 5,15,1,3
+   5  -> maxH{5}                              med 5
+   15 -> 15>5 minH{15}                        med (5+15)/2 = 10
+   1  -> 1<=5 maxH{5,1}                        med 5  (maxH bada)
+   3  -> 3<=5 maxH{5,3,1} farak2 -> 5 minH me -> maxH{3,1} minH{5,15}
+                                              med (3+5)/2 = 4 ✓
+
+★ TRAP (yahin confuse hua): heap ka NAAM top batata, "kaise number rakhta" NAHI.
+  "bada number -> maxHeap" GALAT. bada -> BADI team -> minHeap. naam bhool, team soch.
+
+FAMILY: heap (kth-largest / k-sorted / merge-k) · running-value + do-heap-balance
 ```
 
 ```cpp
@@ -6142,6 +8215,8 @@ possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR: chars rearrange -> koi 2 ADJACENT same na ho. na bane -> "".
+
 PEHCHAN: "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
          -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
           yahan har round 2 nikaalo taaki adjacent-safe.)
@@ -6153,6 +8228,12 @@ FEASIBILITY (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
 
 KYUN POP-TWO: 1 nikaal turant wapas -> phir wahi top -> "aa".
    isliye har round DO alag (top-2) nikaalo, dono lagao -> safe.
+
+TEMPLATE: // pehle mp[ch]++, phir maxHeap.push({cnt,ch}) (cnt PEHLE: us pe sort)
+   while(heap.size()>1){ t1=pop; t2=pop; ans+=t1.ch; ans+=t2.ch;  // >1: har round 2 ALAG char chahiye
+      if(--t1.cnt) push(t1); if(--t2.cnt) push(t2); }  // -- pehle phir check: 0 bacha to wapas mat daalo
+   if(heap.size()==1) return top.cnt>1 ? "" : ans+top.ch;  // akela bacha count>1: do same paas aayenge, impossible
+   return ans;   // heap khaali: saare char jagah pe lag gaye
 
 VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
    R1: pop a,b -> "ab"   -> (2,a)(2,b)
@@ -6211,6 +8292,31 @@ aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod la
 [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
 BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
   yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR: har step bache hue me SABSE CHHOTA uthao (tie -> chhota index), total me jodo,
+      use + ORIGINAL padosi (i-1, i+1) hata do. sab hatne tak.
+
+PEHCHAN: kahani hata do -> "baar-baar MIN + beech me cheezein hat-ti" -> HEAP + hat-chuka array.
+★ BURST BALLOONS NAHI: wahan KAUNSA phodna TU chunta + padosi badalte -> DP.
+   yahan niyam tay (hamesha min) + padosi ORIGINAL index -> koi choice nahi -> heap se simulate.
+   sawaal: "kya mujhe chunna padta hai?" haan -> DP · nahi -> simulate.
+
+TEMPLATE:
+   priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;  // MIN {val,idx} (min: har step sabse chhota uthana)
+   for(i) pq.push({a[i], i});                        // pair -> tie pe chhota idx apne-aap pehle
+       int i = pq.top().second; pq.pop();   // .second = index (first sirf sort ke liye)
+       if(vis[i]) continue;                          // pehle hi hat chuka -> chhodo (LAZY delete)
+       ans += a[i];  vis[i] = true;   // khud ko bhi hatao, dobara na uthe
+       if(i-1 >= 0) vis[i-1] = true;                 // padosi hatao; >=0: pehle element ka left padosi nahi
+       if(i+1 <  n) vis[i+1] = true;   // < n: aakhri index n-1, uske aage bahar
+O(n log n).  LAZY DELETE = heap se beech ka element nikaal nahi sakte -> vis[] se pop pe skip
+             (Dijkstra ke "stale-skip" jaisa hi).
+
+FAMILY: heap (emergency-room: baar-baar min) · visited[] (graph jaisa) · lazy delete
 ```
 
 ```cpp
@@ -6276,6 +8382,12 @@ intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain 
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR : sort by start -> ans me first daalo -> har next OVERLAP? merge : push.
+TEMPLATE:
+    sort(intervals.begin(), intervals.end());     // default FIRST-element (start) se sort (pair jaisa)
+    for(i=1..n){  // 1 se: intervals[0] pehle hi ans me
+        if(intervals[i][0] <= ans.back()[1])       // OVERLAP: curr.start <= last.END (<= : [1,3],[3,5] chhoote bhi merge hote)
+            ans.back()[1] = max(ans.back()[1], intervals[i][1]);   // merge -> bada end (max zaroori: [1,10],[2,3] me end 10 hi rahe)
 DRY-RUN  [[1,3],[2,6],[8,10],[15,18]]  (sorted):
     ans=[[1,3]]
     [2,6]  : 2 <= 3  overlap -> end=max(3,6)=6 -> ans=[[1,6]]
@@ -6310,6 +8422,24 @@ meetings[] me [start, end] diye hain. Kya ek insaan saari meetings attend kar sa
 MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end me true
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. (Merge ka SAME skeleton reuse.)
+SAME as MERGE (sort + ans.push(first) + loop overlap-check) -- bas overlap pe KYA karo:
+     MERGE:   overlap -> ans.back()[1]=max(...)  (merge)  |  end: return ANS (list)
+     MEETING: overlap -> return FALSE           (ruko)    |  end: return TRUE
+TEMPLATE (merge-jaisa hi):
+    if (intervals.empty()) return true;   // ★ EDGE: warna intervals[0] pe crash
+    sort(intervals);  ans.push_back(intervals[0]);   // start se sort, pehla interval baseline
+    for(i=1..n){   // 1 se: intervals[0] pehle hi ans me
+        if(intervals[i][0] < ans.back()[1]) return false;   // overlap -> attend nahi (< kyunki ek khatam usi pal doosri shuru = chalta)
+        else ans.push_back(intervals[i]);   // push: agla overlap isi ke end se check hoga
+    return true;   // koi overlap nahi mila -> saari attend
+boundary FARAK (crux): Merge touching-MERGE -> `<=`  ·  Meeting touching-OK -> `<`.
+ek pattern (sort+overlap) -> bas (a) overlap pe action (merge vs stop) + (b) boundary (< vs <=) badalta. PROBLEM SAMJHO -> decide.
+```
+
 ```cpp
 bool canAttendMeetings(vector<vector<int>> &intervals) {
     if (intervals.empty())
@@ -6335,6 +8465,44 @@ intervals[] pehle se sorted hain aur aapas me overlap nahi karte. Ek newInterval
   kyun: [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
 
 pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
+KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
+TEMPLATE:
+    vector<vector<int>> ans;  int count=0;   // count=0: kitne process hue, doosra loop wahin se chalega
+    for(i=0..n){
+        if(intervals[i][1] < new[0])       ans.push_back(intervals[i]);   // 1. new se PEHLE khatam -> push (sirf < : chhoota hua merge hoga)
+        else if(intervals[i][0] > new[1])  break;                          // 3. new ke AAGE -> BREAK (sorted, aage sab door)
+        else { new[0]=min(new[0],intervals[i][0]);                         // 2. OVERLAP -> new ko GROW
+               new[1]=max(new[1],intervals[i][1]); }   // end bhi max se: dono me jo aage tak jaaye
+        count++;                                                           // break wala yahan nahi aata -> count se doosra loop use daalega
+    ans.push_back(new);                                                   // 4. bada-hua new daalo
+    for(i=count..n) ans.push_back(intervals[i]);                          //    phir count se aage baaki
+break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
+Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
+KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
+TEMPLATE:
+    vector<vector<int>> ans;  int count=0;
+    for(i=0..n){
+        if(intervals[i][1] < new[0])       ans.push_back(intervals[i]);   // 1. new se PEHLE khatam -> push
+        else if(intervals[i][0] > new[1])  break;                          // 3. new ke AAGE -> BREAK (sorted, aage sab door)
+        else { new[0]=min(new[0],intervals[i][0]);                         // 2. OVERLAP -> new ko GROW
+               new[1]=max(new[1],intervals[i][1]); }
+        count++;                                                           // kitne process hue (break se pehle ruk)
+    }
+    ans.push_back(new);                                                   // 4. bada-hua new daalo
+    for(i=count..n) ans.push_back(intervals[i]);                          //    phir count se aage baaki
+    return ans;
+break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
+Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
 ```
 
 ```cpp
@@ -6375,6 +8543,8 @@ min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 
 ```
 TASVEER (purani sheet se, same to same):
 
+TASVEER (purani sheet se, same to same):
+
 NAYA-SOCH (merge/meeting-I se ALAG): rooms ko OBJECT mat gino -> +1/-1 GINTI karo.
     meeting shuru = +1 (room bhara) · khatam = -1 (room khaali). running-sum ka MAX = answer.
 TOOL = ORDERED MAP (map<int,int> = time->delta; keys KHUD sorted -> manual sort NAHI):
@@ -6404,6 +8574,11 @@ FARAK merge se: merge/meeting-I = "kya overlap?" (join/bool). MR-II = "KITNA ove
 FAMILY: sweep-line / "events + running count" -- interval-overlap, max-concurrent, CPU-load, planes-in-sky.
 ★ YAHAN NAHI MILEGA: iska SAGAA BHAI = DIFFERENCE ARRAY (LC-1109) -> PATTERN 4 (PREFIX SUM) me hai.
    wahi machine, bas: map ki jagah ARRAY · end ki jagah END+1 (inclusive) · max ki jagah POORA array.
+
+SAAR : min ROOMS = kisi bhi ek PAL pe MAX kitni meeting ek-saath (peak overlap).
+         0    5    10
+                  ┃
+                  ▲
 ```
 
 ```cpp
@@ -6472,6 +8647,50 @@ Ek array diya hai (sab number alag). Iske saare subsets (khaali bhi) lautao, kra
   kyun: har element lo ya chhodo -> 2 x 2 = 4 subset
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : har element ke saamne 2 raaste -> LE lo ya CHHOD do -> 2 recursive call. index==size pe temp = ek subset.
+TEMPLATE (index-based, include/exclude):
+    void solve(nums, ans, index, temp):
+        if(index >= nums.size()){ ans.push_back(temp); return; }   // poora subset ban gaya
+        // INCLUDE:
+        temp.pop_back();                     // UN-CHOOSE (backtrack) (exclude se PEHLE: warna exclude me bhi element chipka rehta)
+        // EXCLUDE:
+    // caller: temp BAHAR bana ke by-ref pass; solve(nums, ans, 0, temp).
+temp by-REFERENCE (shared path); push/pop usi pe -> backtrack. helper-andar banate -> har call naya -> toot jaata.
+2^n subsets (har element in/out = power set).
+
+── ALT FORM: START-LOOP (for-loop) ── same cheez, alag likhawat (dono yaad rakho):
+    void solve(nums, ans, index, temp):
+        for(i = index; i < nums.size(); i++){   // index se: peeche wale dobara nahi
+            solve(nums, ans, i+1, temp);      // EXPLORE (i+1 -> agla aage se, peeche dobara nahi)
+            temp.pop_back();                  // UN-CHOOSE (backtrack) (agle i se pehle: wahi jagah agle element ko mile)
+start-loop me EXPLICIT base-case ki zaroorat NAHI: index==n -> loop chalega hi nahi -> khud ruk jaata.
+  (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
+FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
+
+── RECURSION TREE (nums=[1,2,3]) ── har edge 2 BAAR: ↓neeche=PUSH(choose) · ↑wapas=POP(backtrack)
+                             [ ]                       <- solve(start=0)
+            ┌─────────────────┼─────────────────┐
+        ↓+1 ↑pop1        ↓+2 ↑pop2        ↓+3 ↑pop3
+            │                 │                 │
+           [1]               [2]               [3]      (har node = subset -> RECORD)
+       ┌────┴────┐            │
+   ↓+2 ↑pop2  ↓+3 ↑pop3   ↓+3 ↑pop3
+       │         │            │
+     [1,2]     [1,3]        [2,3]
+       │
+   ↓+3 ↑pop3
+       │
+    [1,2,3]  END (i=3, loop khatam)
+
+har edge pe DONO arrow: neeche jaate waqt ↓PUSH (choose), wapas aate waqt ↑POP (backtrack). ek edge = 2 baar cross.
+POP KYU? branch khatam -> jo element DAALA tha usko NIKAALO (undo) -> taaki WAHI jagah AGLE sibling ko mile.
+   (undo na karo -> path ganda -> galat subset.)  e.g. [1,2,3]→↑pop3→[1,2]→↑pop2→[1]→ab loop aage ↓+3→[1,3].
+right taraf tree PATLI: i+1/start-aage -> node sirf apne AAGE wale pe branch ([2]→+3, [3]→kuch nahi).
+```
+
 ```cpp
 void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp) {
     if (index >= nums.size()) {             // har element pe faisla ho gaya -> ek poora subset
@@ -6513,6 +8732,27 @@ Ek array diya hai (sab number alag). In numbers ko jitne alag-alag kram me laga 
   kyun: pehli jagah 3 choice, doosri 2, teesri 1 -> 3x2x1 = 6
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : saare elements ka har ORDER (arrangement). har position pe koi bhi UNUSED element -> used[] track.
+SUBSETS se FARAK (crux): subsets = 'start' index (sirf AAGE) -> [1,2]==[2,1] repeat nahi.
+                            permutation = ORDER matter -> loop 0 SE + used[] se skip (start nahi).
+TEMPLATE:
+    void solve(nums, ans, temp, used):
+        if(temp.size() == nums.size()){ ans.push_back(temp); return; }   // poora arrangement
+        for(i = 0; i < nums.size(); i++){                                 // 0 se (start nahi) (order matter: peeche wala bhi kisi position pe aa sakta)
+            if(used[i]) continue;                                         // already-liya -> skip
+            used[i]=true;  temp.push_back(nums[i]);      // CHOOSE
+            solve(nums, ans, temp, used);                // EXPLORE (i+1 nahi -> phir 0 se, used skip)
+            temp.pop_back();  used[i]=false;             // UN-CHOOSE (dono undo) (used false bhi: warna aage ke arrangements me ye band)
+    // caller: temp + used(n,false) BAHAR bana ke by-ref pass.
+n! permutations.  base = size==n (full length), subsets me har-node/index-end tha.
+INDEX/start KYU NAHI PASS kiya (permutation me): order MATTER karta -> har position pe koi bhi UNUSED element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat hi nahi -> isliye 'start' ki zaroorat nahi, uski jagah used[].
+   (subsets/combinations me start = "peeche mat jao" (duplicate-rok, order-agnostic). permutation me wo nahi chahiye -> used[] = "same element dobara mat lo".)
+1-line yaad: SUBSETS='start-aage' (kaunse) · PERMUTATION='used[]+loop-0-se, NO start' (kis order).
+```
+
 ```cpp
 void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vector<int>> &ans) {
     if (temp.size() == nums.size()) {       // base = full length (poora arrangement)
@@ -6542,6 +8782,20 @@ Do number n aur k diye hain. 1 se n tak ke numbers me se k number chunne ke saar
   kyun: [2,1] = [1,2] same -> sirf aage wale chuno -> C(4,2) = 6
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : 1..n me se k numbers ke saare combos (order nahi). = subsets ka start-loop, record SIRF size==k pe.
+TEMPLATE:
+    void solve(n, k, ans, start, temp):
+        if(temp.size() == k){ ans.push_back(temp); return; }   // fixed-size combo poora
+        for(i = start; i <= n; i++){                            // 1..n numbers, start se aage (<= n: n khud bhi ek number hai)
+            temp.pop_back();                  // UN-CHOOSE (agla i try karne se pehle path saaf)
+    // caller: solve(n, k, ans, 1, temp)   (start = 1). (1 se: numbers 1..n hain, 0 nahi)
+subsets se FARAK = SIRF base: subsets har-node add · combinations size==k pe add. (baaki code SAME -> reuse.)
+family 1-line: SUBSETS='start-aage, har-node' · COMBINATIONS='start-aage, size==k' · PERMUTATION='used[]+loop-0, size==n'.
+```
+
 ```cpp
 void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp) {
     if (temp.size() == k) {  // fixed-size combo poora (subsets har node pe, yahan sirf ==k)
@@ -6564,6 +8818,35 @@ void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
 candidates[] (sab alag, sab positive) aur ek target diya hai. Wo saare alag combination lautao jinka jod target ke barabar ho. Ek number kitni bhi baar le sakte ho.
   e.g. [2,3,6,7], target=7 -> [[2,2,3],[7]]
   kyun: 2+2+3 = 7 (2 dobara liya) · 7 akela = 7
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : candidates me se (REUSE allowed) sum==target wale saare combos. = combinations code, bas base target + recurse 'i'.
+TEMPLATE:
+    void solve(cand, target, ans, start, temp):
+        if(target < 0) return;                          // prune (aage koi faida nahi)
+        if(target == 0){ ans.push_back(temp); return; } // valid combo
+        for(i = start; i < cand.size(); i++){   // start se: peeche wale nahi, combo repeat nahi
+            temp.push_back(cand[i]);                     // CHOOSE
+            solve(cand, target - cand[i], ans, i, temp); // EXPLORE ('i' -> REUSE allowed, i+1 nahi)
+            temp.pop_back();                             // UN-CHOOSE (agla candidate try karne se pehle path saaf)
+combinations se FARAK: (1) recurse 'i' na i+1 (same element dobara) (2) base = target (0=record, <0=prune), size==k nahi.
+start=i -> same element repeat OK par PEECHE wale nahi (duplicate combo rok). candidates positive -> target ghatta -> infinite nahi.
+
+── ALT FORM: INCLUDE/EXCLUDE (2-branch) ── same output, alag likhawat (subsets ki tarah dono):
+    void solve(cand, target, ans, index, temp):
+        if(target < 0) return;  // pehle: overshoot hua to aage jaana bekaar
+        if(index >= cand.size()){ if(target==0) ans.push_back(temp); return; }   // end pe check
+        // INCLUDE: cand[index] liya (index SAME -> reuse)
+        temp.push_back(cand[index]);
+        solve(cand, target - cand[index], ans, index, temp);  // index same: yahi coin dobara le sakte
+        temp.pop_back();  // exclude se pehle undo: warna exclude path me ye bhi rehta
+        // EXCLUDE: cand[index] chhoda -> aage (index+1)
+        solve(cand, target, ans, index+1, temp);  // index+1: is candidate ko ab chhod diya
+for-loop form: base target==0 pe turant record.  include/exclude form: base index==size pe (target==0? record).
+FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
 ```
 
 ```cpp
@@ -6613,6 +8896,21 @@ Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR : grid me `word` adjacent (4-dir) cells se banta hai? har cell EK-BAAR. har cell se DFS, mark→recurse→un-mark.
+TEMPLATE:
+    bool solve(board, word, index, i, j, m, n, vis&):          // vis REFERENCE (&) — copy nahi
+        if(i<0||i>=m||j<0||j>=n || vis[i][j] || board[i][j]!=word[index]) return false;  // bounds PEHLE: warna board[i][j] bahar padhta
+        vis[i][j]=true; index++;  // mark PEHLE: aage ke raaste me ye cell dobara na aaye
+        if(solve(..i+1,j..) || solve(..i,j+1..) || solve(..i-1,j..) || solve(..i,j-1..)) return true;  // || : ek raasta mila to baaki call hi nahi
+        vis[i][j]=false;                                       // BACKTRACK (un-mark) (doosre raaste ke liye cell wapas free)
+        return index==word.size();                             // base: poora word mila · index++ ho chuka: aakhri char match hua tabhi == size
+
+    bool exist(board, word):
+        vector<vector<bool>> vis(m, vector<bool>(n,false));    // m x n: har cell ka ek visited (m+1 nahi chahiye)
+        for(i..m) for(j..n)   // har cell se start try karo
+            if(board[i][j]==word[0])   // pehla char mile tabhi DFS shuru
+                if(solve(board, word, 0, i, j, m, n, vis)) return true;   // ★ EK mila = kaafi
+
 ★ CRUX: (1) 4 DFS ko || me JODO — ek direction true → baaki call hi nahi
         (2) visited-check EK-hi if me (bounds+mismatch ke saath)
         (3) base = index==word.size()
@@ -6631,6 +8929,20 @@ ANY vs ALL (har jagah yahi):
    (= stream ka anyMatch / allMatch, andar yahi loop)
 
 islands-DFS se FARAK: islands = bas fill/count. word-search = mark + recurse + UN-mark (path dobara use na ho) + return-bubble.
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+SAAR : grid me `word` adjacent (4-dir) cells se banta hai? har cell EK-BAAR. har cell se DFS, mark→recurse→un-mark.
+TEMPLATE:
+    bool dfs(m,n, i,j, board,word,index, vis):
+        if(i>=m||i<0||j>=n||j<0 || vis[i][j] || board[i][j]!=word[index]) return false;  // ★ bounds+VISITED+mismatch = EK check (top pe)
+        vis[i][j]=true; index++;
+        if(dfs(i+1,j..) || dfs(i-1,j..) || dfs(i,j-1..) || dfs(i,j+1..)) return true;  // 4-dir || SHORT-CIRCUIT (ek true→baaki call NAHI)
+        vis[i][j]=false;                                     // BACKTRACK (un-mark)
+        return index==word.size() ? true : false;           // base: poora word mila
+    exist(): har cell jaha board[i][j]==word[0] se dfs; koi true -> return true.
+★ CRUX (yehi atkaata tha): (1) 4 DFS ko || me JODO — SHORT-CIRCUIT (ek direction true → baaki call hi nahi) (2) visited-check EK-hi if me (bounds+mismatch ke saath) (3) base = index==word.size().
+islands-DFS se FARAK: islands = bas fill/count. word-search = mark + recurse + UN-mark (path dobara use na ho) + return-bubble. yehi backtracking-twist.
 ```
 
 ```cpp
@@ -6683,6 +8995,26 @@ Ek number n diya hai (n jode bracket). n jodon se banne wale saare sahi (balance
 n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : n jode ke saare VALID strings. brute (2^2n saari strings + filter) NAHI -> validity-RULE se hi banao.
+2 RULE (poora khel yahi): open<n -> '(' add sakta · close<open -> ')' add sakta (tabhi valid rahega).
+TEMPLATE:
+    void solve(open, close, n, path, ans): // path BY VALUE (path+'(' naya copy) -> pop_back nahi chahiye
+        if (path.size() == 2*n) { ans.push_back(path); return; }   // base (2*n: har jode me 2 char)
+        if (open  < n)    solve(open+1, close, n, path+'(', ans);   // '(' branch (open<n: n se zyada '(' nahi daal sakte)
+        if (close < open) solve(open, close+1, n, path+')', ans);   // ')' branch (close<open: band utne hi jitne khule)
+    // caller: solve(0,0,n,"",ans);
+★ BUG-TRAP #2 (Arpan-22-Sep, khud pakda): dono ALAG `if` hain, `else if` NAHI --
+   open<n aur close<open dono ek saath sach ho sakti hain, aur tab DONO chalni chahiye.
+   `else if` = "ek mil gaya bas" = dhoondhne wali soch. Yahan BANANA hai, saare banane hain.
+★ BUG-TRAP (Arpan-9-Sep, yaad rakh): dono branch pe `return solve(...)` mat likho!
+   first branch ke `return` se function KHATAM -> 2nd branch (')') kabhi chalti hi nahi -> sirf 1 string banti.
+   backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
+FAMILY: subsets-jaisa (har step pe choice), par choice CONSTRAINT se filter (open/close count) -> sirf valid bante.
+```
+
 ```cpp
 void solve(int open, int close, string path, vector<string> &ans, int n) {   // path BY VALUE: path+'('
     if (open == n && close == n) {          //   naya copy -> pop_back nahi chahiye
@@ -6705,6 +9037,31 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
   kyun: 2 = abc, 3 = def -> har akshar ke saath har akshar = 3 x 3 = 9
 
 "23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : "23" -> har ank ke akshar me se EK-EK chuno -> saare shabd. (2=abc ... 7=pqrs ... 9=wxyz)
+= har LEVEL (index) = ek ank, us level pe us ank ke SAARE akshar try karo (for loop), neeche jao.
+TEMPLATE:
+    void solve(index, digits, mp, temp, ans):
+        if (index >= digits.size()) { ans.push_back(temp); return; }   // saare ank ho gaye
+        for (char c : str) {   // is ank ka har akshar ek alag branch
+            temp.push_back(c);                       // choose
+            solve(index+1, digits, mp, temp, ans);   // explore (agla ank)
+            temp.pop_back();                         // un-choose (agle akshar se pehle path saaf)
+    // caller: digits khaali -> return {} (warna "" wali EK string aa jaati)
+    //         MAP yahan banta (ank -> uske akshar):
+    //           mp['2']="abc"  mp['3']="def"  mp['4']="ghi"  mp['5']="jkl"
+    //           mp['6']="mno"  mp['7']="pqrs" mp['8']="tuv"  mp['9']="wxyz"
+    //         key = char ('2'), kyunki digits[index] char hai -> mp[digits[index]] seedha chalta
+    //         solve(0, ...)
+★ EDGE: digits "" -> khaali LIST, [""] nahi. isliye pehle hi return {}.
+★ BUG-TRAP (24-Sep): `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
+   pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12). LeetCode pe chal jaata (har test pe naya object),
+   local test me pakda gaya. -> ans function ke andar, solve() me REFERENCE se.
+FAMILY: subsets/permutations jaisa (choose-explore-unchoose), bas har level pe choices = us ank ke akshar.
 ```
 
 ```cpp
@@ -6775,6 +9132,18 @@ n seedhiyon ki seedhi hai. Ek baar me 1 ya 2 seedhi chadh sakte ho. Upar tak pah
   kyun: 1+1+1, 1+2, 2+1
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : n steps, ek baar 1 ya 2 step -> top tak kitne tareeke. step n pe -> (n-1) se 1-step YA (n-2) se 2-step.
+   => solve(n) = solve(n-1) + solve(n-2).  base: n==0 || n==1 -> 1.  (= Fibonacci)
+TEMPLATE (top-down memo):
+        if(n==0 || n==1) return 1;              // base (n==0 bhi 1: 2-step se seedha top = ek tareeka)
+    // caller: vector<int> dp(n+1, -1); return solve(n, dp); (n+1: dp[n] tak index chahiye)
+    BOTTOM-UP bhi: dp[0]=dp[1]=1; for(i=2..n) dp[i]=dp[i-1]+dp[i-2]; return dp[n].  // 2 se: 0 aur 1 base pehle bhar diye
+plain recursion = solve(n-2) BAAR-BAAR (overlap) -> exponential. memo se O(n).
+```
+
 ```cpp
 int solve(int n, vector<int> &dp) {         // step n pe: (n-1) se 1 step YA (n-2) se 2 step
     if (n == 0 || n == 1)
@@ -6802,6 +9171,66 @@ Ankon ki ek string di hai, jahan 1 = A, 2 = B ... 26 = Z. Is string ko aksharon 
 A=1 .. Z=26. sirf ank mile ("226") -> kitne alag shabd? GINTI. 2|2|6=BBF · 22|6=VF · 2|26=BZ -> 3
 har i pe 2 choice (1 ank -> i+1 · 2 ank -> i+2); FARAK: yahan har choice pehle VALID honi chahiye
 "226" ka tree: "6" do jagah aata -> dusri baar memo se seedha (yahi dp[] ka kaam)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+QUESTION KYA MAANG RAHA:
+   code: A=1, B=2, ... Z=26. kisi ne shabd ko ANKON me badal diya, beech ke khaane hata diye.
+   ab sirf ank mile "226". wapas kitne alag shabd ban sakte? -> GINTI do (shabd nahi).
+
+      "226"   2 | 2 | 6   ->  B B F
+              22 | 6      ->  V F
+              2 | 26      ->  B Z            => answer 3
+
+SAAR : "226" -> 1..26 = A..Z. kitne tareeke se decode ho sakta?
+   har index i pe 2 CHOICE (climbing-stairs jaisa):  1 ANK lo -> solve(i+1)   ·   2 ANK lo -> solve(i+2)
+   FARAK climbing-stairs se: wahan dono choice HAMESHA valid thi.
+                             yahan har choice pehle VALID honi chahiye (neeche 2 rule).
+
+★ DO ZERO-RULE (yahi poora question hai, baaki climbing-stairs hai):
+   RULE-1  s[i]=='0'  -> is index se koi decode SHURU hota hi nahi -> ye raasta MARA (return 0).
+                        kyunki 0 ka koi letter nahi, aur "01" bhi A nahi (leading zero).
+   RULE-2  2 ANK tabhi lo jab wo 10..26 me ho ->  s[i]=='1'  ya  (s[i]=='2' && s[i+1]<='6')
+                        ("27" -> 2 ank invalid, sirf 1-ank raasta bachta)
+
+TREE ("226") -- har node = jo string abhi BACHI hai, har edge = kitne ank uthaye:
+
+                       "226"
+               ┌─────────┴──────────┐
+             2 liya              22 liya
+               │                    │
+             "26"                  "6"
+         ┌─────┴──────┐             │
+       2 liya      26 liya        6 liya
+         │            │             │
+        "6"          ""             ""
+         │          KHATAM        KHATAM
+       6 liya
+         │
+        ""
+      KHATAM
+
+   neeche "" = string khatam = EK poora decoding ban gaya. teen KHATAM = answer 3.
+   "6" wala node DO jagah aaya (left me aur right me) -- dusri baar memo se seedha utha,
+   dobara neeche nahi gaya. yahi dp[] ka poora kaam.
+   do base: i==n -> 1 (khatam tak pahunchna HI ek valid tareeka hai, isliye 1 na 0)
+            s[i]=='0' -> 0 (raasta mara)
+
+TEMPLATE (top-down memo on index):
+    int solve(int i, string &s, int n, vector<int> &dp){
+        if(i == n)      return 1;                 // ★ KRAM: i==n PEHLE (warna s[n] padhta; khatam = ek poora decoding, isliye 1)
+        if(s[i] == '0') return 0;                 //    s[i] BAAD me (0 se koi letter shuru nahi, raasta mara)
+        if(dp[i] != -1) return dp[i];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+        int ans = solve(i+1, s, n, dp);           // 1 ank: hamesha valid (0 upar hi kat gaya)
+        if(i+1 < n && (s[i]=='1' || (s[i]=='2' && s[i+1]<='6')))   // pehle i+1<n: aakhri char pe aage mat padho
+            ans += solve(i+2, s, n, dp);          // 2 ank (tabhi jab 10..26)
+        return dp[i] = ans;
+    // caller: vector<int> dp(n+1, -1); return solve(0, s, n, dp);
+
+KAB YE PATTERN: string ko TUKDON me kaato + har tukda ek RULE pass kare + kitne tareeke/kam-se-kam
+   -> index pe DP. (word-break bhi yahi shakl -- wahan rule "dictionary me hai kya", yahan "1..26 me hai kya".)
 ```
 
 ```cpp
@@ -6837,6 +9266,25 @@ nums[] me har ghar me rakha paisa diya hai. Do paas-paas wale ghar ek saath nahi
   kyun: ghar 0, 2, 4 = 2+9+1 = 12, koi do padosi nahi
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : adjacent ghar loot nahi sakte -> max paisa. har ghar i pe 2 CHOICE:
+   LOOT i : nums[i] + solve(i-2)   (i-1 skip -- adjacent nahi)  ·  SKIP i : solve(i-1)
+   => solve(i) = max(LOOT, SKIP).  base: i<0 -> 0 · i==0 -> nums[0].
+TEMPLATE (top-down memo, LAST index se):
+    int solve(nums, i, dp){
+        if(i<0) return 0;  // i<0: i-2 se array ke bahar, koi ghar nahi
+        if(i==0) return nums[0];  // sirf pehla ghar bacha: use loot lo
+        int LOOT = nums[i] + solve(nums, i-2, dp);  // i-2: loota to padosi i-1 chhodna padega
+        int SKIP =           solve(nums, i-1, dp);   // skip: ghar i chhoda, pichhle ghar tak ka best
+        return dp[i] = max(LOOT, SKIP);                      // compute + STORE
+    // caller: dp(n,-1); return solve(nums, n-1, dp);        // n-1 = array ka LAST index (0..n-1)
+climbing-stairs se FARAK: wahan sirf ADD (ways(n-1)+ways(n-2)); yahan har step CHOICE -> max(take, skip).
+n-1 kyu: ye TOP-DOWN hi hai (bottom-up nahi). nums[] ke index 0..n-1 -> LAST ghar = n-1 -> "last tak max" = solve(n-1).
+   (climbing me 'n' = step-count 1..n tha, array nahi; yahan index hai -> n-1. sirf naming, direction nahi.)
+```
+
 ```cpp
 int solve(vector<int> &A, int i, vector<int> &dp) {   // LAST index se peeche (top-down)
     if (i < 0)
@@ -6868,6 +9316,8 @@ ghar GOL: pehla (0) aur aakhri (n-1) PADOSI -> dono saath nahi. [2,3,2] -> 3 (2+
 ```
 
 ```
+TASVEER (purani sheet se, same to same):
+
 TASVEER (purani sheet se, same to same):
 
    ghar GOL (circle) me lage hain.
@@ -6906,6 +9356,23 @@ KYUN CHALTA
 EDGE
    n == 1  ->  return nums[0]
    (warna dono run khaali -> 0 aa jaata, galat)
+
+SAAR
+
+TASVEER  [2,3,2]
+
+         ghar0(2)
+        /        \
+
+
+
+
+
+
+KYUN CHALTA
+
+
+EDGE
 ```
 
 ```cpp
@@ -6958,6 +9425,35 @@ amount==0 = THEEK bana -> 0 coins · amount<0 = overshoot -> INVALID (ban-na = t
 (1) INT_MAX = "ban nahi sakta" (min me haarta) (2) overflow guard (3) caller INT_MAX -> -1
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : amount banane ko MIN coins (har coin UNLIMITED = reuse). na ban sake -> -1.
+amount==0 vs amount<0 (THEEK utna, na kam na zyada): amount==0 -> THEEK bana (11 = theek 11) -> SUCCESS -> 0 coins ·
+   amount<0 -> 0 ke NEECHE (coin bada le liya, overshoot) -> INVALID. (ban-na = theek 0 pe RUKNA, cross nahi.)
+3 TRAP (yahi phasaate): (1) INT_MAX = "ban nahi sakta" signal -> min me apne-aap HAAR jaata.
+   (2) OVERFLOW: 1+solve(...) SIRF jab solve != INT_MAX (warna 1+INT_MAX -> negative -> min galat).
+   (3) caller: answer INT_MAX -> return -1.
+
+    int solve(coins, amount, i, dp):
+        if(amount < 0) return INT_MAX;                       // INVALID (INT_MAX: min me apne-aap haar jaata)
+        if(dp[i][amount]!=-1) return dp[i][amount];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+            Take = 1 + solve(coins, amount-coins[i], i, dp); // coin i liya (i SAME = reuse)
+        return dp[i][amount] = min(notTake, Take);
+    // caller: dp(n+1, vec(amount+1,-1)); ans=solve(..,n-1,..); return ans==INT_MAX?-1:ans; (amount+1: dp[amount] tak index chahiye)
+
+    int solve(coins, amount, dp):
+        if(amount < 0) return INT_MAX;  // overshoot: INT_MAX = ye raasta nahi banta
+        if(amount == 0) return 0;  // theek ban gaya: aur koi coin nahi chahiye
+        if(dp[amount]!=-1) return dp[amount];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+        int Take = INT_MAX;  // INT_MAX: koi coin kaam na aaye to nahi-banta signal
+            if(solve(coins, amount-coins[i], dp) != INT_MAX)           // overflow guard
+                Take = min(Take, 1 + solve(coins, amount-coins[i], dp)); // sabme se MIN
+        return dp[amount] = Take; // caller: dp(amount+1,-1); ans==INT_MAX ? -1 : ans
+dono form SAME (backtracking jaisa): TAKE/NOT-TAKE = index pe 2 branch · FOR-LOOP = SIRF take, NOT-TAKE apne-aap
+   (loop me "kaunsa coin" khud choose). for-loop me 'i' index nahi -> 1D dp; 2D me state = (i, amount).
+```
+
 ```cpp
 int solve(vector<int> &coins, int amount, int i, vector<vector<int>> &dp) {
     if (amount < 0)
@@ -7007,6 +9503,21 @@ Ek array diya hai. Usme sabse lambi strictly badhti hui subsequence kitni lambi 
   kyun: 0,1,2,3 chuno (beech ka 0 aur 3 skip) -> 4
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : sabse lambi STRICTLY-increasing subsequence ki LENGTH. coin-change family (take/not-take), ek twist = prev.
+TEMPLATE:
+    int solve(index, prevIndex, nums, dp):
+        if(index == n) return 0;                                   // base (saaf -- no INT_MAX/overflow/-1)
+        if(dp[index][prevIndex+1] != -1) return dp[index][prevIndex+1];  // +1: prevIndex -1 se shuru, dp[-1] crash hota
+        int notTake = solve(index+1, prevIndex, nums, dp);         // chhoda -> prev wahi
+    // caller: dp(n+1, vec(n+1,-1)); return solve(0, -1, nums, dp); (n+1 column: prev -1..n-1 shift ho ke 0..n)
+TWIST vs coin-change: (1) state me PREV bhi (kya-liya, taaki increasing check ho) (2) take pe CONDITION (nums[i]>nums[prev]).
+MEMO offset: prevIndex -1 se shuru -> dp[index][prevIndex + 1] (+1 se index 0..n valid).
+LIS EASY kyu (Arpan): base sirf index==n -> 0 (coin-change ka i<0/INT_MAX/overflow/-1 ganda tha; yahan saaf).
+```
+
 ```cpp
 int solve(int index, int prevIndex, vector<int> &nums, vector<vector<int>> &dp) {
     if (index == nums.size())
@@ -7038,6 +9549,18 @@ m x n grid hai. Robot (0,0) se (m-1, n-1) tak jaana chahta hai aur sirf daayein 
   kyun: 2 down + 1 right ka order: R D D, D R D, D D R
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : m x n grid, robot (0,0) -> (m-1,n-1), sirf RIGHT/DOWN. kitne raaste? cell pe = UPAR se + LEFT se.
+TEMPLATE:
+    int solve(i, j, dp):
+        if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+    // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, dp);
+climbing-stairs se CONNECT: 1D -> 2D. ways(n-1)+ways(n-2) -> ways(i-1,j)+ways(i,j-1). dp[n] -> dp[i][j].
+2D DP ka pehla: state = (i,j) do coordinate. base do (out-of-grid=0, start=1). memo 2D array.
+```
+
 ```cpp
 int solve(int i, int j, vector<vector<int>> &dp) {   // robot (0,0) -> (m-1,n-1), sirf RIGHT / DOWN
     if (i < 0 || j < 0)
@@ -7064,6 +9587,26 @@ int uniquePaths(int m, int n) {
 m x n grid ke har cell me ek cost likhi hai. (0,0) se (m-1, n-1) tak sirf daayein ya neeche chalte hue jaao. Raste ki sabse kam kul cost lautao.
   e.g. [[1,2],[1,1]] -> 3
   kyun: neeche phir right = 1+1+1 = 3 · right phir neeche = 1+2+1 = 4
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : grid me har cell cost. (0,0)->(m-1,n-1), right/down. MIN-sum path. = unique-paths code, 2 tweak.
+
+unique-paths se CONNECT (SAME template, sirf 3 line badli):
+   return 0          ->  return INT_MAX             // base out-of-grid: count me 0 tha, ab INVALID -> min ignore karega
+   return 1          ->  return grid[0][0]          // base start: count nahi -> start ki COST
+   return up + left  ->  grid[i][j] + min(up,left)  // count-JOD -> apni cost + CHHOTA rasta
+KYUN: count problem -> cost-MIN problem. baaki structure (memo + 2 base + 2-dir) bilkul SAME.
+INT_MAX = coin-change INVALID-signal (min me haar jaata; real cell pe >=1 dir valid -> overflow nahi).
+
+TEMPLATE:
+    int solve(i, j, grid, dp): // caller: dp(m+1, vec(n+1,-1)); return solve(m-1, n-1, grid, dp)
+        if(i<0 || j<0) return INT_MAX;                 // INVALID (grid ke bahar) -> min ignore karega
+        if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+        int up = solve(i-1, j, ...), left = solve(i, j-1, ...);   // sirf upar aur left se aa sakte (right/down chaal)
+        return dp[i][j] = grid[i][j] + min(up, left);  // apni cost + upar/left me CHHOTA
 ```
 
 ```cpp
@@ -7098,6 +9641,22 @@ Do string s1 aur s2 di hain. Dono me jo sabse lambi common subsequence hai (kram
   kyun: a, c, e dono me isi order me -> "ace" = 3
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : do string me sabse lambi COMMON subsequence ki length. state = (i,j) = s1 index-i-tak, s2 index-j-tak.
+TEMPLATE:
+    int solve(i, j, s1, s2, dp):
+        if(i<0 || j<0) return 0;                              // koi string khatam -> common kuch nahi, 0
+        if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+        if(s1[i] == s2[j])                                    // char MATCH
+            return dp[i][j] = 1 + solve(i-1, j-1, ...);       //   liya -> DONO se peeche (diagonal)
+        return dp[i][j] = max(solve(i-1, j, ...), solve(i, j-1, ...));  // no-match -> ek char chhodo (2 side)
+    // caller: dp(m, vec(n,-1)); return solve(m-1, n-1, s1, s2, dp);
+MATCH -> diagonal (i-1,j-1) +1 · NO-MATCH -> max of 2 side (i-1,j)/(i,j-1). base i<0||j<0 -> 0.
+grid nahi (2 string) par same 2D soch; ye "2-string DP" ka base (edit-distance, etc. isi pe).
+```
+
 ```cpp
 int solve(const string &s1, const string &s2, int i, int j, vector<vector<int>> &dp) {   // s1 i tak, s2 j tak
     if (i < 0 || j < 0)
@@ -7130,6 +9689,16 @@ Teen kaam kar sakte ho: ek akshar daalo (insert), hatao (delete) ya badlo (repla
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR : w1 -> w2 min ops (insert/delete/replace). = LCS code, transition badli. (HARD par template = easy)
+TEMPLATE:
+    int solve(i, j, w1, w2, dp): // caller: dp(m+1, vec(n+1,-1)); return solve(m-1, n-1, w1, w2, dp)
+        if(i<0) return j+1;                          // w1 khatam -> bache w2 ke j+1 char INSERT
+        if(j<0) return i+1;                          // w2 khatam -> w1 ke i+1 char DELETE
+        if(dp[i][j] != -1) return dp[i][j];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+        if(w1[i] == w2[j]) return dp[i][j] = solve(i-1, j-1, ...);   // MATCH -> koi op nahi
+        return dp[i][j] = 1 + min({ solve(i-1, j-1, ...),   // REPLACE
+                                    solve(i-1, j,   ...),   // DELETE (w1 peeche)
+                                    solve(i,   j-1, ...) }); // INSERT (w2 peeche)
 LCS se FARAK: (1) no-match = 1 + MIN-of-3 (LCS me max-of-2 tha) (2) base = j+1/i+1 (LCS me 0).
 3-choice matlab: replace=diagonal · delete=i-1 · insert=j-1. base 2-sided (dono string ke bache char count).
 
@@ -7204,6 +9773,22 @@ n cheezein hain, har ek ka wazan weight[i] aur keemat value[i]. Bag me zyada se 
 MAX value, weight <= W, har item ek baar
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : items (wt,val) + bag capacity W. har item ek baar (0/1). MAX value, weight<=W. (chor: bag me best chura)
+TEMPLATE:
+    int solve(wt, val, W, i, dp): // caller: dp(n+1, vec(W+1,-1)); return solve(wt, val, W, n-1, dp)
+        if(dp[i][W] != -1) return dp[i][W];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+        int notTake = solve(wt, val, W, i-1, dp);               // item chhoda
+        int take = 0;   // 0 se: fit na ho to take ka koi value nahi
+        if(wt[i] <= W)                                          // fit hota hai tabhi (warna W negative -> dp index crash)
+            take = val[i] + solve(wt, val, W - wt[i], i-1, dp); // liya -> value+ , weight ghata, i-1 (ONCE)
+coin-change se FARAK: item ONCE -> take me i-1 (coin me REUSE -> i same tha). yehi 0/1 ka matlab.
+BASE i<0 vs i==0 (dono valid, same jawab): i<0 -> index-0 NORMAL item (recursion + i<0-base khud sambhaale, CLEANER);
+   i==0 -> item-0 explicit-handle (recursion 1 level pehle rukti, zyada code). i<0 = "sach me khatam", index-0 = normal.
+```
+
 ```cpp
 int solve(vector<int> &wt, vector<int> &val, int W, int i, vector<vector<int>> &dp) {
     if (i < 0)
@@ -7233,6 +9818,35 @@ Ek array (positive numbers) aur ek target diya hai. Kya kuch numbers chun ke unk
   kyun: {5} ya {2,3} = 5 · 1,2,7 se 6 ka koi jod nahi
 
 knapsack ka max-value ki jagah true/false
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : nums[] + target. kya koi SUBSET exactly target tak jode? true/false.
+RECOGNITION : subsetSum ne KNAPSACK function ko HI call kiya -- naya kuch nahi likha.
+   FARAK = solve() me max-VALUE ki jagah TRUE/FALSE (take || notTake), target ghatao.
+TEMPLATE (teen function -- solve + knapsack wrapper + subsetSum call):
+    bool solve(wt, W, i, dp):
+        if(W == 0)  return true;              // target ban gaya -> SUCCESS (sabse PEHLE) (upar rakho: neeche wale base W==0 pe galat false dete)
+        if(i < 0)   return false;             // numbers khatam, target bacha
+        if(i == 0)  return wt[0] == W;        // aakhri number: sirf isse W ban sakta?
+        if(dp[i][W] != -1) return dp[i][W];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+        int notTake = solve(wt, W, i-1, dp);              // number chhoda -> W same
+        int take = 0;   // 0 = false: fit na hua to ye raasta nahi
+        if(wt[i] <= W) take = solve(wt, W - wt[i], i-1, dp);  // liya -> W ghata (wt<=W tabhi: warna W negative, dp crash)
+        return dp[i][W] = (take || notTake);              // koi ek raasta true -> true
+
+    bool knapsack(wt, W):                     // wrapper: dp banao + solve(n-1)
+        int n = wt.size();
+        vector<vector<int>> dp(n+1, vector<int>(W+1, -1));  // W+1: dp[i][W] tak; -1 = abhi nahi nikala (0 = false asli)
+        return solve(wt, W, n-1, dp);   // n-1: aakhri index se peeche chalo
+
+    bool subsetSum(nums, target):
+        return knapsack(nums, target);        // bas knapsack ko hi bula liya
+★ BASE-ORDER TRAP: W==0 sabse UPAR. warna i==0 wale case me W==0 aaya to wt[0]==0=false ->
+   success MISS. eg [5,3],T=3 -> {3} true hona chahiye par galat false. (base-order = DP ka fiddly part.)
+FAMILY: PARTITION EQUAL SUBSET SUM (LC-416) = ISKA delta -> target=totalSum/2, sum odd->false, phir yahi subsetSum.
 ```
 
 ```cpp
@@ -7272,6 +9886,20 @@ Ek array (positive numbers) diya hai. Kya ise do hisson me baant sakte hain jink
 solve() = upar SUBSET SUM wala, hubahu
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : array ko DO barabar-sum subset me baant sakte? true/false.
+[1,5,11,5] -> S=22 -> har hissa 22/2 = 11
+     {11} = 11    aur    {1,5,5} = 11    -> DONO barabar -> true
+RECOGNITION : ek subset S/2 bana le -> baaki apne-aap barabar (S - S/2).
+   => "kya subset S/2 banaye?" = bilkul SUBSET-SUM.
+DELTA (subsetSum ke upar 2 line):
+    int S = sum(nums);
+    if (S % 2) return false;        // ODD -> aadha ho hi nahi sakta
+    return subsetSum(nums, S/2);     // target = S/2 -> wahi boolean subset-sum · dp ka column S/2+1 (target ab S/2 hai)
+```
+
 ```cpp
 bool subsetSum(vector<int> &nums, int target, int n, vector<vector<int>> &dp) {
     return solve(nums, target, n - 1, dp);
@@ -7299,6 +9927,26 @@ Ek string me sirf '(', ')' aur '*' hain. Har '*' ko '(' ya ')' ya khaali maan sa
   kyun: * ko '(' maano -> "(())" valid · ")(" me ')' pehle aa gaya
 
 '*' = '(' YA ')' YA khaali. open = ab tak kitne '(' UNMATCHED. state = (index, open)
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+SAAR : '*' = '(' YA ')' YA khaali. valid ban SAKTI hai? har '*' pe 3-choice -> try-all -> state repeat -> memo.
+TRACK : ek counter open = ab tak kitne '(' UNMATCHED. state = (index, open). '(' 1 raasta, ')' 1, '*' 3 (choice).
+TEMPLATE:
+    bool solve(s, index, open, dp):
+        if(index == s.size()) return open == 0;                     // base: sab '(' match ho gaye?
+        if(dp[index][open] != -1) return dp[index][open];   // -1 = abhi nahi nikala; nikala hai to seedha wahi lo
+        if(s[index]=='(') return dp[index][open] = solve(s, index+1, open+1, dp);   // '(' : ek hi raasta, open badhao
+        if(s[index]==')') return dp[index][open] = (open>0) ? solve(s, index+1, open-1, dp) : false;  // open>0: band karne ko koi khula chahiye
+        bool a = solve(s, index+1, open+1, dp);                      // '*' as '('
+        bool b = (open>0) ? solve(s, index+1, open-1, dp) : false;   // '*' as ')'  (GUARD) (open 0 pe ')' = invalid, dp[-1] crash)
+        bool c = solve(s, index+1, open, dp);                        // '*' khaali
+        return dp[index][open] = a || b || c;   // koi ek raasta valid -> true
+    // caller: dp(n+1, vec(n+1,-1)); return solve(s, 0, 0, dp);   -- open 0..n (worst = saare '(')
+★ GUARD : jahan bhi open-1 -> pehle open>0 (warna open<0 -> dp[-1] crash + galat). '*' pe direct return-false MAT (baaki 2 option zinda).
+= COIN-CHANGE ka cousin (choice + memo), DELTA: state me 'open' (balance) + '*' pe 3-branch OR (true/false, min nahi).
 ```
 
 ```cpp
@@ -7351,6 +9999,8 @@ chain multiply: result SAME, COST order pe -> MIN. p[] = dims, matrix A_i = p[i-
 ```
 TASVEER (purani sheet se, same to same):
 
+SAAR : matrices chain multiply -> result SAME, COST order-pe badalti -> MIN scalar-mult nikaalo.
+
 INPUT p[]: chain ki dims. consecutive PAIR = ek matrix ka ROW x COL. adjacent matrices ek number SHARE karti.
    p[] :   10  --  30  --  5  --  60
    idx :   p0      p1     p2     p3
@@ -7362,6 +10012,20 @@ INPUT p[]: chain ki dims. consecutive PAIR = ek matrix ka ROW x COL. adjacent ma
 
 = two_max (Google) ka WALL hi. FARAK: two_max me left/right PRECOMPUTED (O(1)); yahan ranges OVERLAP
   -> har wall LOOP + har side RECURSE + memo (interval-DP, state = RANGE (i,j) -> 2D dp).
+TEMPLATE:
+    solve(i, j):                              // A_i..A_j ko 1 matrix banane ka MIN cost
+        if i == j: return 0                   // base: ek hi matrix bacha -> multiply ko kuch nahi -> 0  (2+ matrix hon tabhi mult)
+        if dp[i][j] != -1: return dp[i][j]
+        ans = INT_MAX  // MIN chahiye: bade se shuru, pehla cost hi jeete
+
+        // k = i se j-1 KYUN: k = WALL, chain ko (i..k)|(k+1..j) me todti; har side >=1 matrix chahiye.
+        //   k=j pe RIGHT block khaali = invalid -> isliye max k = j-1.
+        //   eg {10,30,5,60}: k=j-1 pe right single, recursion sambhaal leta.
+        for k = i .. j-1:  // j-1 tak: right block khaali na rahe
+            cost = solve(i,k) + solve(k+1,j) + p[i-1]*p[k]*p[j]  // left p[i-1]xp[k] guna right p[k]xp[j]
+            ans = min(ans, cost)
+        return dp[i][j] = ans
+    // caller: solve(1, n) [n=p.size()-1].   i=0 MAT karo (p[i-1]=p[-1] crash). · dp(p.size()+1, vec(p.size()+1,-1))
 COMBINE (a*b*c): block A_i..A_k -> size p[i-1] x p[k]. wall pe LEFT=p[i-1]xp[k], RIGHT=p[k]xp[j] -> mult = p[i-1]*p[k]*p[j].
          number-line: p[i-1]=poore-left baayaan chhor · p[k]=WALL · p[j]=poore-right dayaan chhor.
 
@@ -7416,6 +10080,8 @@ k = range me SABSE AAKHRI phootne wala -> baaki sab phoot chuke -> padosi = rang
 ```
 
 ```
+TASVEER (purani sheet se, same to same):
+
 TASVEER (purani sheet se, same to same):
 
    (padosi = us waqt zinda; array-bahar = 1). saare phod ke MAX total coins?
@@ -7473,6 +10139,54 @@ DRY-RUN (coin = p[i-1]*p[k]*p[j+1]):   p=[1,3,2,5,1], solve(p1,p3), k=p2 phoda
     uske baad JODO: 6 + 10 + 2 = 18    (MCM me result MULTIPLY hote; yahan coins ADD)
 
 real: coins/DP interview-classic. interval-DP FAMILY: MCM, burst-balloons, stone-merge, optimal-BST.
+
+SAAR : balloons ek-ek phodo. phodne pe coins = left * khud * right (padosi = us waqt ZINDA) -> saare phod ke MAX total.
+
+
+
+        .-.    .-.    .-.
+        `-'   *POP*   `-'
+        .-.           .-.
+        `-'           `-'
+
+
+
+TEMPLATE:
+    solve(i, j):                              // A_i..A_j sab phodne ka MAX coins
+        if i > j: return 0                    // base: khaali range (single balloon base NAHI -> wo phoodta)
+        if dp[i][j] != -1: return dp[i][j]
+        ans = INT_MIN  // MAX chahiye: sabse chhote se shuru
+
+        // k = i se j KYUN: har balloon ko baari-baari phod-ke try karo -> unme se MAX = answer.
+        //   eg {3,1,5,8}: 3 phodo, ya 1, ya 5, ya 8 -> har ek try -> MAX nikaalo.
+        //   MCM se ULTA: wahan matrix ke PAIRS the (wall pairs) -> j-1; yahan pair nahi -> k poora i..j.
+        for k = i .. j:  // j tak: har balloon aakhri phootne wala ban sakta
+            coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]  // i-1, j+1: k aakhri, padosi range ke bahar wale
+            ans = max(ans, coins)
+        return dp[i][j] = ans
+    // caller:
+    //   dp(n+1, vector<int>(n+1, -1)); (n+1: asli idx 1..n)
+    //   balloons.insert(balloons.begin(), 1);         // left pad
+    //   balloons.push_back(1);                        // right pad
+    //   return solve(1, n);                           // asli balloon idx 1..n
+
+
+                i-1               j+1
+
+                     |LEFT| (k) |RIGHT|
+                     (p1)       (p3)
+    phir teeno ka coin JODO:
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+        // k = i se j KYUN: har balloon ko baari-baari phod-ke try karo -> unme se MAX = answer.
+        //   eg {3,1,5,8}: 3 phodo, ya 1, ya 5, ya 8 -> har ek try -> MAX nikaalo.
+        //   MCM se ULTA: wahan matrix ke PAIRS the (wall pairs) -> j-1; yahan pair nahi -> k poora i..j.
+        for k = i .. j:
+            coins = solve(i,k-1) + solve(k+1,j) + p[i-1]*p[k]*p[j+1]
+            ans = max(ans, coins)
+        return dp[i][j] = ans
+    // caller: solve(1, n) [n = asli balloon count, pad ke baad].
 ```
 
 ```cpp
@@ -7525,6 +10239,18 @@ Zyada se zyada kitne bachche khush kar sakte ho, wo lautao.
 chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi cookies bade greed ko
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+g[] = bachhe ki GREED, s[] = cookie SIZE. cookie j bachhe i ko khush karti: s[j] >= g[i]. max kitne bachhe khush?
+GREEDY soch: chhoti-greed wale bachhe ko jitni-ZAROORAT-utni (chhoti-se-chhoti jo kaam kare) cookie do
+             -> badi cookies bade-greed walon ke liye bachi rahein.
+dono SORT -> 2-pointer (i=bachha, j=cookie): // while(i<n && j<m): koi ek khatam -> ruk
+   if (s[j] >= g[i])   i++, j++, count++;     // khush -> dono aage (>= : barabar size bhi khush karti)
+   else                j++;                    // cookie choti -> badi dhoondho
+count = ans.  (s khali -> 0 return)
+```
+
 ```cpp
 int findContentChildren(vector<int> &g, vector<int> &s) {
     int n = g.size(), m = s.size(), count = 0, i = 0, j = 0;   // i = bachha, j = cookie
@@ -7553,6 +10279,19 @@ nums[i] batata hai ki index i se zyada se zyada kitne kadam aage kood sakte ho. 
   kyun: 0->1->4 pahunche · doosre me har raasta index 3 (value 0) pe atakta
 ```
 
+```
+TASVEER (purani sheet se, same to same):
+
+nums[i] = us index se max kitni door kood sakte. index0 se LAST tak pahunch sakte ho? true/false.
+GREEDY soch: har index pe track karo "ab tak sabse DOOR kahan tak pahunch sakta hoon" (maxReach).
+   agar koi index i KHUD maxReach se aage nikal gaya -> wahan pahunch hi nahi sakte -> FALSE.
+for i in 0..n-1:
+   if (i > maxReach)  return false;            // is index tak reach hi nahi (maxReach = 0 se shuru)
+   maxReach = max(maxReach, i + nums[i]);       // apni pahunch badhao
+return maxReach >= n-1.    O(n), koi DP nahi.
+★ cookies se FARAK: wahan sort+2-pointer; yahan sort nahi -> ek scan me "farthest reachable" track. greedy ke 2 alag rang.
+```
+
 ```cpp
 bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte. last tak pahunche?
     int maxReach = 0;                       // ab tak sabse DOOR kahan tak pahunch sakte (0 se)
@@ -7574,6 +10313,32 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
 intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue koi bhi do interval overlap na karein, wo lautao. Sirf chhoona (ek ka end = doosre ka start) overlap nahi maana jaata.
   e.g. [[1,2],[2,3],[3,4],[1,3]] -> 1
   kyun: [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
+```
+
+```
+TASVEER (purani sheet se, same to same):
+
+intervals me se MIN kitne HATAO taaki koi overlap na bache? (= max non-overlapping rakho.)
+GREEDY: default SORT. 2-pointer -> start=rakha-hua, end=candidate. // start=0, end=1; while(end < n)
+   NO-overlap (start.end <= end.start, chhoona overlap nahi):  start = end; end++;       // candidate safe, rakho
+   OVERLAP (else):  count++;                                        // ek to hatana hi
+                    if (start.end > end.end)  start = end;          // chhota-END wale ko rakho (chhota end = aage zyada jagah bachti)
+                    end++;   // agla candidate dekho
+count = removals.  WHY chhota-end rakho: aage zyada jagah -> zyada fit.  O(n log n).
+★ EDGE (dry-run se pakda): overlap pe BLINDLY start rakhna GALAT -> [[1,100],[2,3],[3,4]] pe 2 aata (sahi 1).
+  end-compare zaroori. (alt: END pe sort karo -> pehla-waala hamesha chhota-end -> ye if-check gayab.)
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+intervals me se MIN kitne HATAO taaki koi overlap na bache? (= max non-overlapping rakho.)
+GREEDY: default SORT. 2-pointer -> start=rakha-hua, end=candidate.
+   NO-overlap (start.end <= end.start):  start = end; end++;       // candidate safe, rakho
+   OVERLAP (else):  count++;                                        // ek to hatana hi
+                    if (start.end > end.end)  start = end;          // chhota-END wale ko rakho
+                    end++;
+count = removals.  WHY chhota-end rakho: aage zyada jagah -> zyada fit.  O(n log n).
+★ EDGE (dry-run se pakda): overlap pe BLINDLY start rakhna GALAT -> [[1,100],[2,3],[3,4]] pe 2 aata (sahi 1).
+  end-compare zaroori. (alt: END pe sort karo -> pehla-waala hamesha chhota-end -> ye if-check gayab.)
 ```
 
 ```cpp
@@ -7613,6 +10378,8 @@ Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sa
 ```
 TASVEER (purani sheet se, same to same):
 
+TASVEER (purani sheet se, same to same):
+
    tank khaali se shuru. kis pump se chalu ki poora ghoom ke wapas wahin aa jau? koi nahi -> -1.
 
 har pump ka NET = gas[i] - cost[i]. Ek pass, DO accumulator:
@@ -7642,6 +10409,19 @@ DRY-RUN  gas=[1,2,3,4,5]  cost=[3,4,5,1,2]
   -> s aur i ke beech ka koi bhi pump start bana ke bhi i paar nahi hota (beech ka tank >= 0 hi tha,
   uske bina aur kam padta) -> seedha i+1 pe kood.
 ★ cookies / jump / interval se FARAK: yahan sort NAHI. circular + 2 accumulator (possible? + start kahan).
+
+PEHLI SHEET (Aug) se bhi, same to same:
+
+N pump CIRCLE me. gas[i]=milta, cost[i]=agle pump tak kharcha. kaha se shuru karu
+ki poora ghoom ke wapas wahin aa jau? koi start possible nahi -> -1.
+har pump ka NET = gas[i] - cost[i]. Ek pass, DO accumulator:
+   kyaNegativeHua  += gas[i]-cost[i];   // KABHI reset nahi -> ant me <0 -> -1 (petrol hi kam)
+   meriGaddiKaTank += gas[i]-cost[i];   // running; jaha doobta wahan se aage nahi ja sakte
+   if (meriGaddiKaTank < 0) { meriGaddiKaTank = 0; index = i+1; }   // start ko AGLE pump pe khiska do
+return  kyaNegativeHua < 0 ? -1 : index;
+★ KEY: kyaNegativeHua>=0 ho to jo LAST reset-index bacha wahi ANSWER (unique). kyun: jis pump pe
+  tank dooba, us-se-pehle kisi bhi start se wahan pahucha ja HI nahi sakta -> start hamesha aage hi.
+★ cookies/jump/interval se FARAK: yahan sort NAHI. circular + 2-accumulator (feasibility + start-track).
 ```
 
 ```cpp
