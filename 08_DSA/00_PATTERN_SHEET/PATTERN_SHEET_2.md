@@ -800,7 +800,7 @@ int trap(vector<int> &height) {             // O(1) space, two pointer
     int left = 0, right = n - 1;
     int leftMax = 0, rightMax = 0, ans = 0; // max 0 se: abhi koi deewar dekhi nahi; empty -> 0
     while (left < right) {                  // < : milne wali cell sabse unchi deewar, uspe paani nahi
-        if (height[left] <= height[right]) {    // ★ DEEWAR pe faisla, max pe NAHI ([4,1,4,1] -> 0)
+        if (height[left] <= height[right]) {    // ★ DEEWAR pe faisla, max pe NAHI ([4,1,4,1] -> 3)
             if (leftMax > height[left])     // ★ chhoti deewar wali taraf niptao: doosri taraf badi pakki
                 ans += leftMax - height[left];  // chhota -> paani
             else
@@ -833,7 +833,7 @@ solve: &count : warna bahar count badhta hi nahi
 ```
 
 ```cpp
-void solve(int i, int j, string s, int &count) {   // ★ &count : warna bahar count badhta hi nahi
+void solve(int i, int j, const string &s, int &count) {   // ★ &count : warna bahar count badhta hi nahi
     while (i >= 0 && j < s.size() && s[i] == s[j]) {   // range check PEHLE, phir s[i]==s[j]
         i--;                                // dono taraf phailo
         j++;
@@ -1191,20 +1191,6 @@ DRY-RUN [10,5,2,6], k=100:
     k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
     aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
     k = 0 alag, upar hi return 0.
-
-┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
-│ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
-└───────────────────────────────────────────────────────────────
-
- SHARED SKELETON (expand + shrink -- dono me same):
- need-map(t);  count = t.size();                 // count==0 => window me t ke SAARE char (VALID) · need-map: t ke har char pe mp[c]++
- while (j < n) {                                  // OUTER: j (right) aage
-     if (mp[s[j]] > 0) count--;                  // t-char mila -> ek zaroorat puri
-     mp[s[j]]--;                                 // IF ke BAHAR: non-t char -ve -> count me "invisible"
-                                                 //   (andar rakha to D-ASYMMETRY BUG: shrink me count++ galat)
-     while (count == 0) {                         // INNER: VALID -> shrink (i++)
-         mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // MIRROR: aana = -- , jaana = ++
-     j++;   // shrink ke BAAD agla char lo
 ```
 
 ```cpp
@@ -1263,6 +1249,26 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
 
 ### ▸ LC-76 MIN WINDOW SUBSTRING  
 `s="ADOBECODEBANC", t="ABC" -> "BANC"`. s ki sabse chhoti window jisme t ke saare char.
+
+```
+TASVEER (purani sheet se, same to same):
+
+┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
+│ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
+└───────────────────────────────────────────────────────────────
+
+ SHARED SKELETON (expand + shrink -- dono me same):
+      need-map(t);  count = t.size();                 // count==0 => window me t ke SAARE char (VALID) · need-map: t ke har char pe mp[c]++
+      while (j < n) {                                  // OUTER: j (right) aage
+          if (mp[s[j]] > 0) count--;                  // t-char mila -> ek zaroorat puri
+          mp[s[j]]--;                                 // IF ke BAHAR: non-t char -ve -> count me "invisible"
+                                                      //   (andar rakha to D-ASYMMETRY BUG: shrink me count++ galat)
+          while (count == 0) {                         // INNER: VALID -> shrink (i++)
+              mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // MIRROR: aana = -- , jaana = ++
+          }
+          j++;   // shrink ke BAAD agla char lo
+      }
+```
 
 ```cpp
 string minWindow(string s, string t) {
@@ -1705,8 +1711,7 @@ int longestConsecutive(vector<int> &nums) {
     unordered_set<int> st;                  // set: O(1) lookup + duplicate apne aap hat jaate
     for (auto &it : nums)
         st.insert(it);
-    for (int i = 0; i < nums.size(); i++) { // set pe ghoomna behtar: nums pe duplicate START baar-baar
-        int num = nums[i];
+    for (int num : st) {                    // ★ SET pe ghoomo (nums pe nahi): duplicate START baar-baar na gine
         if (!st.count(num - 1)) {           // ★ START tabhi jab num-1 set me NAHI, warna beech ka: skip
             int currNum = num;
             int count = 1;                  // count=1: START khud chain me
@@ -2905,10 +2910,6 @@ DHYAAN:
   1. dono pass ke beech low/high RESET.
   2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
   3. ans(2,-1) + index set karo, push_back mat milao.
-
-┌── FAMILY: ROTATED ────────────────────────────────────────────
-│ KYUN SAATH: array rotate hua; ek comparison se pata karo kaunsa half sorted / pivot kis taraf, phir wahi half rakho.
-└───────────────────────────────────────────────────────────────
 ```
 
 ```cpp
@@ -3175,10 +3176,6 @@ TASVEER (purani sheet se, same to same):
    low3 high3 -> mid=3 (ODD)  : nums[3]=3 != nums[2]=2 -> high=3-1=2
    low3 > high2 -> STOP -> return nums[high]=nums[2]= 2  (sahi)
 return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
-
-┌── FAMILY: 2D-index-map ───────────────────────────────────────
-│ KYUN SAATH: 2D matrix ko 1D sorted array maan ke normal BS; index ko (row,col) me convert.
-└───────────────────────────────────────────────────────────────
 ```
 
 ```cpp
@@ -3719,11 +3716,6 @@ crux: count-FIRST + head-BANTA-TAIL + RECURSE-stitch.
 
 PEHCHAN: "reverse in groups of k" sunte hi -> 3-ptr + count + recurse.
          (copy-random se ALAG: yahan nodes ULATNA, naye banana NAHI.)
-
-┌── FAMILY: HASHMAP-AS-GLUE (clone) ────────────────────────────
-│ KYUN SAATH: map<old*,new*> = purane node ko naye se jodne wala GOND.
-│ (LRU me bhi hashmap-as-glue; yahan clone ke liye old->new.)
-└───────────────────────────────────────────────────────────────
 ```
 
 ```cpp
@@ -3872,12 +3864,15 @@ TRICK: index = hash<string>{}(key)%cap -> us bucket ki chain me traverse -> key 
                        if(head->key == key){ head->value = val; return; }   // return: warna loop aage chalta, END pe DUPLICATE node + sz++
                        else if(head->next == nullptr){ head->next = node; sz++; }   // next null = chain ka END: yahin jodo (agle round naya node match hoke return)
                        head = head->next;
+                    }
+                 }
   get(key):      Entry* head = buckets[index];
                  while(head != NULL){ if(head->key == key) return head->value;  head = head->next; }
   remove(key):   Entry* head = buckets[index], *prev = NULL;   // prev=NULL: head ke peeche koi node nahi
                  while(head != NULL){
                     if(head->key == key){ if(prev) prev->next = head->next;  else buckets[index] = head->next;  sz--; }   // prev NULL = HEAD hi hata: tab bucket ka head badlo
                     prev = head;  head = head->next;   // prev = head (prev->next nahi): prev NULL ho to crash
+                 }
 
 PUT TRAP (7-redo se pakka): key MILI -> value update + TURANT return. return NA kiya to loop aage
    DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- chain-ke-ANDAR update pe phat-ta.)
@@ -4489,7 +4484,7 @@ int maxTwoNonOverlap(vector<int> &nums) {   // STEP 5: WALL
 
 ```
 
-#### ── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number, Single-Number-II bhi) ──
+#### ── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number bhi; Single-Number-II ALAG: wahan baaki 3 baar aate, XOR se nahi katte -> har bit ki ginti % 3) ──
 
 ```
  KAB: har number 2 baar, ek akela · extra memory nahi
@@ -5363,16 +5358,16 @@ BFS (har level = 1 minute):
                 nr=r+d[0], nc=c+d[1];
                 if(nr>=0 && nr<m && nc>=0 && nc<n && grid[nr][nc]==1){   // bounds PEHLE, grid baad: bahar index pe && pehle hi ruk jaata
                     grid[nr][nc]=2; push({nr,nc});   // push ke saath hi 2: warna doosra rotten bhi isse push karta
+                }
+            }
+        }
+    }
 
 END:
     for(i,j): if(grid[i][j]==1) return -1;       // fresh bacha -> impossible
     return mins == 0 ? 0 : mins-1;               // last level extra -> -1
                                                  // ★ EDGE: grid me koi santra hi nahi -> loop
                                                  //   chala hi nahi, mins=0 -> mins-1 = -1 aata, sahi 0
-
-┌── FAMILY: TOPO-SORT / cycle-detect (DIRECTED graph) ─────────
-│ KYUN SAATH: "prerequisites/dependencies + can-finish? / valid-order?" -> TOPO-SORT (Kahn's = BFS + indegree). cycle -> impossible.
-└───────────────────────────────────────────────────────────────
 ```
 
 ```cpp
@@ -5462,10 +5457,6 @@ cycle wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size(
         ans KHAALI se shuru:  vector<int> ans;      (ans(n,0) + push_back = size 2n, galat)
         loop  -> ans.size() < n -> return {}  (khaali)
         self-loop [0->0] -> indegree kabhi 0 nahi -> khaali
-
-┌── FAMILY: CLONE / deep-copy (hashmap old->new) ────────────────
-│ KYUN SAATH: "graph ka DEEP COPY / naya-graph banao" -> traversal (BFS/DFS) + map(purana->naya). map = cycle-rok + clone-dhundo.
-└───────────────────────────────────────────────────────────────
 ```
 
 ```cpp
@@ -5577,10 +5568,6 @@ yaad: (a) if ke ANDAR (sirf naya pe) · (b) if ke BAHAR (har edge pe)
 
 2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
 DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
-
-┌── FAMILY: GRAPH-COLOURING / bipartite (2-colour) ─────────────
-│ KYUN SAATH: "graph ko 2 group me baant sakte? / odd-cycle?" -> 2-COLOUR BFS. adjacent same-rang = false.
-└───────────────────────────────────────────────────────────────
 ```
 
 ```cpp
@@ -5649,10 +5636,6 @@ idea : color[] = -1 (uncolored), 0 / 1 = do rang.
 DRY-RUN (triangle 0-1-2):
     0 ko 0 diya  -> nbr 1 = 1 · nbr 2 = 1
     curr 1 (rang 1) -> nbr 2 ka rang bhi 1 = SAME -> false        (odd cycle pakda gaya)
-
-┌── FAMILY: WEIGHTED shortest-path ──────────────────────────────
-│ KYUN SAATH: "edges pe WEIGHT/cost + shortest path?" -> Dijkstra. (kam edges != kam weight -> BFS kaafi nahi)
-└───────────────────────────────────────────────────────────────
 ```
 
 ```cpp
@@ -6381,6 +6364,8 @@ TOOL = ORDERED MAP (map<int,int> = time->delta; keys KHUD sorted -> manual sort 
     for(auto &it : mp){                                   // keys sorted -> order me
         overlap += it.second;   // +1/-1 jodo = is pal kitni meeting chal rahi
         if(maxOverlap < overlap) maxOverlap = overlap;   // peak yaad rakho = rooms
+    }
+    return maxOverlap;
 DRY-RUN  start=[2,9,6] end=[4,12,10]:
     mp (key-sorted): {2:+1, 4:-1, 6:+1, 9:+1, 10:-1, 12:-1}
     t=2(+1)->ovl=1 mx=1 | t=4(-1)->0 | t=6(+1)->1 | t=9(+1)->2 mx=2 | t=10->1 | t=12->0
@@ -6800,7 +6785,7 @@ har i pe 2 choice (1 ank -> i+1 · 2 ank -> i+2); FARAK: yahan har choice pehle 
 ```
 
 ```cpp
-int solve(int i, string s, int n, vector<int> &dp) {
+int solve(int i, const string &s, int n, vector<int> &dp) {
     if (i == n)
         return 1;                           // i==n PEHLE (warna s[n] padhta); khatam = ek poora decoding
     if (s[i] == '0')
@@ -6884,10 +6869,13 @@ TWIST  (gol ko seedhi line me todo)
    robI = purana House Robber, bina badle.
 
 CODE  (rob1 = House Robber I, waisa hi)
+       int n = nums.size();
        if (n == 1) return nums[0];                // ek ghar: dono temp khaali rehte -> 0 aata, galat
            if (i != 0)     temp1.push_back(nums[i]);   // RUN-A: pehla ghar hata
            if (i != n - 1) temp2.push_back(nums[i]);   // RUN-B: aakhri ghar hata
+       }
        return max(rob1(temp1), rob1(temp2));      // har run ka dp alag (rob1 ke andar naya)
+   }
 
 KYUN CHALTA
    ek ghar hatao -> gol toot ke seedhi line -> normal House Robber.
@@ -7091,7 +7079,7 @@ Do string s1 aur s2 di hain. Dono me jo sabse lambi common subsequence hai (kram
 ```
 
 ```cpp
-int solve(string s1, string s2, int i, int j, vector<vector<int>> &dp) {   // s1 i tak, s2 j tak
+int solve(const string &s1, const string &s2, int i, int j, vector<vector<int>> &dp) {   // s1 i tak, s2 j tak
     if (i < 0 || j < 0)
         return 0;                           // koi string khatam -> common kuch nahi
     if (dp[i][j] != -1)
@@ -7156,7 +7144,7 @@ CRUX: DELETE = w1 ka char NIKAALA (i ghata) · INSERT = w2 ke liye naya char DAA
 ```
 
 ```cpp
-int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp) {   // s1 -> s2 min ops
+int solve(int i, int j, const string &s1, const string &s2, vector<vector<int>> &dp) {   // s1 -> s2 min ops
     if (i < 0)
         return j + 1;                       // ★ s1 khatam -> bache s2 ke j+1 char INSERT
     if (j < 0)
@@ -7616,6 +7604,8 @@ for (int i = 0; i < gas.size(); i++) {
     meriGaddiKaTank += gas[i] - cost[i];   // is start se ab tak ka tank
     kyaNegativeHua  += gas[i] - cost[i];   // poore circle ka total, kabhi reset nahi
         index = i + 1;                  // start AGLE pump pe khiska do (s..i ke beech se shuru karke bhi i paar nahi hota)
+    }
+}
 return kyaNegativeHua < 0 ? -1 : index;  // total kam = petrol hi kam -> -1
 
 DRY-RUN  gas=[1,2,3,4,5]  cost=[3,4,5,1,2]
