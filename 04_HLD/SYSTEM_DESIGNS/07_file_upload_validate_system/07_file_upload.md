@@ -11,18 +11,19 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ## Pehle poochho: kaunsa product? (yahi is design ki chaabi)
 
-Har file upload app alag hai. Income tax ki site pe chhoti PDF hai, folder nahi, par scan zaroori. Drive jaisi app me
-badi file bhi hai aur folder bhi. To design ek kahani nahi, **tukde** hain: ek core jo har jagah lagta hai, aur
-"agar" wale tukde, jo product maange tabhi jodo.
+Har file upload app alag hai: koi scan karta, koi nahi, koi 10 GB ya folder leta hi nahi. Income tax ki site pe
+chhoti PDF hai, folder nahi, par scan zaroori. Drive jaisi app me badi file bhi hai aur folder bhi. To design ek
+kahani nahi, **tukde** hain: ek core jo har jagah lagta hai, aur "agar" wale tukde, jo product maange tabhi jodo.
 
 ```
-CORE (har jagah)      1 peeche line + status · 2 seedha S3 · 3 receptionist ka token · 4 S3 khud bataye · 6 maalik check + seedha download
+CORE (har jagah)      1 peeche line + status · 2 seedha S3 · 3 receptionist ka token · 4 S3 khud bataye · 6 maalik check + seedha download · 7 link ki umar
 AGAR badi file        2 tukde (multipart) + adhoore ki safai
 AGAR folder           5 ped hamare DB me
-AGAR bahar ki file    1 me jaanch + 7 scan ki alag line, scan tak link band
+AGAR bahar ki file    1 me jaanch + 8 scan ki alag line, scan tak link band
 ```
 
-Interview me FR pe hi poochh lo: file kitni badi, folder chahiye, scan chahiye? Jo "haan" aaye wahi tukda bolo.
+Seedha S3 bhi core hai, kyunki 3, 4, 6 usi pe tike. Interview me FR pe hi poochh lo: file kitni badi, folder chahiye,
+scan chahiye? Jo "haan" aaye wahi tukda bolo.
 
 ---
 
@@ -62,35 +63,43 @@ flowchart LR
     style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-## 2. [agar badi file] 2 TB hamare server se guzar raha (seedha bada dabba + tukde)
+## 2. [core + agar badi file] 2 TB hamare server se guzar raha (seedha bada dabba + tukde)
 
 Shaam ko 1000 log ek saath 2 GB daalte hain, 2 TB hamare server se guzar raha, network bhar gaya. Badi file apne
 server se guzaro hi mat, seedha bade dabbe me daalo.
 
 **Maan lo 10 GB ki file, 8 GB pe net gaya:** file ko tukdon me todo. 8 GB ke tukde pahunch chuke, sirf baaki 2 GB
-dobara. Aur client ne dobara upload kiya hi nahi, to adhoore tukde S3 me pade rahenge aur paisa lagega. To thodi der
-baad S3 ki safai unhe hata de.
+dobara. Aur client ne dobara upload kiya hi nahi, to adhoore tukde S3 me pade rahenge aur paisa lagega. To thodi der baad S3 ki safai
+unhe hata de.
 
 **Asli naam:** bada dabba = S3, tukde = multipart upload (resume, sirf toota tukda dobara), safai = lifecycle rule
 (adhoora multipart upload kuch din baad hatao).
 
+```mermaid
+flowchart LR
+    A["Arpan ka phone"] -- "tukde (multipart)" --> S3[("Bada dabba<br/>(S3)")]
+    S3 --> C["Safai<br/>(Lifecycle rule)"]
+    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ## 3. [core] S3 kaise maane ye hamara user hai (receptionist ka token)
 
-Phone seedha S3 me daal raha, par S3 ko kaise pata ki ye Arpan hai aur use ijaazat hai? App me AWS ki chaabi rakhi
-to koi bhi nikaal ke bucket bhar dega ya doosron ki files padh lega. Bank jaisa: koi seedha manager ke cabin me nahi ghusta (cabin = S3). Pehle receptionist (hamara server) JWT dekh ke tasalli kare, phir ladke ke haath me token de (token = presigned URL, sirf is file ke liye, thodi der ka): "ye le, jab
-teri baari aaye to file de dena". 10 GB ka bora receptionist khud nahi uthata, ladka khud andar le jaata (file hamare server se nahi
-guzarti, phone seedha S3 me daalta hai).
+Phone seedha S3 me daal raha, par S3 ko kaise pata ki ye hamara user hai? App me AWS ki chaabi rakhi to koi bhi
+nikaal le. Bank jaisa: koi seedha manager ke cabin me nahi ghusta (cabin = S3). Pehle receptionist (hamara server)
+JWT dekh ke tasalli kare, phir ladke ke haath me token de (token = presigned URL, sirf is file ke liye, thodi der
+ka): "ye le, jab teri baari aaye to file de dena". 10 GB ka bora receptionist khud nahi uthata (file hamare server se
+nahi guzarti, phone seedha S3 me daalta hai).
 
 **Maan lo koi 10 GB ki faltu file daal raha:** size ki had lagao, ya badi file pe paisa lo, S3 ka kharcha bhi hamara.
 
-**Asli naam:** receptionist ka token = presigned URL (hamara server JWT dekh ke banata, chaabi phone ko kabhi nahi),
-had = size limit / quota.
+**Asli naam:** receptionist ka token = presigned URL (hamara server JWT dekh ke banata, chaabi phone ko kabhi nahi), had = size limit /
+quota.
 
 ```mermaid
 flowchart LR
     A["Arpan ka phone"] -- "1. JWT: upload karna hai" --> U["Receptionist<br/>(Upload Server)"]
-    U -- "2. token (presigned URL)" --> A
-    A -- "3. file seedha, tukdon me" --> S3[("Bada dabba<br/>(S3)")]
+    U -- "2. token" --> T["Ladke ke haath token<br/>(Presigned URL)"]
+    T -- "3. file seedha" --> S3[("Manager ka cabin<br/>(S3)")]
     style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
@@ -98,8 +107,8 @@ flowchart LR
 ## 4. [core] File S3 me aa gayi, server ko pata hi nahi (S3 khud bataye)
 
 File hamare server ke paas se guzri hi nahi, to server ko pata nahi chala ki upload kab poora hua. DB me "UPLOADING"
-pada hai, na Kafka me kuch gaya, na scan shuru hua. S3 ko bol do: "jab file aa jaaye, mujhe bata dena". Hum DB me
-mark kar denge aur ladke ko bata denge. Poori nahi hui to wo dobara try karega.
+pada hai, scan shuru hi nahi hua. S3 ko bol do: "jab file aa jaaye, mujhe bata dena". Hum DB me mark kar denge aur
+ladke ko bata denge. Poori nahi hui to wo dobara try karega.
 
 **Asli naam:** S3 event notification (SQS ke raaste) -> hamara server DB me status UPLOADED + Kafka me scan ka kaam.
 
@@ -107,24 +116,24 @@ mark kar denge aur ladke ko bata denge. Poori nahi hui to wo dobara try karega.
 flowchart LR
     S3[("S3")] -- "file aa gayi (event)" --> U["Upload Server"]
     U --> DB[("DB: UPLOADED")]
-    U --> K["Kafka"] --> W["Worker (scan)"]
+    U --> K["Kafka"]
+    K --> W["Worker (scan)"]
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 ## 5. [agar folder] "Goa trip" folder, naam badla to 500 copy (ped hamare DB me)
 
 Arpan ne "Goa trip" folder daala: Day1, Day2, kul 500 photo. S3 me folder hote hi nahi, bas lambe naam wali files.
-Naam path me likha to "Goa trip" se "Goa 2026" karna = 500 copy + 500 delete. Folder ka hisaab alag, apne server
-me: ek parent, baaki uske child, ped jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent
-ka naam badlo, saare bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora. S3 sirf files
-rakhe.
+Naam path me likha to rename = 500 copy + 500 delete. Isliye folder ka hisaab alag, apne server me: ek parent, baaki
+uske child, ped jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent ka naam badlo, saare
+bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora. S3 sirf files rakhe.
 
-**Asli naam:** DB me folders table (id, parent_id, name), file ki row me folder_id; S3 key file ki id se, naam se
+**Asli naam:** ped = DB me folders table (id, parent_id, name), file ki row me folder_id; S3 key file ki id se, naam se
 nahi. Rename = ek row update.
 
 ```mermaid
 flowchart TB
-    G["Goa 2026<br/>(parent, id 1)"] --> D1["Day1<br/>(parent_id 1)"]
+    G["Goa trip<br/>(parent, id 1)"] --> D1["Day1<br/>(parent_id 1)"]
     G --> D2["Day2<br/>(parent_id 1)"]
     D1 --> F1["img1.jpg -> S3 key f-901"]
     D2 --> F2["img2.jpg -> S3 key f-902"]
@@ -133,40 +142,53 @@ flowchart TB
 
 ## 6. [core] Ravi ne 1043 likha, Priya ka statement khula (maalik check + truck seedha ghar)
 
-Arpan ne Ravi ko `app.com/files/1042` bheja. Ravi ne 1043 likha aur Priya ka bank statement khul gaya. Ravi asli
-member hai (JWT sahi), par Priya ki statement maange to "Priya ko saath la" (server DB me dekhe file kiski hai / kisse share hui, warna mana). Server DB me dekhe file kiski hai, kisse
-share hui, tabhi link de, warna mana. Link me chhed-chhaad ki to link bekaar. Aur download bhi hamare server se mat
-guzaro: truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata.
+Arpan ne Ravi ko `app.com/files/1042` bheja. Ravi ne 1043 likha aur Priya ka bank statement khul gaya, aur download
+bhi hamare server se ja raha. Ravi asli member hai (JWT sahi), par Priya ki statement maange to "Priya ko saath la".
+Server DB me dekhe file kiski hai, kisse share hui, tabhi link de, warna mana. Link me chhed-chhaad ki to link bekaar.
+Aur download truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata (hamare server se data nahi
+guzarta).
 
-**Asli naam:** owner / share check = authorization (JWT sirf pehchaan batata, ijaazat DB batata), presigned download
-URL (signature, badla to bekaar), S3 se direct download.
+**Asli naam:** kiski hai = owner / share check (authorization, JWT sirf pehchaan batata, ijaazat DB batata), link bekaar = presigned download
+URL (signature, badla to bekaar), truck seedha ghar = S3 se direct download.
 
 ```mermaid
 flowchart LR
     R["Ravi: file 1043"] --> U["Server<br/>(kiski hai? kisse share?)"]
-    U -- "Priya ki, Ravi ko nahi -> mana" --> R
+    U -- "Priya ki, Ravi ko nahi" --> X["Mana"]
     A["Arpan: file 1042"] --> U
-    U -- "token (presigned download)" --> A
-    A -- "seedha" --> S3[("S3")]
+    U -- "apni file" --> T["Link<br/>(Presigned download URL)"]
+    T --> S3[("S3")]
+    S3 -- "truck seedha ghar" --> A
     style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-**Maan lo Ravi ne apna link 200 logon ke WhatsApp group me daal diya:** link ki umar chhoti (presigned URL expiry), file ke hisaab se: bank
-statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. User khud baante to wo uski zimmedari,
-system pe har cheez nahi thop sakte.
-**Asli naam:** presigned URL expiry, file ki sensitivity pe.
+## 7. [core] Ravi ne link 200 logon ke WhatsApp group me daala (link ki umar)
 
-## 7. [agar bahar ki file] Scan baaki, Ravi ko download chahiye; virus nikla to (alag line + lo hi mat)
+Ravi ne apna link 200 logon ke WhatsApp group me daal diya. To link ki umar chhoti rakho, file ke hisaab se: bank
+statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. User khud baante to wo uski
+zimmedari, system pe har cheez nahi thop sakte.
 
-File S3 me aa gayi, scan me 10 minute baaki, aur Ravi download maang raha. Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do.
+**Asli naam:** umar = presigned URL expiry (file ki sensitivity pe: bank statement jaisi 1-2 minute, baaki 5-6 minute). Umar hamara faisla, S3 ka nahi.
 
-**Maan lo scan me virus nikla:** file lo hi mat, hata do aur user ko batao. Hum antivirus nahi, file system hain;
-mall aur airport ki security jaisa, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan,
-poora antivirus nahi). Zaroori ho to bahar wala (third party)
-pehle jaanche, phir hamare paas.
+```mermaid
+flowchart LR
+    U["Server"] -- "statement: 1-2 min<br/>baaki: 5-6 min" --> L["Link ki umar<br/>(Presigned URL expiry)"]
+    L --> G["200 log WhatsApp<br/>(umar ke baad bekaar)"]
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
-**Asli naam:** scan ke liye alag topic / priority queue, status CLEAN tak download band, INFECTED -> file hatao
-(quarantine / delete) + user ko batao.
+## 8. [agar bahar ki file] Scan baaki, Ravi ko download chahiye; virus nikla to (alag line + lo hi mat)
+
+File S3 me aa gayi, scan me 10 minute baaki, aur Ravi download maang raha. Scan ki alag tez line, jaise SMS me OTP ki
+(doctor line me nahi lagta): scan baaki kaam ke peeche nahi rukta. Scan poora hone tak link hi nahi; ho gaya to user
+ko bata do.
+
+**Maan lo scan me virus nikla:** file lo hi mat, hata do aur user ko batao. Hum antivirus nahi, file system hain; mall aur airport ki security
+jaisa, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to
+bahar wala (third party) pehle jaanche, phir hamare paas.
+
+**Asli naam:** alag line = priority queue / scan ka alag Kafka topic, link nahi = status CLEAN tak download band,
+lo hi mat = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 
 ```mermaid
 flowchart LR

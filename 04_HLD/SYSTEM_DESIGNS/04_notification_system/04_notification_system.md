@@ -51,6 +51,19 @@ log khud sambhal le. Ab SMS dheema hua to sirf SMS line rukti, bill apni line se
 se utha ke teen line me daalta), apni line sambhalna = har topic ka apna consumer group (worker alag-alag badha sakte:
 sale me push ke 100, SMS ke 20).
 
+```mermaid
+flowchart LR
+    N["Notification Service"] --> S[("SMS ki line<br/>(SMS topic)")]
+    N --> E[("Email ki line<br/>(Email topic)")]
+    N --> P[("Push ki line<br/>(Push topic)")]
+    S --> SW["SMS worker<br/>(consumer group)"]
+    E --> EW["Email worker<br/>(consumer group)"]
+    P --> PW["Push worker<br/>(consumer group)"]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style E fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ## 3. Ek "order placed" do baar (parchi)
 
 SMS worker ne khabar uthayi, SMS Arpan ke phone pe pahunch gaya, par Kafka ko commit karne se theek pehle crash.
@@ -62,6 +75,14 @@ dekhi: ye to ho chuka, chhod do. Kabhi bhi kuch ho jaaye, parchi hai.
 pehle check, mila to skip. Ek chhoti khidki fir bhi bachti: SMS chala gaya aur "ho gaya" likhne se pehle hi crash, to wo
 ek baar dobara ja sakta. Parchi is khidki ko bahut chhota kar deti, poora band nahi karti; ye kabhi-kabhar wala dohra
 maan ke chalte.
+
+```mermaid
+flowchart LR
+    K[("Kafka")] --> W["SMS worker"]
+    W --> T[("Parchi: ho gaya?<br/>(Tracking DB, khabar id)")]
+    W --> C["SMS company"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
 ## 4. "Abhi bheed hai, baad me aana" (thodi der baad dobara)
 
@@ -149,6 +170,17 @@ backup tu aa ja, baaki 3 tu bhej de.
 **Asli naam:** tod ke range = campaign tukde (chunks), turant DB me mark = checkpoint (DB), baaki 3 backup = crash pe
 wahin se. Mark ke baad aur marne ke beech wale kuch log dobara aa jaayein, to kadam 3 wali parchi (idempotency)
 rokti: isko bhej diya tha? Haan, to dobara nahi.
+
+```mermaid
+flowchart LR
+    C["1 crore ka offer<br/>(campaign)"] --> T1["Tukda 1<br/>(worker 1, range)"]
+    C --> T2["Tukda 2<br/>(worker 2, range)"]
+    C --> TN["... Tukda 50<br/>(worker 50, range)"]
+    T1 --> D[("Moti diary<br/>(DB checkpoint)")]
+    T2 --> D
+    TN --> D
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
 ## 9. Har SMS pe DB, OTP dheema (ek saancha apne paas)
 

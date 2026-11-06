@@ -32,10 +32,6 @@ poori line sorted hai.
 mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. Commands interview me bolni nahi padti, bas "sorted set,
 score ke kram me".
 
-**Maan lo Redis gira:** ekdum DB pe nahi bhaagna. Uska clone, wo bhi gira to ek aur clone. Teeno gaye tab DB, kyunki har
-match ka score pehle DB me likha, wahan se dobara bhar do.
-**Asli naam:** Redis replica (failover), DB = sach, Redis rebuild.
-
 ```mermaid
 flowchart LR
     G["Match khatam<br/>(Game Service)"] -- "arpan +50" --> Z[("Apne aap sort wala dabba<br/>(Redis sorted set)")]
@@ -100,8 +96,8 @@ board:4-Nov  -> umar poori, apne aap hat jaata
 
 **Asli naam:** alag register = key me tareekh / hafta (time-bucketed key), discard = purane dabbe pe TTL.
 
-**Maan lo Priya aaj khelti hi nahi:** wo aaj ke register me hai hi nahi. Requirement pe depend: naam dikhana hai to
-all-time wale se naam aur aaj ka 0 dikha do; nahi dikhana to wo aaj ke board pe aati hi nahi.
+**Maan lo Priya aaj khelti hi nahi:** agar requirement hai ki naam dikhe to 0 ke saath dikha do, nahi hai to wo aaj
+ke register me hi nahi.
 **Asli naam:** FR ka faisla; aaj ke key me na ho = score 0.
 
 ## 6. Mere aage ke 5, peeche ke 5 (bheed me aas-paas scan)
@@ -109,7 +105,7 @@ all-time wale se naam aur aaj ka 0 dikha do; nahi dikhana to wo aaj ke board pe 
 Main 4,52,318 pe hoon, top 10 me kabhi nahi aaunga, to screen mere aas-paas wale dikhaye. Par wo alag dabbon me baithe:
 Kenji Japan me, Sara Europe me, India wale dabbe me sirf Rohit, Meera, Aditi. Mera score 5200, to mujhe 10,000 wale se
 kya lena-dena. Bheed me main apne aas-paas scan karta, poori bheed nahi dekhta: har dabbe se sirf 5200 ke aas-paas
-wale maango, 4000 aur 6000 wale nahi. Jaise gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhte. Sab dabbon
+wale maango, 4000 aur 6000 wale nahi. Jaise highway pe gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhta hoon. Sab dabbon
 se aaye log mila ke sort, mere upar ke 5 aur neeche ke 5.
 
 **Asli naam:** har shard se score range query (mere score ke thoda upar aur neeche, `ZRANGE BYSCORE REV`), merge, 5 + 5.
@@ -123,6 +119,25 @@ flowchart LR
     E --> M
     J --> M
     style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 7. Redis gira to saare score? (clone, phir DB)
+
+Saare board Redis me hain, aur Redis gira. Ekdum DB pe nahi bhaagunga. Pehle koshish ki gire hi na; gira to uska
+clone kaam sambhale, wo bhi gira to ek aur clone. Teeno gir gaye tab DB pe jaao, kyunki har match ka score pehle DB me
+likha hai, wahan se dobara bhar do.
+
+**Asli naam:** clone = Redis replica (primary gira to replica primary banti, failover). Teeno gaye to DB = sach, Redis
+wahan se rebuild.
+
+```mermaid
+flowchart LR
+    G["Match khatam<br/>(Game Service)"] --> D[("Pehle yahan likha<br/>(DB, sach)")]
+    G --> Z[("Apne aap sort wala dabba<br/>(Redis primary)")]
+    Z --> C1[("Clone<br/>(Redis replica)")]
+    D -. "teeno gire to dobara bharo<br/>(rebuild)" .-> Z
+    style C1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 ---

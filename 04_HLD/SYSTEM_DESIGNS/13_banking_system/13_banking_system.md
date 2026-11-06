@@ -19,38 +19,48 @@ Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna iss
 
 ---
 
-## 1. Bijli gayi, Arpan ke kate, Ravi ko nahi mile (500 wapas + rough copy)
+## 1. Bijli gayi, Arpan ke kate, Ravi ko nahi mile (500 wapas de do)
 
 Arpan ne parchi di "Ravi ko 500 bhej do". Cashier ne Arpan ke 500 kaate, Ravi me jodne jaata usi pal bijli chali
-gayi. Mere 500 kat gaye, Ravi ko kuch nahi mila, to mujhe mere 500 wapas de do na, dikkat hi khatam. Ya dono kaam
-honge, ya koi nahi.
+gayi. Mere 500 kat gaye, Ravi ko kuch nahi mila, to bhai aisa karo na, mujhe mere 500 wapas de do, dikkat hi khatam.
+Ya dono kaam honge, ya koi nahi.
 
-**Asli naam:** cashier = Banking Service (server), register = DB (Postgres), 500 wapas = transaction rollback (BEGIN,
-Arpan -500, Ravi +500, COMMIT; COMMIT se pehle gira to dono ulte). SQL isliye: ek transfer me do row ek saath pakki
-badalni hain (ACID), aur 120 likhai / sec ke liye NoSQL ki kai-machine wali taakat chahiye hi nahi.
+**Asli naam:** cashier = Banking Service (server), register = DB (Postgres), "mere 500 wapas de do" = transaction
+rollback (BEGIN, Arpan -500, Ravi +500, COMMIT; COMMIT se pehle gira to dono ulte). SQL isliye: ek transfer me do row
+ek saath pakki badalni hain (ACID), aur 120 likhai / sec ke liye NoSQL ki kai-machine wali taakat chahiye hi nahi.
 
 ```mermaid
 flowchart LR
     A["Arpan"] --> C["Cashier<br/>(Banking Service)"]
-    C --> R[("Register<br/>(Postgres)")]
+    C --> R[("Register<br/>(Postgres, rollback)")]
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-## 2. Receipt se pehle line kati, wahi parchi dobara (parchi ki key)
+## 2. Receipt se pehle line kati, wahi parchi dobara (log dekh ke mana + parchi ki key)
 
 Ravi ko 500 pahunch gaye, par receipt milne se pehle Arpan ki line kat gayi. Use pata nahi chala, usne wahi parchi
-dobara di. Wo cheez hamare paas hai na, humne register me likh di thi. Hum dekh lenge ki 500 chale gaye, to mana kar
-do: "nahi bhai, 500 tumhare already bhej diye hain."
+dobara di. Wo cheez hamare paas hai na, humne likh di thi. Bhale hi uski line kati ho, wo dobara bheje, log to hamare
+paas hai. Hum dekh lenge ki 500 chale gaye, to mana kar do: "nahi bhai, 500 tumhare already bhej diye hain."
 
-**Maan lo agle din Arpan sach me Ravi ko phir 500 bhejna chahta hai:** register me pehle se "Arpan se Ravi, 500" hai,
-to cashier use bhi mana kar dega. To ek key bana do. Maine ek parchi pe likh diya ki Ravi ko 500 bhejne hain, aur
-parchi bank wale ko de di. Mujhe nahi pata gaye ki nahi, to main dobara wahi same parchi dunga, key thodi badli. Wo
-dekhega: "abe yaar ye to same hi hai, hatao." Nayi baar bhejna hai to nayi parchi, nayi key.
+**Maan lo agle din Arpan sach me Ravi ko phir 500 bhejna chahta hai:** diary me pehle se "Arpan se Ravi, 500" hai, to
+cashier use bhi mana kar dega. Wahi purani parchi hai ya nayi, kaise pehchaane? To ek key bana do, aisi jo badle hi na.
+Maine ek parchi pe likh diya ki Ravi ko 500 bhejne hain is waqt, aur parchi bank wale ko de di. Mujhe nahi pata gaye ki
+nahi, to main dobara wahi same parchi dunga, key thodi badli. Wo dekhega: "abe yaar ye to same hi hai, ise kyun wapas
+bhejna, hatao." Nayi baar bhejna hai to nayi parchi, nayi key.
 
-**Asli naam:** parchi ki key = idempotency key (app Send screen khulte hi UUID banati, jaise `k-77`, dobara bhejne pe
-wahi). Server key usi transaction me ek table me likhta jispe UNIQUE hai: key pehle aa chuki to paisa nahi kat-ta,
-purana jawab wapas. Amount se pehchaan nahi, kyunki Arpan sach me do baar 500 bhej sakta hai.
+**Asli naam:** "log hamare paas hai, dekh ke mana" = DB me pehle wala record dekh ke dobara mat kaato. Parchi ki key =
+idempotency key (app Send screen khulte hi UUID banati, jaise `k-77`, dobara bhejne pe wahi). Server key usi transaction me
+ek table me likhta jispe UNIQUE hai: key pehle aa chuki to paisa nahi kat-ta, purana jawab wapas. Amount se pehchaan
+nahi, kyunki Arpan sach me do baar 500 bhej sakta hai.
+
+```mermaid
+flowchart LR
+    A["Arpan: wahi parchi dobara<br/>(key k-77)"] --> C["Cashier<br/>(Banking Service)"]
+    C --> K[("Key ki diary<br/>(UNIQUE key table)")]
+    K -. "k-77 pehle aa chuki" .-> J["Purana jawab<br/>(paisa nahi kata)"]
+    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
 ## 3. Do counter, 600 the, dono ne kaat diya (dekhna aur kaatna ek kram me)
 
@@ -63,26 +73,41 @@ dekhega. Doosre wale ko 600 dikhne hi nahi chahiye.
 balance >= 500`: 1 row badli = kata, 0 row = paisa kam, mana). Doosre ko 600 na dikhe = row lock: UPI ki query ruk ke
 naye 100 pe jaanchti hai.
 
+```mermaid
+flowchart LR
+    N["Netflix 500<br/>(counter 1)"] --> R[("Arpan ka khaata 600<br/>(row lock)")]
+    U["UPI 500<br/>(counter 2)"] -. "ruk, phir 100 dekho" .-> R
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ## 4. Ravi bola "500 mile hi nahi" (alag diary, kaato mat)
 
 Hafte baad Ravi aaya: "Arpan ke 500 mile hi nahi". Register me sirf aaj ka balance hai, purana number har baar kaat
-ke naya likha. Saabit kaise karein? To ek alag diary rakh lo, usme kaato mat, bas neeche likhte jao, jodte jao: Ravi
-me +500 hua, yahan se -500 hua. Register ka balance wala column update hota rahe, koi dikkat nahi, par diary me kabhi
-mat kaato. Do alag cheez rakho.
+ke naya likha. Saabit kaise karein? To ek alag diary rakh lo, usme kaato mat, bas neeche likhte jao, jodte jao. Ya ek
+copy me do column bana lo: ek me update likhte ja rahe, koi dikkat nahi, par doosre me update mat karo, neeche likhte
+jao: Ravi me +500 hua, yahan se -500 hua. Do alag cheez rakho.
 
 **Asli naam:** diary = ledger (append-only: sirf INSERT, kabhi UPDATE / DELETE nahi; galti hui to ulti line daalo),
-+500 / -500 = double-entry (har transfer ki do line, jod 0). Balance column alag, bas tez padhne ke liye. Dono usi
-transaction me likhe jaate hain, ledger isi DB ki ek alag table hai.
++500 / -500 = double-entry (har transfer ki do line, jod 0). Update wala column = balance column, alag, bas tez padhne
+ke liye. Dono usi transaction me likhe jaate hain, ledger isi DB ki ek alag table hai.
+
+```mermaid
+flowchart LR
+    C["Cashier<br/>(Banking Service)"] --> B[("Update wala column<br/>(balance)")]
+    C --> L[("Alag diary, kaato mat<br/>(ledger, append-only)")]
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
 ## 5. Khabar dene se pehle bijli gayi (likh lo)
 
-Paisa jaate hi Ravi ko khabar deni thi. Cashier khabar ke liye ruke to line ruke. Cashier ne paisa bheja, aur ladke ko
-"Ravi ko khabar do" bolne se pehle bijli chali gayi: ladke ko pata hi nahi ki kisko khabar deni hai. Jo kisi ko yaad nahi rehta, to likh lo na bhai. Hum bhi to yahan
-likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Ab cashier kabhi bhi aaye ya
+Paisa jaate hi Ravi ko khabar deni thi. Cashier ne paisa bheja, aur ladke ko "Ravi ko khabar do" bolne se pehle bijli
+chali gayi: ladke ko pata hi nahi ki kisko khabar deni hai. Jo kisi ko yaad nahi rehta, to likh lo na bhai. Hum bhi to
+yahan likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Ab cashier kabhi bhi aaye ya
 jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
+
 **Asli naam:** likh lo = outbox (khabar usi transaction me ek table me, `sent = false`), ladka = relay (outbox se utha
-ke SMS Service ko bheje, gaya to `sent = true`, SMS gira to dobara try). Transfer
-SMS pe nahi atakta, aur SMS khota bhi nahi.
+ke SMS Service ko bheje, gaya to `sent = true`, SMS gira to dobara try). Transfer SMS pe nahi atakta, aur SMS khota
+bhi nahi.
 
 ```mermaid
 flowchart LR
@@ -93,84 +118,146 @@ flowchart LR
     style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-## 6. Salary ka din, register jal gaya (10 counter + laptop me copy)
+## 6. Salary ka din, line sadak tak (10 cashier, 10 counter)
 
 Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Ek hi cashier, line sadak tak. To cashier badha do: ek
-tha, 10 kar do, 10 counter kar do. Aam taur pe bhi yahi hota hai, bank me ek counter pe bheed ho to hum doosre
-counter pe jaate hain.
-
-Par cashier 10 ho gaye, register abhi bhi ek hi. Raat ko branch me aag lagi, register jal gaya. To use kai jagah
-store karo. Jaise meri ek important copy hai, main use office me chhod gaya, raat me aag lagi to notes kho jaayenge.
-Main aisa nahi karunga: use laptop me save karke laptop ghar le jaaunga.
+tha, 10 kar do, 10 counter kar do. Bheed badh gayi, kaam khatam. Aam taur pe bhi yahi hota hai, bank me ek counter
+pe bheed ho to hum doosre counter pe jaate hain, movies me bhi same.
 
 **Asli naam:** 10 cashier = kai Banking Service machine (stateless, sach DB me), doosre counter pe bhejna = load
-balancer, laptop ghar = DB ki copy doosri building me (RDS Multi-AZ, primary gira to copy primary banti).
-
-**Maan lo laptop me shaam ko ek baar save karta hai, 2 baje zaroori line likhi, 3 baje aag:** jaise hi copy pe likha,
-turant laptop pe likh lo, dikkat hi khatam. Wo cheez tab tak pakki nahi jab tak laptop me nahi aati.
-**Asli naam:** turant laptop pe, tabhi pakka = sync copy (thoda dheema, par ek bhi transfer nahi khota; 120 / sec pe
-dheemapan dikhta bhi nahi). Shaam ko ek baar = async (aakhri likha kho jaata), paise me nahi chalta.
+balancer (khaali machine pe bheje).
 
 ```mermaid
 flowchart LR
     U["Poora mohalla"] --> LB["Counter dikhane wala<br/>(Load balancer)"]
     LB --> C["10 cashier<br/>(Banking Service)"]
-    C --> R[("Register<br/>(Primary DB)")]
-    R --> L[("Laptop ghar pe<br/>(Sync copy, Multi-AZ)")]
+    C --> R[("Register<br/>(DB)")]
     style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
-## 7. Sab sirf balance dekhne aaye (photocopy ka alag desk)
+## 7. Register jal gaya (laptop me copy, ghar le jao)
 
-Salary ke din sab sirf balance dekhne aa rahe. Saare cashier register pe jhuke, jo sach me paisa bhejne aaya uska
-kaam atka. To alag-alag baant do: jo sirf dekhne aa rahe unko sirf dikhao, jo karne aa rahe unko sirf karao. Register
-ki photocopy bana do, photocopy ek alag desk pe rakh lo. Jo sirf padh raha, use photocopy pe bhejo. Jo kuch likh
-raha, use main register pe le aao.
+Cashier 10 ho gaye, par register abhi bhi ek hi. Raat ko branch me aag lagi, register jal gaya. To use kai jagah store
+karo. Jaise meri ek important copy hai, usme notes likhe hain, main use office me chhod gaya, raat me aag lagi to
+notes kho jaayenge. Main aisa nahi karunga: use laptop me save karke laptop ghar le jaaunga. Ab copy me aag lage chahe
+kuch bhi, laptop me mera saamaan hai.
 
-**Asli naam:** photocopy alag desk = read replica (async, balance / history wahan se), main register = primary (sirf
-transfer).
+**Asli naam:** laptop ghar = DB ki copy doosri jagah (replica, RDS Multi-AZ, primary gira to copy primary banti).
 
-**Maan lo photocopy thodi peeche chalti hai, Arpan ne abhi 500 bheje aur turant photocopy desk pe purana balance
-dekh ke ghabra ke dobara bhej diya:** jisne update kiya, use thodi der main register se padhao. Thodi der baad jab
-photocopy sync ho jaaye, phir wahin se.
-**Asli naam:** read-your-writes (abhi transfer kiya to kuch second primary se, baaki sab replica se).
-
-## 8. Haath se balance badla, 5 saal jodna bhaari (diary se milao + mahine ka jod)
-
-Raat ko kisi bank wale ne main register me Arpan ka balance haath se 100 ki jagah 600 kar diya, diary me koi line
-nahi. Agle din Arpan ne 600 nikaal liye. To use diary se milwao na. Asli to diary hai: usme hum sab likh rahe, -500
-+500, ye hai asli sach, na ki wo column jo koi bhi galti se update kar de.
-
-Par Arpan ka khaata 5 saal purana, diary me hazaaron line. Har raat 5 saal ki line shuru se jodna bhaari, raat khatam
-par jod poora nahi. To data tod do: 10 mahine purana kharcha ab badlega thodi. Mahine ke mahine tod do. January se
-March itna kharch kiya, jud gaya, mil gaya, likh do. Pichhle mahine ka khaata change nahi hota, agle mahine ka hota
-rehta hai.
-
-**Asli naam:** diary se milao = raat ka milaan (reconciliation job, read replica pe: balance == ledger ka jod? poore
-bank ka jod == 0? nahi to ALERT, insaan ulti line se theek kare). Ledger = source of truth, balance bas copy. Mahine
-ke mahine = ledger ke mahine ke partition, pichhla jud gaya = snapshot (balance = pichhla snapshot + uske baad ki
-lines), purani line immutable.
-
-## 9. Diary almari me nahi samati, koi line badal de (head office + kohinoor)
-
-5 saal me diary itni moti ki branch ki almari me jagah nahi, aur RBI ka niyam: purani line phenk nahi sakte, 10 saal
-rakhni hain. To use bank ki jagah head office bhej do, wahan safe rahega. Data kahin gaya nahi.
-
-**Asli naam:** head office = S3 (1 saal se purane mahine wahan, sasta, lambe samay ke liye; archive, phenka nahi).
-
-**Maan lo ijazat wala aadmi hi andar ja ke "Arpan -500" ko "Arpan -50" kar de:** uski 3-4 copy alag-alag chupchap
-kahin aur kone me daba do, taaki wo sab na badal paaye. Aakhir me saari copy milao: ek me hi -50 hai, baaki me -500,
-matlab isne chhedchhaad ki. Aur ek aur: version ka lock laga do. Wo kohinoor heera hai, na koi chhoo sakta, na badal
-sakta. Use taala maar do, wo chupchap wahin pada rahega.
-**Asli naam:** kai copy chhupa ke milao = copies doosri jagah (doosra region), version ka lock = versioning, kohinoor
-= S3 Object Lock (compliance mode, 10 saal, admin bhi badal ya mita na sake).
+**Maan lo laptop me shaam ko ek baar save karta hai, 2 baje copy me zaroori line likhi, 3 baje aag:** jaise hi copy pe
+likha, turant laptop pe likh lo, dikkat hi khatam. Wo cheez tab tak pakki nahi jab tak laptop me nahi aati. Copy pe
+likh liya, turant laptop pe lao, phir pakka maano.
+**Asli naam:** turant laptop pe, tabhi pakka = sync copy (thoda dheema, par ek bhi transfer nahi khota; 120 / sec pe
+dheemapan dikhta bhi nahi). Shaam ko ek baar = async (aakhri likha kho jaata), paise me nahi chalta.
 
 ```mermaid
 flowchart LR
-    C["Cashier<br/>(Banking Service)"] --> R[("Diary, mahine ke tukde<br/>(Ledger partitions)")]
-    R --> H[("Head office godown<br/>(S3 + Object Lock)")]
-    H --> X[("Chhupi copy<br/>(Doosra region)")]
+    C["10 cashier<br/>(Banking Service)"] --> R[("Register<br/>(Primary DB)")]
+    R -- "turant" --> L[("Laptop ghar pe<br/>(Sync copy, Multi-AZ)")]
+    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 8. Sab sirf balance dekhne aaye (photocopy ka alag desk)
+
+Salary ke din sab sirf balance dekhne aa rahe. Saare cashier register pe jhuke, jo sach me paisa bhejne aaya uska
+kaam atka. To alag-alag baant do: jo sirf dekhne aa rahe unko sirf dikhao, jo karne aa rahe unko sirf karao. Register
+uske liye khaali chhodo jo waqai kuch kaam kar raha hai. Register ki photocopy bana do, photocopy ek alag desk pe rakh
+lo. Jo sirf padh raha, use photocopy pe bhejo. Jo kuch likh raha, use main register pe le aao.
+
+**Asli naam:** photocopy alag desk = read replica (async, balance / history wahan se), main register = primary (sirf
+likhne wale, transfer).
+
+```mermaid
+flowchart LR
+    W["Paisa bhejne wale"] --> P[("Main register<br/>(Primary)")]
+    P --> X[("Photocopy desk<br/>(Read replica)")]
+    V["Sirf balance dekhne wale"] --> X
+    style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 9. Photocopy peeche, Arpan ne ghabra ke dobara bheja (thodi der main register se)
+
+Photocopy main register se thodi peeche chalti hai. Arpan ne abhi 500 bheje, turant photocopy desk pe gaya, wahan
+purana balance. Ghabra ke dobara bhej diya. To jisne update kiya, use thodi der main register se padhao. Thodi der
+baad jab photocopy sync ho jaaye, phir wahin se padh lo. Har cheez ka system hai yahan.
+
+**Asli naam:** jisne update kiya, thodi der main se = read-your-writes (abhi transfer kiya to kuch second primary se),
+sync ho jaaye to wahin se = phir read replica (baaki sab replica se).
+
+```mermaid
+flowchart LR
+    A["Arpan, abhi 500 bheje"] -- "thodi der" --> P[("Main register<br/>(Primary)")]
+    B["Baaki sab"] --> X[("Photocopy<br/>(Read replica)")]
+    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 10. Haath se balance 100 se 600 (diary se milao)
+
+Raat ko kisi bank wale ne main register me Arpan ka balance haath se 100 ki jagah 600 kar diya, diary me koi line
+nahi. Agle din Arpan ne 600 nikaal liye. To use main diary se milwao na. Asli to diary hai: balance koi bhi haath se
+update kar dega, wahan dikkat hai. Diary me hum sab likh rahe, -500 +500, ye hai asli sach, na ki wo column jo koi bhi
+galti se update kar de.
+
+**Asli naam:** diary se milao = raat ka milaan (reconciliation job, read replica pe: balance == ledger ka jod? nahi to
+ALERT, insaan ulti line se theek kare). Asli sach diary = ledger = source of truth, balance bas copy.
+
+```mermaid
+flowchart LR
+    J["Raat ka milaan<br/>(Reconciliation job)"] --> B[("Balance column")]
+    J --> L[("Diary<br/>(Ledger, source of truth)")]
+    J -. "mel nahi" .-> AL["Ghanti<br/>(ALERT)"]
+    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 11. 5 saal ki diary har raat jodna bhaari (mahine ke mahine tod do)
+
+Arpan ka khaata 5 saal purana, diary me hazaaron line. Har raat milaan ke liye 5 saal ki line shuru se jodna bhaari,
+raat khatam par jod poora nahi. To data tod do: 5 saal purana data thodi badlega. Maine 10 mahine pehle 10,000 ka
+kharcha kiya, wo ab badlega thodi. Mahine ke mahine tod do: January se March tak itna kharch kiya, jud gaya, mil gaya,
+likh do. March se April tak itna, use jod do. Pichhle mahine ka khaata change nahi hota, agle mahine ka hota rehta hai.
+
+**Asli naam:** mahine ke mahine tod do = ledger ke mahine ke partition, pichhla jud gaya, likh do = snapshot (mahine
+ka total; balance = pichhla snapshot + uske baad ki lines), purana data badlega nahi = purani line immutable.
+
+```mermaid
+flowchart LR
+    J["Jan-Mar<br/>(snapshot)"] --> A["Apr<br/>(snapshot)"]
+    A --> N["Is mahine ki lines<br/>(sirf ye jodo)"]
+    style N fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 12. Diary almari me nahi samati, RBI bole 10 saal rakho (head office bhej do)
+
+5 saal me diary itni moti ki branch ki almari me jagah nahi. RBI ka niyam: purani line phenk nahi sakte, 10 saal
+rakhni hain. Hamara chhota bank hai, branch mere shehar me, par uski koi main jagah to hogi na, head office. To use
+apne bank ki jagah head office bhej do, wahan safe rahega. Data kahin gaya nahi.
+
+**Asli naam:** head office me bhej do = purana ledger S3 me (sasta, lambe samay ke liye), data kahin gaya nahi =
+archive, phenka nahi.
+
+```mermaid
+flowchart LR
+    R[("Branch ki almari<br/>(DB, naye mahine)")] -- "purane mahine" --> H[("Head office<br/>(S3 archive)")]
+    style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 13. Ijazat wala hi "-500" ko "-50" kar de (kai copy + kohinoor)
+
+Ijazat wala aadmi hi godown me ja ke "Arpan -500" ko "Arpan -50" kar de. To uski multiple copies rakh lo: 3-4 copy
+alag-alag chupchap kahin aur kone me daba do, taaki wo sab na badal paaye, ek hi badal paaye. Usne ek file badal bhi di
+to doosri copy me same data hoga. Aakhir me saari file milao: ek me hi -500 ki jagah -50 hai, baaki me nahi, matlab
+isne chhedchhaad ki. Aur ek aur: version ka lock laga do, ki wo file koi change hi na kar sake. Wo kohinoor heera hai:
+na koi chhoo sakta, na chhed sakta, na badal sakta. Use taala maar do, wo chupchap wahin pada rahega.
+
+**Asli naam:** kai copy chhupa ke, milao = copies doosri jagah (doosra region) se chhedchhaad pakadna, version ka lock
+= versioning, kohinoor, koi badal na sake = S3 Object Lock (compliance mode, 10 saal, admin bhi badal ya mita na sake).
+
+```mermaid
+flowchart LR
+    H[("Godown<br/>(S3 + Object Lock)")] --> X[("Chhupi copy<br/>(Doosra region)")]
+    H --> M["Saari copy milao<br/>(chhedchhaad pakdo)"]
+    X --> M
     style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```

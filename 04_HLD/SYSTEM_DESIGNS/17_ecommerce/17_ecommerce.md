@@ -22,6 +22,9 @@ Numbers Diwali 8 baje: 50 hazaar log, ghee sirf 500 · zyadatar log dekhne / car
 zyada na bike), sabko milna zaroori nahi. Ye CAP wali baat hai: jo nahi milega use "out of stock", aur design usi
 hisaab se.
 
+**Arpan ka nichod:** e-commerce me sabse bada kaam inventory management hai. Wo kar liya to 90% design wahin sort,
+baaki to frontend pe dikhana hai.
+
 ---
 
 ## 1. Aakhri ghee, aunty aur Ravi ek saath (online aur counter ka alag stock)
@@ -33,6 +36,10 @@ se phir aa jaata hai. Godown me dabba hai to Ravi ko dikhega, nahi to out of sto
 
 **Asli naam:** har raaste (channel) ka alag stock. Online = godown ki ginti, counter = shelf ki. Dono kabhi ek dabbe
 pe nahi takraate.
+
+**Maan lo Lucknow ka store khaali, Kanpur me 20 dabbe:** Lucknow wale ko Lucknow ka store dikhega. Dark store ka
+matlab hi aas-paas ka store. Whitefield me baithe ko Koramangala wala dikhta.
+**Asli naam:** har store ka apna stock (store_id + item), app location dekh ke paas wala store chunta.
 
 ```mermaid
 flowchart LR
@@ -64,7 +71,7 @@ pahunchti, ek gira to doosra chalta.
 
 Sale dukaan me ek counter, ek parchi "ghee: 500". Ek waqt me ek hi aadmi parchi chhoo sakta, line 50 hazaar ki. To 10
 counter bana do, har counter pe 50 ghee, line baant do. Har counter pe ek bechne wala, ek kaatne wala, aur kaatna haath
-chalane jitna tez.
+chalane jitna tez, millisecond bhi nahi.
 
 **Asli naam:** ek row pe sab toot pade = hot row (ek row ek waqt me ek UPDATE, baaki lock ke liye line me). Ginti 10
 tukdon me todo (har tukda ek row / key). Kaatna tez jagah pe: Redis me ginti, `DECR` (ek thread, ek ke baad ek, lakhon
@@ -98,6 +105,10 @@ nahi hona chahiye. Galle pe panni le ke khada aadmi: jab tak paisa nahi diya aur
 **Asli naam:** cart = sirf list, koi reserve / TTL nahi. Stock pay ke waqt katta. Pay fail to ginti wapas (atomic DB
 query). Cart purana ho to checkout pe abhi ka daam + abhi ka stock dobara check ("price changed / out of stock").
 
+**Maan lo ek order me ghee, aata, daal, aur aata khatam:** poora order mat roko. Jo hai wo bhejo, aate pe out of
+stock dikha do. Wo chahe to baaki do le le.
+**Asli naam:** har cheez alag check, adhoora (partial) order chalta.
+
 ## 7. 3000 ek second me Pay (server pe line, 500 ke baad rollback)
 
 8:00-8:01 me 3000 log Pay dabaate, sabko 500 dikh raha. Pay ki request pehle hamare server pe aati hai, to wahan line
@@ -109,27 +120,6 @@ chahe baad me. Asli hal business ka: sale ke liye stock pehle se zyada mangwao (
 API). Doosra raasta: Pay dabaate hi dabba ghadi (10 min) ke saath rok do (BMS jaisa hold), Pay page tabhi khule jab
 dabba mila; refund kam, par dabba ghadi tak kisi ke kaam nahi aata. Dono ki keemat: refund ya ruka dabba.
 
-**Rollback me bhi pech, ghadi me bhi. To Apple store jaisa sale gate:** 500 iPhone, bahar 3000 log. Jitne phone utne andar,
-kisi ka card decline hua ya koi chala gaya to agla batch, jitne bache utne. App pe poora app nahi rok sakte (aata-daal wale
-bhi hain), to ghee ke liye alag counter: sale wala maal us gate se, normal checkout chalta rahe. Us counter se sirf 500 guzarne.
-**Asli naam:** sale gate. Sale item ka "Buy now" (normal cart me nahi). Gate sirf stock jitne logon ko Pay tak jaane de
-(Redis DECR), fail / chala gaya = agla batch. Bahar walon ka paisa katta hi nahi, koi dabba bina bike nahi. Gate ek baar
-banta, har sale pe sirf list (item + ginti + waqt).
-
-**Maan lo net gaya / PSP chup:** Ravi ko laga pay ho gaya, par PSP tak request pahunchi nahi, ya paisa kata aur PSP
-anjaan. Design har jagah se thoda toot-ta hai: chahe 10 minute roko, chahe paisa aane pe kaato, kinaare pe yahi aata.
-Paisa kata to zimmedari hamari, PSP se hum baat karenge.
-**Asli naam:** PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Paisa kata mila to dabba uska; dabba na
-bacha to refund. Perfect design koi nahi, bas kitne refund.
-
-**Maan lo ek order me ghee, aata, daal, aur aata khatam:** poora order mat roko. Jo hai wo bhejo, aate pe out of stock;
-wo chahe to baaki le le.
-**Asli naam:** har item alag check, partial order chalta.
-
-**Maan lo Lucknow ka store khaali, Kanpur me 20:** Lucknow wale ko Lucknow ka store dikhega. Dark store = aas-paas ka
-store, Whitefield wale ko Koramangala wala.
-**Asli naam:** har store ka apna stock (store_id + item), app location se paas wala store.
-
 ```mermaid
 flowchart LR
     U["3000 Pay"] --> Q["Line<br/>(Order Service queue)"]
@@ -138,6 +128,47 @@ flowchart LR
     D -- "0 ke baad" --> RF["Paisa wapas<br/>(refund)"]
     style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
     style RF fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 7b. Rollback me bhi pech, ghadi me bhi (Apple store jaisa sale gate)
+
+Rollback me bhi pech hai aur 10 minute wale me bhi, to koi screwdriver? Apple store dekho: 500 iPhone, bahar 3000
+log. Jitne phone utne log andar, baaki bahar. Kisi ka card decline hua ya koi chala gaya to agla batch bulao, jitne
+bache utne. 3000 ko andar bula ke kya fayda. App pe poora app to rok nahi sakte, aata-daal wale bhi hain. To ghee ke
+liye ek alag counter lagao: sale wala maal us gate se guzrega, normal checkout chalta rahega. Us counter se sirf 500
+ghee guzarne hain, to dikkat hi khatam.
+
+**Asli naam:** sale gate. Sale item ka "Buy now" (normal cart me nahi jaata). Gate sirf utne logon ko Pay tak jaane
+deta jitna stock (Redis DECR), card fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi,
+aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
+
+```mermaid
+flowchart LR
+    U["3000 log bahar<br/>(Sale page)"] --> GT["Apple store ka darwaza<br/>(Sale gate, Buy now)"]
+    GT --> C[("Kitne bache<br/>(Redis DECR)")]
+    GT -- "500 andar" --> P["Pay<br/>(Payment Service + PSP)"]
+    P -. "card fail / chala gaya" .-> NB["Agla batch andar<br/>(jitne bache)"]
+    N["Aata-daal wale<br/>(normal checkout)"] --> O["Badi dukaan<br/>(Order Service)"]
+    style GT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 8. Net gaya / PSP chup (PAYMENT_PENDING, PSP se poochte raho)
+
+Ravi ko laga pay ho gaya, par PSP tak request pahunchi hi nahi, ya paisa kata aur PSP anjaan. Design har jagah se
+thoda toot-ta hai: chahe 10 minute rok lo, chahe paisa aane pe kaato, kinaare pe dikkat rehti hai. Aakhri second pe pay
+kiya to wahan BMS wali cheez hi leni padegi. Paisa kata to zimmedari hamari, PSP se hum baat karenge.
+
+**Asli naam:** PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Paisa kata mila to dabba uska; dabba na
+bacha ho to refund. Perfect design koi nahi, bas kitne refund.
+
+```mermaid
+flowchart LR
+    O["Order<br/>(PAYMENT_PENDING)"] --> J["Poochne wala<br/>(Status job)"]
+    J -- "paisa kata?" --> PSP["PSP"]
+    J -- "haan + dabba bacha" --> D[("Dabba uska<br/>(Inventory DB)")]
+    J -- "haan, dabba nahi" --> RF["Paisa wapas<br/>(refund)"]
+    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 ---
