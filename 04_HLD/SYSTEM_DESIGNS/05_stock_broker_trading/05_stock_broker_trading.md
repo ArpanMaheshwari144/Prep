@@ -185,6 +185,33 @@ flowchart LR
     style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
+## 9. 9:15 ki bheed, book DB me, line atki (chhoti parchi + baad me mota register)
+
+Subah 9:15 market khula, TCS pe ek second me lakhon order. Har order pe dono kaam: book me sabse achha bhaav dekhna
+(padhna), aur naya order jodna ya match ke baad book badalna (likhna). Book DB me hai, har baar kuch millisecond, to
+line badhti gayi aur 9:15:01 ka order 9:16 pe match hua. Itna bhaar mote register pe mat daalo, wo thak jaayega. Apne
+paas ek chhoti parchi rakho aur dhadadhad usi pe likho: ye aaya, iska match hua, ye hat gaya. Sab ho jaaye to baad me
+ek saath mote register pe likh do. Parchi kho gayi to? Uski 3-4-5 copy bana ke rakho, ek gayi to doosri se mil jaayegi.
+
+**Maan lo Ravi ka sauda parchi pe match ho gaya, par DB me abhi gaya nahi:** sach mota register hi hai, parchi sirf
+tezi ke liye. Ravi ke liye alag se mote register pe daudne ka fayda nahi. Parchi pe tabhi likho jab sach me maal hai,
+koi bechne wala hai. Ravi ko turant "processing" dikha do, aur jab mote register me likh diya, tab app me pakka "sauda
+ho gaya".
+
+**Asli naam:** chhoti parchi = order book RAM me (in-memory, micro-second), baad me ek saath = DB me batch write, 3-4-5
+copy = standby / replica + order log (append-only, gire to replay). Kam bheed ho to section 5 jaisa DB pe chal jaata;
+NSE jaisi bheed pe RAM. Sach = DB (source of truth), "processing" = ACCEPTED / PENDING turant, DB commit ke baad FILLED.
+
+```mermaid
+flowchart LR
+    O["Lakhon order<br/>(9:15)"] --> E["Matching engine"]
+    E --> P[("Chhoti parchi<br/>(order book RAM me)")]
+    P -- "copy" --> C[("Parchi ki copy<br/>(standby + order log)")]
+    P -- "baad me ek saath" --> D[("Mota register<br/>(DB, sach)")]
+    D -- "likha gaya" --> A["Ravi ka app<br/>(processing, phir pakka)"]
+    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ---
 
 Notes (Arpan ke shabd) = [STOCK_HAND_NOTES.md](STOCK_HAND_NOTES.md)

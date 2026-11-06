@@ -102,6 +102,8 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  9  portfolio DB band, sauda ulta kar do?    ->  rollback nahi, consumer court (settlement PENDING)
 10  paisa kata, share dikh nahi rahe         ->  parchi apne paas, DB aaye to de do (Kafka retry)
 11  bhaav har second, 10 lakh screen         ->  chat wala hi (WebSocket + Redis pub/sub)
+12  9:15 lakhon order, book DB me, line atki ->  chhoti parchi pe dhadadhad, baad me mota register (book RAM, batch, copy)
+13  parchi pe match, DB me abhi nahi         ->  "processing" turant, mote register ke baad pakka (DB = sach)
 ```
 
 ## 6. Payment system   ([notes](SYSTEM_DESIGNS/06_payment_system/PAYMENT_HAND_NOTES.md))
