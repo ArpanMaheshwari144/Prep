@@ -2824,7 +2824,7 @@ broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya b
 ### ▸ BINARY SEARCH (BASIC)
 
 ```
-SORTED nums[] aur target. target ka INDEX lautao, nahi mile -> -1. O(log n).
+Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mile to -1. O(log n) me karna hai.
   e.g. [-1,0,3,5,9,12], target=9 -> 4
   kyun: 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
 ```
@@ -2832,8 +2832,8 @@ SORTED nums[] aur target. target ka INDEX lautao, nahi mile -> -1. O(log n).
 ```cpp
 int search(vector<int> &nums, int target) {
     int low = 0, high = nums.size() - 1;
-    while (low <= high) {                   // <= : 1 element bacha tab bhi check
-        int mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe overflow
+    while (low <= high) {                   // ★ <= : 1 element bacha tab bhi check
+        int mid = low + (high - low) / 2;   // ★ (low+high)/2 nahi: bade low+high pe overflow
         if (nums[mid] == target)
             return mid;
         else if (nums[mid] < target)
@@ -2848,7 +2848,8 @@ int search(vector<int> &nums, int target) {
 ### ▸ SEARCH INSERT POSITION
 
 ```
-SORTED nums[] (distinct) aur target. mile to uska index, na mile to jahan DAALNE se sorted rahe wo index.
+Ek SORTED array (sab alag number) aur ek target diya hai. target mile to uska index lautao.
+Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
   e.g. [1,3,5,6], target=2 -> 1
   kyun: 2 na mila, 1 aur 3 ke beech jaayega -> index 1
 ```
@@ -2865,14 +2866,15 @@ int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 
         else
             high = mid - 1;
     }
-    return low;                             // na mila: low = pehla nums >= target = insert jagah
+    return low;                             // ★ na mila: low = pehla nums >= target = insert jagah
 }
 ```
 
 ### ▸ FIRST & LAST POSITION (LC-34)
 
 ```
-SORTED nums[] (duplicate ho sakte) aur target. target ka PEHLA aur AAKHRI index lautao, nahi -> {-1,-1}. O(log n).
+Ek SORTED array (number dohraye ho sakte hain) aur ek target diya hai. target jahan pehli baar aur aakhri baar aata hai, wo dono index lautao.
+Na mile to {-1, -1}. O(log n) me karna hai.
   e.g. [5,7,7,8,8,10], target=8 -> {3,4}
   kyun: 8 index 3 aur 4 pe hai -> pehla 3, aakhri 4
 
@@ -2917,14 +2919,14 @@ vector<int> searchRange(vector<int> &nums, int target) {
         int mid = low + (high - low) / 2;
         if (nums[mid] == target) {
             ans[0] = mid;
-            high = mid - 1;                 // mila -> aur LEFT (mid save, usse pehle wala dhoondo)
+            high = mid - 1;                 // ★ mila -> aur LEFT (mid save, usse pehle wala dhoondo)
         }
         else if (nums[mid] < target)
             low = mid + 1;
         else
             high = mid - 1;
     }
-    low = 0, high = nums.size() - 1;        // RESET, warna PASS 2 galat jagah se shuru
+    low = 0, high = nums.size() - 1;        // ★ RESET, warna PASS 2 galat jagah se shuru
     while (low <= high) {                   // PASS 2 = LAST
         int mid = low + (high - low) / 2;
         if (nums[mid] == target) {
@@ -2945,7 +2947,7 @@ vector<int> searchRange(vector<int> &nums, int target) {
 ### ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)
 
 ```
-sorted array kisi jagah se ghuma diya (distinct). target ka INDEX lautao, nahi -> -1. O(log n).
+Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4,5,6,7,0,1,2]. Usme target ka index lautao, na mile to -1. O(log n) me.
   e.g. [4,5,6,7,0,1,2], target=0 -> 4
   kyun: [0,1,2,4,5,6,7] ghum ke [4,5,6,7,0,1,2] bana, 0 ab index 4 pe hai
 ```
@@ -2959,8 +2961,8 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
         int mid = low + (high - low) / 2;
         if (nums[mid] == target)
             return mid;
-        if (nums[low] <= nums[mid]) {       // LEFT half sorted (<= : low==mid pe akela bhi sorted)
-            if (target >= nums[low] && target <= nums[mid])   // >= nums[low] ZARURI: target low pe
+        if (nums[low] <= nums[mid]) {       // ★ LEFT half sorted (<= : low==mid pe akela bhi sorted)
+            if (target >= nums[low] && target <= nums[mid])   // ★ >= nums[low] ZARURI: target low pe
                 high = mid - 1;             //   khud ho sakta, warna miss ([5,1,3], 5)
             else
                 low = mid + 1;
@@ -2979,7 +2981,7 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 ### ▸ FIND MIN IN ROTATED
 
 ```
-sorted array kisi jagah se ghuma diya (distinct). SABSE CHHOTA element lautao. O(log n).
+Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sabse chhota number lautao. O(log n) me.
   e.g. [3,4,5,1,2] -> 1
   kyun: 3,4,5 badhte gaye, 1 pe gira -> wahi ghumne ki jagah, wahi min
 ```
@@ -2987,12 +2989,12 @@ sorted array kisi jagah se ghuma diya (distinct). SABSE CHHOTA element lautao. O
 ```cpp
 int findMin(vector<int> &nums) {            // target nahi, khud MIN -> mid ko HIGH se compare
     int low = 0, high = nums.size() - 1;
-    while (low < high) {                    // low<high: high=mid ke saath <= = infinite loop
+    while (low < high) {                    // ★ low<high: high=mid ke saath <= = infinite loop
         int mid = low + (high - low) / 2;
         if (nums[mid] > nums[high])
             low = mid + 1;                  // mid bada -> min right me, mid khud nahi
         else
-            high = mid;                     // high=MID (mid-1 NAHI): mid khud min ho sakta
+            high = mid;                     // ★ high=MID (mid-1 NAHI): mid khud min ho sakta
     }                                       //   ([3,1,2] pe mid-1 se galat 3 aata)
     return nums[low];
 }
@@ -3013,7 +3015,8 @@ int findMin(vector<int> &nums) {            // target nahi, khud MIN -> mid ko H
 ### ▸ KOKO BANANAS (LC-875) -- min eating-speed
 
 ```
-piles[] me kele, h ghante. har ghante ek pile se k kele (kam ho to bas wo pile). sab khane ki MIN speed k lautao.
+piles[] me kelon ke dher hain aur h ghante hain. Koko har ghante ek dher se k kele khaati hai (dher me kam bache hon to bas wahi).
+Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo lautao.
   e.g. piles=[3,6,7,11], h=8 -> 4
   kyun: k=4 -> 1+2+2+3 = 8 ghante, chal gaya · k=3 -> 1+2+3+4 = 10 > 8, nahi chalega
 ```
@@ -3022,13 +3025,13 @@ piles[] me kele, h ghante. har ghante ek pile se k kele (kam ho to bas wo pile).
 bool solve(vector<int> &piles, int h, int mid) {
     long long hours = 0;                    // long long: bade piles pe sum overflow
     for (int i = 0; i < piles.size(); i++)
-        hours += ceil((double)piles[i] / mid);   // double cast PEHLE: int/int pehle hi floor (7/3=2)
+        hours += ceil((double)piles[i] / mid);   // ★ double cast PEHLE: int/int pehle hi floor (7/3=2)
                                             //   ya integer: (piles[i] + mid - 1) / mid (safe, prefer)
     return hours <= h;                      // hours = sum ceil(piles[i] / mid) <= h ?
 }
 
 int minEatingSpeed(vector<int> &piles, int h) {
-    int low = 1;                            // low=1: 0 pe piles[i]/mid = divide by zero
+    int low = 1;                            // ★ low=1: 0 pe piles[i]/mid = divide by zero
     int high = *max_element(begin(piles), end(piles));   // high = max: ek ghante me sabse badi dheri
     int ans = -1;                           // [3,6,7,11], h=8 -> 4
     while (low <= high) {
@@ -3047,14 +3050,15 @@ int minEatingSpeed(vector<int> &piles, int h) {
 ### ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
 
 ```
-weights[] ko ORDER me D din me bhejna. ek din ka total <= capacity. MIN capacity lautao.
+weights[] me packet ka wazan diya hai. Inhe isi kram me D din me bhejna hai, aur ek din ka kul wazan jahaaz ki capacity se zyada nahi ho sakta.
+Sabse kam capacity kitni chahiye, wo lautao.
   e.g. weights=[3,2,2,4,1,4], D=3 -> 6
   kyun: 6 se [3,2] [2,4] [1,4] = 3 din · 5 se [3,2] [2] [4,1] [4] = 4 din, zyada
 ```
 
 ```cpp
 bool solve(vector<int> &weights, int D, int mid) {
-    int days = 1;                           // day=1: aakhri din ka load bhi gino
+    int days = 1;                           // ★ day=1: aakhri din ka load bhi gino
     int sum = 0;
     for (auto &w : weights) {
         if (sum + w > mid) {                // aaj w chadhaya to capacity tooti -> agla din
@@ -3067,7 +3071,7 @@ bool solve(vector<int> &weights, int D, int mid) {
 }
 
 int shipWithinDays(vector<int> &weights, int days) {
-    int low = *max_element(begin(weights), end(weights));   // low=max: sabse bhaari packet akela chadhe
+    int low = *max_element(begin(weights), end(weights));   // ★ low=max: sabse bhaari packet akela chadhe
     int high = accumulate(begin(weights), end(weights), 0); // high=sum: ek din me sab
     int ans = -1;
     while (low <= high) {                   // SHELL wahi
@@ -3086,19 +3090,20 @@ int shipWithinDays(vector<int> &weights, int days) {
 ### ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
 
 ```
-nums[] ko k LAGATAAR hisson me baanto. har split ka sabse bada hissa-sum dekho, us ka MIN lautao.
+Ek array ko k lagaatar hisson me todna hai. Har tareeke me sabse bade hisse ka jod dekho.
+Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
   e.g. [7,2,5,10,8], k=2 -> 18
   kyun: splits ke bade-sum 25,23,18,24 -> sabse chhota 18 ([7,2,5]=14 | [10,8]=18)
 ```
 
 ```cpp
 bool solve(vector<int> &nums, int k, int mid) {
-    int sum = 0, count = 1;                 // count=1 se START: warna aakhri tukda chhoot jaata
+    int sum = 0, count = 1;                 // ★ count=1 se START: warna aakhri tukda chhoot jaata
     for (int i = 0; i < nums.size(); i++) {
         sum += nums[i];
         if (sum > mid) {
             count++;
-            sum = nums[i];                  // sum = x (0 nahi): limit todne wala x naye tukde ka pehla
+            sum = nums[i];                  // ★ sum = x (0 nahi): limit todne wala x naye tukde ka pehla
         }
     }
     return count <= k;
@@ -3126,7 +3131,7 @@ int splitArray(vector<int> &nums, int k) {
 ### ▸ FIND PEAK ELEMENT (LC-162)
 
 ```
-nums[] me PEAK = dono padosi se strictly bada (bahar -infinity). kisi bhi ek peak ka INDEX lautao. O(log n).
+Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array ke bahar ko minus infinity maano). Kisi bhi ek peak ka index lautao. O(log n) me.
   e.g. [1,2,1,3,5,6,4] -> 5 (ya 1)
   kyun: index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
 ```
@@ -3140,7 +3145,7 @@ int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges
         if (nums[mid] < nums[mid + 1])
             low = mid + 1;                  // CHADHAAI -> peak RIGHT me (mid peak nahi, right bada)
         else if (nums[mid] > nums[mid + 1])
-            high = mid;                     // DHALAAN -> mid KHUD ya left: high = mid (mid-1 NAHI)
+            high = mid;                     // ★ DHALAAN -> mid KHUD ya left: high = mid (mid-1 NAHI)
     }
     return low;                             // low==high pe converge = peak, edges apne aap
 }
@@ -3149,7 +3154,7 @@ int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges
 ### ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
 
 ```
-SORTED nums[] me har element theek 2 baar, sirf EK akela 1 baar. wo akela lautao. O(log n).
+Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek baar) hai. Wo akela number lautao. O(log n) me.
   e.g. [1,1,2,3,3,4,4,8,8] -> 2
   kyun: 1,1 jodi · 2 ka jodidaar nahi · baaki 3,3 4,4 8,8 jodi -> 2
 
@@ -3187,7 +3192,7 @@ int singleNonDuplicate(vector<int> &nums) {
         int mid = low + (high - low) / 2;
         if (mid == 0)
             return nums[mid];               // edge: mid-1 = -1 bahar; yahan aaye to single idx 0 pe
-        if (mid % 2 == 0) {                 // even mid: single se pehle iska saathi AAGE hota
+        if (mid % 2 == 0) {                 // ★ even mid: single se pehle iska saathi AAGE hota
             if (nums[mid] == nums[mid - 1])
                 high = mid - 1;             // saathi peeche = pairing shift ho chuki -> single PEECHE
             else
@@ -3200,7 +3205,7 @@ int singleNonDuplicate(vector<int> &nums) {
                 low = mid + 1;              // saathi peeche mila = theek -> single aage
         }
     }
-    return nums[high];                      // HIGH (low nahi): dono branch mid reject, high single pe
+    return nums[high];                      // ★ HIGH (low nahi): dono branch mid reject, high single pe
 }                                           // [1,1,2,3,3,4,4,8,8]: mid 4 -> 1 -> 2 -> 3 -> high=2 -> 2
 ```
 
@@ -3209,7 +3214,8 @@ int singleNonDuplicate(vector<int> &nums) {
 ### ▸ SEARCH 2D MATRIX
 
 ```
-matrix ki har row sorted, har row ka pehla > pichhli row ka aakhri (poora ek sorted line). target hai? true/false.
+Ek matrix di hai jiski har row sorted hai, aur har row ka pehla number pichhli row ke aakhri number se bada hai (matlab poori matrix ek lambi sorted line hai).
+Batao target matrix me hai ya nahi, true ya false.
   e.g. [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true
   kyun: 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
 ```
@@ -3221,7 +3227,7 @@ bool searchMatrix(vector<vector<int>> &matrix, int target) {
     int low = 0, high = row * col - 1;      // poore matrix ko 1D maano
     while (low <= high) {
         int mid = low + (high - low) / 2;
-        if (matrix[mid / col][mid % col] == target)   // row = mid / col, col = mid % col
+        if (matrix[mid / col][mid % col] == target)   // ★ row = mid / col, col = mid % col
             return true;
         else if (matrix[mid / col][mid % col] < target)
             low = mid + 1;
@@ -3237,7 +3243,8 @@ bool searchMatrix(vector<vector<int>> &matrix, int target) {
 ### ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)
 
 ```
-do SORTED array A, B. dono ko mila ke MEDIAN lautao (odd -> beech wala, even -> beech ke do ka average). O(log).
+Do SORTED array A aur B diye hain. Dono ko milake jo poora sorted array banega, uska median lautao.
+Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me karna hai.
   e.g. A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> 11.0
   kyun: mila ke 1,3,7,8,9,11,15,18,19,21,25 = 11 number -> beech wala (6th) = 11
 
@@ -3293,16 +3300,16 @@ double findMedianSortedArrays(vector<int> &A, vector<int> &B) {
     int m = A.size();
     int n = B.size();
     if (m > n)
-        return findMedianSortedArrays(B, A);   // chhote pe BS -> Py kabhi -ve nahi, O(log(min(m,n)))
+        return findMedianSortedArrays(B, A);   // ★ chhote pe BS -> Py kabhi -ve nahi, O(log(min(m,n)))
     int low = 0, high = m;                  // high=m: A ke 0 se m tak kitne bhi left me
     while (low <= high) {                   // <= : Px=low==high wala cut bhi try
         int Px = low + (high - low) / 2;    // Px = A-left count (BS isi pe)
-        int Py = ((m + n + 1) / 2) - Px;    // +1: odd total pe left me ek zyada
+        int Py = ((m + n + 1) / 2) - Px;    // ★ +1: odd total pe left me ek zyada
         int x1 = (Px == 0) ? INT_MIN : A[Px - 1];   // left khaali -> -INF (A[-1] bahar)
         int x2 = (Py == 0) ? INT_MIN : B[Py - 1];
         int x3 = (Px == m) ? INT_MAX : A[Px];       // right khaali -> +INF (A[m] bahar)
         int x4 = (Py == n) ? INT_MAX : B[Py];
-        if (x1 <= x4 && x2 <= x3) {         // && : dono cross-check sahi tabhi cut valid
+        if (x1 <= x4 && x2 <= x3) {         // ★ && : dono cross-check sahi tabhi cut valid
             if ((m + n) % 2 == 0)
                 return (max(x1, x2) + min(x3, x4)) / 2.0;   // /2.0: int division se .5 kat jaata
             else
@@ -3349,7 +3356,7 @@ double findMedianSortedArrays(vector<int> &A, vector<int> &B) {
 ### ▸ MIDDLE OF LIST
 
 ```
-linked list ka head diya. BEECH wala node lautao; do beech ho (even length) to DOOSRA.
+Linked list ka head diya hai. Beech wala node lautao. Agar list ki lambai even hai aur do beech wale node hain, to doosra wala lautao.
   e.g. 1->2->3->4->5->6 -> 4
   kyun: 6 node me beech ke do 3 aur 4 -> doosra = 4 (odd 1->2->3->4->5 hota to 3)
 ```
@@ -3358,7 +3365,7 @@ linked list ka head diya. BEECH wala node lautao; do beech ho (even length) to D
 Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
     Node *slow = head;                      // dono head se: even list me 2nd middle milta
     Node *fast = head;
-    while (fast != NULL && fast->next != NULL) {   // fast pehle check (NULL->next crash);
+    while (fast != NULL && fast->next != NULL) {   // ★ fast pehle check (NULL->next crash);
         slow = slow->next;                  //   fast->next check hataya -> fast->next->next crash
         fast = fast->next->next;
     }
@@ -3369,7 +3376,7 @@ Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
 ### ▸ DETECT CYCLE
 
 ```
-linked list ka head diya. TRUE agar list me CYCLE hai (koi node wapas pichhle node pe point kare), warna FALSE.
+Linked list ka head diya hai. Agar list me cycle hai (koi node wapas kisi pichhle node pe point karta hai) to true, warna false.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> true
   kyun: -4 ke baad phir 2 pe aa gaye -> 2,0,-4,2,... chakkar kabhi NULL nahi aata
 ```
@@ -3381,7 +3388,7 @@ bool hasCycle(Node *head) {                 // Floyd: cycle ho to tez-dheema MIL
     while (fast != NULL && fast->next != NULL) {
         slow = slow->next;
         fast = fast->next->next;
-        if (slow == fast)                   // check move ke BAAD: dono head se shuru,
+        if (slow == fast)                   // ★ check move ke BAAD: dono head se shuru,
             return true;                    //   pehle check karte to turant true
     }
     return false;                           // fast NULL tak pahuncha = list ka end, cycle nahi
@@ -3391,7 +3398,8 @@ bool hasCycle(Node *head) {                 // Floyd: cycle ho to tez-dheema MIL
 ### ▸ FIND DUPLICATE NUMBER (LC-287)   [= DETECT CYCLE ka ARRAY-application]
 
 ```
-nums[] me n+1 number, har value 1..n. EK number repeat hai, wo lautao. O(1) space, array badalna mana.
+Array me n+1 number hain aur har value 1 se n ke beech hai, isliye ek number zaroor dohraya gaya hai. Wo number lautao.
+Extra jagah O(1) aur array ko badalna mana hai.
   e.g. [1,3,4,2,2] -> 2
   kyun: n=4, values 1..4 me 2 do baar aaya
 
@@ -3415,12 +3423,12 @@ FAMILY: FAST/SLOW (detect_cycle cousin) — wahi Floyd, array pe.
 ```cpp
 int findDuplicate(vector<int> &nums) {
     int slow = 0, fast = 0;                 // 0 se: value 1..n, koi 0 pe point nahi -> 0 cycle ke bahar
-    slow = nums[slow], fast = nums[nums[fast]];   // PEHLE ek kadam: 0 pe hi rahe to loop chalega nahi
+    slow = nums[slow], fast = nums[nums[fast]];   // ★ PEHLE ek kadam: 0 pe hi rahe to loop chalega nahi
     while (slow != fast) {                  // PHASE-1: cycle me tez-dheema milne tak
         slow = nums[slow];
         fast = nums[nums[fast]];
     }
-    slow = 0;                               // sirf slow wapas 0 pe, fast meet point pe hi rahe
+    slow = 0;                               // ★ sirf slow wapas 0 pe, fast meet point pe hi rahe
     while (slow != fast) {                  // PHASE-2 entry: ab fast bhi 1 kadam, 2 nahi
         slow = nums[slow];                  //   (meet se aur 0 se entry tak doori BARABAR = Floyd)
         fast = nums[fast];
@@ -3432,7 +3440,7 @@ int findDuplicate(vector<int> &nums) {
 ### ▸ LINKED LIST CYCLE II (LC-142)   [= DETECT CYCLE + phase-2 ENTRY]
 
 ```
-linked list ka head diya. cycle ho to cycle ka START (entry) node lautao, nahi to NULL.
+Linked list ka head diya hai. Agar cycle hai to wo node lautao jahan se cycle shuru hoti hai, warna NULL.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> node 2
   kyun: chakkar 2,0,-4,2,... hai, bahar se andar pehla kadam 2 pe padta -> entry 2
 
@@ -3443,9 +3451,9 @@ cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* ve
 ListNode *detectCycle(ListNode *head) {
     if (head == NULL)
         return NULL;
-    ListNode *slow = head;
+    ListNode *slow = head;   // ★
     ListNode *fast = head;
-    bool cycle = false;                     // flag: 1 node pe bina cycle bhi slow==fast hota
+    bool cycle = false;                     // ★ flag: 1 node pe bina cycle bhi slow==fast hota
     while (fast != NULL && fast->next != NULL) {
         slow = slow->next;
         fast = fast->next->next;
@@ -3468,7 +3476,7 @@ ListNode *detectCycle(ListNode *head) {
 ### ▸ PALINDROME LL (LC-234)
 
 ```
-linked list ka head diya. TRUE agar aage se aur peeche se SAME padhi jaaye, warna FALSE.
+Linked list ka head diya hai. Agar list aage se aur peeche se ek jaisi padhi jaati hai to true, warna false.
   e.g. 1->2->2->1 -> true · 1->2->3 -> false
   kyun: 1,2,2,1 ulta bhi 1,2,2,1 · 1,2,3 ulta 3,2,1 alag
 
@@ -3479,7 +3487,7 @@ middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKE
 ```cpp
 bool isPalindrome(Node *head) {
     Node *mid = middleNode(head);           // slow / fast
-    Node *rev = reverseList(mid);           // 2nd half ulta (rev = naya head)
+    Node *rev = reverseList(mid);           // ★ 2nd half ulta (rev = naya head)
     while (head != NULL && rev != NULL) {   // && : even me rev half chhota, jo pehle NULL wahin ruko
         if (head->val == rev->val) {
             head = head->next;
@@ -3495,7 +3503,7 @@ bool isPalindrome(Node *head) {
 ### ▸ REMOVE NTH FROM END
 
 ```
-linked list ka head aur n diya. END se n-va node hatao, naya head lautao.
+Linked list ka head aur ek number n diya hai. List ke end se gina hua n-va node hatao aur naya head lautao.
   e.g. 1->2->3->4->5, n=2 -> 1->2->3->5
   kyun: end se gino 5 (1st), 4 (2nd) -> 4 hata
 ```
@@ -3507,8 +3515,8 @@ Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam
     for (int i = 1; i <= n; i++)
         fast = fast->next;                  // fast n kadam aage -> dono me n ka gap
     if (fast == NULL)
-        return head->next;                  // fast list se bahar = head hi hatana hai
-    while (fast->next != NULL) {            // fast AAKHRI node pe ruke -> slow hatane wale ke PEHLE
+        return head->next;                  // ★ fast list se bahar = head hi hatana hai
+    while (fast->next != NULL) {            // ★ fast AAKHRI node pe ruke -> slow hatane wale ke PEHLE
         slow = slow->next;                  // dono saath, gap wahi
         fast = fast->next;
     }
@@ -3520,7 +3528,7 @@ Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam
 ### ▸ REMOVE ELEMENTS (delete by val, LC-203)
 
 ```
-linked list ka head aur val diya. jitne node ka value == val, SAB hatao (head bhi ho sakta). naya head lautao.
+Linked list ka head aur ek number val diya hai. Jitne bhi node ki value val hai, sab hatao (head bhi ho sakta hai). Naya head lautao.
   e.g. 1->2->6->3->4->5->6, val=6 -> 1->2->3->4->5
   kyun: dono 6 wale node (beech wala aur aakhri) nikal gaye, baaki kram waisa hi
 ```
@@ -3535,9 +3543,9 @@ Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
         if (curr->val == val && prev == NULL)
             head = head->next;              // HEAD hata (ya saare node same val)
         else if (curr->val == val && prev != NULL)
-            prev->next = curr->next;        // beech ka hata; prev = curr NAHI (curr hata hua node)
+            prev->next = curr->next;        // ★ beech ka hata; prev = curr NAHI (curr hata hua node)
         else
-            prev = curr;                    // prev SIRF no-match pe aage, warna [1,6,6,2] val=6 fail
+            prev = curr;                    // ★ prev SIRF no-match pe aage, warna [1,6,6,2] val=6 fail
         curr = curr->next;                  // har case ke end me
     }
     return head;
@@ -3549,14 +3557,14 @@ Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
 ### ▸ MERGE TWO SORTED (LC-21)
 
 ```
-do SORTED linked list diye. dono ko jod ke ek SORTED list banao, uska head lautao.
+Do SORTED linked list di hain. Dono ko jod ke ek sorted list banao aur uska head lautao.
   e.g. a: 1->2->4, b: 1->3->4 -> 1->1->2->3->4->4
   kyun: har baar dono ke aage wale me se chhota uthao: 1,1,2,3,4,4
 ```
 
 ```cpp
 Node *mergeTwoLists(Node *a, Node *b) {
-    Node *dummy = new Node(0);              // dummy: head ka special case nahi
+    Node *dummy = new Node(0);              // ★ dummy: head ka special case nahi
     Node *tail = dummy;                     // tail dummy se shuru
     while (a != NULL && b != NULL) {        // && : ek list khatam hote hi ruko, baaki neeche jodte
         if (a->val <= b->val) {
@@ -3587,7 +3595,7 @@ Node *mergeTwoLists(Node *a, Node *b) {
 ### ▸ ADD TWO NUMBERS
 
 ```
-do linked list, har node ek digit, number ULTA rakha (units pehle). dono jodo, jawab bhi ulta list me.
+Do linked list di hain, har node me ek digit hai aur number ulta rakha hai (ikai wala digit pehle). Dono numbers jodo aur jawab bhi isi ulte tareeke se list me lautao.
   e.g. 2->4->3 + 5->6->4 -> 7->0->8
   kyun: 342 + 465 = 807 · 2+5=7, 4+6=10 (0, carry 1), 3+4+1=8
 
@@ -3600,7 +3608,7 @@ Node *addTwoNumbers(Node *a, Node *b) {
     Node *dummy = new Node(0);              // dummy + tail (MERGE jaisa) + ek CARRY
     Node *tail = dummy;
     int carry = 0;
-    while (a != NULL || b != NULL || carry > 0) {   // || carry: 999 + 1 -> list khatam, carry 1 bacha
+    while (a != NULL || b != NULL || carry > 0) {   // ★ || carry: 999 + 1 -> list khatam, carry 1 bacha
         int sum = 0;                                 //   -> ek aur node (leading 1)
         if (a != nullptr) {                 // a hai to jodo, a aage
             sum += a->val;
@@ -3622,7 +3630,7 @@ Node *addTwoNumbers(Node *a, Node *b) {
 ### ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
 
 ```
-linked list diya. har do paas-paas wale NODE ki jodi aapas me badlo (value nahi, node). naya head lautao.
+Linked list di hai. Har do paas-paas wale node ki jodi aapas me badal do. Value nahi badalni, node ki jagah badalni hai. Naya head lautao.
   e.g. 1->2->3->4->5 -> 2->1->4->3->5
   kyun: (1,2) -> 2,1 · (3,4) -> 4,3 · 5 akela, waise hi
 ```
@@ -3637,11 +3645,11 @@ Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap
     Node *first = head;
     while (prev->next != nullptr && first->next != nullptr) {   // jodi (2 node) bache tab tak
         Node *second = first->next;         //   (pehle prev->next, warna NULL->next)
-        Node *temp = second->next;          // BACHA lo, warna agli line me gum
+        Node *temp = second->next;          // ★ BACHA lo, warna agli line me gum
         second->next = first;               // 2 -> 1
         first->next = temp;                 // 1 -> baaki list
         prev->next = second;                // prev -> 2 (= is jodi ka naya head)
-        prev = first;                       // ADVANCE: prev = purana first
+        prev = first;                       // ★ ADVANCE: prev = purana first
         first = temp;                       //   first = agli jodi ka pehla
     }                                       // har iteration SIRF ek jodi; rewire ORDER + temp = crux
     return dummy->next;                     // naya head = pehli jodi ka second
@@ -3653,7 +3661,7 @@ Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap
 ### ▸ REVERSE LINKED LIST
 
 ```
-linked list ka head diya. poori list ULTI karo, naya head lautao.
+Linked list ka head diya hai. Poori list ulti karo aur naya head lautao.
   e.g. 1->2->3->4->5 -> 5->4->3->2->1
   kyun: har node ka teer ulta, purana aakhri (5) naya head
 ```
@@ -3664,19 +3672,20 @@ Node *reverseList(Node *head) {
     Node *curr = head;
     Node *nextt = head;
     while (curr != NULL) {
-        nextt = curr->next;                 // nextt pehle BACHAO: link ulta karte hi aage ka raasta gum
+        nextt = curr->next;                 // ★ nextt pehle BACHAO: link ulta karte hi aage ka raasta gum
         curr->next = prev;                  // curr ka link ULTA (-> prev)
         prev = curr;                        // dono aage
         curr = nextt;
     }
-    return prev;                            // curr NULL pe ruka, prev = aakhri node = naya head
+    return prev;                            // ★ curr NULL pe ruka, prev = aakhri node = naya head
 }
 ```
 
 ### ▸ REVERSE NODES IN K-GROUP (LC-25)  = REVERSE-LL (3-ptr) + RECURSION
 
 ```
-linked list aur k diya. har k node ka group ULTA karo (node, value nahi). aakhir me k se kam bache -> waise hi.
+Linked list aur ek number k diya hai. Har k node ke group ko ulta karo (node badalne hain, value nahi).
+Aakhir me k se kam node bachein to unhe waise hi chhod do.
   e.g. 1->2->3->4->5, k=3 -> 3->2->1->4->5
   kyun: pehla group 1,2,3 -> 3,2,1 · bache 4,5 sirf 2 (< 3) -> waise hi
 
@@ -3723,7 +3732,7 @@ Node *reverseKGroup(Node *head, int k) {
         return NULL;
     int countNode = 0;
     Node *currNode = head;
-    while (currNode && countNode < k) {     // (1) count-FIRST: pehle k node GINO
+    while (currNode && countNode < k) {     // ★ (1) count-FIRST: pehle k node GINO
         currNode = currNode->next;
         countNode++;
     }
@@ -3741,7 +3750,7 @@ Node *reverseKGroup(Node *head, int k) {
         count++;
     }
     if (nextt != NULL)                      // (3) head ab is group ka TAIL -> baaki pe RECURSE + stitch
-        head->next = reverseKGroup(nextt, k);   // nextt = agle group ka head
+        head->next = reverseKGroup(nextt, k);   // ★ nextt = agle group ka head
     return prev;                            // prev = is group ka naya head
 }
 ```
@@ -3751,7 +3760,8 @@ Node *reverseKGroup(Node *head, int k) {
 ### ▸ COPY LIST w/ RANDOM POINTER (LC-138) = HASHMAP old->new + 2 PASS
 
 ```
-list ke har node me val + next + RANDOM (kisi bhi node pe ya NULL). DEEP copy banao, copy ke random copy me hi.
+Linked list ke har node me val, next aur ek random pointer hai (kisi bhi node pe ya NULL). Iski poori nayi copy (deep copy) banao.
+Copy ke random pointer copy wale node pe hi hone chahiye, purani list pe nahi.
   e.g. vals=[7,13,11,10,1], random index=[-1,0,4,2,0] -> naye node, wahi structure
   kyun: copy ke 13 ka random copy wale 7 pe (original 7 pe nahi) · 7 ka random NULL hi
 
@@ -3796,7 +3806,7 @@ T=O(n) S=O(n).  [O(1)-space alt = interleave A->A'->B->B' clone, optional.]
 Node *copyRandomList(Node *head) {
     if (head == NULL)
         return NULL;
-    unordered_map<Node *, Node *> mp;       // old -> new: pass-2 me random ka naya node yahin se
+    unordered_map<Node *, Node *> mp;       // ★ old -> new: pass-2 me random ka naya node yahin se
     Node *curr = head;
     Node *prev = NULL;
     Node *newHead = NULL;
@@ -3819,7 +3829,7 @@ Node *copyRandomList(Node *head) {
         if (curr->random == NULL)
             currRand->random = NULL;        // random NULL to NULL
         else
-            currRand->random = mp[curr->random];   // ORIGINAL ka random padho (curr), uska NAYA copy
+            currRand->random = mp[curr->random];   // ★ ORIGINAL ka random padho (curr), uska NAYA copy
         curr = curr->next;                  //   copy (currRand) se padhte to abhi NULL hota
         currRand = currRand->next;          // dono saath aage
     }
