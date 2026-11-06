@@ -47,12 +47,3 @@ Kal tak ek hi `Sender` tha, aaj teammate ne doosra jod diya. Ab Spring ko samajh
 ## Tera project
 
 usercrud ke main code me field pe `@Autowired` ek bhi jagah nahi hai, har jagah constructor injection hai. `AuthController` ki 5 dependencies sab `private final` hain: `UserRepository`, `RefreshTokenRepository`, `JwtService`, `AuthenticationManager` aur `PasswordEncoder`. Class me ek hi constructor hai, isliye `@Autowired` likhna bhi nahi pada.
-
-## Interview line
-
-```
-@Component marks my class as a bean; @Service, @Repository and @Controller are specializations,
-where @Repository adds exception translation. @Bean is for third-party classes.
-I use constructor injection: final fields, easy testing, required dependencies.
-Two beans of one type need @Primary or @Qualifier; circular dependencies are best fixed by refactoring.
-```

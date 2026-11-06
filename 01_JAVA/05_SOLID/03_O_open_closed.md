@@ -30,10 +30,3 @@ wiring nahi kholte.
 
 Ye wahi Strategy pattern hai jo design patterns me padha tha. Spring me saare `PaymentMethod` bean ek `Map` me apne aap inject
 ho jaate hain, to tu type ke hisaab se map se sahi wala utha leta hai, aur `if-else` ki zaroorat hi khatam ho jaati hai.
-
-## Interview line
-
-```
-New behaviour comes in as a new class behind an interface, like a new PaymentMethod, so I extend the
-system without editing tested code; it is the Strategy pattern.
-```

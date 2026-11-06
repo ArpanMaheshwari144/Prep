@@ -19,11 +19,3 @@ check beech me aata hi nahi tha. `private` karne ke baad bachche sirf `getBalanc
 
 `default` ka matlab `public` nahi hai. Kuch nahi likha to wo cheez sirf apne package me dikhti hai, alag package ki child class
 ko bhi nahi. Wo `protected` ka kaam hai.
-
-## Interview line
-
-```
-private is class only, default is package, protected adds subclasses in other packages,
-public is everywhere. I keep fields private, like balance in my bank project, so it only
-changes through deposit and withdraw.
-```

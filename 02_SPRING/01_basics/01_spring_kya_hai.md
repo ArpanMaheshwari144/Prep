@@ -57,12 +57,3 @@ public UserController(UserService service) {   // maanga, Spring ne de diya
 ```
 
 Poore code me kahin bhi `new UserService()` nahi likha. Controller ne constructor me service maangi aur Spring ne de di, yahi constructor injection hai jo tere project me live chal raha hai.
-
-## Interview line
-
-```
-Spring is an IoC container: it creates objects (beans), wires their dependencies
-through Dependency Injection, and manages their lifecycle, so my code only has business logic.
-Beans are shared singletons and can be wrapped in proxies, which is how @Transactional works.
-Spring Boot adds auto-configuration and an embedded server.
-```

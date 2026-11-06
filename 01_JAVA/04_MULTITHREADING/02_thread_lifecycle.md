@@ -45,13 +45,3 @@ HikariCP wala kissa hai. HikariCP connection ka intezaar ek time-limit (`connect
 hai, isliye dump me ye thread TIMED_WAITING dikhte hain.
 
 Matlab ye 6 haalat ratne ki cheez nahi hain. Hang debug karte waqt thread dump me yahi padhi jaati hain.
-
-## Interview line
-
-```
-A thread has 6 states: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED.
-There is no separate RUNNING state, RUNNABLE covers both ready and on CPU. BLOCKED means waiting
-for a monitor lock, WAITING has no timeout, TIMED_WAITING has one. I don't memorise these for
-their own sake, I read them in a thread dump: many threads BLOCKED on one lock points to a hot
-lock or deadlock, many threads timed-waiting on the connection pool means the pool is exhausted.
-```

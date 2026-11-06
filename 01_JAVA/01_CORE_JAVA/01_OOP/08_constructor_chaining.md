@@ -42,14 +42,3 @@ Yahi cheez Spring me doosre roop me kaatti hai. Tere usercrud ke `User` entity p
 likha hai "JPA REQUIRED". Kyunki Hibernate DB se row padh ke object banata hai, aur wo pehle khaali constructor se object banata hai,
 phir field bharta hai. Jaise hi tu koi argument wala constructor likhta hai, Java ka apne aap wala khaali constructor gayab ho jaata hai.
 Phir agar `@NoArgsConstructor` bhool gaye, to app chalte waqt Hibernate error deta hai ki "No default constructor for entity".
-
-## Interview line
-
-```
-Constructor chaining means one constructor delegating to another: this(...) for the same class,
-super(...) for the parent, and it must be the first line. In my bank project every account
-calls super(id, name, balance), so the common fields are set in one place. If you skip super,
-Java inserts super() with no arguments, which fails when the parent has no empty constructor.
-The same idea bites JPA: an entity needs a no-arg constructor, so in my usercrud User I keep
-@NoArgsConstructor once I add an all-args one.
-```

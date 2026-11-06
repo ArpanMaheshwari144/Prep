@@ -37,13 +37,3 @@ bilkul nahi rokta.
 
 Ab field `private` hai, aur bachche `getBalance() * INTEREST_RATE` se balance sirf padhte hain, badal nahi sakte. Seekh ye hai
 ki inheritance tujhe code to deta hai, par saath me parent ke niyam todne ka raasta bhi de deta hai.
-
-## Interview line
-
-```
-In my bank project, Account is abstract with deposit and withdraw written once, and each
-child (Savings, Current, FD) gives its own calculateInterest, so one call returns a different
-result by type. Adding a new account type means a new class, not an if-else in old code. One
-trade-off I fixed: balance was protected for the children, which let a child bypass the
-withdraw check; now it is private and children read it through getBalance().
-```

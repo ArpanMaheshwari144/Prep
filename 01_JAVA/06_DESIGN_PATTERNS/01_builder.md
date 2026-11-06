@@ -27,11 +27,3 @@ Usercrud me ye do jagah hai: `JwtService` me token banane ke liye `Jwts.builder(
 Class me `private String status = "ACTIVE";` likha aur upar `@Builder` lagaya. Ab `User.builder().name("Arpan").build()` se jo
 object banega uska status `null` hoga, `"ACTIVE"` nahi, kyunki builder field ki default value ko nahi dekhta. Ilaaj: us field
 pe `@Builder.Default` lagao. (Ye Lombok ka likha hua niyam hai, chala ke nahi dekha.)
-
-## Interview line
-
-```
-Builder builds an object step by step with named setters, so there is no long constructor
-with confusing nulls. I used it in usercrud: Jwts.builder() for tokens and User.builder()
-for UserDetails. With Lombok @Builder, field defaults are ignored unless @Builder.Default.
-```

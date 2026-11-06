@@ -48,14 +48,3 @@ karne ke liye `BlockingQueue`, aur kai async kaam ke liye `CompletableFuture.all
 
 Usercrud ka RateLimitController "ek saath kitne" wali soch pe hai, jo semaphore wali soch hai. "Ek second me kitne" wala
 hisaab token bucket hai, semaphore nahi.
-
-## Interview line
-
-```
-Where a resource can take only N at a time, like a connection pool or a downstream that
-handles N concurrent calls, I use a Semaphore instead of a lock. For read-heavy state, a
-ReadWriteLock so readers don't block each other. CountDownLatch to wait for N tasks once,
-CyclicBarrier when workers meet every round. I always use the timeout versions of await, and
-only release a permit I actually acquired, because a Semaphore has no owner and will happily
-grow from 3 to 4.
-```

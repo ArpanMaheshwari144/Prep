@@ -54,14 +54,3 @@ Jackson poori entity JSON bana deta hai, aur `password` (hash) bhi response me c
 ## Tera project
 
 usercrud me poora yahi dhaancha hai: `UserController` request leta hai, `UserService` ko deta hai, aur service `BookRepository` ya `UserRepository` se DB tak jaati hai. Global error ke liye `GlobalExceptionHandler` (`@RestControllerAdvice`) hai, aur controller se pehle `JwtFilter` chalta hai.
-
-## Interview line
-
-```
-A request goes through the filter chain (security), then DispatcherServlet maps it to a controller.
-Spring binds path variables, query params and the JSON body, runs @Valid, and the controller calls
-the service, which owns the transaction and calls the repository. I return DTOs, never entities,
-and handle errors centrally with @RestControllerAdvice.
-```
-
-[← Back to SPRING](../)

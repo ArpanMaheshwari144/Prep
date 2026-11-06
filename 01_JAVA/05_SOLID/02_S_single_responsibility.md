@@ -31,10 +31,3 @@ cook, waiter aur cashier alag-alag log hain, isliye cook badal gaya to cashier k
 
 Tere projects me Controller (HTTP sambhalta hai), Service (logic rakhta hai) aur Repository (DB se baat karta hai) ki teen parat
 isi wajah se hain. PR drill me jab tu "controller me hi DB query likh di" wali galti pakadta hai, to wo yahi niyam toot raha hota hai.
-
-## Interview line
-
-```
-Each class has one reason to change: the controller handles HTTP, the service holds business logic and
-the repository talks to the DB, so a change in one area does not break another.
-```

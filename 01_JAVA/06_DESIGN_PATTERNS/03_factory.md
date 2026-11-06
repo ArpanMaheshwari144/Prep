@@ -31,11 +31,3 @@ file chhedni hi na pade.
 ## Spring me
 
 Spring khud ek badi factory hai: tu `new UserService()` kabhi nahi likhta, Spring object banata hai aur de deta hai.
-
-## Interview line
-
-```
-Factory puts the decision of which object to create in one place. In my bank,
-AccountFactory.create("savings", ...) returns an Account, so callers never call new on a
-subclass. Adding a type means one new case; with many types I would use a map registry.
-```

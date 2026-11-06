@@ -60,11 +60,3 @@ s1.get() pe NPE
 ## Tera project
 
 SimpleBankSystem ke `getAccountHolderNames()` me `.map(Account::getHolderName)` likha hai. Ye teesra type hai, kyunki stream me jo `Account` aaya, usi pe `getHolderName()` chalta hai.
-
-## Interview line
-
-```
-A method reference is a shorter form of a lambda that only calls one existing method.
-There are four kinds: static (Math::abs), a specific object (System.out::println),
-any object of a type (String::toUpperCase), and constructor (Item::new).
-```

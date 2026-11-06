@@ -19,11 +19,3 @@ w.balance -= amt;                      // asli field badla
 
 Wallet se paisa kaata, log me "deducted" bhi likh diya, par balance hila hi nahi. Map me `Integer` ho to
 `map.put(id, map.get(id) - amt);` likhna padta hai.
-
-## Interview line
-
-```
-Java is always pass by value. For objects the reference is copied, so changing fields
-shows up for the caller, but reassigning the parameter does not. Copying a field into a
-local int and changing that does nothing to the object.
-```

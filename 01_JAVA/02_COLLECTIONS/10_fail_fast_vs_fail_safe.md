@@ -29,12 +29,3 @@ kuch judta hai, to ye memory kha jaayega.
 Ye CME local pe kabhi nahi aata, kyunki local pe do request ek saath aati hi nahi. Prod pe bheed me ye kabhi-kabhar aata
 hai, aur log me ek random stack trace dikhta hai jo dobara karne pe hota hi nahi. Isliye jab bhi koi list kai thread me
 baanti hui dikhe, to use ArrayList mat rehne do.
-
-## Interview line
-
-```
-ArrayList and HashMap iterators are fail-fast: if the collection changes underneath, the next call
-throws ConcurrentModificationException instead of returning wrong data. For a list shared across
-threads that is read far more than written, like listeners, I use CopyOnWriteArrayList, which
-iterates over a snapshot; ConcurrentHashMap walks the live map and is only weakly consistent.
-```

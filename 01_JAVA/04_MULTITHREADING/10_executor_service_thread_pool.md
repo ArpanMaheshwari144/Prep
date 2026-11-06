@@ -51,13 +51,3 @@ stack trace print karta hai.
 Usercrud ke [`DemoJobs`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/DemoJobs.java) me
 `@Async sendEmail` ke peeche yahi pool chalta hai, isiliye log me thread ka naam `task-1` aata hai, http wala thread nahi. Wahan
 bhi line ki had rakhna zaroori hai.
-
-## Interview line
-
-```
-A thread pool reuses a fixed set of threads instead of creating one per task.
-ThreadPoolExecutor fills core threads first, then the queue, then extra threads up to max,
-then rejects, because queueing is cheap and threads are expensive. newFixedThreadPool has an
-unbounded queue, so in production I use a bounded queue with a policy like CallerRunsPolicy.
-And submit() hides exceptions inside the Future unless someone calls get().
-```

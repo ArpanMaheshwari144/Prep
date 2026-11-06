@@ -57,12 +57,3 @@ Field me sirf wahi cheez rakho jo kabhi nahi badalti, jaise repo, client ya conf
 
 - **usercrud me har tarah ka bean hai.** `UserController` ek `@RestController` hai, `UserService` ek `@Service` hai, `BookRepository` ek `@Repository` hai (ye interface hai aur iski implementation Spring ne khud banayi), aur `KafkaConfig` ek `@Configuration` hai.
 - **Tune apna BPP bhi likha hai.** `demo/SpringInternalsDemo.java` me `LoggingBeanPostProcessor` hai. Prototype bean 2 baar maanga to 4 print aaye, kyunki har baar before aur after dono chale. Singleton pe kuch print nahi hua, kyunki wo startup pe hi belt se guzar chuka tha.
-
-## Interview line
-
-```
-A bean is an object created and managed by the Spring container. At startup Spring scans,
-creates and wires them; the default scope is singleton, so beans must be stateless.
-Lifecycle: create, inject dependencies, @PostConstruct, then BeanPostProcessor after-init,
-which is where AOP proxies for @Transactional and @Async are applied; @PreDestroy on shutdown.
-```

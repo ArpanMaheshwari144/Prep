@@ -50,12 +50,3 @@ Ye maine chala ke dekha. Galat isliye aata hai kyunki object bante waqt pehle pa
 ki field (`rate`) set hi nahi hui hoti, to wo 0 hoti hai. Bachche ka method chal to jaata hai, par adhoore bachche pe. Tere asli code me
 `INTEREST_RATE` `static final` hai, aur static cheez pehle hi ban jaati hai, isliye tu is trap se bach gaya. Niyam: parent ke constructor
 me wo method kabhi mat bulao jise bachcha badal sakta hai.
-
-## Interview line
-
-```
-An abstract class cannot be instantiated; in my bank, Account is abstract because it has no
-interest formula, and each child must provide calculateInterest or it will not compile.
-abstract cannot pair with final, private or static. One trap: never call an overridable
-method from the parent constructor; the child's fields are not set yet, so it returns 0.
-```

@@ -59,14 +59,3 @@ yahi kiya tha.
 Usercrud ke [`RateLimitController.hit()`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/RateLimitController.java)
 me `public synchronized` lagaya hai. Ek server pe ye chalega. Do server hone pe Redis wala counter chahiye, jo rate limiter
 design me banaya tha.
-
-## Interview line
-
-```
-count-- is read, modify, write, so two threads can read the same value and one update is
-lost; I saw 272 lost decrements in a quick test, and sometimes zero, which is why races hide
-in testing. synchronized lets one thread in at a time and gives visibility. I keep the block
-small, and use ReentrantLock when I need tryLock with a timeout, with unlock in finally.
-But in a Spring singleton across several instances a Java lock isn't enough, so for stock or
-balances I put the lock in the DB or Redis, with an atomic update.
-```

@@ -55,13 +55,3 @@ Claim c = claimRepository.findById(id)
 ```
 
 `findById` Optional deta hai. Claim mila to wahi milta hai, nahi mila to saaf exception aata hai, NPE nahi.
-
-## Interview line
-
-```
-Optional is a container that may or may not hold a value, used as a return type
-to make "not found" explicit instead of returning null.
-Use map, orElse or orElseThrow instead of get().
-orElse always evaluates its default, orElseGet only when empty,
-so use orElseGet when the default is expensive.
-```

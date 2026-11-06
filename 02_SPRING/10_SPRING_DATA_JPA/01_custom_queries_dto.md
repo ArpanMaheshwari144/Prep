@@ -58,12 +58,3 @@ tab bina order wale users bhi 0 ke saath aate hain.
 ## Tera project
 
 usercrud ke `UserRepository` me `@Query("FROM User u WHERE u.age >= :minAge")` hai, aur `AuthorRepository` me N+1 wala `LEFT JOIN FETCH` hai.
-
-## Interview line
-
-```
-Custom @Query JPQL me entity naam pe likhta hoon, start pe check hoti aur DB se nahi bandhti;
-bhaari report ho to native. Client ko entity nahi, DTO deta hoon: SELECT alias + interface
-projection ya JPQL constructor expression, taaki sirf zaroori column jaayein, password jaisa
-kuch leak na ho, aur LAZY / chupi write ka jhanjhat na rahe.
-```

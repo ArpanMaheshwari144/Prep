@@ -56,12 +56,3 @@ saare thread use share karte hain. Wo thread-safe nahi hai, aur kabhi saaf bhi n
 ## Tera project (usercrud)
 
 `/cache-demo/anno/{id}` pe doosri call me "METHOD CHAL RAHA" print hi nahi hua. Matlab cache ne method chalne se pehle hi jawab de diya.
-
-## Interview line
-
-```
-I use @Cacheable so Spring checks the cache before running the method and only hits the DB on a miss;
-@CacheEvict on update keeps it fresh. It works through a proxy, so a call from inside the same class
-skips the cache, which is why the cached method lives in a separate bean. The default in-memory cache is
-per-server, so with multiple instances I use Redis as the shared cache.
-```

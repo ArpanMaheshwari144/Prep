@@ -62,12 +62,3 @@ Kaam seedha ho (filter, map, group, ginti) to stream chhoti aur saaf padti hai. 
 ## Tera hands-on
 
 `07_STREAM_API_WRITE` me Q6 (`counting`), Q13 (`mapping`) aur Q14 (`summingInt`) tune khud likhe hain. Upar ke teen collector wahi teen sawaal hain.
-
-## Interview line
-
-```
-groupingBy takes a key function and an optional downstream collector that decides
-what each group holds: counting, mapping, summingInt and so on.
-toMap throws on duplicate keys unless you pass a merge function.
-mapToInt gives an IntStream for sum and max, boxed converts back to objects.
-```

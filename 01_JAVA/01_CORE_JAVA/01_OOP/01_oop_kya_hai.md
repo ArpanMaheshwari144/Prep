@@ -41,11 +41,3 @@ acc.withdraw(-500);   // 1000 - (-500) = 1500.0 -> nikaalne ke naam pe paise ban
 
 `deposit()` me `amount <= 0` ka check tha, par `withdraw()` me ye check nahi tha. Matlab OOP tujhe darwaza to deta hai, par
 darwaze pe guard kitna pakka hai, ye likhne wale pe hai. Ab `withdraw()` me bhi `amount <= 0` ka check laga diya hai.
-
-## Interview line
-
-```
-OOP keeps data and the rules for changing it in one place. In my bank project, balance had
-no setter; it changed only through deposit and withdraw, which validate the amount. That way
-a bad value can enter only through one door, and that door is where I put the check.
-```

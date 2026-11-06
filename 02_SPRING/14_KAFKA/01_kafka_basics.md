@@ -53,12 +53,3 @@ padi. Jad ye thi ki autoconfig `spring-boot-starter-kafka` ke saath aata hai. St
 `KafkaProducerController` hai (`/kafka/send`), `KafkaConsumer` hai (jisme `@KafkaListener`, DLT listener aur processedIds hain), aur
 `KafkaConfig` hai (jisme sirf `DefaultErrorHandler` aur `NewTopic` hain). DLT topic ke partition utne hi rakho jitne main topic ke hain,
 kyunki recoverer message ko usi partition number pe bhejta hai.
-
-## Interview line
-
-```
-In usercrud the producer just calls kafkaTemplate.send with a key, and a @KafkaListener consumes it.
-Kafka is at-least-once because the offset is committed after processing, so the consumer is idempotent:
-it skips message IDs it has already handled. Failures retry three times with a backoff and then go to a
-dead-letter topic, so one bad message never blocks the partition.
-```

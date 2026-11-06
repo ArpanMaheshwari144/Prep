@@ -35,13 +35,3 @@ toot jaati hai.
 Deadlock exception nahi deta, app bas chup ho jaata hai. Isliye ise thread dump se pakadte hain, `jstack` seedha "Found one
 Java-level deadlock" bolta hai ([DeadlockDemo](practical/DeadlockDemo.java)). DB me bhi yahi hota hai, par wahan DB khud
 deadlock pakad ke ek transaction ko rollback kar deta hai (09_DATABASE/08).
-
-## Interview line
-
-```
-Deadlock is a circular wait: each thread holds one lock and waits for the other's.
-It needs four conditions, and breaking any one prevents it. The simplest fix is a global lock
-order, for example always lock the lower account id first in a transfer; ordering by sender
-still deadlocks for opposite transfers. tryLock with a timeout also works. It doesn't throw,
-it silently hangs, so I detect it with a thread dump.
-```

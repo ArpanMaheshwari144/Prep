@@ -48,13 +48,3 @@ counter hoga, aur teeno ACC1 de denge. Isliye asli id DB sequence ya UUID se aat
 
 Doosra trap: `static Map` ya `static SimpleDateFormat` ko saari request ek saath chhooti hain, aur data mix ho jaata hai. Ye
 wahi "shared field" wali galti hai jo StringBuilder wali file me dekhi.
-
-## Interview line
-
-```
-static members belong to the class, not to an object, so there is one shared copy, which is
-why a static counter gave ACC1, ACC2, ACC3 while an instance counter gave ACC1 every time.
-I use static for constants like an EMAIL_REGEX and for stateless helpers. But static state is
-per JVM and shared by all threads, so it is not a real id generator across servers, and a
-mutable static map needs thread safety.
-```

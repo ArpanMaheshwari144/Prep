@@ -68,15 +68,3 @@ CREATE TABLE account (id INT PRIMARY KEY, balance INT);  INSERT INTO account VAL
 Ek baat jo us din pakdi thi: Workbench ke 2 tab ek hi connection (session) hote hain, aur ek session apna uncommitted badlaav
 hamesha dekh leta hai, isliye isolation test ke liye 2 alag connection chahiye. Aur Workbench me autocommit ON hota hai, to
 `START TRANSACTION` likhna zaroori hai, warna UPDATE turant commit ho jaata hai.
-
-## Interview line
-
-```
-Isolation decides how much two concurrent transactions see of each other. The three
-anomalies are dirty read, non-repeatable read and phantom. Going from READ UNCOMMITTED to SERIALIZABLE
-is safer but slower; MySQL defaults to REPEATABLE READ and Postgres to READ COMMITTED. For
-read-then-write on money I don't rely on the level at all: @Transactional alone still loses updates,
-so I use an atomic conditional UPDATE or SELECT FOR UPDATE.
-```
-
-[← DATABASE folder](.)

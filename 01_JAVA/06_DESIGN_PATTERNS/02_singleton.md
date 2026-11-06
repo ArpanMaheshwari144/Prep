@@ -27,11 +27,3 @@ safe. Ek line ka kaam hai.
 Har `@Service` / `@Repository` by default singleton hota hai: Spring ek hi object banata hai aur saari request use share karti
 hain. Isliye singleton bean ke field me koi badalne wali cheez rakhi to saari request use ek saath chhuengi. Ye wahi "singleton
 me field" wala PR bug hai.
-
-## Interview line
-
-```
-Singleton means one instance for the whole app. A plain lazy getInstance is not thread
-safe; two threads can both create it. The simplest safe way is an enum, like my BankConfig.
-Spring beans are singletons by default, so they must not keep mutable fields.
-```

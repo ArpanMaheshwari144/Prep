@@ -15,11 +15,3 @@ Chala ke dekha to field `null` aaya. Yahan dono taraf wala `accountId` parameter
 de di aur field khaali reh gaya. Isliye `this.accountId = accountId` likhte hain.
 
 `this()` aur `super()` dono constructor ki pehli line hi ho sakte hain (poora = `01_OOP/08_constructor_chaining.md`).
-
-## Interview line
-
-```
-this refers to the current object and super to the parent. this.field fixes the
-name clash with a parameter, and this() or super() call another constructor,
-always as the first line.
-```

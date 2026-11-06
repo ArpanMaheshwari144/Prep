@@ -41,11 +41,3 @@ Do timestamp ka farak `int` me nahi samata. Lagbhag 24 din se zyada ka farak int
 ulta aa jaata hai, aur list chup-chaap galat kram me sort ho jaati hai, koi error nahi aata.
 
 Ilaaj: `Long.compare(a.createdAt, b.createdAt)` likho. Int wale field me bhi `a - b` mat likho, `Integer.compare` likho.
-
-## Interview line
-
-```
-Comparable gives a class one natural order through compareTo, while Comparator lets me sort the same
-objects many ways without touching the class; I always use Integer.compare or Long.compare rather
-than subtraction, because subtracting timestamps can overflow and silently sort in the wrong order.
-```

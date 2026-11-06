@@ -66,13 +66,6 @@ queryFactory
 
 extra join-condition chahiye → `.on(...)`.
 
-## Interview line
-"Dynamic optional filters ke liye QueryDSL — Q-classes se type-safe query, compile-time checked.
- BooleanBuilder me conditions conditionally add karta, string-query ki galti ka risk nahi.
- Specification ka cleaner, less-verbose alternative."
-
----
-
 ## ★ PROJECT CONNECT — usercrud UserSearchService (8-Sep)
 ```java
 QUser user = QUser.user;                          // generated Q-class (compile-time safe)

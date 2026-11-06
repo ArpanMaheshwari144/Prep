@@ -29,13 +29,3 @@ D  interface pe tiko         -> constructor injection (Spring DI)
 
 Har letter ki poori kahani uski apni file me hai: [S](02_S_single_responsibility.md), [O](03_O_open_closed.md),
 [L](04_L_liskov_substitution.md), [I](05_I_interface_segregation.md), [D](06_D_dependency_inversion.md).
-
-## Interview line
-
-```
-In my payment code I keep one responsibility per class: controller, service, repository. New payment
-methods come in as new classes behind a PaymentMethod interface, so I extend without touching tested
-code. Subclasses must honour the parent contract, so a fixed deposit does not inherit withdraw.
-Interfaces stay small, and services depend on interfaces with the implementation injected by Spring,
-which also makes them easy to mock in tests.
-```

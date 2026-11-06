@@ -35,13 +35,3 @@ call pe timeout".
 
 Usercrud ka `@Async` method `CompletableFuture<X>` lauta sakta hai, aur caller use `thenCombine` se doosre kaam ke saath jod
 sakta hai.
-
-## Interview line
-
-```
-Future is blocking: get() halts the caller and you can't chain steps. CompletableFuture is
-composable: thenApply to transform, thenCompose for a dependent call, thenCombine or allOf to run
-independent calls in parallel, exceptionally for a fallback. Three 300 ms calls finish in about
-300 ms. In production I always pass my own executor instead of the common pool, and add orTimeout
-with a fallback, so one slow dependency degrades the page instead of hanging it.
-```

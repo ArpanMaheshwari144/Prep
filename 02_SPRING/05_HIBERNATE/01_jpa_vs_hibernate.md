@@ -43,11 +43,3 @@ Isliye pehle `jakarta.persistence.*` hi use karo.
 
 usercrud me `Author`, `Book` aur `Product` `@Entity` hain, jo JPA ka hissa hai. `BookRepository extends JpaRepository` Spring Data ka hai.
 Hibernate ko Spring Boot ne `starter-data-jpa` se khud laga diya. Matlab code tune JPA ka likha, aur use chalaya Hibernate ne.
-
-## Interview line
-
-```
-JPA ek specification hai (jakarta.persistence: @Entity, EntityManager), Hibernate uska
-sabse common implementation jo asal me SQL banata aur JDBC se chalata hai. Spring Data JPA
-iske upar repository layer deta hai. Main code JPA pe likhta hoon taaki provider se na bandhun.
-```

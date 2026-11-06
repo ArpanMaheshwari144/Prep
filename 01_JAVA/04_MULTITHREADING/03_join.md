@@ -39,12 +39,3 @@ join(2000) ke baad: 2000 ms, abhi bhi zinda? true
 
 Ye wahi baat hai jo PR drill me hamesha pakadi jaati hai: bahar ki call pe timeout lagao. Asli code me yahi kaam
 `future.get(2, SECONDS)` se hota hai (file 11).
-
-## Interview line
-
-```
-t.join() makes the caller wait until t finishes; the threads themselves still run in
-parallel. It fixes timing, not race conditions, for that you need synchronized or atomics.
-In production I never call join() or future.get() without a timeout, so one stuck dependency
-can't hang the request forever.
-```

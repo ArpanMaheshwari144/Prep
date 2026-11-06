@@ -17,12 +17,3 @@ Spring ka `@Transactional` by default sirf unchecked exception pe rollback karta
 receipt PDF banate waqt `IOException` (checked) aaya. Spring ne rollback nahi kiya, commit kar diya, matlab Ravi ka paisa kat
 gaya aur aage gaya hi nahi. Ilaaj: `@Transactional(rollbackFor = Exception.class)`, ya apni exception `RuntimeException` se
 banao. (Ye Spring ka likha hua default niyam hai, Spring app chala ke nahi dekha.)
-
-## Interview line
-
-```
-Checked exceptions are forced by the compiler and are for outside failures like files or
-the DB; unchecked ones extend RuntimeException and are for bugs or business rules. My
-InsufficientFundsException is unchecked. Watch out: @Transactional rolls back only on
-unchecked exceptions by default, so for checked ones add rollbackFor.
-```

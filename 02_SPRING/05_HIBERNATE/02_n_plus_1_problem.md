@@ -71,11 +71,3 @@ Author author;
 ## Tera project
 
 usercrud me `/n1/bad` aur `/n1/good` endpoint hain (21-Aug). 5 author pe logs me dekha ki bad wale me 6 query chali, aur good wale me sirf 1 query.
-
-## Interview line
-
-```
-N+1 tab hota hai jab LAZY relation ko loop me access karte: 1 query parent ki, phir har
-parent pe ek child query. Main show-sql logs me same query repeat dekh ke pakadta hoon, aur
-JOIN FETCH ya @EntityGraph se ek query me laata hoon; bahut data ho to @BatchSize.
-```

@@ -48,12 +48,3 @@ Default me secretary sirf `RuntimeException` aane pe rollback karti hai. Checked
 ## Tera project
 
 usercrud me `/internals` endpoint tune khud likha hai ([`SpringInternalsDemo.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/demo/SpringInternalsDemo.java)). Usme `userService.getClass()` ne `UserService$$SpringCGLIB$$0` print kiya, matlab tujhe asli bean nahi, uski secretary mili thi. Aur jab `createWithSimulatedFailure()` ne `RuntimeException` phenka, to secretary ne rollback kar diya aur DB me user nahi bacha. Ye tune live dekha tha.
-
-## Interview line
-
-```
-@Transactional, @Async and @Cacheable work through proxies that wrap the bean and add logic
-around the real call. JDK dynamic proxy needs an interface; CGLIB subclasses the class,
-and Spring Boot uses CGLIB by default. Self-invocation bypasses the proxy, final methods
-can't be proxied, and by default only unchecked exceptions trigger rollback.
-```

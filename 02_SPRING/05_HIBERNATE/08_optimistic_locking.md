@@ -61,13 +61,3 @@ row dobara padho, naye data pe hisaab lagao, phir bhejo.
 ## Tera project
 
 usercrud me `Product` pe `@Version` hai (22-Aug). `?version=0` bheja to OK aaya aur version 1 ho gaya. Dobara `?version=0` bheja to 409 STALE aaya.
-
-## Interview line
-
-```
-Optimistic locking: row me version counter, update WHERE id=? AND version=? chalta; beech me
-kisi ne badla to 0 rows -> OptimisticLockException, lost update ruk jaata. Lock nahi lagta,
-isliye kam clash wale kaam me tez; conflict pe dobara padh ke retry. Zyada clash ho to
-pessimistic (SELECT FOR UPDATE). Optimistic locking aur OT dono concurrent edit ke hal: jahan
-badlaav jud sakein wahan OT, jahan nahi wahan version check.
-```

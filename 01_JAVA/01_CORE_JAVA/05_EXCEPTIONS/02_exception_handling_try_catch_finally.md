@@ -42,11 +42,3 @@ aur thodi der me HikariCP ka pool khaali ho jaata hai, phir naye request ko conn
 
 `catch (Exception e)` pehle aur `catch (IOException e)` uske baad likha to compile error aata hai. Chhota (specific) catch
 hamesha upar aata hai.
-
-## Interview line
-
-```
-finally always runs, even after a return, so it is for cleanup, but never return from
-finally because it overrides the try's result. For connections and files I use
-try-with-resources, which closes them even on failure, so the pool does not leak.
-```

@@ -33,10 +33,3 @@ koi use galti se bula bhi nahi sakta.
 
 Pehchaanne ka seedha tareeka: agar kisi class ne extend kiya aur override me exception phenk di ya method khaali chhod diya, to
 samjho LSP toot gaya hai.
-
-## Interview line
-
-```
-A subclass must keep the parent promise; if a fixed deposit cannot withdraw, it should not inherit
-withdraw, so I split the hierarchy instead of throwing an exception in the override.
-```

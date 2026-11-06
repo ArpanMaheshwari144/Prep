@@ -45,11 +45,3 @@ map me `put` sach me purani value badal deta hai.
 
 HashSet me add aur contains O(1) hain, par koi kram nahi milta. Agar daalne ka kram chahiye to LinkedHashSet lo, aur
 sorted chahiye to TreeSet lo, jo O(log n) leta hai.
-
-## Interview line
-
-```
-HashSet is just a HashMap whose keys are the elements and whose values are a dummy object, so
-duplicate detection comes from hashCode and equals; in an email dedup tool this means the key class
-must override both, and a duplicate add keeps the first object and returns false.
-```

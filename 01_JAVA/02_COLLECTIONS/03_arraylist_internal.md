@@ -44,11 +44,3 @@ jo har call pe ek taala lagata hai. Doosra `CopyOnWriteArrayList`, jo har likhai
 tabhi theek hai jab padhna bahut ho aur likhna kam.
 
 Vector purana tareeka hai, jisme har method synchronized hota hai. Aaj ke code me Vector nahi lete.
-
-## Interview line
-
-```
-ArrayList is a resizable array: get by index is O(1), adding at the end is amortised O(1), and
-inserting in the middle is O(n) because everything shifts. When I know the size up front I pass
-the capacity to avoid repeated copying.
-```

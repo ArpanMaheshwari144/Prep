@@ -43,12 +43,3 @@ pool khaali ho jaata hai aur app atak jaati hai. Isliye prod me ise `false` rakh
 
 usercrud ka `LazyDemoController` (9-Sep). `open-in-view=false` karke `/lazy/fail` chalaya to 500 aaya ("no session").
 `/lazy/fix-txn` pe `books = 3` aaya aur 2 query chali. `/lazy/fix-fetch` me JOIN FETCH tha, to sirf 1 query chali.
-
-## Interview line
-
-```
-LAZY access pe load karta, EAGER parent ke saath. Default: ToMany LAZY, ToOne EAGER; main sab
-LAZY rakhta hoon aur jahan chahiye JOIN FETCH ya @EntityGraph. LAZY ka risk session band hone
-pe LazyInitializationException; OSIV use chhupa deta par connection poori request pakde rehta,
-isliye prod me OSIV off + service layer me explicit fetch.
-```

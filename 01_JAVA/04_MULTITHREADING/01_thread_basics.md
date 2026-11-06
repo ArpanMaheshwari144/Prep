@@ -44,13 +44,3 @@ t2.start();   // kaam chala: counter-2  <- asli naya thread
 Todoapp ya usercrud jaise Spring Boot app me tujhe thread kabhi khud nahi banana pada. Iski wajah ye hai ki andar Tomcat har
 aane wali request ko apne thread pool ka ek thread de deta hai, by default 200 tak. Yaani mart ke counter Tomcat pehle se
 khol ke baitha hai.
-
-## Interview line
-
-```
-A thread is one independent line of execution, like opening another billing counter.
-If an API makes three 300 ms DB calls one after another it takes 900 ms; on three threads it is
-about 300 ms. I prefer Runnable or a lambda over extending Thread because Java allows only one
-superclass. The classic trap is calling run() instead of start(): it compiles and works, but
-runs on the current thread, so you get no parallelism and no error.
-```

@@ -23,11 +23,3 @@ aur `==` sirf object milata hai, number nahi. Ye bilkul String wala `==` trap ha
 
 `int c = map.get("x");` likha aur key thi hi nahi. Map ne `null` diya, Java ne use `int` banane ki koshish ki, to
 `NullPointerException` aaya. Ilaaj: `map.getOrDefault("x", 0)`.
-
-## Interview line
-
-```
-Wrapper classes like Integer and Long let primitives live in collections, and Java boxes
-and unboxes automatically. Integer caches -128 to 127, so == works for small ids and fails
-for big ones; always use equals. Unboxing a null throws NullPointerException.
-```

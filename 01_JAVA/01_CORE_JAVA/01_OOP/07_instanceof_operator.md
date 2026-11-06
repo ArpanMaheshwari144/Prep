@@ -41,12 +41,3 @@ byaaj galat aayega. Tune apne code me ye galti nahi ki: har account khud `calcul
 
 Matlab jahan `instanceof` ki lambi chain dikhe, samajh lo wahan polymorphism hona chahiye tha. `instanceof` ek-aadh jagah ke liye
 theek hai, jaise sirf FD ki maturity dekhni ho.
-
-## Interview line
-
-```
-instanceof checks the real type of an object at runtime before a cast, so we avoid
-ClassCastException, and it returns false for null. Since Java 16 the check and cast are one
-step: if (a instanceof FixedDeposit fd). But a long instanceof chain usually means missing
-polymorphism; in my bank each account overrides calculateInterest, so I never branch on type.
-```

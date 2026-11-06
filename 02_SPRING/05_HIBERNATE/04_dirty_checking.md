@@ -76,12 +76,3 @@ Hal: response ke liye DTO banao (`new UserDto(u.getName(), u.getEmail())`) aur e
 
 usercrud ka `UserService.update()` `@Transactional` hai. Usme entity load hoti hai, setter se field badalta hai, aur koi `save()` nahi likha, phir bhi commit
 pe Hibernate ne khud UPDATE bhej diya.
-
-## Interview line
-
-```
-Dirty checking: entity load hote hi Hibernate snapshot rakhta, commit / flush pe compare karke
-badle field ka UPDATE khud bhejta (Unit of Work). Ye sirf managed entity pe; detached pe change
-kho jaata, wahan merge / save. Main phir bhi save() likhta hoon taaki write saaf dikhe, aur read
-path pe DTO / readOnly taaki entity galti se badle to DB me na jaaye.
-```

@@ -43,11 +43,3 @@ Cascade hamesha parent se child ki taraf jaata hai (`@OneToMany` pe), child se p
 
 usercrud me Author aur Book alag-alag save aur delete hote hain, isliye wahan jaan-boojh ke cascade nahi lagaya. Interview me seedha bolo: "mere project me
 child independent tha, owned child (Order-OrderItem) pe ALL + orphanRemoval lagaunga."
-
-## Interview line
-
-```
-Cascade parent ka operation child pe chalata hai. Main tab lagata hoon jab child ka lifecycle
-parent se bandha ho, jaise Order-OrderItem: CascadeType.ALL + orphanRemoval. Shared child
-(Author-Book) pe nahi, aur REMOVE / ALL soch ke, kabhi @ManyToOne pe nahi.
-```

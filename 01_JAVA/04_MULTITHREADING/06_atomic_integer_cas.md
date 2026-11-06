@@ -50,14 +50,3 @@ to 2 order bane (double charge), `putIfAbsent` lagaya to 1 hi order bana.
 Usercrud [`IdempotencyController`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/IdempotencyController.java)
 me dono hain: `count.incrementAndGet()` CAS wala counter, aur `map.putIfAbsent(key, "PROCESSING")` jo ConcurrentHashMap me
 key ko atomic tareeke se claim karta hai. 20 parallel request same key ke saath aayi, phir bhi order ek hi bana.
-
-## Interview line
-
-```
-AtomicInteger uses CAS: read the value, compute, and write only if it is still what I read,
-otherwise retry. It's one CPU instruction and lock-free, so it beats synchronized for counters.
-The trap is get() then set(): two steps, not atomic; in a quick test that lost about 1,900 of
-10,000 decrements, while decrementAndGet lost none. Under heavy contention retries pile up,
-so I'd use LongAdder. ABA matters for reused pointers, not plain counters. Same idea as
-putIfAbsent in a map and @Version in the database.
-```

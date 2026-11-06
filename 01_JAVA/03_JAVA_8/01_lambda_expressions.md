@@ -44,11 +44,3 @@ Lambda bahar ke variable ki copy leta hai, ye wahi `int bal = w.balance` wali ka
 ## Tera project
 
 Multithreading practical me `new Thread(() -> {...})` likha hai. Wahan `Runnable` ka ek hi khaana hai (`run`), aur wahi lambda se bhara gaya hai.
-
-## Interview line
-
-```
-Lambda is a short way to implement a functional interface, one with a single abstract method.
-It lets us pass behaviour as an argument, which is what Streams are built on.
-Local variables used inside it must be effectively final.
-```

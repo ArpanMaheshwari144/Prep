@@ -43,13 +43,3 @@ Usercrud [`VolatileDemoController`](../../07_PROJECTS/usercrud/src/main/java/com
 me (27-Aug) bina volatile ke bhi worker ruk gaya tha. Par plain Java me (4-Oct) wahi code latak gaya, jaise upar latka.
 Matlab "mere laptop pe chal gaya" ka koi bharosa nahi hai. Server ki JVM pe shutdown ke waqt app band hi nahi hoga, aur ye
 bug koi test nahi pakadta. Isliye stop wale flag pe `volatile` hamesha likho.
-
-## Interview line
-
-```
-volatile gives visibility and ordering: every thread reads the latest value, and writes
-before it can't be reordered after it. It does not make count++ atomic; for that I use
-AtomicInteger or synchronized. I use it for a stop flag or the instance field in a
-double-checked singleton. Without it the loop can cache the flag and never stop; in a quick test
-the non-volatile worker was still running two seconds after the flag was cleared.
-```

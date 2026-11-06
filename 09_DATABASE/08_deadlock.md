@@ -50,15 +50,3 @@ INSERT INTO account VALUES (2, 200);   -- id=1 pehle se tha
 --    B pe: ERROR 1213 (40001): Deadlock found when trying to get lock; try restarting transaction
 --    B = victim (rollback), A bach gaya.  Cleanup: A: ROLLBACK;
 ```
-
-## Interview line
-
-```
-A DB deadlock is two transactions each holding a row the other needs. Unlike Java, the
-database detects the cycle, picks a victim, rolls it back with error 1213 and lets the other finish.
-I prevent it by locking rows in a fixed order, lower id first, and keeping transactions short. If it
-still happens, I retry in a new transaction from outside, with an idempotency key; retrying inside
-the same @Transactional method is useless because that transaction is already rolled back.
-```
-
-[← DATABASE folder](.)

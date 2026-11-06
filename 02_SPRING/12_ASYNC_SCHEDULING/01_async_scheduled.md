@@ -50,13 +50,3 @@ Kuch aur baatein:
 ## Tera project (usercrud)
 
 `DemoJobs` ek alag bean hai, jisme `@Async sendEmail` aur `@Scheduled(fixedRate = 3000) heartbeat` hain. Controller `demoJobs.sendEmail()` bulata hai, isliye call proxy se hoke jaati hai.
-
-## Interview line
-
-```
-@Async runs a method on a separate thread pool so the request returns immediately, like sending an email
-after signup; it goes through a proxy, so it must be called from another bean, and for real use I define
-my own executor with a bounded queue. But it's in-memory, so if the app dies the pending work is lost;
-anything that must not be lost goes through Kafka or an outbox. @Scheduled runs cron jobs, and with
-multiple instances I add ShedLock so the job runs on only one node.
-```

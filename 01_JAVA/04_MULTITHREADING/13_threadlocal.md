@@ -35,13 +35,3 @@ JWT filter request khatam hone pe SecurityContext saaf karta hai, wo saaf karna 
 Kaam `@Async` ya `CompletableFuture` pe bheja (file 10, 11), to wo doosre cashier ke paas gaya, aur uska locker khaali hai.
 Isiliye async me `SecurityContextHolder` khaali aata hai aur log se traceId gaayab ho jaata hai. Ilaaj: value pehle nikaal ke
 pass karo, ya Spring ka `TaskDecorator` lagao jo context naye thread me copy kar de.
-
-## Interview line
-
-```
-ThreadLocal gives each thread its own copy behind one name, so request context like
-userId, traceId or the SecurityContext doesn't have to be passed through every method. With
-thread pools I always remove() in finally, otherwise the reused thread leaks the previous
-request's value. And it doesn't cross threads: in @Async or CompletableFuture the value is
-null, so I pass it explicitly or use a TaskDecorator.
-```

@@ -60,12 +60,3 @@ method ke andar jo local map hai, wahan HashMap lo. Aur jo map kai thread me baa
 
 [C1 takkar](demo/concurrenthashmap/C1_Takkar.java) · [C2 concurrent](demo/concurrenthashmap/C2_Concurrent.java) ·
 [C3 check-then-act](demo/concurrenthashmap/C3_CheckThenAct.java) · [C4 ilaaj](demo/concurrenthashmap/C4_Ilaaj.java)
-
-## Interview line
-
-```
-In usercrud's idempotency check two requests with the same key can arrive on two Tomcat threads at
-once, so the processed map is a ConcurrentHashMap and the claim is a single putIfAbsent; the map is
-thread-safe per call, but a get followed by a put is still a race, which is why I use merge or
-compute.
-```

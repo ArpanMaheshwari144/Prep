@@ -48,12 +48,3 @@ AI bhi entity pe `@Data` laga deta hai, isliye PR me ye line pakadna tera kaam h
 ## Tera project
 
 usercrud me Book owning side hai (`@JoinColumn author_id`), aur Author inverse side hai (`mappedBy = "author"`).
-
-## Interview line
-
-```
-Bidirectional relation me owning side wo hai jiske table me FK hai (@ManyToOne + @JoinColumn),
-doosri side mappedBy se sirf aaina. mappedBy bhoolo to extra join table, sirf ek side set karo
-to FK NULL, isliye helper method. Many-to-many me main junction entity leta hoon taaki beech
-ki table pe extra field aa sakein.
-```

@@ -90,14 +90,3 @@ if ("SUCCESS".equals(status))   // status null ho to bhi seedha false
 
 Webhook me `status` field kabhi-kabhi aata hi nahi, aur tab ye null hoti hai. Pehli line pe request NPE se toot jaati hai.
 Isliye constant ko aage rakho, kyunki `"SUCCESS"` kabhi null nahi hota.
-
-## Interview line
-
-```
-String is immutable: once created, its content never changes. Methods like trim() return a
-new String, so you must reassign it, otherwise the change is lost and something like an
-email dedup check silently fails. Immutability is what makes the String Pool safe to share, and
-it also gives thread safety and stable HashMap keys. Since == compares references and a
-String read from JSON is a new object, always compare with equals(), and write
-"SUCCESS".equals(status) so a null status does not throw.
-```

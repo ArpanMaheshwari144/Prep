@@ -56,13 +56,3 @@ Saari `parallelStream` poori JVM me ek hi chhota thread pool share karti hain. U
 ## Tera project
 
 SimpleBankSystem ke `getAccountHolderNames()` me yahi belt lagi hai. `findAll()` se dabbe aaye, `map(Account::getHolderName)` beech ka station hai, aur `collect` end pe maal uthata hai.
-
-## Interview line
-
-```
-A stream is a lazy pipeline: intermediate operations like filter and map only build it,
-and nothing runs until a terminal operation like collect or count.
-Elements flow one by one, so findFirst or limit can stop early.
-A stream can be used only once, and parallelStream uses the shared common pool,
-so it should not be used for blocking calls.
-```

@@ -37,13 +37,3 @@ Jab JSON ko `Map<String, Object>` me padhte ho, jaise kisi webhook ka body, to J
 nahi. Phir koi `(Long) map.get("amount")` likhta hai, aur `ClassCastException` aata hai, sirf us din jab amount chhota ho. Bachao:
 `((Number) map.get("amount")).longValue()`, jo Integer aur Long dono pe chalta hai. (Ye Jackson ke default niyam se likha hai, chala ke
 nahi dekha.)
-
-## Interview line
-
-```
-Upcasting is storing a child in a parent reference, automatic and always safe; in my bank,
-Account a1 = new SavingsAccount(...) lets one loop call calculateInterest on all accounts.
-Downcasting goes back to the child type, needs an explicit cast and can throw
-ClassCastException at runtime, so check with instanceof first. Casting unrelated types does
-not even compile.
-```

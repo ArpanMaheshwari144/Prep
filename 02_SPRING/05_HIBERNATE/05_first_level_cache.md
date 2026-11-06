@@ -44,11 +44,3 @@ wali dikkat hai, kyunki tab tak connection pakda rehta hai.
 ## Tera project
 
 usercrud me ek `@Transactional` method ke andar `getById(1)` do baar bulaya. DB query sirf ek baar chali, aur dono baar same object mila.
-
-## Interview line
-
-```
-First-level cache session ka hota hai: ek transaction me same ID dobara maango to DB nahi
-jaata, wahi object milta. Automatic hai, band nahi hota, session ke saath khaali. Dhyaan: sirf
-ID lookup bachta, JPQL har baar DB; aur beech me DB badla to purana data, wahan refresh / clear.
-```

@@ -43,12 +43,3 @@ Tune apna DataSource bean bana liya, to `@ConditionalOnMissingBean` ki wajah se 
 ## Tera project
 
 usercrud ke pom me 8 starter hain: data-jpa, webmvc, validation, graphql, cache, kafka, actuator aur security. Inke liye setup ka code tune kahin nahi likha. Haan, BCrypt Spring ne nahi diya, wo tere `SecurityConfig` ka apna `@Bean` hai.
-
-## Interview line
-
-```
-Spring Boot auto-configuration looks at the classpath and creates beans conditionally:
-@EnableAutoConfiguration loads auto-config classes listed in each jar, each guarded by
-@ConditionalOnClass and @ConditionalOnMissingBean, so if I define my own bean, Boot backs off.
-A starter is just a curated bundle of dependencies.
-```

@@ -49,15 +49,3 @@ java.lang.OutOfMemoryError
 ## Tera kaam
 
 Prod ke heap graph me aari (sawtooth) jaisa pattern normal hai: memory badhti hai aur GC aate hi girti hai. Dikkat tab hai jab har GC ke baad ka neeche wala point bhi dheere-dheere upar chadhta jaaye. Yahi leak ki pehchaan hai.
-
-## Interview line
-
-```
-GC frees objects that are no longer reachable from GC roots like stack
-variables and static fields, using mark and sweep, so circular references
-are not a problem. The heap is generational: most objects die young, so
-minor GCs on the young generation are frequent and cheap, and survivors are
-promoted to the old generation. G1 is the default since Java 9. Java can
-still leak memory if references stay alive, for example a static collection
-that only grows.
-```

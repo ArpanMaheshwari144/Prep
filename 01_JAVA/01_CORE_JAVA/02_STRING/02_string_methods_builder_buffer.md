@@ -56,13 +56,3 @@ Spring ki service singleton hoti hai. Kisi ne class ke field me `private StringB
 taaki log ya message banaye. Ab do request ek saath aayi to dono ek hi dabba bharengi, aur ek user ke message me doosre ka
 text chala jaayega. Ye wahi "singleton me field" wali galti hai jo PR drill me pakadte hain. Ilaaj: StringBuilder method ke
 andar banao.
-
-## Interview line
-
-```
-String concatenation inside a loop creates a new object every time, so it is O(n^2) copying;
-StringBuilder appends into one growing buffer, which is why a 1 lakh row CSV went from
-4 seconds to 1 ms. StringBuffer is the same but synchronized, so it is thread safe and slower.
-In practice I keep StringBuilder as a local variable, so each thread has its own and
-StringBuffer is rarely needed; a StringBuilder field in a singleton bean is a bug.
-```

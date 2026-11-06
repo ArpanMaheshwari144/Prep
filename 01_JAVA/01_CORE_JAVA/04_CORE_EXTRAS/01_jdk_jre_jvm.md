@@ -43,11 +43,3 @@ Insurance   FROM openjdk:8-jdk            <- poora JDK, server pe zaroorat se ba
 ```
 
 todoapp ki Dockerfile me tune khud likha hai: "JRE chahiye sirf (JDK nahi, humne jar pehle build kiya)". Insurance me poori JDK wali image hai, jo server ke liye zaroorat se badi hai, kyunki wahan compile karne wale tools chahiye hi nahi.
-
-## Interview line
-
-```
-JVM runs bytecode, JRE is JVM plus the libraries needed to run, JDK is JRE plus compiler and tools.
-Bytecode is the same everywhere and each OS has its own JVM, which makes Java portable.
-The JVM interprets first and JIT compiles hot code to native, which is why apps warm up.
-```

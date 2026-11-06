@@ -43,12 +43,3 @@ Annotation ek pehredaar hai. Iske bina bhi code chalta hai, par iske saath galti
 ## Tera project
 
 Insurance ke `ClaimService` me `.orElseThrow(() -> new EntityNotFoundException(...))` likha hai. Ye `() -> ...` ek Supplier hai. Ye kuch leta nahi, bas exception bana ke deta hai, aur sirf tab chalta hai jab claim na mile.
-
-## Interview line
-
-```
-A functional interface has exactly one abstract method, and a lambda takes its type from it.
-Java 8 gives four core ones: Predicate (test, returns boolean), Function (apply, T to R),
-Consumer (accept, returns nothing) and Supplier (get, takes nothing).
-@FunctionalInterface makes the compiler enforce the single-method rule.
-```

@@ -43,11 +43,3 @@ liye use compare karna padta hai, aur null ko compare nahi kar sakte. Haan, agar
 jaata hai.
 
 Ek aur baat yaad rakh: TreeMap KEY pe sort karta hai, value pe nahi.
-
-## Interview line
-
-```
-I pick the map by the order I need: HashMap for plain O(1) lookups, LinkedHashMap when insertion or
-access order matters, like an LRU cache with accessOrder true, and TreeMap for sorted keys and range
-queries like floorKey on a leaderboard, at O(log n).
-```

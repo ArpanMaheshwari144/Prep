@@ -39,11 +39,3 @@ for (int i = 0; i < tickets.size(); i++) {
 Ye loop dekhne me bilkul seedha lagta hai. Par LinkedList me har `get(i)` head se shuru karke i tak chalta hai, isliye
 50,000 ticket pe ye ghanton ka kaam ban jaata hai. Ilaaj: for-each ya iterator chalao, jo ek-ek node aage badhta hai.
 Ya phir ArrayList lo.
-
-## Interview line
-
-```
-LinkedList only wins when I already hold the node, like in an LRU cache built from a HashMap and a
-doubly linked list; otherwise reaching a position is O(n) and the nodes are scattered in memory, so
-I default to ArrayList and use ArrayDeque for queues.
-```

@@ -40,11 +40,3 @@ reachedAt bhi ulta ho gaya, aur jo baad me pahuncha wo upar aa gaya. Isliye ulta
 Ye galti test me tabhi pakdi jaati hai jab test me tie wala case ho.
 
 Ek aur baat: rule ko `&&` se jodne ki koshish karoge to compile error aayega, kyunki compare int deta hai, boolean nahi.
-
-## Interview line
-
-```
-For a leaderboard I sort by score descending and break ties with thenComparing on the time the
-score was reached; I put reversed() only on the score comparator, because reversed() at the end
-flips the whole chain, including the tie-breaker.
-```

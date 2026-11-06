@@ -27,10 +27,3 @@ class PaymentRepository implements Readable, Writable { ... }    // dono
 
 Ab jisko jo chahiye, wo sirf wahi interface leta hai. Report wali class sirf `Readable` leti hai, to uske paas `delete()` hai hi
 nahi. Ye remote jaisa hai: TV ke remote me AC ke button nahi hote.
-
-## Interview line
-
-```
-I keep interfaces small and focused, so a read-only report repository implements only Readable and is
-never forced to carry a delete method it should not have.
-```

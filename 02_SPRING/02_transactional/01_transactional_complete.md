@@ -61,12 +61,3 @@ poori app atak jaati hai (ye 31-Oct ke order refund PR wala kissa hai). Hal: tra
   RuntimeException aane pe user DB me nahi bacha.
 - **mini_payment:** yahan order aur payment alag service hain, aur dono ka DB bhi alag hai. Isliye ek `@Transactional` dono ko cover nahi kar sakta,
   aur wahan SAGA aur idempotency key lagayi hai.
-
-## Interview line
-
-```
-@Transactional ek DB ka all-or-nothing hai: Spring proxy BEGIN karta, sab theek to COMMIT,
-RuntimeException pe ROLLBACK. Do dhyaan: checked exception pe rollback nahi hota, aur
-same class ke andar this.method() pe proxy bypass ho jaata hai. Alag service ya alag DB ho
-to @Transactional kaafi nahi, wahan SAGA + idempotency key.
-```

@@ -45,11 +45,3 @@ baar lautaya gaya tha. Isliye agar tune `next()` bulaye bina hi `remove` ya `set
 
 for-each saaf dikhta hai, par usme element hata nahi sakte. Iterator thoda lamba likhna padta hai, par usse hatana safe
 hai. Aaj ke code me seedha `removeIf` likhte hain.
-
-## Interview line
-
-```
-Removing from a list inside a for-each loop changes modCount behind the iterator's back, so the
-next call throws ConcurrentModificationException; worse, removing the second-last element ends the
-loop silently and skips the last one, so I use iterator.remove() or removeIf.
-```

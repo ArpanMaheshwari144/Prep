@@ -42,13 +42,3 @@ override nahi kar raha".
 **Chhota trap:** `static` method override nahi hota, wo bas chhup jaata hai, ise hiding kehte hain. Maan lo `A ref = new B();`
 likha aur phir `ref.show()` bulaya. Agar `show()` static hai, to A wala chalega, B wala nahi. Kyunki static method me Java
 reference ka type dekhta hai, object nahi dekhta.
-
-## Interview line
-
-```
-Overriding is the child replacing a parent method with the same signature, decided at runtime
-by the object: in my bank, calculateInterest differs for Savings, FD and Current. Overloading
-is the same name with different parameters, decided at compile time, like println(int) and
-println(String). The classic bug is writing equals(User) instead of equals(Object): it
-overloads instead of overriding, and HashSet silently keeps duplicates. @Override catches it.
-```

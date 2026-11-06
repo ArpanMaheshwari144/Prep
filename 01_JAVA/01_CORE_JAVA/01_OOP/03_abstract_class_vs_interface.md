@@ -44,14 +44,3 @@ chalti rehti hain.
 // AccountRepository me count() jodna ho:
 default long count() { return findAll().size(); }   // warna InMemory + aage ki har class tootegi
 ```
-
-## Interview line
-
-```
-In my bank project, Account is an abstract class because all accounts share state and the
-same deposit and withdraw code. AccountRepository is an interface because the service only
-needs the contract; today it is in-memory, tomorrow it can be MySQL without changing the
-service. Rule of thumb: shared state and code -> abstract class, a capability or a swap
-point -> interface. Adding a method to a live interface breaks every implementer, which is
-why Java 8 added default methods.
-```

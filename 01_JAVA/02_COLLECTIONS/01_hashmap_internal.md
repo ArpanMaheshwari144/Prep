@@ -55,11 +55,3 @@ andar ghus gaya.
 [H1 index](demo/hashmap/H1_IndexKaise.java) · [H2 takkar](demo/hashmap/H2_Takkar.java) ·
 [H3 spread](demo/hashmap/H3_Spread.java) · [H4 bucket](demo/hashmap/H4_Bucket.java) ·
 [H5 == vs equals](demo/hashmap/H5_Get.java) · [H6 contract](demo/hashmap/H6_Contract.java)
-
-## Interview line
-
-```
-HashMap picks a bucket from the key's hashCode and finds the exact key inside the bucket with
-equals, so both must be overridden together; I have seen a cache that never hit because a key class
-had equals but no hashCode.
-```

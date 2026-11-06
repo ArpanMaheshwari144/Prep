@@ -28,11 +28,3 @@ Refund wala order ab PAID dikh raha hai, kyunki naya naam aage judne se saare nu
 `@Enumerated(EnumType.STRING)`, taaki DB me number ki jagah naam `"REFUNDED"` jaaye.
 
 Enum ko `==` se milana sahi hai, kyunki har naam ka ek hi object hota hai. Ye String wala trap nahi hai.
-
-## Interview line
-
-```
-An enum is a fixed set of named constants, so invalid values fail at compile time, and
-each constant is a single object, so == is safe. In JPA I always use EnumType.STRING,
-because the default ordinal breaks old rows when someone adds a new value in between.
-```

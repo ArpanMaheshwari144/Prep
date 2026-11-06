@@ -55,12 +55,3 @@ private final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());   // NullPo
 
 Field wali ye line `@Value` inject hone se PEHLE chal jaati hai, aur us waqt `secret` null hota hai, isliye NullPointerException aata hai. Isliye usercrud me key ek method
 `getSigningKey()` ke andar banti hai (ya `@PostConstruct` me bana sakte ho).
-
-## Interview line
-
-```
-JWT gives stateless auth: on login I issue a signed token with userId, role and expiry; every request
-carries it as a Bearer header and a JwtFilter verifies the signature and sets the SecurityContext, so any
-server can serve any request. The trade-off is revocation, so I keep the access token short (15 min) and
-a refresh token in the DB; logout deletes the refresh token.
-```

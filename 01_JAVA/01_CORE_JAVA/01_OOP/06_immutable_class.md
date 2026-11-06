@@ -49,13 +49,3 @@ banayi. Isliye bahar se jo add hua, wo order ke andar bhi dikh gaya.
 Bachao: constructor me apni copy rakh lo, jaise `this.items = List.copyOf(items)`. Ye copy bhi banata hai, aur us copy me `add`
 karne pe exception bhi deta hai. Agar `List.copyOf` nahi lagaya, to constructor aur getter dono me `new ArrayList<>(...)` se copy
 deni padti hai.
-
-## Interview line
-
-```
-An immutable class sets all state once in the constructor and never changes it: final class,
-private final fields, no setters. In my payment service, PayRequest is a record, which is
-immutable by default. It gives free thread safety and safe HashMap keys. The trap is a mutable
-field like a List: final stops reassignment, not add(), so copy it in the constructor with
-List.copyOf.
-```

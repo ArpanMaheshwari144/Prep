@@ -36,12 +36,3 @@ Ye wahi galle pe jhapki hai, bas yahan chaabi DB connection aur row lock hai. Ha
 hai, aur thodi bheed aate hi Hikari pool khaali ho jaata hai. Isliye bahar ki call transaction ke bahar rakho, jaisa PR drill
 me hota hai. Aur `catch (InterruptedException e) {}` khaali mat chhodo, usme `Thread.currentThread().interrupt();` likho, warna
 rukne ka signal kho jaata hai.
-
-## Interview line
-
-```
-sleep() pauses but keeps the lock; wait() releases the lock until notify().
-In a quick test, a thread sleeping inside synchronized made the other wait 2 seconds; with wait()
-it got in after 50 ms. wait() must be inside synchronized and in a while loop. The real trap is
-sleeping between retries inside a transaction: it holds a DB connection and drains the pool.
-```

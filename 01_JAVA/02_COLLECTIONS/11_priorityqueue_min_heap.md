@@ -50,11 +50,3 @@ return new ArrayList<>(top5);   // "top 5" API -> screen pe ulta-seedha kram
 Agar sorted chahiye, to ek-ek karke `poll()` karo, ya list bana ke use sort karo. C++ ka `priority_queue` tujhe us pe loop
 chalane hi nahi deta, wahan sirf top aur pop milta hai, isliye wahan ye galti kabhi dikhi hi nahi. Java dekhne deta hai,
 aur wahi trap hai.
-
-## Interview line
-
-```
-PriorityQueue in Java is a min-heap by default, unlike C++'s max-heap, so for top-K I keep a min-heap
-of size K and drop the smallest, which is O(n log k); iterating the queue is not sorted, only
-repeated poll() gives sorted order.
-```

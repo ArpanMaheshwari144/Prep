@@ -30,12 +30,3 @@ notifyAll();   // sab jaago, jiski shart poori ho wahi kaam kare
 ```
 
 Asli code me ye sab haath se likhte hi nahi, seedha `BlockingQueue` lete hain (file 12), wo andar se sambhal leta hai.
-
-## Interview line
-
-```
-Every object has a lock and a wait set. wait() releases the lock and joins the wait set.
-notify() only moves one thread to BLOCKED; it still has to reacquire the lock, which happens
-after the notifier leaves synchronized. With several producers and consumers, notify() can wake
-the wrong kind of thread and everyone ends up waiting, so I use notifyAll, or better a BlockingQueue.
-```

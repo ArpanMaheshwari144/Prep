@@ -41,14 +41,3 @@ Saada `Queue` ya `LinkedList` sirf ek thread ke liye hai, jaise BFS me. Kai thre
 
 File 10 ke pool ki line yahi hai, `@Async` yahi hai, aur bade level pe Kafka yahi hai: producer, topic (shelf), aur consumer
 group. Stadium wali Kafka kahani bhi yahi thi, bas kai server pe phaili hui.
-
-## Interview line
-
-```
-Producer-consumer puts a bounded buffer between a fast producer and a slower consumer:
-the producer waits when it's full, the consumer waits when it's empty. In an interview I can
-write it with synchronized, a while loop and wait/notifyAll; in production I use a BlockingQueue,
-where put() and take() block on their own. A plain LinkedList shared by two threads lost about
-50,000 of 200,000 items in a quick test. The same idea scales up to Kafka: producers, a topic,
-and consumer groups.
-```

@@ -11,11 +11,3 @@
 
 `final List` me `add()` aur `clear()` chalte hain. `final` sirf ye rokta hai ki list kisi doosri list ki taraf ishaara na
 kare, andar ka saaman badalne se nahi rokta.
-
-## Interview line
-
-```
-final means it cannot change: a variable can't be reassigned, a method can't be
-overridden, a class can't be extended. A final List can still be modified, only the
-reference is fixed.
-```
