@@ -336,6 +336,11 @@ TASVEER:
 
 DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
   -> +ve bache index 4,5 -> missing = 5,6.
+
+  index      :   0    1    2    3    4    5    6    7
+  shuru      :   4    3    2    7    8    2    3    1
+  mark baad  :  -4   -3   -2   -7   (8)  (2)  -3   -1
+  +ve index 4, 5 -> missing value 5, 6
 ```
 
 ```cpp
