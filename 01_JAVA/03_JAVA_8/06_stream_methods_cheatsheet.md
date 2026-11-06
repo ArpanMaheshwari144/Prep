@@ -2,60 +2,66 @@
 
 Iski practice `01_JAVA/07_STREAM_API_WRITE` folder me hai (Q1 se Q17, aur REDO).
 
-## Kahani
+## Scene
 
-HR bola: "har department ki total salary batao." Data ye hai:
+Mart me 2 rack hain. Doodh wale rack pe ghee 550 aur paneer 300 hain, anaaj wale pe daal 140 aur aata 320. Mausi boli: "har rack ka hisaab do."
 
-```
-(arpan, eng, 100)  (bob, sales, 200)  (cara, eng, 150)  (dev, sales, 50)
-```
-
-Loop se karo to har employee pe `map[dept] += salary` karna padta hai. Stream me ye kaam ek line ka hai:
+Loop se karo to har dabbe pe `map[rack] += price` likhna padta hai. Stream me `groupingBy` ka pehla argument batata hai ki dabbe kis cheez pe banenge. Doosra argument batata hai ki har dabbe ke andar kya rakhna hai. Slot ek hi hai, bas usme collector badalte raho:
 
 ```java
-emps.stream().collect(groupingBy(e -> e.dept, summingInt(e -> e.salary)));
-// {eng=250, sales=250}
+groupingBy(Item::rack, counting())                    // kitne
+groupingBy(Item::rack, mapping(Item::name, toList())) // kaun kaun
+groupingBy(Item::rack, summingInt(Item::price))       // kitne ka
 ```
 
-## Tasveer
-
-`groupingBy` ka pehla argument batata hai ki **dabbe kis cheez pe banenge**. Doosra argument batata hai ki **har dabbe ke andar kya banega**. Slot ek hi hai, bas usme collector badalte raho:
+Chala ke dekha:
 
 ```
-groupingBy(dept)                          -> eng=[Emp, Emp]       poora object (default)
-groupingBy(dept, counting())              -> eng=2                ginti
-groupingBy(dept, mapping(name, toList())) -> eng=[arpan, cara]    sirf naam
-groupingBy(dept, summingInt(salary))      -> eng=250              jod
+{anaaj=2, doodh=2}
+{anaaj=[daal, aata], doodh=[ghee, paneer]}
+{anaaj=460, doodh=850}
+sum: 1310          <- mapToInt(Item::price).sum()
 ```
 
-## 4 khaas baat
+## Dikkat -> hal
 
-1. **Saare methods 3 dabbon me aate hain, isliye kaam pata ho to naam mil jaata hai:**
-   ```
-   BADLO:     filter · map · flatMap · distinct · sorted · limit / skip
-   AGGREGATE: count · sum / max · reduce · anyMatch · findFirst
-   COLLECT:   toList · toMap · groupingBy · partitioningBy · joining
-   ```
-2. **Naam sirf dabbe ke andar nikalo (`mapping`), collect se pehle `.map(name)` mat lagao.** Pehle hi naam bana diya to stream me sirf String bachegi, dept kho jaayega. Phir group kis cheez pe karoge?
-3. **`IntStream` aur `Stream<Integer>` alag cheezein hain.** `.sum()` sirf `IntStream` pe milta hai, wahan pahunchne ke liye `mapToInt` lagao. List banani ho to `.boxed()` se wapas `Stream<Integer>` banao.
-4. **`reversed()` jahan lagaoge, wahin tak ka sab ulta hoga.** `thenComparing(comparingInt(salary).reversed())` me sirf salary ulti hoti hai. Chain ke end me `.reversed()` lagao to poori chain ulti ho jaati hai, dept bhi Z-A.
+Saare methods 3 dabbon me aate hain. Ye list yaad rakhne ki cheez hai. Likhte waqt koi naam bhool jao to docs ya net pe dekh lo, ye normal hai:
+
+```
+BADLO:     filter · map · flatMap · distinct · sorted · limit / skip
+AGGREGATE: count · sum / max · reduce · anyMatch · findFirst
+COLLECT:   toList · toMap · groupingBy · partitioningBy · joining
+```
+
+Do cheezein dhyaan me rakhni hain. Pehli, naam sirf dabbe ke andar nikalo (`mapping`). Collect se pehle `.map(name)` lagaya to stream me sirf String bachegi aur rack kho jaayega, phir group kis cheez pe karoge. Doosri, `.sum()` sirf `IntStream` pe milta hai, isliye pehle `mapToInt` lagao.
 
 ## Prod wala trap
 
 ```java
-emps.stream().collect(toMap(e -> e.dept, e -> e.name));
-// eng do baar aaya -> IllegalStateException: Duplicate key eng
+l.stream().collect(toMap(Item::rack, Item::name));
 ```
 
-Test data me har dept ek hi baar tha, isliye sab chal gaya. Prod me ek dept me doosra banda aate hi crash. Isliye `toMap` me teesra argument (merge) do, jaise `(a, b) -> a + ", " + b`. Ek key ki kai values chahiye to `toMap` ki jagah `groupingBy` lagao.
+Chala ke dekha:
+
+```
+Duplicate key anaaj (attempted merging values daal and aata)
+```
+
+Test data me har rack pe ek hi dabba tha, isliye sab chal gaya. Prod me usi rack pe doosra dabba aate hi crash ho gaya. Isliye `toMap` me teesra argument (merge) do:
+
+```
+toMap(Item::rack, Item::name, (x, y) -> x + ", " + y)   ->   {anaaj=daal, aata, doodh=ghee, paneer}
+```
+
+Ek key ki kai values chahiye to `toMap` ki jagah `groupingBy` lagao.
 
 ## Loop ya stream
 
-Agar kaam seedha hai, jaise filter, map, group ya ginti, to stream chhoti aur saaf padti hai. Agar logic bhaari hai, jaise beech me `break` chahiye, kai if-else hain, checked exception aata hai, ya debug me breakpoint lagana hai, to loop behtar hai. Dono sahi hain, jo padhne me saaf lage wahi likho.
+Kaam seedha ho (filter, map, group, ginti) to stream chhoti aur saaf padti hai. Logic bhaari ho (beech me `break`, kai if-else, checked exception, ya breakpoint lagana ho) to loop behtar hai. Jo padhne me saaf lage wahi likho.
 
 ## Tera hands-on
 
-`07_STREAM_API_WRITE` me Q6 (`counting`), Q13 (`mapping`), Q14 (`summingInt`) aur Q16 (`reversed`) tune khud likhe hain. Upar ki tasveer wahi chaar sawaal hain.
+`07_STREAM_API_WRITE` me Q6 (`counting`), Q13 (`mapping`) aur Q14 (`summingInt`) tune khud likhe hain. Upar ke teen collector wahi teen sawaal hain.
 
 ## Interview line
 

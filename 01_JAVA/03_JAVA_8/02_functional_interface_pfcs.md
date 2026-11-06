@@ -25,7 +25,7 @@ Supplier se: Item[name=cheeni, price=60]
 
 ## Dikkat -> hal
 
-Lambda ka apna koi type nahi hota. Use jis khaane me rakho, wahi uska type ban jaata hai. Stream ke method batate hain ki kaunsa khaana chahiye: `filter` ko Predicate chahiye, `map` ko Function, `forEach` ko Consumer, aur `orElseGet` ko Supplier. Kaam pata ho to interface ka naam apne aap pata chal jaata hai.
+Lambda ka apna koi type nahi hota. Use jis khaane me rakho, wahi uska type ban jaata hai. Stream ke method batate hain ki kaunsa khaana chahiye: `filter` ko Predicate chahiye, `map` ko Function, `forEach` ko Consumer, aur `orElseGet` ko Supplier. Ye jodi (kaunsa method kaunsa khaana maangta) yaad rakhne ki cheez hai. Bhool jao to docs ya net pe dekh lo, ye normal hai.
 
 ## Prod wala trap
 
