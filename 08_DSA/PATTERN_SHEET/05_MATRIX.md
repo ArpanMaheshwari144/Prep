@@ -25,14 +25,6 @@ m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do
   kyun: 0 cell (1,1) pe -> row 1 aur col 1 poore 0, baaki same
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-TRICK: 2 marker-array -> zeroRow[row], zeroCol[col]. pass-1: cell==0 pe row+col mark; pass-2: marked ho to 0. (in-place, O(m+n) space)
-  pass-1:  for i,j:  if(matrix[i][j]==0){ zeroRow[i]=1; zeroCol[j]=1; }   // init -1 = unmarked · 2 pass: ek me hi 0 kiya to naye 0 bhi mark ho jaate
-  pass-2:  for i,j:  if(zeroRow[i]==1 || zeroCol[j]==1)  matrix[i][j]=0;   // || : row ya col me se koi ek bhi marked ho to 0
-```
-
 ```cpp
 void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m+n) space
     int row = matrix.size();
@@ -61,18 +53,8 @@ m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf,
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
-SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
-TEMPLATE:
-    int top=0, bottom=row-1, left=0, right=col-1;   // row-1/col-1: boundary inclusive, isliye neeche saare loop <=
-    while(top<=bottom && left<=right){   // <= : ek akeli row ya col bachi ho tab bhi chhaapni hai
-        for(int i=left; i<=right; i++)  ans.push_back(matrix[top][i]);     top++;   // top row L->R (top++ turant: right col wala loop ye corner dobara na le)
-        for(int i=top; i<=bottom; i++)  ans.push_back(matrix[i][right]);   right--; // right col T->B (right-- turant: bottom row wala loop ye corner dobara na le)
-        if(top<=bottom){                                                   // GUARD (ek hi row thi to top++ ke baad wahi row ulti dobara chhap jaati)
-            for(int i=right; i>=left; i--) ans.push_back(matrix[bottom][i]); bottom--; // bottom row ulta R->L; bottom-- : ye row ho gayi
-        if(left<=right){                                                   // GUARD (ek hi col thi to right-- ke baad wahi col ulti dobara chhap jaati)
-            for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col neeche se upar; left++ : ye col ho gayi
 GUARD — jo loop jis row/col pe chal raha, guard USI ka:
    3rd loop  BOTTOM row chhaap raha  ->  if (top <= bottom)
              matlab bottom abhi bhi top se NEECHE/barabar hai -> bottom row bachi hai -> chhaapo
@@ -93,26 +75,6 @@ GUARD — kyun?
       top row: 1  ->  top=1  ·  right col: 2 3  ->  right--  ->  left=0, right=-1
       bottom row: guard paas, par (i=-1..0) kuch nahi  ->  bottom=1
       left col?    left <= right ?  0 <= -1 NO  -> skip   (warna 2 dobara)
-
-index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
-TEMPLATE:
-    int top=0, bottom=row-1, left=0, right=col-1;
-    while(top<=bottom && left<=right){
-        for(int i=left; i<=right; i++)  ans.push_back(matrix[top][i]);     top++;   // top row L->R
-        for(int i=top; i<=bottom; i++)  ans.push_back(matrix[i][right]);   right--; // right col T->B
-        if(top<=bottom){                                                   // GUARD
-            for(int i=right; i>=left; i--) ans.push_back(matrix[bottom][i]); bottom--; // bottom row R->L
-        }
-        if(left<=right){                                                   // GUARD
-            for(int i=bottom; i>=top; i--) ans.push_back(matrix[i][left]);   left++;   // left col B->T
-        }
-    }
-GUARD kyun: last 2 loops (bottom-row / left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push.
-index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
 ```
 
 ```cpp
@@ -152,12 +114,6 @@ m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix
   kyun: pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-[ans[i][j] = matrix[j][i];] naya matrix col×row size ka.   // ans(col, vector<int>(row)) · outer i<col, inner j<row
-```
-
 ```cpp
 vector<vector<int>> transpose(vector<vector<int>> &matrix) {
     int row = matrix.size();
@@ -183,42 +139,13 @@ Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
-PURANI SHEET SE (same to same):
-
-   count kitne communicate (jo apni row+col DONO me akela -> nahi ginte).
-INPUT: [[1,0],[1,1]] -> 3   ·   [[1,0],[0,1]] -> 0 (dono akele)
-
-      rowCount[i], colCount[j]. akela pehchano -> count==1 dono me.
 DRY-RUN [[1,0],[1,1]]:
     pass-1:  rowCount=[1,2]  colCount=[2,1]
     (0,0): row0=1, col0=2>1 -> YES
     (1,0): row1=2>1          -> YES
     (1,1): row1=2>1          -> YES     => 3
-FAMILY: = SET MATRIX ZEROES (zeroRow/zeroCol -> yahan rowCount/colCount). counting-family. O(m*n).
-
-SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
-TEMPLATE:
-    vector<int> rowCount(m,0), colCount(n,0);   // 0 se: abhi kisi row/col me koi server gina nahi
-    for i,j: if(grid[i][j]==1){ rowCount[i]++; colCount[j]++; }              // pass-1: pehle poori ginti, tabhi pass-2 me pata akela hai ya nahi
-    for i,j: if(grid[i][j]==1 && (rowCount[i]>1 || colCount[j]>1)) ans++;    // pass-2 CHECK (>1: khud ke alawa koi aur server; || : row ya col koi ek kaafi)
-DRY-RUN [[1,0],[1,1]]:
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
-    rowCount[i], colCount[j]. akela pehchano -> count==1 dono me.
-TEMPLATE:
-  vector<int> rowCount(m,0), colCount(n,0);
-  for i,j: if(grid[i][j]==1){ rowCount[i]++; colCount[j]++; }              // pass-1 COUNT
-  for i,j: if(grid[i][j]==1 && (rowCount[i]>1 || colCount[j]>1)) ans++;    // pass-2 CHECK
-DRY-RUN [[1,0],[1,1]]:
-  pass-1:  rowCount=[1,2]  colCount=[2,1]
-  (0,0): row0=1, col0=2>1 -> YES
-  (1,0): row1=2>1          -> YES
-  (1,1): row1=2>1          -> YES     => 3
-FAMILY: = SET MATRIX ZEROES (zeroRow/zeroCol -> yahan rowCount/colCount). counting-family. O(m*n).
 ```
 
 ```cpp
