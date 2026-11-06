@@ -20,7 +20,7 @@
 using namespace std;
 
 
-bool DFS(int m, int n, int i, int j, vector<vector<char>> &board, string word, int index,
+bool DFS(int m, int n, int i, int j, vector<vector<char>> &board, const string &word, int index,
          vector<vector<bool>> vis)
 {
     if (i >= m || i < 0 || j >= n || j < 0 || vis[i][j] == true || board[i][j] != word[index])

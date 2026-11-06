@@ -6614,7 +6614,7 @@ islands-DFS se FARAK: islands = bas fill/count. word-search = mark + recurse + U
 ```
 
 ```cpp
-bool solve(vector<vector<char>> &board, string word, int index, int i, int j, int m, int n,
+bool solve(vector<vector<char>> &board, const string &word, int index, int i, int j, int m, int n,
            vector<vector<bool>> &vis) {     // vis REFERENCE (&), copy nahi
     if (i < 0 || i >= m || j < 0 || j >= n || vis[i][j] || board[i][j] != word[index])
         return false;  // bounds PEHLE (warna board[i][j] bahar), visited bhi isi if me

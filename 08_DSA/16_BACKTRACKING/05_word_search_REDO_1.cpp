@@ -14,7 +14,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool solve(vector<vector<char>> &board, string word, int index, int i, int j, int m, int n, vector<vector<bool>> &vis)
+bool solve(vector<vector<char>> &board, const string &word, int index, int i, int j, int m, int n, vector<vector<bool>> &vis)
 {
     if (i < 0 || i >= m || j < 0 || j >= n || vis[i][j] || board[i][j] != word[index])
     {
