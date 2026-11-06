@@ -18,7 +18,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int solve(int i, string s, int n, vector<int> &dp)
+int solve(int i, const string &s, int n, vector<int> &dp)
 {
     if (i == n)
     {

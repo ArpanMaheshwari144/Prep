@@ -12,7 +12,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void solve(int i, int j, string s, int &count)
+void solve(int i, int j, const string &s, int &count)
 {
     while (i >= 0 && j < s.size() && s[i] == s[j])
     {

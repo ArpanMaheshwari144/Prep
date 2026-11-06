@@ -21,7 +21,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int solve(string s1, string s2, int i, int j, vector<vector<int>> &dp)
+int solve(const string &s1, const string &s2, int i, int j, vector<vector<int>> &dp)
 {
     if (i < 0 || j < 0)
     {

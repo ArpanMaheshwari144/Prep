@@ -16,7 +16,7 @@
 using namespace std;
 
 // ============================================================
-int solve(int i, int j, string s1, string s2, vector<vector<int>> &dp)
+int solve(int i, int j, const string &s1, const string &s2, vector<vector<int>> &dp)
 {
     if (i < 0 || j < 0)
     {
