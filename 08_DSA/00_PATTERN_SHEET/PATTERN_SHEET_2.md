@@ -3850,7 +3850,8 @@ Node *copyRandomList(Node *head) {
 ### ▸ DESIGN HASHMAP (LLD)
 
 ```
-built-in map ke bina apna HashMap (string -> int): put(key,val) (hai to update), get(key) (nahi -> -1), remove, size.
+Built-in map use kiye bina apna HashMap banao (string key, int value). put(key, val): key pehle se ho to value badlo, warna naya jodo.
+get(key): value lautao, na mile to -1. remove(key): key hatao.
   e.g. put("a",1) put("b",2) put("a",5) get("a") -> 5 · size() -> 2 · remove("b") get("b") -> -1
   kyun: "a" dobara aaya to naya node nahi, value 5 ho gayi -> keys sirf a,b = 2 · b hata to -1
 ```
@@ -3925,7 +3926,7 @@ public:
     }
 
     void put(string key, int val) {
-        int index = hash<string>{}(key) % cap;   // % cap: hash bada number, slot 0..cap-1 me laana
+        int index = hash<string>{}(key) % cap;   // ★ % cap: hash bada number, slot 0..cap-1 me laana
         Entry *node = new Entry(key, val);
         if (buckets[index] == nullptr) {    // khaali slot: naya node hi chain ka head
             buckets[index] = node;
@@ -3936,7 +3937,7 @@ public:
             while (curr != NULL) {
                 if (curr->key == key) {
                     curr->value = val;      // key MILI -> value update
-                    return;                 // TURANT return: warna END pe DUPLICATE node + count++
+                    return;                 // ★ TURANT return: warna END pe DUPLICATE node + count++
                 }                           // (chain ke ANDAR update pe phat-ta; test-pass != code-sahi)
                 else {
                     if (curr->next == nullptr) {   // next null = chain ka END: yahin jodo
@@ -3969,7 +3970,7 @@ public:
                 if (prev != NULL)
                     prev->next = curr->next;        // BEECH: [A]->[B]->[C], B hata -> A->next = C
                 else
-                    buckets[index] = curr->next;    // prev NULL = HEAD hi hata: bucket ka head badlo
+                    buckets[index] = curr->next;    // ★ prev NULL = HEAD hi hata: bucket ka head badlo
                 count--;
             }
             prev = curr;                    // prev = prev->next NAHI: prev NULL -> crash
@@ -3986,7 +3987,7 @@ public:
 ### ▸ DESIGN HASHSET (LLD)
 
 ```
-built-in set ke bina apna HashSet (sirf string key): add (duplicate nahi), contains (true/false), remove, size.
+Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohrav nahi daalna. contains(key): hai to true, warna false. remove(key): hatao.
   e.g. add("apple") add("banana") add("apple") · contains("apple") -> true · size() -> 2 · remove("apple") -> contains false
   kyun: doosra "apple" pehle se tha, kuch nahi juda -> 2 key · remove ke baad apple gayab
 ```
@@ -4044,7 +4045,7 @@ public:
             Entry *curr = buckets[index];
             while (curr != nullptr) {
                 if (curr->key == key)
-                    return;                 // mili -> kuch nahi (duplicate skip)
+                    return;                 // ★ mili -> kuch nahi (duplicate skip)
                 else {
                     if (curr->next == nullptr) {
                         curr->next = node;  // na-mili -> chain END me append + sz++ (HashMap jaisa)
@@ -4080,7 +4081,7 @@ public:
                 sz--;
                 return;
             }
-            prev = curr;                    // prev = prev->next NAHI: NULL->next CRASH
+            prev = curr;                    // ★ prev = prev->next NAHI: NULL->next CRASH
             curr = curr->next;
         }
         return;
@@ -4095,7 +4096,8 @@ public:
 ### ▸ LRU CACHE (LC146) — COMBO: hashmap + doubly-linked-list
 
 ```
-fixed capacity cache. get(key) (nahi -> -1) aur put(key,val) dono O(1). bhar jaaye to sabse PURANA chhua (LRU) hatao.
+Ek fixed capacity wala cache banao. get(key): value lautao, na ho to -1. put(key, val): daalo ya badlo. Dono O(1) me.
+Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least recently used).
   e.g. cap=2: put(1,1) put(2,2) get(1) -> 1 · put(3,3) · get(2) -> -1 · put(4,4) · get(1) -> -1 · get(3) -> 3 · get(4) -> 4
   kyun: get(1) se 1 taaza, put(3) pe 2 sabse purana -> hata · put(4) pe ab 1 purana -> hata, bache 3,4
 ```
@@ -4167,7 +4169,7 @@ public:
     }
 
     void addFront(Node *node) {
-        Node *nxt = head->next;             // nxt PEHLE pakdo: head->next overwrite se pehle (TRAP)
+        Node *nxt = head->next;             // ★ nxt PEHLE pakdo: head->next overwrite se pehle (TRAP)
         head->next = node;
         node->prev = head;
 
@@ -4189,14 +4191,14 @@ public:
         if (mp.count(key) > 0) {
             Node *node = mp[key];
             node->val = value;
-            removeNode(node);               // DONO, get() jaisa. sirf addFront = node purani
+            removeNode(node);               // ★ DONO, get() jaisa. sirf addFront = node purani
             addFront(node);                 //   jagah bhi juda -> wahi evict (put1 put2
         }                                   //   put(1,10) put3 -> get(1) = -1, sahi 10)
         else {
-            if (mp.size() == cap) {         // FULL: pehle evict, phir naya (check add se PEHLE)
+            if (mp.size() == cap) {         // ★ FULL: pehle evict, phir naya (check add se PEHLE)
                 Node *toBeRemoved = tail->prev;     // tail->prev = sabse purana (tail khud dummy)
                 removeNode(toBeRemoved);
-                mp.erase(toBeRemoved->key); // KEY se (->val NAHI: wo key hi nahi,
+                mp.erase(toBeRemoved->key); // ★ KEY se (->val NAHI: wo key hi nahi,
             }                               //   kuch nahi hatta; test me key != val, 1,100)
             Node *newNode = new Node(key, value);
             addFront(newNode);
@@ -4220,7 +4222,7 @@ public:
 ### ▸ BUY/SELL STOCK (LC-121)
 
 ```
-prices[i] = din i ka daam. ek din kharido, BAAD ke kisi din becho. max profit lautao (na ho to 0).
+prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din becho. Sabse zyada kitna munafa ho sakta hai, wo lautao. Munafa na ho to 0.
   e.g. [7,1,5,3,6,4] -> 5
   kyun: din 1 pe 1 me kharida, din 4 pe 6 me becha = 5; pehle-chhota baad-bada ka isse bada farak nahi
 ```
@@ -4230,7 +4232,7 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
     int ans = INT_MIN;
     int minSoFar = INT_MAX;                 // INT_MAX: pehla din hi sasta ban jaaye
     for (int i = 0; i < prices.size(); i++) {
-        minSoFar = min(minSoFar, prices[i]);        // min PEHLE: diff minus nahi, sell buy ke BAAD
+        minSoFar = min(minSoFar, prices[i]);        // ★ min PEHLE: diff minus nahi, sell buy ke BAAD
         ans = max(ans, prices[i] - minSoFar);
     }
     return ans < 0 ? 0 : ans;
@@ -4242,18 +4244,18 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 ### ▸ MAX SUBARRAY SUM (LC-53)
 
 ```
-int array diya. CONTIGUOUS subarray (kam se kam 1 element) jiska SUM sabse bada, wo sum lautao.
+Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chuno jiska jod sabse bada ho, aur wo jod lautao.
   e.g. [-2,1,-3,4,-1,2,1,-5,4] -> 6
   kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
 ```
 
 ```cpp
 int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> sum = 0
-    int maxSum = INT_MIN;                   // INT_MIN: all-negative [-1] bhi pakde
+    int maxSum = INT_MIN;                   // ★ INT_MIN: all-negative [-1] bhi pakde
     int sum = 0;                            // 0 se: abhi tak kuch joda nahi
     for (auto &it : nums) {
         sum += it;
-        maxSum = max(maxSum, sum);          // max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
+        maxSum = max(maxSum, sum);          // ★ max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
         if (sum < 0)
             sum = 0;
     }
@@ -4266,7 +4268,7 @@ int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> su
 ### ▸ MAX PRODUCT SUBARRAY (LC-152)
 
 ```
-int array diya. CONTIGUOUS subarray jiska PRODUCT (guna) sabse bada, wo product lautao.
+Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada ho, aur wo guna lautao. Minus numbers bhi ho sakte hain.
   e.g. [-2,3,-4] -> 24
   kyun: -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
 ```
@@ -4277,9 +4279,9 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
     int maxi = 1;                           //   (loop 1 se ho to ans bhi nums[0] se; warna [4,-3] pe 0)
     int ans = INT_MIN;                      // INT_MIN: 0 se [-2] pe 0 aata, sahi -2
     for (int i = 0; i < nums.size(); i++) {
-        int temp = max({nums[i], mini * nums[i], maxi * nums[i]});   // 3 candidate, temp me:
+        int temp = max({nums[i], mini * nums[i], maxi * nums[i]});   // ★ 3 candidate, temp me:
         mini = min({nums[i], mini * nums[i], maxi * nums[i]});       // FREEZE: min purane max se
-        maxi = temp;                        // max min ke BAAD
+        maxi = temp;                        // ★ max min ke BAAD
         ans = max(ans, maxi);
     }
     return ans;
@@ -4289,7 +4291,7 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
 ### ▸ MAX ABSOLUTE SUM (LC-1749)
 
 ```
-int array diya. kisi bhi CONTIGUOUS subarray ka sum lo, uska |sum| sabse bada lautao.
+Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value (minus hata ke) dekho. Sabse bada absolute jod lautao.
   e.g. [2,-5,1,-4,3,-2] -> 8
   kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
 ```
@@ -4306,7 +4308,7 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
         int temp = max({nums[i], mini + nums[i], maxi + nums[i]});
         mini = min({nums[i], mini + nums[i], maxi + nums[i]});       // temp FREEZE, product jaisa
         maxi = temp;
-        ans = max(ans, max(abs(mini), abs(maxi)));   // answer minSum se bhi aa sakta -> abs dono
+        ans = max(ans, max(abs(mini), abs(maxi)));   // ★ answer minSum se bhi aa sakta -> abs dono
     }
     return ans;                             // [2,-5,1,-4,3,-2] -> [-5,1,-4] = -8 -> 8
 }
@@ -4317,7 +4319,7 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
 ### ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
 
 ```
-nums[] CIRCULAR (end ke baad start). NON-EMPTY contiguous subarray (wrap bhi chalega) ka max sum lautao.
+Ek gol (circular) array diya hai, matlab end ke baad shuru wala number aata hai. Lagaatar numbers ka sabse bada jod lautao (gol ghoom ke bhi le sakte ho, khaali nahi chalega).
   e.g. [5,-3,5] -> 10
   kyun: wrap: last 5 + first 5 = 10; total 7 - min-subarray (-3) = 10
 
@@ -4374,10 +4376,10 @@ int maxSubarraySumCircular(vector<int> &nums) {
         totalSum += nums[i];
     int maxSum = maxKadaneK(nums);
     int minSum = minKadaneK(nums);
-    int circularSum = totalSum - minSum;    // wrap = poora - sabse bura (min) beech ka chunk
+    int circularSum = totalSum - minSum;    // ★ wrap = poora - sabse bura (min) beech ka chunk
     if (maxSum > 0)
         return max(circularSum, maxSum);    // normal: dono me bada. [5,-3,5]: 7, 7-(-3)=10 -> 10
-    return maxSum;                          // sab non-positive: total-min = 0 = EMPTY, galat
+    return maxSum;                          // ★ sab non-positive: total-min = 0 = EMPTY, galat
 }
 // house robber II jaisa "circular twist", par mechanism alag (HR-II = pehla / aakhri chhodo)
 ```
@@ -4385,7 +4387,7 @@ int maxSubarraySumCircular(vector<int> &nums) {
 ### ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = bestLeft + bestRight + WALL
 
 ```
-int array diya. 2 subarray chuno (contiguous, non-empty, NON-OVERLAPPING). dono ke sum ka max JOD lautao.
+Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doosre ko na chhuein (non-overlapping). Dono ke jod ko milake sabse bada total lautao.
   e.g. [1,2,-7,8,6,-4] -> 17
   kyun: [1,2] = 3 aur [8,6] = 14, beech ka -7 chhoda; 3 + 14 = 17
 
@@ -4471,8 +4473,8 @@ int maxTwoNonOverlap(vector<int> &nums) {   // STEP 5: WALL
     vector<int> bestForleft = bestLeftPrefix(nums);
     vector<int> bestForRight = bestRightPrefix(nums);
     int ans = INT_MIN;                      // INT_MIN: sab minus ho to jod bhi minus, 0 se galat
-    for (int i = 0; i < n - 1; i++)         // n-2 tak: i+1 bahar na jaaye; aakhri split (right = akela
-        ans = max(ans, bestForleft[i] + bestForRight[i + 1]);   //   last) bhi aaye: [-5,10,10] -> 20
+    for (int i = 0; i < n - 1; i++)         // ★ n-2 tak: i+1 bahar na jaaye; aakhri split (right = akela
+        ans = max(ans, bestForleft[i] + bestForRight[i + 1]);   // ★   last) bhi aaye: [-5,10,10] -> 20
     return ans;                             // i+1 = NON-OVERLAP: bestRight[i] liya to index i dono me =
 }                                           //   do baar gina ([..,8,..] + [14..] = 22 jhootha)
 // [1,2,-7,8,6,-4]: maxEndAt [1,3,-4,8,14,10] · bestLeft [1,3,3,8,14,14]
@@ -4496,7 +4498,7 @@ int maxTwoNonOverlap(vector<int> &nums) {   // STEP 5: WALL
 ### ▸ SINGLE NUMBER (LC-136)
 
 ```
-array me har number DO baar, sirf EK number ek baar. wo lautao. O(n) time, O(1) space.
+Array me har number do baar aata hai, sirf ek number ek baar. Wo number lautao. O(n) time aur O(1) extra jagah me.
   e.g. [4,1,2,1,2] -> 4
   kyun: 4^1^2^1^2: 1^1 = 0, 2^2 = 0, bacha 4
 ```
@@ -4505,7 +4507,7 @@ array me har number DO baar, sirf EK number ek baar. wo lautao. O(n) time, O(1) 
 int singleNumber(vector<int> &nums) {       // sab 2 baar, ek 1 baar -> sab XOR = wahi ek
     int XORR = nums[0];                     // nums[0] se shuru, isliye loop 1 se
     for (int i = 1; i < nums.size(); i++)
-        XORR ^= nums[i];                    // a^a = 0 pair kat jaata, a^0 = a
+        XORR ^= nums[i];                    // ★ a^a = 0 pair kat jaata, a^0 = a
     return XORR;                            // O(n), O(1), koi map nahi
 }
 ```
