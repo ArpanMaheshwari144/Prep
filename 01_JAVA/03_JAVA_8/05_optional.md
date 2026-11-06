@@ -1,46 +1,53 @@
 # Optional
 
-## Kahani
+## Scene
 
-Doctor ne bola: "patient 101 ka naam do." Tune `findPatient(101)` chalaya. Patient mila hi nahi, to `null` aaya, aur tune seedha `p.getName()` likha tha. Nateeja ye hua ki `NullPointerException` aaya aur prod crash ho gaya. Har jagah `if (p != null)` lagao to code bhaari ho jaata hai, aur kahin na kahin chhoot bhi jaata hai.
+Grahak aaya: "paneer ka daam kya hai?" Mart ke register me paneer hai hi nahi, to `get("paneer")` ne `null` diya. Tune seedha `p.price()` likha tha, to `NullPointerException` aaya aur counter band ho gaya. Har jagah `if (p != null)` lagao to code bhaari ho jaata hai, aur kahin na kahin ye check chhoot bhi jaata hai.
 
-Java 8 ne `null` ki jagah ek **dabba** de diya:
+Java 8 ne `null` ki jagah ek dabba de diya. Dabba bhara ho sakta hai ya khaali, aur method ka return type dekh ke hi pata chal jaata hai ki khaali wala case sambhalna padega:
 
 ```java
-Optional<Patient> p = findPatient(101);
+static Optional<Item> dhundho(String n) { return Optional.ofNullable(register.get(n)); }
 
-String name = p.map(Patient::getName)    // andar hai to naam nikalo, khaali hai to aage badho
-               .orElse("Unknown");        // khaali nikla to default de do
+dhundho("ghee").map(Item::price).orElse(-1);     // dabba bhara hai to daam
+dhundho("paneer").map(Item::price).orElse(-1);   // khaali hai to -1
 ```
 
-## Tasveer
+Chala ke dekha:
 
 ```
-Optional.of(x)          [ x ]       value pakki hai (null diya to wahin NPE)
-Optional.ofNullable(x)  [ x / -- ]  null ho sakta hai (zyadatar yahi)
-Optional.empty()        [ -- ]      pata hai ki khaali hai
+ghee: 550
+paneer: -1
+get(): No value present
 ```
 
-## 3 khaas baat
+## Dikkat -> hal
 
-1. **Optional bolta hai ki "yahan kuch na mile, aisa ho sakta hai".** Method ka return type `Optional<Patient>` dekhte hi call karne wala samajh jaata hai ki khaali case sambhalna padega. Isliye ye return type me lagta hai. Parameter ya field me nahi lagta.
-2. **`get()` seedha mat karo.** Khaali dabbe pe `get()` karoge to `NoSuchElementException` aayega, yaani wahi crash bas naye naam se. Iski jagah `orElse`, `orElseThrow` ya `map` lagao.
-3. **`map` aur `filter` khaali dabbe pe kuch nahi karte, khaali dabba aage bhej dete hain.** Isliye poori chain me ek bhi null check nahi likhna padta.
+`map` aur `filter` khaali dabbe pe kuch nahi karte, bas khaali dabba aage bhej dete hain. Isliye poori chain me ek bhi null check nahi likhna padta. Par khaali dabbe pe seedha `get()` kiya to `No value present` aata hai, matlab wahi crash, bas naye naam se. Isliye `get()` ki jagah `orElse`, `orElseThrow` ya `map` lagao. Optional return type me lagta hai, parameter ya field me nahi.
 
 ## Prod wala trap
 
-Pichhli file ka Supplier yahan kaam aata hai:
+Default nikaalne ke liye godown wale ko phone karna padta hai, aur ye mehnga kaam hai:
 
 ```java
-p.orElse(dbSeDefaultLao());            // dabba bhara ho tab bhi DB call chali
-p.orElseGet(() -> dbSeDefaultLao());   // sirf khaali hone pe chalegi
+dhundho("ghee").map(Item::price).orElse(godownSePoocho());
+dhundho("ghee").map(Item::price).orElseGet(() -> godownSePoocho());
 ```
 
-`orElse(x)` me Java pehle `x` banata hai, phir method chalata hai. Isliye DB call har baar hoti hai. `orElseGet` ek Supplier leta hai, jo sirf khaali dabbe pe chalta hai. Agar default sasta hai (jaise `"Unknown"`), to `orElse` theek hai. Agar default mehnga hai (DB ya API call), to `orElseGet` lagao.
+Chala ke dekha:
+
+```
+orElse, ghee mila tab bhi:
+  (godown wale ko phone kiya)      <- ghee mil gaya tha, phir bhi phone gaya
+orElseGet, ghee mila:
+                                   <- phone nahi gaya
+```
+
+`orElse(x)` me Java pehle `x` banata hai aur phir method chalata hai, isliye phone har baar jaata hai. `orElseGet` ek Supplier leta hai, jo sirf khaali dabbe pe chalta hai. Default sasta ho (jaise `-1`) to `orElse` theek hai. Default mehnga ho (DB ya API call) to `orElseGet` lagao.
 
 ## Tera project
 
-InsuranceManagementSystem ke `ClaimService` me tune ye likha hai:
+Insurance ke `ClaimService` me ye likha hai:
 
 ```java
 Claim c = claimRepository.findById(id)
