@@ -5180,7 +5180,7 @@ bool isValidBST(TreeNode *root) {
 ### ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
 
 ```
-n node (0..n-1), undirected edges, source aur destination diye. source se destination tak rasta? true/false.
+n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destination diye hain. Kya source se destination tak koi rasta hai? true ya false lautao.
   e.g. n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], src=0, dst=5 -> false
   kyun: 0 ke saath sirf 1,2 jude; 5 alag group {3,4,5} me, beech me koi edge nahi
 
@@ -5200,7 +5200,7 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
     queue<int> q;
     vector<bool> vis(n, false);
     q.push(source);
-    vis[source] = true;                     // src bhi mark: warna cycle se ghoom ke src dobara push
+    vis[source] = true;                     // ★ src bhi mark: warna cycle se ghoom ke src dobara push
     while (!q.empty()) {
         int node = q.front();
         q.pop();
@@ -5208,7 +5208,7 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
             return true;
         for (auto &it : adj[node]) {
             if (!vis[it]) {
-                vis[it] = true;             // push ke saath hi mark: warna ek node queue me do baar
+                vis[it] = true;             // ★ push ke saath hi mark: warna ek node queue me do baar
                 q.push(it);
             }
         }
@@ -5222,17 +5222,17 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
 ### ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
 
 ```
-grid me '1' = zameen, '0' = paani. 4-direction se jude '1' = ek island. kitne island?
+Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayein (4 disha) se jude '1' milke ek island bante hain. Kitne island hain, wo ginti lautao.
   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 2
   kyun: (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
 ```
 
 ```cpp
 void DFS(vector<vector<char>> &grid, int i, int j, int m, int n) {
-    if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')   // BASE ek hi if, sab || se
+    if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')   // ★ BASE ek hi if, sab || se
         return;                             // bounds PEHLE, '0' baad: bahar index pe grid padhne se
                                             //   pehle ruk jaata. '0' base me: warna poora grid kha jaata
-    grid[i][j] = '0';                       // SINK = visited, dobara na gino
+    grid[i][j] = '0';                       // ★ SINK = visited, dobara na gino
     DFS(grid, i + 1, j, m, n);              // 4-dir: neeche
     DFS(grid, i - 1, j, m, n);              // upar
     DFS(grid, i, j + 1, m, n);              // right
@@ -5258,7 +5258,7 @@ int numIslands(vector<vector<char>> &grid) {
 ### ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
 
 ```
-n node (0..n-1), undirected edges diye. graph me kitne alag group (connected components)?
+n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag group (connected components) hain, wo ginti lautao.
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
   kyun: {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
 
@@ -5277,11 +5277,11 @@ int countComponents(int n, vector<vector<int>> &edges) {
     queue<int> q;
     vector<bool> vis(n, false);             // sab unvisited
     int count = 0;                          // abhi koi group nahi gina
-    for (int i = 0; i < n; i++) {           // outer-loop: DISCONNECTED groups bhi cover
+    for (int i = 0; i < n; i++) {           // ★ outer-loop: DISCONNECTED groups bhi cover
         if (!vis[i]) {                      // count++ AUR BFS dono iske ANDAR: warna har node gine (= n)
             q.push(i);
             vis[i] = true;                  // start bhi push ke saath mark
-            count++;                        // har UNVISITED node = naya component
+            count++;                        // ★ har UNVISITED node = naya component
             while (!q.empty()) {            // = PATH-EXISTS ka body
                 int node = q.front();
                 q.pop();
@@ -5301,7 +5301,7 @@ int countComponents(int n, vector<vector<int>> &edges) {
 ### ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
 
 ```
-grid me 1 = zameen, 0 = paani (4-direction jude 1 = island). SABSE BADE island ke cells lautao, na ho to 0.
+Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). Sabse bade island me kitne cell hain, wo lautao. Koi island na ho to 0.
   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 3
   kyun: island {(0,0),(0,1),(1,0)} = 3 cell, island {(2,2)} = 1 cell; max 3
 
@@ -5317,7 +5317,7 @@ int DFS(vector<vector<int>> &grid, int i, int j, int m, int n) {
     int upar = DFS(grid, i - 1, j, m, n);
     int right = DFS(grid, i, j + 1, m, n);
     int left = DFS(grid, i, j - 1, m, n);
-    return 1 + left + right + upar + neeche;   // 1 = ye cell khud + chaaron taraf ka area
+    return 1 + left + right + upar + neeche;   // ★ 1 = ye cell khud + chaaron taraf ka area
 }
 
 int maxAreaOfIsland(vector<vector<int>> &grid) {
@@ -5339,7 +5339,8 @@ int maxAreaOfIsland(vector<vector<int>> &grid) {
 ### ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
 
 ```
-grid: 0 khali, 1 fresh, 2 rotten. har minute rotten apne 4 fresh padosi sadaata. sab sadne me kitne min? na ho -1.
+Ek grid me 0 = khaali, 1 = taaza santra, 2 = sada santra. Har minute har sada santra apne 4 taraf ke taaze santron ko sada deta hai.
+Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad paayein to -1.
   e.g. [[2,1,1],[1,1,0],[0,1,1]] -> 4
   kyun: min 1: (0,1),(1,0) · min 2: (0,2),(1,1) · min 3: (2,1) · min 4: (2,2); sab sad gaye
 ```
@@ -5382,7 +5383,7 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             if (grid[i][j] == 2)
-                q.push({i, j});             // MULTI-SOURCE = level-0 (saare rotten PEHLE)
+                q.push({i, j});             // ★ MULTI-SOURCE = level-0 (saare rotten PEHLE)
         }
     }
     vector<vector<int>> dirs = {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};   // 4-dir
@@ -5397,7 +5398,7 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
                 int nR = it[0] + row;
                 int nC = it[1] + col;
                 if (nR >= 0 && nR < m && nC >= 0 && nC < n && grid[nR][nC] == 1) {   // bounds PEHLE
-                    grid[nR][nC] = 2;       // push ke saath hi 2: warna doosra rotten bhi push karta
+                    grid[nR][nC] = 2;       // ★ push ke saath hi 2: warna doosra rotten bhi push karta
                     q.push({nR, nC});
                 }
             }
@@ -5410,7 +5411,7 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
                 return -1;                  // fresh bacha -> impossible
         }
     }
-    return mins == 0 ? mins : mins - 1;     // last level extra -> -1. EDGE: koi santra hi nahi ->
+    return mins == 0 ? mins : mins - 1;     // ★ last level extra -> -1. EDGE: koi santra hi nahi ->
 }                                           //   mins = 0 -> mins-1 = -1 galat, sahi 0
 ```
 
@@ -5419,7 +5420,7 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
 ### ▸ COURSE SCHEDULE (LC-207)  = TOPO-SORT (Kahn's), cycle-detect
 
 ```
-numCourses aur prerequisites diye ([a,b] = a se pehle b). saare course khatam ho sakte? true/false.
+numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pehle b padhna zaroori hai. Kya saare course poore kiye ja sakte hain? true ya false lautao.
   e.g. numCourses=2, prereq=[[1,0],[0,1]] -> false
   kyun: 1 ke liye 0 pehle, 0 ke liye 1 pehle = CYCLE; dono ek doosre ka wait karte
 
@@ -5475,7 +5476,7 @@ bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
         int u = it[1];
         int v = it[0];                      // edge u -> v (pre -> course)
         adj[u].push_back(v);
-        indegree[v]++;                      // v ka ek prereq aur
+        indegree[v]++;                      // ★ v ka ek prereq aur
     }
     queue<int> q;
     vector<int> ans;
@@ -5493,15 +5494,15 @@ bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
                 q.push(it);                 // sab pure -> ready
         }
     }
-    return ans.size() == numCourses;        // cycle wale ka indegree KABHI 0 nahi -> queue me aate hi
+    return ans.size() == numCourses;        // ★ cycle wale ka indegree KABHI 0 nahi -> queue me aate hi
 }                                           //   nahi -> size < n -> false
 ```
 
 ### ▸ BUILD ORDER — ready me se SABSE CHHOTA pehle (topo + MIN-HEAP)
 
 ```
-n module (0..n-1). [a->b] = "a ke BAAD hi b ban sakta". ek baar me ek module banta.
-  jo READY hain (saari dependency ban chuki) unme SABSE CHHOTA number pehle. poora kram lautao; loop ho to KHAALI.
+n module hain (0 se n-1). [a -> b] ka matlab: a banne ke baad hi b ban sakta hai. Ek baar me ek hi module banta hai.
+Jo module ready hain (jinki saari dependency ban chuki), unme se sabse chhote number wala pehle banao. Poora kram lautao. Cycle ho to khaali list.
   e.g. n=4, [0->1]  ->  0 1 2 3
   kyun: shuru me ready = {0, 2, 3} (1 ko 0 chahiye) -> sabse chhota 0 -> ab 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
   (queue lagate to 0 2 3 1 aata: 1 baad me ready hua to line me peeche lagta)
@@ -5522,7 +5523,7 @@ vector<int> buildOrder(int n, vector<vector<int>> &deps) {
         adj[u].push_back(v);
         indegree[v]++;
     }
-    priority_queue<int, vector<int>, greater<int>> pq;   // min-heap: sabse chhota top
+    priority_queue<int, vector<int>, greater<int>> pq;   // ★ min-heap: sabse chhota top
     for (int i = 0; i < n; i++) {           // (id string ho -> heap <string>)
         if (indegree[i] == 0)
             pq.push(i);
@@ -5549,7 +5550,7 @@ vector<int> buildOrder(int n, vector<vector<int>> &deps) {
 ### ▸ CLONE GRAPH (LC-133)  = BFS/DFS + map(old->new)
 
 ```
-connected undirected graph ka ek node diya. poora graph DEEP COPY karo (naye node, naye neighbours), clone lautao.
+Ek juda hua (connected), bina disha wala graph ka ek node diya hai. Poore graph ki nayi copy (deep copy) banao: naye node aur naye neighbours, aur copy ka wahi node lautao.
   e.g. adjList [[2,4],[1,3],[2,4],[1,3]] -> [[2,4],[1,3],[2,4],[1,3]] (sab naye node)
   kyun: square 1-2-3-4-1; har node ka naya clone, aur clone ke neighbours bhi clone hi, purane nahi
 
@@ -5590,7 +5591,7 @@ Node *cloneGraph(Node *node) {
     queue<Node *> q;
     Node *clone = new Node();
     clone->val = node->val;
-    mp[node] = clone;                       // seed bhi map me: warna cycle pe isi node ka doosra clone
+    mp[node] = clone;                       // ★ seed bhi map me: warna cycle pe isi node ka doosra clone
     q.push(node);
     while (!q.empty()) {
         Node *curr = q.front();
@@ -5602,7 +5603,7 @@ Node *cloneGraph(Node *node) {
                 mp[it] = newClone;
                 q.push(it);                 // push sirf naye pe: warna cycle me infinite loop
             }
-            mp[curr]->neighbors.push_back(mp[it]);   // (b) JODNA: A' ki list me B'
+            mp[curr]->neighbors.push_back(mp[it]);   // ★ (b) JODNA: A' ki list me B'
         }                                   // clone pehle se ho tab bhi edge jodni hai
     }
     return mp[node];                        // start node ka clone = naye graph ka shuru
@@ -5615,7 +5616,7 @@ Node *cloneGraph(Node *node) {
 ### ▸ IS BIPARTITE (LC-785)  = 2-colour BFS + outer-loop (CC jaisa)
 
 ```
-adjacency list graph diya. nodes ko 2 group me baant sakte ki HAR edge alag group ke beech ho? true/false.
+Adjacency list wala graph diya hai. Kya saare nodes ko do group me aise baant sakte hain ki har edge ke dono sire alag group me hon? true ya false lautao.
   e.g. [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
   kyun: 0-1-2 triangle: 0 red, 1 blue, 2 dono ka padosi, koi rang nahi bachta
 
@@ -5664,7 +5665,7 @@ bool BFS(vector<vector<int>> &graph, vector<int> &color, int node) {
         q.pop();
         for (auto &it : graph[node]) {
             if (color[it] == -1) {          // (a) uncolored -> ULTA rang + push
-                color[it] = 1 - color[node];   // 0 -> 1, 1 -> 0
+                color[it] = 1 - color[node];   // ★ 0 -> 1, 1 -> 0
                 q.push(it);
             }
             else {
@@ -5679,7 +5680,7 @@ bool BFS(vector<vector<int>> &graph, vector<int> &color, int node) {
 bool isBipartite(vector<vector<int>> &graph) {
     int m = graph.size();
     vector<int> color(m, -1);               // -1 = abhi rang nahi (0 aur 1 asli rang)
-    for (int i = 0; i < m; i++) {           // har node se: graph disconnected ho sakta
+    for (int i = 0; i < m; i++) {           // ★ har node se: graph disconnected ho sakta
         if (color[i] == -1) {               // -1 check PEHLE: rang wale pe BFS dobara nahi
             if (BFS(graph, color, i) == false)
                 return false;               // ek bhi component fail -> poora false
@@ -5694,7 +5695,7 @@ bool isBipartite(vector<vector<int>> &graph) {
 ### ▸ DIJKSTRA  = BFS template + 2 swap + relaxation
 
 ```
-n node, undirected WEIGHTED edges {u,v,w}, source diya. har node tak ka sabse kam total weight lautao.
+n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Source se har node tak pahunchne ka sabse kam kul weight lautao.
   e.g. n=4, edges 0-1(4), 0-2(1), 1-2(2), 1-3(1), 2-3(5), src=0 -> [0,3,1,4]
   kyun: node 1: seedha 4 se sasta 0->2->1 = 3; node 3: 0->2->1->3 = 4 (0->2->3 = 6)
 
@@ -5731,10 +5732,10 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
         int wt = pq.top().first;            // node tak ki dist
         int node = pq.top().second;
         pq.pop();
-        if (wt > dist[node])                // STALE skip (sirf > : barabar wala taaza entry)
+        if (wt > dist[node])                // ★ STALE skip (sirf > : barabar wala taaza entry)
             continue;
         for (auto &it : adj[node]) {        // it.first = nbr, it.second = EDGE weight (dist[node] NAHI)
-            if (wt + it.second < dist[it.first]) {   // RELAX: naya rasta chhota? (< strict: barabar pe
+            if (wt + it.second < dist[it.first]) {   // ★ RELAX: naya rasta chhota? (< strict: barabar pe
                 dist[it.first] = wt + it.second;     //   dobara push bekaar, loop ka khatra)
                 pq.push({wt + it.second, it.first}); // pehle dist update, phir push
             }
@@ -5749,7 +5750,7 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
 ### ▸ DSU (Union-Find)  = parent[] + find + unite
 
 ```
-n node (0..n-1), undirected edges. Union-Find se batao kitne alag groups (components).
+n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao ki kitne alag group hain.
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
   kyun: unite 0-1, 1-2 -> ek leader; 3-4 -> doosra leader; parent[i]==i wale 2 bache
 
@@ -5771,10 +5772,10 @@ public:
     int find(int x) {
         if (x == parent[x])
             return x;                       // khud ka parent = ROOT, yahin ruko
-        return parent[x] = find(parent[x]); // PATH COMPRESSION: agli baar seedha root
+        return parent[x] = find(parent[x]); // ★ PATH COMPRESSION: agli baar seedha root
     }
     void unite(int x, int y) {
-        int u_x = find(x);                  // ROOT jodo, x-y khud nahi: warna group toot jaata
+        int u_x = find(x);                  // ★ ROOT jodo, x-y khud nahi: warna group toot jaata
         int u_y = find(y);
         if (u_x == u_y)
             return;                         // already same set
@@ -5806,7 +5807,8 @@ int countComponents(int n, vector<vector<int>> &edges) {
 ### ▸ WORD LADDER (LC-127)  = BFS shortest-path (unweighted)
 
 ```
-beginWord se endWord, har step EK letter badlo, beech ka har word wordList me ho. shortest me kitne word? na ho 0.
+beginWord, endWord aur ek wordList di hai. Har kadam pe sirf ek akshar badal sakte ho, aur beech ka har word wordList me hona chahiye.
+beginWord se endWord tak sabse chhote raste me kitne word aate hain (beginWord bhi gino), wo lautao. Na pahunch sako to 0.
   e.g. hit -> cog, list=[hot,dot,dog,lot,log,cog] -> 5
   kyun: hit -> hot -> dot -> dog -> cog = 5 word (begin aur end dono gine)
 
@@ -5833,11 +5835,11 @@ int ladderLength(string beginWord, string endWord, vector<string> &wordList) {
             for (char ch = 'a'; ch <= 'z'; ch++) {
                 word[i] = ch;
                 if (st.find(word) != st.end()) {
-                    st.erase(word);         // use karte hi ERASE = visited, alag visited-set nahi
+                    st.erase(word);         // ★ use karte hi ERASE = visited, alag visited-set nahi
                     q.push({word, steps + 1});
                 }
             }
-            word[i] = original;             // RESTORE
+            word[i] = original;             // ★ RESTORE
         }
     }
     return 0;                               // endWord dict me nahi -> 0
