@@ -50,6 +50,10 @@ Technical me: "alag machine, alag raasta" = S3 (chat server ke bahar), "chhota U
 Arpan: Ek register me likh liya "Ravi online hai". Ab har 3-5 second baad Ravi ko hilaunga, haath maarunga: "Ravi, tu online hai?" "Haan bhai, online hoon, pareshaan mat kar." Phir haath maara, jawab nahi diya. Phir maara, phir jawab nahi. 2-3 baar hilaya aur jawab nahi diya, to register se Ravi ka naam kaat diya, ab wo offline.
 Technical me: "register me Ravi online" = presence entry (Redis), "har 3-5 second hilaunga" = heartbeat, "2-3 baar jawab nahi to naam kaat diya" = heartbeat chhoote to entry mite (TTL), "last seen" dikhe.
 
+**12. Ravi ne Arpan ko "kal milte hain" phir "nahi, parso" bheja. Pehla server S1 se gaya, doosra S2 se, S1 dheema tha. Arpan ke phone pe pehle "nahi, parso" aaya, phir "kal milte hain". Arpan galat samjha.**
+Arpan: Pehle to koshish karo ki ek chat ke dono message ek hi server se jaayein. Phir bhi alag server se gaye, to bhi hume pata hai server pe pehle kaun aaya tha: "kal milte hain" pehla, "nahi, parso" doosra. Pehle aaya wo pehle dikhe, aisa mat rakho. Jab dono phone pe pahunch jaayein, phone unhe sahi kram me laga ke dikhaye. Aur S1 bahut dheema ho to S2 wale ko rok ke nahi rakhenge, message to jaana hi hai. Thodi der ulta dikh sakta hai, phir apne aap theek ho jaata, WhatsApp me bhi aisa dekha hai. Perfect jawab nahi hai.
+Technical me: "server pe pata kaun pehle aaya" = har chat ka sequence number (block 7), "phone sahi kram me lagaye" = client number se sort kare, aane ke kram se nahi, "dheeme ke liye doosra mat roko" = deliver turant, baad me reorder.
+
 &nbsp;
 
 Poora design = [14_chat_messaging.md](14_chat_messaging.md)

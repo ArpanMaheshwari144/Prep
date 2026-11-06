@@ -118,6 +118,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  9  "sab taiyaar ho?" poochh ke kaato        ->  slow dost ki wajah se mera paper chhoota (2PC nahi)
 10  Diwali 3,000/sec, ek register            ->  register ke chhote tukde (shard)
 11  wallet tukda 1 me, dukaan tukda 3 me     ->  ladka diary le ke jaaye (saga do shard ke beech)
+12  PSP-1 chup, mara ya dheema pata nahi    ->  processing dikhao, haan ya naa ka waqt do; pata ho gira tabhi PSP-2 (PENDING, timeout, refund)
 ```
 
 ## 7. File upload + validate   ([notes](SYSTEM_DESIGNS/07_file_upload_validate_system/FILE_UPLOAD_HAND_NOTES.md))
@@ -256,6 +257,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  9  kisne padha, 4.9 lakh entry                ->  978 matlab 975 padha, number ghata lo (watermark)
 10  200 MB video, taar jam                     ->  alag raasta, chhota URL (S3, link)
 11  phone band, 2 ghante se "online"           ->  haath maaro, 2-3 baar chup to kaato (heartbeat, TTL)
+12  S1 dheema, "nahi, parso" pehle pahuncha    ->  server ka number, phone us kram me lagaye (seq, client sort)
 ```
 
 ## 15. Uber   ([notes](SYSTEM_DESIGNS/15_uber/UBER_HAND_NOTES.md))
