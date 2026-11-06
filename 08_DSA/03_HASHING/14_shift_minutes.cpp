@@ -27,8 +27,19 @@ using namespace std;
 
 int shiftMinutes(string start, string end)
 {
-    // yahan likho
-    return 0;
+    stringstream ss1(start);
+    stringstream ss2(end);
+
+    string HH1, MM1, HH2, MM2;
+    getline(ss1, HH1, ':');
+    getline(ss1, MM1, ':');
+    getline(ss2, HH2, ':');
+    getline(ss2, MM2, ':');
+
+    int mins1 = stoi(HH1) * 60 + stoi(MM1);
+    int mins2 = stoi(HH2) * 60 + stoi(MM2);
+
+    return (mins2 - mins1 + 1440) % 1440;
 }
 
 // ---------- printer (boilerplate, chhoo mat) ----------
