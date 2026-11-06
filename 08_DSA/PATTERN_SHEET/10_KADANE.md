@@ -39,6 +39,12 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chun
   kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
 ```
 
+```
+TASVEER:
+
+TRAP: max_sum update RESET se PEHLE + max_sum=INT_MIN start (warna all-negative [-1] miss). // sum=0 se: abhi tak kuch joda nahi
+```
+
 ```cpp
 int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> sum = 0
     int maxSum = INT_MIN;                   // ★ INT_MIN: all-negative [-1] bhi pakde
@@ -63,6 +69,14 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
   kyun: -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
 ```
 
+```
+TASVEER:
+
+★ SHURUAAT (24-Sep theek kiya):  max = 1, min = 1, ans = INT_MIN,  loop i = 0 se.   // ans INT_MIN: 0 se [-2] pe 0 aata, sahi -2
+  pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
+  -> [4,-3] pe 0 aata (sahi 4). niyam: loop 1 se ho to ans bhi nums[0] se; loop 0 se to 1 / INT_MIN se.
+```
+
 ```cpp
 int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
     int mini = 1;                           // SHURUAAT: mini = maxi = 1, ans = INT_MIN, loop 0 se
@@ -84,6 +98,14 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
 Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value (minus hata ke) dekho. Sabse bada absolute jod lautao.
   e.g. [2,-5,1,-4,3,-2] -> 8
   kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
+```
+
+```
+TASVEER:
+
+★ SHURUAAT (24-Sep theek kiya): max = 0, min = 0, ans = 0, loop i = 0 se.   n==1 -> return abs(nums[0]).   // 0 se theek: + me 0 kuch nahi jodta, abs kabhi minus nahi
+  pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
+  aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
 ```
 
 ```cpp
@@ -120,15 +142,19 @@ A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL -
 ```
 TASVEER:
 
-IDEA:
-   2 CASE (bada lo):
-      A) NO-wrap  = normal Kadane (max)
-      B) WRAP     = end+start juda, BEECH ka chunk chhoda.
-   KEY INSIGHT: wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
-      wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
-
-DRY-RUN [5,-3,5]:  maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
-   -> wrap = 7−(−3) = 10  ->  ans = max(7,10) = 10.   (10 sirf WRAP se, seedhe Kadane se nahi.)
+Q: circular array (end->start wrap), max-sum NON-EMPTY contiguous subarray (wrap ho sakta).
+★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
+2 CASE (bada lo): A) NO-wrap = normal Kadane (max)  ·  B) WRAP = end+start juda, BEECH ka chunk chhoda.
+KEY INSIGHT: wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
+   wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
+  maxK = maxKadane(nums);  minK = minKadane(nums);  total = sum(nums);
+  ans = max( maxK, total − minK );
+★ EDGE (all-negative): min-subarray = poora array -> total−minK = 0 (EMPTY) -> galat.
+   -> agar maxK < 0 (sab negative) -> sirf maxK return. (empty subarray allowed nahi.)
+CONCRETE [5,-3,5]: maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
+   -> wrap = 7−(−3)=10 -> ans=max(7,10)=10.  (10 sirf WRAP se, seedhe Kadane se nahi.)
+★ minK Kadane-MIN se: cur = min(nums[i], cur+nums[i]); minK = min(minK, cur). (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
+CONNECT: [[house-robber-II]] jaisa "circular twist" par MECHANISM alag (HR-II = exclude-first/last; ye = total−minKadane).
 ```
 
 ```cpp
