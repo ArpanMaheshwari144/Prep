@@ -978,7 +978,7 @@ int totalFruit(string &s, int k) {
     int i = 0, j = 0;
     while (j < s.size()) {
         mp[s[j]]++;
-        while (mp.size() > k) {             // fruit me 2, yahan k
+        while (mp.size() > k) {             // ★ fruit me 2, yahan k
             mp[s[i]]--;
             if (mp[s[i]] == 0)
                 mp.erase(s[i]);
@@ -7509,7 +7509,8 @@ int burstBalloons(vector<int> &balloons) {
 ### ▸ ASSIGN COOKIES (LC-455)  = greedy intro (sort + 2-pointer)
 
 ```
-g[] = bachhe ki greed, s[] = cookie size. s[j] >= g[i] to khush, ek bachha max ek cookie. MAX khush bachhe.
+g[] me har bachche ki bhookh (greed) aur s[] me har cookie ka size diya hai. Bachcha khush tab hota hai jab cookie ka size uski bhookh se kam na ho, aur ek bachche ko zyada se zyada ek cookie milti hai.
+Zyada se zyada kitne bachche khush kar sakte ho, wo lautao.
   e.g. g=[1,2,3], s=[1,1] -> 1
   kyun: dono cookie size 1 -> sirf greed-1 wala khush
 
@@ -7521,7 +7522,7 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
     int n = g.size(), m = s.size(), count = 0, i = 0, j = 0;   // i = bachha, j = cookie
     if (s.size() == 0)
         return 0;                           // cookie hi nahi -> 0
-    sort(begin(g), end(g));                 // dono SORT
+    sort(begin(g), end(g));                 // ★ dono SORT
     sort(begin(s), end(s));
     while (i < n && j < m) {                // koi ek khatam -> ruk
         if (s[j] >= g[i]) {                 // >= : barabar size bhi khush karti
@@ -7530,7 +7531,7 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
             count++;
         }
         else
-            j++;                            // cookie chhoti -> badi dhoondho
+            j++;                            // ★ cookie chhoti -> badi dhoondho
     }
     return count;                           // [10,9,8,7], [5,6,7,8] -> 2 (7->7, 8->8)
 }
@@ -7539,7 +7540,7 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
 ### ▸ JUMP GAME (LC-55)  = greedy REACHABILITY (farthest-reach track)
 
 ```
-nums[i] = index i se max kitna kood sakte. index 0 se last index tak pahunch sakte? true/false.
+nums[i] batata hai ki index i se zyada se zyada kitne kadam aage kood sakte ho. Index 0 se shuru karke kya aakhri index tak pahunch sakte ho? true ya false lautao.
   e.g. [2,3,1,1,4] -> true · [3,2,1,0,4] -> false
   kyun: 0->1->4 pahunche · doosre me har raasta index 3 (value 0) pe atakta
 ```
@@ -7549,8 +7550,8 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
     int maxReach = 0;                       // ab tak sabse DOOR kahan tak pahunch sakte (0 se)
     for (int i = 0; i < nums.size(); i++) {
         if (i > maxReach)
-            return false;                   // index i KHUD maxReach se aage = yahan pahunch hi nahi
-        maxReach = max(maxReach, i + nums[i]);   // i + nums[i]: nums[i] = kitne STEP (relative), i jodo
+            return false;                   // ★ index i KHUD maxReach se aage = yahan pahunch hi nahi
+        maxReach = max(maxReach, i + nums[i]);   // ★ i + nums[i]: nums[i] = kitne STEP (relative), i jodo
                                                  //   ->
     }                                       //   ABSOLUTE index ([2,3,1,1,4]: index 1 -> 1+3 = 4)
     return maxReach >= nums.size() - 1;     // O(n), koi DP nahi. [2,3,1,1,4] -> true
@@ -7562,7 +7563,7 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
 ### ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END)
 
 ```
-intervals[]. MIN kitne hatao ki baaki koi overlap na kare (touching chalta).
+intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue koi bhi do interval overlap na karein, wo lautao. Sirf chhoona (ek ka end = doosre ka start) overlap nahi maana jaata.
   e.g. [[1,2],[2,3],[3,4],[1,3]] -> 1
   kyun: [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
 ```
@@ -7572,14 +7573,14 @@ int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO 
     sort(begin(intervals), end(intervals)); // default sort (start pe)
     int start = 0, end = 1, count = 0;      // start = rakha hua, end = candidate
     while (end < intervals.size()) {
-        if (intervals[start][1] <= intervals[end][0]) {   // NO overlap (<= : chhoona overlap nahi)
+        if (intervals[start][1] <= intervals[end][0]) {   // ★ NO overlap (<= : chhoona overlap nahi)
             start = end;                    // candidate safe, rakho
             end++;
         }
         else {                              // OVERLAP
             count++;                        // ek to hatana hi
             if (intervals[start][1] > intervals[end][1])
-                start = end;                // chhota-END wala rakho: aage zyada jagah -> zyada fit
+                start = end;                // ★ chhota-END wala rakho: aage zyada jagah -> zyada fit
             end++;                          // agla candidate
         }
     }
@@ -7593,7 +7594,8 @@ int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO 
 ### ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
 
 ```
-N pump gol me. gas[i] = milta, cost[i] = agle tak kharcha. kis index se poora chakkar lagega? na lage -> -1.
+N petrol pump gol ghere me hain. gas[i] = pump i pe milne wala petrol, cost[i] = pump i se agle pump tak ka kharcha.
+Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sako to -1.
   e.g. gas=[1,2,3,4,5], cost=[3,4,5,1,2] -> 3
   kyun: index 3 se tank 3, 6, 4, 2, 0 -> kabhi minus nahi, chakkar poora
 
@@ -7642,10 +7644,10 @@ int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
         kyeNegativeHua += gas[i] - cost[i];  // poore circle ka total, KABHI reset nahi ("possible hai?")
         if (meriGaddiKaTank < 0) {          // is start se pump i+1 tak nahi pahunche
             meriGaddiKaTank = 0;            // naya start, khaali tank
-            index = i + 1;                  // AGLE pump pe khiska do: s..i ke beech se shuru karke bhi
+            index = i + 1;                  // ★ AGLE pump pe khiska do: s..i ke beech se shuru karke bhi
         }  //   i paar nahi hota (beech ka tank >= 0 tha, uske bina aur kam)
     }
-    return kyeNegativeHua < 0 ? -1 : index;  // total kam -> -1; warna LAST reset index
+    return kyeNegativeHua < 0 ? -1 : index;  // ★ total kam -> -1; warna LAST reset index
 }
 // gas=[1,2,3,4,5] cost=[3,4,5,1,2]: net -2 -2 -2 +3 +3 -> p0,p1,p2 pe reset, total 0 -> index 3
 // cookies / jump / interval se FARAK: sort NAHI. circular + 2 accumulator (possible? + start kahan)
@@ -7654,7 +7656,8 @@ int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
 ### ▸ TASK SCHEDULER (LC-621)  = greedy IDLE-SLOTS (most-frequent frame)
 
 ```
-tasks (letters), har task 1 unit. same task dobara se pehle n gap. MIN total time (idle bhi gino).
+tasks me kaam diye hain (har akshar ek kaam, har kaam 1 unit time). Ek hi kaam dobara karne se pehle beech me kam se kam n unit ka gap chahiye (khaali baith sakte ho).
+Saare kaam khatam karne me kam se kam kitna kul time lagega (khaali time bhi milake), wo lautao.
   e.g. [A,A,A,B,B,B], n=2 -> 8
   kyun: A B idle A B idle A B = 8 unit
 
@@ -7718,16 +7721,16 @@ int leastInterval(vector<char> &tasks, int n) {
         mp[tasks[i] - 'A']++;               // freq count (26-size)
     sort(begin(mp), end(mp));               // ascending: sabse badi freq aakhri index 25 pe
     int maxFreq = mp[25];
-    int gadde = maxFreq - 1;  // gaps sirf BEECH me: A _ _ A _ _ A (3 A -> 2). aakhri A ke baad
+    int gadde = maxFreq - 1;  // ★ gaps sirf BEECH me: A _ _ A _ _ A (3 A -> 2). aakhri A ke baad
                                             // koi agla A nahi -> cooldown kisi ko nahi rokta (maxFreq
                                             //   NAHI)
     int idleSlotes = n * gadde;             // har gadde me n slot. gadda (gap) alag, slot (1 unit) alag
     for (int i = 24; i >= 0; i--)           // 24 se: 25 = maxFreq khud, use chhodo
-        idleSlotes -= min(mp[i], gadde);  // ek task har gadde me SIRF EK copy (2 = apna cooldown toota)
+        idleSlotes -= min(mp[i], gadde);  // ★ ek task har gadde me SIRF EK copy (2 = apna cooldown toota)
                                             //   -> max gadde slots bhar sakta; kam copies -> utne hi
     if (idleSlotes > 0)
         return tasks.size() + idleSlotes;   // kuch gap sach me KHAALI -> length + idle
-    return tasks.size();                    // <= 0: saare gap bhar gaye -> LENGTH wins
+    return tasks.size();                    // ★ <= 0: saare gap bhar gaye -> LENGTH wins
 }
 // [A,A,A,B,B,B] n=2: gadde 2, idle 4, B bhare min(3,2)=2 -> idle 2 -> 6+2 = 8  (A B idle A B idle A B)
 // length-wins: [A3,B3,C3,D2,E2] n=3 -> idle -2 -> 13
