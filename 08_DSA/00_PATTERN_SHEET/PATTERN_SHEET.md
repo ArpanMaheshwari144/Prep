@@ -1719,6 +1719,17 @@ char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
        e.g. "paper", "title" -> true
        kyun: p->t, a->i, e->l, r->e: har jagah wahi mapping, do char ek hi char pe nahi gaye
 
+       TRUE wala chal ke: "egg", "add"
+         i=0: e aur a dono naye -> e ke a, a ke e (mp1[e]=a, mp2[a]=e)
+         i=1: g aur d dono naye -> g ke d, d ke g
+         i=2: g pehle se hai, mp1[g] = d, aur t me bhi d aaya -> theek. d ka bhi mp2[d] = g -> theek
+         -> loop poora, koi clash nahi -> true
+
+       FALSE wala chal ke: "foo", "bar"
+         i=0: f ke b, b ke f -> theek
+         i=1: o ke a, a ke o -> theek
+         i=2: o pehle se hai, mp1[o] = a, par t me aaya r -> a != r, clash -> false
+
      ═════════════════════════ TAREEKA ════════════════════════════════════
      s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false
 
