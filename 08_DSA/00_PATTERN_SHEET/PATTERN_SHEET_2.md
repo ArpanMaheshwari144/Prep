@@ -1216,7 +1216,7 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k) {
 `↳ SAME: lamba wala dhaancha. Farak: max ki jagah count += j - i + 1.`
 
 ### ▸ LC-992 SUBARRAYS WITH EXACTLY K DISTINCT  
-`[1,2,1,2,3], k=2 -> 7`.
+`[1,2,1,2,3], k=2 -> 7`. Kitne lagaatar subarray hain jinme theek k alag number hon.
 
 ```cpp
 int atMostK(vector<int> &fruits, int k) {
@@ -1238,7 +1238,8 @@ int atMostK(vector<int> &fruits, int k) {
 
 int subarraysWithKDistinct(vector<int> &nums, int k) {
     // ★ exactly k seedha nahi banta: 12 - 5 = 7. k=1 pe atMost(0) apne aap 0
-    return atMostK(nums, k) - atMostK(nums, k - 1);
+    return atMostK(nums, k) - atMostK(nums, k - 1);   // atMost(k) = distinct 1 + 2 + .. + k ka dabba;
+                                                       // atMost(k-1) bina aakhri layer -> exactly k
 }
 ```
 `↳ SAME: atMostK = fruit ka code. Farak: max ki jagah count, aur upar exactly = atMost(k) - atMost(k-1).`
@@ -1248,7 +1249,7 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
 ## NEED-MAP (t ke saare char chahiye)
 
 ### ▸ LC-76 MIN WINDOW SUBSTRING  
-`s="ADOBECODEBANC", t="ABC" -> "BANC"`. s ki sabse chhoti window jisme t ke saare char.
+`s="ADOBECODEBANC", t="ABC" -> "BANC"`. s ki sabse chhoti window jisme t ke saare akshar utni hi baar hon jitni baar t me hain (count ke saath; t="AA" ho to do A chahiye). Na mile to "".
 
 ```
 TASVEER (purani sheet se, same to same):
@@ -1370,7 +1371,7 @@ vector<int> findAnagrams(string s, string p) {
 `★ dhyaan: har window pe substr + isAnagram = har baar p jitna kaam (O(n * m)). Tez chahiye to window ki ginti map me jodte-ghatate raho, har baar dobara mat gino.`
 
 ### ▸ LC-567 PERMUTATION IN STRING  
-`s1="ab", s2="eidbaooo" -> true`.
+`s1="ab", s2="eidbaooo" -> true`. Kya s2 me s1 ka koi anagram (permutation) lagaatar substring ban ke maujood hai? true ya false.
 
 ```cpp
 // LC-438 se alag rakhna: same naam, return type alag
@@ -1399,12 +1400,13 @@ bool checkInclusion(string s1, string s2) {
 ## WINDOW KA MAX (deque)
 
 ### ▸ LC-239 SLIDING WINDOW MAXIMUM  
-`[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`.
+`[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`. Har k size ki window ka sabse bada number lautao.
 
 ```cpp
 vector<int> maxSlidingWindow(vector<int> &nums, int k) {
     vector<int> ans;
     // ★ INDEX rakho, value nahi: kaun window se bahar gaya ye index se pata chalta
+    // INDICES, values DECREASING -> front = max
     deque<int> dq;
     for (int i = 0; i < nums.size(); i++) {
         if (!dq.empty() && dq.front() == i - k)   // 1) window se bahar
