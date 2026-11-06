@@ -4405,6 +4405,24 @@ IDEA:
       KYUN kadane+prefix: har index tak ka running SUM = prefix-sum; uska MAX (neg aaye to reset) = kadane.
       eg [2,1,-99,3,3]=9 -> wall index-1 pe: LEFT best=3 ([2,1]) + RIGHT best=6 ([3,3]) = 9.
 
+TEMPLATE:
+    maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)   // index 0 pe khatam = sirf nums[0], isliye loop 1 se
+        ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // akela naya shuru karo ya pichhle me judo, jo bada
+           |__ ye jo array RETURN hua  -->  neeche bestLeftPrefix me 'temp' ban jaata
+
+    bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)   // 0 tak ka best = khud temp[0], isliye loop 1 se
+        ans[i] = max( ans[i-1] , temp[i] )                            // 0..i ka best = pichhla best ya temp[i], jo bada
+
+    maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)   // last index pe khatam = sirf wahi; right part peeche se banta
+        ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // mirror: akela shuru ya agle (i+1) wale me judo, jo bada
+           |__ ye jo array RETURN hua  -->  neeche bestRightPrefix me 'temp' ban jaata
+
+    bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)   // last se peeche bharo: ans[i+1] pehle se ready chahiye
+        ans[i] = max( ans[i+1] , temp[i] )                           // i..n-1 ka best = agla best (i+1) ya temp[i], jo bada
+
+    maxTwoNonOverlap     (bestLeft=bestLeftPrefix, bestRight=bestRightPrefix;  ans=INT_MIN)   // INT_MIN: sab minus ho to jod bhi minus, 0 se galat
+        for i = 0..n-2 :  ans = max( ans , bestLeft[i] + bestRight[i+1] )    // WALL, i+1 = non-overlap (loop n-2 tak: i+1 array ke bahar na jaaye)
+
 DRY-RUN:
    VISUAL [1,2,-7,8,6,-4]:
      val       : [ 1    2   -7    8    6   -4 ]
