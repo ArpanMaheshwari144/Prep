@@ -39,18 +39,11 @@ string left = line.substr(0, pos), right = line.substr(pos + 1);
 int r = ((x % m) + m) % m;               // hamesha 0..m-1  (Caesar peeche khiskana, remainder)
 char sh = 'A' + ((c - 'A' - k) % 26 + 26) % 26;   // k > 26 bhi chalega
 
-// TIME "HH:MM" (6-Nov grill + 03_HASHING/14_shift_minutes 6/6: shift kitne minute ki)
-// KYUN MINUTE ME: ghante aur minute alag-alag ghatao to MM ka udhaar lena padta (01:15 - 22:30 ulajh jaata).
-//   Dono ko ek hi number (minute) bana do, phir seedha ghatao.
-// KAISE: ":" pe todo (getline ka teesra argument ':'), HH * 60 + MM.
+// TIME "HH:MM" -> minute (misaal: SHIFT MINUTES 03/14)
 stringstream st(t);  string hh, mm;
 getline(st, hh, ':');  getline(st, mm, ':');
-int mins = stoi(hh) * 60 + stoi(mm);     // 22:30 -> 22*60 + 30 = 1350 · 01:15 -> 75
-// KYUN 1440: din me 24 * 60 = 1440 minute. Shift raat 12 ke paar gayi to end chhota, ghatane pe MINUS aata:
-//   75 - 1350 = -1275 -> ek poora din jodo -> -1275 + 1440 = 165 (sahi)
-//   minus nahi tha (09:00 -> 17:30 = 510) to bhi 1440 juda -> 1950 -> % 1440 se wapas 510
-//   isliye "+1440 phir %1440" dono case ek line me. Caesar ka "+26 phir %26" bilkul yahi.
-int diff = (end - start + 1440) % 1440;  // start == end -> 0
+int mins = stoi(hh) * 60 + stoi(mm);     // sab MINUTE me badlo: 22:30 -> 1350
+int diff = (end - start + 1440) % 1440;  // raat 12 ke paar minus aaye -> ek din (24*60) jodo, Caesar ka +26 jaisa
 ```
 
 ---
@@ -2160,6 +2153,40 @@ int diff = (end - start + 1440) % 1440;  // start == end -> 0
              mp[name] += t;
          }
          return mp;
+     }
+
+
+ █████████████████████████ ▸ SHIFT MINUTES  (03/14, HH:MM) █████████████████████████
+     ═════════════════════════ SAWAAL ═════════════════════════════════════
+     shift ka start aur end "HH:MM" (24 ghante ki ghadi). shift raat 12 ke paar bhi ja sakti. kitne MINUTE ki?
+       e.g. "22:30", "01:15" -> 165
+       kyun: 22:30 se 24:00 = 90 minute, 00:00 se 01:15 = 75 minute, 90 + 75 = 165
+
+     ═════════════════════════ TAREEKA ════════════════════════════════════
+     dono time ko MINUTE me badlo, phir ghatao. ghante aur minute alag ghatao to MM ka udhaar lena padta, ulajh jaata.
+     pench: raat 12 ke paar end chhota -> minus aata -> ek poora din (1440) jodo.
+
+     ═════════════════════════ CHAABI ═════════════════════════════════════
+       1. stringstream ss(start); getline(ss, HH, ':'); getline(ss, MM, ':')    (end ke liye bhi same)
+       2. mins = stoi(HH) * 60 + stoi(MM)                                     (22:30 -> 1350, 01:15 -> 75)
+       3. return (mins2 - mins1 + 1440) % 1440
+          KYUN 1440: din me 24 * 60 = 1440 minute.
+            minus aaya:   75 - 1350 = -1275 -> +1440 = 165            (raat 12 paar)
+            minus nahi:   1050 - 540 = 510 -> +1440 = 1950 -> %1440 = 510   (% se extra din wapas hata)
+          isliye "+1440 phir %1440" dono case ek line me. Caesar ka "+26 phir %26" bilkul yahi.
+
+     ═════════════════════════ CODE ═══════════════════════════════════════
+     int shiftMinutes(string start, string end) {
+         stringstream ss1(start);
+         stringstream ss2(end);
+         string HH1, MM1, HH2, MM2;
+         getline(ss1, HH1, ':');
+         getline(ss1, MM1, ':');
+         getline(ss2, HH2, ':');
+         getline(ss2, MM2, ':');
+         int mins1 = stoi(HH1) * 60 + stoi(MM1);
+         int mins2 = stoi(HH2) * 60 + stoi(MM2);
+         return (mins2 - mins1 + 1440) % 1440;   // start == end -> 0
      }
 
 ```
