@@ -5901,14 +5901,15 @@ int ladderLength(string beginWord, string endWord, vector<string> &wordList) {
 ### ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
 
 ```
-stones[]. har turn 2 sabse bhaari ladao: barabar -> dono gaye, warna diff bache. aakhri bacha lautao (warna 0).
+stones[] me pattharon ka wazan diya hai. Har baari do sabse bhaari patthar takraate hain: barabar hon to dono khatam, warna bhaari wala farak jitna bachta hai.
+Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
   e.g. [3,7,2] -> 2
   kyun: 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
 ```
 
 ```cpp
 int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
-    priority_queue<int> pq;                 // MAX: har turn 2 sabse BHAARI chahiye
+    priority_queue<int> pq;                 // ★ MAX: har turn 2 sabse BHAARI chahiye
     for (int i = 0; i < stones.size(); i++)
         pq.push(stones[i]);
     while (pq.size() > 1) {                 // >1: smash ko 2 pathar chahiye
@@ -5920,21 +5921,21 @@ int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, di
         if (diff > 0)                       // barabar -> 0 = dono khatam
             pq.push(diff);                  // bacha pathar wapas heap me
     }
-    return pq.empty() ? 0 : pq.top();       // empty pehle: sab khatam to top() crash
+    return pq.empty() ? 0 : pq.top();       // ★ empty pehle: sab khatam to top() crash
 }   // heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max"
 ```
 
 ### ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
 
 ```
-nums[] + k. k-th SABSE BADA element lautao.
+Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
   e.g. [3,2,1,5,6,4], k=2 -> 5
   kyun: bade se gino 6, 5 -> 2nd = 5
 ```
 
 ```cpp
 int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
-    priority_queue<int, vector<int>, greater<int>> pq;   // MIN: size>k pe sabse CHHOTA evict
+    priority_queue<int, vector<int>, greater<int>> pq;   // ★ MIN: size>k pe sabse CHHOTA evict
     for (auto &it : nums) {
         pq.push(it);
         if (pq.size() > k)
@@ -5947,7 +5948,7 @@ int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
 ### ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
 
 ```
-points[] = [x,y]. origin (0,0) ke sabse PAAS wale k points lautao (doori = x*x+y*y), order koi bhi.
+points[] me [x, y] points diye hain aur ek number k. Origin (0, 0) ke sabse paas wale k points lautao. Doori = x*x + y*y, aur jawab kisi bhi kram me chalega.
   e.g. [[1,3],[-2,2]], k=1 -> [[-2,2]]
   kyun: [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
 
@@ -5956,7 +5957,7 @@ KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap,
 
 ```cpp
 vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
-    priority_queue<pair<int, vector<int>>> maxHeap;   // MAX: sabse door top pe, size>k pe wahi nikle
+    priority_queue<pair<int, vector<int>>> maxHeap;   // ★ MAX: sabse door top pe, size>k pe wahi nikle
     for (int i = 0; i < points.size(); i++) {
         maxHeap.push({{points[i][0] * points[i][0] + points[i][1] * points[i][1]}, {points[i]}});
                                             // {dist, point}: dist PEHLE (pair first pe compare)
@@ -5976,7 +5977,7 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
 ### ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
 
 ```
-nums[] + k. wo k elements lautao jo SABSE ZYADA baar aate (order koi bhi).
+Ek array aur ek number k diya hai. Wo k numbers lautao jo array me sabse zyada baar aate hain. Kram kuch bhi chalega.
   e.g. [1,1,1,2,2,3], k=2 -> [1,2]
   kyun: 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
 
@@ -5991,7 +5992,7 @@ vector<int> topKFrequent(vector<int> &nums, int k) {
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> minHeap;
                                             // MIN: size>k pe sabse KAM freq bahar
     for (auto &it : mp) {
-        minHeap.push({it.second, it.first});   // {freq, num}: freq PEHLE -> heap freq pe sort
+        minHeap.push({it.second, it.first});   // ★ {freq, num}: freq PEHLE -> heap freq pe sort
         if (minHeap.size() > k)
             minHeap.pop();                  // chhoti freq EVICT -> top-k bache
     }
@@ -6010,7 +6011,7 @@ vector<int> topKFrequent(vector<int> &nums, int k) {
 ### ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
 
 ```
-k sorted linked lists. sabko jod ke EK sorted list lautao.
+k sorted linked list di hain. Sabko jod ke ek sorted linked list banao aur uska head lautao.
   e.g. [[1,4,5],[1,3,4],[2,6]] -> [1,1,2,3,4,4,5,6]
   kyun: har baar teeno ke current head me sabse chhota uthao: 1,1,2,3,4,4,5,6
 
@@ -6020,7 +6021,7 @@ struct Compare: ListNode* ko khud compare karna nahi aata
 ```cpp
 struct Compare {                            // ListNode* ko khud compare karna nahi aata
     bool operator()(ListNode *a, ListNode *b) {
-        return a->val > b->val;             // > likha to MIN-heap (pq ka comparator ulta chalta)
+        return a->val > b->val;             // ★ > likha to MIN-heap (pq ka comparator ulta chalta)
     }
 };
 
@@ -6037,7 +6038,7 @@ ListNode *mergeKLists(vector<ListNode *> &lists) {
         tail->next = curr;                  // jodo
         tail = curr;
         if (curr->next)
-            minHeap.push(curr->next);       // uska next; khatam list ka NULL mat daalo
+            minHeap.push(curr->next);       // ★ uska next; khatam list ka NULL mat daalo
     }
     return dummy->next;                     // ->next: dummy khud nakli node
 }   // heap me max k node (1 per list) -> O(N log k)
@@ -6046,7 +6047,7 @@ ListNode *mergeKLists(vector<ListNode *> &lists) {
 ### ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
 
 ```
-arr[] me har element apni sahi (sorted) jagah se max k door. poora sorted array lautao.
+Ek array diya hai jisme har number apni sahi (sorted) jagah se zyada se zyada k khaane door hai. Poora sorted array lautao.
   e.g. [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]
   kyun: 2 abhi index 3 pe, sahi jagah index 0 -> 3 door = k ke andar
 
@@ -6059,7 +6060,7 @@ vector<int> sortKSorted(vector<int> &arr, int k) {
     priority_queue<int, vector<int>, greater<int>> pq;   // MIN: sorted output me chhota pehle
     for (int i = 0; i < arr.size(); i++) {
         pq.push(arr[i]);                    // pehle daalo, phir size dekho
-        if (pq.size() > k + 1) {            // k+1 se bada: tab tak sahi MIN buffer me aa chuka
+        if (pq.size() > k + 1) {            // ★ k+1 se bada: tab tak sahi MIN buffer me aa chuka
             int tp = pq.top();
             pq.pop();
             ans.push_back(tp);              // buffer bhara -> MIN nikaal
@@ -6079,7 +6080,8 @@ vector<int> sortKSorted(vector<int> &arr, int k) {
 ### ▸ FIND MEDIAN FROM DATA STREAM (LC-295)  = TWO-HEAPS balanced
 
 ```
-number ek-ek aate (addNum). kabhi bhi findMedian() = ab tak sab ka beech wala (even -> beech ke 2 ka average).
+Numbers ek-ek karke aate hain (addNum). Kabhi bhi findMedian() bulaya jaaye to ab tak aaye saare numbers ka median lautao.
+Odd ginti pe beech wala, even pe beech ke do ka average.
   e.g. add 5, 15, 1, 3 -> findMedian = 4.0
   kyun: sorted 1,3,5,15 -> beech ke do 3,5 -> (3+5)/2 = 4
 
@@ -6096,7 +6098,7 @@ public:
     priority_queue<double, vector<double>, greater<double>> minHeap;   // BADI team: top = bado ka min
 
     void addNum(int num) {
-        if (maxHeap.empty() || maxHeap.top() >= num)   // empty() pehle: khaali pe top() crash
+        if (maxHeap.empty() || maxHeap.top() >= num)   // ★ empty() pehle: khaali pe top() crash
             maxHeap.push(num);              // 1. PLACEMENT: chhota -> chhoti team
         else
             minHeap.push(num);              //    bada -> badi team (minHeap)
@@ -6105,7 +6107,7 @@ public:
             minHeap.pop();
             maxHeap.push(it);
         }
-        else if (maxHeap.size() > minHeap.size() + 1) {   // 2 ka farak: maxHeap sirf 1 aage chalta
+        else if (maxHeap.size() > minHeap.size() + 1) {   // ★ 2 ka farak: maxHeap sirf 1 aage chalta
             double it = maxHeap.top();
             maxHeap.pop();
             minHeap.push(it);
@@ -6125,7 +6127,7 @@ public:
 ### ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME
 
 ```
-string s ke akshar aise lagao ki koi 2 PADOSI same na ho. koi bhi ek valid lautao, na bane -> "".
+Ek string s di hai. Uske akshar aise lagao ki koi bhi do paas-paas wale akshar same na hon. Koi bhi ek sahi string lautao, aisa na ban sake to khaali string "".
   e.g. "aab" -> "aba" · "aaab" -> ""
   kyun: aab: b dono a ke beech · aaab: 3 a alag karne 2 diwaar chahiye, b sirf 1
 
@@ -6169,7 +6171,7 @@ string reorganizeString(string s) {
     priority_queue<pair<int, char>> maxHeap;   // {count, char}: count PEHLE, us pe sort
     for (auto &it : mp)
         maxHeap.push({it.second, it.first});
-    while (maxHeap.size() > 1) {            // >1: har round 2 ALAG char (1 nikaal wapas = "aa")
+    while (maxHeap.size() > 1) {            // ★ >1: har round 2 ALAG char (1 nikaal wapas = "aa")
         auto it1 = maxHeap.top();
         maxHeap.pop();
         auto it2 = maxHeap.top();
@@ -6184,7 +6186,7 @@ string reorganizeString(string s) {
             maxHeap.push(it2);
     }
     if (!maxHeap.empty()) {
-        if (maxHeap.top().first > 1)        // akela bacha count>1: do same paas aayenge, impossible
+        if (maxHeap.top().first > 1)        // ★ akela bacha count>1: do same paas aayenge, impossible
             return "";
         else
             ans += maxHeap.top().second;
@@ -6198,7 +6200,8 @@ string reorganizeString(string s) {
 ### ▸ THROTTLING — MIN UTHAO, PADOSI HATAO (Amazon OA)  = MIN-HEAP {val,idx} + vis[] (lazy skip)
 
 ```
-responseTimes[]. har step bache me SABSE CHHOTA uthao (tie -> chhota index), jodo, use + i-1, i+1 hatao. total?
+responseTimes[] diya hai. Har kadam pe bache hue numbers me se sabse chhota uthao (barabar ho to chhota index), use jawab me jodo,
+aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod lautao.
   e.g. [4,2,9,1,7,3] -> 6
   kyun: 1 uthaya (9,7 hate) · 2 uthaya (4 hata) · 3 uthaya -> 1+2+3 = 6
 
@@ -6218,7 +6221,7 @@ long long totalResponseTime(vector<int> &responseTimes) {
     while (!pq.empty()) {
         int index = pq.top().second;        // .second = index (first sirf sort ke liye)
         pq.pop();
-        if (vis[index] == false) {          // hat chuka -> chhodo (LAZY delete, Dijkstra stale-skip)
+        if (vis[index] == false) {          // ★ hat chuka -> chhodo (LAZY delete, Dijkstra stale-skip)
             ans += responseTimes[index];
             vis[index] = true;              // khud bhi hatao, dobara na uthe
             if (index - 1 >= 0)             // >=0: pehle ka left padosi nahi
@@ -6262,7 +6265,7 @@ long long totalResponseTime(vector<int> &responseTimes) {
 ### ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
 
 ```
-intervals[] = [start,end]. saare overlap wale jod do, merged list lautao (touching bhi jud jaate).
+intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain (ya bas chhoote hain), unhe jod ke ek kar do. Jude hue intervals ki list lautao.
   e.g. [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]
   kyun: 2 <= 3 -> [1,3] aur [2,6] overlap -> [1,6]; baaki alag
 ```
@@ -6280,13 +6283,13 @@ ans.back() = last interval; [0]=start [1]=END.  overlap = curr.start last.END ko
 
 ```cpp
 vector<vector<int>> merge(vector<vector<int>> &intervals) {
-    sort(begin(intervals), end(intervals)); // default FIRST element (start) se. HAMESHA pehla step
+    sort(begin(intervals), end(intervals)); // ★ default FIRST element (start) se. HAMESHA pehla step
     vector<vector<int>> ans;
     ans.push_back(intervals[0]);            // pehla baseline
     for (int i = 1; i < intervals.size(); i++) {   // 1 se: [0] pehle hi ans me
-        if (ans.back()[1] >= intervals[i][0])   // OVERLAP: curr.start <= last.END
+        if (ans.back()[1] >= intervals[i][0])   // ★ OVERLAP: curr.start <= last.END
                                             //   (<= : [1,3],[3,5] chhoote bhi merge)
-            ans.back()[1] = max(ans.back()[1], intervals[i][1]);   // max zaroori: [1,10],[2,3] -> 10
+            ans.back()[1] = max(ans.back()[1], intervals[i][1]);   // ★ max zaroori: [1,10],[2,3] -> 10
         else
             ans.push_back(intervals[i]);    // no overlap -> naya
     }
@@ -6297,7 +6300,7 @@ vector<vector<int>> merge(vector<vector<int>> &intervals) {
 ### ▸ MEETING ROOMS (LC-252, Easy)  = Merge ka SAME template, bas action alag
 
 ```
-meetings[] = [start,end]. kya ek insaan SAARI attend kar sakta (koi 2 overlap nahi)? true/false.
+meetings[] me [start, end] diye hain. Kya ek insaan saari meetings attend kar sakta hai, matlab koi do meeting takraati nahi? true ya false lautao.
   e.g. [[0,30],[5,10],[15,20]] -> false
   kyun: 5-10 shuru hui jab 0-30 abhi chal rahi (5 < 30) -> overlap
 
@@ -6312,7 +6315,7 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
     vector<vector<int>> ans;
     ans.push_back(intervals[0]);            // pehla baseline
     for (int i = 1; i < intervals.size(); i++) {
-        if (intervals[i][0] < ans.back()[1])   // < (<= NAHI): ek khatam usi pal doosri shuru = chalta
+        if (intervals[i][0] < ans.back()[1])   // ★ < (<= NAHI): ek khatam usi pal doosri shuru = chalta
             return false;                   // 2 meeting takraye -> saare attend nahi
         else
             ans.push_back(intervals[i]);    // agla overlap isi ke end se check
@@ -6324,7 +6327,7 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
 ### ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
 
 ```
-intervals[] pehle se sorted + non-overlap. newInterval daalo (overlap ho to merge), sorted list lautao.
+intervals[] pehle se sorted hain aur aapas me overlap nahi karte. Ek newInterval daalna hai (overlap ho to jod do). Nayi sorted list lautao.
   e.g. [[1,3],[6,9]], new=[2,5] -> [[1,5],[6,9]]
   kyun: [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
 
@@ -6336,13 +6339,13 @@ vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInter
     vector<vector<int>> ans;
     int count = 0;                          // kitne process hue, doosra loop wahin se
     for (int i = 0; i < intervals.size(); i++) {
-        if (intervals[i][1] < newInterval[0])   // 1. new se PEHLE khatam -> push
+        if (intervals[i][1] < newInterval[0])   // ★ 1. new se PEHLE khatam -> push
             ans.push_back(intervals[i]);        //    (sirf < : chhoota hua merge hoga)
         else if (intervals[i][0] > newInterval[1])
-            break;                          // 3. new ke AAGE -> BREAK (sorted, aage sab door)
+            break;                          // ★ 3. new ke AAGE -> BREAK (sorted, aage sab door)
         else {                              // 2. OVERLAP -> new ko GROW
             newInterval[0] = min(newInterval[0], intervals[i][0]);
-            newInterval[1] = max(newInterval[1], intervals[i][1]);   // end bhi max
+            newInterval[1] = max(newInterval[1], intervals[i][1]);   // ★ end bhi max
         }
         count++;                            // break wala yahan nahi aata -> count se doosra loop
     }
@@ -6358,7 +6361,8 @@ vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInter
 ### ▸ MEETING ROOMS II (LC-253)  = SWEEP LINE / event-count
 
 ```
-start[], end[] = meetings. MIN kitne room chahiye (start == kisi ka end -> wahi room chalega).
+start[] aur end[] me meetings ke shuru aur khatam hone ka time diya hai. Kam se kam kitne room chahiye, wo lautao.
+Ek meeting ka end aur doosri ka start same time ho, to wahi room chal jaata hai.
   e.g. start=[2,9,6], end=[4,12,10] -> 2
   kyun: t=9 pe [9,12] aur [6,10] dono chal rahi -> 2 room
 
@@ -6399,11 +6403,11 @@ FAMILY: sweep-line / "events + running count" -- interval-overlap, max-concurren
 
 ```cpp
 int minMeetingRooms(vector<int> &start, vector<int> &end) {
-    map<int, int> mp;                       // ORDERED map: time -> delta, keys khud sorted
+    map<int, int> mp;                       // ★ ORDERED map: time -> delta, keys khud sorted
     int n = start.size();
     for (int i = 0; i < n; i++) {
         mp[start[i]]++;                     // shuru = +1 (room bhara)
-        mp[end[i]]--;                       // khatam = -1. same time pe +1 -1 kat -> room REUSE
+        mp[end[i]]--;                       // ★ khatam = -1. same time pe +1 -1 kat -> room REUSE
     }
     int overlap = 0, maxOverlap = 0;        // 0 se: shuru me koi meeting nahi
     for (auto &it : mp) {                   // keys sorted -> time ke order me
