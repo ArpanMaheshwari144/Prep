@@ -77,7 +77,7 @@ Binary tree ka root diya hai. Root se sabse door wale leaf tak raste me kitne no
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 base : null -> 0.
 comb : return 1 + max(leftDepth, rightDepth).   (khud=1 + gehri branch)
@@ -102,7 +102,7 @@ Binary tree ka root diya hai. Har node ke left aur right bachche aapas me badal 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 base : null -> null.
 comb : recurse dono (left, right) -> phir children SWAP -> return root.
@@ -130,7 +130,7 @@ Do binary tree p aur q diye hain. Kya dono ka dhaancha aur har node ki value bil
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
 comb : isSame(p->left, q->left) && isSame(p->right, q->right).
@@ -164,7 +164,7 @@ isSameTree: same tree ka hi base (dono null / ek null / val alag)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
 comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   CROSS = mirror (yehi ek change).
@@ -206,7 +206,7 @@ height: max-depth ka height(), maxDia by-REFERENCE
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = max-depth ka height() helper (maxDia by-REFERENCE), BAS 1 line EXTRA:
    int height(root, int& maxDia):
@@ -250,7 +250,7 @@ skeleton HUBAHU diameter (return EK arm / record DONO arm / post-order / global 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 CONNECTION -- diameter ki HAR line ke saamne, kya badla (side-by-side):
 
@@ -313,7 +313,7 @@ preorder[rootIndex] = ROOT · inorder me us root pe todo -> LEFT-part | root | R
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 preorder[0] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part. recurse.
 
@@ -379,7 +379,7 @@ maxDepth: return = HEIGHT, ya -1 (neeche kahin imbalance)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
    int maxDepth(root):
@@ -426,7 +426,7 @@ Binary tree ka root aur do node p, q diye hain. Wo sabse neeche wala node lautao
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : wo node jahan p, q ALAG side split ho jaate (ek left, ek right).
    TreeNode* lca(root, p, q):
@@ -471,7 +471,7 @@ Binary tree ka root aur ek targetSum diya hai. Kya root se kisi leaf tak aisa ra
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : root-se-LEAF sum == target? value NEECHE carry (target me se ghatao).
 base : null -> false.
@@ -502,7 +502,7 @@ Binary tree ka root diya hai. Har level ke nodes ko left se right, alag-alag lis
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : har level ki alag list -> list-of-lists. queue = FIFO (pehle-aaya-pehle-process) -> level-order + L-to-R apne aap.
 SKELETON (saare BFS-level Q bas isi pe):
@@ -553,7 +553,7 @@ Binary tree ke daayi taraf khade ho ke upar se neeche dekho. Jo nodes dikhte hai
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : daaye khade -> har level ka SIRF right-most node dikhta (baaki peeche chhup jaate).
 LEVEL-ORDER template bilkul SAME (while + sz-snapshot + for + push L/R). FARAK sirf level ke andar 1 line:
@@ -596,7 +596,7 @@ Level order jaisa hi, par disha har level pe badalti hai: level 0 left se right,
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : level-order BFS jaisa, par direction ALTERNATE (0:L->R · 1:R->L · 2:L->R...).
 = LEVEL-ORDER ka SAME skeleton (queue + sz-SNAPSHOT + inner-loop -> level) + ek levelCounter.
@@ -644,7 +644,7 @@ Binary tree ka root diya hai. Root se sabse paas wale leaf tak raste me kitne no
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
 TEMPLATE (level-order skeleton + EARLY-STOP):
@@ -701,7 +701,7 @@ inorder: BST pe inorder = SORTED (ascending)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : BST inorder = SORTED -> kth smallest = inorder ka k-va element.
 steps: inorder(root) -> sorted vector 'ans' -> return ans[k-1].
@@ -738,7 +738,7 @@ sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRAP : local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
 IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.

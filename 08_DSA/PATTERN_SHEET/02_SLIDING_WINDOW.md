@@ -19,7 +19,7 @@
 `"abcabcbb" -> 3`. Sabse lambi substring jisme koi char repeat na ho.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
 TEMPLATE:
@@ -74,7 +74,7 @@ int lengthOfLongestSubstring(string s) {
 `"AABABBA", k=1 -> 4`. Max k char badal ke sabse lambi window jisme sab same.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
 KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
@@ -125,7 +125,7 @@ int characterReplacement(string s, int k) {
 `[1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6`. Max k zero ko 1 bana ke sabse lambi 1 ki line.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
 TEMPLATE:
@@ -168,7 +168,7 @@ int longestOnes(vector<int> &nums, int k) {
 `[1,2,3,2,2] -> 4`. 2 basket, har basket me ek type. Lagaatar pedon ki sabse lambi line.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW skeleton + map<type,count>.
 DELTA (SW skeleton pe -- sirf ye badalta):
@@ -209,7 +209,7 @@ int totalFruit(vector<int> &fruits) {
 `"eceba", k=2 -> 3`. Sabse lambi substring jisme zyada se zyada k alag char.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 FRUIT-INTO-BASKETS ka GENERAL version. wahi variable window + map<char,count>,
 distinct (mp.size()) > k ho -> left se shrink (erase-on-0). ans = max length.
@@ -245,7 +245,7 @@ int longestKDistinct(string s, int k) {
 `s="abcd", t="bcdf", maxCost=3 -> 3`. s ke char ko t me badalne ki cost `|s[i]-t[i]|`. Kul cost budget ke andar, sabse lambi window.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cost-SUM <= maxCost.
 KEY  : cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
@@ -280,7 +280,7 @@ int equalSubstring(string s, string t, int maxCost) {
 `target=7, [2,3,1,2,4,3] -> 2` ([4,3]). Positive numbers, sum >= target wala sabse chhota subarray.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : positive nums, sum >= target wala SABSE CHHOTA subarray ki length (nahi mile -> 0).
 TEMPLATE:
@@ -328,7 +328,7 @@ int minSubArrayLen(int target, vector<int> &nums) {
 `[2,1,5,1,3,2], k=3 -> 9`. Har size-k window ka sum, sabse bada.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
 KEY  : variable nahi -- size fix k, isliye IF (ek hi remove).
@@ -361,7 +361,7 @@ int maxSumK(vector<int> &nums, int k) {
 `[1,2,3,4,5,6,1], k=3 -> 12` (peeche se 5+6+1). Dono kinaron se kul k card lo, sum sabse bada.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [1,2,3,4,5,6,1], k=3 -> 12   (back se 5,6,1)
 
@@ -437,7 +437,7 @@ int maxScore(vector<int> &nums, int k) {
 `[1,2,3,1], k=3 -> true`. Do barabar number jinka index ka farak <= k.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ★ RECOGNITION: "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
    KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
@@ -483,7 +483,7 @@ bool containsNearbyDuplicate(vector<int> &nums, int k) {
 `[10,5,2,6], k=100 -> 8`. Positive numbers, kitne subarray jinka guna k se kam.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : kitne subarray jinka product < k.   (lambai nahi, GINTI chahiye)
 
@@ -546,7 +546,7 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k) {
 `[1,2,1,2,3], k=2 -> 7`. Kitne lagaatar subarray hain jinme theek k alag number hon.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : kitne SUBARRAYS jinme EXACTLY k different numbers.  [1,2,1,2,3],k=2 -> 7
 
@@ -621,9 +621,9 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
 `s="ADOBECODEBANC", t="ABC" -> "BANC"`. s ki sabse chhoti window jisme t ke saare akshar utni hi baar hon jitni baar t me hain (count ke saath; t="AA" ho to do A chahiye). Na mile to "".
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
 │ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
@@ -682,7 +682,7 @@ string minWindow(string s, string t) {
 `"abcabc" -> 10`. Kitne substring jinme a, b, c teeno.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 IDEA:
    = LC-76 ka SAME code reuse:  numberOfSubstrings(s) = minWindow(s, "abc")
@@ -756,7 +756,7 @@ int numberOfSubstrings(string s) {
 `s="cbaebabacd", p="abc" -> [0,6]`. s me p ke saare anagram ki start index.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
 TEMPLATE:
@@ -803,7 +803,7 @@ vector<int> findAnagrams(string s, string p) {
 `s1="ab", s2="eidbaooo" -> true`. Kya s2 me s1 ka koi anagram (permutation) lagaatar substring ban ke maujood hai? true ya false.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
 = FIND-ALL-ANAGRAMS ka SAME code -- REUSE: checkInclusion(s1,s2) = findAnagrams(s2, s1).
@@ -851,7 +851,7 @@ bool checkInclusion(string s1, string s2) {
 `[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`. Har k size ki window ka sabse bada number lautao.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING) -> front = window ka max.
 CONNECT : back-pop (nums[back]<=nums[i]) = MONOTONIC banana -- ye UNIVERSAL (stack ho ya deque, wahi cheez; isi se monotonic).

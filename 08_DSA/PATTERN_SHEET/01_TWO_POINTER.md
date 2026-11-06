@@ -23,7 +23,7 @@ Naya array nahi banana, isi array me badlaav karna hai (in-place).
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 slow = agli jagah jahan non-zero rakhna hai; fast SCAN karta.
 fast pe non-zero mila -> pehle swap(nums[slow], nums[fast]) -> PHIR slow++.   // fast++ har baar (if ke BAHAR) · slow=0, fast=0 se shuru
@@ -54,7 +54,7 @@ Kitne unique number bache (k), wo lautao. Array ke pehle k khaane me wahi unique
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 move-zeroes cousin. slow = last-UNIQUE ka index, fast SCAN.   // slow=0, fast=0: pehla element khud unique, compare nums[slow]
 naya unique (nums[slow] != nums[fast]) -> pehle slow++ (slow ab duplicate/khali slot pe) -> PHIR nums[slow] = nums[fast] (overwrite).
@@ -86,7 +86,7 @@ Kitne number bache (k), wo lautao. Pehle k khaane me val nahi hona chahiye, unka
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 saare 'val' hata, non-val ki count k lauta (move-zeroes cousin). slow = agli keep-jagah, fast scan.
 nums[fast] != val -> pehle nums[slow] = nums[fast] -> PHIR slow++.   nums[fast] == val -> skip (sirf fast++).
@@ -118,7 +118,7 @@ Ek string di hai jisme sirf chhote akshar (lowercase) hain. Batao ki ye aage se 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
 ```
@@ -147,7 +147,7 @@ Inhe gin ke string palindrome banti hai ya nahi, true ya false lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
 ```
@@ -184,7 +184,7 @@ validPalindrome: palindrome YA ek char delete karke ban jaaye
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = palindrome YA ek char DELETE karke palindrome ban jaaye.
 IDEA: two-pointer; MISMATCH pe -> ya LEFT char delete ya RIGHT char delete. koi ek bane -> true, dono na bane -> false.
@@ -229,7 +229,7 @@ reverseVowels: sirf vowels aapas me ulte, baaki char apni jagah
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
 chhota helper isVowel(ch). left/right pointer:
@@ -274,7 +274,7 @@ Sabse zyada kitna paani rok sakte ho, wo lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).   // left<right: same index pe width 0 · barabar height -> right-- (else)
 ```
@@ -307,7 +307,7 @@ Index 1 se gine jaate hain (1-based), 0 se nahi.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 sorted -> 2 pointer (left,right); sum==target -> mila (return 1-based).
 sum<target -> left++ (bada chahiye); sum>target -> right-- (chhota). O(1) space.   // while(left<right): ek hi index do baar nahi · na mile -> {-1,-1}
@@ -338,7 +338,7 @@ Ek number c diya hai. Batao ki kya aise do poore number a aur b hain jinke liye 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 a²+b²==c possible? (LC 633). RECOGNITION: 2 NUMBER (pair) chahiye -> TWO-POINTER.
 low=0, high=sqrt(c). ans=low²+high²: ==c->true · <c->low++ · >c->high--. low<=high tak, warna false.
@@ -373,7 +373,7 @@ Dobara sort() nahi lagana, ek hi baar me (O(n)) karna hai.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: sorted arr me negatives ka square order ULTA -> sabse BADA square dono CHHOR pe (beech me nahi). 2-ptr, ans PEECHE se bharo. O(n), no sort.
 TEMPLATE: left=0, right=n-1, k=n-1.   // k=n-1: sabse bada square ans ke aakhri slot me · ans(n) pehle se size n (k-- se index pe likho)
@@ -413,7 +413,7 @@ nums2 ko nums1 me hi milana hai (in-place), taaki poora nums1 sorted ho jaaye.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: 2 sorted arr; nums1 ke END me n khaali. in-place -> PEECHE se bharo (aage se karo to zinda element overwrite). O(m+n).  ★ k=m+n-1 NA m*n-1
 in-place = naya array NAHI banaya; usi nums1 me answer bhara -> O(1) EXTRA space.
@@ -466,7 +466,7 @@ sort() nahi lagana, ek hi pass me karna hai.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 Dutch flag, 3 pointer (low/mid/high).  loop: while(mid <= high)   // <= : high wala abhi dekha nahi, use bhi check · low=mid=0, high=n-1
 nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).   // mid++ bhi: low se aaya element pehle hi check ho chuka
@@ -510,7 +510,7 @@ Ek array diya hai. Saare even number pehle aur saare odd number baad me rakhne h
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 evens pehle, odds baad (aapas order koi bhi). left/right pointer.   // while(left<right) · odd check = nums[x]%2 != 0
 left ODD && right EVEN (dono galat jagah) -> swap + left++ right--.
@@ -549,7 +549,7 @@ Ek hi group do baar nahi aana chahiye, chahe array me number dohraye gaye hon.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (sum = -fixed).
 TEMPLATE:
@@ -605,7 +605,7 @@ Do string s aur t di hain. Batao ki kya t me se kuch akshar hata ke (baaki ka kr
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
 s[i]==t[j] -> i++ AUR j++ (char mila).  nahi mila -> sirf j++ (t aage scan).   // while(i<s.size() && j<t.size()): koi ek khatam -> ruko
@@ -641,7 +641,7 @@ O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - heigh
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 CORE: bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i].  (min kyun: CHHOTI side se paani bah jaata.)
 
@@ -715,7 +715,7 @@ solve: &count : warna bahar count badhta hi nahi
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 String me kitne SUBSTRING (contiguous) palindrome hain? COUNT karo.
 single char bhi palindrome · same-dikhne wale par ALAG POSITION wale ALAG count.

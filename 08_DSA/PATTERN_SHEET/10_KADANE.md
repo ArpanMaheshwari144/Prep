@@ -18,7 +18,7 @@ prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din b
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: aaj becho = aaj ka daam MINUS ab-tak-ka-sasta. bas 2 cheez track: mini + maxProfit.
   mini = min(mini, prices[i]);   maxProfit = max(maxProfit, prices[i] - mini); // init mini=INT_MAX; mini PEHLE update -> diff kabhi minus nahi
@@ -51,7 +51,7 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chun
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: pichhla running sum NEGATIVE = aage bojh -> PHENK do (sum=0), fresh. bas yahi.
   sum += nums[i];   max_sum = max(max_sum, sum);   if(sum < 0) sum = 0;   // max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
@@ -83,7 +83,7 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: neg*neg = BADA -> sirf max se nahi banega, MIN bhi track karo (chhota kal sabse bada ban sakta).
   temp    = max({ num, num*max, num*min });     // 3 candidate ka max (temp me rakho: max pehle badla to min ko naya max milta)
@@ -118,7 +118,7 @@ Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = MAX PRODUCT SUBARRAY (152) ka HUBAHU same skeleton (temp/min/max freeze, upar dekh), sirf 2 TWEAK:
    (1) GUNA (*) -> PLUS (+)                    (num*max -> num+max, num*min -> num+min)
@@ -164,7 +164,7 @@ A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL -
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
 
@@ -244,7 +244,7 @@ har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
 

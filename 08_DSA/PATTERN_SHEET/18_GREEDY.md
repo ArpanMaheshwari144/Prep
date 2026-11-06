@@ -22,7 +22,7 @@ chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 g[] = bachhe ki GREED, s[] = cookie SIZE. cookie j bachhe i ko khush karti: s[j] >= g[i]. max kitne bachhe khush?
 GREEDY soch: chhoti-greed wale bachhe ko jitni-ZAROORAT-utni (chhoti-se-chhoti jo kaam kare) cookie do
@@ -62,7 +62,7 @@ nums[i] batata hai ki index i se zyada se zyada kitne kadam aage kood sakte ho. 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 nums[i] = us index se max kitni door kood sakte. index0 se LAST tak pahunch sakte ho? true/false.
 GREEDY soch: har index pe track karo "ab tak sabse DOOR kahan tak pahunch sakta hoon" (maxReach).
@@ -98,7 +98,7 @@ intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 intervals me se MIN kitne HATAO taaki koi overlap na bache? (= max non-overlapping rakho.)
 GREEDY: default SORT. 2-pointer -> start=rakha-hua, end=candidate. // start=0, end=1; while(end < n)
@@ -158,9 +158,9 @@ Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sa
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
    tank khaali se shuru. kis pump se chalu ki poora ghoom ke wapas wahin aa jau? koi nahi -> -1.
 
@@ -239,7 +239,7 @@ SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldow
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 tasks (letters) + cooldown n: SAME task dobara chalane se pehle n gap chahiye. minimum total TIME (idle included)?
 SIGNAL: "same cheez dobara se pehle GAP/cooldown" + "minimum time" -> greedy (most-frequent frame) YA max-heap.

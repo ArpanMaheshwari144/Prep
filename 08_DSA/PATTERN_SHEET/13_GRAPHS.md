@@ -76,7 +76,7 @@ n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destinat
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = tree LEVEL-ORDER (BFS) ka SAME skeleton (queue + pop + push), graph ke liye 3 ADD:
    (1) NEIGHBOURS : tree me node->left/right built-in · graph me adj[node] (edges se banao).
@@ -137,7 +137,7 @@ Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayei
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 outer: for(i,j) if(grid[i][j]=='1') { DFS(i,j); count++; }   // har naya '1' = naya island
 DFS(i,j) — code order (upar se neeche), grid ke 3 farak (adj-list nahi):
@@ -187,7 +187,7 @@ ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BF
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : ISLANDS ka SAME skeleton (outer-loop + count), bas 2 farak:
        (a) graph = ADJ-LIST (grid nahi)   (b) BFS use kiya (islands ne DFS kiya tha).
@@ -247,7 +247,7 @@ ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer cou
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = ISLANDS ka SAME skeleton (base + sink), bas DFS ab void nahi -> AREA return. 2 DELTA:
 
@@ -300,9 +300,9 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = tree LEVEL-ORDER (sz-snapshot) grid pe, MULTI-SOURCE.  har level = 1 minute.
 
@@ -399,7 +399,7 @@ numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pe
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi?   cycle -> false.
 
@@ -556,7 +556,7 @@ saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 ka
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : "mere GRAPH ke saare node map me clone bana (A->A', B->B'), phir clones ko CONNECT kar (A'--B')." bas.
 
@@ -641,7 +641,7 @@ graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har node ko 2 me se ek rang (0/1) do; koi bhi 2 JUDE hue (adjacent) node SAME rang ke na hon.
        ho gaya -> true.  kahin do jude hue SAME rang pe phans gaye (odd cycle) -> false.
@@ -757,7 +757,7 @@ pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 REAL: Google Maps/GPS (shortest route), network routing, delivery/flights -- roz use hota.
 
@@ -836,7 +836,7 @@ REAL: dost-circle ("A-B same circle?"), accounts merge
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 REAL: dost-circle manager ("A-B same circle?"), network/accounts merge.
 
@@ -922,7 +922,7 @@ level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 beginWord -> endWord, har step EK letter badlo, har beech ka word dict me ho. shortest me kitne WORD?
 SIGNAL: "minimum steps / shortest unweighted path" -> BFS (level-by-level).

@@ -36,7 +36,7 @@ Linked list ka head diya hai. Beech wala node lautao. Agar list ki lambai even h
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 FAST/SLOW: slow 1 step, fast 2 step; fast end pe -> slow MIDDLE pe.
    Node *slow=head, *fast=head;   // dono head se: even list me 2nd middle milta
@@ -66,7 +66,7 @@ Linked list ka head diya hai. Agar list me cycle hai (koi node wapas kisi pichhl
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
    Node *slow=head, *fast=head;   // dono head se: cycle ho to fast ghoom ke slow ko pakdega
@@ -104,7 +104,7 @@ values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = dupli
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: n+1 numbers, values 1..n, ek repeat. dhoondo. O(1) space + array READ-ONLY.
 PEHCHAN: "array + duplicate + O(1)-space + no-modify" -> value ko POINTER samjho (i -> nums[i]).
@@ -149,7 +149,7 @@ cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* ve
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: cycle ho to uske START (entry) node ka pointer return; warna NULL.
 = DETECT CYCLE (03), bas DELTA: true/false nahi, ENTRY chahiye -> PHASE-2.
@@ -205,7 +205,7 @@ middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKE
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
    while (head && rev) { if (head->val != rev->val) return false; head=head->next; rev=rev->next; }   // && : even me rev wala half chhota, jo pehle NULL ho wahin ruko
@@ -238,7 +238,7 @@ Linked list ka head aur ek number n diya hai. List ke end se gina hua n-va node 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 FAST/SLOW GAP: pehle fast ko n kadam aage, phir dono saath.
 Node *slow = head, *fast = head;                     // dummy nahi, dono head se
@@ -278,7 +278,7 @@ Linked list ka head aur ek number val diya hai. Jitne bhi node ki value val hai,
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;   // prev=null: head ke peeche koi node nahi
 while (curr != null && head != null):   // head null = sab node hat gaye, aage kuch nahi
@@ -319,7 +319,7 @@ Do SORTED linked list di hain. Dono ko jod ke ek sorted list banao aur uska head
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 DUMMY node + tail (dummy = head ka special-case avoid).   // dummy=new Node(0); tail=dummy -> tail dummy se shuru
    while (a && b): (a->val <= b->val) ? { tail->next=a; a=a->next; } : { tail->next=b; b=b->next; }   tail=tail->next;   // && : ek list khatam hote hi ruko, baaki neeche ke loop jodte
@@ -371,7 +371,7 @@ number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala rig
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: 2 number linked-list me ULTA pade (units-digit HEAD pe). Jodo -> naya list.
       ULTA hai isiliye HEAD-se-HEAD jodo = school-wala right-to-left add (carry aage jaata).
@@ -432,7 +432,7 @@ Linked list di hai. Har do paas-paas wale node ki jodi aapas me badal do. Value 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har do adjacent NODE ki jodi swap (values nahi, NODES = pointer rewire). DUMMY-node trick.
 TEMPLATE:
@@ -478,7 +478,7 @@ Linked list ka head diya hai. Poori list ulti karo aur naya head lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 3-pointer: prev=NULL, curr=head;   // prev=NULL: purana head naya tail banega, uska next NULL
    while (curr) { Node *nextt=curr->next; curr->next=prev; prev=curr; curr=nextt; }   // nextt pehle bachao: link ulta karte hi aage ka rasta gum
@@ -514,7 +514,7 @@ PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALA
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: har k-node group ko reverse (NODES). k se KAM bache -> waise hi.
 
@@ -587,7 +587,7 @@ PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: har node me val+next+RANDOM (kahin bhi ya NULL). DEEP copy banao,
       copy ke random COPY-list ke andar point karein (original pe NAHI).

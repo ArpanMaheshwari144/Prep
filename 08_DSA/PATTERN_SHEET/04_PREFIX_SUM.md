@@ -25,7 +25,7 @@ Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 total nikaalo; leftSum chalao. order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
 ```
@@ -59,7 +59,7 @@ O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= pro
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ans[i] = (i se PEHLE sabka product) × (i ke BAAD sabka product).  no division, O(n).
 running `prod` se 2 pass (assign-BEFORE-update dono me):
@@ -103,7 +103,7 @@ Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak a
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 running sum chalao, max track. (simple prefix)   // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
 ```
@@ -132,7 +132,7 @@ PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak =
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 count subarrays: sum%k==0.
 DERIVE: brute har subarray ka sum baar-baar -> redundancy -> running PREFIX sum -> do prefix ka remainder same = beech ka subarray %k==0.
@@ -169,7 +169,7 @@ beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni ba
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
 ★ CHAABI:  x ^ x = 0   (same number khud se XOR = gayab)
@@ -217,7 +217,7 @@ K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 valid = (har element <= K) AND (>=1 element == K).
 
@@ -266,7 +266,7 @@ har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek b
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 └────────────────────────────────────────────────────────────
 KAB : "har RANGE pe kuch ADD karo" — aur aise 20,000 range hain.

@@ -18,9 +18,9 @@ get(key): value lautao, na mile to -1. remove(key): key hatao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
    index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
@@ -172,7 +172,7 @@ Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohra
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = HashMap ka EXACT code, bas VALUE nikaal do. CONNECTION:
 ┌──────────┬──────────────────────────────┬──────────────────────────────┐
@@ -282,7 +282,7 @@ Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least rec
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 MENTAL MODEL: get+put DONO O(1). 2 zaroorat -> 2 structure JODO:
    hashmap: key -> DLL-node ka POINTER  (find O(1))

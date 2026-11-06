@@ -35,7 +35,7 @@ intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : sort by start -> ans me first daalo -> har next OVERLAP? merge : push.
 TEMPLATE:
@@ -78,7 +78,7 @@ MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. (Merge ka SAME skeleton reuse.)
 SAME as MERGE (sort + ans.push(first) + loop overlap-check) -- bas overlap pe KYA karo:
@@ -123,7 +123,7 @@ pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
 KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
@@ -196,9 +196,9 @@ min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 NAYA-SOCH (merge/meeting-I se ALAG): rooms ko OBJECT mat gino -> +1/-1 GINTI karo.
     meeting shuru = +1 (room bhara) · khatam = -1 (room khaali). running-sum ka MAX = answer.

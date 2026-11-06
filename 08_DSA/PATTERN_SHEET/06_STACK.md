@@ -36,7 +36,7 @@ har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [2,1,2,4,3] -> [4,2,4,-1,-1]
 
@@ -106,7 +106,7 @@ Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (str
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = NEXT GREATER, bas DELTA: condition ULTA -> while nums[st.top()] > nums[i]  (bada -> chhota).
   strictly (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, left->right, push, init -1) sab wahi.
@@ -137,7 +137,7 @@ Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (str
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = NEXT SMALLER, bas DELTA: for-loop ULTA (right->left, i=n-1..0). condition wahi (>).
   (peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
@@ -173,7 +173,7 @@ har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = don
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [2,1,5,6,2,3] -> 10   (bars 5,6 -> min 5 * width 2)
 
@@ -345,7 +345,7 @@ int largestRectangleArea(vector<int> &heights) {
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = Largest-Rectangle-Histogram (LC-84) ka 2D bhai. HAR ROW ko histogram maano -> us pe LC-84 laga -> saare rows ka MAX.
 heights[] (size = COL, har column ki running height -- upar se neeche):
@@ -383,7 +383,7 @@ temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).   // ans(n,0): garam din na mile to 0 (-1 nahi) · < strict: barabar garam nahi
 ```
@@ -414,7 +414,7 @@ Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 same next-greater (monotonic stack), bas array CIRCULAR -> aakhri element ka greater SHURU me bhi ho sakta.
 vector<int> ans(n, -1);                          // size n (2n nahi) · na mile -> -1
@@ -461,9 +461,9 @@ Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao:
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
 = monotonic stack ka DELTA -- 2 farak: (1) stack me INDEX nahi, PAIR {price, span}.
@@ -511,7 +511,7 @@ Ek string me sirf ( ) [ ] { } hain. true lautao agar har khulne wala bracket sah
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 opening push; closing aaye to top se match+pop; end me stack KHALI = valid. (closing pe stack empty -> false)
 match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')   // topp=st.top() + pop pehle, phir match; na mile -> turant false
@@ -549,7 +549,7 @@ class MinStack: push / pop / top / getMin sab O(1)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 DESIGN: push/pop/top/getMin SAB O(1). trick = min hamesha "ready" rakho, bina scan kiye.
 har element ke SAATH uska "yahaan tak ka MIN" store karo -> stack<pair<val, minSoFar>>.
@@ -587,7 +587,7 @@ Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 COUNTER (stack nahi -- sirf '(' ')'). 2 counter (naam tere code se):
    close_needed = kitne '(' abhi UNMATCHED khade (inhe aage ')' chahiye).
@@ -631,7 +631,7 @@ Sirf stack (push, pop, top, empty) ka use karke ek queue (pehle aaya, pehle gaya
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 DESIGN: 2 stack -> input (push yahan) · output (pop / peek yahan se).
 push:        input.push(x).

@@ -42,7 +42,7 @@ s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" fal
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : s->t har char ka 1-to-1 mapping (bijection)? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false.
 KEY  : 2 MAP dono taraf -- mp1=s->t, mp2=t->s. ek map kaafi nahi ("ab"->"aa" clash sirf ULTI-taraf pakadta).
@@ -82,7 +82,7 @@ Isomorphic jaisa hi, bas akshar ki jagah word. true ya false lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = ISOMORPHIC ka SAME 2-map clash-check. REUSE: wahi mp1/mp2 || check, bas char <-> WORD.
   farak SIRF 3 delta:
@@ -136,7 +136,7 @@ Jawab hamesha ek hi hai, aur ek hi number do baar nahi le sakte.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 map me {value -> index}. har num pe dekho: (target - num) map me HAI? -> haan to jodi mil gayi (dono index).
 ek pass: pehle CHECK phir daalo (taaki num khud se na match kare).   // mp.find(target-num) se check · mila -> return {mp[target-num], i}
@@ -163,7 +163,7 @@ Do string s aur t di hain. Kya t, s ka anagram hai, matlab dono me same akshar u
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 dono me har char ka count barabar? count-array[26] (ya map): string-1 se ++, string-2 se -- -> sab ZERO -> anagram.
 (length alag -> turant false.)   // end me koi count != 0 -> false (sirf >0 nahi, -ve bhi aata)
@@ -198,7 +198,7 @@ brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CA
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 DERIVE: brute = har jodi check "anagram hai?" O(n² · k) -> baar-baar wahi letters gin rahe
         -> har word ki ek pehchaan (KEY) bana ke map me CACHE -> O(n · k log k).
@@ -247,7 +247,7 @@ Array me minus number bhi ho sakte hain.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 prefix-sum + hashmap {prefixSum -> count}. running sum chalao; count += mp[sum - k], phir mp[sum]++.
 mp[0]=1 se START zaroori (jab sum khud == k ho, tab prefix-0 chahiye). idea: pichla prefix jahan se ab tak k bana.
@@ -283,7 +283,7 @@ A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har ele
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 count pairs (i<j): (A[i]+A[j])%k==0.
 DERIVE: brute O(n²) har pair -> "partner pehle aaya?" baar-baar -> partner ko hashmap me CACHE -> O(n).
@@ -349,7 +349,7 @@ sort (n log n) mat karo -> SET me O(1) lookup, har CHAIN sirf uske START se gino
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [100,4,200,1,3,2] -> 4   (1,2,3,4 = chain; 100/200 akele)
 
@@ -423,7 +423,7 @@ map se: mp[x]++, count > n/2 wala return -> O(n) time, O(n) space (seedha)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 map se: mp[x]++; count > n/2 wala return. O(n) time, O(n) space. (seedha.)
 BOYER-MOORE VOTING (O(1) space): majority n/2 se zyada -> baaki sab milkar bhi kam -> do ALAG element CANCEL karo, majority bachega.
@@ -462,7 +462,7 @@ extra set/map nahi: value v ka ghar = index v-1 -> dikha to us index ko NEGATIVE
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [4,3,2,7,8,2,3,1] -> [5,6]
 

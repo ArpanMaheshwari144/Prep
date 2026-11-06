@@ -32,7 +32,7 @@ Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mi
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 mid; target<mid -> left half, warna right. (low<=high: 1 element bacha tab bhi check; mid±1)   // mid=low+(high-low)/2 · loop ke bahar return -1
 
@@ -67,7 +67,7 @@ Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 basic BS; na mile to low return (wahi insert jagah).   // loop khatam: low = pehla index jahan nums >= target
 ```
@@ -100,9 +100,9 @@ Na mile to {-1, -1}. O(log n) me karna hai.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
    nahi mila -> {-1,-1}. O(log n).
 INPUT: [5,7,7,8,8,10], target 8 -> {3,4}
@@ -199,7 +199,7 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : sorted array pivot pe rotate ([4,5,6,7,0,1,2]). target ka INDEX, nahi mile -> -1.
 CORE : mid==target? return. warna -> ek half HAMESHA sorted -> wahi se decide:   // while(low<=high): akela element bacha tab bhi check
@@ -247,7 +247,7 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sab
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 mid ko HIGH se compare (koi target nahi, khud min dhoondna). while(low<high): if(nums[mid]>nums[high]) low=mid+1; else high=MID; -> return nums[low].
 high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
@@ -290,7 +290,7 @@ Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 │       ceil-TRAP: int/int FLOOR karta -> use (piles[i]+mid-1)/mid. hours = long (overflow).   // ya ceil((double)piles[i]/mid): cast pehle
 ```
@@ -331,7 +331,7 @@ Sabse kam capacity kitni chahiye, wo lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 │       solve(mid): day=1,sum=0; for w: if(sum+w>mid){day++;sum=0;} sum+=w;  ->  day <= D ?   // day=1: aakhri din ka load bhi gino
 ```
@@ -377,7 +377,7 @@ Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 │       solve(mid): sum=0,count=1; for x: sum+=x; if(sum>mid){count++;sum=x;}  ->  count <= k ?   // sum=x (0 nahi): jis x ne limit todi wo naye tukde ka pehla
 │       count=1 se START (warna aakhri tukda chhoot jaaye).
@@ -427,7 +427,7 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
 low=0, high=n-1;   while (low < high):   mid = low+(high-low)/2;   // low<high: high=mid se atke nahi, aur mid+1 hamesha andar
@@ -464,7 +464,7 @@ single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
    idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
@@ -561,7 +561,7 @@ Batao target matrix me hai ya nahi, true ya false.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)   // col = matrix[0].size(), row nahi
 
@@ -631,7 +631,7 @@ Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wa
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: 2 sorted arrays ka COMBINED median, O(log). MERGE mat karo -> ek CUT dhoondo:
       LEFT aadha | RIGHT aadha, aur left ka HAR element <= right ka HAR. Cut ke 4 kinaare = median.

@@ -45,7 +45,7 @@ Ek array diya hai (sab number alag). Iske saare subsets (khaali bhi) lautao, kra
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har element ke saamne 2 raaste -> LE lo ya CHHOD do -> 2 recursive call. index==size pe temp = ek subset.
 TEMPLATE (index-based, include/exclude):
@@ -130,7 +130,7 @@ Ek array diya hai (sab number alag). In numbers ko jitne alag-alag kram me laga 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : saare elements ka har ORDER (arrangement). har position pe koi bhi UNUSED element -> used[] track.
 SUBSETS se FARAK (crux): subsets = 'start' index (sirf AAGE) -> [1,2]==[2,1] repeat nahi.
@@ -180,7 +180,7 @@ Do number n aur k diye hain. 1 se n tak ke numbers me se k number chunne ke saar
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : 1..n me se k numbers ke saare combos (order nahi). = subsets ka start-loop, record SIRF size==k pe.
 TEMPLATE:
@@ -218,7 +218,7 @@ candidates[] (sab alag, sab positive) aur ek target diya hai. Wo saare alag comb
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : candidates me se (REUSE allowed) sum==target wale saare combos. = combinations code, bas base target + recurse 'i'.
 TEMPLATE:
@@ -291,7 +291,7 @@ Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : grid me `word` adjacent (4-dir) cells se banta hai? har cell EK-BAAR. har cell se DFS, mark→recurse→un-mark.
 TEMPLATE:
@@ -393,7 +393,7 @@ n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : n jode ke saare VALID strings. brute (2^2n saari strings + filter) NAHI -> validity-RULE se hi banao.
 2 RULE (poora khel yahi): open<n -> '(' add sakta · close<open -> ')' add sakta (tabhi valid rahega).
@@ -437,7 +437,7 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : "23" -> har ank ke akshar me se EK-EK chuno -> saare shabd. (2=abc ... 7=pqrs ... 9=wxyz)
 = har LEVEL (index) = ek ank, us level pe us ank ke SAARE akshar try karo (for loop), neeche jao.

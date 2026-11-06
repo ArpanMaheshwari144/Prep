@@ -60,7 +60,7 @@ Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har turn "2 SABSE BHAARI" pathar smash -> MAX-HEAP. pop 2, diff wapas push, till <=1 bache.
 TEMPLATE:
@@ -97,7 +97,7 @@ Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : k SABSE BADE min-heap me rakho -> unme se sabse chhota (heap TOP) = k-th largest.
 TRICK (top-K ka core): MIN-heap of size k.  (kyun MIN: size>k pe sabse-chhota EVICT karna hai.)
@@ -131,7 +131,7 @@ KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap,
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : origin (0,0) ke k SABSE PAAS points. paas = doori = x*x+y*y (√ NAHI, sirf compare).
 = KTH-LARGEST ka MIRROR-TWIN. wahan k BADE (min-heap, chhota evict);
@@ -178,7 +178,7 @@ KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : k sabse ZYADA baar aane wale elements return karo (order matter nahi).
 = KTH-LARGEST ka COUSIN. bas "value" ki jagah "FREQUENCY" pe heap.  FARAK = 2:
@@ -229,7 +229,7 @@ struct Compare: ListNode* ko khud compare karna nahi aata
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : min-heap me har list ka current HEAD. pop chhota -> result me jodo -> uska NEXT push. repeat.
 TEMPLATE:
@@ -281,7 +281,7 @@ har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har element sahi position se max k DOOR -> O(n log k) sort (n log n se behtar).
 DERIVE (WHY heap): index-0 pe MIN aayega, wo max index k tak -> "pehle k+1 me se MIN kaun?"
@@ -334,7 +334,7 @@ heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : stream me numbers aate rehte; kabhi bhi ab-tak ka MEDIAN turant chahiye.
        add 5,15,1,3 -> median 4.0  ((3+5)/2)
@@ -426,7 +426,7 @@ possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: chars rearrange -> koi 2 ADJACENT same na ho. na bane -> "".
 
@@ -508,7 +508,7 @@ BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: har step bache hue me SABSE CHHOTA uthao (tie -> chhota index), total me jodo,
       use + ORIGINAL padosi (i-1, i+1) hata do. sab hatne tak.

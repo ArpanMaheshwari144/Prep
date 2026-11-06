@@ -330,7 +330,7 @@ Naya array nahi banana, isi array me badlaav karna hai (in-place).
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 slow = agli jagah jahan non-zero rakhna hai; fast SCAN karta.
 fast pe non-zero mila -> pehle swap(nums[slow], nums[fast]) -> PHIR slow++.   // fast++ har baar (if ke BAHAR) · slow=0, fast=0 se shuru
@@ -361,7 +361,7 @@ Kitne unique number bache (k), wo lautao. Array ke pehle k khaane me wahi unique
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 move-zeroes cousin. slow = last-UNIQUE ka index, fast SCAN.   // slow=0, fast=0: pehla element khud unique, compare nums[slow]
 naya unique (nums[slow] != nums[fast]) -> pehle slow++ (slow ab duplicate/khali slot pe) -> PHIR nums[slow] = nums[fast] (overwrite).
@@ -393,7 +393,7 @@ Kitne number bache (k), wo lautao. Pehle k khaane me val nahi hona chahiye, unka
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 saare 'val' hata, non-val ki count k lauta (move-zeroes cousin). slow = agli keep-jagah, fast scan.
 nums[fast] != val -> pehle nums[slow] = nums[fast] -> PHIR slow++.   nums[fast] == val -> skip (sirf fast++).
@@ -425,7 +425,7 @@ Ek string di hai jisme sirf chhote akshar (lowercase) hain. Batao ki ye aage se 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
 ```
@@ -454,7 +454,7 @@ Inhe gin ke string palindrome banti hai ya nahi, true ya false lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
 ```
@@ -491,7 +491,7 @@ validPalindrome: palindrome YA ek char delete karke ban jaaye
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = palindrome YA ek char DELETE karke palindrome ban jaaye.
 IDEA: two-pointer; MISMATCH pe -> ya LEFT char delete ya RIGHT char delete. koi ek bane -> true, dono na bane -> false.
@@ -536,7 +536,7 @@ reverseVowels: sirf vowels aapas me ulte, baaki char apni jagah
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
 chhota helper isVowel(ch). left/right pointer:
@@ -581,7 +581,7 @@ Sabse zyada kitna paani rok sakte ho, wo lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).   // left<right: same index pe width 0 · barabar height -> right-- (else)
 ```
@@ -614,7 +614,7 @@ Index 1 se gine jaate hain (1-based), 0 se nahi.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 sorted -> 2 pointer (left,right); sum==target -> mila (return 1-based).
 sum<target -> left++ (bada chahiye); sum>target -> right-- (chhota). O(1) space.   // while(left<right): ek hi index do baar nahi · na mile -> {-1,-1}
@@ -645,7 +645,7 @@ Ek number c diya hai. Batao ki kya aise do poore number a aur b hain jinke liye 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 a²+b²==c possible? (LC 633). RECOGNITION: 2 NUMBER (pair) chahiye -> TWO-POINTER.
 low=0, high=sqrt(c). ans=low²+high²: ==c->true · <c->low++ · >c->high--. low<=high tak, warna false.
@@ -680,7 +680,7 @@ Dobara sort() nahi lagana, ek hi baar me (O(n)) karna hai.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: sorted arr me negatives ka square order ULTA -> sabse BADA square dono CHHOR pe (beech me nahi). 2-ptr, ans PEECHE se bharo. O(n), no sort.
 TEMPLATE: left=0, right=n-1, k=n-1.   // k=n-1: sabse bada square ans ke aakhri slot me · ans(n) pehle se size n (k-- se index pe likho)
@@ -720,7 +720,7 @@ nums2 ko nums1 me hi milana hai (in-place), taaki poora nums1 sorted ho jaaye.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: 2 sorted arr; nums1 ke END me n khaali. in-place -> PEECHE se bharo (aage se karo to zinda element overwrite). O(m+n).  ★ k=m+n-1 NA m*n-1
 in-place = naya array NAHI banaya; usi nums1 me answer bhara -> O(1) EXTRA space.
@@ -773,7 +773,7 @@ sort() nahi lagana, ek hi pass me karna hai.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 Dutch flag, 3 pointer (low/mid/high).  loop: while(mid <= high)   // <= : high wala abhi dekha nahi, use bhi check · low=mid=0, high=n-1
 nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).   // mid++ bhi: low se aaya element pehle hi check ho chuka
@@ -817,7 +817,7 @@ Ek array diya hai. Saare even number pehle aur saare odd number baad me rakhne h
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 evens pehle, odds baad (aapas order koi bhi). left/right pointer.   // while(left<right) · odd check = nums[x]%2 != 0
 left ODD && right EVEN (dono galat jagah) -> swap + left++ right--.
@@ -856,7 +856,7 @@ Ek hi group do baar nahi aana chahiye, chahe array me number dohraye gaye hon.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (sum = -fixed).
 TEMPLATE:
@@ -912,7 +912,7 @@ Do string s aur t di hain. Batao ki kya t me se kuch akshar hata ke (baaki ka kr
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
 s[i]==t[j] -> i++ AUR j++ (char mila).  nahi mila -> sirf j++ (t aage scan).   // while(i<s.size() && j<t.size()): koi ek khatam -> ruko
@@ -948,7 +948,7 @@ O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - heigh
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 CORE: bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i].  (min kyun: CHHOTI side se paani bah jaata.)
 
@@ -1022,7 +1022,7 @@ solve: &count : warna bahar count badhta hi nahi
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 String me kitne SUBSTRING (contiguous) palindrome hain? COUNT karo.
 single char bhi palindrome · same-dikhne wale par ALAG POSITION wale ALAG count.
@@ -1100,7 +1100,7 @@ int countSubstrings(string s) {
 `"abcabcbb" -> 3`. Sabse lambi substring jisme koi char repeat na ho.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
 TEMPLATE:
@@ -1155,7 +1155,7 @@ int lengthOfLongestSubstring(string s) {
 `"AABABBA", k=1 -> 4`. Max k char badal ke sabse lambi window jisme sab same.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
 KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
@@ -1206,7 +1206,7 @@ int characterReplacement(string s, int k) {
 `[1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6`. Max k zero ko 1 bana ke sabse lambi 1 ki line.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
 TEMPLATE:
@@ -1249,7 +1249,7 @@ int longestOnes(vector<int> &nums, int k) {
 `[1,2,3,2,2] -> 4`. 2 basket, har basket me ek type. Lagaatar pedon ki sabse lambi line.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW skeleton + map<type,count>.
 DELTA (SW skeleton pe -- sirf ye badalta):
@@ -1290,7 +1290,7 @@ int totalFruit(vector<int> &fruits) {
 `"eceba", k=2 -> 3`. Sabse lambi substring jisme zyada se zyada k alag char.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 FRUIT-INTO-BASKETS ka GENERAL version. wahi variable window + map<char,count>,
 distinct (mp.size()) > k ho -> left se shrink (erase-on-0). ans = max length.
@@ -1326,7 +1326,7 @@ int longestKDistinct(string s, int k) {
 `s="abcd", t="bcdf", maxCost=3 -> 3`. s ke char ko t me badalne ki cost `|s[i]-t[i]|`. Kul cost budget ke andar, sabse lambi window.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cost-SUM <= maxCost.
 KEY  : cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
@@ -1361,7 +1361,7 @@ int equalSubstring(string s, string t, int maxCost) {
 `target=7, [2,3,1,2,4,3] -> 2` ([4,3]). Positive numbers, sum >= target wala sabse chhota subarray.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : positive nums, sum >= target wala SABSE CHHOTA subarray ki length (nahi mile -> 0).
 TEMPLATE:
@@ -1409,7 +1409,7 @@ int minSubArrayLen(int target, vector<int> &nums) {
 `[2,1,5,1,3,2], k=3 -> 9`. Har size-k window ka sum, sabse bada.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
 KEY  : variable nahi -- size fix k, isliye IF (ek hi remove).
@@ -1442,7 +1442,7 @@ int maxSumK(vector<int> &nums, int k) {
 `[1,2,3,4,5,6,1], k=3 -> 12` (peeche se 5+6+1). Dono kinaron se kul k card lo, sum sabse bada.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [1,2,3,4,5,6,1], k=3 -> 12   (back se 5,6,1)
 
@@ -1518,7 +1518,7 @@ int maxScore(vector<int> &nums, int k) {
 `[1,2,3,1], k=3 -> true`. Do barabar number jinka index ka farak <= k.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ★ RECOGNITION: "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
    KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
@@ -1564,7 +1564,7 @@ bool containsNearbyDuplicate(vector<int> &nums, int k) {
 `[10,5,2,6], k=100 -> 8`. Positive numbers, kitne subarray jinka guna k se kam.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : kitne subarray jinka product < k.   (lambai nahi, GINTI chahiye)
 
@@ -1627,7 +1627,7 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k) {
 `[1,2,1,2,3], k=2 -> 7`. Kitne lagaatar subarray hain jinme theek k alag number hon.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : kitne SUBARRAYS jinme EXACTLY k different numbers.  [1,2,1,2,3],k=2 -> 7
 
@@ -1702,9 +1702,9 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
 `s="ADOBECODEBANC", t="ABC" -> "BANC"`. s ki sabse chhoti window jisme t ke saare akshar utni hi baar hon jitni baar t me hain (count ke saath; t="AA" ho to do A chahiye). Na mile to "".
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
 │ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
@@ -1763,7 +1763,7 @@ string minWindow(string s, string t) {
 `"abcabc" -> 10`. Kitne substring jinme a, b, c teeno.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 IDEA:
    = LC-76 ka SAME code reuse:  numberOfSubstrings(s) = minWindow(s, "abc")
@@ -1837,7 +1837,7 @@ int numberOfSubstrings(string s) {
 `s="cbaebabacd", p="abc" -> [0,6]`. s me p ke saare anagram ki start index.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
 TEMPLATE:
@@ -1884,7 +1884,7 @@ vector<int> findAnagrams(string s, string p) {
 `s1="ab", s2="eidbaooo" -> true`. Kya s2 me s1 ka koi anagram (permutation) lagaatar substring ban ke maujood hai? true ya false.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
 = FIND-ALL-ANAGRAMS ka SAME code -- REUSE: checkInclusion(s1,s2) = findAnagrams(s2, s1).
@@ -1932,7 +1932,7 @@ bool checkInclusion(string s1, string s2) {
 `[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`. Har k size ki window ka sabse bada number lautao.
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING) -> front = window ka max.
 CONNECT : back-pop (nums[back]<=nums[i]) = MONOTONIC banana -- ye UNIVERSAL (stack ho ya deque, wahi cheez; isi se monotonic).
@@ -2015,7 +2015,7 @@ s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" fal
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : s->t har char ka 1-to-1 mapping (bijection)? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false.
 KEY  : 2 MAP dono taraf -- mp1=s->t, mp2=t->s. ek map kaafi nahi ("ab"->"aa" clash sirf ULTI-taraf pakadta).
@@ -2055,7 +2055,7 @@ Isomorphic jaisa hi, bas akshar ki jagah word. true ya false lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = ISOMORPHIC ka SAME 2-map clash-check. REUSE: wahi mp1/mp2 || check, bas char <-> WORD.
   farak SIRF 3 delta:
@@ -2109,7 +2109,7 @@ Jawab hamesha ek hi hai, aur ek hi number do baar nahi le sakte.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 map me {value -> index}. har num pe dekho: (target - num) map me HAI? -> haan to jodi mil gayi (dono index).
 ek pass: pehle CHECK phir daalo (taaki num khud se na match kare).   // mp.find(target-num) se check · mila -> return {mp[target-num], i}
@@ -2136,7 +2136,7 @@ Do string s aur t di hain. Kya t, s ka anagram hai, matlab dono me same akshar u
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 dono me har char ka count barabar? count-array[26] (ya map): string-1 se ++, string-2 se -- -> sab ZERO -> anagram.
 (length alag -> turant false.)   // end me koi count != 0 -> false (sirf >0 nahi, -ve bhi aata)
@@ -2171,7 +2171,7 @@ brute = har jodi "anagram hai?" O(n² · k) -> har word ki KEY bana ke map me CA
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 DERIVE: brute = har jodi check "anagram hai?" O(n² · k) -> baar-baar wahi letters gin rahe
         -> har word ki ek pehchaan (KEY) bana ke map me CACHE -> O(n · k log k).
@@ -2220,7 +2220,7 @@ Array me minus number bhi ho sakte hain.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 prefix-sum + hashmap {prefixSum -> count}. running sum chalao; count += mp[sum - k], phir mp[sum]++.
 mp[0]=1 se START zaroori (jab sum khud == k ho, tab prefix-0 chahiye). idea: pichla prefix jahan se ab tak k bana.
@@ -2256,7 +2256,7 @@ A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har ele
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 count pairs (i<j): (A[i]+A[j])%k==0.
 DERIVE: brute O(n²) har pair -> "partner pehle aaya?" baar-baar -> partner ko hashmap me CACHE -> O(n).
@@ -2322,7 +2322,7 @@ sort (n log n) mat karo -> SET me O(1) lookup, har CHAIN sirf uske START se gino
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [100,4,200,1,3,2] -> 4   (1,2,3,4 = chain; 100/200 akele)
 
@@ -2396,7 +2396,7 @@ map se: mp[x]++, count > n/2 wala return -> O(n) time, O(n) space (seedha)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 map se: mp[x]++; count > n/2 wala return. O(n) time, O(n) space. (seedha.)
 BOYER-MOORE VOTING (O(1) space): majority n/2 se zyada -> baaki sab milkar bhi kam -> do ALAG element CANCEL karo, majority bachega.
@@ -2435,7 +2435,7 @@ extra set/map nahi: value v ka ghar = index v-1 -> dikha to us index ko NEGATIVE
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [4,3,2,7,8,2,3,1] -> [5,6]
 
@@ -2593,7 +2593,7 @@ Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 total nikaalo; leftSum chalao. order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
 ```
@@ -2627,7 +2627,7 @@ O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= pro
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ans[i] = (i se PEHLE sabka product) × (i ke BAAD sabka product).  no division, O(n).
 running `prod` se 2 pass (assign-BEFORE-update dono me):
@@ -2671,7 +2671,7 @@ Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak a
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 running sum chalao, max track. (simple prefix)   // sum=0, maxi=0: shuru ki altitude 0 bhi gino (sab -ve -> 0)
 ```
@@ -2700,7 +2700,7 @@ PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak =
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 count subarrays: sum%k==0.
 DERIVE: brute har subarray ka sum baar-baar -> redundancy -> running PREFIX sum -> do prefix ka remainder same = beech ka subarray %k==0.
@@ -2737,7 +2737,7 @@ beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni ba
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
 ★ CHAABI:  x ^ x = 0   (same number khud se XOR = gayab)
@@ -2785,7 +2785,7 @@ K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 valid = (har element <= K) AND (>=1 element == K).
 
@@ -2834,7 +2834,7 @@ har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek b
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 └────────────────────────────────────────────────────────────
 KAB : "har RANGE pe kuch ADD karo" — aur aise 20,000 range hain.
@@ -2918,7 +2918,7 @@ m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: 2 marker-array -> zeroRow[row], zeroCol[col]. pass-1: cell==0 pe row+col mark; pass-2: marked ho to 0. (in-place, O(m+n) space)
   pass-1:  for i,j:  if(matrix[i][j]==0){ zeroRow[i]=1; zeroCol[j]=1; }   // init -1 = unmarked · 2 pass: ek me hi 0 kiya to naye 0 bhi mark ho jaate
@@ -2953,7 +2953,7 @@ m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf,
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
 TEMPLATE:
@@ -3045,7 +3045,7 @@ m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 [ans[i][j] = matrix[j][i];] naya matrix col×row size ka.   // ans(col, vector<int>(row)) · outer i<col, inner j<row
 ```
@@ -3075,9 +3075,9 @@ Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
    count kitne communicate (jo apni row+col DONO me akela -> nahi ginte).
 INPUT: [[1,0],[1,1]] -> 3   ·   [[1,0],[0,1]] -> 0 (dono akele)
@@ -3172,7 +3172,7 @@ har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [2,1,2,4,3] -> [4,2,4,-1,-1]
 
@@ -3242,7 +3242,7 @@ Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (str
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = NEXT GREATER, bas DELTA: condition ULTA -> while nums[st.top()] > nums[i]  (bada -> chhota).
   strictly (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, left->right, push, init -1) sab wahi.
@@ -3273,7 +3273,7 @@ Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (str
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = NEXT SMALLER, bas DELTA: for-loop ULTA (right->left, i=n-1..0). condition wahi (>).
   (peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
@@ -3309,7 +3309,7 @@ har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = don
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: [2,1,5,6,2,3] -> 10   (bars 5,6 -> min 5 * width 2)
 
@@ -3481,7 +3481,7 @@ int largestRectangleArea(vector<int> &heights) {
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = Largest-Rectangle-Histogram (LC-84) ka 2D bhai. HAR ROW ko histogram maano -> us pe LC-84 laga -> saare rows ka MAX.
 heights[] (size = COL, har column ki running height -- upar se neeche):
@@ -3519,7 +3519,7 @@ temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).   // ans(n,0): garam din na mile to 0 (-1 nahi) · < strict: barabar garam nahi
 ```
@@ -3550,7 +3550,7 @@ Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 same next-greater (monotonic stack), bas array CIRCULAR -> aakhri element ka greater SHURU me bhi ho sakta.
 vector<int> ans(n, -1);                          // size n (2n nahi) · na mile -> -1
@@ -3597,9 +3597,9 @@ Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao:
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 INPUT: next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
 = monotonic stack ka DELTA -- 2 farak: (1) stack me INDEX nahi, PAIR {price, span}.
@@ -3647,7 +3647,7 @@ Ek string me sirf ( ) [ ] { } hain. true lautao agar har khulne wala bracket sah
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 opening push; closing aaye to top se match+pop; end me stack KHALI = valid. (closing pe stack empty -> false)
 match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')   // topp=st.top() + pop pehle, phir match; na mile -> turant false
@@ -3685,7 +3685,7 @@ class MinStack: push / pop / top / getMin sab O(1)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 DESIGN: push/pop/top/getMin SAB O(1). trick = min hamesha "ready" rakho, bina scan kiye.
 har element ke SAATH uska "yahaan tak ka MIN" store karo -> stack<pair<val, minSoFar>>.
@@ -3723,7 +3723,7 @@ Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 COUNTER (stack nahi -- sirf '(' ')'). 2 counter (naam tere code se):
    close_needed = kitne '(' abhi UNMATCHED khade (inhe aage ')' chahiye).
@@ -3767,7 +3767,7 @@ Sirf stack (push, pop, top, empty) ka use karke ek queue (pehle aaya, pehle gaya
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 DESIGN: 2 stack -> input (push yahan) · output (pop / peek yahan se).
 push:        input.push(x).
@@ -3855,7 +3855,7 @@ Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mi
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 mid; target<mid -> left half, warna right. (low<=high: 1 element bacha tab bhi check; mid±1)   // mid=low+(high-low)/2 · loop ke bahar return -1
 
@@ -3890,7 +3890,7 @@ Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 basic BS; na mile to low return (wahi insert jagah).   // loop khatam: low = pehla index jahan nums >= target
 ```
@@ -3923,9 +3923,9 @@ Na mile to {-1, -1}. O(log n) me karna hai.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
    nahi mila -> {-1,-1}. O(log n).
 INPUT: [5,7,7,8,8,10], target 8 -> {3,4}
@@ -4022,7 +4022,7 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : sorted array pivot pe rotate ([4,5,6,7,0,1,2]). target ka INDEX, nahi mile -> -1.
 CORE : mid==target? return. warna -> ek half HAMESHA sorted -> wahi se decide:   // while(low<=high): akela element bacha tab bhi check
@@ -4070,7 +4070,7 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sab
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 mid ko HIGH se compare (koi target nahi, khud min dhoondna). while(low<high): if(nums[mid]>nums[high]) low=mid+1; else high=MID; -> return nums[low].
 high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
@@ -4113,7 +4113,7 @@ Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 │       ceil-TRAP: int/int FLOOR karta -> use (piles[i]+mid-1)/mid. hours = long (overflow).   // ya ceil((double)piles[i]/mid): cast pehle
 ```
@@ -4154,7 +4154,7 @@ Sabse kam capacity kitni chahiye, wo lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 │       solve(mid): day=1,sum=0; for w: if(sum+w>mid){day++;sum=0;} sum+=w;  ->  day <= D ?   // day=1: aakhri din ka load bhi gino
 ```
@@ -4200,7 +4200,7 @@ Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 │       solve(mid): sum=0,count=1; for x: sum+=x; if(sum>mid){count++;sum=x;}  ->  count <= k ?   // sum=x (0 nahi): jis x ne limit todi wo naye tukde ka pehla
 │       count=1 se START (warna aakhri tukda chhoot jaaye).
@@ -4250,7 +4250,7 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
 low=0, high=n-1;   while (low < high):   mid = low+(high-low)/2;   // low<high: high=mid se atke nahi, aur mid+1 hamesha andar
@@ -4287,7 +4287,7 @@ single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
    idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
@@ -4384,7 +4384,7 @@ Batao target matrix me hai ya nahi, true ya false.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)   // col = matrix[0].size(), row nahi
 
@@ -4454,7 +4454,7 @@ Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wa
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: 2 sorted arrays ka COMBINED median, O(log). MERGE mat karo -> ek CUT dhoondo:
       LEFT aadha | RIGHT aadha, aur left ka HAR element <= right ka HAR. Cut ke 4 kinaare = median.
@@ -4574,7 +4574,7 @@ Linked list ka head diya hai. Beech wala node lautao. Agar list ki lambai even h
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 FAST/SLOW: slow 1 step, fast 2 step; fast end pe -> slow MIDDLE pe.
    Node *slow=head, *fast=head;   // dono head se: even list me 2nd middle milta
@@ -4604,7 +4604,7 @@ Linked list ka head diya hai. Agar list me cycle hai (koi node wapas kisi pichhl
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
    Node *slow=head, *fast=head;   // dono head se: cycle ho to fast ghoom ke slow ko pakdega
@@ -4642,7 +4642,7 @@ values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = dupli
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: n+1 numbers, values 1..n, ek repeat. dhoondo. O(1) space + array READ-ONLY.
 PEHCHAN: "array + duplicate + O(1)-space + no-modify" -> value ko POINTER samjho (i -> nums[i]).
@@ -4687,7 +4687,7 @@ cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* ve
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: cycle ho to uske START (entry) node ka pointer return; warna NULL.
 = DETECT CYCLE (03), bas DELTA: true/false nahi, ENTRY chahiye -> PHASE-2.
@@ -4743,7 +4743,7 @@ middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKE
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
    while (head && rev) { if (head->val != rev->val) return false; head=head->next; rev=rev->next; }   // && : even me rev wala half chhota, jo pehle NULL ho wahin ruko
@@ -4776,7 +4776,7 @@ Linked list ka head aur ek number n diya hai. List ke end se gina hua n-va node 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 FAST/SLOW GAP: pehle fast ko n kadam aage, phir dono saath.
 Node *slow = head, *fast = head;                     // dummy nahi, dono head se
@@ -4816,7 +4816,7 @@ Linked list ka head aur ek number val diya hai. Jitne bhi node ki value val hai,
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;   // prev=null: head ke peeche koi node nahi
 while (curr != null && head != null):   // head null = sab node hat gaye, aage kuch nahi
@@ -4857,7 +4857,7 @@ Do SORTED linked list di hain. Dono ko jod ke ek sorted list banao aur uska head
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 DUMMY node + tail (dummy = head ka special-case avoid).   // dummy=new Node(0); tail=dummy -> tail dummy se shuru
    while (a && b): (a->val <= b->val) ? { tail->next=a; a=a->next; } : { tail->next=b; b=b->next; }   tail=tail->next;   // && : ek list khatam hote hi ruko, baaki neeche ke loop jodte
@@ -4909,7 +4909,7 @@ number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala rig
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: 2 number linked-list me ULTA pade (units-digit HEAD pe). Jodo -> naya list.
       ULTA hai isiliye HEAD-se-HEAD jodo = school-wala right-to-left add (carry aage jaata).
@@ -4970,7 +4970,7 @@ Linked list di hai. Har do paas-paas wale node ki jodi aapas me badal do. Value 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har do adjacent NODE ki jodi swap (values nahi, NODES = pointer rewire). DUMMY-node trick.
 TEMPLATE:
@@ -5016,7 +5016,7 @@ Linked list ka head diya hai. Poori list ulti karo aur naya head lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 3-pointer: prev=NULL, curr=head;   // prev=NULL: purana head naya tail banega, uska next NULL
    while (curr) { Node *nextt=curr->next; curr->next=prev; prev=curr; curr=nextt; }   // nextt pehle bachao: link ulta karte hi aage ka rasta gum
@@ -5052,7 +5052,7 @@ PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALA
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: har k-node group ko reverse (NODES). k se KAM bache -> waise hi.
 
@@ -5125,7 +5125,7 @@ PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: har node me val+next+RANDOM (kahin bhi ya NULL). DEEP copy banao,
       copy ke random COPY-list ke andar point karein (original pe NAHI).
@@ -5223,9 +5223,9 @@ get(key): value lautao, na mile to -1. remove(key): key hatao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
    index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
@@ -5377,7 +5377,7 @@ Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohra
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = HashMap ka EXACT code, bas VALUE nikaal do. CONNECTION:
 ┌──────────┬──────────────────────────────┬──────────────────────────────┐
@@ -5487,7 +5487,7 @@ Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least rec
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 MENTAL MODEL: get+put DONO O(1). 2 zaroorat -> 2 structure JODO:
    hashmap: key -> DLL-node ka POINTER  (find O(1))
@@ -5623,7 +5623,7 @@ prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din b
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: aaj becho = aaj ka daam MINUS ab-tak-ka-sasta. bas 2 cheez track: mini + maxProfit.
   mini = min(mini, prices[i]);   maxProfit = max(maxProfit, prices[i] - mini); // init mini=INT_MAX; mini PEHLE update -> diff kabhi minus nahi
@@ -5656,7 +5656,7 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chun
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: pichhla running sum NEGATIVE = aage bojh -> PHENK do (sum=0), fresh. bas yahi.
   sum += nums[i];   max_sum = max(max_sum, sum);   if(sum < 0) sum = 0;   // max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
@@ -5688,7 +5688,7 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: neg*neg = BADA -> sirf max se nahi banega, MIN bhi track karo (chhota kal sabse bada ban sakta).
   temp    = max({ num, num*max, num*min });     // 3 candidate ka max (temp me rakho: max pehle badla to min ko naya max milta)
@@ -5723,7 +5723,7 @@ Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = MAX PRODUCT SUBARRAY (152) ka HUBAHU same skeleton (temp/min/max freeze, upar dekh), sirf 2 TWEAK:
    (1) GUNA (*) -> PLUS (+)                    (num*max -> num+max, num*min -> num+min)
@@ -5769,7 +5769,7 @@ A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL -
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
 
@@ -5849,7 +5849,7 @@ har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
 
@@ -5990,7 +5990,7 @@ Array me har number do baar aata hai, sirf ek number ek baar. Wo number lautao. 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
   XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)   // nums[0] se shuru isliye loop 1 se; a^a=0 se pairs kat jaate
@@ -6085,7 +6085,7 @@ Binary tree ka root diya hai. Root se sabse door wale leaf tak raste me kitne no
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 base : null -> 0.
 comb : return 1 + max(leftDepth, rightDepth).   (khud=1 + gehri branch)
@@ -6110,7 +6110,7 @@ Binary tree ka root diya hai. Har node ke left aur right bachche aapas me badal 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 base : null -> null.
 comb : recurse dono (left, right) -> phir children SWAP -> return root.
@@ -6138,7 +6138,7 @@ Do binary tree p aur q diye hain. Kya dono ka dhaancha aur har node ki value bil
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
 comb : isSame(p->left, q->left) && isSame(p->right, q->right).
@@ -6172,7 +6172,7 @@ isSameTree: same tree ka hi base (dono null / ek null / val alag)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
 comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   CROSS = mirror (yehi ek change).
@@ -6214,7 +6214,7 @@ height: max-depth ka height(), maxDia by-REFERENCE
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = max-depth ka height() helper (maxDia by-REFERENCE), BAS 1 line EXTRA:
    int height(root, int& maxDia):
@@ -6258,7 +6258,7 @@ skeleton HUBAHU diameter (return EK arm / record DONO arm / post-order / global 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 CONNECTION -- diameter ki HAR line ke saamne, kya badla (side-by-side):
 
@@ -6321,7 +6321,7 @@ preorder[rootIndex] = ROOT · inorder me us root pe todo -> LEFT-part | root | R
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 preorder[0] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part. recurse.
 
@@ -6387,7 +6387,7 @@ maxDepth: return = HEIGHT, ya -1 (neeche kahin imbalance)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
    int maxDepth(root):
@@ -6434,7 +6434,7 @@ Binary tree ka root aur do node p, q diye hain. Wo sabse neeche wala node lautao
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : wo node jahan p, q ALAG side split ho jaate (ek left, ek right).
    TreeNode* lca(root, p, q):
@@ -6479,7 +6479,7 @@ Binary tree ka root aur ek targetSum diya hai. Kya root se kisi leaf tak aisa ra
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : root-se-LEAF sum == target? value NEECHE carry (target me se ghatao).
 base : null -> false.
@@ -6510,7 +6510,7 @@ Binary tree ka root diya hai. Har level ke nodes ko left se right, alag-alag lis
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : har level ki alag list -> list-of-lists. queue = FIFO (pehle-aaya-pehle-process) -> level-order + L-to-R apne aap.
 SKELETON (saare BFS-level Q bas isi pe):
@@ -6561,7 +6561,7 @@ Binary tree ke daayi taraf khade ho ke upar se neeche dekho. Jo nodes dikhte hai
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : daaye khade -> har level ka SIRF right-most node dikhta (baaki peeche chhup jaate).
 LEVEL-ORDER template bilkul SAME (while + sz-snapshot + for + push L/R). FARAK sirf level ke andar 1 line:
@@ -6604,7 +6604,7 @@ Level order jaisa hi, par disha har level pe badalti hai: level 0 left se right,
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : level-order BFS jaisa, par direction ALTERNATE (0:L->R · 1:R->L · 2:L->R...).
 = LEVEL-ORDER ka SAME skeleton (queue + sz-SNAPSHOT + inner-loop -> level) + ek levelCounter.
@@ -6652,7 +6652,7 @@ Binary tree ka root diya hai. Root se sabse paas wale leaf tak raste me kitne no
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
 TEMPLATE (level-order skeleton + EARLY-STOP):
@@ -6709,7 +6709,7 @@ inorder: BST pe inorder = SORTED (ascending)
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : BST inorder = SORTED -> kth smallest = inorder ka k-va element.
 steps: inorder(root) -> sorted vector 'ans' -> return ans[k-1].
@@ -6746,7 +6746,7 @@ sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRAP : local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
 IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.
@@ -6874,7 +6874,7 @@ n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destinat
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = tree LEVEL-ORDER (BFS) ka SAME skeleton (queue + pop + push), graph ke liye 3 ADD:
    (1) NEIGHBOURS : tree me node->left/right built-in · graph me adj[node] (edges se banao).
@@ -6935,7 +6935,7 @@ Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayei
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 outer: for(i,j) if(grid[i][j]=='1') { DFS(i,j); count++; }   // har naya '1' = naya island
 DFS(i,j) — code order (upar se neeche), grid ke 3 farak (adj-list nahi):
@@ -6985,7 +6985,7 @@ ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BF
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : ISLANDS ka SAME skeleton (outer-loop + count), bas 2 farak:
        (a) graph = ADJ-LIST (grid nahi)   (b) BFS use kiya (islands ne DFS kiya tha).
@@ -7045,7 +7045,7 @@ ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer cou
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = ISLANDS ka SAME skeleton (base + sink), bas DFS ab void nahi -> AREA return. 2 DELTA:
 
@@ -7098,9 +7098,9 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 = tree LEVEL-ORDER (sz-snapshot) grid pe, MULTI-SOURCE.  har level = 1 minute.
 
@@ -7197,7 +7197,7 @@ numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pe
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi?   cycle -> false.
 
@@ -7354,7 +7354,7 @@ saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 ka
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : "mere GRAPH ke saare node map me clone bana (A->A', B->B'), phir clones ko CONNECT kar (A'--B')." bas.
 
@@ -7439,7 +7439,7 @@ graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har node ko 2 me se ek rang (0/1) do; koi bhi 2 JUDE hue (adjacent) node SAME rang ke na hon.
        ho gaya -> true.  kahin do jude hue SAME rang pe phans gaye (odd cycle) -> false.
@@ -7555,7 +7555,7 @@ pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 REAL: Google Maps/GPS (shortest route), network routing, delivery/flights -- roz use hota.
 
@@ -7634,7 +7634,7 @@ REAL: dost-circle ("A-B same circle?"), accounts merge
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 REAL: dost-circle manager ("A-B same circle?"), network/accounts merge.
 
@@ -7720,7 +7720,7 @@ level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 beginWord -> endWord, har step EK letter badlo, har beech ka word dict me ho. shortest me kitne WORD?
 SIGNAL: "minimum steps / shortest unweighted path" -> BFS (level-by-level).
@@ -7847,7 +7847,7 @@ Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har turn "2 SABSE BHAARI" pathar smash -> MAX-HEAP. pop 2, diff wapas push, till <=1 bache.
 TEMPLATE:
@@ -7884,7 +7884,7 @@ Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : k SABSE BADE min-heap me rakho -> unme se sabse chhota (heap TOP) = k-th largest.
 TRICK (top-K ka core): MIN-heap of size k.  (kyun MIN: size>k pe sabse-chhota EVICT karna hai.)
@@ -7918,7 +7918,7 @@ KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap,
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : origin (0,0) ke k SABSE PAAS points. paas = doori = x*x+y*y (√ NAHI, sirf compare).
 = KTH-LARGEST ka MIRROR-TWIN. wahan k BADE (min-heap, chhota evict);
@@ -7965,7 +7965,7 @@ KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : k sabse ZYADA baar aane wale elements return karo (order matter nahi).
 = KTH-LARGEST ka COUSIN. bas "value" ki jagah "FREQUENCY" pe heap.  FARAK = 2:
@@ -8016,7 +8016,7 @@ struct Compare: ListNode* ko khud compare karna nahi aata
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : min-heap me har list ka current HEAD. pop chhota -> result me jodo -> uska NEXT push. repeat.
 TEMPLATE:
@@ -8068,7 +8068,7 @@ har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har element sahi position se max k DOOR -> O(n log k) sort (n log n se behtar).
 DERIVE (WHY heap): index-0 pe MIN aayega, wo max index k tak -> "pehle k+1 me se MIN kaun?"
@@ -8121,7 +8121,7 @@ heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : stream me numbers aate rehte; kabhi bhi ab-tak ka MEDIAN turant chahiye.
        add 5,15,1,3 -> median 4.0  ((3+5)/2)
@@ -8213,7 +8213,7 @@ possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: chars rearrange -> koi 2 ADJACENT same na ho. na bane -> "".
 
@@ -8295,7 +8295,7 @@ BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR: har step bache hue me SABSE CHHOTA uthao (tie -> chhota index), total me jodo,
       use + ORIGINAL padosi (i-1, i+1) hata do. sab hatne tak.
@@ -8380,7 +8380,7 @@ intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : sort by start -> ans me first daalo -> har next OVERLAP? merge : push.
 TEMPLATE:
@@ -8423,7 +8423,7 @@ MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. (Merge ka SAME skeleton reuse.)
 SAME as MERGE (sort + ans.push(first) + loop overlap-check) -- bas overlap pe KYA karo:
@@ -8468,7 +8468,7 @@ pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
 KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
@@ -8541,9 +8541,9 @@ min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 NAYA-SOCH (merge/meeting-I se ALAG): rooms ko OBJECT mat gino -> +1/-1 GINTI karo.
     meeting shuru = +1 (room bhara) · khatam = -1 (room khaali). running-sum ka MAX = answer.
@@ -8648,7 +8648,7 @@ Ek array diya hai (sab number alag). Iske saare subsets (khaali bhi) lautao, kra
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : har element ke saamne 2 raaste -> LE lo ya CHHOD do -> 2 recursive call. index==size pe temp = ek subset.
 TEMPLATE (index-based, include/exclude):
@@ -8733,7 +8733,7 @@ Ek array diya hai (sab number alag). In numbers ko jitne alag-alag kram me laga 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : saare elements ka har ORDER (arrangement). har position pe koi bhi UNUSED element -> used[] track.
 SUBSETS se FARAK (crux): subsets = 'start' index (sirf AAGE) -> [1,2]==[2,1] repeat nahi.
@@ -8783,7 +8783,7 @@ Do number n aur k diye hain. 1 se n tak ke numbers me se k number chunne ke saar
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : 1..n me se k numbers ke saare combos (order nahi). = subsets ka start-loop, record SIRF size==k pe.
 TEMPLATE:
@@ -8821,7 +8821,7 @@ candidates[] (sab alag, sab positive) aur ek target diya hai. Wo saare alag comb
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : candidates me se (REUSE allowed) sum==target wale saare combos. = combinations code, bas base target + recurse 'i'.
 TEMPLATE:
@@ -8894,7 +8894,7 @@ Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : grid me `word` adjacent (4-dir) cells se banta hai? har cell EK-BAAR. har cell se DFS, mark→recurse→un-mark.
 TEMPLATE:
@@ -8996,7 +8996,7 @@ n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : n jode ke saare VALID strings. brute (2^2n saari strings + filter) NAHI -> validity-RULE se hi banao.
 2 RULE (poora khel yahi): open<n -> '(' add sakta · close<open -> ')' add sakta (tabhi valid rahega).
@@ -9040,7 +9040,7 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : "23" -> har ank ke akshar me se EK-EK chuno -> saare shabd. (2=abc ... 7=pqrs ... 9=wxyz)
 = har LEVEL (index) = ek ank, us level pe us ank ke SAARE akshar try karo (for loop), neeche jao.
@@ -9133,7 +9133,7 @@ n seedhiyon ki seedhi hai. Ek baar me 1 ya 2 seedhi chadh sakte ho. Upar tak pah
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : n steps, ek baar 1 ya 2 step -> top tak kitne tareeke. step n pe -> (n-1) se 1-step YA (n-2) se 2-step.
    => solve(n) = solve(n-1) + solve(n-2).  base: n==0 || n==1 -> 1.  (= Fibonacci)
@@ -9174,7 +9174,7 @@ har i pe 2 choice (1 ank -> i+1 · 2 ank -> i+2); FARAK: yahan har choice pehle 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 QUESTION KYA MAANG RAHA:
    code: A=1, B=2, ... Z=26. kisi ne shabd ko ANKON me badal diya, beech ke khaane hata diye.
@@ -9267,7 +9267,7 @@ nums[] me har ghar me rakha paisa diya hai. Do paas-paas wale ghar ek saath nahi
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : adjacent ghar loot nahi sakte -> max paisa. har ghar i pe 2 CHOICE:
    LOOT i : nums[i] + solve(i-2)   (i-1 skip -- adjacent nahi)  ·  SKIP i : solve(i-1)
@@ -9316,9 +9316,9 @@ ghar GOL: pehla (0) aur aakhri (n-1) PADOSI -> dono saath nahi. [2,3,2] -> 3 (2+
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
    ghar GOL (circle) me lage hain.
    isliye pehla ghar (0) aur aakhri ghar (n-1) PADOSI ban gaye -> dono ek saath nahi loot sakte.
@@ -9426,7 +9426,7 @@ amount==0 = THEEK bana -> 0 coins · amount<0 = overshoot -> INVALID (ban-na = t
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : amount banane ko MIN coins (har coin UNLIMITED = reuse). na ban sake -> -1.
 amount==0 vs amount<0 (THEEK utna, na kam na zyada): amount==0 -> THEEK bana (11 = theek 11) -> SUCCESS -> 0 coins ·
@@ -9504,7 +9504,7 @@ Ek array diya hai. Usme sabse lambi strictly badhti hui subsequence kitni lambi 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : sabse lambi STRICTLY-increasing subsequence ki LENGTH. coin-change family (take/not-take), ek twist = prev.
 TEMPLATE:
@@ -9550,7 +9550,7 @@ m x n grid hai. Robot (0,0) se (m-1, n-1) tak jaana chahta hai aur sirf daayein 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : m x n grid, robot (0,0) -> (m-1,n-1), sirf RIGHT/DOWN. kitne raaste? cell pe = UPAR se + LEFT se.
 TEMPLATE:
@@ -9590,7 +9590,7 @@ m x n grid ke har cell me ek cost likhi hai. (0,0) se (m-1, n-1) tak sirf daayei
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : grid me har cell cost. (0,0)->(m-1,n-1), right/down. MIN-sum path. = unique-paths code, 2 tweak.
 
@@ -9642,7 +9642,7 @@ Do string s1 aur s2 di hain. Dono me jo sabse lambi common subsequence hai (kram
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : do string me sabse lambi COMMON subsequence ki length. state = (i,j) = s1 index-i-tak, s2 index-j-tak.
 TEMPLATE:
@@ -9687,7 +9687,7 @@ Teen kaam kar sakte ho: ek akshar daalo (insert), hatao (delete) ya badlo (repla
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : w1 -> w2 min ops (insert/delete/replace). = LCS code, transition badli. (HARD par template = easy)
 TEMPLATE:
@@ -9774,7 +9774,7 @@ MAX value, weight <= W, har item ek baar
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : items (wt,val) + bag capacity W. har item ek baar (0/1). MAX value, weight<=W. (chor: bag me best chura)
 TEMPLATE:
@@ -9821,7 +9821,7 @@ knapsack ka max-value ki jagah true/false
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : nums[] + target. kya koi SUBSET exactly target tak jode? true/false.
 RECOGNITION : subsetSum ne KNAPSACK function ko HI call kiya -- naya kuch nahi likha.
@@ -9887,7 +9887,7 @@ solve() = upar SUBSET SUM wala, hubahu
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : array ko DO barabar-sum subset me baant sakte? true/false.
 [1,5,11,5] -> S=22 -> har hissa 22/2 = 11
@@ -9930,7 +9930,7 @@ Ek string me sirf '(', ')' aur '*' hain. Har '*' ko '(' ya ')' ya khaali maan sa
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : '*' = '(' YA ')' YA khaali. valid ban SAKTI hai? har '*' pe 3-choice -> try-all -> state repeat -> memo.
 TRACK : ek counter open = ab tak kitne '(' UNMATCHED. state = (index, open). '(' 1 raasta, ')' 1, '*' 3 (choice).
@@ -9997,7 +9997,7 @@ chain multiply: result SAME, COST order pe -> MIN. p[] = dims, matrix A_i = p[i-
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : matrices chain multiply -> result SAME, COST order-pe badalti -> MIN scalar-mult nikaalo.
 
@@ -10080,9 +10080,9 @@ k = range me SABSE AAKHRI phootne wala -> baaki sab phoot chuke -> padosi = rang
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
    (padosi = us waqt zinda; array-bahar = 1). saare phod ke MAX total coins?
 
@@ -10240,7 +10240,7 @@ chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 g[] = bachhe ki GREED, s[] = cookie SIZE. cookie j bachhe i ko khush karti: s[j] >= g[i]. max kitne bachhe khush?
 GREEDY soch: chhoti-greed wale bachhe ko jitni-ZAROORAT-utni (chhoti-se-chhoti jo kaam kare) cookie do
@@ -10280,7 +10280,7 @@ nums[i] batata hai ki index i se zyada se zyada kitne kadam aage kood sakte ho. 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 nums[i] = us index se max kitni door kood sakte. index0 se LAST tak pahunch sakte ho? true/false.
 GREEDY soch: har index pe track karo "ab tak sabse DOOR kahan tak pahunch sakta hoon" (maxReach).
@@ -10316,7 +10316,7 @@ intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 intervals me se MIN kitne HATAO taaki koi overlap na bache? (= max non-overlapping rakho.)
 GREEDY: default SORT. 2-pointer -> start=rakha-hua, end=candidate. // start=0, end=1; while(end < n)
@@ -10376,9 +10376,9 @@ Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sa
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
    tank khaali se shuru. kis pump se chalu ki poora ghoom ke wapas wahin aa jau? koi nahi -> -1.
 
@@ -10457,7 +10457,7 @@ SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldow
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 tasks (letters) + cooldown n: SAME task dobara chalane se pehle n gap chahiye. minimum total TIME (idle included)?
 SIGNAL: "same cheez dobara se pehle GAP/cooldown" + "minimum time" -> greedy (most-frequent frame) YA max-heap.

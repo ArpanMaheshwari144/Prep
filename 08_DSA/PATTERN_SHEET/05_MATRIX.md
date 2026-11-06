@@ -26,7 +26,7 @@ m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: 2 marker-array -> zeroRow[row], zeroCol[col]. pass-1: cell==0 pe row+col mark; pass-2: marked ho to 0. (in-place, O(m+n) space)
   pass-1:  for i,j:  if(matrix[i][j]==0){ zeroRow[i]=1; zeroCol[j]=1; }   // init -1 = unmarked · 2 pass: ek me hi 0 kiya to naye 0 bhi mark ho jaate
@@ -61,7 +61,7 @@ m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf,
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
 TEMPLATE:
@@ -153,7 +153,7 @@ m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 [ans[i][j] = matrix[j][i];] naya matrix col×row size ka.   // ans(col, vector<int>(row)) · outer i<col, inner j<row
 ```
@@ -183,9 +183,9 @@ Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
    count kitne communicate (jo apni row+col DONO me akela -> nahi ginte).
 INPUT: [[1,0],[1,1]] -> 3   ·   [[1,0],[0,1]] -> 0 (dono akele)

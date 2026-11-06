@@ -21,7 +21,7 @@ Array me har number do baar aata hai, sirf ek number ek baar. Wo number lautao. 
 ```
 
 ```
-TASVEER (purani sheet se, same to same):
+PURANI SHEET SE (same to same):
 
 TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
   XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)   // nums[0] se shuru isliye loop 1 se; a^a=0 se pairs kat jaate
