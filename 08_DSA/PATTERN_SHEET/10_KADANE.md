@@ -17,17 +17,6 @@ prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din b
   kyun: din 1 pe 1 me kharida, din 4 pe 6 me becha = 5; pehle-chhota baad-bada ka isse bada farak nahi
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-TRICK: aaj becho = aaj ka daam MINUS ab-tak-ka-sasta. bas 2 cheez track: mini + maxProfit.
-  mini = min(mini, prices[i]);   maxProfit = max(maxProfit, prices[i] - mini); // init mini=INT_MAX; mini PEHLE update -> diff kabhi minus nahi
-(sell buy-ke-BAAD auto -- mini hamesha current se pehle ka.)
-BRUTE->OPT (aise pahunche): brute = saare pair (i<j): prices[j]-prices[i], max. O(n^2).
-  REDUNDANCY = har sell-din pe peeche ka "sabse sasta buy" baar-baar scan.
-  us min ko ek VARIABLE me CACHE -> inner loop gayab -> O(n).  (redundancy->cache = running-min)
-```
-
 ```cpp
 int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab tak ka sasta
     int ans = INT_MIN;
@@ -48,14 +37,6 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chuno jiska jod sabse bada ho, aur wo jod lautao.
   e.g. [-2,1,-3,4,-1,2,1,-5,4] -> 6
   kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
-```
-
-```
-PURANI SHEET SE (same to same):
-
-TRICK: pichhla running sum NEGATIVE = aage bojh -> PHENK do (sum=0), fresh. bas yahi.
-  sum += nums[i];   max_sum = max(max_sum, sum);   if(sum < 0) sum = 0;   // max PEHLE, reset BAAD: warna all-negative [-1] pe 0 aata
-TRAP: max_sum update RESET se PEHLE + max_sum=INT_MIN start (warna all-negative [-1] miss). // sum=0 se: abhi tak kuch joda nahi
 ```
 
 ```cpp
@@ -82,18 +63,6 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
   kyun: -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-TRICK: neg*neg = BADA -> sirf max se nahi banega, MIN bhi track karo (chhota kal sabse bada ban sakta).
-  temp    = max({ num, num*max, num*min });     // 3 candidate ka max (temp me rakho: max pehle badla to min ko naya max milta)
-  min     = min({ num, num*max, num*min });     // FREEZE: min purane max/min se
-  max     = temp;  ans = max(ans, max);         // max min-ke-BAAD, ans me purana bhi
-★ SHURUAAT (24-Sep theek kiya):  max = 1, min = 1, ans = INT_MIN,  loop i = 0 se.   // ans INT_MIN: 0 se [-2] pe 0 aata, sahi -2
-  pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
-  -> [4,-3] pe 0 aata (sahi 4). niyam: loop 1 se ho to ans bhi nums[0] se; loop 0 se to 1 / INT_MIN se.
-```
-
 ```cpp
 int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
     int mini = 1;                           // SHURUAAT: mini = maxi = 1, ans = INT_MIN, loop 0 se
@@ -117,21 +86,6 @@ Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value 
   kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-= MAX PRODUCT SUBARRAY (152) ka HUBAHU same skeleton (temp/min/max freeze, upar dekh), sirf 2 TWEAK:
-   (1) GUNA (*) -> PLUS (+)                    (num*max -> num+max, num*min -> num+min)
-   (2) ans me ABS dono -> ans = max({ ans, |max|, |min| })   (answer minSum se bhi aa sakta -> isliye abs)
-★ SHURUAAT (24-Sep theek kiya): max = 0, min = 0, ans = 0, loop i = 0 se.   n==1 -> return abs(nums[0]).   // 0 se theek: + me 0 kuch nahi jodta, abs kabhi minus nahi
-  pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
-  aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
-dry-run [2,-5,1,-4,3,-2] -> 8: subarray [-5,1,-4]=-8 minSum me -> |-8|=8.
-
-FAMILY: 53=sum(1 value) · 152=product(flip -> max+min) · 1749=abs-sum(max+min).
-MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
-```
-
 ```cpp
 int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: * -> +, ans me ABS
     int n = nums.size();
@@ -148,9 +102,9 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
     }
     return ans;                             // [2,-5,1,-4,3,-2] -> [-5,1,-4] = -8 -> 8
 }
+```
 
 ── (STANDALONE — apni alag trick) ──
-```
 
 ### ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
 
@@ -164,9 +118,7 @@ A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL -
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
+TASVEER:
 
 IDEA:
    2 CASE (bada lo):
@@ -175,25 +127,8 @@ IDEA:
    KEY INSIGHT: wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
       wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
 
-TEMPLATE:
-    maxK = maxKadane(nums);   minK = minKadane(nums);   total = sum(nums); // maxK init: cur=maxK=nums[0], loop 1 se (ya cur=0, maxK=INT_MIN)
-    circular = total − minK;   // wrap = poora array minus sabse bura (min) beech ka chunk
-
-    ★ minK Kadane-MIN se:  cur = min(nums[i], cur+nums[i]);   minK = min(minK, cur).  // init cur=minK=nums[0], loop 1 se (ya cur=0, minK=INT_MAX)
-       (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
-
-    ★ RETURN (edge yahin handle -- Arpan-way, saaf):
-         if (maxK > 0)  return max(circular, maxK);   // normal: dono me se bada
-         return maxK;                                 // maxK<=0 = SAB non-positive (all-neg) -> sirf maxK
-
 DRY-RUN [5,-3,5]:  maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
    -> wrap = 7−(−3) = 10  ->  ans = max(7,10) = 10.   (10 sirf WRAP se, seedhe Kadane se nahi.)
-
-EDGE KYUN: all-negative me min-subarray = poora array -> total−minK = 0 (EMPTY subarray) -> galat.
-   isliye maxK>0 check: agar koi positive hi nahi -> wrap bekaar -> seedha maxK (empty allowed nahi).
-
-CONNECT: [[house-robber-II]] jaisa "circular twist" par MECHANISM alag
-         (HR-II = exclude-first/last · ye = total − minKadane).
 ```
 
 ```cpp
@@ -244,16 +179,7 @@ har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
-
-IDEA:
-   CONNECT: ye KADANE + PREFIX/SUFFIX ka COMBO hai (do pattern jud rahe).
-      05 (kadane per-index) -> maxEndingAt array -> uska PREFIX-max (aage) = bestLeft,
-      SUFFIX-max (peeche) = bestRight -> phir WALL se jodo.  (var = code jaisa: ans/temp)
-      KYUN kadane+prefix: har index tak ka running SUM = prefix-sum; uska MAX (neg aaye to reset) = kadane.
-      eg [2,1,-99,3,3]=9 -> wall index-1 pe: LEFT best=3 ([2,1]) + RIGHT best=6 ([3,3]) = 9.
+TASVEER:
 
 TEMPLATE:
     maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)   // index 0 pe khatam = sirf nums[0], isliye loop 1 se
@@ -292,22 +218,6 @@ EDGE:
      isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
 
    loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-  maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)
-      ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
-         |__ ye jo array RETURN hua  -->  neeche bestLeftPrefix me 'temp' ban jaata
-
-  bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)
-      ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
-
-  maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)
-      ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // 05 ka MIRROR
-         |__ ye jo array RETURN hua  -->  neeche bestRightPrefix me 'temp' ban jaata
-
-  bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)
-      ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
 ```
 
 ```cpp
