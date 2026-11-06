@@ -1,39 +1,39 @@
 # JDK vs JRE vs JVM
 
-## Kahani
+## Scene
 
-Tune todoapp banaya. Laptop pe code likha aur `javac` se compile kiya, isliye wahan **JDK** chahiye tha. Server pe sirf jar chalana hai, compile kuch nahi karna, isliye wahan **JRE** kaafi hai. Dono ke andar jo asli engine bytecode chalata hai, wo **JVM** hai.
-
-## Tasveer
-
-Teeno ek dabbe ke andar doosre dabbe jaise hain. JDK ke andar JRE hai, aur JRE ke andar JVM hai:
+Tune todoapp banaya. Laptop pe code likha aur `javac` se compile kiya, isliye wahan JDK chahiye tha. Server pe sirf jar chalana hai, compile kuch nahi karna, isliye wahan JRE kaafi hai. Dono ke andar jo engine asal me bytecode chalata hai, wo JVM hai.
 
 ```
-JDK  = JRE + javac, jdb, jar        (banane wale ke liye)
+JDK  = JRE + javac, jar, jdb        (banane wale ke liye)
  JRE = JVM + libraries (java.util)  (chalane wale ke liye)
   JVM = bytecode chalata + GC        (engine)
-```
 
-Write Once, Run Anywhere ka matlab ye hai ki `.java` file ek baar compile hoke bytecode banti hai, aur wahi bytecode har OS pe
-us OS ke apne JVM pe chal jaata hai:
-
-```
 .java --javac--> .class (bytecode, har jagah same)
                     |
        Windows JVM   Linux JVM   Mac JVM     <- har OS ka apna JVM
 ```
 
-## 3 khaas baat
+Java platform-independent hai, par JVM nahi. Bytecode har jagah ek jaisa hota hai, sirf har OS ka JVM alag hota hai.
 
-1. **Java platform-independent hai, par JVM nahi.** Bytecode har jagah ek hi hota hai, bas har OS ka JVM alag hota hai.
+## Dikkat -> hal
 
-2. **Java compile bhi hoti hai aur interpret bhi.** `javac` code ko bytecode banata hai. JVM shuru me bytecode ko line-by-line translate karta hai. Jo code baar-baar chalta hai (hot code), use JIT ek baar native code me likh ke rakh leta hai, taaki agli baar translate na karna pade. Chala ke dekha tha: round 1 me 3120 aaya, aur round 3 se ~450 aane laga. JIT band karke (`-Xint`) chalaya, to har round ~27000 hi raha.
+JVM shuru me bytecode ko line-by-line translate karta hai, aur ye dheema hai. Jo code baar-baar chalta hai (hot code), use JIT ek baar native code me badal ke rakh leta hai, taaki agli baar translate na karna pade. Mart ka bill banane wala ek loop 5 baar chala ke dekha:
 
-3. **Java 11 se Oracle alag JRE nahi deta.** Ab ya to poora JDK lagate hain, ya `jlink` se apna chhota runtime banate hain. Docker ki `-jre` wali image wahi chhota runtime hai.
+```
+== normal ==              == -Xint (JIT band) ==
+round 1: 3411 us          round 1: 23042 us
+round 2: 2671 us          round 2: 24315 us
+round 3: 2202 us          round 3: 22794 us
+round 4: 1742 us          round 4: 23065 us
+round 5: 1737 us          round 5: 21784 us
+```
+
+JIT ke saath har round tez hota gaya. JIT band kiya to har round utna hi dheema raha.
 
 ## Prod wala trap
 
-Deploy ke turant baad ki pehli kuch requests dheemi aati hain, phir app tez ho jaati hai. Ye bug nahi hai, JIT ka warm-up hai. Isliye naye deploy ke pehle minute ki latency dekh ke ghabrana nahi chahiye, aur load test ke pehle round ke number ko asli number mat maano.
+Deploy ke turant baad pehli kuch requests dheemi aati hain, phir app tez ho jaati hai. Ye bug nahi hai, ye JIT ka warm-up hai (upar ka round 1). Isliye naye deploy ke pehle minute ki latency dekh ke ghabrana nahi, aur load test ke pehle round ke number ko asli number mat maano.
 
 ## Tera project
 
@@ -42,7 +42,7 @@ todoapp     FROM eclipse-temurin:21-jre   <- sirf chalana hai, jar pehle se bana
 Insurance   FROM openjdk:8-jdk            <- poora JDK, server pe zaroorat se bada
 ```
 
-todoapp me sirf JRE wali image hai, kyunki jar pehle hi build ho chuka hai aur server pe sirf chalana hai. Ye baat todoapp ki Dockerfile me tune khud likhi hai: "JRE chahiye sirf (JDK nahi, humne jar pehle build kiya)". InsuranceManagementSystem me poori JDK wali image hai, jo server ke liye zaroorat se badi hai, kyunki wahan compile karne wale tools ki zaroorat hi nahi.
+todoapp ki Dockerfile me tune khud likha hai: "JRE chahiye sirf (JDK nahi, humne jar pehle build kiya)". Insurance me poori JDK wali image hai, jo server ke liye zaroorat se badi hai, kyunki wahan compile karne wale tools chahiye hi nahi.
 
 ## Interview line
 
