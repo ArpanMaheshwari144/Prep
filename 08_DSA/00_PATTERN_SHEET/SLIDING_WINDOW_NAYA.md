@@ -28,11 +28,12 @@ int lengthOfLongestSubstring(string s) {
     int i = 0, j = 0;
     while (j < s.size()) {
         mp[s[j]]++;
-        while (mp[s[j]] > 1) {              // ★ WHILE, if nahi: "abba" me doosra b aaya to a aur purana b DONO nikaalne. if -> 3 (sahi 2)
+        // ★ "abba": a aur purana b, dono nikaalo. if -> 3, sahi 2
+        while (mp[s[j]] > 1) {
             mp[s[i]]--;
             i++;
         }
-        ans = max(ans, j - i + 1);          // ★ repeat hatne ke BAAD lo
+        ans = max(ans, j - i + 1);
         j++;
     }
     return ans == INT_MIN ? 0 : ans;
@@ -48,8 +49,9 @@ int characterReplacement(string s, int k) {
     int maxLen = INT_MIN, maxFreq = INT_MIN, i = 0, j = 0;
     while (j < s.size()) {
         mp[s[j]]++;
-        maxFreq = max(maxFreq, mp[s[j]]);   // ★ update PEHLE, phir check
-        while (j - i + 1 - maxFreq > k) {   // ★ KICK: length - sabse zyada wala = kitne badalne padenge
+        maxFreq = max(maxFreq, mp[s[j]]);
+        // ★ length - sabse zyada wala = kitne badalne padenge
+        while (j - i + 1 - maxFreq > k) {
             mp[s[i]]--;
             if (mp[s[i]] == 0)
                 mp.erase(s[i]);
@@ -75,12 +77,13 @@ int longestOnes(vector<int> &nums, int k) {
     while (j < nums.size()) {
         if (nums[j] == 0)
             zeroCount++;
-        while (zeroCount > k) {             // ★ map nahi chahiye, sirf zero gino
+        while (zeroCount > k) {
             if (nums[i] == 0)
                 zeroCount--;
             i++;
         }
-        ans = max(ans, j - i + 1);          // ★ bina shart lo. if (zeroCount == k) lagaya to [1,1,0], k=2 -> 0 (sahi 3)
+        // ★ bina shart lo. if (zeroCount == k) -> [1,1,0], k=2 pe 0, sahi 3
+        ans = max(ans, j - i + 1);
         j++;
     }
     return ans == INT_MIN ? 0 : ans;
@@ -98,10 +101,12 @@ int totalFruit(vector<int> &fruits) {
     int i = 0, j = 0;
     while (j < fruits.size()) {
         mp[fruits[j]]++;
-        while (mp.size() > 2) {             // ★ KICK: ginti nahi, ALAG type kitne = mp.size()
+        // ★ ginti nahi, ALAG type kitne = mp.size()
+        while (mp.size() > 2) {
             mp[fruits[i]]--;
+            // ★ erase nahi kiya to size 3 hi rehta, loop rukta nahi, i array ke bahar -> crash
             if (mp[fruits[i]] == 0)
-                mp.erase(fruits[i]);        // ★ 0 pe erase, warna size jhooth bolta: [0,1,2,2] -> 2 (sahi 3)
+                mp.erase(fruits[i]);
             i++;
         }
         ans = max(ans, j - i + 1);
@@ -121,7 +126,7 @@ int totalFruit(string &s, int k) {
     int i = 0, j = 0;
     while (j < s.size()) {
         mp[s[j]]++;
-        while (mp.size() > k) {             // ★ fruit me 2, yahan k
+        while (mp.size() > k) {             // fruit me 2, yahan k
             mp[s[i]]--;
             if (mp[s[i]] == 0)
                 mp.erase(s[i]);
@@ -146,7 +151,8 @@ int longestKDistinct(string s, int k) {
 int equalSubstring(string s, string t, int maxCost) {
     int i = 0, j = 0, cost = 0, ans = INT_MIN;
     while (j < t.size()) {
-        cost += abs(s[j] - t[j]);           // ★ KICK: string ke bhes me "sum <= k" wala sawaal
+        // ★ string ke bhes me "sum <= k" wala sawaal
+        cost += abs(s[j] - t[j]);
         while (cost > maxCost) {
             cost -= abs(s[i] - t[i]);
             i++;
@@ -173,14 +179,15 @@ int minSubArrayLen(int target, vector<int> &nums) {
     int i = 0, j = 0;
     while (j < nums.size()) {
         sum += nums[j];
-        while (sum >= target) {             // ★ ULTA: theek hai tab tak chhota karo
-            size = min(size, j - i + 1);    // ★ ans ANDAR, nikaalne se PEHLE
+        // ★ ULTA: theek hai tab tak chhota karo, ans ANDAR nikaalne se pehle
+        while (sum >= target) {
+            size = min(size, j - i + 1);
             sum -= nums[i];
             i++;
         }
         j++;
     }
-    return size == INT_MAX ? 0 : size;      // ★ koi window bani hi nahi: target=11, [1,1,1] -> 0
+    return size == INT_MAX ? 0 : size;      // target=11, [1,1,1] -> 0
 }
 ```
 `↳ SAME: lamba wala dhaancha ulta. Lamba: kharab pe while, ans baad me, max. Chhota: theek pe while, ans andar, min.`
@@ -195,11 +202,12 @@ int minSubArrayLen(int target, vector<int> &nums) {
 ```cpp
 int maxSumK(vector<int> &nums, int k) {
     int sum = 0;
-    int maxSum = INT_MIN;                   // ★ 0 se shuru kiya to [-1,-2,-3], k=2 -> 0 (sahi -3)
+    // ★ 0 se shuru kiya to [-1,-2,-3], k=2 -> 0, sahi -3
+    int maxSum = INT_MIN;
     int i = 0, j = 0;
     while (j < nums.size()) {
         sum += nums[j];
-        if (j - i + 1 >= k) {               // ★ IF: size fix, ek juda to ek nikla
+        if (j - i + 1 >= k) {               // IF: size fix, ek juda to ek nikla
             maxSum = max(maxSum, sum);
             sum -= nums[i];
             i++;
@@ -235,8 +243,9 @@ int maxScore(vector<int> &nums, int k) {
     for (int i = 0; i < nums.size(); i++)
         Total += nums[i];
     if (nums.size() - k == 0)
-        return Total;                       // ★ saare card liye, window size 0
-    int minSum = minSumK(nums, nums.size() - k);   // ★ KICK: jo NAHI liye wo beech ki lagaatar window (size n-k)
+        return Total;                       // saare card liye
+    // ★ jo NAHI liye wo beech ki lagaatar window (size n-k)
+    int minSum = minSumK(nums, nums.size() - k);
     return Total - minSum;
 }
 ```
@@ -248,17 +257,18 @@ int maxScore(vector<int> &nums, int k) {
 ```cpp
 bool containsNearbyDuplicate(vector<int> &nums, int k) {
     if (k <= 0)
-        return false;                       // ★ [4,4], k=0 -> false
+        return false;                       // [4,4], k=0 -> false
     int i = 0, j = 0;
     unordered_set<int> st;
     while (j < nums.size()) {
         if (st.count(nums[j]) > 0)
-            return true;                    // ★ check PEHLE
+            return true;                    // check PEHLE
         if (j - i + 1 > k) {
             st.erase(nums[i]);
             i++;
         }
-        st.insert(nums[j]);                 // ★ check ke BAAD daalo, warna khud se hi match
+        // ★ check ke BAAD daalo, warna khud se hi match
+        st.insert(nums[j]);
         j++;
     }
     return false;
@@ -277,14 +287,16 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k) {
     if (k == 0)
         return 0;
     int count = 0;
-    int i = 0, j = 0, prod = 1;             // ★ guna 1 se shuru, 0 se sab 0
+    int i = 0, j = 0, prod = 1;             // guna 1 se shuru, 0 se sab 0
     while (j < nums.size()) {
         prod *= nums[j];
-        while (prod >= k && i <= j) {       // ★ i <= j: [1,1,1], k=1 -> 0, warna i bahar bhaagta
+        // ★ i <= j: [1,1,1], k=1 pe i bahar bhaagta
+        while (prod >= k && i <= j) {
             prod /= nums[i];
             i++;
         }
-        count += j - i + 1;                 // ★ KICK: j pe khatam hone wale saare: [j], [j-1..j] .. [i..j]
+        // ★ j pe khatam hone wale saare: [j], [j-1..j] .. [i..j]
+        count += j - i + 1;
         j++;
     }
     return count;
@@ -314,7 +326,8 @@ int atMostK(vector<int> &fruits, int k) {
 }
 
 int subarraysWithKDistinct(vector<int> &nums, int k) {
-    return atMostK(nums, k) - atMostK(nums, k - 1);   // ★ KICK: exactly k seedha nahi banta. 12 - 5 = 7. k=1 pe atMost(0) apne aap 0
+    // ★ exactly k seedha nahi banta: 12 - 5 = 7. k=1 pe atMost(0) apne aap 0
+    return atMostK(nums, k) - atMostK(nums, k - 1);
 }
 ```
 `↳ SAME: atMostK = fruit ka code. Farak: max ki jagah count, aur upar exactly = atMost(k) - atMost(k-1).`
@@ -335,14 +348,15 @@ string minWindow(string s, string t) {
     while (j < s.size()) {
         if (mp[s[j]] > 0)
             count--;
-        mp[s[j]]--;                         // ★ IF ke BAHAR: t me na hone wale char bhi minus me, warna shrink pe count++ galat
-        while (count == 0) {                // ★ CHHOTA wala: theek hai tab tak
+        // ★ IF ke BAHAR: t me na hone wale char bhi minus me, warna shrink pe count++ galat
+        mp[s[j]]--;
+        while (count == 0) {                // chhota wala: theek hai tab tak
             int len = j - i + 1;
-            if (len < minLen) {             // ★ record PEHLE, nikaalne se pehle
+            if (len < minLen) {             // record pehle, nikaalne se pehle
                 minLen = len;
                 index = i;
             }
-            mp[s[i]]++;                     // ★ aaya --, gaya ++ (mirror)
+            mp[s[i]]++;                     // aaya --, gaya ++ (mirror)
             if (mp[s[i]] > 0)
                 count++;
             i++;
@@ -373,7 +387,8 @@ int minWindow(string s, string t) {
                 count++;
             i++;
         }
-        ans += i;                           // ★ KICK: j-i+1 NAHI. while ke baad start 0..i-1 sab theek the -> i
+        // ★ j-i+1 NAHI. while ke baad start 0..i-1 sab theek the -> i
+        ans += i;
         j++;
     }
     return ans;
@@ -413,7 +428,7 @@ vector<int> findAnagrams(string s, string p) {
     while (j < s.size()) {
         while (j - i + 1 > p.size())
             i++;
-        if (j - i + 1 == p.size())          // ★ poori p-size ki window pe hi check
+        if (j - i + 1 == p.size())          // poori p-size ki window pe hi check
             if (isAnagram(s.substr(i, j - i + 1), p))
                 ans.push_back(i);
         j++;
@@ -421,7 +436,7 @@ vector<int> findAnagrams(string s, string p) {
     return ans;
 }
 ```
-`★ dhyaan: har window pe substr + isAnagram = har baar p jitna kaam (O(n * m)). Pass ho jaata hai. Interviewer tez maange to window ki ginti map me jodte-ghatate raho, har baar dobara mat gino.`
+`★ dhyaan: har window pe substr + isAnagram = har baar p jitna kaam (O(n * m)). Tez chahiye to window ki ginti map me jodte-ghatate raho, har baar dobara mat gino.`
 
 ### ▸ LC-567 PERMUTATION IN STRING  
 `s1="ab", s2="eidbaooo" -> true`.
@@ -435,14 +450,15 @@ bool findAnagrams(string s, string p) {
             i++;
         if (j - i + 1 == p.size())
             if (isAnagram(s.substr(i, j - i + 1), p))
-                return true;                // ★ push ki jagah return true
+                return true;                // push ki jagah return true
         j++;
     }
     return false;
 }
 
 bool checkInclusion(string s1, string s2) {
-    return findAnagrams(s2, s1);            // ★ ULTA kram: s2 me s1 dhoondho
+    // ★ ULTA kram: s2 me s1 dhoondho
+    return findAnagrams(s2, s1);
 }
 ```
 `↳ SAME: LC-438. Farak: pehla mila to true, aur call me (s2, s1).`
@@ -457,14 +473,16 @@ bool checkInclusion(string s1, string s2) {
 ```cpp
 vector<int> maxSlidingWindow(vector<int> &nums, int k) {
     vector<int> ans;
-    deque<int> dq;                          // ★ INDEX rakho, value nahi: bahar gaya ye index se pata chalta
+    // ★ INDEX rakho, value nahi: kaun window se bahar gaya ye index se pata chalta
+    deque<int> dq;
     for (int i = 0; i < nums.size(); i++) {
-        if (!dq.empty() && dq.front() == i - k)   // ★ 1) window se bahar. !dq.empty() pehle, warna crash
+        if (!dq.empty() && dq.front() == i - k)   // 1) window se bahar
             dq.pop_front();
-        while (!dq.empty() && nums[dq.back()] <= nums[i])   // ★ 2) chhote bekaar. MIN chahiye to >=
+        // ★ 2) peeche ke chhote bekaar, kabhi max nahi banenge. MIN chahiye to >=
+        while (!dq.empty() && nums[dq.back()] <= nums[i])
             dq.pop_back();
         dq.push_back(i);
-        if (i >= k - 1)                     // ★ 3) record. kram 1 -> 2 -> 3 hi
+        if (i >= k - 1)                     // 3) record. kram 1 -> 2 -> 3 hi
             ans.push_back(nums[dq.front()]);
     }
     return ans;
