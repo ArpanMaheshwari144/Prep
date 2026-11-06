@@ -4547,7 +4547,7 @@ int singleNumber(vector<int> &nums) {       // sab 2 baar, ek 1 baar -> sab XOR 
 ### ▸ 3 DFS TRAVERSALS (LC-144 / 94 / 145)
 
 ```
-binary tree ka root diya. preorder, inorder, postorder teeno order me node values lautao.
+Binary tree ka root diya hai. Tree ke nodes ki values teen kram me lautao: preorder (node, left, right), inorder (left, node, right) aur postorder (left, right, node).
   e.g. [1,2,3,4,5] -> pre 1 2 4 5 3 · in 4 2 5 1 3 · post 4 5 2 3 1
   kyun: pre = root pehle (1, phir 2 ka subtree 2 4 5, phir 3); in = left-root-right; post = root sabse baad
 
@@ -4577,7 +4577,7 @@ void postorder(TreeNode *root, vector<int> &res) {   // POST = left -> right -> 
     postorder(root->left, res);
     postorder(root->right, res);
     res.push_back(root->val);               // VISIT
-}                                           // teeno SAME recursion, sirf VISIT ki JAGAH badalti
+}                                           // ★ teeno SAME recursion, sirf VISIT ki JAGAH badalti
 ```
 
 #### ── FAMILY: recurse + COMBINE (answer = return-value; jo combine karo wahi return) ──
@@ -4585,7 +4585,7 @@ void postorder(TreeNode *root, vector<int> &res) {   // POST = left -> right -> 
 ### ▸ MAX DEPTH (LC-104)
 
 ```
-binary tree ka root diya. root se sabse door leaf tak kitne NODE, wo lautao (null -> 0).
+Binary tree ka root diya hai. Root se sabse door wale leaf tak raste me kitne node aate hain, wo lautao. Khaali tree pe 0.
   e.g. [3,9,20,null,null,15,7] -> 3
   kyun: sabse lamba rasta 3 -> 20 -> 15 (ya 7) = 3 node
 ```
@@ -4596,14 +4596,14 @@ int maxDepth(TreeNode *root) {
         return 0;                           // base: null -> 0
     int left = maxDepth(root->left);
     int right = maxDepth(root->right);
-    return 1 + max(left, right);            // khud = 1 + gehri branch
+    return 1 + max(left, right);            // ★ khud = 1 + gehri branch
 }
 ```
 
 ### ▸ INVERT TREE (LC-226)
 
 ```
-binary tree ka root diya. HAR node ke left aur right child SWAP karo (mirror), root lautao.
+Binary tree ka root diya hai. Har node ke left aur right bachche aapas me badal do (tree ka aaina), aur root lautao.
   e.g. [4,2,7,1,3,6,9] -> [4,7,2,9,6,3,1]
   kyun: 4 ke bachche 2,7 -> 7,2; 2 ke 1,3 -> 3,1; 7 ke 6,9 -> 9,6
 ```
@@ -4614,7 +4614,7 @@ TreeNode *invertTree(TreeNode *root) {
         return nullptr;                     // base: null -> null
     invertTree(root->left);                 // recurse dono (order FREE)
     invertTree(root->right);
-    swap(root->left, root->right);          // TRAP: POINTERS swap (poori branch badalti), values NAHI
+    swap(root->left, root->right);          // ★ TRAP: POINTERS swap (poori branch badalti), values NAHI
     return root;                            //   value-swap = sirf 2 number + leaf pe null->val CRASH
 }
 ```
@@ -4622,7 +4622,7 @@ TreeNode *invertTree(TreeNode *root) {
 ### ▸ SAME TREE (LC-100)
 
 ```
-do tree p, q diye. structure aur values dono bilkul same? true/false.
+Do binary tree p aur q diye hain. Kya dono ka dhaancha aur har node ki value bilkul ek jaisi hai? true ya false lautao.
   e.g. p=[1,2], q=[1,null,2] -> false
   kyun: values same (1,2) par p me 2 LEFT child, q me RIGHT child; structure alag
 ```
@@ -4631,7 +4631,7 @@ do tree p, q diye. structure aur values dono bilkul same? true/false.
 bool isSameTree(TreeNode *p, TreeNode *q) {
     if (p == NULL && q == NULL)
         return true;                        // dono null -> true
-    if (p == NULL && q != NULL)             // null checks PEHLE: warna null->val crash
+    if (p == NULL && q != NULL)             // ★ null checks PEHLE: warna null->val crash
         return false;                       // ek null -> false
     if (p != NULL && q == NULL)             //   (clean base: if (!p || !q) return p == q;)
         return false;
@@ -4646,7 +4646,7 @@ bool isSameTree(TreeNode *p, TreeNode *q) {
 ### ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS
 
 ```
-root diya. tree apne center ke around MIRROR hai? true/false.
+Binary tree ka root diya hai. Kya tree beech se aaine jaisa hai, matlab left hissa right hisse ka ulta roop hai? true ya false lautao.
   e.g. [1,2,2,3,4,4,3] -> true
   kyun: left 2 ke bachche 3,4 aur right 2 ke 4,3; bahar-bahar 3=3, andar-andar 4=4
 
@@ -4664,7 +4664,7 @@ bool isSameTree(TreeNode *p, TreeNode *q) { // same tree ka hi base (dono null /
     if (p->val != q->val)
         return false;
     else if (p->val == q->val)
-        return isSameTree(p->left, q->right) && isSameTree(p->right, q->left);   // CROSS = mirror
+        return isSameTree(p->left, q->right) && isSameTree(p->right, q->left);   // ★ CROSS = mirror
     return false;
 }
 
@@ -4680,7 +4680,7 @@ bool isSymmetric(TreeNode *root) {
 ### ▸ DIAMETER (LC-543)  = MAX-DEPTH + 1 line
 
 ```
-binary tree diya. kinhi DO node ke beech sabse lamba path, EDGES me lautao (root se guzre ya na guzre).
+Binary tree diya hai. Kinhi bhi do node ke beech sabse lamba rasta kitna hai, wo edges ki ginti me lautao. Rasta root se guzre, ye zaroori nahi.
   e.g. [1,2,3,4,5] -> 3
   kyun: path 4 -> 2 -> 1 -> 3 = 3 edge; isse lamba koi rasta nahi
 
@@ -4693,9 +4693,9 @@ int height(TreeNode *root, int &maxDia) {   // max-depth ka height(), maxDia by-
         return 0;                           // null ki height 0: uske neeche koi edge nahi
     int left = height(root->left, maxDia);  // recurse PEHLE: kaam peeche aate hue (post-order)
     int right = height(root->right, maxDia);
-    maxDia = max(maxDia, left + right);     // EXTRA line: is node se guzarti diameter = leftH + rightH
+    maxDia = max(maxDia, left + right);     // ★ EXTRA line: is node se guzarti diameter = leftH + rightH
                                             //   MAX (overwrite NAHI: test pass != code sahi)
-    return 1 + max(left, right);            // HEIGHT return (parent ko yahi chahiye)
+    return 1 + max(left, right);            // ★ HEIGHT return (parent ko yahi chahiye)
 }
 
 int diameterOfBinaryTree(TreeNode *root) {
@@ -4708,7 +4708,7 @@ int diameterOfBinaryTree(TreeNode *root) {
 ### ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
 
 ```
-binary tree diya. koi bhi connected path (kam se kam 1 node, root zaroori nahi). max node-sum lautao.
+Binary tree diya hai (values minus bhi). Koi bhi juda hua rasta chuno (kam se kam ek node, root se guzarna zaroori nahi). Raste ke nodes ka sabse bada jod lautao.
   e.g. [-10,9,20,null,null,15,7] -> 42
   kyun: 15 + 20 + 7 = 42; root -10 jodne se sum ghatta, isliye chhoda
 
@@ -4758,14 +4758,14 @@ DRY-RUN:
 int maxDepth(TreeNode *root, int &maxSum) {
     if (!root)
         return 0;                           // base: null -> 0
-    int left = max(0, maxDepth(root->left, maxSum));     // (3) minus arm -> 0 (lene se sum ghatta)
+    int left = max(0, maxDepth(root->left, maxSum));     // ★ (3) minus arm -> 0 (lene se sum ghatta)
     int right = max(0, maxDepth(root->right, maxSum));
-    maxSum = max(maxSum, root->val + left + right);      // (2) answer: junction pe DONO sadak + node
-    return root->val + max(left, right);    // (1) parent ko: node + EK sadak (upar ek hi ja sakti)
+    maxSum = max(maxSum, root->val + left + right);      // ★ (2) answer: junction pe DONO sadak + node
+    return root->val + max(left, right);    // ★ (1) parent ko: node + EK sadak (upar ek hi ja sakti)
 }
 
 int maxPathSum(TreeNode *root) {
-    int maxSum = INT_MIN;                   // INT_MIN (0 NAHI): akela -3 bhi valid path
+    int maxSum = INT_MIN;                   // ★ INT_MIN (0 NAHI): akela -3 bhi valid path
     maxDepth(root, maxSum);
     return maxSum;                          // [-10,9,20,_,_,15,7]: @20 -> 15+20+7 = 42 (answer), upar 35
 }
@@ -4774,7 +4774,7 @@ int maxPathSum(TreeNode *root) {
 ### ▸ BUILD TREE from PREORDER + INORDER (LC-105)
 
 ```
-preorder aur inorder diye (values unique). original binary tree bana ke root lautao.
+Ek binary tree ka preorder aur inorder kram diya hai (saari values alag). Inse wapas wahi tree banao aur root lautao.
   e.g. pre=[3,9,20,15,7], in=[9,3,15,20,7] -> [3,9,20,null,null,15,7]
   kyun: pre[0]=3 root; inorder me 3 ke baaye [9] = left, daaye [15,20,7] = right; right ka root 20 (agla pre)
 
@@ -4808,9 +4808,9 @@ TreeNode *solve(int &rootIndex, vector<int> &preorder, vector<int> &inorder, int
     if (l > r)
         return NULL;                        // > (>= nahi): l==r pe ek node bacha, wo banana hai
     int pivot = mp[preorder[rootIndex]];    // inorder me root kahan (map = O(1))
-    rootIndex++;                            // ++ turant: agla preorder element = agla root
+    rootIndex++;                            // ★ ++ turant: agla preorder element = agla root
     TreeNode *newNode = new TreeNode(inorder[pivot]);
-    newNode->left = solve(rootIndex, preorder, inorder, l, pivot - 1, mp);    // LEFT pehle: preorder
+    newNode->left = solve(rootIndex, preorder, inorder, l, pivot - 1, mp);    // ★ LEFT pehle: preorder
     newNode->right = solve(rootIndex, preorder, inorder, pivot + 1, r, mp);   //   = Root, Left, Right
     return newNode;
 }
@@ -4829,7 +4829,7 @@ TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
 ### ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
 
 ```
-tree diya. HAR node pe left aur right subtree ki height ka farak <= 1? true/false.
+Binary tree diya hai. Kya har node pe uske left aur right subtree ki unchai ka farak 1 ya usse kam hai? true ya false lautao.
   e.g. [1,2,2,3,3,null,null,4,4] -> false
   kyun: root pe left height 3 (2 -> 3 -> 4), right height 1; farak 2 > 1
 
@@ -4843,7 +4843,7 @@ int maxDepth(TreeNode *root) {              // return = HEIGHT, ya -1 (neeche ka
         return 0;                           // null ki height 0 (balanced hai, -1 nahi)
     int left = maxDepth(root->left);
     if (left == -1)
-        return -1;                          // left me imbalance -> -1 UPAR bhejo, aage mat dekho
+        return -1;                          // ★ left me imbalance -> -1 UPAR bhejo, aage mat dekho
     int right = maxDepth(root->right);
     if (right == -1)
         return -1;                          // right me imbalance -> turant -1 upar
@@ -4866,7 +4866,7 @@ bool isBalanced(TreeNode *root) {
 ### ▸ LCA -- Lowest Common Ancestor (LC-236)
 
 ```
-root aur do node p, q diye. sabse GEHRA node lautao jiske neeche p aur q dono hon (khud bhi ho sakta).
+Binary tree ka root aur do node p, q diye hain. Wo sabse neeche wala node lautao jiske neeche p aur q dono aate hain. Node khud bhi p ya q ho sakta hai.
   e.g. [3,5,1,6,2,0,8,null,null,7,4], p=5, q=4 -> 5
   kyun: 4 to 5 ke subtree me hai (5 -> 2 -> 4); 5 khud p hai, to 5 hi sabse gehra common
 ```
@@ -4876,7 +4876,7 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // 
     if (!root)
         return NULL;                        // khaali subtree -> p/q yahan nahi
     if (root == p || root == q)
-        return root;                        // mil gaya -> UPAR bhejo
+        return root;                        // ★ mil gaya -> UPAR bhejo
     TreeNode *left = lowestCommonAncestor(root->left, p, q);
     TreeNode *right = lowestCommonAncestor(root->right, p, q);
     if (left == NULL)                       // ek side khali -> doosri return. DO case ek saath:
@@ -4888,7 +4888,7 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // 
         return root;
     else if (left == q && right == p)
         return root;
-    return root;                            // DONO non-null -> yahi split point = LCA
+    return root;                            // ★ DONO non-null -> yahi split point = LCA
 }
 ```
 
@@ -4897,7 +4897,7 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // 
 ### ▸ PATH SUM (LC-112)
 
 ```
-root aur targetSum diye. koi ROOT se LEAF tak path jiske nodes ka sum = target? true/false.
+Binary tree ka root aur ek targetSum diya hai. Kya root se kisi leaf tak aisa rasta hai jiske nodes ka jod targetSum ke barabar ho? true ya false lautao.
   e.g. [5,4,8,11,null,13,4], target=20 -> true
   kyun: 5 + 4 + 11 = 20 aur 11 leaf hai; baaki paths 26 (5,8,13) aur 17 (5,8,4)
 ```
@@ -4906,7 +4906,7 @@ root aur targetSum diye. koi ROOT se LEAF tak path jiske nodes ka sum = target? 
 bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == target?
     if (!root)
         return false;                       // base: null -> false
-    if (!root->left && !root->right)        // LEAF = ACTUAL bachche (root->left), recursion-result nahi
+    if (!root->left && !root->right)        // ★ LEAF = ACTUAL bachche (root->left), recursion-result nahi
         return root->val == targetSum;      // leaf pe hi check: beech me mile to path adhoora
     return hasPathSum(root->left, targetSum - root->val) ||    // value NEECHE carry (target ghatao)
            hasPathSum(root->right, targetSum - root->val);     // || : koi ek path bana de to kaafi
@@ -4918,7 +4918,7 @@ bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == ta
 ### ▸ LEVEL ORDER (LC-102)
 
 ```
-root diya. har LEVEL ke nodes left se right, alag-alag list me lautao (list of lists).
+Binary tree ka root diya hai. Har level ke nodes ko left se right, alag-alag list me lautao (list of lists).
   e.g. [3,9,20,null,null,15,7] -> [[3],[9,20],[15,7]]
   kyun: level 0 = 3, level 1 = 9,20, level 2 = 15,7
 ```
@@ -4931,7 +4931,7 @@ vector<vector<int>> levelOrder(TreeNode *root) {   // har level ki alag list. FI
     queue<TreeNode *> q;
     q.push(root);                           // level-0 (root) se BFS shuru
     while (!q.empty()) {
-        int sz = q.size();                  // SNAPSHOT for se PEHLE: loop me push se size badalta,
+        int sz = q.size();                  // ★ SNAPSHOT for se PEHLE: loop me push se size badalta,
         vector<int> temp;                   //   warna agle level ke node is level me ghus jaate
         for (int i = 0; i < sz; i++) {      // sirf sz baar: isi level ke node
             TreeNode *curr = q.front();
@@ -4952,7 +4952,7 @@ vector<vector<int>> levelOrder(TreeNode *root) {   // har level ki alag list. FI
 ### ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
 
 ```
-tree ke DAAYE khade ho ke upar se neeche jo dikhe wo lautao = har level ka sabse right node.
+Binary tree ke daayi taraf khade ho ke upar se neeche dekho. Jo nodes dikhte hain wo lautao, matlab har level ka sabse daayi wala node.
   e.g. [1,2,3,null,5,null,4] -> [1,3,4]
   kyun: level 0 = 1; level 1 = 2,3 me right 3; level 2 = 5,4 me right 4
 ```
@@ -4969,7 +4969,7 @@ vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-
         for (int i = 0; i < sz; i++) {
             TreeNode *curr = q.front();
             q.pop();
-            if (i == sz - 1)                // level ka LAST: FIFO me L-to-R -> aakhri = sabse RIGHT
+            if (i == sz - 1)                // ★ level ka LAST: FIFO me L-to-R -> aakhri = sabse RIGHT
                 ans.push_back(curr->val);   //   (1-based "position sz" = 0-based i == sz-1)
                                             //   left side view: i == 0
             if (curr->left != NULL)
@@ -4985,7 +4985,7 @@ vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-
 ### ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
 
 ```
-level-order jaisa, par direction ulti-palti: level 0 L->R, level 1 R->L, level 2 L->R ...
+Level order jaisa hi, par disha har level pe badalti hai: level 0 left se right, level 1 right se left, level 2 phir left se right, aise hi.
   e.g. [3,9,20,null,null,15,7] -> [[3],[20,9],[15,7]]
   kyun: level 1 ka [9,20] ulta = [20,9]; level 2 seedha [15,7]
 ```
@@ -5010,7 +5010,7 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L �
             if (curr->right != NULL)
                 q.push(curr->right);
         }
-        if (levelCounter % 2 != 0)          // DELTA (inner loop ke BAAD): ODD level -> ulta
+        if (levelCounter % 2 != 0)          // ★ DELTA (inner loop ke BAAD): ODD level -> ulta
             reverse(begin(temp), end(temp));    // (alt: deque / front insert, reverse simplest)
         levelCounter++;                     // reverse check ke BAAD ++: warna root level ulta
         ans.push_back(temp);
@@ -5022,7 +5022,7 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L �
 ### ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
 
 ```
-root se sabse PAAS wale LEAF tak kitne node, lautao (leaf = dono bachche null; null root -> 0).
+Binary tree ka root diya hai. Root se sabse paas wale leaf tak raste me kitne node hain, wo lautao. Leaf = jiske dono bachche null. Khaali tree pe 0.
   e.g. [3,9,20,null,null,15,7] -> 2
   kyun: 3 -> 9, aur 9 leaf hai = 2 node; 20 wali taraf 3 node lagte
 ```
@@ -5040,7 +5040,7 @@ int minDepth(TreeNode *root) {              // root se sabse PAAS wale LEAF tak
             TreeNode *curr = q.front();
             q.pop();
             if (!curr->left && !curr->right)
-                return depth + 1;           // PEHLA leaf = sabse paas -> turant return
+                return depth + 1;           // ★ PEHLA leaf = sabse paas -> turant return
             if (curr->left != NULL)
                 q.push(curr->left);
             if (curr->right != NULL)
@@ -5059,7 +5059,7 @@ int minDepth(TreeNode *root) {              // root se sabse PAAS wale LEAF tak
 ### ▸ KTH SMALLEST IN BST (LC-230)
 
 ```
-BST aur k diye. k-va sabse chhota value lautao (1-indexed).
+Ek BST aur ek number k diya hai. Tree ki values me k-va sabse chhota number lautao (k 1 se gina jaata hai).
   e.g. [5,3,6,2,4,null,null,1], k=3 -> 3
   kyun: inorder (sorted) = 1,2,3,4,5,6; teesra = 3
 
@@ -5078,14 +5078,14 @@ void inorder(TreeNode *root, vector<int> &res) {   // BST pe inorder = SORTED (a
 int kthSmallest(TreeNode *root, int k) {
     vector<int> ans;
     inorder(root, ans);                     // saari values SORTED
-    return ans[k - 1];                      // k-1 TRAP: k 1-based, vector 0-based
+    return ans[k - 1];                      // ★ k-1 TRAP: k 1-based, vector 0-based
 }                                           // optimize: counter, k-va node pe EARLY-STOP
 ```
 
 ### ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN
 
 ```
-tree diya. valid BST? har node pe POORE left subtree < node < POORE right subtree (strict). true/false.
+Binary tree diya hai. Kya ye sahi BST hai? Har node pe uske poore left subtree ki saari values usse chhoti aur poore right subtree ki saari values usse badi honi chahiye (barabar nahi chalega).
   e.g. [5,4,6,null,null,3,7] -> false
   kyun: 3 node 6 ke left me (3 < 6 theek), par 6 to 5 ke right me, to 3 > 5 hona chahiye tha
 
@@ -5100,13 +5100,13 @@ bool solve(TreeNode *root, long long mini, long long maxi) {
         return true;                        // khaali subtree valid
     if (root->val <= mini || root->val >= maxi)
         return false;                       // <= aur >= : barabar bhi galat (BST me duplicate nahi)
-    bool left = solve(root->left, mini, root->val);    // LEFT jao -> maxi = val (chhota hona)
+    bool left = solve(root->left, mini, root->val);    // ★ LEFT jao -> maxi = val (chhota hona)
     bool right = solve(root->right, root->val, maxi);  // RIGHT jao -> mini = val (bada hona)
     return left && right;                   // && : dono subtree valid tabhi valid
 }
 
 bool isValidBST(TreeNode *root) {
-    return solve(root, LLONG_MIN, LLONG_MAX);   // long long: INT_MIN / INT_MAX se shuru kiya to node
+    return solve(root, LLONG_MIN, LLONG_MAX);   // ★ long long: INT_MIN / INT_MAX se shuru kiya to node
 }                                           //   khud INT_MAX ho ([2147483647]) -> strict = galat false
 // alt: inorder strictly increasing? -> BST (kth smallest ka near-transfer)
 ```
