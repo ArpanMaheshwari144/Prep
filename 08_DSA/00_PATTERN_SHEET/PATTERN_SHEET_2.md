@@ -5,7 +5,7 @@ Example, trace aur code ke comment purani sheet se SAME TO SAME uthaye hain. TAR
 
 <h1 align="center">DSA PATTERN SHEET</h1>
 
-> Upar: PEHLE YE · OA tools · DECISION · EDGE kyun · NAAM-SE-CONFUSE A-E · MATHS KA KHEL. Neeche: 18 pattern, har sawaal = SAWAAL + TAREEKA + CHAABI + code.
+> Upar: PEHLE YE · OA tools · DECISION · EDGE kyun · NAAM-SE-CONFUSE A-E · MATHS KA KHEL. Neeche: 18 pattern, har sawaal = sawaal + e.g. + kyun, phir tera poora code.
 
 ---
 
@@ -271,40 +271,37 @@ int diff = (end - start + 1440) % 1440;  // raat 12 ke paar minus aaye -> ek din
 
 
 
- █████████████████████████ ▸ CAESAR: K PEECHE  (03/12, Wise OA) █████████████████████████
-     ═════════════════════════ SAWAAL ═════════════════════════════════════
-     A-Z ke har akshar ko k jagah PEECHE khiskao, A se peeche = Z (gol). Space waisa hi. naya string lautao.
-       e.g. "ABC", 3 -> "XYZ"
-       kyun: A -> Z -> Y -> X (A se peeche gaya to Z pe aaya), B -> Y, C -> Z
+```
 
-     ═════════════════════════ TAREEKA ════════════════════════════════════
-     koi pattern nahi, seedha loop. pench sirf do: minus ka % (C++ me -2 % 26 = -2) aur bada k.
-
-     ═════════════════════════ CHAABI ═════════════════════════════════════
-       1. k bada (1e9) -> pehle k ko 26 ke andar lao (poore chakkar hatao)
-       2. loop har akshar pe: space -> waisa hi daalo, continue
-       3. akshar -> 0..25 number: s[i] - 'A'
-       4. peeche khiskao + 26 jodo + % 26 -> hamesha 0..25   (+26 minus ke liye, % 26 plus wale ke liye)
-       5. wapas akshar: + 'A'
-
-     ═════════════════════════ CODE ═══════════════════════════════════════
-     string shiftBack(string s, int k) {
-         if (s.size() == 0)
-             return "";
-         while (k > 26)
-             k = k % 26;                              // 1e9 -> bache kadam (poore chakkar hatao)
-         string ans = "";
-         for (int i = 0; i < s.size(); i++) {
-             if (s[i] == ' ') {                       // space waisa hi
-                 ans += ' ';
-                 continue;
-             }
-             ans += ((((s[i] - 'A') - k) + 26) % 26) + 'A';   // +26: minus bachao · %26: 0..25 me rakho
-         }
-         return ans;
-     }
+### ▸ CAESAR: K PEECHE  (03/12, Wise OA)
 
 ```
+A-Z ke har akshar ko k jagah PEECHE khiskao, A se peeche = Z (gol). Space waisa hi. naya string lautao.
+  e.g. "ABC", 3 -> "XYZ"
+  kyun: A -> Z -> Y -> X (A se peeche gaya to Z pe aaya), B -> Y, C -> Z
+
+koi pattern nahi, seedha loop. pench sirf do: minus ka % (C++ me -2 % 26 = -2) aur bada k.
+```
+
+```cpp
+string shiftBack(string s, int k) {
+    if (s.size() == 0)
+        return "";
+    while (k > 26)
+        k = k % 26;                              // 1e9 -> bache kadam (poore chakkar hatao)
+    string ans = "";
+    for (int i = 0; i < s.size(); i++) {
+        if (s[i] == ' ') {                       // space waisa hi
+            ans += ' ';
+            continue;
+        }
+        // ★ +26: minus bachao · %26: 0..25 me rakho
+        ans += ((((s[i] - 'A') - k) + 26) % 26) + 'A';
+    }
+    return ans;
+}
+```
+`↳ SAME: SHIFT MINUTES (03/14). Farak: 26 ki jagah 1440 (din ke minute).`
 
 ---
 
@@ -1921,7 +1918,6 @@ n flights (1..n), booking [first,last,seats] = first se last tak har flight pe s
 = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II, PATTERN 15) ka sagaa bhai
 KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
 har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
-n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
 ```
 
 ```cpp
@@ -2334,9 +2330,6 @@ vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka gr
 prices ek-ek aate (next(price)). har call pe SPAN lautao = aaj samet peeche kitne LAGATAAR din price <= aaj.
   e.g. next: 100,80,60,70,60,75,85 -> 1,1,1,2,1,4,6
   kyun: 75 aaya -> peeche 60,70,60 sab <= 75, phir 80 bada -> ruk -> 75,60,70,60 = 4
-
-STREAMING next(price). span = aaj samet peeche kitne LAGATAAR din price <= aaj
-next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
 ```
 
 ```cpp
@@ -2576,7 +2569,6 @@ SORTED nums[] (duplicate ho sakte) aur target. target ka PEHLA aur AAKHRI index 
   e.g. [5,7,7,8,8,10], target=8 -> {3,4}
   kyun: 8 index 3 aur 4 pe hai -> pehla 3, aakhri 4
 
-sorted (duplicate ho sakte) me target ka PEHLA aur AAKHRI index; nahi -> {-1,-1}, O(log n)
 [5,7,7,8,8,10], 8 -> {3,4}. normal BS, bas MILNE pe RUKO MAT -> ans likho, ek taraf aur chalo. 2 BS
 ```
 
@@ -3321,7 +3313,6 @@ list ke har node me val + next + RANDOM (kisi bhi node pe ya NULL). DEEP copy ba
   e.g. vals=[7,13,11,10,1], random index=[-1,0,4,2,0] -> naye node, wahi structure
   kyun: copy ke 13 ka random copy wale 7 pe (original 7 pe nahi) · 7 ka random NULL hi
 
-har node me val + next + RANDOM (kahin bhi / NULL). DEEP copy: copy ke random COPY ke andar
 2 PASS kyun: random aage bhi ho sakta, 1 pass me target abhi bana hi na ho -> pehle sab bana lo (+map)
 PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 ```
@@ -5351,7 +5342,6 @@ responseTimes[]. har step bache me SABSE CHHOTA uthao (tie -> chhota index), jod
   e.g. [4,2,9,1,7,3] -> 6
   kyun: 1 uthaya (9,7 hate) · 2 uthaya (4 hata) · 3 uthaya -> 1+2+3 = 6
 
-har step bache me SABSE CHHOTA (tie -> chhota index), jodo, khud + ORIGINAL padosi (i-1, i+1) hatao
 [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
 BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
   yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
@@ -6425,7 +6415,6 @@ g[] = bachhe ki greed, s[] = cookie size. s[j] >= g[i] to khush, ek bachha max e
   e.g. g=[1,2,3], s=[1,1] -> 1
   kyun: dono cookie size 1 -> sirf greed-1 wala khush
 
-g[] = bachhe ki GREED, s[] = cookie SIZE. s[j] >= g[i] -> khush. max kitne khush?
 chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi cookies bade greed ko
 ```
 
@@ -6510,7 +6499,6 @@ N pump gol me. gas[i] = milta, cost[i] = agle tak kharcha. kis index se poora ch
   e.g. gas=[1,2,3,4,5], cost=[3,4,5,1,2] -> 3
   kyun: index 3 se tank 3, 6, 4, 2, 0 -> kabhi minus nahi, chakkar poora
 
-N pump CIRCLE me. gas[i] = pump i pe milta, cost[i] = i se i+1 tak kharcha. khaali tank, kahan se
   chalu ki poora ghoom ke wapas aa jau? koi nahi -> -1. har pump ka NET = gas[i] - cost[i]
 ```
 
