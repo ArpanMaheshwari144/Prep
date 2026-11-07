@@ -618,7 +618,7 @@ int numberOfSubstrings(string s) {
 
 ## ANAGRAM (fixed size = p ki length)
 
-### ▸ LC-438 FIND ALL ANAGRAMS  = FIXED window (p ki length) + need / have ginti (PARENT)  = LC-76 ka bhai
+### ▸ LC-438 FIND ALL ANAGRAMS  = FIXED window (p ki length) + do map ki ginti (PARENT)  = LC-76 ka bhai
 `s="cbaebabacd", p="abc" -> [0,6]`. s me p ke saare anagram ki start index.
 
 kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
@@ -626,7 +626,7 @@ kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
 ```
 SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
 LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao;
-   yahan DO array (need = p, have = window), aana +1 / jaana -1, phir have == need milao. window fixed = p.size().
+   yahan DO map (mp1 = p, mp2 = window), aana +1 / jaana -1, 0 hua to erase, phir mp1 == mp2 milao. window fixed = p.size().
 ★ GALTI: pehle har window ka substr bana ke isAnagram -> LeetCode pe TLE (34/66). ginti har baar dobara mat banao.
 ```
 
@@ -634,16 +634,18 @@ LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badh
 vector<int> findAnagrams(string s, string p) {
     vector<int> ans;
     int i = 0, j = 0;
-    vector<int> need(26, 0);                // p ki ginti, sirf EK baar
-    vector<int> have(26, 0);                // window ki ginti, jodte-ghatate
+    unordered_map<char, int> mp1;           // p ki ginti, sirf EK baar
+    unordered_map<char, int> mp2;           // window ki ginti, jodte-ghatate
     for (int i = 0; i < p.size(); i++)
-        need[p[i] - 'a']++;
+        mp1[p[i] - 'a'] += 1;
     while (j < s.size()) {
-        have[s[j] - 'a']++;                 // ★ j aaya -> +1
+        mp2[s[j] - 'a'] += 1;               // ★ j aaya -> +1
         if (j - i + 1 == p.size()) {        // == : window poora p-size hua tabhi check
-            if (have == need)               // 26 khaane barabar = anagram -> START-index push
+            if (mp1 == mp2)                 // dono map barabar = anagram -> START-index push
                 ans.push_back(i);
-            have[s[i] - 'a']--;             // ★ i gaya -> -1, PHIR i++
+            mp2[s[i] - 'a']--;              // ★ i gaya -> -1
+            if (mp2[s[i] - 'a'] == 0)       // ★ 0 hua to ERASE, warna 0 wali key padi rehti aur mp1 == mp2 kabhi nahi
+                mp2.erase(s[i] - 'a');
             i++;
         }
         j++;
