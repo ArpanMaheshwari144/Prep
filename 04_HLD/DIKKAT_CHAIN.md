@@ -171,7 +171,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  6  hall 1000 ka, saamne 5000 khade            ->  capacity jitne andar, baaki line (virtual queue, token)
  7  token khatam, parchi ke 3 min baaki        ->  token gate ka, seat ki ghadi parchi ki (do ghadiyan)
  8  Pay daba diya, PSP dheema, umar khatam     ->  parchi pe "pay chal raha", umar badhao (PAYMENT_PENDING)
- 9  chhotu (PSP) 3-4 baar jagaya, phir bhi chup ->  seat book dikha do, baaki hamara kaam (BOOKED)
+ 9  chhotu (PSP) 1-2 baar jagaya, phir bhi chup ->  FAILED dikha do, seat chhodo, "paisa kata ho to wapas"; naye log doosre PSP pe (breaker), baad me kata nikla = refund
 10  baad me chhotu bole "fail ho gaya"         ->  user ko kuch nahi, khud dobara / doosra chhotu (retry, PSP-2)
 ```
 

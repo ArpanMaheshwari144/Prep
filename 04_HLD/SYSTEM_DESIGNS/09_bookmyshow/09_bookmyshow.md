@@ -138,21 +138,29 @@ do.
 **Asli naam:** status likh lo = HELD -> PAYMENT_PENDING (Pay dabate hi), umar badha do = is status pe hold expire nahi
 hota (na query na safai job isko chhoote). PSP ka SUCCESS -> BOOKED.
 
-**Maan lo chhotu (PSP) jawab hi nahi de raha, 3-4 baar jagaya phir bhi chup:** user ne to pay kar diya, chhotu hamara
-hai, uski bimaari ki saza user ko nahi. Kab tak rokun, peeche aur log hain, to uski seat book dikha do. Baad me chhotu
-khud aake bole "main fail ho gaya", to user ko kuch nahi kehna: chhotu ko bolo dobara koshish kar, phir bhi nahi to
-doosra chhotu. Ye hamare aur chhotu ke beech ka kaam hai, zimmedari hamari.
-**Asli naam:** 3-4 baar jagaya = status job retry, book dikha do = PAYMENT_PENDING -> BOOKED, chhotu dobara / doosra
-chhotu = server khud retry, phir PSP-2 (idempotency key ke saath, sirf jab PSP-1 pakka FAILED bole, warna do baar
-katega). User tak FAILED nahi jaata.
+**Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup:** PSP do hi haal me hota: haan bola to
+BOOKED. Dheema hai to 1-2 baar ping, phir bhi chup to booking FAILED dikha do aur seat chhod do, kyunki peeche line lagi
+hai. Jaise do ladke: ek baar-baar mana kar raha, to "chhod, doosra ladka tu ja": ab jo bhi naya pay karne aaye, doosre
+PSP pe. Agar dheeme wale ne peeche se paisa kaat liya tha, to wo hamari id se pata chalega (user seedha PSP se baat nahi
+karta, beech me hum hain). User ko bolo "paisa kata ho to wapas aa jaayega, dobara pay kar le", baad me kata nikla to
+paisa wapas. IRCTC, GPay, Paytm roz yahi karte. Hum perfect system ke peeche nahi: PSP hamare bas me nahi, perfect
+consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa wapas.
+**Asli naam:** 1-2 baar ping = status check retry (timeout), FAILED dikha do = PAYMENT_PENDING -> FAILED + hold release,
+naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
+= reconciliation job + refund.
 
 ```mermaid
 flowchart LR
     A["Arpan: Pay 4:30"] --> S["Counter<br/>(BMS Service)"]
     S --> D[("Parchi pe status<br/>(PAYMENT_PENDING)")]
     S --> P1["Chhotu<br/>(PSP-1)"]
-    S -. "PSP-1 pakka FAILED" .-> P2["Doosra chhotu<br/>(PSP-2, idempotency key)"]
+    P1 -- "haan" --> B["BOOKED"]
+    P1 -- "na" --> F["FAILED<br/>seat chhodo, dobara pay"]
+    P1 -. "1-2 ping ke baad bhi chup" .-> F2["FAILED<br/>'paisa kata ho to wapas'"]
+    F2 --> R["Baad me job<br/>(payment id se poochhe)<br/>kata nikla = refund"]
+    S -. "naye log (breaker)" .-> P2["Doosra chhotu<br/>(PSP-2)"]
     style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style F2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
 ---
