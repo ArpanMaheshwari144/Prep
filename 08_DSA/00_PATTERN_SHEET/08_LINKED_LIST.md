@@ -1,14 +1,6 @@
 ## PATTERN 8 — LINKED LIST
 
 ```
-> **YAHAN NAHI MILEGI:**
-> ```
-> merge K sorted lists   ->  PATTERN 14 (HEAP)
->       node/list dikhta hai, par asli kaam MIN-HEAP of current heads ka hai
->       (jodne ka engine — dummy + tail — wahi hai jo merge-TWO me hai)
-> ```
-
-
  BROAD IDEA: pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
  ★ EDGE (fast-slow): loop ka SHURU chahiye -> milne ke baad slow ko HEAD pe, dono 1-1 step.
          sirf "loop hai ya nahi" poocha to ye step nahi chahiye.
@@ -18,6 +10,10 @@
      while (curr->next != NULL)  // curr ka NEXT dekhna, ya aakhri node PE rukna (tail pakad ke aage jodna)
      // A->B->NULL: curr!=NULL B tak jaake B ka kaam karta; curr->next!=NULL B se pehle ruk jaata
 
+ ★ YAHAN NAHI MILEGI:
+   merge K sorted lists   ->  PATTERN 14 (HEAP)
+         node/list dikhta hai, par asli kaam MIN-HEAP of current heads ka hai
+         (jodne ka engine — dummy + tail — wahi hai jo merge-TWO me hai)
 ```
 
 #### ── FAMILY: FAST/SLOW (slow 1 kadam, fast 2 kadam ya gap; middle / cycle / palindrome / nth-from-end) ──
@@ -27,7 +23,7 @@
  ★ DHYAAN: jodna / hatana -> DUMMY node (head bhi badal sakta)
 ```
 
-### ▸ MIDDLE OF LIST
+### ▸ MIDDLE OF LIST  = FAST/SLOW ka BASE (slow 1, fast 2)
 
 ```
 Linked list ka head diya hai. Beech wala node lautao. Agar list ki lambai even hai aur do beech wale node hain, to doosra wala lautao.
@@ -48,7 +44,7 @@ Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
 ```
 
 
-### ▸ DETECT CYCLE
+### ▸ DETECT CYCLE  = MIDDLE wala fast/slow, milte hi cycle (Floyd)
 
 ```
 Linked list ka head diya hai. Agar list me cycle hai (koi node wapas kisi pichhle node pe point karta hai) to true, warna false.
@@ -114,8 +110,6 @@ cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* ve
 ```
 
 ```
-YAAD:
-
 GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
    1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
    -> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
@@ -148,7 +142,7 @@ ListNode *detectCycle(ListNode *head) {
 ```
 
 
-### ▸ PALINDROME LL (LC-234)
+### ▸ PALINDROME LL (LC-234)  = MIDDLE + REVERSE (2nd half) + compare
 
 ```
 Linked list ka head diya hai. Agar list aage se aur peeche se ek jaisi padhi jaati hai to true, warna false.
@@ -176,7 +170,7 @@ bool isPalindrome(Node *head) {
 ```
 
 
-### ▸ REMOVE NTH FROM END
+### ▸ REMOVE NTH FROM END  = FAST/SLOW ka GAP wala (fast n aage, dummy nahi)
 
 ```
 Linked list ka head aur ek number n diya hai. List ke end se gina hua n-va node hatao aur naya head lautao.
@@ -271,7 +265,7 @@ Node *mergeTwoLists(Node *a, Node *b) {
 ```
 
 
-### ▸ ADD TWO NUMBERS
+### ▸ ADD TWO NUMBERS  = MERGE TWO jaisa DUMMY + tail, bas carry
 
 ```
 Do linked list di hain, har node me ek digit hai aur number ulta rakha hai (ikai wala digit pehle). Dono numbers jodo aur jawab bhi isi ulte tareeke se list me lautao.
@@ -339,7 +333,7 @@ Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap
 
 #### ── FAMILY: REVERSE (3-pointer: prev / curr / next se link ulta; reverse khud + palindrome ka 2nd half) ──
 
-### ▸ REVERSE LINKED LIST
+### ▸ REVERSE LINKED LIST  = 3-pointer (prev / curr / next) ka BASE
 
 ```
 Linked list ka head diya hai. Poori list ulti karo aur naya head lautao.
@@ -376,8 +370,6 @@ PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALA
 ```
 
 ```
-TASVEER:
-
 VISUAL ( 1 -> 2 -> 3 -> 4 -> 5 ,  k=2 ):
    GRP1 [1,2]:  1 -> 2 -> (3 4 5)
         rev ->  2 -> 1          (prev=2 = NAYA HEAD ,  1 = TAIL)
@@ -434,8 +426,6 @@ PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 ```
 
 ```
-TASVEER:
-
 VISUAL ( [x]=node · -> next · ~> random ):
   ORIG:  [7] -> [13] -> [11] -> [10] -> [1]
   rand:   7~>NULL   13~>7   11~>1   10~>11   1~>7      (random kahin bhi)
