@@ -88,7 +88,7 @@ dheemi. To un teeno ko mila de, ek bana de, ek kamre me hi baitha de. Is kamre m
 in 3 me se ek pe bhej. Jisne punch kar diya, baaki 2 usko dekhe hi nahi.
 
 **Asli naam:** ek kamre me baitha de, ek bana de = consumer group (`group.id = sms`), checker = consumer, 3 me se ek
-pe bhej = ek partition group me ek hi consumer ko, baaki 2 dekhe hi nahi = group me ek khabar ek hi checker ke paas (par commit se pehle gira to dobara aa sakti, kadam 6). 30 gate hain to 31va checker khaali baithega. Checker gira
+pe bhej = ek partition group me ek hi consumer ko, baaki 2 dekhe hi nahi = group me ek khabar ek hi checker ke paas (par commit se pehle gira to dobara aa sakti, [kadam 6](#6-checker-register-me-likhne-se-pehle-gira-pehle-aaya-dekh-lo)). 30 gate hain to 31va checker khaali baithega. Checker gira
 to uske gate baaki checkers me bat jaate hain (rebalance).
 
 **Maan lo har fan ki talaashi bhi honi hai, 2 security wale aaye:** unhe checker ke kamre me bitha diya to "sirf ek

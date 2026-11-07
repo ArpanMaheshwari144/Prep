@@ -20,7 +20,7 @@ Technical me: "aur gate" = partition, "har gate ke andar apni line" = kram sirf 
 
 **4. Gate ke andar 3 ticket checker, teeno har fan ka ticket punch kar rahe. Har ticket 3 baar punch, line teen guna dheemi.**
 Arpan: 3 punch ho gaya hai. To aise kar de, un saalon ko mila de, ek bana de, ek kamre me hi baitha de. Is kamre me 3 baithe hain, koi bhi aaye, bas in 3 me se ek pe bhej. Jisne punch kar diya, baaki 2 usko dekhe hi nahi.
-Technical me: "ek kamre me baitha de, ek bana de" = consumer group, "3 me se ek pe bhej" = ek partition group me ek hi consumer ko, "baaki 2 dekhe hi nahi" = group me ek khabar ek hi checker ke paas (par commit se pehle gira to dobara aa sakti, kadam 6).
+Technical me: "ek kamre me baitha de, ek bana de" = consumer group, "3 me se ek pe bhej" = ek partition group me ek hi consumer ko, "baaki 2 dekhe hi nahi" = group me ek khabar ek hi checker ke paas (par commit se pehle gira to dobara aa sakti, [kadam 6](12_message_queue_kafka.md#6-checker-register-me-likhne-se-pehle-gira-pehle-aaya-dekh-lo)).
 **Maan lo har fan ki talaashi bhi honi hai, 2 security wale aaye. Unhe bhi checker ke kamre me bitha diya to "sirf ek ke paas" wala niyam unpe bhi lagega, talaashi chhoot jaayegi.**
 Arpan: To alag baitha do. Matlab pehle ticket checker ka room, phir security ka room. Ek ko paar karo, phir doosre room me jao.
 Technical me: "alag room" = alag consumer group, har group ko saari khabar ki poori copy.
