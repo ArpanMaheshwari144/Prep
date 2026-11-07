@@ -259,6 +259,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  5  group ke 500, ek message 500 kaam          ->  ek dabbe me, log khud aake sunein (ek baar DB)
  6  lift me jawab kho gaya, "hi hi"            ->  ek key, same aaye to mana (clientMsgId)
  7  "kahan?" pehle dikha, ghadiyan aage-peeche ->  server lagayega number (sequence)
+ 7b #980 atka, #981 pehle, phone "981 ke baad do" ->  server ka record, jo nahi gaya sab do; phone sort kare (store-and-forward)
  8  "12 naye message" kaise dikhe              ->  ek ginti, itne padh liye (last_read_seq)
  9  kisne padha, 4.9 lakh entry                ->  978 matlab 975 padha, number ghata lo (watermark)
 10  200 MB video, taar jam                     ->  alag raasta, chhota URL (S3, link)

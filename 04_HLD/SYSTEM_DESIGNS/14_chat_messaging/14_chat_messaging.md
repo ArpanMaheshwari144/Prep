@@ -144,6 +144,13 @@ ek saath aaye to bhi do alag number). Phone ko thodi pata = phone ki ghadi pe bh
 paas aakhri #979, uske baad sab do" bhi isi number se. Redis restart hua to ginti peeche se shuru na ho: us chat ka
 aakhri number Cassandra se padh ke wahin se aage.
 
+**Maan lo #980 ka DB save atka, #981 pehle pahunch gaya, Ravi ka phone "aakhri #981" yaad rakhe aur reconnect pe "#981 ke
+baad do" bole:** #980 chhoot jaata. Par server chootiya nahi: har user ka record rakhta, ye gaya ye nahi gaya. Ravi wapas
+aaya to server apne record se jo nahi gaya wo sab bhejta, phone ke aakhri number se nahi. Message milega hi; kram thoda
+hile to phone number dekh ke sort kar de. Kram kitna strict chahiye, FR me pehle tay (WhatsApp me ek aage-peeche chalega).
+**Asli naam:** har user ka delivery record (store-and-forward, pending list), reconnect pe pending sab, sequence number se
+client-side ordering, ordering = requirement ka faisla.
+
 ```mermaid
 flowchart LR
     A["Arpan: kal party"] --> N[("Server ka number<br/>(Redis INCR seq)")]
