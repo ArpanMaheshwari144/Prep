@@ -33,24 +33,28 @@ vector<int> findAnagrams(string s, string p)
 {
     vector<int> ans;
     int i = 0, j = 0;
-    vector<int> need(26, 0);
-    vector<int> have(26, 0);
+    unordered_map<char, int> mp1;
+    unordered_map<char, int> mp2;
 
     for (int i = 0; i < p.size(); i++)
     {
-        need[p[i] - 'a']++;
+        mp1[p[i] - 'a'] += 1;
     }
 
     while (j < s.size())
     {
-        have[s[j] - 'a']++;
+        mp2[s[j] - 'a'] += 1;
         if (j - i + 1 == p.size())
         {
-            if (have == need)
+            if (mp1 == mp2)
             {
                 ans.push_back(i);
             }
-            have[s[i] - 'a']--;
+            mp2[s[i] - 'a']--;
+            if (mp2[s[i] - 'a'] == 0)
+            {
+                mp2.erase(s[i] - 'a');
+            }
             i++;
         }
         j++;
