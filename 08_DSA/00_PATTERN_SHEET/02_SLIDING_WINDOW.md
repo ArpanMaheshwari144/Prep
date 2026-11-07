@@ -500,89 +500,64 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
 
 ## NEED-MAP (t ke saare char chahiye)
 
-### ▸ LC-76 MIN WINDOW SUBSTRING  
+### ▸ LC-76 MIN WINDOW SUBSTRING (Hard)  -- need-map + COUNT, answer = MIN-track, loop ke ANDAR
 `s="ADOBECODEBANC", t="ABC" -> "BANC"`. s ki sabse chhoti window jisme t ke saare akshar utni hi baar hon jitni baar t me hain (count ke saath; t="AA" ho to do A chahiye). Na mile to "".
 
 kyun: "ADOBEC" (6) bhi A,B,C rakhta, par "BANC" (4) sabse chhota
 
 ```
-TASVEER:
-
-┌── FAMILY: need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR) ─────
-│ LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD). t="abc" -> dono ek.
-└───────────────────────────────────────────────────────────────
-
-SHARED SKELETON (expand + shrink -- dono me same):
-     need-map(t);  count = t.size();                 // count==0 => window me t ke SAARE char (VALID) · need-map: t ke har char pe mp[c]++
-     while (j < n) {                                  // OUTER: j (right) aage
-         if (mp[s[j]] > 0) count--;                  // t-char mila -> ek zaroorat puri
-         mp[s[j]]--;                                 // IF ke BAHAR: non-t char -ve -> count me "invisible"
-                                                     //   (andar rakha to D-ASYMMETRY BUG: shrink me count++ galat)
-         while (count == 0) {                         // INNER: VALID -> shrink (i++)
-             mp[s[i]]++;  if (mp[s[i]] > 0) count++;  i++;   // MIRROR: aana = -- , jaana = ++
-         }
-         j++;   // shrink ke BAAD agla char lo
-     }
-
+FAMILY need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR):
+   LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD).
+count = t.size(). count==0 => window me t ke SAARE char (VALID).
 DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-        len=j-i+1; if(len<minLen){minLen=len; index=i;}   // record PEHLE: abhi [i..j] valid, i++ ke baad shayad nahi
-        mp[s[i]]++; if>0 count++; i++;   // wapas ++; >0 hua = t ka zaroori char gaya, count++
-return minLen==INT_MAX ? "" : s.substr(index, minLen).   // INT_MAX bacha = koi valid window nahi mila -> khaali string
 ```
 
 ```cpp
 string minWindow(string s, string t) {
     unordered_map<char, int> mp;
     for (auto &it : t)
-        mp[it]++;
+        mp[it]++;                           // need-map: t ke har char pe mp[c]++
     int i = 0, j = 0, count = t.size(), minLen = INT_MAX, index = 0;
-    while (j < s.size()) {
+    while (j < s.size()) {                  // OUTER: j (right) aage
         if (mp[s[j]] > 0)
-            count--;
+            count--;                        // t-char mila -> ek zaroorat puri
         // ★ IF ke BAHAR: t me na hone wale char bhi minus me, warna shrink pe count++ galat
-        mp[s[j]]--;
-        while (count == 0) {                // chhota wala: theek hai tab tak
+        mp[s[j]]--;                         //   (andar rakha to D-ASYMMETRY BUG)
+        while (count == 0) {                // INNER: VALID -> shrink + SAVE (chhota wala: theek hai tab tak)
             int len = j - i + 1;
-            if (len < minLen) {             // record pehle, nikaalne se pehle
+            if (len < minLen) {             // record PEHLE: abhi [i..j] valid, i++ ke baad shayad nahi
                 minLen = len;
                 index = i;
             }
-            mp[s[i]]++;                     // aaya --, gaya ++ (mirror)
+            mp[s[i]]++;                     // aaya --, gaya ++ (MIRROR)
             if (mp[s[i]] > 0)
-                count++;
+                count++;                    // >0 hua = t ka zaroori char gaya, count++
             i++;
         }
-        j++;
+        j++;                                // shrink ke BAAD agla char lo
     }
-    return minLen == INT_MAX ? "" : s.substr(index, minLen);   // s="a", t="aa" -> ""
+    return minLen == INT_MAX ? "" : s.substr(index, minLen);   // INT_MAX bacha = koi valid window nahi -> ""
+                                                                // s="a", t="aa" -> ""
 }
 ```
 
 
-### ▸ LC-1358 SUBSTRINGS WITH ALL THREE (a, b, c)  
+### ▸ LC-1358 SUBSTRINGS WITH ALL THREE (a, b, c)  = LC-76 ka SAME code, answer = COUNT, loop ke BAAD
 `"abcabc" -> 10`. Kitne substring jinme a, b, c teeno.
 
 e.g. "aaacb" -> 3 · kyun: "aaacb", "aacb", "acb" me teeno; "cb" ya usse chhote me a nahi = 3
 
 ```
-TASVEER:
-
-IDEA:
-   = LC-76 ka SAME code reuse:  numberOfSubstrings(s) = minWindow(s, "abc")
-     farak sirf answer ki line:
-         LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (sabse chhoti)
-         LC-1358 : while ke BAAD  -> ans += i                        (ginti)
-   ans += i KYUN: shrink window ko invalid hone tak le jaata -> 0 se i-1 tak har start valid tha -> i substring.
-      "abcabc": har j pe i = 0,0,1,2,3,4 -> jod 10
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-ans += i;                                   // outer ke ANDAR, inner-while ke BAAD -> har j pe
+= LC-76 ka SAME minWindow() -- literally REUSE: numberOfSubstrings(s) = minWindow(s, "abc").
+  farak SIRF answer-line:
+      LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
+      LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
+WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
+   "abcabc": har j pe i = 0,0,1,2,3,4 -> jod 10
+★ Product < k wala j-i+1 yahan galat hai.
 ```
 
 ```cpp
-// LC-76 se alag file / naam me rakhna: same naam, return type alag -> saath compile nahi hoga
 int minWindow(string s, string t) {
     unordered_map<char, int> mp;
     for (auto &it : t)
@@ -591,25 +566,24 @@ int minWindow(string s, string t) {
     while (j < s.size()) {
         if (mp[s[j]] > 0)
             count--;
-        mp[s[j]]--;
-        while (count == 0) {
+        mp[s[j]]--;                         // EXPAND (same)
+        while (count == 0) {                // INNER: shrink to INVALID
             mp[s[i]]++;
             if (mp[s[i]] > 0)
                 count++;
             i++;
         }
         // ★ j-i+1 NAHI. while ke baad start 0..i-1 sab theek the -> i
-        ans += i;
+        ans += i;                           // outer ke ANDAR, inner-while ke BAAD -> har j pe
         j++;
     }
     return ans;
 }
 
 int numberOfSubstrings(string s) {
-    return minWindow(s, "abc");
+    return minWindow(s, "abc");             // t = "abc" (count = 3)
 }
 ```
-`↳ SAME: LC-76 ka code. Farak: record nahi, aur ans += i (while ke baad). Product < k wala j-i+1 yahan galat hai.`
 
 ---
 
