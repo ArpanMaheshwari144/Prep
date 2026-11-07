@@ -77,15 +77,6 @@ int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, di
 }   // heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max"
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-TEMPLATE:
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     stones[]. har turn 2 sabse bhaari ladao: barabar -> dono gaye, warna diff bache. aakhri bacha lautao (warna 0).
-```
 
 ### ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
 
@@ -107,21 +98,6 @@ int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
 }   // O(n log k) (sort O(n log n) se behtar)
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : k SABSE BADE min-heap me rakho -> unme se sabse chhota (heap TOP) = k-th largest.
-TRICK (top-K ka core): MIN-heap of size k.  (kyun MIN: size>k pe sabse-chhota EVICT karna hai.)
-TEMPLATE:
-    priority_queue<int, vector<int>, greater<int>> pq;   // MIN-heap (min: size>k pe sabse chhota bahar nikle)
-    for(num : nums){ pq.push(num);  if(pq.size() > k) pq.pop(); }   // k se zyada -> chhota nikaal
-    return pq.top();                                      // k bade me se chhota = kth largest
-O(n log k) (sort O(n log n) se behtar jab sirf k-th chahiye).  yehi pattern = "top-K" saare problems.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     nums[] + k. k-th SABSE BADA element lautao.
-```
 
 ### ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
 
@@ -152,20 +128,6 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : origin (0,0) ke k SABSE PAAS points. paas = doori = x*x+y*y (√ NAHI, sirf compare).
-= KTH-LARGEST ka MIRROR-TWIN. wahan k BADE (min-heap, chhota evict);
-TEMPLATE (max-heap {dist, point}, size k):
-    priority_queue<pair<int, vector<int>>> pq;   // MAX-heap: sabse BADI dist top pe (taaki size>k pe sabse door wala nikle)
-    for(auto &p : points){
-        int d = p[0]*p[0] + p[1]*p[1];           // √ skip -> compare-safe
-        pq.push({d, p});                          // {dist, point} (dist PEHLE: heap pair ke first pe compare karta)
-        if(pq.size() > k) pq.pop();               // sabse door (top) EVICT -> k paas bache
-    while(!pq.empty()){ ans.push_back(pq.top().second); pq.pop(); }  // .second = {x,y} poora
-KEY : (1) dist = x²+y², √ ki zaroorat nahi (order same).  (2) k CHHOTE chahiye -> MAX-heap
-      (bada evict).  pair<int,vector<int>> = dist PEHLE (compare), point .second me poora.
-```
 
 ### ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
 
@@ -199,18 +161,6 @@ vector<int> topKFrequent(vector<int> &nums, int k) {
 }   // O(n log k). max-heap me saare push -> k baar pop = O(n log n), slow
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : k sabse ZYADA baar aane wale elements return karo (order matter nahi).
-= KTH-LARGEST ka COUSIN. bas "value" ki jagah "FREQUENCY" pe heap.  FARAK = 2:
-TEMPLATE:
-    unordered_map<int,int> mp;  for(x:nums) mp[x]++;              // STEP1: freq gino
-    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;  // MIN-heap (min: size>k pe sabse kam freq bahar nikle)
-        if(pq.size() > k) pq.pop();                              // chhoti freq EVICT -> top-k bache
-    while(!pq.empty()){ ans.push_back(pq.top().second); pq.pop(); }  // .second = actual num
-KEY : pair<freq,num> daalte hain (freq PEHLE) taaki heap FREQUENCY pe compare kare.  O(n log k).
-[maxHeap se bhi: saare push -> k baar top-pop.  par O(n log n), slow. min-heap-k better.]
-```
 
 #### ── FAMILY: MIN-heap of current candidates (har baar sabse chhota nikaalo, uska agla daalo) ──
 
@@ -250,12 +200,6 @@ ListNode *mergeKLists(vector<ListNode *> &lists) {
 }   // heap me max k node (1 per list) -> O(N log k)
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : min-heap me har list ka current HEAD. pop chhota -> result me jodo -> uska NEXT push. repeat.
-TEMPLATE:
-heap me max k nodes (1 per list) -> O(N log k).  ListNode* min-heap = custom Compare (a->val > b->val).
-```
 
 ### ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
 
@@ -288,16 +232,6 @@ vector<int> sortKSorted(vector<int> &arr, int k) {
 }   // [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]. O(n log k). kth-largest ka cousin (sliding buffer)
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : har element sahi position se max k DOOR -> O(n log k) sort (n log n se behtar).
-DERIVE (WHY heap): index-0 pe MIN aayega, wo max index k tak -> "pehle k+1 me se MIN kaun?"
-   -> baar-baar MIN + data badalta -> DECISION-table = HEAP. min chahiye -> MIN-heap.
-TEMPLATE (min-heap, k+1 sliding buffer):
-  priority_queue<int,vector<int>,greater<int>> pq;              // MIN-heap (min: sorted output me chhota pehle chahiye)
-EX: arr=[6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]  (buffer hamesha <=4; bharte hi MIN pop).
-= KTH-LARGEST ("heap size k") ka COUSIN: wahan k bade RAKHE, yahan k+1 ka SLIDING buffer.  O(n log k).
-```
 
 #### ── FAMILY: TWO-HEAPS (do team, dono top = beech ke border) ──
 
@@ -368,16 +302,6 @@ public:
 };   // 5 -> 5 · 15 -> 10 · 1 -> 5 · 3 -> farak 2, 5 minHeap me -> {3,1} {5,15} -> 4
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : stream me numbers aate rehte; kabhi bhi ab-tak ka MEDIAN turant chahiye.
-addNum (2 kadam):
-findMedian: barabar(even) -> (maxHeap.top+minHeap.top)/2 ; warna(odd) -> maxHeap.top
-TEMPLATE:
-       return maxHeap.top();  // odd: extra maxHeap me rakha, uska top hi median
-★ TRAP (yahin confuse hua): heap ka NAAM top batata, "kaise number rakhta" NAHI.
-FAMILY: heap (kth-largest / k-sorted / merge-k) · running-value + do-heap-balance
-```
 
 #### ── FAMILY: MAX-heap + greedy (har round sabse zyada wala lagao) ──
 
@@ -442,25 +366,6 @@ string reorganizeString(string s) {
 }   // "aaabbb" -> ab, abab, ababab · "aaab" -> ab, (2,a) akela count 2 -> ""
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR: chars rearrange -> koi 2 ADJACENT same na ho. na bane -> "".
-   aab: a2 -> 1 gap <= 1 baaki -> OK.   aaab: a3 -> 2 gap > 1 -> "".
-   (alag check na bhi rakho -> last-bacha-count>1 khud pakad leta.)
-KYUN POP-TWO: 1 nikaal turant wapas -> phir wahi top -> "aa".
-TEMPLATE: // pehle mp[ch]++, phir maxHeap.push({cnt,ch}) (cnt PEHLE: us pe sort)
-   while(heap.size()>1){ t1=pop; t2=pop; ans+=t1.ch; ans+=t2.ch;  // >1: har round 2 ALAG char chahiye
-      if(--t1.cnt) push(t1); if(--t2.cnt) push(t2); }  // -- pehle phir check: 0 bacha to wapas mat daalo
-   if(heap.size()==1) return top.cnt>1 ? "" : ans+top.ch;  // akela bacha count>1: do same paas aayenge, impossible
-   return ans;   // heap khaali: saare char jagah pe lag gaye
-crux: MAX-HEAP + har round 2 alag nikaalo + last-1 count>1 = impossible.
-FAMILY: heap (top-k-frequent cousin) · greedy-place-most-frequent
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     string s ke akshar aise lagao ki koi 2 PADOSI same na ho. koi bhi ek valid lautao, na bane -> "".
-```
 
 #### ── FAMILY: MIN-heap + vis[] (lazy delete) ──
 
@@ -501,17 +406,4 @@ long long totalResponseTime(vector<int> &responseTimes) {
 }   // O(n log n). heap se beech ka element nikaal nahi sakte -> vis[] se pop pe skip
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR: har step bache hue me SABSE CHHOTA uthao (tie -> chhota index), total me jodo,
-      use + ORIGINAL padosi (i-1, i+1) hata do. sab hatne tak.
-PEHCHAN: kahani hata do -> "baar-baar MIN + beech me cheezein hat-ti" -> HEAP + hat-chuka array.
-   sawaal: "kya mujhe chunna padta hai?" haan -> DP · nahi -> simulate.
-TEMPLATE:
-   priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;  // MIN {val,idx} (min: har step sabse chhota uthana)
-       if(vis[i]) continue;                          // pehle hi hat chuka -> chhodo (LAZY delete)
-       if(i+1 <  n) vis[i+1] = true;   // < n: aakhri index n-1, uske aage bahar
-             (Dijkstra ke "stale-skip" jaisa hi).
-FAMILY: heap (emergency-room: baar-baar min) · visited[] (graph jaisa) · lazy delete
-```
 
