@@ -237,8 +237,6 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
 ```
 
 ```
-YAAD:
-
 ★ PURANI GALTI (Aug sheet): END me sirf return mins-1 tha -> grid me koi santra hi nahi to -1 aata, sahi 0. Isliye ab mins == 0 ? 0 : mins-1.
 ```
 
@@ -327,7 +325,7 @@ bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
 ```
 
 
-### ▸ BUILD ORDER — ready me se SABSE CHHOTA pehle (topo + MIN-HEAP)
+### ▸ BUILD ORDER — ready me se SABSE CHHOTA pehle  = COURSE SCHEDULE (Kahn's) + queue ki jagah MIN-HEAP
 
 ```
 n module hain (0 se n-1). [a -> b] ka matlab: a banne ke baad hi b ban sakta hai. Ek baar me ek hi module banta hai.
@@ -389,8 +387,6 @@ saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 ka
 ```
 
 ```
-TASVEER:
-
 VISUAL (A-B graph):
     original:  A --- B
     (1) clone map me daalo:  mp = { A->A' ,  B->B' }     // naye node, abhi LOOSE (jude nahi)
@@ -444,8 +440,6 @@ graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]
 ```
 
 ```
-TASVEER:
-
 INPUT: graph[i] = node i ke saare neighbours (adj-list KHUD di hai, banani nahi)
     [[1,3],[0,2],[1,3],[0,2]]  -> true        [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
         0 --- 1                                    0 --- 1
@@ -517,18 +511,6 @@ pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
     {dist, node} ->  0 -> (1, node2) -> (3, node1) sirf EK baar, seedha sahi -> (4, node3) khatam
 ```
 
-```
-YAAD:
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-TRICK (RELAXATION = "dheela karo"):
-   d = node tak ki dist,  w = us EDGE ka weight (it.second, NA dist[node]).
-   naya rasta (d + w) purane dist[nbr] se kam? -> dist[nbr] = d+w; push.
-
-PURANI SHEET KI LINE (git 07e45c2b):
-// ★ > strictly (>= nahi): taaza entry ka wt == dist[node] hota. >= = src {0,src} khud skip -> sab INF.
-```
-
 ```cpp
 vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
     unordered_map<int, vector<pair<int, int>>> adj;
@@ -548,7 +530,8 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
         int wt = pq.top().first;            // node tak ki dist
         int node = pq.top().second;
         pq.pop();
-        if (wt > dist[node])                // ★ STALE skip (sirf > : barabar wala taaza entry)
+        // ★ > strictly (>= nahi): taaza entry ka wt == dist[node] hota. >= = src {0,src} khud skip -> sab INF
+        if (wt > dist[node])                // STALE skip (sirf > : barabar wala taaza entry)
             continue;
         for (auto &it : adj[node]) {        // it.first = nbr, it.second = EDGE weight (dist[node] NAHI)
             if (wt + it.second < dist[it.first]) {   // ★ RELAX: naya rasta chhota? (< strict: barabar pe
@@ -637,8 +620,6 @@ level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora 
 ```
 
 ```
-TASVEER:
-
 ★★ EXAMPLE (yahi yaad -> poora recall flash):  begin=hit, end=cog, dict={hot,dot,dog,lot,log,cog}
     Level 1:  hit
     Level 2:  hot                    (hit->hot)
@@ -663,12 +644,8 @@ TEMPLATE:
                                                      │  return 0
    FARAK sirf level-track: TERA steps PAIR me (push me steps+1) · MERA size-loop + baad me level++.
 
-PURANI SHEET KI KYUN LINE (code ke saath wali):
 ★ VISITED trick (Arpan): dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
                          (ek check "dict me hai?" + "visited nahi?" dono serve).
-
-PURANI SHEET KI LINE (git 32b09075):
-w[i] = original          <- RESTORE zaroori (warna word bigad jaata)
 ```
 
 ```cpp
@@ -692,7 +669,7 @@ int ladderLength(string beginWord, string endWord, vector<string> &wordList) {
                     q.push({word, steps + 1});
                 }
             }
-            word[i] = original;             // ★ RESTORE
+            word[i] = original;             // ★ RESTORE zaroori (warna word bigad jaata)
         }
     }
     return 0;                               // endWord dict me nahi -> 0
