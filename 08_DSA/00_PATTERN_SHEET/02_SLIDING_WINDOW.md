@@ -17,19 +17,23 @@
 ## LAMBA wale (kharab hote hi chhota karo, while ke BAAD ans = max)
 
 
-### ▸ LC-3 NO REPEAT
+### ▸ LC-3 NO REPEAT  
+`"abcabcbb" -> 3`. Sabse lambi substring jisme koi char repeat na ho.
+
+kyun: "abc" me teeno alag = 3; agla a aate hi repeat, isse lamba koi substring nahi
 
 ```
-SAWAAL:
-string s. sabse lambi substring (lagaatar) jisme koi char repeat na ho, uski lambai lautao.
-  e.g. "abcabcbb" -> 3
-  kyun: "abc" me teeno alag = 3; agla a aate hi repeat, isse lamba koi nahi
+YAAD:
 
-SOCH:
-window badhao (j), har char map me ginti. jo abhi aaya (s[j]) wahi repeat ho sakta, to sirf mp[s[j]] > 1 dekho.
-repeat hua -> i aage karo jab tak s[j] ki ginti wapas 1 na ho. phir hi lambai record (ab window valid).
-★ GALTI: while ki jagah if -> "abba" pe 3 aaya, sahi 2 (a ke saath purana b bhi nikaalna padta).
-edge: khaali string -> 0.
+INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
+
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+unordered_map<char,int> mp;  int i=0, j=0, maxLen=INT_MIN;   // INT_MIN: end me check karke khaali string pe 0
+    while(mp[s[j]] > 1){                 // INVALID: current char (s[j]) repeat (while: repeat wala char nikalne tak kai char hatane padte)
+        mp[s[i]]--; i++;                 // left shrink jab tak repeat khatam
+    maxLen = max(maxLen, j - i + 1);     // valid window length (shrink ke BAAD record, ab window valid)
+    j++;   // record ke BAAD aage badho
+return maxLen==INT_MIN ? 0 : maxLen;     // khaali string -> INT_MIN reh jaata -> 0
 ```
 
 ```cpp
@@ -42,11 +46,11 @@ int lengthOfLongestSubstring(string s) {
     while (j < s.size()) {
         mp[s[j]]++;
         // ★ "abba": a aur purana b, dono nikaalo. if -> 3, sahi 2
-        while (mp[s[j]] > 1) {              // jo abhi aaya (s[j]) wahi repeat
+        while (mp[s[j]] > 1) {
             mp[s[i]]--;
             i++;
         }
-        ans = max(ans, j - i + 1);          // shrink ke BAAD record: ab window valid
+        ans = max(ans, j - i + 1);
         j++;
     }
     return ans == INT_MIN ? 0 : ans;
@@ -318,29 +322,37 @@ int maxSumK(vector<int> &nums, int k) {
 ```
 
 
-### ▸ LC-1423 MAX POINTS FROM CARDS
+### ▸ LC-1423 MAX POINTS FROM CARDS  
+`[1,2,3,4,5,6,1], k=3 -> 12` (peeche se 5+6+1). Dono kinaron se kul k card lo, sum sabse bada.
+
+kyun: back se 3 = 1+6+5 = 12; front 3 = 6, mix (1+2+1 = 4, 1+1+6 = 8) kam
 
 ```
-SAWAAL:
-cards ki line. EXACTLY k card lo, par sirf DONO kinaron se (aage se, peeche se, ya mix).
-liye hue cards ka sum sabse bada kitna?
-  e.g. [1,2,3,4,5,6,1], k=3 -> 12
-  kyun: peeche se 5+6+1 = 12 sabse bada (aage 3 = 6, mix 1 + 6+1 = 8)
+TASVEER:
 
-SOCH:
-L - k KYUN: total L = 7 card, k = 3 liye -> 7 - 3 = 4 card BACHE.
-  kinaron se uthaye, to bache hue beech me ek tukda:
-    [1 2 3 4 | 5 6 1]      peeche 3 liye    -> bache 1 2 3 4
-    [1 | 2 3 4 5 | 6 1]    aage 1, peeche 2 -> bache 2 3 4 5
-MIN KYUN (MAX nahi): Total = saare card ka sum = 22, ye kabhi nahi badalta.
-  liye hue + bache hue = Total  ->  liye hue = Total - bache hue.
-  liye hue MAX chahiye -> bache hue jitne CHHOTE, utna achha -> bache hue ka MIN.
-to: L - k size ki window chalao (MAX SUM OF K jaisa, bas MIN), sabse chhota sum -> Total - min.
-  dry-run: window 4 -> 10 · 14 · 18 · 16 -> min 10 -> 22 - 10 = 12
-★ GALTI: aage se k + peeche se k le liye -> 2k ho gaye -> L-2k nikaal raha tha.
-         k TOTAL hai (dono kinare milake) -> bache L - k.
-★ GALTI: sirf peeche se k -> [100,1,1,1,1] k=2 pe aage ke 100+1 = 101 chhoot gaye.
-edge: k == L -> sab le liye, kuch nahi bacha -> seedha Total.
+★ RECOGNITION (jab question AISE sound kare): "dono end se k cards lo, sum MAX" -> ye SIGNAL hai.
+   k UTHANE ki tension MAT lo -> ULTA jo BACHTA hai (beech ka L-k) usko MIN kardo -> answer apne-aap.
+   flip ke baad "ye problem THA HI NAHI" -> plain MAX-SUM-K ki MIN-version + (Total - min). bas.
+
+DERIVE (kaise pahuncha -- yahin GADBAD ki thi, dobara padho to soch-ki-raah + galtiyan):
+  (0) "sirf back se k" -> galat: [100,1,1,1,1] k=2 -> front-2=101 best.
+  (1) "front se k + back se k" -> galat: wo 2k cards; problem = k TOTAL (dono end milake). [yahin atka: L-2k nikaal raha tha]
+  (2) taken cards DONO end pe -> contiguous NAHI -> seedha SW fail.
+  (3) FLIP (aha): untaken = beech ka CONTIGUOUS window, size L-k.
+  (4) taken MAX = untaken MIN -> answer = Total - min.  ("hard" flip ke baad TRIVIAL.)
+
+TWIST (yahi hard part): taken cards DONO end pe (contiguous NAHI) -> seedha SW nahi chalta.
+     ULTA socho -> jo NAHI liye = beech ka CONTIGUOUS window, size L-k.
+     taken MAX  <=>  untaken MIN.   answer = Total - min(window).
+= MAX-SUM-SIZE-K (pattern-01) ka cousin -- SAME fixed-window mechanic, bas 3 DELTA:
+     (a) window size = L-k  (b) MAX ki jagah MIN dhundo  (c) answer = Total - min.
+
+DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
+FAMILY: fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
+
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+  int Total = accumulate(nums, 0);   // saare cards ka sum: isme se beech ka min ghatayenge
+minSumK (fixed window, MIN): sum += nums[j]; jab (j-i+1 >= size) -> minSum=min(minSum,sum); sum-=nums[i]; i++.   // minSum=INT_MAX se
 ```
 
 ```cpp
@@ -371,7 +383,7 @@ int maxScore(vector<int> &nums, int k) {
     return Total - minSum;
 }
 ```
-
+`↳ SAME: max sum of k ka MIN version. Farak: seedha nahi, ulta socho, Total - beech ka min.`
 
 
 ### ▸ LC-219 CONTAINS DUPLICATE II  
