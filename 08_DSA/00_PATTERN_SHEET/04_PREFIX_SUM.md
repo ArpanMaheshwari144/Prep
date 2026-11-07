@@ -41,7 +41,7 @@ int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum
 ```
 
 
-### ▸ PRODUCT EXCEPT SELF (LC-238)
+### ▸ PRODUCT EXCEPT SELF (LC-238)  = PIVOT jaisa "assign PEHLE, update BAAD", 2 pass
 
 ```
 Ek array diya hai. Har index i ke liye ans[i] = baaki sabhi numbers ka guna (nums[i] ko chhod ke).
@@ -78,7 +78,7 @@ vector<int> productExceptSelf(vector<int> &nums) {
 ── (STANDALONE — apni alag trick) ──
 
 
-### ▸ HIGHEST ALTITUDE
+### ▸ HIGHEST ALTITUDE  = running sum + max (simple prefix)
 
 ```
 Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak altitude kitni badhi ya ghati. Raste me sabse unchi altitude kitni thi, wo lautao.
@@ -138,7 +138,7 @@ beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni ba
 ```
 
 ```
-↳ SAME: SUBARRAY SUM = K ka hubahu copy, sirf sign badla:
+= SUBARRAY SUM = K ka hubahu copy, sirf sign badla:
    sum wale me:  complement = curSum - k      (a+b=c -> c-b=a)
    XOR wale me:  complement = curXor ^ k      (a^b=c -> c^b=a)   [4^2=6 to 4^6=2]
 ```
@@ -173,8 +173,6 @@ K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 ```
 
 ```
-TASVEER:
-
 [8, 2, 1, 3, 4, 5, 1, 10],  K = 3      (K se bada = DEEWAR)
 
  10 |                                  #
@@ -206,8 +204,6 @@ har i pe:   lastWall = aakhri DEEWAR ka INDEX,   lastK = aakhri K ka INDEX
 ★ 7-Nov REDO_2 ki galti: lastWall = arr[i] likha (8, 4...)  ->  INDEX chahiye (0, 4...), ginti index se banti
 ★ teesri if (lastK > lastWall) chhooti: i = 6 pe 3 - 5 = -2 jud jaata
 
-PURANI SHEET KI LINE (git b086ea01):
-★ count ~n^2/2 (5e9) -> LONG LONG (int overflow).
 WHY simple: "hard-dikhne" wala tha (scary constraints + 3 candidate-pattern), par EK insight (walls) ne
    collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 ```
@@ -230,7 +226,7 @@ long long countSubarraysMaxK(vector<int> &arr, int K) {
 ```
 
 
-### ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)
+### ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)  = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II) ka sagaa bhai
 
 ```
 n flights hain (1 se n). Har booking [first, last, seats] ka matlab: first se last tak har flight me itni seats book hui.
@@ -238,14 +234,11 @@ Saari bookings ke baad har flight ki kul booked seats ka array lautao.
   e.g. n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
   kyun: flight 2 = 10+20+25 = 55; flight 3 = 20+25 = 45; flight 4, 5 = sirf 25
 
-= prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II, PATTERN 15) ka sagaa bhai
 KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
 har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
 ```
 
 ```
-TASVEER:
-
 DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
     diff:   idx  1    2    3    4    5    6
                 +10  +20  -10  -20   .   -25
@@ -255,8 +248,7 @@ DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
     run :        10   55   45   25   25
     ans = [10, 55, 45, 25, 25]
 
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-★★ SWEEP-LINE se RISHTA (Arpan ne khud jod diya — "dono same hain, bas do farak"):
+★★ SWEEP-LINE se RISHTA (Arpan ne khud jod diya — "dono same hain, bas do farak"): code ke neeche comment me.
 ```
 
 ```cpp
