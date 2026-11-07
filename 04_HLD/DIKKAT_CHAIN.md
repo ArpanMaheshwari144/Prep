@@ -316,6 +316,8 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  6  60 ne pay nahi kiya                      ->  cart = list, ginti pay pe, fail to wapas
  7  3000 ek second me Pay                    ->  server pe line, 500 ke baad rollback (ya ghadi wala hold, dono ki keemat)
  7b rollback + ghadi dono me pech           ->  Apple store: sale gate, stock jitne hi Pay tak, fail = agla batch
+ 7c andar gaya, chai peene chala gaya         ->  "ya pay kar ya rakh de": 5 min ghadi, phir wapas line me (expiry + INCR)
+ 7d ghadi khatam ke 1 sec baad Pay           ->  1-2 sec upar bas, phir Priya ka; andar dabaya to PSP hamari zimmedari
  8  net gaya / PSP chup                      ->  BMS wala PAYMENT_PENDING + status job, kinaare pe refund
 ```
 

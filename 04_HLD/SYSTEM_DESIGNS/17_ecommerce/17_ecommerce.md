@@ -142,6 +142,17 @@ ghee guzarne hain, to dikkat hi khatam.
 deta jitna stock (Redis DECR), card fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi,
 aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
 
+**Maan lo Ravi Pay page pe jaake chai peene chala gaya, na pay na cancel:** pay nahi kiya to phone bika nahi. Dukaandar
+jaisa: "ya pay kar ke le ja, ya wapas rakh de". Andar aate hi 5 minute ki ghadi; pay kiya to uska, nahi to wapas line me,
+agla andar.
+**Asli naam:** reservation expiry (TTL), release (Redis INCR) + agla batch.
+
+**Maan lo ghadi 10:05 pe khatam, phone Priya ko gaya, Ravi 10:05 + 1 second pe Pay dabaye:** 5 minute ka time, code ke liye
+1-2 second upar, zyada nahi; uske baad phone Priya ka (BookMyShow me bhi timer khatam to seat kisi aur ki). Time ke
+andar Pay daba diya aur PSP dheema to hamari zimmedari.
+**Asli naam:** Pay pe reservation zinda hai ya nahi check (expiry check), chhota grace period, andar dabaya to
+PAYMENT_PENDING aur hold ruk jaata (kadam 8 / BMS jaisa).
+
 ```mermaid
 flowchart LR
     U["3000 log bahar<br/>(Sale page)"] --> GT["Apple store ka darwaza<br/>(Sale gate, Buy now)"]
