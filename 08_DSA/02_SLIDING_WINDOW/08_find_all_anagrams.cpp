@@ -7,13 +7,13 @@
 // 5. "X jaisa hai, bas ye badla" laga -> poochho: X me jo THI HI NAHI, wo line kya hai? (edge wahin)
 // 6. Code ke BAAD, submit se pehle: us pattern block ki ★ EDGE line + ek chhota dushman-example chalao
 // ============================================================
-// FIND ALL ANAGRAMS IN A STRING (LC-438) — REDO_2 (khaali page, C++)
+// FIND ALL ANAGRAMS IN A STRING (LC-438) — main file (need / have 26, 7-Nov)
 // ============================================================
 // do string s aur p (sirf chhote akshar a-z). s me p ke SAARE anagram ki START INDEX dhundo (vector me lauta).
 // anagram = same characters, order koi bhi (jaise "abc","bca","cab" sab anagram).
 //   s="cbaebabacd", p="abc"  -> [0,6]   (s[0..2]="cba", s[6..8]="bac")
 //   s="abab",       p="ab"   -> [0,1,2]
-// LeetCode limit: s aur p dono 30,000 tak. REDO_1 wala code yahan TLE (34/66) -> ye wala BADE test pe bhi tez chale.
+// LeetCode limit: s aur p dono 30,000 tak. purana substr wala code yahan TLE (34/66) -> ye wala BADE test pe bhi tez chale.
 //
 // Tests (s, p -> expected indices):
 //   "cbaebabacd", "abc"  -> 0 6
