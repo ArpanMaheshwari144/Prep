@@ -1,39 +1,43 @@
 # Spring Proxy: JDK Dynamic vs CGLIB
 
-## Kahani
+## Scene
 
-`transfer()` me asli kaam sirf 2 line ka hai. Par agar transaction haath se sambhalo, to har method me ye 8 line ki plumbing likhni padti hai:
+Asli bean ek bada aadmi hai, aur uske darwaze pe ek **secretary (proxy)** baithi hai. Tera har call pehle secretary se guzarta hai. Plain Java me khud secretary bana ke chalaya:
 
 ```java
-conn.setAutoCommit(false);
-try { /* asli kaam */ conn.commit(); }
-catch (Exception e) { conn.rollback(); throw e; }
-finally { conn.close(); }
+class RealBank implements Bank {
+    public void transfer() { print("asli transfer()"); this.audit(); }   // andar se call
+    public void audit()    { print("asli audit()"); }
+}
+proxy.transfer();   // bahar se, secretary ke through
 ```
 
-100 method hain to 100 baar wahi 8 line, aur kisi ek jagah `rollback` likhna bhool gaye to bug. Spring kehta hai: tu method pe bas `@Transactional` likh de, ye plumbing main ek jagah likh ke sab methods pe laga dunga.
-
-## Tasveer
-
-Asli bean ek bada aadmi hai, aur uske darwaze pe ek **secretary (proxy)** baithi hai.
-
 ```
-Tu -> [SECRETARY: BEGIN] -> asli transfer() -> [SECRETARY: COMMIT ya ROLLBACK] -> Tu
+[SECRETARY] BEGIN  transfer
+   asli transfer()
+   asli audit()                 <- audit ke liye secretary NAHI aayi
+[SECRETARY] COMMIT transfer
+class = $Proxy0
 ```
 
-Tu asli object ko kabhi seedha call nahi karta. Tera har call pehle secretary ke paas jaata hai. Secretary pehle transaction BEGIN karti hai, phir asli `transfer()` chalati hai, aur aakhir me COMMIT ya ROLLBACK karke jawab tujhe lautati hai.
+`@Transactional` yahi secretary hai: BEGIN, asli kaam, phir COMMIT ya ROLLBACK. Wo 8 line ki plumbing (`setAutoCommit(false)`, commit, rollback, close) jo har method me haath se likhni padti, Spring ek jagah likh ke sab methods pe laga deta hai.
 
-## 4 khaas baat
+## Dikkat (self-invocation)
 
-1. **Ye koi jaadu nahi hai, ye wahi code hai jo tu haath se likhta.** Spring use runtime pe bana ke chala deta hai. Asli fayda kam code likhna nahi hai. Fayda ye hai ki plumbing ek jagah aur sahi likhi jaati hai (DRY), aur business logic alag saaf dikhta hai (separation of concerns).
-2. **Secretary do tarah ki hoti hai:**
-   - **JDK dynamic proxy:** agar class koi interface implement karti hai, to proxy wahi interface pehen leti hai, jaise wahi badge laga ke baithi ho.
-   - **CGLIB:** agar interface nahi hai, to Spring teri class ka ek nakli beta (subclass) bana deta hai.
-   Spring Boot 2 se default CGLIB hai.
-3. **Self-invocation trap:** agar class ke andar se hi `this.b()` call kiya, to wo call secretary ke paas se guzarti hi nahi. Isliye `b()` pe laga `@Transactional` lagta hi nahi. Ilaaj ye hai ki `b()` ko ek alag bean me nikaal do.
-4. **`final` aur `private` method pe proxy nahi lagta**, kyunki CGLIB unhe override nahi kar sakta. Aise method pe annotation chup-chaap kaam nahi karta aur koi error bhi nahi aata. Ek aur baat: `@Configuration` class bhi CGLIB proxy hoti hai, isliye uske andar `dependency()` ko do baar call karo to bhi ek hi singleton milta hai.
+`transfer()` bahar se aaya, to secretary ne BEGIN / COMMIT kiya. Par andar se `this.audit()` seedha asli object pe chala, secretary ke paas se guzra hi nahi. Matlab `audit()` pe `@Transactional` laga ho to wo lagta hi nahi, aur koi error bhi nahi aata.
 
-## Prod wala trap
+## Hal
+
+`audit()` ko alag bean me nikaal do, taaki uska call bhi secretary ke through jaaye.
+
+## Secretary ke 2 roop
+
+- **JDK proxy:** class koi interface implement karti ho, to proxy wahi interface pehen leti hai. Upar `$Proxy0` yahi hai.
+- **CGLIB:** interface na ho, to Spring teri class ka ek nakli beta (subclass) bana deta hai. Spring Boot 2 se default yahi hai. Isliye `final` / `private` method pe proxy nahi lagta, kyunki subclass unhe override hi nahi kar sakti.
+
+Tera usercrud: `/internals` endpoint ([`SpringInternalsDemo.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/demo/SpringInternalsDemo.java)) me `userService.getClass()` ne `UserService$$SpringCGLIB$$0` print kiya: tujhe asli bean nahi, uski secretary mili thi. `createWithSimulatedFailure()` ne `RuntimeException` phenka, to secretary ne rollback kiya aur DB me user nahi bacha. Ye tune live dekha tha.
+
+## Trap (prod)
 
 ```java
 @Transactional
@@ -43,8 +47,4 @@ public void transfer() throws IOException {
 }
 ```
 
-Default me secretary sirf `RuntimeException` aane pe rollback karti hai. Checked exception aaye to wo **commit** kar deti hai, matlab debit ho gaya aur credit nahi hua. Ilaaj hai `@Transactional(rollbackFor = Exception.class)`. Ye wahi banking wali kahani hai jahan aadha paisa kat jaata hai.
-
-## Tera project
-
-usercrud me `/internals` endpoint tune khud likha hai ([`SpringInternalsDemo.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/demo/SpringInternalsDemo.java)). Usme `userService.getClass()` ne `UserService$$SpringCGLIB$$0` print kiya, matlab tujhe asli bean nahi, uski secretary mili thi. Aur jab `createWithSimulatedFailure()` ne `RuntimeException` phenka, to secretary ne rollback kar diya aur DB me user nahi bacha. Ye tune live dekha tha.
+Default me secretary sirf `RuntimeException` pe rollback karti hai. Checked exception aaye to wo **commit** kar deti hai, yaani paisa kat gaya aur pahuncha nahi. Ilaaj hai `@Transactional(rollbackFor = Exception.class)`.
