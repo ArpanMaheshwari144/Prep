@@ -66,7 +66,7 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
 ```
 
 
-### ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END)
+### ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END) · MERGE INTERVALS ka bhai (sort + overlap check)
 
 ```
 intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue koi bhi do interval overlap na karein, wo lautao. Sirf chhoona (ek ka end = doosre ka start) overlap nahi maana jaata.
@@ -74,19 +74,13 @@ intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue 
   kyun: [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
 ```
 
-```
-YAAD:
-
-PURANI SHEET KI LINE (git 07e45c2b):
-★ <= (< nahi): sirf CHHOONA overlap nahi. [[1,2],[2,3]] pe < se 1 removal (sahi 0).
-```
-
 ```cpp
 int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO ki overlap na bache
     sort(begin(intervals), end(intervals)); // default sort (start pe)
     int start = 0, end = 1, count = 0;      // start = rakha hua, end = candidate
     while (end < intervals.size()) {
-        if (intervals[start][1] <= intervals[end][0]) {   // ★ NO overlap (<= : chhoona overlap nahi)
+        // ★ <= (< nahi): sirf CHHOONA overlap nahi. [[1,2],[2,3]] pe < se 1 removal (sahi 0)
+        if (intervals[start][1] <= intervals[end][0]) {   // NO overlap
             start = end;                    // candidate safe, rakho
             end++;
         }
@@ -117,8 +111,6 @@ Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sa
 ```
 
 ```
-TASVEER:
-
 DRY-RUN  gas=[1,2,3,4,5]  cost=[3,4,5,1,2]
    idx:   p0  p1  p2  p3  p4
    net:   -2  -2  -2  +3  +3
@@ -164,8 +156,6 @@ SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldow
 ```
 
 ```
-YAAD:
-
 DRY-RUN: tasks=[A,A,A,B,B,B], n=2
    freq: A=3, B=3 -> maxFreq=3 (A frame banega)
    gadde = 3-1 = 2                 // A _ _ A _ _ A  -> 2 gaps
