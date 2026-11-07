@@ -40,7 +40,7 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chun
 ```
 
 ```
-TASVEER:
+YAAD:
 
 TRAP: max_sum update RESET se PEHLE + max_sum=INT_MIN start (warna all-negative [-1] miss). // sum=0 se: abhi tak kuch joda nahi
 ```
@@ -70,7 +70,7 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
 ```
 
 ```
-TASVEER:
+YAAD:
 
 ★ SHURUAAT (24-Sep theek kiya):  max = 1, min = 1, ans = INT_MIN,  loop i = 0 se.   // ans INT_MIN: 0 se [-2] pe 0 aata, sahi -2
   pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
@@ -101,11 +101,14 @@ Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value 
 ```
 
 ```
-TASVEER:
+YAAD:
 
 ★ SHURUAAT (24-Sep theek kiya): max = 0, min = 0, ans = 0, loop i = 0 se.   n==1 -> return abs(nums[0]).   // 0 se theek: + me 0 kuch nahi jodta, abs kabhi minus nahi
   pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
   aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
+
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
 ```
 
 ```cpp
@@ -140,7 +143,7 @@ A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL -
 ```
 
 ```
-TASVEER:
+YAAD:
 
 Q: circular array (end->start wrap), max-sum NON-EMPTY contiguous subarray (wrap ho sakta).
 ★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
@@ -244,6 +247,11 @@ EDGE:
      isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
 
    loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
+
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
+ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
+ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
 ```
 
 ```cpp

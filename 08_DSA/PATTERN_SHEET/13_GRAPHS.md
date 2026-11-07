@@ -75,28 +75,6 @@ n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destinat
   (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-= tree LEVEL-ORDER (BFS) ka SAME skeleton (queue + pop + push), graph ke liye 3 ADD:
-   (1) NEIGHBOURS : tree me node->left/right built-in · graph me adj[node] (edges se banao).
-   (2) VISITED    : tree me cycle nahi · graph me vis[] chahiye (cycle-rok, dobara na ghoomo).
-   (3) LEVEL-loop NAHI : path-exists level-by-level nahi -> sirf reachability (target mil?).
-
-ADJ build (undirected -- NAYA):
-        adj[it[0]].push_back(it[1]);
-        adj[it[1]].push_back(it[0]);     // undirected -> dono taraf
-
-BFS flow:
-    q.push(src);  vis[src] = true;   // src bhi mark: warna cycle se ghoom ke src dobara push
-    while(!q.empty()):
-        node = pop
-        if(node == dst) return true   // pop pe check: src==dst wala case bhi pakda jaata
-        for(nbr : adj[node])
-            if(!vis[nbr]) { vis[nbr]=true; q.push(nbr); }   // push ke saath hi mark: warna ek node queue me do baar
-    return false;                        // queue khali -> koi path nahi
-```
-
 ```cpp
 bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
     unordered_map<int, vector<int>> adj;
@@ -136,18 +114,6 @@ Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayei
   kyun: (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-outer: for(i,j) if(grid[i][j]=='1') { DFS(i,j); count++; }   // har naya '1' = naya island
-DFS(i,j) — code order (upar se neeche), grid ke 3 farak (adj-list nahi):
-   1. BASE (ek hi if, sab || se juda):
-         if( i<0 || i>=m || j<0 || j>=n || grid[i][j]=='0' )  return;   // bounds PEHLE, '0' baad: bahar index pe || grid padhne se pehle ruk jaata
-   2. VISITED   : grid[i][j]='0' (SINK) -> dobara na gino.
-   3. NEIGHBOURS: 4-dir DFS -> (i+1,j)(i-1,j)(i,j+1)(i,j-1).
-'0'-check base me (bounds ke SAATH) -- warna paani/visited pe nahi rukta, poora grid kha jaata.
-```
-
 ```cpp
 void DFS(vector<vector<char>> &grid, int i, int j, int m, int n) {
     if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')   // ★ BASE ek hi if, sab || se
@@ -184,23 +150,6 @@ n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag 
   kyun: {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
 
 ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BFS (islands DFS)
-```
-
-```
-PURANI SHEET SE (same to same):
-
-SAAR : ISLANDS ka SAME skeleton (outer-loop + count), bas 2 farak:
-       (a) graph = ADJ-LIST (grid nahi)   (b) BFS use kiya (islands ne DFS kiya tha).
-input = n nodes + edges[] -> pehle ADJ banao (undirected -> DONO taraf):   -- NAYA
-    for(auto &it : edges){ adj[it[0]].push_back(it[1]); adj[it[1]].push_back(it[0]); }   // undirected -> dono taraf edge
-TEMPLATE:
-    vector<bool> vis(n,false);   int count=0;   // sab unvisited, abhi koi group nahi gina
-    for(i=0..n-1)                                // outer-loop = har node scan -> DISCONNECTED groups bhi cover
-        if(!vis[i]){ count++; bfs(i,adj,vis); }  // har UNVISITED node = naya component
-    bfs(i): q.push i + vis[i]=true;   // start bhi push ke saath mark: warna dobara push hota
-            pop node -> for(auto &it : adj[node]) if(!vis[it]){ vis[it]=true; q.push it; }   // = PATH-EXISTS ka body
-count++ AUR bfs DONO if(!vis[i]) ke ANDAR -- warna har node alag gine (=n galat).
-neighbours = adj[node] (islands me 4-direction tha) -- yahi ek farak, baaki skeleton same.
 ```
 
 ```cpp
@@ -246,22 +195,6 @@ Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). S
 ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer count++ nahi, MAX
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-= ISLANDS ka SAME skeleton (base + sink), bas DFS ab void nahi -> AREA return. 2 DELTA:
-
-  (1) DFS ko INT banao -> khud(1) + chaaron dir ka area jodo:
-        int dfs(i,j){
-           if(i<0||i>=m||j<0||j>=n||grid[i][j]==0) return 0;   // base: bounds/paani -> 0 (bounds PEHLE: bahar index pe grid padhne se pehle || ruk jaata)
-           grid[i][j]=0;                                        // sink (visited mark)
-           return 1 + dfs(i+1,j)+dfs(i-1,j)+dfs(i,j+1)+dfs(i,j-1);   // 1 = ye cell khud, + chaaron taraf ka area
-  (2) outer count++ nahi -> har island ka area le ke MAX:
-        for(i,j) if(grid[i][j]==1) ans = max(ans, dfs(i,j));   // har island ka area nikaalo, sabse bada rakho
-
-ans=0 se start (area hamesha >=0; koi island nahi -> ans 0). ISLANDS ka void-DFS = yahi, bas return-value ADD hui.
-```
-
 ```cpp
 int DFS(vector<vector<int>> &grid, int i, int j, int m, int n) {
     if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0)
@@ -300,49 +233,9 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-PURANI SHEET SE (same to same):
-
-= tree LEVEL-ORDER (sz-snapshot) grid pe, MULTI-SOURCE.  har level = 1 minute.
-
-SETUP:
-    for(i,j): if(grid[i][j]==2) q.push({i,j});   // MULTI-SOURCE = level-0 (saare rotten PEHLE)
-    dirs = {{1,0},{-1,0},{0,1},{0,-1}};          // 4-dir neighbour-trick · int mins=0 yahin
-
-BFS (har level = 1 minute):
-    while(!q.empty()){
-        sz = q.size();   // while se PEHLE pakdo: andar push se size badalta
-        while(sz--){   // sz baar = sirf is minute wale rotten
-            pop(r,c);
-            for(d : dirs){
-                nr=r+d[0], nc=c+d[1];
-                if(nr>=0 && nr<m && nc>=0 && nc<n && grid[nr][nc]==1){   // bounds PEHLE, grid baad: bahar index pe && pehle hi ruk jaata
-                    grid[nr][nc]=2; push({nr,nc});   // push ke saath hi 2: warna doosra rotten bhi isse push karta
-                }
-            }
-        }
-    }
-
-END:
-    for(i,j): if(grid[i][j]==1) return -1;       // fresh bacha -> impossible
-    return mins == 0 ? 0 : mins-1;               // last level extra -> -1
-                                                 // ★ EDGE: grid me koi santra hi nahi -> loop
-                                                 //   chala hi nahi, mins=0 -> mins-1 = -1 aata, sahi 0
-
-SETUP:
-
-            pop(r,c);
-            for(d : dirs){
-                nr=r+d[0], nc=c+d[1];
-
-END:
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-END:
-    for(i,j): if(grid[i][j]==1) return -1;       // fresh bacha -> impossible
-    return mins-1;                               // last level extra -> -1
+★ PURANI GALTI (Aug sheet): END me sirf return mins-1 tha -> grid me koi santra hi nahi to -1 aata, sahi 0. Isliye ab mins == 0 ? 0 : mins-1.
 ```
 
 ```cpp
@@ -396,72 +289,6 @@ numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pe
 
 "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false
 [[1,0],[2,1],[3,2]]: har [a,b] = a lene se pehle b -> edge b -> a
-```
-
-```
-PURANI SHEET SE (same to same):
-
-idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi?   cycle -> false.
-
-INPUT:
-    prerequisites = [[1,0],[2,1],[3,2]]
-    har [a,b] = a lene ke liye b pehle  ->  edge b -> a
-
-TEMPLATE (Kahn's = BFS + indegree):
-    ADJ + INDEGREE (khud banao):   // vector<int> indegree(n, 0): sab 0 se, phir ++
-            u = it[1];  v = it[0];                 // edge u -> v  (pre -> course)
-
-    START:
-        for(i=0; i<n; i++)   // har course check: kai course ek saath start ho sakte
-            if(indegree[i]==0) q.push(i);          // koi prereq nahi -> queue me
-
-    BFS:
-            topo.push_back(node);
-            for(nbr : adj[node]){
-                indegree[nbr]--;                   // ek prereq pura
-                if(indegree[nbr]==0) q.push(nbr);  // sab pure -> ready
-
-    END:
-        return topo.size() == numCourses;          // sab process = no cycle
-
-indegree = "kitne prereq BACHE";  0 = ready-to-take.
-cycle wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
-
-★ VARIANT: BUILD ORDER — "ready me se SABSE CHHOTA pehle" (order maanga)
-    PEHCHAAN: dependency / pehle-ye-phir-wo -> TOPO.  PHIR output wali line padho:
-              "koi bhi valid order"            -> queue
-              "sabse chhota / lexicographic"   -> MIN-HEAP
-    KYUN: topo ke KAI sahi order hote. [5->2,5->0,4->0,4->1,2->3,3->1] me
-          "4 5 0 2 3 1" bhi sahi, "5 4 2 0 3 1" bhi.  sawaal ek KHAAS order maange -> heap.
-          queue = jo PEHLE ready hua wo pehle  ·  heap = ready me jo CHHOTA wo pehle.
-
-    BADLAAV (bas itna):
-        queue<int> q;     ->   priority_queue<int, vector<int>, greater<int>> pq;   (id string -> <string>)   // greater<int> = min-heap: sabse chhota top pe
-        q.front()         ->   pq.top()
-        indegree / adj / ghatana / end-check  SAME.
-
-    DRY-RUN  n=4, [0->1]:
-        heap {0,2,3} -> 0 nikla -> 1 ready -> heap {1,2,3} -> 1 -> 2 -> 3    = 0 1 2 3
-        (1 baad me ready hua, phir bhi 2 se pehle, kyunki chhota)
-        queue hota to: 0 2 3 1   -> GALAT
-
-    EDGE:
-        ans KHAALI se shuru:  vector<int> ans;      (ans(n,0) + push_back = size 2n, galat)
-        loop  -> ans.size() < n -> return {}  (khaali)
-        self-loop [0->0] -> indegree kabhi 0 nahi -> khaali
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false.
-question deta -> MATRIX:  prerequisites = [[1,0],[2,1],[3,2]]   // har [a,b] = a lene ke liye b pehle (edge b se... u->v)
-TEMPLATE (Kahn's = BFS + indegree):
-    usme se KHUD adj-list + indegree banao:
-    for(it : prerequisites){ u=it[0], v=it[1];  adj[u].push_back(v); indegree[v]++; }   // u->v; v ka prereq++
-    for(i=0;i<n;i++) if(indegree[i]==0) q.push(i);        // jo bhi indegree-0 (koi prereq nahi) -> queue me
-    while(q){ node=pop; topo.push(node);
-              for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); } }  // prereq pura -> ghatao; 0 hua -> push
-    return topo.size() == numCourses;                     // sab process = no cycle
-indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
 ```
 
 ```cpp
@@ -556,44 +383,13 @@ saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 ka
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-SAAR : "mere GRAPH ke saare node map me clone bana (A->A', B->B'), phir clones ko CONNECT kar (A'--B')." bas.
-
-idea : map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
-       2 kaam:  (1) clone map me daalo   (2) neighbours ke clone se JODO (push_back).
-       map ki VALUE hi clone -> mp[node] = us node ka clone; map = "clone ho chuka?" + "uska clone kaha".
+TASVEER:
 
 VISUAL (A-B graph):
     original:  A --- B
     (1) clone map me daalo:  mp = { A->A' ,  B->B' }     // naye node, abhi LOOSE (jude nahi)
     (2) clones ko JODO:      A' --- B'                    // mp[A]->neighbors += mp[B]
     => naya deep-copy graph  A'-B'  taiyaar
-
-TEMPLATE  (normal BFS + map<purana, clone> + 2 kaam)
-
-    // SEED · pehle if(!node) return NULL: khaali graph
-    mp[node] = clone;   q.push(node);   // seed bhi map me: warna cycle pe isi node ka doosra clone banta
-
-    while (q) { curr = pop;
-            if (mp.find(it) == mp.end()) {                          // (a) BANANA (find se check: mp[it] khud khaali entry bana deta)
-            mp[curr]->neighbors.push_back(mp[it]);                 // (b) JODNA (if ke BAHAR: clone pehle se ho tab bhi ye edge jodni hai)
-
-yaad: (a) if ke ANDAR (sirf naya pe) · (b) if ke BAHAR (har edge pe)
-      mp[curr] = A' ,  mp[it] = B'  ->  A' ki list me B'
-
-2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
-DFS: recursion + same map -> node pe: map me hai? return; nahi -> clone+map -> har nbr recurse+jodo -> return.
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-TEMPLATE (BFS = normal traversal; map<old,new> + 2 special move):
-    mp[node] = clone(node);  q.push(node);          // seed: start ka clone map me + queue
-    BFS(q): curr nikalo -> for(it : curr->neighbors):
-        (a) it clone nahi hua? -> mp[it]=clone(it); q.push(it);   // naya clone banao + push
-        (b) mp[curr]->neighbors.push_back(mp[it]);                // mp[curr]=A', mp[it]=B' -> JODO (crux)
-    return mp[node];
-    (clone(x) = new Node(); ->val = x->val)
 ```
 
 ```cpp
@@ -641,14 +437,7 @@ graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-SAAR : har node ko 2 me se ek rang (0/1) do; koi bhi 2 JUDE hue (adjacent) node SAME rang ke na hon.
-       ho gaya -> true.  kahin do jude hue SAME rang pe phans gaye (odd cycle) -> false.
-
-PEHCHAAN: "DO team / group me baanto + jo JUDE hain (dushman / edge) woh ek group me NAHI" -> bipartite.
-          output me "team A = {..}, team B = {..}" dikhe = 2 rang = yahi pattern.
-          ★ DSU ULTA hai: DSU me jude hue -> SAME group. yahan jude hue -> ALAG group.
+TASVEER:
 
 INPUT: graph[i] = node i ke saare neighbours (adj-list KHUD di hai, banani nahi)
     [[1,3],[0,2],[1,3],[0,2]]  -> true        [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
@@ -656,45 +445,9 @@ INPUT: graph[i] = node i ke saare neighbours (adj-list KHUD di hai, banani nahi)
         |     |      square = 4-cycle              | \   |      0-1-2 triangle = odd cycle
         3 --- 2      2 rang ho jaate               3 --- 2
 
-idea : color[] = -1 (uncolored), 0 / 1 = do rang.
-       START ko 0 do -> har neighbour ko ULTA rang -> pehle se rang hai aur SAME nikla -> false.
-       graph TOOTA (disconnected) ho sakta -> outer loop har uncolored node se naya BFS (CC jaisa).
-
-TEMPLATE  (BFS alag function, bool lautata; outer loop uska false pakadta)
-
-    bool BFS(graph, int node, vector<int> &color) {
-        color[node] = 0;                              // START ko rang ZAROORI -- warna flip galat
-            int curr = q.front();  q.pop();
-            for (auto &it : graph[curr]) {
-                    color[it] = 1 - color[curr];      //     0->1, 1->0   (ya !color[curr])
-                else if (color[it] == color[curr])    // (b) pehle se rang + SAME = conflict
-        return true;                                  // is component me koi conflict nahi
-
-    bool isBipartite(graph) {
-        vector<int> color(m, -1);   // -1 = abhi rang nahi (0 aur 1 asli rang hain)
-        for (int i = 0; i < m; i++)   // har node se: graph toota (disconnected) ho sakta
-            if (color[i] == -1 && BFS(graph, i, color) == false)   // -1 check PEHLE: rang wale node pe BFS dobara nahi chalta
-
 DRY-RUN (triangle 0-1-2):
     0 ko 0 diya  -> nbr 1 = 1 · nbr 2 = 1
     curr 1 (rang 1) -> nbr 2 ka rang bhi 1 = SAME -> false        (odd cycle pakda gaya)
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-SAAR : har node 2 rang (0/1); koi 2 ADJACENT same-rang na ho -> bipartite. odd-cycle -> false.
-idea : input KHUD adj-list. disconnected -> outer-loop (CC jaisa).
-TRICK (NAYA): 2-COLOUR
-   color[] : -1 = uncolored,  0/1 = do rang.
-   START ko 0 do -> har neighbour OPPOSITE:  color[it] = !color[curr]   (0<->1 flip).
-   neighbour ka rang curr ke SAME nikla -> CONFLICT -> return false.
-TEMPLATE:
-    color[] = -1 (sab uncolored);
-    outer loop har node i: uncolored mila ->
-    phir BFS(i) us current node se shuru:
-        color[i]=0;  q.push(i);        // START ko color ZAROORI -- warna !color[curr] galat
-        curr nikalo -> for(it : graph[curr]):
-            uncolored(-1) -> color[it] = !color[curr];  q.push(it);
-            else color[it]==color[curr]? -> return false;
 ```
 
 ```cpp
@@ -757,37 +510,15 @@ pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-REAL: Google Maps/GPS (shortest route), network routing, delivery/flights -- roz use hota.
-
-SAAR : BFS ka WEIGHTED bhai. wahi template, 2 swap + relaxation:
-         visited[] -> dist[] (init INF, src=0)
-         + naya    = RELAXATION
-
-NO visited[] kyun:
-   dist[] + "wt > dist[node] continue" (STALE-skip) = visited-ka-kaam (node dobara finalize nahi).
-   strict-relax (naya STRICTLY chhota -> tabhi push) -> undirected me bhi infinite-loop nahi.
-
+PURANI SHEET KI KYUN LINE (code ke saath wali):
 TRICK (RELAXATION = "dheela karo"):
    d = node tak ki dist,  w = us EDGE ka weight (it.second, NA dist[node]).
    naya rasta (d + w) purane dist[nbr] se kam? -> dist[nbr] = d+w; push.
 
-idea : min-heap kyun -> "kam edges != kam weight" -> greedily sabse-sasti-abhi-tak node uthao.
-
-PAIR-in-HEAP trick:
-   pq me {dist, node} PAIR -> heap FIRST element (dist) se sort (tie -> second).
-   min-heap -> sabse chhoti dist TOP pe. (top-K / value+index saath me bhi: HAMESHA {jispe-sort, saath-wala}.)
-
-TEMPLATE:
-    adj: for(it:edges){ u=it[0],v=it[1],w=it[2]; adj[u]+={v,w}; adj[v]+={u,w}; }  // undirected DONO taraf
-    vector<int> dist(n, INF);  dist[src]=0;   pq.push({0, src});   // INF se: pehla rasta hamesha chhota lage; src khud 0
-        wt = pq.top().first;  node = pq.top().second;  pq.pop();
-        if(wt > dist[node]) continue;                     // STALE skip (sirf > : barabar wala taaza entry hai)
-        for(it : adj[node]){              // it.first = nbr node,  it.second = edge weight
-            if(wt + it.second < dist[it.first]){          // RELAX (naya rasta chhota?) (< strict: barabar pe dobara push bekaar, loop ka khatra)
-                dist[it.first] = wt + it.second;   // chhota rasta mila -> pehle dist update, phir push
-min-heap (pura syntax): priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;  // {dist,node}
+PURANI SHEET KI LINE (git 07e45c2b):
+// ★ > strictly (>= nahi): taaza entry ka wt == dist[node] hota. >= = src {0,src} khud skip -> sab INF.
 ```
 
 ```cpp
@@ -833,33 +564,6 @@ n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao
 KAB: groups / connected / same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn
   · MST-Kruskal
 REAL: dost-circle ("A-B same circle?"), accounts merge
-```
-
-```
-PURANI SHEET SE (same to same):
-
-REAL: dost-circle manager ("A-B same circle?"), network/accounts merge.
-
-SAAR : parent[] = har node ka leader. edge -> 2 node UNITE. end me alag ROOT (parent[i]==i) = components.
-KAB  : groups/connected/same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn · MST-Kruskal.
-
-TEMPLATE (class):
-    DSU(n): parent[i]=i;  rnk[i]=0;   // parent[i]=i: shuru me har node khud apna leader
-
-    find(x):
-       return parent[x] = find(parent[x]);          // PATH COMPRESSION (parent[x] me assign: agli baar seedha root mile)
-
-    unite(x,y):
-       ux=find(x), uy=find(y);   // ROOT jodo, x-y khud nahi: warna group toot jaata
-       if(ux==uy) return;                            // already same set
-       if(rnk[ux] < rnk[uy]) parent[ux]=uy;          // UNION BY RANK
-       else if(rnk[uy] < rnk[ux]) parent[uy]=ux;     // chhota bade ke neeche
-       else { parent[uy]=ux; rnk[ux]++; }   // barabar rank: jodne se ek level badha, isliye ++
-
-same group? -> find(x) == find(y)   // root compare karo, parent nahi (parent beech ka ho sakta)
-components  -> count(i where find(i)==i)   // sirf root ka parent khud wahi hota
-
-2 opt: path-compression (tree flat) + union-by-rank (chhota bade ke neeche) -> find/unite ~O(1).
 ```
 
 ```cpp
@@ -922,11 +626,7 @@ level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora 
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-beginWord -> endWord, har step EK letter badlo, har beech ka word dict me ho. shortest me kitne WORD?
-SIGNAL: "minimum steps / shortest unweighted path" -> BFS (level-by-level).
-word = NODE · edge = "ek letter farak + dict me maujood".
+TASVEER:
 
 ★★ EXAMPLE (yahi yaad -> poora recall flash):  begin=hit, end=cog, dict={hot,dot,dog,lot,log,cog}
     Level 1:  hit
@@ -952,11 +652,12 @@ TEMPLATE:
                                                      │  return 0
    FARAK sirf level-track: TERA steps PAIR me (push me steps+1) · MERA size-loop + baad me level++.
 
+PURANI SHEET KI KYUN LINE (code ke saath wali):
 ★ VISITED trick (Arpan): dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
                          (ek check "dict me hai?" + "visited nahi?" dono serve).
-★ RETURN = WORDS count (begin = 1), steps nahi -> hit..cog = 5 words.
-★ EDGE: endWord dict me nahi -> 0 (rasta possible hi nahi).
-★ islands/Kahn's wali BFS family; yahan graph IMPLICIT (words). "shortest unweighted = BFS" ka classic.
+
+PURANI SHEET KI LINE (git 32b09075):
+w[i] = original          <- RESTORE zaroori (warna word bigad jaata)
 ```
 
 ```cpp

@@ -36,19 +36,8 @@ har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
-INPUT: [2,1,2,4,3] -> [4,2,4,-1,-1]
-
-SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
-      (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
-TEMPLATE:
-  vector<int> ans(nums.size(), -1);   // -1 init: jisko daaye bada na mile wo -1 hi rahe
-  stack<int> st;                                       // INDEX rakho: ans[st.top()] me likhne ko position chahiye
-     while (!st.empty() && nums[st.top()] < nums[i]) { // top se curr BADA -> top ko answer mila (barabar = bada nahi, isliye sirf <)
-        ans[st.top()] = nums[i];  st.pop();   // pehle ans likho, phir pop: pop ke baad top() badal jaata
-     st.push(i);   // while ke BAAD push: pehle chhote top nipta, phir curr khud intezaar me
-  }                                                    // end tak bache -> koi bada nahi -> -1 (init)
 DRY-RUN [2,1,2,4,3]:
   i0(2): push            st=[0]
   i1(1): 2<1? no; push   st=[0,1]
@@ -58,27 +47,12 @@ DRY-RUN [2,1,2,4,3]:
   => ans=[4,2,4,-1,-1]
 FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
 
-PEHLI SHEET (Aug) se bhi, same to same:
-
+PURANI SHEET KI KYUN LINE (code ke saath wali):
 SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
-    (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
-TEMPLATE:
-vector<int> ans(nums.size(), -1);
-stack<int> st;                                       // INDEX stack
-for (int i = 0; i < nums.size(); i++) {
-   while (!st.empty() && nums[st.top()] < nums[i]) { // top se curr BADA -> top ko answer mila
-      ans[st.top()] = nums[i];  st.pop();
-   }
-   st.push(i);
-}                                                    // end tak bache -> koi bada nahi -> -1 (init)
-DRY-RUN [2,1,2,4,3]:
-i0(2): push            st=[0]
-i1(1): 2<1? no; push   st=[0,1]
-i2(2): 1<2 ans[1]=2 pop; 2<2? no; push  st=[0,2]
-i3(4): 2<4 ans[2]=4; 2<4 ans[0]=4; push st=[3]
-i4(3): 4<3? no; push   st=[3,4]
-=> ans=[4,2,4,-1,-1]
-FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
+      (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
+
+PURANI SHEET KI LINE (git 07e45c2b):
+★ < strictly (<= nahi): barabar wala 'bada' nahi. [2,2] pe <= se ans[0]=2 (sahi -1).
 ```
 
 ```cpp
@@ -105,13 +79,6 @@ Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (str
   kyun: 4 aur 5 ke aage pehla chhota 2 · 2 ke aage sab bade -> -1 · 10 ke aage 8 · 8 aakhri -> -1
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-= NEXT GREATER, bas DELTA: condition ULTA -> while nums[st.top()] > nums[i]  (bada -> chhota).
-  strictly (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, left->right, push, init -1) sab wahi.
-```
-
 ```cpp
 vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition ULTI
     vector<int> ans(nums.size(), -1);
@@ -134,14 +101,6 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
 Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
   e.g. [4,5,2,10,8] -> [-1,4,-1,2,2]
   kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
-```
-
-```
-PURANI SHEET SE (same to same):
-
-= NEXT SMALLER, bas DELTA: for-loop ULTA (right->left, i=n-1..0). condition wahi (>).
-  (peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
-USE: prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ka building block.
 ```
 
 ```cpp
@@ -173,20 +132,11 @@ har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = don
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-INPUT: [2,1,5,6,2,3] -> 10   (bars 5,6 -> min 5 * width 2)
+TASVEER:
 
 SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
       = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
 = PREV-SMALLER + NEXT-SMALLER ka WALL, bas DELTA: VALUE nahi INDEX store + combine loop.
-
-TEMPLATE:
-  nS = next-smaller INDEX   init n,   i = 0..n-1,   while h[st.top()] > h[i]   // none -> n (n = right ki bahar deewar, width sahi; > strict: barabar bar stopper nahi)
-  pS = prev-smaller INDEX   init -1,  i = n-1..0,   while h[st.top()] > h[i]   // none -> -1 (-1 = left ki bahar deewar, index 0 se pehle)
-  int ans = INT_MIN;   // INT_MIN: pehla area bhi max me aaye (height >= 0, to 0 bhi chalega)
-     int width = nS[i] - pS[i] - 1;   // -1: dono stopper khud rectangle me nahi
-     ans = max(ans, heights[i] * width);   // height = heights[i]: range me ye bar sabse chhota hai
 
 3 JAGAH DHYAAN:
   1. INDEX store, value nahi (width index se banti).
@@ -228,12 +178,19 @@ TEMPLATE:
            ans   = 4
            wajah : right ki deewar RIGHT me bahar -> width sahi
 
+       CASE 3: nS default = n-1 = 1                 GALAT
+
+           bar0  :  1 - (-1) - 1 = 1    ->  area 2 * 1 = 2   (bar1 chhoot gaya)
+           bar1  :  1 -  0   - 1 = 0    ->  area 4 * 0 = 0
+           ans   = 2                     (sahi 4)
+           wajah : deewar aakhri bar ke UPAR rakh di, uske BAAD nahi
+
      FAYDA: NS - PS - 1 kinare wale bar pe bhi sahi, alag if-else nahi.
   3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
                                             `>`  -> koi stopper nahi -> width 4 -> 12.
 
 width = NS-PS-1 KYUN: stopper khud andar NAHI -> bars PS+1 se NS-1 tak
-      count = (NS-1)-(PS+1)+1 = NS-PS-1   (-1 sirf EK baar)
+      count = (NS-1)-(PS+1)+1 = NS-PS-1   (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat)
 
 DRY-RUN (h=[2,1,5,6,2,3]):
      6 |            ##
@@ -246,6 +203,9 @@ DRY-RUN (h=[2,1,5,6,2,3]):
        +--------+------+--------
     idx:  0  1    2 3    4   5
 
+    ANSWER (dash-box) = height 5 x width 2 = 10  (sabse bada)
+      i3 ka h=6 ka 6th block box ke UPAR (rectangle sirf 5 tall).
+
     idx  :  0   1   2   3   4   5
     h    :  2   1   5   6   2   3
     PS   : -1  -1   1   2   1   4
@@ -253,40 +213,10 @@ DRY-RUN (h=[2,1,5,6,2,3]):
     width:  1   6   2   1   4   1
     area :  2   6 [10]  6   8   3   -> MAX 10
     bar5 (idx2): PS=1 (h1), NS=4 (h2) -> beech me c2,c3 -> width 2 -> 5*2 = 10.
+                 first = PS+1 = 2, last = NS-1 = 3 -> 3-2+1 = 2. stoppers khud andar nahi.
 
 FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
         2D bhai = MAXIMAL RECTANGLE (har row = histogram, isi ko call).
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-MENTAL MODEL: HAR height pe KHADE ho -> dono taraf NEAREST-SMALLER (prev+next) -> width=next-prev-1 -> area=height*width -> MAX. bas.
-prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
-width = nS[i] - pS[i] - 1 · area = heights[i]*width · ans = max(ans, area).
-
-CODE = prev-smaller + next-smaller (INDEX version) + combine loop:
-  pS[i] = prev-smaller INDEX (none -> -1)     // left boundary
-  nS[i] = next-smaller INDEX (none -> n)      // right boundary (sentinel n, NA -1!)
-  int ans = INT_MIN;
-  for (int i=0; i<n; i++) {
-     int width = nS[i] - pS[i] - 1;
-     ans = max(ans, heights[i]*width);
-  }
-  (pS/nS = upar ka Next/Prev-Smaller template -- bas VALUE ki jagah INDEX store + NS ka sentinel = n.)
-
-TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
-TRICK 2: next-smaller "koi chhota nahi" -> sentinel = n (right-edge, bar END tak failta), NA -1. (-1 se width negative -> [2,4]: 2-(-1)-1=-1 galat; n=2 se 2-(-1)-1=2 -> area 4 sahi.) prev-smaller "none" = -1 sahi (left boundary).
-
-width=NS-PS-1 KYUN (derive): dono boundary (smaller) rectangle me NAHI -> bars PS+1 se NS-1 tak. count=last-first+1=(NS-1)-(PS+1)+1=NS-PS-1. (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat.)
-
-VISUAL (h=[2,1,5,6,2,3])  -- filled bars; ANSWER = dash-box (bars ke andar):
-
-  ANSWER (dash-box) = height 5 x width 2 = 10  (sabse bada)
-    i3 ka h=6 ka 6th block box ke UPAR (rectangle sirf 5 tall).
-
-TABLE:  idx: 0 1 2 3 4 5 · h: 2 1 5 6 2 3 · PS: -1 -1 1 2 1 4 · NS: 1 6 4 4 6 6 · width(NS-PS-1): 1 6 2 1 4 1 · area: 2 6 [10] 6 8 3 -> MAX 10.
-  bar5(idx2): PS=1(h1),NS=4(h2) -> rectangle DONO stoppers ke BEECH (c2,c3, dono>=5) = 2 chauda. first=PS+1=2, last=NS-1=3 -> 3-2+1=2. stoppers khud andar nahi.
-
-next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
 ```
 
 ```cpp
@@ -344,17 +274,6 @@ int largestRectangleArea(vector<int> &heights) {
 = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-= Largest-Rectangle-Histogram (LC-84) ka 2D bhai. HAR ROW ko histogram maano -> us pe LC-84 laga -> saare rows ka MAX.
-heights[] (size = COL, har column ki running height -- upar se neeche):
-   cell == 1 -> heights[j] += 1;    // upar wale 1s ke saath build-up
-   cell == 0 -> heights[j] = 0;     // column toot gaya -> RESET
-har row ke baad:  maxi = max(maxi, largestRectangleArea(heights));   // LC-84 code REUSE (prev/next-smaller + area)
-inner loop j (col), outer i (row).  heights COL-size ka (row nahi).   // heights(col,0), maxi=INT_MIN · call j-loop ke BAHAR
-```
-
 ```cpp
 int maximalRectangle(vector<vector<int>> &matrix) {
     int row = matrix.size();
@@ -382,12 +301,6 @@ temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad
   kyun: 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).   // ans(n,0): garam din na mile to 0 (-1 nahi) · < strict: barabar garam nahi
-```
-
 ```cpp
 vector<int> dailyTemperatures(vector<int> &temps) {
     int n = temps.size();
@@ -411,25 +324,6 @@ vector<int> dailyTemperatures(vector<int> &temps) {
 Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number aata hai. Har number ka agla bada number lautao, na mile to -1.
   e.g. [1,2,3,4,3] -> [2,3,4,-1,4]
   kyun: aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
-```
-
-```
-PURANI SHEET SE (same to same):
-
-same next-greater (monotonic stack), bas array CIRCULAR -> aakhri element ka greater SHURU me bhi ho sakta.
-vector<int> ans(n, -1);                          // size n (2n nahi) · na mile -> -1
-stack<int> st;                                   // INDEX rakho (0..n-1) -- jinka greater abhi nahi mila
-for (int i = 0; i < 2 * n; i++) {                // 2n: doosre chakkar me aakhri elements ko shuru wale dikhte (wrap)
-    while (!st.empty() && nums[st.top()] < nums[i % n]) {   // i % n = asli index (i 2n tak jaata, array n ka)
-        ans[st.top()] = nums[i % n];             // greater TOP ka mila -> ans[top] me likho (ans[i] me nahi)
-    st.push(i % n);                              // push i % n, i nahi (i >= n pe index bahar)
-[1,2,1]: pehle chakkar ke baad aakhri 1 (idx 2) stack me bacha -> doosre chakkar me i=4 -> 4%3=1 -> nums[1]=2
-         -> ans[2] = 2.  Isliye 2n.
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-same monotonic, bas array CIRCULAR. trick: loop 2 BAAR (i: 0..2n-1), access i % n (mod).
-doosre chakkar me aakhri elements ko SHURU ka greater mil jaata (wrap). baaki wahi; na mile -> -1.
 ```
 
 ```cpp
@@ -460,27 +354,6 @@ Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao:
   kyun: 75 aaya -> peeche 60,70,60 sab <= 75, phir 80 bada -> ruk -> 75,60,70,60 = 4
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-PURANI SHEET SE (same to same):
-
-INPUT: next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
-= monotonic stack ka DELTA -- 2 farak: (1) stack me INDEX nahi, PAIR {price, span}.
-  (2) top.price <= aaj -> pop karke uska span APNE span me JODO (index-answer nahi, SUM).
-DRY-RUN 75 (stack top pe ...60,70,60): 60<=75 span=2 pop · 70<=75 span=4 pop · (bacha) · 80>75 ruk -> span=4, push{75,4}.
-KYUN span-JODO: pop hue chhote din KHUD apne peeche ka span nigal chuke -> unka span add = un sab din bhi cover (dobara peeche nahi jaana).
-FAMILY: monotonic-stack (next-greater base) + "answer = accumulated SPAN" delta (index nahi, running count).
-
-┌── (STANDALONE — apni alag trick) ─────────────────────────────
-└───────────────────────────────────────────────────────────────
-
-TEMPLATE:
-     int span = 1;   // 1 se: aaj ka din khud bhi span me ginta
-     while(!st.empty() && st.top().first <= price){ span += st.top().second; st.pop(); }   // <= : barabar price wala din bhi span me; !st.empty() pehle warna top() crash
-     st.push({price, span});   return span;   // poora span saath push: aage bada din ise nigle to sab din jode
-```
-
 ```cpp
 class StockSpanner {
 public:
@@ -498,9 +371,9 @@ public:
     }
 };
 // 75 aaya, top pe ...60,70,60: 60 -> span 2 · 70 -> span 4 · 80 > 75 ruko -> push {75,4}
+```
 
 ── (STANDALONE — apni alag trick) ──
-```
 
 ### ▸ VALID PARENTHESES
 
@@ -508,13 +381,6 @@ public:
 Ek string me sirf ( ) [ ] { } hain. true lautao agar har khulne wala bracket sahi type ke bracket se aur sahi kram me band hota hai, warna false.
   e.g. "{[]}" -> true · "([)]" -> false
   kyun: "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
-```
-
-```
-PURANI SHEET SE (same to same):
-
-opening push; closing aaye to top se match+pop; end me stack KHALI = valid. (closing pe stack empty -> false)
-match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')   // topp=st.top() + pop pehle, phir match; na mile -> turant false
 ```
 
 ```cpp
@@ -548,18 +414,6 @@ Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalei
 class MinStack: push / pop / top / getMin sab O(1)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-DESIGN: push/pop/top/getMin SAB O(1). trick = min hamesha "ready" rakho, bina scan kiye.
-har element ke SAATH uska "yahaan tak ka MIN" store karo -> stack<pair<val, minSoFar>>.
-   push:   newMin = empty ? val : min(val, top().second);  push {val, newMin}.   // empty pehle: pehle element pe top() nahi hota, wahi min
-   getMin: top().second (O(1), koi loop nahi).   top: top().first.   pop: normal.
-KYUN pair (ek single min-var kyun NAHI): pop pe min WAPAS badal sakta -> purana min laut aata;
-   single var us history ko recover nahi kar paata. har element apna min saath -> pop pe neeche wala min apne-aap sahi.
-   (e.g. push 5,3,7 -> min 3 · pop 7 -> min still 3 · pop 3 -> min 5 WAPAS aa gaya.)
-```
-
 ```cpp
 class MinStack {                            // push / pop / top / getMin sab O(1)
 public:
@@ -584,22 +438,6 @@ public:
 Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki string valid ho jaaye, wo ginti lautao.
   e.g. "()))((" -> 4
   kyun: pehla () theek · agle do ')' ka koi '(' nahi -> 2 · aakhri do '(' band nahi hue -> 2 · total 4
-```
-
-```
-PURANI SHEET SE (same to same):
-
-COUNTER (stack nahi -- sirf '(' ')'). 2 counter (naam tere code se):
-   close_needed = kitne '(' abhi UNMATCHED khade (inhe aage ')' chahiye).
-   open_needed  = kitne ')' UNMATCHED aaye (inhe pehle '(' chahiye tha).
-'(' aaye  -> close_needed++                                          (ek open, iska close pending).
-')' aaye  -> close_needed > 0 ? close_needed-- (pending open se MATCH) : open_needed++ (koi open nahi -> ye ')' extra).
-ans = open_needed + close_needed                                     (dono bache = utne insert karne).
-TRAP: ')' match ho gaya to open_needed me MAT gino -- match = 0 insertion (nested "(())" -> 0).
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
 
 ```cpp
@@ -628,18 +466,6 @@ int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')'
 Sirf stack (push, pop, top, empty) ka use karke ek queue (pehle aaya, pehle gaya) banao: push(x) peeche daalta hai, pop() aage wala nikaalta hai, peek() aur empty() bhi chahiye.
   e.g. push(1) push(2) peek() -> 1 · pop() -> 1 · push(3) pop() -> 2 · pop() -> 3 · empty() -> true
   kyun: queue me jo pehle aaya wahi pehle nikalta -> 1, phir 2, phir 3, ab khaali
-```
-
-```
-PURANI SHEET SE (same to same):
-
-DESIGN: 2 stack -> input (push yahan) · output (pop / peek yahan se).
-push:        input.push(x).
-pop / peek:  output KHAALI ho tabhi input ka sab ulta karke output me daalo; phir output.top().   // pop: x=top() bachao, phir pop, return x
-empty:       dono khaali.
-KYUN "khaali ho tabhi": har element zindagi me sirf EK baar input -> output jaata
-   -> pop / peek amortized O(1). (har pop pe palatna = O(n), yahi interviewer poochta.)
-TRAP: output me kuch bacha ho aur tab input palat diya -> kram toot jaata (naye purano ke upar).
 ```
 
 ```cpp

@@ -22,14 +22,6 @@ Naya array nahi banana, isi array me badlaav karna hai (in-place).
   kyun: non-zero 1,3,12 usi kram me aage aa gaye, dono 0 peeche
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-slow = agli jagah jahan non-zero rakhna hai; fast SCAN karta.
-fast pe non-zero mila -> pehle swap(nums[slow], nums[fast]) -> PHIR slow++.   // fast++ har baar (if ke BAHAR) · slow=0, fast=0 se shuru
-ORDER: swap PEHLE, slow++ BAAD (slow tabhi aage jab ek non-zero apni jagah lag gaya).
-```
-
 ```cpp
 void moveZeroes(vector<int> &nums) {
     int slow = 0;                           // slow = agli jagah jahan non-zero rakhna hai
@@ -51,14 +43,6 @@ Ek SORTED array diya hai jisme kuch number dohraye gaye hain. Har number sirf ek
 Kitne unique number bache (k), wo lautao. Array ke pehle k khaane me wahi unique number hone chahiye.
   e.g. [0,0,1,1,1,2,2,3,3,4] -> k=5, [0,1,2,3,4,...]
   kyun: alag numbers sirf 0,1,2,3,4 = 5. sorted hai to dohra hamesha bagal me hota
-```
-
-```
-PURANI SHEET SE (same to same):
-
-move-zeroes cousin. slow = last-UNIQUE ka index, fast SCAN.   // slow=0, fast=0: pehla element khud unique, compare nums[slow]
-naya unique (nums[slow] != nums[fast]) -> pehle slow++ (slow ab duplicate/khali slot pe) -> PHIR nums[slow] = nums[fast] (overwrite).
-ORDER: yahan slow++ PEHLE, overwrite BAAD (move-zeroes se ULTA). fast har baar++. unique count = slow+1.
 ```
 
 ```cpp
@@ -85,14 +69,6 @@ Kitne number bache (k), wo lautao. Pehle k khaane me val nahi hona chahiye, unka
   kyun: teen 2 hate, baaki 5 bache
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-saare 'val' hata, non-val ki count k lauta (move-zeroes cousin). slow = agli keep-jagah, fast scan.
-nums[fast] != val -> pehle nums[slow] = nums[fast] -> PHIR slow++.   nums[fast] == val -> skip (sirf fast++).
-ORDER: write PEHLE, slow++ BAAD (move-zeroes jaisa). end me slow = k (bache shuru ke k me).
-```
-
 ```cpp
 int removeElement(vector<int> &nums, int val) {
     int slow = 0, fast = 0;                 // slow = agli keep-jagah, fast scan
@@ -117,12 +93,6 @@ Ek string di hai jisme sirf chhote akshar (lowercase) hain. Batao ki ye aage se 
   kyun: abca: pehla 'a' = aakhri 'a', par 'b' != 'c'
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
-```
-
 ```cpp
 bool isPalindrome(string s) {               // sirf lowercase letters wala aasan version
     int left = 0;
@@ -144,12 +114,6 @@ Ek string di hai jisme kuch bhi ho sakta hai: space, comma, bade akshar, digit. 
 Inhe gin ke string palindrome banti hai ya nahi, true ya false lautao.
   e.g. "A man, a plan, a canal: Panama" -> true     "race a car" -> false
   kyun: filter + lower = "amanaplanacanalpanama" (palindrome) · "raceacar" (nahi)
-```
-
-```
-PURANI SHEET SE (same to same):
-
-left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
 ```
 
 ```cpp
@@ -181,16 +145,6 @@ Ek string di hai. Batao ki ye palindrome hai, ya zyada se zyada EK akshar hata k
 
 isPalindrome: helper: l..r palindrome hai?
 validPalindrome: palindrome YA ek char delete karke ban jaaye
-```
-
-```
-PURANI SHEET SE (same to same):
-
-= palindrome YA ek char DELETE karke palindrome ban jaaye.
-IDEA: two-pointer; MISMATCH pe -> ya LEFT char delete ya RIGHT char delete. koi ek bane -> true, dono na bane -> false.
-TEMPLATE (CLEAN): helper isPalindrome(s,l,r). main loop; mismatch pe seedha ->   // helper bhi while(l<=r), mismatch -> false · match pe l++ r--
-    return isPalindrome(s,l+1,r) || isPalindrome(s,l,r-1);   (left-delete YA right-delete; || = ek se bhi bane -> true)
-    koi mismatch na aaye -> already palindrome -> true.
 ```
 
 ```cpp
@@ -226,14 +180,6 @@ Ek string di hai. Usme sirf vowels (a e i o u, bade bhi) ka kram ulta karna hai.
 
 isVowel: a e i o u, lower + upper dono
 reverseVowels: sirf vowels aapas me ulte, baaki char apni jagah
-```
-
-```
-PURANI SHEET SE (same to same):
-
-sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
-chhota helper isVowel(ch). left/right pointer:
-dono vowel -> swap + left++ right--.  left vowel nahi -> left++.  warna right--.   // left<right: milte hi ruko, beech ka akela char swap nahi · return s
 ```
 
 ```cpp
@@ -273,12 +219,6 @@ Sabse zyada kitna paani rok sakte ho, wo lautao.
   kyun: index 1 (8) aur index 8 (7): min 7 x doori 7 = 49
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).   // left<right: same index pe width 0 · barabar height -> right-- (else)
-```
-
 ```cpp
 int maxArea(vector<int> &height) {
     int low = 0;
@@ -306,14 +246,6 @@ Index 1 se gine jaate hain (1-based), 0 se nahi.
   kyun: 2 + 7 = 9, wo 1st aur 2nd number hain
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-sorted -> 2 pointer (left,right); sum==target -> mila (return 1-based).
-sum<target -> left++ (bada chahiye); sum>target -> right-- (chhota). O(1) space.   // while(left<right): ek hi index do baar nahi · na mile -> {-1,-1}
-(regular two-sum UNSORTED = hashmap; SORTED = 2-pointer.)
-```
-
 ```cpp
 vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hashmap; SORTED = 2 pointer
     int left = 0, right = nums.size() - 1;
@@ -335,14 +267,6 @@ vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hash
 Ek number c diya hai. Batao ki kya aise do poore number a aur b hain jinke liye a*a + b*b = c ho. true ya false lautao.
   e.g. 5 -> true    3 -> false
   kyun: 5 = 1*1 + 2*2. 3 kisi bhi do square ka jod nahi
-```
-
-```
-PURANI SHEET SE (same to same):
-
-a²+b²==c possible? (LC 633). RECOGNITION: 2 NUMBER (pair) chahiye -> TWO-POINTER.
-low=0, high=sqrt(c). ans=low²+high²: ==c->true · <c->low++ · >c->high--. low<=high tak, warna false.
-★ low<=high (NOT low<high) -- c=0 ka 0+0 single-point bhi check ho jaaye. OVERFLOW: ans = long long.   // (long long)low*low: guna se PEHLE cast
 ```
 
 ```cpp
@@ -373,14 +297,10 @@ Dobara sort() nahi lagana, ek hi baar me (O(n)) karna hai.
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-SAAR: sorted arr me negatives ka square order ULTA -> sabse BADA square dono CHHOR pe (beech me nahi). 2-ptr, ans PEECHE se bharo. O(n), no sort.
-TEMPLATE: left=0, right=n-1, k=n-1.   // k=n-1: sabse bada square ans ke aakhri slot me · ans(n) pehle se size n (k-- se index pe likho)
-   while(left<=right):              // <= : aakhri bacha 1 element bhi daalna hai
-      if(left² <= right²) -> ans[k--]=right², right--   // bada square aakhri khaali slot pe; k-- = likho phir peeche
-      else                -> ans[k--]=left²,  left++   // left wala bada (negative tha), uska square peeche daalo
-FAMILY: fill-from-END (result peeche se bharo).
+PURANI SHEET KI LINE (git 07e45c2b):
+★ left<=right (< nahi): left==right wala aakhri element bhi ans[0] me jaana. < se ans[0] khaali ([-1,2] -> [0,4]).
 ```
 
 ```cpp
@@ -410,19 +330,6 @@ Do sorted array hain. nums1 me pehle m asli number hain aur peeche n khaali jaga
 nums2 ko nums1 me hi milana hai (in-place), taaki poora nums1 sorted ho jaaye.
   e.g. nums1=[1,2,3,0,0,0] m=3, nums2=[2,5,6] -> nums1=[1,2,2,3,5,6]
   kyun: peeche se bharo (khaali jagah peeche hai), sabse bada pehle rakh do
-```
-
-```
-PURANI SHEET SE (same to same):
-
-SAAR: 2 sorted arr; nums1 ke END me n khaali. in-place -> PEECHE se bharo (aage se karo to zinda element overwrite). O(m+n).  ★ k=m+n-1 NA m*n-1
-in-place = naya array NAHI banaya; usi nums1 me answer bhara -> O(1) EXTRA space.
-TEMPLATE: i=m-1, j=n-1, k=m+n-1.   // k=m+n-1: nums1 ka aakhri index (total m+n jagah)
-   while(i>=0 && j>=0):                       // ★ && (|| nahi -> -1 index crash)
-      if(nums1[i] < nums2[j]) -> nums1[k--]=nums2[j], j--   // jo bada wahi peeche; barabar pe else (nums1 wala) chalega
-      else                    -> nums1[k--]=nums1[i], i--   // nums1[i] bada ya barabar -> wahi aakhri khaali slot pe
-   while(i>=0): nums1[k--]=nums1[i], i--   // optional: nums1 ke bache pehle se apni jagah pe hi hain
-   while(j>=0): nums1[k--]=nums2[j], j--      // nums2[j] NA nums1[j] (nums2 ke bache abhi copy nahi hue, ye loop zaroori)
 ```
 
 ```cpp
@@ -466,19 +373,10 @@ sort() nahi lagana, ek hi pass me karna hai.
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-Dutch flag, 3 pointer (low/mid/high).  loop: while(mid <= high)   // <= : high wala abhi dekha nahi, use bhi check · low=mid=0, high=n-1
-nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).   // mid++ bhi: low se aaya element pehle hi check ho chuka
-nums[mid]==1 -> sirf mid++.
-nums[mid]==2 -> swap(mid,high), high-- (mid++ NAHI -> high se aaya element unknown, dobara check).
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-Dutch flag, 3 pointer (low/mid/high):
-nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).
-nums[mid]==1 -> sirf mid++.
-nums[mid]==2 -> swap(mid,high), high-- (mid++ NAHI -> high se aaya element unknown, dobara check).
+PURANI SHEET KI LINE (git 07e45c2b):
+★ loop = while(mid <= high), < nahi: high wala cell abhi UNKNOWN, use bhi check. [2,0,1] pe < se [1,0,2] reh jaata.
 ```
 
 ```cpp
@@ -509,15 +407,6 @@ Ek array diya hai. Saare even number pehle aur saare odd number baad me rakhne h
   e.g. [3,1,2,4] -> [2,4,3,1] (ya [4,2,1,3], koi bhi jisme even pehle)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-evens pehle, odds baad (aapas order koi bhi). left/right pointer.   // while(left<right) · odd check = nums[x]%2 != 0
-left ODD && right EVEN (dono galat jagah) -> swap + left++ right--.
-left EVEN (sahi) -> left++.  warna -> right--.
-TRAP: left even && right odd pe swap MAT karo -> dono already sahi jagah.
-```
-
 ```cpp
 vector<int> sortArrayByParity(vector<int> nums) {   // even pehle, odd baad (aapas ka order koi bhi)
     int left = 0;
@@ -535,9 +424,9 @@ vector<int> sortArrayByParity(vector<int> nums) {   // even pehle, odd baad (aap
     }                                       // ★ TRAP: left even + right odd = dono sahi, swap MAT
     return nums;
 }
+```
 
 ── (STANDALONE — apni alag trick) ──
-```
 
 ### ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
 
@@ -549,23 +438,12 @@ Ek hi group do baar nahi aana chahiye, chahe array me number dohraye gaye hon.
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (sum = -fixed).
-TEMPLATE:
-    sort(begin(nums), end(nums));   // sort PEHLE: 2-pointer aur duplicate skip dono sorted pe hi chalte
-    for(int i=0; i<nums.size(); i++){   // har number ko ek baar FIX karo
-        if(i>0 && nums[i]==nums[i-1]) continue;              // duplicate FIXED skip (i>0 pehle: i=0 pe nums[i-1] bahar padhta)
-        int low=i+1, high=nums.size()-1, sum=-nums[i];   // low=i+1: fixed ke baad wale hi lo, warna wahi element dobara
-        while(low<high){   // < : low==high = ek hi element, jodi nahi banti
-            if(nums[low]+nums[high]==sum){   // jodi mili = fixed ke saath triplet ka sum 0
-                ans.push_back({nums[i],nums[low],nums[high]});
-                while(low<high && nums[low]==nums[low+1]) low++;   // duplicate LOW skip (pehle low<high, warna low+1 bahar)
-                while(low<high && nums[high]==nums[high-1]) high--; // duplicate HIGH skip (pehle low<high, warna high low se neeche khisak jaata)
-                low++; high--;                                       // skip ke baad bhi 1 kadam: abhi purane number pe khade
-            else if(nums[low]+nums[high] < sum) low++;       // chhota -> low aage (bada chahiye)
-CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad LOW (3) match ke baad HIGH.
-sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
+PURANI SHEET KI LINE (git 3e5b872d):
+★ && (|| nahi): pehle low<high dekho, jhooth ho to nums[low+1] padho hi mat (bahar nahi jaana).
+★ skip ke BAAD bhi low++ / high--: skip loop AAKHRI copy pe rukta, naye number pe nahi.
+  bina ++ ke wahi triplet dobara.  ([-2,0,0,2,2] me L idx2 = 0, H idx3 = 2 pe rukte)
 ```
 
 ```cpp
@@ -604,14 +482,6 @@ Do string s aur t di hain. Batao ki kya t me se kuch akshar hata ke (baaki ka kr
   kyun: a..b..c t me usi kram me mil gaye. 'x' t me hai hi nahi
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
-s[i]==t[j] -> i++ AUR j++ (char mila).  nahi mila -> sirf j++ (t aage scan).   // while(i<s.size() && j<t.size()): koi ek khatam -> ruko
-ANT: i >= s.size() -> saare s-char order me mil gaye -> TRUE. warna FALSE.
-```
-
 ```cpp
 bool isSubsequence(string s, string t) {    // s, t me order se hai? beech ke char skip chalega
     int i = 0, j = 0;                       // i -> s, j -> t
@@ -641,39 +511,24 @@ O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - heigh
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-CORE: bar `i` ke upar paani = min(leftMax[i], rightMax[i]) - height[i].  (min kyun: CHHOTI side se paani bah jaata.)
+kyun SAFE: jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi deewar pakka khadi,
+           to had isi chhoti taraf ke max se tay hoti.
+★ MILNE KI JAGAH: dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
+  badi deewar apni jagah rukti -> dono SABSE UNCHI deewar pe milte, jahan paani hota hi nahi.
+★ TRAP: faisla height[left] <= height[right] (DEEWAR) pe lo, leftMax <= rightMax pe NAHI.
+  max pe liya to ek khamba chhoot jaata: [4,1,4,1] -> 0 aata (sahi 3).
 
-[A] O(n) space: leftMax[] ek pass AAGE se · rightMax[] ek pass PEECHE se · ans += min(leftMax[i], rightMax[i]) - height[i].
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+  left=0, right=n-1;   leftMax=height[0], rightMax=height[n-1];
+REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
 
-[B] O(1) two-pointer (arrays hata, bas 2 var):
-      left=0, right=n-1;   leftMax=0, rightMax=0;   // max 0 se: abhi koi deewar dekhi hi nahi
-      while (left < right):   // < : milne wali cell sabse unchi deewar, uspe paani nahi
-          if (height[left] <= height[right]):          // chhoti ASLI deewar wali taraf niptao: doosri taraf badi pakki
-              if (leftMax > height[left])  ans += leftMax - height[left];   // chhota -> paani
-              left++;   // left ka kaam ho gaya, aage chalo
-          else:
-              if (rightMax > height[right]) ans += rightMax - height[right];   // chhota -> paani (rightMax tak bharega)
-              right--;   // right ka kaam ho gaya, andar aao
-    kyun SAFE: jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi deewar pakka khadi,
-               to had isi chhoti taraf ke max se tay hoti.
-    ★ MILNE KI JAGAH: dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
-      badi deewar apni jagah rukti -> dono SABSE UNCHI deewar pe milte, jahan paani hota hi nahi.
-    ★ TRAP: faisla height[left] <= height[right] (DEEWAR) pe lo, leftMax <= rightMax pe NAHI.
-      max pe liya to ek khamba chhoot jaata: [4,1,4,1] -> 0 aata (sahi 3).
-edge: empty -> 0.
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-[B] O(1) two-pointer (arrays hata, bas 2 var):
-      left=0, right=n-1;   leftMax=height[0], rightMax=height[n-1];
-      while (left < right):
-          if (leftMax <= rightMax):  leftMax  = max(leftMax,  height[left]);   ans += leftMax  - height[left];   left++;
-          else:                      rightMax = max(rightMax, height[right]);  ans += rightMax - height[right];  right--;
-    REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
-    kyun SAFE: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already khadi).
-edge: empty -> 0.
+PURANI SHEET KI LINE (git 3a48bbda):
+[B] O(1) two-pointer (arrays hata, bas 2 var)  — ★ 24-Sep THEEK KIYA (Arpan ka apna code):
+    ★ PURANA (GALAT) jo yahan likha tha: faisla `leftMax <= rightMax` pe, leftMax=height[0] se shuru.
+      max abhi current deewar ko shaamil kiye bina -> milne ki jagah galat -> ek khamba chhoot jaata.
+      [4,1,4,1] pe 0 (sahi 3) · [4,5,3,1,4,4] pe 3 (sahi 4). 12 test pass the, random input pe ~1/5 galat.
 ```
 
 ```cpp
@@ -715,11 +570,7 @@ solve: &count : warna bahar count badhta hi nahi
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-String me kitne SUBSTRING (contiguous) palindrome hain? COUNT karo.
-single char bhi palindrome · same-dikhne wale par ALAG POSITION wale ALAG count.
-SIGNAL: "count palindromes / palindromic substrings" -> har CENTER pe khade ho ke PHAILO.
+TASVEER:
 
 ★★ EXAMPLE (yahi yaad -> poora recall):   "abcba"
     a  b  c  b  a
@@ -731,26 +582,9 @@ SIGNAL: "count palindromes / palindromic substrings" -> har CENTER pe khade ho k
 ★ ARPAN-LINE (jisse ye derive hua): "beech wala khada ho ke dono taraf poochta --
   'tum dono same ho? aa jao mere paas'. same hue -> palindrome bana -> phir agli jodi se poochta."
 
-DO tarah ke CENTER (dono chahiye):
-   ODD  length -> center ek CHAR       ("abcba" -> c)     -> expand(i, i)
-   EVEN length -> center do CHAR jodi  ("abba"  -> bb)    -> expand(i, i+1)
-   n-length string me:  n odd-centers + (n-1) even-centers
-
-TEMPLATE:
-   count = 0
-   for i in 0..n-1:   // har index ko center bana ke dono taraf phailao
-       expand(i, i)        // odd: center ek char (khud bhi palindrome, count hoga)
-       expand(i, i+1)      // even · i+1==n bhi theek: while me j<n pehle check
-   return count
-
-   expand(i, j):   // count by REFERENCE (&count), warna bahar count badhta hi nahi
-       while (i >= 0 && j < n && s[i] == s[j]):   // pehle range check, phir s[i]==s[j] (warna bahar padhega)
-           i--;  j++        // dono taraf phailo
-
-★ count HAR match pe badhta (ant me ek baar nahi) -> kyunki har phailav khud ek palindrome hai.
-★ Complexity: O(n^2) time, O(1) space. Koi DP/recursion NAHI chahiye
-  (substring = CONTIGUOUS -> skip ka option nahi -> choice nahi -> recursion nahi.
-   recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+(substring = CONTIGUOUS -> skip ka option nahi -> choice nahi -> recursion nahi.
+ recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
 ```
 
 ```cpp

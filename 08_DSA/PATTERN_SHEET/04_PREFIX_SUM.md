@@ -201,6 +201,11 @@ har i pe:   lastWall = aakhri DEEWAR ka INDEX,   lastK = aakhri K ka INDEX
 
 ★ 7-Nov REDO_2 ki galti: lastWall = arr[i] likha (8, 4...)  ->  INDEX chahiye (0, 4...), ginti index se banti
 ★ teesri if (lastK > lastWall) chhooti: i = 6 pe 3 - 5 = -2 jud jaata
+
+PURANI SHEET KI LINE (git b086ea01):
+★ count ~n^2/2 (5e9) -> LONG LONG (int overflow).
+WHY simple: "hard-dikhne" wala tha (scary constraints + 3 candidate-pattern), par EK insight (walls) ne
+   collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 ```
 
 ```cpp
@@ -244,6 +249,9 @@ DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
             net  +10  +45  -10  -20   0   -25
     run :        10   55   45   25   25
     ans = [10, 55, 45, 25, 25]
+
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+★★ SWEEP-LINE se RISHTA (Arpan ne khud jod diya — "dono same hain, bas do farak"):
 ```
 
 ```cpp

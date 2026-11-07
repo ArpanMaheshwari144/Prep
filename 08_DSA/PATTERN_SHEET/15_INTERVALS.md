@@ -35,20 +35,13 @@ intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain 
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
-SAAR : sort by start -> ans me first daalo -> har next OVERLAP? merge : push.
-TEMPLATE:
-    sort(intervals.begin(), intervals.end());     // default FIRST-element (start) se sort (pair jaisa)
-    for(i=1..n){  // 1 se: intervals[0] pehle hi ans me
-        if(intervals[i][0] <= ans.back()[1])       // OVERLAP: curr.start <= last.END (<= : [1,3],[3,5] chhoote bhi merge hote)
-            ans.back()[1] = max(ans.back()[1], intervals[i][1]);   // merge -> bada end (max zaroori: [1,10],[2,3] me end 10 hi rahe)
 DRY-RUN  [[1,3],[2,6],[8,10],[15,18]]  (sorted):
     ans=[[1,3]]
     [2,6]  : 2 <= 3  overlap -> end=max(3,6)=6 -> ans=[[1,6]]
     [8,10] : 8 <= 6? NO      -> push          -> ans=[[1,6],[8,10]]
     [15,18]: 15 <=10? NO     -> push          -> ans=[[1,6],[8,10],[15,18]]
-ans.back() = last interval; [0]=start [1]=END.  overlap = curr.start last.END ko chhoo/cross kare. sort-by-start HAMESHA pehla step.
 ```
 
 ```cpp
@@ -75,24 +68,6 @@ meetings[] me [start, end] diye hain. Kya ek insaan saari meetings attend kar sa
   kyun: 5-10 shuru hui jab 0-30 abhi chal rahi (5 < 30) -> overlap
 
 MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end me true
-```
-
-```
-PURANI SHEET SE (same to same):
-
-SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. (Merge ka SAME skeleton reuse.)
-SAME as MERGE (sort + ans.push(first) + loop overlap-check) -- bas overlap pe KYA karo:
-     MERGE:   overlap -> ans.back()[1]=max(...)  (merge)  |  end: return ANS (list)
-     MEETING: overlap -> return FALSE           (ruko)    |  end: return TRUE
-TEMPLATE (merge-jaisa hi):
-    if (intervals.empty()) return true;   // ★ EDGE: warna intervals[0] pe crash
-    sort(intervals);  ans.push_back(intervals[0]);   // start se sort, pehla interval baseline
-    for(i=1..n){   // 1 se: intervals[0] pehle hi ans me
-        if(intervals[i][0] < ans.back()[1]) return false;   // overlap -> attend nahi (< kyunki ek khatam usi pal doosri shuru = chalta)
-        else ans.push_back(intervals[i]);   // push: agla overlap isi ke end se check hoga
-    return true;   // koi overlap nahi mila -> saari attend
-boundary FARAK (crux): Merge touching-MERGE -> `<=`  ·  Meeting touching-OK -> `<`.
-ek pattern (sort+overlap) -> bas (a) overlap pe action (merge vs stop) + (b) boundary (< vs <=) badalta. PROBLEM SAMJHO -> decide.
 ```
 
 ```cpp
@@ -123,41 +98,10 @@ pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
-KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
-TEMPLATE:
-    vector<vector<int>> ans;  int count=0;   // count=0: kitne process hue, doosra loop wahin se chalega
-    for(i=0..n){
-        if(intervals[i][1] < new[0])       ans.push_back(intervals[i]);   // 1. new se PEHLE khatam -> push (sirf < : chhoota hua merge hoga)
-        else if(intervals[i][0] > new[1])  break;                          // 3. new ke AAGE -> BREAK (sorted, aage sab door)
-        else { new[0]=min(new[0],intervals[i][0]);                         // 2. OVERLAP -> new ko GROW
-               new[1]=max(new[1],intervals[i][1]); }   // end bhi max se: dono me jo aage tak jaaye
-        count++;                                                           // break wala yahan nahi aata -> count se doosra loop use daalega
-    ans.push_back(new);                                                   // 4. bada-hua new daalo
-    for(i=count..n) ans.push_back(intervals[i]);                          //    phir count se aage baaki
-break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
-Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
-KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
-TEMPLATE:
-    vector<vector<int>> ans;  int count=0;
-    for(i=0..n){
-        if(intervals[i][1] < new[0])       ans.push_back(intervals[i]);   // 1. new se PEHLE khatam -> push
-        else if(intervals[i][0] > new[1])  break;                          // 3. new ke AAGE -> BREAK (sorted, aage sab door)
-        else { new[0]=min(new[0],intervals[i][0]);                         // 2. OVERLAP -> new ko GROW
-               new[1]=max(new[1],intervals[i][1]); }
-        count++;                                                           // kitne process hue (break se pehle ruk)
-    }
-    ans.push_back(new);                                                   // 4. bada-hua new daalo
-    for(i=count..n) ans.push_back(intervals[i]);                          //    phir count se aage baaki
-    return ans;
-break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
-Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
+PURANI SHEET KI LINE (git 07e45c2b):
+// ★ dono strictly (< aur >): chhoota hua (touching) bhi merge. [[1,2]] + [2,5] -> [[1,5]]; <= / >= se [[1,2],[2,5]].
 ```
 
 ```cpp
@@ -196,21 +140,8 @@ min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
-PURANI SHEET SE (same to same):
-
-NAYA-SOCH (merge/meeting-I se ALAG): rooms ko OBJECT mat gino -> +1/-1 GINTI karo.
-    meeting shuru = +1 (room bhara) · khatam = -1 (room khaali). running-sum ka MAX = answer.
-TOOL = ORDERED MAP (map<int,int> = time->delta; keys KHUD sorted -> manual sort NAHI):
-    map<int,int> mp;
-    for(i=0..n){ mp[start[i]]++;  mp[end[i]]--; }        // shuru +1, khatam -1 (map: same time pe +1 -1 kat ke room reuse)
-    int overlap=0, maxOverlap=0;   // 0 se: shuru me koi meeting chal nahi rahi
-    for(auto &it : mp){                                   // keys sorted -> order me
-        overlap += it.second;   // +1/-1 jodo = is pal kitni meeting chal rahi
-        if(maxOverlap < overlap) maxOverlap = overlap;   // peak yaad rakho = rooms
-    }
-    return maxOverlap;
 DRY-RUN  start=[2,9,6] end=[4,12,10]:
     mp (key-sorted): {2:+1, 4:-1, 6:+1, 9:+1, 10:-1, 12:-1}
     t=2(+1)->ovl=1 mx=1 | t=4(-1)->0 | t=6(+1)->1 | t=9(+1)->2 mx=2 | t=10->1 | t=12->0
@@ -224,16 +155,7 @@ SWEEP VISUAL (vertical line jhaadu t=9 pe = 2 bars overlap = PEAK):
                   ┃
                   ▲
                t=9 pe [6,10]+[9,12] dono ANDAR = 2 bars = PEAK = 2 rooms
-TIE (start==prev end): same key pe +1 aur -1 -> net 0 -> room REUSE free (jhoothi peak nahi).
 FARAK merge se: merge/meeting-I = "kya overlap?" (join/bool). MR-II = "KITNA overlap?" (peak count) -> sweep.
-FAMILY: sweep-line / "events + running count" -- interval-overlap, max-concurrent, CPU-load, planes-in-sky.
-★ YAHAN NAHI MILEGA: iska SAGAA BHAI = DIFFERENCE ARRAY (LC-1109) -> PATTERN 4 (PREFIX SUM) me hai.
-   wahi machine, bas: map ki jagah ARRAY · end ki jagah END+1 (inclusive) · max ki jagah POORA array.
-
-SAAR : min ROOMS = kisi bhi ek PAL pe MAX kitni meeting ek-saath (peak overlap).
-         0    5    10
-                  ┃
-                  ▲
 ```
 
 ```cpp

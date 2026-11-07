@@ -18,38 +18,14 @@ get(key): value lautao, na mile to -1. remove(key): key hatao.
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-PURANI SHEET SE (same to same):
+TASVEER:
 
 MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
    index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
 fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).   // ctor: sz=0, cap=16, buckets.resize(cap) -> sab slot nullptr
 
-TRICK: index = hash<string>{}(key)%cap -> us bucket ki chain me traverse -> key match pe kaam; put me end tak na-mili -> naya node append. (collision = same index -> chain)
-  put(key,val):  int index = hash<string>{}(key) % cap;   Entry* node = new Entry(key,val);   // % cap: hash bada number, slot 0..cap-1 me laana
-                 if(buckets[index] == nullptr){ buckets[index] = node; sz++; }   // khaali slot: naya node hi chain ka head
-                 else{
-                    Entry* head = buckets[index];
-                    while(head != NULL){
-                       if(head->key == key){ head->value = val; return; }   // return: warna loop aage chalta, END pe DUPLICATE node + sz++
-                       else if(head->next == nullptr){ head->next = node; sz++; }   // next null = chain ka END: yahin jodo (agle round naya node match hoke return)
-                       head = head->next;
-                    }
-                 }
-  get(key):      Entry* head = buckets[index];
-                 while(head != NULL){ if(head->key == key) return head->value;  head = head->next; }
-  remove(key):   Entry* head = buckets[index], *prev = NULL;   // prev=NULL: head ke peeche koi node nahi
-                 while(head != NULL){
-                    if(head->key == key){ if(prev) prev->next = head->next;  else buckets[index] = head->next;  sz--; }   // prev NULL = HEAD hi hata: tab bucket ka head badlo
-                    prev = head;  head = head->next;   // prev = head (prev->next nahi): prev NULL ho to crash
-                 }
-
 PUT TRAP (7-redo se pakka): key MILI -> value update + TURANT return. return NA kiya to loop aage
    DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- chain-ke-ANDAR update pe phat-ta.)
-
-COMBO (yahi naya/tricky tha): buckets[index] khud ek POINTER hai (chain ka head)
-  -> isliye array-assign (buckets[i]=X) aur node-link (X->next) MIX ho jaate = array + linked-list.
 
 VISUAL:                                      Entry = | key | value | next |
    buckets
@@ -68,19 +44,6 @@ REMOVE head (prev==null):            REMOVE beech (prev exist):
    buckets[i] = curr->next              prev->next = curr->next
    => buckets[i]->[B]->NULL             => [A]->[C]->NULL
 (redo ke liye poora code: file 08_DSA/09_DESIGN/01_hashmap.cpp)
-
-                    while(head != NULL){
-                       head = head->next;
-                 while(head != NULL){
-
-
-
-   buckets
-   ┌────┐
- 0 │ - ──┼──> NULL
-   ├────┤
-   ├────┤
-   └────┘
 ```
 
 ```cpp
@@ -172,7 +135,7 @@ Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohra
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
 = HashMap ka EXACT code, bas VALUE nikaal do. CONNECTION:
 ┌──────────┬──────────────────────────────┬──────────────────────────────┐
@@ -282,7 +245,7 @@ Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least rec
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
 MENTAL MODEL: get+put DONO O(1). 2 zaroorat -> 2 structure JODO:
    hashmap: key -> DLL-node ka POINTER  (find O(1))
@@ -297,20 +260,6 @@ VISUAL:                     Node = | key | val | prev | next |
     [HEAD]<->|1|<->|3|<->[TAIL]
     (dummy)  MRU   LRU   (dummy)
 
-fields: unordered_map<int,Node*> mp · Node{key,val,prev,next} · Node *head,*tail (dummy) · cap.
-ctor:   dummy head,tail bana -> head<->tail link · cap=capacity.   (TRAP-3)   // dummy = new Node(-1,-1) dono
-
-CRUX = 2 DLL helper (yehi asli mechanic, get/put inko call karte):
-   removeNode(n): n->prev->next=n->next;  n->next->prev=n->prev;      // beech se nikal, O(1)
-   addFront(n):   nxt=head->next;  head->next=n; n->prev=head;        // nxt PEHLE pakdo (TRAP-2)
-                  n->next=nxt; nxt->prev=n;                           // n ab head ke turant baad = sabse naya (MRU)
-
-get(key):  mp.count(key)==0 -> -1.  warna: Node* node = mp[key]; removeNode(node); addFront(node); return node->val;   // count se check: mp[key] chup-chaap khaali entry bana deta
-put(k,v):  hai  -> node->val=v  -> removeNode + addFront.   ★ DONO, get() jaisa (neeche TRAP-4) (sirf addFront kiya to node purani jagah bhi juda, wahi evict hota)
-           naya -> FULL? Node* lru = tail->prev;  removeNode(lru);   // tail->prev = sabse purana (tail khud dummy hai) · FULL = mp.size()==cap
-                         mp.erase(lru->key);          // ★ KEY se (map key se dhoondhta). ->val NAHI (TRAP-5)
-                  phir new node addFront + mp[k]=node.   // pehle evict, phir naya: size==cap check add se PEHLE
-
 TRAP: (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()/find(). (C++ jaal)
       (2) DLL rewire: overwrite se PEHLE temp me pakdo (nxt).  (3) ctor me type-dobara = shadowing (naya local).
       (4) ★ (24-Sep, base + REDO_1 dono me tha) put() me key pehle se ho to sirf addFront kiya, removeNode NAHI
@@ -319,17 +268,6 @@ TRAP: (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()
       (5) mp.erase(lru->val) likha -> map me val naam ki key hi nahi, kuch nahi hata -> gaya hua key
           get() pe wapas milta (100 aata, sahi -1), mp.size() badhta rehta -> aage evict hi band.
           test me key == val ho (1,1 · 2,2) to ye chhup jaata -> test me key != val rakho (1,100).
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-CRUX = 2 DLL helper (yehi asli mechanic, get/put inko call karte):
-   removeNode(n): n->prev->next=n->next;  n->next->prev=n->prev;      // beech se nikal, O(1)
-   addFront(n):   nxt=head->next;  head->next=n; n->prev=head;        // nxt PEHLE pakdo (TRAP-2)
-                  n->next=nxt; nxt->prev=n;                           // n = MRU
-
-get(key):  mp.count(key)==0 -> -1.  warna: Node* node = mp[key]; removeNode(node); addFront(node); return node->val;
-put(k,v):  hai  -> node->val=v  -> removeNode + addFront.
-           naya -> FULL? tail->prev(=LRU) removeNode + mp.erase(uski key); phir new node addFront + mp[k]=node.
 ```
 
 ```cpp

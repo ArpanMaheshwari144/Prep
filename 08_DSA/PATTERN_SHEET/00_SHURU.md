@@ -283,6 +283,13 @@ A-Z ke har akshar ko k jagah PEECHE khiskao, A se peeche = Z (gol). Space waisa 
 koi pattern nahi, seedha loop. pench sirf do: minus ka % (C++ me -2 % 26 = -2) aur bada k.
 ```
 
+```
+YAAD:
+
+PURANI SHEET KI LINE (git f95f9ec4):
+4. peeche khiskao + 26 jodo + % 26 -> hamesha 0..25   (+26 minus ke liye, % 26 plus wale ke liye)
+```
+
 ```cpp
 string shiftBack(string s, int k) {
     if (s.size() == 0)

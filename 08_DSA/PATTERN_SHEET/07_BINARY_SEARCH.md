@@ -32,13 +32,10 @@ Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mi
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-mid; target<mid -> left half, warna right. (low<=high: 1 element bacha tab bhi check; mid±1)   // mid=low+(high-low)/2 · loop ke bahar return -1
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-mid; target<mid -> left half, warna right. (low<=high, mid±1)
+PURANI SHEET KI LINE (git 07e45c2b):
+★ low<=high (< nahi): low==high wala aakhri ek element bhi check. [5], target 5 -> < se loop chalta hi nahi -> -1 (sahi 0).
 ```
 
 ```cpp
@@ -64,12 +61,6 @@ Ek SORTED array (sab alag number) aur ek target diya hai. target mile to uska in
 Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
   e.g. [1,3,5,6], target=2 -> 1
   kyun: 2 na mila, 1 aur 3 ke beech jaayega -> index 1
-```
-
-```
-PURANI SHEET SE (same to same):
-
-basic BS; na mile to low return (wahi insert jagah).   // loop khatam: low = pehla index jahan nums >= target
 ```
 
 ```cpp
@@ -100,15 +91,7 @@ Na mile to {-1, -1}. O(log n) me karna hai.
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-PURANI SHEET SE (same to same):
-
-   nahi mila -> {-1,-1}. O(log n).
-INPUT: [5,7,7,8,8,10], target 8 -> {3,4}
-
-      FIRST ke liye LEFT chalte raho · LAST ke liye RIGHT chalte raho -> 2 alag BS.
-= BASIC BS ka WALL, bas DELTA: mid==target pe return nahi, ans likho + ek side chalo.
+TASVEER:
 
 DRY-RUN ([5,7,7,8,8,10], target 8):
   idx :  0  1  2  3  4  5
@@ -125,36 +108,6 @@ DHYAAN:
   1. dono pass ke beech low/high RESET.
   2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
   3. ans(2,-1) + index set karo, push_back mat milao.
-
-SAAR: normal BS, bas target MILNE pe RUKO MAT -> ans me likho, phir ek taraf aur dhoondo.
-
-TEMPLATE:
-  vector<int> ans(2, -1);                    // size fixed 2 -> ans(2,-1), push_back NAHI
-  int low = 0, high = n - 1;   // n-1: aakhri valid index, dono sire inclusive
-  while (low <= high) {                      // PASS 1 = FIRST (<= : low==high wala akela element bhi check)
-     int mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe int overflow
-     if (nums[mid] == target) { ans[0] = mid; high = mid - 1; }   // mila -> aur LEFT (high=mid-1: mid ans me save, ab usse pehle wala dhoondo)
-     else if (nums[mid] < target) low = mid + 1;   // mid chhota: target right me; mid khud nahi, isliye +1
-     else high = mid - 1;   // mid bada: target left me; mid khud nahi, isliye -1
-  low = 0, high = n - 1;                     // RESET, warna PASS 2 galat jagah se shuru
-  while (low <= high) {                      // PASS 2 = LAST (<= : low==high wala akela element bhi check)
-     int mid = low + (high - low) / 2;   // (low+high)/2 nahi: bade low+high pe int overflow
-     if (nums[mid] == target) { ans[1] = mid; low = mid + 1; }    // mila -> aur RIGHT (low=mid+1: mid ans me save, ab usse baad wala dhoondo)
-     else if (nums[mid] < target) low = mid + 1;   // mid chhota: target right me; mid khud nahi, isliye +1
-     else high = mid - 1;   // mid bada: target left me; mid khud nahi, isliye -1
-
-  idx :  0  1  2  3  4  5
-  val :  5  7  7  8  8 10
-
-DHYAAN:
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-sorted + duplicates. target ka {first, last} index. 2 BS, ans(2,-1). mila nahi -> {-1,-1}.
-CORE: mid==target pe RUKO MAT -> boundary tak ek side aur dhoondo.
-1st pass (FIRST): nums[mid]==target -> ans[0]=mid; high=mid-1   (aur LEFT dhoondo)
-2nd pass (LAST):  nums[mid]==target -> ans[1]=mid; low=mid+1    (aur RIGHT dhoondo)
-   baaki dono pass me normal: nums[mid] < target -> low=mid+1 · else -> high=mid-1.
 ```
 
 ```cpp
@@ -199,17 +152,13 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-SAAR : sorted array pivot pe rotate ([4,5,6,7,0,1,2]). target ka INDEX, nahi mile -> -1.
-CORE : mid==target? return. warna -> ek half HAMESHA sorted -> wahi se decide:   // while(low<=high): akela element bacha tab bhi check
-    nums[low] <= nums[mid]  ->  LEFT half sorted:   (<= : low==mid ho to akela element bhi sorted)
-         nums[low] <= target <= nums[mid]  ? -> high = mid-1   :  low = mid+1   // nums[low] <= target: target low pe khud ho sakta, warna miss
-    else                    ->  RIGHT half sorted:
-         nums[mid] <= target <= nums[high] ? -> low = mid+1    :  high = mid-1   // target <= nums[high]: target high pe khud ho sakta, warna miss
-    har baar aadha kaat -> O(log n). loop khatam -> -1.
 BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
          jahaan mid hai (already returned) -> < ya <= farak NAHI.
+
+PURANI SHEET KI LINE (git 07e45c2b):
+★ nums[low] <= nums[mid] (< nahi): 2 bache to low==mid, left half = sirf mid, wo sorted hi hai. [3,1], 1 -> < se -1 (sahi 1).
 ```
 
 ```cpp
@@ -244,14 +193,6 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sabse chhota number lautao. O(log n) me.
   e.g. [3,4,5,1,2] -> 1
   kyun: 3,4,5 badhte gaye, 1 pe gira -> wahi ghumne ki jagah, wahi min
-```
-
-```
-PURANI SHEET SE (same to same):
-
-mid ko HIGH se compare (koi target nahi, khud min dhoondna). while(low<high): if(nums[mid]>nums[high]) low=mid+1; else high=MID; -> return nums[low].
-high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
-(ye wahi high=mid vs high=mid-1 rule -- find-peak jaisa: khud-answer-dhoondh -> high=mid+low<high; target-reject -> high=mid-1+low<=high.)
 ```
 
 ```cpp
@@ -289,12 +230,6 @@ Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo 
   kyun: k=4 -> 1+2+2+3 = 8 ghante, chal gaya · k=3 -> 1+2+3+4 = 10 > 8, nahi chalega
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-│       ceil-TRAP: int/int FLOOR karta -> use (piles[i]+mid-1)/mid. hours = long (overflow).   // ya ceil((double)piles[i]/mid): cast pehle
-```
-
 ```cpp
 bool solve(vector<int> &piles, int h, int mid) {
     long long hours = 0;                    // long long: bade piles pe sum overflow
@@ -328,12 +263,6 @@ weights[] me packet ka wazan diya hai. Inhe isi kram me D din me bhejna hai, aur
 Sabse kam capacity kitni chahiye, wo lautao.
   e.g. weights=[3,2,2,4,1,4], D=3 -> 6
   kyun: 6 se [3,2] [2,4] [1,4] = 3 din · 5 se [3,2] [2] [4,1] [4] = 4 din, zyada
-```
-
-```
-PURANI SHEET SE (same to same):
-
-│       solve(mid): day=1,sum=0; for w: if(sum+w>mid){day++;sum=0;} sum+=w;  ->  day <= D ?   // day=1: aakhri din ka load bhi gino
 ```
 
 ```cpp
@@ -376,16 +305,6 @@ Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
   kyun: splits ke bade-sum 25,23,18,24 -> sabse chhota 18 ([7,2,5]=14 | [10,8]=18)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-│       solve(mid): sum=0,count=1; for x: sum+=x; if(sum>mid){count++;sum=x;}  ->  count <= k ?   // sum=x (0 nahi): jis x ne limit todi wo naye tukde ka pehla
-│       count=1 se START (warna aakhri tukda chhoot jaaye).
-└───────────────────────────────────────────────────────────────
-
-sibling: koko (min speed) · ship (min capacity) · split (min largest-sum) -> teeno IDENTICAL shell.
-```
-
 ```cpp
 bool solve(vector<int> &nums, int k, int mid) {
     int sum = 0, count = 1;                 // ★ count=1 se START: warna aakhri tukda chhoot jaata
@@ -426,17 +345,6 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
   kyun: index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
-low=0, high=n-1;   while (low < high):   mid = low+(high-low)/2;   // low<high: high=mid se atke nahi, aur mid+1 hamesha andar
-   nums[mid] < nums[mid+1]        -> CHADHAAI -> peak RIGHT me       -> low = mid+1;   // mid peak nahi (right wala bada), isliye mid+1
-   else (nums[mid] > nums[mid+1]) -> DHALAAN  -> peak mid-KHUD ya LEFT -> high = mid;   // mid (NOT mid-1) (dhalaan pe mid khud peak ho sakta, phenk nahi sakte)
-return low;   (low==high pe converge = peak. edges auto.)
-GOTCHA: dhalaan me high = mid (mid-1 NAHI) -- mid khud peak ho sakta. isliye while low<high (mid+1 hamesha in-bounds, no sentinel).
-```
-
 ```cpp
 int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges ke bahar -inf
     int n = nums.size();
@@ -464,52 +372,8 @@ single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid 
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
-SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
-   idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
-TEMPLATE:
-    if(nums.size()==1) return nums[0];            // akela element hi single hai, BS ki zarurat nahi
-    int low=0, high=n-1;   // n-1: aakhri valid index, poori array inclusive
-    while(low<=high){   // <= : low>high pe hi ruko, tab high single pe hota
-        int mid=low+(high-low)/2;   // (low+high)/2 nahi: overflow se bachne ko
-        if(mid==0) return nums[mid];              // edge (mid-1 = -1 out-of-bounds; yahan tak aaye to single idx 0 pe)
-        if(mid%2==0){                             // even mid: single se pehle even idx ka saathi AAGE hota
-            if(nums[mid]==nums[mid-1]) high=mid-1; //   single PEECHE (even idx ka saathi peeche = pairing shift ho chuki)
-            else low=mid+1;                        // saathi peeche nahi = pairing theek, single aage
-        } else {                                  // odd mid: single se pehle odd idx ka saathi PEECHE hota
-            if(nums[mid]!=nums[mid-1]) high=mid-1; //   single PEECHE (odd idx ka saathi peeche nahi = pairing shift ho chuki)
-            else low=mid+1;                        // saathi peeche mila = pairing theek, single aage
-    return nums[high];   // high, low nahi: dono branch mid reject karte, high single pe rukta
-── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
-   idx:  0  1  2  3  4  5  6  7  8
-   arr:  1  1  2  3  3  4  4  8  8
-   low0 high8 -> mid=4 (EVEN) : nums[4]=3 == nums[3]=3 -> high=4-1=3
-   low0 high3 -> mid=1 (ODD)  : nums[1]=1 == nums[0]=1 -> low=1+1=2
-   low2 high3 -> mid=2 (EVEN) : nums[2]=2 != nums[1]=1 -> low=2+1=3
-   low3 high3 -> mid=3 (ODD)  : nums[3]=3 != nums[2]=2 -> high=3-1=2
-   low3 > high2 -> STOP -> return nums[high]=nums[2]= 2  (sahi)
-return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
-   idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
-TEMPLATE:
-    if(nums.size()==1) return nums[0];            // BASE
-    int low=0, high=n-1;
-    while(low<=high){
-        int mid=low+(high-low)/2;
-        if(mid==0) return nums[mid];              // edge
-        if(mid%2==0){                             // EVEN mid
-            if(nums[mid]==nums[mid-1]) high=mid-1; //   single PEECHE
-            else low=mid+1;                        //   single AAGE
-        } else {                                  // ODD mid
-            if(nums[mid]!=nums[mid-1]) high=mid-1; //   single PEECHE
-            else low=mid+1;                        //   single AAGE
-        }
-    }
-    return nums[high];
 ── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
    idx:  0  1  2  3  4  5  6  7  8
    arr:  1  1  2  3  3  4  4  8  8
@@ -561,11 +425,7 @@ Batao target matrix me hai ya nahi, true ya false.
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%col]. (row=mid/col, col=mid%col)   // col = matrix[0].size(), row nahi
-
-3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
+TASVEER:
 
 ┌══ DECISION: high=mid  vs  high=mid-1  (kab konsa) ═══════════════════════════
 │ EK SAWAAL: "mid KHUD answer ho sakta abhi bhi?"
@@ -583,18 +443,11 @@ poore matrix ko 1D maano (low=0, high=row*col-1). access: matrix[mid/col][mid%co
 │     e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
 └──────────────────────────────────────────────────────────────────────────────
 
-PEHLI SHEET (Aug) se bhi, same to same:
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
 
-high=mid vs high=mid-1 (kab konsa -- ek sawaal: "mid KHUD answer ho sakta abhi bhi?"):
- TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
- KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
- BUG-CATCH (find-min, 18-Jul): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
- trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
- KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
-     high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
-     high=mid   -> high nahi hilta (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
-     isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
-     e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
+PURANI SHEET KI LINE (git 07e45c2b):
+★ dono jagah COL (row nahi): mid/col = row, mid%col = col. 3x4, mid=5 -> [1][1]; /3 likha to [1][2] galat.
 ```
 
 ```cpp
@@ -631,10 +484,7 @@ Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wa
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-SAAR: 2 sorted arrays ka COMBINED median, O(log). MERGE mat karo -> ek CUT dhoondo:
-      LEFT aadha | RIGHT aadha, aur left ka HAR element <= right ka HAR. Cut ke 4 kinaare = median.
+TASVEER:
 
 CUT idea (chhote array A pe BS -> Px; Py auto):
    A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
@@ -657,17 +507,6 @@ CUT idea (chhote array A pe BS -> Px; Py auto):
    "= BS PAR array-value pe nahi -> CUT-POSITION (Px) pe. condition monotonic -> BS chalti."
    KYUN sirf 4 number: sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
 
-TEMPLATE:
-   if(A.size()>B.size()) return solve(B,A);            // chhote pe BS -> Py kabhi -ve nahi
-   low=0, high=m;                                      // high=m: A ke 0 se m tak kitne bhi left me ja sakte
-   while(low<=high){   // <= : Px=low==high wala cut bhi try ho
-     Px=low+(high-low)/2;  Py=(m+n+1)/2 - Px;   // +1: odd total pe left me ek zyada
-     x1=Px==0?INT_MIN:A[Px-1];  x2=Py==0?INT_MIN:B[Py-1];   // ==0 ? INT_MIN: left khaali, A[-1] out-of-bounds; -INF kabhi compare na bigaade
-     x3=Px==m?INT_MAX:A[Px];    x4=Py==n?INT_MAX:B[Py];   // ==m/n ? INT_MAX: right khaali, A[m] out-of-bounds; +INF compare na bigaade
-     if(x1<=x4 && x2<=x3)   // && : dono cross-check sahi tabhi cut valid; <= kyunki barabar chalega
-        return (m+n)%2==0 ? (max(x1,x2)+min(x3,x4))/2.0 : (double)max(x1,x2);   // /2.0 + (double): int division se .5 kat jaata
-     if(x1>x4) high=Px-1; else low=Px+1;   // x1>x4: A ne zyada liya, cut left khiskao; warna A ne kam liya
-
 ── DRY-RUN (A=[1,3,8,9,15] m=5, B=[7,11,18,19,21,25] n=6, half=6) ──
 
   TRY Px=2:   A:  1  3 | 8  9  15          x1=3   x3=8
@@ -680,8 +519,6 @@ TEMPLATE:
       odd -> median = max(x1,x2) = max(9,11) = 11   ANS=11
 
   GOTCHA: even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
-
-FAMILY: BS-on-PARTITION (naya). cousin = BS-on-ANSWER (koko/ship) -> wahan VALUE pe BS, yahan CUT-position pe.
 ```
 
 ```cpp

@@ -35,16 +35,6 @@ Linked list ka head diya hai. Beech wala node lautao. Agar list ki lambai even h
   kyun: 6 node me beech ke do 3 aur 4 -> doosra = 4 (odd 1->2->3->4->5 hota to 3)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-FAST/SLOW: slow 1 step, fast 2 step; fast end pe -> slow MIDDLE pe.
-   Node *slow=head, *fast=head;   // dono head se: even list me 2nd middle milta
-   while (fast && fast->next) { slow=slow->next; fast=fast->next->next; }   // fast pehle check (NULL->next crash), fast->next se next->next safe
-LOOP-COND `fast && fast->next` dono zaroori: even [1,2,3,4] -> slow=3 (2nd middle); odd [1,2,3] -> slow=2.
-   (fast->next check hataya -> fast->next->next NULL pe crash.)
-```
-
 ```cpp
 Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
     Node *slow = head;                      // dono head se: even list me 2nd middle milta
@@ -63,16 +53,6 @@ Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
 Linked list ka head diya hai. Agar list me cycle hai (koi node wapas kisi pichhle node pe point karta hai) to true, warna false.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> true
   kyun: -4 ke baad phir 2 pe aa gaye -> 2,0,-4,2,... chakkar kabhi NULL nahi aata
-```
-
-```
-PURANI SHEET SE (same to same):
-
-FAST/SLOW (Floyd): cycle ho to tez-dheema MILENGE (slow==fast) -> true.
-   Node *slow=head, *fast=head;   // dono head se: cycle ho to fast ghoom ke slow ko pakdega
-   while (fast && fast->next) { slow=slow->next; fast=fast->next->next; if (slow==fast) return true; }   // check move ke BAAD: dono head se shuru, pehle check karte to turant true
-   return false;   // fast NULL tak pahuncha = list ka end hai, cycle nahi
-no-cycle -> fast NULL pe pahunch ke loop khatam -> false.
 ```
 
 ```cpp
@@ -103,24 +83,6 @@ values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = dupli
 [3,1,3,4,2]: 0->3->4->2->3->4->2... (loop, entry 3 = dup)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-SAAR: n+1 numbers, values 1..n, ek repeat. dhoondo. O(1) space + array READ-ONLY.
-PEHCHAN: "array + duplicate + O(1)-space + no-modify" -> value ko POINTER samjho (i -> nums[i]).
-= DETECT CYCLE, bas DELTA: (a) array-as-linked-list  (b) detect nahi, cycle-ENTRY chahiye -> PHASE-2.
-KYUN CYCLE: values 1..n + n+1 slots -> koi value 2 baar point -> loop. entry-node = duplicate.
-VISUAL: nums=[3,1,3,4,2]:  0->3->4->2->3->4->2...  (loop; entry=3=dup)
-TEMPLATE:
-   int slow=0, fast=0;   // 0 se: value 1..n, koi 0 pe point nahi karta -> 0 cycle ke bahar ka start
-   slow=nums[slow]; fast=nums[nums[fast]];   // ★ PEHLE ek kadam chalao — dono 0 pe hi rahe to slow==fast, PHASE-1 loop chalega hi nahi
-   while(slow!=fast){ slow=nums[slow]; fast=nums[nums[fast]]; }   // PHASE-1: cycle me tez-dheema milne tak chalao
-   while(slow!=fast){ slow=nums[slow]; fast=nums[fast]; }          // PHASE-2 entry (ab fast bhi 1 kadam, 2 nahi)
-   return slow;   // phase-2 me jahan mile wahi cycle entry = duplicate
-crux: phase-2 = meet aur 0 se entry-tak distance BARABAR (Floyd) -> 0-reset + 1-1 kadam.
-FAMILY: FAST/SLOW (detect_cycle cousin) — wahi Floyd, array pe.
-```
-
 ```cpp
 int findDuplicate(vector<int> &nums) {
     int slow = 0, fast = 0;                 // 0 se: value 1..n, koi 0 pe point nahi -> 0 cycle ke bahar
@@ -149,22 +111,11 @@ cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* ve
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-SAAR: cycle ho to uske START (entry) node ka pointer return; warna NULL.
-= DETECT CYCLE (03), bas DELTA: true/false nahi, ENTRY chahiye -> PHASE-2.
-= FIND-DUPLICATE (12) ka Node* version: nums[i] ki jagah ->next. SAME phase-2.
-TEMPLATE:
-   slow=head, fast=head;  bool cycle=false;   // flag: 1 node pe bina cycle bhi slow==fast hota
-   while(fast && fast->next){ slow=slow->next; fast=fast->next->next; if(slow==fast){ cycle=true; break; } }   // break: fast meet point pe hi ruke
-   if(!cycle) return NULL;              // no cycle (flag se decide, slow!=fast se nahi: 1 node pe dono head pe barabar)
-   slow=head;   // sirf slow head pe, fast meet point pe hi rahe
-   while(slow!=fast){ slow=slow->next; fast=fast->next; }   // PHASE-2 entry (dono 1-1 kadam)
-crux: meet aur head se entry-tak distance BARABAR (Floyd) -> head-reset + 1-1 kadam.
 GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
    1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
    -> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
-FAMILY: FAST/SLOW TRIPLET — detect_cycle(03) + find-duplicate(12) + cycle-II(13), teeno wahi Floyd.
 ```
 
 ```cpp
@@ -204,15 +155,6 @@ COMBO: middle -> 2nd half REVERSE -> head (aage se) & rev (peeche se) saath comp
 middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
-   while (head && rev) { if (head->val != rev->val) return false; head=head->next; rev=rev->next; }   // && : even me rev wala half chhota, jo pehle NULL ho wahin ruko
-   return true;   (khali list -> true)
-list TOOT-ti NAHI: pehle-half node ka ->next kabhi nahi badla -> odd me middle node SHARED (head-se aur rev-se dono beech pe aa ke NULL milte -> while(head&&rev) bina cut ke odd+even dono handle).
-```
-
 ```cpp
 bool isPalindrome(Node *head) {
     Node *mid = middleNode(head);           // slow / fast
@@ -235,21 +177,6 @@ bool isPalindrome(Node *head) {
 Linked list ka head aur ek number n diya hai. List ke end se gina hua n-va node hatao aur naya head lautao.
   e.g. 1->2->3->4->5, n=2 -> 1->2->3->5
   kyun: end se gino 5 (1st), 4 (2nd) -> 4 hata
-```
-
-```
-PURANI SHEET SE (same to same):
-
-FAST/SLOW GAP: pehle fast ko n kadam aage, phir dono saath.
-Node *slow = head, *fast = head;                     // dummy nahi, dono head se
-    slow = slow->next; fast = fast->next;            // dono saath, gap wahi
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-FAST/SLOW GAP: fast ko PEHLE aage bhejo (loop i=1; i<=n). ab fast & slow me n ka gap.
-agar fast==NULL -> head hi hatana hai -> return head->next.
-warna dono SAATH chalao (gap constant) jab tak fast->next NULL -> slow "hatane wale ke PEHLE" baith jaata.
-slow->next us node ko point kar raha -> slow->next = slow->next->next. done.
 ```
 
 ```cpp
@@ -275,18 +202,6 @@ Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam
 Linked list ka head aur ek number val diya hai. Jitne bhi node ki value val hai, sab hatao (head bhi ho sakta hai). Naya head lautao.
   e.g. 1->2->6->3->4->5->6, val=6 -> 1->2->3->4->5
   kyun: dono 6 wale node (beech wala aur aakhri) nikal gaye, baaki kram waisa hi
-```
-
-```
-PURANI SHEET SE (same to same):
-
-val wale SAARE node hatao.  if (!head) return null;   prev = null, curr = head;   // prev=null: head ke peeche koi node nahi
-while (curr != null && head != null):   // head null = sab node hat gaye, aage kuch nahi
-   curr->val==val && prev==null   -> head = head->next          (HEAD / ya sab-node-same)
-   curr->val==val && prev!=null   -> prev->next = curr->next     (beech)
-   else (no-match)                -> prev = curr   // sirf no-match pe: hata hua node prev nahi ban sakta
-   curr = curr->next              (har case ke end me)
-TRICK: prev SIRF no-match pe aage (removal pe prev=curr NAHI -- curr hata) -> warna consecutive [1,6,6,2] fail.
 ```
 
 ```cpp
@@ -316,17 +231,6 @@ Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
 Do SORTED linked list di hain. Dono ko jod ke ek sorted list banao aur uska head lautao.
   e.g. a: 1->2->4, b: 1->3->4 -> 1->1->2->3->4->4
   kyun: har baar dono ke aage wale me se chhota uthao: 1,1,2,3,4,4
-```
-
-```
-PURANI SHEET SE (same to same):
-
-DUMMY node + tail (dummy = head ka special-case avoid).   // dummy=new Node(0); tail=dummy -> tail dummy se shuru
-   while (a && b): (a->val <= b->val) ? { tail->next=a; a=a->next; } : { tail->next=b; b=b->next; }   tail=tail->next;   // && : ek list khatam hote hi ruko, baaki neeche ke loop jodte
-   while (a) { tail->next=a; a=a->next; tail=tail->next; }    // baaki a jod do (already sorted)
-   while (b) { tail->next=b; b=b->next; tail=tail->next; }    // baaki b jod do
-   return dummy->next;   (dummy skip -> asli head)
-ek list khatam -> doosri ki BAAKI seedha jod do (dono already sorted).
 ```
 
 ```cpp
@@ -370,35 +274,6 @@ number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala rig
 (2->4->3) + (5->6->4) = 342 + 465 = 807 -> (7->0->8)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-SAAR: 2 number linked-list me ULTA pade (units-digit HEAD pe). Jodo -> naya list.
-      ULTA hai isiliye HEAD-se-HEAD jodo = school-wala right-to-left add (carry aage jaata).
-e.g. (2->4->3) + (5->6->4) = 342 + 465 = 807 -> answer (7->0->8).
-
-dummy + tail (MERGE jaisa) -> naye node peeche jodte jao.  + ek CARRY.
-while (a || b || carry):          <- jab tak koi list bachi HAI, ya carry bacha
-   sum = carry                     (pichhle step ka carry se shuru)
-   if (a) { sum += a->val;  a = a->next; }     (a hai to jodo, a aage)
-   if (b) { sum += b->val;  b = b->next; }     (b hai to jodo, b aage)
-   tail->next = new Node(sum % 10);  tail = tail->next;   (digit jodo)
-   carry = sum / 10;                                      (agle ke liye)
-return dummy->next   // dummy nakli hai, asli head uske next pe
-
-'|| carry' KYUN: 999 + 1 -> dono list khatam, par carry=1 bacha -> ek aur node (leading 1) chahiye.
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-dummy + tail (MERGE jaisa) + CARRY. digits ULTA store (units-digit pehle) -> seedha aage-aage jodo.
-while(a || b || carry):              <- koi list bachi HAI ya carry bacha -> chalte raho
-   sum = carry;                        (pichle ka carry se shuru)
-   a hai to sum += a->val (a aage);  b hai to sum += b->val (b aage).
-   naya node = sum % 10 -> tail se jodo, tail aage.   carry = sum / 10 (agle ke liye).
-return dummy->next.
-'|| carry' zaroori: 999 + 1 = 1000 -> dono list khatam par carry bacha -> ek aur node chahiye (leading '1').
-```
-
 ```cpp
 Node *addTwoNumbers(Node *a, Node *b) {
     Node *dummy = new Node(0);              // dummy + tail (MERGE jaisa) + ek CARRY
@@ -429,21 +304,6 @@ Node *addTwoNumbers(Node *a, Node *b) {
 Linked list di hai. Har do paas-paas wale node ki jodi aapas me badal do. Value nahi badalni, node ki jagah badalni hai. Naya head lautao.
   e.g. 1->2->3->4->5 -> 2->1->4->3->5
   kyun: (1,2) -> 2,1 · (3,4) -> 4,3 · 5 akela, waise hi
-```
-
-```
-PURANI SHEET SE (same to same):
-
-SAAR : har do adjacent NODE ki jodi swap (values nahi, NODES = pointer rewire). DUMMY-node trick.
-TEMPLATE:
-    Node* dummy=new Node(0); dummy->next=head;   // dummy: head bhi badlega, isliye usse pehle ek node chahiye
-    Node* prev=dummy, *first=head;   // prev=dummy: pehli jodi se pehle bhi jodne wala node chahiye
-    while(prev->next && first->next){        // jodi (2 node) bache tab tak (pehle prev->next, warna NULL->next)
-        Node* temp=second->next;             // BACHA lo (warna next line me gum)
-        prev=first;  first=temp;             // ADVANCE (prev=purana first, first=agli jodi ka pehla)
-    return dummy->next;   // naya head = pehli jodi ka second, wo dummy->next pe
-dummy kyu: jodi reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi ke pehle kuch nahi -> dummy.
-rewire ORDER + temp-save = crux. har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
 ```
 
 ```cpp
@@ -477,15 +337,6 @@ Linked list ka head diya hai. Poori list ulti karo aur naya head lautao.
   kyun: har node ka teer ulta, purana aakhri (5) naya head
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-3-pointer: prev=NULL, curr=head;   // prev=NULL: purana head naya tail banega, uska next NULL
-   while (curr) { Node *nextt=curr->next; curr->next=prev; prev=curr; curr=nextt; }   // nextt pehle bachao: link ulta karte hi aage ka rasta gum
-   return prev;   // prev: curr NULL pe ruka, prev aakhri node = naya head
-har step: nextt BACHA -> curr ka link ULTA (->prev) -> dono aage. end: prev = naya head.
-```
-
 ```cpp
 Node *reverseList(Node *head) {
     Node *prev = NULL;                      // prev=NULL: purana head naya tail, uska next NULL
@@ -514,13 +365,7 @@ PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALA
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-SAAR: har k-node group ko reverse (NODES). k se KAM bache -> waise hi.
-
-2 TUKDE (dono pehle se aate):
-   REVERSE-LL  = ek group ko 3-pointer se ulta        [engine reuse]
-   RECURSION   = group reverse -> BAAKI list pe khud ko call -> stitch
+TASVEER:
 
 VISUAL ( 1 -> 2 -> 3 -> 4 -> 5 ,  k=2 ):
    GRP1 [1,2]:  1 -> 2 -> (3 4 5)
@@ -531,16 +376,6 @@ VISUAL ( 1 -> 2 -> 3 -> 4 -> 5 ,  k=2 ):
         3(TAIL) -> reverseKGroup(5)
    GRP3 [5]:    count=1 < 2 -> return 5      (leftover, waise hi)
    JODO:  2 -> 1 -> 4 -> 3 -> 5
-
-DELTA (reverse-LL ke upar):
-   (1) count-FIRST: k node GINO -> < k? return head (leftover guard).   // while(chk && cnt<k) gino; cnt!=k -> return head · head==NULL -> NULL
-   (2) 3-pointer se k reverse (count<k).
-   (3) head ab TAIL -> head->next = reverseKGroup(next,k) ; return prev.   // next = agle group ka head; next!=NULL tabhi recurse
-
-crux: count-FIRST + head-BANTA-TAIL + RECURSE-stitch.
-
-PEHCHAN: "reverse in groups of k" sunte hi -> 3-ptr + count + recurse.
-         (copy-random se ALAG: yahan nodes ULATNA, naye banana NAHI.)
 ```
 
 ```cpp
@@ -587,25 +422,7 @@ PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-SAAR: har node me val+next+RANDOM (kahin bhi ya NULL). DEEP copy banao,
-      copy ke random COPY-list ke andar point karein (original pe NAHI).
-KYUN 2 PASS: random aage/peeche kahin bhi -> 1-pass me target abhi bana
-      hi na ho. pehle SAARE new node bana lo (+map), PHIR random set.
-
-PEHCHAN: "random pointer / deep copy" sunte hi -> MAP (old->new).
-         (k-group se ALAG: yahan naye node BANANA, ulatna NAHI.)
-
-TEMPLATE:
-  curr=head; prev=NULL; newHead=NULL;   // pehle head==NULL -> return NULL · mp = unordered_map<Node*,Node*>
-     Node* temp=new Node(curr->val); mp[curr]=temp;   // mp old->new: pass-2 me random ka naya node yahin se milega
-     if(newHead==NULL){ newHead=temp; prev=temp; }   // pehla clone = naya head, peeche jodne ko koi nahi
-     else { prev->next=temp; prev=temp; }   // pehle prev->next pe jodo, phir prev aage badhao
-  // PASS 2: random set
-  curr=head; currRand=newHead;   // dono list shuru se: same position pe saath chalengi
-     currRand->random = (curr->random==NULL) ? NULL : mp[curr->random];   // random NULL to NULL; warna original target ka naya copy
-     curr=curr->next; currRand=currRand->next;   // dono saath aage: copy aur original same position pe rahein
+TASVEER:
 
 VISUAL ( [x]=node · -> next · ~> random ):
   ORIG:  [7] -> [13] -> [11] -> [10] -> [1]

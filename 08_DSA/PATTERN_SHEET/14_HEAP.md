@@ -59,17 +59,6 @@ Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
   kyun: 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-SAAR : har turn "2 SABSE BHAARI" pathar smash -> MAX-HEAP. pop 2, diff wapas push, till <=1 bache.
-TEMPLATE:
-    priority_queue<int> pq;  for(s:stones) pq.push(s);        // saare -> max-heap (max: har turn 2 sabse BHAARI chahiye)
-        x=pq.top(); pq.pop();   y=pq.top(); pq.pop();         // 2 sabse bhaari nikaalo
-        diff = abs(x-y);  if(diff>0) pq.push(diff);           // barabar -> 0 (dono khatam)
-heap kyun (sort nahi): smash ke baad set BADALTA -> baar-baar "2 max" chahiye -> pop O(log n), top O(1).
-```
-
 ```cpp
 int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
     priority_queue<int> pq;                 // ★ MAX: har turn 2 sabse BHAARI chahiye
@@ -96,18 +85,6 @@ Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
   kyun: bade se gino 6, 5 -> 2nd = 5
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-SAAR : k SABSE BADE min-heap me rakho -> unme se sabse chhota (heap TOP) = k-th largest.
-TRICK (top-K ka core): MIN-heap of size k.  (kyun MIN: size>k pe sabse-chhota EVICT karna hai.)
-TEMPLATE:
-    priority_queue<int, vector<int>, greater<int>> pq;   // MIN-heap (min: size>k pe sabse chhota bahar nikle)
-    for(num : nums){ pq.push(num);  if(pq.size() > k) pq.pop(); }   // k se zyada -> chhota nikaal
-    return pq.top();                                      // k bade me se chhota = kth largest
-O(n log k) (sort O(n log n) se behtar jab sirf k-th chahiye).  yehi pattern = "top-K" saare problems.
-```
-
 ```cpp
 int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
     priority_queue<int, vector<int>, greater<int>> pq;   // ★ MIN: size>k pe sabse CHHOTA evict
@@ -128,24 +105,6 @@ points[] me [x, y] points diye hain aur ek number k. Origin (0, 0) ke sabse paas
   kyun: [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
 
 KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap, sabse BADI evict)
-```
-
-```
-PURANI SHEET SE (same to same):
-
-SAAR : origin (0,0) ke k SABSE PAAS points. paas = doori = x*x+y*y (√ NAHI, sirf compare).
-= KTH-LARGEST ka MIRROR-TWIN. wahan k BADE (min-heap, chhota evict);
-  yahan k CHHOTE-dist (MAX-heap, sabse BADI-dist evict). "top-k chhote" -> MAX-heap of size k.
-TEMPLATE (max-heap {dist, point}, size k):
-    priority_queue<pair<int, vector<int>>> pq;   // MAX-heap: sabse BADI dist top pe (taaki size>k pe sabse door wala nikle)
-    for(auto &p : points){
-        int d = p[0]*p[0] + p[1]*p[1];           // √ skip -> compare-safe
-        pq.push({d, p});                          // {dist, point} (dist PEHLE: heap pair ke first pe compare karta)
-        if(pq.size() > k) pq.pop();               // sabse door (top) EVICT -> k paas bache
-    while(!pq.empty()){ ans.push_back(pq.top().second); pq.pop(); }  // .second = {x,y} poora
-KEY : (1) dist = x²+y², √ ki zaroorat nahi (order same).  (2) k CHHOTE chahiye -> MAX-heap
-      (bada evict).  pair<int,vector<int>> = dist PEHLE (compare), point .second me poora.
-O(n log k).  MIRROR-RULE: "k sabse BADE" -> MIN-heap ; "k sabse CHHOTE" -> MAX-heap.
 ```
 
 ```cpp
@@ -175,23 +134,6 @@ Ek array aur ek number k diya hai. Wo k numbers lautao jo array me sabse zyada b
   kyun: 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
 
 KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
-```
-
-```
-PURANI SHEET SE (same to same):
-
-SAAR : k sabse ZYADA baar aane wale elements return karo (order matter nahi).
-= KTH-LARGEST ka COUSIN. bas "value" ki jagah "FREQUENCY" pe heap.  FARAK = 2:
-   (1) pehle hashmap se freq gino,  (2) heap me {freq, num} daalo (freq pe sort).
-TEMPLATE:
-    unordered_map<int,int> mp;  for(x:nums) mp[x]++;              // STEP1: freq gino
-    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;  // MIN-heap (min: size>k pe sabse kam freq bahar nikle)
-    for(auto &it : mp){                                          // it = {num, freq}
-        pq.push({it.second, it.first});                          // {freq, num} -> pair .first=freq pe sort
-        if(pq.size() > k) pq.pop();                              // chhoti freq EVICT -> top-k bache
-    while(!pq.empty()){ ans.push_back(pq.top().second); pq.pop(); }  // .second = actual num
-KEY : pair<freq,num> daalte hain (freq PEHLE) taaki heap FREQUENCY pe compare kare.  O(n log k).
-[maxHeap se bhi: saare push -> k baar top-pop.  par O(n log n), slow. min-heap-k better.]
 ```
 
 ```cpp
@@ -228,22 +170,6 @@ k sorted linked list di hain. Sabko jod ke ek sorted linked list banao aur uska 
 struct Compare: ListNode* ko khud compare karna nahi aata
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-SAAR : min-heap me har list ka current HEAD. pop chhota -> result me jodo -> uska NEXT push. repeat.
-TEMPLATE:
-    struct Compare { bool operator()(ListNode*a, ListNode*b){ return a->val > b->val; } };  // MIN-heap (> likha to MIN: pq ka comparator ulta chalta, chhota top pe)
-    priority_queue<ListNode*, vector<ListNode*>, Compare> pq;   // Compare: ListNode* ko khud compare karna nahi aata
-    for(l:lists) if(l) pq.push(l);                            // saare heads (NULL skip) (NULL push kiya to ->val pe crash)
-    dummy + tail;                                             // merge-2-lists jaisa build · dummy=new ListNode(0); tail=dummy
-    while(!pq.empty()){
-        curr = pq.top(); pq.pop();  tail->next = curr; tail = curr;   // chhota -> jodo
-        if(curr->next) pq.push(curr->next);                  // uska next pq me (NULL check: khatam list ka null mat daalo)
-    return dummy->next; // ->next: dummy khud nakli node hai
-heap me max k nodes (1 per list) -> O(N log k).  ListNode* min-heap = custom Compare (a->val > b->val).
-```
-
 ```cpp
 struct Compare {                            // ListNode* ko khud compare karna nahi aata
     bool operator()(ListNode *a, ListNode *b) {
@@ -278,22 +204,6 @@ Ek array diya hai jisme har number apni sahi (sorted) jagah se zyada se zyada k 
   kyun: 2 abhi index 3 pe, sahi jagah index 0 -> 3 door = k ke andar
 
 har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
-```
-
-```
-PURANI SHEET SE (same to same):
-
-SAAR : har element sahi position se max k DOOR -> O(n log k) sort (n log n se behtar).
-DERIVE (WHY heap): index-0 pe MIN aayega, wo max index k tak -> "pehle k+1 me se MIN kaun?"
-   -> baar-baar MIN + data badalta -> DECISION-table = HEAP. min chahiye -> MIN-heap.
-TEMPLATE (min-heap, k+1 sliding buffer):
-  priority_queue<int,vector<int>,greater<int>> pq;              // MIN-heap (min: sorted output me chhota pehle chahiye)
-  for (int x : arr) {
-     pq.push(x);   // pehle daalo, phir size dekho
-     if (pq.size() > k+1) { ans.push_back(pq.top()); pq.pop(); } // buffer bhara -> MIN nikaal (k+1 se bada: tab tak sahi MIN buffer me aa chuka)
-  while (!pq.empty()) { ans.push_back(pq.top()); pq.pop(); }     // bache = sorted tail
-EX: arr=[6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]  (buffer hamesha <=4; bharte hi MIN pop).
-= KTH-LARGEST ("heap size k") ka COUSIN: wahan k bade RAKHE, yahan k+1 ka SLIDING buffer.  O(n log k).
 ```
 
 ```cpp
@@ -334,38 +244,12 @@ heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-SAAR : stream me numbers aate rehte; kabhi bhi ab-tak ka MEDIAN turant chahiye.
-       add 5,15,1,3 -> median 4.0  ((3+5)/2)
-
-CHAAL: median = beech wala; poora sorted rakhna mehnga. Numbers ko DO team me baanto:
-       maxHeap = CHHOTI team   top = chhoto ka SABSE BADA    <- naam se ULTA (chhote yahan)
-       minHeap = BADI team     top = bado ka SABSE CHHOTA
-       dono top = beech ke 2 border -> median inhi se.
-
-addNum (2 kadam):
-   1. PLACEMENT: num <= maxHeap.top -> maxHeap ; warna minHeap   (maxHeap khaali -> maxHeap)
-   2. BALANCE  : farak max 1, EXTRA hamesha maxHeap me
-                 minHeap bada       -> minHeap.top -> maxHeap
-                 maxHeap 1+ se bada -> maxHeap.top -> minHeap
-findMedian: barabar(even) -> (maxHeap.top+minHeap.top)/2 ; warna(odd) -> maxHeap.top
+TASVEER:
 
 ★ 2 balance-if KYUN (dono zaroori): placement num ko DONO heap me daal sakti (chhota->maxH, bada->minH).
    FIRST  (maxH < minH)    -> bada-num minH me gaya, minH bada -> ek wapas maxH (extra maxH me rahe)
    SECOND (maxH > minH+1)  -> chhota-num maxH me gaya, maxH 2 bada -> ek minH
    dono milke: farak <=1, extra hamesha maxHeap.
-
-TEMPLATE:
-   priority_queue<double> maxHeap;                                    // chhoti team (max: chhoto ka sabse bada top = beech ka border)
-   priority_queue<double,vector<double>,greater<double>> minHeap;     // badi team (min: bado ka sabse chhota top = border)
-
-       if(maxHeap.empty() || maxHeap.top() >= num) maxHeap.push(num);   // pehle empty(): khaali pe top() crash
-       else minHeap.push(num);   // num maxHeap.top se bada -> badi team (minHeap)
-       if(maxHeap.size() < minHeap.size()){ maxHeap.push(minHeap.top()); minHeap.pop(); }  // minHeap bada: extra hamesha maxHeap me, ek wapas bhejo
-       else if(maxHeap.size() > minHeap.size()+1){ minHeap.push(maxHeap.top()); maxHeap.pop(); }  // 2 ka farak: odd me bhi maxHeap sirf 1 aage chalta
-       if(maxHeap.size()==minHeap.size()) return (maxHeap.top()+minHeap.top())/2.0;  // even: beech ke dono border ka average
-       return maxHeap.top();  // odd: extra maxHeap me rakha, uska top hi median
 
 DRY: add 5,15,1,3
    5  -> maxH{5}                              med 5
@@ -374,10 +258,11 @@ DRY: add 5,15,1,3
    3  -> 3<=5 maxH{5,3,1} farak2 -> 5 minH me -> maxH{3,1} minH{5,15}
                                               med (3+5)/2 = 4 ✓
 
-★ TRAP (yahin confuse hua): heap ka NAAM top batata, "kaise number rakhta" NAHI.
-  "bada number -> maxHeap" GALAT. bada -> BADI team -> minHeap. naam bhool, team soch.
-
-FAMILY: heap (kth-largest / k-sorted / merge-k) · running-value + do-heap-balance
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+CHAAL: median = beech wala; poora sorted rakhna mehnga. Numbers ko DO team me baanto:
+       maxHeap = CHHOTI team   top = chhoto ka SABSE BADA    <- naam se ULTA (chhote yahan)
+       minHeap = BADI team     top = bado ka SABSE CHHOTA
+       dono top = beech ke 2 border -> median inhi se.
 ```
 
 ```cpp
@@ -426,27 +311,7 @@ possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-SAAR: chars rearrange -> koi 2 ADJACENT same na ho. na bane -> "".
-
-PEHCHAN: "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
-         -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
-          yahan har round 2 nikaalo taaki adjacent-safe.)
-
-FEASIBILITY (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
-   -> (maxCount-1) <= (n-maxCount) tabhi possible.
-   aab: a2 -> 1 gap <= 1 baaki -> OK.   aaab: a3 -> 2 gap > 1 -> "".
-   (alag check na bhi rakho -> last-bacha-count>1 khud pakad leta.)
-
-KYUN POP-TWO: 1 nikaal turant wapas -> phir wahi top -> "aa".
-   isliye har round DO alag (top-2) nikaalo, dono lagao -> safe.
-
-TEMPLATE: // pehle mp[ch]++, phir maxHeap.push({cnt,ch}) (cnt PEHLE: us pe sort)
-   while(heap.size()>1){ t1=pop; t2=pop; ans+=t1.ch; ans+=t2.ch;  // >1: har round 2 ALAG char chahiye
-      if(--t1.cnt) push(t1); if(--t2.cnt) push(t2); }  // -- pehle phir check: 0 bacha to wapas mat daalo
-   if(heap.size()==1) return top.cnt>1 ? "" : ans+top.ch;  // akela bacha count>1: do same paas aayenge, impossible
-   return ans;   // heap khaali: saare char jagah pe lag gaye
+TASVEER:
 
 VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
    R1: pop a,b -> "ab"   -> (2,a)(2,b)
@@ -454,9 +319,11 @@ VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
    R3: pop a,b -> "ababab" -> empty      => "ababab"
   ( "aaab": (3,a)(1,b) -> R1 "ab",(2,a) -> size1, count2>1 -> "" )
 
-crux: MAX-HEAP + har round 2 alag nikaalo + last-1 count>1 = impossible.
-
-FAMILY: heap (top-k-frequent cousin) · greedy-place-most-frequent
+PURANI SHEET KI KYUN LINE (code ke saath wali):
+PEHCHAN: "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
+         -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
+          yahan har round 2 nikaalo taaki adjacent-safe.)
+FEASIBILITY (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
 ```
 
 ```cpp
@@ -505,31 +372,6 @@ aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod la
 [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
 BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
   yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
-```
-
-```
-PURANI SHEET SE (same to same):
-
-SAAR: har step bache hue me SABSE CHHOTA uthao (tie -> chhota index), total me jodo,
-      use + ORIGINAL padosi (i-1, i+1) hata do. sab hatne tak.
-
-PEHCHAN: kahani hata do -> "baar-baar MIN + beech me cheezein hat-ti" -> HEAP + hat-chuka array.
-★ BURST BALLOONS NAHI: wahan KAUNSA phodna TU chunta + padosi badalte -> DP.
-   yahan niyam tay (hamesha min) + padosi ORIGINAL index -> koi choice nahi -> heap se simulate.
-   sawaal: "kya mujhe chunna padta hai?" haan -> DP · nahi -> simulate.
-
-TEMPLATE:
-   priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;  // MIN {val,idx} (min: har step sabse chhota uthana)
-   for(i) pq.push({a[i], i});                        // pair -> tie pe chhota idx apne-aap pehle
-       int i = pq.top().second; pq.pop();   // .second = index (first sirf sort ke liye)
-       if(vis[i]) continue;                          // pehle hi hat chuka -> chhodo (LAZY delete)
-       ans += a[i];  vis[i] = true;   // khud ko bhi hatao, dobara na uthe
-       if(i-1 >= 0) vis[i-1] = true;                 // padosi hatao; >=0: pehle element ka left padosi nahi
-       if(i+1 <  n) vis[i+1] = true;   // < n: aakhri index n-1, uske aage bahar
-O(n log n).  LAZY DELETE = heap se beech ka element nikaal nahi sakte -> vis[] se pop pe skip
-             (Dijkstra ke "stale-skip" jaisa hi).
-
-FAMILY: heap (emergency-room: baar-baar min) · visited[] (graph jaisa) · lazy delete
 ```
 
 ```cpp

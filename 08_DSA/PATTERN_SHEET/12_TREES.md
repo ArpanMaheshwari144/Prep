@@ -26,6 +26,23 @@
      //   (2) base + 2-3 node ka chhota tree haath se check (3) print: enter-print null-check ke BAAD
      //   (warna null->val crash), result variable me lo -> print + return dono
 
+ TASVEER (FLOW -- calls NEECHE jaati, JAWAB upar BUBBLE hota):
+         [A]
+        /   \
+      [B]   [C]
+      /  \
+    [D]  [E]
+
+    solve(A)
+      line2:  left  = solve(B) ──► neeche gaya
+                   solve(B):  left=solve(D), right=solve(E) ─► DONO ka COMBINE ═► B ka jawab ─► A ki 'left'
+      line3:  right = solve(C) ──► neeche gaya
+                   solve(C):  ... ─► COMBINE ═► C ka jawab ─► A ki 'right'
+      line4:  return COMBINE(left, right) ═════════════════► FINAL ANSWER
+
+    -> har node SIRF apne 2 bachchon ka jawab leta -> apna banata -> upar deta. poora tree ek saath NAHI.
+    -> null pe BASE -> phir jawab neeche se upar chadhta -> root pe final.
+
  KAB: TreeNode diya · depth / height / path / same / mirror · level-wise · BST
  ★ DHYAAN: BST ka inorder = sorted
 ```
@@ -76,13 +93,6 @@ Binary tree ka root diya hai. Root se sabse door wale leaf tak raste me kitne no
   kyun: sabse lamba rasta 3 -> 20 -> 15 (ya 7) = 3 node
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-base : null -> 0.
-comb : return 1 + max(leftDepth, rightDepth).   (khud=1 + gehri branch)
-```
-
 ```cpp
 int maxDepth(TreeNode *root) {
     if (!root)
@@ -99,15 +109,6 @@ int maxDepth(TreeNode *root) {
 Binary tree ka root diya hai. Har node ke left aur right bachche aapas me badal do (tree ka aaina), aur root lautao.
   e.g. [4,2,7,1,3,6,9] -> [4,7,2,9,6,3,1]
   kyun: 4 ke bachche 2,7 -> 7,2; 2 ke 1,3 -> 3,1; 7 ke 6,9 -> 9,6
-```
-
-```
-PURANI SHEET SE (same to same):
-
-base : null -> null.
-comb : recurse dono (left, right) -> phir children SWAP -> return root.
-TRAP : swap POINTERS (root->left <-> root->right), NA values.
-       pointer-swap = poori BRANCH side badalti · value-swap = sirf 2 number + leaf pe null->val CRASH. order FREE.
 ```
 
 ```cpp
@@ -127,14 +128,6 @@ TreeNode *invertTree(TreeNode *root) {
 Do binary tree p aur q diye hain. Kya dono ka dhaancha aur har node ki value bilkul ek jaisi hai? true ya false lautao.
   e.g. p=[1,2], q=[1,null,2] -> false
   kyun: values same (1,2) par p me 2 LEFT child, q me RIGHT child; structure alag
-```
-
-```
-PURANI SHEET SE (same to same):
-
-base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
-comb : isSame(p->left, q->left) && isSame(p->right, q->right).
-COMBINE = && (dono side match ho tabhi true).   (clean base: if(!p||!q) return p==q;)
 ```
 
 ```cpp
@@ -161,14 +154,6 @@ Binary tree ka root diya hai. Kya tree beech se aaine jaisa hai, matlab left his
   kyun: left 2 ke bachche 3,4 aur right 2 ke 4,3; bahar-bahar 3=3, andar-andar 4=4
 
 isSameTree: same tree ka hi base (dono null / ek null / val alag)
-```
-
-```
-PURANI SHEET SE (same to same):
-
-base : dono null->true · ek null->false · val alag->false.   // null checks PEHLE: warna null->val crash
-comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   CROSS = mirror (yehi ek change).
-call : isSymmetric(root) = root null?true : compare(root->left, root->right).   // root khud nahi, uske dono bachche aapas me mirror hone chahiye
 ```
 
 ```cpp
@@ -205,19 +190,6 @@ Binary tree diya hai. Kinhi bhi do node ke beech sabse lamba rasta kitna hai, wo
 height: max-depth ka height(), maxDia by-REFERENCE
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-= max-depth ka height() helper (maxDia by-REFERENCE), BAS 1 line EXTRA:
-   int height(root, int& maxDia):
-       left = height(root->left, maxDia);   right = height(root->right, maxDia);
-       maxDia = max(maxDia, left + right);   // EXTRA line: is node se guzarne wali diameter = leftH + rightH
-       return 1 + max(left, right);          // HEIGHT return (parent ko yeh chahiye)
-diameterOfBinaryTree: maxDia=0; height(root, maxDia); return maxDia.   // 0 se theek: diameter edge-ginti hai, kabhi minus nahi
-RETURN = height (parent ko chahiye); diameter = BYPRODUCT -> global maxDia (return NAHI).
-maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
-```
-
 ```cpp
 int height(TreeNode *root, int &maxDia) {   // max-depth ka height(), maxDia by-REFERENCE
     if (!root)
@@ -250,22 +222,14 @@ skeleton HUBAHU diameter (return EK arm / record DONO arm / post-order / global 
 ```
 
 ```
-PURANI SHEET SE (same to same):
+TASVEER:
 
-CONNECTION -- diameter ki HAR line ke saamne, kya badla (side-by-side):
-
-  DIAMETER (upar)                      MAX PATH SUM
-  -------------------------            -------------------------------------
-  left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm -> 0 (minus arm lene se sum ghatta) // base: null -> 0
-  right = height(R, maxDia)            right = max(0, solve(R, maxi))
-  maxDia = max(maxDia, left+right)     maxi  = max(maxi, left + node->val + right)  <- +node
-  return 1 + max(left,right)           return node->val + max(left,right)           <- val, 1 nahi
-
-=> skeleton HUBAHU: return-EK-arm / record-DONO-arm / post-order / global-max.
-   SIRF 3 jagah badla:  (1) arm = height -> GAIN(sum)   [1 ki jagah node->val]
-                        (2) record me + node->val        [junction pe node bhi ginta]
-                        (3) max(0,..) neg-arm SKIP        [diameter me sab positive the]
-   + maxi = INT_MIN (0 NAHI!): akela -3 bhi valid path (khaali/0 se galat).
+DIAMETER (upar)                      MAX PATH SUM
+-------------------------            -------------------------------------
+left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm -> 0 (minus arm lene se sum ghatta) // base: null -> 0
+right = height(R, maxDia)            right = max(0, solve(R, maxi))
+maxDia = max(maxDia, left+right)     maxi  = max(maxi, left + node->val + right)  <- +node
+return 1 + max(left,right)           return node->val + max(left,right)           <- val, 1 nahi
 
 VISUAL (junction):
          node
@@ -313,22 +277,7 @@ preorder[rootIndex] = ROOT · inorder me us root pe todo -> LEFT-part | root | R
 ```
 
 ```
-PURANI SHEET SE (same to same):
-
-preorder[0] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part. recurse.
-
-TEMPLATE  (MAP wala, O(n))
-
-    buildTree:  mp[inorder[i]] = i  (ek baar) ;  rootIndex = 0 ;  return solve(0, n-1)   // rootIndex 0: preorder ka pehla = root; 0..n-1 = poora inorder
-
-    solve(int &rootIndex, l, r):
-        pivot = mp[preorder[rootIndex]];   rootIndex++;      // inorder me root kahan; ++ turant: agla preorder elem agla root
-        node->left  = solve(l, pivot-1);                     // LEFT pehle (preorder me root ke baad LEFT wale node aate)
-        node->right = solve(pivot+1, r);   // RIGHT baad me: preorder me left ke saare node pehle aate
-        return node;
-
-★ rootIndex by-REFERENCE (&): ek moving pointer SAB calls me shared -> LEFT poora consume hone ke
-   BAAD hi RIGHT ko sahi agla-root milta (= preorder ka Root,Left,Right order). value-pass -> copy -> galat tree.
+TASVEER:
 
 VISUAL:   preorder  [3] 9 20 15 7        inorder  9 | 3 | 15 20 7
                    ^root                           L  root   R
@@ -341,6 +290,15 @@ DRY-RUN (rootIndex aage badhta, pivot = inorder me root):
   solve(0,4): root=3,  pivot=1 | L=solve(0,0)   R=solve(2,4)
     solve(0,0): root=9,  pivot=0 | NULL, NULL   (leaf 9)
     solve(2,4): root=20, pivot=3 | L=solve(2,2)=15   R=solve(4,4)=7
+
+PURANI SHEET KI LINE (git fc6d517c):
+BF (linear scan)  O(n^2)                    OPTIMIZE (map)  O(n) -- sirf jaha badla
+-----------------------------------------   -----------------------------------------
+solve(int& rootIndex, l, r):
+  int pivot = l;                            int pivot = mp[preorder[rootIndex]];
+  while (inorder[pivot]                       // while-scan HATA -> map O(1)
+        != preorder[rootIndex]) pivot++;
+buildTree: rootIndex=0; solve(0,n-1);       buildTree: + mp{inorder-val->idx} ek baar
 ```
 
 ```cpp
@@ -378,19 +336,6 @@ HAR node pe abs(leftH - rightH) <= 1? alag "balanced?" pass nahi -> height nikaa
 maxDepth: return = HEIGHT, ya -1 (neeche kahin imbalance)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
-   int maxDepth(root):
-       left  = maxDepth(root->left);    if (left == -1)  return -1;   // neeche imbalance -> UPAR propagate
-       right = maxDepth(root->right);   if (right == -1) return -1;   // right me imbalance -> turant -1 upar bhejo
-       return 1 + max(left, right);                                   // balanced -> asli HEIGHT
-   isBalanced = (maxDepth(root) != -1).   // -1 nahi aaya = kahin bhi imbalance nahi
--1 = SENTINEL: imbalance neeche mila -> UPAR propagate -> ek node bhi galat = poora false.
-TRAP: check HAR node pe (sirf root nahi) -- root balanced par ANDAR imbalanced ho sakta [test-pass != code-sahi].
-```
-
 ```cpp
 int maxDepth(TreeNode *root) {              // return = HEIGHT, ya -1 (neeche kahin imbalance)
     if (!root)
@@ -425,20 +370,6 @@ Binary tree ka root aur do node p, q diye hain. Wo sabse neeche wala node lautao
   kyun: 4 to 5 ke subtree me hai (5 -> 2 -> 4); 5 khud p hai, to 5 hi sabse gehra common
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-idea : wo node jahan p, q ALAG side split ho jaate (ek left, ek right).
-   TreeNode* lca(root, p, q):
-       if (!root) return NULL;   // khaali subtree -> p/q yahan nahi mile
-       left  = lca(root->left, p, q);
-       right = lca(root->right, p, q);
-       if (!left)  return right;                    // ek side khali -> doosri return
-       if (!right) return left;   // right khali -> dono left me, left wala hi jawab
-       return root;                                 // DONO non-null -> yehi split-point = LCA
-mechanic: found-node UPAR bubble; jahan DONO taraf se kuch mila = LCA. (if(!left) return right dono case sambhaalta: left-khali+right-mila, aur dono-khali->NULL.)
-```
-
 ```cpp
 TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // p, q ALAG side split
     if (!root)
@@ -470,16 +401,6 @@ Binary tree ka root aur ek targetSum diya hai. Kya root se kisi leaf tak aisa ra
   kyun: 5 + 4 + 11 = 20 aur 11 leaf hai; baaki paths 26 (5,8,13) aur 17 (5,8,4)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-idea : root-se-LEAF sum == target? value NEECHE carry (target me se ghatao).
-base : null -> false.
-leaf : (!root->left && !root->right) -> return target == root->val.   // leaf pe hi check: beech ke node pe sum mile to path adhoora
-comb : hasPathSum(left, t-val) || hasPathSum(right, t-val).   // || : koi ek path target bana de to kaafi
-TRAP: LEAF = !root->left && !root->right (ACTUAL bachche), NA "!left && !right" (recursion-result) -> warna non-leaf pe galat match. [test-pass != code-sahi]
-```
-
 ```cpp
 bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == target?
     if (!root)
@@ -499,23 +420,6 @@ bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == ta
 Binary tree ka root diya hai. Har level ke nodes ko left se right, alag-alag list me lautao (list of lists).
   e.g. [3,9,20,null,null,15,7] -> [[3],[9,20],[15,7]]
   kyun: level 0 = 3, level 1 = 9,20, level 2 = 15,7
-```
-
-```
-PURANI SHEET SE (same to same):
-
-idea : har level ki alag list -> list-of-lists. queue = FIFO (pehle-aaya-pehle-process) -> level-order + L-to-R apne aap.
-SKELETON (saare BFS-level Q bas isi pe):
-        int sz = q.size();               // SNAPSHOT -- is level ke node (for se PEHLE pakdo)
-        vector<int> level;
-        for (int i = 0; i < sz; i++) {   // sirf sz baar: isi level ke node, naye push wale nahi
-            node = q.front();  q.pop();
-            level.push_back(node->val);
-            if (node->left)  q.push(node->left);    // bachche -> AGLE level me jaayenge
-            if (node->right) q.push(node->right);
-        ans.push_back(level);   // level poora bhar gaya tab push (for ke bahar)
-TRAP: sz ko for se PEHLE pakdo. loop me bachche push -> q.size() badalta -> warna agle level ke node is level me ghus jaate.
-TEMPLATE: right-side-view (level ka LAST) · level-average · zigzag -- sab isi skeleton pe, bas "level me kya karna" badalta.
 ```
 
 ```cpp
@@ -552,16 +456,6 @@ Binary tree ke daayi taraf khade ho ke upar se neeche dekho. Jo nodes dikhte hai
   kyun: level 0 = 1; level 1 = 2,3 me right 3; level 2 = 5,4 me right 4
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-idea : daaye khade -> har level ka SIRF right-most node dikhta (baaki peeche chhup jaate).
-LEVEL-ORDER template bilkul SAME (while + sz-snapshot + for + push L/R). FARAK sirf level ke andar 1 line:
-    level-order :  har node ka kaam / sab collect
-    right-view  :  if(i == sz-1) ans.push_back(curr->val);     // level ka LAST hi
-KYUN i==sz-1: nodes L-to-R (FIFO) nikalte -> level ka AAKHRI = sabse RIGHT.  (left-side-view -> i==0 le lo.)
-```
-
 ```cpp
 vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-most dikhta
     if (!root)
@@ -593,17 +487,6 @@ vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-
 Level order jaisa hi, par disha har level pe badalti hai: level 0 left se right, level 1 right se left, level 2 phir left se right, aise hi.
   e.g. [3,9,20,null,null,15,7] -> [[3],[20,9],[15,7]]
   kyun: level 1 ka [9,20] ulta = [20,9]; level 2 seedha [15,7]
-```
-
-```
-PURANI SHEET SE (same to same):
-
-idea : level-order BFS jaisa, par direction ALTERNATE (0:L->R · 1:R->L · 2:L->R...).
-= LEVEL-ORDER ka SAME skeleton (queue + sz-SNAPSHOT + inner-loop -> level) + ek levelCounter.
-DELTA (naya = bas ye, inner-loop ke BAAD -- level HAMESHA normal L->R banao):
-    if (levelCounter % 2 != 0) reverse(level);   // ODD level -> ULTA (R->L) · levelCounter=0 se: root level seedha
-    levelCounter++;  ans.push_back(level);   // reverse check ke BAAD ++: warna root level ulta ho jaata
-even (0,2..) = seedha · odd (1,3..) = reversed.  (alt: deque/front-insert, par reverse simplest.)
 ```
 
 ```cpp
@@ -641,24 +524,6 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L �
 Binary tree ka root diya hai. Root se sabse paas wale leaf tak raste me kitne node hain, wo lautao. Leaf = jiske dono bachche null. Khaali tree pe 0.
   e.g. [3,9,20,null,null,15,7] -> 2
   kyun: 3 -> 9, aur 9 leaf hai = 2 node; 20 wali taraf 3 node lagte
-```
-
-```
-PURANI SHEET SE (same to same):
-
-idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
-TEMPLATE (level-order skeleton + EARLY-STOP):
-    if(!root) return 0;   // khaali tree ki depth 0 (warna NULL push hota)
-    queue<TreeNode*> q; q.push(root);  int depth=0;   // depth = ab tak poore hue level, shuru me koi nahi
-        int sz=q.size();   // for se PEHLE pakdo: loop me push se size badalta
-        for(int i=0;i<sz;i++){   // sirf sz baar: isi level ke node
-            auto curr=q.front(); q.pop();
-            if(!curr->left && !curr->right) return depth+1;  // PEHLA leaf -> turant return (aage mat dekho)
-            if(curr->left)  q.push(curr->left);
-            if(curr->right) q.push(curr->right);
-        depth++;                                             // level POORA -> depth++ (for-loop ke BAAHAR)
-depth = ab tak POORE hue level; leaf is level me mila -> return depth+1.
-DFS-TRAP (isliye BFS): "1 + min(leftD, rightD)" GALAT -- NULL-child ko depth-0 maan ke skew-tree (2->3->4) pe galat deta. BFS me ye dikkat nahi.
 ```
 
 ```cpp
@@ -700,15 +565,6 @@ Ek BST aur ek number k diya hai. Tree ki values me k-va sabse chhota number laut
 inorder: BST pe inorder = SORTED (ascending)
 ```
 
-```
-PURANI SHEET SE (same to same):
-
-idea : BST inorder = SORTED -> kth smallest = inorder ka k-va element.
-steps: inorder(root) -> sorted vector 'ans' -> return ans[k-1].
-k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
-optimize: k-va pe EARLY-STOP (counter, k-va node pe ruko) -- collect-all bhi gate-theek.
-```
-
 ```cpp
 void inorder(TreeNode *root, vector<int> &res) {   // BST pe inorder = SORTED (ascending)
     if (!root)
@@ -738,37 +594,9 @@ sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 
 ```
 
 ```
-PURANI SHEET SE (same to same):
+YAAD:
 
-TRAP : local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
-IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.
-TEMPLATE:
-    solve(root, mini, maxi):
-       null -> true   // khaali subtree valid BST hai
-       (val <= mini || val >= maxi) -> false   // <= aur >=: barabar value bhi galat (BST me duplicate nahi)
-       left  = solve(L, mini, val)      // LEFT  jao -> maxi = val (chhota hona)
-       right = solve(R, val, maxi)      // RIGHT jao -> mini = val (bada hona)
-       return left && right   // && : dono subtree valid tabhi poora valid
-CALL : solve(root, LLONG_MIN, LLONG_MAX);   mini/maxi = long long.
-★ EDGE: INT_MIN/INT_MAX se shuru kiya to node ki value KHUD INT_MIN ya INT_MAX ho
-   (LC-98 allow karta) -> strict check (<=, >=) use galat reject kar deta. [2147483647] pe false aata, sahi true.
-(alt: inorder traversal = strictly increasing? -> BST.)
-(2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
-
-PEHLI SHEET (Aug) se bhi, same to same:
-
-TRAP : local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
-IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.
-TEMPLATE:
-    solve(root, mini, maxi):
-       null -> true
-       (val <= mini || val >= maxi) -> false
-       left  = solve(L, mini, val)      // LEFT  jao -> maxi = val (chhota hona)
-       right = solve(R, val, maxi)      // RIGHT jao -> mini = val (bada hona)
-       return left && right
-CALL : solve(root, INT_MIN, INT_MAX).
-(alt: inorder traversal = strictly increasing? -> BST.)
-(2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
+★ PURANI GALTI (Aug sheet): CALL solve(root, INT_MIN, INT_MAX) tha -> [2147483647] pe false aata, sahi true. Isliye ab long long (LLONG_MIN, LLONG_MAX).
 ```
 
 ```cpp
