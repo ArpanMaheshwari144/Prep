@@ -113,6 +113,11 @@ jaaye to main hoon.
 "Saved" tab jab copy ne bhi likh liya; mujhe kuch ho to tu hai = owner gira to naya owner usi copy se uthaaye. DB
 (Cassandra) me batch waise hi.
 
+**Maan lo dabba aur copy dono gir gaye, batch abhi DB me nahi gaya:** dabba memory ke saath apni disk pe bhi likhe, gire
+to disk se wapas (Kafka jaisa, line disk pe). Phir bhi sab gira to kuch second ki lines chhoot sakti hain, user dobara
+likh lega. Poori consistency chahiye to aur copy, aur paisa; 500 copy bhi koi gira sakta hai, har copy girana design nahi.
+**Asli naam:** disk pe bhi = Redis AOF (persistence), kuch second chhoot = chhota data loss window, durability vs cost trade-off.
+
 ```mermaid
 flowchart LR
     O["Maalik<br/>(Owner server)"] --> B[("Dabba<br/>(Redis buffer)")]
