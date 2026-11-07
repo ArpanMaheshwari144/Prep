@@ -225,7 +225,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [00 SHURU](08_DSA/PATTERN_SHEET/00_SHURU.md) (PEHLE YE · OA tools · DECISION · EDGE list · NAAM-SE-CONFUSE A-E · MATHS KA KHEL)
   - [01 two pointer](08_DSA/PATTERN_SHEET/01_TWO_POINTER.md) · [02 sliding window](08_DSA/PATTERN_SHEET/02_SLIDING_WINDOW.md) · [03 hashing](08_DSA/PATTERN_SHEET/03_HASHING.md) · [04 prefix sum](08_DSA/PATTERN_SHEET/04_PREFIX_SUM.md) · [05 matrix](08_DSA/PATTERN_SHEET/05_MATRIX.md) · [06 stack](08_DSA/PATTERN_SHEET/06_STACK.md) · [07 binary search](08_DSA/PATTERN_SHEET/07_BINARY_SEARCH.md) · [08 linked list](08_DSA/PATTERN_SHEET/08_LINKED_LIST.md) · [09 design](08_DSA/PATTERN_SHEET/09_DESIGN.md)
   - [10 kadane](08_DSA/PATTERN_SHEET/10_KADANE.md) · [11 bit](08_DSA/PATTERN_SHEET/11_BIT_MANIPULATION.md) · [12 trees](08_DSA/PATTERN_SHEET/12_TREES.md) · [13 graphs](08_DSA/PATTERN_SHEET/13_GRAPHS.md) · [14 heap](08_DSA/PATTERN_SHEET/14_HEAP.md) · [15 intervals](08_DSA/PATTERN_SHEET/15_INTERVALS.md) · [16 backtracking](08_DSA/PATTERN_SHEET/16_BACKTRACKING.md) · [17 DP](08_DSA/PATTERN_SHEET/17_DP.md) · [18 greedy](08_DSA/PATTERN_SHEET/18_GREEDY.md)
-  - purani dono sheet abhi rakhi hain: [PATTERN_SHEET.md](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md) · [PATTERN_SHEET_2.md](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET_2.md)
+  - purani dono sheet (28-Oct PATTERN_SHEET + 6-Nov PATTERN_SHEET_2) hata di (7-Nov): unki har line har sawaal ke neeche "PURANI SHEET KI LINE" dabbe me aa gayi, git history me bhi hain
 
 ```
 ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disguised: kahani badli, shart wahi)

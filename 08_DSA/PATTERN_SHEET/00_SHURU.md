@@ -1,6 +1,6 @@
-# PATTERN SHEET 2 (naya saancha)
+# PATTERN SHEET (gate ki chaabi)
 
-Purani `PATTERN_SHEET.md` waisi hi hai, isme kuch nahi chheda. Yahan har sawaal = sawaal + e.g. + kyun, phir tera poora code saamne.
+Purani dono sheet (28-Oct + PATTERN_SHEET_2) ki har line isi folder me aa gayi (jo kahin aur roop me nahi thi, wo har sawaal ke neeche "PURANI SHEET KI LINE" me). Yahan har sawaal = sawaal + e.g. + kyun, phir tera poora code saamne.
 Example, trace aur code ke comment purani sheet se SAME TO SAME uthaye hain. TAREEKA ki jo line code me pehle se thi wo hati, baaki rakhi. CHAABI dabba hata (code saamne hai).
 
 <h1 align="center">DSA PATTERN SHEET</h1>
