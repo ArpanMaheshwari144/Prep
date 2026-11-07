@@ -711,6 +711,8 @@ vector<int> findAnagrams(string s, string p) {
 upar wala substr code LeetCode pe TLE (34/66): har window pe p dobara ginta.
 yahan: need = p ki ginti EK baar · window me aaya -> have +1 · window se gaya -> have -1 · have == need -> index
 bada test (s 30000, p 15000): substr wala 1.1s, ye 0.0002s
+= LC-76 MIN WINDOW ka bhai: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao;
+  yahan DO array (need = p, have = window), aana +1 / jaana -1, phir have == need milao. Window fixed = p.size()
 ```
 
 ```cpp
