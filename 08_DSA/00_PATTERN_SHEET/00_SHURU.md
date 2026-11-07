@@ -2,6 +2,7 @@
 
 Purani dono sheet (28-Oct + PATTERN_SHEET_2) ki har line ek-ek milayi: baaki sab yahan pehle se kisi roop me thi, jo nahi thi wo apne sawaal me jod di (7-Nov). Yahan har sawaal = sawaal + e.g. + kyun, phir tera poora code saamne.
 Example, trace aur code ke comment purani sheet se SAME TO SAME uthaye hain. TAREEKA ki jo line code me pehle se thi wo hati, baaki rakhi. CHAABI dabba hata (code saamne hai).
+7-Nov: AUGUST (29-Aug) wala saancha wapas: sawaal ke NAAM ke saath hi "= kiska bhai / kaunsa pattern" (code ke neeche "SAME" nahi), uske neeche SAAR / KEY / galti ka dabba, phir tera code (comment usi line pe).
 
 <h1 align="center">DSA PATTERN SHEET</h1>
 
@@ -273,7 +274,7 @@ int diff = (end - start + 1440) % 1440;  // raat 12 ke paar minus aaye -> ek din
 
 ```
 
-### ▸ CAESAR: K PEECHE  (03/12, Wise OA)
+### ▸ CAESAR: K PEECHE  (03/12, Wise OA)  = SHIFT MINUTES (03/14) ka bhai (26 ki jagah 1440)
 
 ```
 A-Z ke har akshar ko k jagah PEECHE khiskao, A se peeche = Z (gol). Space waisa hi. naya string lautao.
@@ -281,13 +282,6 @@ A-Z ke har akshar ko k jagah PEECHE khiskao, A se peeche = Z (gol). Space waisa 
   kyun: A -> Z -> Y -> X (A se peeche gaya to Z pe aaya), B -> Y, C -> Z
 
 koi pattern nahi, seedha loop. pench sirf do: minus ka % (C++ me -2 % 26 = -2) aur bada k.
-```
-
-```
-YAAD:
-
-PURANI SHEET KI LINE (git f95f9ec4):
-4. peeche khiskao + 26 jodo + % 26 -> hamesha 0..25   (+26 minus ke liye, % 26 plus wale ke liye)
 ```
 
 ```cpp
@@ -302,13 +296,12 @@ string shiftBack(string s, int k) {
             ans += ' ';
             continue;
         }
-        // ★ +26: minus bachao · %26: 0..25 me rakho
+        // ★ peeche khiskao + 26 jodo + % 26 -> hamesha 0..25 (+26 minus ke liye, % 26 plus wale ke liye)
         ans += ((((s[i] - 'A') - k) + 26) % 26) + 'A';
     }
     return ans;
 }
 ```
-`↳ SAME: SHIFT MINUTES (03/14). Farak: 26 ki jagah 1440 (din ke minute).`
 
 ---
 
