@@ -103,10 +103,6 @@ int maxDepth(TreeNode *root) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-comb : return 1 + max(leftDepth, rightDepth).   (khud=1 + gehri branch)
-```
 
 ### ▸ INVERT TREE (LC-226)
 
@@ -127,16 +123,6 @@ TreeNode *invertTree(TreeNode *root) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-comb : recurse dono (left, right) -> phir children SWAP -> return root.
-       pointer-swap = poori BRANCH side badalti · value-swap = sirf 2 number + leaf pe null->val CRASH. order FREE.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     binary tree ka root diya. HAR node ke left aur right child SWAP karo (mirror), root lautao.
-```
 
 ### ▸ SAME TREE (LC-100)
 
@@ -162,11 +148,6 @@ bool isSameTree(TreeNode *p, TreeNode *q) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-comb : isSame(p->left, q->left) && isSame(p->right, q->right).
-COMBINE = && (dono side match ho tabhi true).   (clean base: if(!p||!q) return p==q;)
-```
 
 ### ▸ SYMMETRIC TREE (LC-101)  = SAME-TREE + CROSS
 
@@ -200,16 +181,6 @@ bool isSymmetric(TreeNode *root) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-comb : CROSS -> compare(p->left, q->right) && compare(p->right, q->left).   CROSS = mirror (yehi ek change).
-call : isSymmetric(root) = root null?true : compare(root->left, root->right).   // root khud nahi, uske dono bachche aapas me mirror hone chahiye
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     root diya. tree apne center ke around MIRROR hai? true/false.
-```
 
 #### ── FAMILY: return-ONE + track-ANOTHER (parent ko HEIGHT return, asli ANSWER global / ref me; post-order) ──
 
@@ -241,12 +212,6 @@ int diameterOfBinaryTree(TreeNode *root) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-= max-depth ka height() helper (maxDia by-REFERENCE), BAS 1 line EXTRA:
-       return 1 + max(left, right);          // HEIGHT return (parent ko yeh chahiye)
-maxDia = MAX (overwrite NAHI -- test-pass != code-sahi trap).
-```
 
 ### ▸ MAX PATH SUM (LC-124, Hard)  = DIAMETER ka SUM-version
 
@@ -306,11 +271,6 @@ int maxPathSum(TreeNode *root) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-CONNECTION -- diameter ki HAR line ke saamne, kya badla (side-by-side):
-   + maxi = INT_MIN (0 NAHI!): akela -3 bhi valid path (khaali/0 se galat).
-```
 
 ### ▸ BUILD TREE from PREORDER + INORDER (LC-105)
 
@@ -371,16 +331,6 @@ TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
 //   value-pass -> copy -> galat tree. pre [3,9,20,15,7] in [9,3,15,20,7] -> 3 (9) (20 (15) (7))
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-TEMPLATE  (MAP wala, O(n))
-        node->right = solve(pivot+1, r);   // RIGHT baad me: preorder me left ke saare node pehle aate
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     preorder aur inorder diye (values unique). original binary tree bana ke root lautao.
-```
 
 ### ▸ BALANCED TREE (LC-110)  = MAX-DEPTH + (-1 SENTINEL)
 
@@ -417,13 +367,6 @@ bool isBalanced(TreeNode *root) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-trick: alag "balanced?" pass NAHI -> height nikaalte-nikaalte HI check -> O(n) single-pass. maxDepth return = HEIGHT ya -1 (imbalance-flag).
-       left  = maxDepth(root->left);    if (left == -1)  return -1;   // neeche imbalance -> UPAR propagate
--1 = SENTINEL: imbalance neeche mila -> UPAR propagate -> ek node bhi galat = poora false.
-TRAP: check HAR node pe (sirf root nahi) -- root balanced par ANDAR imbalanced ho sakta [test-pass != code-sahi].
-```
 
 #### ── FAMILY: search + BUBBLE-UP (jise dhundh rahe wo mila -> UPAR return; DONO taraf se mila = answer) ──
 
@@ -456,13 +399,6 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // 
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-idea : wo node jahan p, q ALAG side split ho jaate (ek left, ek right).
-       if (!root) return NULL;   // khaali subtree -> p/q yahan nahi mile
-       return root;                                 // DONO non-null -> yehi split-point = LCA
-mechanic: found-node UPAR bubble; jahan DONO taraf se kuch mila = LCA. (if(!left) return right dono case sambhaalta: left-khali+right-mila, aur dono-khali->NULL.)
-```
 
 #### ── FAMILY: carry-value DOWN + root-to-LEAF (target ghatao, LEAF pe check, combine = OR) ──
 
@@ -485,10 +421,6 @@ bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == ta
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-TRAP: LEAF = !root->left && !root->right (ACTUAL bachche), NA "!left && !right" (recursion-result) -> warna non-leaf pe galat match. [test-pass != code-sahi]
-```
 
 #### ── FAMILY: BFS / LEVEL-ORDER (QUEUE FIFO, recursion nahi; while ka ek chakkar = ek LEVEL) ──
 
@@ -526,17 +458,6 @@ vector<vector<int>> levelOrder(TreeNode *root) {   // har level ki alag list. FI
 // TEMPLATE: right view · level average · zigzag · min depth -> isi skeleton pe, bas "level me kya"
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-idea : har level ki alag list -> list-of-lists. queue = FIFO (pehle-aaya-pehle-process) -> level-order + L-to-R apne aap.
-SKELETON (saare BFS-level Q bas isi pe):
-        int sz = q.size();               // SNAPSHOT -- is level ke node (for se PEHLE pakdo)
-        for (int i = 0; i < sz; i++) {   // sirf sz baar: isi level ke node, naye push wale nahi
-            if (node->left)  q.push(node->left);    // bachche -> AGLE level me jaayenge
-        ans.push_back(level);   // level poora bhar gaya tab push (for ke bahar)
-TRAP: sz ko for se PEHLE pakdo. loop me bachche push -> q.size() badalta -> warna agle level ke node is level me ghus jaate.
-TEMPLATE: right-side-view (level ka LAST) · level-average · zigzag -- sab isi skeleton pe, bas "level me kya karna" badalta.
-```
 
 ### ▸ RIGHT SIDE VIEW (LC-199)  = LEVEL-ORDER + 1 line
 
@@ -571,13 +492,6 @@ vector<int> rightSideView(TreeNode *root) { // daaye se har level ka SIRF right-
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-idea : daaye khade -> har level ka SIRF right-most node dikhta (baaki peeche chhup jaate).
-LEVEL-ORDER template bilkul SAME (while + sz-snapshot + for + push L/R). FARAK sirf level ke andar 1 line:
-    level-order :  har node ka kaam / sab collect
-KYUN i==sz-1: nodes L-to-R (FIFO) nikalte -> level ka AAKHRI = sabse RIGHT.  (left-side-view -> i==0 le lo.)
-```
 
 ### ▸ ZIGZAG LEVEL ORDER (LC-103)  = LEVEL-ORDER + reverse
 
@@ -616,18 +530,6 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root) {   // 0: L->R · 1: R->L �
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-idea : level-order BFS jaisa, par direction ALTERNATE (0:L->R · 1:R->L · 2:L->R...).
-= LEVEL-ORDER ka SAME skeleton (queue + sz-SNAPSHOT + inner-loop -> level) + ek levelCounter.
-DELTA (naya = bas ye, inner-loop ke BAAD -- level HAMESHA normal L->R banao):
-even (0,2..) = seedha · odd (1,3..) = reversed.  (alt: deque/front-insert, par reverse simplest.)
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     level-order jaisa, par direction ulti-palti: level 0 L->R, level 1 R->L, level 2 L->R ...
-```
 
 ### ▸ MINIMUM DEPTH (LC-111)   = LEVEL-ORDER + EARLY-STOP
 
@@ -664,16 +566,6 @@ int minDepth(TreeNode *root) {              // root se sabse PAAS wale LEAF tak
 //   skew tree (2->3->4) pe galat deta
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-idea : root se sabse PAAS wale LEAF tak depth. BFS neeche -> PEHLA leaf mila = min depth -> RUK jao (first = shortest).
-TEMPLATE (level-order skeleton + EARLY-STOP):
-        int sz=q.size();   // for se PEHLE pakdo: loop me push se size badalta
-            auto curr=q.front(); q.pop();
-            if(!curr->left && !curr->right) return depth+1;  // PEHLA leaf -> turant return (aage mat dekho)
-        depth++;                                             // level POORA -> depth++ (for-loop ke BAAHAR)
-depth = ab tak POORE hue level; leaf is level me mila -> return depth+1.
-```
 
 #### ── FAMILY: BST (left < node < right; INORDER = SORTED -> "sorted / kth chahiye? -> INORDER") ──
 
@@ -703,18 +595,6 @@ int kthSmallest(TreeNode *root, int k) {
 }                                           // optimize: counter, k-va node pe EARLY-STOP
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-idea : BST inorder = SORTED -> kth smallest = inorder ka k-va element.
-steps: inorder(root) -> sorted vector 'ans' -> return ans[k-1].
-k-1 TRAP: k 1-based (1st smallest = k=1), vector 0-based -> index = k-1.
-optimize: k-va pe EARLY-STOP (counter, k-va node pe ruko) -- collect-all bhi gate-theek.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     BST aur k diye. k-va sabse chhota value lautao (1-indexed).
-```
 
 ### ▸ VALIDATE BST (LC-98)  = RANGE carry-DOWN
 
@@ -751,18 +631,4 @@ bool isValidBST(TreeNode *root) {
 // alt: inorder strictly increasing? -> BST (kth smallest ka near-transfer)
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-TRAP : local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
-IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.
-       return left && right   // && : dono subtree valid tabhi poora valid
-   (LC-98 allow karta) -> strict check (<=, >=) use galat reject kar deta. [2147483647] pe false aata, sahi true.
-(alt: inorder traversal = strictly increasing? -> BST.)
-(2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
-PEHLI SHEET (Aug) se bhi, same to same:
-TRAP : local check (sirf turant child) KAAFI NAHI -- node ko SAARE ancestors ka rule maanna.
-IDEA : har node ki ek WINDOW (mini, maxi) -> node us range me ho. neeche jaate window TIGHT hoti.
-(alt: inorder traversal = strictly increasing? -> BST.)
-(2nd tarika: inorder = strictly increasing? -> kth-smallest ka near-transfer.)
-```
 
