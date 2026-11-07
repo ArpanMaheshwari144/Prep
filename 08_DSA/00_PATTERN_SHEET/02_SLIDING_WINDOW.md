@@ -354,15 +354,13 @@ int maxScore(vector<int> &nums, int k) {
 
 
 
-### ▸ LC-219 CONTAINS DUPLICATE II  
+### ▸ LC-219 CONTAINS DUPLICATE II  = fixed-window (size k) + HashSet
 `[1,2,3,1], k=3 -> true`. Do barabar number jinka index ka farak <= k.
 
 kyun: index 0 aur 3 dono pe 1, farak 3 <= 3
   k=0: |i-j|<=0 matlab same index, jodi ban hi nahi sakti
 
 ```
-TASVEER:
-
 ★ RECOGNITION: "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
    KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
    -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
@@ -398,14 +396,15 @@ bool containsNearbyDuplicate(vector<int> &nums, int k) {
 
 ## KITNE (ginti, length nahi)
 
-### ▸ SUBARRAY PRODUCT < K  
+### ▸ SUBARRAY PRODUCT < K  = variable window + COUNT (running product)
 `[10,5,2,6], k=100 -> 8`. Positive numbers, kitne subarray jinka guna k se kam.
 
 kyun: 4 akele + [10,5]=50, [5,2]=10, [2,6]=12, [5,2,6]=60 = 8; [10,5,2]=100 kam nahi
 
 ```
-TASVEER:
-
+SAAR : kitne subarray jinka product < k. variable window, COUNT (length nahi).
+   lamba wala dhaancha, bas max ki jagah count += j - i + 1.
+COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarray). (bahut count-Q me)
 GINTI KYUN (j-i+1):  window [i..j] valid hai, to j pe KHATAM hone wale ye sab bhi valid:
                      [j], [j-1..j], ... [i..j]  =  j-i+1 subarray
 
@@ -419,43 +418,36 @@ DRY-RUN [10,5,2,6], k=100:
     k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
     aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
     k = 0 alag, upar hi return 0.
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-if (k == 0) return 0;   // nums >=1: product kabhi < 0 nahi, koi subarray nahi
-        prod /= nums[i];   // left wala guna se bahar: divide karo
-        i++;   // divide ke BAAD hi left aage
-    j++;   // count ke BAAD aage badho
 ```
 
 ```cpp
 int numSubarrayProductLessThanK(vector<int> &nums, int k) {
     if (k == 0)
-        return 0;
+        return 0;                           // nums >=1: product kabhi < 0 nahi, koi subarray nahi
     int count = 0;
     int i = 0, j = 0, prod = 1;             // guna 1 se shuru, 0 se sab 0
     while (j < nums.size()) {
         prod *= nums[j];
         // ★ i <= j: [1,1,1], k=1 pe i bahar bhaagta
-        while (prod >= k && i <= j) {
-            prod /= nums[i];
-            i++;
+        while (prod >= k && i <= j) {       // INVALID (prod >= k) -> shrink
+            prod /= nums[i];                // left wala guna se bahar: divide karo
+            i++;                            // divide ke BAAD hi left aage
         }
         // ★ j pe khatam hone wale saare: [j], [j-1..j] .. [i..j]
         count += j - i + 1;
-        j++;
+        j++;                                // count ke BAAD aage badho
     }
     return count;
 }
 ```
-`↳ SAME: lamba wala dhaancha. Farak: max ki jagah count += j - i + 1.`
 
 
-### ▸ LC-992 SUBARRAYS WITH EXACTLY K DISTINCT  
+### ▸ LC-992 SUBARRAYS WITH EXACTLY K DISTINCT  = FRUIT (atMost-k) x2, ghata do  [exactly-K trick]
 `[1,2,1,2,3], k=2 -> 7`. Kitne lagaatar subarray hain jinme theek k alag number hon.
 
 ```
-TASVEER:
-
+SAAR : kitne SUBARRAYS jinme EXACTLY k different numbers.
+   atMostK = fruit ka code, bas max ki jagah COUNT (ans += j-i+1).
 CHAAL: "exactly K" seedha SW se count ganda (boundary saaf nahi).
        => exactly(k) = atMost(k) - atMost(k-1).
           atMost(k) = "0..k distinct wale SAB" ; atMost(k-1) = "0..k-1 wale sab" ; ghata do -> exactly k.
@@ -476,11 +468,6 @@ DRY  : [1,2,1,2,3], k=2   -- atMost(2) = konse subarray?
 ★ TRAP: atMost me ans = 0 (max-template se copy karo to INT_MIN reh jaata -> k=1 pe garbage).
 
 FAMILY: fruit-into-baskets · longest-k-distinct · (koi bhi "exactly K" -> atMost(k)-atMost(k-1))
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-    if(mp[nums[i]] == 0) mp.erase(nums[i]);   // erase: warna 0-count key bhi mp.size() me ginti
-ans += j - i + 1;                         // is j pe khatam hone wale valid subarray
-j++;   // count jodne ke BAAD aage badho
 ```
 
 ```cpp
@@ -489,14 +476,14 @@ int atMostK(vector<int> &fruits, int k) {
     unordered_map<int, int> mp;
     while (j < fruits.size()) {
         mp[fruits[j]]++;
-        while (mp.size() > k) {
+        while (mp.size() > k) {             // K se zyada distinct -> shrink
             mp[fruits[i]]--;
             if (mp[fruits[i]] == 0)
-                mp.erase(fruits[i]);
+                mp.erase(fruits[i]);        // erase: warna 0-count key bhi mp.size() me ginti
             i++;
         }
-        count += j - i + 1;
-        j++;
+        count += j - i + 1;                 // is j pe khatam hone wale valid subarray
+        j++;                                // count jodne ke BAAD aage badho
     }
     return count;
 }
@@ -507,7 +494,6 @@ int subarraysWithKDistinct(vector<int> &nums, int k) {
                                                        // atMost(k-1) bina aakhri layer -> exactly k
 }
 ```
-`↳ SAME: atMostK = fruit ka code. Farak: max ki jagah count, aur upar exactly = atMost(k) - atMost(k-1).`
 
 ---
 
