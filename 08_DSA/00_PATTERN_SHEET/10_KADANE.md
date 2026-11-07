@@ -9,7 +9,7 @@
  KAB: subarray ka MAX sum / product · stock ka ek baar kharido-becho
 ```
 
-### ▸ BUY/SELL STOCK (LC-121)
+### ▸ BUY/SELL STOCK (LC-121)  = running MIN cache (aaj ka daam - ab tak ka sasta)
 
 ```
 prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din becho. Sabse zyada kitna munafa ho sakta hai, wo lautao. Munafa na ho to 0.
@@ -32,18 +32,12 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 ```
 
 
-### ▸ MAX SUBARRAY SUM (LC-53)
+### ▸ MAX SUBARRAY SUM (LC-53)  = KADANE ka BASE (running sum, negative = bojh -> 0)
 
 ```
 Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chuno jiska jod sabse bada ho, aur wo jod lautao.
   e.g. [-2,1,-3,4,-1,2,1,-5,4] -> 6
   kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
-```
-
-```
-YAAD:
-
-TRAP: max_sum update RESET se PEHLE + max_sum=INT_MIN start (warna all-negative [-1] miss). // sum=0 se: abhi tak kuch joda nahi
 ```
 
 ```cpp
@@ -63,7 +57,7 @@ int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> su
 
 #### ── FAMILY: flip ho to MIN bhi + 3 candidate + FREEZE (temp) · 53 sum · 152 product · 1749 abs ──
 
-### ▸ MAX PRODUCT SUBARRAY (LC-152)
+### ▸ MAX PRODUCT SUBARRAY (LC-152)  = KADANE + MIN bhi (neg x neg = bada)
 
 ```
 Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada ho, aur wo guna lautao. Minus numbers bhi ho sakte hain.
@@ -72,8 +66,6 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
 ```
 
 ```
-YAAD:
-
 ★ SHURUAAT (24-Sep theek kiya):  max = 1, min = 1, ans = INT_MIN,  loop i = 0 se.   // ans INT_MIN: 0 se [-2] pe 0 aata, sahi -2
   pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
   -> [4,-3] pe 0 aata (sahi 4). niyam: loop 1 se ho to ans bhi nums[0] se; loop 0 se to 1 / INT_MIN se.
@@ -95,7 +87,7 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
 ```
 
 
-### ▸ MAX ABSOLUTE SUM (LC-1749)
+### ▸ MAX ABSOLUTE SUM (LC-1749)  = MAX PRODUCT ka skeleton, * -> +, ans me ABS
 
 ```
 Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value (minus hata ke) dekho. Sabse bada absolute jod lautao.
@@ -104,14 +96,9 @@ Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value 
 ```
 
 ```
-YAAD:
-
 ★ SHURUAAT (24-Sep theek kiya): max = 0, min = 0, ans = 0, loop i = 0 se.   n==1 -> return abs(nums[0]).   // 0 se theek: + me 0 kuch nahi jodta, abs kabhi minus nahi
   pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
   aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-MECHANIC yaad rakh: "flip ho to MIN bhi track + 3 candidate + old FREEZE (temp)".
 ```
 
 ```cpp
@@ -147,9 +134,6 @@ A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL -
 ```
 
 ```
-YAAD:
-
-Q: circular array (end->start wrap), max-sum NON-EMPTY contiguous subarray (wrap ho sakta).
 ★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
 2 CASE (bada lo): A) NO-wrap = normal Kadane (max)  ·  B) WRAP = end+start juda, BEECH ka chunk chhoda.
 KEY INSIGHT: wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
@@ -200,7 +184,7 @@ int maxSubarraySumCircular(vector<int> &nums) {
 ```
 
 
-### ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = bestLeft + bestRight + WALL
+### ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = KADANE (per index) + PREFIX / SUFFIX max + WALL
 
 ```
 Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doosre ko na chhuein (non-overlapping). Dono ke jod ko milake sabse bada total lautao.
@@ -208,13 +192,10 @@ Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doos
   kyun: [1,2] = 3 aur [8,6] = 14, beech ka -7 chhoda; 3 + 14 = 17
 
 har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
-= KADANE (per index) + PREFIX / SUFFIX max
 [2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
 ```
 
 ```
-TASVEER:
-
 TEMPLATE:
     maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)   // index 0 pe khatam = sirf nums[0], isliye loop 1 se
         ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // akela naya shuru karo ya pichhle me judo, jo bada
@@ -252,11 +233,6 @@ EDGE:
      isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
 
    loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // Kadane per-index (=05, prefix-sum+reset)
-ans[i] = max( ans[i-1] , temp[i] )                            // PREFIX-max (=06)
-ans[i] = max( ans[i+1] , temp[i] )                           // SUFFIX-max (=06 ulta)
 ```
 
 ```cpp

@@ -18,8 +18,6 @@ get(key): value lautao, na mile to -1. remove(key): key hatao.
 ```
 
 ```
-TASVEER:
-
 MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
    index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
 fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).   // ctor: sz=0, cap=16, buckets.resize(cap) -> sab slot nullptr
@@ -127,7 +125,7 @@ public:
 ```
 
 
-### ▸ DESIGN HASHSET (LLD)
+### ▸ DESIGN HASHSET (LLD)  = HASHMAP ka EXACT code, bas VALUE nikaal do
 
 ```
 Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohrav nahi daalna. contains(key): hai to true, warna false. remove(key): hatao.
@@ -136,9 +134,7 @@ Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohra
 ```
 
 ```
-TASVEER:
-
-= HashMap ka EXACT code, bas VALUE nikaal do. CONNECTION:
+CONNECTION (HashMap se):
 ┌──────────┬──────────────────────────────┬──────────────────────────────┐
 │ ASPECT   │ HashMap                      │ HashSet                      │
 ├──────────┼──────────────────────────────┼──────────────────────────────┤
@@ -246,8 +242,6 @@ Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least rec
 ```
 
 ```
-TASVEER:
-
 MENTAL MODEL: get+put DONO O(1). 2 zaroorat -> 2 structure JODO:
    hashmap: key -> DLL-node ka POINTER  (find O(1))
    DLL:     dummy [HEAD] <-> MRU .. LRU <-> [TAIL] dummy  (reorder/evict O(1))
