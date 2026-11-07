@@ -31,8 +31,31 @@ using namespace std;
 
 vector<int> findAnagrams(string s, string p)
 {
-    // yahan likh
-    return {};
+    vector<int> ans;
+    int i = 0, j = 0;
+    vector<int> need(26, 0);
+    vector<int> have(26, 0);
+
+    for (int i = 0; i < p.size(); i++)
+    {
+        need[p[i] - 'a']++;
+    }
+
+    while (j < s.size())
+    {
+        have[s[j] - 'a']++;
+        if (j - i + 1 == p.size())
+        {
+            if (have == need)
+            {
+                ans.push_back(i);
+            }
+            have[s[i] - 'a']--;
+            i++;
+        }
+        j++;
+    }
+    return ans;
 }
 
 // ---------- tests (boilerplate, chhoo mat) ----------
