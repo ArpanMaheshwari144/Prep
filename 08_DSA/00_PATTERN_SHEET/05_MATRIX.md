@@ -1,23 +1,19 @@
 ## PATTERN 5 — MATRIX
 
 ```
-> ★ **YAHAN NAHI MILENGI** (grid dikhti hai, par technique alag hai):
-> ```
-> number of islands · rotting oranges · max area of island   ->  PATTERN 13 (GRAPHS)
->       grid hai, par kaam BFS/DFS ka hai — visit + mark + neighbors
-> search 2D matrix                                           ->  PATTERN 7 (BINARY SEARCH)
->       naam me matrix hai, par rows sorted hain -> ek lambi sorted array maan lo
-> ```
-
-
  BROAD IDEA: 2D grid pe index-navigation (boundary/direction careful; copy-pen pe grid banao).
+ KAB: 2D matrix pe index ka khel: spiral, transpose, set zeroes, row / col ginti
+
+ ★ YAHAN NAHI MILENGI (grid dikhti hai, par technique alag hai):
+   number of islands · rotting oranges · max area of island   ->  PATTERN 13 (GRAPHS)
+         grid hai, par kaam BFS/DFS ka hai — visit + mark + neighbors
+   search 2D matrix                                           ->  PATTERN 7 (BINARY SEARCH)
+         naam me matrix hai, par rows sorted hain -> ek lambi sorted array maan lo
+```
 
 ── (STANDALONE — har ek apni index-navigation) ──
 
- KAB: 2D matrix pe index ka khel: spiral, transpose, set zeroes, row / col ginti
-```
-
-### ▸ SET MATRIX ZEROES
+### ▸ SET MATRIX ZEROES  = 2 marker array (zeroRow / zeroCol), 2 pass
 
 ```
 m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do. Isi matrix me badlaav karna hai (in-place).
@@ -53,8 +49,6 @@ m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf,
 ```
 
 ```
-TASVEER:
-
 GUARD — jo loop jis row/col pe chal raha, guard USI ka:
    3rd loop  BOTTOM row chhaap raha  ->  if (top <= bottom)
              matlab bottom abhi bhi top se NEECHE/barabar hai -> bottom row bachi hai -> chhaapo
@@ -102,12 +96,10 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
     return ans;
 }
 // guard sirf 3rd / 4th loop pe: 1st / 2nd ko while(top<=bottom && left<=right) bacha leta
-// [[1,2,3]]: top row 1 2 3 -> top=1 > bottom=0 -> bottom row skip (warna 2 1 dobara)
-// [[1],[2],[3]]: right col ke baad right=-1 < left=0 -> left col skip (warna 2 dobara)
 ```
 
 
-### ▸ TRANSPOSE
+### ▸ TRANSPOSE  = ans[i][j] = matrix[j][i], naya col x row
 
 ```
 m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix[i][j] naye matrix me res[j][i] pe jaayega (naya size n x m).
@@ -140,8 +132,6 @@ Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
 ```
 
 ```
-TASVEER:
-
 DRY-RUN [[1,0],[1,1]]:
     pass-1:  rowCount=[1,2]  colCount=[2,1]
     (0,0): row0=1, col0=2>1 -> YES
