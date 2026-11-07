@@ -112,6 +112,15 @@ ladke ko bata denge. Poori nahi hui to wo dobara try karega.
 
 **Asli naam:** S3 event notification (SQS ke raaste) -> hamara server DB me status UPLOADED + Kafka me scan ka kaam.
 
+**Maan lo DB me UPLOADED likha, Kafka me scan daalne se pehle server gira:** file atki, scan kabhi nahi. Wahi vasiyat:
+UPLOADED ke saath hi "iska scan karwana hai" likh do, baad me koi utha ke Kafka me daal dega.
+**Asli naam:** outbox (status + scan ka kaam ek DB transaction me) + relay.
+
+**Maan lo S3 ne "file aa gayi" do baar bataya, ya ulte kram me:** parchi rakho, is file ka kaam ho gaya to dobara aaya
+chhod do; ulta aaya to dekho kaunsa naya, purana chhod do. S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered at least once."
+([AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html)) aur "Event notifications aren't guaranteed to arrive in the same order that the events occurred." ([AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html))
+**Asli naam:** idempotency (file id + version pe ek hi baar), S3 event ka `sequencer` (usi file ke liye, bada = baad wala).
+
 ```mermaid
 flowchart LR
     S3[("S3")] -- "file aa gayi (event)" --> U["Upload Server"]

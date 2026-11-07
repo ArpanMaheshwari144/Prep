@@ -23,6 +23,13 @@ Technical me: "receptionist ka token" = presigned URL (hamara server deta, chaab
 **4. File S3 me aa gayi, par server ko pata hi nahi, DB me "UPLOADING" pada, scan shuru hi nahi hua.**
 Arpan: S3 ko bol do: "jab file aa jaaye, mujhe bata dena". Hum DB me mark kar denge aur ladke ko bata denge. Poori nahi hui to wo dobara try karega.
 Technical me: "S3 bataye" = S3 event notification -> DB status + Kafka me scan ka kaam.
+**Maan lo server ne DB me UPLOADED likh diya, par Kafka me scan ka kaam daalne se pehle gira. File UPLOADED pe atki, scan kabhi shuru nahi.**
+Arpan: Wahi Kafka aur Notification wala: vasiyat likh do. UPLOADED ke saath hi likh do "iska scan karwana hai", ek hi baar me. Beech me gira to baad me koi utha ke Kafka me daal dega.
+Technical me: "UPLOADED ke saath vasiyat" = outbox (status + scan ka kaam ek hi DB transaction me), "baad me koi daal dega" = relay.
+**Maan lo S3 ne "file aa gayi" do baar bataya, ya ulte kram me.**
+Arpan: Do baar aa sakta hai, koi dikkat nahi. Parchi rakho: is file ka kaam ho gaya, likh liya; dobara aaya to dekha ho gaya, chhod do. Ulta aaya to dekho kaunsa naya hai, purana aaya to chhod do.
+S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered at least once." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html) aur "Event notifications aren't guaranteed to arrive in the same order that the events occurred." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html)
+Technical me: "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa naya" = S3 event ka `sequencer` (bada = baad wala, usi file ke liye).
 
 **5. "Goa trip" folder (Day1, Day2, 500 photo). S3 me folder hote hi nahi; naam path me likha to rename = 500 copy + 500 delete.**
 Arpan: Folder ka hisaab alag, apne server me. Ek parent, baaki uske child, ped jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent ka naam badlo, saare bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora. S3 sirf files rakhe.

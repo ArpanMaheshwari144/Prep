@@ -134,6 +134,8 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  4  8 GB pe net gaya                       ->  tukdon me todo, sirf baaki 2 GB (multipart)
  5  S3 kaise maane ye hamara user          ->  receptionist ka token (presigned URL)
  6  file S3 me aayi, server ko pata nahi   ->  S3 bataye "aa gayi" (event notification)
+ 6b UPLOADED likha, scan daalne se pehle gira ->  UPLOADED ke saath vasiyat (outbox + relay)
+ 6c S3 ne "aa gayi" do baar / ulta bataya ->  parchi, ho gaya to chhod; purana chhod (idempotency, sequencer)
  7  folder rename = 500 copy + 500 delete  ->  ped jaisa, sirf parent badlo (parent_id)
  8  1043 likha, Priya ka statement khula   ->  "Priya ko saath la" (owner / share check)
  9  download bhi hamare server se          ->  truck seedha ghar (S3 direct download)
