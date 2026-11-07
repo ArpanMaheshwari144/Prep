@@ -1,17 +1,13 @@
 ## PATTERN 6 — STACK
 
 ```
-> ★ **YAHAN NAHI MILEGI:**
-> ```
-> generate parentheses   ->  PATTERN 16 (BACKTRACKING)
->       valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choose)
-> ```
-
-
  BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
  ★ EDGE (monotonic stack): stack me INDEX rakho, value nahi (DOORI chahiye: i - st.top()).
  ★ MILTE-JULTE (histogram vs container / trapping): 00_SHURU me NAAM-SE-CONFUSE A dekh.
 
+ ★ YAHAN NAHI MILEGI:
+   generate parentheses   ->  PATTERN 16 (BACKTRACKING)
+         valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choose)
 ```
 
 #### ── FAMILY: MONOTONIC stack (INDEX stack, curr vs top compare -> pop + us index ka ans) ──
@@ -25,7 +21,7 @@
  KAB: brackets match · "har element ka agla / pichhla bada ya chhota" · span · histogram
 ```
 
-### ▸ NEXT GREATER ELEMENT
+### ▸ NEXT GREATER ELEMENT  = monotonic stack ka BASE
 
 ```
 Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number hai, wo lautao. Koi bada na mile to -1.
@@ -36,8 +32,8 @@ har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 ```
 
 ```
-TASVEER:
-
+SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
+      (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
 DRY-RUN [2,1,2,4,3]:
   i0(2): push            st=[0]
   i1(1): 2<1? no; push   st=[0,1]
@@ -46,13 +42,6 @@ DRY-RUN [2,1,2,4,3]:
   i4(3): 4<3? no; push   st=[3,4]
   => ans=[4,2,4,-1,-1]
 FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
-      (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
-
-PURANI SHEET KI LINE (git 07e45c2b):
-★ < strictly (<= nahi): barabar wala 'bada' nahi. [2,2] pe <= se ans[0]=2 (sahi -1).
 ```
 
 ```cpp
@@ -61,7 +50,7 @@ vector<int> nextGreater(vector<int> &nums) {
     stack<int> st;                          // ★ INDEX rakho: ans[topp] me likhne ko position chahiye
     for (int i = 0; i < nums.size(); i++) { // left->right: daaye wala bada aage aayega
         while (!st.empty() && nums[st.top()] < nums[i]) {   // ★ !empty pehle (warna top() crash)
-            int topp = st.top();            // < : curr BADA -> top ko jawab mila (barabar = bada nahi)
+            int topp = st.top();            // ★ < strict (<= nahi): barabar bada nahi. [2,2] pe <= -> ans[0]=2, sahi -1
             st.pop();                       // top pehle bachao: pop ke baad top() badal jaata
             ans[topp] = nums[i];
         }
@@ -71,7 +60,7 @@ vector<int> nextGreater(vector<int> &nums) {
 }
 ```
 
-### ▸ NEXT SMALLER ELEMENT
+### ▸ NEXT SMALLER ELEMENT  = NEXT GREATER, sirf condition ULTI (>)
 
 ```
 Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
@@ -95,7 +84,7 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
 }
 ```
 
-### ▸ PREVIOUS SMALLER ELEMENT
+### ▸ PREVIOUS SMALLER ELEMENT  = NEXT SMALLER, sirf LOOP ULTA (right->left)
 
 ```
 Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
@@ -120,7 +109,7 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 // prev smaller + next smaller = histogram ka building block
 ```
 
-### ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
+### ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)  = PREV-SMALLER + NEXT-SMALLER (INDEX store + combine)
 
 ```
 heights[] me bars ki unchai di hai, har bar ki chaudai 1 hai. Lagaatar bars pe jo sabse bada rectangle ban sakta hai, uska area lautao.
@@ -132,8 +121,6 @@ har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = don
 ```
 
 ```
-TASVEER:
-
 SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
       = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
 = PREV-SMALLER + NEXT-SMALLER ka WALL, bas DELTA: VALUE nahi INDEX store + combine loop.
@@ -264,7 +251,7 @@ int largestRectangleArea(vector<int> &heights) {
 // [2,4]: nS default -1 hota to bar0 width = -1-(-1)-1 = -1 (galat); n=2 se width 2 -> area 4 (sahi)
 ```
 
-### ▸ MAXIMAL RECTANGLE (LC-85, 2D)
+### ▸ MAXIMAL RECTANGLE (LC-85, 2D)  = LC-84 ka 2D bhai (har row = histogram)
 
 ```
 0 aur 1 ki 2D matrix di hai. Sirf 1 se bhara hua sabse bada rectangle kitna bada hai, uska area lautao.
@@ -295,7 +282,7 @@ int maximalRectangle(vector<vector<int>> &matrix) {
 }
 ```
 
-### ▸ DAILY TEMPERATURES
+### ▸ DAILY TEMPERATURES  = NEXT GREATER, ans me VALUE nahi DISTANCE (i - top)
 
 ```
 temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad pehla usse garam din aata hai. Garam din kabhi na aaye to 0.
@@ -320,7 +307,7 @@ vector<int> dailyTemperatures(vector<int> &temps) {
 }
 ```
 
-### ▸ NEXT GREATER ELEM II
+### ▸ NEXT GREATER ELEM II  = NEXT GREATER + CIRCULAR (2n loop, i % n)
 
 ```
 Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number aata hai. Har number ka agla bada number lautao, na mile to -1.
@@ -434,7 +421,7 @@ public:
 // push 5,3,7 -> min 3 · pop 7 -> 3 · pop 3 -> 5 WAPAS (pair me neeche wala min apne aap sahi)
 ```
 
-### ▸ MIN ADD MAKE VALID
+### ▸ MIN ADD MAKE VALID  = VALID PARENTHESES ka counter wala (stack nahi)
 
 ```
 Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki string valid ho jaaye, wo ginti lautao.
