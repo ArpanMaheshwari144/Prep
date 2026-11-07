@@ -223,14 +223,13 @@ int equalSubstring(string s, string t, int maxCost) {
 
 ## CHHOTA wala (theek rahe tab tak chhota karo, ans while ke ANDAR = min)
 
-### ▸ LC-209 MIN SUBARRAY LEN  
+### ▸ LC-209 MIN SUBARRAY LEN (>=TARGET)  = SHORTEST window (longest se ULTA)
 `target=7, [2,3,1,2,4,3] -> 2` ([4,3]). Positive numbers, sum >= target wala sabse chhota subarray.
 
 kyun: [4,3] = 7 >= 7, length 2; akela koi number 7 tak nahi pahunchta
 
 ```
-YAAD:
-
+SAAR : positive nums, sum >= target wala SABSE CHHOTA subarray ki length (nahi mile -> 0).
 LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):
    LONGEST  (jaise no-repeat): window BADA chahiye -> shrink SIRF jab INVALID ho (validity wapas laane ko) ->
             record BAAHAR (shrink ke BAAD, valid window ki length).
@@ -238,61 +237,54 @@ LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):
             record ANDAR (shrink loop ke andar, har step).   <- YE wahi.
    1-line: LONGEST = shrink-jab-MAJBOORI(invalid), record-baad  ·  SHORTEST = shrink-jab-tak-VALID, record-andar.
 char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-int sum=0, minLen=INT_MAX, i=0, j=0;   // INT_MAX: min se ghatega; koi window na bani to end me 0
-    j++;   // shrink loop ke BAHAR: har j pe ek baar aage
-return minLen==INT_MAX ? 0 : minLen;      // koi valid window nahi -> 0
 ```
 
 ```cpp
 int minSubArrayLen(int target, vector<int> &nums) {
     int sum = 0;
-    int size = INT_MAX;
+    int size = INT_MAX;                     // INT_MAX: min se ghatega; koi window na bani to end me 0
     int i = 0, j = 0;
     while (j < nums.size()) {
-        sum += nums[j];
+        sum += nums[j];                     // window add (expand)
         // ★ ULTA: theek hai tab tak chhota karo, ans ANDAR nikaalne se pehle
-        while (sum >= target) {
-            size = min(size, j - i + 1);
-            sum -= nums[i];
+        while (sum >= target) {             // VALID hote hi -> record + SHRINK (aur chhota dhoondo)
+            size = min(size, j - i + 1);    //   record ANDAR (shrink loop ke andar)
+            sum -= nums[i];                 //   left shrink
             i++;
         }
-        j++;
+        j++;                                // shrink loop ke BAHAR: har j pe ek baar aage
     }
-    return size == INT_MAX ? 0 : size;      // target=11, [1,1,1] -> 0
+    return size == INT_MAX ? 0 : size;      // koi valid window nahi -> 0 · target=11, [1,1,1] -> 0
 }
 ```
-`↳ SAME: lamba wala dhaancha ulta. Lamba: kharab pe while, ans baad me, max. Chhota: theek pe while, ans andar, min.`
 
 ---
 
 
 ## FIXED size k (while ki jagah IF)
 
-### ▸ MAX SUM OF K  
+### ▸ MAX SUM OF K (FIXED)  = fixed window size-k + running sum
 `[2,1,5,1,3,2], k=3 -> 9`. Har size-k window ka sum, sabse bada.
 
 kyun: window sums 8, 7, 9, 6 -> max 9 (5+1+3)
 
 ```
-YAAD:
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-j pe : sum += nums[j].   // sum=0, maxSum=INT_MIN (sab negative ho to bhi sahi max)
+SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
+KEY  : variable nahi -- size fix k, isliye IF (ek hi remove).
+WHY IF-not-WHILE : fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
 ```
 
 ```cpp
 int maxSumK(vector<int> &nums, int k) {
     int sum = 0;
     // ★ 0 se shuru kiya to [-1,-2,-3], k=2 -> 0, sahi -3
-    int maxSum = INT_MIN;
+    int maxSum = INT_MIN;                   // INT_MIN: sab negative ho to bhi sahi max
     int i = 0, j = 0;
     while (j < nums.size()) {
-        sum += nums[j];
+        sum += nums[j];                     // j pe add
         if (j - i + 1 >= k) {               // IF: size fix, ek juda to ek nikla
-            maxSum = max(maxSum, sum);
-            sum -= nums[i];
+            maxSum = max(maxSum, sum);      // FULL window -> record
+            sum -= nums[i];                 // phir 1 remove
             i++;
         }
         j++;
