@@ -49,22 +49,16 @@ int lengthOfLongestSubstring(string s) {
 ```
 
 
-### ▸ LC-424 CHAR REPLACEMENT  
+### ▸ LC-424 CHAR REPLACEMENT (LONGEST)  = variable window + freq-map (k badal sakte)
 `"AABABBA", k=1 -> 4`. Max k char badal ke sabse lambi window jisme sab same.
 
 kyun: "AABA" (index 0..3) me ek B ko A banao -> "AAAA" = 4
 
 ```
-YAAD:
-
+SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
 KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
 CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
    se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-j pe : mp[s[j]]++, maxFreq = max(maxFreq, mp[s[j]]).   // maxFreq update PEHLE, phir windowLen-maxFreq check
-            if (mp[s[i]] == 0) mp.erase(s[i]);   // 0 hua to key hatao (DISTINCT gino to zaroori)
-            i++;   // ginti kam karne ke BAAD hi left aage
 ```
 
 ```cpp
@@ -73,83 +67,69 @@ int characterReplacement(string s, int k) {
     int maxLen = INT_MIN, maxFreq = INT_MIN, i = 0, j = 0;
     while (j < s.size()) {
         mp[s[j]]++;
-        maxFreq = max(maxFreq, mp[s[j]]);
+        maxFreq = max(maxFreq, mp[s[j]]);   // maxFreq update PEHLE, phir windowLen - maxFreq check
         // ★ length - sabse zyada wala = kitne badalne padenge
-        while (j - i + 1 - maxFreq > k) {
+        while (j - i + 1 - maxFreq > k) {   // INVALID: k se zyada badalne padenge -> left shrink
             mp[s[i]]--;
             if (mp[s[i]] == 0)
-                mp.erase(s[i]);
-            i++;
+                mp.erase(s[i]);             // 0 hua to key hatao (DISTINCT gino to zaroori)
+            i++;                            // ginti kam karne ke BAAD hi left aage
         }
-        if (j - i + 1 - maxFreq <= k)
+        if (j - i + 1 - maxFreq <= k)       // VALID -> maxLen update
             maxLen = max(maxLen, j - i + 1);
         j++;
     }
     return maxLen;
 }
 ```
-`★ maxFreq ko shrink pe ghatao mat, recompute ki zaroorat nahi.` Wo ab tak ki sabse badi ginti hai. Thodi der purana reh jaaye to bhi best galat nahi aata (tera code har test pe sahi).
 
 
-### ▸ LC-1004 MAX CONSECUTIVE ONES III  
+### ▸ LC-1004 MAX CONSECUTIVE ONES III  = LC-3 ka bhai: variable window + zeros-count (k flips)
 `[1,1,1,0,0,0,1,1,1,1,0], k=2 -> 6`. Max k zero ko 1 bana ke sabse lambi 1 ki line.
 
 kyun: index 4..9 = 0,0,1,1,1,1: do zero flip -> 6 lagaatar 1
 
 ```
-YAAD:
-
+SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
+   LC-3 se farak: map ki jagah ek int (zeroCount), aur shrink "zero > k" pe.
 CORE LEARNING: ans UNCONDITIONAL update -> if(zeroCount==k) MAT lagao.
    kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
    (galti thi: if(zeroCount==k) -> sirf exactly-k ginta -> k=0 / k>zeros case toot jaate.)
 shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-int ans=INT_MIN, zeroCount=0, i=0, j=0;   // INT_MIN: end me check karke khaali array pe 0
-    while(zeroCount > k){                // INVALID: k se zyada zero (flip nahi kar sakte)
-        i++;   // zero check ke BAAD aage (pehle i++ to galat element dekhta)
 ```
 
 ```cpp
 int longestOnes(vector<int> &nums, int k) {
-    int ans = INT_MIN;
+    int ans = INT_MIN;                      // INT_MIN: end me check karke khaali array pe 0
     int zeroCount = 0;
     int i = 0, j = 0;
     while (j < nums.size()) {
         if (nums[j] == 0)
-            zeroCount++;
-        while (zeroCount > k) {
+            zeroCount++;                    // window me zero add
+        while (zeroCount > k) {             // INVALID: k se zyada zero (flip nahi kar sakte)
             if (nums[i] == 0)
-                zeroCount--;
-            i++;
+                zeroCount--;                // left ka zero nikla to count kam
+            i++;                            // zero check ke BAAD aage (pehle i++ to galat element dekhta)
         }
         // ★ bina shart lo. if (zeroCount == k) -> [1,1,0], k=2 pe 0, sahi 3
-        ans = max(ans, j - i + 1);
+        ans = max(ans, j - i + 1);          // UNCONDITIONAL (koi if nahi)
         j++;
     }
     return ans == INT_MIN ? 0 : ans;
 }
 ```
-`↳ SAME: LC-3 wala dhaancha. Farak: map ki jagah ek int (zeroCount), aur shrink "zero > k" pe.`
 
 
-### ▸ FRUIT INTO BASKETS  
+### ▸ FRUIT INTO BASKETS  = longest subarray with AT MOST 2 DISTINCT
 `[1,2,3,2,2] -> 4`. 2 basket, har basket me ek type. Lagaatar pedon ki sabse lambi line.
 
 kyun: [2,3,2,2] me sirf 2 type (2,3) = 4; aage 1 jodo to 3 type ho jaate
 
 ```
-YAAD:
-
 SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW skeleton + map<type,count>.
 while (mp.size() > 2) KYUN while: ek type poora khatam hone tak kai element hatane padte.
    IF bhi chalta (sirf LONGEST): ek aaya ek gaya, size best se bada nahi -> len sahi. COUNT / SHORTEST me sirf while.
 CRUX = erase-on-0: count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-    if(mp[nums[i]]==0) mp.erase(nums[i]);   // count 0 -> ERASE
-    i++;   // erase check ke BAAD hi left aage
-ans = max(ans, j - i + 1);   // shrink ke BAAD record: window ab <=2 distinct · ans=INT_MIN se, return ans==INT_MIN ? 0 : ans
 ```
 
 ```cpp
@@ -158,16 +138,16 @@ int totalFruit(vector<int> &fruits) {
     unordered_map<int, int> mp;
     int i = 0, j = 0;
     while (j < fruits.size()) {
-        mp[fruits[j]]++;
+        mp[fruits[j]]++;                    // window me add
         // ★ ginti nahi, ALAG type kitne = mp.size()
-        while (mp.size() > 2) {
+        while (mp.size() > 2) {             // INVALID: 2 se zyada distinct
             mp[fruits[i]]--;
             // ★ erase nahi kiya to size 3 hi rehta, loop rukta nahi, i array ke bahar -> crash
             if (mp[fruits[i]] == 0)
-                mp.erase(fruits[i]);
-            i++;
+                mp.erase(fruits[i]);        // count 0 -> ERASE
+            i++;                            // erase check ke BAAD hi left aage
         }
-        ans = max(ans, j - i + 1);
+        ans = max(ans, j - i + 1);          // shrink ke BAAD record: window ab <=2 distinct
         j++;
     }
     return ans == INT_MIN ? 0 : ans;
@@ -175,10 +155,15 @@ int totalFruit(vector<int> &fruits) {
 ```
 
 
-### ▸ LONGEST AT-MOST-K DISTINCT  
+### ▸ LONGEST AT-MOST-K DISTINCT  = FRUIT ka GENERAL version (2 ki jagah k)
 `"eceba", k=2 -> 3`. Sabse lambi substring jisme zyada se zyada k alag char.
 
 kyun: "ece" me sirf e,c (2 alag) = 3; "eceb" me 3 alag ho jaate
+
+```
+wahi variable window + map<char,count>, distinct (mp.size()) > k ho -> left se shrink (erase-on-0). ans = max length.
+farak: fruit me "2" hardcoded tha, yahan wahi jagah "k" (mp.size() > k).
+```
 
 ```cpp
 int totalFruit(string &s, int k) {
@@ -203,13 +188,18 @@ int longestKDistinct(string s, int k) {
     return totalFruit(s, k);
 }
 ```
-`↳ SAME: fruit hi hai. Farak sirf "> 2" ki jagah "> k".`
 
 
-### ▸ LC-1208 EQUAL SUBSTRING WITHIN BUDGET  
+### ▸ LC-1208 EQUAL SUBSTRING WITHIN BUDGET  = longest-subarray-sum <= k (string ke bhes me)
 `s="abcd", t="bcdf", maxCost=3 -> 3`. s ke char ko t me badalne ki cost `|s[i]-t[i]|`. Kul cost budget ke andar, sabse lambi window.
 
 kyun: cost = [1,1,1,2]; pehle 3 ka 1+1+1 = 3 <= 3; chaaron ka 5 > 3 · e.g. s="abcd", t="cdef", maxCost=3 -> 1
+
+```
+SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cost-SUM <= maxCost.
+KEY  : cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
+   ONES III jaisa, ek int (cost) track, koi map nahi. cost hamesha 0 ya zyada, isliye negative wala dar nahi.
+```
 
 ```cpp
 int equalSubstring(string s, string t, int maxCost) {
@@ -217,7 +207,7 @@ int equalSubstring(string s, string t, int maxCost) {
     while (j < t.size()) {
         // ★ string ke bhes me "sum <= k" wala sawaal
         cost += abs(s[j] - t[j]);
-        while (cost > maxCost) {
+        while (cost > maxCost) {            // INVALID -> WHILE shrink
             cost -= abs(s[i] - t[i]);
             i++;
         }
@@ -227,7 +217,6 @@ int equalSubstring(string s, string t, int maxCost) {
     return ans;
 }
 ```
-`↳ SAME: ones III jaisa, ek int. Farak: zero ki jagah cost jodo. Cost hamesha 0 ya zyada, isliye negative wala dar nahi.`
 
 ---
 
