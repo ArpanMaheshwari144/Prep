@@ -6,6 +6,8 @@ bhejta hai, dono ek hi bank me. Kaam: paisa na gum ho, na do baar kate, aur har 
 Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
 (kahani ka shabd, bracket me asli naam).
 
+Kadam 1-13 = ek transfer sahi kaise ho. Kadam 14-20 = mahine ki statement, yaani "billions of records" wala sawaal.
+
 ---
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)
@@ -259,6 +261,148 @@ flowchart LR
     H --> M["Saari copy milao<br/>(chhedchhaad pakdo)"]
     X --> M
     style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+---
+
+# Mahine ki statement (billions of records)
+
+Interviewer bole "billions of records process karne ka system banao", to yahi hissa. Wahi branch, wahi register, par
+ab ek transfer nahi: bank ke crore khaate, arbon transaction, aur har customer ki har mahine ki statement banni hai.
+31 March ko sab ek saath maangte hain. Peeche kaam karne wale ladke = chhotu. Yahi dhaancha salary credit, bijli ke
+bill aur mahine ki report me bhi lagta hai.
+
+```
+FR      har customer ki har mahine ki statement, download karo · har line ke saath running balance
+NFR     31 March ki bheed pe bhi turant mile · statement ekdam sahi (ek line na chhoote) · asli payment na atke
+Numbers crore khaate, arbon transaction -> ek machine me nahi samata, ek chhotu se nahi banega -> kaam baanto
+```
+
+## 14. 31 March ko 1 crore log ek saath (pehle se bana ke rakho)
+
+31 March ko ek hi din 1 crore log statement maangne aa gaye. Statement tab banni shuru hui jab maangi, aur sab atke.
+Ye isliye hua kyunki arbon line se statement banane me time lagta hai, Kafka me daal ke magic se turant nahi ban
+jaati. To pehle ye poochho ki statement turant chahiye kya, aur kya turant ban bhi sakti hai. Phir intezaar mat karo
+ki user aaye tab banayenge. Peeche chhotu laga do: January ki January me, February ki February me bana ke rakh do.
+31 March ko jo bhi aaye, Ravi ho ya Shubham, utha ke turant de do.
+
+**Asli naam:** pehle se bana ke rakho = precompute (batch job, mahina band hote hi chalta), peeche chhotu = background
+workers (Kafka se kaam baanta, har message = ek khaata + mahina), bani statement = S3 me PDF, 31 March ko user seedha
+wahan se download karta. Turant chahiye kya = pehla faisla batch ya stream: statement mahine me ek baar banti, isliye
+batch.
+
+```mermaid
+flowchart LR
+    K["Mahina band<br/>(Kafka me kaam)"] --> W["Chhotu<br/>(Batch workers)"]
+    W --> S[("Bani statement<br/>(S3)")]
+    U["31 March, 1 crore log"] --> S
+    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 15. 28 Feb ka transaction der se aaya (record se milao, nayi statement)
+
+28 Feb raat ka ek transaction der se aaya. Ravi ki Feb statement tab tak ban chuki thi, shayad bhej bhi di, aur usme ye
+line hai hi nahi. Isliye statement banane ke baad ek chhotu use bank ke record se milata hai ki sach me sahi hai. Phir
+bhi koi transaction baad me aaya, to do raaste hain. Pehla: use jod ke nayi statement bana do aur Ravi ke account me
+daal do, wo dobara download kar lega. Doosra: statement thodi der se banao, 1 March ki subah nahi to thoda baad, taaki
+der wale bhi aa jaayen. Ekdam pakki chahiye to banao, verify karo ki kuch chhoota nahi, tab do. Kaunsa raasta, ye
+interviewer se poochho: turant chahiye ya ekdam pakki.
+
+**Asli naam:** record se milao = reconciliation (statement ka jod == ledger ka jod?, kadam 10 wala milaan), nayi
+statement, dobara download = revised statement (naya version, purana bhi rakha), thodi der se banao = cutoff + grace
+window, turant ya ekdam pakki = consistency vs immediacy ka faisla.
+
+```mermaid
+flowchart LR
+    W["Chhotu<br/>(Batch worker)"] --> S[("Feb statement")]
+    M["Milaan<br/>(Reconciliation)"] --> S
+    M -. "line chhooti" .-> N[("Nayi statement<br/>(Revised version)")]
+    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 16. Chhotu aadha kaam karke gira (wahin se utha le)
+
+Chhotu aadha kaam karke gir gaya. Ye Kafka me kai baar ho chuka hai. Chhotu jitna karta hai DB me likhta jaata hai, to
+gira to naya chhotu wahin se utha leta hai, shuru se nahi.
+
+**Asli naam:** DB me likhta jaata, wahin se utha le = checkpoint (kaun se khaate ho gaye), jo ban chuka wo dobara nahi
+= idempotency (statement id = khaata + mahina, dobara bani to wahi purani file).
+
+```mermaid
+flowchart LR
+    W1["Chhotu gira"] --> C[("Kahan tak bana<br/>(Checkpoint)")]
+    C --> W2["Naya chhotu<br/>(wahin se)"]
+    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 17. 9 chhotu khaali, ek laga pada (khaali ladke madad karo)
+
+Kaam khaate ke hisaab se 10 chhotu me baanta. 9 chhotu kaam khatam karke baithe hain, ek bahut der se laga pada hai.
+Ye isliye hua kyunki har khaata barabar nahi: aam aadmi ke mahine me 50 transaction, ek bade merchant ke crore. Jab
+ladke khaali baithe hain to naye ladke kyun lane? Ek bhara pada hai, baaki khaali, to kaam baant lo. Idhar aao sab,
+is bande ki madad karo.
+
+**Asli naam:** ek ke paas bahut kaam = hot key / data skew, khaali ladke madad karo = work stealing (kaam chhote
+tukdon me, khaali worker agla tukda utha le). Naye worker lagane ki zaroorat nahi.
+
+```mermaid
+flowchart LR
+    H["Bhara chhotu<br/>(Hot key)"] --> T["Kaam ke tukde"]
+    T --> F["Khaali chhotu<br/>(Work stealing)"]
+    style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 18. Ek khaata, 5 crore transaction, ek statement (bada aadmi jode)
+
+Wo bada kaam ek hi merchant ka hai: 5 crore transaction, aur statement ek hi banni hai. To ek parchi pe sab mat baitho,
+kaam baant do: 20 lakh tu le, 30 lakh tu le. Sab apna hissa karke laaye. Phir ek bada aadmi bulao jo isi kaam me
+expert hai, wo sabke tukde jod ke ek statement bana dega. Thoda time lagega, chalega.
+
+**Asli naam:** kaam baant do = map (har chhotu apne tukde ka hisaab), bada aadmi jod ke ek banaye = reduce (saare tukde
+kram se jod ke ek statement), dono milke = MapReduce.
+
+```mermaid
+flowchart LR
+    A["5 crore transaction"] --> M1["Chhotu 1<br/>(Map)"]
+    A --> M2["Chhotu 2<br/>(Map)"]
+    M1 --> R["Bada aadmi<br/>(Reduce)"]
+    M2 --> R
+    R --> S[("Ek statement")]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 19. May wale ko 1 May ka balance chahiye (master register se utha le)
+
+Statement me har line ke saath running balance chhapta hai. May wale chhotu ko pehli line pe 1 May ka opening balance
+likhna hai, aur wo April wale ke khatam hone pe hi pata chalega. Matlab kaam baanta, par sab line me lag gaye. To
+tukde mahine ke hisaab se do: April wala April, May wala May. Andaze se balance nahi likh sakte, statement galat ho
+jaayegi. Aur balance to master register me pehle se likha hai. Intezaar kyun? May wala chhotu master register se 1 May
+ka balance utha le, apne notepad me likh le, aur kaam shuru kar de.
+
+**Asli naam:** mahine ke tukde = mahine ke partition, master register me likha balance = balance snapshot (kadam 11
+wala: har mahine ke ant ka balance alag likha). Isliye har chhotu apna mahina akela banata, kisi ka intezaar nahi.
+
+```mermaid
+flowchart LR
+    S[("Master register<br/>(Snapshot: 30 April ka balance)")] --> M["May wala chhotu"]
+    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
+## 20. Raat 2 baje chhotu ne register gher liya, chai ki payment atki (photocopy se padho)
+
+Raat 2 baje saare chhotu main register se arbon line padh rahe hain. Usi waqt log UPI kar rahe hain, aur ₹50 ki chai
+ki payment 20 second atak gayi. Ye kadam 8 wali hi dikkat hai: padhne wale ne register gher liya. To chhotu photocopy
+se padhein, main register asli payment ke liye khaali rahe.
+
+**Asli naam:** photocopy se padho = read replica (batch sirf replica pe), main register asli payment ke liye = primary.
+
+```mermaid
+flowchart LR
+    U["UPI, chai ₹50"] --> P[("Main register<br/>(Primary)")]
+    P --> X[("Photocopy<br/>(Read replica)")]
+    W["Chhotu<br/>(Batch workers)"] --> X
     style X fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
