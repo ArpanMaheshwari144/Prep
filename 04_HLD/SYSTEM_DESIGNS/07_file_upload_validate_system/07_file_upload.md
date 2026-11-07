@@ -124,8 +124,9 @@ chhod do; ulta aaya to dekho kaunsa naya, purana chhod do. S3 khud likhta hai: "
 ```mermaid
 flowchart LR
     S3[("S3")] -- "file aa gayi (event)" --> U["Upload Server"]
-    U --> DB[("DB: UPLOADED")]
-    U --> K["Kafka"]
+    U --> DB[("DB: UPLOADED + vasiyat<br/>(status + outbox, ek transaction)")]
+    DB --> R["Runner<br/>(relay)"]
+    R --> K["Kafka"]
     K --> W["Worker (scan)"]
     style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```

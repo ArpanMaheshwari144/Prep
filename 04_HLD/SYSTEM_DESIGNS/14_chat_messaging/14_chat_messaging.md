@@ -140,8 +140,8 @@ number phone nahi lagayega, phone lagayega to clash ho jaayega. Phone ko thodi p
 to bas message bhejne wala banda hai. Server ko pata hai kaunsa pehle aaya, kis time aaya. Server lagayega number.
 
 **Asli naam:** numbering = sequence number, server ka, har chat ka apna (`#980`, `#981`; Redis `INCR seq:college-gang`,
-ek saath aaye to bhi do alag number). Phone ko thodi pata = phone ki ghadi pe bharosa nahi. Wapas jude Ravi ko "mere
-paas aakhri #979, uske baad sab do" bhi isi number se. Redis restart hua to ginti peeche se shuru na ho: us chat ka
+ek saath aaye to bhi do alag number). Phone ko thodi pata = phone ki ghadi pe bharosa nahi. Wapas jude Ravi ko jo
+nahi gaya wo sab server apne record se deta (neeche "Maan lo #980"), aur phone isi number se sort karta. Redis restart hua to ginti peeche se shuru na ho: us chat ka
 aakhri number Cassandra se padh ke wahin se aage.
 
 **Maan lo #980 ka DB save atka, #981 pehle pahunch gaya, Ravi ka phone "aakhri #981" yaad rakhe aur reconnect pe "#981 ke

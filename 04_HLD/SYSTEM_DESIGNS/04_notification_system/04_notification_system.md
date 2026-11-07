@@ -39,7 +39,9 @@ gira to baad me koi utha ke Kafka me daal dega.
 ```mermaid
 flowchart LR
     U["Arpan"] --> O["Order Service"]
-    O --> K[("Beech ka dabba<br/>(Kafka)")]
+    O --> DB[("Order + vasiyat<br/>(DB: order + outbox, ek transaction)")]
+    DB --> R["Runner<br/>(relay)"]
+    R --> K[("Beech ka dabba<br/>(Kafka)")]
     K --> W["Worker"]
     W --> C["SMS / email / push company"]
     style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

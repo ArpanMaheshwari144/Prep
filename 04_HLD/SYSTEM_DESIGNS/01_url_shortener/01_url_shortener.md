@@ -238,7 +238,7 @@ nahi; har click hamare paas, control hamare paas), phone cache pe TTL = browser 
 
 ```mermaid
 flowchart LR
-    U["Log ka phone<br/>(Browser)"] --> C["Counter wala<br/>(App server, 302)"]
+    U["Log ka phone<br/>(Browser)"] --> C["Counter wala<br/>(App server, 302 + no-store)"]
     C --> K["Kaali list<br/>(Safe Browsing check)"]
     C --> D[("Mota register<br/>(DB: band token)")]
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000

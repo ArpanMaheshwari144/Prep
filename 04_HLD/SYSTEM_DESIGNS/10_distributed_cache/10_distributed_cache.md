@@ -136,8 +136,8 @@ deta hai.
 ```mermaid
 flowchart LR
     U["Ravi: naam badlo"] --> S["Server"]
-    S --> C[("Parchi<br/>(Redis: key DELETE)")]
-    S --> D[("Diary<br/>(DB: Ravi Kumar)")]
+    S -- "1. pehle kaato" --> C[("Parchi<br/>(Redis: key DELETE)")]
+    S -- "2. phir likho" --> D[("Diary<br/>(DB: Ravi Kumar)")]
     J["Banda<br/>(Sync job)"] -.-> C
     J -.-> D
     style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
