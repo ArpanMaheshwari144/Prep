@@ -14,11 +14,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int countDivisiblePairs(vector<int> &nums, int k)
+long long countDivisiblePairs(vector<int> &nums, int k)
 {
     unordered_map<int, int> mp;
     int sum = 0;
-    int count = 0;
+    long long count = 0;
     for (int i = 0; i < nums.size(); i++)
     {
         sum = ((nums[i]) % k + k) % k;
@@ -29,7 +29,7 @@ int countDivisiblePairs(vector<int> &nums, int k)
 }
 
 // ---- test helper (ise mat chhed) ----
-void check(int got, int exp, const string &label)
+void check(long long got, long long exp, const string &label)
 {
     cout << label << " -> got " << got << " | exp " << exp
          << (got == exp ? "   PASS" : "   *** FAIL ***") << "\n";

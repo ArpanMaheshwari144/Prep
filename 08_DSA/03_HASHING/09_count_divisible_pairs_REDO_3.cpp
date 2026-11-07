@@ -22,10 +22,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int countDivisiblePairs(vector<int> &nums, int k)
+long long countDivisiblePairs(vector<int> &nums, int k)
 {
     unordered_map<int, int> mp;
-    int count = 0;
+    long long count = 0;
     for (auto &it : nums)
     {
         int rem = (((it % k) + k) % k);
