@@ -2,7 +2,7 @@
 
 ```
  BROAD IDEA: XOR: a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
- ★ MILTE-JULTE (sorted / 1..n / dohra): upar NAAM-SE-CONFUSE D dekh, XOR lagane se PEHLE.
+ ★ MILTE-JULTE (sorted / 1..n / dohra): 00_SHURU me NAAM-SE-CONFUSE D dekh, XOR lagane se PEHLE.
 
 ```
 

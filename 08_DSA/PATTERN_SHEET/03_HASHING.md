@@ -2,7 +2,7 @@
 
 ```
  BROAD IDEA: hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
- ★ MILTE-JULTE (longest consecutive vs LIS): upar NAAM-SE-CONFUSE B dekh.
+ ★ MILTE-JULTE (longest consecutive vs LIS): 00_SHURU me NAAM-SE-CONFUSE B dekh.
 
  COMMON SKELETON (seen / complement / count family -- ek pass):
     map/set banao                      // kabhi PRELOAD: two-sum khaali · subarray-sum-k -> mp{0:1}
@@ -376,7 +376,7 @@ Beech me "success" aaya to us server ki ginti 0. Kul kitne alert hue, wo lautao.
   kyun: s1 ke 3 error (s2, s3 beech me aaye par s1 ki ginti nahi todte) -> 1 alert; s3 ka sirf 1 error
 
 logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
-pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (upar NAAM-SE-CONFUSE E)
+pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (00_SHURU me NAAM-SE-CONFUSE E)
 ```
 
 ```cpp

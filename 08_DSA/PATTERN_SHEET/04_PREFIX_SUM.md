@@ -3,7 +3,7 @@
 ```
  BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
  ★ EDGE (prefix + hashmap, sum == K): map[0] = 1 se SHURU karo. [3], K=3: bina iske poora-array wala case chhoot jaata.
- ★ MILTE-JULTE (max sum vs count sum == K): upar NAAM-SE-CONFUSE C dekh.
+ ★ MILTE-JULTE (max sum vs count sum == K): 00_SHURU me NAAM-SE-CONFUSE C dekh.
  ★ EDGE (C++ %): minus % minus deta (-2 % 5 = -2) -> ((x % m) + m) % m  (divisible-by-k remainder).
 
 ```

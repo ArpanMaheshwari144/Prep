@@ -44,6 +44,26 @@ Ek array diya hai (sab number alag). Iske saare subsets (khaali bhi) lautao, kra
   kyun: har element lo ya chhodo -> 2 x 2 = 4 subset
 ```
 
+```cpp
+void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp) {
+    if (index >= nums.size()) {             // har element pe faisla ho gaya -> ek poora subset
+        ans.push_back(temp);
+        return;
+    }
+    temp.push_back(nums[index]);            // INCLUDE: le liya
+    solve(nums, ans, index + 1, temp);      // index+1: agle element pe faisla
+    temp.pop_back();  // ★ UN-CHOOSE, exclude se PEHLE: warna exclude me bhi chipka rehta
+    solve(nums, ans, index + 1, temp);      // EXCLUDE: element chhod ke aage
+}
+
+vector<vector<int>> subsets(vector<int> &nums) {
+    vector<vector<int>> ans;
+    vector<int> temp;  // ★ BAHAR banao, by-ref pass: helper me banate to har call naya
+    solve(nums, ans, 0, temp);              //   (ek SHARED path pe push / pop -> tabhi backtrack chalta)
+    return ans;                             // 2^n subsets (har element in / out = power set)
+}
+```
+
 ```
 TASVEER:
 
@@ -64,24 +84,6 @@ TASVEER:
 ```
 
 ```cpp
-void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp) {
-    if (index >= nums.size()) {             // har element pe faisla ho gaya -> ek poora subset
-        ans.push_back(temp);
-        return;
-    }
-    temp.push_back(nums[index]);            // INCLUDE: le liya
-    solve(nums, ans, index + 1, temp);      // index+1: agle element pe faisla
-    temp.pop_back();  // ★ UN-CHOOSE, exclude se PEHLE: warna exclude me bhi chipka rehta
-    solve(nums, ans, index + 1, temp);      // EXCLUDE: element chhod ke aage
-}
-
-vector<vector<int>> subsets(vector<int> &nums) {
-    vector<vector<int>> ans;
-    vector<int> temp;  // ★ BAHAR banao, by-ref pass: helper me banate to har call naya
-    solve(nums, ans, 0, temp);              //   (ek SHARED path pe push / pop -> tabhi backtrack chalta)
-    return ans;                             // 2^n subsets (har element in / out = power set)
-}
-
 // ALT FORM (start-loop), same output:
 void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp) {
     ans.push_back(temp);                    // HAR node = ek subset (alag base-case NAHI)

@@ -10,7 +10,7 @@
 
  BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
  ★ EDGE (monotonic stack): stack me INDEX rakho, value nahi (DOORI chahiye: i - st.top()).
- ★ MILTE-JULTE (histogram vs container / trapping): upar NAAM-SE-CONFUSE A dekh.
+ ★ MILTE-JULTE (histogram vs container / trapping): 00_SHURU me NAAM-SE-CONFUSE A dekh.
 
 ```
 
@@ -272,6 +272,8 @@ int largestRectangleArea(vector<int> &heights) {
   kyun: row 1 aur row 2 me col 2,3,4 sab 1 -> 2 row x 3 col = 6
 
 = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
+★ LeetCode pe matrix vector<vector<char>> aati: wahan signature char karo aur check matrix[i][j] == '1'
+  (neeche code teri file 06_STACK/10_maximal_rectangle.cpp jaisa: int matrix + == 1)
 ```
 
 ```cpp

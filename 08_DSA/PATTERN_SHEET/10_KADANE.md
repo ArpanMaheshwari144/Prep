@@ -4,7 +4,7 @@
  BROAD IDEA: ek value AAGE carry karo (min/sum), har step MAX update. single pass, O(1) space.
  ★ EDGE (circular): ans = max(normal kadane, total - minSubarray). SAB NEGATIVE -> total-min = 0 aata,
          tab normal kadane hi sahi (alag se dekho).
- ★ MILTE-JULTE (max sum vs count sum == K): upar NAAM-SE-CONFUSE C dekh.
+ ★ MILTE-JULTE (max sum vs count sum == K): 00_SHURU me NAAM-SE-CONFUSE C dekh.
 
  KAB: subarray ka MAX sum / product · stock ka ek baar kharido-becho
 ```

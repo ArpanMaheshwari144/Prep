@@ -3,7 +3,7 @@
 ```
  BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
  ★ EDGE (sorted 2-ptr): duplicate skip karna hai kya? 3-sum HAAN, 2-sum nahi (bina skip ek triplet kai baar).
- ★ MILTE-JULTE (container / trapping / histogram): upar NAAM-SE-CONFUSE A dekh.
+ ★ MILTE-JULTE (container / trapping / histogram): 00_SHURU me NAAM-SE-CONFUSE A dekh.
 
 ```
 
