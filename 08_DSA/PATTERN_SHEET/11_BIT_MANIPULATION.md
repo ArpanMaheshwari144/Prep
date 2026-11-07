@@ -29,3 +29,10 @@ int singleNumber(vector<int> &nums) {       // sab 2 baar, ek 1 baar -> sab XOR 
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+TRICK: har num 2-baar, ek 1-baar -> saare XOR karo -> pairs cut -> jo bacha = answer.
+  XORR = nums[0];  for i=1..n: XORR ^= nums[i];  return XORR.   (O(n)/O(1), koi map nahi)   // nums[0] se shuru isliye loop 1 se; a^a=0 se pairs kat jaate
+FAMILY (aage isi daabe me aayenge): Missing-Number · Single-Number-II bhi XOR-based.
+```
+

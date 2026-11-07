@@ -31,6 +31,15 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 //   scan -> us min ko VARIABLE me CACHE -> O(n) (redundancy -> cache = running min)
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+TRICK: aaj becho = aaj ka daam MINUS ab-tak-ka-sasta. bas 2 cheez track: mini + maxProfit.
+  mini = min(mini, prices[i]);   maxProfit = max(maxProfit, prices[i] - mini); // init mini=INT_MAX; mini PEHLE update -> diff kabhi minus nahi
+(sell buy-ke-BAAD auto -- mini hamesha current se pehle ka.)
+BRUTE->OPT (aise pahunche): brute = saare pair (i<j): prices[j]-prices[i], max. O(n^2).
+  us min ko ek VARIABLE me CACHE -> inner loop gayab -> O(n).  (redundancy->cache = running-min)
+```
+
 ### ▸ MAX SUBARRAY SUM (LC-53)
 
 ```
@@ -57,6 +66,16 @@ int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> su
     }
     return maxSum;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+TRICK: pichhla running sum NEGATIVE = aage bojh -> PHENK do (sum=0), fresh. bas yahi.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     int array diya. CONTIGUOUS subarray (kam se kam 1 element) jiska SUM sabse bada, wo sum lautao.
 ```
 
 #### ── FAMILY: flip ho to MIN bhi + 3 candidate + FREEZE (temp) · 53 sum · 152 product · 1749 abs ──
@@ -90,6 +109,18 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
     }
     return ans;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+TRICK: neg*neg = BADA -> sirf max se nahi banega, MIN bhi track karo (chhota kal sabse bada ban sakta).
+  temp    = max({ num, num*max, num*min });     // 3 candidate ka max (temp me rakho: max pehle badla to min ko naya max milta)
+  min     = min({ num, num*max, num*min });     // FREEZE: min purane max/min se
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     int array diya. CONTIGUOUS subarray jiska PRODUCT (guna) sabse bada, wo product lautao.
 ```
 
 ### ▸ MAX ABSOLUTE SUM (LC-1749)
@@ -130,6 +161,18 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
 ```
 
 ── (STANDALONE — apni alag trick) ──
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+= MAX PRODUCT SUBARRAY (152) ka HUBAHU same skeleton (temp/min/max freeze, upar dekh), sirf 2 TWEAK:
+   (1) GUNA (*) -> PLUS (+)                    (num*max -> num+max, num*min -> num+min)
+dry-run [2,-5,1,-4,3,-2] -> 8: subarray [-5,1,-4]=-8 minSum me -> |-8|=8.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     int array diya. kisi bhi CONTIGUOUS subarray ka sum lo, uska |sum| sabse bada lautao.
+```
 
 ### ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
 
@@ -193,6 +236,14 @@ int maxSubarraySumCircular(vector<int> &nums) {
     return maxSum;                          // ★ sab non-positive: total-min = 0 = EMPTY, galat
 }
 // house robber II jaisa "circular twist", par mechanism alag (HR-II = pehla / aakhri chhodo)
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+    ★ RETURN (edge yahin handle -- Arpan-way, saaf):
+         return maxK;                                 // maxK<=0 = SAB non-positive (all-neg) -> sirf maxK
+DRY-RUN [5,-3,5]:  maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
+   isliye maxK>0 check: agar koi positive hi nahi -> wrap bekaar -> seedha maxK (empty allowed nahi).
 ```
 
 ### ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = bestLeft + bestRight + WALL
@@ -304,5 +355,21 @@ int maxTwoNonOverlap(vector<int> &nums) {   // STEP 5: WALL
 }                                           //   do baar gina ([..,8,..] + [14..] = 22 jhootha)
 // [1,2,-7,8,6,-4]: maxEndAt [1,3,-4,8,14,10] · bestLeft [1,3,3,8,14,14]
 //   bestRight [14,14,14,14,6,-4] · i=1: 3 + 14 = 17
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+ESSENCE: har wall pe -> [0..i] ka best + [i+1..n-1] ka best -> in sab ka MAX. bas yehi.
+   CONNECT: ye KADANE + PREFIX/SUFFIX ka COMBO hai (do pattern jud rahe).
+      05 (kadane per-index) -> maxEndingAt array -> uska PREFIX-max (aage) = bestLeft,
+      SUFFIX-max (peeche) = bestRight -> phir WALL se jodo.  (var = code jaisa: ans/temp)
+      KYUN kadane+prefix: har index tak ka running SUM = prefix-sum; uska MAX (neg aaye to reset) = kadane.
+      eg [2,1,-99,3,3]=9 -> wall index-1 pe: LEFT best=3 ([2,1]) + RIGHT best=6 ([3,3]) = 9.
+PEHLI SHEET (Aug) se bhi, same to same:
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     int array diya. 2 subarray chuno (contiguous, non-empty, NON-OVERLAPPING). dono ke sum ka max JOD lautao.
 ```
 

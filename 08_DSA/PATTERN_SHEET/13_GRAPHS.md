@@ -104,6 +104,17 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+= tree LEVEL-ORDER (BFS) ka SAME skeleton (queue + pop + push), graph ke liye 3 ADD:
+   (1) NEIGHBOURS : tree me node->left/right built-in · graph me adj[node] (edges se banao).
+   (2) VISITED    : tree me cycle nahi · graph me vis[] chahiye (cycle-rok, dobara na ghoomo).
+   (3) LEVEL-loop NAHI : path-exists level-by-level nahi -> sirf reachability (target mil?).
+ADJ build (undirected -- NAYA):
+BFS flow:
+    return false;                        // queue khali -> koi path nahi
+```
+
 #### ── FAMILY: COUNT components (outer-loop + FLOOD each; Islands = grid, CC = adj-list, bas neighbour badla) ──
 
 ### ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
@@ -140,6 +151,19 @@ int numIslands(vector<vector<char>> &grid) {
     }
     return count;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+DFS(i,j) — code order (upar se neeche), grid ke 3 farak (adj-list nahi):
+   1. BASE (ek hi if, sab || se juda):
+   3. NEIGHBOURS: 4-dir DFS -> (i+1,j)(i-1,j)(i,j+1)(i,j-1).
+'0'-check base me (bounds ke SAATH) -- warna paani/visited pe nahi rukta, poora grid kha jaata.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     grid me '1' = zameen, '0' = paani. 4-direction se jude '1' = ek island. kitne island?
 ```
 
 ### ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
@@ -185,6 +209,15 @@ int countComponents(int n, vector<vector<int>> &edges) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : ISLANDS ka SAME skeleton (outer-loop + count), bas 2 farak:
+       (a) graph = ADJ-LIST (grid nahi)   (b) BFS use kiya (islands ne DFS kiya tha).
+input = n nodes + edges[] -> pehle ADJ banao (undirected -> DONO taraf):   -- NAYA
+    for(i=0..n-1)                                // outer-loop = har node scan -> DISCONNECTED groups bhi cover
+neighbours = adj[node] (islands me 4-direction tha) -- yahi ek farak, baaki skeleton same.
+```
+
 ### ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
 
 ```
@@ -219,6 +252,20 @@ int maxAreaOfIsland(vector<vector<int>> &grid) {
     }
     return ans;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+= ISLANDS ka SAME skeleton (base + sink), bas DFS ab void nahi -> AREA return. 2 DELTA:
+  (1) DFS ko INT banao -> khud(1) + chaaron dir ka area jodo:
+           grid[i][j]=0;                                        // sink (visited mark)
+  (2) outer count++ nahi -> har island ka area le ke MAX:
+ans=0 se start (area hamesha >=0; koi island nahi -> ans 0). ISLANDS ka void-DFS = yahi, bas return-value ADD hui.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     grid me 1 = zameen, 0 = paani (4-direction jude 1 = island). SABSE BADE island ke cells lautao, na ho to 0.
 ```
 
 #### ── FAMILY: MULTI-SOURCE / level-BFS (saare sources EK saath queue; sz-snapshot = ek level = ek minute) ──
@@ -278,6 +325,21 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
 }                                           //   mins = 0 -> mins-1 = -1 galat, sahi 0
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SETUP:
+    dirs = {{1,0},{-1,0},{0,1},{0,-1}};          // 4-dir neighbour-trick · int mins=0 yahin
+                                                 // ★ EDGE: grid me koi santra hi nahi -> loop
+                                                 //   chala hi nahi, mins=0 -> mins-1 = -1 aata, sahi 0
+SETUP:
+PEHLI SHEET (Aug) se bhi, same to same:
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     grid: 0 khali, 1 fresh, 2 rotten. har minute rotten apne 4 fresh padosi sadaata. sab sadne me kitne min? na ho -1.
+```
+
 #### ── FAMILY: TOPO-SORT / cycle-detect (DIRECTED; prereq + can-finish -> Kahn's = BFS + indegree) ──
 
 ### ▸ COURSE SCHEDULE (LC-207)  = TOPO-SORT (Kahn's), cycle-detect
@@ -319,6 +381,40 @@ bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
     }
     return ans.size() == numCourses;        // ★ cycle wale ka indegree KABHI 0 nahi -> queue me aate hi
 }                                           //   nahi -> size < n -> false
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi?   cycle -> false.
+TEMPLATE (Kahn's = BFS + indegree):
+    ADJ + INDEGREE (khud banao):   // vector<int> indegree(n, 0): sab 0 se, phir ++
+            topo.push_back(node);
+                indegree[nbr]--;                   // ek prereq pura
+                if(indegree[nbr]==0) q.push(nbr);  // sab pure -> ready
+        return topo.size() == numCourses;          // sab process = no cycle
+indegree = "kitne prereq BACHE";  0 = ready-to-take.
+cycle wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
+★ VARIANT: BUILD ORDER — "ready me se SABSE CHHOTA pehle" (order maanga)
+    KYUN: topo ke KAI sahi order hote. [5->2,5->0,4->0,4->1,2->3,3->1] me
+          "4 5 0 2 3 1" bhi sahi, "5 4 2 0 3 1" bhi.  sawaal ek KHAAS order maange -> heap.
+          queue = jo PEHLE ready hua wo pehle  ·  heap = ready me jo CHHOTA wo pehle.
+        q.front()         ->   pq.top()
+        heap {0,2,3} -> 0 nikla -> 1 ready -> heap {1,2,3} -> 1 -> 2 -> 3    = 0 1 2 3
+        ans KHAALI se shuru:  vector<int> ans;      (ans(n,0) + push_back = size 2n, galat)
+PEHLI SHEET (Aug) se bhi, same to same:
+idea : "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false.
+question deta -> MATRIX:  prerequisites = [[1,0],[2,1],[3,2]]   // har [a,b] = a lene ke liye b pehle (edge b se... u->v)
+TEMPLATE (Kahn's = BFS + indegree):
+    usme se KHUD adj-list + indegree banao:
+    while(q){ node=pop; topo.push(node);
+              for(nbr:adj[node]){ indegree[nbr]--; if(indegree[nbr]==0) q.push(nbr); } }  // prereq pura -> ghatao; 0 hua -> push
+    return topo.size() == numCourses;                     // sab process = no cycle
+indegree = "kitne prereq BACHE"; 0 = ready-to-take. cycle-wale nodes ka indegree KABHI 0 nahi -> queue me aate hi nahi -> topo.size() < n -> false.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     numCourses aur prerequisites diye ([a,b] = a se pehle b). saare course khatam ho sakte? true/false.
 ```
 
 ### ▸ BUILD ORDER — ready me se SABSE CHHOTA pehle (topo + MIN-HEAP)
@@ -420,6 +516,25 @@ Node *cloneGraph(Node *node) {
 // DFS: recursion + same map -> map me hai? return; nahi -> clone + map -> har nbr recurse + jodo
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : "mere GRAPH ke saare node map me clone bana (A->A', B->B'), phir clones ko CONNECT kar (A'--B')." bas.
+idea : map me har node ka clone BANAO (A->A', B->B') -> phir un clones ko CONNECT karo (sab map ke andar).
+       map ki VALUE hi clone -> mp[node] = us node ka clone; map = "clone ho chuka?" + "uska clone kaha".
+TEMPLATE  (normal BFS + map<purana, clone> + 2 kaam)
+    // SEED · pehle if(!node) return NULL: khaali graph
+yaad: (a) if ke ANDAR (sirf naya pe) · (b) if ke BAHAR (har edge pe)
+2 alag kaam: clone BANANA (exist) vs JODNA (push_back = edge). bina jodna -> loose clones -> adhoora.
+PEHLI SHEET (Aug) se bhi, same to same:
+TEMPLATE (BFS = normal traversal; map<old,new> + 2 special move):
+    BFS(q): curr nikalo -> for(it : curr->neighbors):
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     connected undirected graph ka ek node diya. poora graph DEEP COPY karo (naye node, naye neighbours), clone lautao.
+```
+
 #### ── FAMILY: GRAPH-COLOURING / bipartite (2 group me baant sakte? odd-cycle? -> 2-COLOUR BFS) ──
 
 ### ▸ IS BIPARTITE (LC-785)  = 2-colour BFS + outer-loop (CC jaisa)
@@ -483,6 +598,29 @@ bool isBipartite(vector<vector<int>> &graph) {
     }
     return true;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : har node ko 2 me se ek rang (0/1) do; koi bhi 2 JUDE hue (adjacent) node SAME rang ke na hon.
+       ho gaya -> true.  kahin do jude hue SAME rang pe phans gaye (odd cycle) -> false.
+PEHCHAAN: "DO team / group me baanto + jo JUDE hain (dushman / edge) woh ek group me NAHI" -> bipartite.
+          output me "team A = {..}, team B = {..}" dikhe = 2 rang = yahi pattern.
+          ★ DSU ULTA hai: DSU me jude hue -> SAME group. yahan jude hue -> ALAG group.
+idea : color[] = -1 (uncolored), 0 / 1 = do rang.
+       START ko 0 do -> har neighbour ko ULTA rang -> pehle se rang hai aur SAME nikla -> false.
+       graph TOOTA (disconnected) ho sakta -> outer loop har uncolored node se naya BFS (CC jaisa).
+TEMPLATE  (BFS alag function, bool lautata; outer loop uska false pakadta)
+        for (int i = 0; i < m; i++)   // har node se: graph toota (disconnected) ho sakta
+PEHLI SHEET (Aug) se bhi, same to same:
+SAAR : har node 2 rang (0/1); koi 2 ADJACENT same-rang na ho -> bipartite. odd-cycle -> false.
+idea : input KHUD adj-list. disconnected -> outer-loop (CC jaisa).
+TRICK (NAYA): 2-COLOUR
+   START ko 0 do -> har neighbour OPPOSITE:  color[it] = !color[curr]   (0<->1 flip).
+   neighbour ka rang curr ke SAME nikla -> CONFLICT -> return false.
+    outer loop har node i: uncolored mila ->
+    phir BFS(i) us current node se shuru:
+        curr nikalo -> for(it : graph[curr]):
 ```
 
 #### ── FAMILY: WEIGHTED shortest-path (edges pe weight -> Dijkstra; kam edges != kam weight, BFS kaafi nahi) ──
@@ -552,6 +690,18 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+REAL: Google Maps/GPS (shortest route), network routing, delivery/flights -- roz use hota.
+SAAR : BFS ka WEIGHTED bhai. wahi template, 2 swap + relaxation:
+         visited[] -> dist[] (init INF, src=0)
+NO visited[] kyun:
+   strict-relax (naya STRICTLY chhota -> tabhi push) -> undirected me bhi infinite-loop nahi.
+idea : min-heap kyun -> "kam edges != kam weight" -> greedily sabse-sasti-abhi-tak node uthao.
+   pq me {dist, node} PAIR -> heap FIRST element (dist) se sort (tie -> second).
+   min-heap -> sabse chhoti dist TOP pe. (top-K / value+index saath me bhi: HAMESHA {jispe-sort, saath-wala}.)
+```
+
 #### ── FAMILY: DSU / Union-Find (groups / same-set + edges ek-ek MERGE; BFS = pura traverse, DSU = incremental) ──
 
 ### ▸ DSU (Union-Find)  = parent[] + find + unite
@@ -609,6 +759,19 @@ int countComponents(int n, vector<vector<int>> &edges) {
             count++;                        // sirf root ka parent khud wahi = ek group
     return count;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+REAL: dost-circle manager ("A-B same circle?"), network/accounts merge.
+SAAR : parent[] = har node ka leader. edge -> 2 node UNITE. end me alag ROOT (parent[i]==i) = components.
+TEMPLATE (class):
+       ux=find(x), uy=find(y);   // ROOT jodo, x-y khud nahi: warna group toot jaata
+       if(ux==uy) return;                            // already same set
+       if(rnk[ux] < rnk[uy]) parent[ux]=uy;          // UNION BY RANK
+       else if(rnk[uy] < rnk[ux]) parent[uy]=ux;     // chhota bade ke neeche
+       else { parent[uy]=ux; rnk[ux]++; }   // barabar rank: jodne se ek level badha, isliye ++
+components  -> count(i where find(i)==i)   // sirf root ka parent khud wahi hota
 ```
 
 ### ▸ WORD LADDER (LC-127)  = BFS shortest-path (unweighted)
@@ -686,5 +849,14 @@ int ladderLength(string beginWord, string endWord, vector<string> &wordList) {
     }
     return 0;                               // endWord dict me nahi -> 0
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SIGNAL: "minimum steps / shortest unweighted path" -> BFS (level-by-level).
+word = NODE · edge = "ek letter farak + dict me maujood".
+★ RETURN = WORDS count (begin = 1), steps nahi -> hit..cog = 5 words.
+★ EDGE: endWord dict me nahi -> 0 (rasta possible hi nahi).
+★ islands/Kahn's wali BFS family; yahan graph IMPLICIT (words). "shortest unweighted = BFS" ka classic.
 ```
 

@@ -41,6 +41,16 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+g[] = bachhe ki GREED, s[] = cookie SIZE. cookie j bachhe i ko khush karti: s[j] >= g[i]. max kitne bachhe khush?
+GREEDY soch: chhoti-greed wale bachhe ko jitni-ZAROORAT-utni (chhoti-se-chhoti jo kaam kare) cookie do
+             -> badi cookies bade-greed walon ke liye bachi rahein.
+dono SORT -> 2-pointer (i=bachha, j=cookie): // while(i<n && j<m): koi ek khatam -> ruk
+   else                j++;                    // cookie choti -> badi dhoondho
+count = ans.  (s khali -> 0 return)
+```
+
 ### ▸ JUMP GAME (LC-55)  = greedy REACHABILITY (farthest-reach track)
 
 ```
@@ -62,6 +72,15 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
 }
 // cookies se FARAK: wahan sort + 2-pointer; yahan sort nahi, ek scan me farthest-reach (greedy ke 2
 //   rang)
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+nums[i] = us index se max kitni door kood sakte. index0 se LAST tak pahunch sakte ho? true/false.
+GREEDY soch: har index pe track karo "ab tak sabse DOOR kahan tak pahunch sakta hoon" (maxReach).
+   agar koi index i KHUD maxReach se aage nikal gaya -> wahan pahunch hi nahi sakte -> FALSE.
+   maxReach = max(maxReach, i + nums[i]);       // apni pahunch badhao
+★ cookies se FARAK: wahan sort+2-pointer; yahan sort nahi -> ek scan me "farthest reachable" track. greedy ke 2 alag rang.
 ```
 
 ### ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END)
@@ -100,6 +119,25 @@ int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO 
 // EDGE: overlap pe BLINDLY start rakhna GALAT -> [[1,100],[2,3],[3,4]] pe 2 aata (sahi 1). end-compare
 //   zaroori.
 //   (alt: END pe sort -> pehla wala hamesha chhota-end -> ye if gayab)
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+intervals me se MIN kitne HATAO taaki koi overlap na bache? (= max non-overlapping rakho.)
+GREEDY: default SORT. 2-pointer -> start=rakha-hua, end=candidate. // start=0, end=1; while(end < n)
+                    end++;   // agla candidate dekho
+★ EDGE (dry-run se pakda): overlap pe BLINDLY start rakhna GALAT -> [[1,100],[2,3],[3,4]] pe 2 aata (sahi 1).
+  end-compare zaroori. (alt: END pe sort karo -> pehla-waala hamesha chhota-end -> ye if-check gayab.)
+PEHLI SHEET (Aug) se bhi, same to same:
+intervals me se MIN kitne HATAO taaki koi overlap na bache? (= max non-overlapping rakho.)
+GREEDY: default SORT. 2-pointer -> start=rakha-hua, end=candidate.
+★ EDGE (dry-run se pakda): overlap pe BLINDLY start rakhna GALAT -> [[1,100],[2,3],[3,4]] pe 2 aata (sahi 1).
+  end-compare zaroori. (alt: END pe sort karo -> pehla-waala hamesha chhota-end -> ye if-check gayab.)
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     intervals[]. MIN kitne hatao ki baaki koi overlap na kare (touching chalta).
 ```
 
 ### ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
@@ -144,6 +182,33 @@ int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
 }
 // gas=[1,2,3,4,5] cost=[3,4,5,1,2]: net -2 -2 -2 +3 +3 -> p0,p1,p2 pe reset, total 0 -> index 3
 // cookies / jump / interval se FARAK: sort NAHI. circular + 2 accumulator (possible? + start kahan)
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+har pump ka NET = gas[i] - cost[i]. Ek pass, DO accumulator:
+   kyaNegativeHua  = poore circle ka total   -> KABHI reset nahi  -> sirf "possible hai ya nahi"
+int index = 0, meriGaddiKaTank = 0, kyaNegativeHua = 0;   // 0 se: pehle pump ko start maano, tank khaali
+    kyaNegativeHua  += gas[i] - cost[i];   // poore circle ka total, kabhi reset nahi
+return kyaNegativeHua < 0 ? -1 : index;  // total kam = petrol hi kam -> -1
+★ KEY: total >= 0 ho to LAST reset wala index hi answer. kyun: start s se pump i pe tank dooba
+  -> s aur i ke beech ka koi bhi pump start bana ke bhi i paar nahi hota (beech ka tank >= 0 hi tha,
+  uske bina aur kam padta) -> seedha i+1 pe kood.
+PEHLI SHEET (Aug) se bhi, same to same:
+N pump CIRCLE me. gas[i]=milta, cost[i]=agle pump tak kharcha. kaha se shuru karu
+ki poora ghoom ke wapas wahin aa jau? koi start possible nahi -> -1.
+har pump ka NET = gas[i] - cost[i]. Ek pass, DO accumulator:
+   kyaNegativeHua  += gas[i]-cost[i];   // KABHI reset nahi -> ant me <0 -> -1 (petrol hi kam)
+   meriGaddiKaTank += gas[i]-cost[i];   // running; jaha doobta wahan se aage nahi ja sakte
+return  kyaNegativeHua < 0 ? -1 : index;
+★ KEY: kyaNegativeHua>=0 ho to jo LAST reset-index bacha wahi ANSWER (unique). kyun: jis pump pe
+  tank dooba, us-se-pehle kisi bhi start se wahan pahucha ja HI nahi sakta -> start hamesha aage hi.
+★ cookies/jump/interval se FARAK: yahan sort NAHI. circular + 2-accumulator (feasibility + start-track).
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     N pump gol me. gas[i] = milta, cost[i] = agle tak kharcha. kis index se poora chakkar lagega? na lage -> -1.
 ```
 
 ### ▸ TASK SCHEDULER (LC-621)  = greedy IDLE-SLOTS (most-frequent frame)
@@ -207,4 +272,19 @@ int leastInterval(vector<char> &tasks, int n) {
 // [A,A,A,B,B,B] n=2: gadde 2, idle 4, B bhare min(3,2)=2 -> idle 2 -> 6+2 = 8  (A B idle A B idle A B)
 // length-wins: [A3,B3,C3,D2,E2] n=3 -> idle -2 -> 13
 // alt: max-heap by freq + cooldown-queue (jab "actual schedule" poochein)
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+tasks (letters) + cooldown n: SAME task dobara chalane se pehle n gap chahiye. minimum total TIME (idle included)?
+BADI SOCH: sabse ZYADA baar aane wala task (maxFreq) poori timeline ka DHANCHA banata.
+   usko n-gap ke saath rakho -> beech ke gaps doosre tasks/idle se bharo. jo gap khali bache = IDLE.
+STEP-BY-STEP (har line ka KYUN):
+  2. gadde = maxFreq - 1                 // maxFreq copies rakho to unke BEECH itne gap bante
+                                         //   A _ _ A _ _ A  (3 A -> 2 gaps). WHY -1: gaps hamesha (count-1).
+        idleSlots -= min(mp[i], gadde)   // WHY min(count, gadde): ek task har gap me SIRF EK copy daal sakta
+                                         //   (2 same ek gap me = apna cooldown tootega). gadde gaps hai ->
+  5. idleSlots > 0 ? tasks.size()+idleSlots : tasks.size()
+                                         // <=0 = saare gap bhar gaye (bahut distinct tasks) -> koi idle nahi -> LENGTH wins
+(alt approach: max-heap by freq + cooldown-queue — har cycle sabse frequent pehle. heap = intuitive backup jab "actual schedule" poochein.)
 ```

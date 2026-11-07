@@ -106,6 +106,25 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
 // [[1],[2],[3]]: right col ke baad right=-1 < left=0 -> left col skip (warna 2 dobara)
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
+TEMPLATE:
+        if(top<=bottom){                                                   // GUARD (ek hi row thi to top++ ke baad wahi row ulti dobara chhap jaati)
+        if(left<=right){                                                   // GUARD (ek hi col thi to right-- ke baad wahi col ulti dobara chhap jaati)
+index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
+PEHLI SHEET (Aug) se bhi, same to same:
+SAAR : top/bottom/left/right 4 boundary rakho -> clockwise push -> boundaries andar simat-te.
+TEMPLATE:
+GUARD kyun: last 2 loops (bottom-row / left-col) se PEHLE check -- warna single row/col bache to DUPLICATE push.
+index yaad: top-row [top][i] · right-col [i][right] · bottom-row [bottom][i] · left-col [i][left].
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     m x n matrix. saare elements SPIRAL order me (bahar se andar, clockwise) vector me lautao.
+```
+
 ### ▸ TRANSPOSE
 
 ```
@@ -167,5 +186,21 @@ int countServers(vector<vector<int>> &grid) {   // set zeroes ki 2 marker trick,
                 count++;                    // || : row ya col koi ek kaafi
     return count;                           // O(m*n)
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+   count kitne communicate (jo apni row+col DONO me akela -> nahi ginte).
+INPUT: [[1,0],[1,1]] -> 3   ·   [[1,0],[0,1]] -> 0 (dono akele)
+      rowCount[i], colCount[j]. akela pehchano -> count==1 dono me.
+FAMILY: = SET MATRIX ZEROES (zeroRow/zeroCol -> yahan rowCount/colCount). counting-family. O(m*n).
+SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
+TEMPLATE:
+PEHLI SHEET (Aug) se bhi, same to same:
+SAAR: = SET-MATRIX-ZEROES wali 2-marker trick, bas MARK ki jagah COUNT.
+    rowCount[i], colCount[j]. akela pehchano -> count==1 dono me.
+TEMPLATE:
+  for i,j: if(grid[i][j]==1 && (rowCount[i]>1 || colCount[j]>1)) ans++;    // pass-2 CHECK
+FAMILY: = SET MATRIX ZEROES (zeroRow/zeroCol -> yahan rowCount/colCount). counting-family. O(m*n).
 ```
 

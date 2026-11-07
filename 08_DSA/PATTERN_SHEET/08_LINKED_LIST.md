@@ -47,6 +47,12 @@ Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+FAST/SLOW: slow 1 step, fast 2 step; fast end pe -> slow MIDDLE pe.
+LOOP-COND `fast && fast->next` dono zaroori: even [1,2,3,4] -> slow=3 (2nd middle); odd [1,2,3] -> slow=2.
+```
+
 ### ▸ DETECT CYCLE
 
 ```
@@ -67,6 +73,11 @@ bool hasCycle(Node *head) {                 // Floyd: cycle ho to tez-dheema MIL
     }
     return false;                           // fast NULL tak pahuncha = list ka end, cycle nahi
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+no-cycle -> fast NULL pe pahunch ke loop khatam -> false.
 ```
 
 ### ▸ FIND DUPLICATE NUMBER (LC-287)   [= DETECT CYCLE ka ARRAY-application]
@@ -98,6 +109,19 @@ int findDuplicate(vector<int> &nums) {
     }
     return slow;                            // jahan mile wahi cycle entry = duplicate
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR: n+1 numbers, values 1..n, ek repeat. dhoondo. O(1) space + array READ-ONLY.
+= DETECT CYCLE, bas DELTA: (a) array-as-linked-list  (b) detect nahi, cycle-ENTRY chahiye -> PHASE-2.
+KYUN CYCLE: values 1..n + n+1 slots -> koi value 2 baar point -> loop. entry-node = duplicate.
+VISUAL: nums=[3,1,3,4,2]:  0->3->4->2->3->4->2...  (loop; entry=3=dup)
+TEMPLATE:
+   int slow=0, fast=0;   // 0 se: value 1..n, koi 0 pe point nahi karta -> 0 cycle ke bahar ka start
+   slow=nums[slow]; fast=nums[nums[fast]];   // ★ PEHLE ek kadam chalao — dono 0 pe hi rahe to slow==fast, PHASE-1 loop chalega hi nahi
+crux: phase-2 = meet aur 0 se entry-tak distance BARABAR (Floyd) -> 0-reset + 1-1 kadam.
+FAMILY: FAST/SLOW (detect_cycle cousin) — wahi Floyd, array pe.
 ```
 
 ### ▸ LINKED LIST CYCLE II (LC-142)   [= DETECT CYCLE + phase-2 ENTRY]
@@ -144,6 +168,16 @@ ListNode *detectCycle(ListNode *head) {
 }                                           // detect cycle + find dup + cycle II = teeno wahi Floyd
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR: cycle ho to uske START (entry) node ka pointer return; warna NULL.
+= DETECT CYCLE (03), bas DELTA: true/false nahi, ENTRY chahiye -> PHASE-2.
+= FIND-DUPLICATE (12) ka Node* version: nums[i] ki jagah ->next. SAME phase-2.
+TEMPLATE:
+crux: meet aur head se entry-tak distance BARABAR (Floyd) -> head-reset + 1-1 kadam.
+FAMILY: FAST/SLOW TRIPLET — detect_cycle(03) + find-duplicate(12) + cycle-II(13), teeno wahi Floyd.
+```
+
 ### ▸ PALINDROME LL (LC-234)
 
 ```
@@ -171,6 +205,18 @@ bool isPalindrome(Node *head) {
 }   // list TOOTI nahi: pehle half ka ->next nahi badla, odd me middle SHARED -> bina cut odd + even dono
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+COMBO (3 tool jodo): middle -> 2nd half REVERSE -> head(front) & rev(back) saath chala ke compare.
+   return true;   (khali list -> true)
+list TOOT-ti NAHI: pehle-half node ka ->next kabhi nahi badla -> odd me middle node SHARED (head-se aur rev-se dono beech pe aa ke NULL milte -> while(head&&rev) bina cut ke odd+even dono handle).
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     linked list ka head diya. TRUE agar aage se aur peeche se SAME padhi jaaye, warna FALSE.
+```
+
 ### ▸ REMOVE NTH FROM END
 
 ```
@@ -194,6 +240,14 @@ Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam
     slow->next = slow->next->next;          // while ke BAHAR: loop khatam, ek hi baar hatao
     return head;                            // head nahi hata
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+PEHLI SHEET (Aug) se bhi, same to same:
+agar fast==NULL -> head hi hatana hai -> return head->next.
+warna dono SAATH chalao (gap constant) jab tak fast->next NULL -> slow "hatane wale ke PEHLE" baith jaata.
+slow->next us node ko point kar raha -> slow->next = slow->next->next. done.
 ```
 
 ### ▸ REMOVE ELEMENTS (delete by val, LC-203)
@@ -221,6 +275,11 @@ Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
     }
     return head;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+TRICK: prev SIRF no-match pe aage (removal pe prev=curr NAHI -- curr hata) -> warna consecutive [1,6,6,2] fail.
 ```
 
 #### ── FAMILY: DUMMY node (nakli head + tail; naye node jodte jao; ans = dummy->next; head ka case apne aap) ──
@@ -263,6 +322,11 @@ Node *mergeTwoLists(Node *a, Node *b) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+ek list khatam -> doosri ki BAAKI seedha jod do (dono already sorted).
+```
+
 ### ▸ ADD TWO NUMBERS
 
 ```
@@ -298,6 +362,20 @@ Node *addTwoNumbers(Node *a, Node *b) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR: 2 number linked-list me ULTA pade (units-digit HEAD pe). Jodo -> naya list.
+      ULTA hai isiliye HEAD-se-HEAD jodo = school-wala right-to-left add (carry aage jaata).
+dummy + tail (MERGE jaisa) -> naye node peeche jodte jao.  + ek CARRY.
+while (a || b || carry):          <- jab tak koi list bachi HAI, ya carry bacha
+   sum = carry                     (pichhle step ka carry se shuru)
+PEHLI SHEET (Aug) se bhi, same to same:
+dummy + tail (MERGE jaisa) + CARRY. digits ULTA store (units-digit pehle) -> seedha aage-aage jodo.
+while(a || b || carry):              <- koi list bachi HAI ya carry bacha -> chalte raho
+   sum = carry;                        (pichle ka carry se shuru)
+'|| carry' zaroori: 999 + 1 = 1000 -> dono list khatam par carry bacha -> ek aur node chahiye (leading '1').
+```
+
 ### ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
 
 ```
@@ -327,6 +405,19 @@ Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : har do adjacent NODE ki jodi swap (values nahi, NODES = pointer rewire). DUMMY-node trick.
+TEMPLATE:
+dummy kyu: jodi reconnect karne ko "jodi se pehle wala" node chahiye; pehli jodi ke pehle kuch nahi -> dummy.
+rewire ORDER + temp-save = crux. har iteration = SIRF EK jodi (aage ki jodi ka kaam mat karo).
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     linked list diya. har do paas-paas wale NODE ki jodi aapas me badlo (value nahi, node). naya head lautao.
+```
+
 #### ── FAMILY: REVERSE (3-pointer: prev / curr / next se link ulta; reverse khud + palindrome ka 2nd half) ──
 
 ### ▸ REVERSE LINKED LIST
@@ -350,6 +441,12 @@ Node *reverseList(Node *head) {
     }
     return prev;                            // ★ curr NULL pe ruka, prev = aakhri node = naya head
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+3-pointer: prev=NULL, curr=head;   // prev=NULL: purana head naya tail banega, uska next NULL
+har step: nextt BACHA -> curr ka link ULTA (->prev) -> dono aage. end: prev = naya head.
 ```
 
 ### ▸ REVERSE NODES IN K-GROUP (LC-25)  = REVERSE-LL (3-ptr) + RECURSION
@@ -405,6 +502,19 @@ Node *reverseKGroup(Node *head, int k) {
         head->next = reverseKGroup(nextt, k);   // ★ nextt = agle group ka head
     return prev;                            // prev = is group ka naya head
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR: har k-node group ko reverse (NODES). k se KAM bache -> waise hi.
+2 TUKDE (dono pehle se aate):
+   REVERSE-LL  = ek group ko 3-pointer se ulta        [engine reuse]
+   RECURSION   = group reverse -> BAAKI list pe khud ko call -> stitch
+DELTA (reverse-LL ke upar):
+   (1) count-FIRST: k node GINO -> < k? return head (leftover guard).   // while(chk && cnt<k) gino; cnt!=k -> return head · head==NULL -> NULL
+crux: count-FIRST + head-BANTA-TAIL + RECURSE-stitch.
+PEHCHAN: "reverse in groups of k" sunte hi -> 3-ptr + count + recurse.
+         (copy-random se ALAG: yahan nodes ULATNA, naye banana NAHI.)
 ```
 
 #### ── FAMILY: HASHMAP-AS-GLUE (map<old*, new*> = purane node ko naye se jodne wala gond; LRU me bhi) ──
@@ -480,5 +590,13 @@ Node *copyRandomList(Node *head) {
     }
     return newHead;
 }   // O(1) space alt = interleave A->A'->B->B' clone (optional, code nahi)
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+      copy ke random COPY-list ke andar point karein (original pe NAHI).
+PEHCHAN: "random pointer / deep copy" sunte hi -> MAP (old->new).
+         (k-group se ALAG: yahan naye node BANANA, ulatna NAHI.)
+TEMPLATE:
 ```
 

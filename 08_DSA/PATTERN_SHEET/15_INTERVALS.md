@@ -60,6 +60,18 @@ vector<vector<int>> merge(vector<vector<int>> &intervals) {
 }   // [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : sort by start -> ans me first daalo -> har next OVERLAP? merge : push.
+    sort(intervals.begin(), intervals.end());     // default FIRST-element (start) se sort (pair jaisa)
+ans.back() = last interval; [0]=start [1]=END.  overlap = curr.start last.END ko chhoo/cross kare. sort-by-start HAMESHA pehla step.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     intervals[] = [start,end]. saare overlap wale jod do, merged list lautao (touching bhi jud jaate).
+```
+
 ### ▸ MEETING ROOMS (LC-252, Easy)  = Merge ka SAME template, bas action alag
 
 ```
@@ -85,6 +97,17 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
     }
     return true;                            // koi overlap nahi
 }   // boundary farak: Merge touching = MERGE (<=) · Meeting touching = OK (<)
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : saare meeting attend ho sakte? = koi 2 OVERLAP na karein. (Merge ka SAME skeleton reuse.)
+SAME as MERGE (sort + ans.push(first) + loop overlap-check) -- bas overlap pe KYA karo:
+     MEETING: overlap -> return FALSE           (ruko)    |  end: return TRUE
+TEMPLATE (merge-jaisa hi):
+    return true;   // koi overlap nahi mila -> saari attend
+boundary FARAK (crux): Merge touching-MERGE -> `<=`  ·  Meeting touching-OK -> `<`.
+ek pattern (sort+overlap) -> bas (a) overlap pe action (merge vs stop) + (b) boundary (< vs <=) badalta. PROBLEM SAMJHO -> decide.
 ```
 
 ### ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
@@ -124,6 +147,22 @@ vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInter
         ans.push_back(intervals[i]);        //    phir count se aage baaki
     return ans;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
+KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
+               new[1]=max(new[1],intervals[i][1]); }   // end bhi max se: dono me jo aage tak jaaye
+        count++;                                                           // break wala yahan nahi aata -> count se doosra loop use daalega
+break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
+Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
+PEHLI SHEET (Aug) se bhi, same to same:
+SAAR : intervals pehle se sorted+non-overlap. new insert karo (overlap->merge). SORT nahi -> ek pass, 3 phase.
+KEY : new = "GROWING BOX" -- har overlap use STRETCH karta; sab overlap khatam pe ek baar push.
+        count++;                                                           // kitne process hue (break se pehle ruk)
+break-optimization: interval.start > new.end -> aage sab aur door (sorted) -> ruk. 'count'=kahan ruke -> doosra loop wahin se.
+Merge/Meeting me SORT + ans.push(first);  yahan sorted-diya -> SORT nahi, bas 3-phase (before / grow / after).
 ```
 
 #### ── FAMILY: SWEEP LINE (events + running count: kitna overlap, sirf "hai?" nahi) ──
@@ -176,5 +215,17 @@ int minMeetingRooms(vector<int> &start, vector<int> &end) {
 }   // start=[2,9,6] end=[4,12,10]: t=9 pe [6,10]+[9,12] = 2 -> 2 rooms
 // FAMILY: max-concurrent, CPU-load, planes-in-sky. SAGAA BHAI = DIFFERENCE ARRAY (LC-1109)
 //   -> PATTERN 4: map ki jagah ARRAY · end ki jagah END+1 (inclusive) · max ki jagah POORA array
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+NAYA-SOCH (merge/meeting-I se ALAG): rooms ko OBJECT mat gino -> +1/-1 GINTI karo.
+    meeting shuru = +1 (room bhara) · khatam = -1 (room khaali). running-sum ka MAX = answer.
+TOOL = ORDERED MAP (map<int,int> = time->delta; keys KHUD sorted -> manual sort NAHI):
+        overlap += it.second;   // +1/-1 jodo = is pal kitni meeting chal rahi
+        if(maxOverlap < overlap) maxOverlap = overlap;   // peak yaad rakho = rooms
+TIE (start==prev end): same key pe +1 aur -1 -> net 0 -> room REUSE free (jhoothi peak nahi).
+FAMILY: sweep-line / "events + running count" -- interval-overlap, max-concurrent, CPU-load, planes-in-sky.
+★ YAHAN NAHI MILEGA: iska SAGAA BHAI = DIFFERENCE ARRAY (LC-1109) -> PATTERN 4 (PREFIX SUM) me hai.
 ```
 

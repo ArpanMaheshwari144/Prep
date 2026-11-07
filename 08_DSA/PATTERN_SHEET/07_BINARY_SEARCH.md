@@ -54,6 +54,13 @@ int search(vector<int> &nums, int target) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+mid; target<mid -> left half, warna right. (low<=high: 1 element bacha tab bhi check; mid±1)   // mid=low+(high-low)/2 · loop ke bahar return -1
+PEHLI SHEET (Aug) se bhi, same to same:
+mid; target<mid -> left half, warna right. (low<=high, mid±1)
+```
+
 ### ▸ SEARCH INSERT POSITION
 
 ```
@@ -77,6 +84,11 @@ int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 
     }
     return low;                             // ★ na mila: low = pehla nums >= target = insert jagah
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+basic BS; na mile to low return (wahi insert jagah).   // loop khatam: low = pehla index jahan nums >= target
 ```
 
 ### ▸ FIRST & LAST POSITION (LC-34)
@@ -141,6 +153,28 @@ vector<int> searchRange(vector<int> &nums, int target) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+INPUT: [5,7,7,8,8,10], target 8 -> {3,4}
+      FIRST ke liye LEFT chalte raho · LAST ke liye RIGHT chalte raho -> 2 alag BS.
+= BASIC BS ka WALL, bas DELTA: mid==target pe return nahi, ans likho + ek side chalo.
+TEMPLATE:
+  while (low <= high) {                      // PASS 1 = FIRST (<= : low==high wala akela element bhi check)
+     else if (nums[mid] < target) low = mid + 1;   // mid chhota: target right me; mid khud nahi, isliye +1
+     else high = mid - 1;   // mid bada: target left me; mid khud nahi, isliye -1
+  while (low <= high) {                      // PASS 2 = LAST (<= : low==high wala akela element bhi check)
+     else if (nums[mid] < target) low = mid + 1;   // mid chhota: target right me; mid khud nahi, isliye +1
+     else high = mid - 1;   // mid bada: target left me; mid khud nahi, isliye -1
+PEHLI SHEET (Aug) se bhi, same to same:
+sorted + duplicates. target ka {first, last} index. 2 BS, ans(2,-1). mila nahi -> {-1,-1}.
+CORE: mid==target pe RUKO MAT -> boundary tak ek side aur dhoondo.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     sorted (duplicate ho sakte) me target ka PEHLA aur AAKHRI index; nahi -> {-1,-1}, O(log n)
+```
+
 #### ── FAMILY: ROTATED (ek comparison se kaunsa half sorted / pivot kidhar, wahi half rakho) ──
 
 ### ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)
@@ -187,6 +221,13 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : sorted array pivot pe rotate ([4,5,6,7,0,1,2]). target ka INDEX, nahi mile -> -1.
+CORE : mid==target? return. warna -> ek half HAMESHA sorted -> wahi se decide:   // while(low<=high): akela element bacha tab bhi check
+    har baar aadha kaat -> O(log n). loop khatam -> -1.
+```
+
 ### ▸ FIND MIN IN ROTATED
 
 ```
@@ -207,6 +248,17 @@ int findMin(vector<int> &nums) {            // target nahi, khud MIN -> mid ko H
     }                                       //   ([3,1,2] pe mid-1 se galat 3 aata)
     return nums[low];
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+high=MID (NOT mid-1): else me mid KHUD min ho sakta (CANDIDATE) -> discard mat karo. isliye while(low<high) (warna infinite-loop). [BUG-CATCH: [3,1,2] high=mid-1 se galat 3 deta tha.]
+(ye wahi high=mid vs high=mid-1 rule -- find-peak jaisa: khud-answer-dhoondh -> high=mid+low<high; target-reject -> high=mid-1+low<=high.)
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     sorted array kisi jagah se ghuma diya (distinct). SABSE CHHOTA element lautao. O(log n).
 ```
 
 #### ── FAMILY: BS-on-ANSWER (koko · ship · split: SHELL same, sirf RANGE + solve(mid) alag) ──
@@ -256,6 +308,16 @@ int minEatingSpeed(vector<int> &piles, int h) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+│       ceil-TRAP: int/int FLOOR karta -> use (piles[i]+mid-1)/mid. hours = long (overflow).   // ya ceil((double)piles[i]/mid): cast pehle
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     piles[] me kele, h ghante. har ghante ek pile se k kele (kam ho to bas wo pile). sab khane ki MIN speed k lautao.
+```
+
 ### ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
 
 ```
@@ -294,6 +356,11 @@ int shipWithinDays(vector<int> &weights, int days) {
     }
     return ans;
 }
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     weights[] ko ORDER me D din me bhejna. ek din ka total <= capacity. MIN capacity lautao.
 ```
 
 ### ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
@@ -335,6 +402,18 @@ int splitArray(vector<int> &nums, int k) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+│       solve(mid): sum=0,count=1; for x: sum+=x; if(sum>mid){count++;sum=x;}  ->  count <= k ?   // sum=x (0 nahi): jis x ne limit todi wo naye tukde ka pehla
+│       count=1 se START (warna aakhri tukda chhoot jaaye).
+sibling: koko (min speed) · ship (min capacity) · split (min largest-sum) -> teeno IDENTICAL shell.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     nums[] ko k LAGATAAR hisson me baanto. har split ka sabse bada hissa-sum dekho, us ka MIN lautao.
+```
+
 #### ── FAMILY: HALF-DISCARD (array pura sorted nahi, phir bhi ek comparison se aadha safe discard) ──
 
 ### ▸ FIND PEAK ELEMENT (LC-162)
@@ -358,6 +437,14 @@ int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges
     }
     return low;                             // low==high pe converge = peak, edges apne aap
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+array SORTED nahi, phir bhi BS -- ek comparison (mid vs mid+1) se aadha discard. (peak = neighbours se bada; edges bahar -inf.)
+   else (nums[mid] > nums[mid+1]) -> DHALAAN  -> peak mid-KHUD ya LEFT -> high = mid;   // mid (NOT mid-1) (dhalaan pe mid khud peak ho sakta, phenk nahi sakte)
+return low;   (low==high pe converge = peak. edges auto.)
+GOTCHA: dhalaan me high = mid (mid-1 NAHI) -- mid khud peak ho sakta. isliye while low<high (mid+1 hamesha in-bounds, no sentinel).
 ```
 
 ### ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
@@ -413,6 +500,21 @@ int singleNonDuplicate(vector<int> &nums) {
 }                                           // [1,1,2,3,3,4,4,8,8]: mid 4 -> 1 -> 2 -> 3 -> high=2 -> 2
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
+   idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
+TEMPLATE:
+    int low=0, high=n-1;   // n-1: aakhri valid index, poori array inclusive
+        int mid=low+(high-low)/2;   // (low+high)/2 nahi: overflow se bachne ko
+        if(mid==0) return nums[mid];              // edge (mid-1 = -1 out-of-bounds; yahan tak aaye to single idx 0 pe)
+PEHLI SHEET (Aug) se bhi, same to same:
+SAAR : har element 2x, sirf EK akela. O(log n) BS via INDEX-PARITY. (XOR = O(n); yahan log-n chahiye.)
+   idea: single se PEHLE (left-half) pairs (even,odd) pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 (LEFT) se compare.
+TEMPLATE:
+    if(nums.size()==1) return nums[0];            // BASE
+```
+
 #### ── FAMILY: 2D-index-map (2D matrix = 1D sorted array, index -> (row, col)) ──
 
 ### ▸ SEARCH 2D MATRIX
@@ -466,6 +568,12 @@ bool searchMatrix(vector<vector<int>> &matrix, int target) {
     }
     return false;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+PEHLI SHEET (Aug) se bhi, same to same:
+ BUG-CATCH (find-min, 18-Jul): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
 ```
 
 #### ── FAMILY: BS-on-PARTITION / CUT (value pe nahi, 2 sorted array me CUT-position pe BS) ──
@@ -548,5 +656,17 @@ double findMedianSortedArrays(vector<int> &A, vector<int> &B) {
     }
     return 0.0;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+SAAR: 2 sorted arrays ka COMBINED median, O(log). MERGE mat karo -> ek CUT dhoondo:
+TEMPLATE:
+   if(A.size()>B.size()) return solve(B,A);            // chhote pe BS -> Py kabhi -ve nahi
+   low=0, high=m;                                      // high=m: A ke 0 se m tak kitne bhi left me ja sakte
+     x1=Px==0?INT_MIN:A[Px-1];  x2=Py==0?INT_MIN:B[Py-1];   // ==0 ? INT_MIN: left khaali, A[-1] out-of-bounds; -INF kabhi compare na bigaade
+     x3=Px==m?INT_MAX:A[Px];    x4=Py==n?INT_MAX:B[Py];   // ==m/n ? INT_MAX: right khaali, A[m] out-of-bounds; +INF compare na bigaade
+     if(x1<=x4 && x2<=x3)   // && : dono cross-check sahi tabhi cut valid; <= kyunki barabar chalega
+FAMILY: BS-on-PARTITION (naya). cousin = BS-on-ANSWER (koko/ship) -> wahan VALUE pe BS, yahan CUT-position pe.
 ```
 

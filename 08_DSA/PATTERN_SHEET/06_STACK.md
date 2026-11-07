@@ -71,6 +71,17 @@ vector<int> nextGreater(vector<int> &nums) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+TEMPLATE:
+  vector<int> ans(nums.size(), -1);   // -1 init: jisko daaye bada na mile wo -1 hi rahe
+     st.push(i);   // while ke BAAD push: pehle chhote top nipta, phir curr khud intezaar me
+  }                                                    // end tak bache -> koi bada nahi -> -1 (init)
+PEHLI SHEET (Aug) se bhi, same to same:
+TEMPLATE:
+}                                                    // end tak bache -> koi bada nahi -> -1 (init)
+```
+
 ### ▸ NEXT SMALLER ELEMENT
 
 ```
@@ -93,6 +104,17 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
     }
     return ans;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+= NEXT GREATER, bas DELTA: condition ULTA -> while nums[st.top()] > nums[i]  (bada -> chhota).
+  strictly (> , >= nahi) -> [2,2,2] -> saare -1. baaki (index-stack, left->right, push, init -1) sab wahi.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     nums[] diya. har element ke DAAYE jo PEHLA strictly chhota ho wo lautao, koi nahi -> -1.
 ```
 
 ### ▸ PREVIOUS SMALLER ELEMENT
@@ -118,6 +140,18 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
     return ans;
 }
 // prev smaller + next smaller = histogram ka building block
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+= NEXT SMALLER, bas DELTA: for-loop ULTA (right->left, i=n-1..0). condition wahi (>).
+  (peeche se dekho -> "right ka next-smaller" = "left ka previous-smaller".)
+USE: prev-smaller + next-smaller = Largest-Rectangle-in-Histogram ka building block.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     nums[] diya. har element ke BAAYE jo PEHLA strictly chhota ho wo lautao, koi nahi -> -1.
 ```
 
 ### ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)
@@ -264,6 +298,30 @@ int largestRectangleArea(vector<int> &heights) {
 // [2,4]: nS default -1 hota to bar0 width = -1-(-1)-1 = -1 (galat); n=2 se width 2 -> area 4 (sahi)
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+INPUT: [2,1,5,6,2,3] -> 10   (bars 5,6 -> min 5 * width 2)
+TEMPLATE:
+  nS = next-smaller INDEX   init n,   i = 0..n-1,   while h[st.top()] > h[i]   // none -> n (n = right ki bahar deewar, width sahi; > strict: barabar bar stopper nahi)
+  pS = prev-smaller INDEX   init -1,  i = n-1..0,   while h[st.top()] > h[i]   // none -> -1 (-1 = left ki bahar deewar, index 0 se pehle)
+PEHLI SHEET (Aug) se bhi, same to same:
+MENTAL MODEL: HAR height pe KHADE ho -> dono taraf NEAREST-SMALLER (prev+next) -> width=next-prev-1 -> area=height*width -> MAX. bas.
+prev-smaller + next-smaller ka COMBO. har bar apni OWN height pe rectangle banata -> left prev-smaller tak, right next-smaller tak (dono usse chhote = boundary). sabka area -> MAX.
+CODE = prev-smaller + next-smaller (INDEX version) + combine loop:
+  pS[i] = prev-smaller INDEX (none -> -1)     // left boundary
+  nS[i] = next-smaller INDEX (none -> n)      // right boundary (sentinel n, NA -1!)
+  (pS/nS = upar ka Next/Prev-Smaller template -- bas VALUE ki jagah INDEX store + NS ka sentinel = n.)
+TRICK 1: prev/next-smaller me VALUE nahi, INDEX store karo (width ke liye).
+TRICK 2: next-smaller "koi chhota nahi" -> sentinel = n (right-edge, bar END tak failta), NA -1. (-1 se width negative -> [2,4]: 2-(-1)-1=-1 galat; n=2 se 2-(-1)-1=2 -> area 4 sahi.) prev-smaller "none" = -1 sahi (left boundary).
+VISUAL (h=[2,1,5,6,2,3])  -- filled bars; ANSWER = dash-box (bars ke andar):
+next-GREATER se NAHI: rectangle taller bar ko include karta, shorter pe rukta -> smaller boundary chahiye. (greater tab jab bada element boundary ho.)
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     heights[] = bars, har bar ki width 1. lagatar bars pe banne wala SABSE BADA rectangle ka AREA lautao.
+```
+
 ### ▸ MAXIMAL RECTANGLE (LC-85, 2D)
 
 ```
@@ -295,6 +353,14 @@ int maximalRectangle(vector<vector<int>> &matrix) {
 }
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+= Largest-Rectangle-Histogram (LC-84) ka 2D bhai. HAR ROW ko histogram maano -> us pe LC-84 laga -> saare rows ka MAX.
+   cell == 1 -> heights[j] += 1;    // upar wale 1s ke saath build-up
+   cell == 0 -> heights[j] = 0;     // column toot gaya -> RESET
+har row ke baad:  maxi = max(maxi, largestRectangleArea(heights));   // LC-84 code REUSE (prev/next-smaller + area)
+```
+
 ### ▸ DAILY TEMPERATURES
 
 ```
@@ -318,6 +384,11 @@ vector<int> dailyTemperatures(vector<int> &temps) {
     }
     return ans;
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+same monotonic; ans[top] = i - top (VALUE nahi, DISTANCE/din).   // ans(n,0): garam din na mile to 0 (-1 nahi) · < strict: barabar garam nahi
 ```
 
 ### ▸ NEXT GREATER ELEM II
@@ -346,6 +417,21 @@ vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka gr
     return ans;
 }
 // [1,2,1]: aakhri 1 (idx 2) pehle chakkar me bacha -> i=4 -> 4%3=1 -> nums[1]=2 -> ans[2]=2. isliye 2n
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+same next-greater (monotonic stack), bas array CIRCULAR -> aakhri element ka greater SHURU me bhi ho sakta.
+stack<int> st;                                   // INDEX rakho (0..n-1) -- jinka greater abhi nahi mila
+for (int i = 0; i < 2 * n; i++) {                // 2n: doosre chakkar me aakhri elements ko shuru wale dikhte (wrap)
+PEHLI SHEET (Aug) se bhi, same to same:
+same monotonic, bas array CIRCULAR. trick: loop 2 BAAR (i: 0..2n-1), access i % n (mod).
+doosre chakkar me aakhri elements ko SHURU ka greater mil jaata (wrap). baaki wahi; na mile -> -1.
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     nums[] CIRCULAR hai (end ke baad phir shuru). har element ka next greater lautao, nahi -> -1.
 ```
 
 ### ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
@@ -377,6 +463,24 @@ public:
 
 ── (STANDALONE — apni alag trick) ──
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+INPUT: next(100,80,60,70,60,75,85) -> 1,1,1,2,1,4,6
+= monotonic stack ka DELTA -- 2 farak: (1) stack me INDEX nahi, PAIR {price, span}.
+  (2) top.price <= aaj -> pop karke uska span APNE span me JODO (index-answer nahi, SUM).
+DRY-RUN 75 (stack top pe ...60,70,60): 60<=75 span=2 pop · 70<=75 span=4 pop · (bacha) · 80>75 ruk -> span=4, push{75,4}.
+KYUN span-JODO: pop hue chhote din KHUD apne peeche ka span nigal chuke -> unka span add = un sab din bhi cover (dobara peeche nahi jaana).
+FAMILY: monotonic-stack (next-greater base) + "answer = accumulated SPAN" delta (index nahi, running count).
+TEMPLATE:
+     int span = 1;   // 1 se: aaj ka din khud bhi span me ginta
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     prices ek-ek aate (next(price)). har call pe SPAN lautao = aaj samet peeche kitne LAGATAAR din price <= aaj.
+     STREAMING next(price). span = aaj samet peeche kitne LAGATAAR din price <= aaj
+```
+
 ### ▸ VALID PARENTHESES
 
 ```
@@ -404,6 +508,12 @@ bool isValid(string s) {
     }
     return st.empty();                      // ★ end me stack KHAALI = valid ("" -> true)
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+opening push; closing aaye to top se match+pop; end me stack KHALI = valid. (closing pe stack empty -> false)
+match: (topp=='('&&it==')') || (topp=='['&&it==']') || (topp=='{'&&it=='}')   // topp=st.top() + pop pehle, phir match; na mile -> turant false
 ```
 
 ### ▸ MIN STACK
@@ -434,6 +544,17 @@ public:
 // push 5,3,7 -> min 3 · pop 7 -> 3 · pop 3 -> 5 WAPAS (pair me neeche wala min apne aap sahi)
 ```
 
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+DESIGN: push/pop/top/getMin SAB O(1). trick = min hamesha "ready" rakho, bina scan kiye.
+har element ke SAATH uska "yahaan tak ka MIN" store karo -> stack<pair<val, minSoFar>>.
+   push:   newMin = empty ? val : min(val, top().second);  push {val, newMin}.   // empty pehle: pehle element pe top() nahi hota, wahi min
+   getMin: top().second (O(1), koi loop nahi).   top: top().first.   pop: normal.
+KYUN pair (ek single min-var kyun NAHI): pop pe min WAPAS badal sakta -> purana min laut aata;
+   single var us history ko recover nahi kar paata. har element apna min saath -> pop pe neeche wala min apne-aap sahi.
+   (e.g. push 5,3,7 -> min 3 · pop 7 -> min still 3 · pop 3 -> min 5 WAPAS aa gaya.)
+```
+
 ### ▸ MIN ADD MAKE VALID
 
 ```
@@ -460,6 +581,14 @@ int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')'
     }
     return open_needed + close_needed;      // ★ dono bache = utne insert
 }
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+COUNTER (stack nahi -- sirf '(' ')'). 2 counter (naam tere code se):
+ans = open_needed + close_needed                                     (dono bache = utne insert karne).
+TRAP: ')' match ho gaya to open_needed me MAT gino -- match = 0 insertion (nested "(())" -> 0).
+PEHLI SHEET (Aug) se bhi, same to same:
 ```
 
 ### ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
@@ -511,5 +640,18 @@ public:
 };
 
 // broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
+```
+
+```
+PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
+DESIGN: 2 stack -> input (push yahan) · output (pop / peek yahan se).
+pop / peek:  output KHAALI ho tabhi input ka sab ulta karke output me daalo; phir output.top().   // pop: x=top() bachao, phir pop, return x
+   -> pop / peek amortized O(1). (har pop pe palatna = O(n), yahi interviewer poochta.)
+TRAP: output me kuch bacha ho aur tab input palat diya -> kram toot jaata (naye purano ke upar).
+```
+
+```
+PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
+     sirf stack (push/pop/top/empty) se QUEUE (FIFO) banao: push(x) peeche, pop() aage wala nikaalo, peek(), empty().
 ```
 
