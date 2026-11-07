@@ -63,7 +63,7 @@ Technical me: "token radd" = code band, "dene se pehle khud check" = kaali list 
 **Maan lo token radd kiya, par log counter pe aa hi nahi rahe. Unhe kaise pata chale? Shuru me phone me likhne dena tha ya nahi?**
 Arpan: Unke phone me wo cheez update kar do na. Wo cookies aur cache se aa rahe honge, to unka cache radd kar do, hata do, to agli request seedha yahan aayegi. Phir (jab poocha ki phone uske haath me hai, tu kaise mitayega): To phir phone pe likho mat na bhai. Phone pe likhega nahi to wo hamare counter pe dobara aayega, dobara hum use theek token de denge. Agar aisi phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai.
 Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte hain, lekin hum technical nahi, aam dikkat ka solution bol rahe the, isliye thodi der me samjha.
-Technical me: "phone me likhna hi mat do, har baar counter pe aaye" = 302 (301 nahi), "phone me likh le" = 301 (browser cache), "phone cache pe TTL" = browser cache ki umar.
+Technical me: "phone me likhna hi mat do, har baar counter pe aaye" = 302 + `Cache-Control: no-store` (save hi mat karna; 301 nahi), "phone me likh le" = 301 (browser cache), "phone cache pe TTL" = browser cache ki umar.
 
 **14. Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka number faltu khatam, register bhar raha, asli log atke.**
 Arpan: Jaanch padtaal karenge ki script laga di. Ek-do baar to aisa hoga hi, teen baar, chaar baar, phir pattern pata lag jaayega ki ye banda to har baar aa raha hai, har baar ye drama karke chala jaata hai. To us bande ko rok do, andar ghusne hi mat do, wo kamre me hi nahi aayega, use bahar gate pe hi bhaga do.

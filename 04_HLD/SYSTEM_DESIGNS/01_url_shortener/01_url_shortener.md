@@ -233,7 +233,7 @@ unke phone ka cache radd kar do, to agli request seedha hamare paas aayegi. Par 
 nahi sakta. To phone pe likhne hi mat do. Likhega nahi to wo har baar hamare counter pe aayega, aur hum use theek
 token de denge. Agar phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai. Aam taur pe phone ke
 cache ko TTL laga ke bhi invalidate kar sakte, par tab tak wo purana hi deta.
-**Asli naam:** phone me likh le = 301 (browser cache, hamesha ke liye), phone me likhna hi mat do, har baar counter pe aaye = 302 (301
+**Asli naam:** phone me likh le = 301 (browser cache, hamesha ke liye), phone me likhna hi mat do, har baar counter pe aaye = 302 + `Cache-Control: no-store` (save hi mat karna; 301
 nahi; har click hamare paas, control hamare paas), phone cache pe TTL = browser cache ki umar.
 
 ```mermaid
