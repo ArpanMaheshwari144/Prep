@@ -1,15 +1,43 @@
 ## PATTERN 2 — SLIDING WINDOW
 
 
-**Kab SW:** lagaatar subarray / substring + sabse lamba / sabse chhota / kitne.
-**Kab nahi:** variable window jisme SUM pe shrink ho (`sum > k` pe chhota karo), aur numbers negative hon. Negative jodne pe sum ghat jaata hai, to "bada ho gaya, chhota karo" wala faisla toot jaata hai. Wahan prefix + map lagta hai. Fixed size window (max sum of k) negative ke saath bhi chalti hai.
-
 ```
- dhaancha (lamba wale):  j se jodo -> kharab ho to while me i se nikaalo -> ans lo -> j++
- sabse chhota wale:      j se jodo -> THEEK rahe tab tak while me ans lo + i se nikaalo -> j++
- fixed size k:           while ki jagah IF (ek juda, ek nikla)
+
+ KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
+
+ 2 TYPE:
+   (a) FIXED window   -> size k DIYA hai. i/j pointer: sum += nums[j]; jab (j-i+1) >= k -> track + left hatao (sum -= nums[i], i++).
+   (b) VARIABLE window-> size condition se. TEMPLATE:
+          for j in arr:  window me arr[j] add (update tracker)
+                         while (INVALID): left[i] hatao (tracker update), i++
+                         ans update  (length = j-i+1, ya count += j-i+1)
+
+ KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
+
+ KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
+
+ LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
+
+ IF vs WHILE (ye confusion CLEAR kar) -> SAWAAL: "window ka SIZE fix hai, ya condition pe depend?"
+     · SIZE fix (koi number diya: k-elements ya p.length()) -> IF (ek add, ek remove, size wahi rehta).   [Max-Sum-of-K · Anagram]
+     · SIZE condition pe (sum/distinct/repeat/product) -> WHILE (jab tak invalid, ek se zyada nikal sakte).  [baaki sab]
+     TRAP -- `k` ka matlab dekh: Max-Sum-size-K me k = SIZE (fix -> IF); Subarray-Product<K me k = product LIMIT (size NAHI -> WHILE). same letter `k`, alag matlab.
+ [track] · [INVALID kab -> shrink] · [ans]
+
+ ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel):
+    i = 0, j = 0
+    while (j < n):                     // EXPAND (j HAMESHA aage). [for(j..) == while(j<n){..;j++} -- SAME]
+        arr[j] window me ADD           (tracker update: sum / map / zeros / product)
+        while / if  (WINDOW BAD):      // SHRINK (i aage)
+            arr[i] REMOVE (tracker update);  i++
+        ans UPDATE
+        j++
+    -> sirf 2 cheez badalti: (1) inner IF (fixed, ek remove) ya WHILE (variable, jab tak invalid)
+                             (2) "WINDOW BAD" kya + kya track. baaki dhaancha har baar SAME.
+
+ KAB NAHI: variable window jisme SUM pe shrink ho (sum > k pe chhota karo), aur numbers NEGATIVE hon -> sum ghat jaata,
+     "bada ho gaya, chhota karo" wala faisla toot jaata -> wahan prefix + map. Fixed size window negative ke saath bhi chalti.
  ★ EDGE (variable window): shrink me count 0 ho jaye to map se ERASE karo, warna map.size() jhooth bolega.
- ★ TRAP: max-sum-K me k = SIZE (IF); product<K me k = LIMIT (WHILE)
 ```
 
 ---
@@ -590,23 +618,16 @@ int numberOfSubstrings(string s) {
 
 ## ANAGRAM (fixed size = p ki length)
 
-### ▸ LC-438 FIND ALL ANAGRAMS
+### ▸ LC-438 FIND ALL ANAGRAMS  = FIXED window (p ki length) + need / have ginti (PARENT)  = LC-76 ka bhai
+`s="cbaebabacd", p="abc" -> [0,6]`. s me p ke saare anagram ki start index.
+
+kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
 
 ```
-SAWAAL:
-s aur p (sirf a-z). s me jahan-jahan p ka anagram lagaatar baitha hai
-(wahi akshar, kram koi bhi), un sab ki START index lautao.
-  e.g. s="cbaebabacd", p="abc" -> [0,6]
-  kyun: s[0..2]="cba", s[6..8]="bac" -> dono me a, b, c ek-ek
-
-SOCH:
-kya bol raha: window ka size FIX (= p.size()), har window me akshar ki ginti p jaisi?
-kahan dekha: LC-76 min window. wahan bhi t ki ginti rakhi, j aaya to ginti badli, i gaya to wapas.
-  farak: wahan window chhoti-badi, yahan size fixed. wahan ek map, yahan need (p) + have (window).
-to: need me p ki ginti EK baar -> j aaya have +1 -> size p jitna -> have == need ? index
-    -> i gaya have -1, i++
-★ PEHLI GALTI: har window ka substr bana ke isAnagram -> LeetCode pe TLE (34/66).
-  ginti har window pe dobara mat banao, aate-jaate jodo-ghatao.
+SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
+LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao;
+   yahan DO array (need = p, have = window), aana +1 / jaana -1, phir have == need milao. window fixed = p.size().
+★ GALTI: pehle har window ka substr bana ke isAnagram -> LeetCode pe TLE (34/66). ginti har baar dobara mat banao.
 ```
 
 ```cpp
@@ -619,8 +640,8 @@ vector<int> findAnagrams(string s, string p) {
         need[p[i] - 'a']++;
     while (j < s.size()) {
         have[s[j] - 'a']++;                 // ★ j aaya -> +1
-        if (j - i + 1 == p.size()) {
-            if (have == need)               // 26 khaane barabar = anagram
+        if (j - i + 1 == p.size()) {        // == : window poora p-size hua tabhi check
+            if (have == need)               // 26 khaane barabar = anagram -> START-index push
                 ans.push_back(i);
             have[s[i] - 'a']--;             // ★ i gaya -> -1, PHIR i++
             i++;
@@ -632,18 +653,17 @@ vector<int> findAnagrams(string s, string p) {
 ```
 
 
-### ▸ LC-567 PERMUTATION IN STRING
+### ▸ LC-567 PERMUTATION IN STRING  = FIND-ALL-ANAGRAMS ka EXACT same code
+`s1="ab", s2="eidbaooo" -> true`. Kya s2 me s1 ka koi anagram (permutation) lagaatar substring ban ke maujood hai? true ya false.
+
+kyun: s2[3..4]="ba" = "ab" ka permutation
 
 ```
-SAWAAL:
-s1, s2. kya s2 me kahin lagaatar s1 ka anagram (permutation) baitha hai? true / false.
-  e.g. s1="ab", s2="eidbaooo" -> true
-  kyun: s2[3..4]="ba" -> a, b ek-ek
-
-SOCH:
-upar wala 438 hi hai: s2 pe window s1.size() ki, need = s1 ki ginti.
-farak: pehla match mila -> turant true, poora ghoom liya -> false.
-★ dhyaan: s1 ko s2 ke ANDAR dhoondhna hai, ulta nahi (window s2 pe chalti).
+SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
+farak SIRF answer-line:
+    LC-438 : have == need -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
+    LC-567 : have == need -> return true        ... loop-baad: return false  (pehla match = bool)
+★ ULTA kram: s1 ko s2 ke ANDAR dhoondhna (window s2 pe chalti).
 ```
 
 ```cpp
@@ -657,13 +677,13 @@ bool checkInclusion(string s1, string s2) {
         have[s2[j] - 'a']++;                // ★ j aaya -> +1
         if (j - i + 1 == s1.size()) {
             if (have == need)
-                return true;                // pehla match = true
+                return true;                // <- DELTA: push ki jagah return true
             have[s2[i] - 'a']--;            // ★ i gaya -> -1, PHIR i++
             i++;
         }
         j++;
     }
-    return false;
+    return false;                           // loop-baad: koi na mila
 }
 ```
 
@@ -672,12 +692,10 @@ bool checkInclusion(string s1, string s2) {
 
 ## WINDOW KA MAX (deque)
 
-### ▸ LC-239 SLIDING WINDOW MAXIMUM  
+### ▸ LC-239 SLIDING WINDOW MAXIMUM  = monotonic DEQUE of INDICES (monotonic stack + front-expiry)
 `[1,3,-1,-3,5,3,6,7], k=3 -> [3,3,5,5,6,7]`. Har k size ki window ka sabse bada number lautao.
 
 ```
-YAAD:
-
 SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING) -> front = window ka max.
 CONNECT : back-pop (nums[back]<=nums[i]) = MONOTONIC banana -- ye UNIVERSAL (stack ho ya deque, wahi cheez; isi se monotonic).
           DEQUE lene ki ASLI (aur AKELI) wajah = WINDOW-EXPIRY: front se purana index hatana (dq.front()==i-k -> pop_front).
@@ -686,11 +704,6 @@ CORE : nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo m
 ★ ORDER MATTERS (warna galat ans): (1) front-expiry -> (2) monotonic-clean + push -> (3) record. record hamesha LAST.
 TRAP: deque me INDICES (values nahi -- expiry ke liye index chahiye) · front-expiry ==i-k kaafi (har step check) · record sirf i>=k-1.
 FAMILY: MIN chahiye -> pop_back condition ULTA (nums[back] >= nums[i]).
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-if(!dq.empty() && dq.front()==i-k) dq.pop_front();        // 1) front-index window se bahar (==i-k) -> hata (!dq.empty() pehle: khaali deque pe front() crash)
-while(!dq.empty() && nums[dq.back()]<=nums[i]) dq.pop_back(); // 2) chhote bekaar -> pop (<= : barabar wala purana bhi bekaar, naya zyada der tikega)
-if(i>=k-1) ans.push_back(nums[dq.front()]);               // 3) window poora -> front=max (k-1 = pehle poore window ka aakhri index)
 ```
 
 ```cpp
@@ -700,13 +713,13 @@ vector<int> maxSlidingWindow(vector<int> &nums, int k) {
     // INDICES, values DECREASING -> front = max
     deque<int> dq;
     for (int i = 0; i < nums.size(); i++) {
-        if (!dq.empty() && dq.front() == i - k)   // 1) window se bahar
-            dq.pop_front();
+        if (!dq.empty() && dq.front() == i - k)   // 1) window se bahar (==i-k) -> hata
+            dq.pop_front();                       //    (!dq.empty() pehle: khaali deque pe front() crash)
         // ★ 2) peeche ke chhote bekaar, kabhi max nahi banenge. MIN chahiye to >=
         while (!dq.empty() && nums[dq.back()] <= nums[i])
-            dq.pop_back();
+            dq.pop_back();                  // <= : barabar wala purana bhi bekaar, naya zyada der tikega
         dq.push_back(i);
-        if (i >= k - 1)                     // 3) record. kram 1 -> 2 -> 3 hi
+        if (i >= k - 1)                     // 3) record. kram 1 -> 2 -> 3 hi (k-1 = pehle poore window ka aakhri index)
             ans.push_back(nums[dq.front()]);
     }
     return ans;
