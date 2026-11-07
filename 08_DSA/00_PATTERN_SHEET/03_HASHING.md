@@ -238,9 +238,10 @@ TASVEER:
 ```
 
 ```cpp
-int countDivisiblePairs(vector<int> &nums, int k) {
+long long countDivisiblePairs(vector<int> &nums, int k) {
     unordered_map<int, int> mp;             // {remainder -> kitne aaye}
-    int count = 0;
+    // ★ jode n²/2 tak ja sakte (65537 zero, k=1 -> 2.14 arab > INT_MAX) -> long long
+    long long count = 0;
     for (auto &it : nums) {
         int rem = (((it % k) + k) % k);     // ★ +k phir %k: C++ me negative ka % negative aata, key galat
         count += mp[(k - rem) % k];         // ★ partner rem: it=1,k=3 -> 1+? = 3 -> 2. rem=0 -> 3%3 = 0
