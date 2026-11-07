@@ -1,13 +1,6 @@
-## PATTERN 15 — INTERVALS
+## PATTERN 15 — INTERVALS (sort-by-start + overlap)
 
 ```
-> ★ **YAHAN NAHI MILEGI:**
-> ```
-> non-overlapping intervals  ->  PATTERN 18 (GREEDY)
->       intervals hain, par sawaal "kam se kam kitne HATAO" = greedy choice
->       (sort by END, aur takraane wala chhodo)
-> ``` (sort-by-start + overlap)
-
  BROAD IDEA: interval = [start,end]. dikha -> PEHLA reflex = SORT. phir left-to-right handle.
    REAL: calendar/meeting-scheduling, booking, resource-alloc.
 
@@ -18,6 +11,10 @@
    greedy = wahi sort+loop, bas KEY = END (jaldi-khatam wali max room chhodti -> zyada fit).
       A[1,10] B[2,3] C[4,5] -> START-sort = 1 · END-sort = 2. END jeeta.
 
+ ★ YAHAN NAHI MILEGI:
+   non-overlapping intervals  ->  PATTERN 18 (GREEDY)
+         intervals hain, par sawaal "kam se kam kitne HATAO" = greedy choice
+         (sort by END, aur takraane wala chhodo)
 ```
 
 #### ── FAMILY: sort-by-start + overlap check (bas overlap pe ACTION aur boundary < / <= badalta) ──
@@ -35,8 +32,6 @@ intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain 
 ```
 
 ```
-TASVEER:
-
 DRY-RUN  [[1,3],[2,6],[8,10],[15,18]]  (sorted):
     ans=[[1,3]]
     [2,6]  : 2 <= 3  overlap -> end=max(3,6)=6 -> ans=[[1,6]]
@@ -99,17 +94,11 @@ intervals[] pehle se sorted hain aur aapas me overlap nahi karte. Ek newInterval
 pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
 ```
 
-```
-YAAD:
-
-PURANI SHEET KI LINE (git 07e45c2b):
-// ★ dono strictly (< aur >): chhoota hua (touching) bhi merge. [[1,2]] + [2,5] -> [[1,5]]; <= / >= se [[1,2],[2,5]].
-```
-
 ```cpp
 vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval) {
     vector<vector<int>> ans;
     int count = 0;                          // kitne process hue, doosra loop wahin se
+    // ★ dono strictly (< aur >): chhoota hua (touching) bhi merge. [[1,2]] + [2,5] -> [[1,5]]; <= / >= se [[1,2],[2,5]]
     for (int i = 0; i < intervals.size(); i++) {
         if (intervals[i][1] < newInterval[0])   // ★ 1. new se PEHLE khatam -> push
             ans.push_back(intervals[i]);        //    (sirf < : chhoota hua merge hoga)
@@ -143,8 +132,6 @@ min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 
 ```
 
 ```
-TASVEER:
-
 DRY-RUN  start=[2,9,6] end=[4,12,10]:
     mp (key-sorted): {2:+1, 4:-1, 6:+1, 9:+1, 10:-1, 12:-1}
     t=2(+1)->ovl=1 mx=1 | t=4(-1)->0 | t=6(+1)->1 | t=9(+1)->2 mx=2 | t=10->1 | t=12->0

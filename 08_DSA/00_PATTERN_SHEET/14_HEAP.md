@@ -1,37 +1,6 @@
-## PATTERN 14 — HEAP
+## PATTERN 14 — HEAP (priority_queue: min/max top pe)
 
 ```
-> ★ **YAHAN NAHI MILENGI** ("k-th / median" sun ke heap lagta hai, par nahi):
-> ```
-> median of 2 sorted arrays  ->  PATTERN 7 (BINARY SEARCH)
->       stream nahi hai — do SORTED array hain -> ek CUT dhoondo, O(log)
-> kth smallest in BST        ->  PATTERN 12 (TREES)
->       BST ka INORDER khud sorted deta hai -> k-1 wala element, heap ki zaroorat nahi
-> ``` (priority_queue: min/max top pe)
-
-> ★★ **COMPARATOR — "B KO DEKHO" (Arpan ka apna rule, ratta nahi):**
-> ```
-> comparator me sirf ye dekho ki  b  kis taraf pada hai:
->
->     return a < b;      ->  b BADA wala hai     ->  MAX-heap
->     return a > b;      ->  b CHHOTA wala hai   ->  MIN-heap
-> ```
-> **Ye sirf trick nahi, theek bhi hai.** Comparator asal me poochta hai *"kya `a` ki priority `b`
-> se KAM hai?"*. `a < b` likhne ka matlab hua "chhota = kam priority" -> **bada upar** = max-heap.
-> "b ko dekho" seedha wahi baat pakad leta hai, bina poora vaakya sochre.
->
-> Bade objects pe bhi wahi:
-> ```
-> return a->val > b->val;      ->  b chhota  ->  MIN-heap
-> return a.dist  < b.dist;     ->  b bada    ->  MAX-heap
->
-> priority_queue<int>                             -> max-heap (default)
-> priority_queue<int, vector<int>, greater<int>>  -> min-heap
-> ```
-> (Doosra tareeka, agar kabhi shak ho: comparator = SORT ka niyam. `a<b` = ascending `[1,3,5,9]`.
-> `sort()` **shuru** se padhta hai, `priority_queue` **aakhir** se uthata hai -> 9 top pe = max-heap.
-> Dono raaste ek hi jagah pahunchte hain.)
-
  BROAD IDEA: baar-baar MIN ya MAX + data BADALTA -> HEAP (sort mahenga). top O(1), push/pop O(log n).
    C++ syntax:  priority_queue<int> = MAX-heap  ·  priority_queue<int, vector<int>, greater<int>> = MIN-heap.
    ops: pq.push(x) · pq.top() · pq.pop() · pq.size() · pq.empty().
@@ -42,6 +11,27 @@
  ★ EDGE (comparator): B KO DEKHO -> a < b = b bada = MAX-heap · a > b = b chhota = MIN-heap (neeche poora).
  ★ EDGE (pointer push): push se PEHLE null check (merge-k: khaali list push -> top()->val pe SEGFAULT).
 
+ ★★ COMPARATOR — "B KO DEKHO" (Arpan ka apna rule, ratta nahi):
+   comparator me sirf ye dekho ki  b  kis taraf pada hai:
+       return a < b;      ->  b BADA wala hai     ->  MAX-heap
+       return a > b;      ->  b CHHOTA wala hai   ->  MIN-heap
+   Ye sirf trick nahi, theek bhi hai. Comparator asal me poochta hai "kya a ki priority b se KAM hai?".
+   a < b likhne ka matlab hua "chhota = kam priority" -> bada upar = max-heap.
+   "b ko dekho" seedha wahi baat pakad leta hai, bina poora vaakya soche.
+   Bade objects pe bhi wahi:
+       return a->val > b->val;      ->  b chhota  ->  MIN-heap
+       return a.dist  < b.dist;     ->  b bada    ->  MAX-heap
+       priority_queue<int>                             -> max-heap (default)
+       priority_queue<int, vector<int>, greater<int>>  -> min-heap
+   (Doosra tareeka, agar kabhi shak ho: comparator = SORT ka niyam. a<b = ascending [1,3,5,9].
+    sort() shuru se padhta hai, priority_queue aakhir se uthata hai -> 9 top pe = max-heap.
+    Dono raaste ek hi jagah pahunchte hain.)
+
+ ★ YAHAN NAHI MILENGI ("k-th / median" sun ke heap lagta hai, par nahi):
+   median of 2 sorted arrays  ->  PATTERN 7 (BINARY SEARCH)
+         stream nahi hai — do SORTED array hain -> ek CUT dhoondo, O(log)
+   kth smallest in BST        ->  PATTERN 12 (TREES)
+         BST ka INORDER khud sorted deta hai -> k-1 wala element, heap ki zaroorat nahi
 ```
 
 #### ── FAMILY: heap of size k / top-K (size > k pe top EVICT, k bache) ──
@@ -250,7 +240,10 @@ heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
 ```
 
 ```
-TASVEER:
+CHAAL: median = beech wala; poora sorted rakhna mehnga. Numbers ko DO team me baanto:
+       maxHeap = CHHOTI team   top = chhoto ka SABSE BADA    <- naam se ULTA (chhote yahan)
+       minHeap = BADI team     top = bado ka SABSE CHHOTA
+       dono top = beech ke 2 border -> median inhi se.
 
 ★ 2 balance-if KYUN (dono zaroori): placement num ko DONO heap me daal sakti (chhota->maxH, bada->minH).
    FIRST  (maxH < minH)    -> bada-num minH me gaya, minH bada -> ek wapas maxH (extra maxH me rahe)
@@ -263,12 +256,6 @@ DRY: add 5,15,1,3
    1  -> 1<=5 maxH{5,1}                        med 5  (maxH bada)
    3  -> 3<=5 maxH{5,3,1} farak2 -> 5 minH me -> maxH{3,1} minH{5,15}
                                               med (3+5)/2 = 4 ✓
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-CHAAL: median = beech wala; poora sorted rakhna mehnga. Numbers ko DO team me baanto:
-       maxHeap = CHHOTI team   top = chhoto ka SABSE BADA    <- naam se ULTA (chhote yahan)
-       minHeap = BADI team     top = bado ka SABSE CHHOTA
-       dono top = beech ke 2 border -> median inhi se.
 ```
 
 ```cpp
@@ -305,7 +292,7 @@ public:
 
 #### ── FAMILY: MAX-heap + greedy (har round sabse zyada wala lagao) ──
 
-### ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME
+### ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME (TOP K FREQUENT ka cousin)
 
 ```
 Ek string s di hai. Uske akshar aise lagao ki koi bhi do paas-paas wale akshar same na hon. Koi bhi ek sahi string lautao, aisa na ban sake to khaali string "".
@@ -318,19 +305,16 @@ possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
 ```
 
 ```
-TASVEER:
+PEHCHAN: "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
+         -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
+          yahan har round 2 nikaalo taaki adjacent-safe.)
+FEASIBILITY (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
 
 VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
    R1: pop a,b -> "ab"   -> (2,a)(2,b)
    R2: pop a,b -> "abab" -> (1,a)(1,b)
    R3: pop a,b -> "ababab" -> empty      => "ababab"
   ( "aaab": (3,a)(1,b) -> R1 "ab",(2,a) -> size1, count2>1 -> "" )
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-PEHCHAN: "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
-         -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
-          yahan har round 2 nikaalo taaki adjacent-safe.)
-FEASIBILITY (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
 ```
 
 ```cpp
