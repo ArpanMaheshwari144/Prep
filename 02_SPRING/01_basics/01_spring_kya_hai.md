@@ -1,37 +1,42 @@
 # Spring: kya hai, kyun aaya
 
-## Kahani
+## Scene
 
-2002 ka ek Java dev OrderService likh raha hai:
+Tera OrderService order save karta hai. Kal boss bola "MySQL chhodo, MongoDB pe jao."
 
 ```java
-class OrderService {
-    OrderRepository repo = new MySQLOrderRepository();
-    EmailService email  = new SendGridEmailService();
+class OrderServiceOld {                  // khud banata hai
+    OrderRepo repo = new MySQLRepo();
 }
+class OrderServiceNew {                  // maangta hai
+    private final OrderRepo repo;
+    OrderServiceNew(OrderRepo repo) { this.repo = repo; }
+}
+
+new OrderServiceOld().place("pizza");
+new OrderServiceNew(new MySQLRepo()).place("pizza");
+new OrderServiceNew(new MongoRepo()).place("pizza");
 ```
 
-Maan lo kal MongoDB pe jaana pada. Tab service ka code hi badalna padega, kyunki MySQL wala repo service ke andar `new` se likha hua hai. Test me nakli repo daalna ho to bhi yahi `new` beech me aa jaata hai, kyunki class ne apna auzaar khud bana rakha hai. Jab har class apne auzaar khud banati hai, to ek chhota sa badlaav bhi 50 jagah karna padta hai.
-
-Spring ne kaha: "Tu sirf kaam ka logic likh. Object banana, unhe aapas me jodna aur unhe sambhalna mera kaam hai."
-
-## Tasveer
-
-Pizza counter socho. Pehle tu khud kitchen jaata tha: atta goondhta, oven jalata. Ab tu counter pe bas bolta hai "Margherita chahiye", aur bana-banaya pizza mil jaata hai.
-
 ```
-pehle:   OrderService --new--> MySQLRepo            (tu khud banata tha)
-Spring:  Container --banata + daalta--> OrderService (tu sirf maangta hai)
+MySQL me save: pizza
+MySQL me save: pizza
+Mongo me save: pizza
 ```
 
-## 4 khaas baat
+## Dikkat
 
-1. **IoC (Inversion of Control) ka matlab hai ki control ulta ho gaya.** Ab object tu nahi banata, Spring ka container (ApplicationContext) app start hote hi bana deta hai. Andar wo bhi `new` ya reflection hi use karta hai, isme koi jaadu nahi hai.
-2. **DI (Dependency Injection) ek pattern hai, Spring ka apna feature nahi hai.** Ise tu haath se bhi kar sakta hai, jaise `new AccountService(repo)`. Spring bas ye kaam apne aap kar deta hai. Constructor injection sabse sahi tareeka hai, aur agar class me ek hi constructor ho to `@Autowired` likhna bhi zaroori nahi.
-3. **`new` chhodne ke 2 gehre fayde aur hain:**
-   - **Ek hi copy sab use karte hain (singleton).** Isliye 10 service ke liye 10 DB pool nahi khulte, sab ek hi pool share karte hain.
-   - **Proxy milta hai.** Spring tera object ek cover me lapet ke deta hai, aur `@Transactional` aur `@Async` isi cover ki wajah se chalte hain.
-4. **Spring Boot matlab Spring ke upar apne aap hone wali config aur andar baitha server (Tomcat).** Isliye server alag se install nahi karna padta, `java -jar app.jar` chalao aur app chal jaati hai.
+Old wala MySQL se chipka hua hai. Mongo pe jaane ke liye service ka code hi kholna padega. Test me nakli repo daalna ho tab bhi yahi `new` beech me aata hai. Aur 50 class me aisa likha ho to 50 jagah badlaav karna padega.
+
+## Hal
+
+New wala repo khud nahi banata, constructor me maangta hai. Bahar se jo do wahi chalega, MySQL ho ya Mongo, service ka code wahi rehta hai. Spring yahi "bahar se dena" khud karta hai.
+
+- **IoC (Inversion of Control):** object banana ab tera kaam nahi raha. Spring ka container (ApplicationContext) app start hote hi bana deta hai.
+- **DI (Dependency Injection):** wo bana hua object tere constructor me daal deta hai. Class me ek hi constructor ho to `@Autowired` likhna bhi zaroori nahi.
+- **Bonus:** sab ek hi copy share karte hain (singleton), isliye 10 service ke liye 10 DB pool nahi khulte.
+
+Tere usercrud me yahi chal raha hai: `UserController(UserService service)`. Poore code me kahin `new UserService()` nahi likha, controller ne maanga aur Spring ne de diya.
 
 ## Prod wala trap
 
@@ -39,21 +44,8 @@ Spring:  Container --banata + daalta--> OrderService (tu sirf maangta hai)
 @Service
 class OrderService {
     PaymentService pay = new PaymentService();   // khud bana liya
-    // PaymentService ke andar @Transactional laga hai
 }
+// PaymentService ke andar @Transactional hai
 ```
 
-`new` likhne se tujhe raw object milta hai, Spring ka cover (proxy) nahi milta. Isliye `@Transactional` bina koi error diye chup-chaap kaam karna band kar deta hai: aadha data save ho jaata hai aur rollback nahi hota. Ye wahi singleton aur proxy wali kahani hai jo multithreading aur design patterns me dekhi thi.
-
-## Tera project
-
-usercrud ka `UserController`:
-
-```java
-private final UserService service;
-public UserController(UserService service) {   // maanga, Spring ne de diya
-    this.service = service;
-}
-```
-
-Poore code me kahin bhi `new UserService()` nahi likha. Controller ne constructor me service maangi aur Spring ne de di, yahi constructor injection hai jo tere project me live chal raha hai.
+`new` likhne se tujhe asli object milta hai, Spring ka cover (proxy) nahi milta. `@Transactional` usi cover se chalta hai, isliye yahan wo bina koi error diye kaam karna band kar deta hai: aadha data save ho jaata hai aur rollback nahi hota. Ye wahi singleton wale trap jaisa hai: Spring ki cheez ho to Spring se maango, `new` mat karo.
