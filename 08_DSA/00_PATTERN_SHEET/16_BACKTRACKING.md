@@ -65,8 +65,6 @@ vector<vector<int>> subsets(vector<int> &nums) {
 ```
 
 ```
-TASVEER:
-
 ── RECURSION TREE (nums=[1,2,3]) ── har edge 2 BAAR: ↓neeche=PUSH(choose) · ↑wapas=POP(backtrack)
                              [ ]                       <- solve(start=0)
             ┌─────────────────┼─────────────────┐
@@ -108,9 +106,6 @@ Ek array diya hai (sab number alag). In numbers ko jitne alag-alag kram me laga 
 ```
 
 ```
-YAAD:
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
 INDEX/start KYU NAHI PASS kiya (permutation me): order MATTER karta -> har position pe koi bhi UNUSED element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat hi nahi -> isliye 'start' ki zaroorat nahi, uski jagah used[].
    (subsets/combinations me start = "peeche mat jao" (duplicate-rok, order-agnostic). permutation me wo nahi chahiye -> used[] = "same element dobara mat lo".)
 ```
@@ -171,9 +166,6 @@ candidates[] (sab alag, sab positive) aur ek target diya hai. Wo saare alag comb
 ```
 
 ```
-YAAD:
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
 FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
 ```
 
@@ -224,8 +216,6 @@ Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar
 ```
 
 ```
-YAAD:
-
 ★ BUG-TRAP: loop me `if(solve(...)==false) return false;` -> PEHLA start fail hote hi poora false,
    baaki start dekhe hi nahi.  DRY-RUN "AAB":
          C A A        loop pehle (0,1) wala A -> paas me B nahi -> fail -> purana code yahin FALSE
@@ -235,7 +225,6 @@ YAAD:
 
 ★ PURANI ATAK (Aug sheet): CRUX yahi atkaata tha: 4 DFS ko || me jodna (ek direction true -> baaki call hi nahi) + visited check bounds / mismatch ke saath EK hi if me.
 
-PURANI SHEET KI KYUN LINE (code ke saath wali):
 ANY vs ALL (har jagah yahi):
    "KOI EK bhi?" (any)  -> loop me: mila to return true   · loop ke BAAD: return false
    "SAB ke SAB?" (all)  -> loop me: fail to return false  · loop ke BAAD: return true
@@ -294,8 +283,6 @@ n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
 ```
 
 ```
-YAAD:
-
 ★ BUG-TRAP #2 (Arpan-22-Sep, khud pakda): dono ALAG `if` hain, `else if` NAHI --
    open<n aur close<open dono ek saath sach ho sakti hain, aur tab DONO chalni chahiye.
    `else if` = "ek mil gaya bas" = dhoondhne wali soch. Yahan BANANA hai, saare banane hain.
@@ -319,7 +306,7 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 ```
 
 
-### ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)
+### ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)  = FOR-LOOP backtracking, har digit pe uske letters (index == n pe record)
 
 ```
 2 se 9 tak ke ankon ki ek string di hai. Phone keypad pe har ank ke kuch akshar hote hain (2 = abc, 3 = def ...). In ankon se banne wale saare shabd lautao. Khaali string pe khaali list.
@@ -330,8 +317,6 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 ```
 
 ```
-YAAD:
-
 ★ BUG-TRAP (24-Sep): `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
    pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12). LeetCode pe chal jaata (har test pe naya object),
    local test me pakda gaya. -> ans function ke andar, solve() me REFERENCE se.
