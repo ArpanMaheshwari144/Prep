@@ -40,10 +40,6 @@ int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-total nikaalo; leftSum chalao. order: rightSum=total-leftSum-nums[i]; if(left==right)return i; PHIR leftSum+=nums[i]. (leftSum BAAD me)
-```
 
 ### ▸ PRODUCT EXCEPT SELF (LC-238)
 
@@ -81,13 +77,6 @@ vector<int> productExceptSelf(vector<int> &nums) {
 
 ── (STANDALONE — apni alag trick) ──
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-ans[i] = (i se PEHLE sabka product) × (i ke BAAD sabka product).  no division, O(n).
-running `prod` se 2 pass (assign-BEFORE-update dono me):
-   left-pass  (aage):    left[i]  = prod;  prod *= nums[i];   // prod=1 se shuru: index 0 ke left me koi nahi
-ORDER TRAP: pehle ASSIGN (left[i]=prod), PHIR UPDATE (prod*=nums[i]) -> warna khud ka element bhi product me ghus jaata.
-```
 
 ### ▸ HIGHEST ALTITUDE
 
@@ -135,12 +124,6 @@ int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum %
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-DERIVE: brute har subarray ka sum baar-baar -> redundancy -> running PREFIX sum -> do prefix ka remainder same = beech ka subarray %k==0.
-★ PREFIX KYUN, single A[i] NAHI: subarray = CONTIGUOUS range -> poore range ka sum chahiye -> do prefix ka farak = wahi subarray.
-rem = ((sum%k)+k)%k;   count += mp[rem];   mp[rem]++;   // +k phir %k: negative sum ka % negative aata, alag bucket me jaata
-```
 
 ### ▸ COUNT SUBARRAYS WITH XOR = K  = SUBARRAY-SUM-K, bas + ki jagah ^
 
@@ -174,20 +157,6 @@ int subarrayXorK(vector<int> &nums, int k) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
-PEHLI SHEET (Aug) se bhi, same to same:
-count subarrays jinka XOR == k.  [4,2,2,6,4],k=6 -> 4
-= SUBARRAY-SUM-K ka HUBAHU copy, sirf sign badle:
-   mp[0]=1 SEED · complement mila -> count+ · same complement dobara -> count double (sum jaisa).
-common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     nums[] + k. kitne lagaatar subarray jinke saare elements ka XOR = k -> GINTI.
-```
 
 ### ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
 
@@ -260,15 +229,6 @@ long long countSubarraysMaxK(vector<int> &arr, int K) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-★ TRAP-instinct (jo dhoka deta): "subarray"->SW · "max"->monotonic STACK · "count"->PQ.
-   SAB galat -> max FIXED-K se compare (relative nahi) -> stack/SW ki zaroorat NAHI. SIMPLE LINEAR scan.
-KEY INSIGHT: K se BADE elements = WALL (array ko todte). segment ke andar K-wale subarrays gino.
-do INDEX track (dono init -1):   // -1: abhi koi wall/K nahi, start index 0 se gino
-★ guard lastK > lastWall KYUN: warna (lastK - lastWall) NEGATIVE (K kisi wall ke peeche dab gaya) -> count galat. ([5,3,5] pe dikhta)
-common trick: "assign PEHLE, update BAAD me" (pivot + product dono me).
-```
 
 ### ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)
 
@@ -328,11 +288,4 @@ vector<int> corpFlightBookings(vector<vector<int>> &bookings, int n) {
 //   (JP OA bank me 3-4 baar: "Interval Flip Operations", "Minimum Cores", "Maximum Concurrent Tasks")
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-      seedha karo to har range pe loop = O(range × length). Chahiye O(n + ranges).
-SAAR: har element ko CHHUO MAT. Sirf DO jagah nishaan lagao — jahan se shuru, aur jahan se khatam.
-      phir ek baar chal ke chalti-sum lo — wahi asli value hai.
-TEMPLATE:
-```
 
