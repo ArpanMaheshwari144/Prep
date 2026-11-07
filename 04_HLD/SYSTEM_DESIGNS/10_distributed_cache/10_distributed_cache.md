@@ -119,6 +119,10 @@ kuch second Ravi dikhe, par ye koi paisa thodi hai jo ekdum consistency chahiye.
 **Asli naam:** banda har baar check kare, farak mila to theek = background sync (reconciliation) job, kuch second
 Ravi dikhe, paisa nahi = eventual consistency chalegi.
 
+**Maan lo poochhe "pehle DB phir parchi kaato, ulta kyun nahi?":** wo bhi chalta, chhed thoda chhota, par chhed wahan
+bhi hai (dheemi read purana laake likh sakti). Isliye peeche wala banda dono kram me chahiye; kaatna fail to dobara kaato.
+**Asli naam:** write-then-invalidate, invalidation retry, pakka chahiye to version check / lock.
+
 **Maan lo cache me 1 TB, sync job ko kaise pata kaunsi key dekhni hai:** wahi jo update hui. Job ko time do: pichhle ek
 ghante me DB me jo row badli, sirf unki parchi milao. Ek saath 1 TB nahi badalta. Dikkat lage to 2-3 ghante ya ek din ka kar do.
 **Asli naam:** DB me `updated_at` pe query (index), sirf badli key ka cache theek, chhoti time window.
