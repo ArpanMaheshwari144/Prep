@@ -168,6 +168,41 @@ K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
 ```
 
+```
+TASVEER:
+
+[8, 2, 1, 3, 4, 5, 1, 10],  K = 3      (K se bada = DEEWAR)
+
+ 10 |                                  #
+  8 | #                                #
+  5 | #                     #          #
+  4 | #                 #   #          #
+  3 | #           [3]   #   #          #   <- K wali line
+  2 | #     #     [3]   #   #          #
+  1 | #     #  #  [3]   #   #   #      #
+    +----------------------------------------
+idx   0     1  2   3    4   5   6      7
+     WALL   .  .   K  WALL WALL .    WALL
+     |<-- kamra -->|
+
+har i pe:   lastWall = aakhri DEEWAR ka INDEX,   lastK = aakhri K ka INDEX
+            agar lastK > lastWall  ->  count += lastK - lastWall
+
+ i  arr   lastWall  lastK   jodo
+ 0   8       0       -1      -       (deewar)
+ 1   2       0       -1      -       (K abhi aaya hi nahi)
+ 2   1       0       -1      -
+ 3   3       0        3     +3       [2,1,3] [1,3] [3]  = shuru 1, 2, 3
+ 4   4       4        3      -       deewar ne K ko peeche chhod diya
+ 5   5       5        3      -
+ 6   1       5        3      -       3 - 5 = -2  -> GUARD na ho to ginti ghatti
+ 7  10       7        3      -
+                            = 3
+
+★ 7-Nov REDO_2 ki galti: lastWall = arr[i] likha (8, 4...)  ->  INDEX chahiye (0, 4...), ginti index se banti
+★ teesri if (lastK > lastWall) chhooti: i = 6 pe 3 - 5 = -2 jud jaata
+```
+
 ```cpp
 long long countSubarraysMaxK(vector<int> &arr, int K) {
     int lastWall = -1;                      // aakhri index jahan arr[i] > K  (-1: abhi koi wall nahi)
