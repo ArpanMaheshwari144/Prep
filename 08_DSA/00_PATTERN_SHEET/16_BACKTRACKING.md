@@ -98,25 +98,6 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &
 //   pe branch
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : har element ke saamne 2 raaste -> LE lo ya CHHOD do -> 2 recursive call. index==size pe temp = ek subset.
-TEMPLATE (index-based, include/exclude):
-    // caller: temp BAHAR bana ke by-ref pass; solve(nums, ans, 0, temp).
-temp by-REFERENCE (shared path); push/pop usi pe -> backtrack. helper-andar banate -> har call naya -> toot jaata.
-── ALT FORM: START-LOOP (for-loop) ── same cheez, alag likhawat (dono yaad rakho):
-start-loop me EXPLICIT base-case ki zaroorat NAHI: index==n -> loop chalega hi nahi -> khud ruk jaata.
-  (include/exclude form me 'if(index==size) return' likhna padta; loop form khud terminate.)
-FARAK: include/exclude = base pe subset add + 2 branch  |  start-loop = HAR node pe add + loop. dono 2^n, same choose/explore/un-choose.
-har edge pe DONO arrow: neeche jaate waqt ↓PUSH (choose), wapas aate waqt ↑POP (backtrack). ek edge = 2 baar cross.
-POP KYU? branch khatam -> jo element DAALA tha usko NIKAALO (undo) -> taaki WAHI jagah AGLE sibling ko mile.
-   (undo na karo -> path ganda -> galat subset.)  e.g. [1,2,3]→↑pop3→[1,2]→↑pop2→[1]→ab loop aage ↓+3→[1,3].
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     nums[] (sab unique). SAARE subsets lautao, order koi bhi.
-```
 
 ### ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
 
@@ -155,19 +136,6 @@ void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vect
 // SUBSETS = 'start' (sirf AAGE, [1,2]==[2,1] repeat nahi) · PERMUTATION = used[] + loop 0 se, start NAHI
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : saare elements ka har ORDER (arrangement). har position pe koi bhi UNUSED element -> used[] track.
-SUBSETS se FARAK (crux): subsets = 'start' index (sirf AAGE) -> [1,2]==[2,1] repeat nahi.
-        for(i = 0; i < nums.size(); i++){                                 // 0 se (start nahi) (order matter: peeche wala bhi kisi position pe aa sakta)
-n! permutations.  base = size==n (full length), subsets me har-node/index-end tha.
-1-line yaad: SUBSETS='start-aage' (kaunse) · PERMUTATION='used[]+loop-0-se, NO start' (kis order).
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     nums[] (sab unique). SAARE permutations (har possible order) lautao.
-```
 
 ### ▸ COMBINATIONS (LC-77)  = SUBSETS ka start-loop, bas base size==k
 
@@ -193,11 +161,6 @@ void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
 // SUBSETS = start-aage, har node · COMBINATIONS = start-aage, size==k · PERM = used[] + loop 0, size==n
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : 1..n me se k numbers ke saare combos (order nahi). = subsets ka start-loop, record SIRF size==k pe.
-subsets se FARAK = SIRF base: subsets har-node add · combinations size==k pe add. (baaki code SAME -> reuse.)
-```
 
 ### ▸ COMBINATION SUM (LC-39)  = REUSE allowed + TARGET-base
 
@@ -248,29 +211,6 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
 // candidates positive -> target ghatta -> infinite nahi
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : candidates me se (REUSE allowed) sum==target wale saare combos. = combinations code, bas base target + recurse 'i'.
-    void solve(cand, target, ans, start, temp):
-        if(target < 0) return;                          // prune (aage koi faida nahi)
-        if(target == 0){ ans.push_back(temp); return; } // valid combo
-        for(i = start; i < cand.size(); i++){   // start se: peeche wale nahi, combo repeat nahi
-            temp.push_back(cand[i]);                     // CHOOSE
-            solve(cand, target - cand[i], ans, i, temp); // EXPLORE ('i' -> REUSE allowed, i+1 nahi)
-start=i -> same element repeat OK par PEECHE wale nahi (duplicate combo rok). candidates positive -> target ghatta -> infinite nahi.
-── ALT FORM: INCLUDE/EXCLUDE (2-branch) ── same output, alag likhawat (subsets ki tarah dono):
-    void solve(cand, target, ans, index, temp):
-        if(target < 0) return;  // pehle: overshoot hua to aage jaana bekaar
-        // INCLUDE: cand[index] liya (index SAME -> reuse)
-        temp.push_back(cand[index]);
-        solve(cand, target - cand[index], ans, index, temp);  // index same: yahi coin dobara le sakte
-        // EXCLUDE: cand[index] chhoda -> aage (index+1)
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     candidates[] (distinct, positive) + target. saare unique combos jinka SUM == target, ek number kitni bhi baar.
-```
 
 #### ── FAMILY: GRID PATH (element choose / skip nahi, grid pe raasta: mark -> recurse -> un-mark) ──
 
@@ -339,27 +279,6 @@ bool exist(vector<vector<char>> &board, string word) {
 // islands-DFS se FARAK: islands = fill / count. word search = mark + recurse + UN-mark + return-bubble
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : grid me `word` adjacent (4-dir) cells se banta hai? har cell EK-BAAR. har cell se DFS, mark→recurse→un-mark.
-        vis[i][j]=true; index++;  // mark PEHLE: aage ke raaste me ye cell dobara na aaye
-        if(solve(..i+1,j..) || solve(..i,j+1..) || solve(..i-1,j..) || solve(..i,j-1..)) return true;  // || : ek raasta mila to baaki call hi nahi
-        return index==word.size();                             // base: poora word mila · index++ ho chuka: aakhri char match hua tabhi == size
-            if(board[i][j]==word[0])   // pehla char mile tabhi DFS shuru
-★ CRUX: (1) 4 DFS ko || me JODO — ek direction true → baaki call hi nahi
-        (4) exist() = "KOI EK" sawaal -> loop me sirf TRUE pe return, FALSE loop ke BAAD.
-PEHLI SHEET (Aug) se bhi, same to same:
-SAAR : grid me `word` adjacent (4-dir) cells se banta hai? har cell EK-BAAR. har cell se DFS, mark→recurse→un-mark.
-        if(dfs(i+1,j..) || dfs(i-1,j..) || dfs(i,j-1..) || dfs(i,j+1..)) return true;  // 4-dir || SHORT-CIRCUIT (ek true→baaki call NAHI)
-    exist(): har cell jaha board[i][j]==word[0] se dfs; koi true -> return true.
-★ CRUX (yehi atkaata tha): (1) 4 DFS ko || me JODO — SHORT-CIRCUIT (ek direction true → baaki call hi nahi) (2) visited-check EK-hi if me (bounds+mismatch ke saath) (3) base = index==word.size().
-islands-DFS se FARAK: islands = bas fill/count. word-search = mark + recurse + UN-mark (path dobara use na ho) + return-bubble. yehi backtracking-twist.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     char grid + word. kya word bagal-bagal cells (up/down/left/right) se banta, har cell ek hi baar? true/false.
-```
 
 #### ── FAMILY: CONSTRAINT / LEVEL choices (har step pe choice, rule ya level se) ──
 
@@ -398,19 +317,6 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 // caller: solve(0, 0, "", ans, n). n=3 -> 5, n=4 -> 14 (kam aaye = koi branch kat rahi)
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : n jode ke saare VALID strings. brute (2^2n saari strings + filter) NAHI -> validity-RULE se hi banao.
-2 RULE (poora khel yahi): open<n -> '(' add sakta · close<open -> ')' add sakta (tabhi valid rahega).
-        if (path.size() == 2*n) { ans.push_back(path); return; }   // base (2*n: har jode me 2 char)
-        if (open  < n)    solve(open+1, close, n, path+'(', ans);   // '(' branch (open<n: n se zyada '(' nahi daal sakte)
-FAMILY: subsets-jaisa (har step pe choice), par choice CONSTRAINT se filter (open/close count) -> sirf valid bante.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     n jode brackets. saare VALID (balanced) strings lautao.
-```
 
 ### ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)
 
@@ -458,17 +364,4 @@ vector<string> letterCombinations(string digits) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : "23" -> har ank ke akshar me se EK-EK chuno -> saare shabd. (2=abc ... 7=pqrs ... 9=wxyz)
-= har LEVEL (index) = ek ank, us level pe us ank ke SAARE akshar try karo (for loop), neeche jao.
-    // caller: digits khaali -> return {} (warna "" wali EK string aa jaati)
-    //         MAP yahan banta (ank -> uske akshar):
-FAMILY: subsets/permutations jaisa (choose-explore-unchoose), bas har level pe choices = us ank ke akshar.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     digits (2-9) ki string. phone keypad ke aksharon se saare shabd lautao, khaali -> [].
-```
 
