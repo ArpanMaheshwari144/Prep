@@ -223,7 +223,14 @@ class Library {
             return -1;
         }
         books.get(bookId).availableCount++;
+        // ★ remove(bookId) theek: id String hai -> remove(Object) lagta, pehla match hatta.
+        //   List<Integer> me remove(5) likhte to remove(int INDEX) lagta (index 5 hatta / crash)
+        //   -> wahan remove(Integer.valueOf(5))
         members.get(memberId).borrowedBookIds.remove(bookId);
+        // daysLate = DUE DATE (15 din) ke BAAD kitne din der hui, "kitne din rakhi" NAHI:
+        //   20 din rakhi -> daysLate 5 -> 50 · 16 din -> 1 -> 10 · 17 din -> 2 -> 20
+        //   15 din -> 0 -> time pe, fine 0 · 10 din -> -5 -> pehle laut aayi, fine 0
+        // > 0 shart KYUN: bina iske -5 * 10 = -50 -> library ulta paisa de deti
         int fine = daysLate > 0 ? daysLate * 10 : 0;
         return fine;
     }
