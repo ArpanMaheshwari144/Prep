@@ -36,7 +36,7 @@ interface me state nahi hoti: na field, na constructor, sirf constant rakh sakte
 Agar tune kisi chalte hue interface me naya method jod diya, to jitni bhi classes us interface ko implement karti hain, wo sab
 ek saath compile hona band ho jaati hain, kyunki kisi ne bhi wo naya method likha nahi hai.
 
-Java 8 me yahi dikkat aayi thi. `Collection` me `stream()` aur `forEach()` jodne the, aur seedha jodte to duniya bhar ki list
+Java 8 me yahi dikkat aayi thi. `Collection` me `stream()` aur `Iterable` me `forEach()` jodne the, aur seedha jodte to duniya bhar ki list
 classes toot jaatin. Isliye `default` method laaye gaye: method ki body interface me hi likh do, to purani classes bina chhede
 chalti rehti hain.
 

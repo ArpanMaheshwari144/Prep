@@ -63,10 +63,10 @@ HLD se jodo to ye wahi dikkat hai jahan DB badal gaya par Redis me purana data p
 ```java
 @ManyToOne                 // default EAGER!
 Author author;
-// bookRepo.findAll() -> har book ka author alag query = ulta N+1
+// bookRepo.findAll() -> har ALAG author ki alag query = ulta N+1
 ```
 
-`@ManyToOne` default me EAGER hota hai, isliye `bookRepo.findAll()` karte hi har book ke author ke liye alag query chalti hai. Ye ulta N+1 hai. Hal ye hai ki `@ManyToOne(fetch = FetchType.LAZY)` lagao, aur jahan author sach me chahiye wahan JOIN FETCH karo.
+`@ManyToOne` default me EAGER hota hai, isliye `bookRepo.findAll()` karte hi har alag author ke liye ek alag query chalti hai. 100 book aur 5 author hain to 1 + 5 query, kyunki same author dobara aaye to Hibernate use pehle se khule session (L1 cache) se de deta hai. Author jitne zyada alag, query utni zyada. Ye ulta N+1 hai. Hal ye hai ki `@ManyToOne(fetch = FetchType.LAZY)` lagao, aur jahan author sach me chahiye wahan JOIN FETCH karo.
 
 ## Tera project
 

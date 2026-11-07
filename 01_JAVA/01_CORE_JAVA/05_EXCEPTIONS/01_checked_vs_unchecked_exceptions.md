@@ -3,7 +3,7 @@
 - **Checked:** compiler pehle hi rok deta hai, "handle karo ya `throws` likho". Ye bahar ki cheezon ke liye hain jo fail ho sakti
   hain, jaise file, DB, network (`IOException`, `SQLException`).
 - **Unchecked:** compiler kuch nahi kehta, ye chalte waqt phatti hain. Ye code ki galti ke liye hain, jaise null ya galat index
-  (`NullPointerException`, `IllegalArgumentException`). Pehchaan: `RuntimeException` ka bachcha.
+  (`NullPointerException`, `IndexOutOfBoundsException`, aur galat argument pe `IllegalArgumentException`). Pehchaan: `RuntimeException` ka bachcha.
 
 ## Tera bank
 
