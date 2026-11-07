@@ -541,6 +541,7 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
     }
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;   // {dist,node}
     vector<int> dist(n, 1e9);               // INF se: pehla rasta hamesha chhota lage
+                                            // ★ sawaal weight 1e9 ke paas de -> tabhi long long + INF = LLONG_MAX
     dist[src] = 0;                          // src khud 0
     pq.push({0, src});
     while (!pq.empty()) {
