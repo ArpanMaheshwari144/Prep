@@ -172,7 +172,7 @@ bool isPalindrome(Node *head) {
             return false;
     }
     return true;                            // khaali list -> true
-}   // list TOOTI nahi: pehle half ka ->next nahi badla, odd me middle SHARED -> bina cut odd + even dono
+}   // list badalti hai: 2nd half ulta (2->next = NULL); check ke liye theek. Na todni ho to dummy copy pe chalao
 ```
 
 
