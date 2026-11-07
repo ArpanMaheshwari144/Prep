@@ -1,12 +1,8 @@
 # Spring Boot Auto-Configuration
 
-## Kahani
+## Scene
 
-Ek naya naukar hai, Spring Boot. App start hote hi wo teri almari kholta hai, yaani tera pom aur classpath. Almari me bat dikha to wo samajh jaata hai ki sahab cricket khelte hain, aur ground aur kit khud taiyaar kar deta hai. Bat nahi dikha to wo cricket ka koi setup nahi karta.
-
-## Tasveer
-
-Tere usercrud ka pom:
+Tere usercrud me tune Tomcat chalane ya DB connection banane ki ek bhi line nahi likhi, phir bhi app 8080 pe chal jaati hai aur DB se judi rehti hai. Ye kaun karta hai? Tera pom dekh:
 
 ```
 almari me (pom)            ->  Spring ne khud banaya
@@ -17,29 +13,33 @@ starter-actuator           ->  /actuator/health
 starter-security           ->  filter chain + default login
 ```
 
-Pom me jo starter rakha, uske hisaab se Spring ne cheezein khud bana di. Tune Tomcat chalane ya DB connection banane ki ek bhi line code me nahi likhi.
+## Kaise
 
-## 4 khaas baat
+Spring Boot ek naukar jaisa hai. App start hote hi wo almari (classpath) kholta hai: bat dikha to cricket ka setup kar deta hai, bat nahi dikha to kuch nahi.
 
-1. **Starter bas dependencies ka ek bundle hai.** Wo sahi jars ek saath le aata hai. Asli kaam auto-configuration karta hai.
-2. **`@SpringBootApplication` andar se teen annotation hai: `@Configuration`, `@ComponentScan` aur `@EnableAutoConfiguration`.** Teesra wala har jar me rakhi ek list padhta hai. Boot 2.7 aur 3 me ye list `AutoConfiguration.imports` file me hoti hai, aur purane Boot me `spring.factories` me. Us list me `DataSourceAutoConfiguration` jaisi classes likhi hoti hain.
-3. **Har auto-config class ek shart (`@Conditional`) ke peeche chhupi hoti hai:**
-   - `@ConditionalOnClass` ka matlab hai ki wo library classpath pe ho, tabhi ye config chalo.
-   - `@ConditionalOnMissingBean` ka matlab hai ki tune apna bean nahi banaya, tabhi Spring apna banaye.
-   - `@ConditionalOnProperty` ka matlab hai ki wo property set ho, tabhi ye config chalo.
-4. **Tune apna kuch diya to Spring peeche hat jaata hai.** Kuch nahi diya to Spring ka default chalta hai, jaise H2. Tune `spring.datasource.url` di ya apna bean banaya, to Spring tera wala use karta hai.
+- **Starter:** bas sahi jars ka bundle.
+- **`@SpringBootApplication`:** andar se `@Configuration` + `@ComponentScan` + `@EnableAutoConfiguration`. Teesra wala har jar ki list padhta hai (Boot 2.7 / 3 me `AutoConfiguration.imports`, purane me `spring.factories`), jisme `DataSourceAutoConfiguration` jaisi classes likhi hoti hain.
+- **Har auto-config ek shart (`@Conditional`) ke peeche hoti hai:**
+  - `@ConditionalOnClass`: wo library classpath pe ho tabhi chalo.
+  - `@ConditionalOnMissingBean`: tune apna bean nahi banaya, tabhi Spring apna banaye.
+  - `@ConditionalOnProperty`: wo property set ho tabhi chalo.
 
-## Prod wala trap
+## Dikkat (prod trap)
+
+Tune apna DataSource khud bana liya:
 
 ```java
 @Bean
-DataSource dataSource() {               // apna bana liya
+DataSource dataSource() {
     return new HikariDataSource(...);
 }
 ```
 
-Tune apna DataSource bean bana liya, to `@ConditionalOnMissingBean` ki wajah se Spring apna bean nahi banata. Iske saath ek chupi cheez hoti hai: `application.properties` me likhi `spring.datasource.hikari.maximum-pool-size` jaisi settings bhi chup-chaap lagna band ho jaati hain, aur pool default size pe chalta rehta hai. Ye wahi HikariCP pool exhaustion wali kahani hai jo tune prod me pakdi thi. Kaunsi auto-config chali aur kaunsi nahi, ye dekhna ho to app `--debug` ke saath chalao, uski "condition evaluation report" saaf bata deti hai.
+`@ConditionalOnMissingBean` ki wajah se Spring peeche hat jaata hai, ye theek hai. Par saath me `application.properties` ki `spring.datasource.hikari.maximum-pool-size=50` bhi chup-chaap lagni band ho jaati hai, aur pool default 10 pe chalta rehta hai. Load aaya to connection khatam aur requests atak jaati hain. Ye wahi HikariCP pool wali kahani hai jo tune prod me pakdi thi.
 
-## Tera project
+## Hal
 
-usercrud ke pom me 8 starter hain: data-jpa, webmvc, validation, graphql, cache, kafka, actuator aur security. Inke liye setup ka code tune kahin nahi likha. Haan, BCrypt Spring ne nahi diya, wo tere `SecurityConfig` ka apna `@Bean` hai.
+- Apna bean banaya hai to pool size apne code me hi set karo, ya bean mat banao aur properties se chalne do.
+- Kaunsi auto-config chali aur kaunsi nahi, ye dekhna ho to app `--debug` ke saath chalao. Uski "condition evaluation report" saaf bata deti hai.
+
+Tera usercrud: 8 starter (data-jpa, webmvc, validation, graphql, cache, kafka, actuator, security), setup code zero. Ek cheez tune khud di hai: BCrypt, jo tere `SecurityConfig` ka apna `@Bean` hai.
