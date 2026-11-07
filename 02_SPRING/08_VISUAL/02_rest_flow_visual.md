@@ -1,21 +1,8 @@
 # Spring REST Flow
 
-## Kahani
+## Scene
 
-Tu Domino's app pe pizza order karta hai:
-
-```
-Tu -> Receptionist (Controller) -> Manager (Service) -> Kitchen (Repository) -> Pantry (DB)
-```
-
-- **Receptionist:** order leta hai aur check karta hai ki order poora likha hai ya nahi.
-- **Manager:** tay karta hai ki kaam kaise hoga.
-- **Kitchen:** pantry se saamaan nikaalta hai.
-- **Customer ko kya milta hai:** plate me saja hua pizza (DTO), kitchen ka kachcha saamaan (Entity) nahi.
-
-## Tasveer
-
-Ek POST request ka poora safar:
+Postman se `POST /api/users` maara, body `{"name":"Ravi","email":"ravi@x.com","password":"abc"}`. Request kahan-kahan se guzarti hai:
 
 ```
 Postman POST /api/users
@@ -28,29 +15,36 @@ Postman POST /api/users
  kahin bhi exception -> @RestControllerAdvice -> saaf error JSON
 ```
 
-Request pehle Tomcat pe aati hai, phir filter chain se guzarti hai. Yahin `JwtFilter` token jaanchta hai, aur ye Spring MVC se PEHLE hota hai, isliye token galat hai to 401 yahin se laut jaata hai. Phir DispatcherServlet URL dekh ke sahi controller method dhoondhta hai. JSON ko `UserRequest` me badla jaata hai aur `@Valid` chalta hai, galat data hai to 400. Phir Controller, Service (`@Transactional`) aur Repository se hoke DB me INSERT hota hai. Wapsi me Entity ko DTO me badla jaata hai, Jackson use JSON banata hai, aur 201 jaata hai. Raste me kahin bhi exception aayi, to `@RestControllerAdvice` use ek saaf error JSON me badal deta hai.
+Domino's jaisa: receptionist (Controller) order leta hai, manager (Service) tay karta hai, kitchen (Repository) pantry (DB) se nikaalta hai. Customer ko plate me saja pizza (DTO) milta hai, kachcha saamaan (Entity) nahi.
 
-## 4 khaas baat
+## Dikkat (prod trap)
 
-1. **Request me data teen jagah se aata hai:**
-   - `/users/123` jaisa URL ka hissa `@PathVariable` se milta hai.
-   - `?active=true` jaisi query `@RequestParam` se milti hai.
-   - JSON body `@RequestBody` se milti hai.
-2. **Bahar hamesha DTO bhejo, entity kabhi nahi.** Entity me password, role aur andar ke fields hote hain. `UserResponse { id, name, email }` me sirf wahi jaata hai jo dikhna chahiye.
-3. **`@Valid` method me ghusne se pehle hi rok deta hai.** Galat email ya khaali naam aaya to 400 jaata hai, aur tera code chalta hi nahi.
-4. **Har controller me try-catch nahi likhna padta.** `@RestControllerAdvice` me ek jagah likho: `UserNotFound` aaye to 404, validation fail ho to 400. Aur security ka filter DispatcherServlet se bhi pehle chalta hai, isliye galat token wali request controller tak pahunchti hi nahi.
-
-## Prod wala trap
+Kisi ne jaldi me entity seedha lauta di:
 
 ```java
 @GetMapping("/{id}")
-public User get(@PathVariable Long id) {    // seedha entity lauta di
+public User get(@PathVariable Long id) {
     return repo.findById(id).orElseThrow();
 }
 ```
 
-Jackson poori entity JSON bana deta hai, aur `password` (hash) bhi response me chala jaata hai. Agar entity me doosri entity ka link ho (User ke andar Orders, aur Orders ke andar wapas User), to JSON gol-gol ghoom ke `StackOverflowError` bhi de deta hai. Ilaaj: DTO lautao. Aur POST pe `@ResponseStatus(HttpStatus.CREATED)` lagao, warna wo bhi 200 hi deta hai.
+Response me ye chala jaata hai:
 
-## Tera project
+```json
+{"id":1,"name":"Ravi","email":"ravi@x.com","password":"$2a$10$Xk...","role":"ADMIN"}
+```
 
-usercrud me poora yahi dhaancha hai: `UserController` request leta hai, `UserService` ko deta hai, aur service `BookRepository` ya `UserRepository` se DB tak jaati hai. Global error ke liye `GlobalExceptionHandler` (`@RestControllerAdvice`) hai, aur controller se pehle `JwtFilter` chalta hai.
+Jackson poori entity JSON bana deta hai, password ka hash aur role bhi. Aur entity me gol rishta ho (User me Orders, Order me wapas User), to JSON ghoomta rehta hai aur `StackOverflowError` aata hai.
+
+## Hal
+
+- Bahar hamesha DTO bhejo: `UserResponse { id, name, email }`, sirf wahi jo dikhna chahiye.
+- POST pe `@ResponseStatus(HttpStatus.CREATED)` lagao, warna 201 ki jagah 200 jaata hai.
+
+## Khaas baat
+
+- Data 3 jagah se aata hai: `/users/123` -> `@PathVariable` · `?active=true` -> `@RequestParam` · JSON body -> `@RequestBody`.
+- `@Valid` method me ghusne se pehle hi rok deta hai: galat email aaya to 400, tera code chalta hi nahi.
+- Har controller me try-catch nahi likhte: `@RestControllerAdvice` me ek jagah, `UserNotFound` pe 404, validation fail pe 400.
+
+Tera usercrud: `UserController` -> `UserService` -> `UserRepository`. Upar `JwtFilter` (controller se pehle) aur `GlobalExceptionHandler` (`@RestControllerAdvice`), poora yahi dhaancha hai.
