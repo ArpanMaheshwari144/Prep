@@ -59,7 +59,7 @@ bool isIsomorphic(string s, string t) {
 ```
 
 
-### ▸ WORD PATTERN
+### ▸ WORD PATTERN  = ISOMORPHIC ka bhai (char <-> WORD)
 
 ```
 Ek pattern (akshar) aur ek string s (space se alag words) di hai. Kya pattern ka har akshar hamesha ek hi word se juda hai, aur har word hamesha ek hi akshar se?
@@ -174,7 +174,7 @@ vector<vector<string>> groupAnagrams(vector<string> &strs) {
 ```
 
 
-### ▸ SUBARRAY SUM = K
+### ▸ SUBARRAY SUM = K  = prefix-sum + hashmap {prefixSum -> count}
 
 ```
 Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinka jod theek k ke barabar ho, wo ginti lautao.
@@ -212,8 +212,6 @@ A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har ele
 ```
 
 ```
-TASVEER:
-
  ★ k-rem ka INTUITION (ek element se, concrete):
    maan it=1, k=3.   pehle remainder: 1%3 = 1.
    chahiye: (1 + partner) % 3 == 0.   to partner ka remainder = 3 - 1 = 2.
@@ -253,7 +251,7 @@ long long countDivisiblePairs(vector<int> &nums, int k) {
 ```
 
 
-### ▸ LONGEST CONSECUTIVE SEQ (LC-128)
+### ▸ LONGEST CONSECUTIVE SEQ (LC-128)  = SET + har chain sirf START se gino
 
 ```
 Ek bina sort kiya hua array diya hai. Usme lagaatar numbers ki sabse lambi chain kitni lambi hai (jaise 1, 2, 3, 4), wo lautao.
@@ -266,8 +264,6 @@ sort (n log n) mat karo -> SET me O(1) lookup, har CHAIN sirf uske START se gino
 ```
 
 ```
-TASVEER:
-
 DRY-RUN [100,4,200,1,3,2]  set={1,2,3,4,100,200}:
   100 -> 99 nahi -> START -> 101? nahi        -> count=1
   4   -> 3 HAI   -> beech ka -> skip
@@ -276,6 +272,7 @@ DRY-RUN [100,4,200,1,3,2]  set={1,2,3,4,100,200}:
   3,2 -> (num-1) HAI -> skip
   => ans = 4
   -> har element zindagi me 1 hi baar visit -> O(n)  (warna har num se ginti = O(n^2)).
+FAMILY: hashing/SET (O(1) lookup se sort bachao). trick = "har group sirf START se process".
 ```
 
 ```cpp
@@ -300,7 +297,7 @@ int longestConsecutive(vector<int> &nums) {
 ```
 
 
-### ▸ MAJORITY ELEMENT (LC-169, >n/2)
+### ▸ MAJORITY ELEMENT (LC-169, >n/2)  = BOYER-MOORE VOTING (do alag cancel)
 
 ```
 Ek array me ek number aadhe se zyada baar (n/2 se zyada) aata hai, aur aisa number hamesha hota hai. Wo number lautao.
@@ -343,8 +340,6 @@ extra set/map nahi: value v ka ghar = index v-1 -> dikha to us index ko NEGATIVE
 ```
 
 ```
-TASVEER:
-
 DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
   -> +ve bache index 4,5 -> missing = 5,6.
 
@@ -352,9 +347,6 @@ DRY-RUN [4,3,2,7,8,2,3,1]: mark index 3,2,1,6,7,1(already),2(already),0 -ve
   shuru      :   4    3    2    7    8    2    3    1
   mark baad  :  -4   -3   -2   -7   (8)  (2)  -3   -1
   +ve index 4, 5 -> missing value 5, 6
-
-PURANI SHEET KI LINE (git 07e45c2b):
-★ >0 guard: duplicate dobara aaye to -(-x) = +ve wapas -> wo index 'missing' dikhega. [2,2] pe guard ke bina [1,2] (sahi [1]).
 ```
 
 ```cpp
@@ -362,7 +354,9 @@ vector<int> findDisappearedNumbers(vector<int> &nums) {
     vector<int> ans;
     for (int i = 0; i < nums.size(); i++) {
         int index = abs(nums[i]) - 1;       // ★ abs(): value pehle hi -ve ho chuki ho sakti
-        if (nums[index] > 0)                // ★ >0 check: duplicate pe dobara minus = wapas plus
+        // ★ >0 guard: duplicate dobara aaye to -(-x) = +ve wapas -> wo index 'missing' dikhega.
+        //   [2,2] pe guard ke bina [1,2] (sahi [1])
+        if (nums[index] > 0)
             nums[index] = -nums[index];
     }
     for (int i = 0; i < nums.size(); i++) {
