@@ -36,16 +36,6 @@ void moveZeroes(vector<int> &nums) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-fast pe non-zero mila -> pehle swap(nums[slow], nums[fast]) -> PHIR slow++.   // fast++ har baar (if ke BAHAR) · slow=0, fast=0 se shuru
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     saare 0 ko END me bhejo, baaki numbers ka ORDER wahi rahe. IN-PLACE (naya array nahi).
-```
-
 ### ▸ REMOVE DUP (SORTED)
 
 ```
@@ -68,16 +58,6 @@ int removeDuplicates(vector<int> &nums) {
     }
     return slow + 1;                        // ★ unique count = slow + 1 (slow index hai)
 }
-```
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-move-zeroes cousin. slow = last-UNIQUE ka index, fast SCAN.   // slow=0, fast=0: pehla element khud unique, compare nums[slow]
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     SORTED array. duplicate IN-PLACE hatao, har number ek baar. naya length k lautao (pehle k unique).
 ```
 
 ### ▸ REMOVE ELEMENT
@@ -103,17 +83,6 @@ int removeElement(vector<int> &nums, int val) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-saare 'val' hata, non-val ki count k lauta (move-zeroes cousin). slow = agli keep-jagah, fast scan.
-ORDER: write PEHLE, slow++ BAAD (move-zeroes jaisa). end me slow = k (bache shuru ke k me).
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     array + val. saare val IN-PLACE hatao, naya length k lautao (pehle k me koi val nahi, order kuch bhi).
-```
-
 #### ── FAMILY: left/right COMPARE-CONVERGE (dono chhor se andar, har step compare) ──
 
 ### ▸ VALID PALINDROME (SIMPLE)
@@ -136,16 +105,6 @@ bool isPalindrome(string s) {               // sirf lowercase letters wala aasan
     }
     return true;
 }
-```
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     string (sirf lowercase). aage se aur peeche se same padhe = palindrome? true / false.
 ```
 
 ### ▸ VALID PALINDROME (FULL, LC-125)
@@ -175,11 +134,6 @@ bool isPalindrome(string s) {               // mixed char: sirf alnum ginna, cas
     }
     return true;                            // koi alnum na ho / khaali -> true
 }
-```
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-left/right dono taraf se, compare karte andar aao. (sirf lowercase-letters wala aasan version.)   // while(left<=right), mismatch pe turant return false
 ```
 
 ### ▸ VALID PALINDROME II
@@ -215,13 +169,6 @@ bool validPalindrome(string s) {            // palindrome YA ek char delete kark
     }
     return true;                            // koi mismatch nahi = pehle se palindrome
 }
-```
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-IDEA: two-pointer; MISMATCH pe -> ya LEFT char delete ya RIGHT char delete. koi ek bane -> true, dono na bane -> false.
-TEMPLATE (CLEAN): helper isPalindrome(s,l,r). main loop; mismatch pe seedha ->   // helper bhi while(l<=r), mismatch -> false · match pe l++ r--
-    koi mismatch na aaye -> already palindrome -> true.
 ```
 
 ### ▸ REVERSE VOWELS
@@ -261,12 +208,6 @@ string reverseVowels(string s) {            // sirf vowels aapas me ulte, baaki 
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-sirf vowels (a/e/i/o/u, lower+upper) aapas me reverse, baaki char apni jagah.
-chhota helper isVowel(ch). left/right pointer:
-```
-
 #### ── FAMILY: left/right by-VALUE decision (sum / area ki value dekh ke kaunsa pointer chale) ──
 
 ### ▸ CONTAINER MOST WATER
@@ -296,11 +237,6 @@ int maxArea(vector<int> &height) {
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-left/right; area = min(h)*width; CHHOTI height wala pointer andar (bottleneck).   // left<right: same index pe width 0 · barabar height -> right-- (else)
-```
-
 ### ▸ TWO SUM II (SORTED)
 
 ```
@@ -325,12 +261,6 @@ vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hash
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-sorted -> 2 pointer (left,right); sum==target -> mila (return 1-based).
-(regular two-sum UNSORTED = hashmap; SORTED = 2-pointer.)
-```
-
 ### ▸ SUM OF SQUARE NUMBERS
 
 ```
@@ -353,17 +283,6 @@ bool judgeSquareSum(long long c) {          // a² + b² == c ? (LC 633) 2 numbe
     }
     return false;
 }
-```
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-a²+b²==c possible? (LC 633). RECOGNITION: 2 NUMBER (pair) chahiye -> TWO-POINTER.
-★ low<=high (NOT low<high) -- c=0 ka 0+0 single-point bhi check ho jaaye. OVERFLOW: ans = long long.   // (long long)low*low: guna se PEHLE cast
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     number c. kya do integer a, b hain jinke liye a*a + b*b == c? true / false.
 ```
 
 #### ── FAMILY: fill-from-END (result peeche se bharo, bada element end me) ──
@@ -402,11 +321,6 @@ vector<int> sortedSquares(vector<int> &nums) {   // sabse BADA square dono chhor
     }
     return ans;
 }
-```
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR: sorted arr me negatives ka square order ULTA -> sabse BADA square dono CHHOR pe (beech me nahi). 2-ptr, ans PEECHE se bharo. O(n), no sort.
 ```
 
 ### ▸ MERGE SORTED ARRAY
@@ -448,18 +362,6 @@ void merge(vector<int> &nums1, int m, vector<int> &nums2, int n) {   // nums1 ke
 }                                           // in-place: naya array nahi -> O(1) extra, O(m+n)
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR: 2 sorted arr; nums1 ke END me n khaali. in-place -> PEECHE se bharo (aage se karo to zinda element overwrite). O(m+n).  ★ k=m+n-1 NA m*n-1
-in-place = naya array NAHI banaya; usi nums1 me answer bhara -> O(1) EXTRA space.
-TEMPLATE: i=m-1, j=n-1, k=m+n-1.   // k=m+n-1: nums1 ka aakhri index (total m+n jagah)
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-       IN-PLACE milao, nums1 poora sorted.
-```
-
 #### ── FAMILY: PARTITION / swap-in-place (category me baanto, galat jagah pe swap) ──
 
 ### ▸ SORT COLORS (0,1,2)
@@ -498,17 +400,6 @@ void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-PEHLI SHEET (Aug) se bhi, same to same:
-nums[mid]==0 -> swap(low,mid), low++ AUR mid++ (dono).
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     array me sirf 0, 1, 2. IN-PLACE sort karo (0 phir 1 phir 2), sort() nahi, ek pass me.
-```
-
 ### ▸ SORT ARRAY BY PARITY
 
 ```
@@ -536,17 +427,6 @@ vector<int> sortArrayByParity(vector<int> nums) {   // even pehle, odd baad (aap
 ```
 
 ── (STANDALONE — apni alag trick) ──
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-evens pehle, odds baad (aapas order koi bhi). left/right pointer.   // while(left<right) · odd check = nums[x]%2 != 0
-TRAP: left even && right odd pe swap MAT karo -> dono already sahi jagah.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     saare EVEN pehle, phir saare ODD (aapas ka order kuch bhi chalega).
-```
 
 ### ▸ 3SUM (LC-15)  = SORT + ek fix + baaki 2-pointer (+ duplicate skip)
 
@@ -594,18 +474,6 @@ vector<vector<int>> threeSum(vector<int> &nums) {   // saare UNIQUE triplet jink
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-SAAR : saare UNIQUE triplets jinka sum==0. SORT -> ek number FIX -> baaki 2 ke liye 2-pointer (sum = -fixed).
-TEMPLATE:
-    sort(begin(nums), end(nums));   // sort PEHLE: 2-pointer aur duplicate skip dono sorted pe hi chalte
-        while(low<high){   // < : low==high = ek hi element, jodi nahi banti
-            if(nums[low]+nums[high]==sum){   // jodi mili = fixed ke saath triplet ka sum 0
-                while(low<high && nums[high]==nums[high-1]) high--; // duplicate HIGH skip (pehle low<high, warna high low se neeche khisak jaata)
-CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (i>0 && nums[i]==nums[i-1]) (2) match ke baad LOW (3) match ke baad HIGH.
-sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
-```
-
 ### ▸ IS SUBSEQUENCE
 
 ```
@@ -629,17 +497,6 @@ bool isSubsequence(string s, string t) {    // s, t me order se hai? beech ke ch
         return true;
     return false;
 }
-```
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-s, t ki subsequence hai kya (order same, beech ke char skip allowed). 2 pointer: i for s, j for t.
-ANT: i >= s.size() -> saare s-char order me mil gaye -> TRUE. warna FALSE.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     s aur t. kya t me se kuch char HATA ke (order wahi) s ban sakta? true / false.
 ```
 
 ### ▸ TRAPPING RAIN WATER (LC-42)
@@ -699,21 +556,6 @@ int trap(vector<int> &height) {             // O(1) space, two pointer
 }
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-              left++;   // left ka kaam ho gaya, aage chalo
-              right--;   // right ka kaam ho gaya, andar aao
-edge: empty -> 0.
-PEHLI SHEET (Aug) se bhi, same to same:
-    kyun SAFE: chhoti-max side ka paani sirf usi side se limit (doosri side oonchi wall already khadi).
-edge: empty -> 0.
-```
-
-```
-PURANI SHEET KI LINE (28-Oct PATTERN_SHEET se, upar is roop me nahi thi):
-     height[] = buildings (width 1). baarish ke baad gaddhon me KUL kitna paani rukega?
-```
-
 ### ▸ PALINDROMIC SUBSTRINGS (LC-647)  = EXPAND AROUND CENTER
 
 ```
@@ -762,22 +604,5 @@ int countSubstrings(string s) {
     }
     return count;                           // O(n²), O(1); DP nahi: substring contiguous, choice nahi
 }
-```
-
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-single char bhi palindrome · same-dikhne wale par ALAG POSITION wale ALAG count.
-SIGNAL: "count palindromes / palindromic substrings" -> har CENTER pe khade ho ke PHAILO.
-DO tarah ke CENTER (dono chahiye):
-   ODD  length -> center ek CHAR       ("abcba" -> c)     -> expand(i, i)
-   EVEN length -> center do CHAR jodi  ("abba"  -> bb)    -> expand(i, i+1)
-   n-length string me:  n odd-centers + (n-1) even-centers
-TEMPLATE:
-   for i in 0..n-1:   // har index ko center bana ke dono taraf phailao
-       expand(i, i)        // odd: center ek char (khud bhi palindrome, count hoga)
-       expand(i, i+1)      // even · i+1==n bhi theek: while me j<n pehle check
-   expand(i, j):   // count by REFERENCE (&count), warna bahar count badhta hi nahi
-       while (i >= 0 && j < n && s[i] == s[j]):   // pehle range check, phir s[i]==s[j] (warna bahar padhega)
-★ Complexity: O(n^2) time, O(1) space. Koi DP/recursion NAHI chahiye
 ```
 
