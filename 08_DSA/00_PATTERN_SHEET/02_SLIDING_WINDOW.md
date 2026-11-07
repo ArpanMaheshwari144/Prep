@@ -706,6 +706,35 @@ vector<int> findAnagrams(string s, string p) {
 ```
 `★ dhyaan: har window pe substr + isAnagram = har baar p jitna kaam (O(n * m)). Tez chahiye to window ki ginti map me jodte-ghatate raho, har baar dobara mat gino.`
 
+```
+═════════════════════ ★ TEZ VERSION (achha): need / have 26 ═════════════════════
+upar wala substr code LeetCode pe TLE (34/66): har window pe p dobara ginta.
+yahan: need = p ki ginti EK baar · window me aaya -> have +1 · window se gaya -> have -1 · have == need -> index
+bada test (s 30000, p 15000): substr wala 1.1s, ye 0.0002s
+```
+
+```cpp
+vector<int> findAnagrams(string s, string p) {
+    vector<int> ans;
+    int i = 0, j = 0;
+    vector<int> need(26, 0);                // p ki ginti, sirf EK baar
+    vector<int> have(26, 0);                // window ki ginti, jodte-ghatate
+    for (int i = 0; i < p.size(); i++)
+        need[p[i] - 'a']++;
+    while (j < s.size()) {
+        have[s[j] - 'a']++;                 // ★ j aaya -> +1
+        if (j - i + 1 == p.size()) {
+            if (have == need)               // 26 khaane barabar = anagram
+                ans.push_back(i);
+            have[s[i] - 'a']--;             // ★ i gaya -> -1, PHIR i++
+            i++;
+        }
+        j++;
+    }
+    return ans;
+}
+```
+
 
 ### ▸ LC-567 PERMUTATION IN STRING  
 `s1="ab", s2="eidbaooo" -> true`. Kya s2 me s1 ka koi anagram (permutation) lagaatar substring ban ke maujood hai? true ya false.
@@ -742,6 +771,32 @@ bool checkInclusion(string s1, string s2) {
 }
 ```
 `↳ SAME: LC-438. Farak: pehla mila to true, aur call me (s2, s1).`
+
+```
+═════════════════════ ★ TEZ VERSION (achha): need / have 26 ═════════════════════
+= LC-438 ka tez version, isAnagram / substr nahi. Farak: index push ki jagah return true, loop ke baad false.
+```
+
+```cpp
+bool checkInclusion(string s1, string s2) {
+    int i = 0, j = 0;
+    vector<int> need(26, 0);                // s1 ki ginti, EK baar
+    vector<int> have(26, 0);
+    for (int i = 0; i < s1.size(); i++)
+        need[s1[i] - 'a']++;
+    while (j < s2.size()) {
+        have[s2[j] - 'a']++;                // ★ j aaya -> +1
+        if (j - i + 1 == s1.size()) {
+            if (have == need)
+                return true;                // push ki jagah return true
+            have[s2[i] - 'a']--;            // ★ i gaya -> -1, PHIR i++
+            i++;
+        }
+        j++;
+    }
+    return false;
+}
+```
 
 ---
 
