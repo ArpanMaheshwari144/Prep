@@ -132,7 +132,7 @@ void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vect
         used[i] = false;                    // ★   used false bhi: warna aage ke arrangements me ye band
     }
 }
-// caller: temp + used(n, false) BAHAR bana ke by-ref. n! permutations.
+// caller: temp + used(n, false) BAHAR bana ke by-ref -> solve(nums, temp, used, ans). n! permutations.
 // SUBSETS = 'start' (sirf AAGE, [1,2]==[2,1] repeat nahi) · PERMUTATION = used[] + loop 0 se, start NAHI
 ```
 
@@ -209,6 +209,7 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
 }
 // combinations se FARAK: (1) recurse 'i' na i+1 (2) base = target (0 = record, <0 = prune), size==k nahi
 // candidates positive -> target ghatta -> infinite nahi
+// caller: solve(nums, ans, 0, temp, target)  ya  solve2(candidates, target, ans, 0, temp)
 ```
 
 

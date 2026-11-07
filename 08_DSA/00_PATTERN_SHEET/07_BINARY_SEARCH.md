@@ -349,6 +349,7 @@ int splitArray(vector<int> &nums, int k) {
 
 ```
 Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array ke bahar ko minus infinity maano). Kisi bhi ek peak ka index lautao. O(log n) me.
+  SHART (LC-162): do padosi kabhi barabar nahi (nums[i] != nums[i+1]). Isi se teesra case (barabar) aata hi nahi; [1,1] pe loop atak jaata
   e.g. [1,2,1,3,5,6,4] -> 5 (ya 1)
   kyun: index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
 ```
