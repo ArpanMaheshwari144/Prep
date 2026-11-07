@@ -662,57 +662,23 @@ int numberOfSubstrings(string s) {
 
 ## ANAGRAM (fixed size = p ki length)
 
-### ▸ LC-438 FIND ALL ANAGRAMS  
-`s="cbaebabacd", p="abc" -> [0,6]`. s me p ke saare anagram ki start index.
-
-kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
+### ▸ LC-438 FIND ALL ANAGRAMS
 
 ```
-YAAD:
+SAWAAL:
+s aur p (sirf a-z). s me jahan-jahan p ka anagram lagaatar baitha hai
+(wahi akshar, kram koi bhi), un sab ki START index lautao.
+  e.g. s="cbaebabacd", p="abc" -> [0,6]
+  kyun: s[0..2]="cba", s[6..8]="bac" -> dono me a, b, c ek-ek
 
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-if(j-i+1 == p.size())   // == : window poora p-size hua tabhi check (shuru me chhota)
-j++;   // check ke BAAD aage badho
-```
-
-```cpp
-bool isAnagram(string s, string t) {
-    if (s.size() != t.size())
-        return 0;
-    unordered_map<char, int> mp;
-    for (auto &it : s)
-        mp[it]++;
-    for (auto &it : t)
-        mp[it]--;
-    for (auto &it : mp)
-        if (it.second != 0)
-            return false;
-    return true;
-}
-
-vector<int> findAnagrams(string s, string p) {
-    vector<int> ans;
-    int i = 0, j = 0;
-    while (j < s.size()) {
-        while (j - i + 1 > p.size())
-            i++;
-        if (j - i + 1 == p.size())          // poori p-size ki window pe hi check
-            if (isAnagram(s.substr(i, j - i + 1), p))
-                ans.push_back(i);
-        j++;
-    }
-    return ans;
-}
-```
-`★ dhyaan: har window pe substr + isAnagram = har baar p jitna kaam (O(n * m)). Tez chahiye to window ki ginti map me jodte-ghatate raho, har baar dobara mat gino.`
-
-```
-═════════════════════ ★ TEZ VERSION (achha): need / have 26 ═════════════════════
-upar wala substr code LeetCode pe TLE (34/66): har window pe p dobara ginta.
-yahan: need = p ki ginti EK baar · window me aaya -> have +1 · window se gaya -> have -1 · have == need -> index
-bada test (s 30000, p 15000): substr wala 1.1s, ye 0.0002s
-= LC-76 MIN WINDOW ka bhai: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao;
-  yahan DO array (need = p, have = window), aana +1 / jaana -1, phir have == need milao. Window fixed = p.size()
+SOCH:
+kya bol raha: window ka size FIX (= p.size()), har window me akshar ki ginti p jaisi?
+kahan dekha: LC-76 min window. wahan bhi t ki ginti rakhi, j aaya to ginti badli, i gaya to wapas.
+  farak: wahan window chhoti-badi, yahan size fixed. wahan ek map, yahan need (p) + have (window).
+to: need me p ki ginti EK baar -> j aaya have +1 -> size p jitna -> have == need ? index
+    -> i gaya have -1, i++
+★ PEHLI GALTI: har window ka substr bana ke isAnagram -> LeetCode pe TLE (34/66).
+  ginti har window pe dobara mat banao, aate-jaate jodo-ghatao.
 ```
 
 ```cpp
@@ -738,45 +704,18 @@ vector<int> findAnagrams(string s, string p) {
 ```
 
 
-### ▸ LC-567 PERMUTATION IN STRING  
-`s1="ab", s2="eidbaooo" -> true`. Kya s2 me s1 ka koi anagram (permutation) lagaatar substring ban ke maujood hai? true ya false.
-
-kyun: s2[3..4]="ba" = "ab" ka permutation
+### ▸ LC-567 PERMUTATION IN STRING
 
 ```
-YAAD:
+SAWAAL:
+s1, s2. kya s2 me kahin lagaatar s1 ka anagram (permutation) baitha hai? true / false.
+  e.g. s1="ab", s2="eidbaooo" -> true
+  kyun: s2[3..4]="ba" -> a, b ek-ek
 
-= FIND-ALL-ANAGRAMS ka SAME code -- REUSE: checkInclusion(s1,s2) = findAnagrams(s2, s1).
-  farak SIRF answer-line:
-      LC-438 : isAnagram mila -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
-      LC-567 : isAnagram mila -> return true        ... loop-baad: return false  (pehla match = bool)
-```
-
-```cpp
-// LC-438 se alag rakhna: same naam, return type alag
-bool findAnagrams(string s, string p) {
-    int i = 0, j = 0;
-    while (j < s.size()) {
-        while (j - i + 1 > p.size())
-            i++;
-        if (j - i + 1 == p.size())
-            if (isAnagram(s.substr(i, j - i + 1), p))
-                return true;                // push ki jagah return true
-        j++;
-    }
-    return false;
-}
-
-bool checkInclusion(string s1, string s2) {
-    // ★ ULTA kram: s2 me s1 dhoondho
-    return findAnagrams(s2, s1);
-}
-```
-`↳ SAME: LC-438. Farak: pehla mila to true, aur call me (s2, s1).`
-
-```
-═════════════════════ ★ TEZ VERSION (achha): need / have 26 ═════════════════════
-= LC-438 ka tez version, isAnagram / substr nahi. Farak: index push ki jagah return true, loop ke baad false.
+SOCH:
+upar wala 438 hi hai: s2 pe window s1.size() ki, need = s1 ki ginti.
+farak: pehla match mila -> turant true, poora ghoom liya -> false.
+★ dhyaan: s1 ko s2 ke ANDAR dhoondhna hai, ulta nahi (window s2 pe chalti).
 ```
 
 ```cpp
@@ -790,7 +729,7 @@ bool checkInclusion(string s1, string s2) {
         have[s2[j] - 'a']++;                // ★ j aaya -> +1
         if (j - i + 1 == s1.size()) {
             if (have == need)
-                return true;                // push ki jagah return true
+                return true;                // pehla match = true
             have[s2[i] - 'a']--;            // ★ i gaya -> -1, PHIR i++
             i++;
         }
