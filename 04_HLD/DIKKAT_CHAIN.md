@@ -189,6 +189,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  5  naam badla, cache me purana "Ravi"        ->  pehle parchi kaato, phir DB (cache DELETE)
  6  beech me purana naam phir parchi pe       ->  banda check kare, DB sach hai (sync job)
  7  kuch second purana Ravi dikha             ->  paisa thodi hai (eventual consistency)
+ 7b "pehle DB phir kaato, ulta kyun nahi?"   ->  chhed dono me, banda dono me chahiye (write-then-invalidate + retry)
  8  Priya viral, 10,000 miss, sab DB pe       ->  ek chhotu bhejo, baaki yahin (single flight)
  9  chhotu raaste me gira                     ->  kuch second dekho, phir bheed me se ek (lock timeout)
 10  1 crore log sirf machine 4 pe             ->  machine 4 ka replica, ek aur gaadi (hot key copies)
@@ -204,6 +205,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  4  do server, ek doc ki do shakal           ->  ek centralized system, ek version
  5  lakhon doc, sab ek hi jagah?             ->  har doc ka alag, uska maalik (owner server)
  6  "Saved" dikhaya, DB se pehle server gira ->  dabbe ki ek aur copy (Redis copy)
+ 6b dabba + copy dono gire, batch baaki    ->  disk pe bhi likho; phir bhi gire to kuch second chhoot, 500 copy ka paisa (AOF, trade-off)
  7  owner server hi gira                     ->  "mujhe kuch ho to tu hai" (naya owner wahin se)
  8  Ravi hataya, server pe purani permission ->  chhota note, uska op accept nahi (permission check)
  9  Ravi doosre server se likh raha          ->  building ke bahar chilla de (pub/sub invalidation)
