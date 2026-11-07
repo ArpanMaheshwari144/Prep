@@ -2,16 +2,12 @@
 
 ```
  BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
+ KAB: array SORTED hai aur do number ki jodi chahiye · ya array me IN-PLACE kuch hatana / aage karna hai
  ★ EDGE (sorted 2-ptr): duplicate skip karna hai kya? 3-sum HAAN, 2-sum nahi (bina skip ek triplet kai baar).
  ★ MILTE-JULTE (container / trapping / histogram): 00_SHURU me NAAM-SE-CONFUSE A dekh.
-
 ```
 
 #### ── FAMILY: slow/fast OVERWRITE (fast scan, rakhne wala slow pe; teeno same skeleton) ──
-
-```
- KAB: array SORTED hai aur do number ki jodi chahiye · ya array me IN-PLACE kuch hatana / aage karna hai
-```
 
 ### ▸ MOVE ZEROES
 
@@ -36,7 +32,7 @@ void moveZeroes(vector<int> &nums) {
 }
 ```
 
-### ▸ REMOVE DUP (SORTED)
+### ▸ REMOVE DUP (SORTED)  = MOVE ZEROES ka bhai (yahan slow++ PEHLE, overwrite BAAD)
 
 ```
 Ek SORTED array diya hai jisme kuch number dohraye gaye hain. Har number sirf ek baar rakhna hai, isi array me (in-place).
@@ -60,7 +56,7 @@ int removeDuplicates(vector<int> &nums) {
 }
 ```
 
-### ▸ REMOVE ELEMENT
+### ▸ REMOVE ELEMENT  = MOVE ZEROES ka bhai (write PEHLE, slow++ BAAD)
 
 ```
 Ek array aur ek number val diya hai. Array me se val ke saare number hatane hain, isi array me (in-place).
@@ -107,7 +103,7 @@ bool isPalindrome(string s) {               // sirf lowercase letters wala aasan
 }
 ```
 
-### ▸ VALID PALINDROME (FULL, LC-125)
+### ▸ VALID PALINDROME (FULL, LC-125)  = SIMPLE wala + sirf alnum, case ignore
 
 ```
 Ek string di hai jisme kuch bhi ho sakta hai: space, comma, bade akshar, digit. Sirf letter aur digit gino, aur bade-chhote akshar ko ek jaisa maano.
@@ -136,7 +132,7 @@ bool isPalindrome(string s) {               // mixed char: sirf alnum ginna, cas
 }
 ```
 
-### ▸ VALID PALINDROME II
+### ▸ VALID PALINDROME II  = SIMPLE wala + mismatch pe EK delete (left YA right)
 
 ```
 Ek string di hai. Batao ki ye palindrome hai, ya zyada se zyada EK akshar hata ke palindrome ban sakti hai. true ya false lautao.
@@ -237,7 +233,7 @@ int maxArea(vector<int> &height) {
 }
 ```
 
-### ▸ TWO SUM II (SORTED)
+### ▸ TWO SUM II (SORTED)  = left/right by-VALUE (unsorted two sum = hashmap)
 
 ```
 Ek SORTED array aur ek target diya hai. Wo do number dhoondho jinka jod target ke barabar ho, aur unke index lautao.
@@ -261,7 +257,7 @@ vector<int> twoSum(vector<int> &nums, int target) {   // UNSORTED two sum = hash
 }
 ```
 
-### ▸ SUM OF SQUARE NUMBERS
+### ▸ SUM OF SQUARE NUMBERS  = TWO SUM II jaisa (2 number ki jodi), low=0 high=sqrt(c)
 
 ```
 Ek number c diya hai. Batao ki kya aise do poore number a aur b hain jinke liye a*a + b*b = c ho. true ya false lautao.
@@ -296,18 +292,12 @@ Dobara sort() nahi lagana, ek hi baar me (O(n)) karna hai.
   kyun: -4 ka square 16 hai, isliye sabse bade square dono SIRE pe hote, beech me nahi
 ```
 
-```
-YAAD:
-
-PURANI SHEET KI LINE (git 07e45c2b):
-★ left<=right (< nahi): left==right wala aakhri element bhi ans[0] me jaana. < se ans[0] khaali ([-1,2] -> [0,4]).
-```
-
 ```cpp
 vector<int> sortedSquares(vector<int> &nums) {   // sabse BADA square dono chhor pe (negative)
     vector<int> ans(nums.size(), -1);       // size n pehle se: k-- se index pe likho; O(n), sort nahi
     int left = 0, right = nums.size() - 1, k = nums.size() - 1;   // ★ k = n-1 : sabse bada aakhri slot me
-    while (left <= right) {                 // <= : aakhri bacha 1 element bhi daalna hai
+    // ★ <= (< nahi): left==right wala aakhri element bhi ans[0] me jaana. < se ans[0] khaali ([-1,2] -> [0,4])
+    while (left <= right) {
         if (nums[left] * nums[left] <= nums[right] * nums[right]) {
             ans[k] = nums[right] * nums[right];   // bada square aakhri khaali slot pe
             right--;
@@ -323,7 +313,7 @@ vector<int> sortedSquares(vector<int> &nums) {   // sabse BADA square dono chhor
 }
 ```
 
-### ▸ MERGE SORTED ARRAY
+### ▸ MERGE SORTED ARRAY  = SQUARES jaisa fill-from-END
 
 ```
 Do sorted array hain. nums1 me pehle m asli number hain aur peeche n khaali jagah (0). nums2 me n number hain.
@@ -372,19 +362,13 @@ sort() nahi lagana, ek hi pass me karna hai.
   e.g. [2,0,2,1,1,0] -> [0,0,1,1,2,2]
 ```
 
-```
-YAAD:
-
-PURANI SHEET KI LINE (git 07e45c2b):
-★ loop = while(mid <= high), < nahi: high wala cell abhi UNKNOWN, use bhi check. [2,0,1] pe < se [1,0,2] reh jaata.
-```
-
 ```cpp
 void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
     int low = 0;
     int mid = 0;
     int high = nums.size() - 1;
-    while (mid <= high) {                   // <= : high wala abhi dekha nahi, use bhi check
+    // ★ <= (< nahi): high wala cell abhi UNKNOWN, use bhi check. [2,0,1] pe < se [1,0,2] reh jaata
+    while (mid <= high) {
         if (nums[mid] == 0) {
             swap(nums[low], nums[mid]);
             low++;
@@ -400,7 +384,7 @@ void sortColors(vector<int> &nums) {        // Dutch flag, 3 pointer
 }
 ```
 
-### ▸ SORT ARRAY BY PARITY
+### ▸ SORT ARRAY BY PARITY  = SORT COLORS ka 2-category wala (left/right swap)
 
 ```
 Ek array diya hai. Saare even number pehle aur saare odd number baad me rakhne hain. Even aapas me ya odd aapas me kis kram me hain, isse farak nahi padta.
@@ -438,12 +422,8 @@ Ek hi group do baar nahi aana chahiye, chahe array me number dohraye gaye hon.
 ```
 
 ```
-YAAD:
-
-PURANI SHEET KI LINE (git 3e5b872d):
-★ && (|| nahi): pehle low<high dekho, jhooth ho to nums[low+1] padho hi mat (bahar nahi jaana).
-★ skip ke BAAD bhi low++ / high--: skip loop AAKHRI copy pe rukta, naye number pe nahi.
-  bina ++ ke wahi triplet dobara.  ([-2,0,0,2,2] me L idx2 = 0, H idx3 = 2 pe rukte)
+CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (2) match ke baad LOW (3) match ke baad HIGH.
+sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
 ```
 
 ```cpp
@@ -457,11 +437,14 @@ vector<vector<int>> threeSum(vector<int> &nums) {   // saare UNIQUE triplet jink
         while (low < high) {                // < : low==high ek element; sum=-fixed = 2SUM-II
             if (nums[low] + nums[high] == sum) {
                 ans.push_back({nums[low], nums[high], nums[i]});
+                // ★ && (|| nahi): pehle low<high dekho, jhooth ho to nums[low+1] padho hi mat
                 while (low < high && nums[low] == nums[low + 1])
                     low++;                  // ★ skip 2/3: duplicate LOW (low<high pehle: low+1 bahar)
                 while (low < high && nums[high] == nums[high - 1])
                     high--;                 // skip 3/3: duplicate HIGH (low<high pehle)
-                low++;                      // ★ skip ke baad bhi 1 kadam: abhi purane number pe khade
+                // ★ skip loop AAKHRI copy pe rukta, naye number pe nahi -> bina ++ ke wahi triplet dobara
+                //   ([-2,0,0,2,2] me L idx2 = 0, H idx3 = 2 pe rukte)
+                low++;                      // skip ke baad bhi 1 kadam: abhi purane number pe khade
                 high--;
             }
             else if (nums[low] + nums[high] < sum)
@@ -511,8 +494,6 @@ O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - heigh
 ```
 
 ```
-YAAD:
-
 kyun SAFE: jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi deewar pakka khadi,
            to had isi chhoti taraf ke max se tay hoti.
 ★ MILNE KI JAGAH: dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
@@ -520,13 +501,9 @@ kyun SAFE: jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi
 ★ TRAP: faisla height[left] <= height[right] (DEEWAR) pe lo, leftMax <= rightMax pe NAHI.
   max pe liya to ek khamba chhoot jaata: [4,1,4,1] -> 0 aata (sahi 3).
 
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-  left=0, right=n-1;   leftMax=height[0], rightMax=height[n-1];
-REFRESH pehle, ADD baad (warna naya-bada-bar pe ans NEGATIVE de deta).
-
-PURANI SHEET KI LINE (git 3a48bbda):
-[B] O(1) two-pointer (arrays hata, bas 2 var)  — ★ 24-Sep THEEK KIYA (Arpan ka apna code):
-    ★ PURANA (GALAT) jo yahan likha tha: faisla `leftMax <= rightMax` pe, leftMax=height[0] se shuru.
+★ 24-Sep THEEK KIYA (Arpan ka apna code):
+    ★ PURANA (GALAT) jo yahan likha tha: faisla `leftMax <= rightMax` pe, leftMax=height[0] se shuru
+      (REFRESH pehle, ADD baad).
       max abhi current deewar ko shaamil kiye bina -> milne ki jagah galat -> ek khamba chhoot jaata.
       [4,1,4,1] pe 0 (sahi 3) · [4,5,3,1,4,4] pe 3 (sahi 4). 12 test pass the, random input pe ~1/5 galat.
 ```
@@ -570,8 +547,6 @@ solve: &count : warna bahar count badhta hi nahi
 ```
 
 ```
-TASVEER:
-
 ★★ EXAMPLE (yahi yaad -> poora recall):   "abcba"
     a  b  c  b  a
           ^            "c"        <- center se shuru
@@ -582,7 +557,6 @@ TASVEER:
 ★ ARPAN-LINE (jisse ye derive hua): "beech wala khada ho ke dono taraf poochta --
   'tum dono same ho? aa jao mere paas'. same hue -> palindrome bana -> phir agli jodi se poochta."
 
-PURANI SHEET KI KYUN LINE (code ke saath wali):
 (substring = CONTIGUOUS -> skip ka option nahi -> choice nahi -> recursion nahi.
  recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
 ```
