@@ -14,7 +14,6 @@
     high=mid + while(low<=high) = INFINITE LOOP: mid neeche round, low==high==mid pe range shrink nahi
        ([2,1] peak-logic: mid=0 -> high=0 -> low=high=0 kabhi khatam nahi)
  3 broad trick: BS-on-ANSWER (koko) · sorted-half-check (rotated) · 2D-index-map (matrix).
-
 ```
 
 #### ── FAMILY: BASIC / BOUNDARY (target ko mid se compare, low<=high, mid±1; mila to ruko mat = boundary) ──
@@ -31,17 +30,11 @@ Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mi
   kyun: 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
 ```
 
-```
-YAAD:
-
-PURANI SHEET KI LINE (git 07e45c2b):
-★ low<=high (< nahi): low==high wala aakhri ek element bhi check. [5], target 5 -> < se loop chalta hi nahi -> -1 (sahi 0).
-```
-
 ```cpp
 int search(vector<int> &nums, int target) {
     int low = 0, high = nums.size() - 1;
-    while (low <= high) {                   // ★ <= : 1 element bacha tab bhi check
+    // ★ <= (< nahi): low==high wala aakhri ek element bhi check. [5], 5 -> < se loop chalta hi nahi -> -1 (sahi 0)
+    while (low <= high) {
         int mid = low + (high - low) / 2;   // ★ (low+high)/2 nahi: bade low+high pe overflow
         if (nums[mid] == target)
             return mid;
@@ -55,7 +48,7 @@ int search(vector<int> &nums, int target) {
 ```
 
 
-### ▸ SEARCH INSERT POSITION
+### ▸ SEARCH INSERT POSITION  = BASIC BS, na mile to low (daalne ki jagah)
 
 ```
 Ek SORTED array (sab alag number) aur ek target diya hai. target mile to uska index lautao.
@@ -81,7 +74,7 @@ int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 
 ```
 
 
-### ▸ FIRST & LAST POSITION (LC-34)
+### ▸ FIRST & LAST POSITION (LC-34)  = BASIC BS x2, mila to ruko mat (ek taraf aur chalo)
 
 ```
 Ek SORTED array (number dohraye ho sakte hain) aur ek target diya hai. target jahan pehli baar aur aakhri baar aata hai, wo dono index lautao.
@@ -93,8 +86,6 @@ Na mile to {-1, -1}. O(log n) me karna hai.
 ```
 
 ```
-TASVEER:
-
 DRY-RUN ([5,7,7,8,8,10], target 8):
   idx :  0  1  2  3  4  5
   val :  5  7  7  8  8 10
@@ -155,13 +146,8 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4
 ```
 
 ```
-YAAD:
-
 BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
          jahaan mid hai (already returned) -> < ya <= farak NAHI.
-
-PURANI SHEET KI LINE (git 07e45c2b):
-★ nums[low] <= nums[mid] (< nahi): 2 bache to low==mid, left half = sirf mid, wo sorted hi hai. [3,1], 1 -> < se -1 (sahi 1).
 ```
 
 ```cpp
@@ -173,7 +159,8 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
         int mid = low + (high - low) / 2;
         if (nums[mid] == target)
             return mid;
-        if (nums[low] <= nums[mid]) {       // ★ LEFT half sorted (<= : low==mid pe akela bhi sorted)
+        // ★ <= (< nahi): 2 bache to low==mid, left half = sirf mid, wo sorted hi hai. [3,1], 1 -> < se -1 (sahi 1)
+        if (nums[low] <= nums[mid]) {       // LEFT half sorted
             if (target >= nums[low] && target <= nums[mid])   // ★ >= nums[low] ZARURI: target low pe
                 high = mid - 1;             //   khud ho sakta, warna miss ([5,1,3], 5)
             else
@@ -191,7 +178,7 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 ```
 
 
-### ▸ FIND MIN IN ROTATED
+### ▸ FIND MIN IN ROTATED  = ROTATED ka KHUD-ANSWER wala (mid vs HIGH, high = mid, low < high)
 
 ```
 Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sabse chhota number lautao. O(log n) me.
@@ -262,7 +249,7 @@ int minEatingSpeed(vector<int> &piles, int h) {
 ```
 
 
-### ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity
+### ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity  = KOKO wala shell, sirf range + solve alag
 
 ```
 weights[] me packet ka wazan diya hai. Inhe isi kram me D din me bhejna hai, aur ek din ka kul wazan jahaaz ki capacity se zyada nahi ho sakta.
@@ -303,7 +290,7 @@ int shipWithinDays(vector<int> &weights, int days) {
 ```
 
 
-### ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum
+### ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum  = SHIP WITHIN D DAYS hi (D din = k hisse)
 
 ```
 Ek array ko k lagaatar hisson me todna hai. Har tareeke me sabse bade hisse ka jod dekho.
@@ -382,8 +369,6 @@ single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid 
 ```
 
 ```
-TASVEER:
-
 ── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
    idx:  0  1  2  3  4  5  6  7  8
    arr:  1  1  2  3  3  4  4  8  8
@@ -426,39 +411,13 @@ int singleNonDuplicate(vector<int> &nums) {
 
 #### ── FAMILY: 2D-index-map (2D matrix = 1D sorted array, index -> (row, col)) ──
 
-### ▸ SEARCH 2D MATRIX
+### ▸ SEARCH 2D MATRIX  = BASIC BS, poori matrix ek 1D sorted array (index -> row, col)
 
 ```
 Ek matrix di hai jiski har row sorted hai, aur har row ka pehla number pichhli row ke aakhri number se bada hai (matlab poori matrix ek lambi sorted line hai).
 Batao target matrix me hai ya nahi, true ya false.
   e.g. [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3 -> true
   kyun: 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
-```
-
-```
-TASVEER:
-
-┌══ DECISION: high=mid  vs  high=mid-1  (kab konsa) ═══════════════════════════
-│ EK SAWAAL: "mid KHUD answer ho sakta abhi bhi?"
-│──────────────────────────────────────────────────────────────────────────────
-│ TARGET-REJECT (mid ko target/condition se compare -> mid pakka galat, e.g. basic-BS/rotated-search: target!=mid) -> high = mid-1  (+ while low<=high)
-│ KHUD-ANSWER-DHOONDH (koi target nahi, mid KHUD answer ho sakta -- find-PEAK · find-MIN-rotated) -> high = MID  (+ while low<high)
-│──────────────────────────────────────────────────────────────────────────────
-│ BUG-CATCH (find-min): [3,1,2] pe high=mid-1 karte to mid(=1, khud min) HAT jaata -> galat 3 aata. high=mid se bacha.
-│ trap: high=mid ke saath while(low<=high) = INFINITE LOOP -> high=mid hamesha low<high ke saath.
-│──────────────────────────────────────────────────────────────────────────────
-│ KYUN (nuance): mid = low+(high-low)/2 NEECHE (low ki taraf) round karta. jab low==high==mid ho:
-│     high=mid-1 -> range SHRINK (mid-1) -> low>high -> exit. safe with low<=high.
-│     high=mid   -> high nahi hilta (mid=low) -> range shrink NAHI -> low<=high hua to ATAK (infinite).
-│     isliye high=mid ko low<high chahiye (low==high pe TURANT exit, atakne se pehle).
-│     e.g. [2,1] peak-logic + while(low<=high): mid=0 -> high=mid=0 -> low=high=0 kabhi khatam nahi (loop).
-└──────────────────────────────────────────────────────────────────────────────
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-3 broad-trick: BS-on-ANSWER (Koko) · sorted-half-check (Rotated) · 2D-index-map (matrix).
-
-PURANI SHEET KI LINE (git 07e45c2b):
-★ dono jagah COL (row nahi): mid/col = row, mid%col = col. 3x4, mid=5 -> [1][1]; /3 likha to [1][2] galat.
 ```
 
 ```cpp
@@ -468,7 +427,8 @@ bool searchMatrix(vector<vector<int>> &matrix, int target) {
     int low = 0, high = row * col - 1;      // poore matrix ko 1D maano
     while (low <= high) {
         int mid = low + (high - low) / 2;
-        if (matrix[mid / col][mid % col] == target)   // ★ row = mid / col, col = mid % col
+        // ★ dono jagah COL (row nahi): 3x4, mid=5 -> [1][1]; /3 likha to [1][2] galat
+        if (matrix[mid / col][mid % col] == target)   // row = mid / col, col = mid % col
             return true;
         else if (matrix[mid / col][mid % col] < target)
             low = mid + 1;
@@ -482,7 +442,7 @@ bool searchMatrix(vector<vector<int>> &matrix, int target) {
 
 #### ── FAMILY: BS-on-PARTITION / CUT (value pe nahi, 2 sorted array me CUT-position pe BS) ──
 
-### ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)
+### ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)  = BS-on-ANSWER ka cousin, par VALUE nahi CUT-position pe
 
 ```
 Do SORTED array A aur B diye hain. Dono ko milake jo poora sorted array banega, uska median lautao.
@@ -496,8 +456,6 @@ Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wa
 ```
 
 ```
-TASVEER:
-
 CUT idea (chhote array A pe BS -> Px; Py auto):
    A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
    B:  7 11       | 18 19 21 25   Py = (m+n+1)/2 - Px
