@@ -155,11 +155,19 @@ class Cart {
     }
 
     // TODO: removeItem — tu likh body
+    // LOOP KYUN: yahan sirf NAAM aaya hai ("Apple"), Item object nahi. List me Item object pade hain,
+    //   to "Apple" naam wala KAUNSA object hai, ye har Item ka i.name diye gaye name se milaa ke hi pata chalta.
+    //   items.remove("Apple") likha to Java list me String dhoondhega -> mila hi nahi -> false, kuch nahi hatega.
+    //   asli object (i) chahiye: usi ko remove karna hai, aur price -= i.price ke liye uski price bhi.
+    // LOOP SE BACHNA ho to naam ko chaabi banao: Map<String, List<Item>> -> map.get(name) seedha, O(1).
+    //   yahan sawaal ne List<Item> diya + ek naam ke kai item allowed, isliye list + loop theek.
     public boolean removeItem(String name) {
         for(Item i : items){
             if(i.name.equals(name)){
                 items.remove(i);
                 price -= i.price;
+                // ★ remove ke TURANT baad return: for-each ke andar remove karke loop aage chala to
+                //   ConcurrentModificationException. saare hatane hon to removeIf / Iterator.remove()
                 return true;
             }
         }
