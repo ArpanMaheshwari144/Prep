@@ -72,10 +72,12 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
 
 ```
  1  order khud SMS call kare, button 8 sec   ->  beech me dabba, aaram se bhejunga (queue, Kafka)
+ 1b DB me order, Kafka se pehle gira        ->  order ke saath vasiyat likh do (outbox + relay)
  2  ek hi line, bill aadhe ghante baad       ->  ladies, gents, bachchon ki alag line (topic, group)
  3  commit se pehle crash, SMS do baar       ->  parchi zindabaad, ho gaya likh lo (idempotency)
  4  company bole "abhi bheed hai"            ->  papa busy, thodi der ruk ke (retry queue)
  5  SMS company poori band                   ->  teen-chaar company extra (failover)
+ 5b company 30 sec chup (timeout)          ->  OTP turant backup se, 2 OTP chalega, ek hi code; sale ruk sakti (SLA)
  6  OTP bhi baaki ke peeche line me          ->  VIP darshan, OTP ki priority (alag OTP topic)
  7  fail pe fail, company band kaise samjhun ->  2-3 baar fail to traffic backup se (circuit OPEN)
  8  main company wapas theek hui?            ->  beech-beech me "tu theek hai?" (HALF-OPEN)

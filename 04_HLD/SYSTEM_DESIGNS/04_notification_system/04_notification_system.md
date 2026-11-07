@@ -31,6 +31,11 @@ bol deta.
 **Asli naam:** beech ka dabba = queue (Kafka, khabar disk pe, worker gira tab bhi khoti nahi), aaram se bhejna =
 async, order turant.
 
+**Maan lo DB me order likh diya, Kafka me daalne se pehle server gira:** order ho gaya, SMS kabhi nahi aayega. To Kafka
+wala outbox: order ke saath hi likh do "ye khabar daalni hai", jaise baap marne se pehle vasiyat likh jaata. Beech me
+gira to baad me koi utha ke Kafka me daal dega.
+**Asli naam:** outbox (order + khabar ek hi DB transaction me), relay (runner) outbox se Kafka ko bhejta.
+
 ```mermaid
 flowchart LR
     U["Arpan"] --> O["Order Service"]
@@ -110,6 +115,16 @@ do, retry me nahi, koi dekhe, number galat hai to hatao.
 **Asli naam:** teen-chaar company = failover (backup provider), VIP darshan = OTP ki alag priority line (topic),
 5-6 baar fail to backup = circuit breaker OPEN, "tu theek hai?" = HALF-OPEN, chal gaya = CLOSED, backup bhi fail =
 DLQ (dead letter queue).
+
+**Maan lo SMS company 30 second tak chup (timeout), backup se bheja, par pehli ne bhi bhej diya tha:** timeout = pata
+nahi gaya ya nahi, error nahi. Company se pehle hi tay: 30 second me haan / na, uptime kitna; kam hai to doosri company,
+aur backup. Phir bhi timeout to faisla lo: OTP hai to turant backup se, 2 OTP chale gaye to chalega, bas dono me ek hi
+code. Sale ka message hai to thoda ruk jao, 15-30 second late se kiska kya chhoota.
+Aur pakka ek hi OTP chahiye to company se terms me tay: "30 second me nahi bheja to apni taraf fail maan lo, mat bhejna,
+aur hume fail wapas bata do", phir hum turant doosri company pe.
+**Asli naam:** SLA + timeout threshold, failover, idempotent OTP (same code dono SMS me), priority ke hisaab se retry;
+ek hi OTP chahiye = message validity period (TTL, Twilio me `validity_period`) + failure callback. Par ye rok sirf
+company ki line tak: SMS Jio / Airtel tak chala gaya to wapas nahi, wo hamara area nahi; isliye "ek hi code" bhi saath.
 
 ```mermaid
 flowchart LR
