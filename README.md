@@ -3,14 +3,14 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase, build done):** roz HLD scene-mock (ek real-life scene, usme dikkat -> hal -> naam) · DSA 1 redo + grill 5 · Java / Spring DIN (7 din ka chakkar) · PR drill (hafte me ek baar, 26-Oct) · apply. STAR hafte me ek kahani.
+> ★ **Abhi (DELIVERY + APPLY phase, build done):** roz HLD grill 5 (chhote scene, baarik baat + naam ka khel; naya design padhna abhi band) · DSA 1 redo + grill 5 · Java / Spring DIN (7 din ka chakkar) · PR drill (hafte me ek baar, 26-Oct) · apply. STAR hafte me ek kahani.
 > HLD = ek kahani: "main us situation me hota to kya karta", wahi jawab, naam baad me. Ratna nahi, kahani chala ke dekho (gira to? copy phati to?).
 
 ```
 SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 15 design (14 + Uber; 14 kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 15 + 19 foundation
-  DSA: 18 pattern · 179 problem + 141 REDO = 320 .cpp · pattern sheet (174 sawaal + MATHS KA KHEL)
+  HLD: 18 design (sab kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 18 + 19 foundation
+  DSA: 18 pattern · 181 problem + 147 REDO = 328 .cpp · pattern sheet folder (19 file, 177 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
 
@@ -23,18 +23,18 @@ SAFAR (March: khaali folder)  ->  aaj
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | 14 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + 19 foundations + HANDS_ON (7 demo, design file se alag) | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | 18 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + 19 foundations + HANDS_ON (7 demo, design file se alag) | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 179 problem + 141 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 181 problem + 147 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
 | 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | asli JP round ke hisaab se: correctness · security · quality · design | JP Superday **~10 min PR review** |
 | 13 | [**13_TOOLS**](13_TOOLS) | IntelliJ shortcuts + setup (source me ghoomna) | Spring/library ka andar khol ke dekhna, live coding me tez |
 
-> ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** (gate ki chaabi) · **[PR Review](12_CODE_REVIEW/PR_REVIEW.md)** (shikaar list)
+> ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/PATTERN_SHEET/00_SHURU.md)** (gate ki chaabi, 19 file) · **[PR Review](12_CODE_REVIEW/PR_REVIEW.md)** (shikaar list)
 
 ---
 
@@ -105,9 +105,9 @@ SAFAR (March: khaali folder)  ->  aaj
 ---
 
 ## [04_HLD](04_HLD) — tera strong zone
-**Kya:** 15 poore design (14 + Uber) (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
+**Kya:** 18 poore design (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
-- ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — 15 design ek file me, har line ek dikkat -> ek hal (ek nazar me yaad)
+- ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — 18 design ek file me, har line ek dikkat -> ek hal (ek nazar me yaad)
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
   - [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md)
   - [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
@@ -218,10 +218,14 @@ SAFAR (March: khaali folder)  ->  aaj
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 179 problem + 141 REDO = 320 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 181 problem + 147 REDO = 328 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
-- ★ **[00_PATTERN_SHEET](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md)** — "gate ki chaabi": sabse upar DECISION (brute → redundancy → cache → DS = pattern) + OA tools + MATHS KA KHEL (% gol ghoomna, Caesar), phir har sawaal SAWAAL / TAREEKA / CHAABI / CODE patti me, "kyun" usi code line pe comment.
+- ★ **[PATTERN_SHEET](08_DSA/PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). Har sawaal = poore vakya me sawaal + e.g. + kyun, phir tera code saamne (★ sirf kick line pe), aur jahan zaroori TASVEER / YAAD dabba (dry-run, tasveer, teri purani galti wali line).
+  - [00 SHURU](08_DSA/PATTERN_SHEET/00_SHURU.md) (PEHLE YE · OA tools · DECISION · EDGE list · NAAM-SE-CONFUSE A-E · MATHS KA KHEL)
+  - [01 two pointer](08_DSA/PATTERN_SHEET/01_TWO_POINTER.md) · [02 sliding window](08_DSA/PATTERN_SHEET/02_SLIDING_WINDOW.md) · [03 hashing](08_DSA/PATTERN_SHEET/03_HASHING.md) · [04 prefix sum](08_DSA/PATTERN_SHEET/04_PREFIX_SUM.md) · [05 matrix](08_DSA/PATTERN_SHEET/05_MATRIX.md) · [06 stack](08_DSA/PATTERN_SHEET/06_STACK.md) · [07 binary search](08_DSA/PATTERN_SHEET/07_BINARY_SEARCH.md) · [08 linked list](08_DSA/PATTERN_SHEET/08_LINKED_LIST.md) · [09 design](08_DSA/PATTERN_SHEET/09_DESIGN.md)
+  - [10 kadane](08_DSA/PATTERN_SHEET/10_KADANE.md) · [11 bit](08_DSA/PATTERN_SHEET/11_BIT_MANIPULATION.md) · [12 trees](08_DSA/PATTERN_SHEET/12_TREES.md) · [13 graphs](08_DSA/PATTERN_SHEET/13_GRAPHS.md) · [14 heap](08_DSA/PATTERN_SHEET/14_HEAP.md) · [15 intervals](08_DSA/PATTERN_SHEET/15_INTERVALS.md) · [16 backtracking](08_DSA/PATTERN_SHEET/16_BACKTRACKING.md) · [17 DP](08_DSA/PATTERN_SHEET/17_DP.md) · [18 greedy](08_DSA/PATTERN_SHEET/18_GREEDY.md)
+  - purani dono sheet abhi rakhi hain: [PATTERN_SHEET.md](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET.md) · [PATTERN_SHEET_2.md](08_DSA/00_PATTERN_SHEET/PATTERN_SHEET_2.md)
 
 ```
 ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disguised: kahani badli, shart wahi)
@@ -230,15 +234,15 @@ ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disg
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
-| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 9 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 10 |
-| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 11 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 2 |
-| 03 | [HASHING](08_DSA/03_HASHING) | 13 | 14 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 5 |
-| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 9 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 10 |
+| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 10 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 10 |
+| 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 12 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 2 |
+| 03 | [HASHING](08_DSA/03_HASHING) | 15 | 16 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 5 |
+| 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 10 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 10 |
 | 05 | [MATRIX](08_DSA/05_MATRIX) | 4 | 5 | | 14 | [HEAP](08_DSA/14_HEAP) | 9 | 6 |
 | 06 | [STACK](08_DSA/06_STACK) | 12 | 6 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 4 |
 | 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 9 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 8 |
 | 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 7 | | 17 | [DP](08_DSA/17_DP) | 16 | 17 |
-| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 5 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 4 |
+| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 5 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 5 |
 
 ---
 
