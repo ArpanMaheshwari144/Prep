@@ -313,3 +313,19 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  7b rollback + ghadi dono me pech           ->  Apple store: sale gate, stock jitne hi Pay tak, fail = agla batch
  8  net gaya / PSP chup                      ->  BMS wala PAYMENT_PENDING + status job, kinaare pe refund
 ```
+
+## 18. Netflix   ([notes](SYSTEM_DESIGNS/18_netflix/NETFLIX_HAND_NOTES.md))
+
+```
+ 1  har tukda samundar paar se              ->  file apne shehar me, CA wala dost (Open Connect, ISP ke andar)
+ 1b AWS ka CDN kyun nahi                     ->  courier har litre ka paisa, apna fridge muft me (per-GB bill nahi)
+ 2  12:29 tak dabba khaali                  ->  pen drive pehle se, video badalta nahi (proactive fill)
+ 3  Ravi 3G pe, purana TV, Hindi awaaz      ->  Ferrari / Alto + har film ki apni seedhi + kai roop (ABR, encode ladder, codec)
+ 4  dabbe me poora maal nahi                ->  garam paas, thanda bade dabbe se (popularity, tier, evict)
+ 5  20 dabbe, kis se maange                 ->  hospital ka guard, server batata (steering; AWS pe, video bytes dabbe se)
+ 6  TV pe 27 min, phone pe wahi se          ->  account pe parchi (watch position DB me)
+ 6b har kuch second update, DB ki saans     ->  race me ruk ke likho (pehle cache, DB kabhi-kabhi)
+ 7  "tere liye" me 6 second                 ->  parlour wala GTA pehle se (raat ka batch, cache se uthao)
+ 7b 11 baje Dhurandhar dekhi                ->  turant parchi, dikhate waqt milao (abhi ka fast store + bani list)
+ 7c Priya naya user                         ->  India ka garam maal (cold start)
+```

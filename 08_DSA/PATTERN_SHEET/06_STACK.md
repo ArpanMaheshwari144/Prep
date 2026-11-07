@@ -510,6 +510,6 @@ public:
     }
 };
 
-broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
+// broad-trick: MONOTONIC stack (next-greater + daily-temp = same, bas ans me kya bharo alag).
 ```
 
