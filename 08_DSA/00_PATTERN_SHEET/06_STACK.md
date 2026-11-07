@@ -50,7 +50,7 @@ vector<int> nextGreater(vector<int> &nums) {
     stack<int> st;                          // ★ INDEX rakho: ans[topp] me likhne ko position chahiye
     for (int i = 0; i < nums.size(); i++) { // left->right: daaye wala bada aage aayega
         while (!st.empty() && nums[st.top()] < nums[i]) {   // ★ !empty pehle (warna top() crash)
-            int topp = st.top();            // ★ < strict (<= nahi): barabar bada nahi. [2,2] pe <= -> ans[0]=2, sahi -1
+            int topp = st.top();            // < : curr BADA -> top ko jawab mila. ★ <= nahi: [2,2] pe ans[0]=2, sahi -1
             st.pop();                       // top pehle bachao: pop ke baad top() badal jaata
             ans[topp] = nums[i];
         }
