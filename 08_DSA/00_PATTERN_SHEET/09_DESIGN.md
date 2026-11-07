@@ -126,11 +126,6 @@ public:
 };
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-TRICK: index = hash<string>{}(key)%cap -> us bucket ki chain me traverse -> key match pe kaam; put me end tak na-mili -> naya node append. (collision = same index -> chain)
-COMBO (yahi naya/tricky tha): buckets[index] khud ek POINTER hai (chain ka head)
-```
 
 ### ▸ DESIGN HASHSET (LLD)
 
@@ -342,10 +337,4 @@ public:
 };
 ```
 
-```
-PURANI SHEET KI LINE (PATTERN_SHEET_2 se, upar is roop me nahi thi):
-CRUX = 2 DLL helper (yehi asli mechanic, get/put inko call karte):
-PEHLI SHEET (Aug) se bhi, same to same:
-CRUX = 2 DLL helper (yehi asli mechanic, get/put inko call karte):
-```
 
