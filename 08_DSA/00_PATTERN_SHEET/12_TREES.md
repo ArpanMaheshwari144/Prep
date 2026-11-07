@@ -85,7 +85,7 @@ void postorder(TreeNode *root, vector<int> &res) {   // POST = left -> right -> 
 
 #### ── FAMILY: recurse + COMBINE (answer = return-value; jo combine karo wahi return) ──
 
-### ▸ MAX DEPTH (LC-104)
+### ▸ MAX DEPTH (LC-104)  = recurse + COMBINE ka BASE (1 + max)
 
 ```
 Binary tree ka root diya hai. Root se sabse door wale leaf tak raste me kitne node aate hain, wo lautao. Khaali tree pe 0.
@@ -104,7 +104,7 @@ int maxDepth(TreeNode *root) {
 ```
 
 
-### ▸ INVERT TREE (LC-226)
+### ▸ INVERT TREE (LC-226)  = recurse + swap(left, right)
 
 ```
 Binary tree ka root diya hai. Har node ke left aur right bachche aapas me badal do (tree ka aaina), aur root lautao.
@@ -124,7 +124,7 @@ TreeNode *invertTree(TreeNode *root) {
 ```
 
 
-### ▸ SAME TREE (LC-100)
+### ▸ SAME TREE (LC-100)  = dono tree saath recurse, COMBINE = &&
 
 ```
 Do binary tree p aur q diye hain. Kya dono ka dhaancha aur har node ki value bilkul ek jaisi hai? true ya false lautao.
@@ -227,8 +227,6 @@ skeleton HUBAHU diameter (return EK arm / record DONO arm / post-order / global 
 ```
 
 ```
-TASVEER:
-
 DIAMETER (upar)                      MAX PATH SUM
 -------------------------            -------------------------------------
 left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm -> 0 (minus arm lene se sum ghatta) // base: null -> 0
@@ -272,7 +270,7 @@ int maxPathSum(TreeNode *root) {
 ```
 
 
-### ▸ BUILD TREE from PREORDER + INORDER (LC-105)
+### ▸ BUILD TREE from PREORDER + INORDER (LC-105)  = preorder se ROOT, inorder me todo (map), recurse
 
 ```
 Ek binary tree ka preorder aur inorder kram diya hai (saari values alag). Inse wapas wahi tree banao aur root lautao.
@@ -283,8 +281,6 @@ preorder[rootIndex] = ROOT · inorder me us root pe todo -> LEFT-part | root | R
 ```
 
 ```
-TASVEER:
-
 VISUAL:   preorder  [3] 9 20 15 7        inorder  9 | 3 | 15 20 7
                    ^root                           L  root   R
         -> tree:       3
@@ -297,7 +293,6 @@ DRY-RUN (rootIndex aage badhta, pivot = inorder me root):
     solve(0,0): root=9,  pivot=0 | NULL, NULL   (leaf 9)
     solve(2,4): root=20, pivot=3 | L=solve(2,2)=15   R=solve(4,4)=7
 
-PURANI SHEET KI LINE (git fc6d517c):
 BF (linear scan)  O(n^2)                    OPTIMIZE (map)  O(n) -- sirf jaha badla
 -----------------------------------------   -----------------------------------------
 solve(int& rootIndex, l, r):
@@ -370,7 +365,7 @@ bool isBalanced(TreeNode *root) {
 
 #### ── FAMILY: search + BUBBLE-UP (jise dhundh rahe wo mila -> UPAR return; DONO taraf se mila = answer) ──
 
-### ▸ LCA -- Lowest Common Ancestor (LC-236)
+### ▸ LCA -- Lowest Common Ancestor (LC-236)  = search + BUBBLE-UP (dono taraf mila = answer)
 
 ```
 Binary tree ka root aur do node p, q diye hain. Wo sabse neeche wala node lautao jiske neeche p aur q dono aate hain. Node khud bhi p ya q ho sakta hai.
@@ -402,7 +397,7 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {   // 
 
 #### ── FAMILY: carry-value DOWN + root-to-LEAF (target ghatao, LEAF pe check, combine = OR) ──
 
-### ▸ PATH SUM (LC-112)
+### ▸ PATH SUM (LC-112)  = target NEECHE carry, LEAF pe check, COMBINE = ||
 
 ```
 Binary tree ka root aur ek targetSum diya hai. Kya root se kisi leaf tak aisa rasta hai jiske nodes ka jod targetSum ke barabar ho? true ya false lautao.
@@ -424,7 +419,7 @@ bool hasPathSum(TreeNode *root, int targetSum) {   // root se LEAF tak sum == ta
 
 #### ── FAMILY: BFS / LEVEL-ORDER (QUEUE FIFO, recursion nahi; while ka ek chakkar = ek LEVEL) ──
 
-### ▸ LEVEL ORDER (LC-102)
+### ▸ LEVEL ORDER (LC-102)  = BFS ka BASE (queue, ek chakkar = ek level)
 
 ```
 Binary tree ka root diya hai. Har level ke nodes ko left se right, alag-alag list me lautao (list of lists).
@@ -569,7 +564,7 @@ int minDepth(TreeNode *root) {              // root se sabse PAAS wale LEAF tak
 
 #### ── FAMILY: BST (left < node < right; INORDER = SORTED -> "sorted / kth chahiye? -> INORDER") ──
 
-### ▸ KTH SMALLEST IN BST (LC-230)
+### ▸ KTH SMALLEST IN BST (LC-230)  = BST ka INORDER = sorted list, uska k-1 index
 
 ```
 Ek BST aur ek number k diya hai. Tree ki values me k-va sabse chhota number lautao (k 1 se gina jaata hai).
@@ -609,8 +604,6 @@ sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 
 ```
 
 ```
-YAAD:
-
 ★ PURANI GALTI (Aug sheet): CALL solve(root, INT_MIN, INT_MAX) tha -> [2147483647] pe false aata, sahi true. Isliye ab long long (LLONG_MIN, LLONG_MAX).
 ```
 
