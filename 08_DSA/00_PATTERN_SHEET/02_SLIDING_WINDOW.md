@@ -17,23 +17,14 @@
 ## LAMBA wale (kharab hote hi chhota karo, while ke BAAD ans = max)
 
 
-### ▸ LC-3 NO REPEAT  
+### ▸ LC-3 LONGEST SUBSTRING NO-REPEAT  = variable window + freq-map
 `"abcabcbb" -> 3`. Sabse lambi substring jisme koi char repeat na ho.
 
 kyun: "abc" me teeno alag = 3; agla a aate hi repeat, isse lamba koi substring nahi
 
 ```
-YAAD:
-
+SAAR : longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
 INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-unordered_map<char,int> mp;  int i=0, j=0, maxLen=INT_MIN;   // INT_MIN: end me check karke khaali string pe 0
-    while(mp[s[j]] > 1){                 // INVALID: current char (s[j]) repeat (while: repeat wala char nikalne tak kai char hatane padte)
-        mp[s[i]]--; i++;                 // left shrink jab tak repeat khatam
-    maxLen = max(maxLen, j - i + 1);     // valid window length (shrink ke BAAD record, ab window valid)
-    j++;   // record ke BAAD aage badho
-return maxLen==INT_MIN ? 0 : maxLen;     // khaali string -> INT_MIN reh jaata -> 0
 ```
 
 ```cpp
@@ -44,16 +35,16 @@ int lengthOfLongestSubstring(string s) {
     unordered_map<char, int> mp;
     int i = 0, j = 0;
     while (j < s.size()) {
-        mp[s[j]]++;
+        mp[s[j]]++;                         // window me add
         // ★ "abba": a aur purana b, dono nikaalo. if -> 3, sahi 2
-        while (mp[s[j]] > 1) {
-            mp[s[i]]--;
+        while (mp[s[j]] > 1) {              // INVALID: current char (s[j]) repeat
+            mp[s[i]]--;                     // left shrink jab tak repeat khatam
             i++;
         }
-        ans = max(ans, j - i + 1);
+        ans = max(ans, j - i + 1);          // valid window length (shrink ke BAAD record)
         j++;
     }
-    return ans == INT_MIN ? 0 : ans;
+    return ans == INT_MIN ? 0 : ans;        // khaali string -> INT_MIN reh jaata -> 0
 }
 ```
 
@@ -322,13 +313,13 @@ int maxSumK(vector<int> &nums, int k) {
 ```
 
 
-### ▸ LC-1423 MAX POINTS FROM CARDS  
+### ▸ LC-1423 MAX POINTS FROM CARDS  = MAX-SUM-SIZE-K (01) + COMPLEMENT-twist
 `[1,2,3,4,5,6,1], k=3 -> 12` (peeche se 5+6+1). Dono kinaron se kul k card lo, sum sabse bada.
 
 kyun: back se 3 = 1+6+5 = 12; front 3 = 6, mix (1+2+1 = 4, 1+1+6 = 8) kam
 
 ```
-TASVEER:
+Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 
 ★ RECOGNITION (jab question AISE sound kare): "dono end se k cards lo, sum MAX" -> ye SIGNAL hai.
    k UTHANE ki tension MAT lo -> ULTA jo BACHTA hai (beech ka L-k) usko MIN kardo -> answer apne-aap.
@@ -349,10 +340,6 @@ TWIST (yahi hard part): taken cards DONO end pe (contiguous NAHI) -> seedha SW n
 
 DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
 FAMILY: fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
-
-PURANI SHEET KI KYUN LINE (code ke saath wali):
-  int Total = accumulate(nums, 0);   // saare cards ka sum: isme se beech ka min ghatayenge
-minSumK (fixed window, MIN): sum += nums[j]; jab (j-i+1 >= size) -> minSum=min(minSum,sum); sum-=nums[i]; i++.   // minSum=INT_MAX se
 ```
 
 ```cpp
@@ -383,7 +370,7 @@ int maxScore(vector<int> &nums, int k) {
     return Total - minSum;
 }
 ```
-`↳ SAME: max sum of k ka MIN version. Farak: seedha nahi, ulta socho, Total - beech ka min.`
+
 
 
 ### ▸ LC-219 CONTAINS DUPLICATE II  
