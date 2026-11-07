@@ -34,7 +34,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | asli JP round ke hisaab se: correctness · security · quality · design | JP Superday **~10 min PR review** |
 | 13 | [**13_TOOLS**](13_TOOLS) | IntelliJ shortcuts + setup (source me ghoomna) | Spring/library ka andar khol ke dekhna, live coding me tez |
 
-> ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/PATTERN_SHEET/00_SHURU.md)** (gate ki chaabi, 19 file) · **[PR Review](12_CODE_REVIEW/PR_REVIEW.md)** (shikaar list)
+> ★ **Roz-revise pinned:** **[DSA Pattern Sheet](08_DSA/00_PATTERN_SHEET/00_SHURU.md)** (gate ki chaabi, 19 file) · **[PR Review](12_CODE_REVIEW/PR_REVIEW.md)** (shikaar list)
 
 ---
 
@@ -221,10 +221,10 @@ SAFAR (March: khaali folder)  ->  aaj
 ## [08_DSA](08_DSA) — 18 pattern · 181 problem + 147 REDO = 328 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
-- ★ **[PATTERN_SHEET](08_DSA/PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). Har sawaal = poore vakya me sawaal + e.g. + kyun, phir tera code saamne (★ sirf kick line pe), aur jahan zaroori TASVEER / YAAD dabba (dry-run, tasveer, teri purani galti wali line).
-  - [00 SHURU](08_DSA/PATTERN_SHEET/00_SHURU.md) (PEHLE YE · OA tools · DECISION · EDGE list · NAAM-SE-CONFUSE A-E · MATHS KA KHEL)
-  - [01 two pointer](08_DSA/PATTERN_SHEET/01_TWO_POINTER.md) · [02 sliding window](08_DSA/PATTERN_SHEET/02_SLIDING_WINDOW.md) · [03 hashing](08_DSA/PATTERN_SHEET/03_HASHING.md) · [04 prefix sum](08_DSA/PATTERN_SHEET/04_PREFIX_SUM.md) · [05 matrix](08_DSA/PATTERN_SHEET/05_MATRIX.md) · [06 stack](08_DSA/PATTERN_SHEET/06_STACK.md) · [07 binary search](08_DSA/PATTERN_SHEET/07_BINARY_SEARCH.md) · [08 linked list](08_DSA/PATTERN_SHEET/08_LINKED_LIST.md) · [09 design](08_DSA/PATTERN_SHEET/09_DESIGN.md)
-  - [10 kadane](08_DSA/PATTERN_SHEET/10_KADANE.md) · [11 bit](08_DSA/PATTERN_SHEET/11_BIT_MANIPULATION.md) · [12 trees](08_DSA/PATTERN_SHEET/12_TREES.md) · [13 graphs](08_DSA/PATTERN_SHEET/13_GRAPHS.md) · [14 heap](08_DSA/PATTERN_SHEET/14_HEAP.md) · [15 intervals](08_DSA/PATTERN_SHEET/15_INTERVALS.md) · [16 backtracking](08_DSA/PATTERN_SHEET/16_BACKTRACKING.md) · [17 DP](08_DSA/PATTERN_SHEET/17_DP.md) · [18 greedy](08_DSA/PATTERN_SHEET/18_GREEDY.md)
+- ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). Har sawaal = poore vakya me sawaal + e.g. + kyun, phir tera code saamne (★ sirf kick line pe), aur jahan zaroori TASVEER / YAAD dabba (dry-run, tasveer, teri purani galti wali line).
+  - [00 SHURU](08_DSA/00_PATTERN_SHEET/00_SHURU.md) (PEHLE YE · OA tools · DECISION · EDGE list · NAAM-SE-CONFUSE A-E · MATHS KA KHEL)
+  - [01 two pointer](08_DSA/00_PATTERN_SHEET/01_TWO_POINTER.md) · [02 sliding window](08_DSA/00_PATTERN_SHEET/02_SLIDING_WINDOW.md) · [03 hashing](08_DSA/00_PATTERN_SHEET/03_HASHING.md) · [04 prefix sum](08_DSA/00_PATTERN_SHEET/04_PREFIX_SUM.md) · [05 matrix](08_DSA/00_PATTERN_SHEET/05_MATRIX.md) · [06 stack](08_DSA/00_PATTERN_SHEET/06_STACK.md) · [07 binary search](08_DSA/00_PATTERN_SHEET/07_BINARY_SEARCH.md) · [08 linked list](08_DSA/00_PATTERN_SHEET/08_LINKED_LIST.md) · [09 design](08_DSA/00_PATTERN_SHEET/09_DESIGN.md)
+  - [10 kadane](08_DSA/00_PATTERN_SHEET/10_KADANE.md) · [11 bit](08_DSA/00_PATTERN_SHEET/11_BIT_MANIPULATION.md) · [12 trees](08_DSA/00_PATTERN_SHEET/12_TREES.md) · [13 graphs](08_DSA/00_PATTERN_SHEET/13_GRAPHS.md) · [14 heap](08_DSA/00_PATTERN_SHEET/14_HEAP.md) · [15 intervals](08_DSA/00_PATTERN_SHEET/15_INTERVALS.md) · [16 backtracking](08_DSA/00_PATTERN_SHEET/16_BACKTRACKING.md) · [17 DP](08_DSA/00_PATTERN_SHEET/17_DP.md) · [18 greedy](08_DSA/00_PATTERN_SHEET/18_GREEDY.md)
   - purani dono sheet (28-Oct PATTERN_SHEET + 6-Nov PATTERN_SHEET_2) hata di (7-Nov): unki har line har sawaal ke neeche "PURANI SHEET KI LINE" dabbe me aa gayi, git history me bhi hain
 
 ```
