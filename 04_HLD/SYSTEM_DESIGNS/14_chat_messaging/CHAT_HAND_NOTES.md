@@ -59,6 +59,9 @@ Technical me: "server pe pata kaun pehle aaya" = har chat ka sequence number (bl
 **Maan lo har chat ka alag counter na rakhna ho?**
 Arpan: Har ladke se poochho "tu kab aaya", aur us time ko hi number bana do. Time to hamesha badhta hi hai, to number bhi badhta jaayega. Phone us number se laga ke dikhaye: ye pehle aaya, ye baad me.
 Technical me: "time ko hi number bana do" = Snowflake ID (time + machine ka number + chhota counter, ek number me; FOUNDATIONS 13). Interview me naam yaad na aaye to bhi itna kaafi: "har message ko ek kram number, phone usi se lagata hai".
+**Maan lo interviewer pooche: ye number kabhi khatam to nahi hoga?**
+Arpan: Pehle to number ka daava hi nahi karunga. Yaad aa gaya to bas itna: long me lagbhag 92 lakh crore crore tak number aate hain, aur counter har chat ka alag hai. Aur wo int ki range jaisa kuch aur pooche to seedha bolunga: sab yaad karke nahi aaya, padhte waqt ye dekha tha isliye yaad reh gaya, baaki net se dekh lete hain.
+Technical me: long = 64-bit, had lagbhag 9.2 x 10^18 (92 lakh crore crore), counter har chat ka apna. Bonus line hai, zaroori nahi: asli jawab "har message ko kram number" hi hai.
 
 &nbsp;
 

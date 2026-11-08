@@ -247,6 +247,10 @@ client number se sort kare, aane ke kram se nahi. Dheeme ke liye doosra mat roko
 **Maan lo har chat ka alag counter na rakhna ho:** us time ko hi number bana do jab message server pe aaya. Time
 hamesha badhta hai, to number bhi. Asli naam: Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13).
 
+**Maan lo pooche ye number kabhi khatam to nahi hoga:** number ka daava mat thoko. Yaad ho to bonus: long (64-bit)
+me lagbhag 92 lakh crore crore (9.2 x 10^18) tak, aur counter har chat ka alag. Aur kuch range jaisa pooche to seedha:
+"padhte waqt dekha tha isliye yaad hai, baaki net se dekh lete".
+
 ```mermaid
 flowchart LR
     R["Ravi"] -- "41: kal milte hain" --> S1["S1<br/>(dheema)"]
