@@ -34,10 +34,24 @@ mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. Commands interview me 
 score ke kram me".
 
 ```mermaid
-flowchart LR
-    G["Match khatam<br/>(Game Service)"] -- "arpan +50" --> Z[("Apne aap sort wala dabba<br/>(Redis sorted set)")]
-    U["Screen"] -- "top 10 · mera rank" --> Z
-    style Z fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["SQL: har baar 1 crore row sort,<br/>rank ke liye 1 crore gino"]:::bad
+    M["Match khatam: khiladi + score"]:::card
+    subgraph SD["APNE AAP SORT WALA DABBA"]
+        Z[("Poori line sorted<br/>(Redis sorted set)")]:::pill
+    end
+    T["Top 10: 0 se 9 utha lo"]:::good
+    R["Tera rank: seedha bata de"]:::good
+    X -.-> Z
+    M --> Z
+    Z --> T
+    Z --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. Ravi aur Priya dono 9800 (score phir time, ek number me)
@@ -64,13 +78,26 @@ dabbe na khatkhataye.
 aggregator, badi screen = global top 10 ka cache.
 
 ```mermaid
-flowchart LR
-    I[("India line<br/>(shard 1)")] --> A["Chhotu<br/>(Aggregator)"]
-    E[("Europe line<br/>(shard 2)")] --> A
-    X[("... 10 line<br/>(shard N)")] --> A
-    A --> S[("Badi screen<br/>(global top 10 cache)")]
-    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Saare score ek Redis pe: dab gaya"]:::bad
+    subgraph BD["BAANT DO (region ke hisaab se 10 line)"]
+        I[("India: top 10")]:::card
+        E[("Europe: top 10")]:::card
+        N[("... baaki 8 line")]:::card
+    end
+    C(["Chhotu: sab mila ke sort kar<br/>(100 me se top 10)"]):::pill
+    B["Badi screen: global top 10"]:::good
+    X -.-> BD
+    I --> C
+    E --> C
+    N --> C
+    C --> B
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. India me 3,000 pe hoon, duniya ka rank chahiye (race wala aur referee wala)
@@ -84,14 +111,28 @@ chhotu ka kaam, har kuch minute me sab dabbe mila ke ek bada board. Referee ke l
 jo snapshot banata.
 
 ```mermaid
-flowchart LR
-    A["Arpan ka score"] --> I[("India dabba<br/>upar 3,000")]
-    A --> E[("Europe dabba<br/>upar 1,20,000")]
-    A --> O[("... baaki dabbe")]
-    I --> J["Jodo + 1<br/>(mera rank)"]
-    E --> J
-    O --> J
-    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Main India me 3,000 pe:<br/>duniya ka rank?"]:::card
+    subgraph RW["RACE WALA: SIRF APNE AAGE WALE"]
+        I[("India: mere upar 3,000")]:::card
+        E[("Europe: mere upar kitne")]:::card
+        N[("... har line")]:::card
+    end
+    R(["Sab jodo + 1 = mera rank"]):::pill
+    F["Referee wala poora board: chhotu,<br/>har kuch minute (thoda purana chalega)"]:::card
+    A --> I
+    A --> E
+    A --> N
+    I --> R
+    E --> R
+    N --> R
+    F -.-> RW
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Aaj, is hafte, all-time; raat 12 baje aaj wala khaali (alag register)
@@ -123,14 +164,28 @@ se aaye log mila ke sort, mere upar ke 5 aur neeche ke 5. (Yahi soch cache kadam
 **Asli naam:** har shard se score range query (mere score ke thoda upar aur neeche, `ZRANGE BYSCORE REV`), merge, 5 + 5.
 
 ```mermaid
-flowchart LR
-    A["Arpan 5200<br/>(Leaderboard Service)"] -- "5200 ke aas-paas?" --> I[("India<br/>(shard)")]
-    A -- "5200 ke aas-paas?" --> E[("Europe<br/>(shard)")]
-    A -- "5200 ke aas-paas?" --> J[("Japan<br/>(shard)")]
-    I --> M["Mila ke sort<br/>(merge, 5 + 5)"]
-    E --> M
-    J --> M
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Mera score 5200"]:::card
+    subgraph AS["BHEED ME APNE AAS-PAAS SCAN"]
+        I[("India: 5200 ke aas-paas<br/>Rohit, Meera, Aditi")]:::pill
+        J[("Japan: Kenji")]:::pill
+        E[("Europe: Sara")]:::pill
+    end
+    X["4000 aur 6000 wale: lena-dena nahi"]:::card
+    S5["Mila ke sort: aage ke 5,<br/>peeche ke 5"]:::good
+    A --> I
+    A --> J
+    A --> E
+    A -.-> X
+    I --> S5
+    J --> S5
+    E --> S5
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Redis gira to saare score? (clone, phir DB)
@@ -143,13 +198,22 @@ likha hai, wahan se dobara bhar do.
 wahan se rebuild.
 
 ```mermaid
-flowchart LR
-    G["Match khatam<br/>(Game Service)"] --> D[("Pehle yahan likha<br/>(DB, sach)")]
-    G --> Z[("Apne aap sort wala dabba<br/>(Redis primary)")]
-    Z --> C1[("Clone<br/>(Redis replica)")]
-    D -. "teeno gire to dobara bharo<br/>(rebuild)" .-> Z
-    style C1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Redis gira"]:::bad
+    subgraph CL["EKDUM DB PE NAHI: PEHLE CLONE"]
+        C1[("Clone 1")]:::pill
+        C2[("Clone 2")]:::pill
+    end
+    D[("DB: score pehle yahan likha,<br/>teeno gaye to wahan se bhar do")]:::good
+    X --> C1
+    C1 -. "wo bhi gira" .-> C2
+    C2 -. "teeno gaye" .-> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
