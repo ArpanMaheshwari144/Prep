@@ -71,7 +71,7 @@ Yahi dikkat yahan bhi:
   Ecom     7e  Ravi ne 4 tab khole, Buy now 4 baar            ->  user id pe ek hi rukega (idempotency)
   Leader   3b  match ka +50 do baar pahuncha                  ->  match id dekh ke ek hi baar jodo (idempotency)
   Chat     6b  Ravi ka "mil gaya" kho gaya, message dobara aaya  ->  Ravi ka phone number dekh ke chhode (idempotency)
-  Docs     1b  "kal" ka op dobara gaya, "kal kal"             ->  op id dekh ke chhodo (idempotency)
+  Docs     1b  "budget 20k" ka op dobara gaya                 ->  op id dekh ke chhodo (idempotency)
   File     6c  S3 ne "aa gayi" do baar / ulta bataya          ->  parchi, ho gaya to chhod; purana chhod (idempotency, sequencer)
   News     4   ek khabar 40 baar                              ->  bada aadmi, "ye dobara hai, hatao" (dedup)
   News     5   shabd alag, khabar same                        ->  wordings dekh lo (near-duplicate check)
