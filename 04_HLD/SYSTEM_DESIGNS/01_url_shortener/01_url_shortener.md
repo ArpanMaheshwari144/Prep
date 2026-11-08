@@ -242,12 +242,12 @@ dekho wo kis jagah gira, jo uske paas ki almari hai usme thoos do. Jaise gaadi c
 gaya, to main apne paas ka shelter dhoondhunga. Same to same yahan. Kal 9 se 10 almari hui to sirf uske paas wala
 thoda badlega, poore 9 ya 10 ko alag-alag nahi karna padega.
 
-**Maan lo poochhe, bhari almari ring se hata ke alag kamre me kyun nahi rakhte:** ring me almari ek-ek karke nahi
-bharti (bank locker jaisa nahi). Hash har token ko ring pe kahin bhi giraata hai, to saari almari ek saath, barabar
-bharti hain; koi almari "khatam" nahi hoti, naye token purani me bhi aate rehte hain. Sab bharne lagi to nayi almari
-lagao, wo paas wali ka kuch hissa le leti hai, dono me jagah. Ek-ek karke bharne wala tareeka (bhari almari alag
-kamre me, beech me register "kaunsa token kis kamre me") bhi chalta hai, par crore token ka register rakhna padta aur
-har request ek kadam extra.
+**Maan lo poochhe, saari almari bhar gayi to unhe ring se hata ke alag kamre me kyun nahi rakhte:** ring me almari
+bank locker ki tarah ek-ek karke nahi bharti. Hash har token ko ring pe kahin bhi giraata hai, to saari almari ek
+saath, barabar bharti hain: koi almari "khatam" nahi hoti, naye token purani me bhi aate rehte hain, aur dhoondhne ke
+liye bhi wahi ring chahiye. Sab bharne lagi to nayi almari lagao, wo paas wali ka kuch hissa le leti hai, dono me
+jagah. (Ek-ek karke bharne wala tareeka bhi hota hai: bhari almari alag kamre me, beech me ek register "kaunsa token
+kis kamre me". Par crore token ka register rakhna padta aur har request ek kadam extra.)
 **Asli naam:** saari almari ek saath bharti = hash se barabar baant; ek-ek karke bharna = range partitioning; beech
 ka register = lookup / directory.
 
