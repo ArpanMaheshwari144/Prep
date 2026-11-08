@@ -101,6 +101,7 @@ yahi: koi bhi dikkat aayi to likh lo, kahin daal do, line mat roko. Par galat nu
 hoga, use dobara ghumaana bekaar. Wo kaise pehchanein, agle kadam me.
 
 **Asli naam:** alag rakh ke thodi der baad = retry queue (ruk ke dobara, wait badhta jaata), main line nahi rukti.
+Dikkat aayi to likh lo, kahin daal do = queue / parchi / retry ka ek hi pattern.
 
 ## 5. SMS company poori band (teen-chaar company + VIP line)
 
@@ -109,13 +110,13 @@ company nahi, teen-chaar company rakh lo, ek band to doosri. Aur OTP important h
 OTP. Unki priority alag kar do, jaise mandir me VIP darshan, VIP ko jaldi.
 
 Band hai kaise samjhun: SMS bheja, fail, apni parchi me note kiya. Doosra fail, teesra fail. Ab jo fail hue unhe backup
-se bhejo. Backup se chal gaye aur main pe 5-6 baar fail, matlab main company band hai: ab traffic backup se guzaaro.
+se bhejo. Backup se chal gaye aur main pe 2-3, 5-6 baar fail, matlab main company band hai: ab traffic backup se guzaaro.
 Beech-beech me main ko try karo: "tu theek hai? chal raha?" Nahi chala to backup chalta rahega, chal gaya to wapas
 main pe. Aur backup bhi wahi fail bole, to dikkat company me nahi, phone number me hai: use seedha alag dabbe me daal
 do, retry me nahi, koi dekhe, number galat hai to hatao.
 
 **Asli naam:** teen-chaar company = failover (backup provider), VIP darshan = OTP ki alag priority line (topic),
-5-6 baar fail to backup = circuit breaker OPEN, "tu theek hai?" = HALF-OPEN, chal gaya = CLOSED, backup bhi fail =
+2-3 / 5-6 baar fail to backup = circuit breaker OPEN, "tu theek hai?" = HALF-OPEN, chal gaya = CLOSED, backup bhi fail =
 DLQ (dead letter queue).
 
 **Maan lo SMS company 30 second tak chup (timeout), backup se bheja, par pehli ne bhi bhej diya tha:** timeout = pata
@@ -125,7 +126,7 @@ code. Sale ka message hai to thoda ruk jao, 15-30 second late se kiska kya chhoo
 Aur pakka ek hi OTP chahiye to company se terms me tay: "30 second me nahi bheja to apni taraf fail maan lo, mat bhejna,
 aur hume fail wapas bata do", phir hum turant doosri company pe.
 **Asli naam:** SLA + timeout threshold, failover, idempotent OTP (same code dono SMS me), priority ke hisaab se retry;
-ek hi OTP chahiye = message validity period (TTL, Twilio me `validity_period`) + failure callback. Par ye rok sirf
+ek hi OTP chahiye = message validity period (TTL, Twilio me `validity_period`, 1 se 36,000 sec) + failure callback. Par ye rok sirf
 company ki line tak: SMS Jio / Airtel tak chala gaya to wapas nahi, wo hamara area nahi; isliye "ek hi code" bhi saath.
 
 ```mermaid
@@ -214,7 +215,7 @@ ki setting cache me kaise rakhenge. OTP itna late nahi hoga, kyunki OTP ki apni 
 pehle se hain. Baad me naap ke lage ki faltu queries bahut badh gayi, tab sochunga pasand bhi cache me rakhun.
 
 **Asli naam:** ek saancha apne paas = template cache (saancha badla to key DELETE), pasand = user preference DB se
-(taazi, cache nahi), queries badhi tab = naap ke hi preference cache.
+(taazi, cache nahi), queries badhi tab = naap ke hi preference cache. OTP ki apni line = OTP ki alag priority line (kadam 5).
 
 **Maan lo Diwali ki bheed se DB ki saans phooli, aur OTP worker bhi pasand padhne usi DB pe gaya, OTP 40 second late:**
 OTP ka worker DB me pasand padhne jaaye kyun? Offer thodi bhej rahe. Seedha OTP bhejo. Pasand sirf offer pe dekho.
