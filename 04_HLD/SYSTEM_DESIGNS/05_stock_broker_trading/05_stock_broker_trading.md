@@ -92,6 +92,9 @@ nahi kar paayega, INFY wala order lagta hi nahi.
 **Asli naam:** paisa hold = funds block (available se ghata ke blocked me, check aur kaatna ek query me), kharch na kar
 paaye = doosra order reject.
 
+**Maan lo Arpan ko 10 TCS chahiye, 35,000 hold; Ravi sirf 4 bech raha, 4 mile, 6 baaki:** Main dukaan pe baitha, ladka bola 10 Maggi de do, mere paas 4 hi hain. Yahan design choice hai, FR dekho: kya tujhe 10 abhi turant chahiye? Haan to mujhse mat le, kahin aur se le, aur paisa hold hi nahi karunga. Intezaar kar sakta hai to 4 le ja, paisa hold rehne do, jab 6 aayenge main tujhe de dunga, tujhe kuch karna nahi.
+**Asli naam:** "4 le ja, 6 baad me" = partial fill (order PARTIALLY_FILLED, baaki 6 order book me), "10 turant warna nahi" = all-or-nothing (Fill-or-Kill), FR tay kare. Partial me 4 ka paisa kata (14,000), baaki 6 ka hold (21,000) jaari.
+
 ```mermaid
 flowchart TB
     T["TCS order 35,000<br/>(book me pada)"]:::card
