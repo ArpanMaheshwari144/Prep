@@ -31,10 +31,20 @@ aage badhao, isliye number kabhi repeat nahi hoga. Counter kar do, counter servi
 **Asli naam:** ek line me, aage badhao = counter (har link ko agla number), kabhi repeat nahi = takrav kabhi nahi.
 
 ```mermaid
-flowchart LR
-    U["Log<br/>(User)"] --> C["Counter wala<br/>(Counter service)"]
-    C --> N["Agla number: 9, 10, 11<br/>(har link ko naya number)"]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Log: lamba link do"]:::card
+    subgraph C["COUNTER WALA (Counter service)"]
+        N(["agla number: 9 · 10 · 11"]):::pill
+    end
+    T["har link ka naya number<br/>(kabhi repeat nahi)"]:::good
+    U --> N
+    N --> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style C fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. Counter 10 arab pe, token lamba (number plate jaise akshar bhi)
@@ -48,10 +58,20 @@ hain. DL 3C, phir 4C, 5C, phir 5D, phir A, AB ke baad CB, aise aata rahega. 1 2 
 62^7, ~3.5 lakh crore code.
 
 ```mermaid
-flowchart LR
-    N["Number 10 arab<br/>(counter value)"] --> P["Number plate jaisa<br/>(base62 encode)"]
-    P --> T["7 akshar ka token<br/>(aB3x9..)"]
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    N["Number 10 arab<br/>(counter value)"]:::card
+    subgraph P["NUMBER PLATE JAISA (base62)"]
+        A(["0-9 · a-z · A-Z = 62 tarah"]):::pill
+    end
+    T["7 akshar ka token<br/>aB3x9.."]:::good
+    N --> A
+    A --> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style P fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Har baar mota register palatna (chhota pehla register)
@@ -66,11 +86,22 @@ machine me baantna hai, isliye NoSQL key-value), bahut baar
 poochhe jaane wale = garam / baar-baar padhe link. Pehle Redis, nahi mila to DB se laake Redis me rakho (cache-aside).
 
 ```mermaid
-flowchart LR
-    U["Log<br/>(User)"] --> C["Counter wala<br/>(App server)"]
-    C --> R[("Chhota register<br/>(Redis)")]
-    C --> D[("Mota register<br/>(DB: Cassandra)")]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Log: short.ly/aB3x9 khola"]:::card
+    C["Counter wala<br/>(App server)"]:::card
+    subgraph REG["DO REGISTER"]
+        R[("Chhota register<br/>(Redis, pehle yahan)")]:::good
+        D[("Mota register<br/>(DB: Cassandra)")]:::card
+    end
+    U --> C
+    C -- "1. pehle yahan" --> R
+    C -. "2. nahi mila to" .-> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style REG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Chhota register bhar gaya (kise hatayein)
@@ -92,12 +123,23 @@ jaayenge. Patapat la, khatam kahani, ho gaya kaam.
 Redis bharna. Isse stampede rukta hai.
 
 ```mermaid
-flowchart LR
-    L["1,000 log<br/>(same token)"] --> C["Counter wala<br/>(App server)"]
-    C --> K["Chhota ladka<br/>(lock: ek hi jaaye)"]
-    K --> D[("Mota register<br/>(DB)")]
-    K --> R[("Chhota register<br/>(Redis bharna)")]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    L["1,000 log, same token"]:::card
+    subgraph C["COUNTER WALA (App server)"]
+        K(["chhota ladka: ek hi jaaye<br/>(lock, single flight)"]):::pill
+        W["baaki 999 yahin ruken"]:::card
+    end
+    D[("Mota register (DB)")]:::card
+    R[("Chhota register<br/>(Redis bharna)")]:::good
+    L --> K
+    K -- "ek baar" --> D
+    D --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style C fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Ladka raste me gir gaya (ladke ki timeline)
@@ -111,11 +153,23 @@ nahi kahan gaya. Aur tab tak logon ko purani information de sakte hain, baad me 
 information do, baad me update = soft / hard TTL (soft nikla to purana turant do, peeche se naya lao).
 
 ```mermaid
-flowchart LR
-    L["Ladka gira<br/>(lock wala server)"] -. "timeline khatam" .-> T[("Lock ki umar<br/>(lock TTL)")]
-    T --> N["999 me se ek naya ladka<br/>(mote register se laaye)"]
-    U["Ruke log"] -- "tab tak purani info" --> O["Purana jawab<br/>(soft TTL)"]
-    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    L["Ladka raste me gira<br/>(lock wala server)"]:::bad
+    subgraph T["LADKE KI TIMELINE"]
+        TT(["lock ki umar khatam<br/>(lock TTL)"]):::pill
+    end
+    N["999 me se ek naya ladka<br/>(mote register se laaye)"]:::good
+    U["Ruke log"]:::card
+    O["tab tak purana jawab<br/>(soft TTL)"]:::card
+    L -. "timeline khatam" .-> TT
+    TT --> N
+    U --> O
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style T fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. 5 counter, dono ne token "10" diya (apni-apni range)
@@ -128,14 +182,28 @@ aur 2 dono ne apne 10ve aadmi ko token "10" de diya. To paanchon ko range me baa
 kai app server + aage load balancer.
 
 ```mermaid
-flowchart LR
-    U["Log<br/>(User)"] --> LB["Bheed baantne wala<br/>(Load balancer)"]
-    LB --> C["5 counter<br/>(App servers)"]
-    M["Range dene wala<br/>(Range counter)"] --> C
-    C --> R[("Chhota register<br/>(Redis)")]
-    C --> D[("Mota register<br/>(Cassandra)")]
-    style LB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Log"]:::card
+    LB(["Bheed baantne wala<br/>(Load balancer)"]):::pill
+    subgraph AS["5 COUNTER (App servers)"]
+        C1["Counter 1: 1-100"]:::card
+        C2["Counter 2: 101-200"]:::card
+        C5["... Counter 5"]:::card
+    end
+    M(["Range dene wala<br/>(Range counter)"]):::pill
+    DB[("Redis + Cassandra")]:::card
+    U --> LB
+    LB --> C1
+    LB --> C2
+    LB --> C5
+    M -. "dabba khatam to agla" .-> AS
+    AS --> DB
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. 90 TB, ek almari me nahi aata (tukde, hash se baanto)
@@ -148,12 +216,22 @@ to is tukde pe gaya, phir same aaya to phir usi tukde pe.
 machine tay.
 
 ```mermaid
-flowchart LR
-    T["Token aB3x9"] --> H["Hash se tay<br/>(hash se, 9 me se ek)"]
-    H --> A1[("Almari 1<br/>(Shard 1)")]
-    H --> A2[("Almari 2<br/>(Shard 2)")]
-    H --> A9[("... Almari 9<br/>(Shard 9)")]
-    style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    T["Token aB3x9"]:::card
+    H(["Hash se tay<br/>(9 me se ek)"]):::pill
+    subgraph SH["9 ALMARI (Shards)"]
+        A1[("Almari 1")]:::card
+        A2[("Almari 2")]:::good
+        A9[("... Almari 9")]:::card
+    end
+    T --> H
+    H -- "aB3x9 hamesha yahin" --> A2
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. 10vi almari lagi, sab "nahi mila" (gol chakkar + paas ka shelter)
@@ -169,12 +247,24 @@ machine, sirf paas wala thoda badlega = nayi machine pe sirf ek tukda hilta hai.
 
 ```mermaid
 flowchart LR
-    A[("Almari A<br/>(DB node)")] --> B[("Almari B")]
-    B --> C[("Almari C")]
-    C --> D[("Almari D")]
+    subgraph RING["GOL CHAKKAR (consistent hashing)"]
+        A[("Almari A")]:::card
+        B[("Almari B")]:::card
+        C[("Almari C")]:::good
+        D[("Almari D")]:::card
+    end
+    A --> B
+    B --> C
+    C --> D
     D --> A
-    T["Token aB3x9<br/>(hash pe gira)"] -.-> C
-    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    T(["Token aB3x9<br/>(hash pe gira, ghadi ki disha me pehli almari)"]):::pill
+    T -.-> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RING fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 10. Almari number 3 me aag (copy + acknowledge)
@@ -186,13 +276,25 @@ maine likh liya, tu acknowledge bhej". Jab tak acknowledge nahi aata, tab tak pa
 **Asli naam:** almari ki copy = 3 copy (replica, alag machine), acknowledge aaye tab pakka = quorum write (W=2).
 
 ```mermaid
-flowchart LR
-    C["Counter wala<br/>(App server)"] --> A[("Copy A<br/>(replica)")]
-    C --> B[("Copy B<br/>(replica)")]
-    C --> X[("Copy C<br/>(replica, peeche)")]
-    A --> OK["2 ka haan<br/>(W=2, pakka)"]
+flowchart TB
+    C["Counter wala<br/>(naya token likho)"]:::card
+    subgraph R["3 COPY (alag machine)"]
+        A[("Copy A: haan")]:::good
+        B[("Copy B: haan")]:::good
+        X[("Copy C: peeche")]:::card
+    end
+    OK(["2 ka haan = pakka<br/>(W=2)"]):::pill
+    C --> A
+    C --> B
+    C -.-> X
+    A --> OK
     B --> OK
-    style OK fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style R fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 11. Dost ne C se padha, "nahi mila" (do se padhwao)
@@ -204,13 +306,25 @@ B aur C se, ya A aur C se. Ek copy peeche reh bhi gayi to atleast ek ke paas to 
 **Asli naam:** do se hi padhwao = R=2, ek ke paas to hai = W + R > 3, isliye ek copy hamesha common.
 
 ```mermaid
-flowchart LR
-    W["Naya token<br/>(likho)"] --> A[("A: haan")]
-    W --> B[("B: haan")]
-    W -. "peeche reh gaya" .-> C[("C: abhi nahi")]
-    R["Dost padhe<br/>(do se padho, R=2)"] --> B
-    R --> C
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    W["Naya token (likho)"]:::card
+    subgraph R["3 COPY"]
+        A[("A: haan")]:::good
+        B[("B: haan")]:::good
+        C[("C: abhi nahi")]:::bad
+    end
+    D(["Dost padhe: do se<br/>(R=2, ek me to milega)"]):::pill
+    W --> A
+    W --> B
+    W -. "peeche reh gaya" .-> C
+    D --> B
+    D --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style R fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 12. Cricket ka token viral (register ki photocopy + counter ki parchi)
@@ -229,11 +343,25 @@ information ye rahi", dobara kahin jaana hi nahi padta.
 **Asli naam:** counter wala apne paas parchi rakhe = local cache (app server ki memory me garam link kuch second).
 
 ```mermaid
-flowchart LR
-    U["1 crore log"] --> C["Counter wala + parchi<br/>(App server + local cache)"]
-    C --> R1[("Register ki photocopy 1<br/>(Redis replica)")]
-    C --> R2[("Register ki photocopy 2<br/>(Redis replica)")]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["1 crore log<br/>(cricket ka token)"]:::card
+    subgraph C["COUNTER WALA"]
+        P(["apni parchi<br/>(local cache, kuch second)"]):::pill
+    end
+    subgraph RP["REGISTER KI PHOTOCOPY (Redis replica)"]
+        R1[("Photocopy 1")]:::good
+        R2[("Photocopy 2")]:::good
+    end
+    U --> P
+    P -. "parchi me nahi" .-> R1
+    P -.-> R2
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style C fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style RP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 13. Dhokhe wala pata, log phone se seedha (token radd + phone me likhne mat do)
@@ -256,11 +384,22 @@ cache ko TTL laga ke bhi invalidate kar sakte, par tab tak wo purana hi deta.
 nahi; har click hamare paas, control hamare paas), phone cache pe TTL = browser cache ki umar.
 
 ```mermaid
-flowchart LR
-    U["Log ka phone<br/>(Browser)"] --> C["Counter wala<br/>(App server, 302 + no-store)"]
-    C --> K["Kaali list<br/>(Safe Browsing check)"]
-    C --> D[("Mota register<br/>(DB: band token)")]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Log ka phone (browser)"]:::card
+    subgraph C["COUNTER WALA (App server)"]
+        N(["302 + no-store<br/>(phone me likhne mat do)"]):::pill
+    end
+    K["Kaali list<br/>(Safe Browsing)"]:::bad
+    D[("Mota register<br/>(token: band)")]:::card
+    U -- "har baar yahin" --> N
+    N --> K
+    N --> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style C fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 14. Machine se har second hazaar chit (gate pe bhaga do + har aadmi pe had)
@@ -287,12 +426,24 @@ block list me daal do.
 rate limit per IP, IP ban, desh block = WAF block list / geo-block.
 
 ```mermaid
-flowchart LR
-    S["Script / log"] --> W["Gate pe bhagane wala<br/>(WAF)"]
-    W --> G["Har aadmi ki had<br/>(Rate limit: userId, IP)"]
-    G --> C["Counter wala<br/>(App server)"]
-    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    S["Script: har second hazaar chit"]:::bad
+    L["Asli log"]:::card
+    subgraph G["DARWAZA"]
+        W(["gate pe bhaga do<br/>(WAF)"]):::pill
+        RL(["har aadmi ki had<br/>(rate limit: userId, IP)"]):::pill
+    end
+    C["Counter wala<br/>(App server)"]:::good
+    S -. "roka" .-> W
+    L --> W
+    W --> RL
+    RL --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
