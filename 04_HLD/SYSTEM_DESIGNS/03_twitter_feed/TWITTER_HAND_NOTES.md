@@ -13,7 +13,7 @@ Technical me: "apne paas rakhunga, apne paas se bhej dunga" = har user ka pehle 
 Arpan: Main Twitter ki service pe baitha hoon, dekha Ravi ne abhi Amit ko follow kiya. Amit ne jo pehle daala hai wo Ravi ki feed me seedha push kar do, jaise Instagram pe follow karte hi purani reels dikhti. Aage Amit jo naya daalega wo waise hi chala jaayega.
 Technical me: "follow karte hi purane push" = backfill on follow, "naya waise hi" = fanout on write (kadam 1).
 **Maan lo Ravi ne Arpan ko unfollow kiya, par dabbe me Arpan ke 50 purane tweet pade hain.**
-Arpan: Feed sirf follow walon se nahi banti: Elon, Sachin, Kohli ko follow nahi karta phir bhi dikhte, kyunki Twitter / Instagram ka kaam hi engage rakhna hai; kuch follow na karo to bhi khaali page nahi dikhta. Unfollow ke baad pade hue tweet turant gayab nahi honge, par naye aane band, aur jaise-jaise feed banegi Arpan ke tweet dheere-dheere kam ho jaayenge.
+Arpan: Feed sirf follow walon se nahi banti: main khud Elon, Sachin, Kohli ko follow nahi karta, phir bhi mujhe unke tweet dikhte, kyunki Twitter / Instagram ka kaam hi engage rakhna hai; kuch follow na karo to bhi khaali page nahi dikhta. Unfollow ke baad pade hue tweet turant gayab nahi honge, par naye aane band, aur jaise-jaise feed banegi Arpan ke tweet dheere-dheere kam ho jaayenge.
 Technical me: "turant gayab nahi, dheere kam" = dabba saaf nahi karte (lazy, purge nahi), naye fanout band, ranking (kadam 17) neeche karti; feed me follow ke alawa recommendation bhi.
 
 **2. Kohli ne tweet kiya "Century for India". 27 crore dabbon me daalna, ghanton lagte. Ravi ko 2 ghante baad dikha, match khatam. Tab tak baaki sabke tweet bhi line me peeche atke.**
