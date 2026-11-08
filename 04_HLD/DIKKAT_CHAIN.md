@@ -359,6 +359,7 @@ Yahi dikkat yahan bhi:
   Netflix  1   har tukda samundar paar se                     ->  file apne shehar me, CA wala dost (Open Connect, ISP ke andar)
   Netflix  3   dabbe me poora maal nahi                       ->  garam paas, thanda bade dabbe se (popularity, tier, evict)
   Netflix  4   20 dabbe, kis se maange                        ->  hospital ka guard, server batata (steering; AWS pe, video bytes dabbe se)
+  Netflix  4b  aadhe episode pe dabba 3 band                  ->  TV ke paas 2-3 dabbon ke naam, ek dheema to agla (client failover)
   Netflix  7   tunnel me 3 sec net gaya, video ruki           ->  10 ki jagah 20 packet, aage ke tukde paas (player buffer)
   Netflix      (padhai, scene nahi) P1 AWS CDN kyun nahi: apna fridge muft · P3 Ferrari / Alto + har film ki seedhi + kai roop
   YouTube  1   10 hazaar creator, video server me phansi      ->  file seedha locker, watchman bas parchi rakhe (S3, presigned URL)

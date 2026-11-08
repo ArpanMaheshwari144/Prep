@@ -21,6 +21,9 @@ Technical me: "garam paas" = popularity se kya rakhna (region-wise), "bade dabbe
 **4. Mumbai me 20 dabbe, kuch me Money Heist hai kuch me nahi, ek ki saans phool rahi. Ravi ke TV ko kaise pata kis dabbe se maange?**
 Arpan: Akela bhaar kyun uthaun, 10 dost bulao, sabko dabba do, nikaal-nikaal ke do. Garam season ko zyada se zyada dabbon me rakho. Request hamare server pe aati hai, use pata hai kis dabbe me kya hai, wo mod dega. Hospital ka guard: wheelchair wale is line, mahila us line, buzurg us line.
 Technical me: "zyada dabbon me" = hot content ki kai copy, "server mod dega" = play pe server batata kaunse dabbe se lo (steering), "guard" = load + maal dekh ke sahi dabba.
+**Maan lo aadhe episode pe dabba 3 band ya dheema.**
+Arpan: Money Heist garam hai to ek dabbe me mat rakho, kai dabbon me copy (kadam 4 me hai hi). Aur TV ko ek dabba nahi, 2-3 ke naam do: ek dheema hai to intezaar kyon, doosre dabbe se le le.
+Technical me: "2-3 dabbon ke naam" = server player ko kai CDN dabbon ki list deta, ek atka to player khud agle pe (client side failover).
 
 **5. Ravi ne TV pe 27 minute dekha, band kiya. Subah metro me phone pe khola, 27:00 se chahiye.**
 Arpan: Ravi ka account hai, Netflix account se yaad rakhta. Jaise kisi ke 10,000 rakhe, parchi pe uska naam likha, bus stand pe mila to pehchaan liya. TV, phone, kahin bhi khole, yaad wahi. Parchi DB me.

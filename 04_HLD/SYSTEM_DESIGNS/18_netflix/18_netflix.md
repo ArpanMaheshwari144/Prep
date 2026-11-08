@@ -117,6 +117,9 @@ wheelchair wale is line, mahila us line, buzurg us line.
 **Asli naam:** zyada dabbon me = hot content ki kai copy. Server mod dega = play dabate hi server batata hai kaunse
 dabbe se lo (steering). Guard = load + kis dabbe me kya hai, dono dekh ke sahi dabba.
 
+**Maan lo aadhe episode pe dabba 3 band ya dheema:** Money Heist garam hai to ek dabbe me mat rakho, kai dabbon me copy (kadam 4 me hai hi). Aur TV ko ek dabba nahi, 2-3 ke naam do: ek dheema hai to intezaar kyon, doosre dabbe se le le.
+**Asli naam:** "2-3 dabbon ke naam" = server player ko kai CDN dabbon ki list deta, ek atka to player khud agle pe (client side failover).
+
 ```mermaid
 flowchart TB
     R["Ravi ka TV: play"]:::card
