@@ -122,20 +122,19 @@ kho-kho / headlight = sabse paas wala hi sambhale, machine judi to sirf uske paa
 saari). Har machine ring pe 100-200 jagah = virtual nodes, taaki hissa barabar aaye.
 
 ```mermaid
-flowchart TB
-    A["Server<br/>(cache client)"]:::card
-    subgraph RG["RING (kho-kho)"]
-        R(["consistent hashing"]):::pill
-        M3[("Dabba 3<br/>(Redis node)")]:::card
-        M7[("Dabba 7<br/>(Redis node)")]:::card
-        M11[("Naya dabba 11<br/>(Redis node)")]:::good
+flowchart LR
+    subgraph RG["GOL RING (consistent hashing)"]
+        M3[("Dabba 3")]:::card
+        M7[("Dabba 7")]:::card
+        M11[("Naya dabba 11<br/>(sirf paas wali key aayi,<br/>baaki apni jagah)")]:::good
+        M10[("Dabba 10")]:::card
     end
-    D[("Diary<br/>(DB)")]:::card
-    A --> R
-    R --> M3
-    R --> M7
-    R --> M11
-    A --> D
+    M3 --> M7
+    M7 --> M11
+    M11 --> M10
+    M10 --> M3
+    K(["Key Ravi<br/>(hash do khaanon ke beech gira)"]):::pill
+    K -. "kho-kho: aage ka<br/>sabse paas wala" .-> M11
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
