@@ -18,7 +18,7 @@ kahani nahi, **tukde** hain: ek core jo har jagah lagta hai, aur "agar" wale tuk
 ```
 CORE (har jagah)      1 peeche line + status · 2 seedha S3 · 3 receptionist ka token · 4 S3 khud bataye · 6 maalik check + seedha download · 7 link ki umar
 AGAR badi file        2 tukde (multipart) + adhoore ki safai
-AGAR folder           5 ped hamare DB me
+AGAR folder           5 tree hamare DB me
 AGAR bahar ki file    1 me jaanch + 8 scan ki alag line, scan tak link band
 ```
 
@@ -175,19 +175,19 @@ flowchart TB
     style SB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 5. [agar folder] "Goa trip" folder, naam badla to 500 copy (ped hamare DB me)
+## 5. [agar folder] "Goa trip" folder, naam badla to 500 copy (tree hamare DB me)
 
 Arpan ne "Goa trip" folder daala: Day1, Day2, kul 500 photo. S3 me folder hote hi nahi, bas lambe naam wali files.
 Naam path me likha to rename = 500 copy + 500 delete. Isliye folder ka hisaab alag, apne server me: ek parent, baaki
-uske child, ped jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent ka naam badlo, saare
+uske child, tree jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent ka naam badlo, saare
 bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora. S3 sirf files rakhe.
 
-**Asli naam:** ped = DB me folders table (id, parent_id, name), file ki row me folder_id; S3 key file ki id se, naam se
+**Asli naam:** tree = DB me folders table (id, parent_id, name), file ki row me folder_id; S3 key file ki id se, naam se
 nahi. Rename = ek row update.
 
 ```mermaid
 flowchart TB
-    subgraph PD["PED HAMARE DB ME"]
+    subgraph PD["FOLDER KA TREE (HAMARE DB ME)"]
         G(["Goa trip<br/>(parent, id 1)"]):::pill
         D1["Day1<br/>(parent_id 1)"]:::card
         D2["Day2<br/>(parent_id 1)"]:::card
@@ -309,7 +309,7 @@ flowchart TB
 
 User ko server se token milta hai aur file seedha S3 me jaati hai, badi ho to tukdon me; adhoore tukde S3 ki safai
 hatati hai. S3 khud batata hai ki file aa gayi, server DB me status likhta hai aur Kafka ki alag tez line pe scan
-jaata hai. Scan CLEAN tak link nahi, virus nikla to file hatao. Folder ka ped hamare DB me, rename = ek row. Download
+jaata hai. Scan CLEAN tak link nahi, virus nikla to file hatao. Folder ka tree hamare DB me, rename = ek row. Download
 pe maalik / share check, phir chhoti umar ka link aur file S3 se seedha.
 
 ```
