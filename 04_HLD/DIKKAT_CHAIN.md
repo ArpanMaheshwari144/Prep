@@ -321,7 +321,8 @@ Juda: Kafka ka offset bhi yahi number.
 ```
 Dikkat:      GB-GB ki file hamare server se guzar rahi; ya har tukda samundar paar se; ya purana maal bhi mehngi jagah.
 Humne socha: badi file apne paas mat rakho, seedha locker (S3), watchman bas parchi rakhe. Tukdon me bhejo, tukdon me banao. Dekhne wale ke paas copy (CDN). Garam paas, thanda door.
-             Twitter ka video, YouTube ka video, File upload, Netflix: sab ek hi kahani.
+             Upload: Twitter ka video, YouTube ka video, File upload = ek hi kahani. Netflix pe upload nahi (rights khareedta),
+             wahan sirf paas rakhna (CDN) aur kai size (Ferrari / Alto).
 
 Yahi dikkat yahan bhi:
   Twitter  14  50,000 log 1 GB video, server bhara            ->  alag route pe ja, URL se dekhenge (S3, presigned URL)
