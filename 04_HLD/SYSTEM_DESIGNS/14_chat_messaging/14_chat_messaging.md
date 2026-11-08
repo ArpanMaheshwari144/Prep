@@ -33,10 +33,22 @@ khula, band nahi hota, server khud push karta). Server pe har khula taar memory 
 kuch hi thread, sirf jis taar pe message aaya use sambhalo.
 
 ```mermaid
-flowchart LR
-    A["Arpan"] --> S["Beech ka dabba<br/>(Chat server)"]
-    S --> R["Ravi<br/>(WebSocket, khula taar)"]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["10 crore phone har second:<br/>mere liye kuch aaya? (99% kuch nahi)"]:::bad
+    A["Arpan: kahan hai?"]:::card
+    subgraph BD["BEECH KA DABBA"]
+        W(["Jaise hi aaya, turant doosre ko bhej de<br/>(khula taar, WebSocket)"]):::pill
+    end
+    R["Ravi ko seedha mila,<br/>poochne ka mauka hi nahi"]:::good
+    X -.-> W
+    A --> W
+    W --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. Ravi ka phone band, 2 ghante baad on (dabbe me sanjo lo)
@@ -53,11 +65,22 @@ to message gaya), online hoga to bhej denge = offline delivery. DB = Cassandra, 
 message ek machine pe, kram me.
 
 ```mermaid
-flowchart LR
-    A["Arpan"] --> S["Beech ka dabba<br/>(Chat server)"]
-    S --> D[("Sanjo ke rakhne ka dabba<br/>(Cassandra, chat_id)")]
-    S --> R["Ravi<br/>(WebSocket)"]
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: kahan hai?"]:::card
+    X["Ravi ka phone band,<br/>2 ghante baad on"]:::bad
+    subgraph SJ["DABBE ME SANJO LO"]
+        D[("Arpan ne Ravi ko ye bheja hai<br/>(pehle DB me save)")]:::pill
+    end
+    R["Ravi online: tab bhej denge"]:::good
+    A --> D
+    A -.-> X
+    D --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SJ fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. 100 server, Ravi kis pe? (DSA wala map)
@@ -70,10 +93,20 @@ server pe. Dhoondhne ki zaroorat nahi, O(1) time me mil gaya. Key-value pe rakh 
 lookup. Taar toota to server 71 map se Ravi ki entry mita deta.
 
 ```mermaid
-flowchart LR
-    A["Arpan"] --> S3["Server 3<br/>(Chat server)"]
-    S3 -- "Ravi kahan?" --> M[("DSA wala map<br/>(Redis: ravi -> 71)")]
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    S3["Server 3 (Arpan):<br/>Ravi kis server pe?"]:::card
+    subgraph MP["DSA WALA MAP (key-value)"]
+        M[("Ravi -> server 71,<br/>Arpan -> server 3 (Redis)")]:::pill
+    end
+    S71["Server 71: O(1) me mil gaya"]:::good
+    S3 --> M
+    M --> S71
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style MP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Server 71 tak message kaise? 100 x 99 taar (chhota ladka)
@@ -87,11 +120,22 @@ hoga, use ye pakda de." Wo dekhega "haan bhai, ye wo ladka hai", aur message pak
 pe publish karta. Wahan wale ko pakda de = server 71 apne channel se le ke Ravi ke taar pe bhejta.
 
 ```mermaid
-flowchart LR
-    S3["Server 3<br/>(Chat server)"] --> L["Chhota ladka<br/>(Redis pub/sub, channel server-71)"]
-    L --> S71["Server 71<br/>(Chat server)"]
-    S71 --> R["Ravi"]
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    S3["Server 3: Ravi server 71 pe"]:::card
+    X["Har server baaki 99 se taar:<br/>100 x 99"]:::bad
+    subgraph CL["CHHOTA LADKA"]
+        P(["Address le ke chala ja,<br/>wahan wale ko pakda de<br/>(Redis pub/sub)"]):::pill
+    end
+    S71["Server 71: haan, ye wo ladka,<br/>Ravi ke taar pe"]:::good
+    S3 -.-> X
+    S3 --> P
+    P --> S71
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. 500 logon ka group, ek message ke 500 kaam (ek dabbe me ek baar)
@@ -105,11 +149,22 @@ members wahi ek message padhte, 500 copy nahi. Group bhi bas ek chat hai jisme 2
 online walon ko map + pub/sub se bhejo, baaki wapas aayein to dabbe se.
 
 ```mermaid
-flowchart LR
-    A["Arpan: kal party hai"] --> S["Chat server"]
-    S --> D[("Ek dabba, ek baar<br/>(Cassandra, chat_id = college-gang)")]
-    D --> M["500 log khud padhein<br/>(members)"]
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: kal party hai<br/>(500 logon ka group)"]:::card
+    X["Har member ki alag copy:<br/>ek message, 500 kaam"]:::bad
+    subgraph ED["EK DABBE ME EK BAAR"]
+        D[("chat_id = college-gang<br/>(group message DB me)")]:::pill
+    end
+    M["500 log khud aayenge sunne"]:::good
+    A --> D
+    A -.-> X
+    M --> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style ED fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Lift me "hi" dobara gaya, Ravi ko "hi hi" (ek key)
@@ -125,11 +180,26 @@ wahi; ye banking wali idempotency key hi hai). Key same = dupe copy chhodo, DB m
 double tick = "pahuncha" ka jawab (ack) dobara bhejo.
 
 ```mermaid
-flowchart LR
-    A["Arpan: hi, phir hi<br/>(dono m-501)"] --> S["Chat server"]
-    S --> D[("Key ki jaanch<br/>(clientMsgId m-501)")]
-    D -. "doosra m-501 = discard" .-> X["Chhod do<br/>(dupe)"]
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan lift me: hi"]:::card
+    S["Server: save ho gaya"]:::card
+    X["Pahuncha wala jawab kho gaya:<br/>phone ne dobara hi bheja"]:::bad
+    subgraph KY["EK KEY RAKH LO"]
+        K{"Same person, same key?<br/>(clientMsgId)"}:::pill
+    end
+    D["Haan: discard, tera pehla ho gaya"]:::good
+    T["Network aaya: double tick"]:::good
+    A --> S
+    S -.-> X
+    X --> K
+    K --> D
+    S --> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style KY fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Group me "kahan?" pehle dikha, "kal party" baad me (server lagayega number)
@@ -152,11 +222,24 @@ hile to phone number dekh ke sort kar de. Kram kitna strict chahiye, FR me pehle
 client-side ordering, ordering = requirement ka faisla.
 
 ```mermaid
-flowchart LR
-    A["Arpan: kal party"] --> N[("Server ka number<br/>(Redis INCR seq)")]
-    R["Ravi: kahan?"] --> N
-    N --> G["980 kal party, 981 kahan?<br/>(sequence number)"]
-    style N fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: kal party"]:::card
+    R["Ravi: kahan? (usi second)"]:::card
+    X["Phone ki ghadi 2 second aage-peeche:<br/>phone number lagaye to clash"]:::bad
+    subgraph SN["SERVER LAGAYEGA NUMBER"]
+        N(["Jisne pehle bheja, pehla:<br/>#980, #981 (sequence)"]):::pill
+    end
+    P[("Har user ka record: ye gaya,<br/>ye nahi; jo nahi gaya wo sab do")]:::good
+    A --> N
+    R --> N
+    X -.-> N
+    N --> P
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. "12 naye message" (ek ginti)
@@ -169,10 +252,20 @@ turant uske phone me daal do.
 aakhri number minus `last_read_seq` (980 - 968 = 12).
 
 ```mermaid
-flowchart LR
-    C[("Chat ka aakhri number<br/>(980)")] --> U["12 naye<br/>(unread = 980 - 968)"]
-    L[("Ravi ki ginti<br/>(last_read_seq 968)")] --> U
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    G["Group: aakhri #980"]:::card
+    subgraph EG["EK GINTI RAKH LO"]
+        L[("Ravi ne 968 tak padha<br/>(last_read_seq)")]:::pill
+    end
+    U["980 - 968 = 12 naye,<br/>12 ke 12 phone me"]:::good
+    G --> U
+    L --> U
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style EG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. #975 kisne padha? 4.9 lakh line (number ghata lo)
@@ -186,10 +279,25 @@ read nahi kiya. Number ghata lo, isse pata pad jaayega kisne padha, kisne nahi.
 bas ek number, 4.9 lakh ki jagah 500 number. Neeli tick tab jab sabka number >= 975.
 
 ```mermaid
-flowchart LR
-    M["975 kal party"] --> S[("Sita 978<br/>(watermark 975 se upar: padha)")]
-    M --> R[("Ravi 968<br/>(watermark 975 se neeche: nahi padha)")]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Har message x har member:<br/>980 x 500 = 4.9 lakh line"]:::bad
+    M["Arpan ka #975: kisne padha?"]:::card
+    subgraph NG["NUMBER GHATA LO (har member ka ek number)"]
+        S[("Sita: 978")]:::good
+        R[("Ravi: 968")]:::bad
+    end
+    OK["978 >= 975: Sita ne padha<br/>968 < 975: Ravi ne nahi"]:::pill
+    X -.-> M
+    M --> S
+    M --> R
+    S --> OK
+    R --> OK
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style NG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 10. 200 MB ka video, chat ke taar jam (alag raasta, chhota URL)
@@ -205,12 +313,22 @@ bitha do: "video aayi, mere paas aa ja, main chhota URL bana ke bhej deta hoon",
 me sirf link, wahin se dekh lenge = video S3 / CDN se. 500 log dekhein to bhi video ki copy ek hi.
 
 ```mermaid
-flowchart LR
-    A["Arpan app"] --> V[("Video ki alag machine<br/>(S3)")]
-    A --> S["Beech ka dabba<br/>(Chat server, sirf link)"]
-    S --> R["Ravi"]
-    R --> V
-    style V fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: 200 MB party video"]:::card
+    X["Chat ke taar text ke liye:<br/>video ne sab jam kar diya"]:::bad
+    subgraph AR["ALAG RAASTA, ALAG MACHINE"]
+        S3[("Video wahin pada rahe<br/>(S3 / CDN)")]:::pill
+    end
+    C["Chat me sirf chhota URL,<br/>sab wahin se dekh lenge"]:::good
+    A -.-> X
+    A --> S3
+    S3 --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 11. Phone band par "online" dikh raha (register + hilao)
@@ -225,10 +343,22 @@ diya, ab wo offline.
 kaato = entry ki umar (TTL), heartbeat chhoote to apne aap mite. Aakhri heartbeat ka time = "last seen".
 
 ```mermaid
-flowchart LR
-    R["Ravi ka phone"] -- "har 3-5 sec: haan bhai<br/>(heartbeat)" --> P[("Register: Ravi online<br/>(Redis presence + TTL)")]
-    P -. "2-3 baar chup = naam kaato" .-> O["Offline, last seen"]
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Ravi ka phone lift me band,<br/>2 ghante se online dikh raha"]:::bad
+    subgraph RG["REGISTER: RAVI ONLINE HAI (Redis)"]
+        H{"Har 3-5 second hilao:<br/>tu online hai? (heartbeat)"}:::pill
+    end
+    OK["Haan bhai: online"]:::good
+    OFF["2-3 baar jawab nahi:<br/>naam kaat diya, offline (TTL)"]:::card
+    X --> H
+    H -- "jawab aaya" --> OK
+    H -. "jawab nahi" .-> OFF
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 12. "Nahi, parso" pehle, "kal milte hain" baad me (phone number se kram lagaye)
@@ -253,12 +383,25 @@ to bonus: long (64-bit) me lagbhag 92 lakh crore crore (9.2 x 10^18), counter ha
 dekha tha, baaki net se dekh lete".
 
 ```mermaid
-flowchart LR
-    R["Ravi"] -- "41: kal milte hain" --> S1["S1<br/>(dheema)"]
-    R -- "42: nahi, parso" --> S2["S2"]
-    S1 --> A["Arpan ka phone<br/>(number se sort: 41, 42)"]
-    S2 --> A
-    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    R["Ravi: kal milte hain, phir nahi parso"]:::card
+    S1["S1 (dheema): kal milte hain"]:::bad
+    S2["S2: nahi, parso"]:::card
+    subgraph PK["PHONE SAHI KRAM ME LAGAYE"]
+        N(["Server ka number: kal = pehla,<br/>parso = doosra"]):::pill
+    end
+    A["Arpan: thodi der ulta,<br/>phir apne aap theek"]:::good
+    R --> S1
+    R --> S2
+    S1 --> N
+    S2 --> N
+    N --> A
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
