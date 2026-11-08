@@ -245,27 +245,7 @@ thoda badlega, poore 9 ya 10 ko alag-alag nahi karna padega.
 **Asli naam:** gol chakkar, door-door almari = ring (consistent hashing), paas ka shelter = ghadi ki disha me pehli
 machine, sirf paas wala thoda badlega = nayi machine pe sirf ek tukda hilta hai.
 
-```mermaid
-flowchart LR
-    subgraph RING["GOL CHAKKAR (consistent hashing)"]
-        A[("Almari A")]:::card
-        B[("Almari B")]:::card
-        C[("Almari C")]:::good
-        D[("Almari D")]:::card
-    end
-    A --> B
-    B --> C
-    C --> D
-    D --> A
-    T(["Token aB3x9<br/>(hash pe gira, ghadi ki disha me pehli almari)"]):::pill
-    T -.-> C
-    linkStyle default stroke:#8fa3c7,stroke-width:2px
-    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
-    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
-    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style RING fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
-```
+![Gol chakkar: token jahan gira, ghadi ki disha me paas wali almari (shelter)](ring_kadam9.svg)
 
 ## 10. Almari number 3 me aag (copy + acknowledge)
 
