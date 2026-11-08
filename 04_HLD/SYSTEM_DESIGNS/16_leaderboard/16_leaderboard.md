@@ -112,13 +112,13 @@ board:4-Nov  -> umar poori, apne aap hat jaata
 ke register me hi nahi.
 **Asli naam:** FR ka faisla; aaj ke key me na ho = score 0.
 
-## 6. Mere aage ke 5, peeche ke 5 (bheed me aas-paas scan)
+## 6. Mere aage ke 5, peeche ke 5 (bheed me aas-paas scan, paas ka petrol pump)
 
 Main 4,52,318 pe hoon, top 10 me kabhi nahi aaunga, to screen mere aas-paas wale dikhaye. Par wo alag dabbon me baithe:
 Kenji Japan me, Sara Europe me, India wale dabbe me sirf Rohit, Meera, Aditi. Mera score 5200, to mujhe 10,000 wale se
 kya lena-dena. Bheed me main apne aas-paas scan karta, poori bheed nahi dekhta: har dabbe se sirf 5200 ke aas-paas
 wale maango, 4000 aur 6000 wale nahi. Jaise highway pe gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhta hoon. Sab dabbon
-se aaye log mila ke sort, mere upar ke 5 aur neeche ke 5.
+se aaye log mila ke sort, mere upar ke 5 aur neeche ke 5. (Yahi soch cache kadam 4 me: key ring pe paas ke dabbe me.)
 
 **Asli naam:** har shard se score range query (mere score ke thoda upar aur neeche, `ZRANGE BYSCORE REV`), merge, 5 + 5.
 

@@ -185,7 +185,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  1  DB 50 ms, Ravi ka profile hazaron baar    ->  DB se pehle ek dabba (cache, Redis)
  2  dabba bhar gaya, purane profile pade      ->  jo purana, kam use, nikaal do (LRU)
  3  1 TB ek machine me nahi aata              ->  tod do, hash se same dabba (sharding)
- 4  11vi machine judi, har key ki jagah badli ->  kho-kho, sabse paas wala (consistent hashing)
+ 4  11vi machine judi, har key ki jagah badli ->  kho-kho, sabse paas wala, paas ka petrol pump (consistent hashing)
  5  naam badla, cache me purana "Ravi"        ->  pehle parchi kaato, phir DB (cache DELETE)
  6  beech me purana naam phir parchi pe       ->  banda check kare, DB sach hai (sync job)
  7  kuch second purana Ravi dikha             ->  paisa thodi hai (eventual consistency)
@@ -310,7 +310,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  5  poora 1 crore ka board                   ->  referee wala: chhotu har kuch minute (snapshot job)
  6  aaj / hafta / all-time                   ->  score teeno dabbon me
  7  raat 12 baje aaj wala khaali             ->  alag register, kal wala discard (key me tareekh, TTL)
- 8  mere aage-peeche ke 5, alag dabbon me    ->  bheed me aas-paas scan (score range, merge)
+ 8  mere aage-peeche ke 5, alag dabbon me    ->  bheed me aas-paas scan, paas ka petrol pump (score range, merge)
  9  Redis gira                              ->  clone, phir clone, teeno gaye to DB se bharo (replica, DB sach)
 ```
 

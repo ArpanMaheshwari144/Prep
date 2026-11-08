@@ -107,18 +107,20 @@ flowchart TB
     style TD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 4. 11vi machine judi, saare miss (ring, kho-kho)
+## 4. 11vi machine judi, saare miss (ring, kho-kho, paas ka petrol pump)
 
 10 machine, formula `hash(key) % 10`, Ravi machine 3 pe. 11vi machine judi, formula `% 11`, ab Ravi ke liye machine
 7, jahan uska data hi nahi. Lagbhag har key ki jagah badli, saari request miss, sab DB pe, DB baith gaya. To ring
 lagao, jo pehle discuss ki thi. Ek gol ring me machines paas-paas baithi hain. Key ka hash do khaanon ke beech gira to
 aage ke sabse paas wale khaane pe chala jaata. Kho-kho dekha hai? Bada bhaagta hai to main sabse paas wale bande ko
 dhakka deta hoon: chal tu pakad jaake. Ya do padaav hain, ek 50 km pe, agla 100 km pe; gaadi ki headlight kharab hui
-to main sabse paas wale padaav pe chupchaap ruk jaunga, 100 km pe nahi jaunga. Nayi machine aayi to sirf uske paas wali
-thodi key hilti hain, baaki apni jagah.
+to main sabse paas wale padaav pe chupchaap ruk jaunga, 100 km pe nahi jaunga. Jaise highway pe petrol 50 km ka bacha
+to paas ka pump dhoondhta hoon, door wala nahi; key bhi ring pe jahan giri, uske paas wale dabbe me jaati. Nayi
+machine aayi to sirf uske paas wali thodi key hilti hain, baaki apni jagah. (Yahi soch leaderboard kadam 6 me: score
+ke aas-paas wale hi maango.)
 
 **Asli naam:** ring = consistent hashing, beech me gira to sabse paas wala = key ghadi ki disha me agli machine pe,
-kho-kho / headlight = sabse paas wala hi sambhale, machine judi to sirf uske paas ki key hilti, ~1/N key (`%` me lagbhag
+kho-kho / headlight / paas ka petrol pump = sabse paas wala hi sambhale, machine judi to sirf uske paas ki key hilti, ~1/N key (`%` me lagbhag
 saari). Har machine ring pe 100-200 jagah = virtual nodes, taaki hissa barabar aaye.
 
 ```mermaid
