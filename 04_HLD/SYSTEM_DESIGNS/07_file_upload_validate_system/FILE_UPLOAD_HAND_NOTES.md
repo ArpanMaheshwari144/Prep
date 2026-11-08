@@ -50,8 +50,8 @@ Technical me: "umar" = presigned URL expiry (file ki sensitivity pe).
 Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
 Technical me: "alag line" = priority queue / alag topic scan ke liye, "link nahi" = status CLEAN tak download band, "lo hi mat" = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 **Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki.**
-Arpan: Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko alag line (DLQ) me daal do aur insaan ko alert, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
-Technical me: dobara try = retry with backoff, alag line = DLQ + alert, link band = CLEAN tak download nahi (fail-closed).
+Arpan: Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko dead letter queue me daal do aur insaan ko alert, investigate karo, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
+Technical me: dobara try = retry with backoff, dead letter queue = DLQ + alert (scan wali tez line se alag), link band = CLEAN tak download nahi (fail-closed).
 
 &nbsp;
 
