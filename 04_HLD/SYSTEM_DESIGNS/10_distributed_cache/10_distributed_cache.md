@@ -111,7 +111,7 @@ flowchart TB
 
 10 machine, formula `hash(key) % 10`, Ravi machine 3 pe. 11vi machine judi, formula `% 11`, ab Ravi ke liye machine
 7, jahan uska data hi nahi. Lagbhag har key ki jagah badli, saari request miss, sab DB pe, DB baith gaya. To ring
-lagao, jo pehle discuss ki thi. Ek gol ring me machines paas-paas baithi hain. Key ka hash do khaanon ke beech gira to
+lagao. Ek gol ring me machines paas-paas baithi hain. Key ka hash do khaanon ke beech gira to
 aage ke sabse paas wale khaane pe chala jaata. Kho-kho dekha hai? Bada bhaagta hai to main sabse paas wale bande ko
 dhakka deta hoon: chal tu pakad jaake. Ya do padaav hain, ek 50 km pe, agla 100 km pe; gaadi ki headlight kharab hui
 to main sabse paas wale padaav pe chupchaap ruk jaunga, 100 km pe nahi jaunga. Jaise highway pe petrol 50 km ka bacha
@@ -122,6 +122,24 @@ ke aas-paas wale hi maango.)
 **Asli naam:** ring = consistent hashing, beech me gira to sabse paas wala = key ghadi ki disha me agli machine pe,
 kho-kho / headlight / paas ka petrol pump = sabse paas wala hi sambhale, machine judi to sirf uske paas ki key hilti, ~1/N key (`%` me lagbhag
 saari). Har machine ring pe 100-200 jagah = virtual nodes, taaki hissa barabar aaye.
+
+**Maan lo saare dabbe bhar gaye, to unhe ring se hata ke alag kamre me kyun nahi rakhte:** pehle lagta hai bank locker
+jaisa: dabbe bhar gaye to unme ab kuch aana hi nahi, unhe alag kamre me daal do, khaali dabbe doosre kamre me, beech
+me ek aadmi jo bataye "teri key is kamre me". Par ring me aise nahi chalta. Dabbe ek-ek karke nahi bharte: hash har
+key ko ring pe kahin bhi giraata hai, to saare dabbe ek saath, barabar bharte hain. Koi dabba "khatam" nahi hota, nayi
+key purane me bhi aati rehti hai, aur dhoondhne ke liye bhi wahi ring chahiye. Sab bharne lage to naya dabba lagao, wo
+paas wale ka kuch hissa le leta hai, dono me jagah. (Do kamre wala tareeka bhi kahin chalta hai, par beech wale aadmi
+ko crore key ka hisaab yaad rakhna padta, aur har request ek kadam extra.)
+**Asli naam:** bank locker, ek-ek karke bharna = range partitioning; beech ka aadmi = lookup / directory; saare dabbe
+ek saath bharte = hash se barabar baant.
+
+**Maan lo ring ke saare dabbe phir bhar gaye:** ring me aur dabbe jodte jao. Ring bada hona dikkat nahi: ring koi
+kamra nahi, ek niyam hai; dabbe 10 ho ya lakh, key dhoondhna ek hi hisaab, ring pe ghoomna nahi padta. Har naya dabba
+bas paas wale ka thoda hissa leta hai. Consistent hashing ye khud sambhal leta hai, interview me naam kaafi. Cassandra
+bhi andar yahi karta hai.
+**Asli naam:** dabbe jodte jao = scale out (nayi node ring me), ek hi hisaab = ring pe lookup. Official doc
+(Cassandra, "Dataset Partitioning: Consistent Hashing"):
+https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
 
 ![Gol ring: key jahan giri, ghadi ki disha me aage ka sabse paas wala dabba](ring_kadam4.svg)
 

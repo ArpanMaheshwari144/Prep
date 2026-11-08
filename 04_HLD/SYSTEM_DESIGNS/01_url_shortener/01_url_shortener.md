@@ -215,6 +215,12 @@ to is tukde pe gaya, phir same aaya to phir usi tukde pe.
 **Asli naam:** chhote tukde, alag almari = shard, hash se baant do, same aaye to usi tukde pe = code ke hash se
 machine tay.
 
+**Maan lo almari phir kam padi, 10vi lagani hai:** ye Cassandra khud sambhalta hai. Token ke hash se tukda wahi tay
+karta, nayi machine lagao to apne aap thoda data baant deta, baaki apni jagah. Ye uska andar ka kaam hai, hamara
+faisla nahi; interview me "Cassandra, partition key = token, machine jodte jao" kaafi.
+**Asli naam:** Cassandra andar token ring pe data baantta hai (official doc: "Dataset Partitioning: Consistent
+Hashing", https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html).
+
 ```mermaid
 flowchart TB
     T["Token aB3x9"]:::card
@@ -234,29 +240,7 @@ flowchart TB
     style SH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 9. 10vi almari lagi, sab "nahi mila" (gol chakkar + paas ka shelter)
-
-9 almari bharne lagi, jagah kam, 10vi laga di. Hisaab "9 me se kaunsi" se "10 me se kaunsi" ho gaya, aur lagbhag har token galat
-almari me dhoondha ja raha, sab "nahi mila". To almari ko gol chakkar me baant do, thoda door-door rakho. Token aaya to
-dekho wo kis jagah gira, jo uske paas ki almari hai usme thoos do. Jaise gaadi chala raha hoon aur beech me toofan aa
-gaya, to main apne paas ka shelter dhoondhunga. Same to same yahan. Kal 9 se 10 almari hui to sirf uske paas wala
-thoda badlega, poore 9 ya 10 ko alag-alag nahi karna padega.
-
-**Maan lo poochhe, saari almari bhar gayi to unhe ring se hata ke alag kamre me kyun nahi rakhte:** ring me almari
-bank locker ki tarah ek-ek karke nahi bharti. Hash har token ko ring pe kahin bhi giraata hai, to saari almari ek
-saath, barabar bharti hain: koi almari "khatam" nahi hoti, naye token purani me bhi aate rehte hain, aur dhoondhne ke
-liye bhi wahi ring chahiye. Sab bharne lagi to nayi almari lagao, wo paas wali ka kuch hissa le leti hai, dono me
-jagah. (Ek-ek karke bharne wala tareeka bhi hota hai: bhari almari alag kamre me, beech me ek register "kaunsa token
-kis kamre me". Par crore token ka register rakhna padta aur har request ek kadam extra.)
-**Asli naam:** saari almari ek saath bharti = hash se barabar baant; ek-ek karke bharna = range partitioning; beech
-ka register = lookup / directory.
-
-**Asli naam:** gol chakkar, door-door almari = ring (consistent hashing), paas ka shelter = ghadi ki disha me pehli
-machine, sirf paas wala thoda badlega = nayi machine pe sirf ek tukda hilta hai.
-
-![Gol chakkar: token jahan gira, ghadi ki disha me paas wali almari (shelter)](ring_kadam9.svg)
-
-## 10. Almari number 3 me aag (copy + acknowledge)
+## 9. Almari number 3 me aag (copy + acknowledge)
 
 Almari number 3 me aag lagi, uske saare token jal gaye. To ek almari mat rakho, unhi ki copy bana do: 3 gir gayi to
 uski ek aur copy hai. Par isme dikkat ye ki copy thodi peeche ho sakti hai, to acknowledge wala kar lo: "haan bhai
@@ -286,7 +270,7 @@ flowchart TB
     style R fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 11. Dost ne C se padha, "nahi mila" (do se padhwao)
+## 10. Dost ne C se padha, "nahi mila" (do se padhwao)
 
 Teen copy A, B, C hain. Arpan ne naya token banaya, A aur B ne haan bola, C peeche reh gaya. Turant dost ne token
 dikhaya, aur counter wale ne C se padha, "nahi mila". Humne do pe likha, to do se hi padhwao, single-single se nahi:
@@ -316,7 +300,7 @@ flowchart TB
     style R fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 12. Cricket ka token viral (register ki photocopy + counter ki parchi)
+## 11. Cricket ka token viral (register ki photocopy + counter ki parchi)
 
 Cricket match ka token viral, 1 crore log ek saath. Sab counter wale us token ke liye ek hi chhote register ki taraf
 bhaag rahe, aur wo itna dheema ki uske baaki token bhi atke. Sabko wahi token chahiye, to ek hi register kyun? Uski
@@ -353,7 +337,7 @@ flowchart TB
     style RP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 13. Dhokhe wala pata, log phone se seedha (token radd + phone me likhne mat do)
+## 12. Dhokhe wala pata, log phone se seedha (token radd + phone me likhne mat do)
 
 Kisi ka idea tha ki har aadmi pata apne phone me hi likh le, counter pe aaye hi nahi. Hafte baad pata chala ek token
 ka pata dhokhe wali site ka hai, use band karna hai, par log seedha phone wale pate pe ja rahe. To token radd kar do,
@@ -391,7 +375,7 @@ flowchart TB
     style C fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 14. Machine se har second hazaar chit (gate pe bhaga do + har aadmi pe had)
+## 13. Machine se har second hazaar chit (gate pe bhaga do + har aadmi pe had)
 
 Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka number faltu khatam ho
 raha, register bhar raha, aur asli log atke. To jaanch padtaal karo ki script lagi hai. Ek-do baar, teen baar, chaar

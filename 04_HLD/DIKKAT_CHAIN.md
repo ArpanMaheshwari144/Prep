@@ -12,15 +12,14 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  5  7 baje 1000 log ek saath mote register pe   ->  chhota ladka bhaag ke ja (single flight)
  6  ladka raste me gira, 999 khade              ->  ladke ki timeline, 999 me se ek (lock TTL)
  7  5 counter, dono ne "10" diya                ->  apni-apni range
- 8  90 TB ek almari me nahi aata                ->  tukde, hash se almari (shard)
- 9  10vi almari, sab galat jagah dhoondh rahe   ->  gol chakkar, paas ka shelter (ring)
-10  almari me aag                               ->  copy + acknowledge (quorum)
-11  C se padha, nahi mila                       ->  do se padho (R=2)
-12  viral token, 1 crore log ek hi register pe  ->  register ki photocopy, sab me baant do (Redis replica)
-13  counter wala har baar uth ke register jaata ->  apne paas parchi rakh le (local cache)
-14  dhokhe wali site ka token                   ->  radd karo, aage se pehle hi jaancho (kaali list)
-15  radd kiya, log phone wala pata khol rahe    ->  phone me likhne hi mat do (302)
-16  machine se hazaar nakli chit                ->  gate pe bhaga do, had per user (WAF, rate limit)
+ 8  90 TB ek almari me nahi aata                ->  tukde, hash se almari (shard; Cassandra khud baantta)
+ 9  almari me aag                               ->  copy + acknowledge (quorum)
+10  C se padha, nahi mila                       ->  do se padho (R=2)
+11  viral token, 1 crore log ek hi register pe  ->  register ki photocopy, sab me baant do (Redis replica)
+12  counter wala har baar uth ke register jaata ->  apne paas parchi rakh le (local cache)
+13  dhokhe wali site ka token                   ->  radd karo, aage se pehle hi jaancho (kaali list)
+14  radd kiya, log phone wala pata khol rahe    ->  phone me likhne hi mat do (302)
+15  machine se hazaar nakli chit                ->  gate pe bhaga do, had per user (WAF, rate limit)
 ```
 
 ## 2. Rate limiter   ([notes](SYSTEM_DESIGNS/02_rate_limiter/RATE_LIMITER_HAND_NOTES.md))
