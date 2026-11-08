@@ -236,11 +236,20 @@ flowchart TB
 
 ## 9. 10vi almari lagi, sab "nahi mila" (gol chakkar + paas ka shelter)
 
-9 almari bhar gayi, 10vi laga di. Hisaab "9 me se kaunsi" se "10 me se kaunsi" ho gaya, aur lagbhag har token galat
+9 almari bharne lagi, jagah kam, 10vi laga di. Hisaab "9 me se kaunsi" se "10 me se kaunsi" ho gaya, aur lagbhag har token galat
 almari me dhoondha ja raha, sab "nahi mila". To almari ko gol chakkar me baant do, thoda door-door rakho. Token aaya to
 dekho wo kis jagah gira, jo uske paas ki almari hai usme thoos do. Jaise gaadi chala raha hoon aur beech me toofan aa
 gaya, to main apne paas ka shelter dhoondhunga. Same to same yahan. Kal 9 se 10 almari hui to sirf uske paas wala
 thoda badlega, poore 9 ya 10 ko alag-alag nahi karna padega.
+
+**Maan lo poochhe, bhari almari ring se hata ke alag kamre me kyun nahi rakhte:** ring me almari ek-ek karke nahi
+bharti (bank locker jaisa nahi). Hash har token ko ring pe kahin bhi giraata hai, to saari almari ek saath, barabar
+bharti hain; koi almari "khatam" nahi hoti, naye token purani me bhi aate rehte hain. Sab bharne lagi to nayi almari
+lagao, wo paas wali ka kuch hissa le leti hai, dono me jagah. Ek-ek karke bharne wala tareeka (bhari almari alag
+kamre me, beech me register "kaunsa token kis kamre me") bhi chalta hai, par crore token ka register rakhna padta aur
+har request ek kadam extra.
+**Asli naam:** saari almari ek saath bharti = hash se barabar baant; ek-ek karke bharna = range partitioning; beech
+ka register = lookup / directory.
 
 **Asli naam:** gol chakkar, door-door almari = ring (consistent hashing), paas ka shelter = ghadi ki disha me pehli
 machine, sirf paas wala thoda badlega = nayi machine pe sirf ek tukda hilta hai.
