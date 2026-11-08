@@ -218,6 +218,44 @@ flowchart TB
     style GP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+## 7. Metro ki tunnel, 3 second net gaya, video ruki (10 ki jagah 20 packet)
+
+Ravi metro me Money Heist dekh raha, 4 sec ka tukda chal raha. Tunnel aayi, net 3 second poora gaya. Tukda khatam,
+player ne agla maanga, kuch nahi aaya, gola ghoomne laga, video ruk gayi. Main doodh wala hoon. Amul har ghar aake
+packet nahi deta, mohalle ki dukaan ko deta, log dukaan se lete. Mere paas 10 packet, aa gaye 15 log, 5 laut gaye. To
+pehle hi Amul se bolunga 10 ki jagah 20 bhej, 18 bhi aa gaye to sabko mil jaayega, 2 bache to fridge me pade rahenge.
+Waise hi Ravi ke liye agla 4 sec ka tukda pehle hi apne paas rakh lo, thode tukde aage ke; peeche se data aata rahega.
+Amul ne mana kar diya to Mother Dairy se le aaunga: Amul jaisa nahi, par theek, kaam chal jaayega.
+
+**Asli naam:** agla tukda pehle se paas rakh lo = player buffer (aage ke kuch tukde pehle se; sirf ek tukda aage
+rakho to tunnel me ruk jaata), Mother Dairy = kam quality ka tukda (ABR, P3 ka Alto), raat ko de jaaya kar = raat ko
+bharai (kadam 2).
+
+```mermaid
+flowchart TB
+    X["Tunnel: net 3 second gaya,<br/>sirf ek tukda aage tha, video ruki"]:::bad
+    subgraph DP["DOODH WALA: 10 KI JAGAH 20 PACKET"]
+        direction LR
+        b1(["chal raha"]):::good
+        b2(["+4 sec"]):::pill
+        b3(["+8 sec"]):::pill
+        b4(["+12 sec"]):::pill
+        b1 ~~~ b2 ~~~ b3 ~~~ b4
+    end
+    M["Amul na de to Mother Dairy:<br/>kam quality, par chalti rahe (Alto)"]:::card
+    R["Tunnel me bhi paas ke tukde chalte,<br/>bahar aate hi aur bhar lo"]:::good
+    X --> DP
+    DP --> R
+    M -.-> DP
+    linkStyle 0,1,2 stroke-width:0px
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style DP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ---
 
 # Padhai wala hissa (mock se pehle saath padha, scene me nahi poocha gaya)

@@ -44,6 +44,12 @@ Technical me: "garam maal" = naye user ko region ka trending (cold start), "patt
 
 &nbsp;
 
+**7. Ravi metro me Money Heist dekh raha, 4 sec ka tukda chal raha. Tunnel aayi, net 3 second poora gaya. Tukda khatam, player ne agla maanga, kuch nahi aaya, gola ghoomne laga, video ruk gayi.**
+Arpan: Main doodh wala hoon. Amul har ghar aake packet nahi deta, mohalle ki dukaan ko deta, log dukaan se lete. Mere paas 10 packet, aa gaye 15 log, 5 laut gaye; 3-4 din aisa chala, nuksaan. To pehle hi Amul se bolunga 10 ki jagah 20 bhej, 18 bhi aa gaye to sabko mil jaayega, 2 bache to fridge me pade rahenge. Waise hi Ravi ke liye agla 4 sec ka tukda pehle hi apne paas rakh lo, thode tukde aage ke; peeche se data aata rahega. Amul ne mana kar diya to Mother Dairy se le aaunga: Amul jaisa nahi, par theek, kaam chal jaayega. Aur Amul ko bolunga raat ko de jaaya kar, 12-1 baje, jab bheed na ho.
+Technical me: "agla tukda pehle se paas rakh lo" = player buffer (aage ke kuch tukde pehle se; sirf ek tukda aage = tunnel me ruk jaata), "Mother Dairy, kaam chal jaayega" = kam quality ka tukda (ABR, P3 ka Alto), "raat ko de jaaya kar" = raat ko bharai (kadam 2).
+
+&nbsp;
+
 **Padhai wala hissa (mock se pehle samjha, scene me nahi poocha gaya)**
 
 **P1. AWS ka CDN (CloudFront / Akamai) kyun nahi, apna dabba kyun?**

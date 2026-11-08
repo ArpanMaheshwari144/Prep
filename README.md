@@ -127,7 +127,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [15 uber (Connaught Place se ghar)](04_HLD/SYSTEM_DESIGNS/15_uber/15_uber.md)
   - [16 leaderboard (1 crore khiladi)](04_HLD/SYSTEM_DESIGNS/16_leaderboard/16_leaderboard.md)
   - [17 e-commerce (mausi ka mart, Diwali sale)](04_HLD/SYSTEM_DESIGNS/17_ecommerce/17_ecommerce.md)
-  - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-6 = scene, neeche padhai wala hissa P1-P4)
+  - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-7 = scene, neeche padhai wala hissa P1-P4)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md)
   - [IMG](04_HLD/SYSTEM_DESIGNS/IMG) — jo mermaid se nahi banta (cache ki ring, Uber ka naksha + gaadi), saari tasveer ek folder me
 
