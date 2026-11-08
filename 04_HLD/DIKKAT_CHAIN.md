@@ -324,6 +324,7 @@ Yahi dikkat yahan bhi:
   Notif    4c  OTP retry line se 3 ghante baad gaya           ->  har khabar ki umar, khatam to phenko; OTP VIP line (TTL, priority)
   Rate     10b line lambi, OTP 6 min baad, bekaar             ->  wahi umar + VIP line (Notification 4c jaisa)
   Kafka    9b  pay DLQ me, cancel chal gayi, kram toota       ->  group ka ek atka to us user ki baaki bhi park (same key parking)
+  Netflix  5c  TV ka purana 27, phone ke 37 ke upar           ->  baad wala jeete, purana discard (timestamp, last-write-wins)
 
 Naam: sequence number / offset / OT
 Juda: Kafka ka offset bhi yahi number.

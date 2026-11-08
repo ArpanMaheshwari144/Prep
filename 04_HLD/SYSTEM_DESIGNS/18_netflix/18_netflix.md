@@ -157,6 +157,9 @@ mujhse baat nahi karta. Maine dost ko bola, jo baat hui sankshep me mujhe bata d
 matlab aaj aage nahi badha.
 **Asli naam:** dost sankshep me bataye = dabba / player playback ki report (heartbeat) server ko bhejta.
 
+**Maan lo TV ka net gaya, TV ne "27:00" apne paas rakh liya. Subah phone pe 37 tak dekha, shaam ko TV on hote hi purana 27 pahuncha aur 37 ke upar likh gaya:** Netflix phone, laptop, TV sab me sync rehta, alag nahi ho sakta. Main Netflix ka server hoon: tukde main hi bhej raha, to 27 ke baad agla tukda nahi maanga matlab 25-27 ke aas-paas band kiya. Phir usne phone pe 27 se 37 dekh liya, naya point 37, parchi pe 37. Shaam ko TV khula aur purana 27 aaya: nahi, isne to 37 tak dekh liya, 27 purana hai, discard; 37 se chalao.
+**Asli naam:** "naya point jeete, purana 27 discard" = har position ke saath uska waqt (timestamp), baad wala jeete (last-write-wins, event time se, aane ke waqt se nahi), "main hi tukde bhej raha" = server ko apne bheje tukdon se andaza.
+
 ```mermaid
 flowchart TB
     T["TV pe 27 minute, band"]:::card
