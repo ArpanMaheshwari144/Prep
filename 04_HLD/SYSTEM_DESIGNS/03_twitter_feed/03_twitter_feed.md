@@ -34,12 +34,24 @@ upar), dost apna mujhe de do = tweet aate hi followers ke inbox me (fanout on wr
 inbox se.
 
 ```mermaid
-flowchart LR
-    A["Arpan: tweet"] --> TS["Tweet Service"]
-    TS --> IN[("Ravi ka taiyaar dabba<br/>(Redis inbox)")]
-    R["Ravi: app khola"] --> FS["Feed Service"]
-    FS --> IN
-    style IN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: tweet"]:::card
+    TS["Tweet Service"]:::card
+    subgraph RD["TAIYAAR DABBA (Redis)"]
+        IN[("Ravi ka taiyaar dabba<br/>(Redis inbox)")]:::pill
+    end
+    FS["Feed Service"]:::card
+    R["Ravi: app khola"]:::good
+    A --> TS
+    TS -- "pehle se daal do" --> IN
+    R --> FS
+    FS -- "bas utha lo" --> IN
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. Kohli ke 27 crore dabbe (Kohli ki ek chhoti parchi)
@@ -55,12 +67,26 @@ followers ki had se do raaste, ek chhoti parchi, sab yahin se padhein = celeb ka
 pe wahan se (fanout on read). Dono saath = hybrid fanout.
 
 ```mermaid
-flowchart LR
-    K["Kohli: tweet"] --> TS["Tweet Service"]
-    TS --> P[("Kohli ki ek parchi<br/>(celeb list)")]
-    R["27 crore log: feed"] --> FS["Feed Service"]
-    FS --> P
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    K["Kohli: tweet"]:::card
+    TS["Tweet Service"]:::card
+    X["27 crore dabbe me daalna"]:::bad
+    subgraph PC["KOHLI KI EK PARCHI"]
+        P[("Kohli ki ek parchi<br/>(celeb list)")]:::pill
+    end
+    FS["Feed Service"]:::card
+    R["27 crore log: feed"]:::card
+    K --> TS
+    TS -. "nahi" .-> X
+    TS --> P
+    R --> FS
+    FS -- "padhte waqt" --> P
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Dabba alag, 15 bade logon ki parchiyan alag (sab ek saath lao, sort karo)
@@ -74,11 +100,22 @@ ye tera aaj ka poora twitter ka samachar, jinko tune follow kar rakha tha, sort 
 Ravi ki feed pe push = merge at read.
 
 ```mermaid
-flowchart LR
-    IN[("Doston ka dabba<br/>(Redis inbox)")] --> M["Sab milao, sort<br/>(merge at read)"]
-    P[("15 bade logon ki parchi<br/>(celeb lists)")] --> M
-    M --> R["Ravi ki ek feed"]
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    IN[("Doston ka dabba<br/>(Redis inbox)")]:::card
+    P[("15 bade logon ki parchi<br/>(celeb lists)")]:::card
+    subgraph FS["FEED SERVICE"]
+        M(["Sab milao, sort<br/>(merge at read)"]):::pill
+    end
+    R["Ravi ki ek feed"]:::good
+    IN --> M
+    P --> M
+    M --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style FS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Arpan ke 8,000 followers, "Post" ghoomta rahe (threshold + stadium wala bhai)
@@ -95,16 +132,30 @@ outbox ek transaction me nahi likhe jaate, isliye Kafka hi pakki parchi: Tweet S
 (acks=all), peeche workers tweet Cassandra me aur inbox me likhein (tweet_id se idempotent, dobara aaye to do baar nahi).
 
 ```mermaid
-flowchart LR
-    A["Arpan: post"] --> TS["Tweet Service<br/>(pehle Kafka me)"]
-    TS --> K[("Stadium wala bhai<br/>(Kafka)")]
-    K --> FW["Peeche bharne wale<br/>(Fanout workers)"]
-    FW --> IN[("Har bande ka dabba<br/>(Redis inbox)")]
-    R["Ravi: feed"] --> FS["Feed Service"]
+flowchart TB
+    A["Arpan: post"]:::card
+    TS["Tweet Service<br/>(pehle Kafka me)"]:::card
+    subgraph PB["PEECHE SE BHARO"]
+        K[("Stadium wala bhai<br/>(Kafka)")]:::pill
+        FW(["Peeche bharne wale<br/>(Fanout workers)"]):::pill
+    end
+    IN[("Har bande ka dabba<br/>(Redis inbox)")]:::card
+    FS["Feed Service"]:::card
+    P[("Kohli ki parchi<br/>(celeb list)")]:::card
+    R["Ravi: feed"]:::good
+    A --> TS
+    TS --> K
+    K --> FW
+    FW --> IN
+    R --> FS
     FS --> IN
-    FS --> P[("Kohli ki parchi<br/>(celeb list)")]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style FW fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    FS --> P
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Six ke baad 5 crore ek parchi pe (parchi ki 10-15 copy)
@@ -123,13 +174,22 @@ lagenge. System rok nahi sakte, ye nahi keh sakte ki nahi dekhne denge.
 **Asli naam:** thodi der galat = eventual consistency, peeche ek job = background job copies update kare.
 
 ```mermaid
-flowchart LR
-    U["5 crore refresh"] --> C1[("Parchi copy 1<br/>(hot key replica)")]
-    U --> C2[("Parchi copy 2<br/>(hot key replica)")]
-    U --> CN[("... copy 15<br/>(hot key replica)")]
-    style C1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style C2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style CN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["5 crore refresh<br/>(six ke baad)"]:::bad
+    subgraph CP["PARCHI KI 10-15 COPY"]
+        C1[("Parchi copy 1<br/>(hot key replica)")]:::good
+        C2[("Parchi copy 2<br/>(hot key replica)")]:::good
+        CN[("... copy 15<br/>(hot key replica)")]:::good
+    end
+    U --> C1
+    U --> C2
+    U --> CN
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Memory ka bill aasmaan pe (aakhri 500 + 30 din wala)
@@ -147,10 +207,21 @@ archive = purana data S3, 30 din se nahi khola to kuch taiyaar nahi = inactive u
 Redis me = on-demand inbox banana.
 
 ```mermaid
-flowchart LR
-    IN[("Dabba: last 500<br/>(Redis inbox)")] --> DB[("Mota register<br/>(DB)")]
-    DB --> S3[("Permanent diary<br/>(S3 archive)")]
-    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    subgraph TR["KAUN KAHAN RAHE"]
+        IN[("Dabba: last 500<br/>(Redis inbox)")]:::card
+        DB[("Mota register<br/>(DB)")]:::card
+        S3[("Permanent diary<br/>(S3 archive)")]:::pill
+    end
+    X["30 din se app nahi khola:<br/>dabba taiyaar nahi (aaye to DB se)"]:::bad
+    IN -- "500 se purane" --> DB
+    DB -- "3-4 saal purane" --> S3
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style TR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Din me 50 crore tweet, SQL hil gaya (bada bhai Cassandra + follow ka Neo4j)
@@ -167,14 +238,26 @@ naam se nahi, id se baant do = partition key = user id, mera saara data ek jagah
 follow ka track = graph DB Neo4j.
 
 ```mermaid
-flowchart LR
-    TS["Tweet Service"] --> K[("Stadium wala bhai<br/>(Kafka, pakki parchi)")]
-    K --> FW["Peeche bharne wale<br/>(Workers)"]
-    FW --> C[("Bada bhai<br/>(Cassandra, user id se)")]
-    G[("Follow ka track<br/>(Neo4j)")] -- "followers kaun" --> FW
-    FW --> IN[("Dabba<br/>(Redis inbox, last 500)")]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    TS["Tweet Service"]:::card
+    K[("Stadium wala bhai<br/>(Kafka, pakki parchi)")]:::card
+    FW["Peeche bharne wale<br/>(Workers)"]:::card
+    subgraph DBS["DO NAYE REGISTER"]
+        C[("Bada bhai<br/>(Cassandra, user id se)")]:::pill
+        G[("Follow ka track<br/>(Neo4j)")]:::pill
+    end
+    IN[("Dabba<br/>(Redis inbox, last 500)")]:::card
+    TS --> K
+    K --> FW
+    FW --> C
+    G -- "followers kaun" --> FW
+    FW --> IN
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style DBS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. Server America me, Ravi Delhi me (Lajpat Nagar me branch)
@@ -187,10 +270,21 @@ dabaav. Lajpat Nagar me branch nahi hai? To wahan branch khol do, wo wahi chale 
 **Asli naam:** baatcheet India me rakh = India region, Lajpat Nagar me branch khol do = user ke paas wala region.
 
 ```mermaid
-flowchart LR
-    R["Ravi (Delhi)"] --> IN["India branch<br/>(India region)"]
-    J["John (New York)"] --> US["America branch<br/>(US region)"]
-    style IN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    R["Ravi (Delhi)"]:::card
+    J["John (New York)"]:::card
+    subgraph BR["APNI-APNI BRANCH"]
+        IN(["India branch<br/>(India region)"]):::pill
+        US["America branch<br/>(US region)"]:::card
+    end
+    R -- "samundar paar nahi" --> IN
+    J --> US
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. John ko Arpan ka tweet nahi dikhta (branches aapas me baat karein)
@@ -211,10 +305,24 @@ Mujhe bas dekhna tha ki tu hai ya nahi, tu aa gaya to le tera kaam.
 replay.
 
 ```mermaid
-flowchart LR
-    IN["India branch<br/>(India region)"] --> Q[("Sambhal ke rakhne wala<br/>(queue: pending)")]
-    Q --> US["America branch<br/>(US region)"]
-    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan ka tweet"]:::card
+    IN["India branch<br/>(India region)"]:::card
+    subgraph BB["BRANCHES AAPAS ME BAAT"]
+        Q[("Sambhal ke rakhne wala<br/>(queue: pending)")]:::pill
+    end
+    US["America branch<br/>(US region)"]:::card
+    J["John ko dikha"]:::good
+    A --> IN
+    IN --> Q
+    Q --> US
+    US --> J
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
@@ -231,10 +339,20 @@ nahi, alag is route pe chala ja, tujhe phir ek URL se access kar lenge.
 link.
 
 ```mermaid
-flowchart LR
-    A["Arpan ka phone"] --> TS["Tweet Service<br/>(sirf URL deta)"]
-    A --> S3[("Alag raasta<br/>(S3, presigned URL)")]
-    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan ka phone<br/>(1 GB video)"]:::card
+    TS["Tweet Service<br/>(sirf URL deta)"]:::card
+    subgraph AR["ALAG RAASTA"]
+        S3[("S3<br/>(presigned URL)")]:::pill
+    end
+    A -- "URL do" --> TS
+    A -- "video seedha" --> S3
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 11. Ravi gaon me 3G pe, 1 GB nahi kheench paata (Ferrari aur Alto)
@@ -248,10 +366,20 @@ Phone bole "mera net bekaar, 240p de", net achha to 4K. Ferrari highway ke liye,
 ABR (adaptive bitrate).
 
 ```mermaid
-flowchart LR
-    V[("Ek 4K file<br/>(S3)")] --> F["Ferrari: 4K<br/>(achha net)"]
-    V --> AL["Alto: 240p-360p<br/>(kharab net)"]
-    style AL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    V[("Ek 4K file<br/>(S3)")]:::card
+    subgraph KS["KAI SIZE"]
+        F["Ferrari: 4K<br/>(achha net)"]:::good
+        AL(["Alto: 240p-360p<br/>(kharab net)"]):::pill
+    end
+    V --> F
+    V --> AL
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style KS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 12. Ek machine, 20 minute, 50,000 video peeche (kai machine + id ki parchi)
@@ -264,13 +392,22 @@ isi id pe kaam karein, aur kisi id pe nahi.
 video id + hissa number se.
 
 ```mermaid
-flowchart LR
-    S3[("4K video<br/>(S3)")] --> W1["Machine 1<br/>(worker: hissa 1)"]
-    S3 --> W2["Machine 2<br/>(worker: hissa 2)"]
-    S3 --> WN["... Machine 10<br/>(worker: hissa 10)"]
-    style W1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style W2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style WN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    S3[("4K video<br/>(S3)")]:::card
+    subgraph WK["KAI MACHINE (hisse baante)"]
+        W1(["Machine 1<br/>(worker: hissa 1)"]):::pill
+        W2(["Machine 2<br/>(worker: hissa 2)"]):::pill
+        WN(["... Machine 10<br/>(worker: hissa 10)"]):::pill
+    end
+    S3 --> W1
+    S3 --> W2
+    S3 --> WN
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style WK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 13. Worker 7 beech me gira, "processing" ghanton se (tu hai kya + yahan tak parchi)
@@ -288,10 +425,20 @@ wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan 
 **Asli naam:** atka to replacement = timeout pe slow worker ka hissa doosre ko, kahan tak chhoda = checkpoint.
 
 ```mermaid
-flowchart LR
-    W7["Worker 7<br/>(heartbeat nahi / atka)"] --> ST[("Status ki parchi<br/>(DB: hisse + checkpoint)")]
-    ST --> NW["Naya banda<br/>(retry, checkpoint se)"]
-    style NW fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    W7["Worker 7<br/>(heartbeat nahi / atka)"]:::bad
+    subgraph SP["STATUS KI PARCHI"]
+        ST[("DB: hisse + checkpoint<br/>(yahan tak kar liya)")]:::card
+    end
+    NW(["Naya banda<br/>(retry, checkpoint se)"]):::pill
+    W7 -. "tu hai kya? jawab nahi" .-> ST
+    ST --> NW
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 14. Ravi 2:00 pe khiskata, phone 0 se kheench raha (copy dekh ke seedha 51wa page)
@@ -317,10 +464,20 @@ wala tareeka chal raha hota. Dikkat aayi, solution ban gaya.
 bina wajah nahi.
 
 ```mermaid
-flowchart LR
-    P["Ravi ka phone<br/>(player + bookmark)"] --> M["Copy: kaunsa page kahan<br/>(manifest)"]
-    P --> T[("Tukda 51<br/>(segment, CDN)")]
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    P["Ravi ka phone<br/>(player + bookmark)"]:::card
+    subgraph CP["COPY DEKHO"]
+        M(["Copy: kaunsa page kahan<br/>(manifest)"]):::pill
+    end
+    T[("Tukda 51<br/>(segment, CDN)")]:::good
+    P --> M
+    M -- "seedha 51" --> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 15. Six viral, saare tukde US me (copy paas me + taala-chaabi)
@@ -344,14 +501,26 @@ jaati, wo AWS ka kaam.
 ke hi link deta, 5 minute umar = short expiry. Hamara faisla: kisko aur kitni der ka.
 
 ```mermaid
-flowchart LR
-    A["Arpan: 4K video"] --> S3[("Alag raasta<br/>(S3, presigned URL)")]
-    S3 --> W["Kai machine<br/>(Transcoding workers)"]
-    W --> T[("Kai size ke tukde<br/>(segments + manifest)")]
-    T --> CDN["Paas wali copy<br/>(CDN, signed URL)"]
-    CDN --> R["Ravi / John<br/>(player: manifest + ABR)"]
-    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style CDN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: 4K video"]:::card
+    S3[("Alag raasta<br/>(S3, presigned URL)")]:::card
+    W(["Kai machine<br/>(Transcoding workers)"]):::pill
+    T[("Kai size ke tukde<br/>(segments + manifest)")]:::card
+    subgraph PS["PAAS WALI COPY"]
+        CDN(["CDN, signed URL<br/>(taala-chaabi)"]):::pill
+    end
+    R["Ravi / John<br/>(player: manifest + ABR)"]:::good
+    A --> S3
+    S3 --> W
+    W --> T
+    T --> CDN
+    CDN --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
