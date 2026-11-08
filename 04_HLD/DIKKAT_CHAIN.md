@@ -331,7 +331,7 @@ Yahi dikkat yahan bhi:
   Twitter  26  scroll ke beech upar 5 naye, wahi 5 dobara     ->  kahan tak padha yaad rakh (cursor, offset nahi)
   Notif    4b  Shipped pehle, Order placed baad me            ->  order ki parchi, gaya nahi to dono saath / doosri company / email
   Notif    4c  OTP retry line se 3 ghante baad gaya           ->  har khabar ki umar, khatam to phenko; OTP VIP line (TTL, priority)
-  Rate     10b line lambi, OTP 6 min baad, bekaar             ->  wahi umar + VIP line (Notification 4c jaisa)
+  Rate     10b line lambi, OTP 6 min baad, bekaar             ->  har OTP pe umar, khatam to phenk do (message TTL)
   Kafka    9b  pay DLQ me, cancel chal gayi, kram toota       ->  group ka ek atka to us user ki baaki bhi park (same key parking)
   Netflix  5c  TV ka purana 27, phone ke 37 ke upar           ->  baad wala jeete, purana discard (timestamp, last-write-wins)
   Leader   7b  11:59:58 ka match, score 12:00:02 pe           ->  parchi pe khatam hone ka waqt, usi din ka register (event time)
