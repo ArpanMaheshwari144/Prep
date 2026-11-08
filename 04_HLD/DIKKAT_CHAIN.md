@@ -17,6 +17,7 @@ Yahi dikkat yahan bhi:
   BMS      1   dono ko D5 "mil gayi"                          ->  seat pe parchi, dekhna + rokna ek saath (hold)
   BMS      1b  D5 D6 D7 chahiye, D7 beech me Priya ki         ->  teeno ek saath, ek parchi, ek na mile to koi nahi (transaction)
   Banking  4   600 me do counter pe 500-500                   ->  dekhna aur kaatna ek kram me (row lock)
+  Banking  4b  Arpan->Ravi, Ravi->Arpan, dono atke            ->  ek line ek kram (lock ordering) ya ek wapas, phir dobara (deadlock)
   Uber     5   Raju pe ek second me do ride                   ->  BMS wali parchi, ek kadam me (hold / lock)
   Uber     16  wallet me sirf 40                              ->  poora kaato, aadha nahi (atomic charge)
   Ecom     1   aakhri ghee, aunty + Ravi ek saath             ->  online ko godown, counter ko shelf (channel ka alag stock)

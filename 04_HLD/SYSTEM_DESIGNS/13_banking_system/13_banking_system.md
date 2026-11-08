@@ -99,6 +99,9 @@ dekhega. Doosre wale ko 600 dikhne hi nahi chahiye.
 balance >= 500`: 1 row badli = kata, 0 row = paisa kam, mana). Doosre ko 600 na dikhe = row lock: UPI ki query ruk ke
 naye 100 pe jaanchti hai.
 
+**Maan lo ek hi pal me do parchi: counter 1 pe "Arpan se Ravi 500", counter 2 pe "Ravi se Arpan 300". Counter 1 ne Arpan ka khaata pakda, Ravi ka maang raha; counter 2 ne Ravi ka pakda, Arpan ka maang raha. Dono ek doosre ka intezaar, koi nahi hilta:** Dono counter wale apna-apna khaata pakad ke khade, na ye chhodta na wo. Do raaste hain. Pehla: main Ravi se bolunga "chal bhai, hum dono ek hi line me lagenge, ek hi counter pe", to ek ke baad ek kaam hoga. Doosra: main bolunga "koi baat nahi, pehle mere khaate se kaat ke Ravi me daal de". Wo ho gaya to khaata free, phir doosri parchi bhi ho jaayegi.
+**Asli naam:** "dono ek doosre ka khaata pakad ke baithe" = deadlock. "ek hi line, ek counter" = kram fix (lock ordering: har counter pehle chhota account number pakde, dono ek hi khaate pe line me). "pehle ek poora, phir doosra" = DB atkan pakadta hai (deadlock detection), ek parchi rollback, doosri poori, phir pehli dobara (retry).
+
 ```mermaid
 flowchart TB
     N["Counter 1: Netflix 500"]:::card
