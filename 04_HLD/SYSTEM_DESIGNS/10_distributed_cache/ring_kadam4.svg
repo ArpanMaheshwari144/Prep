@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="540" viewBox="0 0 720 540" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f5c542"/>
+    </marker>
+    <marker id="cw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8fa3c7"/>
+    </marker>
+  </defs>
+  <rect width="720" height="540" fill="#0f1420"/>
+  <text x="360" y="34" fill="#9fb3d9" font-size="18" text-anchor="middle" letter-spacing="1">GOL RING (consistent hashing)</text>
+  <circle cx="360" cy="270" r="170" fill="none" stroke="#3a4a6b" stroke-width="6"/>
+  <path d="M 252.5 83.8 A 215 215 0 0 1 467.5 83.8" fill="none" stroke="#8fa3c7" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#cw)"/>
+  <text x="360" y="262" fill="#9fb3d9" font-size="16" text-anchor="middle">ghadi ki disha me</text>
+  <text x="360" y="284" fill="#9fb3d9" font-size="16" text-anchor="middle">aage chalo</text>
+  <g font-size="16" text-anchor="middle">
+    <rect x="300" y="77" width="120" height="46" rx="6" fill="#1e2638" stroke="#3a4a6b" stroke-width="2"/>
+    <text x="360" y="106" fill="#e8ecf5">Dabba 3</text>
+    <rect x="470" y="247" width="120" height="46" rx="6" fill="#1e2638" stroke="#3a4a6b" stroke-width="2"/>
+    <text x="530" y="276" fill="#e8ecf5">Dabba 7</text>
+    <rect x="375" y="394" width="140" height="46" rx="6" fill="#2e7d4f" stroke="#3fbf6f" stroke-width="2"/>
+    <text x="445" y="423" fill="#ffffff">Naya dabba 11</text>
+    <rect x="153" y="332" width="120" height="46" rx="6" fill="#1e2638" stroke="#3a4a6b" stroke-width="2"/>
+    <text x="213" y="361" fill="#e8ecf5">Dabba 10</text>
+  </g>
+  <circle cx="507" cy="355" r="10" fill="#f5c542"/>
+  <path d="M 500.9 365.1 A 170 170 0 0 1 480 391" fill="none" stroke="#f5c542" stroke-width="4" marker-end="url(#ah)"/>
+  <line x1="517" y1="350" x2="590" y2="330" stroke="#f5c542" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="596" y="322" fill="#f5c542" font-size="15">Key Ravi</text>
+  <text x="596" y="341" fill="#f5c542" font-size="13">(hash yahan gira)</text>
+  <text x="528" y="410" fill="#e8ecf5" font-size="14">kho-kho: aage ka</text>
+  <text x="528" y="429" fill="#e8ecf5" font-size="14">sabse paas wala</text>
+  <text x="360" y="512" fill="#9fb3d9" font-size="14" text-anchor="middle">Naya dabba 11 juda: sirf 7 aur 11 ke beech wali key hili, baaki apni jagah</text>
+</svg>

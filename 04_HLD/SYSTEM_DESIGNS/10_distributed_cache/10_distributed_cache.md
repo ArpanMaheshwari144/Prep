@@ -123,27 +123,7 @@ ke aas-paas wale hi maango.)
 kho-kho / headlight / paas ka petrol pump = sabse paas wala hi sambhale, machine judi to sirf uske paas ki key hilti, ~1/N key (`%` me lagbhag
 saari). Har machine ring pe 100-200 jagah = virtual nodes, taaki hissa barabar aaye.
 
-```mermaid
-flowchart LR
-    subgraph RG["GOL RING (consistent hashing)"]
-        M3[("Dabba 3")]:::card
-        M7[("Dabba 7")]:::card
-        M11[("Naya dabba 11<br/>(sirf paas wali key aayi,<br/>baaki apni jagah)")]:::good
-        M10[("Dabba 10")]:::card
-    end
-    M3 --> M7
-    M7 --> M11
-    M11 --> M10
-    M10 --> M3
-    K(["Key Ravi<br/>(hash do khaanon ke beech gira)"]):::pill
-    K -. "kho-kho: aage ka<br/>sabse paas wala" .-> M11
-    linkStyle default stroke:#8fa3c7,stroke-width:2px
-    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
-    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
-    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style RG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
-```
+![Gol ring: key jahan giri, ghadi ki disha me aage ka sabse paas wala dabba](ring_kadam4.svg)
 
 ## 5. Ravi ne naam badla, sabko purana dikh raha (parchi kaato, phir DB, peeche ek banda)
 
