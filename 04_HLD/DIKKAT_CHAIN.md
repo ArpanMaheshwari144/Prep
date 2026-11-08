@@ -329,8 +329,8 @@ Yahi dikkat yahan bhi:
   Chat     12  S1 dheema, "nahi, parso" pehle pahuncha        ->  server ka number, phone us kram me lagaye (seq, client sort)
   Leader   2   Ravi, Priya dono 9800                          ->  score phir time, ek number me (thenComparing)
   Twitter  26  scroll ke beech upar 5 naye, wahi 5 dobara     ->  kahan tak padha yaad rakh (cursor, offset nahi)
-  Notif    4b  Shipped pehle, Order placed baad me            ->  order ki parchi, gaya nahi to dono saath / doosri company / email
-  Notif    4c  OTP retry line se 3 ghante baad gaya           ->  har khabar ki umar, khatam to phenko; OTP VIP line (TTL, priority)
+  Notif    4b  Shipped jaane wala, Order placed atka           ->  order ki parchi, gaya nahi to dono saath / doosri company / email
+  Notif    4c  OTP retry line se 3 ghante baad gaya           ->  OTP phenko nahi, priority line (bhari to 3-4); SMS company 30 sec me maar de, hum dobara (priority queue, TTL)
   Rate     10b line lambi, OTP 6 min baad, bekaar             ->  har OTP pe umar, khatam to phenk do (message TTL)
   Kafka    9b  pay DLQ me, cancel chal gayi, kram toota       ->  group ka ek atka to us user ki baaki bhi park (same key parking)
   Netflix  5c  TV ka purana 27, phone ke 37 ke upar           ->  baad wala jeete, purana discard (timestamp, last-write-wins)
