@@ -42,11 +42,22 @@ mujhe bata, phir main bataunga kitni request hain. Ek ne bataya 1, doosre ne 2, 
 RAM me hai, ~1 ms, aur data sirf 500 MB.
 
 ```mermaid
-flowchart LR
-    U["Ravi ki script"] --> LB["Load balancer"]
-    LB --> S["10 server<br/>(App servers)"]
-    S --> R[("Hisaab wala<br/>(Redis counter)")]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Ravi ki script"]:::bad
+    LB["Load balancer"]:::card
+    subgraph AS["10 SERVER (App servers)"]
+        S["khud nahi ginte,<br/>sirf batate"]:::card
+    end
+    R[("Hisaab wala<br/>(Redis counter)")]:::pill
+    U --> LB
+    LB --> S
+    S -- "har request pe +1" --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Khaata badla, 3 second me 10 OTP (token ka dabba)
@@ -62,12 +73,24 @@ refill rate (OTP: max 5, har 2 minute me 1, aam raftaar 10 min me 5, request aan
 burst allow. Sirf 2 number rakhne padte (kitne bache, aakhri baar kab), wahi 500 MB.
 
 ```mermaid
-flowchart LR
-    D[("Har bande ka dabba<br/>(token bucket, max 5)")] -- "apni raftaar se bhare<br/>(2 min me 1)" --> D
-    U["Ravi: OTP maanga"] --> D
-    D -- "token mila" --> OK["OTP gaya"]
-    D -. "dabba khaali" .-> X["429, baad me aao"]
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Ravi: OTP maanga"]:::card
+    subgraph B["RAVI KA DABBA"]
+        D[("Har bande ka dabba<br/>(token bucket, max 5)")]:::pill
+        F["apni raftaar se bhare<br/>(2 min me 1)"]:::card
+    end
+    OK["OTP gaya"]:::good
+    X["429, baad me aao"]:::bad
+    F --> D
+    U --> D
+    D -- "token mila" --> OK
+    D -. "dabba khaali" .-> X
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style B fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Ek token, 20 request ek saath (ek hi baari me, Lua)
@@ -83,10 +106,24 @@ atomic), banking wala check aur update ek me = wahi atomic check-and-update. 20 
 baaki 19 ko 429.
 
 ```mermaid
-flowchart LR
-    S["20 request<br/>(10 server)"] --> L["Ek hi baari me<br/>(Lua script: check + nikaalo)"]
-    L --> R[("Ravi ka dabba<br/>(Redis: tokens = 1)")]
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    S["20 request<br/>(10 server)"]:::bad
+    subgraph RD["REDIS (ek waqt ek kaam)"]
+        L(["Ek hi baari me<br/>(Lua script: check + nikaalo)"]):::pill
+        R[("Ravi ka dabba<br/>(Redis: tokens = 1)")]:::card
+    end
+    OK["1 ko token"]:::good
+    X["baaki 19 ko 429"]:::bad
+    S --> L
+    L --> R
+    L --> OK
+    L -.-> X
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Guard andar kamre me baitha (guard ko gate pe bithao)
@@ -100,13 +137,29 @@ gate pe bitha do, ghar me koi ghuse hi nahi, gate pe hi hata do.
 app tak pahunchti hi nahi, aur har service ko apna limiter nahi likhna).
 
 ```mermaid
-flowchart LR
-    U["Ravi ki script"] --> G["Gate ka guard<br/>(API Gateway + limiter)"]
-    G --> R[("Hisaab wala<br/>(Redis, Lua)")]
-    G --> LB["Load balancer"]
-    LB --> O["OTP Service"]
-    O --> SMS["SMS company"]
-    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Ravi ki script"]:::bad
+    subgraph GT["MAIN GATE"]
+        G(["Gate ka guard<br/>(API Gateway + limiter)"]):::pill
+    end
+    R[("Hisaab wala<br/>(Redis, Lua)")]:::card
+    subgraph GH["GHAR KE ANDAR"]
+        LB["Load balancer"]:::card
+        O["OTP Service"]:::card
+        SMS["SMS company"]:::card
+    end
+    U --> G
+    G --> R
+    G --> LB
+    LB --> O
+    O --> SMS
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style GT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style GH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Guard ka Redis gira (papa ke dost aane do, chor roko)
@@ -119,12 +172,22 @@ Par beech me kuch chor bhi hain jo hamari tijori lootne aa rahe, unhe rok do.
 nuksaan, site band hona bada), tijori ke chor = OTP fail-closed (yahan har request pe SMS ka paisa jaata).
 
 ```mermaid
-flowchart LR
-    G["Gate ka guard<br/>(API Gateway)"] -.->|"Redis gira"| R[("Hisaab wala<br/>(Redis)")]
-    G --> F["Papa ke dost<br/>(Feed: fail-open)"]
-    G --> O["Tijori<br/>(OTP: fail-closed)"]
-    style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    R[("Hisaab wala<br/>(Redis)")]:::bad
+    G["Gate ka guard<br/>(API Gateway)"]:::card
+    subgraph FS["REDIS GIRA TO KAUN ANDAR"]
+        F(["Papa ke dost<br/>(Feed: fail-open)"]):::good
+        O(["Tijori<br/>(OTP: fail-closed)"]):::pill
+    end
+    G -. "Redis gira" .-> R
+    G --> F
+    G --> O
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style FS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Script ruki nahi, din-raat maarti (alag dabba, permanent band)
@@ -138,11 +201,22 @@ denge: tu ab kahin nahi ja sakta, yahan se hil hi nahi sakta, is site ke liye tu
 ban list, permanent band = ban wala gate pe bina gine lautta.
 
 ```mermaid
-flowchart LR
-    U["Ravi ki script"] --> B["Ban wala dabba<br/>(ban list)"]
-    B --> G["Gate ka guard<br/>(API Gateway + limiter)"]
-    G --> O["OTP Service"]
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Ravi ki script<br/>(teesri baar bhi aaya)"]:::bad
+    subgraph BN["ALAG DABBA"]
+        B(["Ban wala dabba<br/>(ban list)"]):::pill
+    end
+    G["Gate ka guard<br/>(API Gateway + limiter)"]:::card
+    O["OTP Service"]:::good
+    U --> B
+    B --> G
+    G --> O
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. Har baar naya number, aur office atka (login ke baad kadi, login se pehle dheeli had)
@@ -162,12 +236,27 @@ koi nahi, aaj bhi Google, YouTube toot-te hain.
 dheeli had, insaan hazaar baar nahi, pattern notice = script pattern pakadna, IP ko WAF me daal do = WAF block.
 
 ```mermaid
-flowchart LR
-    U["Ravi / office"] --> W["Gate se pehle<br/>(WAF + ban list)"]
-    W --> G["Gate ka guard<br/>(API Gateway: userId kadi, IP dheeli)"]
-    G --> R[("Hisaab wala<br/>(Redis)")]
-    G --> O["OTP Service"]
-    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Ravi / office"]:::card
+    subgraph DW["GATE SE PEHLE"]
+        W(["WAF + ban list"]):::pill
+    end
+    subgraph GT["GATE KA GUARD (API Gateway)"]
+        K(["login ke baad userId: kadi had<br/>login se pehle IP: dheeli had"]):::pill
+    end
+    R[("Hisaab wala<br/>(Redis)")]:::card
+    O["OTP Service"]:::good
+    U --> W
+    W --> K
+    K --> R
+    K --> O
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style DW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style GT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. Result ka din, sab had me, phir bhi SMS company giri (line lagwao)
@@ -183,14 +272,26 @@ turant "OTP aa raha" bol deta), beech me cheez jo spike rok le = worker SMS comp
 ek saanjhi had se (global had, Redis ka ek token bucket).
 
 ```mermaid
-flowchart LR
-    U["1 crore bachche"] --> G["Gate ka guard<br/>(API Gateway)"]
-    G --> O["OTP Service"]
-    O --> K[("Line<br/>(Kafka)")]
-    K --> WK["Ek-ek karke bhejne wale<br/>(Workers, global had)"]
-    WK --> SMS["SMS company"]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style WK fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["1 crore bachche"]:::card
+    G["Gate ka guard<br/>(API Gateway)"]:::card
+    O["OTP Service"]:::card
+    subgraph LN["LINE LAGWAO"]
+        K[("Line<br/>(Kafka)")]:::pill
+        WK(["Ek-ek karke bhejne wale<br/>(Workers, global had)"]):::pill
+    end
+    SMS["SMS company"]:::good
+    U --> G
+    G --> O
+    O --> K
+    K --> WK
+    WK -- "aaram-aaram se" --> SMS
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style LN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 10. VPN se 3 region, 15 OTP (ghar ka region)
@@ -211,10 +312,20 @@ aur wahan ka number liya, to uska ghar US hi hai.
 number nahi = VPN se bachav.
 
 ```mermaid
-flowchart LR
-    R["Ravi (VPN)<br/>+91 number"] --> US["US gateway<br/>(region)"]
-    US --> IN[("India ka Redis<br/>(home region ginti)")]
-    style IN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    R["Ravi (VPN)<br/>+91 number"]:::bad
+    US["US gateway<br/>(region)"]:::card
+    subgraph HM["GHAR KA REGION"]
+        IN[("India ka Redis<br/>(home region ginti)")]:::pill
+    end
+    R --> US
+    US -- "+91 = ghar India" --> IN
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style HM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
