@@ -31,9 +31,22 @@ sirf ek hai: har driver ki sabse taaza jagah batana.
 **Asli naam:** beech ka dabba = Location Service; driver ka phone har ~4 sec lat/long bhejta.
 
 ```mermaid
-flowchart LR
-    D["Driver ka phone<br/>(GPS lat/long)"] -- "har 4 sec" --> L["Beech ka dabba<br/>(Location Service)"]
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: Book"]:::card
+    X["Server: kaunsa driver kahan?<br/>pata hi nahi"]:::bad
+    P["Driver ka phone: GPS lat/long,<br/>thodi-thodi der me (~4 sec)"]:::card
+    subgraph BD["BEECH KA DABBA"]
+        L(["Kaam sirf ek: har driver ki<br/>sabse taaza jagah (Location Service)"]):::pill
+    end
+    A -.-> X
+    P --> L
+    A --> L
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. 1.25 lakh likhai / sec, DB ghut gaya (bada bhai)
@@ -47,9 +60,20 @@ liye bana hai, apni copies khud rakhta.
 nayi jagah aate hi upar likh do (sirf taaza chahiye).
 
 ```mermaid
-flowchart LR
-    L["Beech ka dabba<br/>(Location Service)"] -- "1.25 lakh / sec" --> C[("Bada bhai<br/>(Cassandra)")]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Har 4 sec, 5 lakh driver:<br/>1.25 lakh / sec, normal DB ghut gaya"]:::bad
+    P["Chhoti parchi: dheemi ho sakti,<br/>gir sakti, kab tak replica"]:::card
+    subgraph BB["BADA BHAI (isi kaam ke liye bana)"]
+        C[("Likhai tez, copies khud<br/>(Cassandra)")]:::pill
+    end
+    X -.-> P
+    X --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. 5 lakh ka fasla naapna, 40 sec ghoomna (naksha dabbon me)
@@ -61,13 +85,7 @@ khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
 
 **Asli naam:** naksha dabbon me = geohash (grid), sirf apna dabba = 5 lakh ki jagah gine-chune driver.
 
-```mermaid
-flowchart LR
-    A["Arpan: Book"] --> M["Milaane wala<br/>(Matching)"]
-    M -- "sirf CP ka dabba" --> G[("Naksha ke dabbe<br/>(geohash -> drivers)")]
-    G --> R["Dabbe ke 3 driver"]
-    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
+![Naksha pehle se dabbon me kata: server sirf Arpan ke dabbe me dekhe](map_kadam3.svg)
 
 ## 4. Arpan dabbe ke kinare pe, 200 meter door khaali driver (gola khincho)
 
@@ -77,14 +95,7 @@ bhi dekho, phir asli fasla naap ke sabse paas wala.
 
 **Asli naam:** gola + chhoote dabbe = apna geohash + aas-paas ke dabbe (neighbours), phir asli distance.
 
-```mermaid
-flowchart LR
-    A["Arpan, kinare pe"] --> G1[("Apna dabba<br/>(geohash)")]
-    A --> G2[("Gola jinhe chhoota<br/>(padosi geohash)")]
-    G1 --> F["Asli fasla naapo<br/>(distance)"]
-    G2 --> F
-    style G2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
+![Dabbe ki seema pe mat chalo: Arpan se 8 km ka gola, chhoote dabbon ke driver bhi](map_kadam4.svg)
 
 ## 5. Raju ek, Arpan aur Priya do (BMS wali parchi)
 
@@ -97,31 +108,53 @@ driver.
 to bheed me bhi sab ek taale pe nahi toot-te.
 
 ```mermaid
-flowchart LR
-    A["Arpan"] --> M["Milaane wala<br/>(Matching)"]
-    P["Priya"] --> M
-    M -- "Raju FREE? to parchi" --> H[("Raju pe parchi<br/>(lock + TTL 15 sec)")]
-    H -- "pehle aaya" --> A2["Arpan ko Raju"]
-    H -. "parchi lagi hai" .-> P2["Priya ko agla driver"]
-    style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: Book"]:::card
+    Pr["Priya: Book (usi second)"]:::card
+    subgraph BP["BMS WALI PARCHI"]
+        R[("Raju khaali hai to Arpan ka,<br/>ek kadam me (lock)")]:::pill
+    end
+    OK["Arpan: Raju mila"]:::good
+    N["Priya: Raju chala gaya,<br/>agla driver"]:::card
+    T["15 sec me accept nahi:<br/>parchi hatao (TTL)"]:::bad
+    A --> R
+    Pr --> R
+    R --> OK
+    R -.-> N
+    R -.-> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Concert khatam, 50 hazaar log, 500 cab (line + surge)
 
 Diljit ka concert khatam hua, 50 hazaar log ek saath book kar rahe, aas-paas cab sirf 500. BMS jaisa: 500 cab hain
 to 500 log andar, baaki line me, agli baari. 50 hazaar ko server pe bitha ke kya karunga. Pehle 500 sambhalo, phir
-kiraya badha ke door ki cab bulao: 30 km door ka driver bhi kamaai dekh ke aa jaata, aur jinhe zaroori
-nahi wo ruk jaate ya metro le lete.
+kiraya badha ke door ki cab bulao.
 
 **Asli naam:** 500 andar, baaki line = virtual queue (waiting room), kiraya badhao, door ki cab aaye = surge pricing.
 
 ```mermaid
-flowchart LR
-    U["50 hazaar log"] --> Q["Line<br/>(Virtual queue)"]
-    Q -- "500 andar" --> M["Milaane wala<br/>(Matching)"]
-    S["Kiraya badhao<br/>(Surge pricing)"] -. "door ki cab aaye" .-> M
-    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Concert khatam: 50 hazaar log,<br/>cab 500"]:::bad
+    subgraph BL["BMS JAISA: 500 ANDAR, BAAKI LINE ME"]
+        Q(["Agli baari (virtual queue)"]):::pill
+    end
+    S2(["Kiraya badha ke door ki cab bulao<br/>(surge)"]):::pill
+    OK["Pehle 500 sambhalo"]:::good
+    U --> Q
+    Q --> OK
+    Q --> S2
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha (ghadi server ki)
@@ -137,10 +170,22 @@ Asli naam: broadcast dispatch; do ne ek saath accept kiya to BMS wali parchi, jo
 Window 20-25 sec bhi kar sakte, par faisla phir bhi server ki ghadi.
 
 ```mermaid
-flowchart LR
-    R["Raju: accept<br/>(14.9 sec, phone pe)"] --> S["Server ki ghadi<br/>(16 sec, TTL khatam)"]
-    S -. "parchi phaad do" .-> X["Accept radd<br/>(reject)"]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    R["Raju: accept 14.9 sec pe dabaya"]:::card
+    subgraph GS["GHADI SERVER KI"]
+        S{"Server pe kab pahuncha?"}:::pill
+    end
+    X["16 sec pe: der se, parchi phaad do,<br/>accept radd"]:::bad
+    B(["Ya: aas-paas ke saare phone bajao,<br/>jo pehle accept kare (broadcast)"]):::card
+    R --> S
+    S --> X
+    B -.-> S
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style GS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. Raju Janpath gaya, naam CP ke dabbe me pada (taaza jagah dekho)
@@ -153,10 +198,22 @@ to use mat do, Arpan ke liye CP me koi aur. Dono ek saath dabaayein to wahi taal
 double se bachata.
 
 ```mermaid
-flowchart LR
-    M["Milaane wala<br/>(Matching)"] -- "assign se pehle" --> L[("Raju ki taaza jagah<br/>(latest location: Janpath)")]
-    L -. "gole me nahi" .-> N["CP me koi aur driver"]
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Raju Janpath gaya, CP ke dabbe me<br/>naam pada: Arpan, Priya dono ko dikhe"]:::bad
+    subgraph TJ["SACH WAHI JO GPS NE ABHI BHEJA"]
+        L(["Book pe Raju ki taaza jagah dekho"]):::pill
+    end
+    N["Gole me nahi: Raju mat do,<br/>Arpan ko CP me koi aur"]:::good
+    T["Dono ek saath: wahi taala"]:::card
+    X --> L
+    L --> N
+    L -.-> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style TJ fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. Register driver ke naam se, chahiye jagah ke naam se (jagah ka panna)
@@ -174,11 +231,23 @@ do = har location update pe purane set se remove + naye me add (driver ki row me
 se bahar = sirf khaali driver set me, sawari khatam pe wapas.
 
 ```mermaid
-flowchart LR
-    U["Raju ki nayi jagah<br/>(location update)"] -- "remove" --> CP[("CP ka panna<br/>(Redis set: geohash CP)")]
-    U -- "add" --> JP[("Janpath ka panna<br/>(Redis set: geohash Janpath)")]
-    style CP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style JP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Register driver ke naam se:<br/>CP me kaun? phir 5 lakh line"]:::bad
+    subgraph JP["JAGAH KE HISAAB SE PANNA (Redis set)"]
+        CP[("CP: itne driver")]:::pill
+        JN[("Janpath: Raju")]:::pill
+    end
+    R["Raju CP se nikla: wahan se hata,<br/>naye panne me daal"]:::card
+    B["Booked: list se bahar,<br/>sawari khatam pe wapas"]:::good
+    X --> CP
+    R --> JN
+    B -.-> CP
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style JP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 10. 10 lakh phone "Raju kahan?" poochh rahe (poochne ka mauka mat do)
@@ -189,12 +258,7 @@ hila to turant Arpan ko dikha de, hila to dikha de. Asal me hilta hai, jhooth na
 
 **Asli naam:** poochne ka mauka mat do, khud dikha do = push (WebSocket, khula taar), polling band.
 
-```mermaid
-flowchart LR
-    R["Raju hila"] --> S["Dabba jo khud dikhaye<br/>(Server, push)"]
-    S --> A["Arpan<br/>(WebSocket, khula taar)"]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-```
+![Raju hila to turant Arpan ko dikha do: khula taar, poochne ka mauka nahi](map_kadam10.svg)
 
 ## 11. Arpan server 12 pe, Raju ki jagah server 57 pe (store karwa lo, seedha raasta)
 
@@ -206,14 +270,20 @@ sirf Arpan se lena-dena. Jaise ghar ka raasta pata ho to seedha usi raaste.
 server 57 seedha server 12 ko (pub/sub channel), wahan se Arpan ke taar pe. Chat wala DSA map + chhota ladka hi.
 
 ```mermaid
-flowchart LR
-    R["Raju ka phone<br/>(har 4 sec jagah)"] --> S57["Server 57<br/>(Location Service)"]
-    S57 --> M[("Map<br/>(Redis: Raju -> Arpan -> server 12)")]
-    S57 --> L["Seedha raasta<br/>(pub/sub)"]
-    L --> S12["Server 12<br/>(Arpan ka taar)"]
-    S12 --> A["Arpan<br/>(WebSocket)"]
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    S57["Server 57: Raju ki jagah aayi,<br/>Arpan kahan?"]:::card
+    subgraph SK["STORE KARWA LO (Redis)"]
+        M[("Arpan -> server 12<br/>Raju ki ride -> Arpan")]:::pill
+    end
+    S12["Server 12: Arpan ke taar pe<br/>(seedha usi raaste, pub/sub)"]:::good
+    S57 --> M
+    M --> S12
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 12. 250 dikha, 500 kate (jo dikhaya wahi + tip)
@@ -227,11 +297,22 @@ banata to aise.)
 tip alag, rider ki marzi.
 
 ```mermaid
-flowchart LR
-    B["Book: 250 dikha<br/>(quote)"] --> R[("Ride ki row<br/>(upfront fare lock)")]
-    R --> C["Aakhir me 250 kaato"]
-    T["Rider ki marzi<br/>(tip)"] -.-> C
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Book pe 250 dikha, Arpan ne haan kiya"]:::card
+    X["Beech me surge 2 guna:<br/>500 kate"]:::bad
+    subgraph JD["JO DIKHAYA WAHI"]
+        F(["250 hi lo<br/>(upfront fare, ride ke saath save)"]):::pill
+    end
+    T["Zyada mehnat lagi: rider ki marzi pe tip"]:::good
+    A --> F
+    X -.-> F
+    F --> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style JD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 13. Trip khatam, wallet me ₹40 (poora ya kuch nahi, ride tab tak khuli)
@@ -245,11 +326,22 @@ de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 PAYMENT_PENDING jab tak SUCCESS, GPay / cash = fallback payment method, dono app pe dikhe.
 
 ```mermaid
-flowchart LR
-    W["Wallet 40<br/>(atomic charge fail)"] --> P[("Ride khuli<br/>(PAYMENT_PENDING)")]
-    P --> G["GPay / cash<br/>(fallback)"]
-    G --> S["Ride khatam<br/>(SUCCESS)"]
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    T["Trip khatam: 250 kaatne,<br/>wallet me 40"]:::bad
+    subgraph PK["POORA KAATO YA KUCH NAHI"]
+        A(["40 kaat ke mat chhodo<br/>(atomic charge)"]):::pill
+    end
+    S["Dono app pe: payment nahi hua,<br/>GPay / cash"]:::card
+    OK["Paisa aaya tabhi ride khatam<br/>(PAYMENT_PENDING tak khuli)"]:::good
+    T --> A
+    A --> S
+    S --> OK
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 14. (Socha hua) Ride ke beech Raju ka phone band (location timeout + support)
@@ -265,11 +357,22 @@ utne paise = jahan tak ka kiraya / jo dikhaya, support ride band kare = manual c
 available list se bahar.
 
 ```mermaid
-flowchart LR
-    L["Location band<br/>(timeout)"] --> F["Jahan tak ka kiraya<br/>(fare)"]
-    F --> SP["Uber support<br/>(manual close)"]
-    SP --> D[("Ride band<br/>(ride status DB)")]
-    style SP fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Ride ke beech Raju ka phone band,<br/>naksha pe gayab"]:::bad
+    subgraph LT["LOCATION AANI BAND"]
+        W(["Server ek-do baar dekhe,<br/>phir apni taraf se band (timeout)"]):::pill
+    end
+    P["Jahan tak aaye utne paise:<br/>Arpan ki app me"]:::card
+    S["Support: ride band, DB update,<br/>Raju kahin nahi"]:::good
+    X --> W
+    W --> P
+    P --> S
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style LT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
