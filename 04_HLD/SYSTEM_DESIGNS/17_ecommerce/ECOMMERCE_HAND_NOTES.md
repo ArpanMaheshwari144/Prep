@@ -25,9 +25,9 @@ Technical me: sale ka alag raasta / alag service. Uski bheed baaki dukaan (norma
 **4. Sale dukaan me ek counter, ek parchi "ghee: 500". Ek waqt me ek hi aadmi parchi chhoota, line 50 hazaar ki.**
 Arpan: 10 counter bana do, har counter pe 50 ghee, line baant do. Har counter pe do aadmi: ek bechne wala, ek kaatne wala. Kaatna to haath chalane jitna tez, millisecond bhi nahi.
 Technical me: ek row pe sab toot pade = hot row. Ginti 10 tukdon me todo. Kaatna tez jagah pe (Redis me ginti, DECR).
-**Maan lo Redis me ghee ki ginti kat gayi, Ravi ko "dabba tera" bol diya, par DB me order likhne se pehle server gir gaya.**
-Arpan: Ab Redis kehta ek ghee kam hai, aur DB me koi order hi nahi. Sach DB hai, jaise Cache aur Banking me kaha tha. Ek banda peeche se Redis aur DB ko milata rahe: Redis me jitni ginti kati, utne order DB me hain ya nahi. Koi kati ginti bina order ke kuch minute se padi hai, to wo ghee wapas ginti me jod do, taaki doosra le sake.
-Technical me: banda milata rahe = reconciliation job, DB sach = Redis sirf tez ginti, bina order wali kati ginti wapas = compensation.
+**Maan lo Redis me ghee ki ginti kat gayi (Ravi gate ke andar aaya), par DB me order likhne se pehle server gir gaya.**
+Arpan: Ab Redis kehta ek ghee kam hai, aur DB me koi order hi nahi. Sach DB hai, jaise Cache aur Banking me kaha tha. Ek banda peeche se Redis aur DB ko milata rahe: Redis me jitni ginti kati, utne order DB me hain ya nahi. Koi kati ginti bina order ke gate ki ghadi (5 minute) se zyada purani hai, matlab wo banda na pay kar paaya na order bana, to wo ghee wapas ginti me jod do, taaki doosra le sake. Jiska paisa aa gaya, uska dabba uska hi rahega.
+Technical me: banda milata rahe = reconciliation job, DB sach = Redis sirf tez ginti, ghadi se purani bina order wali kati ginti wapas = compensation (gate ki 5 min ki ghadi ke baad hi, chalte hue pay ko nahi chhedna).
 
 **5. Counter 3 ke 50 khatam, uski line me 2000 log. Counter 7 pe abhi 30 pade.**
 Arpan: Jiska khatam hua wo counter band, aur line ko bolo jahan ghee bacha hai wahan jaao. "Khatam" tab bolo jab sabka zero ho jaaye.

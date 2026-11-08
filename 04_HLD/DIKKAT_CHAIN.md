@@ -532,7 +532,7 @@ Yahi dikkat yahan bhi:
   Uber     10  Raju Janpath me, purana naam pada              ->  sach wahi jo GPS ne abhi bheja (latest location)
   Uber     15  250 dikha, aakhir me 500 kate                  ->  jo dikhaya wahi lo (upfront fare)
   Leader   1   1 crore sort kiye bina top 10 + rank           ->  apne aap sort wala dabba (Redis sorted set)
-  Ecom     4b  Redis me ginti kati, DB me order nahi          ->  DB sach, banda milaye, bina order ki ginti wapas (reconciliation)
+  Ecom     4b  Redis me ginti kati, DB me order nahi          ->  DB sach, banda milaye, 5 min ghadi ke baad bina order ki ginti wapas (reconciliation)
   Cache    10b key 3 machine pe, sirf 1 se kati               ->  parchi har copy se kaato, sync job copies bhi dekhe
 
 Naam: ledger / reconciliation / eventual consistency / sahi dabba

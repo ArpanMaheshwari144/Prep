@@ -109,8 +109,8 @@ chalane jitna tez, millisecond bhi nahi.
 tukdon me todo (har tukda ek row / key). Kaatna tez jagah pe: Redis me ginti, `DECR` (ek thread, ek ke baad ek, lakhon
 per second). DB tak sirf jinka mila.
 
-**Maan lo Redis me ghee ki ginti kat gayi, Ravi ko "dabba tera" bol diya, par DB me order likhne se pehle server gir gaya:** Ab Redis kehta ek ghee kam hai, aur DB me koi order hi nahi. Sach DB hai, jaise Cache aur Banking me kaha tha. Ek banda peeche se Redis aur DB ko milata rahe: Redis me jitni ginti kati, utne order DB me hain ya nahi. Koi kati ginti bina order ke kuch minute se padi hai, to wo ghee wapas ginti me jod do, taaki doosra le sake.
-**Asli naam:** banda milata rahe = reconciliation job, DB sach = Redis sirf tez ginti, bina order wali kati ginti wapas = compensation.
+**Maan lo Redis me ghee ki ginti kat gayi (Ravi gate ke andar aaya), par DB me order likhne se pehle server gir gaya:** Ab Redis kehta ek ghee kam hai, aur DB me koi order hi nahi. Sach DB hai, jaise Cache aur Banking me kaha tha. Ek banda peeche se Redis aur DB ko milata rahe: Redis me jitni ginti kati, utne order DB me hain ya nahi. Koi kati ginti bina order ke gate ki ghadi (5 minute) se zyada purani hai, matlab wo banda na pay kar paaya na order bana, to wo ghee wapas ginti me jod do, taaki doosra le sake. Jiska paisa aa gaya, uska dabba uska hi rahega.
+**Asli naam:** banda milata rahe = reconciliation job, DB sach = Redis sirf tez ginti, ghadi se purani bina order wali kati ginti wapas = compensation (gate ki 5 min ki ghadi ke baad hi, chalte hue pay ko nahi chhedna).
 
 ```mermaid
 flowchart TB
