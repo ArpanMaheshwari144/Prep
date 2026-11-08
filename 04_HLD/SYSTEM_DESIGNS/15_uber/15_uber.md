@@ -130,6 +130,10 @@ dikhti hai.
 
 **Asli naam:** ghadi server ki = TTL ka faisla server pe, der se aaya accept reject.
 
+**Maan lo ek-ek driver ki jagah aas-paas ke saare driver ke phone ek saath bajao:** jo pehle accept kare uski ride.
+Asli naam: broadcast dispatch; do ne ek saath accept kiya to BMS wali parchi, jo server pe pehle pahuncha wo jeeta.
+Window 20-25 sec bhi kar sakte, par faisla phir bhi server ki ghadi.
+
 ```mermaid
 flowchart LR
     R["Raju: accept<br/>(14.9 sec, phone pe)"] --> S["Server ki ghadi<br/>(16 sec, TTL khatam)"]

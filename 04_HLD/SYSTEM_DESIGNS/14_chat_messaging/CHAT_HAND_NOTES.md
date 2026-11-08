@@ -56,6 +56,9 @@ Technical me: "register me Ravi online" = presence entry (Redis), "har 3-5 secon
 **12. Ravi ne Arpan ko "kal milte hain" phir "nahi, parso" bheja. Pehla server S1 se gaya, doosra S2 se, S1 dheema tha. Arpan ke phone pe pehle "nahi, parso" aaya, phir "kal milte hain". Arpan galat samjha.**
 Arpan: Pehle to koshish karo ki ek chat ke dono message ek hi server se jaayein. Phir bhi alag server se gaye, to bhi hume pata hai server pe pehle kaun aaya tha: "kal milte hain" pehla, "nahi, parso" doosra. Pehle aaya wo pehle dikhe, aisa mat rakho. Jab dono phone pe pahunch jaayein, phone unhe sahi kram me laga ke dikhaye. Aur S1 bahut dheema ho to S2 wale ko rok ke nahi rakhenge, message to jaana hi hai. Thodi der ulta dikh sakta hai, phir apne aap theek ho jaata, WhatsApp me bhi aisa dekha hai. Perfect jawab nahi hai.
 Technical me: "server pe pata kaun pehle aaya" = har chat ka sequence number (block 7), "phone sahi kram me lagaye" = client number se sort kare, aane ke kram se nahi, "dheeme ke liye doosra mat roko" = deliver turant, baad me reorder.
+**Maan lo har chat ka alag counter na rakhna ho?**
+Arpan: Har ladke se poochho "tu kab aaya", aur us time ko hi number bana do. Time to hamesha badhta hi hai, to number bhi badhta jaayega. Phone us number se laga ke dikhaye: ye pehle aaya, ye baad me.
+Technical me: "time ko hi number bana do" = Snowflake ID (time + machine ka number + chhota counter, ek number me; FOUNDATIONS 13). Interview me naam yaad na aaye to bhi itna kaafi: "har message ko ek kram number, phone usi se lagata hai".
 
 &nbsp;
 

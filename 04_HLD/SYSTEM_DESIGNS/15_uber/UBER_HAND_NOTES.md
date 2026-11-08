@@ -33,6 +33,9 @@ Technical me: "500 andar, baaki line" = virtual queue, "kiraya badhao, door ki c
 **7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak Priya ko de diya.**
 Arpan: Ghadi server ki. 15 sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd. Uber me bhi aise booking cancel hoti dikhti.
 Technical me: "ghadi server ki" = TTL ka faisla server pe, der se aaya accept reject.
+**Maan lo ek-ek driver ko 15 sec dene ki jagah kuch aur karna ho?**
+Arpan: Jab tak Arpan ko cab nahi milti, aas-paas ke saare driver ke phone bajte raho: tum lo, tum lo. Ya time rakhna hai to 20-25 second rakh do. Par phir bhi accept server tak der se pahuncha to cab nahi milegi, kyunki server tak request pahunchna zaroori hai, tabhi server kuch kar payega.
+Technical me: "sabke phone bajao" = broadcast dispatch (aas-paas ke kai driver ko ek saath, jo pehle accept kare uski ride), do ne ek saath accept kiya to BMS wali parchi (jo server pe pehle pahuncha wo jeeta), "20-25 sec" = TTL lamba, par faisla phir bhi server ki ghadi.
 
 **8. Raju Connaught Place ke dabbe se Janpath ke dabbe me gaya, purane dabbe me naam pada; Arpan aur Priya dono ko dikh raha.**
 Arpan: Sach wahi jo GPS ne abhi bheja: Raju Janpath me. Book pe Raju ki taaza jagah dekho; Arpan ke gole me nahi to use mat do, Arpan ke liye CP me koi aur. Dono ek saath dabaayein to wahi taala.

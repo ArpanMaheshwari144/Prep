@@ -188,6 +188,11 @@ backup tu aa ja, baaki 3 tu bhej de.
 wahin se. Mark ke baad aur marne ke beech wale kuch log dobara aa jaayein, to kadam 3 wali parchi (idempotency)
 rokti: isko bhej diya tha? Haan, to dobara nahi.
 
+**Maan lo 5 crore promo usi line me, aur ek user ka OTP uske peeche, 40 minute late:** hospital jaisa, serious patient
+100 logon ki line me peeche khada. Serious ki line alag karo, parchi wale apni line me aaram se aate rahein. Asli naam:
+OTP / order ki alag priority line (topic + apne worker), promo alag topic; promo kitna bhi lamba ho, OTP pe asar nahi
+(kadam 5 wali VIP line).
+
 ```mermaid
 flowchart LR
     C["1 crore ka offer<br/>(campaign)"] --> T1["Tukda 1<br/>(worker 1, range)"]

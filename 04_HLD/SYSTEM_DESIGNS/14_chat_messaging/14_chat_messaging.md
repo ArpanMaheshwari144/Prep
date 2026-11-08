@@ -244,6 +244,9 @@ Perfect jawab nahi hai.
 **Asli naam:** server pe pata kaun pehle aaya = har chat ka sequence number (kadam 7), phone sahi kram me lagaye =
 client number se sort kare, aane ke kram se nahi. Dheeme ke liye doosra mat roko = deliver turant, baad me reorder.
 
+**Maan lo har chat ka alag counter na rakhna ho:** us time ko hi number bana do jab message server pe aaya. Time
+hamesha badhta hai, to number bhi. Asli naam: Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13).
+
 ```mermaid
 flowchart LR
     R["Ravi"] -- "41: kal milte hain" --> S1["S1<br/>(dheema)"]
