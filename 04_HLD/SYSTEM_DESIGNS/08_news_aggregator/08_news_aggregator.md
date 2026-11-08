@@ -30,15 +30,15 @@ category, time. Data chhota, url UNIQUE chahiye, isliye SQL).
 
 ```mermaid
 flowchart TB
-    S["5000 site"]:::card
+    S["5000 site: NDTV, Times, Cricbuzz"]:::card
     subgraph CH["CHHOTU"]
-        C(["Fetcher"]):::pill
+        C(["Saari khabar utha ke<br/>dabbe me daal de (fetcher)"]):::pill
     end
-    D[("Dabba<br/>(DB)")]:::card
-    A["Ravi"]:::good
+    D[("Dabba (DB)")]:::card
+    R["Ravi: wahan se padh lunga"]:::good
     S --> C
     C --> D
-    A --> D
+    D --> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -58,23 +58,23 @@ ke kram me, aakhri 500).
 
 ```mermaid
 flowchart TB
-    S["5000 site"]:::card
-    C["Bahut chhotu<br/>(Fetchers)"]:::card
-    D[("Dabba<br/>(DB)")]:::card
-    subgraph TP["TAIYAAR PARCHI"]
-        P[("Chhoti parchi<br/>(Redis feed)")]:::pill
+    X["Chhotu akela: ek chakkar 3 ghante,<br/>8:55 wali 11 baje"]:::bad
+    C["Bahut saare chhotu"]:::card
+    D[("Dabba (DB)")]:::card
+    subgraph CP["CHHOTI PARCHI, PEHLE SE TAIYAAR"]
+        P[("Akhbaar jaisi: sab yahin se padhein<br/>(Redis feed)")]:::pill
     end
-    A["Ravi"]:::good
-    S --> C
+    R["Ravi"]:::good
+    X -.-> C
     C --> D
     C --> P
-    A --> P
+    R --> P
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style TP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Ek khabar 40 baar (bada aadmi)
@@ -89,13 +89,15 @@ dono me Kohli, century, India, jeeta hai, to same khabar, hata do; nahi to rakh 
 
 ```mermaid
 flowchart TB
-    C["50 chhotu<br/>(Fetchers)<br/>ek khabar 40 baar"]:::bad
-    subgraph BA["BADA AADMI"]
-        B(["Dedup: hash + near-duplicate"]):::pill
+    C["50 chhotu: ek khabar 40 baar"]:::bad
+    subgraph BA["CHHOTU KE PAAS EK BADA AADMI"]
+        H(["Ye dobara hai, hatao<br/>(hubahu: hash)"]):::pill
+        W(["Wordings dekh lo: Kohli, century,<br/>India, jeeta = same (near-duplicate)"]):::pill
     end
-    D[("Dabba<br/>(DB, ek hi baar)")]:::good
-    C --> B
-    B --> D
+    D[("Dabba: khabar ek hi baar")]:::good
+    C --> H
+    H --> W
+    W --> D
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -117,23 +119,25 @@ chhotu nahi rukte, bheed line me khadi rehti, khoti nahi.
 
 ```mermaid
 flowchart TB
-    C["Chhotu<br/>(Producer)"]:::card
-    subgraph LN["LINE + PEECHE WORKERS"]
-        K[("Line<br/>(Kafka)")]:::pill
-        W(["Peeche workers<br/>(Consumer group: dedup)"]):::pill
+    C["Chhotu: faltu khada mat kar,<br/>daal aur kaam karta reh (producer)"]:::card
+    subgraph SK["STADIUM WALI KAHANI"]
+        K[("Kafka")]:::pill
+        W(["Peeche workers dupe hataate<br/>(consumer group)"]):::pill
     end
-    D[("Dabba<br/>(DB)")]:::card
-    P[("Parchi<br/>(Redis feed)")]:::card
+    D[("Dabba (DB)")]:::card
+    P[("Parchi (Redis feed)")]:::card
+    N["Har dupe nahi hatega,<br/>jaise Instagram feed"]:::card
     C --> K
     K --> W
     W --> D
     W --> P
+    W -.-> N
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style LN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style SK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Ravi ko cricket, Priya ko tech, aur 9 baje 1 crore (category + manage karne wala banda)
@@ -148,13 +152,13 @@ bhi kaam kar de).
 
 ```mermaid
 flowchart TB
-    U["1 crore log"]:::card
-    subgraph MB["MANAGE KARNE WALA BANDA"]
-        LB(["Load balancer"]):::pill
+    U["9 baje 1 crore log"]:::card
+    subgraph MB["EK BANDA JO SABKO MANAGE KARE"]
+        LB(["Tere pe 10 load, tere pe 5,<br/>agli request tere paas<br/>(load balancer)"]):::pill
     end
-    F1["Server 1<br/>(Feed Service)"]:::card
-    F2["Server 2<br/>(Feed Service)"]:::card
-    P[("Category parchi<br/>(cricket, tech)")]:::good
+    F1["Server 1"]:::card
+    F2["Server 2"]:::card
+    P[("Category me baant do:<br/>Ravi cricket, Priya tech")]:::good
     U --> LB
     LB --> F1
     LB --> F2
@@ -174,31 +178,29 @@ Priya app kholti hai. Chhotu site pe jaata hai ya parchi se deta hai? Parchi bhi
 pehle din pasand poochi: tech. To pehli baar DB se laao (thoda time chalega) aur parchi me rakh do. Roz tech hi dekh
 raha to wahi pehle se saamne rakho, pasand badle to DB se.
 
-**Maan lo jis site se khabar la rahe wo band:** chhotu 30 second khada intezaar kare to baaki site ki baari der se. To
-5 sec, 10 sec baad dobara try; na khule to chhodo, baaki site chalti rahengi. Baar-baar band mile to thodi der use
-chhuo hi mat.
+Aur jis site se khabar la rahe wo band ho to 5 sec, 10 sec baad dobara try; na khule to chhodo, baaki site chalti
+rahengi.
 
-**Asli naam:** pehli baar DB, phir parchi = cache-aside; zyada der intezaar nahi = timeout, 5 sec, 10 sec baad dobara =
-retry + backoff, thodi der chhuo mat = circuit breaker (OPEN 30 min, phir ek try HALF-OPEN), ek site band = baaki pe
-asar nahi.
+**Asli naam:** pehli baar DB, phir parchi = cache-aside, 5 sec, 10 sec baad dobara = retry + backoff, ek site band =
+baaki pe asar nahi.
 
 ```mermaid
 flowchart TB
-    P["Priya"]:::card
-    F["Feed Service"]:::card
-    subgraph PP["PEHLE PARCHI"]
-        R[("Parchi<br/>(Redis)")]:::pill
+    P["Priya app kholti hai"]:::card
+    subgraph DP["PEHLI BAAR DB, PHIR PARCHI"]
+        D[("Pehle din pasand: tech,<br/>DB se laao (thoda time)")]:::card
+        R[("Parchi me rakh do: roz tech<br/>to wahi saamne")]:::pill
     end
-    D[("DB")]:::card
-    P --> F
-    F -- "pehle parchi" --> R
-    F -. "pehli baar / pasand badli" .-> D
+    S["Site band: 5 sec, 10 sec baad try,<br/>na khule to chhodo, baaki chalti"]:::card
+    P --> D
+    D --> R
+    P --> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style PP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style DP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Parchi 8 baje bani, 9:05 iPhone ki khabar (aate hi feed me + milaan)
@@ -211,12 +213,12 @@ Chhoot gayi to DB se le ke seedha feed me.
 
 ```mermaid
 flowchart TB
-    W["Worker"]:::card
-    D[("DB<br/>(iPhone 9:05)")]:::card
-    P[("Tech parchi<br/>(Redis feed)")]:::good
-    subgraph ML["MILAAN"]
-        J(["Check job"]):::pill
+    W["9:05 iPhone ki khabar"]:::card
+    D[("Dabba (DB)")]:::card
+    subgraph AH["AATE HI TECH WALON KI FEED ME"]
+        P[("Tech parchi")]:::pill
     end
+    J(["Milaan: aaj ki badi khabar hai na?<br/>chhooti to DB se feed me (check job)"]):::pill
     W --> D
     W -- "aate hi" --> P
     J --> P
@@ -226,7 +228,7 @@ flowchart TB
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style ML fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style AH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. 50 lakh tech wale, sabki alag parchi (ek tech parchi)
@@ -240,13 +242,15 @@ ki pasand se. Har user ki alag feed (twitter jaisi fan-out) yahan faltu.
 
 ```mermaid
 flowchart TB
-    W["Worker"]:::card
-    subgraph ET["EK TECH PARCHI"]
-        T[("feed:tech, ek key")]:::pill
+    X["50 lakh alag parchi:<br/>10 crore likhna, bekaar"]:::bad
+    W["Worker: ek baar likho"]:::card
+    subgraph ET["SAARI TECH KHABAR EK PARCHI ME"]
+        T[("Tesla launch sabke liye")]:::pill
     end
     A["Arpan"]:::good
     R["Ravi"]:::good
-    W -- "ek baar likho" --> T
+    X -.-> W
+    W --> T
     A --> T
     R --> T
     linkStyle default stroke:#8fa3c7,stroke-width:2px
@@ -269,21 +273,19 @@ likhta, isliye agla kadam quorum).
 
 ```mermaid
 flowchart TB
-    F["Feed Service<br/>(10 lakh / sec tech)"]:::card
-    A[("Tech dabba<br/>(Redis A)")]:::card
-    subgraph CP["CRICKET DABBE ME TECH COPY"]
-        B[("Redis B")]:::pill
-        C[("Redis C")]:::pill
+    F["9 baje iPhone launch:<br/>10 lakh / sec, tech dabba 1 lakh"]:::bad
+    subgraph DT["DO TAREEKE: TEENO AAPAS ME BAANT LO"]
+        A[("Tech ke dabbe badha do")]:::pill
+        B[("Cricket dabba (kal match nahi):<br/>isme bhi tech parchi")]:::pill
     end
     F --> A
     F --> B
-    F --> C
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style DT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 10. iPhone khabar sirf A me, refresh pe gayab (do me likho, do se padho)
@@ -297,23 +299,23 @@ taaza).
 
 ```mermaid
 flowchart TB
-    W["Worker"]:::card
-    subgraph RD["3 REDIS"]
-        A[("Redis A")]:::good
-        B[("Redis B")]:::good
-        C[("Redis C<br/>(abhi nahi)")]:::card
+    W["Garam khabar"]:::card
+    subgraph TD["TECH PARCHI 3 DABBON ME"]
+        A[("Dabba A: hai")]:::good
+        B[("Dabba B: hai")]:::good
+        C[("Dabba C: abhi nahi")]:::card
     end
     P["Priya"]:::card
-    W -- "do me likho (W=2)" --> A
+    W -- "do me likho" --> A
     W --> B
-    P -- "do se padho (R=2)" --> B
+    P -- "do se padho" --> B
     P --> C
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style RD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style TD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 11. Worker DB me likh ke mara, khabar kisi ko nahi dikhi (status)
@@ -328,13 +330,13 @@ url UNIQUE bacha leta; logging = outbox / WAL wali soch.
 
 ```mermaid
 flowchart TB
-    K[("Kafka")]:::card
-    W2["Agla worker"]:::card
-    subgraph ST["STATUS"]
-        D[("DB: status<br/>DB me daali, parchi me nahi")]:::pill
+    W1["Worker ne DB me likhi,<br/>parchi se pehle mara"]:::bad
+    subgraph ST["EK STATUS RAKH (logging)"]
+        D[("DB me daali / parchi me daali")]:::pill
     end
-    P[("Parchi<br/>(Redis feed)")]:::good
-    K --> W2
+    W2["Agla worker status dekh ke<br/>kaam aage badhaye"]:::card
+    P[("Parchi (Redis feed)")]:::good
+    W1 --> D
     W2 --> D
     W2 -- "bacha kaam" --> P
     linkStyle default stroke:#8fa3c7,stroke-width:2px
