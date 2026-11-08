@@ -41,6 +41,9 @@ Technical me: paisa aane pe server pe ek-ek karke ginti kaato, 500 ke baad aaye 
 **7b. Rollback me bhi pech, 10 minute wale me bhi pech. Koi screwdriver? (Apple store: 500 iPhone, bahar 3000 log)**
 Arpan: Jitne phone utne log andar, baaki bahar. Kisi ka card decline hua ya koi chala gaya to agla batch bulao, jitne bache utne. 3000 ko andar bula ke kya fayda. App pe poora app to rok nahi sakte, aata-daal wale bhi hain. To ghee ke liye ek alag counter lagao: sale wala maal us gate se guzrega, normal checkout chalta rahega. Us counter se sirf 500 ghee guzarne hain, to dikkat hi khatam.
 Technical me: sale gate (Buy now, cart me nahi jaata). Gate sirf utne logon ko Pay tak jaane deta jitna stock (Redis DECR). Fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi, aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
+**Maan lo Ravi ne 4 tab khole, Buy now 4 baar.**
+Arpan: Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
+Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 **Maan lo gate se 500 andar, Ravi Pay page pe gaya aur chai peene chala gaya, na pay kiya na cancel. Uska phone Redis me "gaya" gina hai, bahar 2500 khade.**
 Arpan: Jab tak pay nahi karoge, phone bika nahi, stock me utna hi hai. Dukaan pe ghee ka dabba haath me pakad ke khada hoon, pay nahi kar raha, peeche wala dukaandar se bolta hai, to dukaandar kehta: ya to pay karke le ja, ya wapas rakh de. To andar aate hi ghadi, 5 minute. Pay kiya to phone uska, nahi kiya to wapas line me aur agla andar.
 Technical me: "ya pay kar ya rakh de" = reservation expiry (TTL, 5 min), "wapas line me, agla andar" = release (Redis INCR) + agla batch.
@@ -51,6 +54,9 @@ Technical me: "5 min ke baad phone uska nahi" = Pay pe server check kare ki rese
 **8. Net gaya / PSP chup: Ravi ko laga pay ho gaya, par PSP tak request pahunchi nahi, ya paisa kata aur PSP anjaan.**
 Arpan: Design har jagah se thoda toot-ta hai. Chahe 10 minute rok lo, chahe paisa aane pe kaato, kinaare pe dikkat rehti hai. Aakhri second pe pay kiya to wahan BMS wali cheez hi leni padegi. Paisa kata to zimmedari hamari, PSP se hum baat karenge.
 Technical me: PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Paisa kata mila to dabba uska; dabba na bacha ho to refund. Perfect design koi nahi, bas kitne refund.
+**Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**
+Arpan: Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
+Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **Agar pooche: ek order me ghee, aata, daal. Aata khatam.**
 Arpan: Poora order mat roko. Jo hai wo bhejo, aate pe out of stock dikha do. Wo chahe to baaki do le le.

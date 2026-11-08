@@ -179,6 +179,8 @@ person ko ja raha aur key same hai, to mana kar do: "ye message chahiye nahi, te
 wahi; ye banking wali idempotency key hi hai). Key same = dupe copy chhodo, DB me dobara mat likho. Network aaye to
 double tick = "pahuncha" ka jawab (ack) dobara bhejo.
 
+**Maan lo ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja:** Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
+
 ```mermaid
 flowchart TB
     A["Arpan lift me: hi"]:::card

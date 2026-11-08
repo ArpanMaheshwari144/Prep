@@ -25,6 +25,9 @@ Technical me: "gola + chhoote dabbe" = apna geohash + aas-paas ke dabbe, phir as
 **5. Gole me ek khaali driver Raju. Arpan aur Priya ne ek hi second me book dabaya, Raju ke phone pe do ride.**
 Arpan: BMS wali parchi: "Raju khaali hai to Arpan ka" ek kadam me. Jiski pehle pahunchi uski parchi, doosre ko "Raju chala gaya", uske liye agla driver. Parchi ki umar: Raju 15 sec me accept na kare to parchi hatao, agla driver.
 Technical me: "parchi" = driver pe hold / lock (atomic, sirf FREE ho to), "umar" = TTL.
+**Maan lo net atka, Arpan ne Book do baar daba diya.**
+Arpan: Payment wali idempotency key: phone Book dabate hi booking id banaye, dono request me wahi. Server pehle id dekhe, pehle aa chuki to nayi ride nahi, wahi purani ride lauta do.
+Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **6. Diljit ka concert khatam, 50 hazaar log, cab sirf 500.**
 Arpan: BMS jaisa: 500 cab hain to 500 log andar, baaki line me, agli baari. 50 hazaar ko server pe bitha ke kya karunga. Pehle 500 sambhalo, phir kiraya badha ke door ki cab bulao.
@@ -60,6 +63,9 @@ Technical me: "jo dikhaya wahi" = upfront fare: quote ride ke saath save (lock),
 **13. Trip khatam, ₹250 kaatne gaye, Arpan ke wallet me sirf ₹40. Payment fail, Arpan ghar ke andar, Raju ka petrol aur 40 minute.**
 Arpan: Kaatna hai to poora kaato, aadha mat kaato: 40 kaat ke chhod diya to log jaan-boojh ke 1 rupaya rakhenge. Wallet me 250 nahi to app me saaf dikhao "payment nahi hua", aur Raju ke phone pe bhi dikhe. Arpan GPay se de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak khatam nahi" = ride status PAYMENT_PENDING jab tak SUCCESS, "GPay / cash" = fallback payment method, dono app pe dikhe.
+**Maan lo 250 kaatne gaye, gateway chup, pata nahi kata ya nahi.**
+Arpan: Dobara kaatne pe ride id hi key: gateway pehchaan lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala status job).
+Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **14. (Socha hua, hypothetical) Ride ke beech Raju ka phone switch off. GPS bhi band, naksha pe Raju gayab. Ride khatam kaun karega?**
 Arpan: Phone band hona Uber ke haath me nahi, design ki dikkat nahi. Phone apni location khud bhejta hai, server poochhta nahi. Location aani band hui to server ek-do baar dekhega, phir apni taraf se bhi band. Jahan tak aaye utne paise Arpan ki app me dikhenge, wo de do. Phir Uber support ko phone: "driver ka phone band ho gaya". Support wahan se ride band kar dega, DB me update, Raju kahin nahi dikhega.

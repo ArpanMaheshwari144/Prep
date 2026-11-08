@@ -77,6 +77,8 @@ dabbe na khatkhataye.
 **Asli naam:** baantna = shard (har khiladi ek hi dabbe me), har dabbe se le ke milana = scatter-gather, chhotu =
 aggregator, badi screen = global top 10 ka cache.
 
+**Maan lo match ka +50 retry se do baar pahuncha:** Match id hi key: is match ka score pehle jud chuka to dobara mat jodo. +100 nahi, +50.
+
 ```mermaid
 flowchart TB
     X["Saare score ek Redis pe: dab gaya"]:::bad

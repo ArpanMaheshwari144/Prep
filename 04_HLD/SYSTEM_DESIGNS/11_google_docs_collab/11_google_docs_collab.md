@@ -34,6 +34,8 @@ aur main use "Goa jaayenge" ke baad, ya neeche, ya beech me kahin, wahin laga du
 insert / delete), is letter ke baad add kar do = op me jagah (position) + kis version pe dekh ke likha (baseVersion). Server se dono ki screen tak op
 turant = WebSocket (dono taraf khula taar).
 
+**Maan lo "kal" wala op dobara chala gaya ("mil gaya" kho gaya):** Har op ki apni id: server pehle id dekhe, ye op lag chuka to dobara mat lagao. Doc me "kal kal" nahi.
+
 ```mermaid
 flowchart TB
     X["Poora text bheja: Arpan ki line gayab<br/>(last write wins, nahi chalega)"]:::bad

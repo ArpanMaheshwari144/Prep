@@ -225,6 +225,8 @@ andar Pay daba diya aur PSP dheema to hamari zimmedari.
 **Asli naam:** Pay pe reservation zinda hai ya nahi check (expiry check), chhota grace period, andar dabaya to
 PAYMENT_PENDING aur hold ruk jaata (kadam 8 / BMS jaisa).
 
+**Maan lo Ravi ne 4 tab khole, Buy now 4 baar:** Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
+
 ```mermaid
 flowchart TB
     U["Bahar 3000 log"]:::card
@@ -255,6 +257,8 @@ kiya to wahan BMS wali cheez hi leni padegi. Paisa kata to zimmedari hamari, PSP
 
 **Asli naam:** PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Paisa kata mila to dabba uska; dabba na
 bacha ho to refund. Perfect design koi nahi, bas kitne refund.
+
+**Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se):** Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 
 ```mermaid
 flowchart TB

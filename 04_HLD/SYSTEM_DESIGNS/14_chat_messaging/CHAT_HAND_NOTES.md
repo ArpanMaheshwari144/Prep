@@ -29,6 +29,9 @@ Technical me: "ek dabbe me rakh lo" = group message DB me ek baar (chat_id = col
 **6. Arpan lift me, Ravi ko "hi" bheja. Message server pe save ho gaya, par "pahuncha" wala jawab lift me kho gaya. Phone ko laga gaya hi nahi, "hi" dobara bheja. Ravi ko "hi hi".**
 Arpan: Message Ravi ke paas chala gaya, par hum lift me the to jawab hamare paas nahi aaya, humein laga nahi gaya. To jab network aaye tab bol do "haan bhai, chala gaya", double tick dikha do. Network nahi aaya to wo dobara bhej deta, do "hi" pahunch gaye. To message ek baar issue karwao, doosri baar discard kar do. Ek key rakh lo: "hi" aaya, iske paas ek key hai. Doosra aaya, same person ko ja raha aur key same hai, to mana kar do: "ye message chahiye nahi, tera pehla ho gaya."
 Technical me: "ek key rakh lo, key same to mana" = clientMsgId (idempotency key), "doosri baar discard" = dupe copy chhodo, "network aaye to double tick" = "pahuncha" ka jawab dobara bhejo.
+**Maan lo ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja.**
+Arpan: Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
+Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **7. Group me Arpan ne "kal party" bheja, usi second Ravi ne "kahan?". Kuch members ko "kahan?" pehle dikha. Dono phone ki ghadiyan bhi 2 second aage-peeche. (Claude ne poochha: number lagayega kaun?)**
 Arpan: Numbering kar do: jisne pehle bheja uska pehla aayega, saaf seedhi baat. Phone nahi lagayega number, phone lagayega to clash ho jaayega. Phone ko thodi pata kaunsa message pehle aaya, phone to bas message bhejne wala banda hai. Server ko pata hai kaunsa pehle aaya, kis time aaya. Server lagayega number.
