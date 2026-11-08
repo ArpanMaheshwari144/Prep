@@ -334,14 +334,13 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
 
 ```
  1  har tukda samundar paar se              ->  file apne shehar me, CA wala dost (Open Connect, ISP ke andar)
- 1b AWS ka CDN kyun nahi                     ->  courier har litre ka paisa, apna fridge muft me (per-GB bill nahi)
  2  12:29 tak dabba khaali                  ->  pen drive pehle se, video badalta nahi (proactive fill)
- 3  Ravi 3G pe, purana TV, Hindi awaaz      ->  Ferrari / Alto + har film ki apni seedhi + kai roop (ABR, encode ladder, codec)
- 4  dabbe me poora maal nahi                ->  garam paas, thanda bade dabbe se (popularity, tier, evict)
- 5  20 dabbe, kis se maange                 ->  hospital ka guard, server batata (steering; AWS pe, video bytes dabbe se)
- 6  TV pe 27 min, phone pe wahi se          ->  account pe parchi (watch position DB me)
- 6b har kuch second update, DB ki saans     ->  race me ruk ke likho (pehle cache, DB kabhi-kabhi)
- 7  "tere liye" me 6 second                 ->  parlour wala GTA pehle se (raat ka batch, cache se uthao)
- 7b 11 baje Dhurandhar dekhi                ->  turant parchi, dikhate waqt milao (abhi ka fast store + bani list)
- 7c Priya naya user                         ->  India ka garam maal (cold start)
+ 3  dabbe me poora maal nahi                ->  garam paas, thanda bade dabbe se (popularity, tier, evict)
+ 4  20 dabbe, kis se maange                 ->  hospital ka guard, server batata (steering; AWS pe, video bytes dabbe se)
+ 5  TV pe 27 min, phone pe wahi se          ->  account pe parchi (watch position DB me)
+ 5b har kuch second update, DB ki saans     ->  race me ruk ke likho (pehle cache, DB kabhi-kabhi)
+ 6  "tere liye" me 6 second                 ->  parlour wala GTA pehle se (raat ka batch, cache se uthao)
+ 6b 11 baje Dhurandhar dekhi                ->  turant parchi, dikhate waqt milao (abhi ka fast store + bani list)
+ 6c Priya naya user                         ->  India ka garam maal (cold start)
+ (padhai, scene nahi) P1 AWS CDN kyun nahi: apna fridge muft · P3 Ferrari / Alto + har film ki seedhi + kai roop
 ```

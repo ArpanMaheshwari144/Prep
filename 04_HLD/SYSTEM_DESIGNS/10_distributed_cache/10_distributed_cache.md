@@ -145,7 +145,7 @@ bhi andar yahi karta hai.
 (Cassandra, "Dataset Partitioning: Consistent Hashing"):
 https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
 
-![Gol ring: key jahan giri, ghadi ki disha me aage ka sabse paas wala dabba](ring_kadam4.svg)
+![Gol ring: key jahan giri, ghadi ki disha me aage ka sabse paas wala dabba](../IMG/10_cache_ring_kadam4.svg)
 
 ## 5. Ravi ne naam badla, sabko purana dikh raha (parchi kaato, phir DB, peeche ek banda)
 
