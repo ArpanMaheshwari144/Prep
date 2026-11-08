@@ -36,15 +36,17 @@ turant = WebSocket (dono taraf khula taar).
 
 ```mermaid
 flowchart TB
+    X["Poora text bheja: Arpan ki line gayab<br/>(last write wins, nahi chalega)"]:::bad
     A["Arpan: Goa jaayenge"]:::card
     R["Ravi: budget 20k"]:::card
-    subgraph OP["POORA TEXT NAHI, OPERATION"]
-        S(["Doc server<br/>(op aata, poora text nahi)"]):::pill
+    subgraph OP["POORA TEXT NAHI, OPERATION BHEJO"]
+        S(["insert / delete / add:<br/>is letter ke baad add kar do"]):::pill
     end
-    D[("Diary<br/>(DB)")]:::good
+    D["Dono ka text dikhe"]:::good
     A --> S
     R --> S
     S --> D
+    X -.-> S
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -67,15 +69,17 @@ join / transaction ki zarurat nahi, isliye Postgres nahi.
 
 ```mermaid
 flowchart TB
-    U["Lakhon log<br/>(har akshar)"]:::card
-    S["Doc server"]:::card
-    subgraph CR["CHHOTA REGISTER"]
-        B[("Redis buffer")]:::pill
+    U["Lakhon log dhadadhad save"]:::card
+    S["Main hi Google Docs hoon"]:::card
+    subgraph CR["APNA CHHOTA REGISTER"]
+        B[("Saari baatein likhta rahunga<br/>(Redis buffer)")]:::pill
     end
-    D[("Diary<br/>(Cassandra, batch write)")]:::good
+    D[("Kuch der baad DB me save<br/>(Cassandra, batch)")]:::good
+    X["Har write pe DB query:<br/>DB baith jaayega"]:::bad
     U --> S
     S --> B
     B -- "kuch der baad" --> D
+    S -.-> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -100,11 +104,11 @@ server tay karta, jo pehle pahuncha use agla version.
 ```mermaid
 flowchart TB
     A["Arpan: shuru me Hum"]:::card
-    R["Ravi: jagah 3 pe kal"]:::card
-    subgraph KH["SHABD KHISKA DO"]
-        S(["Khiskao<br/>(OT)"]):::pill
+    R["Ravi: Goa ke baad kal"]:::card
+    subgraph KH["SHABDON KO KHISKA DIYA"]
+        S(["Yaad rakhun kisne kahan likha<br/>(OT)"]):::pill
     end
-    F["Hum Goa kal jaayenge<br/>(Ravi ki jagah aage)"]:::good
+    F["Hum Goa kal jaayenge:<br/>na kal galat jagah, na Hum"]:::good
     A --> S
     R --> S
     S --> F
@@ -130,12 +134,12 @@ maalik = har doc ka ek owner server (LB `docId` dekh ke ring pe owner chunta, ek
 
 ```mermaid
 flowchart TB
-    A["Arpan<br/>(server A)"]:::card
-    R["Ravi<br/>(server B)"]:::card
-    subgraph MK["HAR DOC KA EK MAALIK"]
-        O(["Owner server<br/>(is doc ka OT)"]):::pill
+    A["Arpan (server A)"]:::card
+    R["Ravi (server B)"]:::card
+    subgraph CS["HAR DOC KA EK CENTRALIZED SYSTEM"]
+        O(["Maalik: dono ka padh ke<br/>sahi se likhe (owner server)"]):::pill
     end
-    V["Ek hi version<br/>(dono ki screen pe)"]:::good
+    V["Dono ki screen pe ek hi version"]:::good
     A --> O
     R --> O
     O --> V
@@ -144,7 +148,7 @@ flowchart TB
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style MK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style CS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. "Saved" dikha, server gira, para uda (dabba aur uski copy)
@@ -161,18 +165,19 @@ jaaye to main hoon.
 
 **Maan lo dabba aur copy dono gir gaye, batch abhi DB me nahi gaya:** dabba memory ke saath apni disk pe bhi likhe, gire
 to disk se wapas (Kafka jaisa, line disk pe). Phir bhi sab gira to kuch second ki lines chhoot sakti hain, user dobara
-likh lega. Poori consistency chahiye to aur copy, aur paisa; 500 copy bhi koi gira sakta hai, har copy girana design nahi.
+likh lega. Aisa sochenge to design hi nahi banega: poori consistency chahiye to 2 kyun, 500 copy rakho, aur 500 ka
+paisa bhi do. Interviewer dekhna chahta hai main sochta kaise hoon, har copy girana design nahi.
 **Asli naam:** disk pe bhi = Redis AOF (persistence), kuch second chhoot = chhota data loss window, durability vs cost trade-off.
 
 ```mermaid
 flowchart TB
-    O["Maalik<br/>(Owner server)"]:::bad
-    subgraph DC["DABBA + USKI COPY"]
-        B[("Dabba<br/>(Redis buffer)")]:::card
-        C[("Dabbe ki copy<br/>(Redis replica, Saved iske baad)")]:::pill
+    O["Maalik gira: Saved dikha tha"]:::bad
+    subgraph DC["EK DABBA + USKI COPY"]
+        B[("Dabba: saari information<br/>(Redis buffer)")]:::card
+        C[("Copy: tu bhi store kar le,<br/>Saved iske baad (replica)")]:::pill
     end
-    D[("Diary<br/>(Cassandra)")]:::card
-    N["Naya maalik<br/>(naya owner)"]:::good
+    D[("DB (Cassandra, batch)")]:::card
+    N["Mujhe kuch ho to tu hai:<br/>naya maalik copy se"]:::good
     O --> B
     B --> C
     B -- "batch" --> D
@@ -201,12 +206,12 @@ server pe permission cache + har op pe check (har akshar pe SQL nahi), iska oper
 ```mermaid
 flowchart TB
     M["Arpan: Ravi ko hatao"]:::card
-    subgraph CA["CENTRALIZED AUTHORITY + TEZ BACHCHA"]
-        Q[("SQL: permission")]:::pill
-        P(["Tez bachcha<br/>(Redis pub/sub)"]):::pill
+    subgraph CA["CENTRALIZED AUTHORITY"]
+        Q[("Sab likh rahi: Ravi editor nahi<br/>(SQL)")]:::pill
     end
-    S1["Ravi ka server<br/>(note hata, op reject)"]:::bad
-    S2["Baaki server<br/>(note hata)"]:::good
+    P(["Tez bhaagne wala bachcha:<br/>building ke bahar chilla de<br/>(pub/sub)"]):::pill
+    S1["Ravi ka server: note hata,<br/>op accept nahi"]:::bad
+    S2["Baaki server: note hata"]:::good
     M --> Q
     Q --> P
     P --> S1
@@ -232,15 +237,15 @@ dekh lunga = reconnect pe chhoote hue badlaav copy (ya SQL) se le ke note theek,
 
 ```mermaid
 flowchart TB
-    P["Tez bachcha<br/>(Redis pub/sub)"]:::card
-    subgraph CP["SERVER KI COPY NOTE KAR LETI"]
-        C(["Server 7 ki copy<br/>(standby, note kiya)"]):::pill
+    P["Bachcha chillaya: Ravi editor nahi"]:::card
+    S7["Server 7 bahar tha,<br/>awaaz nahi suni"]:::bad
+    subgraph CP["SERVER KI COPY SAATH KHADI"]
+        C(["Note karke likh liya:<br/>Ravi editor nahi (standby)"]):::pill
     end
-    S7["Server 7<br/>(wapas aaya)"]:::card
-    X["Ravi ka op<br/>(reject)"]:::bad
+    W["Wapas aaya: kya hua?<br/>Ravi ki permission kaat do"]:::good
     P --> C
-    S7 -- "kya hua?" --> C
-    S7 --> X
+    S7 --> W
+    C --> W
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
