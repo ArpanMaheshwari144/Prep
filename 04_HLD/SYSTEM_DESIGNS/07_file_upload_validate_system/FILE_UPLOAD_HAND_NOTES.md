@@ -32,8 +32,8 @@ S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered 
 Technical me: "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa naya" = S3 event ka `sequencer` (bada = baad wala, usi file ke liye).
 
 **5. "Goa trip" folder (Day1, Day2, 500 photo). S3 me folder hote hi nahi; naam path me likha to rename = 500 copy + 500 delete.**
-Arpan: Folder ka hisaab alag, apne server me. Ek parent, baaki uske child, ped jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent ka naam badlo, saare bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora. S3 sirf files rakhe.
-Technical me: "ped" = DB me folders table (id, parent_id), file ki row me folder_id; S3 key file ki id se, naam se nahi.
+Arpan: Folder ka hisaab alag, apne server me. Ek parent, baaki uske child, tree jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent ka naam badlo, saare bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora. S3 sirf files rakhe.
+Technical me: "tree" = DB me folders table (id, parent_id), file ki row me folder_id; S3 key file ki id se, naam se nahi.
 
 **6. Ravi ne URL me 1042 ki jagah 1043 likha aur Priya ka bank statement khul gaya. Download bhi hamare server se ja raha.**
 Arpan: Ravi asli member hai (JWT), par Priya ki statement maange to "Priya ko saath la" (server DB me dekhe file kiski hai / kisse share hui, warna mana). Server DB me dekhe file kiski hai / kisse share hui, tabhi link de. Link me chhed-chhaad ki to link bekaar. Download truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata (hamare server se data nahi guzarta).
