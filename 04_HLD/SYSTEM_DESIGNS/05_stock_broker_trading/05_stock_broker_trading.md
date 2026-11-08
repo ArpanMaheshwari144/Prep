@@ -33,12 +33,24 @@ DB (Postgres; ek user ka paisa kaatna / hold ek transaction me = ACID). Portfoli
 sauda wahan Kafka se pahunchta (kadam 6-7).
 
 ```mermaid
-flowchart LR
-    A["Arpan: buy 10 @ 3500"] --> O["Order Service"]
-    R["Ravi: sell 10 @ 3500"] --> O
-    O --> M["Beech ka aadmi<br/>(Matching engine)"]
-    M --> B[("Do list<br/>(Order book)")]
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: buy 10 @ 3500"]:::card
+    R["Ravi: sell 10 @ 3500"]:::card
+    O["Order Service"]:::card
+    subgraph BA["BEECH KA AADMI"]
+        M(["Matching engine"]):::pill
+        B[("Do list<br/>(Order book)")]:::card
+    end
+    A --> O
+    R --> O
+    O --> M
+    M --> B
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. Net gaya, 20 share kharid liye (chaabi)
@@ -53,10 +65,22 @@ hai, iska taala to main khareed chuka, ghapla hai. Bhai tu nikal, ye chaabi is b
 (UNIQUE(user_id, client_order_id)), wahi chaabi dobara aayi = duplicate order reject, purana order hi lautao.
 
 ```mermaid
-flowchart LR
-    A["Arpan ka app"] -- "order + chaabi" --> O["Server<br/>(Order Service)"]
-    O --> K[("Taala<br/>(UNIQUE client_order_id)")]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan ka app<br/>(net gaya, dobara bheja)"]:::card
+    O["Server<br/>(Order Service)"]:::card
+    subgraph CH["CHAABI"]
+        K[("Taala<br/>(UNIQUE client_order_id)")]:::pill
+    end
+    X["doosri baar: same chaabi,<br/>naya order nahi"]:::good
+    A -- "order + chaabi" --> O
+    O --> K
+    K --> X
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. 35,000 se do order (paisa hold)
@@ -71,11 +95,22 @@ nahi kar paayega, INFY wala order lagta hi nahi.
 paaye = doosra order reject. Ravi ke share pe bhi yahi, ek share do baar nahi bikta.
 
 ```mermaid
-flowchart LR
-    O["TCS order 35,000"] --> W[("Arpan ka khaata<br/>available 0, blocked 35,000")]
-    I["INFY order 35,000"] --> W
-    W -- "paisa nahi" --> X["INFY reject"]
-    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    O["TCS order 35,000"]:::card
+    I["INFY order 35,000"]:::card
+    subgraph KH["PAISA HOLD"]
+        W[("Arpan ka khaata<br/>available 0, blocked 35,000")]:::pill
+    end
+    X["INFY reject"]:::bad
+    O --> W
+    I --> W
+    W -- "paisa nahi" --> X
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style KH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. 4 thread, 10 share 20 me bik gaye (ek line, ek jagah)
@@ -92,11 +127,22 @@ ki book ek hi thread (single-threaded per symbol). Lock nahi chahiye, aur line k
 Cancel bhi isi line me: sauda pehle aaya to "bik chuka", cancel pehle to hold wapas.
 
 ```mermaid
-flowchart LR
-    A["Arpan"] --> Q["Ek line<br/>(TCS ka ek thread)"]
-    M["Mohan"] --> Q
-    Q --> B[("TCS book<br/>(Ravi ke 10)")]
-    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan"]:::card
+    M["Mohan"]:::card
+    subgraph EL["EK LINE, EK JAGAH"]
+        Q(["TCS ka ek thread"]):::pill
+    end
+    B[("TCS book<br/>(Ravi ke 10)")]:::good
+    A --> Q
+    M --> Q
+    Q -- "ek-ek karke" --> B
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style EL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Book RAM me thi, machine mari (permanent dabba + parchi)
@@ -117,14 +163,24 @@ jaisi bheed ho), subah se parchi = order log (append-only, sirf jodna), parchi d
 se book wapas.
 
 ```mermaid
-flowchart LR
-    O["Order Service"] --> M["Ek share ek thread<br/>(Matching engine)"]
-    M --> L[("Parchi<br/>(Order log)")]
-    M --> D[("Permanent dabba<br/>(Primary DB)")]
-    D --> C[("3-4 copy<br/>(Replica)")]
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    O["Order Service"]:::card
+    M["Ek share ek thread<br/>(Matching engine)"]:::card
+    subgraph PD["PERMANENT DABBA + PARCHI"]
+        L[("Parchi<br/>(Order log)")]:::pill
+        D[("Permanent dabba<br/>(Primary DB)")]:::pill
+        C[("3-4 copy<br/>(Replica)")]:::pill
+    end
+    O --> M
+    M --> L
+    M --> D
+    D --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Sauda hua, sabko batana (10 ladkon ki fauj)
@@ -139,13 +195,26 @@ instruction di. Tu ye kar, tu ye kar, jab sab ho jaaye to mujhe bata dena.
 rukti.
 
 ```mermaid
-flowchart LR
-    M["Matching engine"] --> K[("10 ladkon ki fauj<br/>(Kafka: trades)")]
-    K --> S["Settlement"]
-    K --> N["SMS<br/>(Notification)"]
-    K --> A["Audit"]
-    K --> P["Price Service"]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    M["Matching engine"]:::card
+    subgraph FJ["10 LADKON KI FAUJ"]
+        K[("Kafka: trades")]:::pill
+    end
+    S["Settlement"]:::card
+    N["SMS<br/>(Notification)"]:::card
+    A["Audit"]:::card
+    P["Price Service"]:::card
+    M --> K
+    K --> S
+    K --> N
+    K --> A
+    K --> P
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style FJ fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Paisa kata, share dikh nahi rahe (sauda ulta nahi, parchi pakdo)
@@ -162,10 +231,20 @@ intezaar kar rahe.
 katta.
 
 ```mermaid
-flowchart LR
-    K[("Parchi<br/>(Kafka: trades)")] --> S["Portfolio Service<br/>(retry)"]
-    S --> D[("Portfolio DB<br/>(band, PENDING)")]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    subgraph PP["PARCHI PAKDO"]
+        K[("Parchi<br/>(Kafka: trades)")]:::pill
+    end
+    S["Portfolio Service<br/>(retry)"]:::card
+    D[("Portfolio DB<br/>(band, PENDING)")]:::bad
+    K --> S
+    S -. "khule to phir" .-> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. TCS ka bhaav 10 lakh screen pe (chat wala khula taar)
@@ -178,11 +257,22 @@ rakho aur bhaav khud bhejo, beech me ek chhota ladka jo bhaav sab machine tak ch
 se har share ka ek bhaav / sec. Bhaav kho bhi jaaye to agle second naya, isliye yahan Kafka nahi.
 
 ```mermaid
-flowchart LR
-    P["Price Service"] --> R[("Chhota ladka<br/>(Redis pub/sub: TCS)")]
-    R --> W["WebSocket server"]
-    W -- "khula taar" --> U["10 lakh app"]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    P["Price Service"]:::card
+    subgraph CL["CHHOTA LADKA"]
+        R[("Redis pub/sub: TCS")]:::pill
+    end
+    W["WebSocket server"]:::card
+    U["10 lakh app"]:::good
+    P --> R
+    R --> W
+    W -- "khula taar" --> U
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. 9:15 ki bheed, book DB me, line atki (chhoti parchi + baad me mota register)
@@ -203,13 +293,26 @@ copy = standby / replica + order log (append-only, gire to replay). Kam bheed ho
 NSE jaisi bheed pe RAM. Sach = DB (source of truth), "processing" = ACCEPTED / PENDING turant, DB commit ke baad FILLED.
 
 ```mermaid
-flowchart LR
-    O["Lakhon order<br/>(9:15)"] --> E["Matching engine"]
-    E --> P[("Chhoti parchi<br/>(order book RAM me)")]
-    P -- "copy" --> C[("Parchi ki copy<br/>(standby + order log)")]
-    P -- "baad me ek saath" --> D[("Mota register<br/>(DB, sach)")]
-    D -- "likha gaya" --> A["Ravi ka app<br/>(processing, phir pakka)"]
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    O["Lakhon order<br/>(9:15)"]:::card
+    E["Matching engine"]:::card
+    subgraph RM["CHHOTI PARCHI (RAM)"]
+        P[("order book RAM me")]:::pill
+    end
+    C[("Parchi ki copy<br/>(standby + order log)")]:::card
+    D[("Mota register<br/>(DB, sach)")]:::card
+    A["Ravi ka app<br/>(processing, phir pakka)"]:::good
+    O --> E
+    E --> P
+    P -- "copy" --> C
+    P -- "baad me ek saath" --> D
+    D -- "likha gaya" --> A
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
