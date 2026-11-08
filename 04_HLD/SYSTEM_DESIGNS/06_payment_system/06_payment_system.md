@@ -33,14 +33,14 @@ sambhalta, hum thodi fees dete). Hamara paise ka hisaab = SQL DB (Postgres; dono
 
 ```mermaid
 flowchart TB
-    A["Arpan"]:::card
-    S["Payment Service"]:::card
-    subgraph CA["BEECH KI AUTHORITY"]
-        P(["Centralized authority<br/>(PSP)"]):::pill
+    A["Arpan: pay 500"]:::card
+    X["HDFC hamari sunta hi nahi,<br/>har bank se judna = saalon"]:::bad
+    subgraph CA["CENTRALIZED AUTHORITY JO KAAM KHUD KARE"]
+        P(["Bas uski cheez use karo<br/>(PSP ki API)"]):::pill
     end
-    H["HDFC"]:::good
-    A --> S
-    S --> P
+    H["HDFC / ICICI / har bank"]:::good
+    A -.-> X
+    A --> P
     P --> H
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
@@ -62,13 +62,15 @@ parchi pe likhte raho kya-kya hua: PSP ne ye kara, ab ye kara. Fail hua to FAIL 
 
 ```mermaid
 flowchart TB
-    S["Payment Service"]:::card
-    subgraph AP["APNI PARCHI"]
-        D[("payment table:<br/>INITIATED")]:::pill
+    A["Pay dabaya"]:::card
+    subgraph AP["APNE PAAS EK PARCHI"]
+        D[("INITIATED ho gaya,<br/>PSP ne ye kara, ab ye")]:::pill
     end
-    P["PSP<br/>(30 sec chup)"]:::bad
-    S --> D
-    S -. "jawab nahi" .-> P
+    P["PSP: 30 second chup"]:::bad
+    R["Pakka jawab aaya tabhi:<br/>PASS ya FAIL mark"]:::good
+    A --> D
+    A --> P
+    P -. "jawab" .-> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -89,16 +91,13 @@ reconciliation, cron job).
 
 ```mermaid
 flowchart TB
-    S["Payment Service"]:::card
-    D[("Parchi<br/>(payment: PENDING)")]:::card
-    P["PSP"]:::card
-    subgraph BB["BEECH KA BANDA"]
-        J(["Poochne wala job"]):::pill
+    D[("Parchi: jawab ka intezaar<br/>(PENDING)")]:::card
+    P["PSP<br/>(batana bhool gaya / message khoya)"]:::bad
+    subgraph BB["BEECH ME EK BANDA"]
+        J(["Hua ya nahi hua, bata do:<br/>dono se permanent baat<br/>(poochne wala job)"]):::pill
     end
-    S --> D
-    S --> P
-    J -- "PENDING kaun" --> D
-    J -- "pakka kya hua?" --> P
+    J --> D
+    J --> P
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -107,7 +106,7 @@ flowchart TB
     style BB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 4. PSP-1 poora band (doosra raasta)
+## 4. PSP-1 poora band (fallback tareeka)
 
 Aaj PSP-1 poora band, uski har call fail. Dukaan pe log pay kar rahe aur sabka payment ruk raha. To PSP-1 band hai
 to unka payment PSP-2 pe bhej do, hamare paas fallback tareeka hai, logon ko intezaar kyun karwana. Aur maan lo PSP-1
@@ -119,19 +118,21 @@ PENDING, PSP-1 wapas aaye tab pakka, PSP-2 pe dobara nahi (warna do baar kata).
 
 ```mermaid
 flowchart TB
-    S["Payment Service"]:::card
-    P1["PSP-1<br/>(band: atke PENDING)"]:::bad
-    subgraph DR["DOOSRA RAASTA"]
-        P2(["Fallback PSP-2"]):::pill
+    S["Dukaan pe log pay kar rahe"]:::card
+    P1["PSP-1 poora band"]:::bad
+    subgraph FB["FALLBACK TAREEKA"]
+        P2(["Naya payment PSP-2 pe bhej do"]):::pill
     end
+    W["PSP-1 pe atke: thodi der ruko,<br/>aate-jaate bata denge (PENDING)"]:::card
     S -.-> P1
     S --> P2
+    P1 -.-> W
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style DR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style FB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Server INITIATED likh ke gira (pehle register, phir bhejo)
@@ -147,21 +148,21 @@ INITIATED utha ke PSP se status poochhe, idempotency key = payment id hi PSP ki 
 
 ```mermaid
 flowchart TB
-    S["Payment Service"]:::card
-    subgraph PR["PEHLE REGISTER"]
-        D[("INITIATED commit")]:::pill
+    S["Server"]:::card
+    subgraph BR["BEECH ME EK REGISTER"]
+        D[("Pehle likho: initiate hua<br/>(INITIATED commit)")]:::pill
     end
-    P["PSP<br/>(idempotency key = payment id)"]:::card
-    J["Restart ke baad<br/>(job)"]:::good
+    P["Phir PSP ko bhejo<br/>+ idempotency key (payment id)"]:::card
+    G["Server gira: aake dekha, likha hai,<br/>PSP se dobara poochho"]:::good
     S -- "1. pehle likho" --> D
-    S -- "2. phir bhejo + key" --> P
-    J --> D
+    S -- "2. phir bhejo" --> P
+    G --> D
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style PR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style BR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Dukaan ka paisa ICICI me, wahan FAILED (sab ulta)
@@ -177,13 +178,15 @@ liye the, ise wapas kar raha hoon, aur sab wapas paise bhej dunga.
 
 ```mermaid
 flowchart TB
-    W[("Dukaan ka wallet<br/>(-500)")]:::card
-    P["PSP -> ICICI<br/>(FAILED)"]:::bad
-    subgraph SU["SAB ULTA"]
-        L[("Register<br/>(Ledger: ulti line, +500)")]:::pill
+    W[("Dukaan ka wallet: -500")]:::card
+    I["ICICI pe PSP: FAILED<br/>(bank band, kal aana)"]:::bad
+    subgraph SU["SAB ULTA KAR DO"]
+        L[("Register me kaat diya:<br/>yahan se liye the, wapas kar raha<br/>(ledger ulti line)")]:::pill
     end
-    W --> P
-    P -- "ulta kadam" --> L
+    B["500 wapas dukaan ke wallet me"]:::good
+    W --> I
+    I --> L
+    L --> B
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -203,21 +206,21 @@ nikle, FAILED pe wapas wallet. Har waqt poore hisaab ka jod barabar.
 
 ```mermaid
 flowchart TB
-    W[("Wallet<br/>(-500)")]:::card
-    subgraph PL["PEHLE LIKH LO"]
-        H[("Beech ka khaata<br/>(Hold: 500)")]:::pill
+    W[("Wallet se 500 kate")]:::card
+    subgraph LK["SABSE PEHLE KAHIN LIKH LO"]
+        H[("Ledger: tere paise abhi yahan hain<br/>(hold, beech ka khaata)")]:::pill
     end
-    I["ICICI"]:::good
-    W2[("Wapas wallet")]:::card
+    I["SUCCESS: ICICI"]:::good
+    B["FAILED: wapas wallet"]:::card
     W --> H
-    H -- "SUCCESS" --> I
-    H -- "FAILED" --> W2
+    H -- "2 minute baad SUCCESS" --> I
+    H -- "FAILED" --> B
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style PL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style LK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. Saga ka jhanjhat kyun, sabse poochh lo "taiyaar ho?" (dheema dost)
@@ -233,21 +236,23 @@ isliye 2PC nahi, saga + hold.
 
 ```mermaid
 flowchart TB
-    C["Poochne wala<br/>(2PC coordinator)"]:::card
-    subgraph TH["TAIYAAR HO?"]
-        W["Wallet: taiyaar"]:::good
-        P["PSP: taiyaar"]:::good
-        I["ICICI: dheema<br/>(sab khade)"]:::bad
+    C["Sabse poochho: taiyaar ho?<br/>(2PC)"]:::card
+    subgraph PB["PAANCH BANDE"]
+        A["Wallet: taiyaar"]:::good
+        B["PSP: taiyaar"]:::good
+        I["ICICI: slow"]:::bad
     end
-    C --> W
-    C --> P
+    X["Ek slow ki wajah se sab khade:<br/>dost ki wajah se mera paper chhoota"]:::bad
+    C --> A
+    C --> B
     C --> I
+    I --> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style TH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style PB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. Diwali pe 3,000 / sec, ek register nahi jhel raha (chhote tukde)
@@ -261,21 +266,21 @@ shard ka apna likhne wala, likhai bant gayi.
 
 ```mermaid
 flowchart TB
-    S["Payment Service"]:::card
-    subgraph CT["CHHOTE TUKDE"]
-        T1[("Tukda 1<br/>(Shard 1)")]:::pill
-        T2[("Tukda 2<br/>(Shard 2)")]:::pill
-        T3[("Tukda 3<br/>(Shard 3)")]:::pill
+    X["Diwali: 3,000 payment / sec,<br/>ek register nahi jhel raha"]:::bad
+    subgraph KD["REGISTER KAAT DO, CHHOTE TUKDE"]
+        T1[("Tu yahan likh<br/>(tukda 1)")]:::pill
+        T2[("Tu ye likh<br/>(tukda 2)")]:::pill
+        T3[("Tu ye likh<br/>(tukda 3)")]:::pill
     end
-    S --> T1
-    S --> T2
-    S --> T3
+    X --> T1
+    X --> T2
+    X --> T3
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style CT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style KD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 10. Arpan tukda 1 me, dukaan tukda 3 me (office ka ladka + diary)
@@ -290,13 +295,15 @@ hold), wapas aake paise = fail pe ulta kadam.
 
 ```mermaid
 flowchart TB
-    T1[("Tukda 1: Arpan<br/>(Shard 1)")]:::card
-    subgraph OL["OFFICE KA LADKA"]
-        L(["Ladka + diary<br/>(Saga + hold)"]):::pill
+    T1[("Tukda 1: Arpan ka wallet")]:::card
+    subgraph OL["OFFICE KA LADKA + DIARY"]
+        L(["Ye 500 Arpan ne diye, is tukde<br/>me dene hain: de ke aa, bata<br/>(saga + hold)"]):::pill
     end
-    T3[("Tukda 3: dukaan<br/>(Shard 3)")]:::good
+    T3[("Tukda 3: dukaan")]:::good
+    B["Hisaab poora nahi:<br/>wapas aake paise de dega"]:::card
     T1 --> L
     L --> T3
+    L -.-> B
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -321,19 +328,21 @@ Naa to paise wapas = refund.
 
 ```mermaid
 flowchart TB
-    S["Payment Service"]:::card
-    subgraph CH["CHHOTU KO WAQT"]
-        CB{"PSP-1 pehle se down?<br/>(Circuit breaker)"}:::pill
-        J(["Chhotu ka waqt<br/>(Timeout + status job)"]):::pill
+    R["Ravi ka top-up 500"]:::card
+    CB{"PSP-1 pehle se down?"}:::card
+    P2["Seedha PSP-2"]:::good
+    subgraph CH["CHHOTU KO WAQT DO"]
+        PD(["Ravi: process ho raha hai<br/>(PENDING, PSP-2 pe nahi)"]):::pill
+        J(["Chhotu: itna waqt, haan ya naa<br/>(timeout + status job)"]):::pill
     end
-    P2["Seedha PSP-2<br/>(Fallback)"]:::good
-    PD[("Process ho raha<br/>(PENDING)")]:::card
-    R["Paise wapas<br/>(Refund)"]:::bad
-    S --> CB
-    CB -- "haan (OPEN)" --> P2
+    OK["Haan: kaam ho gaya"]:::good
+    NA["Naa: Ravi ke paise wapas"]:::bad
+    R --> CB
+    CB -- "haan, pata hai" --> P2
     CB -- "pata nahi" --> PD
-    J --> PD
-    J -- "naa" --> R
+    PD --> J
+    J --> OK
+    J --> NA
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
