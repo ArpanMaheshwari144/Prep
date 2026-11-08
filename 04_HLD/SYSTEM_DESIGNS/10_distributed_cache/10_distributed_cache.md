@@ -34,15 +34,15 @@ cache hit, nahi mila to DB se laake rakho = cache-aside. DB = source of truth.
 
 ```mermaid
 flowchart TB
-    A["Log<br/>(Ravi ka profile)"]:::card
+    U["Hazaaron log: Ravi ka profile<br/>(DB 50 ms, saans phooli)"]:::bad
     S["Server"]:::card
     subgraph DP["DB SE PEHLE EK DABBA"]
-        C[("Redis cache")]:::pill
+        C[("Padhi bahut, update kam:<br/>yahin se de de (Redis)")]:::pill
     end
-    D[("Diary<br/>(DB)")]:::card
-    A --> S
-    S -- "pehle yahan" --> C
-    S -. "nahi mila to" .-> D
+    D[("DB")]:::card
+    U --> S
+    S -- "pehle dabba" --> C
+    S -. "baar-baar nahi" .-> D
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -63,19 +63,21 @@ HashMap + doubly linked list, sab O(1), wahi LC 146).
 
 ```mermaid
 flowchart TB
-    P["Priya ka profile<br/>(nayi key)"]:::good
-    C[("Bhara dabba<br/>(Redis, 64 GB)")]:::card
-    subgraph PN["PURANA NIKAALO"]
-        O(["3 saal purane profile<br/>(LRU eviction)"]):::pill
+    P["Priya viral: jagah nahi"]:::bad
+    C[("Dabba bhar gaya (RAM, 64 GB)")]:::card
+    subgraph KH["RAM THODA KHAALI KARO"]
+        O(["Jo purana, kam use: nikaal do<br/>(3 saal purane profile, LRU)"]):::pill
     end
+    OK["Priya ki jagah ban gayi"]:::good
     P --> C
-    C -- "purana nikaalo" --> O
+    C --> O
+    O --> OK
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style PN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style KH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. 1 TB ek dabbe me nahi aata (tod do, hash batata kahan)
@@ -90,15 +92,17 @@ cache client library karti, beech me koi alag dabba nahi.
 
 ```mermaid
 flowchart TB
-    S["Server<br/>(hash(key))"]:::card
-    subgraph TD["TOD DO (hash batata kahan)"]
-        M1[("Dabba 1: 2 crore<br/>(Redis shard)")]:::pill
-        M2[("Dabba 2: 2 crore<br/>(Redis shard)")]:::pill
-        MN[("... Dabba N<br/>(Redis shard)")]:::pill
+    X["10 crore users, 1 TB:<br/>ek dabba 64 GB"]:::bad
+    H(["Hash: same key, same dabba"]):::pill
+    subgraph TD["TOD DO (kam pade to aur tod do)"]
+        M1[("Dabba 1: 2 crore")]:::card
+        M2[("Dabba 2: 2 crore")]:::card
+        MN[("... aur dabbe")]:::card
     end
-    S --> M1
-    S --> M2
-    S --> MN
+    X --> H
+    H --> M1
+    H --> M2
+    H --> MN
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -177,24 +181,23 @@ deta hai.
 
 ```mermaid
 flowchart TB
-    U["Ravi: naam badlo"]:::card
-    S["Server"]:::card
-    C[("Parchi<br/>(Redis: key DELETE)")]:::card
-    D[("Diary<br/>(DB: Ravi Kumar)")]:::good
-    subgraph PB["PEECHE EK BANDA"]
-        J(["Sync job"]):::pill
+    R["Ravi: naam Ravi Kumar kar do"]:::card
+    subgraph KR["KRAM"]
+        C[("1. Parchi se Ravi kaat do")]:::pill
+        D[("2. Diary (DB) me Ravi Kumar")]:::pill
     end
-    U --> S
-    S -- "1. pehle kaato" --> C
-    S -- "2. phir likho" --> D
+    G["Koi get kare: parchi khaali,<br/>DB se Ravi Kumar, parchi pe"]:::good
+    J(["Ek banda har baar check:<br/>yahan Ravi, wahan Ravi Kumar?<br/>DB sach (sync job)"]):::card
+    R --> C
+    C --> D
+    D --> G
     J -.-> C
-    J -.-> D
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style PB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style KR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Priya viral, 10,000 log ek saath DB pe (ek chhotu bhejo)
@@ -220,23 +223,23 @@ expiry).
 
 ```mermaid
 flowchart TB
-    U["10,000 log<br/>(sab miss)"]:::bad
-    subgraph SV["SERVER"]
-        S["Server"]:::card
-        L(["Ek chhotu<br/>(single flight lock)"]):::pill
+    U["Priya viral: 10,000 log,<br/>sab miss"]:::bad
+    subgraph CH["CHUPCHAAP EK CHHOTU"]
+        L(["Chhotu jaldi DB jaa,<br/>Priya ki parchi le aa<br/>(single flight)"]):::pill
     end
-    D[("Mota register<br/>(DB)")]:::card
-    C[("Parchi<br/>(Redis cache)")]:::good
-    U --> S
-    S --> L
-    L -- "ek baar" --> D
-    S --> C
+    B["Chhotu gira? kuch second dekho,<br/>bheed me se ek aadmi bhejo"]:::card
+    D[("Mota register (DB)")]:::card
+    C[("Parchi pe likh, sabko<br/>yahin se bhaga do")]:::good
+    U --> L
+    L --> D
+    D --> C
+    B -.-> D
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style SV fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style CH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. 1 crore log, akeli machine 4 pe (ek aur gaadi)
@@ -253,17 +256,15 @@ nahi chalta, kyunki ek key ek hi machine pe jaati.
 
 ```mermaid
 flowchart TB
-    U["1 crore log<br/>(Priya ki key)"]:::bad
-    S["Server"]:::card
+    U["1 crore log: Priya ki key<br/>sirf machine 4 pe"]:::bad
     subgraph GD["EK AUR GAADI"]
-        M4[("Machine 4<br/>(Redis node)")]:::card
-        M8[("Machine 8: copy<br/>(replica)")]:::pill
-        M9[("Machine 9: copy<br/>(replica)")]:::pill
+        M4[("Machine 4")]:::card
+        M8[("Machine 8: tu bhi dekh le<br/>(replica)")]:::pill
+        M9[("Machine 9: tu bhi dekh le<br/>(replica)")]:::pill
     end
-    U --> S
-    S --> M4
-    S --> M8
-    S --> M9
+    U --> M4
+    U --> M8
+    U --> M9
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
