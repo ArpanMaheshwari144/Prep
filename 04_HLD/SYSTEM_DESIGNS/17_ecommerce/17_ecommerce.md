@@ -42,11 +42,23 @@ matlab hi aas-paas ka store. Whitefield me baithe ko Koramangala wala dikhta.
 **Asli naam:** har store ka apna stock (store_id + item), app location dekh ke paas wala store chunta.
 
 ```mermaid
-flowchart LR
-    R["Ravi<br/>(App)"] --> O["Order<br/>(Order Service)"]
-    O --> G[("Godown ki parchi<br/>(Inventory DB: online stock)")]
-    A["Aunty<br/>(Counter)"] --> S[("Shelf<br/>(store stock)")]
-    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    R["Ravi: app pe order"]:::card
+    A["Aunty: counter pe"]:::card
+    subgraph MM["MAUSI KA MART: HAR RAASTE KA ALAG STOCK"]
+        G[("Godown: Ravi ko yahi dikhe<br/>(online stock)")]:::pill
+        SH[("Shelf: aunty ka")]:::card
+    end
+    ATM["ATM jaisa: shelf khatam,<br/>duniya ka maal nahi"]:::good
+    R --> G
+    A --> SH
+    G -.-> ATM
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style MM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. Ladka 10 dabbe utha ke bhool gaya (uthana aur likhna ek hi kaam)
@@ -68,10 +80,23 @@ liye aaya wo wahin aaye, wahin se nikle, badi dukaan me ghuse hi nahi.
 pahunchti, ek gira to doosra chalta.
 
 ```mermaid
-flowchart LR
-    S["Sale wale<br/>(50 hazaar)"] --> F["Bagal wali dukaan<br/>(Flash Sale Service)"]
-    N["Aata-daal wale"] --> M["Badi dukaan<br/>(Order Service)"]
-    style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Diwali sale: 50 hazaar log ghee pe"]:::bad
+    subgraph BD["BAGAL WALI KHAALI DUKAAN"]
+        S(["Sale wala maal: wahin aao,<br/>wahin se niklo (alag service)"]):::pill
+    end
+    subgraph BG["BADI DUKAAN"]
+        N["Aata-daal: aaram se khareedein"]:::good
+    end
+    U --> S
+    N -. "bheed yahan nahi" .-> S
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style BG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Ek parchi pe 50 hazaar (10 counter, tez kaatne wala)
@@ -85,14 +110,26 @@ tukdon me todo (har tukda ek row / key). Kaatna tez jagah pe: Redis me ginti, `D
 per second). DB tak sirf jinka mila.
 
 ```mermaid
-flowchart LR
-    U["50 hazaar log"] --> F["Sale dukaan<br/>(Flash Sale Service)"]
-    F --> C1[("Counter 1: 50<br/>(Redis key 1)")]
-    F --> C2[("Counter 2: 50<br/>(Redis key 2)")]
-    F --> CN[("... Counter 10<br/>(Redis key 10)")]
-    style C1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style C2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style CN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    X["Ek counter, ek parchi ghee 500:<br/>line 50 hazaar"]:::bad
+    subgraph TC["10 COUNTER, HAR PE 50 GHEE"]
+        C1(["Counter 1: 50"]):::pill
+        C2(["Counter 2: 50"]):::pill
+        CN(["... Counter 10: 50"]):::pill
+    end
+    K["Kaatne wala: haath jitna tez<br/>(Redis DECR)"]:::good
+    X --> C1
+    X --> C2
+    X --> CN
+    C1 --> K
+    C2 --> K
+    CN --> K
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style TC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Counter 3 khatam, counter 7 pe 30 pade (khaali counter band, baaki khule)
@@ -103,12 +140,20 @@ hua wo counter band, aur uski line ko bolo jahan ghee bacha wahan jaao. "Khatam"
 **Asli naam:** ek tukda (key) 0 ho gaya to agla tukda try karo. Sold out tabhi jab saare tukde 0.
 
 ```mermaid
-flowchart LR
-    U["Counter 3 ki line"] --> C3[("Counter 3<br/>(tukda 3: 0)")]
-    C3 -. "khatam, agla try" .-> C7[("Counter 7<br/>(tukda 7: 30)")]
-    C7 --> OK["Ghee mila"]
-    C7 -. "sab tukde 0" .-> SO["Tabhi 'sold out'"]
-    style C7 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    C3["Counter 3: 50 khatam,<br/>line me 2000"]:::bad
+    subgraph KB["KHAALI COUNTER BAND, BAAKI KHULE"]
+        C7(["Counter 7: abhi 30 pade,<br/>yahan jaao"]):::pill
+    end
+    S["Khatam tab hi bolo<br/>jab sabka zero"]:::good
+    C3 --> C7
+    C7 --> S
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style KB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. 500 kate, 60 ne pay hi nahi kiya (cart = list, ginti pay pe)
@@ -137,13 +182,24 @@ API). Doosra raasta: Pay dabaate hi dabba ghadi (10 min) ke saath rok do (BMS ja
 dabba mila; refund kam, par dabba ghadi tak kisi ke kaam nahi aata. Dono ki keemat: refund ya ruka dabba.
 
 ```mermaid
-flowchart LR
-    U["3000 Pay"] --> Q["Line<br/>(Order Service queue)"]
-    Q --> P["Pay<br/>(Payment Service + PSP)"]
-    P -- "paisa aaya" --> D[("Ginti kaato<br/>(Redis DECR / Inventory DB)")]
-    D -- "0 ke baad" --> RF["Paisa wapas<br/>(refund)"]
-    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style RF fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["3000 log ek second me Pay,<br/>ghee 500"]:::card
+    subgraph SL["HAMARE SERVER PE LINE"]
+        Q(["Jo pehle aaya, pehle paaya:<br/>paisa aaya to ginti kaato"]):::pill
+    end
+    OK["Pehle 500: dabba uska"]:::good
+    R["501 ke baad: turant rollback,<br/>paisa wapas, out of stock"]:::bad
+    B["Asli hal: stock pehle se<br/>zyada mangwao"]:::card
+    U --> Q
+    Q --> OK
+    Q --> R
+    B -.-> Q
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7b. Rollback me bhi pech, ghadi me bhi (Apple store jaisa sale gate)
@@ -170,14 +226,25 @@ andar Pay daba diya aur PSP dheema to hamari zimmedari.
 PAYMENT_PENDING aur hold ruk jaata (kadam 8 / BMS jaisa).
 
 ```mermaid
-flowchart LR
-    U["3000 log bahar<br/>(Sale page)"] --> GT["Apple store ka darwaza<br/>(Sale gate, Buy now)"]
-    GT --> C[("Kitne bache<br/>(Redis DECR)")]
-    GT -- "500 andar" --> P["Pay<br/>(Payment Service + PSP)"]
-    P -. "card fail / chala gaya" .-> NB["Agla batch andar<br/>(jitne bache)"]
-    N["Aata-daal wale<br/>(normal checkout)"] --> O["Badi dukaan<br/>(Order Service)"]
-    style GT fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Bahar 3000 log"]:::card
+    subgraph AG["APPLE STORE JAISA SALE GATE"]
+        G(["Jitne phone utne andar<br/>(Redis DECR)"]):::pill
+        T(["Andar aate hi 5 min ghadi:<br/>ya pay kar, ya rakh de"]):::pill
+    end
+    P["Pay kiya: phone uska"]:::good
+    N["Card decline / chala gaya:<br/>wapas, agla batch andar"]:::card
+    U --> G
+    G --> T
+    T --> P
+    T -.-> N
+    N -.-> G
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. Net gaya / PSP chup (PAYMENT_PENDING, PSP se poochte raho)
@@ -190,12 +257,26 @@ kiya to wahan BMS wali cheez hi leni padegi. Paisa kata to zimmedari hamari, PSP
 bacha ho to refund. Perfect design koi nahi, bas kitne refund.
 
 ```mermaid
-flowchart LR
-    O["Order<br/>(PAYMENT_PENDING)"] --> J["Poochne wala<br/>(Status job)"]
-    J -- "paisa kata?" --> PSP["PSP"]
-    J -- "haan + dabba bacha" --> D[("Dabba uska<br/>(Inventory DB)")]
-    J -- "haan, dabba nahi" --> RF["Paisa wapas<br/>(refund)"]
-    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    R["Ravi: laga pay ho gaya"]:::card
+    X["PSP tak pahunchi nahi,<br/>ya kata aur PSP anjaan"]:::bad
+    subgraph BM["BMS WALI CHEEZ"]
+        P[("PAYMENT_PENDING")]:::pill
+        J(["Status job: PSP se poochte raho"]):::pill
+    end
+    OK["Paisa kata: dabba uska"]:::good
+    RF["Dabba na bacha: refund"]:::card
+    R --> X
+    X --> P
+    J --> P
+    P --> OK
+    P -.-> RF
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
