@@ -36,11 +36,22 @@ isliye ek hi khabar SMS aur Fraud dono padh lete hain, aur peeche ja ke dobara b
 hote hi queue se hat jaati, dobara nahi padh sakte).
 
 ```mermaid
-flowchart LR
-    O["Ticket counter<br/>(Order Service)"] --> K[("Admin ki line<br/>(Kafka topic)")]
-    K --> S["SMS counter<br/>(SMS Service)"]
-    K --> F["Fraud counter<br/>(Fraud Service)"]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    O["Ticket counter<br/>(Order Service)"]:::card
+    subgraph AL["ADMIN KI LINE"]
+        K[("Kafka topic")]:::pill
+    end
+    S["SMS counter<br/>(SMS Service)"]:::good
+    F["Fraud counter<br/>(Fraud Service)"]:::good
+    O --> K
+    K --> S
+    K --> F
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. Line me ek aadmi ruk gaya (seat booked hai)
@@ -55,10 +66,20 @@ khabar padhne se mit-ti nahi, 7 din disk pe rehti hai (retention). Fraud dheema 
 rukega.
 
 ```mermaid
-flowchart LR
-    K[("Admin ki line<br/>(Kafka topic)")] --> S["Ruka aadmi<br/>(SMS consumer, restart)"]
-    B[("Booked seat<br/>(offset = bookmark)")] -.-> S
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    K[("Admin ki line<br/>(Kafka topic)")]:::card
+    subgraph BS["SEAT BOOKED HAI"]
+        B[("Booked seat<br/>(offset = bookmark)")]:::pill
+    end
+    S["Ruka aadmi<br/>(SMS consumer, restart)"]:::good
+    K --> S
+    B -. "yahin se shuru" .-> S
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Ek admin se bheed nahi sambhal rahi (aur gate + hash)
@@ -72,14 +93,24 @@ cancel) hamesha ek hi gate se jaayengi, to unka kram nahi bigdega.
 ke andar, kaun kis gate pe, hash = key ka hash se partition (`hash(userId) % 30`), isliye key = userId (kram sirf ek partition ke andar pakka hai, poore topic me nahi).
 
 ```mermaid
-flowchart LR
-    O["Ticket counter<br/>(Producer, key = userId)"] --> H["Hash<br/>(hash(userId) % 30)"]
-    H --> G1[("Gate 1<br/>(Partition 1)")]
-    H --> G2[("Gate 2<br/>(Partition 2)")]
-    H --> GN[("... Gate 30<br/>(Partition 30)")]
-    style G1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style G2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style GN fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    O["Ticket counter<br/>(Producer, key = userId)"]:::card
+    H(["Hash<br/>(hash(userId) % 30)"]):::pill
+    subgraph GT["AUR GATE (30 partition)"]
+        G1[("Gate 1<br/>(Partition 1)")]:::card
+        G2[("Gate 2<br/>(Partition 2)")]:::card
+        GN[("... Gate 30<br/>(Partition 30)")]:::card
+    end
+    O --> H
+    H --> G1
+    H --> G2
+    H --> GN
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style GT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Har ticket 3 baar punch (ek kamra, alag kamra)
@@ -98,11 +129,20 @@ security ka room. Ek ko paar karo, phir doosre room me jao.
 **Asli naam:** alag room = alag consumer group (`fraud`), har group ko saari khabar ki poori copy aur apna offset.
 
 ```mermaid
-flowchart LR
-    G[("Gate<br/>(Partitions)")] --> C["Checker ka kamra<br/>(Consumer group sms)"]
-    G --> T["Security ka kamra<br/>(Consumer group fraud)"]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    G[("Gate<br/>(Partitions)")]:::card
+    subgraph KM["ALAG-ALAG KAMRA"]
+        C(["Checker ka kamra<br/>(Consumer group sms)"]):::pill
+        T(["Security ka kamra<br/>(Consumer group fraud)"]):::pill
+    end
+    G --> C
+    G --> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style KM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Admin ne "aa gaya" bola, phir gira (vasiyat ki copy)
@@ -117,12 +157,22 @@ replica hai, replica ne bol diya "likh liya", sab bolein, tab.
 replica leader ban jaati. 2 pakki copy na hon to likhna band: khabar khone se behtar thodi der rukna.
 
 ```mermaid
-flowchart LR
-    O["Ticket counter<br/>(Producer, acks=all)"] --> L[("Gate ka admin<br/>(Leader broker)")]
-    L --> R1[("Doosra admin<br/>(Replica)")]
-    L --> R2[("Teesra admin<br/>(Replica)")]
-    style R1 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style R2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    O["Ticket counter<br/>(Producer, acks=all)"]:::card
+    L[("Gate ka admin<br/>(Leader broker)")]:::card
+    subgraph VC["VASIYAT KI COPY"]
+        R1[("Doosra admin<br/>(Replica)")]:::pill
+        R2[("Teesra admin<br/>(Replica)")]:::pill
+    end
+    O --> L
+    L --> R1
+    L --> R2
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style VC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Checker register me likhne se pehle gira (pehle aaya? dekh lo)
@@ -143,11 +193,22 @@ Asli naam: at-least-once, idempotent consumer (idempotency key = eventId / order
 bhejo taaki wo bhi dobara na bheje.
 
 ```mermaid
-flowchart LR
-    K[("Admin ki line<br/>(Kafka)")] --> N["Naya checker<br/>(consumer)"]
-    N --> I[("Pehle aaya?<br/>(eventId check, idempotency)")]
-    I --> S["Punch<br/>(SMS bhejo, sirf naya)"]
-    style I fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    K[("Admin ki line<br/>(Kafka)")]:::card
+    N["Naya checker<br/>(consumer)"]:::card
+    subgraph PA["PEHLE AAYA? DEKH LO"]
+        I[("eventId check<br/>(idempotency)")]:::pill
+    end
+    S["Punch<br/>(SMS bhejo, sirf naya)"]:::good
+    K --> N
+    N --> I
+    I --> S
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Ticket counter khabar bhejne se pehle gira (vasiyat + runner)
@@ -166,12 +227,22 @@ to `eventId` pakad leta hai.
 chuka, khabar vasiyat me padi hai, Kafka theek hote hi runner bhej dega.
 
 ```mermaid
-flowchart LR
-    O["Ticket counter<br/>(Order Service)"] --> D[("Vasiyat<br/>(DB: order + outbox)")]
-    D --> RL["Runner<br/>(Relay)"]
-    RL --> K[("Admin ki line<br/>(Kafka)")]
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    O["Ticket counter<br/>(Order Service)"]:::card
+    subgraph VR["VASIYAT + RUNNER"]
+        D[("DB: order + outbox<br/>(ek transaction)")]:::pill
+        RL(["Runner<br/>(Relay)"]):::pill
+    end
+    K[("Admin ki line<br/>(Kafka)")]:::good
+    O --> D
+    D --> RL
+    RL --> K
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style VR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. Galat ticket wala baar-baar ghus raha (bouncer + side ki line)
@@ -185,12 +256,22 @@ karke dobara chalaye), bouncer gate pe hi rok de = galat khabar
 ko pehle hi rokna (validation: Order Service bhejne se pehle number aur format jaanch le).
 
 ```mermaid
-flowchart LR
-    B["Bouncer<br/>(validation)"] --> K[("Admin ki line<br/>(Kafka)")]
-    K --> C["Checker<br/>(SMS consumer)"]
-    C -- "galat ticket" --> D[("Side ki line<br/>(DLQ)")]
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    subgraph BN["BOUNCER"]
+        B(["validation"]):::pill
+    end
+    K[("Admin ki line<br/>(Kafka)")]:::card
+    C["Checker<br/>(SMS consumer)"]:::card
+    D[("Side ki line<br/>(DLQ)")]:::bad
+    B --> K
+    K --> C
+    C -- "galat ticket" --> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. SMS counter 10 minute band, sab DLQ me ja rahe (pehle check, phir traffic divert)
@@ -205,12 +286,22 @@ divert kar do.
 check, traffic divert = fallback (doosri SMS company). DLQ sirf us khabar ke liye jo akeli fail ho.
 
 ```mermaid
-flowchart LR
-    C["Checker<br/>(SMS consumer)"] --> CB["Pehle check<br/>(circuit breaker + health check)"]
-    CB --> S1["SMS counter<br/>(SMS company 1, band)"]
-    CB -- "waqai band" --> S2["Doosra raasta<br/>(SMS company 2, fallback)"]
-    style CB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    C["Checker<br/>(SMS consumer)"]:::card
+    subgraph PC["PEHLE CHECK"]
+        CB{"circuit breaker<br/>+ health check"}:::pill
+    end
+    S1["SMS counter<br/>(SMS company 1, band)"]:::bad
+    S2(["Doosra raasta<br/>(SMS company 2, fallback)"]):::good
+    C --> CB
+    CB -.-> S1
+    CB -- "waqai band" --> S2
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 10. Koi 7 din peeche reh gaya (aur admin + alert)
@@ -231,11 +322,20 @@ peeche kyun ja raha hai."
 **Asli naam:** consumer lag alert (lag 1 ghante se zyada to alert).
 
 ```mermaid
-flowchart LR
-    G[("Gate<br/>(Partitions, 7 din retention)")] --> C["Aur checker<br/>(consumer badhao, 30 tak)"]
-    G -. "lag badha" .-> A["Alert<br/>(consumer lag alert)"]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style A fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    G[("Gate<br/>(Partitions, 7 din retention)")]:::card
+    subgraph AA["AUR ADMIN + ALERT"]
+        C(["Aur checker<br/>(consumer badhao, 30 tak)"]):::pill
+        A(["Alert<br/>(consumer lag alert)"]):::pill
+    end
+    G --> C
+    G -. "lag badha" .-> A
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
