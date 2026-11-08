@@ -244,12 +244,13 @@ Perfect jawab nahi hai.
 **Asli naam:** server pe pata kaun pehle aaya = har chat ka sequence number (kadam 7), phone sahi kram me lagaye =
 client number se sort kare, aane ke kram se nahi. Dheeme ke liye doosra mat roko = deliver turant, baad me reorder.
 
-**Maan lo har chat ka alag counter na rakhna ho:** us time ko hi number bana do jab message server pe aaya. Time
-hamesha badhta hai, to number bhi. Asli naam: Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13).
-
-**Maan lo pooche ye number kabhi khatam to nahi hoga:** number ka daava mat thoko. Yaad ho to bonus: long (64-bit)
-me lagbhag 92 lakh crore crore (9.2 x 10^18) tak, aur counter har chat ka alag. Aur kuch range jaisa pooche to seedha:
-"padhte waqt dekha tha isliye yaad hai, baaki net se dekh lete".
+**Maan lo interviewer kheeche: number kaun lagayega, aur ye kabhi khatam to nahi hoga:** message server pe jis time
+aaya, usi time ko number bana do; time hamesha badhta hai, to number bhi, aur phone usi se kram lagata hai. Par "kabhi
+khatam nahi hoga" jaisa daava mat karo: interviewer "maan lo 50 saal me bhar gaya to?" kheench sakta hai aur point
+wapas lena padta hai. Seedha dhaancha bolo: har message ko ek kram number, phone usi se lagata hai. Asli naam: time se
+number = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), ya har chat ka sequence number. Had yaad ho
+to bonus: long (64-bit) me lagbhag 92 lakh crore crore (9.2 x 10^18), counter har chat ka alag; warna "padhte waqt
+dekha tha, baaki net se dekh lete".
 
 ```mermaid
 flowchart LR
