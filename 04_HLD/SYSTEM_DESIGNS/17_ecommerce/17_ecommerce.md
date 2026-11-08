@@ -67,6 +67,13 @@ liye aaya wo wahin aaye, wahin se nikle, badi dukaan me ghuse hi nahi.
 **Asli naam:** sale ka alag raasta / alag service (Flash Sale Service, apne server). Uski bheed normal orders tak nahi
 pahunchti, ek gira to doosra chalta.
 
+```mermaid
+flowchart LR
+    S["Sale wale<br/>(50 hazaar)"] --> F["Bagal wali dukaan<br/>(Flash Sale Service)"]
+    N["Aata-daal wale"] --> M["Badi dukaan<br/>(Order Service)"]
+    style F fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ## 4. Ek parchi pe 50 hazaar (10 counter, tez kaatne wala)
 
 Sale dukaan me ek counter, ek parchi "ghee: 500". Ek waqt me ek hi aadmi parchi chhoo sakta, line 50 hazaar ki. To 10
@@ -94,6 +101,15 @@ flowchart LR
 hua wo counter band, aur uski line ko bolo jahan ghee bacha wahan jaao. "Khatam" tab bolo jab sabka zero.
 
 **Asli naam:** ek tukda (key) 0 ho gaya to agla tukda try karo. Sold out tabhi jab saare tukde 0.
+
+```mermaid
+flowchart LR
+    U["Counter 3 ki line"] --> C3[("Counter 3<br/>(tukda 3: 0)")]
+    C3 -. "khatam, agla try" .-> C7[("Counter 7<br/>(tukda 7: 30)")]
+    C7 --> OK["Ghee mila"]
+    C7 -. "sab tukde 0" .-> SO["Tabhi 'sold out'"]
+    style C7 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
 ## 6. 500 kate, 60 ne pay hi nahi kiya (cart = list, ginti pay pe)
 

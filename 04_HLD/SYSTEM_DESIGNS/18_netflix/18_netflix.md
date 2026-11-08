@@ -41,7 +41,7 @@ buffering kam), ISP bhi khush (uska bahar jaane wala bandwidth bachta).
 ```mermaid
 flowchart LR
     S[("US ka store<br/>(origin / S3)")] -- "dost roz laata<br/>(fill)" --> B[("Apne shehar ka dabba<br/>(Open Connect, ISP ke andar)")]
-    R["Ravi ka TV"] -- "tukde paas se" --> B
+    B -- "tukde paas se" --> R["Ravi ka TV"]
     style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -132,7 +132,7 @@ paas wala dabba video dega, ye sab AWS pe. Sirf video ke bytes Open Connect se.
 flowchart LR
     R["Ravi play dabaya"] --> P["Hamara server, AWS pe<br/>(Playback / Steering Service)"]
     P -- "dabba 7 se lo" --> R
-    R -- "tukde" --> B7[("Dabba 7<br/>(Open Connect)")]
+    B7[("Dabba 7<br/>(Open Connect)")] -- "tukde" --> R
     style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
 ```
 
@@ -157,7 +157,7 @@ matlab aaj aage nahi badha.
 
 ```mermaid
 flowchart LR
-    R["Ravi ka TV"] -- "tukde" --> B[("Dabba<br/>(Open Connect)")]
+    B[("Dabba<br/>(Open Connect)")] -- "tukde" --> R["Ravi ka TV"]
     R -- "26:50 pe hoon<br/>(heartbeat)" --> W["Hamara server"]
     W --> C[("Parchi paas<br/>(cache)")]
     C -- "ruk gaya -> register" --> D[("Register<br/>(DB, account pe)")]

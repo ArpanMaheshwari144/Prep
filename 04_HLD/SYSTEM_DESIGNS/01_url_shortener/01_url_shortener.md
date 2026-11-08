@@ -109,6 +109,14 @@ nahi kahan gaya. Aur tab tak logon ko purani information de sakte hain, baad me 
 **Asli naam:** ladke ki timeline, nahi aaya to agla = lock TTL (umar khatam to lock khulta, agla le leta), purani
 information do, baad me update = soft / hard TTL (soft nikla to purana turant do, peeche se naya lao).
 
+```mermaid
+flowchart LR
+    L["Ladka gira<br/>(lock wala server)"] -. "timeline khatam" .-> T[("Lock ki umar<br/>(lock TTL)")]
+    T --> N["999 me se ek naya ladka<br/>(mote register se laaye)"]
+    U["Ruke log"] -- "tab tak purani info" --> O["Purana jawab<br/>(soft TTL)"]
+    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ## 7. 5 counter, dono ne token "10" diya (apni-apni range)
 
 Ek counter se bheed nahi sambhli, to 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha, isliye counter 1
@@ -193,6 +201,16 @@ dikhaya, aur counter wale ne C se padha, "nahi mila". Humne do pe likha, to do s
 B aur C se, ya A aur C se. Ek copy peeche reh bhi gayi to atleast ek ke paas to hai, C nahi hai to B ke paas hai.
 
 **Asli naam:** do se hi padhwao = R=2, ek ke paas to hai = W + R > 3, isliye ek copy hamesha common.
+
+```mermaid
+flowchart LR
+    W["Naya token<br/>(likho)"] --> A[("A: haan")]
+    W --> B[("B: haan")]
+    W -. "peeche reh gaya" .-> C[("C: abhi nahi")]
+    R["Dost padhe<br/>(do se padho, R=2)"] --> B
+    R --> C
+    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
 ## 12. Cricket ka token viral (register ki photocopy + counter ki parchi)
 

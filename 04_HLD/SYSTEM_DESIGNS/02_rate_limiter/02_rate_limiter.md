@@ -60,6 +60,15 @@ user apni raftaar se aata, khaata badalne se kuch reset nahi hota. User der tak 
 refill rate (OTP: max 5, har 2 minute me 1, aam raftaar 10 min me 5, request aane pe hi hisaab = lazy refill), der baad aaya to bahut token =
 burst allow. Sirf 2 number rakhne padte (kitne bache, aakhri baar kab), wahi 500 MB.
 
+```mermaid
+flowchart LR
+    D[("Har bande ka dabba<br/>(token bucket, max 5)")] -- "apni raftaar se bhare<br/>(2 min me 1)" --> D
+    U["Ravi: OTP maanga"] --> D
+    D -- "token mila" --> OK["OTP gaya"]
+    D -. "dabba khaali" .-> X["429, baad me aao"]
+    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ## 4. Ek token, 20 request ek saath (ek hi baari me, Lua)
 
 Ravi ke dabbe me 1 token. Script ne ek pal me 20 request maari, 10 server pe. Har server ne Redis se padha "tokens =

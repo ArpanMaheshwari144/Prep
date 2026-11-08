@@ -103,6 +103,15 @@ hoga, use dobara ghumaana bekaar. Wo kaise pehchanein, agle kadam me.
 **Asli naam:** alag rakh ke thodi der baad = retry queue (ruk ke dobara, wait badhta jaata), main line nahi rukti.
 Dikkat aayi to likh lo, kahin daal do = queue / parchi / retry ka ek hi pattern.
 
+```mermaid
+flowchart LR
+    Q[("Main line<br/>(SMS topic)")] --> W["SMS worker"]
+    W -- "company: abhi bheed" --> R[("Alag rakho<br/>(retry queue, wait badhta)")]
+    R -. "thodi der baad" .-> W
+    W --> S["SMS company"]
+    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ## 5. SMS company poori band (teen-chaar company + VIP line)
 
 Har call 30 second latki phir fail, saare worker atke, retry line phoolti ja rahi, Arpan ka OTP nahi aaya. To ek
@@ -155,6 +164,16 @@ usi se guzrein. Main beech me baitha hoon: tune bhej diya, tu bhi bhej raha? Nah
 
 **Asli naam:** had apni taraf se = rate limit, saanjha dabba = shared token bucket (Redis, 100 token / sec, sab worker
 wahi se token lete), token nahi mila = khabar line me wait, khoti nahi.
+
+```mermaid
+flowchart LR
+    W1["Worker 1"] --> B[("Saanjha dabba<br/>(Redis, 100 token / sec)")]
+    W2["Worker 2"] --> B
+    WN["... Worker 20"] --> B
+    B -- "token mila" --> S["SMS company<br/>(had 100 / sec)"]
+    B -. "token nahi" .-> L["Line me wait<br/>(khoti nahi)"]
+    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
 
 ## 7. Company ne "le liya" bola, SMS pahuncha hi nahi (le liya ke baad)
 

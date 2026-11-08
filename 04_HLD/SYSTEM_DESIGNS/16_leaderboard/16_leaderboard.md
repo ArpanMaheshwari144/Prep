@@ -82,6 +82,17 @@ chhotu ka kaam, har kuch minute me sab dabbe mila ke ek bada board. Referee ke l
 **Asli naam:** mera rank = har shard se count (mere score se upar, `ZCOUNT`), jod ke +1. Poora board = background job
 jo snapshot banata.
 
+```mermaid
+flowchart LR
+    A["Arpan ka score"] --> I[("India dabba<br/>upar 3,000")]
+    A --> E[("Europe dabba<br/>upar 1,20,000")]
+    A --> O[("... baaki dabbe")]
+    I --> J["Jodo + 1<br/>(mera rank)"]
+    E --> J
+    O --> J
+    style J fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+```
+
 ## 5. Aaj, is hafte, all-time; raat 12 baje aaj wala khaali (alag register)
 
 Teeno board ka kram alag: aaj koi aur upar, hafte me koi aur, all-time me koi aur. Alag se sort nahi chalana: match

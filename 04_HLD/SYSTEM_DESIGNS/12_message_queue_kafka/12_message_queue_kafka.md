@@ -134,6 +134,13 @@ ki ye pehle aaya hai. Aa chuka to chhod do. Bas, samajh ja.
 kabhi dobara aati (at-least-once). Check kar le ki pehle aaya hai = idempotency (`eventId` se dobara wali khabar pakad
 ke chhodna, Redis / DB me dekh ke). Ye padhne wale ka kaam hai, Kafka ka nahi.
 
+**Maan lo worker ne order #501 ka SMS bhej diya, par bookmark (commit) khiskaane se pehle gir gaya:** naya
+worker wahi message dobara uthata hai. Paisa dena (SMS company) aur DONE likhna (hamara DB) do alag jagah hain,
+ek jhatke me nahi ho sakte, ye beech ka pal rok nahi sakte, isliye dobara aana maan ke chalo. Har message ki ek
+pakki id bana do: wahi id dobara aaye to discard, chahe naya worker laaye ya doosri SMS company se jaaye.
+Asli naam: at-least-once, idempotent consumer (idempotency key = eventId / order id), wahi id SMS company ko bhi
+bhejo taaki wo bhi dobara na bheje.
+
 ```mermaid
 flowchart LR
     K[("Admin ki line<br/>(Kafka)")] --> N["Naya checker<br/>(consumer)"]
