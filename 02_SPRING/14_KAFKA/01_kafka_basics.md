@@ -53,3 +53,26 @@ padi. Jad ye thi ki autoconfig `spring-boot-starter-kafka` ke saath aata hai. St
 `KafkaProducerController` hai (`/kafka/send`), `KafkaConsumer` hai (jisme `@KafkaListener`, DLT listener aur processedIds hain), aur
 `KafkaConfig` hai (jisme sirf `DefaultErrorHandler` aur `NewTopic` hain). DLT topic ke partition utne hi rakho jitne main topic ke hain,
 kyunki recoverer message ko usi partition number pe bhejta hai.
+
+## Andar se: message disk pe kaise rakha jaata hai (padhai, design me nahi poochte)
+
+Ye wahi kahani hai jo bank aur Twitter me pehle aa chuki hai. Stadium ke gate pe admin ek register me har aane wale ka
+naam likhta hai. Wo beech ke panne pe nahi likhta, aur purana naam kaat ke dobara nahi likhta. Bas aakhri line ke neeche
+agla naam jodta jaata hai. Kafka bhi disk pe yahi karta hai: har partition ek register hai, aur naya message hamesha
+uske aakhir me judta hai. Beech me jagah dhoond ke likhna dheema hota hai, aakhir me jodte jaana sabse tez, isliye
+Kafka itna tez likh paata hai.
+
+Register bhar jaaye to admin purana band karke almari me rakh deta hai aur naya register khol leta hai. Har register ke
+cover pe likha hota hai ki wo kis number se shuru hua: "0 se", "500 se", "1000 se". 7 din purana maal hatana ho to Kafka
+panne kaat-kaat ke nahi hatata, jo poora register 7 din se purana ho use seedha almari se phenk deta hai.
+
+Offset 501 maanga to do kadam: pehle covers dekho, 501 "500 se" wale register me hai (covers kram me lage hain, to
+binary search). Phir us register ke saath lagi chhoti parchi dekho, jaise kitaab ki vishay-suchi: "500 -> panna 1,
+600 -> panna 4". Parchi har number ke liye nahi likhti, beech-beech ke, taaki chhoti rahe. Panna 1 pe jao, do-chaar
+line aage padho, 501 mil gaya.
+
+**Asli naam:** aakhir me jodo = append-only log, ek register = segment (`.log` file), poora register phenkna =
+retention, chhoti parchi = `.index` (offset se jagah, beech-beech ki entry = sparse index).
+
+**Pehle kahan bola:** kaato mat neeche likho = Banking 5 (ledger) · mahine ke mahine tod do = Banking 12 · purana
+head office = Banking 13 · ID se seedha page, 1 lakh panne nahi palatne = Twitter 16.
