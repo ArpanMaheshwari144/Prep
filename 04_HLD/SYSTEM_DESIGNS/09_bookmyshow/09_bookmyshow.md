@@ -37,15 +37,19 @@ aur pay hua to seat + booking + payment teeno ek saath badlein ya koi nahi, ye t
 
 ```mermaid
 flowchart TB
-    A["Arpan"]:::card
-    L["Doosra ladka"]:::card
-    S["Counter<br/>(BMS Service)"]:::card
-    subgraph EK["DEKHNA + PARCHI EK SAATH"]
-        D[("Seat pe parchi<br/>(SQL DB: seats, HELD)")]:::pill
+    A["Arpan: ek seat chahiye,<br/>lo mere paise"]:::card
+    L["Doosra ladka: D5"]:::card
+    C1["Mera counter"]:::card
+    C2["Doosra counter"]:::card
+    subgraph EK["DEKHNA + BOOK KARNA EK SAATH"]
+        D[("D5 pe parchi: ye Arpan ki,<br/>kisi aur ko nahi (hold)")]:::pill
     end
-    A --> S
-    L --> S
-    S --> D
+    X["Doosra counter: parchi lagi hai,<br/>tu ja bhai, seat book ho gayi"]:::bad
+    A --> C1
+    L --> C2
+    C1 --> D
+    C2 --> D
+    D -.-> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -66,13 +70,13 @@ hata ke seat wapas FREE, pay aa gaya to HELD -> BOOKED.
 
 ```mermaid
 flowchart TB
-    S["Counter<br/>(BMS Service)"]:::card
-    subgraph PM["5 MINUTE KI PARCHI"]
-        D[("Seat ki parchi<br/>(HELD, hold_until 5 min)")]:::pill
+    A["Arpan parchi laga ke<br/>chai peene gaya"]:::bad
+    subgraph PM["PARCHI THODI DER KE LIYE"]
+        D[("Counter wala 5 minute tak<br/>dekhta (hold_until)")]:::pill
     end
-    F["Parchi phaad di<br/>(seat wapas FREE)"]:::good
-    S --> D
-    D -- "5 min, pay nahi" --> F
+    F["Nahi aaya: parchi phaad di,<br/>seat agle ke liye (FREE)"]:::good
+    A --> D
+    D -- "5 minute, pay nahi" --> F
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -95,21 +99,22 @@ query me hi: `WHERE status = FREE OR (status = HELD AND hold_until < now)`, phaa
 
 ```mermaid
 flowchart TB
-    N["Naya aadmi"]:::card
-    S["Counter<br/>(BMS Service)"]:::card
-    subgraph PU["PARCHI PE HI UMAR"]
-        D[("FREE ya hold_until<br/>nikal chuka = le lo")]:::pill
+    X["Parchi phaadne wala chhutti pe,<br/>parchi 20 minute se lagi"]:::bad
+    N["Naya aadmi: D5 chahiye"]:::card
+    subgraph DR["DO RAASTE"]
+        B(["Chhota bhai / replacement<br/>(backup safai job)"]):::pill
+        U(["Parchi pe hi umar: 5 minute baad<br/>apne aap gayab"]):::pill
     end
-    J["Chhota bhai<br/>(backup safai job)"]:::card
-    N --> S
-    S --> D
-    J -.-> D
+    OK["Umar nikal chuki: D5 naye ki"]:::good
+    X --> B
+    N --> U
+    U --> OK
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style PU fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style DR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. 10 baje 10 lakh log (counter badhao, alag diary, hall jitne andar)
@@ -129,26 +134,25 @@ chand rows pe hai, ek row ek hi jagah lock hoti hai; bheed ko register tak pahun
 
 ```mermaid
 flowchart TB
-    U["10 lakh log"]:::bad
-    subgraph GT["LINE + NUMBER KI PARCHI"]
-        W(["Waiting room + token<br/>(hall jitne andar)"]):::pill
+    U["10 baje 10 lakh log,<br/>seat 50 hazaar"]:::bad
+    subgraph LN["CAPACITY JITNE ANDAR, BAAKI LINE ME"]
+        W(["Le bhai, ye teri parchi,<br/>agla number tera (token)"]):::pill
     end
-    S["Bahut counter<br/>(BMS Service)"]:::card
+    S["Counter badha de, server badha de"]:::card
     subgraph DY["ALAG DIARY"]
-        P[("Hilane wali diary<br/>(SQL primary)")]:::card
-        R[("Dekhne wali diary<br/>(Read replica)")]:::pill
+        P[("Hilane wale ki diary<br/>(primary)")]:::card
+        R[("Dekhne wale ki diary<br/>(read replica)")]:::pill
     end
     U --> W
     W --> S
     S --> P
     S --> R
-    P --> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style GT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style LN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
     style DY fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
@@ -161,23 +165,21 @@ ruk gayi iske liye. Use utne time me payment karna hai jo uske liye allot hua. K
 do, seat agle ki.
 
 **Asli naam:** token = sirf gate ka pass, hold = seat ki ghadi (`hold_until`). Do alag ghadiyan: token gate ki, hold
-seat ki; pay ka faisla sirf hold ki ghadi karti. Token khatam = bas nayi seat HOLD nahi
-kar sakta, dobara line. Pay ka raasta banking / payment wali kahani se aaya: dobara bheja to idempotency key (booking
-id), paisa PSP se, webhook aaya tab D5 HELD -> BOOKED.
+seat ki; pay ka faisla sirf hold ki ghadi karti.
 
 ```mermaid
 flowchart TB
-    A["Arpan"]:::card
+    A["Arpan: token mila (10 min),<br/>8ve minute pe D5 chuni"]:::card
     subgraph G1["GHADI 1: GATE"]
-        W(["Number ki parchi<br/>(Token, 10 min)"]):::pill
+        T(["Token: andar aa gaya,<br/>authenticate ho chuka"]):::pill
     end
-    S["Counter<br/>(BMS Service)"]:::card
-    subgraph G2["GHADI 2: PAY"]
-        D[("Seat ki parchi<br/>(hold_until, 5 min)")]:::pill
+    subgraph G2["GHADI 2: SEAT"]
+        H(["Parchi 5 minute: seat ruk gayi,<br/>utne time me payment"]):::pill
     end
-    A --> W
-    W --> S
-    S --> D
+    OK["10ve minute token khatam,<br/>par parchi baaki: pay kar paayega"]:::good
+    A --> T
+    T --> H
+    H --> OK
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -211,25 +213,21 @@ naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idemp
 
 ```mermaid
 flowchart TB
-    A["Arpan: Pay 4:30"]:::card
-    S["Counter<br/>(BMS Service)"]:::card
-    subgraph SL["STATUS LIKH LO"]
-        D[("Parchi pe status<br/>(PAYMENT_PENDING)")]:::pill
+    A["Arpan: Pay 4:30, PSP dheema"]:::card
+    subgraph SL["PARCHI PE STATUS LIKH LO"]
+        D[("Pay chal raha, PSP ka jawab baaki:<br/>umar badha do (PAYMENT_PENDING)")]:::pill
     end
-    P1["Chhotu<br/>(PSP-1)"]:::card
-    B["BOOKED"]:::good
-    F["FAILED<br/>seat chhodo, dobara pay"]:::bad
-    F2(["FAILED<br/>'paisa kata ho to wapas'"]):::pill
-    R["Baad me job<br/>(payment id se poochhe)<br/>kata nikla = refund"]:::card
-    P2["Doosra chhotu<br/>(PSP-2)"]:::good
-    A --> S
-    S --> D
-    S --> P1
-    P1 -- "haan" --> B
-    P1 -- "na" --> F
-    P1 -. "1-2 ping ke baad bhi chup" .-> F2
-    F2 --> R
-    S -. "naye log (breaker)" .-> P2
+    P{"PSP (chhotu)"}:::card
+    B["Haan: BOOKED"]:::good
+    F["1-2 baar ping, phir bhi chup:<br/>FAILED, seat chhod do"]:::bad
+    R["Paisa kata ho to wapas<br/>(payment id, refund)"]:::card
+    N["Naye log: doosra ladka<br/>(PSP-2)"]:::good
+    A --> D
+    D --> P
+    P -- "haan" --> B
+    P -. "chup" .-> F
+    F --> R
+    F -.-> N
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
