@@ -262,5 +262,5 @@ flowchart LR
     style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-Pehle kahan bola: kaato mat neeche likho = Banking 5 (ledger) · mahine ke mahine tod do = Banking 12 · purana head
-office = Banking 13 · ID se seedha page, 1 lakh panne nahi palatne = Twitter 16.
+Pehle kahan bola: kaato mat neeche likho = Banking 4 (ledger) · mahine ke mahine tod do = Banking 11 · purana head
+office = Banking 12 · ID se seedha page, 1 lakh panne nahi palatne = Twitter 16.

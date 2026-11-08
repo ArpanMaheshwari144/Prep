@@ -520,7 +520,7 @@ baawla thodi hoon. Par mere paas ID hain, to seedha wahi page kholunga. Register
 to kaam aasaan. Photo / video CDN se aa jaayegi, baaki mote register se.
 
 **Asli naam:** ID se seedha page = hydration (ID se poori post, key se lookup), photo CDN se = post me CDN link, mota
-register = tweet store (Cassandra), like count saath me. Dabbe me sirf ID isliye, taaki dabba chhota rahe (kadam 7).
+register = tweet store (Cassandra), like count saath me. Dabbe me sirf ID isliye, taaki dabba chhota rahe (kadam 6).
 
 **Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai:** 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega.
 **Asli naam:** page pe deleted = tweet store me deleted flag (soft delete), dikhate waqt chhod do = hydration pe filter, 8000 dabbe saaf nahi karne padte.
@@ -594,7 +594,7 @@ flowchart TB
 ## 18. Scroll ke beech upar 5 naye, wahi 5 dobara (kahan tak padha yaad rakh)
 
 Ravi scroll kar raha, 20 dekhe, agle 20 maange. Beech me upar 5 naye aa gaye, to neeche wale 5 khisak ke agle page me
-chale gaye; isliye wahi 5 dobara. Hal: Arpan ne kahan tak padha, thodi der ke liye yaad rakh lo. "Arpan ne yahan tak
+chale gaye; isliye wahi 5 dobara. Hal: Ravi ne kahan tak padha, thodi der ke liye yaad rakh lo. "Ravi ne yahan tak
 padh liya, ab iske baad wale do." Naye 5 upar hain, upar scroll karega to dikhenge. Refresh pe purani post dobara aa
 sakti hai, Instagram ka kaam hi engage rakhna, wo chalta hai.
 
@@ -606,7 +606,7 @@ list thodi der save, cursor usi list me aage.
 flowchart TB
     X["Page 1 dekha: #35 se #26,<br/>beech me upar 5 naye aaye"]:::bad
     O["Page number se agle 20:<br/>5 khiske, wahi 5 dobara"]:::bad
-    CR(["Kahan tak padha, yaad rakh (cursor):<br/>Arpan ne #26 tak padha"]):::pill
+    CR(["Kahan tak padha, yaad rakh (cursor):<br/>Ravi ne #26 tak padha"]):::pill
     N["Agla page #25 se,<br/>dobara kuch nahi"]:::good
     U["Naye 5 upar:<br/>upar scroll pe dikhenge"]:::card
     X -.-> O

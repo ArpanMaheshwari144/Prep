@@ -35,6 +35,7 @@ insert / delete), is letter ke baad add kar do = op me jagah (position) + kis ve
 turant = WebSocket (dono taraf khula taar).
 
 **Maan lo "kal" wala op dobara chala gaya ("mil gaya" kho gaya):** Har op ki apni id: server pehle id dekhe, ye op lag chuka to dobara mat lagao. Doc me "kal kal" nahi.
+**Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
 ```mermaid
 flowchart TB

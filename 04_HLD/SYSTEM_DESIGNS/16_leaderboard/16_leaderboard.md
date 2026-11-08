@@ -78,6 +78,7 @@ dabbe na khatkhataye.
 aggregator, badi screen = global top 10 ka cache.
 
 **Maan lo match ka +50 retry se do baar pahuncha:** Match id hi key: is match ka score pehle jud chuka to dobara mat jodo. +100 nahi, +50.
+**Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
 ```mermaid
 flowchart TB

@@ -232,6 +232,7 @@ packet nahi deta, mohalle ki dukaan ko deta, log dukaan se lete. Mere paas 10 pa
 pehle hi Amul se bolunga 10 ki jagah 20 bhej, 18 bhi aa gaye to sabko mil jaayega, 2 bache to fridge me pade rahenge.
 Waise hi Ravi ke liye agla 4 sec ka tukda pehle hi apne paas rakh lo, thode tukde aage ke; peeche se data aata rahega.
 Amul ne mana kar diya to Mother Dairy se le aaunga: Amul jaisa nahi, par theek, kaam chal jaayega.
+Aur Amul ko bolunga raat ko de jaaya kar, 12-1 baje, jab bheed na ho.
 
 **Asli naam:** agla tukda pehle se paas rakh lo = player buffer (aage ke kuch tukde pehle se; sirf ek tukda aage
 rakho to tunnel me ruk jaata), Mother Dairy = kam quality ka tukda (ABR, P3 ka Alto), raat ko de jaaya kar = raat ko
