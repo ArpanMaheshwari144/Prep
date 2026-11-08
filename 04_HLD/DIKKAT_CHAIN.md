@@ -12,7 +12,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  5  7 baje 1000 log ek saath mote register pe   ->  chhota ladka bhaag ke ja (single flight)
  6  ladka raste me gira, 999 khade              ->  ladke ki timeline, 999 me se ek (lock TTL)
  7  5 counter, dono ne "10" diya                ->  apni-apni range
- 8  90 TB ek almari me nahi aata                ->  tukde, hash se almari (shard; Cassandra khud baantta)
+ 8  90 TB ek almari me nahi aata                ->  tukde, hash se almari (shard; Cassandra khud baantta, andar ring = consistent hashing)
  9  almari me aag                               ->  copy + acknowledge (quorum)
 10  C se padha, nahi mila                       ->  do se padho (R=2)
 11  viral token, 1 crore log ek hi register pe  ->  register ki photocopy, sab me baant do (Redis replica)
@@ -50,7 +50,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
  6  six pe 5 crore, parchi wali machine hili ->  10-15 copy bana do, baant do (hot key replica)
  7  dabbe me 3 saal ke tweet, memory ka bill ->  parchi chhoti, bas last 500 (inbox had)
  8  30 crore mahino se app nahi khol rahe    ->  30 din nahi aaya to kuch taiyaar nahi (on-demand inbox)
- 9  din me 50 crore tweet, likhai ki line    ->  bada bhai, "tu dekh le" (Cassandra)
+ 9  din me 50 crore tweet, likhai ki line    ->  bada bhai, "tu dekh le" (Cassandra, andar ring = consistent hashing)
 10  kaun kisko follow karta, iska track      ->  ek aur bada bhai (Neo4j)
 11  "Arpan ke naye 500" poori table me       ->  naam se nahi, id se baanto (partition key = user id)
 12  Ravi Delhi me, server America me         ->  Lajpat Nagar me branch khol do (India region)
@@ -280,7 +280,7 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
 
 ```
  1  server ko pata nahi driver kahan        ->  phone khud bheje, ek dabba (Location Service)
- 2  1.25 lakh update/sec, DB ghuta          ->  bada bhai bulao (Cassandra)
+ 2  1.25 lakh update/sec, DB ghuta          ->  bada bhai bulao (Cassandra, andar ring = consistent hashing)
  3  5 lakh driver ka fasla naap raha        ->  naksha dabbon me, sirf apna dabba (geohash)
  4  dabbe ke kinare, bagal me driver        ->  8 km ka gola, chhoote dabbe bhi (neighbour geohash)
  5  Raju pe ek second me do ride            ->  BMS wali parchi, ek kadam me (hold / lock)

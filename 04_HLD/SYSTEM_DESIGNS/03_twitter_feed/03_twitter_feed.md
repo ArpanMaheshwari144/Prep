@@ -223,7 +223,7 @@ follow kar raha, wo Cassandra me rakhne ka matlab nahi, uske liye ek aur bada bh
 raha, iska track rakhna." Aur Arpan ke saare tweet ek jagah chahiye: naam se todo to doosra Arpan bhi ho sakta, isliye
 id se baanto. Meri id har baar same, to mera saara data ek jagah.
 
-**Asli naam:** likhai bahut, bada bhai = Cassandra (write-heavy, na join na transaction chahiye, khud kai machine me baant-ta), replica bhi wo kar leta = Cassandra ki apni copy,
+**Asli naam:** likhai bahut, bada bhai = Cassandra (write-heavy, na join na transaction chahiye, khud kai machine me baant-ta, andar ring = consistent hashing: nayi machine jude to sirf paas ka hissa hile), replica bhi wo kar leta = Cassandra ki apni copy,
 naam se nahi, id se baant do = partition key = user id, mera saara data ek jagah = ek partition (author ke saare tweet, time ke kram me),
 follow ka track = graph DB Neo4j.
 

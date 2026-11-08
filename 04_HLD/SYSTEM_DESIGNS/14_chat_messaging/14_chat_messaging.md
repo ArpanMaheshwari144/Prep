@@ -60,7 +60,7 @@ Jaise papa ne mujhe paise de ke kahin bheja, aur uncle ji mile nahi, to main pai
 phenk thodi dunga.
 
 **Asli naam:** dabba = message store (har message pehle DB me save, phir bhejo; pehle bhejte aur save se pehle gira
-to message gaya), online hoga to bhej denge = offline delivery. DB = Cassandra, `chat_id` se baanta: likhai bahut
+to message gaya), online hoga to bhej denge = offline delivery. DB = Cassandra, `chat_id` se baanta (andar ring = consistent hashing): likhai bahut
 (46,000 / sec, roz 1.2 TB), padhai hamesha ek chat ki ("aakhri 50 do"), na join na transaction. Ek chat ke saare
 message ek machine pe, kram me.
 

@@ -9,7 +9,8 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ```
 SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 18 design (sab kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 18 + 19 foundation
+  HLD: 19 design (sab kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 19 + 19 foundation
+        har diagram hand notes ke shabdon se (8-Nov) · jahan ring, wahan consistent hashing
   DSA: 18 pattern · 181 problem + 148 REDO = 329 .cpp · pattern sheet folder (19 file, 177 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
@@ -23,7 +24,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | 18 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + 19 foundations + HANDS_ON (7 demo, design file se alag) | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | 19 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + 19 foundations + HANDS_ON (7 demo, design file se alag) | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
@@ -105,9 +106,9 @@ SAFAR (March: khaali folder)  ->  aaj
 ---
 
 ## [04_HLD](04_HLD) — tera strong zone
-**Kya:** 18 poore design (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
+**Kya:** 19 poore design (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
-- ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — 18 design ek file me, har line ek dikkat -> ek hal (ek nazar me yaad)
+- ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — 18 design ek file me (YouTube abhi nahi), har line ek dikkat -> ek hal (ek nazar me yaad)
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
   - [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md)
   - [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
@@ -126,7 +127,9 @@ SAFAR (March: khaali folder)  ->  aaj
   - [15 uber (Connaught Place se ghar)](04_HLD/SYSTEM_DESIGNS/15_uber/15_uber.md)
   - [16 leaderboard (1 crore khiladi)](04_HLD/SYSTEM_DESIGNS/16_leaderboard/16_leaderboard.md)
   - [17 e-commerce (mausi ka mart, Diwali sale)](04_HLD/SYSTEM_DESIGNS/17_ecommerce/17_ecommerce.md)
-  - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md)
+  - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-6 = scene, neeche padhai wala hissa P1-P4)
+  - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md)
+  - [IMG](04_HLD/SYSTEM_DESIGNS/IMG) — jo mermaid se nahi banta (cache ki ring, Uber ka naksha + gaadi), saari tasveer ek folder me
 
 - ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> Arpan ka jawab -> Technical me (asli naam). Revision yahin se; main design file me bhi har kadam pe wahi scene line.
   - [01 URL (token counter)](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md)
@@ -147,6 +150,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [16 Leaderboard (1 crore khiladi)](04_HLD/SYSTEM_DESIGNS/16_leaderboard/LEADERBOARD_HAND_NOTES.md)
   - [17 E-commerce (mausi ka mart)](04_HLD/SYSTEM_DESIGNS/17_ecommerce/ECOMMERCE_HAND_NOTES.md)
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/NETFLIX_HAND_NOTES.md)
+  - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/YOUTUBE_HAND_NOTES.md)
 
 
 - **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) (+ interview me kaunsa DB: 4 sawaal) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) (+ 3 service se maal jodna: timeout · breaker · PARTIAL) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md) · [19 url-browser-journey](04_HLD/FOUNDATIONS/19_url_browser_journey.md)

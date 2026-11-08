@@ -56,7 +56,7 @@ the: ya to chhoti parchi, kaat ke nayi jagah likho; ya bada dabba jo likhne me t
 dheemi ho sakti, gir sakti, aur kab tak replica lagaunga, kal driver aur badhenge. To bada bhai bulao, jo isi kaam ke
 liye bana hai, apni copies khud rakhta.
 
-**Asli naam:** bada bhai = Cassandra (likhai tez, apni copies, machine jodo to badhta). Driver ki row driver_id pe,
+**Asli naam:** bada bhai = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing, nayi machine jude to sirf paas ka hissa hile). Driver ki row driver_id pe,
 nayi jagah aate hi upar likh do (sirf taaza chahiye).
 
 ```mermaid

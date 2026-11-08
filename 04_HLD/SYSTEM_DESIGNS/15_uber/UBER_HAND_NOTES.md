@@ -12,7 +12,7 @@ Technical me: "beech ka dabba" = Location Service, phone har ~4 sec lat/long bhe
 
 **2. Har 4 sec, 5 lakh driver = 1.25 lakh update / sec. Normal DB ghut gaya, jagah 30 sec peeche.**
 Arpan: Ya to chhoti parchi, kaat ke nayi jagah likho; ya bada dabba jo likhne me tez ho. Crore-crore likhai pe parchi dheemi ho sakti, gir sakti, aur kab tak replica lagaunga, kal driver aur badhenge. To bada bhai bulao, jo isi kaam ke liye bana hai, apni copies khud rakhta: Cassandra.
-Technical me: "bada dabba" = Cassandra (likhai tez, apni copies, machine jodo to badhta).
+Technical me: "bada dabba" = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing).
 
 **3. Book pe server 5 lakh driver ka fasla naap raha, 40 sec "dhoondh rahe hain".**
 Arpan: Connaught Place pe khade ko ISBT ka driver kyun? Sirf 8-9 km ke andar wale chahiye. Aur 5 lakh me se chhaanto mat: naksha pehle se dabbon me kata ho, server sirf usi dabbe me dekhe jahan Arpan khada. Usme 3 driver, unme jo khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.

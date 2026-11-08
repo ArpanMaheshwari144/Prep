@@ -618,7 +618,7 @@ PER-CRITICALITY (CAP se jod ke) — ek hi app mein dono zones:
    RDS = sirf SQL wale (relational), AWS chalata: MySQL · PostgreSQL · MariaDB · Oracle · SQL Server
          (Aurora = AWS ka apna MySQL / Postgres jaisa, wo bhi isi parivaar me)
    NoSQL RDS pe NAHI, uske alag service:
-     key-value          -> DynamoDB (AWS ka apna, ring + copy andar khud karta)
+     key-value          -> DynamoDB (AWS ka apna, ring = consistent hashing + copy andar khud karta)
      Cassandra jaisa    -> Amazon Keyspaces (Cassandra ki bhasha, AWS chalata) ya EC2 pe khud Cassandra
      MongoDB jaisa      -> DocumentDB (Mongo ki bhasha) ya MongoDB Atlas
      cache              -> ElastiCache (Redis)

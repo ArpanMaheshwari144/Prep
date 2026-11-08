@@ -390,6 +390,9 @@ CDN                        kaunsa edge server tera file rakhega
 RING + vnodes   ek machine badli  ->  sirf uska HISSA hila (~1/N)
 
 KEEMAT:  ring ka naksha sabko pata hona chahiye — aur wo khud ek system hai.
+
+NIYAM:   jahan RING, wahan CONSISTENT HASHING. Cassandra / DynamoDB chuna, ya cache machines ring pe,
+         ya LB ring pe owner chune = sab andar yahi. Interview me "Cassandra" bola to ye apne aap aa gaya.
 ```
 
 ---

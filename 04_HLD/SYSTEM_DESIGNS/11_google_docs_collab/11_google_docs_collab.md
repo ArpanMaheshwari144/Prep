@@ -130,7 +130,7 @@ centralized system; 100 log ek doc pe to un 100 ka ek; 1 lakh log to unka ek. Us
 maalik hoga, sab uske hisaab se chalega.
 
 **Asli naam:** centralized system, ek hi version = ek jagah kram aur OT, har doc ka alag centralized system, uska
-maalik = har doc ka ek owner server (LB `docId` dekh ke ring pe owner chunta, ek doc ke saare editor wahin).
+maalik = har doc ka ek owner server (LB `docId` dekh ke ring pe owner chunta = consistent hashing, server jude / gire to sirf paas ke doc hilein, ek doc ke saare editor wahin).
 
 ```mermaid
 flowchart TB
