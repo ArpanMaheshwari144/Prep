@@ -108,7 +108,7 @@ SAFAR (March: khaali folder)  ->  aaj
 ## [04_HLD](04_HLD) — tera strong zone
 **Kya:** 19 poore design (naye saanche me roz ek, saath baith ke; cross-question usi kadam me) + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
-- ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — 18 design ek file me (YouTube abhi nahi), har line ek dikkat -> ek hal (ek nazar me yaad)
+- ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — dikkat ke 20 parivaar: dikkat -> humne kya socha -> wahi dikkat kis-kis design me (19 design, har line ek dikkat -> ek hal)
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
   - [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md)
   - [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md)
