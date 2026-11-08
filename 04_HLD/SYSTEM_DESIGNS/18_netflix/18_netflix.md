@@ -243,7 +243,7 @@ Sirf video ke bytes Open Connect se.
 US ke store me har episode ki ek badi 4K file hai. John WiFi pe mast, Ravi gaon me 3G pe, video chalta hi nahi; aur
 uska purana TV naye tarah ki file samajhta bhi nahi. Twitter wala hi khel: Ferrari highway ke liye, Alto gaon ke liye.
 Kai size banao, phone apna net dekh ke size chune, net gire to tasveer thodi dhundhli par chalti rahe. Video 4-4 second
-ke tukdon me, aage khiskao to player manifest dekh ke seedha us tukde pe (copy ka 51wa page). Netflix me teen twist:
+ke tukdon me, aage khiskao to player manifest dekh ke seedha us tukde pe (copy ka 51wa page). Player aage ke 2-3 tukde pehle se le ke rakhta: net thoda hile to bhi video nahi rukti, aur net zyada gire to agla tukda Alto wala. Netflix me teen twist:
 
 1. **Har film ki apni seedhi.** Cartoon (Doraemon) kam hilta, kam bits me bhi saaf. Bank wala goli-baari scene bahut
    hilta, zyada bits chahiye. Ek niyam sab pe lagao to cartoon pe data barbaad aur action film dhundhli.
@@ -260,7 +260,7 @@ action film  : 240p = 0.4 Mbps ... 1080p = 5 Mbps       (zyada chahiye)
 ```
 
 **Asli naam:** Ferrari / Alto = transcoding (kai size) + ABR (net dekh ke size), 4 sec tukde + manifest = segments +
-seek, har film ki apni seedhi = per-title encode ladder, kai roop = codec, ek baar banao = AWS pe batch encoding
+seek, aage ke tukde pehle se = player buffer, har film ki apni seedhi = per-title encode ladder, kai roop = codec, ek baar banao = AWS pe batch encoding
 (parallel workers), awaaz / subtitle alag = alag audio / subtitle tracks.
 
 ```mermaid
