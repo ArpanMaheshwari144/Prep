@@ -38,14 +38,28 @@ gira to baad me koi utha ke Kafka me daal dega.
 **Asli naam:** outbox (order + khabar ek hi DB transaction me), relay (runner) outbox se Kafka ko bhejta.
 
 ```mermaid
-flowchart LR
-    U["Arpan"] --> O["Order Service"]
-    O --> DB[("Order + vasiyat<br/>(DB: order + outbox, ek transaction)")]
-    DB --> R["Runner<br/>(relay)"]
-    R --> K[("Beech ka dabba<br/>(Kafka)")]
-    K --> W["Worker"]
-    W --> C["SMS / email / push company"]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Arpan"]:::card
+    O["Order Service"]:::card
+    DB[("Order + vasiyat<br/>(DB: order + outbox, ek transaction)")]:::card
+    R["Runner<br/>(relay)"]:::card
+    subgraph BD["BEECH KA DABBA"]
+        K[("Kafka")]:::pill
+    end
+    W["Worker"]:::card
+    C["SMS / email / push company"]:::good
+    U --> O
+    O --> DB
+    DB --> R
+    R --> K
+    K --> W
+    W --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. SMS ke peeche bill atka (sabki alag line)
@@ -60,16 +74,28 @@ se utha ke teen line me daalta), apni line sambhalna = har topic ka apna consume
 sale me push ke 100, SMS ke 20).
 
 ```mermaid
-flowchart LR
-    N["Notification Service"] --> S[("SMS ki line<br/>(SMS topic)")]
-    N --> E[("Email ki line<br/>(Email topic)")]
-    N --> P[("Push ki line<br/>(Push topic)")]
-    S --> SW["SMS worker<br/>(consumer group)"]
-    E --> EW["Email worker<br/>(consumer group)"]
-    P --> PW["Push worker<br/>(consumer group)"]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style E fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    N["Notification Service"]:::card
+    subgraph AL["SABKI ALAG LINE"]
+        S[("SMS ki line<br/>(SMS topic)")]:::pill
+        E[("Email ki line<br/>(Email topic)")]:::pill
+        P[("Push ki line<br/>(Push topic)")]:::pill
+    end
+    SW["SMS worker<br/>(consumer group)"]:::card
+    EW["Email worker<br/>(consumer group)"]:::card
+    PW["Push worker<br/>(consumer group)"]:::card
+    N --> S
+    N --> E
+    N --> P
+    S --> SW
+    E --> EW
+    P --> PW
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Ek "order placed" do baar (parchi)
@@ -85,11 +111,22 @@ ek baar dobara ja sakta. Parchi is khidki ko bahut chhota kar deti, poora band n
 maan ke chalte.
 
 ```mermaid
-flowchart LR
-    K[("Kafka")] --> W["SMS worker"]
-    W --> T[("Parchi: ho gaya?<br/>(Tracking DB, khabar id)")]
-    W --> C["SMS company"]
-    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    K[("Kafka")]:::card
+    W["SMS worker"]:::card
+    subgraph PC["PARCHI"]
+        T[("Ho gaya?<br/>(Tracking DB, khabar id)")]:::pill
+    end
+    C["SMS company<br/>(sirf ek baar)"]:::good
+    K --> W
+    W --> T
+    W --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. "Abhi bheed hai, baad me aana" (thodi der baad dobara)
@@ -105,12 +142,23 @@ hoga, use dobara ghumaana bekaar. Wo kaise pehchanein, agle kadam me.
 Dikkat aayi to likh lo, kahin daal do = queue / parchi / retry ka ek hi pattern.
 
 ```mermaid
-flowchart LR
-    Q[("Main line<br/>(SMS topic)")] --> W["SMS worker"]
-    W -- "company: abhi bheed" --> R[("Alag rakho<br/>(retry queue, wait badhta)")]
+flowchart TB
+    Q[("Main line<br/>(SMS topic)")]:::card
+    W["SMS worker"]:::card
+    subgraph AR["ALAG RAKHO"]
+        R[("Retry queue<br/>(wait badhta)")]:::pill
+    end
+    S["SMS company"]:::good
+    Q --> W
+    W -- "company: abhi bheed" --> R
     R -. "thodi der baad" .-> W
-    W --> S["SMS company"]
-    style R fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    W --> S
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. SMS company poori band (teen-chaar company + VIP line)
@@ -140,19 +188,34 @@ ek hi OTP chahiye = message validity period (TTL, Twilio me `validity_period`, 1
 company ki line tak: SMS Jio / Airtel tak chala gaya to wapas nahi, wo hamara area nahi; isliye "ek hi code" bhi saath.
 
 ```mermaid
-flowchart LR
-    N["Notification Service"] --> T[("VIP line<br/>(OTP topic)")]
-    N --> S[("SMS line")]
-    T --> W["Worker"]
+flowchart TB
+    N["Notification Service"]:::card
+    subgraph LN["DO LINE"]
+        T[("VIP line<br/>(OTP topic)")]:::pill
+        S[("SMS line")]:::card
+    end
+    W["Worker"]:::card
+    subgraph CK["COMPANY BAND?"]
+        CB{"Band hai?<br/>(circuit breaker)"}:::pill
+    end
+    M["Main company"]:::bad
+    B(["Backup company<br/>(failover)"]):::good
+    D[("Alag dabba<br/>(DLQ)")]:::pill
+    N --> T
+    N --> S
+    T --> W
     S --> W
-    W --> CB{"Band hai?<br/>(circuit breaker)"}
-    CB --> M["Main company"]
-    CB --> B["Backup company<br/>(failover)"]
-    W --> D[("Alag dabba<br/>(DLQ)")]
-    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style CB fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    W --> CB
+    CB --> M
+    CB --> B
+    W --> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style LN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style CK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Company ki had 100 / sec (saanjha dabba)
@@ -167,13 +230,26 @@ usi se guzrein. Main beech me baitha hoon: tune bhej diya, tu bhi bhej raha? Nah
 wahi se token lete), token nahi mila = khabar line me wait, khoti nahi.
 
 ```mermaid
-flowchart LR
-    W1["Worker 1"] --> B[("Saanjha dabba<br/>(Redis, 100 token / sec)")]
-    W2["Worker 2"] --> B
-    WN["... Worker 20"] --> B
-    B -- "token mila" --> S["SMS company<br/>(had 100 / sec)"]
-    B -. "token nahi" .-> L["Line me wait<br/>(khoti nahi)"]
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    subgraph WK["20 WORKER"]
+        W1["Worker 1"]:::card
+        W2["Worker 2"]:::card
+        WN["... Worker 20"]:::card
+    end
+    B[("Saanjha dabba<br/>(Redis, 100 token / sec)")]:::pill
+    S["SMS company<br/>(had 100 / sec)"]:::good
+    L["Line me wait<br/>(khoti nahi)"]:::card
+    W1 --> B
+    W2 --> B
+    WN --> B
+    B -- "token mila" --> S
+    B -. "token nahi" .-> L
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style WK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Company ne "le liya" bola, SMS pahuncha hi nahi (le liya ke baad)
@@ -187,13 +263,23 @@ hua to apni parchi me "sent", fail hua to "fail".
 DELIVERED / FAILED, apni parchi = Tracking DB (Cassandra: har message ek row, bahut likhna, JOIN nahi).
 
 ```mermaid
-flowchart LR
-    W["SMS worker"] --> C["SMS company"]
-    W --> T[("Parchi<br/>(Tracking DB: ACCEPTED)")]
-    C --> H["Company batati<br/>(Webhook)"]
+flowchart TB
+    W["SMS worker"]:::card
+    C["SMS company"]:::card
+    subgraph LB["LE LIYA KE BAAD"]
+        T[("Parchi<br/>(Tracking DB: ACCEPTED)")]:::pill
+        H(["Company batati<br/>(Webhook)"]):::pill
+    end
+    W --> C
+    W --> T
+    C --> H
     H --> T
-    style T fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style H fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style LB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. Diwali: 1 crore ko offer (tukde + moti diary)
@@ -215,14 +301,26 @@ OTP / order ki alag priority line (topic + apne worker), promo alag topic; promo
 (kadam 5 wali VIP line).
 
 ```mermaid
-flowchart LR
-    C["1 crore ka offer<br/>(campaign)"] --> T1["Tukda 1<br/>(worker 1, range)"]
-    C --> T2["Tukda 2<br/>(worker 2, range)"]
-    C --> TN["... Tukda 50<br/>(worker 50, range)"]
-    T1 --> D[("Moti diary<br/>(DB checkpoint)")]
+flowchart TB
+    C["1 crore ka offer<br/>(campaign)"]:::card
+    subgraph TK["50 TUKDE"]
+        T1["Tukda 1<br/>(worker 1, range)"]:::card
+        T2["Tukda 2<br/>(worker 2, range)"]:::card
+        TN["... Tukda 50<br/>(worker 50, range)"]:::card
+    end
+    D[("Moti diary<br/>(DB checkpoint)")]:::pill
+    C --> T1
+    C --> T2
+    C --> TN
+    T1 --> D
     T2 --> D
     TN --> D
-    style D fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style TK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. Har SMS pe DB, OTP dheema (ek saancha apne paas)
@@ -242,13 +340,26 @@ OTP ka worker DB me pasand padhne jaaye kyun? Offer thodi bhej rahe. Seedha OTP 
 **Asli naam:** OTP pe preference check skip (OTP opt-out nahi hota), OTP path pe DB nahi, line ke saath DB se bhi alag.
 
 ```mermaid
-flowchart LR
-    K[("Kafka")] --> N["Notification Service"]
-    N --> TC[("Ek saancha<br/>(Template cache)")]
-    N --> L[("SMS / email / push line")]
-    L --> W["Worker"]
-    W --> PD[("Mota register<br/>(Preference DB)")]
-    style TC fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    K[("Kafka")]:::card
+    subgraph NS["NOTIFICATION SERVICE"]
+        N["Notification Service"]:::card
+        TC[("Ek saancha apne paas<br/>(Template cache)")]:::pill
+    end
+    L[("SMS / email / push line")]:::card
+    W["Worker"]:::card
+    PD[("Mota register<br/>(Preference DB)")]:::card
+    K --> N
+    N --> TC
+    N --> L
+    L --> W
+    W --> PD
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style NS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
