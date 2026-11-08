@@ -278,6 +278,9 @@ aur SMS ab ek ja, ek ja, dheela-dheela, aaram se.
 turant "OTP aa raha" bol deta), beech me cheez jo spike rok le = worker SMS company ki raftaar se bhejte, saare worker
 ek saanjhi had se (global had, Redis ka ek token bucket).
 
+**Maan lo OTP line me atka, der se nikla, tab tak bekaar:** Wahi "30 second me nahi bheja to mat bhejna" apni line pe bhi. Har khabar ke saath uski umar likho; line se nikalte waqt umar khatam ho to phenk do, bhejo mat (OTP ki umar chhoti, order wali lambi). Aur pehle se pata hai OTP late nahi hona chahiye, to use VIP line me daalo, wo sabse pehle nikle.
+**Asli naam:** umar = message TTL / expiry (line se nikalte waqt jaancho), VIP line = OTP ki alag tez priority line.
+
 ```mermaid
 flowchart TB
     U["Result ka din: 1 crore bachche"]:::card

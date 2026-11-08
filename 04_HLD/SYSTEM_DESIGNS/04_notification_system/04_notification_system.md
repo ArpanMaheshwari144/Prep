@@ -138,6 +138,9 @@ Dikkat aayi to likh lo, kahin daal do = queue / parchi / retry ka ek hi pattern.
 **Maan lo "Order placed" SMS bheed me atka (retry line), "Shipped" push pehle pahunch gaya, Arpan ko pehle Shipped dikha:** Ek parchi rakhunga: Arpan ka order placed, chhotu ko bheja. Chhotu wapas nahi aaya, to parchi pe likha SMS abhi gaya nahi. Order pack hokar ship hua, parchi pe likha, par mujhe pata hai placed abhi gaya nahi. Chhotu aaya, bola SMS company bheed me hai. To ek saath bhej do: "aapka order placed aur ship ho gaya". Interviewer bole alag-alag dikhao, to retry mat karwao, placed wala doosri SMS company ko de do, phir shipped. SMS nahi ja raha to bagal me email wala khada hai, confirmation ek baar to chala jaayega.
 **Asli naam:** "order ki parchi" = har order ka status (order id pe), "pehle wala gaya nahi to dono saath" = khabar milana (coalesce, kram bachao), "doosri SMS company" = failover (kadam 5), "email wala" = channel fallback.
 
+**Maan lo OTP line me atka, der se nikla, tab tak bekaar:** Wahi "30 second me nahi bheja to mat bhejna" apni line pe bhi. Har khabar ke saath uski umar likho; line se nikalte waqt umar khatam ho to phenk do, bhejo mat (OTP ki umar chhoti, order wali lambi). Aur pehle se pata hai OTP late nahi hona chahiye, to use VIP line me daalo, wo sabse pehle nikle.
+**Asli naam:** umar = message TTL / expiry (line se nikalte waqt jaancho), VIP line = OTP ki alag tez priority line.
+
 ```mermaid
 flowchart TB
     C["Company: abhi bheed hai,<br/>baad me try karo"]:::bad
