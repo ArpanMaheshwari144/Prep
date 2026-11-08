@@ -249,6 +249,14 @@ Ek nazar me yaad dilane ke liye: har line ek dikkat, aage tera hal. Bhool jaao t
 13  almari me jagah nahi, 10 saal rakhni     ->  head office bhej do (S3 archive)
 14  godown me -500 ko -50 kar diya           ->  kai copy chhupa ke, milao (copies)
 15  ijazat wala file badal hi na paaye       ->  kohinoor, taala maar do (S3 Object Lock)
+    --- mahine ki statement (billions of records) ---
+16  31 March 1 crore log ek saath           ->  peeche chhotu, pehle se bana ke rakho (precompute, batch)
+17  28 Feb ka transaction der se aaya       ->  record se milao, nayi statement (reconciliation, revised)
+18  chhotu aadha kaam karke gira            ->  DB me likhta jaata, wahin se utha le (checkpoint)
+19  9 chhotu khaali, ek laga pada           ->  khaali ladke madad karo (hot key, work stealing)
+20  ek khaata 5 crore, statement ek         ->  kaam baanto, bada aadmi jode (MapReduce)
+21  May wale ko 1 May ka balance chahiye    ->  master register se utha le (balance snapshot)
+22  2 baje chhotu ne register gher liya     ->  chhotu photocopy se padhein (read replica)
 ```
 
 ## 14. Chat messaging   ([notes](SYSTEM_DESIGNS/14_chat_messaging/CHAT_HAND_NOTES.md))

@@ -10,7 +10,7 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
   HLD: 18 design (sab kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 18 + 19 foundation
-  DSA: 18 pattern · 181 problem + 147 REDO = 328 .cpp · pattern sheet folder (19 file, 177 sawaal + MATHS KA KHEL)
+  DSA: 18 pattern · 181 problem + 148 REDO = 329 .cpp · pattern sheet folder (19 file, 177 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
 
@@ -27,7 +27,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 181 problem + 147 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 181 problem + 148 REDO + sheet | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -121,14 +121,14 @@ SAFAR (March: khaali folder)  ->  aaj
   - [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md)
   - [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md)
   - [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) ([concepts kahani se](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md) · [Kafka ya RabbitMQ: kab kaunsa](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_ya_rabbitmq_kab_kaunsa.md))
-  - [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md)
+  - [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) (kadam 14-20 = mahine ki statement, "billions of records" wala sawaal)
   - [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
   - [15 uber (Connaught Place se ghar)](04_HLD/SYSTEM_DESIGNS/15_uber/15_uber.md)
   - [16 leaderboard (1 crore khiladi)](04_HLD/SYSTEM_DESIGNS/16_leaderboard/16_leaderboard.md)
   - [17 e-commerce (mausi ka mart, Diwali sale)](04_HLD/SYSTEM_DESIGNS/17_ecommerce/17_ecommerce.md)
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md)
 
-- ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> hal -> naam -> interview line. Revision yahin se; main design file me bhi har kadam pe wahi scene line.
+- ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> Arpan ka jawab -> Technical me (asli naam). Revision yahin se; main design file me bhi har kadam pe wahi scene line.
   - [01 URL (token counter)](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md)
   - [02 rate limiter (OTP button)](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/RATE_LIMITER_HAND_NOTES.md)
   - [03 twitter (Ravi + King Kohli)](04_HLD/SYSTEM_DESIGNS/03_twitter_feed/TWITTER_HAND_NOTES.md)
@@ -218,7 +218,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 181 problem + 147 REDO = 328 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 181 problem + 148 REDO = 329 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + master sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
 - ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). Har sawaal = poore vakya me sawaal + e.g. + kyun, phir tera code saamne (★ sirf kick line pe), aur jahan zaroori TASVEER / YAAD dabba (dry-run, tasveer, teri purani galti wali line).
