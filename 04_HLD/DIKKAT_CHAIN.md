@@ -40,7 +40,7 @@ Yahi dikkat yahan bhi:
   Uber     6   Raju 15 sec me accept na kare                  ->  parchi ki umar, agla driver (TTL)
   Uber     9   14.9 pe accept, server pe 16 pe                ->  ghadi server ki, parchi phaad do (server TTL)
   Uber     18  Raju ka phone band, naksha pe gayab            ->  location band, ek-do baar dekho (location timeout)
-  Leader   7   raat 12 baje aaj wala khaali                   ->  alag register, kal wala discard (key me tareekh, TTL)
+  Leader   7   raat 12 baje aaj wala khaali                   ->  alag register, kal wala side me rakho (key me tareekh, history)
   Ecom     6   60 ne pay nahi kiya                            ->  cart = list, ginti pay pe, fail to wapas
   Ecom     7c  andar gaya, chai peene chala gaya              ->  "ya pay kar ya rakh de": 5 min ghadi, phir wapas line me (expiry + INCR)
   Ecom     7d  ghadi khatam ke 1 sec baad Pay                 ->  1-2 sec upar bas, phir Priya ka; andar dabaya to PSP hamari zimmedari
@@ -325,6 +325,7 @@ Yahi dikkat yahan bhi:
   Rate     10b line lambi, OTP 6 min baad, bekaar             ->  wahi umar + VIP line (Notification 4c jaisa)
   Kafka    9b  pay DLQ me, cancel chal gayi, kram toota       ->  group ka ek atka to us user ki baaki bhi park (same key parking)
   Netflix  5c  TV ka purana 27, phone ke 37 ke upar           ->  baad wala jeete, purana discard (timestamp, last-write-wins)
+  Leader   7b  11:59:58 ka match, score 12:00:02 pe           ->  parchi pe khatam hone ka waqt, usi din ka register (event time)
 
 Naam: sequence number / offset / OT
 Juda: Kafka ka offset bhi yahi number.

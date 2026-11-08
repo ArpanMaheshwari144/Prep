@@ -142,18 +142,21 @@ flowchart TB
 Teeno board ka kram alag: aaj koi aur upar, hafte me koi aur, all-time me koi aur. Alag se sort nahi chalana: match
 jeeta to score ek saath teeno dabbon me jod do, teeno khud khisaka denge. Raat 12 baje 1 crore ka score ek-ek karke
 zero karne ka koi matlab nahi (aaj 20 lakh khele to 80 lakh ko chhuna padta). To har din ka alag register: naya din,
-naya register, aur kal wala poora register discard.
+naya register, aur kal wala register side me rakh do, phekna nahi (history).
 
 ```
 Arpan +50 -> board:5-Nov +50 · board:week-45 +50 · board:all-time +50
-board:4-Nov  -> umar poori, apne aap hat jaata
+board:4-Nov  -> live se hata, history me (dekhna ho to wahi register khol do)
 ```
 
-**Asli naam:** alag register = key me tareekh / hafta (time-bucketed key), discard = purane dabbe pe TTL.
+**Asli naam:** alag register = key me tareekh / hafta (time-bucketed key), side me rakhna = purana dabba live Redis se TTL se hat sakta, par board history me (DB / sasti jagah) rehta.
 
 **Maan lo Priya aaj khelti hi nahi:** agar requirement hai ki naam dikhe to 0 ke saath dikha do, nahi hai to wo aaj
 ke register me hi nahi.
 **Asli naam:** FR ka faisla; aaj ke key me na ho = score 0.
+
+**Maan lo Ravi ka match 11:59:58 pe khatam, score 12:00:02 pe pahuncha, server ne 9 Nov ke register me daal diya:** LeetCode jaisa: Arpan ne contest diya, main parchi pe sab likh deta hoon: contest 137, Arpan ki rank, aur kis waqt khatam hua. Request server tak late aayi to koi baat nahi, parchi me sab likha hai: ye is din ka contest tha, itne baje khatam hua, to usi din ke register me daalo. Jo register kar ke aaye nahi, unka 0. Beech me LeetCode crash bhi ho jaaye to parchi hamare paas hai, wapas aate hi mote register me daal do. Purana register phekna nahi, side me rakh do; Ravi ko 7 Nov ka dekhna hai to wahi register khol ke dikha do.
+**Asli naam:** "parchi pe contest id + khatam hone ka waqt" = event time, "usi din ke register me" = event time se bucket (pahunchne ke waqt se nahi), "purana register side me" = har din ka board history me rakho (discard nahi).
 
 ## 6. Mere aage ke 5, peeche ke 5 (bheed me aas-paas scan, paas ka petrol pump)
 
