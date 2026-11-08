@@ -31,8 +31,36 @@ using namespace std;
 
 vector<int> findAnagrams(string s, string p)
 {
-    // yahan likh
-    return {};
+    vector<int> ans;
+
+    unordered_map<char, int> mp1;
+    unordered_map<char, int> mp2;
+
+    for (int i = 0; i < p.size(); i++)
+    {
+        mp1[p[i] - 'a']++;
+    }
+
+    int i = 0, j = 0;
+    while (j < s.size())
+    {
+        mp2[s[j] - 'a']++;
+        if (j - i + 1 == p.size())
+        {
+            if (mp1 == mp2)
+            {
+                ans.push_back(i);
+            }
+            mp2[s[i] - 'a']--;
+            if (mp2[s[i] - 'a'] == 0)
+            {
+                mp2.erase(s[i] - 'a');
+            }
+            i++;
+        }
+        j++;
+    }
+    return ans;
 }
 
 // ---------- tests (boilerplate, chhoo mat) ----------

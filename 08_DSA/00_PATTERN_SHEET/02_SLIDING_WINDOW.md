@@ -663,24 +663,26 @@ kyun: s2[3..4]="ba" = "ab" ka permutation
 ```
 SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
 farak SIRF answer-line:
-    LC-438 : have == need -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
-    LC-567 : have == need -> return true        ... loop-baad: return false  (pehla match = bool)
+    LC-438 : mp1 == mp2 -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
+    LC-567 : mp1 == mp2 -> return true        ... loop-baad: return false  (pehla match = bool)
 ★ ULTA kram: s1 ko s2 ke ANDAR dhoondhna (window s2 pe chalti).
 ```
 
 ```cpp
 bool checkInclusion(string s1, string s2) {
-    int i = 0, j = 0;
-    vector<int> need(26, 0);                // s1 ki ginti, EK baar
-    vector<int> have(26, 0);
+    unordered_map<char, int> mp1;           // s1 ki ginti, EK baar
+    unordered_map<char, int> mp2;           // window ki ginti
     for (int i = 0; i < s1.size(); i++)
-        need[s1[i] - 'a']++;
+        mp1[s1[i] - 'a']++;
+    int i = 0, j = 0;
     while (j < s2.size()) {
-        have[s2[j] - 'a']++;                // ★ j aaya -> +1
+        mp2[s2[j] - 'a']++;                 // ★ j aaya -> +1
         if (j - i + 1 == s1.size()) {
-            if (have == need)
+            if (mp1 == mp2)
                 return true;                // <- DELTA: push ki jagah return true
-            have[s2[i] - 'a']--;            // ★ i gaya -> -1, PHIR i++
+            mp2[s2[i] - 'a']--;             // ★ i gaya -> -1
+            if (mp2[s2[i] - 'a'] == 0)      // ★ 0 hua to ERASE
+                mp2.erase(s2[i] - 'a');
             i++;
         }
         j++;

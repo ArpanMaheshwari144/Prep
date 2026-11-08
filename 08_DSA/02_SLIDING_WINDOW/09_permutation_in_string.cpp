@@ -20,61 +20,38 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool isAnagram(string s, string t)
+// LC-438 find all anagrams ka EXACT same code (do map), farak sirf answer line:
+//   438 me ans.push_back(i)  ->  yahan pehla match milte hi return true
+bool checkInclusion(string s1, string s2)
 {
-    // cout << "-->" << s << " " << t << endl;
-    if (s.size() != t.size())
+    unordered_map<char, int> mp1;
+    unordered_map<char, int> mp2;
+
+    for (int i = 0; i < s1.size(); i++)
     {
-        return 0;
+        mp1[s1[i] - 'a']++;
     }
 
-    unordered_map<char, int> mp;
-    for (auto &it : s)
-    {
-        mp[it]++;
-    }
-
-    for (auto &it : t)
-    {
-        mp[it]--;
-    }
-
-    for (auto &it : mp)
-    {
-        if (it.second != 0)
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool findAnagrams(string s, string p)
-{
     int i = 0, j = 0;
-    while (j < s.size())
+    while (j < s2.size())
     {
-        while (j - i + 1 > p.size())
+        mp2[s2[j] - 'a']++;
+        if (j - i + 1 == s1.size())
         {
-            i++;
-        }
-
-        if (j - i + 1 == p.size())
-        {
-            // cout << j - i + 1 << endl;
-            if (isAnagram(s.substr(i, j - i + 1), p))
+            if (mp1 == mp2)
             {
                 return true;
             }
+            mp2[s2[i] - 'a']--;
+            if (mp2[s2[i] - 'a'] == 0)
+            {
+                mp2.erase(s2[i] - 'a');
+            }
+            i++;
         }
         j++;
     }
     return false;
-}
-
-bool checkInclusion(string s1, string s2)
-{
-    return findAnagrams(s2, s1);
 }
 
 int main()
