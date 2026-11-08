@@ -49,6 +49,14 @@ m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf,
 ```
 
 ```
+CHAABI — isme bas yahi pattern hai (pata ho to jitna code likhne me time, utna hi):
+   TOP row     left -> right    phir top++
+   RIGHT col   top -> bottom    phir right--
+   BOTTOM row  right -> left    phir bottom--   (if top <= bottom)
+   LEFT col    bottom -> top    phir left++     (if left <= right)
+```
+
+```
 GUARD — jo loop jis row/col pe chal raha, guard USI ka:
    3rd loop  BOTTOM row chhaap raha  ->  if (top <= bottom)
              matlab bottom abhi bhi top se NEECHE/barabar hai -> bottom row bachi hai -> chhaapo
