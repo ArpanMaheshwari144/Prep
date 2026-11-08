@@ -53,14 +53,25 @@ sach me PDF / CSV hai.
 scan = third party virus scan.
 
 ```mermaid
-flowchart LR
-    A["Arpan: Upload"] --> U["Upload Server"]
-    U -- "status: UPLOADED" --> DB[("DB<br/>(file ka status)")]
-    U --> K["Line<br/>(Kafka)"]
-    K --> W["Worker<br/>(scan + magic bytes + thumbnail)"]
+flowchart TB
+    A["Arpan: Upload"]:::card
+    U["Upload Server"]:::card
+    DB[("DB<br/>(file ka status)")]:::card
+    subgraph PB["PEECHE BHEJO"]
+        K[("Line<br/>(Kafka)")]:::pill
+        W(["Worker<br/>(scan + magic bytes + thumbnail)"]):::pill
+    end
+    A --> U
+    U -- "status: UPLOADED" --> DB
+    U --> K
+    K --> W
     W --> DB
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style W fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. [core + agar badi file] 2 TB hamare server se guzar raha (seedha bada dabba + tukde)
@@ -76,10 +87,20 @@ unhe hata de.
 (adhoora multipart upload kuch din baad hatao).
 
 ```mermaid
-flowchart LR
-    A["Arpan ka phone"] -- "tukde (multipart)" --> S3[("Bada dabba<br/>(S3)")]
-    S3 --> C["Safai<br/>(Lifecycle rule)"]
-    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan ka phone"]:::card
+    subgraph BD["SEEDHA BADA DABBA"]
+        S3[("S3")]:::pill
+    end
+    C["Safai<br/>(Lifecycle rule)"]:::card
+    A -- "tukde (multipart)" --> S3
+    S3 --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style BD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. [core] S3 kaise maane ye hamara user hai (receptionist ka token)
@@ -96,12 +117,22 @@ nahi guzarti, phone seedha S3 me daalta hai).
 quota.
 
 ```mermaid
-flowchart LR
-    A["Arpan ka phone"] -- "1. JWT: upload karna hai" --> U["Receptionist<br/>(Upload Server)"]
-    U -- "2. token" --> T["Ladke ke haath token<br/>(Presigned URL)"]
-    T -- "3. file seedha" --> S3[("Manager ka cabin<br/>(S3)")]
-    style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan ka phone"]:::card
+    subgraph RC["RECEPTIONIST KA TOKEN"]
+        U(["Receptionist<br/>(Upload Server)"]):::pill
+        T["Ladke ke haath token<br/>(Presigned URL)"]:::card
+    end
+    S3[("Manager ka cabin<br/>(S3)")]:::good
+    A -- "1. JWT: upload karna hai" --> U
+    U -- "2. token" --> T
+    T -- "3. file seedha" --> S3
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. [core] File S3 me aa gayi, server ko pata hi nahi (S3 khud bataye)
@@ -122,13 +153,26 @@ chhod do; ulta aaya to dekho kaunsa naya, purana chhod do. S3 khud likhta hai: "
 **Asli naam:** idempotency (file id + version pe ek hi baar), S3 event ka `sequencer` (usi file ke liye, bada = baad wala).
 
 ```mermaid
-flowchart LR
-    S3[("S3")] -- "file aa gayi (event)" --> U["Upload Server"]
-    U --> DB[("DB: UPLOADED + vasiyat<br/>(status + outbox, ek transaction)")]
-    DB --> R["Runner<br/>(relay)"]
-    R --> K["Kafka"]
-    K --> W["Worker (scan)"]
-    style S3 fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    subgraph SB["S3 KHUD BATAYE"]
+        S3[("S3")]:::pill
+    end
+    U["Upload Server"]:::card
+    DB[("DB: UPLOADED + vasiyat<br/>(status + outbox, ek transaction)")]:::card
+    R["Runner<br/>(relay)"]:::card
+    K[("Kafka")]:::card
+    W["Worker (scan)"]:::good
+    S3 -- "file aa gayi (event)" --> U
+    U --> DB
+    DB --> R
+    R --> K
+    K --> W
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. [agar folder] "Goa trip" folder, naam badla to 500 copy (ped hamare DB me)
@@ -143,11 +187,23 @@ nahi. Rename = ek row update.
 
 ```mermaid
 flowchart TB
-    G["Goa trip<br/>(parent, id 1)"] --> D1["Day1<br/>(parent_id 1)"]
-    G --> D2["Day2<br/>(parent_id 1)"]
-    D1 --> F1["img1.jpg -> S3 key f-901"]
-    D2 --> F2["img2.jpg -> S3 key f-902"]
-    style G fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    subgraph PD["PED HAMARE DB ME"]
+        G(["Goa trip<br/>(parent, id 1)"]):::pill
+        D1["Day1<br/>(parent_id 1)"]:::card
+        D2["Day2<br/>(parent_id 1)"]:::card
+    end
+    F1["img1.jpg -> S3 key f-901"]:::card
+    F2["img2.jpg -> S3 key f-902"]:::card
+    G --> D1
+    G --> D2
+    D1 --> F1
+    D2 --> F2
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. [core] Ravi ne 1043 likha, Priya ka statement khula (maalik check + truck seedha ghar)
@@ -162,14 +218,28 @@ guzarta).
 URL (signature, badla to bekaar), truck seedha ghar = S3 se direct download.
 
 ```mermaid
-flowchart LR
-    R["Ravi: file 1043"] --> U["Server<br/>(kiski hai? kisse share?)"]
-    U -- "Priya ki, Ravi ko nahi" --> X["Mana"]
-    A["Arpan: file 1042"] --> U
-    U -- "apni file" --> T["Link<br/>(Presigned download URL)"]
-    T --> S3[("S3")]
-    S3 -- "truck seedha ghar" --> A
-    style U fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    R["Ravi: file 1043"]:::bad
+    A["Arpan: file 1042"]:::card
+    subgraph MC["MAALIK CHECK"]
+        U(["Server<br/>(kiski hai? kisse share?)"]):::pill
+    end
+    X["Mana"]:::bad
+    T["Link<br/>(Presigned download URL)"]:::card
+    S3[("S3")]:::card
+    AH["Arpan ke ghar<br/>(truck seedha)"]:::good
+    R --> U
+    A --> U
+    U -- "Priya ki, Ravi ko nahi" --> X
+    U -- "apni file" --> T
+    T --> S3
+    S3 -- "truck seedha ghar" --> AH
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style MC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. [core] Ravi ne link 200 logon ke WhatsApp group me daala (link ki umar)
@@ -181,10 +251,20 @@ zimmedari, system pe har cheez nahi thop sakte.
 **Asli naam:** umar = presigned URL expiry (file ki sensitivity pe: bank statement jaisi 1-2 minute, baaki 5-6 minute). Umar hamara faisla, S3 ka nahi.
 
 ```mermaid
-flowchart LR
-    U["Server"] -- "statement: 1-2 min<br/>baaki: 5-6 min" --> L["Link ki umar<br/>(Presigned URL expiry)"]
-    L --> G["200 log WhatsApp<br/>(umar ke baad bekaar)"]
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Server"]:::card
+    subgraph LU["LINK KI UMAR"]
+        L(["Presigned URL expiry"]):::pill
+    end
+    G["200 log WhatsApp<br/>(umar ke baad bekaar)"]:::bad
+    U -- "statement: 1-2 min<br/>baaki: 5-6 min" --> L
+    L --> G
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style LU fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. [agar bahar ki file] Scan baaki, Ravi ko download chahiye; virus nikla to (alag line + lo hi mat)
@@ -201,13 +281,26 @@ bahar wala (third party) pehle jaanche, phir hamare paas.
 lo hi mat = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 
 ```mermaid
-flowchart LR
-    S3[("S3: file aayi")] -- "event" --> U["Upload Server"]
-    U --> K["Scan ki alag line<br/>(priority topic)"]
-    K --> W["Scan worker"]
-    W -- "CLEAN" --> DB[("DB: CLEAN<br/>ab link milega")]
-    W -- "INFECTED" --> X["File hatao<br/>+ user ko batao"]
-    style K fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    S3[("S3: file aayi")]:::card
+    U["Upload Server"]:::card
+    subgraph AL["ALAG LINE"]
+        K(["Scan ki alag line<br/>(priority topic)"]):::pill
+        W["Scan worker"]:::card
+    end
+    DB[("DB: CLEAN<br/>ab link milega")]:::good
+    X["File hatao<br/>+ user ko batao"]:::bad
+    S3 -- "event" --> U
+    U --> K
+    K --> W
+    W -- "CLEAN" --> DB
+    W -- "INFECTED" --> X
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
