@@ -117,6 +117,9 @@ nahi guzarti, phone seedha S3 me daalta hai).
 **Asli naam:** receptionist ka token = presigned URL (hamara server JWT dekh ke banata, chaabi phone ko kabhi nahi), had = size limit /
 quota.
 
+**Maan lo 10 GB ki file, upload 40 minute chal raha, aur receptionist ka token thodi der ka tha, beech me hi khatam ho gaya:** Token poori file ka ek nahi, har tukde ka apna. Kadam 2 me file tukdon me ja rahi hai, to har tukda bhejne se pehle receptionist se us tukde ka chhota token le lo. Beech me net gaya ya token ki umar khatam hui, to koi baat nahi: jo tukde pahunch gaye wo S3 me pade hain, bas baaki tukdon ke liye naya token maango aur wahin se aage badho. Is tarah token chhota bhi rehta hai (leak hua to nuksaan kam) aur bada upload bhi poora ho jaata hai.
+**Asli naam:** har tukde ka token = har part ka alag presigned URL (multipart upload), resume pe naya token = sirf baaki parts ke liye naye URL.
+
 ```mermaid
 flowchart TB
     A["Arpan ka phone<br/>(app me AWS chaabi nahi)"]:::card
@@ -285,6 +288,9 @@ bahar wala (third party) pehle jaanche, phir hamare paas.
 
 **Asli naam:** alag line = priority queue / scan ka alag Kafka topic, link nahi = status CLEAN tak download band,
 lo hi mat = INFECTED -> file hatao (quarantine / delete) + user ko batao.
+
+**Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki:** Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko alag line (DLQ) me daal do aur insaan ko alert, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
+**Asli naam:** dobara try = retry with backoff, alag line = DLQ + alert, link band = CLEAN tak download nahi (fail-closed).
 
 ```mermaid
 flowchart TB

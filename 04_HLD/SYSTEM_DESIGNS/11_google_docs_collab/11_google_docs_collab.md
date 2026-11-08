@@ -69,6 +69,9 @@ pe DB query nahi maarunga, warna DB baith jaayega.
 hamesha "is doc ke op, version ke kram se"; key `(docId, version)`; likhai bahut tez, machine jodo to data khud bat-ta;
 join / transaction ki zarurat nahi, isliye Postgres nahi.
 
+**Maan lo trip plan doc 2 saal purana, op log me 50 lakh op; Ravi ne aaj khola to kya server saare op shuru se lagayega:** Ye Banking ke master register wali baat hai: May wale ko 1 May ka balance chahiye to shuru se nahi jodte, master register se uthate hain. Waise hi har kuch hazaar op pe poore doc ki ek photo save kar lo. Ravi doc khole to sabse nayi photo uthao aur sirf uske baad ke thode op lagao. Doc turant khulega.
+**Asli naam:** poore doc ki photo = snapshot, photo + baad ke op = snapshot + op log replay.
+
 ```mermaid
 flowchart TB
     U["Lakhon log dhadadhad save"]:::card

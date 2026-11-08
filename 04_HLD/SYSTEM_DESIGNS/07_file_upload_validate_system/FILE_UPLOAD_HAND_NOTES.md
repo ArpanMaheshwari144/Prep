@@ -19,6 +19,9 @@ Technical me: "bada dabba" = S3, "tukde" = multipart upload (resume), "safai" = 
 **3. Phone seedha S3 me daal raha, par S3 kaise maane ye hamara user hai? App me AWS chaabi rakhi to koi bhi nikaal le.**
 Arpan: Bank jaisa: koi seedha manager ke cabin me nahi ghusta (cabin = S3). Pehle receptionist (hamara server) JWT dekh ke tasalli kare, phir ladke ke haath me token de (token = presigned URL, sirf is file ke liye, thodi der ka): "ye le, jab teri baari aaye to file de dena". 10 GB ka bora receptionist khud nahi uthata (file hamare server se nahi guzarti, phone seedha S3 me daalta hai). Badi faltu file pe had ya paisa.
 Technical me: "receptionist ka token" = presigned URL (hamara server deta, chaabi phone ko nahi), "had" = size limit / quota.
+**Maan lo 10 GB ki file, upload 40 minute chal raha, aur receptionist ka token thodi der ka tha, beech me hi khatam ho gaya.**
+Arpan: Token poori file ka ek nahi, har tukde ka apna. Kadam 2 me file tukdon me ja rahi hai, to har tukda bhejne se pehle receptionist se us tukde ka chhota token le lo. Beech me net gaya ya token ki umar khatam hui, to koi baat nahi: jo tukde pahunch gaye wo S3 me pade hain, bas baaki tukdon ke liye naya token maango aur wahin se aage badho. Is tarah token chhota bhi rehta hai (leak hua to nuksaan kam) aur bada upload bhi poora ho jaata hai.
+Technical me: har tukde ka token = har part ka alag presigned URL (multipart upload), resume pe naya token = sirf baaki parts ke liye naye URL.
 
 **4. File S3 me aa gayi, par server ko pata hi nahi, DB me "UPLOADING" pada, scan shuru hi nahi hua.**
 Arpan: S3 ko bol do: "jab file aa jaaye, mujhe bata dena". Hum DB me mark kar denge aur ladke ko bata denge. Poori nahi hui to wo dobara try karega.
@@ -46,6 +49,9 @@ Technical me: "umar" = presigned URL expiry (file ki sensitivity pe).
 **8. Scan me 10 minute baaki, Ravi ko download chahiye. Scan me virus nikla to?**
 Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
 Technical me: "alag line" = priority queue / alag topic scan ke liye, "link nahi" = status CLEAN tak download band, "lo hi mat" = INFECTED -> file hatao (quarantine / delete) + user ko batao.
+**Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki.**
+Arpan: Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko alag line (DLQ) me daal do aur insaan ko alert, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
+Technical me: dobara try = retry with backoff, alag line = DLQ + alert, link band = CLEAN tak download nahi (fail-closed).
 
 &nbsp;
 

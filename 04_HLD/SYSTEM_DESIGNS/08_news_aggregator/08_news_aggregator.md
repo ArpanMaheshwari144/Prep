@@ -56,6 +56,9 @@ saari khabar ek saath aati hai, jo achha lage padh lo.
 **Asli naam:** bahut chhotu = kai fetcher ek saath (parallel), chhoti parchi = Redis me taiyaar feed (sorted set, time
 ke kram me, aakhri 500).
 
+**Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya:** Ye Twitter ke worker 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to manage karne wala samajh jaata hai chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hai. Is tarah koi site bina dekhe nahi chhoot-ti.
+**Asli naam:** "main zinda hoon" = heartbeat, site baant dena = kaam ka reassignment (lease khatam to doosra le).
+
 ```mermaid
 flowchart TB
     X["Chhotu akela: ek chakkar 3 ghante,<br/>8:55 wali 11 baje"]:::bad

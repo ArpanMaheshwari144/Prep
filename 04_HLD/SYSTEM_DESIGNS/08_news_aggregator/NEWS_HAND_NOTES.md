@@ -13,6 +13,9 @@ Technical me: "chhotu" = fetcher (har site se khabar khinchne wala), "dabba" = D
 **2. Chhotu akela, 5000 site, ek site pe 2 second = ek chakkar 3 ghante. 8:55 wali khabar 11 baje pahunchi.**
 Arpan: Bahut saare chhotu rakh le. Aur khabar pehle se taiyaar rakh, ek chhoti parchi me, sab wahin se padh lein. Jaise akhbaar me saari khabar ek saath aati hai, jo achha lage padh lo.
 Technical me: "bahut saare chhotu" = kai fetcher ek saath, "chhoti parchi" = Redis me taiyaar feed (cache).
+**Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya.**
+Arpan: Ye Twitter ke worker 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to manage karne wala samajh jaata hai chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hai. Is tarah koi site bina dekhe nahi chhoot-ti.
+Technical me: "main zinda hoon" = heartbeat, site baant dena = kaam ka reassignment (lease khatam to doosra le).
 
 **3. 50 chhotu. Ravi ki feed me ek khabar 40 baar: 2 chhotu ek hi Cricbuzz se laaye, 38 alag site se alag shabdon me.**
 Arpan: Chhotu ke paas ek bada aadmi rakh: "ye dobara hai, hatao, pehle aa chuki". Par "India jeeta, Kohli ki century" aur "Kohli ki shaandaar century, India jeeta" me shabd alag hain, hubahu wala check nahi pakdega. To wordings dekh lo: dono me Kohli, century, India, jeeta hai, to same khabar, hata do; nahi to rakh lo.

@@ -215,6 +215,7 @@ Yahi dikkat yahan bhi:
   Banking  10  photocopy peeche, ghabra ke dobara bheja       ->  jisne likha, thodi der main file se (read-your-writes)
   Banking  22  2 baje chhotu ne register gher liya            ->  chhotu photocopy se padhein (read replica)
   Leader   9   Redis gira                                     ->  clone, phir clone, teeno gaye to DB se bharo (replica, DB sach)
+  News     2b  chhotu 7 ki 100 site, wo mara                  ->  "main zinda hoon" band to site baaki chhotuon me (heartbeat)
 
 Naam: replica / quorum / sync copy / read-your-writes
 Juda: sirf wahi "maan lo gira" jahan HUM faisla lete (sync ya async, fail-open), AWS wala nahi.
@@ -280,6 +281,7 @@ Yahi dikkat yahan bhi:
   Kafka    12  counter waqai band hai                         ->  road band, traffic divert (fallback)
   Uber     17  payment fail, Arpan ghar ke andar              ->  paisa nahi aaya to ride khatam nahi (PAYMENT_PENDING)
   Ecom     8   net gaya / PSP chup                            ->  BMS wala PAYMENT_PENDING + status job, kinaare pe refund
+  File     11b bahar wala scanner 1 ghante se chup            ->  ruk ke dobara, phir DLQ + alert; tab tak link band
 
 Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ
 Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker.
@@ -366,6 +368,7 @@ Yahi dikkat yahan bhi:
   YouTube  2   ek machine har quality, 3 ghante               ->  20-25 log, tukde baanto, chhoti quality pehle (parallel encoding)
   YouTube  5   10 saal purani video bhi mehngi jagah          ->  garam garam jagah, thandi thandi jagah (hot / cold storage)
   YouTube  6   2010 ka gaana aaj trend pe                     ->  thodi der garam + CDN pe, phir wapas (promote / demote)
+  File     5b  10 GB upload, token beech me khatam            ->  har tukde ka apna token, resume pe baaki ke naye (presigned per part)
 
 Naam: S3 + presigned URL / multipart / transcoding + ABR / CDN / hot-cold
 Juda: link kisko mile wo gate pe (16).
@@ -402,6 +405,7 @@ Yahi dikkat yahan bhi:
   Netflix  6c  Priya naya user                                ->  India ka garam maal (cold start)
   YouTube  7   MrBeast ki video, crore subscriber             ->  Twitter wala fan-out, sabko push
   Twitter  25  Amit ka tweet 40 ke neeche dab gaya            ->  jisse judta wo pehle (ranking)
+  Docs     2b  2 saal purana doc, 50 lakh op                  ->  har kuch hazaar op pe doc ki photo, photo + baad ke op (snapshot)
 
 Naam: fanout on write / precompute / batch / checkpoint / MapReduce
 Juda: Kohli jaise 27 crore pe ulta: padhte waqt milao (fanout on read).
@@ -474,6 +478,7 @@ Yahi dikkat yahan bhi:
   Chat     8   "12 naye message" kaise dikhe                  ->  ek ginti, itne padh liye (last_read_seq)
   Chat     9   kisne padha, 4.9 lakh entry                    ->  978 matlab 975 padha, number ghata lo (watermark)
   Twitter  24  dabbe me sirf number, screen pe poora tweet    ->  ID se seedha page, photo CDN se (hydration)
+  Twitter  24b tweet delete, 8000 dabbon me ID padi           ->  page pe "deleted" mile to dikhao mat (soft delete)
 
 Naam: operation / inbox had / watermark / parent_id / template cache
 ```
@@ -519,6 +524,8 @@ Yahi dikkat yahan bhi:
   Uber     10  Raju Janpath me, purana naam pada              ->  sach wahi jo GPS ne abhi bheja (latest location)
   Uber     15  250 dikha, aakhir me 500 kate                  ->  jo dikhaya wahi lo (upfront fare)
   Leader   1   1 crore sort kiye bina top 10 + rank           ->  apne aap sort wala dabba (Redis sorted set)
+  Ecom     4b  Redis me ginti kati, DB me order nahi          ->  DB sach, banda milaye, bina order ki ginti wapas (reconciliation)
+  Cache    10b key 3 machine pe, sirf 1 se kati               ->  parchi har copy se kaato, sync job copies bhi dekhe
 
 Naam: ledger / reconciliation / eventual consistency / sahi dabba
 Juda: paisa ho to sach turant chahiye; profile ho to thodi der purana chalega.
