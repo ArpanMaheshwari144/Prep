@@ -262,6 +262,7 @@ Yahi dikkat yahan bhi:
   Notif    9   backup bhi same fail bole                      ->  number galat, alag daal do (DLQ)
   Notif    10  20 worker 300/sec, company ki had 100          ->  saanjha dabba, sab usi se guzrein (token bucket, Redis)
   Notif    11  company ne "OK" bola, SMS pahuncha nahi        ->  "le liya", baad me sent ya fail bataye (webhook)
+  Notif    11b le liya bola, DELIVERED kabhi aaya hi nahi     ->  cron job chhotu poochhe, na mile to FAILED + backup (status poll)
   Stock    9   portfolio DB band, sauda ulta kar do?          ->  rollback nahi, consumer court (settlement PENDING)
   Stock    10  paisa kata, share dikh nahi rahe               ->  parchi apne paas, DB aaye to de do (Kafka retry)
   Payment  1   HDFC hamari sunta hi nahi                      ->  centralized authority, uski API (PSP)

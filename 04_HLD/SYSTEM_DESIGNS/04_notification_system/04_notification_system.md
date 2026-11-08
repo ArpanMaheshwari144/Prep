@@ -249,6 +249,9 @@ hua to apni parchi me "sent", fail hua to "fail".
 **Asli naam:** le liya = ACCEPTED (SENT nahi), company baad me batati = webhook (signature jaanch ke), sent ya fail =
 DELIVERED / FAILED, apni parchi = Tracking DB (Cassandra: har message ek row, bahut likhna, JOIN nahi).
 
+**Maan lo company ne "le liya" bola, phir DELIVERED / FAILED kabhi aaya hi nahi:** Payment wala beech ka banda, cron job jaisa. Ek chhotu ACCEPTED pe atke record dekhta rahe; kuch der baad bhi jawab nahi aaya to company se khud poochhe "is SMS ka kya hua". Wahan se bhi kuch na mile to FAILED maan ke backup se bhej do.
+**Asli naam:** "beech ka banda, cron job" = status poll job (har kuch minute, ACCEPTED + purane record utha ke company ki status API se poochhe), "kuch na mile to FAILED" = timeout ke baad fail maan ke failover (kadam 5). Payment kadam 3 jaisa.
+
 ```mermaid
 flowchart TB
     W["SMS worker"]:::card
