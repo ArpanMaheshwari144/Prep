@@ -35,11 +35,22 @@ insert / delete), is letter ke baad add kar do = op me jagah (position) + kis ve
 turant = WebSocket (dono taraf khula taar).
 
 ```mermaid
-flowchart LR
-    A["Arpan: Goa jaayenge"] --> S["Doc server<br/>(op aata, poora text nahi)"]
-    R["Ravi: budget 20k"] --> S
-    S --> D[("Diary<br/>(DB)")]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: Goa jaayenge"]:::card
+    R["Ravi: budget 20k"]:::card
+    subgraph OP["POORA TEXT NAHI, OPERATION"]
+        S(["Doc server<br/>(op aata, poora text nahi)"]):::pill
+    end
+    D[("Diary<br/>(DB)")]:::good
+    A --> S
+    R --> S
+    S --> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style OP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. Har chhota badlaav DB pe (chhota register, kuch der baad DB)
@@ -55,11 +66,22 @@ hamesha "is doc ke op, version ke kram se"; key `(docId, version)`; likhai bahut
 join / transaction ki zarurat nahi, isliye Postgres nahi.
 
 ```mermaid
-flowchart LR
-    U["Lakhon log<br/>(har akshar)"] --> S["Doc server"]
-    S --> B[("Chhota register<br/>(Redis buffer)")]
-    B -- "kuch der baad" --> D[("Diary<br/>(Cassandra, batch write)")]
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    U["Lakhon log<br/>(har akshar)"]:::card
+    S["Doc server"]:::card
+    subgraph CR["CHHOTA REGISTER"]
+        B[("Redis buffer")]:::pill
+    end
+    D[("Diary<br/>(Cassandra, batch write)")]:::good
+    U --> S
+    S --> B
+    B -- "kuch der baad" --> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Ek hi second me dono ne likha, Ravi ka "kal" galat jagah (shabd khiska do)
@@ -76,11 +98,22 @@ pichhle op ke hisaab se aage (op jis version pe bana, uske baad lage op ke hisaa
 server tay karta, jo pehle pahuncha use agla version.
 
 ```mermaid
-flowchart LR
-    A["Arpan: shuru me Hum"] --> S["Khiskao<br/>(OT)"]
-    R["Ravi: jagah 3 pe kal"] --> S
-    S --> F["Hum Goa kal jaayenge<br/>(Ravi ki jagah aage)"]
-    style S fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan: shuru me Hum"]:::card
+    R["Ravi: jagah 3 pe kal"]:::card
+    subgraph KH["SHABD KHISKA DO"]
+        S(["Khiskao<br/>(OT)"]):::pill
+    end
+    F["Hum Goa kal jaayenge<br/>(Ravi ki jagah aage)"]:::good
+    A --> S
+    R --> S
+    S --> F
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style KH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Do server, ek doc ki do shakal (har doc ka ek centralized maalik)
@@ -96,11 +129,22 @@ maalik hoga, sab uske hisaab se chalega.
 maalik = har doc ka ek owner server (LB `docId` dekh ke ring pe owner chunta, ek doc ke saare editor wahin).
 
 ```mermaid
-flowchart LR
-    A["Arpan<br/>(server A)"] --> O["Maalik<br/>(Owner server: is doc ka OT)"]
-    R["Ravi<br/>(server B)"] --> O
-    O --> V["Ek hi version<br/>(dono ki screen pe)"]
-    style O fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    A["Arpan<br/>(server A)"]:::card
+    R["Ravi<br/>(server B)"]:::card
+    subgraph MK["HAR DOC KA EK MAALIK"]
+        O(["Owner server<br/>(is doc ka OT)"]):::pill
+    end
+    V["Ek hi version<br/>(dono ki screen pe)"]:::good
+    A --> O
+    R --> O
+    O --> V
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style MK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. "Saved" dikha, server gira, para uda (dabba aur uski copy)
@@ -121,12 +165,24 @@ likh lega. Poori consistency chahiye to aur copy, aur paisa; 500 copy bhi koi gi
 **Asli naam:** disk pe bhi = Redis AOF (persistence), kuch second chhoot = chhota data loss window, durability vs cost trade-off.
 
 ```mermaid
-flowchart LR
-    O["Maalik<br/>(Owner server)"] --> B[("Dabba<br/>(Redis buffer)")]
-    B --> C[("Dabbe ki copy<br/>(Redis replica, Saved iske baad)")]
-    B -- "batch" --> D[("Diary<br/>(Cassandra)")]
-    N["Naya maalik<br/>(naya owner)"] -.-> C
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    O["Maalik<br/>(Owner server)"]:::bad
+    subgraph DC["DABBA + USKI COPY"]
+        B[("Dabba<br/>(Redis buffer)")]:::card
+        C[("Dabbe ki copy<br/>(Redis replica, Saved iske baad)")]:::pill
+    end
+    D[("Diary<br/>(Cassandra)")]:::card
+    N["Naya maalik<br/>(naya owner)"]:::good
+    O --> B
+    B --> C
+    B -- "batch" --> D
+    N -.-> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style DC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. Ravi hata, phir bhi 2 minute likhta raha (memory me note + tez bhaagne wala bachcha)
@@ -143,13 +199,24 @@ Bahut se answer ho sakte, ek sahi answer nahi: Redis pub/sub bolo ya building ke
 server pe permission cache + har op pe check (har akshar pe SQL nahi), iska operation accept nahi = op reject, tez bhaagne wala bachcha / building ke bahar chilla de = pub/sub invalidation (Redis pub/sub).
 
 ```mermaid
-flowchart LR
-    M["Arpan: Ravi ko hatao"] --> Q[("Centralized authority<br/>(SQL: permission)")]
-    Q --> P["Tez bachcha<br/>(Redis pub/sub)"]
-    P --> S1["Ravi ka server<br/>(note hata, op reject)"]
-    P --> S2["Baaki server<br/>(note hata)"]
-    style Q fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    M["Arpan: Ravi ko hatao"]:::card
+    subgraph CA["CENTRALIZED AUTHORITY + TEZ BACHCHA"]
+        Q[("SQL: permission")]:::pill
+        P(["Tez bachcha<br/>(Redis pub/sub)"]):::pill
+    end
+    S1["Ravi ka server<br/>(note hata, op reject)"]:::bad
+    S2["Baaki server<br/>(note hata)"]:::good
+    M --> Q
+    Q --> P
+    P --> S1
+    P --> S2
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Server 7 ne awaaz suni hi nahi (server ki copy note kar leti)
@@ -164,11 +231,22 @@ aake tujhse dekh lunga, tu meri copy hai." Ladka chillaya "Ravi editor nahi", co
 dekh lunga = reconnect pe chhoote hue badlaav copy (ya SQL) se le ke note theek, phir hi Ravi ka op maano.
 
 ```mermaid
-flowchart LR
-    P["Tez bachcha<br/>(Redis pub/sub)"] --> C["Server 7 ki copy<br/>(standby, note kiya)"]
-    S7["Server 7<br/>(wapas aaya)"] -- "kya hua?" --> C
-    S7 --> X["Ravi ka op<br/>(reject)"]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+flowchart TB
+    P["Tez bachcha<br/>(Redis pub/sub)"]:::card
+    subgraph CP["SERVER KI COPY NOTE KAR LETI"]
+        C(["Server 7 ki copy<br/>(standby, note kiya)"]):::pill
+    end
+    S7["Server 7<br/>(wapas aaya)"]:::card
+    X["Ravi ka op<br/>(reject)"]:::bad
+    P --> C
+    S7 -- "kya hua?" --> C
+    S7 --> X
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
