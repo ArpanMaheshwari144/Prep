@@ -98,6 +98,9 @@ paaye = doosra order reject.
 **Maan lo Arpan ne 3500 pe 10 TCS ka order daala, TCS 3600 pe hi raha, 3:30 baje market band, order bika nahi, Arpan cancel bhool gaya:** Main dukaan wala hoon, mere paas TCS 3600 me bik raha. Arpan bola mujhe 3500 ka chahiye, jab 3500 ho mujhe bata dena. Theek hai, par pehle paise de ja, warna har koi aake bolega "mere liye rakh lena". Din bhar 3600 se neeche nahi aaya, koi baat nahi, paisa hold pe hi rahega, kyunki app usi liye bana hai. Wo order daal ke so gaya to bhi theek. Agle din TCS 4000 pe chala gaya, to saaf baat: lena hai to le, nahi lena to order cancel kar, paisa wapas tere paas. 3500 pe lena hai to jab neeche aayega tab de dunga.
 **Asli naam:** "jab tak cancel na kare order khula, paisa hold" = GTC (Good Till Cancelled) order, cancel pe hold wapas available me.
 
+**Maan lo Ravi ke paas 10 TCS, usne 3600 pe 10 bechne ka order daala, bika nahi, phir 3650 pe 10 ka doosra order daal diya; dono bik gaye to 20 bech diye:** Ravi ke paas 10 hi share hain to wo 20 kaise bechega, gadit hi nahi baithta. Ravi mere paas aaya, bola mere 10 TCS bech de, 3600 chahiye; maine parchi pe likha 3600 ke 10. Ravi dobara aaya, bola bike nahi, 3650 kar de. To main naya order nahi likhunga, usi parchi pe 3600 kaat ke 3650 kar dunga. App me bhi yahi: bika nahi to Edit karo, bhaav badlo, peeche DB me wahi order update. Bhaav 3600 karo ya 7000, share 10 hi rahenge.
+**Asli naam:** "10 share usi order se bandhe" = share hold (holdings block, free se blocked me; doosra sell order reject), "parchi pe kaat ke naya bhaav" = modify order (naya order nahi, wahi order update).
+
 ```mermaid
 flowchart TB
     T["TCS order 35,000<br/>(book me pada)"]:::card
