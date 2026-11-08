@@ -11,7 +11,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      5000 site se khabar laao · user ko taazi feed (uski category) · ek khabar ek hi baar
+FR      5000 site se khabar laao · user ko taazi feed (uski category) · ek khabar ek hi baar (best effort, kabhi dohra chalega)
 NFR     feed turant (~200 ms) · khabar 5-10 min se purani nahi · ek site band ho to baaki na ruke
 Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec · nayi khabar ~1 / sec
         -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta

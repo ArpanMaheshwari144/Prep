@@ -14,6 +14,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ```
 FR      get(key), put(key, value), delete(key) · asli sach DB me, cache sirf tez copy
 NFR     tez (~1 ms, DB se 50 ms) · DB pe bojh kam · thodi der purana chalega (profile hai, paisa nahi)
+        · jagah bhare to purana nikle · ek hi key pe bheed ho to bhi na gire
 Numbers DB ek padhai ~50 ms, kuch hazaar query / sec jhelta · Ravi ka profile hazaaron / sec, badalta din me ek baar
         10 crore user, roz khulne wale profile ~1 TB · ek machine ki RAM 64 GB -> baantna padega
 ```

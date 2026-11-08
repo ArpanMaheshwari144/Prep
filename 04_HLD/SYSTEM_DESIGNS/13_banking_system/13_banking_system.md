@@ -14,7 +14,9 @@ Kadam 1-13 = ek transfer sahi kaise ho. Kadam 14-20 = mahine ki statement, yaani
 
 ```
 FR      paisa daalo, nikaalo, balance + history dekho · transfer A se B, DONO isi bank me (doosra bank scope se bahar)
+        · paisa jaate hi Ravi ko khabar
 NFR     paisa na gum ho, na bane, na do baar kate · har paise ka hisaab mile (audit) · balance dekhna tez
+        · salary ke din ki bheed jhele (counter badhao, DB wahi)
 Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna isse kahin zyada
         -> bheed chhoti, asli dikkat SAHI hona: ek SQL DB kaafi, shard nahi
 ```
@@ -275,7 +277,8 @@ bill aur mahine ki report me bhi lagta hai.
 
 ```
 FR      har customer ki har mahine ki statement, download karo · har line ke saath running balance
-NFR     31 March ki bheed pe bhi turant mile · statement ekdam sahi (ek line na chhoote) · asli payment na atke
+NFR     31 March ki bheed pe bhi turant mile · statement sahi (der se aaya transaction: turant chahiye ya ekdam pakki,
+        ye pehle poochho, kadam 15) · asli payment na atke
 Numbers crore khaate, arbon transaction -> ek machine me nahi samata, ek chhotu se nahi banega -> kaam baanto
 ```
 

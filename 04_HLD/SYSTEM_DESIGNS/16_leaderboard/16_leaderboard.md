@@ -13,7 +13,8 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      score update · top 10 · mera rank · mere aage-peeche ke 5 · aaj / hafta / all-time board
-NFR     top 10 aur rank turant (milli second) · naya score kuch second me board pe · thoda purana referee board chalega
+        · score barabar to pehle pahuncha wo upar
+NFR     top 10 aur rank turant (milli second) · naya score kuch second me board pe · thoda purana referee board chalega · Redis gira to score na khoye
 Numbers 1 crore khiladi · har second lakhon match khatam -> likhai bahut · board dekhne wale usse bhi zyada
         -> har baar 1 crore sort / ginti nahi chal sakti
 ```

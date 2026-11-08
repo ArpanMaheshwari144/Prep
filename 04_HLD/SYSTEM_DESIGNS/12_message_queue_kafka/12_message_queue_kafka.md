@@ -14,7 +14,8 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ```
 FR      Order Service ki khabar SMS, Fraud, Analytics tak pahunche · Order Service kisi ka intezaar na kare
         · ek user ki khabar kram me (order, pay, cancel)
-NFR     khabar kabhi na khoye · sale ki bheed me bhi chale · ek service dheemi ho to baaki na rukein
+NFR     khabar kabhi na khoye · do baar aaye to bhi kaam ek baar · sale ki bheed me bhi chale
+        · ek service dheemi ho to baaki na rukein · ek kharab khabar line na roke
 Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~500 / sec -> 10 checker, gate 30 (aage checker badhane ki jagah)
         ek khabar ~1 KB -> roz ~100 GB, 7 din x 3 copy = ~2 TB disk
 ```

@@ -13,9 +13,10 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      dukaan ko pay (bank se, PSP ke zariye) · dukaan ka paisa wallet se uske bank me · fail ho to paisa wapas
+        · wallet top-up · wallet se wallet (Arpan se dukaan)
 NFR     do baar na kate · paisa kabhi gayab na dikhe · kuch gire to bhi payment atka na rahe · har paisa trace ho
 Numbers ~10 crore user, aam din kuch sau payment / sec, Diwali pe ~3,000 / sec
-        -> bheed badi dikkat nahi, sahi hona badi dikkat
+        -> aam din bheed badi dikkat nahi, sahi hona badi dikkat · Diwali ka 3,000 / sec ek register nahi jhelega (kadam 9)
 ```
 
 ---

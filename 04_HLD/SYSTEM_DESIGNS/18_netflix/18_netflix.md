@@ -42,7 +42,10 @@ buffering kam), ISP bhi khush (uska bahar jaane wala bandwidth bachta).
 flowchart LR
     S[("US ka store<br/>(origin / S3)")] -- "dost roz laata<br/>(fill)" --> B[("Apne shehar ka dabba<br/>(Open Connect, ISP ke andar)")]
     B -- "tukde paas se" --> R["Ravi ka TV"]
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    class B hl
+    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
 ```
 
 ## 2. 12:29 tak dabba khaali, 12:30 pe 2 crore (pehle se laa ke rakho)
@@ -59,7 +62,10 @@ Badlegi nahi = video static hai, isliye CDN pe rakhna safe.
 flowchart LR
     S[("US ka store<br/>(origin)")] -- "raat ko pehle se<br/>(proactive fill)" --> B[("Mumbai ka dabba<br/>(Open Connect)")]
     U["12:30 pe 2 crore"] --> B
-    style B fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    class B hl
+    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
 ```
 
 ## 3. Ravi gaon me 3G pe, purana TV, Hindi awaaz (har film ki apni seedhi)
@@ -93,7 +99,10 @@ flowchart LR
     W --> L[("Har film ki apni seedhi x kai roop<br/>(encode ladder x codec)")]
     L -- "raat ko" --> B[("ISP ke dabbe<br/>(Open Connect)")]
     B -- "net dekh ke size<br/>(ABR)" --> R["Ravi ka TV / phone"]
-    style L fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    class L hl
+    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
 ```
 
 ## 4. Dabbe me poora maal nahi samaata (garam paas, thanda bade dabbe se)
@@ -111,7 +120,10 @@ flowchart LR
     R["Ravi: purana season"] --> M[("Mumbai ka chhota dabba<br/>(sirf garam maal)")]
     M -- "nahi mila<br/>(miss)" --> T[("Bada dabba<br/>(upar wala tier)")]
     T --> S[("US ka store<br/>(origin)")]
-    style M fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    class M hl
+    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
 ```
 
 ## 5. 20 dabbe, Ravi ka TV kis dabbe se maange (server batata hai)
@@ -133,7 +145,10 @@ flowchart LR
     R["Ravi play dabaya"] --> P["Hamara server, AWS pe<br/>(Playback / Steering Service)"]
     P -- "dabba 7 se lo" --> R
     B7[("Dabba 7<br/>(Open Connect)")] -- "tukde" --> R
-    style P fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    class P hl
+    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
 ```
 
 ## 6. TV pe 27 minute, subah phone pe wahi se (account pe parchi)
@@ -161,7 +176,10 @@ flowchart LR
     R -- "26:50 pe hoon<br/>(heartbeat)" --> W["Hamara server"]
     W --> C[("Parchi paas<br/>(cache)")]
     C -- "ruk gaya -> register" --> D[("Register<br/>(DB, account pe)")]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    class C hl
+    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
 ```
 
 ## 7. App khola, "tere liye" line banane me 6 second (pehle se bana ke rakho)
@@ -197,7 +215,10 @@ flowchart LR
     A["Ravi app khola"] --> S["Hamara server"]
     S --> C
     S --> P[("Abhi dekha<br/>(fast store)")]
-    style C fill:#ffe8b3,stroke:#f59f00,stroke-width:2px,color:#000
+    class C hl
+    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
 ```
 
 ---

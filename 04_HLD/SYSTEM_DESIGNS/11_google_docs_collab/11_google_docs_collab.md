@@ -13,6 +13,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      kai log ek doc ek saath edit karein · doosre ka likha turant dikhe, kisi ka likha mite nahi
+        · kaun edit kar sakta, hataya to turant band
 NFR     typing turant, ruke nahi · aakhir me sabka doc SAME · "Saved" dikha to ude nahi (sab copy ek saath gire to aakhri kuch second)
 Numbers ~10 crore user, roz ~3-4 crore · har akshar ek badlaav
         -> likhna bahut zyada: har akshar pe DB nahi chal sakta

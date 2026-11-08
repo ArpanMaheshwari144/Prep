@@ -12,7 +12,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      buy / sell order dalo (LIMIT / MARKET) · order milao = sauda · paisa aur share badlo · live bhaav, cancel
+FR      buy / sell order dalo (LIMIT, apna bhaav) · order milao = sauda · paisa aur share badlo · live bhaav, cancel
 NFR     paisa aur share hamesha sahi · jo pehle aaya wo pehle mile · 9:15 ki bheed jhele · har cheez ka record
 Numbers 50 lakh order roz, market ~6 ghante -> ~250 / sec aam · 9:15 pe jhatka ~10,000 / sec, saare share me bata
         live bhaav: ~10 lakh app khule, har second naya bhaav -> poochhne ki jagah push

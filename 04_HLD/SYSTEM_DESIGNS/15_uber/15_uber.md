@@ -13,7 +13,9 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
+        · Arpan ko Raju live dikhe · kiraya pehle dikhe · trip khatam pe pay
 NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi · bheed (concert) me bhi chale
+        · ride ke beech driver gaya to sambhalo
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
 ```
