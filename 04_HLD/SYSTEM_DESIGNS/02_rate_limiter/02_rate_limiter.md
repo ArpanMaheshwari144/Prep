@@ -30,6 +30,25 @@ chal le; ek bande ke liye ek threshold hona chahiye. Rate limit ka kaam yahi hai
 **Asli naam:** ek bande ka threshold = rate limit per user, had paar to mana = 429 (saath me Retry-After: kitni der
 baad aao).
 
+```mermaid
+flowchart TB
+    R["Ravi ki script: dhadadhad SMS,<br/>bematlab, bill chadh raha"]:::bad
+    subgraph LM["LIMIT LAGAO"]
+        T(["Ek bande ke liye threshold<br/>(rate limit per user)"]):::pill
+    end
+    X["Had paar: mana (429)"]:::bad
+    OK["Had me: OTP gaya"]:::good
+    R --> T
+    T -. "paar" .-> X
+    T --> OK
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style LM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 2. 10 server, har ek ke paas ginti alag (hisaab main rakhunga)
 
 Ginti server apni memory me rakh raha tha. App 10 server pe, load balancer Ravi ki requests baant deta. Har server ke
@@ -43,21 +62,22 @@ RAM me hai, ~1 ms, aur data sirf 500 MB.
 
 ```mermaid
 flowchart TB
-    U["Ravi ki script"]:::bad
-    LB["Load balancer"]:::card
-    subgraph AS["10 SERVER (App servers)"]
-        S["khud nahi ginte,<br/>sirf batate"]:::card
+    subgraph FA["5 AADMI (10 server), har ek ki apni ginti"]
+        A1["Server 1:<br/>abhi had me hai"]:::bad
+        A2["Server 2:<br/>abhi had me hai"]:::bad
     end
-    R[("Hisaab wala<br/>(Redis counter)")]:::pill
-    U --> LB
-    LB --> S
-    S -- "har request pe +1" --> R
+    subgraph HM["HISAAB MAIN RAKHUNGA"]
+        R[("Tu chhod, mujhe bata:<br/>1 + 2 + 3 + 4<br/>(central counter, Redis)")]:::pill
+    end
+    A1 -- "ek aaya" --> R
+    A2 -- "ek aaya" --> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style AS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style FA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style HM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Khaata badla, 3 second me 10 OTP (token ka dabba)
@@ -65,7 +85,7 @@ flowchart TB
 Ginti ka khaata ghadi se tha: 10:00-10:10 ek khaata, 10:10-10:20 agla, har khaate me 5. Ravi ne 10:09:58 pe 5 liye,
 khaata badla, 10:10:01 pe phir 5, 3 second me 10. To had ek dabbe me rakh lo, har bande ka apna dabba: is dabbe se
 token nikaalo aur aage badho. Dabbe ki ek raftaar hoti hai, itne second me ek token. Dabba apni raftaar se bharta,
-user apni raftaar se aata, khaata badalne se kuch reset nahi hota. User der tak nahi aaya to uska dabba poora bhara
+user apni raftaar se aata. User der tak nahi aaya to uska dabba poora bhara
 (had tak, 5 token), to ek saath 5 le sakta, koi dikkat nahi.
 
 **Asli naam:** ghadi ka khaata = fixed window (kinare pe dugni), token ka dabba = token bucket, apni raftaar se bhare =
@@ -74,23 +94,23 @@ burst allow. Sirf 2 number rakhne padte (kitne bache, aakhri baar kab), wahi 500
 
 ```mermaid
 flowchart TB
-    U["Ravi: OTP maanga"]:::card
-    subgraph B["RAVI KA DABBA"]
-        D[("Har bande ka dabba<br/>(token bucket, max 5)")]:::pill
-        F["apni raftaar se bhare<br/>(2 min me 1)"]:::card
+    K["Khaata badla: 10:09:58 pe 5,<br/>10:10:01 pe phir 5"]:::bad
+    subgraph DB["HAR BANDE KA DABBA (token bucket)"]
+        D[("Dabbe se token nikaalo,<br/>aage badho (max 5)")]:::pill
+        F["Apni raftaar se badhe<br/>(2 min me 1)"]:::card
     end
-    OK["OTP gaya"]:::good
-    X["429, baad me aao"]:::bad
+    OK["Token mila: OTP gaya"]:::good
+    X["Dabba khaali: 429"]:::bad
+    K --> D
     F --> D
-    U --> D
-    D -- "token mila" --> OK
-    D -. "dabba khaali" .-> X
+    D --> OK
+    D -.-> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style B fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style DB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Ek token, 20 request ek saath (ek hi baari me, Lua)
@@ -107,15 +127,15 @@ baaki 19 ko 429.
 
 ```mermaid
 flowchart TB
-    S["20 request<br/>(10 server)"]:::bad
-    subgraph RD["REDIS (ek waqt ek kaam)"]
-        L(["Ek hi baari me<br/>(Lua script: check + nikaalo)"]):::pill
-        R[("Ravi ka dabba<br/>(Redis: tokens = 1)")]:::card
+    S1["Ek pal me 20 request, 10 server:<br/>sabne padha tokens = 1"]:::bad
+    subgraph EB["EK HI BAARI ME (Redis ek waqt ek kaam)"]
+        L(["Check + nikaalo ek saath,<br/>andar koi ghus na paaye<br/>(Lua script)"]):::pill
     end
+    B["Jaise banking me<br/>check + update ek me"]:::card
     OK["1 ko token"]:::good
-    X["baaki 19 ko 429"]:::bad
-    S --> L
-    L --> R
+    X["Baaki 19 ko 429"]:::bad
+    S1 --> L
+    B -.-> L
     L --> OK
     L -.-> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
@@ -123,7 +143,7 @@ flowchart TB
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style RD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style EB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. Guard andar kamre me baitha (guard ko gate pe bithao)
@@ -138,21 +158,15 @@ app tak pahunchti hi nahi, aur har service ko apna limiter nahi likhna).
 
 ```mermaid
 flowchart TB
-    U["Ravi ki script"]:::bad
+    U["Script ki 1000 request"]:::bad
     subgraph GT["MAIN GATE"]
-        G(["Gate ka guard<br/>(API Gateway + limiter)"]):::pill
+        G(["Guard yahan bitha do<br/>(API Gateway + limiter)"]):::pill
     end
-    R[("Hisaab wala<br/>(Redis, Lua)")]:::card
     subgraph GH["GHAR KE ANDAR"]
-        LB["Load balancer"]:::card
-        O["OTP Service"]:::card
-        SMS["SMS company"]:::card
+        O["Kamre (OTP Service):<br/>koi ghus hi na paaye"]:::good
     end
     U --> G
-    G --> R
-    G --> LB
-    LB --> O
-    O --> SMS
+    G -- "sirf had wale" --> O
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -173,21 +187,21 @@ nuksaan, site band hona bada), tijori ke chor = OTP fail-closed (yahan har reque
 
 ```mermaid
 flowchart TB
-    R[("Hisaab wala<br/>(Redis)")]:::bad
-    G["Gate ka guard<br/>(API Gateway)"]:::card
-    subgraph FS["REDIS GIRA TO KAUN ANDAR"]
-        F(["Papa ke dost<br/>(Feed: fail-open)"]):::good
-        O(["Tijori<br/>(OTP: fail-closed)"]):::pill
+    R[("Guard ka Redis gira")]:::bad
+    G["Gate ka guard"]:::card
+    subgraph KA["KISE ANDAR AANE DEN"]
+        F(["Papa ke dost: aane do,<br/>dekh ke chale jaayenge<br/>(feed: fail-open)"]):::good
+        C(["Tijori ke chor: roko<br/>(OTP: fail-closed)"]):::pill
     end
-    G -. "Redis gira" .-> R
+    G -. "ginti nahi mil rahi" .-> R
     G --> F
-    G --> O
+    G --> C
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style FS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style KA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. Script ruki nahi, din-raat maarti (alag dabba, permanent band)
@@ -202,21 +216,19 @@ ban list, permanent band = ban wala gate pe bina gine lautta.
 
 ```mermaid
 flowchart TB
-    U["Ravi ki script<br/>(teesri baar bhi aaya)"]:::bad
-    subgraph BN["ALAG DABBA"]
-        B(["Ban wala dabba<br/>(ban list)"]):::pill
+    R["Ravi: ek baar mana, do baar mana,<br/>teesri baar bhi aaya"]:::bad
+    subgraph AD["ALAG DABBA"]
+        B(["Yahan se hil hi nahi sakta<br/>(ban list)"]):::pill
     end
-    G["Gate ka guard<br/>(API Gateway + limiter)"]:::card
-    O["OTP Service"]:::good
-    U --> B
-    B --> G
-    G --> O
+    X["Is site ke liye permanent band:<br/>gate pe bina gine lautta"]:::bad
+    R --> B
+    B --> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style BN fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style AD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. Har baar naya number, aur office atka (login ke baad kadi, login se pehle dheeli had)
@@ -237,26 +249,21 @@ dheeli had, insaan hazaar baar nahi, pattern notice = script pattern pakadna, IP
 
 ```mermaid
 flowchart TB
-    U["Ravi / office"]:::card
-    subgraph DW["GATE SE PEHLE"]
-        W(["WAF + ban list"]):::pill
+    U["Ravi naye number / office ke 500 log<br/>ek WiFi se"]:::card
+    subgraph HD["DO HAD"]
+        K(["Login ke baad: userId pe kadi had,<br/>kuch kare to ban"]):::pill
+        I(["Login se pehle: IP pe dheeli had<br/>(itni dheeli nahi ki script chale)"]):::pill
     end
-    subgraph GT["GATE KA GUARD (API Gateway)"]
-        K(["login ke baad userId: kadi had<br/>login se pehle IP: dheeli had"]):::pill
-    end
-    R[("Hisaab wala<br/>(Redis)")]:::card
-    O["OTP Service"]:::good
-    U --> W
-    W --> K
-    K --> R
-    K --> O
+    W["Roz hazaar baar password reset:<br/>insaan nahi, IP ko WAF me daal do"]:::bad
+    U --> K
+    U --> I
+    I -. "pattern notice" .-> W
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style DW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
-    style GT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style HD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. Result ka din, sab had me, phir bhi SMS company giri (line lagwao)
@@ -273,19 +280,17 @@ ek saanjhi had se (global had, Redis ka ek token bucket).
 
 ```mermaid
 flowchart TB
-    U["1 crore bachche"]:::card
-    G["Gate ka guard<br/>(API Gateway)"]:::card
-    O["OTP Service"]:::card
-    subgraph LN["LINE LAGWAO"]
-        K[("Line<br/>(Kafka)")]:::pill
-        WK(["Ek-ek karke bhejne wale<br/>(Workers, global had)"]):::pill
+    U["Result ka din: 1 crore bachche"]:::card
+    O["OTP Service: log badha do,<br/>server badha do"]:::card
+    subgraph LN["LINE LAGWA, EK-EK KARKE"]
+        K[("Line (Kafka)")]:::pill
+        W(["Beech ki cheez jo spike rok le:<br/>tu nikal, ab tu nikal<br/>(workers, global had)"]):::pill
     end
-    SMS["SMS company"]:::good
-    U --> G
-    G --> O
+    S["SMS company: aaram se,<br/>apne hisaab se"]:::good
+    U --> O
     O --> K
-    K --> WK
-    WK -- "aaram-aaram se" --> SMS
+    K --> W
+    W -- "dheela-dheela" --> S
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -313,19 +318,21 @@ number nahi = VPN se bachav.
 
 ```mermaid
 flowchart TB
-    R["Ravi (VPN)<br/>+91 number"]:::bad
-    US["US gateway<br/>(region)"]:::card
-    subgraph HM["GHAR KA REGION"]
-        IN[("India ka Redis<br/>(home region ginti)")]:::pill
+    R["Ravi VPN badal-badal ke:<br/>Mumbai, US, Europe"]:::bad
+    US["US gateway"]:::card
+    subgraph GR["GHAR KA REGION"]
+        IN[("+91 dekh ke ghar India:<br/>count India ke Redis pe")]:::pill
     end
+    X["US / Europe pe ginti nahi"]:::card
     R --> US
-    US -- "+91 = ghar India" --> IN
+    US -- "+91" --> IN
+    US -.-> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style HM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style GR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
