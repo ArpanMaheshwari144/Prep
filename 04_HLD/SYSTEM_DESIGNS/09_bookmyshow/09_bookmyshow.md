@@ -35,6 +35,9 @@ status = FREE`, parchi = hold, doosre counter ko mana = uski query me 0 row badl
 kahani se aaya (wahan `WHERE balance >= 500`, yahan `WHERE status = FREE`). Register = SQL DB (Postgres): data chhota,
 aur pay hua to seat + booking + payment teeno ek saath badlein ya koi nahi, ye transaction SQL ka seedha kaam hai.
 
+**Maan lo Arpan ko family ke saath D5, D6, D7 teeno chahiye; counter wale ne D5, D6 pe parchi lagayi, D7 tak pahuncha to usi second doosre counter wale ne D7 pe Priya ki parchi laga di:** Ye almost same hai. D5 D6 D7 ka kaam ek saath hi hoga, alag-alag nahi: dekhna aur rokna teeno ka ek hi baar, beech me koi nahi aa sakta. Agar teeno available hain tabhi book karo. Maan lo mujhe D1 se D10 poora block chahiye, to main beech me khada hoke bolunga "sab sun lo, D1 se D10 meri", ek parchi pe likh dunga aur sab counter wale usi parchi se padhenge. Jaise ek chhotu board leke khada ho gaya: "D1 se D10 book hai, ise koi book nahi karega".
+**Asli naam:** "teeno ek saath, beech me koi nahi" = ek transaction (all-or-nothing, UPDATE ... WHERE seat IN (...) AND FREE; ek bhi na mili to rollback, kisi pe parchi nahi), "ek parchi poore block ki" = ek booking id ke neeche saari seat.
+
 ```mermaid
 flowchart TB
     A["Arpan: ek seat chahiye,<br/>lo mere paise"]:::card

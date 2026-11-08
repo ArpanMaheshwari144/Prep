@@ -15,6 +15,7 @@ Yahi dikkat yahan bhi:
   Rate     4   20 server ne ek saath "tokens = 1" padha       ->  sab ek hi baari me, koi ghus na paaye (Lua script)
   Stock    4   4 thread, 10 share 20 me bike                  ->  copy apne paas kheencho, ek jagah (1 thread per symbol)
   BMS      1   dono ko D5 "mil gayi"                          ->  seat pe parchi, dekhna + rokna ek saath (hold)
+  BMS      1b  D5 D6 D7 chahiye, D7 beech me Priya ki         ->  teeno ek saath, ek parchi, ek na mile to koi nahi (transaction)
   Banking  4   600 me do counter pe 500-500                   ->  dekhna aur kaatna ek kram me (row lock)
   Uber     5   Raju pe ek second me do ride                   ->  BMS wali parchi, ek kadam me (hold / lock)
   Uber     16  wallet me sirf 40                              ->  poora kaato, aadha nahi (atomic charge)
