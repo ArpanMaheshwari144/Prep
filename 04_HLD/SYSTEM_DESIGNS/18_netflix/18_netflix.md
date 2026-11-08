@@ -39,13 +39,22 @@ buffering kam), ISP bhi khush (uska bahar jaane wala bandwidth bachta).
 **Asli naam:** courier = per-GB bill wala CDN, mohalle ka fridge = Open Connect, ISP ke andar free me laga.
 
 ```mermaid
-flowchart LR
-    S[("US ka store<br/>(origin / S3)")] -- "dost roz laata<br/>(fill)" --> B[("Apne shehar ka dabba<br/>(Open Connect, ISP ke andar)")]
-    B -- "tukde paas se" --> R["Ravi ka TV"]
-    class B hl
-    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+flowchart TB
+    US[("US ka store<br/>(doosra shehar)")]:::card
+    X["Har tukda samundar paar:<br/>buffering, bill aasmaan pe"]:::bad
+    subgraph AS["FILE APNE SHEHAR ME"]
+        B(["Dost roz aata-jaata, file le aaye:<br/>ISP ke andar Netflix ka dabba<br/>(Open Connect)"]):::pill
+    end
+    R["Ravi ka TV: paas se"]:::good
+    US -.-> X
+    US -- "dabba bharta rehta" --> B
+    B --> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 2. 12:29 tak dabba khaali, 12:30 pe 2 crore (pehle se laa ke rakho)
@@ -59,13 +68,20 @@ Aur ye cheez ban gayi hai, ab badlegi nahi, isliye rakhne me koi dikkat nahi.
 Badlegi nahi = video static hai, isliye CDN pe rakhna safe.
 
 ```mermaid
-flowchart LR
-    S[("US ka store<br/>(origin)")] -- "raat ko pehle se<br/>(proactive fill)" --> B[("Mumbai ka dabba<br/>(Open Connect)")]
-    U["12:30 pe 2 crore"] --> B
-    class B hl
-    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+flowchart TB
+    X["12:29 tak dabba khaali,<br/>12:30 pe 2 crore"]:::bad
+    subgraph PD["PEN DRIVE ME PEHLE SE RAKH LO"]
+        B(["Raat ko hi Money Heist bhar do<br/>(ban gayi, ab badlegi nahi)"]):::pill
+    end
+    R["12:30: le tu bhi, tu bhi,<br/>buffering hi nahi"]:::good
+    X -.-> B
+    B --> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 3. Ravi gaon me 3G pe, purana TV, Hindi awaaz (har film ki apni seedhi)
@@ -94,15 +110,24 @@ seek, har film ki apni seedhi = per-title encode ladder, kai roop = codec, ek ba
 (parallel workers), awaaz / subtitle alag = alag audio / subtitle tracks.
 
 ```mermaid
-flowchart LR
-    F[("Studio ki badi file")] --> W["Kai machine, tukde baant ke<br/>(batch encoding on AWS)"]
-    W --> L[("Har film ki apni seedhi x kai roop<br/>(encode ladder x codec)")]
-    L -- "raat ko" --> B[("ISP ke dabbe<br/>(Open Connect)")]
-    B -- "net dekh ke size<br/>(ABR)" --> R["Ravi ka TV / phone"]
-    class L hl
-    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+flowchart TB
+    V[("Ek badi 4K file")]:::card
+    subgraph FA["FERRARI / ALTO (kai size)"]
+        F["Ferrari: 1080p, WiFi pe John"]:::good
+        A(["Alto: 240p, gaon me 3G pe Ravi"]):::pill
+    end
+    SD(["Har film ki apni seedhi:<br/>cartoon kam bits, goli-baari zyada"]):::card
+    RP["Kai roop: purana TV / naya phone<br/>awaaz, subtitle alag files"]:::card
+    V --> F
+    V --> A
+    SD -.-> FA
+    RP -.-> FA
     linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style FA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. Dabbe me poora maal nahi samaata (garam paas, thanda bade dabbe se)
@@ -116,14 +141,22 @@ lo, thodi der chhote dabbe me rakh lo, garmaahat khatam to wapas.
 store / tier. Garmaahat khatam to wapas = thanda maal dabbe se nikalna (evict).
 
 ```mermaid
-flowchart LR
-    R["Ravi: purana season"] --> M[("Mumbai ka chhota dabba<br/>(sirf garam maal)")]
-    M -- "nahi mila<br/>(miss)" --> T[("Bada dabba<br/>(upar wala tier)")]
-    T --> S[("US ka store<br/>(origin)")]
-    class M hl
-    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+flowchart TB
+    X["Mumbai ke dabbe me<br/>poora maal nahi samaata"]:::bad
+    subgraph GP["GARAM CHEEZ PAAS"]
+        G[("Money Heist (craze)")]:::pill
+    end
+    BD[("Bada dabba (upar wala store)")]:::card
+    T["Purana season: bade dabbe se mangwa lo,<br/>garmaahat khatam to wapas"]:::card
+    X --> G
+    T --> BD
+    BD -.-> GP
     linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style GP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 5. 20 dabbe, Ravi ka TV kis dabbe se maange (server batata hai)
@@ -141,14 +174,24 @@ paas wala dabba video dega, ye sab AWS pe. Sirf video ke bytes Open Connect se.
 **Asli naam:** AWS = login / browse / recommendation / steering (control plane), Open Connect = sirf video ke bytes.
 
 ```mermaid
-flowchart LR
-    R["Ravi play dabaya"] --> P["Hamara server, AWS pe<br/>(Playback / Steering Service)"]
-    P -- "dabba 7 se lo" --> R
-    B7[("Dabba 7<br/>(Open Connect)")] -- "tukde" --> R
-    class P hl
-    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+flowchart TB
+    R["Ravi ka TV: play"]:::card
+    subgraph HG["HOSPITAL KA GUARD (hamara server)"]
+        S(["Pata hai kis dabbe me kya:<br/>mod dega (steering)"]):::pill
+    end
+    D3[("Dabba 3: Money Heist, khaali")]:::good
+    D7[("Dabba 7: saans phooli")]:::bad
+    M["Garam season zyada dabbon me,<br/>10 dost, sab nikaal-nikaal ke do"]:::card
+    R --> S
+    S --> D3
+    S -.-> D7
+    M -.-> D3
     linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style HG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 6. TV pe 27 minute, subah phone pe wahi se (account pe parchi)
@@ -171,15 +214,24 @@ matlab aaj aage nahi badha.
 **Asli naam:** dost sankshep me bataye = dabba / player playback ki report (heartbeat) server ko bhejta.
 
 ```mermaid
-flowchart LR
-    B[("Dabba<br/>(Open Connect)")] -- "tukde" --> R["Ravi ka TV"]
-    R -- "26:50 pe hoon<br/>(heartbeat)" --> W["Hamara server"]
-    W --> C[("Parchi paas<br/>(cache)")]
-    C -- "ruk gaya -> register" --> D[("Register<br/>(DB, account pe)")]
-    class C hl
-    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+flowchart TB
+    T["TV pe 27 minute, band"]:::card
+    subgraph AP["ACCOUNT PE PARCHI"]
+        P(["Abhi parchi paas<br/>(fast store)"]):::pill
+        R[("Ruk gaya to register<br/>(DB)")]:::pill
+    end
+    D["Dabba sankshep me bataye:<br/>kahan tak dekha"]:::card
+    PH["Subah phone: 27:00 se"]:::good
+    T --> P
+    D -.-> P
+    P -- "27 pe ruka" --> R
+    R --> PH
     linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 7. App khola, "tere liye" line banane me 6 second (pehle se bana ke rakho)
@@ -208,17 +260,24 @@ game hai, khelo. India me hai to India ka garam maal dikhao. Dheere-dheere lat l
 **Asli naam:** garam maal = naye user ko region ka trending (cold start). Pattern banega = dekhne se apni list.
 
 ```mermaid
-flowchart LR
-    E["Dekhna / chhodna / search"] --> K[["Kafka"]]
-    K --> J["Raat ka kaam<br/>(batch job)"]
-    J -- "Ravi ki line" --> C[("Tayaar line<br/>(cache)")]
-    A["Ravi app khola"] --> S["Hamara server"]
-    S --> C
-    S --> P[("Abhi dekha<br/>(fast store)")]
-    class C hl
-    classDef default fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef hl fill:#f5c542,stroke:#f5c542,color:#000
+flowchart TB
+    X["App khola: 3 saal ka itihaas,<br/>6 second khaali screen"]:::bad
+    subgraph GP["GAME PARLOUR WALA: GTA PEHLE SE LAGA KE"]
+        L[("Raat ko list bana ke rakho<br/>(batch, Twitter feed jaisa)")]:::pill
+    end
+    N(["Abhi dekhi Dhurandhar: turant parchi,<br/>dikhate waqt milao, lal patti"]):::card
+    Pr["Priya naya: India ka garam maal"]:::card
+    R["App khole: tayaar cheez saamne"]:::good
+    X -.-> L
+    L --> R
+    N -.-> R
+    Pr -.-> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style GP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
