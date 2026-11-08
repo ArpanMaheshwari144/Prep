@@ -12,7 +12,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      tweet post (text, photo / video) · home feed: jinko follow karta unke naye tweet, naye upar
+FR      tweet post (text, photo / video) · home feed: jinko follow karta unke naye tweet, naye upar · scroll pe agla page, dekha hua dobara nahi
         · video har net pe chale (tukde, kai quality, beech se dekhna, paas ka CDN)
 NFR     feed ~200 ms me (40 din baad aaya to thodi der chalegi) · 2-5 sec purani chalegi (isliye pehle se bana sakte) · 27 crore wale celeb ka tweet bhi sambhle
 Numbers ~50 crore user, 50 crore tweet / din = ~5,000 / sec · ek aadmi ~500 ko follow · shaam 8 baje 5 crore ek saath
@@ -504,6 +504,111 @@ flowchart TB
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+## 16. Dabbe me sirf number, screen pe poora tweet (ID se seedha page)
+
+Ravi ke dabbe me sirf tweet ke number pade hain: #905, #902, #899. Par screen pe number nahi chahiye, chahiye kisne
+likha, photo, kitne like. Mere paas ek mota register hai, sab likha hua. 1,00,000 page me dhoondhna time lega, main
+baawla thodi hoon. Par mere paas ID hain, to seedha wahi page kholunga. Register 1 crore page ka ho ya 10 crore, ID ho
+to kaam aasaan. Photo / video CDN se aa jaayegi, baaki mote register se.
+
+**Asli naam:** ID se seedha page = hydration (ID se poori post, key se lookup), photo CDN se = post me CDN link, mota
+register = tweet store (Cassandra), like count saath me. Dabbe me sirf ID isliye, taaki dabba chhota rahe (kadam 7).
+
+```mermaid
+flowchart TB
+    subgraph DB["RAVI KA DABBA: SIRF NUMBER"]
+        direction LR
+        a(["#905"]):::pill
+        b(["#902"]):::pill
+        c(["#899"]):::pill
+        a ~~~ b ~~~ c
+    end
+    R[("Mota register:<br/>ID se seedha page")]:::card
+    C[("CDN: photo / video")]:::card
+    S["Ravi ki screen: kisne likha,<br/>photo, 2,481 like"]:::good
+    DB --> R
+    R --> S
+    C --> S
+    linkStyle 0,1 stroke-width:0px
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style DB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+## 17. Amit ka tweet 40 ke neeche dab gaya (jisse judta wo pehle)
+
+Ravi roz dost Amit ke tweet pe like / comment karta. Amit ka tweet 3 ghante pehle aaya, uske baad 40 aur, Amit ka
+neeche dab gaya; upar wo jinhe Ravi kholta bhi nahi. Ye ek tarah recommendation hi hai. Peeche kaunsa algorithm /
+machine learning, wo design ka hissa nahi. Par main roz Amit ki photo like kar raha, baaki 40 ko bas dekh ke chhod
+deta. Instagram roz dekh raha ki ye ladka Amit ko like karta, to pehli photo Amit ki dikhayega. YouTube me bhi same:
+MrBeast ki video roz dekhun to wahi suggest karega. Unka kaam hi yahi: main jitni der rahun, unki kamaai badhe.
+
+**Asli naam:** jisse zyada judta wo pehle = ranking (kisse baat karta, post kitni nayi, likes), algorithm design ka
+hissa nahi = ranking model alag; hum dabbe ki list dete, ranked list lete, phir kadam 16 se poori post. Netflix kadam
+6 ("tere liye") se juda.
+
+```mermaid
+flowchart TB
+    subgraph TL["TIME KE KRAM ME"]
+        direction LR
+        t1(["#905"]):::card
+        t2(["#902"]):::card
+        t3(["... 40 aur"]):::card
+        t4(["#860 Amit"]):::bad
+        t1 ~~~ t2 ~~~ t3 ~~~ t4
+    end
+    M(["Jisse judta wo pehle:<br/>kisse baat, kitni nayi, likes<br/>(ranking)"]):::pill
+    subgraph RK["RAVI KA KRAM"]
+        direction LR
+        r1(["#860 Amit"]):::good
+        r2(["#905"]):::card
+        r3(["#899"]):::card
+        r1 ~~~ r2 ~~~ r3
+    end
+    TL --> M
+    M --> RK
+    linkStyle 0,1,2,3,4 stroke-width:0px
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style TL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style RK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+## 18. Scroll ke beech upar 5 naye, wahi 5 dobara (kahan tak padha yaad rakh)
+
+Ravi scroll kar raha, 20 dekhe, agle 20 maange. Beech me upar 5 naye aa gaye, to neeche wale 5 khisak ke agle page me
+chale gaye; isliye wahi 5 dobara. Hal: Arpan ne kahan tak padha, thodi der ke liye yaad rakh lo. "Arpan ne yahan tak
+padh liya, ab iske baad wale do." Naye 5 upar hain, upar scroll karega to dikhenge. Refresh pe purani post dobara aa
+sakti hai, Instagram ka kaam hi engage rakhna, wo chalta hai.
+
+**Asli naam:** page number se agle 20 = offset pagination (isi se khisakta), kahan tak padha yaad rakh = cursor (har
+page ke saath aakhri dikhayi post lautao, agla uske theek baad se), thodi der yaad = ranked feed (kadam 17) me ranked
+list thodi der save, cursor usi list me aage.
+
+```mermaid
+flowchart TB
+    X["Page 1 dekha: #35 se #26,<br/>beech me upar 5 naye aaye"]:::bad
+    O["Page number se agle 20:<br/>5 khiske, wahi 5 dobara"]:::bad
+    CR(["Kahan tak padha, yaad rakh (cursor):<br/>Arpan ne #26 tak padha"]):::pill
+    N["Agla page #25 se,<br/>dobara kuch nahi"]:::good
+    U["Naye 5 upar:<br/>upar scroll pe dikhenge"]:::card
+    X -.-> O
+    X --> CR
+    CR --> N
+    CR -.-> U
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
 ```
 
 ---

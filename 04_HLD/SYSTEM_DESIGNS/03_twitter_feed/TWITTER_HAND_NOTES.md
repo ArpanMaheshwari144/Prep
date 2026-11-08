@@ -92,4 +92,16 @@ Technical me: "taala-chaabi maalik ke paas" = har request pe access check, "10 l
 Arpan: CDN ke paas bhi taala-chaabi ho, har request US tak nahi jaayegi. In 10 ki user id do: ye 10 aayein to link do, nahi to mat do. Aur link ki umar 5 minute, uske baad kisi ke liye nahi khulega. Leak bhi hua to 11wa nahi ghusega. Mohar kaise jaanchi jaati, wo AWS ka kaam.
 Technical me: "CDN ke paas bhi taala" = CDN signature jaanchta (signed URL / cookie), "10 user id" = server allow list dekh ke hi link deta, "5 minute umar" = short expiry. Hamara faisla: kisko aur kitni der ka.
 
+**16. Ravi ke dabbe me sirf tweet ke number (#905, #902 ...). Screen pe chahiye kisne likha, photo, kitne like.**
+Arpan: Mere paas ek mota register hai, sab likha hua. 1,00,000 page me dhoondhna time lega, main baawla thodi hoon. Par mere paas ID hain (905, 902), to seedha wahi page kholunga. Register 1 crore page ka ho ya 10 crore, ID ho to kaam aasaan. Photo / video CDN se aa jaayegi, baaki mote register se. Isme koi badi dikkat nahi.
+Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup), "photo CDN se" = post me CDN link, "mota register" = tweet store (Cassandra), like count saath me.
+
+**17. Ravi roz dost Amit ke tweet pe like / comment karta. Amit ka tweet 3 ghante pehle aaya, uske baad 40 aur, Amit ka neeche dab gaya; upar wo jinhe Ravi kholta bhi nahi.**
+Arpan: Ye ek tarah recommendation hi hai. Peeche kaunsa algorithm / machine learning, wo design ka hissa nahi. Par main roz Amit ki photo like kar raha, baaki 40 ko bas dekh ke chhod deta. Instagram roz dekh raha ki ye ladka Amit ko like karta, to pehli photo Amit ki dikhayega. YouTube me bhi same: MrBeast ki video roz dekhun to wahi suggest karega. Unka kaam hi yahi: main jitni der rahun, unki kamaai badhe.
+Technical me: "jisse zyada judta wo pehle" = ranking (kisse baat karta, post kitni nayi, likes), "algorithm design ka hissa nahi" = ranking model alag; hum list dete, ranked list lete. Netflix 6 ("tere liye") se juda.
+
+**18. Ravi scroll kar raha, 20 dekhe, agle 20 maange. Beech me upar 5 naye aa gaye, agle page pe wahi 5 dobara.**
+Arpan: 20 padhe, agle 20 maange, beech me upar 5 aa gaye, to neeche wale 5 khisak ke agle page me chale gaye; isliye wahi 5 dobara. Hal: Arpan ne kahan tak padha, thodi der ke liye yaad rakh lo. "Arpan ne yahan tak padh liya, ab iske baad wale do." Naye 5 upar hain, upar scroll karega to dikhenge. Refresh pe purani post dobara aa sakti hai, Instagram ka kaam hi engage rakhna, wo chalta hai; par interview me ye bataunga.
+Technical me: "page number se agle 20" = offset pagination (isi se khisakta), "kahan tak padha yaad rakh" = cursor (har page ke saath aakhri dikhayi post lautao, agla uske theek baad se), "thodi der yaad" = ranked feed me ranked list thodi der save, cursor usi list me aage.
+
 Poora design = [03_twitter_feed.md](03_twitter_feed.md)

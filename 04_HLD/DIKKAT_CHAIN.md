@@ -311,6 +311,7 @@ Yahi dikkat yahan bhi:
   Chat     7b  #980 atka, #981 pehle, phone "981 ke baad do"  ->  server ka record, jo nahi gaya sab do; phone sort kare (store-and-forward)
   Chat     12  S1 dheema, "nahi, parso" pehle pahuncha        ->  server ka number, phone us kram me lagaye (seq, client sort)
   Leader   2   Ravi, Priya dono 9800                          ->  score phir time, ek number me (thenComparing)
+  Twitter  26  scroll ke beech upar 5 naye, wahi 5 dobara     ->  kahan tak padha yaad rakh (cursor, offset nahi)
 
 Naam: sequence number / offset / OT
 Juda: Kafka ka offset bhi yahi number.
@@ -383,6 +384,7 @@ Yahi dikkat yahan bhi:
   Netflix  6b  11 baje Dhurandhar dekhi                       ->  turant parchi, dikhate waqt milao (abhi ka fast store + bani list)
   Netflix  6c  Priya naya user                                ->  India ka garam maal (cold start)
   YouTube  7   MrBeast ki video, crore subscriber             ->  Twitter wala fan-out, sabko push
+  Twitter  25  Amit ka tweet 40 ke neeche dab gaya            ->  jisse judta wo pehle (ranking)
 
 Naam: fanout on write / precompute / batch / checkpoint / MapReduce
 Juda: Kohli jaise 27 crore pe ulta: padhte waqt milao (fanout on read).
@@ -454,6 +456,7 @@ Yahi dikkat yahan bhi:
   Docs     1   Save pe poora text, Arpan ki line gayab        ->  poora text nahi, operation bhejo (insert / delete)
   Chat     8   "12 naye message" kaise dikhe                  ->  ek ginti, itne padh liye (last_read_seq)
   Chat     9   kisne padha, 4.9 lakh entry                    ->  978 matlab 975 padha, number ghata lo (watermark)
+  Twitter  24  dabbe me sirf number, screen pe poora tweet    ->  ID se seedha page, photo CDN se (hydration)
 
 Naam: operation / inbox had / watermark / parent_id / template cache
 ```
