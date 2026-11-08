@@ -227,3 +227,40 @@ ko eventId se pakad lega (hissa 4). Outbox table bharti jaaye to purani sent = t
 
 Is tarah teeno jagah bachav ho gaya: **bhejne wala = outbox · Kafka = 3 copy + acks=all · padhne wala = pehle kaam
 phir commit + eventId**.
+
+## 7. Partition andar se: register (disk pe kaise rakha jaata hai)
+
+Ye design ka faisla nahi, Kafka ka andar ka kaam hai; interview me design me nahi poochte. Par ye wahi kahani hai jo
+bank aur Twitter me pehle aa chuki hai.
+
+Stadium ke gate pe admin ek register me har aane wale ka naam likhta hai. Wo beech ke panne pe nahi likhta, aur
+purana naam kaat ke dobara nahi likhta. Bas aakhri line ke neeche agla naam jodta jaata hai. Kafka bhi disk pe yahi
+karta hai: har partition ek register hai, aur naya message hamesha uske aakhir me judta hai. Beech me jagah dhoond ke
+likhna dheema hota hai, aakhir me jodte jaana sabse tez, isliye Kafka itna tez likh paata hai. Ise **append-only log**
+kehte hain.
+
+Register bhar jaaye to admin purana band karke almari me rakh deta hai aur naya register khol leta hai. Har register
+ke cover pe likha hota hai ki wo kis number se shuru hua: "0 se", "500 se", "1000 se". Ek register = **segment**
+(`.log` file). 7 din purana maal hatana ho to Kafka panne kaat-kaat ke nahi hatata; jo poora register 7 din se purana
+ho, use seedha almari se phenk deta hai. Ise **retention** kehte hain.
+
+Bookmark (hissa 3) pe 501 likha hai, to 501 kaise milta hai? Do kadam. Pehle covers dekho: 501 "500 se" wale register
+me hai (covers kram me lage hain, to binary search). Phir us register ke saath lagi chhoti parchi dekho, jaise kitaab
+ki vishay-suchi: "500 -> panna 1, 600 -> panna 4". Parchi har number ke liye nahi likhti, beech-beech ke, taaki chhoti
+rahe. Panna 1 pe jao, do-chaar line aage padho, 501 mil gaya. Ye parchi **`.index`** file hai (offset se jagah,
+beech-beech ki entry = sparse index).
+
+```mermaid
+flowchart LR
+    B["Bookmark: 501"] --> C{"Covers dekho<br/>0 · 500 · 1000"}
+    C --> S2
+    subgraph S2["Register '500 se' (segment)"]
+        I[("parchi .index<br/>500 -> panna 1<br/>600 -> panna 4")]
+        L[(".log<br/>500, 501, 502 ...<br/>aakhir me hi judta")]
+    end
+    I -- "panna 1, do line aage" --> L
+    style S2 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
+```
+
+Pehle kahan bola: kaato mat neeche likho = Banking 5 (ledger) · mahine ke mahine tod do = Banking 12 · purana head
+office = Banking 13 · ID se seedha page, 1 lakh panne nahi palatne = Twitter 16.

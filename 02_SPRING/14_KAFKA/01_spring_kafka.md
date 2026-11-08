@@ -1,6 +1,6 @@
-# Kafka (Spring, usercrud me chalaya)
+# Spring Kafka (code me kaise chalta, usercrud me chalaya)
 
-HLD wali kahani (stadium, admin ki line, gate matlab partition, kamra matlab consumer group) 04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka me hai.
+Kafka andar se kaise chalta (topic, partition, group, commit, copy, outbox, disk pe register) = [kafka_concepts.md](../../04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md). HLD wali kahani (stadium) = [12_message_queue_kafka](../../04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md).
 Yahan sirf Spring wala hissa hai: tere usercrud me Kafka code me kaise chalta hai.
 
 ## Kahani: Order Service aur SMS

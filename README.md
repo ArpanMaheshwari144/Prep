@@ -94,7 +94,7 @@ SAFAR (March: khaali folder)  ->  aaj
 - **[11_GRAPHQL](02_SPRING/11_GRAPHQL/01_graphql.md)** — schema · @QueryMapping · client-picks-fields.
 - **[12_ASYNC_SCHEDULING](02_SPRING/12_ASYNC_SCHEDULING/01_async_scheduled.md)** — @Async · @Scheduled (proxy pe tika).
 - **[13_CACHE](02_SPRING/13_CACHE/01_cache.md)** — @Cacheable · @CacheEvict.
-- **[14_KAFKA](02_SPRING/14_KAFKA/01_kafka_basics.md)** — section 0 = **KYUN Kafka** (seedhi call ki dikkat · MQ vs log · har shabd kis dikkat se: broker / topic / partition / offset / group, akhbaar misaal) · message kis consumer ko (key se partition, group se consumer) · commit kab (at-least-once + idempotent) · producer/consumer · DLQ (event-driven ka core).
+- **[14_KAFKA](02_SPRING/14_KAFKA/01_spring_kafka.md)** — Spring Kafka: KafkaTemplate · @KafkaListener · DLT · concurrency · sticky partitioner trap · usercrud. Andar ki samajh (partition, commit, outbox, disk pe register) = [kafka_concepts](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md)
 
 ---
 
