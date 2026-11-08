@@ -34,17 +34,15 @@ sauda wahan Kafka se pahunchta (kadam 6-7).
 
 ```mermaid
 flowchart TB
-    A["Arpan: buy 10 @ 3500"]:::card
-    R["Ravi: sell 10 @ 3500"]:::card
-    O["Order Service"]:::card
-    subgraph BA["BEECH KA AADMI"]
-        M(["Matching engine"]):::pill
-        B[("Do list<br/>(Order book)")]:::card
+    A["Arpan: 3500 pe kharidna"]:::card
+    R["Ravi: 3500 pe bechna"]:::card
+    subgraph BA["BEECH ME EK AADMI"]
+        M(["Dono ka bhaav theek?<br/>to aapas me sell / buy<br/>(matching engine)"]):::pill
     end
-    A --> O
-    R --> O
-    O --> M
-    M --> B
+    OK["Sauda: na Arpan ne Ravi ko<br/>jaana, na Ravi ne Arpan ko"]:::good
+    A --> M
+    R --> M
+    M --> OK
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -66,15 +64,15 @@ hai, iska taala to main khareed chuka, ghapla hai. Bhai tu nikal, ye chaabi is b
 
 ```mermaid
 flowchart TB
-    A["Arpan ka app<br/>(net gaya, dobara bheja)"]:::card
-    O["Server<br/>(Order Service)"]:::card
-    subgraph CH["CHAABI"]
-        K[("Taala<br/>(UNIQUE client_order_id)")]:::pill
+    A["Net gaya, app ne<br/>Buy 10 TCS dobara bheja"]:::bad
+    subgraph CH["EK KEY LAGA DE"]
+        K[("Chaabi ka taala khareed liya<br/>(client_order_id, UNIQUE)")]:::pill
     end
-    X["doosri baar: same chaabi,<br/>naya order nahi"]:::good
-    A -- "order + chaabi" --> O
-    O --> K
-    K --> X
+    OK["Pehli baar: 10 share"]:::good
+    X["Wahi chaabi dobara:<br/>tu nikal is building se"]:::bad
+    A --> K
+    K --> OK
+    K -.-> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -92,25 +90,23 @@ account pe EMI daal rakhi to wo paisa hold ho jaata hai. Same yahan: order lagte
 nahi kar paayega, INFY wala order lagta hi nahi.
 
 **Asli naam:** paisa hold = funds block (available se ghata ke blocked me, check aur kaatna ek query me), kharch na kar
-paaye = doosra order reject. Ravi ke share pe bhi yahi, ek share do baar nahi bikta.
+paaye = doosra order reject.
 
 ```mermaid
 flowchart TB
-    O["TCS order 35,000"]:::card
-    I["INFY order 35,000"]:::card
-    subgraph KH["PAISA HOLD"]
-        W[("Arpan ka khaata<br/>available 0, blocked 35,000")]:::pill
+    T["TCS order 35,000<br/>(book me pada)"]:::card
+    subgraph HO["PAISA HOLD (jaise EMI me bank)"]
+        W[("Arpan ka khaata:<br/>available 0, hold 35,000")]:::pill
     end
-    X["INFY reject"]:::bad
-    O --> W
+    I["INFY order 35,000:<br/>kharch hi nahi kar paaya, reject"]:::bad
+    T --> W
     I --> W
-    W -- "paisa nahi" --> X
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style KH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style HO fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 4. 4 thread, 10 share 20 me bik gaye (ek line, ek jagah)
@@ -128,15 +124,15 @@ Cancel bhi isi line me: sauda pehle aaya to "bik chuka", cancel pehle to hold wa
 
 ```mermaid
 flowchart TB
-    A["Arpan"]:::card
-    M["Mohan"]:::card
-    subgraph EL["EK LINE, EK JAGAH"]
-        Q(["TCS ka ek thread"]):::pill
+    X["Copy door khadi: do thread,<br/>10 share 20 me bik gaye"]:::bad
+    subgraph EL["SABKO EK LINE ME, EK JAGAH"]
+        Q(["TCS ki book ek hi jagah<br/>(ek thread)"]):::pill
     end
-    B[("TCS book<br/>(Ravi ke 10)")]:::good
-    A --> Q
-    M --> Q
-    Q -- "ek-ek karke" --> B
+    A["Arpan aaya: pehle bech diya,<br/>zero"]:::good
+    M["Mohan aaya: mana"]:::card
+    X --> Q
+    Q --> A
+    Q --> M
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -164,17 +160,16 @@ se book wapas.
 
 ```mermaid
 flowchart TB
-    O["Order Service"]:::card
-    M["Ek share ek thread<br/>(Matching engine)"]:::card
-    subgraph PD["PERMANENT DABBA + PARCHI"]
-        L[("Parchi<br/>(Order log)")]:::pill
-        D[("Permanent dabba<br/>(Primary DB)")]:::pill
-        C[("3-4 copy<br/>(Replica)")]:::pill
+    X["Book RAM me, machine mari:<br/>adhoora order uda"]:::bad
+    subgraph PD["PERMANENT DABBA"]
+        D[("Kaata-jodi DB me<br/>(primary DB)")]:::pill
+        C[("3-4 copy<br/>(replica)")]:::card
     end
-    O --> M
-    M --> L
-    M --> D
+    L[("Subah ki parchi: to-do, utni ki<br/>utni rehti (order log)")]:::pill
+    B["Parchi dekh ke bag<br/>dobara jamao"]:::good
+    X --> D
     D --> C
+    L --> B
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -196,19 +191,19 @@ rukti.
 
 ```mermaid
 flowchart TB
-    M["Matching engine"]:::card
+    E["Engine: main khud kuch nahi<br/>karunga, instruction de di"]:::card
     subgraph FJ["10 LADKON KI FAUJ"]
-        K[("Kafka: trades")]:::pill
+        K[("Kafka (trades)")]:::pill
     end
-    S["Settlement"]:::card
-    N["SMS<br/>(Notification)"]:::card
-    A["Audit"]:::card
-    P["Price Service"]:::card
-    M --> K
-    K --> S
-    K --> N
-    K --> A
+    P["Portfolio"]:::card
+    H["Paise ka hisaab"]:::card
+    S["SMS"]:::card
+    B["Bhaav ki screen"]:::card
+    E --> K
     K --> P
+    K --> H
+    K --> S
+    K --> B
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -232,47 +227,51 @@ katta.
 
 ```mermaid
 flowchart TB
-    subgraph PP["PARCHI PAKDO"]
-        K[("Parchi<br/>(Kafka: trades)")]:::pill
+    X["Paisa kata, portfolio DB band"]:::bad
+    N["Rollback nahi: match ho gaya,<br/>warna consumer court"]:::bad
+    subgraph PA["PARCHI APNE PAAS"]
+        K[("Ye kaam karna hai<br/>(Kafka me message)")]:::pill
     end
-    S["Portfolio Service<br/>(retry)"]:::card
-    D[("Portfolio DB<br/>(band, PENDING)")]:::bad
-    K --> S
-    S -. "khule to phir" .-> D
+    U["Grahak: thodi der baad<br/>dikha denge (PENDING)"]:::card
+    D["DB aaya: le meri parchi,<br/>jaldi kar"]:::good
+    X --> K
+    X -.-> N
+    K --> U
+    K --> D
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style PP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style PA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 8. TCS ka bhaav 10 lakh screen pe (chat wala khula taar)
 
 TCS ka bhaav har second badal raha (3500, 3501, 3499), 10 lakh logon ki screen pe live chahiye. Har app har second
-poochhe to 10 lakh request har second. Iska design chat me kar chuke, dobara bolne ka fayda nahi: app ka taar khula
-rakho aur bhaav khud bhejo, beech me ek chhota ladka jo bhaav sab machine tak chilla de.
+poochhe to 10 lakh request har second. Iska design chat me kar chuke, dobara bolne ka fayda nahi, ho gaya: chat wala hi, app ka taar khula
+rakho aur bhaav khud bhejo.
 
-**Asli naam:** chat wala hi: khula taar = WebSocket (push), chhota ladka = Redis pub/sub (channel "TCS"), Price Service = trades
+**Asli naam:** chat wala hi: khula taar = WebSocket (push), bhaav sab machine tak = Redis pub/sub (channel "TCS"), Price Service = trades
 se har share ka ek bhaav / sec. Bhaav kho bhi jaaye to agle second naya, isliye yahan Kafka nahi.
 
 ```mermaid
 flowchart TB
-    P["Price Service"]:::card
-    subgraph CL["CHHOTA LADKA"]
-        R[("Redis pub/sub: TCS")]:::pill
+    P["TCS ka bhaav har second"]:::card
+    subgraph CW["CHAT WALA HI (upar kar chuke)"]
+        R(["Redis pub/sub"]):::pill
+        W(["Khula taar<br/>(WebSocket)"]):::pill
     end
-    W["WebSocket server"]:::card
     U["10 lakh app"]:::good
     P --> R
     R --> W
-    W -- "khula taar" --> U
+    W --> U
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style CL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style CW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ## 9. 9:15 ki bheed, book DB me, line atki (chhoti parchi + baad me mota register)
@@ -294,25 +293,23 @@ NSE jaisi bheed pe RAM. Sach = DB (source of truth), "processing" = ACCEPTED / P
 
 ```mermaid
 flowchart TB
-    O["Lakhon order<br/>(9:15)"]:::card
-    E["Matching engine"]:::card
-    subgraph RM["CHHOTI PARCHI (RAM)"]
-        P[("order book RAM me")]:::pill
+    O["9:15: ek second me lakhon order"]:::card
+    subgraph CP["CHHOTI PARCHI (dhadadhad likho)"]
+        P[("Order book RAM me")]:::pill
     end
-    C[("Parchi ki copy<br/>(standby + order log)")]:::card
-    D[("Mota register<br/>(DB, sach)")]:::card
-    A["Ravi ka app<br/>(processing, phir pakka)"]:::good
-    O --> E
-    E --> P
-    P -- "copy" --> C
+    C[("Parchi ki 3-4-5 copy<br/>(standby + order log)")]:::card
+    D[("Mota register: sach<br/>(DB, baad me ek saath)")]:::card
+    R["Ravi: pehle processing,<br/>DB ke baad pakka"]:::good
+    O --> P
+    P --> C
     P -- "baad me ek saath" --> D
-    D -- "likha gaya" --> A
+    D --> R
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style RM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---
