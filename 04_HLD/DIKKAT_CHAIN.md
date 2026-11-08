@@ -34,6 +34,7 @@ Humne socha: 5 minute dekhunga, phir phaad do. Parchi pe hi umar likh do, apne a
 Yahi dikkat yahan bhi:
   Stock    3   35,000 se do order, chahiye 70,000             ->  EMI jaisa paisa hold (funds block)
   Stock    3b  10 chahiye, 4 mile, 6 baaki                    ->  FR: 4 le ja + 6 ka hold jaari (partial) ya 10 nahi to kuch nahi (FOK)
+  Stock    3c  3500 ka order, market band, bika nahi          ->  order khula, hold jaari, cancel pe wapas (GTC)
   BMS      2   parchi laga ke chai peene, kabhi nahi aaya     ->  5 minute dekhunga, phir phaad do (hold_until)
   BMS      3   parchi phaadne wala chhutti pe                 ->  chhota bhai / replacement (backup safai job)
   BMS      4   20 minute se purani parchi lagi                ->  parchi pe hi umar, apne aap gayab (expiry query me)

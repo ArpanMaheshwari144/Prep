@@ -95,6 +95,9 @@ paaye = doosra order reject.
 **Maan lo Arpan ko 10 TCS chahiye, 35,000 hold; Ravi sirf 4 bech raha, 4 mile, 6 baaki:** Main dukaan pe baitha, ladka bola 10 Maggi de do, mere paas 4 hi hain. Yahan design choice hai, FR dekho: kya tujhe 10 abhi turant chahiye? Haan to mujhse mat le, kahin aur se le, aur paisa hold hi nahi karunga. Intezaar kar sakta hai to 4 le ja, paisa hold rehne do, jab 6 aayenge main tujhe de dunga, tujhe kuch karna nahi.
 **Asli naam:** "4 le ja, 6 baad me" = partial fill (order PARTIALLY_FILLED, baaki 6 order book me), "10 turant warna nahi" = all-or-nothing (Fill-or-Kill), FR tay kare. Partial me 4 ka paisa kata (14,000), baaki 6 ka hold (21,000) jaari.
 
+**Maan lo Arpan ne 3500 pe 10 TCS ka order daala, TCS 3600 pe hi raha, 3:30 baje market band, order bika nahi, Arpan cancel bhool gaya:** Main dukaan wala hoon, mere paas TCS 3600 me bik raha. Arpan bola mujhe 3500 ka chahiye, jab 3500 ho mujhe bata dena. Theek hai, par pehle paise de ja, warna har koi aake bolega "mere liye rakh lena". Din bhar 3600 se neeche nahi aaya, koi baat nahi, paisa hold pe hi rahega, kyunki app usi liye bana hai. Wo order daal ke so gaya to bhi theek. Agle din TCS 4000 pe chala gaya, to saaf baat: lena hai to le, nahi lena to order cancel kar, paisa wapas tere paas. 3500 pe lena hai to jab neeche aayega tab de dunga.
+**Asli naam:** "jab tak cancel na kare order khula, paisa hold" = GTC (Good Till Cancelled) order, cancel pe hold wapas available me.
+
 ```mermaid
 flowchart TB
     T["TCS order 35,000<br/>(book me pada)"]:::card
