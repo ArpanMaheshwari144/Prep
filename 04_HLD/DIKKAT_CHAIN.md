@@ -320,6 +320,7 @@ Yahi dikkat yahan bhi:
   Chat     12  S1 dheema, "nahi, parso" pehle pahuncha        ->  server ka number, phone us kram me lagaye (seq, client sort)
   Leader   2   Ravi, Priya dono 9800                          ->  score phir time, ek number me (thenComparing)
   Twitter  26  scroll ke beech upar 5 naye, wahi 5 dobara     ->  kahan tak padha yaad rakh (cursor, offset nahi)
+  Notif    4b  Shipped pehle, Order placed baad me            ->  order ki parchi, gaya nahi to dono saath / doosri company / email
 
 Naam: sequence number / offset / OT
 Juda: Kafka ka offset bhi yahi number.
