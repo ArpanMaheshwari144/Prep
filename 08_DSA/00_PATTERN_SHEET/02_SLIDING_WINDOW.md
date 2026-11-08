@@ -627,6 +627,8 @@ kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
 SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
 LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao;
    yahan DO map (mp1 = p, mp2 = window), aana +1 / jaana -1, 0 hua to erase, phir mp1 == mp2 milao. window fixed = p.size().
+★ FIXED window = WHILE nahi, ek IF kaafi: window poori (p.size()) hote hi usi if me i++, neeche j++ ->
+   window hamesha p.size() ki rehti, isse badi kabhi nahi. isliye map banaya: dono barabar size, seedha mp1 == mp2.
 ★ GALTI: pehle har window ka substr bana ke isAnagram -> LeetCode pe TLE (34/66). ginti har baar dobara mat banao.
 ```
 
