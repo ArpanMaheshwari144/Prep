@@ -25,6 +25,9 @@ Technical me: "PSP-2 pe bhej do, fallback tareeka" = fallback PSP, "status wale 
 **5. Server parchi pe INITIATED likh chuka tha, aur PSP ko call bhejte waqt hi gir gaya. Restart pe yaad nahi ki call PSP tak pahunchi ya nahi.**
 Arpan: Beech me ek register rakho, usme likh lo "initiate hua". Server gira to aake dekhega: haan yaar, ye cheez likhi hui hai, chalo PSP se dobara poochte hain, "bata PSP, iska kya hua". To pehle register me likho, phir bhejo. Aur agar dobara bhejna pade to idempotency key laga denge, us key se pata pad jaayega ki do baar hua. Key process ho chuki to do baar nahi hoga.
 Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATED commit, "aake dekhega, PSP se dobara poochte" = restart pe job INITIATED utha ke status poochhe, "idempotency key" = payment id hi PSP ki idempotency key.
+**Maan lo net atka, Arpan ne "Pay" do baar daba diya.**
+Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; server pehle key dekhe, purani hai to wahi parchi lauta de. Wahi Chat aur Banking wali key.
+Technical me: "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
 
 **6. Dukaan ke 500 wallet se ICICI me nikalne hain. ICICI hamara DB nahi, to ek transaction me nahi. Wallet se kaat liye, aur ICICI me jodte waqt PSP bola "FAILED".**
 Arpan: Ulta kar do, sab ulta kar do, sab wapas paise bhej do. Maan le main HDFC bank hoon, bagal wale bank ko bhejne gaya, usne mana kar diya: "nahi bhai, bank band ho gaya, kal aana, abhi server bekaar hai." Fail ho gaya, baatcheet khatam. To main apne register me sab kaat dunga: "maine yahan se paise liye the, ise wapas kar raha hoon", aur sab wapas paise bhej dunga.

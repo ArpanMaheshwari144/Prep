@@ -59,6 +59,7 @@ Yahi dikkat yahan bhi:
   Notif    3   commit se pehle crash, SMS do baar             ->  parchi zindabaad, ho gaya likh lo (idempotency)
   Stock    2   net gaya, app ne dobara bheja, 20 share        ->  chaabi ka taala khareed liya (idempotency key)
   Payment  6   dobara bhejna pada to do baar kate?            ->  idempotency key laga do (payment id)
+  Payment  6b  net atka, Pay do baar daba diya                ->  phone ki key, wahi parchi lauta do (client idempotency key)
   File     6c  S3 ne "aa gayi" do baar / ulta bataya          ->  parchi, ho gaya to chhod; purana chhod (idempotency, sequencer)
   News     4   ek khabar 40 baar                              ->  bada aadmi, "ye dobara hai, hatao" (dedup)
   News     5   shabd alag, khabar same                        ->  wordings dekh lo (near-duplicate check)

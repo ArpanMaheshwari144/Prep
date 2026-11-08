@@ -146,6 +146,11 @@ do baar nahi hoga.
 **Asli naam:** pehle register me likho, phir bhejo = PSP call se pehle INITIATED commit, aake dekhega = restart pe job
 INITIATED utha ke PSP se status poochhe, idempotency key = payment id hi PSP ki idempotency key.
 
+**Maan lo net atka, Arpan ne "Pay" do baar daba diya:** wahi idempotency key, bas ek kadam pehle. Phone "Pay" dabate hi
+ek key banaye, dono request me wahi key jaaye. Server pehle key dekhe: pehle aa chuki hai to nayi parchi nahi, wahi
+purani parchi lauta do. Wahi Chat ka `clientMsgId`, wahi Banking ki key.
+**Asli naam:** phone ki key = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
+
 ```mermaid
 flowchart TB
     S["Server"]:::card
