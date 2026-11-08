@@ -271,6 +271,9 @@ gate pe hi rok de, andar hi na aane de. Matlab bouncer.
 karke dobara chalaye), bouncer gate pe hi rok de = galat khabar
 ko pehle hi rokna (validation: Order Service bhejne se pehle number aur format jaanch le).
 
+**Maan lo Arpan ki "pay" khabar DLQ me gayi, peeche ki "cancel" chal gayi, kram toota:** Cinema hall ka ticket checker: 3 logon ka group aaya (order, pay, cancel). Ek gadbad nikla to use jaane nahi dunga. Ya to teeno mat jao, ya pehla (order) chala gaya to baaki do (pay, cancel) abhi mat jao; jab wo theek ho jaaye to pay aur cancel ek saath dobara jaayenge. Isse kram nahi tootega.
+**Asli naam:** "3 logon ka group" = ek user ki khabar (key = userId, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein.
+
 ```mermaid
 flowchart TB
     F["Galat ticket wala fan<br/>(baar-baar ghusta)"]:::bad

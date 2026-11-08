@@ -45,6 +45,9 @@ Technical me: "pehle kahin likh de" = outbox (khabar usi DB transaction me), "ba
 **8. Ek fan ka ticket hi galat hai. Wo baar-baar gate pe ghusne ki koshish karta, har baar mana, aur peeche poori line atki.**
 Arpan: Use line se hata, usko ghusne hi mat de. Tu bahar, tu aayega hi nahi. Matlab mere paas ek aisi cheez ho jo uske gate pe hi rok de, andar hi na aane de. Matlab bouncer, hahaha.
 Technical me: "line se hata" = DLQ (alag line, baaki line chale), "bouncer gate pe hi rok de" = galat khabar ko pehle hi rokna (validation).
+**Maan lo Arpan ki "pay" khabar DLQ me gayi, peeche ki "cancel" chal gayi, kram toota.**
+Arpan: Cinema hall ka ticket checker: 3 logon ka group aaya (order, pay, cancel). Ek gadbad nikla to use jaane nahi dunga. Ya to teeno mat jao, ya pehla (order) chala gaya to baaki do (pay, cancel) abhi mat jao; jab wo theek ho jaaye to pay aur cancel ek saath dobara jaayenge. Isse kram nahi tootega.
+Technical me: "3 logon ka group" = ek user ki khabar (key = userId, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein.
 
 **9. Andar ka SMS counter 10 minute ke liye band. Jo fan wahan pahunchta hai sab fail, sab alag line (DLQ) me ja rahe.**
 Arpan: Nahi, maan lo 10 minute kuch dikkat hai, wo 11ve minute khul sakta hai. Sab DLQ me nahi bhejunga. Pehle dekhunga ki kya hai, kya waqai wo band hai, main check karunga. Aur ek service nahi, bahut saari services hain. Agar wo waqai band hai to uska traffic kahin aur bhej dunga. Jaise aam road pe: mujhe kahin jaana hai, wo road band hai, to traffic divert kar do.
