@@ -382,6 +382,8 @@ Humne socha: jab pata hai kya maangega, pehle se bana ke rakh lo (parlour wala G
 
 Yahi dikkat yahan bhi:
   Twitter  1   500 logon ke tweet milao, feed 6-7 sec         ->  apne paas rakhunga, apne paas se bhejunga (fanout on write)
+  Twitter  1b  naya follow, purane tweet dabbe me nahi        ->  follow karte hi purane push (backfill)
+  Twitter  1c  unfollow, purane 50 tweet dabbe me             ->  saaf nahi, naye band, dheere khisakte (lazy, ranking)
   Twitter  2   Kohli ke 27 crore dabbe, ghanton lage          ->  ek chhoti parchi, sab yahin se padhein (fanout on read)
   Twitter  3   doston ka dabba + 15 celeb parchiyan           ->  ek parchi pe, DSA jaisa sort (merge at read)
   Notif    12  1 crore offer, 40 lakh pe crash                ->  50 worker, alag-alag range (chunks)

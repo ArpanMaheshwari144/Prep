@@ -33,6 +33,12 @@ register me nahi jaana pada, dobara DB hit nahi.
 upar), dost apna mujhe de do = tweet aate hi followers ke inbox me (fanout on write), dobara DB hit nahi = feed seedha
 inbox se.
 
+**Maan lo Ravi ne aaj Amit ko follow kiya, Amit ke pichhle hafte ke 20 tweet Ravi ke dabbe me kabhi gaye hi nahi:** Main Twitter ki service pe baitha hoon, dekha Ravi ne abhi Amit ko follow kiya. Amit ne jo pehle daala hai wo Ravi ki feed me seedha push kar do, jaise Instagram pe follow karte hi purani reels dikhti. Aage Amit jo naya daalega wo waise hi chala jaayega.
+**Asli naam:** "follow karte hi purane push" = backfill on follow, "naya waise hi" = fanout on write (kadam 1).
+
+**Maan lo Ravi ne Arpan ko unfollow kiya, par dabbe me Arpan ke 50 purane tweet pade hain:** Feed sirf follow walon se nahi banti: Elon, Sachin, Kohli ko follow nahi karta phir bhi dikhte, kyunki Twitter / Instagram ka kaam hi engage rakhna hai; kuch follow na karo to bhi khaali page nahi dikhta. Unfollow ke baad pade hue tweet turant gayab nahi honge, par naye aane band, aur jaise-jaise feed banegi Arpan ke tweet dheere-dheere kam ho jaayenge.
+**Asli naam:** "turant gayab nahi, dheere kam" = dabba saaf nahi karte (lazy, purge nahi), naye fanout band, ranking (kadam 17) neeche karti; feed me follow ke alawa recommendation bhi.
+
 ```mermaid
 flowchart TB
     X["Har baar 500 logon ke tweet<br/>DB se: feed 6-7 second"]:::bad
