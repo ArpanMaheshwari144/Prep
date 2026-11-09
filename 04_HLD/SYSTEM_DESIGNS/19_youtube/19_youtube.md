@@ -24,6 +24,7 @@ FR      1  video upload (badi file, 2-40 GB)                                  ->
         3  har phone / net pe dekhna (manifest + CDN, Netflix jaisa)             -> Netflix kadam 1-3
         4  har video ka view count                                              -> kadam 3
         5  subscribe kiya to nayi video ki khabar (MrBeast)                      -> kadam 7
+        6  nakli view ginti me na aayein                                       -> kadam 4
 
 NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       -> kadam 1
         2  video jaldi live (pehle chhoti quality)                              -> kadam 2

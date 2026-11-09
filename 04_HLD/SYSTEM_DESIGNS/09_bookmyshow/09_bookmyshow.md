@@ -13,6 +13,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      show aur seat map dekho · seat chuno -> pay karo -> ticket pakka
+        · seat chuni to 5 minute tere naam rukti, pay nahi kiya to chhoot jaati
 NFR     ek seat kabhi do logon ko na bike (yahi dil hai) · seat map dekhna tez · badi movie ke din ki bheed jhele
 Numbers advance booking 10 baje: 10 lakh log ek saath, seat sirf 50 hazaar · 100 log map dekhte to ~1-2 book karte
         -> dekhna bahut, likhna kam · data chhota (aaj + agle hafte ke show), purana archive

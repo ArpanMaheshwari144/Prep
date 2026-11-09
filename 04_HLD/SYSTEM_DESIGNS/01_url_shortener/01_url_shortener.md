@@ -13,6 +13,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      lamba link do, chhota code lo (max 7 akshar, short.ly/aB3x9) · chhota link khole to lambe pe bhejo (redirect)
+        · dhokhe wala link pata chale to wo chhota link band kar sako · ek aadmi had se zyada link na bana sake
 NFR     kholna turant · hamesha chale (link toota to bheja hua bekaar) · ek code = ek link, kabhi same nahi
         · dhokhe wala link na khule · machine se bheed (bot) na ho
 Numbers roz 10 crore naye link = ~1,000 / sec banana · har link ~100 baar khulta = ~1 lakh / sec kholna

@@ -15,6 +15,7 @@ Kadam 1-13 = ek transfer sahi kaise ho. Kadam 14-20 = mahine ki statement, yaani
 ```
 FR      paisa daalo, nikaalo, balance + history dekho · transfer A se B, DONO isi bank me (doosra bank scope se bahar)
         · paisa jaate hi Ravi ko khabar
+        · mahine / saal ki statement mile (31 March), purana hisaab 10 saal rakho
 NFR     paisa na gum ho, na bane, na do baar kate · har paise ka hisaab mile (audit) · balance dekhna tez
         · salary ke din ki bheed jhele (counter badhao, DB wahi)
 Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna isse kahin zyada

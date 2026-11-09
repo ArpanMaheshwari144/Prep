@@ -13,7 +13,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      1-to-1 chat + group (500 tak) · Ravi offline ho to baad me mile · tick (pahuncha / padha) + unread
-        · photo / video · online / last seen (E2E encryption, call: scope se bahar)
+        · photo / video · online / last seen (end-to-end encryption, call: scope se bahar)
 NFR     message turant (1 sec se kam) · kabhi na khoye · ek chat me kram na bigde (thodi der ulta dikh sakta, phone number se theek kar leta) · do baar na dikhe
 Numbers 50 crore user, ek waqt ~10 crore online = 10 crore khule taar -> ~100 chat server
         roz ~400 crore message = ~46,000 likhai / sec, ek message ~300 byte -> roz ~1.2 TB

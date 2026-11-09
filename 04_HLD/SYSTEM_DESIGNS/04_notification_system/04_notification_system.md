@@ -13,6 +13,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      ek ghatna (order hua) -> SMS / email / push · user ki pasand maano · message ka saancha ("Hi {naam}")
+        · OTP jaisa zaroori pehle jaaye, umar khatam ho to mat bhejo · ek saath crore logon ko offer bhi bhej sakein
 NFR     Order Service ruke nahi · khabar khoye nahi · do baar na jaaye (kabhi-kabhar dohra ho to ek hi OTP code, dohra pakdo)
         · OTP turant, offer ruk sakta · SMS pahuncha ya nahi, pata ho
 Numbers 10 crore user x 5 khabar = 50 crore roz, ~5,800 / sec · sale pe 10 guna
