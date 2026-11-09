@@ -133,7 +133,16 @@ to uske gate baaki checkers me bat jaate hain (rebalance).
 **Maan lo har fan ki talaashi bhi honi hai, 2 security wale aaye:** unhe checker ke kamre me bitha diya to "sirf ek
 ke paas" wala niyam unpe bhi lagega, talaashi chhoot jaayegi. To alag baitha do: pehle ticket checker ka room, phir
 security ka room. Ek ko paar karo, phir doosre room me jao.
-**Asli naam:** alag room = alag consumer group (`fraud`), har group ko saari khabar ki poori copy aur apna offset.
+**Asli naam:** alag room = alag consumer group (`fraud`). "Pehle checker, phir security" = checker jo paas kare use
+nayi line me daale (naya topic `ticket_ok`), security group usi nayi line se padhe, kyunki talaashi ticket ke baad hi.
+Talaashi ka ticket se lena-dena na hota, to dono group seedha ek hi topic se, apni-apni copy aur apne offset se padhte;
+ek dheema to doosra nahi rukta.
+
+**Maan lo checker ke room me scanner hang, 10 minute sab atke:** ticket check zaroori hai, bina ticket wale ki talaashi
+kyun, wahin se nikaal do; order maintain karna hai, jaise pehle order phir pay. Scanner atka to ek mat rakho, copy rakho:
+2-3 scanner, 2-3 room, ek kharab to doosre se traffic chalta rahe.
+**Asli naam:** 2-3 scanner / room = group me zyada consumer (ek gira to uske partition baaki me bat jaate, rebalance);
+pehle ticket phir talaashi = do topic ki chain (`ticket_ok`).
 
 ```mermaid
 flowchart TB
@@ -147,8 +156,10 @@ flowchart TB
         S1(["Talaashi"]):::pill
     end
     OK["Seat"]:::good
+    T[("ticket_ok line<br/>(naya topic)")]:::card
     G -- "3 me se ek hi punch" --> C2
-    C2 -- "ek ko paar karo" --> S1
+    C2 -- "paas hua to nayi line me" --> T
+    T -- "security yahin se padhe" --> S1
     S1 --> OK
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5

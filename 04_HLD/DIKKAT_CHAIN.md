@@ -248,6 +248,7 @@ Yahi dikkat yahan bhi:
   Kafka    3   ek admin se nahi sambhal rahi                  ->  aur gate, har gate ki apni line (partition)
   Kafka    4   har ticket 3 baar punch                        ->  ek kamre me bitha do, 3 me se ek (consumer group)
   Kafka    5   security wale bhi usi kamre me                 ->  alag room (alag consumer group)
+  Kafka    5b  checker ka scanner hang, talaashi bhi ruki      ->  pehle ticket phir talaashi = nayi line (ticket_ok); 2-3 scanner (zyada consumer)
   Kafka    13  7 din peeche, purana panna phat jaata          ->  aur checker daalo, gate bhar gaye to gate bhi (consumer, phir partition)
   Kafka    14  aaj 1 din, kal 2 din peeche                    ->  alert laga do (consumer lag alert)
 

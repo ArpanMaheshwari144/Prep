@@ -23,7 +23,10 @@ Arpan: 3 punch ho gaya hai. To aise kar de, un saalon ko mila de, ek bana de, ek
 Technical me: "ek kamre me baitha de, ek bana de" = consumer group, "3 me se ek pe bhej" = ek partition group me ek hi consumer ko, "baaki 2 dekhe hi nahi" = group me ek khabar ek hi checker ke paas (par commit se pehle gira to dobara aa sakti, [kadam 6](12_message_queue_kafka.md#6-checker-register-me-likhne-se-pehle-gira-pehle-aaya-dekh-lo)).
 **Maan lo har fan ki talaashi bhi honi hai, 2 security wale aaye. Unhe bhi checker ke kamre me bitha diya to "sirf ek ke paas" wala niyam unpe bhi lagega, talaashi chhoot jaayegi.**
 Arpan: To alag baitha do. Matlab pehle ticket checker ka room, phir security ka room. Ek ko paar karo, phir doosre room me jao.
-Technical me: "alag room" = alag consumer group, har group ko saari khabar ki poori copy.
+Technical me: "alag room" = alag consumer group. "pehle ticket checker ka room, phir security ka room" = checker jo paas kare use nayi line me daale (naya topic: ticket_ok), security group usi nayi line se padhe, kyunki talaashi ticket ke baad hi. Agar talaashi ka ticket se lena-dena na hota, to dono group seedha ek hi line se, apni-apni copy aur apni raftaar se padhte, ek dheema to doosra nahi rukta.
+**Maan lo checker ke room me scanner hang, 10 minute sab atke.**
+Arpan: Ticket check zaroori hai, bina ticket talaashi kyun lun, wahin se nikaal dunga. Order maintain karna hai, jaise pehle order phir pay. Scanner atka to ek mat rakho, copy bana ke rakho: 2-3 scanner, 2-3 room. Ek kharab to doosre se traffic chalta rahega.
+Technical me: "2-3 scanner / room" = group me zyada consumer (ek gira to uske partition baaki me bat jaate, rebalance); "pehle ticket phir talaashi" = do topic ki chain (ticket_ok).
 
 **5. Admin ne ticket counter ko "aa gaya" bol diya, phir wo gira, aur uski jagah lene wale ke paas aakhri kuch logon ki list hi nahi thi. Arpan ki vasiyat me: baap ne vasiyat ek hi copy me likhi, ghar walon ko bol diya "likh di", phir wo copy jal gayi. "Likh di" kab bolna tha?**
 Arpan: Bhai "likh di" aise bolna ki uski copy aur bana, aur wo likh de, tab "likh di". Matlab replica hai, replica ne bol diya "likh liya", sab bolein, tab. Ye raha connection.
