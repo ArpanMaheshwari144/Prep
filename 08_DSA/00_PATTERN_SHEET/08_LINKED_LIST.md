@@ -105,12 +105,13 @@ Array me n+1 number hain aur har value 1 se n ke beech hai, isliye ek number zar
 Extra jagah O(1) aur array ko badalna mana hai.
   e.g. [1,3,4,2,2] -> 2
   kyun: n=4, values 1..4 me 2 do baar aaya
-
-n+1 numbers, values 1..n, ek repeat. O(1) space + array READ-ONLY
-PEHCHAN: "array + duplicate + O(1) space + no-modify" -> value = POINTER (i -> nums[i])
-values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = duplicate
-[3,1,3,4,2]: 0->3->4->2->3->4->2... (loop, entry 3 = dup)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** n+1 numbers, values 1..n, ek repeat. O(1) space + array READ-ONLY
+> PEHCHAN: "array + duplicate + O(1) space + no-modify" -> value = POINTER (i -> nums[i])
+> values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = duplicate
+> [3,1,3,4,2]: 0->3->4->2->3->4->2... (loop, entry 3 = dup)
 
 > [!IMPORTANT]
 > **CHAABI:** value = POINTER (`i -> nums[i]`), cycle ki ENTRY = duplicate. PHASE-1 slow/fast milao, PHASE-2 `slow = 0`, dono 1-1 kadam, jahan mile wahi jawab.
@@ -146,9 +147,10 @@ int findDuplicate(vector<int> &nums) {
 Linked list ka head diya hai. Agar cycle hai to wo node lautao jahan se cycle shuru hoti hai, warna NULL.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> node 2
   kyun: chakkar 2,0,-4,2,... hai, bahar se andar pehla kadam 2 pe padta -> entry 2
-
-cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* version (->next)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* version (->next)
 
 **SAAR**
 
@@ -203,10 +205,11 @@ ListNode *detectCycle(ListNode *head) {
 Linked list ka head diya hai. Agar list aage se aur peeche se ek jaisi padhi jaati hai to true, warna false.
   e.g. 1->2->2->1 -> true · 1->2->3 -> false
   kyun: 1,2,2,1 ulta bhi 1,2,2,1 · 1,2,3 ulta 3,2,1 alag
-
-COMBO: middle -> 2nd half REVERSE -> head (aage se) & rev (peeche se) saath compare
-middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** COMBO: middle -> 2nd half REVERSE -> head (aage se) & rev (peeche se) saath compare
+> middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
 
 > [!IMPORTANT]
 > **CHAABI:** `middleNode` -> `reverseList(mid)` (2nd half ulta) -> `head` aage se aur `rev` peeche se saath-saath compare.
@@ -363,10 +366,11 @@ Node *mergeTwoLists(Node *a, Node *b) {
 Do linked list di hain, har node me ek digit hai aur number ulta rakha hai (ikai wala digit pehle). Dono numbers jodo aur jawab bhi isi ulte tareeke se list me lautao.
   e.g. 2->4->3 + 5->6->4 -> 7->0->8
   kyun: 342 + 465 = 807 · 2+5=7, 4+6=10 (0, carry 1), 3+4+1=8
-
-number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala right-to-left add
-(2->4->3) + (5->6->4) = 342 + 465 = 807 -> (7->0->8)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala right-to-left add
+> (2->4->3) + (5->6->4) = 342 + 465 = 807 -> (7->0->8)
 
 > [!IMPORTANT]
 > **CHAABI:** MERGE jaisa dummy + tail, bas ek `carry`: `sum` = a + b + carry, node = `sum % 10`, `carry = sum / 10`.
@@ -486,10 +490,11 @@ Linked list aur ek number k diya hai. Har k node ke group ko ulta karo (node bad
 Aakhir me k se kam node bachein to unhe waise hi chhod do.
   e.g. 1->2->3->4->5, k=3 -> 3->2->1->4->5
   kyun: pehla group 1,2,3 -> 3,2,1 · bache 4,5 sirf 2 (< 3) -> waise hi
-
-har k-node group ulta (NODES), k se KAM bache -> waise hi. 1->2->3->4->5, k=2 -> 2->1->4->3->5
-PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALAG: ulatna, naya nahi)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** har k-node group ulta (NODES), k se KAM bache -> waise hi. 1->2->3->4->5, k=2 -> 2->1->4->3->5
+> PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALAG: ulatna, naya nahi)
 
 ### VISUAL (k=2)
 
@@ -554,10 +559,11 @@ Linked list ke har node me val, next aur ek random pointer hai (kisi bhi node pe
 Copy ke random pointer copy wale node pe hi hone chahiye, purani list pe nahi.
   e.g. vals=[7,13,11,10,1], random index=[-1,0,4,2,0] -> naye node, wahi structure
   kyun: copy ke 13 ka random copy wale 7 pe (original 7 pe nahi) · 7 ka random NULL hi
-
-2 PASS kyun: random aage bhi ho sakta, 1 pass me target abhi bana hi na ho -> pehle sab bana lo (+map)
-PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** 2 PASS kyun: random aage bhi ho sakta, 1 pass me target abhi bana hi na ho -> pehle sab bana lo (+map)
+> PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 
 **SAAR**
 ```

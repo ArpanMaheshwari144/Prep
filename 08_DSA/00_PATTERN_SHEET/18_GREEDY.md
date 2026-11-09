@@ -25,9 +25,10 @@ g[] me har bachche ki bhookh (greed) aur s[] me har cookie ka size diya hai. Bac
 Zyada se zyada kitne bachche khush kar sakte ho, wo lautao.
   e.g. g=[1,2,3], s=[1,1] -> 1
   kyun: dono cookie size 1 -> sirf greed-1 wala khush
-
-chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi cookies bade greed ko
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi cookies bade greed ko
 
 > [!IMPORTANT]
 > **CHAABI:** dono SORT, 2 pointer: `s[j] >= g[i]` to khush (`i++ j++ count++`), warna sirf `j++` (badi cookie dhoondho). koi ek khatam -> ruk.
@@ -141,9 +142,10 @@ N petrol pump gol ghere me hain. gas[i] = pump i pe milne wala petrol, cost[i] =
 Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sako to -1.
   e.g. gas=[1,2,3,4,5], cost=[3,4,5,1,2] -> 3
   kyun: index 3 se tank 3, 6, 4, 2, 0 -> kabhi minus nahi, chakkar poora
-
-  chalu ki poora ghoom ke wapas aa jau? koi nahi -> -1. har pump ka NET = gas[i] - cost[i]
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** chalu ki poora ghoom ke wapas aa jau? koi nahi -> -1. har pump ka NET = gas[i] - cost[i]
 
 **SAAR**
 ```
@@ -194,11 +196,12 @@ tasks me kaam diye hain (har akshar ek kaam, har kaam 1 unit time). Ek hi kaam d
 Saare kaam khatam karne me kam se kam kitna kul time lagega (khaali time bhi milake), wo lautao.
   e.g. [A,A,A,B,B,B], n=2 -> 8
   kyun: A B idle A B idle A B = 8 unit
-
-SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldown" + "minimum time"
-  -> greedy (most-frequent frame) YA max-heap. sabse ZYADA wala task (maxFreq) DHANCHA banata,
-  beech ke gaps doosre tasks se bharo, khaali bache = IDLE
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldown" + "minimum time"
+> -> greedy (most-frequent frame) YA max-heap. sabse ZYADA wala task (maxFreq) DHANCHA banata,
+> beech ke gaps doosre tasks se bharo, khaali bache = IDLE
 
 ### DRY-RUN
 

@@ -49,9 +49,10 @@ valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choo
 Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number hai, wo lautao. Koi bada na mile to -1.
   e.g. [2,1,2,4,3] -> [4,2,4,-1,-1]
   kyun: 2 ke aage pehla bada 4 · 1 ke aage 2 · 2 ke aage 4 · 4 aur 3 ke aage koi bada nahi -> -1
-
-har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 
 **SAAR**
 ```
@@ -239,10 +240,11 @@ vector<int> prevGreater(vector<int> &nums)
 heights[] me bars ki unchai di hai, har bar ki chaudai 1 hai. Lagaatar bars pe jo sabse bada rectangle ban sakta hai, uska area lautao.
   e.g. [2,1,5,6,2,3] -> 10
   kyun: bars 5 aur 6 -> height min(5,6)=5 x width 2 = 10, baaki koi bada nahi banta
-
-har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = dono STOPPER
-[2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = dono STOPPER
+> [2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
 
 **SAAR**
 ```
@@ -457,11 +459,14 @@ int largestRectangleArea(vector<int> &heights) {
 0 aur 1 ki 2D matrix di hai. Sirf 1 se bhara hua sabse bada rectangle kitna bada hai, uska area lautao.
   e.g. [[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]] -> 6
   kyun: row 1 aur row 2 me col 2,3,4 sab 1 -> 2 row x 3 col = 6
-
-= LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
-★ LeetCode pe matrix vector<vector<char>> aati: wahan signature char karo aur check matrix[i][j] == '1'
-  (neeche code teri file 06_STACK/10_maximal_rectangle.cpp jaisa: int matrix + == 1)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
+
+> [!WARNING]
+> ★ LeetCode pe matrix `vector<vector<char>>` aati: wahan signature char karo aur check matrix[i][j] == '1'
+> (neeche code teri file 06_STACK/10_maximal_rectangle.cpp jaisa: int matrix + == 1)
 
 > [!IMPORTANT]
 > **CHAABI:** Har row = histogram: `matrix[i][j] == 1` to `heights[j] += 1`, warna `heights[j] = 0`; har row ke BAAD `largestRectangleArea(heights)` call, sabka max.
@@ -649,9 +654,10 @@ bool isValid(string s) {
 Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalein. getMin() stack me abhi ka sabse chhota number deta hai.
   e.g. push(-2) push(0) push(-3) getMin() -> -3 · pop() · top() -> 0 · getMin() -> -2
   kyun: -3 pop hone ke baad stack me [-2,0] bacha -> upar 0, sabse chhota -2
-
-class MinStack: push / pop / top / getMin sab O(1)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** class MinStack: push / pop / top / getMin sab O(1)
 
 > [!IMPORTANT]
 > **CHAABI:** Pair `{val, yahan tak ka MIN}` push -> `getMin() = st.top().second`, koi scan nahi. Pop pe purana min apne aap wapas.

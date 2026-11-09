@@ -184,10 +184,11 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
 Ek gol (circular) array diya hai, matlab end ke baad shuru wala number aata hai. Lagaatar numbers ka sabse bada jod lautao (gol ghoom ke bhi le sakte ho, khaali nahi chalega).
   e.g. [5,-3,5] -> 10
   kyun: wrap: last 5 + first 5 = 10; total 7 - min-subarray (-3) = 10
-
-circular (end -> start wrap), max-sum NON-EMPTY subarray. TRICK: PATA hona chahiye
-A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL - min
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** circular (end -> start wrap), max-sum NON-EMPTY subarray. TRICK: PATA hona chahiye
+> A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL - min
 
 **SAAR**
 ```
@@ -265,10 +266,11 @@ int maxSubarraySumCircular(vector<int> &nums) {
 Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doosre ko na chhuein (non-overlapping). Dono ke jod ko milake sabse bada total lautao.
   e.g. [1,2,-7,8,6,-4] -> 17
   kyun: [1,2] = 3 aur [8,6] = 14, beech ka -7 chhoda; 3 + 14 = 17
-
-har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
-[2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
+> [2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
 
 **SAAR**
 ```

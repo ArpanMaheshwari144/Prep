@@ -92,10 +92,11 @@
 n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destination diye hain. Kya source se destination tak koi rasta hai? true ya false lautao.
   e.g. n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], src=0, dst=5 -> false
   kyun: 0 ke saath sirf 1,2 jude; 5 alag group {3,4,5} me, beech me koi edge nahi
-
-= tree LEVEL-ORDER ka skeleton + 3 ADD: (1) neighbours = adj[node] (edges se banao)
-  (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** = tree LEVEL-ORDER ka skeleton + 3 ADD: (1) neighbours = adj[node] (edges se banao)
+> (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
 
 > [!IMPORTANT]
 > **CHAABI:** edges se `adj` banao (undirected = dono taraf), source se EK BFS; pop pe `node == destination` to true, queue khaali to false. Outer loop nahi, level-loop nahi.
@@ -189,9 +190,10 @@ int numIslands(vector<vector<char>> &grid) {
 n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag group (connected components) hain, wo ginti lautao.
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
   kyun: {0,1,2} ek group, {3,4} doosra; dono ke beech koi edge nahi
-
-ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BFS (islands DFS)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BFS (islands DFS)
 
 > [!IMPORTANT]
 > **CHAABI:** islands ka skeleton, grid ki jagah adj-list: outer loop har node, `!vis[i]` mila to `count++` + BFS (poora group mark). padosi = `adj[node]`.
@@ -242,9 +244,10 @@ int countComponents(int n, vector<vector<int>> &edges) {
 Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). Sabse bade island me kitne cell hain, wo lautao. Koi island na ho to 0.
   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 3
   kyun: island {(0,0),(0,1),(1,0)} = 3 cell, island {(2,2)} = 1 cell; max 3
-
-ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer count++ nahi, MAX
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer count++ nahi, MAX
 
 > [!IMPORTANT]
 > **CHAABI:** islands hi, 2 delta: DFS `void` nahi, area lautaye `1 + neeche + upar + right + left`; outer me `count++` nahi, `ans = max(ans, DFS(...))`.
@@ -355,10 +358,11 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
 numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pehle b padhna zaroori hai. Kya saare course poore kiye ja sakte hain? true ya false lautao.
   e.g. numCourses=2, prereq=[[1,0],[0,1]] -> false
   kyun: 1 ke liye 0 pehle, 0 ke liye 1 pehle = CYCLE; dono ek doosre ka wait karte
-
-"prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false
-[[1,0],[2,1],[3,2]]: har [a,b] = a lene se pehle b -> edge b -> a
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** "prereq + can-finish-ALL?" = koi CYCLE to nahi? cycle -> false
+> [[1,0],[2,1],[3,2]]: har [a,b] = a lene se pehle b -> edge b -> a
 
 > [!IMPORTANT]
 > **CHAABI:** `[a, b]` = edge `b -> a`, `indegree[a]++`. indegree 0 wale queue me; nikaalte waqt `adj` ke har node ka indegree ghatao, 0 hua to push. `ans.size() == numCourses` = cycle nahi.
@@ -408,12 +412,13 @@ Jo module ready hain (jinki saari dependency ban chuki), unme se sabse chhote nu
   e.g. n=4, [0->1]  ->  0 1 2 3
   kyun: shuru me ready = {0, 2, 3} (1 ko 0 chahiye) -> sabse chhota 0 -> ab 1 bhi ready = {1, 2, 3} -> 1 -> 2 -> 3
   (queue lagate to 0 2 3 1 aata: 1 baad me ready hua to line me peeche lagta)
-
-PEHCHAAN: dependency -> TOPO. output line padho: "koi bhi valid order" -> queue · "sabse chhota /
-  lexicographic" -> MIN-HEAP. topo ke KAI sahi order ([5->2,5->0,4->0,4->1,2->3,3->1]: "4 5 0 2 3 1"
-  aur "5 4 2 0 3 1" dono sahi) -> khaas order = heap. queue = jo pehle ready · heap = ready me chhota
-BADLAAV bas itna: queue -> min-heap, front() -> top(). indegree / adj / ghatana / end-check SAME
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** PEHCHAAN: dependency -> TOPO. output line padho: "koi bhi valid order" -> queue · "sabse chhota /
+> lexicographic" -> MIN-HEAP. topo ke KAI sahi order ([5->2,5->0,4->0,4->1,2->3,3->1]: "4 5 0 2 3 1"
+> aur "5 4 2 0 3 1" dono sahi) -> khaas order = heap. queue = jo pehle ready · heap = ready me chhota
+> BADLAAV bas itna: queue -> min-heap, front() -> top(). indegree / adj / ghatana / end-check SAME
 
 > [!IMPORTANT]
 > **CHAABI:** Course Schedule hi, bas `queue` -> `priority_queue<int, vector<int>, greater<int>>` (min-heap) aur `front()` -> `top()`: ready me se sabse chhota pehle. indegree / adj / end-check SAME.
@@ -463,11 +468,12 @@ vector<int> buildOrder(int n, vector<vector<int>> &deps) {
 Ek juda hua (connected), bina disha wala graph ka ek node diya hai. Poore graph ki nayi copy (deep copy) banao: naye node aur naye neighbours, aur copy ka wahi node lautao.
   e.g. adjList [[2,4],[1,3],[2,4],[1,3]] -> [[2,4],[1,3],[2,4],[1,3]] (sab naye node)
   kyun: square 1-2-3-4-1; har node ka naya clone, aur clone ke neighbours bhi clone hi, purane nahi
-
-saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 kaam:
-  (a) clone BANANA (if ke ANDAR, sirf naye pe)  (b) JODNA push_back (if ke BAHAR, har edge pe)
-  bina jodna -> loose clones -> adhoora graph
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 kaam:
+> (a) clone BANANA (if ke ANDAR, sirf naye pe)  (b) JODNA push_back (if ke BAHAR, har edge pe)
+> bina jodna -> loose clones -> adhoora graph
 
 **SAAR**
 ```
@@ -523,13 +529,14 @@ Node *cloneGraph(Node *node) {
 Adjacency list wala graph diya hai. Kya saare nodes ko do group me aise baant sakte hain ki har edge ke dono sire alag group me hon? true ya false lautao.
   e.g. [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
   kyun: 0-1-2 triangle: 0 red, 1 blue, 2 dono ka padosi, koi rang nahi bachta
-
-har node ko rang 0/1; koi 2 JUDE node SAME rang na hon. odd cycle (triangle) -> false
-PEHCHAAN: "DO team me baanto + jo JUDE (dushman / edge) wo ek group me NAHI". output "team A / team B"
-  = 2 rang. DSU ULTA hai: DSU me jude -> SAME group, yahan jude -> ALAG
-graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]] -> true (square)
-  [[1,2,3],[0,2],[0,1,3],[0,2]] -> false (0-1-2 triangle)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** har node ko rang 0/1; koi 2 JUDE node SAME rang na hon. odd cycle (triangle) -> false
+> PEHCHAAN: "DO team me baanto + jo JUDE (dushman / edge) wo ek group me NAHI". output "team A / team B"
+> = 2 rang. DSU ULTA hai: DSU me jude -> SAME group, yahan jude -> ALAG
+> graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]] -> true (square)
+> [[1,2,3],[0,2],[0,1,3],[0,2]] -> false (0-1-2 triangle)
 
 **SAAR**
 ```
@@ -596,14 +603,22 @@ bool isBipartite(vector<vector<int>> &graph) {
 n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Source se har node tak pahunchne ka sabse kam kul weight lautao.
   e.g. n=4, edges 0-1(4), 0-2(1), 1-2(2), 1-3(1), 2-3(5), src=0 -> [0,3,1,4]
   kyun: node 1: seedha 4 se sasta 0->2->1 = 3; node 3: 0->2->1->3 = 4 (0->2->3 = 6)
+```
 
-BFS ka WEIGHTED bhai: queue -> MIN-HEAP (chhoti dist pehle) · visited[] -> dist[] (INF, src=0) + RELAX
-visited kyun nahi: dist[] + STALE-skip = visited ka kaam; strict relax -> undirected me bhi loop nahi
-negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford. REAL: Maps / GPS, routing
-pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
-═════════════════════════ ★ EDGE ═════════════════════════════════════
-{node, dist} ULTA likha to bhi test PASS ho jaate (relax baar-baar theek karta), par Dijkstra NAHI raha
-  kyun {dist, node}: chhoti DIST wala node nikla = uski dist PAKKI (weight >= 0, aage sasta raasta aa hi nahi sakta)
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** BFS ka WEIGHTED bhai: queue -> MIN-HEAP (chhoti dist pehle) · visited[] -> dist[] (INF, src=0) + RELAX
+> visited kyun nahi: dist[] + STALE-skip = visited ka kaam; strict relax -> undirected me bhi loop nahi
+> negative weight -> Dijkstra FAIL (dist ghatta rehta) -> Bellman-Ford. REAL: Maps / GPS, routing
+> pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
+
+> [!WARNING]
+> **★ EDGE:**
+> {node, dist} ULTA likha to bhi test PASS ho jaate (relax baar-baar theek karta), par Dijkstra NAHI raha
+> kyun {dist, node}: chhoti DIST wala node nikla = uski dist PAKKI (weight >= 0, aage sasta raasta aa hi nahi sakta)
+
+### {node, dist} ULTA likha to (trace)
+
+```
   upar wale e.g. pe:
     {node, dist} ->  0 nikla -> node1 (dist 4) pehle nikla, kyunki node NUMBER chhota
                      -> 4 pakka nahi (asli 3: 0->2->1), node 3 ko 5 bataya
@@ -662,11 +677,12 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
 n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao ki kitne alag group hain.
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
   kyun: unite 0-1, 1-2 -> ek leader; 3-4 -> doosra leader; parent[i]==i wale 2 bache
-
-KAB: groups / connected / same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn
-  · MST-Kruskal
-REAL: dost-circle ("A-B same circle?"), accounts merge
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** KAB: groups / connected / same-set? · UNDIRECTED cycle-detect · provinces · redundant-conn
+> · MST-Kruskal
+> REAL: dost-circle ("A-B same circle?"), accounts merge
 
 > [!IMPORTANT]
 > **CHAABI:** `parent[i] = i` se shuru; `find` = root tak jao + path compression (`parent[x] = find(parent[x])`); `unite` = dono ROOT jodo (rank se); group ginti = `find(i) == i`.
@@ -730,12 +746,13 @@ beginWord, endWord aur ek wordList di hai. Har kadam pe sirf ek akshar badal sak
 beginWord se endWord tak sabse chhote raste me kitne word aate hain (beginWord bhi gino), wo lautao. Na pahunch sako to 0.
   e.g. hit -> cog, list=[hot,dot,dog,lot,log,cog] -> 5
   kyun: hit -> hot -> dot -> dog -> cog = 5 word (begin aur end dono gine)
-
-begin -> end, har step EK letter badlo, beech ka har word dict me. "min steps" -> BFS level-by-level
-word = NODE · edge = ek letter farak + dict me. graph IMPLICIT (words), islands / Kahn's wali family
-hit -> hot -> dot / lot -> dog / log -> cog = 5 WORDS (begin = 1, steps nahi)
-level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora layer khatam pe)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** begin -> end, har step EK letter badlo, beech ka har word dict me. "min steps" -> BFS level-by-level
+> word = NODE · edge = ek letter farak + dict me. graph IMPLICIT (words), islands / Kahn's wali family
+> hit -> hot -> dot / lot -> dog / log -> cog = 5 WORDS (begin = 1, steps nahi)
+> level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora layer khatam pe)
 
 ### EXAMPLE (hit -> cog, level-wise)
 

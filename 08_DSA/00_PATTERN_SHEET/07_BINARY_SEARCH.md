@@ -118,9 +118,10 @@ Ek SORTED array (number dohraye ho sakte hain) aur ek target diya hai. target ja
 Na mile to {-1, -1}. O(log n) me karna hai.
   e.g. [5,7,7,8,8,10], target=8 -> {3,4}
   kyun: 8 index 3 aur 4 pe hai -> pehla 3, aakhri 4
-
-[5,7,7,8,8,10], 8 -> {3,4}. normal BS, bas MILNE pe RUKO MAT -> ans likho, ek taraf aur chalo. 2 BS
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** [5,7,7,8,8,10], 8 -> {3,4}. normal BS, bas MILNE pe RUKO MAT -> ans likho, ek taraf aur chalo. 2 BS
 
 **SAAR**
 
@@ -472,10 +473,11 @@ int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges
 Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek baar) hai. Wo akela number lautao. O(log n) me.
   e.g. [1,1,2,3,3,4,4,8,8] -> 2
   kyun: 1,1 jodi · 2 ka jodidaar nahi · baaki 3,3 4,4 8,8 jodi -> 2
-
-har element 2x, sirf EK akela. O(log n) (XOR = O(n), yahan log n chahiye)
-single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 se compare
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** har element 2x, sirf EK akela. O(log n) (XOR = O(n), yahan log n chahiye)
+> single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 se compare
 
 **SAAR**
 
@@ -580,11 +582,12 @@ Do SORTED array A aur B diye hain. Dono ko milake jo poora sorted array banega, 
 Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me karna hai.
   e.g. A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> 11.0
   kyun: mila ke 1,3,7,8,9,11,15,18,19,21,25 = 11 number -> beech wala (6th) = 11
-
-MERGE mat karo -> CUT: LEFT aadha | RIGHT aadha, left ka HAR <= right ka HAR. 4 kinaare = median
-A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> Px=4 (1 3 8 9 | 15), Py=2 (7 11 | 18 ..) -> max(9,11) = 11
-Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wahan VALUE pe)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** MERGE mat karo -> CUT: LEFT aadha | RIGHT aadha, left ka HAR <= right ka HAR. 4 kinaare = median
+> A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> Px=4 (1 3 8 9 | 15), Py=2 (7 11 | 18 ..) -> max(9,11) = 11
+> Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wahan VALUE pe)
 
 **SAAR**
 

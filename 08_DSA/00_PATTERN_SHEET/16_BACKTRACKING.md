@@ -352,9 +352,10 @@ bool exist(vector<vector<char>> &board, string word) {
 Ek number n diya hai (n jode bracket). n jodon se banne wale saare sahi (balanced) bracket strings lautao.
   e.g. n=2 -> ["(())", "()()"]
   kyun: 2 '(' + 2 ')' ke sirf yahi 2 jahan ')' kabhi '(' se aage nahi nikalta ("())(" galat)
-
-n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
 
 > [!WARNING]
 > **★ BUG-TRAP #2 (Arpan-22-Sep, khud pakda):** dono ALAG `if` hain, `else if` NAHI --
@@ -395,9 +396,10 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 2 se 9 tak ke ankon ki ek string di hai. Phone keypad pe har ank ke kuch akshar hote hain (2 = abc, 3 = def ...). In ankon se banne wale saare shabd lautao. Khaali string pe khaali list.
   e.g. "23" -> [ad,ae,af,bd,be,bf,cd,ce,cf]
   kyun: 2 = abc, 3 = def -> har akshar ke saath har akshar = 3 x 3 = 9
-
-"23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
 ```
+
+> [!IMPORTANT]
+> **PEHCHAAN / SAAR:** "23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
 
 > [!WARNING]
 > **★ BUG-TRAP (24-Sep):** `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
