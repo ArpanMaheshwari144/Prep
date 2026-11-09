@@ -1,107 +1,44 @@
-# Transaction Internals — DB ke ANDAR kya hota hai (MySQL InnoDB)
+# Transaction Internals (MySQL InnoDB)
 
-> Sawaal: jab hum `START TRANSACTION` karke UPDATE karte hain, DB ke **andar** kya hota hai?
-> Kaise track karta? Commit tak kya "pending" rehta? Ye note wahi deep-dive.
-> (Related: `../02_SPRING/02_transactional/` — @Transactional isi ka wrapper hai.)
+## Scene: prod ticket, "order 101 cancel karna hai"
 
----
+Workbench me:
 
-## InnoDB kya hai? (28-Sep, Arpan ka sawaal)
-
-```
-MySQL = gaadi · InnoDB = uska ENGINE
-MySQL ke 2 hisse:
-  upar  SQL layer       query samajhna, plan banana (optimizer)        -> sab engine ke liye same
-  neeche STORAGE ENGINE  data disk pe kaise rakhe, lock, transaction    -> InnoDB (MySQL 5.5 se DEFAULT)
-purana engine MyISAM: transaction NAHI, poori TABLE lock, crash pe data kharab -> ab koi use nahi karta
-InnoDB: transaction (ACID) · ROW lock · foreign key · crash recovery (redo) · MVCC (undo)
-AWS RDS MySQL (tera kaam) bhi InnoDB hi chalata hai
+```sql
+START TRANSACTION;
+UPDATE orders SET status = 'CANCELLED' WHERE id = 101;
+-- COMMIT abhi nahi kiya, chai peene chala gaya
 ```
 
----
+**1. Teammate ko kya dikhta hai?**
+Usi waqt teammate apne laptop se `SELECT status FROM orders WHERE id = 101` chalata hai. Use **PLACED** dikhta hai, CANCELLED nahi. Tera
+badlaav abhi pakka nahi hua, isliye sirf tujhe dikh raha hai.
+Kaise: UPDATE karne se pehle MySQL ne purani value (PLACED) ek alag jagah rakh li thi. Isi ko **undo log** kehte hain. Baaki sab ko wahi
+purani value dikhti hai.
 
-## MENTAL MODEL (pehle ye theek karo)
+**2. Teammate bhi wahi order badle to?**
+Teammate `UPDATE orders SET status = 'SHIPPED' WHERE id = 101` chalata hai. Uski query atak jaati hai, aur 50 second (default) baad error
+aata hai: `Lock wait timeout exceeded`.
+Kyun: tune order 101 pe **taala (row lock)** laga rakha hai. Jab tak tu COMMIT ya ROLLBACK nahi karta, us row ko koi aur nahi badal sakta.
+(9-Nov tere MySQL pe do session chala ke dekha, yahi error aaya.)
 
-> UPDATE karte hi change **TURANT ho jaati hai** (memory/buffer pool me), par wo
-> **"pending / reversible / doosron ko invisible"** hoti hai. Commit use "official" banata.
-> "Mark karke commit pe update" — aisa NAHI. Update ho jaata, bas reversible + hidden rehta.
+**3. Chai se aa ke dikha ki galat order tha.**
+`ROLLBACK` chalaya. MySQL undo log se PLACED wapas rakh deta hai aur taala khol deta hai. Aisa lagta hai jaise kuch hua hi nahi tha.
 
----
+**4. Sahi order pe COMMIT kiya, aur usi second DB server band ho gaya.**
+Wapas chalu hone pe bhi order CANCELLED hi milta hai. Wajah: COMMIT pe MySQL nayi value pehle ek log file me disk pe likh deta hai. Isi ko
+**redo log** (WAL, write-ahead log) kehte hain. Server wapas aaya to usne wo log padh ke badlaav dobara chala diya.
 
-## Jab TRANSACTION me UPDATE karte ho — 3 cheezein hoti hain
+## Yaad rakhne ki cheez
 
-### 1. UNDO LOG  (rollback + doosron ke reads ke liye)
-Row modify karne se **PEHLE**, InnoDB uski **PURANI value UNDO LOG me** likhta hai.
-- **Rollback** hua -> undo se purani value WAPAS.
-- Doosri transactions ko **purani (committed) value isi undo se** dikhti -> teri adhoori change nahi dikhti. (= MVCC)
+**undo = purani value** (rollback ke liye, aur doosron ko purana dikhane ke liye). **redo = nayi value** (crash ke baad wapas laane ke liye).
 
-### 2. REDO LOG = WAL (Write-Ahead Log)  (durability ke liye)
-Change **REDO LOG me DISK pe** likhi jaati -- data page abhi disk pe permanent na bhi ho.
-- "Write-ahead" = data likhne se PEHLE log likho.
-- **Commit ke baad CRASH** ho -> redo log se change **REPLAY** -> data gum nahi hota. = **Durability**.
+InnoDB = MySQL ka engine jo data disk pe rakhta hai aur transaction, row lock aur crash recovery sambhalta hai (MySQL 5.5 se default, AWS RDS
+MySQL me bhi yahi).
 
-### 3. LOCK  (isolation ke liye)
-Jis row ko UPDATE kar raha, uspe **ROW-LOCK** -> doosri transaction use modify nahi kar sakti
-jab tak tu commit/rollback na kare. = **Isolation**.
+## Prod wala trap
 
-★ InnoDB lock asal me **INDEX record** pe lagta hai. UPDATE ke WHERE wale column pe index NAHI ->
-  InnoDB ko jitni rows SCAN karni padti, un sab pe lock (lagbhag poori table) -> baaki INSERT / UPDATE ruk jaate.
-  **Tera HikariCP wala din yahi tha:** badi write query ne email table pe lock pakde rakhe, inserts atke,
-  connections wait me -> pool khatam. Lamba transaction = lamba lock.
-
----
-
-## COMMIT karne pe
-- Redo log **DISK pe FLUSH** -> ab durable, crash-proof.
-  (commit se pehle redo zyada tar memory ke log buffer me hota; commit pe flush = innodb_flush_log_at_trx_commit=1 default)
-- Locks **RELEASE**.
-- Teri change ab **sabko VISIBLE + PERMANENT**. Undo log baad me purge.
-
-## ROLLBACK karne pe
-- **UNDO LOG** se saari purani values **RESTORE**.
-- Locks release. Jaise kuch hua hi nahi.
-
----
-
-## UNDO vs REDO — ulti disha (confuse mat karo)
-
-| | UNDO Log | REDO Log (WAL) |
-|---|---|---|
-| Kya rakhta | **PURANI** value (before) | **NAYI** change (what happened) |
-| Kis liye | **PEECHE** jaana: ROLLBACK + doosron ko purana dikhana (MVCC) | **AAGE** jaana: crash ke baad REPLAY (durability) |
-| Direction | backward | forward |
-
-- **Undo** = "wapas kaise jaun" (rollback / old version).
-- **Redo** = "crash hua to aage kaise pahunchu" (commit ke baad data na gum-e).
-- **Lock** = doosron ko us row pe rukna (isolation).
-
----
-
-## TRACK-CHANGES ANALOGY (concrete)
-
-Word doc me "track changes" ON karke edit karna jaisa:
-- Tu edit karta (change memory me ho gayi), par **purana text bhi saved** (undo log).
-- Ek **log** banta ki kya badla (redo log).
-- Us section pe **lock** -> koi aur edit nahi kar sakta.
-- Baaki log abhi **purana published version** dekhte (jab tak "accept" na kare).
-- **COMMIT = "Accept all + publish"** -> sabko naya dikhta, permanent.
-- **ROLLBACK = "Reject all"** -> track-changes discard, purana wapas.
-
----
-
-## ONE-LINE (yaad rakh)
-
-> UPDATE turant hoti (buffer pool) + **UNDO** (purana bacha ke) + **REDO/WAL** (crash-recovery) + **LOCK** (isolation).
-> COMMIT -> redo flush + visible + permanent.  ROLLBACK -> undo se restore.
->
-> **Transaction = undo (peeche) + redo/WAL (aage) + lock (isolation). Har cheez logged -> isliye reliable (ACID).**
-
----
-
-## INTERVIEW me kaise use kare
-Jab @Transactional / ACID / "how does rollback work" pooche -> ye andar wali baat bolo:
-> "Internally InnoDB writes the old row to an **undo log** (for rollback + MVCC reads), writes the change to the
-> **redo log / WAL** (for crash-recovery durability), and takes a **row lock** (for isolation). Commit flushes redo
-> and makes it visible; rollback restores from undo."
-
--> most candidates abstraction ke peeche nahi dekhte -> ye reasoning STRONG dikhta.
+Asli zindagi me yahi "COMMIT bhool ke chai" sabse bada khatra hai. Jab tak transaction khula hai, taala laga hai. App ki saari requests jo
+order 101 chhoona chahti hain, line me rukti hain. Connection atakte hain aur Hikari pool khaali ho jaata hai. Upar se agar WHERE wale column
+pe index na ho, to MySQL scan ki hui saari rows pe taala laga deta hai, lagbhag poori table pe. HikariCP wala din yahi tha. Isliye prod pe
+transaction kholo to kaam karke turant COMMIT ya ROLLBACK karo.
