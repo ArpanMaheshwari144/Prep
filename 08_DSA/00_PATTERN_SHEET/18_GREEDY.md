@@ -10,8 +10,11 @@
  ★ DHYAAN: gas station: tank minus hua -> agla station naya start
 ```
 
+---
+
 ### ▸ ASSIGN COOKIES (LC-455)  = greedy intro (sort + 2-pointer)
 
+**SAWAAL**
 ```
 g[] me har bachche ki bhookh (greed) aur s[] me har cookie ka size diya hai. Bachcha khush tab hota hai jab cookie ka size uski bhookh se kam na ho, aur ek bachche ko zyada se zyada ek cookie milti hai.
 Zyada se zyada kitne bachche khush kar sakte ho, wo lautao.
@@ -21,6 +24,13 @@ Zyada se zyada kitne bachche khush kar sakte ho, wo lautao.
 chhoti greed wale ko jitni ZAROORAT utni (chhoti se chhoti jo kaam kare) -> badi cookies bade greed ko
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** dono SORT, 2 pointer: `s[j] >= g[i]` to khush (`i++ j++ count++`), warna sirf `j++` (badi cookie dhoondho). koi ek khatam -> ruk.
+
+> [!WARNING]
+> cookie chhoti pade to sirf `j++`, `i` wahi (bachcha wait kare). `>=` lo, barabar size bhi khush karti.
+
+**CODE**
 ```cpp
 int findContentChildren(vector<int> &g, vector<int> &s) {
     int n = g.size(), m = s.size(), count = 0, i = 0, j = 0;   // i = bachha, j = cookie
@@ -41,15 +51,24 @@ int findContentChildren(vector<int> &g, vector<int> &s) {
 }
 ```
 
+---
 
 ### ▸ JUMP GAME (LC-55)  = greedy REACHABILITY (farthest-reach track)
 
+**SAWAAL**
 ```
 nums[i] batata hai ki index i se zyada se zyada kitne kadam aage kood sakte ho. Index 0 se shuru karke kya aakhri index tak pahunch sakte ho? true ya false lautao.
   e.g. [2,3,1,1,4] -> true · [3,2,1,0,4] -> false
   kyun: 0->1->4 pahunche · doosre me har raasta index 3 (value 0) pe atakta
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** ek scan, `maxReach = max(maxReach, i + nums[i])`; `i > maxReach` hua to yahan pahunch hi nahi -> false; end `maxReach >= n - 1`.
+
+> [!WARNING]
+> `nums[i]` akela nahi, `i + nums[i]` (kadam relative, index absolute). `i > maxReach` check update se PEHLE.
+
+**CODE**
 ```cpp
 bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte. last tak pahunche?
     int maxReach = 0;                       // ab tak sabse DOOR kahan tak pahunch sakte (0 se)
@@ -65,15 +84,24 @@ bool canJump(vector<int> &nums) {  // nums[i] = us index se max kitna kood sakte
 //   rang)
 ```
 
+---
 
 ### ▸ NON-OVERLAPPING INTERVALS (LC-435)  = greedy interval-scheduling (keep SMALLER-END) · MERGE INTERVALS ka bhai (sort + overlap check)
 
+**SAWAAL**
 ```
 intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue koi bhi do interval overlap na karein, wo lautao. Sirf chhoona (ek ka end = doosre ka start) overlap nahi maana jaata.
   e.g. [[1,2],[2,3],[3,4],[1,3]] -> 1
   kyun: [1,3] hatao -> [1,2],[2,3],[3,4] sirf chhoote, overlap nahi
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** start pe sort; `start` = rakha hua, `end` = candidate. overlap pe `count++` aur chhote-END wala rakho (`intervals[start][1] > intervals[end][1]` to `start = end`).
+
+> [!WARNING]
+> no-overlap `<=` (`<` se `[[1,2],[2,3]]` pe 1, sahi 0: chhoona overlap nahi). overlap pe blindly `start` mat rakho, end compare (`[[1,100],[2,3],[3,4]]` pe 2, sahi 1).
+
+**CODE**
 ```cpp
 int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO ki overlap na bache
     sort(begin(intervals), end(intervals)); // default sort (start pe)
@@ -98,9 +126,11 @@ int eraseOverlapIntervals(vector<vector<int>> intervals) {   // MIN kitne HATAO 
 //   (alt: END pe sort -> pehla wala hamesha chhota-end -> ye if gayab)
 ```
 
+---
 
 ### ▸ GAS STATION (LC-134)  = greedy running-tank + reset-start
 
+**SAWAAL**
 ```
 N petrol pump gol ghere me hain. gas[i] = pump i pe milne wala petrol, cost[i] = pump i se agle pump tak ka kharcha.
 Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sako to -1.
@@ -110,6 +140,7 @@ Kis pump se shuru karke poora chakkar laga sakte ho, wo index lautao. Na laga sa
   chalu ki poora ghoom ke wapas aa jau? koi nahi -> -1. har pump ka NET = gas[i] - cost[i]
 ```
 
+**SAAR**
 ```
 DRY-RUN  gas=[1,2,3,4,5]  cost=[3,4,5,1,2]
    idx:   p0  p1  p2  p3  p4
@@ -122,6 +153,13 @@ DRY-RUN  gas=[1,2,3,4,5]  cost=[3,4,5,1,2]
    total 0 >= 0 -> return index = 3
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** 2 accumulator: `tank` (abhi wale start se; minus hua to `0` + `index = i + 1`) aur `total` (poore circle ka, kabhi reset nahi). `total < 0` -> -1, warna `index`.
+
+> [!WARNING]
+> reset pe `index = i + 1` (i nahi): s..i ke beech se shuru karke bhi i paar nahi hota. `total` reset mat karo, wahi "possible hai?" bataata.
+
+**CODE**
 ```cpp
 int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
     int n = gas.size();
@@ -141,9 +179,11 @@ int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
 // cookies / jump / interval se FARAK: sort NAHI. circular + 2 accumulator (possible? + start kahan)
 ```
 
+---
 
 ### ▸ TASK SCHEDULER (LC-621)  = greedy IDLE-SLOTS (most-frequent frame)
 
+**SAWAAL**
 ```
 tasks me kaam diye hain (har akshar ek kaam, har kaam 1 unit time). Ek hi kaam dobara karne se pehle beech me kam se kam n unit ka gap chahiye (khaali baith sakte ho).
 Saare kaam khatam karne me kam se kam kitna kul time lagega (khaali time bhi milake), wo lautao.
@@ -155,6 +195,7 @@ SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldow
   beech ke gaps doosre tasks se bharo, khaali bache = IDLE
 ```
 
+**SAAR**
 ```
 DRY-RUN: tasks=[A,A,A,B,B,B], n=2
    freq: A=3, B=3 -> maxFreq=3 (A frame banega)
@@ -180,6 +221,13 @@ DRY-RUN: tasks=[A,A,A,B,B,B], n=2
    => gaps = (count-1) = maxFreq-1 = gadde.  n*maxFreq lena = zyada idle = GALAT.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** sabse zyada wala task dhaancha: `gadde = maxFreq - 1`, `idle = n * gadde`, baaki har task se `min(mp[i], gadde)` ghatao; `idle > 0` -> `size + idle`, warna `size`.
+
+> [!WARNING]
+> `gadde = maxFreq - 1` (maxFreq nahi: aakhri A ke baad gadda nahi). ek task har gadde me SIRF EK copy -> `min(mp[i], gadde)`. `idle <= 0` pe LENGTH wins (`[A3,B3,C3,D2,E2] n=3 -> 13`).
+
+**CODE**
 ```cpp
 int leastInterval(vector<char> &tasks, int n) {
     vector<int> mp(26);

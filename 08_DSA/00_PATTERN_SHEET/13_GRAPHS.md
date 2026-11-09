@@ -64,8 +64,11 @@
  KAB: edges / adjacency list / grid diya · "kitne group?" · "A se B pahunch sakte?" · "kam se kam kitne step?"
 ```
 
+---
+
 ### ▸ PATH EXISTS (LC-1971)  = single BFS (reachability)
 
+**SAWAAL**
 ```
 n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destination diye hain. Kya source se destination tak koi rasta hai? true ya false lautao.
   e.g. n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], src=0, dst=5 -> false
@@ -75,6 +78,13 @@ n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destinat
   (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** edges se `adj` banao (undirected = dono taraf), source se EK BFS; pop pe `node == destination` to true, queue khaali to false. Outer loop nahi, level-loop nahi.
+
+> [!WARNING]
+> `vis` PUSH ke saath hi mark karo, aur `vis[source] = true` bhi: warna cycle se ghoom ke ek node (source bhi) queue me do baar.
+
+**CODE**
 ```cpp
 bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
     unordered_map<int, vector<int>> adj;
@@ -109,12 +119,20 @@ bool validPath(int n, vector<vector<int>> &edges, int source, int destination) {
 
 ### ▸ NUMBER OF ISLANDS (LC-200)  = Connected-Components on a GRID
 
+**SAWAAL**
 ```
 Ek grid di hai jisme '1' = zameen aur '0' = paani. Upar, neeche, daayein, baayein (4 disha) se jude '1' milke ek island bante hain. Kitne island hain, wo ginti lautao.
   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 2
   kyun: (0,0),(0,1),(1,0) ek group; (2,2) akela, uske 4 padosi paani; to 2
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** har naya `'1'` = naya island: DFS se poora island `'0'` me dubo do (SINK = visited), phir `count++`.
+
+> [!WARNING]
+> base ek hi `if` sab `||` se: bounds PEHLE, `grid[i][j] == '0'` BAAD (bahar index pe grid padhne se pehle ruk jaata). `'0'` base me na ho to poora grid kha jaata.
+
+**CODE**
 ```cpp
 void DFS(vector<vector<char>> &grid, int i, int j, int m, int n) {
     if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0')   // ★ BASE ek hi if, sab || se
@@ -143,9 +161,11 @@ int numIslands(vector<vector<char>> &grid) {
 }
 ```
 
+---
 
 ### ▸ CONNECTED COMPONENTS (LC-323)  = ISLANDS par ADJ-LIST graph (grid nahi) + BFS
 
+**SAWAAL**
 ```
 n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag group (connected components) hain, wo ginti lautao.
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
@@ -154,6 +174,13 @@ n node (0 se n-1) aur bina disha wale edges diye hain. Graph me kitne alag-alag 
 ISLANDS ka SAME skeleton (outer-loop + count), 2 farak: graph = ADJ-LIST, aur BFS (islands DFS)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** islands ka skeleton, grid ki jagah adj-list: outer loop har node, `!vis[i]` mila to `count++` + BFS (poora group mark). padosi = `adj[node]`.
+
+> [!WARNING]
+> `count++` aur BFS dono `if (!vis[i])` ke ANDAR, warna har node gina jaata (= n). start bhi push ke saath mark.
+
+**CODE**
 ```cpp
 int countComponents(int n, vector<vector<int>> &edges) {
     unordered_map<int, vector<int>> adj;
@@ -187,9 +214,11 @@ int countComponents(int n, vector<vector<int>> &edges) {
 }
 ```
 
+---
 
 ### ▸ MAX AREA OF ISLAND (LC-695)  = Islands, par MAX AREA (count nahi)
 
+**SAWAAL**
 ```
 Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). Sabse bade island me kitne cell hain, wo lautao. Koi island na ho to 0.
   e.g. [[1,1,0],[1,0,0],[0,0,1]] -> 3
@@ -198,6 +227,13 @@ Ek grid di hai jisme 1 = zameen aur 0 = paani (4 disha se jude 1 = ek island). S
 ISLANDS ka SAME skeleton, 2 DELTA: (1) DFS void nahi, AREA return  (2) outer count++ nahi, MAX
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** islands hi, 2 delta: DFS `void` nahi, area lautaye `1 + neeche + upar + right + left`; outer me `count++` nahi, `ans = max(ans, DFS(...))`.
+
+> [!WARNING]
+> base pe bounds PEHLE, `grid[i][j] == 0` baad, dono pe `return 0`; `1` sirf asli cell pe. `ans` 0 se (koi island nahi -> 0).
+
+**CODE**
 ```cpp
 int DFS(vector<vector<int>> &grid, int i, int j, int m, int n) {
     if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0)
@@ -229,6 +265,7 @@ int maxAreaOfIsland(vector<vector<int>> &grid) {
 
 ### ▸ ROTTING ORANGES (LC-994)  = grid MULTI-SOURCE BFS + levels
 
+**SAWAAL**
 ```
 Ek grid me 0 = khaali, 1 = taaza santra, 2 = sada santra. Har minute har sada santra apne 4 taraf ke taaze santron ko sada deta hai.
 Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad paayein to -1.
@@ -240,6 +277,13 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
 ★ PURANI GALTI (Aug sheet): END me sirf return mins-1 tha -> grid me koi santra hi nahi to -1 aata, sahi 0. Isliye ab mins == 0 ? 0 : mins-1.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** saare `2` PEHLE queue me (multi-source = level 0); `sz = q.size()` snapshot = ek minute, `while (sz--)` ke BAHAR `mins++`; end me `1` bacha to -1.
+
+> [!WARNING]
+> aakhri level ke baad bhi `mins++` hota -> `mins - 1`; par koi santra hi nahi to `mins = 0` -> seedha 0 lautao (`mins - 1` = -1 galat). `grid = 2` push ke saath hi, warna doosra rotten bhi push karta.
+
+**CODE**
 ```cpp
 int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; har level = 1 minute
     queue<pair<int, int>> q;
@@ -285,6 +329,7 @@ int orangesRotting(vector<vector<int>> &grid) {   // tree LEVEL-ORDER grid pe; h
 
 ### ▸ COURSE SCHEDULE (LC-207)  = TOPO-SORT (Kahn's), cycle-detect
 
+**SAWAAL**
 ```
 numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pehle b padhna zaroori hai. Kya saare course poore kiye ja sakte hain? true ya false lautao.
   e.g. numCourses=2, prereq=[[1,0],[0,1]] -> false
@@ -294,6 +339,13 @@ numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pe
 [[1,0],[2,1],[3,2]]: har [a,b] = a lene se pehle b -> edge b -> a
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** `[a, b]` = edge `b -> a`, `indegree[a]++`. indegree 0 wale queue me; nikaalte waqt `adj` ke har node ka indegree ghatao, 0 hua to push. `ans.size() == numCourses` = cycle nahi.
+
+> [!WARNING]
+> disha ulti mat karo: `u = it[1]` (pre), `v = it[0]` (course), edge pre -> course. cycle wale ka indegree KABHI 0 nahi -> queue me aate hi nahi -> size < n -> false.
+
+**CODE**
 ```cpp
 bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
     unordered_map<int, vector<int>> adj;
@@ -324,9 +376,11 @@ bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
 }                                           //   nahi -> size < n -> false
 ```
 
+---
 
 ### ▸ BUILD ORDER — ready me se SABSE CHHOTA pehle  = COURSE SCHEDULE (Kahn's) + queue ki jagah MIN-HEAP
 
+**SAWAAL**
 ```
 n module hain (0 se n-1). [a -> b] ka matlab: a banne ke baad hi b ban sakta hai. Ek baar me ek hi module banta hai.
 Jo module ready hain (jinki saari dependency ban chuki), unme se sabse chhote number wala pehle banao. Poora kram lautao. Cycle ho to khaali list.
@@ -340,6 +394,13 @@ PEHCHAAN: dependency -> TOPO. output line padho: "koi bhi valid order" -> queue 
 BADLAAV bas itna: queue -> min-heap, front() -> top(). indegree / adj / ghatana / end-check SAME
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Course Schedule hi, bas `queue` -> `priority_queue<int, vector<int>, greater<int>>` (min-heap) aur `front()` -> `top()`: ready me se sabse chhota pehle. indegree / adj / end-check SAME.
+
+> [!WARNING]
+> `ans` KHAALI banao: `ans(n, 0)` + `push_back` = size 2n -> end check galat, hamesha `{}`. self-loop `[0->0]` pe indegree kabhi 0 nahi -> khaali.
+
+**CODE**
 ```cpp
 vector<int> buildOrder(int n, vector<vector<int>> &deps) {
     vector<int> indegree(n, 0);
@@ -376,6 +437,7 @@ vector<int> buildOrder(int n, vector<vector<int>> &deps) {
 
 ### ▸ CLONE GRAPH (LC-133)  = BFS/DFS + map(old->new)
 
+**SAWAAL**
 ```
 Ek juda hua (connected), bina disha wala graph ka ek node diya hai. Poore graph ki nayi copy (deep copy) banao: naye node aur naye neighbours, aur copy ka wahi node lautao.
   e.g. adjList [[2,4],[1,3],[2,4],[1,3]] -> [[2,4],[1,3],[2,4],[1,3]] (sab naye node)
@@ -386,6 +448,7 @@ saare node ka clone map me (A->A', B->B'), phir clones ko CONNECT (A'--B'). 2 ka
   bina jodna -> loose clones -> adhoora graph
 ```
 
+**SAAR**
 ```
 VISUAL (A-B graph):
     original:  A --- B
@@ -394,6 +457,13 @@ VISUAL (A-B graph):
     => naya deep-copy graph  A'-B'  taiyaar
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** `map<purana, naya>`: (a) clone BANANA + `q.push` sirf naye pe, `if (mp.find(it) == mp.end())` ke ANDAR; (b) JODNA `mp[curr]->neighbors.push_back(mp[it])` `if` ke BAHAR, har edge pe.
+
+> [!WARNING]
+> seed `mp[node] = clone` BFS se pehle, warna cycle pe isi node ka doosra clone. check `mp.find` se karo, `mp[it]` likha to khaali entry ban jaati.
+
+**CODE**
 ```cpp
 Node *cloneGraph(Node *node) {
     if (!node)
@@ -427,6 +497,7 @@ Node *cloneGraph(Node *node) {
 
 ### ▸ IS BIPARTITE (LC-785)  = 2-colour BFS + outer-loop (CC jaisa)
 
+**SAWAAL**
 ```
 Adjacency list wala graph diya hai. Kya saare nodes ko do group me aise baant sakte hain ki har edge ke dono sire alag group me hon? true ya false lautao.
   e.g. [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
@@ -439,6 +510,7 @@ graph[i] = node i ke neighbours (adj-list KHUD di hai). [[1,3],[0,2],[1,3],[0,2]
   [[1,2,3],[0,2],[0,1,3],[0,2]] -> false (0-1-2 triangle)
 ```
 
+**SAAR**
 ```
 INPUT: graph[i] = node i ke saare neighbours (adj-list KHUD di hai, banani nahi)
     [[1,3],[0,2],[1,3],[0,2]]  -> true        [[1,2,3],[0,2],[0,1,3],[0,2]] -> false
@@ -451,6 +523,13 @@ DRY-RUN (triangle 0-1-2):
     curr 1 (rang 1) -> nbr 2 ka rang bhi 1 = SAME -> false        (odd cycle pakda gaya)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** har node rang 0/1, padosi ko `1 - color[node]`; padosi pehle se ranga + SAME rang = false. outer loop har node (CC jaisa), `color[i] == -1` pe hi BFS.
+
+> [!WARNING]
+> BFS shuru me `color[node] = 0` ZAROORI, warna `1 - (-1)` flip galat. outer me `-1` check PEHLE, rang wale pe dobara BFS nahi.
+
+**CODE**
 ```cpp
 bool BFS(vector<vector<int>> &graph, vector<int> &color, int node) {
     queue<int> q;
@@ -491,6 +570,7 @@ bool isBipartite(vector<vector<int>> &graph) {
 
 ### ▸ DIJKSTRA  = BFS template + 2 swap + relaxation
 
+**SAWAAL**
 ```
 n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Source se har node tak pahunchne ka sabse kam kul weight lautao.
   e.g. n=4, edges 0-1(4), 0-2(1), 1-2(2), 1-3(1), 2-3(5), src=0 -> [0,3,1,4]
@@ -511,6 +591,13 @@ pq me {dist, node} PAIR: heap FIRST se sort -> HAMESHA {jispe-sort, saath-wala}
     {dist, node} ->  0 -> (1, node2) -> (3, node1) sirf EK baar, seedha sahi -> (4, node3) khatam
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** BFS + 2 swap: `queue` -> min-heap `{dist, node}` (dist PEHLE), `visited` -> `dist[]` (INF, src 0) + RELAX `wt + it.second < dist[it.first]` -> update, phir push.
+
+> [!WARNING]
+> pair `{dist, node}` hi likho: `{node, dist}` pe test PASS par har node kai baar khulta. stale skip `wt > dist[node]` strictly `>` (`>=` se src `{0, src}` khud skip -> sab INF).
+
+**CODE**
 ```cpp
 vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
     unordered_map<int, vector<pair<int, int>>> adj;
@@ -549,6 +636,7 @@ vector<int> dijkstra(int n, vector<vector<int>> &edges, int src) {
 
 ### ▸ DSU (Union-Find)  = parent[] + find + unite
 
+**SAWAAL**
 ```
 n node (0 se n-1) aur bina disha wale edges diye hain. Union-Find (DSU) se batao ki kitne alag group hain.
   e.g. n=5, edges=[[0,1],[1,2],[3,4]] -> 2
@@ -559,6 +647,13 @@ KAB: groups / connected / same-set? · UNDIRECTED cycle-detect · provinces · r
 REAL: dost-circle ("A-B same circle?"), accounts merge
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** `parent[i] = i` se shuru; `find` = root tak jao + path compression (`parent[x] = find(parent[x])`); `unite` = dono ROOT jodo (rank se); group ginti = `find(i) == i`.
+
+> [!WARNING]
+> `unite` me `x`-`y` khud mat jodo, ROOT jodo (`find(x)`, `find(y)`), warna group toot jaata. same group? bhi `find(x) == find(y)`, `parent` compare nahi.
+
+**CODE**
 ```cpp
 class DSU {
 public:
@@ -604,9 +699,11 @@ int countComponents(int n, vector<vector<int>> &edges) {
 }
 ```
 
+---
 
 ### ▸ WORD LADDER (LC-127)  = BFS shortest-path (unweighted)
 
+**SAWAAL**
 ```
 beginWord, endWord aur ek wordList di hai. Har kadam pe sirf ek akshar badal sakte ho, aur beech ka har word wordList me hona chahiye.
 beginWord se endWord tak sabse chhote raste me kitne word aate hain (beginWord bhi gino), wo lautao. Na pahunch sako to 0.
@@ -619,6 +716,7 @@ hit -> hot -> dot / lot -> dog / log -> cog = 5 WORDS (begin = 1, steps nahi)
 level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora layer khatam pe)
 ```
 
+**SAAR**
 ```
 ★★ EXAMPLE (yahi yaad -> poora recall flash):  begin=hit, end=cog, dict={hot,dot,dog,lot,log,cog}
     Level 1:  hit
@@ -648,6 +746,13 @@ TEMPLATE:
                          (ek check "dict me hai?" + "visited nahi?" dono serve).
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** word = node; har position pe `'a'..'z'` badal ke dict me mila = padosi. BFS `{word, steps}`, begin = 1; dict-set se ERASE karte hi use karo = visited (alag set nahi).
+
+> [!WARNING]
+> `word[i] = original` RESTORE har position ke baad, warna word bigad jaata. `st.erase(beginWord)` bhi, begin dobara na aaye.
+
+**CODE**
 ```cpp
 int ladderLength(string beginWord, string endWord, vector<string> &wordList) {
     unordered_set<string> st(begin(wordList), end(wordList));   // dict = lookup + visited dono

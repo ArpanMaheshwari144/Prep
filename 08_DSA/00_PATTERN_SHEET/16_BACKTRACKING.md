@@ -36,14 +36,24 @@
  ★ DHYAAN: grid: visit mark -> explore -> UNMARK
 ```
 
+---
+
 ### ▸ SUBSETS (LC-78)  = har element pe 2 choice (INCLUDE / EXCLUDE)
 
+**SAWAAL**
 ```
 Ek array diya hai (sab number alag). Iske saare subsets (khaali bhi) lautao, kram kuch bhi chalega.
   e.g. [1,2] -> [], [1], [2], [1,2]
   kyun: har element lo ya chhodo -> 2 x 2 = 4 subset
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** har element pe 2 call: INCLUDE (`push`, `index + 1`) -> `pop` -> EXCLUDE (`index + 1`); base `index >= n` pe record. ALT: start-loop, HAR node record, alag base nahi.
+
+> [!WARNING]
+> `pop_back` EXCLUDE call se PEHLE, warna exclude path me bhi element chipka rehta. `temp` caller me EK baar banao, by-ref pass (helper me banaya to har call naya).
+
+**CODE**
 ```cpp
 void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp) {
     if (index >= nums.size()) {             // har element pe faisla ho gaya -> ek poora subset
@@ -96,20 +106,27 @@ void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &
 //   pe branch
 ```
 
+---
 
 ### ▸ PERMUTATIONS (LC-46)  = used[] + FULL-LENGTH base (har position pe koi bhi bacha)
 
+**SAWAAL**
 ```
 Ek array diya hai (sab number alag). In numbers ko jitne alag-alag kram me laga sakte ho, wo saare kram (permutations) lautao.
   e.g. [1,2,3] -> [1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]
   kyun: pehli jagah 3 choice, doosri 2, teesri 1 -> 3x2x1 = 6
 ```
 
-```
-INDEX/start KYU NAHI PASS kiya (permutation me): order MATTER karta -> har position pe koi bhi UNUSED element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat hi nahi -> isliye 'start' ki zaroorat nahi, uski jagah used[].
-   (subsets/combinations me start = "peeche mat jao" (duplicate-rok, order-agnostic). permutation me wo nahi chahiye -> used[] = "same element dobara mat lo".)
-```
+> [!IMPORTANT]
+> **CHAABI:** loop HAMESHA `0` se + `used[]` (start nahi: order matter, peeche wala bhi kisi position pe); base `temp.size() == nums.size()` pe record.
+>
+> INDEX/start KYU NAHI PASS kiya (permutation me): order MATTER karta -> har position pe koi bhi UNUSED element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat hi nahi -> isliye 'start' ki zaroorat nahi, uski jagah used[].
+> (subsets/combinations me start = "peeche mat jao" (duplicate-rok, order-agnostic). permutation me wo nahi chahiye -> used[] = "same element dobara mat lo".)
 
+> [!WARNING]
+> un-choose me DONO undo: `temp.pop_back()` + `used[i] = false`. sirf pop kiya to aage ke arrangement me wo element band.
+
+**CODE**
 ```cpp
 void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vector<int>> &ans) {
     if (temp.size() == nums.size()) {       // base = full length (poora arrangement)
@@ -131,15 +148,24 @@ void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vect
 // SUBSETS = 'start' (sirf AAGE, [1,2]==[2,1] repeat nahi) · PERMUTATION = used[] + loop 0 se, start NAHI
 ```
 
+---
 
 ### ▸ COMBINATIONS (LC-77)  = SUBSETS ka start-loop, bas base size==k
 
+**SAWAAL**
 ```
 Do number n aur k diye hain. 1 se n tak ke numbers me se k number chunne ke saare tareeke lautao. Kram matter nahi karta, [1,2] aur [2,1] ek hi hain.
   e.g. n=4, k=2 -> [1,2],[1,3],[1,4],[2,3],[2,4],[3,4]
   kyun: [2,1] = [1,2] same -> sirf aage wale chuno -> C(4,2) = 6
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** subsets ka start-loop, bas base `temp.size() == k` pe record (har node pe nahi); recurse `i + 1` (aage hi, kram nahi).
+
+> [!WARNING]
+> loop `i <= n` (`n` khud bhi number) aur caller `index = 1` se (numbers 1..n, 0 nahi).
+
+**CODE**
 ```cpp
 void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp) {
     if (temp.size() == k) {  // fixed-size combo poora (subsets har node pe, yahan sirf ==k)
@@ -156,19 +182,26 @@ void solve(int n, int k, vector<vector<int>> &ans, int index, vector<int> &temp)
 // SUBSETS = start-aage, har node · COMBINATIONS = start-aage, size==k · PERM = used[] + loop 0, size==n
 ```
 
+---
 
 ### ▸ COMBINATION SUM (LC-39)  = REUSE allowed + TARGET-base
 
+**SAWAAL**
 ```
 candidates[] (sab alag, sab positive) aur ek target diya hai. Wo saare alag combination lautao jinka jod target ke barabar ho. Ek number kitni bhi baar le sakte ho.
   e.g. [2,3,6,7], target=7 -> [[2,2,3],[7]]
   kyun: 2+2+3 = 7 (2 dobara liya) · 7 akela = 7
 ```
 
-```
-FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
-```
+> [!IMPORTANT]
+> **CHAABI:** combinations hi, 2 farak: recurse `i` (`i + 1` NAHI) = REUSE; base = target (`0` -> record, `< 0` -> prune), size nahi. include/exclude form me `index` SAME pass.
+>
+> FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
 
+> [!WARNING]
+> `i + 1` likh diya to 2 dobara nahi le sakte, `[2,2,3]` chhoot jaata. `target < 0` prune sabse upar, warna bekaar gehra jaata.
+
+**CODE**
 ```cpp
 void solve(vector<int> &nums, vector<vector<int>> &ans, int index, vector<int> &temp, int target) {
     if (target < 0)
@@ -209,6 +242,7 @@ void solve2(vector<int> &candidates, int target, vector<vector<int>> &ans, int i
 
 ### ▸ WORD SEARCH (LC-79)  = grid-DFS + BACKTRACKING
 
+**SAWAAL**
 ```
 Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar, neeche, daayein, baayein) se chalte hue ye word ban sakta hai? Ek cell ek hi baar use hoga. true ya false lautao.
   e.g. board ABCE/SFCS/ADEE: "ABCCED" -> true, "ABCB" -> false
@@ -231,6 +265,13 @@ ANY vs ALL (har jagah yahi):
    (= stream ka anyMatch / allMatch, andar yahi loop)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** har cell pe ek `if`: bounds + `vis` + char mismatch -> false; mark -> 4 disha `||` (ek true = baaki call nahi) -> un-mark. pehla char mile wahin se start, KOI EK true = kaafi.
+
+> [!WARNING]
+> ANY wala loop: andar sirf true pe `return true`, loop ke BAAD `return false` (andar `== false` pe return = pehla start fail -> poora false). `vis[i][j] = false` un-mark zaroori, warna doosra raasta band.
+
+**CODE**
 ```cpp
 bool solve(vector<vector<char>> &board, const string &word, int index, int i, int j, int m, int n,
            vector<vector<bool>> &vis) {     // vis REFERENCE (&), copy nahi
@@ -274,6 +315,7 @@ bool exist(vector<vector<char>> &board, string word) {
 
 ### ▸ GENERATE PARENTHESES (LC-22)  = CONSTRAINT-guided (open / close count)
 
+**SAWAAL**
 ```
 Ek number n diya hai (n jode bracket). n jodon se banne wale saare sahi (balanced) bracket strings lautao.
   e.g. n=2 -> ["(())", "()()"]
@@ -291,6 +333,13 @@ n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
    backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** 2 rule hi branch: `open < n` -> `'('`, `close < open` -> `')'`; base `open == n && close == n`. path BY VALUE (`path + '('`) -> pop nahi chahiye.
+
+> [!WARNING]
+> dono ALAG `if` (`else if` nahi: dono sach ho sakti) aur `return solve(...)` NAHI (pehla return doosri branch maar deta -> sirf 1 string). n=3 pe 5 se kam = branch kat rahi.
+
+**CODE**
 ```cpp
 void solve(int open, int close, string path, vector<string> &ans, int n) {   // path BY VALUE: path+'('
     if (open == n && close == n) {          //   naya copy -> pop_back nahi chahiye
@@ -305,9 +354,11 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 // caller: solve(0, 0, "", ans, n). n=3 -> 5, n=4 -> 14 (kam aaye = koi branch kat rahi)
 ```
 
+---
 
 ### ▸ LETTER COMBINATIONS OF A PHONE NUMBER (LC-17)  = FOR-LOOP backtracking, har digit pe uske letters (index == n pe record)
 
+**SAWAAL**
 ```
 2 se 9 tak ke ankon ki ek string di hai. Phone keypad pe har ank ke kuch akshar hote hain (2 = abc, 3 = def ...). In ankon se banne wale saare shabd lautao. Khaali string pe khaali list.
   e.g. "23" -> [ad,ae,af,bd,be,bf,cd,ce,cf]
@@ -322,6 +373,13 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
    local test me pakda gaya. -> ans function ke andar, solve() me REFERENCE se.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** har level = ek ank, uske saare akshar for-loop me: `push` -> `solve(index + 1)` -> `pop`; `index >= digits.size()` pe record.
+
+> [!WARNING]
+> `digits == ""` pe `{}` (khaali LIST, `[""]` nahi). `ans` function ke andar banao, global pe do baar call = pichhle jawab jud jaate ("2" pe 12).
+
+**CODE**
 ```cpp
 void solve(int index, string &temp, unordered_map<char, string> &mp, vector<string> &ans,
            string &digits) {
