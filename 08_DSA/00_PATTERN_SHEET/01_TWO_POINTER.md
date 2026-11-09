@@ -662,19 +662,26 @@ height[] me buildings ki unchai di hai, har building ki chaudai 1 hai. Baarish k
 ```
 
 **SAAR**
-```
-kyun SAFE: jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi deewar pakka khadi,
-           to had isi chhoti taraf ke max se tay hoti.
-★ MILNE KI JAGAH: dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
-  badi deewar apni jagah rukti -> dono SABSE UNCHI deewar pe milte, jahan paani hota hi nahi.
-★ TRAP: faisla height[left] <= height[right] (DEEWAR) pe lo, leftMax <= rightMax pe NAHI.
-  max pe liya to ek khamba chhoot jaata: [4,1,4,1] -> 0 aata (sahi 3).
 
+> [!IMPORTANT]
+> **kyun SAFE:** jis taraf ki DEEWAR chhoti, wahi taraf niptao -- doosri taraf ek badi deewar pakka khadi,
+> to had isi chhoti taraf ke max se tay hoti.
+>
+> **★ MILNE KI JAGAH:** dono pointer jahan milte, wo cell kabhi process nahi hota. Deewar dekh ke chalne se
+> badi deewar apni jagah rukti -> dono SABSE UNCHI deewar pe milte, jahan paani hota hi nahi.
+
+> [!WARNING]
+> **★ TRAP:** faisla height[left] <= height[right] (DEEWAR) pe lo, leftMax <= rightMax pe NAHI.
+> max pe liya to ek khamba chhoot jaata: [4,1,4,1] -> 0 aata (sahi 3).
+
+### purana galat code (24-Sep theek kiya)
+
+```
 ★ 24-Sep THEEK KIYA (Arpan ka apna code):
-    ★ PURANA (GALAT) jo yahan likha tha: faisla `leftMax <= rightMax` pe, leftMax=height[0] se shuru
-      (REFRESH pehle, ADD baad).
-      max abhi current deewar ko shaamil kiye bina -> milne ki jagah galat -> ek khamba chhoot jaata.
-      [4,1,4,1] pe 0 (sahi 3) · [4,5,3,1,4,4] pe 3 (sahi 4). 12 test pass the, random input pe ~1/5 galat.
+★ PURANA (GALAT) jo yahan likha tha: faisla `leftMax <= rightMax` pe, leftMax=height[0] se shuru
+(REFRESH pehle, ADD baad).
+max abhi current deewar ko shaamil kiye bina -> milne ki jagah galat -> ek khamba chhoot jaata.
+[4,1,4,1] pe 0 (sahi 3) · [4,5,3,1,4,4] pe 3 (sahi 4). 12 test pass the, random input pe ~1/5 galat.
 ```
 
 > [!IMPORTANT]
@@ -726,6 +733,9 @@ Akela akshar bhi palindrome gina jaata hai, aur alag jagah wali same substring a
 ```
 
 **SAAR**
+
+### misaal "abcba"
+
 ```
 ★★ EXAMPLE (yahi yaad -> poora recall):   "abcba"
     a  b  c  b  a
@@ -733,13 +743,14 @@ Akela akshar bhi palindrome gina jaata hai, aur alag jagah wali same substring a
        ^  ^  ^         "bcb"      <- ek kadam phaila (b==b)
     ^  ^  ^  ^  ^      "abcba"    <- aur phaila (a==a)
     => ek hi center se 3 palindrome mile -> har phailav pe count++
-
-★ ARPAN-LINE (jisse ye derive hua): "beech wala khada ho ke dono taraf poochta --
-  'tum dono same ho? aa jao mere paas'. same hue -> palindrome bana -> phir agli jodi se poochta."
-
-(substring = CONTIGUOUS -> skip ka option nahi -> choice nahi -> recursion nahi.
- recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
 ```
+
+> [!IMPORTANT]
+> **★ ARPAN-LINE (jisse ye derive hua):** "beech wala khada ho ke dono taraf poochta --
+> 'tum dono same ho? aa jao mere paas'. same hue -> palindrome bana -> phir agli jodi se poochta."
+>
+> (substring = CONTIGUOUS -> skip ka option nahi -> choice nahi -> recursion nahi.
+> recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
 
 > [!IMPORTANT]
 > **CHAABI:** har CENTER se phailo: odd `solve(i, i)`, even `solve(i, i + 1)`; `while` me range check PEHLE phir `s[i] == s[j]`, HAR match pe `count++`.

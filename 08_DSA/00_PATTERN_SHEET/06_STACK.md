@@ -57,6 +57,11 @@ har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 ```
 SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
       (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
+```
+
+### DRY-RUN [2,1,2,4,3]
+
+```
 DRY-RUN [2,1,2,4,3]:
   i0(2): push            st=[0]
   i1(1): 2<1? no; push   st=[0,1]
@@ -64,8 +69,9 @@ DRY-RUN [2,1,2,4,3]:
   i3(4): 2<4 ans[2]=4; 2<4 ans[0]=4; push st=[3]
   i4(3): 4<3? no; push   st=[3,4]
   => ans=[4,2,4,-1,-1]
-FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
 ```
+
+**FAMILY:** monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
 
 > [!IMPORTANT]
 > **CHAABI:** INDEX ka stack, loop 0 se n-1 (NEXT = aage ka). Jo top curr se CHHOTA (`nums[st.top()] < nums[i]`) uska jawab = `nums[i]` -> pop; `while` ke BAAD `push(i)`.

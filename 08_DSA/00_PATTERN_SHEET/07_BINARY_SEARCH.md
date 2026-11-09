@@ -123,6 +123,9 @@ Na mile to {-1, -1}. O(log n) me karna hai.
 ```
 
 **SAAR**
+
+### DRY-RUN ([5,7,7,8,8,10], target 8)
+
 ```
 DRY-RUN ([5,7,7,8,8,10], target 8):
   idx :  0  1  2  3  4  5
@@ -134,12 +137,16 @@ DRY-RUN ([5,7,7,8,8,10], target 8):
           l3 h5 mid4 (8==8) -> ans[1]=4, l=5
           l5 h5 mid5 (10>8) -> h=4             -> ruk -> LAST 4
   -> {3,4}
-
-DHYAAN:
-  1. dono pass ke beech low/high RESET.
-  2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
-  3. ans(2,-1) + index set karo, push_back mat milao.
 ```
+
+> [!WARNING]
+> **DHYAAN:**
+>
+> 1. dono pass ke beech low/high RESET.
+>
+> 2. mila to sirf EK pointer hilao (FIRST: high=mid-1 · LAST: low=mid+1).
+>
+> 3. ans(2,-1) + index set karo, push_back mat milao.
 
 > [!IMPORTANT]
 > **CHAABI:** Do BS. Mila to RUKO MAT: PASS 1 (FIRST) `ans[0] = mid, high = mid - 1` · PASS 2 (LAST) `ans[1] = mid, low = mid + 1`. Baaki basic BS.
@@ -471,6 +478,9 @@ single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid 
 ```
 
 **SAAR**
+
+### DRY-RUN (single = 2 @ idx 2)
+
 ```
 ── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
    idx:  0  1  2  3  4  5  6  7  8
@@ -480,8 +490,10 @@ single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid 
    low2 high3 -> mid=2 (EVEN) : nums[2]=2 != nums[1]=1 -> low=2+1=3
    low3 high3 -> mid=3 (ODD)  : nums[3]=3 != nums[2]=2 -> high=3-1=2
    low3 > high2 -> STOP -> return nums[high]=nums[2]= 2  (sahi)
-return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 ```
+
+> [!IMPORTANT]
+> **KYUN HIGH:** return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 
 > [!IMPORTANT]
 > **CHAABI:** Single se PEHLE pair (even, odd) index pe. mid ko `mid - 1` se milao: EVEN mid ka saathi peeche mila = shift ho chuki -> `high = mid - 1`; ODD mid ka saathi peeche mila = theek -> `low = mid + 1`. End `return nums[high]`.
@@ -575,6 +587,9 @@ Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wa
 ```
 
 **SAAR**
+
+### CUT ki tasveer
+
 ```
 CUT idea (chhote array A pe BS -> Px; Py auto):
    A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
@@ -585,18 +600,28 @@ CUT idea (chhote array A pe BS -> Px; Py auto):
           x1=9  x3=15
           x2=11 x4=18
    |___ LEFT = 6 (half) ___|___ RIGHT = 5 ___|
+```
 
-   4 KINAARE (baaki se matlab NAHI, sorted isliye apne-aap sahi):
-     x1=A[Px-1] Aleft   x3=A[Px] Aright   (edge Px==0->-INF, Px==m->+INF)
-     x2=B[Py-1] Bleft   x4=B[Py] Bright   (edge Py==0->-INF, Py==n->+INF)
+> [!IMPORTANT]
+> **4 KINAARE** (baaki se matlab NAHI, sorted isliye apne-aap sahi):
+>
+> x1=A[Px-1] Aleft   x3=A[Px] Aright   (edge Px==0->-INF, Px==m->+INF)
+>
+> x2=B[Py-1] Bleft   x4=B[Py] Bright   (edge Py==0->-INF, Py==n->+INF)
+>
+> **SAHI cut:**  `x1<=x4  &&  x2<=x3`        (left-max <= right-min, dono-taraf cross-check)
+>
+> galat -> `x1>x4` (A ne ZYADA liya) -> high=Px-1  |  warna -> low=Px+1
+>
+> **MEDIAN:** odd -> max(x1,x2)  |  even -> (max(x1,x2)+min(x3,x4))/2.0
+>
+> "= BS PAR array-value pe nahi -> CUT-POSITION (Px) pe. condition monotonic -> BS chalti."
+>
+> **KYUN sirf 4 number:** sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
 
-   SAHI cut:  x1<=x4  &&  x2<=x3        (left-max <= right-min, dono-taraf cross-check)
-     galat -> x1>x4 (A ne ZYADA liya) -> high=Px-1  |  warna -> low=Px+1
-   MEDIAN: odd -> max(x1,x2)  |  even -> (max(x1,x2)+min(x3,x4))/2.0
+### DRY-RUN (A=[1,3,8,9,15], B=[7,11,18,19,21,25])
 
-   "= BS PAR array-value pe nahi -> CUT-POSITION (Px) pe. condition monotonic -> BS chalti."
-   KYUN sirf 4 number: sorted -> Px se pehle sab <=x1, aage sab >=x3. har step O(1), Px pe BS = O(log(min(m,n))).
-
+```
 ── DRY-RUN (A=[1,3,8,9,15] m=5, B=[7,11,18,19,21,25] n=6, half=6) ──
 
   TRY Px=2:   A:  1  3 | 8  9  15          x1=3   x3=8
@@ -607,9 +632,10 @@ CUT idea (chhote array A pe BS -> Px; Py auto):
               B:  7 11 | 18 19 21 25       x2=11  x4=18   (Py=2)
       x1(9)<=x4(18)  &&  x2(11)<=x3(15)  -> SAHI cut
       odd -> median = max(x1,x2) = max(9,11) = 11   ANS=11
-
-  GOTCHA: even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
 ```
+
+> [!WARNING]
+> **GOTCHA:** even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
 
 > [!IMPORTANT]
 > **CHAABI:** CHHOTE array A pe CUT `Px` pe BS, `Py = (m + n + 1) / 2 - Px`. 4 kinaare: `x1 = A[Px-1]`, `x2 = B[Py-1]` (left) · `x3 = A[Px]`, `x4 = B[Py]` (right). `x1 <= x4 && x2 <= x3` = sahi cut: odd -> `max(x1, x2)`, even -> `(max(x1,x2) + min(x3,x4)) / 2.0`. `x1 > x4` -> `high = Px - 1`, warna `low = Px + 1`.

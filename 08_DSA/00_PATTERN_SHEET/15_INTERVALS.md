@@ -168,11 +168,22 @@ Ek meeting ka end aur doosri ka start same time ho, to wahi room chal jaata hai.
 ```
 
 **SAAR**
+
+> [!IMPORTANT]
+> **FARAK merge se:** merge/meeting-I = "kya overlap?" (join/bool). MR-II = "KITNA overlap?" (peak count) -> sweep.
+
+### DRY-RUN
+
 ```
 DRY-RUN  start=[2,9,6] end=[4,12,10]:
     mp (key-sorted): {2:+1, 4:-1, 6:+1, 9:+1, 10:-1, 12:-1}
     t=2(+1)->ovl=1 mx=1 | t=4(-1)->0 | t=6(+1)->1 | t=9(+1)->2 mx=2 | t=10->1 | t=12->0
     maxOverlap = 2  -> 2 rooms
+```
+
+### SWEEP VISUAL
+
+```
 SWEEP VISUAL (vertical line jhaadu t=9 pe = 2 bars overlap = PEAK):
          0    5    10
                   ┃            <- jhaadu (sweep line) t=9 pe
@@ -182,7 +193,6 @@ SWEEP VISUAL (vertical line jhaadu t=9 pe = 2 bars overlap = PEAK):
                   ┃
                   ▲
                t=9 pe [6,10]+[9,12] dono ANDAR = 2 bars = PEAK = 2 rooms
-FARAK merge se: merge/meeting-I = "kya overlap?" (join/bool). MR-II = "KITNA overlap?" (peak count) -> sweep.
 ```
 
 > [!IMPORTANT]
