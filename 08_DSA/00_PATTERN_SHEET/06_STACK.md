@@ -161,38 +161,67 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 
 ---
 
-### ▸ PREVIOUS GREATER ELEMENT  (06/07 REDO_1, 9-Nov)  = PREVIOUS SMALLER, sirf shart ULTI (<)
+### ▸ NEXT SMALLER + PREV GREATER  (06/07 REDO_1, 9-Nov, ek file me dono)  = disha + shart, dono ek saath
 
 **SAWAAL**
 ```
-Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse BADA (strictly) number hai, wo lautao. Koi na mile to -1.
-  e.g. [4,5,2,10,8] -> [-1,-1,5,-1,10]
+Do function likhne hain (dono VALUE lautayein, na mile to -1, strictly):
+
+(A) nextSmaller: har element ke RIGHT me pehla CHHOTA.
+  e.g. [4,5,2,10,8] -> [2, 2, -1, 8, -1]
+  kyun: 4 ke aage pehla chhota 2 · 5 ke aage 2 · 2 se chhota koi nahi · 10 ke aage 8 · 8 aakhri
+
+(B) prevGreater: har element ke LEFT me pehla BADA.
+  e.g. [4,5,2,10,8] -> [-1,-1, 5, -1, 10]
   kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 chhota -> -1 · 2 ke peeche pehla bada 5 · 10 se bada koi nahi · 8 ke peeche 10
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** PREVIOUS = peeche se chalna, to loop ULTA `for (i = n-1; i >= 0; i--)`. GREATER = naya `nums[i]` top se BADA ho to top ka jawab mila: `nums[i] > nums[st.top()]` -> pop, `ans[tp] = nums[i]`.
+> **CHAABI:** sirf DISHA aur SHART dekho. NEXT = aage ka, loop `0` se `n-1`. PREV = peeche se, loop `n-1` se `0`.
+>
+> SMALLER: naya `nums[i]` top se CHHOTA -> `nums[i] < nums[st.top()]`. GREATER: naya top se BADA -> `nums[i] > nums[st.top()]`. Pop karo, `ans[tp] = nums[i]`.
 
 > [!WARNING]
-> PREV = loop `n-1` se `0` (ulta); `0` se chalaya to ye NEXT greater ban jaata. `>` strict: barabar wala bada nahi, `[2,2,2] -> [-1,-1,-1]`.
+> Disha ulti chali to NEXT ki jagah PREV ban jaata (aur dry run bhi ulta ghoomta, histogram wala 38 min). Shart strict: barabar na chhota na bada, `[2,2,2] -> [-1,-1,-1]` dono me.
 
 **CODE**
 ```cpp
-vector<int> prevGreater(vector<int> &nums) {
+vector<int> nextSmaller(vector<int> &nums)
+{
     int n = nums.size();
     vector<int> ans(n, -1);
     stack<int> st;
-    for (int i = n - 1; i >= 0; i--) {             // PREV = peeche se: loop ulta
-        while (!st.empty() && nums[i] > nums[st.top()]) {
+    for (int i = 0; i < n; i++)
+    {
+        while (!st.empty() && nums[i] < nums[st.top()])
+        {
             int tp = st.top();
             st.pop();
-            ans[tp] = nums[i];                     // tp ke baayi taraf pehla bada = nums[i]
+            ans[tp] = nums[i];
         }
         st.push(i);
     }
     return ans;
 }
-// 12/12 pehli baar me (9-Nov, histogram ke baad usi din)
+
+vector<int> prevGreater(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> ans(n, -1);
+    stack<int> st;
+    for (int i = n - 1; i >= 0; i--)
+    {
+        while (!st.empty() && nums[i] > nums[st.top()])
+        {
+            int tp = st.top();
+            st.pop();
+            ans[tp] = nums[i];
+        }
+        st.push(i);
+    }
+    return ans;
+}
+// dono 12/12 pehli baar me (9-Nov, histogram ke baad usi din)
 ```
 
 ---
