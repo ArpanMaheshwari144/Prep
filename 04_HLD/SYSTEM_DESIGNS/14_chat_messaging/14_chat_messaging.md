@@ -378,11 +378,14 @@ Perfect jawab nahi hai.
 client number se sort kare, aane ke kram se nahi. Dheeme ke liye doosra mat roko = deliver turant, baad me reorder.
 
 **Maan lo interviewer kheeche: number kaun lagayega, aur ye kabhi khatam to nahi hoga:** message server pe jis time
-aaya, usi time ko number bana do; time hamesha badhta hai, to number bhi, aur phone usi se kram lagata hai. Par "kabhi
+aaya, usi time ko number bana do; time hamesha badhta hai, to number bhi, aur phone usi se kram lagata hai. Ghadi kaunsi? Har group ka apna ek
+server hota hai: 500 logon ka group hamesha server 7 pe jaata hai, to number server 7 ki ghadi se lagega; ek group ke do
+message alag-alag server pe nahi jaate. 10 din baad group server 20 pe gaya, to ab server 20 ki ghadi. Par "kabhi
 khatam nahi hoga" jaisa daava mat karo: interviewer "maan lo 50 saal me bhar gaya to?" kheench sakta hai aur point
 wapas lena padta hai. Seedha dhaancha bolo: har message ko ek kram number, phone usi se lagata hai. Asli naam: time se
-number = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), ya har chat ka sequence number. Had yaad ho
-to bonus: long (64-bit) me lagbhag 92 lakh crore crore (9.2 x 10^18), counter har chat ka alag; warna "padhte waqt
+number = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), ya har chat ka sequence number; ek chat hamesha ek hi server pe (chat id se server tay, kadam 12), server
+badle to wahan number pichhle aakhri number ke aage se shuru. Had yaad ho
+to bonus: long (64-bit) me lagbhag 9.2 x 10^18 (9 ke baad 18 zero), counter har chat ka alag; warna "padhte waqt
 dekha tha, baaki net se dekh lete".
 
 ```mermaid
