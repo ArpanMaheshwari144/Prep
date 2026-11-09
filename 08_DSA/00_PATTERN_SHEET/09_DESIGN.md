@@ -1,12 +1,16 @@
 ## PATTERN 9 — DESIGN (data-structure)
 
-```
- BROAD IDEA: data-structure ko khud banao (built-in ke bina) -> array + pointers/nodes se.
 
- KAB: "class banao": HashMap / HashSet built-in ke bina · LRU cache · get / put O(1)
- ★ DHYAAN: HashMap: array of buckets, har bucket ek list · index = hash(key) % size · same key aaye to update
- ★ DHYAAN: LRU me map se bhi hatana mat bhoolna
-```
+> [!IMPORTANT]
+> **BROAD IDEA:** data-structure ko khud banao (built-in ke bina) -> array + pointers/nodes se.
+>
+> **KAB:** "class banao": HashMap / HashSet built-in ke bina · LRU cache · get / put O(1)
+
+> [!IMPORTANT]
+> **★ DHYAAN:** HashMap: array of buckets, har bucket ek list · index = hash(key) % size · same key aaye to update
+
+> [!WARNING]
+> **★ DHYAAN:** LRU me map se bhi hatana mat bhoolna
 
 ---
 

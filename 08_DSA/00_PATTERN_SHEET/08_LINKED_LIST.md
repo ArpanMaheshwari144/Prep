@@ -1,29 +1,37 @@
 ## PATTERN 8 — LINKED LIST
 
-```
- BROAD IDEA: pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
- ★ EDGE (fast-slow): loop ka SHURU chahiye -> milne ke baad slow ko HEAD pe, dono 1-1 step.
-         sirf "loop hai ya nahi" poocha to ye step nahi chahiye.
 
- LOOP-CONDITION (while me kya likhun) -- ek sawaal: aakhri node ka bhi kaam hai, ya sirf uske NEXT ko dekhna?
+> [!IMPORTANT]
+> **BROAD IDEA:** pointer manipulation. 3 broad-trick: FAST/SLOW · REVERSE (3-pointer) · DUMMY node.
+>
+> **KAB:** node / next diya · middle · cycle · ulta karo · nth from end · do list jodo
+
+> [!WARNING]
+> **★ DHYAAN:** jodna / hatana -> DUMMY node (head bhi badal sakta)
+
+> [!WARNING]
+> **★ EDGE (fast-slow):** loop ka SHURU chahiye -> milne ke baad slow ko HEAD pe, dono 1-1 step.
+>
+> sirf "loop hai ya nahi" poocha to ye step nahi chahiye.
+
+### LOOP-CONDITION (while me kya likhun)
+
+> [!IMPORTANT]
+> **LOOP-CONDITION (while me kya likhun) -- ek sawaal: aakhri node ka bhi kaam hai, ya sirf uske NEXT ko dekhna?**
+
+```
      while (curr != NULL)        // har node ka apna kaam (get / remove / count / print) -> ZYADATAR yahi
      while (curr->next != NULL)  // curr ka NEXT dekhna, ya aakhri node PE rukna (tail pakad ke aage jodna)
      // A->B->NULL: curr!=NULL B tak jaake B ka kaam karta; curr->next!=NULL B se pehle ruk jaata
-
- ★ YAHAN NAHI MILEGI:
-   merge K sorted lists   ->  PATTERN 14 (HEAP)
-         node/list dikhta hai, par asli kaam MIN-HEAP of current heads ka hai
-         (jodne ka engine — dummy + tail — wahi hai jo merge-TWO me hai)
 ```
 
-#### ── FAMILY: FAST/SLOW (slow 1 kadam, fast 2 kadam ya gap; middle / cycle / palindrome / nth-from-end) ──
-
-```
- KAB: node / next diya · middle · cycle · ulta karo · nth from end · do list jodo
- ★ DHYAAN: jodna / hatana -> DUMMY node (head bhi badal sakta)
-```
+**★ YAHAN NAHI MILEGI:** merge K sorted lists -> PATTERN 14 (HEAP)
+node/list dikhta hai, par asli kaam MIN-HEAP of current heads ka hai
+(jodne ka engine — dummy + tail — wahi hai jo merge-TWO me hai)
 
 ---
+
+#### ── FAMILY: FAST/SLOW (slow 1 kadam, fast 2 kadam ya gap; middle / cycle / palindrome / nth-from-end) ──
 
 ### ▸ MIDDLE OF LIST  = FAST/SLOW ka BASE (slow 1, fast 2)
 
