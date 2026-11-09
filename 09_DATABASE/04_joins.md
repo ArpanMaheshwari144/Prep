@@ -1,166 +1,100 @@
-# SQL JOINS — visual, concrete (MySQL / Postgres / MongoDB)
+# SQL Joins (har join ka asli output, MySQL pe chala ke, 9-Nov)
 
-> Ratta nahi. Do table leke har join ka RESULT dekho. Join = do table ko ek chaabi (key) pe jodna.
+## Do table
 
----
+```
+customers                  orders
++----+-------+            +-----+-------------+---------+
+| id | name  |            | id  | customer_id | item    |
++----+-------+            +-----+-------------+---------+
+|  1 | Arpan |            | 101 |           1 | Phone   |
+|  2 | Ravi  |            | 102 |           1 | Cover   |
+|  3 | Sita  |            | 103 |        NULL | Charger |
++----+-------+            +-----+-------------+---------+
+```
 
-## Setup — 2 tables (poore me yehi chalega)
+Ravi aur Sita ne kuch nahi khareeda. Charger wala order kisi customer se juda nahi hai.
 
-**employees**
-| id | name  | dept_id |
-|----|-------|---------|
-| 1  | Arpan | 10      |
-| 2  | Ravi  | 20      |
-| 3  | Sia   | NULL    | ← kisi dept me nahi
+## INNER JOIN (sirf jinka dono taraf match ho)
 
-**departments**
-| id | dept_name |
-|----|-----------|
-| 10 | Backend   |
-| 20 | Frontend  |
-| 30 | DevOps    | ← koi employee nahi
-
-Join ki **chaabi**: `employees.dept_id = departments.id`
-
----
-
-## 1. INNER JOIN — sirf MATCH wale (dono taraf ho)
 ```sql
-SELECT e.name, d.dept_name
-FROM employees e
-INNER JOIN departments d ON e.dept_id = d.id;
+SELECT c.name, o.id, o.item FROM customers c INNER JOIN orders o ON o.customer_id = c.id;
 ```
-| name  | dept_name |
-|-------|-----------|
-| Arpan | Backend   |
-| Ravi  | Frontend  |
+```
+| Arpan | 101 | Phone |
+| Arpan | 102 | Cover |
+```
 
-→ Sia (dept nahi) OUT, DevOps (emp nahi) OUT. Sirf **dono taraf match** = andar.
+## LEFT JOIN (saare customer, order na mile to NULL)
 
----
-
-## 2. LEFT JOIN — LEFT ka SAB + right jo mile (na mile → NULL)
 ```sql
-FROM employees e
-LEFT JOIN departments d ON e.dept_id = d.id;
+... FROM customers c LEFT JOIN orders o ON o.customer_id = c.id;
 ```
-| name  | dept_name |
-|-------|-----------|
-| Arpan | Backend   |
-| Ravi  | Frontend  |
-| Sia   | NULL      | ← left ka banda raha, right khaali
+```
+| Arpan | 101  | Phone |
+| Arpan | 102  | Cover |
+| Ravi  | NULL | NULL  |
+| Sita  | NULL | NULL  |
+```
 
-→ **Saare employees** aaye (Sia bhi), uska dept nahi mila to NULL. DevOps out (wo right pe hai).
-**Sabse zyada use** — "saare X, chahe unka Y ho ya na ho".
+## RIGHT JOIN (saare order, customer na mile to NULL)
 
----
-
-## 3. RIGHT JOIN — RIGHT ka SAB + left jo mile
 ```sql
-FROM employees e
-RIGHT JOIN departments d ON e.dept_id = d.id;
+... FROM customers c RIGHT JOIN orders o ON o.customer_id = c.id;
 ```
-| name  | dept_name |
-|-------|-----------|
-| Arpan | Backend   |
-| Ravi  | Frontend  |
-| NULL  | DevOps    | ← dept raha, koi emp nahi
+```
+| Arpan | 101 | Phone   |
+| Arpan | 102 | Cover   |
+| NULL  | 103 | Charger |
+```
 
-→ **Saare departments** (DevOps bhi), Sia out.
-(LEFT ka ulta — practice me LEFT zyada; table order ulta karke kaam chal jaata.)
+## FULL OUTER (dono taraf ke saare)
 
----
+MySQL me ye seedha nahi hota (Postgres me hota hai), isliye LEFT `UNION` RIGHT likhte hain:
 
-## 4. FULL OUTER JOIN — dono ka SAB (jahan match nahi → NULL)
-| name  | dept_name |
-|-------|-----------|
-| Arpan | Backend   |
-| Ravi  | Frontend  |
-| Sia   | NULL      |
-| NULL  | DevOps    |
+```
+| Arpan | 101  | Phone   |
+| Arpan | 102  | Cover   |
+| Ravi  | NULL | NULL    |
+| Sita  | NULL | NULL    |
+| NULL  | 103  | Charger |
+```
 
-→ Left ka bacha (Sia) + Right ka bacha (DevOps) **dono** aaye. Poora union.
+## CROSS JOIN (har customer x har order)
 
----
+3 x 3 = **9 row**.
 
-## 5. CROSS JOIN — har row × har row (cartesian, koi condition nahi)
-3 emp × 3 dept = **9 rows**. Har employee ko har dept ke saath joda. Real me kam use (combinations chahiye tab).
+## SELF JOIN (employee ko usi table me uske manager se jodo)
 
-## 6. SELF JOIN — table ko KHUD se join
-`employees` me `manager_id` ho (jo bhi ek employee hai) → employee ko uske manager se jodo.
-Ek hi table, do baar alias:
+```
+employees:  1 Mehta (manager NULL) · 2 Arpan (manager 1) · 3 Ravi (manager 2)
+```
 ```sql
-SELECT e.name AS emp, m.name AS manager
-FROM employees e
-JOIN employees m ON e.manager_id = m.id;
+SELECT e.name, m.name AS manager FROM employees e INNER JOIN employees m ON e.manager_id = m.id;
 ```
-★ INNER JOIN se CEO (manager_id NULL) gaayab -> sab chahiye to `LEFT JOIN employees m`.
-
----
-
-## ★★ 2 TRAP jo interview me poochhe jaate (28-Sep joda)
-
-**1. LEFT JOIN + WHERE me right table ki condition = chupchaap INNER JOIN**
-```sql
--- GALAT: Sia (dept NULL) gaayab, kyunki WHERE me NULL = false
-SELECT e.name, d.dept_name FROM employees e
-LEFT JOIN departments d ON e.dept_id = d.id
-WHERE d.dept_name = 'Backend';
-
--- SAHI (saare employees chahiye, dept sirf Backend wala dikhe): condition ON me
-LEFT JOIN departments d ON e.dept_id = d.id AND d.dept_name = 'Backend'
 ```
-(Ye galti 10_SPRING_DATA_JPA/01 ki badi query me thi, 28-Sep theek ki.)
-
-**2. ANTI-JOIN — "jinka match NAHI hai" (bahut poochha jaata)**
-```sql
--- kaunse employee kisi dept me nahi?
-SELECT e.name FROM employees e
-LEFT JOIN departments d ON e.dept_id = d.id
-WHERE d.id IS NULL;                 -- -> Sia
--- ya: WHERE NOT EXISTS (SELECT 1 FROM departments d WHERE d.id = e.dept_id)
--- NOT IN se bacho: subquery me ek bhi NULL aaya to NOT IN kuch nahi lautata
+| Arpan | Mehta |
+| Ravi  | Arpan |          <- Mehta gaayab, uska manager nahi
+```
+Wahi query LEFT JOIN se:
+```
+| Arpan | Mehta |
+| Ravi  | Arpan |
+| Mehta | NULL  |
 ```
 
----
+## Trap: "kaunse customer ne kabhi order nahi kiya?"
 
-## Venn (dimaag me chipka)
 ```
-INNER  = beech ka overlap (∩)
-LEFT   = poora LEFT circle (+ overlap)
-RIGHT  = poora RIGHT circle (+ overlap)
-FULL   = dono circle poore (∪)
+WHERE id NOT IN (SELECT customer_id FROM orders)      -> khaali (Ravi, Sita dono gaayab)
+LEFT JOIN orders o ... WHERE o.id IS NULL             -> Ravi, Sita
+WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE ...)   -> Ravi, Sita
 ```
 
----
+Charger wale order ka `customer_id` NULL hai. `NOT IN` har customer ko us NULL se bhi milata hai, aur NULL se tulna ka jawab na sach hota
+hai na jhooth, to koi bhi pass nahi hota. Isliye aisi query me `NOT EXISTS` ya `LEFT JOIN ... IS NULL` lo.
 
-## MySQL vs Postgres (asli interview-diff)
-- INNER / LEFT / RIGHT / CROSS → **dono me same** syntax.
-- ★ **FULL OUTER JOIN**: **Postgres = supported. MySQL = NAHI!**
-  MySQL me emulate: `LEFT JOIN ... UNION ... RIGHT JOIN`.  ← ye interview me poochte.
-- Postgres = standard-compliant/strict; MySQL kuch quirks (joins ke liye lagbhag sab same).
-- Dono me `USING(col)` shorthand (column-naam same ho tab) + `NATURAL JOIN` (auto-match — **avoid**, chhupa bug).
+Doosra trap (DTO wali file me bhi): LEFT JOIN ke baad WHERE me right table ki shart lagayi to NULL wali rows kat jaati hain, aur LEFT
+chup-chaap INNER ban jaata hai. Shart `ON` me likho.
 
----
-
-## MongoDB — joins hote hi nahi (alag soch)
-- Mongo = document DB → data usually **EMBEDDED** (denormalized). Employee ke andar hi dept ghusa dete → join ki zaroorat hi nahi.
-- Jab sach me do collection jodni ho → aggregation me **`$lookup`** (= LEFT OUTER JOIN jaisa):
-```js
-db.employees.aggregate([
-  { $lookup: {
-      from: "departments",
-      localField: "dept_id",
-      foreignField: "id",
-      as: "dept"          // matched dept ek ARRAY me aata
-  }}
-])
-```
-- **SQL soch:** normalize → query-time pe JOIN.
-- **Mongo soch:** embed/denormalize → join avoid; sirf kabhi-kabhi `$lookup` (heavier, sirf left-outer style).
-
----
-
-## 1-line recall
-INNER = overlap · LEFT = saara-left · RIGHT = saara-right · FULL = dono-poore · CROSS = har×har · SELF = khud-se.
-MySQL me FULL-OUTER nahi (UNION se). Mongo = embed, warna $lookup.
+MongoDB me join nahi hota, data andar hi rakhte hain; zaroorat pade to `$lookup`, jo LEFT JOIN jaisa hai.
