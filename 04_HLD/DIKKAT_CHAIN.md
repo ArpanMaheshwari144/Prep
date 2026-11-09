@@ -142,7 +142,7 @@ Yahi dikkat yahan bhi:
   URL      6   ladka raste me gira, 999 khade                 ->  ladke ki timeline, 999 me se ek (lock TTL)
   Cache    8   Priya viral, 10,000 miss, sab DB pe            ->  ek chhotu bhejo, baaki yahin (single flight)
   Cache    9   chhotu raaste me gira                          ->  kuch second dekho, phir bheed me se ek (lock timeout)
-  Cache    9b  bot nakli id maange, har baar DB               ->  parchi pe range, bahar wala wahin wapas (cache penetration)
+  Cache    9b  bot nakli id maange, har baar DB               ->  parchi pe range + "500 = null" bhi parchi pe (cache penetration, negative caching)
 
 Naam: single flight / lock timeout
 Juda: ladke ki timeline = parchi ki umar (2). URL aur Cache dono me same.
