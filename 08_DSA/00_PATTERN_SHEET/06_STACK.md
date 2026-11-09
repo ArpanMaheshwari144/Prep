@@ -18,6 +18,12 @@
      // (2) ans me kya: VALUE (next greater / smaller) · DISTANCE i - top (daily temp) · INDEX (histogram)
      // (3) disha: next = 0..n-1 · prev = n-1..0 (loop ulta) · circular = 2n loop, i % n
 
+ ★★ ASLI CHAABI (Arpan, 9-Nov chai ke baad): is family me yaad sirf LOOP KI DISHA rakhni hai.
+      NEXT  (smaller / greater)  ->  loop 0 se n-1
+      PREV  (smaller / greater)  ->  loop n-1 se 0
+    sign (< ya >) copy-pen pe ek dry run me pakad aata ("chhota aaya to kise pop?").
+    disha galat = dry run bhi ulta ghoomta (histogram REDO_2, 38 min yahin).
+
  KAB: brackets match · "har element ka agla / pichhla bada ya chhota" · span · histogram
 ```
 
