@@ -161,7 +161,7 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 
 ---
 
-### ▸ NEXT SMALLER + PREV GREATER  (06/07 REDO_1, 9-Nov, ek file me dono)  = disha + shart, dono ek saath
+### ▸ NEXT SMALLER + PREV GREATER  (06/13, naya sawaal 9-Nov, ek file me dono)  = disha + shart, dono ek saath
 
 **SAWAAL**
 ```

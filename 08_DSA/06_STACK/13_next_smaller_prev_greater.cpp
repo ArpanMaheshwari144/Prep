@@ -7,7 +7,7 @@
 //   5. "X jaisa hai, bas ye badla" -> X me jo THI HI NAHI, wo line kya? (edge wahin)
 //   6. Code ke BAAD: pattern block ki ★ EDGE line + ek chhota dushman-example chalao
 // ============================================================
-// NEXT SMALLER + PREV GREATER   [REDO_1, histogram ke baad usi din]
+// NEXT SMALLER + PREV GREATER   [naya sawaal 06/13, 9-Nov histogram ke baad usi din, dono ek file me]
 // ============================================================
 // Do function likhne hain (dono VALUE lautayein, na mile to -1, strictly):
 //
