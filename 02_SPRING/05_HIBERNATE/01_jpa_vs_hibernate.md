@@ -1,23 +1,35 @@
 # JPA vs Hibernate
 
-## Kahani: Arpan ka PA
+## Scene: JDBC tu jaanta hai
 
-Arpan ek bada afsar hai. Uske paas ek "PA ka niyam" kaagaz pe likha hai: file kaise rakhni hai, report kaise deni hai. Kaagaz khud koi kaam nahi
-karta. Yahi niyam **JPA** hai (sirf interface aur annotation, yaani spec).
+Java me `Connection`, `PreparedStatement` sirf interface hain. Inme koi code nahi jo sach me MySQL tak jaaye. Asli kaam MySQL ka driver
+(`mysql-connector-j` jar) karta hai. Kal Postgres pe jaana ho to bas driver ka jar badlo, tera `PreparedStatement` wala code wahi rehta hai.
 
-Phir Arpan ne ek asli PA rakha jo register me likhta hai aur DB tak jaata hai. Ye PA **Hibernate** hai (JPA ki implementation). Kal Hibernate ko
-hata ke EclipseLink rakh do, to bhi niyam wahi rahega, aur tera code nahi badlega.
+JPA aur Hibernate bilkul yahi jodi hain, bas ek manzil upar:
+
+- **JPA** = niyam (interface aur annotation): `@Entity`, `@Id`, `EntityManager.persist()`. Ye bas batata hai ki "object ko table me aise
+  rakhna hai". Khud koi SQL nahi likhta.
+- **Hibernate** = wo jar jo is niyam pe sach me kaam karta hai. `persist(book)` aaya to Hibernate `insert into book ...` banata hai, aur
+  neeche JDBC se DB tak bhejta hai.
 
 ```
-Tera code (@Entity, @Id, EntityManager)   <- JPA ka niyam
-Hibernate (SQL banata)                     <- niyam pe kaam
-JDBC -> Database
+Tera code      @Entity, @Id, persist()        <- JPA (niyam, jaise JDBC ka interface)
+Hibernate      insert into book ... banata     <- kaam karne wala (jaise MySQL driver)
+JDBC           SQL DB tak le jaata
+MySQL
 ```
 
-## Yaad ki cheez
+## Tera project
 
-`JpaRepository` JPA ka interface nahi hai, ye **Spring Data** ka interface hai. Isme `findByEmail` jaise method ke naam se query khud ban jaati hai,
-aur iske neeche bhi wahi Hibernate chalta hai. Boot 3 me package ka naam `jakarta.persistence` hai, pehle ye `javax.persistence` tha.
+usercrud me `Book.java` ki pehli line `import jakarta.persistence.*;` hai, matlab tune code JPA ka likha. Hibernate tune kahin naam se nahi
+likha, `spring-boot-starter-data-jpa` ne use chupchaap jod diya. App start hote hi log me ye line aati hai:
+`HHH000412: Hibernate ORM core version 6.x`. "HHH" Hibernate ki apni pehchaan hai, yaani niyam JPA ka hai aur chal Hibernate raha hai.
+Boot 3 me package ka naam `jakarta.persistence` hai, pehle ye `javax.persistence` tha.
+
+## Teesra naam jo confuse karta hai
+
+`BookRepository extends JpaRepository` na JPA ka hai, na Hibernate ka. Ye **Spring Data** ka hai, jo JPA ke upar baitha hai. `findByEmail`
+jaisa method naam padh ke query bana deta hai, aur iske neeche bhi wahi Hibernate chalta hai.
 
 ## Prod wala trap
 
@@ -25,10 +37,6 @@ aur iske neeche bhi wahi Hibernate chalta hai. Boot 3 me package ka naam `jakart
 import org.hibernate.annotations.Type;   // Hibernate ka apna, JPA ka nahi
 ```
 
-Jaise hi code me `org.hibernate.*` ka import aaya, tera code ek hi provider se bandh jaata hai. Upgrade ke waqt (jaise Hibernate 5 se 6) yahi line
-toot-ti hai. Isliye jahan tak ho sake `jakarta.persistence.*` hi use karo.
-
-## Tera project
-
-usercrud me `Author`, `Book` aur `Product` JPA wale `@Entity` hain. `BookRepository extends JpaRepository` Spring Data ka hai.
-Hibernate ko Spring Boot ne `starter-data-jpa` se khud laga diya. Matlab code tune JPA ka likha, aur use chalaya Hibernate ne.
+Code me `org.hibernate.*` ka import aaya to tu niyam chhod ke seedha driver se chipak gaya, wahi baat jaise JDBC chhod ke MySQL driver ki
+andar ki class use kar lo. Hibernate 5 se 6 ke upgrade me aisi lines hi tootti hain. Isliye jahan tak ho sake `jakarta.persistence.*` hi
+use karo.
