@@ -242,6 +242,24 @@ Array me minus number bhi ho sakte hain.
 > [!IMPORTANT]
 > **CHAABI:** map `{prefixSum -> kitni baar}`. Har i pe `count += mp[sum - k]`, phir `mp[sum]++`.
 
+### SUM - K KYUN CHALTA HAI
+
+```
+Hum dhadadhad aage chalte hain aur sum jodte jaate hain. sum = yahan tak ka poora jod.
+sum - k nikaalte hain: agar wo peeche kahin sum ban ke map me pada hai,
+to wahan ke BAAD se yahan tak ka jod theek k hai.
+
+[1,2,3], k=3      shuru: mp = {0:1}
+  i=0: sum = 1       1 - 3 = -2   map me nahi
+  i=1: sum = 1+2 = 3 3 - 3 =  0   map me hai -> yahan tak ka sum 3 hai, aur sum me se 3 ghataya
+                                    tabhi 0 aaya -> [1,2] ka jod 3              count = 1
+  i=2: sum = 6       6 - 3 =  3   map me hai (i=1 pe sum 3 tha) -> uske baad se yahan tak = [3]
+                                    ka jod 3                                     count = 2
+
+Ye trick sirf un sawaalon me jahan "LAGAATAAR tukde ka jod = k" maanga ho.
+Tukda = abhi ka sum - peeche ka sum. To peeche ka sum = sum - k. Wahi map me dhoondte hain.
+```
+
 > [!WARNING]
 > `mp[0] = 1` se shuru (sum khud == k wala case). Aur `sum - k` hi, two-sum ka `k - sum` ulta yahan mat lagao.
 
@@ -288,6 +306,27 @@ theek k ho, aur uski lambai lautao. Koi na mile to 0.
 
 > [!IMPORTANT]
 > **CHAABI:** map `{prefixSum -> PEHLA index}`, `mp[0] = -1`. `sum - k` mila to lambai `i - mp[sum - k]`.
+
+### SUM - K KYUN CHALTA HAI (upar SUBARRAY SUM = K wali hi trick)
+
+```
+Wahi trick: dhadadhad chalo, sum jodo, sum - k map me dhoondo. Mila to wahan ke baad se yahan tak jod = k.
+Bas yahan map me PEHLA index rakha, to lambai = i - mp[sum - k].
+
+[3,-1,4,-2,2,1], k=4      shuru: mp = {0:-1}
+
+i  num  sum  sum-k  map me?          lambai        ans   map me daala
+0   3    3    -1    nahi             -             0     3:0
+1  -1    2    -2    nahi             -             0     2:1
+2   4    6     2    haan, index 1    2-1 = 1       1     6:2
+3  -2    4     0    haan, index -1   3-(-1) = 4    4     4:3
+4   2    6     2    haan, index 1    4-1 = 3       4     (6 pehle se, skip)
+5   1    7     3    haan, index 0    5-0 = 5       5     7:5
+
+i=3: sum 4, 4 - 4 = 0 -> shuru se yahan tak jod 4 -> [3,-1,4,-2], lambai 4
+i=5: sum 7, 7 - 4 = 3 -> 3 index 0 pe pada -> index 0 ke baad se yahan tak jod 4
+     -> [-1,4,-2,2,1], lambai 5 - 0 = 5
+```
 
 > [!WARNING]
 > `if (!mp.count(sum)) mp[sum] = i`: PEHLA index hi rakho, baad wala likh diya to tukda chhota. Lambai me `+1` nahi, wo index tukde me nahi.
