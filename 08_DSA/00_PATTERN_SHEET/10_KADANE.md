@@ -94,10 +94,13 @@ Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada
 ```
 
 **SAAR**
+
+### shuruaat + purani galti (24-Sep theek kiya)
+
 ```
 ★ SHURUAAT (24-Sep theek kiya):  max = 1, min = 1, ans = INT_MIN,  loop i = 0 se.   // ans INT_MIN: 0 se [-2] pe 0 aata, sahi -2
-  pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
-  -> [4,-3] pe 0 aata (sahi 4). niyam: loop 1 se ho to ans bhi nums[0] se; loop 0 se to 1 / INT_MIN se.
+pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
+-> [4,-3] pe 0 aata (sahi 4). niyam: loop 1 se ho to ans bhi nums[0] se; loop 0 se to 1 / INT_MIN se.
 ```
 
 > [!IMPORTANT]
@@ -135,10 +138,13 @@ Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value 
 ```
 
 **SAAR**
+
+### shuruaat + purani galti (24-Sep theek kiya)
+
 ```
 ★ SHURUAAT (24-Sep theek kiya): max = 0, min = 0, ans = 0, loop i = 0 se.   n==1 -> return abs(nums[0]).   // 0 se theek: + me 0 kuch nahi jodta, abs kabhi minus nahi
-  pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
-  aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
+pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
+aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
 ```
 
 > [!IMPORTANT]
@@ -185,19 +191,27 @@ A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL -
 
 **SAAR**
 ```
-★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
 2 CASE (bada lo): A) NO-wrap = normal Kadane (max)  ·  B) WRAP = end+start juda, BEECH ka chunk chhoda.
-KEY INSIGHT: wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
-   wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
   maxK = maxKadane(nums);  minK = minKadane(nums);  total = sum(nums);
   ans = max( maxK, total − minK );
-★ EDGE (all-negative): min-subarray = poora array -> total−minK = 0 (EMPTY) -> galat.
-   -> agar maxK < 0 (sab negative) -> sirf maxK return. (empty subarray allowed nahi.)
-CONCRETE [5,-3,5]: maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
-   -> wrap = 7−(−3)=10 -> ans=max(7,10)=10.  (10 sirf WRAP se, seedhe Kadane se nahi.)
-★ minK Kadane-MIN se: cur = min(nums[i], cur+nums[i]); minK = min(minK, cur). (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
-CONNECT: [[house-robber-II]] jaisa "circular twist" par MECHANISM alag (HR-II = exclude-first/last; ye = total−minKadane).
 ```
+
+> [!IMPORTANT]
+> ★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
+>
+> **KEY INSIGHT:** wrap = poora array MINUS beech-ka-chunk. max-wrap ke liye SABSE-BURA (min) chunk hatao ->
+> wrap-max = TOTAL − (minimum-subarray-sum).   [min-subarray = Kadane ka MIN-version]
+
+> [!WARNING]
+> **★ EDGE (all-negative):** min-subarray = poora array -> total−minK = 0 (EMPTY) -> galat.
+> -> agar maxK < 0 (sab negative) -> sirf maxK return. (empty subarray allowed nahi.)
+>
+> **CONCRETE [5,-3,5]:** maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 · total=7
+> -> wrap = 7−(−3)=10 -> ans=max(7,10)=10.  (10 sirf WRAP se, seedhe Kadane se nahi.)
+>
+> **★ minK Kadane-MIN se:** cur = min(nums[i], cur+nums[i]); minK = min(minK, cur). (prefix-sum se NAHI -- Arpan-10-Sep pakda.)
+
+**CONNECT:** [[house-robber-II]] jaisa "circular twist" par MECHANISM alag (HR-II = exclude-first/last; ye = total−minKadane).
 
 > [!IMPORTANT]
 > **CHAABI:** 2 case, bada lo: NO-wrap = normal Kadane `maxSum` · WRAP = `totalSum - minSum` (beech ka sabse bura chunk hatao). `max(circularSum, maxSum)`.
@@ -275,7 +289,11 @@ TEMPLATE:
 
     maxTwoNonOverlap     (bestLeft=bestLeftPrefix, bestRight=bestRightPrefix;  ans=INT_MIN)   // INT_MIN: sab minus ho to jod bhi minus, 0 se galat
         for i = 0..n-2 :  ans = max( ans , bestLeft[i] + bestRight[i+1] )    // WALL, i+1 = non-overlap (loop n-2 tak: i+1 array ke bahar na jaaye)
+```
 
+### DRY-RUN
+
+```
 DRY-RUN:
    VISUAL [1,2,-7,8,6,-4]:
      val       : [ 1    2   -7    8    6   -4 ]
@@ -283,18 +301,24 @@ DRY-RUN:
      bestLeft  : [ 1    3    3    8   14   14 ]   (06)
      bestRight : [ 14   14   14   14   6   -4 ]   (06 ka mirror)
      i=1: bestLeft[1]=3 + bestRight[2]=14 = 17
+```
 
-EDGE:
-   i+1 KYUN (non-overlap ki JAAN): right ko i se lo (bestRight[i]) -> shared index DONO subarray me -> DO BAAR count -> OVERLAP.
-     e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, index 3 DONO me = jhootha. i+1 (ya i-1, loop i=1->n-1) se dono ALAG.
+> [!WARNING]
+> **EDGE:**
+>
+> **i+1 KYUN (non-overlap ki JAAN):** right ko i se lo (bestRight[i]) -> shared index DONO subarray me -> DO BAAR count -> OVERLAP.
+> e.g. bestLeft[3]=8 + bestRight[3]=14 = 22, index 3 DONO me = jhootha. i+1 (ya i-1, loop i=1->n-1) se dono ALAG.
+>
+> loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 
+### overlap dekh (index 3)
+
+```
      val       : [  1   2  -7   8   6  -4 ]
      bestLeft  : [  1   3   3  (8) 14  14 ]   (0..i)          <- aage
      bestRight : [ 14  14  14 (14) 6  -4 ]   (i+1..n-1)      <- peeche
      overlap dekh: index 3 pe bestLeft ka 8 AUR bestRight ka 14 -- dono me index 3 COMMON = do baar count (jhootha).
      isliye: left = [0..i], right = [i+1..n-1] -> ek AAGE shift -> index 3 dono me nahi. (ya left [0..i-1], right [i..n-1])
-
-   loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 ```
 
 > [!IMPORTANT]

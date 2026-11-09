@@ -151,10 +151,13 @@ cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* ve
 ```
 
 **SAAR**
+
+### purani galti (24-Sep theek kiya)
+
 ```
 GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
-   1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
-   -> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
+1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
+-> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
 ```
 
 > [!IMPORTANT]
@@ -488,6 +491,8 @@ har k-node group ulta (NODES), k se KAM bache -> waise hi. 1->2->3->4->5, k=2 ->
 PEHCHAN: "reverse in groups of k" -> 3-ptr + count + recurse (copy-random se ALAG: ulatna, naya nahi)
 ```
 
+### VISUAL (k=2)
+
 ```
 VISUAL ( 1 -> 2 -> 3 -> 4 -> 5 ,  k=2 ):
    GRP1 [1,2]:  1 -> 2 -> (3 4 5)
@@ -571,13 +576,16 @@ VISUAL ( [x]=node · -> next · ~> random ):
      1' ~>  mp[ 1.rand=7  ]  = 7'
      7' ~>  NULL
   => saare copy-random COPY ke andar (original pe nahi) = DEEP
-
-KEY: currRand->random = mp[curr->random] = old-random ka NAYA-copy -> DEEP.
-★ SAMAJH: "13 ka random 7 pe hai" -> ye ORIGINAL batata (curr->random padho).
-  mp sirf old->new BADALTA (clone-map). Source hamesha curr (original);
-  currRand (copy) padhte to random abhi NULL hota -- isliye curr se lete.
-T=O(n) S=O(n).  [O(1)-space alt = interleave A->A'->B->B' clone, optional.]
 ```
+
+> [!IMPORTANT]
+> **KEY:** currRand->random = mp[curr->random] = old-random ka NAYA-copy -> DEEP.
+>
+> **★ SAMAJH:** "13 ka random 7 pe hai" -> ye ORIGINAL batata (curr->random padho).
+> mp sirf old->new BADALTA (clone-map). Source hamesha curr (original);
+> currRand (copy) padhte to random abhi NULL hota -- isliye curr se lete.
+
+T=O(n) S=O(n).  [O(1)-space alt = interleave A->A'->B->B' clone, optional.]
 
 > [!IMPORTANT]
 > **CHAABI:** PASS 1: har node ka clone + `mp[curr] = temp` (old -> new) + next jodo. PASS 2: `currRand->random = mp[curr->random]` = original ke random ka NAYA copy.

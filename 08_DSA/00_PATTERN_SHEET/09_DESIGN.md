@@ -29,10 +29,15 @@ get(key): value lautao, na mile to -1. remove(key): key hatao.
 MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
    index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
 fields: buckets (Entry* ka array) · cap (slots = 16) · sz (kitne pairs).   // ctor: sz=0, cap=16, buckets.resize(cap) -> sab slot nullptr
+```
 
-PUT TRAP (7-redo se pakka): key MILI -> value update + TURANT return. return NA kiya to loop aage
-   DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- chain-ke-ANDAR update pe phat-ta.)
+> [!WARNING]
+> **PUT TRAP (7-redo se pakka):** key MILI -> value update + TURANT return. return NA kiya to loop aage
+> DUPLICATE node laga deta + sz galat. ("test-pass != code-sahi" -- chain-ke-ANDAR update pe phat-ta.)
 
+### VISUAL
+
+```
 VISUAL:                                      Entry = | key | value | next |
    buckets
    ┌────┐
@@ -43,7 +48,11 @@ VISUAL:                                      Entry = | key | value | next |
  3 │ - ──┼──> | cat | 9 | - ─|──> | dog | 4 | - ─|──> NULL     <- COLLISION (chain)
    └────┘
    buckets[i] = us chain ka HEAD (ya NULL).
+```
 
+### REMOVE head vs beech
+
+```
 REMOVE head (prev==null):            REMOVE beech (prev exist):
    buckets[i]->[A]->[B]->NULL           [A]->[B]->[C]->NULL   (remove B)
                ^curr                          ^prev ^curr
@@ -170,9 +179,11 @@ CONNECTION (HashMap se):
 │ size     │ return sz                    │ SAME                         │
 └──────────┴──────────────────────────────┴──────────────────────────────┘
 SAME (dono me): bucket khaali -> node laga + sz++; index = hash<string>{}(key)%cap; chaining/collision; remove head-vs-beech; VISUAL/COMBO (upar HashMap entry).
-BUG-CATCH (remove, khud pakda): advance = "prev = curr; curr = curr->next"
-   (NA prev = prev->next -- prev NULL se non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
+
+> [!WARNING]
+> **BUG-CATCH (remove, khud pakda):** advance = "prev = curr; curr = curr->next"
+> (NA prev = prev->next -- prev NULL se non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 
 > [!IMPORTANT]
 > **CHAABI:** HASHMAP ka hi code, Entry me sirf `| key | next |`. add: key mili -> kuch nahi (`return`), na mili -> chain END + `sz++`. contains = get ka true/false. remove HUBAHU same.
@@ -278,23 +289,31 @@ MENTAL MODEL: get+put DONO O(1). 2 zaroorat -> 2 structure JODO:
    DLL:     dummy [HEAD] <-> MRU .. LRU <-> [TAIL] dummy  (reorder/evict O(1))
    head-side=recent · tail-side=purana(evict) · dummy head+tail = edge-case clean.
    => hashmap = KAHAN hai (find), DLL = ORDER (reorder/evict). jodne se dono O(1).
+```
 
+### VISUAL
+
+```
 VISUAL:                     Node = | key | val | prev | next |
    mp:{ 1->●, 3->● }
           │    │
           v    v
     [HEAD]<->|1|<->|3|<->[TAIL]
     (dummy)  MRU   LRU   (dummy)
-
-TRAP: (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()/find(). (C++ jaal)
-      (2) DLL rewire: overwrite se PEHLE temp me pakdo (nxt).  (3) ctor me type-dobara = shadowing (naya local).
-      (4) ★ (24-Sep, base + REDO_1 dono me tha) put() me key pehle se ho to sirf addFront kiya, removeNode NAHI
-          -> node purani jagah pe BHI juda reh gaya, tail->prev use hi dekhta -> jo abhi update hua wahi evict.
-          cap=2: put1, put2, put(1,10), put3 -> get(1) = -1 aaya (sahi 10), get(2) = 2 (sahi -1).
-      (5) mp.erase(lru->val) likha -> map me val naam ki key hi nahi, kuch nahi hata -> gaya hua key
-          get() pe wapas milta (100 aata, sahi -1), mp.size() badhta rehta -> aage evict hi band.
-          test me key == val ho (1,1 · 2,2) to ye chhup jaata -> test me key != val rakho (1,100).
 ```
+
+> [!WARNING]
+> **TRAP:** (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()/find(). (C++ jaal)
+>
+> (2) DLL rewire: overwrite se PEHLE temp me pakdo (nxt).  (3) ctor me type-dobara = shadowing (naya local).
+>
+> (4) ★ (24-Sep, base + REDO_1 dono me tha) put() me key pehle se ho to sirf addFront kiya, removeNode NAHI
+> -> node purani jagah pe BHI juda reh gaya, tail->prev use hi dekhta -> jo abhi update hua wahi evict.
+> cap=2: put1, put2, put(1,10), put3 -> get(1) = -1 aaya (sahi 10), get(2) = 2 (sahi -1).
+>
+> (5) mp.erase(lru->val) likha -> map me val naam ki key hi nahi, kuch nahi hata -> gaya hua key
+> get() pe wapas milta (100 aata, sahi -1), mp.size() badhta rehta -> aage evict hi band.
+> test me key == val ho (1,1 · 2,2) to ye chhup jaata -> test me key != val rakho (1,100).
 
 > [!IMPORTANT]
 > **CHAABI:** hashmap = KAHAN (`key -> Node*`), DLL dummy `head`/`tail` = ORDER (head-side MRU, tail-side LRU). get aur put dono me `removeNode` + `addFront`. Full pe `tail->prev` hatao + `mp.erase(key)`.
