@@ -320,7 +320,7 @@ flowchart TB
 
 ## 13. Trip khatam, wallet me ₹40 (poora ya kuch nahi, ride tab tak khuli)
 
-Trip khatam, ₹250 kaatne gaye, Arpan ke wallet me sirf ₹40. Payment fail, Arpan ghar ke andar, aur Raju ka petrol aur
+Trip khatam, ₹250 kaatne gaye, Arpan ke wallet me sirf ₹40. Payment fail, Arpan gaadi me hi baitha, Raju saamne, aur Raju ka petrol aur
 40 minute gaye. Kaatna hai to poora kaato, aadha mat kaato: 40 kaat ke chhod diya to log jaan-boojh ke 1 rupaya
 rakhenge. Wallet me 250 nahi to app me saaf dikhao "payment nahi hua", aur Raju ke phone pe bhi dikhe. Arpan GPay se
 de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.

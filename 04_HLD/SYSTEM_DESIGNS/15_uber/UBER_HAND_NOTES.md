@@ -60,7 +60,7 @@ Technical me: "store karwa lo" = session map (user -> server, Redis) + ride map 
 Arpan: Jo dikhaya wahi lena meri zimmedari. 250 hi lo. Traffic me phase aur driver ki mehnat zyada lagi to rider ki marzi pe tip: 50-100 de de, na de to jitna dikhaya utna. (Uber / Rapido asal me badha deti hain, par main banata to aise.)
 Technical me: "jo dikhaya wahi" = upfront fare: quote ride ke saath save (lock), aakhir me wahi kaato; "zyada mehnat" = tip alag, rider ki marzi.
 
-**13. Trip khatam, ₹250 kaatne gaye, Arpan ke wallet me sirf ₹40. Payment fail, Arpan ghar ke andar, Raju ka petrol aur 40 minute.**
+**13. Trip khatam, ₹250 kaatne gaye, Arpan ke wallet me sirf ₹40. Payment fail, Arpan gaadi me hi baitha, Raju saamne, Raju ka petrol aur 40 minute.**
 Arpan: Kaatna hai to poora kaato, aadha mat kaato: 40 kaat ke chhod diya to log jaan-boojh ke 1 rupaya rakhenge. Wallet me 250 nahi to app me saaf dikhao "payment nahi hua", aur Raju ke phone pe bhi dikhe. Arpan GPay se de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak khatam nahi" = ride status PAYMENT_PENDING jab tak SUCCESS, "GPay / cash" = fallback payment method, dono app pe dikhe.
 **Maan lo 250 kaatne gaye, gateway chup, pata nahi kata ya nahi.**

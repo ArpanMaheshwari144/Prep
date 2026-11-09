@@ -287,7 +287,7 @@ Yahi dikkat yahan bhi:
   Kafka    9   galat ticket baar-baar, line atki              ->  line se hata (DLQ)
   Kafka    11  SMS counter 10 min band, sab DLQ me            ->  pehle check, waqai band? (circuit breaker)
   Kafka    12  counter waqai band hai                         ->  road band, traffic divert (fallback)
-  Uber     17  payment fail, Arpan ghar ke andar              ->  paisa nahi aaya to ride khatam nahi (PAYMENT_PENDING)
+  Uber     17  payment fail, Arpan gaadi me, Raju saamne      ->  paisa nahi aaya to ride khatam nahi (PAYMENT_PENDING)
   Ecom     8   net gaya / PSP chup                            ->  BMS wala PAYMENT_PENDING + status job, kinaare pe refund
   File     11b bahar wala scanner 1 ghante se chup            ->  ruk ke dobara, phir DLQ + alert; tab tak link band
 
