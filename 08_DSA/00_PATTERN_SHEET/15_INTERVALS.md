@@ -11,18 +11,18 @@
 ```
  ★ DECISION — input same [start,end], SAWAAL (verb) decide karta kaunsa tool:
      "MERGE overlapping / combine"           -> sort by START + merge
-     "MAX non-overlapping pick / min remove" -> GREEDY: sort by END, free ho to pick
+     "MAX non-overlapping pick / min remove" -> GREEDY: START sort + overlap pe chhota-END rakho (tera LC-435), ya END sort
      "kitne ek-SAATH / MIN rooms chahiye"    -> LINE-SWEEP (start +1, end -1, running-count ka MAX)
 ```
 
 > [!WARNING]
-> greedy = wahi sort+loop, bas KEY = END (jaldi-khatam wali max room chhodti -> zyada fit).
+> greedy ki asli baat = jaldi KHATAM hone wala rakho (wo aage zyada jagah chhodta -> zyada fit). START pe sort kiya to overlap pe END compare karna ZAROORI.
 >
-> A[1,10] B[2,3] C[4,5] -> START-sort = 1 · END-sort = 2. END jeeta.
+> A[1,10] B[2,3] C[4,5] -> START-sort karke bina END compare ke pehla rakha = 1 (galat) · END compare / END-sort = 2 (sahi).
 
 **★ YAHAN NAHI MILEGI:** non-overlapping intervals -> PATTERN 18 (GREEDY)
   intervals hain, par sawaal "kam se kam kitne HATAO" = greedy choice
-  (sort by END, aur takraane wala chhodo)
+  (START sort + takraane pe chhota-END rakho, ya END sort)
 
 ---
 

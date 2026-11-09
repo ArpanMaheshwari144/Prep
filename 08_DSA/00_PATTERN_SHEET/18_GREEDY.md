@@ -11,7 +11,7 @@
 > **SIGNATURE:** aksar pehle SORT (kisi key pe: size / finish-time) -> phir ek LINEAR pass me pick / skip.
 
 > [!WARNING]
-> ★ DHYAAN: intervals me "kam se kam hatao" -> END pe sort
+> ★ DHYAAN: intervals me "kam se kam hatao" -> tera code: START pe sort + overlap pe CHHOTE-END wala rakho (LC-435). Ya seedha END pe sort, tab wo if hi nahi lagta. Dono sahi.
 >
 > ★ DHYAAN: gas station: tank minus hua -> agla station naya start
 
