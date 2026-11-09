@@ -204,6 +204,30 @@ DRY-RUN (h=[2,1,5,6,2,3]):
 
 FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
         2D bhai = MAXIMAL RECTANGLE (har row = histogram, isi ko call).
+
+★ GALTI (REDO_2, 38 min yahin atka): "2 ka jawab abhi kahan se laaun, stack to khaali hai?"
+  STACK = jawab ka INTEZAAR karne walon ki LINE. Jawab abhi nahi chahiye, BAAD me aayega.
+    stack khaali = koi baat nahi: 2 line me khada ho jaata, default pehle se bhara (NS = n, PS = -1).
+    CHHOTA aaya  = line walon ka jawab mil gaya -> pop karo, unka ans bharo, phir naya bhi line me.
+
+  NS (aage ka chhota)   : loop 0 -> n-1
+  PS (peeche ka chhota) : loop n-1 -> 0      wahi chaal, bas disha ulti
+  shart (dono me same)  : heights[top] > heights[i]   -> naya CHHOTA aaya tab pop
+                          ulta sign (heights[i] > heights[top]) = next GREATER ban jaata (yahi likha tha)
+
+  CHAAR KE CHAAR pe yahi niyam (sirf "pop karke bharo" wale tareeke me):
+    next smaller / next greater  -> 0 -> n-1
+    prev smaller / prev greater  -> n-1 -> 0
+    smaller ya greater           -> sirf while ka sign badalta
+  dhyaan: "pehle bekaar nikaalo, phir top hi jawab" wala doosra tareeka ULTI disha chalta. dono mat milao.
+
+  copy-pen [2,1,5,6,2,3], NS:
+    i0(2): line khaali -> 2 line me
+    i1(1): 1 < 2 -> 2 ka NS = 1, pop; 1 line me
+    i2(5), i3(6): bade -> line me
+    i4(2): 2 < 6 -> 6 ka NS = 4; 2 < 5 -> 5 ka NS = 4; 2 line me
+    i5(3): line me.  bache (1, 2, 3) -> NS = n = 6
+    NS = [1, 6, 4, 4, 6, 6]
 ```
 
 ```cpp
