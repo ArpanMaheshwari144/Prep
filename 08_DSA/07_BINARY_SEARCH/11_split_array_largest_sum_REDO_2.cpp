@@ -13,7 +13,14 @@
 // Har tukde ka sum nikaalo; us split ki "cost" = sabse BADA tukda-sum.
 // Saare possible splits me se sabse CHHOTI cost lautao.
 //
-//   [7,2,5,10,8], k=2  ->  18     ([7,2,5]=14 | [10,8]=18)
+//   [7,2,5,10,8], k=2  ->  18
+//  saare split (har split ki cost = uske tukdon me sabse bada sum):
+//    [7]          | [2,5,10,8]   ->  7 , 25  -> cost 25
+//    [7,2]        | [5,10,8]     ->  9 , 23  -> cost 23
+//    [7,2,5]      | [10,8]       -> 14 , 18  -> cost 18
+//    [7,2,5,10]   | [8]          -> 24 ,  8  -> cost 24
+//  cost 25, 23, 18, 24 -> sabse chhoti 18 -> jawab 18.
+//  14 aur 18 do alag jawab nahi, EK hi split ke do tukde; us split ki cost 18 hi ginegi, 14 kabhi nahi.
 //
 // Tests (neeche main() me, khud PASS/FAIL batayega):
 //   [7,2,5,10,8], k=2     -> 18

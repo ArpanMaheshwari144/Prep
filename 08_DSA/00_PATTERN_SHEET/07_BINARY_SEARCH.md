@@ -388,7 +388,13 @@ int shipWithinDays(vector<int> &weights, int days) {
 Ek array ko k lagaatar hisson me todna hai. Har tareeke me sabse bade hisse ka jod dekho.
 Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
   e.g. [7,2,5,10,8], k=2 -> 18
-  kyun: splits ke bade-sum 25,23,18,24 -> sabse chhota 18 ([7,2,5]=14 | [10,8]=18)
+  saare split (har split ki cost = uske tukdon me sabse bada sum):
+    [7]          | [2,5,10,8]   ->  7 , 25  -> cost 25
+    [7,2]        | [5,10,8]     ->  9 , 23  -> cost 23
+    [7,2,5]      | [10,8]       -> 14 , 18  -> cost 18
+    [7,2,5,10]   | [8]          -> 24 ,  8  -> cost 24
+  cost 25, 23, 18, 24 -> sabse chhoti 18 -> jawab 18.
+  14 aur 18 do alag jawab nahi, EK hi split ke do tukde; us split ki cost 18 hi ginegi, 14 kabhi nahi.
 ```
 
 > [!IMPORTANT]
