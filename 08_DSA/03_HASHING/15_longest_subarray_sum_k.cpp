@@ -30,8 +30,21 @@ using namespace std;
 
 int longestSubarraySumK(vector<int> &nums, int k)
 {
-    // yahan likh
-    return 0;
+    unordered_map<int, int> mp;
+    mp[0] = -1;
+    int sum = 0;
+    int ans = 0;
+    for (int i = 0; i < nums.size(); i++)
+    {
+        sum += nums[i];
+        if (mp.count(sum - k))
+        {
+            ans = max(ans, i - mp[sum - k]);
+        }
+        if (!mp.count(sum)) // override se bachao
+            mp[sum] = i;
+    }
+    return ans;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
