@@ -1,40 +1,58 @@
 ## PATTERN 16 — BACKTRACKING (choose / explore / un-choose)
 
+
+> [!IMPORTANT]
+> **KAB:** "saare subsets / permutations / combinations", "N-queens", "har combination try karo".
+
+> [!IMPORTANT]
+> **BROAD IDEA:** saari possibilities explore -> solution EK-EK step build;
+> galat lage -> PEECHE aao (backtrack) -> agla raasta.
+>
+> **MAZE:** raasta pakdo -> dead-end -> WAPAS last-junction -> doosra try. har element pe CHOICE(s).
+>
+> **DECISION TREE:** har node = choice-point; har leaf tak ka raasta = ek possible answer.
+
+> [!IMPORTANT]
+> **TEMPLATE (3 step):** CHOOSE (path me daalo) -> EXPLORE (aage recurse)
+> -> UN-CHOOSE (pop / undo -> agli choice).
+
+### 2 FORMS = SAME cheez, alag likhawat (dono me core: CHOOSE -> EXPLORE -> UN-CHOOSE):
+
 ```
- BROAD IDEA: saari possibilities explore -> solution EK-EK step build;
-   galat lage -> PEECHE aao (backtrack) -> agla raasta.
-   MAZE: raasta pakdo -> dead-end -> WAPAS last-junction -> doosra try. har element pe CHOICE(s).
-   TEMPLATE (3 step): CHOOSE (path me daalo) -> EXPLORE (aage recurse)
-                      -> UN-CHOOSE (pop / undo -> agli choice).
-   DECISION TREE: har node = choice-point; har leaf tak ka raasta = ek possible answer.
-   KAB: "saare subsets / permutations / combinations", "N-queens", "har combination try karo".
-
- GOTCHA 1 — EARLY RETURN 2ND BRANCH MAAR DETA:
-     if (cond1) return solve(...);           // GALAT: function yahin exit -> neeche wali branch kabhi nahi
-     if (cond2) solve(...);
-     // FIX: har branch bina return:  if (cond1) solve(...);  if (cond2) solve(...);
-     // return HARMFUL sirf jab uske BAAD chalne wala code ho. LAST line pe return = safe.
-     // BEECH me return = agla branch maar deta (void / non-void se lena-dena NAHI, FLOW ka rule).
-
- GOTCHA 2 — `else if` MAT LAGAO (dono branch ALAG if):
-     if (cond1) solve(...);                  // sahi: dono chalti
-     if (cond2) solve(...);
-     // else if = "ek mil gaya, bas" -> cond1 sach to cond2 KABHI nahi. backtracking = HAR combination banana.
-     // dhoondhne wale code me else if theek (ek jawab). BANANE wale code me GALAT (saare jawab).
-
- 2 FORMS = SAME cheez, alag likhawat (dono me core: CHOOSE -> EXPLORE -> UN-CHOOSE):
    A) INCLUDE / EXCLUDE : 2 call (liya / nahi liya), record BASE (index == n) pe
    B) FOR-LOOP (start)  : loop se har element pe branch, record HAR node pe, alag base nahi
                           (index == n -> loop chalta hi nahi -> khud ruk jaata)
-
 ```
+
+> [!WARNING]
+> **GOTCHA 1 — EARLY RETURN 2ND BRANCH MAAR DETA:**
+> ```
+>     if (cond1) return solve(...);           // GALAT: function yahin exit -> neeche wali branch kabhi nahi
+>     if (cond2) solve(...);
+> ```
+> // FIX: har branch bina return:  if (cond1) solve(...);  if (cond2) solve(...);
+>
+> // return HARMFUL sirf jab uske BAAD chalne wala code ho. LAST line pe return = safe.
+>
+> // BEECH me return = agla branch maar deta (void / non-void se lena-dena NAHI, FLOW ka rule).
+
+> [!WARNING]
+> **GOTCHA 2 — `else if` MAT LAGAO (dono branch ALAG if):**
+> ```
+>     if (cond1) solve(...);                  // sahi: dono chalti
+>     if (cond2) solve(...);
+> ```
+> // else if = "ek mil gaya, bas" -> cond1 sach to cond2 KABHI nahi. backtracking = HAR combination banana.
+>
+> // dhoondhne wale code me else if theek (ek jawab). BANANE wale code me GALAT (saare jawab).
 
 #### ── FAMILY: SUBSETS-family (start-aage = kaunse; used[] = kis order) ──
 
-```
- KAB: "SAARE" subsets / permutations / combinations · grid me word dhoondo · N-queens
- ★ DHYAAN: grid: visit mark -> explore -> UNMARK
-```
+> [!IMPORTANT]
+> **KAB:** "SAARE" subsets / permutations / combinations · grid me word dhoondo · N-queens
+
+> [!WARNING]
+> ★ DHYAAN: grid: visit mark -> explore -> UNMARK
 
 ---
 

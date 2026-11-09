@@ -1,32 +1,42 @@
 ## PATTERN 13 — GRAPHS (BFS/DFS + visited)
 
+
+> [!IMPORTANT]
+> **KAB:** edges / adjacency list / grid diya · "kitne group?" · "A se B pahunch sakte?" · "kam se kam kitne step?"
+
+> [!IMPORTANT]
+> **BROAD IDEA:** graph = nodes + edges. TREE bhi ek graph hai (special) -> Graph = Tree + 2 cheez:
+>
+> (1) CYCLE ho sakti -> VISITED chahiye (warna A->B->C->A infinite loop)
+>
+> (2) pointers ki jagah ADJACENCY LIST.
+
+> [!IMPORTANT]
+> **TREE se transfer:** BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]).
+> bas 'visited' add.
+
+### INPUT-FORM pehchano (pehle ye -- kab adj-list banani, kab NAHI):
+
 ```
- BROAD IDEA: graph = nodes + edges. TREE bhi ek graph hai (special) -> Graph = Tree + 2 cheez:
-   (1) CYCLE ho sakti -> VISITED chahiye (warna A->B->C->A infinite loop)
-   (2) pointers ki jagah ADJACENCY LIST.
- ★ EDGE (BFS grid / word ladder): visited ANDAR DAALTE waqt mark karo, nikaalte waqt nahi
-         (warna ek node kai baar queue me).
- ★ EDGE (queue / stack / heap se nikaalna): "auto &it = q.front(); q.pop();" = TOOTA reference (pop ke baad it kachra).
-         copy lo (auto it = q.front()) ya pehle padho phir pop. tests sanyog se pass ho jaate, isliye chhupa rehta (rotting REDO_1).
-
- TREE se transfer: BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]).
-   bas 'visited' add.
-
- INPUT-FORM pehchano (pehle ye -- kab adj-list banani, kab NAHI):
       unordered_map<int, vector<int>> adj;    // ya  vector<int> adj[n];
       edges[] + undirected -> adj[u]+=v; adj[v]+=u;  DONO taraf      (path-exists, CC, dijkstra{v,w})
       edges[] + directed   -> sirf adj[u]+=v; + indegree[v]++        (course-schedule/topo)
       GRID (2D) diya       -> adj-list NAHI -> padosi = 4-dir `dirs`, cell khud node
                               (islands, rotting, max-area)
       graph[]/node.neighbors already -> build SKIP, seedha traverse  (bipartite, clone-graph)
+```
 
- DECISION-GUIDE (koi graph-Q se pehle):
+### DECISION-GUIDE (koi graph-Q se pehle):
+
+```
    Q1  OUTER-LOOP chahiye? (SABSE bada -- yehi trick)
         kitne group / poora graph / disconnected -> HAAN:
              for (i : all nodes)  if (!vis[i]) { count++; BFS(i); }   // sirf unvisited pe: naya group
                                                                       //   (CC, Islands)
         ek source -> target / ek hi component -> NAHI: sirf source se EK traversal   (Path-Exists)
+```
 
+```
    Q2  DFS ya BFS? (connectivity ke liye dono same)
         BFS = shortest-path / level (unweighted) · DFS = recursion, code chhota
         BFS (queue):                          DFS (recursion):
@@ -42,27 +52,36 @@
                     }
             }
         GRID pe: adj[node] ki jagah 4-direction (Q3 dirs); visited = cell ko SINK ('0'/'2').
+```
 
+> [!WARNING]
+> ★ EDGE (BFS grid / word ladder): visited ANDAR DAALTE waqt mark karo, nikaalte waqt nahi
+> (warna ek node kai baar queue me).
+
+> [!WARNING]
+> ★ EDGE (queue / stack / heap se nikaalna): "auto &it = q.front(); q.pop();" = TOOTA reference (pop ke baad it kachra).
+> copy lo (auto it = q.front()) ya pehle padho phir pop. tests sanyog se pass ho jaate, isliye chhupa rehta (rotting REDO_1).
+
+```
    Q2b BFS ke ANDAR: PLAIN ya LEVEL-ORDER? (rotting me chhoota tha)
         "reach / connected / count / islands"   -> PLAIN BFS (level-count nahi)
         "kitne STEPS / MINUTES / shortest-dist"  -> LEVEL-ORDER, ek queue-size snapshot = ek level = ek step:
              while (!q.empty()) { int sz = q.size(); while (sz--) { ... push nbrs } steps++; }
              // sz pehle pakdo; steps++ level ke baad, andar nahi   (rotting, min-steps-in-grid, word-ladder)
+```
 
+```
    Q3  neighbours kaise? edges -> adj[node] · grid -> 2 TRICK (ratta, apne aap nahi aate):
           (a) vector<vector<int>> dirs = {{1,0},{-1,0},{0,1},{0,-1}};   // neeche, upar, daaye, baaye
               for (auto &d : dirs) { int nr = r + d[0], nc = c + d[1]; ... }
           (b) if (nr >= 0 && nr < m && nc >= 0 && nc < n && grid[nr][nc] == ?)   // bounds PEHLE, grid baad:
               //   bahar index pe && pehle hi ruk jaata. HAR grid-Q me; '==?' per-Q (islands/rotting == '1')
-   visited HAMESHA (cycle rok) -> push/enter ke waqt mark.
-
 ```
+
+> [!IMPORTANT]
+> **visited HAMESHA (cycle rok) -> push/enter ke waqt mark.**
 
 #### ── FAMILY: single-source traversal (ek source se ek BFS, target mila? koi OUTER-loop nahi) ──
-
-```
- KAB: edges / adjacency list / grid diya · "kitne group?" · "A se B pahunch sakte?" · "kam se kam kitne step?"
-```
 
 ---
 

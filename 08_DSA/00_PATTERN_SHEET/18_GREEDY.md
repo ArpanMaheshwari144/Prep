@@ -1,14 +1,19 @@
 ## PATTERN 18 — GREEDY
 
-```
- BROAD IDEA: har step pe ABHI-KA-BEST choice pakdo (local best), aage ki poori planning nahi.
-   Kaam karta SIRF jab abhi-ka-best = aage-bhi-best (greedy-choice property); warna DP (jo sab explore kare).
-   SIGNATURE: aksar pehle SORT (kisi key pe: size / finish-time) -> phir ek LINEAR pass me pick / skip.
 
- KAB: har step pe abhi ka best chuno aur wo aage bhi best rahe · aksar pehle SORT, phir ek pass
- ★ DHYAAN: intervals me "kam se kam hatao" -> END pe sort
- ★ DHYAAN: gas station: tank minus hua -> agla station naya start
-```
+> [!IMPORTANT]
+> **KAB:** har step pe abhi ka best chuno aur wo aage bhi best rahe · aksar pehle SORT, phir ek pass
+
+> [!IMPORTANT]
+> **BROAD IDEA:** har step pe ABHI-KA-BEST choice pakdo (local best), aage ki poori planning nahi.
+> Kaam karta SIRF jab abhi-ka-best = aage-bhi-best (greedy-choice property); warna DP (jo sab explore kare).
+>
+> **SIGNATURE:** aksar pehle SORT (kisi key pe: size / finish-time) -> phir ek LINEAR pass me pick / skip.
+
+> [!WARNING]
+> ★ DHYAAN: intervals me "kam se kam hatao" -> END pe sort
+>
+> ★ DHYAAN: gas station: tank minus hua -> agla station naya start
 
 ---
 
