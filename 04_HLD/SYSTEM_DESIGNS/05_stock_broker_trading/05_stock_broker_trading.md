@@ -12,7 +12,13 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      buy / sell order dalo (LIMIT, apna bhaav) · order milao = sauda · paisa aur share badlo · live bhaav, cancel
+FR      buy / sell order dalo (apna bhaav likh ke) · bhaav mile to sauda · paisa aur share badlo · live bhaav dikhe · order cancel ho sake
+        3:30 baje market band hua aur poore din order nahi bika, to kya hoga? Yahan do raaste hain:
+          (1) order wahin khatam, aur 3:30 pe paisa / share user ko wapas
+          (2) order agle din bhi khula rahe, aur paisa / share hum rok ke rakhein jab tak user khud cancel na kare
+        Hamara FR = raasta (2). Isliye hold din badalne pe bhi rehta hai, aur cancel karne pe hi wapas jaata hai.
+        Jitna mila utna abhi de do, baaki ke liye order khula rahe; user bole "sab ek saath chahiye, warna kuch nahi" to wahi karo.
+        FR ne ye maanga, isliye design ye hai. FR raasta (1) maange, to 3:30 pe hold wapas, aur jawab bhi badlega.
 NFR     paisa aur share hamesha sahi · jo pehle aaya wo pehle mile · 9:15 ki bheed jhele · har cheez ka record
 Numbers 50 lakh order roz, market ~6 ghante -> ~250 / sec aam · 9:15 pe jhatka ~10,000 / sec, saare share me bata
         live bhaav: ~10 lakh app khule, har second naya bhaav -> poochhne ki jagah push
