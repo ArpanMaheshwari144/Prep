@@ -143,9 +143,8 @@ kyun: index 4..9 = 0,0,1,1,1,1: do zero flip -> 6 lagaatar 1
 ```
 SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
    LC-3 se farak: map ki jagah ek int (zeroCount), aur shrink "zero > k" pe.
-CORE LEARNING: ans UNCONDITIONAL update -> if(zeroCount==k) MAT lagao.
+CORE LEARNING: ans UNCONDITIONAL update (bina kisi shart ke).
    kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
-   (galti thi: if(zeroCount==k) -> sirf exactly-k ginta -> k=0 / k>zeros case toot jaate.)
 shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
 ```
 
@@ -166,7 +165,6 @@ int longestOnes(vector<int> &nums, int k) {
                 zeroCount--;                // left ka zero nikla to count kam
             i++;                            // zero check ke BAAD aage (pehle i++ to galat element dekhta)
         }
-        // ★ bina shart lo. if (zeroCount == k) -> [1,1,0], k=2 pe 0, sahi 3
         ans = max(ans, j - i + 1);          // UNCONDITIONAL (koi if nahi)
         j++;
     }
