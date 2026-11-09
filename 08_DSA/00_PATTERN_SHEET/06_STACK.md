@@ -243,11 +243,25 @@ har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = don
 SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
       = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
 = PREV-SMALLER + NEXT-SMALLER ka WALL, bas DELTA: VALUE nahi INDEX store + combine loop.
+```
 
-3 JAGAH DHYAAN:
-  1. INDEX store, value nahi (width index se banti).
-  2. nS ka default = n   (n = array ka SIZE = kitne bar)   NA -1
+> [!WARNING]
+> **3 JAGAH DHYAAN:**
+>
+> 1. INDEX store, value nahi (width index se banti).
+>
+> 2. nS ka default = n   (n = array ka SIZE = kitne bar)   NA -1
+>
+> 3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
+> `>`  -> koi stopper nahi -> width 4 -> 12.
 
+> [!IMPORTANT]
+> width = NS-PS-1 KYUN: stopper khud andar NAHI -> bars PS+1 se NS-1 tak
+> count = (NS-1)-(PS+1)+1 = NS-PS-1   (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat)
+
+### nS default `n` kyun (misaal [2,4])
+
+```
      KYUN: -1 aur n = array ke BAHAR ki nakli deewar
 
            [2,4] -> size 2 -> n = 2   (index 0, 1 andar; index 2 bahar)
@@ -292,12 +306,11 @@ SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (N
            wajah : deewar aakhri bar ke UPAR rakh di, uske BAAD nahi
 
      FAYDA: NS - PS - 1 kinare wale bar pe bhi sahi, alag if-else nahi.
-  3. `>` strictly, `>=` NAHI.   [3,3,3,3]: `>=` -> barabar wala bhi stopper -> har width 1 -> 3 (galat)
-                                            `>`  -> koi stopper nahi -> width 4 -> 12.
+```
 
-width = NS-PS-1 KYUN: stopper khud andar NAHI -> bars PS+1 se NS-1 tak
-      count = (NS-1)-(PS+1)+1 = NS-PS-1   (-1 SIRF EK baar, do nahi -- building6: 4-2-1=1 sahi, 4-2-1-1=0 galat)
+### DRY-RUN
 
+```
 DRY-RUN (h=[2,1,5,6,2,3]):
      6 |            ##
        |        +------+
@@ -320,26 +333,34 @@ DRY-RUN (h=[2,1,5,6,2,3]):
     area :  2   6 [10]  6   8   3   -> MAX 10
     bar5 (idx2): PS=1 (h1), NS=4 (h2) -> beech me c2,c3 -> width 2 -> 5*2 = 10.
                  first = PS+1 = 2, last = NS-1 = 3 -> 3-2+1 = 2. stoppers khud andar nahi.
+```
 
-FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
+**FAMILY:** next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta).
         2D bhai = MAXIMAL RECTANGLE (har row = histogram, isi ko call).
 
-★ GALTI (REDO_2, 38 min yahin atka): "2 ka jawab abhi kahan se laaun, stack to khaali hai?"
-  STACK = jawab ka INTEZAAR karne walon ki LINE. Jawab abhi nahi chahiye, BAAD me aayega.
-    stack khaali = koi baat nahi: 2 line me khada ho jaata, default pehle se bhara (NS = n, PS = -1).
-    CHHOTA aaya  = line walon ka jawab mil gaya -> pop karo, unka ans bharo, phir naya bhi line me.
+> [!WARNING]
+> ★ GALTI (REDO_2, 38 min yahin atka): "2 ka jawab abhi kahan se laaun, stack to khaali hai?"
+> STACK = jawab ka INTEZAAR karne walon ki LINE. Jawab abhi nahi chahiye, BAAD me aayega.
+> stack khaali = koi baat nahi: 2 line me khada ho jaata, default pehle se bhara (NS = n, PS = -1).
+> CHHOTA aaya  = line walon ka jawab mil gaya -> pop karo, unka ans bharo, phir naya bhi line me.
 
-  NS (aage ka chhota)   : loop 0 -> n-1
-  PS (peeche ka chhota) : loop n-1 -> 0      wahi chaal, bas disha ulti
-  shart (dono me same)  : heights[top] > heights[i]   -> naya CHHOTA aaya tab pop
-                          ulta sign (heights[i] > heights[top]) = next GREATER ban jaata (yahi likha tha)
+> [!IMPORTANT]
+> **DISHA (Arpan, 9-Nov):**
+>
+> NS (aage ka chhota)   : loop 0 -> n-1
+> PS (peeche ka chhota) : loop n-1 -> 0      wahi chaal, bas disha ulti
+> shart (dono me same)  : heights[top] > heights[i]   -> naya CHHOTA aaya tab pop
+> ulta sign (heights[i] > heights[top]) = next GREATER ban jaata (yahi likha tha)
+>
+> CHAAR KE CHAAR pe yahi niyam (sirf "pop karke bharo" wale tareeke me):
+> next smaller / next greater  -> 0 -> n-1
+> prev smaller / prev greater  -> n-1 -> 0
+> smaller ya greater           -> sirf while ka sign badalta
+> dhyaan: "pehle bekaar nikaalo, phir top hi jawab" wala doosra tareeka ULTI disha chalta. dono mat milao.
 
-  CHAAR KE CHAAR pe yahi niyam (sirf "pop karke bharo" wale tareeke me):
-    next smaller / next greater  -> 0 -> n-1
-    prev smaller / prev greater  -> n-1 -> 0
-    smaller ya greater           -> sirf while ka sign badalta
-  dhyaan: "pehle bekaar nikaalo, phir top hi jawab" wala doosra tareeka ULTI disha chalta. dono mat milao.
+### copy-pen [2,1,5,6,2,3], NS
 
+```
   copy-pen [2,1,5,6,2,3], NS:
     i0(2): line khaali -> 2 line me
     i1(1): 1 < 2 -> 2 ka NS = 1, pop; 1 line me
