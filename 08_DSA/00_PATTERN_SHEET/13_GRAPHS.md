@@ -292,6 +292,8 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
   kyun: min 1: (0,1),(1,0) · min 2: (0,2),(1,1) · min 3: (2,1) · min 4: (2,2); sab sad gaye
 ```
 
+### purani galti (Aug sheet)
+
 ```
 ★ PURANI GALTI (Aug sheet): END me sirf return mins-1 tha -> grid me koi santra hi nahi to -1 aata, sahi 0. Isliye ab mins == 0 ? 0 : mins-1.
 ```
@@ -735,7 +737,8 @@ hit -> hot -> dot / lot -> dog / log -> cog = 5 WORDS (begin = 1, steps nahi)
 level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora layer khatam pe)
 ```
 
-**SAAR**
+### EXAMPLE (hit -> cog, level-wise)
+
 ```
 ★★ EXAMPLE (yahi yaad -> poora recall flash):  begin=hit, end=cog, dict={hot,dot,dog,lot,log,cog}
     Level 1:  hit
@@ -743,7 +746,11 @@ level track 2 tareeke: steps PAIR me (ye code) · ya size-loop + level++ (poora 
     Level 3:  dot, lot               (hot->dot, hot->lot)
     Level 4:  dog, log               (dot->dog, lot->log)
     Level 5:  cog == endWord -> 5    [hit hot dot dog cog = 5 WORDS]
+```
 
+### TEMPLATE: TERA (steps PAIR me) vs MERA (size-loop)
+
+```
 TEMPLATE:
    TERA (level PAIR me)                              │  MERA (per-layer SIZE-loop)
    ──────────────────────────────────────────────────┼──────────────────────────────────────
@@ -760,10 +767,11 @@ TEMPLATE:
    return 0                                          │    level++   (poora layer khatam)
                                                      │  return 0
    FARAK sirf level-track: TERA steps PAIR me (push me steps+1) · MERA size-loop + baad me level++.
-
-★ VISITED trick (Arpan): dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
-                         (ek check "dict me hai?" + "visited nahi?" dono serve).
 ```
+
+> [!IMPORTANT]
+> **★ VISITED trick (Arpan):** dict-set se word ERASE karo jaise hi use karo -> alag visited-set NAHI chahiye
+> (ek check "dict me hai?" + "visited nahi?" dono serve).
 
 > [!IMPORTANT]
 > **CHAABI:** word = node; har position pe `'a'..'z'` badal ke dict me mila = padosi. BFS `{word, steps}`, begin = 1; dict-set se ERASE karte hi use karo = visited (alag set nahi).

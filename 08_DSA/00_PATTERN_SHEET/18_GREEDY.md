@@ -200,7 +200,8 @@ SAME task dobara se pehle n gap. minimum total TIME (idle bhi)? signal: "cooldow
   beech ke gaps doosre tasks se bharo, khaali bache = IDLE
 ```
 
-**SAAR**
+### DRY-RUN
+
 ```
 DRY-RUN: tasks=[A,A,A,B,B,B], n=2
    freq: A=3, B=3 -> maxFreq=3 (A frame banega)
@@ -209,9 +210,25 @@ DRY-RUN: tasks=[A,A,A,B,B,B], n=2
    B se bharo: min(3,2)=2 -> idleSlots = 4-2 = 2   // B har gap me 1 -> 2 slot bhare; 3rd B last column me A ke saath
    idleSlots=2 > 0 -> ans = 6 + 2 = 8
    picture:  A B idle A B idle A B    // 2 idle bache = wahi idleSlots
-★ length-WINS edge: [A3,B3,C3,D2,E2] n=3 -> idleSlots -2 (<=0) -> ans = 13 (saare gap bhar gaye, idle 0).
+```
 
-★★ GOTCHA — gadde = maxFreq-1 KYUN (maxFreq nahi)?   [ye confusion 12-Sep REDO pe hui]
+> [!WARNING]
+> **★ length-WINS edge:** [A3,B3,C3,D2,E2] n=3 -> idleSlots -2 (<=0) -> ans = 13 (saare gap bhar gaye, idle 0).
+
+> [!WARNING]
+> **★★ GOTCHA — gadde = maxFreq-1 KYUN (maxFreq nahi)?   [ye confusion 12-Sep REDO pe hui]**
+>
+> KYUN: cooldown = "AGLA same-task chalane se pehle gap" -> wo AGLE ko rokta hai.
+> Aakhri A ke baad koi agla A nahi -> cooldown kisi ko rok nahi raha -> koi idle nahi.
+> (dawa: aakhri goli kha li -> bottle khali -> 2 ghante wait nahi, kaam khatam.)
+>
+> + problem "FINISH tak minimum time" poochta -> aakhri task pe clock STOP.
+>
+> => gaps = (count-1) = maxFreq-1 = gadde.  n*maxFreq lena = zyada idle = GALAT.
+
+### TERMS: slot vs gadda (SAHI / GALAT tasveer)
+
+```
    TERMS (mix mat kar — yahi confuse hua tha):
       _     = ek SLOT (ek unit time)
       _ _   = ek GADDA (do A ke BEECH ka poora gap) = n slots  (n=2 -> gadda me 2 slot)
@@ -219,11 +236,6 @@ DRY-RUN: tasks=[A,A,A,B,B,B], n=2
       total idle slots = gadde x n = 2 x 2 = 4     (gadda alag, slot alag!)
    SAHI :  A _ _ A _ _ A         (3 A -> gadde sirf BEECH me -> 2 = maxFreq-1)
    GALAT:  A _ _ A _ _ A _ _     (aakhri A ke baad gadda NAHI)
-   KYUN: cooldown = "AGLA same-task chalane se pehle gap" -> wo AGLE ko rokta hai.
-         Aakhri A ke baad koi agla A nahi -> cooldown kisi ko rok nahi raha -> koi idle nahi.
-         (dawa: aakhri goli kha li -> bottle khali -> 2 ghante wait nahi, kaam khatam.)
-   + problem "FINISH tak minimum time" poochta -> aakhri task pe clock STOP.
-   => gaps = (count-1) = maxFreq-1 = gadde.  n*maxFreq lena = zyada idle = GALAT.
 ```
 
 > [!IMPORTANT]

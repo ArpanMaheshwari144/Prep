@@ -267,21 +267,35 @@ Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar
   kyun: A,B,C (row 0) -> C neeche -> E neeche -> D left · ABCB me wahi B dobara lagta
 ```
 
+> [!WARNING]
+> **★ BUG-TRAP:** loop me `if(solve(...)==false) return false;` -> PEHLA start fail hote hi poora false,
+> baaki start dekhe hi nahi.  DRY-RUN "AAB":
+
+### DRY-RUN "AAB"
+
 ```
-★ BUG-TRAP: loop me `if(solve(...)==false) return false;` -> PEHLA start fail hote hi poora false,
-   baaki start dekhe hi nahi.  DRY-RUN "AAB":
          C A A        loop pehle (0,1) wala A -> paas me B nahi -> fail -> purana code yahin FALSE
          A A A        jabki (1,1)->(1,0)->(2,0) = A A B  -> start bacha hi nahi try karne ko
          B C D
-   + ulta bug: word[0] kahin na mila -> loop kuch nahi karta -> end me `return true` = jhootha "mila".
-
-★ PURANI ATAK (Aug sheet): CRUX yahi atkaata tha: 4 DFS ko || me jodna (ek direction true -> baaki call hi nahi) + visited check bounds / mismatch ke saath EK hi if me.
-
-ANY vs ALL (har jagah yahi):
-   "KOI EK bhi?" (any)  -> loop me: mila to return true   · loop ke BAAD: return false
-   "SAB ke SAB?" (all)  -> loop me: fail to return false  · loop ke BAAD: return true
-   (= stream ka anyMatch / allMatch, andar yahi loop)
 ```
+
+> [!WARNING]
+> + ulta bug: word[0] kahin na mila -> loop kuch nahi karta -> end me `return true` = jhootha "mila".
+
+### purani atak (Aug sheet)
+
+```
+★ PURANI ATAK (Aug sheet): CRUX yahi atkaata tha: 4 DFS ko || me jodna (ek direction true -> baaki call hi nahi) + visited check bounds / mismatch ke saath EK hi if me.
+```
+
+> [!IMPORTANT]
+> **ANY vs ALL (har jagah yahi):**
+>
+> "KOI EK bhi?" (any)  -> loop me: mila to return true   · loop ke BAAD: return false
+>
+> "SAB ke SAB?" (all)  -> loop me: fail to return false  · loop ke BAAD: return true
+>
+> (= stream ka anyMatch / allMatch, andar yahi loop)
 
 > [!IMPORTANT]
 > **CHAABI:** har cell pe ek `if`: bounds + `vis` + char mismatch -> false; mark -> 4 disha `||` (ek true = baaki call nahi) -> un-mark. pehla char mile wahin se start, KOI EK true = kaafi.
@@ -342,14 +356,14 @@ Ek number n diya hai (n jode bracket). n jodon se banne wale saare sahi (balance
 n jode ke saare VALID strings. brute (2^2n + filter) NAHI -> 2 RULE se hi banao
 ```
 
-```
-★ BUG-TRAP #2 (Arpan-22-Sep, khud pakda): dono ALAG `if` hain, `else if` NAHI --
-   open<n aur close<open dono ek saath sach ho sakti hain, aur tab DONO chalni chahiye.
-   `else if` = "ek mil gaya bas" = dhoondhne wali soch. Yahan BANANA hai, saare banane hain.
-★ BUG-TRAP (Arpan-9-Sep, yaad rakh): dono branch pe `return solve(...)` mat likho!
-   first branch ke `return` se function KHATAM -> 2nd branch (')') kabhi chalti hi nahi -> sirf 1 string banti.
-   backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
-```
+> [!WARNING]
+> **★ BUG-TRAP #2 (Arpan-22-Sep, khud pakda):** dono ALAG `if` hain, `else if` NAHI --
+> open<n aur close<open dono ek saath sach ho sakti hain, aur tab DONO chalni chahiye.
+> `else if` = "ek mil gaya bas" = dhoondhne wali soch. Yahan BANANA hai, saare banane hain.
+>
+> **★ BUG-TRAP (Arpan-9-Sep, yaad rakh):** dono branch pe `return solve(...)` mat likho!
+> first branch ke `return` se function KHATAM -> 2nd branch (')') kabhi chalti hi nahi -> sirf 1 string banti.
+> backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
 
 > [!IMPORTANT]
 > **CHAABI:** 2 rule hi branch: `open < n` -> `'('`, `close < open` -> `')'`; base `open == n && close == n`. path BY VALUE (`path + '('`) -> pop nahi chahiye.
@@ -385,11 +399,10 @@ void solve(int open, int close, string path, vector<string> &ans, int n) {   // 
 "23" -> har ank ke akshar me se EK-EK. har LEVEL (index) = ek ank, us ke SAARE akshar try (for loop)
 ```
 
-```
-★ BUG-TRAP (24-Sep): `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
-   pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12). LeetCode pe chal jaata (har test pe naya object),
-   local test me pakda gaya. -> ans function ke andar, solve() me REFERENCE se.
-```
+> [!WARNING]
+> **★ BUG-TRAP (24-Sep):** `ans` ko GLOBAL mat rakho -- ek hi program me function do baar bula to
+> pichhle jawab bhi jud jaate ("2" pe 3 ki jagah 12). LeetCode pe chal jaata (har test pe naya object),
+> local test me pakda gaya. -> ans function ke andar, solve() me REFERENCE se.
 
 > [!IMPORTANT]
 > **CHAABI:** har level = ek ank, uske saare akshar for-loop me: `push` -> `solve(index + 1)` -> `pop`; `index >= digits.size()` pe record.
