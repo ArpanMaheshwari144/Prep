@@ -32,7 +32,7 @@ Technical me: "phat gaya, garam me lao" = trend detect (view spike, view count w
 
 **7. MrBeast ne nayi video daali. Uske crore subscribers ko turant pata chalna chahiye.**
 Arpan: Ye wahi subscriber wala fan-out hai jo Twitter me kiya: jisne subscribe kiya hai, sabko notification push kar do, jaise Instagram / Twitter pe follow karte hain to feed me aata hai. YouTube asal me kaise karta hai, unka design public nahi, par fan-out jaisa hi kuch hoga. Ye pehle ho chuka hai.
-Technical me: "sab subscribers ko push" = fan-out (Twitter design) + notification system (bade creator pe Twitter wala hybrid: celebrity ka pull).
+Technical me: "sab subscribers ko push" = fan-out (Twitter design) + notification system. Ghanti ke liye pull nahi chalta (user ko pata hi nahi kuch aaya), isliye bade creator pe bhi push; crore subscribers ko queue me daal ke workers thoda-thoda bhejte (Notification design). Home feed me video dikhana alag baat: wahan Twitter wala hybrid (bade creator ka pull) chalta.
 
 &nbsp;
 

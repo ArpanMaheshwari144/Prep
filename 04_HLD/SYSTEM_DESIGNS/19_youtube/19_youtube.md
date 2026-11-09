@@ -269,7 +269,9 @@ jo Twitter me kiya: jisne subscribe kiya hai, sabko notification push kar do, ja
 hain to feed me aata hai. YouTube asal me kaise karta hai, unka design public nahi, par fan-out jaisa hi kuch hoga.
 
 **Asli naam:** sab subscribers ko push = fan-out ([Twitter](../03_twitter_feed/03_twitter_feed.md)) + [Notification](../04_notification_system/04_notification_system.md)
-system; bahut bade creator pe Twitter wala hybrid (celebrity ka pull: feed kholne pe uski nayi video khinch lo).
+system. Ghanti ke liye pull nahi chalta (user ko pata hi nahi kuch aaya), isliye bade creator pe bhi push; crore
+subscribers ko queue me daal ke workers thoda-thoda bhejte. Home feed me video dikhana alag baat: wahan Twitter wala
+hybrid (bade creator ka pull: feed kholne pe uski nayi video khinch lo).
 
 ```mermaid
 flowchart TB
