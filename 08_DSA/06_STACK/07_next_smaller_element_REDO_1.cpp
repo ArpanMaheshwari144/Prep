@@ -33,14 +33,38 @@ using namespace std;
 
 vector<int> nextSmaller(vector<int> &nums)
 {
-    // yahan likh
-    return {};
+    int n = nums.size();
+    vector<int> ans(n, -1);
+    stack<int> st;
+    for (int i = 0; i < n; i++)
+    {
+        while (!st.empty() && nums[i] < nums[st.top()])
+        {
+            int tp = st.top();
+            st.pop();
+            ans[tp] = nums[i];
+        }
+        st.push(i);
+    }
+    return ans;
 }
 
 vector<int> prevGreater(vector<int> &nums)
 {
-    // yahan likh
-    return {};
+    int n = nums.size();
+    vector<int> ans(n, -1);
+    stack<int> st;
+    for (int i = n - 1; i >= 0; i--)
+    {
+        while (!st.empty() && nums[i] > nums[st.top()])
+        {
+            int tp = st.top();
+            st.pop();
+            ans[tp] = nums[i];
+        }
+        st.push(i);
+    }
+    return ans;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
