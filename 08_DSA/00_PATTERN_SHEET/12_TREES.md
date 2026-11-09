@@ -312,6 +312,8 @@ skeleton HUBAHU diameter (return EK arm / record DONO arm / post-order / global 
   (3) max(0, ..): minus arm SKIP (diameter me sab positive the)
 ```
 
+### DIAMETER vs MAX PATH SUM (line-by-line)
+
 ```
 DIAMETER (upar)                      MAX PATH SUM
 -------------------------            -------------------------------------
@@ -319,13 +321,21 @@ left  = height(L, maxDia)            left  = max(0, solve(L, maxi))   <- neg arm
 right = height(R, maxDia)            right = max(0, solve(R, maxi))
 maxDia = max(maxDia, left+right)     maxi  = max(maxi, left + node->val + right)  <- +node
 return 1 + max(left,right)           return node->val + max(left,right)           <- val, 1 nahi
+```
 
+### VISUAL (junction)
+
+```
 VISUAL (junction):
          node
         /    \
     Lgain    Rgain      parent ko : node + max(L,R)   [EK sadak hi upar ja sakti]
                         answer me : L + node + R      [junction pe DONO sadak, upar nahi]
+```
 
+### DRY-RUN
+
+```
 DRY-RUN:
            -10
           /   \
@@ -383,11 +393,20 @@ VISUAL:   preorder  [3] 9 20 15 7        inorder  9 | 3 | 15 20 7
                      9   20
                         /  \
                       15    7
+```
+
+### DRY-RUN
+
+```
 DRY-RUN (rootIndex aage badhta, pivot = inorder me root):
   solve(0,4): root=3,  pivot=1 | L=solve(0,0)   R=solve(2,4)
     solve(0,0): root=9,  pivot=0 | NULL, NULL   (leaf 9)
     solve(2,4): root=20, pivot=3 | L=solve(2,2)=15   R=solve(4,4)=7
+```
 
+### BF (linear scan) vs OPTIMIZE (map)
+
+```
 BF (linear scan)  O(n^2)                    OPTIMIZE (map)  O(n) -- sirf jaha badla
 -----------------------------------------   -----------------------------------------
 solve(int& rootIndex, l, r):
@@ -789,9 +808,14 @@ Binary tree diya hai. Kya ye sahi BST hai? Har node pe uske poore left subtree k
 **SAAR**
 ```
 node ko SAARE ancestors ka rule maanna -> har node ki WINDOW (mini, maxi), neeche jaate tight hoti
-═════════════════════════ ★ EDGE ═════════════════════════════════════
-sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 5 -> galat)
 ```
+
+> [!WARNING]
+> **★ EDGE:**
+>
+> sirf turant child check KAAFI NAHI ([5,4,6,null,null,3,7]: 3 < 6 theek, par 3 < 5 -> galat)
+
+### purani galti (Aug sheet)
 
 ```
 ★ PURANI GALTI (Aug sheet): CALL solve(root, INT_MIN, INT_MAX) tha -> [2147483647] pe false aata, sahi true. Isliye ab long long (LLONG_MIN, LLONG_MAX).

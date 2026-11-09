@@ -324,22 +324,35 @@ Odd ginti pe beech wala, even pe beech ke do ka average.
 **SAAR**
 ```
 stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
-═════════════════════════ ★ EDGE ═════════════════════════════════════
-heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
-  bada -> BADI team -> minHeap. naam bhool, team soch.
 ```
+
+> [!WARNING]
+> **★ EDGE:**
+>
+> heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
+> bada -> BADI team -> minHeap. naam bhool, team soch.
+
+### CHAAL (do team)
 
 ```
 CHAAL: median = beech wala; poora sorted rakhna mehnga. Numbers ko DO team me baanto:
        maxHeap = CHHOTI team   top = chhoto ka SABSE BADA    <- naam se ULTA (chhote yahan)
        minHeap = BADI team     top = bado ka SABSE CHHOTA
        dono top = beech ke 2 border -> median inhi se.
+```
 
-★ 2 balance-if KYUN (dono zaroori): placement num ko DONO heap me daal sakti (chhota->maxH, bada->minH).
-   FIRST  (maxH < minH)    -> bada-num minH me gaya, minH bada -> ek wapas maxH (extra maxH me rahe)
-   SECOND (maxH > minH+1)  -> chhota-num maxH me gaya, maxH 2 bada -> ek minH
-   dono milke: farak <=1, extra hamesha maxHeap.
+> [!IMPORTANT]
+> **★ 2 balance-if KYUN (dono zaroori):** placement num ko DONO heap me daal sakti (chhota->maxH, bada->minH).
+>
+> FIRST  (maxH < minH)    -> bada-num minH me gaya, minH bada -> ek wapas maxH (extra maxH me rahe)
+>
+> SECOND (maxH > minH+1)  -> chhota-num maxH me gaya, maxH 2 bada -> ek minH
+>
+> dono milke: farak <=1, extra hamesha maxHeap.
 
+### DRY-RUN (add 5,15,1,3)
+
+```
 DRY: add 5,15,1,3
    5  -> maxH{5}                              med 5
    15 -> 15>5 minH{15}                        med (5+15)/2 = 10
@@ -407,12 +420,16 @@ possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
   (alag check na bhi rakho: aakhri bacha count>1 khud pakad leta)
 ```
 
-```
-PEHCHAN: "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
-         -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
-          yahan har round 2 nikaalo taaki adjacent-safe.)
-FEASIBILITY (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
+> [!IMPORTANT]
+> **PEHCHAN:** "rearrange so adjacent not same" / "sabse-zyada wala spread karo"
+> -> MAX-HEAP {count,char}. (top-k-frequent ka cousin: wahan k nikaale,
+> yahan har round 2 nikaalo taaki adjacent-safe.)
+>
+> **FEASIBILITY** (dry-run se khud nikli): maxCount-1 gaps, (n-maxCount) se bharo
 
+### VISUAL ("aaabbb")
+
+```
 VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
    R1: pop a,b -> "ab"   -> (2,a)(2,b)
    R2: pop a,b -> "abab" -> (1,a)(1,b)
@@ -478,9 +495,11 @@ aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod la
 **SAAR**
 ```
 [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
-BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
-  yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
 ```
+
+> [!IMPORTANT]
+> **BURST BALLOONS NAHI:** wahan kaunsa phodna TU chunta + padosi badalte -> DP.
+> yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
 
 > [!IMPORTANT]
 > **CHAABI:** MIN-heap `{val, idx}` (tie pe chhota idx apne aap pehle). Pop pe `vis[index] == false` tabhi lo, phir khud + `index-1` + `index+1` ko `vis` true.
