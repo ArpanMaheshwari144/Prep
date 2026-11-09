@@ -150,6 +150,42 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 
 ---
 
+### ▸ PREVIOUS GREATER ELEMENT  (06/07 REDO_1, 9-Nov)  = PREVIOUS SMALLER, sirf shart ULTI (<)
+
+**SAWAAL**
+```
+Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse BADA (strictly) number hai, wo lautao. Koi na mile to -1.
+  e.g. [4,5,2,10,8] -> [-1,-1,5,-1,10]
+  kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 chhota -> -1 · 2 ke peeche pehla bada 5 · 10 se bada koi nahi · 8 ke peeche 10
+```
+
+> [!IMPORTANT]
+> **CHAABI:** PREVIOUS = peeche se chalna, to loop ULTA `for (i = n-1; i >= 0; i--)`. GREATER = naya `nums[i]` top se BADA ho to top ka jawab mila: `nums[i] > nums[st.top()]` -> pop, `ans[tp] = nums[i]`.
+
+> [!WARNING]
+> PREV = loop `n-1` se `0` (ulta); `0` se chalaya to ye NEXT greater ban jaata. `>` strict: barabar wala bada nahi, `[2,2,2] -> [-1,-1,-1]`.
+
+**CODE**
+```cpp
+vector<int> prevGreater(vector<int> &nums) {
+    int n = nums.size();
+    vector<int> ans(n, -1);
+    stack<int> st;
+    for (int i = n - 1; i >= 0; i--) {             // PREV = peeche se: loop ulta
+        while (!st.empty() && nums[i] > nums[st.top()]) {
+            int tp = st.top();
+            st.pop();
+            ans[tp] = nums[i];                     // tp ke baayi taraf pehla bada = nums[i]
+        }
+        st.push(i);
+    }
+    return ans;
+}
+// 12/12 pehli baar me (9-Nov, histogram ke baad usi din)
+```
+
+---
+
 ### ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)  = PREV-SMALLER + NEXT-SMALLER (INDEX store + combine)
 
 **SAWAAL**
