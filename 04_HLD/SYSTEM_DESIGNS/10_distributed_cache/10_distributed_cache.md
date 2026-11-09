@@ -123,8 +123,14 @@ to paas ka pump dhoondhta hoon, door wala nahi; key bhi ring pe jahan giri, uske
 machine aayi to sirf uske paas wali thodi key hilti hain, baaki apni jagah. (Yahi soch leaderboard kadam 6 me: score
 ke aas-paas wale hi maango.)
 
-**Asli naam:** ring = consistent hashing, beech me gira to sabse paas wala = key ghadi ki disha me agli machine pe,
-kho-kho / headlight / paas ka petrol pump = sabse paas wala hi sambhale, machine judi to sirf uske paas ki key hilti, ~1/N key (`%` me lagbhag
+**Maan lo key 47 pe giri, peeche machine 45 pe (2 door), aage machine 52 pe (5 door):** ise highway maan lo. Petrol
+pump peeche paas me hai, par highway pe U-turn nahi lete, ek hi disha me badhna hai. Peeche wala pump nikal gaya, chahe
+paas ho, gaadi aage wale pump pe hi jaayegi. Key bhi 52 pe jaati.
+
+**Asli naam:** ring = consistent hashing, "aage ke sabse paas wale khaane pe" = key ghadi ki disha me agli machine pe
+(hamesha aage wali, peeche wali nahi, chahe peeche wali zyada paas ho; ek hi disha tay hai, isliye dhoondhne pe har baar
+wahi machine milti). Kho-kho / headlight / paas ka petrol pump = machine giri to uski keys aage wali agli machine
+sambhalti, door wali nahi. Machine judi to sirf uske paas ki key hilti, ~1/N key (`%` me lagbhag
 saari). Har machine ring pe 100-200 jagah = virtual nodes, taaki hissa barabar aaye.
 
 **Maan lo saare dabbe bhar gaye, to unhe ring se hata ke alag kamre me kyun nahi rakhte:** pehle lagta hai bank locker
