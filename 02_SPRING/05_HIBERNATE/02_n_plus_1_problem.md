@@ -1,73 +1,63 @@
 # N+1 Problem
 
-## Kahani: wahi PA, 5 lekhak
+## Scene: tera usercrud, `/n1/bad`
 
-Arpan PA se kehta hai: "saare lekhak ki list lao, phir har lekhak ki kitaabein gino." PA ek baar record room jaata hai aur 5 lekhak ki
-list le aata hai. Phir Arpan pehle lekhak ki kitaabein maangta hai, to PA dobara record room jaata hai. Doosre lekhak ke liye phir jaata hai. Is tarah 5 lekhak ke liye 5 chakkar aur lagte hain.
-
-Kul chakkar hue 1 + 5, isi ko **N+1** kehte hain. PA bewakoof nahi hai, use bola hi gaya tha ki "kitaabein tabhi lana jab maangi jaayein" (yahi LAZY hai).
-
-Hal ye hai ki pehli baar me hi bolo "lekhak aur unki kitaabein, dono ek saath le aana". Yahi `JOIN FETCH` hai, aur isme sirf 1 chakkar lagta hai.
-
-## Tasveer
-
-```
-BAD (LAZY + loop)                     GOOD (JOIN FETCH)
-select * from author        1         select a.*, b.* from author a
-select book where author=1  +1          LEFT JOIN book b ...       1
-select book where author=2  +1
-...                                   = 1 query
-= 1 + N
-```
-
-Bure tareeke me pehle ek query saare author laati hai, phir har author ke liye ek alag book query chalti hai, to kul 1 + N query. Achhe tareeke me ek hi query JOIN karke author aur book dono le aati hai.
-
-## 4 khaas baat
-
-1. Iski jad ye hai ki `@OneToMany` default LAZY hota hai, aur hum loop me `getBooks()` bulate hain. EAGER kar dene se ye theek nahi hota, kyunki tab har jagah kitaabein load hone lagti hain, chahe zaroorat ho ya nahi.
-2. Hal teen hain. Pehla `LEFT JOIN FETCH` hai (sirf JOIN likha to jis lekhak ki koi kitaab nahi, wo list se gaayab ho jaata hai). Doosra `@EntityGraph(attributePaths = "books")` hai. Teesra
-   `@BatchSize(10)` hai, jisme 100 lekhak ke liye 1 + 10 query lagti hain.
-3. Pakadne ka tareeka: `show-sql=true` lagao, aur logs me ek hi select baar-baar dikhe to samajh lo N+1 hai.
-4. Iska ek likhne wala bhai bhi hai: loop me `setPrice` kiya to N alag UPDATE jaate hain. Iska hal ek `@Modifying` bulk UPDATE hai, jo neeche dikhaya hai.
-
-## Likhne wala bhai + almaari ka trap
+DB me 5 author hain. Code ye hai:
 
 ```java
-List<Product> products = repo.findAll();     // PA 100 file le aaya
-for (Product p : products)
-    p.setPrice(p.getPrice() * 0.9);          // commit pe 100 alag UPDATE
+List<Author> authors = authorRepo.findAll();   // 1 query: saare author
+for (Author a : authors)
+    count += a.getBooks().size();              // har author pe 1 aur query
 ```
 
-Hal ye hai ki PA ko ek hi hukum do: "record room me jaake saari files pe khud daam kam kar do".
+21-Aug ko logs me ye dikha tha:
+
+```
+/n1/bad   ->  select * from author             1
+              select book where author_id=1    +1
+              ...  (5 author)                  +5    = 6 query
+/n1/good  ->  select a.*, b.* from author a
+              left join book b ...                   = 1 query
+```
+
+## Kyun hua
+
+`@OneToMany` default me LAZY hai, yaani "kitaabein tabhi lao jab maangi jaayein". Loop me har author ki kitaabein maangi gayi, to har baar
+ek nayi query chali. 1 (author) + N (har author ki kitaab) = **N+1**. 5 author pe 6 query, 10,000 author pe 10,001.
+
+## Hal
+
+Pehli hi query me bolo "author aur unki kitaabein dono ek saath lao":
+
+- `LEFT JOIN FETCH` (tera `findAllWithBooks()`). Sirf `JOIN` likha to jis author ki koi kitaab nahi, wo list se gaayab ho jaata hai.
+- Ya `@EntityGraph(attributePaths = "books")`, jo yahi kaam annotation se karta hai.
+- Ya `@BatchSize(10)`, jo ek query me 10 author ki kitaabein laata hai, to 100 author pe 1 + 10 query.
+
+EAGER kar dena hal nahi hai, kyunki tab har jagah kitaabein aayengi, chahe zaroorat ho ya nahi.
+
+Pakadna kaise: `show-sql=true` lagao. Logs me ek hi select baar-baar dikhe, sirf id badle, to wahi N+1 hai.
+
+## Likhne wala bhai
+
+Loop me `p.setPrice(...)` kiya to 100 product pe 100 alag UPDATE jaate hain. Hal hai ek bulk UPDATE, jisme DB khud 100 row badal deta hai:
 
 ```java
 @Modifying(clearAutomatically = true)
 @Query("UPDATE Product p SET p.price = p.price * 0.9")
-void discountAll();                          // 1 UPDATE, DB khud 100 row badalta
+void discountAll();                          // 1 UPDATE
 ```
 
-Par yahan ek trap hai. PA jo bhi file laata hai, use apni **almaari** (1st-level cache) me rakh leta hai, aur usi transaction me dobara maangi jaaye to almaari se hi de deta hai.
-Bulk UPDATE seedha record room me badlaav karta hai, almaari ki file ko nahi chhoota, isliye almaari wali file purani reh jaati hai:
-
-```java
-Product p = repo.findById(1L).get();   // almaari me: daam 100
-repo.discountAll();                    // record room me ab 90
-repo.findById(1L).get().getPrice();    // almaari se -> 100 (purana!)
-```
-
-`clearAutomatically = true` lagane se bulk UPDATE ke baad almaari khaali ho jaati hai, isliye agli baar PA record room se naya daam (90) laata hai.
-HLD se jodo to ye wahi dikkat hai jahan DB badal gaya par Redis me purana data pada hai. Wahan hum key DELETE karte hain, yahan almaari khaali karte hain.
+`clearAutomatically = true` kyun: Hibernate jo row ek baar laata hai, use apni almaari (1st-level cache) me rakh leta hai. Bulk UPDATE seedha
+DB badalta hai, almaari nahi, to usi transaction me dobara `findById` kiya to purana daam (100) milega, naya (90) nahi. Redis me purani key
+padi rehne wali wahi dikkat; wahan key DELETE karte hain, yahan almaari khaali.
 
 ## Prod wala trap
 
 ```java
-@ManyToOne                 // default EAGER!
+@ManyToOne        // default EAGER
 Author author;
-// bookRepo.findAll() -> har ALAG author ki alag query = ulta N+1
 ```
 
-`@ManyToOne` default me EAGER hota hai, isliye `bookRepo.findAll()` karte hi har alag author ke liye ek alag query chalti hai. 100 book aur 5 author hain to 1 + 5 query, kyunki same author dobara aaye to Hibernate use pehle se khule session (L1 cache) se de deta hai. Author jitne zyada alag, query utni zyada. Ye ulta N+1 hai. Hal ye hai ki `@ManyToOne(fetch = FetchType.LAZY)` lagao, aur jahan author sach me chahiye wahan JOIN FETCH karo.
-
-## Tera project
-
-usercrud me `/n1/bad` aur `/n1/good` endpoint hain (21-Aug). 5 author pe logs me dekha ki bad wale me 6 query chali, aur good wale me sirf 1 query.
+`bookRepo.findAll()` karte hi har alag author ke liye ek alag query chalti hai. Ye ulta N+1 hai, aur ye tab bhi hota hai jab tune author
+maanga hi nahi. 100 book aur 5 author hon to 1 + 5 query, kyunki Hibernate ek hi author dobara aaye to almaari se de deta hai. Hal:
+`@ManyToOne(fetch = FetchType.LAZY)` lagao, aur jahan author sach me chahiye wahan JOIN FETCH karo.
