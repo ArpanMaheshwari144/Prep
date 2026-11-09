@@ -71,6 +71,41 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 Arpan: Phone band hona Uber ke haath me nahi, design ki dikkat nahi. Phone apni location khud bhejta hai, server poochhta nahi. Location aani band hui to server ek-do baar dekhega, phir apni taraf se bhi band. Jahan tak aaye utne paise Arpan ki app me dikhenge, wo de do. Phir Uber support ko phone: "driver ka phone band ho gaya". Support wahan se ride band kar dega, DB me update, Raju kahin nahi dikhega.
 Technical me: "location aani band, ek-do baar dekha" = location timeout (phone push karta, server sirf intezaar karta), "utne paise" = jahan tak ka kiraya / jo dikhaya, "support ride band kare" = manual close, ride status DB me update, driver available list se bahar.
 
+**15. Arpan aur Ravi ne saath me book kiya. Do gaadi: Car A aur Car B. Arpan ki booking pehle pahunchi, server ne Arpan ko paas wali Car A de di, Ravi ke liye Car B bachi jo 6 km door.**
+
+```
+   Sadak pe kaun kahan:
+
+   [Car B]                 (Arpan)               [Car A]          (Ravi)
+      |                       |                     |                |
+      |<------- 3 km -------->|<------ 2 km ------->|<--- 1 km ----->|
+
+
+   Car A se:   Arpan 2 km  ·  Ravi 1 km
+   Car B se:   Arpan 3 km  ·  Ravi 6 km
+
+
+   Purana niyam (jo pehle aaya, use paas wali):
+       Arpan  <-  Car A   2 km
+       Ravi   <-  Car B   6 km        kul 8 km
+
+   Naya (dono ko saath milao):
+       Ravi   <-  Car A   1 km
+       Arpan  <-  Car B   3 km        kul 4 km
+```
+
+Arpan: Ek booking ko akele mat dekho. Do booking aayi aur do gaadi hain, to dono user aur dono gaadi ki jagah (latitude / longitude) rakh ke har jodi ki doori nikaalo: Arpan se Car A kitni, Car B kitni, Ravi se Car A kitni, Car B kitni. Phir jodi aisi do ki sabki milake doori kam aaye: Ravi ko beech wali Car A, Arpan ko bahar wali Car B. Doori km me naapo, minute me nahi, kyunki minute traffic se ghat-badh jaate hain. Aur ek baar driver ne accept kar liya to gaadi pakki, use todna nahi; driver khud cancel kare tabhi dobara doori nikaalo.
+Technical me: "dono ko saath milao, kul doori kam" = batch matching (kai booking aur kai gaadi ek saath, sabka milake pickup kam).
+**Maan lo Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe. Jab Arpan ki aayi tab Ravi ki thi hi nahi, to server ne turant Car A Arpan ko de di.**
+Arpan: Booking aate hi gaadi mat do. 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hi hai). Us beech jitni booking aayi, sab ko saath milao, phir gaadi do. Jaldbaazi me kisi ko galat gaadi na de do.
+Technical me: "15-20 second ruko, sab saath milao" = batching window.
+**Maan lo shaam 7 baje office chhutne ka waqt. Har baar koi naya banda gaadi ke bilkul paas mil jaata, aur Arpan 7:05 tak "finding driver" pe hai.**
+Arpan: Gaadi extra ho to dikkat hi nahi, sabko mil jaayegi. Gaadi ek hi ho aur Arpan ke saath 1-2 baar aisa ho chuka, to agli gaadi Arpan ki hi, chahe wo Ravi ya Priya ke zyada paas ho. Teesri baar Arpan ko gaadi milegi hi.
+Technical me: "baar-baar peeche reh gaya" = starvation, "jitna ruka utni baari upar" = aging (gaadi nahi badhti, sirf baari tay hoti).
+**Maan lo Arpan ne 5 minute ruk ke gusse me booking cancel ki aur turant dobara book ki. Server ne nayi booking maan ke ginti 7:05 se shuru kar di.**
+Arpan: Do raaste hain. (1) Cancel kiya to line se hata do, dobara aaye to peeche lage, kyunki beech me aur log aa gaye honge; use aage laana unke saath galat. (2) Redis me parchi likh do "Arpan 5 minute ruka tha" aur us pe 30 second ki umar. 30 second ke andar wapas aaya to uske 5 minute chalte rahenge, warna parchi khatam aur wo line me peeche.
+Technical me: "parchi" = Redis me pehle tap ka waqt (intezaar pehle tap se gino), "30 second ki umar" = TTL.
+
 &nbsp;
 
 Poora design = [15_uber.md](15_uber.md)

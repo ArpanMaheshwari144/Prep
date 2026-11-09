@@ -20,6 +20,8 @@ Yahi dikkat yahan bhi:
   Banking  4b  Arpan->Ravi, Ravi->Arpan, dono atke            ->  ek line ek kram (lock ordering) ya ek wapas, phir dobara (deadlock)
   Uber     5   Raju pe ek second me do ride                   ->  BMS wali parchi, ek kadam me (hold / lock)
   Uber     16  wallet me sirf 40                              ->  poora kaato, aadha nahi (atomic charge)
+  Uber     19  Car A Arpan se 2 km, Ravi se 1 km; Arpan ko di ->  dono ko saath milao, kul doori kam (batch matching)
+  Uber     19b Arpan 7:00:00, Ravi 7:00:02, gaadi de chuke    ->  15-20 sec ruko, sab booking saath (batching window)
   Ecom     1   aakhri ghee, aunty + Ravi ek saath             ->  online ko godown, counter ko shelf (channel ka alag stock)
   Ecom     2   ladka uthake likhna bhool gaya                 ->  uthana + parchi ek hi kaam (atomic transaction)
 
@@ -45,6 +47,7 @@ Yahi dikkat yahan bhi:
   Uber     6   Raju 15 sec me accept na kare                  ->  parchi ki umar, agla driver (TTL)
   Uber     9   14.9 pe accept, server pe 16 pe                ->  ghadi server ki, parchi phaad do (server TTL)
   Uber     18  Raju ka phone band, naksha pe gayab            ->  location band, ek-do baar dekho (location timeout)
+  Uber     20b cancel karke dobara, ginti 7:05 se             ->  hatao, ya Redis parchi "5 min ruka" 30 sec umar (TTL)
   Leader   7   raat 12 baje aaj wala khaali                   ->  alag register, kal wala side me rakho (key me tareekh, history)
   Ecom     6   60 ne pay nahi kiya                            ->  cart = list, ginti pay pe, fail to wapas
   Ecom     7c  andar gaya, chai peene chala gaya              ->  "ya pay kar ya rakh de": 5 min ghadi, phir wapas line me (expiry + INCR)
@@ -463,6 +466,7 @@ Yahi dikkat yahan bhi:
   BMS      7   token khatam, parchi ke 3 min baaki            ->  token gate ka, seat ki ghadi parchi ki (do ghadiyan)
   Uber     7   concert khatam, 50 hazaar, cab 500             ->  500 andar, baaki line (virtual queue)
   Uber     8   baaki ke liye cab hi nahi                      ->  kiraya badha ke door ki cab (surge pricing)
+  Uber     20  Arpan 7:05 tak "finding driver", naye aage    ->  1-2 baar peeche to agli gaadi usi ki (starvation -> aging)
   Ecom     0   sale ka maal seemit                            ->  FR me hi cut off: 500 ko hi, baaki out of stock (consistency > availability)
   Ecom     3   sale ki bheed, aata-daal bhi atka              ->  sale ki alag dukaan (alag service)
   Ecom     7   3000 ek second me Pay                          ->  server pe line, 500 ke baad rollback (ya ghadi wala hold, dono ki keemat)

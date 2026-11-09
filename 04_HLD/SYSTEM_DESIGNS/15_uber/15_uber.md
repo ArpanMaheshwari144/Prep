@@ -15,6 +15,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
         · Arpan ko Raju live dikhe · kiraya pehle dikhe · trip khatam pe pay
         · bheed me (concert) kiraya badh sakta hai, aur wo pehle hi dikh jaaye
+        · ek saath kai booking aayein to aisi gaadi do ki sabki milake doori kam · jo der se ruka wo baar-baar peeche na rahe
 NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi · bheed (concert) me bhi chale
         · ride ke beech driver gaya to sambhalo
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
@@ -380,6 +381,82 @@ flowchart TB
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style LT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+---
+
+## 15. Arpan aur Ravi saath, beech wali gaadi galat ko gayi (batch matching + aging)
+
+Arpan aur Ravi ne saath me book kiya. Do gaadi hain: Car B Arpan se 3 km, Car A Arpan se 2 km aur Ravi se 1 km, aur
+Car B Ravi se 6 km. Arpan ki booking pehle pahunchi, to purane niyam se paas wali Car A Arpan ko mili aur Ravi ke liye
+Car B bachi, 6 km door. Kul 8 km. Ek booking ko akele mat dekho: dono user aur dono gaadi ki jagah rakh ke har jodi ki
+doori nikaalo, phir jodi aisi do ki sabki milake doori kam aaye. Ravi ko beech wali Car A (1 km), Arpan ko bahar wali
+Car B (3 km), kul 4 km. Doori km me naapo, minute traffic se ghat-badh jaate hain. Aur ek baar driver ne accept kar liya
+to gaadi pakki, use todna nahi; driver khud cancel kare tabhi dobara doori nikaalo.
+
+**Asli naam:** dono ko saath milao, kul doori kam = batch matching (kai booking aur kai gaadi ek saath, sabka milake
+pickup kam).
+
+**Maan lo Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe, aur server ne turant Car A Arpan ko de di:** Booking
+aate hi gaadi mat do. 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hai). Us beech
+jitni booking aayi, sab ko saath milao, phir gaadi do, taaki jaldbaazi me galat gaadi kisi ko na jaaye.
+**Asli naam:** 15-20 second ruko, sab saath milao = batching window.
+
+**Maan lo office chhutne ka waqt, har baar koi naya banda gaadi ke paas mil jaata, aur Arpan 7:05 tak "finding driver" pe:**
+Gaadi extra ho to dikkat hi nahi. Gaadi ek hi ho aur Arpan ke saath 1-2 baar aisa ho chuka, to agli gaadi Arpan ki hi,
+chahe wo kisi aur ke zyada paas ho.
+**Asli naam:** baar-baar peeche reh gaya = starvation, jitna ruka utni baari upar = aging (gaadi nahi badhti, sirf baari
+tay hoti).
+
+**Maan lo Arpan ne 5 minute ruk ke gusse me cancel kiya aur turant dobara book kiya, server ne ginti 7:05 se shuru kar di:**
+Do raaste. (1) Cancel kiya to line se hata do, dobara aaye to peeche lage, kyunki beech me aur log aa gaye. (2) Redis me
+parchi "Arpan 5 minute ruka tha", 30 second ki umar; 30 second ke andar wapas aaya to uske 5 minute chalte rahenge,
+warna parchi khatam aur line me peeche.
+**Asli naam:** parchi = Redis me pehle tap ka waqt (intezaar pehle tap se gino), umar = TTL.
+
+```mermaid
+flowchart TB
+    subgraph MAP["SADAK PE KAUN KAHAN"]
+        direction LR
+        B["Car B"]:::card ---|3 km| AR(["Arpan"]):::pill
+        AR ---|2 km| A["Car A"]:::card
+        A ---|1 km| RV(["Ravi"]):::pill
+    end
+    subgraph OLD["PURANA: jo pehle aaya, use paas wali"]
+        O1["Arpan ko Car A: 2 km<br/>Ravi ko Car B: 6 km<br/>kul 8 km"]:::bad
+    end
+    subgraph NEW["NAYA: dono ko saath milao (batch matching)"]
+        N1["Ravi ko Car A: 1 km<br/>Arpan ko Car B: 3 km<br/>kul 4 km"]:::good
+    end
+    MAP --> OLD
+    MAP --> NEW
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style MAP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style OLD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style NEW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+```mermaid
+flowchart TB
+    BK["Booking aayi:<br/>Arpan 7:00:00, Ravi 7:00:02"]:::card
+    W(["15-20 sec ruko, beech ki<br/>saari booking jama (batching window)"]):::pill
+    C["Cancel karke 30 sec me wapas:<br/>Redis parchi, 5 min chalte rahe (TTL)"]:::pill
+    AG{"Koi 1-2 baar<br/>peeche reh gaya?"}:::card
+    P["Haan: agli gaadi usi ki (aging)"]:::good
+    M["Nahi: sab booking + sab gaadi saath,<br/>kul doori kam (batch matching)"]:::good
+    BK --> W
+    W --> AG
+    C -.-> AG
+    AG --> P
+    AG --> M
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
 ```
 
 ---

@@ -200,6 +200,40 @@ int subarraySum(vector<int> &nums, int k) { // prefix-sum + hashmap {prefixSum -
 ```
 
 
+### ▸ LONGEST SUBARRAY SUM = K  (03/15)  = SUBARRAY SUM = K ka bhai, GINTI ki jagah LAMBAI
+
+```
+Ek array aur ek number k diya hai (minus number bhi ho sakte hain). Sabse lamba lagaatar subarray dhoondo jiska jod
+theek k ho, aur uski lambai lautao. Koi na mile to 0.
+  e.g. [3,-1,4,-2,2,1], k=4 -> 5
+  kyun: [-1,4,-2,2,1] ka jod 4 hai aur lambai 5; [4] bhi 4 hai par lambai sirf 1
+
+ FARAK (subarray sum = k se):
+   wahan map = {prefixSum -> KITNI BAAR}   (ginti chahiye thi)
+   yahan map = {prefixSum -> PEHLA INDEX}  (lambai chahiye: i - jahan pehli baar ye sum dikha)
+   start: mp[0] = 1 ki jagah mp[0] = -1   (index -1: shuru se i tak ka tukda, lambai = i + 1)
+```
+
+```cpp
+int longestSubarraySumK(vector<int> &nums, int k) { // prefix-sum + hashmap {prefixSum -> pehla index}
+    unordered_map<int, int> mp;
+    mp[0] = -1;                             // ★ index -1: shuru se hi jod k ho to lambai i - (-1) = i + 1
+    int sum = 0;
+    int ans = 0;
+    for (int i = 0; i < nums.size(); i++) {
+        sum += nums[i];                     // running sum
+        if (mp.count(sum - k)) {            // sum - k pehle dikha? to wahan ke baad se i tak jod = k
+            ans = max(ans, i - mp[sum - k]);// ★ lambai = i - us index (+1 nahi, wo index tukde me nahi)
+        }
+        if (!mp.count(sum))                 // ★ override se bachao: PEHLA index hi rakho,
+            mp[sum] = i;                    //   baad wala likh diya to tukda chhota ho jaayega
+    }
+    return ans;
+}
+// [0,0,0], k=0 -> 3: mp[0] = -1 pe hi ruka rehta (guard), i=2 pe 2 - (-1) = 3
+```
+
+
 ### ▸ COUNT DIVISIBLE PAIRS  = two-sum/hashmap-complement, par KEY = REMAINDER
 
 ```
