@@ -5,6 +5,7 @@
  ★ MILTE-JULTE (sorted / 1..n / dohra): 00_SHURU me NAAM-SE-CONFUSE D dekh, XOR lagane se PEHLE.
 ```
 
+
 #### ── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number bhi; Single-Number-II ALAG: wahan baaki 3 baar aate, XOR se nahi katte -> har bit ki ginti % 3) ──
 
 ```
@@ -13,12 +14,20 @@
 
 ### ▸ SINGLE NUMBER (LC-136)
 
+**SAWAAL**
 ```
 Array me har number do baar aata hai, sirf ek number ek baar. Wo number lautao. O(n) time aur O(1) extra jagah me.
   e.g. [4,1,2,1,2] -> 4
   kyun: 4^1^2^1^2: 1^1 = 0, 2^2 = 0, bacha 4
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** sab XOR kar do: `a^a = 0` (pair kat jaata), `a^0 = a` -> akela bacha. Koi map nahi, O(1).
+
+> [!WARNING]
+> `XORR = nums[0]` se shuru, isliye loop `i = 1` se, 0 se nahi.
+
+**CODE**
 ```cpp
 int singleNumber(vector<int> &nums) {       // sab 2 baar, ek 1 baar -> sab XOR = wahi ek
     int XORR = nums[0];                     // nums[0] se shuru, isliye loop 1 se
@@ -27,5 +36,4 @@ int singleNumber(vector<int> &nums) {       // sab 2 baar, ek 1 baar -> sab XOR 
     return XORR;                            // O(n), O(1), koi map nahi
 }
 ```
-
 

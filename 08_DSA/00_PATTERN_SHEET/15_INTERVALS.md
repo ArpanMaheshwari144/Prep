@@ -17,6 +17,7 @@
          (sort by END, aur takraane wala chhodo)
 ```
 
+
 #### ── FAMILY: sort-by-start + overlap check (bas overlap pe ACTION aur boundary < / <= badalta) ──
 
 ```
@@ -25,12 +26,14 @@
 
 ### ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
 
+**SAWAAL**
 ```
 intervals[] me [start, end] diye hain. Jo intervals aapas me overlap karte hain (ya bas chhoote hain), unhe jod ke ek kar do. Jude hue intervals ki list lautao.
   e.g. [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]
   kyun: 2 <= 3 -> [1,3] aur [2,6] overlap -> [1,6]; baaki alag
 ```
 
+**SAAR**
 ```
 DRY-RUN  [[1,3],[2,6],[8,10],[15,18]]  (sorted):
     ans=[[1,3]]
@@ -39,6 +42,13 @@ DRY-RUN  [[1,3],[2,6],[8,10],[15,18]]  (sorted):
     [15,18]: 15 <=10? NO     -> push          -> ans=[[1,6],[8,10],[15,18]]
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** sort by START; `ans.back()[1] >= intervals[i][0]` -> overlap -> `ans.back()[1] = max(ans.back()[1], intervals[i][1])`; warna push.
+
+> [!WARNING]
+> `max` zaroori: `[1,10],[2,3] -> 10`. `>=` : `[1,3],[3,5]` chhoote bhi merge.
+
+**CODE**
 ```cpp
 vector<vector<int>> merge(vector<vector<int>> &intervals) {
     sort(begin(intervals), end(intervals)); // ★ default FIRST element (start) se. HAMESHA pehla step
@@ -56,16 +66,26 @@ vector<vector<int>> merge(vector<vector<int>> &intervals) {
 ```
 
 
+---
+
 ### ▸ MEETING ROOMS (LC-252, Easy)  = Merge ka SAME template, bas action alag
 
+**SAWAAL**
 ```
 meetings[] me [start, end] diye hain. Kya ek insaan saari meetings attend kar sakta hai, matlab koi do meeting takraati nahi? true ya false lautao.
   e.g. [[0,30],[5,10],[15,20]] -> false
   kyun: 5-10 shuru hui jab 0-30 abhi chal rahi (5 < 30) -> overlap
-
-MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end me true
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Merge ka SAME template, bas action: `intervals[i][0] < ans.back()[1]` -> return false; loop khatam -> true.
+>
+> MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end me true
+
+> [!WARNING]
+> `<` (`<=` NAHI): ek khatam usi pal doosri shuru = chalta. `intervals.empty()` pe pehle true, warna `intervals[0]` pe crash.
+
+**CODE**
 ```cpp
 bool canAttendMeetings(vector<vector<int>> &intervals) {
     if (intervals.empty())
@@ -84,16 +104,26 @@ bool canAttendMeetings(vector<vector<int>> &intervals) {
 ```
 
 
+---
+
 ### ▸ INSERT INTERVAL (LC-57)  = already-SORTED -> 3 phase (no sort)
 
+**SAWAAL**
 ```
 intervals[] pehle se sorted hain aur aapas me overlap nahi karte. Ek newInterval daalna hai (overlap ho to jod do). Nayi sorted list lautao.
   e.g. [[1,3],[6,9]], new=[2,5] -> [[1,5],[6,9]]
   kyun: [2,5] aur [1,3] overlap -> [1,5]; [6,9] 5 ke baad -> alag
-
-pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** pehle se sorted -> SORT nahi, 3 phase: new se PEHLE khatam (`[1] < new[0]`) -> push · new ke AAGE (`[0] > new[1]`) -> break · warna overlap -> new ko GROW (min start, max end). Phir new + `count` se baaki.
+>
+> pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
+
+> [!WARNING]
+> dono strictly (`<` aur `>`): chhoota hua (touching) bhi merge, `[[1,2]] + [2,5] -> [[1,5]]`; `<=`/`>=` likha to `[[1,2],[2,5]]`. End bhi `max`.
+
+**CODE**
 ```cpp
 vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval) {
     vector<vector<int>> ans;
@@ -122,15 +152,15 @@ vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInter
 
 ### ▸ MEETING ROOMS II (LC-253)  = SWEEP LINE / event-count
 
+**SAWAAL**
 ```
 start[] aur end[] me meetings ke shuru aur khatam hone ka time diya hai. Kam se kam kitne room chahiye, wo lautao.
 Ek meeting ka end aur doosri ka start same time ho, to wahi room chal jaata hai.
   e.g. start=[2,9,6], end=[4,12,10] -> 2
   kyun: t=9 pe [9,12] aur [6,10] dono chal rahi -> 2 room
-
-min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 / -1 GINTI
 ```
 
+**SAAR**
 ```
 DRY-RUN  start=[2,9,6] end=[4,12,10]:
     mp (key-sorted): {2:+1, 4:-1, 6:+1, 9:+1, 10:-1, 12:-1}
@@ -148,6 +178,15 @@ SWEEP VISUAL (vertical line jhaadu t=9 pe = 2 bars overlap = PEAK):
 FARAK merge se: merge/meeting-I = "kya overlap?" (join/bool). MR-II = "KITNA overlap?" (peak count) -> sweep.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** har start `+1`, har end `-1` ordered `map` me; time ke kram me running `overlap`, uska MAX = rooms.
+>
+> min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 / -1 GINTI
+
+> [!WARNING]
+> ORDERED `map` (keys khud sorted, time ke order me chalna). End ka `-1` usi key pe: same time pe +1 -1 kat -> room REUSE.
+
+**CODE**
 ```cpp
 int minMeetingRooms(vector<int> &start, vector<int> &end) {
     map<int, int> mp;                       // ★ ORDERED map: time -> delta, keys khud sorted
@@ -167,5 +206,4 @@ int minMeetingRooms(vector<int> &start, vector<int> &end) {
 // FAMILY: max-concurrent, CPU-load, planes-in-sky. SAGAA BHAI = DIFFERENCE ARRAY (LC-1109)
 //   -> PATTERN 4: map ki jagah ARRAY · end ki jagah END+1 (inclusive) · max ki jagah POORA array
 ```
-
 
