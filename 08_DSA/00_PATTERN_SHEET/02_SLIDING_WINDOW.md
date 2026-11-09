@@ -1,30 +1,26 @@
 ## PATTERN 2 — SLIDING WINDOW
 
 
+> [!IMPORTANT]
+> **KAB PEHCHANO:** CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
+
+### IF ya WHILE?
+
+> [!IMPORTANT]
+> **IF vs WHILE (ye confusion CLEAR kar) -> SAWAAL: "window ka SIZE fix hai, ya condition pe depend?"**
+>
+> · SIZE fix (koi number diya: k-elements ya p.length()) -> IF (ek add, ek remove, size wahi rehta).   [Max-Sum-of-K · Anagram]
+>
+> · SIZE condition pe (sum/distinct/repeat/product) -> WHILE (jab tak invalid, ek se zyada nikal sakte).  [baaki sab]
+
+> [!WARNING]
+> TRAP -- `k` ka matlab dekh: Max-Sum-size-K me k = SIZE (fix -> IF); Subarray-Product<K me k = product LIMIT (size NAHI -> WHILE). same letter `k`, alag matlab.
+
+### ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel)
+
 ```
-
- KAB PEHCHANO: CONTIGUOUS subarray/substring + "longest / shortest / max / min / COUNT" maanga -> SW socho.
-
- 2 TYPE:
-   (a) FIXED window   -> size k DIYA hai. i/j pointer: sum += nums[j]; jab (j-i+1) >= k -> track + left hatao (sum -= nums[i], i++).
-   (b) VARIABLE window-> size condition se. TEMPLATE:
-          for j in arr:  window me arr[j] add (update tracker)
-                         while (INVALID): left[i] hatao (tracker update), i++
-                         ans update  (length = j-i+1, ya count += j-i+1)
-
- KYA TRACK: sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
-
- KEY: shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
-
- LENGTH ya COUNT: length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
-
- IF vs WHILE (ye confusion CLEAR kar) -> SAWAAL: "window ka SIZE fix hai, ya condition pe depend?"
-     · SIZE fix (koi number diya: k-elements ya p.length()) -> IF (ek add, ek remove, size wahi rehta).   [Max-Sum-of-K · Anagram]
-     · SIZE condition pe (sum/distinct/repeat/product) -> WHILE (jab tak invalid, ek se zyada nikal sakte).  [baaki sab]
-     TRAP -- `k` ka matlab dekh: Max-Sum-size-K me k = SIZE (fix -> IF); Subarray-Product<K me k = product LIMIT (size NAHI -> WHILE). same letter `k`, alag matlab.
  [track] · [INVALID kab -> shrink] · [ans]
 
- ONE SKELETON (fixed + variable DONO isi pe -- ye poora khel):
     i = 0, j = 0
     while (j < n):                     // EXPAND (j HAMESHA aage). [for(j..) == while(j<n){..;j++} -- SAME]
         arr[j] window me ADD           (tracker update: sum / map / zeros / product)
@@ -34,11 +30,33 @@
         j++
     -> sirf 2 cheez badalti: (1) inner IF (fixed, ek remove) ya WHILE (variable, jab tak invalid)
                              (2) "WINDOW BAD" kya + kya track. baaki dhaancha har baar SAME.
-
- KAB NAHI: variable window jisme SUM pe shrink ho (sum > k pe chhota karo), aur numbers NEGATIVE hon -> sum ghat jaata,
-     "bada ho gaya, chhota karo" wala faisla toot jaata -> wahan prefix + map. Fixed size window negative ke saath bhi chalti.
- ★ EDGE (variable window): shrink me count 0 ho jaye to map se ERASE karo, warna map.size() jhooth bolega.
 ```
+
+> [!IMPORTANT]
+> **KEY:** shrink ke BAAD window HAMESHA valid -> ans UNCONDITIONAL (koi if(==k) nahi).
+>
+> **LENGTH ya COUNT:** length -> max(ans, j-i+1) · subarray COUNT -> count += (j-i+1) (window size).
+
+**KYA TRACK:** sum · freq-map (distinct=map.size / char-count) · zeros-count · product · maxFreq.
+
+### 2 TYPE
+
+```
+   (a) FIXED window   -> size k DIYA hai. i/j pointer: sum += nums[j]; jab (j-i+1) >= k -> track + left hatao (sum -= nums[i], i++).
+   (b) VARIABLE window-> size condition se. TEMPLATE:
+          for j in arr:  window me arr[j] add (update tracker)
+                         while (INVALID): left[i] hatao (tracker update), i++
+                         ans update  (length = j-i+1, ya count += j-i+1)
+```
+
+### Kab NAHI, aur ek edge
+
+> [!WARNING]
+> **KAB NAHI:** variable window jisme SUM pe shrink ho (sum > k pe chhota karo), aur numbers NEGATIVE hon -> sum ghat jaata,
+> "bada ho gaya, chhota karo" wala faisla toot jaata -> wahan prefix + map. Fixed size window negative ke saath bhi chalti.
+
+> [!WARNING]
+> ★ EDGE (variable window): shrink me count 0 ho jaye to map se ERASE karo, warna map.size() jhooth bolega.
 
 ---
 
