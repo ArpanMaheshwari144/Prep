@@ -57,6 +57,9 @@ Technical me: "5 min ke baad phone uska nahi" = Pay pe server check kare ki rese
 **8. Net gaya / PSP chup: Ravi ko laga pay ho gaya, par PSP tak request pahunchi nahi, ya paisa kata aur PSP anjaan.**
 Arpan: Design har jagah se thoda toot-ta hai. Chahe 10 minute rok lo, chahe paisa aane pe kaato, kinaare pe dikkat rehti hai. Aakhri second pe pay kiya to wahan BMS wali cheez hi leni padegi. Paisa kata to zimmedari hamari, PSP se hum baat karenge.
 Technical me: PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Paisa kata mila to dabba uska; dabba na bacha ho to refund. Perfect design koi nahi, bas kitne refund.
+**Maan lo PSP 30-50 second chup, Myntra ko pata nahi Ravi ka paisa kata ya nahi.**
+Arpan: Order ki khabar Myntra ki apni hai: Pay dabate hi apne paas order PENDING aur payment INITIATED likh diya, stock rok liya. Paisa kata ya nahi, ye PSP hi batayega, Myntra Ravi ka bank nahi dekh sakta. Isliye Razorpay se onboarding pe hi tay karo: 30-50 second me jawab do, nahi diya to request tum khud cancel karoge. 50 second guzre to Ravi ko "time out, dobara pay karo" dikhao; dobara pay kare to Razorpay ki jagah doosre PSP pe bhejo, kyunki pata hai Razorpay abhi dheema hai.
+Technical me: order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), SLA (timeout pe PSP khud cancel) -> tabhi PSP failover safe (warna unknown state me doosre PSP pe do baar kat sakta, Payment kadam 11).
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**
 Arpan: Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).

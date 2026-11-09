@@ -68,6 +68,7 @@ Yahi dikkat yahan bhi:
   Uber     5b  net atka, Book do baar daba diya               ->  wahi booking id, wahi ride (idempotency key)
   Uber     16b 250 kaatne gaye, gateway chup                  ->  ride id hi key, pehle poochho phir dobara (idempotency)
   Ecom     8b  PSP ka success do baar aaya                    ->  payment id dekh ke doosra chhodo (idempotency)
+  Ecom     8c  PSP 50 sec chup, kata pata nahi                ->  SLA se cancel pakka, dobara pay doosre PSP pe (failover)
   Ecom     7e  Ravi ne 4 tab khole, Buy now 4 baar            ->  user id pe ek hi rukega (idempotency)
   Leader   3b  match ka +50 do baar pahuncha                  ->  match id dekh ke ek hi baar jodo (idempotency)
   Chat     6b  Ravi ka "mil gaya" kho gaya, message dobara aaya  ->  Ravi ka phone number dekh ke chhode (idempotency)
