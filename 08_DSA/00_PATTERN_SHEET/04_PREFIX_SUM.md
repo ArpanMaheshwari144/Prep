@@ -15,8 +15,11 @@
  ★ DHYAAN: mp[0] = 1 bhoolna nahi ([3], K=3)
 ```
 
+---
+
 ### ▸ PIVOT INDEX
 
+**SAWAAL**
 ```
 Ek array diya hai. Wo pehla index lautao jahan uske baayi taraf ke sabhi numbers ka jod, daayi taraf ke sabhi numbers ke jod ke barabar ho.
 Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1.
@@ -24,6 +27,13 @@ Us index ka apna number kisi bhi taraf nahi gina jaata. Aisa index na mile to -1
   kyun: index 3 (6): left 1+7+3 = 11, right 5+6 = 11
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** pehle `totalSum`; har i pe `rightSum = totalSum - leftSum - nums[i]`, `leftSum == rightSum` to i lautao.
+
+> [!WARNING]
+> `leftSum += nums[i]` check ke BAAD hi. Pehle joda to khud ka number left me gin jaata, right me se bhi kat gaya.
+
+**CODE**
 ```cpp
 int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum (khud kisi taraf nahi)
     int totalSum = 0;
@@ -41,18 +51,28 @@ int pivotIndex(vector<int> &nums) {         // index jahan left sum == right sum
 ```
 
 
+---
+
 ### ▸ PRODUCT EXCEPT SELF (LC-238)  = PIVOT jaisa "assign PEHLE, update BAAD", 2 pass
 
+**SAWAAL**
 ```
 Ek array diya hai. Har index i ke liye ans[i] = baaki sabhi numbers ka guna (nums[i] ko chhod ke).
 Bhaag (division) nahi lagana, O(n) me karna hai.
   e.g. [1,2,3,4] -> [24,12,8,6]
   kyun: ans[1] = left 1 x right 3x4=12 -> 12; ans[0] = 2x3x4 = 24
-
-ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
-O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** `ans[i] = left[i] * right[i]`. Dono pass me ASSIGN pehle (`left[i] = prod`), UPDATE baad (`prod *= nums[i]`).
+>
+> ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
+> O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
+
+> [!WARNING]
+> UPDATE pehle kiya to khud ka element bhi product me aa jaata. Right pass se pehle `prod = 1` reset, warna left-pass ka bacha product saath aata.
+
+**CODE**
 ```cpp
 vector<int> productExceptSelf(vector<int> &nums) {
     int n = nums.size();
@@ -75,17 +95,27 @@ vector<int> productExceptSelf(vector<int> &nums) {
 }
 ```
 
+---
+
 ── (STANDALONE — apni alag trick) ──
 
 
 ### ▸ HIGHEST ALTITUDE  = running sum + max (simple prefix)
 
+**SAWAAL**
 ```
 Ek cyclist 0 altitude se shuru karta hai. gain[i] batata hai ki agle point tak altitude kitni badhi ya ghati. Raste me sabse unchi altitude kitni thi, wo lautao.
   e.g. [-5,1,5,0,-7] -> 1
   kyun: altitude 0, -5, -4, 1, 1, -6 -> max 1
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** running sum chalao, har kadam `maxi = max(maxi, sum)`.
+
+> [!WARNING]
+> `maxi = 0` se shuru (`INT_MIN` nahi): shuru ki altitude 0 bhi ginti, sab -ve ho to jawab 0.
+
+**CODE**
 ```cpp
 int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (simple prefix)
     int sum = 0;
@@ -98,17 +128,27 @@ int largestAltitude(vector<int> &gain) {    // running sum chalao, max track (si
 }
 ```
 
+---
+
 ### ▸ SUBARRAY SUMS DIVISIBLE BY K (LC-974)  = SUBARRAY-SUM-K + REMAINDER-key
 
+**SAWAAL**
 ```
 Ek array (plus aur minus dono) aur ek number k diya hai. Kitne lagaatar subarray hain jinka jod k se poora kat jaaye (sum % k == 0), wo ginti lautao.
   e.g. [1,2,3], k=3 -> 3
   kyun: [3]=3, [1,2]=3, [1,2,3]=6 -> teeno 3 se divide; [1],[2],[2,3]=5 nahi
-
-brute: har subarray sum baar-baar -> PREFIX -> do prefix ka remainder same = beech wala %k==0
-PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** SUBARRAY-SUM-K ka code, bas key = `rem` (sum ki jagah): same remainder wale do prefix ka beech `% k == 0`.
+>
+> brute: har subarray sum baar-baar -> PREFIX -> do prefix ka remainder same = beech wala %k==0
+> PREFIX kyun, single A[i] nahi: subarray CONTIGUOUS range -> do prefix ka farak = wahi subarray
+
+> [!WARNING]
+> `mp[0] = 1` seed (shuru se hi divisible wala), aur `((sum % k) + k) % k` (negative sum ka `%` negative aata).
+
+**CODE**
 ```cpp
 int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum % k == 0
     unordered_map<int, int> mp;
@@ -125,13 +165,19 @@ int subarraysDivByK(vector<int> &nums, int k) {   // count subarrays jinka sum %
 ```
 
 
+---
+
 ### ▸ COUNT SUBARRAYS WITH XOR = K  = SUBARRAY-SUM-K, bas + ki jagah ^
 
+**SAWAAL**
 ```
 Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinke saare numbers ka XOR theek k ke barabar ho, wo ginti lautao.
   e.g. [4,2,2,6,4], k=6 -> 4
   kyun: [4,2]=6, [2,2,6]=6, [6]=6, [4,2,2,6,4]=6 (4^4 aur 2^2 kat gaye) = 4
+```
 
+**SAAR**
+```
 [4,2,2,6,4], k=6 -> 4.   CHAABI: x ^ x = 0 (same number khud se XOR = gayab)
 (shuru se j tak XOR) ^ (shuru se i tak XOR) = beech ka XOR (common hissa kat gaya)
 beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni baar aaya
@@ -143,6 +189,10 @@ beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni ba
    XOR wale me:  complement = curXor ^ k      (a^b=c -> c^b=a)   [4^2=6 to 4^6=2]
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** SUBARRAY-SUM-K ka copy: `count += mp[xorr ^ k]`, phir `mp[xorr]++`. (`a^b=c -> c^b=a`, isliye `- k` ki jagah `^ k`.)
+
+**CODE**
 ```cpp
 int subarrayXorK(vector<int> &nums, int k) {
     unordered_map<int, int> mp;
@@ -158,13 +208,19 @@ int subarrayXorK(vector<int> &nums, int k) {
 ```
 
 
+---
+
 ### ▸ COUNT SUBARRAYS WITH MAX == K  = BOUNDARY-index (2 pointer track, NO stack/SW)
 
+**SAWAAL**
 ```
 Ek array aur ek number K diya hai. Kitne lagaatar subarray hain jinka sabse bada number theek K ho (na zyada, na kam), wo ginti lautao.
   e.g. [8,2,1,3,4,5,1,10], K=3 -> 3
   kyun: [2,1,3], [1,3], [3]; 8 aur 4 K se bade = deewar, unhe chhoo nahi sakte
+```
 
+**SAAR**
+```
 kitne subarray jinka MAX bilkul K. [8,2,1,3,4,5,1,10],K=3 -> 3 ([2,1,3],[1,3],[3])
 valid = (har element <= K) AND (>=1 element == K)
 K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
@@ -208,6 +264,13 @@ WHY simple: "hard-dikhne" wala tha (scary constraints + 3 candidate-pattern), pa
    collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** K se bada = DEEWAR. `lastWall` aur `lastK` dono INDEX rakho; har i pe pehle dono update, phir `lastK > lastWall` to `count += lastK - lastWall`.
+
+> [!WARNING]
+> `if (lastK > lastWall)` guard zaroori, warna `lastK - lastWall` NEGATIVE jud jaata (`[5,3,5]` pe dikhta). count `long long` (~n²/2).
+
+**CODE**
 ```cpp
 long long countSubarraysMaxK(vector<int> &arr, int K) {
     int lastWall = -1;                      // aakhri index jahan arr[i] > K  (-1: abhi koi wall nahi)
@@ -226,18 +289,28 @@ long long countSubarraysMaxK(vector<int> &arr, int K) {
 ```
 
 
+---
+
 ### ▸ DIFFERENCE ARRAY / RANGE UPDATE (LC-1109 Corporate Flight Bookings)  = prefix-sum ka ULTA · SWEEP-LINE (MEETING ROOMS II) ka sagaa bhai
 
+**SAWAAL**
 ```
 n flights hain (1 se n). Har booking [first, last, seats] ka matlab: first se last tak har flight me itni seats book hui.
 Saari bookings ke baad har flight ki kul booked seats ka array lautao.
   e.g. n=5, [[1,2,10],[2,3,20],[2,5,25]] -> [10,55,45,25,25]
   kyun: flight 2 = 10+20+25 = 55; flight 3 = 20+25 = 45; flight 4, 5 = sirf 25
-
-KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
-har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** sirf DO nishaan: `diff[start] += count`, `diff[end + 1] -= count`. Phir ek baar chalti-sum (`cummSum += diff[i]`) = har flight ka jawab.
+>
+> KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
+> har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
+
+> [!WARNING]
+> `diff` size `n + 2` (end+1 = n+1 tak jaata, `n + 1` rakha to crash). Inclusive range me `end + 1` pe ghatao; `end` pe ghataya to aakhri flight chhoot gayi.
+
+**SAAR**
 ```
 DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
     diff:   idx  1    2    3    4    5    6
@@ -251,6 +324,7 @@ DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
 ★★ SWEEP-LINE se RISHTA (Arpan ne khud jod diya — "dono same hain, bas do farak"): code ke neeche comment me.
 ```
 
+**CODE**
 ```cpp
 vector<int> corpFlightBookings(vector<vector<int>> &bookings, int n) {
     vector<int> diff(n + 2);                // ★ n+2: end+1 sabse bada n+1 ho sakta (n+1 rakha to crash)

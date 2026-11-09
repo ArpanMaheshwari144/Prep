@@ -15,12 +15,20 @@
 
 ### ▸ SET MATRIX ZEROES  = 2 marker array (zeroRow / zeroCol), 2 pass
 
+**SAWAAL**
 ```
 m x n matrix di hai. Jis cell me 0 hai, uski poori row aur poora column 0 kar do. Isi matrix me badlaav karna hai (in-place).
   e.g. [[1,1,1],[1,0,1],[1,1,1]] -> [[1,0,1],[0,0,0],[1,0,1]]
   kyun: 0 cell (1,1) pe -> row 1 aur col 1 poore 0, baaki same
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** do marker array `zeroRow` / `zeroCol`. Pass-1 sirf MARK, pass-2 `zeroRow[i] == 0 || zeroCol[j] == 0` to cell 0.
+
+> [!WARNING]
+> Ek hi pass me 0 karte gaye to naye bane 0 bhi mark ho jaate, matrix faltu 0 se bhar jaati. Isliye pehle sirf mark, phir alag pass me 0.
+
+**CODE**
 ```cpp
 void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m+n) space
     int row = matrix.size();
@@ -40,14 +48,18 @@ void setZeroes(vector<vector<int>> &matrix) {   // in-place, 2 marker array, O(m
 }
 ```
 
+---
+
 ### ▸ SPIRAL MATRIX (LC-54)  = 4 boundary andar simat-te (clockwise)
 
+**SAWAAL**
 ```
 m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf, ghadi ki sui ki disha me) ek list me lautao.
   e.g. [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
   kyun: upar 1,2,3 -> right col 6,9 -> neeche ulta 8,7 -> left col upar 4 -> beech 5
 ```
 
+**SAAR**
 ```
 CHAABI — isme bas yahi pattern hai (pata ho to jitna code likhne me time, utna hi):
    TOP row     left -> right    phir top++
@@ -79,6 +91,13 @@ GUARD — kyun?
       left col?    left <= right ?  0 <= -1 NO  -> skip   (warna 2 dobara)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** 4 boundary andar simat-te: top row L->R `top++`, right col T->B `right--`, bottom row R->L `bottom--`, left col B->T `left++`. `while (top <= bottom && left <= right)`.
+
+> [!WARNING]
+> 3rd / 4th loop pe GUARD: `if (top <= bottom)` bottom row, `if (left <= right)` left col. Ek hi row / col bachi ho to ulti disha wala loop wahi dobara chhaap deta (`[[1,2,3]]` pe 2 1 dobara).
+
+**CODE**
 ```cpp
 vector<int> spiralOrder(vector<vector<int>> &matrix) {
     int row = matrix.size();
@@ -107,14 +126,24 @@ vector<int> spiralOrder(vector<vector<int>> &matrix) {
 ```
 
 
+---
+
 ### ▸ TRANSPOSE  = ans[i][j] = matrix[j][i], naya col x row
 
+**SAWAAL**
 ```
 m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix[i][j] naye matrix me res[j][i] pe jaayega (naya size n x m).
   e.g. [[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]
   kyun: pehli row 1,2,3 ban gayi pehla col; 2x3 se 3x2
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** `ans[i][j] = matrix[j][i]`. Outer `i < col`, inner `j < row`.
+
+> [!WARNING]
+> `ans` ka size `col x row` banao (`ans(col, vector<int>(row, -1))`), `row x col` nahi: non-square pe index bahar.
+
+**CODE**
 ```cpp
 vector<vector<int>> transpose(vector<vector<int>> &matrix) {
     int row = matrix.size();
@@ -127,18 +156,28 @@ vector<vector<int>> transpose(vector<vector<int>> &matrix) {
 }
 ```
 
+---
+
 ### ▸ COUNT SERVERS THAT COMMUNICATE (LC-1267, JP)  = SET MATRIX ZEROES ka cousin (row/col COUNT 2-pass)
 
+**SAWAAL**
 ```
 Ek grid di hai jisme 1 = server. Do server baat kar sakte hain agar wo ek hi row ya ek hi column me hon.
 Kitne server kisi doosre server se baat kar sakte hain, wo ginti lautao.
   e.g. [[1,1,0,0],[0,0,1,0],[0,0,1,1]] -> 5
   kyun: (0,0)-(0,1) row 0, (1,2)-(2,2) col 2, (2,3)-(2,2) row 2 -> paanchon ka saathi = 5
-
-1 = server. communicate = uski ROW ya COL me koi DOOSRA server. row + col dono me akela -> nahi gino
-[[1,0],[1,1]] -> 3  ·  [[1,0],[0,1]] -> 0
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** SET-ZEROES ki 2 pass, MARK ki jagah COUNT: pass-1 `rowCount[i]++`, `colCount[j]++`; pass-2 server gino jab `rowCount[i] > 1 || colCount[j] > 1`.
+>
+> 1 = server. communicate = uski ROW ya COL me koi DOOSRA server. row + col dono me akela -> nahi gino
+> [[1,0],[1,1]] -> 3  ·  [[1,0],[0,1]] -> 0
+
+> [!WARNING]
+> `> 1` hi, `>= 1` nahi: khud bhi ginti me hai, saathi ke liye 1 se zyada chahiye. Pass-1 poori ginti pehle, tabhi pass-2 me pata akela hai ya nahi.
+
+**SAAR**
 ```
 DRY-RUN [[1,0],[1,1]]:
     pass-1:  rowCount=[1,2]  colCount=[2,1]
@@ -147,6 +186,7 @@ DRY-RUN [[1,0],[1,1]]:
     (1,1): row1=2>1          -> YES     => 3
 ```
 
+**CODE**
 ```cpp
 int countServers(vector<vector<int>> &grid) {   // set zeroes ki 2 marker trick, MARK ki jagah COUNT
     int m = grid.size();
