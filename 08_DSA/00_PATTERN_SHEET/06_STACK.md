@@ -21,6 +21,8 @@
  ★★ ASLI CHAABI (Arpan, 9-Nov chai ke baad): is family me yaad sirf LOOP KI DISHA rakhni hai.
       NEXT  (smaller / greater)  ->  loop 0 se n-1
       PREV  (smaller / greater)  ->  loop n-1 se 0
+      Arpan (9-Nov raat): "previous ko yaad karne ki zaroorat hi nahi. PREVIOUS = peeche se chalna, to loop ulta (n-1 se 0).
+      NEXT = aage ka, to 0 se. Bas ye yaad rakho."
     sign (< ya >) copy-pen pe ek dry run me pakad aata ("chhota aaya to kise pop?").
     disha galat = dry run bhi ulta ghoomta (histogram REDO_2, 38 min yahin).
 
