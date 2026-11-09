@@ -125,7 +125,8 @@ ke aas-paas wale hi maango.)
 
 **Maan lo key 47 pe giri, peeche machine 45 pe (2 door), aage machine 52 pe (5 door):** ise highway maan lo. Petrol
 pump peeche paas me hai, par highway pe U-turn nahi lete, ek hi disha me badhna hai. Peeche wala pump nikal gaya, chahe
-paas ho, gaadi aage wale pump pe hi jaayegi. Key bhi 52 pe jaati.
+paas ho, gaadi aage wale pump pe hi jaayegi. Kho-kho me bhi same: usi pe dhyaan jo us disha me baitha. Key bhi
+52 pe jaati.
 
 **Asli naam:** ring = consistent hashing, "aage ke sabse paas wale khaane pe" = key ghadi ki disha me agli machine pe
 (hamesha aage wali, peeche wali nahi, chahe peeche wali zyada paas ho; ek hi disha tay hai, isliye dhoondhne pe har baar
