@@ -364,6 +364,26 @@ DRY-RUN (h=[2,1,5,6,2,3]):
 > smaller ya greater           -> sirf while ka sign badalta
 > dhyaan: "pehle bekaar nikaalo, phir top hi jawab" wala doosra tareeka ULTI disha chalta. dono mat milao.
 
+### PS ko 0 se chalaya to? (Arpan ne 9-Nov raat khud chala ke dekha)
+
+> [!WARNING]
+> **PREV ko 0 se chalaya, shart ulti ki (`heights[i] > heights[top]`), to jawab galat:** stack me `[0, 1]` pade the, 5 aaya to
+> while ne pehle 1 kaata (`ans[1] = 2`), phir dobara chala aur 0 bhi kaat diya (`ans[0] = 2`).
+>
+> Dono ka sahi jawab -1 tha (peeche koi chhota nahi), par dono ko 5 wala bar mil gaya. Ye "aage ka bada" (next greater) ban gaya.
+>
+> Arpan: "isliye previous ko PEECHE se chalate. NEXT 0 se, kyunki wo aage dekh raha, dikkat nahi. PREV me abhi array bhara hi nahi,
+> isliye 0, 1 ke liye 5 ka jawab galat bata diya."
+
+```
+PS ko 0 se, shart ulti (heights[i] > heights[top]),  h = [2,1,5,6,2,3]:
+  i0 (2): push                    stack [0]
+  i1 (1): 1 > 2? nahi             stack [0, 1]
+  i2 (5): 5 > 1 -> pop 1, ans[1] = 2
+          5 > 2 -> pop 0, ans[0] = 2     <- while dobara chala, 0 bhi kat gaya
+  ans[0] = 2, ans[1] = 2   (sahi: -1, -1)
+```
+
 ### copy-pen [2,1,5,6,2,3], NS
 
 ```
