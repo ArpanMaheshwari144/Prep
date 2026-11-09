@@ -1,45 +1,43 @@
 # Cascade Types
 
-## Kahani: Arpan ka order
+## Scene: Flipkart pe tera order
 
-Arpan ek order deta hai, jiske andar 3 item hain: pen, copy aur bag. Ye items sirf isi order ke hain.
-- PA ko sirf order ki file di jaati hai, `save(order)`. Agar cascade laga hai, to PA andar ki 3 item parchiyan bhi khud record room le jaata hai.
-- Order delete kiya, to items bhi saath me delete ho gaye.
-- Order se bag hataya (`items.remove(bag)`), to `orphanRemoval` ki wajah se bag ki row DB se bhi chali gayi. Ye na hota to bag "anaath" ban ke DB me pada rehta.
+Ek order me 3 item hain: pen, copy aur bag. Ye item sirf isi order ke hain, order ke bina inka koi matlab nahi.
 
-Lekhak aur kitaab ka rishta alag hai. Kitaab library ki bhi hai, kisi aur list me bhi ho sakti hai. Isliye lekhak delete karne pe kitaabein nahi udni chahiye, aur yahan cascade nahi lagta.
+```java
+@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+List<OrderItem> items;
 
-## Tasveer
-
-```
-save(order)  -> INSERT orders        (pehle parent, id chahiye)
-             -> INSERT order_items x3 (order_id ke saath)
-delete(order)-> SELECT items -> DELETE har item alag -> DELETE order
-items.remove(bag) + orphanRemoval -> DELETE bag
+orderRepo.save(order);          // INSERT orders, phir INSERT order_items x3
+orderRepo.delete(order);        // DELETE har item, phir DELETE order
+order.getItems().remove(bag);   // commit pe DELETE bag
 ```
 
-`save(order)` pe pehle orders me INSERT hota hai, kyunki items ko order ki id chahiye, phir 3 order_items INSERT hote hain. `delete(order)` pe pehle items SELECT hote hain, phir har item ka alag DELETE chalta hai, aur aakhir me order DELETE hota hai. Aur `items.remove(bag)` ke saath orphanRemoval ho to bag ka DELETE chalta hai.
+- Sirf `save(order)` bola, par Hibernate andar ke 3 item bhi khud le gaya. Pehle order ka INSERT hua, kyunki item ko `order_id` chahiye.
+- Order delete kiya to item bhi saath me gaye.
+- List se bag hataya to `orphanRemoval` ne DB se bhi bag ki row uda di. Ye na hota to bag bina order ke DB me pada rehta.
 
-## 4 khaas baat
+## Ek hi sawaal: "kya child ka jeena parent pe tika hai?"
 
-1. Bas ek sawaal poochho: **"kya child ka jeena parent pe tika hai?"** Agar haan (Order-OrderItem, Post-Comment), to `CascadeType.ALL` aur
-   `orphanRemoval` lagao. Agar nahi (Author-Book, Category-Product), to cascade mat lagao.
-2. Types ye hain: PERSIST, MERGE, REMOVE, REFRESH, DETACH, aur ALL jo in paanchon ko ek saath laga deta hai. REMOVE sabse khatarnaak hai, isliye ALL andha-dhundh mat lagao.
-3. Bidirectional rishte me sirf list me add karna kaafi nahi hai, `item.setOrder(order)` bhi karna padta hai, warna DB me `order_id` NULL chala jaata hai. Isliye ek helper `addItem()` banao jo dono kaam ek saath kare.
-4. Cascade REMOVE har child ke liye alag DELETE chalata hai, matlab 1000 item to 1000 query. Bulk delete ho to JPQL DELETE ya DB ka `ON DELETE CASCADE` use karo.
+- **Haan** (Order-OrderItem, Post-Comment): `CascadeType.ALL` + `orphanRemoval`.
+- **Nahi** (Author-Book, Category-Product): cascade mat lagao. Isi liye usercrud me Author aur Book alag-alag save / delete hote hain. Author
+  hataya to kitaabein nahi udni chahiye.
+
+## Do chhoti dikkat
+
+- **Do taraf ka rishta:** sirf `items.add(item)` kaafi nahi, `item.setOrder(order)` bhi karna padta hai, warna DB me `order_id` NULL jaata
+  hai. Isliye ek `addItem()` helper banao jo dono kaam saath kare.
+- **1000 item pe 1000 DELETE:** cascade har child ka alag DELETE chalata hai. Bada delete ho to ek JPQL `DELETE` ya DB ka
+  `ON DELETE CASCADE` use karo.
 
 ## Prod wala trap
 
 ```java
-@ManyToOne(cascade = CascadeType.ALL)   // ulti disha me cascade!
+@ManyToOne(cascade = CascadeType.ALL)   // child se parent ki taraf
 Author author;
-// bookRepo.delete(book) -> author bhi delete -> author ki baaki kitaabein bhi (FK error ya sab gaya)
+// bookRepo.delete(book) -> author bhi delete hone chala
 ```
 
-Yahan cascade ulti disha me laga hai. Ek book delete ki to uska author bhi delete hone jaata hai, aur phir ya to FK error aata hai ya author ki baaki kitaabein bhi chali jaati hain.
-Cascade hamesha parent se child ki taraf jaata hai (`@OneToMany` pe), child se parent ki taraf (`@ManyToOne` pe) kabhi nahi.
-
-## Tera project
-
-usercrud me Author aur Book alag-alag save aur delete hote hain, isliye wahan jaan-boojh ke cascade nahi lagaya. Interview me seedha bolo: "mere project me
-child independent tha, owned child (Order-OrderItem) pe ALL + orphanRemoval lagaunga."
+Ek kitaab delete ki to Hibernate uska author bhi delete karne chala. Ya to FK error aata hai (author ki baaki kitaabein abhi hain), ya author
+ki saari kitaabein saath me chali jaati hain. Cascade hamesha parent se child ki taraf lagta hai (`@OneToMany` pe), child se parent ki taraf
+(`@ManyToOne` pe) kabhi nahi.
