@@ -1,33 +1,44 @@
 ## PATTERN 6 — STACK
 
-```
- BROAD IDEA: stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
- ★ EDGE (monotonic stack): stack me INDEX rakho, value nahi (DOORI chahiye: i - st.top()).
- ★ MILTE-JULTE (histogram vs container / trapping): 00_SHURU me NAAM-SE-CONFUSE A dekh.
 
- ★ YAHAN NAHI MILEGI:
-   generate parentheses   ->  PATTERN 16 (BACKTRACKING)
-         valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choose)
-```
+> [!IMPORTANT]
+> **BROAD IDEA:** stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
+
+> [!IMPORTANT]
+> **★★ ASLI CHAABI (Arpan, 9-Nov chai ke baad): is family me yaad sirf LOOP KI DISHA rakhni hai.**
+>
+> NEXT  (smaller / greater)  ->  loop 0 se n-1
+>
+> PREV  (smaller / greater)  ->  loop n-1 se 0
+>
+> Arpan (9-Nov raat): "previous ko yaad karne ki zaroorat hi nahi. PREVIOUS = peeche se chalna, to loop ulta (n-1 se 0).
+> NEXT = aage ka, to 0 se. Bas ye yaad rakho."
+
+sign (< ya >) copy-pen pe ek dry run me pakad aata ("chhota aaya to kise pop?").
+
+> [!WARNING]
+> disha galat = dry run bhi ulta ghoomta (histogram REDO_2, 38 min yahin).
+
+> [!WARNING]
+> ★ EDGE (monotonic stack): stack me INDEX rakho, value nahi (DOORI chahiye: i - st.top()).
+
+**★ MILTE-JULTE** (histogram vs container / trapping): 00_SHURU me NAAM-SE-CONFUSE A dekh.
+
+**★ YAHAN NAHI MILEGI:** generate parentheses   ->  PATTERN 16 (BACKTRACKING)
+valid-parentheses CHECK karta hai (stack) · generate BANATA hai (choose/un-choose)
 
 #### ── FAMILY: MONOTONIC stack (INDEX stack, curr vs top compare -> pop + us index ka ans) ──
+
+### SKELETON (ek hi, 3 cheez badalti)
 
 ```
      // ek hi skeleton, sirf 3 cheez badalti:
      // (1) cmp: `<` = GREATER dhoondh rahe, `>` = SMALLER (ulta lagta: top ko jab curr hara de)
      // (2) ans me kya: VALUE (next greater / smaller) · DISTANCE i - top (daily temp) · INDEX (histogram)
      // (3) disha: next = 0..n-1 · prev = n-1..0 (loop ulta) · circular = 2n loop, i % n
-
- ★★ ASLI CHAABI (Arpan, 9-Nov chai ke baad): is family me yaad sirf LOOP KI DISHA rakhni hai.
-      NEXT  (smaller / greater)  ->  loop 0 se n-1
-      PREV  (smaller / greater)  ->  loop n-1 se 0
-      Arpan (9-Nov raat): "previous ko yaad karne ki zaroorat hi nahi. PREVIOUS = peeche se chalna, to loop ulta (n-1 se 0).
-      NEXT = aage ka, to 0 se. Bas ye yaad rakho."
-    sign (< ya >) copy-pen pe ek dry run me pakad aata ("chhota aaya to kise pop?").
-    disha galat = dry run bhi ulta ghoomta (histogram REDO_2, 38 min yahin).
-
- KAB: brackets match · "har element ka agla / pichhla bada ya chhota" · span · histogram
 ```
+
+**KAB:** brackets match · "har element ka agla / pichhla bada ya chhota" · span · histogram
 
 ---
 

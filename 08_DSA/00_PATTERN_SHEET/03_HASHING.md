@@ -1,25 +1,28 @@
 ## PATTERN 3 — HASHING
 
-```
- BROAD IDEA: hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
- ★ MILTE-JULTE (longest consecutive vs LIS): 00_SHURU me NAAM-SE-CONFUSE B dekh.
 
- COMMON SKELETON (seen / complement / count family -- ek pass):
+> [!IMPORTANT]
+> **BROAD IDEA:** hashmap/hashset = O(1) lookup. "pehle dekha?" / "complement hai?" / count -> O(n).
+>
+> **KAB:** "pehle dekha?" · "jodi / complement hai?" · "kitni baar aaya?" · grouping (anagram)
+
+**★ MILTE-JULTE** (longest consecutive vs LIS): 00_SHURU me NAAM-SE-CONFUSE B dekh.
+
+### COMMON SKELETON (seen / complement / count family -- ek pass):
+
+```
     map/set banao                      // kabhi PRELOAD: two-sum khaali · subarray-sum-k -> mp{0:1}
     for x in arr:
         CHECK pehle                    // map me complement/seen/count hai? -> ans use/count
         UPDATE baad                    // map me x daalo / count++ (warna x KHUD se match kar leta)
     // har hashing Q one-pass nahi: group-anagrams = pehle poora map bharo phir output ·
     // longest-consec = set-membership. ye skeleton sirf "seen/complement/count" family ke liye.
-
 ```
 
 #### ── FAMILY: 2-MAP BIJECTION (mp1 + mp2 dono taraf; koi ek clash -> false, ek map kaafi nahi) ──
 
-```
- KAB: "pehle dekha?" · "jodi / complement hai?" · "kitni baar aaya?" · grouping (anagram)
- ★ DHYAAN: 1-to-1 mapping (isomorphic / word pattern) -> DO map, ek kaafi nahi
-```
+> [!WARNING]
+> **★ DHYAAN:** 1-to-1 mapping (isomorphic / word pattern) -> DO map, ek kaafi nahi
 
 ---
 

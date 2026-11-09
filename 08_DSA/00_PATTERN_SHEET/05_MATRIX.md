@@ -1,15 +1,21 @@
 ## PATTERN 5 — MATRIX
 
-```
- BROAD IDEA: 2D grid pe index-navigation (boundary/direction careful; copy-pen pe grid banao).
- KAB: 2D matrix pe index ka khel: spiral, transpose, set zeroes, row / col ginti
 
- ★ YAHAN NAHI MILENGI (grid dikhti hai, par technique alag hai):
-   number of islands · rotting oranges · max area of island   ->  PATTERN 13 (GRAPHS)
-         grid hai, par kaam BFS/DFS ka hai — visit + mark + neighbors
-   search 2D matrix                                           ->  PATTERN 7 (BINARY SEARCH)
-         naam me matrix hai, par rows sorted hain -> ek lambi sorted array maan lo
-```
+> [!IMPORTANT]
+> **BROAD IDEA:** 2D grid pe index-navigation (boundary/direction careful; copy-pen pe grid banao).
+>
+> **KAB:** 2D matrix pe index ka khel: spiral, transpose, set zeroes, row / col ginti
+
+### Kab NAHI
+
+**★ YAHAN NAHI MILENGI** (grid dikhti hai, par technique alag hai):
+
+- number of islands · rotting oranges · max area of island  ->  **PATTERN 13 (GRAPHS)**
+  - grid hai, par kaam BFS/DFS ka hai — visit + mark + neighbors
+- search 2D matrix  ->  **PATTERN 7 (BINARY SEARCH)**
+  - naam me matrix hai, par rows sorted hain -> ek lambi sorted array maan lo
+
+---
 
 ── (STANDALONE — har ek apni index-navigation) ──
 

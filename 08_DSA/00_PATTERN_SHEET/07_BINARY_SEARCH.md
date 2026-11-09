@@ -1,26 +1,40 @@
 ## PATTERN 7 — BINARY SEARCH
 
-```
- BROAD IDEA: sorted space -> mid -> aadha kaato -> O(log n). (space array ho ya ANSWER-range).
- BS ko poori sorted array nahi chahiye: bas ek comparison se "kaunsa half phenko" tay ho (find-peak bhi).
- BOUNDARY RULE: jis boundary pe element KHUD answer ho sakta -> equality INCLUDE (>= / <=).
-    jahan mid==target pehle hi return ho gaya -> < ya <= farak nahi. galat >/< = off-by-one -> chhota dry-run.
- ★ EDGE (BS on answer): lo = max(arr) (isse kam me bhaari item uthta hi nahi), hi = sum(arr).
-         ship-in-D-days [3,10], D=2: lo=0 rakha -> 5 aata, sahi 10.
 
- high=mid  vs  high=mid-1 (EK SAWAAL: "mid KHUD answer ho sakta abhi bhi?"):
-    TARGET-REJECT (basic / rotated search: mid != target pakka)   -> high = mid-1  + while (low <= high)
-    KHUD-ANSWER (find-peak / find-min-rotated, koi target nahi)  -> high = mid    + while (low < high)
-    high=mid + while(low<=high) = INFINITE LOOP: mid neeche round, low==high==mid pe range shrink nahi
-       ([2,1] peak-logic: mid=0 -> high=0 -> low=high=0 kabhi khatam nahi)
- 3 broad trick: BS-on-ANSWER (koko) · sorted-half-check (rotated) · 2D-index-map (matrix).
-```
+> [!IMPORTANT]
+> **BROAD IDEA:** sorted space -> mid -> aadha kaato -> O(log n). (space array ho ya ANSWER-range).
+>
+> BS ko poori sorted array nahi chahiye: bas ek comparison se "kaunsa half phenko" tay ho (find-peak bhi).
+
+### high=mid ya high=mid-1?
+
+> [!IMPORTANT]
+> **high=mid  vs  high=mid-1 (EK SAWAAL: "mid KHUD answer ho sakta abhi bhi?"):**
+>
+> TARGET-REJECT (basic / rotated search: mid != target pakka)   -> high = mid-1  + while (low <= high)
+>
+> KHUD-ANSWER (find-peak / find-min-rotated, koi target nahi)  -> high = mid    + while (low < high)
+
+> [!WARNING]
+> high=mid + while(low<=high) = INFINITE LOOP: mid neeche round, low==high==mid pe range shrink nahi
+> ([2,1] peak-logic: mid=0 -> high=0 -> low=high=0 kabhi khatam nahi)
+
+### BOUNDARY RULE
+
+> [!IMPORTANT]
+> **BOUNDARY RULE:** jis boundary pe element KHUD answer ho sakta -> equality INCLUDE (>= / <=).
+>
+> jahan mid==target pehle hi return ho gaya -> < ya <= farak nahi. galat >/< = off-by-one -> chhota dry-run.
+
+> [!WARNING]
+> ★ EDGE (BS on answer): lo = max(arr) (isse kam me bhaari item uthta hi nahi), hi = sum(arr).
+> ship-in-D-days [3,10], D=2: lo=0 rakha -> 5 aata, sahi 10.
+
+**3 broad trick:** BS-on-ANSWER (koko) · sorted-half-check (rotated) · 2D-index-map (matrix).
 
 #### ── FAMILY: BASIC / BOUNDARY (target ko mid se compare, low<=high, mid±1; mila to ruko mat = boundary) ──
 
-```
- KAB: SORTED + ek jagah / threshold dhoondhna · "MIN / MAX value jisme condition sach" (answer pe BS)
-```
+**KAB:** SORTED + ek jagah / threshold dhoondhna · "MIN / MAX value jisme condition sach" (answer pe BS)
 
 ---
 

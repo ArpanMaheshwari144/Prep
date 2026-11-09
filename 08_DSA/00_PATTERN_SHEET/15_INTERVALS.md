@@ -1,28 +1,35 @@
 ## PATTERN 15 — INTERVALS (sort-by-start + overlap)
 
-```
- BROAD IDEA: interval = [start,end]. dikha -> PEHLA reflex = SORT. phir left-to-right handle.
-   REAL: calendar/meeting-scheduling, booking, resource-alloc.
 
+> [!IMPORTANT]
+> **BROAD IDEA:** interval = [start,end]. dikha -> PEHLA reflex = SORT. phir left-to-right handle.
+>
+> REAL: calendar/meeting-scheduling, booking, resource-alloc.
+
+### DECISION — sawaal ka verb tool chunta
+
+```
  ★ DECISION — input same [start,end], SAWAAL (verb) decide karta kaunsa tool:
      "MERGE overlapping / combine"           -> sort by START + merge
      "MAX non-overlapping pick / min remove" -> GREEDY: sort by END, free ho to pick
      "kitne ek-SAATH / MIN rooms chahiye"    -> LINE-SWEEP (start +1, end -1, running-count ka MAX)
-   greedy = wahi sort+loop, bas KEY = END (jaldi-khatam wali max room chhodti -> zyada fit).
-      A[1,10] B[2,3] C[4,5] -> START-sort = 1 · END-sort = 2. END jeeta.
-
- ★ YAHAN NAHI MILEGI:
-   non-overlapping intervals  ->  PATTERN 18 (GREEDY)
-         intervals hain, par sawaal "kam se kam kitne HATAO" = greedy choice
-         (sort by END, aur takraane wala chhodo)
 ```
 
+> [!WARNING]
+> greedy = wahi sort+loop, bas KEY = END (jaldi-khatam wali max room chhodti -> zyada fit).
+>
+> A[1,10] B[2,3] C[4,5] -> START-sort = 1 · END-sort = 2. END jeeta.
+
+**★ YAHAN NAHI MILEGI:** non-overlapping intervals -> PATTERN 18 (GREEDY)
+  intervals hain, par sawaal "kam se kam kitne HATAO" = greedy choice
+  (sort by END, aur takraane wala chhodo)
+
+---
 
 #### ── FAMILY: sort-by-start + overlap check (bas overlap pe ACTION aur boundary < / <= badalta) ──
 
-```
- KAB: [start, end] diye · merge · meeting · kitne room · insert
-```
+> [!IMPORTANT]
+> **KAB:** [start, end] diye · merge · meeting · kitne room · insert
 
 ### ▸ MERGE INTERVALS (LC-56)  = sort-by-start + merge
 

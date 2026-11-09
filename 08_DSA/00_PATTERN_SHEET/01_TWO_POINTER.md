@@ -1,12 +1,17 @@
 ## PATTERN 1 — TWO POINTER
 
-```
- BROAD IDEA: do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
- KAB: array SORTED hai aur do number ki jodi chahiye · ya array me IN-PLACE kuch hatana / aage karna hai
- ★ EDGE (sorted 2-ptr): duplicate skip karna hai kya? 3-sum HAAN, 2-sum nahi (bina skip ek triplet kai baar).
- ★ MILTE-JULTE (container / trapping / histogram): 00_SHURU me NAAM-SE-CONFUSE A dekh.
-```
 
+> [!IMPORTANT]
+> **BROAD IDEA:** do pointer (dono taraf se, ya slow-fast) -> ek saath move karke O(n).
+>
+> **KAB:** array SORTED hai aur do number ki jodi chahiye · ya array me IN-PLACE kuch hatana / aage karna hai
+
+> [!WARNING]
+> ★ EDGE (sorted 2-ptr): duplicate skip karna hai kya? 3-sum HAAN, 2-sum nahi (bina skip ek triplet kai baar).
+
+**★ MILTE-JULTE** (container / trapping / histogram): 00_SHURU me NAAM-SE-CONFUSE A dekh.
+
+---
 
 #### ── FAMILY: slow/fast OVERWRITE (fast scan, rakhne wala slow pe; teeno same skeleton) ──
 

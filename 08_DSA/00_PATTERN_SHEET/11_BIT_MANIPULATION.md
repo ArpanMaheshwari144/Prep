@@ -1,16 +1,17 @@
 ## PATTERN 11 — BIT MANIPULATION (XOR)
 
-```
- BROAD IDEA: XOR: a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
- ★ MILTE-JULTE (sorted / 1..n / dohra): 00_SHURU me NAAM-SE-CONFUSE D dekh, XOR lagane se PEHLE.
-```
 
+> [!IMPORTANT]
+> **BROAD IDEA:** XOR: a^a=0 (pair cancel), a^0=a (single bacha). pairs khud gayab, extra memory nahi.
+
+**★ MILTE-JULTE** (sorted / 1..n / dohra): 00_SHURU me NAAM-SE-CONFUSE D dekh, XOR lagane se PEHLE.
+
+---
 
 #### ── FAMILY: XOR-cancel (pair khud kat, akela / missing bacha = ans; Missing-Number bhi; Single-Number-II ALAG: wahan baaki 3 baar aate, XOR se nahi katte -> har bit ki ginti % 3) ──
 
-```
- KAB: har number 2 baar, ek akela · extra memory nahi
-```
+> [!IMPORTANT]
+> **KAB:** har number 2 baar, ek akela · extra memory nahi
 
 ### ▸ SINGLE NUMBER (LC-136)
 

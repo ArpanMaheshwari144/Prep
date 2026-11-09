@@ -1,19 +1,25 @@
 ## PATTERN 4 — PREFIX SUM
 
-```
- BROAD IDEA: running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
- ★ EDGE (prefix + hashmap, sum == K): map[0] = 1 se SHURU karo. [3], K=3: bina iske poora-array wala case chhoot jaata.
- ★ MILTE-JULTE (max sum vs count sum == K): 00_SHURU me NAAM-SE-CONFUSE C dekh.
- ★ EDGE (C++ %): minus % minus deta (-2 % 5 = -2) -> ((x % m) + m) % m  (divisible-by-k remainder).
 
-```
+> [!IMPORTANT]
+> **BROAD IDEA:** running sum pehle se rakho -> range/left-right sum O(1) (baar-baar loop nahi).
+>
+> **KAB:** range sum baar-baar · "kitne subarray ka sum = K" (negative bhi) · left sum = right sum
+
+**★ MILTE-JULTE** (max sum vs count sum == K): 00_SHURU me NAAM-SE-CONFUSE C dekh.
+
+### 2 EDGE
+
+> [!WARNING]
+> **★ EDGE (prefix + hashmap, sum == K):** map[0] = 1 se SHURU karo. [3], K=3: bina iske poora-array wala case chhoot jaata.
+
+> [!WARNING]
+> **★ EDGE (C++ %):** minus % minus deta (-2 % 5 = -2) -> ((x % m) + m) % m  (divisible-by-k remainder).
 
 #### ── FAMILY: "assign PEHLE, update BAAD" (pehle current index ka result rakho, PHIR running value badlo) ──
 
-```
- KAB: range sum baar-baar · "kitne subarray ka sum = K" (negative bhi) · left sum = right sum
- ★ DHYAAN: mp[0] = 1 bhoolna nahi ([3], K=3)
-```
+> [!WARNING]
+> **★ DHYAAN:** mp[0] = 1 bhoolna nahi ([3], K=3)
 
 ---
 
