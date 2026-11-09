@@ -19,8 +19,9 @@ Numbers Diwali 8 baje: 50 hazaar log, ghee sirf 500 · zyadatar log dekhne / car
 ```
 
 **Faisla FR se:** interview me pehle hi bol do ki sale ka maal seemit hai, to yahan consistency chahiye (500 se ek bhi
-zyada na bike), sabko milna zaroori nahi. Ye CAP wali baat hai: jo nahi milega use "out of stock", aur design usi
-hisaab se.
+zyada na bike), sabko milna zaroori nahi: jo nahi milega use "out of stock", aur design usi hisaab se. Ye CAP wali
+baat nahi: CAP tab aata hai jab kai system hon aur beech ka taar toote; yahan stock ki ginti ek hi jagah hai (Koramangala
+aur Whitefield ki alag dukaan ho to unka stock bhi alag).
 
 **Arpan ka nichod:** e-commerce me sabse bada kaam inventory management hai. Wo kar liya to 90% design wahin sort,
 baaki to frontend pe dikhana hai.
