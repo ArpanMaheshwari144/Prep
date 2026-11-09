@@ -1,78 +1,97 @@
-# SQL WINDOW FUNCTIONS — ek nazar (BlackRock + banks me aaya)
+# SQL Window Functions
 
-> Ek line: **GROUP BY jaisa hisaab, par har ROW wahin rehti hai.**
-> Running total = tera PREFIX SUM · moving average = tera SLIDING WINDOW. Naya sirf syntax hai.
+MySQL 5.7 pe ye chalta hi nahi: `ROW_NUMBER() OVER (...)` pe `ERROR 1064 syntax error`, kyunki window function MySQL 8 se aaye. Neeche ke
+saare output SQLite pe chala ke nikaale hain (9-Nov).
+
+## Data
 
 ```
-FUNC(...) OVER ( PARTITION BY x      <- khidki kaise baante (GROUP BY jaisa, row dabti nahi)
-                 ORDER BY y          <- khidki ke andar kram
-                 ROWS / RANGE ... )  <- khidki kitni badi (moving wale me)
-```
-
-## GROUP BY vs WINDOW
-```
-GROUP BY    SELECT customer, SUM(amount) FROM orders GROUP BY customer;
-            -> A ki 3 row dab ke 1 row
-
-WINDOW      SELECT id, customer, amount,
-                   SUM(amount) OVER (PARTITION BY customer) AS customer_total
-            FROM orders;
-            -> A ki teeno row rahi, har row pe A ka total (600)
+orders:  Arpan day1 100 · Arpan day2 200 · Arpan day3 300 · Ravi day1 50 · Ravi day2 150
 ```
 
-## RUNNING TOTAL (prefix sum)
-```sql
-SUM(amount) OVER (PARTITION BY customer ORDER BY day) AS running_total
+## GROUP BY ya window?
+
+GROUP BY rows ko daba ke ek kar deta hai:
 ```
+SELECT customer, SUM(amount) FROM orders GROUP BY customer;
+| Arpan | 600 |
+| Ravi  | 200 |
 ```
-A  day1 100 -> 100 · day2 200 -> 300 · day3 300 -> 600 · B pe naya shuru
+Window wahi hisaab karta hai, par har row apni jagah rehti hai:
+```
+SUM(amount) OVER (PARTITION BY customer) AS customer_total
+| Arpan | 1 | 100 | 600 |
+| Arpan | 2 | 200 | 600 |
+| Arpan | 3 | 300 | 600 |
+| Ravi  | 1 |  50 | 200 |
+| Ravi  | 2 | 150 | 200 |
+```
+`PARTITION BY` = kis hisaab se baanto (GROUP BY jaisa, par row dabti nahi).
+
+## Running total (prefix sum)
+
+`ORDER BY` lagaya to har row tak ka jod:
+```
+SUM(amount) OVER (PARTITION BY customer ORDER BY day) AS running
+| Arpan | 1 | 100 | 100 |
+| Arpan | 2 | 200 | 300 |
+| Arpan | 3 | 300 | 600 |
+| Ravi  | 1 |  50 |  50 |      <- Ravi pe naya shuru
+| Ravi  | 2 | 150 | 200 |
 ```
 
-## MOVING AVERAGE (sliding window)
-```sql
--- last 2 ROWS ka average
-AVG(amount) OVER (PARTITION BY customer ORDER BY day
-                  ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
+## Moving average (sliding window)
 
--- last 1 MINUTE ka average (time ke hisaab se khidki)
--- MySQL 8:
-AVG(price) OVER (ORDER BY ts
-                 RANGE BETWEEN INTERVAL 1 MINUTE PRECEDING AND CURRENT ROW)
--- Postgres (11+): interval quote me
-AVG(price) OVER (ORDER BY ts
-                 RANGE BETWEEN INTERVAL '1 minute' PRECEDING AND CURRENT ROW)
+Pichhli 1 row + ye wali:
 ```
+AVG(amount) OVER (PARTITION BY customer ORDER BY day ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
+| Arpan | 1 | 100 | 100 |
+| Arpan | 2 | 200 | 150 |      <- (100+200)/2
+| Arpan | 3 | 300 | 250 |      <- (200+300)/2
 ```
-ROWS   = GINTI se khidki (pichhli N row)
-RANGE  = VALUE se khidki (pichhle 1 minute me jitni bhi row)
-```
+`ROWS` = ginti se khidki (pichhli N row). `RANGE` = value se khidki (jaise pichhle 1 minute ki saari row:
+MySQL 8 me `RANGE BETWEEN INTERVAL 1 MINUTE PRECEDING AND CURRENT ROW`, Postgres me `INTERVAL '1 minute'`).
 
-## RANK wale teen
-```
-score   ROW_NUMBER   RANK   DENSE_RANK
-90      1            1      1
-80      2            2      2
-80      3            2      2        <- barabar
-70      4            4      3        <- RANK ne 3 chhoda, DENSE_RANK ne nahi
+## Rank wale teen
 
-ROW_NUMBER   har row alag number
-RANK         barabar = same, phir number CHHOOT-ta   (1,2,2,4)
-DENSE_RANK   barabar = same, kuch nahi chhoot-ta    (1,2,2,3)
+Backend: Arpan 90, Ravi 80, Sita 80, Mehta 70
+```
+name   salary  ROW_NUMBER  RANK  DENSE_RANK
+Arpan  90      1           1     1
+Ravi   80      2           2     2
+Sita   80      3           2     2      <- barabar
+Mehta  70      4           4     3      <- RANK ne 3 chhoda, DENSE_RANK ne nahi
 ```
 
-## CLASSIC: har department me 2nd highest salary
+## Classic sawaal: har department me 2nd highest salary
+
 ```sql
 SELECT * FROM (
     SELECT name, dept, salary,
            DENSE_RANK() OVER (PARTITION BY dept ORDER BY salary DESC) AS rnk
-    FROM employees
+    FROM emp
 ) t
 WHERE rnk = 2;
 ```
-★ window function WHERE me seedha nahi likh sakte (WHERE pehle chalta hai) -> subquery / CTE me lapeto.
+```
+| Ravi | Backend  | 80 |
+| Sita | Backend  | 80 |      <- dono 80, dono 2nd
+| Raj  | Frontend | 50 |
+```
+Window function ko WHERE me seedha nahi likh sakte, kyunki WHERE pehle chalta hai. Isliye andar subquery me lapeto.
 
-## Baaki kaam ke (naam yaad rakho)
+## LAG / LEAD
+
+"Kal se kitna badha?":
 ```
-LAG(col)  OVER (ORDER BY day)   pichhli row ki value   -> "kal se kitna badha?"
-LEAD(col) OVER (ORDER BY day)   agli row ki value
+amount - LAG(amount) OVER (PARTITION BY customer ORDER BY day)
+| Arpan | 1 | 100 | NULL |      <- pehle din pichhla hai hi nahi
+| Arpan | 2 | 200 | 100  |
+| Arpan | 3 | 300 | 100  |
 ```
+`LEAD` = agli row ki value.
+
+## Trap
+
+"2nd highest" me `ROW_NUMBER` lagaya to Ravi aur Sita (dono 80) me se sirf ek aata, aur kaun aayega ye tay nahi. `RANK` lagaya to barabari ke
+baad wala number chhoot jaata hai. "N-th highest" me **DENSE_RANK** hi lo.
