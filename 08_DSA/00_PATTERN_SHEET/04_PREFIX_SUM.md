@@ -183,11 +183,13 @@ Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinke saare numb
 ```
 
 **SAAR**
-```
-[4,2,2,6,4], k=6 -> 4.   CHAABI: x ^ x = 0 (same number khud se XOR = gayab)
-(shuru se j tak XOR) ^ (shuru se i tak XOR) = beech ka XOR (common hissa kat gaya)
-beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni baar aaya
-```
+
+> [!IMPORTANT]
+> [4,2,2,6,4], k=6 -> 4.   **CHAABI:** x ^ x = 0 (same number khud se XOR = gayab)
+>
+> (shuru se j tak XOR) ^ (shuru se i tak XOR) = beech ka XOR (common hissa kat gaya)
+>
+> beech wala = k chahiye -> pichhla XOR = abhi ka XOR ^ k -> map me dekho kitni baar aaya
 
 ```
 = SUBARRAY SUM = K ka hubahu copy, sirf sign badla:
@@ -230,9 +232,13 @@ Ek array aur ek number K diya hai. Kitne lagaatar subarray hain jinka sabse bada
 kitne subarray jinka MAX bilkul K. [8,2,1,3,4,5,1,10],K=3 -> 3 ([2,1,3],[1,3],[3])
 valid = (har element <= K) AND (>=1 element == K)
 K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
-═════════════════════════ ★ EDGE ═════════════════════════════════════
-"subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
 ```
+
+> [!WARNING]
+> **★ EDGE:**
+> "subarray"->SW, "max"->STACK, "count"->PQ sab galat: max FIXED K se compare -> simple scan
+
+### tasveer (K se bada = DEEWAR)
 
 ```
 [8, 2, 1, 3, 4, 5, 1, 10],  K = 3      (K se bada = DEEWAR)
@@ -248,10 +254,15 @@ K se BADE element = WALL (array todte). segment ke andar K wale subarray gino
 idx   0     1  2   3    4   5   6      7
      WALL   .  .   K  WALL WALL .    WALL
      |<-- kamra -->|
+```
 
-har i pe:   lastWall = aakhri DEEWAR ka INDEX,   lastK = aakhri K ka INDEX
-            agar lastK > lastWall  ->  count += lastK - lastWall
+> [!IMPORTANT]
+> **har i pe:**   lastWall = aakhri DEEWAR ka INDEX,   lastK = aakhri K ka INDEX
+> agar lastK > lastWall  ->  count += lastK - lastWall
 
+### DRY-RUN
+
+```
  i  arr   lastWall  lastK   jodo
  0   8       0       -1      -       (deewar)
  1   2       0       -1      -       (K abhi aaya hi nahi)
@@ -262,13 +273,20 @@ har i pe:   lastWall = aakhri DEEWAR ka INDEX,   lastK = aakhri K ka INDEX
  6   1       5        3      -       3 - 5 = -2  -> GUARD na ho to ginti ghatti
  7  10       7        3      -
                             = 3
-
-★ 7-Nov REDO_2 ki galti: lastWall = arr[i] likha (8, 4...)  ->  INDEX chahiye (0, 4...), ginti index se banti
-★ teesri if (lastK > lastWall) chhooti: i = 6 pe 3 - 5 = -2 jud jaata
-
-WHY simple: "hard-dikhne" wala tha (scary constraints + 3 candidate-pattern), par EK insight (walls) ne
-   collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 ```
+
+### purani galti (7-Nov REDO_2)
+
+```
+★ 7-Nov REDO_2 ki galti: lastWall = arr[i] likha (8, 4...)  ->  INDEX chahiye (0, 4...), ginti index se banti
+```
+
+> [!WARNING]
+> **★ teesri if (lastK > lastWall) chhooti:** i = 6 pe 3 - 5 = -2 jud jaata
+
+> [!IMPORTANT]
+> **WHY simple:** "hard-dikhne" wala tha (scary constraints + 3 candidate-pattern), par EK insight (walls) ne
+> collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 
 > [!IMPORTANT]
 > **CHAABI:** K se bada = DEEWAR. `lastWall` aur `lastK` dono INDEX rakho; har i pe pehle dono update, phir `lastK > lastWall` to `count += lastK - lastWall`.
@@ -317,6 +335,9 @@ Saari bookings ke baad har flight ki kul booked seats ka array lautao.
 > `diff` size `n + 2` (end+1 = n+1 tak jaata, `n + 1` rakha to crash). Inclusive range me `end + 1` pe ghatao; `end` pe ghataya to aakhri flight chhoot gayi.
 
 **SAAR**
+
+### DRY-RUN
+
 ```
 DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
     diff:   idx  1    2    3    4    5    6
@@ -326,9 +347,9 @@ DRY-RUN  n=5, bookings=[[1,2,10],[2,3,20],[2,5,25]]:
             net  +10  +45  -10  -20   0   -25
     run :        10   55   45   25   25
     ans = [10, 55, 45, 25, 25]
-
-★★ SWEEP-LINE se RISHTA (Arpan ne khud jod diya — "dono same hain, bas do farak"): code ke neeche comment me.
 ```
+
+**★★ SWEEP-LINE se RISHTA** (Arpan ne khud jod diya — "dono same hain, bas do farak"): code ke neeche comment me.
 
 **CODE**
 ```cpp

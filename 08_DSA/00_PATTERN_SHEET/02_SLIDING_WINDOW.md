@@ -115,10 +115,13 @@ kyun: "AABA" (index 0..3) me ek B ko A banao -> "AAAA" = 4
 **SAAR**
 ```
 SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable window + freq-map.
-KEY  : windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
-CORE TRICK (non-obvious): maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
-   se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 ```
+
+> [!IMPORTANT]
+> **KEY  :** windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
+>
+> **CORE TRICK (non-obvious):** maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
+> se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
 > [!IMPORTANT]
 > **CHAABI:** `windowLen - maxFreq` = kitne char badalne padenge. Ye `> k` hua to shrink.
@@ -160,11 +163,17 @@ kyun: index 4..9 = 0,0,1,1,1,1: do zero flip -> 6 lagaatar 1
 **SAAR**
 ```
 SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
-   LC-3 se farak: map ki jagah ek int (zeroCount), aur shrink "zero > k" pe.
-CORE LEARNING: ans UNCONDITIONAL update (bina kisi shart ke).
-   kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
-shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
 ```
+
+**LC-3 se farak:** map ki jagah ek int (zeroCount), aur shrink "zero > k" pe.
+
+> [!IMPORTANT]
+> **CORE LEARNING:** ans UNCONDITIONAL update (bina kisi shart ke).
+>
+> kyun: upar while(zeroCount>k) shrink ke BAAD window HAMESHA valid (<=k) -> yahan pahunchte hi valid -> condition faltu.
+
+> [!WARNING]
+> shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
 
 > [!IMPORTANT]
 > **CHAABI:** map ki jagah ek `zeroCount`. `zeroCount > k` hua to shrink, phir ans bina shart.
@@ -201,10 +210,15 @@ kyun: [2,3,2,2] me sirf 2 type (2,3) = 4; aage 1 jodo to 3 type ho jaate
 **SAAR**
 ```
 SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW skeleton + map<type,count>.
-while (mp.size() > 2) KYUN while: ek type poora khatam hone tak kai element hatane padte.
-   IF bhi chalta (sirf LONGEST): ek aaya ek gaya, size best se bada nahi -> len sahi. COUNT / SHORTEST me sirf while.
-CRUX = erase-on-0: count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
 ```
+
+> [!IMPORTANT]
+> **while (mp.size() > 2) KYUN while:** ek type poora khatam hone tak kai element hatane padte.
+>
+> IF bhi chalta (sirf LONGEST): ek aaya ek gaya, size best se bada nahi -> len sahi. COUNT / SHORTEST me sirf while.
+
+> [!WARNING]
+> **CRUX = erase-on-0:** count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
 
 > [!IMPORTANT]
 > **CHAABI:** alag type kitne = `mp.size()`. `> 2` hua to shrink.
@@ -287,9 +301,12 @@ kyun: cost = [1,1,1,2]; pehle 3 ka 1+1+1 = 3 <= 3; chaaron ka 5 > 3 · e.g. s="a
 **SAAR**
 ```
 SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cost-SUM <= maxCost.
-KEY  : cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
-   ONES III jaisa, ek int (cost) track, koi map nahi. cost hamesha 0 ya zyada, isliye negative wala dar nahi.
 ```
+
+> [!IMPORTANT]
+> **KEY  :** cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
+>
+> ONES III jaisa, ek int (cost) track, koi map nahi. cost hamesha 0 ya zyada, isliye negative wala dar nahi.
 
 > [!IMPORTANT]
 > **CHAABI:** har char ki cost `|s[i] - t[i]|`. Bas "longest subarray, sum <= maxCost", string ke bhes me.
@@ -325,14 +342,19 @@ kyun: [4,3] = 7 >= 7, length 2; akela koi number 7 tak nahi pahunchta
 **SAAR**
 ```
 SAAR : positive nums, sum >= target wala SABSE CHHOTA subarray ki length (nahi mile -> 0).
-LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):
-   LONGEST  (jaise no-repeat): window BADA chahiye -> shrink SIRF jab INVALID ho (validity wapas laane ko) ->
-            record BAAHAR (shrink ke BAAD, valid window ki length).
-   SHORTEST (ye / min-window):  window CHHOTA chahiye -> VALID hote hi record + shrink (chhota karte jao jab tak valid) ->
-            record ANDAR (shrink loop ke andar, har step).   <- YE wahi.
-   1-line: LONGEST = shrink-jab-MAJBOORI(invalid), record-baad  ·  SHORTEST = shrink-jab-tak-VALID, record-andar.
 char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" family me (LC-1358 ke saath).
 ```
+
+> [!IMPORTANT]
+> **LONGEST vs SHORTEST (yahi confusion ki JAD -- window BADA chahiye ya CHHOTA):**
+>
+> LONGEST  (jaise no-repeat): window BADA chahiye -> shrink SIRF jab INVALID ho (validity wapas laane ko) ->
+> record BAAHAR (shrink ke BAAD, valid window ki length).
+>
+> SHORTEST (ye / min-window):  window CHHOTA chahiye -> VALID hote hi record + shrink (chhota karte jao jab tak valid) ->
+> record ANDAR (shrink loop ke andar, har step).   <- YE wahi.
+>
+> 1-line: LONGEST = shrink-jab-MAJBOORI(invalid), record-baad  ·  SHORTEST = shrink-jab-tak-VALID, record-andar.
 
 > [!IMPORTANT]
 > **CHAABI:** SHORTEST: valid hote hi record + shrink, ans `while` ke ANDAR. (LONGEST me ans `while` ke BAAD.)
@@ -373,9 +395,12 @@ kyun: window sums 8, 7, 9, 6 -> max 9 (5+1+3)
 **SAAR**
 ```
 SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k).
-KEY  : variable nahi -- size fix k, isliye IF (ek hi remove).
-WHY IF-not-WHILE : fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
 ```
+
+> [!IMPORTANT]
+> **KEY  :** variable nahi -- size fix k, isliye IF (ek hi remove).
+>
+> **WHY IF-not-WHILE :** fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
 
 > [!IMPORTANT]
 > **CHAABI:** size fix `k` -> `if` (ek aaya, ek gaya), `while` nahi.
@@ -414,27 +439,43 @@ kyun: back se 3 = 1+6+5 = 12; front 3 = 6, mix (1+2+1 = 4, 1+1+6 = 8) kam
 **SAAR**
 ```
 Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
-
-★ RECOGNITION (jab question AISE sound kare): "dono end se k cards lo, sum MAX" -> ye SIGNAL hai.
-   k UTHANE ki tension MAT lo -> ULTA jo BACHTA hai (beech ka L-k) usko MIN kardo -> answer apne-aap.
-   flip ke baad "ye problem THA HI NAHI" -> plain MAX-SUM-K ki MIN-version + (Total - min). bas.
-
-DERIVE (kaise pahuncha -- yahin GADBAD ki thi, dobara padho to soch-ki-raah + galtiyan):
-  (0) "sirf back se k" -> galat: [100,1,1,1,1] k=2 -> front-2=101 best.
-  (1) "front se k + back se k" -> galat: wo 2k cards; problem = k TOTAL (dono end milake). [yahin atka: L-2k nikaal raha tha]
-  (2) taken cards DONO end pe -> contiguous NAHI -> seedha SW fail.
-  (3) FLIP (aha): untaken = beech ka CONTIGUOUS window, size L-k.
-  (4) taken MAX = untaken MIN -> answer = Total - min.  ("hard" flip ke baad TRIVIAL.)
-
-TWIST (yahi hard part): taken cards DONO end pe (contiguous NAHI) -> seedha SW nahi chalta.
-     ULTA socho -> jo NAHI liye = beech ka CONTIGUOUS window, size L-k.
-     taken MAX  <=>  untaken MIN.   answer = Total - min(window).
-= MAX-SUM-SIZE-K (pattern-01) ka cousin -- SAME fixed-window mechanic, bas 3 DELTA:
-     (a) window size = L-k  (b) MAX ki jagah MIN dhundo  (c) answer = Total - min.
-
-DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
-FAMILY: fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
 ```
+
+> [!IMPORTANT]
+> **★ RECOGNITION (jab question AISE sound kare):** "dono end se k cards lo, sum MAX" -> ye SIGNAL hai.
+>
+> k UTHANE ki tension MAT lo -> ULTA jo BACHTA hai (beech ka L-k) usko MIN kardo -> answer apne-aap.
+>
+> flip ke baad "ye problem THA HI NAHI" -> plain MAX-SUM-K ki MIN-version + (Total - min). bas.
+
+> [!WARNING]
+> **DERIVE (kaise pahuncha -- yahin GADBAD ki thi, dobara padho to soch-ki-raah + galtiyan):**
+>
+> (0) "sirf back se k" -> galat: [100,1,1,1,1] k=2 -> front-2=101 best.
+>
+> (1) "front se k + back se k" -> galat: wo 2k cards; problem = k TOTAL (dono end milake). [yahin atka: L-2k nikaal raha tha]
+>
+> (2) taken cards DONO end pe -> contiguous NAHI -> seedha SW fail.
+>
+> (3) FLIP (aha): untaken = beech ka CONTIGUOUS window, size L-k.
+>
+> (4) taken MAX = untaken MIN -> answer = Total - min.  ("hard" flip ke baad TRIVIAL.)
+
+> [!IMPORTANT]
+> **TWIST (yahi hard part):** taken cards DONO end pe (contiguous NAHI) -> seedha SW nahi chalta.
+> ULTA socho -> jo NAHI liye = beech ka CONTIGUOUS window, size L-k.
+> taken MAX  <=>  untaken MIN.   answer = Total - min(window).
+>
+> = MAX-SUM-SIZE-K (pattern-01) ka cousin -- SAME fixed-window mechanic, bas 3 DELTA:
+> (a) window size = L-k  (b) MAX ki jagah MIN dhundo  (c) answer = Total - min.
+
+### DRY-RUN
+
+```
+DRY-RUN [1,2,3,4,5,6,1] k=3: Total=22, win=4 -> [1,2,3,4]=10 · [2,3,4,5]=14 · [3,4,5,6]=18 · [4,5,6,1]=16 -> min=10 -> 22-10=12.
+```
+
+**FAMILY:** fixed-size SW + COMPLEMENT trick ("kya NAHI liya" gino). trap = k cards TOTAL (dono end milake), na har end se k.
 
 > [!IMPORTANT]
 > **CHAABI:** ulta socho: jo NAHI liye wo beech ki lagaatar window (size n - k). Answer = Total - min.
@@ -483,15 +524,24 @@ kyun: index 0 aur 3 dono pe 1, farak 3 <= 3
   k=0: |i-j|<=0 matlab same index, jodi ban hi nahi sakti
 
 **SAAR**
+
+> [!IMPORTANT]
+> **★ RECOGNITION:** "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
+>
+> **KEY INSIGHT:** agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
+> -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
+
+### DRY-RUN
+
 ```
-★ RECOGNITION: "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
-   KEY INSIGHT: agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
-   -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
 DRY-RUN [1,2,3,1] k=3: 1,2,3 add -> j=3 nums=1 set me hai -> true. | [1,2,3,1,2,3] k=2: har baar window<=2, kabhi dup nahi -> false.
-★ k=0 kyun alag: check (st.count) window CHHOTI hone se PEHLE hota hai -> k=0 pe pichhla element
-   abhi set me hota, [4,4] k=0 pe true aa jaata (sahi false).
-FAMILY: fixed-window (size k) + HashSet (seen-check). value-equal -> set; within-k -> window size k.
 ```
+
+> [!WARNING]
+> **★ k=0 kyun alag:** check (st.count) window CHHOTI hone se PEHLE hota hai -> k=0 pe pichhla element
+> abhi set me hota, [4,4] k=0 pe true aa jaata (sahi false).
+
+**FAMILY:** fixed-window (size k) + HashSet (seen-check). value-equal -> set; within-k -> window size k.
 
 > [!IMPORTANT]
 > **CHAABI:** set me sirf pichhle k element rakho. Duplicate mila to index ka farak apne aap <= k.
@@ -535,21 +585,30 @@ kyun: 4 akele + [10,5]=50, [5,2]=10, [2,6]=12, [5,2,6]=60 = 8; [10,5,2]=100 kam 
 ```
 SAAR : kitne subarray jinka product < k. variable window, COUNT (length nahi).
    lamba wala dhaancha, bas max ki jagah count += j - i + 1.
-COUNT TRICK: valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarray). (bahut count-Q me)
-GINTI KYUN (j-i+1):  window [i..j] valid hai, to j pe KHATAM hone wale ye sab bhi valid:
-                     [j], [j-1..j], ... [i..j]  =  j-i+1 subarray
+```
 
+> [!IMPORTANT]
+> **COUNT TRICK:** valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarray). (bahut count-Q me)
+>
+> **GINTI KYUN (j-i+1):**  window [i..j] valid hai, to j pe KHATAM hone wale ye sab bhi valid:
+> [j], [j-1..j], ... [i..j]  =  j-i+1 subarray
+
+### DRY-RUN
+
+```
 DRY-RUN [10,5,2,6], k=100:
     j=0  prod 10               window [10]          +1   count 1
     j=1  prod 50               window [10,5]        +2   count 3
     j=2  prod 100 >= 100 -> 10 hatao, prod 10       +2   count 5   ([5,2],[2])
     j=3  prod 60               window [5,2,6]       +3   count 8
-
-★ EDGE: shrink ki shart me `&& i <= j` zaroori.
-    k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
-    aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
-    k = 0 alag, upar hi return 0.
 ```
+
+> [!WARNING]
+> **★ EDGE:** shrink ki shart me `&& i <= j` zaroori.
+> k = 1 pe window poori khaali hone ke baad bhi prod = 1 rehta (khaali ka product 1),
+> aur 1 >= 1 sach -> bina i <= j ke loop array ke BAHAR chala jaata.  ([1], k=1 -> 0)
+>
+> k = 0 alag, upar hi return 0.
 
 > [!IMPORTANT]
 > **CHAABI:** `count += j - i + 1`: j pe khatam hone wale saare subarray.
@@ -589,27 +648,35 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k) {
 ```
 SAAR : kitne SUBARRAYS jinme EXACTLY k different numbers.
    atMostK = fruit ka code, bas max ki jagah COUNT (ans += j-i+1).
-CHAAL: "exactly K" seedha SW se count ganda (boundary saaf nahi).
-       => exactly(k) = atMost(k) - atMost(k-1).
-          atMost(k) = "0..k distinct wale SAB" ; atMost(k-1) = "0..k-1 wale sab" ; ghata do -> exactly k.
-          (jaise  <=5  -  <=1  =  2..5)
+```
 
-WHY (bucket): atMost(k) = CUMULATIVE dabba = (distinct=1) + (distinct=2) + ... + (distinct=k).
-              atMost(k-1) = wahi bina aakhri layer.  ghata do -> sirf (distinct=k) bacha (baaki cancel).
-              jaise bade dabbe me se chhota nikaalo -> extra layer = exactly k.
+> [!IMPORTANT]
+> **CHAAL:** "exactly K" seedha SW se count ganda (boundary saaf nahi).
+> => exactly(k) = atMost(k) - atMost(k-1).
+> atMost(k) = "0..k distinct wale SAB" ; atMost(k-1) = "0..k-1 wale sab" ; ghata do -> exactly k.
+> (jaise  <=5  -  <=1  =  2..5)
+>
+> **WHY (bucket):** atMost(k) = CUMULATIVE dabba = (distinct=1) + (distinct=2) + ... + (distinct=k).
+> atMost(k-1) = wahi bina aakhri layer.  ghata do -> sirf (distinct=k) bacha (baaki cancel).
+> jaise bade dabbe me se chhota nikaalo -> extra layer = exactly k.
 
+### DRY [1,2,1,2,3], k=2
+
+```
 DRY  : [1,2,1,2,3], k=2   -- atMost(2) = konse subarray?
            distinct=1 (5):  [1] [2] [1] [2] [3]
            distinct=2 (7):  [1,2] [2,1] [1,2] [2,3] [1,2,1] [2,1,2] [1,2,1,2]   <- ANSWER
            atMost(2) = 5 + 7 = 12  (distinct 1 aur 2 dono gine)
            atMost(1) = 5           (sirf distinct=1)
            12 - 5 = 7 ✓            (distinct=1 dono me tha -> cancel, sirf exactly-2 bache)
-
-★ k=1 pe special-case NAHI: atMost(0) naturally 0 -> subtraction rehne do.
-★ TRAP: atMost me ans = 0 (max-template se copy karo to INT_MIN reh jaata -> k=1 pe garbage).
-
-FAMILY: fruit-into-baskets · longest-k-distinct · (koi bhi "exactly K" -> atMost(k)-atMost(k-1))
 ```
+
+> [!WARNING]
+> ★ k=1 pe special-case NAHI: atMost(0) naturally 0 -> subtraction rehne do.
+>
+> **★ TRAP:** atMost me ans = 0 (max-template se copy karo to INT_MIN reh jaata -> k=1 pe garbage).
+
+**FAMILY:** fruit-into-baskets · longest-k-distinct · (koi bhi "exactly K" -> atMost(k)-atMost(k-1))
 
 > [!IMPORTANT]
 > **CHAABI:** exactly(k) = atMost(k) - atMost(k - 1).
@@ -655,11 +722,12 @@ kyun: "ADOBEC" (6) bhi A,B,C rakhta, par "BANC" (4) sabse chhota
 
 **SAAR**
 ```
-FAMILY need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR):
-   LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD).
 count = t.size(). count==0 => window me t ke SAARE char (VALID).
 DERIVE: chhote example HAATH-trace (ADOBECODEBANC -> BANC) se map+count nikla.
 ```
+
+**FAMILY** need-map + COUNT (t ke SAARE char chahiye -- --/++ MIRROR):
+LC-76 + LC-1358 ka EXPAND+SHRINK bilkul SAME. FARAK = answer KAHAN (LC-76 loop-ANDAR · LC-1358 loop-BAAD).
 
 > [!IMPORTANT]
 > **CHAABI:** `count = t.size()`. Aaya `--`, gaya `++` (mirror). `count == 0` = valid, record `while` ke ANDAR.
@@ -711,10 +779,14 @@ e.g. "aaacb" -> 3 · kyun: "aaacb", "aacb", "acb" me teeno; "cb" ya usse chhote 
   farak SIRF answer-line:
       LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
       LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
-WHY ans += i: shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
-   "abcabc": har j pe i = 0,0,1,2,3,4 -> jod 10
-★ Product < k wala j-i+1 yahan galat hai.
 ```
+
+> [!IMPORTANT]
+> **WHY ans += i:** shrink window INVALID tak le jaata -> ab [0..i-1] SAARE valid left-starts -> ginti = i.
+> "abcabc": har j pe i = 0,0,1,2,3,4 -> jod 10
+
+> [!WARNING]
+> ★ Product < k wala j-i+1 yahan galat hai.
 
 > [!IMPORTANT]
 > **CHAABI:** LC-76 ka same code, bas answer `ans += i`, `while` ke BAAD.
@@ -766,10 +838,14 @@ kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
 SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
 LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao;
    yahan DO map (mp1 = p, mp2 = window), aana +1 / jaana -1, 0 hua to erase, phir mp1 == mp2 milao. window fixed = p.size().
-★ FIXED window = WHILE nahi, ek IF kaafi: window poori (p.size()) hote hi usi if me i++, neeche j++ ->
-   window hamesha p.size() ki rehti, isse badi kabhi nahi. isliye map banaya: dono barabar size, seedha mp1 == mp2.
-★ GALTI: pehle har window ka substr bana ke isAnagram -> LeetCode pe TLE (34/66). ginti har baar dobara mat banao.
 ```
+
+> [!IMPORTANT]
+> **★ FIXED window = WHILE nahi, ek IF kaafi:** window poori (p.size()) hote hi usi if me i++, neeche j++ ->
+> window hamesha p.size() ki rehti, isse badi kabhi nahi. isliye map banaya: dono barabar size, seedha mp1 == mp2.
+
+> [!WARNING]
+> **★ GALTI:** pehle har window ka substr bana ke isAnagram -> LeetCode pe TLE (34/66). ginti har baar dobara mat banao.
 
 > [!IMPORTANT]
 > **CHAABI:** do map (p ki ginti, window ki ginti). Aana +1, jaana -1. Window fixed p.size() -> `if`, phir `mp1 == mp2`.
@@ -816,8 +892,10 @@ SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
 farak SIRF answer-line:
     LC-438 : mp1 == mp2 -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
     LC-567 : mp1 == mp2 -> return true        ... loop-baad: return false  (pehla match = bool)
-★ ULTA kram: s1 ko s2 ke ANDAR dhoondhna (window s2 pe chalti).
 ```
+
+> [!WARNING]
+> **★ ULTA kram:** s1 ko s2 ke ANDAR dhoondhna (window s2 pe chalti).
 
 > [!IMPORTANT]
 > **CHAABI:** LC-438 ka same code, bas `push_back(i)` ki jagah `return true`.
@@ -860,14 +938,21 @@ bool checkInclusion(string s1, string s2) {
 **SAAR**
 ```
 SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING) -> front = window ka max.
-CONNECT : back-pop (nums[back]<=nums[i]) = MONOTONIC banana -- ye UNIVERSAL (stack ho ya deque, wahi cheez; isi se monotonic).
-          DEQUE lene ki ASLI (aur AKELI) wajah = WINDOW-EXPIRY: front se purana index hatana (dq.front()==i-k -> pop_front).
-          = monotonic STACK + bas wahi 1 window-front-expiry delta. (front-pop hamesha EXISTING element hota, naya nahi.) order dono me matter.
-CORE : nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo max ban hi nahi sakte) -> pop_back.
-★ ORDER MATTERS (warna galat ans): (1) front-expiry -> (2) monotonic-clean + push -> (3) record. record hamesha LAST.
-TRAP: deque me INDICES (values nahi -- expiry ke liye index chahiye) · front-expiry ==i-k kaafi (har step check) · record sirf i>=k-1.
-FAMILY: MIN chahiye -> pop_back condition ULTA (nums[back] >= nums[i]).
 ```
+
+> [!IMPORTANT]
+> **CONNECT :** back-pop (nums[back]<=nums[i]) = MONOTONIC banana -- ye UNIVERSAL (stack ho ya deque, wahi cheez; isi se monotonic).
+> DEQUE lene ki ASLI (aur AKELI) wajah = WINDOW-EXPIRY: front se purana index hatana (dq.front()==i-k -> pop_front).
+> = monotonic STACK + bas wahi 1 window-front-expiry delta. (front-pop hamesha EXISTING element hota, naya nahi.) order dono me matter.
+>
+> **CORE :** nums[i] aaya -> usse CHHOTE back-wale BEKAAR (jab tak nums[i] zinda, wo max ban hi nahi sakte) -> pop_back.
+
+> [!WARNING]
+> **★ ORDER MATTERS (warna galat ans):** (1) front-expiry -> (2) monotonic-clean + push -> (3) record. record hamesha LAST.
+>
+> **TRAP:** deque me INDICES (values nahi -- expiry ke liye index chahiye) · front-expiry ==i-k kaafi (har step check) · record sirf i>=k-1.
+
+**FAMILY:** MIN chahiye -> pop_back condition ULTA (nums[back] >= nums[i]).
 
 > [!IMPORTANT]
 > **CHAABI:** deque me INDEX, values ghatte kram me, front = max. Kram: (1) front se purana hatao (2) peeche ke chhote pop + push (3) record.

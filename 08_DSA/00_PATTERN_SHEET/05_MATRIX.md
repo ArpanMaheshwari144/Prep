@@ -74,18 +74,25 @@ CHAABI — isme bas yahi pattern hai (pata ho to jitna code likhne me time, utna
    LEFT col    bottom -> top    phir left++     (if left <= right)
 ```
 
+> [!WARNING]
+> **GUARD — jo loop jis row/col pe chal raha, guard USI ka:**
+>
+> 3rd loop  BOTTOM row chhaap raha  ->  if (top <= bottom)
+> matlab bottom abhi bhi top se NEECHE/barabar hai -> bottom row bachi hai -> chhaapo
+>
+> 4th loop  LEFT col chhaap raha    ->  if (left <= right)
+> matlab left abhi bhi right se PEHLE/barabar hai -> left col bachi hai -> chhaapo
+>
+> 1st/2nd loop (top row, right col) pe guard NAHI -> while(top<=bottom && left<=right) bacha leta
+
+> [!IMPORTANT]
+> **GUARD — kyun?**
+> sawaal: "jo row / col ab chhaapne ja raha, wo ABHI BACHI hai?"
+> ek hi row ya ek hi col bachi ho to ulti disha wala loop WAHI dobara chhaap deta
+
+### misaal: ek row · ek col
+
 ```
-GUARD — jo loop jis row/col pe chal raha, guard USI ka:
-   3rd loop  BOTTOM row chhaap raha  ->  if (top <= bottom)
-             matlab bottom abhi bhi top se NEECHE/barabar hai -> bottom row bachi hai -> chhaapo
-   4th loop  LEFT col chhaap raha    ->  if (left <= right)
-             matlab left abhi bhi right se PEHLE/barabar hai -> left col bachi hai -> chhaapo
-   1st/2nd loop (top row, right col) pe guard NAHI -> while(top<=bottom && left<=right) bacha leta
-
-GUARD — kyun?
-   sawaal: "jo row / col ab chhaapne ja raha, wo ABHI BACHI hai?"
-   ek hi row ya ek hi col bachi ho to ulti disha wala loop WAHI dobara chhaap deta
-
    [[1,2,3]]  ek row
       top row:  1 2 3   ->  top++  ->  top=1, bottom=0
       right col: (i=1..0) kuch nahi  ->  right--  ->  right=1
