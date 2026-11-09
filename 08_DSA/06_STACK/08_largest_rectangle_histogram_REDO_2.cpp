@@ -30,10 +30,54 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+vector<int> nextSmaller(vector<int> &heights)
+{
+    int n = heights.size();
+    vector<int> ans(n, n);
+    stack<int> st;
+    for (int i = 0; i < n; i++)
+    {
+        while (!st.empty() && heights[st.top()] > heights[i])
+        {
+            int tp = st.top();
+            st.pop();
+            ans[tp] = i;
+        }
+        st.push(i);
+    }
+    return ans;
+}
+
+vector<int> prevSmaller(vector<int> &heights)
+{
+    int n = heights.size();
+    vector<int> ans(n, -1);
+    stack<int> st;
+    for (int i = n - 1; i >= 0; i--)
+    {
+        while (!st.empty() && heights[st.top()] > heights[i])
+        {
+            int tp = st.top();
+            st.pop();
+            ans[tp] = i;
+        }
+        st.push(i);
+    }
+    return ans;
+}
+
 int largestRectangleArea(vector<int> &heights)
 {
-    // yahan likh
-    return 0;
+    int n = heights.size();
+    vector<int> ns = nextSmaller(heights);
+    vector<int> ps = prevSmaller(heights);
+    int area = INT_MIN;
+    for (int i = 0; i < n; i++)
+    {
+        int width = ns[i] - ps[i] - 1;
+        area = max(area, heights[i] * width);
+    }
+    return area;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
