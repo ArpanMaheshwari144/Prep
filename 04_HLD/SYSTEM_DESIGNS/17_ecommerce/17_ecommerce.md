@@ -266,7 +266,7 @@ bacha ho to refund. Perfect design koi nahi, bas kitne refund.
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
 **Maan lo PSP 30-50 second chup, Myntra ko pata nahi Ravi ka paisa kata ya nahi:** Order ki khabar Myntra ki apni hai: Pay dabate hi apne paas order PENDING aur payment INITIATED likh diya, stock rok liya. Paisa kata ya nahi, ye PSP hi batayega, Myntra Ravi ka bank nahi dekh sakta. Isliye Razorpay se onboarding pe hi tay karo: 30-50 second me jawab do, nahi diya to request tum khud cancel karoge. 50 second guzre to Ravi ko "time out, dobara pay karo" dikhao; dobara pay kare to Razorpay ki jagah doosre PSP pe bhejo, kyunki pata hai Razorpay abhi dheema hai.
-**Asli naam:** order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), SLA (timeout pe PSP khud cancel) -> tabhi PSP failover safe (warna unknown state me doosre PSP pe do baar kat sakta, Payment kadam 11).
+**Asli naam:** order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), hamara tay kiya timeout (50 sec) + PSP ke saath tay: uske baad request cancel, der se "success" aaya to PSP khud wapas karega (auto-refund) -> isliye dobara pay doosre PSP pe safe (PSP failover). Aisa tay na ho to Payment kadam 11: PENDING rakho, doosre PSP pe nahi.
 
 ```mermaid
 flowchart TB
