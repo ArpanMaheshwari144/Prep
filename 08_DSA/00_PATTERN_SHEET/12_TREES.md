@@ -1,20 +1,33 @@
 ## PATTERN 12 — TREES (recursion)
 
+
+> [!IMPORTANT]
+> **BROAD IDEA:** har tree-Q = RECURSION on TreeNode(val, left, right).
+> 3 cheez -> BASE (null pe return) · dono taraf RECURSE · COMBINE.
+>
+> **KAB:** TreeNode diya · depth / height / path / same / mirror · level-wise · BST
+>
+> **★ DHYAAN:** BST ka inorder = sorted
+
+### Recurse PEHLE ya baad?
+
+> [!IMPORTANT]
+> **ORDER:** kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
+
+### CORE (har tree-Q bas yehi 4 line; sirf BASE + COMBINE badalte):
+
 ```
- BROAD IDEA: har tree-Q = RECURSION on TreeNode(val, left, right).
-             3 cheez -> BASE (null pe return) · dono taraf RECURSE · COMBINE.
- ★ EDGE (max path sum): left = max(0, left) · right = max(0, right) -> "0 = wo arm li hi nahi".
-         2 ke neeche -1: arm lo to 1, chhodo to 2 -> negative arm LENA nuksaan.
-
- ORDER: kaam recursion-RESULT pe depend kare -> recurse-PEHLE (post-order); independent -> free.
-
- CORE (har tree-Q bas yehi 4 line; sirf BASE + COMBINE badalte):
      solve(node) {
          if (node == NULL) return BASE;      // (1) base -> null pe ruko
          left  = solve(node->left);          // (2) node->left = NEECHE bhejo (call)
          right = solve(node->right);         // (3) left / right = jo VALUE wapas aayi (child ka jawab)
          return COMBINE(left, right);        // (4) apna jawab banao -> parent ko do (jawab neeche se upar)
      }
+```
+
+### Q1-Q4 FAISLE (kaunsa BASE / COMBINE / return)
+
+```
      // Q1 root->left (asli bachcha: recurse · LEAF check · swap) vs left (return value: COMBINE me)
      // Q1b return type: bool -> seedha call ||/&& (variable nahi) · node -> LCA
      //     · int dobara chahiye -> variable
@@ -22,11 +35,19 @@
      //    special condition kuch Q me: path-sum -> LEAF pe check · LCA -> root == p || q
      // Q3 answer seedha bane -> RETURN · parent ko height chahiye -> height RETURN + answer GLOBAL (diameter)
      // Q4 subtree se bane (height / sum) -> UPAR return · target path pe -> value NEECHE carry (path-sum)
+```
+
+### DEBUG (poora trace nahi)
+
+```
      // DEBUG: poora trace mat karo. (1) maano left/right mil gaya, bas "is node pe kya" socho
      //   (2) base + 2-3 node ka chhota tree haath se check (3) print: enter-print null-check ke BAAD
      //   (warna null->val crash), result variable me lo -> print + return dono
+```
 
- TASVEER (FLOW -- calls NEECHE jaati, JAWAB upar BUBBLE hota):
+### TASVEER (FLOW -- calls NEECHE jaati, JAWAB upar BUBBLE hota):
+
+```
          [A]
         /   \
       [B]   [C]
@@ -42,10 +63,13 @@
 
     -> har node SIRF apne 2 bachchon ka jawab leta -> apna banata -> upar deta. poora tree ek saath NAHI.
     -> null pe BASE -> phir jawab neeche se upar chadhta -> root pe final.
-
- KAB: TreeNode diya · depth / height / path / same / mirror · level-wise · BST
- ★ DHYAAN: BST ka inorder = sorted
 ```
+
+### Ek edge
+
+> [!WARNING]
+> **★ EDGE (max path sum):** left = max(0, left) · right = max(0, right) -> "0 = wo arm li hi nahi".
+> 2 ke neeche -1: arm lo to 1, chhodo to 2 -> negative arm LENA nuksaan.
 
 
 ---

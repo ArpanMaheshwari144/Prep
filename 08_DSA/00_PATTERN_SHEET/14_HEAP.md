@@ -1,47 +1,70 @@
 ## PATTERN 14 — HEAP (priority_queue: min/max top pe)
 
+
+> [!IMPORTANT]
+> **BROAD IDEA:** baar-baar MIN ya MAX + data BADALTA -> HEAP (sort mahenga). top O(1), push/pop O(log n).
+>
+> **KAB:** top-K · k-th largest/smallest · merge-k-lists · Dijkstra · median-stream.
+>
+> **MIRROR-RULE:** "k sabse BADE" -> MIN-heap size k ; "k sabse CHHOTE" -> MAX-heap size k. O(n log k).
+
+### C++ syntax
+
 ```
- BROAD IDEA: baar-baar MIN ya MAX + data BADALTA -> HEAP (sort mahenga). top O(1), push/pop O(log n).
    C++ syntax:  priority_queue<int> = MAX-heap  ·  priority_queue<int, vector<int>, greater<int>> = MIN-heap.
    ops: pq.push(x) · pq.top() · pq.pop() · pq.size() · pq.empty().
-   REAL: emergency-room (severity top pe).
-   KAB: top-K · k-th largest/smallest · merge-k-lists · Dijkstra · median-stream.
-   MIRROR-RULE: "k sabse BADE" -> MIN-heap size k ; "k sabse CHHOTE" -> MAX-heap size k. O(n log k).
- ★ EDGE (top K): MIN-heap of size k (sab max-heap me daal ke k pop = O(n log n), haar gaye).
- ★ EDGE (comparator): B KO DEKHO -> a < b = b bada = MAX-heap · a > b = b chhota = MIN-heap (neeche poora).
- ★ EDGE (pointer push): push se PEHLE null check (merge-k: khaali list push -> top()->val pe SEGFAULT).
+```
 
- ★★ COMPARATOR — "B KO DEKHO" (Arpan ka apna rule, ratta nahi):
-   comparator me sirf ye dekho ki  b  kis taraf pada hai:
-       return a < b;      ->  b BADA wala hai     ->  MAX-heap
-       return a > b;      ->  b CHHOTA wala hai   ->  MIN-heap
-   Ye sirf trick nahi, theek bhi hai. Comparator asal me poochta hai "kya a ki priority b se KAM hai?".
-   a < b likhne ka matlab hua "chhota = kam priority" -> bada upar = max-heap.
-   "b ko dekho" seedha wahi baat pakad leta hai, bina poora vaakya soche.
+**REAL:** emergency-room (severity top pe).
+
+### COMPARATOR — "B KO DEKHO"
+
+> [!IMPORTANT]
+> **★★ COMPARATOR — "B KO DEKHO" (Arpan ka apna rule, ratta nahi):**
+> comparator me sirf ye dekho ki  b  kis taraf pada hai:
+>
+> `return a < b;`      ->  b BADA wala hai     ->  MAX-heap
+>
+> `return a > b;`      ->  b CHHOTA wala hai   ->  MIN-heap
+>
+> Ye sirf trick nahi, theek bhi hai. Comparator asal me poochta hai "kya a ki priority b se KAM hai?".
+> a < b likhne ka matlab hua "chhota = kam priority" -> bada upar = max-heap.
+> "b ko dekho" seedha wahi baat pakad leta hai, bina poora vaakya soche.
+
+```
    Bade objects pe bhi wahi:
        return a->val > b->val;      ->  b chhota  ->  MIN-heap
        return a.dist  < b.dist;     ->  b bada    ->  MAX-heap
        priority_queue<int>                             -> max-heap (default)
        priority_queue<int, vector<int>, greater<int>>  -> min-heap
-   (Doosra tareeka, agar kabhi shak ho: comparator = SORT ka niyam. a<b = ascending [1,3,5,9].
-    sort() shuru se padhta hai, priority_queue aakhir se uthata hai -> 9 top pe = max-heap.
-    Dono raaste ek hi jagah pahunchte hain.)
-
- ★ YAHAN NAHI MILENGI ("k-th / median" sun ke heap lagta hai, par nahi):
-   median of 2 sorted arrays  ->  PATTERN 7 (BINARY SEARCH)
-         stream nahi hai — do SORTED array hain -> ek CUT dhoondo, O(log)
-   kth smallest in BST        ->  PATTERN 12 (TREES)
-         BST ka INORDER khud sorted deta hai -> k-1 wala element, heap ki zaroorat nahi
 ```
+
+(Doosra tareeka, agar kabhi shak ho: comparator = SORT ka niyam. a<b = ascending [1,3,5,9].
+sort() shuru se padhta hai, priority_queue aakhir se uthata hai -> 9 top pe = max-heap.
+Dono raaste ek hi jagah pahunchte hain.)
+
+### 3 EDGE
+
+> [!WARNING]
+> **★ EDGE (top K):** MIN-heap of size k (sab max-heap me daal ke k pop = O(n log n), haar gaye).
+>
+> **★ EDGE (comparator):** B KO DEKHO -> a < b = b bada = MAX-heap · a > b = b chhota = MIN-heap (neeche poora).
+>
+> **★ EDGE (pointer push):** push se PEHLE null check (merge-k: khaali list push -> top()->val pe SEGFAULT).
+
+**★ YAHAN NAHI MILENGI** ("k-th / median" sun ke heap lagta hai, par nahi):
+- median of 2 sorted arrays  ->  PATTERN 7 (BINARY SEARCH)
+  - stream nahi hai — do SORTED array hain -> ek CUT dhoondo, O(log)
+- kth smallest in BST        ->  PATTERN 12 (TREES)
+  - BST ka INORDER khud sorted deta hai -> k-1 wala element, heap ki zaroorat nahi
 
 
 ---
 
 #### ── FAMILY: heap of size k / top-K (size > k pe top EVICT, k bache) ──
 
-```
- KAB: top K / k-th sabse bada ya chhota · baar-baar min / max aur data badal raha · merge K list · median stream
-```
+> [!IMPORTANT]
+> **KAB:** top K / k-th sabse bada ya chhota · baar-baar min / max aur data badal raha · merge K list · median stream
 
 ### ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
 
