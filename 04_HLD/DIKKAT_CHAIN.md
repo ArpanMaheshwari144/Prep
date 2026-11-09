@@ -307,6 +307,7 @@ Yahi dikkat yahan bhi:
   Chat     1   phone har second "kuch aaya?"                  ->  poochne ka mauka hi na do (WebSocket)
   Chat     3   100 server, Ravi kis pe                        ->  DSA wala map, O(1) (session map, Redis)
   Chat     4   har server baaki 99 se taar jode?              ->  chhota ladka address le ke jaaye (Redis pub/sub)
+  Chat     12c group ke 500, har message pe 500 dhoondho?    ->  har taar-server ko ek baar, aage wo de (per-server fan-out)
   Uber     1   server ko pata nahi driver kahan               ->  phone khud bheje, ek dabba (Location Service)
   Uber     13  10 lakh phone "Raju kahan?"                    ->  poochne ka mauka mat do (push, WebSocket)
   Uber     14  Arpan server 12 pe, Raju 57 pe                 ->  ghar ka raasta pata, seedha usi raaste (pub/sub)

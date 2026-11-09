@@ -65,4 +65,10 @@ Technical me: "time ko hi number" = Snowflake ID (time + machine + chhota counte
 
 &nbsp;
 
+**Maan lo group me 500 log hain. Har message pe 500 logon ka server dhoondhna padega?**
+Arpan: 500 baar kyun bhejunga. Mere saamne 10 log baithe hain jo ek hi server se jude hain, maan lo server 4. Message aaya to bas "server 4 pe bhej do". Server 4 pe ek baitha ho ya 500, mujhe lena-dena nahi, mera kaam message dena hai. Aage server 4 apne logon ko dega.
+Technical me: "taar wala server" = WebSocket gateway, jahan phone juda hai. "group wala server" = chat server, jo number lagata hai. Dono alag hain. "server pe ek baar bhejo, aage wo apne logon ko de" = per-server fan-out (Redis pub/sub: har gateway group ka channel sunta hai, chat server us channel pe ek baar daalta hai).
+
+&nbsp;
+
 Poora design = [14_chat_messaging.md](14_chat_messaging.md)

@@ -388,6 +388,11 @@ badle to wahan number pichhle aakhri number ke aage se shuru. Had yaad ho
 to bonus: long (64-bit) me lagbhag 9.2 x 10^18 (9 ke baad 18 zero), counter har chat ka alag; warna "padhte waqt
 dekha tha, baaki net se dekh lete".
 
+**Maan lo group me 500 log, har message pe 500 logon ka server dhoondhna padega:** 500 baar kyun bhejna. Ek taar-server
+se 10 log jude hon ya 500, chat server us server pe message ek hi baar bhejta hai, aage wo server apne jude logon ko de
+deta hai. Do alag dabbe: taar wala server = WebSocket gateway (jahan phone juda), group wala server = chat server (jo
+number lagata). Asli naam: per-server fan-out, Redis pub/sub (har gateway group ka channel sunta, chat server ek baar daalta).
+
 ```mermaid
 flowchart TB
     R["Ravi: kal milte hain, phir nahi parso"]:::card
