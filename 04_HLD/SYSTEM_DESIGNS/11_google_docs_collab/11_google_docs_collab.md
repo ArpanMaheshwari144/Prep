@@ -166,7 +166,7 @@ Ya main dabbe ko bolunga: ye meri information tu bhi store kar le. Kal mujhe kuc
 jaaye to main hoon.
 
 **Asli naam:** ek dabba, saari information store = Redis buffer, us dabbe ki ek aur copy = Redis ki copy (replica),
-"Saved" tab jab copy ne bhi likh liya; mujhe kuch ho to tu hai = owner gira to naya owner usi copy se uthaaye. DB
+"Saved" tab jab copy ne bhi likh liya (Redis copy apne aap thodi der baad likhti; "copy ne bhi likh liya" pakka karne ke liye WAIT); mujhe kuch ho to tu hai = owner gira to naya owner usi copy se uthaaye. DB
 (Cassandra) me batch waise hi.
 
 **Maan lo dabba aur copy dono gir gaye, batch abhi DB me nahi gaya:** dabba memory ke saath apni disk pe bhi likhe, gire

@@ -10,7 +10,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **1. Server khud sab kar raha (lena, virus scan, thumbnail, save), Arpan 10 min spinner dekh raha, 1000 log aaye to list kholne wale bhi atke.**
 Arpan: YouTube kuch rokta nahi, bol deta "upload chal raha, chai pi aao". Matlab peeche kuch chal raha. Stadium jaisa: line me lag jao, baaki main peeche karta rahunga. File lo, line (Kafka) me daalo, worker peeche kaam kare. Status apne DB me, user UI pe dekh le. Aur jaanch: PDF bol ke exe na chadha de, to virus scan (third party) + file ka chhota tukda dekh lo ki sach me PDF / CSV hai.
-Technical me: "line" = Kafka + worker (async), "status" = DB me file ka status, "chhota tukda" = magic bytes, "scan" = third party virus scan.
+Technical me: "line" = Kafka + worker (async; Kafka me file nahi jaati, sirf file ki id / S3 ka pata, file S3 me), "status" = DB me file ka status, "chhota tukda" = magic bytes, "scan" = third party virus scan.
 
 **2. 1000 log x 2 GB = 2 TB hamare server se guzar raha, network bhar gaya.**
 Arpan: Badi file apne server se guzaro hi mat, seedha bade dabbe (S3) me. 10 GB ko tukdon me todo; 8 GB pe net gaya to sirf baaki 2 GB dobara. Client ne dobara upload kiya hi nahi to adhoore tukde thodi der baad S3 ki safai hata de.
@@ -48,7 +48,7 @@ Technical me: "umar" = presigned URL expiry (file ki sensitivity pe).
 
 **8. Scan me 10 minute baaki, Ravi ko download chahiye. Scan me virus nikla to?**
 Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
-Technical me: "alag line" = priority queue / alag topic scan ke liye, "link nahi" = status CLEAN tak download band, "lo hi mat" = INFECTED -> file hatao (quarantine / delete) + user ko batao.
+Technical me: "alag line" = scan ka alag Kafka topic (Kafka me priority nahi hoti, isliye zaroori kaam ki alag line), "link nahi" = status CLEAN tak download band, "lo hi mat" = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 **Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki.**
 Arpan: Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko dead letter queue me daal do aur insaan ko alert, investigate karo, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
 Technical me: dobara try = retry with backoff, dead letter queue = DLQ + alert (scan wali tez line se alag), link band = CLEAN tak download nahi (fail-closed).

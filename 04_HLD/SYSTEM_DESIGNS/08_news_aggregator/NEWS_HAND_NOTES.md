@@ -47,7 +47,7 @@ Technical me: "dabbe badha do" = aur Redis node, par us pe bhi tech ki copy (ek 
 
 **10. Tech parchi 3 dabbon me. iPhone khabar sirf A me pahunchi. Priya ko A se dikhi, refresh pe B se gayi to gayab.**
 Arpan: Garam khabar do-teen dabbon me daalo. A ke paas hai, B ke paas nahi, to B bhi rakhe. Do me likho, do se padho: A-B, A-C, B-C, koi bhi do.
-Technical me: "do me likho, do se padho" = quorum (3 me W=2, R=2, kam se kam ek me taaza).
+Technical me: "do me likho, do se padho" = quorum (3 me W=2, R=2, kam se kam ek me taaza). Redis copies khud ye nahi karti; app do me likhe aur do se padhe (Cassandra jaisa DB ye khud karta).
 
 **11. Worker ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker DB me dekh ke dupe samjha, hata di. Khabar kisi ko nahi dikhi.**
 Arpan: Gadbad parchi se pehle hui. DB se pehle mara to dikkat nahi, doosra daal dega, dupe check + unique constraint hai. To ek status rakh: "DB me daali", "parchi me daali". Beech me gira to agla status dekh ke kaam aage badha dega. Ek tarah ki logging.

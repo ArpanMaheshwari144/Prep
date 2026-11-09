@@ -29,7 +29,7 @@ jao, aur wo apne aap sort karke rakhe. Top 10 chahiye to upar se 10 utha lo, ran
 kaunse number pe khada hai. Ye priority queue jaisa hi hai, bas wahan sirf upar wala pakka hota (parent-child), yahan
 poori line sorted hai.
 
-**Asli naam:** apne aap sort wala dabba = Redis sorted set. Score daalna / badalna (`ZINCRBY`), top 10 (`ZRANGE 0 9 REV`),
+**Asli naam:** apne aap sort wala dabba = Redis sorted set. Score daalna / badalna (`ZADD`; kadam 2 ke baad naya pack kiya number `ZADD` se, `ZINCRBY` nahi, kyunki time wala hissa bhi badalna hai), top 10 (`ZRANGE 0 9 REV`),
 mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. Commands interview me bolni nahi padti, bas "sorted set,
 score ke kram me".
 

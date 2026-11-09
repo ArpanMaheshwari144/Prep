@@ -329,7 +329,7 @@ Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 
 **Asli naam:** pehle se pata down hai = circuit breaker OPEN, tab hi fallback PSP-2. Pata nahi kata ya nahi = unknown
 state, PENDING (PSP-2 pe nahi, warna do baar katega). Itna waqt, haan ya naa = timeout + status job PSP-1 se poochhe.
-Naa to paise wapas = refund.
+Naa to paise wapas = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
 
 ```mermaid
 flowchart TB

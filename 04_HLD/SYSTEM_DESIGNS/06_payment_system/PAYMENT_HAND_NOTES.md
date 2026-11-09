@@ -51,7 +51,7 @@ Technical me: "ladka 500 le ke us tukde me" = saga do shard ke beech, "diary" = 
 
 **11. Ravi ka wallet top-up 500, PSP-1 30 second se chup. Pata nahi PSP-1 mara hai ya bas dheema, aur Ravi ke bank se paisa kata ya nahi. Doosra PSP khada hai.**
 Arpan: Chhotu ko 500 de ke bheja, wo laut ke nahi aaya. Ho sakta hai bhaag gaya, ho sakta hai line me khada ho aur dukaan pe paise de bhi diye hon. Agar pehle se pata hai ki PSP-1 down hai, to payment wahan jaane hi mat do, seedha PSP-2. Par agar pata nahi aur paise shayad kat chuke hain, to PSP-2 ko bheja to wo bhi kaat lega. Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya, naa aaya to Ravi ke paise wapas. Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
-Technical me: "pehle se pata down hai" = circuit breaker OPEN, tab hi fallback PSP-2, "pata nahi kata ya nahi" = unknown state, PENDING (PSP-2 pe nahi, warna do baar katega), "itna waqt, haan ya naa" = timeout + status job PSP-1 se poochhe, "naa to paise wapas" = refund.
+Technical me: "pehle se pata down hai" = circuit breaker OPEN, tab hi fallback PSP-2, "pata nahi kata ya nahi" = unknown state, PENDING (PSP-2 pe nahi, warna do baar katega), "itna waqt, haan ya naa" = timeout + status job PSP-1 se poochhe, "naa to paise wapas" = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
 
 &nbsp;
 

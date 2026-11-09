@@ -298,7 +298,7 @@ garam khabar do-teen dabbon me daalo. A ke paas hai, B ke paas nahi, to B bhi ra
 A-C, B-C, koi bhi do.
 
 **Asli naam:** do me likho, do se padho = quorum, N=3, W=2, R=2 (W + R > N, isliye jo bhi do padho, kam se kam ek me
-taaza).
+taaza). Redis copies khud ye nahi karti; app do me likhe aur do se padhe (Cassandra jaisa DB ye khud karta).
 
 ```mermaid
 flowchart TB
