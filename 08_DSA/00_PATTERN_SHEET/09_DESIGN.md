@@ -8,8 +8,11 @@
  ★ DHYAAN: LRU me map se bhi hatana mat bhoolna
 ```
 
+---
+
 ### ▸ DESIGN HASHMAP (LLD)
 
+**SAWAAL**
 ```
 Built-in map use kiye bina apna HashMap banao (string key, int value). put(key, val): key pehle se ho to value badlo, warna naya jodo.
 get(key): value lautao, na mile to -1. remove(key): key hatao.
@@ -17,6 +20,7 @@ get(key): value lautao, na mile to -1. remove(key): key hatao.
   kyun: "a" dobara aaya to naya node nahi, value 5 ho gayi -> keys sirf a,b = 2 · b hata to -1
 ```
 
+**SAAR**
 ```
 MENTAL MODEL: ek ARRAY (buckets); har slot me ek LINKED-LIST (chain). buckets[index] = us chain ka HEAD.
    index = hash<string>{}(key) % cap.  (exact C++ syntax: hash<string>{}(key) -- string hash.)  same index pe 2 key (collision) -> chain me jode (next se).
@@ -44,6 +48,14 @@ REMOVE head (prev==null):            REMOVE beech (prev exist):
 (redo ke liye poora code: file 08_DSA/09_DESIGN/01_hashmap.cpp)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** ARRAY of buckets, har slot ek CHAIN. `index = hash<string>{}(key) % cap`. put: chain me key MILI -> update, na mili -> END pe jodo + `count++`. remove: `prev == NULL` -> `buckets[index] = curr->next`, warna `prev->next = curr->next`.
+
+> [!WARNING]
+> put me key MILI -> value update + TURANT `return`. return na kiya to loop END pe DUPLICATE node + `count++` (test pass hoke bhi code galat).
+> remove me advance `prev = curr`, `prev = prev->next` NAHI (prev NULL se `NULL->next` crash).
+
+**CODE**
 ```cpp
 struct Entry {                              // Entry = | key | value | next |
     string key;
@@ -125,14 +137,18 @@ public:
 ```
 
 
+---
+
 ### ▸ DESIGN HASHSET (LLD)  = HASHMAP ka EXACT code, bas VALUE nikaal do
 
+**SAWAAL**
 ```
 Built-in set use kiye bina apna HashSet banao (sirf string key). add(key): dohrav nahi daalna. contains(key): hai to true, warna false. remove(key): hatao.
   e.g. add("apple") add("banana") add("apple") · contains("apple") -> true · size() -> 2 · remove("apple") -> contains false
   kyun: doosra "apple" pehle se tha, kuch nahi juda -> 2 key · remove ke baad apple gayab
 ```
 
+**SAAR**
 ```
 CONNECTION (HashMap se):
 ┌──────────┬──────────────────────────────┬──────────────────────────────┐
@@ -154,6 +170,13 @@ BUG-CATCH (remove, khud pakda): advance = "prev = curr; curr = curr->next"
    (NA prev = prev->next -- prev NULL se non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** HASHMAP ka hi code, Entry me sirf `| key | next |`. add: key mili -> kuch nahi (`return`), na mili -> chain END + `sz++`. contains = get ka true/false. remove HUBAHU same.
+
+> [!WARNING]
+> remove me advance `prev = curr; curr = curr->next`. `prev = prev->next` NAHI: prev NULL se non-head remove pe `NULL->next` = CRASH.
+
+**CODE**
 ```cpp
 struct Entry {                              // HashMap ka EXACT code, bas VALUE nahi: | key | next |
     string key;
@@ -232,8 +255,11 @@ public:
 };
 ```
 
+---
+
 ### ▸ LRU CACHE (LC146) — COMBO: hashmap + doubly-linked-list
 
+**SAWAAL**
 ```
 Ek fixed capacity wala cache banao. get(key): value lautao, na ho to -1. put(key, val): daalo ya badlo. Dono O(1) me.
 Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least recently used).
@@ -241,6 +267,7 @@ Cache bhar jaaye to wo key hatao jo sabse lambe samay se use nahi hui (least rec
   kyun: get(1) se 1 taaza, put(3) pe 2 sabse purana -> hata · put(4) pe ab 1 purana -> hata, bache 3,4
 ```
 
+**SAAR**
 ```
 MENTAL MODEL: get+put DONO O(1). 2 zaroorat -> 2 structure JODO:
    hashmap: key -> DLL-node ka POINTER  (find O(1))
@@ -265,6 +292,16 @@ TRAP: (1) mp[key] missing pe CHUP-CHAAP entry INSERT -> check ke liye mp.count()
           test me key == val ho (1,1 · 2,2) to ye chhup jaata -> test me key != val rakho (1,100).
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** hashmap = KAHAN (`key -> Node*`), DLL dummy `head`/`tail` = ORDER (head-side MRU, tail-side LRU). get aur put dono me `removeNode` + `addFront`. Full pe `tail->prev` hatao + `mp.erase(key)`.
+
+> [!WARNING]
+> check `mp.count(key)` se, `mp[key]` chup-chaap entry bana deta.
+> put me key pehle se ho to `removeNode` + `addFront` DONO; sirf addFront = node purani jagah bhi juda -> wahi evict (put1 put2 put(1,10) put3 -> get(1) = -1, sahi 10).
+> evict me `mp.erase(toBeRemoved->key)`, `->val` NAHI (wo key hi nahi, kuch nahi hatta; test me key != val rakho).
+> addFront me `nxt = head->next` overwrite se PEHLE pakdo. ctor me `Node *head =` nahi (shadowing = naya local).
+
+**CODE**
 ```cpp
 struct Node {                               // Node = | key | val | prev | next |
     int key, val;

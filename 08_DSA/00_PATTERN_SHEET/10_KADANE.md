@@ -9,14 +9,24 @@
  KAB: subarray ka MAX sum / product · stock ka ek baar kharido-becho
 ```
 
+---
+
 ### ▸ BUY/SELL STOCK (LC-121)  = running MIN cache (aaj ka daam - ab tak ka sasta)
 
+**SAWAAL**
 ```
 prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din becho. Sabse zyada kitna munafa ho sakta hai, wo lautao. Munafa na ho to 0.
   e.g. [7,1,5,3,6,4] -> 5
   kyun: din 1 pe 1 me kharida, din 4 pe 6 me becha = 5; pehle-chhota baad-bada ka isse bada farak nahi
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** running MIN cache: har din `minSoFar = min(minSoFar, prices[i])` PEHLE, phir `ans = max(ans, prices[i] - minSoFar)`. End me `ans < 0 ? 0 : ans`.
+
+> [!WARNING]
+> min update PEHLE, diff BAAD (sell buy ke BAAD; ulta kiya to diff minus / aaj ka daam khud se). `minSoFar = INT_MAX` se shuru, pehla din hi sasta ban jaaye.
+
+**CODE**
 ```cpp
 int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab tak ka sasta
     int ans = INT_MIN;
@@ -32,14 +42,24 @@ int maxProfit(vector<int> &prices) {        // aaj becho = aaj ka daam MINUS ab 
 ```
 
 
+---
+
 ### ▸ MAX SUBARRAY SUM (LC-53)  = KADANE ka BASE (running sum, negative = bojh -> 0)
 
+**SAWAAL**
 ```
 Ek array diya hai. Lagaatar numbers ka aisa subarray (kam se kam ek number) chuno jiska jod sabse bada ho, aur wo jod lautao.
   e.g. [-2,1,-3,4,-1,2,1,-5,4] -> 6
   kyun: [4,-1,2,1] = 6; pehle ke -2,1,-3 ka jod negative, unhe saath lena sum ghatata
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** running `sum += it`, `maxSum = max(maxSum, sum)`, `sum < 0` = bojh -> `sum = 0`.
+
+> [!WARNING]
+> max PEHLE, reset BAAD; `maxSum = INT_MIN` (0 nahi). Warna all-negative `[-1]` pe 0 aata, sahi -1.
+
+**CODE**
 ```cpp
 int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> sum = 0
     int maxSum = INT_MIN;                   // ★ INT_MIN: all-negative [-1] bhi pakde
@@ -55,22 +75,33 @@ int maxSubArray(vector<int> &nums) {        // running sum NEGATIVE = bojh -> su
 ```
 
 
+---
+
 #### ── FAMILY: flip ho to MIN bhi + 3 candidate + FREEZE (temp) · 53 sum · 152 product · 1749 abs ──
 
 ### ▸ MAX PRODUCT SUBARRAY (LC-152)  = KADANE + MIN bhi (neg x neg = bada)
 
+**SAWAAL**
 ```
 Ek array diya hai. Lagaatar numbers ka aisa subarray chuno jiska guna sabse bada ho, aur wo guna lautao. Minus numbers bhi ho sakte hain.
   e.g. [-2,3,-4] -> 24
   kyun: -2 x 3 = -6 (sabse chhota), phir x -4 = 24; neg x neg = bada, isliye min bhi saath rakhna
 ```
 
+**SAAR**
 ```
 ★ SHURUAAT (24-Sep theek kiya):  max = 1, min = 1, ans = INT_MIN,  loop i = 0 se.   // ans INT_MIN: 0 se [-2] pe 0 aata, sahi -2
   pehle max=min=nums[0], ans=0, loop 1 se tha -> nums[0] AKELA kabhi ans me nahi gaya
   -> [4,-3] pe 0 aata (sahi 4). niyam: loop 1 se ho to ans bhi nums[0] se; loop 0 se to 1 / INT_MIN se.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** 3 candidate `{nums[i], mini * nums[i], maxi * nums[i]}`: max aur MIN dono rakho (neg x neg = bada). `ans = max(ans, maxi)`.
+
+> [!WARNING]
+> `temp` me max FREEZE karo, `mini` purane `maxi` se nikaalo, phir `maxi = temp` (max min ke BAAD). Shuruaat `mini = maxi = 1`, `ans = INT_MIN`, loop 0 se: `ans = 0` pe `[-2]` me 0 aata, sahi -2.
+
+**CODE**
 ```cpp
 int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (chhota kal sabse bada)
     int mini = 1;                           // SHURUAAT: mini = maxi = 1, ans = INT_MIN, loop 0 se
@@ -87,20 +118,31 @@ int maxProduct(vector<int> &nums) {         // neg*neg = BADA -> MIN bhi track (
 ```
 
 
+---
+
 ### ▸ MAX ABSOLUTE SUM (LC-1749)  = MAX PRODUCT ka skeleton, * -> +, ans me ABS
 
+**SAWAAL**
 ```
 Ek array diya hai. Kisi bhi lagaatar subarray ka jod lo aur uska absolute value (minus hata ke) dekho. Sabse bada absolute jod lautao.
   e.g. [2,-5,1,-4,3,-2] -> 8
   kyun: [-5,1,-4] = -8, |-8| = 8; sabse bada positive tukda sirf 3, to bada-negative jeeta
 ```
 
+**SAAR**
 ```
 ★ SHURUAAT (24-Sep theek kiya): max = 0, min = 0, ans = 0, loop i = 0 se.   n==1 -> return abs(nums[0]).   // 0 se theek: + me 0 kuch nahi jodta, abs kabhi minus nahi
   pehle max=min=nums[0], ans=0, loop 1 se -> nums[0] akela chhoot jaata ([9,-6] pe 6, sahi 9);
   aur n==1 pe abs nahi tha ([-7] pe -7, sahi 7).
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** MAX PRODUCT ka skeleton, `*` -> `+`. `ans = max(ans, max(abs(mini), abs(maxi)))`: jawab min-sum se bhi aa sakta.
+
+> [!WARNING]
+> shuruaat `0, 0, 0`, loop 0 se (+ me 0 kuch nahi jodta). `n == 1` pe `return abs(nums[0])` (`[-7]` -> 7). abs DONO pe, sirf maxi nahi.
+
+**CODE**
 ```cpp
 int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: * -> +, ans me ABS
     int n = nums.size();
@@ -119,11 +161,14 @@ int maxAbsoluteSum(vector<int> &nums) {     // = MAX PRODUCT skeleton, 2 tweak: 
 }
 ```
 
+---
+
 ── (STANDALONE — apni alag trick) ──
 
 
 ### ▸ MAX SUM CIRCULAR SUBARRAY (LC-918)  = TRICK: total − MIN-subarray
 
+**SAWAAL**
 ```
 Ek gol (circular) array diya hai, matlab end ke baad shuru wala number aata hai. Lagaatar numbers ka sabse bada jod lautao (gol ghoom ke bhi le sakte ho, khaali nahi chalega).
   e.g. [5,-3,5] -> 10
@@ -133,6 +178,7 @@ circular (end -> start wrap), max-sum NON-EMPTY subarray. TRICK: PATA hona chahi
 A) no-wrap = normal Kadane  B) wrap = poora array MINUS beech ka chunk = TOTAL - min
 ```
 
+**SAAR**
 ```
 ★ ye TRICK-problem hai -- interview me on-the-spot derive lagbhag impossible; SEEKHNA padta.
 2 CASE (bada lo): A) NO-wrap = normal Kadane (max)  ·  B) WRAP = end+start juda, BEECH ka chunk chhoda.
@@ -148,6 +194,13 @@ CONCRETE [5,-3,5]: maxK=7 (5,-3,5 contiguous -- -3 skip nahi hota) · minK=-3 ·
 CONNECT: [[house-robber-II]] jaisa "circular twist" par MECHANISM alag (HR-II = exclude-first/last; ye = total−minKadane).
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** 2 case, bada lo: NO-wrap = normal Kadane `maxSum` · WRAP = `totalSum - minSum` (beech ka sabse bura chunk hatao). `max(circularSum, maxSum)`.
+
+> [!WARNING]
+> sab non-positive (`maxSum <= 0`) -> `total - min = 0` = EMPTY subarray = galat -> sirf `maxSum` return. `minSum` Kadane-MIN se (`sum = min(sum + nums[i], nums[i])`), prefix-sum se NAHI.
+
+**CODE**
 ```cpp
 int maxKadaneK(vector<int> &nums) {
     int sum = nums[0];                      // init sum = maxSum = nums[0], loop 1 se (ya 0 + INT_MIN)
@@ -184,8 +237,11 @@ int maxSubarraySumCircular(vector<int> &nums) {
 ```
 
 
+---
+
 ### ▸ 2 MAX-SUM NON-OVERLAPPING SUBARRAYS (Google)  = KADANE (per index) + PREFIX / SUFFIX max + WALL
 
+**SAWAAL**
 ```
 Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doosre ko na chhuein (non-overlapping). Dono ke jod ko milake sabse bada total lautao.
   e.g. [1,2,-7,8,6,-4] -> 17
@@ -195,6 +251,7 @@ har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
 [2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
 ```
 
+**SAAR**
 ```
 TEMPLATE:
     maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)   // index 0 pe khatam = sirf nums[0], isliye loop 1 se
@@ -235,6 +292,13 @@ EDGE:
    loop i<n-1: aakhri split (right = akela last element) MISS mat karo. [-5,10,10] -> 20.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** 5 STEP: kadane-per-index aage -> running max = `bestLeft[i]` (0..i ka best) · mirror peeche -> `bestRight[i]` (i..n-1 ka best) · WALL: `ans = max(ans, bestLeft[i] + bestRight[i + 1])`.
+
+> [!WARNING]
+> `i + 1` = NON-OVERLAP: `bestRight[i]` liya to index i dono me, do baar gina (22 jhootha). Loop `i < n - 1` (i+1 bahar na jaaye, par aakhri split `[-5,10,10] -> 20` bhi aaye). `ans = INT_MIN`, sab minus pe 0 galat.
+
+**CODE**
 ```cpp
 vector<int> maxEndingAtForLeft(vector<int> &nums) {      // STEP 1: kadane per index (aage)
     int n = nums.size();

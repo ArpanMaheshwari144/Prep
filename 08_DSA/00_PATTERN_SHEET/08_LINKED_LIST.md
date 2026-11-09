@@ -23,14 +23,24 @@
  ★ DHYAAN: jodna / hatana -> DUMMY node (head bhi badal sakta)
 ```
 
+---
+
 ### ▸ MIDDLE OF LIST  = FAST/SLOW ka BASE (slow 1, fast 2)
 
+**SAWAAL**
 ```
 Linked list ka head diya hai. Beech wala node lautao. Agar list ki lambai even hai aur do beech wale node hain, to doosra wala lautao.
   e.g. 1->2->3->4->5->6 -> 4
   kyun: 6 node me beech ke do 3 aur 4 -> doosra = 4 (odd 1->2->3->4->5 hota to 3)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** dono `head` se, `slow` 1 kadam, `fast` 2 kadam. `fast` end pe pahuncha to `slow` MIDDLE pe (even me doosra middle).
+
+> [!WARNING]
+> while me `fast != NULL` PEHLE, phir `fast->next != NULL`. Koi ek check hataya to `fast->next->next` NULL pe crash.
+
+**CODE**
 ```cpp
 Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
     Node *slow = head;                      // dono head se: even list me 2nd middle milta
@@ -44,14 +54,24 @@ Node *middleNode(Node *head) {              // fast end pe -> slow MIDDLE pe
 ```
 
 
+---
+
 ### ▸ DETECT CYCLE  = MIDDLE wala fast/slow, milte hi cycle (Floyd)
 
+**SAWAAL**
 ```
 Linked list ka head diya hai. Agar list me cycle hai (koi node wapas kisi pichhle node pe point karta hai) to true, warna false.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> true
   kyun: -4 ke baad phir 2 pe aa gaye -> 2,0,-4,2,... chakkar kabhi NULL nahi aata
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** MIDDLE wala hi slow/fast. Cycle ho to fast ghoom ke slow ko pakadta -> `slow == fast` = true; fast NULL tak pahuncha = cycle nahi.
+
+> [!WARNING]
+> `slow == fast` check MOVE ke BAAD. Pehle check kiya to dono head pe hain = turant true.
+
+**CODE**
 ```cpp
 bool hasCycle(Node *head) {                 // Floyd: cycle ho to tez-dheema MILENGE
     Node *slow = head;                      // dono head se: cycle ho to fast ghoom ke slow ko pakdega
@@ -67,8 +87,11 @@ bool hasCycle(Node *head) {                 // Floyd: cycle ho to tez-dheema MIL
 ```
 
 
+---
+
 ### ▸ FIND DUPLICATE NUMBER (LC-287)   [= DETECT CYCLE ka ARRAY-application]
 
+**SAWAAL**
 ```
 Array me n+1 number hain aur har value 1 se n ke beech hai, isliye ek number zaroor dohraya gaya hai. Wo number lautao.
 Extra jagah O(1) aur array ko badalna mana hai.
@@ -81,6 +104,13 @@ values 1..n + n+1 slot -> koi value 2 baar point -> loop; cycle ki ENTRY = dupli
 [3,1,3,4,2]: 0->3->4->2->3->4->2... (loop, entry 3 = dup)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** value = POINTER (`i -> nums[i]`), cycle ki ENTRY = duplicate. PHASE-1 slow/fast milao, PHASE-2 `slow = 0`, dono 1-1 kadam, jahan mile wahi jawab.
+
+> [!WARNING]
+> loop se PEHLE ek kadam (`slow = nums[slow], fast = nums[nums[fast]]`), warna dono 0 pe = `while (slow != fast)` chalta hi nahi. PHASE-2 me sirf slow 0 pe, fast meet point pe hi rahe.
+
+**CODE**
 ```cpp
 int findDuplicate(vector<int> &nums) {
     int slow = 0, fast = 0;                 // 0 se: value 1..n, koi 0 pe point nahi -> 0 cycle ke bahar
@@ -99,8 +129,11 @@ int findDuplicate(vector<int> &nums) {
 ```
 
 
+---
+
 ### ▸ LINKED LIST CYCLE II (LC-142)   [= DETECT CYCLE + phase-2 ENTRY]
 
+**SAWAAL**
 ```
 Linked list ka head diya hai. Agar cycle hai to wo node lautao jahan se cycle shuru hoti hai, warna NULL.
   e.g. 3->2->0->-4, aur -4 ka next = 2 wala node -> node 2
@@ -109,12 +142,20 @@ Linked list ka head diya hai. Agar cycle hai to wo node lautao jahan se cycle sh
 cycle ho to uske START node ka pointer, warna NULL. = find-duplicate ka Node* version (->next)
 ```
 
+**SAAR**
 ```
 GOTCHA (24-Sep theek kiya): pehle `if(slow!=fast) return NULL` likha tha -- GALAT.
    1 node, bina cycle: loop chalta hi nahi -> slow==fast==head reh jaate -> head return ho jaata (sahi NULL).
    -> alag `cycle` flag rakho, sirf slow==fast MILNE pe true.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** DETECT CYCLE + PHASE-2: mile to `break` (fast meet point pe), `slow = head`, dono 1-1 kadam, jahan mile = cycle ka START. FIND DUPLICATE ka `->next` version.
+
+> [!WARNING]
+> cycle `flag` se decide, `slow != fast` se NAHI: 1 node bina cycle me loop chalta hi nahi, `slow == fast == head` -> galat head return (sahi NULL).
+
+**CODE**
 ```cpp
 ListNode *detectCycle(ListNode *head) {
     if (head == NULL)
@@ -142,8 +183,11 @@ ListNode *detectCycle(ListNode *head) {
 ```
 
 
+---
+
 ### ▸ PALINDROME LL (LC-234)  = MIDDLE + REVERSE (2nd half) + compare
 
+**SAWAAL**
 ```
 Linked list ka head diya hai. Agar list aage se aur peeche se ek jaisi padhi jaati hai to true, warna false.
   e.g. 1->2->2->1 -> true · 1->2->3 -> false
@@ -153,6 +197,13 @@ COMBO: middle -> 2nd half REVERSE -> head (aage se) & rev (peeche se) saath comp
 middleNode = upar wala MIDDLE OF LIST · reverseList = neeche wala REVERSE LINKED LIST
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** `middleNode` -> `reverseList(mid)` (2nd half ulta) -> `head` aage se aur `rev` peeche se saath-saath compare.
+
+> [!WARNING]
+> while me `head != NULL && rev != NULL` (`&&`): jo pehle NULL ho wahin ruko. List badalti hai (2nd half ulta), na todni ho to copy pe chalao.
+
+**CODE**
 ```cpp
 bool isPalindrome(Node *head) {
     Node *mid = middleNode(head);           // slow / fast
@@ -170,14 +221,24 @@ bool isPalindrome(Node *head) {
 ```
 
 
+---
+
 ### ▸ REMOVE NTH FROM END  = FAST/SLOW ka GAP wala (fast n aage, dummy nahi)
 
+**SAWAAL**
 ```
 Linked list ka head aur ek number n diya hai. List ke end se gina hua n-va node hatao aur naya head lautao.
   e.g. 1->2->3->4->5, n=2 -> 1->2->3->5
   kyun: end se gino 5 (1st), 4 (2nd) -> 4 hata
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** fast pehle n kadam aage (gap n), phir dono saath jab tak `fast->next != NULL` -> slow hatane wale ke PEHLE rukta -> `slow->next = slow->next->next`.
+
+> [!WARNING]
+> n kadam ke baad `fast == NULL` = head hi hatana hai -> `return head->next` (ye check while se PEHLE, warna `fast->next` NULL pe crash).
+
+**CODE**
 ```cpp
 Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam aage, phir dono saath
     Node *slow = head;                      // dummy nahi, dono head se
@@ -196,14 +257,24 @@ Node *removeNthFromEnd(Node *head, int n) { // FAST/SLOW GAP: pehle fast n kadam
 ```
 
 
+---
+
 ### ▸ REMOVE ELEMENTS (delete by val, LC-203)
 
+**SAWAAL**
 ```
 Linked list ka head aur ek number val diya hai. Jitne bhi node ki value val hai, sab hatao (head bhi ho sakta hai). Naya head lautao.
   e.g. 1->2->6->3->4->5->6, val=6 -> 1->2->3->4->5
   kyun: dono 6 wale node (beech wala aur aakhri) nikal gaye, baaki kram waisa hi
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** prev/curr: match + `prev == NULL` -> head aage · match + prev hai -> `prev->next = curr->next` · no-match -> `prev = curr`. `curr` har case me aage.
+
+> [!WARNING]
+> `prev = curr` SIRF no-match pe. Match pe prev wahi rahe (curr to hata hua node hai), warna `[1,6,6,2]`, val=6 fail.
+
+**CODE**
 ```cpp
 Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
     if (!head)
@@ -224,16 +295,23 @@ Node *removeElements(Node *head, int val) { // val wale SAARE node hatao
 ```
 
 
+---
+
 #### ── FAMILY: DUMMY node (nakli head + tail; naye node jodte jao; ans = dummy->next; head ka case apne aap) ──
 
 ### ▸ MERGE TWO SORTED (LC-21)
 
+**SAWAAL**
 ```
 Do SORTED linked list di hain. Dono ko jod ke ek sorted list banao aur uska head lautao.
   e.g. a: 1->2->4, b: 1->3->4 -> 1->1->2->3->4->4
   kyun: har baar dono ke aage wale me se chhota uthao: 1,1,2,3,4,4
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** dummy + tail: dono ke aage wale me se chhota `tail->next` pe jodo, `&&` se ek list khatam hote hi ruko, baaki poori list jod do, `return dummy->next`.
+
+**CODE**
 ```cpp
 Node *mergeTwoLists(Node *a, Node *b) {
     Node *dummy = new Node(0);              // ★ dummy: head ka special case nahi
@@ -265,8 +343,11 @@ Node *mergeTwoLists(Node *a, Node *b) {
 ```
 
 
+---
+
 ### ▸ ADD TWO NUMBERS  = MERGE TWO jaisa DUMMY + tail, bas carry
 
+**SAWAAL**
 ```
 Do linked list di hain, har node me ek digit hai aur number ulta rakha hai (ikai wala digit pehle). Dono numbers jodo aur jawab bhi isi ulte tareeke se list me lautao.
   e.g. 2->4->3 + 5->6->4 -> 7->0->8
@@ -276,6 +357,13 @@ number list me ULTA (units digit HEAD pe) -> head se head jodo = school wala rig
 (2->4->3) + (5->6->4) = 342 + 465 = 807 -> (7->0->8)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** MERGE jaisa dummy + tail, bas ek `carry`: `sum` = a + b + carry, node = `sum % 10`, `carry = sum / 10`.
+
+> [!WARNING]
+> while me `|| carry > 0` zaroori: 999 + 1 me dono list khatam, carry 1 bacha -> ek aur node (leading 1).
+
+**CODE**
 ```cpp
 Node *addTwoNumbers(Node *a, Node *b) {
     Node *dummy = new Node(0);              // dummy + tail (MERGE jaisa) + ek CARRY
@@ -301,14 +389,24 @@ Node *addTwoNumbers(Node *a, Node *b) {
 ```
 
 
+---
+
 ### ▸ SWAP NODES IN PAIRS  = DUMMY + 3-player rewire (order + temp-save)
 
+**SAWAAL**
 ```
 Linked list di hai. Har do paas-paas wale node ki jodi aapas me badal do. Value nahi badalni, node ki jagah badalni hai. Naya head lautao.
   e.g. 1->2->3->4->5 -> 2->1->4->3->5
   kyun: (1,2) -> 2,1 · (3,4) -> 4,3 · 5 akela, waise hi
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** dummy + `prev`. Har jodi: `second = first->next`, `temp = second->next` bachao, phir `second->next = first`, `first->next = temp`, `prev->next = second`. ADVANCE `prev = first`, `first = temp`.
+
+> [!WARNING]
+> `temp = second->next` PEHLE bachao, warna `first->next = temp` pe aage ki list gum. Advance me `prev = first` (purana first = is jodi ka tail).
+
+**CODE**
 ```cpp
 Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap (values nahi, pointer)
     if (!head)
@@ -331,16 +429,26 @@ Node *swapPairs(Node *head) {               // har do adjacent NODE ki jodi swap
 ```
 
 
+---
+
 #### ── FAMILY: REVERSE (3-pointer: prev / curr / next se link ulta; reverse khud + palindrome ka 2nd half) ──
 
 ### ▸ REVERSE LINKED LIST  = 3-pointer (prev / curr / next) ka BASE
 
+**SAWAAL**
 ```
 Linked list ka head diya hai. Poori list ulti karo aur naya head lautao.
   e.g. 1->2->3->4->5 -> 5->4->3->2->1
   kyun: har node ka teer ulta, purana aakhri (5) naya head
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** 3 pointer: `nextt = curr->next` bachao -> `curr->next = prev` (link ulta) -> `prev = curr`, `curr = nextt`. `return prev`.
+
+> [!WARNING]
+> `nextt` link ulatne se PEHLE bachao, warna aage ka raasta gum. Return `prev` (curr NULL pe ruka, prev = aakhri node = naya head), `curr` nahi.
+
+**CODE**
 ```cpp
 Node *reverseList(Node *head) {
     Node *prev = NULL;                      // prev=NULL: purana head naya tail, uska next NULL
@@ -357,8 +465,11 @@ Node *reverseList(Node *head) {
 ```
 
 
+---
+
 ### ▸ REVERSE NODES IN K-GROUP (LC-25)  = REVERSE-LL (3-ptr) + RECURSION
 
+**SAWAAL**
 ```
 Linked list aur ek number k diya hai. Har k node ke group ko ulta karo (node badalne hain, value nahi).
 Aakhir me k se kam node bachein to unhe waise hi chhod do.
@@ -381,6 +492,13 @@ VISUAL ( 1 -> 2 -> 3 -> 4 -> 5 ,  k=2 ):
    JODO:  2 -> 1 -> 4 -> 3 -> 5
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** (1) pehle k node GINO, kam bache -> `return head` (2) 3-pointer se sirf k node ulte (3) `head` ab group ka TAIL -> `head->next = reverseKGroup(nextt, k)`, `return prev`.
+
+> [!WARNING]
+> count-FIRST: bina gine ulta kiya to leftover (k se kam) bhi ulta ho jaata. Recurse `nextt` (agle group ka head) pe, stitch `head->next` pe.
+
+**CODE**
 ```cpp
 Node *reverseKGroup(Node *head, int k) {
     if (head == NULL)
@@ -411,10 +529,13 @@ Node *reverseKGroup(Node *head, int k) {
 ```
 
 
+---
+
 #### ── FAMILY: HASHMAP-AS-GLUE (map<old*, new*> = purane node ko naye se jodne wala gond; LRU me bhi) ──
 
 ### ▸ COPY LIST w/ RANDOM POINTER (LC-138) = HASHMAP old->new + 2 PASS
 
+**SAWAAL**
 ```
 Linked list ke har node me val, next aur ek random pointer hai (kisi bhi node pe ya NULL). Iski poori nayi copy (deep copy) banao.
 Copy ke random pointer copy wale node pe hi hone chahiye, purani list pe nahi.
@@ -425,6 +546,7 @@ Copy ke random pointer copy wale node pe hi hone chahiye, purani list pe nahi.
 PEHCHAN: "random pointer / deep copy" -> MAP (old -> new). T = O(n), S = O(n)
 ```
 
+**SAAR**
 ```
 VISUAL ( [x]=node · -> next · ~> random ):
   ORIG:  [7] -> [13] -> [11] -> [10] -> [1]
@@ -449,6 +571,13 @@ KEY: currRand->random = mp[curr->random] = old-random ka NAYA-copy -> DEEP.
 T=O(n) S=O(n).  [O(1)-space alt = interleave A->A'->B->B' clone, optional.]
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** PASS 1: har node ka clone + `mp[curr] = temp` (old -> new) + next jodo. PASS 2: `currRand->random = mp[curr->random]` = original ke random ka NAYA copy.
+
+> [!WARNING]
+> random ORIGINAL (`curr->random`) se padho, copy (`currRand`) se nahi: copy ka random abhi NULL hota. 2 PASS isliye: random aage ke node pe bhi ho sakta, 1 pass me target bana hi na ho.
+
+**CODE**
 ```cpp
 Node *copyRandomList(Node *head) {
     if (head == NULL)
