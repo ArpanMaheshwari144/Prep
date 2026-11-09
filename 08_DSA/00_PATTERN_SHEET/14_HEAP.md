@@ -34,6 +34,9 @@
          BST ka INORDER khud sorted deta hai -> k-1 wala element, heap ki zaroorat nahi
 ```
 
+
+---
+
 #### ── FAMILY: heap of size k / top-K (size > k pe top EVICT, k bache) ──
 
 ```
@@ -42,6 +45,7 @@
 
 ### ▸ LAST STONE WEIGHT (LC-1046, Easy)  = MAX-HEAP smash
 
+**SAWAAL**
 ```
 stones[] me pattharon ka wazan diya hai. Har baari do sabse bhaari patthar takraate hain: barabar hon to dono khatam, warna bhaari wala farak jitna bachta hai.
 Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
@@ -49,6 +53,13 @@ Aakhir me jo patthar bache uska wazan lautao, koi na bache to 0.
   kyun: 7,3 -> 4 bacha · 4,2 -> 2 bacha · ek hi bacha = 2
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** `priority_queue<int>` (MAX), `while (pq.size() > 1)`: do top nikaalo, `diff > 0` to wapas push.
+
+> [!WARNING]
+> `pq.empty() ? 0 : pq.top()` me empty PEHLE: sab khatam ho gaye to `top()` crash.
+
+**CODE**
 ```cpp
 int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, diff wapas, till <=1 bache
     priority_queue<int> pq;                 // ★ MAX: har turn 2 sabse BHAARI chahiye
@@ -68,14 +79,24 @@ int lastStoneWeight(vector<int> &stones) {  // har turn 2 SABSE BHAARI smash, di
 ```
 
 
+---
+
 ### ▸ KTH LARGEST ELEMENT (LC-215, Medium)  = MIN-HEAP of size k
 
+**SAWAAL**
 ```
 Ek array aur ek number k diya hai. Array ka k-va sabse bada number lautao.
   e.g. [3,2,1,5,6,4], k=2 -> 5
   kyun: bade se gino 6, 5 -> 2nd = 5
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** MIN-heap (`greater<int>`), har push ke baad `pq.size() > k` to pop (sabse chhota evict). End me `pq.top()` = k-th largest.
+
+> [!WARNING]
+> k sabse BADE chahiye to MIN-heap, MAX nahi. Max-heap me sab daal ke k pop = O(n log n), heap ka faayda gaya.
+
+**CODE**
 ```cpp
 int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
     priority_queue<int, vector<int>, greater<int>> pq;   // ★ MIN: size>k pe sabse CHHOTA evict
@@ -89,16 +110,26 @@ int findKthLargest(vector<int> &nums, int k) {   // top-K ka core
 ```
 
 
+---
+
 ### ▸ K CLOSEST POINTS TO ORIGIN (LC-973, Medium)  = MAX-HEAP of size k
 
+**SAWAAL**
 ```
 points[] me [x, y] points diye hain aur ek number k. Origin (0, 0) ke sabse paas wale k points lautao. Doori = x*x + y*y, aur jawab kisi bhi kram me chalega.
   e.g. [[1,3],[-2,2]], k=1 -> [[-2,2]]
   kyun: [1,3] = 1+9 = 10, [-2,2] = 4+4 = 8 -> 8 chhota
-
-KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap, sabse BADI evict)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** kth-largest ka MIRROR: MAX-heap `pair<dist, point>`, `size > k` pe pop (sabse DOOR evict), bache k paas wale; `.second` = point.
+>
+> KTH-LARGEST ka MIRROR: wahan k BADE (min-heap) · yahan k CHHOTE dist (MAX-heap, sabse BADI evict)
+
+> [!WARNING]
+> `{dist, point}` me dist PEHLE (pair `first` pe compare hota). dist = `x*x + y*y`, sqrt nahi.
+
+**CODE**
 ```cpp
 vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
     priority_queue<pair<int, vector<int>>> maxHeap;   // ★ MAX: sabse door top pe, size>k pe wahi nikle
@@ -119,16 +150,26 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
 ```
 
 
+---
+
 ### ▸ TOP K FREQUENT ELEMENTS (LC-347, Medium)  = MIN-HEAP size k on FREQUENCY
 
+**SAWAAL**
 ```
 Ek array aur ek number k diya hai. Wo k numbers lautao jo array me sabse zyada baar aate hain. Kram kuch bhi chalega.
   e.g. [1,1,1,2,2,3], k=2 -> [1,2]
   kyun: 1 -> 3 baar, 2 -> 2 baar, 3 -> 1 baar -> top 2 = 1, 2
-
-KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** pehle map se freq, phir MIN-heap me `{freq, num}` size k (`size > k` pe pop). Bache k = jawab, `.second` nikaalo.
+>
+> KTH-LARGEST ka COUSIN, farak 2: (1) pehle hashmap se freq (2) heap me {freq, num}
+
+> [!WARNING]
+> `{freq, num}`: freq PEHLE, warna heap number pe sort hoga, freq pe nahi.
+
+**CODE**
 ```cpp
 vector<int> topKFrequent(vector<int> &nums, int k) {
     unordered_map<int, int> mp;
@@ -152,18 +193,28 @@ vector<int> topKFrequent(vector<int> &nums, int k) {
 ```
 
 
+---
+
 #### ── FAMILY: MIN-heap of current candidates (har baar sabse chhota nikaalo, uska agla daalo) ──
 
 ### ▸ MERGE K SORTED LISTS (LC-23, Hard)  = MIN-HEAP of current heads
 
+**SAWAAL**
 ```
 k sorted linked list di hain. Sabko jod ke ek sorted linked list banao aur uska head lautao.
   e.g. [[1,4,5],[1,3,4],[2,6]] -> [1,1,2,3,4,4,5,6]
   kyun: har baar teeno ke current head me sabse chhota uthao: 1,1,2,3,4,4,5,6
-
-struct Compare: ListNode* ko khud compare karna nahi aata
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** saare heads MIN-heap me (`Compare: a->val > b->val`), har baar top nikaalo, `tail` se jodo, uska `next` push. `dummy->next` lautao.
+>
+> struct Compare: ListNode* ko khud compare karna nahi aata
+
+> [!WARNING]
+> NULL push mat karo: heads pe `if (l)`, aur `curr->next` tabhi jab non-null. Warna `top()->val` pe SEGFAULT.
+
+**CODE**
 ```cpp
 struct Compare {                            // ListNode* ko khud compare karna nahi aata
     bool operator()(ListNode *a, ListNode *b) {
@@ -191,16 +242,26 @@ ListNode *mergeKLists(vector<ListNode *> &lists) {
 ```
 
 
+---
+
 ### ▸ SORT NEARLY-SORTED (k-sorted) ARRAY  = MIN-HEAP size k+1 (sliding buffer)
 
+**SAWAAL**
 ```
 Ek array diya hai jisme har number apni sahi (sorted) jagah se zyada se zyada k khaane door hai. Poora sorted array lautao.
   e.g. [6,5,3,2,8,10,9], k=3 -> [2,3,5,6,8,9,10]
   kyun: 2 abhi index 3 pe, sahi jagah index 0 -> 3 door = k ke andar
-
-har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** MIN-heap = sliding buffer: pehle push, phir `pq.size() > k + 1` to top nikaal ke `ans` me. End me bache sab = sorted tail.
+>
+> har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
+
+> [!WARNING]
+> `k + 1` (`k` nahi): tab tak sahi MIN buffer me aa chuka hota. Pehle push, phir size check.
+
+**CODE**
 ```cpp
 vector<int> sortKSorted(vector<int> &arr, int k) {
     vector<int> ans;
@@ -223,16 +284,22 @@ vector<int> sortKSorted(vector<int> &arr, int k) {
 ```
 
 
+---
+
 #### ── FAMILY: TWO-HEAPS (do team, dono top = beech ke border) ──
 
 ### ▸ FIND MEDIAN FROM DATA STREAM (LC-295)  = TWO-HEAPS balanced
 
+**SAWAAL**
 ```
 Numbers ek-ek karke aate hain (addNum). Kabhi bhi findMedian() bulaya jaaye to ab tak aaye saare numbers ka median lautao.
 Odd ginti pe beech wala, even pe beech ke do ka average.
   e.g. add 5, 15, 1, 3 -> findMedian = 4.0
   kyun: sorted 1,3,5,15 -> beech ke do 3,5 -> (3+5)/2 = 4
+```
 
+**SAAR**
+```
 stream me kabhi bhi median turant. add 5,15,1,3 -> 4.0 ((3+5)/2)
 ═════════════════════════ ★ EDGE ═════════════════════════════════════
 heap ka NAAM top batata, number kaun rakhta wo NAHI. "bada -> maxHeap" GALAT:
@@ -258,6 +325,13 @@ DRY: add 5,15,1,3
                                               med (3+5)/2 = 4 ✓
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** do team: `maxHeap` = CHHOTI team, `minHeap` = BADI team. Placement `maxHeap.empty() || maxHeap.top() >= num` -> maxHeap, warna minHeap; phir 2 balance-if (farak <= 1, extra maxHeap me). Size barabar -> dono top ka average, warna `maxHeap.top()`.
+
+> [!WARNING]
+> `maxHeap.empty() ||` PEHLE likho, khaali pe `top()` crash. Dono balance-`if` zaroori (num kisi bhi heap me ja sakta), doosra `maxHeap.size() > minHeap.size() + 1`.
+
+**CODE**
 ```cpp
 class MedianFinder {
 public:
@@ -290,15 +364,21 @@ public:
 ```
 
 
+---
+
 #### ── FAMILY: MAX-heap + greedy (har round sabse zyada wala lagao) ──
 
 ### ▸ REORGANIZE STRING (LC-767)  = MAX-HEAP + POP-TWO-AT-A-TIME (TOP K FREQUENT ka cousin)
 
+**SAWAAL**
 ```
 Ek string s di hai. Uske akshar aise lagao ki koi bhi do paas-paas wale akshar same na hon. Koi bhi ek sahi string lautao, aisa na ban sake to khaali string "".
   e.g. "aab" -> "aba" · "aaab" -> ""
   kyun: aab: b dono a ke beech · aaab: 3 a alag karne 2 diwaar chahiye, b sirf 1
+```
 
+**SAAR**
+```
 koi 2 ADJACENT same na ho, na bane -> "". top-k-frequent ka cousin: har round 2 nikaalo
 possible tabhi: (maxCount-1) gap <= (n-maxCount) baaki. aab OK · aaab -> ""
   (alag check na bhi rakho: aakhri bacha count>1 khud pakad leta)
@@ -317,6 +397,13 @@ VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
   ( "aaab": (3,a)(1,b) -> R1 "ab",(2,a) -> size1, count2>1 -> "" )
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** MAX-heap `{count, char}`, `while (size > 1)`: do pop -> `ans` me, count `-= 1`, `>= 1` to wapas push. Aakhir akela bacha: `count > 1` -> `""`, warna jodo.
+
+> [!WARNING]
+> `> 1` (`!empty` nahi): ek nikaal ke wapas daala to `"aa"` ban jaata. Aakhri bacha `count > 1` = do same paas aayenge, isliye `""`.
+
+**CODE**
 ```cpp
 string reorganizeString(string s) {
     string ans = "";
@@ -351,21 +438,34 @@ string reorganizeString(string s) {
 ```
 
 
+---
+
 #### ── FAMILY: MIN-heap + vis[] (lazy delete) ──
 
 ### ▸ THROTTLING — MIN UTHAO, PADOSI HATAO (Amazon OA)  = MIN-HEAP {val,idx} + vis[] (lazy skip)
 
+**SAWAAL**
 ```
 responseTimes[] diya hai. Har kadam pe bache hue numbers me se sabse chhota uthao (barabar ho to chhota index), use jawab me jodo,
 aur use aur uske dono padosi (i-1, i+1, jo bache hon) hata do. Ant me kul jod lautao.
   e.g. [4,2,9,1,7,3] -> 6
   kyun: 1 uthaya (9,7 hate) · 2 uthaya (4 hata) · 3 uthaya -> 1+2+3 = 6
+```
 
+**SAAR**
+```
 [4,2,9,1,7,3] -> 1 (9,7 gaye) -> 2 (4 gaya) -> 3 = 6
 BURST BALLOONS NAHI: wahan kaunsa phodna TU chunta + padosi badalte -> DP.
   yahan niyam tay (hamesha min) + ORIGINAL padosi -> koi choice nahi -> heap se simulate
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** MIN-heap `{val, idx}` (tie pe chhota idx apne aap pehle). Pop pe `vis[index] == false` tabhi lo, phir khud + `index-1` + `index+1` ko `vis` true.
+
+> [!WARNING]
+> LAZY delete: hata hua index heap me pada rehta, pop pe `vis` check kar ke chhodo. Padosi pe bounds `index - 1 >= 0` / `index + 1 < n`.
+
+**CODE**
 ```cpp
 long long totalResponseTime(vector<int> &responseTimes) {
     int n = responseTimes.size();
