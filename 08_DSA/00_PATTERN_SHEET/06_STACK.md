@@ -29,8 +29,11 @@
  KAB: brackets match · "har element ka agla / pichhla bada ya chhota" · span · histogram
 ```
 
+---
+
 ### ▸ NEXT GREATER ELEMENT  = monotonic stack ka BASE
 
+**SAWAAL**
 ```
 Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number hai, wo lautao. Koi bada na mile to -1.
   e.g. [2,1,2,4,3] -> [4,2,4,-1,-1]
@@ -39,6 +42,7 @@ Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse bada number
 har element ke DAAYE pehla BADA, koi nahi -> -1.  [2,1,2,4,3] -> [4,2,4,-1,-1]
 ```
 
+**SAAR**
 ```
 SAAR: MONOTONIC stack (INDEX ka). left->right. jise abhi tak apna "bada" nahi mila wo stack me pade
       (decreasing). curr aaya -> jo bhi top usse CHHOTA -> unka answer = curr -> pop.
@@ -52,6 +56,13 @@ DRY-RUN [2,1,2,4,3]:
 FAMILY: monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** INDEX ka stack, loop 0 se n-1 (NEXT = aage ka). Jo top curr se CHHOTA (`nums[st.top()] < nums[i]`) uska jawab = `nums[i]` -> pop; `while` ke BAAD `push(i)`.
+
+> [!WARNING]
+> `<` strict (`<=` nahi): `[2,2]` pe `ans[0]=2` aata, sahi -1. `!st.empty()` pehle, warna `top()` crash. top pehle bachao (`topp`), pop ke baad `top()` badal jaata.
+
+**CODE**
 ```cpp
 vector<int> nextGreater(vector<int> &nums) {
     vector<int> ans(nums.size(), -1);       // -1 init: daaye bada na mile wo -1 hi rahe
@@ -68,14 +79,24 @@ vector<int> nextGreater(vector<int> &nums) {
 }
 ```
 
+---
+
 ### ▸ NEXT SMALLER ELEMENT  = NEXT GREATER, sirf condition ULTI (>)
 
+**SAWAAL**
 ```
 Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
   e.g. [4,5,2,10,8] -> [2,2,-1,8,-1]
   kyun: 4 aur 5 ke aage pehla chhota 2 · 2 ke aage sab bade -> -1 · 10 ke aage 8 · 8 aakhri -> -1
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** NEXT GREATER ka code hubahu, sirf `while` ki shart ULTI: `nums[st.top()] > nums[i]` (naya CHHOTA aaya to top ka jawab mila). Loop 0 se n-1 (NEXT = aage ka).
+
+> [!WARNING]
+> `>` strict (`>=` nahi): `[2,2,2] -> saare -1`. DISHA: NEXT = loop `0` se `n-1`; ulta chalaya to ye PREV smaller ban jaata.
+
+**CODE**
 ```cpp
 vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition ULTI
     vector<int> ans(nums.size(), -1);
@@ -92,14 +113,24 @@ vector<int> nextSmaller(vector<int> &nums) {   // = next greater, sirf condition
 }
 ```
 
+---
+
 ### ▸ PREVIOUS SMALLER ELEMENT  = NEXT SMALLER, sirf LOOP ULTA (right->left)
 
+**SAWAAL**
 ```
 Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (strictly) number hai, wo lautao. Koi na mile to -1.
   e.g. [4,5,2,10,8] -> [-1,4,-1,2,2]
   kyun: 4 ke peeche kuch nahi · 5 ke peeche 4 · 2 ke peeche 4,5 bade -> -1 · 10 aur 8 ke peeche pehla chhota 2
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** NEXT SMALLER ka code hubahu, sirf LOOP ULTA: `for (i = n-1; i >= 0; i--)` (PREVIOUS = peeche se chalna). Shart wahi `>`.
+
+> [!WARNING]
+> DISHA hi poori chaabi: PREV = loop `n-1` se `0`. `0` se `n-1` chalaya to ye NEXT smaller ban jaata aur dry run bhi ulta ghoomta (9-Nov histogram REDO_2, 38 min yahin).
+
+**CODE**
 ```cpp
 vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA (condition wahi >)
     vector<int> ans(nums.size(), -1);
@@ -117,8 +148,11 @@ vector<int> prevSmaller(vector<int> &nums) {   // = next smaller, sirf LOOP ULTA
 // prev smaller + next smaller = histogram ka building block
 ```
 
+---
+
 ### ▸ LARGEST RECTANGLE IN HISTOGRAM (LC-84)  = PREV-SMALLER + NEXT-SMALLER (INDEX store + combine)
 
+**SAWAAL**
 ```
 heights[] me bars ki unchai di hai, har bar ki chaudai 1 hai. Lagaatar bars pe jo sabse bada rectangle ban sakta hai, uska area lautao.
   e.g. [2,1,5,6,2,3] -> 10
@@ -128,6 +162,7 @@ har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = don
 [2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
 ```
 
+**SAAR**
 ```
 SAAR: HAR bar pe KHADE ho -> left me pehla CHHOTA (PS), right me pehla CHHOTA (NS)
       = dono STOPPER -> beech ki width -> area = height*width -> sabka MAX.
@@ -238,6 +273,13 @@ FAMILY: next-GREATER se NAHI (rectangle bade bar ko andar leta, CHHOTE pe rukta)
     NS = [1, 6, 4, 4, 6, 6]
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Har bar pe KHADE ho: PS (peeche ka chhota, loop `n-1` se `0`) + NS (aage ka chhota, loop `0` se `n-1`), dono me shart `heights[top] > heights[i]`, INDEX store. `width = ns[i] - ps[i] - 1`, area = `heights[i] * width`, sabka max.
+
+> [!WARNING]
+> DISHA: NS = loop `0 -> n-1`, PS = loop `n-1 -> 0`; ulti chali to dry run bhi ulta ghoomta (9-Nov REDO_2, 38 min yahin). nS default `n` (-1 NAHI: `[2,4]` pe width -1). `>` strict (`>=` pe `[3,3,3,3] -> 3`, sahi 12). `-1` sirf EK baar (`4-2-1=1` sahi, `4-2-1-1=0` galat).
+
+**CODE**
 ```cpp
 vector<int> nextSmaller(vector<int> &heights) {
     int n = heights.size();
@@ -283,8 +325,11 @@ int largestRectangleArea(vector<int> &heights) {
 // [2,4]: nS default -1 hota to bar0 width = -1-(-1)-1 = -1 (galat); n=2 se width 2 -> area 4 (sahi)
 ```
 
+---
+
 ### ▸ MAXIMAL RECTANGLE (LC-85, 2D)  = LC-84 ka 2D bhai (har row = histogram)
 
+**SAWAAL**
 ```
 0 aur 1 ki 2D matrix di hai. Sirf 1 se bhara hua sabse bada rectangle kitna bada hai, uska area lautao.
   e.g. [[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]] -> 6
@@ -295,6 +340,13 @@ int largestRectangleArea(vector<int> &heights) {
   (neeche code teri file 06_STACK/10_maximal_rectangle.cpp jaisa: int matrix + == 1)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Har row = histogram: `matrix[i][j] == 1` to `heights[j] += 1`, warna `heights[j] = 0`; har row ke BAAD `largestRectangleArea(heights)` call, sabka max.
+
+> [!WARNING]
+> 0 aaya to column RESET (`heights[j] = 0`, build-up tootta). Call j-loop ke BAHAR (har row ke baad). `heights` ka size COL (row nahi). LeetCode pe matrix `char` aati -> `== '1'`.
+
+**CODE**
 ```cpp
 int maximalRectangle(vector<vector<int>> &matrix) {
     int row = matrix.size();
@@ -314,14 +366,24 @@ int maximalRectangle(vector<vector<int>> &matrix) {
 }
 ```
 
+---
+
 ### ▸ DAILY TEMPERATURES  = NEXT GREATER, ans me VALUE nahi DISTANCE (i - top)
 
+**SAWAAL**
 ```
 temps[] me har din ka taapmaan diya hai. Har din ke liye batao ki kitne din baad pehla usse garam din aata hai. Garam din kabhi na aaye to 0.
   e.g. [73,74,75,71,69,72,76,73] -> [1,1,4,2,1,1,0,0]
   kyun: 75 (din 2) ke baad pehla zyada 76 din 6 pe -> 6-2 = 4 · 76 ke baad koi zyada nahi -> 0
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** NEXT GREATER ka code, ans me VALUE nahi DISTANCE: `ans[tp] = i - tp`.
+
+> [!WARNING]
+> init `0` (-1 nahi): garam din na mile to 0. `<` strict: barabar taapmaan = garam nahi.
+
+**CODE**
 ```cpp
 vector<int> dailyTemperatures(vector<int> &temps) {
     int n = temps.size();
@@ -339,14 +401,24 @@ vector<int> dailyTemperatures(vector<int> &temps) {
 }
 ```
 
+---
+
 ### ▸ NEXT GREATER ELEM II  = NEXT GREATER + CIRCULAR (2n loop, i % n)
 
+**SAWAAL**
 ```
 Ek gol (circular) array diya hai, matlab aakhri number ke baad phir pehla number aata hai. Har number ka agla bada number lautao, na mile to -1.
   e.g. [1,2,3,4,3] -> [2,3,4,-1,4]
   kyun: aakhri 3 ke aage kuch nahi, ghoom ke shuru me 1,2,3,4 -> pehla bada 4 · 4 se bada kahin nahi -> -1
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** NEXT GREATER + CIRCULAR: loop `2 * n` tak, har jagah `i % n` (compare, ans, push).
+
+> [!WARNING]
+> `st.push(i % n)` (`i` nahi: `i >= n` pe index bahar). `ans` size `n` (2n nahi). Jawab TOP ka -> `ans[tp]` (`ans[i]` nahi). `[1,2,1]`: aakhri 1 ka jawab doosre chakkar me milta, isliye 2n.
+
+**CODE**
 ```cpp
 vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka greater shuru me bhi
     if (nums.size() == 0)
@@ -367,14 +439,24 @@ vector<int> nextGreaterElements(vector<int> &nums) {   // CIRCULAR: aakhri ka gr
 // [1,2,1]: aakhri 1 (idx 2) pehle chakkar me bacha -> i=4 -> 4%3=1 -> nums[1]=2 -> ans[2]=2. isliye 2n
 ```
 
+---
+
 ### ▸ ONLINE STOCK SPAN (LC-901)  = monotonic-stack + SUM-span DELTA
 
+**SAWAAL**
 ```
 Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao: aaj ko milake peeche kitne lagaatar din ka daam aaj ke daam se kam ya barabar tha.
   e.g. next: 100,80,60,70,60,75,85 -> 1,1,1,2,1,4,6
   kyun: 75 aaya -> peeche 60,70,60 sab <= 75, phir 80 bada -> ruk -> 75,60,70,60 = 4
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Stack me INDEX nahi, PAIR `{price, span}`. `span = 1` se shuru; `top.price <= price` tak pop aur pop wale ka span JODO; phir `{price, span}` push.
+
+> [!WARNING]
+> `<=` (barabar daam wala din bhi span me). Pop karte waqt `span += st.top().second` bhoola to galat: wo din apne peeche ke din nigal chuka hai.
+
+**CODE**
 ```cpp
 class StockSpanner {
 public:
@@ -396,14 +478,24 @@ public:
 
 ── (STANDALONE — apni alag trick) ──
 
+---
+
 ### ▸ VALID PARENTHESES
 
+**SAWAAL**
 ```
 Ek string me sirf ( ) [ ] { } hain. true lautao agar har khulne wala bracket sahi type ke bracket se aur sahi kram me band hota hai, warna false.
   e.g. "{[]}" -> true · "([)]" -> false
   kyun: "([)]" me ( khula, [ khula, par ) aaya jabki sabse upar [ khula hai -> match nahi
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Opening -> push. Closing -> stack khaali to `false`, warna top pop karke type milao. End me `return st.empty()`.
+
+> [!WARNING]
+> Closing aaya aur stack khaali -> turant `false`. End me `return st.empty()` (sirf `true` nahi): `"" -> true`, khula bracket bacha to false.
+
+**CODE**
 ```cpp
 bool isValid(string s) {
     stack<int> st;
@@ -425,8 +517,11 @@ bool isValid(string s) {
 }
 ```
 
+---
+
 ### ▸ MIN STACK
 
+**SAWAAL**
 ```
 Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalein. getMin() stack me abhi ka sabse chhota number deta hai.
   e.g. push(-2) push(0) push(-3) getMin() -> -3 · pop() · top() -> 0 · getMin() -> -2
@@ -435,6 +530,13 @@ Ek stack banao jisme push(val), pop(), top() aur getMin() chaaron O(1) me chalei
 class MinStack: push / pop / top / getMin sab O(1)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Pair `{val, yahan tak ka MIN}` push -> `getMin() = st.top().second`, koi scan nahi. Pop pe purana min apne aap wapas.
+
+> [!WARNING]
+> `push` me `st.empty()` pehle check (pehle push pe `top()` nahi hota). Single min var NAHI: pop pe purana min WAPAS chahiye (`push 5,3,7 -> pop 7 -> 3 -> pop 3 -> 5`).
+
+**CODE**
 ```cpp
 class MinStack {                            // push / pop / top / getMin sab O(1)
 public:
@@ -453,14 +555,24 @@ public:
 // push 5,3,7 -> min 3 · pop 7 -> 3 · pop 3 -> 5 WAPAS (pair me neeche wala min apne aap sahi)
 ```
 
+---
+
 ### ▸ MIN ADD MAKE VALID  = VALID PARENTHESES ka counter wala (stack nahi)
 
+**SAWAAL**
 ```
 Ek string me sirf '(' aur ')' hain. Kam se kam kitne bracket jodne padenge taaki string valid ho jaaye, wo ginti lautao.
   e.g. "()))((" -> 4
   kyun: pehla () theek · agle do ')' ka koi '(' nahi -> 2 · aakhri do '(' band nahi hue -> 2 · total 4
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Do counter: `(` -> `close_needed++`; `)` -> pending open ho to `close_needed--`, warna `open_needed++`. Answer = dono ka JOD.
+
+> [!WARNING]
+> `)` aaya aur koi open pending nahi (`close_needed == 0`) -> wo extra, `open_needed++`; minus me mat jao. Answer `open_needed + close_needed`, akela nahi.
+
+**CODE**
 ```cpp
 int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')')
     if (s.empty())
@@ -481,14 +593,24 @@ int minAddToMakeValid(string s) {           // COUNTER, stack nahi (sirf '(' ')'
 }
 ```
 
+---
+
 ### ▸ QUEUE USING STACKS (LC 232)  — Walmart R2 me aaya ("fully working code")
 
+**SAWAAL**
 ```
 Sirf stack (push, pop, top, empty) ka use karke ek queue (pehle aaya, pehle gaya) banao: push(x) peeche daalta hai, pop() aage wala nikaalta hai, peek() aur empty() bhi chahiye.
   e.g. push(1) push(2) peek() -> 1 · pop() -> 1 · push(3) pop() -> 2 · pop() -> 3 · empty() -> true
   kyun: queue me jo pehle aaya wahi pehle nikalta -> 1, phir 2, phir 3, ab khaali
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Do stack: `push` -> `input`; `pop` / `peek` -> `output` se. `output` KHAALI ho tabhi poora `input` palto (har element ek hi baar palta = amortized O(1)).
+
+> [!WARNING]
+> `output` me kuch bacha ho tab palta -> kram toot jaata; sirf `output.empty()` pe palto (pop aur peek dono me). `pop` me `x = output.top()` bachao, phir pop, phir return.
+
+**CODE**
 ```cpp
 class MyQueue {
 public:

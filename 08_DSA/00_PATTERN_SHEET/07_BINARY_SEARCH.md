@@ -22,14 +22,24 @@
  KAB: SORTED + ek jagah / threshold dhoondhna · "MIN / MAX value jisme condition sach" (answer pe BS)
 ```
 
+---
+
 ### ▸ BINARY SEARCH (BASIC)
 
+**SAWAAL**
 ```
 Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mile to -1. O(log n) me karna hai.
   e.g. [-1,0,3,5,9,12], target=9 -> 4
   kyun: 9 index 4 pe baitha hai (-1,0,3,5 ke baad)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** `while (low <= high)`, `mid = low + (high - low) / 2`. `nums[mid] == target` -> return mid; chhota -> `low = mid + 1`; bada -> `high = mid - 1`. Bahar -> -1.
+
+> [!WARNING]
+> `<=` (`<` nahi): `[5], 5` pe `<` se loop chalta hi nahi -> -1, sahi 0. `(low + high) / 2` nahi: bade low+high pe overflow.
+
+**CODE**
 ```cpp
 int search(vector<int> &nums, int target) {
     int low = 0, high = nums.size() - 1;
@@ -48,8 +58,11 @@ int search(vector<int> &nums, int target) {
 ```
 
 
+---
+
 ### ▸ SEARCH INSERT POSITION  = BASIC BS, na mile to low (daalne ki jagah)
 
+**SAWAAL**
 ```
 Ek SORTED array (sab alag number) aur ek target diya hai. target mile to uska index lautao.
 Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
@@ -57,6 +70,13 @@ Na mile to wo index lautao jahan target daalne se array sorted bana rahe.
   kyun: 2 na mila, 1 aur 3 ke beech jaayega -> index 1
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** BASIC BS hubahu; na mile to `return low` (low = pehla `nums >= target` = daalne ki jagah).
+
+> [!WARNING]
+> Na mile to -1 nahi, `low` lautao: `[1,3,5,6], 2` -> loop ke baad low = 1.
+
+**CODE**
 ```cpp
 int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 3 ke beech)
     int low = 0, high = nums.size() - 1;
@@ -74,8 +94,11 @@ int searchInsert(vector<int> &nums, int target) {   // [1,3,5,6], 2 -> 1 (1 aur 
 ```
 
 
+---
+
 ### ▸ FIRST & LAST POSITION (LC-34)  = BASIC BS x2, mila to ruko mat (ek taraf aur chalo)
 
+**SAWAAL**
 ```
 Ek SORTED array (number dohraye ho sakte hain) aur ek target diya hai. target jahan pehli baar aur aakhri baar aata hai, wo dono index lautao.
 Na mile to {-1, -1}. O(log n) me karna hai.
@@ -85,6 +108,7 @@ Na mile to {-1, -1}. O(log n) me karna hai.
 [5,7,7,8,8,10], 8 -> {3,4}. normal BS, bas MILNE pe RUKO MAT -> ans likho, ek taraf aur chalo. 2 BS
 ```
 
+**SAAR**
 ```
 DRY-RUN ([5,7,7,8,8,10], target 8):
   idx :  0  1  2  3  4  5
@@ -103,6 +127,13 @@ DHYAAN:
   3. ans(2,-1) + index set karo, push_back mat milao.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Do BS. Mila to RUKO MAT: PASS 1 (FIRST) `ans[0] = mid, high = mid - 1` · PASS 2 (LAST) `ans[1] = mid, low = mid + 1`. Baaki basic BS.
+
+> [!WARNING]
+> Dono pass ke beech `low = 0, high = n-1` RESET (warna PASS 2 galat jagah se shuru). Mila to sirf EK pointer hilao. `ans(2,-1)` + index set, `push_back` nahi.
+
+**CODE**
 ```cpp
 vector<int> searchRange(vector<int> &nums, int target) {
     vector<int> ans(2, -1);                 // size fixed 2 -> ans(2,-1) + index set, push_back NAHI
@@ -139,17 +170,23 @@ vector<int> searchRange(vector<int> &nums, int target) {
 
 ### ▸ SEARCH IN ROTATED (LC-33)  = rotated sorted array me target, O(log n)
 
+**SAWAAL**
 ```
 Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4,5,6,7,0,1,2]. Usme target ka index lautao, na mile to -1. O(log n) me.
   e.g. [4,5,6,7,0,1,2], target=0 -> 4
   kyun: [0,1,2,4,5,6,7] ghum ke [4,5,6,7,0,1,2] bana, 0 ab index 4 pe hai
 ```
 
-```
-BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
-         jahaan mid hai (already returned) -> < ya <= farak NAHI.
-```
+> [!IMPORTANT]
+> **CHAABI:** `nums[mid] == target` -> return. `nums[low] <= nums[mid]` -> LEFT sorted: target `>= nums[low] && <= nums[mid]` to `high = mid - 1`, warna `low = mid + 1`. Nahi to RIGHT sorted, wahi ulta (`>= nums[mid] && <= nums[high]`).
+>
+> BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
+> jahaan mid hai (already returned) -> < ya <= farak NAHI.
 
+> [!WARNING]
+> `nums[low] <= nums[mid]` me `<=` (`<` nahi): `[3,1], 1` pe `<` se -1, sahi 1. Range me `>= nums[low]` ZAROORI (target low pe khud ho sakta): `[5,1,3], 5` miss.
+
+**CODE**
 ```cpp
 int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka index, nahi -> -1
     int n = nums.size();
@@ -178,14 +215,24 @@ int search(vector<int> &nums, int target) { // [4,5,6,7,0,1,2] me target ka inde
 ```
 
 
+---
+
 ### ▸ FIND MIN IN ROTATED  = ROTATED ka KHUD-ANSWER wala (mid vs HIGH, high = mid, low < high)
 
+**SAWAAL**
 ```
 Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sabse chhota number lautao. O(log n) me.
   e.g. [3,4,5,1,2] -> 1
   kyun: 3,4,5 badhte gaye, 1 pe gira -> wahi ghumne ki jagah, wahi min
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Target nahi, khud MIN -> mid ko HIGH se compare: `nums[mid] > nums[high]` to `low = mid + 1`, warna `high = mid`. `while (low < high)`, return `nums[low]`.
+
+> [!WARNING]
+> `high = mid` (mid-1 NAHI: mid khud min ho sakta, `[3,1,2]` pe mid-1 se galat 3). `high = mid` ke saath `low < high` hi; `<=` = infinite loop.
+
+**CODE**
 ```cpp
 int findMin(vector<int> &nums) {            // target nahi, khud MIN -> mid ko HIGH se compare
     int low = 0, high = nums.size() - 1;
@@ -213,8 +260,11 @@ int findMin(vector<int> &nums) {            // target nahi, khud MIN -> mid ko H
      // FARAK sirf 2: (a) RANGE (low, high)  (b) solve(mid) ka formula (greedy count <= limit?)
 ```
 
+---
+
 ### ▸ KOKO BANANAS (LC-875) -- min eating-speed
 
+**SAWAAL**
 ```
 piles[] me kelon ke dher hain aur h ghante hain. Koko har ghante ek dher se k kele khaati hai (dher me kam bache hon to bas wahi).
 Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo lautao.
@@ -222,6 +272,13 @@ Saare kele h ghante me khatam karne ke liye sabse kam speed k kitni chahiye, wo 
   kyun: k=4 -> 1+2+2+3 = 8 ghante, chal gaya · k=3 -> 1+2+3+4 = 10 > 8, nahi chalega
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Answer-range pe BS: `low = 1`, `high = max(piles)`. `solve(mid)`: `sum ceil(piles[i] / mid) <= h`? haan -> `ans = mid, high = mid - 1` (chhota try), nahi -> `low = mid + 1`.
+
+> [!WARNING]
+> `low = 1` (0 pe `piles[i] / mid` divide by zero). `(double)` cast PEHLE, int/int pehle hi floor (`7/3 = 2`); ya integer `(piles[i] + mid - 1) / mid`. hours `long long`.
+
+**CODE**
 ```cpp
 bool solve(vector<int> &piles, int h, int mid) {
     long long hours = 0;                    // long long: bade piles pe sum overflow
@@ -249,8 +306,11 @@ int minEatingSpeed(vector<int> &piles, int h) {
 ```
 
 
+---
+
 ### ▸ SHIP WITHIN D DAYS (LC-1011) -- min capacity  = KOKO wala shell, sirf range + solve alag
 
+**SAWAAL**
 ```
 weights[] me packet ka wazan diya hai. Inhe isi kram me D din me bhejna hai, aur ek din ka kul wazan jahaaz ki capacity se zyada nahi ho sakta.
 Sabse kam capacity kitni chahiye, wo lautao.
@@ -258,6 +318,13 @@ Sabse kam capacity kitni chahiye, wo lautao.
   kyun: 6 se [3,2] [2,4] [1,4] = 3 din · 5 se [3,2] [2] [4,1] [4] = 4 din, zyada
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** KOKO ka shell, sirf range + solve alag: `low = max(weights)`, `high = sum(weights)`. `solve`: `sum + w > mid` to `days++, sum = 0`; `days <= D`?
+
+> [!WARNING]
+> `days = 1` se shuru (aakhri din ka load bhi gine). `low = max` (sabse bhaari packet akela chadhe): `[3,10], D=2` me lo=0 rakha -> 5 aata, sahi 10.
+
+**CODE**
 ```cpp
 bool solve(vector<int> &weights, int D, int mid) {
     int days = 1;                           // ★ day=1: aakhri din ka load bhi gino
@@ -290,8 +357,11 @@ int shipWithinDays(vector<int> &weights, int days) {
 ```
 
 
+---
+
 ### ▸ SPLIT ARRAY LARGEST SUM (LC-410) -- min largest part-sum  = SHIP WITHIN D DAYS hi (D din = k hisse)
 
+**SAWAAL**
 ```
 Ek array ko k lagaatar hisson me todna hai. Har tareeke me sabse bade hisse ka jod dekho.
 Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
@@ -299,6 +369,13 @@ Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
   kyun: splits ke bade-sum 25,23,18,24 -> sabse chhota 18 ([7,2,5]=14 | [10,8]=18)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** SHIP WITHIN D DAYS hi: k hisse = D din. `solve`: `sum > mid` to `count++, sum = nums[i]`; `count <= k`? Range `low = max`, `high = sum`.
+
+> [!WARNING]
+> `count = 1` se START (warna aakhri tukda chhoot jaata). Limit tootne pe `sum = nums[i]` (0 nahi): wahi element naye tukde ka pehla.
+
+**CODE**
 ```cpp
 bool solve(vector<int> &nums, int k, int mid) {
     int sum = 0, count = 1;                 // ★ count=1 se START: warna aakhri tukda chhoot jaata
@@ -334,6 +411,7 @@ int splitArray(vector<int> &nums, int k) {
 
 ### ▸ FIND PEAK ELEMENT (LC-162)
 
+**SAWAAL**
 ```
 Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array ke bahar ko minus infinity maano). Kisi bhi ek peak ka index lautao. O(log n) me.
   SHART (LC-162): do padosi kabhi barabar nahi (nums[i] != nums[i+1]). Isi se teesra case (barabar) aata hi nahi; [1,1] pe loop atak jaata
@@ -341,6 +419,13 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
   kyun: index 5 pe 6 -> padosi 5 aur 4 dono chhote · index 1 pe 2 bhi (1 aur 1 se bada)
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** mid ko `mid + 1` se compare: CHADHAAI (`nums[mid] < nums[mid+1]`) -> `low = mid + 1`; DHALAAN -> `high = mid`. `while (low < high)`, return `low`.
+
+> [!WARNING]
+> `high = mid` (mid-1 NAHI: mid khud peak ho sakta) ke saath `low < high` hi (atke nahi, `mid + 1` hamesha andar). SHART: padosi barabar nahi; `[1,1]` pe loop atak jaata.
+
+**CODE**
 ```cpp
 int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges ke bahar -inf
     int n = nums.size();
@@ -357,8 +442,11 @@ int findPeakElement(vector<int> &nums) {    // peak = dono padosi se bada; edges
 ```
 
 
+---
+
 ### ▸ SINGLE ELEMENT (SORTED, LC-540)  = INDEX-PARITY binary search
 
+**SAWAAL**
 ```
 Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek baar) hai. Wo akela number lautao. O(log n) me.
   e.g. [1,1,2,3,3,4,4,8,8] -> 2
@@ -368,6 +456,7 @@ har element 2x, sirf EK akela. O(log n) (XOR = O(n), yahan log n chahiye)
 single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid ko mid-1 se compare
 ```
 
+**SAAR**
 ```
 ── DRY-RUN -- ISKO paper pe dekh, prose bhool (single = 2 @ idx 2) ──
    idx:  0  1  2  3  4  5  6  7  8
@@ -380,6 +469,13 @@ single se PEHLE pairs (even,odd) idx pe -> single ke BAAD (odd,even) SHIFT. mid 
 return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Single se PEHLE pair (even, odd) index pe. mid ko `mid - 1` se milao: EVEN mid ka saathi peeche mila = shift ho chuki -> `high = mid - 1`; ODD mid ka saathi peeche mila = theek -> `low = mid + 1`. End `return nums[high]`.
+
+> [!WARNING]
+> `return nums[high]` (low nahi): dono branch mid REJECT karte, high khud single pe rukta. `mid == 0` pe seedha `nums[mid]` (`mid - 1` bahar). size 1 pe seedha `nums[0]`.
+
+**CODE**
 ```cpp
 int singleNonDuplicate(vector<int> &nums) {
     if (nums.size() == 1)
@@ -413,6 +509,7 @@ int singleNonDuplicate(vector<int> &nums) {
 
 ### ▸ SEARCH 2D MATRIX  = BASIC BS, poori matrix ek 1D sorted array (index -> row, col)
 
+**SAWAAL**
 ```
 Ek matrix di hai jiski har row sorted hai, aur har row ka pehla number pichhli row ke aakhri number se bada hai (matlab poori matrix ek lambi sorted line hai).
 Batao target matrix me hai ya nahi, true ya false.
@@ -420,6 +517,13 @@ Batao target matrix me hai ya nahi, true ya false.
   kyun: 3 pehli row me index 1 pe mil gaya · target=13 hota to 11 aur 16 ke beech, nahi -> false
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** Poori matrix ek 1D sorted line: `high = row * col - 1`, cell = `matrix[mid / col][mid % col]`. Baaki basic BS.
+
+> [!WARNING]
+> Dono jagah COL (`/ col`, `% col`), row nahi: 3x4, mid=5 -> `[1][1]`; `/3` likha to `[1][2]` galat. `col = matrix[0].size()`.
+
+**CODE**
 ```cpp
 bool searchMatrix(vector<vector<int>> &matrix, int target) {
     int row = matrix.size();
@@ -444,6 +548,7 @@ bool searchMatrix(vector<vector<int>> &matrix, int target) {
 
 ### ▸ MEDIAN OF 2 SORTED ARRAYS (LC-4, Hard)  = BS-on-ANSWER ka cousin, par VALUE nahi CUT-position pe
 
+**SAWAAL**
 ```
 Do SORTED array A aur B diye hain. Dono ko milake jo poora sorted array banega, uska median lautao.
 Kul number odd hon to beech wala, even hon to beech ke do ka average. O(log) me karna hai.
@@ -455,6 +560,7 @@ A=[1,3,8,9,15], B=[7,11,18,19,21,25] -> Px=4 (1 3 8 9 | 15), Py=2 (7 11 | 18 ..)
 Px=2 try: x2=19 > x3=8 -> A ne KAM liya -> low = Px+1. cousin = BS-on-ANSWER (wahan VALUE pe)
 ```
 
+**SAAR**
 ```
 CUT idea (chhote array A pe BS -> Px; Py auto):
    A:  1  3  8  9 | 15            Px = A-left count (BS ISI pe, chhote array pe)
@@ -491,6 +597,13 @@ CUT idea (chhote array A pe BS -> Px; Py auto):
   GOTCHA: even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
 ```
 
+> [!IMPORTANT]
+> **CHAABI:** CHHOTE array A pe CUT `Px` pe BS, `Py = (m + n + 1) / 2 - Px`. 4 kinaare: `x1 = A[Px-1]`, `x2 = B[Py-1]` (left) · `x3 = A[Px]`, `x4 = B[Py]` (right). `x1 <= x4 && x2 <= x3` = sahi cut: odd -> `max(x1, x2)`, even -> `(max(x1,x2) + min(x3,x4)) / 2.0`. `x1 > x4` -> `high = Px - 1`, warna `low = Px + 1`.
+
+> [!WARNING]
+> `m > n` to swap (chhote pe BS, Py kabhi -ve nahi). Edge: `Px == 0` / `Py == 0` -> `INT_MIN`, `Px == m` / `Py == n` -> `INT_MAX` (warna `A[-1]` / `A[m]` bahar). Even me `/ 2.0` (int division se .5 kat jaata). `(m + n + 1) / 2` me `+1`.
+
+**CODE**
 ```cpp
 double findMedianSortedArrays(vector<int> &A, vector<int> &B) {
     int m = A.size();
