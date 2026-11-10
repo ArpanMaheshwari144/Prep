@@ -215,6 +215,29 @@ consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa 
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
 
+**Maan lo ye sab pehle se tay hi nahi, aur 55 second baad, jab Arpan back daba chuka, 56ve second pe paisa kata (Myntra
+wala hi jawab, BookMyShow ka bhi apna PSP nahi, Razorpay hai):** Razorpay ko onboard karte hi vaada lo: "30 second me
+jawab do, fail ya pass", buffer 50-55 second, 1 minute bahut. Downtime poochh lo, jaise AWS uptime batata. Badi film
+(Avengers Doomsday) pe Stripe, Amazon Pay jaisi 3-4 company aur line me. 55 second baad bhi chup to har 3-4 second pe
+2-3 ping, 10 nahi. Aur Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe event
+bhejta. Event aaya = paisa kata, seat book, aur hum haath utha ke "mil gaya" bol dete. Event nahi aaya = paisa nahi
+kata. Event raste me kho gaya to wo Razorpay ka HLD hai, wo dobara bhejega; na hum andhe, na wo.
+**Asli naam:** onboard pe vaada = SLA / timeout, 3-4 company line me = backup PSP (failover), 3-4 sec pe ping = status
+poll, paisa katte hi event = webhook (PSP callback), "mil gaya" = ack (2xx), raste me kho gaya = PSP ki webhook redelivery.
+
+```mermaid
+flowchart LR
+    R["Razorpay se pehle hi vaada:<br/>30 sec, buffer 55 (SLA)"]:::card --> P{"Paisa kata?"}:::card
+    P -- "haan: turant event<br/>(webhook)" --> S["Seat BOOKED,<br/>'mil gaya' (ack)"]:::good
+    P -. "55 sec chup" .-> Q["3-4 sec pe 2-3 ping<br/>(status poll)"]:::bad
+    Q -.-> X["Badi film: Stripe, Amazon Pay<br/>line me (backup PSP)"]:::pill
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
 ```mermaid
 flowchart TB
     A["Arpan: Pay 4:30, PSP dheema"]:::card

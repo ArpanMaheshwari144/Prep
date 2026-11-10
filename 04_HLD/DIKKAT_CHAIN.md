@@ -302,6 +302,7 @@ Yahi dikkat yahan bhi:
   BMS      6   Pay daba diya, PSP dheema, umar khatam         ->  parchi pe "pay chal raha", umar badhao (PAYMENT_PENDING)
   BMS      6b  chhotu (PSP) 1-2 baar jagaya, phir bhi chup    ->  FAILED dikha do, seat chhod do; "chhod, doosra ladka tu ja" (timeout, circuit breaker -> PSP-2)
   BMS      6b  dheeme chhotu ne peeche se paisa kaat liya     ->  id hamare paas; "kata ho to wapas aayega", kata nikla to wapas (reconciliation job + refund)
+  BMS      6c  55 sec baad 56ve sec paisa kata, Arpan gaya    ->  Razorpay se vaada 30-55 sec; paisa katte hi event, S3 jaisa; mil gaya (SLA, webhook + ack)
   Kafka    8   galat ticket baar-baar, line atki              ->  line se hata (DLQ)
   Kafka    9   SMS counter 10 min band, sab DLQ me            ->  pehle check, waqai band? (circuit breaker)
   Kafka    9   counter waqai band hai                         ->  road band, traffic divert (fallback)
@@ -311,7 +312,7 @@ Yahi dikkat yahan bhi:
   News     6   jis site se khabar la rahe wo band             ->  5 sec, 10 sec baad dobara; na khule to chhodo (retry + backoff)
   Ecom     8b  PSP 50 sec chup, kata pata nahi                ->  Razorpay se pehle hi tay: 50 sec me jawab nahi to cancel; dobara pay doosre PSP pe (timeout, auto-refund, PSP failover)
 
-Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job
+Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP
 Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker.
 ```
 
