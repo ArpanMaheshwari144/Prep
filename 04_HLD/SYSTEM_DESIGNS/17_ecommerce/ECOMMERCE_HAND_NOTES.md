@@ -25,6 +25,7 @@ Technical me: sale ka alag raasta / alag service. Uski bheed baaki dukaan (norma
 **4. Sale dukaan me ek counter, ek parchi "ghee: 500". Ek waqt me ek hi aadmi parchi chhoota, line 50 hazaar ki.**
 Arpan: 10 counter bana do, har counter pe 50 ghee, line baant do. Har counter pe do aadmi: ek bechne wala, ek kaatne wala. Kaatna to haath chalane jitna tez, millisecond bhi nahi.
 Technical me: ek row pe sab toot pade = hot row. Ginti 10 tukdon me todo. Kaatna tez jagah pe (Redis me ginti, DECR).
+
 **Maan lo Redis me ghee ki ginti kat gayi (Ravi gate ke andar aaya), par DB me order likhne se pehle server gir gaya.**
 Arpan: Ab Redis kehta ek ghee kam hai, aur DB me koi order hi nahi. Sach DB hai, jaise Cache aur Banking me kaha tha. Ek banda peeche se Redis aur DB ko milata rahe: Redis me jitni ginti kati, utne order DB me hain ya nahi. Koi kati ginti bina order ke gate ki ghadi (5 minute) se zyada purani hai, matlab wo banda na pay kar paaya na order bana, to wo ghee wapas ginti me jod do, taaki doosra le sake. Jiska paisa aa gaya, uska dabba uska hi rahega.
 Technical me: banda milata rahe = reconciliation job, DB sach = Redis sirf tez ginti, ghadi se purani bina order wali kati ginti wapas = compensation (gate ki 5 min ki ghadi ke baad hi, chalte hue pay ko nahi chhedna).
@@ -44,12 +45,15 @@ Technical me: paisa aane pe server pe ek-ek karke ginti kaato, 500 ke baad aaye 
 **7b. Rollback me bhi pech, 10 minute wale me bhi pech. Koi screwdriver? (Apple store: 500 iPhone, bahar 3000 log)**
 Arpan: Jitne phone utne log andar, baaki bahar. Kisi ka card decline hua ya koi chala gaya to agla batch bulao, jitne bache utne. 3000 ko andar bula ke kya fayda. App pe poora app to rok nahi sakte, aata-daal wale bhi hain. To ghee ke liye ek alag counter lagao: sale wala maal us gate se guzrega, normal checkout chalta rahega. Us counter se sirf 500 ghee guzarne hain, to dikkat hi khatam.
 Technical me: sale gate (Buy now, cart me nahi jaata). Gate sirf utne logon ko Pay tak jaane deta jitna stock (Redis DECR). Fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi, aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
+
 **Maan lo Ravi ne 4 tab khole, Buy now 4 baar.**
 Arpan: Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
+
 **Maan lo gate se 500 andar, Ravi Pay page pe gaya aur chai peene chala gaya, na pay kiya na cancel. Uska phone Redis me "gaya" gina hai, bahar 2500 khade.**
 Arpan: Jab tak pay nahi karoge, phone bika nahi, stock me utna hi hai. Dukaan pe ghee ka dabba haath me pakad ke khada hoon, pay nahi kar raha, peeche wala dukaandar se bolta hai, to dukaandar kehta: ya to pay karke le ja, ya wapas rakh de. To andar aate hi ghadi, 5 minute. Pay kiya to phone uska, nahi kiya to wapas line me aur agla andar.
 Technical me: "ya pay kar ya rakh de" = reservation expiry (TTL, 5 min), "wapas line me, agla andar" = release (Redis INCR) + agla batch. TTL khatam hone se ginti apne aap wapas nahi badhti; ek job (ya expiry ki khabar) INCR karti hai.
+
 **Maan lo Ravi ki ghadi 10:05 pe khatam, phone Priya ko gaya, aur 10:05 + 1 second pe Ravi lauta aur Pay daba diya.**
 Arpan: Saaf baat, 5 minute mera time. Andar pay kiya to phone Ravi ka. Code chalne me time lagta, to 1-2 second upar de sakte, zyada nahi. Uske baad pay dabaya to phone uska nahi, Priya ka; time window hai, cheez pakad ke baithe nahi reh sakte. BookMyShow me bhi aisa: seat rakh ke baitha raha to timer khatam, seat hat gayi, kisi aur ne le li, mujhe housefull. Aur agar time ke andar pay daba diya aur PSP dheema hai, to wo hamari zimmedari, user ki nahi.
 Technical me: "5 min ke baad phone uska nahi" = Pay pe server check kare ki reservation abhi zinda hai (expiry check), "1-2 second upar" = chhota grace period, "andar pay, PSP dheema = hamari zimmedari" = Pay dabate hi PAYMENT_PENDING, hold ruk jaata (BMS jaisa).
@@ -57,11 +61,13 @@ Technical me: "5 min ke baad phone uska nahi" = Pay pe server check kare ki rese
 **8. Net gaya / PSP chup: Ravi ko laga pay ho gaya, par PSP tak request pahunchi nahi, ya paisa kata aur PSP anjaan.**
 Arpan: Design har jagah se thoda toot-ta hai. Chahe 10 minute rok lo, chahe paisa aane pe kaato, kinaare pe dikkat rehti hai. Aakhri second pe pay kiya to wahan BMS wali cheez hi leni padegi. Paisa kata to zimmedari hamari, PSP se hum baat karenge.
 Technical me: PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Paisa kata mila to dabba uska; dabba na bacha ho to refund. Perfect design koi nahi, bas kitne refund.
+
 **Maan lo PSP 30-50 second chup, Myntra ko pata nahi Ravi ka paisa kata ya nahi.**
 Arpan: Order ki khabar Myntra ki apni hai: Pay dabate hi apne paas order PENDING aur payment INITIATED likh diya, stock rok liya. Paisa kata ya nahi, ye PSP hi batayega, Myntra Ravi ka bank nahi dekh sakta. Isliye Razorpay se onboarding pe hi tay karo: 30-50 second me jawab do, nahi diya to request tum khud cancel karoge. 50 second guzre to Ravi ko "time out, dobara pay karo" dikhao; dobara pay kare to Razorpay ki jagah doosre PSP pe bhejo, kyunki pata hai Razorpay abhi dheema hai.
 Technical me: order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), hamara tay kiya timeout (50 sec) + PSP ke saath tay: uske baad request cancel, der se "success" aaya to PSP khud wapas karega (auto-refund) -> isliye dobara pay doosre PSP pe safe (PSP failover). Aisa tay na ho to Payment kadam 11: PENDING rakho, doosre PSP pe nahi.
 Aur Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 bhejta (BookMyShow 6c wala hi jawab). Event aaya = kata, "mil gaya". Event raste me kho gaya to wo Razorpay ka HLD hai. Big Billion Day jaisi sale pe 3-4 company (Stripe, Amazon Pay) line me.
 Technical me: webhook (PSP callback) + ack, webhook redelivery PSP ki, backup PSP (failover).
+
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**
 Arpan: Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).

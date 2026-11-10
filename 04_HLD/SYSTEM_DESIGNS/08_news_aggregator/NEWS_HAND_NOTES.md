@@ -13,6 +13,7 @@ Technical me: "chhotu" = fetcher (har site se khabar khinchne wala), "dabba" = D
 **2. Chhotu akela, 5000 site, ek site pe 2 second = ek chakkar 3 ghante. 8:55 wali khabar 11 baje pahunchi.**
 Arpan: Bahut saare chhotu rakh le. Aur khabar pehle se taiyaar rakh, ek chhoti parchi me, sab wahin se padh lein. Jaise akhbaar me saari khabar ek saath aati hai, jo achha lage padh lo.
 Technical me: "bahut saare chhotu" = kai fetcher ek saath, "chhoti parchi" = Redis me taiyaar feed (cache).
+
 **Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya.**
 Arpan: Ye Twitter ke worker 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.
 Technical me: "main zinda hoon" = heartbeat, "main site baant deta" = coordinator (chhotuon ko kaam baantne wala, load balancer nahi), kaam ka reassignment (lease khatam to doosra le).

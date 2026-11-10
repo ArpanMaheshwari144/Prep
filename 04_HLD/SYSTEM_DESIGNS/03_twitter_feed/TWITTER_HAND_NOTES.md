@@ -9,9 +9,11 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 **1. Ravi app khole to server dhoondhe wo kis-kis ko follow karta (500 log), sabke tweet DB se nikaale, milaye, sort kare. Shaam 8 baje 5 crore log ek saath, feed 6-7 second ghoome, DB hil jaaye.**
 Arpan: Baar-baar DB jaana padta. Mere 10 dost hain, roz apna hisaab maang rahe. Har baar unke paas kyun jaun jab roz yahi karna hai? Main kahunga tum teeno idhar aao, mujhe apna de do, main apne paas rakhunga aur apne paas se bhej dunga. Dobara DB hit nahi. Unhone app khola, unhe turant mila. Har baar mote register me nahi jaana pada.
 Technical me: "apne paas rakhunga, apne paas se bhej dunga" = har user ka pehle se bana inbox (Redis), "dost apna mujhe de do" = tweet aate hi followers ke inbox me (fanout on write), "dobara DB hit nahi" = feed seedha inbox se.
+
 **Maan lo Ravi ne aaj Amit ko follow kiya, Amit ke pichhle hafte ke 20 tweet Ravi ke dabbe me kabhi gaye hi nahi.**
 Arpan: Main Twitter ki service pe baitha hoon, dekha Ravi ne abhi Amit ko follow kiya. Amit ne jo pehle daala hai wo Ravi ki feed me seedha push kar do, jaise Instagram pe follow karte hi purani reels dikhti. Aage Amit jo naya daalega wo waise hi chala jaayega.
 Technical me: "follow karte hi purane push" = backfill on follow, "naya waise hi" = fanout on write (kadam 1).
+
 **Maan lo Ravi ne Arpan ko unfollow kiya, par dabbe me Arpan ke 50 purane tweet pade hain.**
 Arpan: Feed sirf follow walon se nahi banti: main khud Elon, Sachin, Kohli ko follow nahi karta, phir bhi mujhe unke tweet dikhte, kyunki Twitter / Instagram ka kaam hi engage rakhna hai; kuch follow na karo to bhi khaali page nahi dikhta. Unfollow ke baad pade hue tweet turant gayab nahi honge, par naye aane band, aur jaise-jaise feed banegi Arpan ke tweet dheere-dheere kam ho jaayenge.
 Technical me: "turant gayab nahi, dheere kam" = dabba saaf nahi karte (lazy, purge nahi), naye fanout band, ranking (kadam 17) neeche karti; feed me follow ke alawa recommendation bhi.
@@ -31,6 +33,7 @@ Technical me: "threshold, Kohli wala tareeka" = had ke upar celeb raasta, "stadi
 **5. Kohli ne 99 se six maara aur tweet kiya. 1 minute me 5 crore log refresh, sabko wahi ek parchi chahiye. Wo parchi ek machine pe, wo machine hil gayi, Dhoni-SRK ki parchiyan bhi atki.**
 Arpan: Us waqt wo cheez famous ho gayi to log aayenge. Use alag-alag machine pe baant do, 5 crore ek machine pe na aayein. Main dekh raha lakhon log is parchi ko padhne aa rahe. Main iski 10-15 copy bana dunga: le tu bhi ye copy le, sabko padhwa. Bheed badh rahi to baant do, copiyan bana do, clone kar do.
 Technical me: "famous ho gayi, log aayenge" = hot key, "10-15 copy alag machine pe" = key ki replicas, "baant do" = read unme bantna.
+
 **Maan lo Kohli ne "Inida" likh ke 10 second me "India" kar diya, kuch copies purana dikha rahi.**
 Arpan: thodi der galat dikhega na. Peeche ek job chala do, ek ladka laga do, wo jaldi-jaldi sabko theek information pass kar dega. Kuch second lagenge. System rok nahi sakte, ye nahi keh sakte ki nahi dekhne denge.
 Technical me: "thodi der galat" = eventual consistency, "peeche ek job" = background job copies update kare.
@@ -51,6 +54,7 @@ Technical me: "baatcheet India me rakh" = India region, "Lajpat Nagar me branch 
 **9. Arpan ne India branch me tweet kiya. Follower John New York me, America branch se baat karta, use pata hi nahi. Ulta Kohli America se tweet kare to Ravi ko nahi dikhta.**
 Arpan: Do register hain, mera is wale se baat karta, John us wale se, par dono register ek-doosre ko nahi jaante. To unhe bhi baat karni padegi. Jab ye kuch likhe to apne register me to theek, aur us register pe bhi bhej do jahan se Arpan padhta. Jaise SBI ki do branch: dost ne Mumbai wali me 500 daale, main Delhi wali me jaake poochhta "mere liye kuch aaya?", branches aapas me baat karti hain to bata deti.
 Technical me: "register aapas me baat karein" = cross-region replication, "us register pe bhi bhej do" = tweet doosre region ko copy.
+
 **Maan lo dono branch ki baat 10 minute ruki aur Arpan ne beech me 5 tweet kiye.**
 Arpan: ek banda bithao jo pal-pal dekhta rahe: "America wala dost aaya?" Nahi aaya, nahi aaya, ab aa gaya. "Le, Arpan ke 5 tweet, teri feed me push kar diye." Mujhe bas dekhna tha ki tu hai ya nahi, tu aa gaya to le tera kaam.
 Technical me: "banda sambhal ke rakhe" = queue me pending, "pal-pal dekhta" = retry, "judte hi bhej" = link wapas aane pe replay.
@@ -74,6 +78,7 @@ Technical me: "kai machine, kaam baanto" = video ke hisse, transcoding workers (
 **13. 10 worker, 9 ka hissa bana, worker 7 beech me gira; video na taiyaar na koi batata, "processing" ghanton se.**
 Arpan: Har worker ka status. 9 ne bata diya, ek nahi bata paaya to dekhunga, heartbeat: "tu hai kya?" Jawab nahi to ise ghar bhejo, naya banda. Uske paas parchi: "maine yahan tak kar liya", naya wahin se uthaye. Save se pehle gira to shuru se.
 Technical me: "har worker ka status" = DB me hisson ki ginti, "tu hai kya" = heartbeat, "naya banda" = job dobara (retry), "yahan tak parchi" = checkpoint.
+
 **Maan lo worker 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam.**
 Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
 Technical me: "atka to replacement" = timeout pe slow worker ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
@@ -81,6 +86,7 @@ Technical me: "atka to replacement" = timeout pe slow worker ka hissa doosre ko,
 **14. Ravi 2:00 pe khiskata hai six dekhne, par phone 0:00 se 2:00 tak sab kheench raha, faaltu data, six late.**
 Arpan: 0 se 2 dikhane ka fayda nahi. Kisi ne copy di aur bola seedha 51wa page dikha. Main copy dekhunga, kahan 50 khatam, 51 kahan shuru, hisaab lagaunga, aur seedha 51 khol dunga.
 Technical me: "copy me kaunsa page kahan" = manifest (tukdon ki list), "hisaab, seedha 51" = seek: time se tukda number, seedha wahi tukda.
+
 **Maan lo 1 crore log dekh rahe, har ek ke ~150 tukde. Kya har tukda humare server ki API se jaayega?**
 Arpan: Tukda dene me sochna kuch nahi, bas file hai, to CDN pe rakh do. Pehle socha har reader ke paas ek bachcha khada karun jo yaad rakhe kaunse page pe hai, par 1 crore log = 1 crore bachche. Book me koi bachcha nahi hota, mere paas bookmark hota: 50 pe hoon to 51 khud palat leta. Sab client side, server pe aane ki zaroorat hi nahi.
 Technical me: "bas file" = tukde CDN se seedhe (static), "bookmark" = phone ka player khud yaad rakhta kahan hai, "51 khud palto" = manifest se agle tukde ka link, server sirf shuru me ek baar (manifest + link).
@@ -90,6 +96,7 @@ Technical me: "kahan aasaan" = kaam wahan karo jahan sabse sasta + seedha (yahan
 **15. Six viral, 1 crore log India, US, Australia se; saare tukde US ke S3 me, samundar paar, bill aasmaan pe, India me atke.**
 Arpan: Samundar paar kyun? Europe wala dost bole "video mere Europe me aa jaaye". Iski copy bana do, tu apne paas rakh, tu apne paas, teeno copy same, jo jahan se dekhe paas se khule.
 Technical me: "copy paas me rakho" = CDN (edge cache).
+
 **Maan lo private video (10 dost), Ravi ne CDN link bade WhatsApp group me daal diya.**
 Arpan: Taala-chaabi mere paas. Kamra mera, 10 log hi aa sakte. 11wa aaye, dost ka dost ho, access nahi.
 Technical me: "taala-chaabi maalik ke paas" = har request pe access check, "10 log hi" = allow list (sirf link kaafi nahi).
@@ -101,6 +108,7 @@ Technical me: "CDN ke paas bhi taala" = CDN signature jaanchta (signed URL / coo
 **16. Ravi ke dabbe me sirf tweet ke number (#905, #902 ...). Screen pe chahiye kisne likha, photo, kitne like.**
 Arpan: Mere paas ek mota register hai, sab likha hua. 1,00,000 page me dhoondhna time lega, main baawla thodi hoon. Par mere paas ID hain (905, 902), to seedha wahi page kholunga. Register 1 crore page ka ho ya 10 crore, ID ho to kaam aasaan. Photo / video CDN se aa jaayegi, baaki mote register se. Isme koi badi dikkat nahi.
 Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup), "photo CDN se" = post me CDN link, "mota register" = tweet store (Cassandra), like count saath me.
+
 **Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai.**
 Arpan: 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega.
 Technical me: page pe deleted = tweet store me deleted flag (soft delete), dikhate waqt chhod do = hydration pe filter, 8000 dabbe saaf nahi karne padte.

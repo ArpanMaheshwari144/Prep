@@ -25,6 +25,7 @@ Technical me: "gola + chhoote dabbe" = apna geohash + aas-paas ke dabbe, phir as
 **5. Gole me ek khaali driver Raju. Arpan aur Priya ne ek hi second me book dabaya, Raju ke phone pe do ride.**
 Arpan: BMS wali parchi: "Raju khaali hai to Arpan ka" ek kadam me. Jiski pehle pahunchi uski parchi, doosre ko "Raju chala gaya", uske liye agla driver. Parchi ki umar: Raju 15 sec me accept na kare to parchi hatao, agla driver.
 Technical me: "parchi" = driver pe hold / lock (atomic, sirf FREE ho to), "umar" = TTL.
+
 **Maan lo net atka, Arpan ne Book do baar daba diya.**
 Arpan: Payment wali idempotency key: phone Book dabate hi booking id banaye, dono request me wahi. Server pehle id dekhe, pehle aa chuki to nayi ride nahi, wahi purani ride lauta do.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
@@ -36,6 +37,7 @@ Technical me: "500 andar, baaki line" = virtual queue, "kiraya badhao, door ki c
 **7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak Priya ko de diya.**
 Arpan: Ghadi server ki. 15 sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd. Uber me bhi aise booking cancel hoti dikhti.
 Technical me: "ghadi server ki" = TTL ka faisla server pe, der se aaya accept reject.
+
 **Maan lo ek-ek driver ko 15 sec dene ki jagah kuch aur karna ho?**
 Arpan: Jab tak Arpan ko cab nahi milti, aas-paas ke saare driver ke phone bajte raho: tum lo, tum lo. Ya time rakhna hai to 20-25 second rakh do. Par phir bhi accept server tak der se pahuncha to cab nahi milegi, kyunki server tak request pahunchna zaroori hai, tabhi server kuch kar payega.
 Technical me: "sabke phone bajao" = broadcast dispatch (aas-paas ke kai driver ko ek saath, jo pehle accept kare uski ride), do ne ek saath accept kiya to BMS wali parchi (jo server pe pehle pahuncha wo jeeta), "20-25 sec" = TTL lamba, par faisla phir bhi server ki ghadi.
@@ -63,6 +65,7 @@ Technical me: "jo dikhaya wahi" = upfront fare: quote ride ke saath save (lock),
 **13. Trip khatam, ₹250 kaatne gaye, Arpan ke wallet me sirf ₹40. Payment fail, Arpan gaadi me hi baitha, Raju saamne, Raju ka petrol aur 40 minute.**
 Arpan: Kaatna hai to poora kaato, aadha mat kaato: 40 kaat ke chhod diya to log jaan-boojh ke 1 rupaya rakhenge. Wallet me 250 nahi to app me saaf dikhao "payment nahi hua", aur Raju ke phone pe bhi dikhe. Arpan GPay se de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak khatam nahi" = ride status PAYMENT_PENDING jab tak SUCCESS, "GPay / cash" = fallback payment method, dono app pe dikhe.
+
 **Maan lo 250 kaatne gaye, gateway chup, pata nahi kata ya nahi.**
 Arpan: Dobara kaatne pe ride id hi key: gateway pehchaan lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala status job).
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
@@ -98,12 +101,15 @@ Technical me: "location aani band, ek-do baar dekha" = location timeout (phone p
 
 Arpan: Ek booking ko akele mat dekho. Do booking aayi aur do gaadi hain, to dono user aur dono gaadi ki jagah (latitude / longitude) rakh ke har jodi ki doori nikaalo: Arpan se Car A kitni, Car B kitni, Ravi se Car A kitni, Car B kitni. Phir jodi aisi do ki sabki milake doori kam aaye: Ravi ko beech wali Car A, Arpan ko bahar wali Car B. Doori km me naapo, minute me nahi, kyunki minute traffic se ghat-badh jaate hain. Aur ek baar driver ne accept kar liya to gaadi pakki, use todna nahi; driver khud cancel kare tabhi dobara doori nikaalo.
 Technical me: "dono ko saath milao, kul doori kam" = batch matching (kai booking aur kai gaadi ek saath, sabka milake pickup kam).
+
 **Maan lo Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe. Jab Arpan ki aayi tab Ravi ki thi hi nahi, to server ne turant Car A Arpan ko de di.**
 Arpan: Booking aate hi gaadi mat do. 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hi hai). Us beech jitni booking aayi, sab ko saath milao, phir gaadi do. Jaldbaazi me kisi ko galat gaadi na de do.
 Technical me: "15-20 second ruko, sab saath milao" = batching window.
+
 **Maan lo shaam 7 baje office chhutne ka waqt. Har baar koi naya banda gaadi ke bilkul paas mil jaata, aur Arpan 7:05 tak "finding driver" pe hai.**
 Arpan: Gaadi extra ho to dikkat hi nahi, sabko mil jaayegi. Gaadi ek hi ho aur Arpan ke saath 1-2 baar aisa ho chuka, to agli gaadi Arpan ki hi, chahe wo Ravi ya Priya ke zyada paas ho. Teesri baar Arpan ko gaadi milegi hi. Paas wale bande ko bol do "tu thodi der aur dekh le, tere liye aur gaadi aa rahi", par ye gaadi Arpan ke paas jaayegi. Arpan line me hi nahi hai to ye niyam lagta hi nahi.
 Technical me: "baar-baar peeche reh gaya" = starvation, "jitna ruka utni baari upar" = aging (gaadi nahi badhti, sirf baari tay hoti).
+
 **Maan lo Arpan ne 5 minute ruk ke gusse me booking cancel ki aur turant dobara book ki. Server ne nayi booking maan ke ginti 7:05 se shuru kar di.**
 Arpan: Do raaste hain. (1) Cancel kiya to line se hata do, dobara aaye to peeche lage, kyunki beech me aur log aa gaye honge; use aage laana unke saath galat. (2) Redis me parchi likh do "Arpan 5 minute ruka tha" aur us pe 30 second ki umar. 30 second ke andar wapas aaya to uske 5 minute chalte rahenge, warna parchi khatam aur wo line me peeche. Uber crore customer sambhalta, sabka dekhna hai: 30 second ke baad bhi Arpan ko aage rakha to beech me aaye logon ka nuksaan. Cancel Arpan ne kiya, to dobara peeche lagna uski galti ka nateeja; baaki koi pareshaan nahi hota.
 Technical me: "parchi" = Redis me pehle tap ka waqt (intezaar pehle tap se gino), "30 second ki umar" = TTL.
@@ -111,12 +117,15 @@ Technical me: "parchi" = Redis me pehle tap ka waqt (intezaar pehle tap se gino)
 **16. (Zomato wali reel se aaya: Aman ki biryani, Raju ki bike) Arpan map pe Raju ki gaadi apni taraf aati dekh raha hai. Raju signal pe 15-20 minute khada, phone phir bhi har 4 second wahi jagah bhej raha, battery 15% pe.**
 Arpan: Location mujhe kab chahiye? Driver bahut der se hil hi nahi raha to baar-baar location bhej ke karega kya, faltu hai. Jaise koi aadmi so raha hai to main uske kamre me baar-baar nahi jaunga; jagega tab jaunga. Dikh gaya ki Raju signal pe khada hai, to 4 second ki jagah 10, 15-20 second pe bhejo. Location band nahi hogi, bas der se aayegi; gaadi chali to phir har 4 second.
 Technical me: "khada hai to der se, chala to jaldi" = adaptive ping (speed ke hisaab se location bhejne ka waqt, battery bachti).
+
 **Maan lo Raju Connaught Place ki oonchi buildings ke beech hai. GPS buildings se takra ke galat jagah bata raha, Arpan ke map pe gaadi ek building ki chhat pe dikh rahi (ghost bike, helicopter ban gayi).**
 Arpan: Main server pe baitha, dekha location ek badi building ke upar aa rahi. Asli jagah jaake dekha to neeche sadak hai, upar building; signal buildings me ulajh jaata. Hamein pata hai Raju is building ke aas-paas hai aur wahan sadak kaunsi hai. To 1 second ke liye wo chhat pe bhi dikha, use paas wali sadak pe wapas utaar do.
 Technical me: "paas wali sadak pe chipka do" = map matching (GPS ka galat point sabse paas ki sadak pe, Raju ke raaste ke hisaab se).
+
 **Maan lo location har 4 second aati hai. Beech me gaadi 4 second khadi, phir achanak aage koodti, phir khadi: chal nahi rahi, teleport ho rahi.**
 Arpan: Duniya me aisi technology nahi jo bilkul har pal ki asli jagah de; ho bhi to bahut paisa lagega. Main sadak pe hota aur bike chalaata to seedha-seedha aage jaata. To apne gudde (map pe gaadi) ko halka-halka aage chalate raho: thoda aage, thoda aur aage. Nayi location aaye to use sahi jagah pe rakh do. Par flyover ke neeche Raju ne U-turn le liya, hum to gudde ko aage chala rahe the; signal wapas aaya to asli jagah peeche nikli, to gudda wahan se uth ke wahan teleport. Ye har app me dikhta hai, Uber, Rapido, Zomato, Swiggy.
 Technical me: "gudde ko andaze se aage chalao" = dead reckoning (speed + sadak dekh ke andaza), "nayi aayi to sahi jagah" = correction, "U-turn pe kooda" = andaza galat nikla, isliye jump.
+
 **Maan lo Raju Arpan ki society ki basement parking me ghusa aur phone 5 minute bilkul offline. Andaze se chalate rahe to gaadi shehar ke bahar; ruki dikhi to Arpan sochega Raju bhaag gaya.**
 Arpan: Aakhri location pata hai: Raju building ke paas pahunch gaya. To gaadi wahin rok do aur map ki jagah dikha do "Raju tumhari building pahunch gaya". Arpan ko shaanti, wo map dekhna band kar dega. Zomato me Raju khana le ke upar bhi aata hai, isliye do cheez: pehle "order tumhari building tak pahunch gaya", phir jab haath me diya tab "order tumhe mil gaya". Uber me Arpan neeche aata hai, wahan "Raju pahunch gaya" kaafi.
 Technical me: "aakhri jagah pe roko" = last known location (andaze se aage nahi), "map ki jagah status" = status update (arrived / delivered), jagah se pata chala pahuncha = geofence.

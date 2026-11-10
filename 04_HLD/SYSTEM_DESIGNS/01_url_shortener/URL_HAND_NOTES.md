@@ -37,6 +37,7 @@ Technical me: "apni-apni range" = counter range (beech ka counter har app server
 **8. 5 saal me mote register me itne token (90 TB) ki wo ek almari me aata hi nahi.**
 Arpan: Shard kar do, chhote-chhote tukde bana do. 90 TB kab tak sambhaal loge, wo bharta jaayega. 10 TB ke 9 tukde kar do, aur sab tukde alag-alag rakh do: ye yahan, ye yahan. Aur use hash se baant do, ki ab kabhi aayega to wo is tukde pe chala jaayega, phir same aayega to phir usi tukde pe.
 Technical me: "chhote tukde, alag almari" = shard, "hash se baant do, same aaye to usi tukde pe" = code ke hash se machine tay.
+
 **Maan lo almari phir kam padi, 10vi lagani hai:** Cassandra khud sambhalta: token ke hash se tukda wahi tay karta, nayi machine lagao to apne aap thoda data baant deta. Uska andar ka kaam, hamara faisla nahi.
 Technical me: Cassandra andar token ring (consistent hashing) se baantta, official doc: https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
 
@@ -51,6 +52,7 @@ Technical me: "do se hi padhwao" = R=2, "ek ke paas to hai" = W + R > 3, ek copy
 **11. Cricket match ka token viral, 1 crore log ek saath. Sab counter wale us token ke liye ek hi chhote register ki taraf bhaag rahe, wo itna dheema ki uske baaki token bhi atke.**
 Arpan: Sabko wahi token chahiye. To us chhote register ko bahut saaron me baant do. Ek hi kyun hai wo register, 10 register bana de, uski photocopy bana de aur divide kar de. Ek hi chhote register pe ek saath itne log nahi aa rahe, wo bat gaya. 10 kar do, 100 kar do.
 Technical me: "chhote register ki photocopy, divide" = Redis replica (padhai copies me bantna).
+
 **Maan lo copy 10 ho ya 100, har baar counter wale ko kursi se uth ke register tak jaana padta. 1 crore log, 1 crore chakkar.**
 Arpan: Us counter wale ko bol: ye information tu rakh le, baar-baar uth ke kyun ja raha hai. Ek chhoti parchi le, uska token aur information apne paas rakh. Maan le roz 100 log aaye, ek hi information maang rahe, aur wo mere se pachaas kadam door hai, mujhe har baar wahin jaana padta. Main wo information utha ke apne paas ek page pe likh lunga, aur apni kursi pe baith gaya. Ab koi poochhe to "le bhai, teri information ye rahi". Mujhe dobara kahin jaana nahi padta.
 Technical me: "counter wala apne paas parchi rakhe" = local cache (app server ki memory me garam link kuch second).
@@ -58,6 +60,7 @@ Technical me: "counter wala apne paas parchi rakhe" = local cache (app server ki
 **12. Kisi ka idea: har aadmi pata apne phone me hi likh le, counter pe aaye hi nahi. Hafte baad pata chala ek token ka pata dhokhe wali site ka hai, use band karna hai, par log seedha phone wale pate pe ja rahe.**
 Arpan: Token radd kar do, ki ab wo galat site pe nahi jaayega. Doosri cheez, aisi kisi cheez ko hum pehle se hi dekh lenge ki wo theek bhi hai: user ko dene se pehle khud check kar lo ki jo wo bana raha hai wo theek bana raha hai ya nahi. Galat bana raha hai to mana kar do banane se, aur us token ko radd kar do.
 Technical me: "token radd" = code band, "dene se pehle khud check" = kaali list (Google Safe Browsing).
+
 **Maan lo token radd kiya, par log counter pe aa hi nahi rahe. Unhe kaise pata chale? Shuru me phone me likhne dena tha ya nahi?**
 Arpan: Unke phone me wo cheez update kar do na. Wo cookies aur cache se aa rahe honge, to unka cache radd kar do, hata do, to agli request seedha yahan aayegi. Phir (jab poocha ki phone uske haath me hai, tu kaise mitayega): To phir phone pe likho mat na bhai. Phone pe likhega nahi to wo hamare counter pe dobara aayega, dobara hum use theek token de denge. Agar aisi phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai.
 Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte hain, lekin hum technical nahi, aam dikkat ka solution bol rahe the, isliye thodi der me samjha.
@@ -66,6 +69,7 @@ Technical me: "phone me likhna hi mat do, har baar counter pe aaye" = 302 + `Cac
 **13. Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka number faltu khatam, register bhar raha, asli log atke.**
 Arpan: Jaanch padtaal karenge ki script laga di. Ek-do baar to aisa hoga hi, teen baar, chaar baar, phir pattern pata lag jaayega ki ye banda to har baar aa raha hai, har baar ye drama karke chala jaata hai. To us bande ko rok do, andar ghusne hi mat do, wo kamre me hi nahi aayega, use bahar gate pe hi bhaga do.
 Technical me: "pattern pata lag jaayega, gate pe bhaga do" = WAF block.
+
 **Maan lo pakadne me 3-4 chakkar lagte, tab tak wo laakhon chit de chuka. Shuru se har aadmi ke liye kya niyam?**
 Arpan: Yahan thoda pench hai. Had ek user, ek aadmi pe rakhenge. Kyunki maan lo ek office hai, wahan wo log unke WiFi se aa rahe hain, to dikkat ho jaayegi. Ek group ek saath aa gaya, lekin wo sab legit users hain, unko to token dena padega. To per user pe lagao, group pe nahi: ye ek banda hai, ek baar me 5 hi lagayega, usse zyada nahi.
 Technical me: "per user had, group pe nahi" = rate limit user pe (IP pe nahi), "office ka WiFi" = ek IP ke peeche kai asli user, "5 se zyada nahi" = had paar pe 429.

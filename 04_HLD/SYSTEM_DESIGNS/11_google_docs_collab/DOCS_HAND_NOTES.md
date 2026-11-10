@@ -9,6 +9,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 **1. Jo "Save" dabata hai, uska poora text server pe jaake purane ko hata deta hai. Arpan ne upar "Goa jaayenge" likh ke Save kiya, Ravi ne neeche "budget 20k" likh ke Save kiya. Ravi ki screen pe purana text tha, to Arpan ki line gayab.**
 Arpan: Dono ka text dikhao, kisi ko gayab kyun karna. Ye to last write wins wali situation ho rahi, Google Docs me last write wins nahi chalne ka, warna Google Docs ka matlab hi khatam. Poora text nahi bhej sakte, poora bhejenge to overwrite ho jaayega. Operation bhej do: insert, delete, add. Maine likha "Goa jaayenge", Ravi ne kuch kiya to uska operation bhejenge: is letter ke baad add kar do. Main Ravi ka operation laaunga: isne ye likha to "Goa jaayenge" ke baad budget likh dunga, ya neeche, ya beech me kahin. Google andar se kaise karta, wahan jaana bhi nahi chahta, main khud kaise karunga wo dekh raha.
 Technical me: "last write wins nahi" = dono ka badlaav bache, "poora text nahi, operation bhej do: insert, delete" = operation (op) bhejna, "is letter ke baad add kar do" = op me jagah (position).
+
 **Maan lo Ravi ka "budget 20k" wala op dobara chala gaya ("mil gaya" kho gaya).**
 Arpan: Har op ki apni id: server pehle id dekhe, ye op lag chuka to dobara mat lagao. Doc me "budget 20k budget 20k" nahi.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
@@ -16,6 +17,7 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 **2. (Ye dikkat Arpan ne khud uthayi) Hazaron-laakhon log dhadadhad save kar rahe, har chhota badlaav DB pe jaaye to?**
 Arpan: Sab save DB pe jaayenge kya, kitna DB write karega, Cassandra ki bhi haalat ho jaayegi. Main hi Google Docs hoon: wo baar-baar hata rahe, badal rahe, check kar rahe. To main apna ek chhota register bana lunga, unki saari baatein likhta rahunga, phir kuch der baad DB me save kar dunga. Har write pe DB query nahi maarunga, warna DB baith jaayega.
 Technical me: "chhota register, saari baatein likhta rahunga" = buffer (Redis), "kuch der baad DB me save" = batch write (Cassandra), "har write pe DB query nahi" = har akshar pe DB nahi.
+
 **Maan lo trip plan doc 2 saal purana, op log me 50 lakh op; Ravi ne aaj khola to kya server saare op shuru se lagayega.**
 Arpan: Ye Banking ke master register wali baat hai: May wale ko 1 May ka balance chahiye to shuru se nahi jodte, master register se uthate hain. Waise hi har kuch hazaar op pe poore doc ki ek photo save kar lo. Ravi doc khole to sabse nayi photo uthao aur sirf uske baad ke thode op lagao. Doc turant khulega.
 Technical me: poore doc ki photo = snapshot, photo + baad ke op = snapshot + op log replay.
@@ -32,6 +34,7 @@ Technical me: "centralized system, ek hi version" = ek jagah kram aur OT, "har d
 **5. Owner server ne 5 second ke badlaav register (apni memory) me jama kiye, Arpan ko "Saved" dikha diya. DB me likhne se pehle server gira, Arpan ka poora para uda.**
 Arpan: Use ek chhoti memory me likh de. Chal maan le mere paas ek dabba hai, us dabbe me saari information store kar raha. Kal wo dabba mar jaaye ya gir jaaye, to us dabbe ki ek aur copy bana dunga. Ya main dabbe ko bolunga: ye meri information tu bhi store kar le. Kal mujhe kuch ho jaaye to tu hai, tujhe kuch ho jaaye to main hoon.
 Technical me: "ek dabba, saari information store" = Redis buffer, "us dabbe ki ek aur copy" = Redis ki copy (replica), "Saved" tab jab copy ne bhi likh liya (Redis copy apne aap thodi der baad likhti; "copy ne bhi likh liya" pakka karne ke liye WAIT); "mujhe kuch ho to tu hai" = owner gira to naya owner usi copy se uthaaye. DB (Cassandra) me batch waise hi.
+
 **Maan lo dabba aur uski copy dono gir gaye, system restart, batch abhi DB me nahi gaya tha?**
 Arpan: Dabba apni disk pe bhi likh de, memory me bhi aur disk pe bhi; gire to disk se wapas aa jaayega, jaise Kafka me line disk pe rehti. Phir bhi sab gira diya to haan, kuch second ki lines chhoot sakti hain, user dobara likh lega. Aisa sochenge to design hi nahi banega: poori consistency chahiye to 2 kyun, 500 copy rakho, aur 500 ka paisa bhi do. Interviewer dekhna chahta hai main sochta kaise hoon, har copy girana design nahi.
 Technical me: "disk pe bhi likh de" = Redis AOF (persistence), "kuch second chhoot sakti" = chhota data loss window, trade-off: zyada durability = zyada copy / zyada paisa.

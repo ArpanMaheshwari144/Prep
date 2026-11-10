@@ -17,6 +17,7 @@ Technical me: "apne paas ek parchi" = payment table me status, "INITIATED ho gay
 **3. Parchi pe jawab ka intezaar hai. PSP ka pakka jawab pata kaise chale? Aur PSP batana bhool jaaye, ya uska message raste me kho jaaye, to payment hamesha atka rahega?**
 Arpan: Beech me ek aisa banda bitha do jo humein batata rahe: PSP hua ya nahi hua, bata do. Beech me ek aisa system bithao jo permanent dono se baat karta rahe: haan bhai, hua, nahi hua.
 Technical me: "beech me banda jo batata rahe hua ya nahi" = poochne wala job (PENDING utha ke PSP se status poochhe), "permanent dono se baat karta rahe" = PSP aur hamare DB ka milaan.
+
 **Maan lo PSP ka message raste me kho gaya, ya beech wala banda bhi der se pahuncha.** (BookMyShow 6c wala hi jawab)
 Arpan: PSP ko onboard karte hi bol do: "jaise hi paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhejta hai. Event aaya matlab paisa kata, hum haath utha ke bol dete "mil gaya". Event raste me kho gaya to wo PSP ka HLD hai, wo dobara bhejega; tab tak beech wala banda poochhta rahe. Na hum andhe, na wo.
 Technical me: "paisa katte hi chhota event" = webhook (PSP callback, sign jaanch ke), "mil gaya" = ack (2xx), "dobara bhejega" = webhook redelivery, beech wala banda = status job backup ke liye.
@@ -28,6 +29,7 @@ Technical me: "PSP-2 pe bhej do, fallback tareeka" = fallback PSP, "status wale 
 **5. Server parchi pe INITIATED likh chuka tha, aur PSP ko call bhejte waqt hi gir gaya. Restart pe yaad nahi ki call PSP tak pahunchi ya nahi.**
 Arpan: Beech me ek register rakho, usme likh lo "initiate hua". Server gira to aake dekhega: haan yaar, ye cheez likhi hui hai, chalo PSP se dobara poochte hain, "bata PSP, iska kya hua". To pehle register me likho, phir bhejo. Aur agar dobara bhejna pade to idempotency key laga denge, us key se pata pad jaayega ki do baar hua. Key process ho chuki to do baar nahi hoga.
 Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATED commit, "aake dekhega, PSP se dobara poochte" = restart pe job INITIATED utha ke status poochhe, "idempotency key" = payment id hi PSP ki idempotency key.
+
 **Maan lo net atka, Arpan ne "Pay" do baar daba diya.**
 Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; server pehle key dekhe, purani hai to wahi parchi lauta de. Wahi Chat aur Banking wali key.
 Technical me: "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
@@ -55,7 +57,8 @@ Technical me: "ladka 500 le ke us tukde me" = saga do shard ke beech, "diary" = 
 **11. Ravi ka wallet top-up 500, PSP-1 30 second se chup. Pata nahi PSP-1 mara hai ya bas dheema, aur Ravi ke bank se paisa kata ya nahi. Doosra PSP khada hai.**
 Arpan: Chhotu ko 500 de ke bheja, wo laut ke nahi aaya. Ho sakta hai bhaag gaya, ho sakta hai line me khada ho aur dukaan pe paise de bhi diye hon. Agar pehle se pata hai ki PSP-1 down hai, to payment wahan jaane hi mat do, seedha PSP-2. Par agar pata nahi aur paise shayad kat chuke hain, to PSP-2 ko bheja to wo bhi kaat lega. Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya, naa aaya to Ravi ke paise wapas. Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 Technical me: "pehle se pata down hai" = circuit breaker OPEN, tab hi fallback PSP-2, "pata nahi kata ya nahi" = unknown state, PENDING (PSP-2 pe nahi, warna do baar katega), "itna waqt, haan ya naa" = timeout + status job PSP-1 se poochhe, "naa to paise wapas" = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
-**Maan lo pehle se PSP-1 ke saath kuch tay hi nahi tha, isliye PSP-2 pe bhejne se darr hai.** (BookMyShow 6c wala hi jawab)
+
+**Maan lo PSP-1 chup hai aur PSP-2 pe bhejne se darr hai ki do baar na kat jaaye. Ye darr hi na rahe, iske liye PSP-1 ke saath pehle se kya tay karoge?** (BookMyShow 6c wala hi jawab)
 Arpan: PSP-1 ko onboard karte hi vaada lo: "30 second me jawab do, haan ya naa", thoda buffer 50-55 second, 1 minute bahut. Saath me tay karo ki itne me jawab nahi diya to wo request khud cancel karega. Ab 55 second baad PSP-2 pe bhejna safe hai, do baar nahi katega. Downtime bhi poochh lo, jaise AWS uptime batata. Diwali jaisi badi sale ho to 3-4 company (Stripe, Amazon Pay) line me rakho.
 Technical me: "onboard pe vaada 30 sec, buffer 55" = SLA / timeout, "jawab nahi to khud cancel" = PSP auto-cancel / auto-refund (isliye failover safe), "3-4 company line me" = backup PSP (failover).
 

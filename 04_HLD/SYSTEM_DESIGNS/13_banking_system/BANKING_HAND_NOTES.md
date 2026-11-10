@@ -13,6 +13,7 @@ Technical me: "mere 500 wapas de do" = transaction rollback (ya dono kaam, ya ko
 **2. Ravi ko 500 pahunch gaye, par receipt milne se pehle Arpan ki line kat gayi. Use pata nahi chala, usne wahi parchi dobara di.**
 Arpan: Wo cheez hamare paas hai na, humne likh di thi. Bhale hi uski line kati ho, wo dobara bheje, wo log to hamare paas hai. Hum dekh lenge ki 500 chale gaye, to mana kar do: "nahi bhai, 500 tumhare already bhej diye hain."
 Technical me: "log hamare paas hai, dekh ke mana" = DB me pehle wala record dekh ke dobara mat kaato.
+
 **Maan lo agle din Arpan sach me Ravi ko phir 500 bhejna chahta hai. Diary me pehle se "Arpan se Ravi, 500" hai, cashier use bhi mana kar dega. Wahi purani parchi hai ya nayi, kaise pehchaane?**
 Arpan: Aisa karo, ek key bana do, ek key le lo. Arpan ne Ravi ko 500 bheje, ab use pata nahi gaye ki nahi, to wo dobara bhejega to usi key ke saath bhejega na, key thodi badli, key to same hi hai. Key kuch aisa rakho jo badle hi na. Maan lo maine ek parchi pe likh diya ki Ravi ko 500 bhejne hain is waqt, aur parchi bank wale ko de di. Mujhe nahi pata gaye ki nahi, to main dobara wahi same parchi dunga. Wo dekhega: "abe yaar ye to same hi hai, ise kyun wapas bhejna, hatao." Matlab ek key aisi banegi jo do baar transaction me same hi rahegi.
 Technical me: "key jo badle hi na, same parchi" = idempotency key, "ye to same hi hai, hatao" = key pehle aa chuki to purana jawab (UNIQUE), nayi parchi = nayi key.
@@ -20,6 +21,7 @@ Technical me: "key jo badle hi na, same parchi" = idempotency key, "ye to same h
 **3. Branch me do counter. Arpan ke khaate me 600. Ek hi pal me do parchi, Netflix 500 aur UPI 500, alag counter pe. Dono cashier ne 600 dekha, dono ne kaat diya, balance -400.**
 Arpan: Ise ek hi kram me kar lo, dekhna aur kaatna ek hi kram me. Jisne pehle 600 dekha, wo pehle kaat de: Netflix ke 500 turant kat gaye, ab account me 100 rupaye hain, to agla counter 600 nahi, 100 dekhega. Technical terms me jo bhi kehte hain wo mujhe pata nahi, lekin ek kar do, aur doosre wale ko 600 dikhne nahi chahiye.
 Technical me: "dekhna aur kaatna ek kram me" = ek query me check + kaato (`balance - 500 WHERE balance >= 500`), "doosre ko 600 dikhne nahi chahiye" = row lock.
+
 **Maan lo ek hi pal me do parchi: counter 1 pe "Arpan se Ravi 500", counter 2 pe "Ravi se Arpan 300". Counter 1 ne Arpan ka khaata pakda, Ravi ka maang raha; counter 2 ne Ravi ka pakda, Arpan ka maang raha. Dono ek doosre ka intezaar, koi nahi hilta.**
 Arpan: Dono counter wale apna-apna khaata pakad ke khade, na ye chhodta na wo. Do raaste hain. Pehla: main Ravi se bolunga "chal bhai, hum dono ek hi line me lagenge, ek hi counter pe", to ek ke baad ek kaam hoga. Doosra: main bolunga "koi baat nahi, pehle mere khaate se kaat ke Ravi me daal de". Wo ho gaya to khaata free, phir doosri parchi bhi ho jaayegi. Aur ye atkan sirf ek hi bank ke DB ke andar hota hai, alag bank me nahi. User ko kabhi pata nahi chalta: DB khud tod deta hai, app dobara chala deta hai, papa ke 10 aur mere 10 dono chale jaate hain.
 Technical me: "dono ek doosre ka khaata pakad ke baithe" = deadlock. "ek hi line, ek counter" = ek ke baad ek (serialize); 10 counter bane rahein aur phir bhi na atkein, uske liye har counter pehle chhota account number pakde (lock ordering). "pehle ek poora, phir doosra" = DB atkan pakadta hai (deadlock detection), ek parchi rollback, doosri poori, phir pehli dobara (retry).
@@ -39,6 +41,7 @@ Technical me: "10 cashier, 10 counter" = kai service machine, "doosre counter pe
 **7. Cashier 10 ho gaye, par register abhi bhi ek hi. Raat ko branch me aag lagi, register jal gaya.**
 Arpan: Use kahin store karwa lo na, kai jagah store karo. Maan le meri ek important copy hai, usme kuch notes likh rakhe hain. Main use office me chhod gaya, raat me office me aag lagi, wo notes kho jaayenge na. Nahi, main aisa nahi karunga: main use laptop me save kar lunga aur laptop ghar le jaaunga. Ab us copy me aag lage chahe kuch bhi ho, mere laptop me to mera saamaan hai.
 Technical me: "laptop me save, ghar le jaao" = replica doosri jagah (Multi-AZ).
+
 **Maan lo laptop me shaam ko ek baar save karta hai. 2 baje copy me zaroori line likhi, 3 baje aag. Copy kab likhi jaani chahiye?**
 Arpan: Jaise hi maine copy pe likha, turant laptop pe likh lo na, dikkat hi khatam. Hamare paas proof ho gaya, ab office me aag lage chahe kuch bhi. Matlab wo cheez tab tak pakki nahi jab tak wo mere laptop me nahi aati. Copy pe likh liya, use turant laptop pe lao, phir pakka maano.
 Technical me: "turant laptop pe, tabhi pakka" = sync copy, "shaam ko ek baar save" = async (aakhri likha kho jaata).

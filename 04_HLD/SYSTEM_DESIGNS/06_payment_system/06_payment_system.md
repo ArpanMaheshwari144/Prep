@@ -336,9 +336,12 @@ Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 state, PENDING (PSP-2 pe nahi, warna do baar katega). Itna waqt, haan ya naa = timeout + status job PSP-1 se poochhe.
 Naa to paise wapas = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
 
-**Maan lo PSP-1 ke saath pehle se kuch tay hi nahi (BookMyShow 6c wala hi jawab):** onboard karte hi vaada lo "30 second
+**Maan lo PSP-1 chup hai aur PSP-2 pe bhejne se darr hai ki do baar na kat jaaye. Ye darr hi na rahe, iske liye PSP-1 ke saath pehle se kya tay karoge? (BookMyShow 6c wala hi jawab)**
+
+Onboard karte hi vaada lo "30 second
 me haan ya naa", buffer 50-55 second, aur itne me jawab nahi to request wo khud cancel karega. Ab 55 second baad PSP-2
 pe bhejna safe, do baar nahi katega. Downtime poochh lo (AWS jaisa uptime). Diwali jaisi sale pe 3-4 company line me.
+
 **Asli naam:** vaada = SLA / timeout, khud cancel = PSP auto-cancel / auto-refund (isliye failover safe), 3-4 company =
 backup PSP (failover).
 

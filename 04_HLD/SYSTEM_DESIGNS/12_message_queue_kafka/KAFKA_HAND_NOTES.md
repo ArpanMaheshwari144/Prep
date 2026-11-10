@@ -21,9 +21,11 @@ Technical me: "aur gate" = partition, "har gate ke andar apni line" = kram sirf 
 **4. Gate ke andar 3 ticket checker, teeno har fan ka ticket punch kar rahe. Har ticket 3 baar punch, line teen guna dheemi.**
 Arpan: 3 punch ho gaya hai. To aise kar de, un saalon ko mila de, ek bana de, ek kamre me hi baitha de. Is kamre me 3 baithe hain, koi bhi aaye, bas in 3 me se ek pe bhej. Jisne punch kar diya, baaki 2 usko dekhe hi nahi.
 Technical me: "ek kamre me baitha de, ek bana de" = consumer group, "3 me se ek pe bhej" = ek partition group me ek hi consumer ko, "baaki 2 dekhe hi nahi" = group me ek khabar ek hi checker ke paas (par commit se pehle gira to dobara aa sakti, [kadam 6](12_message_queue_kafka.md#6-checker-register-me-likhne-se-pehle-gira-pehle-aaya-dekh-lo)).
+
 **Maan lo har fan ki talaashi bhi honi hai, 2 security wale aaye. Unhe bhi checker ke kamre me bitha diya to "sirf ek ke paas" wala niyam unpe bhi lagega, talaashi chhoot jaayegi.**
 Arpan: To alag baitha do. Matlab pehle ticket checker ka room, phir security ka room. Ek ko paar karo, phir doosre room me jao.
 Technical me: "alag room" = alag consumer group. "pehle ticket checker ka room, phir security ka room" = checker jo paas kare use nayi line me daale (naya topic: ticket_ok), security group usi nayi line se padhe, kyunki talaashi ticket ke baad hi. Agar talaashi ka ticket se lena-dena na hota, to dono group seedha ek hi line se, apni-apni copy aur apni raftaar se padhte, ek dheema to doosra nahi rukta.
+
 **Maan lo checker ke room me scanner hang, 10 minute sab atke.**
 Arpan: Ticket check zaroori hai, bina ticket talaashi kyun lun, wahin se nikaal dunga. Order maintain karna hai, jaise pehle order phir pay. Scanner atka to ek mat rakho, copy bana ke rakho: 2-3 scanner, 2-3 room. Ek kharab to doosre se traffic chalta rahega.
 Technical me: "2-3 scanner / room" = group me zyada consumer (ek gira to uske partition baaki me bat jaate, rebalance); "pehle ticket phir talaashi" = do topic ki chain (ticket_ok).
@@ -35,7 +37,8 @@ Technical me: "copy bhi likh de, tab likh di" = acks=all, "replica ne bol diya l
 **6. Checker ne fan ko seat pe baitha diya (ticket punch), par register me likhne se pehle gir gaya. Naya checker wahi fan dobara bhejega.**
 Arpan: Idempotency check kar le ki wo pehle aaya hai. Bas, samajh ja.
 Technical me: "check kar le ki pehle aaya hai" = idempotency (eventId se dobara wali khabar pakad ke chhodna).
-**Maan lo worker ne Arpan ke order #501 ka SMS bhej diya, par bookmark (commit) aage khiskaane se pehle gir gaya. Naya worker wahi message dobara uthata hai, Arpan ko do SMS nahi jaane chahiye. (7-Nov grill, yahan pehle ghoom ke aaya)**
+
+**Maan lo worker ne Arpan ke order #501 ka SMS bhej diya, par bookmark (commit) aage khiskaane se pehle gir gaya. Naya worker wahi message dobara uthata hai, Arpan ko do SMS nahi jaane chahiye.**
 Arpan (pehli soch): Parchi pe likh lo "Ravi ko 10,000 dene hain", de diye to parchi pe DONE, aur paise dena + DONE likhna ek hi kaam bana do, ya dono ho ya koi nahi.
 Pench: paise dena (SMS company) aur parchi (hamara DB) do alag jagah hain, ek jhatke me nahi ho sakte. SMS chala gaya aur DONE likhne se pehle gira, ye beech ka pal kabhi nahi hatega. Is pal ko rok nahi sakte, isliye dobara aana maan ke chalo.
 Arpan (aakhri): Har message ki ek pakki id bana do. Is id se ek SMS chala gaya; wahi id dobara aaye to discard kar do, chahe naya worker laaye ya doosri SMS company se jaaye.
@@ -48,6 +51,7 @@ Technical me: "pehle kahin likh de" = outbox (khabar usi DB transaction me), "ba
 **8. Ek fan ka ticket hi galat hai. Wo baar-baar gate pe ghusne ki koshish karta, har baar mana, aur peeche poori line atki.**
 Arpan: Use line se hata, usko ghusne hi mat de. Tu bahar, tu aayega hi nahi. Matlab mere paas ek aisi cheez ho jo uske gate pe hi rok de, andar hi na aane de. Matlab bouncer, hahaha.
 Technical me: "line se hata" = DLQ (alag line, baaki line chale), "bouncer gate pe hi rok de" = galat khabar ko pehle hi rokna (validation).
+
 **Maan lo Arpan ki "pay" khabar DLQ me gayi, peeche ki "cancel" chal gayi, kram toota.**
 Arpan: Cinema hall ka ticket checker: 3 logon ka group aaya (order, pay, cancel). Ek gadbad nikla to use jaane nahi dunga. Ya to teeno mat jao, ya pehla (order) chala gaya to baaki do (pay, cancel) abhi mat jao; jab wo theek ho jaaye to pay aur cancel ek saath dobara jaayenge. Isse kram nahi tootega. Jaise ticket pe likha A1, A2, A3: A1 andar chala gaya, A2 ruk gaya, to A3 ko A2 ki seat pe nahi bhejunga. A2 jaayega to A3 jaayega, A2 cancel to A3 bhi ruka.
 Technical me: "3 logon ka group" = ek user ki khabar (key = userId, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein. Kafka kram ek partition ke andar pakka deta hai; yahan kram humare consumer ne toda, jab pay ko DLQ bhej ke cancel pe aage badh gaya.
@@ -59,6 +63,7 @@ Technical me: "sab DLQ me nahi, pehle check" = circuit breaker, "check karunga k
 **10. Koi line me 7 din se zyada peeche reh gaya, aur gate ki 7 din purani list ka panna phaad diya jaata hai.**
 Arpan: Wahan bheed bahut zyada hai, aur admin daalo wahan. Use itna peeche rehne hi mat do na, wahan aisa karo taaki wo bheed 7 din tak peeche na rahe.
 Technical me: "aur admin daalo" = pehle checker (consumer) badhao, gate (30) tak; gate bhar gaye tab gate (partition) bhi badhao, isliye shuru se zyada gate rakhe the, "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
+
 **Maan lo wo dheere-dheere peeche ja raha: aaj 1 din, kal 2 din. 7 din hone se pehle kaise pata chalega?**
 Arpan: Alert laga do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."
 Technical me: "alert laga do" = consumer lag alert.

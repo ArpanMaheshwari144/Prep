@@ -41,6 +41,7 @@ Technical me: "login ke baad userId hamare paas" = userId pe kadi had, "login pe
 **9. Result ka din, subah 10 baje 1 crore bachche OTP maangte. Har bachcha apni had me, phir bhi OTP Service aur SMS company dono gire.**
 Arpan: Mere paas 2-3 log hain jo 10,000 logon ka kaam kar rahe, koi na koi girega hi. To log badha do, server badha do. Aur SMS company ko utni bheed mat jaane do, wo apne hisaab se kaam kar rahi. Line lagwa, aaram-aaram se: "jaao beta, ek-ek karke; tu nikal, ab tu nikal." Hamare aur SMS company ke beech ek cheez fit kar denge jo spike rok le. SMS ab ek ja, ek ja, dheela-dheela, aaram se.
 Technical me: "log badha do, server badha do" = apne server scale, "line lagwa, ek-ek karke" = queue (Kafka), "beech me cheez jo spike rok le" = SMS company ki raftaar se worker, global had.
+
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar.**
 Arpan: Line me har OTP pe uski umar likh do. Line se nikalte waqt dekho, umar khatam to phenk do, bhejo mat; bachcha naya OTP maang lega.
 Technical me: umar = message TTL / expiry (line se nikalte waqt jaancho), purana OTP SMS company tak jaata hi nahi.
