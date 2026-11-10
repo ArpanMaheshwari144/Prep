@@ -87,7 +87,7 @@ khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
 
 **Asli naam:** naksha dabbon me = geohash (grid), sirf apna dabba = 5 lakh ki jagah gine-chune driver.
 
-![Naksha pehle se dabbon me kata: server sirf Arpan ke dabbe me dekhe](../IMG/15_uber_map_kadam3.svg)
+![Naksha pehle se dabbon me kata: server sirf Arpan ke dabbe me dekhe](../00_IMG/15_uber_map_kadam3.svg)
 
 ## 4. Arpan dabbe ke kinare pe, 200 meter door khaali driver (gola khincho)
 
@@ -97,7 +97,7 @@ bhi dekho, phir asli fasla naap ke sabse paas wala.
 
 **Asli naam:** gola + chhoote dabbe = apna geohash + aas-paas ke dabbe (neighbours), phir asli distance.
 
-![Dabbe ki seema pe mat chalo: Arpan se 8 km ka gola, chhoote dabbon ke driver bhi](../IMG/15_uber_map_kadam4.svg)
+![Dabbe ki seema pe mat chalo: Arpan se 8 km ka gola, chhoote dabbon ke driver bhi](../00_IMG/15_uber_map_kadam4.svg)
 
 ## 5. Raju ek, Arpan aur Priya do (BMS wali parchi)
 
@@ -263,7 +263,7 @@ hila to turant Arpan ko dikha de, hila to dikha de. Asal me hilta hai, jhooth na
 
 **Asli naam:** poochne ka mauka mat do, khud dikha do = push (WebSocket, khula taar), polling band.
 
-![Raju hila to turant Arpan ko dikha do: khula taar, poochne ka mauka nahi](../IMG/15_uber_map_kadam10.svg)
+![Raju hila to turant Arpan ko dikha do: khula taar, poochne ka mauka nahi](../00_IMG/15_uber_map_kadam10.svg)
 
 ## 11. Arpan server 12 pe, Raju ki jagah server 57 pe (store karwa lo, seedha raasta)
 

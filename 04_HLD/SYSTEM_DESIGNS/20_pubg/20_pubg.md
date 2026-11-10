@@ -103,7 +103,7 @@ aas-paas kya ho raha, wahi Arpan ke kaano me. Map pe bhi aas-paas ke log, door k
 **Asli naam:** khula taar = WebSocket / UDP connection (push), sirf aas-paas walon ko event = area of interest /
 interest management (naksha dabbon me, Uber ke geohash jaisa; har player ko sirf apne aur pados ke dabbon ki khabar).
 
-![Sirf aas-paas ki khabar: Arpan aur Claude Pochinki me, Military Base ki khabar nahi](../IMG/20_pubg_kadam2_aas_paas.svg)
+![Sirf aas-paas ki khabar: Arpan aur Claude Pochinki me, Military Base ki khabar nahi](../00_IMG/20_pubg_kadam2_aas_paas.svg)
 
 ## 3. Hacker ka phone bole "meri goli lagi" (faisla server ka)
 
@@ -128,7 +128,7 @@ match me ghusne hi mat do.
 **Asli naam:** pichhli jagah se 1 second me itna hi = server-side movement validation (speed ki had, namumkin chaal
 reject), update phenko = server ki jagah sach, agli baar ghusne mat do = anti-cheat ban.
 
-![Faisla server ka: goli ki line (kadam 3) aur 1 second me 500 m namumkin (kadam 4)](../IMG/20_pubg_kadam3_4_server_judge.svg)
+![Faisla server ka: goli ki line (kadam 3) aur 1 second me 500 m namumkin (kadam 4)](../00_IMG/20_pubg_kadam3_4_server_judge.svg)
 
 ## 5. Chicken dinner ke baad DB ghut gaya (parchi, line, Cassandra)
 
