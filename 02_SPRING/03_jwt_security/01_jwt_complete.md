@@ -1,32 +1,20 @@
 # JWT + Spring Security
 
-## Kahani: hotel ka keycard
+## Scene: Fargate pe 3 task, aage LB
 
-Tu hotel me check-in karta hai. Reception teri ID dekh ke tujhe ek keycard de deta hai. Ab har baar kamra kholne ke liye reception nahi jaana padta,
-bas card tap karo aur darwaza khul jaata hai. Card me kamra number aur checkout ki tareekh likhi hai, aur us pe hotel ki mohar hai, isliye koi nakli card
-nahi bana sakta. JWT yahi keycard hai.
+Teri app Fargate pe 3 task me chal rahi hai aur aage load balancer hai. Pehle **session** wala tareeka tha: login hua to task 1 ki memory
+me likha gaya "abc123 = Arpan". Agli request LB ne task 2 pe bhej di. Task 2 ko abc123 ka pata hi nahi, kyunki wo task 1 ki memory me tha,
+isliye user achanak logout ho gaya. Iske hal the sticky session ya Redis me session rakhna, aur dono me jhanjhat hai.
 
-## Dikkat aur ye kyun bana
-
-Purana tareeka **session** tha. Login pe server apni memory me likh leta tha "abc123 = Arpan". Ab maan lo app 3 server pe chal rahi hai, aur load balancer
-ne agli request server 2 pe bhej di. Server 2 ko abc123 ka pata hi nahi, kyunki wo server 1 ki memory me tha, isliye user ko dobara login karna padta. Iske hal the sticky session ya
-Redis me session store karna, par dono me jhanjhat hai.
-
-JWT me server kuch yaad nahi rakhta. Token khud batata hai "main Arpan hoon, mera role USER hai, main 15 min tak valid hoon", aur us pe secret se
-mohar lagi hoti hai. Koi bhi server mohar jaanch ke us pe bharosa kar leta hai, isliye ise **stateless** kehte hain.
-
-## Tasveer
+JWT me server kuch yaad nahi rakhta. Token khud bolta hai "main userId 7, role USER, itne baje tak valid", aur us pe secret se mohar lagi
+hoti hai. Koi bhi task mohar jaanch ke us pe bharosa kar leta hai, DB me jaaye bina. Isliye ise **stateless** kehte hain.
 
 ```
 LOGIN:    password sahi (BCrypt) -> token = header . payload(userId, role, exp) . MOHAR(HMAC, secret se)
-REQUEST:  Authorization: Bearer <token> -> server mohar dobara banata -> mili? haan -> Arpan maan liya (DB nahi)
+REQUEST:  Authorization: Bearer <token> -> server mohar dobara banata -> mili? haan -> user maan liya (DB nahi)
 HACKER:   payload me role=ADMIN kiya -> mohar match nahi -> 401
           naya token banana? secret chahiye, uske paas nahi
 ```
-
-Login pe password BCrypt se check hota hai, aur sahi ho to token banta hai jisme header, payload (userId, role, exp) aur secret se bani HMAC mohar hoti hai. Har request me token `Authorization: Bearer` header me aata hai, server wahi mohar dobara bana ke milata hai, aur mil gayi to user ko Arpan maan leta hai, DB me jaaye bina. Hacker ne payload me role=ADMIN kar diya to mohar match nahi hogi aur 401 milega. Naya token wo bana nahi sakta, kyunki uske liye secret chahiye jo uske paas nahi hai.
-
-Payload sirf base64 hai, encrypt nahi hai, isliye jwt.io pe koi bhi use padh sakta hai. Isliye password ya card jaisi cheez token ke andar kabhi mat daalo.
 
 ## Chala ke dekha (plain Java HMAC, wahi mohar wala kaam)
 
@@ -37,34 +25,36 @@ asli    : 200 OK, {"userId":7,"role":"USER",...}
 ADMIN kiya: 401 mohar match nahi
 ```
 
-Payload koi bhi padh sakta hai, par badal nahi sakta. Role ADMIN karte hi mohar match nahi hui aur 401 aa gaya.
+Payload sirf base64 hai, chhupa hua nahi, isliye koi bhi use padh sakta hai (jwt.io pe bhi). Isliye password ya card number token me kabhi
+mat daalo. Par badal koi nahi sakta: hacker ne role ADMIN kiya to mohar match nahi hui aur 401 mila, aur naya token wo bana nahi sakta kyunki
+secret uske paas nahi hai.
 
-Fargate pe 3 task aur aage LB wali baat yahi hai: session hota to task 1 ki memory me rehta, aur LB agli request task 2 pe bhejta to user logout ho jaata. Token ke saath koi bhi task mohar jaanch ke user ko pehchan leta hai.
+## Chhoti dikkat: logout pe token marta nahi
 
-## Trade-off
+User ne logout kiya, par token apni umar khatam hone tak chalta rahega. Server use beech me "maar" nahi sakta, kyunki server ne kuch yaad
+hi nahi rakha.
 
-Fayda ye hai ki JWT stateless hai: kitne bhi server ho, koi bhi server koi bhi request le sakta hai, aur session store ki zaroorat nahi padti.
+Hal: access token chhota rakho (15 min ka, har request me jaata hai), aur refresh token lamba rakho (7 din ka, DB me rakha, sirf
+`/auth/refresh` pe jaata hai). Logout karna matlab refresh token DB se delete kar dena.
 
-Ye kaat-ta wahan hai jahan logout ya revoke karna ho. Token apni umar khatam hone tak valid rehta hai, aur server beech me use "maar" nahi sakta.
-
-Hal: access token chhota rakho (15 min ka, har request me jaata hai), aur refresh token lamba rakho (7 din ka, DB me rakha, sirf `/auth/refresh` pe jaata hai).
-Logout karna matlab refresh token DB se delete kar dena. Is tarah chori ka khatra bas 15 min ka bachta hai. Ek baat samajh lo: agar chori ka token bina badle chalaya gaya, to mohar to sahi hi
-rahegi. Mohar sirf token badalne aur nakli token banane se bachati hai, chori se nahi. Isliye chhoti umar, HTTPS aur refresh rotation teeno lagte hain.
+Ek baat saaf: chori hua token badle bina chalaya gaya to mohar sahi hi rahegi. Mohar sirf token badalne aur nakli token banane se bachati hai,
+chori se nahi. Isliye chori ka khatra utna hi bachta hai jitni access token ki umar, aur saath me HTTPS lagta hai.
 
 ## Tera project (usercrud)
 
-- `SecurityConfig` me `csrf.disable()` hai, kyunki token header me jaata hai, cookie me nahi, aur browser header khud se nahi bhejta. Session `STATELESS` hai,
-  `/auth/**` pe permitAll hai, baaki sab authenticated hai, aur `addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)` se apna filter pehle lagaya hai.
-- `JwtFilter extends OncePerRequestFilter`: ye har request pe token jaanchta hai aur user ko locker (`SecurityContextHolder`) me rakh deta hai.
-- Controller `@AuthenticationPrincipal` se user leta hai, matlab userId **token se** aata hai, body se nahi. Ye PR drill wala point hai ki body se userId lena matlab
-  spoof ka khatra. Par user mil gaya iska matlab ye nahi ki RD ya order bhi usi ka hai, isliye owner check phir bhi karna padta hai.
+- `SecurityConfig` me session `STATELESS` hai, `/auth/**` pe permitAll hai, baaki sab authenticated hai, aur
+  `addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)` se apna filter pehle lagaya hai. `csrf.disable()` isliye hai
+  kyunki token header me jaata hai, cookie me nahi, aur browser header khud se nahi bhejta.
+- `JwtFilter extends OncePerRequestFilter`: ye har request pe token jaanchta hai aur user ko `SecurityContextHolder` me rakh deta hai.
+- Controller `@AuthenticationPrincipal` se userId **token se** leta hai, body se nahi. Ye PR drill wala point hai: body se userId lena
+  matlab spoof ka khatra. Par user mil gaya iska matlab ye nahi ki order bhi usi ka hai, isliye owner check phir bhi karna padta hai.
 
-## Asli kaam wala trap
+## Prod wala trap
 
 ```java
 @Value("${jwt.secret}") private String secret;
 private final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());   // NullPointerException
 ```
 
-Field wali ye line `@Value` inject hone se PEHLE chal jaati hai, aur us waqt `secret` null hota hai, isliye NullPointerException aata hai. Isliye usercrud me key ek method
-`getSigningKey()` ke andar banti hai (ya `@PostConstruct` me bana sakte ho).
+Field wali ye line `@Value` inject hone se PEHLE chal jaati hai. Us waqt `secret` null hota hai, isliye app start hote hi gir jaati hai.
+Isliye usercrud me key ek method `getSigningKey()` ke andar banti hai (ya `@PostConstruct` me bana sakte ho).
