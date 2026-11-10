@@ -89,6 +89,11 @@ karta rahe, PSP se bhi aur hamari parchi se bhi: haan bhai hua, nahi hua.
 INITIATED / PENDING uthata, PSP se status poochhta), dono se baat = PSP aur hamare DB ka milaan (raat ko poora
 reconciliation, cron job).
 
+**Maan lo PSP ka message raste me kho gaya (BookMyShow 6c wala hi jawab):** PSP ko onboard karte hi bol do "jaise hi
+paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhejta. Event aaya = paisa kata, hum
+"mil gaya" bol dete. Event raste me kho gaya to wo PSP ka HLD hai, wo dobara bhejega; tab tak beech wala banda poochhe.
+**Asli naam:** event = webhook (PSP callback), "mil gaya" = ack (2xx), dobara bhejega = webhook redelivery.
+
 ```mermaid
 flowchart TB
     D[("Parchi: jawab ka intezaar<br/>(PENDING)")]:::card
@@ -330,6 +335,12 @@ Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 **Asli naam:** pehle se pata down hai = circuit breaker OPEN, tab hi fallback PSP-2. Pata nahi kata ya nahi = unknown
 state, PENDING (PSP-2 pe nahi, warna do baar katega). Itna waqt, haan ya naa = timeout + status job PSP-1 se poochhe.
 Naa to paise wapas = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
+
+**Maan lo PSP-1 ke saath pehle se kuch tay hi nahi (BookMyShow 6c wala hi jawab):** onboard karte hi vaada lo "30 second
+me haan ya naa", buffer 50-55 second, aur itne me jawab nahi to request wo khud cancel karega. Ab 55 second baad PSP-2
+pe bhejna safe, do baar nahi katega. Downtime poochh lo (AWS jaisa uptime). Diwali jaisi sale pe 3-4 company line me.
+**Asli naam:** vaada = SLA / timeout, khud cancel = PSP auto-cancel / auto-refund (isliye failover safe), 3-4 company =
+backup PSP (failover).
 
 ```mermaid
 flowchart TB

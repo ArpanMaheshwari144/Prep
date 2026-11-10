@@ -17,6 +17,9 @@ Technical me: "apne paas ek parchi" = payment table me status, "INITIATED ho gay
 **3. Parchi pe jawab ka intezaar hai. PSP ka pakka jawab pata kaise chale? Aur PSP batana bhool jaaye, ya uska message raste me kho jaaye, to payment hamesha atka rahega?**
 Arpan: Beech me ek aisa banda bitha do jo humein batata rahe: PSP hua ya nahi hua, bata do. Beech me ek aisa system bithao jo permanent dono se baat karta rahe: haan bhai, hua, nahi hua.
 Technical me: "beech me banda jo batata rahe hua ya nahi" = poochne wala job (PENDING utha ke PSP se status poochhe), "permanent dono se baat karta rahe" = PSP aur hamare DB ka milaan.
+**Maan lo PSP ka message raste me kho gaya, ya beech wala banda bhi der se pahuncha.** (BookMyShow 6c wala hi jawab)
+Arpan: PSP ko onboard karte hi bol do: "jaise hi paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhejta hai. Event aaya matlab paisa kata, hum haath utha ke bol dete "mil gaya". Event raste me kho gaya to wo PSP ka HLD hai, wo dobara bhejega; tab tak beech wala banda poochhta rahe. Na hum andhe, na wo.
+Technical me: "paisa katte hi chhota event" = webhook (PSP callback, sign jaanch ke), "mil gaya" = ack (2xx), "dobara bhejega" = webhook redelivery, beech wala banda = status job backup ke liye.
 
 **4. Aaj PSP-1 poora band, uski har call fail. Dukaan pe log pay kar rahe aur sabka payment ruk raha.**
 Arpan: PSP-1 band ho gaya to unka payment alag PSP-2 pe bhej do. Hamare paas fallback tareeka hoga na koi, unhe intezaar kyun karwana. Aur maan lo PSP-1 band hai lekin kuch log apna status jaanna chah rahe, to unhe thodi der rok do: "bhai abhi thoda down hai, aate-jaate hum tumhe bata denge."
@@ -52,6 +55,9 @@ Technical me: "ladka 500 le ke us tukde me" = saga do shard ke beech, "diary" = 
 **11. Ravi ka wallet top-up 500, PSP-1 30 second se chup. Pata nahi PSP-1 mara hai ya bas dheema, aur Ravi ke bank se paisa kata ya nahi. Doosra PSP khada hai.**
 Arpan: Chhotu ko 500 de ke bheja, wo laut ke nahi aaya. Ho sakta hai bhaag gaya, ho sakta hai line me khada ho aur dukaan pe paise de bhi diye hon. Agar pehle se pata hai ki PSP-1 down hai, to payment wahan jaane hi mat do, seedha PSP-2. Par agar pata nahi aur paise shayad kat chuke hain, to PSP-2 ko bheja to wo bhi kaat lega. Isliye Ravi ko bolo "tumhara payment process ho raha hai", aur PSP-1 ko saaf bol do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho gaya, naa aaya to Ravi ke paise wapas. Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 Technical me: "pehle se pata down hai" = circuit breaker OPEN, tab hi fallback PSP-2, "pata nahi kata ya nahi" = unknown state, PENDING (PSP-2 pe nahi, warna do baar katega), "itna waqt, haan ya naa" = timeout + status job PSP-1 se poochhe, "naa to paise wapas" = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
+**Maan lo pehle se PSP-1 ke saath kuch tay hi nahi tha, isliye PSP-2 pe bhejne se darr hai.** (BookMyShow 6c wala hi jawab)
+Arpan: PSP-1 ko onboard karte hi vaada lo: "30 second me jawab do, haan ya naa", thoda buffer 50-55 second, 1 minute bahut. Saath me tay karo ki itne me jawab nahi diya to wo request khud cancel karega. Ab 55 second baad PSP-2 pe bhejna safe hai, do baar nahi katega. Downtime bhi poochh lo, jaise AWS uptime batata. Diwali jaisi badi sale ho to 3-4 company (Stripe, Amazon Pay) line me rakho.
+Technical me: "onboard pe vaada 30 sec, buffer 55" = SLA / timeout, "jawab nahi to khud cancel" = PSP auto-cancel / auto-refund (isliye failover safe), "3-4 company line me" = backup PSP (failover).
 
 &nbsp;
 

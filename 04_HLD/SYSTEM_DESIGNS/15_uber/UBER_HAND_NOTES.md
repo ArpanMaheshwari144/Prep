@@ -66,6 +66,8 @@ Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak
 **Maan lo 250 kaatne gaye, gateway chup, pata nahi kata ya nahi.**
 Arpan: Dobara kaatne pe ride id hi key: gateway pehchaan lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala status job).
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
+Aur gateway (Razorpay) se onboard pe hi vaada: 30-55 second me haan ya naa, aur paisa katte hi chhota sa event bhej do, jaise S3 bhejta (BookMyShow 6c wala hi jawab). Event aaya = kata, "mil gaya"; tab poochhne ki zaroorat hi kam.
+Technical me: SLA / timeout + webhook (PSP callback) + ack.
 
 **14. (Socha hua, hypothetical) Ride ke beech Raju ka phone switch off. GPS bhi band, naksha pe Raju gayab. Ride khatam kaun karega?**
 Arpan: Phone band hona Uber ke haath me nahi, design ki dikkat nahi. Phone apni location khud bhejta hai, server poochhta nahi. Location aani band hui to server ek-do baar dekhega, phir apni taraf se bhi band. Jahan tak aaye utne paise Arpan ki app me dikhenge, wo de do. Phir Uber support ko phone: "driver ka phone band ho gaya". Support wahan se ride band kar dega, DB me update, Raju kahin nahi dikhega.
