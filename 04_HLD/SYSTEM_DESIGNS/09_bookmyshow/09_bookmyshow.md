@@ -240,7 +240,7 @@ paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, A
 **Asli naam:** 30-55 sec gola = hamara client timeout (PSP ka 10 min wala alag), onboard pe SLA = PSP ka uptime SLA +
 incident response (latency ka nahi), doosra pay doosre PSP pe = PSP failover
 (backup PSP), khud poochte = status poll, event = webhook, "mil gaya" = ack (2xx), baad me kata nikla to lautao = late
-authorisation + refund (capture nahi kiya to PSP khud auto-refund).
+authorisation + refund (capture nahi kiya to PSP khud auto-refund, warna refund hum karte: refund API).
 
 ```mermaid
 flowchart LR

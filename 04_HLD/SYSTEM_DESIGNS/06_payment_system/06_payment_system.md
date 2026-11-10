@@ -350,7 +350,7 @@ Onboard karte waqt PSP-1 se SLA zaroor lo: uptime (jaise 99.9%) aur down hua to 
 der lega, wo nahi. Diwali jaisi sale pe 3-4 company line me.
 
 **Asli naam:** 30-55 sec = hamara client timeout (PSP ka 10 min alag), dobara PSP-2 pe = PSP failover, poochte + event =
-status poll + webhook, kata nikla to lautao = late authorisation + refund (capture nahi kiya to PSP auto-refund),
+status poll + webhook, kata nikla to lautao = late authorisation + refund (capture nahi kiya to PSP auto-refund, warna refund hum karte: refund API),
 onboard pe SLA = uptime SLA + incident response (latency ka nahi), 3-4 company = backup PSP.
 
 ```mermaid
