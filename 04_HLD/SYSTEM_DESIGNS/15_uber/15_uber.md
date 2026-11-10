@@ -330,8 +330,18 @@ de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 **Asli naam:** poora ya kuch nahi = atomic charge (partial nahi), ride tab tak khatam nahi = ride status
 PAYMENT_PENDING jab tak SUCCESS, GPay / cash = fallback payment method, dono app pe dikhe.
 
-**Maan lo 250 kaatne gaye, gateway chup, pata nahi kata ya nahi:** Dobara kaatne pe ride id hi key: gateway pehchaan lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala status job). Aur gateway se onboard pe hi vaada: 30-55 second me haan ya naa, aur paisa katte hi chhota sa event bhej do, jaise S3 bhejta (BookMyShow 6c wala hi jawab). **Asli naam:** SLA / timeout + webhook + ack.
+**Maan lo 250 kaatne gaye, gateway chup, pata nahi kata ya nahi:** Dobara kaatne pe ride id hi key: gateway pehchaan
+lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala
+status job).
+
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
+
+**Maan lo poochhte raho aur gateway ka jawab aaye hi na, Arpan aur Raju dono gaadi me intezaar kar rahe. Ye atakna hi na
+ho, iske liye gateway se pehle kya tay karoge? (BookMyShow 6c wala hi jawab):** Gateway (Razorpay) ko onboard karte hi
+vaada lo: tay waqt me haan ya naa (BMS me 30 second, thoda buffer). Aur paisa katte hi chhota sa event bhej do, jaise S3
+file aane pe event bhejta. Event aaya = kata, hum "mil gaya" bol dete; tab baar-baar poochhne ki zaroorat hi kam.
+
+**Asli naam:** tay waqt = SLA / timeout, paisa katte hi event = webhook (PSP callback), "mil gaya" = ack (2xx).
 
 ```mermaid
 flowchart TB

@@ -263,15 +263,21 @@ kiya to wahan BMS wali cheez hi leni padegi. Paisa kata to zimmedari hamari, PSP
 **Asli naam:** PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Paisa kata mila to dabba uska; dabba na
 bacha ho to refund. Perfect design koi nahi, bas kitne refund.
 
-**Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se):** Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
-**Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
-
 **Maan lo PSP 30-50 second chup, Myntra ko pata nahi Ravi ka paisa kata ya nahi:** Order ki khabar Myntra ki apni hai: Pay dabate hi apne paas order PENDING aur payment INITIATED likh diya, stock rok liya. Paisa kata ya nahi, ye PSP hi batayega, Myntra Ravi ka bank nahi dekh sakta. Isliye Razorpay se onboarding pe hi tay karo: 30-50 second me jawab do, nahi diya to request tum khud cancel karoge. 50 second guzre to Ravi ko "time out, dobara pay karo" dikhao; dobara pay kare to Razorpay ki jagah doosre PSP pe bhejo, kyunki pata hai Razorpay abhi dheema hai.
+
 **Asli naam:** order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), hamara tay kiya timeout (50 sec) + PSP ke saath tay: uske baad request cancel, der se "success" aaya to PSP khud wapas karega (auto-refund) -> isliye dobara pay doosre PSP pe safe (PSP failover). Aisa tay na ho to Payment kadam 11: PENDING rakho, doosre PSP pe nahi.
 
-Aur Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 bhejta (BookMyShow 6c wala hi jawab).
-Event aaya = kata, "mil gaya". Raste me kho gaya to wo Razorpay ka HLD. Badi sale pe 3-4 company line me.
-**Asli naam:** webhook (PSP callback) + ack, webhook redelivery, backup PSP (failover).
+**Maan lo Ravi ka paisa kat gaya, par Myntra ko ye khabar der se mile ya mile hi na. Har baar Razorpay se poochhte rahoge?
+(BookMyShow 6c wala hi jawab):** Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe
+event bhejta. Event aaya = kata, hum "mil gaya" bol dete. Event raste me kho gaya to wo Razorpay ka HLD hai, wo dobara
+bhejega. Badi sale (Big Billion Day) pe 3-4 company (Stripe, Amazon Pay) line me.
+
+**Asli naam:** event = webhook (PSP callback), "mil gaya" = ack (2xx), dobara bhejega = webhook redelivery, 3-4 company =
+backup PSP (failover).
+
+**Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se):** Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
+
+**Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
 ```mermaid
 flowchart TB

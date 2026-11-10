@@ -92,6 +92,7 @@ reconciliation, cron job).
 **Maan lo PSP ka message raste me kho gaya (BookMyShow 6c wala hi jawab):** PSP ko onboard karte hi bol do "jaise hi
 paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhejta. Event aaya = paisa kata, hum
 "mil gaya" bol dete. Event raste me kho gaya to wo PSP ka HLD hai, wo dobara bhejega; tab tak beech wala banda poochhe.
+
 **Asli naam:** event = webhook (PSP callback), "mil gaya" = ack (2xx), dobara bhejega = webhook redelivery.
 
 ```mermaid
