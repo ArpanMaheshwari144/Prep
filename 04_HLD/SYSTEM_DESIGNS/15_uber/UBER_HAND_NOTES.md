@@ -106,6 +106,19 @@ Technical me: "baar-baar peeche reh gaya" = starvation, "jitna ruka utni baari u
 Arpan: Do raaste hain. (1) Cancel kiya to line se hata do, dobara aaye to peeche lage, kyunki beech me aur log aa gaye honge; use aage laana unke saath galat. (2) Redis me parchi likh do "Arpan 5 minute ruka tha" aur us pe 30 second ki umar. 30 second ke andar wapas aaya to uske 5 minute chalte rahenge, warna parchi khatam aur wo line me peeche. Uber crore customer sambhalta, sabka dekhna hai: 30 second ke baad bhi Arpan ko aage rakha to beech me aaye logon ka nuksaan. Cancel Arpan ne kiya, to dobara peeche lagna uski galti ka nateeja; baaki koi pareshaan nahi hota.
 Technical me: "parchi" = Redis me pehle tap ka waqt (intezaar pehle tap se gino), "30 second ki umar" = TTL.
 
+**16. (Zomato wali reel se aaya: Aman ki biryani, Raju ki bike) Arpan map pe Raju ki gaadi apni taraf aati dekh raha hai. Raju signal pe 15-20 minute khada, phone phir bhi har 4 second wahi jagah bhej raha, battery 15% pe.**
+Arpan: Location mujhe kab chahiye? Driver bahut der se hil hi nahi raha to baar-baar location bhej ke karega kya, faltu hai. Jaise koi aadmi so raha hai to main uske kamre me baar-baar nahi jaunga; jagega tab jaunga. Dikh gaya ki Raju signal pe khada hai, to 4 second ki jagah 10, 15-20 second pe bhejo. Location band nahi hogi, bas der se aayegi; gaadi chali to phir har 4 second.
+Technical me: "khada hai to der se, chala to jaldi" = adaptive ping (speed ke hisaab se location bhejne ka waqt, battery bachti).
+**Maan lo Raju Connaught Place ki oonchi buildings ke beech hai. GPS buildings se takra ke galat jagah bata raha, Arpan ke map pe gaadi ek building ki chhat pe dikh rahi (ghost bike, helicopter ban gayi).**
+Arpan: Main server pe baitha, dekha location ek badi building ke upar aa rahi. Asli jagah jaake dekha to neeche sadak hai, upar building; signal buildings me ulajh jaata. Hamein pata hai Raju is building ke aas-paas hai aur wahan sadak kaunsi hai. To 1 second ke liye wo chhat pe bhi dikha, use paas wali sadak pe wapas utaar do.
+Technical me: "paas wali sadak pe chipka do" = map matching (GPS ka galat point sabse paas ki sadak pe, Raju ke raaste ke hisaab se).
+**Maan lo location har 4 second aati hai. Beech me gaadi 4 second khadi, phir achanak aage koodti, phir khadi: chal nahi rahi, teleport ho rahi.**
+Arpan: Duniya me aisi technology nahi jo bilkul har pal ki asli jagah de; ho bhi to bahut paisa lagega. Main sadak pe hota aur bike chalaata to seedha-seedha aage jaata. To apne gudde (map pe gaadi) ko halka-halka aage chalate raho: thoda aage, thoda aur aage. Nayi location aaye to use sahi jagah pe rakh do. Par flyover ke neeche Raju ne U-turn le liya, hum to gudde ko aage chala rahe the; signal wapas aaya to asli jagah peeche nikli, to gudda wahan se uth ke wahan teleport. Ye har app me dikhta hai, Uber, Rapido, Zomato, Swiggy.
+Technical me: "gudde ko andaze se aage chalao" = dead reckoning (speed + sadak dekh ke andaza), "nayi aayi to sahi jagah" = correction, "U-turn pe kooda" = andaza galat nikla, isliye jump.
+**Maan lo Raju Arpan ki society ki basement parking me ghusa aur phone 5 minute bilkul offline. Andaze se chalate rahe to gaadi shehar ke bahar; ruki dikhi to Arpan sochega Raju bhaag gaya.**
+Arpan: Aakhri location pata hai: Raju building ke paas pahunch gaya. To gaadi wahin rok do aur map ki jagah dikha do "Raju tumhari building pahunch gaya". Arpan ko shaanti, wo map dekhna band kar dega. Zomato me Raju khana le ke upar bhi aata hai, isliye do cheez: pehle "order tumhari building tak pahunch gaya", phir jab haath me diya tab "order tumhe mil gaya". Uber me Arpan neeche aata hai, wahan "Raju pahunch gaya" kaafi.
+Technical me: "aakhri jagah pe roko" = last known location (andaze se aage nahi), "map ki jagah status" = status update (arrived / delivered), jagah se pata chala pahuncha = geofence.
+
 &nbsp;
 
 Poora design = [15_uber.md](15_uber.md)

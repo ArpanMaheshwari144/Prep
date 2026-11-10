@@ -494,8 +494,9 @@ Yahi dikkat yahan bhi:
   Chat     9   kisne padha, 4.9 lakh entry                    ->  978 matlab 975 padha, number ghata lo (watermark)
   Twitter  24  dabbe me sirf number, screen pe poora tweet    ->  ID se seedha page, photo CDN se (hydration)
   Twitter  24b tweet delete, 8000 dabbon me ID padi           ->  page pe "deleted" mile to dikhao mat (soft delete)
+  Uber     21  Raju signal pe khada, har 4 sec wahi jagah      ->  sote ke kamre me baar-baar mat jao, 15-20 sec (adaptive ping)
 
-Naam: operation / inbox had / watermark / parent_id / template cache
+Naam: operation / inbox had / watermark / parent_id / template cache / adaptive ping
 ```
 
 ## 19. Server door baitha hai  (BRANCH)
@@ -541,9 +542,25 @@ Yahi dikkat yahan bhi:
   Leader   1   1 crore sort kiye bina top 10 + rank           ->  apne aap sort wala dabba (Redis sorted set)
   Ecom     4b  Redis me ginti kati, DB me order nahi          ->  DB sach, banda milaye, 5 min ghadi ke baad bina order ki ginti wapas (reconciliation)
   Cache    10b key 3 machine pe, sirf 1 se kati               ->  parchi har copy se kaato, sync job copies bhi dekhe
+  Uber     22  buildings ke beech gaadi chhat pe (ghost bike)  ->  paas wali sadak pe chipka do (map matching)
 
 Naam: ledger / reconciliation / eventual consistency / sahi dabba
 Juda: paisa ho to sach turant chahiye; profile ho to thodi der purana chalega.
+```
+
+## 21. Beech me khabar nahi aayi, screen pe kya dikhayein  (ANDAZA + STATUS)
+
+```
+Dikkat:      location har 4 sec, beech me gaadi teleport; basement me 5 min kuch nahi aaya.
+Humne socha: beech me andaze se chalao, nayi aaye to sahi jagah. Kuch aa hi nahi raha to aakhri jagah pe roko aur map ki jagah status batao.
+
+Yahi dikkat yahan bhi:
+  Uber     23  har 4 sec location, beech me gaadi koodti      ->  gudde ko halka-halka aage, nayi aayi to sahi jagah (dead reckoning)
+  Uber     23b flyover ke neeche U-turn, gudda aage chala     ->  signal aaya, asli peeche, kooda; har app me hota (correction)
+  Uber     24  basement me 5 min offline                      ->  aakhri jagah pe roko, "Raju pahunch gaya" (last known + status)
+
+Naam: dead reckoning / correction / last known location / status (arrived, delivered)
+Juda: server ki taraf location band ho to Uber 18 (location timeout); Zomato me do status, building tak + haath me.
 ```
 
 ---

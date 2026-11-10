@@ -463,4 +463,76 @@ flowchart TB
 
 ---
 
+## 16. Arpan ke map pe Raju ki gaadi live (adaptive ping, map matching, dead reckoning)
+
+Ye Zomato wali reel se aaya (Aman ki biryani, Raju ki bike), par Uber me bhi wahi: Arpan map pe Raju ki gaadi apni taraf
+aati dekhta hai. Raju signal pe 15-20 minute khada hai aur phone phir bhi har 4 second wahi jagah bhej raha, battery 15%.
+Driver hil hi nahi raha to baar-baar location ka kya kaam; jaise sote aadmi ke kamre me baar-baar nahi jaate, jagega tab
+jaate. Khada dikhe to 4 second ki jagah 10, 15-20 second pe bhejo; location band nahi, bas der se. Gaadi chali to phir
+har 4 second.
+**Asli naam:** khada hai to der se, chala to jaldi = adaptive ping (speed ke hisaab se location ka waqt, battery bachti).
+
+**Maan lo Raju Connaught Place ki oonchi buildings ke beech hai, GPS takra ke galat jagah bata raha, gaadi map pe ek
+building ki chhat pe dikh rahi (ghost bike):** Server pe dikha location building ke upar aa rahi; asli jagah pe neeche
+sadak hai, signal buildings me ulajhta. Hamein pata hai Raju is building ke aas-paas hai aur wahan sadak kaunsi hai, to
+chhat pe dikhe to use paas wali sadak pe wapas utaar do.
+**Asli naam:** paas wali sadak pe chipka do = map matching (GPS ka galat point sabse paas ki sadak pe, raaste ke hisaab se).
+
+**Maan lo location har 4 second aati hai, beech me gaadi khadi, phir achanak aage koodti (teleport):** Har pal ki asli
+jagah dene wali technology nahi, ho bhi to bahut mehngi. Bike chalaane wala seedha aage hi jaata, to map pe gudde ko
+halka-halka aage chalate raho; nayi location aaye to sahi jagah pe rakh do. Par flyover ke neeche Raju ne U-turn le liya
+aur hum gudde ko aage chala rahe the; signal aaya to asli jagah peeche, gudda uth ke wahan teleport. Ye Uber, Rapido,
+Zomato, Swiggy sab me dikhta hai.
+**Asli naam:** gudde ko andaze se aage = dead reckoning (speed + sadak se andaza), nayi aayi to sahi jagah = correction,
+U-turn pe kooda = andaza galat nikla.
+
+**Maan lo Raju Arpan ki society ki basement parking me ghusa, phone 5 minute bilkul offline; andaze se chalate rahe to
+gaadi shehar ke bahar, ruki dikhi to lage Raju bhaag gaya:** Aakhri location pata hai, Raju building ke paas pahunch
+gaya. Gaadi wahin rok do aur map ki jagah dikha do "Raju tumhari building pahunch gaya"; Arpan ko shaanti, map dekhna
+band. Zomato me Raju khana le ke upar bhi aata hai, isliye wahan do status: pehle "building tak pahuncha", phir haath me
+diya tab "order mil gaya". Uber me Arpan neeche aata hai, "Raju pahunch gaya" kaafi.
+**Asli naam:** aakhri jagah pe roko = last known location (andaze se aage nahi), map ki jagah status = status update
+(arrived / delivered), jagah se pata chala pahuncha = geofence.
+
+```mermaid
+flowchart TB
+    L["Raju ka phone:<br/>GPS location"]:::card
+    A{"Raju khada hai?"}:::card
+    A1(["10-20 sec me ek baar<br/>(adaptive ping)"]):::pill
+    A2(["Har 4 sec<br/>(chal raha)"]):::pill
+    S["Server: point chhat pe?<br/>paas wali sadak pe chipka do<br/>(map matching)"]:::good
+    M["Arpan ka map: beech me gudda<br/>andaze se aage (dead reckoning),<br/>nayi aayi to sahi jagah (correction)"]:::good
+    O{"5 min koi location nahi?"}:::card
+    X["Aakhri jagah pe roko +<br/>'Raju pahunch gaya' (status)"]:::good
+    L --> A
+    A -->|haan| A1
+    A -->|nahi| A2
+    A1 --> S
+    A2 --> S
+    S --> M
+    M --> O
+    O -->|haan| X
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+```
+
+```mermaid
+flowchart LR
+    subgraph U["FLYOVER KE NEECHE U-TURN"]
+        direction LR
+        P1["Aakhri asli jagah"]:::card --> G["Gudda andaze se<br/>aage chalta raha"]:::bad
+        P1 -.->|Raju ne U-turn liya| R["Asli Raju:<br/>100 m peeche"]:::good
+        G -->|signal aaya,<br/>gudda kooda| R
+    end
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style U fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+---
+
 Notes (Arpan ke shabd) = [UBER_HAND_NOTES.md](UBER_HAND_NOTES.md)
