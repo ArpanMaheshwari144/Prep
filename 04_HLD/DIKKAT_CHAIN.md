@@ -74,7 +74,7 @@ Yahi dikkat yahan bhi:
   Ecom     8c  PSP 50 sec chup, kata pata nahi                ->  SLA se cancel pakka, dobara pay doosre PSP pe (failover)
   Ecom     7e  Ravi ne 4 tab khole, Buy now 4 baar            ->  user id pe ek hi rukega (idempotency)
   Leader   3b  match ka +50 do baar pahuncha                  ->  match id dekh ke ek hi baar jodo (idempotency)
-  Chat     6b  Ravi ka "mil gaya" kho gaya, message dobara aaya  ->  Ravi ka phone number dekh ke chhode (idempotency)
+  Chat     6b  Ravi ka "mil gaya" kho gaya, dobara aaya       ->  Ravi ka phone number dekh ke chhode (idempotency)
   Docs     1b  "budget 20k" ka op dobara gaya                 ->  op id dekh ke chhodo (idempotency)
   File     6c  S3 ne "aa gayi" do baar / ulta bataya          ->  parchi, ho gaya to chhod; purana chhod (idempotency, sequencer)
   News     4   ek khabar 40 baar                              ->  bada aadmi, "ye dobara hai, hatao" (dedup)
@@ -251,12 +251,12 @@ Yahi dikkat yahan bhi:
   Kafka    3   ek admin se nahi sambhal rahi                  ->  aur gate, har gate ki apni line (partition)
   Kafka    4   har ticket 3 baar punch                        ->  ek kamre me bitha do, 3 me se ek (consumer group)
   Kafka    5   security wale bhi usi kamre me                 ->  alag room (alag consumer group)
-  Kafka    5b  checker ka scanner hang, talaashi bhi ruki      ->  pehle ticket phir talaashi = nayi line (ticket_ok); 2-3 scanner (zyada consumer)
+  Kafka    5b  checker ka scanner hang, talaashi bhi ruki     ->  pehle ticket phir talaashi = nayi line (ticket_ok); 2-3 scanner (zyada consumer)
   Kafka    13  7 din peeche, purana panna phat jaata          ->  aur checker daalo, gate bhar gaye to gate bhi (consumer, phir partition)
   Kafka    14  aaj 1 din, kal 2 din peeche                    ->  alert laga do (consumer lag alert)
   PUBG     5   chicken dinner pe lakhon likhai, DB ghuta      ->  match me parchi, end pe line + copy, dheere DB (batch, Kafka, Cassandra)
 
-Naam: Kafka / queue + worker / consumer group
+Naam: Kafka / queue + worker / consumer group / batch + Cassandra (likhai tez)
 Juda: line me se gira to (4) aur (3). Line peeche reh gayi to alert.
 ```
 
@@ -312,7 +312,7 @@ Yahi dikkat yahan bhi:
   Chat     1   phone har second "kuch aaya?"                  ->  poochne ka mauka hi na do (WebSocket)
   Chat     3   100 server, Ravi kis pe                        ->  DSA wala map, O(1) (session map, Redis)
   Chat     4   har server baaki 99 se taar jode?              ->  chhota ladka address le ke jaaye (Redis pub/sub)
-  Chat     12c group ke 500, har message pe 500 dhoondho?    ->  har taar-server ko ek baar, aage wo de (per-server fan-out)
+  Chat     12c group ke 500, har message pe 500 dhoondho?     ->  har taar-server ko ek baar, aage wo de (per-server fan-out)
   Uber     1   server ko pata nahi driver kahan               ->  phone khud bheje, ek dabba (Location Service)
   Uber     13  10 lakh phone "Raju kahan?"                    ->  poochne ka mauka mat do (push, WebSocket)
   Uber     14  Arpan server 12 pe, Raju 57 pe                 ->  ghar ka raasta pata, seedha usi raaste (pub/sub)
@@ -451,10 +451,10 @@ Yahi dikkat yahan bhi:
   Docs     8   Ravi hataya, server pe purani permission       ->  chhota note, uska op accept nahi (permission check)
   Kafka    10  galat ticket gate tak aaye hi kyun             ->  bouncer, gate pe hi rok de (validation)
   YouTube  4   ek phone se 10 lakh "view"                     ->  gino hi mat, gate pe rok, baar-baar to ban (rate limit, WAF)
-  PUBG     3   hacker ka phone bole "goli lagi"                 ->  server line kheenche, deewar, gudda (hit validation)
+  PUBG     3   hacker ka phone bole "goli lagi"               ->  server line kheenche, deewar, gudda (hit validation)
   PUBG     4   1 second me 500 meter                          ->  Koramangala se Whitefield namumkin, phenk do, ban (movement validation)
 
-Naam: rate limit / token bucket / API gateway / WAF / validation / permission check
+Naam: rate limit / token bucket / API gateway / WAF / validation / permission check / hit validation / movement validation
 Juda: Rate limiter, URL, File, Kafka, Docs, Twitter video, YouTube views, PUBG ka hacker: ek hi gate.
 ```
 
@@ -469,7 +469,7 @@ Yahi dikkat yahan bhi:
   BMS      7   token khatam, parchi ke 3 min baaki            ->  token gate ka, seat ki ghadi parchi ki (do ghadiyan)
   Uber     7   concert khatam, 50 hazaar, cab 500             ->  500 andar, baaki line (virtual queue)
   Uber     8   baaki ke liye cab hi nahi                      ->  kiraya badha ke door ki cab (surge pricing)
-  Uber     20  Arpan 7:05 tak "finding driver", naye aage    ->  1-2 baar peeche to agli gaadi usi ki (starvation -> aging)
+  Uber     20  Arpan 7:05 tak "finding driver", naye aage     ->  1-2 baar peeche to agli gaadi usi ki (starvation -> aging)
   Ecom     0   sale ka maal seemit                            ->  FR me hi cut off: 500 ko hi, baaki out of stock (consistency > availability)
   Ecom     3   sale ki bheed, aata-daal bhi atka              ->  sale ki alag dukaan (alag service)
   Ecom     7   3000 ek second me Pay                          ->  server pe line, 500 ke baad rollback (ya ghadi wala hold, dono ki keemat)
@@ -497,10 +497,10 @@ Yahi dikkat yahan bhi:
   Chat     9   kisne padha, 4.9 lakh entry                    ->  978 matlab 975 padha, number ghata lo (watermark)
   Twitter  24  dabbe me sirf number, screen pe poora tweet    ->  ID se seedha page, photo CDN se (hydration)
   Twitter  24b tweet delete, 8000 dabbon me ID padi           ->  page pe "deleted" mile to dikhao mat (soft delete)
-  Uber     21  Raju signal pe khada, har 4 sec wahi jagah      ->  sote ke kamre me baar-baar mat jao, 15-20 sec (adaptive ping)
+  Uber     21  Raju signal pe khada, har 4 sec wahi jagah     ->  sote ke kamre me baar-baar mat jao, 15-20 sec (adaptive ping)
   PUBG     2   Military Base ki har goli Pochinki tak         ->  sirf aas-paas ke dabbon ki khabar (area of interest)
 
-Naam: operation / inbox had / watermark / parent_id / template cache / adaptive ping
+Naam: operation / inbox had / watermark / parent_id / template cache / adaptive ping / area of interest
 ```
 
 ## 19. Server door baitha hai  (BRANCH)
@@ -516,7 +516,7 @@ Yahi dikkat yahan bhi:
   Twitter  13  John New York me, Arpan ka tweet nahi          ->  SBI ki do branch aapas me baat karein (cross-region)
   PUBG     1   America ka ladka Mumbai match me, ping 300     ->  America wala America server pe; akela 3 wale squad me (region matchmaking, squad fill)
 
-Naam: multi-region / home region
+Naam: multi-region / home region / region matchmaking
 Juda: video ke liye yahi kaam CDN karta (14).
 ```
 
@@ -547,7 +547,7 @@ Yahi dikkat yahan bhi:
   Leader   1   1 crore sort kiye bina top 10 + rank           ->  apne aap sort wala dabba (Redis sorted set)
   Ecom     4b  Redis me ginti kati, DB me order nahi          ->  DB sach, banda milaye, 5 min ghadi ke baad bina order ki ginti wapas (reconciliation)
   Cache    10b key 3 machine pe, sirf 1 se kati               ->  parchi har copy se kaato, sync job copies bhi dekhe
-  Uber     22  buildings ke beech gaadi chhat pe (ghost bike)  ->  paas wali sadak pe chipka do (map matching)
+  Uber     22  buildings ke beech gaadi chhat pe (ghost bike) ->  paas wali sadak pe chipka do (map matching)
 
 Naam: ledger / reconciliation / eventual consistency / sahi dabba
 Juda: paisa ho to sach turant chahiye; profile ho to thodi der purana chalega.
