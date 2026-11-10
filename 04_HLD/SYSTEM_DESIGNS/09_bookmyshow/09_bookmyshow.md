@@ -195,6 +195,8 @@ flowchart TB
 
 ## 6. Pay dabaya, PSP dheema, parchi ki umar nikal gayi (status likh lo)
 
+### 6a. Seat kiski?
+
 Maine 4:30 pe Pay dabaya, PSP dheema. 5:00 pe parchi ki umar khatam, 5:10 pe Priya D5 maang rahi, aur PSP ka jawab
 6:00 pe aata hai "paisa kat gaya". Time ke andar Pay dabaya to seat meri, Priya ko nahi; humne vaada kar diya, warna
 consumer court ka case. PSP dheema hai to galti meri nahi, hamari taraf ki hai. To parchi pe status likh lo: pay chal
@@ -204,24 +206,31 @@ do.
 **Asli naam:** status likh lo = HELD -> PAYMENT_PENDING (Pay dabate hi), umar badha do = is status pe hold expire nahi
 hota (na query na safai job isko chhoote). PSP ka SUCCESS -> BOOKED.
 
-**Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup:** PSP do hi haal me hota: haan bola to
-BOOKED. Dheema hai to 1-2 baar ping, phir bhi chup to booking FAILED dikha do aur seat chhod do, kyunki peeche line lagi
-hai. Jaise do ladke: ek baar-baar mana kar raha, to "chhod, doosra ladka tu ja": ab jo bhi naya pay karne aaye, doosre
+### 6b. Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup
+
+PSP do hi haal me hota: haan bola to BOOKED. Dheema hai to 1-2 baar ping, phir bhi chup to booking FAILED dikha do aur
+seat chhod do, kyunki peeche line lagi hai. Jaise do ladke: ek baar-baar mana kar raha, to "chhod, doosra ladka tu ja": ab jo bhi naya pay karne aaye, doosre
 PSP pe. Agar dheeme wale ne peeche se paisa kaat liya tha, to wo hamari id se pata chalega (user seedha PSP se baat nahi
 karta, beech me hum hain). User ko bolo "paisa kata ho to wapas aa jaayega, dobara pay kar le", baad me kata nikla to
 paisa wapas. IRCTC, GPay, Paytm roz yahi karte. Hum perfect system ke peeche nahi: PSP hamare bas me nahi, perfect
 consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa wapas.
+
 **Asli naam:** 1-2 baar ping = status check retry (timeout), FAILED dikha do = PAYMENT_PENDING -> FAILED + hold release,
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
 
-**Maan lo ye sab pehle se tay hi nahi, aur 55 second baad, jab Arpan back daba chuka, 56ve second pe paisa kata (Myntra
-wala hi jawab, BookMyShow ka bhi apna PSP nahi, Razorpay hai):** Razorpay ko onboard karte hi vaada lo: "30 second me
-jawab do, fail ya pass", buffer 50-55 second, 1 minute bahut. Downtime poochh lo, jaise AWS uptime batata. Badi film
-(Avengers Doomsday) pe Stripe, Amazon Pay jaisi 3-4 company aur line me. 55 second baad bhi chup to har 3-4 second pe
-2-3 ping, 10 nahi. Aur Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe event
-bhejta. Event aaya = paisa kata, seat book, aur hum haath utha ke "mil gaya" bol dete. Event nahi aaya = paisa nahi
-kata. Event raste me kho gaya to wo Razorpay ka HLD hai, wo dobara bhejega; na hum andhe, na wo.
+### 6c. Arpan 55 second ruka, back daba diya, 56ve second pe paisa kata: pehle se kya tay karoge?
+
+Myntra wala hi jawab, BookMyShow ka bhi apna PSP nahi, Razorpay hai. Razorpay ko onboard karte hi vaada lo: "30 second me
+jawab do, fail ya pass", buffer 50-55 second, 1 minute bahut. Downtime poochh lo, jaise AWS uptime batata.
+
+Badi film (Avengers Doomsday) pe Stripe, Amazon Pay jaisi 3-4 company aur line me. 55 second baad bhi chup to har 3-4
+second pe 2-3 ping, 10 nahi.
+
+Aur Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe event bhejta. Event aaya =
+paisa kata, seat book, aur hum haath utha ke "mil gaya" bol dete. Event nahi aaya = paisa nahi kata. Event raste me kho
+gaya to wo Razorpay ka HLD hai, wo dobara bhejega; na hum andhe, na wo.
+
 **Asli naam:** onboard pe vaada = SLA / timeout, 3-4 company line me = backup PSP (failover), 3-4 sec pe ping = status
 poll, paisa katte hi event = webhook (PSP callback), "mil gaya" = ack (2xx), raste me kho gaya = PSP ki webhook redelivery.
 

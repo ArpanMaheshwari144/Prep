@@ -30,15 +30,25 @@ Arpan: Humne use token diya, wo andar aa gaya. Iska matlab wo authenticate ho ch
 Technical me: "token diya, andar aa gaya, authenticate ho chuka" = token sirf gate ka pass, "seat ruk gayi, allot hue time me payment" = pay ka faisla hold ki ghadi (hold_until) karti. Do alag ghadiyan: token = gate, hold = seat.
 
 **6. Arpan ne 4:30 pe Pay dabaya, PSP dheema. 5:00 pe parchi ki umar khatam, 5:10 pe Priya D5 maang rahi, PSP ka jawab 6:00 pe "paisa kat gaya".**
+
+**6a. Seat kiski?**
 Arpan: Time ke andar Pay dabaya to seat Arpan ki, Priya ko nahi; humne vaada kar diya, warna consumer court ka case. PSP dheema hai to galti Arpan ki nahi, hamari taraf ki hai. To parchi pe status likh lo: pay chal raha hai, PSP ka jawab baaki. Jab tak ye likha hai, umar badha do, seat kisi aur ko dikhe hi nahi. Ya query me hi daal do.
 Technical me: "status likh lo" = HELD -> PAYMENT_PENDING (Pay dabate hi), "umar badha do" = is status pe hold expire nahi hota (query aur safai job isko nahi chhoote).
-**Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup. User ko kab tak rokun?**
+
+**6b. Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup. User ko kab tak rokun?**
 Arpan: PSP do hi haal me hota: haan bol diya to BOOKED, theek. Dheema hai to 1-2 baar ping karo "bhai kya chal raha". Phir bhi chup to booking FAILED dikha do aur seat chhod do, kyunki peeche line lagi hai, aur bhi log pay kar rahe. Jaise mere paas do ladke: ek ko baar-baar bol raha "ja pay kar", wo mana kar raha, to "chhod, doosra ladka tu ja". Ab jo bhi naya pay karne aaye, wo doosre PSP pe jaayega, ye wala dheema hai.
+
 Aur agar dheeme wale ne peeche se paisa kaat liya tha? User seedha PSP se baat nahi karta, beech me hum baithe hain, jaise bank me seedha manager ke paas nahi ja sakte. Har payment ki id hamare paas hai. User ko bol do "paisa kata ho to wapas aa jaayega, dobara pay kar le", aur baad me kata nikla to rollback, paisa wapas. IRCTC, GPay, Paytm sab roz yahi karte; isiliye wo likhte hain "agar paise kate to", kyunki unhe bhi pakka nahi pata.
+
 Hum perfect system ke peeche nahi bhaag rahe. PSP hamare bas me nahi, wo dheema hai to na uski galti na hamari. Perfect consistency maango to ticket bechoge kaise; dikkat aayegi, bas user se saaf baat karo aur paisa wapas karo.
 Technical me: "1-2 baar ping" = status check retry (timeout), "FAILED dikha do, seat chhod do" = PAYMENT_PENDING -> FAILED, hold release, "doosra ladka / naye log doosre PSP pe" = circuit breaker -> PSP-2, "id hamare paas" = payment id (idempotency key), "baad me kata nikla to wapas" = reconciliation job + refund.
-**Maan lo ye sab pehle se tay hi nahi, aur 55 second baad, jab Arpan back daba chuka, 56ve second pe paisa kata. Ab?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
-Arpan: Razorpay ko onboard karte hi vaada lo: "30 second me jawab do, fail ya pass, gol-gol screen nahi ghoomegi". Thoda buffer de do, 50-55 second, par 1 minute bahut hai, itni der gola ghooma to user chala jaayega. Unse downtime bhi poochh lo, jaise AWS batata hai "itna uptime". Avengers Doomsday jaisi badi film aa rahi ho to Stripe, Amazon Pay jaisi 3-4 company aur line me rakho, ek dheemi hui to doosri khadi. 55 second baad bhi chup to har 3-4 second pe 2-3 baar ping, 10 baar nahi; phir bhi chup to unse baat karo "isi liye tumhe rakha tha". Aur sabse badi baat: Razorpay ko bolo "jaise hi paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhejta hai. Event aaya matlab paisa kata, seat book; maine haath utha ke bol diya "mil gaya". Event nahi aaya matlab paisa nahi kata. Unka chhotu gir gaya, event raste me kho gaya, ye unka HLD hai, unki zimmedari (wo do-teen chhotu rakhein, dobara bhejein); hum bhi andhe nahi, wo bhi nahi.
+
+**6c. Arpan 55 second ruka, phir back daba diya. 56ve second pe paisa kat gaya. Aisa hi na ho, iske liye pehle se kya tay karoge?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
+Arpan: Razorpay ko onboard karte hi vaada lo: "30 second me jawab do, fail ya pass, gol-gol screen nahi ghoomegi". Thoda buffer de do, 50-55 second, par 1 minute bahut hai, itni der gola ghooma to user chala jaayega. Unse downtime bhi poochh lo, jaise AWS batata hai "itna uptime".
+
+Avengers Doomsday jaisi badi film aa rahi ho to Stripe, Amazon Pay jaisi 3-4 company aur line me rakho, ek dheemi hui to doosri khadi. 55 second baad bhi chup to har 3-4 second pe 2-3 baar ping, 10 baar nahi; phir bhi chup to unse baat karo "isi liye tumhe rakha tha".
+
+Aur sabse badi baat: Razorpay ko bolo "jaise hi paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhejta hai. Event aaya matlab paisa kata, seat book; maine haath utha ke bol diya "mil gaya". Event nahi aaya matlab paisa nahi kata. Unka chhotu gir gaya, event raste me kho gaya, ye unka HLD hai, unki zimmedari (wo do-teen chhotu rakhein, dobara bhejein); hum bhi andhe nahi, wo bhi nahi.
 Technical me: "onboard pe vaada, 30 sec + buffer 55" = SLA / timeout, "badi film pe 3-4 company line me" = backup PSP (failover), "har 3-4 sec 2-3 ping" = status poll, "paisa katte hi chhota event, S3 jaisa" = webhook (PSP se callback), "haath utha ke mil gaya" = ack (2xx), "event raste me kho gaya to unka kaam" = PSP ki retry (webhook redelivery), unka HLD.
 
 &nbsp;
