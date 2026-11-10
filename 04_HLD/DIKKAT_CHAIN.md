@@ -74,7 +74,7 @@ Yahi dikkat yahan bhi:
   Payment  5b  net atka, Pay do baar daba diya                ->  phone ki key, wahi parchi lauta do (client idempotency key)
   Uber     5b  net atka, Book do baar daba diya               ->  wahi booking id, wahi ride (idempotency key)
   Uber     13b 250 kaatne gaye, gateway chup                  ->  ride id hi key, pehle poochho phir dobara (idempotency)
-  Uber     13b gateway ka jawab aaye hi na, pehle kya tay?      ->  tay waqt me haan / naa ka vaada + paisa katte hi event, BMS jaisa (SLA, webhook)
+  Uber     13b gateway ka jawab aaye hi na, pehle kya tay?    ->  tay waqt me haan / naa ka vaada + paisa katte hi event, BMS jaisa (SLA, webhook)
   Ecom     8c  PSP ka success do baar aaya                    ->  payment id dekh ke doosra chhodo (idempotency)
   Ecom     7c  Ravi ne 4 tab khole, Buy now 4 baar            ->  user id pe ek hi rukega (idempotency)
   Leader   3b  match ka +50 do baar pahuncha                  ->  match id dekh ke ek hi baar jodo (idempotency)
