@@ -229,12 +229,16 @@ minute user ko nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega
 baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar
 lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi.
 
+Haan, onboard karte waqt Razorpay se SLA zaroor lo: unka system kitna chalega (uptime, jaise 99.9%) aur down hua to
+kitni der me khabar + theek karenge. Ye unke haath me hai, isliye likh ke dete hain. Bank kitni der lega, wo nahi.
+
 Pehla wala DB me FAILED likh do. Peeche hum khud Razorpay se poochte rahenge, aur uska event bhi aayega (paisa katte hi,
 jaise S3 bhejta), hum "mil gaya" bol dete. Baad me pata chala paisa kata tha, to Razorpay ko bolo "is user ka paisa
 lautao"; wo bank se poochh ke kata tha to wapas karega. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi;
 paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, Amazon Pay) line me.
 
-**Asli naam:** 30-55 sec gola = hamara client timeout (PSP ka 10 min wala alag), doosra pay doosre PSP pe = PSP failover
+**Asli naam:** 30-55 sec gola = hamara client timeout (PSP ka 10 min wala alag), onboard pe SLA = PSP ka uptime SLA +
+incident response (latency ka nahi), doosra pay doosre PSP pe = PSP failover
 (backup PSP), khud poochte = status poll, event = webhook, "mil gaya" = ack (2xx), baad me kata nikla to lautao = late
 authorisation + refund (capture nahi kiya to PSP khud auto-refund).
 
