@@ -4,8 +4,9 @@
 
 - **@Async** = chhotu ko paise de diye "doodh ka packet le aa", aur main chhotu ke liye ruka nahi, ghar aa gaya. Chhotu laake de dega.
 - **@Scheduled** = chhotu ko bol diya "roz raat 2 baje mera phone charging pe laga dena". Koi bulata nahi, ghadi bulati hai.
-- Scheduler ke paas ek hi chhotu hai: wo kisi aur kaam me laga ho to 2 baje wala kaam ruka rehta hai, chhodta nahi, khaali hote hi
-  kar deta hai.
+- Scheduler ke paas ek hi chhotu hai, aur wo ek waqt pe ek hi kaam karta hai. 2 baje wo kuch aur kar raha tha (lamba report), to us
+  waqt mera phone charging pe nahi lagega. Kaam bhoolta nahi: haath khaali hote hi charger laga dega, bas der se. Neeche demo me
+  heartbeat isi tarah 4 sec der se chala.
 
 ## Scene: signup ka welcome email
 
