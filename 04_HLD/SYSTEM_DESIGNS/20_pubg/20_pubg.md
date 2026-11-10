@@ -21,7 +21,7 @@ Ye hissa scene-mock se pehle samjhaya tha, interview me "goli kaise lagti hai" p
   Lagi ya nahi, server referee ki tarah tay karta. Phone khud bole "headshot laga" to hacker har goli headshot bata de.
 - **Goli udti dikhna = phone ka cartoon:** asli hisaab (goli kitni tez, kitni neeche giri, raaste me kaun aaya)
   server pe; screen pe sirf animation.
-- **Dushman smooth chalta dikhe:** server second me 20-30 baar sabki jagah bhejta, beech ka hissa phone andaze se
+- **Dushman smooth chalta dikhe:** server second me (maan lo) 20-30 baar sabki jagah bhejta, beech ka hissa phone andaze se
   bharta. Wahi Uber wala gudda; dushman achanak kood jaaye to wahi U-turn wali kood.
 - **Lag:** tera net 100 ms peeche. Tune jahan dushman dekh ke maara, wo 100 ms pehle wahan tha. Server ghadi peeche
   ghuma ke dekhta goli chalne ke pal wo kahan tha (lag compensation). Leaderboard ke event time jaisa: kaam kab hua,
@@ -49,7 +49,7 @@ NFR     1  ping kam (India wala India ke server pe)                             
         4  match khatam hone pe DB na ghute, agla match turant                  -> kadam 5
 
 Numbers raat 9 baje lakhon log · ek match 100 log, 8 km x 8 km
-        · server second me 20 baar sabki jagah -> 100 x 99 khabar har baar, sabko sab nahi bhej sakte
+        · server second me (maan lo) 20 baar sabki jagah -> 100 x 99 khabar har baar, sabko sab nahi bhej sakte
         · raat 10 baje hazaron match ek saath khatam -> lakhon likhai ek pal me
 ```
 
@@ -61,7 +61,7 @@ Trade-off jo bolne hain: door ki khabar nahi aati (par door ka dikhna hi nahi ch
 ## 1. America ka ladka Arpan ke match me, aur akele ka kya (region + squad fill)
 
 Raat 9 baje 1 lakh log ek saath "Start" dabate hain. Arpan ke match me abhi 37 log hain, tabhi America se ek ladka
-aaya jiska Mumbai server tak ping 300 ms hai. America wala ladka America ke server pe jaayega, uska yahan matlab nahi;
+aaya jiska Mumbai server tak ping (maan lo) 300 ms hai. America wala ladka America ke server pe jaayega, uska yahan matlab nahi;
 design India tak, India ke servers pe. PUBG me log 4-4 ke squad me baithte: tere 4 dost hain to tere 4 jud jaayenge.
 Akela hai to kisi aise squad me daal do jahan 3 log pehle se hain. 4 zaroori bhi nahi, 2 ya 3 ka squad bhi match shuru
 kar sakta. Raat 3 baje 37 pe atka match: matchmaking ki baat, main design ye nahi.
@@ -93,7 +93,7 @@ flowchart TB
 
 ## 2. Military Base ki har goli Arpan ke phone pe (sirf aas-paas ki khabar)
 
-Match shuru. Server har second 20 baar sabki jagah sabko bhej raha: 100 logon ko 99-99 ki khabar. Arpan Pochinki ke
+Match shuru. Server har second (maan lo) 20 baar sabki jagah sabko bhej raha: 100 logon ko 99-99 ki khabar. Arpan Pochinki ke
 ghar me chhupa hai, 6 km door Military Base me 30 log lad rahe, aur unki har goli, har kadam Arpan ke phone pe aa
 rahi. Phone garam, data jal raha. Ek khula taar rakho, phone mangwaye nahi, khabar apne aap aaye. Par 6 km door ki
 awaaz PUBG me aati hi nahi. Goli chali to ek event bana; server dekhe kaun us jagah ke aas-paas hai, sirf unko bhejo.

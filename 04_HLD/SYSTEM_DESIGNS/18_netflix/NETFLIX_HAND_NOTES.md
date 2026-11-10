@@ -2,7 +2,7 @@
 
 Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
-**Scene:** Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath. Arpan, Ravi aur India ke 2 crore log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi.
+**Scene:** Maan lo Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath. Arpan, Ravi aur India ke 2 crore log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi.
 
 &nbsp;
 
@@ -74,7 +74,7 @@ AWS chhoda nahi. Login, browse, "tere liye" line, aur play dabane pe kaunsa paas
 Technical me: AWS = login / browse / recommendation / steering (control plane), Open Connect = sirf video ke bytes.
 
 **P3. Ek video ke kai size: Twitter wala Ferrari / Alto, teen twist ke saath**
-Twitter me khud nikala tha: Ferrari highway ke liye, Alto gaon ke liye, phone net dekh ke size chunta, net gira to tasveer thodi dhundhli par chalti rahe. Video 4-4 second ke tukdon me, aage khiskao to player manifest dekh ke seedha us tukde pe (copy ka 51wa page). Netflix me teen twist:
+Twitter me khud nikala tha: Ferrari highway ke liye, Alto gaon ke liye, phone net dekh ke size chunta, net gira to tasveer thodi dhundhli par chalti rahe. Video (maan lo) 4-4 second ke tukdon me, aage khiskao to player manifest dekh ke seedha us tukde pe (copy ka 51wa page). Netflix me teen twist:
 (1) Har film ki apni seedhi. Cartoon (Doraemon) me rang saade, kam hilta, to kam bits me bhi saaf. Action film (Money Heist ka bank wala goli-baari scene) me bahut hilta, zyada bits chahiye. Ek hi niyam sab pe lagao to cartoon pe data barbaad aur action film dhundhli.
 (2) Ek size ke bhi kai roop. Purana TV ek tarah ki file samajhta, naya phone doosri tarah ki jo aur chhoti hoti. Play dabate hi app batata "main ye wala samajhta hoon", wahi roop milta.
 (3) Ek baar banao, karodon baar chalao. Twitter me video abhi daala abhi chalana tha, jaldi thi. Netflix ke paas studio ki film release se din-hafte pehle aa jaati. Kai machine (AWS pe) tukde baant ke aaraam se saare size aur roop banati (wahi "video ki id ki parchi, 10 log kaam baanto"), phir raat ko dabbon me.

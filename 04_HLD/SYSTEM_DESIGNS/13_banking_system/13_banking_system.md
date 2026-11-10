@@ -376,9 +376,9 @@ flowchart TB
     style MT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 12. Diary almari me nahi samati, RBI bole 10 saal rakho (head office bhej do)
+## 12. Diary almari me nahi samati, 10 saal rakhni hai (head office bhej do)
 
-5 saal me diary itni moti ki branch ki almari me jagah nahi. RBI ka niyam: purani line phenk nahi sakte, 10 saal
+5 saal me diary itni moti ki branch ki almari me jagah nahi. Niyam (maan lo): purani line phenk nahi sakte, 10 saal
 rakhni hain. Hamara chhota bank hai, branch mere shehar me, par uski koi main jagah to hogi na, head office. To use
 apne bank ki jagah head office bhej do, wahan safe rahega. Data kahin gaya nahi.
 
@@ -387,7 +387,7 @@ archive, phenka nahi.
 
 ```mermaid
 flowchart TB
-    X["Diary almari me nahi samati,<br/>RBI: 10 saal rakho"]:::bad
+    X["Diary almari me nahi samati,<br/>niyam: 10 saal rakho"]:::bad
     B[("Branch ki almari:<br/>abhi ki diary")]:::card
     subgraph HO["HEAD OFFICE BHEJ DO"]
         S3[("Purani diary: wahan safe<br/>(S3, archive)")]:::pill

@@ -62,7 +62,7 @@ Technical me: "ledger se milwao" = raat ka milaan (reconciliation), "asli sach l
 Arpan: Data tod do na bhai. 5 saal purana data thodi badlega, wo same hi rahega. Maan liya maine ek mahine me 10,000 ka kharcha kiya, wo 10 mahine purana hai, ab wo badlega thodi. Mahine ke mahine me tod do, kaam khatam. Arpan ne January se March tak itna kharch kiya, jud gaya, mil gaya. March se April tak itna kiya, use jod do. Pichhle mahine ka khaata thodi change kar sakte hain, agle mahine ka khaata hota rehta hai. Pichhle ka dekh ke tod do, tod ke likh do, dikkat khatam.
 Technical me: "mahine ke mahine tod do" = mahine ke partition, "pichhla jud gaya, likh do" = snapshot (mahine ka total), "purana data badlega nahi" = purani line immutable.
 
-**12. 5 saal me diary itni moti ki branch ki almari me jagah nahi. RBI ka niyam: purani line phenk nahi sakte, 10 saal rakhni hain.**
+**12. 5 saal me diary itni moti ki branch ki almari me jagah nahi. Niyam (maan lo): purani line phenk nahi sakte, 10 saal rakhni hain.**
 Arpan: Use apne bank ki jagah main office me bhej do. Hamara chhota bank hai, meri branch mere shehar me hai, uski koi main jagah to hogi na, head office. Use wahan bhej do, wahan safe rahega. Data kahin gaya nahi.
 Technical me: "head office me bhej do" = purana ledger S3 me (sasta, lambe samay ke liye), "data kahin gaya nahi" = archive, phenka nahi.
 

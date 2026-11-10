@@ -2,7 +2,7 @@
 
 Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
-**Scene:** Arpan ne tweet kiya "aaj ka mock 5/5". Ravi Arpan ko follow karta hai, aur King Kohli ko bhi (27 crore followers). Ravi app kholta hai to home feed pe sabke naye tweet, naye pehle.
+**Scene:** Arpan ne tweet kiya "aaj ka mock 5/5". Ravi Arpan ko follow karta hai, aur King Kohli ko bhi (maan lo 27 crore followers). Ravi app kholta hai to home feed pe sabke naye tweet, naye pehle.
 
 &nbsp;
 

@@ -1,6 +1,6 @@
 # Twitter feed: Arpan, Ravi aur King Kohli ki kahani
 
-Arpan ne tweet kiya "aaj ka mock 5/5". Ravi Arpan ko follow karta hai, aur King Kohli ko bhi (27 crore followers).
+Arpan ne tweet kiya "aaj ka mock 5/5". Ravi Arpan ko follow karta hai, aur King Kohli ko bhi (maan lo 27 crore followers).
 Kaam: Ravi app khole to home feed pe sabke naye tweet, naye pehle, turant; Kohli ka tweet bhi, aur stadium se aaya
 video bhi har net pe chale.
 
@@ -15,7 +15,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 FR      tweet post (text, photo / video) · home feed: jinko follow karta unke tweet, jisse zyada judta (like / comment) uska upar, baaki naye upar · scroll pe agla page, dekha hua dobara nahi
         · video har net pe chale (tukde, kai quality, beech se dekhna, paas ka CDN)
 NFR     feed ~200 ms me (40 din baad aaya to thodi der chalegi) · 2-5 sec purani chalegi (isliye pehle se bana sakte) · 27 crore wale celeb ka tweet bhi sambhle
-Numbers ~50 crore user, 50 crore tweet / din = ~5,000 / sec · ek aadmi ~500 ko follow · shaam 8 baje 5 crore ek saath
+Numbers ~50 crore user, 50 crore tweet / din = ~5,800 / sec · ek aadmi ~500 ko follow · shaam 8 baje 5 crore ek saath
         -> padhna : likhna ~50 : 1, isliye feed pehle se taiyaar rakho
 ```
 

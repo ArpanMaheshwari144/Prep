@@ -33,7 +33,7 @@ bheed me line chahiye.
 Unhone pehle purani queues try ki thi, aur wo is kaam ke liye chhoti padi. Kafka ke banane walon ne 2011 me jo
 paper likha tha, usme ActiveMQ aur RabbitMQ dono se tulna ki hai. Wajah teen thi:
 
-**1. Bahut zyada data.** LinkedIn pe roz arbon events the. RabbitMQ har message ka alag hisaab rakhta hai: kise
+**1. Bahut zyada data.** LinkedIn pe roz lagbhag ek arab message the. RabbitMQ har message ka alag hisaab rakhta hai: kise
 diya, usne "mil gaya" (ack) bola ya nahi. Itne messages pe ye hisaab hi bhaari pad gaya. Kafka messages ko jhund
 me likhta hai, aur disk pe seedha aage-aage, isliye bahut tez hai.
 

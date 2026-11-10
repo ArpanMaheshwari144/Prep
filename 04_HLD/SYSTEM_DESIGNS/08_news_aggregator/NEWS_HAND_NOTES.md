@@ -42,7 +42,7 @@ Technical me: "aate hi feed me" = likhte waqt push, "milaan" = check job.
 Arpan: Worker pe faltu load kyun? Sab tech wale hain, sabko same khabar; Tesla launch hua to sabke liye hai, aisa nahi Arpan ke liye hai Ravi ke liye nahi. 50 lakh alag parchi bekaar. Saari tech khabar ek parchi me, app khule to wahin se.
 Technical me: "ek tech parchi" = category ka ek feed (ek key), likhna ek baar, padhte waqt user ki pasand se.
 
-**9. Tech parchi ek dabbe me. 9 baje iPhone launch, 10 lakh request / sec, dabba 1 lakh sambhalta. Cricket wale dabbe khaali.**
+**9. Tech parchi ek dabbe me. 9 baje iPhone launch, 10 lakh request / sec, dabba (maan lo) 1 lakh sambhalta. Cricket wale dabbe khaali.**
 Arpan: Do tareeke: tech ke dabbe badha do, ya kal match nahi to cricket wale dabbon me bhi tech parchi daal do, aadhi request wahan se. World Cup hota to cricket dabba chahiye tha. Teeno aapas me baant lo.
 Technical me: "dabbe badha do" = aur Redis node, par us pe bhi tech ki copy (ek key ek hi node pe rehti, akela node load nahi baant-ta), "cricket dabbe me tech ki copy" = garam key ki copies, load baant.
 

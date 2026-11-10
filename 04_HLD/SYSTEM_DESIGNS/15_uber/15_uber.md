@@ -30,7 +30,7 @@ Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking sha
 latitude-longitude. To phone khud bheje, har hilne pe nahi, thodi-thodi der me. Beech me ek dabba rakh lo jiska kaam
 sirf ek hai: har driver ki sabse taaza jagah batana.
 
-**Asli naam:** beech ka dabba = Location Service; driver ka phone har ~4 sec lat/long bhejta.
+**Asli naam:** beech ka dabba = Location Service; driver ka phone har ~4 sec (maan lo) lat/long bhejta.
 
 ```mermaid
 flowchart TB
@@ -410,7 +410,7 @@ to gaadi pakki, use todna nahi; driver khud cancel kare tabhi dobara doori nikaa
 pickup kam).
 
 **Maan lo Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe, aur server ne turant Car A Arpan ko de di:** Booking
-aate hi gaadi mat do. 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hai). Us beech
+aate hi gaadi mat do. Maan lo 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hai). Us beech
 jitni booking aayi, sab ko saath milao, phir gaadi do, taaki jaldbaazi me galat gaadi kisi ko na jaaye.
 **Asli naam:** 15-20 second ruko, sab saath milao = batching window.
 

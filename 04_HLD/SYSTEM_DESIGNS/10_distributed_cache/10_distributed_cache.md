@@ -132,7 +132,7 @@ paas ho, gaadi aage wale pump pe hi jaayegi. Kho-kho me bhi same: usi pe dhyaan 
 (hamesha aage wali, peeche wali nahi, chahe peeche wali zyada paas ho; ek hi disha tay hai, isliye dhoondhne pe har baar
 wahi machine milti). Kho-kho / headlight / paas ka petrol pump = machine giri to uski keys aage wali agli machine
 sambhalti, door wali nahi. Machine judi to sirf uske paas ki key hilti, ~1/N key (`%` me lagbhag
-saari). Har machine ring pe 100-200 jagah = virtual nodes, taaki hissa barabar aaye.
+saari). Har machine ring pe kai jagah (maan lo 100-200) = virtual nodes, taaki hissa barabar aaye.
 
 **Maan lo saare dabbe bhar gaye, to unhe ring se hata ke alag kamre me kyun nahi rakhte:** pehle lagta hai bank locker
 jaisa: dabbe bhar gaye to unme ab kuch aana hi nahi, unhe alag kamre me daal do, khaali dabbe doosre kamre me, beech

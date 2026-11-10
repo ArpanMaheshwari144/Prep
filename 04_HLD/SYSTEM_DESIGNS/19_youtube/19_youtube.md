@@ -20,7 +20,7 @@ number, taaki FR / NFR aur design ek hi kahani rahe.
 
 ```
 FR      1  video upload (badi file, 2-40 GB)                                  -> kadam 1
-        2  upload ke baad har quality me bane (360p se 4K)                       -> kadam 2
+        2  upload ke baad har quality me bane (144p se 4K)                       -> kadam 2
         3  har phone / net pe dekhna (manifest + CDN, Netflix jaisa)             -> Netflix kadam 1-3
         4  har video ka view count                                              -> kadam 3
         5  subscribe kiya to nayi video ki khabar (MrBeast)                      -> kadam 7
@@ -35,7 +35,7 @@ NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       
 
 Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
         · viral video pe ek minute me lakhon view -> ek row pe +1 nahi chalega
-        · saalon ki videos x 5 quality -> sab tez storage me nahi rakh sakte
+        · saalon ki videos x kai quality -> sab tez storage me nahi rakh sakte
 ```
 
 Trade-off jo bolne hain: view count thodi der se badhta (DB bachane ke liye) · thandi jagah sasti par laane me der
@@ -167,7 +167,7 @@ flowchart TB
 
 ## 4. Script se ek ghante me 10 lakh fake view (gate pe rok, ginti me hi mat lo)
 
-Ek creator ne script likh di: ek hi phone se har 3 second refresh, ek ghante me 10 lakh "view". Views pe paisa milta
+Ek creator ne script likh di: hazaar phone / bot se har 3 second refresh, ek ghante me 10 lakh "view". Views pe paisa milta
 hai, wo trending me upar aa gaya, asli creators shikayat kar rahe hain. Ye fraud hai. Aisa view ginti me gino hi mat.
 API gateway pe hi rok do, request andar hi mat aane do: ek hi bande / IP se 10 lakh request? Rate limit laga do.
 Baar-baar kare to WAF me daal do, ya permanent ban. Peeche Kafka ka worker pattern dekhta rahe: 3-4 baar wahi pattern
@@ -179,7 +179,7 @@ WAF me daal do = WAF ban, worker pattern dekhe = fraud detection worker (bot / r
 
 ```mermaid
 flowchart TB
-    B["Script: ek phone, har 3 sec"]:::bad
+    B["Script: hazaar phone / bot,<br/>har 3 sec"]:::bad
     R["Asli dekhne wale"]:::card
     subgraph G["DARWAZA (API gateway)"]
         RL(["had: rate limit"]):::pill

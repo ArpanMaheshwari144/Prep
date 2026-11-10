@@ -476,7 +476,7 @@ Yahi dikkat yahan bhi:
   File     8   scan me virus nikla                            ->  file lo hi mat (quarantine / delete)
   Docs     6   Ravi hataya, server pe purani permission       ->  chhota note, uska op accept nahi (permission check)
   Kafka    8   galat ticket gate tak aaye hi kyun             ->  bouncer, gate pe hi rok de (validation)
-  YouTube  4   ek phone se 10 lakh "view"                     ->  gino hi mat, gate pe rok, baar-baar to ban (rate limit, WAF)
+  YouTube  4   bot / phone se 10 lakh "view"                  ->  gino hi mat, gate pe rok, baar-baar to ban (rate limit, WAF)
   PUBG     3   hacker ka phone bole "goli lagi"               ->  server line kheenche, deewar, gudda (hit validation)
   PUBG     4   1 second me 500 meter                          ->  Koramangala se Whitefield namumkin, phenk do, ban (movement validation)
 

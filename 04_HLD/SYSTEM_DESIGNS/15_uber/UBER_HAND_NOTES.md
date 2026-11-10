@@ -8,7 +8,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **1. "Book" dabaya, par server ko pata hi nahi kaunsa driver abhi kahan hai.**
 Arpan: Location to phone me khud hai, GPS ka latitude-longitude. Phone khud bhejega, har hilne pe nahi, thodi-thodi der me. Beech me ek dabba rakh lo jiska kaam sirf ek: har driver ki sabse taaza jagah batana.
-Technical me: "beech ka dabba" = Location Service, phone har ~4 sec lat/long bhejta.
+Technical me: "beech ka dabba" = Location Service, phone har ~4 sec (maan lo) lat/long bhejta.
 
 **2. Har 4 sec, 5 lakh driver = 1.25 lakh update / sec. Normal DB ghut gaya, jagah 30 sec peeche.**
 Arpan: Ya to chhoti parchi, kaat ke nayi jagah likho; ya bada dabba jo likhne me tez ho. Crore-crore likhai pe parchi dheemi ho sakti, gir sakti, aur kab tak replica lagaunga, kal driver aur badhenge. To bada bhai bulao, jo isi kaam ke liye bana hai, apni copies khud rakhta: Cassandra.
@@ -105,7 +105,7 @@ Arpan: Ek booking ko akele mat dekho. Do booking aayi aur do gaadi hain, to dono
 Technical me: "dono ko saath milao, kul doori kam" = batch matching (kai booking aur kai gaadi ek saath, sabka milake pickup kam).
 
 **Maan lo Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe. Jab Arpan ki aayi tab Ravi ki thi hi nahi, to server ne turant Car A Arpan ko de di.**
-Arpan: Booking aate hi gaadi mat do. 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hi hai). Us beech jitni booking aayi, sab ko saath milao, phir gaadi do. Jaldbaazi me kisi ko galat gaadi na de do.
+Arpan: Booking aate hi gaadi mat do. Maan lo 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hi hai). Us beech jitni booking aayi, sab ko saath milao, phir gaadi do. Jaldbaazi me kisi ko galat gaadi na de do.
 Technical me: "15-20 second ruko, sab saath milao" = batching window.
 
 **Maan lo shaam 7 baje office chhutne ka waqt. Har baar koi naya banda gaadi ke bilkul paas mil jaata, aur Arpan 7:05 tak "finding driver" pe hai.**

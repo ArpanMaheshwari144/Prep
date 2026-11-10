@@ -1,6 +1,6 @@
 # Netflix: Money Heist ka naya season, 12:30 pe poori duniya ek saath
 
-Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath aata hai. Arpan, Ravi aur India ke 2
+Maan lo Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath aata hai. Arpan, Ravi aur India ke 2
 crore log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi. Kaam: sabko bina buffering video mile,
 data pahunchane ka bill aasmaan pe na jaaye, aur app kholte hi "tere liye" wali line turant dikhe.
 
@@ -287,7 +287,7 @@ Sirf video ke bytes Open Connect se.
 
 US ke store me har episode ki ek badi 4K file hai. John WiFi pe mast, Ravi gaon me 3G pe, video chalta hi nahi; aur
 uska purana TV naye tarah ki file samajhta bhi nahi. Twitter wala hi khel: Ferrari highway ke liye, Alto gaon ke liye.
-Kai size banao, phone apna net dekh ke size chune, net gire to tasveer thodi dhundhli par chalti rahe. Video 4-4 second
+Kai size banao, phone apna net dekh ke size chune, net gire to tasveer thodi dhundhli par chalti rahe. Video (maan lo) 4-4 second
 ke tukdon me, aage khiskao to player manifest dekh ke seedha us tukde pe (copy ka 51wa page). Netflix me teen twist:
 
 1. **Har film ki apni seedhi.** Cartoon (Doraemon) kam hilta, kam bits me bhi saaf. Bank wala goli-baari scene bahut
@@ -300,6 +300,7 @@ ke tukdon me, aage khiskao to player manifest dekh ke seedha us tukde pe (copy k
 Awaaz aur subtitle alag files hain: ek hi 1080p ke saath Hindi ya English kuch bhi chuno, video ki 10 copy nahi banti.
 
 ```
+(misaal ke number, maan lo)
 cartoon      : 240p = 0.2 Mbps ... 1080p = 1.5 Mbps     (kam me hi saaf)
 action film  : 240p = 0.4 Mbps ... 1080p = 5 Mbps       (zyada chahiye)
 ```

@@ -266,7 +266,7 @@ flowchart TB
 
 ## 9. iPhone launch, tech dabba 10 lakh / sec (dabbe badhao ya cricket dabbe me copy)
 
-Tech parchi ek dabbe me. 9 baje iPhone launch, 10 lakh request / sec, dabba 1 lakh sambhalta. Cricket wale dabbe
+Tech parchi ek dabbe me. 9 baje iPhone launch, 10 lakh request / sec, dabba (maan lo) 1 lakh sambhalta. Cricket wale dabbe
 khaali. Do tareeke: tech ke dabbe badha do, ya kal match nahi to cricket wale dabbon me bhi tech parchi daal do, aadhi
 request wahan se. World Cup hota to cricket dabba chahiye tha. Teeno aapas me baant lo.
 
