@@ -404,14 +404,16 @@ jitni booking aayi, sab ko saath milao, phir gaadi do, taaki jaldbaazi me galat 
 
 **Maan lo office chhutne ka waqt, har baar koi naya banda gaadi ke paas mil jaata, aur Arpan 7:05 tak "finding driver" pe:**
 Gaadi extra ho to dikkat hi nahi. Gaadi ek hi ho aur Arpan ke saath 1-2 baar aisa ho chuka, to agli gaadi Arpan ki hi,
-chahe wo kisi aur ke zyada paas ho.
+chahe wo kisi aur ke zyada paas ho. Paas wale bande se bol do "thodi der aur dekh le, tere liye aur gaadi aa rahi". Arpan line
+me hi nahi to ye niyam lagta hi nahi.
 **Asli naam:** baar-baar peeche reh gaya = starvation, jitna ruka utni baari upar = aging (gaadi nahi badhti, sirf baari
 tay hoti).
 
 **Maan lo Arpan ne 5 minute ruk ke gusse me cancel kiya aur turant dobara book kiya, server ne ginti 7:05 se shuru kar di:**
 Do raaste. (1) Cancel kiya to line se hata do, dobara aaye to peeche lage, kyunki beech me aur log aa gaye. (2) Redis me
 parchi "Arpan 5 minute ruka tha", 30 second ki umar; 30 second ke andar wapas aaya to uske 5 minute chalte rahenge,
-warna parchi khatam aur line me peeche.
+warna parchi khatam aur line me peeche. Sabka dekhna hai: 30 second ke baad bhi Arpan aage rahe to beech me aaye logon ka
+nuksaan; cancel Arpan ne kiya, to peeche lagna uski galti ka nateeja, baaki koi pareshaan nahi.
 **Asli naam:** parchi = Redis me pehle tap ka waqt (intezaar pehle tap se gino), umar = TTL.
 
 ```mermaid

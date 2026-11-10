@@ -221,6 +221,8 @@ aakhri number Cassandra se padh ke wahin se aage.
 baad do" bole:** #980 chhoot jaata. Par server chootiya nahi: har user ka record rakhta, ye gaya ye nahi gaya. Ravi wapas
 aaya to server apne record se jo nahi gaya wo sab bhejta, phone ke aakhri number se nahi. Message milega hi; kram thoda
 hile to phone number dekh ke sort kar de. Kram kitna strict chahiye, FR me pehle tay (WhatsApp me ek aage-peeche chalega).
+Jaise class me teacher: roll number 6 late hai to baaki 100 ki attendance lo, register me likho "6 abhi nahi aaya"; 6 aaye
+to 5 ke baad wali jagah bithao. Register server ke paas, kuch khota nahi.
 **Asli naam:** har user ka delivery record (store-and-forward, pending list), reconnect pe pending sab, sequence number se
 client-side ordering, ordering = requirement ka faisla.
 

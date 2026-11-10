@@ -100,10 +100,10 @@ Technical me: "dono ko saath milao, kul doori kam" = batch matching (kai booking
 Arpan: Booking aate hi gaadi mat do. 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hi hai). Us beech jitni booking aayi, sab ko saath milao, phir gaadi do. Jaldbaazi me kisi ko galat gaadi na de do.
 Technical me: "15-20 second ruko, sab saath milao" = batching window.
 **Maan lo shaam 7 baje office chhutne ka waqt. Har baar koi naya banda gaadi ke bilkul paas mil jaata, aur Arpan 7:05 tak "finding driver" pe hai.**
-Arpan: Gaadi extra ho to dikkat hi nahi, sabko mil jaayegi. Gaadi ek hi ho aur Arpan ke saath 1-2 baar aisa ho chuka, to agli gaadi Arpan ki hi, chahe wo Ravi ya Priya ke zyada paas ho. Teesri baar Arpan ko gaadi milegi hi.
+Arpan: Gaadi extra ho to dikkat hi nahi, sabko mil jaayegi. Gaadi ek hi ho aur Arpan ke saath 1-2 baar aisa ho chuka, to agli gaadi Arpan ki hi, chahe wo Ravi ya Priya ke zyada paas ho. Teesri baar Arpan ko gaadi milegi hi. Paas wale bande ko bol do "tu thodi der aur dekh le, tere liye aur gaadi aa rahi", par ye gaadi Arpan ke paas jaayegi. Arpan line me hi nahi hai to ye niyam lagta hi nahi.
 Technical me: "baar-baar peeche reh gaya" = starvation, "jitna ruka utni baari upar" = aging (gaadi nahi badhti, sirf baari tay hoti).
 **Maan lo Arpan ne 5 minute ruk ke gusse me booking cancel ki aur turant dobara book ki. Server ne nayi booking maan ke ginti 7:05 se shuru kar di.**
-Arpan: Do raaste hain. (1) Cancel kiya to line se hata do, dobara aaye to peeche lage, kyunki beech me aur log aa gaye honge; use aage laana unke saath galat. (2) Redis me parchi likh do "Arpan 5 minute ruka tha" aur us pe 30 second ki umar. 30 second ke andar wapas aaya to uske 5 minute chalte rahenge, warna parchi khatam aur wo line me peeche.
+Arpan: Do raaste hain. (1) Cancel kiya to line se hata do, dobara aaye to peeche lage, kyunki beech me aur log aa gaye honge; use aage laana unke saath galat. (2) Redis me parchi likh do "Arpan 5 minute ruka tha" aur us pe 30 second ki umar. 30 second ke andar wapas aaya to uske 5 minute chalte rahenge, warna parchi khatam aur wo line me peeche. Uber crore customer sambhalta, sabka dekhna hai: 30 second ke baad bhi Arpan ko aage rakha to beech me aaye logon ka nuksaan. Cancel Arpan ne kiya, to dobara peeche lagna uski galti ka nateeja; baaki koi pareshaan nahi hota.
 Technical me: "parchi" = Redis me pehle tap ka waqt (intezaar pehle tap se gino), "30 second ki umar" = TTL.
 
 &nbsp;
