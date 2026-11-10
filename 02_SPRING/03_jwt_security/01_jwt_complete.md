@@ -28,6 +28,19 @@ Login pe password BCrypt se check hota hai, aur sahi ho to token banta hai jisme
 
 Payload sirf base64 hai, encrypt nahi hai, isliye jwt.io pe koi bhi use padh sakta hai. Isliye password ya card jaisi cheez token ke andar kabhi mat daalo.
 
+## Chala ke dekha (plain Java HMAC, wahi mohar wala kaam)
+
+```
+token   : eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjcsInJvbGUiOiJVU0VSIiwi...UfZxae8Q...
+payload : {"userId":7,"role":"USER","exp":1731240000}   <- koi bhi padh le
+asli    : 200 OK, {"userId":7,"role":"USER",...}
+ADMIN kiya: 401 mohar match nahi
+```
+
+Payload koi bhi padh sakta hai, par badal nahi sakta. Role ADMIN karte hi mohar match nahi hui aur 401 aa gaya.
+
+Fargate pe 3 task aur aage LB wali baat yahi hai: session hota to task 1 ki memory me rehta, aur LB agli request task 2 pe bhejta to user logout ho jaata. Token ke saath koi bhi task mohar jaanch ke user ko pehchan leta hai.
+
 ## Trade-off
 
 Fayda ye hai ki JWT stateless hai: kitne bhi server ho, koi bhi server koi bhi request le sakta hai, aur session store ki zaroorat nahi padti.
