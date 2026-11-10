@@ -714,3 +714,17 @@ int shiftMinutes(string start, string end) {
 }
 ```
 
+### ULTA: minute -> wapas "HH:MM" (grill 10-Nov, library me naya)
+
+> [!IMPORTANT]
+> **Twist:** time ko `m` minute aage / peeche karo (`m` minus bhi). Upar wali `+1440 %1440` hi, bas end me minute ko wapas ghadi banao: ghante = `total / 60`, minute = `total % 60`.
+
+```cpp
+total = (total + m + 1440) % 1440;     // minus aur 24 ghante ke paar, dono theek
+int H = total / 60, M = total % 60;    // minute -> wapas ghadi
+string ans = (H < 10 ? "0" : "") + to_string(H) + ":" + (M < 10 ? "0" : "") + to_string(M);   // 0 aage: "00:15"
+
+// "00:10", m = -20 :  (10 - 20 + 1440) % 1440 = 1430 -> 1430/60 = 23, 1430%60 = 50 -> "23:50"
+// "23:45", m = +30 :  (1425 + 30 + 1440) % 1440 = 15 -> 15/60 = 0, 15%60 = 15     -> "00:15"
+```
+

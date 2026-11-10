@@ -50,6 +50,8 @@ stringstream st(t);  string hh, mm;
 getline(st, hh, ':');  getline(st, mm, ':');
 int mins = stoi(hh) * 60 + stoi(mm);     // sab MINUTE me badlo: 22:30 -> 1350
 int diff = (end - start + 1440) % 1440;  // raat 12 ke paar minus aaye -> ek din (24*60) jodo, Caesar ka +26 jaisa
+int t2 = (mins + m + 1440) % 1440;       // m minute aage / peeche (minus bhi)
+int H = t2 / 60, M = t2 % 60;            // minute -> wapas HH:MM (1430 -> 23:50), print me 10 se chhota ho to aage "0"
 ```
 
 ---
