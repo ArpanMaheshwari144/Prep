@@ -1,11 +1,10 @@
 # Cache (Spring: @Cacheable)
 
-## Kahani: HLD wala Ravi ka profile
+## Scene: HLD wala Ravi ka profile
 
-Ravi ka profile har second hazaaron log kholte hain, aur har baar DB tak jaane me 50 ms lagte hain. HLD me humne DB se pehle ek dabba rakha tha
-(04_HLD/SYSTEM_DESIGNS/10_distributed_cache). Spring me wahi dabba bas ek annotation se lag jaata hai.
-
-## Tasveer
+Ravi ka profile har second hazaaron log kholte hain, aur har baar DB tak jaane me 50 ms lagte hain. HLD me humne DB se pehle ek dabba rakha
+tha ([10_distributed_cache](../../04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md)). Spring me wahi dabba bas ek line
+`@Cacheable("users")` se lag jaata hai. Iske liye `@EnableCaching` aur `spring-boot-starter-cache` dono chahiye.
 
 ```
 @Cacheable("users") getUser(id)
@@ -18,24 +17,36 @@ naam badla    -> @CacheEvict  (dabbe se hatao)      <- HLD wala "parchi kaato"
 update pe     -> @CachePut    (method chalao + dabba taaza)
 ```
 
-Call aate hi Spring pehle "users" dabbe me wo id dhoondhta hai. Mil gayi (HIT) to method ke andar ghusta hi nahi, seedha value lauta deta hai. Nahi mili (MISS) to method chalata hai, DB se data laata hai, aur jo aaya use dabbe me daal deta hai. Naam badla to `@CacheEvict` us entry ko dabbe se hata deta hai, ye HLD wala "parchi kaato" hai. Aur `@CachePut` method bhi chalata hai aur dabba bhi taaza kar deta hai.
+## Chala ke dekha (plain Java proxy, wahi kaam jo Spring andar karta)
 
-## Dikkat aur ye kyun
+```
+controller -> proxy.getUser(7), pehli baar:
+   MISS
+   METHOD CHAL RAHA (DB 50 ms) id=7
+controller -> proxy.getUser(7), doosri baar:
+   HIT, method me ghusa hi nahi
+```
 
-Manual cache me har method me khud likhna padta hai: "map me hai? to de do, warna DB se laao aur map me daal do". Har jagah wahi if-else. `@Cacheable`
-yahi kaam proxy se karta hai, method ke aage khada ho ke. Iske liye `@EnableCaching` aur `spring-boot-starter-cache` dono chahiye.
+Spring method ke aage proxy bana ke khada hota hai. HIT pe method chalta hi nahi, value seedha dabbe se aati hai. MISS pe method chalta hai
+aur jo DB se aaya wo dabbe me chala jaata hai. Manual cache me yahi "map me hai? de do, warna DB se laao aur map me daalo" wala if-else har
+method me khud likhna padta.
 
-## Trade-off
+## Chhoti dikkat: 3 server, teen alag dabbe
 
-Local cache default hai, aur ye app ki apni memory me rehta hai. Ye sabse tez hai kyunki network nahi lagta. Par ye sirf usi server ka hota hai, aur restart pe khatam ho jaata hai. Isme TTL nahi hota, par Caffeine lagao to TTL mil jaata hai.
+Local cache default hai, aur ye app ki apni memory me rehta hai. Sabse tez hai kyunki network nahi lagta, par sirf usi server ka hota hai aur
+restart pe khatam. Maan lo 3 server pe local cache hai. Ravi ne naam badla, to server A ka dabba saaf ho gaya, par B aur C abhi bhi purana naam
+dikha rahe hain.
 
-Redis ek alag server hai. Isme lagbhag 1 ms lagta hai, kyunki ek network hop hai. Par saare server ek hi copy dekhte hain, aur restart pe bhi data bacha rehta hai. Isme TTL aur eviction dono milte hain.
+Hal: multi-server me Redis lo. Wo alag server hai, lagbhag 1 ms lagta hai kyunki ek network hop hai, par saare server ek hi copy dekhte hain,
+aur TTL aur eviction dono milte hain. Bahut garam key (IPL score) ke liye Redis ke aage 1-2 sec ka local cache bhi rakh dete hain. Local me
+TTL chahiye to Caffeine lagao.
 
-Maan lo 3 server pe local cache hai. Ravi ne naam badla, to server A ka cache saaf ho gaya, par B aur C abhi bhi purana naam dikhate hain. Isliye multi-server setup me Redis lete hain, aur
-bahut garam key (jaise IPL score) ke liye Redis ke aage 1-2 sec ka local cache bhi rakh dete hain. Yaad rakh, cache ek kaam hai aur Redis ek tool hai. Redis lock,
-counter aur pub/sub bhi karta hai.
+## Tera project (usercrud)
 
-## Asli kaam wala trap
+`/cache-demo/anno/{id}` pe doosri call me "METHOD CHAL RAHA" print hi nahi hua, matlab cache ne method chalne se pehle hi jawab de diya.
+Cache wala method alag bean `CacheDemoService` me hai, aur controller usi bean ko bulata hai (wajah neeche trap me).
+
+## Prod wala trap: this se bulaya to cache kabhi nahi
 
 ```java
 @Service
@@ -47,12 +58,11 @@ public class UserService {
 }
 ```
 
-`@Cacheable` proxy se chalta hai. Same class ke andar `this.getUser()` bulaya to call proxy ko bypass kar deti hai, aur har baar DB jaati hai. Ye wahi `@Transactional`
-wala self-invocation jaal hai. Isliye usercrud me cache wala method alag bean (`CacheDemoService`) me rakha hai, aur controller usi bean ko bulata hai.
+```
+controller -> proxy.profile(9) jo andar this.getUser(9) bulata, do baar:
+   METHOD CHAL RAHA (DB 50 ms) id=9
+   METHOD CHAL RAHA (DB 50 ms) id=9      <- cache kabhi nahi laga
+```
 
-Do baatein aur. `@EnableCaching` lagana bhool gaye to annotation chup-chaap kuch nahi karta. Aur manual demo wala `HashMap` singleton controller me rakha hai, to
-saare thread use share karte hain. Wo thread-safe nahi hai, aur kabhi saaf bhi nahi hota.
-
-## Tera project (usercrud)
-
-`/cache-demo/anno/{id}` pe doosri call me "METHOD CHAL RAHA" print hi nahi hua. Matlab cache ne method chalne se pehle hi jawab de diya.
+Same class ke andar `this.getUser()` bulaya to call proxy ke paas se guzarti hi nahi, isliye har baar DB jaati hai. Ye wahi `@Transactional`
+wala self-invocation jaal hai. Aur `@EnableCaching` lagana bhool gaye to annotation chup-chaap kuch nahi karta.
