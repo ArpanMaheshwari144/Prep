@@ -336,12 +336,14 @@ status job).
 
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
-**Maan lo poochhte raho aur gateway ka jawab aaye hi na, Arpan aur Raju dono gaadi me intezaar kar rahe. Ye atakna hi na
-ho, iske liye gateway se pehle kya tay karoge? (BookMyShow 6c wala hi jawab):** Gateway (Razorpay) ko onboard karte hi
-vaada lo: tay waqt me haan ya naa (BMS me 30 second, thoda buffer). Aur paisa katte hi chhota sa event bhej do, jaise S3
-file aane pe event bhejta. Event aaya = kata, hum "mil gaya" bol dete; tab baar-baar poochhne ki zaroorat hi kam.
+**Maan lo poochhte raho aur gateway ka jawab aaye hi na, Arpan aur Raju dono gaadi me intezaar kar rahe. Kab tak
+rokoge? (BookMyShow 6c wala hi jawab):** Gateway khud 10 minute tak rukta hai (peeche bank aur NPCI), to hum apni ghadi
+rakhte: 30 se 55 second, phir dono app pe "payment nahi hua, paisa kata to wapas aa jaayega", Arpan GPay / cash se de.
+Paisa katte hi gateway chhota sa event bhejta, jaise S3 bhejta; aaya to "mil gaya". Baad me kata nikla aur cash de chuka,
+to gateway ko bolo "lautao". Onboard pe SLA lo: uptime aur down hone pe khabar; bank ki der nahi.
 
-**Asli naam:** tay waqt = SLA / timeout, paisa katte hi event = webhook (PSP callback), "mil gaya" = ack (2xx).
+**Asli naam:** 30-55 sec = hamara client timeout, event = webhook (PSP callback), "mil gaya" = ack (2xx), baad me kata to
+lautao = late authorisation + refund, onboard pe SLA = uptime SLA + incident response.
 
 ```mermaid
 flowchart TB

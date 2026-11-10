@@ -74,7 +74,7 @@ Yahi dikkat yahan bhi:
   Payment  5b  net atka, Pay do baar daba diya                ->  phone ki key, wahi parchi lauta do (client idempotency key)
   Uber     5b  net atka, Book do baar daba diya               ->  wahi booking id, wahi ride (idempotency key)
   Uber     13b 250 kaatne gaye, gateway chup                  ->  ride id hi key, pehle poochho phir dobara (idempotency)
-  Uber     13b gateway ka jawab aaye hi na, pehle kya tay?    ->  tay waqt me haan / naa ka vaada + paisa katte hi event, BMS jaisa (SLA, webhook)
+  Uber     13b gateway ka jawab aaye hi na, kab tak rokoge?   ->  30-55 sec ghadi, phir GPay / cash; kata nikla to lautao (timeout, webhook, refund)
   Ecom     8c  PSP ka success do baar aaya                    ->  payment id dekh ke doosra chhodo (idempotency)
   Ecom     7c  Ravi ne 4 tab khole, Buy now 4 baar            ->  user id pe ek hi rukega (idempotency)
   Leader   3b  match ka +50 do baar pahuncha                  ->  match id dekh ke ek hi baar jodo (idempotency)
@@ -301,7 +301,7 @@ Yahi dikkat yahan bhi:
   Payment  6   wallet se kata, ICICI ne FAILED bola           ->  sab ulta kar do, paise wapas (saga)
   Payment  8   "sab taiyaar ho?" poochh ke kaato              ->  slow dost ki wajah se mera paper chhoota (2PC nahi)
   Payment  11  PSP-1 chup, mara ya dheema pata nahi           ->  "process ho raha"; chhotu, itna waqt, haan ya naa; pata ho down tabhi PSP-2 (PENDING, timeout, refund)
-  Payment  11b PSP-1 chup, PSP-2 pe bheja to do baar katega?  ->  onboard pe vaada 30-55 sec, nahi to wo khud cancel; tab PSP-2 safe (SLA, auto-cancel)
+  Payment  11b PSP-1 chup, PSP-2 pe bheja to do baar katega?  ->  30-55 sec phir FAILED + PSP-2; PSP-1 pe bhi kata to wo lautaye (timeout, failover, refund)
   BMS      6   Pay daba diya, PSP dheema, umar khatam         ->  parchi pe "pay chal raha", umar badhao (PAYMENT_PENDING)
   BMS      6b  chhotu (PSP) 1-2 baar jagaya, phir bhi chup    ->  FAILED dikha do, seat chhod do; "chhod, doosra ladka tu ja" (timeout, circuit breaker -> PSP-2)
   BMS      6b  dheeme chhotu ne peeche se paisa kaat liya     ->  id hamare paas; "kata ho to wapas aayega", kata nikla to wapas (reconciliation job + refund)
@@ -316,8 +316,8 @@ Yahi dikkat yahan bhi:
   Ecom     8b  PSP 50 sec chup, kata pata nahi                ->  Razorpay se pehle hi tay: 50 sec me jawab nahi to cancel; dobara pay doosre PSP pe (timeout, auto-refund, PSP failover)
   Ecom     8b  PSP ka "kata" kaise turant pata chale          ->  paisa katte hi chhota event, S3 jaisa; badi sale pe 3-4 company (webhook, backup PSP)
 
-Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / auto-cancel / webhook redelivery
-Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker. PSP se onboard pe vaada (30-55 sec) + paisa katte hi event (webhook) bhi charon me (BMS 6c).
+Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / late authorisation + auto-refund / webhook redelivery
+Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker. PSP pe hamari ghadi 30-55 sec (PSP khud 10 min rukta) + paisa katte hi event (webhook) + der se kata to refund, charon me (BMS 6c); onboard pe SLA sirf uptime ka.
 ```
 
 ## 12. Phone baar-baar "kuch aaya?"  (KHULA TAAR)

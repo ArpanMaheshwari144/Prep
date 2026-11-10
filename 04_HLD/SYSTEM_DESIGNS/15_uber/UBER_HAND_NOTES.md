@@ -70,9 +70,9 @@ Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak
 Arpan: Dobara kaatne pe ride id hi key: gateway pehchaan lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala status job).
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
-**Maan lo poochhte raho aur gateway ka jawab aaye hi na. Arpan gaadi me baitha, Raju saamne, dono intezaar kar rahe. Ye atakna hi na ho, iske liye gateway se pehle kya tay karoge?** (BookMyShow 6c wala hi jawab)
-Arpan: Gateway (Razorpay) ko onboard karte hi vaada lo: tay waqt me haan ya naa (BMS me 30 second, thoda buffer). Aur paisa katte hi mujhe chhota sa event bhej do, jaise S3 file aane pe event bhejta. Event aaya = kata, hum "mil gaya" bol dete; tab baar-baar poochhne ki zaroorat hi kam.
-Technical me: "tay waqt me haan ya naa" = SLA / timeout, "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack (2xx).
+**Maan lo poochhte raho aur gateway ka jawab aaye hi na. Arpan gaadi me baitha, Raju saamne, dono intezaar kar rahe. Kab tak rokoge?** (BookMyShow 6c wala hi jawab)
+Arpan: Gateway khud 10 minute tak rukta hai (peeche bank aur NPCI), to hum apni ghadi rakhte: 30 se 55 second, phir dono app pe "payment nahi hua, paisa kata to wapas aa jaayega", Arpan GPay / cash se de. Paisa katte hi gateway chhota sa event bhejta, jaise S3 file aane pe bhejta. Event aaya = kata, hum "mil gaya" bol dete. Baad me kata nikla aur Arpan cash de chuka, to gateway ko bolo "lautao". Onboard pe gateway se SLA lo: uptime aur down hone pe kitni der me khabar; bank ki der nahi.
+Technical me: "30-55 sec" = hamara client timeout, "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack (2xx), "baad me kata to lautao" = late authorisation + refund, "onboard pe SLA" = uptime SLA + incident response.
 
 **14. (Socha hua, hypothetical) Ride ke beech Raju ka phone switch off. GPS bhi band, naksha pe Raju gayab. Ride khatam kaun karega?**
 Arpan: Phone band hona Uber ke haath me nahi, design ki dikkat nahi. Phone apni location khud bhejta hai, server poochhta nahi. Location aani band hui to server ek-do baar dekhega, phir apni taraf se bhi band. Jahan tak aaye utne paise Arpan ki app me dikhenge, wo de do. Phir Uber support ko phone: "driver ka phone band ho gaya". Support wahan se ride band kar dega, DB me update, Raju kahin nahi dikhega.
