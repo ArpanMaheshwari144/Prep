@@ -44,7 +44,7 @@ Aur agar dheeme wale ne peeche se paisa kaat liya tha? User seedha PSP se baat n
 Hum perfect system ke peeche nahi bhaag rahe. PSP hamare bas me nahi, wo dheema hai to na uski galti na hamari. Perfect consistency maango to ticket bechoge kaise; dikkat aayegi, bas user se saaf baat karo aur paisa wapas karo.
 Technical me: "1-2 baar ping" = status check retry (timeout), "FAILED dikha do, seat chhod do" = PAYMENT_PENDING -> FAILED, hold release, "doosra ladka / naye log doosre PSP pe" = circuit breaker -> PSP-2, "id hamare paas" = payment id (idempotency key), "baad me kata nikla to wapas" = reconciliation job + refund.
 
-**6c. Arpan 55 second ruka, phir back daba diya. 56ve second pe paisa kat gaya. Aisa hi na ho, iske liye pehle se kya tay karoge?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
+**6c. Gola ghoomta raha, Arpan ne thak ke back daba diya, booking FAILED, seat chhod di. Thodi der baad Razorpay ne paisa kaat liya: paisa gaya, seat bhi nahi. Ye ho hi na, iske liye Razorpay ke saath pehle se kya tay karoge?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
 Arpan: Razorpay ko onboard karte hi vaada lo: "30 second me jawab do, fail ya pass, gol-gol screen nahi ghoomegi". Thoda buffer de do, 50-55 second, par 1 minute bahut hai, itni der gola ghooma to user chala jaayega. Unse downtime bhi poochh lo, jaise AWS batata hai "itna uptime".
 
 Avengers Doomsday jaisi badi film aa rahi ho to Stripe, Amazon Pay jaisi 3-4 company aur line me rakho, ek dheemi hui to doosri khadi. 55 second baad bhi chup to har 3-4 second pe 2-3 baar ping, 10 baar nahi; phir bhi chup to unse baat karo "isi liye tumhe rakha tha".

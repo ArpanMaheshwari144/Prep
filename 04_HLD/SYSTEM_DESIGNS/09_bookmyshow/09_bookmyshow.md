@@ -219,7 +219,10 @@ consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa 
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
 
-### 6c. Arpan 55 second ruka, back daba diya, 56ve second pe paisa kata: pehle se kya tay karoge?
+### 6c. Back dabaya, seat chhodi, phir paisa kata: pehle se kya tay karoge?
+
+Gola ghoomta raha, maine thak ke back daba diya, booking FAILED, seat chhod di. Thodi der baad Razorpay ne paisa kaat
+liya: paisa gaya, seat bhi nahi.
 
 Myntra wala hi jawab, BookMyShow ka bhi apna PSP nahi, Razorpay hai. Razorpay ko onboard karte hi vaada lo: "30 second me
 jawab do, fail ya pass", buffer 50-55 second, 1 minute bahut. Downtime poochh lo, jaise AWS uptime batata.
