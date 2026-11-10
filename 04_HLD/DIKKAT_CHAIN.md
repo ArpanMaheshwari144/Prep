@@ -254,6 +254,7 @@ Yahi dikkat yahan bhi:
   Kafka    5b  checker ka scanner hang, talaashi bhi ruki      ->  pehle ticket phir talaashi = nayi line (ticket_ok); 2-3 scanner (zyada consumer)
   Kafka    13  7 din peeche, purana panna phat jaata          ->  aur checker daalo, gate bhar gaye to gate bhi (consumer, phir partition)
   Kafka    14  aaj 1 din, kal 2 din peeche                    ->  alert laga do (consumer lag alert)
+  PUBG     5   chicken dinner pe lakhon likhai, DB ghuta      ->  match me parchi, end pe line + copy, dheere DB (batch, Kafka, Cassandra)
 
 Naam: Kafka / queue + worker / consumer group
 Juda: line me se gira to (4) aur (3). Line peeche reh gayi to alert.
@@ -450,9 +451,11 @@ Yahi dikkat yahan bhi:
   Docs     8   Ravi hataya, server pe purani permission       ->  chhota note, uska op accept nahi (permission check)
   Kafka    10  galat ticket gate tak aaye hi kyun             ->  bouncer, gate pe hi rok de (validation)
   YouTube  4   ek phone se 10 lakh "view"                     ->  gino hi mat, gate pe rok, baar-baar to ban (rate limit, WAF)
+  PUBG     3   hacker ka phone bole "goli lagi"                 ->  server line kheenche, deewar, gudda (hit validation)
+  PUBG     4   1 second me 500 meter                          ->  Koramangala se Whitefield namumkin, phenk do, ban (movement validation)
 
 Naam: rate limit / token bucket / API gateway / WAF / validation / permission check
-Juda: Rate limiter, URL, File, Kafka, Docs, Twitter video, YouTube views: ek hi gate.
+Juda: Rate limiter, URL, File, Kafka, Docs, Twitter video, YouTube views, PUBG ka hacker: ek hi gate.
 ```
 
 ## 17. Hall chhota, bheed badi  (LINE ME LAGAO)
@@ -495,6 +498,7 @@ Yahi dikkat yahan bhi:
   Twitter  24  dabbe me sirf number, screen pe poora tweet    ->  ID se seedha page, photo CDN se (hydration)
   Twitter  24b tweet delete, 8000 dabbon me ID padi           ->  page pe "deleted" mile to dikhao mat (soft delete)
   Uber     21  Raju signal pe khada, har 4 sec wahi jagah      ->  sote ke kamre me baar-baar mat jao, 15-20 sec (adaptive ping)
+  PUBG     2   Military Base ki har goli Pochinki tak         ->  sirf aas-paas ke dabbon ki khabar (area of interest)
 
 Naam: operation / inbox had / watermark / parent_id / template cache / adaptive ping
 ```
@@ -510,6 +514,7 @@ Yahi dikkat yahan bhi:
   Rate     12  US ko kaise pata ghar Mumbai                   ->  +91 dekh lo, IP badle number nahi (country code)
   Twitter  12  Ravi Delhi me, server America me               ->  Lajpat Nagar me branch khol do (India region)
   Twitter  13  John New York me, Arpan ka tweet nahi          ->  SBI ki do branch aapas me baat karein (cross-region)
+  PUBG     1   America ka ladka Mumbai match me, ping 300     ->  America wala America server pe; akela 3 wale squad me (region matchmaking, squad fill)
 
 Naam: multi-region / home region
 Juda: video ke liye yahi kaam CDN karta (14).
@@ -586,3 +591,4 @@ Juda: server ki taraf location band ho to Uber 18 (location timeout); Zomato me 
 - Ecom: [notes](SYSTEM_DESIGNS/17_ecommerce/ECOMMERCE_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/17_ecommerce/17_ecommerce.md)
 - Netflix: [notes](SYSTEM_DESIGNS/18_netflix/NETFLIX_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/18_netflix/18_netflix.md)
 - YouTube: [notes](SYSTEM_DESIGNS/19_youtube/YOUTUBE_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/19_youtube/19_youtube.md)
+- PUBG: [notes](SYSTEM_DESIGNS/20_pubg/PUBG_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/20_pubg/20_pubg.md)

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="560" viewBox="0 0 760 560" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="760" height="560" fill="#0f1420"/>
+  <text x="380" y="32" fill="#9fb3d9" font-size="18" text-anchor="middle" letter-spacing="1">SIRF AAS-PAAS KI KHABAR (AREA OF INTEREST)</text>
+  <text x="380" y="54" fill="#6f84a8" font-size="12" text-anchor="middle">naksha dabbon me kata (Uber ke geohash jaisa) · jagah ke naam misaal, asli Erangel ka naap nahi</text>
+
+  <!-- row 1 -->
+  <rect x="30" y="70" width="140" height="130" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="38" y="90" fill="#9fb3d9" font-size="13">Georgopol</text>
+  <rect x="170" y="70" width="140" height="130" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="178" y="90" fill="#9fb3d9" font-size="13">Rozhok</text>
+  <rect x="310" y="70" width="140" height="130" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="318" y="90" fill="#9fb3d9" font-size="13">School</text>
+  <rect x="450" y="70" width="140" height="130" fill="#1e2638" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="458" y="90" fill="#9fb3d9" font-size="13">Yasnaya</text>
+  <rect x="590" y="70" width="140" height="130" fill="#1e2638" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="598" y="90" fill="#9fb3d9" font-size="13">Lipovka</text>
+
+  <!-- row 2 -->
+  <rect x="30" y="200" width="140" height="130" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="38" y="220" fill="#9fb3d9" font-size="13">Gatka</text>
+  <rect x="170" y="200" width="140" height="130" fill="#2a2a14" stroke="#f5c542" stroke-width="3"/>
+  <text x="178" y="220" fill="#f5c542" font-size="14" font-weight="bold">Pochinki</text>
+  <rect x="310" y="200" width="140" height="130" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="318" y="220" fill="#9fb3d9" font-size="13">Shelter</text>
+  <rect x="450" y="200" width="140" height="130" fill="#1e2638" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="458" y="220" fill="#9fb3d9" font-size="13">Prison</text>
+  <rect x="590" y="200" width="140" height="130" fill="#1e2638" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="598" y="220" fill="#9fb3d9" font-size="13">Mylta</text>
+
+  <!-- row 3 -->
+  <rect x="30" y="330" width="140" height="130" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="38" y="350" fill="#9fb3d9" font-size="13">Primorsk</text>
+  <rect x="170" y="330" width="140" height="130" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="178" y="350" fill="#9fb3d9" font-size="13">Ferry Pier</text>
+  <rect x="310" y="330" width="140" height="130" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="318" y="350" fill="#9fb3d9" font-size="13">Novorepnoye</text>
+  <rect x="450" y="330" width="140" height="130" fill="#3a1a1e" stroke="#e05561" stroke-width="2"/>
+  <text x="458" y="350" fill="#e05561" font-size="13" font-weight="bold">Military Base</text>
+  <rect x="590" y="330" width="140" height="130" fill="#1e2638" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="598" y="350" fill="#9fb3d9" font-size="13">Mylta Power</text>
+
+  <!-- Arpan gudda -->
+  <g transform="translate(215,270)" stroke="#f5c542" stroke-width="3" stroke-linecap="round" fill="none">
+    <circle cx="0" cy="-22" r="8" fill="#f5c542"/>
+    <line x1="0" y1="-14" x2="0" y2="8"/>
+    <line x1="-11" y1="-6" x2="11" y2="-6"/>
+    <line x1="0" y1="8" x2="-8" y2="22"/>
+    <line x1="0" y1="8" x2="8" y2="22"/>
+  </g>
+  <text x="208" y="312" fill="#f5c542" font-size="13" text-anchor="middle" font-weight="bold">Arpan</text>
+
+  <!-- Claude gudda with shotgun -->
+  <g transform="translate(268,270)" stroke="#e8833a" stroke-width="3" stroke-linecap="round" fill="none">
+    <circle cx="0" cy="-22" r="8" fill="#e8833a"/>
+    <line x1="0" y1="-14" x2="0" y2="8"/>
+    <line x1="-11" y1="-6" x2="11" y2="-6"/>
+    <line x1="0" y1="8" x2="-8" y2="22"/>
+    <line x1="0" y1="8" x2="8" y2="22"/>
+    <line x1="8" y1="-7" x2="26" y2="-12" stroke="#c9ced8" stroke-width="4"/>
+  </g>
+  <text x="272" y="312" fill="#e8833a" font-size="13" text-anchor="middle" font-weight="bold">Claude</text>
+
+  <!-- Military Base fight -->
+  <g stroke="#e05561" stroke-width="2.5" stroke-linecap="round">
+    <line x1="480" y1="390" x2="500" y2="380"/><line x1="480" y1="400" x2="503" y2="400"/><line x1="480" y1="410" x2="500" y2="420"/>
+    <line x1="560" y1="380" x2="540" y2="372"/><line x1="560" y1="395" x2="537" y2="395"/><line x1="560" y1="410" x2="540" y2="418"/>
+  </g>
+  <text x="520" y="445" fill="#e8ecf5" font-size="12" text-anchor="middle">30 log lad rahe</text>
+
+  <!-- no-send arrow -->
+  <line x1="450" y1="352" x2="318" y2="300" stroke="#e05561" stroke-width="2.5" stroke-dasharray="7 5"/>
+  <g transform="translate(384,326)" stroke="#e05561" stroke-width="4" stroke-linecap="round">
+    <line x1="-10" y1="-10" x2="10" y2="10"/><line x1="10" y1="-10" x2="-10" y2="10"/>
+  </g>
+  <text x="318" y="288" fill="#e05561" font-size="12">6 km door: khabar mat bhejo</text>
+
+  <!-- legend -->
+  <rect x="30" y="480" width="18" height="14" fill="#2a2a14" stroke="#f5c542" stroke-width="2"/>
+  <text x="56" y="492" fill="#e8ecf5" font-size="13">Arpan ka dabba</text>
+  <rect x="190" y="480" width="18" height="14" fill="#16301f" stroke="#3fbf6f" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="216" y="492" fill="#e8ecf5" font-size="13">aas-paas ke dabbe: inki goli, kadam, awaaz bhejo</text>
+  <rect x="30" y="510" width="18" height="14" fill="#3a1a1e" stroke="#e05561" stroke-width="2"/>
+  <text x="56" y="522" fill="#e8ecf5" font-size="13">door ka dabba: Arpan ke phone pe kuch nahi (phone thanda, data bacha)</text>
+</svg>
