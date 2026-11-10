@@ -215,34 +215,35 @@ karta, beech me hum hain). User ko bolo "paisa kata ho to wapas aa jaayega, doba
 paisa wapas. IRCTC, GPay, Paytm roz yahi karte. Hum perfect system ke peeche nahi: PSP hamare bas me nahi, perfect
 consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa wapas.
 
-**Asli naam:** 1-2 baar ping = status check retry (timeout), FAILED dikha do = PAYMENT_PENDING -> FAILED + hold release,
+**Asli naam:** 1-2 baar ping = status check retry (timeout), FAILED dikha do = booking FAILED + hold release,
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
 
-### 6c. Back dabaya, seat chhodi, phir paisa kata: pehle se kya tay karoge?
+### 6c. Back dabaya, seat chhodi, phir paisa kata: ab?
 
 Gola ghoomta raha, maine thak ke back daba diya, booking FAILED, seat chhod di. Thodi der baad Razorpay ne paisa kaat
 liya: paisa gaya, seat bhi nahi.
 
-Myntra wala hi jawab, BookMyShow ka bhi apna PSP nahi, Razorpay hai. Razorpay ko onboard karte hi vaada lo: "30 second me
-jawab do, fail ya pass", buffer 50-55 second, 1 minute bahut. Downtime poochh lo, jaise AWS uptime batata.
+Razorpay khud 10 minute tak rukta hai, kyunki uske peeche bank aur NPCI hain, sarkari raasta, wo uske haath me nahi. 10
+minute user ko nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske
+baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar
+lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi.
 
-Badi film (Avengers Doomsday) pe Stripe, Amazon Pay jaisi 3-4 company aur line me. 55 second baad bhi chup to har 3-4
-second pe 2-3 ping, 10 nahi.
+Pehla wala DB me FAILED likh do. Peeche hum khud Razorpay se poochte rahenge, aur uska event bhi aayega (paisa katte hi,
+jaise S3 bhejta), hum "mil gaya" bol dete. Baad me pata chala paisa kata tha, to Razorpay ko bolo "is user ka paisa
+lautao"; wo bank se poochh ke kata tha to wapas karega. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi;
+paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, Amazon Pay) line me.
 
-Aur Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe event bhejta. Event aaya =
-paisa kata, seat book, aur hum haath utha ke "mil gaya" bol dete. Event nahi aaya = paisa nahi kata. Event raste me kho
-gaya to wo Razorpay ka HLD hai, wo dobara bhejega; na hum andhe, na wo.
-
-**Asli naam:** onboard pe vaada = SLA / timeout, 3-4 company line me = backup PSP (failover), 3-4 sec pe ping = status
-poll, paisa katte hi event = webhook (PSP callback), "mil gaya" = ack (2xx), raste me kho gaya = PSP ki webhook redelivery.
+**Asli naam:** 30-55 sec gola = hamara client timeout (PSP ka 10 min wala alag), doosra pay doosre PSP pe = PSP failover
+(backup PSP), khud poochte = status poll, event = webhook, "mil gaya" = ack (2xx), baad me kata nikla to lautao = late
+authorisation + refund (capture nahi kiya to PSP khud auto-refund).
 
 ```mermaid
 flowchart LR
-    R["Razorpay se pehle hi vaada:<br/>30 sec, buffer 55 (SLA)"]:::card --> P{"Paisa kata?"}:::card
-    P -- "haan: turant event<br/>(webhook)" --> S["Seat BOOKED,<br/>'mil gaya' (ack)"]:::good
-    P -. "55 sec chup" .-> Q["3-4 sec pe 2-3 ping<br/>(status poll)"]:::bad
-    Q -.-> X["Badi film: Stripe, Amazon Pay<br/>line me (backup PSP)"]:::pill
+    G["30-55 sec gola<br/>(hamari ghadi)"]:::card --> P{"Paisa kata?"}:::card
+    P -- "haan: event (webhook)" --> S["Seat BOOKED,<br/>'mil gaya' (ack)"]:::good
+    P -. "chup" .-> F["FAILED dikhao: kata to wapas,<br/>doosra pay Amazon Pay pe"]:::bad
+    F -.-> R["Baad me kata nikla:<br/>Razorpay lautaye (refund)"]:::pill
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000

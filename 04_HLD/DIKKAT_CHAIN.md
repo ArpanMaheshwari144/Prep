@@ -305,7 +305,7 @@ Yahi dikkat yahan bhi:
   BMS      6   Pay daba diya, PSP dheema, umar khatam         ->  parchi pe "pay chal raha", umar badhao (PAYMENT_PENDING)
   BMS      6b  chhotu (PSP) 1-2 baar jagaya, phir bhi chup    ->  FAILED dikha do, seat chhod do; "chhod, doosra ladka tu ja" (timeout, circuit breaker -> PSP-2)
   BMS      6b  dheeme chhotu ne peeche se paisa kaat liya     ->  id hamare paas; "kata ho to wapas aayega", kata nikla to wapas (reconciliation job + refund)
-  BMS      6c  back dabaya, seat chhodi, phir paisa kata      ->  Razorpay se vaada 30-55 sec; paisa katte hi event, S3 jaisa; mil gaya (SLA, webhook + ack)
+  BMS      6c  back dabaya, seat chhodi, phir paisa kata      ->  30-55 sec gola, phir FAILED + doosre PSP pe; kata nikla to Razorpay lautaye (timeout, failover, refund)
   Kafka    8   galat ticket baar-baar, line atki              ->  line se hata (DLQ)
   Kafka    9   SMS counter 10 min band, sab DLQ me            ->  pehle check, waqai band? (circuit breaker)
   Kafka    9   counter waqai band hai                         ->  road band, traffic divert (fallback)
