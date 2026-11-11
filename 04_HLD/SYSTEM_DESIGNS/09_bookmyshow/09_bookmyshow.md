@@ -224,8 +224,8 @@ naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idemp
 Gola ghoomta raha, maine thak ke back daba diya, booking FAILED, seat chhod di. Thodi der baad Razorpay ne paisa kaat
 liya: paisa gaya, seat bhi nahi.
 
-Razorpay khud 10 minute tak rukta hai, kyunki uske peeche bank aur NPCI hain, sarkari raasta, wo uske haath me nahi. 10
-minute user ko nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske
+Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok
+sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske
 baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar
 lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi.
 
@@ -237,7 +237,7 @@ jaise S3 bhejta), hum "mil gaya" bol dete. Baad me pata chala paisa kata tha, to
 lautao"; wo bank se poochh ke kata tha to wapas karega. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi;
 paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, Amazon Pay) line me.
 
-**Asli naam:** 30-55 sec gola = hamara client timeout (PSP ka 10 min wala alag), onboard pe SLA = PSP ka uptime SLA +
+**Asli naam:** 30-55 sec gola = hamara client timeout, onboard pe SLA = PSP ka uptime SLA +
 incident response (latency ka nahi), doosra pay doosre PSP pe = PSP failover
 (backup PSP), khud poochte = status poll, event = webhook, "mil gaya" = ack (2xx), baad me kata nikla to lautao = late
 authorisation + refund (capture nahi kiya to PSP khud auto-refund, warna refund hum karte: refund API).
@@ -248,6 +248,60 @@ flowchart LR
     P -- "haan: event (webhook)" --> S["Seat BOOKED,<br/>'mil gaya' (ack)"]:::good
     P -. "chup" .-> F["FAILED dikhao: kata to wapas,<br/>doosra pay Amazon Pay pe"]:::bad
     F -.-> R["Baad me kata nikla:<br/>Razorpay lautaye (refund)"]:::pill
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+### 6d. SUCCESS likha, ticket bolne se pehle server gira (SUCCESS + parchi ek saath)
+
+Razorpay ka event aaya "paisa kat gaya", parchi pe SUCCESS likh diya. Ticket banane wale ko bolne hi wale the ki server
+gir gaya. Restart ke baad parchi SUCCESS hai, koi chhotu use nahi uthata; paisa kata, ticket kabhi nahi bana.
+
+SUCCESS likhna aur ticket book karna do alag kaam nahi, ek jagah hon. SUCCESS ke saath hi parchi pe likh do "Arpan ne
+paisa de diya, D5 book karna hai". Koi bhi aaye, kahin se bhi aaye, parchi dekh ke D5 book kar de. Server gire to bhi
+parchi wahin padi.
+
+**Asli naam:** SUCCESS + parchi ek saath = transactional outbox (ek hi DB transaction), parchi dekh ke book = relay /
+worker outbox padh ke ticket service ko bhejta.
+
+```mermaid
+flowchart LR
+    E["Event: paisa kata"]:::card --> T
+    subgraph T["EK SAATH (ek DB transaction)"]
+        S[("Parchi: SUCCESS")]:::pill
+        O[("Parchi: D5 book karna hai")]:::pill
+    end
+    T --> R["Chhotu parchi padhe<br/>(relay)"]:::card --> K["Ticket bana"]:::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    style T fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+### 6e. Bank ne 12 minute lagaye, seat Priya ki, paisa kata (alag haalat + raat ki refund job)
+
+Maine parchi ki umar ke andar Pay dabaya, bank ne 12 minute lagaye. Tab tak parchi khatam, D5 Priya ko mil gayi. 12ve
+minute pe event: "Arpan ka paisa kat gaya".
+
+Razorpay kitni der leta, wo hamara design nahi. Hamare haath me itna: Pay dabate hi ek chhotu Razorpay se har kuch
+second poochta rahe, jawab aaye to bata de. Window khatam to seat khul gayi, Priya ne book kar li, ye theek hai. 12-13
+minute pe "paisa kat gaya" aaya, to DB me likho: paisa kata, seat nahi, refund dena hai. UI pe "booking fail, paisa 2-3
+din me wapas". Raat ki sync job saare baaki refund karegi, warna Razorpay ko bolo "lautao"; bank se Razorpay baat karta
+hai, BookMyShow nahi.
+
+**Asli naam:** chhotu poochta = status poll job, paisa kata seat nahi = payment SUCCESS + booking FAILED (do alag
+haalat), refund dena = REFUND_PENDING, raat ki sync job = refund / reconciliation job, lautao = refund API.
+
+```mermaid
+flowchart LR
+    P["Pay dabaya"]:::card --> C["Chhotu Razorpay se<br/>poochta rahe (status poll)"]:::card
+    C -. "window khatam" .-> W["Seat khuli,<br/>Priya ne li"]:::bad
+    C -- "12 min: paisa kata" --> D[("DB: payment SUCCESS,<br/>booking FAILED, REFUND")]:::pill
+    D --> N["Raat ki job:<br/>Razorpay lautaye (refund)"]:::good
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000

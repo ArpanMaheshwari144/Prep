@@ -306,6 +306,8 @@ Yahi dikkat yahan bhi:
   BMS      6b  chhotu (PSP) 1-2 baar jagaya, phir bhi chup    ->  FAILED dikha do, seat chhod do; "chhod, doosra ladka tu ja" (timeout, circuit breaker -> PSP-2)
   BMS      6b  dheeme chhotu ne peeche se paisa kaat liya     ->  id hamare paas; "kata ho to wapas aayega", kata nikla to wapas (reconciliation job + refund)
   BMS      6c  back dabaya, seat chhodi, phir paisa kata      ->  30-55 sec gola, phir FAILED + doosre PSP pe; kata nikla to Razorpay lautaye (timeout, failover, refund)
+  BMS      6d  SUCCESS likha, ticket bolne se pehle gira      ->  SUCCESS + parchi "D5 book karo" ek saath (transactional outbox)
+  BMS      6e  bank 12 min, seat Priya ki, paisa kata         ->  chhotu poochta; DB me REFUND, raat ki job lautaye (status poll, refund job)
   Kafka    8   galat ticket baar-baar, line atki              ->  line se hata (DLQ)
   Kafka    9   SMS counter 10 min band, sab DLQ me            ->  pehle check, waqai band? (circuit breaker)
   Kafka    9   counter waqai band hai                         ->  road band, traffic divert (fallback)
@@ -317,7 +319,7 @@ Yahi dikkat yahan bhi:
   Ecom     8b  PSP ka "kata" kaise turant pata chale          ->  paisa katte hi chhota event, S3 jaisa; badi sale pe 3-4 company (webhook, backup PSP)
 
 Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / late authorisation + auto-refund / webhook redelivery
-Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker. PSP pe hamari ghadi 30-55 sec (PSP khud 10 min rukta) + paisa katte hi event (webhook) + der se kata to refund, charon me (BMS 6c); onboard pe SLA sirf uptime ka.
+Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker. PSP pe hamari ghadi 30-55 sec + chhotu poochta (status poll) + paisa katte hi event (webhook) + der se kata to DB me REFUND, raat ki job lautaye, charon me (BMS 6c, 6e); SUCCESS + parchi ek saath (outbox, BMS 6d); onboard pe SLA sirf uptime ka.
 ```
 
 ## 12. Phone baar-baar "kuch aaya?"  (KHULA TAAR)

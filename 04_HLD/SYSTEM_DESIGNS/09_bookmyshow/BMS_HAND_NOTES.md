@@ -4,6 +4,15 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan BookMyShow pe Avengers ke pehle show ki seat D5 book kar raha hai. Arpan ki misaal: cinema ke do counter ek hi seat bech rahe, aur ek-doosre ko pata nahi.
 
+**6d. Razorpay ka event aaya "paisa kat gaya", parchi pe SUCCESS likh diya. Ticket banane wale ko bolne hi wale the ki server gir gaya. Restart ke baad parchi SUCCESS hai, to koi chhotu use nahi uthata (wo sirf PENDING dekhta). Paisa kata, ticket kabhi nahi bana.**
+Arpan: SUCCESS likhna aur ticket book karna, ye do kaam alag-alag nahi, ek hi jagah hon. Ya to dono ek saath karo, ya SUCCESS ke saath hi ek parchi pe likh do "Arpan ne paisa de diya, D5 book karna hai", kyunki SUCCESS likhne ke baad bhi server gir sakta hai. Jaise mujhe D5 book karna tha aur beech me koi kaam yaad aa gaya, main bhool gaya; doosre ko D5 ka kuch pata hi nahi, wo apna agla kaam dekh lega. Isliye parchi pe likh do: koi bhi aaye, kahin se bhi aaye, parchi dekh le aur D5 book kar de.
+Technical me: "SUCCESS aur parchi ek saath" = transactional outbox (payment SUCCESS + "ticket banao" ek hi DB transaction me), "koi bhi aaye parchi dekh ke book kare" = relay / worker outbox table padh ke ticket service ko bheje; server gire to restart pe parchi wahin padi.
+
+**6e. Arpan ne parchi ki umar ke andar Pay dabaya, bank ne paisa kaatne me 12 minute lagaye. Tab tak parchi khatam, D5 Priya ko mil gayi. 12ve minute pe event: "Arpan ka paisa kat gaya". Arpan ki booking kya dikhegi, paise ka kya?**
+Arpan: Razorpay kya karta, kitni der leta, wo hamara design nahi. Hamare haath me itna: Pay dabate hi ek chhotu rakh lo jo Razorpay se har kuch second poochta rahe (3, 5, 10 second, ek-dum nahi), jawab aaye to bata de; main apne aur kaam me lag jaata hoon. Window khatam to seat khul gayi, Priya ne doosre PSP se book kar li, ye theek hai. 12-13 minute pe chhotu aaya "paisa kat gaya", to DB me likh do: paisa kata, seat book nahi hui, refund dena hai. Arpan ko UI pe dikha do "booking fail hui, paisa 2-3 din me wapas aa jaayega". Raat ko sync job chalegi, jiska refund baaki hai sabka karegi: hamare haath me ho to hum, warna Razorpay ko bolo "iska lautao". Razorpay bank se poochega, wo uska design hai; bank BookMyShow ke server se baat nahi karta, Razorpay se karta hai. Yahi jawab har jagah jahan PSP beech me hai.
+Technical me: "chhotu poochta rahe" = status poll job, "paisa kata, seat nahi" = payment SUCCESS + booking FAILED (do alag haalat), "refund dena hai" = REFUND_PENDING, "raat ki sync job" = refund / reconciliation job, "Razorpay ko bolo lautao" = refund API.
+
+
 &nbsp;
 
 **1. Arpan ne D5 chuni aur "book" dabaya. Usi second ek aur ladke ne bhi D5 pe book dabaya. Dono ke app ne seat khaali dekhi, aur dono ko "seat mil gayi" aa gaya.**
@@ -45,12 +54,12 @@ Hum perfect system ke peeche nahi bhaag rahe. PSP hamare bas me nahi, wo dheema 
 Technical me: "1-2 baar ping" = status check retry (timeout), "FAILED dikha do, seat chhod do" = booking FAILED + hold release (paisa kata nikla to refund), "doosra ladka / naye log doosre PSP pe" = circuit breaker -> PSP-2, "id hamare paas" = payment id (idempotency key), "baad me kata nikla to wapas" = reconciliation job + refund.
 
 **6c. Gola ghoomta raha, Arpan ne thak ke back daba diya, booking FAILED, seat chhod di. Thodi der baad Razorpay ne paisa kaat liya: paisa gaya, seat bhi nahi. Ab?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
-Arpan: Razorpay khud 10 minute tak rukta hai, kyunki uske peeche bank aur NPCI hain, sarkari raasta, wo uske haath me nahi. 10 minute user ko nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi.
+Arpan: Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi.
 
 Haan, onboard karte waqt Razorpay se SLA zaroor lo: unka system kitna chalega (uptime, jaise 99.9%) aur down hua to kitni der me khabar + theek karenge. Ye unke haath me hai, isliye likh ke dete hain. Bank kitni der lega, wo nahi.
 
 Pehla wala DB me FAILED likh do. Peeche hum khud Razorpay se poochte rahenge, aur uska event bhi aayega: paisa katte hi chhota sa event, jaise S3 file aane pe bhejta, aur hum haath utha ke "mil gaya" bol dete. Baad me pata chala paisa kata tha, to Razorpay ko bolo "is user ka paisa lautao". Wo bank se poochh ke kata tha to wapas karega, nahi kata to kuch nahi. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi; bank hamare server ko jawab hi nahi dega. Paisa Razorpay ne kaata, to lautayega bhi wahi; hum apni taraf DB me likh ke rakhte hain. Badi film pe 3-4 company (Stripe, Amazon Pay) line me rakho.
-Technical me: "30-55 sec gola" = hamara client timeout (PSP ka 10 min wala timeout alag), "onboard pe SLA" = PSP ka uptime SLA + incident response (latency ka nahi, wo bank / NPCI pe), "doosra pay doosre PSP pe" = PSP failover (backup PSP), "hum khud poochte" = status poll (fetch payment API), "chhota event" = webhook, "mil gaya" = ack (2xx), "baad me kata nikla to lautao" = late authorisation + refund (capture nahi kiya to PSP khud auto-refund, warna refund hum karte: refund API).
+Technical me: "30-55 sec gola" = hamara client timeout, "onboard pe SLA" = PSP ka uptime SLA + incident response (latency ka nahi), "doosra pay doosre PSP pe" = PSP failover (backup PSP), "hum khud poochte" = status poll (fetch payment API), "chhota event" = webhook, "mil gaya" = ack (2xx), "baad me kata nikla to lautao" = late authorisation + refund (capture nahi kiya to PSP khud auto-refund, warna refund hum karte: refund API).
 
 
 &nbsp;

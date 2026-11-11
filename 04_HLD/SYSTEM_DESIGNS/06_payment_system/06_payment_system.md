@@ -340,7 +340,7 @@ Naa to paise wapas = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, 
 **Maan lo PSP-1 chup hai, Ravi ko ghanton nahi rok sakte, aur PSP-2 pe bhejne se darr hai ki do baar na kat jaaye
 (BookMyShow 6c wala hi jawab)**
 
-PSP-1 khud 10 minute tak rukta hai, kyunki uske peeche bank aur NPCI hain, wo uske haath me nahi. Itni der Ravi ko nahi
+PSP-1 kitni der lega, wo hamare haath me nahi, uska design hai. Zyada der Ravi ko nahi
 rok sakte. To 30 se 55 second rukte hain, phir Ravi ko saaf bolo: "payment abhi ho nahi pa raha, paisa kata hoga to
 apne aap wapas aa jaayega, dobara karo". Dobara wala PSP-2 pe. Pehla DB me FAILED, peeche PSP-1 se poochte raho aur
 uska event bhi aayega. Baad me pata chala PSP-1 pe bhi kata tha, to PSP-1 ko bolo "is user ka paisa lautao"; bank se
@@ -349,7 +349,7 @@ poochhne ka haq PSP-1 ka hai, hamara nahi. Do baar kata bhi to ek wapas.
 Onboard karte waqt PSP-1 se SLA zaroor lo: uptime (jaise 99.9%) aur down hua to kitni der me khabar + theek. Bank kitni
 der lega, wo nahi. Diwali jaisi sale pe 3-4 company line me.
 
-**Asli naam:** 30-55 sec = hamara client timeout (PSP ka 10 min alag), dobara PSP-2 pe = PSP failover, poochte + event =
+**Asli naam:** 30-55 sec = hamara client timeout, dobara PSP-2 pe = PSP failover, poochte + event =
 status poll + webhook, kata nikla to lautao = late authorisation + refund (capture nahi kiya to PSP auto-refund, warna refund hum karte: refund API),
 onboard pe SLA = uptime SLA + incident response (latency ka nahi), 3-4 company = backup PSP.
 

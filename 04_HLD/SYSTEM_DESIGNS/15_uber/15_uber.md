@@ -337,7 +337,7 @@ status job).
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
 **Maan lo poochhte raho aur gateway ka jawab aaye hi na, Arpan aur Raju dono gaadi me intezaar kar rahe. Kab tak
-rokoge? (BookMyShow 6c wala hi jawab):** Gateway khud 10 minute tak rukta hai (peeche bank aur NPCI), to hum apni ghadi
+rokoge? (BookMyShow 6c wala hi jawab):** Gateway kitni der lega, hamare haath me nahi, to hum apni ghadi
 rakhte: 30 se 55 second, phir dono app pe "payment nahi hua, paisa kata to wapas aa jaayega", Arpan GPay / cash se de.
 Paisa katte hi gateway chhota sa event bhejta, jaise S3 bhejta; aaya to "mil gaya". Baad me kata nikla aur cash de chuka,
 to gateway ko bolo "lautao". Onboard pe SLA lo: uptime aur down hone pe khabar; bank ki der nahi.
