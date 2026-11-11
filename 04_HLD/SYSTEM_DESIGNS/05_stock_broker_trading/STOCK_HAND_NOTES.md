@@ -54,7 +54,8 @@ Technical me: "upar kar chuke" = chat wala hi: khula taar (WebSocket) + Redis pu
 **9. Subah 9:15, market khula, TCS pe ek second me lakhon order. Har order pe book me sabse achha bhaav dekhna (padhna) aur naya order jodna ya match pe book badalna (likhna). Book DB me, har baar kuch millisecond. Line badh rahi, 9:15:01 ka order 9:16 pe match.**
 Arpan: Itna bhaar DB pe mat rakho, mota register bechara thak jaayega. Baar-baar mote register pe likhne aur padhne thodi jaaunga. Apne paas ek chhoti parchi rakh lo, dhadadhad us pe likhte raho: ye aaya, iska match hoga, ye hat gaya. Sab ho jaaye to baad me ek saath mote register pe likh do. Koi bole parchi kho gayi to? Koi baat nahi, uski 3-4-5 copy bana lo, ek gayi to doosri se mil jaayegi.
 Technical me: "chhoti parchi, dhadadhad likho" = order book RAM me (in-memory), "baad me ek saath mote register pe" = DB me batch write, "parchi ki 3-4-5 copy" = standby / replica (aur order log). Kam bheed ho to block 5 jaisa DB pe chal jaata; NSE jaisi bheed pe RAM.
-Maan lo Ravi ka sauda parchi pe match ho gaya, DB me abhi gaya nahi. Ravi ko "sauda ho gaya" kab dikhaye?
+
+**Maan lo Ravi ka sauda parchi pe match ho gaya, DB me abhi gaya nahi. Ravi ko "sauda ho gaya" kab dikhaye?**
 Arpan: Sach to mota register (DB) hai, parchi sirf tezi ke liye. Ravi ke liye alag se mote register pe jaaun to fayda kya. Parchi pe tabhi likho jab hamare paas sach me maal hai, koi bechne wala hai. Ravi ko bol do "rakh liya, tu ja, app me update ho jaayega", app pe "processing" dikha do. Sab ho jaaye, mote register me likh do, phir app me pakka dikha do.
 Technical me: "sach mota register" = DB = source of truth, "processing dikha do" = ACCEPTED / PENDING turant, "mote register ke baad pakka" = DB me commit ke baad FILLED / confirmed.
 

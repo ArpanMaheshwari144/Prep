@@ -38,8 +38,8 @@ Humne socha: 5 minute dekhunga, phir phaad do. Parchi pe hi umar likh do, apne a
 
 Yahi dikkat yahan bhi:
   Stock    3   35,000 se do order, chahiye 70,000             ->  EMI jaisa paisa hold (funds block)
-  Stock    3b  10 chahiye, 4 mile, 6 baaki                    ->  FR: 4 abhi + 6 ka hold jaari (partial) ya 10 nahi to kuch nahi, hold wapas (FOK)
-  Stock    3c  3500 ka order, market band, bika nahi          ->  order khula, hold jaari, cancel pe wapas (GTC)
+  Stock    3b  10 chahiye, 4 mile, 6 baaki                    ->  FR: 4 abhi + 6 ka hold jaari (partial) ya 10 nahi to kuch nahi, hold wapas (Fill-or-Kill)
+  Stock    3c  3500 ka order, market band, bika nahi          ->  order khula, hold jaari, cancel pe wapas (Good Till Cancelled)
   Stock    3d  Ravi ke 10 share, 2 sell order, 20 bike        ->  share bhi hold, naya nahi, wahi order ka bhaav badlo (modify order)
   BMS      2   parchi laga ke chai peene, kabhi nahi aaya     ->  5 minute dekhunga, phir phaad do (hold_until)
   BMS      3   parchi phaadne wala chhutti pe                 ->  chhota bhai / replacement (backup safai job)
@@ -54,7 +54,7 @@ Yahi dikkat yahan bhi:
   Ecom     6   60 ne pay nahi kiya                            ->  cart sirf list, paisa nahi diya to maal uska nahi; ginti pay pe (koi reserve nahi, atomic)
   Ecom     7d  andar gaya, chai peene chala gaya              ->  "ya pay kar ya rakh de": 5 min ghadi, phir wapas line me (expiry + INCR)
   Ecom     7e  ghadi khatam ke 1 sec baad Pay                 ->  1-2 sec upar bas, phir Priya ka; andar dabaya to PSP hamari zimmedari (grace period, PAYMENT_PENDING)
-  Rate     9b  line lambi, OTP 6 min baad, bekaar             ->  har OTP pe umar, khatam to phenk do (message TTL)
+  Rate     9b  OTP line me atka, der se nikla, bekaar         ->  har OTP pe umar, khatam to phenk do (message TTL)
   Notif    4b  OTP retry line se 3 ghante baad gaya           ->  OTP umar ke andar priority line (bhari to 3-4); umar khatam = bhejo mat, app pe Resend (priority queue, expiry)
 
 Naam: TTL / hold expiry / message TTL / funds block / partial / FOK / GTC / modify order / backup safai job / heartbeat / presence / location timeout / broadcast dispatch / reservation expiry / grace period / key me tareekh
@@ -75,7 +75,7 @@ Yahi dikkat yahan bhi:
   Uber     5b  net atka, Book do baar daba diya               ->  wahi booking id, wahi ride (idempotency key)
   Uber     13b 250 kaatne gaye, gateway chup                  ->  ride id hi key, pehle poochho phir dobara (idempotency)
   Uber     13c gateway ka jawab aaye hi na, kab tak rokoge?   ->  30-55 sec ghadi, phir GPay / cash; kata nikla to lautao (timeout, webhook, refund)
-  Ecom     8c  PSP ka success do baar aaya                    ->  payment id dekh ke doosra chhodo (idempotency)
+  Ecom     8d  PSP ka success do baar aaya                    ->  payment id dekh ke doosra chhodo (idempotency)
   Ecom     7c  Ravi ne 4 tab khole, Buy now 4 baar            ->  user id pe ek hi rukega (idempotency)
   Leader   3b  match ka +50 do baar pahuncha                  ->  match id dekh ke ek hi baar jodo (idempotency)
   Chat     6b  Ravi ka "mil gaya" kho gaya, dobara aaya       ->  Ravi ka phone message ka number dekhe, dobara mat dikhao (idempotency)
@@ -321,9 +321,9 @@ Yahi dikkat yahan bhi:
   File     8b  bahar wala scanner 1 ghante se chup            ->  ruk ke dobara, phir insaan ko alert; tab tak link band (retry + backoff, DLQ)
   News     6   jis site se khabar la rahe wo band             ->  5 sec, 10 sec baad dobara; na khule to chhodo (retry + backoff)
   Ecom     8b  PSP 50 sec chup, kata pata nahi                ->  hamari ghadi 30-50 sec, phir "time out, kata to wapas", dobara pay doosre PSP pe; kata nikla to REFUND_PENDING (timeout, PSP failover, refund job)
-  Ecom     8b  PSP ka "kata" kaise turant pata chale          ->  paisa katte hi chhota event, S3 jaisa; badi sale pe 3-4 company (webhook, backup PSP)
+  Ecom     8c  PSP ka "kata" kaise turant pata chale          ->  paisa katte hi chhota event, S3 jaisa; badi sale pe 3-4 company (webhook, backup PSP)
 
-Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / late authorisation + auto-refund / webhook redelivery
+Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / REFUND_PENDING + refund job / webhook redelivery
 Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker. PSP pe hamari ghadi 30-55 sec + chhotu poochta (status poll) + paisa katte hi event (webhook) + der se kata to DB me REFUND, raat ki job lautaye, charon me (BMS 6c, 6e); SUCCESS + parchi ek saath (outbox, BMS 6d); onboard pe SLA sirf uptime ka.
 ```
 
@@ -407,7 +407,7 @@ Yahi dikkat yahan bhi:
   Netflix  4   20 dabbe, kis se maange                        ->  hospital ka guard, server batata (steering; AWS pe, video bytes dabbe se)
   Netflix  4b  aadhe episode pe dabba 3 band                  ->  TV ke paas 2-3 dabbon ke naam, ek dheema to agla (client failover)
   Netflix  7   tunnel me 3 sec net gaya, video ruki           ->  Amul se 10 ki jagah 20 packet, nahi to Mother Dairy (player buffer, ABR)
-  Netflix      (padhai, scene nahi) P1 AWS CDN kyun nahi: apna fridge muft · P3 Ferrari / Alto + har film ki seedhi + kai roop
+  Netflix      (padhai, scene nahi) P1 AWS CDN kyun nahi: apna fridge muft · P2 AWS = control plane (login, list), video ISP ke dabbe se · P3 Ferrari / Alto + har film ki seedhi + kai roop · P4 har user ki apni thumbnail + list re-rank
   YouTube  1   10 hazaar creator, video server me phansi      ->  file seedha locker, watchman bas parchi rakhe (S3, presigned URL)
   YouTube  2   ek machine har quality, 3 ghante               ->  20-25 log, tukde baanto, chhoti quality pehle (parallel encoding)
   YouTube  5   10 saal purani video bhi mehngi jagah          ->  garam cheez garam jagah, thandi cheez thandi jagah (hot / cold storage, lifecycle)

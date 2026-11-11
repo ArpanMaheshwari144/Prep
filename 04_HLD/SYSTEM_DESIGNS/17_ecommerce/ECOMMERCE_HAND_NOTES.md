@@ -14,6 +14,10 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 Arpan: Shelf ka maal app pe mat dikhao, warna dikkat hogi. Aunty ke haath se cheen thodi lunga. Ravi ko godown ka dikhao, aunty ko shelf ka. ATM jaisa: ATM me paisa khatam hua to duniya ka paisa khatam nahi hua, gaadi se phir aa jaata hai. Godown me ek dabba hai to Ravi ko dikhega, nahi to out of stock.
 Technical me: har raaste ka alag stock. Online = godown ki ginti, counter = shelf. Dono kabhi ek dabbe pe nahi takraate.
 
+**Maan lo Lucknow ka store khaali, Kanpur me 20 dabbe.**
+Arpan: Lucknow wale ko Lucknow ka store dikhega. Dark store ka matlab hi aas-paas ka store. Whitefield me baithe ko Koramangala wala dikhta.
+Technical me: har store ka apna stock, app location dekh ke paas wala store chunta.
+
 **2. Ladka godown se 10 dabbe shelf pe le gaya, kahin likha nahi. App pe abhi bhi 40, sach me 30.**
 Arpan: Parchi pe likha hai kitna maal hai. Godown se uthaya to parchi pe kaat ke likho. Aur ye ek hi kaam bana do: godown se uthana aur parchi update karna alag kaam nahi, ek hi kaam hain. To bhoolne ka mauka hi nahi.
 Technical me: parchi = DB. Maal hilaana aur ginti badalna ek hi transaction me (atomic), alag-alag kadam nahi.
@@ -37,6 +41,10 @@ Technical me: ek tukda khaali to doosre tukde se lo. Sold out tabhi jab saare tu
 **6. 500 kat gaye, "sold out" dikh gaya, par 60 logon ne pay hi nahi kiya.**
 Arpan: Jab tak pay nahi hua, ginti nahi kategi. Cart me daalna sirf list hai. Cart kabhi khaali mat karo: Myntra pe joota daal ke mahine baad aao to bhi wahin dikhta. Blinkit pe mummy se list banwa raha hoon, 5 minute me sab gaayab ho gaya to kya baat hui? Galle pe panni le ke khada aadmi: jab tak paisa nahi diya aur bill nahi bana, maal uska nahi.
 Technical me: cart = sirf list, koi reserve nahi. Stock pay ke waqt katta. Fail hua to wapas (atomic DB query).
+
+**Maan lo ek order me ghee, aata, daal, aur aata khatam.**
+Arpan: Poora order mat roko. Jo hai wo bhejo, aate pe out of stock dikha do. Wo chahe to baaki do le le.
+Technical me: har cheez alag check. Adhoora order chalta.
 
 **7. 3000 log ek hi second me Pay dabaate hain, ghee 500.**
 Arpan: Pay ki request hamare server pe aati hai, wahan line lagao: jo pehle aaya wo pehle paaya, duniya ka dastoor. Jiska paisa aaya, ginti kaato, dabba uska. 500 khatam hone ke baad jiska paisa aaya uska turant rollback, do minute me paisa wapas, aur "out of stock" bol do. Out of stock to dikhna hi hai, chahe pehle dikhe chahe baad me. Asli hal: sale ke liye stock pehle se zyada mangwao. Samsung pe discount lagaunga to 500 nahi, 10-20 hazaar laaunga.
@@ -73,14 +81,6 @@ Technical me: "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack 
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**
 Arpan: Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
-
-**Agar pooche: ek order me ghee, aata, daal. Aata khatam.**
-Arpan: Poora order mat roko. Jo hai wo bhejo, aate pe out of stock dikha do. Wo chahe to baaki do le le.
-Technical me: har cheez alag check. Adhoora order chalta.
-
-**Agar pooche: Lucknow ka store khaali, Kanpur me 20 dabbe.**
-Arpan: Lucknow wale ko Lucknow ka store dikhega. Dark store ka matlab hi aas-paas ka store. Whitefield me baithe ko Koramangala wala dikhta.
-Technical me: har store ka apna stock, app location dekh ke paas wala store chunta.
 
 &nbsp;
 

@@ -136,11 +136,11 @@ hoga, use dobara ghumaana bekaar. Wo kaise pehchanein, agle kadam me.
 **Asli naam:** alag rakh ke thodi der baad = retry queue (ruk ke dobara, wait badhta jaata), main line nahi rukti.
 Dikkat aayi to likh lo, kahin daal do = queue / parchi / retry ka ek hi pattern.
 
-**Maan lo "Order placed" SMS bheed me atka (retry line), aur "Shipped" push jaane ko taiyaar hai; aise hi gaya to Arpan ko pehle Shipped dikhega:** Ek parchi rakhunga: Arpan ka order placed, chhotu ko bheja. Chhotu wapas nahi aaya, to parchi pe likha SMS abhi gaya nahi. Order pack hokar ship hua, parchi pe likha, par mujhe pata hai placed abhi gaya nahi. Chhotu aaya, bola SMS company bheed me hai. To ek saath bhej do: "aapka order placed aur ship ho gaya". Interviewer bole alag-alag dikhao, to retry mat karwao, placed wala doosri SMS company ko de do, phir shipped. SMS nahi ja raha to bagal me email wala khada hai, confirmation ek baar to chala jaayega.
-**Asli naam:** "order ki parchi" = har order ka status (order id pe), "pehle wala gaya nahi to dono saath" = khabar milana (coalesce, kram bachao), "doosri SMS company" = failover (kadam 5), "email wala" = channel fallback.
-
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar:** OTP zaroori hai to uski umar ke andar use bhejna hi bhejna hai: priority line se bhejo, priority line bhi bhar gayi to 3-4 priority line kar do, jaise hospital me hota hai. Par OTP ki umar khatam ho gayi to use bhejo hi mat, rok do, uska koi matlab nahi. App pe neeche 60 second ka timer chalta hai (60, 59, 58...), tab tak OTP nahi aaya to "Resend OTP" ka button aata hai, user dobara maang lega. Kabhi-kabhi 2 OTP ek saath bhi aa jaate hain, wo chalta hai. Aur OTP hamari taraf se nikal gaya par SMS company ke paas atak gaya, to wahi shart jo company se pehle tay ki thi (kadam 5): "30 second me nahi bhej paaye to mat bhejna, hume bata do".
 **Asli naam:** OTP = priority queue (bheed pe 3-4 line = partition / worker badhao), umar ke andar retry. Umar khatam = line se nikalte waqt drop, bhejo mat (expiry check). App pe resend timer (60 sec) -> user naya OTP maange. SMS company ke paas atka = unki taraf validity period (kadam 5 ki shart).
+
+**Maan lo "Order placed" SMS bheed me atka (retry line), aur "Shipped" push jaane ko taiyaar hai; aise hi gaya to Arpan ko pehle Shipped dikhega:** Ek parchi rakhunga: Arpan ka order placed, chhotu ko bheja. Chhotu wapas nahi aaya, to parchi pe likha SMS abhi gaya nahi. Order pack hokar ship hua, parchi pe likha, par mujhe pata hai placed abhi gaya nahi. Chhotu aaya, bola SMS company bheed me hai. To ek saath bhej do: "aapka order placed aur ship ho gaya". Interviewer bole alag-alag dikhao, to retry mat karwao, placed wala doosri SMS company ko de do, phir shipped. SMS nahi ja raha to bagal me email wala khada hai, confirmation ek baar to chala jaayega.
+**Asli naam:** "order ki parchi" = har order ka status (order id pe), "pehle wala gaya nahi to dono saath" = khabar milana (coalesce, kram bachao), "doosri SMS company" = failover (kadam 5), "email wala" = channel fallback.
 
 ```mermaid
 flowchart TB
@@ -367,28 +367,25 @@ flowchart TB
     style AP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
----
-
-Notes (Arpan ke shabd) = [NOTIFICATION_HAND_NOTES.md](NOTIFICATION_HAND_NOTES.md)
-
 ## Poora raasta ek nazar me (OTP ki line, company, receipt, failed line)
 
 ```mermaid
 flowchart TB
-    B["Bank / Order Service:<br/>SMS banate hi kism tay"]:::card
-    subgraph PRL["PROMOTIONAL"]
-        PR[("offer, loan")]:::card --> WP["apna worker"]:::card
+    B["Order Service:<br/>khabar banate hi kism tay"]:::card
+    subgraph PRL["PROMO LINE (dheemi)"]
+        PR[("Diwali offer")]:::card --> WP["apna worker"]:::card
     end
-    subgraph TRL["TRANSACTIONAL (VIP)"]
+    subgraph TRL["OTP LINE (VIP)"]
         TR[("OTP")]:::pill --> WT["apna worker"]:::pill
     end
-    subgraph SVL["SERVICE"]
-        SV[("order, alert")]:::card --> WS["apna worker"]:::card
+    subgraph SVL["ORDER KHABAR (SMS / email / push)"]
+        SV[("order placed, shipped")]:::card --> WS["apna worker"]:::card
     end
     C1["SMS company 1<br/>(chup ho to 1, 2, 5 sec ruk ke + jitter)"]:::card
     C2["SMS company 2, wahi code<br/>(WhatsApp sirf FR me ho to)"]:::pill
     OK(["DELIVERED<br/>(operator ki receipt)"]):::good
-    DL[("Failed line (DLQ):<br/>engineer dekhte")]:::bad
+    EX(["Umar khatam: bhejo mat,<br/>user resend dabaye"]):::bad
+    DL[("Galat number / backup bhi fail:<br/>alag line (DLQ)")]:::bad
     B --> PR
     B --> TR
     B --> SV
@@ -398,7 +395,8 @@ flowchart TB
     C1 --> OK
     C1 -. "receipt nahi / chup" .-> C2
     C2 --> OK
-    C2 -. "umar tak bhi nahi" .-> DL
+    C2 -. "umar tak bhi nahi" .-> EX
+    C2 -. "galat number" .-> DL
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -408,3 +406,7 @@ flowchart TB
     style TRL fill:#141a29,stroke:#f5c542,color:#f5c542
     style SVL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+
+---
+
+Notes (Arpan ke shabd) = [NOTIFICATION_HAND_NOTES.md](NOTIFICATION_HAND_NOTES.md)
