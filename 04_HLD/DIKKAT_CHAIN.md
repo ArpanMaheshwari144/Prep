@@ -285,6 +285,7 @@ Yahi dikkat yahan bhi:
   Notif    4   company bole "abhi bheed hai"                  ->  papa busy, thodi der ruk ke (retry queue)
   Notif    5   SMS company poori band                         ->  teen-chaar company extra (failover)
   Notif    5b  company 30 sec chup (timeout)                  ->  OTP turant backup se, 2 OTP chalega, ek hi code; sale ruk sakti (SLA)
+  Notif    5c  company chup, lakhon worker har second dobara  ->  1, 2, 5 sec ruk ke + aage-peeche; 2-3 company, dheeme ko kam kaam (backoff, jitter, weighted routing)
   Notif    5   fail pe fail, company band kaise samjhun       ->  2-3 baar fail to traffic backup se (circuit OPEN)
   Notif    5   main company wapas theek hui?                  ->  beech-beech me "tu theek hai?" (HALF-OPEN)
   Notif    5   backup bhi same fail bole                      ->  number galat, alag daal do (DLQ)

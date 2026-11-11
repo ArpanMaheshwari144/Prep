@@ -210,6 +210,14 @@ flowchart TB
     style CB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+**Maan lo SMS company ka server chup, aur lakhon worker fail hote hi har second dobara bhej rahe, company theek hi nahi ho
+pa rahi:** use theek hone ka mauka do. Pehle 1 second ruko, phir 2, phir 5, aur thoda aage-peeche, taaki sab ek saath na
+toot padein. Aur ek company pe mat tiko: 2-3 company aur rakho. Jaise chhotu dheema pada to 3-4 chhotu aur; dheeme ko kam
+kaam, baaki me baanto. Company ke server hum nahi badha sakte, apni taraf se aur company khadi kar lete hain.
+
+**Asli naam:** 1, 2, 5 sec ruk ke = exponential backoff, aage-peeche = jitter, 2-3 company = multi-provider failover,
+dheeme ko kam kaam = weighted routing (circuit breaker ke saath).
+
 ## 6. Company ki had 100 / sec (saanjha dabba)
 
 20 worker apni raftaar se, sab milake 300 / sec, company 429 de rahi aur block ki dhamki. Har worker ko sirf apni
