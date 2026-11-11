@@ -173,6 +173,21 @@ Compromise speed + safety.
 
 ---
 
+## DB khud kaise nahi bhoolta: write-ahead log (WAL)
+
+DB pe likhne se pehle wo khud ek diary me likhta hai: "ye badlaav hone wala hai". Diary disk pe pakki ho jaaye, tabhi
+"likh diya" bolta hai. Asli table baad me aaram se update hoti hai. Beech me DB gira, to wapas uthke diary padhta hai aur
+jo adhoora tha wo poora kar deta hai. Yahi diary copies (replica) ko bhi bheji jaati hai, isliye replica bhi wahi badlaav
+usi kram me karti hai.
+
+- PostgreSQL: WAL (commit tabhi pakka jab WAL disk pe aa gaya). MySQL InnoDB: redo log. MongoDB (WiredTiger): journal.
+  Cassandra: commit log. Naam alag, kaam wahi.
+- Ye DB ka andar ka kaam hai (RDS / Postgres khud karta), hamara design faisla nahi. Design me yahi soch hum apni taraf
+  karte hain: DB + parchi ek saath (outbox), PSP se pehle INITIATED likho (Payment), Redis me AOF (Docs), pehle diary
+  phir "ho gaya" (Banking sync copy).
+
+---
+
 ## Failover
 
 ### Automatic (preferred)
