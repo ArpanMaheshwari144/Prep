@@ -3,7 +3,7 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase, build done) = har hafte ka fix naqsha (11-Nov):** roz DSA 1 redo + grill 5 · HLD grill 5 (roz, kabhi nahi rukti, alag-alag design ke scene) + foundations 3 file · Java / Spring us din ka hissa (MON Spring ke extra hisse · TUE Collections + Streams · WED Core Java · THU Multithreading · FRI Java 8 + SOLID · SAT Spring core · SUN Spring data + DB) · apply. Hafte me ek: THU PR drill · FRI naya HLD design (pehla inventory) · HLD WEEKEND ROUND SAT ya SUN (hafte me ek design: sikhao -> hand notes -> poora mock -> grill 5 usi se) · SUN STAR.
+> ★ **Abhi (DELIVERY + APPLY phase, build done) = har hafte ka fix naqsha (11-Nov):** roz DSA 1 redo + grill 5 · HLD grill 5 (roz, kabhi nahi rukti, alag-alag design ke scene) + foundations 3 file · Java / Spring us din ka hissa (MON Spring ke extra hisse · TUE Collections + Streams · WED Core Java · THU Multithreading · FRI Java 8 + SOLID · SAT Spring core · SUN Spring data + DB) · apply. Hafte me ek: THU PR drill · FRI naya HLD design (pehla inventory) · HLD WEEKEND ROUND SAT ya SUN (hafte me ek design: sikhao -> hand notes -> poora mock, mock ke andar 5 cross-sawaal = grill) · SUN STAR.
 > Priority: HLD + Java / Spring ka gyaan gehra; DSA light (OA ka gate).
 > HLD = ek kahani: "main us situation me hota to kya karta", wahi jawab, naam baad me. Ratna nahi, kahani chala ke dekho (gira to? copy phati to?).
 
