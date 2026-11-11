@@ -44,12 +44,40 @@ Map put se            -> [Arpan M]
 
 Set me ab bhi purana naam "Arpan" hai, aur koi error nahi aaya.
 
-Gate ke register jaisa samjho: Arpan andar ja chuka hai. Naya ID card leke dobara aaya, guard ne bola "tu to andar hai"
-aur card wapas kar diya. Andar ab bhi purane card wala Arpan hai.
+### Kyun: Set ki almari vs Map ki almari
+
+Saari baat ek line pe tiki hai: **Set ke andar sirf KEY hoti hai, aur key ki pehchaan email se ho rahi hai.**
+
+Upar padha ki `set.add(obj)` = `map.put(obj, PRESENT)`. To Set ke andar ki almari aisi dikhti hai:
+
+```
+  KEY                                    VALUE
+  [Panelist: arpan@gmail.com, "Arpan"]   PRESENT
+```
+
+Ab naya object aaya `[arpan@gmail.com, "Arpan M"]`:
+- Set ne dekha: email same, to ye "wahi banda" hai, key pehle se andar hai.
+- HashMap ka niyam: key pehle se ho to **purani KEY wahin rehti hai**, sirf VALUE badalti hai.
+- Value PRESENT thi, PRESENT hi rahi. Kuch nahi badla, naya object andar gaya hi nahi, `add` = false.
+
+Map me email KEY hai aur poora Panelist VALUE:
+
+```
+  KEY                  VALUE
+  "arpan@gmail.com"    Panelist "Arpan"   ->  ab  Panelist "Arpan M"
+```
+
+`put` pe key wahi rehti hai aur value badal jaati hai, isliye naya naam andar chala gaya.
+
+Ek line me: **Set me jo badalna hai (naam) wo key ke andar chhupa hai, aur key kabhi nahi badalti. Map me jo badalna hai
+wo value hai, aur value badal jaati hai.**
+
+Gate ke register jaisa: Arpan andar ja chuka hai. Naya ID card leke dobara aaya, guard ne bola "tu to andar hai" aur card
+wapas kar diya. Andar ab bhi purane card wala Arpan hai.
 
 Ilaaj:
 - Pehle `set.remove(purana)`, phir `set.add(naya)`.
-- Ya Set ki jagah `Map<email, Panelist>`. Map me `put` sach me purani value badal deta hai (upar output).
+- Ya Set ki jagah `Map<email, Panelist>`, jahan `put` sach me purani value badal deta hai (upar output).
 
 ## Trade-off
 
