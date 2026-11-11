@@ -120,7 +120,8 @@ band hai lekin kuch log apna status jaanna chah rahe, to unhe thodi der rok do: 
 hum tumhe bata denge.
 
 **Asli naam:** PSP-2 = fallback PSP (naye payment), status wale ko thodi der rokna = PSP-1 pe atke payment wahin
-PENDING, PSP-1 wapas aaye tab pakka, PSP-2 pe dobara nahi (warna do baar kata).
+PENDING, PSP-2 pe dobara nahi (warna do baar kata); thodi der = 30-55 sec, phir 11b wala final jawab (FAILED + PSP-2,
+kata nikla to REFUND_PENDING).
 
 ```mermaid
 flowchart TB
@@ -334,7 +335,7 @@ do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho ga
 Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 
 **Asli naam:** pehle se pata down hai = circuit breaker OPEN, tab hi fallback PSP-2. Pata nahi kata ya nahi = unknown
-state, PENDING (PSP-2 pe nahi, warna do baar katega). Itna waqt, haan ya naa = timeout + status job PSP-1 se poochhe.
+state, PENDING (PSP-2 pe nahi, warna do baar katega). Itna waqt, haan ya naa = timeout + status job PSP-1 se poochhe. Par Ravi ko ghanton nahi rokte: 30-55 sec ke baad 11b wala final jawab (FAILED dikhao + PSP-2, kata nikla to REFUND_PENDING).
 Naa to paise wapas = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
 
 **Maan lo PSP-1 chup hai, Ravi ko ghanton nahi rok sakte, aur PSP-2 pe bhejne se darr hai ki do baar na kat jaaye
@@ -350,7 +351,7 @@ Onboard karte waqt PSP-1 se SLA zaroor lo: uptime (jaise 99.9%) aur down hua to 
 der lega, wo nahi. Diwali jaisi sale pe 3-4 company line me.
 
 **Asli naam:** 30-55 sec = hamara client timeout, dobara PSP-2 pe = PSP failover, poochte + event =
-status poll + webhook, kata nikla to lautao = late authorisation + refund (capture nahi kiya to PSP auto-refund, warna refund hum karte: refund API),
+status poll + webhook, kata nikla to lautao = REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe,
 onboard pe SLA = uptime SLA + incident response (latency ka nahi), 3-4 company = backup PSP.
 
 ```mermaid
@@ -359,7 +360,7 @@ flowchart TB
     CB{"PSP-1 pehle se down?"}:::card
     P2["Seedha PSP-2"]:::good
     subgraph CH["CHHOTU KO WAQT DO"]
-        PD(["Ravi: process ho raha hai<br/>(PENDING, PSP-2 pe nahi)"]):::pill
+        PD(["Ravi: process ho raha hai<br/>(PENDING, 30-55 sec tak; phir 11b)"]):::pill
         J(["Chhotu: itna waqt, haan ya naa<br/>(timeout + status job)"]):::pill
     end
     OK["Haan: kaam ho gaya"]:::good

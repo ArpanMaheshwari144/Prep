@@ -45,9 +45,17 @@ Technical me: "parchi se kaat do" = cache DELETE, "DB source of truth" = DB = sa
 Wo bhi chalta hai, beech ka chhed thoda chhota hota hai, par chhed wahan bhi hai: ek dheemi read purana naam laake parchi pe likh sakti. Isliye peeche wala banda dono kram me chahiye; kaatna fail hua to dobara kaato. Bilkul pakka chahiye to wahi lock / version check.
 Technical me: "pehle DB phir kaato" = write-then-invalidate, "kaatna fail to dobara" = invalidation retry, "pakka chahiye" = version check / lock.
 
+**Maan lo cache me 1 TB, crore-on key. Sync job ko kaise pata kaunsi key check karni hai? Har key roz DB se milana sambhav nahi.**
+Arpan: Wahi key dekho jo update hui, baaki se lena-dena nahi. Ek saath 1 TB update nahi hota. Sync job ko time de do: pichhle ek ghante me kaunsi row update hui, sirf unki parchi DB se milao. Phir agla ghanta. Dikkat lage to 2-3 ghante ya ek din ka kar do.
+Technical me: "pichhle ghante me update hui" = DB me updated_at pe query (index), sirf un key ka cache milao / theek karo; "time badha do" = window chhoti-badi.
+
 **6. Priya aam user thi, uski parchi cache me hai hi nahi. Raat 9 baje video viral, ek second me 10,000 log, sabko miss, sab ek saath DB pe, Priya ki ek hi query 10,000 baar.**
 Arpan: 10,000 log ek saath DB jaayenge to DB maar dega, pehle unhe roko. Main chupchaap ek chhotu bhejunga: chhotu bhai, jaldi se DB me jaa, Priya ki parchi hot hai, le aa. Parchi pe likh lunga aur sabko yahin se bhaga dunga, mote register ki taraf koi nahi jaayega. Chhotu raaste me gir gaya ya dheema pad gaya, to kuch second dekh lo. Nahi aaya to unme se ek aadmi pakdunga: ae bhai tu idhar aa, mote register pe jaa, jo data tu maang raha wo utha la aur mujhe bhi de dena. Wo laya, cache me daal diya, sabko bhej diya. Ye mera backup plan.
 Technical me: "10,000 ek saath DB pe" = cache stampede, "ek chhotu bhejo, baaki yahin se" = single flight (lock), "kuch second dekho, phir bheed me se ek" = lock ki umar (timeout).
+
+**Maan lo interviewer poochhe, aur raaste?**
+Arpan: ek ki jagah do chhotu bhejo, ek gira to doosra le aayega. Hot key ko zyada der tak rakho. Ya key ki 3 copy rakho aur sabka expire ka time alag, to sab ek saath kabhi expire nahi honge. "Ek sahi jawab nahi, company kya chahti hai us pe."
+Technical me: do chhotu = redundant fetch, hot key lambi umar = longer TTL, alag-alag expire = TTL jitter (staggered expiry).
 
 **Maan lo ek bot har second 10,000 aise user id maang raha jo hain hi nahi (50 crore, 70 crore, 99 crore...). Cache me kuch nahi, DB me bhi kuch nahi, cache me rakhne ko kuch nahi, to har baar seedha DB.**
 Arpan: Main khud ko scene me rakh ke dekhta hoon. Mere paas 1 se 10 tak gintee hai. Ek ladka aaya: "11 hai?" Main andar jaake dekhta hoon, nahi hai. Phir aaya: "33 hai?" Phir andar gaya, nahi hai. 2-3 baar aisa hua, har baar andar jaana pada, main pareshaan ho gaya. Aise to wo number badhata jaayega aur main har baar andar bhaagta rahunga.
@@ -56,8 +64,6 @@ To main parchi pe likh lunga "mere paas 1 se 10 tak hai", isse bada koi maange t
 
 Range ke andar wala, jaise 500, nahi mila to null de do; null ka kya karna wo uska engineer if-else lagaye. Aur koi 500 baar-baar maange (range ke andar, par hai nahi), to main parchi pe likh lunga "500 = null"; ab koi bhi 500 maange, DB jaaunga hi nahi.
 Technical me: "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parchi pe range, bahar wala wahin wapas" = request aate hi id range check (input validation), cache aur DB se pehle; galat id na cache tak pahunchti na DB tak. (Yahan parchi = range ki parchi, cache wali key nahi.) Range ke andar par nahi mila = null ko bhi cache me rakho (negative caching, thodi der ki umar), taaki baar-baar wahi nakli id DB tak na pahunche.
-Aur raaste (Arpan, 5-Nov HLD grill): ek ki jagah do chhotu bhejo, ek gira to doosra le aayega. Hot key ko zyada der tak rakho. Ya key ki 3 copy rakho aur sabka expire ka time alag, to sab ek saath kabhi expire nahi honge. "Ek sahi jawab nahi, company kya chahti hai us pe."
-Technical me: do chhotu = redundant fetch, hot key lambi umar = longer TTL, alag-alag expire = TTL jitter (staggered expiry).
 
 **Maan lo wo ek chhotu DB pe jaake atak gaya, DB zinda hai par bojh se bahut dheema, 2 minute ho gaye. Baaki 9,999 kab tak rukenge?**
 Arpan: Yahan dikkat chhotu ki nahi, DB ki hai, to ilaaj bhi DB ka. 10-15 chhotu aur bhejne ka fayda nahi, wo bhi dheeme DB pe atkenge. Padhne wale zyada hain to DB ki 2-3 copy bana do: ek primary jo likhta hai, baaki padhne ke liye. Chhotu ne dekha ye copy dheemi hai, to use chhod ke doosri pe jaaye, wahan se jaldi jawab mila, cache me rakha, aur 9,999 sab free, cache se utha ke le gaye. Copy sync karna AWS (RDS) ka kaam hai, hamara nahi.
@@ -71,9 +77,6 @@ Technical me: "machine 4 ka replica, 8 aur 9 tu bhi dekh" = hot key ki copies ka
 Arpan: Refresh pe kabhi naya naam aayega, kabhi purana, kyunki 8 aur 9 pe abhi purani parchi padi hai. Kadam 5 wala niyam "pehle parchi kaato" sirf ek machine pe nahi, jitni copies hain sab pe lagao. Aur kadam 5 wala peeche ka banda (sync job) bhi sirf ek jagah nahi, saari copies jaanche.
 Technical me: copies pe bhi delete = hot key ki har replica invalidate, sync job copies bhi = reconciliation sab replicas pe.
 
-**Maan lo cache me 1 TB, crore-on key. Sync job ko kaise pata kaunsi key check karni hai? Har key roz DB se milana sambhav nahi.**
-Arpan: Wahi key dekho jo update hui, baaki se lena-dena nahi. Ek saath 1 TB update nahi hota. Sync job ko time de do: pichhle ek ghante me kaunsi row update hui, sirf unki parchi DB se milao. Phir agla ghanta. Dikkat lage to 2-3 ghante ya ek din ka kar do.
-Technical me: "pichhle ghante me update hui" = DB me updated_at pe query (index), sirf un key ka cache milao / theek karo; "time badha do" = window chhoti-badi.
 
 &nbsp;
 

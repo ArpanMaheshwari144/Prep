@@ -384,7 +384,9 @@ aaya, usi time ko number bana do; time hamesha badhta hai, to number bhi, aur ph
 server hota hai: 500 logon ka group hamesha server 7 pe jaata hai, to number server 7 ki ghadi se lagega; ek group ke do
 message alag-alag server pe nahi jaate. 10 din baad group server 20 pe gaya, to ab server 20 ki ghadi. Par "kabhi
 khatam nahi hoga" jaisa daava mat karo: interviewer "maan lo 50 saal me bhar gaya to?" kheench sakta hai aur point
-wapas lena padta hai. Seedha dhaancha bolo: har message ko ek kram number, phone usi se lagata hai. Asli naam: time se
+wapas lena padta hai. Seedha dhaancha bolo: har message ko ek kram number, phone usi se lagata hai.
+
+**Asli naam:** time se
 number = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), ya har chat ka sequence number; ek chat hamesha ek hi server pe (chat id se server tay, kadam 12), server
 badle to wahan number pichhle aakhri number ke aage se shuru. Had yaad ho
 to bonus: long (64-bit) me lagbhag 9.2 x 10^18 (9 ke baad 18 zero), counter har chat ka alag; warna "padhte waqt
@@ -393,7 +395,9 @@ dekha tha, baaki net se dekh lete".
 **Maan lo group me 500 log, har message pe 500 logon ka server dhoondhna padega:** 500 baar kyun bhejna. Ek taar-server
 se 10 log jude hon ya 500, chat server us server pe message ek hi baar bhejta hai, aage wo server apne jude logon ko de
 deta hai. Do alag dabbe: taar wala server = WebSocket gateway (jahan phone juda), group wala server = chat server (jo
-number lagata). Asli naam: per-server fan-out, Redis pub/sub (har gateway group ka channel sunta, chat server ek baar daalta).
+number lagata).
+
+**Asli naam:** per-server fan-out, Redis pub/sub (har gateway group ka channel sunta, chat server ek baar daalta).
 
 ```mermaid
 flowchart TB

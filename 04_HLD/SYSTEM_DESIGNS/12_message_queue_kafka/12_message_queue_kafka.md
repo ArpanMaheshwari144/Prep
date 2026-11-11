@@ -219,7 +219,8 @@ hain", de diye to parchi pe DONE, aur paise dena + DONE likhna ek hi kaam bana d
 paise dena (SMS company) aur parchi (hamara DB) do alag jagah hain, ek jhatke me nahi ho sakte. SMS chala gaya aur
 DONE likhne se pehle gira, ye beech ka pal kabhi nahi hatega, isliye dobara aana maan ke chalo. Aakhri: har message ki
 ek pakki id bana do; wahi id dobara aaye to discard kar do, chahe naya worker laaye ya doosri SMS company se jaaye.
-Asli naam: at-least-once, idempotent consumer (idempotency key = eventId / order id), wahi id SMS company ko bhi
+
+**Asli naam:** at-least-once, idempotent consumer (idempotency key = eventId / order id), wahi id SMS company ko bhi
 bhejo taaki wo bhi dobara na bheje.
 
 ```mermaid

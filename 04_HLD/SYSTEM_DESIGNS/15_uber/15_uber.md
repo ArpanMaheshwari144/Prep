@@ -343,7 +343,7 @@ Paisa katte hi gateway chhota sa event bhejta, jaise S3 bhejta; aaya to "mil gay
 to gateway ko bolo "lautao". Onboard pe SLA lo: uptime aur down hone pe khabar; bank ki der nahi.
 
 **Asli naam:** 30-55 sec = hamara client timeout, event = webhook (PSP callback), "mil gaya" = ack (2xx), baad me kata to
-lautao = late authorisation + refund, onboard pe SLA = uptime SLA + incident response.
+lautao = REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe, onboard pe SLA = uptime SLA + incident response.
 
 ```mermaid
 flowchart TB

@@ -219,6 +219,31 @@ consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa 
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
 
+```mermaid
+flowchart TB
+    A["Arpan: Pay 4:30, PSP dheema"]:::card
+    subgraph SL["PARCHI PE STATUS LIKH LO"]
+        D[("Pay chal raha, PSP ka jawab baaki:<br/>umar badha do (PAYMENT_PENDING)")]:::pill
+    end
+    P{"PSP (chhotu)"}:::card
+    B["Haan: BOOKED"]:::good
+    F["1-2 baar ping, phir bhi chup:<br/>FAILED, seat chhod do"]:::bad
+    R["Paisa kata ho to wapas<br/>(payment id, refund)"]:::card
+    N["Naye log: doosra ladka<br/>(PSP-2)"]:::good
+    A --> D
+    D --> P
+    P -- "haan" --> B
+    P -. "chup" .-> F
+    F --> R
+    F -.-> N
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ### 6c. Back dabaya, seat chhodi, phir paisa kata: ab?
 
 Gola ghoomta raha, maine thak ke back daba diya, booking FAILED, seat chhod di. Thodi der baad Razorpay ne paisa kaat
@@ -239,8 +264,8 @@ paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, A
 
 **Asli naam:** 30-55 sec gola = hamara client timeout, onboard pe SLA = PSP ka uptime SLA +
 incident response (latency ka nahi), doosra pay doosre PSP pe = PSP failover
-(backup PSP), khud poochte = status poll, event = webhook, "mil gaya" = ack (2xx), baad me kata nikla to lautao = late
-authorisation + refund (capture nahi kiya to PSP khud auto-refund, warna refund hum karte: refund API).
+(backup PSP), khud poochte = status poll, event = webhook, "mil gaya" = ack (2xx), baad me kata nikla to lautao =
+REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe.
 
 ```mermaid
 flowchart LR
@@ -312,8 +337,8 @@ flowchart LR
 ### 6f. Purana PENDING naye SUCCESS ke upar likh gaya (sach ek jagah, haalat sirf aage)
 
 Event aaya SUCCESS, parchi pe likha. 2 second baad chhotu ka purana jawab "PENDING" (SUCCESS se pehle poocha tha, raste
-me atka tha) pahuncha aur parchi wapas PENDING ho gayi. Sach ek hi jagah ho, mote register (DB) me, use sirf Razorpay ka
-event likhe. Chhotu likhne se pehle DB dekhe: SUCCESS hai to purana PENDING phenk de. Parchi pe galat reh gaya to sync
+me atka tha) pahuncha aur parchi wapas PENDING ho gayi. Sach ek hi jagah ho, mote register (DB) me. Razorpay ka event
+sach hai; jo bhi likhe (event ya chhotu), pehle DB dekhe: SUCCESS hai to purana PENDING phenk de. Parchi pe galat reh gaya to sync
 job DB se utha ke parchi theek kare, ulta kabhi nahi.
 
 **Asli naam:** mota register = source of truth (DB), SUCCESS ke upar PENDING nahi = conditional update (sirf tab likho
@@ -324,10 +349,12 @@ flowchart LR
     subgraph PAY["PAYMENT (paisa)"]
         P1(["PENDING"]):::pill --> S1(["SUCCESS"]):::good
         P1 --> F1(["FAILED"]):::bad
+        S1 -. "seat nahi mili" .-> R1(["REFUND_PENDING"]):::pill --> R2(["REFUNDED"]):::good
     end
     subgraph BOOK["BOOKING (seat)"]
-        H1(["HELD"]):::pill --> B1(["BOOKED"]):::good
+        H1(["HELD"]):::pill --> PP(["PAYMENT_PENDING"]):::pill --> B1(["BOOKED"]):::good
         H1 --> E1(["EXPIRED"]):::bad
+        PP --> FB(["FAILED"]):::bad
     end
     PAY ~~~ N["Sirf aage, peeche kabhi nahi:<br/>SUCCESS ke upar PENDING nahi"]:::card
     linkStyle default stroke:#8fa3c7,stroke-width:2px
@@ -361,30 +388,6 @@ flowchart LR
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
 ```
 
-```mermaid
-flowchart TB
-    A["Arpan: Pay 4:30, PSP dheema"]:::card
-    subgraph SL["PARCHI PE STATUS LIKH LO"]
-        D[("Pay chal raha, PSP ka jawab baaki:<br/>umar badha do (PAYMENT_PENDING)")]:::pill
-    end
-    P{"PSP (chhotu)"}:::card
-    B["Haan: BOOKED"]:::good
-    F["1-2 baar ping, phir bhi chup:<br/>FAILED, seat chhod do"]:::bad
-    R["Paisa kata ho to wapas<br/>(payment id, refund)"]:::card
-    N["Naye log: doosra ladka<br/>(PSP-2)"]:::good
-    A --> D
-    D --> P
-    P -- "haan" --> B
-    P -. "chup" .-> F
-    F --> R
-    F -.-> N
-    linkStyle default stroke:#8fa3c7,stroke-width:2px
-    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
-    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
-    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style SL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
-```
 
 ---
 
