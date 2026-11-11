@@ -309,6 +309,58 @@ flowchart LR
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
 ```
 
+### 6f. Purana PENDING naye SUCCESS ke upar likh gaya (sach ek jagah, haalat sirf aage)
+
+Event aaya SUCCESS, parchi pe likha. 2 second baad chhotu ka purana jawab "PENDING" (SUCCESS se pehle poocha tha, raste
+me atka tha) pahuncha aur parchi wapas PENDING ho gayi. Sach ek hi jagah ho, mote register (DB) me, use sirf Razorpay ka
+event likhe. Chhotu likhne se pehle DB dekhe: SUCCESS hai to purana PENDING phenk de. Parchi pe galat reh gaya to sync
+job DB se utha ke parchi theek kare, ulta kabhi nahi.
+
+**Asli naam:** mota register = source of truth (DB), SUCCESS ke upar PENDING nahi = conditional update (sirf tab likho
+jab abhi PENDING ho), haalat sirf aage = state machine, DB se parchi theek = reconciliation / sync job.
+
+```mermaid
+flowchart LR
+    subgraph PAY["PAYMENT (paisa)"]
+        P1(["PENDING"]):::pill --> S1(["SUCCESS"]):::good
+        P1 --> F1(["FAILED"]):::bad
+    end
+    subgraph BOOK["BOOKING (seat)"]
+        H1(["HELD"]):::pill --> B1(["BOOKED"]):::good
+        H1 --> E1(["EXPIRED"]):::bad
+    end
+    PAY ~~~ N["Sirf aage, peeche kabhi nahi:<br/>SUCCESS ke upar PENDING nahi"]:::card
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PAY fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style BOOK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+### 6g. "Refund shuru" ko "refund ho gaya" likh diya, 5 din baad paisa nahi aaya (pakka jawab tak pending)
+
+Raat ki job ne Razorpay ko "lautao" bola, Razorpay bola "refund shuru", aur job ne DB me "refund ho gaya" likh diya. Refund
+beech me fail hua. "Shuru" ka matlab "ho gaya" nahi: pakka jawab aane tak REFUND_PENDING hi likho, paise me galat jawab
+kabhi nahi (consumer court me ungli hum pe). Ek job 5 din se purane pending refund nikaale aur Razorpay se poochhe.
+
+**Asli naam:** REFUND_PENDING -> REFUNDED / REFUND_FAILED = refund state (sirf refund.processed / refund.failed event pe),
+5 din se purane poochho = stuck refund job (reconciliation).
+
+```mermaid
+flowchart LR
+    R["Raat ki job:<br/>Razorpay, lautao"]:::card --> D[("DB: REFUND_PENDING")]:::pill
+    D -- "event: refund ho gaya" --> OK(["REFUNDED"]):::good
+    D -- "event: fail" --> X(["REFUND_FAILED,<br/>dobara / support"]):::bad
+    D -. "5 din se pending" .-> J["Job: Razorpay se poochho"]:::card
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
 ```mermaid
 flowchart TB
     A["Arpan: Pay 4:30, PSP dheema"]:::card

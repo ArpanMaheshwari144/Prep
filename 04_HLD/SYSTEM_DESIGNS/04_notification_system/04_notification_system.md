@@ -259,7 +259,7 @@ hua to apni parchi me "sent", fail hua to "fail".
 DELIVERED / FAILED, apni parchi = Tracking DB (Cassandra: har message ek row, bahut likhna, JOIN nahi).
 
 **Maan lo company ne "le liya" bola, phir DELIVERED / FAILED kabhi aaya hi nahi:** Payment wala beech ka banda, cron job jaisa. Ek chhotu ACCEPTED pe atke record dekhta rahe; kuch der baad bhi jawab nahi aaya to company se khud poochhe "is SMS ka kya hua". Wahan se bhi kuch na mile to FAILED maan ke backup se bhej do.
-**Asli naam:** "beech ka banda, cron job" = status poll job (har kuch minute, ACCEPTED + purane record utha ke company ki status API se poochhe), "kuch na mile to FAILED" = timeout ke baad fail maan ke failover (kadam 5). Payment kadam 3 jaisa.
+**Asli naam:** "beech ka banda, cron job" = status poll job (har kuch minute, ACCEPTED + purane record utha ke company ki status API se poochhe), "kuch na mile to FAILED" = timeout ke baad fail maan ke failover (kadam 5): doosri SMS company, wahi code (naya nahi). WhatsApp pe OTP sirf tab, jab FR me WhatsApp channel ho; uske apne niyam aur alag flow hain, to ye pehle FR me tay (channel failover). Payment kadam 3 jaisa.
 
 ```mermaid
 flowchart TB
@@ -362,3 +362,41 @@ flowchart TB
 ---
 
 Notes (Arpan ke shabd) = [NOTIFICATION_HAND_NOTES.md](NOTIFICATION_HAND_NOTES.md)
+
+## Poora raasta ek nazar me (OTP ki line, company, receipt, failed line)
+
+```mermaid
+flowchart TB
+    B["Bank / Order Service:<br/>SMS banate hi kism tay"]:::card
+    subgraph PRL["PROMOTIONAL"]
+        PR[("offer, loan")]:::card --> WP["apna worker"]:::card
+    end
+    subgraph TRL["TRANSACTIONAL (VIP)"]
+        TR[("OTP")]:::pill --> WT["apna worker"]:::pill
+    end
+    subgraph SVL["SERVICE"]
+        SV[("order, alert")]:::card --> WS["apna worker"]:::card
+    end
+    C1["SMS company 1<br/>(chup ho to 1, 2, 5 sec ruk ke + jitter)"]:::card
+    C2["SMS company 2, wahi code<br/>(WhatsApp sirf FR me ho to)"]:::pill
+    OK(["DELIVERED<br/>(operator ki receipt)"]):::good
+    DL[("Failed line (DLQ):<br/>engineer dekhte")]:::bad
+    B --> PR
+    B --> TR
+    B --> SV
+    WP --> C1
+    WT --> C1
+    WS --> C1
+    C1 --> OK
+    C1 -. "receipt nahi / chup" .-> C2
+    C2 --> OK
+    C2 -. "umar tak bhi nahi" .-> DL
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PRL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style TRL fill:#141a29,stroke:#f5c542,color:#f5c542
+    style SVL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```

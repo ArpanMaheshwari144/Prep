@@ -310,6 +310,8 @@ Yahi dikkat yahan bhi:
   BMS      6c  back dabaya, seat chhodi, phir paisa kata      ->  30-55 sec gola, phir FAILED + doosre PSP pe; kata nikla to Razorpay lautaye (timeout, failover, refund)
   BMS      6d  SUCCESS likha, ticket bolne se pehle gira      ->  SUCCESS + parchi "D5 book karo" ek saath (transactional outbox)
   BMS      6e  bank 12 min, seat Priya ki, paisa kata         ->  chhotu poochta; DB me REFUND, raat ki job lautaye (status poll, refund job)
+  BMS      6f  purana PENDING naye SUCCESS pe likh gaya       ->  sach ek jagah (DB), likhne se pehle dekho, sirf aage (source of truth, conditional update)
+  BMS      6g  "refund shuru" ko "ho gaya" likha              ->  pakka jawab tak REFUND_PENDING, 5 din purane poochho (refund state, stuck refund job)
   Kafka    8   galat ticket baar-baar, line atki              ->  line se hata (DLQ)
   Kafka    9   SMS counter 10 min band, sab DLQ me            ->  pehle check, waqai band? (circuit breaker)
   Kafka    9   counter waqai band hai                         ->  road band, traffic divert (fallback)
