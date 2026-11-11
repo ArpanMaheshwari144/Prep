@@ -45,6 +45,15 @@ floorKey(90)=85 ceilingKey(90)=92 subMap(85,95)={85=Rahul, 92=Priya}
 
 TreeMap KEY pe sort karta hai, value pe nahi.
 
+## Dikkat: leaderboard me score ko key banaya
+
+```
+92 pe Zoya bhi aayi: {85=Rahul, 92=Zoya, 100=Arpan}
+```
+
+Priya gayab ho gayi. Ek key pe ek hi value rehti hai, to naya `put` purane ko kaat deta hai. Hal wahi jo HLD leaderboard
+me tha: composite score, matlab score ke saath kuch aur jod ke key alag bana do.
+
 ## Trade-off
 
 - HashMap O(1), koi kram nahi.
