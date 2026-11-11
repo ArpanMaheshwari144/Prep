@@ -235,13 +235,19 @@ map hota to har list ek hi cheez rehti. flatMap har list ko khol deta hai.
 
 ## Maang: "pehle dept, usme salary bada pehle" (do chaabi se sort)
 
+Pehle sirf dept:
 ```java
 emps.stream()
-  .sorted(Comparator.comparing(Emp::dept))                     -> [arpan, cara, bob, dev]   sirf dept
+  .sorted(Comparator.comparing(Emp::dept))
+  .map(e -> e.name).collect(toList())                          -> [arpan, cara, bob, dev]
+```
+
+Ab dept barabar ho to salary bada pehle:
+```java
+emps.stream()
   .sorted(Comparator.comparing(Emp::dept)
           .thenComparing(Comparator.comparingInt(Emp::salary).reversed()))
-                                                               -> [cara, arpan, bob, dev]   eng me cara 150 upar
-  .map(e -> e.name).collect(toList())
+  .map(e -> e.name).collect(toList())                          -> [cara, arpan, bob, dev]   eng me cara 150 upar
 ```
 
 - `.reversed()` sirf salary wale pe lagao, poori chain pe nahi (Collections 09 wala trap).
