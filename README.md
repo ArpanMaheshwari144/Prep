@@ -3,7 +3,7 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase, build done) = har hafte ka fix naqsha (11-Nov):** roz DSA 1 redo + grill 5 · HLD grill 5 (roz, kabhi nahi rukti, alag-alag design ke scene) + foundations 3 file · padhai us din ke VISHAY pe, sab jod ke (MON messaging / Kafka · TUE speed / cache + Collections + Streams · WED code ka design: Core Java, patterns, SOLID, LLD · THU concurrency · FRI security + API · SAT infra + Spring core · SUN transaction + DB + Spring data) · apply. Hafte me ek: THU PR drill · FRI naya HLD design (pehla inventory) · HLD WEEKEND ROUND SAT ya SUN (hafte me ek design: sikhao -> hand notes -> poora mock, mock ke andar 5 cross-sawaal = grill) · SUN STAR.
+> ★ **Abhi (DELIVERY + APPLY phase, build done) = har hafte ka fix naqsha (11-Nov):** roz DSA 1 redo + grill 5 · HLD grill 5 (roz, kabhi nahi rukti, alag-alag design ke scene) + foundations 3 file · padhai us din ke VISHAY pe, sab jod ke (MON messaging / Kafka · TUE speed / cache + Collections + Streams · WED code ka design: Core Java, patterns, SOLID, LLD + ek system-write REDO (CodeSignal jaisa) · THU concurrency · FRI security + API · SAT infra + Spring core · SUN transaction + DB + Spring data) · apply. Hafte me ek: THU PR drill · FRI naya HLD design (pehla inventory) · HLD WEEKEND ROUND SAT ya SUN (hafte me ek design: sikhao -> hand notes -> poora mock, mock ke andar 5 cross-sawaal = grill) · SUN STAR.
 > Priority: HLD + Java / Spring ka gyaan gehra; DSA light (OA ka gate).
 > HLD = ek kahani: "main us situation me hota to kya karta", wahi jawab, naam baad me. Ratna nahi, kahani chala ke dekho (gira to? copy phati to?).
 
@@ -62,7 +62,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 - **[08_TESTING](01_JAVA/08_TESTING)** — [unit testing (JUnit + Mockito)](01_JAVA/08_TESTING/01_unit_testing_mockito.md) — mock/when/assert/verify + tautology-vs-logic + usercrud anchor.
 
-- **[09_SYSTEM_WRITE](01_JAVA/09_SYSTEM_WRITE)** — CodeSignal / Airbnb jaisa round: class ke method likho, tests pass karo — [L1 Wallet](01_JAVA/09_SYSTEM_WRITE/L1_Wallet.java).
+- **[09_SYSTEM_WRITE](01_JAVA/09_SYSTEM_WRITE)** — CodeSignal / Airbnb jaisa round: class ke method likho, tests pass karo. Har WED ek file ka REDO (khaali class + wahi tests) — [L1 Wallet](01_JAVA/09_SYSTEM_WRITE/L1_Wallet.java) (create · deposit · transfer · getBalance, 21 test) · [Autodesk Banking](01_JAVA/09_SYSTEM_WRITE/Autodesk_Banking.java) (asli OA sawaal, 18 test; upar 3 galti: ulta check · `==` se naam · target `put` chhoota + bikhre output me debug ki tarkeeb)
 
 - **[00_NOTES_BOOK](01_JAVA/00_NOTES_BOOK)** — poore Java notes ek kitaab me ([PDF](01_JAVA/00_NOTES_BOOK/Arpan_Java_Notes_V90.pdf) · [DOCX](01_JAVA/00_NOTES_BOOK/Arpan_Java_Notes_V90.docx)).
 

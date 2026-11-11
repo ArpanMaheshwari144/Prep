@@ -2,6 +2,15 @@
 // Neeche BankingSystemImpl me TERA OA wala code jaisa ka taisa hai. Chala, jo FAIL aaye wahan theek kar.
 // Atke aur galti na dikhe to System.out.println se value dekh.
 //
+// ★ OA ME YE 3 GALTI HUI THI (11-Nov, 11/18 -> theek karke 18/18) — redo se pehle ye padh:
+//   1. pehla check ULTA: "dono account HAIN -> empty" likha tha. Sahi: koi EK bhi NAHI -> empty  (!a || !b)
+//   2. same account check me containsKey(a) == containsKey(b) = true/false mila raha tha, naam nahi. Sahi: a.equals(b)
+//      (String ko == se kabhi nahi, == object milata hai, text nahi)
+//   3. targetAmount += amount kiya par mp.put(target, ...) CHHOOT gaya. int alag dabba hai, map apne aap nahi badalta.
+//      (Airbnb wali hi galti: ghataya / jodha, par wapas map me nahi rakha)
+// ★ DEBUG (bahut test ek saath chalte, output bikhra): har return se pehle println me RAASTE ka naam
+//      ("EMPTY-1 nahi mila a,b" / "OK a->b src=.."), phir sirf PEHLA fail test pakdo.
+//
 //   boolean createAccount(int timestamp, String accountId)
 //        naya account, balance 0 -> true.  accountId pehle se hai -> false.
 //
