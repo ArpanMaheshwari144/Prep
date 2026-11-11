@@ -24,3 +24,15 @@ public class Q1_EvenNumbers {
         System.out.println(evenNumbers(nums));   // expect: [2, 4, 6]
     }
 }
+
+// CHALA KE (11-Nov): [2, 4, 6] · REDO_1 (boxed pehle, phir filter) T1 T2 T3 PASS -- dono kram chalte.
+//
+// .boxed() bhool gaye to? COMPILE hi nahi hota:
+//   "method collect in interface IntStream cannot be applied to given types"
+//   IntStream ka collect() Collectors.toList() nahi leta, kyunki List me int nahi, Integer jaata hai.
+//
+// PROD TRAP: Collectors.toList() vs naya .toList() (Java 16+)
+//   Collectors.toList() pe add(8) -> [2, 4, 6, 8]
+//   .toList() pe add(8)          -> UnsupportedOperationException
+//   .toList() wali list BADAL NAHI SAKTE. Method ne list lauta di, aage kisi caller ne add() kiya -> prod me exception.
+//   Aage list me jodna hai to Collectors.toList() (ya new ArrayList<>(...)); sirf padhna hai to .toList() theek.
