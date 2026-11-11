@@ -1,7 +1,10 @@
 # Kafka concepts: ek kahani
 
-Arpan ne Swiggy pe order kiya. Order Service ka kaam bas order banana hai. Par is order ki khabar do aur service ko
-chahiye: SMS Service, jo Arpan ko SMS bhejegi, aur Fraud Service, jo dekhegi ki order shaq wala to nahi.
+Match ka din, stadium ke bahar bahut bheed. Arpan ne ticket counter se match ka ticket liya. Ticket counter (**Order
+Service**) ka kaam bas ticket banana hai. Par is ticket ki khabar andar do jagah chahiye: checker ka kamra (**SMS
+Service**), jo Arpan ko "seat pakki" ka SMS bhejega, aur security ka kamra (**Fraud Service**), jo dekhega ki ticket
+nakli to nahi. Kahani wahi stadium wali hai jo [hand notes](KAFKA_HAND_NOTES.md) aur [main file](12_message_queue_kafka.md)
+me hai.
 
 Har diagram pichhle diagram ko hi aage badhata hai. **Peela = jo abhi naya juda**, baaki wahi purana.
 
@@ -9,8 +12,9 @@ Har diagram pichhle diagram ko hi aage badhata hai. **Peela = jo abhi naya juda*
 
 ## 1. Topic
 
-Order Service ko SMS aur Fraud ka intezaar nahi karna. Wo bas khabar ek naam wali line me daal deta hai aur apne
-kaam pe lag jaata hai. Is line ka naam "order-events" hai. Kafka me aisi naam wali line ko **topic** kehte hain.
+Ticket counter ko andar ke kamron ka intezaar nahi karna. Gate pe admin ne bola: line banao, ek-ek karke jao. Counter
+bas Arpan ki khabar gate ki line me daal deta hai aur agle fan ka ticket kaatne lag jaata hai. Is line ka naam
+"order-events" hai. Kafka me aisi naam wali line ko **topic** kehte hain.
 
 ```mermaid
 flowchart LR
@@ -20,21 +24,21 @@ flowchart LR
     style T fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-SMS aur Fraud dono isi topic se padhte hain. Padhne se khabar mitti nahi, isliye dono ko poori khabar milti hai.
-Kal koi teesri service aaye, jaise Analytics, to wo bhi bas isi topic se padhna shuru kar degi. Order Service me ek
-line nahi badalti.
+Checker (SMS) aur security (Fraud) dono isi line (topic) se padhte hain. Padhne se khabar mitti nahi, isliye dono ko poori
+khabar milti hai. Kal koi teesra kamra khule, jaise ginti wala (Analytics), to wo bhi bas isi line se padhna shuru kar
+dega. Ticket counter me ek line nahi badalti.
 
-Sab theek chal raha tha. Phir Diwali sale aayi.
+Sab theek chal raha tha. Phir India-Pakistan ka match aaya.
 
 ---
 
 ## 2. Partition
 
-Sale me har second hazaaron order (~5,000) aane lage. Saare isi ek topic order-events me ja rahe the, aur ye topic ek hi
-machine pe tha. Wo machine itna bojh nahi jhel paayi, line lambi hoti gayi, Arpan ka order bhi atak gaya.
+Bade match me har second hazaaron ticket (~5,000) katne lage. Saare isi ek line (topic) order-events me ja rahe the, aur ye
+line ek hi gate (ek machine) pe thi. Akela admin itni bheed nahi sambhal paaya, line lambi hoti gayi, Arpan bhi atak gaya.
 
-To humne topic badla nahi. Isi order-events ko andar se 3 tukdon me baant diya, aur har tukda alag machine pe
-rakh diya. Ek tukde ko **partition** kehte hain.
+To humne topic nahi badla. Isi order-events ke liye aur gate khol diye: 3 gate, har gate ki apni line, har gate
+alag machine pe. Ek gate (tukde) ko **partition** kehte hain.
 
 ```mermaid
 flowchart LR
@@ -51,24 +55,25 @@ flowchart LR
     style P2 fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-Ab bojh teen machine me bat gaya. Par sawaal aaya: Arpan ki khabar kis tukde me jaaye? Arpan ne pehle order kiya,
-phir pay, phir cancel. Ye teeno alag tukdon me gaye to kaun pehle padha jaaye, iska koi bharosa nahi. Kram sirf ek
-tukde ke andar pakka hota hai.
+Ab bojh teen gate me bat gaya. Par sawaal aaya: Arpan ki khabar kis gate pe jaaye? Arpan ne pehle ticket liya, phir
+pay kiya, phir cancel kiya. Ye teeno alag gate pe gaye to andar kaun pehle pahunche, iska koi bharosa nahi. Kram sirf
+ek gate ki line ke andar pakka hota hai.
 
-Isliye Order Service har khabar ke saath ek **key** deta hai: user ki id. Same key hamesha same tukde me jaati hai.
-Arpan ki teeno khabar P1 me, aur wahan kram se.
+Isliye ticket counter har khabar ke saath ek **key** deta hai: user ki id. Kaun kis gate pe jaaye, ye key ke hash se
+tay hota hai, aur same key hamesha same gate pe jaati hai. Arpan ki teeno khabar P1 gate pe, aur wahan kram se.
 
-Tukde ban gaye. Par ab SMS Service ko bhi bheed jhelni thi, to uski 3 machine chalayi gayi.
+Gate ban gaye. Par ab checker ke kamre ko bhi bheed jhelni thi, to wahan 3 checker bitha diye.
 
 ---
 
 ## 3. Consumer group
 
-SMS Service ki 3 machine hain: banda-A, banda-B, banda-C. Agar teeno saare tukde padhein, to Arpan ki khabar teeno ke
-paas jaayegi aur Arpan ko 3 SMS chale jaayenge.
+Checker ke kamre (SMS Service) me 3 checker hain: banda-A, banda-B, banda-C. Agar teeno har gate ke saare fan dekhein,
+to Arpan ka ticket teeno punch karenge aur Arpan ko 3 SMS chale jaayenge.
 
-To teeno machine ko ek team bana diya. Sabko ek hi team ka naam diya (group.id = "sms"). Is team ko
-**consumer group** kehte hain. Team ke andar har tukda sirf ek bande ko milta hai.
+To teeno ko ek hi kamre me ek team bana ke bitha diya. Sabko ek hi team ka naam diya (group.id = "sms"). Is team ko
+**consumer group** kehte hain. Kamre ke andar har gate ki line sirf ek checker ko milti hai, jisne punch kar diya,
+baaki do us fan ko dekhte hi nahi.
 
 ```mermaid
 flowchart LR
@@ -91,10 +96,11 @@ flowchart LR
     style X fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-P1 sirf banda-B ke paas hai, to Arpan ko ek hi SMS jaata hai. Fraud Service alag team hai ("fraud"), use apni poori
-copy milti hai. Har team apna bookmark rakhti hai ki agli baar kaunsa number padhna hai, ise **offset** kehte
-hain. Isliye Fraud dheema chale to bhi SMS nahi rukta. Aur banda-B gir jaaye to Kafka uska tukda P1 banda-A ya
-banda-C ko de deta hai, ise **rebalance** kehte hain.
+P1 gate sirf banda-B ke paas hai, to Arpan ko ek hi SMS jaata hai. Security (Fraud Service) alag kamra hai, alag team
+("fraud"), use apni poori line milti hai. Har kamra apne register me bookmark rakhta hai ki agli baar line ka kaunsa
+number bhejna hai, jaise "seat booked, wahi baithega", koi aur us jagah nahi ghusta. Ise **offset** kehte hain. Isliye
+security dheemi chale to bhi checker nahi rukta. Aur banda-B gir jaaye to Kafka uska gate P1 banda-A ya banda-C ko de
+deta hai, ise **rebalance** kehte hain.
 
 Par banda-B girta kab hai, ye bhi maayne rakhta hai. Ek din wo kaam karte-karte beech me gir gaya.
 
@@ -102,9 +108,9 @@ Par banda-B girta kab hai, ye bhi maayne rakhta hai. Ek din wo kaam karte-karte 
 
 ## 4. Commit
 
-banda-B ka kaam teen kadam ka hai: P1 se agli khabar uthao ("2 cancel"), Arpan ko SMS bhejo, phir Kafka ko batao
-"agli baar 3 se padhna". Ye aakhri kadam, bookmark aage karna, **commit** kehlata hai. Bookmark pe hamesha **agla**
-number hota hai: "2 cancel" ho gaya to bookmark 3.
+Checker banda-B ka kaam teen kadam ka hai: P1 gate ki line se agli khabar uthao ("2 cancel"), Arpan ko SMS bhejo, phir
+register me likho "agli baar 3 se bhejna". Ye aakhri kadam, register me bookmark aage karna, **commit** kehlata hai.
+Bookmark pe hamesha **agla** number hota hai: "2 cancel" ho gaya to bookmark 3.
 
 ```mermaid
 flowchart LR
@@ -116,15 +122,16 @@ flowchart LR
     style B fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-banda-B ne SMS bheja aur commit se pehle gir gaya. Bookmark abhi 2 pe hai. P1 banda-A ko mila, usne bookmark dekha
-aur "2 cancel" dobara padha. Arpan ko 2 SMS chale gaye.
+banda-B ne SMS bheja (fan ko seat pe baitha diya) aur register me likhne (commit) se pehle gir gaya. Bookmark abhi 2 pe hai. P1
+gate banda-A ko mila, usne register dekha aur "2 cancel" dobara uthaya. Naya checker wahi fan dobara bhej raha hai:
+Arpan ko 2 SMS chale gaye.
 
-Ulta karte (pehle commit, phir SMS) to aur bura hota: bookmark 3 pe chala jaata, banda-A 3 se padhta, aur "2 cancel"
-ka SMS kabhi jaata hi nahi.
+Ulta karte (pehle commit, phir SMS) to aur bura hota: bookmark 3 pe chala jaata, banda-A 3 se bhejta, aur
+"2 cancel" ka SMS kabhi jaata hi nahi.
 
 Isliye kram pakka hai: pehle kaam, phir commit. Khabar kabhi khoti nahi, bas kabhi dobara aa jaati hai. Dobara aayi
-khabar pakadne ke liye har khabar ki apni id hoti hai (eventId). SMS bhejne se pehle banda dekhta hai ki ye id pehle
-ho chuki ya nahi. Id kahin likh ke rakhte hain, jaise Redis ya DB me.
+khabar pakadne ke liye har khabar ki apni id hoti hai (eventId), jaise har ticket ka apna number. SMS bhejne se pehle
+checker dekhta hai ki ye id pehle aa chuki ya nahi. Id kahin likh ke rakhte hain, jaise Redis ya DB me.
 
 ```mermaid
 flowchart LR
@@ -134,24 +141,25 @@ flowchart LR
     style X fill:#d3f9d8,stroke:#2f9e44,stroke-width:2px,color:#000
 ```
 
-Ye pehchaanna padhne wale (SMS Service) ka kaam hai, Kafka ka nahi.
+Ye pehchaanna padhne wale (checker, SMS Service) ka kaam hai, gate (Kafka) ka nahi.
 
-Padhne wali taraf ab pakki thi. Phir ek din Kafka ki apni machine hi mar gayi.
+Padhne wali taraf ab pakki thi. Phir ek din gate ki apni machine hi mar gayi.
 
 ---
 
 ## 5. Leader aur copy
 
-Arpan ki teeno khabar P1 me thi, aur P1 Kafka ki machine B pe tha. Kafka ki har machine ko **broker** kehte hain.
-Broker khabar RAM me nahi rakhta, **disk** pe ek file ke aakhir me jodta jaata hai (beech me kuch badalta nahi, jaise
-ledger). Isliye machine restart ho to file wahin hai, khabar bachi. Padhne se bhi file se nahi mitti, kuch din
-(**retention**, aam taur pe 7 din) baad hi hat-ti hai.
+Arpan ki teeno khabar P1 gate pe thi, aur P1 ka register gate-ghar B (Kafka ki machine B) me rakha tha. Kafka ki har
+machine ko **broker** kehte hain. Broker khabar RAM me nahi rakhta, **disk** pe register ke aakhir me jodta jaata hai
+(beech me kuch badalta nahi, jaise ledger, hissa 7). Isliye machine restart ho to register wahin hai, khabar bachi.
+Padhne se bhi register se nahi mitti, kuch din (**retention**, aam taur pe 7 din) baad hi hat-ti hai.
 
-Machine B ki disk mar gayi. Agar P1 sirf wahin hota, to Arpan ki khabar hamesha ke liye chali jaati.
+Gate-ghar B ki disk mar gayi. Agar P1 ka register sirf wahin hota, to Arpan ki khabar hamesha ke liye chali jaati.
 
-Isliye har tukde ki 3 copy rakhte hain, teen alag machine pe. Jis machine pe likhna-padhna hota hai wo **leader**
-hai, baaki do copy hain. Leader mara to bachi copy me se ek naya leader ban jaata hai. Ye faisla Kafka ki ek
-machine karti hai jo baaki sab pe nazar rakhti hai, use **Controller** kehte hain.
+Isliye har gate ke register ki 3 copy rakhte hain, teen alag gate-ghar (machine) me. Jis machine pe likhna-padhna hota
+hai wo **leader** hai, baaki do copy hain. Leader mara to bachi copy me se ek naya leader ban jaata hai. Ye faisla
+Kafka ki ek machine karti hai jo baaki sab pe nazar rakhti hai, jaise stadium ka head admin. Use **Controller** kehte
+hain.
 
 ```mermaid
 flowchart LR
@@ -170,9 +178,10 @@ flowchart LR
     style C fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-Par ek pench tha. Agar B ne Order Service ko "ho gaya" bol diya aur copy tak khabar pahunchne se pehle hi mar gaya, to
-copy ke paas wo khabar thi hi nahi. Isliye "ho gaya" tabhi bolte hain jab copy pe bhi likh jaaye, ise **acks=all**
-kehte hain.
+Par ek pench tha. Agar B ne ticket counter (Order Service) ko "aa gaya" bol diya aur copy tak khabar pahunchne se pehle
+hi mar gaya, to copy ke paas wo khabar thi hi nahi. Vasiyat jaisa: baap ne ek hi copy me likhi, ghar walon ko bol diya
+"likh di", phir wo copy jal gayi. Isliye "aa gaya" tabhi bolte hain jab copy pe bhi likh jaaye, ise **acks=all** kehte
+hain.
 
 Koi copy peeche chal rahi ho to use leader nahi banate, warna aakhri khabar kho jaayegi. Sirf poori taaza copy
 "pakki" maani jaati hai, aur pakki copies ki list ko **ISR** (in-sync replicas) kehte hain. Aur agar sirf leader bacha ho, koi pakki
@@ -183,14 +192,14 @@ disk pe. To khabar ek disk ke bharose nahi bachti, **teen machine ki copy** se b
 ye bahut kam hota hai. Ek line: disk pe likha (restart se bacha) + 3 copy (machine mari to bhi bacha) + acks=all
 (copy hone ke baad hi "ho gaya").
 
-Ab Kafka bhi pakka tha aur padhne wala bhi. Bacha ek: bhejne wala, Order Service khud.
+Ab gate (Kafka) bhi pakka tha aur padhne wala bhi. Bacha ek: bhejne wala, ticket counter (Order Service) khud.
 
 ---
 
 ## 6. Outbox
 
-Arpan ne order cancel kiya. Order Service ko do kaam karne the: DB me likhna "order = cancel", aur Kafka ko khabar
-dena. Pehla kaam hua, aur doosre se pehle Order Service gir gaya.
+Arpan ne ticket cancel kiya. Ticket counter (Order Service) ko do kaam karne the: apne khate (DB) me likhna "order =
+cancel", aur gate (Kafka) ko khabar dena. Pehla kaam hua, aur doosre se pehle counter gir gaya.
 
 ```mermaid
 flowchart LR
@@ -199,13 +208,13 @@ flowchart LR
     style K fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#000
 ```
 
-DB me cancel ho gaya, par SMS aur Fraud ko kabhi pata hi nahi chala. DB aur Kafka do alag cheezein hain, dono me ek
-saath, ek hi baar me likhne ka koi tareeka nahi.
+Khate (DB) me cancel ho gaya, par checker (SMS) aur security (Fraud) ko kabhi pata hi nahi chala. Khata aur gate do
+alag cheezein hain, dono me ek saath, ek hi baar me likhne ka koi tareeka nahi.
 
-To khabar bhi usi DB me likh di, cancel ke saath, ek hi transaction me. Ek transaction ka matlab: dono likhe
-jaayenge ya koi nahi. Khabar jis alag table me jaati hai use **outbox** kehte hain. Phir ek chhota alag program,
-**relay**, har second outbox me dekhta hai ki kaunsi khabar abhi bheji nahi gayi (sent = false), use Kafka ko
-bhejta hai, aur Kafka OK bole to sent = true likh deta hai.
+To counter ne khabar bhi usi khate me likh di, cancel ke saath, ek hi transaction me: "gate ko bhejna baaki". Ek
+transaction ka matlab: dono likhe jaayenge ya koi nahi. Khabar jis alag table me jaati hai use **outbox** kehte hain.
+Phir ek chhotu (alag chhota program, **relay**) har second outbox me dekhta hai ki kaunsi parchi abhi gate tak nahi
+gayi (sent = false), use gate (Kafka) tak le jaata hai, aur gate OK bole to sent = true likh deta hai.
 
 ```mermaid
 flowchart LR
@@ -221,12 +230,13 @@ flowchart LR
     style RL fill:#ffe8b3,stroke:#f59f00,stroke-width:3px,color:#000
 ```
 
-Ab Order Service kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha, na khabar, Arpan dobara
-dabayega. Relay ne bheja aur sent = true likhne se pehle gira, to relay dobara bhejega, aur banda-B us dohri khabar
-ko eventId se pakad lega (hissa 4). Outbox table bharti jaaye to purani sent = true wali row roz saaf kar dete hain.
+Ab ticket counter kahin bhi gire, kuch nahi khota. Transaction se pehle gira to na cancel likha, na khabar, Arpan
+dobara dabayega. Chhotu (relay) ne bheja aur sent = true likhne se pehle gira, to wo dobara bhejega, aur checker
+banda-B us dohri khabar ko eventId se pakad lega (hissa 4). Outbox table bharti jaaye to purani sent = true wali row
+roz saaf kar dete hain.
 
-Is tarah teeno jagah bachav ho gaya: **bhejne wala = outbox · Kafka = 3 copy + acks=all · padhne wala = pehle kaam
-phir commit + eventId**.
+Is tarah teeno jagah bachav ho gaya: **bhejne wala (counter) = outbox · gate (Kafka) = 3 copy + acks=all · padhne
+wala (checker) = pehle kaam phir commit + eventId**.
 
 ## 7. Partition andar se: register (disk pe kaise rakha jaata hai)
 
