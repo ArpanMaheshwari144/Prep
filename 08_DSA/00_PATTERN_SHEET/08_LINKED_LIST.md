@@ -18,6 +18,11 @@
 
 > [!IMPORTANT]
 > **LOOP-CONDITION (while me kya likhun) -- ek sawaal: aakhri node ka bhi kaam hai, ya sirf uske NEXT ko dekhna?**
+>
+> **★ PEHLE SOCHO: curr ko ROKNA KAHAN hai?** (Arpan, k-group REDO_2)
+> - **Rokna hi nahi, bas ginna / har node chhoona** -> `while (curr != NULL)`, aage badhte jao. Yahan `curr->next` pe roka
+>   to aakhri node (1->2->3->4->5 me 5) gina hi nahi jaayega. k-group me pehle k node ginte waqt yahi.
+> - **Bilkul AAKHRI node PE rukna hai** (tail pakad ke aage jodna) -> `while (curr->next != NULL)`, curr aakhri node pe khada milega.
 
 ```
      while (curr != NULL)        // har node ka apna kaam (get / remove / count / print) -> ZYADATAR yahi
