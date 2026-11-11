@@ -217,6 +217,12 @@ likh lunga aur sabko yahin se bhaga dunga, mote register ki taraf koi nahi jaaye
 **Asli naam:** 10,000 ek saath DB pe = cache stampede, ek chhotu bhejo baaki yahin ruko = single flight (lock: pehli
 request lock leti, DB jaati, cache bharti; baaki thoda ruk ke cache dekhte).
 
+**Maan lo wo chhotu DB pe atak gaya, DB zinda par bojh se dheema, 2 minute ho gaye:** dikkat chhotu ki nahi, DB ki hai.
+Aur chhotu bhejne ka fayda nahi. Padhne ke liye DB ki 2-3 copy rakho; chhotu ek copy dheemi dekhe to doosri pe jaaye,
+jawab cache me rakhe, aur 9,999 cache se le jaayein. Copy sync karna AWS (RDS) ka kaam.
+
+**Asli naam:** DB ki copy = read replica, dheemi chhod ke doosri pe = timeout + retry on another replica.
+
 **Maan lo chhotu raaste me gir gaya ya dheema pad gaya:** kuch second dekh lo. Nahi aaya to bheed me se ek aadmi
 pakdunga: ae bhai tu idhar aa, mote register pe jaa, jo data tu maang raha wo utha la aur mujhe bhi de dena. Wo laya,
 cache me daal diya, sabko bhej diya. Ye mera backup plan.

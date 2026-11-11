@@ -59,6 +59,10 @@ Technical me: "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parc
 Aur raaste (Arpan, 5-Nov HLD grill): ek ki jagah do chhotu bhejo, ek gira to doosra le aayega. Hot key ko zyada der tak rakho. Ya key ki 3 copy rakho aur sabka expire ka time alag, to sab ek saath kabhi expire nahi honge. "Ek sahi jawab nahi, company kya chahti hai us pe."
 Technical me: do chhotu = redundant fetch, hot key lambi umar = longer TTL, alag-alag expire = TTL jitter (staggered expiry).
 
+**Maan lo wo ek chhotu DB pe jaake atak gaya, DB zinda hai par bojh se bahut dheema, 2 minute ho gaye. Baaki 9,999 kab tak rukenge?**
+Arpan: Yahan dikkat chhotu ki nahi, DB ki hai, to ilaaj bhi DB ka. 10-15 chhotu aur bhejne ka fayda nahi, wo bhi dheeme DB pe atkenge. Padhne wale zyada hain to DB ki 2-3 copy bana do: ek primary jo likhta hai, baaki padhne ke liye. Chhotu ne dekha ye copy dheemi hai, to use chhod ke doosri pe jaaye, wahan se jaldi jawab mila, cache me rakha, aur 9,999 sab free, cache se utha ke le gaye. Copy sync karna AWS (RDS) ka kaam hai, hamara nahi.
+Technical me: "DB ki copy, padhne ke liye" = read replica, "dheemi copy chhod ke doosri pe" = timeout + retry on another replica, "sync AWS ka kaam" = managed replication (RDS).
+
 **7. Priya ki parchi cache me aa gayi, par ek second me 1 crore log. Ring pe uski key sirf machine 4 pe. Baaki 9 aaram se, akeli machine 4 pe poori bheed, dheemi hote-hote girne lagi.**
 Arpan: Baaki machine pe baant de. Machine 4 ka replica bana de, teen jagah ho gayi, to bat gaya. Ya ring me aur jagah bitha de: machine 8 tu bhi dekh le, machine 9 tu bhi dekh le. Jaise bheed zyada ho gayi to ek aur gaadi extra kar lo. Ek gaadi me sab nahi aa sakte, to ek-do chhoti gaadi kar lo.
 Technical me: "machine 4 ka replica, 8 aur 9 tu bhi dekh" = hot key ki copies kai machines pe, "ek aur gaadi" = padhne ki bheed copies me bat-ti.

@@ -149,6 +149,7 @@ Yahi dikkat yahan bhi:
   URL      5   7 baje 1000 log ek saath mote register pe      ->  chhota ladka bhaag ke ja (single flight)
   URL      6   ladka raste me gira, 999 khade                 ->  ladke ki timeline, 999 me se ek (lock TTL)
   Cache    6   Priya viral, 10,000 miss, sab DB pe            ->  ek chhotu bhejo, baaki yahin (single flight)
+  Cache    6c  chhotu dheeme DB pe atka, 9,999 ruke           ->  dikkat DB ki: padhne ki copy, dheemi chhod doosri pe (read replica, timeout)
   Cache    6   chhotu raaste me gira                          ->  kuch second dekho, phir bheed me se ek (lock timeout)
   Cache    6   aur raaste?                                    ->  do chhotu bhejo, hot key lambi umar, expire alag-alag (redundant fetch, TTL jitter)
   Cache    6b  bot nakli id maange, har baar DB               ->  parchi pe range + "500 = null" bhi parchi pe (cache penetration, negative caching)
