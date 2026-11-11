@@ -37,11 +37,7 @@ S102 pe alarm kyun nahi baja: check `next()` pe hota hai. S102 hatne ke baad `ha
 hai, to `next()` bulaya hi nahi gaya, ginti mili hi nahi. Isliye Java bhi kehta hai ki ye alarm "best effort" hai, iske
 bharose mat raho: `removeIf` / `it.remove()` hi likho.
 
-## Exception kyun aata hai
-
-List apne har badlaav ki ginti rakhti hai, jise `modCount` kehte hain. Iterator bante waqt is ginti ki ek copy apne paas
-rakh leta hai. Tune seedha list se hataya to list ki ginti badh gayi, par iterator ki copy purani reh gayi. Agle `next()`
-pe dono milaata hai, mel nahi khaati, exception.
+## Ginti ek nazar me
 
 ```
 list.remove()  -> list ka modCount 5, iterator ki copy abhi 4 -> agle next() pe CME

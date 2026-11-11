@@ -16,14 +16,42 @@ Java default peek = 5   reverseOrder peek = 30
 Daala 30, 5, 20, 10, 15. Java ne default me 5 (sabse chhota) diya. C++ ki aadat se Java likha to "sabse bada" ki jagah
 "sabse chhota" niklega.
 
+## Tere DSA me min-heap kahan tha, kahan nahi
+
+- **Dijkstra = min-heap.** Har baar wo node chahiye jiski doori abhi SABSE KAM hai (Maps jaisa: jo jagah sabse paas,
+  pehle use pakka karo, phir wahan se aage). Isliye top pe sabse chhoti doori. Tera C++ (sheet 13 graphs):
+
+```cpp
+priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;   // {dist,node}
+```
+
+  C++ me default max-heap hai, isliye `greater<...>` likh ke min-heap banana pada. Java me default hi min-heap hai,
+  bas batao ki doori pe compare kare:
+
+```java
+PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));   // {dist, node}
+```
+
+  Yahan bhi `a[0] - b[0]` nahi, `Integer.compare` (file 08 wala trap: badi doori pe minus wala tareeka had paar).
+
+- **Simple topo sort (Course Schedule) = sirf QUEUE, heap nahi.** Koi bhi sahi kram chalega, to jo pehle ready hua wo
+  pehle.
+- **Topo ka bhai (modules: "ready me se sabse chhota number pehle") = min-heap.** Wahan khaas kram maanga hai, isliye
+  queue -> min-heap, `front()` -> `top()`, baaki sab same. Sheet 13 me likha: "koi bhi valid order -> queue · sabse
+  chhota / lexicographic -> MIN-HEAP".
+
 ## Kis dikkat se bana: 1 lakh me se top 5
 
 Poora sort = O(n log n), jabki chahiye sirf 5. Isliye 5 size ki min-heap rakho: har naya number daalo, size 5 se upar
 jaaye to sabse chhota nikaal do. Aakhir me 5 sabse bade bachte hain, kaam O(n log k). Tera kth largest bhi yahi.
 
 ```
+1 lakh me top 5, println(pq)     : [999960, 999964, 999971, 999988, 999994]
+new ArrayList<>(pq)              : [999960, 999964, 999971, 999988, 999994]
 poll() baar-baar                 : [999960, 999964, 999971, 999988, 999994]
 ```
+
+Teeno sorted dikhe, par sirf `poll()` wala pakka sorted hai. Upar ke do sanyog se aaye (neeche prod trap).
 
 ## poll() sorted kyun deta hai (C++ ke top + pop jaisa)
 
