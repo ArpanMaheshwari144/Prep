@@ -1,54 +1,70 @@
 # HashMap: andar kaise kaam karta hai
 
-## Tere code se shuru (H6)
+## Scene: tere project ka employee cache
 
 ```java
 cache.put(new Employee(101), salary);
 cache.get(new Employee(101));   // null
 ```
 
-Id dono baar same hai, 101. Phir bhi `get` bolta hai ki "mila hi nahi" aur null de deta hai. Aisa kyun hua, isi sawaal ka
-jawab poora HashMap hai.
+Id dono baar 101 hai, phir bhi `get` null deta hai. Isi sawaal ka jawab poora HashMap hai.
 
-## Kahani: 16 khaane ki almari
-
-HashMap ko ek almari samjho jisme 16 khaane hain. Jab koi key aati hai, to pehle uska `hashCode` ek number banata hai.
-Phir `(16-1) & hash` se tay hota hai ki ye key kaunse khaane me jaayegi. Matlab har key ka khaana pehle se pata hota hai,
-isliye dhoondhna seedha O(1) hai. List ki tarah ek-ek element dekhna nahi padta.
+## Bina hashCode chalao (sirf `equals` likha)
 
 ```
-put(e101)      -> hashCode banaya -> khaana 5 mila  -> khaana [5] me rakh diya e101
-get(naya e101) -> hashCode ALAG bana -> khaana 12 dekha -> wo khaali hai -> null
+498931366 2060468723 equals=true
+get = null
+set size = 2
 ```
 
-Tere `Employee` me `hashCode` likha hi nahi tha, to Java ne object ki apni pehchaan (memory wali) se number bana diya.
-Tune do baar `new` likha, to do alag object bane, do alag number bane, aur dono alag khaano me gaye. `get` galat khaane
-me dhoondhne gaya, isliye baat `equals` tak pahunchi hi nahi.
+`equals` true de raha hai, phir bhi `get` null aaya, aur Set me duplicate ghus gaya.
 
-## Dikkat: do key ek hi khaane me aa gayi
+## Kyun: 16 khaane ki almari
 
-Kabhi-kabhi do alag key ka khaana same nikalta hai. Tab dono us khaane me ek chain me lag jaati hain, aur chain ke andar
-sahi key `equals` se pehchani jaati hai.
+HashMap ek almari jaisa hai jisme 16 khaane hain. Key ka `hashCode` ek number banata hai, aur `(16-1) & hash` se tay
+hota hai ki key kaunse khaane me jaayegi. Khaana pehle se pata hai, isliye dhoondhna seedha O(1) hai, list ki tarah
+ek-ek element nahi dekhna padta.
 
-Isko aise yaad rakh: `hashCode` batata hai ki kaunsa khaana, aur `equals` batata hai ki khaane ke andar kaunsi key.
-Isliye dono ko hamesha saath me override karna hota hai.
+```
+put(e101)      -> hashCode banaya -> khaana 5 mila   -> khaana [5] me rakh diya
+get(naya e101) -> hashCode ALAG   -> khaana 12 dekha -> khaali -> null
+```
 
-## Trade-off
+- `hashCode` likha nahi tha, isliye Java ne har object ki memory wali pehchaan se alag number bana diya.
+- Do baar `new` likha, to do alag object, do alag number, do alag khaane.
+- `get` galat khaane me dhoondhne gaya, isliye baat `equals` tak pahunchi hi nahi.
 
-Jaise hi almari 75% bhar jaati hai, wo apne aap dugni ho jaati hai. Isi ko load factor 0.75 kehte hain. Agar jaldi dugni
-karein to memory bekaar jaati hai, aur agar der se karein to chain lambi ho jaati hai aur map dheema pad jaata hai.
+Yaad rakh: **`hashCode` batata hai kaunsa khaana, `equals` batata hai khaane ke andar kaunsi key.** Isliye dono saath
+me likhne padte hain.
 
-Agar koi chain 8 se lambi ho jaaye (aur table 64 ya usse bada ho), to wo chain tree ban jaati hai. Isse bheed wale khaane
-me bhi dhoondhna O(log n) me ho jaata hai.
+## Tera H6 (dono likhe hue), asli output
+
+```
+132
+132
+true
+A
+```
+
+Number same aaya, khaana same mila, `equals` true hua aur `get` ne A diya.
+
+## Chhoti dikkat: do key ek hi khaane me
+
+Kabhi do alag key ka khaana same nikalta hai. Tab dono us khaane me ek chain me lag jaati hain, aur chain ke andar sahi
+key `equals` se pehchani jaati hai.
+
+- Almari 75% bhar jaaye to apne aap dugni ho jaati hai (load factor 0.75). Jaldi dugni karo to memory bekaar, der se
+  karo to chain lambi aur map dheema.
+- Koi chain 8 se lambi ho jaaye (aur table 64 ya usse bada ho), to wo chain tree ban jaati hai. Tab bheed wale khaane
+  me bhi dhoondhna O(log n) me hota hai.
 
 ## Prod trap
 
-Maan lo cache ki key class me `hashCode` nahi likha. To cache kabhi hit hi nahi hota, aur har baar DB call jaati hai.
-Koi error nahi aata, bas sab dheema chalta hai. Code review me `equals` likha hua dikh jaata hai, isliye sab theek lagta
-hai aur galti pakdi nahi jaati.
+Cache ki key class me `hashCode` bhool gaye to cache kabhi hit nahi hota aur har baar DB call jaati hai. Koi error nahi
+aata, bas system dheema ho jaata hai. Code review me `equals` likha dikh jaata hai, isliye sab theek lagta hai aur galti
+pakdi nahi jaati.
 
-Set me ye aur bura hai. Agar tune `set.add(new Employee(101))` do baar kiya, to `size() = 2` aata hai, matlab duplicate
-andar ghus gaya.
+Set me ye aur bura hai: `set.add(new Employee(101))` do baar kiya to `size() = 2`, matlab duplicate andar ghus gaya.
 
 ## Tera hands-on (khud likha, chala ke dekha)
 
