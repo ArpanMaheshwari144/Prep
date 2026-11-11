@@ -5,6 +5,38 @@
 Tujhe list me se expired surveys hatane hain. Tune for-each loop chalaya aur uske andar `list.remove()` likh diya. Turant
 `ConcurrentModificationException` (CME) aa gaya.
 
+## Java ne aisa kyun banaya: attendance register
+
+Pehle saaf: list se seedha hatane me koi dikkat nahi. `list.remove(x)` loop ke bahar likho to kuch nahi hota. Dikkat
+sirf tab hai jab tu list pe CHAL bhi raha hai aur usi waqt HATA bhi raha hai.
+
+Teacher register pe ungli rakh ke naam bol rahi hai, ungli row 3 pe hai. Beech me kisi ne row 2 mita di.
+- Saare naam ek row upar khisak gaye.
+- Ungli row 3 pe hi hai, par wahan ab doosra baccha aa gaya.
+- Jo baccha row 3 pe tha, wo ab row 2 pe hai, ungli ke peeche. Wo bina bulaye chhoot gaya.
+
+Iterator bhi ek ungli hai jo yaad rakhti hai "main index 3 pe hoon". Beech me hataya, sab khiske, ungli ek element kood
+gayi. Neeche wale S102 output me yahi hua: S103 chup-chaap chhoot gaya, error nahi, bas galat nateeja. Prod me 100 me se
+1 survey kabhi expire hi nahi hoga aur kisi ko pata nahi chalega.
+
+Java ne socha: chup-chaap galat nateeja dene se behtar hai zor se chillao.
+- `modCount` = list ka register: "mujhme kitni baar badlaav hua", har add / remove pe +1.
+- Iterator ki copy = "jab maine chalna shuru kiya tab ginti kitni thi".
+- Har `next()` pe dono milao. Alag nikli = kisi ne meri ungli ke neeche list badal di, ab ungli ka bharosa nahi -> CME.
+
+Copy faltu nahi hai, yahi to wo tareeka hai jisse pata chalta hai ki list badli ya nahi. HLD jaisa hi: copy pe likh ke
+rakho, aur jo copy se mel na khaaye uspe alert kar do ki kuch chhoota.
+
+"Concurrent" ka matlab "do thread" nahi, matlab "tere chalne ke beech me badlaav hua". Ek hi thread me bhi aata hai (tera
+loop), aur doosra thread list badle tab bhi yahi alarm bajta hai.
+
+`it.remove()` safe kyun: yahan ungli khud hatati hai, to use pata hai ki element khiske. Wo apni jagah theek kar leti hai
+aur ginti bhi badha leti hai, kuch nahi chhootta.
+
+S102 pe alarm kyun nahi baja: check `next()` pe hota hai. S102 hatne ke baad `hasNext()` ne dekha ungli list ke ant pe
+hai, to `next()` bulaya hi nahi gaya, ginti mili hi nahi. Isliye Java bhi kehta hai ki ye alarm "best effort" hai, iske
+bharose mat raho: `removeIf` / `it.remove()` hi likho.
+
 ## Exception kyun aata hai
 
 List apne har badlaav ki ginti rakhti hai, jise `modCount` kehte hain. Iterator bante waqt is ginti ki ek copy apne paas
