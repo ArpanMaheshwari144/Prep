@@ -230,7 +230,8 @@ kuch bhi, laptop me mera saamaan hai.
 likha, turant laptop pe likh lo, dikkat hi khatam. Wo cheez tab tak pakki nahi jab tak laptop me nahi aati. Copy pe
 likh liya, turant laptop pe lao, phir pakka maano.
 **Asli naam:** turant laptop pe, tabhi pakka = sync copy (thoda dheema, par ek bhi transfer nahi khota; 120 / sec pe
-dheemapan dikhta bhi nahi). Shaam ko ek baar = async (aakhri likha kho jaata), paise me nahi chalta.
+dheemapan dikhta bhi nahi). Shaam ko ek baar = async (aakhri likha kho jaata), paise me nahi chalta. Ek DB ke andar bhi
+yahi soch: pehle diary me pakka, phir haan = write-ahead log (WAL), DB khud karta (Foundations 05).
 
 ```mermaid
 flowchart TB

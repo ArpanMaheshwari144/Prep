@@ -44,7 +44,7 @@ Technical me: "laptop me save, ghar le jaao" = replica doosri jagah (Multi-AZ).
 
 **Maan lo laptop me shaam ko ek baar save karta hai. 2 baje copy me zaroori line likhi, 3 baje aag. Copy kab likhi jaani chahiye?**
 Arpan: Jaise hi maine copy pe likha, turant laptop pe likh lo na, dikkat hi khatam. Hamare paas proof ho gaya, ab office me aag lage chahe kuch bhi. Matlab wo cheez tab tak pakki nahi jab tak wo mere laptop me nahi aati. Copy pe likh liya, use turant laptop pe lao, phir pakka maano.
-Technical me: "turant laptop pe, tabhi pakka" = sync copy, "shaam ko ek baar save" = async (aakhri likha kho jaata).
+Technical me: "turant laptop pe, tabhi pakka" = sync copy, "shaam ko ek baar save" = async (aakhri likha kho jaata). Ek DB ke andar bhi yahi: "pehle diary me pakka, phir haan" = write-ahead log (WAL), DB khud karta (Foundations 05).
 
 **8. Salary ke din sab sirf balance dekhne aa rahe. Saare cashier register pe jhuke, jo sach me paisa bhejne aaya uska kaam atka.**
 Arpan: Alag-alag cheez kar lo. Jo sirf dekhne aa rahe unko sirf dikhao, jo karne aa rahe unko sirf karao, alag-alag baant do. Register uske liye khaali chhodo jo waqai kuch kaam kar raha hai. Us register ki photocopy bana do, photocopy ek alag desk pe rakh lo. Jo sirf padh raha, dekh raha, kuch update nahi kar raha, use photocopy pe bhej do. Jo kuch likh raha, use main register pe le aao.

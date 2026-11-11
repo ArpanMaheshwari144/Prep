@@ -234,7 +234,7 @@ Yahi dikkat yahan bhi:
   Docs     5b  dabba + copy dono gire, batch baaki            ->  disk pe bhi likho; phir bhi gire to kuch second chhoot, 500 copy ka paisa (AOF, trade-off)
   Docs     5   owner server hi gira                           ->  "mujhe kuch ho to tu hai" (naya owner wahin se)
   Banking  7   register jal gaya                              ->  laptop me save, ghar le jaao (replica, Multi-AZ)
-  Banking  7b  2 baje likha, 3 baje aag                       ->  turant laptop pe, tabhi pakka (sync copy)
+  Banking  7b  2 baje likha, 3 baje aag                       ->  turant laptop pe, tabhi pakka (sync copy; DB ke andar wahi = WAL)
   Banking  8   sab balance dekhne aaye, kaam atka             ->  photocopy alag desk pe (read replica)
   Banking  9   photocopy peeche, ghabra ke dobara bheja       ->  jisne likha, thodi der main file se (read-your-writes)
   Banking  20  2 baje chhotu ne register gher liya            ->  chhotu photocopy se padhein (read replica)
