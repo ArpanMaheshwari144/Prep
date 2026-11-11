@@ -218,6 +218,14 @@ kaam, baaki me baanto. Company ke server hum nahi badha sakte, apni taraf se aur
 **Asli naam:** 1, 2, 5 sec ruk ke = exponential backoff, aage-peeche = jitter, 2-3 company = multi-provider failover,
 dheeme ko kam kaam = weighted routing (circuit breaker ke saath).
 
+**Maan lo OTP ki receipt (phone tak pahuncha) nahi aayi, umar 2 minute:** pehle FR me tay ki WhatsApp / email pe OTP
+ja sakta hai ya nahi (WhatsApp ke apne niyam, alag flow). SMS me operator ko umar ke saath bhejo, atka to wahin mare.
+Screen pe timer: "2 minute baad dobara maango". 2 minute tak success nahi aaya to OTP nahi gaya. Har OTP ka record DB me
+(Arpan, 101, umar 2 min), to do raaste: 101 phaad ke naya OTP nayi umar ke saath, ya wahi 101 nayi umar ke saath dobara.
+
+**Asli naam:** umar = validity period (TTL), timer = resend cooldown, success nahi = delivery receipt nahi, record = OTP
+store (code + expiry), naya = regenerate, wahi nayi umar se = resend with refreshed TTL, WhatsApp = FR pe channel failover.
+
 ## 6. Company ki had 100 / sec (saanjha dabba)
 
 20 worker apni raftaar se, sab milake 300 / sec, company 429 de rahi aur block ki dhamki. Har worker ko sirf apni
