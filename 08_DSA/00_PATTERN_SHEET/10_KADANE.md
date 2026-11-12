@@ -280,23 +280,115 @@ Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doos
 
 **SAAR**
 ```
-TEMPLATE:
-    maxEndingAtForLeft   (base ans[0]=nums[0];        loop i=1..n-1  AAGE)   // index 0 pe khatam = sirf nums[0], isliye loop 1 se
-        ans[i] = max( nums[i] , ans[i-1] + nums[i] )                   // akela naya shuru karo ya pichhle me judo, jo bada
-           |__ ye jo array RETURN hua  -->  neeche bestLeftPrefix me 'temp' ban jaata
+nums = [ 1 , 2 , -7 , 8 , 6 , -4 ]      jawab = 17
+index    0   1    2   3   4    5
 
-    bestLeftPrefix       (temp = UPAR wale ka RETURN;  base ans[0]=temp[0];   loop i=1..n-1  AAGE)   // 0 tak ka best = khud temp[0], isliye loop 1 se
-        ans[i] = max( ans[i-1] , temp[i] )                            // 0..i ka best = pichhla best ya temp[i], jo bada
+==============================================================
+STEP 1: maxEndingAtForLeft            (aage chalo  0 -> n-1)
+==============================================================
+KYUN: har i pe "jo subarray i pe hi KHATAM ho" uska best sum.
+      (kadane, bas har index ka jawab array me rakh lo)
 
-    maxEndingAtForRight  (base ans[n-1]=nums[n-1];    loop i=n-2..0  PEECHE)   // last index pe khatam = sirf wahi; right part peeche se banta
-        ans[i] = max( nums[i] , ans[i+1] + nums[i] )                  // mirror: akela shuru ya agle (i+1) wale me judo, jo bada
-           |__ ye jo array RETURN hua  -->  neeche bestRightPrefix me 'temp' ban jaata
+base : ans[0] = nums[0]          loop : i = 1 .. n-1
+rule : ans[i] = max( nums[i] , ans[i-1] + nums[i] )
+                     akela naya    pichhle me judo
 
-    bestRightPrefix      (temp = UPAR wale ka RETURN;  base ans[n-1]=temp[n-1];  loop i=n-2..0  PEECHE)   // last se peeche bharo: ans[i+1] pehle se ready chahiye
-        ans[i] = max( ans[i+1] , temp[i] )                           // i..n-1 ka best = agla best (i+1) ya temp[i], jo bada
+  i=0   ans[0] = nums[0] = 1
+  i=1   ans[0]=1  --+-->  1 + 2  = 3   vs akela 2    -> 3  (juda)
+  i=2   ans[1]=3  --+-->  3 + -7 = -4  vs akela -7   -> -4 (juda)
+  i=3   ans[2]=-4 --+-->  -4 + 8 = 4   vs akela 8    -> 8  (naya shuru)
+  i=4   ans[3]=8  --+-->  8 + 6  = 14  vs akela 6    -> 14 (juda)
+  i=5   ans[4]=14 --+-->  14 + -4 = 10 vs akela -4   -> 10 (juda)
 
-    maxTwoNonOverlap     (bestLeft=bestLeftPrefix, bestRight=bestRightPrefix;  ans=INT_MIN)   // INT_MIN: sab minus ho to jod bhi minus, 0 se galat
-        for i = 0..n-2 :  ans = max( ans , bestLeft[i] + bestRight[i+1] )    // WALL, i+1 = non-overlap (loop n-2 tak: i+1 array ke bahar na jaaye)
+  ans = [ 1 , 3 , -4 , 8 , 14 , 10 ]
+          |___ ye RETURN hua  -->  STEP 2 me 'temp'
+
+==============================================================
+STEP 2: bestLeftPrefix                (aage chalo  0 -> n-1)
+==============================================================
+KYUN: STEP 1 sirf "i pe KHATAM" deta. Hume chahiye "0..i ke
+      andar KAHIN bhi" ka best = STEP 1 ka running max.
+
+temp : STEP 1 ka array  [ 1 , 3 , -4 , 8 , 14 , 10 ]
+base : ans[0] = temp[0]          loop : i = 1 .. n-1
+rule : ans[i] = max( ans[i-1] , temp[i] )
+                     pichhla best   aaj ka
+
+  i=0   ans[0] = temp[0] = 1
+  i=1   ans[0]=1  vs temp[1]=3    -> 3
+  i=2   ans[1]=3  vs temp[2]=-4   -> 3   (pichhla hi bada, wahi chala)
+  i=3   ans[2]=3  vs temp[3]=8    -> 8
+  i=4   ans[3]=8  vs temp[4]=14   -> 14
+  i=5   ans[4]=14 vs temp[5]=10   -> 14
+
+  bestLeft = [ 1 , 3 , 3 , 8 , 14 , 14 ]
+
+==============================================================
+STEP 3: maxEndingAtForRight           (peeche chalo  n-1 -> 0)
+==============================================================
+KYUN: STEP 1 ka ULTA. har i pe "jo subarray i se SHURU ho"
+      uska best sum. Right wala hissa isi se banega.
+
+base : ans[n-1] = nums[n-1]      loop : i = n-2 .. 0
+rule : ans[i] = max( nums[i] , ans[i+1] + nums[i] )
+                     akela naya    AGLE me judo
+
+  i=5   ans[5] = nums[5] = -4
+  i=4   ans[5]=-4 --+-->  -4 + 6 = 2   vs akela 6    -> 6  (naya)
+  i=3   ans[4]=6  --+-->  6 + 8  = 14  vs akela 8    -> 14 (juda)
+  i=2   ans[3]=14 --+-->  14 + -7 = 7  vs akela -7   -> 7  (juda)
+  i=1   ans[2]=7  --+-->  7 + 2  = 9   vs akela 2    -> 9  (juda)
+  i=0   ans[1]=9  --+-->  9 + 1  = 10  vs akela 1    -> 10 (juda)
+
+  ans = [ 10 , 9 , 7 , 14 , 6 , -4 ]
+          |___ ye RETURN hua  -->  STEP 4 me 'temp'
+
+==============================================================
+STEP 4: bestRightPrefix               (peeche chalo  n-1 -> 0)
+==============================================================
+KYUN: STEP 3 sirf "i se SHURU" deta. Hume chahiye "i..n-1 ke
+      andar KAHIN bhi" ka best = STEP 3 ka running max, peeche se.
+
+temp : STEP 3 ka array  [ 10 , 9 , 7 , 14 , 6 , -4 ]
+base : ans[n-1] = temp[n-1]      loop : i = n-2 .. 0
+rule : ans[i] = max( ans[i+1] , temp[i] )
+                     agla best      aaj ka
+
+  i=5   ans[5] = temp[5] = -4
+  i=4   ans[5]=-4 vs temp[4]=6    -> 6
+  i=3   ans[4]=6  vs temp[3]=14   -> 14
+  i=2   ans[3]=14 vs temp[2]=7    -> 14
+  i=1   ans[2]=14 vs temp[1]=9    -> 14
+  i=0   ans[1]=14 vs temp[0]=10   -> 14
+
+  bestRight = [ 14 , 14 , 14 , 14 , 6 , -4 ]
+
+==============================================================
+STEP 5: maxTwoNonOverlap   (DEEWAR / WALL)
+==============================================================
+KYUN: har i pe deewar: left = 0..i ka best, right = i+1..n-1
+      ka best. i+1 isliye ki koi index dono me na aaye.
+
+ans = INT_MIN      loop : i = 0 .. n-2    (i < n - 1)
+rule : ans = max( ans , bestLeft[i] + bestRight[i+1] )
+
+  ★ loop n-2 tak: andar bestRight[i+1] padhna hai,
+    i = n-1 gaya to i+1 = n = array ke bahar.
+
+            bestLeft:  1    3    3    8   14   14
+                       |    |    |    |    |
+                       |    \    \    \    \
+                       |     \    \    \    \
+           bestRight: 14   14   14   14    6   -4
+                       (i ke saath i+1 wala, tirchha)
+
+  i=0   bestLeft[0]=1  + bestRight[1]=14  = 15
+  i=1   bestLeft[1]=3  + bestRight[2]=14  = 17   <-- MAX
+  i=2   bestLeft[2]=3  + bestRight[3]=14  = 17
+  i=3   bestLeft[3]=8  + bestRight[4]=6   = 14
+  i=4   bestLeft[4]=14 + bestRight[5]=-4  = 10
+
+  jawab = 17   ([1,2] = 3  +  [8,6] = 14)
 ```
 
 ### DRY-RUN
