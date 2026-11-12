@@ -46,5 +46,6 @@ karne ke liye `BlockingQueue`, aur kai async kaam ke liye `CompletableFuture.all
 
 ## Tera project
 
-Usercrud ka RateLimitController "ek saath kitne" wali soch pe hai, jo semaphore wali soch hai. "Ek second me kitne" wala
-hisaab token bucket hai, semaphore nahi.
+Usercrud ka RateLimitController "ek second me kitne" (1 sec me 5, fixed window, `synchronized`) hai, semaphore nahi.
+Semaphore ki soch alag hai: "ek saath kitne andar" (printer pe 3). Rate (per second) = window / token bucket, concurrency
+(ek saath) = semaphore.
