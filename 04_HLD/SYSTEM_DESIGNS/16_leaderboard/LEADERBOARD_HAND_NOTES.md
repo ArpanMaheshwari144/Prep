@@ -38,6 +38,13 @@ Technical me: "parchi pe contest id + khatam hone ka waqt" = event time, "usi di
 Arpan: Mera score 5200 hai, to mujhe 10,000 wale se kya lena-dena. Bheed me main apne aas-paas scan karta, poori bheed nahi dekhta. 5200 ke aas-paas wali range dekho; 4000 aur 6000 walon se matlab nahi. Jaise highway pe gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhta hoon (yahi soch cache 4 me: key ring pe paas ke dabbe me).
 Technical me: "apne aas-paas scan" = har shard se mere score ke thoda upar aur thoda neeche wale (score range query), sab mila ke sort, mere upar ke 5 aur neeche ke 5.
 
+**Maan lo (12-Nov grill) dabbe region ke hisaab se: India, US, Europe. Arpan world rank 50,000 pe. World me uske upar ke 5 aur neeche ke 5 kaise?**
+Raasta 1 (upar wala, score se): har region se Arpan ke SCORE ke aas-paas wale maango, jodo, 5 + 5. Region ko "rank 50,000" mat bolo: India wale Redis me sirf India ki line hai, uski rank apni line ki; score teeno jagah ek hi matlab rakhta.
+Raasta 2 (Arpan, 12-Nov): ek bada bhai teeno region ki line ek saath milata, jaise teen class ke bachche marks / waqt ke kram me ek line me bithao: pehle wala pehle, phir doosra. Dheere-dheere world board ban jaata. Shuru me kisi ki rank thodi galat dikhe to sheet aate-aate apne aap theek ho jaati. Arpan world board pe 50,000 pe aa gaya, to aage ke 5 aur peeche ke 5 seedha wahi se.
+Kaunsa kab: Raasta 1 me har page pe sirf thode log, bojh baanta hi rehta, rank hamesha taaza; par har baar teeno region se poochhna. Raasta 2 me world board taiyaar, page turant; par poora board ek jagah (jo bojh baanta tha wo phir ek jagah) aur rank thodi der purani. Lakhon log apna "mere aas-paas" page baar-baar kholte to raasta 1; world ki top list / poora world board dikhana ho aur thodi der purani rank chalegi to raasta 2.
+Bolne ki line: "Do raaste hain: har region se score ke aas-paas wale maang ke jodo, ya ek bada bhai sab milake world board banaye. Mere aas-paas wale page ke liye pehla, world top list ke liye doosra, wahan thodi der purani rank chal jaayegi."
+Technical me: raasta 1 = har shard pe score range query + merge (scatter-gather), raasta 2 = global merged board (aggregator, k-way merge), rank thodi der purani (eventual consistency).
+
 **7. Redis gira to saare score?**
 Arpan: Ekdum DB pe nahi bhaagunga. Pehle koshish ki gire hi na; gira to uska clone, wo bhi gira to ek aur clone. Teeno gir gaye tab DB pe jaao, kyunki score pehle DB me likha hai, wahan se dobara bhar do.
 Technical me: "clone" = Redis replica (gira to replica primary), "teeno gaye to DB" = DB sach, Redis wahan se rebuild.
