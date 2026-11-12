@@ -12,8 +12,8 @@ Bina taala:     bacha ghee: 199
 synchronized:   bacha ghee: 0     <- har baar sahi
 ```
 
-Ye isliye hota hai kyunki `ghee--` ek kaam nahi, teen kaam hai: parchi padho (500), ek ghatao (499), aur likho (499). Do
-cashier ne ek saath 500 padha aur dono ne 499 likha. Isse dabbe do bike, par kata ek. Pehli line dekh: kabhi-kabhi kismat
+Ye isliye hota hai kyunki `ghee--` ek kaam nahi, teen kaam hai: parchi padho, ek ghatao, aur likho. Parchi 10000 se kat-kat
+ke neeche aa rahi hai. Maan lo kisi pal parchi pe 500 bacha tha: do cashier ne ek saath 500 padha aur dono ne 499 likha. Isse dabbe do bike, par kata ek. Pehli line dekh: kabhi-kabhi kismat
 se sahi bhi aa jaata hai, isiliye ye bug testing me chhup jaata hai aur prod me pakda jaata hai.
 
 `synchronized` parchi pe taala hai. Ek cashier ne parchi uthayi, to baaki line me khade rahenge.
