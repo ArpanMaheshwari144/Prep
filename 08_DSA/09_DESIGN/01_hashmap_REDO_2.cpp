@@ -27,13 +27,30 @@
 //   remove k7                  -> get k7 = -1, get k8 = 64, size 50
 // ============================================================
 
-#include <iostream>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
+// ---- diya hua (LeetCode jaisa) ----
+struct Entry
+{
+    string key;
+    int value;
+    Entry *next;
+    Entry(string k, int v) : key(k), value(v), next(nullptr) {}
+};
+
+// ---- kaam: constructor + neeche ke 4 method ----
 class MyHashMap
 {
+    int sz;
+    int cap;
+    vector<Entry *> buckets; // buckets[i] = us chain ka pehla node (ya nullptr)
+
 public:
+    MyHashMap()
+    {
+    }
+
     void put(string key, int val)
     {
     }
