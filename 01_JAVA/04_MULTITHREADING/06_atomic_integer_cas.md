@@ -3,7 +3,7 @@
 ## Scene: parchi pe taala nahi, "abhi bhi 500 hai?"
 
 File 04 me parchi pe taala lagaya tha: ek cashier likhta, baaki 9 line me intezaar karte. CAS taala lagata hi nahi. Har
-cashier bas itna kehta hai: "maine parchi pe 500 padha tha. Agar abhi bhi 500 likha hai to 499 likh do, warna kuch mat likho,
+cashier bas itna kehta hai (parchi 10000 se kat-kat ke neeche aa rahi, maan lo is pal 500 hai): "maine parchi pe 500 padha tha. Agar abhi bhi 500 likha hai to 499 likh do, warna kuch mat likho,
 main dobara padhunga." Ye wahi cheez hai jo pehle dekh chuke: Google Docs ka version (tune 5 pe save kiya, beech me koi 7 kar
 gaya, to tera save reject), banking ki `WHERE balance >= 500`, aur e-commerce ka Redis DECR.
 
@@ -15,6 +15,8 @@ decrementAndGet():    bacha ghee: 0
 compareAndSet loop:   bacha ghee: 0
    us loop me kitni baar 'koi aur pehle likh gaya, dobara': 9311
 ```
+
+Har baar chalane pe ye number alag aate hain (12-Nov dobara chalaya to 950 aur 7654), par pehli line kabhi 0 pakki nahi.
 
 ## Khaas baat
 
