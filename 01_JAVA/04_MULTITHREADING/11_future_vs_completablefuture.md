@@ -31,6 +31,9 @@ lagaya, to ek atka hua recs call poora page latka deta hai. Upar ki doosri line 
 me khul gaya, bas recs khaali the. Ye wahi soch hai jo payment design me thi (timeout + fallback), aur PR drill ka "bahar ki
 call pe timeout".
 
+BMS 6b (12-Nov) bhi yahi hai: PSP ke liye ~1 min ki ghadi = `orTimeout`, ghadi khatam to "booking fail, seat abhi tumhari,
+dobara pay?" popup = `exceptionally` wala fallback. Page atka nahi, user ko saaf jawab mila.
+
 ## Tera project
 
 Usercrud ka `@Async` method `CompletableFuture<X>` lauta sakta hai, aur caller use `thenCombine` se doosre kaam ke saath jod
