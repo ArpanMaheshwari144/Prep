@@ -51,7 +51,7 @@ Technical me: "rollback nahi, consumer court" = sauda ulta nahi, "thodi der baad
 Arpan: Iska design hum upar (chat me) karke aa chuke hain, dobara bolne ka fayda nahi, ho gaya.
 Technical me: "upar kar chuke" = chat wala hi: khula taar (WebSocket) + Redis pub/sub.
 
-**9. Subah 9:15, market khula, TCS pe ek second me lakhon order. Har order pe book me sabse achha bhaav dekhna (padhna) aur naya order jodna ya match pe book badalna (likhna). Book DB me, har baar kuch millisecond. Line badh rahi, 9:15:01 ka order 9:16 pe match.**
+**9. (Maan lo NSE jaisi bheed, kadam 5 wale ~10,000 / sec nahi) Subah 9:15, market khula, TCS pe ek second me lakhon order. Har order pe book me sabse achha bhaav dekhna (padhna) aur naya order jodna ya match pe book badalna (likhna). Book DB me, har baar kuch millisecond. Line badh rahi, 9:15:01 ka order 9:16 pe match.**
 Arpan: Itna bhaar DB pe mat rakho, mota register bechara thak jaayega. Baar-baar mote register pe likhne aur padhne thodi jaaunga. Apne paas ek chhoti parchi rakh lo, dhadadhad us pe likhte raho: ye aaya, iska match hoga, ye hat gaya. Sab ho jaaye to baad me ek saath mote register pe likh do. Koi bole parchi kho gayi to? Koi baat nahi, uski 3-4-5 copy bana lo, ek gayi to doosri se mil jaayegi.
 Technical me: "chhoti parchi, dhadadhad likho" = order book RAM me (in-memory), "baad me ek saath mote register pe" = DB me batch write, "parchi ki 3-4-5 copy" = standby / replica (aur order log). Kam bheed ho to block 5 jaisa DB pe chal jaata; NSE jaisi bheed pe RAM.
 

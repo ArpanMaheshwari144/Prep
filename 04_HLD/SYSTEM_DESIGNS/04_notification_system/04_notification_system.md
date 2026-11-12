@@ -371,7 +371,10 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-    B["Order Service:<br/>khabar banate hi kism tay"]:::card
+    O["Order Service:<br/>order placed, shipped"]:::card
+    LG["Login / payment:<br/>OTP maanga"]:::card
+    MK["Marketing:<br/>Diwali offer"]:::card
+    B["Notification Service:<br/>khabar ki kism dekh ke line tay"]:::card
     subgraph PRL["PROMO LINE (dheemi)"]
         PR[("Diwali offer")]:::card --> WP["apna worker"]:::card
     end
@@ -386,6 +389,9 @@ flowchart TB
     OK(["DELIVERED<br/>(operator ki receipt)"]):::good
     EX(["Umar khatam: bhejo mat,<br/>user resend dabaye"]):::bad
     DL[("Galat number / backup bhi fail:<br/>alag line (DLQ)")]:::bad
+    O --> B
+    LG --> B
+    MK --> B
     B --> PR
     B --> TR
     B --> SV

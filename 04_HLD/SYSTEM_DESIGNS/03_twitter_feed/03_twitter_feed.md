@@ -77,10 +77,11 @@ flowchart TB
     subgraph CP["KOHLI KI EK CHHOTI PARCHI"]
         P[("Na DB, na kuch:<br/>27 crore yahin se padh lenge")]:::pill
     end
-    N["100-200, 2,000-3,000 wale:<br/>dabba theek"]:::card
+    N["100-200, 2,000-3,000 wale"]:::card
+    D["Seedha unke followers ke dabbe me:<br/>theek (fanout on write)"]:::good
     K -. "nahi" .-> X
     K --> P
-    N -.-> X
+    N --> D
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -140,8 +141,10 @@ flowchart TB
     end
     OK["Tera post ho gaya, nikal"]:::good
     W["Peeche dabbe bharte rahe"]:::card
+    C["Kohli wala tareeka:<br/>apni parchi, feed khulne pe padho"]:::card
     A --> T
     T -- "nahi" --> K
+    T -- "haan" --> C
     K --> OK
     K --> W
     linkStyle default stroke:#8fa3c7,stroke-width:2px

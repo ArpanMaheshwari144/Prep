@@ -292,7 +292,7 @@ flowchart TB
 
 ## 9. 9:15 ki bheed, book DB me, line atki (chhoti parchi + baad me mota register)
 
-Subah 9:15 market khula, TCS pe ek second me lakhon order. Har order pe dono kaam: book me sabse achha bhaav dekhna
+Maan lo NSE jaisi bheed hai (Numbers wale ~10,000 / sec nahi, jis pe kadam 5 me DB chuna tha). Subah 9:15 market khula, TCS pe ek second me lakhon order. Har order pe dono kaam: book me sabse achha bhaav dekhna
 (padhna), aur naya order jodna ya match ke baad book badalna (likhna). Book DB me hai, har baar kuch millisecond, to
 line badhti gayi aur 9:15:01 ka order 9:16 pe match hua. Itna bhaar mote register pe mat daalo, wo thak jaayega. Apne
 paas ek chhoti parchi rakho aur dhadadhad usi pe likho: ye aaya, iska match hua, ye hat gaya. Sab ho jaaye to baad me
