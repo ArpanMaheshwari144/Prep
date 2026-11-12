@@ -14,7 +14,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ```
 FR      show aur seat map dekho · seat chuno -> pay karo -> ticket pakka
         · seat chuni to 5 minute tere naam rukti, pay nahi kiya to chhoot jaati
-        · pay ~1 minute (30-55 sec + thoda buffer) me na ho to payment fail dikhe, par seat bachi umar tak teri, dobara pay kar sake
+        · pay ~1 minute (30-55 sec + thoda buffer) me na ho to payment fail dikhe, par seat abhi teri, popup "dobara pay?": Haan = doosre PSP ka QR, Naa = seat turant khali
         · 1 minute ke andar paisa kata to seat pakki; uske baad kata to refund
 NFR     ek seat kabhi do logon ko na bike (yahi dil hai) · seat map dekhna tez · badi movie ke din ki bheed jhele
 Numbers advance booking 10 baje: 10 lakh log ek saath, seat sirf 50 hazaar · 100 log map dekhte to ~1-2 book karte
@@ -212,8 +212,8 @@ hota (na query na safai job isko chhoote). PSP ka SUCCESS -> BOOKED.
 
 PSP do hi haal me hota: haan bola to BOOKED. Dheema hai to 1-2 baar ping, phir bhi chup to payment FAILED dikha do, kyunki
 peeche line lagi hai. Par seat mat chhodo: user to pay kar raha, dikkat Razorpay / bank ki taraf se, seat chhodi to galti
-hamari. Seat parchi ki bachi umar tak Arpan ki HELD, wo dobara pay kare (doosre PSP pe); pay nahi kiya to umar khatam, tab
-seat agle ki. Jaise do ladke: ek baar-baar mana kar raha, to "chhod, doosra ladka tu ja": ab jo bhi naya pay karne aaye, doosre
+hamari. Seat parchi ki bachi umar tak Arpan ki HELD, wo dobara pay kare (doosre PSP pe); popup pe Naa dabaya to
+seat turant agle ki. Jaise do ladke: ek baar-baar mana kar raha, to "chhod, doosra ladka tu ja": ab jo bhi naya pay karne aaye, doosre
 PSP pe. Agar dheeme wale ne peeche se paisa kaat liya tha, to wo hamari id se pata chalega (user seedha PSP se baat nahi
 karta, beech me hum hain). User ko bolo "paisa kata ho to wapas aa jaayega, dobara pay kar le", baad me kata nikla to
 paisa wapas. IRCTC, GPay, Paytm roz yahi karte. Hum perfect system ke peeche nahi: PSP hamare bas me nahi, perfect
@@ -227,11 +227,14 @@ naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idemp
 reh sakte, peeche aur log hain, aur user khud pareshan hota "seat hui ya nahi, paisa kata ya nahi". Gole ke beech UI pe likho
 "tumhara payment process ho raha hai, bank se jawab aate hi batayenge", peeche chhotu Razorpay se poochhta rahe. 1 minute ke
 andar paisa kata to seat BOOKED, refund nahi. 1 minute ho gaya aur jawab nahi, to "booking fail hui, paisa kata hoga to wapas
-aa jaayega, seat abhi bhi tumhari HELD hai, dobara pay kar lo"; dobara pay doosre PSP pe, seat ki umar thodi badha do, us
-umar me pay nahi kiya to seat hat jaati. DB me likho: booking fail, paisa kata ho to refund; Razorpay ko bolo "kata ho to
+aa jaayega, seat abhi bhi tumhari hai". Saath me UI pe popup:
+"pehla payment fail hua, dikkat ho to refund kar denge ya reach out karo; isi seat ko book karna hai to dobara pay karo,
+Haan / Naa". Haan = QR dobara khule, is baar doosre PSP ka (Amazon Pay), pay hua to BOOKED. Naa = seat turant khali,
+apni jagah wapas. Seat ki umar (TTL) ab nahi badhate, seedha user se poochh lo; 99% Haan dabayega kyunki galti hamari taraf
+ki. Har cheez backend se nahi, UI bhi kaam karta. (Bank ka server hi down ho to wo HLD ke bahar.) DB me likho: booking fail, paisa kata ho to refund; Razorpay ko bolo "kata ho to
 lautao", wo bank se poochh ke lautata aur hume batata. 1 minute ke baad aaya "paisa kat gaya" = refund.
 **Asli naam:** client timeout ~60 sec, PAYMENT_PENDING UI message + status poll, 1 minute ke andar SUCCESS = BOOKED, baad me
-= attempt FAILED + booking HELD (umar thodi badhi, phir EXPIRED), der se SUCCESS = REFUND_PENDING + refund API, dobara pay = PSP-2.
+= attempt FAILED + booking HELD + UI popup "dobara pay?" (Haan = PSP-2 ka QR, Naa = turant EXPIRED, hold_until nahi badhaya), der se SUCCESS = REFUND_PENDING + refund API, dobara pay = PSP-2.
 
 ```mermaid
 flowchart TB
@@ -325,8 +328,8 @@ flowchart LR
 ### 6e. Bank ne 12 minute lagaye, seat Priya ki, paisa kata (alag haalat + raat ki refund job)
 
 Maine parchi ki umar ke andar Pay dabaya, bank ne 12 minute lagaye. 6a se Pay dabate hi parchi ki umar ruk gayi thi, par 6c
-wali 30-55 second ki ghadi nikal gayi, payment FAILED dikha, seat bachi umar tak meri HELD rahi; maine dobara pay nahi kiya,
-umar khatam, tab D5 Priya ko mili. 12ve
+wali 30-55 second ki ghadi nikal gayi, payment FAILED dikha, popup pe maine Naa dabaya,
+seat turant khuli, D5 Priya ko mili. 12ve
 minute pe event: "Arpan ka paisa kat gaya".
 
 Razorpay kitni der leta, wo hamara design nahi. Hamare haath me itna: Pay dabate hi ek chhotu Razorpay se har kuch
@@ -335,13 +338,13 @@ minute pe "paisa kat gaya" aaya, to DB me likho: paisa kata, seat nahi, refund d
 din me wapas". Raat ki sync job saare baaki refund karegi, warna Razorpay ko bolo "lautao"; bank se Razorpay baat karta
 hai, BookMyShow nahi.
 
-**Asli naam:** window khatam = 30-55 sec pe payment FAILED, phir dobara pay nahi kiya to parchi ki bachi umar (hold_until) khatam, tab seat khuli, chhotu poochta = status poll job, paisa kata seat nahi = payment SUCCESS + booking FAILED (do alag
+**Asli naam:** window khatam = 30-55 sec pe payment FAILED, phir popup pe Naa to seat turant khuli (EXPIRED), chhotu poochta = status poll job, paisa kata seat nahi = payment SUCCESS + booking FAILED (do alag
 haalat), refund dena = REFUND_PENDING, raat ki sync job = refund / reconciliation job, lautao = refund API.
 
 ```mermaid
 flowchart LR
     P["Pay dabaya"]:::card --> C["Chhotu Razorpay se<br/>poochta rahe (status poll)"]:::card
-    C -. "30-55 sec: payment FAILED, dobara pay nahi, umar khatam" .-> W["Seat khuli,<br/>Priya ne li"]:::bad
+    C -. "~1 min: payment FAILED, popup pe Naa" .-> W["Seat khuli,<br/>Priya ne li"]:::bad
     C -- "12 min: paisa kata" --> D[("DB: payment SUCCESS,<br/>booking FAILED, REFUND")]:::pill
     D --> N["Raat ki job:<br/>Razorpay lautaye (refund)"]:::good
     linkStyle default stroke:#8fa3c7,stroke-width:2px
@@ -371,7 +374,7 @@ flowchart LR
     subgraph BOOK["BOOKING (seat)"]
         H1(["HELD"]):::pill --> PP(["PAYMENT_PENDING"]):::pill --> B1(["BOOKED"]):::good
         H1 --> E1(["EXPIRED"]):::bad
-        PP -. "pay fail (30-55 sec), dobara pay" .-> H1
+        PP -. "pay fail (~1 min), popup Haan:<br/>dobara pay (PSP-2)" .-> H1
     end
     PAY ~~~ N["Sirf aage, peeche kabhi nahi:<br/>SUCCESS ke upar PENDING nahi"]:::card
     linkStyle default stroke:#8fa3c7,stroke-width:2px

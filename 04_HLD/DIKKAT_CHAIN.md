@@ -311,7 +311,7 @@ Yahi dikkat yahan bhi:
   Payment  11  PSP-1 chup, mara ya dheema pata nahi           ->  "process ho raha"; chhotu, itna waqt, haan ya naa; pata ho down tabhi PSP-2 (PENDING, timeout, refund)
   Payment  11b PSP-1 chup, PSP-2 pe bheja to do baar katega?  ->  30-55 sec phir FAILED + PSP-2; PSP-1 pe bhi kata to wo lautaye (timeout, failover, refund)
   BMS      6a  Pay daba diya, PSP dheema, umar khatam         ->  parchi pe "pay chal raha", umar badhao (PAYMENT_PENDING)
-  BMS      6b  chhotu (PSP) 1-2 baar jagaya, phir bhi chup    ->  ~1 min (30-55 + buffer), UI "process ho raha"; andar kata = BOOKED, baad me = fail dikhao, seat MAT chhodo (HELD, dobara pay), der se kata = refund (timeout, PSP-2)
+  BMS      6b  chhotu (PSP) 1-2 baar jagaya, phir bhi chup    ->  ~1 min (30-55 + buffer), UI "process ho raha"; andar kata = BOOKED, baad me = fail + popup "dobara pay?" (Haan = PSP-2 QR, Naa = seat turant khali, TTL nahi badhana), der se kata = refund
   BMS      6b  dheeme chhotu ne peeche se paisa kaat liya     ->  id hamare paas; "kata ho to wapas aayega", kata nikla to wapas (reconciliation job + refund)
   BMS      6c  back dabaya, seat chhodi, phir paisa kata      ->  30-55 sec gola, phir FAILED + doosre PSP pe; kata nikla to Razorpay lautaye (timeout, failover, refund)
   BMS      6d  SUCCESS likha, ticket bolne se pehle gira      ->  SUCCESS + parchi "D5 book karo" ek saath (transactional outbox)
