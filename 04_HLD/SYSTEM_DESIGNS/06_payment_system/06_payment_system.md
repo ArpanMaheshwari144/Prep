@@ -120,7 +120,7 @@ band hai lekin kuch log apna status jaanna chah rahe, to unhe thodi der rok do: 
 hum tumhe bata denge.
 
 **Asli naam:** PSP-2 = fallback PSP (naye payment), status wale ko thodi der rokna = PSP-1 pe atke payment wahin
-PENDING, PSP-2 pe dobara nahi (warna do baar kata); thodi der = 30-55 sec, phir 11b wala final jawab (FAILED + PSP-2,
+PENDING, PSP-2 pe dobara nahi (warna do baar kata); thodi der = 30-55 sec, phir neeche wala "Maan lo PSP-1 chup" jawab (chain me 11b) (FAILED + PSP-2,
 kata nikla to REFUND_PENDING).
 
 ```mermaid
@@ -335,7 +335,7 @@ do: chhotu, tere paas itna waqt hai, ya haan bol ya naa. Haan aaya to kaam ho ga
 Koi perfect raasta nahi hai, par Ravi ko bekaar me ghanton atka ke nahi rakhna.
 
 **Asli naam:** pehle se pata down hai = circuit breaker OPEN, tab hi fallback PSP-2. Pata nahi kata ya nahi = unknown
-state, PENDING (PSP-2 pe nahi, warna do baar katega). Itna waqt, haan ya naa = timeout + status job PSP-1 se poochhe. Par Ravi ko ghanton nahi rokte: 30-55 sec ke baad 11b wala final jawab (FAILED dikhao + PSP-2, kata nikla to REFUND_PENDING).
+state, PENDING (PSP-2 pe nahi, warna do baar katega). Itna waqt, haan ya naa = timeout + status job PSP-1 se poochhe. Par Ravi ko ghanton nahi rokte: 30-55 sec ke baad neeche wala "Maan lo PSP-1 chup" jawab (chain me 11b) (FAILED dikhao + PSP-2, kata nikla to REFUND_PENDING).
 Naa to paise wapas = refund (PSP bola "naa" matlab kata hi nahi, to bas FAILED, wapas kuch nahi; kata tha par haan der se aaya, to refund).
 
 **Maan lo PSP-1 chup hai, Ravi ko ghanton nahi rok sakte, aur PSP-2 pe bhejne se darr hai ki do baar na kat jaaye
@@ -360,11 +360,11 @@ flowchart TB
     CB{"PSP-1 pehle se down?"}:::card
     P2["Seedha PSP-2"]:::good
     subgraph CH["CHHOTU KO WAQT DO"]
-        PD(["Ravi: process ho raha hai<br/>(PENDING, 30-55 sec tak; phir 11b)"]):::pill
+        PD(["Ravi: process ho raha hai<br/>(PENDING, 30-55 sec tak;<br/>phir neeche wala Maan lo)"]):::pill
         J(["Chhotu: itna waqt, haan ya naa<br/>(timeout + status job)"]):::pill
     end
     OK["Haan: kaam ho gaya"]:::good
-    NA["Naa: Ravi ke paise wapas"]:::bad
+    NA["Naa: paisa kata hi nahi, bas FAILED<br/>(kata tha aur haan der se aaya = refund)"]:::bad
     R --> CB
     CB -- "haan, pata hai" --> P2
     CB -- "pata nahi" --> PD

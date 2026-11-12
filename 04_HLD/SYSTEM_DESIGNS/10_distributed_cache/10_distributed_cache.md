@@ -195,10 +195,11 @@ flowchart TB
     end
     G["Koi get kare: parchi khaali,<br/>DB se Ravi Kumar, parchi pe"]:::good
     J(["Ek banda har baar check:<br/>yahan Ravi, wahan Ravi Kumar?<br/>DB sach (sync job)"]):::card
+    F[("Parchi pe DB wala naam:<br/>Ravi Kumar")]:::good
     R --> C
     C --> D
     D --> G
-    J -.-> C
+    J -. "farak mila to theek" .-> F
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000

@@ -309,7 +309,8 @@ flowchart LR
 
 ### 6e. Bank ne 12 minute lagaye, seat Priya ki, paisa kata (alag haalat + raat ki refund job)
 
-Maine parchi ki umar ke andar Pay dabaya, bank ne 12 minute lagaye. Tab tak parchi khatam, D5 Priya ko mil gayi. 12ve
+Maine parchi ki umar ke andar Pay dabaya, bank ne 12 minute lagaye. 6a se Pay dabate hi parchi ki umar ruk gayi thi, par 6c
+wali 30-55 second ki ghadi nikal gayi, booking FAILED, seat chhooti, aur D5 Priya ko mil gayi. 12ve
 minute pe event: "Arpan ka paisa kat gaya".
 
 Razorpay kitni der leta, wo hamara design nahi. Hamare haath me itna: Pay dabate hi ek chhotu Razorpay se har kuch
@@ -318,13 +319,13 @@ minute pe "paisa kat gaya" aaya, to DB me likho: paisa kata, seat nahi, refund d
 din me wapas". Raat ki sync job saare baaki refund karegi, warna Razorpay ko bolo "lautao"; bank se Razorpay baat karta
 hai, BookMyShow nahi.
 
-**Asli naam:** chhotu poochta = status poll job, paisa kata seat nahi = payment SUCCESS + booking FAILED (do alag
+**Asli naam:** window khatam = 6c wali 30-55 sec client timeout (parchi ki umar nahi, wo PAYMENT_PENDING pe ruki thi), chhotu poochta = status poll job, paisa kata seat nahi = payment SUCCESS + booking FAILED (do alag
 haalat), refund dena = REFUND_PENDING, raat ki sync job = refund / reconciliation job, lautao = refund API.
 
 ```mermaid
 flowchart LR
     P["Pay dabaya"]:::card --> C["Chhotu Razorpay se<br/>poochta rahe (status poll)"]:::card
-    C -. "window khatam" .-> W["Seat khuli,<br/>Priya ne li"]:::bad
+    C -. "30-55 sec (6c) nikle: FAILED" .-> W["Seat khuli,<br/>Priya ne li"]:::bad
     C -- "12 min: paisa kata" --> D[("DB: payment SUCCESS,<br/>booking FAILED, REFUND")]:::pill
     D --> N["Raat ki job:<br/>Razorpay lautaye (refund)"]:::good
     linkStyle default stroke:#8fa3c7,stroke-width:2px
