@@ -373,7 +373,9 @@ har minute online / offline hote, har baar 500-500 khabar ka toofan, aur 500 me 
 screen pe dekha hi nahi. WhatsApp mujhe notification bhej ke thodi batayega ki dost online hai. Jisne Neha ki chat
 khol rakhi hai, bas use dikhao: 500 me se 10 ne chat kholi, to 10 ko. Jaise gaon me 500 log aur ek electronics ki
 dukaan. Nayi LED aayi, to dukaan wala 500 ke ghar nahi jaata, na bahar board laga ke raah chalte ko dikhata. Jo dukaan
-ke andar aaya, "aaiye sir, ye nayi LED aayi hai", usi ko dikhata hai.
+ke andar aaya, "aaiye sir, ye nayi LED aayi hai", usi ko dikhata hai. Aur main server se baar-baar poochta nahi ki Neha
+online hai. Taar to pehle se khula hai (kadam 1). Maine chat kholi to bas server ko pata lag gaya, ab wo usi khule
+taar pe mujhe khud bata dega. Dono taraf se taar khula hai.
 
 **Asli naam:** dukaan ke andar aaya = chat kholte hi phone server ko bolta "Neha ka status batate rehna" = subscribe,
 chat band = unsubscribe. Neha online hui (kadam 11 ka register badla) to server sirf subscribers ko bataye = presence
