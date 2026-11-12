@@ -99,6 +99,11 @@ bhi dekho, phir asli fasla naap ke sabse paas wala.
 
 ![Dabbe ki seema pe mat chalo: Arpan se 8 km ka gola, chhoote dabbon ke driver bhi](../00_IMG/15_uber_map_kadam4.svg)
 
+**Maan lo (reel se aaya) seedhi lakeer pe sabse paas Raju 500 meter, par Gomti nadi ke us paar, pul 4 km door; isi kinare Shyam 1.5 km:** Sirf map pe kaun paas
+dikh raha ye nahi dekhna. Gole ke driver ki asli doori nikaalo: sadak se kitni door, kitni der lagegi. Nadi wala sadak se 8 km,
+peeche wala 2 km, to Arpan ko peeche wala. Achanak jaam alag baat, wo pehle se nahi pata.
+**Asli naam:** map pe paas = seedhi lakeer (straight-line) doori, sadak se kitni door = road distance / ETA (routing se, sirf gole ke kuch paas wale driver pe).
+
 ## 5. Raju ek, Arpan aur Priya do (BMS wali parchi)
 
 Gole me ek khaali driver Raju. Arpan aur Priya ne ek hi second me "Book" dabaya, aur Raju ke phone pe do ride aa gayi.
@@ -161,6 +166,12 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style BL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+
+**Maan lo (reel se aaya) Ekana stadium me match khatam, 2 minute me 15,000 booking ek hi dabbe se, us dabbe wale server ka CPU 100%, baaki
+shehar ke server khaali:** Driver kam pade to gola bada karo, Gomti Nagar, Chinhat se gaadi aaye. Server ka bojh: us ilaake ke liye 2-3
+dabbe extra, load ek machine pe na rahe. Stadium, Connaught Place jaise hotspot pata hain, wahan pehle se 2-3 extra dabbe; 40-50 hazaar
+booking ki had paar ho to system apne aap dabbe badha de.
+**Asli naam:** ek dabbe pe saara bojh = hot cell (hot shard), 2-3 dabbe extra = hot cell ko chhote dabbon me tod ke kai shard pe, pehle se = pre-scaling, had paar to apne aap = auto-scaling.
 
 ## 7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha (ghadi server ki)
 

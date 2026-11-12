@@ -172,6 +172,7 @@ Yahi dikkat yahan bhi:
   Cache    7   1 crore log sirf machine 4 pe                  ->  machine 4 ka replica, ek aur gaadi (hot key copies)
   Banking  17  9 chhotu khaali, ek laga pada                  ->  khaali ladke madad karo (hot key, work stealing)
   Banking  6   salary ka din, ek cashier, line sadak tak      ->  cashier badha do, 10 cashier, 10 counter (kai machine + LB)
+  Uber     6b  stadium chhuta, 15,000 booking ek dabbe pe      ->  2-3 dabbe extra, hotspot pe pehle se, had paar to apne aap (hot cell split, pre-scaling)
   Ecom     4   ek parchi pe 50 hazaar                         ->  10 counter, tez kaatne wala (hot row todo, Redis DECR)
   Ecom     5   counter 3 khatam, counter 7 pe 30              ->  khaali counter band, sold out tab jab sab 0
   News     5   9 baje 1 crore log ek saath                    ->  bahut saare server + ek banda jo sabko manage kare (load balancer)
@@ -204,6 +205,7 @@ Yahi dikkat yahan bhi:
   Uber     2   1.25 lakh update/sec, DB ghuta                 ->  bada bhai bulao (Cassandra, andar ring = consistent hashing)
   Uber     3   5 lakh driver ka fasla naap raha               ->  naksha dabbon me, sirf apna dabba (geohash)
   Uber     4   dabbe ke kinare, bagal me driver               ->  8 km ka gola, chhoote dabbe bhi (neighbour geohash)
+  Uber     4b  map pe paas Raju, par nadi ke us paar           ->  sadak se kitni door, kitni der (road distance / ETA)
   Uber     9   register driver ke naam se, 5 lakh line        ->  jagah ke hisaab se panna (geohash ka Redis set)
   Uber     9   dabba badla, purana naam pada                  ->  nikla to hata do, naye me daal do (remove + add)
   Leader   3   lakhon update ek Redis pe                      ->  region se baant do, chhotu mila ke badi screen (shard, scatter-gather)
