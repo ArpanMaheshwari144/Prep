@@ -25,8 +25,66 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+vector<int> maxEndingAtForLeft(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> ans(n, 0);
+    ans[0] = nums[0];
+    for (int i = 1; i < n; i++)
+    {
+        ans[i] = max(nums[i], ans[i - 1] + nums[i]);
+    }
+    return ans;
+}
+
+vector<int> bestLeftPrefix(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> temp = maxEndingAtForLeft(nums);
+    vector<int> ans(n, 0);
+    ans[0] = temp[0];
+    for (int i = 1; i < n; i++)
+    {
+        ans[i] = max(ans[i - 1], temp[i]);
+    }
+    return ans;
+}
+
+vector<int> maxEndingAtForRight(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> ans(n, 0);
+    ans[n - 1] = nums[n - 1];
+    for (int i = n - 2; i >= 0; i--)
+    {
+        ans[i] = max(nums[i], ans[i + 1] + nums[i]);
+    }
+    return ans;
+}
+
+vector<int> bestRightPrefix(vector<int> &nums)
+{
+    int n = nums.size();
+    vector<int> temp = maxEndingAtForRight(nums);
+    vector<int> ans(n, 0);
+    ans[n - 1] = temp[n - 1];
+    for (int i = n - 2; i >= 0; i--)
+    {
+        ans[i] = max(ans[i + 1], temp[i]);
+    }
+    return ans;
+}
+
 int maxTwoNonOverlap(vector<int> &nums)
 {
+    int ans = INT_MIN;
+    vector<int> bestForleft = bestLeftPrefix(nums);
+    vector<int> bestForRight = bestRightPrefix(nums);
+    for (int i = 0; i < nums.size() - 1; i++)
+    {
+        ans = max(ans, bestForleft[i] + bestForRight[i + 1]);
+    }
+    return ans;
 }
 
 int main()
@@ -46,9 +104,11 @@ int main()
     {
         int got = maxTwoNonOverlap(t.first);
         bool ok = (got == t.second);
-        if (ok) pass++;
+        if (ok)
+            pass++;
         cout << "got " << got << " | exp " << t.second << (ok ? "   PASS" : "   *** FAIL ***") << "\n";
     }
-    cout << "\n" << pass << "/" << tests.size() << " PASS\n";
+    cout << "\n"
+         << pass << "/" << tests.size() << " PASS\n";
     return 0;
 }
