@@ -267,6 +267,11 @@ bacha ho to refund. Perfect design koi nahi, bas kitne refund.
 
 **Asli naam:** order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), hamara client timeout (50 sec), der se "success" aaya to DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe -> isliye dobara pay doosre PSP pe chal jaata (PSP failover), do baar kata to ek wapas.
 
+**Payment fail hua to cart (12-Nov, Arpan):** cart khaali mat karo. Amazon cart tabhi khaali karta jab payment
+SUCCESS ho; fail hua to cart wahin, bas "dobara pay kar do". Raaste kai: dobara QR doosre PSP pe, net banking, ya cash on
+delivery. Ek hi raasta nahi.
+**Asli naam:** cart sirf SUCCESS pe khaali, fail pe cart + order wahin, retry = PSP failover / net banking / COD (payment method fallback).
+
 **Maan lo Ravi ka paisa kat gaya, par Myntra ko ye khabar der se mile ya mile hi na. Har baar Razorpay se poochhte rahoge?
 (BookMyShow 6c wala hi jawab):** Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe
 event bhejta. Event aaya = kata, hum "mil gaya" bol dete. Event raste me kho gaya to wo Razorpay ka HLD hai, wo dobara

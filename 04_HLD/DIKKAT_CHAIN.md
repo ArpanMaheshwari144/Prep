@@ -326,6 +326,7 @@ Yahi dikkat yahan bhi:
   File     8b  bahar wala scanner 1 ghante se chup            ->  ruk ke dobara, phir insaan ko alert; tab tak link band (retry + backoff, DLQ)
   News     6   jis site se khabar la rahe wo band             ->  5 sec, 10 sec baad dobara; na khule to chhodo (retry + backoff)
   Ecom     8b  PSP 50 sec chup, kata pata nahi                ->  hamari ghadi 30-50 sec, phir "time out, kata to wapas", dobara pay doosre PSP pe; kata nikla to REFUND_PENDING (timeout, PSP failover, refund job)
+  Ecom     8e  payment fail, cart ka kya                      ->  cart khaali nahi (sirf SUCCESS pe), dobara pay: doosra PSP / net banking / COD (payment fallback)
   Ecom     8c  PSP ka "kata" kaise turant pata chale          ->  paisa katte hi chhota event, S3 jaisa; badi sale pe 3-4 company (webhook, backup PSP)
 
 Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / REFUND_PENDING + refund job / webhook redelivery
