@@ -14,6 +14,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ```
 FR      show aur seat map dekho · seat chuno -> pay karo -> ticket pakka
         · seat chuni to 5 minute tere naam rukti, pay nahi kiya to chhoot jaati
+        · pay 30-55 sec me na ho to payment fail dikhe, par seat bachi umar tak teri, dobara pay kar sake
 NFR     ek seat kabhi do logon ko na bike (yahi dil hai) · seat map dekhna tez · badi movie ke din ki bheed jhele
 Numbers advance booking 10 baje: 10 lakh log ek saath, seat sirf 50 hazaar · 100 log map dekhte to ~1-2 book karte
         -> dekhna bahut, likhna kam · data chhota (aaj + agle hafte ke show), purana archive
@@ -198,7 +199,7 @@ flowchart TB
 ### 6a. Seat kiski?
 
 Maine 4:30 pe Pay dabaya, PSP dheema. 5:00 pe parchi ki umar khatam, 5:10 pe Priya D5 maang rahi, aur PSP ka jawab
-6:00 pe aata hai "paisa kat gaya". Time ke andar Pay dabaya to seat meri, Priya ko nahi; humne vaada kar diya, warna
+5:20 pe aata hai (Pay ke 50 second baad, 6c ki 30-55 sec ghadi ke andar) "paisa kat gaya". Time ke andar Pay dabaya to seat meri, Priya ko nahi; humne vaada kar diya, warna
 consumer court ka case. PSP dheema hai to galti meri nahi, hamari taraf ki hai. To parchi pe status likh lo: pay chal
 raha hai, PSP ka jawab baaki. Jab tak ye likha hai, umar badha do, seat kisi aur ko dikhe hi nahi. Ya query me hi daal
 do.
@@ -208,14 +209,16 @@ hota (na query na safai job isko chhoote). PSP ka SUCCESS -> BOOKED.
 
 ### 6b. Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup
 
-PSP do hi haal me hota: haan bola to BOOKED. Dheema hai to 1-2 baar ping, phir bhi chup to booking FAILED dikha do aur
-seat chhod do, kyunki peeche line lagi hai. Jaise do ladke: ek baar-baar mana kar raha, to "chhod, doosra ladka tu ja": ab jo bhi naya pay karne aaye, doosre
+PSP do hi haal me hota: haan bola to BOOKED. Dheema hai to 1-2 baar ping, phir bhi chup to payment FAILED dikha do, kyunki
+peeche line lagi hai. Par seat mat chhodo: user to pay kar raha, dikkat Razorpay / bank ki taraf se, seat chhodi to galti
+hamari. Seat parchi ki bachi umar tak Arpan ki HELD, wo dobara pay kare (doosre PSP pe); pay nahi kiya to umar khatam, tab
+seat agle ki. Jaise do ladke: ek baar-baar mana kar raha, to "chhod, doosra ladka tu ja": ab jo bhi naya pay karne aaye, doosre
 PSP pe. Agar dheeme wale ne peeche se paisa kaat liya tha, to wo hamari id se pata chalega (user seedha PSP se baat nahi
 karta, beech me hum hain). User ko bolo "paisa kata ho to wapas aa jaayega, dobara pay kar le", baad me kata nikla to
 paisa wapas. IRCTC, GPay, Paytm roz yahi karte. Hum perfect system ke peeche nahi: PSP hamare bas me nahi, perfect
 consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa wapas.
 
-**Asli naam:** 1-2 baar ping = status check retry (timeout), FAILED dikha do = booking FAILED + hold release,
+**Asli naam:** 1-2 baar ping = status check retry (timeout), payment FAILED dikha do, seat mat chhodo = payment attempt FAILED, booking wapas HELD (hold_until tak), umar khatam to EXPIRED,
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
 
@@ -227,7 +230,7 @@ flowchart TB
     end
     P{"PSP (chhotu)"}:::card
     B["Haan: BOOKED"]:::good
-    F["1-2 baar ping, phir bhi chup:<br/>FAILED, seat chhod do"]:::bad
+    F["1-2 baar ping, phir bhi chup:<br/>payment FAILED, seat HELD rahe<br/>(dobara pay)"]:::bad
     R["Paisa kata ho to wapas<br/>(payment id, refund)"]:::card
     N["Naye log: doosra ladka<br/>(PSP-2)"]:::good
     A --> D
@@ -252,12 +255,13 @@ liya: paisa gaya, seat bhi nahi.
 Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok
 sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske
 baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar
-lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi.
+lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi. Seat mat chhodo, parchi ki bachi umar tak Arpan ki HELD (6b):
+peeche picture ki line lagi hai aur log 1 minute bhi nahi rukte, par dikkat hamari taraf ki hai, user ki nahi.
 
 Haan, onboard karte waqt Razorpay se SLA zaroor lo: unka system kitna chalega (uptime, jaise 99.9%) aur down hua to
 kitni der me khabar + theek karenge. Ye unke haath me hai, isliye likh ke dete hain. Bank kitni der lega, wo nahi.
 
-Pehla wala DB me FAILED likh do. Peeche hum khud Razorpay se poochte rahenge, aur uska event bhi aayega (paisa katte hi,
+Pehla payment DB me FAILED likh do (booking nahi, wo HELD rehti). Peeche hum khud Razorpay se poochte rahenge, aur uska event bhi aayega (paisa katte hi,
 jaise S3 bhejta), hum "mil gaya" bol dete. Baad me pata chala paisa kata tha, to Razorpay ko bolo "is user ka paisa
 lautao"; wo bank se poochh ke kata tha to wapas karega. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi;
 paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, Amazon Pay) line me.
@@ -271,7 +275,7 @@ REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo laut
 flowchart LR
     G["30-55 sec gola<br/>(hamari ghadi)"]:::card --> P{"Paisa kata?"}:::card
     P -- "haan: event (webhook)" --> S["Seat BOOKED,<br/>'mil gaya' (ack)"]:::good
-    P -. "chup" .-> F["FAILED dikhao: kata to wapas,<br/>doosra pay Amazon Pay pe"]:::bad
+    P -. "chup" .-> F["Payment FAILED dikhao, seat HELD:<br/>kata to wapas, doosra pay Amazon Pay pe"]:::bad
     F -.-> R["Baad me kata nikla:<br/>Razorpay lautaye (refund)"]:::pill
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
@@ -310,7 +314,8 @@ flowchart LR
 ### 6e. Bank ne 12 minute lagaye, seat Priya ki, paisa kata (alag haalat + raat ki refund job)
 
 Maine parchi ki umar ke andar Pay dabaya, bank ne 12 minute lagaye. 6a se Pay dabate hi parchi ki umar ruk gayi thi, par 6c
-wali 30-55 second ki ghadi nikal gayi, booking FAILED, seat chhooti, aur D5 Priya ko mil gayi. 12ve
+wali 30-55 second ki ghadi nikal gayi, payment FAILED dikha, seat bachi umar tak meri HELD rahi; maine dobara pay nahi kiya,
+umar khatam, tab D5 Priya ko mili. 12ve
 minute pe event: "Arpan ka paisa kat gaya".
 
 Razorpay kitni der leta, wo hamara design nahi. Hamare haath me itna: Pay dabate hi ek chhotu Razorpay se har kuch
@@ -319,13 +324,13 @@ minute pe "paisa kat gaya" aaya, to DB me likho: paisa kata, seat nahi, refund d
 din me wapas". Raat ki sync job saare baaki refund karegi, warna Razorpay ko bolo "lautao"; bank se Razorpay baat karta
 hai, BookMyShow nahi.
 
-**Asli naam:** window khatam = 6c wali 30-55 sec client timeout (parchi ki umar nahi, wo PAYMENT_PENDING pe ruki thi), chhotu poochta = status poll job, paisa kata seat nahi = payment SUCCESS + booking FAILED (do alag
+**Asli naam:** window khatam = 30-55 sec pe payment FAILED, phir dobara pay nahi kiya to parchi ki bachi umar (hold_until) khatam, tab seat khuli, chhotu poochta = status poll job, paisa kata seat nahi = payment SUCCESS + booking FAILED (do alag
 haalat), refund dena = REFUND_PENDING, raat ki sync job = refund / reconciliation job, lautao = refund API.
 
 ```mermaid
 flowchart LR
     P["Pay dabaya"]:::card --> C["Chhotu Razorpay se<br/>poochta rahe (status poll)"]:::card
-    C -. "30-55 sec (6c) nikle: FAILED" .-> W["Seat khuli,<br/>Priya ne li"]:::bad
+    C -. "30-55 sec: payment FAILED, dobara pay nahi, umar khatam" .-> W["Seat khuli,<br/>Priya ne li"]:::bad
     C -- "12 min: paisa kata" --> D[("DB: payment SUCCESS,<br/>booking FAILED, REFUND")]:::pill
     D --> N["Raat ki job:<br/>Razorpay lautaye (refund)"]:::good
     linkStyle default stroke:#8fa3c7,stroke-width:2px
@@ -355,7 +360,7 @@ flowchart LR
     subgraph BOOK["BOOKING (seat)"]
         H1(["HELD"]):::pill --> PP(["PAYMENT_PENDING"]):::pill --> B1(["BOOKED"]):::good
         H1 --> E1(["EXPIRED"]):::bad
-        PP --> FB(["FAILED"]):::bad
+        PP -. "pay fail (30-55 sec), dobara pay" .-> H1
     end
     PAY ~~~ N["Sirf aage, peeche kabhi nahi:<br/>SUCCESS ke upar PENDING nahi"]:::card
     linkStyle default stroke:#8fa3c7,stroke-width:2px
