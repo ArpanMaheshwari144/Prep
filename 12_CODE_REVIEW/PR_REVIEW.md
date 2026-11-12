@@ -1,5 +1,30 @@
 # PR REVIEW — JP SUPERDAY
 
+## 0. DRILL KA HISAAB — har drill ek line (naya drill = neeche line jodo)
+
+| # | Din | PR | Bhaari bug | Pakde | Chhoote | FAISLA |
+|---|---|---|---|---|---|---|
+| 1 | 14 Oct | Loan prepay | 24 | 14 (+1 chhota) | baaki | |
+| 2 | 15 Oct | Mandate | 25 | 14 (+4 chhote) | baaki | |
+| 3 | 16 Oct | Reward redeem | 29 | 12 (+4 chhote) | baaki | |
+| 4 | 18 Oct | Card limit | 3 | 3 (+1 chhota) | - | chhoota |
+| 5 | 19 Oct | Fuel recharge | 3 | 3 (+1 chhota) | - | haan |
+| 6 | 20 Oct | Bijli bill | 4 | 2 | body se userId, fail pe 200 (enum == ko galti bola) | haan |
+| 7 | 21 Oct | Claim payout | 5 | 1 (body userId) | fail pe 200, owner check (soch me tha, likha nahi), bank call txn me bina timeout, double payout | haan |
+| 8 | 22 Oct | Cashback withdraw | 4 | 1 (owner check) | fail pe 200, bank call txn + timeout, double payout (enum == ko galti bola) | haan |
+| 9 | 24 Oct | FD premature close | 4 | 2 (owner, timeout) | double payout, fail pe 200, txn ke bahar | chhoota |
+| 10 | 25 Oct | RD close | 3 | 2 (double payout, txn ke bahar) | fail pe 200 | haan |
+| 11 | 31 Oct | Order refund | 3 | 1 (HTTP txn ke andar) | double refund, fail pe 200 (owner check tha, "nahi" bola) | haan |
+| 12 | 4 Nov | SIP redeem | 2 + 3 chhote | 2 (double payout, fail pe 200) | 409, magic 0.01, naam process (@RequiredArgsConstructor ko bug bola) | haan |
+| 13 | 12 Nov | FD close | 5 | 1 (fail pe 200 / string) + bahar call txn me | double payout, 409, magic 0.01, naam process (@RequiredArgsConstructor ko bug bola, owner check tha "nahi" bola) | haan |
+
+**Agla PR inhi pe banega (sabse zyada chhoote, upar wale pehle):**
+1. double payout / do click (check ACTIVE phir paisa) — chhoota 21, 22, 24, 31 Oct, 12 Nov · pakda 25 Oct, 4 Nov
+2. pehle se band pe bhi 200 "ho gaya" (409 chahiye) — chhoota 4 Nov, 12 Nov
+3. magic number (0.01) + naam (`process`) — chhoota 4 Nov, 12 Nov
+4. JAAL (bug NAHI): `@RequiredArgsConstructor` + final = constructor injection (4 Nov, 12 Nov galat bola) · owner check maujood hai to "nahi" mat bolo (31 Oct, 12 Nov) · enum == sahi (20, 22 Oct)
+5. fail pe 200 — ab 4 Nov, 12 Nov pakda; ek aur drill me aaye to table 2 me
+
 Drill se pehle: table 1 (chhoot rahe) padho, table 2 pe ek nazar. Baaki table PR ke waqt upar se neeche.
 
 ## 1. CHHOOT RAHE — har PR me inhe pehle dhoondo
