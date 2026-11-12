@@ -366,6 +366,38 @@ flowchart TB
     style RG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+## 11b. Neha online aayi, khabar 500 contacts ko? (sirf dukaan me aaye ko)
+
+Neha ne app khola, wo online ho gayi. Uske phone me 500 contacts. Seedha socho to server 500 ko bata de, par lakhon log
+har minute online / offline hote, har baar 500-500 khabar ka toofan, aur 500 me se zyada tar ne Neha ka naam us waqt
+screen pe dekha hi nahi. WhatsApp mujhe notification bhej ke thodi batayega ki dost online hai. Jisne Neha ki chat
+khol rakhi hai, bas use dikhao: 500 me se 10 ne chat kholi, to 10 ko. Jaise gaon me 500 log aur ek electronics ki
+dukaan. Nayi LED aayi, to dukaan wala 500 ke ghar nahi jaata, na bahar board laga ke raah chalte ko dikhata. Jo dukaan
+ke andar aaya, "aaiye sir, ye nayi LED aayi hai", usi ko dikhata hai.
+
+**Asli naam:** dukaan ke andar aaya = chat kholte hi phone server ko bolta "Neha ka status batate rehna" = subscribe,
+chat band = unsubscribe. Neha online hui (kadam 11 ka register badla) to server sirf subscribers ko bataye = presence
+pub/sub. Isliye kisi ka online dekhna ho to uski chat kholni padti hai.
+
+```mermaid
+flowchart TB
+    N["Neha online aayi<br/>(500 contacts)"]:::card
+    subgraph DK["DUKAAN: JINHONE NEHA KI CHAT KHOLI (subscribe)"]
+        S{"Sirf in 10 ko batao:<br/>Neha online (pub/sub)"}:::pill
+    end
+    Y["10 log jinki chat khuli:<br/>online dikha"]:::good
+    X["Baaki 490: kuch nahi bheja<br/>(chat kholenge tab dikhega)"]:::bad
+    N --> S
+    S -- "chat khuli" --> Y
+    S -. "chat band" .-> X
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style DK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 12. "Nahi, parso" pehle, "kal milte hain" baad me (phone number se kram lagaye)
 
 Ravi ne Arpan ko "kal milte hain" phir "nahi, parso" bheja. Pehla server S1 se gaya, doosra S2 se, S1 dheema tha.
