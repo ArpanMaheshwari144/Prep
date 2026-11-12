@@ -272,6 +272,8 @@ Ek array diya hai. Do subarray chuno jo lagaatar hon, khaali na hon, aur ek-doos
 > **PEHCHAAN / SAAR:** har WALL i pe: [0..i] ka best + [i+1..n-1] ka best -> sabka MAX
 > [2,1,-99,3,3] = 9: wall index 1 -> left [2,1] = 3 + right [3,3] = 6
 >
+> **★ COPY-PEN WALA SAWAAL: pehle copy pe array chala (5 step), phir code. Sheet dekh ke seedha likha to detail fisalti.**
+>
 > **★ REDO_2 me yahin atka: AAKHRI loop kahan tak?**
 >
 > andar `bestRight[i + 1]` padhna hai, isliye `i < n - 1` (i sirf n-2 tak).
