@@ -6,12 +6,12 @@ Drill se pehle: table 1 (chhoot rahe) padho, table 2 pe ek nazar. Baaki table PR
 
 | # | Code me dikhe | Asar | Sahi | Chhoota |
 |---|---|---|---|---|
-| 1 | `if (status == ACTIVE) { pay(); setStatus(CLOSED); save }` | do click / retry = do baar paisa | `UPDATE .. SET status='CLOSING' WHERE id=? AND status='ACTIVE'` (1 row tabhi aage) + idempotency key. Akela `@Transactional` nahi rokta, dono request ACTIVE padh lengi | 21, 22, 24, 31 Oct (25 Oct, 4 Nov PAKDA) |
-| 2 | `catch (Exception e) { return ok("FAILED"); }` | app ko 200 mila, samjha kaam ho gaya | 502 / 4xx + status FAILED | 20, 21, 22, 24, 25, 31 Oct (4 Nov PAKDA) |
-| 3 | `if (status == ACTIVE) { ... }` ke bahar kuch nahi, phir `ok("REDEEMED")` | pehle se band SIP pe bhi 200 "ho gaya" | ACTIVE nahi to 409 | 4 Nov |
-| 4 | `new BigDecimal("0.01")` jaisa seedha number | baad me koi samjhe hi nahi ye kya hai | `EXIT_LOAD` constant | 4 Nov (24 Oct pakda tha) |
-| 5 | method ka naam `process` / `handle` | naam se kaam pata nahi chalta | kaam ka naam: `redeem` | 4 Nov |
-| 6 | `@RequiredArgsConstructor` + `private final Repo repo;` | lagta hai constructor injection nahi | ye hi constructor injection hai, bug NAHI | 4 Nov galat bola |
+| 1 | `if (status == ACTIVE) { pay(); setStatus(CLOSED); save }` | do click / retry = do baar paisa | `UPDATE .. SET status='CLOSING' WHERE id=? AND status='ACTIVE'` (1 row tabhi aage) + idempotency key. Akela `@Transactional` nahi rokta, dono request ACTIVE padh lengi | 21, 22, 24, 31 Oct, 12 Nov (25 Oct, 4 Nov PAKDA) |
+| 2 | `catch (Exception e) { return ok("FAILED"); }` | app ko 200 mila, samjha kaam ho gaya | 502 / 4xx + status FAILED | 20, 21, 22, 24, 25, 31 Oct (4 Nov, 12 Nov PAKDA) |
+| 3 | `if (status == ACTIVE) { ... }` ke bahar kuch nahi, phir `ok("REDEEMED")` | pehle se band SIP pe bhi 200 "ho gaya" | ACTIVE nahi to 409 | 4 Nov, 12 Nov |
+| 4 | `new BigDecimal("0.01")` jaisa seedha number | baad me koi samjhe hi nahi ye kya hai | `EXIT_LOAD` constant | 4 Nov, 12 Nov (24 Oct pakda tha) |
+| 5 | method ka naam `process` / `handle` | naam se kaam pata nahi chalta | kaam ka naam: `redeem` | 4 Nov, 12 Nov |
+| 6 | `@RequiredArgsConstructor` + `private final Repo repo;` | lagta hai constructor injection nahi | ye hi constructor injection hai, bug NAHI | 4 Nov, 12 Nov galat bola |
 
 ## 2. PAKDE JAA RAHE — PR me mat do
 
