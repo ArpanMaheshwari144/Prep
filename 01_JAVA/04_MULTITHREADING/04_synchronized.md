@@ -54,6 +54,10 @@ hai. Aur agar 2 server chala diye, to har server ka apna taala hoga, aur dono ek
 e-commerce me ghee ki ginti ka taala Java me nahi, parchi pe lagaya tha (atomic UPDATE aur Redis `DECR`), aur banking me bhi
 yahi kiya tha.
 
+PR drill ka double payout (FD close, 12-Nov) bhi yahi race hai: "ACTIVE hai?" padha, phir paisa diya, phir CLOSED likha. Do click
+aaye to dono ne ACTIVE padha. Java ka `synchronized` 2 server pe nahi bachata, isliye taala DB pe:
+`UPDATE ... SET status='CLOSING' WHERE id=? AND status='ACTIVE'`, 1 row badli tabhi aage.
+
 ## Tera project
 
 Usercrud ke [`RateLimitController.hit()`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/controller/RateLimitController.java)
