@@ -49,24 +49,86 @@ class MyHashMap
 public:
     MyHashMap()
     {
+        sz = 0;
+        cap = 16;
+        buckets.resize(cap);
     }
 
     void put(string key, int val)
     {
+        int index = hash<string>{}(key) % cap;
+        Entry *node = new Entry(key, val);
+        if (buckets[index] == NULL)
+        {
+            buckets[index] = node;
+            sz++;
+        }
+        else
+        {
+            Entry *curr = buckets[index];
+            // yaha per hum biikul end tak
+            while (curr != NULL)
+            {
+                if (curr->key == key)
+                {
+                    curr->value = val;
+                    return;
+                }
+                else
+                {
+                    if (curr->next == NULL)
+                    {
+                        curr->next = node;
+                        sz++;
+                    }
+                }
+                curr = curr->next;
+            }
+        }
     }
 
     int get(string key)
     {
+        int index = hash<string>{}(key) % cap;
+        Entry *curr = buckets[index];
+        while (curr != NULL)
+        {
+            if (curr->key == key)
+            {
+                return curr->value;
+            }
+            curr = curr->next;
+        }
         return -1;
     }
 
     void remove(string key)
     {
+        int index = hash<string>{}(key) % cap;
+        Entry *curr = buckets[index];
+        Entry *prev = NULL;
+        while (curr != NULL)
+        {
+            if (curr->key == key)
+            {
+                if (prev == NULL)
+                {
+                    buckets[index] = curr->next;
+                }
+                else
+                {
+                    prev->next = curr->next;
+                }
+                sz--;
+            }
+            prev = curr;
+            curr = curr->next;
+        }
     }
 
     int size()
     {
-        return 0;
+        return sz;
     }
 };
 
@@ -74,7 +136,8 @@ int t = 0, pass = 0;
 void check(string naam, int got, int exp)
 {
     t++;
-    if (got == exp) pass++;
+    if (got == exp)
+        pass++;
     cout << "T" << t << " " << naam << ": " << (got == exp ? "PASS" : "FAIL") << "  got=" << got << " exp=" << exp << "\n";
 }
 
@@ -114,6 +177,7 @@ int main()
     check("get k8 (padosi bacha)", m.get("k8"), 64);
     check("size", m.size(), 50);
 
-    cout << "\n" << pass << "/" << t << " PASS\n";
+    cout << "\n"
+         << pass << "/" << t << " PASS\n";
     return 0;
 }

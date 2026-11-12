@@ -99,6 +99,8 @@ public:
         }
         else {                              // same index (collision) -> chain me jodo
             Entry *curr = buckets[index];
+            // curr != NULL (curr->next != NULL nahi): AAKHRI node pe bhi khade hoke uski key dekhni hai;
+            // wahan else ke if me curr->next == NULL dikhega -> usi ke next me naya node jod denge
             while (curr != NULL) {
                 if (curr->key == key) {
                     curr->value = val;      // key MILI -> value update
