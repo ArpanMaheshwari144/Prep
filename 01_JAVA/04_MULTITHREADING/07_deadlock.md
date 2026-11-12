@@ -14,6 +14,10 @@ jo bhej raha pehle:  DEADLOCK, 2 thread phase, koi error nahi
 id ke kram se lock:  dono transfer ho gaye
 ```
 
+Dono ek hi JVM me chalao to doosre me bhi DEADLOCK dikhta hai, kyunki pehle wale phase thread mare hi nahi. Deadlock khud
+nahi khulta. HLD Banking 3b ("Arpan se Ravi 500" + "Ravi se Arpan 300", do counter) yahi scene hai; wahan tune bola tha "ek hi
+line, ek counter" (= kram se lock) aur "pehle ek poora, phir doosra" (= DB atkan pakad ke ek rollback).
+
 ## Hal: sab ek hi kram me lock lein
 
 Deadlock ke liye 4 shart ek saath chahiye: ek cheez ek hi ke paas, ek pakad ke doosri ka intezaar, koi zabardasti chheen nahi
