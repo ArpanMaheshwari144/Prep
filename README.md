@@ -3,7 +3,7 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase, build done) = har hafte ka fix naqsha (11-Nov):** roz DSA 1 redo + grill 5 · HLD grill 5 (roz, kabhi nahi rukti, alag-alag design ke scene) + foundations 3 file · padhai us din ke VISHAY pe, sab jod ke (MON messaging / Kafka · TUE speed / cache + Collections + Streams · WED code ka design: Core Java, patterns, SOLID, LLD + system-write files ek nazar (CodeSignal jaisa) · THU concurrency · FRI security + API · SAT infra + Spring core · SUN transaction + DB + Spring data) · apply. Hafte me ek: THU PR drill · FRI naya HLD design (pehla inventory) · HLD WEEKEND ROUND SAT ya SUN (hafte me ek design: sikhao -> hand notes -> poora mock, mock ke andar 5 cross-sawaal = grill) · SUN STAR.
+> ★ **Abhi (DELIVERY + APPLY phase, build done) = har hafte ka fix naqsha (11 / 12-Nov):** ROZ, har din, naqshe se bahar: DSA 1 redo + DSA grill 5 + HLD grill 5 (+ reel ho to). MON-SUN = Java + Spring poora ghumana, har file ke saath uska HLD / DB jod (MON messaging / Kafka · TUE speed / cache + Collections + Streams · WED code ka design: Core Java, patterns, SOLID, LLD + system-write files ek nazar (CodeSignal jaisa) · THU concurrency · FRI security + API · SAT infra + Spring core · SUN transaction + DB + Spring data) · apply. HLD padhai din me EK (jis design ka us din round, uske 1-2 sawaal subah ki grill me). Hafte me ek: THU PR drill (chat me) · FRI naya HLD design (pehla inventory) · HLD WEEKEND ROUND SAT ya SUN (us design ki padhai -> USI DIN poora mock, bas) · SUN STAR. Plan pakka, din ke man se badalta.
 > Priority: HLD + Java / Spring ka gyaan gehra; DSA light (OA ka gate).
 > HLD = ek kahani: "main us situation me hota to kya karta", wahi jawab, naam baad me. Ratna nahi, kahani chala ke dekho (gira to? copy phati to?).
 
@@ -12,7 +12,7 @@ SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
   HLD: 20 design (sab kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 20 + 19 foundation + dikkat chain 21 parivaar
         har diagram hand notes ke shabdon se (8-Nov) · jahan ring, wahan consistent hashing
-  DSA: 18 pattern · 183 problem + 152 REDO = 335 .cpp · pattern sheet folder (19 file, 179 sawaal + MATHS KA KHEL)
+  DSA: 18 pattern · 183 problem + 154 REDO = 337 .cpp · pattern sheet folder (19 file, 179 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
 
@@ -29,7 +29,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 152 REDO + sheet (179 sawaal) | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 154 REDO + sheet (179 sawaal) | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -62,7 +62,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 - **[08_TESTING](01_JAVA/08_TESTING)** — [unit testing (JUnit + Mockito)](01_JAVA/08_TESTING/01_unit_testing_mockito.md) — mock/when/assert/verify + tautology-vs-logic + usercrud anchor.
 
-- **[09_SYSTEM_WRITE](01_JAVA/09_SYSTEM_WRITE)** — CodeSignal / Airbnb jaisa round: class ke method likho, tests pass karo. Har WED saari files ek nazar (upar ki galti lines + code), redo nahi — [L1 Wallet](01_JAVA/09_SYSTEM_WRITE/L1_Wallet.java) (Airbnb OA wala sawaal: create · deposit · transfer · getBalance, 21 test) · [Autodesk Banking](01_JAVA/09_SYSTEM_WRITE/Autodesk_Banking.java) (asli OA sawaal, 18 test; upar 3 galti: ulta check · `==` se naam · target `put` chhoota + bikhre output me debug ki tarkeeb)
+- **[09_SYSTEM_WRITE](01_JAVA/09_SYSTEM_WRITE)** — CodeSignal / Airbnb jaisa round: class ke method likho, tests pass karo. Har WED saari files ek nazar (upar ki galti lines + code), redo nahi — [L1 Wallet](01_JAVA/09_SYSTEM_WRITE/L1_Wallet.java) (Airbnb OA wala sawaal: create · deposit · transfer · getBalance, 21 test) · [Autodesk Banking](01_JAVA/09_SYSTEM_WRITE/Autodesk_Banking.java) (asli OA sawaal, 18 test; upar 4 galti: ulta check · `==` se naam · target `put` chhoota · timestamp ko id samjha + bikhre output me debug ki tarkeeb)
 
 - **[00_NOTES_BOOK](01_JAVA/00_NOTES_BOOK)** — poore Java notes ek kitaab me ([PDF](01_JAVA/00_NOTES_BOOK/Arpan_Java_Notes_V90.pdf) · [DOCX](01_JAVA/00_NOTES_BOOK/Arpan_Java_Notes_V90.docx)).
 
@@ -72,7 +72,7 @@ SAFAR (March: khaali folder)  ->  aaj
 ## [02_SPRING](02_SPRING)
 **Kya:** Spring Boot internals + persistence + messaging + deployment. &nbsp; **Kyu:** backend role ka dil; proxy / @Transactional / Hibernate-N+1 / Kafka = deep-grill ke pasandeeda sawaal.
 
-- **[01_basics](02_SPRING/01_basics)** — Spring ka andar-ka-jaadu (IoC/proxy) — [spring-kya-hai](02_SPRING/01_basics/01_spring_kya_hai.md) · [beans/IoC](02_SPRING/01_basics/02_beans_ioc_container.md) · [annotations/DI](02_SPRING/01_basics/03_annotations_di_types.md) · [proxy JDK-vs-CGLIB](02_SPRING/01_basics/04_proxy_jdk_cglib.md) · [auto-configuration](02_SPRING/01_basics/05_autoconfiguration.md)
+- **[01_basics](02_SPRING/01_basics)** — Spring ka andar-ka-jaadu (IoC/proxy) — [spring-kya-hai](02_SPRING/01_basics/01_spring_kya_hai.md) · [beans/IoC](02_SPRING/01_basics/02_beans_ioc_container.md) · [annotations/DI](02_SPRING/01_basics/03_annotations_di_types.md) (+ Lombok `@RequiredArgsConstructor` = constructor injection, PR ka jaal) · [proxy JDK-vs-CGLIB](02_SPRING/01_basics/04_proxy_jdk_cglib.md) · [auto-configuration](02_SPRING/01_basics/05_autoconfiguration.md)
   <br>&nbsp;&nbsp;↳ *live chal-ke-dekha:* proxy/singleton/prototype/BPP — demo `usercrud` project me (neeche [usercrud sandbox map](#usercrud--live-demo-sandbox))
   <br>&nbsp;&nbsp;↳ *concept-demo:* [ReflectionAnnotationDemo](02_SPRING/01_basics/practical/ReflectionAnnotationDemo.java) — "Spring annotation ko reflection se kaise padhta" (plain Java, koi Spring-dependency nahi; sirf concept dikhata)
 
@@ -225,7 +225,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 183 problem + 152 REDO = 335 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 183 problem + 154 REDO = 337 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + pattern sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
 - ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). 179 sawaal. Har sawaal pe moti line, phir SAWAAL (poore vakya + e.g. + kyun) · SAAR (dry-run / tasveer) · CHAABI (baingani dabba) · WARNING (peela dabba, aaj ke code ka trap) · CODE (tera code, ★ sirf kick line pe). Teri purani galti wali line kabhi nahi kati.
@@ -241,7 +241,7 @@ ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disg
 
 | # | Pattern | Problems | REDO | | # | Pattern | Problems | REDO |
 |---|---------|----------|------|---|---|---------|----------|------|
-| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 10 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 10 |
+| 01 | [TWO_POINTER](08_DSA/01_TWO_POINTER) | 18 | 10 | | 10 | [KADANE](08_DSA/10_KADANE) | 9 | 11 |
 | 02 | [SLIDING_WINDOW](08_DSA/02_SLIDING_WINDOW) | 17 | 12 | | 11 | [BIT_MANIPULATION](08_DSA/11_BIT_MANIPULATION) | 1 | 2 |
 | 03 | [HASHING](08_DSA/03_HASHING) | 16 | 17 | | 12 | [TREES](08_DSA/12_TREES) | 17 | 5 |
 | 04 | [PREFIX_SUM](08_DSA/04_PREFIX_SUM) | 7 | 10 | | 13 | [GRAPHS](08_DSA/13_GRAPHS) | 12 | 10 |
@@ -249,7 +249,7 @@ ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disg
 | 06 | [STACK](08_DSA/06_STACK) | 13 | 7 | | 15 | [INTERVALS](08_DSA/15_INTERVALS) | 4 | 4 |
 | 07 | [BINARY_SEARCH](08_DSA/07_BINARY_SEARCH) | 12 | 10 | | 16 | [BACKTRACKING](08_DSA/16_BACKTRACKING) | 7 | 8 |
 | 08 | [LINKED_LIST](08_DSA/08_LINKED_LIST) | 13 | 8 | | 17 | [DP](08_DSA/17_DP) | 16 | 17 |
-| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 5 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 5 |
+| 09 | [DESIGN](08_DSA/09_DESIGN) | 3 | 6 | | 18 | [GREEDY](08_DSA/18_GREEDY) | 5 | 5 |
 
 ---
 
@@ -277,9 +277,9 @@ ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disg
 ## [12_CODE_REVIEW](12_CODE_REVIEW)
 **Kya:** PR-review round ka framework. &nbsp; **Kyu:** JP Superday me ~10 min ka asli PR — bug + style.
 
-[PR review](12_CODE_REVIEW/PR_REVIEW.md) — sabse upar **10 SAWAAL** (fields · ID kiski · input · 2 request · save · bahar ki call · loop · catch · log · return), phir code ki har JAGAH ka section (class fields -> method params -> DB -> if -> write -> HTTP -> loop -> catch -> log -> return): code ki SHAKAL -> NAAM -> ASAR -> SAHI. End me **FAISLA** line, 3 blocker naam ke saath.
+[PR review](12_CODE_REVIEW/PR_REVIEW.md) — sabse upar **0. DRILL KA HISAAB** (har drill ek line: kitne pakde, kya chhoota + "agla PR inhi pe") · 1. CHHOOT RAHE · 2. PAKDE JAA RAHE · 3. CHECKLIST (12 jagah), phir code ki har JAGAH ka section (class fields -> method params -> DB -> if -> write -> HTTP -> loop -> catch -> log -> return): code ki SHAKAL -> NAAM -> ASAR -> SAHI. End me **FAISLA** line, 3 blocker naam ke saath.
 
-> **Drill ka tareeka:** answer-key pehle likhi, PR me sirf wo bug jo abhi chhoot rahe (file ke sabse upar list). 2 drill lagaataar pakda gaya to "mat do" list me.
+> **Drill ka tareeka:** drill CHAT me (file nahi), answer-key pehle. Har naye PR me "agla PR" list ke chhoote + jaal (jaise `@RequiredArgsConstructor`) zaroor, jab tak 2 drill lagaataar na pakde; phir "mat do" list me.
 
 ---
 
