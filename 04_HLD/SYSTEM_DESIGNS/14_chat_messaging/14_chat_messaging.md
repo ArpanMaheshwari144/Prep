@@ -366,26 +366,26 @@ flowchart TB
     style RG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 11b. Neha online aayi, khabar 500 contacts ko? (sirf dukaan me aaye ko)
+## 11b. Ravi online aaya, khabar 500 contacts ko? (sirf dukaan me aaye ko)
 
-Neha ne app khola, wo online ho gayi. Uske phone me 500 contacts. Seedha socho to server 500 ko bata de, par lakhon log
-har minute online / offline hote, har baar 500-500 khabar ka toofan, aur 500 me se zyada tar ne Neha ka naam us waqt
-screen pe dekha hi nahi. WhatsApp mujhe notification bhej ke thodi batayega ki dost online hai. Jisne Neha ki chat
+Ravi ne app khola, wo online ho gaya. Uske phone me 500 contacts. Seedha socho to server 500 ko bata de, par lakhon log
+har minute online / offline hote, har baar 500-500 khabar ka toofan, aur 500 me se zyada tar ne Ravi ka naam us waqt
+screen pe dekha hi nahi. WhatsApp mujhe notification bhej ke thodi batayega ki dost online hai. Jisne Ravi ki chat
 khol rakhi hai, bas use dikhao: 500 me se 10 ne chat kholi, to 10 ko. Jaise gaon me 500 log aur ek electronics ki
 dukaan. Nayi LED aayi, to dukaan wala 500 ke ghar nahi jaata, na bahar board laga ke raah chalte ko dikhata. Jo dukaan
-ke andar aaya, "aaiye sir, ye nayi LED aayi hai", usi ko dikhata hai. Aur main server se baar-baar poochta nahi ki Neha
+ke andar aaya, "aaiye sir, ye nayi LED aayi hai", usi ko dikhata hai. Aur main server se baar-baar poochta nahi ki Ravi
 online hai. Taar to pehle se khula hai (kadam 1). Maine chat kholi to bas server ko pata lag gaya, ab wo usi khule
 taar pe mujhe khud bata dega. Dono taraf se taar khula hai.
 
-**Asli naam:** dukaan ke andar aaya = chat kholte hi phone server ko bolta "Neha ka status batate rehna" = subscribe,
-chat band = unsubscribe. Neha online hui (kadam 11 ka register badla) to server sirf subscribers ko bataye = presence
+**Asli naam:** dukaan ke andar aaya = chat kholte hi phone server ko bolta "Ravi ka status batate rehna" = subscribe,
+chat band = unsubscribe. Ravi online hua (kadam 11 ka register badla) to server sirf subscribers ko bataye = presence
 pub/sub. Isliye kisi ka online dekhna ho to uski chat kholni padti hai.
 
 ```mermaid
 flowchart TB
-    N["Neha online aayi<br/>(500 contacts)"]:::card
-    subgraph DK["DUKAAN: JINHONE NEHA KI CHAT KHOLI (subscribe)"]
-        S{"Sirf in 10 ko batao:<br/>Neha online (pub/sub)"}:::pill
+    N["Ravi online aaya<br/>(500 contacts)"]:::card
+    subgraph DK["DUKAAN: JINHONE RAVI KI CHAT KHOLI (subscribe)"]
+        S{"Sirf in 10 ko batao:<br/>Ravi online (pub/sub)"}:::pill
     end
     Y["10 log jinki chat khuli:<br/>online dikha"]:::good
     X["Baaki 490: kuch nahi bheja<br/>(chat kholenge tab dikhega)"]:::bad

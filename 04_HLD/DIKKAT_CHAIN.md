@@ -534,7 +534,7 @@ Yahi dikkat yahan bhi:
   Docs     1   Save pe poora text, Arpan ki line gayab        ->  poora text nahi, operation bhejo (insert / delete)
   Chat     8   "12 naye message" kaise dikhe                  ->  ek ginti, itne padh liye (last_read_seq)
   Chat     9   kisne padha, 4.9 lakh entry                    ->  978 matlab 975 padha, number ghata lo (watermark)
-  Chat     11b Neha online, khabar 500 contacts ko?           ->  jo dukaan me aaya usi ko LED dikhao, chat kholi = subscribe (presence pub/sub)
+  Chat     11b Ravi online, khabar 500 contacts ko?           ->  jo dukaan me aaya usi ko LED dikhao, chat kholi = subscribe (presence pub/sub)
   Twitter  16  dabbe me sirf number, screen pe poora tweet    ->  ID se seedha page, photo CDN se (hydration)
   Twitter  16b tweet delete, 8000 dabbon me ID padi           ->  page pe "deleted" mile to dikhao mat (soft delete)
   Uber     16  Raju signal pe khada, har 4 sec wahi jagah     ->  sote ke kamre me baar-baar mat jao, 15-20 sec (adaptive ping)
