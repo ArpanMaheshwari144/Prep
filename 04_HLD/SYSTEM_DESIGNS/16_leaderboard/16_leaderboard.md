@@ -115,6 +115,9 @@ chhotu ka kaam, har kuch minute me sab dabbe mila ke ek bada board. Referee ke l
 **Asli naam:** mera rank = har shard se count (mere score se upar, `ZCOUNT`), jod ke +1. Poora board = background job
 jo snapshot banata.
 
+**Khiladi alag region me (12-Nov, Arpan):** FR ke hisaab se poora world board (kadam 6 ke neeche "12-Nov grill") se. Hum Arpan ki
+nazar se nahi, leaderboard ki nazar se soch rahe: sabka dekhna hai, US me Pablo ka bhi.
+
 ```mermaid
 flowchart TB
     A["Main India me 3,000 pe:<br/>duniya ka rank?"]:::card
@@ -171,6 +174,9 @@ se aaye log mila ke sort, mere upar ke 5 aur neeche ke 5. (Yahi soch cache kadam
 
 **Asli naam:** har shard se score range query (mere score ke thoda upar aur neeche, `ZRANGE BYSCORE REV`), merge, 5 + 5.
 
+**Khiladi alag region me (12-Nov, Arpan):** FR ke hisaab se poora world board se (neeche wala "12-Nov grill"); leaderboard ki
+nazar se sochna, sirf Arpan ki nahi.
+
 ```mermaid
 flowchart TB
     A["Mera score 5200"]:::card
@@ -202,6 +208,9 @@ Jaisa FR me tay kiya, kaam **poora world leaderboard** banana hai; Arpan ke aas-
 paanchon wale (50,000 me 20,000) pehle, unki rank pehle; baaki 30,000 baad me alag. Ek jitne sawaal walon me UTC me pehle khatam
 wala upar, barabar to milli second, wo bhi barabar to naam. Result aate jaayein, line me judte jaayein; rank dheere-dheere theek
 (Arpan ko thodi der 5,000, phir 50,000). Har baar region se "aas-paas" maangna bhaari, isliye ek board.
+Arpan ke upar ke 5 / neeche ke 5 seedha tay nahi hote, time se hote: ranking upar se dheere-dheere tay hoti, thodi der galat dikhe to farak
+nahi (LeetCode bhi time poora hone pe theek karta). Happy New Year film ka board: jab tak time poora nahi Team India neeche, result aate-aate
+upar. Rassi jaisa: chhoti baandhi, phir badi, dheere-dheere apne aap lambi.
 Bolne ki line: "FR ke hisaab se poora world board. Ek time zone (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle
 khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."
 **Asli naam:** global leaderboard (aggregator, sab region mila ke ek sorted board), sort key = solved desc, finish time asc, ms, naam (composite score, kadam 2), solved count ke hisaab se bucket, rank thodi der purani = eventual consistency.
