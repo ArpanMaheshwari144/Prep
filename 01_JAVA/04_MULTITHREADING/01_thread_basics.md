@@ -16,6 +16,9 @@ Ek counter (bina thread):          Teen counter (start()):             Galti se 
   kul: 907 ms                        kul: 305 ms                          kul: 902 ms
 ```
 
+Teen counter wale hisse me ek baar chalaya to user pehle start hua par sabse aakhir me aaya (orders, recomm, user). Teen
+counter ek saath chalein to kaun pehle khatam hoga, ye tay nahi hota.
+
 ## Khaas baat
 
 Naya counter kholne ke do tareeke hain: `extends Thread`, ya `implements Runnable`. Aaj kal log seedha lambda likhte hain:
