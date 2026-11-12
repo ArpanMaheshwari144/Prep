@@ -195,18 +195,14 @@ flowchart TB
 ```
 
 **Maan lo (12-Nov grill) dabbe region ke hisaab se (India, US, Europe), Arpan world rank 50,000, world me upar ke 5 aur neeche ke 5:**
-Raasta 1 (upar wala): har region se Arpan ke **score** ke aas-paas wale maango, jodo. Region ko "rank 50,000" mat bolo, uski rank
-apni line ki hai; score teeno jagah ek matlab rakhta. Raasta 2 (Arpan): ek bada bhai teeno line ek saath milata, jaise teen class ke
-bachche marks / waqt ke kram me ek line me. Dheere-dheere world board banta, shuru me rank thodi galat, phir apne aap theek. Arpan
-50,000 pe aaya to aage-peeche ke 5 seedha world board se.
-Arpan (ICPC jaisa): contest khatam, bada bhai har region se score + khatam karne ka waqt le ke sabko ek line me. Score barabar to UTC
-me pehle khatam wala upar, waqt bhi barabar to milli second, wo bhi barabar to naam se. Har baar "mere aas-paas" ke liye teeno se
-maangna bhaari, isliye pehle sab ek saath milao, phir rank dheere-dheere theek.
-Kaunsa kab: raasta 1 me bojh baanta rehta aur rank taaza, par har page pe teeno se poochhna; raasta 2 me page turant, par poora board
-ek jagah aur rank thodi der purani. "Mere aas-paas" page (lakhon log, baar-baar) = raasta 1; world top list = raasta 2.
-Bolne ki line: "Do raaste hain: har region se score ke aas-paas maang ke jodo, ya bada bhai sab milake world board banaye. Mere
-aas-paas ke liye pehla, world top list ke liye doosra, wahan thodi der purani rank chalegi."
-**Asli naam:** raasta 1 = score range query har shard pe + merge (scatter-gather), raasta 2 = global merged board (aggregator, k-way merge), rank thodi purani = eventual consistency. Barabari: score -> UTC waqt -> milli second -> naam (tie-break).
+Pehle FR todo: kaam Arpan ke 5 + 5 nahi, **poora world leaderboard**; Arpan ke aas-paas wale isi board ka hissa. Contest ek jagah
+(ICPC jaisa), sabka waqt ek time zone, UTC. Bada bhai sab region ka result likhe. Pehle gino kisne kitne sawaal kiye: 5 me se
+paanchon wale (50,000 me 20,000) pehle, unki rank pehle; baaki 30,000 baad me alag. Ek jitne sawaal walon me UTC me pehle khatam
+wala upar, barabar to milli second, wo bhi barabar to naam. Result aate jaayein, line me judte jaayein; rank dheere-dheere theek
+(Arpan ko thodi der 5,000, phir 50,000). Har baar region se "aas-paas" maangna bhaari, isliye ek board.
+Bolne ki line: "Pehle FR: poora world board. Ek time zone (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle
+khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."
+**Asli naam:** global leaderboard (aggregator, sab region mila ke ek sorted board), sort key = solved desc, finish time asc, ms, naam (composite score, kadam 2), solved count ke hisaab se bucket, rank thodi der purani = eventual consistency.
 
 ## 7. Redis gira to saare score? (clone, phir DB)
 
