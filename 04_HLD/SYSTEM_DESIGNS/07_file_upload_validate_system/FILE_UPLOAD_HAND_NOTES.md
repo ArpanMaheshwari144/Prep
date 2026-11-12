@@ -33,9 +33,9 @@ Arpan: Wahi Kafka aur Notification wala: vasiyat likh do. UPLOADED ke saath hi l
 Technical me: "UPLOADED ke saath vasiyat" = outbox (status + scan ka kaam ek hi DB transaction me), "baad me koi daal dega" = relay.
 
 **Maan lo S3 ne "file aa gayi" do baar bataya, ya ulte kram me.**
-Arpan: Do baar aa sakta hai, koi dikkat nahi. Parchi rakho: is file ka kaam ho gaya, likh liya; dobara aaya to dekha ho gaya, chhod do. Ulta aaya to dekho kaunsa naya hai, purana aaya to chhod do.
+Arpan: Do baar aa sakta hai, koi dikkat nahi. Parchi rakho: is file ka kaam ho gaya, likh liya; dobara aaya to dekha ho gaya, chhod do. Ulta aaya to dekho kaunsa naya hai, purana aaya to chhod do. (12-Nov grill, resume v1 phir v2, event ulte aaye: apna thappa lagao, pehli = current, doosri = updated. V1 / V2 ke naam se nahi, apne thappe se faisla; purana thappa baad me aaya to phenk do.)
 S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered at least once." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html) aur "Event notifications aren't guaranteed to arrive in the same order that the events occurred." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html)
-Technical me: "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa naya" = S3 event ka `sequencer` (bada = baad wala, usi file ke liye).
+Technical me: "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa naya" / "apna thappa" = S3 event ka `sequencer` ya hamara version number (bada = baad wala, usi file ke liye).
 
 **5. "Goa trip" folder (Day1, Day2, 500 photo). S3 me folder hote hi nahi; naam path me likha to rename = 500 copy + 500 delete.**
 Arpan: Folder ka hisaab alag, apne server me. Ek parent, baaki uske child, tree jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent ka naam badlo, saare bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora. S3 sirf files rakhe.

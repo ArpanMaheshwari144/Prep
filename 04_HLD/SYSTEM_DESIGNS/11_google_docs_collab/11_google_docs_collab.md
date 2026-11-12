@@ -196,6 +196,10 @@ flowchart TB
     style DC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+**Maan lo (12-Nov grill) poore data center ki bijli gayi, dabba aur copy dono ek hi jagah the:** ek jagah mat rakho. Arpan ka data
+Mumbai me, copy Delhi ke data center me; Mumbai gaya to Delhi se. (Infra ka sawaal, kam hi hota.)
+**Asli naam:** multi-region replica (alag data center me copy).
+
 ## 6. Ravi hata, phir bhi 2 minute likhta raha (memory me note + tez bhaagne wala bachcha)
 
 Main doc ka maalik, maine Ravi ko hata diya. Par Ravi ke server ke paas permission ki purani copy, "Ravi = editor", to

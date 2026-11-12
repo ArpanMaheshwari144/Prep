@@ -173,6 +173,12 @@ dabbe extra, load ek machine pe na rahe. Stadium, Connaught Place jaise hotspot 
 booking ki had paar ho to system apne aap dabbe badha de.
 **Asli naam:** ek dabbe pe saara bojh = hot cell (hot shard), 2-3 dabbe extra = hot cell ko chhote dabbon me tod ke kai shard pe, pehle se = pre-scaling, had paar to apne aap = auto-scaling.
 
+**Maan lo (12-Nov grill) India-Pakistan match, 2 lakh log, server badhane se kaam nahi chala to dabba tukdon me toda. Arpan ke tukde
+me koi khaali driver nahi, 300 meter door neeche wale tukde me 5, par doosre server pe:** Pehle server badhao, kaam na chale tab hi
+todo. Toda to ek papa ji (bada aadmi) jo sab tukde dekhe: Arpan ka tukda + uske upar, neeche, bagal wale tukde, unke khaali driver
+Arpan ko. Har tukde ke liye yahi. Phir bhi bheed to gola bada.
+**Asli naam:** pehle scale out, zaroorat pe split, papa ji = coordinator jo kai server se poochh ke jode (scatter-gather), aas-paas ke tukde = neighbour cells.
+
 ## 7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha (ghadi server ki)
 
 Raju ne 14.9 sec pe accept dabaya, par server pe 16 sec pe pahuncha, tab tak Priya ko de diya. Ghadi server ki hai. 15

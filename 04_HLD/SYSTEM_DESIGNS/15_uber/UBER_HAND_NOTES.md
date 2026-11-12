@@ -42,6 +42,10 @@ Technical me: "500 andar, baaki line" = virtual queue, "kiraya badhao, door ki c
 Arpan: Pehle to itne driver us dabbe me honge hi nahi, gola bada karo, Gomti Nagar, Chinhat se bhi gaadi aaye. Aur ek server pe bojh: us ilaake ke liye 2-3 dabbe extra laga do taaki load ek machine pe na rahe. Har baar haath se nahi lagaunge: stadium, Connaught Place jaise hotspot pata hain, wahan pehle se 2-3 extra dabbe le ke chalo, aur 40-50 hazaar booking ki had paar ho to system apne aap dabbe badha de.
 Technical me: "ek dabbe pe saara bojh" = hot cell (hot shard), "2-3 dabbe extra" = hot cell ko chhote dabbon me tod ke kai shard pe baanto, "pehle se le ke chalo" = jaane-pehchaane hotspot pe pre-scaling, "had paar to apne aap" = auto-scaling.
 
+**Maan lo (12-Nov grill) India-Pakistan match, 2 lakh log. Server badhane se kaam nahi chala, to stadium wala dabba tukdon me toda, har tukda apne server pe. Arpan Gate 3 pe, uske tukde me ek bhi khaali driver nahi; 300 meter door neeche wale tukde me 5 khaali driver, par wo doosre server pe. App bola "koi driver nahi".**
+Arpan: Pehle server badhao, kaam na chale tab hi todo, aur 25-50 hazaar ke hisaab se, jitne zaroori. Toda to dikkat aayi: Arpan upar wale tukde me, khaali driver neeche wale me aaram se pastry kha raha. To ek papa ji le aao, bada aadmi jo sab tukde dekhta hai. Arpan ki request aaye to sirf uska tukda nahi, uske upar, neeche aur bagal wale tukde bhi dekho, unme khaali driver ho to Arpan ko. Ye har tukde ke liye. Phir bhi bheed zyada to gola bada.
+Technical me: "pehle server, phir todo" = pehle scale out, zaroorat pe hi split, "papa ji jo sab tukde dekhe" = coordinator jo kai server se poochh ke jode (scatter-gather), "upar, neeche, bagal wale tukde" = neighbour cells (kadam 4 wala gola).
+
 **7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak Priya ko de diya.**
 Arpan: Ghadi server ki. 15 sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd. Uber me bhi aise booking cancel hoti dikhti.
 Technical me: "ghadi server ki" = TTL ka faisla server pe, der se aaya accept reject.
