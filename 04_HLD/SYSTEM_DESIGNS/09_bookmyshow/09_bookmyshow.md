@@ -14,7 +14,8 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ```
 FR      show aur seat map dekho · seat chuno -> pay karo -> ticket pakka
         · seat chuni to 5 minute tere naam rukti, pay nahi kiya to chhoot jaati
-        · pay 30-55 sec me na ho to payment fail dikhe, par seat bachi umar tak teri, dobara pay kar sake
+        · pay ~1 minute (30-55 sec + thoda buffer) me na ho to payment fail dikhe, par seat bachi umar tak teri, dobara pay kar sake
+        · 1 minute ke andar paisa kata to seat pakki; uske baad kata to refund
 NFR     ek seat kabhi do logon ko na bike (yahi dil hai) · seat map dekhna tez · badi movie ke din ki bheed jhele
 Numbers advance booking 10 baje: 10 lakh log ek saath, seat sirf 50 hazaar · 100 log map dekhte to ~1-2 book karte
         -> dekhna bahut, likhna kam · data chhota (aaj + agle hafte ke show), purana archive
@@ -221,6 +222,16 @@ consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa 
 **Asli naam:** 1-2 baar ping = status check retry (timeout), payment FAILED dikha do, seat mat chhodo = payment attempt FAILED, booking wapas HELD (hold_until tak), umar khatam to EXPIRED,
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
+
+**Ghadi pakki (12-Nov, Arpan):** ghadi lagbhag 1 minute, 30-55 second + 5 second ka buffer: Razorpay ki taraf hum baithe nahi
+reh sakte, peeche aur log hain, aur user khud pareshan hota "seat hui ya nahi, paisa kata ya nahi". Gole ke beech UI pe likho
+"tumhara payment process ho raha hai, bank se jawab aate hi batayenge", peeche chhotu Razorpay se poochhta rahe. 1 minute ke
+andar paisa kata to seat BOOKED, refund nahi. 1 minute ho gaya aur jawab nahi, to "booking fail hui, paisa kata hoga to wapas
+aa jaayega, seat abhi bhi tumhari HELD hai, dobara pay kar lo"; dobara pay doosre PSP pe, seat ki umar thodi badha do, us
+umar me pay nahi kiya to seat hat jaati. DB me likho: booking fail, paisa kata ho to refund; Razorpay ko bolo "kata ho to
+lautao", wo bank se poochh ke lautata aur hume batata. 1 minute ke baad aaya "paisa kat gaya" = refund.
+**Asli naam:** client timeout ~60 sec, PAYMENT_PENDING UI message + status poll, 1 minute ke andar SUCCESS = BOOKED, baad me
+= attempt FAILED + booking HELD (umar thodi badhi, phir EXPIRED), der se SUCCESS = REFUND_PENDING + refund API, dobara pay = PSP-2.
 
 ```mermaid
 flowchart TB
