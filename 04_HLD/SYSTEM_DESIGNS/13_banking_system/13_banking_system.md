@@ -62,7 +62,7 @@ paas hai. Hum dekh lenge ki 500 chale gaye, to mana kar do: "nahi bhai, 500 tumh
 **Maan lo agle din Arpan sach me Ravi ko phir 500 bhejna chahta hai:** diary me pehle se "Arpan se Ravi, 500" hai, to
 cashier use bhi mana kar dega. Wahi purani parchi hai ya nayi, kaise pehchaane? To ek key bana do, aisi jo badle hi na.
 Maine ek parchi pe likh diya ki Ravi ko 500 bhejne hain is waqt, aur parchi bank wale ko de di. Mujhe nahi pata gaye ki
-nahi, to main dobara wahi same parchi dunga, key thodi badli. Wo dekhega: "abe yaar ye to same hi hai, ise kyun wapas
+nahi, to main dobara wahi same parchi dunga, key thodi badli, key to same hi hai. Wo dekhega: "abe yaar ye to same hi hai, ise kyun wapas
 bhejna, hatao." Nayi baar bhejna hai to nayi parchi, nayi key.
 
 **Asli naam:** "log hamare paas hai, dekh ke mana" = DB me pehle wala record dekh ke dobara mat kaato. Parchi ki key =
