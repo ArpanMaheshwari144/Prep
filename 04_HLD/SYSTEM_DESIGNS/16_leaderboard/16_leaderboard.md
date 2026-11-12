@@ -13,8 +13,10 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      score update · top 10 · mera rank · mere aage-peeche ke 5 · aaj / hafta / all-time board
-        · score barabar to pehle pahuncha wo upar
+        · score barabar to pehle pahuncha wo upar (contest me: ek time zone UTC, pehle khatam wala, phir milli second, phir naam)
+        · khiladi alag region (India, US, Europe) me hon to bhi EK poora world board; mere aage-peeche ke 5 usi board se
 NFR     top 10 aur rank turant (milli second) · naya score kuch second me board pe · thoda purana referee board chalega · Redis gira to score na khoye
+        · world board pe rank thodi der purani chalegi (result aate-aate apne aap theek)
 Numbers 1 crore khiladi · har second lakhon match khatam -> likhai bahut · board dekhne wale usse bhi zyada
         -> har baar 1 crore sort / ginti nahi chal sakti
 ```
@@ -195,12 +197,12 @@ flowchart TB
 ```
 
 **Maan lo (12-Nov grill) dabbe region ke hisaab se (India, US, Europe), Arpan world rank 50,000, world me upar ke 5 aur neeche ke 5:**
-Pehle FR todo: kaam Arpan ke 5 + 5 nahi, **poora world leaderboard**; Arpan ke aas-paas wale isi board ka hissa. Contest ek jagah
+Jaisa FR me tay kiya, kaam **poora world leaderboard** banana hai; Arpan ke aas-paas wale isi board ka hissa. Contest ek jagah
 (ICPC jaisa), sabka waqt ek time zone, UTC. Bada bhai sab region ka result likhe. Pehle gino kisne kitne sawaal kiye: 5 me se
 paanchon wale (50,000 me 20,000) pehle, unki rank pehle; baaki 30,000 baad me alag. Ek jitne sawaal walon me UTC me pehle khatam
 wala upar, barabar to milli second, wo bhi barabar to naam. Result aate jaayein, line me judte jaayein; rank dheere-dheere theek
 (Arpan ko thodi der 5,000, phir 50,000). Har baar region se "aas-paas" maangna bhaari, isliye ek board.
-Bolne ki line: "Pehle FR: poora world board. Ek time zone (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle
+Bolne ki line: "FR ke hisaab se poora world board. Ek time zone (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle
 khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."
 **Asli naam:** global leaderboard (aggregator, sab region mila ke ek sorted board), sort key = solved desc, finish time asc, ms, naam (composite score, kadam 2), solved count ke hisaab se bucket, rank thodi der purani = eventual consistency.
 
