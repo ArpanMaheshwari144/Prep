@@ -38,6 +38,7 @@ Humne socha: 5 minute dekhunga, phir phaad do. Parchi pe hi umar likh do, apne a
 
 Yahi dikkat yahan bhi:
   Stock    3   35,000 se do order, chahiye 70,000             ->  EMI jaisa paisa hold (funds block)
+  Stock    3e  order khula (35,000 hold), 20,000 withdraw         ->  beech se nahi; cancel karo (poora wapas) ya modify karke chhota (withdraw sirf available se)
   Stock    3b  10 chahiye, 4 mile, 6 baaki                    ->  FR: 4 abhi + 6 ka hold jaari (partial) ya 10 nahi to kuch nahi, hold wapas (Fill-or-Kill)
   Stock    3c  3500 ka order, market band, bika nahi          ->  order khula, hold jaari, cancel pe wapas (Good Till Cancelled)
   Stock    3d  Ravi ke 10 share, 2 sell order, 20 bike        ->  share bhi hold, naya nahi, wahi order ka bhaav badlo (modify order)

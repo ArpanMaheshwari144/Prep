@@ -18,6 +18,10 @@ Technical me: "ek key laga de" = idempotency key (client_order_id), "chaabi ka t
 Arpan: Arpan ko ye paise kharch karne hi na de. Bank me EMI bharte hain na, bahut log bolte "bank ne mera paisa hold kar rakha, na kharch kar sakta na kahin kar sakta". Salary account pe EMI daal rakhi to wo paisa hold ho jaata hai. Same to same yahin kar lo, paisa hold kar lo, wo kahin bhi kharch nahi kar paayega.
 Technical me: "paisa hold kar lo, jaise EMI me bank" = funds block (available se kam, blocked me), "kharch hi na kar paaye" = doosra order reject.
 
+**Maan lo order khula pada hai (35,000 hold) aur Arpan ne "withdraw to bank" se 20,000 nikalne chahe.**
+Arpan: Ek aadmi 35,000 de gaya, maine entry bana di aur manager ko vaada kar diya ki 35,000 aa rahe. Thodi der baad bola "20,000 urgent chahiye". Beech me se nahi dunga, kyunki saamne vaada ho chuka. Do raaste: order cancel kar, poore 35,000 wapas tere account me, phir jitne nikalne nikaal; ya UI me modify ho to order chhota kar (15,000 ka), 20,000 free. Aadha-aadha nahi. Paisa uska hai, hold hamesha ke liye nahi, cancel ka raasta hamesha khula (har trading app deta).
+Technical me: withdraw sirf available se (balance - blocked = 0, isliye reject + "order cancel / modify karo"), cancel = hold wapas available me, modify order = hold chhota.
+
 **Maan lo Arpan ko 10 TCS chahiye, 35,000 hold; Ravi sirf 4 bech raha, 4 mile, 6 baaki.**
 Arpan: Main beech me baitha hoon. Arpan bola 10 TCS chahiye, Ravi sirf 4 bech raha. Yahan design choice hai, FR dekho: kya Arpan ko 10 abhi turant chahiye? Haan to 4 bhi mat do, sauda hi nahi, aur uska hold wapas kar do. Intezaar kar sakta hai to Ravi ke 4 abhi de do, baaki 6 ka hold rehne do; jab koi aur 6 bechne aayega, main use de dunga, Arpan ko kuch karna nahi.
 Technical me: "4 abhi, 6 baad me" = partial fill (order PARTIALLY_FILLED, baaki 6 order book me), "10 turant warna nahi" = all-or-nothing (Fill-or-Kill, hold wapas), FR tay kare. Partial me 4 ka paisa kata (14,000), baaki 6 ka hold (21,000) jaari.

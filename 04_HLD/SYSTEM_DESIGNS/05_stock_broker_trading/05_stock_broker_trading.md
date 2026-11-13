@@ -99,6 +99,10 @@ nahi kar paayega, INFY wala order lagta hi nahi.
 **Asli naam:** paisa hold = funds block (available se ghata ke blocked me, check aur kaatna ek query me), kharch na kar
 paaye = doosra order reject.
 
+**Maan lo order khula (35,000 hold) aur Arpan "withdraw to bank" se 20,000 nikalna chahe:** beech me se nahi, kyunki saamne vaada ho chuka. Ya order
+cancel karo (poore 35,000 wapas, phir nikaalo), ya modify karke chhota karo (15,000 ka order, 20,000 free). Paisa uska hai, cancel ka raasta hamesha khula.
+**Asli naam:** withdraw sirf available se (balance - blocked), warna reject; cancel = hold wapas available me; modify order = hold chhota.
+
 **Maan lo Arpan ko 10 TCS chahiye, 35,000 hold; Ravi sirf 4 bech raha, 4 mile, 6 baaki:** Main beech me baitha hoon. Arpan bola 10 TCS chahiye, Ravi sirf 4 bech raha. Yahan design choice hai, FR dekho: kya Arpan ko 10 abhi turant chahiye? Haan to 4 bhi mat do, sauda hi nahi, aur uska hold wapas kar do. Intezaar kar sakta hai to Ravi ke 4 abhi de do, baaki 6 ka hold rehne do; jab koi aur 6 bechne aayega, main use de dunga, Arpan ko kuch karna nahi.
 **Asli naam:** "4 abhi, 6 baad me" = partial fill (order PARTIALLY_FILLED, baaki 6 order book me), "10 turant warna nahi" = all-or-nothing (Fill-or-Kill, hold wapas), FR tay kare. Partial me 4 ka paisa kata (14,000), baaki 6 ka hold (21,000) jaari.
 
