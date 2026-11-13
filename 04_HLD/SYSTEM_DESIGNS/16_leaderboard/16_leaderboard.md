@@ -219,6 +219,10 @@ aas-paas, to seedha Delhi, New York, Stockholm wale dabbe; Bangalore, Mumbai ko 
 Ye andaze wali rank, galat hogi; rank sirf time se nahi, galat jawab / retry bhi ginte (pehle khatam par 3 galat < 1 minute baad bina galti).
 Sabka khatam hote-hote rank theek, asli rank contest poora hone pe.
 **Asli naam:** range partitioning (score range pe shard), coordinator = shard map / router, sirf matching shard pe range query, estimated rank, penalty (LeetCode: har galat submission pe 5 minute).
+**Aur tez (13-Nov, Arpan):** chalte contest me availability zyada, consistency kam (sahi rank waise bhi ant me). Sign-up pehle hota, to pehle se pata India 50,000,
+US 30,000, Europe 20,000: usi hisaab se jagah baant do (ye rank nahi, bas baantna, jaise URL me server ko counter ki range). Desh ke andar IP se shehar, har desh ka
+coordinator; ek dabbe pe kai thappe ho sakte. Query 1 crore nahi dekhti. Asli rank world board pe.
+**Asli naam:** AP + eventual consistency, capacity planning / pre-partition (sign-up count se), geo routing (IP), shard map me har shard ki kai range, partition key != rank.
 Bolne ki line: "FR ke hisaab se poora world board. Ek time zone (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle
 khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."
 **Asli naam:** global leaderboard (aggregator, sab region mila ke ek sorted board), sort key = solved desc, finish time asc, ms, naam (composite score, kadam 2), solved count ke hisaab se bucket, rank thodi der purani = eventual consistency.
