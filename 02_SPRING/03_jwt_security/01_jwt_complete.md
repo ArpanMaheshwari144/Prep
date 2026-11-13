@@ -40,6 +40,12 @@ Hal: access token chhota rakho (15 min ka, har request me jaata hai), aur refres
 Ek baat saaf: chori hua token badle bina chalaya gaya to mohar sahi hi rahegi. Mohar sirf token badalne aur nakli token banane se bachati hai,
 chori se nahi. Isliye chori ka khatra utna hi bachta hai jitni access token ki umar, aur saath me HTTPS lagta hai.
 
+## HLD se jod
+
+Rate limiter me "login ke baad userId pe kadi had" wala userId yahi token deta hai. Docs me "har edit pe dekho abhi haq hai ya nahi" wahi
+baat hai jo yahan hai: token se pata chalta hai banda kaun hai (authentication), par order ya doc uska hai ya nahi, ye owner / permission
+check alag se karna padta hai (authorization).
+
 ## Tera project (usercrud)
 
 - `SecurityConfig` me session `STATELESS` hai, `/auth/**` pe permitAll hai, baaki sab authenticated hai, aur
