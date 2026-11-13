@@ -4,6 +4,14 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan ne apni news app kholi, "Arpan News". Apna reporter koi nahi, khabar bahar ki 5000 site se aati hai.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      5000 site se khabar laao · user ko taazi feed (uski category) · ek khabar ek hi baar (best effort, kabhi dohra chalega)
+NFR     feed turant (~200 ms) · khabar 5-10 min se purani nahi · ek site band ho to baaki na ruke
+Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec · nayi khabar ~1 / sec
+        -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta
+```
+
 &nbsp;
 
 **1. NDTV, Times, Cricbuzz jaisi 5000 site kabhi bhi khabar daalti hain. Ravi 9 baje khole to 8:55 wali "India ne match jeeta" dikhe. Khabar aayegi kaise?**

@@ -4,6 +4,15 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Maan lo Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath. Arpan, Ravi aur India ke 2 crore log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      video chalana (play) · ruk ke kisi bhi device pe wahi se aage · app kholte hi "tere liye" wali line
+NFR     play dabate hi video, buffering nahi · kamzor net aur purane TV pe bhi chale · 12:30 jaisi bheed bhi jhele · "tere liye" line turant
+        (thodi purani chalegi) · data pahunchane ka kharcha kam
+Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabko video nahi bhej sakte
+        · har film kai size me -> poora maal kisi ek dabbe me nahi samaata
+```
+
 &nbsp;
 
 **1. Saari episode US ke store me. 12:30 pe karodon log wahi file maang rahe, har tukda samundar paar se, Ravi ke TV pe buffering, data pahunchane wali company ka bill aasmaan pe.**

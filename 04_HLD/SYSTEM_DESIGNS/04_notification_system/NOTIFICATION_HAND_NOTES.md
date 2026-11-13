@@ -4,6 +4,16 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan ek shopping app se order karta hai. Order hone pe app use teen jagah khabar bhejti hai: SMS ("order placed"), email (bill) aur phone pe push ("shipped"). Ye khabar bhejne ka system Arpan bana raha hai.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      ek ghatna (order hua) -> SMS / email / push · user ki pasand maano · message ka saancha ("Hi {naam}")
+        · OTP jaisa zaroori pehle jaaye, umar khatam ho to mat bhejo · ek saath crore logon ko offer bhi bhej sakein
+NFR     Order Service ruke nahi · khabar khoye nahi · do baar na jaaye (kabhi-kabhar dohra ho to ek hi OTP code, dohra pakdo)
+        · OTP turant, offer ruk sakta · SMS pahuncha ya nahi, pata ho
+Numbers 10 crore user x 5 khabar = 50 crore roz, ~5,800 / sec · sale pe 10 guna
+        SMS company ki had 100 / sec · Diwali campaign = 1 crore log ek saath
+```
+
 &nbsp;
 
 **1. Order Service khud DB me order likhta, phir khud SMS, email, push company ko call karta. SMS company dheemi, har call 8 second, "Place Order" ka button 8 second ghoome. SMS company band ho to order hi fail dikhe, jabki DB me likha ja chuka.**

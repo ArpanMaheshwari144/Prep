@@ -4,6 +4,15 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan dukaan pe khade ho ke app se pay karta hai. Uska paisa HDFC me, dukaan wale ka ICICI me. Hamara app na HDFC ka, na ICICI ka.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      dukaan ko pay (bank se, PSP ke zariye) · dukaan ka paisa wallet se uske bank me · fail ho to paisa wapas
+        · wallet top-up · wallet se wallet (Arpan se dukaan)
+NFR     do baar na kate · paisa kabhi gayab na dikhe · kuch gire to bhi payment atka na rahe · har paisa trace ho
+Numbers ~10 crore user, aam din kuch sau payment / sec, Diwali pe ~3,000 / sec
+        -> aam din bheed badi dikkat nahi, sahi hona badi dikkat · Diwali ka 3,000 / sec ek register nahi jhelega (kadam 9)
+```
+
 &nbsp;
 
 **1. Arpan ne "pay 500" dabaya, app ko HDFC khaate se 500 nikalne hain. Par app HDFC ka hissa nahi, HDFC hamari sunta hi nahi. Har bank se khud judne jaayein to alag manzoori, saalon lag jaayenge.**

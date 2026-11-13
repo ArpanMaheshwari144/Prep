@@ -4,6 +4,14 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** ek aam file-sharing app. Arpan 2 GB ki video / 10 GB file / "Goa trip" folder daalta hai, Ravi ke saath share karta hai.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      file upload (badi bhi, folder bhi) · jaanch (virus + sach me wahi type) · status dikhe · share + download
+NFR     user ruke nahi · file khoye nahi · ek ki file doosra na dekhe · bheed (shaam ko hazaaron upload) me bhi chale
+Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi nahi chahiye
+        status log baar-baar dekhte -> padhna zyada, likhna kam
+```
+
 **Pehle poochho kaunsa product** (Arpan: "har file upload alag, koi scan karta koi nahi, koi 10 GB / folder leta hi nahi"): core = 1, 3, 4, 6 har jagah (seedha S3 bhi core, kyunki 3, 4, 6 usi pe tike); agar badi file = 2 ka tukde wala hissa; agar folder = 5; agar bahar ki file (virus scan) = 8.
 
 &nbsp;

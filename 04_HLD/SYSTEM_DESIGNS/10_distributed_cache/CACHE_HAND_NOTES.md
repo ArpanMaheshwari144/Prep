@@ -4,6 +4,15 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan ki app me har bande ka profile page hai (naam, photo, bio). Ravi mashhoor hai, uska profile din me lakhon log kholte hain. Data DB me hai, aur har baar server DB se padh ke laata hai.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      get(key), put(key, value), delete(key) · asli sach DB me, cache sirf tez copy
+NFR     tez (~1 ms, DB se 50 ms) · DB pe bojh kam · thodi der purana chalega (profile hai, paisa nahi)
+        · jagah bhare to purana nikle · ek hi key pe bheed ho to bhi na gire
+Numbers DB ek padhai ~50 ms, kuch hazaar query / sec jhelta · Ravi ka profile hazaaron / sec, badalta din me ek baar
+        10 crore user, roz khulne wale profile ~1 TB · ek machine ki RAM 64 GB -> baantna padega
+```
+
 &nbsp;
 
 **1. DB se ek baar padhne me ~50 ms, aur DB ek second me kuch hazaar query hi jhelta. Ravi ka profile har second hazaaron log khol rahe, jabki uska data din bhar me shayad ek baar badalta. Page dheema, DB ki saans phooli.**

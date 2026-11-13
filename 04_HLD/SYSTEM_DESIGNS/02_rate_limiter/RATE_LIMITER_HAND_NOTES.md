@@ -4,6 +4,16 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan ki app me "OTP bhejo" ka button hai, har OTP pe SMS company ka bill. Ravi ne mazaak me script chala di jo har second 1000 baar button dabati hai.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      har user ki had (OTP 10 minute me 5, login 5 / minute, baaki API 100 / minute) · paar ho to 429 + Retry-After
+        · baar-baar wala permanent band · SMS company ki had bhi bachao
+        · login se pehle dheeli had, login ke baad user ke naam pe kadi had · VPN se region badal ke had na tode, ghar ka region dekho
+NFR     tez: har request ke aage, ~1 ms me haan / na · ginti EK: 10 server hon tab bhi ek jagah · limiter gire to site na gire (OTP jaisi tijori chhod ke, wo band)
+Numbers ~1 crore user, bheed me ~10,000 request / sec · har user ke 2 chhote number = ~500 MB
+        -> dikkat jagah ki nahi, speed ki: RAM wala Redis, DB nahi
+```
+
 &nbsp;
 
 **1. Server dab gaya, har request pe SMS ja raha, SMS company ka bill chadh raha.**

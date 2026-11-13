@@ -4,6 +4,21 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan TCS ke 10 share 3500 pe kharidna chahta hai, Ravi apne 10 TCS 3500 pe bechna chahta hai. Dono ek-doosre ko jaante nahi.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      buy / sell order dalo (apna bhaav likh ke) · bhaav mile to sauda · paisa aur share badlo · live bhaav dikhe · order cancel ho sake
+        · order ka bhaav badal sake (naya order nahi, wahi order)
+        3:30 baje market band hua aur poore din order nahi bika, to kya hoga? Yahan do raaste hain:
+          (1) order wahin khatam, aur 3:30 pe paisa / share user ko wapas
+          (2) order agle din bhi khula rahe, aur paisa / share hum rok ke rakhein jab tak user khud cancel na kare
+        Hamara FR = raasta (2). Isliye hold din badalne pe bhi rehta hai, aur cancel karne pe hi wapas jaata hai.
+        Jitna mila utna abhi de do, baaki ke liye order khula rahe; user bole "sab ek saath chahiye, warna kuch nahi" to wahi karo.
+        FR ne ye maanga, isliye design ye hai. FR raasta (1) maange, to 3:30 pe hold wapas, aur jawab bhi badlega.
+NFR     paisa aur share hamesha sahi · jo pehle aaya wo pehle mile · 9:15 ki bheed jhele · har cheez ka record
+Numbers 50 lakh order roz, market ~6 ghante -> ~250 / sec aam · 9:15 pe jhatka ~10,000 / sec, saare share me bata
+        live bhaav: ~10 lakh app khule, har second naya bhaav -> poochhne ki jagah push
+```
+
 &nbsp;
 
 **1. Arpan aur Ravi ek-doosre ko jaante hi nahi. Unke jaise lakhon log, koi 3490 pe kharidna chahta, koi 3510 pe bechna, har second hazaron naye order. Arpan ka order Ravi ke order se kaun milayega?**

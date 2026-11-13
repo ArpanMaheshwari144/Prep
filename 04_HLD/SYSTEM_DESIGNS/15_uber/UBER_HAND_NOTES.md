@@ -4,6 +4,18 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan shaam 7 baje Connaught Place pe khada hai, ghar ke liye Uber book karna hai. Sheher me 5 lakh driver ghoom rahe hain.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
+        · Arpan ko Raju live dikhe · kiraya pehle dikhe · trip khatam pe pay
+        · bheed me (concert) kiraya badh sakta hai, aur wo pehle hi dikh jaaye
+        · ek saath kai booking aayein to aisi gaadi do ki sabki milake doori kam · jo der se ruka wo baar-baar peeche na rahe
+NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi · bheed (concert) me bhi chale
+        · ride ke beech driver gaya to sambhalo
+Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
+        -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
+```
+
 &nbsp;
 
 **1. "Book" dabaya, par server ko pata hi nahi kaunsa driver abhi kahan hai.**

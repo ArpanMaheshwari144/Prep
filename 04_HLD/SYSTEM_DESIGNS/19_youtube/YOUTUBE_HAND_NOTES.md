@@ -4,6 +4,34 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan YouTuber hai. Goa trip ka vlog: 1 ghante ki video, 2 GB (4K me 40 GB tak). Lakhon log dekhenge, viral bhi ho sakta.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+Pehli line interviewer ko: "Main poora YouTube (sign-up se logout tak) nahi, ye cheezein solve karunga: video upload,
+jaldi live, dekhna, view count, aur nayi video ki khabar. Theek lage to aage badhein." Neeche har line ke saath kadam
+number, taaki FR / NFR aur design ek hi kahani rahe.
+
+```
+FR      1  video upload (badi file, 2-40 GB)                                  -> kadam 1
+        2  upload ke baad har quality me bane (144p se 4K)                       -> kadam 2
+        3  har phone / net pe dekhna (manifest + CDN, Netflix jaisa)             -> Netflix kadam 1-3
+        4  har video ka view count                                              -> kadam 3
+        5  subscribe kiya to nayi video ki khabar (MrBeast)                      -> kadam 7
+        6  nakli view ginti me na aayein                                       -> kadam 4
+
+NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       -> kadam 1
+        2  video jaldi live (pehle chhoti quality)                              -> kadam 2
+        3  viral pe bhi ginti DB na giraye (count thoda der se chalega)         -> kadam 3
+        4  fake view na gine                                                    -> kadam 4
+        5  storage sasta (purani video sasti jagah)                             -> kadam 5
+        6  achanak trend pe bhi bina buffering                                  -> kadam 6
+
+Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
+        · viral video pe ek minute me lakhon view -> ek row pe +1 nahi chalega
+        · saalon ki videos x kai quality -> sab tez storage me nahi rakh sakte
+```
+
+Trade-off jo bolne hain: view count thodi der se badhta (DB bachane ke liye) · thandi jagah sasti par laane me der
+(isliye trend pe wapas garam) · pehle chhoti quality (4K wale ko thoda intezaar).
+
 &nbsp;
 
 **1. Upload dabaya, video hamare app server se hokar storage ja rahi. Usi waqt 10 hazaar creator aur, server ki bandwidth / memory videos me phans gayi, jo sirf search / comment kar rahe the unka app bhi atka.**

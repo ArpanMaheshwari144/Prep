@@ -4,6 +4,17 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Mohalle ki bank branch: cashier, aur ek register jisme sabke khaate likhe hain. Arpan apne khaate se Ravi ko 500 bhejta hai, dono ek hi bank me. Paisa na gum ho, na do baar kate, har paise ka hisaab mile.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      paisa daalo, nikaalo, balance + history dekho · transfer A se B, DONO isi bank me (doosra bank scope se bahar)
+        · paisa jaate hi Ravi ko khabar
+        · mahine / saal ki statement mile (31 March), purana hisaab 10 saal rakho
+NFR     paisa na gum ho, na bane, na do baar kate · har paise ka hisaab mile (audit) · balance dekhna tez
+        · salary ke din ki bheed jhele (counter badhao, DB wahi)
+Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna isse kahin zyada
+        -> bheed chhoti, asli dikkat SAHI hona: ek SQL DB kaafi, shard nahi
+```
+
 &nbsp;
 
 **1. Arpan ne parchi di "Ravi ko 500 bhej do". Cashier ne Arpan ke 500 kaate, Ravi me jodne jaata usi pal bijli chali gayi. Arpan ke 500 kat gaye, Ravi ko kuch nahi mila.**

@@ -4,6 +4,17 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan BookMyShow pe Avengers ke pehle show ki seat D5 book kar raha hai. Arpan ki misaal: cinema ke do counter ek hi seat bech rahe, aur ek-doosre ko pata nahi.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      show aur seat map dekho · seat chuno -> pay karo -> ticket pakka
+        · seat chuni to 5 minute tere naam rukti, pay nahi kiya to chhoot jaati
+        · pay ~1 minute (30-55 sec + thoda buffer) me na ho to payment fail dikhe, par seat abhi teri, popup "dobara pay?": Haan = doosre PSP ka QR, Naa = seat turant khali
+        · 1 minute ke andar paisa kata to seat pakki; uske baad kata to refund
+NFR     ek seat kabhi do logon ko na bike (yahi dil hai) · seat map dekhna tez · badi movie ke din ki bheed jhele
+Numbers advance booking 10 baje: 10 lakh log ek saath, seat sirf 50 hazaar · 100 log map dekhte to ~1-2 book karte
+        -> dekhna bahut, likhna kam · data chhota (aaj + agle hafte ke show), purana archive
+```
+
 &nbsp;
 
 **1. Arpan ne D5 chuni aur "book" dabaya. Usi second ek aur ladke ne bhi D5 pe book dabaya. Dono ke app ne seat khaali dekhi, aur dono ko "seat mil gayi" aa gaya.**

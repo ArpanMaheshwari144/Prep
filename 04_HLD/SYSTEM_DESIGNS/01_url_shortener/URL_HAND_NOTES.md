@@ -4,6 +4,17 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Token counter. Log aate hain aur bahut lamba pata likhi chit dete hain ("amazon.in/products/xyz/..."). Counter wala unhe chhota token deta hai, jaise aB3x9. Jo bhi token dikhaye, use wo lamba pata mil jaata hai.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      lamba link do, chhota code lo (max 7 akshar, short.ly/aB3x9) · chhota link khole to lambe pe bhejo (redirect)
+        · dhokhe wala link pata chale to wo chhota link band kar sako · ek aadmi had se zyada link na bana sake
+NFR     kholna turant · hamesha chale (link toota to bheja hua bekaar) · ek code = ek link, kabhi same nahi
+        · dhokhe wala link na khule · machine se bheed (bot) na ho
+Numbers roz 10 crore naye link = ~1,000 / sec banana · har link ~100 baar khulta = ~1 lakh / sec kholna
+        5 saal me ~90 TB · 7 akshar, har akshar 62 tarah ka = ~3.5 lakh crore code
+        -> kholna 100 guna zyada: cache chahiye · 90 TB ek machine me nahi: tukde chahiye
+```
+
 &nbsp;
 
 **1. Counter wala token apne man se bana raha, kuch bhi chhota likh deta. Ek din do alag logon ko same token de diya. Chhota bhi rahe aur do logon ko kabhi same na mile, kaise?**

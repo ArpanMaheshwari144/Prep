@@ -4,6 +4,14 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Mausi ka mart (Reliance Smart jaisa), ab online bhi. Dukaan bhi chal rahi, counter pe billing bhi, aur app se ghar delivery bhi. Stock ek hi: wahi shelf, wahi godown.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      cart me daalo · pay karo · order pakka · stock dekho (paas wale store ka) · sale (seemit maal, aadhe daam)
+NFR     ek dabba do logon ko kabhi nahi (consistency) · sale me 500 hai to 500 ko hi, baaki "out of stock"
+        (availability nahi, ye FR me hi cut off) · sale ki bheed se normal orders na atkein
+Numbers Diwali 8 baje: 50 hazaar log, ghee sirf 500 · zyadatar log dekhne / cart me daalne aate, pay kam
+```
+
 **Faisla FR se (interview me pehle):** Sale me pehle hi bol do: ghee 500 hai to 500 ko hi milega, baaki ko "out of stock" dikhega. Yahan consistency chahiye: 500 hai to 500 hi bikenge, 400 hai to 400 hi, ek bhi zyada nahi. Sabko milna zaroori nahi, baaki ko "out of stock". Ye CAP wali baat nahi hai, kyunki CAP tab aata hai jab 3-4-5 system hon aur beech ka taar toote; yahan stock ki ginti ek hi jagah hai (alag dukaan, jaise Koramangala aur Whitefield, to unka stock bhi alag). FR me hi ye cut off kar do, phir design usi hisaab se.
 
 **Nichod (Arpan):** E-commerce me sabse bada kaam inventory management hai. Wo kar liya to 90% design wahin sort, baaki to frontend pe dikhana hai.

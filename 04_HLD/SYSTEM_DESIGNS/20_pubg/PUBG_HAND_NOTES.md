@@ -4,6 +4,30 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan aur Claude ek squad me. Plane se Pochinki me utre, Claude ke haath me shotgun. Raat 9 baje India me lakhon log khel rahe, ek match me 100 log, 8 km x 8 km ka Erangel. Uber se aaya: map pe kaun kahan, aas-paas ka gola, gudda, sab wahi.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+Pehli line interviewer ko: "Main poora PUBG (skins, shop, login) nahi, ye cheezein solve karunga: match me jodna,
+match ke andar khel, goli aur chaal ka faisla, aur match ke baad ka hisaab. Design India ke servers tak." Neeche har
+line ke saath kadam number.
+
+```
+FR      1  "Start" dabao to 100 logon ke match me jodo, 4-4 ke squad          -> kadam 1
+        2  match me aas-paas ke log, goli, awaaz dikhe / sunai de               -> kadam 2
+        3  goli lagi ya nahi, sar pe lagi to headshot                           -> kadam 3
+        4  match khatam: kills, damage, rank points save                        -> kadam 5
+
+NFR     1  ping kam (India wala India ke server pe)                             -> kadam 1
+        2  phone garam na ho, data na jale                                      -> kadam 2
+        3  hacker na jeete: faisla server ka                                    -> kadam 3, 4
+        4  match khatam hone pe DB na ghute, agla match turant                  -> kadam 5
+
+Numbers raat 9 baje lakhon log · ek match 100 log, 8 km x 8 km
+        · server second me (maan lo) 20 baar sabki jagah -> 100 x 99 khabar har baar, sabko sab nahi bhej sakte
+        · raat 10 baje hazaron match ek saath khatam -> lakhon likhai ek pal me
+```
+
+Trade-off jo bolne hain: door ki khabar nahi aati (par door ka dikhna hi nahi chahiye) · server har goli check karta
+(server pe kaam zyada, par hacker ki nahi chalti) · rank points thodi der se dikhte (DB bachane ke liye).
+
 &nbsp;
 
 **1. Raat 9 baje 1 lakh log ek saath "Start" dabate hain. Ek match me 100 chahiye, Arpan ke match me abhi 37. Tabhi America se ek ladka aaya, Mumbai server tak ping 300 ms, wo bhi isi match me jud gaya.**

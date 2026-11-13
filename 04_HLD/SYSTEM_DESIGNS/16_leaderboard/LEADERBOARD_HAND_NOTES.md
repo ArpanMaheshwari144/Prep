@@ -4,6 +4,17 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Ek game hai, 1 crore khiladi. Har match ke baad kisi ka score badalta hai. Screen pe teen cheez chahiye: top 10 abhi ke abhi, "tera rank 4,52,318", aur tere aage ke 5 aur peeche ke 5 khiladi.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      score update · top 10 · mera rank · mere aage-peeche ke 5 · aaj / hafta / all-time board
+        · score barabar to pehle pahuncha wo upar (contest me: ek time zone UTC, pehle khatam wala, phir milli second, phir naam)
+        · khiladi alag region (India, US, Europe) me hon to bhi EK poora world board; mere aage-peeche ke 5 usi board se
+NFR     top 10 aur rank turant (milli second) · naya score kuch second me board pe · thoda purana referee board chalega · Redis gira to score na khoye
+        · world board pe rank thodi der purani chalegi (result aate-aate apne aap theek)
+Numbers 1 crore khiladi · har second lakhon match khatam -> likhai bahut · board dekhne wale usse bhi zyada
+        -> har baar 1 crore sort / ginti nahi chal sakti
+```
+
 &nbsp;
 
 **1. Top 10 aur "tera rank" chahiye. SQL me har baar 1 crore row sort, aur rank ke liye "mere upar kitne" gino to 1 crore dekhne padte.**

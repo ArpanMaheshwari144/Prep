@@ -4,6 +4,15 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan aur Ravi ek hi doc "Trip plan" pe saath likh rahe hain. Doc me hai `Goa jaayenge`.
 
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      kai log ek doc ek saath edit karein · doosre ka likha turant dikhe, kisi ka likha mite nahi
+        · kaun edit kar sakta, hataya to turant band
+NFR     typing turant, ruke nahi · aakhir me sabka doc SAME · "Saved" dikha to ude nahi (sab copy ek saath gire to aakhri kuch second)
+Numbers ~10 crore user, roz ~3-4 crore · har akshar ek badlaav
+        -> likhna bahut zyada: har akshar pe DB nahi chal sakta
+```
+
 &nbsp;
 
 **1. Jo "Save" dabata hai, uska poora text server pe jaake purane ko hata deta hai. Arpan ne upar "Goa jaayenge" likh ke Save kiya, Ravi ne neeche "budget 20k" likh ke Save kiya. Ravi ki screen pe purana text tha, to Arpan ki line gayab.**
