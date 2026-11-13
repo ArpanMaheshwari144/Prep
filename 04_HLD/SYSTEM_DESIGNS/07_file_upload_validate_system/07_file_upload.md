@@ -280,7 +280,8 @@ flowchart TB
 
 File S3 me aa gayi, scan me 10 minute baaki, aur Ravi download maang raha. Scan ki alag tez line, jaise SMS me OTP ki
 (doctor line me nahi lagta): scan baaki kaam ke peeche nahi rukta. Scan poora hone tak link hi nahi; ho gaya to user
-ko bata do.
+ko bata do. Paise ginne jaisa: andaze se "10,000" bata diya aur asal me 25,000 nikle to galat khabar phail gayi; pehle poora gino,
+phir batao. Upload hote hi link manager ko chala gaya to bhi manager ko "file jaanch me hai, thoda ruko" dikhe, file nahi.
 
 **Maan lo scan me virus nikla:** file lo hi mat, hata do aur user ko batao. Hum antivirus nahi, file system hain; mall aur airport ki security
 jaisa, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to
