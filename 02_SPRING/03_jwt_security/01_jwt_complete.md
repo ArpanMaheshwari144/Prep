@@ -52,8 +52,10 @@ check alag se karna padta hai (authorization).
   `addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)` se apna filter pehle lagaya hai. `csrf.disable()` isliye hai
   kyunki token header me jaata hai, cookie me nahi, aur browser header khud se nahi bhejta.
 - `JwtFilter extends OncePerRequestFilter`: ye har request pe token jaanchta hai aur user ko `SecurityContextHolder` me rakh deta hai.
-- Controller `@AuthenticationPrincipal` se userId **token se** leta hai, body se nahi. Ye PR drill wala point hai: body se userId lena
-  matlab spoof ka khatra. Par user mil gaya iska matlab ye nahi ki order bhi usi ka hai, isliye owner check phir bhi karna padta hai.
+- Dhyaan: usercrud ke controller abhi userId token se nahi nikaalte, `@AuthenticationPrincipal` project me
+  kahin nahi hai. Sahi tareeka: userId **token se** lo (`@AuthenticationPrincipal` ya `SecurityContextHolder`), body se kabhi nahi.
+  Body se lena matlab spoof ka khatra, ye PR drill wala point hai. Aur user mil gaya iska matlab ye nahi ki order bhi usi ka hai,
+  isliye owner check phir bhi karna padta hai.
 
 ## Prod wala trap
 
