@@ -282,7 +282,7 @@ Yahi dikkat yahan bhi:
   Kafka         10  7 din peeche, purana panna phat jaata          ->  aur admin daalo, itna peeche rehne hi mat do (consumer, phir partition)
   Kafka         10b aaj 1 din, kal 2 din peeche                    ->  alert laga do (consumer lag alert)
   PUBG          5   chicken dinner pe lakhon likhai, DB ghuta      ->  match me parchi, end pe line + copy, dheere DB (batch, Kafka, Cassandra)
-  Inventory     7   5 se kam, email order ke andar, order 8 sec atka ->  line lagwao, order turant, alert peeche + 2-3 email, SMS, siren (Kafka event, async, multi-channel)
+  Inventory     7   5 se kam, email dheema, order atka        ->  saari inventory dekho, grahak mat roko, alert kai raaston se (line me); mangwana purchase team ka (scope se bahar)
 
 Naam: Kafka / queue + worker / consumer group / batch + Cassandra (likhai tez) / partition / alag topic / priority topic / consumer lag alert
 Juda: line me se gira to (4) aur (3). Line peeche reh gayi to alert.

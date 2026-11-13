@@ -236,32 +236,37 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
 ```
 
-## 7. 5 se kam, email dheema, har order 8 second atka (line lagwao, kai raaste)
+## 7. 5 se kam (saari inventory dekho, alert kai raaston se, mangwana scope se bahar)
 
-Delhi me iPhone 5 se neeche, purchase team ko email jaana hai taaki naya maal mangaya jaaye. Email ka kaam order wali
-request ke andar hi likha tha; email server dheema, sale ke din har order 8 second atka. Grahak ka order email ka
-intezaar kyun kare: line lagwao, order turant poora, alert peeche se jaata rahe. Aur ek email service pe mat tiko, 2-3
-rakho, ek dheema to doosre pe apne aap chala jaaye. Saath me godown me siren, SMS, store manager tak sabko alert; ek
-darwaza band ho to doosre se ghuso.
+Delhi me iPhone 5 se neeche aa gaye. Iska matlab hamara kaam badh gaya, par grahak ko mat roko. Pehle saari inventory
+dekho: Bangalore se order aaya to Bangalore, phir main warehouse. Maal hai to order chalta rahe, 5 hon ya 100 order.
+Kitni inventory hai, ye FR me tay hota hai. 2-3 inventory hain to batao "is me khatam, doosri me dekh lo". Ek hi
+inventory hai to usme sab jagah iPhone nahi bhar sakte, aur maal bhi chahiye; to 2-3 bache tab hi har jagah siren,
+sabko alert. Alert kisi bhi raaste pahunche: email nahi to SMS, WhatsApp, ek email company nahi to doosri. Khatam ho
+gaya to out of stock, aur alert "inventory khaali, jahan se deal karte ho wahan se deal karo". iPhone kahan se mangwana
+hai, wo manager / purchase team tay karegi; is design ka kaam ginti sahi rakhna aur batana hai. Naya stock jaldi aa
+raha ho to order lete raho, 1 mahina lagega to out of stock dikhao.
 
-**Asli naam:** line = Kafka me "low stock" event, worker alert bheje (async, order ko nahi rokta). Kai raaste =
-multi-channel (email, SMS, siren) + backup email provider (failover).
+**Asli naam:** had pe alert = low stock / reorder point alert, line me = Kafka event (async, order nahi rukta), kai
+raaste = email, SMS, WhatsApp + backup provider. Saare godown ka jod = available to promise across warehouses (kitne
+godown = FR). Maal mangwana = purchase / procurement system, scope se bahar. Jaldi aane wala maal = backorder, der =
+out of stock (restock lead time, FR tay kare).
 
 ```mermaid
 flowchart TB
-    O["Order: ginti 5 se neeche"]:::card
-    OK["Grahak ko turant: order pakka"]:::good
+    O["Order aaya: Delhi me 5 se kam"]:::card
+    J{{"Saari inventory me hai?<br/>(apna shehar, main warehouse)"}}:::pill
+    OK["Order chalta rahe,<br/>grahak nahi rukta"]:::good
     K(["Line me khabar: low stock<br/>(Kafka event)"]):::pill
-    W["Worker: alert bheje"]:::card
-    E1["Email 1 dheema"]:::bad
-    E2["Email 2 (backup)"]:::good
-    SMS["SMS / siren / manager"]:::good
-    O --> OK
+    AL["Alert kai raaston se:<br/>email, SMS, WhatsApp, siren"]:::good
+    OS["Sab khaali: out of stock<br/>+ 'jahan se deal karte, wahan se'"]:::bad
+    PT["Kahan se mangwana:<br/>purchase team (scope se bahar)"]:::card
+    O --> J
+    J -- "haan" --> OK
+    J -- "nahi" --> OS
     O --> K
-    K --> W
-    W -.-> E1
-    W --> E2
-    W --> SMS
+    K --> AL
+    AL -.-> PT
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
@@ -276,8 +281,8 @@ flowchart TB
 Ginti Pay pe ghatti hai, ek hi kaam me ("ek kam karo sirf tab jab 1 ho"), SQL me. Sale ki bheed pe stock dabbon me
 baanto, khaali dabba ho to agla dabba, out of stock tabhi jab sab khaali. Har badlaav register (ledger) me, raat ko
 chhotu milaan kare. Maal pehle apne shehar se, phir main warehouse se, doosra shehar FR tay kare. Sirf dekhne walon ke
-liye bahar banner (cache). Return ki jaanch darwaze pe, ginti sirf bechne layak maal ki. Kam stock ki khabar line me,
-order nahi rukta, alert kai raaston se.
+liye bahar banner (cache). Return ki jaanch darwaze pe, ginti sirf bechne layak maal ki. Kam stock pe saari inventory dekho, grahak
+nahi rukta, alert kai raaston se; maal mangwana purchase team ka kaam.
 
 ---
 
