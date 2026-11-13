@@ -212,6 +212,11 @@ Bahut se answer ho sakte, ek sahi answer nahi: Redis pub/sub bolo ya building ke
 
 **Asli naam:** centralized authority = permission ka asli sach (SQL: kaun, kis doc pe, kya kar sakta), memory me note =
 server pe permission cache + har op pe check (har akshar pe SQL nahi), iska operation accept nahi = op reject, tez bhaagne wala bachcha / building ke bahar chilla de = pub/sub invalidation (Redis pub/sub).
+**Maan lo Ravi hatne ke waqt offline tha:** laptop pe likhta raha, aadhe ghante baad net aaya aur saare edits ek saath aaye. Net aate hi
+Ravi ko popup "tumhe owner ne hata diya". Server pe edit seedha nahi lagta, har edit pe dekho bhejne wale ke paas abhi edit ka haq hai ya nahi;
+tha to merge, nahi to saare edits phenk do. Alag rakhna ho (Ravi baad me wapas mile) to wo FR ki baat, interviewer se poochh ke.
+**Asli naam:** popup = permission revoked event, har edit pe haq = har op pe server-side permission check, phenk do = op reject, alag rakhna = rejected ops ka log (FR pe).
+
 
 ```mermaid
 flowchart TB

@@ -488,6 +488,7 @@ Yahi dikkat yahan bhi:
   File     8   scan me 10 min baaki, download chahiye         ->  scan poora tak link hi nahi (CLEAN tak band)
   File     8   scan me virus nikla                            ->  file lo hi mat (quarantine / delete)
   Docs     6   Ravi hataya, server pe purani permission       ->  chhota note, uska op accept nahi (permission check)
+  Docs     6b  Ravi offline likhta raha, aadhe ghante baad edits aaye ->  popup "hata diya", har edit pe aaj ka haq dekho, nahi to phenk do (op reject)
   Kafka    8   galat ticket gate tak aaye hi kyun             ->  bouncer, gate pe hi rok de (validation)
   YouTube  4   bot / phone se 10 lakh "view"                  ->  gino hi mat, gate pe rok, baar-baar to ban (rate limit, WAF)
   PUBG     3   hacker ka phone bole "goli lagi"               ->  server line kheenche, deewar, gudda (hit validation)
