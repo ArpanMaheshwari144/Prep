@@ -211,6 +211,14 @@ wala upar, barabar to milli second, wo bhi barabar to naam. Result aate jaayein,
 Arpan ke upar ke 5 / neeche ke 5 seedha tay nahi hote, time se hote: ranking upar se dheere-dheere tay hoti, thodi der galat dikhe to farak
 nahi (LeetCode bhi time poora hone pe theek karta). Happy New Year film ka board: jab tak time poora nahi Team India neeche, result aate-aate
 upar. Rassi jaisa: chhoti baandhi, phir badi, dheere-dheere apne aap lambi.
+**Contest me aage-peeche (13-Nov, Arpan):** contest chal raha ho to "aage ke 5, peeche ke 5" ka alag feature ka matlab nahi; rank hilti rahegi,
+ye sabko pata. Contest poora hua to board bana, usme upar-neeche wale apne aap. (Game alag: chalta rehta, wahan aage-peeche har waqt, kadam 6.)
+Chalte contest me Arpan ne khatam kiya to bhi dikhana ho: dabbe **score ki range se** baanto (naam shehar ke: Bangalore = 10,000 wali range,
+Mumbai = 50,000, Delhi = 5,000). Har desh ka coordinator har dabbe pe thappa lagata ki isme kahan se kahan tak; US, Europe same. Arpan 5200 ke
+aas-paas, to seedha Delhi, New York, Stockholm wale dabbe; Bangalore, Mumbai ko poochha bhi nahi. Wahan se upar ke 10, neeche ke 10, Arpan beech me.
+Ye andaze wali rank, galat hogi; rank sirf time se nahi, galat jawab / retry bhi ginte (pehle khatam par 3 galat < 1 minute baad bina galti).
+Sabka khatam hote-hote rank theek, asli rank contest poora hone pe.
+**Asli naam:** range partitioning (score range pe shard), coordinator = shard map / router, sirf matching shard pe range query, estimated rank, penalty (LeetCode: har galat submission pe 5 minute).
 Bolne ki line: "FR ke hisaab se poora world board. Ek time zone (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle
 khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."
 **Asli naam:** global leaderboard (aggregator, sab region mila ke ek sorted board), sort key = solved desc, finish time asc, ms, naam (composite score, kadam 2), solved count ke hisaab se bucket, rank thodi der purani = eventual consistency.

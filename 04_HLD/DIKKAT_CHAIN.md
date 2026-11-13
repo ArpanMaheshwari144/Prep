@@ -219,6 +219,7 @@ Yahi dikkat yahan bhi:
   Leaderboard   4   India me 3,000, duniya ka rank                 ->  race wala: har line me mere upar kitne, jodo (count)
   Leaderboard   6   mere aage-peeche ke 5, alag dabbon me          ->  bheed me aas-paas scan, paas ka petrol pump (score range, merge)
   Leaderboard   6b  region me baante, world ke aas-paas ke 5 + 5      ->  FR: poora world board; UTC, pehle sawaal gino, phir waqt, ms, naam; rank upar se dheere tay (Happy New Year board, rassi) (global board, sort key, eventual)
+  Leaderboard   6c  chalte contest me aage-peeche 10               ->  dabbe score range se, coordinator ka thappa, seedha sahi dabba; andaze wali rank, galat jawab bhi ginte (range partition, shard map, penalty)
 
 Naam: shard / partition key / consistent hashing / saga / clockwise / scale out / owner server / geohash / scatter-gather / score range
 Juda: URL 8 aur Cache 4 dono me ring wahi (Cassandra andar khud karta). Bheed ek tukde pe ho to (7).
