@@ -24,6 +24,17 @@ Index naya column nahi hai, alag dhaancha hai jo rows ki taraf ishaara karta hai
 - Jisme alag-alag value zyada hon (email, user_id). Gender (M/F) pe bekaar hai, kyunki aadhi table phir bhi bachti hai aur MySQL scan hi karega.
 - Muft nahi hai: har INSERT / UPDATE pe tree bhi theek karna padta hai, to writes dheemi hoti hain aur jagah bhi lagti hai.
 
+## Scene: UPI chai tapri, "har column pe index laga do"
+
+Paytm ki payments table me 30 crore row hain. `WHERE upi_id = ...` bina index ke har row padhti hai (full table scan), 5 minute. upi_id pe
+index lagaya to MySQL peeche ek tree banata hai, BST jaisa: chhota left, bada right, sab sorted. Kitaab ka beech ka page kholo, cheez
+badi hai to right, chhoti hai to left, aise chhalang maarte hue pahuncho. Search O(log n) ho gaya, 30 crore me bhi ~29 kadam, milliseconds.
+
+**Maan lo developer ne socha "index itna tez hai to har column pe laga do"** (upi_id, amount, status, time, merchant, note): search to
+tez rehti hai, par tapri pe har payment ka "processing..." dheema ho jaata hai. Kyunki har nayi payment likhte waqt bhi tree me
+dhoondhna padta hai ki ise kahan rakhun, idhar gaya, phir udhar. Aur har index ka apna alag tree hai, to 6 index = har payment pe 6 tree
+me jagah dhoondh ke likhna. **Hal:** index sirf us column pe jahan WHERE lagta hai (yahan upi_id), baaki pe nahi.
+
 ## Teen cheez jo poochhi jaati hain
 
 - **Composite `(city, age)`:** `WHERE city=...` chalega, `city + age` chalega, sirf `WHERE age > 25` nahi chalega (bayan wala column chhoda).
