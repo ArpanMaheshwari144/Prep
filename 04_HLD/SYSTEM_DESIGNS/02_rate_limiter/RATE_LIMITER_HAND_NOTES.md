@@ -22,6 +22,10 @@ Technical me: "dabbe se token nikaalo, aage badho" = token bucket, "apni raftaar
 Arpan: Pehle bola: Ravi ko 10 alag server pe jaane hi mat do, uska ek home server, wahi se jaaye. Phir: Redis single thread application hai, wo ek waqt me ek hi chalata. Iska answer bhi pata hai: Lua script. Ye sab cheez ek hi baari me kar de, andar koi ghus hi na paaye. Jaise banking me update aur check ek hi me karte hain, wahi Lua script kar degi.
 Technical me: "Redis single thread" = Redis ek command ek waqt (par alag-alag GET aur DECR ke beech doosra server ghus sakta, isliye single thread akela kaafi nahi), "sab ek hi baari me, andar koi ghus na paaye" = Lua script (check + nikaalna atomic), "banking me update aur check ek me" = wahi atomic check-and-update.
 
+**Maan lo counter wala tareeka (har request pe +1, pehli pe 60 sec ki umar). Ravi ki pehli request pe +1 ho gaya, umar lagane se pehle server gira.**
+Arpan: Counter bina umar ke pada rahega, kabhi khatam nahi hoga, Ravi ka hisaab hamesha ke liye bigad gaya. To +1 aur umar do alag kaam nahi, ek hi kaam: ya dono likhe jaayein ya kuch nahi. Ladke ko bula ke bolo "+1 aur 60 dono ek saath likhna, beech me gira to kuch mat likhna, sab pehle jaisa". Kuch nahi hua to dobara try kar lo.
+Technical me: "dono ek saath ya kuch nahi" = INCR + EXPIRE ek Lua script me (atomic, ya SET key 1 EX 60 NX + INCR); bina umar ka counter = key kabhi expire nahi, user hamesha block. (HANDS_ON 02 me chala ke dekha.)
+
 **5. Limiter OTP Service ke andar. Script ki 1000 request LB se, login check karke OTP Service tak pahunchti, wahan mana. SMS nahi gaya, par raaste ke saare server bojh utha rahe.**
 Arpan: Mere ghar me ek security guard hai, wo kehta 10,000 log andar nahi aa sakte. Par wo main gate pe nahi, andar kamre me baitha hai. Ghar ke andar to 1000 log ghus gaye, galat ho gaya. Use bahar gate pe bitha de, ghar ke andar koi ghus hi na paaye, gate pe hi hata do.
 Technical me: "guard andar kamre me" = limiter service ke andar, "guard bahar gate pe" = limiter API gateway pe.

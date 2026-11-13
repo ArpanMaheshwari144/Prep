@@ -126,6 +126,10 @@ isliye single thread akela kaafi nahi. Sab ek hi baari me, andar koi ghus na paa
 atomic), banking wala check aur update ek me = wahi atomic check-and-update. 20 line me lagti hain: 1 ko token mila,
 baaki 19 ko 429.
 
+**Maan lo counter wala tareeka:** har request pe +1, pehli pe 60 sec ki umar. Ravi ki pehli request pe +1 ho gaya aur umar lagane se pehle server
+gira. Counter bina umar ke pada rahega, Ravi hamesha ke liye atka. Isliye +1 aur umar ek hi kaam: ya dono likhe jaayein ya kuch nahi, phir dobara try.
+**Asli naam:** INCR + EXPIRE ek Lua script me (atomic); bina umar ki key kabhi expire nahi hoti (HANDS_ON 02_incr_expire_crash).
+
 ```mermaid
 flowchart TB
     S1["Ek pal me 20 request, 10 server:<br/>sabne padha tokens = 1"]:::bad

@@ -478,6 +478,7 @@ Yahi dikkat yahan bhi:
   URL      13c bina login link, userId hai hi nahi            ->  pehle login laga do; bina login IP pe dheeli had (auth, IP rate limit)
   Rate     1   script har second 1000 OTP, bill chadha        ->  ek bande ka threshold (rate limit, 429)
   Rate     3   khaata badla, 3 second me 10 OTP               ->  dabbe se token nikaalo, apni raftaar se (token bucket)
+  Rate     4b  +1 hua, umar lagane se pehle server gira            ->  +1 aur umar ek hi kaam, ya dono ya kuch nahi (INCR + EXPIRE Lua, atomic)
   Rate     5   guard andar kamre me, 1000 ghus gaye           ->  guard bahar gate pe bitha do (API gateway)
   Rate     7   script 429 khaati, phir bhi maarti rehti       ->  dabbe me gala pakad ke bitha do (ban list)
   Rate     8   office ke 500 log ek WiFi, sab atke            ->  login se pehle dheeli had, baad me userId pe
