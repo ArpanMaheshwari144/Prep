@@ -24,7 +24,7 @@ Yahi dikkat yahan bhi:
   Uber     15b Arpan 7:00:00, Ravi 7:00:02, gaadi de chuke    ->  15-20 sec ruko, sab booking saath (batching window)
   Ecom     1   aakhri ghee, aunty + Ravi ek saath             ->  online ko godown, counter ko shelf (channel ka alag stock)
   Ecom     2   ladka uthake likhna bhool gaya                 ->  uthana + parchi ek hi kaam (atomic transaction)
-  Inv      1   do log ek pal me aakhri iPhone                 ->  "ek kam karo sirf tab jab 1 ho", ek hi kaam (atomic conditional update)
+  Inventory 1   do log ek pal me aakhri iPhone                 ->  "ek kam karo sirf tab jab 1 ho", ek hi kaam (atomic conditional update)
   Ecom     6b  ek order me ghee, aata, daal; aata khatam      ->  poora order mat roko, jo hai wo bhejo, aate pe out of stock (adhoora order)
 
 Naam: lock / atomic / counter range / Lua script / 1 thread per symbol / transaction / row lock / deadlock / lock ordering / batch matching / batching window / channel ka alag stock / adhoora order
@@ -54,7 +54,7 @@ Yahi dikkat yahan bhi:
   Uber     15d cancel karke dobara, ginti 7:05 se             ->  hatao, ya Redis parchi "5 min ruka" 30 sec umar (TTL)
   Leader   5   raat 12 baje aaj wala khaali                   ->  alag register, kal wala side me rakho (key me tareekh, history)
   Ecom     6   60 ne pay nahi kiya                            ->  cart sirf list, paisa nahi diya to maal uska nahi; ginti pay pe (koi reserve nahi, atomic)
-  Inv      1b  Buy dabaya, battery khatam, pay hua nahi       ->  cart me hai, kharida nahi; ginti pay pe, jisne pehle pay kiya uska (koi reserve nahi)
+  Inventory 1b  Buy dabaya, battery khatam, pay hua nahi       ->  cart me hai, kharida nahi; ginti pay pe, jisne pehle pay kiya uska (koi reserve nahi)
   Ecom     7d  andar gaya, chai peene chala gaya              ->  "ya pay kar ya rakh de": 5 min ghadi, phir wapas line me (expiry + INCR)
   Ecom     7e  ghadi khatam ke 1 sec baad Pay                 ->  1-2 sec upar bas, phir Priya ka; andar dabaya to PSP hamari zimmedari (grace period, PAYMENT_PENDING)
   Rate     9b  OTP line me atka, der se nikla, bekaar         ->  har OTP pe umar, khatam to phenk do (message TTL)
@@ -137,7 +137,7 @@ Yahi dikkat yahan bhi:
   Netflix  5   TV pe 27 min, phone pe wahi se                 ->  account pe parchi (watch position DB me)
   Netflix  5c  har kuch second update, DB ki saans            ->  race me ruk ke likho (pehle cache, DB kabhi-kabhi)
   YouTube  3   1 lakh view, ek row ke lock pe line            ->  +1 parchi pe, chhotu batch me jode (Kafka, batch count)
-  Inv      5   1 crore sirf page dekh rahe, har baar DB jod   ->  bahar banner / chhotu ki copy, asli jaanch Pay pe (cache, Redis)
+  Inventory 5   1 crore sirf page dekh rahe, har baar DB jod   ->  bahar banner / chhotu ki copy, asli jaanch Pay pe (cache, Redis)
 
 Naam: cache (Redis) / LRU, TTL / write buffer + batch / local cache / cache-aside / eviction
 Juda: parchi bhar gayi to purana nikaalo; parchi aur DB alag ho sakte (20).
@@ -179,8 +179,8 @@ Yahi dikkat yahan bhi:
   Uber     6b  stadium chhuta, 15,000 booking ek dabbe pe      ->  2-3 dabbe extra, hotspot pe pehle se, had paar to apne aap (hot cell split, pre-scaling)
   Ecom     4   ek parchi pe 50 hazaar                         ->  10 counter, tez kaatne wala (hot row todo, Redis DECR)
   Ecom     5   counter 3 khatam, counter 7 pe 30              ->  khaali counter band, sold out tab jab sab 0
-  Inv      2   sale, 2 lakh Pay ek row pe, taala             ->  1000 ko 5 dabbe, har counter apna dabba (bucketing / sharded counter)
-  Inv      2b  dabba 3 khaali, baaki me 150                   ->  request doosre dabbe pe mod do, out of stock tab jab sab 0
+  Inventory 2   sale, 2 lakh Pay ek row pe, taala             ->  1000 ko 5 dabbe, har counter apna dabba (bucketing / sharded counter)
+  Inventory 2b  dabba 3 khaali, baaki me 150                   ->  request doosre dabbe pe mod do, out of stock tab jab sab 0
   News     5   9 baje 1 crore log ek saath                    ->  bahut saare server + ek banda jo sabko manage kare (load balancer)
 
 Naam: hot key copies / replica / hot row todo / work stealing / kai machine + load balancer
@@ -282,7 +282,7 @@ Yahi dikkat yahan bhi:
   Kafka    10  7 din peeche, purana panna phat jaata          ->  aur admin daalo, itna peeche rehne hi mat do (consumer, phir partition)
   Kafka    10b aaj 1 din, kal 2 din peeche                    ->  alert laga do (consumer lag alert)
   PUBG     5   chicken dinner pe lakhon likhai, DB ghuta      ->  match me parchi, end pe line + copy, dheere DB (batch, Kafka, Cassandra)
-  Inv      7   5 se kam, email order ke andar, order 8 sec atka ->  line lagwao, order turant, alert peeche + 2-3 email, SMS, siren (Kafka event, async, multi-channel)
+  Inventory 7   5 se kam, email order ke andar, order 8 sec atka ->  line lagwao, order turant, alert peeche + 2-3 email, SMS, siren (Kafka event, async, multi-channel)
 
 Naam: Kafka / queue + worker / consumer group / batch + Cassandra (likhai tez) / partition / alag topic / priority topic / consumer lag alert
 Juda: line me se gira to (4) aur (3). Line peeche reh gayi to alert.
@@ -501,7 +501,7 @@ Yahi dikkat yahan bhi:
   YouTube  4   bot / phone se 10 lakh "view"                  ->  gino hi mat, gate pe rok, baar-baar to ban (rate limit, WAF)
   PUBG     3   hacker ka phone bole "goli lagi"               ->  server line kheenche, deewar, gudda (hit validation)
   PUBG     4   1 second me 500 meter                          ->  Koramangala se Whitefield namumkin, phenk do, ban (movement validation)
-  Inv      6   return aate hi +1, tooti screen Priya ko       ->  jaanch darwaze pe, kharab to wahin reject; ginti sirf bechne layak ki (doorstep QC, sellable vs damaged)
+  Inventory 6   return aate hi +1, tooti screen Priya ko       ->  jaanch darwaze pe, kharab to wahin reject; ginti sirf bechne layak ki (doorstep QC, sellable vs damaged)
 
 Naam: rate limit / token bucket / API gateway / WAF / validation / permission check / hit validation / movement validation / kaali list / 302 / auth / 429 / ban list / allow list / signed URL / magic bytes / virus scan / quarantine / fraud detection / anti-cheat ban
 Juda: Rate limiter, URL, File, Kafka, Docs, Twitter video, YouTube views, PUBG ka hacker: ek hi gate.
@@ -567,7 +567,7 @@ Yahi dikkat yahan bhi:
   Twitter  9b  branch ki baat 10 min ruki, beech me 5 tweet   ->  banda pal-pal dekhe "dost aaya?", aate hi 5 push (queue, retry, replay)
   PUBG     1   America ka ladka Mumbai match me, ping 300     ->  America wala America server pe; akela 3 wale squad me (region matchmaking, squad fill)
   Ecom     1b  Lucknow ka store khaali, Kanpur me 20          ->  Lucknow wale ko Lucknow ka store, dark store = aas-paas ka (location se paas wala store)
-  Inv      4   Bangalore khaali, Delhi 50, Mumbai 10          ->  pehle apna shehar, phir main warehouse; doosra shehar FR tay kare (hub and spoke, sourcing rule)
+  Inventory 4   Bangalore khaali, Delhi 50, Mumbai 10          ->  pehle apna shehar, phir main warehouse; doosra shehar FR tay kare (hub and spoke, sourcing rule)
 
 Naam: multi-region / home region / region matchmaking / country code / cross-region / squad fill / dark store
 Juda: video ke liye yahi kaam CDN karta (14).
@@ -600,7 +600,7 @@ Yahi dikkat yahan bhi:
   Uber     12  250 dikha, aakhir me 500 kate                  ->  jo dikhaya wahi lo (upfront fare)
   Leader   1   1 crore sort kiye bina top 10 + rank           ->  apne aap sort wala dabba (Redis sorted set)
   Ecom     4b  Redis me ginti kati, DB me order nahi          ->  DB sach, banda milaye, 5 min ghadi ke baad bina order ki ginti wapas (reconciliation)
-  Inv      3   rack pe 48, system me 50, "2 kab gaye?"       ->  har bill register me (ledger), raat ka chhotu milaaye (reconciliation job)
+  Inventory 3   rack pe 48, system me 50, "2 kab gaye?"       ->  har bill register me (ledger), raat ka chhotu milaaye (reconciliation job)
   Cache    7b  key 3 machine pe, sirf 1 se kati               ->  parchi har copy se kaato, sync job copies bhi dekhe (har replica invalidate)
   Uber     16b buildings ke beech gaadi chhat pe (ghost bike) ->  paas wali sadak pe wapas utaar do (map matching)
   News     7   Priya ki parchi me aaj ki badi khabar chhooti  ->  milaan: chhoot gayi to DB se le ke seedha feed me (check job)
