@@ -13,8 +13,10 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ```
 FR      cart me daalo · pay karo · order pakka · stock dekho (paas wale store ka) · sale (seemit maal, aadhe daam)
+        · ek order me kai cheez, ek khatam ho to baaki bhejo · sale me ek user ko ek hi
 NFR     ek dabba do logon ko kabhi nahi (consistency) · sale me 500 hai to 500 ko hi, baaki "out of stock"
         (availability nahi, ye FR me hi cut off) · sale ki bheed se normal orders na atkein
+        · paisa kata to maal ya refund, net / PSP chup ho to bhi order latka na rahe
 Numbers Diwali 8 baje: 50 hazaar log, ghee sirf 500 · zyadatar log dekhne / cart me daalne aate, pay kam
 ```
 

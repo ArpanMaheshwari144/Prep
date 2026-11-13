@@ -8,6 +8,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 ```
 FR      buy / sell order dalo (apna bhaav likh ke) · bhaav mile to sauda · paisa aur share badlo · live bhaav dikhe · order cancel ho sake
         · order ka bhaav badal sake (naya order nahi, wahi order)
+        · paise nikaal sake, par sirf jo khule order me ruke nahi (khula order cancel / chhota karke baaki)
         3:30 baje market band hua aur poore din order nahi bika, to kya hoga? Yahan do raaste hain:
           (1) order wahin khatam, aur 3:30 pe paisa / share user ko wapas
           (2) order agle din bhi khula rahe, aur paisa / share hum rok ke rakhein jab tak user khud cancel na kare
