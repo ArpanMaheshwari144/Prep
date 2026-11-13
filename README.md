@@ -131,6 +131,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-7 = scene, neeche padhai wala hissa P1-P4)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md)
   - [20 PUBG (Arpan + Claude ka squad, Pochinki)](04_HLD/SYSTEM_DESIGNS/20_pubg/20_pubg.md) (Uber se aaya: aas-paas ka gola, gudda, namumkin chaal)
+  - [21 Inventory (Ravi ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) (E-com se aaya: ginti pay pe, dabbe, register, hub and spoke)
   - [00_IMG](04_HLD/SYSTEM_DESIGNS/00_IMG) — jo mermaid se nahi banta (cache ki ring, Uber ka naksha + gaadi, PUBG ke dabbe + gudde), saari tasveer ek folder me
 
 - ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> Arpan ka jawab -> Technical me (asli naam). Revision yahin se; main design file me bhi har kadam pe wahi scene line.
@@ -154,6 +155,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/NETFLIX_HAND_NOTES.md)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/YOUTUBE_HAND_NOTES.md)
   - [20 PUBG (Pochinki drop)](04_HLD/SYSTEM_DESIGNS/20_pubg/PUBG_HAND_NOTES.md)
+  - [21 Inventory (teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/INVENTORY_HAND_NOTES.md)
 
 
 - **[FOUNDATIONS](04_HLD/FOUNDATIONS)** — building-blocks (har design inhi se bante) — [01 hld-kya-hai](04_HLD/FOUNDATIONS/01_hld_kya_hai.md) · [02 capacity-estimation](04_HLD/FOUNDATIONS/02_capacity_estimation.md) · [03 load-balancing](04_HLD/FOUNDATIONS/03_load_balancing.md) · [04 caching](04_HLD/FOUNDATIONS/04_caching.md) · [05 replication](04_HLD/FOUNDATIONS/05_database_replication.md) · [06 sharding](04_HLD/FOUNDATIONS/06_database_sharding.md) · [07 message-queues](04_HLD/FOUNDATIONS/07_message_queues.md) · [08 CAP](04_HLD/FOUNDATIONS/08_cap_theorem.md) · [09 db-what-when](04_HLD/FOUNDATIONS/09_databases_what_when.md) (+ interview me kaunsa DB: 4 sawaal) · [10 ms-communication](04_HLD/FOUNDATIONS/10_ms_communication.md) (+ 3 service se maal jodna: timeout · breaker · PARTIAL) · [11 reliability/SPOF](04_HLD/FOUNDATIONS/11_reliability_spof_cloud.md) · [12 elasticsearch](04_HLD/FOUNDATIONS/12_elasticsearch_search.md) · [13 snowflake-id](04_HLD/FOUNDATIONS/13_distributed_id_snowflake.md) · [14 jab-ilaaj-hi-bimari-bane](04_HLD/FOUNDATIONS/14_jab_ilaaj_hi_bimari_bane.md) (HUB: LB, cache, limiter, queue, CAP, SPOF, CDN ki ek hi shakal) · [15 CDN](04_HLD/FOUNDATIONS/15_cdn.md) · [16 DNS](04_HLD/FOUNDATIONS/16_dns.md) · [17 WAF](04_HLD/FOUNDATIONS/17_waf.md) · [18 monitoring](04_HLD/FOUNDATIONS/18_monitoring.md) · [19 url-browser-journey](04_HLD/FOUNDATIONS/19_url_browser_journey.md)
