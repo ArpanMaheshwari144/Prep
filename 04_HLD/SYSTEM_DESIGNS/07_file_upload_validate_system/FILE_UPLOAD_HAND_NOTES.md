@@ -50,7 +50,7 @@ Arpan: Link ki umar chhoti (presigned URL expiry), file ke hisaab se: bank state
 Technical me: "umar" = presigned URL expiry (file ki sensitivity pe).
 
 **8. Scan me 10 minute baaki, Ravi ko download chahiye. Scan me virus nikla to?**
-Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
+Arpan: Scan ki alag tez line, jaise SMS me OTP ki (doctor line me nahi lagta = scan ka alag Kafka topic, baaki kaam ke peeche nahi rukta). Scan poora hone tak link hi nahi; ho gaya to user ko bata do. Paise ginne jaisa: kisi ne kaha "gin do", maine andaza bola 10,000, wo sabko bata aaya, par asal me 20-25 hazaar nikle; pehle poora gino, phir batao. Upload hote hi Priya ne manager ko link bheja to bhi manager ko "file jaanch me hai, thoda ruko" dikhe, file nahi. Virus nikla to file lo hi mat. Hum antivirus nahi, file system hain; mall vs airport ki security, hum utna jaanchte jitna system ko chahiye (magic bytes + virus scan, poora antivirus nahi). Zaroori ho to bahar wala (third party) pehle jaanche, phir hamare paas.
 Technical me: "alag line" = scan ka alag Kafka topic (Kafka me priority nahi hoti, isliye zaroori kaam ki alag line), "link nahi" = status CLEAN tak download band, "lo hi mat" = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 
 **Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki.**
