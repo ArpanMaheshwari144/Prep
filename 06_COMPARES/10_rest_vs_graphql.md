@@ -1,346 +1,37 @@
 # REST vs GraphQL
 
----
+GraphQL kya hai aur usercrud me kaise lagaya = [Spring 11 GraphQL](../02_SPRING/11_GRAPHQL/01_graphql.md) ("jitna maango utna deta").
+Yahan sirf kab kya, aur GraphQL ki keemat.
 
-## 1-Line Analogy
+## Scene: Facebook 2012
 
-```
-REST    = Fixed menu     (order item A, item B separately)
-GraphQL = Custom chef    ("give me exactly what I ask")
-```
+Facebook ka mobile app 2G pe ghisat raha tha. Ek screen ke liye 4-5 REST call lagti thi, aur har call me 30 field aate the. Isliye
+Facebook ne GraphQL banaya, aur 2015 me sabke liye khol diya. Aaj GitHub ki API v4 aur Shopify GraphQL pe hain; Stripe aur zyadatar
+enterprise API REST pe.
 
----
+## Kab kya
 
-## Side by Side
+- **REST:** seedha CRUD, public API, aur jahan cache chahiye. Har cheez ka alag URL (`/users`, `/users/123/tweets`), GET / POST / PUT /
+  DELETE. Tera usercrud REST hai.
+- **GraphQL:** mobile app, ek screen pe bahut judi hui cheezein (user + tweets + likes ek query me), aur kai tarah ke client (web,
+  mobile) jinhe alag-alag field chahiye. Ek hi URL `/graphql`, client field chunta hai.
+- Asal me dono saath chalte hain: login, file upload aur webhook REST pe, app ke andar ka data GraphQL se.
 
-```
-┌──────────────────┬──────────────────┬──────────────────┐
-│  Feature         │  REST             │  GraphQL          │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Endpoints        │ Many (per resource│ ONE single        │
-│                  │ /users, /posts)    │ /graphql           │
-├──────────────────┼──────────────────┼──────────────────┤
-│ HTTP methods     │ GET/POST/PUT/DEL  │ Mostly POST       │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Over-fetching    │ Yes             │ No (client      │
-│                  │ (server decides)   │ picks fields)     │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Under-fetching   │ Yes             │ No (nested in   │
-│                  │ (need multiple req)│ one query)        │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Schema           │ OpenAPI/Swagger   │ Built-in strong   │
-│                  │ optional           │ typed schema      │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Caching          │ Easy (URL-based)│ Hard           │
-│                  │ Browser caches      │ (custom logic)    │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Versioning       │ /v1/users → /v2/ │ Schema evolves    │
-│                  │                     │ (deprecate fields)│
-├──────────────────┼──────────────────┼──────────────────┤
-│ Learning curve   │ Simple          │ Steeper        │
-├──────────────────┼──────────────────┼──────────────────┤
-│ N+1 problem      │ Manageable         │ Common (need      │
-│                  │                     │ DataLoader)       │
-└──────────────────┴──────────────────┴──────────────────┘
-```
+## GraphQL ki keemat (HLD se jod)
 
----
+1. **Cache:** REST me `GET /users/123` ka URL hi cache ki chaabi hai, jaise URL shortener aur Netflix me CDN URL dekh ke rakhta. GraphQL
+   me sab ek hi URL pe `POST`, to URL dekh ke cache nahi kar sakte.
+2. **Rate limiter:** rate limiter me "ek request = ek token" tha. GraphQL me ek hi request `{ users { orders { items } } }` 1000 REST call
+   jitni bhaari ho sakti hai. Isliye wahan request ginne ki jagah query kitni gehri / bhaari hai wo naapte hain (depth / complexity limit).
+3. **Galti:** REST me 404 / 500 se pata chalta hai. GraphQL me galti aksar 200 ke andar `errors` me aati hai (Spring GraphQL bhi aise hi
+   bhejta hai), to monitoring alag se dekhni padti hai.
 
-## REST EXAMPLE
+## Prod wala trap: N+1
 
-```
-TWITTER-LIKE APP:
+Query aayi `{ users { orders { id } } }`. Resolver ne 1 query me 100 users laaye, phir har user ke orders ke liye alag query chalayi.
+Kul 1 + 100 = 101 DB query, ek hi request me, aur client ko pata bhi nahi (usne to ek query bheji). Tere usercrud ka `/n1` demo isi dikkat
+ka hai.
 
-1. Get user info:
-   GET /users/123
-   Response: { id, name, email, age, address, phone, ... 30 fields }
+**Hal:** sabke orders ek saath maango (`WHERE user_id IN (...)`). Spring GraphQL me `@BatchMapping`, bahar ki duniya me iska naam DataLoader.
 
-2. Get user's tweets:
-   GET /users/123/tweets
-   Response: [{ tweet1 }, { tweet2 }, ...]
-
-3. Get each tweet's likes:
-   GET /tweets/1/likes
-   GET /tweets/2/likes
-   GET /tweets/3/likes
-   ...
-
-= 3+ separate requests
-= OVER-FETCHING (got 30 fields, needed 3)
-= UNDER-FETCHING (need 3 requests for full data)
-```
-
----
-
-## GRAPHQL EXAMPLE (Same data)
-
-```
-POST /graphql
-{
-  user(id: 123) {
-    name              ← only fields needed
-    tweets {
-      content
-      likes
-    }
-  }
-}
-
-Response:
-{
-  "data": {
-    "user": {
-      "name": "Arpan",
-      "tweets": [
-        { "content": "Hi", "likes": { "count": 5 } },
-        { "content": "Bye", "likes": { "count": 3 } }
-      ]
-    }
-  }
-}
-
-= 1 request
-= Exact data needed
-= No over/under fetching
-```
-
----
-
-## Over-Fetching Visual
-
-```
-REST:
-   Client needs: name + email
-
-   GET /users/123
-   Server returns: {
-      name: "Arpan",        ← needed
-      email: "a@b.com",     ← needed
-      phone: "...",         ← extra
-      address: "...",       ← extra
-      bio: "...",            ← extra
-      preferences: {...},    ← extra
-      ... 30 more fields    ← extra
-   }
-
-   = Server decides, client gets MORE than needed
-
-GraphQL:
-   Client asks: { user(id:123) { name email } }
-   Server returns: { name, email }
-
-   = Client decides, gets EXACTLY what asked
-```
-
----
-
-## Under-Fetching Visual
-
-```
-REST:
-   Need: User profile + their 5 latest tweets
-
-   Request 1: GET /users/123 → user data
-   Request 2: GET /users/123/tweets → tweets
-
-   = 2 round trips
-   = Mobile network = slow
-
-GraphQL:
-   query {
-      user(id: 123) {
-         name
-         tweets(limit: 5) { content }
-      }
-   }
-
-   = 1 round trip
-   = Mobile friendly
-```
-
----
-
-## GRAPHQL STRONG TYPING
-
-```
-GraphQL SCHEMA (mandatory):
-
-   type User {
-     id: ID!
-     name: String!
-     email: String
-     tweets(limit: Int): [Tweet!]!
-   }
-
-   type Tweet {
-     id: ID!
-     content: String!
-     likes: Int!
-     author: User!
-   }
-
-   type Query {
-     user(id: ID!): User
-     tweets: [Tweet!]!
-   }
-
-= Self-documenting
-= Auto-completion in IDE
-= Compile-time errors
-= Client/server contract enforced
-```
-
----
-
-## GRAPHQL CHALLENGES
-
-```
-1. N+1 PROBLEM (common pitfall)
-   Query: { users { name posts { title } } }
-
-   Naive resolver:
-      1 query for all users
-      Then 1 query per user for posts
-      = N+1 queries (slow)
-
-   FIX: DataLoader (batch + cache)
-
-2. CACHING HARD
-   REST: GET /users/123 → cache by URL
-   GraphQL: POST /graphql → same URL, different queries
-   = Cache key must include query
-   = Browser caching broken
-
-3. RATE LIMITING HARD
-   REST: count requests
-   GraphQL: complex query = "1 request" but expensive
-   = Need query complexity analysis
-   = Depth limits, field limits
-
-4. ERROR HANDLING
-   REST: HTTP status codes (404, 400, 500)
-   GraphQL: Always 200 OK, errors in body
-   = Different mental model
-
-5. FILE UPLOAD
-   REST: multipart/form-data → standard
-   GraphQL: needs extension/workaround
-```
-
----
-
-## WHEN TO USE WHAT
-
-```
-REST CHOOSE WHEN:
-   • Simple CRUD APIs
-   • Public APIs (broad reach)
-   • Strong HTTP caching needed
-   • CDN-friendly
-   • Microservices (each owns its API)
-   • Team unfamiliar with GraphQL
-
-   Examples:
-   • Stripe API
-   • Twitter v1 (now v2)
-   • Most enterprise APIs
-   • UserCRUD
-
-GRAPHQL CHOOSE WHEN:
-   • Mobile apps (over-fetching costly)
-   • Complex nested data
-   • Multiple client types (web, mobile, IoT)
-   • Frontend team wants flexibility
-   • Aggregating multiple data sources
-   • Rapid frontend iteration
-
-   Examples:
-   • Facebook (invented it)
-   • GitHub API v4
-   • Shopify
-```
-
----
-
-## REAL-WORLD STORY
-
-```
-Facebook 2012:
-   Mobile app slow on 2G networks
-   REST API = too many requests, over-fetching
-
-   Solution: Created GraphQL internally
-
-   Result:
-   • Single request per screen
-   • Mobile-friendly bandwidth
-   • Frontend devs autonomous (pick fields)
-
-   2015: Open-sourced
-   Now: GitHub, Shopify, Airbnb, Pinterest
-```
-
----
-
-## HYBRID — Best of Both
-
-```
-Modern stack often uses BOTH:
-
-   REST for:
-   • Auth (/login, /logout)
-   • File uploads
-   • Webhooks
-   • Public APIs
-   • Cacheable resources
-
-   GraphQL for:
-   • Internal frontend data fetching
-   • Mobile app queries
-   • Complex aggregation
-
-= Not "either or"
-= Tool for the job
-```
-
----
-
-## INTERVIEW LINE
-
-```
-"REST has multiple endpoints, one per resource, with
- standard HTTP methods. Simple, cacheable, but causes
- over-fetching and under-fetching.
-
- GraphQL has a single endpoint, client specifies exactly
- what fields needed, no over/under fetching, strong schema.
- But caching is harder, N+1 problem common, learning curve.
-
- REST for simple CRUD APIs and public APIs.
- GraphQL for mobile apps with complex nested data and
- multiple client types.
-
- Facebook invented GraphQL to solve mobile bandwidth
- problems. Modern stacks often use both — REST for
- cacheable resources, GraphQL for internal frontend."
-```
-
----
-
-## Memory Hook
-
-```
-REST    = Fixed menu (multiple endpoints, server decides)
-GraphQL = Custom chef (one endpoint, client decides)
-
-REST: simple, cacheable, over/under fetching
-GraphQL: efficient, flexible, N+1 risk + cache hard
-
-Mobile-heavy → GraphQL
-Public/simple → REST
-
-Facebook invented GraphQL (mobile pain)
-DataLoader = N+1 fix
-```
-
-[← HLD README](../README.md)
+[← COMPARES README](../README.md)
