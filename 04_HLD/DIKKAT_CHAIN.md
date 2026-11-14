@@ -157,8 +157,13 @@ Yahi dikkat yahan bhi:
   Cache         6   chhotu raaste me gira                          ->  kuch second dekho, phir bheed me se ek (lock timeout)
   Cache         6   aur raaste?                                    ->  do chhotu bhejo, hot key lambi umar, expire alag-alag (redundant fetch, TTL jitter)
   Cache         6b  bot nakli id maange, har baar DB               ->  parchi pe range + "500 = null" bhi parchi pe (cache penetration, negative caching)
+  Cache         7c  Priya roz garam, machine 8 pe 8 baje umar khatam ->  nazar, umar badhao, copies ki umar alag (TTL extend, TTL jitter)
+  Cache         7d  chhotu gira, purani parchi to mit gayi         ->  chupchaap doosri parchi, 10 chhotu na aayein tab backoff (stale copy, backoff + jitter)
+  Cache         7e  50 server ke 50 chhotu mote register pe         ->  saamne ek banda, sirf ek chhotu (distributed lock)
+  URL shortener 11c cricket token, photocopy 7 pe umar khatam      ->  umar badhao, photocopy umar alag, chupchaap doosri parchi (TTL extend, stale copy)
+  URL shortener 11d 50 counter ke 50 ladke                         ->  saamne ek banda, sirf ek ladka (distributed lock)
 
-Naam: single flight / lock timeout / cache stampede / cache penetration / negative caching / TTL jitter
+Naam: single flight / lock timeout / cache stampede / cache penetration / negative caching / TTL jitter / stale copy / distributed lock
 Juda: ladke ki timeline = parchi ki umar (2). URL aur Cache dono me same.
 ```
 

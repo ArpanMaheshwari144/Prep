@@ -337,6 +337,18 @@ pachaas kadam door ho, to har baar wahan jaane ki jagah apne page pe likh lo. Ab
 information ye rahi", dobara kahin jaana hi nahi padta.
 **Asli naam:** counter wala apne paas parchi rakhe = local cache (app server ki memory me garam link kuch second).
 
+**Maan lo wahi cricket token roz garam, photocopy 7 pe 7 baje umar khatam, aur purani information to mit chuki:** aisa
+token ek saath khatam hi mat hone do: nazar rakho, umar badhate raho (+60, +60), 10 photocopy ki umar alag. Photocopy 7
+pe sab ruko, ladka mote register se laaye. Purani ke liye chupchaap ek aur parchi apne paas; asli mite to wo do, ladka
+nayi laaye to purani phaad do. Counter wale ki apni parchi pe chhoti umar. Ladka gira to doosra; backoff tab jab 10
+ladke bhi na aayein (mota register gira).
+**Asli naam:** hot key TTL extend (refresh-ahead), TTL jitter, stale copy (soft / hard TTL, stale-while-revalidate; kadam 6
+wali purani information yahi), local cache short TTL, DB down pe retry with backoff + jitter.
+
+**Maan lo 50 counter, har counter wale ne apna ladka bheja, mote register pe 50 ladke:** saamne ek banda sabko rokta,
+sirf ek ladka jaata, ek hi information to laani hai.
+**Asli naam:** distributed lock (saajha lock, Redis me ek key: SET NX + umar); kadam 5 ka ladka ek counter ka ho to 50 ladke jaate.
+
 ```mermaid
 flowchart TB
     U["Cricket ka token viral:<br/>1 crore log ek saath"]:::bad

@@ -281,6 +281,23 @@ nahi chalta, kyunki ek key ek hi machine pe jaati.
 **Maan lo Priya ki key machine 4, 8, 9 teeno pe hai (copies), usne naam badla, aur sirf machine 4 ki parchi kati:** Refresh pe kabhi naya naam aayega, kabhi purana, kyunki 8 aur 9 pe abhi purani parchi padi hai. Kadam 5 wala niyam "pehle parchi kaato" sirf ek machine pe nahi, jitni copies hain sab pe lagao. Aur kadam 5 wala peeche ka banda (sync job) bhi sirf ek jagah nahi, saari copies jaanche.
 **Asli naam:** copies pe bhi delete = hot key ki har replica invalidate, sync job copies bhi = reconciliation sab replicas pe.
 
+**Maan lo Priya ab roz ki mashhoor, parchi 4, 8, 9 pe garam, aaj 8 baje umar khatam, chhotu ko 2 second:** aisi garam
+parchi ko ek saath khatam hone hi mat do. Us pe nazar rakho aur umar badhate raho (+60, +60). Teeno copy ki umar alag,
+to sab ek saath nahi mitengi. Machine 8 ki mit gayi to wahan sab ruko, ek chhotu mote register se laaye (kadam 6).
+**Asli naam:** umar badhate raho = hot key TTL extend (refresh-ahead), copy umar alag = TTL jitter, ek chhotu = single flight.
+
+**Maan lo chhotu gira, aur parchi to umar khatam hote hi mit gayi, purani information kahan se:** ek parchi nahi.
+Chupchaap ek aur parchi apne paas rakho jisme wahi information; asli mite to "abhi ye le lo, thodi der purana dekh lo",
+chhotu nayi laaye to purani phaad do. App / browser ke cache se bhi purana de sakte, par un pe chhoti umar, taaki log
+jaldi Redis pe aayein. Ek chhotu gira to doosra; backoff tab jab 10 chhotu bhi na aayein, tab DB gira hai.
+**Asli naam:** doosri parchi = stale copy (soft / hard TTL, stale-while-revalidate), app / browser chhoti umar = local
+cache short TTL, 10 na aayein tab = DB down pe retry with backoff + jitter.
+
+**Maan lo 50 server, har server ka apna chhotu, mote register pe 50 chhotu:** saamne ek banda khada hai jo sabko
+rokta: sab apne server pe chup, sirf ek chhotu jaaye, ek hi information to laani hai, wo sabko de dega.
+**Asli naam:** distributed lock (sab server ke beech saajha lock: Redis me ek key, SET NX + umar). Kadam 6 ka lock sirf
+ek server ke andar ho to 50 server ke 50 chhotu jaate.
+
 ```mermaid
 flowchart TB
     U["1 crore log: Priya ki key<br/>sirf machine 4 pe"]:::bad
