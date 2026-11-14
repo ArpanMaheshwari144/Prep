@@ -35,6 +35,13 @@ DataSource dataSource() {
 }
 ```
 
+Asli Spring Boot 4 pe chalaya (usercrud ke jars se), dono baar properties me `maximum-pool-size=50`:
+
+```
+properties me 50, bean Spring ne banaya  -> maximum-pool-size = 50
+properties me 50, bean maine khud banaya -> maximum-pool-size = 10
+```
+
 `@ConditionalOnMissingBean` ki wajah se Spring peeche hat jaata hai, ye theek hai. Par saath me `application.properties` ki `spring.datasource.hikari.maximum-pool-size=50` bhi chup-chaap lagni band ho jaati hai, aur pool default 10 pe chalta rehta hai. Load aaya to connection khatam aur requests atak jaati hain. Ye wahi HikariCP pool wali kahani hai jo tune prod me pakdi thi.
 
 ## Hal
