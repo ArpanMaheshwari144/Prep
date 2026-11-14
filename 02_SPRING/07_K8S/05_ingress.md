@@ -6,6 +6,16 @@
 
 ---
 
+## Koi poochhe to aise bolo
+
+**Ingress kya hai:** cluster ka main gate. Bahar se (browser se) aayi request yahin aati hai, aur Ingress batata hai ki `/users` wali request usercrud ki Service pe jaaye aur `/todo` wali todo ki Service pe. Ye K8s ke andar ka NGINX hai.
+
+**Kyun:** har service ka alag bahar wala darwaza kholna mehenga aur bikhra hota. Ek gate, ek domain, raste ke hisaab se aage bhejo, HTTPS bhi yahin.
+
+**Aage ki kahani:** ab app chal rahi hai aur bahar se pahunch rahi hai. Bacha: DB ka URL aur password kahan rakhein, ConfigMap aur Secret ([06](06_configmap_secret.md)).
+
+---
+
 ## ONE-LINE ANSWER (yaad rakh)
 
 ```

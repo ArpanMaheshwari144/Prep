@@ -7,6 +7,16 @@
 
 ---
 
+## Koi poochhe to aise bolo
+
+**Service kya hai:** pods ke aage ek pakka naam aur pata. Peeche pod marte-bante rahein, IP badalta rahe, Service ka naam wahi rehta hai. usercrud MySQL ko `mysql` naam se dhundh leta hai, pod ka IP jaanne ki zaroorat nahi.
+
+**Kyun:** pod ka IP pe bharosa nahi kar sakte, kyunki wo badalta rehta hai. Aur 3 pod hon to Service request ko teeno me baant bhi deti hai, chhota load balancer jaisa.
+
+**Dikkat jisse agla tukda bana:** Service cluster ke andar ka pata hai. Bahar ki duniya (browser) ko andar aane ke liye ek darwaza chahiye, wo Ingress ([05](05_ingress.md)).
+
+---
+
 ## The Problem K8s Service Solves
 
 ```

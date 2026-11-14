@@ -6,6 +6,16 @@
 
 ---
 
+## Koi poochhe to aise bolo
+
+**ConfigMap / Secret kya hai:** config aur password image ke andar nahi likhte, bahar rakhte hain. Aam config (DB URL, profile) ConfigMap me, password aur key Secret me. Pod chalte waqt ye bahar se env ya file ban ke andar aate hain. Ye Spring ke `application-{profile}.properties` jaisa hi kaam hai, bas K8s ke level pe.
+
+**Kyun:** ek hi image dev pe bhi chale aur prod pe bhi, sirf bahar ki config badle. Password image me likha to jiske paas image, uske paas password.
+
+**Dhyaan:** Secret apne aap me taala nahi hai, sirf base64 me likha hota hai. Asli bachav access ki rok (kaun padh sakta) aur cluster ke andar encryption se aata hai.
+
+---
+
 ## The Problem
 
 ```

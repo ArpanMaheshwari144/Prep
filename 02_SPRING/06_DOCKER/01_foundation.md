@@ -8,6 +8,18 @@
 
 ---
 
+## Koi poochhe to aise bolo
+
+**Docker kya hai:** Docker ek tool hai jo meri app ko uske saare saamaan (Java ka version, jar, config) ke saath ek dabbe me band kar deta hai. Is dabbe ko container kehte hain, aur jis saanche se dabba banta hai use image kehte hain.
+
+**Kyun use karte hain:** pehle "mere laptop pe chal raha, server pe nahi" wali dikkat hoti thi, kyunki har machine pe Java ka version aur library alag hoti hai. Container me sab kuch saath band hai, isliye laptop, test server aur prod, teeno jagah app ek jaisi chalti hai. Naya banda team me aaye to ek command se usercrud aur MySQL chal jaate hain, setup me din nahi lagte. Aur ye VM se halka hai, kyunki poora OS nahi uthata, machine ka kernel share karta hai, isliye second me chalu ho jaata hai.
+
+**Tere project me:** usercrud ki image banayi, MySQL container me chalaya, phir Compose se dono ek command me chalaye.
+
+**Aage ki kahani:** Docker ek machine tak kaam aata hai. Jab bahut machine pe bahut dabbe sambhalne hon, wahan Kubernetes aata hai ([K8S 01](../07_K8S/01_why_k8s_and_architecture.md)).
+
+---
+
 # PART 1 — Docker Install + Verification
 
 ## Install Configuration (Docker Desktop)

@@ -7,6 +7,16 @@
 
 ---
 
+## Koi poochhe to aise bolo
+
+**Deployment kya hai:** pod ka manager. Main likhta hoon "usercrud ke 3 pod chahiye", Deployment ginti pakad ke rakhta hai: ek pod mara to naya bana deta hai.
+
+**Kyun:** do kaam ke liye. Pehla, pod mare to apne aap naya aa jaaye. Doosra, naya version aaye to ek-ek karke purane pod hatata hai aur naye lagata hai, isliye app band nahi hoti; naya version kharab nikla to pichhle pe wapas ja sakte hain. Bheed badhe to ginti 3 se 10 kar do, bas.
+
+**Dikkat jisse agla tukda bana:** pod marte-bante rehte hain aur har naye pod ka IP badal jaata hai. To usercrud MySQL ko dhundhe kaise? Iske liye Service ([04](04_service.md)).
+
+---
+
 ## Why Deployment?
 
 ```

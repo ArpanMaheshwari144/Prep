@@ -7,6 +7,18 @@
 
 ---
 
+## Koi poochhe to aise bolo
+
+**Pod kya hai:** Kubernetes container ko seedha nahi pakadta, use ek kamre me rakhta hai. Wo kamra Pod hai. Pod me aam taur pe ek hi container hota hai, kabhi saath me ek helper bhi (jaise logs bhejne wala), aur pod ko ek IP milta hai. Ek pod ke andar wale container aapas me `localhost` se baat kar lete hain.
+
+**Kyun:** kabhi app ke saath ek helper ko bilkul paas chahiye, same pata aur same files ke saath. Pod ye jodi ek saath chalata aur ek saath hatata hai.
+
+**Dikkat jisse agla tukda bana:** pod khud mar jaaye ya uski machine gir jaaye to wo wapas nahi aata. Isliye pod ko kabhi akela nahi chalate, uske upar ek manager rakhte hain, Deployment ([03](03_deployment.md)).
+
+**Tere project me:** `usercrud ... 0/1 ErrImageNeverPull` aaya tha: pod ban gaya par andar ka dabba shuru hi nahi hua. Isliye "pod bana" aur "app chali" alag baatein hain, READY column dekho.
+
+---
+
 ## What's a Pod?
 
 ```

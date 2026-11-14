@@ -7,6 +7,18 @@
 
 ---
 
+## Koi poochhe to aise bolo
+
+**Kubernetes kya hai:** Docker se app ek dabbe (container) me band hoti hai, par Docker ek machine tak hi kaam aata hai. Jab 50 machine pe 100 dabbe chalane hon, koi dabba gir jaaye to use dobara uthana ho, bheed badhe to aur copy chahiye, aur naya version bina app band kiye daalna ho, tab ye sab Kubernetes sambhalta hai. Isliye wo Docker ka bhagwan hai: Docker dabba banata hai, Kubernetes bahut saare dabbe chalata aur sambhalta hai.
+
+**Kyun use karte hain:** main use bas likh ke deta hoon "mujhe usercrud ki 3 copy chahiye". Wo baar-baar dekhta rehta hai ki kitni chal rahi hain, aur 2 bachi to ek nayi bana deta hai. Raat 3 baje crash hua to koi insaan uthane nahi baithta, Kubernetes khud uthata hai. Compose ye nahi karta, wo ek machine ka hai aur khud se kuch nahi sambhalta.
+
+**Andar kya hai (bas itna):** ek dimaag hota hai (control plane) jo tay karta hai kaunsa dabba kis machine pe jaaye aur ginti milata rehta hai, aur kaam karne wali machines (worker node) jahan dabbe asal me chalte hain.
+
+**Aage ki kahani:** Kubernetes dabbe ko seedha nahi pakadta, use Pod me rakhta hai (02). Pod ka manager Deployment hai (03). Pods ko pakka pata Service deti hai (04). Bahar se andar aane ka darwaza Ingress hai (05). Config aur password bahar ConfigMap aur Secret me rehte hain (06).
+
+---
+
 ## Why K8s? Docker Compose Kaafi Nahi?
 
 ```
