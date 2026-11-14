@@ -52,6 +52,8 @@ Technical me: "tree" = DB me folders table (id, parent_id), file ki row me folde
 **6. Ravi ne URL me 1042 ki jagah 1043 likha aur Priya ka bank statement khul gaya. Download bhi hamare server se ja raha.**
 Arpan: Ravi asli member hai (JWT), par Priya ki statement maange to "Priya ko saath la" (server DB me dekhe file kiski hai / kisse share hui, warna mana). Server DB me dekhe file kiski hai / kisse share hui, tabhi link de. Link me chhed-chhaad ki to link bekaar. Download truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata (hamare server se data nahi guzarta).
 Technical me: "kiski hai" = owner / share check (authorization, JWT sirf pehchaan), "link bekaar" = presigned download URL (signature), "truck seedha ghar" = S3 se direct download.
+**Maan lo beech me CDN laga diya, Priya ka statement Jaipur ke CDN dabbe me pada, Ravi CDN wala URL khole:** faisla hamara server karega, S3 / CDN sirf rakhte aur dete. Kamre ke bahar main khada: ID dikha, file kiski hai dekho, tabhi token; bina token CDN file nahi deta.
+Technical me: CDN pe bhi signed URL / signed cookie (server sign kare, CDN jaanche).
 
 **7. Ravi ne link 200 logon ke WhatsApp group me daal diya.**
 Arpan: Link ki umar chhoti (presigned URL expiry), file ke hisaab se: bank statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. User khud baante to wo uski zimmedari, system pe har cheez nahi thop sakte.

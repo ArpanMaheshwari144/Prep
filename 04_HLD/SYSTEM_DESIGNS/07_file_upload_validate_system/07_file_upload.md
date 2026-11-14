@@ -225,6 +225,11 @@ guzarta).
 **Asli naam:** kiski hai = owner / share check (authorization, JWT sirf pehchaan batata, ijaazat DB batata), link bekaar = presigned download
 URL (signature, badla to bekaar), truck seedha ghar = S3 se direct download.
 
+**Maan lo download tez karne ko beech me CDN laga diya (Jaipur ka dabba), Priya ka statement wahan pada hai aur Ravi CDN wala URL khole:**
+faisla phir bhi hamara server karega. S3 aur CDN sirf rakhte aur dete hain. Kamre ke bahar main khada hoon: file lene aaye to
+pehle ID dikha, server dekhe file kiski hai, tabhi token de. Bina token ke CDN file nahi deta.
+**Asli naam:** CDN pe bhi signed URL / signed cookie (hamara server sign kare, CDN signature jaanche, CloudFront signed URL).
+
 ```mermaid
 flowchart TB
     R["Ravi: 1043 maanga<br/>(Priya ka statement)"]:::bad

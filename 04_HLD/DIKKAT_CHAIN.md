@@ -495,6 +495,7 @@ Yahi dikkat yahan bhi:
   Twitter       15c CDN ko allow list pata hi nahi                 ->  CDN ke paas bhi taala (signed URL / cookie)
   File upload   1   PDF bol ke exe chadha de                       ->  chhota tukda dekh lo (magic bytes)
   File upload   6   1043 likha, Priya ka statement khula           ->  "Priya ko saath la" (owner / share check)
+  File upload   6b  CDN dabbe me Priya ka statement, Ravi ne URL khola ->  faisla server ka, token ke bina CDN na de (CDN signed URL)
   File upload   8   scan me 10 min baaki, download chahiye         ->  scan poora tak link hi nahi (CLEAN tak band)
   File upload   8   scan me virus nikla                            ->  file lo hi mat (quarantine / delete)
   Docs          6   Ravi hataya, server pe purani permission       ->  chhota note, uska op accept nahi (permission check)
