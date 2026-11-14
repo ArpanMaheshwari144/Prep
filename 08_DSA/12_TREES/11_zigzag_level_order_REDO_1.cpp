@@ -40,8 +40,38 @@ struct TreeNode
 
 vector<vector<int>> zigzagLevelOrder(TreeNode *root)
 {
-    // yahan likh
-    return {};
+    vector<vector<int>> ans;
+    if (!root)
+        return ans;
+    queue<TreeNode *> q;
+    q.push(root);
+    int levelCount = 0;
+    while (!q.empty())
+    {
+        int sz = q.size();
+        vector<int> temp;
+        for (int i = 0; i < sz; i++)
+        {
+            TreeNode *curr = q.front();
+            q.pop();
+            temp.push_back(curr->val);
+            if (curr->left != NULL)
+            {
+                q.push(curr->left);
+            }
+            if (curr->right != NULL)
+            {
+                q.push(curr->right);
+            }
+        }
+        if (levelCount % 2 != 0)
+        {
+            reverse(begin(temp), end(temp));
+        }
+        levelCount++;
+        ans.push_back(temp);
+    }
+    return ans;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
