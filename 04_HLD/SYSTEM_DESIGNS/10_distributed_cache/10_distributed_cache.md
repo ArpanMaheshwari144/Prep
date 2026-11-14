@@ -291,7 +291,8 @@ Chupchaap ek aur parchi apne paas rakho jisme wahi information; asli mite to "ab
 chhotu nayi laaye to purani phaad do. App / browser ke cache se bhi purana de sakte, par un pe chhoti umar, taaki log
 jaldi Redis pe aayein. Ek chhotu gira to doosra; backoff tab jab 10 chhotu bhi na aayein, tab DB gira hai.
 **Asli naam:** doosri parchi = stale copy (soft / hard TTL, stale-while-revalidate), app / browser chhoti umar = local
-cache short TTL, 10 na aayein tab = DB down pe retry with backoff + jitter.
+cache short TTL, 10 na aayein tab = DB down pe retry with backoff + jitter (backoff = har baar thoda zyada ruk ke dobara, 1, 2, 4 sec; jitter = sab servers ka
+intezaar thoda alag-alag, taaki sab ek pal me na lautein; do alag cheez, saath bolte hain).
 
 **Maan lo 50 server, har server ka apna chhotu, mote register pe 50 chhotu:** saamne ek banda khada hai jo sabko
 rokta: sab apne server pe chup, sirf ek chhotu jaaye, ek hi information to laani hai, wo sabko de dega.

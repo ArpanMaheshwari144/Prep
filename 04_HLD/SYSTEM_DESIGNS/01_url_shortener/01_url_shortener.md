@@ -343,7 +343,8 @@ pe sab ruko, ladka mote register se laaye. Purani ke liye chupchaap ek aur parch
 nayi laaye to purani phaad do. Counter wale ki apni parchi pe chhoti umar. Ladka gira to doosra; backoff tab jab 10
 ladke bhi na aayein (mota register gira).
 **Asli naam:** hot key TTL extend (refresh-ahead), TTL jitter, stale copy (soft / hard TTL, stale-while-revalidate; kadam 6
-wali purani information yahi), local cache short TTL, DB down pe retry with backoff + jitter.
+wali purani information yahi), local cache short TTL, DB down pe retry with backoff + jitter (backoff = har baar thoda zyada ruk ke dobara, 1, 2, 4 sec; jitter = sab servers ka
+intezaar thoda alag-alag, taaki sab ek pal me na lautein; do alag cheez, saath bolte hain).
 
 **Maan lo 50 counter, har counter wale ne apna ladka bheja, mote register pe 50 ladke:** saamne ek banda sabko rokta,
 sirf ek ladka jaata, ek hi information to laani hai.
