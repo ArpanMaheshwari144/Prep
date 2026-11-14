@@ -60,7 +60,8 @@ Technical me: har cheez alag check. Adhoora order chalta.
 Arpan: Pay ki request hamare server pe aati hai, wahan line lagao: jo pehle aaya wo pehle paaya, duniya ka dastoor. Jiska paisa aaya, ginti kaato, dabba uska. 500 khatam hone ke baad jiska paisa aaya uska turant rollback, do minute me paisa wapas, aur "out of stock" bol do. Out of stock to dikhna hi hai, chahe pehle dikhe chahe baad me. Asli hal: sale ke liye stock pehle se zyada mangwao. Samsung pe discount lagaunga to 500 nahi, 10-20 hazaar laaunga.
 Technical me: paisa aane pe server pe ek-ek karke ginti kaato, 500 ke baad aaye paise ka refund (rollback). Doosra raasta: Pay dabaate hi dabba ghadi (10 min) ke saath rok do, refund kam, par dabba ghadi tak ruka. Dono ki keemat.
 
-**7b. Rollback me bhi pech, 10 minute wale me bhi pech. Koi screwdriver? (Apple store: 500 iPhone, bahar 3000 log)**
+**7b. Rollback me bhi pech, 10 minute wale me bhi pech. Koi screwdriver?**
+(Yahan se sale ka maal ghee ki jagah iPhone: mausi ke mart me Diwali sale pe 500 iPhone aaye, Apple store jaisa, bahar 3000 log. Ghee ho ya iPhone, baat wahi: maal kam, log zyada.)
 Arpan: Jitne phone utne log andar, baaki bahar. Kisi ka card decline hua ya koi chala gaya to agla batch bulao, jitne bache utne. 3000 ko andar bula ke kya fayda. App pe poora app to rok nahi sakte, aata-daal wale bhi hain. To ghee ke liye ek alag counter lagao: sale wala maal us gate se guzrega, normal checkout chalta rahega. Us counter se sirf 500 ghee guzarne hain, to dikkat hi khatam.
 Technical me: sale gate (Buy now, cart me nahi jaata). Gate sirf utne logon ko Pay tak jaane deta jitna stock (Redis DECR). Fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi, aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
 
@@ -80,11 +81,13 @@ Technical me: "5 min ke baad phone uska nahi" = Pay pe server check kare ki rese
 Arpan: Design har jagah se thoda toot-ta hai. Chahe 10 minute rok lo, chahe paisa aane pe kaato, kinaare pe dikkat rehti hai. Aakhri second pe pay kiya to wahan BMS wali cheez hi leni padegi. Paisa kata to zimmedari hamari, PSP se hum baat karenge.
 Technical me: PAYMENT_PENDING (BMS jaisa) + status job PSP se poochta rahe. Paisa kata mila to dabba uska; dabba na bacha ho to refund. Perfect design koi nahi, bas kitne refund.
 
+(Payment wala hissa Myntra ki misaal se: mausi ke mart ki app bhi online dukaan hai, aur paisa wahan bhi Razorpay jaisa PSP hi kaatta. Neeche "Myntra" = hamari online dukaan.)
+
 **Maan lo PSP 30-50 second chup, Myntra ko pata nahi Ravi ka paisa kata ya nahi.**
 Arpan: Order ki khabar Myntra ki apni hai: Pay dabate hi apne paas order PENDING aur payment INITIATED likh diya, stock rok liya. Paisa kata ya nahi, ye PSP hi batayega, Myntra Ravi ka bank nahi dekh sakta. Razorpay kitni der lega, hamare haath me nahi; zyada der Ravi ko nahi rok sakte. Isliye ghadi hamari: 30-50 second, uske baad Ravi ko "time out, paisa kata to wapas aa jaayega, dobara pay karo" dikhao; dobara pay kare to Razorpay ki jagah doosre PSP pe bhejo, kyunki pata hai Razorpay abhi dheema hai. Baad me pata chala Razorpay pe bhi kata tha, to Razorpay ko bolo "lautao".
 Technical me: order PENDING + payment INITIATED (Myntra ka apna DB), paise ki khabar sirf PSP se (webhook / status API, din ka settlement report), hamara client timeout (50 sec), der se "success" aaya to DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe -> isliye dobara pay doosre PSP pe chal jaata (PSP failover), do baar kata to ek wapas.
-(12-Nov Arpan) Payment fail hua to cart khaali mat karo. Amazon cart tabhi khaali karta jab payment SUCCESS ho; fail hua to cart wahin pada, bas bol do "dobara pay kar do". Raaste kai: dobara QR khulwa do doosre PSP pe, ya net banking, ya cash on delivery. Ek hi raasta nahi, bahut alag-alag ho sakte.
-Technical me (12-Nov): cart sirf payment SUCCESS pe khaali, fail pe cart + order wahin, retry options = doosra PSP (failover) / net banking / COD (payment method fallback).
+Arpan: Payment fail hua to cart khaali mat karo. Amazon cart tabhi khaali karta jab payment SUCCESS ho; fail hua to cart wahin pada, bas bol do "dobara pay kar do". Raaste kai: dobara QR khulwa do doosre PSP pe, ya net banking, ya cash on delivery. Ek hi raasta nahi, bahut alag-alag ho sakte.
+Technical me: cart sirf payment SUCCESS pe khaali, fail pe cart + order wahin, retry options = doosra PSP (failover) / net banking / COD (payment method fallback).
 
 **Maan lo Ravi ka paisa kat gaya, par Myntra ko ye khabar der se mile ya mile hi na. Har baar Razorpay se poochhte rahoge?** (BookMyShow 6c wala hi jawab)
 Arpan: Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe event bhejta. Event aaya = kata, hum "mil gaya" bol dete. Event raste me kho gaya to wo Razorpay ka HLD hai, wo dobara bhejega. Aur Big Billion Day jaisi sale pe 3-4 company (Stripe, Amazon Pay) line me rakho, ek dheemi hui to doosri khadi.

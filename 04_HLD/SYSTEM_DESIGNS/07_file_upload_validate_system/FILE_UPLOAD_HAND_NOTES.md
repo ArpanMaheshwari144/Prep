@@ -41,7 +41,8 @@ Arpan: Wahi Kafka aur Notification wala: vasiyat likh do. UPLOADED ke saath hi l
 Technical me: "UPLOADED ke saath vasiyat" = outbox (status + scan ka kaam ek hi DB transaction me), "baad me koi daal dega" = relay.
 
 **Maan lo S3 ne "file aa gayi" do baar bataya, ya ulte kram me.**
-Arpan: Do baar aa sakta hai, koi dikkat nahi. Parchi rakho: is file ka kaam ho gaya, likh liya; dobara aaya to dekha ho gaya, chhod do. Ulta aaya to dekho kaunsa naya hai, purana aaya to chhod do. (12-Nov grill, resume v1 phir v2, event ulte aaye: apna thappa lagao, pehli = current, doosri = updated. V1 / V2 ke naam se nahi, apne thappe se faisla; purana thappa baad me aaya to phenk do.)
+Arpan: Do baar aa sakta hai, koi dikkat nahi. Parchi rakho: is file ka kaam ho gaya, likh liya; dobara aaya to dekha ho gaya, chhod do. Ulta aaya to dekho kaunsa naya hai, purana aaya to chhod do.
+Maan lo resume me v1 phir v2 aaye aur event ulte pahunche. Arpan: Apna thappa lagao, pehli = current, doosri = updated. V1 / V2 ke naam se nahi, apne thappe se faisla; purana thappa baad me aaya to phenk do.
 S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered at least once." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html) aur "Event notifications aren't guaranteed to arrive in the same order that the events occurred." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html)
 Technical me: "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa naya" / "apna thappa" = S3 event ka `sequencer` ya hamara version number (bada = baad wala, usi file ke liye).
 
@@ -50,9 +51,10 @@ Arpan: Folder ka hisaab alag, apne server me. Ek parent, baaki uske child, tree 
 Technical me: "tree" = DB me folders table (id, parent_id), file ki row me folder_id; S3 key file ki id se, naam se nahi.
 
 **6. Ravi ne URL me 1042 ki jagah 1043 likha aur Priya ka bank statement khul gaya. Download bhi hamare server se ja raha.**
-Arpan: Ravi asli member hai (JWT), par Priya ki statement maange to "Priya ko saath la" (server DB me dekhe file kiski hai / kisse share hui, warna mana). Server DB me dekhe file kiski hai / kisse share hui, tabhi link de. Link me chhed-chhaad ki to link bekaar. Download truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata (hamare server se data nahi guzarta).
+Arpan: Ravi asli member hai (JWT), par Priya ki statement maange to "Priya ko saath la". Server DB me dekhe file kiski hai / kisse share hui, tabhi link de. Link me chhed-chhaad ki to link bekaar. Download truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata (hamare server se data nahi guzarta).
 Technical me: "kiski hai" = owner / share check (authorization, JWT sirf pehchaan), "link bekaar" = presigned download URL (signature), "truck seedha ghar" = S3 se direct download.
-**Maan lo beech me CDN laga diya, Priya ka statement Jaipur ke CDN dabbe me pada, Ravi CDN wala URL khole:** faisla hamara server karega, S3 / CDN sirf rakhte aur dete. Kamre ke bahar main khada: ID dikha, file kiski hai dekho, tabhi token; bina token CDN file nahi deta.
+**Maan lo beech me CDN laga diya, Priya ka statement Jaipur ke CDN dabbe me pada, Ravi CDN wala URL khole:**
+Arpan: Faisla hamara server karega, S3 / CDN sirf rakhte aur dete. Kamre ke bahar main khada: ID dikha, file kiski hai dekho, tabhi token; bina token CDN file nahi deta.
 Technical me: CDN pe bhi signed URL / signed cookie (server sign kare, CDN jaanche).
 
 **7. Ravi ne link 200 logon ke WhatsApp group me daal diya.**

@@ -34,7 +34,9 @@ Technical me: "naksha dabbon me" = geohash (grid), "sirf apna dabba" = 5 lakh ki
 Arpan: Dabbe ki seema pe mat chalo. Arpan jahan khada wahan se 8 km ka gola khincho; jin dabbon ko gola chhoota, unke driver bhi dekho.
 Technical me: "gola + chhoote dabbe" = apna geohash + aas-paas ke dabbe, phir asli fasla.
 
-**Maan lo (reel se aaya, Gomti nadi) seedhi lakeer pe sabse paas Raju 500 meter, par nadi ke us paar, pul 4 km door; isi kinare Shyam 1.5 km. System ne Raju diya, Arpan 18 minute khada.**
+(Agle do scene Lucknow ke: Arpan Lucknow me hai, wahan Gomti nadi aur Ekana stadium. Shehar badla, Uber ki baat wahi.)
+
+**Maan lo (Gomti nadi) seedhi lakeer pe sabse paas Raju 500 meter, par nadi ke us paar, pul 4 km door; isi kinare Shyam 1.5 km. System ne Raju diya, Arpan 18 minute khada.**
 Arpan: Sirf ye nahi dekhunga ki map pe kaun paas dikh raha. Gole ke driver ki asli doori nikaalunga: sadak se kitni door hai, kitni der lagegi. Nadi wala saamne dikh raha par sadak se 8 km, peeche wala dikh bhi nahi raha par 2 km; to Arpan ko peeche wala. Jaam achanak lag jaaye wo alag baat, wo Uber pehle se nahi bata sakta.
 Technical me: "map pe paas" = seedhi lakeer (straight-line) doori, "sadak se kitni door" = road distance / ETA (routing se, sirf gole ke kuch paas wale driver pe).
 
@@ -50,11 +52,11 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 Arpan: BMS jaisa: 500 cab hain to 500 log andar, baaki line me, agli baari. 50 hazaar ko server pe bitha ke kya karunga. Pehle 500 sambhalo, phir kiraya badha ke door ki cab bulao.
 Technical me: "500 andar, baaki line" = virtual queue, "kiraya badhao, door ki cab aaye" = surge pricing.
 
-**Maan lo (reel se aaya) Ekana stadium me match khatam, 2 minute me 15,000 booking ek hi dabbe se. Drivers ka data dabbe ke hisaab se alag-alag server pe baanta hai; stadium wale server ka CPU 100%, baaki shehar ke server khaali.**
+**Maan lo Ekana stadium me match khatam, 2 minute me 15,000 booking ek hi dabbe se. Drivers ka data dabbe ke hisaab se alag-alag server pe baanta hai; stadium wale server ka CPU 100%, baaki shehar ke server khaali.**
 Arpan: Pehle to itne driver us dabbe me honge hi nahi, gola bada karo, Gomti Nagar, Chinhat se bhi gaadi aaye. Aur ek server pe bojh: us ilaake ke liye 2-3 dabbe extra laga do taaki load ek machine pe na rahe. Har baar haath se nahi lagaunge: stadium, Connaught Place jaise hotspot pata hain, wahan pehle se 2-3 extra dabbe le ke chalo, aur 40-50 hazaar booking ki had paar ho to system apne aap dabbe badha de.
 Technical me: "ek dabbe pe saara bojh" = hot cell (hot shard), "2-3 dabbe extra" = hot cell ko chhote dabbon me tod ke kai shard pe baanto, "pehle se le ke chalo" = jaane-pehchaane hotspot pe pre-scaling, "had paar to apne aap" = auto-scaling.
 
-**Maan lo (12-Nov grill) India-Pakistan match, 2 lakh log. Server badhane se kaam nahi chala, to stadium wala dabba tukdon me toda, har tukda apne server pe. Arpan Gate 3 pe, uske tukde me ek bhi khaali driver nahi; 300 meter door neeche wale tukde me 5 khaali driver, par wo doosre server pe. App bola "koi driver nahi".**
+**Maan lo India-Pakistan match, 2 lakh log. Server badhane se kaam nahi chala, to stadium wala dabba tukdon me toda, har tukda apne server pe. Arpan Gate 3 pe, uske tukde me ek bhi khaali driver nahi; 300 meter door neeche wale tukde me 5 khaali driver, par wo doosre server pe. App bola "koi driver nahi".**
 Arpan: Pehle server badhao, kaam na chale tab hi todo, aur 25-50 hazaar ke hisaab se, jitne zaroori. Toda to dikkat aayi: Arpan upar wale tukde me, khaali driver neeche wale me aaram se pastry kha raha. To ek papa ji le aao, bada aadmi jo sab tukde dekhta hai. Arpan ki request aaye to sirf uska tukda nahi, uske upar, neeche aur bagal wale tukde bhi dekho, unme khaali driver ho to Arpan ko. Ye har tukde ke liye. Phir bhi bheed zyada to gola bada.
 Technical me: "pehle server, phir todo" = pehle scale out, zaroorat pe hi split, "papa ji jo sab tukde dekhe" = coordinator jo kai server se poochh ke jode (scatter-gather), "upar, neeche, bagal wale tukde" = neighbour cells (kadam 4 wala gola).
 
