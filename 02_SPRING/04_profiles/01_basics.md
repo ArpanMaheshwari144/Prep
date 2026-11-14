@@ -285,3 +285,23 @@ spring.profiles.active=docker,prod-secrets,monitoring
 
 ---
 
+
+## Asli chala ke (Spring Boot 4, master me `active=local`)
+
+```
+1) bina kuch:              active=local  | db.url=localhost:3306 (local MySQL)  | jwt.expiration=900000
+2) CLI docker:             active=docker | db.url=localhost:3307 (Docker MySQL) | jwt.expiration=900000
+3) env var docker:         active=docker | db.url=localhost:3307 (Docker MySQL) | jwt.expiration=900000
+4) env docker + CLI local: active=local  | db.url=localhost:3306 (local MySQL)  | jwt.expiration=900000
+```
+
+`jwt.expiration` har baar master se aaya (profile file me wo key hai hi nahi), `db.url` profile file se. Line 4 me env var docker bol raha tha aur CLI local, CLI jeeta.
+
+## Prod trap: profile ke naam me typo
+
+```
+--spring.profiles.active=dokcer
+active=dokcer | db.url=MASTER-wala
+```
+
+Koi error nahi. Profile "active" dikhta hai, par `application-dokcer.properties` hai hi nahi, to Spring chup-chaap master wali value utha leta hai. Isliye startup log me `The following 1 profile is active` aur Hikari kis URL pe juda, dono dekho.
