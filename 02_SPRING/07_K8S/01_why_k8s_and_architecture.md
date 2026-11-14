@@ -1,7 +1,4 @@
-# Topic 1 — Why K8s + Architecture
-
-> **Foundation:** Container orchestration big picture
-> **Mode:** Theory + visualizations
+# Topic 1 — Kubernetes kya hai, kyun
 
 [← Back to README](00_README.md) | [Pod →](02_pod.md)
 
@@ -11,234 +8,43 @@
 
 **Kubernetes kya hai:** Docker se app ek dabbe (container) me band hoti hai, par Docker ek machine tak hi kaam aata hai. Jab 50 machine pe 100 dabbe chalane hon, koi dabba gir jaaye to use dobara uthana ho, bheed badhe to aur copy chahiye, aur naya version bina app band kiye daalna ho, tab ye sab Kubernetes sambhalta hai. Isliye wo Docker ka bhagwan hai: Docker dabba banata hai, Kubernetes bahut saare dabbe chalata aur sambhalta hai.
 
-**Kyun use karte hain:** main use bas likh ke deta hoon "mujhe usercrud ki 3 copy chahiye". Wo baar-baar dekhta rehta hai ki kitni chal rahi hain, aur 2 bachi to ek nayi bana deta hai. Raat 3 baje crash hua to koi insaan uthane nahi baithta, Kubernetes khud uthata hai. Compose ye nahi karta, wo ek machine ka hai aur khud se kuch nahi sambhalta.
-
-**Andar kya hai (bas itna):** ek dimaag hota hai (control plane) jo tay karta hai kaunsa dabba kis machine pe jaaye aur ginti milata rehta hai, aur kaam karne wali machines (worker node) jahan dabbe asal me chalte hain.
-
-**Aage ki kahani:** Kubernetes dabbe ko seedha nahi pakadta, use Pod me rakhta hai (02). Pod ka manager Deployment hai (03). Pods ko pakka pata Service deti hai (04). Bahar se andar aane ka darwaza Ingress hai (05). Config aur password bahar ConfigMap aur Secret me rehte hain (06).
+**Kyun use karte hain:** main use bas bata deta hoon "mujhe usercrud ki 3 copy chahiye". Wo baar-baar dekhta rehta hai ki kitni chal rahi hain, aur 2 bachi to ek nayi bana deta hai. Raat 3 baje crash hua to koi insaan uthane nahi baithta, Kubernetes khud uthata hai. Compose ye nahi karta, wo ek machine ka hai aur khud se kuch nahi sambhalta.
 
 ---
 
-## Why K8s? Docker Compose Kaafi Nahi?
+## Kahani: restaurant ki chain
 
 ```
-DOCKER alone:
-   • Single container manage
-   • Single host (laptop / one server)
-
-DOCKER COMPOSE:
-   • Multiple containers, ek host pe
-   • Dev / small production OK
-
-But REAL PRODUCTION need:
-   • 100s of containers across 50 servers
-   • Auto-scale jab traffic spike (Black Friday)
-   • Self-healing (container crash → restart automatic)
-   • Rolling updates (zero downtime deploy)
-   • Load balancing across containers
-   • Service discovery (sab connect kaise hote)
-
-   = K8S kaam karta yahan
+Docker      = ek kitchen, ek dish banata hai
+Compose     = ek restaurant, kai kitchen ek jagah
+Kubernetes  = 50 shehar me poori chain
+              rush aaya      -> aur kitchen khul jaati
+              kitchen tooti  -> nayi lag jaati
+              menu badla     -> har jagah dheere-dheere badal jaata
 ```
 
 ---
 
-## STORY — Restaurant Chain
+## Andar kya hai (bas itna)
 
-```
-Docker             = ek kitchen (ek dish cook karta)
-Compose            = ek restaurant (multiple kitchens)
-KUBERNETES         = entire restaurant CHAIN
-                     • 50 restaurants across cities
-                     • Auto-open more during rush
-                     • Auto-replace broken kitchens
-                     • Customer ko nearest auto-route
-                     • Menu update karo → all locations sync
+Ek **dimaag** hota hai aur kai **kaam karne wali machines**.
 
-K8s = orchestration brain for container fleet
-```
+Dimaag ke teen kaam hain. Pehla, likh ke rakhna ki kya chahiye (3 copy). Doosra, tay karna ki naya dabba kis machine pe jaaye. Teesra, baar-baar milana ki jo chahiye aur jo chal raha hai wo barabar hai ya nahi; barabar nahi to theek karna.
+
+Kaam wali machines pe dabbe asal me chalte hain. Har machine pe ek chhota agent hota hai jo dimaag ki baat sunta hai aur batata rehta hai ki uske dabbe theek hain ya nahi.
+
+Ye wahi "jo hona chahiye vs jo hai, milao" wala kaam hai jo banking design me sync job karta tha. Bas yahan dabbon ke liye.
 
 ---
 
-## What K8s Does (5 superpowers)
+## Koi poochhe "Kubernetes ne Docker hata diya?"
 
-```
-1. AUTO-SCALING       → Traffic up? more pods auto. Down? scale down.
-2. SELF-HEALING       → Pod crash? K8s replaces it instantly.
-3. ROLLING UPDATES    → Deploy v2 → gradual replace v1, zero downtime.
-4. LOAD BALANCING     → Traffic split across healthy pods.
-5. SERVICE DISCOVERY  → Pods find each other by name (DNS).
-```
+Kubernetes ab dabbe chalane ke liye Docker ka poora engine beech me nahi rakhta, seedha ek chhote runtime se chalata hai. Par Docker se banayi image waise hi chalti hai, kyunki image ka format sabka ek hai. Matlab image banane me Docker ab bhi kaam aata hai.
 
 ---
 
-## K8s Architecture (Visual)
+## Aage ki kahani
 
-```
-                    KUBERNETES CLUSTER
-   ┌─────────────────────────────────────────────────────┐
-   │                                                       │
-   │  CONTROL PLANE (the brain — master node)             │
-   │  ┌────────────────────────────────────────────┐      │
-   │  │                                              │      │
-   │  │  • API Server     (entry point — kubectl)    │      │
-   │  │  • Scheduler      (decides where pods run)   │      │
-   │  │  • Controller     (maintains desired state)  │      │
-   │  │  • etcd           (key-value store, state)   │      │
-   │  │                                              │      │
-   │  └────────────────────────────────────────────┘      │
-   │                          │                            │
-   │                          │ orchestrates                │
-   │                          ▼                            │
-   │  WORKER NODES (jahan containers actually run)         │
-   │  ┌────────────┐  ┌────────────┐  ┌────────────┐      │
-   │  │ Node 1      │  │ Node 2      │  │ Node 3      │     │
-   │  │ ┌────────┐  │  │ ┌────────┐  │  │ ┌────────┐  │     │
-   │  │ │ Pod    │  │  │ │ Pod    │  │  │ │ Pod    │  │     │
-   │  │ │ Pod    │  │  │ │ Pod    │  │  │ │ Pod    │  │     │
-   │  │ └────────┘  │  │ └────────┘  │  │ └────────┘  │     │
-   │  │             │  │             │  │             │     │
-   │  │ kubelet     │  │ kubelet     │  │ kubelet     │     │
-   │  │ (agent)     │  │ (agent)     │  │ (agent)     │     │
-   │  └────────────┘  └────────────┘  └────────────┘      │
-   └─────────────────────────────────────────────────────┘
-```
-
----
-
-## Component Decode
-
-### CONTROL PLANE (Master node)
-
-```
-API Server      → tu kubectl se baat karta isko
-                  Single entry point for all K8s ops
-                  REST API exposing
-
-Scheduler       → "Naya pod kahan deploy karu?"
-                  Decides node based on resources, constraints
-
-Controller      → (controller-manager) "Actual state = Desired state?"
-                  Continuously checks + reconciles
-                  Pod crashed? Re-create (Deployment Controller)
-
-etcd            → "Cluster ka memory" (key-value store)
-                  Stores: cluster config, secrets, state
-                  Highly available, distributed
-```
-
-### WORKER NODE
-
-```
-kubelet         → control plane se baat, pods manage
-                  Runs on every worker
-                  Reports pod status to API Server
-
-kube-proxy      → networking + load balancing
-                  Implements Service routing
-
-Container       → Docker / containerd
-runtime           K8s ko khud container run nahi karna ata
-                  Delegate to runtime
-```
-
----
-
-## Docker vs K8s — Same Domain, Different Levels
-
-```
-DOCKER             K8S
-──────             ─────
-1 container        1000s containers
-Manual run         Auto-orchestrate
-Single host        Multi-host cluster
-docker run         kubectl apply -f deployment.yaml
-docker-compose     similar but for cluster scale
-No self-healing    Self-healing built-in
-No auto-scaling    HPA auto-scaling
-Manual updates     Rolling updates zero downtime
-LOW-LEVEL          HIGH-LEVEL
-```
-
----
-
-## They Work TOGETHER
-
-```
-PRODUCTION SETUP:
-   • Docker (or containerd) BANATA container
-   • K8s SCHEDULES container on right node
-   • K8s MONITORS health, replaces if crash
-   • K8s AUTO-SCALES based on traffic
-   • K8s LOAD BALANCES across containers
-
-Docker = engineer building bricks
-K8s    = construction manager building cities
-```
-
----
-
-## Layer Visual
-
-```
-   ┌──────────────────────────────────────┐
-   │  KUBERNETES (orchestration layer)    │
-   │  • Auto-scale                         │
-   │  • Self-heal                          │
-   │  • Load balance                       │
-   │  • Multi-host management              │
-   │  • "Decides WHERE container runs"     │
-   └────────────────┬─────────────────────┘
-                    │ uses
-                    ▼
-   ┌──────────────────────────────────────┐
-   │  CONTAINER RUNTIME (Docker / containerd)│
-   │  • Container BANATA                  │
-   │  • Container RUN karta                │
-   │  • "Actually runs the container"      │
-   └──────────────────────────────────────┘
-
-   K8s sits ON TOP of container runtime. K8s 1.24 se Docker Engine seedha nahi (dockershim hata),
-   containerd chalata; Docker se bani image waise hi chalti hai, kyunki image ka format ek hi (OCI).
-```
-
----
-
-## Quick Interview Sense
-
-**Q: "Why K8s when Docker exists?"**
-
-> *"Docker = single host container management. K8s = multi-host orchestration at scale. Production needs auto-scaling, self-healing, rolling updates, load balancing — built into K8s. Docker alone = manual. K8s automates fleet management. Both layers — different responsibilities."*
-
-**Q: "K8s architecture explain karo?"**
-
-> *"Control Plane (master) + Worker Nodes (cluster). Control plane has API Server (entry), Scheduler (placement), Controller (reconciliation), etcd (state storage). Workers run kubelet (agent) + container runtime. kubectl talks to API Server, which orchestrates via control plane components. Workers run actual pods."*
-
----
-
-## Power Phrase
-
-> *"K8s = container orchestration platform — manages containers fleet across cluster of machines. Control plane (API Server, Scheduler, Controller, etcd) brain; Worker nodes execute pods. Solves: auto-scaling, self-healing, rolling updates, load balancing, service discovery. Docker = container build/run primitive; K8s sits on top, manages at scale. Production = both together."*
-
----
-
-## Memory Hook
-
-```
-K8s = "Restaurant chain manager"
-   • Docker = ek kitchen
-   • Compose = ek restaurant
-   • K8s = chain across cities
-
-5 superpowers:
-   1. Auto-scale (rush hour → more kitchens)
-   2. Self-heal (kitchen broken → replace)
-   3. Rolling update (menu change → gradual)
-   4. Load balance (customer → nearest restaurant)
-   5. Service discovery (kitchen-to-kitchen connect)
-
-Architecture:
-   Control plane (brain) + Workers (execution)
-```
+Kubernetes dabbe ko seedha nahi pakadta, use **Pod** me rakhta hai (02). Pod ka manager **Deployment** hai (03). Pods ko pakka pata **Service** deti hai (04). Bahar se andar aane ka darwaza **Ingress** hai (05). Config aur password bahar **ConfigMap aur Secret** me rehte hain (06).
 
 [← Back to README](00_README.md) | [Pod →](02_pod.md)
