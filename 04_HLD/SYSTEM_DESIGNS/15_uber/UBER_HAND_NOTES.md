@@ -129,7 +129,7 @@ Arpan: Ek booking ko akele mat dekho. Do booking aayi aur do gaadi hain, to dono
 Technical me: "dono ko saath milao, kul doori kam" = batch matching (kai booking aur kai gaadi ek saath, sabka milake pickup kam).
 
 **Maan lo Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe. Jab Arpan ki aayi tab Ravi ki thi hi nahi, to server ne turant Car A Arpan ko de di.**
-Arpan: Booking aate hi gaadi mat do. Maan lo 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hi hai). Us beech jitni booking aayi, sab ko saath milao, phir gaadi do. Jaldbaazi me kisi ko galat gaadi na de do.
+Arpan: Booking aate hi gaadi mat do. Maan lo 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hi hai). Us beech jitni booking aayi, sab ko saath milao, phir gaadi do. Jaldbaazi me kisi ko galat gaadi na de do. (14-Nov grill) Main upar se dekh raha: Arpan ki booking aayi, gaadi paas thi; 5-10 second ruka, tabhi Ravi aaya aur wahi gaadi Ravi se 1 km. To wo gaadi Ravi ko, Arpan ko agli gaadi.
 Technical me: "15-20 second ruko, sab saath milao" = batching window.
 
 **Maan lo shaam 7 baje office chhutne ka waqt. Har baar koi naya banda gaadi ke bilkul paas mil jaata, aur Arpan 7:05 tak "finding driver" pe hai.**

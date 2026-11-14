@@ -428,7 +428,7 @@ pickup kam).
 
 **Maan lo Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe, aur server ne turant Car A Arpan ko de di:** Booking
 aate hi gaadi mat do. Maan lo 15-20 second ruko, user itna ruk lega (Uber me bhi driver dhoondhne me itna lagta hai). Us beech
-jitni booking aayi, sab ko saath milao, phir gaadi do, taaki jaldbaazi me galat gaadi kisi ko na jaaye.
+jitni booking aayi, sab ko saath milao, phir gaadi do, taaki jaldbaazi me galat gaadi kisi ko na jaaye. Upar se dekho: 5-10 second me Ravi aaya aur wahi gaadi Ravi se 1 km, to wo Ravi ko, Arpan ko agli gaadi.
 **Asli naam:** 15-20 second ruko, sab saath milao = batching window.
 
 **Maan lo office chhutne ka waqt, har baar koi naya banda gaadi ke paas mil jaata, aur Arpan 7:05 tak "finding driver" pe:**

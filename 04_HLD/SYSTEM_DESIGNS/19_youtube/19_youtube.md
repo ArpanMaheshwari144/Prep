@@ -242,7 +242,8 @@ har baar time lag raha, video ghoom rahi, log likh rahe "YouTube down hai?". To 
 garam storage aur CDN pe rakh lo. Pattern pata hai: ek-do din phatega, roz koi nahi sunega. Jaise Saiyaara ka gaana
 India ka hai, Europe wale nahi sunenge, to India ke CDN pe. Fati jeans jaisa: kabhi nahi pehenta tha, trend aaya to 4-5
 din pehni, trend thanda hua to wapas almaari me. Roz ginti dekho, 50 lakh, 16 lakh, 10 lakh, 5 lakh... trend khatam,
-wapas thande storage me.
+wapas thande storage me. Purana gaana US ke server pe tha aur India ka traffic roz US tak ja raha, to ek copy Mumbai ke
+server pe; 10 din peak ke baad ginti girti dikhe to wapas thandi jagah.
 
 **Asli naam:** phat gaya, garam me lao = trend detect (view spike, kadam 3 wali ginti se), promote to hot storage +
 regional CDN; ginti giri, wapas almaari = demote (CDN se hatao, phir cold storage, TTL / lifecycle).
