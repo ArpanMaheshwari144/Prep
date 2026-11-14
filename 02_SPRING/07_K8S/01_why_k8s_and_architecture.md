@@ -106,7 +106,7 @@ API Server      → tu kubectl se baat karta isko
 Scheduler       → "Naya pod kahan deploy karu?"
                   Decides node based on resources, constraints
 
-Controller      → "Actual state = Desired state?"
+Controller      → (controller-manager) "Actual state = Desired state?"
                   Continuously checks + reconciles
                   Pod crashed? Re-create (Deployment Controller)
 
@@ -186,7 +186,8 @@ K8s    = construction manager building cities
    │  • "Actually runs the container"      │
    └──────────────────────────────────────┘
 
-   K8s sits ON TOP of Docker (or similar runtime)
+   K8s sits ON TOP of container runtime. K8s 1.24 se Docker Engine seedha nahi (dockershim hata),
+   containerd chalata; Docker se bani image waise hi chalti hai, kyunki image ka format ek hi (OCI).
 ```
 
 ---
