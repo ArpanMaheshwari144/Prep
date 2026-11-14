@@ -37,6 +37,12 @@ Ye wahi "jo hona chahiye vs jo hai, milao" wala kaam hai jo banking design me sy
 
 ---
 
+## Kisne banaya
+
+Google ne banaya. Google apne andar saalon se karodon dabbe ek system se chalata tha, jiska naam Borg tha; usi ke tajurbe se Kubernetes bana. 2014 me Google ne ise open source kiya, aur ab ise CNCF (Linux Foundation ke neeche) sambhalti hai, kisi ek company ka nahi. AWS pe EKS, Google pe GKE, Azure pe AKS, sab ise taiyaar chala ke dete hain. Naam Greek ka hai, matlab "jahaz chalane wala"; K8s isliye kyunki K aur s ke beech 8 akshar.
+
+---
+
 ## Koi poochhe "Kubernetes ne Docker hata diya?"
 
 Kubernetes ab dabbe chalane ke liye Docker ka poora engine beech me nahi rakhta, seedha ek chhote runtime se chalata hai. Par Docker se banayi image waise hi chalti hai, kyunki image ka format sabka ek hai. Matlab image banane me Docker ab bhi kaam aata hai.
