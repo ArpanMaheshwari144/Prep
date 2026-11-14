@@ -55,12 +55,15 @@ UserService userService = new UserService(repo, email);
 ```java
 @Service
 public class UserService {
-    @Autowired UserRepository repo;
-    @Autowired EmailService email;
+    private final UserRepository repo;
+    private final EmailService email;
+    public UserService(UserRepository repo, EmailService email) {   // ek constructor = @Autowired bhi nahi
+        this.repo = repo; this.email = email;
+    }
 }
 
 // Spring ne KHUD bana liya
-// Spring ne KHUD jod diya
+// Spring ne KHUD jod diya (constructor me daal ke)
 ```
 
 ---
@@ -212,12 +215,13 @@ INDUSTRY CHOICE: Constructor (Lombok @RequiredArgsConstructor)
 └──────────────┴──────────────────────────────┘
 
    90% beans = singleton (default)
-   = Memory efficient, thread-safe stateless
+   = Memory efficient. Thread-safe TABHI jab field me badalta data na ho
+     (field me count++ rakha to 1 lakh me ~350 gayab, 02_beans wala race)
 ```
 
 ---
 
-## Full App Flow (Visual)
+## 10 Full App Flow (Visual)
 
 ```
    STARTUP
