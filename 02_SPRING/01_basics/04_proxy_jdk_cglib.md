@@ -32,8 +32,8 @@ class = $Proxy0
 
 ## Secretary ke 2 roop
 
-- **JDK proxy:** class koi interface implement karti ho, to proxy wahi interface pehen leti hai. Upar `$Proxy0` yahi hai.
-- **CGLIB:** interface na ho, to Spring teri class ka ek nakli beta (subclass) bana deta hai. Spring Boot 2 se default yahi hai. Isliye `final` / `private` method pe proxy nahi lagta, kyunki subclass unhe override hi nahi kar sakti.
+- **JDK proxy:** class koi interface implement karti ho, to proxy wahi interface pehen leti hai (plain Spring me). Upar `$Proxy0` yahi hai.
+- **CGLIB:** Spring teri class ka ek nakli beta (subclass) bana deta hai. Plain Spring me ye tab aata hai jab interface na ho; Spring Boot 2 se interface ho tab bhi default yahi hai. Isliye `final` / `private` method pe proxy nahi lagta, kyunki subclass unhe override hi nahi kar sakti.
 
 Tera usercrud: `/internals` endpoint ([`SpringInternalsDemo.java`](../../07_PROJECTS/usercrud/src/main/java/com/arpan/usercrud/demo/SpringInternalsDemo.java)) me `userService.getClass()` ne `UserService$$SpringCGLIB$$0` print kiya: tujhe asli bean nahi, uski secretary mili thi. `createWithSimulatedFailure()` ne `RuntimeException` phenka, to secretary ne rollback kiya aur DB me user nahi bacha. Ye tune live dekha tha.
 
