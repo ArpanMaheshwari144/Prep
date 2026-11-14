@@ -148,6 +148,32 @@ aayenge sunne. Kahin rakh do, 500 log jab chahe apna aake sunte rahenge.
 members wahi ek message padhte, 500 copy nahi. Group bhi bas ek chat hai jisme 2 ki jagah 500 log; members ki list se
 online walon ko map + pub/sub se bhejo, baaki wapas aayein to dabbe se.
 
+**Maan lo #981 DB me save ho gaya, par pub/sub tak pahunchne se pehle chat server gir gaya:** Ek server thodi hai,
+1-2 chhotu extra rakh lo; ek bimar pada to doosra aayega. Par doosre ko pata kaise chale ki #981 bhejna baaki hai? Main
+nikal raha hoon aur chhotu baad me aayega, to parchi pe likh ke deewar pe chipka jaunga: "chhotu bhai ye message yahan
+jaana chahiye". Chhotu aayega, parchi padhega, message dene nikal jaayega.
+**Asli naam:** extra chhotu = backup server / kai worker, deewar ki parchi = outbox (message ke saath usi transaction me
+"ye bhejna hai" wali row), parchi padhne wala chhotu = relay jo outbox padh ke pub/sub pe daale.
+
+**Maan lo pehla chhotu sirf der se tha, wo bhi aaya aur backup bhi, dono ne #981 bhej diya:** Status rakho. Bheja to
+parchi pe DONE aur mote register me DONE, dono ek hi transaction me, beech me gire to rollback. Koi aaye aur DONE dikhe
+to kaam ho chuka.
+**Asli naam:** outbox row ka status (bhejna baaki -> DONE). Par bhejna DB ke bahar hai, to bhejna aur DONE ek
+transaction nahi: bhej ke DONE se pehle gira to dobara jaayega. Isliye agla.
+
+**Maan lo dono chhotu ne ek hi pal me parchi padhi, DONE kisi ne likha hi nahi tha, dono bhejne nikle:** Chhotu thode
+time antar pe uthein. Aur 500 tak ek chhotu nahi pahuncha sakta, to bahar ek aadmi khada karo jo 500 ko jaanta. Chhotu
+parchi le ke usko de, wo 500 ko bhej de. Doosra chhotu wahi message laaye to aadmi bole "ye to abhi chala gaya",
+parchi phaad ke phenk de. 2, 3, 5 chhotu ek saath aayein, aadmi sambhal lega.
+**Asli naam:** bahar wala aadmi = fan-out service, message number #981 = idempotency key, wahi number dobara aaye to
+discard (dedup fan-out pe). Kadam 6 wali key ki doosri kahani: wahan phone pe, yahan bhejne wale pe.
+
+**Maan lo aage: #980 "kal Goa chalte hain" ki parchi wala aadmi chai peene gaya, doosre aadmi ne #981 "shaam 5 baje
+taiyaar" pehle bhej diya:** Dekh lo kaunsa message pehle aaya tha, wahi pehle jaayega. Time specific hai: is samay ye
+pehle aaya, to wahi pehle, phir doosra.
+**Asli naam:** server ka sequence number (kadam 7 / 12), phone usi kram me lagaye; #981 pehle pahunche to bhi #980 ke
+baad dikhe.
+
 ```mermaid
 flowchart TB
     A["Arpan: kal party hai<br/>(500 logon ka group)"]:::card
@@ -181,6 +207,8 @@ double tick = "pahuncha" ka jawab (ack) dobara bhejo.
 
 **Maan lo ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja:** Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
+Isi key ki doosri kahani = kadam 5 ka bahar wala aadmi: wo 500 ko jaanta, #981 dobara aaye to "ye to chala gaya" bol
+ke phenk de (dedup fan-out pe).
 
 ```mermaid
 flowchart TB

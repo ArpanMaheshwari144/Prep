@@ -91,6 +91,8 @@ Yahi dikkat yahan bhi:
   Banking       2   receipt se pehle line kati, wahi parchi        ->  log hamare paas, dekh ke mana (pehla record)
   Banking       2b  agle din sach me phir 500 bhejne               ->  key jo badle hi na, same parchi (idempotency key)
   Chat          6   lift me jawab kho gaya, "hi hi"                ->  ek key, same aaye to mana (clientMsgId)
+  Chat          5c  late chhotu bhi aaya, #981 500 ko do baar      ->  parchi + register pe DONE, ek transaction (outbox status)
+  Chat          5d  do chhotu ek hi pal me, dono bhejne nikle      ->  bahar wala aadmi: "ye to chala gaya", parchi phaado (dedup fan-out, message id)
 
 Naam: idempotency key / dedup / near-duplicate check / sequencer / idempotent consumer
 Juda: dobara aata hi isliye ki beech me koi gira (4). Kafka ka retry bhi dobara bhejta, isliye har consumer pe yahi.
@@ -114,6 +116,7 @@ Yahi dikkat yahan bhi:
   Banking       1   500 kate, bijli gayi, Ravi ko nahi mila        ->  mere 500 wapas de do (rollback)
   Banking       5   khabar dene se pehle bijli gayi                ->  jo yaad nahi rehta, likh lo (outbox, relay)
   Chat          2   Ravi ka phone band, 2 ghante                   ->  uncle nahi mile, paise apne paas (message store)
+  Chat          5b  #981 DB me, pub/sub se pehle server gira       ->  extra chhotu + deewar pe parchi (backup, outbox + relay)
 
 Naam: outbox + relay / acks=all / rollback / order log + replay / message store
 Juda: vasiyat padh ke dobara bheja to (3) chahiye. Notification, File upload, Kafka, Banking, News sab me same.
@@ -385,6 +388,7 @@ Yahi dikkat yahan bhi:
   Chat          7b  #980 atka, #981 pehle, phone "981 ke baad do"  ->  server ka record, jo nahi gaya sab do; phone sort kare (store-and-forward)
   Chat          12  S1 dheema, "nahi, parso" pehle pahuncha        ->  server ka number, phone us kram me lagaye (seq, client sort)
   Chat          12b number kaun lagayega, kabhi khatam to nahi?    ->  us time ko hi number, group ke server ki ghadi; daava nahi (Snowflake ID)
+  Chat          5e  #980 wala chai peene gaya, #981 pehle gaya     ->  jo pehle aaya wahi pehle (sequence number, phone sort)
   Leaderboard   2   Ravi, Priya dono 9800                          ->  score phir time, ek number me (thenComparing)
   Twitter       18  scroll ke beech upar 5 naye, wahi 5 dobara     ->  kahan tak padha yaad rakh (cursor, offset nahi)
   Notification  4c  Shipped jaane wala, Order placed atka          ->  order ki parchi, gaya nahi to dono saath / doosri company / email (coalesce, failover)
