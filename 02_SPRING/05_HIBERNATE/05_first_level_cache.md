@@ -1,5 +1,14 @@
 # First-Level Cache (L1)
 
+## Koi poochhe "first-level cache kya hai" to aise bolo
+
+```
+Har transaction (session) ki apni almaari: jo entity aayi wo almaari me.
+Usi transaction me dobara ID se maangi to DB nahi jaata, wahi object almaari se.
+Transaction khatam to almaari khaali, apne aap chalti hai.
+L2 = poore app ki saanjhi almaari (khud lagani padti); @Cacheable = Spring ka, method ka result.
+```
+
 ## Scene: usercrud, ek `@Transactional` me do baar `getById(1)`
 
 ```java
@@ -40,6 +49,21 @@ public void waitForPayment(Long id) {
         Thread.sleep(1000);                                  // webhook ne DB me PAID kiya, yahan kabhi nahi dikhega
     }
 }
+```
+
+Chala ke dekha (Boot 4 + Hibernate 7, 1.5 sec pe webhook DB me PAID likhta):
+
+```
+>> @Transactional ke andar loop
+select ...                     <- query sirf pehli baar
+   sec 1: PENDING   sec 2: PENDING
+   [webhook] DB me PAID likh diya
+   sec 3: PENDING   sec 4: PENDING   -> loop kabhi nahi rukta
+>> wahi loop, par em.refresh()
+select ... (har baar)
+   sec 2: PENDING
+   [webhook] DB me PAID likh diya
+   sec 3: PAID                       -> ruk gaya
 ```
 
 Webhook ne DB me PAID kar diya, par loop har baar almaari se padh raha hai, to use PENDING hi dikhta hai aur loop kabhi nahi rukta. Hal: loop
