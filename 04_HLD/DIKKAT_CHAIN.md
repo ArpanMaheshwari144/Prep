@@ -220,6 +220,7 @@ Yahi dikkat yahan bhi:
   Docs          4   lakhon doc, sab ek hi jagah?                   ->  har doc ka alag, uska maalik (owner server)
   Banking       11  5 saal ki line roz jodna bhaari                ->  mahine ke mahine tod do (partition, snapshot)
   Uber          2   1.25 lakh update/sec, DB ghuta                 ->  bada bhai bulao (Cassandra, andar ring = consistent hashing)
+  Uber          2b  har location DB me nayi line, map dheema       ->  abhi ki jagah parchi (Redis overwrite), raasta Kafka -> batch storage, DB me sirf status
   Uber          3   5 lakh driver ka fasla naap raha               ->  naksha dabbon me, sirf apna dabba (geohash)
   Uber          4   dabbe ke kinare, bagal me driver               ->  8 km ka gola, chhoote dabbe bhi (neighbour geohash)
   Uber          6c  dabba toda, Arpan ke tukde me driver nahi       ->  papa ji: apna + upar / neeche / bagal ke tukde (scatter-gather, neighbour cells)
@@ -628,6 +629,7 @@ Yahi dikkat yahan bhi:
   Inventory     3   rack pe 48, system me 50, "2 kab gaye?"       ->  har bill register me (ledger), raat ka chhotu milaaye (reconciliation job)
   Cache         7b  key 3 machine pe, sirf 1 se kati               ->  parchi har copy se kaato, sync job copies bhi dekhe (har replica invalidate)
   Uber          16b buildings ke beech gaadi chhat pe (ghost bike) ->  paas wali sadak pe wapas utaar do (map matching)
+  Uber          16b GPS ne bike nadi ke us paar phenki, 1 second   ->  rok nahi sakte, animation se wapas isi road pe (map matching)
   News          7   Priya ki parchi me aaj ki badi khabar chhooti  ->  milaan: chhoot gayi to DB se le ke seedha feed me (check job)
 
 Naam: ledger / reconciliation / eventual consistency / sahi dabba / central counter / Neo4j / matching engine / DB = sach / cache DELETE / sync job / write-then-invalidate / updated_at / check job / double-entry / S3 Object Lock / revised statement / latest location / upfront fare / map matching / Redis sorted set / compensation
@@ -643,7 +645,8 @@ Humne socha: beech me andaze se chalao, nayi aaye to sahi jagah. Kuch aa hi nahi
 Yahi dikkat yahan bhi:
   Uber          16c har 4 sec location, beech me gaadi koodti      ->  gudde ko halka-halka aage, nayi aayi to sahi jagah (dead reckoning)
   Uber          16c flyover ke neeche U-turn, gudda aage chala     ->  signal aaya, asli peeche, kooda; har app me hota (correction)
-  Uber          16d basement me 5 min offline                      ->  aakhri jagah pe roko, "Raju pahunch gaya" (last known + status)
+  Uber          16d raaste me tunnel, net gaya, 15 jagah           ->  bahar nikla to aakhri jagah, bike tair ke wahan (last write wins); 15 jagah Kafka -> tasveer
+  Uber          16e basement me 5 min offline                      ->  aakhri jagah pe roko, "Raju pahunch gaya" (last known + status)
   Train         1   net / GPS band, train kahan                    ->  phone ka tower, range jitna andaza (cell ID, 5-10 km)
   Train         2   outer pe 25 min, timetable bole aage           ->  asli khabar jeete, delayed by X, expected time (ETA)
   Train         3   mera net band, dost ko khabar                  ->  jinka net chalu unka app bheje, server se push (crowdsourcing)

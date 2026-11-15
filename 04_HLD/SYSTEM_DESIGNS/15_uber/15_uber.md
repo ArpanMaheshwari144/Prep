@@ -61,6 +61,11 @@ liye bana hai, apni copies khud rakhta.
 **Asli naam:** bada bhai = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing, nayi machine jude to sirf paas ka hissa hile). Driver ki row driver_id pe,
 nayi jagah aate hi upar likh do (sirf taaza chahiye).
 
+**Doosri kahani (Zomato wali reel se):** location DB me likhna faltu; DB me sirf kaam ki cheez (order delivered, pending).
+Abhi ki jagah ek parchi (Redis) pe, har 4 second purani kaat ke nayi, delivery ke baad hata do. Company ko poora raasta
+chahiye to saari location Kafka me (bheed ka jawab), wahan se batch me alag storage box me ("10 minute yahan khada tha").
+**Asli naam:** Redis me sirf aakhri jagah (overwrite), history = Kafka -> batch write alag storage, DB = sirf status.
+
 ```mermaid
 flowchart TB
     X["Har 4 sec, 5 lakh driver:<br/>1.25 lakh / sec, normal DB ghut gaya"]:::bad
@@ -506,6 +511,8 @@ building ki chhat pe dikh rahi (ghost bike):** Server pe dikha location building
 sadak hai, signal buildings me ulajhta. Hamein pata hai Raju is building ke aas-paas hai aur wahan sadak kaunsi hai, to
 chhat pe dikhe to use paas wali sadak pe wapas utaar do.
 **Asli naam:** paas wali sadak pe chipka do = map matching (GPS ka galat point sabse paas ki sadak pe, raaste ke hisaab se).
+**Doosri kahani (nadi):** GPS ne bike 1 second me nadi ke us paar dikha di. Network theek nahi to app kahin bhi phenk sakta,
+ye rok nahi sakte (Uber, Rapido me hota); animation se use wapas isi road pe le aao. Wahi map matching.
 
 **Maan lo location har 4 second aati hai, beech me gaadi khadi, phir achanak aage koodti (teleport):** Har pal ki asli
 jagah dene wali technology nahi, ho bhi to bahut mehngi. Bike chalaane wala seedha aage hi jaata, to map pe gudde ko
@@ -514,6 +521,13 @@ aur hum gudde ko aage chala rahe the; signal aaya to asli jagah peeche, gudda ut
 Zomato, Swiggy sab me dikhta hai.
 **Asli naam:** gudde ko andaze se aage = dead reckoning (speed + sadak se andaza), nayi aayi to sahi jagah = correction,
 U-turn pe kooda = andaza galat nikla.
+
+**Maan lo Raju raaste me tunnel me ghusa, net 1 minute gaya, phone ne 15 jagah note ki par bhej nahi paaya; map pe
+bike ek jagah khadi (basement se alag: wahan pahunch chuka, yahan raaste me):** bike thodi der wahi dikhegi, theek
+hai. Tunnel se nikla to Redis me aakhri jagah, aur bike animation se tair ke wahan (PG ki lift jaisa): last write wins.
+Tunnel ke andar ki 15 jagah map ke kaam ki nahi, Kafka me, worker tasveer banaye "Raju yahan ruka tha". Khada ho to
+location 4 ki jagah 8 second.
+**Asli naam:** last write wins, animation se jump, history ke liye Kafka, adaptive ping.
 
 **Maan lo Raju Arpan ki society ki basement parking me ghusa, phone 5 minute bilkul offline; andaze se chalate rahe to
 gaadi shehar ke bahar, ruki dikhi to lage Raju bhaag gaya:** Aakhri location pata hai, Raju building ke paas pahunch
