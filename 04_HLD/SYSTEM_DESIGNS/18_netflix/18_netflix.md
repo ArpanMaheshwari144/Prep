@@ -170,7 +170,7 @@ flowchart TB
         P(["Abhi parchi paas<br/>(fast store)"]):::pill
         R[("Ruk gaya to register<br/>(DB)")]:::pill
     end
-    D["Dabba sankshep me bataye:<br/>kahan tak dekha"]:::card
+    D["Player sankshep me bataye:<br/>kahan tak dekha (heartbeat)"]:::card
     PH["Subah phone: 27:00 se"]:::good
     T --> P
     D -.-> P
@@ -269,7 +269,7 @@ flowchart TB
 
 Ye kadam nahi hain. Notes me bhi alag hain (P1-P4). Interview me poochhe to yahan se.
 
-## P1. AWS ka CDN (CloudFront / Akamai) kyun nahi, apna dabba kyun?
+## P1. Bahar ka CDN (CloudFront / Akamai) kyun nahi, apna dabba kyun?
 
 Doodh company ki kahani: courier har litre ka paisa leta hai, aur Netflix ke liye ye "litre" roz ke hazaaron TB hain.
 To Netflix ne har mohalle ki dukaan me apna fridge muft me rakh diya. Teen fayde: paisa (dabba ek baar ka kharcha,

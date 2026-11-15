@@ -138,7 +138,7 @@ Dikkat aayi to likh lo, kahin daal do = queue / parchi / retry ka ek hi pattern.
 
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar:** OTP zaroori hai to uski umar ke andar use bhejna hi bhejna hai: priority line se bhejo, priority line bhi bhar gayi to 3-4 priority line kar do, jaise hospital me hota hai. Par OTP ki umar khatam ho gayi to use bhejo hi mat, rok do, uska koi matlab nahi. App pe neeche 60 second ka timer chalta hai (60, 59, 58...), tab tak OTP nahi aaya to "Resend OTP" ka button aata hai, user dobara maang lega. Kabhi-kabhi 2 OTP ek saath bhi aa jaate hain, wo chalta hai. Aur OTP hamari taraf se nikal gaya par SMS company ke paas atak gaya, to wahi shart jo company se pehle tay ki thi (kadam 5): "30 second me nahi bhej paaye to mat bhejna, hume bata do".
 **Asli naam:** OTP = priority queue (bheed pe 3-4 line = partition / worker badhao), umar ke andar retry. Umar khatam = line se nikalte waqt drop, bhejo mat (expiry check). App pe resend timer (60 sec) -> user naya OTP maange. SMS company ke paas atka = unki taraf validity period (kadam 5 ki shart).
-OTP retry line me gaya matlab kuch toota: turant alert, aur Ravi ko phone pe "hamari taraf se gadbad, theek kar rahe". Teen baar thode antar pe
+OTP retry line me gaya matlab kuch toota: turant alert, aur Arpan ke phone pe "hamari taraf se gadbad, theek kar rahe". Teen baar thode antar pe
 try, phir doosri SMS company (failover, kadam 5).
 
 **Maan lo "Order placed" SMS bheed me atka (retry line), aur "Shipped" push jaane ko taiyaar hai; aise hi gaya to Arpan ko pehle Shipped dikhega:** Ek parchi rakhunga: Arpan ka order placed, chhotu ko bheja. Chhotu wapas nahi aaya, to parchi pe likha SMS abhi gaya nahi. Order pack hokar ship hua, parchi pe likha, par mujhe pata hai placed abhi gaya nahi. Chhotu aaya, bola SMS company bheed me hai. To ek saath bhej do: "aapka order placed aur ship ho gaya". Interviewer bole alag-alag dikhao, to retry mat karwao, placed wala doosri SMS company ko de do, phir shipped. SMS nahi ja raha to bagal me email wala khada hai, confirmation ek baar to chala jaayega.
@@ -304,8 +304,8 @@ wahin se. Mark ke baad aur marne ke beech wale kuch log dobara aa jaayein, to ka
 rokti: isko bhej diya tha? Haan, to dobara nahi.
 
 **Maan lo 5 crore promo usi line me, aur ek user ka OTP uske peeche, 40 minute late:** hospital jaisa, serious patient
-100 logon ki line me peeche khada. Serious ki line alag karo, parchi wale apni line me aaram se aate rahein. Asli naam:
-OTP / order ki alag priority line (topic + apne worker), promo alag topic; promo kitna bhi lamba ho, OTP pe asar nahi
+100 logon ki line me peeche khada. Serious ki line alag karo, parchi wale apni line me aaram se aate rahein.
+**Asli naam:** OTP / order ki alag priority line (topic + apne worker), promo alag topic; promo kitna bhi lamba ho, OTP pe asar nahi
 (kadam 5 wali VIP line).
 
 ```mermaid

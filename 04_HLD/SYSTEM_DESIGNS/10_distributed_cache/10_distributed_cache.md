@@ -292,7 +292,7 @@ chhotu nayi laaye to purani phaad do. App / browser ke cache se bhi purana de sa
 jaldi Redis pe aayein. Ek chhotu gira to doosra; backoff tab jab 10 chhotu bhi na aayein, tab DB gira hai.
 **Asli naam:** doosri parchi = stale copy (soft / hard TTL, stale-while-revalidate), app / browser chhoti umar = local
 cache short TTL, 10 na aayein tab = DB down pe retry with backoff (chhotu gira to thoda ruk ke
-doosra, phir thoda zyada ruk ke teesra, 1, 2, 4 sec; bombard nahi). Jitter = kadam 7c wali "umar alag" (+1, +2), yahan nahi.
+doosra, phir thoda zyada ruk ke teesra, 1, 2, 4 sec; bombard nahi). Jitter = kadam 7 wali "umar alag" (chain me 7c) (+1, +2), yahan nahi.
 
 **Maan lo 50 server, har server ka apna chhotu, mote register pe 50 chhotu:** saamne ek banda khada hai jo sabko
 rokta: sab apne server pe chup, sirf ek chhotu jaaye, ek hi information to laani hai, wo sabko de dega.

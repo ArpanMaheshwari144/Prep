@@ -24,7 +24,7 @@ User  -->  LB  -->  kai counter (app server)
  1  do logon ko same token              ->  ek line ka counter (ginti)
  2  10 arab pe token lamba              ->  number plate jaise akshar bhi (base62)
  3  har baar mota register palatna      ->  chhota register pehle (cache)
- 4  chhota register bhar gaya           ->  jo sabse kam use hua use hatao (LRU)
+ 4  chhota register bhar gaya           ->  jo kab se poochha nahi gaya use hatao (LRU)
  5  7 baje 1,000 log mote register pe   ->  ek chhota ladka jaaye, baaki ruke (single flight)
  6  ladka raste me gir gaya             ->  ladke ki timeline (lock ki umar)
  7  5 counter, dono ne "10" diya        ->  har counter ki apni range

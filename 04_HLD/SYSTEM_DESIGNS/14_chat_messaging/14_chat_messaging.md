@@ -449,7 +449,7 @@ khatam nahi hoga" jaisa daava mat karo: interviewer "maan lo 50 saal me bhar gay
 wapas lena padta hai. Seedha dhaancha bolo: har message ko ek kram number, phone usi se lagata hai.
 
 **Asli naam:** time se
-number = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), ya har chat ka sequence number; ek chat hamesha ek hi server pe (chat id se server tay, kadam 12), server
+number = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), ya har chat ka sequence number; ek chat hamesha ek hi server pe (chat id se server tay), server
 badle to wahan number pichhle aakhri number ke aage se shuru. Had yaad ho
 to bonus: long (64-bit) me lagbhag 9.2 x 10^18 (9 ke baad 18 zero), counter har chat ka alag; warna "padhte waqt
 dekha tha, baaki net se dekh lete".

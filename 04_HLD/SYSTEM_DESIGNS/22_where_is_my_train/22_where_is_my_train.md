@@ -97,7 +97,7 @@ flowchart TB
 
 ## 2. Outer pe 25 minute ruki, timetable bole aage nikal gayi (asli khabar jeete)
 
-Train Itarsi se nikli, agla station 40 km door, beech me outer pe 25 minute ruki, phone poore 25 minute ek hi tower se
+Train Rewari se nikli, agla station 40 km door, beech me outer pe 25 minute ruki, phone poore 25 minute ek hi tower se
 juda. Timetable ke hisaab se is waqt tak agle station pahunch jaani thi. Aas-paas ka tower app pakad lega aur update kar
 dega: ye abhi pahunchi nahi, outer pe khadi hai, aur neeche "train is delayed by 10 minutes", expected time 10 baje tha,
 ab 10:15 / 10:30. Zaroori nahi jo train ka data humne store kar rakha, train wahi pahunch jaaye; wo hum update karenge jab
@@ -111,7 +111,7 @@ flowchart TB
     TT[("Timetable (phone me):<br/>ab tak agle station pe")]:::card
     TW["Tower: 25 min se wahi,<br/>train outer pe"]:::pill
     W["Asli khabar jeete"]:::good
-    D["delayed by 25 min,<br/>expected 10:25 (pakka nahi)"]:::good
+    D["delayed by X min,<br/>expected time (pakka nahi)"]:::good
     TT -.-> W
     TW --> W
     W --> D
@@ -152,7 +152,7 @@ flowchart LR
 
 ## 4. Tower ki list kahan se (khud tukdon me, ya permission wali authority)
 
-App ko "tower 40817 = Kanpur se 20 km pehle" jaisi list chahiye. Railway ke paas tower ki list nahi, Jio / Airtel nahi
+App ko "tower 40817 = Jaipur se 25 km pehle" jaisi list chahiye. Railway ke paas tower ki list nahi, Jio / Airtel nahi
 dete. Ye information hum apne aap se kar sakte hain. App ek jhatke me nahi banta, tukdon me: pehle UP ka, phir Delhi ka,
 phir joda. Railway se route ka data mil jaata (kaunsi train kahan chalti). Phir Delhi se Jaipur jaate dekho: is station
 ke beech 5 tower, us ke beech 3, us ke beech 4. Station ke paas jaal zyada, gaon ke beech kam, wahan dekhna kahan tower

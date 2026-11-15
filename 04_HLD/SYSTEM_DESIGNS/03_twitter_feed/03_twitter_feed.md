@@ -294,14 +294,14 @@ region ko copy.
 **Maan lo dono branch ki baat 10 minute ruki aur Arpan ne beech me 5 tweet kiye:** ek banda bithao jo pal-pal dekhta
 rahe: "America wala dost aaya?" Nahi aaya, nahi aaya, ab aa gaya. "Le, Arpan ke 5 tweet, teri feed me push kar diye."
 Mujhe bas dekhna tha ki tu hai ya nahi, tu aa gaya to le tera kaam.
-**Asli naam:** banda sambhal ke rakhe = queue me pending, pal-pal dekhta = retry, judte hi bhej = link wapas aane pe
+**Asli naam:** tweet tab tak rakhe rehna = queue me pending, pal-pal dekhta = retry, aa gaya to push = link wapas aane pe
 replay.
 
 ```mermaid
 flowchart TB
     A["Arpan ka tweet<br/>(India branch)"]:::card
     subgraph BB["BRANCHES AAPAS ME BAAT"]
-        B(["Us register pe bhi bhej do<br/>jahan se Arpan padhta"]):::pill
+        B(["Us register pe bhi bhej do<br/>jahan se John padhta"]):::pill
         P(["Baat ruki? Pal-pal dekhne wala<br/>banda: aa gaya to 5 tweet push"]):::pill
     end
     US["America branch:<br/>John ko dikha"]:::good
@@ -611,7 +611,7 @@ list thodi der save, cursor usi list me aage.
 
 ```mermaid
 flowchart TB
-    X["Page 1 dekha: #35 se #26,<br/>beech me upar 5 naye aaye"]:::bad
+    X["Page 1 dekha: #45 se #26,<br/>beech me upar 5 naye aaye"]:::bad
     O["Page number se agle 20:<br/>5 khiske, wahi 5 dobara"]:::bad
     CR(["Kahan tak padha, yaad rakh (cursor):<br/>Ravi ne #26 tak padha"]):::pill
     N["Agla page #25 se,<br/>dobara kuch nahi"]:::good

@@ -42,7 +42,7 @@ Technical me: "2-3 scanner / room" = group me zyada consumer (ek gira to uske pa
 
 **5. Admin ne ticket counter ko "aa gaya" bol diya, phir wo gira, aur uski jagah lene wale ke paas aakhri kuch logon ki list hi nahi thi. Arpan ki vasiyat me: baap ne vasiyat ek hi copy me likhi, ghar walon ko bol diya "likh di", phir wo copy jal gayi. "Likh di" kab bolna tha?**
 Arpan: Bhai "likh di" aise bolna ki uski copy aur bana, aur wo likh de, tab "likh di". Matlab replica hai, replica ne bol diya "likh liya", sab bolein, tab. Ye raha connection.
-Technical me: "copy bhi likh de, tab likh di" = acks=all, "replica ne bol diya likh liya" = in-sync replica ki haan (min.insync = 2).
+Technical me: "copy bhi likh de, tab likh di" = acks=all, "replica ne bol diya likh liya" = in-sync replica ki haan (min.insync.replicas = 2).
 
 **6. Checker ne fan ko seat pe baitha diya (ticket punch), par register me likhne se pehle gir gaya. Naya checker wahi fan dobara bhejega.**
 Arpan: Idempotency check kar le ki wo pehle aaya hai. Bas, samajh ja.

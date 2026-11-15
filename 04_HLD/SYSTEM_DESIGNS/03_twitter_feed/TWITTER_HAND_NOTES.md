@@ -67,7 +67,7 @@ Technical me: "register aapas me baat karein" = cross-region replication, "us re
 
 **Maan lo dono branch ki baat 10 minute ruki aur Arpan ne beech me 5 tweet kiye.**
 Arpan: ek banda bithao jo pal-pal dekhta rahe: "America wala dost aaya?" Nahi aaya, nahi aaya, ab aa gaya. "Le, Arpan ke 5 tweet, teri feed me push kar diye." Mujhe bas dekhna tha ki tu hai ya nahi, tu aa gaya to le tera kaam.
-Technical me: "banda sambhal ke rakhe" = queue me pending, "pal-pal dekhta" = retry, "judte hi bhej" = link wapas aane pe replay.
+Technical me: tweet tab tak rakhe rehna = queue me pending, "pal-pal dekhta" = retry, "aa gaya to push kar diye" = link wapas aane pe replay.
 
 &nbsp;
 

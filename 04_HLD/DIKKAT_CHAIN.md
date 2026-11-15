@@ -40,10 +40,10 @@ Humne socha: 5 minute dekhunga, phir phaad do. Parchi pe hi umar likh do, apne a
 
 Yahi dikkat yahan bhi:
   Stock         3   35,000 se do order, chahiye 70,000             ->  EMI jaisa paisa hold (funds block)
-  Stock         3e  order khula (35,000 hold), 20,000 withdraw         ->  beech se nahi; cancel karo (poora wapas) ya modify karke chhota (withdraw sirf available se)
   Stock         3b  10 chahiye, 4 mile, 6 baaki                    ->  FR: 4 abhi + 6 ka hold jaari (partial) ya 10 nahi to kuch nahi, hold wapas (Fill-or-Kill)
   Stock         3c  3500 ka order, market band, bika nahi          ->  order khula, hold jaari, cancel pe wapas (Good Till Cancelled)
   Stock         3d  Ravi ke 10 share, 2 sell order, 20 bike        ->  share bhi hold, naya nahi, wahi order ka bhaav badlo (modify order)
+  Stock         3e  order khula (35,000 hold), 20,000 withdraw         ->  beech se nahi; cancel karo (poora wapas) ya modify karke chhota (withdraw sirf available se)
   BookMyShow    2   parchi laga ke chai peene, kabhi nahi aaya     ->  5 minute dekhunga, phir phaad do (hold_until)
   BookMyShow    3   parchi phaadne wala chhutti pe                 ->  chhota bhai / replacement (backup safai job)
   BookMyShow    3   20 minute se purani parchi lagi                ->  parchi pe hi umar, apne aap gayab (expiry query me)
@@ -398,7 +398,7 @@ Yahi dikkat yahan bhi:
   Chat          12  S1 dheema, "nahi, parso" pehle pahuncha        ->  server ka number, phone us kram me lagaye (seq, client sort)
   Chat          12b number kaun lagayega, kabhi khatam to nahi?    ->  us time ko hi number, group ke server ki ghadi; daava nahi (Snowflake ID)
   Chat          5e  #980 wala chai peene gaya, #981 pehle gaya     ->  jo pehle aaya wahi pehle (sequence number, phone sort)
-  Leaderboard   2   Ravi, Priya dono 9800                          ->  score phir time, ek number me (thenComparing)
+  Leaderboard   2   Ravi, Priya dono 9800                          ->  score phir time, ek number me (composite score)
   Twitter       18  scroll ke beech upar 5 naye, wahi 5 dobara     ->  kahan tak padha yaad rakh (cursor, offset nahi)
   Notification  4c  Shipped jaane wala, Order placed atka          ->  order ki parchi, gaya nahi to dono saath / doosri company / email (coalesce, failover)
   Kafka         8b  pay DLQ me, cancel chal gayi, kram toota       ->  A2 ruka to A3 bhi ruka, theek hone pe saath dobara (same key parking)
@@ -502,8 +502,8 @@ Humne socha: bouncer gate pe hi bitha do: had laga do, baar-baar kare to ban, ga
 
 Yahi dikkat yahan bhi:
   URL shortener 12  dhokhe wali site ka token                      ->  radd karo, aage se pehle hi jaancho (kaali list)
-  URL shortener 12c dhokhe wala link bana hi kyun                  ->  library ki kitaab: banate waqt chupke se kholo (create-time safety check)
   URL shortener 12b radd kiya, log phone wala pata khol rahe       ->  phone me likhne hi mat do (302)
+  URL shortener 12c dhokhe wala link bana hi kyun                  ->  library ki kitaab: banate waqt chupke se kholo (create-time safety check)
   URL shortener 13  machine se hazaar nakli chit                   ->  pattern pata lag jaayega, gate pe bhaga do (WAF)
   URL shortener 13b pakadne me 3-4 chakkar, laakhon chit de chuka  ->  had ek aadmi pe, group pe nahi, 5 hi (rate limit per user)
   URL shortener 13c bina login link, userId hai hi nahi            ->  pehle login laga do; bina login IP pe dheeli had (auth, IP rate limit)

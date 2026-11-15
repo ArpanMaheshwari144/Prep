@@ -73,7 +73,7 @@ Technical me: "agla tukda pehle se paas rakh lo" = player buffer (aage ke kuch t
 
 **Padhai wala hissa (mock se pehle samjha, scene me nahi poocha gaya)**
 
-**P1. AWS ka CDN (CloudFront / Akamai) kyun nahi, apna dabba kyun?**
+**P1. Bahar ka CDN (CloudFront / Akamai) kyun nahi, apna dabba kyun?**
 Doodh company ki kahani: courier company har litre ka paisa leti hai, aur Netflix ke liye ye "litre" roz ke hazaaron TB hain, bill aasmaan pe. Netflix ne har mohalle ki dukaan me apna fridge muft me rakh diya: Jio / Airtel jaise ISP ke andar apna dabba. Teen fayde: paisa (dabba ek baar ka kharcha, per-GB bill nahi), paas (video ISP ke andar se aata, buffering kam), ISP bhi khush (uska bahar jaane wala bandwidth bachta). Aur aam CDN tab file laata jab koi pehli baar maange, Netflix raat ko jab net khaali hota tab pehle se bhar deta. Doodh wala subah se pehle fridge bhar deta, maangne ka intezaar nahi karta.
 Technical me: courier = per-GB bill wala CDN (CloudFront / Akamai), mohalle ka fridge = Open Connect (ISP ke andar, free), raat ko pehle se = proactive fill (off-peak).
 
