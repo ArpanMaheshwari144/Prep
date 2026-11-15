@@ -41,5 +41,16 @@ ek line hai, to tower badla matlab train aage badhi. Station pe tower ghane hote
 kitni: poora timetable app me offline hai, to train abhi kahan hai aur timetable ke hisaab se kahan honi chahiye thi, wahi farak
 delay hai.
 
+**Maan lo tower ki list koi deta hi nahi (railway ke paas nahi, Jio / Airtel nahi dete), to list kahan se?**
+Pehla raasta, khud: app ek jhatke me nahi banta, tukdon me banta (pehle UP, phir Delhi, phir aage). Patri ka raasta railway ke
+data se mil jaata (kaunsi train kahan chalti). Phir khud train me chalo aur note karo: is station ke beech 5 tower, us ke beech
+3, us ke beech 1. Gaon ke beech jaal kam hai, wahan dhyaan se dekho kahan tower hai. Ye list app me daalni hi padegi, warna app
+chal hi nahi sakta.
+Doosra raasta, jinke paas jaankari hai: tower koi bhi kahin bhi nahi laga sakta, wo permissible height se upar hota hai, to
+permission leni padti hai aur jaankari kisi authority ke paas rehti hai (patri ke paas ho to railway, Delhi me MCD, Mumbai me
+BMC). Railway ne 50% di to baaki 50% shehar ki authority se. Jio / Airtel de dein to well and good. Naya tower lage ya hate to
+wo update bhejte rahein, app me list taaza karte raho. Kaunsa raasta asal me chalta, ye data public nahi, isliye 2-3 raaste
+saath rakho.
+
 **Sach kitna pakka:** cell tower + offline timetable + logon se data = app ka apna bayaan aur Wikipedia. Doston ke phone se list
 banne wali baat ek reel ka daava hai, kahin aur se jaancha nahi.
