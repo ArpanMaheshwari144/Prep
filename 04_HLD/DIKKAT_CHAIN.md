@@ -179,6 +179,7 @@ Humne socha: us ek ki photocopy bana do, ek aur gaadi; ya counter tod do (10 cou
 
 Yahi dikkat yahan bhi:
   URL shortener 11  viral token, 1 crore log ek hi register pe     ->  register ki photocopy, sab me baant do (Redis replica)
+  URL shortener 11e IPL link baaki links ko atka raha              ->  server ke paas + uska alag dabba + copy (local cache, hot key isolation)
   Twitter       5   six pe 5 crore, parchi wali machine hili       ->  10-15 copy bana do, baant do (hot key replica)
   News          9   iPhone launch, 10 lakh/sec, dabba 1 lakh       ->  tech ke dabbe badha do (aur Redis node + tech ki copy)
   News          9   cricket wale dabbe khaali pade                 ->  unme bhi tech ki copy (hot key copies)
@@ -206,6 +207,7 @@ Humne socha: tod do, tukde baanto, hash se pata kis almari me. Machine jude to s
 Yahi dikkat yahan bhi:
   URL shortener 8   90 TB ek almari me nahi aata                   ->  tukde, hash se almari, same aaye to usi tukde pe (shard)
   URL shortener 8b  almari phir kam padi, 10vi lagani              ->  Cassandra khud baant deta, uska andar ka kaam (consistent hashing)
+  URL shortener 8c  register state ke hisaab se, Mumbai se khula   ->  token me state code, bada bhai list se bheje (shard id in key, router)
   Twitter       7   din me 50 crore tweet, likhai ki line          ->  bada bhai, "tu dekh le" (Cassandra, andar ring = consistent hashing)
   Twitter       7   "Arpan ke naye 500" poori table me             ->  naam se nahi, id se baanto (partition key = user id)
   Payment       9   Diwali 3,000/sec, ek register                  ->  register ke chhote tukde (shard)
@@ -243,6 +245,7 @@ Humne socha: ek pe bharosa nahi: copy bana do, do me likho, do se padho. Jisne a
 
 Yahi dikkat yahan bhi:
   URL shortener 9   almari me aag                                  ->  copy + acknowledge (quorum)
+  URL shortener 9b  Delhi me aag, copy peeche chale                ->  copy alag jagah, authority pehle likhe phir bheje, uski bhi copy (leader, async replica)
   URL shortener 10  C se padha, nahi mila                          ->  do se padho (R=2)
   Rate limiter  6   Redis gira, sabko jaane de ya roke             ->  papa ke dost andar, chor bahar (fail-open / fail-closed)
   Twitter       13  worker 7 gira, "processing" ghanton se         ->  "tu hai kya?", jawab nahi to naya banda (heartbeat)
@@ -498,6 +501,7 @@ Humne socha: bouncer gate pe hi bitha do: had laga do, baar-baar kare to ban, ga
 
 Yahi dikkat yahan bhi:
   URL shortener 12  dhokhe wali site ka token                      ->  radd karo, aage se pehle hi jaancho (kaali list)
+  URL shortener 12c dhokhe wala link bana hi kyun                  ->  library ki kitaab: banate waqt chupke se kholo (create-time safety check)
   URL shortener 12b radd kiya, log phone wala pata khol rahe       ->  phone me likhne hi mat do (302)
   URL shortener 13  machine se hazaar nakli chit                   ->  pattern pata lag jaayega, gate pe bhaga do (WAF)
   URL shortener 13b pakadne me 3-4 chakkar, laakhon chit de chuka  ->  had ek aadmi pe, group pe nahi, 5 hi (rate limit per user)

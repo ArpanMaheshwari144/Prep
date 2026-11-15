@@ -294,6 +294,11 @@ flowchart TB
     style SH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+**Doosri kahani (state ke hisaab se):** mote register ko state ke hisaab se kaato (Delhi, Punjab, UP), har register pe
+thappa. Token me state ka chhupa code (01 = Delhi); beech ka bada bhai shuru ke 2 digit list se mila ke sahi register
+pe bheje. DB = Cassandra: key-value, likhai bahut, poori consistency nahi chahiye, apne aap scale + replica.
+**Asli naam:** geo-partition, shard id ID ke andar, router / shard map.
+
 ## 9. Almari number 3 me aag (copy + acknowledge)
 
 Almari number 3 me aag lagi, uske saare token jal gaye. To ek almari mat rakho, unhi ki copy bana do: 3 gir gayi to
@@ -325,6 +330,10 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+
+**Doosri kahani (leader):** copy Lajpat Nagar, ISBT, Kashmiri Gate; beech ki authority pehle likhe phir sabko bheje,
+uski bhi ek copy. Copy peeche chale to baad me update; arabon number hain, ek-do link kho bhi jaayein to theek.
+**Asli naam:** leader -> replica (async lag), leader failover.
 
 ## 10. Dost ne C se padha, "nahi mila" (do se padhwao)
 
@@ -406,6 +415,10 @@ flowchart TB
     style PC fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+**Doosri kahani (alag dabba):** garam link server ke paas (local cache), aur uska alag Redis dabba + 1-2 copy, taaki
+IPL ki bheed me baaki logon ke link na atkein. 3-4 counter phanse to ek chhotu laake sabke kaan me daale.
+**Asli naam:** hot key isolation, hot key replicas, request coalescing.
+
 ## 12. Dhokhe wala pata, log phone se seedha (token radd + phone me likhne mat do)
 
 Kisi ka idea tha ki har aadmi pata apne phone me hi likh le, counter pe aaye hi nahi. Hafte baad pata chala ek token
@@ -443,6 +456,10 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style CW fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+
+**Doosri kahani (library ki kitaab):** link banate waqt hi chupke se kholo, jaise kitaab library me rakhne se pehle
+dekhte; gandi nikle to mat do.
+**Asli naam:** create time pe URL safety check (reputation / kaali list).
 
 ## 13. Machine se har second hazaar chit (gate pe bhaga do + har aadmi pe had)
 
