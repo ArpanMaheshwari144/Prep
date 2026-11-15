@@ -28,10 +28,67 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+class DSU
+{
+public:
+    vector<int> parent, rnk;
+    DSU(int n)
+    {
+        parent.resize(n);
+        rnk.assign(n, 0);
+        for (int i = 0; i < n; i++)
+        {
+            parent[i] = i;
+        }
+    }
+
+    int find(int x)
+    {
+        if (x == parent[x])
+        {
+            return x;
+        }
+        return parent[x] = find(parent[x]);
+    }
+
+    void unite(int x, int y)
+    {
+        int u_x = find(x);
+        int u_y = find(y);
+
+        if (rnk[u_x] < rnk[u_y])
+        {
+            parent[u_x] = u_y;
+        }
+        else if (rnk[u_y] < rnk[u_x])
+        {
+            parent[u_y] = u_x;
+        }
+        else
+        {
+            parent[u_y] = u_x;
+            rnk[u_x]++;
+        }
+    }
+};
+
 int countComponents(int n, vector<vector<int>> &edges)
 {
-    // yahan likh
-    return 0;
+    DSU dsu(n);
+    int count = 0;
+    for (auto &e : edges)
+    {
+        dsu.unite(e[0], e[1]);
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        if (dsu.find(i) == i)
+        {
+            count++;
+        }
+    }
+    return count;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
@@ -42,7 +99,8 @@ int main()
     {
         int got = countComponents(n, e);
         total++;
-        if (got == exp) pass++;
+        if (got == exp)
+            pass++;
         cout << "T" << total << ": " << got << " (exp " << exp << ")" << (got == exp ? "  ok" : "  GALAT") << "\n";
     };
     check(5, {{0, 1}, {1, 2}, {3, 4}}, 2);
