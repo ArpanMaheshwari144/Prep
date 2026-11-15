@@ -1,5 +1,14 @@
 # `@Transactional`
 
+## Koi poochhe "@Transactional kya hai" to aise bolo
+
+```
+Ek method ke andar ke saare DB kaam ek packet: ya sab hoga, ya kuch nahi.
+Spring method ke aage ek proxy bithata hai: pehle transaction shuru, phir method,
+sab theek to commit, RuntimeException aayi to rollback.
+Jaise banking me 1000 kate aur credit pe bijli gayi, to paise wapas.
+```
+
 ## Kahani: banking wala Arpan, Ravi ko ₹1000
 
 Banking mock me cashier ne Arpan ke 500 kaat liye aur tabhi bijli chali gayi. Tab jawab tha "mere 500 wapas de do".
@@ -14,6 +23,17 @@ public void transfer(Long from, Long to, BigDecimal amt) {
 ```
 
 Debit ho gaya aur credit pe exception aa gayi, to Spring dono kaam undo kar deta hai aur Arpan ke 1000 wapas aa jaate hain.
+
+Chala ke dekha (Spring Boot 4 + H2, Arpan 5000, Ravi 0, debit ke baad exception):
+
+```
+bina @Transactional -> Arpan=4000, Ravi=0     <- 1000 hawa me gayab
+@Transactional      -> Arpan=5000, Ravi=0     <- proxy ne rollback kiya
+checked exception   -> Arpan=4000, Ravi=0     <- @Transactional laga tha, phir bhi gaya
+this. se call       -> Arpan=4000, Ravi=0     <- proxy ke bagal se call, transaction bana hi nahi
+```
+
+Neeche ke do kyun gaye, wo agle hisse me.
 
 ## Andar kya hota hai: kaam proxy karta hai, method nahi
 
