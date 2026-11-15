@@ -333,7 +333,8 @@ flowchart TB
 
 **Doosri kahani (leader):** copy Lajpat Nagar, ISBT, Kashmiri Gate; beech ki authority pehle likhe phir sabko bheje,
 uski bhi ek copy. Copy peeche chale to baad me update. Save hi fail ho gaya (crash, rollback) to user ko "link bana nahi, dobara banao"; ek-do number bekaar gaye to naya number, arabon hain.
-**Asli naam:** leader -> replica (async lag), leader failover.
+**Asli naam:** leader -> replica (async lag), leader failover. Ye MySQL / MongoDB jaisa tareeka; Cassandra me leader nahi,
+wahan pehli kahani wala quorum.
 
 ## 10. Dost ne C se padha, "nahi mila" (do se padhwao)
 
