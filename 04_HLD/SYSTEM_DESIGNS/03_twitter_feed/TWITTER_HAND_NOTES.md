@@ -55,7 +55,7 @@ Technical me: "last 500" = inbox ki had, "DB se query karke Redis me" = cache mi
 **7. Saare tweet ek SQL DB me, din me 50 crore naye, likhne ki line itni lambi ki machine hile. Aur dabba banane ke liye har baar "Arpan ke naye 500" poori table me dhoondhna.**
 Arpan: Likhai bahut zyada hai to alag machine, technical naam Cassandra, mera bade bhai. "Bhai Cassandra, mera system bahut likh raha, tu bada bhai hai, dekh le." Replica bhi wo kar leta. Kaun kisko follow kar raha, wo Cassandra me rakhne ka matlab nahi, uske liye ek aur bada bhai Neo4j: "ye aadmi isko follow kar raha, iska track rakhna."
 Aur Arpan ke saare tweet ek jagah: naam se todo, par naam do logon ke same ho sakte (doosra Arpan), to id me baant do. Meri id har baar same, to mera saara data ek jagah.
-Technical me: "likhai bahut, bada bhai" = Cassandra (write-heavy; andar ring = consistent hashing), "replica bhi wo kar leta" = Cassandra ki apni copy, "naam se nahi, id se baant do" = partition key = user id, "mera saara data ek jagah" = ek partition, "follow ka track" = graph DB Neo4j.
+Technical me: "likhai bahut, bada bhai" = Cassandra (write-heavy; andar ring = consistent hashing), "replica bhi wo kar leta" = Cassandra ki apni copy, "naam se nahi, id se baant do" = partition key = user id, "mera saara data ek jagah" = ek partition (author id se hissa, andar tweet id se tweet: key = author id + tweet id), "follow ka track" = graph DB Neo4j.
 
 **8. Saare server America me. Ravi Delhi me, har request samundar paar, har kaam me aadha second upar se. IPL pe India ke 10 crore America ki machine hila rahe.**
 Arpan: Ravi India se kar raha to har baar America kyun bhejna, bekaar ka travel. India me hai to baatcheet India me rakh. Ye bank jaisa hai: Lajpat Nagar ke log doosri branch me aa rahe, us bank pe dabaav. Lajpat Nagar me branch nahi hai? To wahan branch khol do, wahi chale jaayenge.
@@ -123,7 +123,7 @@ Technical me: "CDN ke paas bhi taala" = CDN signature jaanchta (signed URL / coo
 
 **16. Ravi ke dabbe me sirf tweet ke number (#905, #902 ...). Screen pe chahiye kisne likha, photo, kitne like.**
 Arpan: Mere paas ek mota register hai, sab likha hua. 1,00,000 page me dhoondhna time lega, main baawla thodi hoon. Par mere paas ID hain (905, 902), to seedha wahi page kholunga. Register 1 crore page ka ho ya 10 crore, ID ho to kaam aasaan. Photo / video CDN se aa jaayegi, baaki mote register se. Isme koi badi dikkat nahi.
-Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup), "photo CDN se" = post me CDN link, "mota register" = tweet store (Cassandra), like count saath me.
+Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup; dabbe me tweet number ke saath kiska tweet bhi, "905, Arpan ka": author se hissa, number se tweet), "photo CDN se" = post me CDN link, "mota register" = tweet store (Cassandra), like count saath me.
 
 **Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai.**
 Arpan: 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega.

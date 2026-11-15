@@ -234,7 +234,7 @@ raha, iska track rakhna." Aur Arpan ke saare tweet ek jagah chahiye: naam se tod
 id se baanto. Meri id har baar same, to mera saara data ek jagah.
 
 **Asli naam:** likhai bahut, bada bhai = Cassandra (write-heavy, na join na transaction chahiye, khud kai machine me baant-ta, andar ring = consistent hashing: nayi machine jude to sirf paas ka hissa hile), replica bhi wo kar leta = Cassandra ki apni copy,
-naam se nahi, id se baant do = partition key = user id, mera saara data ek jagah = ek partition (author ke saare tweet, time ke kram me),
+naam se nahi, id se baant do = partition key = user id, mera saara data ek jagah = ek partition (author id se hissa, andar tweet id se tweet, time ke kram me),
 follow ka track = graph DB Neo4j.
 
 ```mermaid
@@ -526,7 +526,8 @@ likha, photo, kitne like. Mere paas ek mota register hai, sab likha hua. 1,00,00
 baawla thodi hoon. Par mere paas ID hain, to seedha wahi page kholunga. Register 1 crore page ka ho ya 10 crore, ID ho
 to kaam aasaan. Photo / video CDN se aa jaayegi, baaki mote register se.
 
-**Asli naam:** ID se seedha page = hydration (ID se poori post, key se lookup), photo CDN se = post me CDN link, mota
+**Asli naam:** ID se seedha page = hydration (ID se poori post, key se lookup; dabbe me "905, Arpan ka", author se hissa,
+number se tweet), photo CDN se = post me CDN link, mota
 register = tweet store (Cassandra), like count saath me. Dabbe me sirf ID isliye, taaki dabba chhota rahe (kadam 6).
 
 **Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai:** 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega.
