@@ -12,13 +12,18 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      lamba link do, chhota code lo (max 7 akshar, short.ly/aB3x9) · chhota link khole to lambe pe bhejo (redirect)
-        · dhokhe wala link pata chale to wo chhota link band kar sako · ek aadmi had se zyada link na bana sake
-NFR     kholna turant · hamesha chale (link toota to bheja hua bekaar) · ek code = ek link, kabhi same nahi
-        · dhokhe wala link na khule · machine se bheed (bot) na ho
-Numbers roz 10 crore naye link = ~1,000 / sec banana · har link ~100 baar khulta = ~1 lakh / sec kholna
-        5 saal me ~90 TB · 7 akshar, har akshar 62 tarah ka = ~3.5 lakh crore code
-        -> kholna 100 guna zyada: cache chahiye · 90 TB ek machine me nahi: tukde chahiye
+FR      1  lamba URL do, chhota token lo                                  -> kadam 1, 2
+        2  chhota token kholo to lambe pe bhejo                             -> kadam 3
+        3  do logon ko kabhi same token na mile                             -> kadam 1, 7
+        4  dhokhe wala link pata chale to wo token band kar sako             -> kadam 12
+        5  machine se hazaar chit na ban sake (har aadmi pe had)            -> kadam 13
+
+NFR     1  kholna turant, har baar mote register pe na jaaye                -> kadam 3, 4
+        2  garam (viral) token pe bhi na atke                               -> kadam 5, 6, 11
+        3  lambe ka chhota hamesha sahi, abhi likha turant mile             -> kadam 9, 10
+        4  data kabhi na khoye (almari jale to bhi)                          -> kadam 9
+
+Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me nahi aata -> tukde (kadam 8)
 ```
 
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
