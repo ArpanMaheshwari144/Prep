@@ -645,8 +645,8 @@ Humne socha: beech me andaze se chalao, nayi aaye to sahi jagah. Kuch aa hi nahi
 Yahi dikkat yahan bhi:
   Uber          16c har 4 sec location, beech me gaadi koodti      ->  gudde ko halka-halka aage, nayi aayi to sahi jagah (dead reckoning)
   Uber          16c flyover ke neeche U-turn, gudda aage chala     ->  signal aaya, asli peeche, kooda; har app me hota (correction)
-  Uber          16d raaste me tunnel, net gaya, 15 jagah           ->  bahar nikla to aakhri jagah, bike tair ke wahan (last write wins); 15 jagah Kafka -> tasveer
-  Uber          16e basement me 5 min offline                      ->  aakhri jagah pe roko, "Raju pahunch gaya" (last known + status)
+  Uber          16c raaste me tunnel, net gaya, 15 jagah           ->  ruka dikhao ya aage badhao, mod pe seedha wahan; bahar aakhri jagah, bike tair ke (last write wins); 15 jagah Kafka -> tasveer
+  Uber          16d basement me 5 min offline                      ->  aakhri jagah pe roko, "Raju pahunch gaya" (last known + status)
   Train         1   net / GPS band, train kahan                    ->  phone ka tower, range jitna andaza (cell ID, 5-10 km)
   Train         2   outer pe 25 min, timetable bole aage           ->  asli khabar jeete, delayed by X, expected time (ETA)
   Train         3   mera net band, dost ko khabar                  ->  jinka net chalu unka app bheje, server se push (crowdsourcing)

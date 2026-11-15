@@ -521,12 +521,12 @@ aur hum gudde ko aage chala rahe the; signal aaya to asli jagah peeche, gudda ut
 Zomato, Swiggy sab me dikhta hai.
 **Asli naam:** gudde ko andaze se aage = dead reckoning (speed + sadak se andaza), nayi aayi to sahi jagah = correction,
 U-turn pe kooda = andaza galat nikla.
-
-**Maan lo Raju raaste me tunnel me ghusa, net 1 minute gaya, phone ne 15 jagah note ki par bhej nahi paaya; map pe
-bike ek jagah khadi (basement se alag: wahan pahunch chuka, yahan raaste me):** bike thodi der wahi dikhegi, theek
-hai. Tunnel se nikla to Redis me aakhri jagah, aur bike animation se tair ke wahan (PG ki lift jaisa): last write wins.
-Tunnel ke andar ki 15 jagah map ke kaam ki nahi, Kafka me, worker tasveer banaye "Raju yahan ruka tha". Khada ho to
-location 4 ki jagah 8 second.
+**Doosri kahani (tunnel, flyover jaisi hi):** Raju raaste me tunnel me ghusa, net 1 minute gaya, phone ne 15 jagah note
+ki par bhej nahi paaya; map pe bike ek jagah khadi (basement se alag: wahan pahunch chuka, yahan raaste me). Net poora
+gaya to driver ruka dikhega, chalta nahi dikha sakte (pata nahi kya kar raha); ya aage-aage badhao, par galat gudda nahi,
+mod ke peeche nikla to flyover jaisa seedha wahan. Dono ho sakte. Net aaya to Redis me aakhri jagah, aur bike
+animation se tair ke wahan (PG ki lift jaisa): last write wins. Tunnel ke andar ki 15 jagah map ke kaam ki nahi, Kafka
+me, worker tasveer banaye "Raju yahan ruka tha". Khada ho to location 4 ki jagah 8 second.
 **Asli naam:** last write wins, animation se jump, history ke liye Kafka, adaptive ping.
 
 **Maan lo Raju Arpan ki society ki basement parking me ghusa, phone 5 minute bilkul offline; andaze se chalate rahe to
