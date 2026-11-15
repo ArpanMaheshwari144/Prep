@@ -332,7 +332,7 @@ flowchart TB
 ```
 
 **Doosri kahani (leader):** copy Lajpat Nagar, ISBT, Kashmiri Gate; beech ki authority pehle likhe phir sabko bheje,
-uski bhi ek copy. Copy peeche chale to baad me update; arabon number hain, ek-do link kho bhi jaayein to theek.
+uski bhi ek copy. Copy peeche chale to baad me update; link nahi khota ("haan" do copy ke baad), bas kuch number bekaar ho jaayein to theek, arabon hain.
 **Asli naam:** leader -> replica (async lag), leader failover.
 
 ## 10. Dost ne C se padha, "nahi mila" (do se padhwao)
