@@ -219,7 +219,7 @@ karta, beech me hum hain). User ko bolo "paisa kata ho to wapas aa jaayega, doba
 paisa wapas. IRCTC, GPay, Paytm roz yahi karte. Hum perfect system ke peeche nahi: PSP hamare bas me nahi, perfect
 consistency maango to ticket bik hi nahi sakte; bas user se saaf baat aur paisa wapas.
 
-**Asli naam:** 1-2 baar ping = status check retry (timeout), payment FAILED dikha do, seat mat chhodo = payment attempt FAILED, booking wapas HELD (hold_until tak), umar khatam to EXPIRED,
+**Asli naam:** 1-2 baar ping = status check retry (timeout), payment FAILED dikha do, seat mat chhodo = payment attempt FAILED, booking HELD hi rehti jab tak popup pe Haan / Naa na aaye (hold_until wali query / safai isko nahi chhooti), Naa = EXPIRED,
 naye log doosre PSP pe = circuit breaker -> PSP-2, hamari id = payment id (idempotency key), baad me kata nikla to wapas
 = reconciliation job + refund.
 
