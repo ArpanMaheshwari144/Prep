@@ -96,7 +96,7 @@ Arpan: Ek code bana lo: Delhi ka 01, Punjab ka 03, UP ka koi aur; state 25-30 ha
 Technical me: "token me state ka code" = shard key ID ke andar (shard id prefix), "bada bhai list dekh ke bheje" = router / lookup (shard map).
 
 **DB kaunsa:** Arpan: Cassandra, kyunki likhai bahut hai; link pelam pel ban rahe, aur yahan poori consistency chahiye bhi nahi, nature of data hi aisa hai: key-value pair (token -> lamba link). MongoDB, DynamoDB, Cassandra jaisa; Cassandra 90 TB ke liye bhi aaram se scale ho jaayega, saalon tak dikkat nahi. Aur Cassandra apne andar copy (replica) aur node wali consistency khud sambhalta, hamein zyada lena-dena nahi.
-Technical me: key-value + bahut likhai + saalon ka data = Cassandra (wide-column, apne aap replica + scale). "Poori consistency nahi chahiye" = data me bank jaisa transaction / join nahi; Cassandra me consistency apni marzi ki (tunable), aur "abhi likha turant mile" wala kaam kadam 10 ka quorum karta.
+Technical me: key-value + bahut likhai + saalon ka data = Cassandra (wide-column, apne aap replica + scale). Cassandra kyun: data key-value, likhai bahut, aur data me bank jaisi consistency (paisa nikaalna, transaction) chahiye hi nahi.
 
 **9. Almari number 3 me aag lagi, uske saare token jal gaye.**
 Arpan: Ek almari mat rakho, unhi ki copy bana do. 3 number ki almari gir gayi to uski ek aur copy hai. Ab isme dikkat ye aa sakti hai ki copy thodi si peeche ho sakti hai, to wahi acknowledge wala kar lo: jab tak acknowledge nahi hota wo wahin rahega, "haan bhai maine likh liya, tu acknowledge bhej". Same dikkat ka same solution ho gaya.
