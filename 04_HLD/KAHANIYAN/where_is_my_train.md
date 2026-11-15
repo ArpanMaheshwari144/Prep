@@ -1,6 +1,6 @@
 # Where Is My Train: bina net / GPS ke train kahan hai
 
-[<- saari kahaniyan](README.md)
+[<- saari kahaniyan](README.md) · Poora design (notes + main) = [22_where_is_my_train](../SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md)
 
 Chhota app hai, 2015 me Bangalore ki Sigmoid Labs ne banaya, 2018 me Google ne kharida. Iska HLD koi nahi poochta (LB, replica
 jaisa kuch bolna yahan faltu hai). Kaam ki cheez iska tareeka hai: mobile tower se jagah ka andaza.

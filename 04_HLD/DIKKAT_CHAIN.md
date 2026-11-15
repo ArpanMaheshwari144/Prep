@@ -481,6 +481,7 @@ Yahi dikkat yahan bhi:
   YouTube       7   MrBeast ki video, crore subscriber             ->  Twitter wala fan-out, sabko push (fan-out + notification, queue + workers)
   Twitter       17  Amit ka tweet 40 ke neeche dab gaya            ->  jisse judta wo pehle (ranking)
   Docs          2b  2 saal purana doc, 50 lakh op                  ->  har kuch hazaar op pe doc ki photo, photo + baad ke op (snapshot)
+  Train         4   tower ki list koi nahi deta                    ->  khud tukdon me, ya permission wali authority (railway, MCD, BMC), updates (data partner)
 
 Naam: fanout on write / precompute / batch / checkpoint / MapReduce / fanout on read / backfill / merge at read / chunks / snapshot / balance snapshot / snapshot job / proactive fill / cold start
 Juda: Kohli jaise 27 crore pe ulta: padhte waqt milao (fanout on read).
@@ -636,6 +637,9 @@ Yahi dikkat yahan bhi:
   Uber          16c har 4 sec location, beech me gaadi koodti      ->  gudde ko halka-halka aage, nayi aayi to sahi jagah (dead reckoning)
   Uber          16c flyover ke neeche U-turn, gudda aage chala     ->  signal aaya, asli peeche, kooda; har app me hota (correction)
   Uber          16d basement me 5 min offline                      ->  aakhri jagah pe roko, "Raju pahunch gaya" (last known + status)
+  Train         1   net / GPS band, train kahan                    ->  phone ka tower, range jitna andaza (cell ID, 5-10 km)
+  Train         2   outer pe 25 min, timetable bole aage           ->  asli khabar jeete, delayed by X, expected time (ETA)
+  Train         3   mera net band, dost ko khabar                  ->  jinka net chalu unka app bheje, server se push (crowdsourcing)
 
 Naam: dead reckoning / correction / last known location / status (arrived, delivered) / geofence
 Juda: server ki taraf location band ho to Uber 14 (location timeout); Zomato me do status, building tak + haath me.
@@ -666,3 +670,4 @@ Juda: server ki taraf location band ho to Uber 14 (location timeout); Zomato me 
 - YouTube: [notes](SYSTEM_DESIGNS/19_youtube/YOUTUBE_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/19_youtube/19_youtube.md)
 - PUBG: [notes](SYSTEM_DESIGNS/20_pubg/PUBG_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/20_pubg/20_pubg.md)
 - Inventory: [notes](SYSTEM_DESIGNS/21_inventory_system/INVENTORY_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md)
+- Where Is My Train: [notes](SYSTEM_DESIGNS/22_where_is_my_train/TRAIN_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md)
