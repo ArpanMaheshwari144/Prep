@@ -15,6 +15,35 @@ Numbers roz 10 crore naye link = ~1,000 / sec banana · har link ~100 baar khult
         -> kholna 100 guna zyada: cache chahiye · 90 TB ek machine me nahi: tukde chahiye
 ```
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+User  -->  LB  -->  kai counter (app server)
+                        |
+        naya token:     |   ginti ki line (counter, har counter ki apni range)
+                        |   number -> chhota token (akshar + number, base62)
+                        |   mota register me likho (Cassandra, tukdon me, 3 copy)
+                        |
+        token se pata:  |   pehle chhota register (Redis cache), na mile to mota register
+                        v
+                  lamba pata -> wahan bhej do (302)
+
+ 1  do logon ko same token              ->  ek line ka counter (ginti)
+ 2  10 arab pe token lamba              ->  number plate jaise akshar bhi (base62)
+ 3  har baar mota register palatna      ->  chhota register pehle (cache)
+ 4  chhota register bhar gaya           ->  jo sabse kam use hua use hatao (LRU)
+ 5  7 baje 1,000 log mote register pe   ->  ek chhota ladka jaaye, baaki ruke (single flight)
+ 6  ladka raste me gir gaya             ->  ladke ki timeline (lock ki umar)
+ 7  5 counter, dono ne "10" diya        ->  har counter ki apni range
+ 8  90 TB, ek almari me nahi            ->  tukde, hash se baanto (sharding)
+ 9  almari 3 me aag                     ->  copy + "haan" ka intezaar (replica, ack)
+10  dost ne C se padha, "nahi mila"     ->  do me likho, do se padho (quorum)
+11  cricket token viral                 ->  register ki photocopy + counter ki parchi (hot key copies, local cache)
+12  dhokhe wala pata, log phone se      ->  token radd + phone me likhne mat do (302, 301 nahi)
+13  machine se har second hazaar chit   ->  gate pe bhaga do + har aadmi pe had (rate limit)
+```
+
+**FR / NFR kahan se:** Arpan: Hum hamesha URL ki baat kar rahe, to FR me wahi jaayega ki lamba URL le ke chhota banana. Jo dikkat design me dekh rahe, wahi FR / NFR banti: do logon ko same token na mile, lambe ka chhota hamesha theek ho, garam (hot) URL sambhale, sab mote register pe na jaaye, machine se hazaar chit na aaye. NFR me: consistency kaise, jaldi kaise, copies, local kaise rakhein. Dikkat se hi FR bante, unse hi NFR bhi; ye aaj pakka ho gaya. Numbers tab jab sach me zaroorat ho; 1 million ho ya 1 billion, shard waise bhi lagana padega.
+
 &nbsp;
 
 **1. Counter wala token apne man se bana raha, kuch bhi chhota likh deta. Ek din do alag logon ko same token de diya. Chhota bhi rahe aur do logon ko kabhi same na mile, kaise?**

@@ -21,6 +21,33 @@ Numbers roz 10 crore naye link = ~1,000 / sec banana · har link ~100 baar khult
         -> kholna 100 guna zyada: cache chahiye · 90 TB ek machine me nahi: tukde chahiye
 ```
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+User  -->  LB  -->  kai counter (app server)
+                        |
+        naya token:     |   ginti ki line (counter, har counter ki apni range)
+                        |   number -> chhota token (akshar + number, base62)
+                        |   mota register me likho (Cassandra, tukdon me, 3 copy)
+                        |
+        token se pata:  |   pehle chhota register (Redis cache), na mile to mota register
+                        v
+                  lamba pata -> wahan bhej do (302)
+
+ 1  do logon ko same token              ->  ek line ka counter (ginti)
+ 2  10 arab pe token lamba              ->  number plate jaise akshar bhi (base62)
+ 3  har baar mota register palatna      ->  chhota register pehle (cache)
+ 4  chhota register bhar gaya           ->  jo sabse kam use hua use hatao (LRU)
+ 5  7 baje 1,000 log mote register pe   ->  ek chhota ladka jaaye, baaki ruke (single flight)
+ 6  ladka raste me gir gaya             ->  ladke ki timeline (lock ki umar)
+ 7  5 counter, dono ne "10" diya        ->  har counter ki apni range
+ 8  90 TB, ek almari me nahi            ->  tukde, hash se baanto (sharding)
+ 9  almari 3 me aag                     ->  copy + "haan" ka intezaar (replica, ack)
+10  dost ne C se padha, "nahi mila"     ->  do me likho, do se padho (quorum)
+11  cricket token viral                 ->  register ki photocopy + counter ki parchi (hot key copies, local cache)
+12  dhokhe wala pata, log phone se      ->  token radd + phone me likhne mat do (302, 301 nahi)
+13  machine se har second hazaar chit   ->  gate pe bhaga do + har aadmi pe had (rate limit)
+```
+
 ---
 
 ## 1. Do logon ko same token (ek line ka counter)
