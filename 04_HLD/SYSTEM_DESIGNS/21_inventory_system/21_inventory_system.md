@@ -44,6 +44,12 @@ saath" jaisa hi.
 `UPDATE stock SET qty = qty - 1 WHERE product = X AND godown = Y AND qty >= 1`. Ek row badli to order pakka, zero row
 badli to "out of stock".
 
+**Maan lo Ravi aur Arpan dono ne ek hi second me aakhri iPhone ka pay kar diya, Arpan jeeta, Ravi ka paisa kat chuka:**
+ya to doosri inventory (Haryana, Punjab) se iPhone de do, Ravi ko to iPhone chahiye; kahin nahi hai to "stock khatam",
+order cancel aur paise refund (bank ki timeline, 2-7 din). Amazon jaisi badi company seedha refund karti; chhota store
+ya jise naam banana hai, wo kahin se arrange karke deta. Ravi ko nahi pata tha ek hi bacha tha.
+**Asli naam:** doosre godown se sourcing, nahi to order cancel + refund (E-com wala), kaunsa = business rule.
+
 ### DB kaunsa: SQL ya NoSQL?
 
 Data kya: product, godown, kitne, aur har badlaav ki entry (kab, kitna, kis order se). Kaam kya: ginti ghatana bina

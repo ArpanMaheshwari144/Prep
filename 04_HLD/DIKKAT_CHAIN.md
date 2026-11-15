@@ -26,6 +26,7 @@ Yahi dikkat yahan bhi:
   E-commerce    1   aakhri ghee, aunty + Ravi ek saath             ->  online ko godown, counter ko shelf (channel ka alag stock)
   E-commerce    2   ladka uthake likhna bhool gaya                 ->  uthana + parchi ek hi kaam (atomic transaction)
   Inventory     1   do log ek pal me aakhri iPhone                 ->  "ek kam karo sirf tab jab 1 ho", ek hi kaam (atomic conditional update)
+  Inventory     1c  dono ne pay kiya, ek ko iPhone, doosre ka paisa kata ->  doosre godown se de do, ya cancel + refund; chhota store arrange kare (sourcing / refund)
   E-commerce    6b  ek order me ghee, aata, daal; aata khatam      ->  poora order mat roko, jo hai wo bhejo, aate pe out of stock (adhoora order)
 
 Naam: lock / atomic / counter range / Lua script / 1 thread per symbol / transaction / row lock / deadlock / lock ordering / batch matching / batching window / channel ka alag stock / adhoora order
