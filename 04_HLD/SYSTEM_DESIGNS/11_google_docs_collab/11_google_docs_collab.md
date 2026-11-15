@@ -110,6 +110,43 @@ server tay karta, jo pehle pahuncha use agla version.
 **Isi dikkat ki doosri kahani (A B C D):** dono ke paas A B C D. Ravi ne B hataya, Arpan ne C se pehle E joda. Dono ke
 document bilkul same laga do: B hat jaayega, B ki jagah E aake lag jaayega, dono ke paas A E C D, na kisi ka kuch khoya.
 **Asli naam:** wahi OT (Ravi ka delete pehle laga, to Arpan ke E ki jagah ek peeche khiski).
+```
+            jagah:  0  1  2  3
+shuru (dono ke paas): A  B  C  D
+
+Ravi:  delete(1)  = B hatao          Arpan: insert(2, E) = C se pehle E
+
+Arpan ki screen:  A B E C D  -> Ravi ka delete(1) aaya -> A E C D     (sahi)
+Ravi ki screen:   A C D      -> Arpan ka insert(2) aaya -> A C E D     (GALAT, E galat jagah)
+
+OT: Ravi ka delete jagah 1 pe, Arpan ki jagah 2 usse aage -> Arpan ka insert ek peeche khiska do: insert(1, E)
+Ravi ki screen:   A C D      -> insert(1, E)            -> A E C D     (dono same)
+```
+
+```mermaid
+flowchart TB
+    S["Shuru, dono ke paas:<br/>A B C D"]:::card
+    RD["Ravi: delete(1) = B hatao"]:::card
+    AI["Arpan: insert(2, E) = C se pehle E"]:::card
+    AS["Arpan ki screen:<br/>A B E C D, phir delete(1)<br/>= A E C D"]:::good
+    RW["Ravi ki screen bina OT:<br/>A C D, phir insert(2)<br/>= A C E D"]:::bad
+    subgraph OT["SHABDON KO KHISKA DIYA (OT)"]
+        T(["delete jagah 1 pe, insert 2 pe:<br/>insert ek peeche, insert(1, E)"]):::pill
+    end
+    RR["Ravi ki screen OT ke saath:<br/>A E C D (dono same)"]:::good
+    S --> RD
+    S --> AI
+    AI --> AS
+    RD -.-> RW
+    RD --> T
+    T --> RR
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style OT fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
 
 **Maan lo koi bole: jo pehle aaya wo taala laga de, doosra ruke:** phir Google Docs ka matlab hi nahi, wo sharing
 document hai. Taala lagaya to doosra bas dekhta rahega, jaise YouTube upload pe hi mana kar de. Tum likho, Docs apne

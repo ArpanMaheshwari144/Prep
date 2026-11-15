@@ -38,6 +38,18 @@ Technical me: "shabdon ko khiska diya" = OT (Operational Transformation), "yaad 
 **Isi dikkat ki doosri kahani: Arpan ke paas A B C D, Ravi ke paas bhi A B C D. Usi pal Ravi ne B hataya aur Arpan ne C se pehle naya hissa E joda.**
 Arpan: Ravi ne B hataya, iska matlab Arpan ke paas bhi B hatega; Arpan ne E joda, to Ravi ke paas bhi aayega. Main hota to: achha, dono same document pe; ek ne B hataya, ek ne C ke upar E joda. To dono ke document bilkul same laga do: A E C D. Na kisi ka kuch khoya, na kisi ka. B to hat jaayega, aur B ki jagah E aake lag jaayega. Ravi ke document me A E C D, Arpan ke document me bhi A E C D, dono me same, koi dikkat wali baat nahi, aasaan hai.
 Technical me: wahi OT: Ravi ka "B hatao" pehle laga, to Arpan ke E ki jagah ek peeche khisak gayi, dono jagah A E C D.
+```
+            jagah:  0  1  2  3
+shuru (dono ke paas): A  B  C  D
+
+Ravi:  delete(1)  = B hatao          Arpan: insert(2, E) = C se pehle E
+
+Arpan ki screen:  A B E C D  -> Ravi ka delete(1) aaya -> A E C D     (sahi)
+Ravi ki screen:   A C D      -> Arpan ka insert(2) aaya -> A C E D     (GALAT, E galat jagah)
+
+OT: Ravi ka delete jagah 1 pe, Arpan ki jagah 2 usse aage -> Arpan ka insert ek peeche khiska do: insert(1, E)
+Ravi ki screen:   A C D      -> insert(1, E)            -> A E C D     (dono same)
+```
 
 **Maan lo server ka ek banda bole: seedha hal hai, jo pehle likhne aaya wo doc pe taala laga de, doosra tab tak ruka rahe.**
 Arpan: Phir Google Docs ka matlab hi nahi rahega; Google Docs ka matlab hi sharing document hai. Ek pe taala laga doge to saara matlab mitti paleet. Wahi baat hogi ki YouTube pe video upload karne gaya aur YouTube ne pehle hi mana kar diya. Taala laga ke baith jaoge to doosra banda bas dekhta rahega, jo galat hai. Google Docs me taala jaisa koi feature ho sakta hai, par usme hum nahi jaate, wo design ka part nahi. Tum likho, Google Docs apne hisaab se use aage-peeche karta hai.
