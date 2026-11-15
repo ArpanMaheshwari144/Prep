@@ -133,7 +133,7 @@ to uske gate baaki checkers me bat jaate hain (rebalance).
 **Maan lo har fan ki talaashi bhi honi hai, 2 security wale aaye:** unhe checker ke kamre me bitha diya to "sirf ek
 ke paas" wala niyam unpe bhi lagega, talaashi chhoot jaayegi. To alag baitha do: pehle ticket checker ka room, phir
 security ka room. Ek ko paar karo, phir doosre room me jao.
-**Asli naam:** alag room = alag consumer group (`fraud`). "Pehle checker, phir security" = checker jo paas kare use
+**Asli naam:** alag room = alag consumer group (`security`, upar wale Fraud group se alag). "Pehle checker, phir security" = checker jo paas kare use
 nayi line me daale (naya topic `ticket_ok`), security group usi nayi line se padhe, kyunki talaashi ticket ke baad hi.
 Talaashi ka ticket se lena-dena na hota, to dono group seedha ek hi topic se, apni-apni copy aur apne offset se padhte;
 ek dheema to doosra nahi rukta.
