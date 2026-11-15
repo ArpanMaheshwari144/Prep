@@ -1,5 +1,13 @@
 # Isolation Levels: ek transaction doosre ka kitna dekhe
 
+## Koi poochhe "isolation level kya hai" to aise bolo
+
+```
+Do transaction ek saath chalein to ek ko doosre ka adhoora kaam kitna dikhe, ye isolation level tay karta.
+3 gadbad: dirty read (bina commit wala padha), non-repeatable (dobara padha to badla), phantom (nayi row aa gayi).
+Jitna kada level, utni gadbad ruke, par utna dheema. Postgres default READ COMMITTED, MySQL REPEATABLE READ.
+```
+
 ## Scene: munshi likh raha, cashier padh raha
 
 Mausi ke mart me ghee ka hisaab ek register me hai. Munshi (transaction A) register me likh raha hai, aur cashier (transaction
@@ -37,9 +45,16 @@ public void withdraw(long id, int amt) {
 }
 ```
 
+Chala ke dekha (Spring Boot 4 + H2, account me 100, do ATM ek saath 80-80, dono method pe `@Transactional`):
+
+```
+padho-phir-likho   -> ATM1 diya 80, ATM2 diya 80, bacha balance 20    <- 160 nikle, 100 the
+ek query me shart  -> ATM1 diya 80, ATM2 diya 0,  bacha balance 20    <- sahi
+```
+
 `@Transactional` laga diya to log maan lete hain ki safe ho gaya, par nahi hua. Ye MT 04 wala hi "padho, phir likho" jhagda
 hai, bas ab DB me, aur isse lost update kehte hain. Ilaaj wahi hai jo banking aur e-commerce me kiya: ek hi query me shart
-(`0 row` aaye to mana), ya pehle `SELECT ... FOR UPDATE` se row pe taala.
+(`0 row` aaye to mana), ya pehle `SELECT ... FOR UPDATE` se row pe taala. Ek line me: dekhna aur badalna ek hi jagah rakho, kyunki do thread ek saath dekh sakte hain (HLD me inventory, BMS seat, banking, sab jagah yahi).
 
 ```sql
 UPDATE account SET balance = balance - 80 WHERE id = ? AND balance >= 80;   -- 0 row = mana
