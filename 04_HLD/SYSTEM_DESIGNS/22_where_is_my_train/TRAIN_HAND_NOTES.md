@@ -62,4 +62,4 @@ Technical me: kai source se list jodna (railway + shehar ki authority + operator
 
 &nbsp;
 
-Poora design = [22_where_is_my_train.md](22_where_is_my_train.md) · Pehle ki chhoti kahani = [KAHANIYAN/where_is_my_train.md](../../KAHANIYAN/where_is_my_train.md)
+Poora design = [22_where_is_my_train.md](22_where_is_my_train.md)

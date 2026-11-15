@@ -7,7 +7,7 @@ faltu. 100 me se ek app hoga jo ye karta, baaki har jagah net chalta. Kaam ki ch
 Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
 (kahani ka shabd, bracket me asli naam).
 
-Pehle ki chhoti kahani = [KAHANIYAN/where_is_my_train.md](../../KAHANIYAN/where_is_my_train.md). Uber se farak: Uber
+App 2015 me Bangalore ki Sigmoid Labs ne banaya, 2018 me Google ne kharida. Uber se farak: Uber
 bina net ke chalta hi nahi, yahan poora design tower pe tika hai.
 
 ---
@@ -205,5 +205,8 @@ Phone hamesha kisi tower se juda (cell ID), net / GPS band bhi -> phone me list 
 ki range jitna andaza (pakki jagah nahi) -> timetable phone me, asli khabar jeete (delayed by X, expected time) -> dost
 tak khabar un logon se jinka net chalu (server, push) -> list khud tukdon me ya permission wali authority se, updates se
 taaza.
+
+**Sach kitna pakka:** cell tower + offline timetable + logon se data = app ka apna bayaan aur Wikipedia. Andar ki list
+kaise bani, wo public nahi; doston ke phone wali baat reel ka daava hai.
 
 Notes (Arpan ke shabd) = [TRAIN_HAND_NOTES.md](TRAIN_HAND_NOTES.md)
