@@ -106,6 +106,9 @@ naye 100 pe jaanchti hai.
 **Maan lo roz 1 crore transfer, sab ek line me to bank dheema:** ek counter thodi hai, hazaron hain. Jo do account aapas
 me takra rahe (Arpan-Ravi) sirf unka ek group, Priya-Amit alag group; 50 counter pe sab dhadadhad, koi kisi ko nahi kaatta.
 **Asli naam:** taala sirf un khaaton pe (per-account / row lock), baaki parallel; kaam account ke hisaab se (partition by account).
+Counter ek group ka nahi: Arpan-Ravi khatam to usi counter pe Priya-Amit; ek counter pe do group ki line, group me teen
+bhi (Arpan, Ravi, Priya). Counter hisaab se chalta, itne counter koi nahi bithata.
+**Asli naam:** worker pool, account ke hisaab se counter tay, har counter ki apni queue.
 
 ```mermaid
 flowchart TB
