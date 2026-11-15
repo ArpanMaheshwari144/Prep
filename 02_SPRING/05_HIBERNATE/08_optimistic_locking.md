@@ -1,5 +1,13 @@
 # Optimistic Locking (@Version)
 
+## Koi poochhe "optimistic locking kya hai" to aise bolo
+
+```
+Entity pe @Version: Hibernate har UPDATE me "AND version = jo padha tha" jod deta.
+Beech me kisi ne badla to 0 row badlti, exception: "purani row padhi thi, dobara padho".
+Lock nahi, isliye tez; jahan takraav kabhi-kabhi (profile / page edit). Bheed wali cheez (seat, balance) = ek query me shart ya FOR UPDATE.
+```
+
 ## Scene: tera Confluence
 
 Tu aur Ravi ek hi page khol ke baithe ho, dono ke paas version 5 hai. Ravi ne pehle save kiya, page version 6 ho gaya. Ab tu save dabata hai
@@ -21,6 +29,22 @@ B: UPDATE product SET stock=80, version=1 WHERE id=1 AND version=0   -> 0 row (D
 
 Hibernate har UPDATE me `AND version = jo padha tha` jod deta hai. Beech me kisi ne badla to 0 row badlengi, aur Hibernate samajh jaata hai
 ki tu purani row pe likh raha tha.
+
+Aaj chala ke dekha (Boot 4 + Hibernate 7, stock 100, A aur B dono ne v0 padha):
+
+```
+@Version ke saath
+update product set stock=?,version=? where id=? and version=?   <- Hibernate ne khud jodi shart
+>> A ne 90 save kiya -> OK
+>> B ne 80 save kiya -> ObjectOptimisticLockingFailureException
+>> DB me: stock=90, version=1
+
+bina @Version
+>> A ne 90 -> OK,  B ne 80 -> OK (lost update!)
+>> DB me: stock=80   <- A ka 90 chup-chaap mit gaya
+```
+
+DB 07 wala hi "dekho aur likho ek jagah", bas shart `version` ki aur Hibernate khud jodta.
 
 ## Soch aur trade-off
 
