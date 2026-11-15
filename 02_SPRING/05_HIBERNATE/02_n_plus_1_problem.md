@@ -1,5 +1,14 @@
 # N+1 Problem
 
+## Koi poochhe "N+1 problem kya hai" to aise bolo
+
+```
+Ek query se N parent laaye, phir loop me har parent ke bachche maange -> har parent pe ek aur query: 1 + N.
+Wajah: @OneToMany default LAZY, bachche tabhi aate jab maange jaayein.
+Hal: pehli query me hi saath lao (LEFT JOIN FETCH ya @EntityGraph).
+Pakadna: logs me ek hi select baar-baar, sirf id badle.
+```
+
 ## Scene: tera usercrud, `/n1/bad`
 
 DB me 5 author hain. Code ye hai:
@@ -19,6 +28,17 @@ for (Author a : authors)
 /n1/good  ->  select a.*, b.* from author a
               left join book b ...                   = 1 query
 ```
+
+Aaj phir chala ke dekha (Boot 4 + Hibernate 7, 5 author, har ek ki 2 kitaab):
+
+```
+BAD  (findAll + loop)  select ... from author                     1
+                       select ... from book where author_id=?     x5   = 6 query, kitaabein 10
+GOOD (left join fetch) select distinct ... from author
+                       left join book on ...                      = 1 query, kitaabein 10
+```
+
+Jawab dono me 10, query 6 aur 1. HLD wali hi baat: DB tak baar-baar mat jao, ek baar me le aao.
 
 ## Kyun hua
 
