@@ -296,7 +296,7 @@ flowchart TB
 
 **Doosri kahani (state ke hisaab se):** mote register ko state ke hisaab se kaato (Delhi, Punjab, UP), har register pe
 thappa. Token me state ka chhupa code (01 = Delhi); beech ka bada bhai shuru ke 2 digit list se mila ke sahi register
-pe bheje. DB = Cassandra: key-value, likhai bahut, poori consistency nahi chahiye, apne aap scale + replica.
+pe bheje. DB = Cassandra: key-value, likhai bahut, poori consistency nahi chahiye (transaction / join nahi; "abhi likha turant mile" = kadam 10 ka quorum), apne aap scale + replica.
 **Asli naam:** geo-partition, shard id ID ke andar, router / shard map.
 
 ## 9. Almari number 3 me aag (copy + acknowledge)
