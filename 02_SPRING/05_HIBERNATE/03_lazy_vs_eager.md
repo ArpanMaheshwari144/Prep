@@ -1,5 +1,13 @@
 # LAZY vs EAGER Fetch
 
+## Koi poochhe "LAZY aur EAGER me farak" to aise bolo
+
+```
+LAZY: bachche tabhi DB se aate jab maange jaayein, tab tak unki jagah parchi (proxy).
+EAGER: parent ke saath bina maange bhi aa jaate.
+Default: "to MANY" LAZY, "to ONE" EAGER. Niyam: sab LAZY, jahan chahiye wahan JOIN FETCH / DTO.
+```
+
 ## Scene: usercrud ka `LazyDemoController` (9-Sep)
 
 `open-in-view=false` karke `/lazy/fail` chalaya. Controller ne `author.getBooks()` bulaya aur jawab aaya
@@ -14,6 +22,15 @@ LAZY                                   EAGER
 Author #1                              Author #1
   books: [parchi]  <- proxy              books: [B1, B2, B3]
   getBooks() -> TAB DB jaata             publisher: {...}  <- bina maange bhi
+```
+
+Aaj phir chala ke dekha (Boot 4 + Hibernate 7):
+
+```
+parchi ki class: PersistentBag                     <- kitaabein nahi, Hibernate ki parchi
+bina transaction -> LazyInitializationException: Cannot lazily initialize collection ... (no session)
+@Transactional ke andar -> books = 2               <- session khula, parchi khuli
+JOIN FETCH -> books = 2                            <- pehli query me hi aa gayi
 ```
 
 ## Default (yaad ki cheez)
