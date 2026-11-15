@@ -247,7 +247,7 @@ Humne socha: ek pe bharosa nahi: copy bana do, do me likho, do se padho. Jisne a
 
 Yahi dikkat yahan bhi:
   URL shortener 9   almari me aag                                  ->  copy + acknowledge (quorum)
-  URL shortener 9b  Delhi me aag, copy peeche chale                ->  copy alag jagah, authority pehle likhe phir bheje, uski bhi copy (leader, async replica; MySQL / Mongo jaisa, Cassandra me quorum)
+  URL shortener 9b  Delhi me aag, copy peeche chale                ->  copy alag jagah, authority pehle likhe phir bheje, uski bhi copy (coordinator, async copy)
   URL shortener 10  C se padha, nahi mila                          ->  do se padho (R=2)
   Rate limiter  6   Redis gira, sabko jaane de ya roke             ->  papa ke dost andar, chor bahar (fail-open / fail-closed)
   Twitter       13  worker 7 gira, "processing" ghanton se         ->  "tu hai kya?", jawab nahi to naya banda (heartbeat)
