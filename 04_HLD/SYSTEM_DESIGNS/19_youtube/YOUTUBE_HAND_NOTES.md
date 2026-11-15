@@ -6,7 +6,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 Pehli line interviewer ko: "Main poora YouTube (sign-up se logout tak) nahi, ye cheezein solve karunga: video upload,
-jaldi live, dekhna, view count, aur nayi video ki khabar. Theek lage to aage badhein." Neeche har line ke saath kadam
+jaldi live, dekhna, view count, nayi video ki khabar, aur reels / shorts ka swipe. Theek lage to aage badhein." Neeche har line ke saath kadam
 number, taaki FR / NFR aur design ek hi kahani rahe.
 
 ```
@@ -16,6 +16,7 @@ FR      1  video upload (badi file, 2-40 GB)                                  ->
         4  har video ka view count                                              -> kadam 3
         5  subscribe kiya to nayi video ki khabar (MrBeast)                      -> kadam 7
         6  nakli view ginti me na aayein                                       -> kadam 4
+        7  reels / shorts: swipe karte hi agli chale                            -> kadam 8
 
 NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       -> kadam 1
         2  video jaldi live (pehle chhoti quality)                              -> kadam 2
@@ -23,6 +24,7 @@ NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       
         4  fake view na gine                                                    -> kadam 4
         5  storage sasta (purani video sasti jagah)                             -> kadam 5
         6  achanak trend pe bhi bina buffering                                  -> kadam 6
+        7  swipe pe spinner nahi, par skip hui reel pe data / battery bekaar na jaaye -> kadam 8
 
 Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
         · viral video pe ek minute me lakhon view -> ek row pe +1 nahi chalega
@@ -30,7 +32,7 @@ Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
 ```
 
 Trade-off jo bolne hain: view count thodi der se badhta (DB bachane ke liye) · thandi jagah sasti par laane me der
-(isliye trend pe wapas garam) · pehle chhoti quality (4K wale ko thoda intezaar).
+(isliye trend pe wapas garam) · pehle chhoti quality (4K wale ko thoda intezaar) · reels pehle se zyada laaye to data / battery, kam laaye to spinner.
 
 &nbsp;
 
@@ -62,7 +64,7 @@ Technical me: "phat gaya, garam me lao" = trend detect (view spike, view count w
 Arpan: Ye wahi subscriber wala fan-out hai jo Twitter me kiya: jisne subscribe kiya hai, sabko notification push kar do, jaise Instagram / Twitter pe follow karte hain to feed me aata hai. YouTube asal me kaise karta hai, unka design public nahi, par fan-out jaisa hi kuch hoga. Ye pehle ho chuka hai.
 Technical me: "sab subscribers ko push" = fan-out (Twitter design) + notification system. Ghanti ke liye pull nahi chalta (user ko pata hi nahi kuch aaya), isliye bade creator pe bhi push; crore subscribers ko queue me daal ke workers thoda-thoda bhejte (Notification design). Home feed me video dikhana alag baat: wahan Twitter wala hybrid (bade creator ka pull) chalta.
 
-**8. Ravi Instagram pe reels dekh raha. Har swipe pe app server se agli reel maangta: phone se server, server se CDN, phir chale. Beech me 1-2 second ka spinner, aur reels me 1 second bhi bahut; spinner dikha aur Ravi aage swipe kar gaya.**
+**8. Chhoti video ka swipe (YouTube Shorts ho ya Instagram Reels, ek hi baat). Ravi Instagram pe reels dekh raha. Har swipe pe app server se agli reel maangta: phone se server, server se CDN, phir chale. Beech me 1-2 second ka spinner, aur reels me 1 second bhi bahut; spinner dikha aur Ravi aage swipe kar gaya.**
 Arpan: Instagram ke servers yahan hain nahi, to har reel pe bahar tak nahi jaayega; reel ke saare tukde CDN me laake rakh leta hai. Reel upload hui to 720p, 480p, jitne bhi p hote honge utne me todta hoga, transcoding yahan bhi lagti hogi: reel chhoti hoti hai to pehle chhoti quality bani, phir usse badi, phir usse badi, aur sab CDN ke server pe store. Ravi ki Instagram ki algorithm set hogi ki wo kis-kis ki reel dekhta hai, wahi reels aayengi. Ab koi dekh raha to 5 reel apne paas rakh lo. Ek scene lete hain: ek banda mere paas aaya, use page padhne hain, mere paas 20 page hain. Wo dhadadhad padhta raha. To kya main 20ve page ke khatam hone ka intezaar karunga? Nahi, chhotu ko bolunga "turant agle 20 page utha la". Wo 20 page padh le to agle 20 de diye, phir agle 20. Wo intezaar nahi kar raha, mere paas pehle se saamaan hai use dene ke liye. Bas yahi Instagram karta hai.
 Technical me: "agle 20 page pehle se" = pre-fetching (aage ki reels ki list ek saath aati, aur unke tukde pehle se phone pe, agli reel ka player bhi taiyaar, swipe kiya aur chali), "tukde paas me" = CDN, "kai quality" = transcoding.
 

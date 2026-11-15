@@ -183,6 +183,9 @@ With cache:
 
 **Each layer reduces load on next.**
 
+DB ke andar bhi ek parat hoti hai: buffer pool. Request DB tak pahunch bhi jaaye, to DB pehle apni RAM (buffer pool) me
+dekhta hai ki wo page / data pehle se padha pada hai kya; nahi mila tabhi disk pe jaata hai.
+
 ### Local (app) vs Distributed (Redis) cache — DEPTH
 
 ```

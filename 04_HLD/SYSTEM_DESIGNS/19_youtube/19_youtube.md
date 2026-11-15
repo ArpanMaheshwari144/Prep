@@ -15,7 +15,7 @@ wahi yahan bhi. Upload ke tukde aur resume = [File upload](../07_file_upload_val
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 Pehli line interviewer ko: "Main poora YouTube (sign-up se logout tak) nahi, ye cheezein solve karunga: video upload,
-jaldi live, dekhna, view count, aur nayi video ki khabar. Theek lage to aage badhein." Neeche har line ke saath kadam
+jaldi live, dekhna, view count, nayi video ki khabar, aur reels / shorts ka swipe. Theek lage to aage badhein." Neeche har line ke saath kadam
 number, taaki FR / NFR aur design ek hi kahani rahe.
 
 ```
@@ -25,6 +25,7 @@ FR      1  video upload (badi file, 2-40 GB)                                  ->
         4  har video ka view count                                              -> kadam 3
         5  subscribe kiya to nayi video ki khabar (MrBeast)                      -> kadam 7
         6  nakli view ginti me na aayein                                       -> kadam 4
+        7  reels / shorts: swipe karte hi agli chale                            -> kadam 8
 
 NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       -> kadam 1
         2  video jaldi live (pehle chhoti quality)                              -> kadam 2
@@ -32,6 +33,7 @@ NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       
         4  fake view na gine                                                    -> kadam 4
         5  storage sasta (purani video sasti jagah)                             -> kadam 5
         6  achanak trend pe bhi bina buffering                                  -> kadam 6
+        7  swipe pe spinner nahi, par skip hui reel pe data / battery bekaar na jaaye -> kadam 8
 
 Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
         · viral video pe ek minute me lakhon view -> ek row pe +1 nahi chalega
@@ -39,7 +41,7 @@ Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
 ```
 
 Trade-off jo bolne hain: view count thodi der se badhta (DB bachane ke liye) · thandi jagah sasti par laane me der
-(isliye trend pe wapas garam) · pehle chhoti quality (4K wale ko thoda intezaar).
+(isliye trend pe wapas garam) · pehle chhoti quality (4K wale ko thoda intezaar) · reels pehle se zyada laaye to data / battery, kam laaye to spinner.
 
 ---
 
@@ -301,6 +303,7 @@ flowchart TB
 
 ## 8. Reels me har swipe pe spinner (agli reels pehle se, sirf shuru ke tukde)
 
+YouTube Shorts ho ya Instagram Reels, chhoti video ka swipe ek hi baat.
 Ravi Instagram pe reels dekh raha, har swipe pe app server se agli reel maangta, beech me 1-2 second ka spinner aur Ravi
 aage swipe kar gaya. Reel ke tukde pehle se CDN pe hain (kai quality me bane, transcoding). Ek banda dhadadhad page padh
 raha, to main 20ve page ke khatam hone ka intezaar nahi karunga, chhotu ko bolunga "turant agle 20 page utha la"; wo

@@ -33,5 +33,13 @@ tower se nahi poochh sakti ki kaunsa phone kahan juda hai. Train me jinka net ch
 hain), unka app "is train ka phone abhi tower X pe" server ko bhejta hai, aur server se dost ke phone pe jaata hai. Dost ka net chalu hona
 chahiye, kyunki usko khabar net se hi aati hai. Isi ka naam crowdsourcing: logon ke safar se hi list aur khabar dono bante hain.
 
-**Sach kitna pakka:** cell tower + offline timetable + logon se data = app ka apna bayaan aur Wikipedia. Andar ki list kaise banti hai,
-wo public nahi.
+**Kadam 4: GPS kyun nahi, list kaise bani, aur late kaise pata.**
+GPS battery khaata hai aur train ki metal body uska signal kamzor kar deti hai; train ke liye meter nahi, kuch km ka andaza kaafi.
+List aise bani (reel ka daava): founder ne doston ke phone me GPS aur tower ID dono saath record karwaye. Map pe daala to towers
+ne railway line kheench di, phir logon ke safar se poore desh ka naqsha bana, sirf 7-8 MB. Train sirf patri pe chalti hai, aur patri
+ek line hai, to tower badla matlab train aage badhi. Station pe tower ghane hote hain, wahan andaza lagbhag GPS jitna sahi. Late
+kitni: poora timetable app me offline hai, to train abhi kahan hai aur timetable ke hisaab se kahan honi chahiye thi, wahi farak
+delay hai.
+
+**Sach kitna pakka:** cell tower + offline timetable + logon se data = app ka apna bayaan aur Wikipedia. Doston ke phone se list
+banne wali baat ek reel ka daava hai, kahin aur se jaancha nahi.
