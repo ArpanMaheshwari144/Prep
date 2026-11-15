@@ -39,16 +39,33 @@ Technical me: "shabdon ko khiska diya" = OT (Operational Transformation), "yaad 
 Arpan: Ravi ne B hataya, iska matlab Arpan ke paas bhi B hatega; Arpan ne E joda, to Ravi ke paas bhi aayega. Main hota to: achha, dono same document pe; ek ne B hataya, ek ne C ke upar E joda. To dono ke document bilkul same laga do: A E C D. Na kisi ka kuch khoya, na kisi ka. B to hat jaayega, aur B ki jagah E aake lag jaayega. Ravi ke document me A E C D, Arpan ke document me bhi A E C D, dono me same, koi dikkat wali baat nahi, aasaan hai.
 Technical me: wahi OT: Ravi ka "B hatao" pehle laga, to Arpan ke E ki jagah ek peeche khisak gayi, dono jagah A E C D.
 ```
-            jagah:  0  1  2  3
-shuru (dono ke paas): A  B  C  D
+             ARPAN (US)                          RAVI (India)
 
-Ravi:  delete(1)  = B hatao          Arpan: insert(2, E) = C se pehle E
+shuru        0  A                                0  A
+             1  B                                1  B
+             2  C                                2  C
+             3  D                                3  D
 
-Arpan ki screen:  A B E C D  -> Ravi ka delete(1) aaya -> A E C D     (sahi)
-Ravi ki screen:   A C D      -> Arpan ka insert(2) aaya -> A C E D     (GALAT, E galat jagah)
+apna kaam    insert(2, E) = C se pehle E         delete(1) = B hatao
 
-OT: Ravi ka delete jagah 1 pe, Arpan ki jagah 2 usse aage -> Arpan ka insert ek peeche khiska do: insert(1, E)
-Ravi ki screen:   A C D      -> insert(1, E)            -> A E C D     (dono same)
+             0  A                                0  A
+             1  B                                1  C
+             2  E                                2  D
+             3  C
+             4  D
+
+doosre ka    Ravi ka delete(1) aaya:             Arpan ka insert(2, E) aaya, bina OT:
+aaya         0  A                                0  A
+             1  E                                1  C
+             2  C                                2  E   <- GALAT, E ko C se pehle aana tha
+             3  D                                3  D
+
+OT ke saath                                      delete jagah 1 pe hua, insert jagah 2 pe (usse aage),
+                                                 to insert ek peeche khiska do = insert(1, E)
+                                                 0  A
+                                                 1  E
+                                                 2  C
+                                                 3  D   <- dono ke paas A E C D
 ```
 
 **Maan lo server ka ek banda bole: seedha hal hai, jo pehle likhne aaya wo doc pe taala laga de, doosra tab tak ruka rahe.**

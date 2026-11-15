@@ -111,29 +111,46 @@ server tay karta, jo pehle pahuncha use agla version.
 document bilkul same laga do: B hat jaayega, B ki jagah E aake lag jaayega, dono ke paas A E C D, na kisi ka kuch khoya.
 **Asli naam:** wahi OT (Ravi ka delete pehle laga, to Arpan ke E ki jagah ek peeche khiski).
 ```
-            jagah:  0  1  2  3
-shuru (dono ke paas): A  B  C  D
+             ARPAN (US)                          RAVI (India)
 
-Ravi:  delete(1)  = B hatao          Arpan: insert(2, E) = C se pehle E
+shuru        0  A                                0  A
+             1  B                                1  B
+             2  C                                2  C
+             3  D                                3  D
 
-Arpan ki screen:  A B E C D  -> Ravi ka delete(1) aaya -> A E C D     (sahi)
-Ravi ki screen:   A C D      -> Arpan ka insert(2) aaya -> A C E D     (GALAT, E galat jagah)
+apna kaam    insert(2, E) = C se pehle E         delete(1) = B hatao
 
-OT: Ravi ka delete jagah 1 pe, Arpan ki jagah 2 usse aage -> Arpan ka insert ek peeche khiska do: insert(1, E)
-Ravi ki screen:   A C D      -> insert(1, E)            -> A E C D     (dono same)
+             0  A                                0  A
+             1  B                                1  C
+             2  E                                2  D
+             3  C
+             4  D
+
+doosre ka    Ravi ka delete(1) aaya:             Arpan ka insert(2, E) aaya, bina OT:
+aaya         0  A                                0  A
+             1  E                                1  C
+             2  C                                2  E   <- GALAT, E ko C se pehle aana tha
+             3  D                                3  D
+
+OT ke saath                                      delete jagah 1 pe hua, insert jagah 2 pe (usse aage),
+                                                 to insert ek peeche khiska do = insert(1, E)
+                                                 0  A
+                                                 1  E
+                                                 2  C
+                                                 3  D   <- dono ke paas A E C D
 ```
 
 ```mermaid
 flowchart TB
-    S["Shuru, dono ke paas:<br/>A B C D"]:::card
+    S["Shuru, dono ke paas:<br/>A<br/>B<br/>C<br/>D"]:::card
     RD["Ravi: delete(1) = B hatao"]:::card
     AI["Arpan: insert(2, E) = C se pehle E"]:::card
-    AS["Arpan ki screen:<br/>A B E C D, phir delete(1)<br/>= A E C D"]:::good
-    RW["Ravi ki screen bina OT:<br/>A C D, phir insert(2)<br/>= A C E D"]:::bad
+    AS["Arpan ki screen, delete(1) ke baad:<br/>A<br/>E<br/>C<br/>D"]:::good
+    RW["Ravi ki screen bina OT, insert(2) ke baad:<br/>A<br/>C<br/>E  galat jagah<br/>D"]:::bad
     subgraph OT["SHABDON KO KHISKA DIYA (OT)"]
         T(["delete jagah 1 pe, insert 2 pe:<br/>insert ek peeche, insert(1, E)"]):::pill
     end
-    RR["Ravi ki screen OT ke saath:<br/>A E C D (dono same)"]:::good
+    RR["Ravi ki screen OT ke saath:<br/>A<br/>E<br/>C<br/>D<br/>(dono same)"]:::good
     S --> RD
     S --> AI
     AI --> AS
