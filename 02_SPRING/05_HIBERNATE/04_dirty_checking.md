@@ -1,5 +1,13 @@
 # Dirty Checking
 
+## Koi poochhe "dirty checking kya hai" to aise bolo
+
+```
+Hibernate entity laate waqt uski photocopy (snapshot) rakh leta hai.
+Commit se pehle entity ko photocopy se milata, badla mila to khud UPDATE bhejta, save() ki zaroorat nahi.
+Sirf tab jab entity managed ho, yaani transaction ke andar.
+```
+
 ## Scene: usercrud ka `UserService.update()`
 
 ```java
@@ -21,6 +29,16 @@ entity ko photocopy se milata hai: Suresh tha, ab Arpan hai, to entity "dirty" h
 findById  -> entity + photocopy (name = Suresh)
 setName   -> entity me "Arpan"
 commit    -> milaya: Suresh != Arpan -> DIRTY -> UPDATE users SET name='Arpan' WHERE id=1
+```
+
+Aaj chala ke dekha (Boot 4 + Hibernate 7):
+
+```
+>> @Transactional + setName, save() nahi
+update users set name=?,password=? where id=?      <- Hibernate ne khud bheja
+   DB me naam: Arpan
+>> bina transaction + setName("Ravi")
+   DB me naam: Arpan                               <- Ravi kho gaya, milaane wala koi nahi
 ```
 
 ## Kab chalta hai
@@ -47,6 +65,16 @@ public User getProfile(Long id) {
     u.setPassword(null);     // JSON me hash na jaaye, isliye hataya
     return u;
 }                            // commit pe DB me bhi password NULL -> user login nahi kar paata
+```
+
+Chala ke dekha:
+
+```
+>> getProfile: setPassword(null)
+update users set name=?,password=? where id=?      <- bina maange UPDATE
+   DB me password: null
+>> wahi, par readOnly = true
+   DB me password: hash123                         <- bacha
 ```
 
 Iraada sirf response se password hatana tha, par entity managed thi, to dirty checking ne DB me bhi NULL likh diya. Hal: response ke liye
