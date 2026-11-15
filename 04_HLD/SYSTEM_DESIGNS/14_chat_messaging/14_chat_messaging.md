@@ -28,7 +28,7 @@ aise poochh rahe, 99% baar jawab "kuch nahi", server poochne walon se hi dab gay
 do. Kisi ne kuch bheja to seedha bhej do, bas kaam khatam. Beech me aisa dabba rakh do jo jaise hi kuch aaya, turant
 doosre bande ko bhej de. Phone band, net nahi, aise pench aage dekhte.
 
-**Asli naam:** har second poochhna = polling (band), beech ka dabba = chat server, khula taar = WebSocket (ek baar
+**Asli naam:** har second poochhna = polling (band), beech ka dabba = taar wala server (kadam 12 me isko WebSocket gateway kehte), khula taar = WebSocket (ek baar
 khula, band nahi hota, server khud push karta). Server pe har khula taar memory khaata hai, isliye event loop (Netty):
 kuch hi thread, sirf jis taar pe message aaya use sambhalo.
 
@@ -61,7 +61,7 @@ phenk thodi dunga.
 
 **Asli naam:** dabba = message store (har message pehle DB me save, phir bhejo; pehle bhejte aur save se pehle gira
 to message gaya), online hoga to bhej denge = offline delivery. DB = Cassandra, `chat_id` se baanta (andar ring = consistent hashing): likhai bahut
-(46,000 / sec, roz 1.2 TB), padhai hamesha ek chat ki ("aakhri 50 do"), na join na transaction. Ek chat ke saare
+(46,000 / sec, roz 1.2 TB), padhai hamesha ek chat ki ("aakhri 50 do"), join nahi chahiye (message + parchi ek saath likhne ka kaam batch se, kadam 5). Ek chat ke saare
 message ek machine pe, kram me.
 
 ```mermaid
@@ -146,17 +146,17 @@ aayenge sunne. Kahin rakh do, 500 log jab chahe apna aake sunte rahenge.
 
 **Asli naam:** ek dabba = group message DB me sirf ek baar (`chat_id = college-gang`), 500 log khud aayenge sunne =
 members wahi ek message padhte, 500 copy nahi. Group bhi bas ek chat hai jisme 2 ki jagah 500 log; members ki list se
-online walon ko map + pub/sub se bhejo, baaki wapas aayein to dabbe se.
+online walon ko map + pub/sub se bhejo, baaki wapas aayein to dabbe se (500 ka behtar raasta: kadam 12, group ka channel).
 
 **Maan lo #981 DB me save ho gaya, par pub/sub tak pahunchne se pehle chat server gir gaya:** Ek server thodi hai,
 1-2 chhotu extra rakh lo; ek bimar pada to doosra aayega. Par doosre ko pata kaise chale ki #981 bhejna baaki hai? Main
 nikal raha hoon aur chhotu baad me aayega, to parchi pe likh ke deewar pe chipka jaunga: "chhotu bhai ye message yahan
 jaana chahiye". Chhotu aayega, parchi padhega, message dene nikal jaayega.
-**Asli naam:** extra chhotu = backup server / kai worker, deewar ki parchi = outbox (message ke saath usi transaction me
+**Asli naam:** extra chhotu = backup server / kai worker, deewar ki parchi = outbox (message ke saath ek saath, dono ya koi nahi (batch),
 "ye bhejna hai" wali row), parchi padhne wala chhotu = relay jo outbox padh ke pub/sub pe daale.
 
 **Maan lo pehla chhotu sirf der se tha, wo bhi aaya aur backup bhi, dono ne #981 bhej diya:** Status rakho. Bheja to
-parchi pe DONE aur mote register me DONE, dono ek hi transaction me, beech me gire to rollback. Koi aaye aur DONE dikhe
+parchi pe DONE aur mote register me DONE, dono ek saath (dono ya koi nahi), beech me gire to kuch nahi likha, phir se. Koi aaye aur DONE dikhe
 to kaam ho chuka.
 **Asli naam:** outbox row ka status (bhejna baaki -> DONE). Par bhejna DB ke bahar hai, to bhejna aur DONE ek
 transaction nahi: bhej ke DONE se pehle gira to dobara jaayega. Isliye agla.
@@ -251,7 +251,7 @@ aaya to server apne record se jo nahi gaya wo sab bhejta, phone ke aakhri number
 hile to phone number dekh ke sort kar de. Kram kitna strict chahiye, FR me pehle tay (WhatsApp me ek aage-peeche chalega).
 Jaise class me teacher: roll number 6 late hai to baaki 100 ki attendance lo, register me likho "6 abhi nahi aaya"; 6 aaye
 to 5 ke baad wali jagah bithao. Register server ke paas, kuch khota nahi.
-**Asli naam:** har user ka delivery record (store-and-forward, pending list), reconnect pe pending sab, sequence number se
+**Asli naam:** har user ka delivery record (store-and-forward; group me har member ka bas ek number "yahan tak pahuncha", kadam 9), reconnect pe pending sab, sequence number se
 client-side ordering, ordering = requirement ka faisla.
 
 ```mermaid
