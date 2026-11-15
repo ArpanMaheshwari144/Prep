@@ -103,6 +103,10 @@ naye 100 pe jaanchti hai.
 **Maan lo ek hi pal me do parchi: counter 1 pe "Arpan se Ravi 500", counter 2 pe "Ravi se Arpan 300". Counter 1 ne Arpan ka khaata pakda, Ravi ka maang raha; counter 2 ne Ravi ka pakda, Arpan ka maang raha. Dono ek doosre ka intezaar, koi nahi hilta:** Dono counter wale apna-apna khaata pakad ke khade, na ye chhodta na wo. Do raaste hain. Pehla: main Ravi se bolunga "chal bhai, hum dono ek hi line me lagenge, ek hi counter pe", to ek ke baad ek kaam hoga. Doosra: main bolunga "koi baat nahi, pehle mere khaate se kaat ke Ravi me daal de". Wo ho gaya to khaata free, phir doosri parchi bhi ho jaayegi. Aur ye atkan sirf ek hi bank ke DB ke andar hota hai, alag bank me nahi. User ko kabhi pata nahi chalta: DB khud tod deta hai, app dobara chala deta hai, Arpan ke 500 aur Ravi ke 300 dono chale jaate hain.
 **Asli naam:** "dono ek doosre ka khaata pakad ke baithe" = deadlock. "ek hi line, ek counter" = ek ke baad ek (serialize); 10 counter bane rahein aur phir bhi na atkein, uske liye har counter pehle chhota account number pakde (lock ordering). "pehle ek poora, phir doosra" = DB atkan pakadta hai (deadlock detection), ek parchi rollback, doosri poori, phir pehli dobara (retry).
 
+**Maan lo roz 1 crore transfer, sab ek line me to bank dheema:** ek counter thodi hai, hazaron hain. Jo do account aapas
+me takra rahe (Arpan-Ravi) sirf unka ek group, Priya-Amit alag group; 50 counter pe sab dhadadhad, koi kisi ko nahi kaatta.
+**Asli naam:** taala sirf un khaaton pe (per-account / row lock), baaki parallel; kaam account ke hisaab se (partition by account).
+
 ```mermaid
 flowchart TB
     N["Counter 1: Netflix 500"]:::card

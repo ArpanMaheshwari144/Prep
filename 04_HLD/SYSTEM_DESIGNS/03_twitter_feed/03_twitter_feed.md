@@ -416,6 +416,9 @@ yahan tak parchi = checkpoint.
 **Maan lo worker 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam:** uski
 wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
 **Asli naam:** atka to replacement = timeout pe slow worker ka hissa doosre ko, kahan tak chhoda = checkpoint.
+Doosri kahani: "zinda hoon" kaafi nahi, poochho kaam kahan tak hua. Ek chhotu ke paas 50 newspaper aa gaye, baaki ke
+10-20; 2-3 chhotu extra bhejo, madad karein. Naye chhotu pehle uski parchi dekhein ("30 khatam") aur 31 se lagein.
+**Asli naam:** heartbeat + progress report, bada chunk = data skew, madad = work stealing / split, parchi = checkpoint (DB / Redis).
 
 ```mermaid
 flowchart TB

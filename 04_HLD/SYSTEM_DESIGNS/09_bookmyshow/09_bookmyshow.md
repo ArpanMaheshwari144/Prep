@@ -364,6 +364,10 @@ job DB se utha ke parchi theek kare, ulta kabhi nahi.
 **Asli naam:** mota register = source of truth (DB), SUCCESS ke upar PENDING nahi = conditional update (sirf tab likho
 jab abhi PENDING ho), haalat sirf aage = state machine, DB se parchi theek = reconciliation / sync job.
 
+Doosri kahani: khabar pe number (PENDING 1, SUCCESS 2); 2 pehle aaye to 1 ka intezaar, phir kram se. 1 kho jaaye to
+1-2 second baad chhotu Razorpay se pooche "paisa kata?", kata hai to book. Ya dono status ek hi operation me.
+**Asli naam:** sequence number (out-of-order hold), timeout ke baad status poll, atomic update.
+
 ```mermaid
 flowchart LR
     subgraph PAY["PAYMENT (paisa)"]

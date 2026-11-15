@@ -92,6 +92,12 @@ Technical me: "har worker ka status" = DB me hisson ki ginti, "tu hai kya" = hea
 **Maan lo worker 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam.**
 Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
 Technical me: "atka to replacement" = timeout pe slow worker ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
+Isi dikkat ki doosri kahani: "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam? Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye. To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
+Technical me: "zinda hoon != kaam ho raha" = heartbeat ke saath progress report, "bada chunk" = data skew (ek hisse pe zyada kaam), "2-3 chhotu madad" = hissa tod ke baanto (work stealing / split).
+
+**Maan lo worker 7 ke 50 me se 30 ban chuke, 2 naye chhotu bheje; unhe kaise pata 31 se shuru karna, warna pehle ke 30 do baar.**
+Arpan: Har chhotu ke paas ek parchi hogi: mera kaam yahan tak ho gaya. Sabko bol diya "apne kaam ka hamesha track rakho", kyunki kisi din bimaar pad gaye, ekdum kuch ho gaya, to main aaunga, kaise dekhunga kaam kahan tak hua. Wo track DB me, Redis me, kahin bhi; technical naam me nahi jaate, problem kaise samajh rahe wo dekhte hain. Kisi ne 5 kiye, kisi ne 7, kisi ne 10, sab likhte gaye. Worker 7 ne likh diya "30 khatam". Naye chhotu ko kaha pehle iski parchi dekho, isne kahan tak khatam kiya; 31 pe lag jaao, 10 tu sambhal, 10 tu sambhal, kaam jaldi nipta do.
+Technical me: "kahan tak hua ki parchi" = checkpoint (DB / Redis me), naya worker wahin se shuru (resume), baaki bacha kaam baant ke.
 
 **14. Ravi 2:00 pe khiskata hai six dekhne, par phone 0:00 se 2:00 tak sab kheench raha, faaltu data, six late.**
 Arpan: 0 se 2 dikhane ka fayda nahi. Kisi ne copy di aur bola seedha 51wa page dikha. Main copy dekhunga, kahan 50 khatam, 51 kahan shuru, hisaab lagaunga, aur seedha 51 khol dunga.
