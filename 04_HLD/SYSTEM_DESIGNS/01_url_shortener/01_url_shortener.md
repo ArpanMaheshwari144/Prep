@@ -9,23 +9,6 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ---
 
-## FR / NFR / Numbers (interview me pehle 2 minute)
-
-```
-FR      1  lamba URL do, chhota token lo                                  -> kadam 1, 2
-        2  chhota token kholo to lambe pe bhejo                             -> kadam 3
-        3  do logon ko kabhi same token na mile                             -> kadam 1, 7
-        4  dhokhe wala link pata chale to wo token band kar sako             -> kadam 12
-        5  machine se hazaar chit na ban sake (har aadmi pe had)            -> kadam 13
-
-NFR     1  kholna turant, har baar mote register pe na jaaye                -> kadam 3, 4
-        2  garam (viral) token pe bhi na atke                               -> kadam 5, 6, 11
-        3  lambe ka chhota hamesha sahi, abhi likha turant mile             -> kadam 9, 10
-        4  data kabhi na khoye (almari jale to bhi)                          -> kadam 9
-
-Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me nahi aata -> tukde (kadam 8)
-```
-
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
 User  -->  LB  -->  kai counter (app server)
@@ -51,6 +34,25 @@ User  -->  LB  -->  kai counter (app server)
 11  cricket token viral                 ->  register ki photocopy + counter ki parchi (hot key copies, local cache)
 12  dhokhe wala pata, log phone se      ->  token radd + phone me likhne mat do (302, 301 nahi)
 13  machine se har second hazaar chit   ->  gate pe bhaga do + har aadmi pe had (rate limit)
+```
+
+**FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
+
+## FR / NFR / Numbers (interview me pehle 2 minute)
+
+```
+FR      1  lamba URL do, chhota token lo                                  -> kadam 1, 2
+        2  chhota token kholo to lambe pe bhejo                             -> kadam 3
+        3  do logon ko kabhi same token na mile                             -> kadam 1, 7
+        4  dhokhe wala link pata chale to wo token band kar sako             -> kadam 12
+        5  machine se hazaar chit na ban sake (har aadmi pe had)            -> kadam 13
+
+NFR     1  kholna turant, har baar mote register pe na jaaye                -> kadam 3, 4
+        2  garam (viral) token pe bhi na atke                               -> kadam 5, 6, 11
+        3  lambe ka chhota hamesha sahi, abhi likha turant mile             -> kadam 9, 10
+        4  data kabhi na khoye (almari jale to bhi)                          -> kadam 9
+
+Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me nahi aata -> tukde (kadam 8)
 ```
 
 ---

@@ -4,22 +4,6 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Token counter. Log aate hain aur bahut lamba pata likhi chit dete hain ("amazon.in/products/xyz/..."). Counter wala unhe chhota token deta hai, jaise aB3x9. Jo bhi token dikhaye, use wo lamba pata mil jaata hai.
 
-**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
-```
-FR      1  lamba URL do, chhota token lo                                  -> kadam 1, 2
-        2  chhota token kholo to lambe pe bhejo                             -> kadam 3
-        3  do logon ko kabhi same token na mile                             -> kadam 1, 7
-        4  dhokhe wala link pata chale to wo token band kar sako             -> kadam 12
-        5  machine se hazaar chit na ban sake (har aadmi pe had)            -> kadam 13
-
-NFR     1  kholna turant, har baar mote register pe na jaaye                -> kadam 3, 4
-        2  garam (viral) token pe bhi na atke                               -> kadam 5, 6, 11
-        3  lambe ka chhota hamesha sahi, abhi likha turant mile             -> kadam 9, 10
-        4  data kabhi na khoye (almari jale to bhi)                          -> kadam 9
-
-Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me nahi aata -> tukde (kadam 8)
-```
-
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
 User  -->  LB  -->  kai counter (app server)
@@ -47,7 +31,24 @@ User  -->  LB  -->  kai counter (app server)
 13  machine se har second hazaar chit   ->  gate pe bhaga do + har aadmi pe had (rate limit)
 ```
 
-**FR / NFR kahan se:** Arpan: Hum hamesha URL ki baat kar rahe, to FR me wahi jaayega ki lamba URL le ke chhota banana. Jo dikkat design me dekh rahe, wahi FR / NFR banti: do logon ko same token na mile, lambe ka chhota hamesha theek ho, garam (hot) URL sambhale, sab mote register pe na jaaye, machine se hazaar chit na aaye. NFR me: consistency kaise, jaldi kaise, copies, local kaise rakhein. Dikkat se hi FR bante, unse hi NFR bhi; ye aaj pakka ho gaya. Numbers tab jab sach me zaroorat ho; 1 million ho ya 1 billion, shard waise bhi lagana padega.
+**FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
+Arpan: Hum hamesha URL ki baat kar rahe, to FR me wahi jaayega ki lamba URL le ke chhota banana. Jo dikkat design me dekh rahe, wahi FR / NFR banti: do logon ko same token na mile, lambe ka chhota hamesha theek ho, garam (hot) URL sambhale, sab mote register pe na jaaye, machine se hazaar chit na aaye. NFR me: consistency kaise, jaldi kaise, copies, local kaise rakhein. Dikkat se hi FR bante, unse hi NFR bhi; ye aaj pakka ho gaya. Numbers tab jab sach me zaroorat ho; 1 million ho ya 1 billion, shard waise bhi lagana padega.
+
+**FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
+```
+FR      1  lamba URL do, chhota token lo                                  -> kadam 1, 2
+        2  chhota token kholo to lambe pe bhejo                             -> kadam 3
+        3  do logon ko kabhi same token na mile                             -> kadam 1, 7
+        4  dhokhe wala link pata chale to wo token band kar sako             -> kadam 12
+        5  machine se hazaar chit na ban sake (har aadmi pe had)            -> kadam 13
+
+NFR     1  kholna turant, har baar mote register pe na jaaye                -> kadam 3, 4
+        2  garam (viral) token pe bhi na atke                               -> kadam 5, 6, 11
+        3  lambe ka chhota hamesha sahi, abhi likha turant mile             -> kadam 9, 10
+        4  data kabhi na khoye (almari jale to bhi)                          -> kadam 9
+
+Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me nahi aata -> tukde (kadam 8)
+```
 
 &nbsp;
 
