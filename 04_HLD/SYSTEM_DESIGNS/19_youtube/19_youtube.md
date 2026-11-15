@@ -215,7 +215,7 @@ Jo ladka roz file lene aata hai, uski file apne paas; jo mahine me ek baar aata 
 jaake le aao.
 
 **Asli naam:** garam / thanda storage = hot / cold storage tiering (lifecycle policy: itne din koi nahi dekha to sasti
-jagah; original file shuru se hi cold me), pehle se India ke CDN pe = popular video ko pehle se regional CDN pe.
+jagah; original file, saari quality ban jaane ke baad cold me), pehle se India ke CDN pe = popular video ko pehle se regional CDN pe.
 
 ```mermaid
 flowchart TB
