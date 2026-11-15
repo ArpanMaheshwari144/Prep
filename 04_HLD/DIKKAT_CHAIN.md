@@ -56,7 +56,7 @@ Yahi dikkat yahan bhi:
   Uber          15d cancel karke dobara, ginti 7:05 se             ->  hatao, ya Redis parchi "5 min ruka" 30 sec umar (TTL)
   Leaderboard   5   raat 12 baje aaj wala khaali                   ->  alag register, kal wala side me rakho (key me tareekh, history)
   E-commerce    6   60 ne pay nahi kiya                            ->  cart sirf list, paisa nahi diya to maal uska nahi; ginti pay pe (koi reserve nahi, atomic)
-  Inventory     1b  Buy dabaya, battery khatam, pay hua nahi       ->  cart me hai, kharida nahi; ginti pay pe, jisne pehle pay kiya uska (koi reserve nahi)
+  Inventory     1   Buy dabaya, battery khatam, pay hua nahi       ->  cart me hai, kharida nahi; ginti pay pe, jisne pehle pay kiya uska (koi reserve nahi)
   E-commerce    7d  andar gaya, chai peene chala gaya              ->  "ya pay kar ya rakh de": 5 min ghadi, phir wapas line me (expiry + INCR)
   E-commerce    7e  ghadi khatam ke 1 sec baad Pay                 ->  1-2 sec upar bas, phir Priya ka; andar dabaya to PSP hamari zimmedari (grace period, PAYMENT_PENDING)
   Rate limiter  9b  OTP line me atka, der se nikla, bekaar         ->  har OTP pe umar, khatam to phenk do (message TTL)
@@ -180,7 +180,7 @@ Humne socha: us ek ki photocopy bana do, ek aur gaadi; ya counter tod do (10 cou
 
 Yahi dikkat yahan bhi:
   URL shortener 11  viral token, 1 crore log ek hi register pe     ->  register ki photocopy, sab me baant do (Redis replica)
-  URL shortener 11e IPL link baaki links ko atka raha              ->  server ke paas + uska alag dabba + copy (local cache, hot key isolation)
+  URL shortener 11e IPL link baaki links ko atka raha              ->  server ke paas + uska alag dabba + copy, ring me gira to agli copy; consistent hashing nahi (local cache, hot key isolation)
   Twitter       5   six pe 5 crore, parchi wali machine hili       ->  10-15 copy bana do, baant do (hot key replica)
   News          9   iPhone launch, 10 lakh/sec, dabba 1 lakh       ->  tech ke dabbe badha do (aur Redis node + tech ki copy)
   News          9   cricket wale dabbe khaali pade                 ->  unme bhi tech ki copy (hot key copies)
@@ -299,7 +299,7 @@ Yahi dikkat yahan bhi:
   Kafka         10  7 din peeche, purana panna phat jaata          ->  aur admin daalo, itna peeche rehne hi mat do (consumer, phir partition)
   Kafka         10b aaj 1 din, kal 2 din peeche                    ->  alert laga do (consumer lag alert)
   PUBG          5   chicken dinner pe lakhon likhai, DB ghuta      ->  match me parchi, end pe line + copy, dheere DB (batch, Kafka, Cassandra)
-  Inventory     7   5 se kam, email dheema, order atka        ->  saari inventory dekho, grahak mat roko, alert kai raaston se (line me); mangwana purchase team ka (scope se bahar)
+  Inventory     7   5 se kam, ab kya: sirf email?           ->  saari inventory dekho, grahak mat roko, alert kai raaston se (line me); mangwana purchase team ka (scope se bahar)
 
 Naam: Kafka / queue + worker / consumer group / batch + Cassandra (likhai tez) / partition / alag topic / priority topic / consumer lag alert
 Juda: line me se gira to (4) aur (3). Line peeche reh gayi to alert.
@@ -341,7 +341,7 @@ Yahi dikkat yahan bhi:
   BookMyShow    6d  SUCCESS likha, ticket bolne se pehle gira      ->  SUCCESS + parchi "D5 book karo" ek saath (transactional outbox)
   BookMyShow    6e  bank 12 min, seat Priya ki, paisa kata         ->  chhotu poochta; DB me REFUND, raat ki job lautaye (status poll, refund job)
   BookMyShow    6f  purana PENDING naye SUCCESS pe likh gaya       ->  sach ek jagah (DB), likhne se pehle dekho, sirf aage (source of truth, conditional update)
-  BookMyShow    6h  SUCCESS pehle, PENDING baad me / kho gaya      ->  number lagao, 2 ruke jab tak 1; 1 na aaye to Razorpay se poochho (sequence, status poll)
+  BookMyShow    6f  SUCCESS pehle, PENDING baad me / kho gaya      ->  number lagao, 2 ruke jab tak 1; 1 na aaye to Razorpay se poochho (sequence, status poll)
   BookMyShow    6g  "refund shuru" ko "ho gaya" likha              ->  pakka jawab tak REFUND_PENDING, 5 din purane poochho (refund state, stuck refund job)
   Kafka         8   galat ticket baar-baar, line atki              ->  line se hata (DLQ)
   Kafka         9   SMS counter 10 min band, sab DLQ me            ->  pehle check, waqai band? (circuit breaker)

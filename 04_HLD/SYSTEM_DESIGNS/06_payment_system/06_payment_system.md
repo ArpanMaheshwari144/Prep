@@ -350,7 +350,8 @@ poochhne ka haq PSP-1 ka hai, hamara nahi. Do baar kata bhi to ek wapas.
 Onboard karte waqt PSP-1 se SLA zaroor lo: uptime (jaise 99.9%) aur down hua to kitni der me khabar + theek. Bank kitni
 der lega, wo nahi. Diwali jaisi sale pe 3-4 company line me.
 
-**Asli naam:** 30-55 sec = hamara client timeout, dobara PSP-2 pe = PSP failover, poochte + event =
+**Asli naam:** 30-55 sec = hamara client timeout, pehla DB me FAILED = us koshish ka attempt FAILED (payment ka sach
+event / poll se), dobara PSP-2 pe = PSP failover, poochte + event =
 status poll + webhook, kata nikla to lautao = REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe,
 onboard pe SLA = uptime SLA + incident response (latency ka nahi), 3-4 company = backup PSP.
 

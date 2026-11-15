@@ -418,6 +418,7 @@ flowchart TB
 
 **Doosri kahani (alag dabba):** garam link server ke paas (local cache), aur uska alag Redis dabba + 1-2 copy, taaki
 IPL ki bheed me baaki logon ke link na atkein. 3-4 counter phanse to ek chhotu laake sabke kaan me daale.
+Ye consistent hashing nahi: link badal nahi raha, bas Redis ki copiyan ek ring me, aas-paas koi gira to agli copy pe.
 **Asli naam:** hot key isolation, hot key replicas, request coalescing.
 
 ## 12. Dhokhe wala pata, log phone se seedha (token radd + phone me likhne mat do)

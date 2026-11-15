@@ -12,7 +12,7 @@ number, taaki FR / NFR aur design ek hi kahani rahe.
 ```
 FR      1  video upload (badi file, 2-40 GB)                                  -> kadam 1
         2  upload ke baad har quality me bane (144p se 4K)                       -> kadam 2
-        3  har phone / net pe dekhna (manifest + CDN, Netflix jaisa)             -> Netflix kadam 1-3
+        3  har phone / net pe dekhna (manifest + CDN, Netflix jaisa)             -> Netflix kadam 1-4 + P3
         4  har video ka view count                                              -> kadam 3
         5  subscribe kiya to nayi video ki khabar (MrBeast)                      -> kadam 7
         6  nakli view ginti me na aayein                                       -> kadam 4
