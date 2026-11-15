@@ -193,7 +193,7 @@ Yahi dikkat yahan bhi:
   Inventory     2b  dabba 3 khaali, baaki me 150                   ->  request doosre dabbe pe mod do, out of stock tab jab sab 0
   News          5   9 baje 1 crore log ek saath                    ->  bahut saare server + ek banda jo sabko manage kare (load balancer)
 
-Naam: hot key copies / replica / hot row todo / work stealing / kai machine + load balancer
+Naam: hot key copies / replica / hot row todo / bucketing / sharded counter / work stealing / kai machine + load balancer
 Juda: machine badhane se nahi hota, kyunki ek key ek hi machine pe (8).
 ```
 
@@ -450,7 +450,7 @@ Yahi dikkat yahan bhi:
   YouTube       8c  har reel poori pehle se, 29 sec bekaar         ->  shuru ke kuch chunks, pattern dekh ke kam (pre-fetch sirf shuru, trade-off)
   File upload   3b  10 GB upload, token beech me khatam            ->  har tukde ka apna token, resume pe baaki ke naye (presigned per part)
 
-Naam: S3 + presigned URL / multipart / transcoding + ABR / CDN / hot-cold / event notification / lifecycle rule / manifest + seek / archive / Open Connect / steering / client failover / player buffer / parallel encoding / promote / demote
+Naam: S3 + presigned URL / multipart / transcoding + ABR / pre-fetch / CDN / hot-cold / event notification / lifecycle rule / manifest + seek / archive / Open Connect / steering / client failover / player buffer / parallel encoding / promote / demote
 Juda: link kisko mile wo gate pe (16).
 ```
 
@@ -490,7 +490,7 @@ Yahi dikkat yahan bhi:
   Docs          2b  2 saal purana doc, 50 lakh op                  ->  har kuch hazaar op pe doc ki photo, photo + baad ke op (snapshot)
   Train         4   tower ki list koi nahi deta                    ->  khud tukdon me, ya permission wali authority (railway, MCD, BMC), updates (data partner)
 
-Naam: fanout on write / precompute / batch / checkpoint / MapReduce / fanout on read / backfill / merge at read / chunks / snapshot / balance snapshot / snapshot job / proactive fill / cold start
+Naam: fanout on write / precompute / batch / checkpoint / data partner / MapReduce / fanout on read / backfill / merge at read / chunks / snapshot / balance snapshot / snapshot job / proactive fill / cold start
 Juda: Kohli jaise 27 crore pe ulta: padhte waqt milao (fanout on read).
 ```
 
@@ -595,7 +595,7 @@ Yahi dikkat yahan bhi:
   E-commerce    1b  Lucknow ka store khaali, Kanpur me 20          ->  Lucknow wale ko Lucknow ka store, dark store = aas-paas ka (location se paas wala store)
   Inventory     4   Bangalore khaali, Delhi 50, Mumbai 10          ->  pehle apna shehar, phir main warehouse; doosra shehar FR tay kare (hub and spoke, sourcing rule)
 
-Naam: multi-region / home region / region matchmaking / country code / cross-region / squad fill / dark store
+Naam: multi-region / home region / region matchmaking / country code / cross-region / squad fill / dark store / hub and spoke
 Juda: video ke liye yahi kaam CDN karta (14).
 ```
 
@@ -652,7 +652,7 @@ Yahi dikkat yahan bhi:
   Train         2   outer pe 25 min, timetable bole aage           ->  asli khabar jeete, delayed by X, expected time (ETA)
   Train         3   mera net band, dost ko khabar                  ->  jinka net chalu unka app bheje, server se push (crowdsourcing)
 
-Naam: dead reckoning / correction / last known location / status (arrived, delivered) / geofence
+Naam: dead reckoning / correction / last known location / status (arrived, delivered) / geofence / last write wins / cell ID / ETA / crowdsourcing
 Juda: server ki taraf location band ho to Uber 14 (location timeout); Zomato me do status, building tak + haath me.
 ```
 
