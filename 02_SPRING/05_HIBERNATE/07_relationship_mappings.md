@@ -1,37 +1,67 @@
 # Relationship Mappings
 
-## Scene: usercrud ki do table
+## Koi poochhe "Author-Book ka rishta / mappedBy kya hai" to aise bolo
+
+```
+"Is kitaab ka lekhak kaun" DB me sirf ek jagah likha hai: books table ka author_id.
+Isliye DB me wahi jaata hai jo kitaab ko bataya (book.setAuthor). Author ki books list sirf padhne ke liye hai,
+usme add / remove karo to DB ko farak nahi padta.
+mappedBy = "author" ka matlab: meri list mat dekho, rishta Book ke author me likha hai.
+```
+
+## Do table
 
 ```
 authors              books
-id  name             id  title   author_id   <- FK, har kitaab pe "lekhak kaun"
-1   Arpan            1   Java    1
-2   Suresh           2   Spring  1
-                     3   Python  2
+id  name             id  title   author_id    <- rishta sirf yahan likha hai
+1   Arpan
+2   Suresh
 ```
 
-Rishta DB me sirf ek jagah likha hai: `books.author_id`. Isliye Java me bhi do side ka kaam alag hai:
+`authors` table me kitaabon ka koi khaana hi nahi hai.
 
-- **Book = likhne wali side.** FK (`author_id`) isi table me hai. Book me jo author set karoge, Hibernate DB me wahi likhega.
-  ```java
-  @ManyToOne @JoinColumn(name = "author_id")
-  Author author;
-  ```
-- **Author = sirf dekhne wali list.** Author ki `books` list DB me kuch nahi likhti, bas Book table se padh ke dikhati hai.
-  `mappedBy = "author"` ka matlab hai: "rishta Book ke `author` field me likha hai, mere paas nahi".
-  ```java
-  @OneToMany(mappedBy = "author")
-  List<Book> books;
-  ```
+```java
+class Book   { @ManyToOne @JoinColumn(name = "author_id") Author author; }   // ye DB me likhta hai
+class Author { @OneToMany(mappedBy = "author") List<Book> books; }          // ye sirf padhta hai
+```
 
-(Docs me inka naam owning side aur inverse side hai.)
+## Chala ke dekha (Boot 4 + Hibernate 7): har kadam pe books table
 
-## Dikkat
+```
+Kadam 1: java.setAuthor(arpan)          [kitaab ko bataya]
+     books: Java    author_id=1          <- DB me likh gaya
 
-- `mappedBy` bhool gaya to Hibernate ise do alag rishte samajhta hai aur ek faaltu teesri table `author_books` bana deta hai.
-- Sirf `author.getBooks().add(book)` kiya aur `book.setAuthor(author)` nahi kiya, to DB me `author_id` NULL jaata hai. Wajah ye hai ki
-  Hibernate sirf likhne wali side (Book) dekhta hai, dekhne wali list ko nahi. Hal (cascade wali file jaisa):
-  `addBook(b) { books.add(b); b.setAuthor(this); }`.
+Kadam 2: arpan.getBooks().add(spring)   [sirf Arpan ki list me daala]
+     books: Spring  author_id=NULL       <- DB me kuch nahi likha
+
+Kadam 3: arpan.getBooks().remove(java)  [Arpan ki list se nikala]
+     books: Java    author_id=1          <- DB me kuch nahi badla
+
+Kadam 4: java.setAuthor(suresh)         [kitaab ko naya lekhak bataya]
+     books: Java    author_id=2          <- DB badal gaya
+```
+
+List list hai: usme add / delete karo, DB ko farak nahi padta. DB sirf kitaab ki taraf dekhta hai.
+
+Isliye rishta jodna ho to hamesha `book.setAuthor(...)`. List bhi saath me theek rakhni ho to ek helper jo dono kaam kare:
+
+```java
+void addBook(Book b) { books.add(b); b.setAuthor(this); }
+```
+
+(Cascade wali file me `ghadi order_id=NULL` isi wajah se aaya tha.)
+
+## Dikkat: mappedBy likhna bhool gaye
+
+Chala ke dekha:
+
+```
+mappedBy ke bina  -> DB me bani table: [AUTHOR_BOOKS, BOOK, AUTHOR]   <- faaltu teesri table
+mappedBy ke saath -> DB me bani table: [BOOK, AUTHOR]
+```
+
+Hibernate ko laga list ka apna alag rishta hai, to usne list ke liye alag join table `author_books` bana di. Ab rishta do jagah likha jaata
+hai, aur dono alag baat bol sakte hain.
 
 ## Many-to-many (Student aur Course)
 
@@ -44,7 +74,7 @@ pe extra cheez chahiye hoti hai (enrolledDate, grade). Wo `@ManyToMany` me nahi 
 ```java
 @Entity @Data class Author { @OneToMany(mappedBy = "author") List<Book> books; }
 @Entity @Data class Book   { @ManyToOne Author author; }
-// log.info(author) -> Author.toString -> books -> Book.toString -> author -> ... StackOverflowError
+// log.info(author) -> StackOverflowError   (chala ke dekha)
 ```
 
 `@Data` ne dono taraf `toString` bana diya. Author ne books chhapi, har book ne apna author, author ne phir books, aur ye chakkar tab tak
