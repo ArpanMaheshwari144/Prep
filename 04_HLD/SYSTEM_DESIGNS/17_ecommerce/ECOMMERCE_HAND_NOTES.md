@@ -64,6 +64,7 @@ Technical me: paisa aane pe server pe ek-ek karke ginti kaato, 500 ke baad aaye 
 (Yahan se sale ka maal ghee ki jagah iPhone: mausi ke mart me Diwali sale pe 500 iPhone aaye, Apple store jaisa, bahar 3000 log. Ghee ho ya iPhone, baat wahi: maal kam, log zyada.)
 Arpan: Jitne phone utne log andar, baaki bahar. Kisi ka card decline hua ya koi chala gaya to agla batch bulao, jitne bache utne. 3000 ko andar bula ke kya fayda. App pe poora app to rok nahi sakte, aata-daal wale bhi hain. To ghee ke liye ek alag counter lagao: sale wala maal us gate se guzrega, normal checkout chalta rahega. Us counter se sirf 500 ghee guzarne hain, to dikkat hi khatam.
 Technical me: sale gate (Buy now, cart me nahi jaata). Gate sirf utne logon ko Pay tak jaane deta jitna stock (Redis DECR). Fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi, aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
+(Normal cart pe kadam 6 wahi: ginti pay pe. Sirf sale wale item pe gate ginti pehle kaatta, isliye yahan ghadi aur wapas jodna.)
 
 **Maan lo Ravi ne 4 tab khole, Buy now 4 baar.**
 Arpan: Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
