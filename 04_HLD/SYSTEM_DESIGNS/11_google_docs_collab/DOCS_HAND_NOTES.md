@@ -35,6 +35,14 @@ Technical me: poore doc ki photo = snapshot, photo + baad ke op = snapshot + op 
 Arpan: Maine likha "Hum Goa jaayenge", usne likha "Goa kal jaayenge", to poora ban jaayega "Hum Goa kal jaayenge". Uska kal galat jagah nahi aur hamara Hum bhi galat jagah nahi. Humne shabdon ko khiska diya. Main yaad rakhun ki Arpan ne Goa se pehle Hum likha tha, to wahan Hum likh dun; Ravi ne Goa ke baad kal likha tha, to "Hum Goa kal jaayenge". Koi dikkat hi nahi.
 Technical me: "shabdon ko khiska diya" = OT (Operational Transformation), "yaad rakhun kisne kahan likha" = op ki jagah pichhle op ke hisaab se aage.
 
+**Isi dikkat ki doosri kahani: Arpan ke paas A B C D, Ravi ke paas bhi A B C D. Usi pal Ravi ne B hataya aur Arpan ne C se pehle naya hissa E joda.**
+Arpan: Ravi ne B hataya, iska matlab Arpan ke paas bhi B hatega; Arpan ne E joda, to Ravi ke paas bhi aayega. Main hota to: achha, dono same document pe; ek ne B hataya, ek ne C ke upar E joda. To dono ke document bilkul same laga do: A E C D. Na kisi ka kuch khoya, na kisi ka. B to hat jaayega, aur B ki jagah E aake lag jaayega. Ravi ke document me A E C D, Arpan ke document me bhi A E C D, dono me same, koi dikkat wali baat nahi, aasaan hai.
+Technical me: wahi OT: Ravi ka "B hatao" pehle laga, to Arpan ke E ki jagah ek peeche khisak gayi, dono jagah A E C D.
+
+**Maan lo server ka ek banda bole: seedha hal hai, jo pehle likhne aaya wo doc pe taala laga de, doosra tab tak ruka rahe.**
+Arpan: Phir Google Docs ka matlab hi nahi rahega; Google Docs ka matlab hi sharing document hai. Ek pe taala laga doge to saara matlab mitti paleet. Wahi baat hogi ki YouTube pe video upload karne gaya aur YouTube ne pehle hi mana kar diya. Taala laga ke baith jaoge to doosra banda bas dekhta rahega, jo galat hai. Google Docs me taala jaisa koi feature ho sakta hai, par usme hum nahi jaate, wo design ka part nahi. Tum likho, Google Docs apne hisaab se use aage-peeche karta hai.
+Technical me: taala = locking (ek likhe, baaki ruke), mil ke likhne wale doc me nahi chalta; OT me sab ek saath likhte, kram server tay karta.
+
 **4. Lakhon doc, 100 server. Arpan server A se, Ravi server B se. Dono server apne kram me OT lagaate, ek hi doc ki do alag shakal.**
 Arpan: Ek centralized system bana do. Do ladke apne-apne server pe likh rahe, main Google Docs hoon: dono ka mere tak aaya, main dono ka sentence padh ke sahi se likh dunga, "Hum Goa kal jaayenge", aur dono ki screen pe wahi, ek hi version.
 Par sabka ek nahi hoga: har doc ke liye alag. Main aur Ravi ek doc pe to hum dono ka ek centralized system. 100 log ek doc pe to un 100 ka ek, 1 lakh log to unka ek. Us centralized system ka koi na koi maalik hoga, uske hisaab se chalega.

@@ -382,6 +382,8 @@ Humne socha: phone pe bharosa nahi, server number lagaye, phone us kram me lagay
 
 Yahi dikkat yahan bhi:
   Docs          3   "Hum" aur "kal", kal galat jagah               ->  shabdon ko khiska do (OT)
+  Docs          3b  Ravi ne B hataya, Arpan ne E joda              ->  dono ke doc same: A E C D (OT)
+  Docs          3c  "jo pehle aaya taala laga de"                  ->  phir sharing doc ka matlab hi nahi, OT se sab saath (locking nahi)
   Docs          4   do server, ek doc ki do shakal                 ->  ek centralized system, ek version
   Kafka         2   line me ek aadmi nikla, sab atke               ->  seat booked, wahi baithega (offset)
   Chat          7   "kahan?" pehle dikha, ghadiyan aage-peeche     ->  server lagayega number (sequence)
@@ -436,6 +438,9 @@ Yahi dikkat yahan bhi:
   YouTube       2   ek machine har quality, 3 ghante               ->  20-25 log, tukde baanto, chhoti quality pehle (parallel encoding)
   YouTube       5   10 saal purani video bhi mehngi jagah          ->  garam cheez garam jagah, thandi cheez thandi jagah (hot / cold storage, lifecycle)
   YouTube       6   2010 ka gaana aaj trend pe                     ->  fati jeans: thodi der garam + CDN, trend thanda to wapas almaari (promote / demote)
+  YouTube       8   reels me har swipe pe spinner                  ->  agle 20 page pehle se, chhotu utha laaye (pre-fetch)
+  YouTube       8b  mobile data, reels skip, pack khatam           ->  net ke hisaab se quality, 1 sec wali reel aage nahi (ABR, engagement)
+  YouTube       8c  har reel poori pehle se, 29 sec bekaar         ->  shuru ke kuch chunks, pattern dekh ke kam (pre-fetch sirf shuru, trade-off)
   File upload   3b  10 GB upload, token beech me khatam            ->  har tukde ka apna token, resume pe baaki ke naye (presigned per part)
 
 Naam: S3 + presigned URL / multipart / transcoding + ABR / CDN / hot-cold / event notification / lifecycle rule / manifest + seek / archive / Open Connect / steering / client failover / player buffer / parallel encoding / promote / demote

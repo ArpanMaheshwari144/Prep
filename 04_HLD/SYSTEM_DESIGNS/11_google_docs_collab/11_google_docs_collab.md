@@ -107,6 +107,15 @@ Koi dikkat hi nahi.
 pichhle op ke hisaab se aage (op jis version pe bana, uske baad lage op ke hisaab se position aage-peeche). Kram
 server tay karta, jo pehle pahuncha use agla version.
 
+**Isi dikkat ki doosri kahani (A B C D):** dono ke paas A B C D. Ravi ne B hataya, Arpan ne C se pehle E joda. Dono ke
+document bilkul same laga do: B hat jaayega, B ki jagah E aake lag jaayega, dono ke paas A E C D, na kisi ka kuch khoya.
+**Asli naam:** wahi OT (Ravi ka delete pehle laga, to Arpan ke E ki jagah ek peeche khiski).
+
+**Maan lo koi bole: jo pehle aaya wo taala laga de, doosra ruke:** phir Google Docs ka matlab hi nahi, wo sharing
+document hai. Taala lagaya to doosra bas dekhta rahega, jaise YouTube upload pe hi mana kar de. Tum likho, Docs apne
+hisaab se aage-peeche karta.
+**Asli naam:** locking (ek likhe, baaki ruke) mil ke likhne me nahi chalta; OT me sab ek saath, kram server ka.
+
 ```mermaid
 flowchart TB
     A["Arpan: shuru me Hum"]:::card

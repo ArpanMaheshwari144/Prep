@@ -299,12 +299,54 @@ flowchart TB
     style F fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+## 8. Reels me har swipe pe spinner (agli reels pehle se, sirf shuru ke tukde)
+
+Ravi Instagram pe reels dekh raha, har swipe pe app server se agli reel maangta, beech me 1-2 second ka spinner aur Ravi
+aage swipe kar gaya. Reel ke tukde pehle se CDN pe hain (kai quality me bane, transcoding). Ek banda dhadadhad page padh
+raha, to main 20ve page ke khatam hone ka intezaar nahi karunga, chhotu ko bolunga "turant agle 20 page utha la"; wo
+intezaar nahi karta, mere paas pehle se saamaan hai.
+
+**Asli naam:** agle page pehle se = pre-fetching (aage ki reels ki list ek saath, unke tukde pehle se phone pe, agli
+reel ka player bhi taiyaar).
+
+**Maan lo Ravi mobile data pe, zyadatar reels 1 second me skip, app 5 reels poori achhi quality me utaar raha, pack
+shaam tak khatam:** Net dekho: kamzor hai to kam quality laao (240p bahut, pehle blur phir saaf). Battery pe Instagram
+kya karta, public nahi. Aur jis reel pe engagement 1 second, wo aage dikhane ka nahi.
+**Asli naam:** ABR (adaptive bitrate), recommendation ka engagement signal (kitni der dekhi).
+
+**Maan lo net achha, par 5 me se 4 reel 1 second me skip, har reel poori 30 second pehle hi aa chuki:** Poori 10
+reel laana bewakoofi; shuru ke kuch chunks lo, achha laga to baaki. Chhotu ko sirf 3-4 page laane bolo, poora padha to
+baaki chupchaap aa jaayenge. Par 1-2 page dekh ke kitaab mat hatao; 1-2 din pattern dekh ke laana kam karo.
+**Asli naam:** pre-fetch me sirf pehle kuch second, kitna laana = user ke pattern se. Trade-off: zyada laaye to data aur
+battery, kam laaye to spinner. Data saver on ho to pehle se laana band.
+
+```mermaid
+flowchart TB
+    R["Ravi: reel 1 dekh raha"]:::card
+    X["Har swipe pe server tak:<br/>1-2 sec spinner"]:::bad
+    subgraph PF["AGLE PAGE PEHLE SE"]
+        P(["Reel 2, 3, 4 ke shuru ke tukde<br/>phone pe pehle se (pre-fetch)"]):::pill
+    end
+    C[("CDN: tukde, kai quality")]:::card
+    S["Swipe kiya aur chali"]:::good
+    R -.-> X
+    C --> P
+    P --> S
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PF fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ---
 
 ## Wrap
 
 Upload seedha storage me (parchi server ke paas) -> event pe tod ke parallel encoding, chhoti quality pehle -> dekhna
 Netflix jaisa (manifest + CDN) -> har view stream me, ginti batch me (Cassandra) -> fake view gate pe aur stream me
-chhaano -> garam / thanda storage, trend pe upar-neeche -> nayi video ki khabar fan-out se.
+chhaano -> garam / thanda storage, trend pe upar-neeche -> nayi video ki khabar fan-out se -> reels me agli reels ke shuru ke tukde pehle se (pre-fetch, kitna = user ke
+pattern se).
 
 Notes (Arpan ke shabd) = [YOUTUBE_HAND_NOTES.md](YOUTUBE_HAND_NOTES.md)
