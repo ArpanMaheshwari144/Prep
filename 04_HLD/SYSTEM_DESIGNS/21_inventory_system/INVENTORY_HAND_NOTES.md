@@ -38,7 +38,7 @@ Technical me: khaali bucket -> request agle bucket pe, out of stock = saare buck
 Arpan: Jaise-jaise iPhone bikta rahe, bill banta rahe, register me likhta jaun: Ravi ne ek iPhone liya, bill ban gaya. Usi waqt system me bhi chadha do. Ya raat ko dukaan pe chhotu chhod jao: "ye aaj ke bill hain, dekh kisne kya kharida aur system me kitne bache." Sab sync rakho. Phir bhi kabhi fark aaya to register me sab likha hai, dekh lenge ki 2 iPhone bike par likhe nahi gaye, ya likha kuch aur gaya. Ye cheez dono taraf ho sakti hai, isliye register hi sach batayega.
 Technical me: register = stock ledger (har badlaav ki entry: kab, kitna, kis order se), raat ka chhotu = reconciliation job (ledger aur ginti ka milaan).
 
-**4. Ravi Bangalore me iPhone order karta hai. Bangalore godown khaali, Delhi me 50, Mumbai me 10.**
+**4. Ravi Bangalore me iPhone order karta hai. Bangalore godown khaali, Delhi godown me 50, Mumbai godown me 10.**
 Arpan: Ek main warehouse hota hai, Amazon jaisi company ka maal asal me wahin se aata hai, phir chhote godown tak pahunchta hai. Pehle dekhunga Bangalore me iPhone hai kya, hai to wahin se. Nahi hai to main warehouse dekhunga, wahan hai to wahan se utha ke Bangalore bhej do, Ravi ko out of stock nahi dikhega. Mumbai ka iPhone Bangalore bhejna, ye FR pe hai. FR bole "maal hai to order poora karo", to Delhi ya Mumbai se bhejo. FR bole har shehar ka maal usi shehar ke liye, to main warehouse aur Bangalore dono khaali hone pe out of stock dikha do, kyunki kal Mumbai me 10 log aaye to unke liye wahan maal rehna chahiye.
 Technical me: main warehouse + shehar ke godown = hub and spoke, kahan se maal uthana = fulfilment / sourcing rule (FR tay kare).
 

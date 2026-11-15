@@ -155,7 +155,7 @@ flowchart TB
 
 ## 4. Bangalore khaali, Delhi aur Mumbai me maal (pehle apna shehar, phir main warehouse)
 
-Ravi Bangalore me iPhone order karta hai. Bangalore godown khaali, Delhi me 50, Mumbai me 10. Ek main warehouse hota
+Ravi Bangalore me iPhone order karta hai. Bangalore godown khaali, Delhi godown me 50, Mumbai godown me 10. Ek main warehouse hota
 hai; Amazon jaisi company ka maal asal me wahin se aata hai, phir chhote godown tak pahunchta hai. Pehle dekho Bangalore
 me iPhone hai kya, hai to wahin se. Nahi to main warehouse dekho, wahan hai to wahan se utha ke Bangalore bhej do, Ravi
 ko out of stock nahi dikhega. Mumbai ka iPhone Bangalore bhejna ya nahi, ye FR tay karega. FR bole "maal hai to order

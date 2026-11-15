@@ -16,7 +16,7 @@ chhoti PDF hai, folder nahi, par scan zaroori. Drive jaisi app me badi file bhi 
 kahani nahi, **tukde** hain: ek core jo har jagah lagta hai, aur "agar" wale tukde, jo product maange tabhi jodo.
 
 ```
-CORE (har jagah)      1 peeche line + status · 2 seedha S3 · 3 receptionist ka token · 4 S3 khud bataye · 6 kiski hai + seedha download
+CORE (har jagah)      1 peeche line + status · 2 seedha S3 · 3 receptionist ka token · 4 S3 khud bataye · 6 kiski hai + seedha download · 7 link ki umar
 AGAR badi file        2 tukde (multipart) + adhoore ki safai
 AGAR folder           5 tree hamare DB me
 AGAR bahar ki file    1 me jaanch + 8 scan ki alag line, scan tak link band
@@ -253,7 +253,7 @@ flowchart TB
     style KH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 7. Ravi ne link 200 logon ke WhatsApp group me daala (link ki umar)
+## 7. [core] Ravi ne link 200 logon ke WhatsApp group me daala (link ki umar)
 
 Ravi ne apna link 200 logon ke WhatsApp group me daal diya. To link ki umar chhoti rakho, file ke hisaab se: bank
 statement jaisi 1-2 minute, baaki 5-6 minute. Umar hamara faisla, S3 ka nahi. User khud baante to wo uski

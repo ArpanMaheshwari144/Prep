@@ -142,6 +142,25 @@ OT ke saath                                      delete jagah 1 pe hua, insert j
 
 ```mermaid
 flowchart TB
+    A["Arpan: shuru me Hum"]:::card
+    R["Ravi: Goa ke baad kal"]:::card
+    subgraph KH["SHABDON KO KHISKA DIYA"]
+        S(["Yaad rakhun kisne kahan likha<br/>(OT)"]):::pill
+    end
+    F["Hum Goa kal jaayenge:<br/>na kal galat jagah, na Hum"]:::good
+    A --> S
+    R --> S
+    S --> F
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style KH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+```mermaid
+flowchart TB
     S["Shuru, dono ke paas:<br/>A<br/>B<br/>C<br/>D"]:::card
     RD["Ravi: delete(1) = B hatao"]:::card
     AI["Arpan: insert(2, E) = C se pehle E"]:::card
@@ -170,24 +189,6 @@ document hai. Taala lagaya to doosra bas dekhta rahega, jaise YouTube upload pe 
 hisaab se aage-peeche karta.
 **Asli naam:** locking (ek likhe, baaki ruke) mil ke likhne me nahi chalta; OT me sab ek saath, kram server ka.
 
-```mermaid
-flowchart TB
-    A["Arpan: shuru me Hum"]:::card
-    R["Ravi: Goa ke baad kal"]:::card
-    subgraph KH["SHABDON KO KHISKA DIYA"]
-        S(["Yaad rakhun kisne kahan likha<br/>(OT)"]):::pill
-    end
-    F["Hum Goa kal jaayenge:<br/>na kal galat jagah, na Hum"]:::good
-    A --> S
-    R --> S
-    S --> F
-    linkStyle default stroke:#8fa3c7,stroke-width:2px
-    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
-    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
-    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
-    style KH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
-```
 
 ## 4. Do server, ek doc ki do shakal (har doc ka ek centralized maalik)
 

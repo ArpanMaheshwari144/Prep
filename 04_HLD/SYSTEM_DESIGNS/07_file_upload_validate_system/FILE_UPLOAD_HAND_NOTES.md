@@ -12,7 +12,7 @@ Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi n
         status log baar-baar dekhte -> padhna zyada, likhna kam
 ```
 
-**Pehle poochho kaunsa product** (Arpan: "har file upload alag, koi scan karta koi nahi, koi 10 GB / folder leta hi nahi"): core = 1, 3, 4, 6 har jagah (seedha S3 bhi core, kyunki 3, 4, 6 usi pe tike); agar badi file = 2 ka tukde wala hissa; agar folder = 5; agar bahar ki file (virus scan) = 8.
+**Pehle poochho kaunsa product** (Arpan: "har file upload alag, koi scan karta koi nahi, koi 10 GB / folder leta hi nahi"): core = 1, 3, 4, 6, 7 har jagah (seedha S3 bhi core, kyunki 3, 4, 6 usi pe tike; 7 = 6 wale download link ki umar); agar badi file = 2 ka tukde wala hissa; agar folder = 5; agar bahar ki file (virus scan) = 8.
 
 &nbsp;
 

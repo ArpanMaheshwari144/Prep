@@ -578,6 +578,7 @@ Yahi dikkat yahan bhi:
   PUBG          2   Military Base ki har goli Pochinki tak         ->  6 km door ki awaaz aati hi nahi, sirf aas-paas ki (area of interest)
 
 Naam: operation / inbox had / watermark / parent_id / template cache / adaptive ping / area of interest / base62 / on-demand inbox / hydration / soft delete / read count / presence pub/sub (subscribe)
+Juda: "padha" ka ek number kram wale number se hi banta (13). Kam bhejna bheed ka bojh bhi ghatata (7).
 ```
 
 ## 19. Server door baitha hai  (BRANCH)
