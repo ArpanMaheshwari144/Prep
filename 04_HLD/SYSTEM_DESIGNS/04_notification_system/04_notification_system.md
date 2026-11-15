@@ -347,7 +347,7 @@ pehle se hain. Baad me naap ke lage ki faltu queries bahut badh gayi, tab sochun
 
 **Maan lo Diwali ki bheed se DB ki saans phooli, aur OTP worker bhi pasand padhne usi DB pe gaya, OTP 40 second late:**
 OTP ka worker DB me pasand padhne jaaye kyun? Offer thodi bhej rahe. Seedha OTP bhejo. Pasand sirf offer pe dekho.
-**Asli naam:** OTP pe preference check skip (OTP opt-out nahi hota), OTP path pe DB nahi, line ke saath DB se bhi alag.
+**Asli naam:** OTP pe preference check skip (OTP opt-out nahi hota), OTP path pe pasand (preference) wala DB nahi, line ke saath DB se bhi alag.
 
 ```mermaid
 flowchart TB
@@ -370,6 +370,8 @@ flowchart TB
 ```
 
 ## Poora raasta ek nazar me (OTP ki line, company, receipt, failed line)
+
+Tasveer sirf SMS ka raasta dikhati hai; email / push ki apni line kadam 2 wali hi hai.
 
 ```mermaid
 flowchart TB
