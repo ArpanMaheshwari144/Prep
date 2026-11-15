@@ -1,5 +1,13 @@
 # Cascade Types
 
+## Koi poochhe "cascade kya hai" to aise bolo
+
+```
+Parent pe jo kaam karo (save / delete), wo apne aap bachchon pe bhi: cascade.
+orphanRemoval: parent ki list se bachcha nikala to DB se bhi uski row ud jaati.
+Ek sawaal: bachche ka jeena parent pe tika hai? Haan (Order-Item) -> ALL + orphanRemoval. Nahi (Author-Book) -> cascade nahi.
+```
+
 ## Scene: Flipkart pe tera order
 
 Ek order me 3 item hain: pen, copy aur bag. Ye item sirf isi order ke hain, order ke bina inka koi matlab nahi.
@@ -16,6 +24,24 @@ order.getItems().remove(bag);   // commit pe DELETE bag
 - Sirf `save(order)` bola, par Hibernate andar ke 3 item bhi khud le gaya. Pehle order ka INSERT hua, kyunki item ko `order_id` chahiye.
 - Order delete kiya to item bhi saath me gaye.
 - List se bag hataya to `orphanRemoval` ne DB se bhi bag ki row uda di. Ye na hota to bag bina order ke DB me pada rehta.
+
+## DB ki dono table me har kadam pe kya hua (chala ke dekha, Boot 4 + Hibernate 7)
+
+```
+Kadam 1: sirf save(order)            Kadam 2: list se bag nikala (remove)
+orders   order_item                  orders   order_item
+id       id name order_id            id       id name order_id
+1        1  pen  1                   1        1  pen  1
+         2  copy 1                            2  copy 1
+         3  bag  1                            (bag ki row DB se mit gayi)
+-> item save nahi bola, phir bhi       -> DB ko kuch nahi bola, Hibernate ne dekha bag
+   teeno aa gaye = CASCADE                anath ho gaya, khud delete = ORPHAN REMOVAL
+
+Kadam 3 (dikkat): naya order, ghadi list me daali, par ghadi.setOrder() nahi
+order_item:  4  ghadi  NULL   <- save hui, par kisi order se judi nahi
+```
+
+OrphanRemoval na hota to bag Java ki list se hat jaata, par DB me `bag, order_id=1` pada rehta, customer ko order me dikhta rehta.
 
 ## Ek hi sawaal: "kya child ka jeena parent pe tika hai?"
 
