@@ -568,7 +568,7 @@ Yahi dikkat yahan bhi:
   Notification  9b  OTP worker bhi pasand padhne DB pe             ->  OTP seedha bhejo, DB se lena-dena nahi
   File upload   5   folder rename = 500 copy + 500 delete          ->  tree jaisa, sirf parent badlo (parent_id)
   Docs          1   Save pe poora text, Arpan ki line gayab        ->  poora text nahi, operation bhejo (insert / delete)
-  Chat          8   "12 naye message" kaise dikhe                  ->  ek ginti, itne padh liye (last_read_seq)
+  Chat          8   "12 naye message" kaise dikhe                  ->  ek ginti, itne padh liye (read count, kul - padhe)
   Chat          9   kisne padha, 4.9 lakh entry                    ->  978 matlab 975 padha, number ghata lo (watermark)
   Chat          11b Ravi online, khabar 500 contacts ko?           ->  jo dukaan me aaya usi ko LED dikhao, chat kholi = subscribe (presence pub/sub)
   Twitter       16  dabbe me sirf number, screen pe poora tweet    ->  ID se seedha page, photo CDN se (hydration)
@@ -576,7 +576,7 @@ Yahi dikkat yahan bhi:
   Uber          16  Raju signal pe khada, har 4 sec wahi jagah     ->  sote ke kamre me baar-baar mat jao, 15-20 sec (adaptive ping)
   PUBG          2   Military Base ki har goli Pochinki tak         ->  6 km door ki awaaz aati hi nahi, sirf aas-paas ki (area of interest)
 
-Naam: operation / inbox had / watermark / parent_id / template cache / adaptive ping / area of interest / base62 / on-demand inbox / hydration / soft delete / last_read_seq / presence pub/sub (subscribe)
+Naam: operation / inbox had / watermark / parent_id / template cache / adaptive ping / area of interest / base62 / on-demand inbox / hydration / soft delete / read count / presence pub/sub (subscribe)
 ```
 
 ## 19. Server door baitha hai  (BRANCH)

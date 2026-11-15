@@ -281,14 +281,14 @@ Ravi ko unread ginti dikhani hai, "12 naye message", group me 980 message, 500 m
 map me ya DB me: Ravi ne itne message padh liye. 968 tak padh liye, aakhri 980 hai, to neeche 12 aur hain, wo 12 ke 12
 turant uske phone me daal do.
 
-**Asli naam:** ginti = `last_read_seq` (kahan tak padha, har member ka har chat me ek number), 12 aur hain = unread =
-aakhri number minus `last_read_seq` (980 - 968 = 12).
+**Asli naam:** ginti = read count (har member ka har chat me ek ginti), 12 aur hain = unread = chat ke kul message
+minus Ravi ke padhe (980 - 968 = 12). Ginti hai, message ka ID nahi ghatate.
 
 ```mermaid
 flowchart TB
     G["Group: aakhri #980"]:::card
     subgraph EG["EK GINTI RAKH LO"]
-        L[("Ravi ne 968 tak padha<br/>(last_read_seq)")]:::pill
+        L[("Ravi ne 968 padhe<br/>(read count)")]:::pill
     end
     U["980 - 968 = 12 naye,<br/>12 ke 12 phone me"]:::good
     G --> U
