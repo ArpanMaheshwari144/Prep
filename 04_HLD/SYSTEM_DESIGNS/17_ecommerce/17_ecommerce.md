@@ -222,6 +222,9 @@ ghee guzarne hain, to dikkat hi khatam.
 deta jitna stock (Redis DECR), card fail / chala gaya = agla batch. Gate ke bahar walon ka paisa kabhi katta hi nahi,
 aur koi dabba bina bike nahi padta. Gate ek baar banta, har sale pe sirf list badalti (item + ginti + waqt).
 
+**Maan lo Ravi ne 4 tab khole, Buy now 4 baar:** Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
+**Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
+
 **Maan lo Ravi Pay page pe jaake chai peene chala gaya, na pay na cancel:** pay nahi kiya to phone bika nahi. Dukaandar
 jaisa: "ya pay kar ke le ja, ya wapas rakh de". Andar aate hi 5 minute ki ghadi; pay kiya to uska, nahi to wapas line me,
 agla andar.
@@ -232,9 +235,6 @@ agla andar.
 andar Pay daba diya aur PSP dheema to hamari zimmedari.
 **Asli naam:** Pay pe reservation zinda hai ya nahi check (expiry check), chhota grace period, andar dabaya to
 PAYMENT_PENDING aur hold ruk jaata (kadam 8 / BMS jaisa).
-
-**Maan lo Ravi ne 4 tab khole, Buy now 4 baar:** Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
-**Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
 ```mermaid
 flowchart TB
