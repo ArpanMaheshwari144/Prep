@@ -450,6 +450,8 @@ flowchart TB
 
 # Mahine ki statement (billions of records)
 
+(Ye alag sawaal hai, bade bank ka: crore khaate, arbon transaction. Upar wala 50 lakh account ka design yahan bada ho jaata.)
+
 Interviewer bole "billions of records process karne ka system banao", to yahi hissa. Wahi branch, wahi register, par
 ab ek transfer nahi: bank ke crore khaate, arbon transaction, aur har customer ki har mahine ki statement banni hai.
 31 March ko sab ek saath maangte hain. Peeche kaam karne wale ladke = chhotu. Yahi dhaancha salary credit, bijli ke

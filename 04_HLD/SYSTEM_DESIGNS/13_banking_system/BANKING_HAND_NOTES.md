@@ -91,6 +91,8 @@ Technical me: "kai copy chhupa ke, milao" = copies (doosri jagah) se chhedchhaad
 
 ## Mahine ki statement (billions of records)
 
+(Ye alag sawaal hai, bade bank ka: crore khaate, arbon transaction. Upar wala 50 lakh account ka design yahan bada ho jaata.)
+
 **Scene:** Bank ke crore khaate, arbon transaction. Har customer ki har mahine ki statement banni hai, aur 31 March ko sab ek saath maangte hain. Peeche kaam karne wale = chhotu.
 
 **14. 31 March ko ek hi din 1 crore log statement maangne aa gaye. Statement tab banni shuru hui jab maangi, sab atke.**
