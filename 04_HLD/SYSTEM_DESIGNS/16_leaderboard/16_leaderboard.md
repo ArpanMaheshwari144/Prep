@@ -35,6 +35,11 @@ poori line sorted hai.
 mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. Commands interview me bolni nahi padti, bas "sorted set,
 score ke kram me".
 
+**Doosri kahani (index laga do?):** score pe SQL index lagaya to top 10 turant, par rank ke liye har block me jaake
+"mere upar kitne" gin-na padta, 1 crore me time badhta. Aur score har second badal raha, to har likhai pe index bhi
+badlega; jahan likhai zyada wahan index ka utna fayda nahi. Isliye sorted set, jo andar hi sort rakhta.
+**Asli naam:** index se bhi count scan, write-heavy pe index ka bojh, isliye Redis sorted set (log N).
+
 ```mermaid
 flowchart TB
     X["SQL: har baar 1 crore row sort,<br/>rank ke liye 1 crore gino"]:::bad

@@ -625,6 +625,7 @@ Yahi dikkat yahan bhi:
   Uber          8   Raju Janpath me, purana naam pada              ->  sach wahi jo GPS ne abhi bheja (latest location)
   Uber          12  250 dikha, aakhir me 500 kate                  ->  jo dikhaya wahi lo (upfront fare)
   Leaderboard   1   1 crore sort kiye bina top 10 + rank           ->  apne aap sort wala dabba (Redis sorted set)
+  Leaderboard   1b  score pe index laga do, rank phir bhi dheema     ->  rank = gin-na, aur har second likhai pe index bhi badle; write-heavy, isliye sorted set
   E-commerce    4b  Redis me ginti kati, DB me order nahi          ->  DB sach, banda milaye, 5 min ghadi ke baad bina order ki ginti wapas (reconciliation)
   Inventory     3   rack pe 48, system me 50, "2 kab gaye?"       ->  har bill register me (ledger), raat ka chhotu milaaye (reconciliation job)
   Cache         7b  key 3 machine pe, sirf 1 se kati               ->  parchi har copy se kaato, sync job copies bhi dekhe (har replica invalidate)
