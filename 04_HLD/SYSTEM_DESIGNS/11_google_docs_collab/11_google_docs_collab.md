@@ -65,7 +65,7 @@ bhi haalat ho jaayegi. Main hi Google Docs hoon: log baar-baar hata rahe, badal 
 chhota register bana lunga, unki saari baatein usme likhta rahunga, phir kuch der baad DB me save kar dunga. Har write
 pe DB query nahi maarunga, warna DB baith jaayega.
 
-**Asli naam:** chhota register, saari baatein likhta rahunga = buffer (Redis), kuch der baad DB me save = batch write
+**Asli naam:** chhota register, saari baatein likhta rahunga = buffer (server ki apni memory, Redis kadam 5 me), kuch der baad DB me save = batch write
 (Cassandra), har write pe DB query nahi = har akshar pe DB nahi. Cassandra kyun: op log me sirf aage jodna, padhna
 hamesha "is doc ke op, version ke kram se"; key `(docId, version)`; likhai bahut tez, machine jodo to data khud bat-ta;
 join / transaction ki zarurat nahi, isliye Postgres nahi.

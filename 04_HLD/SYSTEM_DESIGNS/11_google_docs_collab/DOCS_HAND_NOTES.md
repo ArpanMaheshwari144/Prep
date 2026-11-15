@@ -25,7 +25,7 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **2. (Ye dikkat Arpan ne khud uthayi) Hazaron-laakhon log dhadadhad save kar rahe, har chhota badlaav DB pe jaaye to?**
 Arpan: Sab save DB pe jaayenge kya, kitna DB write karega, Cassandra ki bhi haalat ho jaayegi. Main hi Google Docs hoon: wo baar-baar hata rahe, badal rahe, check kar rahe. To main apna ek chhota register bana lunga, unki saari baatein likhta rahunga, phir kuch der baad DB me save kar dunga. Har write pe DB query nahi maarunga, warna DB baith jaayega.
-Technical me: "chhota register, saari baatein likhta rahunga" = buffer (Redis), "kuch der baad DB me save" = batch write (Cassandra), "har write pe DB query nahi" = har akshar pe DB nahi.
+Technical me: "chhota register, saari baatein likhta rahunga" = buffer (server ki apni memory; gira to udega, isliye kadam 5 me Redis + copy), "kuch der baad DB me save" = batch write (Cassandra), "har write pe DB query nahi" = har akshar pe DB nahi.
 
 **Maan lo trip plan doc 2 saal purana, op log me 50 lakh op; Ravi ne aaj khola to kya server saare op shuru se lagayega.**
 Arpan: Ye Banking ke master register wali baat hai: May wale ko 1 May ka balance chahiye to shuru se nahi jodte, master register se uthate hain. Waise hi har kuch hazaar op pe poore doc ki ek photo save kar lo. Ravi doc khole to sabse nayi photo uthao aur sirf uske baad ke thode op lagao. Doc turant khulega.
