@@ -138,3 +138,7 @@ Arpan: 20 padhe, agle 20 maange, beech me upar 5 aa gaye, to neeche wale 5 khisa
 Technical me: "page number se agle 20" = offset pagination (isi se khisakta), "kahan tak padha yaad rakh" = cursor (har page ke saath aakhri dikhayi post lautao, agla uske theek baad se), "thodi der yaad" = ranked feed me ranked list thodi der save, cursor usi list me aage.
 
 Poora design = [03_twitter_feed.md](03_twitter_feed.md)
+
+**19. Cassandra ki 3 copy (A, B, C), koi leader nahi. Tune Ravi ki DP pe reply kiya "mast DP bhai", ye A aur B me likha, C tak abhi nahi. Ravi ka "thank you bhai" C me pehle pahunch gaya. Priya C se padh rahi: sirf "thank you bhai" dikha, tera reply gaayab.**
+Arpan: Ye to pehle kar rakha hai: quorum, do pe likho, do se padho. Isme naya kya hai.
+Technical me: "do pe likho, do se padho" = quorum (3 copy me W = 2, R = 2; padhne wali do me se ek me naya reply zaroor milega), URL kadam 10 wala hi.

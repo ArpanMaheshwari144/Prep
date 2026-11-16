@@ -404,6 +404,7 @@ Yahi dikkat yahan bhi:
   Notification  4c  Shipped jaane wala, Order placed atka          ->  order ki parchi, gaya nahi to dono saath / doosri company / email (coalesce, failover)
   Kafka         8b  pay DLQ me, cancel chal gayi, kram toota       ->  A2 ruka to A3 bhi ruka, theek hone pe saath dobara (same key parking)
   Netflix       5b  TV ka purana 27, phone ke 37 ke upar           ->  baad wala jeete, purana discard (timestamp, last-write-wins)
+  Twitter       19  "thank you" pehle dikha, "mast DP" gaayab      ->  do pe likho, do se padho (quorum)
   Leaderboard   5b  11:59:58 ka match, score 12:00:02 pe           ->  parchi pe khatam hone ka waqt, usi din ka register (event time)
 
 Naam: sequence number / offset / OT / coalesce / cursor / store-and-forward / client sort / Snowflake ID / same key parking / event time / last-write-wins
