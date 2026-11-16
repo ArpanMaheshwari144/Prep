@@ -725,49 +725,42 @@ me park karta hai. Ye wahi DLQ hai.
 
 ---
 
-## ★★ "QUEUE NE SPIKE ABSORB NAHI KIYA — ULTA BIGAAD DIYA" (20-Sep deep-dive)
+## Queue sahi jagah lagi, chal bhi rahi, aur usi ne system gira diya
 
-> "QUEUE KAB GALAT HAI" wala section upar hai — wo batata hai kab queue LAGANI hi nahi chahiye.
-> Ye section alag sawaal hai: **queue sahi jagah lagi hai, chal rahi hai — aur usi ne system maara.**
+"Queue kab galat hai" upar hai: wahan queue lagani hi nahi thi. Ye alag sawaal hai: queue sahi jagah lagi hai, aur usi ne
+system maara.
 
-### 1. Jad ki baat — queue BURST absorb karti hai, LAGATAAR overload nahi
-
-```
-aa rahi hain     1,000 msg/s
-nikal rahi hain    800 msg/s
-
-har second 200 jama  ->  1 ghante me 7,20,000 pending
-```
-
-Queue ne kaam GAAYAB nahi kiya. Usne **"abhi error"** ko **"hamesha late"** me badal diya.
-Agar aane ki raftaar nikalne ki raftaar se LAGATAAR zyada hai, to queue sirf ek dheere-dheere
-doobta hua system hai.
+### Koi poochhe "queue lagayi phir bhi system gira, kaise?" to aise bolo
 
 ```
-queue TAB kaam karti hai jab spike AATA-JAATA ho
-   10 second ka jhatka, jise agle 2 minute me nipta diya jaaye    <- ye absorb hai
-   lagataar 25% zyada load                                        <- ye absorb NAHI, ye DOOBNA hai
+Queue achanak aayi bheed (burst) jhelti hai, lagaataar zyada load nahi. Aane ki raftaar
+lagaataar nikalne se zyada hai to queue bas dheere-dheere doobta hua system hai.
+Aur consumer der tak band raha to wapas aate hi jama hua backlog poori raftaar se kheenchta hai,
+jisse peeche ke DB pe 10 guna load aata hai aur DB gir jaata hai. Ilaaj: consumer pe raftaar
+ki had lagao, aur backlog ke baad raftaar dheere-dheere badhao.
 ```
 
-### 2. ★★ BACKLOG NIKALTE WAQT KA ULTA SPIKE (asli jawab)
+### 1. Burst aur lagaataar ka farak
 
 ```
-consumer 10 minute down raha   ->  6,00,000 message jama
-consumer WAPAS aaya            ->  wo POORI RAFTAAR se kheenchta hai
-                               ->  DB pe normal se 10x load
-                               ->  DB GIR GAYA
+toss ke waqt 10 second ka jhatka, phir bheed normal  -> line ne jhel liya, 2 minute me saaf
+poore match har minute 1000 aaye, checker 800 dekhe   -> har minute 200 jama, line road tak,
+                                                         phir sheher tak
 ```
 
-**Queue ne spike absorb nahi kiya — usne spike ko JAMA karke rakha aur baad me EK SAATH chhod
-diya.** Aur wo laher asli spike se BADI thi.
+Queue ne kaam gayab nahi kiya. Usne "abhi error" ko "hamesha late" me badal diya.
+
+### 2. Backlog ka ulta spike
 
 ```
-ILAAJ consumer me hai:
-   bahar nikalne ki RAFTAAR pe apni limit (consumer-side rate limit)
-   backlog ke baad DHEERE-DHEERE raftaar badhao (ramp-up)
-
-   ★ consumer ka kaam "jitna TEZ ho sake" nahi hai — "jitna PEECHE WALA jhel sake" hai
+checker 10 minute chai pe gaya        -> gate pe 6 lakh fan jama
+checker wapas aaya, sabko ek saath    -> andar ki seedhiyon (DB) pe 10 guna bheed
+andar dhakka-mukki, seedhi toot gayi  -> DB gira
 ```
+
+Queue ne spike roka nahi, use jama karke baad me ek saath chhod diya, aur wo laher asli spike se bhi badi thi. Ilaaj consumer
+me hai: checker ki raftaar pe had lagao (consumer-side rate limit), aur wapas aane ke baad dheere-dheere andar bhejo (ramp-up).
+Consumer ka kaam "jitna tez ho sake" nahi hai, "jitna peeche wala jhel sake" hai.
 
 ### 3. Jo kaam ab BEKAAR ho chuka, wo bhi ho raha hai (MURDA KAAM)
 
