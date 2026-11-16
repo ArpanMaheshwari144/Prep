@@ -630,12 +630,14 @@ flowchart TB
 
 ## 19. "Thank you" dikha, "mast DP" gaayab (do pe likho, do se padho)
 
-Ravi ne nayi DP daali, Arpan ne reply kiya "mast DP bhai", Ravi ne uspe "thank you bhai". Tweet / reply ki 3 copy hain.
-Arpan ka reply copy A aur B me likha gaya, C tak abhi nahi; Ravi ka "thank you" C me pehle pahunch gaya. Priya C se padh
-rahi, use sirf "thank you" dikha. Hal: do pe likho, do se padho. Reply tabhi pura mano jab kam se kam 2 copy ne rakh liya.
-Pehla seedha raasta: thodi der leader (ya jahan likha) se hi padhwa do, par saari read leader pe = leader pe bojh.
-Isliye phir: priya bhi kisi 2 copy se poochhe: C me nahi to A me hai. DB shard karke leader + 3 copy rakhi hon tab bhi yahi: leader aur
-2 copy ne rakha tabhi pura. Twitter me Cassandra hai, wo ye khud karta hai.
+Ravi ne nayi DP daali, Arpan ne reply kiya "mast DP bhai", Ravi ne uspe "thank you bhai". Reply ki 3 copy hain (A, B,
+C). Arpan ka reply A aur B me likha gaya, C tak abhi nahi; Ravi ka "thank you" C me pehle pahunch gaya. Priya C se padh
+rahi, use sirf "thank you" dikha.
+
+Pehla seedha raasta: thodi der leader (jahan pehle likha) se hi padhwa do. Par saari read leader pe = leader pe bojh.
+Isliye phir: do pe likho, do se padho. Reply tabhi pura mano jab kam se kam 2 copy ne rakh liya, aur Priya bhi kisi 2 copy
+se poochhe: C me nahi to A me hai. DB shard karke leader + 3 copy rakhi hon tab bhi yahi. Twitter me Cassandra hai (koi
+leader nahi), wo ye khud karta hai.
 
 **Asli naam:** do pe likho, do se padho = quorum (N = 3, W = 2, R = 2, W + R > N, isliye padhi gayi do copy me se ek me
 naya likha zaroor), thodi der leader se padho = leader read / read-your-writes (trade-off: leader pe bojh), 2 ne rakha tabhi pura = write ack, Cassandra = leaderless, QUORUM read / write (URL kadam 9-10).
