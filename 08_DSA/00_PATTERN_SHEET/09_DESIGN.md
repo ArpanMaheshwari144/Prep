@@ -318,7 +318,7 @@ VISUAL:                     Node = | key | val | prev | next |
 > test me key == val ho (1,1 · 2,2) to ye chhup jaata -> test me key != val rakho (1,100).
 
 > [!IMPORTANT]
-> **CHAABI:** hashmap = KAHAN (`key -> Node*`), DLL dummy `head`/`tail` = ORDER (head-side MRU, tail-side LRU). get aur put dono me `removeNode` + `addFront`. Full pe `tail->prev` hatao + `mp.erase(key)`.
+> **CHAABI:** hashmap = KAHAN (`key -> Node*`), DLL dummy `head`/`tail` = ORDER (head-side MRU, tail-side LRU). get aur put dono me `removeNode` + `addFront`. Full pe `tail->prev` hatao + map se USI node ki key se (`mp.erase(toBeRemoved->key)`).
 
 > [!WARNING]
 > check `mp.count(key)` se, `mp[key]` chup-chaap entry bana deta.
