@@ -128,10 +128,10 @@ threshold rakho: itne followers paar gaye to inbox me push nahi, Kohli wala tare
 dabba laga do, mera favourite stadium wala bhai Kafka. Maine post dabaya to "tera post ho gaya, nikal", peeche Kafka
 sab karta rahega. Kuch gira to outbox me rakh lo, ek parchi pe likha hai.
 
-**Asli naam:** threshold, Kohli wala tareeka = had ke upar celeb raasta, stadium wala bhai = Kafka (async fanout, peeche fanout workers),
+**Asli naam:** threshold, Kohli wala tareeka = had ke upar celeb raasta, stadium wala bhai = Kafka (async fanout, peeche fanout workers / consumers),
 post ho gaya, nikal = turant OK, parchi pe likha = outbox ki soch. Yahan tweet Cassandra me jaata, aur wahan tweet +
 outbox ek transaction me nahi likhe jaate, isliye Kafka hi pakki parchi: Tweet Service pehle Kafka me daale
-(acks=all), peeche workers tweet Cassandra me aur inbox me likhein (tweet_id se idempotent, dobara aaye to do baar nahi).
+(acks=all), peeche workers / consumers tweet Cassandra me aur inbox me likhein (tweet_id se idempotent, dobara aaye to do baar nahi).
 
 ```mermaid
 flowchart TB
@@ -379,7 +379,7 @@ Ek machine 4K se 4 size banaye, 20 minute lagte, Arpan ka tweet atka, aur 50,000
 machine kyun, kai machine kar do, kaam baant do. Video ki ek id rakh lo, parchi pe likh do, taaki repeat na ho. 10 log
 isi id pe kaam karein, aur kisi id pe nahi.
 
-**Asli naam:** kai machine, kaam baanto = video ke hisse, transcoding workers (parallel), id ki parchi = har hissa
+**Asli naam:** kai machine, kaam baanto = video ke hisse, transcoding workers / consumers (parallel), id ki parchi = har hissa
 video id + hissa number se.
 
 ```mermaid
@@ -403,27 +403,27 @@ flowchart TB
     style KM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 13. Worker 7 beech me gira, "processing" ghanton se (tu hai kya + yahan tak parchi)
+## 13. Worker / consumer 7 beech me gira, "processing" ghanton se (tu hai kya + yahan tak parchi)
 
-10 worker, 9 ka hissa bana, worker 7 beech me gira, aur video na taiyaar na koi batata, "processing" ghanton se. To har
-worker ka status rakho. 9 ne bata diya, ek nahi bata paaya to dekhunga, heartbeat: "tu hai kya?" Jawab nahi to ise
+10 worker / consumer, 9 ka hissa bana, worker / consumer 7 beech me gira, aur video na taiyaar na koi batata, "processing" ghanton se. To har
+worker / consumer ka status rakho. 9 ne bata diya, ek nahi bata paaya to dekhunga, heartbeat: "tu hai kya?" Jawab nahi to ise
 ghar bhejo, naya banda lao. Uske paas parchi: "maine yahan tak kar liya", naya wahin se uthaye. Save se pehle gira to
 shuru se.
 
-**Asli naam:** har worker ka status = DB me hisson ki ginti, tu hai kya = heartbeat, naya banda = job dobara (retry),
+**Asli naam:** har worker / consumer ka status = DB me hisson ki ginti, tu hai kya = heartbeat, naya banda = job dobara (retry),
 yahan tak parchi = checkpoint.
 
-**Maan lo worker 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam:** uski
+**Maan lo worker / consumer 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam:** uski
 wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
-**Asli naam:** atka to replacement = timeout pe slow worker ka hissa doosre ko, kahan tak chhoda = checkpoint.
+**Asli naam:** atka to replacement = timeout pe slow worker / consumer ka hissa doosre ko, kahan tak chhoda = checkpoint.
 Doosri kahani: "zinda hoon" kaafi nahi, poochho kaam kahan tak hua. Ek chhotu ke paas 50 newspaper aa gaye, baaki ke
 10-20; 2-3 chhotu extra bhejo, madad karein. Naye chhotu pehle uski parchi dekhein ("30 khatam") aur 31 se lagein.
 **Asli naam:** heartbeat + progress report, bada chunk = data skew, madad = work stealing / split, parchi = checkpoint (DB / Redis).
 
 ```mermaid
 flowchart TB
-    W7["Worker 7 beech me gira"]:::bad
-    subgraph ST["HAR WORKER KA STATUS"]
+    W7["Worker / consumer 7 beech me gira"]:::bad
+    subgraph ST["HAR WORKER / CONSUMER KA STATUS"]
         H{"Tu hai kya?<br/>(heartbeat)"}:::pill
         C[("Parchi: maine yahan<br/>tak kar liya")]:::card
     end

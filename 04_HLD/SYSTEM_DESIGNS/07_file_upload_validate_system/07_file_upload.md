@@ -43,13 +43,13 @@ Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi n
 Arpan ne 2 GB ki video daali. Server file leta, virus scan karta, thumbnail banata, save karta, aur ye sab hone ke
 baad "done" bolta. Arpan 10 minute spinner dekh raha, aur 1000 log aaye to jo sirf apni list khol rahe wo bhi atke.
 YouTube kuch rokta nahi, bol deta "upload chal raha, chai pi aao". Matlab peeche kuch chal raha. Stadium jaisa: line
-me lag jao, baaki main peeche karta rahunga. File lo, line me daalo, worker peeche kaam kare. Status apne DB me rakho,
+me lag jao, baaki main peeche karta rahunga. File lo, line me daalo, worker / consumer peeche kaam kare. Status apne DB me rakho,
 user UI pe dekh le.
 
 Aur jaanch: koi PDF bol ke exe na chadha de. To virus scan (bahar ki company ka) aur file ka chhota tukda dekh lo ki
 sach me PDF / CSV hai.
 
-**Asli naam:** line = Kafka + worker (async; Kafka me file nahi jaati, sirf file ki id / S3 ka pata, file S3 me), status = DB me file ki row ka status, chhota tukda = magic bytes,
+**Asli naam:** line = Kafka + worker / consumer (async; Kafka me file nahi jaati, sirf file ki id / S3 ka pata, file S3 me), status = DB me file ki row ka status, chhota tukda = magic bytes,
 scan = third party virus scan.
 
 ```mermaid
@@ -58,7 +58,7 @@ flowchart TB
     U["Server: file lo,<br/>upload chal raha, chai pi aao"]:::card
     subgraph SL["STADIUM JAISA: LINE ME LAG JAO"]
         K[("Line (Kafka)")]:::pill
-        W(["Worker peeche: virus scan +<br/>chhota tukda dekho (magic bytes)"]):::pill
+        W(["Worker / consumer peeche: virus scan +<br/>chhota tukda dekho (magic bytes)"]):::pill
     end
     DB[("Status apne DB me,<br/>user UI pe dekh le")]:::good
     A --> U
@@ -329,7 +329,7 @@ jaata hai. Scan CLEAN tak link nahi, virus nikla to file hatao. Folder ka tree h
 pe maalik / share check, phir chhoti umar ka link aur file S3 se seedha.
 
 ```
-user ruke nahi       -> Kafka + worker, status DB me
+user ruke nahi       -> Kafka + worker / consumer, status DB me
 server dabe nahi     -> presigned URL, seedha S3, multipart
 file khoye nahi      -> S3 + S3 event (status atke nahi)
 kachra na bache      -> lifecycle safai (adhoore tukde)

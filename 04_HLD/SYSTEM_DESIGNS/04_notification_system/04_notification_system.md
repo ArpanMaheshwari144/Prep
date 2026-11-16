@@ -30,7 +30,7 @@ beech me ek dabba rakh lo. Wo dabba kahe: aao bhai aao, sab mere paas aa jao, ko
 lunga aur dheere-dheere aaram se sabko bhejta rahunga. Order Service khabar dabbe me daal ke turant "order ho gaya"
 bol deta.
 
-**Asli naam:** beech ka dabba = queue (Kafka, khabar disk pe, worker gira tab bhi khoti nahi), aaram se bhejna =
+**Asli naam:** beech ka dabba = queue (Kafka, khabar disk pe, worker / consumer gira tab bhi khoti nahi), aaram se bhejna =
 async, order turant.
 
 **Maan lo DB me order likh diya, Kafka me daalne se pehle server gira:** order ho gaya, SMS kabhi nahi aayega. To Kafka
@@ -61,7 +61,7 @@ flowchart TB
 
 ## 2. SMS ke peeche bill atka (sabki alag line)
 
-Dabbe me ek hi line thi, SMS, email, push sab ek ke peeche ek, aur ek worker. SMS company 8 second le rahi, to email
+Dabbe me ek hi line thi, SMS, email, push sab ek ke peeche ek, aur ek worker / consumer. SMS company 8 second le rahi, to email
 aur push company theek hote hue bhi bill aadhe ghante baad mila. To line alag-alag kar do, sabki apni line. Jaise
 ladies ki alag line, gents ki alag, bachchon ki alag; airport security, mandiron me bhi aise hi hota. Har line apne
 log khud sambhal le. Ab SMS dheema hua to sirf SMS line rukti, bill apni line se nikal jaata.
@@ -95,7 +95,7 @@ flowchart TB
 
 ## 3. Ek "order placed" do baar (parchi)
 
-SMS worker ne khabar uthayi, SMS Arpan ke phone pe pahunch gaya, par Kafka ko commit karne se theek pehle crash.
+SMS worker / consumer ne khabar uthayi, SMS Arpan ke phone pe pahunch gaya, par Kafka ko commit karne se theek pehle crash.
 Dobara chala, Kafka ne wahi khabar phir di, SMS do baar. OTP ya "5000 debited" pe hua to banda ghabra jaayega. To
 parchi rakh lo apne paas. Kaam ho gaya to likh liya aur kahin rakh liya. 10 din baad wahi khabar dobara aayi, parchi
 dekhi: ye to ho chuka, chhod do. Kabhi bhi kuch ho jaaye, parchi hai.
@@ -137,7 +137,7 @@ hoga, use dobara ghumaana bekaar. Wo kaise pehchanein, agle kadam me.
 Dikkat aayi to likh lo, kahin daal do = queue / parchi / retry ka ek hi pattern.
 
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar:** OTP zaroori hai to uski umar ke andar use bhejna hi bhejna hai: priority line se bhejo, priority line bhi bhar gayi to 3-4 priority line kar do, jaise hospital me hota hai. Par OTP ki umar khatam ho gayi to use bhejo hi mat, rok do, uska koi matlab nahi. App pe neeche 60 second ka timer chalta hai (60, 59, 58...), tab tak OTP nahi aaya to "Resend OTP" ka button aata hai, user dobara maang lega. Kabhi-kabhi 2 OTP ek saath bhi aa jaate hain, wo chalta hai. Aur OTP hamari taraf se nikal gaya par SMS company ke paas atak gaya, to wahi shart jo company se pehle tay ki thi (kadam 5): "30 second me nahi bhej paaye to mat bhejna, hume bata do".
-**Asli naam:** OTP = priority queue (bheed pe 3-4 line = partition / worker badhao), umar ke andar retry. Umar khatam = line se nikalte waqt drop, bhejo mat (expiry check). App pe resend timer (60 sec) -> user naya OTP maange. SMS company ke paas atka = unki taraf validity period (kadam 5 ki shart).
+**Asli naam:** OTP = priority queue (bheed pe 3-4 line = partition / worker / consumer badhao), umar ke andar retry. Umar khatam = line se nikalte waqt drop, bhejo mat (expiry check). App pe resend timer (60 sec) -> user naya OTP maange. SMS company ke paas atka = unki taraf validity period (kadam 5 ki shart).
 OTP retry line me gaya matlab kuch toota: turant alert, aur Arpan ke phone pe "hamari taraf se gadbad, theek kar rahe". Teen baar thode antar pe
 try, phir doosri SMS company (failover, kadam 5).
 
@@ -165,7 +165,7 @@ flowchart TB
 
 ## 5. SMS company poori band (teen-chaar company + VIP line)
 
-Har call 30 second latki phir fail, saare worker atke, retry line phoolti ja rahi, Arpan ka OTP nahi aaya. To ek
+Har call 30 second latki phir fail, saare worker / consumer atke, retry line phoolti ja rahi, Arpan ka OTP nahi aaya. To ek
 company nahi, teen-chaar company rakh lo, ek band to doosri. Aur OTP important hai: bank OTP, transfer OTP, Uber ka
 OTP. Unki priority alag kar do, jaise mandir me VIP darshan, VIP ko jaldi.
 
@@ -212,7 +212,7 @@ flowchart TB
     style CB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-**Maan lo SMS company ka server chup, aur lakhon worker fail hote hi har second dobara bhej rahe, company theek hi nahi ho
+**Maan lo SMS company ka server chup, aur lakhon worker / consumer fail hote hi har second dobara bhej rahe, company theek hi nahi ho
 pa rahi:** use theek hone ka mauka do. Pehle 1 second ruko, phir 2, phir 5, aur thoda aage-peeche, taaki sab ek saath na
 toot padein. Aur ek company pe mat tiko: 2-3 company aur rakho. Jaise chhotu dheema pada to 3-4 chhotu aur; dheeme ko kam
 kaam, baaki me baanto. Company ke server hum nahi badha sakte, apni taraf se aur company khadi kar lete hain.
@@ -230,18 +230,18 @@ store (code + expiry), naya = regenerate, wahi nayi umar se = resend with refres
 
 ## 6. Company ki had 100 / sec (saanjha dabba)
 
-20 worker apni raftaar se, sab milake 300 / sec, company 429 de rahi aur block ki dhamki. Har worker ko sirf apni
+20 worker / consumer apni raftaar se, sab milake 300 / sec, company 429 de rahi aur block ki dhamki. Har worker / consumer ko sirf apni
 ginti pata. Main company ko nahi bol sakta ki had badha do, unhe baaki bhi dekhna hai, aur apni SMS company banana
 impossible. To ruk-ruk ke bhejo, peeche lambi kataar lage to koi dikkat nahi, burst ek saath na jaaye. Aur ginti
 saanjha kar lo: 10 log apna-apna kaam kar rahe, tumne kitna kara? +2, tumne +3. Ek dabba jisme ye ginti likhi ho, sab
 usi se guzrein. Main beech me baitha hoon: tune bhej diya, tu bhi bhej raha? Nahi, tu ruk.
 
-**Asli naam:** had apni taraf se = rate limit, saanjha dabba = shared token bucket (Redis, 100 token / sec, sab worker
+**Asli naam:** had apni taraf se = rate limit, saanjha dabba = shared token bucket (Redis, 100 token / sec, sab worker / consumer
 wahi se token lete), token nahi mila = khabar line me wait, khoti nahi.
 
 ```mermaid
 flowchart TB
-    X["20 worker apni raftaar:<br/>milake 300/sec, company ki had 100"]:::bad
+    X["20 worker / consumer apni raftaar:<br/>milake 300/sec, company ki had 100"]:::bad
     subgraph SD["SAANJHA DABBA (sab usi se guzrein)"]
         B[("Tune ek bhej diya? Tu nahi bhejega<br/>(Redis, 100 token/sec)")]:::pill
     end
@@ -273,7 +273,7 @@ DELIVERED / FAILED, apni parchi = Tracking DB (Cassandra: har message ek row, ba
 
 ```mermaid
 flowchart TB
-    W["SMS worker"]:::card
+    W["SMS worker / consumer"]:::card
     C["Company: le liya,<br/>abhi bheja nahi (ACCEPTED)"]:::card
     subgraph LB["EK TIME KE BAAD COMPANY BATAYEGI"]
         H(["Do hi raaste: sent ya fail<br/>(webhook)"]):::pill
@@ -292,8 +292,8 @@ flowchart TB
 
 ## 8. Diwali: 1 crore ko offer (tukde + moti diary)
 
-Ek khabar "1 crore users ko offer bhejo". Ek worker ne list nikaali, loop me bhejne laga, 40 lakh pe crash. Dobara
-chala to loop shuru se, 40 lakh ko do baar, aur kaam ek worker pe atka, baaki khaali. To thoda todo. 20, 30, 50 worker
+Ek khabar "1 crore users ko offer bhejo". Ek worker / consumer ne list nikaali, loop me bhejne laga, 40 lakh pe crash. Dobara
+chala to loop shuru se, 40 lakh ko do baar, aur kaam ek worker / consumer pe atka, baaki khaali. To thoda todo. 20, 30, 50 worker / consumer
 me baant do, sabko alag range: tu yahan se yahan tak. Jo bheje gaye unhe turant DB me mark karo. 1 crore Redis me
 nahi rakhunga, Redis ko befaltu nahi bharna, apni moti diary hai, usme karte jao. Jaise 10 logon ko kaam diya: tu iske
 ghar ja, tu iske ghar, parchi pe likhte raho ye ghar ho gaya. Kal koi bimaar pada to parchi dekho: 10 me se 7 ho gaye,
@@ -305,16 +305,16 @@ rokti: isko bhej diya tha? Haan, to dobara nahi.
 
 **Maan lo 5 crore promo usi line me, aur ek user ka OTP uske peeche, 40 minute late:** hospital jaisa, serious patient
 100 logon ki line me peeche khada. Serious ki line alag karo, parchi wale apni line me aaram se aate rahein.
-**Asli naam:** OTP / order ki alag priority line (topic + apne worker), promo alag topic; promo kitna bhi lamba ho, OTP pe asar nahi
+**Asli naam:** OTP / order ki alag priority line (topic + apne worker / consumer), promo alag topic; promo kitna bhi lamba ho, OTP pe asar nahi
 (kadam 5 wali VIP line).
 
 ```mermaid
 flowchart TB
     O["1 crore ko Diwali offer"]:::card
     subgraph TD["THODA TODTE HAIN: ALAG RANGE"]
-        T1["Tu yahan se yahan<br/>(worker 1)"]:::card
-        T2["Tu yahan se yahan<br/>(worker 2)"]:::card
-        TN["... worker 50"]:::card
+        T1["Tu yahan se yahan<br/>(worker / consumer 1)"]:::card
+        T2["Tu yahan se yahan<br/>(worker / consumer 2)"]:::card
+        TN["... worker / consumer 50"]:::card
     end
     D[("Moti diary: ye ghar ho gaya<br/>(DB checkpoint)")]:::pill
     B["Koi bimaar: 10 me se 7 ho gaye,<br/>backup baaki 3 bheje"]:::good
@@ -339,14 +339,14 @@ Arpan ne settings me chuna "offer wale SMS mat bhejo". Har SMS se pehle worker D
 saancha padhta. 1 crore SMS = 1 crore query, DB ki saans phooli. Wo baar-baar wahi cheez padh raha hai, use apne paas
 rakh lo. Diwali pe sabko ek hi offer, "Diwali 50% off". Mote register pe baar-baar kyun jaun? Ek saancha apne paas,
 bas naam badalna hai, bhejta ja. Par user ki pasand uski settings hai, wo DB me hai, DB se hi uthayenge; crore users
-ki setting cache me kaise rakhenge. OTP itna late nahi hoga, kyunki OTP ki apni line, apne worker aur rate limit
+ki setting cache me kaise rakhenge. OTP itna late nahi hoga, kyunki OTP ki apni line, apne worker / consumer aur rate limit
 pehle se hain. Baad me naap ke lage ki faltu queries bahut badh gayi, tab sochunga pasand bhi cache me rakhun.
 
 **Asli naam:** ek saancha apne paas = template cache (saancha badla to key DELETE), pasand = user preference DB se
 (taazi, cache nahi), queries badhi tab = naap ke hi preference cache. OTP ki apni line = OTP ki alag priority line (kadam 5).
 
-**Maan lo Diwali ki bheed se DB ki saans phooli, aur OTP worker bhi pasand padhne usi DB pe gaya, OTP 40 second late:**
-OTP ka worker DB me pasand padhne jaaye kyun? Offer thodi bhej rahe. Seedha OTP bhejo. Pasand sirf offer pe dekho.
+**Maan lo Diwali ki bheed se DB ki saans phooli, aur OTP worker / consumer bhi pasand padhne usi DB pe gaya, OTP 40 second late:**
+OTP ka worker / consumer DB me pasand padhne jaaye kyun? Offer thodi bhej rahe. Seedha OTP bhejo. Pasand sirf offer pe dekho.
 **Asli naam:** OTP pe preference check skip (OTP opt-out nahi hota), OTP path pe pasand (preference) wala DB nahi, line ke saath DB se bhi alag.
 
 ```mermaid
@@ -354,8 +354,8 @@ flowchart TB
     subgraph AP["APNE PAAS RAKH LO"]
         T(["Ek hi saancha: Diwali 50% off,<br/>bas naam badlo (template cache)"]):::pill
     end
-    OF["Offer worker"]:::card
-    OT["OTP worker"]:::card
+    OF["Offer worker / consumer"]:::card
+    OT["OTP worker / consumer"]:::card
     PD[("User ki pasand<br/>(settings, DB)")]:::card
     S["OTP seedha bhejo:<br/>DB se lena-dena nahi"]:::good
     T --> OF
@@ -380,13 +380,13 @@ flowchart TB
     MK["Marketing:<br/>Diwali offer"]:::card
     B["Notification Service:<br/>khabar ki kism dekh ke line tay"]:::card
     subgraph PRL["PROMO LINE (dheemi)"]
-        PR[("Diwali offer")]:::card --> WP["apna worker"]:::card
+        PR[("Diwali offer")]:::card --> WP["apna worker / consumer"]:::card
     end
     subgraph TRL["OTP LINE (VIP)"]
-        TR[("OTP")]:::pill --> WT["apna worker"]:::pill
+        TR[("OTP")]:::pill --> WT["apna worker / consumer"]:::pill
     end
     subgraph SVL["ORDER KHABAR (SMS / email / push)"]
-        SV[("order placed, shipped")]:::card --> WS["apna worker"]:::card
+        SV[("order placed, shipped")]:::card --> WS["apna worker / consumer"]:::card
     end
     C1["SMS company 1<br/>(chup ho to 1, 2, 5 sec ruk ke + jitter)"]:::card
     C2["SMS company 2, wahi code<br/>(WhatsApp sirf FR me ho to)"]:::pill

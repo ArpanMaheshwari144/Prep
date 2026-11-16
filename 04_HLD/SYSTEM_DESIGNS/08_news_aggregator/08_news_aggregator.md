@@ -13,7 +13,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 ```
 FR      5000 site se khabar laao · user ko taazi feed (uski category) · ek khabar ek hi baar (best effort, kabhi dohra chalega)
 NFR     feed turant (~200 ms) · khabar 5-10 min se purani nahi · ek site band ho to baaki na ruke
-        · aayi khabar kho na jaaye (worker gira to bhi) · refresh pe khabar gayab na ho
+        · aayi khabar kho na jaaye (worker / consumer gira to bhi) · refresh pe khabar gayab na ho
 Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec · nayi khabar ~1 / sec
         -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta
 ```
@@ -57,7 +57,7 @@ saari khabar ek saath aati hai, jo achha lage padh lo.
 **Asli naam:** bahut chhotu = kai fetcher ek saath (parallel), chhoti parchi = Redis me taiyaar feed (sorted set, time
 ke kram me, aakhri 500).
 
-**Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya:** Ye Twitter ke worker 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.
+**Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya:** Ye Twitter ke worker / consumer 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.
 **Asli naam:** "main zinda hoon" = heartbeat, "main site baant deta" = coordinator (chhotuon ko kaam baantne wala, load balancer nahi), kaam ka reassignment (lease khatam to doosra le).
 
 ```mermaid
@@ -110,11 +110,11 @@ flowchart TB
     style BA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 4. Bada aadmi akela, chhotu line me khade (Kafka + workers)
+## 4. Bada aadmi akela, chhotu line me khade (Kafka + workers / consumers)
 
 Bada aadmi akela, har khabar ko hafte ki 5 lakh khabron se milata, 1 minute ek khabar. Line lambi, 8:55 wali 10:30
 pe. Chhotu ko faltu khada mat karo. Khabar Kafka me daalo (stadium wali kahani) aur chhotu apna kaam karta rahe.
-Peeche workers dupe hata ke feed / DB / Redis me rakhte rahenge. Aur har dupe nahi hatega, kabhi aa jaayega, jaise
+Peeche workers / consumers dupe hata ke feed / DB / Redis me rakhte rahenge. Aur har dupe nahi hatega, kabhi aa jaayega, jaise
 Instagram feed me bhi aata.
 
 **Asli naam:** isme daal, chalta rahe = Kafka (chhotu = producer), peeche workers = consumer group, har dupe nahi
@@ -237,7 +237,7 @@ flowchart TB
 
 ## 8. 50 lakh tech wale, sabki alag parchi (ek tech parchi)
 
-50 lakh tech wale, har ek ki apni parchi, har minute 20 khabar = 10 crore likhna, workers peeche. Worker pe faltu load
+50 lakh tech wale, har ek ki apni parchi, har minute 20 khabar = 10 crore likhna, workers / consumers peeche. Worker / consumer pe faltu load
 kyun? Sab tech wale hain, sabko same khabar; Tesla launch hua to sabke liye hai, aisa nahi Arpan ke liye hai Ravi ke
 liye nahi. 50 lakh alag parchi bekaar. Saari tech khabar ek parchi me, app khule to wahin se.
 
@@ -247,7 +247,7 @@ ki pasand se. Har user ki alag feed (twitter jaisi fan-out) yahan faltu.
 ```mermaid
 flowchart TB
     X["50 lakh alag parchi:<br/>10 crore likhna, bekaar"]:::bad
-    W["Worker: ek baar likho"]:::card
+    W["Worker / consumer: ek baar likho"]:::card
     subgraph ET["SAARI TECH KHABAR EK PARCHI ME"]
         T[("Tesla launch sabke liye")]:::pill
     end
@@ -322,23 +322,23 @@ flowchart TB
     style TD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 11. Worker DB me likh ke mara, khabar kisi ko nahi dikhi (status)
+## 11. Worker / consumer DB me likh ke mara, khabar kisi ko nahi dikhi (status)
 
-Worker ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker DB me dekh ke dupe samjha, hata di.
+Worker / consumer ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker / consumer DB me dekh ke dupe samjha, hata di.
 Khabar kisi ko nahi dikhi. Gadbad parchi se pehle hui. DB se pehle mara to dikkat nahi, doosra daal dega, dupe check +
 unique constraint hai. To ek status rakho: "DB me daali", "parchi me daali". Beech me gira to agla status dekh ke kaam
 aage badha dega. Ek tarah ki logging.
 
-**Asli naam:** status = khabar ka state (SAVED -> IN_FEED), agla worker adhoora kaam poora karta; DB se pehle gira to
+**Asli naam:** status = khabar ka state (SAVED -> IN_FEED), agla worker / consumer adhoora kaam poora karta; DB se pehle gira to
 url UNIQUE bacha leta; logging = outbox / WAL wali soch.
 
 ```mermaid
 flowchart TB
-    W1["Worker ne DB me likhi,<br/>parchi se pehle mara"]:::bad
+    W1["Worker / consumer ne DB me likhi,<br/>parchi se pehle mara"]:::bad
     subgraph ST["EK STATUS RAKH (logging)"]
         D[("DB me daali / parchi me daali")]:::pill
     end
-    W2["Agla worker status dekh ke<br/>kaam aage badhaye"]:::card
+    W2["Agla worker / consumer status dekh ke<br/>kaam aage badhaye"]:::card
     P[("Parchi (Redis feed)")]:::good
     W1 --> D
     W2 --> D

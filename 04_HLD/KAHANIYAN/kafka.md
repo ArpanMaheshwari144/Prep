@@ -37,8 +37,8 @@ bhejne wale  --> ek baar likho --> [ Kafka: ek lambi line, disk pe, kuch din tak
 25 pipe ki jagah ab sab bas ek line se jud gaye. Har padhne wala apna bookmark (offset) khud rakhta hai, aur kisi
 ke padhne se message mit-ta nahi.
 
-Ye wahi cheez hai jo hamare designs me hai: notification aur twitter me ek khabar daalo aur kai worker apni
-raftaar se uthayein, aur news me Fetcher aur Worker ke beech Kafka. LinkedIn ki dikkat bhi bilkul yahi thi, bas
+Ye wahi cheez hai jo hamare designs me hai: notification aur twitter me ek khabar daalo aur kai worker / consumer apni
+raftaar se uthayein, aur news me Fetcher aur Worker / consumer ke beech Kafka. LinkedIn ki dikkat bhi bilkul yahi thi, bas
 bahut bade paimane pe.
 
 2011 me LinkedIn ne ise open-source kar diya, aur ye Apache Kafka ban gaya. Naam lekhak Franz Kafka ke naam pe

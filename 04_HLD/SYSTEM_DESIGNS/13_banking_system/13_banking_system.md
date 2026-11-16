@@ -108,7 +108,7 @@ me takra rahe (Arpan-Ravi) sirf unka ek group, Priya-Amit alag group; 50 counter
 **Asli naam:** taala sirf un khaaton pe (per-account / row lock), baaki parallel; kaam account ke hisaab se (partition by account).
 Counter ek group ka nahi: Arpan-Ravi khatam to usi counter pe Priya-Amit; ek counter pe do group ki line, group me teen
 bhi (Arpan, Ravi, Priya). Counter hisaab se chalta, itne counter koi nahi bithata.
-**Asli naam:** worker pool, account ke hisaab se counter tay, har counter ki apni queue.
+**Asli naam:** worker / consumer pool, account ke hisaab se counter tay, har counter ki apni queue.
 
 ```mermaid
 flowchart TB
@@ -473,7 +473,7 @@ ki user aaye tab banayenge. Peeche chhotu laga do: January ki January me, Februa
 31 March ko jo bhi aaye, Ravi ho ya Shubham, utha ke turant de do.
 
 **Asli naam:** pehle se bana ke rakho = precompute (batch job, mahina band hote hi chalta), peeche chhotu = background
-workers (Kafka se kaam baanta, har message = ek khaata + mahina), bani statement = S3 me PDF, 31 March ko user seedha
+workers / consumers (Kafka se kaam baanta, har message = ek khaata + mahina), bani statement = S3 me PDF, 31 March ko user seedha
 wahan se download karta. Turant chahiye kya = pehla faisla batch ya stream: statement mahine me ek baar banti, isliye
 batch.
 
@@ -561,7 +561,7 @@ ladke khaali baithe hain to naye ladke kyun lane? Ek bhara pada hai, baaki khaal
 is bande ki madad karo.
 
 **Asli naam:** ek ke paas bahut kaam = hot key / data skew, khaali ladke madad karo = work stealing (kaam chhote
-tukdon me, khaali worker agla tukda utha le). Naye worker lagane ki zaroorat nahi.
+tukdon me, khaali worker / consumer agla tukda utha le). Naye worker / consumer lagane ki zaroorat nahi.
 
 ```mermaid
 flowchart TB

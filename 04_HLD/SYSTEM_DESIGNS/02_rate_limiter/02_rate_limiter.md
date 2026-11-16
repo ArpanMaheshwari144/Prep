@@ -24,7 +24,7 @@ Ravi / script
 [ OTP Service ] (kai server)
      |
      v
-[ Line (queue) ] -> worker SMS company ki raftaar se bhejta; umar khatam wala OTP phenk do
+[ Line (queue) ] -> worker / consumer SMS company ki raftaar se bhejta; umar khatam wala OTP phenk do
      |
      v
 [ SMS company ]
@@ -329,7 +329,7 @@ badha do. Aur SMS company ko utni bheed mat jaane do, wo apne hisaab se kaam kar
 aur SMS ab ek ja, ek ja, dheela-dheela, aaram se.
 
 **Asli naam:** log badha do, server badha do = apne server scale, line lagwa, ek-ek karke = queue (Kafka, OTP Service
-turant "OTP aa raha" bol deta), beech me cheez jo spike rok le = worker SMS company ki raftaar se bhejte, saare worker
+turant "OTP aa raha" bol deta), beech me cheez jo spike rok le = worker / consumer SMS company ki raftaar se bhejte, saare worker / consumer
 ek saanjhi had se (global had, Redis ka ek token bucket).
 
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar:** Line me har OTP pe uski umar likh do. Line se nikalte waqt dekho, umar khatam to phenk do, bhejo mat; bachcha naya OTP maang lega.
@@ -341,7 +341,7 @@ flowchart TB
     O["OTP Service: log badha do,<br/>server badha do"]:::card
     subgraph LN["LINE LAGWA, EK-EK KARKE"]
         K[("Line (Kafka)")]:::pill
-        W(["Beech ki cheez jo spike rok le:<br/>tu nikal, ab tu nikal<br/>(workers, global had)"]):::pill
+        W(["Beech ki cheez jo spike rok le:<br/>tu nikal, ab tu nikal<br/>(workers / consumers, global had)"]):::pill
     end
     S["SMS company: aaram se,<br/>apne hisaab se"]:::good
     U --> O

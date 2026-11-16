@@ -38,7 +38,7 @@ Technical me: "sabko ek saath lao, ek parchi pe" = inbox + follow kiye celeb ki 
 
 **4. Arpan ke 8,000 followers (abhi bhi chhota user). "Post" dabaya, server ek-ek karke 8,000 dabbe bhar raha, button ghoomta rahe. 3,000 pe server gira, baaki 5,000 ko kabhi nahi mila, Arpan ko pata bhi nahi.**
 Arpan: Sabse pehle ek threshold rakho, itne followers paar gaye to inbox me push nahi, Kohli wala tareeka. Bheed sambhalne ke liye ek dabba laga do, mera favourite stadium wala bhai Kafka. Maine post dabaya to "tera post ho gaya, nikal", peeche Kafka sab karta rahega. Kuch gira to outbox me rakh lo, ek parchi pe likha hai.
-Technical me: "threshold, Kohli wala tareeka" = had ke upar celeb raasta, "stadium wala bhai" = Kafka (async fanout), "post ho gaya, nikal" = turant OK, "parchi pe likha" = outbox ki soch; yahan tweet Cassandra me (wahan tweet + outbox ek transaction me nahi likhe jaate), isliye Kafka hi pakki parchi: Tweet Service pehle Kafka me daale (acks=all), workers Cassandra + inbox likhein.
+Technical me: "threshold, Kohli wala tareeka" = had ke upar celeb raasta, "stadium wala bhai" = Kafka (async fanout), "post ho gaya, nikal" = turant OK, "parchi pe likha" = outbox ki soch; yahan tweet Cassandra me (wahan tweet + outbox ek transaction me nahi likhe jaate), isliye Kafka hi pakki parchi: Tweet Service pehle Kafka me daale (acks=all), workers / consumers Cassandra + inbox likhein.
 
 **5. Kohli ne 99 se six maara aur tweet kiya. 1 minute me 5 crore log refresh, sabko wahi ek parchi chahiye. Wo parchi ek machine pe, wo machine hil gayi, Dhoni-SRK ki parchiyan bhi atki.**
 Arpan: Us waqt wo cheez famous ho gayi to log aayenge. Use alag-alag machine pe baant do, 5 crore ek machine pe na aayein. Main dekh raha lakhon log is parchi ko padhne aa rahe. Main iski 10-15 copy bana dunga: le tu bhi ye copy le, sabko padhwa. Bheed badh rahi to baant do, copiyan bana do, clone kar do.
@@ -83,21 +83,21 @@ Technical me: "kai size" = transcoding, "thoda-thoda kuch second ka" = segments 
 
 **12. Ek machine 4K se 4 size banaye, 20 minute; Arpan ka tweet atka, aur 50,000 video usi ek machine ke peeche.**
 Arpan: Ek machine kyun, kai machine kar de, kaam baant do. Video ki ek id rakh lo, parchi pe likh do, taaki repeat na ho. 10 log isi id pe kaam karein, aur kisi id pe nahi.
-Technical me: "kai machine, kaam baanto" = video ke hisse, transcoding workers (parallel), "id ki parchi" = har hissa video id + hissa number se.
+Technical me: "kai machine, kaam baanto" = video ke hisse, transcoding workers / consumers (parallel), "id ki parchi" = har hissa video id + hissa number se.
 
-**13. 10 worker, 9 ka hissa bana, worker 7 beech me gira; video na taiyaar na koi batata, "processing" ghanton se.**
+**13. 10 worker / consumer, 9 ka hissa bana, worker / consumer 7 beech me gira; video na taiyaar na koi batata, "processing" ghanton se.**
 Arpan: Har worker ka status. 9 ne bata diya, ek nahi bata paaya to dekhunga, heartbeat: "tu hai kya?" Jawab nahi to ise ghar bhejo, naya banda. Uske paas parchi: "maine yahan tak kar liya", naya wahin se uthaye. Save se pehle gira to shuru se.
-Technical me: "har worker ka status" = DB me hisson ki ginti, "tu hai kya" = heartbeat, "naya banda" = job dobara (retry), "yahan tak parchi" = checkpoint.
+Technical me: "har worker / consumer ka status" = DB me hisson ki ginti, "tu hai kya" = heartbeat, "naya banda" = job dobara (retry), "yahan tak parchi" = checkpoint.
 
-**Maan lo worker 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam.**
+**Maan lo worker / consumer 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam.**
 Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
-Technical me: "atka to replacement" = timeout pe slow worker ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
+Technical me: "atka to replacement" = timeout pe slow worker / consumer ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
 Isi dikkat ki doosri kahani: "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam? Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye. To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
 Technical me: "zinda hoon != kaam ho raha" = heartbeat ke saath progress report, "bada chunk" = data skew (ek hisse pe zyada kaam), "2-3 chhotu madad" = hissa tod ke baanto (work stealing / split).
 
-**Maan lo worker 7 ke 50 me se 30 ban chuke, 2 naye chhotu bheje; unhe kaise pata 31 se shuru karna, warna pehle ke 30 do baar.**
+**Maan lo worker / consumer 7 ke 50 me se 30 ban chuke, 2 naye chhotu bheje; unhe kaise pata 31 se shuru karna, warna pehle ke 30 do baar.**
 Arpan: Har chhotu ke paas ek parchi hogi: mera kaam yahan tak ho gaya. Sabko bol diya "apne kaam ka hamesha track rakho", kyunki kisi din bimaar pad gaye, ekdum kuch ho gaya, to main aaunga, kaise dekhunga kaam kahan tak hua. Wo track DB me, Redis me, kahin bhi; technical naam me nahi jaate, problem kaise samajh rahe wo dekhte hain. Kisi ne 5 kiye, kisi ne 7, kisi ne 10, sab likhte gaye. Worker 7 ne likh diya "30 khatam". Naye chhotu ko kaha pehle iski parchi dekho, isne kahan tak khatam kiya; 31 pe lag jaao, 10 tu sambhal, 10 tu sambhal, kaam jaldi nipta do.
-Technical me: "kahan tak hua ki parchi" = checkpoint (DB / Redis me), naya worker wahin se shuru (resume), baaki bacha kaam baant ke.
+Technical me: "kahan tak hua ki parchi" = checkpoint (DB / Redis me), naya worker / consumer wahin se shuru (resume), baaki bacha kaam baant ke.
 
 **14. Ravi 2:00 pe khiskata hai six dekhne, par phone 0:00 se 2:00 tak sab kheench raha, faaltu data, six late.**
 Arpan: 0 se 2 dikhane ka fayda nahi. Kisi ne copy di aur bola seedha 51wa page dikha. Main copy dekhunga, kahan 50 khatam, 51 kahan shuru, hisaab lagaunga, aur seedha 51 khol dunga.

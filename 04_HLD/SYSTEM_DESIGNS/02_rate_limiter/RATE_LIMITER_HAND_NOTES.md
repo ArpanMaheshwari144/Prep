@@ -19,7 +19,7 @@ Ravi / script
 [ OTP Service ] (kai server)
      |
      v
-[ Line (queue) ] -> worker SMS company ki raftaar se bhejta; umar khatam wala OTP phenk do
+[ Line (queue) ] -> worker / consumer SMS company ki raftaar se bhejta; umar khatam wala OTP phenk do
      |
      v
 [ SMS company ]
@@ -99,7 +99,7 @@ Technical me: "login ke baad userId hamare paas" = userId pe kadi had, "login pe
 
 **9. Result ka din, subah 10 baje 1 crore bachche OTP maangte. Har bachcha apni had me, phir bhi OTP Service aur SMS company dono gire.**
 Arpan: Mere paas 2-3 log hain jo 10,000 logon ka kaam kar rahe, koi na koi girega hi. To log badha do, server badha do. Aur SMS company ko utni bheed mat jaane do, wo apne hisaab se kaam kar rahi. Line lagwa, aaram-aaram se: "jaao beta, ek-ek karke; tu nikal, ab tu nikal." Hamare aur SMS company ke beech ek cheez fit kar denge jo spike rok le. SMS ab ek ja, ek ja, dheela-dheela, aaram se.
-Technical me: "log badha do, server badha do" = apne server scale, "line lagwa, ek-ek karke" = queue (Kafka), "beech me cheez jo spike rok le" = SMS company ki raftaar se worker, global had.
+Technical me: "log badha do, server badha do" = apne server scale, "line lagwa, ek-ek karke" = queue (Kafka), "beech me cheez jo spike rok le" = SMS company ki raftaar se worker / consumer, global had.
 
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar.**
 Arpan: Line me har OTP pe uski umar likh do. Line se nikalte waqt dekho, umar khatam to phenk do, bhejo hi mat. Agar OTP ki umar khatam ho gayi to use bhej hi kyun rahe ho, rok do; wo 60 second baad dobara maang lega. Tumne kabhi dekha hai, OTP maangte hain to neeche second chalte hain, 60, 59, 58, ki 60 second me OTP aa jaayega; nahi aaya to "Resend OTP" ka button aata hai. Bahut se bank me aisa hi hota hai. Wahi cheez yahan jodni hai.

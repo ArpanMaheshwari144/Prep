@@ -172,11 +172,11 @@ flowchart TB
 Ek creator ne script likh di: hazaar phone / bot se har 3 second refresh, ek ghante me 10 lakh "view". Views pe paisa milta
 hai, wo trending me upar aa gaya, asli creators shikayat kar rahe hain. Ye fraud hai. Aisa view ginti me gino hi mat.
 API gateway pe hi rok do, request andar hi mat aane do: ek hi bande / IP se 10 lakh request? Rate limit laga do.
-Baar-baar kare to WAF me daal do, ya permanent ban. Peeche Kafka ka worker pattern dekhta rahe: 3-4 baar wahi pattern
+Baar-baar kare to WAF me daal do, ya permanent ban. Peeche Kafka ka worker / consumer pattern dekhta rahe: 3-4 baar wahi pattern
 dikha to daal do.
 
 **Asli naam:** gateway pe rok do = rate limit per user / IP / video ([Rate limiter](../02_rate_limiter/02_rate_limiter.md)),
-WAF me daal do = WAF ban, worker pattern dekhe = fraud detection worker (bot / repeat view ginti se pehle filter, kadam
+WAF me daal do = WAF ban, worker / consumer pattern dekhe = fraud detection worker / consumer (bot / repeat view ginti se pehle filter, kadam
 3 wali stream padh ke).
 
 ```mermaid
@@ -274,7 +274,7 @@ hain to feed me aata hai. YouTube asal me kaise karta hai, unka design public na
 
 **Asli naam:** sab subscribers ko push = fan-out ([Twitter](../03_twitter_feed/03_twitter_feed.md)) + [Notification](../04_notification_system/04_notification_system.md)
 system. Ghanti ke liye pull nahi chalta (user ko pata hi nahi kuch aaya), isliye bade creator pe bhi push; crore
-subscribers ko queue me daal ke workers thoda-thoda bhejte. Home feed me video dikhana alag baat: wahan Twitter wala
+subscribers ko queue me daal ke workers / consumers thoda-thoda bhejte. Home feed me video dikhana alag baat: wahan Twitter wala
 hybrid (bade creator ka pull: feed kholne pe uski nayi video khinch lo).
 
 ```mermaid

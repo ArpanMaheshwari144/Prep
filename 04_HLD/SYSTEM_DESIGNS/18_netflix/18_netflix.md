@@ -307,7 +307,7 @@ action film  : 240p = 0.4 Mbps ... 1080p = 5 Mbps       (zyada chahiye)
 
 **Asli naam:** Ferrari / Alto = transcoding (kai size) + ABR (net dekh ke size), 4 sec tukde + manifest = segments +
 seek, har film ki apni seedhi = per-title encode ladder, kai roop = codec, ek baar banao = AWS pe batch encoding
-(parallel workers), awaaz / subtitle alag = alag audio / subtitle tracks.
+(parallel workers / consumers), awaaz / subtitle alag = alag audio / subtitle tracks.
 
 ```mermaid
 flowchart TB

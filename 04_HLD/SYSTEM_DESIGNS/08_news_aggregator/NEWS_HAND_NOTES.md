@@ -8,7 +8,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 ```
 FR      5000 site se khabar laao · user ko taazi feed (uski category) · ek khabar ek hi baar (best effort, kabhi dohra chalega)
 NFR     feed turant (~200 ms) · khabar 5-10 min se purani nahi · ek site band ho to baaki na ruke
-        · aayi khabar kho na jaaye (worker gira to bhi) · refresh pe khabar gayab na ho
+        · aayi khabar kho na jaaye (worker / consumer gira to bhi) · refresh pe khabar gayab na ho
 Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec · nayi khabar ~1 / sec
         -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta
 ```
@@ -47,7 +47,7 @@ Technical me: "pehli baar DB, phir parchi" = cache-aside, "5 sec, 10 sec baad do
 Arpan: Nayi khabar aate hi tech walon ki feed me daal do. Aur milaan: har tech wale ki parchi me aaj ki badi khabar hai na? Chhoot gayi to DB se le ke seedha feed me.
 Technical me: "aate hi feed me" = likhte waqt push, "milaan" = check job.
 
-**8. 50 lakh tech wale, har ek ki apni parchi, har minute 20 khabar = 10 crore likhna. Workers peeche.**
+**8. 50 lakh tech wale, har ek ki apni parchi, har minute 20 khabar = 10 crore likhna. Workers / consumers peeche.**
 Arpan: Worker pe faltu load kyun? Sab tech wale hain, sabko same khabar; Tesla launch hua to sabke liye hai, aisa nahi Arpan ke liye hai Ravi ke liye nahi. 50 lakh alag parchi bekaar. Saari tech khabar ek parchi me, app khule to wahin se.
 Technical me: "ek tech parchi" = category ka ek feed (ek key), likhna ek baar, padhte waqt user ki pasand se.
 
@@ -59,9 +59,9 @@ Technical me: "dabbe badha do" = aur Redis node, par us pe bhi tech ki copy (ek 
 Arpan: Garam khabar do-teen dabbon me daalo. A ke paas hai, B ke paas nahi, to B bhi rakhe. Do me likho, do se padho: A-B, A-C, B-C, koi bhi do.
 Technical me: "do me likho, do se padho" = quorum (3 me W=2, R=2, kam se kam ek me taaza). Redis copies khud ye nahi karti; app do me likhe aur do se padhe (Cassandra jaisa DB ye khud karta).
 
-**11. Worker ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker DB me dekh ke dupe samjha, hata di. Khabar kisi ko nahi dikhi.**
+**11. Worker / consumer ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker / consumer DB me dekh ke dupe samjha, hata di. Khabar kisi ko nahi dikhi.**
 Arpan: Gadbad parchi se pehle hui. DB se pehle mara to dikkat nahi, doosra daal dega, dupe check + unique constraint hai. To ek status rakh: "DB me daali", "parchi me daali". Beech me gira to agla status dekh ke kaam aage badha dega. Ek tarah ki logging.
-Technical me: "status" = khabar ka state (DB me -> feed me), agla worker adhoora kaam poora karta; "logging" = outbox / WAL wali soch.
+Technical me: "status" = khabar ka state (DB me -> feed me), agla worker / consumer adhoora kaam poora karta; "logging" = outbox / WAL wali soch.
 
 &nbsp;
 

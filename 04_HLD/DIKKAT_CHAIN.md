@@ -69,7 +69,7 @@ Juda: single flight ka ladka gira to bhi yahi umar (6). Chat ka "online" bhi isi
 ## 3. Ek hi kaam do baar aa gaya  (DOBARA)
 
 ```
-Dikkat:      net gaya, app ne dobara bheja, ya worker ne commit se pehle crash kiya, to wahi kaam do baar: do SMS, do baar paisa kata, 20 share.
+Dikkat:      net gaya, app ne dobara bheja, ya worker / consumer ne commit se pehle crash kiya, to wahi kaam do baar: do SMS, do baar paisa kata, 20 share.
 Humne socha: parchi zindabaad: ho gaya likh lo. Same chaabi dobara aaye to dekh ke mana kar do.
 
 Yahi dikkat yahan bhi:
@@ -112,7 +112,7 @@ Yahi dikkat yahan bhi:
   Stock         5   adhoora order RAM ke saath uda                 ->  bag ki parchi dekh ke dobara jamao (order log, replay)
   Payment       5   INITIATED likha, call bhejte server gira       ->  pehle register me likho, phir bhejo (commit first)
   File upload   4b  UPLOADED likha, scan daalne se pehle gira      ->  UPLOADED ke saath vasiyat (outbox + relay)
-  News          11  DB me likhi, parchi se pehle worker mara       ->  status rakh, agla aage badhaaye (state, outbox)
+  News          11  DB me likhi, parchi se pehle worker / consumer mara       ->  status rakh, agla aage badhaaye (state, outbox)
   Kafka         5   admin ne "aa gaya" bola, phir gira             ->  vasiyat ki copy bhi likhe, tab "likh di" (acks=all)
   Kafka         7   Order Service gate tak bhejne se pehle gira    ->  baap ki vasiyat, pehle likh de (outbox)
   Banking       1   500 kate, bijli gayi, Ravi ko nahi mila        ->  mere 500 wapas de do (rollback)
@@ -250,8 +250,8 @@ Yahi dikkat yahan bhi:
   URL shortener 9b  Delhi me aag, copy peeche chale                ->  copy alag jagah, authority pehle likhe phir bheje, uski bhi copy (coordinator, async copy)
   URL shortener 10  C se padha, nahi mila                          ->  do se padho (R=2)
   Rate limiter  6   Redis gira, sabko jaane de ya roke             ->  dono khule (OTP pe kisi ka bank transfer), bouncer 5-5 karke bheje (fail-open + local fallback limiter)
-  Twitter       13  worker 7 gira, "processing" ghanton se         ->  "tu hai kya?", jawab nahi to naya banda (heartbeat)
-  Twitter       13b worker zinda, 1 ghante se ek hissa bana raha   ->  "tu thoda rest le", replacement wahin se kare (timeout, checkpoint)
+  Twitter       13  worker / consumer 7 gira, "processing" ghanton se         ->  "tu hai kya?", jawab nahi to naya banda (heartbeat)
+  Twitter       13b worker / consumer zinda, 1 ghante se ek hissa bana raha   ->  "tu thoda rest le", replacement wahin se kare (timeout, checkpoint)
   Twitter       13c zinda par kaam kahan tak? 50 ka chunk            ->  "kahan tak hua" poochho, 2-3 chhotu madad, parchi dekh ke 31 se (progress, work stealing, checkpoint)
   Stock         5   book RAM me, machine mar gayi                  ->  permanent dabbe me rakho (DB)
   Stock         5   permanent dabba bhi gira to                    ->  3-4 copy bana ke rakho (replica)
@@ -288,7 +288,7 @@ Yahi dikkat yahan bhi:
   Notification  5   OTP bhi baaki ke peeche line me                ->  VIP darshan, OTP ki priority (alag OTP topic)
   Notification  8b  5 crore promo ke peeche OTP, 40 min baad       ->  hospital jaisa, serious ki line alag (high-priority topic)
   Stock         6   sauda pakka, engine khud sabko call kare       ->  10 ladkon ki fauj (Kafka, consumer group)
-  File upload   1   server khud sab kare, 10 min spinner           ->  chai pi aao, peeche line (Kafka + worker)
+  File upload   1   server khud sab kare, 10 min spinner           ->  chai pi aao, peeche line (Kafka + worker / consumer)
   File upload   8   scan baaki kaam ke peeche atka                 ->  doctor line me nahi lagta (alag scan topic)
   News          4   bada aadmi akela, 1 min ek khabar              ->  stadium wali kahani, chhotu daal ke chale (Kafka)
   Kafka         1   stadium ke bahar bheed, sab ghus rahe          ->  admin: line banao, ek-ek karke (Kafka)
@@ -315,12 +315,12 @@ Yahi dikkat yahan bhi:
   Notification  4   company bole "abhi bheed hai"                  ->  papa busy, thodi der ruk ke (retry queue)
   Notification  5   SMS company poori band                         ->  teen-chaar company extra (failover)
   Notification  5b  company 30 sec chup (timeout)                  ->  OTP turant backup se, 2 OTP chalega, ek hi code; sale ruk sakti (SLA)
-  Notification  5c  company chup, lakhon worker har second dobara  ->  1, 2, 5 sec ruk ke + aage-peeche; 2-3 company, dheeme ko kam kaam (backoff, jitter, weighted routing)
+  Notification  5c  company chup, lakhon worker / consumer har second dobara  ->  1, 2, 5 sec ruk ke + aage-peeche; 2-3 company, dheeme ko kam kaam (backoff, jitter, weighted routing)
   Notification  5d  OTP ki receipt nahi aayi, umar 2 min           ->  umar ke saath bhejo; DB me record, naya OTP ya wahi nayi umar se (TTL, regenerate / resend)
   Notification  5   fail pe fail, company band kaise samjhun       ->  2-3 baar fail to traffic backup se (circuit OPEN)
   Notification  5   main company wapas theek hui?                  ->  beech-beech me "tu theek hai?" (HALF-OPEN)
   Notification  5   backup bhi same fail bole                      ->  number galat, alag daal do (DLQ)
-  Notification  6   20 worker 300/sec, company ki had 100          ->  saanjha dabba, sab usi se guzrein (token bucket, Redis)
+  Notification  6   20 worker / consumer 300/sec, company ki had 100          ->  saanjha dabba, sab usi se guzrein (token bucket, Redis)
   Notification  7   company ne "OK" bola, SMS pahuncha nahi        ->  "le liya", baad me sent ya fail bataye (webhook)
   Notification  7b  le liya bola, DELIVERED kabhi aaya hi nahi     ->  cron job chhotu poochhe, na mile to FAILED + backup (status poll)
   Stock         7   portfolio DB band, sauda ulta kar do?          ->  rollback nahi, consumer court (settlement PENDING)
@@ -423,7 +423,7 @@ Yahi dikkat yahan bhi:
   Twitter       10  50,000 log 1 GB video, server bhara            ->  alag route pe ja, URL se dekhenge (S3, presigned URL)
   Twitter       11  John 4K TV pe, Ravi gaon me phone pe           ->  Ferrari highway, Alto gaon (transcoding, ABR)
   Twitter       6   3-4 saal purane tweet bhi mote register me     ->  alag permanent diary, S3 (archive)
-  Twitter       12  ek machine 4 size banaye, 20 minute            ->  kai machine, video id ki parchi pe baanto (workers)
+  Twitter       12  ek machine 4 size banaye, 20 minute            ->  kai machine, video id ki parchi pe baanto (workers / consumers)
   Twitter       14  2:00 pe khiskaya, phone 0:00 se kheenche       ->  copy dekh ke seedha 51wa page (manifest, seek)
   Twitter       14b 1 crore log, har tukda hamari API se?          ->  bas file hai, CDN pe rakh do (static)
   Twitter       14b 1 crore bachche yaad rakhein kaunsa page       ->  bookmark, 51 khud palat lo (player client side)
@@ -468,7 +468,7 @@ Yahi dikkat yahan bhi:
   Twitter       1c  unfollow, purane 50 tweet dabbe me             ->  saaf nahi, naye band, dheere khisakte (lazy, ranking)
   Twitter       2   Kohli ke 27 crore dabbe, ghanton lage          ->  ek chhoti parchi, sab yahin se padhein (fanout on read)
   Twitter       3   doston ka dabba + 15 celeb parchiyan           ->  ek parchi pe, DSA jaisa sort (merge at read)
-  Notification  8   1 crore offer, 40 lakh pe crash                ->  50 worker, alag-alag range (chunks)
+  Notification  8   1 crore offer, 40 lakh pe crash                ->  50 worker / consumer, alag-alag range (chunks)
   Notification  8   dobara chala to loop shuru se                  ->  parchi pe likho "ye ghar ho gaya" (checkpoint DB)
   News          1   5000 site, khabar aayegi kaise                 ->  chhotu, sab utha ke dabbe me (fetcher, DB)
   News          2   chhotu akela, ek chakkar 3 ghante              ->  bahut saare chhotu (kai fetcher)
@@ -487,7 +487,7 @@ Yahi dikkat yahan bhi:
   Netflix       6   "tere liye" me 6 second                        ->  parlour wala GTA pehle se (raat ka batch, cache se uthao)
   Netflix       6b  11 baje Dhurandhar dekhi                       ->  turant parchi, dikhate waqt milao (abhi ka fast store + bani list)
   Netflix       6c  Priya naya user                                ->  India ka garam maal (cold start)
-  YouTube       7   MrBeast ki video, crore subscriber             ->  Twitter wala fan-out, sabko push (fan-out + notification, queue + workers)
+  YouTube       7   MrBeast ki video, crore subscriber             ->  Twitter wala fan-out, sabko push (fan-out + notification, queue + workers / consumers)
   Twitter       17  Amit ka tweet 40 ke neeche dab gaya            ->  jisse judta wo pehle (ranking)
   Docs          2b  2 saal purana doc, 50 lakh op                  ->  har kuch hazaar op pe doc ki photo, photo + baad ke op (snapshot)
   Train         4   tower ki list koi nahi deta                    ->  khud tukdon me, ya permission wali authority (railway, MCD, BMC), updates (data partner)
@@ -567,7 +567,7 @@ Yahi dikkat yahan bhi:
   Twitter       6   dabbe me 3 saal ke tweet, memory ka bill       ->  parchi chhoti, bas last 500 (inbox had)
   Twitter       6   30 crore mahino se app nahi khol rahe          ->  30 din nahi aaya to kuch taiyaar nahi (on-demand inbox)
   Notification  9   har SMS se pehle saancha DB se                 ->  ek hi saancha apne paas, bas naam badlo (template cache)
-  Notification  9b  OTP worker bhi pasand padhne DB pe             ->  OTP seedha bhejo, DB se lena-dena nahi
+  Notification  9b  OTP worker / consumer bhi pasand padhne DB pe             ->  OTP seedha bhejo, DB se lena-dena nahi
   File upload   5   folder rename = 500 copy + 500 delete          ->  tree jaisa, sirf parent badlo (parent_id)
   Docs          1   Save pe poora text, Arpan ki line gayab        ->  poora text nahi, operation bhejo (insert / delete)
   Chat          8   "12 naye message" kaise dikhe                  ->  ek ginti, itne padh liye (read count, kul - padhe)

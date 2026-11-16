@@ -308,7 +308,7 @@ paisa de diya, D5 book karna hai". Koi bhi aaye, kahin se bhi aaye, parchi dekh 
 parchi wahin padi.
 
 **Asli naam:** SUCCESS + parchi ek saath = transactional outbox (ek hi DB transaction), parchi dekh ke book = relay /
-worker outbox padh ke ticket service ko bhejta.
+worker / consumer outbox padh ke ticket service ko bhejta.
 
 ```mermaid
 flowchart LR

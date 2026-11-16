@@ -50,6 +50,6 @@ SAGA ≠ ye   saga kaam ULTA karta (refund). Yahan sirf raste me khona rokna.
 JAWAB:    Teen jagah se khabar khoti thi, teeno band ki:
           1) Paisa kata aur khabar ek saath DB me (outbox), to bhejne se pehle crash me khabar nahi khoti.
           2) Kafka me 'saath chal rahi saari copy (ISR) me likh gaya tabhi done'.
-          3) Worker kaam ke baad 'padh liya' bolta, id se dobara skip, kharab khabar DLQ me.
+          3) Worker / consumer kaam ke baad 'padh liya' bolta, id se dobara skip, kharab khabar DLQ me.
           Chala ke dekha: bina iske 5 me se 3 khabar kho gayi, iske saath ek bhi nahi.
 ```

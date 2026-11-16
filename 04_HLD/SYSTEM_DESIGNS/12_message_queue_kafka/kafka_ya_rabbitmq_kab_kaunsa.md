@@ -9,8 +9,8 @@ Saath: [Kafka design](12_message_queue_kafka.md) · [kafka_concepts](kafka_conce
 
 ```
 RabbitMQ = daakghar
-  chitthi aayi -> sahi dabbe (queue) me gayi -> ek worker ne uthayi, "mil gaya" (ack) bola -> chitthi khatam
-  achha: kaam baantna (ek kaam ek worker), routing ke niyam (ye wali yahan, wo wahan)
+  chitthi aayi -> sahi dabbe (queue) me gayi -> ek worker / consumer ne uthayi, "mil gaya" (ack) bola -> chitthi khatam
+  achha: kaam baantna (ek kaam ek worker / consumer), routing ke niyam (ye wali yahan, wo wahan)
 
 Kafka = register (bahi-khata)
   har entry bas likhti jaati hai, padhne se mit-ti nahi, kuch din rehti hai
@@ -18,7 +18,7 @@ Kafka = register (bahi-khata)
 ```
 
 **Kab kaunsa:**
-- **RabbitMQ:** jab ek kaam ek baar ek worker se karwana hai, jaise email bhejna ya report banana, aur message
+- **RabbitMQ:** jab ek kaam ek baar ek worker / consumer se karwana hai, jaise email bhejna ya report banana, aur message
   ke hisaab se raasta badalna hai.
 - **Kafka:** jab ek hi event kai jagah chahiye (search, notification, analytics), dobara padhna pad sakta hai,
   aur data bahut bada hai.
