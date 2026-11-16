@@ -9,15 +9,56 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ---
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Ravi / script
+     |
+     v
+[ GATE: API gateway pe guard ]  <-- ban list: baar-baar todne wala yahin se wapas
+     |   har request pe poochhe: "Ravi ke dabbe me token hai?"
+     v
+[ Redis: har user ka dabba (token bucket) ]
+     |   check + token nikaalna EK saath (Lua script); 10 server hon tab bhi ginti ek jagah
+     |   had paar -> 429 + "itne second baad aana"
+     v
+[ OTP Service ] (kai server)
+     |
+     v
+[ Line (queue) ] -> worker SMS company ki raftaar se bhejta; umar khatam wala OTP phenk do
+     |
+     v
+[ SMS company ]
+
+saath me: Redis gira -> dono khule (OTP + feed), gateway apni kachchi ginti se 5-5 karke (local fallback)
+          login se pehle dheeli had (IP / number), login ke baad userId pe kadi
+          3 region -> ginti ghar region ke Redis me (+91 = India)
+
+ 1  script har second 1000 OTP, bill chadha     ->  ek bande ki had (rate limit, 429)
+ 2  10 server, har ek ki alag ginti             ->  ginti ek jagah (central counter, Redis)
+ 3  khaata badla, 3 second me 10 OTP            ->  dabbe se token, apni raftaar se (token bucket)
+ 4  20 request ek saath, "tokens = 1"           ->  check + nikaalna ek baari me (Lua script)
+ 5  guard andar kamre me, 1000 ghus gaye        ->  guard gate pe (API gateway)
+ 6  guard ka Redis gira                         ->  dono khule, bouncer 5-5 karke (fail-open + local fallback)
+ 7  script 429 khaati, phir bhi maarti          ->  pattern dekho, ban / WAF
+ 8  naya number har baar, office ek WiFi        ->  login se pehle dheeli had, baad me userId pe kadi
+ 9  result ka din, SMS company giri             ->  line lagwao, ek-ek karke (queue, Kafka)
+10  VPN se 3 region, 15 OTP                     ->  ek ghar region, ginti wahin (home region, +91)
+```
+
+**FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
+
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      har user ki had (OTP 10 minute me 5, login 5 / minute, baaki API 100 / minute) · paar ho to 429 + Retry-After
-        · baar-baar wala permanent band · SMS company ki had bhi bachao
-        · login se pehle dheeli had, login ke baad user ke naam pe kadi had · VPN se region badal ke had na tode, ghar ka region dekho
-NFR     tez: har request ke aage, ~1 ms me haan / na · ginti EK: 10 server hon tab bhi ek jagah · limiter gire to site na gire (OTP aur feed dono chalu, gateway apni kachchi ginti se had lagaye)
-Numbers ~1 crore user, bheed me ~10,000 request / sec · har user ke 2 chhote number = ~500 MB
-        -> dikkat jagah ki nahi, speed ki: RAM wala Redis, DB nahi
+FR      1  had me hai to jaane do, paar to 429, thodi der baad dobara       -> kadam 1, 3
+        2  20 request alag-alag server pe jaayein, ginti phir bhi ek       -> kadam 2, 4
+        3  office ke ek IP se 500 log aa rahe, unhe bhi sambhalo            -> kadam 8
+
+NFR     1  ginti consistent rahe                                           -> kadam 2, 4
+        2  hamesha available: limiter / Redis gira to site na gire, failover -> kadam 6
+        3  VPN se region badle to bhi ek hi ghar region                     -> kadam 10
+
+Numbers nahi: yahan koi faisla nahi badalte.
 ```
 
 ---
