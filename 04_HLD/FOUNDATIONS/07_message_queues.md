@@ -317,6 +317,8 @@ ek khabar kai jagah, dobara padhna   -> Kafka
 AWS pe seedha-saadha                 -> SQS
 ```
 
+Baaki naam jo sunne ko milte hain: AWS Kinesis (Kafka jaisa, AWS ka), Google Pub/Sub (GCP ka), ActiveMQ (purana Java broker).
+
 ### Pehle kaun aaya, aur RabbitMQ ne ye kyun nahi kiya
 
 RabbitMQ pehle aaya (2007), Kafka baad me (2011). RabbitMQ ka niyam (AMQP) JP Morgan me shuru hua tha: bank ko do system ke
@@ -827,19 +829,3 @@ queue me   jama kiya backlog baad me bada karke chhoda
 
 Poora dhaancha: `03_load_balancing.md` ka "CHHE TARIKE" · `04_caching.md` ka "REDIS LAGATE HI SERVER DOWN" ·
 `SYSTEM_DESIGNS/02_rate_limiter` ka "LIMITER LAGA THA PHIR BHI NAHI BACHA".
-
----
-
-## Real-World Tools
-
-| Tool | Type | Use |
-|---|---|---|
-| **Kafka** | Log-based | LinkedIn, Uber, Netflix — event streaming |
-| **RabbitMQ** | Broker | Traditional Java/Spring apps |
-| **AWS SQS** | Managed queue | Simple async tasks |
-| **AWS Kinesis** | Managed Kafka-like | AWS event streaming |
-| **Google Pub/Sub** | Managed | GCP pub-sub |
-| **Redis Streams** | Lightweight | Smaller scale, simple |
-| **ActiveMQ** | Broker | Older Java enterprise |
-
----
