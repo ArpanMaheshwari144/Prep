@@ -1,5 +1,14 @@
 # @Async + @Scheduled
 
+## Koi poochhe "@Async aur @Scheduled kya hain" to aise bolo
+
+```
+@Async: method alag thread pe chalta hai, caller uska intezaar nahi karta (welcome email).
+@Scheduled: method ghadi se chalta hai, koi call nahi karta (fixedRate, fixedDelay, cron).
+Dono ke liye @EnableAsync / @EnableScheduling lagana padta hai, warna annotation chup-chaap kuch nahi karti.
+Scheduler ka default pool 1 thread ka hota hai, isliye ek lamba job baaki sab jobs ko rok deta hai.
+```
+
 ## Ek line me (Arpan ki misaal)
 
 - **@Async** = chhotu ko paise de diye "doodh ka packet le aa", aur main chhotu ke liye ruka nahi, ghar aa gaya. Chhotu laake de dega.
