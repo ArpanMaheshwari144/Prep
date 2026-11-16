@@ -249,7 +249,7 @@ Yahi dikkat yahan bhi:
   URL shortener 9   almari me aag                                  ->  copy + acknowledge (quorum)
   URL shortener 9b  Delhi me aag, copy peeche chale                ->  copy alag jagah, authority pehle likhe phir bheje, uski bhi copy (coordinator, async copy)
   URL shortener 10  C se padha, nahi mila                          ->  do se padho (R=2)
-  Rate limiter  6   Redis gira, sabko jaane de ya roke             ->  papa ke dost andar, chor bahar (fail-open / fail-closed)
+  Rate limiter  6   Redis gira, sabko jaane de ya roke             ->  dono khule (OTP pe kisi ka bank transfer), bouncer 5-5 karke bheje (fail-open + local fallback limiter)
   Twitter       13  worker 7 gira, "processing" ghanton se         ->  "tu hai kya?", jawab nahi to naya banda (heartbeat)
   Twitter       13b worker zinda, 1 ghante se ek hissa bana raha   ->  "tu thoda rest le", replacement wahin se kare (timeout, checkpoint)
   Twitter       13c zinda par kaam kahan tak? 50 ka chunk            ->  "kahan tak hua" poochho, 2-3 chhotu madad, parchi dekh ke 31 se (progress, work stealing, checkpoint)

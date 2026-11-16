@@ -9,7 +9,7 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 FR      har user ki had (OTP 10 minute me 5, login 5 / minute, baaki API 100 / minute) · paar ho to 429 + Retry-After
         · baar-baar wala permanent band · SMS company ki had bhi bachao
         · login se pehle dheeli had, login ke baad user ke naam pe kadi had · VPN se region badal ke had na tode, ghar ka region dekho
-NFR     tez: har request ke aage, ~1 ms me haan / na · ginti EK: 10 server hon tab bhi ek jagah · limiter gire to site na gire (OTP jaisi tijori chhod ke, wo band)
+NFR     tez: har request ke aage, ~1 ms me haan / na · ginti EK: 10 server hon tab bhi ek jagah · limiter gire to site na gire (OTP aur feed dono chalu, gateway apni kachchi ginti se had lagaye)
 Numbers ~1 crore user, bheed me ~10,000 request / sec · har user ke 2 chhote number = ~500 MB
         -> dikkat jagah ki nahi, speed ki: RAM wala Redis, DB nahi
 ```
@@ -41,13 +41,13 @@ Arpan: Mere ghar me ek security guard hai, wo kehta 10,000 log andar nahi aa sak
 Technical me: "guard andar kamre me" = limiter service ke andar, "guard bahar gate pe" = limiter API gateway pe.
 
 **6. Gate ka guard ginti Redis se dekhta, Redis gira. Ya sabko jaane de ya sabko rok de. OTP button ke liye kya, home page (feed) ke liye kya?**
-Arpan: Mere papa ke kuch khaas dost hain, unko andar aane do, wo dekh ke chale jaayenge, koi nuksaan nahi. "Papa ji namaste, chalte hain." Par beech me kuch chor bhi hain jo hamari tijori lootne aa rahe, unhe rok do.
-Technical me: "papa ke dost, dekh ke chale jaayenge" = feed / home page fail-open, "tijori lootne wale chor rok do" = OTP fail-closed.
-Arpan (doosri kahani, 16-Nov round): Redis gira hai, API gateway (bouncer) thodi gira. Redis ki to ek copy (replica) bhi hai; worst case sab gira. OTP band nahi kar sakte: kisi ka zaroori bank transfer ho raha, OTP nahi aaya to wo kya karega, rate limiter ka kaam ye nahi. Feed band karna bhi galat, koi zaroori reel upload kar raha ho. To dono khule rakho. Bouncer bahar khada hai, use bol do "ek saath 1000 andar mat bhejna, 5-5 karke bhejna". Gateway ke andar ka kaam mujhe pata nahi, par aisa kuch kar sakte. Interviewer poochhe "OTP kyun band kiya, mera bank transfer atka", to wo jawab galat lagega.
-Technical me: "dono khule, bouncer 5-5 karke bheje" = Redis gira to fail-open, par har gateway apni memory me kachchi ginti se had lagaye (local fallback limiter, thoda dheela par pura khula nahi); Redis ki replica pehle.
+Arpan: Redis gira hai, API gateway (bouncer) thodi gira. Redis ki to ek copy (replica) bhi hai; worst case sab gira. OTP band nahi kar sakte: kisi ka zaroori bank transfer ho raha, OTP nahi aaya to wo kya karega, rate limiter ka kaam ye nahi. Feed band karna bhi galat, koi zaroori reel upload kar raha ho. To dono khule rakho. Bouncer bahar khada hai, use bol do "ek saath 1000 andar mat bhejna, 5-5 karke bhejna". Gateway ke andar ka kaam mujhe pata nahi, par aisa kuch kar sakte. Interviewer poochhe "OTP kyun band kiya, mera bank transfer atka", to wo jawab galat lagega.
+Arpan (aage): OTP band karne ka matlab sabke liye band nahi. Shaq wala kaun, ye dekho: kisi ne 2-3 second me 5 OTP maang liye to wo suspicious, sirf uske liye gate band. Jo apni time range me baith ke OTP maang raha, use mana nahi kar sakte, warna dikkat. Interviewer poochhe "OTP kaise band kar doge, mera bank transaction atka", to bolo: sir sabka nahi, sirf usi ka jisne ek second me 3-4 maang liye.
+Technical me: "dono khule, bouncer 5-5 karke bheje" = Redis gira to fail-open, par har gateway apni memory me kachchi ginti se had lagaye (local fallback limiter, thoda dheela par pura khula nahi); "2-3 second me 5 OTP = shaq, sirf uska band" = OTP pe band sirf us user ka jo pattern tode (per-user block), baaki sabke liye khula; Redis ki replica pehle.
 
 **7. Script gate pe rukti, 429 khaati, par ruki nahi. Din-raat har second maarti, gate ko roz karodon "mana", Ravi ko farak nahi.**
 Arpan: Ek baar mana kiya, do baar mana kiya, teesri baar bhi aaya. "Ravi bhai, tum yahan aao, mere is dabbe se jaake baat karo, wo kuch samjhaayega, chhoti si toffee dega." Us dabbe me Ravi ka gala pakad ke wahin bitha denge: tu ab kahin nahi ja sakta, yahan se hil hi nahi sakta, is site ke liye tu permanent band.
+Arpan (doosri kahani, 16-Nov round): Pehle 1-2 baar chot khaayi to bouncer API gateway pe khada kiya. Ab bouncer bhi roz 1000 logon se uljha hai. To pattern dekho: ye banda roz-roz aa ke yahi kar raha? Haan to ban karo, WAF me daal do, block, kahani khatam.
 Technical me: "ek baar, do baar, teesri baar" = baar-baar had todne ka pattern, "alag dabba, yahan se hil nahi sakta" = ban list, "permanent band" = ban wala gate pe bina gine lautta.
 
 **8. OTP login se pehle, had phone number pe. Ravi ki script har baar naya number daalti, har number ki ginti 1. Had IP pe lagai to subah 9 baje office ke 500 log ek hi WiFi (IP) se, 5 OTP ke baad poora office atka.**

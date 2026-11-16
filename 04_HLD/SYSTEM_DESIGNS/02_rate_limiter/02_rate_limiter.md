@@ -15,7 +15,7 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 FR      har user ki had (OTP 10 minute me 5, login 5 / minute, baaki API 100 / minute) · paar ho to 429 + Retry-After
         · baar-baar wala permanent band · SMS company ki had bhi bachao
         · login se pehle dheeli had, login ke baad user ke naam pe kadi had · VPN se region badal ke had na tode, ghar ka region dekho
-NFR     tez: har request ke aage, ~1 ms me haan / na · ginti EK: 10 server hon tab bhi ek jagah · limiter gire to site na gire (OTP jaisi tijori chhod ke, wo band)
+NFR     tez: har request ke aage, ~1 ms me haan / na · ginti EK: 10 server hon tab bhi ek jagah · limiter gire to site na gire (OTP aur feed dono chalu, gateway apni kachchi ginti se had lagaye)
 Numbers ~1 crore user, bheed me ~10,000 request / sec · har user ke 2 chhote number = ~500 MB
         -> dikkat jagah ki nahi, speed ki: RAM wala Redis, DB nahi
 ```
@@ -181,26 +181,31 @@ flowchart TB
     style GH fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 6. Guard ka Redis gira (papa ke dost aane do, chor roko)
+## 6. Guard ka Redis gira (dono khule, bouncer 5-5 karke bheje)
 
-Gate ka guard ginti Redis se dekhta, aur Redis gir gaya. Ab ya sabko jaane do ya sabko roko? Mere papa ke kuch khaas
-dost hain, unko andar aane do, wo dekh ke chale jaayenge, koi nuksaan nahi. "Papa ji namaste, chalte hain."
-Par beech me kuch chor bhi hain jo hamari tijori lootne aa rahe, unhe rok do.
+Gate ka guard ginti Redis se dekhta, aur Redis gir gaya. Pehle to Redis ki copy (replica) hai, wo sambhal legi. Worst case
+sab gira. Ab ya sabko jaane do ya sabko roko? Redis gira hai, API gateway (bouncer) thodi gira. OTP band nahi kar sakte:
+kisi ka zaroori bank transfer ho raha, OTP nahi aaya to wo kya karega, rate limiter ka kaam ye nahi. Feed band karna bhi
+galat, koi zaroori reel upload kar raha ho. To dono khule rakho, aur bahar khade bouncer ko bol do "ek saath 1000 andar mat
+bhejna, 5-5 karke bhejna". OTP band karna ho to sabka nahi, sirf shaq wale ka: jisne 2-3 second me 5 OTP
+maang liye, sirf uske liye gate band; apni range me maangne wale ke liye khula.
 
-**Asli naam:** papa ke dost, dekh ke chale jaayenge = feed / home page fail-open (kuch der bina had ke chalna chhota
-nuksaan, site band hona bada), tijori ke chor = OTP fail-closed (yahan har request pe SMS ka paisa jaata).
+**Asli naam:** dono khule = fail-open; bouncer 5-5 karke bheje = har gateway apni memory me kachchi ginti se had lagaye
+(local fallback limiter: Redis jitni sahi nahi, thodi dheeli, par darwaza poora khula nahi). Redis ki replica pehle bachav. Shaq wala (2-3 sec me 5 OTP) = sirf us user pe block, sab pe nahi.
 
 ```mermaid
 flowchart TB
-    R[("Guard ka Redis gira")]:::bad
-    G["Gate ka guard"]:::card
-    subgraph KA["KISE ANDAR AANE DEN"]
-        F(["Papa ke dost: aane do,<br/>dekh ke chale jaayenge<br/>(feed: fail-open)"]):::good
-        C(["Tijori ke chor: roko<br/>(OTP: fail-closed)"]):::pill
+    R[("Guard ka Redis gira<br/>(pehle replica sambhale)")]:::bad
+    G["Gate ka guard (API gateway):<br/>khud nahi gira"]:::card
+    subgraph KA["DONO KHULE, PAR HAD KE SAATH"]
+        F(["Feed: chalu"]):::good
+        C(["OTP: chalu<br/>(bank transfer na atke)"]):::good
+        L(["Gateway apni memory me<br/>kachchi ginti: 5-5 karke andar<br/>(local fallback limiter)"]):::pill
     end
     G -. "ginti nahi mil rahi" .-> R
-    G --> F
-    G --> C
+    G --> L
+    L --> F
+    L --> C
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
