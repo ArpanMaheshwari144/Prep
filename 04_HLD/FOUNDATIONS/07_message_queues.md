@@ -250,15 +250,36 @@ consumer ko jaati hai.
 
 ---
 
-## Delivery Semantics
+## Delivery ke teen vaade
 
-| Semantic | Guarantee | Speed | Use Case |
-|---|---|---|---|
-| **At-most-once** | May lose | Fast | Metrics, logs |
-| **At-least-once** | May duplicate | Medium | Most cases (with idempotency) |
-| **Exactly-once** | No loss, no dup | Slow | Banking, payments |
+### Koi poochhe "at-most-once, at-least-once, exactly-once" to aise bolo
 
-**Key insight:** At-least-once + idempotent consumer ≈ exactly-once (cheaper).
+```
+At-most-once: pehle offset commit, phir kaam. Crash hua to message kho gaya, par duplicate kabhi nahi.
+At-least-once: pehle kaam, phir commit. Crash hua to message dobara aayega, khota nahi.
+              Default yahi hai, aur consumer ko idempotent banate hain (id dekh ke skip).
+Exactly-once: na khoye, na duplicate. Sabse mehenga hai, isliye aam taur pe
+              at-least-once + idempotent consumer se yahi asar laate hain.
+```
+
+### Stadium me (checker = SMS ka worker / consumer)
+
+```
+AT-MOST-ONCE    checker ne pehle bookmark aage khiskaya, phir SMS bhejne chala aur gir gaya.
+                Naya checker bookmark se aage padhega, Arpan ka SMS kabhi nahi gaya.
+                Chalega kahan: metrics, logs (ek-do kho gaye to farak nahi).
+
+AT-LEAST-ONCE   checker ne pehle SMS bheja, bookmark khiskaane se pehle gir gaya.
+                Naya checker wahi khabar phir uthayega, SMS do baar jaa sakta hai.
+                Hal: khabar ki id dekho, pehle bheja hai to chhod do.
+                (usercrud me processedIds yahi karta hai)
+
+EXACTLY-ONCE    na khoye, na do baar. Paisa, bank.
+```
+
+Spring Kafka se jod ([01_spring_kafka](../../02_SPRING/14_SPRING_KAFKA/01_spring_kafka.md)): Spring kaam ke baad commit karta
+hai, yani at-least-once. Duplicate rokne wala set memory me tha, to restart pe gaya aur SMS dobara chala gaya. Isliye wo id
+DB ya Redis me rakhte hain.
 
 ---
 
