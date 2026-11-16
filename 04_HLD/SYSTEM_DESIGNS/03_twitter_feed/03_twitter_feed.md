@@ -628,6 +628,33 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
 ```
 
+## 19. "Thank you" dikha, "mast DP" gaayab (do pe likho, do se padho)
+
+Ravi ne nayi DP daali, Arpan ne reply kiya "mast DP bhai", Ravi ne uspe "thank you bhai". Tweet / reply ki 3 copy hain.
+Arpan ka reply copy A aur B me likha gaya, C tak abhi nahi; Ravi ka "thank you" C me pehle pahunch gaya. Priya C se padh
+rahi, use sirf "thank you" dikha. Hal: do pe likho, do se padho. Reply tabhi pura mano jab kam se kam 2 copy ne rakh liya.
+Priya bhi kisi 2 copy se poochhe: C me nahi to A me hai. DB shard karke leader + 3 copy rakhi hon tab bhi yahi: leader aur
+2 copy ne rakha tabhi pura. Twitter me Cassandra hai, wo ye khud karta hai.
+
+**Asli naam:** do pe likho, do se padho = quorum (N = 3, W = 2, R = 2, W + R > N, isliye padhi gayi do copy me se ek me
+naya likha zaroor), 2 ne rakha tabhi pura = write ack, Cassandra = leaderless, QUORUM read / write (URL kadam 9-10).
+
+```mermaid
+flowchart TB
+    W["Arpan ka reply 'mast DP':<br/>A aur B me likha (2 ne haan bola)"]:::card
+    C[("Copy C: abhi sirf<br/>'thank you'")]:::bad
+    Q(["Priya kisi 2 copy se padhe<br/>(quorum: W 2, R 2)"]):::pill
+    OK["C me nahi to A me hai:<br/>dono reply sahi kram me"]:::good
+    W -.-> C
+    W --> Q
+    Q --> OK
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
 ---
 
 Notes (Arpan ke shabd) = [TWITTER_HAND_NOTES.md](TWITTER_HAND_NOTES.md)
