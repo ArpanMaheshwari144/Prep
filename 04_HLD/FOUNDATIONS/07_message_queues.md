@@ -127,6 +127,8 @@ kaam wahin se aage chalta hai. Thread me ye kuch nahi hota: email gaya ya nahi, 
 
 ### Do sawaal se faisla
 
+Aaj ke microservice me aam niyam: kuch badla (state change) to event (queue), kuch poochna hai (query) to REST.
+
 ```
 caller ko turant jawab chahiye?    haan -> sync (REST)          nahi -> queue
 kaam kho jaaye to chalega?          haan -> background thread    nahi -> queue
@@ -275,6 +277,8 @@ AT-LEAST-ONCE   checker ne pehle SMS bheja, bookmark khiskaane se pehle gir gaya
                 (usercrud me processedIds yahi karta hai)
 
 EXACTLY-ONCE    na khoye, na do baar. Paisa, bank.
+                Sakht exactly-once ke liye distributed transaction (2PC) chahiye: dheema aur naazuk,
+                isliye aam taur pe isse bachte hain.
 ```
 
 Spring Kafka se jod ([01_spring_kafka](../../02_SPRING/14_SPRING_KAFKA/01_spring_kafka.md)): Spring kaam ke baad commit karta
@@ -839,101 +843,3 @@ Poora dhaancha: `03_load_balancing.md` ka "CHHE TARIKE" · `04_caching.md` ka "R
 | **ActiveMQ** | Broker | Older Java enterprise |
 
 ---
-
-## Interview Talking Points
-
-**Q: "MQ vs REST kab?"**
-
-> *"REST sync — caller waits, tightly coupled. MQ async — decouple, buffer spikes, retry on failure. Heavy/slow/non-critical work → MQ. Real-time response → REST. Modern microservices: events for state changes, REST for queries."*
-
-**Q: "Kafka vs RabbitMQ?"**
-
-> *"Kafka = distributed append-only log, millions/sec, persistent, replay support — event streaming. RabbitMQ = traditional broker, complex routing (exchanges), push-based, task queues. Big scale + replay → Kafka. Complex routing + small/medium → RabbitMQ."*
-
-**Q: "Exactly-once delivery kaise?"**
-
-> *"Hard. Practical: **at-least-once + idempotent consumer** (unique message_id, dedup table). Effectively exactly-once at lower cost. Strict exactly-once needs distributed transactions (2PC) — slow, brittle, mostly avoid."*
-
-**Q: "DLQ kya?"**
-
-> *"Dead Letter Queue — messages failing repeatedly (5 retries) shifted here. Main queue se stuck poison messages hatate. Manual investigation + fix + replay. Production mandatory."*
-
-**Q: "Kafka mein ordering?"**
-
-> *"Within partition guaranteed (append-only log). Cross-partition no order. Trick: same key → same partition. user_id key → us user ke saare events ordered. Critical for sequence-dependent flows."*
-
----
-
-## Power Phrase
-
-> **"MQ = async + decouple + buffer + reliability. Producer publishes, consumer processes — independently. Patterns: P2P (queue) vs Pub-Sub (topic). Delivery: at-least-once + idempotent = practical exactly-once. Kafka (log, millions/sec, replay) vs RabbitMQ (broker, routing). Hard problems: ordering, idempotency, DLQ, backpressure."**
-
----
-
-## Memory Hook
-
-```
-MQ = "Restaurant order slips"
-   • Waiter (producer) → board (queue) → chef (consumer)
-   • Decouple, async, buffer, reliable
-
-Patterns:
-   Point-to-Point (Queue) → 1 message, 1 consumer
-   Pub-Sub (Topic)        → 1 message, all subscribers
-
-Delivery:
-   At-most-once   → fast, lossy (metrics)
-   At-least-once  → most common (idempotent consumer)
-   Exactly-once   → slowest, banking
-
-Kafka:
-   Topic → Partitions → Offset
-   Same key → same partition = order
-   Consumer group → parallelism
-   Replay support
-
-RabbitMQ:
-   Exchange → Binding → Queue
-   Direct/Topic/Fanout/Headers
-   Push-based, complex routing
-
-Hard problems:
-   1. Ordering   — partition key trick
-   2. Idempotency — unique msg_id + dedup
-   3. DLQ        — poison message escape
-   4. Backpressure — auto-scale consumers
-```
-
----
-
-## Trap Box
-
-```
-Trap 1: "MQ = always better than REST"
-         Real-time queries (get user) → REST simpler
-         Async/heavy/spike-prone work → MQ
-
-Trap 2: "Exactly-once is achievable easily"
-         Distributed exactly-once = hard problem
-         At-least-once + idempotent consumer
-
-Trap 3: "Kafka order guaranteed always"
-         Only within partition
-         Use partition key for related messages
-
-Trap 4: "No DLQ needed"
-         Poison messages stuck retry forever
-         DLQ mandatory in production
-
-Trap 5: "Consumer faster than producer always"
-         Spikes → backpressure → infinite queue
-         Auto-scale consumers, monitor queue depth
-
-Trap 6: "Kafka and RabbitMQ same thing"
-         Different paradigms (log vs broker)
-         Kafka = streaming, RabbitMQ = task queues
-
-Trap 7: "Async = lost reliability"
-         MQ persistence + retry = MORE reliable than REST
-         MQ improves reliability with right config
-```
