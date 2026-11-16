@@ -177,13 +177,12 @@ Arpan ne pakda: ek hi partition me pay aur cancel gaye to pehle pay hoga, phir c
 doosre me, to kram ka koi bharosa nahi. Kafka partition ke bahar kram nahi dekhta; andar jo pehle aaya wahi pehle niklega.
 Kafka andar sort nahi karta, bas jis kram me khabar aayi wahi kram pakka rakhta hai.
 
-Poore system ka ek kram chahiye to sab ek hi line me lagana padega, aur ek line = ek machine, to bheed wahi atak jaayegi.
-Isliye Kafka ne ye sauda kiya: teen line se raftaar milti hai, aur kram sirf ek line ke andar. Jinka kram zaroori hai
-(ek user ke pay, cancel), unhe ek hi key do, to wo ek hi line me jaate hain.
-
-Source, Kafka ke apne docs (kafka.apache.org/0100/documentation.html, Consumers): "Kafka only provides a total order over
-records within a partition, not between different partitions in a topic." Aur wahi aage likha hai ki poora kram chahiye to
-topic me ek hi partition rakho, par tab ek consumer group me sirf ek consumer chal paayega. Yahi sauda hai: kram ya raftaar.
+Kafka banane walon (Kreps, Narkhede, Rao, LinkedIn) ke 2011 ke paper "Kafka: a Distributed Messaging System for Log
+Processing" me ye likha hai: "To balance the load, a topic is divided into multiple partitions", aur "there is no guarantee
+on the ordering of messages coming from different partitions." Yani partition bojh baantne ke liye bane, aur partition ke
+bahar kram ka vaada nahi. Kafka ke docs (Consumers wala hissa) me aage likha hai ki poora kram chahiye to topic me ek hi
+partition rakho, par tab ek consumer group me sirf ek consumer chal paayega. Unhone andar baith ke aur kya socha, wo kahin
+likha nahi mila. Jinka kram zaroori hai (ek user ke pay, cancel), unhe ek hi key do, to wo ek hi partition me jaate hain.
 
 ---
 
