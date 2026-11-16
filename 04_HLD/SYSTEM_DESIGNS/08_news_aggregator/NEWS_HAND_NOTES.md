@@ -24,7 +24,7 @@ Arpan: Bahut saare chhotu rakh le. Aur khabar pehle se taiyaar rakh, ek chhoti p
 Technical me: "bahut saare chhotu" = kai fetcher ek saath, "chhoti parchi" = Redis me taiyaar feed (cache).
 
 **Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya.**
-Arpan: Ye Twitter ke worker 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.
+Arpan: Ye Twitter ke worker / consumer 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.
 Technical me: "main zinda hoon" = heartbeat, "main site baant deta" = coordinator (chhotuon ko kaam baantne wala, load balancer nahi), kaam ka reassignment (lease khatam to doosra le).
 
 **3. 50 chhotu. Ravi ki feed me ek khabar 40 baar: 2 chhotu ek hi Cricbuzz se laaye, 38 alag site se alag shabdon me.**
@@ -32,7 +32,7 @@ Arpan: Chhotu ke paas ek bada aadmi rakh: "ye dobara hai, hatao, pehle aa chuki"
 Technical me: "bada aadmi" = dedup, "hubahu same" = URL / title ka hash, "wordings dekh lo" = shabd milaan (near-duplicate check).
 
 **4. Bada aadmi akela, har khabar ko hafte ki 5 lakh khabron se milata, 1 minute ek khabar. Line lambi, 8:55 wali 10:30 pe.**
-Arpan: Chhotu ko faltu khada mat kar. Khabar Kafka me daal (stadium wali kahani) aur chhotu apna kaam karta rahe. Peeche workers dupe hata ke feed / DB / Redis me rakhte rahenge. Aur har dupe nahi hatega, kabhi aa jaayega, jaise Instagram feed me bhi aata.
+Arpan: Chhotu ko faltu khada mat kar. Khabar Kafka me daal (stadium wali kahani) aur chhotu apna kaam karta rahe. Peeche workers / consumers dupe hata ke feed / DB / Redis me rakhte rahenge. Aur har dupe nahi hatega, kabhi aa jaayega, jaise Instagram feed me bhi aata.
 Technical me: "isme daal, chalta rahe" = Kafka (chhotu = producer), "peeche workers" = consumer group, "har dupe nahi hatega" = dedup best effort, trade-off maana.
 
 **5. Ravi ko cricket, Priya ko tech, par sabki ek parchi. Aur 9 baje 1 crore log ek saath.**
@@ -48,7 +48,7 @@ Arpan: Nayi khabar aate hi tech walon ki feed me daal do. Aur milaan: har tech w
 Technical me: "aate hi feed me" = likhte waqt push, "milaan" = check job.
 
 **8. 50 lakh tech wale, har ek ki apni parchi, har minute 20 khabar = 10 crore likhna. Workers / consumers peeche.**
-Arpan: Worker pe faltu load kyun? Sab tech wale hain, sabko same khabar; Tesla launch hua to sabke liye hai, aisa nahi Arpan ke liye hai Ravi ke liye nahi. 50 lakh alag parchi bekaar. Saari tech khabar ek parchi me, app khule to wahin se.
+Arpan: Worker / consumer pe faltu load kyun? Sab tech wale hain, sabko same khabar; Tesla launch hua to sabke liye hai, aisa nahi Arpan ke liye hai Ravi ke liye nahi. 50 lakh alag parchi bekaar. Saari tech khabar ek parchi me, app khule to wahin se.
 Technical me: "ek tech parchi" = category ka ek feed (ek key), likhna ek baar, padhte waqt user ki pasand se.
 
 **9. Tech parchi ek dabbe me. 9 baje iPhone launch, 10 lakh request / sec, dabba (maan lo) 1 lakh sambhalta. Cricket wale dabbe khaali.**

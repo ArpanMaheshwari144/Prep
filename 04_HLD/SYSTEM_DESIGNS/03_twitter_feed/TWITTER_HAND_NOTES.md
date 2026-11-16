@@ -86,7 +86,7 @@ Arpan: Ek machine kyun, kai machine kar de, kaam baant do. Video ki ek id rakh l
 Technical me: "kai machine, kaam baanto" = video ke hisse, transcoding workers / consumers (parallel), "id ki parchi" = har hissa video id + hissa number se.
 
 **13. 10 worker / consumer, 9 ka hissa bana, worker / consumer 7 beech me gira; video na taiyaar na koi batata, "processing" ghanton se.**
-Arpan: Har worker ka status. 9 ne bata diya, ek nahi bata paaya to dekhunga, heartbeat: "tu hai kya?" Jawab nahi to ise ghar bhejo, naya banda. Uske paas parchi: "maine yahan tak kar liya", naya wahin se uthaye. Save se pehle gira to shuru se.
+Arpan: Har worker / consumer ka status. 9 ne bata diya, ek nahi bata paaya to dekhunga, heartbeat: "tu hai kya?" Jawab nahi to ise ghar bhejo, naya banda. Uske paas parchi: "maine yahan tak kar liya", naya wahin se uthaye. Save se pehle gira to shuru se.
 Technical me: "har worker / consumer ka status" = DB me hisson ki ginti, "tu hai kya" = heartbeat, "naya banda" = job dobara (retry), "yahan tak parchi" = checkpoint.
 
 **Maan lo worker / consumer 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam.**
@@ -96,7 +96,7 @@ Isi dikkat ki doosri kahani: "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Ha
 Technical me: "zinda hoon != kaam ho raha" = heartbeat ke saath progress report, "bada chunk" = data skew (ek hisse pe zyada kaam), "2-3 chhotu madad" = hissa tod ke baanto (work stealing / split).
 
 **Maan lo worker / consumer 7 ke 50 me se 30 ban chuke, 2 naye chhotu bheje; unhe kaise pata 31 se shuru karna, warna pehle ke 30 do baar.**
-Arpan: Har chhotu ke paas ek parchi hogi: mera kaam yahan tak ho gaya. Sabko bol diya "apne kaam ka hamesha track rakho", kyunki kisi din bimaar pad gaye, ekdum kuch ho gaya, to main aaunga, kaise dekhunga kaam kahan tak hua. Wo track DB me, Redis me, kahin bhi; technical naam me nahi jaate, problem kaise samajh rahe wo dekhte hain. Kisi ne 5 kiye, kisi ne 7, kisi ne 10, sab likhte gaye. Worker 7 ne likh diya "30 khatam". Naye chhotu ko kaha pehle iski parchi dekho, isne kahan tak khatam kiya; 31 pe lag jaao, 10 tu sambhal, 10 tu sambhal, kaam jaldi nipta do.
+Arpan: Har chhotu ke paas ek parchi hogi: mera kaam yahan tak ho gaya. Sabko bol diya "apne kaam ka hamesha track rakho", kyunki kisi din bimaar pad gaye, ekdum kuch ho gaya, to main aaunga, kaise dekhunga kaam kahan tak hua. Wo track DB me, Redis me, kahin bhi; technical naam me nahi jaate, problem kaise samajh rahe wo dekhte hain. Kisi ne 5 kiye, kisi ne 7, kisi ne 10, sab likhte gaye. Worker / consumer 7 ne likh diya "30 khatam". Naye chhotu ko kaha pehle iski parchi dekho, isne kahan tak khatam kiya; 31 pe lag jaao, 10 tu sambhal, 10 tu sambhal, kaam jaldi nipta do.
 Technical me: "kahan tak hua ki parchi" = checkpoint (DB / Redis me), naya worker / consumer wahin se shuru (resume), baaki bacha kaam baant ke.
 
 **14. Ravi 2:00 pe khiskata hai six dekhne, par phone 0:00 se 2:00 tak sab kheench raha, faaltu data, six late.**

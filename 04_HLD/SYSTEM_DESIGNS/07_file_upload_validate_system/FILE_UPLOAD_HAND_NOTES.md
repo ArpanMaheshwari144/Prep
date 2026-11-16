@@ -17,7 +17,7 @@ Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi n
 &nbsp;
 
 **1. Server khud sab kar raha (lena, virus scan, thumbnail, save), Arpan 10 min spinner dekh raha, 1000 log aaye to list kholne wale bhi atke.**
-Arpan: YouTube kuch rokta nahi, bol deta "upload chal raha, chai pi aao". Matlab peeche kuch chal raha. Stadium jaisa: line me lag jao, baaki main peeche karta rahunga. File lo, line (Kafka) me daalo, worker peeche kaam kare. Status apne DB me, user UI pe dekh le. Aur jaanch: PDF bol ke exe na chadha de, to virus scan (third party) + file ka chhota tukda dekh lo ki sach me PDF / CSV hai.
+Arpan: YouTube kuch rokta nahi, bol deta "upload chal raha, chai pi aao". Matlab peeche kuch chal raha. Stadium jaisa: line me lag jao, baaki main peeche karta rahunga. File lo, line (Kafka) me daalo, worker / consumer peeche kaam kare. Status apne DB me, user UI pe dekh le. Aur jaanch: PDF bol ke exe na chadha de, to virus scan (third party) + file ka chhota tukda dekh lo ki sach me PDF / CSV hai.
 Technical me: "line" = Kafka + worker / consumer (async; Kafka me file nahi jaati, sirf file ki id / S3 ka pata, file S3 me), "status" = DB me file ka status, "chhota tukda" = magic bytes, "scan" = third party virus scan.
 
 **2. 1000 log x 2 GB = 2 TB hamare server se guzar raha, network bhar gaya.**

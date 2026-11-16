@@ -335,7 +335,7 @@ flowchart TB
 
 ## 9. Har SMS pe DB, OTP dheema (ek saancha apne paas)
 
-Arpan ne settings me chuna "offer wale SMS mat bhejo". Har SMS se pehle worker DB se user ki pasand aur message ka
+Arpan ne settings me chuna "offer wale SMS mat bhejo". Har SMS se pehle worker / consumer DB se user ki pasand aur message ka
 saancha padhta. 1 crore SMS = 1 crore query, DB ki saans phooli. Wo baar-baar wahi cheez padh raha hai, use apne paas
 rakh lo. Diwali pe sabko ek hi offer, "Diwali 50% off". Mote register pe baar-baar kyun jaun? Ek saancha apne paas,
 bas naam badalna hai, bhejta ja. Par user ki pasand uski settings hai, wo DB me hai, DB se hi uthayenge; crore users

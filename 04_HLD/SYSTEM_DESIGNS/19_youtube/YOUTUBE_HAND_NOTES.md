@@ -49,7 +49,7 @@ Arpan: Har +1 pe mote register tak bhaagna pagalpan hai. +1 abhi parchi pe likh 
 Technical me: "parchi pe +1" = view event stream me (Kafka), "chhotu batch me jode" = batch aggregation (memory me gino, kuch second me ek baar likho), count thodi der se badhta = trade-off, "likhai zyada" = Cassandra.
 
 **4. Ek creator ne script likhi: hazaar phone / bot se har 3 second refresh, ek ghante me 10 lakh "view". Views pe paisa milta, wo trending me upar, asli creators shikayat kar rahe.**
-Arpan: Ye fraud hai. Aisa view ginti me gino hi mat. API gateway pe hi rok do, request andar hi mat aane do: ek hi bande / IP se 10 lakh request? Rate limit laga do. Baar-baar kare to WAF me daal do, ya permanent ban. Peeche Kafka ka worker pattern dekhta rahe: 3-4 baar wahi pattern dikha to daal do. Rate limiter, Kafka, WAF pehle padh chuke hain.
+Arpan: Ye fraud hai. Aisa view ginti me gino hi mat. API gateway pe hi rok do, request andar hi mat aane do: ek hi bande / IP se 10 lakh request? Rate limit laga do. Baar-baar kare to WAF me daal do, ya permanent ban. Peeche Kafka ka worker / consumer pattern dekhta rahe: 3-4 baar wahi pattern dikha to daal do. Rate limiter, Kafka, WAF pehle padh chuke hain.
 Technical me: "gateway pe rok do" = rate limit per user / IP / video, "WAF me daal do" = WAF ban, "worker / consumer pattern dekhe" = fraud detection worker / consumer (bot / repeat view ginti se pehle filter).
 
 **5. Roz lakhon video, har ek ki 40 GB original + 5 quality ki copies. 10 saal purani videos jo mahine me ek baar koi dekhta, wo bhi mehenge tez storage me. Bill har mahine badh raha.**
