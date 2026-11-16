@@ -45,6 +45,8 @@ Technical me: "phone ki key" = client idempotency key (app -> server), payment i
 
 **6. Dukaan ke 500 wallet se ICICI me nikalne hain. ICICI hamara DB nahi, to ek transaction me nahi. Wallet se kaat liye, aur ICICI me jodte waqt PSP bola "FAILED".**
 Arpan: Ulta kar do, sab ulta kar do, sab wapas paise bhej do. Maan le main HDFC bank hoon, bagal wale bank ko bhejne gaya, usne mana kar diya: "nahi bhai, bank band ho gaya, kal aana, abhi server bekaar hai." Fail ho gaya, baatcheet khatam. To main apne register me sab kaat dunga: "maine yahan se paise liye the, ise wapas kar raha hoon", aur sab wapas paise bhej dunga.
+Arpan (doosri kahani, 16-Nov grill, wallet se 2000 Ravi ke ICICI me, ICICI ne FAILED bola): Agar Arpan ka account bhi usi ICICI me hai to badhiya, ek hi transaction me sab, fail hua to apne aap rollback, koi dikkat nahi. Worst case: Arpan ka account alag bank me hai, dono ke alag DB hain, to ek transaction nahi ban sakta. Tab saga: payment nahi hua to peeche jaate-jaate sab rollback kar do.
+Technical me: "ek hi bank = ek transaction me rollback" = ek DB ke andar @Transactional / ACID; "alag DB, ek transaction nahi" = isliye saga.
 Technical me: "sab ulta kar do" = saga (fail pe ulta kadam), "register me sab kaat diya" = ledger me ulti line, "wapas paise bhej dunga" = 500 wapas dukaan ke wallet me.
 
 **7. Wallet se 500 kaate, PSP ka jawab aane me 2 minute lage. Us 2 minute me 500 na dukaan ke wallet me, na ICICI me. Hisaab wala kahega 500 gayab.**
