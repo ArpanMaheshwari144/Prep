@@ -37,7 +37,8 @@ FIX D   USE_LUA = true   pehle phansi key ek baar DEL (Lua purani phansi key the
 TTL:  -1 = key hai, timer nahi · -2 = key hi nahi · 58 = 58 sec baaki
 ```
 ```
-FIX:  B -> faisla pehle se: fail-open (aam API) / fail-closed (login, OTP) + replica
+FIX:  B -> pehle replica. sab gira to fail-open: OTP aur feed dono chalu (OTP band = kisi ka bank transfer atka),
+           par gateway apni memory me kachchi ginti se had (local fallback limiter); sirf shaq wale (1 sec me 5 OTP) ka band
       C -> replica / AOF on. limiter me aksar chalne do (1 min ki ginti, paisa nahi). paisa hota to nahi.
       D -> Lua: INCR + EXPIRE ek command, Redis single-thread -> script beech me nahi rukti
            (doosra raasta: HAR request pe INCR ke baad EXPIRE key 60 NX -> umar na ho to lagti, phansi key
