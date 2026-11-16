@@ -3,6 +3,16 @@
 Kafka andar se kaise chalta (topic, partition, group, commit, copy, outbox, disk pe register), stadium ki kahani me = [kafka_concepts.md](../../04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md). HLD wali kahani (stadium) = [12_message_queue_kafka](../../04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md).
 Yahan sirf Spring wala hissa hai: tere usercrud me Kafka code me kaise chalta hai.
 
+## Koi poochhe "Spring me Kafka kaise use kiya" to aise bolo
+
+```
+Producer side kafkaTemplate.send(topic, key, message) karta hai, daal ke aage badh jaata hai.
+Consumer side method pe @KafkaListener(topics, groupId) lagta hai; Spring andar loop chala ke khud
+message kheenchta hai (pull) aur method chala deta hai.
+Fail hua to DefaultErrorHandler 3 baar try karta hai, phir message DLT topic me park, line aage.
+Offset kaam ke BAAD commit hota hai, isliye duplicate aa sakta hai; message id dekh ke skip karte hain.
+```
+
 ## Scene: order hua, teeno ko batana hai
 
 Order hote hi SMS, Email aur Fraud, teeno ko batana hai. Agar Order Service khud ek-ek ko call kare, to teen dikkat aati hain. SMS 3 sec le
