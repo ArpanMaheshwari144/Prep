@@ -40,8 +40,34 @@ using namespace std;
 
 long long totalResponseTime(vector<int> &responseTimes)
 {
-    // yahan likh
-    return 0;
+    int n = responseTimes.size();
+    long long ans = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    vector<bool> vis(n, false);
+    for (int i = 0; i < n; i++)
+    {
+        pq.push({responseTimes[i], i});
+    }
+
+    while (!pq.empty())
+    {
+        int index = pq.top().second;
+        pq.pop();
+        if (vis[index] == false)
+        {
+            ans += responseTimes[index];
+            vis[index] = true;
+            if (index - 1 >= 0)
+            {
+                vis[index - 1] = true;
+            }
+            if (index + 1 < n)
+            {
+                vis[index + 1] = true;
+            }
+        }
+    }
+    return ans;
 }
 
 // ============================ TESTS ============================
