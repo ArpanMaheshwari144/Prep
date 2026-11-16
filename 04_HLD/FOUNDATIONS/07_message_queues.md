@@ -762,85 +762,67 @@ Queue ne spike roka nahi, use jama karke baad me ek saath chhod diya, aur wo lah
 me hai: checker ki raftaar pe had lagao (consumer-side rate limit), aur wapas aane ke baad dheere-dheere andar bhejo (ramp-up).
 Consumer ka kaam "jitna tez ho sake" nahi hai, "jitna peeche wala jhel sake" hai.
 
-### 3. Jo kaam ab BEKAAR ho chuka, wo bhi ho raha hai (MURDA KAAM)
+### Koi poochhe "queue me aur kya ulta ho sakta hai" to aise bolo
 
 ```
-user ne request bheji                  ->  queue me padi
-30 sec baad user ka sabar khatam       ->  page band / retry maar diya
-2 min baad consumer ne purana message  ->  poora kaam kiya
-                                       ->  us kaam ka ab koi INTEZAAR hi nahi kar raha
-                                       ->  aur retry wala NAYA message bhi queue me hai
+Murda kaam: user chala gaya, phir bhi uska purana message process ho raha hai. Isliye message ke
+saath deadline rakho, purana ho to chhod do, aur queue bhar jaaye to seedha mana karo.
+Chhupi backpressure: queue sab accept karti rehti hai, error koi nahi aata, bas line chupchaap
+badhti hai. Isliye alert error pe nahi, queue ki lambai aur sabse purane message ki umar pe lagao.
+Autoscale: consumer 5 se 50 kiye to DB ke connection khatam ho gaye. Pehle dekho atka kaun hai,
+aur consumer ki max ginti peeche wale ki had se baandho.
 ```
 
-Aadha kaam murda kaam hai, aur load dugna.
+### 3. Murda kaam
 
 ```
-ILAAJ:
-   message ke saath uski DEADLINE rakho; consumer uthate waqt dekhe —
-      "ye 30 sec purana hai -> chhod do"
-   queue ko BOUNDED rakho: bhar gayi -> seedha MANA karo
-   ★ turant "na" kehna, late jawab dene se BEHTAR hai
+fan 30 sec line me khada raha, phir ghar chala gaya. 2 minute baad checker ne uska ticket dekha,
+seat bhi di, par seat pe koi nahi. Upar se wo naya ticket le ke dobara line me hai, kaam dugna.
 ```
 
-### 4. Queue ne BACKPRESSURE CHHUPA di
+Ilaaj: ticket pe time likho (message ki deadline), purana ho to phenk do. Line poori bhar gayi (bounded queue) to gate pe hi
+"aaj nahi" bol do. Turant "na" kehna late jawab se behtar hai.
+
+### 4. Chhupi backpressure
 
 ```
-BINA queue      server bhara -> client ko TURANT 503 -> wo ruk jaata
-                (system ne "na" bola, aur wahi sahi tha)
-
-QUEUE ke saath  sab accept ho raha -> kisi ko mana nahi mil raha
-                -> producer POORI raftaar se bhejta rehta
-                -> dashboard pe sab HARA (koi error nahi)
-                -> sirf ek number chupchaap badh raha hai: QUEUE DEPTH
+queue nahi    gate pe bheed dikhti, server bhara to turant 503, log khud ruk jaate
+queue hai     sab andar le liye, scoreboard pe sab hara, koi error nahi;
+              bas line chupchaap road tak jaa rahi hai (queue depth)
 ```
 
-Jab tak koi wo number dekhta hai, ghante ka backlog ban chuka hota hai.
+Ilaaj: alert error rate pe nahi, line ki lambai (queue depth) aur sabse purane fan ke khade rehne ke time (oldest message age)
+pe lagao.
+
+### 5. Autoscale ne DB maara
 
 ```
-★ isi liye asli ALERT  `error rate` pe NAHI —
-     QUEUE DEPTH  aur  MESSAGE KI UMAR (oldest message age) pe lagta hai
+line lambi dekh ke checker 5 se 50 kar diye
+asli atkan andar ki seedhi (DB pool 200) thi
+50 checker x 20 connection = 1000 seedhi pe -> seedhi toot gayi, ab kuch nahi chal raha
 ```
 
-### 5. Consumer AUTOSCALE ne DB ko maar diya
+Ilaaj: checker badhane se pehle dekho atka kaun hai; consumer ki max ginti peeche wale (DB) ki had se baandho.
+
+### Aur ek: pub-sub traffic guna karta hai
 
 ```
-queue depth badh rahi   ->  autoscaling ne consumer 5 se 50 kar diye
-50 consumer x 20 conn   =   1,000 connection DB pe
-DB ka pool 200 ka tha   ->  DB khatam  ->  ab KUCH BHI nahi chal raha
+1 event publish -> 5 service subscribe -> har ek aage 3 call = andar 1 request, bahar 15 call
 ```
 
-Bottleneck queue me tha hi nahi — **DB me tha**. Consumer badhane se sirf DB pe zor badha.
+Producer ko lagta hai usne ek chhota event bheja. Pub-sub me traffic ginti me nahi badhta, guna hota hai.
+
+### Ek hi shakal, poore HLD me: bachane wali cheez hi maarti hai
 
 ```
-ILAAJ: consumer badhane se PEHLE dekho RUKA KAUN hai
-       peeche wale ki had ke hisaab se consumer ki MAX ginti baandho
+LB me      retry / health check ne hi bheed badha di
+cache me   slow Redis + timeout nahi, tez karne wali cheez ne raasta rok diya
+limiter me per-user had thi, kul bheed ki nahi
+queue me   jama kiya backlog baad me bada karke chhoda
 ```
 
-### ★ Aur ek — jo seedha TRAFFIC GUNA kar deti hai (fan-out)
-
-```
-1 event publish hua
-   -> 5 service subscribe hain
-      -> har ek apne aage 3 call karti hai
-         = 1 request andar, 15 call bahar
-```
-
-Producer ko lagta hai usne "ek chhota event" bheja hai.
-**Pub-sub me traffic ginti nahi badhata — GUNA karta hai.**
-
----
-
-### ★ EK HI SHAKAL — poore HLD me ghoomti hai
-
-```
-LB me      "BACHANE wali cheez ne maara"                (health check / retry / sticky)
-cache me   "TEZ karne wali cheez ne raasta rok diya"    (slow Redis + no timeout)
-limiter me "ROKNE wali cheez ne bheed ko roka hi nahi"  (per-user limit vs aggregate load)
-queue me   "ABSORB karne wali cheez ne spike JAMA karke baad me BADA karke chhoda"
-```
-
-Poora dhaancha: `03_load_balancing.md` ka "CHHE TARIKE" · `04_caching.md` ka "REDIS LAGATE HI
-SERVER DOWN" · `SYSTEM_DESIGNS/02_rate_limiter` ka "LIMITER LAGA THA PHIR BHI NAHI BACHA".
+Poora dhaancha: `03_load_balancing.md` ka "CHHE TARIKE" · `04_caching.md` ka "REDIS LAGATE HI SERVER DOWN" ·
+`SYSTEM_DESIGNS/02_rate_limiter` ka "LIMITER LAGA THA PHIR BHI NAHI BACHA".
 
 ---
 
