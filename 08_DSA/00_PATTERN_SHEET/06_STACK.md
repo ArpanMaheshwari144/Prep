@@ -245,6 +245,7 @@ heights[] me bars ki unchai di hai, har bar ki chaudai 1 hai. Lagaatar bars pe j
 > [!IMPORTANT]
 > **PEHCHAAN / SAAR:** har bar pe KHADE ho: left me pehla CHHOTA (pS), right me pehla CHHOTA (nS) = dono STOPPER
 > [2,1,5,6,2,3] -> 10 (bars 5,6 -> min 5 * width 2). next GREATER se nahi: rectangle chhote pe rukta
+> TRAPPING RAIN WATER se farak: wahan har bar ka paani PLUS karte (sabka SUM); yahan sirf EK sabse bada rectangle (5, 6 wale = 10), MAX.
 
 **SAAR**
 ```
