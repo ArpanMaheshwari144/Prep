@@ -177,6 +177,11 @@ Arpan ne pakda: ek hi partition me pay aur cancel gaye to pehle pay hoga, phir c
 doosre me, to kram ka koi bharosa nahi. Kafka partition ke bahar kram nahi dekhta; andar jo pehle aaya wahi pehle niklega.
 Kafka andar sort nahi karta, bas jis kram me khabar aayi wahi kram pakka rakhta hai.
 
+Arpan: Kafka koi jaadu nahi kar raha. Kafka ka matlab hi hai bheed ko line me lagana: 1000 log bheed me aaye, usne 1000 ki
+seedhi line lagwa di. Stadium ke bahar bodyguard bhi yahi karta hai. Line ka matlab hi ek kram, isliye partition ke andar kram
+apne aap hai. Exam hall jaisa: school me bachcha kahin bhi baithe, par exam me roll number ke hisaab se uski seat fix
+(Kafka me key se partition fix).
+
 Kafka banane walon (Kreps, Narkhede, Rao, LinkedIn) ke 2011 ke paper "Kafka: a Distributed Messaging System for Log
 Processing" me ye likha hai: "To balance the load, a topic is divided into multiple partitions", aur "there is no guarantee
 on the ordering of messages coming from different partitions." Yani partition bojh baantne ke liye bane, aur partition ke
