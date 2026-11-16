@@ -105,6 +105,12 @@ intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue 
 > **CHAABI:** start pe sort; `start` = rakha hua, `end` = candidate. overlap pe `count++` aur chhote-END wala rakho (`intervals[start][1] > intervals[end][1]` to `start = end`).
 
 > [!WARNING]
+> **LINE SWEEP se farak (Arpan, 16-Nov grill):** LINE SWEEP (MEETING ROOMS II, 15_INTERVALS/04) me start aur end alag-alag
+> (do array / map me +1, -1) aur poochha "EK SAATH kitne chal rahe" = running count ka MAX. Yahan ek hi array [s,e] aur poochha
+> "kitne HATAO" = greedy: sort, overlap nahi to aage, overlap to `count++`. Sweep ka MAX se ye nahi nikalta:
+> `[[1,2],[2,3],[3,4],[1,3]]` -> ek saath max 2, hatao 1 · `[[1,3],[2,4],[5,7],[6,8]]` -> ek saath max 2, hatao 2 (chala ke dekha).
+
+> [!WARNING]
 > no-overlap `<=` (`<` se `[[1,2],[2,3]]` pe 1, sahi 0: chhoona overlap nahi). overlap pe blindly `start` mat rakho, end compare (`[[1,100],[2,3],[3,4]]` pe 2, sahi 1).
 
 **CODE**
