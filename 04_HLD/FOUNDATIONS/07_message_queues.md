@@ -694,48 +694,34 @@ public void process(EmailEvent event) {
 
 ---
 
-## 4 Hard Problems
+## Mushkil dikkat: kram, duplicate, DLQ, backpressure
 
-### 1. **Message Ordering**
-```
-Kafka: Order guaranteed only WITHIN a partition
-       Cross-partition = no order
-       Fix: Use same KEY for related messages → same partition
-            (e.g., key=user_id keeps user's events ordered)
-```
+Kram (sirf partition ke andar, key = userId) aur duplicate (at-least-once + idempotent consumer) upar ho chuke. Yahan baaki do.
 
-### 2. **Idempotency** (mandatory!)
-```
-At-least-once → duplicate possible
-Consumer must handle:
-   "Process payment for order_123" — comes twice
-   Charge twice
-   Check if already processed → skip
+### Koi poochhe to aise bolo
 
-Pattern:
-   Unique message_id + processed_messages table
-   Or: idempotent operations (upsert, set status)
+```
+DLQ: ek message baar-baar fail ho raha hai to use 3-5 try ke baad alag line (DLQ) me daal do.
+     Main line aage badhti hai, aur kharab message ko baad me dekh ke theek karke dobara chala do.
+Backpressure: daalne wale tez hain aur uthane wale dheeme, to line badhti hi jaati hai.
+     Hal: consumer badhao (line ki lambai dekh ke autoscale), daalne walon pe had lagao,
+     ya kam zaroori message chhod do.
 ```
 
-### 3. **Dead Letter Queue (DLQ)**
-```
-Message fails repeatedly (e.g., 5 retries) → DLQ
-   → Doesn't block main queue
-   → Manual investigation
-   → Fix root cause, replay
+### Stadium me
 
-Production essential — bina DLQ = poison messages stuck
+```
+DLQ             ek khabar ka ticket phata hua hai, checker 3 baar padhne ki koshish karta hai, fail.
+                Wahi khabar pe atka raha to peeche ke hazaar fan bhi ruke. Use side wale kamre (DLQ)
+                me bitha do, line chalne do, baad me dekh lo.
+
+BACKPRESSURE    gate pe har minute 5000 fan aa rahe hain aur checker 1000 hi dekh pa raha hai.
+                Line road tak pahunch gayi. Ya to checker badhao, ya bahar hi rok lagao
+                (rate limit), ya VIP ko pehle aur baaki ko baad me.
 ```
 
-### 4. **Backpressure**
-```
-Producers >> Consumers → queue grows ∞
-Fixes:
-   • Auto-scale consumers (k8s HPA on queue depth)
-   • Rate-limit producers
-   • Drop messages (priority-based)
-   • Bigger broker storage (Kafka holds days)
-```
+Spring Kafka se jod: `DefaultErrorHandler(recoverer, FixedBackOff(1000, 2))` 3 try karta hai, phir message "user-events-dlt"
+me park karta hai. Ye wahi DLQ hai.
 
 ---
 
