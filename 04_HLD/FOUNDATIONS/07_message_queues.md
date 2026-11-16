@@ -223,23 +223,30 @@ wahi stadium wali baat hai: counter ko andar ke kamron ka pata hi nahi.
 
 ---
 
-## 2 Core Patterns
+## Do pattern: point-to-point aur pub-sub
 
-### **Point-to-Point (Queue)**
+### Koi poochhe to aise bolo
+
 ```
-Producer → Queue → ONE consumer picks
-   • Each message processed by ONE worker / consumer
-   • Multiple workers / consumers compete for messages
-   • Use: task processing (email, image resize)
+Point-to-point: ek khabar sirf EK consumer uthata hai. Kai consumer hon to kaam aapas me bant jaata hai
+(email bhejna, photo chhoti karna).
+Pub-sub: ek khabar SABKO jaati hai, har ek ko apni copy
+("order hua" -> email + SMS + analytics + godaam).
+Kafka me dono consumer group se hote hain: ek group ke andar kaam batta hai, alag-alag group ko sab milta hai.
 ```
 
-### **Pub-Sub (Topic)**
+### Stadium me
+
 ```
-Producer → Topic → ALL subscribers receive
-   • Each message broadcast to many
-   • Each subscriber gets own copy
-   • Use: events ("order placed" → email + SMS + analytics + warehouse)
+PUB-SUB          SMS ka kamra aur Fraud ka kamra, dono ko Arpan ki poori khabar milti hai.
+                 Dono alag group hain, dono apna offset rakhte hain.
+
+POINT-TO-POINT   SMS ke kamre me 3 checker baithe hain (ek group). Arpan ki khabar in teeno
+                 me se sirf EK uthata hai, isliye SMS do baar nahi jaata.
 ```
+
+Kafka ek hi topic pe dono ek saath kar deta hai. RabbitMQ ki aam queue point-to-point wali hai: ek chitthi ek worker /
+consumer ko jaati hai.
 
 ---
 
