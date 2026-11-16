@@ -331,90 +331,20 @@ hai, isliye hataya.)
 
 ---
 
-## WHY Kafka Bana — LinkedIn Origin (event-driven architecture)
+## Kafka kaise bana (sirf jaankari ke liye, interview ka sawaal nahi)
 
-> Apni connection (revision 20 Jun): LinkedIn ne Kafka banaya, unka pura system pub-sub hai.
-
-```
-PROBLEM (LinkedIn ~2010): bahut services -- profile, feed, search, messaging,
-   analytics, ML recommendations. Har koi ko har kisi ka data chahiye.
-   Agar har service SEEDHA har service se baat kare:
-        N services -> N×N connections -> SPAGHETTI
-        naya consumer add -> sab producers ko change (nightmare)
-
-SOLUTION (Kafka = central event LOG):
-   koi bhi event ho (profile update, post like, job view)
-        -> ek central LOG (topic) mein likho, EK BAAR
-        -> jisko chahiye SUBSCRIBE kar le (feed, search, analytics, ML...)
-   Producer ko pata NAHI kaun sun raha. Naya consumer add -> kisi ko change nahi.
-   -> LinkedIn ka pura architecture EVENT-DRIVEN / pub-sub ban gaya.
-```
-
-**Kafka ka khaas (normal queue se farak — yehi insight):**
-```
-   Normal MQ (RabbitMQ/SQS): message uthaya -> DELETE (transient, ek baar)
-   Kafka: DURABLE append-only LOG -> retention (days/weeks)
-        -> naya consumer aaye -> PURANE events bhi padh sakta (REPLAY)
-        -> isliye analytics/ML ko bhi feed kar paaya (woh history chahte)
-```
-
-> **1-line:** N×N spaghetti se bachne ko sab kuch ek central durable event-log mein —
-> producer blind, consumer subscribe, replay possible. LinkedIn = pub-sub at its core.
-
-**★ AUR GEHRA — unhone MQ banaya hi NAHI tha (18-Sep):**
-```
-Us waqt ke MQ (ActiveMQ/JMS) is kaam ke liye theek nahi baithe, 3 wajah:
-   1. HAR MESSAGE ka hisab rakhte the (kisko diya, kisne ack kiya, dobara kisko bhejna)
-      -> mehnga; volume badhne pe BROKER khud ghutne tek deta
-   2. padhne pe message MITT jaata -> ek team ne le liya, dusri ko nahi
-   3. isi wajah se NAYA consumer purana data kabhi nahi paa sakta tha
-
-Jay Kreps + team ne ULTA sawaal pucha: "DB apne andar kya karta hai?"
-   -> WRITE-AHEAD LOG. Ek file jisme sirf AAGE likha jaata hai.
-   -> aur disk ki sabse TEZ cheez yahi hai: seedhi lambi likhai (sequential write),
-      random likhai se kai guna tez.
-
-To unhone MQ banana chhoda hi nahi -- unhone ek BAANTA HUA COMMIT LOG banaya,
-aur DO faisle liye jinse baaki sab khud nikla:
-   1. padhne pe kuch MAT mitao   -> message rehne do; umar (retention) poori ho tabhi hatao
-   2. hisab BROKER se HATAO      -> broker ka kaam bas "aage likho + byte range do"
-                                    kaun kahan tak padha = sirf EK NUMBER (offset)
-
-   -> isi se: replay · kai team ek hi data pe · naye consumer ko poora itihaas
-   -> aur throughput bhi: broker ko per-message kuch sochna hi nahi,
-      OS ka page cache + zero-copy seedha network pe bhej deta hai
-```
-
-★ **Isliye ULTA kehna zyada sach hai:**
-> *Kafka MQ banane ki koshish me log nahi bana. Wo LOG banaya gaya tha — aur MQ uska ek ISTEMAAL nikal aaya.*
-
-**Jo MQ me normal hai par Kafka me hai hi NAHI** (kami nahi — us faisle ki KEEMAT hai):
-```
-per-message ack  ·  ek message ko haTA dena  ·  priority queue  ·  ek message ko dobara kataar me daalna
-```
-
----
-
-## Kafka Deep (key concepts)
+Poori kahani = [KAHANIYAN/kafka.md](../KAHANIYAN/kafka.md). Topic, partition, group, offset stadium me =
+[kafka_concepts](../SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md).
 
 ```
-TOPIC = logical stream of messages
-   "user-events", "order-events"
-
-PARTITION = topic split into pieces (parallelism)
-   Topic "user-events" → partitions 0,1,2,3
-   Each partition = ordered append-only log
-
-PRODUCER → writes with optional KEY
-   Same key → same partition (ordering preserved)
-
-CONSUMER GROUP = set of consumers sharing work
-   Each partition → ONE consumer in group
-   Add consumers → parallelism (max = #partitions)
-
-OFFSET = position in partition
-   Consumer tracks: "I've read up to offset 1247"
-   Replay = reset offset
+dikkat      LinkedIn pe har system har system se pipe se juda, jaal ban gaya (5 x 5 = 25 pipe)
+hal         beech me ek log: ek baar likho, sab apni raftaar se padhein, padhne se mit-ta nahi,
+            hisaab (offset) padhne wala rakhe
+DB se idea  DB andar write-ahead log chalata hai. Jay Kreps, 2013, LinkedIn engineering blog:
+            "The Log: What every software engineer should know about real-time data's unifying abstraction"
+disk tez    Kafka docs (Design, "Don't fear the filesystem!"): linear write ~600MB/sec, random ~100k/sec,
+            "a difference of over 6000X"; upar se OS page cache + sendfile (zero-copy)
+keemat      Kafka me ye nahi hai: har message ka alag ack, priority queue, ek message ko line se nikaalna
 ```
 
 ---
