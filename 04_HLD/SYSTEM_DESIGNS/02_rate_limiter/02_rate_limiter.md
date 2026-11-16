@@ -189,6 +189,9 @@ kisi ka zaroori bank transfer ho raha, OTP nahi aaya to wo kya karega, rate limi
 galat, koi zaroori reel upload kar raha ho. To dono khule rakho, aur bahar khade bouncer ko bol do "ek saath 1000 andar mat
 bhejna, 5-5 karke bhejna". OTP band karna ho to sabka nahi, sirf shaq wale ka: jisne 2-3 second me 5 OTP
 maang liye, sirf uske liye gate band; apni range me maangne wale ke liye khula.
+Chor wo jo mask pehen ke aaya (1 second me 5-6 OTP); bhala aadmi "papa ka dost" bole to papa se verify karao, phir andar.
+Aur suspicious kaun, ye dekhna rate limiter ka kaam nahi: limiter ne apna kaam kar diya (OTP bhi chalu, feed bhi), suspicious
+kaun ye system ka alag hissa dekhe.
 
 **Asli naam:** dono khule = fail-open; bouncer 5-5 karke bheje = har gateway apni memory me kachchi ginti se had lagaye
 (local fallback limiter: Redis jitni sahi nahi, thodi dheeli, par darwaza poora khula nahi). Redis ki replica pehle bachav. Shaq wala (2-3 sec me 5 OTP) = sirf us user pe block, sab pe nahi.
