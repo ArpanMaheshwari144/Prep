@@ -328,7 +328,10 @@ Do SORTED linked list di hain. Dono ko jod ke ek sorted list banao aur uska head
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** dummy + tail: dono ke aage wale me se chhota `tail->next` pe jodo, `&&` se ek list khatam hote hi ruko, baaki poori list jod do, `return dummy->next`.
+> **CHAABI:** dummy + tail: dono ke aage wale me se chhota `tail->next` pe jodo; ek list khatam to baaki poori list jod do.
+
+> [!WARNING]
+> `while` me `&&`: ek list khatam hote hi ruko, baaki neeche jodo. `return dummy->next` (dummy skip -> asli head).
 
 **CODE**
 ```cpp
@@ -463,7 +466,7 @@ Linked list ka head diya hai. Poori list ulti karo aur naya head lautao.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** 3 pointer: `nextt = curr->next` bachao -> `curr->next = prev` (link ulta) -> `prev = curr`, `curr = nextt`. `return prev`.
+> **CHAABI:** 3 pointer: `nextt = curr->next` bachao -> `curr->next = prev` (link ulta) -> `prev = curr`, `curr = nextt`.
 
 > [!WARNING]
 > `nextt` link ulatne se PEHLE bachao, warna aage ka raasta gum. Return `prev` (curr NULL pe ruka, prev = aakhri node = naya head), `curr` nahi.

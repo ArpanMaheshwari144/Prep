@@ -11,7 +11,7 @@
 ```
  ★ DECISION — input same [start,end], SAWAAL (verb) decide karta kaunsa tool:
      "MERGE overlapping / combine"           -> sort by START + merge
-     "MAX non-overlapping pick / min remove" -> GREEDY: START sort + overlap pe chhota-END rakho (tera LC-435), ya END sort
+     "MAX non-overlapping pick / min remove" -> GREEDY (PATTERN 18, LC-435)
      "kitne ek-SAATH / MIN rooms chahiye"    -> LINE-SWEEP (start +1, end -1, running-count ka MAX)
 ```
 
@@ -22,7 +22,6 @@
 
 **★ YAHAN NAHI MILEGI:** non-overlapping intervals -> PATTERN 18 (GREEDY)
   intervals hain, par sawaal "kam se kam kitne HATAO" = greedy choice
-  (START sort + takraane pe chhota-END rakho, ya END sort)
 
 ---
 
@@ -86,8 +85,6 @@ meetings[] me [start, end] diye hain. Kya ek insaan saari meetings attend kar sa
 
 > [!IMPORTANT]
 > **CHAABI:** Merge ka SAME template, bas action: `intervals[i][0] < ans.back()[1]` -> return false; loop khatam -> true.
->
-> MERGE: overlap -> end max, return list · MEETING: overlap -> return false, end me true
 
 > [!WARNING]
 > `<` (`<=` NAHI): ek khatam usi pal doosri shuru = chalta. `intervals.empty()` pe pehle true, warna `intervals[0]` pe crash.
@@ -123,12 +120,10 @@ intervals[] pehle se sorted hain aur aapas me overlap nahi karte. Ek newInterval
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** pehle se sorted -> SORT nahi, 3 phase: new se PEHLE khatam (`[1] < new[0]`) -> push · new ke AAGE (`[0] > new[1]`) -> break · warna overlap -> new ko GROW (min start, max end). Phir new + `count` se baaki.
->
-> pehle se sorted + non-overlap -> SORT nahi, ek pass. newInterval = "GROWING BOX"
+> **CHAABI:** pehle se sorted -> SORT nahi, 3 phase: new se PEHLE khatam (`[1] < new[0]`) -> push · new ke AAGE (`[0] > new[1]`) -> break · warna overlap -> new ko GROW (min start, max end). Phir new push, phir baaki.
 
 > [!WARNING]
-> dono strictly (`<` aur `>`): chhoota hua (touching) bhi merge, `[[1,2]] + [2,5] -> [[1,5]]`; `<=`/`>=` likha to `[[1,2],[2,5]]`. End bhi `max`.
+> dono strictly (`<` aur `>`): chhoota hua (touching) bhi merge, `[[1,2]] + [2,5] -> [[1,5]]`; `<=`/`>=` likha to `[[1,2],[2,5]]`. End bhi `max`. Baaki wala doosra loop `count` se: break wala `count++` tak nahi pahunchta.
 
 **CODE**
 ```cpp
@@ -197,11 +192,9 @@ SWEEP VISUAL (vertical line jhaadu t=9 pe = 2 bars overlap = PEAK):
 
 > [!IMPORTANT]
 > **CHAABI:** har start `+1`, har end `-1` ordered `map` me; time ke kram me running `overlap`, uska MAX = rooms.
->
-> min ROOMS = kisi ek pal pe MAX kitni meeting saath. rooms object mat gino -> +1 / -1 GINTI
 
 > [!WARNING]
-> ORDERED `map` (keys khud sorted, time ke order me chalna). End ka `-1` usi key pe: same time pe +1 -1 kat -> room REUSE.
+> rooms object mat gino -> +1 / -1 GINTI. ORDERED `map` (keys khud sorted, time ke order me chalna). End ka `-1` usi key pe: same time pe +1 -1 kat -> room REUSE.
 
 **CODE**
 ```cpp

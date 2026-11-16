@@ -188,7 +188,7 @@ SAME (dono me): bucket khaali -> node laga + sz++; index = hash<string>{}(key)%c
 > (NA prev = prev->next -- prev NULL se non-head remove pe NULL->next = CRASH). (file 08_DSA/09_DESIGN/02_hashset.cpp)
 
 > [!IMPORTANT]
-> **CHAABI:** HASHMAP ka hi code, Entry me sirf `| key | next |`. add: key mili -> kuch nahi (`return`), na mili -> chain END + `sz++`. contains = get ka true/false. remove HUBAHU same.
+> **CHAABI:** HASHMAP ka hi code, Entry me sirf `| key | next |`. add: key mili -> kuch nahi, na mili -> chain END. contains = get ka true/false. remove HUBAHU same.
 
 > [!WARNING]
 > remove me advance `prev = curr; curr = curr->next`. `prev = prev->next` NAHI: prev NULL se non-head remove pe `NULL->next` = CRASH.

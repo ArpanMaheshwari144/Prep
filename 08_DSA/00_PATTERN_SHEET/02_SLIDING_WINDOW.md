@@ -73,14 +73,13 @@ kyun: "abc" me teeno alag = 3; agla a aate hi repeat, isse lamba koi substring n
 **SAAR**
 ```
 longest substring jisme koi char REPEAT na ho. variable window + freq-map(mp).
-INVALID = mp[s[j]]>1 (jo abhi add hua wahi repeat). empty-string edge -> INT_MIN -> 0.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** jo abhi add hua (`s[j]`) wahi repeat ho sakta hai, to INVALID = `mp[s[j]] > 1`. Shrink ke **baad** `ans = max(ans, j - i + 1)`.
+> **CHAABI:** jo abhi add hua (`s[j]`) wahi repeat ho sakta hai, to INVALID = `mp[s[j]] > 1`.
 
 > [!WARNING]
-> **"abba":** `while` ki jagah `if` likha to 3 aata, sahi 2. Ek se zyada char nikaalne pad sakte hain (a aur purana b dono).
+> **"abba":** `while` ki jagah `if` likha to 3 aata, sahi 2. Ek se zyada char nikaalne pad sakte hain (a aur purana b dono). Shrink ke **baad** `ans = max(ans, j - i + 1)`.
 
 **CODE**
 ```cpp
@@ -118,8 +117,6 @@ SAAR : longest window jisme <=k char badal ke sabko SAME bana sako. variable win
 ```
 
 > [!IMPORTANT]
-> **KEY  :** windowLen - maxFreq = kitne char badalne padenge. <=k -> valid.
->
 > **CORE TRICK (non-obvious):** maxFreq kabhi GHATAO mat (shrink pe recompute nahi). window best-length
 > se chhota hota hi nahi (sirf badhta/slide) -> stale/purana maxFreq bhi answer kharab nahi karta.
 
@@ -165,8 +162,6 @@ kyun: index 4..9 = 0,0,1,1,1,1: do zero flip -> 6 lagaatar 1
 SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (freq-map nahi).
 ```
 
-**LC-3 se farak:** map ki jagah ek int (zeroCount), aur shrink "zero > k" pe.
-
 > [!IMPORTANT]
 > **CORE LEARNING:** ans UNCONDITIONAL update (bina kisi shart ke).
 >
@@ -176,7 +171,7 @@ SAAR : at most k zeros ko FLIP -> longest all-1 window. sirf zeroCount track (fr
 > shrink pe nums[i]==0 hi zeroCount-- (1 nikalne pe count na badle).
 
 > [!IMPORTANT]
-> **CHAABI:** map ki jagah ek `zeroCount`. `zeroCount > k` hua to shrink, phir ans bina shart.
+> **CHAABI:** map ki jagah ek `zeroCount`. `zeroCount > k` hua to shrink.
 
 **CODE**
 ```cpp
@@ -218,7 +213,7 @@ SAAR : "longest subarray with AT MOST 2 DISTINCT" (fruit/basket sirf kahani). SW
 > IF bhi chalta (sirf LONGEST): ek aaya ek gaya, size best se bada nahi -> len sahi. COUNT / SHORTEST me sirf while.
 
 > [!WARNING]
-> **CRUX = erase-on-0:** count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
+> **GALTI = erase-on-0:** count 0 hone pe key map me PADI reh jaati -> mp.size() galat distinct dega -> condition toot. isliye ERASE.
 
 > [!IMPORTANT]
 > **CHAABI:** alag type kitne = `mp.size()`. `> 2` hua to shrink.
@@ -259,8 +254,6 @@ kyun: "ece" me sirf e,c (2 alag) = 3; "eceb" me 3 alag ho jaate
 
 > [!IMPORTANT]
 > **CHAABI:** fruit ka hi code, bas `2` ki jagah `k` (`mp.size() > k`).
->
-> wahi variable window + `map<char,count>`: distinct (`mp.size()`) `> k` ho to left se shrink (erase-on-0). ans = max length.
 
 > [!WARNING]
 > wahi erase-on-0: count 0 hua to key hatao, warna `mp.size()` jhooth bolega.
@@ -304,8 +297,6 @@ SAAR : s ko t banane me har char ka cost = |s[i]-t[i]|. longest window jiska cos
 ```
 
 > [!IMPORTANT]
-> **KEY  :** cost-array bana ke "longest subarray with sum <= k" -- bas string ke bhes me chhupa.
->
 > ONES III jaisa, ek int (cost) track, koi map nahi. cost hamesha 0 ya zyada, isliye negative wala dar nahi.
 
 > [!IMPORTANT]
@@ -353,8 +344,6 @@ char-matching wala SHORTEST = MIN WINDOW (LC-76) -> neeche "need-map + COUNT" fa
 >
 > SHORTEST (ye / min-window):  window CHHOTA chahiye -> VALID hote hi record + shrink (chhota karte jao jab tak valid) ->
 > record ANDAR (shrink loop ke andar, har step).   <- YE wahi.
->
-> 1-line: LONGEST = shrink-jab-MAJBOORI(invalid), record-baad  ·  SHORTEST = shrink-jab-tak-VALID, record-andar.
 
 > [!IMPORTANT]
 > **CHAABI:** SHORTEST: valid hote hi record + shrink, ans `while` ke ANDAR. (LONGEST me ans `while` ke BAAD.)
@@ -398,8 +387,6 @@ SAAR : k-size ke har window ka sum -> unme se MAX. fixed window (size hamesha k)
 ```
 
 > [!IMPORTANT]
-> **KEY  :** variable nahi -- size fix k, isliye IF (ek hi remove).
->
 > **WHY IF-not-WHILE :** fixed size -> har step 1 add + 1 remove -> slide. variable hota to WHILE (kai remove).
 
 > [!IMPORTANT]
@@ -462,10 +449,6 @@ Q: sirf DONO ENDS (front/back) se TOTAL k cards lo -> unka sum MAXIMIZE.
 > (4) taken MAX = untaken MIN -> answer = Total - min.  ("hard" flip ke baad TRIVIAL.)
 
 > [!IMPORTANT]
-> **TWIST (yahi hard part):** taken cards DONO end pe (contiguous NAHI) -> seedha SW nahi chalta.
-> ULTA socho -> jo NAHI liye = beech ka CONTIGUOUS window, size L-k.
-> taken MAX  <=>  untaken MIN.   answer = Total - min(window).
->
 > = MAX-SUM-SIZE-K (pattern-01) ka cousin -- SAME fixed-window mechanic, bas 3 DELTA:
 > (a) window size = L-k  (b) MAX ki jagah MIN dhundo  (c) answer = Total - min.
 
@@ -527,9 +510,6 @@ kyun: index 0 aur 3 dono pe 1, farak 3 <= 3
 
 > [!IMPORTANT]
 > **★ RECOGNITION:** "same value + index farak <=k ke ANDAR" -> window me sirf LAST k elements rakho (HashSet).
->
-> **KEY INSIGHT:** agar set me sirf last-k elements hain, aur andar duplicate mila -> uska index-farak apne-aap <=k
-> -> "|i-j|<=k" alag se check karne ki zaroorat NAHI. bas window ko k-size me rakho.
 
 ### DRY-RUN
 
@@ -588,10 +568,8 @@ SAAR : kitne subarray jinka product < k. variable window, COUNT (length nahi).
 ```
 
 > [!IMPORTANT]
-> **COUNT TRICK:** valid -> count += (j-i+1) = window size (j pe end hone wale saare valid subarray). (bahut count-Q me)
->
 > **GINTI KYUN (j-i+1):**  window [i..j] valid hai, to j pe KHATAM hone wale ye sab bhi valid:
-> [j], [j-1..j], ... [i..j]  =  j-i+1 subarray
+> [j], [j-1..j], ... [i..j]  =  j-i+1 subarray  (ye ginti bahut count-Q me lagti)
 
 ### DRY-RUN
 
@@ -652,7 +630,6 @@ SAAR : kitne SUBARRAYS jinme EXACTLY k different numbers.
 
 > [!IMPORTANT]
 > **CHAAL:** "exactly K" seedha SW se count ganda (boundary saaf nahi).
-> => exactly(k) = atMost(k) - atMost(k-1).
 > atMost(k) = "0..k distinct wale SAB" ; atMost(k-1) = "0..k-1 wale sab" ; ghata do -> exactly k.
 > (jaise  <=5  -  <=1  =  2..5)
 >
@@ -775,8 +752,7 @@ e.g. "aaacb" -> 3 · kyun: "aaacb", "aacb", "acb" me teeno; "cb" ya usse chhote 
 
 **SAAR**
 ```
-= LC-76 ka SAME minWindow() -- literally REUSE: numberOfSubstrings(s) = minWindow(s, "abc").
-  farak SIRF answer-line:
+farak SIRF answer-line:
       LC-76   : while ke ANDAR -> if(len<minLen){minLen; index}   (MIN track)
       LC-1358 : while ke BAAD  -> ans += i                        (COUNT)
 ```
@@ -836,8 +812,7 @@ kyun: s[0..2]="cba" aur s[6..8]="bac" dono "abc" ke anagram
 **SAAR**
 ```
 SAAR : s me p ke SAARE anagram ki START-INDEX. fixed window (p ki length) + har window pe anagram-check.
-LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao;
-   yahan DO map (mp1 = p, mp2 = window), aana +1 / jaana -1, 0 hua to erase, phir mp1 == mp2 milao. window fixed = p.size().
+LC-76 se farak: wahan EK map me t ki ginti, aana-jaana pe usi map ko ghatao-badhao; yahan DO map.
 ```
 
 > [!IMPORTANT]
@@ -889,9 +864,6 @@ kyun: s2[3..4]="ba" = "ab" ka permutation
 **SAAR**
 ```
 SAAR : s2 me s1 ka koi permutation (=anagram) substring hai? (bool)
-farak SIRF answer-line:
-    LC-438 : mp1 == mp2 -> ans.push_back(i)  ... loop-baad: return ans    (SAARE indices)
-    LC-567 : mp1 == mp2 -> return true        ... loop-baad: return false  (pehla match = bool)
 ```
 
 > [!WARNING]
@@ -955,7 +927,7 @@ SAAR : har size-k window ka MAX, O(n). deque me INDICES rakho (values DECREASING
 **FAMILY:** MIN chahiye -> pop_back condition ULTA (nums[back] >= nums[i]).
 
 > [!IMPORTANT]
-> **CHAABI:** deque me INDEX, values ghatte kram me, front = max. Kram: (1) front se purana hatao (2) peeche ke chhote pop + push (3) record.
+> **CHAABI:** deque me INDEX, values ghatte kram me, front = max. Front se purana hatao, peeche ke chhote pop + push.
 
 > [!WARNING]
 > value nahi INDEX rakho (bahar kaun gaya, index se pata chalta). Record sirf `i >= k - 1`.

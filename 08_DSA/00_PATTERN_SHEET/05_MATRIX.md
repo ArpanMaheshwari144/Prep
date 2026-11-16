@@ -67,7 +67,7 @@ m x n matrix di hai. Uske saare numbers spiral kram me (bahar se andar ki taraf,
 
 **SAAR**
 ```
-CHAABI — isme bas yahi pattern hai (pata ho to jitna code likhne me time, utna hi):
+PATTERN — har chakkar ke 4 kadam:
    TOP row     left -> right    phir top++
    RIGHT col   top -> bottom    phir right--
    BOTTOM row  right -> left    phir bottom--   (if top <= bottom)
@@ -151,10 +151,10 @@ m x n matrix di hai. Uska transpose lautao, matlab row ko column bana do: matrix
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** `ans[i][j] = matrix[j][i]`. Outer `i < col`, inner `j < row`.
+> **CHAABI:** `ans[i][j] = matrix[j][i]`.
 
 > [!WARNING]
-> `ans` ka size `col x row` banao (`ans(col, vector<int>(row, -1))`), `row x col` nahi: non-square pe index bahar.
+> `ans` ka size `col x row` banao (`ans(col, vector<int>(row, -1))`), `row x col` nahi: non-square pe index bahar. Outer `i < col`, inner `j < row`.
 
 **CODE**
 ```cpp

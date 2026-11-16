@@ -26,10 +26,10 @@ prices[i] din i ka share ka daam hai. Ek din kharido aur uske baad ke kisi din b
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** running MIN cache: har din `minSoFar = min(minSoFar, prices[i])` PEHLE, phir `ans = max(ans, prices[i] - minSoFar)`. End me `ans < 0 ? 0 : ans`.
+> **CHAABI:** running MIN cache: har din `minSoFar = min(minSoFar, prices[i])`, phir `ans = max(ans, prices[i] - minSoFar)`.
 
 > [!WARNING]
-> min update PEHLE, diff BAAD (sell buy ke BAAD; ulta kiya to diff minus / aaj ka daam khud se). `minSoFar = INT_MAX` se shuru, pehla din hi sasta ban jaaye.
+> min update PEHLE, diff BAAD (sell buy ke BAAD; ulta kiya to diff minus / aaj ka daam khud se). `minSoFar = INT_MAX` se shuru, pehla din hi sasta ban jaaye. End me `ans < 0 ? 0 : ans` (munafa na ho to 0).
 
 **CODE**
 ```cpp

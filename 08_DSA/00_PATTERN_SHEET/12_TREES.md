@@ -85,8 +85,6 @@ Binary tree ka root diya hai. Tree ke nodes ki values teen kram me lautao: preor
 
 > [!IMPORTANT]
 > **CHAABI:** teeno ka recursion ek hi hai (`if (!root) return;` + left + right), sirf `res.push_back(root->val)` (VISIT) ki JAGAH badalti: pre me sabse pehle, in me beech, post me sabse baad.
->
-> preorder: PRE = VISIT -> left -> right (root pehle)
 
 **CODE**
 ```cpp
@@ -222,8 +220,6 @@ Binary tree ka root diya hai. Kya tree beech se aaine jaisa hai, matlab left his
 
 > [!IMPORTANT]
 > **CHAABI:** same tree ka hi code, bas CROSS: `isSameTree(p->left, q->right) && isSameTree(p->right, q->left)`. Root pe call `isSameTree(root->left, root->right)`, root khud nahi.
->
-> isSameTree: same tree ka hi base (dono null / ek null / val alag)
 
 > [!WARNING]
 > null checks yahan bhi PEHLE (dono null / ek null), warna `null->val` crash.
@@ -267,8 +263,6 @@ Binary tree diya hai. Kinhi bhi do node ke beech sabse lamba rasta kitna hai, wo
 
 > [!IMPORTANT]
 > **CHAABI:** max-depth ka height() hi, recurse ke BAAD ek EXTRA line `maxDia = max(maxDia, left + right)`. Return HEIGHT (`1 + max`), diameter by-reference me.
->
-> height: max-depth ka height(), maxDia by-REFERENCE
 
 > [!WARNING]
 > `max` lo, overwrite nahi: `maxDia = left + right` likha to test pass ho sakta par galat. Aur function HEIGHT return karta hai, diameter nahi.
@@ -418,8 +412,6 @@ buildTree: rootIndex=0; solve(0,n-1);       buildTree: + mp{inorder-val->idx} ek
 
 > [!IMPORTANT]
 > **CHAABI:** `preorder[rootIndex]` = root, map se inorder me pivot, `rootIndex++`, phir LEFT pehle (`l..pivot-1`) aur RIGHT (`pivot+1..r`) recurse.
->
-> preorder[rootIndex] = ROOT · inorder me us root pe todo -> LEFT-part | root | RIGHT-part, recurse
 
 > [!WARNING]
 > `rootIndex` by-REFERENCE (`int &`): value-pass me copy jaati, RIGHT ko galat root milta. Base `l > r` (`>=` nahi: `l == r` pe ek node banana hai).
@@ -465,7 +457,6 @@ Binary tree diya hai. Kya har node pe uske left aur right subtree ki unchai ka f
 > **CHAABI:** maxDepth hi, par return = HEIGHT ya `-1` (sentinel). `abs(left - right) > 1` hua to `-1`, warna `1 + max(left, right)`.
 >
 > HAR node pe abs(leftH - rightH) <= 1? alag "balanced?" pass nahi -> height nikaalte-nikaalte HI check
-> maxDepth: return = HEIGHT, ya -1 (neeche kahin imbalance)
 
 > [!WARNING]
 > left se `-1` aaya to TURANT `-1` upar bhejo, right mat dekho. Check HAR node pe (sirf root nahi: root balanced par andar imbalanced ho sakta).
@@ -673,7 +664,7 @@ Level order jaisa hi, par disha har level pe badalti hai: level 0 left se right,
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** level HAMESHA normal L->R banao, for ke BAAD `levelCounter % 2 != 0` to `reverse(temp)`.
+> **CHAABI:** level HAMESHA normal L->R banao, for ke BAAD ODD level pe `reverse(temp)`.
 
 > [!WARNING]
 > reverse check ke BAAD `levelCounter++`, pehle kiya to root level ulta ho jaata. `levelCounter = 0` se shuru.
@@ -721,10 +712,10 @@ Binary tree ka root diya hai. Root se sabse paas wale leaf tak raste me kitne no
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** level order + EARLY-STOP: pehla leaf (`!curr->left && !curr->right`) mile to `return depth + 1`. `depth++` for ke BAHAR.
+> **CHAABI:** level order + EARLY-STOP: pehla leaf (`!curr->left && !curr->right`) mile to `return depth + 1`.
 
 > [!WARNING]
-> DFS `1 + min(leftD, rightD)` GALAT: NULL child ko depth 0 maan leta, skew tree (2->3->4) pe galat. Isliye BFS.
+> DFS `1 + min(leftD, rightD)` GALAT: NULL child ko depth 0 maan leta, skew tree (2->3->4) pe galat. Isliye BFS. `depth++` for ke BAHAR (level POORA hone pe).
 
 **CODE**
 ```cpp
@@ -769,9 +760,7 @@ Ek BST aur ek number k diya hai. Tree ki values me k-va sabse chhota number laut
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** BST ka inorder = SORTED vector, jawab `ans[k - 1]`.
->
-> inorder: BST pe inorder = SORTED (ascending)
+> **CHAABI:** BST ka inorder = SORTED vector, jawab k-va element.
 
 > [!WARNING]
 > `k - 1`: k 1-based hai, vector 0-based.
@@ -822,10 +811,10 @@ node ko SAARE ancestors ka rule maanna -> har node ki WINDOW (mini, maxi), neech
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** har node ki window `(mini, maxi)` neeche carry: LEFT jao -> `maxi = root->val`, RIGHT jao -> `mini = root->val`. `<= mini || >= maxi` pe false, combine `&&`.
+> **CHAABI:** har node ki window `(mini, maxi)` neeche carry: LEFT jao -> `maxi = root->val`, RIGHT jao -> `mini = root->val`. Window ke bahar pe false, combine `&&`.
 
 > [!WARNING]
-> `long long` + `LLONG_MIN, LLONG_MAX` se shuru. `INT_MIN / INT_MAX` liya to node khud `INT_MAX` ho (`[2147483647]`) -> strict check galat false deta.
+> `long long` + `LLONG_MIN, LLONG_MAX` se shuru. `INT_MIN / INT_MAX` liya to node khud `INT_MAX` ho (`[2147483647]`) -> strict check galat false deta. Check `<= mini || >= maxi` (barabar bhi galat, BST me duplicate nahi).
 
 **CODE**
 ```cpp

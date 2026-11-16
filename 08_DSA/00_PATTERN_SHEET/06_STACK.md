@@ -5,7 +5,7 @@
 > **BROAD IDEA:** stack = LIFO. "kholo push, band karo pop-match" · ya MONOTONIC (next-greater/smaller).
 
 > [!IMPORTANT]
-> **★★ ASLI CHAABI (Arpan, 9-Nov chai ke baad): is family me yaad sirf LOOP KI DISHA rakhni hai.**
+> **DISHA (NEXT / PREV me loop kidhar se):**
 >
 > NEXT  (smaller / greater)  ->  loop 0 se n-1
 >
@@ -75,10 +75,10 @@ DRY-RUN [2,1,2,4,3]:
 **FAMILY:** monotonic-stack ka BASE. Next-Smaller / Prev-Smaller = isi ka DELTA (neeche).
 
 > [!IMPORTANT]
-> **CHAABI:** INDEX ka stack, loop 0 se n-1 (NEXT = aage ka). Jo top curr se CHHOTA (`nums[st.top()] < nums[i]`) uska jawab = `nums[i]` -> pop; `while` ke BAAD `push(i)`.
+> **CHAABI:** INDEX ka stack. Jo top curr se CHHOTA (`nums[st.top()] < nums[i]`) uska jawab = `nums[i]` -> pop.
 
 > [!WARNING]
-> `<` strict (`<=` nahi): `[2,2]` pe `ans[0]=2` aata, sahi -1. `!st.empty()` pehle, warna `top()` crash. top pehle bachao (`topp`), pop ke baad `top()` badal jaata.
+> `<` strict (`<=` nahi): `[2,2]` pe `ans[0]=2` aata, sahi -1. `!st.empty()` pehle, warna `top()` crash. top pehle bachao (`topp`), pop ke baad `top()` badal jaata. DISHA: NEXT = loop `0` se `n-1` (aage ka). `while` ke BAAD `push(i)`.
 
 **CODE**
 ```cpp
@@ -109,7 +109,7 @@ Ek array diya hai. Har number ke liye uske daayi taraf jo pehla usse chhota (str
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** NEXT GREATER ka code hubahu, sirf `while` ki shart ULTI: `nums[st.top()] > nums[i]` (naya CHHOTA aaya to top ka jawab mila). Loop 0 se n-1 (NEXT = aage ka).
+> **CHAABI:** NEXT GREATER ka code hubahu, sirf `while` ki shart ULTI: `nums[st.top()] > nums[i]` (naya CHHOTA aaya to top ka jawab mila).
 
 > [!WARNING]
 > `>` strict (`>=` nahi): `[2,2,2] -> saare -1`. DISHA: NEXT = loop `0` se `n-1`; ulta chalaya to ye PREV smaller ban jaata.
@@ -146,7 +146,7 @@ Ek array diya hai. Har number ke liye uske baayi taraf jo pehla usse chhota (str
 > **CHAABI:** NEXT SMALLER ka code hubahu, sirf LOOP ULTA: `for (i = n-1; i >= 0; i--)` (PREVIOUS = peeche se chalna). Shart wahi `>`.
 
 > [!WARNING]
-> DISHA hi poori chaabi: PREV = loop `n-1` se `0`. `0` se `n-1` chalaya to ye NEXT smaller ban jaata aur dry run bhi ulta ghoomta (9-Nov histogram REDO_2, 38 min yahin).
+> PREV = loop `n-1` se `0`. `0` se `n-1` chalaya to ye NEXT smaller ban jaata aur dry run bhi ulta ghoomta (9-Nov histogram REDO_2, 38 min yahin).
 
 **CODE**
 ```cpp
@@ -400,10 +400,10 @@ PS ko 0 se, shart ulti (heights[i] > heights[top]),  h = [2,1,5,6,2,3]:
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** Har bar pe KHADE ho: PS (peeche ka chhota, loop `n-1` se `0`) + NS (aage ka chhota, loop `0` se `n-1`), dono me shart `heights[top] > heights[i]`, INDEX store. `width = ns[i] - ps[i] - 1`, area = `heights[i] * width`, sabka max.
+> **CHAABI:** Har bar pe KHADE ho: PS (peeche ka chhota) + NS (aage ka chhota), INDEX store. `width = ns[i] - ps[i] - 1`, area = `heights[i] * width`, sabka max.
 
 > [!WARNING]
-> DISHA: NS = loop `0 -> n-1`, PS = loop `n-1 -> 0`; ulti chali to dry run bhi ulta ghoomta (9-Nov REDO_2, 38 min yahin). nS default `n` (-1 NAHI: `[2,4]` pe width -1). `>` strict (`>=` pe `[3,3,3,3] -> 3`, sahi 12). `-1` sirf EK baar (`4-2-1=1` sahi, `4-2-1-1=0` galat).
+> DISHA: NS = loop `0 -> n-1`, PS = loop `n-1 -> 0`; ulti chali to dry run bhi ulta ghoomta (9-Nov REDO_2, 38 min yahin). nS default `n` (-1 NAHI: `[2,4]` pe width -1). Dono me shart `heights[top] > heights[i]`, `>` strict (`>=` pe `[3,3,3,3] -> 3`, sahi 12). `-1` sirf EK baar (`4-2-1=1` sahi, `4-2-1-1=0` galat).
 
 **CODE**
 ```cpp
@@ -580,10 +580,10 @@ Share ke daam ek-ek karke aate hain (next(price) call). Har call pe span lautao:
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** Stack me INDEX nahi, PAIR `{price, span}`. `span = 1` se shuru; `top.price <= price` tak pop aur pop wale ka span JODO; phir `{price, span}` push.
+> **CHAABI:** Stack me INDEX nahi, PAIR `{price, span}`. Peeche ke sasta din pop karo aur pop wale ka span JODO; phir `{price, span}` push.
 
 > [!WARNING]
-> `<=` (barabar daam wala din bhi span me). Pop karte waqt `span += st.top().second` bhoola to galat: wo din apne peeche ke din nigal chuka hai.
+> `top.price <= price` tak pop: `<=` (barabar daam wala din bhi span me). `span = 1` se shuru (aaj ka din khud bhi span me). Pop karte waqt `span += st.top().second` bhoola to galat: wo din apne peeche ke din nigal chuka hai.
 
 **CODE**
 ```cpp

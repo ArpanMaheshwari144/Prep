@@ -102,7 +102,7 @@ intervals[] diye hain. Kam se kam kitne interval hatane padenge taaki bache hue 
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** start pe sort; `start` = rakha hua, `end` = candidate. overlap pe `count++` aur chhote-END wala rakho (`intervals[start][1] > intervals[end][1]` to `start = end`).
+> **CHAABI:** start pe sort; overlap pe `count++` aur chhote-END wala rakho.
 
 > [!WARNING]
 > **LINE SWEEP se farak (Arpan, 16-Nov grill):** LINE SWEEP (MEETING ROOMS II, 15_INTERVALS/04) me start aur end alag-alag

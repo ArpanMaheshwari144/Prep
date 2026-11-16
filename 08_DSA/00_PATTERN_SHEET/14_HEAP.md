@@ -231,11 +231,9 @@ k sorted linked list di hain. Sabko jod ke ek sorted linked list banao aur uska 
 
 > [!IMPORTANT]
 > **CHAABI:** saare heads MIN-heap me (`Compare: a->val > b->val`), har baar top nikaalo, `tail` se jodo, uska `next` push. `dummy->next` lautao.
->
-> struct Compare: ListNode* ko khud compare karna nahi aata
 
 > [!WARNING]
-> NULL push mat karo: heads pe `if (l)`, aur `curr->next` tabhi jab non-null. Warna `top()->val` pe SEGFAULT.
+> NULL push mat karo: heads pe `if (l)`, aur `curr->next` tabhi jab non-null. Warna `top()->val` pe SEGFAULT. `struct Compare` khud likhna: ListNode* ko khud compare karna nahi aata.
 
 **CODE**
 ```cpp
@@ -277,7 +275,7 @@ Ek array diya hai jisme har number apni sahi (sorted) jagah se zyada se zyada k 
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** MIN-heap = sliding buffer: pehle push, phir `pq.size() > k + 1` to top nikaal ke `ans` me. End me bache sab = sorted tail.
+> **CHAABI:** MIN-heap = sliding buffer: buffer bhar gaya to top nikaal ke `ans` me. End me bache sab = sorted tail.
 >
 > har element sahi jagah se max k door. index-0 ka MIN max index k tak -> "pehle k+1 me MIN kaun?"
 
@@ -362,7 +360,7 @@ DRY: add 5,15,1,3
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** do team: `maxHeap` = CHHOTI team, `minHeap` = BADI team. Placement `maxHeap.empty() || maxHeap.top() >= num` -> maxHeap, warna minHeap; phir 2 balance-if (farak <= 1, extra maxHeap me). Size barabar -> dono top ka average, warna `maxHeap.top()`.
+> **CHAABI:** do team: `maxHeap` = CHHOTI team, `minHeap` = BADI team. Placement `maxHeap.top() >= num` -> maxHeap, warna minHeap; phir 2 balance-if (farak <= 1, extra maxHeap me). Size barabar -> dono top ka average, warna `maxHeap.top()`.
 
 > [!WARNING]
 > `maxHeap.empty() ||` PEHLE likho, khaali pe `top()` crash. Dono balance-`if` zaroori (num kisi bhi heap me ja sakta), doosra `maxHeap.size() > minHeap.size() + 1`.
@@ -438,7 +436,7 @@ VISUAL ( "aaabbb" ):        heap (3,a)(3,b)
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** MAX-heap `{count, char}`, `while (size > 1)`: do pop -> `ans` me, count `-= 1`, `>= 1` to wapas push. Aakhir akela bacha: `count > 1` -> `""`, warna jodo.
+> **CHAABI:** MAX-heap `{count, char}`, har round: do pop -> `ans` me, count `-= 1`, `>= 1` to wapas push. Aakhir akela bacha: `count > 1` -> `""`, warna jodo.
 
 > [!WARNING]
 > `> 1` (`!empty` nahi): ek nikaal ke wapas daala to `"aa"` ban jaata. Aakhri bacha `count > 1` = do same paas aayenge, isliye `""`.

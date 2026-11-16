@@ -26,7 +26,7 @@ Naya array nahi banana, isi array me badlaav karna hai (in-place).
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** `slow` = agli jagah jahan non-zero rakhna, `fast` scan. Non-zero mila -> `swap(nums[slow], nums[fast])` PEHLE, `slow++` BAAD.
+> **CHAABI:** `slow` = agli jagah jahan non-zero rakhna, `fast` scan. Non-zero mila -> `swap(nums[slow], nums[fast])` + `slow++`.
 
 > [!WARNING]
 > `fast++` har baar, `if` ke BAHAR. `slow++` sirf swap ke BAAD (non-zero apni jagah lag gaya tabhi aage).
@@ -60,7 +60,7 @@ Kitne unique number bache (k), wo lautao. Array ke pehle k khaane me wahi unique
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** `slow` = last UNIQUE ka index. `nums[slow] != nums[fast]` -> naya unique: `slow++` PEHLE, phir `nums[slow] = nums[fast]`.
+> **CHAABI:** `slow` = last UNIQUE ka index. `nums[slow] != nums[fast]` -> naya unique: `slow++` + `nums[slow] = nums[fast]`.
 
 > [!WARNING]
 > MOVE ZEROES se ULTA kram: yahan `slow++` PEHLE, overwrite BAAD. Return `slow + 1` (slow index hai, ginti nahi).
@@ -95,7 +95,7 @@ Kitne number bache (k), wo lautao. Pehle k khaane me val nahi hona chahiye, unka
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** `nums[fast] != val` -> `nums[slow] = nums[fast]` PEHLE, `slow++` BAAD (move zeroes jaisa). `val` mila to sirf `fast++`.
+> **CHAABI:** `nums[fast] != val` -> `nums[slow] = nums[fast]` + `slow++` (move zeroes jaisa). `val` mila to sirf `fast++`.
 
 > [!WARNING]
 > write PEHLE, `slow++` BAAD. Return `slow` hi k hai (REMOVE DUP me `slow + 1` tha, yahan nahi).
@@ -128,10 +128,10 @@ Ek string di hai jisme sirf chhote akshar (lowercase) hain. Batao ki ye aage se 
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** `left`/`right` dono chhor se andar, `s[left] != s[right]` pe turant false, `left <= right` tak.
+> **CHAABI:** `left`/`right` dono chhor se andar, `s[left] != s[right]` pe turant false.
 
 > [!WARNING]
-> `right = s.size() - 1` (aakhri index), `s.size()` nahi.
+> `right = s.size() - 1` (aakhri index), `s.size()` nahi. Loop `left <= right` tak.
 
 **CODE**
 ```cpp
@@ -162,7 +162,7 @@ Inhe gin ke string palindrome banti hai ya nahi, true ya false lautao.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** 4 branch isi kram me: `tolower` match -> dono andar · left alnum nahi -> `left++` · right alnum nahi -> `right--` · dono alnum PAR alag -> false.
+> **CHAABI:** 4 branch: `tolower` match -> dono andar · left alnum nahi -> `left++` · right alnum nahi -> `right--` · dono alnum PAR alag -> false.
 
 > [!WARNING]
 > false sirf AAKHRI `else` me (dono alnum aur alag). Pehle match, phir non-alnum skip; compare `tolower` ke saath (`<cctype>`).
@@ -202,9 +202,6 @@ Ek string di hai. Batao ki ye palindrome hai, ya zyada se zyada EK akshar hata k
 
 > [!IMPORTANT]
 > **CHAABI:** pehle mismatch pe do raaste: `isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1)`. Koi mismatch nahi -> true.
->
-> isPalindrome: helper: l..r palindrome hai?
-> validPalindrome: palindrome YA ek char delete karke ban jaaye
 
 **CODE**
 ```cpp
@@ -244,10 +241,7 @@ Ek string di hai. Usme sirf vowels (a e i o u, bade bhi) ka kram ulta karna hai.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** dono vowel -> swap + dono andar; left vowel nahi -> `left++`; warna `right--`. `isVowel` me lower + upper dono.
->
-> isVowel: a e i o u, lower + upper dono
-> reverseVowels: sirf vowels aapas me ulte, baaki char apni jagah
+> **CHAABI:** dono vowel -> swap + dono andar; left vowel nahi -> `left++`; warna `right--`.
 
 > [!WARNING]
 > `while (left < right)`: milte hi ruko, beech ka akela char swap nahi. Bade vowel (A E I O U) bhi `isVowel` me.
@@ -331,7 +325,7 @@ Index 1 se gine jaate hain (1-based), 0 se nahi.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** SORTED -> `left`/`right`: jod chhota -> `left++`, bada -> `right--`. UNSORTED two sum = hashmap.
+> **CHAABI:** SORTED -> `left`/`right`: jod chhota -> `left++`, bada -> `right--`.
 
 > [!WARNING]
 > 1-based lautao: `{left + 1, right + 1}`. `left < right` (ek hi index do baar nahi).
@@ -442,10 +436,10 @@ nums2 ko nums1 me hi milana hai (in-place), taaki poora nums1 sorted ho jaaye.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** peeche se bharo: `i = m - 1`, `j = n - 1`, `k = m + n - 1`; jo bada wahi `nums1[k]`. Ant me bache `nums2[j]` copy.
+> **CHAABI:** peeche se bharo: jo bada wahi `nums1[k]` (aakhri khaali slot). Ant me bache `nums2[j]` copy.
 
 > [!WARNING]
-> `k = m + n - 1` (`m*n-1` NAHI). `while (i >= 0 && j >= 0)`: `&&` (`||` se -1 index crash). Aakhri loop `nums2[j]` (`nums1[j]` NAHI), ye abhi copy nahi hue.
+> `i = m - 1`, `j = n - 1`, `k = m + n - 1` (`m*n-1` NAHI). `while (i >= 0 && j >= 0)`: `&&` (`||` se -1 index crash). Aakhri loop `nums2[j]` (`nums1[j]` NAHI), ye abhi copy nahi hue.
 
 **CODE**
 ```cpp
@@ -569,12 +563,6 @@ Ek hi group do baar nahi aana chahiye, chahe array me number dohraye gaye hon.
   kyun: -1 do baar hai, par [-1,0,1] sirf ek baar likhna hai
 ```
 
-**SAAR**
-```
-CRUX = DUPLICATE skip 3 JAGAH: (1) fixed i (2) match ke baad LOW (3) match ke baad HIGH.
-sum = -nums[i] (fixed ko doosri taraf) -> sorted pe 2-pointer (= 2SUM-II).
-```
-
 > [!IMPORTANT]
 > **CHAABI:** sort + har `i` FIX, `sum = -nums[i]`, baaki `low/high` = 2SUM-II. Duplicate skip 3 jagah: fixed `i`, match ke baad `low`, match ke baad `high`.
 
@@ -685,13 +673,13 @@ max abhi current deewar ko shaamil kiye bina -> milne ki jagah galat -> ek khamb
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** faisla DEEWAR pe: `height[left] <= height[right]` -> chhoti deewar wali taraf niptao: `leftMax > height[left]` -> paani `leftMax - height[left]`, warna nayi deewar `leftMax`. Doosri taraf mirror.
+> **CHAABI:** faisla DEEWAR pe: `height[left] <= height[right]` -> chhoti deewar wali taraf niptao (paani = `leftMax - height[left]`). Doosri taraf mirror.
 >
 > bar i ke upar paani = min(leftMax[i], rightMax[i]) - height[i]   (min: chhoti side se bah jaata)
 > O(n) space wala: leftMax[] aage se, rightMax[] peeche se, ans += min(..) - height[i]
 
 > [!WARNING]
-> faisla `height[left] <= height[right]` (DEEWAR) pe lo, `leftMax <= rightMax` pe NAHI: max pe liya to ek khamba chhoot jaata, `[4,1,4,1] -> 0` (sahi 3).
+> faisla `height[left] <= height[right]` (DEEWAR) pe lo, `leftMax <= rightMax` pe NAHI: max pe liya to ek khamba chhoot jaata, `[4,1,4,1] -> 0` (sahi 3). Andar: `leftMax > height[left]` -> paani, warna `leftMax = height[left]` (nayi deewar).
 
 **CODE**
 ```cpp
@@ -753,14 +741,10 @@ Akela akshar bhi palindrome gina jaata hai, aur alag jagah wali same substring a
 > recursion ki khushboo SUBSEQUENCE me aati, substring me nahi).
 
 > [!IMPORTANT]
-> **CHAABI:** har CENTER se phailo: odd `solve(i, i)`, even `solve(i, i + 1)`; `while` me range check PEHLE phir `s[i] == s[j]`, HAR match pe `count++`.
->
-> kitne substring palindrome (single char bhi; alag position = alag count). har CENTER se phailo
-> "abcba": c -> bcb -> abcba = ek center se 3. ODD center = ek char, EVEN center = do char jodi
-> solve: &count : warna bahar count badhta hi nahi
+> **CHAABI:** har CENTER se phailo: odd `solve(i, i)`, even `solve(i, i + 1)`; HAR match pe `count++`.
 
 > [!WARNING]
-> `int &count` reference, warna bahar count badhta hi nahi. `count++` HAR match pe (ant me ek baar nahi).
+> `int &count` reference, warna bahar count badhta hi nahi. `count++` HAR match pe (ant me ek baar nahi). `while` me range check PEHLE, phir `s[i] == s[j]`.
 
 **CODE**
 ```cpp

@@ -99,10 +99,10 @@ n node (0 se n-1), bina disha wale (undirected) edges, ek source aur ek destinat
 > (2) vis[] (tree me cycle nahi, graph me hai)  (3) level-loop NAHI: sirf reachability
 
 > [!IMPORTANT]
-> **CHAABI:** edges se `adj` banao (undirected = dono taraf), source se EK BFS; pop pe `node == destination` to true, queue khaali to false. Outer loop nahi, level-loop nahi.
+> **CHAABI:** edges se `adj` banao (undirected = dono taraf), source se EK BFS; `node == destination` mila to true, queue khaali to false. Outer loop nahi, level-loop nahi.
 
 > [!WARNING]
-> `vis` PUSH ke saath hi mark karo, aur `vis[source] = true` bhi: warna cycle se ghoom ke ek node (source bhi) queue me do baar.
+> `vis` PUSH ke saath hi mark karo, aur `vis[source] = true` bhi: warna cycle se ghoom ke ek node (source bhi) queue me do baar. `node == destination` check POP pe (src == dst wala case bhi pakda jaata).
 
 **CODE**
 ```cpp
@@ -302,10 +302,10 @@ Saare santre sadne me kam se kam kitne minute lagenge, wo lautao. Kabhi na sad p
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** saare `2` PEHLE queue me (multi-source = level 0); `sz = q.size()` snapshot = ek minute, `while (sz--)` ke BAHAR `mins++`; end me `1` bacha to -1.
+> **CHAABI:** saare `2` PEHLE queue me (multi-source = level 0); `sz = q.size()` snapshot = ek minute; end me `1` bacha to -1.
 
 > [!WARNING]
-> aakhri level ke baad bhi `mins++` hota -> `mins - 1`; par koi santra hi nahi to `mins = 0` -> seedha 0 lautao (`mins - 1` = -1 galat). `grid = 2` push ke saath hi, warna doosra rotten bhi push karta.
+> `mins++` `while (sz--)` ke BAHAR (ek level = ek minute). aakhri level ke baad bhi `mins++` hota -> `mins - 1`; par koi santra hi nahi to `mins = 0` -> seedha 0 lautao (`mins - 1` = -1 galat). `grid = 2` push ke saath hi, warna doosra rotten bhi push karta.
 
 **CODE**
 ```cpp
@@ -365,7 +365,7 @@ numCourses courses aur prerequisites diye hain, [a, b] ka matlab: a padhne se pe
 > [[1,0],[2,1],[3,2]]: har [a,b] = a lene se pehle b -> edge b -> a
 
 > [!IMPORTANT]
-> **CHAABI:** `[a, b]` = edge `b -> a`, `indegree[a]++`. indegree 0 wale queue me; nikaalte waqt `adj` ke har node ka indegree ghatao, 0 hua to push. `ans.size() == numCourses` = cycle nahi.
+> **CHAABI:** prereq se `adj` + `indegree` banao. indegree 0 wale queue me; nikaalte waqt `adj` ke har node ka indegree ghatao, 0 hua to push. `ans.size() == numCourses` = cycle nahi.
 
 > [!WARNING]
 > disha ulti mat karo: `u = it[1]` (pre), `v = it[0]` (course), edge pre -> course. cycle wale ka indegree KABHI 0 nahi -> queue me aate hi nahi -> size < n -> false.
@@ -418,13 +418,12 @@ Jo module ready hain (jinki saari dependency ban chuki), unme se sabse chhote nu
 > **PEHCHAAN / SAAR:** PEHCHAAN: dependency -> TOPO. output line padho: "koi bhi valid order" -> queue · "sabse chhota /
 > lexicographic" -> MIN-HEAP. topo ke KAI sahi order ([5->2,5->0,4->0,4->1,2->3,3->1]: "4 5 0 2 3 1"
 > aur "5 4 2 0 3 1" dono sahi) -> khaas order = heap. queue = jo pehle ready · heap = ready me chhota
-> BADLAAV bas itna: queue -> min-heap, front() -> top(). indegree / adj / ghatana / end-check SAME
 
 > [!IMPORTANT]
-> **CHAABI:** Course Schedule hi, bas `queue` -> `priority_queue<int, vector<int>, greater<int>>` (min-heap) aur `front()` -> `top()`: ready me se sabse chhota pehle. indegree / adj / end-check SAME.
+> **CHAABI:** Course Schedule hi, bas `queue` -> min-heap: ready me se sabse chhota pehle. indegree / adj / ghatana / end-check SAME.
 
 > [!WARNING]
-> `ans` KHAALI banao: `ans(n, 0)` + `push_back` = size 2n -> end check galat, hamesha `{}`. self-loop `[0->0]` pe indegree kabhi 0 nahi -> khaali.
+> `ans` KHAALI banao: `ans(n, 0)` + `push_back` = size 2n -> end check galat, hamesha `{}`. self-loop `[0->0]` pe indegree kabhi 0 nahi -> khaali. min-heap = `priority_queue<int, vector<int>, greater<int>>`, aur `front()` -> `top()`.
 
 **CODE**
 ```cpp
@@ -628,10 +627,10 @@ n node, bina disha wale weight wale edges {u, v, w} aur ek source diya hai. Sour
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** BFS + 2 swap: `queue` -> min-heap `{dist, node}` (dist PEHLE), `visited` -> `dist[]` (INF, src 0) + RELAX `wt + it.second < dist[it.first]` -> update, phir push.
+> **CHAABI:** BFS + 2 swap: `queue` -> min-heap `{dist, node}`, `visited` -> `dist[]` + RELAX `wt + it.second < dist[it.first]` -> update, phir push.
 
 > [!WARNING]
-> pair `{dist, node}` hi likho: `{node, dist}` pe test PASS par har node kai baar khulta. stale skip `wt > dist[node]` strictly `>` (`>=` se src `{0, src}` khud skip -> sab INF).
+> pair `{dist, node}` hi likho: `{node, dist}` pe test PASS par har node kai baar khulta. stale skip `wt > dist[node]` strictly `>` (`>=` se src `{0, src}` khud skip -> sab INF). `dist[]` INF se, `dist[src] = 0`.
 
 **CODE**
 ```cpp
@@ -791,10 +790,10 @@ TEMPLATE:
 > (ek check "dict me hai?" + "visited nahi?" dono serve).
 
 > [!IMPORTANT]
-> **CHAABI:** word = node; har position pe `'a'..'z'` badal ke dict me mila = padosi. BFS `{word, steps}`, begin = 1; dict-set se ERASE karte hi use karo = visited (alag set nahi).
+> **CHAABI:** word = node; har position pe `'a'..'z'` badal ke dict me mila = padosi. BFS `{word, steps}`; dict-set se ERASE karte hi use karo = visited (alag set nahi).
 
 > [!WARNING]
-> `word[i] = original` RESTORE har position ke baad, warna word bigad jaata. `st.erase(beginWord)` bhi, begin dobara na aaye.
+> `word[i] = original` RESTORE har position ke baad, warna word bigad jaata. `st.erase(beginWord)` bhi, begin dobara na aaye. begin = 1 se shuru (begin khud ek word gina jaata).
 
 **CODE**
 ```cpp

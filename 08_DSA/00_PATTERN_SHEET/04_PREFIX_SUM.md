@@ -70,7 +70,7 @@ Bhaag (division) nahi lagana, O(n) me karna hai.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** `ans[i] = left[i] * right[i]`. Dono pass me ASSIGN pehle (`left[i] = prod`), UPDATE baad (`prod *= nums[i]`).
+> **CHAABI:** `ans[i] = left[i] * right[i]`.
 >
 > ans[i] = (i se PEHLE sabka product) x (i ke BAAD sabka product). division nahi, O(n)
 > O(1) extra (follow-up): left ko seedha ans me likho, right-pass me ans[i] *= prod (alag right[] nahi)
@@ -185,7 +185,7 @@ Ek array aur ek number k diya hai. Kitne lagaatar subarray hain jinke saare numb
 **SAAR**
 
 > [!IMPORTANT]
-> [4,2,2,6,4], k=6 -> 4.   **CHAABI:** x ^ x = 0 (same number khud se XOR = gayab)
+> **x ^ x = 0** (same number khud se XOR = gayab)
 >
 > (shuru se j tak XOR) ^ (shuru se i tak XOR) = beech ka XOR (common hissa kat gaya)
 >
@@ -256,10 +256,6 @@ idx   0     1  2   3    4   5   6      7
      |<-- kamra -->|
 ```
 
-> [!IMPORTANT]
-> **har i pe:**   lastWall = aakhri DEEWAR ka INDEX,   lastK = aakhri K ka INDEX
-> agar lastK > lastWall  ->  count += lastK - lastWall
-
 ### DRY-RUN
 
 ```
@@ -289,10 +285,10 @@ idx   0     1  2   3    4   5   6      7
 > collapse kar diya -> linear. mushkil = insight-dhundhna, code chhota. (search->test->eliminate = process.)
 
 > [!IMPORTANT]
-> **CHAABI:** K se bada = DEEWAR. `lastWall` aur `lastK` dono INDEX rakho; har i pe pehle dono update, phir `lastK > lastWall` to `count += lastK - lastWall`.
+> **CHAABI:** K se bada = DEEWAR. Har i pe `lastWall` (aakhri deewar) aur `lastK` (aakhri K); `lastK > lastWall` to `count += lastK - lastWall`.
 
 > [!WARNING]
-> `if (lastK > lastWall)` guard zaroori, warna `lastK - lastWall` NEGATIVE jud jaata (`[5,3,5]` pe dikhta). count `long long` (~n²/2).
+> `if (lastK > lastWall)` guard zaroori, warna `lastK - lastWall` NEGATIVE jud jaata (`[5,3,5]` pe dikhta). count `long long` (~n²/2). `lastWall` / `lastK` INDEX hain, value nahi; har i pe pehle dono update, PHIR count.
 
 **CODE**
 ```cpp
@@ -329,7 +325,6 @@ Saari bookings ke baad har flight ki kul booked seats ka array lautao.
 > **CHAABI:** sirf DO nishaan: `diff[start] += count`, `diff[end + 1] -= count`. Phir ek baar chalti-sum (`cummSum += diff[i]`) = har flight ka jawab.
 >
 > KAB: har RANGE pe kuch ADD karo, 20,000 range. seedha = O(range x length), chahiye O(n + ranges)
-> har element mat chhuo: sirf DO jagah nishaan (shuru + khatam ke baad), phir ek baar chalti-sum = value
 
 > [!WARNING]
 > `diff` size `n + 2` (end+1 = n+1 tak jaata, `n + 1` rakha to crash). Inclusive range me `end + 1` pe ghatao; `end` pe ghataya to aakhri flight chhoot gayi.

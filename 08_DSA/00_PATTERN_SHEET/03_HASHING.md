@@ -46,12 +46,10 @@ Ek akshar hamesha ek hi akshar banega, aur do alag akshar ek hi akshar nahi ban 
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** DO map, dono taraf (`mp1` s->t, `mp2` t->s). Kisi bhi EK taraf clash -> false. `count()` pehle, phir milao, phir dono me save.
->
-> s->t har char ka 1-to-1 mapping? "egg"->"add" true; "foo"->"bar", "ab"->"aa" false
+> **CHAABI:** DO map, dono taraf (`mp1` s->t, `mp2` t->s). Kisi bhi EK taraf clash -> false.
 
 > [!WARNING]
-> `mp2` (t->s) hatao mat: "ab"->"aa" ka clash sirf ULTI taraf pakda jaata. Aur `mp1.count()` pehle check karo, seedha `mp1[x]` khaali key bana ke galat clash deta.
+> `mp2` (t->s) hatao mat: "ab"->"aa" ka clash sirf ULTI taraf pakda jaata. Aur `mp1.count()` pehle check karo, seedha `mp1[x]` khaali key bana ke galat clash deta. Save check ke BAAD, dono map me.
 
 **CODE**
 ```cpp
@@ -132,7 +130,7 @@ Jawab hamesha ek hi hai, aur ek hi number do baar nahi le sakte.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** map `{value -> index}`. Har number pe pehle dekho `target - nums[i]` map me hai? Mila to dono index. CHECK pehle, daalo BAAD.
+> **CHAABI:** map `{value -> index}`. Har number pe dekho `target - nums[i]` map me hai? Mila to dono index.
 
 > [!WARNING]
 > `mp[nums[i]] = i` check ke BAAD hi. Pehle daala to number khud se match kar leta.
@@ -163,10 +161,10 @@ Do string s aur t di hain. Kya t, s ka anagram hai, matlab dono me same akshar u
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** ek map: s se `++`, t se `--`, end me har key 0 honi chahiye. Length alag -> turant false.
+> **CHAABI:** ek map: s se `++`, t se `--`, end me har key 0 honi chahiye.
 
 > [!WARNING]
-> Check `!= 0` karo, sirf `> 0` nahi: t me zyada aaya char minus me jaata, wo bhi pakadna hai.
+> Check `!= 0` karo, sirf `> 0` nahi: t me zyada aaya char minus me jaata, wo bhi pakadna hai. Length alag -> turant false.
 
 **CODE**
 ```cpp
@@ -297,15 +295,10 @@ theek k ho, aur uski lambai lautao. Koi na mile to 0.
 
 > [!IMPORTANT]
 > **FARAK (subarray sum = k se):**
->
-> wahan map = {prefixSum -> KITNI BAAR}   (ginti chahiye thi)
->
-> yahan map = {prefixSum -> PEHLA INDEX}  (lambai chahiye: i - jahan pehli baar ye sum dikha)
->
 > start: mp[0] = 1 ki jagah mp[0] = -1   (index -1: shuru se i tak ka tukda, lambai = i + 1)
 
 > [!IMPORTANT]
-> **CHAABI:** map `{prefixSum -> PEHLA index}`, `mp[0] = -1`. `sum - k` mila to lambai `i - mp[sum - k]`.
+> **CHAABI:** map `{prefixSum -> PEHLA index}`. `sum - k` mila to lambai `i - mp[sum - k]`.
 
 ### SUM - K KYUN CHALTA HAI (upar SUBARRAY SUM = K wali hi trick)
 
@@ -364,7 +357,7 @@ Ek array aur ek number k diya hai. Kitne jode (i < j) hain jinka jod k se poora 
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** key = REMAINDER. partner ka rem = `(k - rem) % k`; `mp[partner]` jitna, utne pair. Lookup pehle, `mp[rem]++` baad.
+> **CHAABI:** key = REMAINDER. partner ka rem = `(k - rem) % k`; `mp[partner]` jitna, utne pair.
 >
 > pairs (i<j): (A[i]+A[j])%k==0. brute O(n²) -> "partner pehle aaya?" ko hashmap me CACHE -> O(n)
 > A[i] KYUN, prefix NAHI: pair = 2 ALAG element (contiguous range nahi) -> har element ka apna rem
@@ -539,9 +532,6 @@ Extra jagah O(1) honi chahiye.
 
 > [!IMPORTANT]
 > **CHAABI:** value v ka ghar = index `v - 1`; dikha to us index ko NEGATIVE karo. End me jo `+ve` bacha, uska `i + 1` missing.
->
-> size n, values 1..n (repeat ho sakte). jo MISSING wo sab. [4,3,2,7,8,2,3,1] -> [5,6]
-> extra set/map nahi: value v ka ghar = index v-1 -> dikha to us index ko NEGATIVE mark
 
 > [!WARNING]
 > `abs(nums[i])` lo (value pehle hi -ve ho sakti) aur `nums[index] > 0` guard. Bina guard duplicate pe `-(-x)` wapas +ve: `[2,2]` pe `[1,2]`, sahi `[1]`.
@@ -594,9 +584,8 @@ Beech me "success" aaya to us server ki ginti 0. Kul kitne alert hue, wo lautao.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** key = server, map `{server -> lagaataar error}`. line todo `ss >> server >> code >> msg`; error -> `++`, 3 pura -> alert + 0; success -> 0.
+> **CHAABI:** key = server, map `{server -> lagaataar error}`. error -> `++`, 3 pura -> alert + 0; success -> 0.
 >
-> logs "s1 500 error", "s2 200 success" ... kisi server ke LAGAATAAR 3 error -> alert++, ginti 0.
 > pench: beech me DOOSRE server ki lines aati -> ek window nahi, "KISKA lagaataar" = key = server   (00_SHURU me NAAM-SE-CONFUSE E)
 
 > [!WARNING]
@@ -639,8 +628,6 @@ Lines di hain, har line "naam,subject,marks". Har student ke kul marks nikaalo, 
 
 > [!IMPORTANT]
 > **CHAABI:** `getline(ss, name, ',')` teen baar (comma tak), `stoi(marks)`, `mp[name] += t`. `map` (sorted) = alphabet kram apne aap.
->
-> line todo -> naam = key -> map me marks jodte jao. pench: tukde COMMA se, space se nahi -> >> nahi chalega, getline
 
 > [!WARNING]
 > Tukde COMMA se hain, `>>` space pe todta, yahan nahi chalega; `getline` with `','`.
@@ -693,7 +680,7 @@ KYUN 1440: din me 24 * 60 = 1440 minute.
 > isliye "+1440 phir %1440" dono case ek line me. Caesar ka "+26 phir %26" bilkul yahi.
 
 > [!IMPORTANT]
-> **CHAABI:** dono ko MINUTE banao (`HH * 60 + MM`), phir `(mins2 - mins1 + 1440) % 1440`. Caesar ka `+26 %26` yahi.
+> **CHAABI:** dono ko MINUTE banao (`HH * 60 + MM`), phir `(mins2 - mins1 + 1440) % 1440`.
 
 > [!WARNING]
 > Raat 12 paar end chhota -> minus aata, isliye `+1440`; par `% 1440` bhi zaroori warna seedhe case me ek extra din (1950) jud jaata.

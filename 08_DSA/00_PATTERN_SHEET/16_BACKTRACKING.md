@@ -66,7 +66,7 @@ Ek array diya hai (sab number alag). Iske saare subsets (khaali bhi) lautao, kra
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** har element pe 2 call: INCLUDE (`push`, `index + 1`) -> `pop` -> EXCLUDE (`index + 1`); base `index >= n` pe record. ALT: start-loop, HAR node record, alag base nahi.
+> **CHAABI:** har element pe 2 call: INCLUDE (`push`, `index + 1`) aur EXCLUDE (`index + 1`); base `index >= n` pe record.
 
 > [!WARNING]
 > `pop_back` EXCLUDE call se PEHLE, warna exclude path me bhi element chipka rehta. `temp` caller me EK baar banao, by-ref pass (helper me banaya to har call naya).
@@ -137,9 +137,6 @@ Ek array diya hai (sab number alag). In numbers ko jitne alag-alag kram me laga 
 
 > [!IMPORTANT]
 > **CHAABI:** loop HAMESHA `0` se + `used[]` (start nahi: order matter, peeche wala bhi kisi position pe); base `temp.size() == nums.size()` pe record.
->
-> INDEX/start KYU NAHI PASS kiya (permutation me): order MATTER karta -> har position pe koi bhi UNUSED element (peeche wala bhi) chahiye -> loop HAMESHA 0-se -> "peeche mat jao" wali baat hi nahi -> isliye 'start' ki zaroorat nahi, uski jagah used[].
-> (subsets/combinations me start = "peeche mat jao" (duplicate-rok, order-agnostic). permutation me wo nahi chahiye -> used[] = "same element dobara mat lo".)
 
 > [!WARNING]
 > un-choose me DONO undo: `temp.pop_back()` + `used[i] = false`. sirf pop kiya to aage ke arrangement me wo element band.
@@ -213,8 +210,6 @@ candidates[] (sab alag, sab positive) aur ek target diya hai. Wo saare alag comb
 
 > [!IMPORTANT]
 > **CHAABI:** combinations hi, 2 farak: recurse `i` (`i + 1` NAHI) = REUSE; base = target (`0` -> record, `< 0` -> prune), size nahi. include/exclude form me `index` SAME pass.
->
-> FAMILY (5) 1-line: SUBSETS=start-aage,har-node · COMBINATIONS=start-aage,size==k · COMB-SUM=start-'i'(reuse),target-base · PERMUTATION=used[]+loop-0,size==n.
 
 > [!WARNING]
 > `i + 1` likh diya to 2 dobara nahi le sakte, `[2,2,3]` chhoot jaata. `target < 0` prune sabse upar, warna bekaar gehra jaata.
@@ -285,7 +280,7 @@ Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar
 ### purani atak (Aug sheet)
 
 ```
-★ PURANI ATAK (Aug sheet): CRUX yahi atkaata tha: 4 DFS ko || me jodna (ek direction true -> baaki call hi nahi) + visited check bounds / mismatch ke saath EK hi if me.
+★ PURANI ATAK (Aug sheet): GALTI yahi atkaata tha: 4 DFS ko || me jodna (ek direction true -> baaki call hi nahi) + visited check bounds / mismatch ke saath EK hi if me.
 ```
 
 > [!IMPORTANT]
@@ -298,7 +293,7 @@ Aksharon ki ek grid aur ek word diya hai. Kya grid me paas-paas wale cells (upar
 > (= stream ka anyMatch / allMatch, andar yahi loop)
 
 > [!IMPORTANT]
-> **CHAABI:** har cell pe ek `if`: bounds + `vis` + char mismatch -> false; mark -> 4 disha `||` (ek true = baaki call nahi) -> un-mark. pehla char mile wahin se start, KOI EK true = kaafi.
+> **CHAABI:** har cell pe bounds + `vis` + char mismatch -> false; mark -> 4 disha `||` -> un-mark. pehla char mile wahin se start, KOI EK true = kaafi.
 
 > [!WARNING]
 > ANY wala loop: andar sirf true pe `return true`, loop ke BAAD `return false` (andar `== false` pe return = pehla start fail -> poora false). `vis[i][j] = false` un-mark zaroori, warna doosra raasta band.
@@ -367,10 +362,10 @@ Ek number n diya hai (n jode bracket). n jodon se banne wale saare sahi (balance
 > backtracking = DONO choice ek-ke-baad-ek chalao (koi return nahi). = classic "early-return kills 2nd branch" trap.
 
 > [!IMPORTANT]
-> **CHAABI:** 2 rule hi branch: `open < n` -> `'('`, `close < open` -> `')'`; base `open == n && close == n`. path BY VALUE (`path + '('`) -> pop nahi chahiye.
+> **CHAABI:** 2 rule hi branch: `open < n` -> `'('`, `close < open` -> `')'`; base `open == n && close == n`.
 
 > [!WARNING]
-> dono ALAG `if` (`else if` nahi: dono sach ho sakti) aur `return solve(...)` NAHI (pehla return doosri branch maar deta -> sirf 1 string). n=3 pe 5 se kam = branch kat rahi.
+> dono ALAG `if` (`else if` nahi: dono sach ho sakti) aur `return solve(...)` NAHI (pehla return doosri branch maar deta -> sirf 1 string). n=3 pe 5 se kam = branch kat rahi. path BY VALUE (`path + '('`) -> pop nahi chahiye.
 
 **CODE**
 ```cpp

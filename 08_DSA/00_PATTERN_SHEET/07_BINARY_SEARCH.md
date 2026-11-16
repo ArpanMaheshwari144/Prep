@@ -48,7 +48,7 @@ Ek SORTED array aur ek target diya hai. target kis index pe hai wo lautao, na mi
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** `while (low <= high)`, `mid = low + (high - low) / 2`. `nums[mid] == target` -> return mid; chhota -> `low = mid + 1`; bada -> `high = mid - 1`. Bahar -> -1.
+> **CHAABI:** `mid` nikaalo: `nums[mid] == target` -> return mid; chhota -> `low = mid + 1`; bada -> `high = mid - 1`. Bahar -> -1.
 
 > [!WARNING]
 > `<=` (`<` nahi): `[5], 5` pe `<` se loop chalta hi nahi -> -1, sahi 0. `(low + high) / 2` nahi: bade low+high pe overflow.
@@ -200,13 +200,13 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai, jaise [4
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** `nums[mid] == target` -> return. `nums[low] <= nums[mid]` -> LEFT sorted: target `>= nums[low] && <= nums[mid]` to `high = mid - 1`, warna `low = mid + 1`. Nahi to RIGHT sorted, wahi ulta (`>= nums[mid] && <= nums[high]`).
->
-> BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
-> jahaan mid hai (already returned) -> < ya <= farak NAHI.
+> **CHAABI:** `nums[mid] == target` -> return. `nums[low] <= nums[mid]` -> LEFT sorted: target `nums[low]` se `nums[mid]` ke beech to `high = mid - 1`, warna `low = mid + 1`. Nahi to RIGHT sorted, wahi ulta (target `nums[mid]` se `nums[high]` ke beech to `low = mid + 1`).
 
 > [!WARNING]
 > `nums[low] <= nums[mid]` me `<=` (`<` nahi): `[3,1], 1` pe `<` se -1, sahi 1. Range me `>= nums[low]` ZAROORI (target low pe khud ho sakta): `[5,1,3], 5` miss.
+>
+> BOUNDARY RULE (dry-run se pakda): jahaan boundary KHUD valid answer ho sakti (nums[low]/nums[high]) -> >= / <= ZARURI (equality include).
+> jahaan mid hai (already returned) -> < ya <= farak NAHI.
 
 **CODE**
 ```cpp
@@ -249,10 +249,10 @@ Ek sorted array (sab alag number) ko kisi jagah se ghuma diya gaya hai. Usme sab
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** Target nahi, khud MIN -> mid ko HIGH se compare: `nums[mid] > nums[high]` to `low = mid + 1`, warna `high = mid`. `while (low < high)`, return `nums[low]`.
+> **CHAABI:** Target nahi, khud MIN -> mid ko HIGH se compare: `nums[mid] > nums[high]` to `low = mid + 1`, warna `high = mid`.
 
 > [!WARNING]
-> `high = mid` (mid-1 NAHI: mid khud min ho sakta, `[3,1,2]` pe mid-1 se galat 3). `high = mid` ke saath `low < high` hi; `<=` = infinite loop.
+> `high = mid` (mid-1 NAHI: mid khud min ho sakta, `[3,1,2]` pe mid-1 se galat 3). `high = mid` ke saath `low < high` hi; `<=` = infinite loop. Return `nums[low]`.
 
 **CODE**
 ```cpp
@@ -398,7 +398,7 @@ Aisa todo ki ye sabse bada jod jitna ho sake chhota ho, aur wo jod lautao.
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** SHIP WITHIN D DAYS hi: k hisse = D din. `solve`: `sum > mid` to `count++, sum = nums[i]`; `count <= k`? Range `low = max`, `high = sum`.
+> **CHAABI:** SHIP WITHIN D DAYS hi: k hisse = D din. `solve`: `sum > mid` to naya tukda (`count++`); `count <= k`? Range `low = max`, `high = sum`.
 
 > [!WARNING]
 > `count = 1` se START (warna aakhri tukda chhoot jaata). Limit tootne pe `sum = nums[i]` (0 nahi): wahi element naye tukde ka pehla.
@@ -448,10 +448,10 @@ Ek array diya hai. Peak wo number hai jo apne dono padosiyon se bada ho (array k
 ```
 
 > [!IMPORTANT]
-> **CHAABI:** mid ko `mid + 1` se compare: CHADHAAI (`nums[mid] < nums[mid+1]`) -> `low = mid + 1`; DHALAAN -> `high = mid`. `while (low < high)`, return `low`.
+> **CHAABI:** mid ko `mid + 1` se compare: CHADHAAI (`nums[mid] < nums[mid+1]`) -> `low = mid + 1`; DHALAAN -> `high = mid`.
 
 > [!WARNING]
-> `high = mid` (mid-1 NAHI: mid khud peak ho sakta) ke saath `low < high` hi (atke nahi, `mid + 1` hamesha andar). SHART: padosi barabar nahi; `[1,1]` pe loop atak jaata.
+> `high = mid` (mid-1 NAHI: mid khud peak ho sakta) ke saath `low < high` hi (atke nahi, `mid + 1` hamesha andar). SHART: padosi barabar nahi; `[1,1]` pe loop atak jaata. Return `low` (low == high pe converge = peak).
 
 **CODE**
 ```cpp
@@ -504,7 +504,7 @@ Ek SORTED array me har number theek do baar aata hai, sirf ek number akela (ek b
 > **KYUN HIGH:** return nums[HIGH] (not low): dono branch mid REJECT karte -> high khud single pe aa ke rukta.
 
 > [!IMPORTANT]
-> **CHAABI:** Single se PEHLE pair (even, odd) index pe. mid ko `mid - 1` se milao: EVEN mid ka saathi peeche mila = shift ho chuki -> `high = mid - 1`; ODD mid ka saathi peeche mila = theek -> `low = mid + 1`. End `return nums[high]`.
+> **CHAABI:** Single se PEHLE pair (even, odd) index pe. mid ko `mid - 1` se milao: EVEN mid ka saathi peeche mila = shift ho chuki -> `high = mid - 1`; ODD mid ka saathi peeche mila = theek -> `low = mid + 1`.
 
 > [!WARNING]
 > `return nums[high]` (low nahi): dono branch mid REJECT karte, high khud single pe rukta. `mid == 0` pe seedha `nums[mid]` (`mid - 1` bahar). size 1 pe seedha `nums[0]`.
@@ -647,7 +647,7 @@ CUT idea (chhote array A pe BS -> Px; Py auto):
 > **GOTCHA:** even -> /2.0 + (double) cast (int-div se 3.5 bug) | edge ±INF warna out-of-bounds.
 
 > [!IMPORTANT]
-> **CHAABI:** CHHOTE array A pe CUT `Px` pe BS, `Py = (m + n + 1) / 2 - Px`. 4 kinaare: `x1 = A[Px-1]`, `x2 = B[Py-1]` (left) · `x3 = A[Px]`, `x4 = B[Py]` (right). `x1 <= x4 && x2 <= x3` = sahi cut: odd -> `max(x1, x2)`, even -> `(max(x1,x2) + min(x3,x4)) / 2.0`. `x1 > x4` -> `high = Px - 1`, warna `low = Px + 1`.
+> **CHAABI:** CHHOTE array A pe CUT `Px` pe BS, `Py = (m + n + 1) / 2 - Px`. 4 kinaare: `x1 = A[Px-1]`, `x2 = B[Py-1]` (left) · `x3 = A[Px]`, `x4 = B[Py]` (right). `x1 <= x4 && x2 <= x3` = sahi cut: odd -> `max(x1, x2)`, even -> `max(x1,x2)` aur `min(x3,x4)` ka average. `x1 > x4` -> `high = Px - 1`, warna `low = Px + 1`.
 
 > [!WARNING]
 > `m > n` to swap (chhote pe BS, Py kabhi -ve nahi). Edge: `Px == 0` / `Py == 0` -> `INT_MIN`, `Px == m` / `Py == n` -> `INT_MAX` (warna `A[-1]` / `A[m]` bahar). Even me `/ 2.0` (int division se .5 kat jaata). `(m + n + 1) / 2` me `+1`.
