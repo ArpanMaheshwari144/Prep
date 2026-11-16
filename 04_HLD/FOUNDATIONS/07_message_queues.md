@@ -283,23 +283,51 @@ DB ya Redis me rakhte hain.
 
 ---
 
-## Kafka vs RabbitMQ
+## Kafka ya RabbitMQ
 
-| | **Kafka** | **RabbitMQ** |
-|---|---|---|
-| Model | Distributed log (append-only) | Traditional broker |
-| Throughput | Millions/sec | ~50K/sec |
-| Storage | Persistent (days/weeks) | Until consumed |
-| Replay | (re-read history) | |
-| Consumer | Pull-based | Push-based |
-| Routing | Simple (topics) | Complex (exchanges) |
-| Use case | Event streaming, analytics | Task queues, RPC |
-| Mental model | "Distributed commit log" | "Smart post office" |
+Poori kahani (daakghar vs register, LinkedIn ne RabbitMQ kyun nahi liya, 2011 ke paper ki teen wajah) =
+[kafka_ya_rabbitmq_kab_kaunsa](../SYSTEM_DESIGNS/12_message_queue_kafka/kafka_ya_rabbitmq_kab_kaunsa.md). Yahan nichod.
 
-**Production rule:**
-- Big scale + replay → **Kafka**
-- Complex routing + small/medium scale → **RabbitMQ**
-- AWS managed simple → **SQS**
+### Koi poochhe "Kafka ya RabbitMQ" to aise bolo
+
+```
+RabbitMQ daakghar jaisa hai: chitthi aayi, sahi dabbe me gayi, ek worker / consumer ne uthayi,
+"mil gaya" (ack) bola, aur chitthi khatam. Kaam baantne aur routing ke niyam ke liye achha hai.
+Kafka register (bahi-khata) jaisa hai: entry likhti jaati hai, padhne se mit-ti nahi, kuch din rehti hai.
+Ek khabar kai log padhein, apni raftaar se, chahe to dobara. Bahut bade data ke liye achha hai.
+```
+
+### Stadium me farak
+
+```
+KAFKA       Arpan ki khabar line me padi rehti hai. SMS ne padhi, Fraud ne padhi, kal Analytics
+            aaya to wo bhi shuru se padh lega. Har kamra apna bookmark (offset) khud rakhta hai.
+
+RABBITMQ    khabar ek kamre ko di, usne "mil gaya" bola, khabar khatam. Kal koi naya kamra aaya
+            to purani khabar uske liye bachi hi nahi.
+```
+
+```
+ek kaam ek baar, routing ke niyam   -> RabbitMQ
+ek khabar kai jagah, dobara padhna   -> Kafka
+AWS pe seedha-saadha                 -> SQS
+```
+
+### Pehle kaun aaya, aur RabbitMQ ne ye kyun nahi kiya
+
+RabbitMQ pehle aaya (2007), Kafka baad me (2011). RabbitMQ ka niyam (AMQP) JP Morgan me shuru hua tha: bank ko do system ke
+beech bharose se message bhejna tha, ek chitthi ek baar, pakka. Us kaam me "padh liya to mita do" hi sahi design hai.
+
+Arpan: bank hai, chitthi baar-baar kyun padhega; chitthi khatam, kaam khatam, paisa jama, chitthi phaad ke phenk do. Jaise
+pehle cinema me gate wala ticket phaad deta tha taaki usi ticket pe koi doosra na ghuse.
+
+LinkedIn ki dikkat alag thi (roz arabon message, har khabar kai jagah, Hadoop raat ko dobara padhe), isliye register bana. Do
+alag dikkat, do alag cheez. Baad me RabbitMQ ne bhi ye kaam jod liya: 2021 me RabbitMQ 3.9 me "Streams" aaya. Source:
+rabbitmq.com blog 2021-07-13 "RabbitMQ Streams Overview": "A RabbitMQ stream models an append-only log with non-destructive
+consuming semantics."
+
+(Purani table me "Kafka millions/sec, RabbitMQ ~50K/sec" tha; iska source nahi mila aur RabbitMQ ki raftaar setup pe badalti
+hai, isliye hataya.)
 
 ---
 
