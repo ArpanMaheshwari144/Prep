@@ -307,6 +307,10 @@ User: GET /profile (read)
       → Returns OLD name
 ```
 
+Roz ki misaal: profile photo badli, nayi photo leader me save hui, refresh kiya to padhna ek copy (follower) se hua jisme
+abhi purani photo thi, isliye purani dikhi. Glitch nahi, ye replication lag hai. Tere design me yahi dikkat do jagah:
+banking kadam 9 (photocopy peeche, ghabra ke dobara bheja) aur twitter kadam 19 (tera reply gaayab). Dono me hal neeche wala #1.
+
 ### Solutions
 
 #### 1. Read your own writes
