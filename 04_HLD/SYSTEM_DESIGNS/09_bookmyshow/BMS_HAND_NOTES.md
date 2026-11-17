@@ -40,6 +40,8 @@ Technical me: "counter / server badha de" = machine badhana, "dekhne wale ki ala
 **5. Line me Arpan ka number aaya, andar jaane ka token mila jo 10 minute chalega. Usne 8ve minute pe D5 chuni, to D5 pe 5 minute ki parchi lagi. 10ve minute pe token khatam, par parchi ke 3 minute baaki. Pay kar paayega? Kaunsi ghadi chalegi?**
 Arpan: Humne use token diya, wo andar aa gaya. Iska matlab wo authenticate ho chuka, ab koi dikkat nahi. Andar aa gaya, to haan bhai, seat ruk gayi iske liye. Payment nahi karega to use hata do. Use utne time me payment karna hai jo uske liye allot hua. Kar diya to theek, nahi to agla.
 Technical me: "token diya, andar aa gaya, authenticate ho chuka" = token sirf gate ka pass, "seat ruk gayi, allot hue time me payment" = pay ka faisla hold ki ghadi (hold_until) karti. Do alag ghadiyan: token = gate, hold = seat.
+Doosri kahani (17-Nov BMS round grill): Isme Arpan ki galti nahi. Koi har baar 9:59 pe seat chune to use 1 minute hi milega, ye galat baat. To andar aake seat chuni to thoda grace period de do, 4-5 minute, taaki pay kar le. 9ve minute pe chuni to 9 + 5 = 14 minute tak; usme pay ho gaya to theek, nahi to bahar.
+Technical me: "seat chuni to grace" = hold ki apni umar (hold_until), token khatam hone se nahi kat-ti.
 
 **6. Arpan ne 4:30 pe Pay dabaya, PSP dheema. 5:00 pe parchi ki umar khatam, 5:10 pe Priya D5 maang rahi, PSP ka jawab 5:20 pe (Pay ke 50 second baad, 6c ki 30-55 sec ghadi ke andar) "paisa kat gaya".**
 

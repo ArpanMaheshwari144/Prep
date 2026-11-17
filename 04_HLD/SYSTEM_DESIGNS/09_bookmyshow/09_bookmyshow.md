@@ -173,6 +173,9 @@ do, seat agle ki.
 **Asli naam:** token = sirf gate ka pass, hold = seat ki ghadi (`hold_until`). Do alag ghadiyan: token gate ki, hold
 seat ki; pay ka faisla sirf hold ki ghadi karti.
 
+Doosri kahani: koi 9:59 pe seat chune to token ke hisaab se 1 minute hi milega, galat baat. Seat chunte hi grace (4-5
+minute) do: 9ve minute pe chuni to 14 tak pay kar sakta, nahi to bahar. **Asli naam:** grace = hold_until.
+
 ```mermaid
 flowchart TB
     A["Arpan: token mila (10 min),<br/>8ve minute pe D5 chuni"]:::card
