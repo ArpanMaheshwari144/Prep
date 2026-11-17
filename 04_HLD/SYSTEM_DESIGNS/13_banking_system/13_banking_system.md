@@ -301,12 +301,11 @@ flowchart TB
 Photocopy main register se thodi peeche chalti hai. Arpan ne abhi 500 bheje, turant photocopy desk pe gaya, wahan
 purana balance. Ghabra ke dobara bhej diya. To jisne update kiya, use thodi der main register se padhao. Thodi der
 baad jab photocopy sync ho jaaye, phir wahin se padh lo. Har cheez ka system hai yahan.
+Instagram pe bhi yahi hota: profile photo update ki, turant refresh kiya to purani photo dikhi, thodi der baad nayi.
 
 **Asli naam:** jisne update kiya, thodi der main se = read-your-writes (abhi transfer kiya to kuch second primary se),
 sync ho jaaye to wahin se = phir read replica (baaki sab replica se).
-
-**Zindagi ki misaal:** Instagram pe video upload ki, turant refresh kiya to kuch second dikhi hi nahi, thodi der baad
-dikh gayi. Video leader me likh gayi thi, refresh pe padhna ek copy se hua jo abhi peeche thi = replication lag. Hal wahi upar wala.
+Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo leader me, refresh pe padhna copy se jo abhi peeche).
 
 ```mermaid
 flowchart TB

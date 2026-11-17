@@ -638,12 +638,11 @@ Pehla seedha raasta: thodi der leader (jahan pehle likha) se hi padhwa do. Par s
 Isliye phir: do pe likho, do se padho. Reply tabhi pura mano jab kam se kam 2 copy ne rakh liya, aur Priya bhi kisi 2 copy
 se poochhe: C me nahi to A me hai. DB shard karke leader + 3 copy rakhi hon tab bhi yahi. Twitter me Cassandra hai (koi
 leader nahi), wo ye khud karta hai.
+Instagram pe bhi yahi hota: profile photo update ki, turant refresh kiya to purani photo dikhi, thodi der baad nayi.
 
 **Asli naam:** do pe likho, do se padho = quorum (N = 3, W = 2, R = 2, W + R > N, isliye padhi gayi do copy me se ek me
 naya likha zaroor), thodi der leader se padho = leader read / read-your-writes (trade-off: leader pe bojh), 2 ne rakha tabhi pura = write ack, Cassandra = leaderless, QUORUM read / write (URL kadam 9-10).
-
-**Zindagi ki misaal:** Instagram pe video upload ki, turant refresh kiya to kuch second dikhi hi nahi, thodi der baad
-dikh gayi. Video leader me likh gayi thi, refresh pe padhna ek copy se hua jo abhi peeche thi = replication lag. Hal wahi upar wala.
+Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo leader me, refresh pe padhna copy se jo abhi peeche).
 
 ```mermaid
 flowchart TB

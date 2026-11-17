@@ -69,8 +69,8 @@ Technical me: "photocopy alag desk pe" = read replica, "main register likhne wal
 
 **9. Photocopy main register se thodi peeche chalti hai. Arpan ne abhi 500 bheje, turant photocopy desk pe gaya, wahan purana balance. Ghabra ke dobara bhej diya.**
 Arpan: Use pehle thodi der main file se padho na. Jisne update kiya, use turant main file pe padho. Thodi der baad jab wo replica pe sync ho jaayega, phir wahin se padh lo. Har cheez ka system hai yahan.
-Technical me: "jisne update kiya, thodi der main file se" = read-your-writes (primary se padhna), "sync ho jaaye to wahin se" = phir read replica.
-Zindagi ki misaal (Arpan): Instagram pe video upload ki, turant refresh kiya to kuch second dikhi hi nahi, thodi der baad dikh gayi. Video leader me likh gayi thi, refresh pe padhna ek copy se hua jo abhi peeche thi. Yahi replication lag; hal wahi upar wala.
+Instagram pe bhi yahi hota: profile photo update ki, turant refresh kiya to purani photo dikhi, thodi der baad nayi.
+Technical me: "jisne update kiya, thodi der main file se" = read-your-writes (primary se padhna), "sync ho jaaye to wahin se" = phir read replica. Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo leader me, refresh pe padhna copy se jo abhi peeche).
 
 **10. Raat ko kisi bank wale ne main register me Arpan ka balance haath se 100 ki jagah 600 kar diya, diary (ledger) me koi line nahi. Agle din Arpan ne 600 nikaal liye.**
 Arpan: Use main ledger se milwao na. Asli to ledger hai. Arpan ka balance koi bhi haath se update kar dega, wahan dikkat hai. Apna jo main hai wo ledger se hai: ledger me hum sab cheez likh rahe, -500 +500, ye hai asli sach, na ki wo column jo galti se koi bhi update kar de.
