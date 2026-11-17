@@ -60,6 +60,7 @@ Aur adhoora order: bag pack kar raha, saara saamaan aaya nahi, to poora bag khaa
 Technical me: "permanent dabba" = DB, "3-4 copy" = replica / standby, "numbers discuss nahi kiye, itni bheed nahi" = pehle numbers, phir RAM ya DB ka faisla, "subah se ek parchi, utni ki utni rehti" = order log (append-only), "parchi dekh ke bag dobara jamao" = log replay se book wapas.
 
 Doosri kahani (17-Nov grill): RAM fast hai isliye RAM me rakha, par RAM me daalne se pehle usse kahin aur bhi likh le. RAM udi, restart hui, to jo likha hai wo wapas RAM me aa jaayega, kyunki hamare paas sab likha hua hai.
+Technical me: "RAM me daalne se pehle kahin aur likh le" = write-ahead log (WAL / order log, append-only), "restart pe wapas RAM me" = log replay se in-memory book rebuild.
 
 **Maan lo replay me wo order bhi wapas aa gaye jo crash se pehle match hoke trade ban chuke the (Arpan ke 10 share Ravi ko bik chuke, dono ke portfolio bhi update). Phir se match hue to 10 share dobara bikenge.**
 Arpan: Aisa nahi hone ka. Jiska order pakka ho gaya, wo DB me likh do, mote register me. Parchi se replay karte waqt mote register me dekh lo: kis-kis ka order tha, kya ho gaya; Arpan aur Ravi dono ka ho gaya, dono ke dashboard me dikh gaya, to inhe book me mat lagao, hatao. Parchi bhi kaam ki hai, par tab jab saath me mota register ho, kyunki aakhri sach (source of truth) mota register hai: kuch bhi bika, trade hua, portfolio me idhar se udhar gaya, wo register me pada hai. Jo order trade ho gaya, use dobara RAM me laane ka matlab hi nahi.

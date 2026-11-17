@@ -33,6 +33,7 @@ User  -->  LB  -->  kai counter (app server)
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
 Arpan: Hum hamesha URL ki baat kar rahe, to FR me wahi jaayega ki lamba URL le ke chhota banana. Jo dikkat design me dekh rahe, wahi FR / NFR banti: do logon ko same token na mile, lambe ka chhota hamesha theek ho, garam (hot) URL sambhale, sab mote register pe na jaaye, machine se hazaar chit na aaye. NFR me: consistency kaise, jaldi kaise, copies, local kaise rakhein. Dikkat se hi FR bante, unse hi NFR bhi; ye aaj pakka ho gaya. Numbers tab jab sach me zaroorat ho; 1 million ho ya 1 billion, shard waise bhi lagana padega.
+Technical me: "do logon ko same token na mile" = uniqueness (counter / range), "lambe ka chhota hamesha theek" = consistency (quorum read / write), "garam URL sambhale" = hot key (cache, copies), "sab mote register pe na jaaye" = cache hit ratio, "machine se hazaar chit nahi" = rate limit, "jaldi" = low latency, "copies" = replication / availability.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
