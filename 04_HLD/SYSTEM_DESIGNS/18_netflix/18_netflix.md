@@ -274,8 +274,9 @@ Ye kadam nahi hain. Notes me bhi alag hain (P1-P4). Interview me poochhe to yaha
 Doodh company ki kahani: courier har litre ka paisa leta hai, aur Netflix ke liye ye "litre" roz ke hazaaron TB hain.
 To Netflix ne har mohalle ki dukaan me apna fridge muft me rakh diya. Teen fayde: paisa (dabba ek baar ka kharcha,
 per-GB bill nahi), paas (video ISP ke andar se, buffering kam), ISP bhi khush (uska bahar jaane wala bandwidth
-bachta).
-**Asli naam:** courier = per-GB bill wala CDN, mohalle ka fridge = Open Connect, ISP ke andar free me laga.
+bachta). Aur aam CDN tab file laata jab koi pehli baar maange; Netflix raat ko, jab net khaali hota, pehle se bhar deta.
+Doodh wala subah se pehle fridge bhar deta, maangne ka intezaar nahi karta.
+**Asli naam:** courier = per-GB bill wala CDN, mohalle ka fridge = Open Connect, ISP ke andar free me laga, raat ko pehle se = proactive fill (off-peak).
 
 ## P2. Phir AWS kis kaam ka?
 
@@ -332,7 +333,7 @@ flowchart TB
 
 ## P4. "Tere liye" line ke baaki tukde
 
-Isme do itihaas judte hain: Ravi ka apna (kitna dekha, beech me kahan chhoda bhi) aur Ravi jaise logon ka ("jinhone
+Mohalle ka chaiwala tujhe roz dekhta, tere aane se pehle jaanta tu adrak wali kam cheeni maangega. Isme do itihaas judte hain: Ravi ka apna (kitna dekha, beech me kahan chhoda bhi) aur Ravi jaise logon ka ("jinhone
 Money Heist dekha, unhone Squid Game bhi dekha"). App khola to list uthao aur thoda abhi ke
 hisaab se badlo: "abhi raat hai to thriller upar", "tu TV pe hai". Tasveer bhi teri: ek film ki 5-6 tasveer, Ravi action
 dekhta to Money Heist ki goli wali, koi romance dekhta to usi film ki pyaar wali. Film wahi, darwaza alag.
