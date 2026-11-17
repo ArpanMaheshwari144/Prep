@@ -89,6 +89,8 @@ Technical me: "ek mote register me sach" = source of truth (DB), "likhne se pehl
 **6g. Raat ki job ne Razorpay ko bola "Arpan ka 500 lautao", Razorpay bola "refund shuru". Job ne DB me likh diya "refund ho gaya". 5 din baad Arpan: "paisa nahi aaya". Refund Razorpay ki taraf beech me fail ho gaya tha.**
 Arpan: "Refund shuru" ka matlab "ho gaya" nahi. Jab tak Razorpay se pakka jawab na aaye ki refund ho gaya, DB me REFUND_PENDING hi likho. Galat jawab zindagi me kabhi mat likho, paise ke maamle me inconsistency nahi; kal Arpan consumer court gaya aur hamare DB me "refund ho gaya" likha hai jabki bank me paisa nahi, to ungli hum pe. Ek job lagao: 5 din se purane jinka refund abhi tak pending hai, unhe nikaalo aur Razorpay se poochho "inka kya hua", unke support se bhi. Dabaav nahi daal sakte, par poochhna hamara kaam hai. Pakka jawab aaye tabhi DB me REFUNDED.
 Technical me: "pakka jawab tak REFUND_PENDING" = refund state (REFUND_PENDING -> REFUNDED / REFUND_FAILED, sirf refund.processed / refund.failed event pe), "5 din se purane pending, Razorpay se poochho" = stuck refund job (reconciliation), "galat jawab mat likho" = source of truth.
+Doosri kahani (17-Nov BMS round grill): Razorpay do (ya jitne uske niyam) event bhejega. Pehla "refund shuru" aaya to DB me REFUND INITIATED likho. Usi din ya 1-2 din baad "refund poora" aaye tabhi REFUNDED. Jaise main kisi ladke ko paise dekar bhejoon, wo aake bole "pahuncha diye", to kya main uske bolne se maan lunga? Saamne wale ko phone karke poochhunga "sach me mile?".
+Technical me: "shuru" = refund.created (REFUND_PENDING / INITIATED), "poora" = refund.processed (REFUNDED), "ladke ki baat nahi, saamne wale se poochho" = sirf pakke event pe final state.
 
 
 &nbsp;

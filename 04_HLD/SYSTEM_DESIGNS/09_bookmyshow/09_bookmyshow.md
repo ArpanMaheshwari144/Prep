@@ -406,6 +406,9 @@ kabhi nahi (consumer court me ungli hum pe). Ek job 5 din se purane pending refu
 **Asli naam:** REFUND_PENDING -> REFUNDED / REFUND_FAILED = refund state (sirf refund.processed / refund.failed event pe),
 5 din se purane poochho = stuck refund job (reconciliation).
 
+Doosri kahani: paise dekar ladka bheja, wo bole "pahuncha diye", to uske bolne se nahi maante, saamne wale se poochhte.
+Waise hi "refund shuru" pe INITIATED, "refund poora" event pe hi REFUNDED.
+
 ```mermaid
 flowchart LR
     R["Raat ki job:<br/>Razorpay, lautao"]:::card --> D[("DB: REFUND_PENDING")]:::pill
