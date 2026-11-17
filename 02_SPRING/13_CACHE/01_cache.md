@@ -82,4 +82,6 @@ wala self-invocation jaal hai.
 
 Tere todoapp me bhi ye hai: `TodoService.update()` ki pehli line `getById(id)` hai, jis pe `@Cacheable` laga hai. Same class se
 bulaya, isliye update ke waqt ye hamesha DB se padhta hai. Yahan nuksaan nahi (update se pehle taaza data padhna achha hi hai),
-par kisi read method me aisa hua to tu sochega cache laga hai, jabki laga hi nahi. Aur `@EnableCaching` lagana bhool gaye to annotation chup-chaap kuch nahi karta.
+par kisi read method me aisa hua to tu sochega cache laga hai, jabki laga hi nahi.
+
+Aur `@EnableCaching` lagana bhool gaye to annotation chup-chaap kuch nahi karta.
