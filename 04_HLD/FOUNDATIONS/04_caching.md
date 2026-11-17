@@ -106,49 +106,41 @@ PEHCHAAN KA SAWAAL: "ye Redis abhi gir jaaye to kya hoga?"
 
 ---
 
-## Multi-level Cache Architecture
+## 4b. Cache kai parat me (multi-level cache)
+
+### Koi poochhe "cache sirf Redis me hota hai?" to aise bolo
 
 ```
-   USER (browser)
-        │
-        ▼
-   1. BROWSER CACHE       ← static files (your laptop)
-        │ miss
-        ▼
-   2. CDN CACHE           ← Cloudflare edge servers
-        │ miss
-        ▼
-   3. LB / API GATEWAY    ← can cache responses
-        │ miss
-        ▼
-   4. APP CACHE           ← in-app (Caffeine/Guava)
-        │ miss
-        ▼
-   5. DISTRIBUTED CACHE   ← Redis, Memcached
-        │ miss
-        ▼
-   6. DATABASE            ← source of truth (slowest)
+Nahi, cache kai parat me hota hai. Sabse paas user ka browser, phir CDN jo shahar ke paas baitha
+hai, phir gateway, phir app ki apni memory, phir Redis, aur aakhir me DB. DB ke andar bhi buffer
+pool hota hai. Har parat agli parat ka bojh kam karti hai. App ki memory sabse tez hai par har
+server ki alag; Redis thoda dheema par sab servers ka ek. Isliye aksar dono: pehle local, phir
+Redis, phir DB.
 ```
 
-**Each layer reduces load on next.**
-
-DB ke andar bhi ek parat hoti hai: buffer pool. Request DB tak pahunch bhi jaaye, to DB pehle apni RAM (buffer pool) me
-dekhta hai ki wo page / data pehle se padha pada hai kya; nahi mila tabhi disk pe jaata hai.
-
-### Local (app) vs Distributed (Redis) cache — DEPTH
+Ek kitaab, chhe jagah. Pehli jagah se dekhna shuru, na mile to agli:
 
 ```
-   LOCAL / IN-PROCESS (Caffeine, JVM ke andar):
-      ✓ FASTEST (same process, no network hop)
-      ✗ Har server ka APNA cache → 5 servers = 5 alag (inconsistent)
-      ✗ Server restart → cache gaya
-   DISTRIBUTED (Redis, alag service):
-      ✓ SHARED (sab servers ek hi Redis) → consistent
-      ✓ Server restart → cache safe (Redis alag)
-      ✗ Thoda slow (network hop)
-   = aksar DONO (L1 local + L2 Redis) = "near cache" pattern
-     (local fastest hits, miss pe Redis, phir DB)
+1. GHAR KI ALMARI     browser cache          tere laptop pe hi, static file (photo, CSS)
+2. MOHALLE KI BRANCH  CDN                    shahar ke paas -> tera Netflix, file upload signed URL
+3. MAIN GATE          LB / API gateway       poora jawab bhi rakh sakta
+4. CASHIER KI JEB     app cache (Caffeine)   sabse tez, par har cashier ki apni jeb
+5. COUNTER            Redis                  sab cashier ek hi counter dekhte
+6. GODOWN             DB                     sach yahin, sabse dheema
+   godown ke andar bhi darwaze ke paas ek shelf (buffer pool): disk tak jaane se pehle DB
+   apni RAM me dekhta -> tera Where Is My Train wala buffer pool
 ```
+
+Jeb aur counter ka farak (Spring 13 wala hi):
+
+```
+JEB (local)     sabse tez (network nahi) | har cashier ki alag (5 server = 5 alag) | restart pe khaali
+COUNTER (Redis) sab ek dekhte, restart pe bhi bacha | thoda dheema (ek network hop)
+DONO            pehle jeb, nahi mila to counter, phir godown = "near cache"
+                -> tera cache 6c (saari copy dheemi to local cache chhota TTL), IPL score 1-2 sec local
+```
+
+Interview me ye aise aata: "Redis bhi dheema pad gaya to?" -> jeb me 1-2 second ka local cache (tera cache 6c).
 
 ---
 
