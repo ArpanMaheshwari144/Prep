@@ -56,6 +56,7 @@ NFR     1  badi movie ki bheed jhele: kai server, LB, padhne wali copy, Redis   
 
 Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
         -> line + padhne wali copy (kadam 4)
+Shard   nahi: shard ki keemat badi hai, companiyan 10 baar sochti hain. Bada ho to pehle partition + index (Arpan 17-Nov)
 API     abhi nahi (Arpan 17-Nov: kuch din baad)
 ```
 
