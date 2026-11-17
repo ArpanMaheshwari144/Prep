@@ -173,7 +173,8 @@ Railway ne 50% di to baaki 50% wahan se; Jio de de to well and good. Kaunsa raas
 
 **Reel me ek aur raasta (reel ka daava, kahin aur se jaancha nahi):** doston ke phone me GPS aur tower ID dono saath
 record, map pe tower ne patri ki line kheench di, phir logon ke safar se poora naqsha, sirf 7-8 MB. Patri ek line hai,
-to tower badla matlab train aage badhi; station pe tower ghane, wahan andaza lagbhag GPS jitna.
+to tower badla matlab train aage badhi; station pe tower ghane, wahan andaza lagbhag GPS jitna. App 2015 me Bangalore
+ki Sigmoid Labs ne banaya, 2018 me Google ne kharida.
 
 ```mermaid
 flowchart TB
