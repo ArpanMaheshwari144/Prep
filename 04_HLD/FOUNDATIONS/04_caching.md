@@ -6,90 +6,58 @@
 
 ---
 
-## STORY — Library Front Desk
-
-> Library mein 10,000 books. Tu daily 5-7 popular books padhta — same hi.
->
-> **Without caching:**
-> Har baar warehouse jao → 5 min walk × 7 books = 35 min waste daily.
->
-> **With caching (front desk):**
-> Top-100 popular books **front desk pe** rakho. 10 sec each access.
->
-> **Cache = front desk** (frequently accessed data, fast storage)
-> **DB = warehouse** (slow but complete)
-
----
-
-## ★★ PEHLE LOAD KO ALAG KARO, PHIR ILAAJ CHUNO (cache har read pe nahi lagti)
-
-> Ek hi page pe do bilkul alag tarah ka load ho sakta hai. Ek ilaaj dono pe nahi chalta.
+### Koi poochhe "cache kya hai, kab lagate ho" to aise bolo
 
 ```
-RESULT-DAY wala scenario (10 lakh student ek saath):
-
-   TOPPERS LIST   -> EK hi cheez, 10 lakh baar maangi gayi
-                     DB wahi query 10 lakh baar chala raha = poori bewakoofi
-                     -> CACHE  (10 lakh me se DB pe sirf 1 request jaayegi)
-
-   APNA RESULT    -> har student ki ALAG cheez -> 10 lakh alag key
-                     cache lagane pe hit-rate lagbhag ZERO (har banda naya key maangta)
-                     -> cache yahan BEKAAR
-                     -> ilaaj: roll_number pe INDEX (data 2 GB hai, index se milliseconds)
+Cache = front desk. Jo cheez sab log baar-baar maangte hain, use godown (DB) se nikaal ke counter
+pe rakh do, agli baar seedha counter se do. Pehle dekhta hoon load kis tarah ka hai: ek cheez
+sab maang rahe to cache; har banda alag cheez maang raha to cache bekaar, wahan index. Aur cache
+muft nahi hai: purana data dikh sakta hai, RAM kam padti hai, garam key expire hui to sab DB pe
+bhaagte, aur cache khud gira to poora load DB pe. Isliye jahan purana data dikhna mehnga ho
+(balance, seat), wahan cache nahi.
 ```
 
-```
-★ SHARED (sabko wahi)   -> CACHE
-★ PER-USER (sabko alag) -> INDEX / seedha DB
-★ pehle poocho: "kitni UNIQUE cheezein maangi ja rahi hain?"
-     thodi si, bahut baar -> cache ka sona
-     har request alag     -> cache bekaar
-```
+## 1. Front desk (kahani)
+
+Library me 10,000 kitaabein godown me hain, ek kitaab laane me 5 minute. Par roz wahi 100 kitaabein maangi jaati hain. Unhe counter pe
+rakh do, 10 second me mil jaayengi. Counter = cache, godown = DB.
+
+## 2. Pehle load pehchano, phir ilaaj chuno (cache har read pe nahi lagti)
+
+Result ke din 10 lakh student ek saath aaye:
 
 ```
-★ AUR: "machine badi kar do" is dikkat ka ilaaj nahi hai —
-  badi machine wahi FALTU kaam tez karti hai, kaam KAM nahi karti.
-  Cache kaam HATA deta hai. (aur saal me ek din ke liye 4x bill dena alag nuksan)
+TOPPERS LIST   sab wahi EK cheez maang rahe   -> counter pe rakho (cache), DB tak 10 lakh me se sirf 1 request
+APNA RESULT    har student ki ALAG cheez      -> 10 lakh alag kitaab, har ek ek hi baar maangi jaayegi;
+                                                 counter bekaar -> roll number pe INDEX, DB milliseconds me de dega
 ```
 
----
+Ek sawaal yaad rakh: **kitni alag-alag cheezein maangi ja rahi hain?** Thodi cheez, baar-baar = cache. Har request alag = index.
 
-## ★★ CACHE KI KEEMAT — aur kab ise NAHI lagana
+"Machine badi kar do" is dikkat ka ilaaj nahi: badi machine wahi faltu kaam tez karti hai, kaam kam nahi karti. Cache kaam hi hata deta hai.
 
-> Cache lagana muft nahi hai. Ye chaar cheezein saath me aati hain:
-
-```
-1. STALE DATA      DB me update ho gaya, cache me purana pada hai
-                   ILAAJ : update pe entry DELETE (invalidate) + TTL safety-net
-                   KEEMAT: system ab eventually-consistent hai — kuch der purana dikh sakta hai
-
-2. MEMORY LIMIT    RAM mehngi hai, sab kuch nahi samayega
-                   ILAAJ : LRU eviction
-                   KEEMAT: kabhi jo chahiye tha wo abhi-abhi nikal gaya hoga
-
-3. STAMPEDE        ek HOT key expire -> 1000 request ek saath miss -> sab DB pe -> DB down
-                   ILAAJ : mutex (ek hi rebuild kare) . soft-TTL (expire se pehle background refresh)
-
-4. ★ CACHE KHUD GIR GAYA  (sabse bada, aur sabse zyada bhoola jaata hai)
-                   ab 100% traffic seedha DB pe — jo DB is load ke liye bana hi nahi tha
-                   (cache lagate hi tumne DB ko us load ke liye CHHOTA kar diya tha)
-                   ILAAJ : replica + failover; kahin-kahin fail-open
-```
+## 3. Cache ki keemat (chaar cheezein, sab tere design me pehle se)
 
 ```
-★ CACHE KAB NAHI LAGANA — ek line ka niyam:
-     "purana data dikhna kitna mehnga hai?"
-        bahut mehnga  -> bank balance . seat availability . payment status  -> cache nahi (ya bahut chhota TTL)
-        sasta         -> feed . profile . product page . URL mapping        -> bilkul lagao
+PURANA DATA      godown me kitaab badli, counter pe purani padi
+                 ilaaj: badlo to counter se hatao (invalidate) + TTL; keemat: kuch der purana dikh sakta (eventual consistency)
+JAGAH KAM        counter chhota, sab nahi samata
+                 ilaaj: jo sabse der se nahi maangi, wo hatao (LRU)
+GARAM KITAAB KA  ek garam key expire, 1000 log ek saath godown bhaage, DB gira (stampede)
+TIME KHATAM      ilaaj: ek hi aadmi jaaye, baaki ruke (mutex) / expire se pehle peeche se taaza karo   -> tera 10_distributed_cache
+COUNTER HI GIRA  ab poori bheed godown pe (DB us load ke liye bana hi nahi tha)
+                 copy / failover AWS sambhalta; hamara faisla = DB ko kaise bachayein (kahin-kahin fail-open)
 ```
 
+**Kab cache nahi:** poochho, purana data dikhna kitna mehnga hai?
+
 ```
-★ RAM vs DISK (thos number, bolne layak):
-     DISK ~1-10 milli-second   |   RAM ~100 nano-second   -> hazaron guna farak
-   + cache me QUERY hoti hi nahi — seedha key lookup (O(1)).
-     DB ko parse -> plan -> index -> disk page -> row banana padta hai.
-   => jagah bhi badli (RAM) aur KAAM bhi chhota hua (query -> lookup).
+mehnga  -> bank balance, seat, payment status  -> cache nahi (isliye tere BMS me hold seedha DB me)
+sasta   -> feed, profile, product page, URL    -> bilkul lagao
 ```
+
+RAM vs disk: SSD pe ek read ~0.1 ms (purani HDD ~10 ms), RAM ~100 nano-second, hazaar guna farak. Upar se cache me query hoti hi nahi,
+seedha key se lookup; DB ko query samajhna, index, disk page, row banana sab karna padta.
 
 ---
 
