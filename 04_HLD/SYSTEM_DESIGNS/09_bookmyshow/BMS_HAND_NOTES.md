@@ -48,8 +48,8 @@ NFR     1  badi movie ki bheed jhele: kai server, LB, padhne wali copy, Redis   
         3  line me khada aadmi bekaar na lautay: andar aaya to seat ki ghadi alag   -> kadam 4, 5
         4  sach DB me, galat haalat kabhi na likho (refund PSP ka, hum sirf sach likhte) -> kadam 6f, 6g
 
-Numbers sirf jahan faisla badle: advance booking 10 baje 10 lakh log, seat 50 hazaar -> line + padhne wali copy (kadam 4)
-        · 100 log map dekhte to ~1-2 book karte -> dekhna bahut, likhna kam · data chhota (aaj + agle hafte ke show)
+Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
+        -> line + padhne wali copy (kadam 4)
 API     abhi nahi (Arpan 17-Nov: kuch din baad)
 ```
 
