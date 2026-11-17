@@ -245,6 +245,11 @@ jawab cache me rakhe, aur 9,999 cache se le jaayein. Copy sync karna AWS (RDS) k
 
 **Asli naam:** DB ki copy = read replica, dheemi chhod ke doosri pe = timeout + retry on another replica.
 
+**Maan lo saari copy dheemi:** thodi der purani jaankari dikha do; baaki logon ko pata hi nahi Priya ne kya badla, Priya ko
+UI pe "peeche update ho rahi hai". Purani jaankari local cache me 30-45 sec ki umar ke saath, taaki Redis pe bhi bheed
+na aaye. DB theek hote hi chhotu naya laaye, umar khatam, sab naya le jaayein.
+**Asli naam:** serve stale (stale-while-revalidate), local cache short TTL, background refresh.
+
 ```mermaid
 flowchart TB
     U["Priya viral: 10,000 log,<br/>sab miss"]:::bad
