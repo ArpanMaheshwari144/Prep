@@ -241,6 +241,15 @@ Lazy akela kaafi nahi: jo packet koi kabhi maange hi nahi, wo shelf gherta pada 
 
 ## ═══ HANDS-ON — EVICTION LIVE (asli Redis, docker, 18-Sep) ═══
 
+### Koi poochhe "Redis me kaunsi eviction policy lagaoge" to aise bolo
+
+```
+Do tarah ka maal hota hai: jo phenk sakte hain (cache entry, session) aur jo nahi (config,
+feature flag). volatile-lru lagata hoon: sirf TTL wali keys hatati hai. To TTL hi faisla karta
+hai: TTL lagaya matlab "phenk sakte ho", nahi lagaya matlab "mat chhuna". allkeys-lru sab
+hata deta hai, chahe kitni zaroori key ho.
+```
+
 > Upar ki theory ko CHAL KE dekha. Har command + uska ASLI output neeche likha hai.
 > Setup: `07_PROJECTS/usercrud/docker-compose.yml` me `redis-master` service (redis:7-alpine).
 > Poora sawaal jise saabit karna tha: **"cache bhar jaaye to kya hota hai, aur kaun sa maal marta hai?"**
@@ -381,11 +390,15 @@ TTL daala = "ye disposable hai". TTL nahi daala = "isko mat chhuna".
 ★ **Ismein chhupa hua BUG:** agar koi galti se config key pe bhi TTL laga de, wo bhi chupchaap
 gayab ho sakti hai — aur pata tab chalega jab feature ruk jaayega. Koi error nahi aayega.
 
-### Ek line me (interview me bolne layak)
+### Tere design se jod: rate limiter ki ginti (sach) cache wale Redis me mat rakho
 
-> *"Cache kabhi sach ka maalik nahi hota. DB bharne pe 'fail' bolta hai, cache bharne pe
-> 'purana maal phenk deta hoon, tu chalta reh' bolta hai. Kaun phenka jaayega ye `maxmemory-policy`
-> tay karti hai — aur `volatile-lru` me wo faisla TTL ke haath me chala jaata hai."*
+Limiter ka counter Redis me SACH hai (section 4), aur us pe TTL laga hai (`INCR + EXPIRE` ek Lua script me, rate limiter kadam 4).
+`allkeys-lru` ho ya `volatile-lru`, dono me TTL wali key phenki ja sakti hai. Ginti phenki = 0 se shuru = user ko had se zyada
+request (had dheeli, fail-open jaisa). Hal: limiter ka Redis ALAG, `noeviction` + kaafi memory, taaki ginti kabhi phenki na jaaye.
+Wo bhi bhar gaya to `noeviction` naya likhna error dega -> wahi rate limiter kadam 6 ka faisla: fail-open ya fail-close.
+
+Ek line me: cache kabhi sach ka maalik nahi; cache bhara to "purana phenk deta hoon, tu chalta reh". Kaun phenka jaaye, ye
+`maxmemory-policy` tay karti, aur `volatile-lru` me wo faisla TTL ke haath me.
 
 ---
 
