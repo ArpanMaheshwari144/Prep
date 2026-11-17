@@ -19,6 +19,7 @@ Yahi dikkat yahan bhi:
   Banking       3   600 me do counter pe 500-500                   ->  dekhna aur kaatna ek kram me (row lock)
   Banking       3b  Arpan->Ravi, Ravi->Arpan, dono atke            ->  ek hi line, ek counter; ya pehle ek poora, phir doosra (serialize / lock ordering, deadlock detection + retry)
   Banking       3c  1 crore transfer, sab ek line me, bank dheema  ->  jo takra rahe sirf unka group, baaki 50 counter pe (per-account lock, partition)
+  Banking       21  Mumbai + Frankfurt dono ne 1000 de diye        ->  jahan khaata khula wahi har kaam kare, baaki request aage bhejein (write affinity / home region)
   Uber          5   Raju pe ek second me do ride                   ->  BMS wali parchi, ek kadam me (hold / lock)
   Uber          13  wallet me sirf 40                              ->  poora kaato, aadha nahi (atomic charge)
   Uber          15  Car A Arpan se 2 km, Ravi se 1 km; Arpan ko di ->  dono ko saath milao, kul doori kam (batch matching)

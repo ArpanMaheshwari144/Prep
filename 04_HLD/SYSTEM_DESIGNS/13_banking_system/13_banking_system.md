@@ -678,6 +678,38 @@ flowchart TB
     style MR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+## 21. Do branch, dono ne 1000 de diye (jahan khaata khula, wahi kaam kare)
+
+Bank ki do branch hain, Mumbai aur Frankfurt, dono ka apna register, raat ko dono mila liye jaate. Rahul ke khaate me
+1000. Usi pal Mumbai me Rahul ne 1000 nikaale aur Frankfurt me uski card se 1000 ki payment hui. Dono cashier ne apne
+register me 1000 dekhe, dono ne de diye, raat ko milaan pe balance -1000. Dikkat ye ki na Mumbai ne Frankfurt ko bataya,
+na Frankfurt ne Mumbai ko. Ek raasta hai har baar dono ek doosre ko phone karke milaa lein, par har baar time lagta hai,
+aur line vyast ho ya tooti ho to kaam atak jaata, aur user ko rok bhi nahi sakte. Isliye dekho khaata kahan khula tha
+(Mumbai). Us khaate ka har kaam Mumbai hi karega: Frankfurt me koi Rahul ke khaate se paisa nikaale to Frankfurt apni
+request Mumbai bhej deta hai. Mumbai ne 1000 de diye, balance 0; Frankfurt ki request aayi to Mumbai ne mana kar diya.
+
+**Asli naam:** do branch, dono likh sakti = multi-leader replication · har baar phone karke milao = synchronous
+replication · jahan khaata khula wahi kaam kare, baaki request aage bhejein = write affinity / home region · raat ko
+-1000 = write conflict (ye business rule ka takraav hai, AWS nahi pakadta). Isi kahani ka bhai: rate limiter kadam 10
+(ghar region), chat (har group ka ek server).
+
+```mermaid
+flowchart TB
+    R1["Mumbai: Rahul 1000 nikaale"]:::card
+    R2["Frankfurt: card se 1000"]:::card
+    F["Frankfurt branch"]:::card
+    subgraph HR["KHAATA MUMBAI ME KHULA: HAR KAAM YAHIN"]
+        M[("Mumbai register<br/>1000 -> 0")]:::pill
+    end
+    R1 --> M
+    R2 --> F
+    F -- "request Mumbai bhejo<br/>jawab: 0 hai, mana" --> M
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    style HR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ---
 
 Notes (Arpan ke shabd) = [BANKING_HAND_NOTES.md](BANKING_HAND_NOTES.md)

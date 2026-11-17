@@ -123,6 +123,10 @@ Technical me: "mahine ke tukde" = mahine ke partition, "master register me likha
 Arpan: Iska jawab pehle bahut jagah de chuka hoon. Chhotu photocopy se padhein, main register asli payment ke liye khaali rahe.
 Technical me: "photocopy se padhein" = read replica (kadam 8 wala "photocopy ka alag desk"), "main register asli payment ke liye" = primary.
 
+**21. Bank ki do branch, Mumbai aur Frankfurt, dono ka apna register, raat ko dono mila liye jaate. Rahul ke khaate me 1000. Usi pal Mumbai me Rahul ne 1000 nikaale aur Frankfurt me uski card se 1000 ki payment hui. Dono cashier ne 1000 dekhe, dono ne de diye. Raat ko milaan hua to balance -1000.**
+Arpan: Sabse pehle dekho Rahul ne khaata kahan khulwaya tha, maan lo Mumbai me. Bank multi region hai (JP Morgan jaisa: Australia, Frankfurt, Delhi, Mumbai), har jagah hai. Dikkat kyun hui? Ek hi time pe yahan bhi aaya, wahan bhi aaya, na tune mujhe bataya na maine tujhe. Ek raasta: har baar dono ek doosre ko phone karke milaa lein (sync). Par uski keemat hai: har baar doosre ko phone karna, faltu time lagta, aur kabhi phone line vyast ho ya connection bekaar ho to dikkat; aur user ko rok bhi nahi sakte. Isliye: jis branch me khaata khula, uska har kaam wahi kare. Frankfurt me koi Rahul ke khaate se paisa nikaale to Frankfurt apni request Mumbai bhej de, Mumbai batayega. Dono taraf se request aayegi to bhi ek hi server pe jaayegi. Mumbai me 1000 nikle, balance 0. Usi waqt Frankfurt ne request bheji, Mumbai ne kaha "0 hai, mat nikalne de, koi Mumbai me nikaal ke le gaya".
+Technical me: "do branch, dono likh sakti, raat ko milaan" = multi-leader replication, "har baar phone karke milao" = synchronous replication (dheema, line tooti to atka), "jahan khaata khula, wahi har kaam kare, baaki request aage bhejein" = write affinity / home region, "raat ko dono mile, -1000" = write conflict (business rule ka, AWS nahi pakadta).
+
 &nbsp;
 
 Poora design = [13_banking_system.md](13_banking_system.md)
