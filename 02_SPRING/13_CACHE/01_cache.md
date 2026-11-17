@@ -1,5 +1,15 @@
 # Cache (Spring: @Cacheable)
 
+### Koi poochhe "Spring me cache kaise lagate ho" to aise bolo
+
+```
+Jo cheez baar-baar padhi jaati hai aur kam badalti hai, uske method pe @Cacheable laga deta hoon.
+Spring us method ke aage ek proxy khada karta hai: pehle cache me dekhta hai, mila to method chalata
+hi nahi, nahi mila to DB se laake cache me rakh deta hai. Data badle to @CacheEvict se purana hata
+deta hoon. Ek server ho to local cache, kai server ho to Redis, taaki sab ek hi copy dekhein, aur
+TTL lagata hoon taaki purana data apne aap nikal jaaye. Mere todoapp me Redis cache hai, TTL 5 minute.
+```
+
 ## Scene: HLD wala Ravi ka profile
 
 Ravi ka profile har second hazaaron log kholte hain, aur har baar DB tak jaane me 50 ms lagte hain. HLD me humne DB se pehle ek dabba rakha
@@ -46,6 +56,9 @@ TTL chahiye to Caffeine lagao.
 `/cache-demo/anno/{id}` pe doosri call me "METHOD CHAL RAHA" print hi nahi hua, matlab cache ne method chalne se pehle hi jawab de diya.
 Cache wala method alag bean `CacheDemoService` me hai, aur controller usi bean ko bulata hai (wajah neeche trap me).
 
+todoapp me asli Redis cache: `RedisConfig` me TTL 5 minute, `TodoService` me `getById` aur `getAll` pe `@Cacheable`, aur
+`create` / `update` pe `@CacheEvict` (naya ya badla todo aaya to purani list cache se hatao).
+
 ## Prod wala trap: this se bulaya to cache kabhi nahi
 
 ```java
@@ -65,4 +78,8 @@ controller -> proxy.profile(9) jo andar this.getUser(9) bulata, do baar:
 ```
 
 Same class ke andar `this.getUser()` bulaya to call proxy ke paas se guzarti hi nahi, isliye har baar DB jaati hai. Ye wahi `@Transactional`
-wala self-invocation jaal hai. Aur `@EnableCaching` lagana bhool gaye to annotation chup-chaap kuch nahi karta.
+wala self-invocation jaal hai.
+
+Tere todoapp me bhi ye hai: `TodoService.update()` ki pehli line `getById(id)` hai, jis pe `@Cacheable` laga hai. Same class se
+bulaya, isliye update ke waqt ye hamesha DB se padhta hai. Yahan nuksaan nahi (update se pehle taaza data padhna achha hi hai),
+par kisi read method me aisa hua to tu sochega cache laga hai, jabki laga hi nahi. Aur `@EnableCaching` lagana bhool gaye to annotation chup-chaap kuch nahi karta.
