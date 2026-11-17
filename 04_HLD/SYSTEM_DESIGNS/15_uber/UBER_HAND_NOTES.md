@@ -67,6 +67,8 @@ Technical me: "pehle server, phir todo" = pehle scale out, zaroorat pe hi split,
 **7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak Priya ko de diya.**
 Arpan: Ghadi server ki. 15 sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd. Uber me bhi aise booking cancel hoti dikhti.
 Technical me: "ghadi server ki" = TTL ka faisla server pe, der se aaya accept reject.
+Doosri kahani (17-Nov grill): Main server pe baitha hoon. Uber me ride ek driver ko nahi, aas-paas ke jitne khaali driver hain sabke paas jaati. Raju ne 14.9 pe dabaya par server tak 16 pe aaya, itne me Suresh ka accept server pe aa gaya, to cab Suresh ko, kyunki server ne usse pehle dekha. Jaise mere paas ek aakhri ice-cream bachi, do bachche daude; ek ne pehle shuru kiya par gir gaya, mujhe dukh hua, par doosra aake paise de deta hai. Emotion me keh sakte ruk jaao, par technically ice-cream usko jo pehle mere paas aaya. Raju ko ye nahi bolenge "tumhari request nahi pahunchi", bas "tumse pehle kisi aur ne le li".
+Technical me: "server ne pehle dekha" = server pe jo accept pehle pahuncha wo jeeta (first-write-wins / conditional update), "kisi aur ne le li" = Raju ko ride taken / expired message.
 
 **Maan lo ek-ek driver ko 15 sec dene ki jagah kuch aur karna ho?**
 Arpan: Jab tak Arpan ko cab nahi milti, aas-paas ke saare driver ke phone bajte raho: tum lo, tum lo. Ya time rakhna hai to 20-25 second rakh do. Par phir bhi accept server tak der se pahuncha to cab nahi milegi, kyunki server tak request pahunchna zaroori hai, tabhi server kuch kar payega.

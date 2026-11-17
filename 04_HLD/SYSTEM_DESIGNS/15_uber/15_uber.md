@@ -192,6 +192,11 @@ dikhti hai.
 
 **Asli naam:** ghadi server ki = TTL ka faisla server pe, der se aaya accept reject.
 
+Doosri kahani: aakhri ice-cream, do bachche daude, pehle shuru karne wala gir gaya; ice-cream usko jo pehle pahuncha.
+Server pe Suresh ka accept pehle aaya to ride Suresh ki. Raju ko "request nahi pahunchi" nahi, bas "tumse pehle kisi aur
+ne le li".
+**Asli naam:** server pe pehle pahuncha accept jeeta (first-write-wins), Raju ko ride taken message.
+
 **Maan lo ek-ek driver ki jagah aas-paas ke saare driver ke phone ek saath bajao:** jo pehle accept kare uski ride.
 **Asli naam:** broadcast dispatch; do ne ek saath accept kiya to BMS wali parchi, jo server pe pehle pahuncha wo jeeta.
 Window 20-25 sec bhi kar sakte, par faisla phir bhi server ki ghadi.
