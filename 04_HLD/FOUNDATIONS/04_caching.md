@@ -984,105 +984,76 @@ Naam: cascading / metastable failure. Poora dhaancha = `03_load_balancing.md` ka
 
 ---
 
-## Advanced — 3 Cache Problems + Bloom Filter (DEPTH)
+## 10. Counter pe kitaab nahi mili: teen tarah ki bheed (cache miss)
 
-Senior-level interview depth. (Penetration + Avalanche naye; Breakdown = stampede, upar interview-points mein bhi.)
-
-```
-   ┌──────────────┬──────────────────────────┬───────────────────────────┐
-   │ Problem      │ Kya                       │ Fix                        │
-   ├──────────────┼──────────────────────────┼───────────────────────────┤
-   │ PENETRATION  │ non-existent keys (jo hai │ negative caching (null bhi │
-   │              │ HI NAHI) → cache miss     │ cache, short TTL) /        │
-   │              │ → har baar DB → overload  │ BLOOM FILTER (DB se pehle  │
-   │              │                           │ "exist?" check)            │
-   │ AVALANCHE    │ BAHUT keys EK SAATH expire│ JITTER / random TTL (sab   │
-   │              │ (same TTL) → bheed DB pe  │ ek saath nahi, bikhre)     │
-   │              │ → DB crash                │ + cache HA (cluster)       │
-   │ BREAKDOWN /  │ EK super-HOT key expire   │ MUTEX (1 thread rebuild,   │
-   │ STAMPEDE     │ → massive concurrent      │ baaki wait) / soft-logical │
-   │              │ traffic ek saath DB pe    │ TTL (background refresh) / │
-   │              │                           │ never-expire hot keys      │
-   └──────────────┴──────────────────────────┴───────────────────────────┘
-```
-
-### Bloom Filter (penetration fix — kaise kaam karta)
+### Koi poochhe "cache miss se DB kaise girta hai" to aise bolo
 
 ```
-   = "yeh key set mein hai ya nahi" — space-efficient, probabilistic
-   2 jawab: "DEFINITELY nahi" (pakka) | "SHAYAD hai" (maybe, false-positive ok)
-
-   BANTA: ek BIT ARRAY (0/1) + k HASH functions
-   ADD:   key ko k hash → un k positions ke bits 1 karo (key store nahi hoti)
-   CHECK: k hash → koi bit 0? → DEFINITELY nahi (reject, DB hit nahi)
-                   saare 1? → shayad hai → DB check (confirm)
-
-   INSIGHT: bit 0 = key kabhi add hi nahi hui (no false negative)
-            saare 1 = shayad (doosri key ke hash collide hoke 1 kar sakte = false positive)
-   = "nahi" 100% sahi; "haan" ~99% (kabhi false positive)
-   USE: pre-load valid keys → fake/non-existent keys DB se pehle reject
-   Origin: Burton Bloom (1970, academic). Google/Cassandra/Redis use karte.
+Teen tarah. Nakli key jo DB me hai hi nahi, har baar miss, har baar DB (penetration): null bhi
+thodi der cache me rakho, ya Bloom filter se pehle hi jaancho. Bahut saari keys ek saath expire,
+sab ek saath DB pe (avalanche): TTL me thoda random (jitter). Ek garam key expire, hazaaron log
+ek saath DB pe (breakdown / stampede): ek hi aadmi DB jaaye, baaki ruke (mutex), ya expire se
+pehle peeche se taaza kar do.
 ```
 
-### Penetration vs Avalanche vs Breakdown (confuse mat)
 ```
-   PENETRATION = fake keys (hai HI NAHI)        → negative cache / bloom
-   AVALANCHE   = bahut REAL keys ek saath expire → jitter TTL
-   BREAKDOWN   = EK hot key expire (massive traffic) → mutex / soft-TTL
-```
+1. NAKLI KITAAB (penetration)   koi "11 number" maang raha jo godown me hai hi nahi
+                                har baar counter miss, har baar godown -> godown pe bojh
+                                hal: "nahi hai" bhi counter pe thodi der likh do (null cache, chhota TTL)
+                                     ya Bloom filter: pehle hi jaancho "ye kitaab ho bhi sakti hai?"
+                                -> tera cache design: "parchi pe range 1-10, 11 wala wahin wapas"
 
-### Cache-Aside RACE CONDITION (concurrent read + write)
+2. SAB EK SAATH EXPIRE          subah 10 baje sab kitaabon ki date ek saath likhi, sab ek saath nikli
+   (avalanche)                  -> sab log ek saath godown
+                                hal: date me thoda random (jitter), sab bikhar ke nikle (+ cache ki copy)
 
-```
-   Setup: cache-aside, ek READ (miss) + ek WRITE ek saath. DB = "John" (purana).
-
-   t1: A (READ)  → cache miss → DB padha → "John" mila (cache mein DAALA NAHI, slow)
-   t2: B (WRITE) → DB update "John" → "Johnny"
-   t3: B (WRITE) → cache delete (khaali tha)
-   t4: A (continue) → cache mein "John" DAAL diya (jo t1 pe padha — PURANA)
-
-   RESULT: cache = "John" (purana), DB = "Johnny" (naya) → STALE
-   = slow read purana padh ke, write ke BAAD cache mein daal de → stale (threads)
+3. EK GARAM KITAAB EXPIRE       bestseller ki date nikli, 1000 log ek saath godown bhaage
+   (breakdown / stampede)       hal: ek hi aadmi jaaye, baaki ruke (mutex)
+                                     ya date nikalne se pehle peeche se nayi rakh do (refresh-ahead / soft TTL)
+                                     ya bahut garam kitaab kabhi expire hi na ho
 ```
 
-**Fixes:**
-```
-   1. SHORT TTL — stale ho bhi gaya to jaldi expire (safety net)
-   2. DELAYED DOUBLE-DELETE — write: DB update → cache delete → thodi der baad
-      DOBARA delete (beech ka stale catch ho jaaye)
-   3. VERSIONING/CAS — cache mein version; purana version reject (complex)
-```
+### Bloom filter (nakli kitaab ka hal)
 
-**Lock se rok sakte? Haan, PAR:**
-```
-   - Java `synchronized` = SINGLE JVM tak. Distributed (multi-server + Redis)
-     mein → DISTRIBUTED LOCK chahiye (Redis SETNX/Redlock, Zookeeper)
-   - Lock = CONTENTION + LATENCY → caching ka speed maara → SELECTIVELY use
-     (hot keys / strong-consistency), har operation pe nahi
-   = general race → cheaper (TTL/double-delete); lock → critical/hot-key (mutex)
-```
-
-> **Meta:** Koi system PERFECT nahi — har fix naye trade-off laata (cache→invalidation,
-> lock→contention, TTL→staleness). Senior = RIGHT trade-off chunna, perfect dhoondna nahi
-> (= CAP theorem ka spirit).
-
----
-
-## Cache Hit Ratio
+Ek lambi patti, sirf 0 aur 1. Har asli kitaab ke naam se kuch khaane (k hash) 1 kar do, kitaab khud nahi rakhte.
+Naya naam aaya: uska ek bhi khaana 0 -> pakka nahi hai, godown jaane ki zaroorat nahi. Saare 1 -> "shayad hai", godown jaake dekho.
 
 ```
-Hit Ratio = (Cache hits) / (Total requests)
-
-Good:   >80%
-Great:  >95%
-
-Low ratio fixes:
-   • Increase cache size
-   • Switch eviction (LRU ↔ LFU)
-   • Reconsider what's cacheable
+"NAHI" -> hamesha sahi (khaana 0 matlab ye naam kabhi joda hi nahi)
+"HAAN" -> kabhi galat (doosri kitaabon ne wahi khaane 1 kar diye = false positive)
 ```
 
-Monitor in production — Spring Boot Actuator + Micrometer.
+Burton Bloom ne 1970 me banaya. Cassandra, Redis (RedisBloom) jaise use karte.
+
+### Ek race: purani kitaab counter pe pad gayi
+
+```
+t1  A: counter pe nahi mili -> godown se "John" padha (rakhne me der kar di)
+t2  B: godown me "Johnny" likha
+t3  B: counter khaali kiya (waise bhi khaali tha)
+t4  A: ab "John" counter pe rakh diya  -> counter = John (purana), godown = Johnny
+```
+
+```
+hal 1  chhota TTL: purani padi to bhi jaldi niklegi (bachaav)
+hal 2  double delete: likho -> counter khaali -> thodi der baad DOBARA khaali (beech ka purana pakda jaaye)
+hal 3  version: counter pe version, purana version wala reject (mushkil)
+lock?  Java synchronized ek hi JVM tak; kai server pe distributed lock (Redis SETNX / Redlock, Zookeeper)
+       par lock = intezaar + dheemapan, cache ka fayda gaya -> sirf garam key / zaroori jagah
+```
+
+Yahi wo race hai jo section 5 me "phenkna bhi 100% race-free nahi" bola tha.
+
+```
+Koi system perfect nahi: har hal naya trade-off laata (cache -> invalidation, lock -> intezaar,
+TTL -> thoda purana). Sahi trade-off chunna hi kaam hai.
+```
+
+### Hit ratio
+
+100 me se kitni baar counter pe mil gayi (hits / kul request). 80% se upar achha, 95% se upar bahut achha (aam andaaza,
+pakka niyam nahi). Kam ho to: counter bada karo, LRU / LFU badlo, ya socho ki cache me rakh kya rahe ho. Production me
+Spring Boot Actuator + Micrometer se dekhte hain.
 
 ---
 
