@@ -139,6 +139,9 @@ rakh lo: wo parchi dekhta rahe aur batch me mote register me jodta rahe, "is bat
 gino, kuch second me ek baar DB me likho; lakh likhai ki jagah ginti ki), likhai zyada = Cassandra. Trade-off: count
 thodi der se badhta hai.
 
+Doosri kahani: koi har ghante ek rupaya de jaaye to har rupaye ke liye bank nahi bhaagte; apne paas jama karo, gaddi
+bani to ek saath jama. **Asli naam:** Redis counter (INCR) / Kafka, phir batch me DB.
+
 ```mermaid
 flowchart TB
     subgraph V["VIRAL: 1 minute me 1,00,000 view"]
