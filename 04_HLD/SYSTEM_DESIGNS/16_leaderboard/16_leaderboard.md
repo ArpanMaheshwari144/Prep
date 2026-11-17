@@ -228,6 +228,11 @@ Sabka khatam hote-hote rank theek, asli rank contest poora hone pe.
 US 30,000, Europe 20,000: usi hisaab se jagah baant do (ye rank nahi, bas baantna, jaise URL me server ko counter ki range). Desh ke andar IP se shehar, har desh ka
 coordinator; ek dabbe pe kai thappe ho sakte. Query 1 crore nahi dekhti. Asli rank world board pe.
 **Asli naam:** AP + eventual consistency, capacity planning / pre-partition (sign-up count se), jagah ke hisaab se gole (geo partitioning: Delhi ke gole me Haryana, UP bhi; dabbe pe range ka thappa, query seedha us dabbe pe), shard map me har shard ki kai range, partition key != rank.
+**Doosri kahani (baantne ka matlab saaf):** India se 10 lakh log, meri rank 5,000 dekhni hai to 10 lakh me kahan dhoondhoge.
+Map pe gole: Delhi ka gola (Haryana, UP wale bhi), Mumbai ka (Pune bhi), Bangalore, Chennai, Gujarat. Har dabbe pe range ka
+thappa: Delhi pe 4,000 se 5,000, to seedha Delhi ke dabbe pe; Bangalore, Mumbai se lena-dena nahi. (Pehle "IP" shabd bola
+tha, matlab tha jagah ke hisaab se gola.)
+**Asli naam:** geo partitioning (location se shard), shard map (kis shard me kaunsi range), query sirf us ek shard pe.
 Bolne ki line: "FR ke hisaab se poora world board. Ek time zone (UTC). Pehle sawaal gino, paanchon wale pehle; ek jitne sawaal me jo pehle
 khatam kare wo upar, phir milli second, phir naam. Result aate jaayein, board banta jaaye, rank thodi der me theek."
 **Asli naam:** global leaderboard (aggregator, sab region mila ke ek sorted board), sort key = solved desc, finish time asc, ms, naam (composite score, kadam 2), solved count ke hisaab se bucket, rank thodi der purani = eventual consistency.
