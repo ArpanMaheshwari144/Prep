@@ -20,6 +20,7 @@ Numbers 1 crore khiladi · har second lakhon match khatam -> likhai bahut · boa
 **1. Top 10 aur "tera rank" chahiye. SQL me har baar 1 crore row sort, aur rank ke liye "mere upar kitne" gino to 1 crore dekhne padte.**
 Arpan: Ek aisa dabba jisme khiladi aur score daalte jao, wo apne aap sort karke de deta hai. Top 10 chahiye to 0 se 9 utha lo. Ye priority queue jaisa hi hai, bas wahan parent-child wala rishta hota, yahan poori line sorted hai, nikalo to wo de deta.
 Technical me: "apne aap sort wala dabba" = Redis sorted set (har khiladi + score, kram me; daalna, top 10, rank sab log N).
+Jaankari (reel se, 17-Nov): sorted set andar se skip list hai, highway jaisi (neeche sadak har gaon rukti, upar express lane sirf bade shehron pe), isliye 1 crore me bhi ~24 kadam.
 
 **Isi dikkat ki doosri kahani (reel se): kisi ne kaha Redis kyun, SQL me score pe index laga do. Index laga diya, top 10 ab turant, par Arpan ka rank (45,23,118) abhi bhi 3 second leta hai.**
 Arpan: 1 crore khiladi pe index kaise lagega: maan lo 5 lakh ka ek block, phir 5 lakh ka, phir 5 lakh ka. Mujhe 1 crore me se 45 lakh wala rank dhoondhna hai; 5-5 lakh alag bhi kar diye to bhi har block me jaake dekhna hi padega, dhoondhne ka time badhega. Asli dikkat ye hai ki score badalta jaata hai, har second update ho raha. Index lagaya to har likhai pe index bhi badlega, likhne aur update ka time har waqt badhta jaayega. Index ka fayda ye ki query jaldi chalti, par jahan likhai zyada hai wahan index ka utna fayda nahi; log bahut hain aur real time me score dhadadhad update ho raha. Isliye Redis sorted set: andar hi andar sort karta rehta, top 500 aur rank dono turant.
@@ -28,6 +29,7 @@ Technical me: "har block me jaake dekhna" = rank ke liye "mere upar kitne" gin-n
 **2. Ravi aur Priya dono ke 9800. Line me aage kaun?**
 Arpan: LeetCode jaisa: time se sort kar do. Jisne ek second, ya 0.01 milli second, pehle submit dabaya wo upar. Pehle score dekho, score same ho to time dekho, jaise streams me thenComparing padha tha.
 Technical me: dabba har khiladi ke saath ek hi number leta, to "score phir time" ek number me pack: aage score, point ke baad time (jo pehle aaya uska hissa bada). Ravi 9800.95, Priya 9800.90.
+Jaankari (reel se, 17-Nov): time na jodo to score barabar hone pe Redis khud naam ke alphabet se kram lagata (Aditi pehle, Zoya baad me), pehle pahunchne wala nahi; isliye time jodte hain.
 
 **3. Har second lakhon match khatam, saare score update ek hi Redis pe.**
 Arpan: Ek Redis kyun? Alag-alag kar do, region ke hisaab se baant do: India ke, Europe ke, aise 10 line. Top 10 ke liye har line ka top 10 le lo, aur ek chhotu ko de do: "ye sab mila ke sort kar aur badi screen pe dikha de". 10 line ke top 10 = 100 log, unme se top 10.

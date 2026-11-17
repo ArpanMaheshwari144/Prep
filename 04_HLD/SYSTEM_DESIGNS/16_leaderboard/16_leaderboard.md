@@ -32,7 +32,7 @@ kaunse number pe khada hai. Ye priority queue jaisa hi hai, bas wahan sirf upar 
 poori line sorted hai.
 
 **Asli naam:** apne aap sort wala dabba = Redis sorted set. Score daalna / badalna (`ZADD`; kadam 2 ke baad naya pack kiya number `ZADD` se, `ZINCRBY` nahi, kyunki time wala hissa bhi badalna hai), top 10 (`ZRANGE 0 9 REV`),
-mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. Commands interview me bolni nahi padti, bas "sorted set,
+mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. (Andar se sorted set = skip list + hash table: highway ki express lane jaisa, upar ki lane se bhaago, sahi jagah neeche utro.) Commands interview me bolni nahi padti, bas "sorted set,
 score ke kram me".
 
 **Doosri kahani (index laga do?):** score pe SQL index lagaya to top 10 turant, par rank ke liye har block me jaake
@@ -73,6 +73,7 @@ Priya  9800, 10:05 pe  ->  9800.90      line: Ravi -> Priya
 ```
 
 **Asli naam:** composite score (score + earlier-time fraction). Score pehle tolta, fraction sirf barabari pe.
+Time na jodo to barabar score pe Redis khud member naam ke alphabet (lexicographic) se kram lagata, pehle pahuncha wala nahi; isliye time jodte hain.
 
 ## 3. Har second lakhon update ek Redis pe (baant do, phir milao)
 
