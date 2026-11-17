@@ -881,70 +881,47 @@ galti bhi usi second naql kar leta hai.
 
 ---
 
-## Real-World Cache Tools
+## 7. Cache ke tools (ek line me)
 
-### **Redis** (modern choice — 80% market)
-- In-memory key-value
-- Persistence: snapshot + AOF
-- Data structures: String, List, Set, Hash, Sorted Set, Streams
-- Single-threaded (atomic ops)
-- Pub-Sub support
-- **Use:** Distributed cache, sessions, leaderboards
-
-### **Memcached** (legacy)
-- Pure key-value, simpler
-- Multi-threaded
-- No persistence
-- **Use:** Pure cache, no advanced needs
-
-### **Caffeine** (Java in-process)
-- Library — runs inside JVM
-- Spring `@Cacheable` integrates
-- **Use:** Single-app local cache
-
-### Redis vs Memcached
+```
+Redis      sabse aam: key-value + list, set, sorted set (tera leaderboard), hash, stream
+           disk pe bhi likh sakta (snapshot + AOF), pub-sub, ek waqt me ek command (atomic)
+Memcached  sirf key-value, purana aur saada, kai thread, disk pe kuch nahi likhta
+Caffeine   Java ke andar ki jeb (local cache), Spring @Cacheable isse jud jaata
+```
 
 | | Redis | Memcached |
 |---|---|---|
-| Data structures | Many | Key-value only |
-| Persistence | | |
-| Pub-Sub | | |
-| Modern choice | | Legacy |
+| Data structures | bahut (list, set, sorted set, hash) | sirf key-value |
+| Disk pe likhna (persistence) | haan | nahi |
+| Pub-Sub | haan | nahi |
+| Aaj kal | sabse aam | purana, saada |
 
 ---
 
-## The Hard Problem — Cache Invalidation
+## 8. Purana data cache se kaise hatayein (cache invalidation)
 
-> *"Two hard things in CS: cache invalidation and naming things."*
+### Koi poochhe "purana data cache se kaise hatate ho" to aise bolo
 
-**Problem:** DB updated, cache stale → users see old data.
-
-### Solutions:
-
-#### 1. **TTL (simplest)**
 ```
-SET cache:user:123 → John (TTL: 5 min)
-After 5 min → expires automatically
-Next read fetches fresh
+Teen tareeke. TTL: har cheez ki expiry, apne aap nikal jaati, par utni der purani dikh sakti.
+Seedha hatana: DB me likha, turant cache se wo key delete; par delete fail hua to purani padi
+rahegi, isliye TTL bhi saath. Kai server ka apna local cache ho to ek event bhejo ki "ye key
+hatao", sab sunke hata dete (pub-sub). Asal me TTL + delete dono saath lagate hain.
 ```
-**Trade-off:** 5 min staleness OK.
 
-#### 2. **Explicit invalidation**
-```
-On write:
-   1. Update DB
-   2. DELETE cache:user:123
-   3. Next read → fresh fetch
-```
-**Risk:** Step 2 fails → stale forever.
+Counter pe purani kitaab kaise hatayein:
 
-#### 3. **Pub-Sub invalidation**
 ```
-DB write → publish event → caches subscribe → delete entry
+1. TTL           har kitaab pe expiry date, date nikli to apne aap bahar
+                 saste me, par tab tak purani dikh sakti (5 min TTL = 5 min tak purani)
+2. SEEDHA PHENKO godown me kitaab badli -> turant counter wali phenko  -> todoapp ka @CacheEvict
+                 phenkna bhool gaye / fail hua to purani padi rahegi -> isliye TTL saath (bachaav)
+3. SABKO BATAO   har cashier ki jeb me copy (local cache) -> ek awaaz "ye kitaab phenko",
+                 sab sunke phenk dete (pub-sub) -> Spring 13 wali "3 server, teen alag dabbe" ka hal
 ```
-**Use:** Multi-region distributed.
 
-**Production combo:** TTL + explicit invalidation.
+Asal me: TTL + seedha phenkna, dono saath.
 
 ---
 
