@@ -305,6 +305,9 @@ baad jab photocopy sync ho jaaye, phir wahin se padh lo. Har cheez ka system hai
 **Asli naam:** jisne update kiya, thodi der main se = read-your-writes (abhi transfer kiya to kuch second primary se),
 sync ho jaaye to wahin se = phir read replica (baaki sab replica se).
 
+**Zindagi ki misaal:** Instagram pe video upload ki, turant refresh kiya to kuch second dikhi hi nahi, thodi der baad
+dikh gayi. Video leader me likh gayi thi, refresh pe padhna ek copy se hua jo abhi peeche thi = replication lag. Hal wahi upar wala.
+
 ```mermaid
 flowchart TB
     A["Arpan ne abhi 500 bheje"]:::card

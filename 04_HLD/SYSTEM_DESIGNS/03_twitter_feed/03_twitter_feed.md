@@ -642,6 +642,9 @@ leader nahi), wo ye khud karta hai.
 **Asli naam:** do pe likho, do se padho = quorum (N = 3, W = 2, R = 2, W + R > N, isliye padhi gayi do copy me se ek me
 naya likha zaroor), thodi der leader se padho = leader read / read-your-writes (trade-off: leader pe bojh), 2 ne rakha tabhi pura = write ack, Cassandra = leaderless, QUORUM read / write (URL kadam 9-10).
 
+**Zindagi ki misaal:** Instagram pe video upload ki, turant refresh kiya to kuch second dikhi hi nahi, thodi der baad
+dikh gayi. Video leader me likh gayi thi, refresh pe padhna ek copy se hua jo abhi peeche thi = replication lag. Hal wahi upar wala.
+
 ```mermaid
 flowchart TB
     W["Arpan ka reply 'mast DP':<br/>A aur B me likha (2 ne haan bola)"]:::card
