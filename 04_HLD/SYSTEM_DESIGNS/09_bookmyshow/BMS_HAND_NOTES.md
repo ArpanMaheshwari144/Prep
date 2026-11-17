@@ -34,21 +34,25 @@ User --> line (virtual queue, token: capacity jitne andar) --> LB --> kai counte
 Arpan (17-Nov round): Log aa rahe hain, paise dekar ja rahe hain, matlab seat book honi chahiye. Ek seat do aadmi ko nahi milni chahiye. Payment consistent hona chahiye. Logon ko zyada intezaar na karna pade. FR me wo jo BookMyShow karta hai: seat book karna, pay karna, ek seat do ko nahi. NFR wo jo hum engineer ki tarah dekhte: Redis, replica, kai server, load balancer, kuch atke nahi; koi line me aaya aur bahut der khada raha, uski parchi khatam ho gayi aur bina pay kiye chala gaya, 8 minute khade rehne ka fayda hi nahi hua, aisa na ho. Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai. API abhi nahi, kuch din baad.
 Arpan (shard pe): BookMyShow me shard nahi, partition kar do. Shard ki ek keemat hai, shard karna matlab apni aisi-taisi karwana. AWS jaise bahut bade platform, ya bank jo Europe, America, Canada, Australia, India sab jagah faila hai, wahan shard keh sakte. BookMyShow India me bahut bada bhi ho to partition kar lo, thoda indexing laga do. Shard bahut alag duniya hai; hum aise hi bol dete "shard kar do", par companiyan 10 baar sochti hain.
 Technical me: "pehle partition" = ek hi DB ke andar table partitioning (jaise show date se), "indexing" = sahi index, "shard ki keemat" = cross-shard transaction, rebalancing, ops ka bojh; shard aakhri raasta.
+Arpan (FR dobara, chain dekh ke): FR wo jo BookMyShow asal me karta hai. Chain me har baar seat dekhna, rokna, pay karna, book karna hi ho raha. To FR ke liye dikkat dekhne ki zaroorat nahi: seat dekho, seat hai to book karo, book kiya to paise kaato, paise kate to seat do, bas. Baaki NFR: do log ek saath book na karein, zyada bheed na ho, zyada line me intezaar na karna pade, refund turant mile, seat turant dikhe.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      1  seat chuno, pay karo, ticket pakka                                     -> kadam 1, 6d
-        2  ek seat kabhi do logon ko na mile (family ki saari seat ek saath)       -> kadam 1, 1b
-        3  payment consistent: paisa kata to ticket, ticket nahi to paisa wapas     -> kadam 6a-6g
-        4  logon ko zyada intezaar na karna pade                                    -> kadam 4, 6b
+FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroorat nahi)
+        1  seat dekho (seat map)
+        2  seat khaali hai to book karo (seat roko)
+        3  book kiya to paisa kaato
+        4  paisa kata to seat do (ticket)
         (pehle se tay: seat chuni to 5 min tere naam, pay nahi to chhoot jaati -> kadam 2 ·
          pay ~1 min me na ho to FAILED, popup Haan = doosre PSP ka QR, Naa = seat khali -> kadam 6b ·
          1 min ke andar kata to seat pakki, baad me kata to refund -> kadam 6b, 6e)
 
-NFR     1  badi movie ki bheed jhele: kai server, LB, padhne wali copy, Redis        -> kadam 4
-        2  koi tukda gire to kaam na atke (copy, backup job, outbox)                  -> kadam 3, 6d
-        3  line me khada aadmi bekaar na lautay: andar aaya to seat ki ghadi alag   -> kadam 4, 5
-        4  sach DB me, galat haalat kabhi na likho (refund PSP ka, hum sirf sach likhte) -> kadam 6f, 6g
+NFR     (ye dikkat chain se)
+        1  do log ek seat ek saath book na kar sakein                              -> kadam 1, 1b
+        2  zyada bheed jhele                                                         -> kadam 4
+        3  line me zyada intezaar na karna pade                                     -> kadam 4, 5
+        4  paisa sahi rahe: kata to seat, seat nahi to refund jaldi                  -> kadam 6a-6g
+        5  seat map turant dikhe                                                     -> kadam 4
 
 Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
         -> line + padhne wali copy (kadam 4)
