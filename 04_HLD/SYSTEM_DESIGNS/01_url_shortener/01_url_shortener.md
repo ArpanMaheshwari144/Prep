@@ -486,6 +486,11 @@ block list me daal do.
 **Asli naam:** login laga do = auth zaroori (tab userId pe had + tracking), bina login IP pe dheeli had = anonymous
 rate limit per IP, IP ban, desh block = WAF block list / geo-block.
 
+**Doosri kahani (bodyguard):** ek aadmi script chala ke 1 lakh link le gaya, pata hi nahi laga. To gate pe bodyguard
+khada karo: kuch abnormal lage (script, ek aadmi laakhon request, ek IP se 1000 ek saath) to rok do; baar-baar aaye to
+jail, dobara nahi aayega. AWS ke gateway pe hi rok do, phir block list me.
+**Asli naam:** API gateway / WAF pe rate limit + anomaly check, jail = IP / user ban.
+
 ```mermaid
 flowchart TB
     S["Machine: har second hazaar chit"]:::bad

@@ -268,6 +268,11 @@ denge: tu ab kahin nahi ja sakta, yahan se hil hi nahi sakta, is site ke liye tu
 **Asli naam:** ek baar, do baar, teesri baar = baar-baar had todne ka pattern, alag dabba, yahan se hil nahi sakta =
 ban list, permanent band = ban wala gate pe bina gine lautta.
 
+**Doosri kahani (16-Nov round):** pehle 1-2 baar chot khaayi to bouncer API gateway pe khada kiya. Ab bouncer bhi roz
+1000 logon se uljha hai. To pattern dekho: ye banda roz-roz aa ke yahi kar raha? Haan to ban karo, WAF me daal do,
+block, kahani khatam.
+**Asli naam:** roz ka pattern = abuse pattern, WAF me daal do = WAF block list (gateway tak bhi nahi pahunchta).
+
 ```mermaid
 flowchart TB
     R["Ravi: ek baar mana, do baar mana,<br/>teesri baar bhi aaya"]:::bad
