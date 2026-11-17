@@ -678,6 +678,17 @@ hai, peeche se naye master pe mod dete hain. Isi liye zyadatar team khud Sentine
 
 ## ═══ HANDS-ON — SENTINEL LIVE: KHUD-B-KHUD FAILOVER (18-Sep) ═══
 
+### Koi poochhe "Redis me failover khud kaise hota hai" to aise bolo
+
+```
+Teen Sentinel chalate hain jo master ko lagaataar ping karte hain. Ek ko master na dikhe to wo
+"shayad mara" maanti hai. Bahumat (quorum) bhi haan kahe tab "pakka mara". Phir Sentinel aapas me
+ek leader chunti hain, taaki do log do alag copy promote na kar dein. Leader ek copy ko master
+banati hai, aur purana master lautta hai to use turant replica bana deti hai, isliye split brain
+nahi hota. App ko master ka IP hardcode nahi karna, Sentinel se poochhna padta hai ki abhi master
+kaun hai.
+```
+
 > Upar wale demo me promote MAINE haath se kiya tha (`REPLICAOF NO ONE`) aur usi se SPLIT BRAIN hua.
 > Ab wahi kaam 3 Sentinel se karaya — bina kuch chhue. Poora faisla logs me timestamp ke saath neeche hai.
 > File: `07_PROJECTS/usercrud/docker-compose.yml` (sentinel-1 / sentinel-2 / sentinel-3)
@@ -859,12 +870,14 @@ data ka kya hua           "bangalore" MARA            kuch nahi khoya
 → Sentinel ne koi naya jaadu nahi kiya. Usne wahi teen kaam kiye jo main bhool gaya tha:
 **bahumat se maano · promote karne wala ek hi ho · lautne wale ko turant replica banao.**
 
-### Ek line me (interview me bolne layak)
+### Ek line me
 
-> *"Replica availability deta hai, safety nahi. Master gire to padhna chalta rehta hai — par likhna tab tak
-> ruka rehta hai jab tak koi BAHAR se promote na kare, aur wo faisla bahumat se hona chahiye warna split
-> brain ho jaata hai, jise sulajhane ka matlab hai kisi ek ka data maarna. Aur replica backup nahi hai —
-> wo master ki galti bhi usi second naql kar leta hai."*
+```
+Replica availability deta hai, safety nahi. Master gire to padhna chalta rehta hai, par likhna tab tak
+ruka rehta hai jab tak koi BAHAR se promote na kare, aur wo faisla bahumat se hona chahiye, warna split
+brain, jise sulajhane ka matlab hai kisi ek ka data maarna. Aur replica backup nahi hai: wo master ki
+galti bhi usi second naql kar leta hai.
+```
 
 ---
 
