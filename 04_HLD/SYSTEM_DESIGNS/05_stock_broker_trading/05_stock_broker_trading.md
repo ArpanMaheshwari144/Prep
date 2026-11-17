@@ -173,6 +173,8 @@ ya teesri copy hai. Zyada bheed, zyada likhai ho to DB ko alag-alag shard kar do
 Aur adhoora order: bag pack kar raha, saara saamaan aaya nahi, to poora bag khaali karo aur dobara jamao. Subah ek
 parchi banayi, Bangalore ja raha, 10 kapde rakhne hain, 5 ye, 3 ye, jo rakha us pe tick, to-do ki tarah. Bag khaali
 kiya to bhi parchi utni ki utni hai, wo dekh ke dobara jama lo.
+Doosri kahani (17-Nov grill): RAM fast hai isliye RAM me rakha, par RAM me daalne se pehle kahin aur bhi likh lo. RAM
+udi, restart hui, to jo likha hai wo wapas RAM me aa jaayega (write-ahead order log).
 
 **Maan lo replay me wo order bhi aa gaye jo crash se pehle trade ban chuke the:** Arpan ke 10 share Ravi ko bik chuke,
 portfolio bhi update. Phir match hue to dobara bikenge. Isliye jo trade pakka hua wo mote register (DB) me likha hai;
