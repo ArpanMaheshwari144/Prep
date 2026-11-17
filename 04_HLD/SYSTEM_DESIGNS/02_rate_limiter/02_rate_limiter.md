@@ -397,6 +397,48 @@ flowchart TB
     style GR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+## 11. Feed ka cache usi Redis me, Ravi ka dabba phenka gaya (alag Redis, ya LRU hatao)
+
+Ravi ka dabba Redis me, abhi khaali. Kharcha bachane ko company ne usi Redis me home page / product page ka cache bhi daal
+diya. Diwali ki raat cache badhta gaya, memory bhar gayi, Redis jagah banane ko purani keys phenkne laga (LRU) aur Ravi ka
+dabba bhi chala gaya. Bouncer ko dabba mila nahi, naya Ravi samajh ke bhara dabba bana diya, script 5 OTP aur le gayi.
+Pehli baat: feed / product page alag Redis me, Ravi ka dabba alag Redis me, to ye dikkat aati hi nahi. Ek me hi rakhna hai
+(kharcha) to LRU nahi laga sakte, kyunki Ravi ke token evict karne ke nahi, wo use honge: LRU hatao, kuch mat phenko. Product
+page Diwali ke baad thanda hoga, tab TTL se nikal jaayega.
+
+**Maan lo ek hi Redis, LRU hata diya, aur Diwali ki raat TTL khatam hone se pehle hi memory bhar gayi:** raaste kam ho gaye,
+kyunki Redis ko bol diya kuch mat phenk. Ravi ka dabba nahi phenk sakte, to product page me kuch karo. Team pehle se soche:
+jo product page dekh liya uska TTL kam kar do, wo jaldi nikal jaayega, Redis balance rahega; jo nahi dekha wo apne TTL pe.
+Product page DB se bhi aa sakta, thodi loading zyada, par Redis theek chalega. Phir bhi zyada dikkat hui to sabse baad me
+Redis tod do: product page ka alag, OTP ka alag.
+
+**Asli naam:** feed alag Redis, Ravi ka alag = sach (limiter ka dabba) aur cache alag Redis · LRU hatao = `maxmemory-policy
+noeviction` (Redis kuch nahi phenkta; bhar gaya to naya likhna error deta, isliye bharne hi mat do) · dekh liya to TTL kam
+= cache pe chhota TTL · DB se thodi loading = cache miss pe DB, thoda dheema (graceful degradation). Foundations 04 caching
+ka "Redis = ek cheez, teen kaam": limiter ka dabba SACH hai, cache nahi, isliye phenkna mana.
+
+```mermaid
+flowchart TB
+    R["Ravi ki request"]:::card
+    F["Diwali: lakhon product page"]:::card
+    subgraph S1["REDIS 1: SACH (noeviction)"]
+        D[("Ravi ka dabba<br/>kabhi phenka nahi jaata")]:::pill
+    end
+    subgraph S2["REDIS 2: CACHE (TTL, bheed me chhota TTL)"]
+        C[("product page / feed")]:::card
+    end
+    DB[("DB: cache miss pe<br/>thoda dheema")]:::good
+    R --> D
+    F --> C
+    C -. "nahi mila" .-> DB
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    style S1 fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+    style S2 fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ---
 
 Notes (Arpan ke shabd) = [RATE_LIMITER_HAND_NOTES.md](RATE_LIMITER_HAND_NOTES.md)

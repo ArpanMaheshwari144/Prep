@@ -594,6 +594,7 @@ Humne socha: paas me branch khol do, branches aapas me baat karein. Ginti ek gha
 Yahi dikkat yahan bhi:
   Rate limiter  10  VPN badal ke teen region, 15 OTP               ->  ek ghar region, ginti wahin (home region)
   Rate limiter  10b US ko kaise pata ghar Mumbai                   ->  +91 dekh lo, IP badle number nahi (country code)
+  Rate limiter  11  feed ka cache usi Redis, Ravi ka dabba gaya     ->  alag Redis; ek me ho to LRU hatao + cache ka TTL chhota (noeviction)
   Twitter       8   Ravi Delhi me, server America me               ->  Lajpat Nagar me branch khol do (India region)
   Twitter       9   John New York me, Arpan ka tweet nahi          ->  SBI ki do branch aapas me baat karein (cross-region)
   Twitter       9b  branch ki baat 10 min ruki, beech me 5 tweet   ->  banda pal-pal dekhe "dost aaya?", aate hi 5 push (queue, retry, replay)

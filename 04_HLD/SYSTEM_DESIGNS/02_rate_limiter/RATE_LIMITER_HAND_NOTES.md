@@ -38,6 +38,7 @@ saath me: Redis gira -> dono khule (OTP + feed), gateway apni kachchi ginti se 5
  8  naya number har baar, office ek WiFi        ->  login se pehle dheeli had, baad me userId pe kadi
  9  result ka din, SMS company giri             ->  line lagwao, ek-ek karke (queue, Kafka)
 10  VPN se 3 region, 15 OTP                     ->  ek ghar region, ginti wahin (home region, +91)
+11  feed ka cache usi Redis, Ravi ka dabba gaya ->  alag Redis; ek me ho to LRU hatao + cache ka TTL chhota (noeviction)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -113,6 +114,14 @@ Technical me: "ek particular region decide" = home region, "count India ke Redis
 **Maan lo OTP login se pehle, sirf phone number aata. Ravi VPN se US gateway pe. US ko kaise pata is number ka ghar Mumbai?**
 Arpan: Phone number har desh ka alag hota hai, hamara +91 se shuru. VPN IP badal sakta hai, number nahi; VPN chala ke call karun to bhi +91 hi jaata. To +91 dekh ke ghar India, ginti India ke Redis me. Ravi sach me US shift hua aur wahan ka number liya, to uska ghar US hi hai.
 Technical me: "+91 se pata" = phone number ka country code se home region (koi alag register nahi chahiye), "IP badle, number nahi" = VPN se bachav.
+
+**11. Ravi ka dabba Redis me, abhi khaali (saare token use kar chuka). Kharcha bachane ko company ne usi Redis me home page / product page ka cache bhi daal diya. Diwali ki raat sab page khol rahe, cache badhta gaya, Redis ki memory bhar gayi. Jagah banane ko Redis purani keys phenkne laga (LRU), Ravi ka dabba bhi chala gaya. Bouncer ko dabba mila nahi, naya Ravi samajh ke bhara dabba (5 token) bana diya, script 5 OTP aur le gayi, kisi ko pata nahi chala.**
+Arpan: Pehli baat to hum sochenge ki alag-alag Redis me rakho: home page / feed alag Redis me, Ravi ka alag Redis me, to kabhi dikkat nahi aayegi. Agar ek me hi rakhna hai (kharcha bachana hai) to phir hum LRU nahi laga sakte, kyunki dono important hain, kuch evict nahi kar sakte. Ravi ke token aise evict karne ke nahi, wo to use honge. LRU lagaya to usne Ravi ka token hata diya, wahi dikkat ho jaayegi. To LRU eviction policy hata do, Ravi ka mat hatao. Product page Diwali ke baad ek-do din me thanda ho jaayega, tab use hata denge, baaki Redis apna chalta rahega, dikkat hi nahi.
+Technical me: "feed alag Redis, Ravi ka alag" = sach (limiter ka dabba) aur cache alag Redis me, "LRU hata do, Ravi ka mat hatao" = maxmemory-policy noeviction (Redis kuch nahi phenkta), "Diwali ke baad thanda, tab hatao" = cache pe TTL.
+
+**Maan lo ek hi Redis, LRU hata diya (noeviction). Diwali ki raat page itne padhe gaye ki TTL khatam hone se pehle hi memory bhar gayi. Ravi ki agli request pe bouncer ko dabbe se token nikaal ke likhna hai.**
+Arpan: Ab hamare paas raaste kam ho gaye, kyunki Redis ko bol diya kuch mat phenk; Redis itna bhar sakta hai ki kuch rakh hi na paaye. OTP wali cheez (Ravi ka dabba) nahi phenk sakte, warna dikkat. To product page me kuch karna padega. Hamari team pehle se soche ki Redis bhar sakta hai: jo product page logon ne dekh liya, uska TTL kam kar do, wo jaldi Redis se nikal jaayega; doosra dekh liya to uska bhi kam kar do, Redis balance rahega. Jo nahi dekha uska TTL wahi, dheere-dheere wo bhi nikalta jaayega. Product page to DB se bhi la sakte hain, thodi loading zyada dikhegi, par Redis theek chalega. Redis gira to replica hai. Phir bhi zyada dikkat hui to sabse baad me Redis tod do: product page ka Redis alag, Ravi (OTP) ka alag. Thodi peak DB aur Redis se sambhal li, Diwali thandi padi, phir Redis se sab hata denge, baaki chalta rahega.
+Technical me: "dekh liya to TTL kam kar do" = cache pe chhota TTL (bheed me jaldi expire), "product page DB se, thodi loading" = cache miss pe DB, thoda dheema chalega (graceful degradation), "Ravi ka dabba nahi phenk sakte" = sach wali key kabhi evict nahi, "sabse baad me Redis tod do" = sach aur cache alag Redis.
 
 &nbsp;
 
