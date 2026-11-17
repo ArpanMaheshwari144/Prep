@@ -404,6 +404,36 @@ Ek line me: cache kabhi sach ka maalik nahi; cache bhara to "purana phenk deta h
 
 ## ═══ HANDS-ON — REPLICATION · FAILOVER · SPLIT BRAIN (asli Redis, 18-Sep) ═══
 
+### Koi poochhe "Redis ka master gir gaya to kya hota hai" to aise bolo
+
+```
+Replica padhna chalu rakhti hai, par likhna ruk jaata hai, kyunki replica khud master nahi banti;
+use pata hi nahi ki master mara hai ya sirf network toota. Koi bahar se promote karta hai, Sentinel,
+jo bahumat (quorum) se tay karta hai ki master sach me mara. Galat promote hua to do master ban
+jaate hain (split brain) aur ek ka data marta hai. Aur replica backup nahi hai: master ne galti ki
+to replica bhi turant wahi galti copy karti hai. Production me ElastiCache jaisa managed ye sab
+khud karta hai, hum ek endpoint use karte hain.
+```
+
+Is prayog ke chaar sabak (register wali kahani me):
+
+```
+1. COPY PADHTI HAI, LIKHTI NAHI   master gira -> copy se padhna chalu, likhna band (READONLY)
+                                  copy khud maalik nahi banti: pata nahi master mara ya sirf taar toota
+2. DO MAALIK = SPLIT BRAIN        haath se copy ko maalik banaya, purana laut aaya -> dono master,
+                                  bangalore vs mumbai, jodne ka raasta nahi, ek ka data maarna pada
+                                  -> reel (17-Nov) aur banking 21: "likhna hamesha EK jagah"
+3. STOP vs KILL                   docker stop: Redis marne se pehle disk pe likh leta, data bacha
+                                  docker kill (bijli gayi): mauka nahi mila, data gaya
+4. REPLICA BACKUP NAHI            master khaali lauta to copy ne apni SAHI copy khud phenk di
+                                  -> banking 7 (register jala): copy alag jagah + alag backup chahiye
+```
+
+Tere niyam se jod: "master gira, copy promote karo" AWS (ElastiCache) khud karta, hamara design nahi. Interviewer pooche
+"Redis gira to?" to do line: "managed Redis khud copy promote kar deta; par jo likha replica tak nahi pahuncha tha wo ja
+sakta, isliye paise wali cheez ka sach DB me rakhta hoon, Redis me nahi" (tera BMS wala faisla).
+
+
 > Upar wale eviction demo ka agla hissa, usi do container pe.
 > Sawaal: **"master mar jaaye to kya hota hai, aur kaun sa data marta hai?"**
 > Har command + uska ASLI output. Jo log-line neeche hai wo `docker logs` se copy ki hui hai.
