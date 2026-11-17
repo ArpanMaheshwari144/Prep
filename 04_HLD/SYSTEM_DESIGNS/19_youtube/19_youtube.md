@@ -317,7 +317,8 @@ reel ka player bhi taiyaar).
 
 **Maan lo Ravi mobile data pe, zyadatar reels 1 second me skip, app 5 reels poori achhi quality me utaar raha, pack
 shaam tak khatam:** Net dekho: kamzor hai to kam quality laao (240p bahut, pehle blur phir saaf). Battery pe Instagram
-kya karta, public nahi. Aur jis reel pe engagement 1 second, wo aage dikhane ka nahi.
+kya karta, public nahi. Aur jis reel pe engagement 1 second, wo aage dikhane ka nahi; jisme 30 second guzaare, wahi
+dekhna chah raha. Library jaisa: 10 log roz aate, unka pattern samajh ke wahi kitaabein zyada aur alag-alag variety rakh di.
 **Asli naam:** ABR (adaptive bitrate), recommendation ka engagement signal (kitni der dekhi).
 
 **Maan lo net achha, par 5 me se 4 reel 1 second me skip, har reel poori 30 second pehle hi aa chuki:** Poori 10
