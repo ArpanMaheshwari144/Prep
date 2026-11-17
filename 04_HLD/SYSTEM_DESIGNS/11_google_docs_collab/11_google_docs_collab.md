@@ -201,6 +201,13 @@ maalik hoga, sab uske hisaab se chalega.
 
 **Asli naam:** centralized system, ek hi version = ek jagah kram aur OT, har doc ka alag centralized system, uska
 maalik = har doc ka ek owner server (LB `docId` dekh ke ring pe owner chunta = consistent hashing, server jude / gire to sirf paas ke doc hilein, ek doc ke saare editor wahin).
+Doosri kahani (16-Nov grill, Arpan Mumbai server se, Ravi Delhi server se): pehle saare op apne paas jama karo (Redis,
+abhi DB nahi). Arpan ne jagah 0 pe "ARPAN" likha, Ravi ne jagah 2 pe "RAVI". Dono op ek jagah aaye: pehle ARPAN, phir
+Ravi jagah 2 pe, jahan "P" hai. Arpan ka kaat ke Ravi ka likhna, ya "AR" + "RAVI" likh ke "PAN" kho dena, dono galat. To
+"P" ko khiska do, beech me poora "RAVI": "AR RAVI PAN". Jaise main Madhya Pradesh me beech me baitha, Ravi Delhi se, Arpan
+Mumbai se; dono ka mere paas aaya, merge karke dono ko ek jaisa dikha diya. Upar se har likhne wale ki rang wali line
+(cursor) bhi dikhti.
+**Asli naam:** owner server pe OT (position khiskana), live cursor (presence).
 
 ```mermaid
 flowchart TB
