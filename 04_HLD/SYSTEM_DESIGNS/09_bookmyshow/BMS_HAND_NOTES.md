@@ -4,15 +4,53 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan BookMyShow pe Avengers ke pehle show ki seat D5 book kar raha hai. Arpan ki misaal: cinema ke do counter ek hi seat bech rahe, aur ek-doosre ko pata nahi.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+User --> line (virtual queue, token: capacity jitne andar) --> LB --> kai counter (app server)
+                                                                   |
+   seat map dekhna:     padhne wali copy se (read replica), dekhne wale bahut, likhne wale kam
+   seat chuni:          dekhna + rokna ek query (WHERE FREE), parchi = hold, 5 min umar
+   Pay dabaya:          parchi pe PAYMENT_PENDING, umar ruki
+   PSP (Razorpay):      ~1 min ghadi (30-55 sec + buffer), chhotu status poochhe + webhook
+   SUCCESS:             DB me SUCCESS + "ticket banao" ek saath (outbox) --> ticket service
+   der se kata / fail:  REFUND_PENDING --> raat ki job --> refund API --> pakke event pe REFUNDED
+
+ 1   do log ek saath D5                         ->  dekhna + rokna ek query (hold)
+ 1b  family D5 D6 D7, beech me D7 gayi           ->  teeno ek transaction, ek na mile to kuch nahi
+ 2   parchi laga ke chai peene gaya              ->  parchi ki umar 5 min (hold_until)
+ 3   parchi phaadne wala chhutti pe              ->  backup job / umar query me hi
+ 4   10 baje 10 lakh log, seat 50 hazaar         ->  read replica + line me lagao (virtual queue, token)
+ 5   token 10 min, parchi bachi                  ->  do ghadi: token = gate, parchi = seat (grace)
+ 6a  Pay 4:30, umar 5:00, PSP jawab 5:20         ->  PAYMENT_PENDING pe umar nahi kat-ti
+ 6b  PSP chup                                    ->  ~1 min ghadi, phir FAILED + popup (Haan = PSP-2, Naa = seat khali)
+ 6c  back daba diya, baad me paisa kata          ->  seat HELD, poll + webhook, kata nikla to refund
+ 6d  SUCCESS likha, ticket se pehle server gira  ->  SUCCESS + parchi ek saath (outbox)
+ 6e  bank ne 12 min lagaye, seat Priya ko        ->  payment SUCCESS + booking FAILED, refund job
+ 6f  purana PENDING ne SUCCESS kaata             ->  sach DB me, likhne se pehle DB dekho, sync job
+ 6g  "refund shuru" ko "ho gaya" likha           ->  pakke event pe hi REFUNDED, stuck refund job
+```
+
+**FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
+Arpan (17-Nov round): Log aa rahe hain, paise dekar ja rahe hain, matlab seat book honi chahiye. Ek seat do aadmi ko nahi milni chahiye. Payment consistent hona chahiye. Logon ko zyada intezaar na karna pade. FR me wo jo BookMyShow karta hai: seat book karna, pay karna, ek seat do ko nahi. NFR wo jo hum engineer ki tarah dekhte: Redis, replica, kai server, load balancer, kuch atke nahi; koi line me aaya aur bahut der khada raha, uski parchi khatam ho gayi aur bina pay kiye chala gaya, 8 minute khade rehne ka fayda hi nahi hua, aisa na ho. Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai. API abhi nahi, kuch din baad.
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      show aur seat map dekho · seat chuno -> pay karo -> ticket pakka
-        · seat chuni to 5 minute tere naam rukti, pay nahi kiya to chhoot jaati
-        · pay ~1 minute (30-55 sec + thoda buffer) me na ho to payment fail dikhe, par seat abhi teri, popup "dobara pay?": Haan = doosre PSP ka QR, Naa = seat turant khali
-        · 1 minute ke andar paisa kata to seat pakki; uske baad kata to refund
-NFR     ek seat kabhi do logon ko na bike (yahi dil hai) · seat map dekhna tez · badi movie ke din ki bheed jhele
-Numbers advance booking 10 baje: 10 lakh log ek saath, seat sirf 50 hazaar · 100 log map dekhte to ~1-2 book karte
-        -> dekhna bahut, likhna kam · data chhota (aaj + agle hafte ke show), purana archive
+FR      1  seat chuno, pay karo, ticket pakka                                     -> kadam 1, 6d
+        2  ek seat kabhi do logon ko na mile (family ki saari seat ek saath)       -> kadam 1, 1b
+        3  payment consistent: paisa kata to ticket, ticket nahi to paisa wapas     -> kadam 6a-6g
+        4  logon ko zyada intezaar na karna pade                                    -> kadam 4, 6b
+        (pehle se tay: seat chuni to 5 min tere naam, pay nahi to chhoot jaati -> kadam 2 ·
+         pay ~1 min me na ho to FAILED, popup Haan = doosre PSP ka QR, Naa = seat khali -> kadam 6b ·
+         1 min ke andar kata to seat pakki, baad me kata to refund -> kadam 6b, 6e)
+
+NFR     1  badi movie ki bheed jhele: kai server, LB, padhne wali copy, Redis        -> kadam 4
+        2  koi tukda gire to kaam na atke (copy, backup job, outbox)                  -> kadam 3, 6d
+        3  line me khada aadmi bekaar na lautay: andar aaya to seat ki ghadi alag   -> kadam 4, 5
+        4  sach DB me, galat haalat kabhi na likho (refund PSP ka, hum sirf sach likhte) -> kadam 6f, 6g
+
+Numbers sirf jahan faisla badle: advance booking 10 baje 10 lakh log, seat 50 hazaar -> line + padhne wali copy (kadam 4)
+        · 100 log map dekhte to ~1-2 book karte -> dekhna bahut, likhna kam · data chhota (aaj + agle hafte ke show)
+API     abhi nahi (Arpan 17-Nov: kuch din baad)
 ```
 
 &nbsp;
