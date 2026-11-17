@@ -110,6 +110,7 @@ Yahi dikkat yahan bhi:
   Twitter       4   3,000 pe server gira, 5,000 ko nahi mila       ->  parchi pe likha, Kafka hi pakki parchi (acks=all)
   Notification  1b  DB me order, Kafka se pehle gira               ->  order ke saath vasiyat likh do (outbox + relay)
   Stock         5   adhoora order RAM ke saath uda                 ->  bag ki parchi dekh ke dobara jamao (order log, replay)
+  Stock         5b  replay me ho chuke trade bhi wapas aaye         ->  mota register dekho, ho chuke hatao (trade DB = source of truth)
   Payment       5   INITIATED likha, call bhejte server gira       ->  pehle register me likho, phir bhejo (commit first)
   File upload   4b  UPLOADED likha, scan daalne se pehle gira      ->  UPLOADED ke saath vasiyat (outbox + relay)
   News          11  DB me likhi, parchi se pehle worker / consumer mara       ->  status rakh, agla aage badhaaye (state, outbox)

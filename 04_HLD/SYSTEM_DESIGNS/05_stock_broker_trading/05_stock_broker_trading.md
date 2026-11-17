@@ -174,10 +174,15 @@ Aur adhoora order: bag pack kar raha, saara saamaan aaya nahi, to poora bag khaa
 parchi banayi, Bangalore ja raha, 10 kapde rakhne hain, 5 ye, 3 ye, jo rakha us pe tick, to-do ki tarah. Bag khaali
 kiya to bhi parchi utni ki utni hai, wo dekh ke dobara jama lo.
 
+**Maan lo replay me wo order bhi aa gaye jo crash se pehle trade ban chuke the:** Arpan ke 10 share Ravi ko bik chuke,
+portfolio bhi update. Phir match hue to dobara bikenge. Isliye jo trade pakka hua wo mote register (DB) me likha hai;
+replay karte waqt register dekho, jo ho chuke unhe book me mat lagao, sirf khule order wapas. Parchi kaam ki tab hai jab
+saath me mota register ho, aakhri sach wahi.
+
 **Asli naam:** permanent dabba = DB (primary), 3-4 copy = replica / standby, tukde = shard (share ke hisaab se), pehle numbers =
 numbers se RAM ya DB ka faisla (bahut kam traffic pe DB pe hi chal jaata; RAM + micro-second wala jhanjhat tab jab NSE
 jaisi bheed ho), subah se parchi = order log (append-only, sirf jodna), parchi dekh ke bag dobara = log replay
-se book wapas.
+se book wapas, replay pe mota register = trade DB (source of truth), ho chuke trade book me wapas nahi.
 
 ```mermaid
 flowchart TB

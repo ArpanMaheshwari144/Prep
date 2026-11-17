@@ -59,6 +59,12 @@ Arpan: RAM me kyun rakh raha, sabko kisi permanent dabbe me rakh lo. Wo dheema p
 Aur adhoora order: bag pack kar raha, saara saamaan aaya nahi, to poora bag khaali karo aur dobara jamao. Subah ek parchi banayi, Bangalore ja raha, 10 kapde rakhne hain, 5 ye, 3 ye. Jo rakha us pe tick, to-do ki tarah. Bag se nikaalna ho to sab hata do, par wo parchi mere paas utni ki utni hai. Wo parchi dekh ke dobara jama lo.
 Technical me: "permanent dabba" = DB, "3-4 copy" = replica / standby, "numbers discuss nahi kiye, itni bheed nahi" = pehle numbers, phir RAM ya DB ka faisla, "subah se ek parchi, utni ki utni rehti" = order log (append-only), "parchi dekh ke bag dobara jamao" = log replay se book wapas.
 
+Doosri kahani (17-Nov grill): RAM fast hai isliye RAM me rakha, par RAM me daalne se pehle usse kahin aur bhi likh le. RAM udi, restart hui, to jo likha hai wo wapas RAM me aa jaayega, kyunki hamare paas sab likha hua hai.
+
+**Maan lo replay me wo order bhi wapas aa gaye jo crash se pehle match hoke trade ban chuke the (Arpan ke 10 share Ravi ko bik chuke, dono ke portfolio bhi update). Phir se match hue to 10 share dobara bikenge.**
+Arpan: Aisa nahi hone ka. Jiska order pakka ho gaya, wo DB me likh do, mote register me. Parchi se replay karte waqt mote register me dekh lo: kis-kis ka order tha, kya ho gaya; Arpan aur Ravi dono ka ho gaya, dono ke dashboard me dikh gaya, to inhe book me mat lagao, hatao. Parchi bhi kaam ki hai, par tab jab saath me mota register ho, kyunki aakhri sach (source of truth) mota register hai: kuch bhi bika, trade hua, portfolio me idhar se udhar gaya, wo register me pada hai. Jo order trade ho gaya, use dobara RAM me laane ka matlab hi nahi.
+Technical me: "pehle kahin aur likh, phir RAM" = order log pehle (write-ahead), "replay pe mota register dekho, ho chuke hatao" = trade DB = source of truth, replay me sirf khule (unfilled) order book me wapas, dobara match nahi.
+
 **6. Arpan aur Ravi ka sauda ho gaya. Khabar kai jagah: dono ke portfolio, paise ka hisaab, SMS, bhaav ki screen. Engine khud ek-ek ko call kare to SMS dheema hua to engine bhi ruka, 9:15 ki line atki.**
 Arpan: Main apne paas 10 ladke ikatthe karunga: tu aa, tu aa, le ye information, sab pakad ke aa ja. Main khud kuch nahi karunga, maine baith ke instruction de di. 10 ladkon ki fauj: tu ye kar, tu ye kar. Jab sab ho jaaye to mujhe bata dena.
 Technical me: "10 ladkon ki fauj" = Kafka (trades topic), "har ladka apna kaam" = har service ka alag consumer group, "main khud kuch nahi karunga" = engine sirf ek baar daal ke aage.
