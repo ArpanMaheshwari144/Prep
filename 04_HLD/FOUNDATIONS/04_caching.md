@@ -61,37 +61,36 @@ seedha key se lookup; DB ko query samajhna, index, disk page, row banana sab kar
 
 ---
 
-## ★★ REDIS = EK CHEEZ, TEEN ALAG KAAM (ye ghaalmel sabse zyada hota hai)
+## 4. Redis = ek cheez, teen alag kaam (ye ghaalmel sabse zyada hota hai)
 
-> Designs me "Redis" baar-baar aata hai — par har jagah uska KAAM alag hota hai.
-> Ye farak na pakdo to sab mix ho jaata hai.
-
-```
-1. CACHE          -> DB ka jawab paas rakh liya
-                     gir gaya to? -> sirf SLOW hoga, jawab wahi milega
-                     misaal: url-shortener (wahi URL baar-baar) . hot tweet
-
-2. SHARED STATE   -> sach YAHIN rehta hai (DB me hai hi nahi)
-                     gir gaya to? -> GALAT behaviour, niyam TOOT jaayega
-                     misaal: rate-limiter ka counter (har server ka apna count ho jaata -> limit toot)
-
-3. MEMORY / DEDUP -> "ye kaam pehle ho chuka" ka nishaan
-                     gir gaya to? -> dobara ho jaayega (double charge / double email)
-                     misaal: idempotency key (payment) . eventId dedup (Kafka consumer)
-```
+### Koi poochhe "Redis kahan-kahan lagaya" to aise bolo
 
 ```
-★ PEHCHAN KA EK SAWAAL:
-     "ye Redis abhi gir jaaye to kya hoga?"
-        sirf SLOW hoga, jawab wahi         -> ye CACHE tha
-        GALAT jawab / niyam toot jaayega   -> ye cache NAHI tha, ye SOURCE OF TRUTH tha
+Redis ek hi hai, par har design me uska kaam alag hai. Kahin cache hai: DB ka jawab paas rakha, gira
+to bas dheema hoga. Kahin sach wahi hai: rate limiter ki ginti, gira to niyam toot jaayega. Kahin
+yaad rakhne ke liye hai: ye payment pehle ho chuki, gira to dobara ho jaayegi. Pehchaan ka ek
+sawaal: "Redis abhi gir jaaye to kya hoga?" Sirf dheema hua to cache tha, galat hua to wo sach tha.
 ```
 
+Wahi library ka counter:
+
 ```
-★ AUR EK CHEEZ JO CACHE JAISI DIKHTI HAI PAR NAHI HAI — PRECOMPUTE:
-     twitter ka inbox (Redis list) = cache nahi, PEHLE SE BANAYA HUA jawab.
-     cache  = "DB ne jo diya wo paas rakh liya"
-     precompute = "jawab pehle hi bana ke rakh diya, DB se aisa jawab milta hi nahi"
+1. CACHE         counter pe kitaab ki COPY, asli godown me
+                 gira -> log godown jaayenge, dheema, par kitaab wahi          -> URL shortener, garam tweet
+2. SHARED STATE  counter pe register "aaj kisne kitni li, had 5"; godown me ye ginti kahin nahi
+                 gira -> ginti gayi, koi 50 le jaayega, niyam toota             -> rate limiter (saare server ek ginti, Lua)
+3. DEDUP         counter pe parchi "Ravi ko ye kitaab de chuke"
+                 gira -> Ravi ko dobara de denge (double charge / double email) -> payment idempotency key, Kafka eventId
+```
+
+Chauthi cheez jo cache jaisi dikhti hai par nahi hai, **precompute**: twitter ka inbox. Cache = DB ne jo diya wo paas rakh liya.
+Inbox = jawab pehle se bana ke rakh diya, DB se seedha aisa jawab milta hi nahi (har baar 200 logon ke tweet jodna mehnga).
+
+```
+PEHCHAAN KA SAWAAL: "ye Redis abhi gir jaaye to kya hoga?"
+   sirf dheema, jawab wahi          -> cache tha            -> "dheema hoga, DB se le lenge"
+   galat jawab / niyam toot gaya    -> sach (source of truth) tha
+                                       -> "copy rakhenge + fail-open ya fail-close ka faisla" (rate limiter kadam 6)
 ```
 
 ```
