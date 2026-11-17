@@ -310,6 +310,10 @@ parchi wahin padi.
 **Asli naam:** SUCCESS + parchi ek saath = transactional outbox (ek hi DB transaction), parchi dekh ke book = relay /
 worker / consumer outbox padh ke ticket service ko bhejta.
 
+Doosri kahani: payment aur ticket alag service, beech me ek dabba: "Arpan ka payment poora, ticket PENDING". Ticket
+service gire ya server gire, dabba wahin; jo bhi aaye pending padh ke ticket banaye, phir dabbe se hatao.
+**Asli naam:** outbox / pending table, consumer poll + retry.
+
 ```mermaid
 flowchart LR
     E["Event: paisa kata"]:::card --> T
