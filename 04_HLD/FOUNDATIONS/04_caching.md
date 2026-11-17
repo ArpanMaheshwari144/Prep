@@ -106,24 +106,6 @@ PEHCHAAN KA SAWAAL: "ye Redis abhi gir jaaye to kya hoga?"
 
 ---
 
-## Why Cache?
-
-```
-Without cache:
-   Every request → DB hit (~50-100 ms)
-   1000 RPS → DB overload → crash
-
-With cache:
-   90% requests → Cache (RAM ~1 ms)
-   10% requests → DB (cache miss)
-   DB load: 10x reduced
-   Latency: 50-100x faster
-```
-
-**Trade memory for speed** — RAM expensive but FAST.
-
----
-
 ## Multi-level Cache Architecture
 
 ```
@@ -170,81 +152,55 @@ dekhta hai ki wo page / data pehle se padha pada hai kya; nahi mila tabhi disk p
 
 ---
 
-## 4 Cache Strategies
+## 5. Likhne-padhne ke tareeke (cache strategies)
 
-### 1. **Cache-Aside (Lazy Loading)** — most common (90%)
+Kyun cache, ek line me: har request DB pe jaaye to 1000 request / sec pe DB gira; 90% counter se do to DB pe bojh 10 guna kam.
+
+### Koi poochhe "cache aur DB me likhte-padhte kaise ho" to aise bolo
 
 ```
-Read:
-   1. App checks cache
-   2. Cache MISS → query DB
-   3. Store result in cache
-   4. Return to user
-
-Write:
-   1. Update DB
-   2. Invalidate cache (delete entry)
-   3. Next read fetches fresh
+Zyadatar cache-aside: padhte waqt pehle cache dekho, nahi mila to DB se laao aur cache me rakho.
+Data badla to pehle DB me likho, phir cache se wo entry hata do (update nahi, delete). Jahan
+cache hamesha taaza chahiye wahan write-through (dono me ek saath, likhna dheema). Jahan likhna
+bahut tez chahiye aur thoda kho jaana chalega wahan write-behind (pehle cache, DB me baad me
+ek saath). Garam data ke liye refresh-ahead, expire se pehle hi peeche se taaza kar do.
 ```
 
-**Pros:** Simple, no cache update on every write
-**Cons:** First read slow, stale risk
-**Use:** Read-heavy systems
+Wahi library counter, paanch tareeke:
 
-**★ (drill se) — write pe cache DELETE kyun, UPDATE kyun nahi:**
 ```
-   do write lagbhag saath: A DB me 10 likhe, B DB me 20 likhe (DB me aakhri = 20)
-   cache UPDATE ulte kram me pahunche -> pehle 20, phir 10 -> cache me 10 = GALAT, TTL tak atka
-   cache-write fail ho jaaye -> bhi galat value pada rehta
-   DELETE -> koi value likhi hi nahi -> agla read DB (source of truth) se bharega
-   ★ par delete bhi 100% race-free NAHI (read-write race neeche "Cache-Aside RACE CONDITION") -> TTL safety-net rakho
-   line: "On write I invalidate the cache instead of updating it — a failed or out-of-order
-          cache write could leave wrong data; delete lets the next read repopulate from the DB."
+1. CACHE-ASIDE    counter pe nahi mili -> godown se laao, counter pe rakho
+   (sabse aam)    kitaab badli -> godown me badlo, counter wali PHENK do
+                  -> tera URL shortener, todoapp ka @CacheEvict
+
+2. WRITE-THROUGH  nayi kitaab aayi -> counter + godown DONO me rakho, phir "haan"
+                  counter hamesha taaza, par har likhna dheema
+
+3. WRITE-BEHIND   counter pe rakh ke turant "haan", godown me baad me ek saath bhejo
+   (write-back)   bahut tez, par godown pahunchne se pehle counter jala to kitaabein gayi
+                  -> tera YouTube views: ek-ek rupaya jama karke gaddi ek saath (+1 batch)
+
+4. REFRESH-AHEAD  garam kitaab ki copy expire hone se PEHLE hi peeche se nayi rakh do
+                  -> tera leaderboard background worker, cache me stampede se bachna
+
+5. WRITE-AROUND   nayi kitaab seedha godown, counter pe tab jab koi maange
+                  jo likhte hi turant nahi padha jaata (warna counter faltu bharta)
 ```
 
-### 2. **Write-Through**
-```
-Write → update CACHE + DB synchronously (both)
-```
-**Pros:** Cache always fresh
-**Cons:** Slow writes
-**Use:** Critical fresh data
-
-### 3. **Write-Behind (Write-Back)**
-```
-Write → update cache → return immediately
-Cache → DB (async, batched in background)
-```
-**Pros:** Very fast writes
-**Cons:** Data loss risk on cache crash
-**Use:** Logs, analytics, high write throughput
-
-### 4. **Refresh-Ahead**
-```
-Cache PROACTIVELY refresh before expiry
-```
-**Use:** Predictable hot data (trending items)
-
-### 5. **Write-Around**
-```
-Write → SEEDHA DB mein (cache BYPASS, cache update NAHI)
-Cache sirf READ pe bharta (cache-aside jaisa)
-```
-**Use:** Jab likha data TURANT nahi padha jaata (warna cache mein
-"kabhi na padha jaane wala" data bharta = waste). **Pros:** cache pollution kam.
-**Cons:** likhne ke turant baad read = cache miss (DB se).
-
----
+**Kitaab badli to counter wali update kyun nahi, phenkte kyun hain?** Do log lagbhag saath aaye: A ne godown me 10 likha, B ne 20
+(godown me aakhri = 20). Counter pe dono ka update ulte kram me pahuncha: pehle 20, phir 10. Ab counter pe 10, galat, aur TTL tak galat
+hi rahega. Phenk diya to counter pe kuch likha hi nahi, agla aadmi godown se sahi 20 laayega. Phenkna bhi 100% race-free nahi (neeche
+"Cache-Aside RACE CONDITION"), isliye TTL saath me rakho.
 
 ## Strategy Comparison
 
 | | Cache-Aside | Write-Through | Write-Behind | Refresh-Ahead |
 |---|---|---|---|---|
 | Read | Fast (warm) | Fast | Fast | Fastest |
-| Write | Fast | Slow | Very fast | Slow |
-| Consistency | Eventual | Strong | Weak | Eventual |
+| Write | Fast | Slow | Very fast | — (padhne ka tareeka, likhne pe asar nahi) |
+| Consistency | Eventual | Zyada taaza | Weak | Eventual |
 | Complexity | Easy | Medium | Hard | Hard |
-| Use case | Read-heavy (90%) | Critical data | High write | Predictable hot |
+| Use case | Read-heavy (90%) | Taaza chahiye | Bahut likhna | Garam, pata ho kaunsa |
 
 ---
 
