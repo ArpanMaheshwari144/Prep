@@ -196,68 +196,46 @@ hi rahega. Phenk diya to counter pe kuch likha hi nahi, agla aadmi godown se sah
 
 ---
 
-## Eviction Policies
+## 6. Counter bhar gaya, kya hatayein (eviction)
 
-Cache full → kya hatao?
+### Koi poochhe "cache bhar gaya to kya hatate ho" to aise bolo
 
-### **LRU (Least Recently Used)** — most popular
 ```
-Cache: [A, B, C, D, E]   E most recent, A oldest
-Add F → Evict A (oldest accessed)
-```
-**Used by:** Redis, browsers, OS page cache
-
-**LRU IMPLEMENT kaise (O(1)) — DSA connect:**
-```
-   HashMap (key → node, O(1) lookup) + Doubly Linked List (recency order)
-   → access: node ko FRONT laao (most recent)
-   → evict: list ke END se hatao (least recent)
-   = "HashMap + DLL" = classic LRU Cache design (LeetCode 146 — DSA Phase 2)
+Jagah bhari to koi niyam chahiye ki kaun nikle. LRU: jo sabse der se nahi maanga gaya wo nikle,
+sabse aam. LFU: jo sabse kam baar maanga gaya wo nikle. Upar se har cheez pe TTL, taaki purani
+apne aap nikle. Redis me default kuch nahi nikalta, memory bhari to naya likhna error deta hai,
+isliye cache ke liye allkeys-lru set karte hain.
 ```
 
-### **LFU (Least Frequently Used)**
+Library counter pe 5 kitaab ki jagah, chhathi aayi. Kise hatayein?
+
 ```
-Track access count → Evict lowest count
+LRU   jo SABSE DER se nahi maangi        (aakhri baar KAB maangi)
+LFU   jo SABSE KAM baar maangi           (KITNI baar maangi)
+FIFO  jo sabse PEHLE rakhi thi           (maangi ho ya nahi) -> bekaar, purani garam kitaab bhi chali jaati
+TTL   har kitaab pe expiry date          (date nikli to bahar) -> session, OTP
 ```
 
-**★ (drill se) — LRU vs LFU ek misaal me:**
+**LRU vs LFU ek misaal me:** A 100 baar maangi, aakhri baar 1 ghanta pehle. B sirf 2 baar, aakhri baar 1 second pehle.
+LRU (time dekhta) A hatata. LFU (ginti dekhta) B hatata. Aksar TTL + LRU saath.
+
+**LRU kaise banta (O(1)):** HashMap (key -> node) + doubly linked list. Jo maangi wo aage, hatana ho to peeche se. Tera DSA ka LRU
+(LeetCode 146, 09 design ki agli baari pe redo).
+
+**Redis me:** default `noeviction` hai, memory bhari to kuch nahi hatata, naya likhna error deta. LRU khud set karna padta
+(`allkeys-lru`, tera hands-on neeche isi se chala). Redis ka LRU bhi andaze wala: kuch random key utha ke unme se sabse purani
+hatata, poori list nahi rakhta.
+
+**Redis ko kaise pata ki key expire ho gayi?** Har key ka alag alarm nahi (lakhon alarm bahut mehnge). Doodh ke packet jaisi date
+chhapi rehti hai (`SET otp 1234 EX 60` -> expires["otp"] = abhi + 60 sec), safai do tareeke:
+
 ```
-   A = 100 baar use, aakhri baar 1 ghanta pehle · B = 2 baar use, aakhri baar 1 sec pehle
-   LRU (TIME, aakhri kab) -> A hataata · LFU (COUNT, kitni baar) -> B hataata
-   aksar TTL + LRU saath
+1) LAZY   jab koi maange: packet uthate waqt date dekho, nikal gayi to phenko aur "nahi hai" (nil)
+2) ACTIVE peeche se: second me ~10 baar, TTL wali keys me se ~20 random uthao, purani phenko;
+          25% se zyada purani nikli to turant ek round aur
 ```
 
-### **FIFO**
-```
-Evict oldest insertion (regardless of access)
-```
-**Suboptimal** — popular old entries lost.
-
-### **TTL (Time To Live)**
-```
-Each entry has expiry → expire hone pe hata di jaati
-```
-**Use:** Sessions, OTPs, time-sensitive data
-
-**Redis ko kaise pata ki key expire ho gayi? — har key ka alag TIMER NAHI chalta** (lakhon key = lakhon timer, bahut mehenga).
-Redis key ke saath bas uska **expiry ka time** likh ke rakhta hai. Misaal: doodh ke packet pe date chhapi hai, alarm nahi bajta.
-```
-SET otp 1234 EX 60   ->  alag table me likha:  expires["otp"] = abhi + 60 sec  (jaise 10:00:60)
-
-1) LAZY (jab koi maange tab check):
-   GET otp  ->  abhi ka time > 10:00:60 ?
-                haan -> key wahin delete, jawab nil
-                na   -> 1234 de deta
-
-2) ACTIVE (background safai, second me ~10 baar):
-   TTL wali keys me se ~20 random uthao -> jo expire ho gayi, hata do
-   inme 25% se zyada expired nikli -> turant ek round aur
-```
-Lazy akela kaafi nahi: jo key koi kabhi maange hi nahi, wo memory gherti padi rahegi -> isliye active safai bhi.
-Doodh wala: packet uthate waqt date dekhta (lazy) + din me kuch baar shelf se random packet utha ke purane phenkta (active).
-
-**BOL:** "Redis doesn't run a timer per key. It stores the expiry timestamp. Expired keys are removed lazily when
-someone accesses them, and by a periodic background job that samples random keys with a TTL."
+Lazy akela kaafi nahi: jo packet koi kabhi maange hi nahi, wo shelf gherta pada rahega, isliye active safai bhi.
 
 ---
 
