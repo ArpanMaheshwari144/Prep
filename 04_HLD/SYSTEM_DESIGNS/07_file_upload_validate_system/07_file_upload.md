@@ -375,7 +375,7 @@ ya server), wo alag baat; design ko bas ek number chahiye jisse pata chale file 
 
 **Asli naam:** file ke maal se number = content hash (jaise SHA-256), register me milaan = deduplication.
 
-**Maan lo Priya wahi viral meme daalti hai, number register me mila, upload ruka, par Priya ki list me meme nahi:** Priya
+**Maan lo Priya wahi viral meme daalti hai jo Ravi sabse pehle daal chuka, number register me mila, upload ruka, par Priya ki list me meme nahi:** Priya
 alag user hai (alag login, alag userId), uska upload mana nahi. Pehle uske hisaab me dekho, usne ye file kabhi daali? Nahi.
 Phir poore DB me: file pehle se hai. To Priya ko "upload ho gaya" dikhao, aur download pe usi purani meme pe bhej do.
 **Asli naam:** hash + userId pe check, Priya ke naam nayi row jo purani S3 file ki taraf ishaara kare = reference /
