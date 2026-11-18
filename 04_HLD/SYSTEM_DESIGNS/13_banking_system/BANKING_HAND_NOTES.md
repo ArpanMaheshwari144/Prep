@@ -4,13 +4,53 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Mohalle ki bank branch: cashier, aur ek register jisme sabke khaate likhe hain. Arpan apne khaate se Ravi ko 500 bhejta hai, dono ek hi bank me. Paisa na gum ho, na do baar kate, har paise ka hisaab mile.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Arpan  -->  LB  -->  kai counter (app server)  -->  DB (khaate, row lock)  --sync copy-->  laptop (replica, Multi-AZ)
+                                                       |                                 photocopy (read replica)
+                         ledger (kaato mat, neeche likho) · outbox -> Ravi ko khabar
+                         statement: raat ko pehle se bana ke (batch, checkpoint, snapshot), purana S3 me 10 saal
+
+ 1   500 kate, bijli gayi, Ravi ko nahi mila     ->  500 wapas (rollback)
+ 2   receipt se pehle line kati, wahi parchi     ->  log dekh ke mana; key jo badle na (idempotency key)
+ 3   600 me do counter pe 500-500                ->  dekhna aur kaatna ek kram me (row lock)
+ 3b  Arpan->Ravi, Ravi->Arpan, dono atke         ->  ek line, ya ek kram me lock (lock ordering)
+ 3c  1 crore transfer, sab ek line me            ->  sirf takrane walon ka group (per-account lock)
+ 4   "500 mile hi nahi", saabit kaise            ->  alag diary, kaato mat (ledger)
+ 5   khabar dene se pehle bijli gayi             ->  likh lo (outbox, relay)
+ 6   salary ka din, ek cashier                   ->  10 counter + LB
+ 7   register jal gaya                           ->  copy turant (sync replica, WAL)
+ 8   sab balance dekhne aaye                     ->  photocopy alag desk (read replica)
+ 9   photocopy peeche, ghabra ke dobara bheja    ->  likhne wala main se padhe (read-your-writes)
+10   haath se 100 ko 600 kar diya                ->  ledger se milao (reconciliation)
+11   5 saal ki line roz jodna bhaari             ->  mahine-mahine tod do (partition, snapshot)
+12   almari me jagah nahi, 10 saal               ->  S3 archive
+13   godown me -500 ko -50                       ->  kai copy + taala (S3 Object Lock)
+14   31 March 1 crore ek saath                   ->  pehle se bana ke (precompute, batch)
+15   28 Feb ka transaction der se aaya           ->  nayi statement (revised)
+16   chhotu aadha kaam karke gira                ->  wahin se utha le (checkpoint)
+17   9 chhotu khaali, ek laga pada               ->  khaali madad karein (work stealing)
+18   ek khaata 5 crore, statement ek             ->  kaam baanto (MapReduce)
+19   May wale ko 1 May ka balance                ->  balance snapshot
+20   2 baje chhotu ne register gher liya         ->  chhotu photocopy se padhein
+21   Mumbai + Frankfurt dono ne 1000 de diye     ->  jahan khaata khula wahi kaam kare (write affinity)
+```
+
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: Mahine / saal ki statement na FR hai na NFR, ye bank ka andar ka kaam hai (RBI se juda), scope me nahi rakh sakte; interviewer se sawaal ke roop me poochh sakte "statement bhi chahiye?". Banking ka kaam almost transaction hi hai, ekdum consistent: sab kate, sab jude. Salary ke din ki bheed NFR nahi, wo alag kaam hai; aise to NFR me LB-vLB sab aa jaayenge.
+Technical me: statement = scope clarification (poochho), bheed = scaling (design me LB, NFR me nahi), NFR = consistency + audit + tez padhna.
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      paisa daalo, nikaalo, balance + history dekho · transfer A se B, DONO isi bank me (doosra bank scope se bahar)
-        · paisa jaate hi Ravi ko khabar
-        · mahine / saal ki statement mile (31 March), purana hisaab 10 saal rakho
-NFR     paisa na gum ho, na bane, na do baar kate · har paise ka hisaab mile (audit) · balance dekhna tez
-        · salary ke din ki bheed jhele (counter badhao, DB wahi)
+FR      1  paisa daalo, nikaalo, balance + history dekho                    -> kadam 1, 3, 8
+        2  transfer A se B, DONO isi bank me (doosra bank scope se bahar)  -> kadam 1, 2, 3, 3b, 3c
+        3  paisa jaate hi doosre user (Ravi) ko khabar                     -> kadam 5
+        SCOPE KA SAWAAL (FR / NFR nahi): mahine / saal ki statement, purana hisaab 10 saal = bank ka andar ka
+           kaam (RBI se juda). Interviewer se poochho "statement bhi chahiye?"; haan bole to   -> kadam 11-19
+
+NFR     1  paisa na gum ho, na bane, na do baar kate                       -> kadam 1, 2, 3, 4, 7
+        2  har paise ka hisaab mile (audit)                                -> kadam 4, 10, 13
+        3  balance dekhna tez                                              -> kadam 8, 9
 Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna isse kahin zyada
         -> bheed chhoti, asli dikkat SAHI hona: ek SQL DB kaafi, shard nahi
 ```
