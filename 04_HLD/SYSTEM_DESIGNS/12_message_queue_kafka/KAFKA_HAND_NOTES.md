@@ -4,15 +4,46 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Match ka din, stadium ke bahar bahut bheed. Gate pe admin / chowkidar line sambhalta hai (Kafka), andar checker ka kamra aur counter (SMS, Fraud), bahar ticket counter (Order Service). Scene Arpan ne khud chuna.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Order Service  -->  DB + vasiyat (outbox)  -->  Kafka (stadium: gate = partition, line = topic)
+                                                   |  admin "likh di" tabhi jab copy bhi likhi (acks=all)
+                                                   |  order id se gate (partition key) -> ek order ka kram pakka
+                         +-------------------------+-------------------------+
+                    SMS room (consumer group)  Fraud room            Analytics room
+                    parchi / bookmark (offset) · pakki id se dohra phenko · kharab ticket DLQ · counter band = circuit breaker
+
+ 1   stadium ke bahar bheed, sab ghus rahe       ->  admin, line banao (Kafka)
+ 2   line me ek aadmi nikla, sab atke            ->  seat booked, wahi baithega (offset)
+ 3   ek admin se nahi sambhal rahi               ->  aur gate, har gate ki apni line (partition)
+ 3b  #A7 ka paid aur shipped alag gate pe        ->  order id se ek gate (partition key)
+ 4   har ticket 3 baar punch                     ->  ek kamre me bitha do (consumer group)
+ 4b  security wale bhi usi kamre me              ->  alag room (alag consumer group)
+ 4c  scanner hang, talaashi bhi ruki             ->  nayi line ticket_ok; zyada consumer
+ 5   admin ne "aa gaya" bola, phir gira          ->  copy bhi likhe, tab "likh di" (acks=all)
+ 6   punch ke baad, register se pehle gira       ->  pehle aaya hai? check (idempotency)
+ 6b  SMS gaya, bookmark se pehle gira            ->  pakki id, dobara aaye to phenko (idempotent consumer)
+ 7   Order Service gate tak bhejne se pehle gira ->  pehle vasiyat likh de (outbox)
+ 8   galat ticket baar-baar, line atki           ->  line se hata (DLQ); gate pe hi rok (validation)
+ 8b  pay DLQ me, cancel chal gayi, kram toota    ->  A2 ruka to A3 bhi ruka (same key parking)
+ 9   SMS counter 10 min band, sab DLQ me         ->  pehle check, waqai band? (circuit breaker, fallback)
+10   7 din peeche, purana panna phat jaata       ->  aur consumer daalo, phir partition
+10b  aaj 1 din, kal 2 din peeche                 ->  alert (consumer lag alert)
+```
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      Order Service ki khabar SMS, Fraud, Analytics tak pahunche · Order Service kisi ka intezaar na kare
         · ek user ki khabar kram me (order, pay, cancel)
-NFR     khabar kabhi na khoye · do baar aaye to bhi kaam ek baar · sale ki bheed me bhi chale
+NFR     khabar kabhi na khoye · do baar aaye to bhi kaam ek baar
         · ek service dheemi ho to baaki na rukein · ek kharab khabar line na roke
 Numbers roz 10 crore khabar = ~1,200 / sec, sale me ~5,000 / sec · ek checker ~500 / sec -> 10 checker, gate 30 (aage checker badhane ki jagah)
         ek khabar ~1 KB -> roz ~100 GB, 7 din x 3 copy = ~2 TB disk
 ```
+
+**FR / NFR -> kadam (Arpan: "sale ki bheed hatao, yahan matlab nahi; baaki sab theek"):** khabar SMS, Fraud, Analytics tak =
+1, 4, 4b · Order Service intezaar na kare = 1, 7 · ek user ki khabar kram me = 2, 3b, 8b · NFR khabar kabhi na khoye = 5, 7 ·
+do baar aaye to kaam ek baar = 6, 6b · ek service dheemi to baaki na rukein = 4b, 4c, 9, 10 · ek kharab khabar line na roke = 8, 8b.
 
 &nbsp;
 
