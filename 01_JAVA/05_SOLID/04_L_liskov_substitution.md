@@ -1,23 +1,35 @@
 # L: Liskov Substitution (bachcha baap ki jagah lag sake)
 
-**Niyam:** jahan parent chalta hai, wahan agar child daal do, to kuch bhi nahi tootna chahiye.
+**Koi poochhe "Liskov kya hai" to aise bolo:**
+```
+Jahan baap class chalti hai, wahan bachcha daal do to kuch nahi tootna chahiye. FD bhi Account
+hai, par withdraw nahi kar sakta; agar FD ne withdraw() me exception phenki to L toota.
+Isliye withdraw sirf un account me do jo sach me nikaal sakte.
+```
 
 ## Kahani
 
-`Account.withdraw()` sab account ke paas hai. `SavingsAccount` aur `CurrentAccount` me ye theek chalta hai. Par
-`FixedDeposit extends Account` ne socha ki "FD se maturity se pehle paisa nikaal nahi sakte", aur isliye usne `withdraw()` me
-exception phenk di.
+Bank me mahine ke ant me ek job sab account se 500 ka bill kaatti hai. List me Arpan (Savings), Ravi (FD), Priya (Savings).
+`FixedDeposit extends Account` ne socha "FD se maturity se pehle paisa nahi nikalta", aur `withdraw()` me exception phenk di.
 
 ```java
 class FixedDeposit extends Account {
     @Override void withdraw(double amt) { throw new RuntimeException("FD se withdraw nahi"); }
 }
-void payBill(Account a) { a.withdraw(500); }   // FD aaya to yahin toota
+for (Account a : list) a.withdraw(500);   // FD aaya to yahin toota
 ```
 
-Dikkat ye hai ki jo code ye maan ke chalta hai ki "koi bhi Account aaye, withdraw ho jaayega", wo FD aate hi toot gaya. Ye Bird
-aur Penguin wali misaal jaisa hai: Penguin Bird to hai, par ud nahi sakta. To agar Bird me `fly()` hai, to Penguin us wade ko
-nibha hi nahi sakta.
+Chala ke dekha:
+
+```
+--- mahine ka bill job: sab account se 500 ---
+Arpan ka bill kata, bacha 500.0
+JOB GIRI: FD se withdraw nahi
+Priya ka balance: 800.0 (bill kata hi nahi)
+```
+
+**Dikkat:** galti sirf Ravi ke FD ki, par poori job gir gayi aur Priya ka bill bhi nahi kata. Job ne maana tha "har Account se
+withdraw hoga", FD ne wo wada tod diya. Bird / Penguin jaisa: Penguin Bird hai par ud nahi sakta.
 
 ## Fix
 
@@ -26,10 +38,18 @@ class Account { double balance; }
 class WithdrawableAccount extends Account { void withdraw(double amt) { ... } }
 class SavingsAccount extends WithdrawableAccount { }
 class FixedDeposit extends Account { }   // withdraw hai hi nahi
+void payBill(WithdrawableAccount a) { a.withdraw(500); }
 ```
 
-Ab `withdraw()` sirf `WithdrawableAccount` me hai. FD seedha `Account` se aata hai, to uske paas `withdraw()` hai hi nahi, aur
-koi use galti se bula bhi nahi sakta.
+Ab FD ko `payBill()` me daala to compile hi nahi hota:
 
-Pehchaanne ka seedha tareeka: agar kisi class ne extend kiya aur override me exception phenk di ya method khaali chhod diya, to
-samjho LSP toot gaya hai.
+```
+error: incompatible types: FixedDeposit cannot be converted to WithdrawableAccount
+```
+
+Galti raat ki job me nahi, likhte waqt hi pakdi gayi (IntelliJ laal kar deta).
+
+## Trap
+
+Override karke `throw new UnsupportedOperationException()`, ya method khaali chhod dena. Khaali to aur bura: FD ka bill "kat gaya"
+dikhega, asal me kuch nahi kata. PR me ye do dikhein to samjho L toot raha hai.
