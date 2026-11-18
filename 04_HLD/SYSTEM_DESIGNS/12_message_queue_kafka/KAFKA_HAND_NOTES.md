@@ -28,6 +28,10 @@ Technical me: "seat booked, wahi baithega" = offset (bookmark), "line dobara shu
 Arpan: Bheed bahut hai, wo akela admin nahi sambhal pa raha, to inke liye aur gate khade karo. Har ek ke andar apni line. Yahi Kafka karta hai: broker, partition, aur unke andar line. Kaun kis gate pe jaaye, wahan hash aa gaya.
 Technical me: "aur gate" = partition, "har gate ke andar apni line" = kram sirf ek partition ke andar, "kaun kis gate pe, hash" = key ka hash se partition.
 
+**Maan lo Order Service order #A7 ke "paid" aur "shipped" koi bhi khaali partition me daal deti: paid partition 2 me, shipped partition 5 me. Partition 5 ka consumer tez, shipped pehle chal gaya.**
+Arpan: Alag-alag nahi bhej sakte. Key ke zariye ek hi partition me laayenge: A7 ki saari cheez ek partition me, A8 ki ek me. Main Kafka hoon: paid is line me ghusa, shipped us line me, shipped aage nikal gaya, paid peeche reh gaya, dikkat. Isliye ek key, ek tukda: A7, phir A8, phir A9. Tukde ke andar Kafka line follow karta hi hai: pehle paid phir shipped.
+Technical me: "key ke zariye ek partition" = partition key (message key = order id), "tukde ke andar line" = kram sirf ek partition ke andar.
+
 **4. Gate ke andar 3 ticket checker, teeno har fan ka ticket punch kar rahe. Har ticket 3 baar punch, line teen guna dheemi.**
 Arpan: 3 punch ho gaya hai. To aise kar de, un saalon ko mila de, ek bana de, ek kamre me hi baitha de. Is kamre me 3 baithe hain, koi bhi aaye, bas in 3 me se ek pe bhej. Jisne punch kar diya, baaki 2 usko dekhe hi nahi.
 Technical me: "ek kamre me baitha de, ek bana de" = consumer group, "3 me se ek pe bhej" = ek partition group me ek hi consumer ko, "baaki 2 dekhe hi nahi" = group me ek khabar ek hi checker ke paas (par commit se pehle gira to dobara aa sakti, [kadam 6](12_message_queue_kafka.md#6-checker-register-me-likhne-se-pehle-gira-pehle-aaya-dekh-lo)).

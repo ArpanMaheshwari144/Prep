@@ -195,6 +195,7 @@ Yahi dikkat yahan bhi:
   E-commerce    5   counter 3 khatam, counter 7 pe 30              ->  khaali counter band, sold out tab jab sab 0
   Inventory     2   sale, 2 lakh Pay ek row pe, taala             ->  1000 ko 5 dabbe, har counter apna dabba (bucketing / sharded counter)
   Inventory     2b  dabba 3 khaali, baaki me 150                   ->  request doosre dabbe pe mod do, out of stock tab jab sab 0
+  Inventory     2c  sab dabbe 0, ek cancel, iPhone wapas           ->  stock me +1, kisi dabbe ka nahi; jo pehle pay kare uska (restock)
   News          5   9 baje 1 crore log ek saath                    ->  bahut saare server + ek banda jo sabko manage kare (load balancer)
 
 Naam: hot key copies / replica / hot row todo / bucketing / sharded counter / work stealing / kai machine + load balancer
@@ -271,6 +272,7 @@ Yahi dikkat yahan bhi:
   Banking       20  2 baje chhotu ne register gher liya            ->  chhotu photocopy se padhein (read replica)
   Leaderboard   7   Redis gira                                     ->  clone, phir clone, teeno gaye to DB se bharo (replica, DB sach)
   News          2b  chhotu 7 ki 100 site, wo mara                  ->  "main zinda hoon" band to site baaki chhotuon me (heartbeat)
+  News          2c  chhotu 7 ka net 20 sec atka, site chhotu 12 ko ->  thodi der ruko; purana laute to malik nahi, leader jaisa (lease timeout, fencing)
   Twitter       5b  "Inida" se "India", kuch copy purana dikhaye   ->  thodi der galat, peeche ek ladka sabko theek kare (eventual consistency)
 
 Naam: replica / quorum / sync copy / read-your-writes / fail-open / fail-closed / heartbeat / eventual consistency / timeout / coordinator / Redis AOF / naya owner (failover) / read replica / Multi-AZ
@@ -293,6 +295,7 @@ Yahi dikkat yahan bhi:
   Stock         6   sauda pakka, engine khud sabko call kare       ->  10 ladkon ki fauj (Kafka, consumer group)
   File upload   1   server khud sab kare, 10 min spinner           ->  chai pi aao, peeche line (Kafka + worker / consumer)
   File upload   8   scan baaki kaam ke peeche atka                 ->  doctor line me nahi lagta (alag scan topic)
+  File upload   5b  folder delete, S3 me 500 photo padi            ->  DB me turant hatao, S3 peeche: event ya sync job (soft delete, async delete, orphan cleanup)
   News          4   bada aadmi akela, 1 min ek khabar              ->  stadium wali kahani, chhotu daal ke chale (Kafka)
   Kafka         1   stadium ke bahar bheed, sab ghus rahe          ->  admin: line banao, ek-ek karke (Kafka)
   Kafka         3   ek admin se nahi sambhal rahi                  ->  aur gate, har gate ki apni line (partition)
@@ -406,6 +409,7 @@ Yahi dikkat yahan bhi:
   Twitter       18  scroll ke beech upar 5 naye, wahi 5 dobara     ->  kahan tak padha yaad rakh (cursor, offset nahi)
   Notification  4c  Shipped jaane wala, Order placed atka          ->  order ki parchi, gaya nahi to dono saath / doosri company / email (coalesce, failover)
   Kafka         8b  pay DLQ me, cancel chal gayi, kram toota       ->  A2 ruka to A3 bhi ruka, theek hone pe saath dobara (same key parking)
+  Kafka         3b  #A7 ka paid aur shipped alag partition me      ->  key se ek partition, line ke andar kram (partition key = order id)
   Netflix       5b  TV ka purana 27, phone ke 37 ke upar           ->  baad wala jeete, purana discard (timestamp, last-write-wins)
   Twitter       19  "thank you" pehle dikha, "mast DP" gaayab      ->  do pe likho, do se padho (quorum)
   Leaderboard   5b  11:59:58 ka match, score 12:00:02 pe           ->  parchi pe khatam hone ka waqt, usi din ka register (event time)
@@ -478,6 +482,7 @@ Yahi dikkat yahan bhi:
   News          2   chhotu akela, ek chakkar 3 ghante              ->  bahut saare chhotu (kai fetcher)
   News          2   khabar pehle se taiyaar kahan                  ->  chhoti parchi, akhbaar jaisi (Redis feed)
   News          5   Ravi cricket, Priya tech, ek parchi            ->  category ke hisaab se baanto
+  News          5b  Priya ki teen category, ek feed                ->  pasand ek parchi, khabar pe thappa, pasand walon ki feed me push; login nahi to aam (preference, fan-out on write)
   News          7   9:05 ki iPhone khabar purani parchi me nahi    ->  aate hi tech walon ki feed me (push on write)
   News          8   50 lakh alag parchi, 10 crore likhai           ->  saari tech khabar ek parchi (category feed)
   Banking       14  31 March 1 crore log ek saath                  ->  peeche chhotu, pehle se bana ke rakho (precompute, batch)

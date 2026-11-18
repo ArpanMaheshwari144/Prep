@@ -226,6 +226,11 @@ bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora.
 **Asli naam:** tree = DB me folders table (id, parent_id, name), file ki row me folder_id; S3 key file ki id se, naam se
 nahi. Rename = ek row update.
 
+**Maan lo folder delete kiya, DB me 500 file "deleted", par S3 me 500 photo padi, jagah aur paisa:** S3 se hatana
+user ka kaam nahi. User ke saamne DB me turant hata do, S3 ka kaam peeche: ya delete pe ek event jaaye jo S3 se hata de,
+ya baad me sync job DB aur S3 milaaye, jo DB me nahi wo S3 se hatao.
+**Asli naam:** soft delete (DB me turant) + async delete (queue + worker) ya orphan cleanup / reconciliation job.
+
 ```mermaid
 flowchart TB
     X["S3 me folder nahi: naam path me<br/>to rename = 500 copy + 500 delete"]:::bad

@@ -99,6 +99,11 @@ partition, aur unke andar line. Kaun kis gate pe jaaye, wahan hash aa gaya.
 **Asli naam:** aur gate = partition (yahan 30, alag broker pe), har gate ke andar apni line = kram sirf ek partition
 ke andar, kaun kis gate pe, hash = key ka hash se partition (`hash(userId) % 30`), isliye key = userId (kram sirf ek partition ke andar pakka hai, poore topic me nahi).
 
+**Maan lo order #A7 ka "paid" partition 2 me, "shipped" partition 5 me, 5 wala tez, shipped pehle chal gaya:** alag
+mat bhejo, key se ek partition: A7 ki saari khabar ek line me, A8 ki ek me. Ek line ke andar kram pakka, pehle paid phir
+shipped.
+**Asli naam:** partition key (message key = order id), kram sirf ek partition ke andar.
+
 ```mermaid
 flowchart TB
     U["Bheed bahut, ek admin<br/>se nahi sambhal rahi"]:::bad

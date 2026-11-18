@@ -95,6 +95,10 @@ ko mana nahi karte; uski request khud doosre dabbe pe mod do. Grahak ko maal cha
 hai.
 **Asli naam:** khaali bucket -> request agle bucket pe, out of stock = saare bucket 0.
 
+**Maan lo sab dabbe 0, "Out of stock", aur Ravi ne order cancel kiya, ek iPhone wapas:** dabbe sirf bheed baantne ko,
+phone kisi dabbe ka nahi. Wapas aaya to stock me +1 (koi bhi dabba), "Out of stock" hata do, jo pehle pay kare uska.
+**Asli naam:** restock / inventory release, ginti payment pe (koi reserve nahi).
+
 ```mermaid
 flowchart TB
     X["2 lakh Pay,<br/>ek row pe taala"]:::bad

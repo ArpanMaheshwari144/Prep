@@ -34,6 +34,10 @@ Technical me: stock ko tukdon me baanto (bucketing / sharded counter), har tukda
 Arpan: Out of stock tab dikhega jab 1000 ke 1000 khatam ho jaayein, ek counter khatam hone pe nahi. Ek banda ghee lene aaya, teesre counter pe ghee nahi bacha, par baaki counter pe hai, to main use mana thodi karunga; usse kahunga is counter pe aa ja, ya uski request khud us dabbe pe mod dunga. Grahak ko maal chahiye, use pata hi nahi wo kis dabbe me hai. Online me kisi ko kuch nahi dikhta, use bas iPhone chahiye.
 Technical me: khaali bucket -> request agle bucket pe, out of stock = saare bucket 0.
 
+**Maan lo sab dabbe 0, page pe "Out of stock". Ravi ne order cancel kiya, ek iPhone wapas. +1 kis dabbe me, aur page dekh rahi Priya ko kaise mile?**
+Arpan: 5 dabbe isliye ki bheed kam ho; hai to mere paas 1000 hi. Offline store jaisa: board laga diya, line lambi to 5 line me baant do, paanchon billing karein, bill dikhao iPhone lo. Ek phone wapas aaya to mere stock me aayega, kisi dabbe ka nahi, ek iPhone hai. Pay karo, jisne pehle pay kiya uska.
+Technical me: "stock me wapas, kisi dabbe ka nahi" = restock / inventory release (koi bhi dabba +1, "out of stock" hata do), "jisne pehle pay kiya uska" = ginti payment pe (koi reserve nahi, kadam 1).
+
 **3. Mahine ke ant me manager rack pe ginta hai: 48 iPhone. System bolta 50. "Ye 2 kab gaye, kis order me, ya kabhi aaye hi nahi?" Hamare paas sirf ek number, kitne = 50.**
 Arpan: Jaise-jaise iPhone bikta rahe, bill banta rahe, register me likhta jaun: Ravi ne ek iPhone liya, bill ban gaya. Usi waqt system me bhi chadha do. Ya raat ko dukaan pe chhotu chhod jao: "ye aaj ke bill hain, dekh kisne kya kharida aur system me kitne bache." Sab sync rakho. Phir bhi kabhi fark aaya to register me sab likha hai, dekh lenge ki 2 iPhone bike par likhe nahi gaye, ya likha kuch aur gaya. Ye cheez dono taraf ho sakti hai, isliye register hi sach batayega.
 Technical me: register = stock ledger (har badlaav ki entry: kab, kitna, kis order se), raat ka chhotu = reconciliation job (ledger aur ginti ka milaan).

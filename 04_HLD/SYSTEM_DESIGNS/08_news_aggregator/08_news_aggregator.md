@@ -40,6 +40,7 @@ Arpan: Theek hai, badhiya hai, yahi rehne do.
 FR      1  5000 site se khabar laao                                   -> kadam 1, 2, 2b
         2  user ko taazi feed (uski category)                         -> kadam 5, 6, 7, 8
         3  ek khabar ek hi baar (best effort, kabhi dohra chalega)    -> kadam 3, 4
+        4  login nahi to aam khabar, login hai to uski pasand ki      -> kadam 5
 
 NFR     1  feed turant (~200 ms)                                      -> kadam 2, 6
         2  khabar 5-10 min se purani nahi                             -> kadam 2, 4, 7
@@ -92,6 +93,11 @@ ke kram me, aakhri 500).
 
 **Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya:** Ye Twitter ke worker / consumer 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.
 **Asli naam:** "main zinda hoon" = heartbeat, "main site baant deta" = coordinator (chhotuon ko kaam baantne wala, load balancer nahi), kaam ka reassignment (lease khatam to doosra le).
+
+**Maan lo chhotu 7 ka net 20 second atka, mara nahi tha, site turant chhotu 12 ko di, ab dono wahi 100 site utha rahe:**
+ekdam se mat do, thodi der ruko, net aaya to chhotu 7 wapas. Nahi aaya to chhotu 12 aage chalaye, aur chhotu 7 laute to
+wo dobara malik nahi, leader wali baat (purana leader wapas aaye to leader nahi banta).
+**Asli naam:** lease / heartbeat timeout + fencing (naye malik ka bada number / epoch, purane ki baat nahi maani jaati).
 
 ```mermaid
 flowchart TB
@@ -186,6 +192,13 @@ pe 10 load, tere pe 5, agli request tere paas.
 **Asli naam:** category me baant = har khabar pe category, user ki pasand DB me, manage karne wala banda = load
 balancer, server = stateless Feed Service (server kuch yaad nahi rakhta, parchi Redis me hai, to koi bhi server kisi ka
 bhi kaam kar de).
+
+**Maan lo Priya ne teen category chuni (tech, cricket, business), use EK feed chahiye:** teen alag parchi bekaar. Ek
+parchi pe sabki pasand. Khabar aate hi shabdon ki list se thappa (tech / cricket / business; kabhi galat bhi lagega).
+Khabar sabke liye ek hi, pasand dekh ke us category walon ki feed me push (Twitter jaisa), app kholte hi turant; neeche
+scroll pe aur load. Login hai to pasand ki, login nahi to aam khabar.
+**Asli naam:** user preference store, keyword-based classification, fan-out on write, pagination / infinite scroll,
+logged-out default / trending feed.
 
 ```mermaid
 flowchart TB

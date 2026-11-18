@@ -35,6 +35,7 @@ Arpan: Theek hai, badhiya hai, yahi rehne do.
 FR      1  5000 site se khabar laao                                   -> kadam 1, 2, 2b
         2  user ko taazi feed (uski category)                         -> kadam 5, 6, 7, 8
         3  ek khabar ek hi baar (best effort, kabhi dohra chalega)    -> kadam 3, 4
+        4  login nahi to aam khabar, login hai to uski pasand ki      -> kadam 5
 
 NFR     1  feed turant (~200 ms)                                      -> kadam 2, 6
         2  khabar 5-10 min se purani nahi                             -> kadam 2, 4, 7
@@ -60,6 +61,10 @@ Technical me: "bahut saare chhotu" = kai fetcher ek saath, "chhoti parchi" = Red
 Arpan: Ye Twitter ke worker / consumer 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.
 Technical me: "main zinda hoon" = heartbeat, "main site baant deta" = coordinator (chhotuon ko kaam baantne wala, load balancer nahi), kaam ka reassignment (lease khatam to doosra le).
 
+**Maan lo chhotu 7 ka net 20 second atka, wo mara nahi tha, aur uski site turant chhotu 12 ko de di. Net aaya, ab dono wahi 100 site utha rahe.**
+Arpan: Pehli baat, ekdam se chhotu 12 ko nahi de sakte. Thodi der intezaar karenge, net aaya to wapas chala jaayega. Chhotu 7 nahi aaya, khatam, chhotu 12 wahan se aage continue karega. Phir chhotu 7 aaye to wo replication wali baat hai: leader mar gaya to doosra leader, purana leader wapas zinda ho to wo dobara leader nahi banta. Same yahan.
+Technical me: "thodi der intezaar" = lease / heartbeat timeout, "purana wapas aaye to malik nahi" = fencing (har naye malik ka bada number, jaise epoch; purane number ki baat nahi maani jaati).
+
 **3. 50 chhotu. Ravi ki feed me ek khabar 40 baar: 2 chhotu ek hi Cricbuzz se laaye, 38 alag site se alag shabdon me.**
 Arpan: Chhotu ke paas ek bada aadmi rakh: "ye dobara hai, hatao, pehle aa chuki". Par "India jeeta, Kohli ki century" aur "Kohli ki shaandaar century, India jeeta" me shabd alag hain, hubahu wala check nahi pakdega. To wordings dekh lo: dono me Kohli, century, India, jeeta hai, to same khabar, hata do; nahi to rakh lo.
 Technical me: "bada aadmi" = dedup, "hubahu same" = URL / title ka hash, "wordings dekh lo" = shabd milaan (near-duplicate check).
@@ -71,6 +76,10 @@ Technical me: "isme daal, chalta rahe" = Kafka (chhotu = producer), "peeche work
 **5. Ravi ko cricket, Priya ko tech, par sabki ek parchi. Aur 9 baje 1 crore log ek saath.**
 Arpan: Khabar category ke hisaab se baant do, jise jo pasand wahi do. 1 crore ke liye bahut saare server, aur ek banda jo sabko manage kare: tere pe 10 load, tere pe 5, agli request tere paas.
 Technical me: "category me baant" = har khabar pe category, user ki pasand DB me, "manage karne wala banda" = load balancer.
+
+**Maan lo Priya ne teen category chuni: tech, cricket, business. Use EK feed dikhani, upar sabse nayi.**
+Arpan: Alag-alag teen parchi rakhne ka koi matlab nahi. Ek parchi pe sabki pasand likh lunga: Priya ko tech, business, cricket; Rahul ko ye teen. Khabar aayi, maine apna algorithm chala ke chhaant liya: ye tech ki, ye cricket ki, ye business ki. Shabdon ki list hogi (iPhone, AI), word by word dekhte hain, to kabhi non-tech bhi chali jaayegi, hota bhi hai. Khabar to sabki ek hi hai: AI launch hua to poori duniya ke liye, Rahul aur Priya ko alag khabar thodi. Pasand dekh ke us category ki khabar unki feed me push, Twitter jaisa, taaki app kholte hi turant dikhe; neeche scroll karo to apne aap load. Login hai to pasand ke hisaab se, category chunne ka option; login nahi to bas normal khabar. Ye FR me likh sakte.
+Technical me: "pasand ki ek parchi" = user preference store, "shabdon ki list se chhaanto" = keyword-based classification (category tag), "feed me push" = fan-out on write, "neeche scroll pe load" = pagination / infinite scroll, "login nahi to normal khabar" = logged-out default / trending feed.
 
 **6. Priya app kholti hai. Chhotu site pe jaata hai ya parchi se deta hai?**
 Arpan: Parchi bhi chhotu hi banata. Naya banda aaya, pehle din pasand poochi: tech. To pehli baar DB se laao (thoda time chalega) aur parchi me rakh do. Roz tech hi dekh raha to wahi pehle se saamne rakho, pasand badle to DB se. Aur jis site se khabar la rahe wo band ho to 5 sec, 10 sec baad dobara try; na khule to chhodo, baaki site chalti rahengi.
