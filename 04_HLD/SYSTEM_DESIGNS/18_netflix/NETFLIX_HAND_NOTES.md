@@ -39,7 +39,7 @@ FR      1  video chalana (play)                                             -> k
 
 NFR     1  play dabate hi video jaldi shuru ho; net ke hisaab se quality ghate-badhe
            (net bahut kamzor ho ya quality badle to thodi buffering hogi hi) -> kadam 1, 2, 4b, 7
-        2  kamzor net aur purane TV pe bhi chale                            -> kadam 7
+        2  kamzor net aur purane TV pe bhi chale                            -> kadam 7, P3
         3  12:30 jaisi bheed bhi jhele                                      -> kadam 2, 3
         4  pasand wali list jaldi khule (thodi purani chalegi)              -> kadam 6, 6b
         5  data pahunchane ka kharcha kam                                   -> kadam 1, 3
@@ -85,8 +85,8 @@ Technical me: "parchi paas" = position pehle fast store me, "ruk gaya to registe
 Arpan: Do log baat kar rahe, ek mujhse baat nahi karta. Maine dost ko bola, jo baat hui sankshep me mujhe bata diya kar. Jis din kuch nahi bataya, matlab aaj aage nahi badha.
 Technical me: "dost sankshep me bataye" = dabba / player playback ki report server ko bhejta.
 
-**6. App khola, server "tere liye" line banane baitha: 3 saal ka itihaas, karodon logon se milaan, 6 second khaali screen.**
-Arpan: Game parlour wala jaanta hai Arpan 3 baje aata, GTA pehle se laga ke rakhta. Ravi ka 3 saal ka pattern hai, kya dekha, kya search kiya. App khole to tayaar cheez saamne. Ye Twitter ki feed jaisa, pehle se push.
+**6. App khola, server pasand wali list banane baitha: 3 saal ka itihaas, karodon logon se milaan, 6 second khaali screen.**
+Arpan: Ravi hamara 3 saal ka user hai, hamein pata lag gaya. Main roz cafe / parlour jaata hoon game khelne, pelam pel 3-4 saal se: kisi din GTA, kisi din God of War, God Hand, Valhalla, kisi din PUBG PC. Ek din nahi gaya, doosre din parlour wala bola "kal kahan reh gaye the, tumhara game intezaar karta tha, maine sab chala rakha tha ki kuch na kuch khelega; koi baat nahi, main hamesha tumhare liye taiyaar cheez rakhunga taaki tumhe wait na karna pade". Pattern hai, pattern yaad kar lo. Ravi ne 3 saal me app me kya kiya: Money Heist kitni baar search kiya, Stranger Things, Breaking Bad, kya-kya dekha; us hisaab se uska pattern hai. Ravi app kholega to hamein pata hai use kya dikhana hai, kya suggest karna hai: Money Heist dobara, Stranger Things, Breaking Bad se milte-julte shows; India me hai to Dhurandhar, aajkal latest. Netflix ko pata hai wo kya dekhega, to wo cheez uske app me hi daal do. Ye same to same Twitter wala feed hai jo hum seedha push kar dete, uske aane ka wait nahi karte; app kholega to turant dikhega, ek second ki loading nahi. Palak jhapakte content saamne hota, jaadu thodi ho raha: feed me pehle se push kar diya, app khola, content saamne.
 Technical me: "pehle se laga ke rakhta" = list raat ko pehle se banti (batch), "app khole to saamne" = cache se uthao, sochna nahi.
 
 **Maan lo list raat 2 baje bani, Ravi ne 11 baje Dhurandhar khatam ki, 11:05 pe sabse upar wahi.**
@@ -112,7 +112,7 @@ Doodh company ki kahani: courier company har litre ka paisa leti hai, aur Netfli
 Technical me: courier = per-GB bill wala CDN (CloudFront / Akamai), mohalle ka fridge = Open Connect (ISP ke andar, free), raat ko pehle se = proactive fill (off-peak).
 
 **P2. Phir AWS kis kaam ka?**
-AWS chhoda nahi. Login, browse, "tere liye" line, aur play dabane pe kaunsa paas wala dabba video dega, ye sab AWS pe chalta. Sirf video ke bytes Open Connect se aate.
+AWS chhoda nahi. Login, browse, pasand wali list, aur play dabane pe kaunsa paas wala dabba video dega, ye sab AWS pe chalta. Sirf video ke bytes Open Connect se aate.
 `tu play dabata -> AWS (login, kaunsa episode, kaunsa paas wala dabba) -> ISP ke andar Netflix ka dabba -> video ke tukde`
 Technical me: AWS = login / browse / recommendation / steering (control plane), Open Connect = sirf video ke bytes.
 
@@ -124,7 +124,7 @@ Twitter me khud nikala tha: Ferrari highway ke liye, Alto gaon ke liye, phone ne
 Awaaz aur subtitle alag files: ek hi 1080p ke saath Hindi ya English kuch bhi chuno, video ki 10 copy nahi banti.
 Technical me: Ferrari / Alto = transcoding (kai size) + ABR, 4 sec tukde + manifest = segments + seek, har film ki apni seedhi = per-title encode ladder, kai roop = codec, ek baar banao = AWS pe batch encoding (parallel workers / consumers), awaaz / subtitle alag = alag audio / subtitle tracks.
 
-**P4. "Tere liye" line ke baaki tukde**
+**P4. Pasand wali list ke baaki tukde**
 Mohalle ka chaiwala tujhe roz dekhta, tere aane se pehle jaanta tu adrak wali kam cheeni maangega. Netflix tera itihaas leta (kya dekha, kitna dekha, beech me chhoda, kya search kiya) aur tere jaise logon ka bhi ("jinhone Money Heist dekha, unhone Squid Game bhi dekha"). Raat ko badi machines har user ki list bana ke rakh deti. App khola to list uthao aur thoda abhi ke hisaab se badlo: "abhi raat hai to thriller upar", "tu TV pe hai". Tasveer bhi teri: ek film ki 5-6 tasveer, tu action zyada dekhta to Money Heist ki goli wali, koi romance dekhta to usi film ki pyaar wali. Film wahi, darwaza alag.
 `tera dekhna / chhodna / search -> Kafka -> raat ka batch: har user ki list; app khola -> list uthao (cache) + thoda abhi ka mod`
 Technical me: chaiwala = offline / batch recommendation (tera + tere jaise logon ka itihaas), thoda abhi ka mod = online halka re-rank, apni tasveer = personalized thumbnail, dekhna -> Kafka = events ka stream batch tak.

@@ -53,9 +53,9 @@ FR      1  paisa daalo, nikaalo, balance + history dekho                    -> k
         2  transfer A se B, DONO isi bank me (doosra bank scope se bahar)  -> kadam 1, 2, 3, 3b, 3c
         3  paisa jaate hi doosre user (Ravi) ko khabar                     -> kadam 5
         SCOPE KA SAWAAL (FR / NFR nahi): mahine / saal ki statement, purana hisaab 10 saal = bank ka andar ka
-           kaam (RBI se juda). Interviewer se poochho "statement bhi chahiye?"; haan bole to   -> kadam 11-19
+           kaam (RBI se juda). Interviewer se poochho "statement bhi chahiye?"; haan bole to   -> kadam 11-20
 
-NFR     1  paisa na gum ho, na bane, na do baar kate                       -> kadam 1, 2, 3, 4, 7
+NFR     1  paisa na gum ho, na bane, na do baar kate                       -> kadam 1, 2, 3, 4, 7, 21
         2  har paise ka hisaab mile (audit)                                -> kadam 4, 10, 13
         3  balance dekhna tez                                              -> kadam 8, 9
 Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna isse kahin zyada

@@ -1,8 +1,8 @@
 # Netflix: Money Heist ka naya season, 12:30 pe poori duniya ek saath
 
 Maan lo Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath aata hai. Arpan, Ravi aur India ke 2
-crore log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi. Kaam: sabko bina buffering video mile,
-data pahunchane ka bill aasmaan pe na jaaye, aur app kholte hi "tere liye" wali line turant dikhe.
+crore log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi. Kaam: play dabate hi video jaldi shuru ho, quality net ke hisaab se,
+data pahunchane ka bill aasmaan pe na jaaye, aur app kholte hi pasand wali list turant dikhe.
 
 Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
 (kahani ka shabd, bracket me asli naam).
@@ -45,7 +45,7 @@ FR      1  video chalana (play)                                             -> k
 
 NFR     1  play dabate hi video jaldi shuru ho; net ke hisaab se quality ghate-badhe
            (net bahut kamzor ho ya quality badle to thodi buffering hogi hi) -> kadam 1, 2, 4b, 7
-        2  kamzor net aur purane TV pe bhi chale                            -> kadam 7
+        2  kamzor net aur purane TV pe bhi chale                            -> kadam 7, P3
         3  12:30 jaisi bheed bhi jhele                                      -> kadam 2, 3
         4  pasand wali list jaldi khule (thodi purani chalegi)              -> kadam 6, 6b
         5  data pahunchane ka kharcha kam                                   -> kadam 1, 3
@@ -218,9 +218,9 @@ flowchart TB
     style AP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 6. App khola, "tere liye" line banane me 6 second (pehle se bana ke rakho)
+## 6. App khola, pasand wali list banane me 6 second (pehle se bana ke rakho)
 
-App khola to server "tere liye" line banane baitha: 3 saal ka itihaas, karodon logon se milaan, aur 6 second khaali
+App khola to server pasand wali list banane baitha: 3 saal ka itihaas, karodon logon se milaan, aur 6 second khaali
 screen. Game parlour wala jaanta hai Arpan 3 baje aata hai, to GTA pehle se laga ke rakhta hai. Ravi ka 3 saal ka
 pattern hai, kya dekha, kya search kiya. App khole to tayaar cheez saamne. Ye Twitter ki feed jaisa hai, pehle se push.
 
@@ -314,7 +314,7 @@ Doodh wala subah se pehle fridge bhar deta, maangne ka intezaar nahi karta.
 
 ## P2. Phir AWS kis kaam ka?
 
-AWS chhoda nahi. Login, browse, "tere liye" line, aur play dabane pe kaunsa paas wala dabba video dega, ye sab AWS pe.
+AWS chhoda nahi. Login, browse, pasand wali list, aur play dabane pe kaunsa paas wala dabba video dega, ye sab AWS pe.
 Sirf video ke bytes Open Connect se.
 **Asli naam:** AWS = login / browse / recommendation / steering (control plane), Open Connect = sirf video ke bytes.
 
@@ -365,7 +365,7 @@ flowchart TB
     style FA fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## P4. "Tere liye" line ke baaki tukde
+## P4. Pasand wali list ke baaki tukde
 
 Mohalle ka chaiwala tujhe roz dekhta, tere aane se pehle jaanta tu adrak wali kam cheeni maangega. Isme do itihaas judte hain: Ravi ka apna (kitna dekha, beech me kahan chhoda bhi) aur Ravi jaise logon ka ("jinhone
 Money Heist dekha, unhone Squid Game bhi dekha"). App khola to list uthao aur thoda abhi ke
