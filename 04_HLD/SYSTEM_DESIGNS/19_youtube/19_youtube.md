@@ -54,8 +54,8 @@ NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       
         4  nakli / bot ke view ginti me na aayein                               -> kadam 4
         5  storage sasta (purani video sasti jagah)                             -> kadam 5
         6  purani video achanak trend pe aaye to bhi aaram se chale (garam jagah + CDN);
-           net ke hisaab se quality, kamzor net pe thodi buffering hogi hi      -> kadam 6
-        7  swipe pe spinner nahi, par skip hui reel pe data / battery bekaar na jaaye -> kadam 8
+           net ke hisaab se quality, kamzor net pe thodi buffering hogi hi      -> kadam 6 + Netflix P3
+        7  swipe pe spinner nahi, par skip hui reel pe data / battery bekaar na jaaye -> kadam 8, 8c
 
 Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
         · viral video pe ek minute me lakhon view -> ek row pe +1 nahi chalega

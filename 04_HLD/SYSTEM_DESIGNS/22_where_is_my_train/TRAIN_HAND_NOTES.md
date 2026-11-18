@@ -6,6 +6,22 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Ye design kaisa:** Where Is My Train bahut chhota app hai; iska HLD me LB, replica DB jaisa kuch bolna faltu. 100 me se ek app hoga jo ye karta, baaki har jagah net chalta. Kaam ki cheez iska tareeka hai: cell tower.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+phone (net / GPS band)  --kaunsa tower juda (cell ID)-->  phone me tower list (offline)  -->  "train yahan aas-paas, 5-10 km"
+                                                                 |
+            timetable phone me = shuru ka andaza · asli khabar aaye to "delayed by X min" + expected time
+            train me jinka net chalu  -->  server  -->  station pe dost ke phone pe push
+            list kahan se: route ke tukdon me, railway / shehar / Jio se, naya-hata tower aata rahe
+
+ 1   net band, GPS band, train kahan              ->  phone kis tower se juda, list se jagah, range jitna andaza (cell ID)
+ 2   outer pe 25 min ruki, timetable bole aage    ->  asli khabar jeete, "delayed by X min" + expected (ETA)
+ 3   Arpan ka net band, Jio data nahi deta        ->  train me jinka net chalu wo bhejein, server dost ko push (crowdsourcing)
+ 4   tower ki list kahan se                       ->  route ke hisaab se tukdon me jodo, list phone me (offline lookup)
+ 4b  5 bande saalon, Jio naya tower lagaye        ->  railway se list + updates (data partner, data refresh)
+ 4c  railway ke paas sab nahi                     ->  shehar ki authority / Jio, jo mile jodo (kai source)
+```
+
 **FR / NFR (interview me pehle 2 minute):**
 ```
 FR      1  net / GPS band ho tab bhi train kahan, ek andaza dikhe              -> kadam 1

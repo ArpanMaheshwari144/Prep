@@ -4,6 +4,26 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Ravi ki Flipkart jaisi online dukaan hai. Maal teen godown me pada hai: Delhi, Mumbai, Bangalore, aur ek main warehouse Delhi me. System ka kaam bas ek: har pal sach batana ki kaunsa maal, kis godown me, kitna pada hai.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+order / Pay  -->  server  -->  DB: "1 kam karo sirf tab jab 1 ho" (ek hi kaam), sale me ginti 5 dabbon me baanti
+                                  |
+           dekhne wale 1 crore = cache (Redis) se, asli jaanch Pay pe · har badlaav ledger me, raat ka chhotu milaye
+           return darwaze pe jaanch · 5 se kam to alert · pehle apna shehar, phir main warehouse
+
+ 1   do log ek pal me aakhri iPhone              ->  "ek kam karo sirf tab jab 1 ho" (atomic conditional update)
+ 1b  Buy dabaya, pay hua nahi                    ->  cart me hai, kharida nahi; ginti pay pe
+ 1c  dono ne pay kiya, ek ko iPhone              ->  doosre godown se de do, ya cancel + refund
+ 2   sale, 2 lakh Pay ek row pe, taala           ->  1000 ko 5 dabbe, har counter apna (sharded counter)
+ 2b  dabba 3 khaali, baaki me 150                ->  doosre dabbe pe mod do, out of stock tab jab sab 0
+ 2c  sab dabbe 0, ek cancel                      ->  stock me +1, jo pehle pay kare uska (restock)
+ 3   rack pe 48, system me 50                    ->  har bill ledger me, raat ka chhotu milaye (reconciliation)
+ 4   Bangalore khaali, Delhi 50, Mumbai 10       ->  pehle apna shehar, phir main warehouse (hub and spoke)
+ 5   1 crore sirf page dekh rahe                 ->  cache / Redis, asli jaanch Pay pe
+ 6   return aate hi +1, tooti screen Priya ko    ->  jaanch darwaze pe, ginti sirf bechne layak ki
+ 7   5 se kam, ab kya                            ->  alert kai raaston se, grahak mat roko
+```
+
 **FR / NFR / Numbers (interview me pehle 2 minute):**
 ```
 FR      maal aaya to ginti badhao · order pe ghatao (jitna sach me hai) · cancel / wapsi pe badhao
@@ -13,6 +33,10 @@ NFR     ginti me galti nahi (pakka na ho to "abhi nahi", galat "haan" nahi) · d
 Numbers product lakhon, godown kuch hi · aam din ek product pe second me 1-2 order
         · sale ke din ek iPhone pe second me hazaaron "Pay", sab ek hi row pe
 ```
+
+**FR / NFR -> kadam (Arpan: "achha hai, badhiya likh rakha hai"):** maal aaya to badhao = 3 · order pe ghatao = 1, 1b, 2, 2b ·
+cancel / wapsi pe badhao = 2c, 6 · "kitne, kahan" = 4, 5 · kam ho to alert = 7 · NFR ginti me galti nahi = 1, 1c, 2, 3 ·
+dekhne me thoda purana, ghatana sahi = 5 · har badlaav ka hisaab = 3.
 
 **E-com se aaya:** wahan "cart sirf list hai, ginti pay pe" aur "counter khaali to doosra counter" padha tha. Yahan wahi ginti apne aap me poora system hai, saare godown ke saath.
 
