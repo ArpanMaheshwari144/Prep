@@ -65,7 +65,8 @@ Arpan: Akela bhaar kyun uthaun, 10 dost bulao, sabko dabba do, nikaal-nikaal ke 
 Technical me: "zyada dabbon me" = hot content ki kai copy, "server mod dega" = play pe server batata kaunse dabbe se lo (steering), "guard" = load + maal dekh ke sahi dabba.
 
 **Maan lo aadhe episode pe dabba 3 band ya dheema.**
-Arpan: Money Heist garam hai to ek dabbe me mat rakho, kai dabbon me copy (kadam 4 me hai hi). Aur TV ko ek dabba nahi, 2-3 ke naam do: ek dheema hai to intezaar kyon, doosre dabbe se le le.
+Arpan: Saans phoolne wali baat, traffic baant do, ek dabba nahi. Money Heist ka garam season chal raha, pelam pel log dekh rahe, to use 20 dabbon me baant do. Ek dabbe me rakha aur dhadadhad log aaye ja rahe, haath badhata hoon nikaalta hoon, haath dukh gaya; to main apne 10 dost ko phone karunga: aao, ye dabbe lo, isme Money Heist hai, nikaal ke do. Ab akela bhaad nahi uthana padta. Ravi ke TV ko kaise pata 20 me se kis dabbe se maange? Hamein to pata hai Money Heist kis dabbe me hai, server use route kar dega.
+Technical me (TV ki taraf se): ek dabba dheema / band to TV ke paas 2-3 dabbon ke naam, doosre se le (client failover).
 Technical me: "2-3 dabbon ke naam" = server player ko kai CDN dabbon ki list deta, ek atka to player khud agle pe (client side failover).
 
 **5. Ravi ne TV pe 27 minute dekha, band kiya. Subah metro me phone pe khola, 27:00 se chahiye.**

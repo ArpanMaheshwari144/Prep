@@ -76,7 +76,7 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 **4. Main India wali line me 3,000 pe hoon. Screen pe poori duniya ka rank dikhana hai, aur lines 10 hain.**
 Arpan: Do nazar hain. Race me bhaagne wala sirf apne aage wale dekhta, peeche wale nahi: mera rank = mere upar kitne log. Referee sabko dekhta, ek ko nahi: scoreboard sabka dikhana hai to wo kaam chhotu ka, sab mila ke.
 Technical me: "mere upar kitne" = har shard se count (mere score se upar), sab jodo, +1. "Referee wala poora board" = background job jo har kuch minute me snapshot banata (thoda purana chalega).
-Arpan: Khiladi alag region me hon to FR ke hisaab se poora world board (kadam 6 ke neeche) se: hum Arpan ki nazar se nahi, leaderboard ki nazar se soch rahe; sabka dekhna hai, US me Pablo ka bhi.
+Arpan: FR pe depend karta hai. Hum Arpan ke point of view se soch rahe the; Arpan ko shuru ke 5 aur neeche ke 5 nahi dikhane, hum leaderboard ki tarah soch rahe. Leaderboard me world rank banana, to sabka dekhna, sirf Arpan ka nahi: US me Pablo ka bhi, yahan iska, wahan uska. Sabka kaise dikhega? Time se. Upar se ranking dheere-dheere tay hoti aayegi; ho sakta Arpan ki rank thodi der galat lage, farak nahi padta. Leaderboard ka matlab yahi: thodi der galat, time poora hote-hote sab rank theek.
 
 **5. Teen board chahiye: aaj ka, is hafte ka, all-time. Raat 12 baje aaj wala khaali ho ke naya din shuru.**
 Arpan: Teeno ka kram alag hoga: aaj koi aur upar, hafte me koi aur, all-time me koi aur. Ek-ek ka score zero karne ka koi matlab nahi. Ek alag register me rakh lo, aur kal wala register side me rakh do, phekna nahi. Priya aaj nahi khelti: agar requirement hai ki naam dikhe to 0 ke saath dikha do, nahi hai to wo aaj ke register me hi nahi.

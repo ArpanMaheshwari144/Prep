@@ -82,7 +82,7 @@ Arpan: BMS wali parchi: "Raju khaali hai to Arpan ka" ek kadam me. Jiski pehle p
 Technical me: "parchi" = driver pe hold / lock (atomic, sirf FREE ho to), "umar" = TTL.
 
 **Maan lo net atka, Arpan ne Book do baar daba diya.**
-Arpan: Payment wali idempotency key: phone Book dabate hi booking id banaye, dono request me wahi. Server pehle id dekhe, pehle aa chuki to nayi ride nahi, wahi purani ride lauta do.
+Arpan: ID jodna bas, sab me ID jodna. Booking ID jaayegi, same hi ID hai na, to wo idempotency ki ho jaayegi, server apne aap reject kar dega. Yahan booking ID hogi, wahan koi aur ID hogi; bas chhota connect rakh.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **6. Diljit ka concert khatam, 50 hazaar log, cab sirf 500.**
