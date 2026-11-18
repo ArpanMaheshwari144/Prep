@@ -105,7 +105,7 @@ Technical me: sale gate (Buy now, cart me nahi jaata). Gate sirf utne logon ko P
 (Normal cart pe kadam 6 wahi: ginti pay pe. Sirf sale wale item pe gate ginti pehle kaatta, isliye yahan ghadi aur wapas jodna.)
 
 **Maan lo Ravi ne 4 tab khole, Buy now 4 baar.**
-Arpan: Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
+Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Gate pe user id hi key: ek user ka ek hi ghee rukega, Ravi ka pehle se ruka hai to wahi lauta do, naya mat roko.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **Maan lo gate se 500 andar, Ravi Pay page pe gaya aur chai peene chala gaya, na pay kiya na cancel. Uska phone Redis me "gaya" gina hai, bahar 2500 khade.**
@@ -133,7 +133,7 @@ Arpan: Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3
 Technical me: "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack (2xx), "dobara bhejega" = webhook redelivery, "3-4 company line me" = backup PSP (failover).
 
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**
-Arpan: Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
+Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 &nbsp;

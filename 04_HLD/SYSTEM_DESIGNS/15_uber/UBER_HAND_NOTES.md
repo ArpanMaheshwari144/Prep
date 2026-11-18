@@ -132,7 +132,7 @@ Arpan: Kaatna hai to poora kaato, aadha mat kaato: 40 kaat ke chhod diya to log 
 Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak khatam nahi" = ride status PAYMENT_PENDING jab tak SUCCESS, "GPay / cash" = fallback payment method, dono app pe dikhe.
 
 **Maan lo 250 kaatne gaye, gateway chup, pata nahi kata ya nahi.**
-Arpan: Dobara kaatne pe ride id hi key: gateway pehchaan lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala status job).
+Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Dobara kaatne pe ride id hi key: gateway pehchaan lega ki ye wahi charge hai, do baar nahi katega. Dobara bhejne se pehle gateway se poochh lo kya hua (Payment wala status job).
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **Maan lo poochhte raho aur gateway ka jawab aaye hi na. Arpan gaadi me baitha, Raju saamne, dono intezaar kar rahe. Kab tak rokoge?** (BookMyShow 6c wala hi jawab)

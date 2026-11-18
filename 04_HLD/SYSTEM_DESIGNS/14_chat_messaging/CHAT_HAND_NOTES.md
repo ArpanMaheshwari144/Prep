@@ -92,7 +92,7 @@ Arpan: Message Ravi ke paas chala gaya, par hum lift me the to jawab hamare paas
 Technical me: "ek key rakh lo, key same to mana" = clientMsgId (idempotency key), "doosri baar discard" = dupe copy chhodo, "network aaye to double tick" = "pahuncha" ka jawab dobara bhejo.
 
 **Maan lo ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja.**
-Arpan: Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
+Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 Isi key ki doosri kahani = 5d: bahar wala aadmi jo 500 ko jaanta, wahi #981 dobara aaye to "ye to chala gaya" bol ke parchi phaad de.
 

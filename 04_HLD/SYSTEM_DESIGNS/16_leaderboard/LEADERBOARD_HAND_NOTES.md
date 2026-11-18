@@ -70,7 +70,7 @@ Arpan: Ek Redis kyun? Alag-alag kar do, region ke hisaab se baant do: India ke, 
 Technical me: "baant do" = shard, "har line se le ke milao" = scatter-gather, "chhotu + badi screen" = aggregator jo global top 10 bana ke cache me rakhta.
 
 **Maan lo match ka +50 retry se do baar pahuncha.**
-Arpan: Match id hi key: is match ka score pehle jud chuka to dobara mat jodo. +100 nahi, +50.
+Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Match id hi key: is match ka score pehle jud chuka to dobara mat jodo. +100 nahi, +50.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 
 **4. Main India wali line me 3,000 pe hoon. Screen pe poori duniya ka rank dikhana hai, aur lines 10 hain.**
