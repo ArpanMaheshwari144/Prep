@@ -91,7 +91,7 @@ Technical me: "alag diary, kaato mat, neeche likhte jao" = ledger (append-only),
 Arpan: Jo kuch yaad nahi rehta kisi ko, to likh lo na bhai. Hum bhi to yahan likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Kahin likh lo, logs me likh lo. Ab cashier kabhi bhi aaye ya jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
 Technical me: "jo yaad nahi rehta, likh lo" = outbox (usi transaction me), "koi bhi ladka aaye, pahuncha dega" = relay.
 
-**6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Kadam 3 wale do counter me se ek ka cashier aaj chhutti pe, ek hi cashier bacha, line sadak tak.**
+**6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Roz ki bheed ke liye kadam 3 wale do counter kaafi the, aaj unhi do pe line sadak tak.**
 Arpan: Cashier badha do. Ek cashier tha, 10 cashier kar do, 10 counter kar do. Bheed badh gayi, kaam khatam, paisa hazam. Aam taur pe bhi yahi hota hai: bank me ek counter pe bheed hai to hum doosre counter pe jaate hain, movies me bhi same, har jagah same.
 Technical me: "10 cashier, 10 counter" = kai service machine, "doosre counter pe jaate" = LB khaali machine pe bheje.
 
