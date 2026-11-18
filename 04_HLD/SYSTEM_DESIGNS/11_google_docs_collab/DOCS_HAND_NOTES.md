@@ -4,6 +4,30 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan aur Ravi ek hi doc "Trip plan" pe saath likh rahe hain. Doc me hai `Goa jaayenge`.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Arpan / Ravi  -->  WebSocket  -->  doc ka owner server (ek doc = ek maalik, ek version)
+                                       |
+                    har badlaav = op (insert / delete), OT se khiska ke sabka doc SAME
+                    op Redis buffer (+ copy) me, kuch der baad batch me DB · har kuch hazaar op pe photo (snapshot)
+                    permission badli to sab server ko awaaz (pub/sub), har op pe haq dekho
+
+ 1   Save pe poora text, Arpan ki line gayab     ->  poora text nahi, op bhejo (insert / delete)
+ 1b  "budget 20k" ka op dobara gaya              ->  op id dekh ke chhodo (idempotency)
+ 2   laakhon save, har badlaav DB pe             ->  chhota register, baad me batch me DB (Redis buffer)
+ 2b  2 saal purana doc, 50 lakh op               ->  doc ki photo + baad ke op (snapshot)
+ 3   "Hum" aur "kal", kal galat jagah            ->  shabdon ko khiska do (OT)
+ 3b  Ravi ne B hataya, Arpan ne E joda           ->  dono ka doc same: A E C D (OT)
+ 3c  "jo pehle aaya taala laga de"               ->  phir sharing ka matlab nahi (locking nahi)
+ 4   lakhon doc, do server, do shakal            ->  har doc ka ek maalik (owner server)
+ 5   "Saved" dikhaya, DB se pehle server gira    ->  dabbe ki copy (Redis copy); owner gira to naya owner wahin se
+ 5b  dabba + copy dono gire                      ->  disk pe bhi; phir bhi gire to kuch second chhoot
+ 5c  poore data center ki bijli gayi             ->  copy doosre shehar (multi-region)
+ 6   Ravi hataya, server pe purani permission    ->  sabko awaaz (pub/sub), har op pe haq dekho
+ 6b  Ravi offline likhta raha                    ->  popup "hata diya", purane edits phenko
+ 7   server 7 ne awaaz suni hi nahi              ->  wapas aake note dekh (reconnect)
+```
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      kai log ek doc ek saath edit karein · doosre ka likha turant dikhe, kisi ka likha mite nahi
@@ -12,6 +36,10 @@ NFR     typing turant, ruke nahi · aakhir me sabka doc SAME · "Saved" dikha to
 Numbers ~10 crore user, roz ~3-4 crore · har akshar ek badlaav
         -> likhna bahut zyada: har akshar pe DB nahi chal sakta
 ```
+
+**FR / NFR -> kadam (Arpan: "achha lag raha, aise hi rehne do"):** kai log ek saath edit = 1, 3, 3b, 4 · doosre ka likha
+turant dikhe, kisi ka mite nahi = 1, 1b, 3, 3c · kaun edit kar sakta, hataya to turant band = 6, 6b, 7 · NFR typing turant =
+2 · aakhir me sabka doc SAME = 3, 3b, 4 · "Saved" dikha to ude nahi = 5, 5b, 5c.
 
 &nbsp;
 
