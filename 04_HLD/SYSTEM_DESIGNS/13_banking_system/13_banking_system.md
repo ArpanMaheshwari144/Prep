@@ -232,7 +232,8 @@ flowchart TB
 
 ## 6. Salary ka din, line sadak tak (10 cashier, 10 counter)
 
-Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Ek hi cashier, line sadak tak. To cashier badha do: ek
+Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Kadam 3 wale do counter me se ek ka cashier aaj
+chhutti pe, ek hi cashier bacha, line sadak tak. To cashier badha do: ek
 tha, 10 kar do, 10 counter kar do. Bheed badh gayi, kaam khatam. Aam taur pe bhi yahi hota hai, bank me ek counter
 pe bheed ho to hum doosre counter pe jaate hain, movies me bhi same.
 
@@ -456,7 +457,7 @@ flowchart TB
 
 ## 13. Ijazat wala hi "-500" ko "-50" kar de (kai copy + kohinoor)
 
-Ijazat wala aadmi hi godown me ja ke "Arpan -500" ko "Arpan -50" kar de. To uski multiple copies rakh lo: 3-4 copy
+Head office me purani diary ek godown (almari wala kamra) me rakhi hai. Ijazat wala aadmi hi us godown me ja ke "Arpan -500" ko "Arpan -50" kar de. To uski multiple copies rakh lo: 3-4 copy
 alag-alag chupchap kahin aur kone me daba do, taaki wo sab na badal paaye, ek hi badal paaye. Usne ek file badal bhi di
 to doosri copy me same data hoga. Aakhir me saari file milao: ek me hi -500 ki jagah -50 hai, baaki me nahi, matlab
 isne chhedchhaad ki. Aur ek aur: version ka lock laga do, ki wo file koi change hi na kar sake. Wo kohinoor heera hai:
@@ -722,7 +723,7 @@ flowchart TB
 
 ## 21. Do branch, dono ne 1000 de diye (jahan khaata khula, wahi kaam kare)
 
-Bank ki do branch hain, Mumbai aur Frankfurt, dono ka apna register, raat ko dono mila liye jaate. Rahul ke khaate me
+Bank bada ho gaya, ab Mumbai ke saath Frankfurt (Germany) me bhi branch. Dono ka apna register, raat ko dono mila liye jaate. Rahul ke khaate me
 1000. Usi pal Mumbai me Rahul ne 1000 nikaale aur Frankfurt me uski card se 1000 ki payment hui. Dono cashier ne apne
 register me 1000 dekhe, dono ne de diye, raat ko milaan pe balance -1000. Dikkat ye ki na Mumbai ne Frankfurt ko bataya,
 na Frankfurt ne Mumbai ko. Ek raasta hai har baar dono ek doosre ko phone karke milaa lein, par har baar time lagta hai,

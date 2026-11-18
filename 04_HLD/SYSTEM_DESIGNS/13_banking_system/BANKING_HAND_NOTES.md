@@ -91,7 +91,7 @@ Technical me: "alag diary, kaato mat, neeche likhte jao" = ledger (append-only),
 Arpan: Jo kuch yaad nahi rehta kisi ko, to likh lo na bhai. Hum bhi to yahan likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Kahin likh lo, logs me likh lo. Ab cashier kabhi bhi aaye ya jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
 Technical me: "jo yaad nahi rehta, likh lo" = outbox (usi transaction me), "koi bhi ladka aaye, pahuncha dega" = relay.
 
-**6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Ek hi cashier, line sadak tak.**
+**6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Kadam 3 wale do counter me se ek ka cashier aaj chhutti pe, ek hi cashier bacha, line sadak tak.**
 Arpan: Cashier badha do. Ek cashier tha, 10 cashier kar do, 10 counter kar do. Bheed badh gayi, kaam khatam, paisa hazam. Aam taur pe bhi yahi hota hai: bank me ek counter pe bheed hai to hum doosre counter pe jaate hain, movies me bhi same, har jagah same.
 Technical me: "10 cashier, 10 counter" = kai service machine, "doosre counter pe jaate" = LB khaali machine pe bheje.
 
@@ -124,7 +124,7 @@ Technical me: "mahine ke mahine tod do" = mahine ke partition, "pichhla jud gaya
 Arpan: Use apne bank ki jagah main office me bhej do. Hamara chhota bank hai, meri branch mere shehar me hai, uski koi main jagah to hogi na, head office. Use wahan bhej do, wahan safe rahega. Data kahin gaya nahi.
 Technical me: "head office me bhej do" = purana ledger S3 me (sasta, lambe samay ke liye), "data kahin gaya nahi" = archive, phenka nahi.
 
-**13. Ijazat wala aadmi hi godown me ja ke "Arpan -500" ko "Arpan -50" kar de.**
+**13. Head office me purani diary ek godown (almari wala kamra) me rakhi hai. Ijazat wala aadmi hi us godown me ja ke "Arpan -500" ko "Arpan -50" kar de.**
 Arpan: Uski multiple copies rakh lo. 3-4 copy alag-alag chupchap kahin aur kone me daba do, taaki wo sab na badal paaye, ek hi badal paaye. Usne ek file badal bhi di to doosri copy me same data hoga. Aakhir me paancho file milao: ek me hi -500 ki jagah -50 hai, baaki me nahi, matlab isne chhedchhaad ki hai. Aur ek aur kar sakte hain: version ka lock laga do, ki wo file koi change hi na kar sake. Maan le wo ek tarah se kohinoor heera hai: na koi chhoo sakta, na chhed sakta, na badal sakta. Use aisi jagah taala maar do: ye main data hai, ispe koi na badlega, wo chupchap wahin pada rahega.
 Technical me: "kai copy chhupa ke, milao" = copies (doosri jagah) se chhedchhaad pakadna, "version ka lock" = versioning, "kohinoor, koi badal na sake" = S3 Object Lock.
 
@@ -164,7 +164,7 @@ Technical me: "mahine ke tukde" = mahine ke partition, "master register me likha
 Arpan: Iska jawab pehle bahut jagah de chuka hoon. Chhotu photocopy se padhein, main register asli payment ke liye khaali rahe.
 Technical me: "photocopy se padhein" = read replica (kadam 8 wala "photocopy ka alag desk"), "main register asli payment ke liye" = primary.
 
-**21. Bank ki do branch, Mumbai aur Frankfurt, dono ka apna register, raat ko dono mila liye jaate. Rahul ke khaate me 1000. Usi pal Mumbai me Rahul ne 1000 nikaale aur Frankfurt me uski card se 1000 ki payment hui. Dono cashier ne 1000 dekhe, dono ne de diye. Raat ko milaan hua to balance -1000.**
+**21. Bank bada ho gaya, ab Mumbai ke saath Frankfurt (Germany) me bhi branch. Dono ka apna register, raat ko dono mila liye jaate. Rahul ke khaate me 1000. Usi pal Mumbai me Rahul ne 1000 nikaale aur Frankfurt me uski card se 1000 ki payment hui. Dono cashier ne 1000 dekhe, dono ne de diye. Raat ko milaan hua to balance -1000.**
 Arpan: Sabse pehle dekho Rahul ne khaata kahan khulwaya tha, maan lo Mumbai me. Bank multi region hai (JP Morgan jaisa: Australia, Frankfurt, Delhi, Mumbai), har jagah hai. Dikkat kyun hui? Ek hi time pe yahan bhi aaya, wahan bhi aaya, na tune mujhe bataya na maine tujhe. Ek raasta: har baar dono ek doosre ko phone karke milaa lein (sync). Par uski keemat hai: har baar doosre ko phone karna, faltu time lagta, aur kabhi phone line vyast ho ya connection bekaar ho to dikkat; aur user ko rok bhi nahi sakte. Isliye: jis branch me khaata khula, uska har kaam wahi kare. Frankfurt me koi Rahul ke khaate se paisa nikaale to Frankfurt apni request Mumbai bhej de, Mumbai batayega. Dono taraf se request aayegi to bhi ek hi server pe jaayegi. Mumbai me 1000 nikle, balance 0. Usi waqt Frankfurt ne request bheji, Mumbai ne kaha "0 hai, mat nikalne de, koi Mumbai me nikaal ke le gaya".
 Technical me: "do branch, dono likh sakti, raat ko milaan" = multi-leader replication, "har baar phone karke milao" = synchronous replication (dheema, line tooti to atka), "jahan khaata khula, wahi har kaam kare, baaki request aage bhejein" = write affinity / home region, "raat ko dono mile, -1000" = write conflict (business rule ka, AWS nahi pakadta).
 
