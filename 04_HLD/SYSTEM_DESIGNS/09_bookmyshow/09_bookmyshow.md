@@ -173,6 +173,11 @@ aur replica wali cheez. Aur thode-thode log andar jaao, zyada nahi. Sabse pehli 
 utne log andar. Maan lo mere hall me 1000 ki jagah aur saamne 5000 khade, to 1000 andar jaao, baaki 4000 ghar jaao. Aur
 wo line me lago: "le bhai, ye teri parchi, tu jaayega, phir agla number tera."
 
+Doosri kahani (18-Nov raat): bheed ko aane se pehle baant do. Avengers Doomsday 17 December ko aa rahi hai, par uski
+booking 17 November ko hi khul gayi, to log mahine bhar me dheere-dheere seat lete hain. GTA 6 ka pre-download release
+(19 November) se 9 din pehle khula, taaki release ke din server pe ek saath download na aaye. Interview me: "Sir, hum
+mahina pehle booking khol dete hain, to itna shor aata hi nahi."
+
 **Asli naam:** counter / server badhao = kai BMS Service machine (load balancer ke peeche), kuch hilane wali diary =
 SQL primary (saari HOLD / BOOKED query yahin), dekhne wale ki alag diary = read replica (seat map yahan se), capacity
 jitne andar baaki line me = virtual queue (waiting room), ye teri parchi agla number tera = token (andar aane ka pass, umar 10 minute). Replica thoda peeche ho to chalega: map
