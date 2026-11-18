@@ -357,7 +357,9 @@ flowchart TB
 
 **URL 10 / Twitter 19 se aaya:** teen copy A, B, C, do me likho do se padho (quorum, R + W > N). Yahan sirf naya.
 
-Black Friday / Diwali sale, raat 12 baje. Ring pe 10 almari, Rahul ka cart teen almari A, B, C pe: N = 3, W = 2,
+Mausi ka mart bada ho gaya: Diwali pe cart me itna maal judne laga ki ek DB se cart sambhla nahi. To cart ko 10 almari
+ki ring pe baant diya (cache / URL wali ring), aur har grahak ka cart 3 almari pe copy kiya taaki ek gire to bhi cart
+na khoye. Phir Black Friday / Diwali sale, raat 12 baje. Rahul ka cart teen almari A, B, C pe: N = 3, W = 2,
 R = 2, 2 + 2 > 3 to likhne aur padhne wali almari me kam se kam ek common. Rahul ne iPhone pe "Add to Cart" dabaya,
 usi waqt B aur C dono band. Sirf A chalu, 2 ki "haan" milegi hi nahi. Har almari ki ek aur copy banana = kharcha aur
 sar-dard, upar se D, E, F khaali padi bekaar. Isliye B aur C gire to ring pe aage wali chalti almari D aur E pe likh
