@@ -52,12 +52,11 @@ saath me: Redis gira -> dono khule (OTP + feed), gateway apni kachchi ginti se 5
 
 ```
 FR      1  had me hai to jaane do, paar to 429, thodi der baad dobara       -> kadam 1, 3
-        2  20 request alag-alag server pe jaayein, ginti phir bhi ek       -> kadam 2, 4
-        3  office ke ek IP se 500 log aa rahe, unhe bhi sambhalo            -> kadam 8
+        2  office ke ek IP se 500 log aa rahe, unhe bhi sambhalo            -> kadam 8
 
-NFR     1  ginti consistent rahe                                           -> kadam 2, 4
+NFR     1  ginti consistent rahe, request kisi bhi server pe jaaye          -> kadam 2, 4
         2  hamesha available: limiter / Redis gira to site na gire, failover -> kadam 6
-        3  VPN se region badle to bhi ek hi ghar region                     -> kadam 10
+        3  VPN se region badle to bhi had ek hi rahe                        -> kadam 10
 
 Numbers nahi: yahan koi faisla nahi badalte.
 ```
