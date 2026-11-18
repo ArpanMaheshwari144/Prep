@@ -530,7 +530,7 @@ to kaam aasaan. Photo / video CDN se aa jaayegi, baaki mote register se.
 number se tweet), photo CDN se = post me CDN link, mota
 register = tweet store (Cassandra), like count saath me. Dabbe me sirf ID isliye, taaki dabba chhota rahe (kadam 6).
 
-**Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai:** 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega.
+**Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai:** 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega. Doosri kahani (Arpan): feed me push ho chuka tha to kuch second dikh sakta; phir "The user has deleted this post" ki patti (eventual consistency, tombstone).
 **Asli naam:** page pe deleted = tweet store me deleted flag (soft delete), dikhate waqt chhod do = hydration pe filter, 8000 dabbe saaf nahi karne padte.
 
 ```mermaid
