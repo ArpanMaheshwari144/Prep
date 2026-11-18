@@ -399,7 +399,8 @@ flowchart TB
 
 ## 11. Feed ka cache usi Redis me, Ravi ka dabba phenka gaya (alag Redis, ya LRU hatao)
 
-Ravi ka dabba Redis me, abhi khaali. Kharcha bachane ko company ne usi Redis me home page / product page ka cache bhi daal
+Ye app sirf OTP login nahi, ek dukaan bhi hai: home page (feed, kadam 6 wala) aur product page. Ravi ka dabba Redis me, abhi
+khaali. Kharcha bachane ko company ne usi Redis me home page / product page ka cache bhi daal
 diya. Diwali ki raat cache badhta gaya, memory bhar gayi, Redis jagah banane ko purani keys phenkne laga (LRU) aur Ravi ka
 dabba bhi chala gaya. Bouncer ko dabba mila nahi, naya Ravi samajh ke bhara dabba bana diya, script 5 OTP aur le gayi.
 Pehli baat: feed / product page alag Redis me, Ravi ka dabba alag Redis me, to ye dikkat aati hi nahi. Ek me hi rakhna hai
