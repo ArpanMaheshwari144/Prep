@@ -135,7 +135,7 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-7 = scene, neeche padhai wala hissa P1-P4)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md)
   - [20 PUBG (Arpan + Claude ka squad, Pochinki)](04_HLD/SYSTEM_DESIGNS/20_pubg/20_pubg.md) (Uber se aaya: aas-paas ka gola, gudda, namumkin chaal · reel se 2b apni chaal turant, 3b server ki maano + rewind · Ek nazar + FR / NFR)
-  - [21 Inventory (Ravi ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) (E-com se aaya: ginti pay pe, dabbe, register, hub and spoke)
+  - [21 Inventory (Arpan ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) (E-com se aaya: ginti pay pe, dabbe, register, hub and spoke)
   - [22 Where Is My Train (bina net / GPS ke train kahan)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md) (cell tower, crowdsourcing, tower ki list)
   - [23 Yelp search (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md) (reel se: geo filter + Elasticsearch fuzzy, Postgres -> ES change event, Closed dikhao, server-side sort)
 

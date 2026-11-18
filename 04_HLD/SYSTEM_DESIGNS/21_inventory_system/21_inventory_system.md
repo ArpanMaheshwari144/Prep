@@ -1,6 +1,6 @@
-# Inventory system: Ravi ki online dukaan, teen godown ki kahani
+# Inventory system: Arpan ki online dukaan, teen godown ki kahani
 
-Ravi ki Flipkart jaisi online dukaan hai. Maal teen godown me pada hai (Delhi, Mumbai, Bangalore) aur ek main warehouse
+Arpan ki Flipkart jaisi online dukaan hai; Ravi, Priya uske grahak. Maal teen godown me pada hai (Delhi, Mumbai, Bangalore) aur ek main warehouse
 Delhi me. Inventory system ka kaam bas ek: har pal sach batana ki kaunsa maal, kis godown me, kitna pada hai. Ye galat
 hua to do nuksaan: jo maal hai hi nahi wo bik gaya (overselling, refund, grahak naraaz), ya maal pada-pada sad raha aur
 system bol raha "0".
@@ -104,7 +104,7 @@ flowchart TB
 
 ## 2. Sale, ek row pe 2 lakh "Pay" (stock ko dabbon me baanto)
 
-Diwali sale, raat 12 baje. Delhi me 1000 iPhone, ek second me 2 lakh log "Pay", sab ek hi row pe "ek kam karo". DB us
+Diwali se pehle Delhi godown me 1000 naye iPhone aaye. Diwali sale, raat 12 baje, ek second me 2 lakh log "Pay", sab ek hi row pe "ek kam karo". DB us
 row pe taala laga ke ek-ek ko line me chalata hai, log 20 second se spinner dekh rahe. Ek counter pe lambi line lagi
 hai aur itna saamaan hi nahi. To 1000 ko baant do, 5 line kar lo, har counter ka apna dabba: 200 ek jagah, 200 ek
 jagah. Log apne dabbe se uthayenge. Sab ek hi dabbe se uthayenge to taala dobara ek hi jagah lag jaayega, isliye
@@ -217,7 +217,7 @@ flowchart TB
 
 ## 5. 1 crore log sirf dekh rahe (bahar banner)
 
-Sale se ek din pehle iPhone ka page 1 crore log khol rahe, "sirf X bache". Har page khulne pe DB se saare dabbon ka jod
+Agli sale (Republic Day) se ek din pehle iPhone ka page 1 crore log khol rahe, "sirf X bache". Har page khulne pe DB se saare dabbon ka jod
 nikal raha. Order koi nahi, sirf log dekh rahe, phir bhi DB pe bojh. Log bas daam / ginti pata karke chale jaate,
 dukaan me bheed aur faltu ka drama. To ek banner pe chhapwa ke bahar taang do, padh ke nikal jao, andar mat aao;
 kharidna ho tab andar aao. Ya chhotu ko baar-baar andar bhejne ki jagah chhotu ek baar copy pe sab likh ke de de, aur

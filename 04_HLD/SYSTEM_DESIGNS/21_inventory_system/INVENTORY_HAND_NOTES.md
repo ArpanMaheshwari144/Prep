@@ -1,8 +1,8 @@
-# Inventory: hand notes (Ravi ki online dukaan, teen godown)
+# Inventory: hand notes (Arpan ki online dukaan, teen godown)
 
 Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
-**Scene:** Ravi ki Flipkart jaisi online dukaan hai. Maal teen godown me pada hai: Delhi, Mumbai, Bangalore, aur ek main warehouse Delhi me. System ka kaam bas ek: har pal sach batana ki kaunsa maal, kis godown me, kitna pada hai.
+**Scene:** Arpan ki Flipkart jaisi online dukaan hai; Ravi, Priya uske grahak. Maal teen godown me pada hai: Delhi, Mumbai, Bangalore, aur ek main warehouse Delhi me. System ka kaam bas ek: har pal sach batana ki kaunsa maal, kis godown me, kitna pada hai.
 
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
@@ -50,7 +50,7 @@ Technical me: ginti Buy pe nahi, payment pe ghate (koi reserve nahi). Ghatana ek
 Arpan: Ye design ka hissa hai aur bahut jagah hota bhi hai, Amazon, Flipkart jaisi company me sale me bahut hota. Mere paas iPhone ek hi hai. Do raaste: ya to kahin se arrange karke doosra iPhone de do; Delhi ki inventory me nahi hai par Haryana, Punjab ki inventory me pada hai, Ravi ko to iPhone chahiye, doosri inventory se de do. Doosra case, kahin bhi iPhone nahi hai, to bolo "tumhare paise kat gaye, iPhone ka stock khatam ho gaya, out of stock tha", aur paise refund kar do; 2, 3 ya 7 din, jo bhi bank ki timeline ho. Amazon jaisi badi company ko ek customer naraaz ho to farak nahi padta, order cancel, refund aa raha. Par main chhota store hoon, ya abhi apni popularity badhana chahta hoon, to kahin na kahin se iPhone arrange karke dunga; Ravi ke paise kat gaye, Ravi ko nahi pata mere paas ek hi iPhone tha, use lena-dena nahi.
 Technical me: "doosri inventory se de do" = doosre godown se sourcing (kadam 4 wala hub), "kahin nahi to refund" = order cancel + refund (E-com wala), store ka faisla = business rule (chhota store maal laaye, bada refund kare).
 
-**2. Diwali sale, raat 12 baje. Delhi me 1000 iPhone, ek second me 2 lakh log "Pay", sab ek hi row pe "ek kam karo". DB taala laga ke ek-ek ko line me chalata, log 20 second se spinner dekh rahe.**
+**2. Diwali se pehle Delhi godown me 1000 naye iPhone aaye. Diwali sale, raat 12 baje, ek second me 2 lakh log "Pay", sab ek hi row pe "ek kam karo". DB taala laga ke ek-ek ko line me chalata, log 20 second se spinner dekh rahe.**
 Arpan: Ek counter pe lambi line lagi hai aur itna saamaan hi nahi. To 1000 ko baant do, 5 line kar lo, har counter ka apna dabba: 200 ek jagah, 200 ek jagah, 200 ek jagah. Log apne dabbe se uthayenge. Sab ek hi dabbe se uthayenge to DB pe taala dobara ek hi jagah lag jaayega, isliye alag-alag tukdon me baanto aur har counter apna dabba ghatata rahe.
 Technical me: stock ko tukdon me baanto (bucketing / sharded counter), har tukda alag row, taala ek row pe nahi.
 
@@ -70,7 +70,7 @@ Technical me: register = stock ledger (har badlaav ki entry: kab, kitna, kis ord
 Arpan: Ek main warehouse hota hai, Amazon jaisi company ka maal asal me wahin se aata hai, phir chhote godown tak pahunchta hai. Pehle dekhunga Bangalore me iPhone hai kya, hai to wahin se. Nahi hai to main warehouse dekhunga, wahan hai to wahan se utha ke Bangalore bhej do, Ravi ko out of stock nahi dikhega. Mumbai ka iPhone Bangalore bhejna, ye FR pe hai. FR bole "maal hai to order poora karo", to Delhi ya Mumbai se bhejo. FR bole har shehar ka maal usi shehar ke liye, to main warehouse aur Bangalore dono khaali hone pe out of stock dikha do, kyunki kal Mumbai me 10 log aaye to unke liye wahan maal rehna chahiye.
 Technical me: main warehouse + shehar ke godown = hub and spoke, kahan se maal uthana = fulfilment / sourcing rule (FR tay kare).
 
-**5. Sale se ek din pehle iPhone ka page 1 crore log khol rahe, "sirf X bache". Har page khulne pe DB se saare dabbon ka jod. Order koi nahi, sirf log dekh rahe, phir bhi DB pe bojh.**
+**5. Agli sale (Republic Day) se ek din pehle iPhone ka page 1 crore log khol rahe, "sirf X bache". Har page khulne pe DB se saare dabbon ka jod. Order koi nahi, sirf log dekh rahe, phir bhi DB pe bojh.**
 Arpan: Bahut log aa rahe aur bas daam / ginti pata karke chale jaate, dukaan me bheed aur faltu ka drama. To ek banner pe chhapwa ke bahar taang do, padh ke nikal jao, andar mat aao; kharidna ho tab andar aao. Ya chhotu ko baar-baar andar bhej raha "bata ye kitne hain", chhotu bina matlab thak raha; to chhotu ek baar copy pe sab likh ke de de, main copy saamne khol ke bata deta hoon. Chhotu aaram se ice cream kha raha, main bhi, DB pe koi nahi ja raha.
 Technical me: banner / copy = cache (Redis), page pe thodi purani ginti chalti hai, asli jaanch Pay pe (NFR 2).
 
