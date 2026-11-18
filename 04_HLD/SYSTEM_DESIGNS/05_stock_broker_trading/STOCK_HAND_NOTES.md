@@ -43,7 +43,7 @@ FR      buy / sell order dalo (apna bhaav likh ke) · bhaav mile to sauda · pai
         Hamara FR = raasta (2). Isliye hold din badalne pe bhi rehta hai, aur cancel karne pe hi wapas jaata hai.
         Jitna mila utna abhi de do, baaki ke liye order khula rahe; user bole "sab ek saath chahiye, warna kuch nahi" to wahi karo.
         FR ne ye maanga, isliye design ye hai. FR raasta (1) maange, to 3:30 pe hold wapas, aur jawab bhi badlega.
-NFR     paisa aur share hamesha sahi · jo pehle aaya wo pehle mile · 9:15 ki bheed jhele · har cheez ka record
+NFR     paisa aur share hamesha sahi · jo pehle aaya wo pehle mile · har cheez ka record
 Numbers 50 lakh order roz, market ~6 ghante -> ~250 / sec aam · 9:15 pe jhatka ~10,000 / sec, saare share me bata
         live bhaav: ~10 lakh app khule, har second naya bhaav -> poochhne ki jagah push
 ```
@@ -51,7 +51,7 @@ Numbers 50 lakh order roz, market ~6 ghante -> ~250 / sec aam · 9:15 pe jhatka 
 **FR / NFR -> kadam (Arpan: "achha baith ke banaya, sab badhiya, aise hi rehne do"):** order dalo + bhaav mile to sauda = 1 ·
 paisa aur share badlo = 3, 6, 7 · live bhaav = 8 · cancel = 3c · bhaav badle (wahi order) = 3d · paise nikaalna = 3e ·
 3:30 raasta 2 = 3c · jitna mila utna = 3b · NFR paisa / share sahi = 2, 3, 5b, 7 · pehle aaya pehle = 4 ·
-9:15 ki bheed = 9, 9b · har cheez ka record = 5, 6.
+har cheez ka record = 5, 6.
 
 &nbsp;
 

@@ -40,9 +40,8 @@ FR      1  video chalana (play)                                             -> k
 NFR     1  play dabate hi video jaldi shuru ho; net ke hisaab se quality ghate-badhe
            (net bahut kamzor ho ya quality badle to thodi buffering hogi hi) -> kadam 1, 2, 4b, 7
         2  kamzor net aur purane TV pe bhi chale                            -> kadam 7, P3
-        3  12:30 jaisi bheed bhi jhele                                      -> kadam 2, 3
-        4  pasand wali list jaldi khule (thodi purani chalegi)              -> kadam 6, 6b
-        5  data pahunchane ka kharcha kam                                   -> kadam 1, 3
+        3  pasand wali list jaldi khule (thodi purani chalegi)              -> kadam 6, 6b
+        4  data pahunchane ka kharcha kam                                   -> kadam 1, 3
 Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabko video nahi bhej sakte
         · har film kai size me -> poora maal kisi ek dabbe me nahi samaata
 ```

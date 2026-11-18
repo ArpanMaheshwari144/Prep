@@ -46,7 +46,8 @@ FR      1  file upload, badi bhi                                  -> kadam 2, 3
 NFR     1  user ruke nahi                                         -> kadam 1
         2  file khoye nahi                                        -> kadam 2, 4b
         3  ek ki file doosra na dekhe                             -> kadam 3, 6, 7
-        4  bheed (shaam ko hazaaron upload) me bhi chale          -> kadam 2
+        4  ek hi file S3 me baar-baar na rakhein (bill), har user ko apni file dikhe,
+           ek ke delete karne se doosre ki na jaaye              -> kadam 9, 9b, 9c
 
 Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi nahi chahiye (kadam 2)
         status log baar-baar dekhte -> padhna zyada, likhna kam

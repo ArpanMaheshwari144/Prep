@@ -44,7 +44,7 @@ FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
         · Arpan ko Raju live dikhe · kiraya pehle dikhe · trip khatam pe pay
         · bheed me (concert) kiraya badh sakta hai, aur wo pehle hi dikh jaaye
         · ek saath kai booking aayein to aisi gaadi do ki sabki milake doori kam · jo der se ruka wo baar-baar peeche na rahe
-NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi · bheed (concert) me bhi chale
+NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi
         · ride ke beech driver gaya to sambhalo
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
@@ -53,7 +53,7 @@ Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking sha
 **FR / NFR -> kadam (Arpan: "theek lag raha, achha lag raha"):** driver ki jagah = 1, 2, 2b, 8, 14, 16 · paas ka khaali driver =
 3, 4, 4b, 6c, 9 · ek driver ek sawari = 5, 7 · Raju live = 10, 11, 16b-16d · kiraya pehle = 12 · trip khatam pe pay = 13 ·
 bheed me kiraya = 6 · sabki milake doori kam = 15, 15b · der se ruka peeche na rahe = 15c, 15d · NFR turant mile = 3, 4, 7b ·
-ek driver do jagah nahi = 5, 7 · concert me bhi chale = 6, 6b · ride ke beech driver gaya = 14, 16d.
+ek driver do jagah nahi = 5, 7 · ride ke beech driver gaya = 14, 16d.
 
 ---
 

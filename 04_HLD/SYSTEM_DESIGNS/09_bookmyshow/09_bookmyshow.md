@@ -52,10 +52,9 @@ FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroo
 
 NFR     (ye dikkat chain se)
         1  do log ek seat ek saath book na kar sakein                              -> kadam 1, 1b
-        2  zyada bheed jhele                                                         -> kadam 4
-        3  line me zyada intezaar na karna pade                                     -> kadam 4, 5
-        4  paisa sahi rahe: kata to seat, seat nahi to refund jaldi                  -> kadam 6a-6g
-        5  seat map turant dikhe                                                     -> kadam 4
+        2  line me zyada intezaar na karna pade                                     -> kadam 4, 5
+        3  paisa sahi rahe: kata to seat, seat nahi to refund jaldi                  -> kadam 6a-6g
+        4  seat map turant dikhe                                                     -> kadam 4
 
 Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
         -> line + padhne wali copy (kadam 4)
