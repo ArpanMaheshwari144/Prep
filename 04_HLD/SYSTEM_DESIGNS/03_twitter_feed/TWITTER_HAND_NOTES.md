@@ -4,12 +4,60 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan ne tweet kiya "aaj ka mock 5/5". Ravi Arpan ko follow karta hai, aur King Kohli ko bhi (maan lo 27 crore followers). Ravi app kholta hai to home feed pe sabke naye tweet, naye pehle.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Ravi  -->  LB  -->  tweet server  -->  Kafka ("post ho gaya, nikal")  -->  workers
+                                                                            |
+                    har follower ka dabba (Redis, sirf last 500)  <---------+   (chhote user: likhte waqt bhar do)
+                    Kohli / SRK ki alag parchi (10-15 copy)                     (celeb: padhte waqt milao)
+                                |
+   feed khule:  dabba + celeb parchi milao, ranking, number se poora tweet (photo CDN se)
+   asli maal:   Cassandra (user id se baanto, 3 copy), purane tweet S3, follow ka track Neo4j
+   video:       S3 presigned URL -> workers 4 size banayein -> CDN -> phone tukde kheenche
+   region:      India branch + US branch, aapas me baat
+
+ 1   500 logon ke tweet milao, feed 6-7 sec     ->  pehle se dabbe me rakho (fan-out on write)
+ 1b  naya follow, purane tweet dabbe me nahi    ->  follow karte hi purane push (backfill)
+ 1c  unfollow, purane 50 dabbe me               ->  naye band, purane dheere khisakte (lazy)
+ 2   Kohli ke 27 crore dabbe, ghanton           ->  ek parchi, sab wahin se padhein (fan-out on read)
+ 3   doston ka dabba + 15 celeb parchi          ->  padhte waqt sort karke milao (merge at read)
+ 4   8,000 dabbe, Post ka button ghoome         ->  Kafka me daalo, "post ho gaya" turant (acks=all)
+ 5   six pe 5 crore, parchi wali machine hili   ->  10-15 copy, baant do (hot key replica)
+ 5b  "Inida" se "India", kuch copy purani       ->  thodi der galat, phir sab theek (eventual consistency)
+ 6   3 saal ke tweet dabbe me, 30 crore soye    ->  last 500 bas, 30 din nahi aaya to kuch nahi; purane S3
+ 7   50 crore tweet / din, likhai ki line       ->  Cassandra, user id se baanto; follow = Neo4j
+ 8   Ravi Delhi me, server America me           ->  India branch (region)
+ 9   John New York me, Arpan ka tweet nahi      ->  dono branch aapas me baat; ruki to replay
+10   50,000 log 1 GB video                      ->  S3 presigned URL, server se nahi
+11   John 4K TV, Ravi gaon me 3G                ->  kai size (transcoding, ABR)
+12   ek machine 4 size, 20 minute               ->  kai workers, video id se baanto
+13   worker 7 gira, "processing" ghanton        ->  heartbeat, timeout, checkpoint se aage
+14   2:00 pe khiskaya, phone 0:00 se kheenche   ->  manifest, seedha 51va tukda; CDN pe static
+15   tukde US ke S3 me, samundar paar           ->  CDN edge; private video = signed URL
+16   dabbe me sirf number                       ->  number se poora tweet (hydration); delete = soft delete
+17   Amit ka tweet 40 ke neeche dab gaya        ->  jisse judta wo upar (ranking)
+18   scroll pe wahi 5 dobara                    ->  cursor, offset nahi
+19   "mast DP" gaayab                           ->  do pe likho, do se padho (quorum)
+```
+
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: Twitter ko engagement ke hisaab se dekhna hai. Naya banda aaya, kisi ko follow nahi karta, to khaali page nahi dikhaunga; trending dikhaunga: aaj ye hua, Elon ne SpaceX me ye kiya, SpaceX aur Tesla ka merger. Instagram bhi yahi karta: main kisi ko follow nahi karta tha phir bhi bahut kuch aata; GTA 6 baar-baar search kiya to GTA 6 aane laga. Ravi 1000 logon ko follow karta, uski feed khatam nahi hoti, wahan scroll me dohrav nahi; refresh pe purana dobara aa jaaye to theek, Twitter iska hisaab nahi rakhta.
+Technical me: "khaali page nahi, trending dikhao" = cold start / recommendation (follow ke alawa), "jo search kiya wahi aane laga" = interest se ranking, "scroll me dohrav nahi" = cursor (kadam 18).
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      tweet post (text, photo / video) · home feed: jinko follow karta unke tweet, jisse zyada judta (like / comment) uska upar, baaki naye upar · scroll pe agla page, dekha hua dobara nahi
-        · video har net pe chale (tukde, kai quality, beech se dekhna, paas ka CDN)
-NFR     feed ~200 ms me (40 din baad aaya to thodi der chalegi) · 2-5 sec purani chalegi (isliye pehle se bana sakte) · 27 crore wale celeb ka tweet bhi sambhle
-        · duniya bhar ke user: Delhi wale ko paas ki branch se tez, aur door ki branch ka tweet bhi dikhe
+FR      1  tweet post karo (text, photo / video)                               -> kadam 4, 10
+        2  home feed: jinko follow karta unke tweet, jisse zyada judta wo upar -> kadam 1, 2, 3, 17
+        3  infinite scroll: ek scroll ke beech wahi tweet dobara na aaye
+           (refresh pe aa sakta, Twitter iska hisaab nahi rakhta)              -> kadam 18
+        4  follow wale khatam to neeche doosron ke tweet (trending),
+           feed kabhi khaali nahi                                              -> (abhi kadam nahi)
+        5  video har net pe chale (tukde, kai quality, beech se dekhna)       -> kadam 11-15
+
+NFR     1  feed ~200 ms me (40 din baad aaya to thodi der chalegi)            -> kadam 1, 6
+        2  2-5 sec purani chalegi (isliye pehle se bana sakte)                -> kadam 4, 5b
+        3  27 crore wale celeb ka tweet bhi sambhle                           -> kadam 2, 5
+        4  duniya bhar ke user: paas ki branch se tez, door ka tweet bhi dikhe -> kadam 8, 9
 Numbers ~50 crore user, 50 crore tweet / din = ~5,800 / sec · ek aadmi ~500 ko follow · shaam 8 baje 5 crore ek saath
         -> padhna : likhna ~50 : 1, isliye feed pehle se taiyaar rakho
 ```
