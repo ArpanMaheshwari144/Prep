@@ -27,12 +27,49 @@ scan chahiye? Jo "haan" aaye wahi tukda bolo.
 
 ---
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, folder tree, kiski file
+  |                    ^
+  |  tukde seedha      |  "file aa gayi" (S3 event)
+  v                    |
+ S3  ------------------+        server -> line (Kafka) -> scan worker -> CLEAN tak link band
+  |
+  +--> download: server haq dekhe -> chhoti umar ka link -> S3 / CDN se seedha phone pe
+
+ 1   server khud sab kare, 10 min spinner          ->  chai pi aao, peeche line (Kafka + worker); chhota tukda dekh lo (magic bytes)
+ 2   1000 x 2 GB hamare server se, 8 GB pe net gaya ->  seedha S3, tukdon me, sirf baaki dobara; adhoore tukde S3 ki safai (multipart, lifecycle)
+ 3   S3 kaise maane ye hamara user                 ->  receptionist ka token (presigned URL)
+ 3b  10 GB upload, token beech me khatam           ->  har tukde ka apna token (presigned per part)
+ 4   file S3 me aayi, server ko pata nahi          ->  S3 bataye "aa gayi" (event notification)
+ 4b  UPLOADED likha, scan daalne se pehle gira     ->  UPLOADED ke saath vasiyat (outbox + relay)
+ 4c  S3 ne "aa gayi" do baar / ulta bataya         ->  parchi + apna thappa (idempotency, sequencer / version)
+ 5   folder rename = 500 copy + 500 delete         ->  tree jaisa, sirf parent badlo (parent_id)
+ 6   1043 likha, Priya ka statement khula          ->  "Priya ko saath la", truck seedha ghar (owner check, S3 direct download)
+ 6b  CDN dabbe me Priya ka statement               ->  bina token CDN na de (CDN signed URL)
+ 7   link 200 logon ke WhatsApp group me           ->  link ki umar chhoti (presigned expiry)
+ 8   scan me 10 min baaki / virus nikla            ->  CLEAN tak link band, virus to file hatao (quarantine)
+ 8b  bahar wala scanner 1 ghante se chup           ->  ruk ke dobara, phir insaan ko alert (retry + backoff, DLQ)
+```
+
+**FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
+Arpan: Ye sab sahi lag raha, koi dikkat nahi, yahi rehne do.
+
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      file upload (badi bhi, folder bhi) · jaanch (virus + sach me wahi type) · status dikhe · share + download
-NFR     user ruke nahi · file khoye nahi · ek ki file doosra na dekhe · bheed (shaam ko hazaaron upload) me bhi chale
-Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi nahi chahiye
+FR      1  file upload, badi bhi                                  -> kadam 2, 3
+        2  folder bhi (rename / delete poora ek saath)            -> kadam 5
+        3  jaanch: virus + sach me wahi type                      -> kadam 1, 8
+        4  status dikhe (upload chal raha / scan / taiyaar)       -> kadam 1, 4
+        5  share + download                                       -> kadam 6, 7
+
+NFR     1  user ruke nahi                                         -> kadam 1
+        2  file khoye nahi                                        -> kadam 2, 4b
+        3  ek ki file doosra na dekhe                             -> kadam 3, 6, 7
+        4  bheed (shaam ko hazaaron upload) me bhi chale          -> kadam 2
+
+Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi nahi chahiye (kadam 2)
         status log baar-baar dekhte -> padhna zyada, likhna kam
 ```
 
