@@ -62,7 +62,8 @@ peeche = eventual consistency.
 
 Sync job raat 2 baje chalti; dopahar 1 baje joda "Paneer Burger" shaam 8 baje search me nahi. Postgres me badlaav aate hi
 ek event bhejo jo ES ko update kare, jaise S3 ka "file aa gayi" event. Raat wali job bhi chalti rahe, jo event chhoota
-wo pakde. Yahan queue / Kafka nahi; app itna bada nahi, bas change event.
+wo pakde. Yahan queue / Kafka nahi; Kafka numbers dekh ke: ek saath ~20 hazaar seedha sambhal jaata, Kafka tab
+jab peak pe lakh log ek saath aayein (Arpan).
 
 **Asli naam:** change event (Postgres ke badlaav ko seedha padhna = CDC), raat ki job = reconciliation.
 
