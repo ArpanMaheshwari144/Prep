@@ -227,6 +227,7 @@ Yahi dikkat yahan bhi:
   Uber          2   1.25 lakh update/sec, DB ghuta                 ->  bada bhai bulao (Cassandra, andar ring = consistent hashing)
   Uber          2b  har location DB me nayi line, map dheema       ->  abhi ki jagah parchi (Redis overwrite), raasta Kafka -> batch storage, DB me sirf status
   Uber          3   5 lakh driver ka fasla naap raha               ->  naksha dabbon me, sirf apna dabba (geohash)
+  Yelp          1   "burger" pe 8 sec, "burgr" pe zero             ->  aas-paas ke restaurant + Elasticsearch, galat spelling pe bhi (geo filter, fuzzy)
   Uber          4   dabbe ke kinare, bagal me driver               ->  8 km ka gola, chhoote dabbe bhi (neighbour geohash)
   Uber          6c  dabba toda, Arpan ke tukde me driver nahi       ->  papa ji: apna + upar / neeche / bagal ke tukde (scatter-gather, neighbour cells)
   Uber          4b  map pe paas Raju, par nadi ke us paar           ->  sadak se kitni door, kitni der (road distance / ETA)
@@ -407,6 +408,7 @@ Yahi dikkat yahan bhi:
   Chat          5e  #980 wala chai peene gaya, #981 pehle gaya     ->  jo pehle aaya wahi pehle (sequence number, phone sort)
   Leaderboard   2   Ravi, Priya dono 9800                          ->  score phir time, ek number me (composite score)
   Twitter       18  scroll ke beech upar 5 naye, wahi 5 dobara     ->  kahan tak padha yaad rakh (cursor, offset nahi)
+  Yelp          4   300 m wali 4.6 star 15ve number pe             ->  sort user chune, server saare pe kare, phone ko pehle 10 (server-side sort, pagination)
   Notification  4c  Shipped jaane wala, Order placed atka          ->  order ki parchi, gaya nahi to dono saath / doosri company / email (coalesce, failover)
   Kafka         8b  pay DLQ me, cancel chal gayi, kram toota       ->  A2 ruka to A3 bhi ruka, theek hone pe saath dobara (same key parking)
   Kafka         3b  #A7 ka paid aur shipped alag partition me      ->  key se ek partition, line ke andar kram (partition key = order id)
@@ -648,6 +650,8 @@ Yahi dikkat yahan bhi:
   Uber          16b buildings ke beech gaadi chhat pe (ghost bike) ->  paas wali sadak pe wapas utaar do (map matching)
   Uber          16b GPS ne bike nadi ke us paar phenki, 1 second   ->  rok nahi sakte, animation se wapas isi road pe (map matching)
   News          7   Priya ki parchi me aaj ki badi khabar chhooti  ->  milaan: chhoot gayi to DB se le ke seedha feed me (check job)
+  Yelp          2   Burger Singh band, search me abhi bhi          ->  Postgres -> ES sync, "Closed" dikhao, Zomato jaisa (DB -> search sync)
+  Yelp          3   dopahar ka naya burger, ES ko raat 2 baje       ->  badlaav pe change event, raat ki job bhi (CDC, reconciliation)
 
 Naam: ledger / reconciliation / eventual consistency / sahi dabba / central counter / Neo4j / matching engine / DB = sach / cache DELETE / sync job / write-then-invalidate / updated_at / check job / double-entry / S3 Object Lock / revised statement / latest location / upfront fare / map matching / Redis sorted set / compensation
 Juda: paisa ho to sach turant chahiye; profile ho to thodi der purana chalega.
@@ -684,6 +688,7 @@ Juda: server ki taraf location band ho to Uber 14 (location timeout); Zomato me 
 - Notification: [notes](SYSTEM_DESIGNS/04_notification_system/NOTIFICATION_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
 - Stock: [notes](SYSTEM_DESIGNS/05_stock_broker_trading/STOCK_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md)
 - Payment: [notes](SYSTEM_DESIGNS/06_payment_system/PAYMENT_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/06_payment_system/06_payment_system.md)
+- Yelp search: [notes](SYSTEM_DESIGNS/23_yelp_search/YELP_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md)
 - File upload: [notes](SYSTEM_DESIGNS/07_file_upload_validate_system/FILE_UPLOAD_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md)
 - News: [notes](SYSTEM_DESIGNS/08_news_aggregator/NEWS_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator.md)
 - BookMyShow: [notes](SYSTEM_DESIGNS/09_bookmyshow/BMS_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow.md)
