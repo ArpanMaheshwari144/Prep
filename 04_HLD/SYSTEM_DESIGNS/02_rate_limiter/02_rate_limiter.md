@@ -43,6 +43,7 @@ saath me: Redis gira -> dono khule (OTP + feed), gateway apni kachchi ginti se 5
  8  naya number har baar, office ek WiFi        ->  login se pehle dheeli had, baad me userId pe kadi
  9  result ka din, SMS company giri             ->  line lagwao, ek-ek karke (queue, Kafka)
 10  VPN se 3 region, 15 OTP                     ->  ek ghar region, ginti wahin (home region, +91)
+11  feed ka cache usi Redis, Ravi ka dabba gaya ->  alag Redis; ek me ho to LRU hatao + cache ka TTL chhota (noeviction)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.

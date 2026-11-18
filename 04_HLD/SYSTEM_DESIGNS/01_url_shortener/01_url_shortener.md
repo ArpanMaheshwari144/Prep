@@ -42,7 +42,7 @@ User  -->  LB  -->  kai counter (app server)
 
 ```
 FR      1  lamba URL do, chhota token lo                                  -> kadam 1, 2
-        2  chhota token kholo to lambe pe bhejo                             -> kadam 3
+        2  chhota token kholo to lambe pe bhejo                             -> kadam 3, 12
         3  do logon ko kabhi same token na mile                             -> kadam 1, 7
         4  dhokhe wala link pata chale to wo token band kar sako             -> kadam 12
         5  machine se hazaar chit na ban sake (har aadmi pe had)            -> kadam 13

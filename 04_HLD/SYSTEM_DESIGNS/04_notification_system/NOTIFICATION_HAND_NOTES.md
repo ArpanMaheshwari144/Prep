@@ -47,8 +47,8 @@ FR      1  ek ghatna (order hua) -> SMS / email / push                      -> k
         2  user ki pasand maano ("offer wale SMS mat bhejo")                -> kadam 9
         3  message ka saancha ("Hi {naam}")                                 -> kadam 9
 
-NFR     1  Order Service ruke nahi                                          -> kadam 1, 1b
-        2  khabar khoye nahi                                                -> kadam 1b, 3, 8
+NFR     1  Order Service ruke nahi                                          -> kadam 1
+        2  khabar khoye nahi                                                -> kadam 1b, 4, 5, 8
         3  do baar na jaaye (kabhi dohra ho to ek hi OTP code)              -> kadam 3, 5b
         4  OTP jaisa zaroori turant, sabse pehle; offer ruk sakta           -> kadam 4b, 5b, 8b, 9b
         5  OTP ki umar khatam ho to mat bhejo                               -> kadam 4b, 5d
