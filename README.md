@@ -12,9 +12,10 @@ SAFAR (March: khaali folder)  ->  aaj
   Java + Spring poora · LLD 11 · 6 project
   HLD: 22 design (sab kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 22 + 19 foundation + dikkat chain 21 parivaar
         har diagram hand notes ke shabdon se (8-Nov) · jahan ring, wahan consistent hashing
-        round ho gaye (FR / NFR design se, URL saanche me): 01 URL (15-Nov) · 02 rate limiter (16-Nov)
+        round ho gaye (FR / NFR design se, URL saanche me): 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov)
+        Ek nazar dhaancha + FR / NFR -> kadam (18-Nov): + 20 PUBG · 07 file upload · 08 news = 6 design, 16 baaki
         Kafka = stadium + tube: producer daale -> Kafka / queue line -> worker / consumer nikaale
-  DSA: 18 pattern · 183 problem + 157 REDO = 340 .cpp · pattern sheet folder (19 file, 178 sawaal + MATHS KA KHEL)
+  DSA: 18 pattern · 183 problem + 159 REDO = 342 .cpp · pattern sheet folder (19 file, 178 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
 ```
 
@@ -31,7 +32,7 @@ SAFAR (March: khaali folder)  ->  aaj
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
-| 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 157 REDO + sheet (178 sawaal) | **Gate** — pass karna hai (ab revise-only) |
+| 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 159 REDO + sheet (178 sawaal) | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
 | 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + JP company + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
@@ -120,9 +121,9 @@ SAFAR (March: khaali folder)  ->  aaj
   - [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
   - [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md)
   - [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md)
-  - [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md)
-  - [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator.md)
-  - [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow.md)
+  - [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md) (Ek nazar + FR / NFR -> kadam; folder delete = soft delete + S3 peeche)
+  - [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator.md) (Ek nazar + FR / NFR -> kadam; login nahi to aam khabar, chhotu ka lease + fencing)
+  - [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow.md) (round ho gaya 17-Nov: FR app ke kaam se, NFR chain se)
   - [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md)
   - [11 google-docs-collab](04_HLD/SYSTEM_DESIGNS/11_google_docs_collab/11_google_docs_collab.md)
   - [12 message-queue (design Kafka)](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/12_message_queue_kafka.md) ([concepts stadium ki kahani se](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_concepts.md) · [Kafka ya RabbitMQ: kab kaunsa](04_HLD/SYSTEM_DESIGNS/12_message_queue_kafka/kafka_ya_rabbitmq_kab_kaunsa.md))
@@ -133,7 +134,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [17 e-commerce (mausi ka mart, Diwali sale)](04_HLD/SYSTEM_DESIGNS/17_ecommerce/17_ecommerce.md)
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-7 = scene, neeche padhai wala hissa P1-P4)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md)
-  - [20 PUBG (Arpan + Claude ka squad, Pochinki)](04_HLD/SYSTEM_DESIGNS/20_pubg/20_pubg.md) (Uber se aaya: aas-paas ka gola, gudda, namumkin chaal)
+  - [20 PUBG (Arpan + Claude ka squad, Pochinki)](04_HLD/SYSTEM_DESIGNS/20_pubg/20_pubg.md) (Uber se aaya: aas-paas ka gola, gudda, namumkin chaal · reel se 2b apni chaal turant, 3b server ki maano + rewind · Ek nazar + FR / NFR)
   - [21 Inventory (Ravi ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) (E-com se aaya: ginti pay pe, dabbe, register, hub and spoke)
   - [22 Where Is My Train (bina net / GPS ke train kahan)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md) (cell tower, crowdsourcing, tower ki list)
 
@@ -231,7 +232,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 ---
 
-## [08_DSA](08_DSA) — 18 pattern · 183 problem + 157 REDO = 340 .cpp
+## [08_DSA](08_DSA) — 18 pattern · 183 problem + 159 REDO = 342 .cpp
 **Kya:** pattern-wise solved problems (sirf C++) + pattern sheet. &nbsp; **Kyu:** interview ka **gate** — pass karna hai. Ab naya nahi, sirf REVISE + redo.
 
 - ★ **[PATTERN_SHEET](08_DSA/00_PATTERN_SHEET)** — "gate ki chaabi", 19 chhoti file (ek badi file pe GitHub atakta tha). 178 sawaal. Har sawaal pe moti line, phir SAWAAL (poore vakya + e.g. + kyun) · SAAR (dry-run / tasveer) · CHAABI (baingani dabba) · WARNING (peela dabba, aaj ke code ka trap) · CODE (tera code, ★ sirf kick line pe). Teri purani galti wali line kabhi nahi kati. CHAABI = sawaal ki khaasiyat (jiske bina jawab galat); teri apni purani galti = WARNING (16-Nov).
