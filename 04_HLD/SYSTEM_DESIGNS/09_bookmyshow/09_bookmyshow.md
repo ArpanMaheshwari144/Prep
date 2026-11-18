@@ -324,6 +324,13 @@ jaise S3 bhejta), hum "mil gaya" bol dete. Baad me pata chala paisa kata tha, to
 lautao"; wo bank se poochh ke kata tha to wapas karega. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi;
 paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, Amazon Pay) line me.
 
+Doosri kahani (18-Nov raat): GPay se pay kar raha hoon. GPay ka gola hamare server pe nahi, to 1 minute ho ya 10
+minute, wo sawaal hi nahi. Back dabaya aur paise kate hi nahi = user khush. Back daba ke app band kiya aur bilkul tabhi
+paise kat gaye: chhotu peeche dekhta rehta hai, kata to seat book. Seat 1.5-2 minute rakho, peeche bheed hai; Razorpay /
+bank chup rahe to booking fail dikhao, seat chhodo (app band hai, popup dikh hi nahi sakta), "paise kate to wapas aa
+jaayenge". DB me booking INITIATED -> FAILED. 1 ghante baad paise kate to DB me likh lo aur Razorpay ko bolo "kata ho to
+refund karo".
+
 **Asli naam:** 30-55 sec gola = hamara client timeout, onboard pe SLA = PSP ka uptime SLA +
 incident response (latency ka nahi), doosra pay doosre PSP pe = PSP failover
 (backup PSP), khud poochte = status poll, event = webhook, "mil gaya" = ack (2xx), baad me kata nikla to lautao =
