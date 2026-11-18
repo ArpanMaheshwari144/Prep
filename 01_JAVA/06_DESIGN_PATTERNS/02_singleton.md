@@ -1,5 +1,12 @@
 # Singleton pattern
 
+**Koi poochhe "Singleton kya hai" to aise bolo:**
+```
+Poori app me us class ka sirf ek object, jaise config ya connection pool. Seedha "null hai to
+bana do" do thread me do object bana deta, isliye enum (ya double-check lock). Spring ka har
+@Service by default singleton hai, isliye uske field me request ka data kabhi mat rakho.
+```
+
 Singleton matlab poori app me us class ka sirf ek object. Config, logger, connection pool jaisi cheezon ke liye, kyunki do alag
 config object ho gaye to ek jagah limit 1 lakh hogi aur doosri jagah kuch aur.
 
@@ -27,3 +34,13 @@ safe. Ek line ka kaam hai.
 Har `@Service` / `@Repository` by default singleton hota hai: Spring ek hi object banata hai aur saari request use share karti
 hain. Isliye singleton bean ke field me koi badalne wali cheez rakhi to saari request use ek saath chhuengi. Ye wahi "singleton
 me field" wala PR bug hai.
+
+Chala ke dekha (ek hi bean, field `currentUser`, do request 10 ms ke farak se):
+
+```
+Arpan ne pay kiya, receipt pe naam: Ravi
+Ravi ne pay kiya, receipt pe naam: Ravi
+```
+
+Arpan ki receipt pe Ravi ka naam: Ravi ki request ne beech me wahi field badal di. Ilaaj: request ka data method ke andar local
+variable / parameter me rakho, field me sirf wo jo kabhi na badle (repo, config).
