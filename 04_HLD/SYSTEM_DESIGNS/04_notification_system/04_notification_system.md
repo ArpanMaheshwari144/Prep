@@ -1,7 +1,8 @@
 # Notification system: Arpan ke order ki kahani
 
 Arpan ek shopping app se order karta hai. Order hote hi app use teen jagah khabar bhejti hai: SMS ("order placed"),
-email (bill) aur phone pe push ("shipped"). Ye khabar bhejne wala system main bana raha hoon. Kaam: order turant ho,
+email (bill) aur phone pe push ("shipped"). Isi app ka login OTP aur "₹5000 debited" SMS bhi isi system se jaata
+hai. Ye khabar bhejne wala system main bana raha hoon. Kaam: order turant ho,
 khabar khoye nahi, do baar na jaaye, aur OTP kabhi bheed me na phanse.
 
 Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (interview me yahi shabd) -> tasveer
