@@ -31,6 +31,30 @@ Ye hissa scene-mock se pehle samjhaya tha, interview me "goli kaise lagti hai" p
 
 ---
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Phone  -->  khula taar (WebSocket / UDP)  -->  India ka game server (ek match, 100 log)
+                                                   |
+             match me jodna:                       |   India wala India server pe, squad fill
+             khel ke beech:                        |   sirf aas-paas ki khabar
+                                                   |   apni chaal phone pe turant, faisla server ka
+                                                   |   goli + chaal server jaanche (rewind karke)
+             match khatam:                         |   parchi -> line (Kafka) -> Cassandra
+                                                   v
+
+ 1   America ka ladka Mumbai match me, ping 300    ->  America wala America server pe; akela 3 wale squad me (region matchmaking, squad fill)
+ 2   100 logon ko 99-99 ki khabar, phone garam     ->  khula taar + sirf aas-paas walon ko (WebSocket / UDP, area of interest)
+ 2b  har kadam pe 120 ms, kichad me chalna         ->  player turant apni screen pe chale, server peeche hisaab kare (client-side prediction)
+ 3   hacker ka phone bole "goli lagi"              ->  server line kheenche, deewar, gudda (hit validation, hitbox)
+ 3b  phone pe 3 kadam aage, server bole ruk gaya   ->  server ki maano, 3 kadam peeche; goli ke pal tak rewind (reconciliation, lag compensation)
+ 4   1 second me 500 meter                         ->  Koramangala se Whitefield namumkin, phenk do, ban (movement validation)
+ 5   chicken dinner pe lakhon likhai, DB ghuta     ->  match me parchi, end pe line + copy, dheere DB (batch, Kafka, Cassandra)
+```
+
+**FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
+Arpan: FR badhiya. Start dabane pe match me jodna, PUBG karta bhi hai. Match me aas-paas ke log, goli, gaadi chalegi, noise aayegi. Goli lagi to mara hua dikhao; sar pe lagi to headshot, kahin bhi lagi to dead dikhao. NFR me ping kam aayega. Phone garam na ho, ye NFR me nahi aayega: ye physical hardware ki dikkat hai, hatao. Hacker na jeete theek, match khatam hone pe DB theek. Har kadam pe 120 ms ka kichad: client-side prediction NFR me daal sakte. Phone pe 3 kadam aage, server bole ruk gaya, goli ke pal tak peeche: ye bhi NFR me aa sakta. Chicken dinner NFR me nahi, wo PUBG ka khaas hai. 1 second me 500 meter namumkin, wo hacker wale me aa gaya.
+Technical me: "button dabate hi chale" = low input latency (client-side prediction), "goli ke pal tak peeche" = fair hit registration (lag compensation), "faisla server ka" = server authoritative.
+
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 Pehli line interviewer ko: "Main poora PUBG (skins, shop, login) nahi, ye cheezein solve karunga: match me jodna,
@@ -39,14 +63,15 @@ line ke saath kadam number.
 
 ```
 FR      1  "Start" dabao to 100 logon ke match me jodo, 4-4 ke squad          -> kadam 1
-        2  match me aas-paas ke log, goli, awaaz dikhe / sunai de               -> kadam 2
-        3  goli lagi ya nahi, sar pe lagi to headshot                           -> kadam 3
+        2  match me aas-paas ke log, goli, gaadi, awaaz dikhe / sunai de        -> kadam 2
+        3  goli lagi ya nahi; sar pe lagi to headshot, kahin bhi lagi to dead   -> kadam 3
         4  match khatam: kills, damage, rank points save                        -> kadam 5
 
 NFR     1  ping kam (India wala India ke server pe)                             -> kadam 1
-        2  phone garam na ho, data na jale                                      -> kadam 2
+        2  button dabate hi player chale, kichad jaisa na lage                  -> kadam 2b
         3  hacker na jeete: faisla server ka                                    -> kadam 3, 4
-        4  match khatam hone pe DB na ghute, agla match turant                  -> kadam 5
+        4  goli ka faisla insaaf se: goli ke pal jo saamne tha use lagi         -> kadam 3b
+        5  match khatam hone pe DB na ghute, agla match turant                  -> kadam 5
 
 Numbers raat 9 baje lakhon log · ek match 100 log, 8 km x 8 km
         · server second me (maan lo) 20 baar sabki jagah -> 100 x 99 khabar har baar, sabko sab nahi bhej sakte
@@ -206,9 +231,11 @@ flowchart TB
     MM["1. India server, squad fill"]:::card
     AOI["2. Sirf aas-paas ki khabar<br/>(area of interest)"]:::card
     HIT["3. Goli: server line kheenche<br/>(hit validation)"]:::card
+    PRED["2b. Apni chaal turant<br/>(client-side prediction)"]:::card
+    REW["3b. Server ki maano, goli ke pal tak rewind<br/>(lag compensation)"]:::card
     MOV["4. Chaal: 1 sec me itna hi<br/>(movement validation, ban)"]:::card
     END["5. Parchi -> line -> Cassandra"]:::good
-    ST --> MM --> AOI --> HIT --> MOV --> END
+    ST --> MM --> AOI --> PRED --> HIT --> REW --> MOV --> END
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
