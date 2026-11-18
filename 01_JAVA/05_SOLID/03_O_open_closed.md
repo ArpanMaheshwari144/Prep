@@ -1,32 +1,55 @@
 # O: Open / Closed (naya jodo, purana mat chhedo)
 
-**Niyam:** class naye kaam ke liye khuli honi chahiye (extend kar sako), par purana tested code chhedne ke liye band honi chahiye.
+**Koi poochhe "Open / Closed kya hai" to aise bolo:**
+```
+Naya kaam jodne ke liye purana tested code nahi kholna chahiye. Har payment mode ek interface
+ke peeche apni class; kal Crypto aaya to bas nayi class, if-else ki chain nahi badhti.
+Board pe naya socket lagate ho, poori wiring nahi kholte.
+```
 
 ## Kahani
 
-Pehle sirf UPI tha. Phir Card aaya, phir Wallet, phir Crypto. Har baar wahi file kholni padi aur `else if` ki chain lambi hoti
-gayi. Aur har baar ye darr rehta tha ki purane tested raaste me koi naya bug na aa jaaye.
+Pehle sirf UPI tha, phir Wallet aaya. Har baar wahi file khuli aur `else if` judta gaya. Kisi ne aakhri me `else` likh diya:
+"baaki sab card se kaato". Phir app ne naya mode CRYPTO bheja, jo backend me abhi likha hi nahi tha.
 
 ```java
-if (type.equals("UPI"))         { ... }
-else if (type.equals("CARD"))   { ... }
-else if (type.equals("WALLET")) { ... }   // har naye mode pe tested code chhedo
+if (type.equals("UPI"))         return "UPI se " + amt;
+else if (type.equals("WALLET")) return "Wallet se " + amt;
+else                            return "Card se " + amt;   // "baaki sab card"
 ```
 
 ## Fix
 
 ```java
-interface PaymentMethod { void pay(double amount); }
-class UpiPayment  implements PaymentMethod { public void pay(double a) { ... } }
-class CardPayment implements PaymentMethod { public void pay(double a) { ... } }
+interface PaymentMethod { String pay(int amt); }
+Map<String, PaymentMethod> methods;              // UPI, WALLET, CARD ... har ek apni class
+
+PaymentMethod m = methods.get(type);
+if (m == null) throw new IllegalArgumentException("mode nahi pata: " + type);
+return m.pay(amt);
 // kal Crypto: bas nayi class CryptoPayment, purani koi file nahi khuli
 ```
 
-Ab har payment ka apna class hai, sab ek `PaymentMethod` interface ke peeche. Kal naya mode aaya to bas ek nayi class banegi,
-purani koi file nahi khulegi. Ye bijli ke board jaisa hai: naya appliance lagana hai to naya socket laga do, poori building ki
-wiring nahi kholte.
+Chala ke dekha:
+
+```
+--- if-else, app ne naya mode CRYPTO bheja ---
+Card se 500
+--- interface + map, wahi CRYPTO ---
+ERROR: mode nahi pata: CRYPTO
+--- CryptoPayment jodne ke baad ---
+Crypto se 500 | UPI se 200
+```
+
+**Dikkat:** if-else ne user ke card se 500 chupchaap kaat liye, jabki usne crypto chuna tha. Koi crash nahi, isliye kisi ko pata bhi nahi.
+**Hal:** interface + map me anjaan mode pe saaf error, aur CRYPTO jodne me sirf nayi class lagi; UPI wala code chhua tak nahi.
+
+## Trap
+
+if-else ki chain me aakhri `else` ko "baaki sab" bana dena: naya mode aayega to chupchaap galat raaste chala jaayega. Anjaan mode pe
+hamesha error do, default pe mat bhejo.
 
 ## Tera project
 
-Ye wahi Strategy pattern hai jo design patterns me padha tha. Spring me saare `PaymentMethod` bean ek `Map` me apne aap inject
-ho jaate hain, to tu type ke hisaab se map se sahi wala utha leta hai, aur `if-else` ki zaroorat hi khatam ho jaati hai.
+Ye wahi Strategy pattern hai jo design patterns me padha. Spring me `Map<String, PaymentMethod>` constructor me maango, to saare
+`PaymentMethod` bean apne bean naam ke saath khud bhar jaate hain, map khud nahi banana padta.
