@@ -4,6 +4,34 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan shaam 7 baje Connaught Place pe khada hai, ghar ke liye Uber book karna hai. Sheher me 5 lakh driver ghoom rahe hain.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Raju (phone har 4 sec)  -->  Location Service  -->  Redis (abhi ki jagah, geohash dabbe) + Kafka -> raasta batch me Cassandra
+                                                          |
+Arpan "Book"  -->  matching: apna + aas-paas ke dabbe, sadak ki doori (ETA), 15-20 sec ki booking saath (batch)
+                    driver pe parchi (hold, 15 sec umar, ghadi server ki) · bheed me line + surge
+                    Raju live dikhe: WebSocket + pub/sub · trip khatam: kiraya jo dikhaya, poora kaato
+
+ 1   server ko pata nahi driver kahan            ->  phone khud bheje (Location Service)
+ 2   1.25 lakh update / sec, DB ghuta            ->  Cassandra; abhi ki jagah Redis, raasta Kafka (2b)
+ 3   5 lakh driver ka fasla naap raha            ->  naksha dabbon me (geohash)
+ 4   dabbe ke kinare, bagal me driver            ->  aas-paas ke dabbe bhi; nadi ke us paar = sadak se doori (4b)
+ 5   Raju pe ek second me do ride                ->  parchi, ek kadam me (hold / lock); 15 sec umar, net atka = wahi booking id
+ 6   concert khatam, 50 hazaar, cab 500          ->  line (virtual queue) + kiraya badhao (surge); stadium dabba = 2-3 extra
+ 6c  dabba toda, Arpan ke tukde me driver nahi   ->  aas-paas ke tukde bhi (scatter-gather)
+ 7   14.9 pe accept, server pe 16 pe             ->  ghadi server ki; 7b sabko bajao ya 20-25 sec
+ 8   Raju Janpath me, purana naam pada           ->  sach wahi jo GPS ne abhi bheja
+ 9   register driver ke naam se                  ->  jagah ke hisaab se (geohash Redis set), dabba badla to hatao + daalo
+10   10 lakh phone "Raju kahan?"                 ->  push, WebSocket
+11   Arpan server 12 pe, Raju 57 pe              ->  pub/sub
+12   250 dikha, aakhir me 500 kate               ->  jo dikhaya wahi (upfront fare)
+13   wallet me 40, gateway chup                  ->  poora kaato; ride id key; 30-55 sec phir GPay / cash; PAYMENT_PENDING
+14   Raju ka phone band, naksha pe gayab         ->  location timeout
+15   Car A Arpan se 2 km, Ravi se 1 km           ->  sab saath milao, kul doori kam (batch matching, 15-20 sec window)
+15c  Arpan baar-baar peeche                      ->  aging, agli gaadi usi ki
+16   signal pe khada, har 4 sec wahi jagah       ->  15-20 sec (adaptive ping); 16b-d chhat pe / nadi paar / tunnel / basement
+```
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
@@ -15,6 +43,11 @@ NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi · bhe
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
 ```
+
+**FR / NFR -> kadam (Arpan: "theek lag raha, achha lag raha"):** driver ki jagah = 1, 2, 2b, 8, 14, 16 · paas ka khaali driver =
+3, 4, 4b, 6c, 9 · ek driver ek sawari = 5, 7 · Raju live = 10, 11, 16b-16d · kiraya pehle = 12 · trip khatam pe pay = 13 ·
+bheed me kiraya = 6 · sabki milake doori kam = 15, 15b · der se ruka peeche na rahe = 15c, 15d · NFR turant mile = 3, 4, 7b ·
+ek driver do jagah nahi = 5, 7 · concert me bhi chale = 6, 6b · ride ke beech driver gaya = 14, 16d.
 
 &nbsp;
 
