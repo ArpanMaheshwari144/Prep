@@ -358,8 +358,9 @@ flowchart TB
 **URL 10 / Twitter 19 se aaya:** teen copy A, B, C, do me likho do se padho (quorum, R + W > N). Yahan sirf naya.
 
 Diwali sale aa gayi. Mausi ne bahut saara maal mangwa liya; sab ek hi godown me padta to ek saath sabki bheed lag
-jaati. Isliye godown ko 10 hisson (almari) me tod diya, URL / cache wali ring pe. Har grahak ka cart 3 almari pe copy,
-taaki ek gire to bhi cart na khoye. Phir Black Friday / Diwali sale, raat 12 baje. Rahul ka cart teen almari A, B, C pe: N = 3, W = 2,
+jaati. Isliye godown ko 10 hisson (almari) me tod diya, URL / cache wali ring pe. Maal ke saath grahakon ki cart-list
+bhi in almari pe baant di; har grahak ka cart 3 almari pe copy, taaki ek gire to bhi cart na khoye. Usi sale ki raat
+12 baje Rahul (naya grahak, pehli baar app pe) aaya. Rahul ka cart teen almari A, B, C pe: N = 3, W = 2,
 R = 2, 2 + 2 > 3 to likhne aur padhne wali almari me kam se kam ek common. Rahul ne iPhone pe "Add to Cart" dabaya,
 usi waqt B aur C dono band. Sirf A chalu, 2 ki "haan" milegi hi nahi. Har almari ki ek aur copy banana = kharcha aur
 sar-dard, upar se D, E, F khaali padi bekaar. Isliye B aur C gire to ring pe aage wali chalti almari D aur E pe likh
