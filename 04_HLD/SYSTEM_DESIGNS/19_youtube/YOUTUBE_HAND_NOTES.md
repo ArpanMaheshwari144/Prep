@@ -4,6 +4,28 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan YouTuber hai. Goa trip ka vlog: 1 ghante ki video, 2 GB (4K me 40 GB tak). Lakhon log dekhenge, viral bhi ho sakta.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+creator  --presigned URL-->  S3 (file seedha locker me, server se nahi)  -->  20-25 worker tukde baant ke har quality
+                                                                              (chhoti quality pehle = jaldi live)
+dekhne wala  -->  manifest + CDN (Netflix jaisa) · garam video garam jagah, purani sasti jagah, trend pe wapas CDN
+view +1  -->  Kafka parchi, chhotu batch me jode · bot ke view gate pe hi rok
+nayi video  -->  Twitter wala fan-out, subscribers ko khabar · reels: agle kuch shuru ke tukde pehle se
+
+ 1   10 hazaar creator, video server me phansi   ->  seedha locker (S3, presigned URL)
+ 2   ek machine har quality, 3 ghante            ->  tukde baanto, chhoti quality pehle (parallel encoding)
+ 3   1 lakh view, ek row ke lock pe line         ->  +1 parchi pe, batch me jodo (Kafka, batch count)
+ 4   bot / phone se 10 lakh "view"               ->  gate pe rok, baar-baar to ban (rate limit, WAF)
+ 5   10 saal purani video bhi mehngi jagah       ->  garam garam jagah, thandi sasti (hot / cold storage)
+ 6   2010 ka gaana aaj trend pe                  ->  thodi der garam + CDN, phir wapas
+ 7   MrBeast ki video, crore subscriber          ->  fan-out + notification
+ 8   reels me har swipe pe spinner               ->  agle pehle se (pre-fetch)
+ 8b  mobile data, reels skip                     ->  net ke hisaab se quality (ABR)
+ 8c  har reel poori pehle se, 29 sec bekaar      ->  sirf shuru ke tukde pehle se
+```
+
+**Arpan (FR / NFR pe, 18-Nov):** nakli view FR nahi, NFR hai (FR 6 hata, NFR 4 me). "Bina buffering" jhootha vaada, Netflix jaisa: net ke hisaab se buffering hogi.
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 Pehli line interviewer ko: "Main poora YouTube (sign-up se logout tak) nahi, ye cheezein solve karunga: video upload,
 jaldi live, dekhna, view count, nayi video ki khabar, aur reels / shorts ka swipe. Theek lage to aage badhein." Neeche har line ke saath kadam
@@ -15,15 +37,15 @@ FR      1  video upload (badi file, 2-40 GB)                                  ->
         3  har phone / net pe dekhna (manifest + CDN, Netflix jaisa)             -> Netflix kadam 1-4 + P3
         4  har video ka view count                                              -> kadam 3
         5  subscribe kiya to nayi video ki khabar (MrBeast)                      -> kadam 7
-        6  nakli view ginti me na aayein                                       -> kadam 4
-        7  reels / shorts: swipe karte hi agli chale                            -> kadam 8
+        6  reels / shorts: swipe karte hi agli chale                            -> kadam 8
 
 NFR     1  upload kabhi app ko na roke (badi file app server se na guzre)       -> kadam 1
         2  video jaldi live (pehle chhoti quality)                              -> kadam 2
         3  viral pe bhi ginti DB na giraye (count thoda der se chalega)         -> kadam 3
-        4  fake view na gine                                                    -> kadam 4
+        4  nakli / bot ke view ginti me na aayein                               -> kadam 4
         5  storage sasta (purani video sasti jagah)                             -> kadam 5
-        6  achanak trend pe bhi bina buffering                                  -> kadam 6
+        6  purani video achanak trend pe aaye to bhi aaram se chale (garam jagah + CDN);
+           net ke hisaab se quality, kamzor net pe thodi buffering hogi hi      -> kadam 6
         7  swipe pe spinner nahi, par skip hui reel pe data / battery bekaar na jaaye -> kadam 8
 
 Numbers lakhon video roz, ek video 2-40 GB -> app server se nahi guzar sakti
