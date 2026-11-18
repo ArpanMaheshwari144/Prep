@@ -9,6 +9,34 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ---
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Arpan  --WebSocket-->  chat server S1  -->  DB (message store, pehle likho)  -->  outbox + chhotu
+                           |                                                       |
+          Ravi kis server pe? (session map, Redis)        Redis pub/sub -> Ravi ka server S7 --WebSocket--> Ravi
+          number server lagaye (seq / Snowflake), phone us kram me lagaye · photo / video S3 link · online = heartbeat
+
+ 1   phone har second "kuch aaya?"               ->  WebSocket
+ 2   Ravi ka phone band, 2 ghante                ->  apne paas rakho (message store)
+ 3   100 server, Ravi kis pe                     ->  session map (Redis)
+ 4   har server baaki 99 se taar jode?           ->  chhota ladka address le ke jaaye (Redis pub/sub)
+ 5   group ke 500, ek message 500 kaam           ->  ek baar DB, log khud aake sunein
+ 5b  DB me likha, pub/sub se pehle server gira   ->  outbox + relay
+ 5c-e  late chhotu do baar bheje, kram ulta      ->  outbox status, dedup, sequence + phone sort
+ 6   lift me jawab kho gaya, "hi hi"             ->  clientMsgId, same aaye to mana
+ 6b  "mil gaya" kho gaya, dobara aaya            ->  phone number dekhe (idempotency)
+ 7   "kahan?" pehle dikha                        ->  server ka number (sequence)
+ 7b  #980 atka, #981 pehle                       ->  server record, jo nahi gaya do; phone sort (store-and-forward)
+ 8   "12 naye message"                           ->  kul - padhe (read count)
+ 9   kisne padha, 4.9 lakh entry                 ->  watermark
+10   200 MB video, taar jam                      ->  S3 link
+11   phone band, 2 ghante se "online"            ->  heartbeat, TTL
+11b  Ravi online, khabar 500 contacts ko?        ->  jo chat khole usi ko (presence pub/sub)
+12   S1 dheema, "nahi, parso" pehle              ->  server ka number, phone sort
+12b  number kaun lagaye                          ->  Snowflake ID
+12c  group ke 500 dhoondho?                      ->  har server ko ek baar (per-server fan-out)
+```
+
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
@@ -18,6 +46,10 @@ NFR     message turant (1 sec se kam) · kabhi na khoye · ek chat me kram na bi
 Numbers 50 crore user, ek waqt ~10 crore online = 10 crore khule taar -> ~100 chat server
         roz ~400 crore message = ~46,000 likhai / sec, ek message ~300 byte -> roz ~1.2 TB
 ```
+
+**FR / NFR -> kadam (Arpan: "badhiya likha hai, aise hi rehne do"):** 1-to-1 + group = 1, 3, 4, 5, 12c · offline ho to baad me
+mile = 2, 7b · tick + unread = 8, 9 · photo / video = 10 · online / last seen = 11, 11b · NFR turant = 1, 3, 4 · kabhi na khoye =
+2, 5b · kram na bigde = 5e, 7, 7b, 12, 12b · do baar na dikhe = 5c, 5d, 6, 6b.
 
 ---
 
