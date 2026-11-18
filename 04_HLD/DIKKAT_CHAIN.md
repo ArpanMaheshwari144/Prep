@@ -580,6 +580,7 @@ Yahi dikkat yahan bhi:
   File upload   5   folder rename = 500 copy + 500 delete          ->  tree jaisa, sirf parent badlo (parent_id)
   File upload   9   S3 bill double, ek hi file lakhon baar         ->  file ke maal se number, register me milao (content hash, dedup)
   File upload   9b  Priya wahi meme daale, list me dikhe nahi      ->  uske naam row, purani file pe bhejo (reference, cross-user dedup)
+  File upload   9c  Ravi ne delete kiya, Priya ka download toota   ->  sirf Ravi ki row, aakhri wala hataye tab S3 se (reference counting)
   Docs          1   Save pe poora text, Arpan ki line gayab        ->  poora text nahi, operation bhejo (insert / delete)
   Chat          8   "12 naye message" kaise dikhe                  ->  ek ginti, itne padh liye (read count, kul - padhe)
   Chat          9   kisne padha, 4.9 lakh entry                    ->  978 matlab 975 padha, number ghata lo (watermark)

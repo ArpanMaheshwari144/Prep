@@ -29,6 +29,7 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
  8b  bahar wala scanner 1 ghante se chup           ->  ruk ke dobara, phir insaan ko alert (retry + backoff, DLQ)
  9   S3 bill double, ek hi file lakhon baar        ->  file ke maal se number, register me milao, pehle se to upload nahi (content hash, dedup)
  9b  Priya wahi meme daale, list me dikhe hi nahi  ->  Priya ka upload mat roko, uske naam row, purani file pe bhejo (reference, cross-user dedup)
+ 9c  Ravi ne delete kiya, Priya ka download toota  ->  sirf Ravi ki row hatao, aakhri wala hataye tab S3 se (reference counting)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -119,6 +120,10 @@ Technical me: "file ke content se number" = content hash (jaise SHA-256), "mote 
 **Maan lo Priya wahi viral meme upload karti hai jo pehle se lakhon baar aa chuka. Number register me mil gaya, upload ruk gaya, par Priya ki list me meme dikh hi nahi raha, kyunki uske naam pe kuch likha hi nahi gaya.**
 Arpan: Priya aur Ravi same meme upload kar rahe, to iske liye sochna padega. Priya ka upload hum rok nahi sakte, kyunki Ravi ne apna kiya, Priya ne apna. Agar app me login hi na hota to dekhte; par yahan login hai, Priya ki alag userId, Ravi ki alag. Hash same ho sakta hai kyunki meme same hai, par userId alag. Pehle Priya ke hisaab me dekhenge: kya Priya ne ye file kabhi upload ki thi? Nahi. Phir poore DB me dekha: ye file pehle se uploaded hai. To Priya ko bolo ki file upload ho gayi, aur jab Priya kabhi download kare to usi meme pe redirect kar denge, meme download ho jaayega, dikkat hi nahi. S3 andar duplicate ka kya karta, wo S3 jaane.
 Technical me: "Priya ka upload mat roko, pehle uske hisaab me dekho" = hash + userId pe check, "poore DB me hai to usi pe redirect" = Priya ke naam nayi row jo purani S3 file ki taraf ishaara kare (reference / pointer, ek file kai maalik), alag users ke beech = cross-user dedup.
+
+**Maan lo Ravi ne wo meme delete kiya, peeche ki safai ne S3 se file hata di. Agle din Priya ne download dabaya, uska redirect usi file pe tha, error aaya.**
+Arpan: Har user ki alag copy rakh sakte, jagah nahi gherti, ek chhoti copy: ye Ravi ka hai, ye Priya ka. Ravi ne delete kiya, par dekh lo aur kisi user ka bhi hai kya; Priya ka nikla. To Ravi ke hisaab se hata denge, Priya ka S3 me pada rahega; jab Priya delete karegi tab S3 se bhi gayab. Dobara upload nahi karenge; server userId se Priya ka alag, Ravi ka alag rakhta. Ravi ne hataya to Ravi ki userId se khatam, Priya ki userId me hai to Priya ke paas jaayega, Ravi se lena-dena nahi.
+Technical me: "ye Ravi ka, ye Priya ka" = har user ki apni row (reference), "aur kisi ka bhi hai to mat hatao, aakhri wala hataye tab S3 se" = reference counting (ginti 0 tabhi S3 se safai).
 
 &nbsp;
 

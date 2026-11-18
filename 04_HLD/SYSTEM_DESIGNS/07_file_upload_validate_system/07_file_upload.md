@@ -52,6 +52,7 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
  8b  bahar wala scanner 1 ghante se chup           ->  ruk ke dobara, phir insaan ko alert (retry + backoff, DLQ)
  9   S3 bill double, ek hi file lakhon baar        ->  file ke maal se number, register me milao, pehle se to upload nahi (content hash, dedup)
  9b  Priya wahi meme daale, list me dikhe hi nahi  ->  Priya ka upload mat roko, uske naam row, purani file pe bhejo (reference, cross-user dedup)
+ 9c  Ravi ne delete kiya, Priya ka download toota  ->  sirf Ravi ki row hatao, aakhri wala hataye tab S3 se (reference counting)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -378,6 +379,11 @@ alag user hai (alag login, alag userId), uska upload mana nahi. Pehle uske hisaa
 Phir poore DB me: file pehle se hai. To Priya ko "upload ho gaya" dikhao, aur download pe usi purani meme pe bhej do.
 **Asli naam:** hash + userId pe check, Priya ke naam nayi row jo purani S3 file ki taraf ishaara kare = reference /
 pointer (ek file, kai maalik), cross-user dedup.
+
+**Maan lo Ravi ne meme delete kiya, safai ne S3 se file hata di, Priya ka download toota:** har user ki apni row (ye Ravi
+ka, ye Priya ka). Ravi delete kare to sirf Ravi ki row jaaye; pehle dekho file aur kisi ke naam bhi hai? Priya ke naam hai
+to file rahe. Aakhri wala (Priya) bhi delete kare tab S3 se.
+**Asli naam:** reference counting (kitne user is file ko pakde hain; ginti 0 tabhi S3 se safai).
 
 ---
 
