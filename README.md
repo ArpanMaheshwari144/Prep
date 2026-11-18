@@ -114,7 +114,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 - ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — dikkat ke 21 parivaar: dikkat -> humne kya socha -> wahi dikkat kis-kis design me (23 design, har line ek dikkat -> ek hal)
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
-  - **FR / NFR + Ek nazar (18-Nov ginti):** DONE = 01 URL, 02 rate limiter, 07 file upload, 08 news, 09 BMS, 20 PUBG · AADHA = 19 YouTube, 22 Train (FR / NFR -> kadam hai, Ek nazar baaki), 23 Yelp (Ek nazar hai, FR / NFR baaki) · BAAKI 14 = 03, 04, 05, 06, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21 (FR / NFR likha hai par kadam se juda nahi, Ek nazar nahi). Roz 2-3.
+  - **FR / NFR + Ek nazar (18-Nov ginti):** DONE 21 = 01-21 (har FR / NFR line kadam se judi, upar Ek nazar) · BAAKI = 22 Train (Ek nazar), 23 Yelp (FR / NFR) · phir alag aankh se poore folder ka audit.
   - [00_IMG](04_HLD/SYSTEM_DESIGNS/00_IMG) — jo mermaid se nahi banta (cache ki ring, Uber ka naksha + gaadi, PUBG ke dabbe + gudde), saari tasveer ek folder me
   - [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) (round ho gaya: Ek nazar dhaancha + FR / NFR design se, saancha baaki design ke liye)
   - [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) (round ho gaya: kadam 6 = dono khule, gateway pe kachchi ginti, sirf shaq wale ka OTP band)
