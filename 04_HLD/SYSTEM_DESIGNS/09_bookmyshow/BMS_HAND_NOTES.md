@@ -87,7 +87,7 @@ Technical me: "token diya, andar aa gaya, authenticate ho chuka" = token sirf ga
 Doosri kahani (17-Nov BMS round grill): Isme Arpan ki galti nahi. Koi har baar 9:59 pe seat chune to use 1 minute hi milega, ye galat baat. To andar aake seat chuni to thoda grace period de do, 4-5 minute, taaki pay kar le. 9ve minute pe chuni to 9 + 5 = 14 minute tak; usme pay ho gaya to theek, nahi to bahar.
 Technical me: "seat chuni to grace" = hold ki apni umar (hold_until), token khatam hone se nahi kat-ti.
 
-**6. Arpan ne 4:30 pe Pay dabaya, PSP dheema. 5:00 pe parchi ki umar khatam, 5:10 pe Priya D5 maang rahi, PSP ka jawab 5:20 pe (Pay ke 50 second baad, 6c ki 30-55 sec ghadi ke andar) "paisa kat gaya".**
+**6. Arpan ne 4:30 pe Pay dabaya, PSP dheema. 5:00 pe parchi ki umar khatam, 5:10 pe Priya D5 maang rahi, PSP ka jawab 5:20 pe (Pay ke 50 second baad, 6b ki 30-55 sec ghadi ke andar) "paisa kat gaya".**
 
 **6a. Seat kiski?**
 Arpan: Time ke andar Pay dabaya to seat Arpan ki, Priya ko nahi; humne vaada kar diya, warna consumer court ka case. PSP dheema hai to galti Arpan ki nahi, hamari taraf ki hai. To parchi pe status likh lo: pay chal raha hai, PSP ka jawab baaki. Jab tak ye likha hai, umar badha do, seat kisi aur ko dikhe hi nahi. Ya query me hi daal do.
@@ -104,7 +104,7 @@ Technical me: ghadi = client timeout ~60 sec (30-55 + buffer), "process ho raha"
 Hum perfect system ke peeche nahi bhaag rahe. PSP hamare bas me nahi, wo dheema hai to na uski galti na hamari. Perfect consistency maango to ticket bechoge kaise; dikkat aayegi, bas user se saaf baat karo aur paisa wapas karo.
 Technical me: "1-2 baar ping" = status check retry (timeout), "payment FAILED dikha do, seat mat chhodo" = payment attempt FAILED, booking wapas HELD (hold_until tak, dobara pay), umar khatam to EXPIRED (paisa kata nikla to refund), "doosra ladka / naye log doosre PSP pe" = circuit breaker -> PSP-2, "id hamare paas" = payment id (idempotency key), "baad me kata nikla to wapas" = reconciliation job + refund.
 
-**6c. Gola ghoomta raha, Arpan ne thak ke back daba diya, booking FAILED, seat chhod di. Thodi der baad Razorpay ne paisa kaat liya: paisa gaya, seat bhi nahi. Ab?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
+**6c. 6b wala gola ghoom hi raha tha, popup aane se pehle hi Arpan ne thak ke back daba diya, app band. Thodi der baad Razorpay ne paisa kaat liya. Arpan ko lag raha: paisa gaya, seat bhi gayi. Ab?** (Myntra wala hi jawab; BookMyShow ka bhi apna PSP nahi, Razorpay hi hai)
 Arpan: Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi. Aur seat mat chhodo, wo parchi ki bachi umar tak Arpan ki HELD rahe (6b).
 
 Haan, onboard karte waqt Razorpay se SLA zaroor lo: unka system kitna chalega (uptime, jaise 99.9%) aur down hua to kitni der me khabar + theek karenge. Ye unke haath me hai, isliye likh ke dete hain. Bank kitni der lega, wo nahi.

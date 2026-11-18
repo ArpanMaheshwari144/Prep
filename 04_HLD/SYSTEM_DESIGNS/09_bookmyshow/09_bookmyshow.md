@@ -244,7 +244,7 @@ flowchart TB
 ### 6a. Seat kiski?
 
 Maine 4:30 pe Pay dabaya, PSP dheema. 5:00 pe parchi ki umar khatam, 5:10 pe Priya D5 maang rahi, aur PSP ka jawab
-5:20 pe aata hai (Pay ke 50 second baad, 6c ki 30-55 sec ghadi ke andar) "paisa kat gaya". Time ke andar Pay dabaya to seat meri, Priya ko nahi; humne vaada kar diya, warna
+5:20 pe aata hai (Pay ke 50 second baad, 6b ki 30-55 sec ghadi ke andar) "paisa kat gaya". Time ke andar Pay dabaya to seat meri, Priya ko nahi; humne vaada kar diya, warna
 consumer court ka case. PSP dheema hai to galti meri nahi, hamari taraf ki hai. To parchi pe status likh lo: pay chal
 raha hai, PSP ka jawab baaki. Jab tak ye likha hai, umar badha do, seat kisi aur ko dikhe hi nahi. Ya query me hi daal
 do.
@@ -305,10 +305,10 @@ flowchart TB
     style SL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-### 6c. Back dabaya, seat chhodi, phir paisa kata: ab?
+### 6c. Back dabaya, app band, phir paisa kata: ab?
 
-Gola ghoomta raha, maine thak ke back daba diya, booking FAILED, seat chhod di. Thodi der baad Razorpay ne paisa kaat
-liya: paisa gaya, seat bhi nahi.
+6b wala gola ghoom hi raha tha, popup aane se pehle hi maine thak ke back daba diya, app band. Thodi der baad Razorpay ne
+paisa kaat liya. Mujhe lag raha: paisa gaya, seat bhi gayi.
 
 Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok
 sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske

@@ -241,7 +241,8 @@ flowchart TB
 
 ## 6. Priya viral, 10,000 log ek saath DB pe (ek chhotu bhejo)
 
-Priya aam user thi, uski parchi cache me hai hi nahi. Raat 9 baje video viral, ek second me 10,000 log, sabko miss,
+Kuch hafte baad Priya ka craze utar gaya, log uska profile kam kholne lage, aur kadam 2 wale LRU ne uski parchi
+dabbe se nikaal di. Aaj raat 9 baje uska naya video phir viral, ek second me 10,000 log, sabko miss,
 sab ek saath DB pe, Priya ki ek hi query 10,000 baar. 10,000 log ek saath DB jaayenge to DB maar dega, pehle unhe
 roko. Main chupchaap ek chhotu bhejunga: chhotu bhai, jaldi se DB me jaa, Priya ki parchi hot hai, le aa. Parchi pe
 likh lunga aur sabko yahin se bhaga dunga, mote register ki taraf koi nahi jaayega.
