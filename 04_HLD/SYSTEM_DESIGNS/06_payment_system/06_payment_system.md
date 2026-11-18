@@ -221,7 +221,8 @@ flowchart TB
 
 ## 6. Dukaan ka paisa ICICI me, wahan FAILED (sab ulta)
 
-Dukaan ke 500 uske wallet se ICICI me nikalne hain. ICICI hamara DB nahi, to ek transaction me nahi hoga. Wallet se
+Arpan ke 500 seedha dukaan ke bank me nahi jaate: app ka apna wallet hai, har dukaan ka bhi; din bhar ke paise
+dukaan ke wallet me jama, shaam ko dukaan wala ek baar me bank me nikaalta. Aaj dukaan ke 500 uske wallet se ICICI me nikalne hain. ICICI hamara DB nahi, to ek transaction me nahi hoga. Wallet se
 kaat liye, aur ICICI me jodte waqt PSP bola "FAILED". To ulta kar do, sab ulta kar do, sab wapas paise bhej do. Maan
 le main HDFC bank hoon, bagal wale bank ko bhejne gaya, usne mana kar diya: "nahi bhai, bank band ho gaya, kal aana,
 abhi server bekaar hai". Fail ho gaya, baatcheet khatam. To main apne register me sab kaat dunga: maine yahan se paise
