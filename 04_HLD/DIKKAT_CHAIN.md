@@ -360,6 +360,8 @@ Yahi dikkat yahan bhi:
   E-commerce    8b  PSP 50 sec chup, kata pata nahi                ->  hamari ghadi 30-50 sec, phir "time out, kata to wapas", dobara pay doosre PSP pe; kata nikla to REFUND_PENDING (timeout, PSP failover, refund job)
   E-commerce    8e  payment fail, cart ka kya                      ->  cart khaali nahi (sirf SUCCESS pe), dobara pay: doosra PSP / net banking / COD (payment fallback)
   E-commerce    8c  PSP ka "kata" kaise turant pata chale          ->  paisa katte hi chhota event, S3 jaisa; badi sale pe 3-4 company (webhook, backup PSP)
+  E-commerce    9   sale pe cart ki almari B, C giri, Add to Cart  ->  ring pe aage wali chalti almari pe likho (sloppy quorum, Dynamo)
+  E-commerce    9b  B, C wapas, iPhone D, E pe                    ->  D ka chhotu lauta de + sync job (hinted handoff, anti-entropy)
 
 Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / REFUND_PENDING + refund job / webhook redelivery
 Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker. PSP pe hamari ghadi 30-55 sec + chhotu poochta (status poll) + paisa katte hi event (webhook) + der se kata to DB me REFUND, raat ki job lautaye, charon me (BMS 6c, 6e); SUCCESS + parchi ek saath (outbox, BMS 6d); onboard pe SLA sirf uptime ka.

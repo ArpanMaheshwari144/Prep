@@ -35,6 +35,8 @@ Ravi  -->  LB  -->  normal dukaan (aata, daal)          sale ki alag dukaan (ghe
  7e  ghadi khatam ke 1 sec baad Pay              ->  1-2 sec grace, andar dabaya to PSP hamari zimmedari
  8   net gaya / PSP chup                         ->  PAYMENT_PENDING + status job, refund
  8b-e  PSP 50 sec chup, kata kaise pata, success do baar, fail pe cart  ->  ghadi, webhook, payment id, cart wahi
+ 9   sale pe cart ki almari B, C giri           ->  ring pe aage wali chalti almari pe likho (sloppy quorum)
+ 9b  B, C wapas, iPhone D, E pe                  ->  D ka chhotu lauta de + sync job (hinted handoff, anti-entropy)
 ```
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
@@ -347,6 +349,50 @@ flowchart TB
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style BM fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+---
+
+## 9. Sale pe Rahul ke cart ki do almari giri (aage wali chalti almari pe likh do)
+
+**URL 10 / Twitter 19 se aaya:** teen copy A, B, C, do me likho do se padho (quorum, R + W > N). Yahan sirf naya.
+
+Black Friday / Diwali sale, raat 12 baje. Ring pe 10 almari, Rahul ka cart teen almari A, B, C pe: N = 3, W = 2,
+R = 2, 2 + 2 > 3 to likhne aur padhne wali almari me kam se kam ek common. Rahul ne iPhone pe "Add to Cart" dabaya,
+usi waqt B aur C dono band. Sirf A chalu, 2 ki "haan" milegi hi nahi. Har almari ki ek aur copy banana = kharcha aur
+sar-dard, upar se D, E, F khaali padi bekaar. Isliye B aur C gire to ring pe aage wali chalti almari D aur E pe likh
+do; W = 2 poora, "Add to Cart" fail nahi.
+
+**Asli naam:** sloppy quorum (Amazon Dynamo, leaderless replication: client khud kai copy pe likhe / padhe, jo naya wo lo).
+
+**9b. Aadhe ghante baad B, C wapas, par iPhone D, E pe:** B, C ko pata nahi iPhone juda, agla padhna unse hua to iPhone
+gayab. B, C ko kahani se hatana chalega nahi (kal D, E gire to wahi dikkat). Isliye D ka chhotu dekhta rahe; B, C wapas
+aate hi bole "tum gire the, D ne sambhala, ye Rahul ka iPhone, rakh lo", phir D apni copy chhod de. Upar se ek job
+sab almari milaati rahe, taaki jo parchi kho jaaye wo bhi pakdi jaaye.
+
+**Asli naam:** hinted handoff (D ke paas maal + hint ki ye B, C ka), anti-entropy / read repair (peeche milaan).
+
+**Padhai (reel, R aur W ka dial):** N = 10 pe W1 R1 = tez par purana mil sakta; W6 R5 = 11 > 10 pakka, par 1 hi almari
+gir sakti. Balance = R aur W dono N ke aadhe ke paas. Yahi dial consistency aur availability ke beech chunne deta.
+
+```mermaid
+flowchart LR
+    R(["Rahul: Add to Cart"]):::pill
+    subgraph RING["Ring pe almari (Rahul ka cart = A, B, C)"]
+        A[("A chalu")]:::good
+        B[("B: sale pe band,<br/>aadhe ghante baad wapas")]:::bad
+        C[("C band")]:::bad
+        D[("D chalu<br/>parchi: ye B ka")]:::card
+    end
+    R -- "likho (W = 2)" --> A
+    R -- "B gira, aage wali pe" --> D
+    D -. "B wapas aaya: chhotu<br/>Rahul ka iPhone de aaya" .-> B
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RING fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---

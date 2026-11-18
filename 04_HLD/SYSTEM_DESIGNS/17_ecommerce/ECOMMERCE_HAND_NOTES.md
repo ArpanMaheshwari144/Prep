@@ -30,6 +30,8 @@ Ravi  -->  LB  -->  normal dukaan (aata, daal)          sale ki alag dukaan (ghe
  7e  ghadi khatam ke 1 sec baad Pay              ->  1-2 sec grace, andar dabaya to PSP hamari zimmedari
  8   net gaya / PSP chup                         ->  PAYMENT_PENDING + status job, refund
  8b-e  PSP 50 sec chup, kata kaise pata, success do baar, fail pe cart  ->  ghadi, webhook, payment id, cart wahi
+ 9   sale pe cart ki almari B, C giri           ->  ring pe aage wali chalti almari pe likho (sloppy quorum)
+ 9b  B, C wapas, iPhone D, E pe                  ->  D ka chhotu lauta de + sync job (hinted handoff, anti-entropy)
 ```
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
@@ -135,6 +137,30 @@ Technical me: "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack 
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**
 Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Payment id hi key: pehli baar aaya to order pakka, doosri baar wahi id dekh ke chhod do. Do order nahi, ginti do baar nahi kategi.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
+
+**URL 10 / Twitter 19 se aaya:** teen copy A, B, C, do me likho do se padho (quorum, R + W > N). Neeche sirf naya. (Reel se: Amazon Dynamo, leader hi nahi.)
+
+```
+ ring pe 10 almari, Rahul ka cart = A, B, C      N = 3 · W = 2 · R = 2 (2 + 2 > 3)
+
+ 9   sale, raat 12 baje, B aur C band:
+        A [chalu]   B [X]   C [X]   D [chalu]   E [chalu]  ...
+        likhna:  A + D  (D = aage wali chalti almari, parchi: "ye B ka hai")  ->  W = 2 poora, Add to Cart chala
+
+ 9b  aadhe ghante baad B, C wapas:
+        D ka chhotu  --"tum gire the, ye Rahul ka iPhone"-->  B, C       phir D apni parchi wali copy chhod de
+        upar se ek job sab almari milaati rahe (jo parchi kho gayi wo bhi pakdi jaaye)
+```
+
+**9. Black Friday / Diwali sale, raat 12 baje. Ring pe 10 almari, Rahul ka cart teen almari A, B, C pe (N = 3, W = 2, R = 2, 2 + 2 > 3). Rahul ne iPhone pe "Add to Cart" dabaya, usi waqt B aur C dono band (ek ki bijli gayi, ek ka net). Sirf A chalu, 2 ki "haan" milegi hi nahi, D se J mast chal rahi par wo Rahul ki almari nahi. Kuch na kiya to "Add to Cart fail".**
+Arpan: A, B, C teen hamare paas hain, to do me likho, do se hi poochho: kuch bhi likha to main 2 me likhunga, A aur B me; padhte waqt B aur C se poochunga, hamesha 2 pe, koi na koi common. Tune B aur C dono maar di, A akeli reh gayi; Rahul ki ek almari haan bol sakti, par condition poori nahi ho rahi. Ek raasta: B aur C ki ek copy bana do, A ki copy, B ki copy, sabki copy, to koi mar bhi jaaye to peeche chalta rahe. Par copy banane me nuksaan: apni sar-dardi aur badha di, aur D, E, F, G, H jo khaali padi hain unka use hi nahi kar rahe. To aisa karo: A, B, C hai aur D, E khaali padi mast chal rahi, to B aur C pe bhi rakho aur D, E pe bhi rakh lo. B aur C gire to D aur E apna chalte rahenge, W + R > N wali condition poori ho rahi.
+Technical me: "B, C gire to ring pe aage wali chalti almari D, E pe likh do" = sloppy quorum (Amazon Dynamo, leaderless replication); "har almari ki ek aur copy" = replication factor badhana (kharcha zyada, khaali almari bekaar).
+
+**9b. Aadhe ghante baad B aur C wapas chalu. Rahul ka naya iPhone wala cart D aur E pe pada hai (jo Rahul ki almari nahi), B aur C ke paas purana cart, unhe pata hi nahi iPhone juda. Agla padhna R = 2 B aur C se hua to iPhone gayab.**
+Arpan: B aur C wapas aa gaye, par unhe pata nahi iPhone hai; iPhone D aur E pe hai, jo Rahul ki almari hai hi nahi. Isme do raaste. Ek: B aur C ko kahani se hata do, wapas aayenge to shuru se; aage D aur E hi poora karenge. Par phir sawaal: kal D aur E bhi gir gaye to? Isliye doosra: B C aur D E aapas me baat karein. Beech me ek chhotu laga denge: dekhega B aur C wapas aaye ya nahi; aa gaye to D ka chhotu B aur C ke paas jaayega, bolega "tum thodi der pehle gir gaye the, tumhara kaam D ne sambhal liya tha, ye Rahul hai, iska iPhone hai, ise tum dekh lo"; phir D apna aage kaam karega. Upar se ek job chal jaayegi jo sabko sync karti rahe, poora picture.
+Technical me: "D ka chhotu B, C ke wapas aate hi unhe Rahul ka iPhone de aaye" = hinted handoff (D ke paas maal + parchi / hint ki ye asal me B, C ka hai), "sabko sync karne wali job" = anti-entropy / read repair.
+
+**Padhai (reel se, R aur W ka dial):** N = 10 pe W1 R1 = bahut tez, par purana bhi mil sakta (1 + 1 < 10). W6 R5 = 11 > 10, pakka naya, par sirf 1 almari gir sakti, aur gire to likhna ruk jaata. Isliye balance tab jab R aur W dono N ke aadhe ke paas. Yahi dial consistency aur availability ke beech khud chunne deta (C side ya A side).
 
 &nbsp;
 
