@@ -18,6 +18,8 @@ Ravi  -->  server  -->  Elasticsearch (search ki copy: aas-paas + text + sort)  
  4   300 m wali 4.6 star 15ve number pe          ->  sort user chune, server saare pe sort kare, phone ko pehle 10 (server-side sort + pagination)
 ```
 
+**Arpan ka nichod:** "Yelp = Uber aur search ka mixture. Aas-paas ka salon / restaurant dhoondho, rating padho, wahan chale jao ya contact karo. Uber me driver chalta, yahan dukaan khadi rehti; isliye bas aas-paas + search."
+
 **FR / NFR:** round me Arpan design dekh ke nikalega (abhi tay nahi).
 **Numbers (Arpan):** Zomato jaisa app India ke shehron me chalta, worldwide nahi. Ek area me 5 lakh log ek saath "pizza" faltu number hai; 10-20 hazaar maano, itna server sambhal leta, iske liye alag hal nahi chahiye.
 
