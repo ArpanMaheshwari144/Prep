@@ -59,7 +59,7 @@ Technical me: "seat booked, wahi baithega" = offset (bookmark), "line dobara shu
 Arpan: Bheed bahut hai, wo akela admin nahi sambhal pa raha, to inke liye aur gate khade karo. Har ek ke andar apni line. Yahi Kafka karta hai: broker, partition, aur unke andar line. Kaun kis gate pe jaaye, wahan hash aa gaya.
 Technical me: "aur gate" = partition, "har gate ke andar apni line" = kram sirf ek partition ke andar, "kaun kis gate pe, hash" = key ka hash se partition.
 
-**Maan lo Order Service order #A7 ke "paid" aur "shipped" koi bhi khaali partition me daal deti: paid partition 2 me, shipped partition 5 me. Partition 5 ka consumer tez, shipped pehle chal gaya.**
+**Maan lo bahar ka ticket counter (Order Service) har order ki do khabar bhejta hai, pehle "paid" phir "shipped". Order #A7 ke dono wo koi bhi khaali partition me daal deta: paid partition 2 me, shipped partition 5 me. Partition 5 ka consumer tez, shipped pehle chal gaya.**
 Arpan: Alag-alag nahi bhej sakte. Key ke zariye ek hi partition me laayenge: A7 ki saari cheez ek partition me, A8 ki ek me. Main Kafka hoon: paid is line me ghusa, shipped us line me, shipped aage nikal gaya, paid peeche reh gaya, dikkat. Isliye ek key, ek tukda: A7, phir A8, phir A9. Tukde ke andar Kafka line follow karta hi hai: pehle paid phir shipped.
 Technical me: "key ke zariye ek partition" = partition key (message key = order id), "tukde ke andar line" = kram sirf ek partition ke andar.
 
@@ -99,7 +99,7 @@ Technical me: "line se hata" = DLQ (alag line, baaki line chale), "bouncer gate 
 
 **Maan lo Arpan ki "pay" khabar DLQ me gayi, peeche ki "cancel" chal gayi, kram toota.**
 Arpan: Cinema hall ka ticket checker: 3 logon ka group aaya (order, pay, cancel). Ek gadbad nikla to use jaane nahi dunga. Ya to teeno mat jao, ya pehla (order) chala gaya to baaki do (pay, cancel) abhi mat jao; jab wo theek ho jaaye to pay aur cancel ek saath dobara jaayenge. Isse kram nahi tootega. Jaise ticket pe likha A1, A2, A3: A1 andar chala gaya, A2 ruk gaya, to A3 ko A2 ki seat pe nahi bhejunga. A2 jaayega to A3 jaayega, A2 cancel to A3 bhi ruka. Stadium me do saathi aaye, ek ki jeb me hathiyar nikla: dono bahar, ek nahi. Pehle PAY, phir CANCEL; PAY nahi hua to dono hi nahi, dono baad me line me.
-Technical me: "3 logon ka group" = ek user ki khabar (key = userId, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein. Kafka kram ek partition ke andar pakka deta hai; yahan kram humare consumer ne toda, jab pay ko DLQ bhej ke cancel pe aage badh gaya.
+Technical me: "3 logon ka group" = ek order ki khabar (key = order id, wahi 3b wali, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein. Kafka kram ek partition ke andar pakka deta hai; yahan kram humare consumer ne toda, jab pay ko DLQ bhej ke cancel pe aage badh gaya.
 
 **9. Andar ka SMS counter 10 minute ke liye band. Jo fan wahan pahunchta hai sab fail, sab alag line (DLQ) me ja rahe.**
 Arpan: Nahi, maan lo 10 minute kuch dikkat hai, wo 11ve minute khul sakta hai. Sab DLQ me nahi bhejunga. Pehle dekhunga ki kya hai, kya waqai wo band hai, main check karunga. Aur ek service nahi, bahut saari services hain. Agar wo waqai band hai to uska traffic kahin aur bhej dunga. Jaise aam road pe: mujhe kahin jaana hai, wo road band hai, to traffic divert kar do.

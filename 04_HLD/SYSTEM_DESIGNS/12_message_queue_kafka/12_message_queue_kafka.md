@@ -128,9 +128,9 @@ Bheed bahut hai, akela admin nahi sambhal pa raha. To inke liye aur gate khade k
 partition, aur unke andar line. Kaun kis gate pe jaaye, wahan hash aa gaya.
 
 **Asli naam:** aur gate = partition (yahan 30, alag broker pe), har gate ke andar apni line = kram sirf ek partition
-ke andar, kaun kis gate pe, hash = key ka hash se partition (`hash(userId) % 30`), isliye key = userId (kram sirf ek partition ke andar pakka hai, poore topic me nahi).
+ke andar, kaun kis gate pe, hash = key ka hash se partition (`hash(order id) % 30`), isliye key = order id (kram sirf ek partition ke andar pakka hai, poore topic me nahi).
 
-**Maan lo order #A7 ka "paid" partition 2 me, "shipped" partition 5 me, 5 wala tez, shipped pehle chal gaya:** alag
+**Maan lo bahar ka ticket counter (Order Service) order #A7 ki do khabar bhejta hai, "paid" partition 2 me, "shipped" partition 5 me, 5 wala tez, shipped pehle chal gaya:** alag
 mat bhejo, key se ek partition: A7 ki saari khabar ek line me, A8 ki ek me. Ek line ke andar kram pakka, pehle paid phir
 shipped.
 **Asli naam:** partition key (message key = order id), kram sirf ek partition ke andar.
@@ -320,7 +320,7 @@ karke dobara chalaye), bouncer gate pe hi rok de = galat khabar
 ko pehle hi rokna (validation: Order Service bhejne se pehle number aur format jaanch le).
 
 **Maan lo Arpan ki "pay" khabar DLQ me gayi, peeche ki "cancel" chal gayi, kram toota:** Cinema hall ka ticket checker: 3 logon ka group aaya (order, pay, cancel). Ek gadbad nikla to use jaane nahi dunga. Ya to teeno mat jao, ya pehla (order) chala gaya to baaki do (pay, cancel) abhi mat jao; jab wo theek ho jaaye to pay aur cancel ek saath dobara jaayenge. Isse kram nahi tootega. Jaise ticket pe likha A1, A2, A3: A1 andar chala gaya, A2 ruk gaya, to A3 ko A2 ki seat pe nahi bhejunga. A2 jaayega to A3 jaayega, A2 cancel to A3 bhi ruka. Stadium me do saathi aaye, ek ki jeb me hathiyar nikla: dono bahar, ek nahi. Pehle PAY, phir CANCEL; PAY nahi hua to dono hi nahi, dono baad me line me.
-**Asli naam:** "3 logon ka group" = ek user ki khabar (key = userId, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein. Kafka kram ek partition ke andar pakka deta hai; yahan kram humare consumer ne toda, jab pay ko DLQ bhej ke cancel pe aage badh gaya.
+**Asli naam:** "3 logon ka group" = ek order ki khabar (key = order id, wahi 3b wali, ek partition), "gadbad wala atka to baaki do bhi ruko" = us key ki aage ki khabar bhi park karo (DLQ + same key ki parking), theek hone pe kram se dobara; baaki users chalte rahein. Kafka kram ek partition ke andar pakka deta hai; yahan kram humare consumer ne toda, jab pay ko DLQ bhej ke cancel pe aage badh gaya.
 
 ```mermaid
 flowchart TB
