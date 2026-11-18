@@ -4,12 +4,42 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan ki app me har bande ka profile page hai (naam, photo, bio). Ravi mashhoor hai, uska profile din me lakhon log kholte hain. Data DB me hai, aur har baar server DB se padh ke laata hai.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Ravi  -->  server  -->  cache (Redis, RAM)  --miss-->  DB (asli sach)
+                          |
+            tukdon me (hash), ring pe (consistent hashing), garam key ki copy
+            bhara to LRU · naam badla to parchi kaato + sync job · bheed pe ek chhotu (single flight)
+
+ 1   DB 50 ms, profile hazaaron baar            ->  DB se pehle ek dabba (cache, Redis)
+ 2   dabba bhar gaya                            ->  purana, kam use wala nikaalo (LRU)
+ 3   1 TB ek machine me nahi                    ->  tod do, hash se baanto (sharding)
+ 4   11vi machine judi, har key ki jagah badli  ->  paas ka petrol pump (consistent hashing)
+ 4b-d  ring ek disha, sab dabbe barabar bharte, aur dabbe jodo (scale out)
+ 5   naam badla, cache me purana "Ravi"         ->  pehle DB, phir parchi kaato + retry; sync job (updated_at)
+ 5b-c  kuch second purana chalega (eventual consistency), TTL
+ 6   Priya viral, 10,000 miss, sab DB pe        ->  ek chhotu bhejo, baaki ruko (single flight)
+ 6b  bot nakli id maange                        ->  "nahi hai" bhi parchi pe (negative cache)
+ 6c  chhotu dheeme DB pe atka                   ->  padhne ki copy, dheemi to purana dikhao (read replica, serve stale)
+ 7   1 crore sirf machine 4 pe                  ->  machine 4 ki copy (hot key replica)
+ 7b  key 3 machine pe, sirf 1 se kati           ->  har copy se kaato
+ 7c-e  umar badhao + alag-alag (TTL jitter), chhotu gira to purani parchi, 50 server me ek hi chhotu (distributed lock)
+```
+
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: Cache ka kaam bas itna: get kar sakein, put kar sakein, delete kar sakein. "Asli sach DB me" sabko pata hai, FR me daalne ka matlab nahi. "Cache sirf tez copy" hatao, tez to NFR me pehle se hai. DB pe bojh kam = cache ka matlab hi yahi.
+Technical me: FR = cache ka API (get / put / delete), baaki sab NFR (latency, DB offload, staleness, eviction, hot key, negative cache).
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      get(key), put(key, value), delete(key) · asli sach DB me, cache sirf tez copy
-NFR     tez (~1 ms, DB se 50 ms) · DB pe bojh kam · thodi der purana chalega (profile hai, paisa nahi)
-        · jagah bhare to purana nikle · ek hi key pe bheed ho to bhi na gire
-        · jo key hai hi nahi (bot ki nakli id), uske liye baar-baar DB tak na jaayein
+FR      1  get(key), put(key, value), delete(key)                          -> kadam 1, 5
+
+NFR     1  tez (~1 ms, DB se 50 ms)                                         -> kadam 1
+        2  DB pe bojh kam                                                   -> kadam 1, 6, 6c
+        3  thodi der purana chalega (profile hai, paisa nahi)               -> kadam 5, 5b, 5c
+        4  jagah bhare to purana nikle                                      -> kadam 2, 3, 4
+        5  ek hi key pe bheed ho to bhi na gire                             -> kadam 6, 7, 7c-7e
+        6  jo key hai hi nahi (bot ki nakli id), uske liye baar-baar DB tak na jaayein  -> kadam 6b
 Numbers DB ek padhai ~50 ms, kuch hazaar query / sec jhelta · Ravi ka profile hazaaron / sec, badalta din me ek baar
         10 crore user, roz khulne wale profile ~1 TB · ek machine ki RAM 64 GB -> baantna padega
 ```
