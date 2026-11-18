@@ -1,18 +1,33 @@
 # D: Dependency Inversion (interface pe tiko)
 
-**Niyam:** bada code (jaise service) kisi asli class pe nahi, interface pe tika hona chahiye, aur asli object bahar se aana chahiye.
+**Koi poochhe "Dependency Inversion kya hai" to aise bolo:**
+```
+Service andar new MySqlRepo() nahi likhti, interface leti hai aur asli object bahar se
+(constructor se) aata hai. Isliye kal Mongo lagao ya test me nakli repo, service nahi badalti.
+Spring ka constructor injection yahi karta hai. Socket interface hai, charger koi bhi.
+```
 
 ## Kahani
 
 ```java
 class PaymentService {
-    private final MySqlPaymentRepo repo = new MySqlPaymentRepo();   // MySQL se chipka
+    private final PaymentRepository repo = new MySqlPaymentRepo();   // MySQL se chipka
 }
 ```
 
-Yahan `PaymentService` ne andar hi `new MySqlPaymentRepo()` likh diya, to wo MySQL se chipak gaya. Kal Mongo chahiye hua, to
-PaymentService ko chhedna padega. Aur test me asli DB ki jagah mock daalna ho, to wo ho hi nahi sakta, kyunki `new` andar
-likha hai aur bahar se kuch dene ka raasta hi nahi hai. Ye aisa hai jaise charger ko seedha diwar ki wiring me solder kar diya ho.
+Service andar hi `new MySqlPaymentRepo()` likh ke MySQL se chipak gayi. Test likhne baithe, laptop pe MySQL chalu nahi tha.
+
+Chala ke dekha:
+
+```
+--- test: andar new MySqlPaymentRepo() ---
+TEST FAIL: MySQL se connect nahi ho paya (localhost:3306)
+--- test: constructor se nakli repo ---
+pay = OK, saved = [arpan -500]
+```
+
+**Dikkat:** `new` andar likha hai, bahar se kuch dene ka raasta hi nahi, to har test asli DB maangta hai. Kal Mongo chahiye to
+bhi service kholni padegi. Charger ko diwar ki wiring me solder kar diya jaisa.
 
 ## Fix
 
@@ -26,12 +41,9 @@ class PaymentService {
 }
 ```
 
-Ab service sirf `PaymentRepository` interface jaanti hai, aur asli repo constructor se bahar se aata hai. Ye diwar ke socket
-jaisa hai: socket interface hai, usme koi bhi charger laga do. Spring ka DI yahi karta hai: kaunsa repo dena hai, ye Spring tay
-karta hai, aur service ko pata bhi nahi hota ki andar MySQL hai ya kuch aur.
+Service sirf interface jaanti hai. Asli MySQL repo Spring deta hai, test me `new PaymentService(nakliRepo)`.
 
-## Tera project
+## Trap + tera project
 
-usercrud me constructor injection hi use hua hai. Isliye test me seedha `new PaymentService(mockRepo)` likh ke mock daal sakte
-ho. PR drill me jab tu "andar `new` likha hai" ya "field pe `@Autowired` lagaya hai" wali galti pakadta hai, to wo yahi niyam
-toot raha hota hai.
+usercrud me constructor injection hi hai, isliye test me seedha mock daal sakte ho. PR drill me "andar `new` likha hai" ya "field pe
+`@Autowired`" pakadta hai, wo yahi niyam toot raha. Field `@Autowired` me bhi test me bina Spring ke repo daalne ka seedha raasta nahi.
