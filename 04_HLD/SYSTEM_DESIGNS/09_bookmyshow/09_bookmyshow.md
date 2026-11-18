@@ -327,10 +327,12 @@ paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, A
 Doosri kahani (18-Nov raat): GPay se pay kar raha hoon. GPay ka gola hamare server pe nahi, to 1 minute ho ya 10
 minute, wo sawaal hi nahi. Back dabaya aur paise kate hi nahi = user khush. Do haal: (1) user app me ruka, 10 second me
 "fail" aaya -> wahin popup "seat tumhari, dobara pay karo", dobara pay doosre PSP pe. (2) user ne back daba ke app band
-kar diya, popup ka mauka hi nahi: 1.5 minute rokenge, chhotu peeche dekhta, kata to seat book; uske baad khatam (peeche
-bheed, chhotu 10 minute busy nahi reh sakta), booking INITIATED -> FAILED, seat chhodo. Paise 2 minute, 10 minute ya
-1 ghante baad kate: user app me hai hi nahi, DB me likh lo, Razorpay ko bolo "kata ho to refund karo", aur user agli baar
-app khole tab dikhao "booking fail, paise kate to wapas aa jaayenge".
+kar diya: 1.5 minute rokenge, chhotu peeche dekhta, kata to seat book; uske baad khatam (peeche bheed, chhotu 10 minute
+busy nahi reh sakta), booking INITIATED -> FAILED. Popup phir bhi bhejo, kyunki backend ko pata hi nahi app band hai:
+"booking fail, paise kate to wapas, seat abhi tumhari, dobara pay karo". Popup pe timer (1, 2 ya 5 minute, train booking
+jaisa), utni der seat uski; pay kiya to normal booking (Razorpay ne kaata to seat book), timer khatam to seat chhodo.
+Paise 2 minute, 10 minute ya 1 ghante baad kate: DB me likh lo, Razorpay ko bolo "kata ho to refund karo", aur user agli
+baar app khole tab dikhao "booking fail, paise kate to wapas aa jaayenge".
 
 **Asli naam:** 30-55 sec gola = hamara client timeout, onboard pe SLA = PSP ka uptime SLA +
 incident response (latency ka nahi), doosra pay doosre PSP pe = PSP failover
