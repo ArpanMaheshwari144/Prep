@@ -4,11 +4,45 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Maan lo Money Heist ka naya season Friday dopahar 12:30 baje poori duniya me ek saath. Arpan, Ravi aur India ke 2 crore log 12:30 pe ek saath play dabate hain, saath me US, Spain, Brazil bhi.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Ravi ka TV  -->  AWS (login, list, pasand wali list, kaunsa dabba = steering)   video bytes AWS se nahi
+                       |                                                        |
+              watch position: pehle cache, DB kabhi-kabhi                 ISP ke andar Netflix ke dabbe (Open Connect)
+              pasand wali list: raat ka batch + abhi ki parchi            raat ko pehle se bhare, garam paas, thanda bade dabbe se
+                                                                          dabba band = TV agla dabba; player buffer
+
+ 1   har tukda samundar paar se                  ->  file apne shehar me (Open Connect, ISP ke andar)
+ 2   12:29 tak dabba khaali                      ->  pehle se bhar do, video badalta nahi (proactive fill)
+ 3   dabbe me poora maal nahi                    ->  garam paas, thanda bade dabbe se (popularity, tier)
+ 4   20 dabbe, kis se maange                     ->  server batata (steering, AWS pe)
+ 4b  aadhe episode pe dabba 3 band               ->  TV ke paas 2-3 naam, agla (client failover)
+ 5   TV pe 27 min, phone pe wahi se              ->  account pe parchi (watch position)
+ 5b  TV ka purana 27, phone ke 37 ke upar        ->  baad wala jeete (timestamp, last-write-wins)
+ 5c  har kuch second update, DB ki saans         ->  pehle cache, DB kabhi-kabhi
+ 5d  tukde ISP ke dabbe se, AWS ko kaise pata    ->  TV sankshep me bataye
+ 6   pasand wali list me 6 second                ->  raat ka batch, cache se
+ 6b  11 baje Dhurandhar dekhi                    ->  turant parchi, dikhate waqt milao
+ 6c  Priya naya user                             ->  India ka garam maal (cold start)
+ 7   tunnel me 3 sec net gaya                    ->  player buffer, nahi to doosri quality
+```
+
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: "Buffering nahi" NFR galat hai. User ka net bahut mandda hai, 144p pe bhi nahi chal raha, to buffering hogi hi; quality 180p se 720p ya 360p badalti hai tab bhi hoti hai, Netflix me buffering hoti hai. Net ke hisaab se hogi. FR / NFR ki bhasha wahi jo neeche design me likhi, alag shabd ("tere liye" jaisa) nahi.
+Technical me: NFR = jaldi shuru (low start-up time) + adaptive bitrate (ABR), buffering zero ka vaada nahi.
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      video chalana (play) · ruk ke kisi bhi device pe wahi se aage · app kholte hi "tere liye" wali line
-NFR     play dabate hi video, buffering nahi · kamzor net aur purane TV pe bhi chale · 12:30 jaisi bheed bhi jhele · "tere liye" line turant
-        (thodi purani chalegi) · data pahunchane ka kharcha kam
+FR      1  video chalana (play)                                             -> kadam 1, 4, 7
+        2  video beech me roko, kisi bhi device pe wahi se aage chale       -> kadam 5, 5b, 5c, 5d
+        3  app kholte hi user ki pasand ke hisaab se videos ki list         -> kadam 6, 6b, 6c
+
+NFR     1  play dabate hi video jaldi shuru ho; net ke hisaab se quality ghate-badhe
+           (net bahut kamzor ho ya quality badle to thodi buffering hogi hi) -> kadam 1, 2, 4b, 7
+        2  kamzor net aur purane TV pe bhi chale                            -> kadam 7
+        3  12:30 jaisi bheed bhi jhele                                      -> kadam 2, 3
+        4  pasand wali list jaldi khule (thodi purani chalegi)              -> kadam 6, 6b
+        5  data pahunchane ka kharcha kam                                   -> kadam 1, 3
 Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabko video nahi bhej sakte
         · har film kai size me -> poora maal kisi ek dabbe me nahi samaata
 ```
