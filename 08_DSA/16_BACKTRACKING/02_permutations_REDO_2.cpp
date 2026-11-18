@@ -27,10 +27,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+void solve(vector<int> &nums, vector<int> &temp, vector<bool> &used, vector<vector<int>> &ans)
+{
+    if (temp.size() == nums.size())
+    {
+        ans.push_back(temp);
+        return;
+    }
+
+    for (int i = 0; i < nums.size(); i++)
+    {
+        if (used[i])
+        {
+            continue;
+        }
+
+        temp.push_back(nums[i]);
+        used[i] = true;
+        solve(nums, temp, used, ans);
+        used[i] = false;
+        temp.pop_back();
+    }
+}
+
 vector<vector<int>> permute(vector<int> &nums)
 {
-    // yahan likh
-    return {};
+    int n = nums.size();
+    vector<vector<int>> ans;
+    vector<int> temp;
+    vector<bool> used(n, false);
+    solve(nums, temp, used, ans);
+    return ans;
 }
 
 // ─── TESTS (isko haath mat lagana) ──────────────────────────
@@ -52,10 +79,7 @@ int main()
     check({-1, 5}, {{-1, 5}, {5, -1}}, 4);
     check({3, 1, 2}, six, 5);
     check({1, 2, 3, 4},
-          {{1, 2, 3, 4}, {1, 2, 4, 3}, {1, 3, 2, 4}, {1, 3, 4, 2}, {1, 4, 2, 3}, {1, 4, 3, 2},
-           {2, 1, 3, 4}, {2, 1, 4, 3}, {2, 3, 1, 4}, {2, 3, 4, 1}, {2, 4, 1, 3}, {2, 4, 3, 1},
-           {3, 1, 2, 4}, {3, 1, 4, 2}, {3, 2, 1, 4}, {3, 2, 4, 1}, {3, 4, 1, 2}, {3, 4, 2, 1},
-           {4, 1, 2, 3}, {4, 1, 3, 2}, {4, 2, 1, 3}, {4, 2, 3, 1}, {4, 3, 1, 2}, {4, 3, 2, 1}},
+          {{1, 2, 3, 4}, {1, 2, 4, 3}, {1, 3, 2, 4}, {1, 3, 4, 2}, {1, 4, 2, 3}, {1, 4, 3, 2}, {2, 1, 3, 4}, {2, 1, 4, 3}, {2, 3, 1, 4}, {2, 3, 4, 1}, {2, 4, 1, 3}, {2, 4, 3, 1}, {3, 1, 2, 4}, {3, 1, 4, 2}, {3, 2, 1, 4}, {3, 2, 4, 1}, {3, 4, 1, 2}, {3, 4, 2, 1}, {4, 1, 2, 3}, {4, 1, 3, 2}, {4, 2, 1, 3}, {4, 2, 3, 1}, {4, 3, 1, 2}, {4, 3, 2, 1}},
           6);
     return 0;
 }
