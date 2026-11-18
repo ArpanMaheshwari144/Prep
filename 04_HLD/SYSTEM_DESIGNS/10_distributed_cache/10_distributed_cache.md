@@ -42,8 +42,8 @@ FR      1  get(key), put(key, value), delete(key)                          -> ka
 
 NFR     1  tez (~1 ms, DB se 50 ms)                                         -> kadam 1
         2  DB pe bojh kam                                                   -> kadam 1, 6, 6c
-        3  thodi der purana chalega (profile hai, paisa nahi)               -> kadam 5, 5b, 5c
-        4  jagah bhare to purana nikle                                      -> kadam 2, 3, 4
+        3  thodi der purana chalega (profile hai, paisa nahi)               -> kadam 5, 5b, 5c, 7b
+        4  jagah bhare to purana nikle                                      -> kadam 2
         5  ek hi key pe bheed ho to bhi na gire                             -> kadam 6, 7, 7c-7e
         6  jo key hai hi nahi (bot ki nakli id), uske liye baar-baar DB tak na jaayein  -> kadam 6b
 Numbers DB ek padhai ~50 ms, kuch hazaar query / sec jhelta · Ravi ka profile hazaaron / sec, badalta din me ek baar

@@ -39,7 +39,7 @@ FR      1  5000 site se khabar laao                                   -> kadam 1
 
 NFR     1  feed turant (~200 ms)                                      -> kadam 2, 6
         2  khabar 5-10 min se purani nahi                             -> kadam 2, 4, 7
-        3  ek site band ho to baaki na ruke                           -> kadam 6
+        3  ek site band ho to baaki na ruke                           -> kadam 4, 6
         4  aayi khabar kho na jaaye (worker / consumer gira to bhi)   -> kadam 11
         5  refresh pe khabar gayab na ho                              -> kadam 10
 
