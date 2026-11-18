@@ -4,11 +4,49 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan dukaan pe khade ho ke app se pay karta hai. Uska paisa HDFC me, dukaan wale ka ICICI me. Hamara app na HDFC ka, na ICICI ka.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Arpan  -->  app server  -->  parchi INITIATED (pehle apne register me)  -->  PSP-1 (band / chup to PSP-2)  -->  HDFC
+                                    |                                           |
+                                    |  pakka jawab: PSP webhook ("mil gaya" ack) + status job jo poochhta rahe
+                                    v
+                          wallet DB (tukdon me, shard) · ledger me hold · saga se ulta karo, 2PC nahi
+
+ 1   HDFC hamari sunta hi nahi                  ->  beech ka bada, uski API (PSP)
+ 2   PSP 30 sec chup, FAILED ya SUCCESS?        ->  apne paas parchi, INITIATED (payment status)
+ 3   PSP batana bhool gaya                      ->  beech me banda poochhta rahe (status job)
+ 3b  PSP ka message raste me kho gaya           ->  event + "mil gaya" (webhook + ack)
+ 4   PSP-1 poora band                           ->  PSP-2 pe bhejo (fallback PSP)
+ 5   INITIATED likha, call bhejte server gira   ->  pehle register, phir bhejo; dobara bheja to payment id (idempotency)
+ 5b  net atka, Pay do baar dabaya               ->  phone ki key, wahi parchi lautao (client idempotency key)
+ 6   wallet se kata, ICICI ne FAILED bola       ->  sab ulta, paise wapas (saga)
+ 7   2 minute 500 na yahan na wahan             ->  ledger me likho, paise yahan hain (hold)
+ 8   "sab taiyaar ho?" poochh ke kaato          ->  slow dost se mera paper chhoota (2PC nahi)
+ 9   Diwali 3,000 / sec, ek register            ->  register ke tukde (shard)
+10   wallet tukda 1 me, dukaan tukda 3 me       ->  ladka diary le ke jaaye (saga do shard ke beech)
+11   PSP-1 chup, mara ya dheema pata nahi       ->  "process ho raha"; down pakka pata ho tabhi PSP-2
+11b  PSP-2 pe bheja to do baar katega?          ->  30-55 sec phir FAILED + PSP-2; PSP-1 pe bhi kata to wo lautaye
+```
+
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: PSP ka FR / NFR se kuch lena-dena nahi, PSP alag cheez hai (HDFC hamara PSP nahi). FR me ek cheez poochh sakte: sab ek bank me rakhein ya do bank me. Ek hi bank me sab ho to wahan transaction, do bank me ho to saga. Hamara design do bank wala, isliye saga likha.
+Technical me: ek jagah = ek DB transaction (ACID), alag jagah = saga (har kadam ka ulta kadam), 2PC nahi (kadam 8).
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      dukaan ko pay (bank se, PSP ke zariye) · dukaan ka paisa wallet se uske bank me · fail ho to paisa wapas
-        · wallet top-up · wallet se wallet (Arpan se dukaan)
-NFR     do baar na kate · paisa kabhi gayab na dikhe · kuch gire to bhi payment atka na rahe · har paisa trace ho
+FR      1  dukaan ko pay (bank se, PSP ke zariye)                          -> kadam 1, 2, 3, 4
+        2  dukaan ka paisa wallet se uske bank me                          -> kadam 6, 7
+        3  fail ho to paisa wapas                                          -> kadam 6, 11b
+        4  wallet top-up                                                   -> kadam 11
+        5  wallet se wallet (Arpan se dukaan)                              -> kadam 10
+        6  FR me poochho: dono khaate ek jagah (ek bank / ek register) ya alag?
+           Ek jagah = seedha ek transaction. Alag jagah (do bank, do tukde) = saga.
+           Hamara design = alag, isliye saga. FR badle to jawab badle.     -> kadam 6, 8, 10
+
+NFR     1  do baar na kate                                                 -> kadam 5, 5b, 11b
+        2  paisa kabhi gayab na dikhe                                      -> kadam 7
+        3  kuch gire to bhi payment atka na rahe                           -> kadam 3, 3b, 4, 5, 11
+        4  har paisa trace ho                                              -> kadam 2, 7
 Numbers ~10 crore user, aam din kuch sau payment / sec, Diwali pe ~3,000 / sec
         -> aam din bheed badi dikkat nahi, sahi hona badi dikkat · Diwali ka 3,000 / sec ek register nahi jhelega (kadam 9)
 ```
