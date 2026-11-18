@@ -30,11 +30,12 @@ Arpan  -->  app server  -->  parchi INITIATED (pehle apne register me)  -->  PSP
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
 Arpan: PSP ka FR / NFR se kuch lena-dena nahi, PSP alag cheez hai (HDFC hamara PSP nahi). FR me ek cheez poochh sakte: sab ek bank me rakhein ya do bank me. Ek hi bank me sab ho to wahan transaction, do bank me ho to saga. Hamara design do bank wala, isliye saga likha.
-Technical me: ek jagah = ek DB transaction (ACID), alag jagah = saga (har kadam ka ulta kadam), 2PC nahi (kadam 8).
+Arpan (do baar katna): Do baar katta hai bhai, GPay, PhonePe, Paytm sab pe hota. PSP / Razorpay ke chakkar me: wahan se jawab na aaye, doosre PSP pe bhej diya, paise kat gaye; ye hum rok nahi sakte. Kabhi user ka net, kabhi Razorpay ka, kabhi bank ka. Isliye "do baar nahi katega" bolna zyada ho jaayega, interview me cross-Q ban jaayega; bolo hi mat.
+Technical me: ek jagah = ek DB transaction (ACID), alag jagah = saga (har kadam ka ulta kadam), 2PC nahi (kadam 8). Double debit = idempotency se kam, par zero ka vaada nahi; reconciliation + auto refund; RBI TAT circular (20-Sep-2019): UPI merchant T+5, P2P T+1, der pe Rs 100 / din.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      1  dukaan ko pay (bank se, PSP ke zariye)                          -> kadam 1, 2, 3, 4
+FR      1  dukaan ko pay (bank se)                                         -> kadam 1, 2, 3, 4
         2  dukaan ka paisa wallet se uske bank me                          -> kadam 6, 7
         3  fail ho to paisa wapas                                          -> kadam 6, 11b
         4  wallet top-up                                                   -> kadam 11
@@ -43,7 +44,10 @@ FR      1  dukaan ko pay (bank se, PSP ke zariye)                          -> ka
            Ek jagah = seedha ek transaction. Alag jagah (do bank, do tukde) = saga.
            Hamara design = alag, isliye saga. FR badle to jawab badle.     -> kadam 6, 8, 10
 
-NFR     1  do baar na kate                                                 -> kadam 5, 5b, 11b
+NFR     1  do baar na kaatne ki poori koshish (payment id, idempotency); phir bhi PSP / bank / net ki
+           gadbad se kabhi do baar kat sakta, GPay / PhonePe / Paytm sab me hota. Kata to apne aap
+           wapas: raat ka milaan (reconciliation) + refund. RBI ka niyam: UPI dukaan wala payment
+           T+5 din me wapas, P2P T+1, der hui to bank Rs 100 / din deta       -> kadam 5, 5b, 11b
         2  paisa kabhi gayab na dikhe                                      -> kadam 7
         3  kuch gire to bhi payment atka na rahe                           -> kadam 3, 3b, 4, 5, 11
         4  har paisa trace ho                                              -> kadam 2, 7
