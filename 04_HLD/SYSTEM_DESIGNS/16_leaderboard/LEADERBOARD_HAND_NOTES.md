@@ -4,13 +4,46 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Ek game hai, 1 crore khiladi. Har match ke baad kisi ka score badalta hai. Screen pe teen cheez chahiye: top 10 abhi ke abhi, "tera rank 4,52,318", aur tere aage ke 5 aur peeche ke 5 khiladi.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+match khatam (+50, match id)  -->  server  -->  Redis sorted set (apne aap sort)  --clone-->  replica, DB sach
+                                                   |
+                         region ke dabbe (India / US / Europe), chhotu mila ke world board (scatter-gather)
+                         aaj / hafta / all-time = teen alag dabbe (key me tareekh) · referee board = snapshot job
+
+ 1   1 crore sort kiye bina top 10 + rank        ->  apne aap sort wala dabba (Redis sorted set)
+ 1b  score pe index laga do                      ->  rank = ginna, har likhai pe index badle; write-heavy
+ 2   Ravi, Priya dono 9800                       ->  score phir time, ek number me (composite score)
+ 3   lakhon update ek Redis pe                   ->  region se baanto, chhotu mila ke (shard, scatter-gather)
+ 3b  match ka +50 do baar                        ->  match id se ek baar (idempotency)
+ 4   India me 3,000, duniya ka rank              ->  har line me mere upar kitne, jodo; poora board = snapshot job
+ 5   raat 12 baje aaj wala khaali                ->  key me tareekh, kal wala side me; teeno dabbe alag
+ 5b  11:59:58 ka match, score 12:00:02 pe        ->  khatam hone ka waqt, usi din ka register (event time)
+ 6   mere aage-peeche ke 5, alag dabbon me       ->  aas-paas scan, merge (score range)
+ 6b  world ke aas-paas 5 + 5                     ->  poora world board; UTC, sawaal, waqt, ms, naam
+ 6c  chalte contest me aage-peeche 10            ->  dabbe score range se, coordinator seedha sahi dabba
+ 6d  1 crore contest aur tez                     ->  availability > consistency; pehle pata kitne, jagah baanto
+ 7   Redis gira                                  ->  clone, clone, teeno gaye to DB se (replica, DB sach)
+```
+
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: Score update FR hai. Top 10 FR nahi ho sakta, scoreboard aise kaam nahi karta: poochho top 10, 50 ya 100. "Mera rank" aur "mere aage-peeche ke 5" FR nahi, board sabke hisaab se banta, ye kisi ek user ka hai. Aaj / hafta / all-time, UTC, world ya India ka board: ye sab FR se pehle sawaal hain, pehle requirement clear kar lo, phir uske hisaab se FR me daalo. Score barabar to pehle wala upar = NFR. Rank milli second, score kuch second, Redis gira: inka yahan matlab nahi; asli rank to contest khatam hone ke baad hi pata chalti, beech me thodi purani chalegi.
+Technical me: pehle sawaal = scope / requirement clarification, FR = score update + top N, NFR = tie-break + eventual consistency (contest ke beech).
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      score update · top 10 · mera rank · mere aage-peeche ke 5 · aaj / hafta / all-time board
-        · score barabar to pehle pahuncha wo upar (contest me: ek time zone UTC, pehle khatam wala, phir milli second, phir naam)
-        · khiladi alag region (India, US, Europe) me hon to bhi EK poora world board; mere aage-peeche ke 5 usi board se
-NFR     top 10 aur rank turant (milli second) · naya score kuch second me board pe · thoda purana referee board chalega · Redis gira to score na khoye
-        · world board pe rank thodi der purani chalegi (result aate-aate apne aap theek)
+PEHLE SAWAAL (FR se pehle interviewer se poochho, jawab se FR badle):
+        a  top kitne dikhane: 10, 50 ya 100?
+        b  board kis hisaab se: aaj ka, hafte ka, all-time, ya teeno?             -> kadam 5, 5b
+        c  board poori duniya ka ya ek desh (India) ka?                           -> kadam 3, 4, 6b
+        d  contest hai to waqt kis time zone me (UTC)?                            -> kadam 6b
+        e  kisi ek user ka rank / uske aage-peeche ke 5 chahiye?                  -> kadam 4, 6, 6c
+
+FR      1  score update                                                     -> kadam 3, 3b
+        2  top N ka board (N, board aur region upar ke sawaal se)           -> kadam 1, 4, 5
+
+NFR     1  score barabar to pehle pahuncha wo upar (contest me: pehle khatam wala, phir milli second, phir naam)  -> kadam 2, 6b
+        2  board / rank thodi der purana chalega; asli rank contest khatam hone ke baad   -> kadam 4, 6c, 6d
 Numbers 1 crore khiladi · har second lakhon match khatam -> likhai bahut · board dekhne wale usse bhi zyada
         -> har baar 1 crore sort / ginti nahi chal sakti
 ```
