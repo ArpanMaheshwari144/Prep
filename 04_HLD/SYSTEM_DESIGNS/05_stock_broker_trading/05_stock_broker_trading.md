@@ -9,6 +9,34 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ---
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Arpan / Ravi  -->  LB  -->  order server  -->  paisa / share hold (funds block)
+                                                    |
+                                    matching engine (har share ki ek book, ek hi thread)
+                                    book RAM me (tez) + har order parchi pe likha (order log)
+                                                    |
+                                    sauda hua  -->  trade DB (sach)  -->  Kafka
+                                                                           |
+                                    portfolio · paisa · SMS · bhaav screen (WebSocket + Redis pub/sub)
+
+ 1   Arpan Ravi ko jaanta nahi, kaun milaye     ->  beech me ek aadmi, bhaav milao (matching engine)
+ 2   net gaya, app ne dobara bheja, 20 share    ->  chaabi ka taala (idempotency key)
+ 3   35,000 se do order, chahiye 70,000         ->  EMI jaisa paisa hold (funds block)
+ 3b  10 chahiye, 4 mile, 6 baaki                ->  4 abhi + 6 ka hold jaari, ya "sab ya kuch nahi" (partial fill)
+ 3c  3500 ka order, market band, bika nahi      ->  order khula, hold jaari, cancel pe wapas
+ 3d  Ravi ke 10 share, 2 sell order, 20 bike    ->  share bhi hold; naya nahi, wahi order badlo (modify)
+ 3e  order khula, 20,000 withdraw               ->  beech se nahi; cancel ya chhota karke
+ 4   4 thread, 10 share 20 me bike              ->  ek share ek thread (1 thread per symbol)
+ 5   book RAM me, machine mar gayi              ->  parchi dekh ke dobara jamao (order log, replay); 3-4 copy
+ 5b  replay me ho chuke trade bhi wapas         ->  trade DB dekho, ho chuke hatao (DB = sach)
+ 6   sauda pakka, engine khud sabko call kare   ->  Kafka, consumer group
+ 7   portfolio DB band, paisa kata share nahi   ->  ulta nahi; parchi rakho, DB aaye to de do (Kafka retry)
+ 8   bhaav har second, 10 lakh screen           ->  chat wala hi (WebSocket + Redis pub/sub)
+ 9   9:15 lakhon order, line atki               ->  book RAM, batch me DB, copy
+ 9b  parchi pe match, DB me abhi nahi           ->  "processing" turant, DB ke baad pakka
+```
+
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
@@ -25,6 +53,11 @@ NFR     paisa aur share hamesha sahi · jo pehle aaya wo pehle mile · 9:15 ki b
 Numbers 50 lakh order roz, market ~6 ghante -> ~250 / sec aam · 9:15 pe jhatka ~10,000 / sec, saare share me bata
         live bhaav: ~10 lakh app khule, har second naya bhaav -> poochhne ki jagah push
 ```
+
+**FR / NFR -> kadam (Arpan: "achha baith ke banaya, sab badhiya, aise hi rehne do"):** order dalo + bhaav mile to sauda = 1 ·
+paisa aur share badlo = 3, 6, 7 · live bhaav = 8 · cancel = 3c · bhaav badle (wahi order) = 3d · paise nikaalna = 3e ·
+3:30 raasta 2 = 3c · jitna mila utna = 3b · NFR paisa / share sahi = 2, 3, 5b, 7 · pehle aaya pehle = 4 ·
+9:15 ki bheed = 9, 9b · har cheez ka record = 5, 6.
 
 ---
 
