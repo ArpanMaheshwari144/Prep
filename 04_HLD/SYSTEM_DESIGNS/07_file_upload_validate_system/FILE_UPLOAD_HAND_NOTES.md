@@ -28,6 +28,7 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
  8   scan me 10 min baaki / virus nikla            ->  CLEAN tak link band, virus to file hatao (quarantine)
  8b  bahar wala scanner 1 ghante se chup           ->  ruk ke dobara, phir insaan ko alert (retry + backoff, DLQ)
  9   S3 bill double, ek hi file lakhon baar        ->  file ke maal se number, register me milao, pehle se to upload nahi (content hash, dedup)
+ 9b  Priya wahi meme daale, list me dikhe hi nahi  ->  Priya ka upload mat roko, uske naam row, purani file pe bhejo (reference, cross-user dedup)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -114,6 +115,10 @@ Technical me: dobara try = retry with backoff, dead letter queue = DLQ + alert (
 **9. App ko 6 mahine ho gaye. S3 ka bill pichhle mahine se double. S3 me ek hi meme lakhon baar padi, Ravi ne apni shaadi ki 2 GB video teen baar daali (bhool gaya tha ki pehle daal chuka).**
 Arpan: Pehli baat, S3 duplicate file handle nahi karta, to hamein apne server se kehna padega duplicate handle karo. Main server pe baitha hoon, ek aadmi moti file le ke aaya, maine bhej di. Kuch din baad wahi file dobara le aaya, phir bhej di; 3-4 baar aa raha. To uski file pe ek number chipka do, maan lo ABC123, aur DB (mote register) me rakh do. Number hash hoga: file ka content dekh ke koi bhi algorithm chalao, number nikla ABC123. Wahi file dobara aayi to dobara number nikala, wahi ABC123 nikla kyunki same file hai; to wo file upload nahi hone denge. Number phone nikaale ya server, wo design ka hissa nahi; hamein bas ek number chahiye jisse pata chale ye file pehle se hai ya nahi. Presigned URL me number jod sakte, par pata nahi wahan hota hai ya nahi, to wahan nahi. Number ka roop kuch bhi (string, number); mote register me rakho, pehle se hai to theek, nahi to nahi.
 Technical me: "file ke content se number" = content hash (jaise SHA-256), "mote register me number" = DB me hash, "pehle se hai to upload nahi" = deduplication (S3 khud nahi karta).
+
+**Maan lo Priya wahi viral meme upload karti hai jo pehle se lakhon baar aa chuka. Number register me mil gaya, upload ruk gaya, par Priya ki list me meme dikh hi nahi raha, kyunki uske naam pe kuch likha hi nahi gaya.**
+Arpan: Priya aur Ravi same meme upload kar rahe, to iske liye sochna padega. Priya ka upload hum rok nahi sakte, kyunki Ravi ne apna kiya, Priya ne apna. Agar app me login hi na hota to dekhte; par yahan login hai, Priya ki alag userId, Ravi ki alag. Hash same ho sakta hai kyunki meme same hai, par userId alag. Pehle Priya ke hisaab me dekhenge: kya Priya ne ye file kabhi upload ki thi? Nahi. Phir poore DB me dekha: ye file pehle se uploaded hai. To Priya ko bolo ki file upload ho gayi, aur jab Priya kabhi download kare to usi meme pe redirect kar denge, meme download ho jaayega, dikkat hi nahi. S3 andar duplicate ka kya karta, wo S3 jaane.
+Technical me: "Priya ka upload mat roko, pehle uske hisaab me dekho" = hash + userId pe check, "poore DB me hai to usi pe redirect" = Priya ke naam nayi row jo purani S3 file ki taraf ishaara kare (reference / pointer, ek file kai maalik), alag users ke beech = cross-user dedup.
 
 &nbsp;
 

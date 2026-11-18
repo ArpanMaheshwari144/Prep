@@ -51,6 +51,7 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
  8   scan me 10 min baaki / virus nikla            ->  CLEAN tak link band, virus to file hatao (quarantine)
  8b  bahar wala scanner 1 ghante se chup           ->  ruk ke dobara, phir insaan ko alert (retry + backoff, DLQ)
  9   S3 bill double, ek hi file lakhon baar        ->  file ke maal se number, register me milao, pehle se to upload nahi (content hash, dedup)
+ 9b  Priya wahi meme daale, list me dikhe hi nahi  ->  Priya ka upload mat roko, uske naam row, purani file pe bhejo (reference, cross-user dedup)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -371,6 +372,12 @@ nikalo; same file ka number same aata hai. Register me pehle se hai to upload ho
 ya server), wo alag baat; design ko bas ek number chahiye jisse pata chale file pehle se hai ya nahi.
 
 **Asli naam:** file ke maal se number = content hash (jaise SHA-256), register me milaan = deduplication.
+
+**Maan lo Priya wahi viral meme daalti hai, number register me mila, upload ruka, par Priya ki list me meme nahi:** Priya
+alag user hai (alag login, alag userId), uska upload mana nahi. Pehle uske hisaab me dekho, usne ye file kabhi daali? Nahi.
+Phir poore DB me: file pehle se hai. To Priya ko "upload ho gaya" dikhao, aur download pe usi purani meme pe bhej do.
+**Asli naam:** hash + userId pe check, Priya ke naam nayi row jo purani S3 file ki taraf ishaara kare = reference /
+pointer (ek file, kai maalik), cross-user dedup.
 
 ---
 

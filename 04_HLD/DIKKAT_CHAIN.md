@@ -579,6 +579,7 @@ Yahi dikkat yahan bhi:
   Notification  9b  OTP worker / consumer bhi pasand padhne DB pe             ->  OTP seedha bhejo, DB se lena-dena nahi
   File upload   5   folder rename = 500 copy + 500 delete          ->  tree jaisa, sirf parent badlo (parent_id)
   File upload   9   S3 bill double, ek hi file lakhon baar         ->  file ke maal se number, register me milao (content hash, dedup)
+  File upload   9b  Priya wahi meme daale, list me dikhe nahi      ->  uske naam row, purani file pe bhejo (reference, cross-user dedup)
   Docs          1   Save pe poora text, Arpan ki line gayab        ->  poora text nahi, operation bhejo (insert / delete)
   Chat          8   "12 naye message" kaise dikhe                  ->  ek ginti, itne padh liye (read count, kul - padhe)
   Chat          9   kisne padha, 4.9 lakh entry                    ->  978 matlab 975 padha, number ghata lo (watermark)
