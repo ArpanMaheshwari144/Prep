@@ -20,7 +20,18 @@ Ravi  -->  server  -->  Elasticsearch (search ki copy: aas-paas + text + sort)  
 
 **Arpan ka nichod:** "Yelp = Uber aur search ka mixture. Aas-paas ka salon / restaurant dhoondho, rating padho, wahan chale jao ya contact karo. Uber me driver chalta, yahan dukaan khadi rehti; isliye bas aas-paas + search."
 
-**FR / NFR:** round me Arpan design dekh ke nikalega (abhi tay nahi).
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: Koi bhi kuch dhoondhe to use aas-paas ka search milna chahiye, jaise Zomato karta; kisi ne kuch dhoondha aur mil gaya aas-paas ki range me, geo filter wahi. Iska FR simple hi hai, aas-paas ka dhoondha mila, bas. Yelp chhota hai, FR / NFR bhi chhote hi banenge. Kadam 1 aur 4 FR me, 2 aur 3 NFR me.
+Technical me: FR = geo search (fuzzy bhi) + sort; NFR = DB aur search ka sync (Closed badge, change event + raat ki job).
+
+**FR / NFR (interview me pehle 2 minute):**
+```
+FR      1  kuch bhi dhoondho (galat spelling pe bhi), aas-paas ki range me mile   -> kadam 1
+        2  sort user chune: doori se ya rating se                                 -> kadam 4
+
+NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega) -> kadam 2
+        2  menu / dukaan badle to search me jaldi aaye; event chhoote to raat ki job pakde -> kadam 3
+```
 **Numbers (Arpan):** Zomato jaisa app India ke shehron me chalta, worldwide nahi. Ek area me 5 lakh log ek saath "pizza" faltu number hai; 10-20 hazaar maano, itna server sambhal leta, iske liye alag hal nahi chahiye.
 
 &nbsp;

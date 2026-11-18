@@ -114,7 +114,7 @@ SAFAR (March: khaali folder)  ->  aaj
 
 - ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — dikkat ke 21 parivaar: dikkat -> humne kya socha -> wahi dikkat kis-kis design me (23 design, har line ek dikkat -> ek hal)
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
-  - **FR / NFR + Ek nazar (18-Nov ginti):** DONE 21 = 01-21 (har FR / NFR line kadam se judi, upar Ek nazar) · BAAKI = 22 Train (Ek nazar), 23 Yelp (FR / NFR) · phir alag aankh se poore folder ka audit.
+  - **FR / NFR + Ek nazar (18-Nov):** 23 / 23 DONE. Har FR / NFR line kadam se judi, upar Ek nazar; alag aankh se audit bhi ho gaya (FR = app + user ka kaam, NFR = peeche ka, bheed FR / NFR me nahi).
   - [00_IMG](04_HLD/SYSTEM_DESIGNS/00_IMG) — jo mermaid se nahi banta (cache ki ring, Uber ka naksha + gaadi, PUBG ke dabbe + gudde), saari tasveer ek folder me
   - [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) (round ho gaya: Ek nazar dhaancha + FR / NFR design se, saancha baaki design ke liye)
   - [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) (round ho gaya: kadam 6 = dono khule, gateway pe kachchi ginti, sirf shaq wale ka OTP band)
