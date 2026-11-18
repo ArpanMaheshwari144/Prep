@@ -65,7 +65,7 @@ fuzzy search (typo tolerance).
 
 ## 2. Burger Singh band, search me abhi bhi (Postgres -> ES sync, "Closed" dikhao)
 
-Burger Singh ne dukaan band ki, Postgres me "closed", par ES ke paas purani jaankari. Postgres aur ES ko sync karo.
+Burger Singh ne aaj ke liye dukaan band ki (chhutti), Postgres me "closed", par ES ke paas purani jaankari. Postgres aur ES ko sync karo.
 Dukaan search se gayab nahi hoti; Zomato jaisa, aati hai par "Closed" dikhti hai.
 
 **Asli naam:** DB -> search index sync (Postgres sach, ES search ki copy), status field (Closed badge), thodi der ES
@@ -73,7 +73,7 @@ peeche = eventual consistency.
 
 ## 3. Dopahar ka naya burger, ES ko raat 2 baje pata (badlaav pe event)
 
-Sync job raat 2 baje chalti; dopahar 1 baje joda "Paneer Burger" shaam 8 baje search me nahi. Postgres me badlaav aate hi
+Sync job raat 2 baje chalti; paas wale Burger Point ne dopahar 1 baje joda "Paneer Burger", shaam 8 baje search me nahi. Postgres me badlaav aate hi
 ek event bhejo jo ES ko update kare, jaise S3 ka "file aa gayi" event. Raat wali job bhi chalti rahe, jo event chhoota
 wo pakde. Yahan queue / Kafka nahi; Kafka numbers dekh ke: ek saath ~20 hazaar seedha sambhal jaata, Kafka tab
 jab peak pe lakh log ek saath aayein (Arpan).
