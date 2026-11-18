@@ -169,7 +169,7 @@ Valorant me 128 tick server, second me 128 baar duniya update).
 
 ## 4. Hacker 1 second me 500 meter (chaal bhi server jaanche)
 
-Hacker ki goli imaandaar thi. Dikkat ye ki wo 1 second me 500 meter daud ke Arpan ke peeche pahuncha; phone ne bas bola
+Kadam 3 wala wahi hacker agle match me phir aaya. Is baar uski goli imaandaar thi. Dikkat ye ki wo 1 second me 500 meter daud ke Arpan ke peeche pahuncha; phone ne bas bola
 "main ab Arpan ke peeche hoon". 500 meter to PUBG me ek poori jagah, poora School paar. Server ke paas pichhli jagah
 hai: 1 second baad player ya to wahin hoga ya aas-paas. Jaise Koramangala me khadi gaadi 1 second baad Whitefield nahi
 pahunch sakti. To ye update phenk do, ye bot hai ya hacker; is baar ghus gaya to uski koi baat mat maano, agli baar
