@@ -27,6 +27,7 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
  7   link 200 logon ke WhatsApp group me           ->  link ki umar chhoti (presigned expiry)
  8   scan me 10 min baaki / virus nikla            ->  CLEAN tak link band, virus to file hatao (quarantine)
  8b  bahar wala scanner 1 ghante se chup           ->  ruk ke dobara, phir insaan ko alert (retry + backoff, DLQ)
+ 9   S3 bill double, ek hi file lakhon baar        ->  file ke maal se number, register me milao, pehle se to upload nahi (content hash, dedup)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -109,6 +110,10 @@ Technical me: "alag line" = scan ka alag Kafka topic (Kafka me priority nahi hot
 **Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki.**
 Arpan: Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko dead letter queue me daal do aur insaan ko alert, investigate karo, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
 Technical me: dobara try = retry with backoff, dead letter queue = DLQ + alert (scan wali tez line se alag), link band = CLEAN tak download nahi (fail-closed).
+
+**9. App ko 6 mahine ho gaye. S3 ka bill pichhle mahine se double. S3 me ek hi meme lakhon baar padi, Ravi ne apni shaadi ki 2 GB video teen baar daali (bhool gaya tha ki pehle daal chuka).**
+Arpan: Pehli baat, S3 duplicate file handle nahi karta, to hamein apne server se kehna padega duplicate handle karo. Main server pe baitha hoon, ek aadmi moti file le ke aaya, maine bhej di. Kuch din baad wahi file dobara le aaya, phir bhej di; 3-4 baar aa raha. To uski file pe ek number chipka do, maan lo ABC123, aur DB (mote register) me rakh do. Number hash hoga: file ka content dekh ke koi bhi algorithm chalao, number nikla ABC123. Wahi file dobara aayi to dobara number nikala, wahi ABC123 nikla kyunki same file hai; to wo file upload nahi hone denge. Number phone nikaale ya server, wo design ka hissa nahi; hamein bas ek number chahiye jisse pata chale ye file pehle se hai ya nahi. Presigned URL me number jod sakte, par pata nahi wahan hota hai ya nahi, to wahan nahi. Number ka roop kuch bhi (string, number); mote register me rakho, pehle se hai to theek, nahi to nahi.
+Technical me: "file ke content se number" = content hash (jaise SHA-256), "mote register me number" = DB me hash, "pehle se hai to upload nahi" = deduplication (S3 khud nahi karta).
 
 &nbsp;
 

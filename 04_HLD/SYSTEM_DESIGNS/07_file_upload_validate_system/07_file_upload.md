@@ -50,6 +50,7 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
  7   link 200 logon ke WhatsApp group me           ->  link ki umar chhoti (presigned expiry)
  8   scan me 10 min baaki / virus nikla            ->  CLEAN tak link band, virus to file hatao (quarantine)
  8b  bahar wala scanner 1 ghante se chup           ->  ruk ke dobara, phir insaan ko alert (retry + backoff, DLQ)
+ 9   S3 bill double, ek hi file lakhon baar        ->  file ke maal se number, register me milao, pehle se to upload nahi (content hash, dedup)
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -360,6 +361,16 @@ flowchart TB
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
     style TL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
+
+## 9. S3 ka bill double, ek hi file lakhon baar (file ka number)
+
+App ko 6 mahine ho gaye, S3 ka bill pichhle mahine se double. S3 me ek hi meme lakhon baar padi hai, Ravi ne apni shaadi
+ki 2 GB video teen baar daali. S3 duplicate file khud nahi pakadta, ye kaam hamara design karega. Har file pe uske andar
+ke maal se ek number chipka do (maan lo ABC123) aur mote register (DB) me rakh do. Wahi file dobara aaye to number dobara
+nikalo; same file ka number same aata hai. Register me pehle se hai to upload hone hi mat do. Number kaun nikaale (phone
+ya server), wo alag baat; design ko bas ek number chahiye jisse pata chale file pehle se hai ya nahi.
+
+**Asli naam:** file ke maal se number = content hash (jaise SHA-256), register me milaan = deduplication.
 
 ---
 
