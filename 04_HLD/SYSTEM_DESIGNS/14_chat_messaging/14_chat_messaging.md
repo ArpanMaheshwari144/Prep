@@ -180,14 +180,14 @@ aayenge sunne. Kahin rakh do, 500 log jab chahe apna aake sunte rahenge.
 members wahi ek message padhte, 500 copy nahi. Group bhi bas ek chat hai jisme 2 ki jagah 500 log; members ki list se
 online walon ko map + pub/sub se bhejo, baaki wapas aayein to dabbe se (500 ka behtar raasta: kadam 12, group ka channel).
 
-**5b. Maan lo #981 DB me save ho gaya, par pub/sub tak pahunchne se pehle chat server gir gaya:** Ek server thodi hai,
-1-2 chhotu extra rakh lo; ek bimar pada to doosra aayega. Par doosre ko pata kaise chale ki #981 bhejna baaki hai? Main
+**5b. Maan lo #980 DB me save ho gaya, par pub/sub tak pahunchne se pehle chat server gir gaya:** Ek server thodi hai,
+1-2 chhotu extra rakh lo; ek bimar pada to doosra aayega. Par doosre ko pata kaise chale ki #980 bhejna baaki hai? Main
 nikal raha hoon aur chhotu baad me aayega, to parchi pe likh ke deewar pe chipka jaunga: "chhotu bhai ye message yahan
 jaana chahiye". Chhotu aayega, parchi padhega, message dene nikal jaayega.
 **Asli naam:** extra chhotu = backup server / kai worker / consumer, deewar ki parchi = outbox (message ke saath ek saath, dono ya koi nahi (batch),
 "ye bhejna hai" wali row), parchi padhne wala chhotu = relay jo outbox padh ke pub/sub pe daale.
 
-**5c. Maan lo pehla chhotu sirf der se tha, wo bhi aaya aur backup bhi, dono ne #981 bhej diya:** Status rakho. Bheja to
+**5c. Maan lo pehla chhotu sirf der se tha, wo bhi aaya aur backup bhi, dono ne #980 bhej diya:** Status rakho. Bheja to
 parchi pe DONE aur mote register me DONE, dono ek saath (dono ya koi nahi), beech me gire to kuch nahi likha, phir se. Koi aaye aur DONE dikhe
 to kaam ho chuka.
 **Asli naam:** outbox row ka status (bhejna baaki -> DONE). Par bhejna DB ke bahar hai, to bhejna aur DONE ek
@@ -197,13 +197,13 @@ transaction nahi: bhej ke DONE se pehle gira to dobara jaayega. Isliye agla.
 time antar pe uthein. Aur 500 tak ek chhotu nahi pahuncha sakta, to bahar ek aadmi khada karo jo 500 ko jaanta. Chhotu
 parchi le ke usko de, wo 500 ko bhej de. Doosra chhotu wahi message laaye to aadmi bole "ye to abhi chala gaya",
 parchi phaad ke phenk de. 2, 3, 5 chhotu ek saath aayein, aadmi sambhal lega.
-**Asli naam:** bahar wala aadmi = fan-out service, message number #981 = idempotency key, wahi number dobara aaye to
+**Asli naam:** bahar wala aadmi = fan-out service, message number #980 = idempotency key, wahi number dobara aaye to
 discard (dedup fan-out pe). Kadam 6 wali key ki doosri kahani: wahan phone pe, yahan bhejne wale pe.
 
-**5e. Maan lo aage: #980 "kal Goa chalte hain" ki parchi wala aadmi chai peene gaya, doosre aadmi ne #981 "shaam 5 baje
+**5e. Maan lo aage: #982 "kal Goa chalte hain" ki parchi wala aadmi chai peene gaya, doosre aadmi ne #983 "shaam 5 baje
 taiyaar" pehle bhej diya:** Dekh lo kaunsa message pehle aaya tha, wahi pehle jaayega. Time specific hai: is samay ye
 pehle aaya, to wahi pehle, phir doosra.
-**Asli naam:** server ka sequence number (kadam 7 / 12), phone usi kram me lagaye; #981 pehle pahunche to bhi #980 ke
+**Asli naam:** server ka sequence number (kadam 7 / 12), phone usi kram me lagaye; #983 pehle pahunche to bhi #982 ke
 baad dikhe.
 
 ```mermaid
@@ -239,7 +239,7 @@ double tick = "pahuncha" ka jawab (ack) dobara bhejo.
 
 **Maan lo ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja:** Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
-Isi key ki doosri kahani = kadam 5 ka bahar wala aadmi: wo 500 ko jaanta, #981 dobara aaye to "ye to chala gaya" bol
+Isi key ki doosri kahani = kadam 5 ka bahar wala aadmi: wo 500 ko jaanta, #980 dobara aaye to "ye to chala gaya" bol
 ke phenk de (dedup fan-out pe).
 
 ```mermaid
@@ -338,9 +338,9 @@ flowchart TB
     style EG fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-## 9. #975 kisne padha? 4.9 lakh line (number ghata lo)
+## 9. #980 kisne padha? 4.9 lakh line (number ghata lo)
 
-Arpan ne #975 "kal party" bheja, Info me dekhna kis-kis ne padha. Har message x har member ki line = 980 x 500 = 4.9
+Arpan ne #980 "kal party" bheja, Info me dekhna kis-kis ne padha. Har message x har member ki line = 980 x 500 = 4.9
 lakh entry. Group me double tick aata hai, Info me jaake dekhte hain kisne padha. Sita ka number 978, iska matlab Sita
 ne 975 padha, tabhi uski ginti 978 hui. Ravi ka 968, matlab wo bahut der se offline hai, ya pahuncha to usne ye message
 read nahi kiya. Number ghata lo, isse pata pad jaayega kisne padha, kisne nahi.
@@ -351,7 +351,7 @@ bas ek number, 4.9 lakh ki jagah 500 number. Neeli tick tab jab sabka number >= 
 ```mermaid
 flowchart TB
     X["Har message x har member:<br/>980 x 500 = 4.9 lakh line"]:::bad
-    M["Arpan ka #975: kisne padha?"]:::card
+    M["Arpan ka #980: kisne padha?"]:::card
     subgraph NG["NUMBER GHATA LO (har member ka ek number)"]
         S[("Sita: 978")]:::good
         R[("Ravi: 968")]:::bad
