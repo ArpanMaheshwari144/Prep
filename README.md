@@ -3,17 +3,16 @@
 Java / Spring backend interview prep — DSA, system design, projects, hands-on notes.
 **Har heading/link click → seedha wahi note ya folder khul jaata.** Har section ke saath **Kya hai** + **Kyu matter karta** likha hai — kholne se pehle hi pata chal jaaye.
 
-> ★ **Abhi (DELIVERY + APPLY phase, build done):** ROZ, kabhi nahi rukta: DSA 1 redo + DSA grill 5 (5 alag pattern, sheet ka block saath) + HLD grill 5 (DIKKAT_CHAIN se alag-alag design). Padhai = ROTATION: din ka vishay (MON Kafka · TUE cache · WED code ka design · THU concurrency · FRI security · SAT infra · SUN transaction + DB), 2-3 file, man ke hisaab se; har Java / Spring file me upar "koi poochhe to aise bolo" + scene + chala ke output + ek trap. HLD ROUND (man se, din me ek): us design ka FR / NFR + thode numbers + API Arpan khud, file URL saanche me (Ek nazar dhaancha + dikkat chain), grill = 5 normal + 4-5 usi design ke. Hafte me ek: THU PR drill · SUN STAR. Plan pakka, din ke man se badalta.
+> ★ **Abhi (DELIVERY + APPLY phase, build done):** ROZ: DSA 1 redo + DSA grill 5 (5 alag pattern, sheet ka block saath). HLD: roz ki grill 5 BAND (18-Nov, dohraav ho rahi thi); ab roz ek design uthao, FR se ant tak khud bolo, Claude beech me kood sakta (sirf tere bole pe, nitpick zero). Naya maal (Zomato, Dropbox, Google Maps) = padhai -> scene-mock -> file. Padhai = ROTATION (Java / Spring / infra), 2-3 file, man ke hisaab se; Java shaam ko. Hafte me ek: THU PR drill · SUN STAR.
 > Priority: HLD + Java / Spring ka gyaan gehra; DSA light (OA ka gate).
-> HLD = ek kahani: "main us situation me hota to kya karta", wahi jawab, naam baad me. Ratna nahi, kahani chala ke dekho (gira to? copy phati to?).
+> HLD = ek kahani: "main us situation me hota to kya karta", wahi jawab, naam baad me. FR = jo app aur user milke karte; NFR = peeche ka kaam; scope = pehle sawaal; bheed FR / NFR me nahi (HLD ka matlab hi bheed).
 
 ```
-SAFAR (March: khaali folder)  ->  aaj
+SAFAR (March: khaali folder)  ->  aaj (18-Nov)
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 23 design (sab kahani format me: kahani -> asli naam -> tasveer) + scene-mock + hand notes 23 + 19 foundation + dikkat chain 21 parivaar
-        har diagram hand notes ke shabdon se (8-Nov) · jahan ring, wahan consistent hashing
-        round ho gaye (FR / NFR design se, URL saanche me): 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov)
-        Ek nazar dhaancha + FR / NFR -> kadam (18-Nov): + 20 PUBG · 07 file upload · 08 news = 6 design, 16 baaki
+  HLD: 23 design (kahani -> asli naam -> tasveer) + scene-mock + hand notes 23 + 19 foundation + dikkat chain 21 parivaar
+        23 / 23 design: upar Ek nazar (dhaancha + dikkat chain), FR / NFR har line kadam se judi (18-Nov), alag aankh se audit
+        round ho gaye: 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov) · naye 18-Nov: 23 Yelp, file upload dedup (kadam 9)
         Kafka = stadium + tube: producer daale -> Kafka / queue line -> worker / consumer nikaale
   DSA: 18 pattern · 183 problem + 159 REDO = 342 .cpp · pattern sheet folder (19 file, 178 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
@@ -122,7 +121,7 @@ SAFAR (March: khaali folder)  ->  aaj
   - [04 notification](04_HLD/SYSTEM_DESIGNS/04_notification_system/04_notification_system.md)
   - [05 stock-broker](04_HLD/SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md)
   - [06 payment](04_HLD/SYSTEM_DESIGNS/06_payment_system/06_payment_system.md)
-  - [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md) (Ek nazar + FR / NFR -> kadam; folder delete = soft delete + S3 peeche)
+  - [07 file-upload](04_HLD/SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md) (folder delete = soft delete + S3 peeche · kadam 9 dedup: content hash, reference, reference counting)
   - [08 news-aggregator](04_HLD/SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator.md) (Ek nazar + FR / NFR -> kadam; login nahi to aam khabar, chhotu ka lease + fencing)
   - [09 bookmyshow](04_HLD/SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow.md) (round ho gaya 17-Nov: FR app ke kaam se, NFR chain se)
   - [10 distributed-cache](04_HLD/SYSTEM_DESIGNS/10_distributed_cache/10_distributed_cache.md)
