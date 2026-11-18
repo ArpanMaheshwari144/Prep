@@ -105,6 +105,17 @@ interest management (naksha dabbon me, Uber ke geohash jaisa; har player ko sirf
 
 ![Sirf aas-paas ki khabar: Arpan aur Claude Pochinki me, Military Base ki khabar nahi](../00_IMG/20_pubg_kadam2_aas_paas.svg)
 
+## 2b. Har kadam pe 120 ms, kichad me chalna (apni chaal turant)
+
+Arpan ka phone Mumbai server se 60 ms door hai, jaana-aana 120 ms. Arpan "aage chal" dabata, phone server ko batata,
+server "haan" bole tab player chalta: har kadam pe 120 ms ki der, jaise kichad me chal raha ho. Server door bhi ho sakta,
+isliye client side hi kar lo: player ko turant apni screen pe chala do, jaise Zomato me gudda chalta dikhta. Phone apni
+chaal server ko bhejta rehta, server peeche-peeche apna hisaab chalata aur aakhri jagah pakad leta. Seedhi line ho ya
+idhar-udhar, exact nahi par andaza aaram se. Player ka button smooth, server ka hisaab bhi chalta.
+
+**Asli naam:** player turant apni screen pe chale, server ka intezaar nahi = client-side prediction, phone apni chaal
+(input) bhejta aur faisla server ka = server authoritative.
+
 ## 3. Hacker ka phone bole "meri goli lagi" (faisla server ka)
 
 Hacker ka phone server ko bolta "meri goli Arpan ko lagi", jabki goli deewar pe lagi ya Arpan se 5-6 meter door.
@@ -116,6 +127,20 @@ gudda bana ke dekha goli kahan lagi: upar lagi to headshot, neeche to "Arpan kil
 
 **Asli naam:** server line kheenche, deewar dekhe, gudda bana ke dekhe = server-side hit validation (raycast: goli ki
 line, beech me deewar, player ka hitbox), sar / body / pair alag = hitbox. Phone sirf "is disha me goli chalayi" bhejta.
+
+## 3b. Phone pe 3 kadam aage, server bole goli pehle lag chuki (server ki maano, rewind)
+
+Phone ne Arpan ko turant 3 kadam aage dikha diya. 120 ms baad server ka jawab: us pal se pehle Claude ki goli lag chuki
+thi, Arpan ruk gaya tha. Maano server ki, wahi sach hai: 3 kadam aage chale to 3 kadam peeche. Claude ne Arpan ko
+dekha, Arpan uske dekhne ke baad aage badh gaya, aur Claude ne goli chalayi. Server scene recreate karta: goli kahan se
+chali, Arpan us waqt kahan tha. Server Arpan ko (delay jitna) peeche karke dekhta; us pal Arpan goli ke saamne tha to
+goli lagi, bhale wo aage chala gaya. Isi se kabhi bhaag ke deewar ke peeche pahunch ke bhi mar jaate ho (PUBG, GTA,
+bahut game me). Server ki aankhen nahi, wo ping se baat karta. Goli deewar pe lagti to server mana karta (kadam 3).
+
+**Asli naam:** server ki maano, 3 kadam peeche = server reconciliation, jhatke se peeche = rubber banding, server
+scene peeche ghuma ke dekhe = lag compensation (server rewind, goli wale ke ping jitna; Valve ne apne games me likha),
+deewar ke peeche marna iska asar, corner se nikal ke maarne wale ko fayda = peeker's advantage (Riot ne kam karne ko
+Valorant me 128 tick server, second me 128 baar duniya update).
 
 ## 4. Hacker 1 second me 500 meter (chaal bhi server jaanche)
 

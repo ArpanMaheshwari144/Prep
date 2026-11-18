@@ -409,8 +409,9 @@ Yahi dikkat yahan bhi:
   Netflix       5b  TV ka purana 27, phone ke 37 ke upar           ->  baad wala jeete, purana discard (timestamp, last-write-wins)
   Twitter       19  "thank you" pehle dikha, "mast DP" gaayab      ->  do pe likho, do se padho (quorum)
   Leaderboard   5b  11:59:58 ka match, score 12:00:02 pe           ->  parchi pe khatam hone ka waqt, usi din ka register (event time)
+  PUBG          3b  deewar ke peeche pahuncha, phir bhi mara       ->  server goli ke pal tak peeche ghuma ke dekhe (lag compensation, peeker's advantage)
 
-Naam: sequence number / offset / OT / coalesce / cursor / store-and-forward / client sort / Snowflake ID / same key parking / event time / last-write-wins
+Naam: sequence number / offset / OT / coalesce / cursor / store-and-forward / client sort / Snowflake ID / same key parking / event time / last-write-wins / lag compensation
 Juda: Kafka ka offset bhi yahi number.
 ```
 
@@ -655,11 +656,13 @@ Yahi dikkat yahan bhi:
   Uber          16c flyover ke neeche U-turn, gudda aage chala     ->  signal aaya, asli peeche, kooda; har app me hota (correction)
   Uber          16c raaste me tunnel, net gaya, 15 jagah           ->  ruka dikhao ya aage badhao, mod pe seedha wahan; bahar aakhri jagah, bike tair ke (last write wins); 15 jagah Kafka -> tasveer
   Uber          16d basement me 5 min offline                      ->  aakhri jagah pe roko, "Raju pahunch gaya" (last known + status)
+  PUBG          2b  har kadam pe 120 ms, kichad me chalna          ->  player ko turant apni screen pe chala do, server peeche hisaab kare (client-side prediction)
+  PUBG          3b  phone pe 3 kadam aage, server bole ruk gaya    ->  server ki maano, 3 kadam peeche (reconciliation, rubber banding)
   Train         1   net / GPS band, train kahan                    ->  phone ka tower, range jitna andaza (cell ID, 5-10 km)
   Train         2   outer pe 25 min, timetable bole aage           ->  asli khabar jeete, delayed by X, expected time (ETA)
   Train         3   mera net band, dost ko khabar                  ->  jinka net chalu unka app bheje, server se push (crowdsourcing)
 
-Naam: dead reckoning / correction / last known location / status (arrived, delivered) / geofence / last write wins / cell ID / ETA / crowdsourcing
+Naam: dead reckoning / client-side prediction / rubber banding / correction / last known location / status (arrived, delivered) / geofence / last write wins / cell ID / ETA / crowdsourcing
 Juda: server ki taraf location band ho to Uber 14 (location timeout); Zomato me do status, building tak + haath me.
 ```
 
