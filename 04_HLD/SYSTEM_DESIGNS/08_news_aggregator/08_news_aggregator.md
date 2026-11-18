@@ -8,14 +8,47 @@ Har kadam = **kahani** (dikkat aur hal, bolne wali bhasha) -> **Asli naam** (int
 
 ---
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+5000 site  -->  kai chhotu (fetcher)  -->  line (Kafka)  -->  worker / consumer: dupe hatao, DB me likho
+                                                                    |
+                                                                    v
+                                       category ki ek parchi (Redis: tech, cricket ...), garam ho to 2-3 dabbe
+                                                                    |
+User  -->  LB  -->  server  -->  parchi se feed (pehli baar DB se)  <+
+
+ 1   5000 site, khabar aayegi kaise                ->  chhotu, sab utha ke dabbe me (fetcher, DB)
+ 2   chhotu akela, ek chakkar 3 ghante             ->  bahut saare chhotu + khabar pehle se parchi me (kai fetcher, Redis feed)
+ 2b  chhotu 7 ki 100 site, wo mara                 ->  "main zinda hoon" band to site baaki chhotuon me (heartbeat, coordinator)
+ 3   ek khabar 40 baar, shabd alag                 ->  bada aadmi "dobara hai, hatao", wordings dekh lo (dedup, near-duplicate)
+ 4   bada aadmi akela, 1 min ek khabar             ->  chhotu Kafka me daal ke chale, peeche workers (Kafka, consumer group)
+ 5   Ravi cricket, Priya tech, 9 baje 1 crore      ->  category me baanto + kai server, LB
+ 6   Priya pehli baar aayi / site band             ->  pehli baar DB phir parchi; site band to ruk ke dobara (cache-aside, retry + backoff)
+ 7   9:05 ki iPhone khabar purani parchi me nahi   ->  aate hi feed me + milaan (push on write, check job)
+ 8   50 lakh alag parchi, 10 crore likhai          ->  saari tech khabar ek parchi (category feed)
+ 9   iPhone launch, 10 lakh/sec, dabba 1 lakh      ->  dabbe badhao + khaali cricket dabbon me tech ki copy (hot key copies)
+10   A me khabar, refresh pe B se gayab            ->  do me likho, do se padho (quorum)
+11   DB me likhi, parchi se pehle worker mara      ->  status rakh, agla aage badhaaye (state, outbox)
+```
+
+**FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
+Arpan: Theek hai, badhiya hai, yahi rehne do.
+
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      5000 site se khabar laao · user ko taazi feed (uski category) · ek khabar ek hi baar (best effort, kabhi dohra chalega)
-NFR     feed turant (~200 ms) · khabar 5-10 min se purani nahi · ek site band ho to baaki na ruke
-        · aayi khabar kho na jaaye (worker / consumer gira to bhi) · refresh pe khabar gayab na ho
-Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec · nayi khabar ~1 / sec
-        -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta
+FR      1  5000 site se khabar laao                                   -> kadam 1, 2, 2b
+        2  user ko taazi feed (uski category)                         -> kadam 5, 6, 7, 8
+        3  ek khabar ek hi baar (best effort, kabhi dohra chalega)    -> kadam 3, 4
+
+NFR     1  feed turant (~200 ms)                                      -> kadam 2, 6
+        2  khabar 5-10 min se purani nahi                             -> kadam 2, 4, 7
+        3  ek site band ho to baaki na ruke                           -> kadam 6
+        4  aayi khabar kho na jaaye (worker / consumer gira to bhi)   -> kadam 11
+        5  refresh pe khabar gayab na ho                              -> kadam 10
+
+Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec (kadam 9)
+        nayi khabar ~1 / sec -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta
 ```
 
 ---
