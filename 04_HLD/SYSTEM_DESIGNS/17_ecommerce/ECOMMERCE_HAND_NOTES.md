@@ -4,13 +4,51 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Mausi ka mart (Reliance Smart jaisa), ab online bhi. Dukaan bhi chal rahi, counter pe billing bhi, aur app se ghar delivery bhi. Stock ek hi: wahi shelf, wahi godown.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Ravi  -->  LB  -->  normal dukaan (aata, daal)          sale ki alag dukaan (ghee 500)
+                         |                                     |
+              DB (order, ek hi kaam me uthana + parchi)   Redis ginti (10 counter, DECR), sale gate: stock jitne hi Pay tak
+                         |                                     |  5 min ghadi, phir wapas line me
+                    PSP: PAYMENT_PENDING + status job + webhook, fail pe cart wahi, kata to refund
+                    paas ka store (location), DB sach, banda Redis aur DB milaye
+
+ 0   sale ka maal seemit                         ->  FR me hi cut off: 500 ko hi, baaki out of stock
+ 1   aakhri ghee, aunty + Ravi ek saath          ->  online ko godown, counter ko shelf (alag stock)
+ 1b  Lucknow ka store khaali, Kanpur me 20       ->  location se paas ka store (dark store)
+ 2   ladka uthake likhna bhool gaya              ->  uthana + parchi ek kaam (atomic transaction)
+ 3   sale ki bheed, aata-daal bhi atka           ->  sale ki alag dukaan (alag service)
+ 4   ek parchi pe 50 hazaar                      ->  10 counter, Redis DECR (hot row todo)
+ 4b  Redis me ginti kati, DB me order nahi       ->  DB sach, banda milaye (reconciliation)
+ 5   counter 3 khatam, counter 7 pe 30           ->  khaali counter band, sold out tab jab sab 0
+ 6   60 ne pay nahi kiya                         ->  cart sirf list, ginti pay pe
+ 6b  order me aata khatam                        ->  jo hai wo bhejo, aate pe out of stock
+ 7   3000 ek second me Pay                       ->  server pe line, 500 ke baad rollback (ya ghadi wala hold)
+ 7b  rollback + ghadi dono me pech               ->  Apple store jaisa sale gate
+ 7c  4 tab, Buy now 4 baar                       ->  user id pe ek (idempotency)
+ 7d  andar gaya, chai peene chala gaya           ->  5 min ghadi, phir wapas (expiry)
+ 7e  ghadi khatam ke 1 sec baad Pay              ->  1-2 sec grace, andar dabaya to PSP hamari zimmedari
+ 8   net gaya / PSP chup                         ->  PAYMENT_PENDING + status job, refund
+ 8b-e  PSP 50 sec chup, kata kaise pata, success do baar, fail pe cart  ->  ghadi, webhook, payment id, cart wahi
+```
+
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: E-commerce ka matlab: stock dekho aur screen pe dikhao, phir cart me daalo, pay karo, order pakka. Stock pehle aana chahiye. "Ek order me kai cheez, ek khatam to baaki bhejo" FR me nahi, usse design nahi badalta (Hello Interview: FR / NFR me wahi jo design me farak laaye); sale wale se badalta hai. Sale me 500 hai to 500 ko hi (Apple store wali kahani, apni banayi isliye aaj bhi yaad).
+Technical me: FR = browse / stock -> cart -> checkout -> order; NFR = consistency (oversell nahi), alag sale service, payment latka na rahe.
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      cart me daalo · pay karo · order pakka · stock dekho (paas wale store ka) · sale (seemit maal, aadhe daam)
-        · ek order me kai cheez, ek khatam ho to baaki bhejo · sale me ek user ko ek hi
-NFR     ek dabba do logon ko kabhi nahi (consistency) · sale me 500 hai to 500 ko hi, baaki "out of stock"
-        (availability nahi, ye FR me hi cut off) · sale ki bheed se normal orders na atkein
-        · paisa kata to maal ya refund, net / PSP chup ho to bhi order latka na rahe
+FR      1  stock dekho (paas wale store ka), screen pe dikhe                -> kadam 1, 1b
+        2  cart me daalo                                                    -> kadam 6
+        3  pay karo                                                         -> kadam 8
+        4  order pakka                                                      -> kadam 2
+        5  sale: seemit maal, aadhe daam; sale me ek user ko ek hi          -> kadam 0, 3, 7, 7c
+
+NFR     1  ek dabba do logon ko kabhi nahi (consistency)                    -> kadam 1, 2, 4
+        2  sale me 500 maal hai to wo 500 logon ko hi mile, baaki ko "out of stock"
+           (availability nahi, ye FR me hi cut off)                         -> kadam 0, 4, 5, 7, 7b
+        3  sale ki bheed se normal orders na atkein                         -> kadam 3
+        4  paisa kata to maal ya refund, net / PSP chup ho to bhi order latka na rahe  -> kadam 8, 8b-8e
 Numbers Diwali 8 baje: 50 hazaar log, ghee sirf 500 · zyadatar log dekhne / cart me daalne aate, pay kam
 ```
 
