@@ -34,7 +34,7 @@ match ke andar khel, goli aur chaal ka faisla, aur match ke baad ka hisaab. Desi
 line ke saath kadam number.
 
 ```
-FR      1  "Start" dabao to 100 logon ke match me jodo, 4-4 ke squad          -> kadam 1
+FR      1  "Start" dabao to 100 logon ke match me jodo, 4-4 (ya 2-3) ke squad   -> kadam 1
         2  match me aas-paas ke log, goli, gaadi, awaaz dikhe / sunai de        -> kadam 2
         3  goli lagi ya nahi; sar pe lagi to headshot, kahin bhi lagi to dead   -> kadam 3
         4  match khatam: kills, damage, rank points save                        -> kadam 5

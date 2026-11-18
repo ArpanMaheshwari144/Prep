@@ -45,11 +45,12 @@ PEHLE SAWAAL (FR se pehle interviewer se poochho, jawab se FR badle):
         d  contest hai to waqt kis time zone me (UTC)?                            -> kadam 6b
         e  kisi ek user ka rank / uske aage-peeche ke 5 chahiye?                  -> kadam 4, 6, 6c
 
-FR      1  score update                                                     -> kadam 3, 3b
+FR      1  score update                                                     -> kadam 3
         2  top N ka board (N, board aur region upar ke sawaal se)           -> kadam 1, 4, 5
 
 NFR     1  score barabar to jisne pehle banaya wo upar (contest me: pehle khatam wala, phir milli second, phir naam)  -> kadam 2, 6b
         2  board / rank thodi der purana chalega; asli rank contest khatam hone ke baad   -> kadam 4, 6c, 6d
+        3  ek match ka score ek hi baar jude (match id)                    -> kadam 3b
 Numbers 1 crore khiladi · har second lakhon match khatam -> likhai bahut · board dekhne wale usse bhi zyada
         -> har baar 1 crore sort / ginti nahi chal sakti
 ```

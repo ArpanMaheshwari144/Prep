@@ -13,7 +13,7 @@ Ravi  -->  LB  -->  normal dukaan (aata, daal)          sale ki alag dukaan (ghe
                     PSP: PAYMENT_PENDING + status job + webhook, fail pe cart wahi, kata to refund
                     paas ka store (location), DB sach, banda Redis aur DB milaye
 
- 0   sale ka maal seemit                         ->  FR me hi cut off: 500 ko hi, baaki out of stock
+ -   sale ka maal seemit                         ->  FR me hi cut off: 500 ko hi, baaki out of stock
  1   aakhri ghee, aunty + Ravi ek saath          ->  online ko godown, counter ko shelf (alag stock)
  1b  Lucknow ka store khaali, Kanpur me 20       ->  location se paas ka store (dark store)
  2   ladka uthake likhna bhool gaya              ->  uthana + parchi ek kaam (atomic transaction)
@@ -42,11 +42,11 @@ FR      1  stock dekho (paas wale store ka), screen pe dikhe                -> k
         2  cart me daalo                                                    -> kadam 6
         3  pay karo                                                         -> kadam 8
         4  order pakka                                                      -> kadam 2
-        5  sale: seemit maal, aadhe daam; sale me ek user ko ek hi          -> kadam 0, 3, 7, 7c
+        5  sale: seemit maal; sale me ek user ko ek hi                      -> Faisla FR se, kadam 3, 7, 7c
 
 NFR     1  ek dabba do logon ko kabhi nahi (consistency)                    -> kadam 1, 2, 4
         2  sale me 500 maal hai to wo 500 logon ko hi mile, baaki ko "out of stock"
-           (availability nahi, ye FR me hi cut off)                         -> kadam 0, 4, 5, 7, 7b
+           (availability nahi, ye FR me hi cut off)                         -> Faisla FR se, kadam 4, 5, 7, 7b
         3  sale ki bheed se normal orders na atkein                         -> kadam 3
         4  paisa kata to maal ya refund, net / PSP chup ho to bhi order latka na rahe  -> kadam 8, 8b-8e
 Numbers Diwali 8 baje: 50 hazaar log, ghee sirf 500 · zyadatar log dekhne / cart me daalne aate, pay kam
