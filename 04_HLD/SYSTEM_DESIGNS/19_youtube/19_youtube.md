@@ -293,7 +293,7 @@ flowchart LR
 
 ## 7. MrBeast ki nayi video, crore subscribers ko khabar (subscriber wala fan-out)
 
-MrBeast ne nayi video daali, uske crore subscribers ko turant pata chalna chahiye. Ye wahi subscriber wala fan-out hai
+Arpan ka vlog chal gaya, par asli bojh tab jab MrBeast jaisa bada YouTuber nayi video daale. MrBeast ne nayi video daali, uske crore subscribers ko turant pata chalna chahiye. Ye wahi subscriber wala fan-out hai
 jo Twitter me kiya: jisne subscribe kiya hai, sabko notification push kar do, jaise Instagram / Twitter pe follow karte
 hain to feed me aata hai. YouTube asal me kaise karta hai, unka design public nahi, par fan-out jaisa hi kuch hoga.
 
@@ -329,7 +329,7 @@ flowchart TB
 ## 8. Reels me har swipe pe spinner (agli reels pehle se, sirf shuru ke tukde)
 
 YouTube Shorts ho ya Instagram Reels, chhoti video ka swipe ek hi baat.
-Ravi Instagram pe reels dekh raha, har swipe pe app server se agli reel maangta, beech me 1-2 second ka spinner aur Ravi
+Arpan ne Goa vlog se 30 second ke shorts bhi kaat ke daale. Arpan ka dost Ravi Instagram pe reels dekh raha, har swipe pe app server se agli reel maangta, beech me 1-2 second ka spinner aur Ravi
 aage swipe kar gaya. Reel ke tukde pehle se CDN pe hain (kai quality me bane, transcoding). Ek banda dhadadhad page padh
 raha, to main 20ve page ke khatam hone ka intezaar nahi karunga, chhotu ko bolunga "turant agle 20 page utha la"; wo
 intezaar nahi karta, mere paas pehle se saamaan hai.
