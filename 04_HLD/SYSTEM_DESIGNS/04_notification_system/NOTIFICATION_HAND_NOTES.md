@@ -4,12 +4,56 @@ Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpa
 
 **Scene:** Arpan ek shopping app se order karta hai. Order hone pe app use teen jagah khabar bhejti hai: SMS ("order placed"), email (bill) aur phone pe push ("shipped"). Ye khabar bhejne ka system Arpan bana raha hai.
 
+**Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
+```
+Order Service  -->  DB me order + saath me vasiyat (outbox)  -->  Kafka
+                                                                    |
+                 alag-alag line: OTP (VIP) · SMS · email · push · promo
+                                                                    |
+                 workers  -->  saanjha had (token bucket, Redis)  -->  SMS / email / push company
+                    |                                                   |
+                    |  fail: ruk ke dobara (1, 2, 5 sec) · band to backup company (circuit breaker) · galat number = DLQ
+                    |  pahuncha? company baad me bataye (webhook), na bataye to chhotu poochhe
+                    |
+                 pasand + saancha apne paas (cache) · Diwali 1 crore = tukdon me, parchi pe "kahan tak"
+
+ 1   order khud SMS call kare, button 8 sec        ->  beech me dabba, aaram se bhejo (Kafka)
+ 1b  DB me order, Kafka se pehle gira              ->  order ke saath vasiyat (outbox + relay)
+ 2   ek hi line, bill aadha ghanta baad            ->  har kaam ki alag line (topic, group)
+ 3   commit se pehle crash, SMS do baar            ->  "ho gaya" likh lo (idempotency)
+ 4   company bole "abhi bheed hai"                 ->  thodi der ruk ke (retry queue)
+ 4b  OTP retry line me 3 ghante                    ->  OTP ki umar, priority line; umar khatam = mat bhejo
+ 4c  Shipped jaane wala, Order placed atka         ->  order ki parchi, dono saath / doosri company
+ 5   SMS company poori band                        ->  backup company (circuit OPEN / HALF-OPEN), galat number DLQ
+ 5b  company 30 sec chup                           ->  OTP turant backup se, ek hi code; sale ruk sakti
+ 5c  lakhon worker har second dobara               ->  1, 2, 5 sec ruk ke + aage-peeche (backoff + jitter)
+ 5d  OTP receipt nahi, umar 2 min                  ->  umar ke saath bhejo, naya OTP ya wahi nayi umar se
+ 6   20 worker 300 / sec, had 100                  ->  saanjha dabba (token bucket, Redis)
+ 7   "OK" bola, SMS pahuncha nahi                  ->  company baad me bataye (webhook)
+ 7b  DELIVERED kabhi aaya hi nahi                  ->  chhotu poochhe, na mile to FAILED + backup
+ 8   1 crore offer, 40 lakh pe crash               ->  tukde, parchi pe "ye ghar ho gaya" (chunks, checkpoint)
+ 8b  5 crore promo ke peeche OTP                   ->  serious ki line alag (high-priority topic)
+ 9   har SMS se pehle saancha DB se                ->  saancha apne paas (template cache)
+ 9b  OTP worker bhi pasand padhne DB pe            ->  OTP seedha bhejo, DB se lena-dena nahi
+```
+
+**FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
+Arpan: FR wo jo app ka kaam hai. Notification ka kaam kya: order hua, SMS / email gaya, user ki pasand maano aur message bhej do, bas. OTP jaisa zaroori pehle jaaye, umar khatam ho to mat bhejo, crore logon ko ek saath offer, ye sab NFR hain: pehle FR bani, FR me dikkat aayi, aur wo cheez NFR me jodi. "OTP pehle jaaye" aur "OTP turant" ek hi baat, ek baar likho.
+Technical me: FR = kya karta (functional), NFR = kitna achha / kis shart pe karta (priority, TTL, scale, delivery tracking).
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
-FR      ek ghatna (order hua) -> SMS / email / push · user ki pasand maano · message ka saancha ("Hi {naam}")
-        · OTP jaisa zaroori pehle jaaye, umar khatam ho to mat bhejo · ek saath crore logon ko offer bhi bhej sakein
-NFR     Order Service ruke nahi · khabar khoye nahi · do baar na jaaye (kabhi-kabhar dohra ho to ek hi OTP code, dohra pakdo)
-        · OTP turant, offer ruk sakta · SMS pahuncha ya nahi, pata ho
+FR      1  ek ghatna (order hua) -> SMS / email / push                      -> kadam 1, 2
+        2  user ki pasand maano ("offer wale SMS mat bhejo")                -> kadam 9
+        3  message ka saancha ("Hi {naam}")                                 -> kadam 9
+
+NFR     1  Order Service ruke nahi                                          -> kadam 1, 1b
+        2  khabar khoye nahi                                                -> kadam 1b, 3, 8
+        3  do baar na jaaye (kabhi dohra ho to ek hi OTP code)              -> kadam 3, 5b
+        4  OTP jaisa zaroori turant, sabse pehle; offer ruk sakta           -> kadam 4b, 5b, 8b, 9b
+        5  OTP ki umar khatam ho to mat bhejo                               -> kadam 4b, 5d
+        6  ek saath crore logon ko offer bhi bhej sakein                    -> kadam 8
+        7  SMS pahuncha ya nahi, pata ho                                    -> kadam 7, 7b
 Numbers 10 crore user x 5 khabar = 50 crore roz, ~5,800 / sec · sale pe 10 guna
         SMS company ki had 100 / sec · Diwali campaign = 1 crore log ek saath
 ```
