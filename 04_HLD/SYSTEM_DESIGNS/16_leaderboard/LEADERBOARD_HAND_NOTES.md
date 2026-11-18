@@ -2,7 +2,7 @@
 
 Har block = sawaal (scene) -> Arpan ne jo bola, wahi shabd -> Technical me (Arpan ke shabd ka naam).
 
-**Scene:** Ek game hai, 1 crore khiladi. Har match ke baad kisi ka score badalta hai. Screen pe teen cheez chahiye: top 10 abhi ke abhi, "tera rank 4,52,318", aur tere aage ke 5 aur peeche ke 5 khiladi.
+**Scene:** Ek game hai, 1 crore khiladi. Har match ke baad kisi ka score badalta hai. Roz ke match ke alawa game me LeetCode jaisa contest bhi hota hai (sab ek saath shuru, 5 level / sawaal, ant me contest ki apni rank). Screen pe teen cheez chahiye: top 10 abhi ke abhi, "tera rank 4,52,318", aur tere aage ke 5 aur peeche ke 5 khiladi.
 
 **Ek nazar: dhaancha + dikkat chain (round me sabse pehle ye, phir FR / NFR isi se):**
 ```
@@ -90,7 +90,7 @@ Technical me: "parchi pe contest id + khatam hone ka waqt" = event time, "usi di
 Arpan: Mera score 5200 hai, to mujhe 10,000 wale se kya lena-dena. Bheed me main apne aas-paas scan karta, poori bheed nahi dekhta. 5200 ke aas-paas wali range dekho; 4000 aur 6000 walon se matlab nahi. Jaise highway pe gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhta hoon (yahi soch cache 4 me: key ring pe paas ke dabbe me).
 Technical me: "apne aas-paas scan" = har shard se mere score ke thoda upar aur thoda neeche wale (score range query), sab mila ke sort, mere upar ke 5 aur neeche ke 5.
 
-**Maan lo dabbe region ke hisaab se: India, US, Europe. Arpan world rank 50,000 pe. World me uske upar ke 5 aur neeche ke 5 kaise?**
+**Maan lo dabbe region ke hisaab se: India, US, Europe. Is Sunday ke world contest me Arpan ki rank 50,000 (game wali 4,52,318 alag hai). World me uske upar ke 5 aur neeche ke 5 kaise?**
 Arpan: Ye ek sawaal nahi, pehle tod ke dekho kya maanga. Jaisa FR me tay kiya, kaam POORA world leaderboard banana hai; Arpan ke aas-paas wale to isi board ka ek hissa, Arpan jo dekhega wahi.
 Arpan: Contest ek jagah hota (ICPC jaisa, US me ho ya Europe me), to sabka waqt ek time zone me, UTC. Bada bhai India, US, Europe sabke paas gaya, sabka result likh liya. Pehle gino kisne kitne sawaal kiye: contest me 5 sawaal the, 50,000 me se 20,000 ne paanchon kiye, to pehle sirf unse khelo, unki rank pehle; baaki 30,000 (4, 3, 2 wale) ko baad me alag dekh lo, unki rank waise bhi neeche. Ek jitne sawaal walon me jisne UTC me pehle khatam kiya wo upar; waqt bhi barabar to milli second (LeetCode bhi karta); wo bhi barabar to naam se. Result aate jaayein, line me judte jaayein. Rank dheere-dheere theek hoti, Arpan ko thodi der 5,000 dikhe phir 50,000. Har baar region se "aas-paas" maangna bhaari, isliye ek board banao.
 Arpan: Arpan ke upar ke 5 aur neeche ke 5 seedha tay nahi ho sakte, time se tay hote. Ranking upar se dheere-dheere tay hoti aati; thodi der Arpan ki rank galat dikh sakti, farak nahi padta, LeetCode bhi time poora hone pe sab rank theek kar deta. Happy New Year film ka board: jab tak time poora nahi, Team India neeche, jaise-jaise result aate Team India upar. Jisne pehle poora kiya use upar lao, jo baad me khatam kare use neeche; board thodi der hilta, phir sab aa gaye to ek saath jud ke theek. Rassi jaisa: chhoti rassi baandhi, phir badi, phir aur, dheere-dheere apne aap lambi.

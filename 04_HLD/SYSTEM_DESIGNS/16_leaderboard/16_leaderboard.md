@@ -1,6 +1,7 @@
 # Leaderboard: 1 crore khiladi, ek line ki kahani
 
-Ek game hai, 1 crore khiladi, aur har match ke baad kisi ka score badalta hai. Screen pe teen cheez chahiye: top 10
+Ek game hai, 1 crore khiladi, aur har match ke baad kisi ka score badalta hai. Roz ke match ke alawa game me LeetCode
+jaisa contest bhi hota hai (sab ek saath shuru, 5 level / sawaal, contest ki apni rank). Screen pe teen cheez chahiye: top 10
 abhi ke abhi, "tera rank 4,52,318", aur tere aage ke 5 aur peeche ke 5 khiladi. Kaam: ye sab bina 1 crore sort kiye,
 aur har second lakhon match khatam hon tab bhi.
 
@@ -242,7 +243,7 @@ flowchart TB
     style AS fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
-**Maan lo (12-Nov grill) dabbe region ke hisaab se (India, US, Europe), Arpan world rank 50,000, world me upar ke 5 aur neeche ke 5:**
+**Maan lo (12-Nov grill) dabbe region ke hisaab se (India, US, Europe), is Sunday ke world contest me Arpan ki rank 50,000 (game wali 4,52,318 alag), world me upar ke 5 aur neeche ke 5:**
 Jaisa FR me tay kiya, kaam **poora world leaderboard** banana hai; Arpan ke aas-paas wale isi board ka hissa. Contest ek jagah
 (ICPC jaisa), sabka waqt ek time zone, UTC. Bada bhai sab region ka result likhe. Pehle gino kisne kitne sawaal kiye: 5 me se
 paanchon wale (50,000 me 20,000) pehle, unki rank pehle; baaki 30,000 baad me alag. Ek jitne sawaal walon me UTC me pehle khatam
