@@ -79,6 +79,25 @@ update kar de.
 
 **Asli naam:** cache (Redis), write pe cache update (writes kam, reads zyada).
 
+```mermaid
+flowchart TB
+    X["Har baar menu DB se,<br/>Diwali pe 50 hazaar = bekaar bojh"]:::bad
+    A["Arpan: menu dekho"]:::card
+    subgraph G["DB SE AAGE EK DABBA"]
+        R[("Menu Redis me")]:::pill
+    end
+    P[("Postgres: menu badla")]:::card
+    A -.-> X
+    A --> R
+    P -- "job: cache update" --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 1. 15 km ke restaurant kaise (area ki ek list cache me)
 
 App khula, location on, GPS se lat / long aaya. Uske chaaron taraf 15 km ka gola, gole ke andar ke restaurant dikhao; band
@@ -90,6 +109,25 @@ Band hone wala ho to banner "jaldi order karo".
 **Asli naam:** geo / radius search, area list cache (Redis) + TTL, write pe cache update, cache stampede pe lock, fan-out
 (list app me push, ek aur raasta).
 
+```mermaid
+flowchart TB
+    X["Arpan, Rahul, Neha, Ravi:<br/>4 baar DB, list ek hi"]:::bad
+    A["Lat / long se 15 km ka gola"]:::card
+    subgraph G["AREA KI EK LIST"]
+        L[("Redis: list + TTL,<br/>band = closed nishaan")]:::pill
+    end
+    P[("Postgres: restaurant band hua")]:::card
+    A -.-> X
+    A --> L
+    P -- "closed mark" --> L
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 2. Neha kinare pe, Whitefield bahut bada (area ke andar area)
 
 Kinare wale ki bhi ek hi location hoti hai, uske lat / long se list. Whitefield bahut bada hai (ITPL ek chhor, doosra,
@@ -97,6 +135,25 @@ teesra), to bade area ke andar chhote area kaato; har chhote area ki apni ek lis
 Ye Uber me ho chuka.
 
 **Asli naam:** grid / geohash cell, cell ke naam pe cache key.
+
+```mermaid
+flowchart TB
+    X["Neha kinare pe,<br/>Whitefield bahut bada"]:::bad
+    subgraph G["AREA KE ANDAR AREA (grid / geohash cell)"]
+        C1(["ITPL cell ki list"]):::pill
+        C2(["Doosre cell ki list"]):::pill
+        C3(["Teesre cell ki list"]):::pill
+    end
+    X --> C1
+    X --> C2
+    X --> C3
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
 
 ## 3. Order Burger Singh tak (order status flow)
 
@@ -108,6 +165,23 @@ kuch naya nahi.
 **Asli naam:** order status flow (placed -> accepted -> ready -> delivering -> delivered, state DB me), notification /
 webhook, driver dispatch (radius).
 
+```mermaid
+flowchart TB
+    A["Arpan: order"]:::card
+    subgraph G["ORDER STATUS FLOW (DB me)"]
+        S1(["placed"]):::pill --> S2(["accepted<br/>(Burger Singh ne)"]):::pill --> S3(["ready"]):::pill --> S4(["delivering<br/>(5 km ka driver)"]):::pill --> S5(["delivered"]):::good
+    end
+    N["Arpan ko notification"]:::card
+    A --> S1
+    S2 -.-> N
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 4. Burger ready, driver 15 min door (prep-time se bulao)
 
 Driver ka aana order ki quantity pe depend karta. Restaurant jaanta hai kitni der lagegi (1 burger 5 min, 30 burger 1
@@ -116,6 +190,23 @@ hote hi utha le. 30 burger me user ko pata hai time lagega, kuch thande bhi ho s
 
 **Asli naam:** prep-time estimate se driver dispatch.
 
+```mermaid
+flowchart TB
+    X["Burger ready, driver 15 min door:<br/>burger thanda"]:::bad
+    Q["Quantity: 1 burger 5 min,<br/>30 burger 1 ghanta"]:::card
+    subgraph G["PREP-TIME SE BULAO"]
+        D(["Driver ko request + ready time,<br/>khana ready hote hi pahunche"]):::pill
+    end
+    X -.-> Q
+    Q --> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 5. Burger Singh chup (accept timeout)
 
 Na accept, na reject. User ko atka ke nahi rakh sakte: order 2-3 min (ya 1-1.5 min) restaurant ki screen pe, user ko gola
@@ -123,6 +214,25 @@ Na accept, na reject. User ko atka ke nahi rakh sakte: order 2-3 min (ya 1-1.5 m
 paisa kata hi nahi; kata hai to refund. Restaurant ka app hi band ho to order hota hi nahi.
 
 **Asli naam:** accept timeout + auto-cancel, accept ke baad hi paisa (warna refund).
+
+```mermaid
+flowchart TB
+    A["Arpan: order placed, gola ghoom raha"]:::card
+    B["Burger Singh: na accept, na reject"]:::bad
+    subgraph G["ACCEPT TIMEOUT"]
+        T(["2-3 min window"]):::pill
+        F(["Order fail, paisa nahi kata / refund,<br/>dobara try karo"]):::pill
+    end
+    A --> B
+    B --> T
+    T -- "accept nahi" --> F
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
 
 ## 6. Diwali, Burger Singh pe 2 min me 500 (capacity gate + Kafka line)
 
@@ -133,6 +243,27 @@ ki apni line; andar walon ko "order placed" dikhao aur Kafka me daalo, worker pe
 
 **Asli naam:** capacity gate, restaurant-wise queue (Kafka, key = restaurant id), async processing.
 
+```mermaid
+flowchart TB
+    X["Diwali: 2 min me 500 order,<br/>seedha Postgres = app hang"]:::bad
+    subgraph G["CAPACITY GATE + LINE"]
+        S(["Subah stock: Burger Singh 350"]):::pill
+        K(["350 andar: order placed,<br/>Kafka line (key = restaurant)"]):::pill
+    end
+    O["150: out of stock"]:::card
+    W["Worker -> Burger Singh -> driver"]:::card
+    X --> S
+    S --> K
+    S --> O
+    K --> W
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 7. 349 pe Arpan + Rahul ek pal me (atomic decrement)
 
 Diwali pe kai server; dono server ne ginti 349 ek hi pal me padhi aur dono andar, 351. Ilaaj: ginti ka counter ek hi
@@ -141,6 +272,25 @@ bacha = bacha - 1 WHERE bacha >= 1`. Jo pehle pahuncha usko burger, doosre ko "o
 bhi ek ko hi milega, kismat se.
 
 **Asli naam:** atomic decrement / conditional update (Redis DECR / Lua), first come first served.
+
+```mermaid
+flowchart TB
+    X["Ginti 349: do server ne ek pal me padhi,<br/>dono andar = 351"]:::bad
+    subgraph G["EK COUNTER, ATOMIC"]
+        C[("UPDATE bacha = bacha - 1<br/>WHERE bacha >= 1")]:::pill
+    end
+    A["Pehla pahuncha: burger mila"]:::good
+    R["Doosra: out of stock"]:::card
+    X --> C
+    C --> A
+    C --> R
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
 
 ## 8. Address khaali wala order, saari line atki (retry limit + DLQ, reel se)
 
@@ -151,6 +301,25 @@ dekhe. Pech: kram wali line se hataya to kram toot sakta, usi order ke baaki mes
 
 **Asli naam:** poison message, retry limit (SQS maxReceiveCount; Kafka me N retry ke baad DLQ topic + offset commit),
 dead letter queue (DLQ), DLQ alert.
+
+```mermaid
+flowchart TB
+    X["Address khaali order:<br/>fail, wapas line, phir fail, line atki"]:::bad
+    subgraph G["RETRY KI HAD + DLQ"]
+        R(["3 baar retry"]):::pill
+        D(["Dead letter queue + alert"]):::pill
+    end
+    L["Baaki order chal pade"]:::good
+    X --> R
+    R -- "had paar" --> D
+    D --> L
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
 
 ---
 
