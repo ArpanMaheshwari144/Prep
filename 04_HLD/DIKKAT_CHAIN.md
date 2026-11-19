@@ -29,6 +29,7 @@ Yahi dikkat yahan bhi:
   Inventory     1   do log ek pal me aakhri iPhone                 ->  "ek kam karo sirf tab jab 1 ho", ek hi kaam (atomic conditional update)
   Inventory     1c  dono ne pay kiya, ek ko iPhone, doosre ka paisa kata ->  doosre godown se de do, ya cancel + refund; chhota store arrange kare (sourcing / refund)
   E-commerce    6b  ek order me ghee, aata, daal; aata khatam      ->  poora order mat roko, jo hai wo bhejo, aate pe out of stock (adhoora order)
+  Zomato        7   349 pe Arpan + Rahul ek pal me, 351 ho gaye     ->  ek hi counter, check + ghatao ek saath, pehle wale ko (atomic decrement)
 
 Naam: lock / atomic / counter range / Lua script / 1 thread per symbol / transaction / row lock / deadlock / lock ordering / batch matching / batching window / channel ka alag stock / adhoora order
 Juda: parchi laga ke koi gayab ho jaaye to umar chahiye (2). Ek hi cheez pe bahut bheed to counter todo (7).
@@ -145,6 +146,9 @@ Yahi dikkat yahan bhi:
   Netflix       5c  har kuch second update, DB ki saans            ->  race me ruk ke likho (pehle cache, DB kabhi-kabhi)
   YouTube       3   1 lakh view, ek row ke lock pe line            ->  +1 parchi pe, chhotu batch me jode (Kafka, batch count)
   Inventory     5   1 crore sirf page dekh rahe, har baar DB jod   ->  bahar banner / chhotu ki copy, asli jaanch Pay pe (cache, Redis)
+  Zomato        0   menu har baar DB se                             ->  menu Redis me, menu badle to job cache update kare (cache + write pe update)
+  Zomato        1   Whitefield me sabko wahi 15 km list, 4 baar DB ->  area ki list ek dabbe me, TTL, band = closed nishaan (area list cache)
+  Zomato        2   Neha kinare pe, Whitefield bahut bada           ->  area ke andar chhote area, har ek ki list (grid / geohash cell)
 
 Naam: cache (Redis) / LRU, TTL / write buffer + batch / local cache / cache-aside / eviction
 Juda: parchi bhar gayi to purana nikaalo; parchi aur DB alag ho sakte (20).
@@ -307,6 +311,7 @@ Yahi dikkat yahan bhi:
   Kafka         10b aaj 1 din, kal 2 din peeche                    ->  alert laga do (consumer lag alert)
   PUBG          5   chicken dinner pe lakhon likhai, DB ghuta      ->  match me parchi, end pe line + copy, dheere DB (batch, Kafka, Cassandra)
   Inventory     7   5 se kam, ab kya: sirf email?           ->  saari inventory dekho, grahak mat roko, alert kai raaston se (line me); mangwana purchase team ka (scope se bahar)
+  Zomato        6   Diwali, 500 order seedha Postgres pe            ->  "order placed" dikhao, restaurant-wise Kafka line, worker peeche (queue + async)
 
 Naam: Kafka / queue + worker / consumer group / batch + Cassandra (likhai tez) / partition / alag topic / priority topic / consumer lag alert
 Juda: line me se gira to (4) aur (3). Line peeche reh gayi to alert.
@@ -362,6 +367,8 @@ Yahi dikkat yahan bhi:
   E-commerce    8c  PSP ka "kata" kaise turant pata chale          ->  paisa katte hi chhota event, S3 jaisa; badi sale pe 3-4 company (webhook, backup PSP)
   E-commerce    9   sale pe cart ki almari B, C giri, Add to Cart  ->  ring pe aage wali chalti almari pe likho (sloppy quorum, Dynamo)
   E-commerce    9b  B, C wapas, iPhone D, E pe                    ->  D ka chhotu lauta de + sync job (hinted handoff, anti-entropy)
+  Zomato        5   Burger Singh chup, na accept na reject          ->  2-3 min window, phir order fail, paisa nahi kata / wapas (accept timeout)
+  Zomato        8   address khaali order, saari line atki (reel)    ->  3 retry, phir alag line + alert (retry limit + DLQ, poison message)
 
 Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / REFUND_PENDING + refund job / webhook redelivery
 Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker. PSP pe hamari ghadi 30-55 sec + chhotu poochta (status poll) + paisa katte hi event (webhook) + der se kata to DB me REFUND, raat ki job lautaye, charon me (BMS 6c, 6e); SUCCESS + parchi ek saath (outbox, BMS 6d); onboard pe SLA sirf uptime ka.
@@ -504,6 +511,7 @@ Yahi dikkat yahan bhi:
   Twitter       17  Amit ka tweet 40 ke neeche dab gaya            ->  jisse judta wo pehle (ranking)
   Docs          2b  2 saal purana doc, 50 lakh op                  ->  har kuch hazaar op pe doc ki photo, photo + baad ke op (snapshot)
   Train         4   tower ki list koi nahi deta                    ->  khud tukdon me, ya permission wali authority (railway, MCD, BMC), updates (data partner)
+  Zomato        4   burger ready, driver 15 min door                ->  quantity se ready time, driver ko wahi time (prep-time dispatch)
 
 Naam: fanout on write / precompute / batch / checkpoint / data partner / MapReduce / fanout on read / backfill / merge at read / chunks / snapshot / balance snapshot / snapshot job / proactive fill / cold start
 Juda: Kohli jaise 27 crore pe ulta: padhte waqt milao (fanout on read).
@@ -564,6 +572,7 @@ Yahi dikkat yahan bhi:
   E-commerce    3   sale ki bheed, aata-daal bhi atka              ->  sale ki alag dukaan (alag service)
   E-commerce    7   3000 ek second me Pay                          ->  server pe line, 500 ke baad rollback (ya ghadi wala hold, dono ki keemat)
   E-commerce    7b  rollback + ghadi dono me pech                  ->  Apple store: sale gate, stock jitne hi Pay tak, fail = agla batch
+  Zomato        6   Diwali, Burger Singh pe 2 min me 500            ->  subah stock poocho, 350 hi andar, baaki out of stock (capacity gate)
 
 Naam: virtual queue / sale gate / surge / token / starvation -> aging / alag service
 Juda: andar gaya to ghadi (2), pay pe (11).
@@ -675,6 +684,7 @@ Yahi dikkat yahan bhi:
   Train         1   net / GPS band, train kahan                    ->  phone ka tower, range jitna andaza (cell ID, 5-10 km)
   Train         2   outer pe 25 min, timetable bole aage           ->  asli khabar jeete, delayed by X, expected time (ETA)
   Train         3   mera net band, dost ko khabar                  ->  jinka net chalu unka app bheje, server se push (crowdsourcing)
+  Zomato        3   order Burger Singh tak, user ko kya dikhe       ->  placed -> accepted -> ready -> delivering + notification (order status flow)
 
 Naam: dead reckoning / client-side prediction / rubber banding / correction / last known location / status (arrived, delivered) / geofence / last write wins / cell ID / ETA / crowdsourcing
 Juda: server ki taraf location band ho to Uber 14 (location timeout); Zomato me do status, building tak + haath me.
@@ -691,6 +701,7 @@ Juda: server ki taraf location band ho to Uber 14 (location timeout); Zomato me 
 - Stock: [notes](SYSTEM_DESIGNS/05_stock_broker_trading/STOCK_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/05_stock_broker_trading/05_stock_broker_trading.md)
 - Payment: [notes](SYSTEM_DESIGNS/06_payment_system/PAYMENT_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/06_payment_system/06_payment_system.md)
 - Yelp search: [notes](SYSTEM_DESIGNS/23_yelp_search/YELP_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md)
+- Zomato: [notes](SYSTEM_DESIGNS/24_zomato/ZOMATO_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/24_zomato/24_zomato.md)
 - File upload: [notes](SYSTEM_DESIGNS/07_file_upload_validate_system/FILE_UPLOAD_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/07_file_upload_validate_system/07_file_upload.md)
 - News: [notes](SYSTEM_DESIGNS/08_news_aggregator/NEWS_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/08_news_aggregator/08_news_aggregator.md)
 - BookMyShow: [notes](SYSTEM_DESIGNS/09_bookmyshow/BMS_HAND_NOTES.md) · [design file](SYSTEM_DESIGNS/09_bookmyshow/09_bookmyshow.md)

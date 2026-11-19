@@ -10,9 +10,9 @@ Java / Spring backend interview prep — DSA, system design, projects, hands-on 
 ```
 SAFAR (March: khaali folder)  ->  aaj (18-Nov)
   Java + Spring poora · LLD 11 · 6 project
-  HLD: 23 design (kahani -> asli naam -> tasveer) + scene-mock + hand notes 23 + 19 foundation + dikkat chain 21 parivaar
+  HLD: 24 design (kahani -> asli naam -> tasveer) + scene-mock + hand notes 24 + 19 foundation + dikkat chain 21 parivaar
         23 / 23 design: upar Ek nazar (dhaancha + dikkat chain), FR / NFR har line kadam se judi (18-Nov), alag aankh se audit
-        round ho gaye: 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov) · naye 18-Nov: 23 Yelp, file upload dedup (kadam 9)
+        round ho gaye: 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov) · naye 18-Nov: 23 Yelp, file upload dedup (kadam 9) · 19-Nov: 24 Zomato
         Kafka = stadium + tube: producer daale -> Kafka / queue line -> worker / consumer nikaale
   DSA: 18 pattern · 183 problem + 159 REDO = 342 .cpp · pattern sheet folder (19 file, 178 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
@@ -27,7 +27,7 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
 | 01 | [**01_JAVA**](01_JAVA) | Core · Collections · Java-8 · Multithreading · SOLID · Patterns · Testing | Java grill round ka **core** — collections-internal + multithreading sabse zyada pucha jaata |
 | 02 | [**02_SPRING**](02_SPRING) | Boot internals · @Transactional · Hibernate · JWT · Docker/K8s · Kafka/Async/Cache · QueryDSL/GraphQL | Backend role ka **dil** — proxy / N+1 / tx / Kafka = deep-grill favourites |
 | 03 | [**03_LLD**](03_LLD) | 11 OOP designs, code me | LLD round — class-design + patterns **bolke** |
-| 04 | [**04_HLD**](04_HLD) | 23 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + DIKKAT_CHAIN (21 parivaar) + 19 foundations + HANDS_ON (7 demo, design file se alag) | Tera **strong zone** — JP ka pura ek round |
+| 04 | [**04_HLD**](04_HLD) | 24 design (ek kahani: FR → NFR → numbers → design chhote se badhta, har kadam = dikkat → dabba → kyun / doosra kyun nahi) + DIKKAT_CHAIN (21 parivaar) + 19 foundations + HANDS_ON (7 demo, design file se alag) | Tera **strong zone** — JP ka pura ek round |
 | 05 | [**05_INFRA_DEEP**](05_INFRA_DEEP) | devops commands + hands-on demos (concept notes ab 04_HLD/FOUNDATIONS me) | HLD ke demo ka saboot + STAR-fodder |
 | 06 | [**06_COMPARES**](06_COMPARES) | 14 side-by-side "X vs Y" | Rapid-fire — turant clear answer chahiye |
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
@@ -109,9 +109,9 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
 ---
 
 ## [04_HLD](04_HLD) — tera strong zone
-**Kya:** 23 poore design (scene-mock se bane, hand notes = sach, main file unse; cross-question usi kadam me) + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
+**Kya:** 24 poore design (scene-mock se bane, hand notes = sach, main file unse; cross-question usi kadam me) + neev (19 foundations) + hands-on demo. &nbsp; **Kyu:** JP ka pura ek round; tera favourite — yahan sabse confident.
 
-- ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — dikkat ke 21 parivaar: dikkat -> humne kya socha -> wahi dikkat kis-kis design me (23 design, har line ek dikkat -> ek hal)
+- ★★ **[DIKKAT_CHAIN](04_HLD/DIKKAT_CHAIN.md)** — dikkat ke 21 parivaar: dikkat -> humne kya socha -> wahi dikkat kis-kis design me (24 design, har line ek dikkat -> ek hal)
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
   - **FR / NFR + Ek nazar (18-Nov):** 23 / 23 DONE. Har FR / NFR line kadam se judi, upar Ek nazar; alag aankh se audit bhi ho gaya (FR = app + user ka kaam, NFR = peeche ka, bheed FR / NFR me nahi).
   - [00_IMG](04_HLD/SYSTEM_DESIGNS/00_IMG) — jo mermaid se nahi banta (cache ki ring, Uber ka naksha + gaadi, PUBG ke dabbe + gudde), saari tasveer ek folder me
@@ -138,6 +138,7 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
   - [21 Inventory (Arpan ki online dukaan, teen godown)](04_HLD/SYSTEM_DESIGNS/21_inventory_system/21_inventory_system.md) (E-com se aaya: ginti pay pe, dabbe, register, hub and spoke)
   - [22 Where Is My Train (bina net / GPS ke train kahan)](04_HLD/SYSTEM_DESIGNS/22_where_is_my_train/22_where_is_my_train.md) (cell tower, crowdsourcing, tower ki list)
   - [23 Yelp search (5 km ke andar burger)](04_HLD/SYSTEM_DESIGNS/23_yelp_search/23_yelp_search.md) (reel se: geo filter + Elasticsearch fuzzy, Postgres -> ES change event, Closed dikhao, server-side sort)
+  - [24 Zomato (Whitefield ke PG se Burger Singh)](04_HLD/SYSTEM_DESIGNS/24_zomato/24_zomato.md) (area list cache + grid cell, order status flow, prep-time dispatch, accept timeout, Diwali capacity gate + Kafka line, atomic decrement, reel se DLQ)
 
 - ★★ **HAND NOTES** — scene-mock ke baad, Arpan ke shabd. Har block = scene -> Arpan ka jawab -> Technical me (asli naam). Revision yahin se; main design file me bhi har kadam pe wahi scene line.
   - [01 URL (token counter)](04_HLD/SYSTEM_DESIGNS/01_url_shortener/URL_HAND_NOTES.md)
