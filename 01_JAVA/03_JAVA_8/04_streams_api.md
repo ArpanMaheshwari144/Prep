@@ -75,6 +75,29 @@ l.removeIf(daam < 200)     -> asli list: [ghee 550, aata 320]
 PR me ye galti dikhti: `filter` lagaya aur samjha DB wali list saaf ho gayi.
 
 
+## Parat 3: map (har samaan ko kuch aur bana dena)
+
+```java
+l.stream().map(Item::naam).toList()
+l.stream().map(it -> it.daam() * 2).toList()
+```
+```
+[ghee, aata, daal]
+[1100, 640, 280]
+```
+
+`filter` samaan rokta, `map` samaan BADALTA: ek dabba andar, uski jagah kuch aur bahar (naam, dugna daam). Ginti utni hi.
+
+**Trap:** Java 16 wala `toList()` jo list deta, usme jod nahi sakte:
+
+```
+naam.add("chini")                      ->  UnsupportedOperationException
+collect(Collectors.toList()) pe add    ->  [ghee, aata, daal, chini]
+```
+
+Prod me aise phatta: kisi ne `collect(Collectors.toList())` ko "chhota likhte" bol ke `toList()` kiya, neeche usi list me `add`
+ho raha tha. Compile ho jaata, chalne pe phat-ta.
+
 ## Scene
 
 Mart me 4 dabbe hain: ghee 550, daal 140, aata 320, chai 400. Mausi boli: "300 se mehnge dabbe chuno aur unke naam do."
