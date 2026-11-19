@@ -225,6 +225,10 @@ int subarrayXorK(vector<int> &nums, int k) {
 Ek array aur ek number K diya hai. Kitne lagaatar subarray hain jinka sabse bada number theek K ho (na zyada, na kam), wo ginti lautao.
   e.g. [8,2,1,3,4,5,1,10], K=3 -> 3
   kyun: [2,1,3], [1,3], [3]; 8 aur 4 K se bade = deewar, unhe chhoo nahi sakte
+  e.g. [3,1,5,3,2], K=3 -> 4
+  kyun: 5 = deewar, array do kamron me toota: [3,1] aur [3,2].
+        pehle kamre se [3], [3,1]; doosre se [3], [3,2]  (= 4). [1] aur [2] me 3 hai hi nahi, max kam.
+        koi tukda deewar ke paar nahi jaata -> window chhoti-badi karne ka sawaal hi nahi, har kamra alag gino.
 ```
 
 **SAAR**
