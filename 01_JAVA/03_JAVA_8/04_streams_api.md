@@ -98,6 +98,32 @@ collect(Collectors.toList()) pe add    ->  [ghee, aata, daal, chini]
 Prod me aise phatta: kisi ne `collect(Collectors.toList())` ko "chhota likhte" bol ke `toList()` kiya, neeche usi list me `add`
 ho raha tha. Compile ho jaata, chalne pe phat-ta.
 
+## Parat 4: sorted (daam se lagana)
+
+Chai aur aata dono 320:
+
+```java
+sorted(Comparator.comparing(Item::daam))                           // sasta pehle
+sorted(Comparator.comparing(Item::daam).reversed())                // mehnga pehle
+sorted(Comparator.comparing(Item::daam).thenComparing(Item::naam)) // daam barabar to naam se
+```
+```
+[daal, chai, aata, ghee]
+[ghee, chai, aata, daal]
+[daal, aata, chai, ghee]
+```
+
+Daam barabar ho to list me jo pehle tha wahi pehle (chai). `thenComparing` se barabar waalon me naam se kram (aata, chai).
+
+**Trap:** bina bataye `sorted()`:
+
+```
+l.stream().sorted()   ->  ClassCastException
+```
+
+Compile ho jaata, chalne pe phat-ta. Number / String apne aap sort hote, apni banayi class (`Item`) nahi; `Comparator` do.
+Wahi jo DSA me `sort(v.begin(), v.end(), cmp)` me likhta, bas Java ki bhasha me.
+
 ## Scene
 
 Mart me 4 dabbe hain: ghee 550, daal 140, aata 320, chai 400. Mausi boli: "300 se mehnge dabbe chuno aur unke naam do."
