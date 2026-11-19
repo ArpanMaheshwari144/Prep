@@ -378,4 +378,25 @@ Netflix jaisa (manifest + CDN) -> har view stream me, ginti batch me (Cassandra)
 chhaano -> garam / thanda storage, trend pe upar-neeche -> nayi video ki khabar fan-out se -> reels me agli reels ke shuru ke tukde pehle se (pre-fetch, kitna = user ke
 pattern se).
 
+---
+
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    CR(["Creator"]):::pill -- "presigned URL" --> S3[("S3")]:::card
+    S3 --> W["20-25 worker: tukde,<br/>har quality (chhoti pehle)"]:::card
+    W --> CDN[("CDN · garam / thanda storage")]:::pill
+    V(["Dekhne wala"]):::pill -- "manifest" --> CDN
+    V -- "view +1" --> K["Kafka parchi, chhotu batch me jode<br/>bot gate pe"]:::card
+    W --> FO(["Nayi video: fan-out<br/>subscribers ko khabar"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [YOUTUBE_HAND_NOTES.md](YOUTUBE_HAND_NOTES.md)

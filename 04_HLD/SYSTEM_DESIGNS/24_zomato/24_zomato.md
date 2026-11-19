@@ -52,22 +52,6 @@ Data kya: restaurant, menu, order, order ka status, aaj ka stock. Kaam kya: orde
 aakhri burger na le jaayein), aur scale itna bada nahi. Isliye SQL (Postgres, AWS RDS): transaction, aur RDS replica /
 backup khud sambhal leta. Cassandra / MongoDB / DynamoDB ki zaroorat nahi, wo itne bade likhne ke liye bane hain jo yahan nahi.
 
-```mermaid
-flowchart LR
-    A(["Arpan: Whitefield"]):::pill --> S["Server"]:::card
-    S --> R[("Redis<br/>menu + area list, TTL")]:::new
-    S --> P[("Postgres (RDS)<br/>order, status, stock counter")]:::card
-    P -- "menu / khula-band badla<br/>cache update" --> R
-    S -- "Diwali: order placed" --> K["Kafka line<br/>restaurant-wise"]:::new
-    K --> W["Worker"]:::card
-    W --> B["Burger Singh ka app<br/>accept, 2-3 min window"]:::card
-    B -- "ready time ke saath" --> D(["Driver 5 km"]):::pill
-    linkStyle default stroke:#8fa3c7,stroke-width:2px
-    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
-    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
-    classDef new fill:#f5c542,stroke:#c99a10,color:#000
-```
-
 ---
 
 ## 0. Menu baar-baar DB se (menu Redis me)
@@ -330,5 +314,27 @@ Redis me, DB badle to update -> order Burger Singh ke app pe, accept ki 2-3 min 
 quantity se ready time, utne time pe 5 km ka driver -> delivering, tracking Uber wali -> Diwali pe subah stock, gate pe
 capacity, andar walon ki Kafka line -> aakhri burger ek hi counter pe atomic ghatao -> kharab order line na roke: 3 retry, phir DLQ + alert. Do system: user ka order, aur
 restaurant + driver ka.
+
+---
+
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart LR
+    A(["Arpan: Whitefield"]):::pill --> S["Server"]:::card
+    S --> R[("Redis<br/>menu + area list, TTL")]:::new
+    S --> P[("Postgres (RDS)<br/>order, status, stock counter")]:::card
+    P -- "menu / khula-band badla<br/>cache update" --> R
+    S -- "Diwali: order placed" --> K["Kafka line<br/>restaurant-wise"]:::new
+    K --> W["Worker"]:::card
+    W --> B["Burger Singh ka app<br/>accept, 2-3 min window"]:::card
+    B -- "ready time ke saath" --> D(["Driver 5 km"]):::pill
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef new fill:#f5c542,stroke:#c99a10,color:#000
+```
+
+---
 
 Notes (Arpan ke shabd) = [ZOMATO_HAND_NOTES.md](ZOMATO_HAND_NOTES.md)

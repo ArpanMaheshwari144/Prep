@@ -320,4 +320,22 @@ nahi rukta, alert kai raaston se; maal mangwana purchase team ka kaam.
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    O(["Order / Pay"]):::pill --> S["Server"]:::card
+    S --> DB[("DB: 1 kam karo sirf tab jab 1 ho<br/>sale me 5 dabbe")]:::pill
+    V(["1 crore dekhne wale"]):::card --> C[("Cache (Redis)")]:::card
+    DB --> LG["Ledger + raat ka chhotu milaye"]:::card
+    DB --> AL(["5 se kam: alert ·<br/>pehle shehar, phir main warehouse"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [INVENTORY_HAND_NOTES.md](INVENTORY_HAND_NOTES.md)

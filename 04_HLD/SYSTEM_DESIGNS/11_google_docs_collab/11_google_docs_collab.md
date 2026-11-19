@@ -370,4 +370,22 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    U(["Arpan / Ravi"]):::pill -- "WebSocket" --> O["Doc ka owner server<br/>ek doc = ek maalik, ek version"]:::pill
+    O --> OT["Har badlaav = op,<br/>OT se sabka doc SAME"]:::card
+    OT --> R[("Redis buffer + copy")]:::card
+    R -- "batch" --> DB[("DB + snapshot")]:::card
+    P["Permission badli"]:::card -- "pub/sub" --> O
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [DOCS_HAND_NOTES.md](DOCS_HAND_NOTES.md)

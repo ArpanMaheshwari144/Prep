@@ -356,4 +356,23 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    U(["Ravi"]):::pill --> S["Server"]:::card
+    S --> C[("Cache (Redis, RAM)<br/>tukdon me, ring pe")]:::pill
+    C -. "miss" .-> DB[("DB (asli sach)")]:::card
+    C --> H["Garam key ki copy ·<br/>bhara to LRU · TTL + jitter"]:::card
+    DB -- "naam badla: parchi kaato + sync job" --> C
+    S --> L["Bheed pe ek chhotu<br/>(single flight / lock)"]:::card
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [CACHE_HAND_NOTES.md](CACHE_HAND_NOTES.md)

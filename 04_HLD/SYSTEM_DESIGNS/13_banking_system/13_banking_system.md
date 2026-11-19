@@ -755,4 +755,24 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    A(["Arpan"]):::pill --> LB["LB"]:::card --> C["Kai counter (app server)"]:::card
+    C --> DB[("DB: khaate, row lock")]:::pill
+    DB -- "sync copy" --> REP[("Laptop (replica, Multi-AZ)")]:::card
+    DB --> RR[("Photocopy (read replica)")]:::card
+    DB --> LG["Ledger: kaato mat, neeche likho"]:::card
+    DB --> OB["Outbox -> Ravi ko khabar"]:::card
+    DB --> ST(["Statement: raat ka batch,<br/>purana S3 me"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [BANKING_HAND_NOTES.md](BANKING_HAND_NOTES.md)

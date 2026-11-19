@@ -405,4 +405,23 @@ doosra na dekhe      -> owner / share check, chhota link, scan tak band
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    P(["Phone"]):::pill --> S["Hamara server<br/>JWT dekhe, token de"]:::card
+    S --> DB[("DB: status, folder tree,<br/>kiski file")]:::card
+    P -- "tukde seedha" --> S3[("S3")]:::pill
+    S3 -- "file aa gayi (S3 event)" --> S
+    S --> K["Line (Kafka)"]:::card --> SC["Scan worker<br/>CLEAN tak link band"]:::card
+    S -- "haq dekhe, chhoti umar ka link" --> CDN(["S3 / CDN se seedha phone pe"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [FILE_UPLOAD_HAND_NOTES.md](FILE_UPLOAD_HAND_NOTES.md)

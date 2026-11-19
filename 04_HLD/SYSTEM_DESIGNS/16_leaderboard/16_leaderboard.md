@@ -303,4 +303,23 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    M(["Match khatam: +50, match id"]):::pill --> S["Server"]:::card
+    S --> Z[("Redis sorted set<br/>apne aap sort")]:::pill
+    Z -- "clone" --> REP[("Replica · DB sach")]:::card
+    Z --> RG["Region ke dabbe: India / US / Europe"]:::card
+    RG --> W(["World board: chhotu milaye<br/>(scatter-gather)"]):::good
+    Z --> T["Aaj / hafta / all-time<br/>teen dabbe"]:::card
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [LEADERBOARD_HAND_NOTES.md](LEADERBOARD_HAND_NOTES.md)

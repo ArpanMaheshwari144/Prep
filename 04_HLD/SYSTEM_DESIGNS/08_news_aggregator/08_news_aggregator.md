@@ -399,4 +399,24 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    SRC(["Khabar ke source"]):::card --> W["Worker / consumer"]:::card
+    W --> DB[("DB (sach)")]:::card
+    W --> R[("Category ki parchi (Redis)<br/>garam ho to 2-3 dabbe")]:::pill
+    U(["User"]):::pill --> LB["LB"]:::card --> S["Server"]:::card
+    S --> R
+    S -. "pehli baar" .-> DB
+    R --> F(["Feed"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [NEWS_HAND_NOTES.md](NEWS_HAND_NOTES.md)

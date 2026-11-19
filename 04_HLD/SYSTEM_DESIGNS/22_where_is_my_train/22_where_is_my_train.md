@@ -226,4 +226,25 @@ taaza.
 **Sach kitna pakka:** cell tower + offline timetable + logon se data = app ka apna bayaan aur Wikipedia. Andar ki list
 kaise bani, wo public nahi; doston ke phone wali baat reel ka daava hai.
 
+---
+
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    P(["Phone: net / GPS band"]):::pill -- "kaunsa tower (cell ID)" --> TL[("Phone me tower list (offline)")]:::pill
+    TL --> E(["Train yahan aas-paas, 5-10 km"]):::good
+    TT["Timetable phone me:<br/>shuru ka andaza"]:::card --> E
+    F(["Net chalu wale"]):::card --> S["Server"]:::card
+    S -- "push" --> D(["Station pe dost"]):::good
+    S -- "delayed by X + expected time" --> E
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [TRAIN_HAND_NOTES.md](TRAIN_HAND_NOTES.md)

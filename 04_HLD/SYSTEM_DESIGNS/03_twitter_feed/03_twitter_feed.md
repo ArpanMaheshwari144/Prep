@@ -710,4 +710,25 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    U(["Ravi: tweet"]):::pill --> LB["LB"]:::card --> T["Tweet server"]:::card
+    T --> K["Kafka: post ho gaya"]:::card --> W["Workers"]:::card
+    W --> F[("Har follower ka dabba<br/>Redis, last 500")]:::pill
+    CL[("Kohli / SRK ki alag parchi<br/>padhte waqt milao")]:::card
+    F --> FE(["Feed: dabba + celeb parchi,<br/>ranking"]):::good
+    CL --> FE
+    T --> DB[("Cassandra: user id se baanto, 3 copy<br/>purane S3, follow Neo4j")]:::card
+    V["Video: presigned URL -> S3<br/>workers 4 size -> CDN"]:::card --> FE
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [TWITTER_HAND_NOTES.md](TWITTER_HAND_NOTES.md)

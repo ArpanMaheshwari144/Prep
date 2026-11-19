@@ -618,4 +618,24 @@ flowchart LR
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    D(["Raju: phone har 4 sec"]):::pill --> LS["Location Service"]:::card
+    LS --> R[("Redis: abhi ki jagah,<br/>geohash dabbe")]:::pill
+    LS --> K["Kafka -> raasta batch me Cassandra"]:::card
+    A(["Arpan: Book"]):::pill --> M["Matching: aas-paas ke dabbe,<br/>ETA, 15-20 sec batch"]:::card
+    M --> R
+    M --> H["Driver pe parchi (hold, 15 sec)<br/>bheed me line + surge"]:::card
+    H --> L(["Live: WebSocket + pub/sub,<br/>trip khatam: kiraya kaato"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [UBER_HAND_NOTES.md](UBER_HAND_NOTES.md)

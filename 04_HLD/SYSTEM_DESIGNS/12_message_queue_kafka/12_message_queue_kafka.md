@@ -414,4 +414,23 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    O(["Order Service"]):::pill --> DB[("DB + outbox")]:::card
+    DB --> K["Kafka: topic = line, partition = gate<br/>acks=all, order id se gate"]:::pill
+    K --> S["SMS room<br/>(consumer group)"]:::card
+    K --> F["Fraud room"]:::card
+    K --> A["Analytics room"]:::card
+    S --> X(["offset · dedup ·<br/>DLQ · circuit breaker"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [KAFKA_HAND_NOTES.md](KAFKA_HAND_NOTES.md) · [Kafka concepts](kafka_concepts.md)

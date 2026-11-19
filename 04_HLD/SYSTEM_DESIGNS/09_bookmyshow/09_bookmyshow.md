@@ -481,4 +481,23 @@ flowchart LR
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    U(["User"]):::pill --> Q["Line (virtual queue, token)"]:::card --> LB["LB"]:::card --> C["Kai counter (app server)"]:::card
+    C -- "seat map" --> RR[("Read replica")]:::card
+    C -- "seat chuni: WHERE FREE" --> DB[("DB: parchi = hold, 5 min")]:::pill
+    DB -- "Pay: PAYMENT_PENDING" --> PSP["PSP (Razorpay)<br/>ghadi ~1 min, status + webhook"]:::card
+    PSP --> OB["SUCCESS + outbox"]:::card --> T(["Ticket service"]):::good
+    PSP -. "der se / fail" .-> RF["REFUND_PENDING<br/>raat ki job -> REFUNDED"]:::bad
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [BMS_HAND_NOTES.md](BMS_HAND_NOTES.md)

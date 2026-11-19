@@ -429,4 +429,25 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    A(["Arpan"]):::pill --> S["App server"]:::card
+    S --> I[("Parchi INITIATED<br/>pehle apne register me")]:::pill
+    I --> P1["PSP-1"]:::card
+    P1 -. "band / chup" .-> P2["PSP-2"]:::card
+    P1 --> B(["HDFC"]):::good
+    P2 --> B
+    P1 -- "webhook + status job" --> W[("Wallet DB, shard<br/>ledger me hold")]:::card
+    W --> SG["Saga se ulta karo<br/>(2PC nahi)"]:::card
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [PAYMENT_HAND_NOTES.md](PAYMENT_HAND_NOTES.md)

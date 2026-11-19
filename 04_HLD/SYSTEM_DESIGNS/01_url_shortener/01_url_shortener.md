@@ -515,4 +515,23 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    U(["User"]):::pill --> LB["LB"]:::card --> C["Kai counter (app server)<br/>har counter ki apni range"]:::card
+    C -- "naya token" --> T["number -> chhota token<br/>(base62)"]:::card
+    T --> M[("Mota register<br/>Cassandra, tukdon me, 3 copy")]:::card
+    C -- "token se pata" --> R[("Chhota register<br/>Redis cache")]:::pill
+    R -. "na mile" .-> M
+    R --> L(["Lamba pata -> 302"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [URL_HAND_NOTES.md](URL_HAND_NOTES.md)

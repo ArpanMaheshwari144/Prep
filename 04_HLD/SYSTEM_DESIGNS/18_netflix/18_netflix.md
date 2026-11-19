@@ -376,4 +376,23 @@ apni tasveer = personalized thumbnail, dekhna / chhodna / search = events Kafka 
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    TV(["Ravi ka TV"]):::pill --> AWS["AWS: login, list, pasand,<br/>kaunsa dabba (steering)"]:::card
+    AWS --> WP[("Watch position: cache,<br/>DB kabhi-kabhi")]:::card
+    AWS --> RC["Pasand: raat ka batch + abhi ki parchi"]:::card
+    TV -- "video bytes" --> OC[("ISP ke andar Netflix ke dabbe<br/>(Open Connect)")]:::pill
+    OC -. "dabba band" .-> OC2[("Agla dabba")]:::card
+    OC --> B(["Player buffer"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [NETFLIX_HAND_NOTES.md](NETFLIX_HAND_NOTES.md)

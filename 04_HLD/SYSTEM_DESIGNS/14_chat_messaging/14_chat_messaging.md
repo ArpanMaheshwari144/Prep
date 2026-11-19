@@ -522,4 +522,23 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    A(["Arpan"]):::pill -- "WebSocket" --> S1["Chat server S1"]:::card
+    S1 --> DB[("DB: message store,<br/>pehle likho")]:::pill
+    DB --> OB["Outbox + chhotu"]:::card
+    S1 --> SM[("Session map (Redis)<br/>Ravi kis server pe")]:::card
+    OB --> PS["Redis pub/sub"]:::card --> S7["Ravi ka server S7"]:::card
+    S7 -- "WebSocket" --> R(["Ravi"]):::good
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [CHAT_HAND_NOTES.md](CHAT_HAND_NOTES.md)

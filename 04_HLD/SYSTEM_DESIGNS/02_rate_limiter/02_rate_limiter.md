@@ -442,4 +442,24 @@ flowchart TB
 
 ---
 
+## Poora dhaancha ek nazar me
+
+```mermaid
+flowchart TB
+    U(["Ravi / script"]):::pill --> G["API gateway pe guard<br/>ban list yahin"]:::card
+    G --> R[("Redis: har user ka dabba<br/>token bucket, Lua: check + nikaalo")]:::pill
+    R -. "had paar" .-> X(["429 + itne sec baad"]):::bad
+    R --> O["OTP Service (kai server)"]:::card
+    O --> Q["Line (queue)<br/>umar khatam = phenko"]:::card
+    Q --> W["Worker: SMS company ki raftaar"]:::card --> S(["SMS company"]):::good
+    G -. "Redis gira: local fallback 5-5" .-> O
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+---
+
 Notes (Arpan ke shabd) = [RATE_LIMITER_HAND_NOTES.md](RATE_LIMITER_HAND_NOTES.md)

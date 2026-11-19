@@ -40,6 +40,121 @@ NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega
 **Numbers (Arpan):** Zomato jaisa app India ke shehron me, worldwide nahi. Ek area me 10-20 hazaar log ek saath search,
 itna server sambhal leta; 5 lakh faltu number.
 
+---
+
+## 1. "burger" pe 8 second, "burgr" pe zero (aas-paas + Elasticsearch)
+
+Abhi sirf Postgres hai, 50 lakh restaurant, har ek ke naam aur menu me "burger" dhoondhna (LIKE '%burger%') 8 second,
+aur "burgr" likha to ek bhi result nahi. Ravi ka latitude longitude lo, uske aas-paas ke restaurant hi dekho, jaise Uber
+me karte. Text dhoondhna Elasticsearch ka kaam: kuch bhi likho, sahi option de deta, "burgr" pe bhi burger.
+
+**Asli naam:** aas-paas = geo filter (geohash / radius), text = Elasticsearch (inverted index), galat spelling pe bhi =
+fuzzy search (typo tolerance).
+
+```mermaid
+flowchart TB
+    X["Postgres LIKE '%burger%': 8 sec,<br/>burgr pe zero"]:::bad
+    subgraph G["AAS-PAAS + ELASTICSEARCH"]
+        GF(["Ravi ki lat / long:<br/>aas-paas ke restaurant (geohash)"]):::pill
+        ES(["Elasticsearch: kuch bhi likho,<br/>sahi option (fuzzy)"]):::pill
+    end
+    X --> GF
+    GF --> ES
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+## 2. Burger Singh band, search me abhi bhi (Postgres -> ES sync, "Closed" dikhao)
+
+Burger Singh ne aaj ke liye dukaan band ki (chhutti), Postgres me "closed", par ES ke paas purani jaankari. Postgres aur ES ko sync karo.
+Dukaan search se gayab nahi hoti; Zomato jaisa, aati hai par "Closed" dikhti hai.
+
+**Asli naam:** DB -> search index sync (Postgres sach, ES search ki copy), status field (Closed badge), thodi der ES
+peeche = eventual consistency.
+
+```mermaid
+flowchart TB
+    P[("Postgres: Burger Singh closed")]:::card
+    X["ES ke paas purani jaankari:<br/>search me abhi bhi khula"]:::bad
+    subgraph G["POSTGRES -> ES SYNC"]
+        C(["Search me aaye, par<br/>'Closed' dikhe"]):::pill
+    end
+    P -.-> X
+    P -- "sync" --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+## 3. Dopahar ka naya burger, ES ko raat 2 baje pata (badlaav pe event)
+
+Sync job raat 2 baje chalti; paas wale Burger Point ne dopahar 1 baje joda "Paneer Burger", shaam 8 baje search me nahi. Postgres me badlaav aate hi
+ek event bhejo jo ES ko update kare, jaise S3 ka "file aa gayi" event. Raat wali job bhi chalti rahe, jo event chhoota
+wo pakde. Yahan queue / Kafka nahi; Kafka numbers dekh ke: ek saath ~20 hazaar seedha sambhal jaata, Kafka tab
+jab peak pe lakh log ek saath aayein (Arpan).
+
+**Asli naam:** change event (Postgres ke badlaav ko seedha padhna = CDC), raat ki job = reconciliation.
+
+```mermaid
+flowchart TB
+    X["Sync raat 2 baje: dopahar ka<br/>Paneer Burger shaam ko nahi"]:::bad
+    subgraph G["BADLAAV PE EVENT"]
+        E(["Postgres me aate hi<br/>change event -> ES"]):::pill
+        J(["Raat ki job: jo chhoota<br/>wo pakde"]):::pill
+    end
+    X --> E
+    X --> J
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+## 4. 300 meter wali 4.6 star 15ve number pe (sort user chune, server kare)
+
+200 restaurant mile, screen pe 10. User sort chunta hai: doori se ya rating se. Sort server karta hai saare 200 pe, phone
+ko wahi pehle 10 jaate jo sort ke baad upar aaye. Naam me burger ho ya menu me, sab aate hain, bas neeche-upar.
+
+**Asli naam:** sort param (rating / doori), server-side sort (Elasticsearch me) + pagination.
+
+```mermaid
+flowchart TB
+    X["200 mile, 300 m wali 4.6 star<br/>15ve number pe"]:::bad
+    subgraph G["SORT USER CHUNE"]
+        S(["Doori se ya rating se:<br/>server saare 200 pe sort"]):::pill
+    end
+    T(["Phone ko pehle 10"]):::good
+    X --> S
+    S --> T
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style G fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+---
+
+## Wrap
+
+Ravi ki jagah se aas-paas ke restaurant (geo filter) -> Elasticsearch me text, galat spelling pe bhi (fuzzy) -> asli sach
+Postgres, ES uski copy: badlaav aate hi change event, raat ki job chhoota pakde; band dukaan "Closed" -> sort user chune,
+server saare pe kare, phone ko pehle 10.
+
+---
+
+## Poora dhaancha ek nazar me
+
 ```mermaid
 flowchart LR
     R(["Ravi: burger"]):::pill --> S["Server"]:::card
@@ -53,46 +168,5 @@ flowchart LR
 ```
 
 ---
-
-## 1. "burger" pe 8 second, "burgr" pe zero (aas-paas + Elasticsearch)
-
-Abhi sirf Postgres hai, 50 lakh restaurant, har ek ke naam aur menu me "burger" dhoondhna (LIKE '%burger%') 8 second,
-aur "burgr" likha to ek bhi result nahi. Ravi ka latitude longitude lo, uske aas-paas ke restaurant hi dekho, jaise Uber
-me karte. Text dhoondhna Elasticsearch ka kaam: kuch bhi likho, sahi option de deta, "burgr" pe bhi burger.
-
-**Asli naam:** aas-paas = geo filter (geohash / radius), text = Elasticsearch (inverted index), galat spelling pe bhi =
-fuzzy search (typo tolerance).
-
-## 2. Burger Singh band, search me abhi bhi (Postgres -> ES sync, "Closed" dikhao)
-
-Burger Singh ne aaj ke liye dukaan band ki (chhutti), Postgres me "closed", par ES ke paas purani jaankari. Postgres aur ES ko sync karo.
-Dukaan search se gayab nahi hoti; Zomato jaisa, aati hai par "Closed" dikhti hai.
-
-**Asli naam:** DB -> search index sync (Postgres sach, ES search ki copy), status field (Closed badge), thodi der ES
-peeche = eventual consistency.
-
-## 3. Dopahar ka naya burger, ES ko raat 2 baje pata (badlaav pe event)
-
-Sync job raat 2 baje chalti; paas wale Burger Point ne dopahar 1 baje joda "Paneer Burger", shaam 8 baje search me nahi. Postgres me badlaav aate hi
-ek event bhejo jo ES ko update kare, jaise S3 ka "file aa gayi" event. Raat wali job bhi chalti rahe, jo event chhoota
-wo pakde. Yahan queue / Kafka nahi; Kafka numbers dekh ke: ek saath ~20 hazaar seedha sambhal jaata, Kafka tab
-jab peak pe lakh log ek saath aayein (Arpan).
-
-**Asli naam:** change event (Postgres ke badlaav ko seedha padhna = CDC), raat ki job = reconciliation.
-
-## 4. 300 meter wali 4.6 star 15ve number pe (sort user chune, server kare)
-
-200 restaurant mile, screen pe 10. User sort chunta hai: doori se ya rating se. Sort server karta hai saare 200 pe, phone
-ko wahi pehle 10 jaate jo sort ke baad upar aaye. Naam me burger ho ya menu me, sab aate hain, bas neeche-upar.
-
-**Asli naam:** sort param (rating / doori), server-side sort (Elasticsearch me) + pagination.
-
----
-
-## Wrap
-
-Ravi ki jagah se aas-paas ke restaurant (geo filter) -> Elasticsearch me text, galat spelling pe bhi (fuzzy) -> asli sach
-Postgres, ES uski copy: badlaav aate hi change event, raat ki job chhoota pakde; band dukaan "Closed" -> sort user chune,
-server saare pe kare, phone ko pehle 10.
 
 Notes (Arpan ke shabd) = [YELP_HAND_NOTES.md](YELP_HAND_NOTES.md)
