@@ -61,6 +61,9 @@ Numbers ~10 crore user, aam din kuch sau payment / sec, Diwali pe ~3,000 / sec
 Arpan: Ek aisa system bana do, aisi API jo ye kaam khud kare. Har cheez ke liye alag-alag nahi, sirf ek centralized tareeka ho, koi centralized authority jo ye kaam khud kare. Bas hum uski cheez use karein.
 Technical me: "centralized authority jo ye kaam khud kare" = PSP (Razorpay, Juspay), "bas hum uski cheez use karein" = PSP ki API.
 
+Reel se (Stripe; Arpan: "scene-mock ka matlab nahi, tokenization credit card ka apna hota, Stripe ID rakhta"): card ka number apne DB me nahi, PSP card rakhe aur hume ek ID de, DB me sirf wo ID; UPI me sirf UPI ID, PIN user ke UPI app me.
+Technical me: tokenization (payment method ID), card data PSP ke paas (PCI DSS), India me RBI ka niyam (1 Oct 2022): dukaan aur PSP dono card number nahi rakhte, sirf bank / card network; baaki ke paas token.
+
 **2. App ne PSP ko bola "500 kaato", aur PSP 30 second se chup. FAILED dikhaya to Arpan dobara pay karega aur 1,000 kat sakte. SUCCESS dikhaya to ho sakta paisa kata hi na ho, aur dukaan wala bina paise saamaan de de.**
 Arpan: Hum apne paas ek parchi rakh lein, jisse dekh sakein PSP pe kya ho raha. Pay dabaya, to maine apne paas parchi rakh di: INITIATED ho gaya. Parchi pe likha rahega kya-kya hua: PSP ne ye kara, ab ye kara. Fail ho gaya to FAIL mark kar do, pass ho gaya to PASS mark kar do.
 Technical me: "apne paas ek parchi" = payment table me status, "INITIATED ho gaya" = INITIATED status, "fail hua to FAIL, pass hua to PASS mark" = pakka jawab aane pe hi SUCCESS / FAILED.

@@ -73,6 +73,13 @@ kare. Hum bas uski cheez use karein.
 **Asli naam:** centralized authority = PSP (Razorpay, Juspay), uski cheez use karna = PSP ki API (bank, UPI, card PSP
 sambhalta, hum thodi fees dete). Hamara paise ka hisaab = SQL DB (Postgres; dono taraf ek saath badle = ACID).
 
+**Card ka number kahan rakhein (reel se, Stripe; scene-mock nahi):** card ka number hum apne DB me rakhte hi nahi. PSP
+(Stripe / Razorpay) card leke apne paas rakhta aur hume ek ID deta; DB me sirf wo ID, agli baar usi ID se charge.
+Card sambhalne ka jhanjhat aur jokhim hamara nahi, hum fees dete. India me RBI ka niyam isse bhi kada (1 Oct 2022 se):
+dukaan hi nahi, PSP bhi card number nahi rakh sakta; card sirf bank / card network (Visa, RuPay) ke paas, baaki sabko
+token milta. UPI me ye sawaal hi nahi: hamare paas sirf UPI ID aati, PIN user apne UPI app me daalta.
+**Asli naam:** tokenization (payment method ID / card token), card data PSP ke paas (PCI DSS ka bojh PSP pe).
+
 ```mermaid
 flowchart TB
     A["Arpan: pay 500"]:::card
