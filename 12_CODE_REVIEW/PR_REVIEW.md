@@ -17,13 +17,13 @@
 | 11 | 31 Oct | Order refund | 3 | 1 (HTTP txn ke andar) | double refund, fail pe 200 (owner check tha, "nahi" bola) | haan |
 | 12 | 4 Nov | SIP redeem | 2 + 3 chhote | 2 (double payout, fail pe 200) | 409, magic 0.01, naam process (@RequiredArgsConstructor ko bug bola) | haan |
 | 13 | 12 Nov | FD close | 5 | 1 (fail pe 200 / string) + bahar call txn me | double payout, 409, magic 0.01, naam process (@RequiredArgsConstructor ko bug bola, owner check tha "nahi" bola) | haan |
-| 14 | 19 Nov | Policy surrender | 3 + 2 chhote (Claude ka bada / chhota label, interviewer ki nazar alag ho sakti) | 1 chhota (body me string "SURRENDERED" hardcode) | double payout, pehle se SURRENDERED pe 200 (409), magic 0.95 + naam `handle` (@Transactional bola rollback ke liye, par bank call bahar rakhni thi; policyId log ko PII bola) | haan |
+| 14 | 19 Nov | Policy surrender | 3 + 2 chhote (Claude ka bada / chhota label, interviewer ki nazar alag ho sakti) | 2 (txn + bank call beech me na ho; body me string "SURRENDERED" hardcode) | double payout, pehle se SURRENDERED pe 200 (409), magic 0.95 + naam `handle` (policyId log ko PII bola) | haan |
 
 **Agla PR inhi pe banega (sabse zyada chhoote, upar wale pehle):**
 1. double payout / do click (check ACTIVE phir paisa) — chhoota 21, 22, 24, 31 Oct, 12 Nov, 19 Nov · pakda 25 Oct, 4 Nov
 2. pehle se band pe bhi 200 "ho gaya" (409 chahiye) — chhoota 4 Nov, 12 Nov, 19 Nov
 3. magic number (0.01 / 0.95) + naam (`process` / `handle`) — chhoota 4 Nov, 12 Nov, 19 Nov
-4. JAAL (bug NAHI): `@RequiredArgsConstructor` + final = constructor injection (4 Nov, 12 Nov galat bola; 19 Nov bug nahi bola) · `@Transactional` (Arpan: bade code base me rollback ke liye) theek soch, par bank call transaction ke BAHAR rakho; rollback DB ka hota, gaya paisa wapas nahi aata (19 Nov) · ID (policyId) log me theek, PII = naam / account number (19 Nov) · owner check maujood hai to "nahi" mat bolo (31 Oct, 12 Nov) · enum == sahi (20, 22 Oct)
+4. JAAL (bug NAHI): `@RequiredArgsConstructor` + final = constructor injection (4 Nov, 12 Nov galat bola; 19 Nov bug nahi bola) · ID (policyId) log me theek, PII = naam / account number (19 Nov) · owner check maujood hai to "nahi" mat bolo (31 Oct, 12 Nov) · enum == sahi (20, 22 Oct)
 5. fail pe 200 — ab 4 Nov, 12 Nov pakda; ek aur drill me aaye to table 2 me
 
 Drill se pehle: table 1 (chhoot rahe) padho, table 2 pe ek nazar. Baaki table PR ke waqt upar se neeche.
