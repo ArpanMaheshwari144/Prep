@@ -148,6 +148,57 @@ khaali list pe max                       ->  Optional.empty
 **Trap:** test me list hamesha bhari, `.get()` chal jaata. Prod me kisi din khaali aayi (aaj koi samaan nahi) aur `.get()` phat
 gaya. `orElse` se batao khaali ho to kya.
 
+## Parat 6: collect + groupingBy (dibbe ke hisaab se), aaj ka pehla sawaal
+
+Mart ka samaan: ghee, aata (rasoi) · sabun, shampoo (nahana).
+
+**Sabse kaam ka: har dibbe me kaun-kaun (sirf naam)**
+
+```java
+Map<String, List<String>> m = l.stream()
+        .collect(groupingBy(Item::dibba, mapping(Item::naam, toList())));
+```
+```
+{nahana=[sabun, shampoo], rasoi=[ghee, aata]}
+```
+
+Ise do hisson me padho:
+- `groupingBy(Item::dibba, ...)` = dher kis cheez pe banana: **dibba** (rasoi, nahana) map ki key ban jaata.
+- `mapping(Item::naam, toList())` = har dher me poora dabba (`Item`) nahi chahiye, **sirf uska naam** (`map` wala kaam, dher ke
+  andar), aur un naamon ki list.
+
+`mapping` na lagao (`groupingBy(Item::dibba)` akela) to har dibbe me poore `Item` aate: `rasoi=[Item[ghee..], Item[aata..]]`.
+Naam chahiye to `mapping`.
+
+**Doosra hissa badlo, kaam badal jaata (saancha wahi):**
+
+```java
+groupingBy(Item::dibba, mapping(Item::naam, toList()))   // har dibbe me KAUN
+groupingBy(Item::dibba, counting())                      // har dibbe me KITNE
+groupingBy(Item::dibba, summingInt(Item::daam))          // har dibbe ka KUL DAAM
+```
+```
+{nahana=[sabun, shampoo], rasoi=[ghee, aata]}
+{nahana=2, rasoi=2}
+{nahana=220, rasoi=870}
+```
+
+**Trap:** `toMap` lagaya, soch ke har dibbe me ek hi samaan hoga:
+
+```
+toMap(Item::dibba, Item::naam)
+  ->  IllegalStateException: Duplicate key rasoi (attempted merging values ghee and aata)
+
+toMap(Item::dibba, Item::naam, (x, y) -> x + "+" + y)
+  ->  {nahana=sabun+shampoo, rasoi=ghee+aata}
+```
+
+Test me har dibbe me ek samaan tha, chal gaya. Prod me ek key do baar aayi, `toMap` phat gaya. Ek key pe kai cheezein aa sakti
+hon to `groupingBy`, ya `toMap` ko teesra hissa do (takrayein to kya karna).
+
+**Streams basic ka chakkar:** belt chalu (`stream`) -> `filter` (roko) -> `map` (badlo) -> `sorted` (lagao) -> ant: `count` /
+`sum` / `max` ya `collect` + `groupingBy`.
+
 ## Scene
 
 Mart me 4 dabbe hain: ghee 550, daal 140, aata 320, chai 400. Mausi boli: "300 se mehnge dabbe chuno aur unke naam do."
