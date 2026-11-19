@@ -124,6 +124,30 @@ l.stream().sorted()   ->  ClassCastException
 Compile ho jaata, chalne pe phat-ta. Number / String apne aap sort hote, apni banayi class (`Item`) nahi; `Comparator` do.
 Wahi jo DSA me `sort(v.begin(), v.end(), cmp)` me likhta, bas Java ki bhasha me.
 
+## Parat 5: ant wale (count, sum, max), belt ka hisaab
+
+```java
+l.stream().count()                                // kitne dabbe
+l.stream().mapToInt(Item::daam).sum()             // kul daam (parat 1 wala mapToInt)
+l.stream().max(Comparator.comparing(Item::daam))  // sabse mehnga
+```
+```
+3
+1010
+Optional[Item[naam=ghee, daam=550]]
+```
+
+`max` seedha dabba nahi, dibbe ke andar dabba (`Optional`) deta, kyunki list khaali bhi ho sakti:
+
+```
+khaali list pe max                       ->  Optional.empty
+.map(Item::naam).orElse("kuch nahi")     ->  kuch nahi
+.get() khaali pe                         ->  NoSuchElementException
+```
+
+**Trap:** test me list hamesha bhari, `.get()` chal jaata. Prod me kisi din khaali aayi (aaj koi samaan nahi) aur `.get()` phat
+gaya. `orElse` se batao khaali ho to kya.
+
 ## Scene
 
 Mart me 4 dabbe hain: ghee 550, daal 140, aata 320, chai 400. Mausi boli: "300 se mehnge dabbe chuno aur unke naam do."
