@@ -25,6 +25,8 @@ User  -->  LB  -->  server  -->  parchi se feed (pehli baar DB se)  <+
  9   iPhone launch, 10 lakh/sec, dabba 1 lakh      ->  dabbe badhao + khaali cricket dabbon me tech ki copy (hot key copies)
 10   A me khabar, refresh pe B se gayab            ->  do me likho, do se padho (quorum)
 11   DB me likhi, parchi se pehle worker mara      ->  status rakh, agla aage badhaaye (state, outbox)
+12   6 mahine, table mota, purani koi nahi padhta  ->  FR me kab tak, raddi jaisa nikaal ke alag (retention, archival)
+13   "Kohli century" pe 8 sec gola                  ->  Elasticsearch; jad nikaalo, 5 paper ek saath; peeche reh jaaye to sync / der / alert
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -36,12 +38,15 @@ FR      1  5000 site se khabar laao                                   -> kadam 1
         2  user ko taazi feed (uski category)                         -> kadam 5, 6, 7, 8
         3  ek khabar ek hi baar (best effort, kabhi dohra chalega)    -> kadam 3, 4
         4  login nahi to aam khabar, login hai to uski pasand ki      -> kadam 5
+        5  khabar search kar sake ("Kohli century")                   -> kadam 13
+        (pehle sawaal: purani khabar kab tak rakhni hai)              -> kadam 12
 
 NFR     1  feed turant (~200 ms)                                      -> kadam 2, 6
         2  khabar 5-10 min se purani nahi                             -> kadam 2, 4, 7
         3  ek site band ho to baaki na ruke                           -> kadam 4, 6
         4  aayi khabar kho na jaaye (worker / consumer gira to bhi)   -> kadam 11
         5  refresh pe khabar gayab na ho                              -> kadam 10
+        6  search thoda peeche chal sakta (kitni der, FR me tay)      -> kadam 13
 
 Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec (kadam 9)
         nayi khabar ~1 / sec -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta
@@ -110,6 +115,19 @@ Technical me: "do me likho, do se padho" = quorum (3 me W=2, R=2, kam se kam ek 
 **11. Worker / consumer ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker / consumer DB me dekh ke dupe samjha, hata di. Khabar kisi ko nahi dikhi.**
 Arpan: Gadbad parchi se pehle hui. DB se pehle mara to dikkat nahi, doosra daal dega, dupe check + unique constraint hai. To ek status rakh: "DB me daali", "parchi me daali". Beech me gira to agla status dekh ke kaam aage badha dega. Ek tarah ki logging.
 Technical me: "status" = khabar ka state (DB me -> feed me), agla worker / consumer adhoora kaam poora karta; "logging" = outbox / WAL wali soch.
+
+**12. App ko 6 mahine ho gaye. Roz 5000 site se ~1 khabar / sec, photo ke saath. "Khabar" table mota, disk ka bill har mahine badh raha, feed banate waqt itne bade table me chhaantna dheema. Par Ravi aur Priya 2-3 din se purani khabar kabhi kholte hi nahi.**
+Arpan: Sabse pehle FR me tay karo ki purani khabar kab tak rahegi. Jaise main akhbaar padhta hoon, ghar me akhbaar jama hote rehte hain. Aaj ka padh liya, wo dheere-dheere raddi ban jaata hai, phir raddi me bech dete hain, ghar me nahi rakhte. Same yahan: purani khabar mote register me rakhne ka matlab nahi. Shard karna sense nahi banata: shard tab karo jab dono hisse ka data kaam me aa raha ho. Ek mahine purani khabar kaun dobara padhta, koi nahi. Koi bolega partition kar do, usse bhi fayda nahi; jab tak DB me padi hai, matlab nahi. Ek saal purani khabar kaun padhega? Use mote register se nikaalo, panna nikaal ke alag rakh do.
+Technical me: "FR me tay kab tak" = data retention policy, "raddi, register se nikaal ke alag" = archival (purana data DB se hata ke sasti jagah, jaise S3 / cold storage); jo data padha hi nahi jaata uska shard / partition bekaar.
+
+**13. Ravi ne search me "Kohli century" likha. Server mote register me 7 din ki lakhon khabron ki poori likhai me ek-ek karke "Kohli" dhoondh raha, Ravi 8 second se gola dekh raha.**
+Arpan: Main Elasticsearch add kar dunga. Elasticsearch apne aap me alag design hai. 7 din me sach me bahut khabar, Kohli ki dhoondhne me bahut time lagega; aisa nahi ki har din ka partition karo. Elasticsearch search index bana ke khud dhoondh lega. Andar kaise kaam karta wo Elasticsearch jaane, uska design hum nahi bana rahe.
+**Maan lo headline alag-alag shabdon me:** Arpan: Koi "Kohli ne century maari", koi "aaj Kohli ki shatakiya paari". Hamari company khabar banati nahi, bahar se laati hai, aur sabki headline alag. To sabki jad nikaalo: Kohli century. Mere paas 10 paper aaye, 5 me almost wahi baat, likhne ka andaaz alag. Koi aaya "Kohli ki century?", maine kaha haan maari, ye le 5 paper, isme sab likha hai kab maari.
+Technical me: Elasticsearch = alag search index (black box, PSP jaisa); "sabki jad" = stemming / synonyms (analyzer), "ek baat ke 5 paper ek saath" = milti-julti khabar ka group (clustering, kadam 3 jaisa).
+
+**Maan lo headline me ekdum "Kohli century" likha, khabar 9:00 pe register me gayi, feed me turant dikhi. Ravi ne 9:00:20 pe search kiya, kuch nahi mila; 9:02 pe mil gayi.**
+Arpan: Feed mote register se banti, isliye turant dikhi. Elasticsearch alag dabba hai, us tak abhi baat pahunchi nahi, isliye search me nahi aayi. Do raaste: (1) register aur Elasticsearch ko sync me rakho, khabar aaye to register me likho aur Elasticsearch me bhi bhar do, dono ek saath. (2) feed turant, Elasticsearch peeche-peeche, search me kuch second ki der; user 20 second ruk lega, dikkat nahi. Dono raaste sahi. Search kitna ruk sakta, FR me tay. Sync job fail ho jaaye to alert lagao, failover karo ya dobara bharo.
+Technical me: "dono me ek saath bharo" = dual write, "peeche-peeche" = async indexing (eventual consistency), "kitni der chalegi, FR me" = search lag tay, "sync fail to alert" = alert + reindex.
 
 &nbsp;
 

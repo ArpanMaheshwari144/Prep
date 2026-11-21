@@ -232,6 +232,7 @@ Yahi dikkat yahan bhi:
   Uber          2b  har location DB me nayi line, map dheema       ->  abhi ki jagah parchi (Redis overwrite), raasta Kafka -> batch storage, DB me sirf status
   Uber          3   5 lakh driver ka fasla naap raha               ->  naksha dabbon me, sirf apna dabba (geohash)
   Yelp          1   "burger" pe 8 sec, "burgr" pe zero             ->  aas-paas ke restaurant + Elasticsearch, galat spelling pe bhi (geo filter, fuzzy)
+  News          13  "Kohli century" pe 8 sec gola                  ->  Elasticsearch, alag headline ki jad ek (search index, analyzer)
   Uber          4   dabbe ke kinare, bagal me driver               ->  8 km ka gola, chhoote dabbe bhi (neighbour geohash)
   Uber          6c  dabba toda, Arpan ke tukde me driver nahi       ->  papa ji: apna + upar / neeche / bagal ke tukde (scatter-gather, neighbour cells)
   Uber          4b  map pe paas Raju, par nadi ke us paar           ->  sadak se kitni door, kitni der (road distance / ETA)
@@ -279,6 +280,7 @@ Yahi dikkat yahan bhi:
   News          2b  chhotu 7 ki 100 site, wo mara                  ->  "main zinda hoon" band to site baaki chhotuon me (heartbeat)
   News          2c  chhotu 7 ka net 20 sec atka, site chhotu 12 ko ->  thodi der ruko; purana laute to malik nahi, leader jaisa (lease timeout, fencing)
   Twitter       5b  "Inida" se "India", kuch copy purana dikhaye   ->  thodi der galat, peeche ek ladka sabko theek kare (eventual consistency)
+  News          13  feed me dikhi, search me 2 min baad            ->  dono me ek saath bharo ya peeche-peeche, fail pe alert (dual write, async index)
 
 Naam: replica / quorum / sync copy / read-your-writes / fail-open / fail-closed / heartbeat / eventual consistency / timeout / coordinator / Redis AOF / naya owner (failover) / read replica / Multi-AZ
 Juda: sirf wahi "maan lo gira" jahan HUM faisla lete (sync ya async, fail-open), AWS wala nahi.
@@ -455,6 +457,7 @@ Yahi dikkat yahan bhi:
   File upload   6   download bhi hamare server se                  ->  truck seedha ghar (S3 direct download)
   File upload   7   link 200 logon ke WhatsApp group me            ->  link ki umar chhoti (presigned expiry)
   Banking       12  almari me jagah nahi, 10 saal rakhni           ->  head office bhej do (S3 archive)
+  News          12  6 mahine, table mota, purani koi nahi padhta   ->  FR me kab tak, raddi jaisa nikaal ke alag (retention, archive)
   Chat          10  200 MB video, taar jam                         ->  alag raasta, chhota URL (S3, link)
   Netflix       1   har tukda samundar paar se                     ->  file apne shehar me, CA wala dost (Open Connect, ISP ke andar)
   Netflix       3   dabbe me poora maal nahi                       ->  garam paas, thanda bade dabbe se (popularity, tier, evict)

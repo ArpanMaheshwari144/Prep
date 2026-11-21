@@ -29,6 +29,8 @@ User  -->  LB  -->  server  -->  parchi se feed (pehli baar DB se)  <+
  9   iPhone launch, 10 lakh/sec, dabba 1 lakh      ->  dabbe badhao + khaali cricket dabbon me tech ki copy (hot key copies)
 10   A me khabar, refresh pe B se gayab            ->  do me likho, do se padho (quorum)
 11   DB me likhi, parchi se pehle worker mara      ->  status rakh, agla aage badhaaye (state, outbox)
+12   6 mahine, table mota, purani koi nahi padhta  ->  FR me kab tak, raddi jaisa nikaal ke alag (retention, archival)
+13   "Kohli century" pe 8 sec gola                  ->  Elasticsearch; jad nikaalo, 5 paper ek saath; peeche reh jaaye to sync / der / alert
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
@@ -41,12 +43,15 @@ FR      1  5000 site se khabar laao                                   -> kadam 1
         2  user ko taazi feed (uski category)                         -> kadam 5, 6, 7, 8
         3  ek khabar ek hi baar (best effort, kabhi dohra chalega)    -> kadam 3, 4
         4  login nahi to aam khabar, login hai to uski pasand ki      -> kadam 5
+        5  khabar search kar sake ("Kohli century")                   -> kadam 13
+        (pehle sawaal: purani khabar kab tak rakhni hai)              -> kadam 12
 
 NFR     1  feed turant (~200 ms)                                      -> kadam 2, 6
         2  khabar 5-10 min se purani nahi                             -> kadam 2, 4, 7
         3  ek site band ho to baaki na ruke                           -> kadam 4, 6
         4  aayi khabar kho na jaaye (worker / consumer gira to bhi)   -> kadam 11
         5  refresh pe khabar gayab na ho                              -> kadam 10
+        6  search thoda peeche chal sakta (kitni der, FR me tay)      -> kadam 13
 
 Numbers 1 crore user x 5 baar = 5 crore roz, subah ~6000 / sec, badi khabar (iPhone launch) pe 10 lakh / sec (kadam 9)
         nayi khabar ~1 / sec -> padhna bahut zyada, likhna kam: padhne ka raasta tez, likhna peeche chal sakta
@@ -404,6 +409,82 @@ flowchart TB
     style ST fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
+## 12. 6 mahine, khabar table mota, purani koi nahi padhta (raddi: nikaal ke alag)
+
+App ko 6 mahine ho gaye. Roz 5000 site se ~1 khabar / sec, photo ke saath. "Khabar" table mota, disk ka bill har mahine
+badh raha, feed banate waqt itne bade table me chhaantna dheema. Par Ravi aur Priya 2-3 din se purani khabar kholte hi
+nahi. Sabse pehle FR me tay karo ki purani khabar kab tak rahegi. Ghar me akhbaar jama hote, aaj ka padh liya to
+dheere-dheere raddi, raddi me bech dete, ghar me nahi rakhte. Same yahan: purani khabar mote register se nikaalo, alag
+rakh do. Shard / partition sense nahi banata: shard tab jab dono hisse ka data kaam me aa raha ho; jo khabar koi padhta
+hi nahi, wo DB me padi rahe to matlab nahi.
+
+**Asli naam:** FR me kab tak = data retention policy; raddi, register se nikaal ke alag = archival (purana data DB se hata
+ke sasti jagah, jaise S3 / cold storage); jo data padha hi nahi jaata uska shard / partition bekaar.
+
+```mermaid
+flowchart TB
+    X["6 mahine, khabar table mota:<br/>bill badha, feed dheemi"]:::bad
+    subgraph RD["RADDI JAISA (FR me tay: kab tak)"]
+        K(["Purani khabar mote register se nikaalo"]):::pill
+    end
+    D[("Mota register: sirf taazi khabar")]:::good
+    A[("Alag sasti jagah (archive, S3)")]:::card
+    N["Shard / partition nahi:<br/>jo padha hi nahi jaata"]:::card
+    X -.-> K
+    K --> D
+    K -- "purani" --> A
+    K -.-> N
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style RD fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
+## 13. "Kohli century" pe 8 sec gola (search ka alag dabba)
+
+Ravi ne search me "Kohli century" likha. Server mote register me 7 din ki lakhon khabron ki poori likhai me ek-ek karke
+"Kohli" dhoondh raha, Ravi 8 second se gola dekh raha. To Elasticsearch add karo: wo apne aap me alag design hai, search
+index bana ke khud dhoondh leta. Andar kaise kaam karta wo Elasticsearch jaane, uska design hum nahi bana rahe.
+
+**Maan lo headline alag-alag shabdon me** ("Kohli ne century maari", "aaj Kohli ki shatakiya paari"): hamari company khabar
+banati nahi, bahar se laati hai, sabki headline alag. Sabki jad nikaalo: Kohli century. 10 paper me 5 me wahi baat,
+likhne ka andaaz alag; koi pooche "Kohli ki century?" to ye 5 paper de do.
+
+**Maan lo khabar 9:00 pe register me gayi, feed me turant dikhi, par 9:00:20 ke search me nahi; 9:02 pe mili:** feed mote
+register se banti, Elasticsearch alag dabba, us tak abhi baat pahunchi nahi. Do raaste: (1) dono ko sync me rakho, khabar
+aaye to register me likho aur Elasticsearch me bhi bhar do; (2) feed turant, Elasticsearch peeche-peeche, search me kuch
+second der (user 20 second ruk lega). Dono sahi; kitni der chalegi, FR me tay. Sync job fail ho to alert, failover ya
+dobara bharo.
+
+**Asli naam:** Elasticsearch = alag search index (black box, PSP jaisa); sabki jad = stemming / synonyms (analyzer); ek baat
+ke 5 paper = clustering (kadam 3 jaisa); dono me ek saath = dual write; peeche-peeche = async indexing (eventual
+consistency); sync fail = alert + reindex.
+
+```mermaid
+flowchart TB
+    X["'Kohli century': register ki lakhon<br/>khabar me ek-ek, 8 sec gola"]:::bad
+    K["Khabar aayi"]:::card
+    D[("Mota register (Postgres): feed")]:::card
+    subgraph ES["SEARCH KA ALAG DABBA"]
+        E[("Elasticsearch: index,<br/>sabki jad (Kohli century)")]:::pill
+    end
+    S["Ravi ka search: 5 paper ek saath"]:::good
+    J["Peeche reh gaya: kuch second der<br/>(FR me tay); sync fail to alert"]:::good
+    X -.-> E
+    K --> D
+    K -- "saath me / peeche-peeche" --> E
+    E --> S
+    E -.-> J
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style ES fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ---
 
 ## Poora dhaancha ek nazar me
@@ -411,11 +492,14 @@ flowchart TB
 ```mermaid
 flowchart TB
     SRC(["Khabar ke source"]):::card --> W["Worker / consumer"]:::card
-    W --> DB[("DB (sach)")]:::card
+    W --> DB[("DB (sach, sirf taazi)")]:::card
     W --> R[("Category ki parchi (Redis)<br/>garam ho to 2-3 dabbe")]:::pill
+    W --> ES[("Elasticsearch (search)")]:::pill
+    DB -. "purani" .-> AR[("Archive (S3)")]:::card
     U(["User"]):::pill --> LB["LB"]:::card --> S["Server"]:::card
     S --> R
     S -. "pehli baar" .-> DB
+    S -- "search" --> ES
     R --> F(["Feed"]):::good
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
