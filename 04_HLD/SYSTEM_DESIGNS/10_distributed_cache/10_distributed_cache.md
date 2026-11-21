@@ -217,6 +217,9 @@ laga do, form khaali chhod diya to apne aap gaayab. Har baar TTL se kaam nahi ch
 deta hai.
 **Asli naam:** thodi der wala data, chhota TTL = TTL; baar-baar badalne wale data ke liye sync job. Sync job ke saath bhi ek lamba TTL rakho, taaki job chooke to purana data hamesha ke liye na atke (safety net).
 
+**Teeno ek thaali ke:** TTL (time pe khud mite), delete (hum kaatein), sync job (peeche se update); ek answer nahi.
+**Asli naam:** TTL / invalidate / reconciliation job.
+
 ```mermaid
 flowchart TB
     R["Ravi: naam Ravi Kumar kar do"]:::card
@@ -281,6 +284,9 @@ UI pe "peeche update ho rahi hai". Purani jaankari local cache me 30-45 sec ki u
 na aaye. DB theek hote hi chhotu naya laaye, umar khatam, sab naya le jaayein.
 **Asli naam:** serve stale (stale-while-revalidate), local cache short TTL, background refresh.
 
+**Maan lo parchi bhar gayi:** ek request laaye, cache bhare, phir normal traffic thoda slow wapas, warna phir gire.
+**Asli naam:** ramp-up after refill.
+
 ```mermaid
 flowchart TB
     U["Priya viral: 10,000 log,<br/>sab miss"]:::bad
@@ -334,6 +340,9 @@ doosra, phir thoda zyada ruk ke teesra, 1, 2, 4 sec; bombard nahi). Jitter = kad
 rokta: sab apne server pe chup, sirf ek chhotu jaaye, ek hi information to laani hai, wo sabko de dega.
 **Asli naam:** distributed lock (sab server ke beech saajha lock: Redis me ek key, SET NX + umar). Kadam 6 ka lock sirf
 ek server ke andar ho to 50 server ke 50 chhotu jaate.
+
+**Maan lo pehle se pata hai (Diwali sale, iPhone launch, World Cup):** dev pehle se cache taiyaar rakhte, isliye kam toot-ta.
+**Asli naam:** cache pre-warm.
 
 ```mermaid
 flowchart TB
