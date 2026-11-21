@@ -1,5 +1,24 @@
 # SQL Joins (har join ka asli output, MySQL pe chala ke, 9-Nov)
 
+## Koi poochhe to aise bolo
+
+Join do table ko ek shart pe jodta hai, jaise "order ka customer_id = customer ka id". Farak bas itna hai ki jod na mile to
+row aaye ya na aaye:
+
+- **INNER JOIN:** sirf wo row aati hai jiska jod dono taraf mila. Jis customer ka koi order nahi, wo nahi aata; jis order
+  ka koi customer nahi, wo bhi nahi aata.
+- **LEFT JOIN:** baayi table (customers) ke saare log aate hain. Jiska order nahi mila, uske order wale khaane me NULL aata hai.
+- **RIGHT JOIN:** ulta: daayi table (orders) ke saare order aate hain. Jis order ka customer nahi mila, wahan customer NULL.
+- **FULL OUTER JOIN:** dono taraf ke saare. Jahan jod mila wahan juda hua, jahan nahi mila wahan NULL. MySQL me seedha nahi
+  hota, isliye LEFT aur RIGHT ka `UNION` karte hain.
+- **CROSS JOIN:** koi shart hi nahi lagti. Har customer ko har order ke saath ek-ek baar jod deta hai, chahe wo order uska
+  ho ya na ho. 3 customer aur 3 order hain to 3 x 3 = 9 row. Kaam tab aata hai jab saare jode chahiye hon, jaise T-shirt ke
+  3 size aur 4 rang se 12 combination banane hon. Galti se shart bhool gaye to bhi yahi ho jaata hai, aur 1 lakh x 1 lakh
+  row ban jaati hain.
+- **SELF JOIN:** table ko khud se jodna, jaise employee ko usi table me uske manager se.
+
+Roz ke kaam me zyaadatar INNER aur LEFT hi lagte hain.
+
 ## Do table
 
 ```
