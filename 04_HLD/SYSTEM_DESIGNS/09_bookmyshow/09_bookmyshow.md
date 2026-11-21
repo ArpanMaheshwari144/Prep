@@ -85,6 +85,9 @@ aur pay hua to seat + booking + payment teeno ek saath badlein ya koi nahi, ye t
 **Maan lo Arpan ko family ke saath D5, D6, D7 teeno chahiye; counter wale ne D5, D6 pe parchi lagayi, D7 tak pahuncha to usi second doosre counter wale ne D7 pe Priya ki parchi laga di:** Ye almost same hai. D5 D6 D7 ka kaam ek saath hi hoga, alag-alag nahi: dekhna aur rokna teeno ka ek hi baar, beech me koi nahi aa sakta. Agar teeno available hain tabhi book karo. Maan lo mujhe D1 se D10 poora block chahiye, to main beech me khada hoke bolunga "sab sun lo, D1 se D10 meri", ek parchi pe likh dunga aur sab counter wale usi parchi se padhenge. Jaise ek chhotu board leke khada ho gaya: "D1 se D10 book hai, ise koi book nahi karega".
 **Asli naam:** "teeno ek saath, beech me koi nahi" = ek transaction (all-or-nothing, UPDATE ... WHERE seat IN (...) AND FREE; ek bhi na mili to rollback, kisi pe parchi nahi), "ek parchi poore block ki" = ek booking id ke neeche saari seat.
 
+**DB kaunsa:** check + book ek hi update me; consistency over availability, ek seat do ko nahi -> SQL, NoSQL nahi.
+**Asli naam:** atomic conditional UPDATE, SQL.
+
 ```mermaid
 flowchart TB
     A["Arpan: ek seat chahiye,<br/>lo mere paise"]:::card
@@ -117,6 +120,9 @@ Usne 5 minute intezaar kiya, main nahi aaya, to parchi phaad ke phenk di. Seat a
 
 **Asli naam:** 5 minute tak dekhta hoon = hold expiry (`hold_until = now + 5 min`), parchi phaad ke phenk di = hold
 hata ke seat wapas FREE, pay aa gaya to HELD -> BOOKED.
+
+**Maan lo umar Redis TTL me kyun nahi:** DB column kaafi; Redis abhi early stage, ek aur system sambhalna, gira to
+keys ka kya. **Asli naam:** hold_until column, ek hi sach.
 
 ```mermaid
 flowchart TB
@@ -287,6 +293,9 @@ ki. Har cheez backend se nahi, UI bhi kaam karta. (Bank ka server hi down ho to 
 lautao", wo bank se poochh ke lautata aur hume batata. 1 minute ke baad aaya "paisa kat gaya" = refund.
 **Asli naam:** client timeout ~60 sec, PAYMENT_PENDING UI message + status poll, 1 minute ke andar SUCCESS = BOOKED, baad me
 = attempt FAILED + booking HELD + UI popup "dobara pay?" (Haan = PSP-2 ka QR, Naa = turant EXPIRED, hold_until nahi badhaya), der se SUCCESS = REFUND_PENDING + refund API, dobara pay = PSP-2.
+
+**Maan lo Pay do baar daba:** key client banaye, wahi key dobara aaye to "process ho rahi / ho chuki".
+**Asli naam:** client idempotency key.
 
 ```mermaid
 flowchart TB
