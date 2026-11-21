@@ -51,7 +51,7 @@ FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroo
         (pehle sawaal, Arpan 21-Nov: payment Razorpay / QR jaisa bahar ka PSP karega; uska andar ka kaam design ka hissa nahi
          (writeups me bhi PSP = bahar ka dabba, Razorpay apne aap me alag system design). Interviewer se poochho: PSP ka timeout
          kitna rakhein, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout, uske baad FAILED aur alag column)
-        (pehle se tay: seat chuni to 5 min tere naam, pay nahi to chhoot jaati -> kadam 2 ·
+        (pehle se tay: seat chuni to 5 min tere naam, pay nahi to chhoot jaati -> kadam 2, 3 ·
          pay ~1 min me na ho to FAILED, popup Haan = doosre PSP ka QR, Naa = seat khali -> kadam 6b ·
          1 min ke andar kata to seat pakki, baad me kata to refund -> kadam 6b, 6e)
 

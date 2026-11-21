@@ -62,7 +62,7 @@ NFR     1  Order Service ruke nahi                                          -> k
         6  ek saath crore logon ko offer bhi bhej sakein                    -> kadam 8
         7  SMS pahuncha ya nahi, pata ho                                    -> kadam 7, 7b
 Numbers 10 crore user x 5 khabar = 50 crore roz, ~5,800 / sec · sale pe 10 guna
-        SMS company ki had 100 / sec · Diwali campaign = 1 crore log ek saath
+        SMS company ki had 100 / sec (-> kadam 6) · Diwali campaign = 1 crore log ek saath (-> kadam 8)
 ```
 
 ---

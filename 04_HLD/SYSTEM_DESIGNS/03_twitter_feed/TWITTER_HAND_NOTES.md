@@ -47,7 +47,7 @@ Technical me: "khaali page nahi, trending dikhao" = cold start / recommendation 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      1  tweet post karo (text, photo / video)                               -> kadam 4, 10
-        2  home feed: jinko follow karta unke tweet, jisse zyada judta wo upar -> kadam 1, 2, 3, 17
+        2  home feed: jinko follow karta unke tweet, jisse zyada judta wo upar -> kadam 1, 2, 3, 16, 17
         3  infinite scroll: ek scroll ke beech wahi tweet dobara na aaye
            (refresh pe aa sakta, Twitter iska hisaab nahi rakhta)              -> kadam 18
         4  follow wale khatam to neeche doosron ke tweet (trending),
