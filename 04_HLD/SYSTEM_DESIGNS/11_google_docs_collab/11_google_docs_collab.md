@@ -65,6 +65,10 @@ turant = WebSocket (dono taraf khula taar).
 **Maan lo Ravi ka "budget 20k" wala op dobara chala gaya ("mil gaya" kho gaya):** Har op ki apni id: server pehle id dekhe, ye op lag chuka to dobara mat lagao. Doc me "budget 20k budget 20k" nahi.
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 
+**Misaal:** Jira comment / Atlassian me "abhi kuch change hua" bhi version number se. **Maan lo Ravi ko dikh hi nahi raha:**
+HTTP ek tarafa, har baar refresh; WebSocket se turant push; toota to judte hi saare ek saath (WhatsApp jaisa).
+**Asli naam:** version check, WebSocket push, reconnect pe missed ops.
+
 ```mermaid
 flowchart TB
     X["Poora text bheja: Arpan ki line gayab<br/>(last write wins, nahi chalega)"]:::bad
@@ -168,6 +172,9 @@ OT ke saath                                      delete jagah 1 pe hua, insert j
                                                  3  D   <- dono ke paas A E C D
 ```
 
+**Maan lo dono ne 0 pe likha:** tie-break user id + timestamp, dono ko same. **OT ke alawa:** CRDT, har akshar ki id,
+merge commutative, central transform nahi. **Asli naam:** deterministic tie-break, CRDT.
+
 ```mermaid
 flowchart TB
     A["Arpan: shuru me Hum"]:::card
@@ -236,6 +243,9 @@ Ravi jagah 2 pe, jahan "P" hai. Arpan ka kaat ke Ravi ka likhna, ya "AR" + "RAVI
 Mumbai se; dono ka mere paas aaya, merge karke dono ko ek jaisa dikha diya. Upar se har likhne wale ki rang wali line
 (cursor) bhi dikhti.
 **Asli naam:** owner server pe OT (position khiskana), live cursor (presence).
+
+**Maan lo 1000 log ek doc pe:** OT sirf editors ka, 900 viewer ho to bhi dikkat nahi. **Asli naam:** editors pe transform,
+viewers ko fan-out.
 
 ```mermaid
 flowchart TB
