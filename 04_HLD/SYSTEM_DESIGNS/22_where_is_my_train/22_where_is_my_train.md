@@ -35,7 +35,7 @@ FR      1  net / GPS band ho tab bhi train kahan, ek andaza dikhe              -
         2  train late ho to "delayed by X min" + expected time                   -> kadam 2
         3  station pe khade dost ko bhi dikhe train kahan                        -> kadam 3
 
-NFR     1  battery na khaaye, gaon me bhi chale                                  -> kadam 1
+NFR     1  battery na khaaye (GPS nahi, tower se andaza)                         -> kadam 1
         2  pakki jagah nahi, range chalegi (station se pehle log taiyaar rahein)  -> kadam 1
         3  dikhaya time expected hai, pakka nahi                                 -> kadam 2
         4  tower ki list taaza rahe (naya tower lage / hate)                     -> kadam 4, 4b, 4c
