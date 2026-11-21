@@ -58,6 +58,8 @@ Arpan: Bahut saare chhotu rakh le. Aur khabar pehle se taiyaar rakh, ek chhoti p
 Technical me: "bahut saare chhotu" = kai fetcher ek saath, "chhoti parchi" = Redis me taiyaar feed (cache).
 **Maan lo koi site band hai ya bahut dheemi:** Arpan: Har site ka fetch parallel hoga, timeout hoga, aur har site ka circuit breaker: koi site fail ho gayi to circuit breaker hai hamare paas. Aur peeche queue hai jo backlog aur spike sambhal sakti hai.
 Technical me: per-source timeout + circuit breaker (ek dheemi site baaki ko na roke), queue = backlog / spike buffer.
+**DB kaunsa:** Arpan (21-Nov): News me consistency honi chahiye: khabar kahan se laa rahe, title, URL, category, time, ye sab theek chahiye. Isliye shuruaat Postgres (ya MySQL) se karunga, Cassandra ekdum se nahi ghusa sakta. Kaunsa DB, iska jawab FR se milega: interviewer bole "likhai bahut hai, 50,000 fetcher, har fetcher 100-1000 khabar laa raha, har minute DB me update", tab write-heavy hai aur Cassandra ka sense banta. Bole "padhai zyada, likhai me itni dikkat nahi", to Cassandra lunga hi nahi, Postgres se kaam chal jaayega. Badi companiyan dono rakh sakti: ACID wala bhi aur NoSQL bhi (key-value / JSON me khabar ka title, khabar).
+Technical me: shuruaat = Postgres (row: title, url, category, time, consistency); FR me write-heavy aaye = Cassandra; dono saath = polyglot persistence.
 
 **Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya.**
 Arpan: Ye Twitter ke worker / consumer 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.

@@ -61,7 +61,8 @@ jeeta" dikhe. Apna reporter nahi hai, to ek dabba rakh lete hain jo har jagah se
 chhotu, main in jagahon se news padhta hoon, saari khabar utha ke ek dabbe me daal de, main wahan se padh lunga.
 
 **Asli naam:** chhotu = fetcher (har site se khabar khinchne wala), dabba = DB (Postgres; khabar ek row: title, url,
-category, time. Data chhota, url UNIQUE chahiye, isliye SQL).
+category, time; consistency chahiye, isliye SQL se shuru. FR me likhai bahut aaye (hazaron fetcher, har minute update) tab
+Cassandra; dono saath bhi chal sakte).
 
 ```mermaid
 flowchart TB
