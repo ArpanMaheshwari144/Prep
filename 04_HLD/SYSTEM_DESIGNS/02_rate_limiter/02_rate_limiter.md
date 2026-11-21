@@ -281,7 +281,8 @@ block, kahani khatam.
 **Asli naam:** roz ka pattern = abuse pattern, WAF me daal do = WAF block list (gateway tak bhi nahi pahunchta).
 
 **Maan lo pattern kaise pakdein:** peeche Kafka se dekho kitni baar aaya, kaunse endpoint jhaanke, us pattern se WAF me.
-**Asli naam:** request events -> Kafka -> abuse detection consumer -> WAF block list.
+Ban kuch der ka, kyunki IP badalte rehte; pakka pakda gaya user / account permanent band.
+**Asli naam:** request events -> Kafka -> abuse detection consumer -> WAF block list; IP ban = TTL, account ban = permanent.
 
 ```mermaid
 flowchart TB
