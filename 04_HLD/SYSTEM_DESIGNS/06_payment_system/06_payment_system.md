@@ -49,6 +49,9 @@ FR      1  dukaan ko pay (bank se)                                         -> ka
         6  FR me poochho: dono khaate ek jagah (ek bank / ek register) ya alag?
            Ek jagah = seedha ek transaction. Alag jagah (do bank, do tukde) = saga.
            Hamara design = alag, isliye saga. FR badle to jawab badle.     -> kadam 6, 8, 10
+        (pehle sawaal, Arpan 21-Nov: bank se paisa PSP (Razorpay jaisa) laata; uska andar ka kaam design ka hissa nahi, Razorpay
+         apne aap me alag system design. Interviewer se poochho: PSP ka timeout kitna rakhein, ya PSP scope se bahar? Wo bole
+         "30-60 sec bahut" to wahi timeout, uske baad FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))
 
 NFR     1  do baar na kaatne ki poori koshish (payment id, idempotency); phir bhi PSP / bank / net ki
            gadbad se kabhi do baar kat sakta, GPay / PhonePe / Paytm sab me hota. Kata to apne aap

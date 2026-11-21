@@ -48,6 +48,9 @@ FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
         · bheed me (concert) kiraya badh sakta hai, aur wo pehle hi dikh jaaye
         · ek saath kai booking aayein to aisi gaadi do ki sabki milake doori kam · jo der se ruka wo baar-baar peeche na rahe
         · traffic me sach me bahut der fanse to kiraya badh sakta, laal batti pe nahi (Arpan 21-Nov, kadam 12 doosri kahani)
+        (pehle sawaal, Arpan 21-Nov: trip ka paisa PSP (Razorpay jaisa) kaatta; uska andar ka kaam design ka hissa nahi.
+         Interviewer se poochho: PSP ka timeout kitna, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout,
+         uske baad FAILED aur alag column "kitni der baad kata" (kadam 13b))
 NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi
         · ride ke beech driver gaya to sambhalo
         · sawari wali ride ka poora raasta pakka rahe (SOS / shikayat), khaali driver ka zaroori nahi (Arpan 21-Nov, kadam 2)
