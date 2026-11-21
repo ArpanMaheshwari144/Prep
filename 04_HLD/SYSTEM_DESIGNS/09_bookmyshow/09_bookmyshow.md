@@ -41,8 +41,7 @@ Arpan (17-Nov round): Log aa rahe hain, paise dekar ja rahe hain, matlab seat bo
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
-FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroorat nahi)
-        1  seat dekho (seat map)
+FR      1  seat dekho (seat map)
         2  seat khaali hai to book karo (seat roko)
         3  book kiya to paisa kaato
         4  paisa kata to seat do (ticket)
@@ -55,8 +54,7 @@ FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroo
          pay ~1 min me na ho to FAILED, popup Haan = doosre PSP ka QR, Naa = seat khali -> kadam 6b ·
          1 min ke andar kata to seat pakki, baad me kata to refund -> kadam 6b, 6e)
 
-NFR     (ye dikkat chain se)
-        1  do log ek seat ek saath book na kar sakein                              -> kadam 1, 1b
+NFR     1  do log ek seat ek saath book na kar sakein                              -> kadam 1, 1b
         2  line me zyada intezaar na karna pade                                     -> kadam 4, 5
         3  paisa sahi rahe: kata to seat, seat nahi to refund pakka (kab tak = PSP / bank, RBI ka niyam) -> kadam 6a-6g
         4  seat map turant dikhe                                                     -> kadam 4
