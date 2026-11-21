@@ -46,6 +46,9 @@ FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroo
         2  seat khaali hai to book karo (seat roko)
         3  book kiya to paisa kaato
         4  paisa kata to seat do (ticket)
+        (pehle sawaal, Arpan 21-Nov: payment Razorpay / QR jaisa bahar ka PSP karega; uska andar ka kaam design ka hissa nahi
+         (writeups me bhi PSP = bahar ka dabba, Razorpay apne aap me alag system design). Interviewer se poochho: PSP ka timeout
+         kitna rakhein, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout, uske baad FAILED aur alag column)
         (pehle se tay: seat chuni to 5 min tere naam, pay nahi to chhoot jaati -> kadam 2 ·
          pay ~1 min me na ho to FAILED, popup Haan = doosre PSP ka QR, Naa = seat khali -> kadam 6b ·
          1 min ke andar kata to seat pakki, baad me kata to refund -> kadam 6b, 6e)
@@ -55,6 +58,7 @@ NFR     (ye dikkat chain se)
         2  line me zyada intezaar na karna pade                                     -> kadam 4, 5
         3  paisa sahi rahe: kata to seat, seat nahi to refund pakka (kab tak = PSP / bank, RBI ka niyam) -> kadam 6a-6g
         4  seat map turant dikhe                                                     -> kadam 4
+        5  user ko zyada der na latkao: PSP chup to 30-55 sec me saaf jawab, der se kata to hisaab rahe   -> kadam 6b, 6c
 
 Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
         -> line + padhne wali copy (kadam 4)
@@ -131,6 +135,8 @@ Arpan (do haal): Yahan do cheezein hain. Pehla: user app me ruka raha. Maan lo m
 Arpan (popup ki umar): Popup to hum dikhayenge hi, kyunki backend ko pata hi nahi ki user ne app band kiya ya nahi. 1.5-2 minute baad popup: "tumhari booking fail ho gayi, paise kate to wapas aa jaayenge, koi dikkat nahi; tumhari seat abhi bhi hamare paas hai, dobara pay kar lo". Par us popup ki bhi ek umar hogi, aisa nahi ki wo hamesha screen pe rahe. Aajkal popup me upar chhota sa timer chalta hai, train booking me dekha hoga, 1, 2 ya 5 minute ka. Utni der seat uski (TTL tak). Us beech pay kar diya to wahi normal booking chalegi: Razorpay se jawab aaya ki paise kat gaye to seat book, nahi to nahi. Timer khatam aur pay nahi kiya (ya app band tha) to seat chhodo, doosre log le lenge.
 Arpan (der se kata): Maan lo paise 2 minute pe kate, ya 5-10 minute baad, ya 1 ghante baad. Tab tak user app me hai hi nahi. DB me likh lo ki iske paise kate, Razorpay ko bolo "kata ho to refund kar dena, nahi kata to koi baat nahi". Aur jab user agli baar app khole, tab use dikha do: "booking fail ho gayi, tumhare koi paise kate to wapas aa jaayenge; nahi kate to badhiya".
 Technical me: "GPay ka gola hamare server pe nahi" = UPI app (GPay) ka apna screen, hamara client timeout wahan nahi chalta; "app me ruka to wahin popup, dobara pay doosre PSP pe" = 6b wala popup + PSP failover; "1.5 minute rokenge, chhotu dekhta" = status poll / webhook ka time; "popup to dikhayenge hi, backend ko pata nahi app band hai" = server user ki screen nahi jaanta, isliye hamesha popup bhejo; "popup ka timer, utni der seat uski" = popup / hold ki umar (TTL, train booking jaisa countdown), timer khatam = hold release; "booking fail" = INITIATED -> FAILED; "der se kata" = late debit -> REFUND_PENDING + refund API (Razorpay lautaye); "agli baar app khole tab batao" = booking status jab user wapas aaye.
+Arpan (21-Nov): 30-55 sec hamare liye hai: itni der peeche chhotu Razorpay se poochhta rahe, phir bhi jawab nahi to payment FAILED maano. User ko zyada nahi latka sakte; Razorpay ne 5 minute baad event bheja to 5 minute khade thodi rahenge. Aise der se katna bahut kam hota hai, aam taur pe 1 minute ke andar jawab aa jaata hai. Baad me paisa kata to Razorpay event bhejega; table me alag column "kitni der baad kata" (jaise Uber me). Isse saboot bhi: roz ka pattern dikhega (10 me se 5 user ke har baar 2 minute baad kate), Razorpay ko dikha sakte "aise kaise chalega, theek kar aur inka paisa wapas de".
+Technical me: "chhotu poochhe" = status polling, "Razorpay khud bataye" = webhook (late ho to payment.authorized + late_authorized: true); Razorpay bank se 3 din tak poochhta rehta, capture na karo to khud auto-refund (Razorpay docs); "kitni der baad kata" = late debit column (reconciliation + PSP latency ka saboot).
 
 **6d. Razorpay ka event aaya "paisa kat gaya", parchi pe SUCCESS likh diya. Ticket banane wale ko bolne hi wale the ki server gir gaya. Restart ke baad parchi SUCCESS hai, to koi chhotu use nahi uthata (wo sirf PENDING dekhta). Paisa kata, ticket kabhi nahi bana.**
 Arpan: SUCCESS likhna aur ticket book karna, ye do kaam alag-alag nahi, ek hi jagah hon. Ya to dono ek saath karo, ya SUCCESS ke saath hi ek parchi pe likh do "Arpan ne paisa de diya, D5 book karna hai", kyunki SUCCESS likhne ke baad bhi server gir sakta hai. Jaise mujhe D5 book karna tha aur beech me koi kaam yaad aa gaya, main bhool gaya; doosre ko D5 ka kuch pata hi nahi, wo apna agla kaam dekh lega. Isliye parchi pe likh do: koi bhi aaye, kahin se bhi aaye, parchi dekh le aur D5 book kar de.

@@ -46,6 +46,9 @@ FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroo
         2  seat khaali hai to book karo (seat roko)
         3  book kiya to paisa kaato
         4  paisa kata to seat do (ticket)
+        (pehle sawaal, Arpan 21-Nov: payment Razorpay / QR jaisa bahar ka PSP karega; uska andar ka kaam design ka hissa nahi
+         (writeups me bhi PSP = bahar ka dabba, Razorpay apne aap me alag system design). Interviewer se poochho: PSP ka timeout
+         kitna rakhein, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout, uske baad FAILED aur alag column)
         (pehle se tay: seat chuni to 5 min tere naam, pay nahi to chhoot jaati -> kadam 2 ·
          pay ~1 min me na ho to FAILED, popup Haan = doosre PSP ka QR, Naa = seat khali -> kadam 6b ·
          1 min ke andar kata to seat pakki, baad me kata to refund -> kadam 6b, 6e)
@@ -55,6 +58,7 @@ NFR     (ye dikkat chain se)
         2  line me zyada intezaar na karna pade                                     -> kadam 4, 5
         3  paisa sahi rahe: kata to seat, seat nahi to refund pakka (kab tak = PSP / bank, RBI ka niyam) -> kadam 6a-6g
         4  seat map turant dikhe                                                     -> kadam 4
+        5  user ko zyada der na latkao: PSP chup to 30-55 sec me saaf jawab, der se kata to hisaab rahe   -> kadam 6b, 6c
 
 Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
         -> line + padhne wali copy (kadam 4)
@@ -296,6 +300,10 @@ lautao", wo bank se poochh ke lautata aur hume batata. 1 minute ke baad aaya "pa
 
 **Maan lo Pay do baar daba:** key client banaye, wahi key dobara aaye to "process ho rahi / ho chuki".
 **Asli naam:** client idempotency key.
+
+**Maan lo PSP chup (21-Nov):** 30-55 sec ke baad FAILED; Razorpay bank se 3 din tak poochhta, der se kata to webhook
+(late_authorized). Alag column "kitni der baad kata" = refund job + Razorpay ki der ka saboot (roz ka pattern).
+**Asli naam:** polling vs webhook, late authorisation, auto-refund, late debit column.
 
 ```mermaid
 flowchart TB
