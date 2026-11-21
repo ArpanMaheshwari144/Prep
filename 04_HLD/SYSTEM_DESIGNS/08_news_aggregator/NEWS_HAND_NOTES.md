@@ -127,6 +127,7 @@ Technical me: Elasticsearch = alag search index (black box, PSP jaisa); koi pooc
 
 **Maan lo headline me ekdum "Kohli century" likha, khabar 9:00 pe register me gayi, feed me turant dikhi. Ravi ne 9:00:20 pe search kiya, kuch nahi mila; 9:02 pe mil gayi.**
 Arpan: Feed mote register se banti, isliye turant dikhi. Elasticsearch alag dabba hai, us tak abhi baat pahunchi nahi, isliye search me nahi aayi. Do raaste: (1) register aur Elasticsearch ko sync me rakho, khabar aaye to register me likho aur Elasticsearch me bhi bhar do, dono ek saath. (2) feed turant, Elasticsearch peeche-peeche, search me kuch second ki der; user 20 second ruk lega, dikkat nahi. Dono raaste sahi. Search kitna ruk sakta, FR me tay. Sync job fail ho jaaye to alert lagao, failover karo ya dobara bharo.
+Arpan (phir, wahi baat khol ke): Pehle mujhe laga Elasticsearch bas ek API service hai; diagram dekh ke pata chala ye alag dabba hai aur feed alag dabba, tab jawab apne aap aa gaya. Do raaste: (1) pehle dono ko sync me rakho, phir feed dikhao; 30-40 sec me dono sync, to khabar khulte hi search me bhi turant. (2) search pe gola ghuma do (user 10-15 sec ruk leta), peeche sync chalta rahe, sync hua aur result aa gaya. Kaunsa, ye requirement: user kitne second ruk sakta. Elasticsearch ko hum batate hain kya aur kaise dhoondhna; andar kaise karta, wo Elasticsearch jaane.
 Technical me: "dono me ek saath bharo" = dual write, "peeche-peeche" = async indexing (eventual consistency), "kitni der chalegi, FR me" = search lag tay, "sync fail to alert" = alert + reindex.
 
 &nbsp;
