@@ -1,132 +1,42 @@
-# SQL vs NoSQL
+# SQL vs NoSQL — data kaisa hai, kaam kya hai, us hisaab se
 
 ---
 
-## 1-Line Analogy
+## Koi poochhe to aise bolo
 
-```
-SQL    = EXCEL spreadsheet  (rows + columns, fixed schema)
-NoSQL  = JSON document file (flexible, anything goes)
-```
+**SQL** (MySQL, Postgres): data table me, row aur column. Tables aapas me judi (user, order, payment), JOIN se milti, aur
+transaction (ACID) milta: paisa kata to dono jagah sahi. **NoSQL** ek kism nahi, kai kism: **Redis** = key -> value, bahut
+tez (parchi, cache, session). **MongoDB** = poora document ek jagah (product catalog, profile). **Cassandra** = likhai bahut
+tez, machine jodte jao aur badhta (feed, location history, chat). **Neo4j** = rishton ka jaal. Chunav: data aapas me juda
+aur galti nahi chalegi -> SQL; likhai bahut zyada, ya sirf ek key se padhna, ya dhaancha badalta rehta -> NoSQL. Asli
+system me dono saath chalte.
 
 ---
 
-## Side by Side
+## Tere hi faisle (24 design se)
 
 ```
-┌──────────────────┬──────────────────┬──────────────────┐
-│  Feature         │  SQL              │  NoSQL            │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Schema           │ FIXED, predefined │ FLEXIBLE, dynamic│
-│                  │ ALTER TABLE        │ Add field anytime │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Structure        │ Tables + rows     │ Documents/KV/    │
-│                  │ Foreign keys      │ Wide-column/Graph│
-├──────────────────┼──────────────────┼──────────────────┤
-│ Query language   │ SQL (standard)    │ Varies per DB     │
-│                  │ JOIN, GROUP BY    │ MongoDB query,    │
-│                  │                    │ DynamoDB API     │
-├──────────────────┼──────────────────┼──────────────────┤
-│ ACID              │ Strong          │ Often eventual│
-│                  │ Transactions       │ BASE (newer ones)│
-├──────────────────┼──────────────────┼──────────────────┤
-│ Scaling          │ VERTICAL (mostly) │ HORIZONTAL native │
-│                  │ Bigger server      │ Sharding built-in │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Relationships    │ Native (JOIN)      │ Denormalize /     │
-│                  │                    │ embed documents   │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Examples         │ MySQL, PostgreSQL,│ MongoDB (doc)     │
-│                  │ Oracle, SQL Server│ Redis (KV)        │
-│                  │                    │ Cassandra (wide)  │
-│                  │                    │ Neo4j (graph)     │
-│                  │                    │ DynamoDB (KV/doc) │
-└──────────────────┴──────────────────┴──────────────────┘
+BMS, banking, payment, file upload metadata  -> SQL    (paisa / seat, transaction chahiye)
+Zomato                                        -> Postgres ("Cassandra big bull, laana hi nahi", scale chhota)
+News                                          -> Postgres pehle; likhai bahut badhi to Cassandra (FR se faisla)
+Uber raasta, chat message                     -> Cassandra (likhai bahut, chat_id / driver se baanto)
+Uber abhi ki jagah, BMS parchi, feed          -> Redis (abhi ka, kaat ke nayi likho)
+Search                                        -> Elasticsearch (News 13)
 ```
 
 ---
 
-## When to Use What
+## Dikkat se hal
 
-```
-SQL CHOOSE KARO when:
-   • Strong relationships (User → Order → Items)
-   • Need ACID (banking, finance)
-   • Complex queries with JOINs
-   • Schema stable / well-defined
-   • Reporting + analytics
-   • Compliance / audit required
-
-   Examples: UserCRUD, banking, ERP
-
-NoSQL CHOOSE KARO when:
-   • Schema changes frequently
-   • Massive scale (millions/billions records)
-   • Unstructured data (logs, social posts)
-   • Specific access pattern (key-value lookups)
-   • Eventual consistency acceptable
-
-   Examples:
-   • Cache (Redis)
-   • Social feed (Cassandra)
-   • Catalog (MongoDB)
-   • Session storage (Redis)
-   • Time-series (InfluxDB)
-```
+Sab kuch ek DB me thoonsna: location har 4 sec SQL me likhi to DB ghut gaya (Uber kadam 2). Hal: kaam ke hisaab se dabba;
+ek system me SQL + Redis + Cassandra saath.
 
 ---
 
-## NoSQL Types Visual
+## Trap
 
-```
-┌──────────────┬──────────────────────┬──────────────────┐
-│  Type        │  Structure            │  Use Case         │
-├──────────────┼──────────────────────┼──────────────────┤
-│ Document     │ JSON-like docs        │ Catalogs, profiles│
-│ (MongoDB)    │ Nested fields         │ CMS, blogs        │
-├──────────────┼──────────────────────┼──────────────────┤
-│ Key-Value    │ Simple key → value     │ Cache, sessions   │
-│ (Redis)      │ Super fast            │ Real-time data    │
-├──────────────┼──────────────────────┼──────────────────┤
-│ Wide-Column  │ Rows with many cols   │ Time-series        │
-│ (Cassandra)  │ Distributed           │ Analytics          │
-│              │                        │ Twitter feed       │
-├──────────────┼──────────────────────┼──────────────────┤
-│ Graph        │ Nodes + edges          │ Social networks    │
-│ (Neo4j)      │ Relationships first   │ Fraud detection    │
-│              │                        │ Recommendations    │
-└──────────────┴──────────────────────┴──────────────────┘
-```
-
----
-
-## INTERVIEW LINE
-
-```
-"SQL when you need relationships, ACID, complex queries.
- NoSQL when you need horizontal scale, flexible schema,
- or specific access patterns.
-
- Don't fight your data model. If it's tabular and related,
- SQL. If it's documents, hierarchical, or eventually
- consistent, NoSQL.
-
- Many real systems use BOTH — SQL for transactional core,
- NoSQL for cache/feed/analytics."
-```
-
----
-
-## Memory Hook
-
-```
-SQL    = Excel spreadsheet (structured)
-NoSQL  = JSON files folder (flexible)
-
-SQL = JOIN king
-NoSQL = SHARD king
-
-Real apps: HYBRID (SQL + Redis + Cassandra commonly)
-```
+"NoSQL me transaction hota hi nahi" galat: MongoDB me bhi hota. Par jahan row wala data aur transaction chahiye, wahan SQL
+ye sab muft me deta (tera banking wala jawab). "SQL scale nahi hota" bhi adhoora: read replica, partition, zaroorat pade to
+shard, sab hota; bas mehnat zyada.
 
 [← HLD README](../README.md)
