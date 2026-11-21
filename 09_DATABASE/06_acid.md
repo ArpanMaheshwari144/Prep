@@ -1,5 +1,13 @@
 # ACID
 
+## Koi poochhe to aise bolo
+
+Transaction me kai kaam ek saath hote (order cancel + wallet me 500 wapas). ACID iski chaar guarantee:
+**A** dono kaam ya koi nahi, beech me gira to sab ROLLBACK (undo log). **C** DB ke niyam nahi tootenge (balance minus me
+nahi, order ka customer asli), toota to poora reject. **I** beech ki adhoori haalat doosre ko nahi dikhegi aur usi row ko wo
+nahi badal sakta (row lock). **D** COMMIT ho gaya to server gire tab bhi badlaav bacha (redo log). Ye wahi undo, redo aur
+taala hai jo DB 02 me dekha.
+
 ## Scene: prod ticket, "order 101 cancel karo aur ₹500 user ke wallet me wapas daalo"
 
 ```sql
