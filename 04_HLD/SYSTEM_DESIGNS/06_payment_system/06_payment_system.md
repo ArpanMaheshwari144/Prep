@@ -80,6 +80,9 @@ dukaan hi nahi, PSP bhi card number nahi rakh sakta; card sirf bank / card netwo
 token milta. UPI me ye sawaal hi nahi: hamare paas sirf UPI ID aati, PIN user apne UPI app me daalta.
 **Asli naam:** tokenization (payment method ID / card token), card data PSP ke paas (PCI DSS ka bojh PSP pe).
 
+**DB kaunsa:** jhukaav consistency pe; SQL ACID deta, NoSQL key-value ACID nahi -> MySQL / Postgres. Scale pehle replica
++ index, shard baad me. **Asli naam:** ACID = SQL, scale ka kram.
+
 ```mermaid
 flowchart TB
     A["Arpan: pay 500"]:::card
@@ -207,6 +210,9 @@ ek key banaye, dono request me wahi key jaaye. Server pehle key dekhe: pehle aa 
 purani parchi lauta do. Wahi Chat ka `clientMsgId`, wahi Banking ki key.
 **Asli naam:** phone ki key = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
 
+**Maan lo ek key ki do request ek saath:** key client banaye; DB atomic constraint, check then act, ek key ek hi baar process.
+**Asli naam:** unique constraint on idempotency key.
+
 ```mermaid
 flowchart TB
     S["Server"]:::card
@@ -329,6 +335,8 @@ dikkat khatam. Ab aaram se sab apna-apna likh rahe.
 
 **Asli naam:** register ke chhote tukde = shard (account id se, ek insaan ka saara kaam ek tukde pe), tu ye likh = har
 shard ka apna likhne wala, likhai bant gayi.
+
+**Maan lo Diwali pe sab pe pel:** LB + read replica + server badhao. **Asli naam:** app scale + read replica.
 
 ```mermaid
 flowchart TB

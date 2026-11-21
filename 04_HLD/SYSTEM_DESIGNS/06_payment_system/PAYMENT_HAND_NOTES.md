@@ -63,6 +63,8 @@ Technical me: "centralized authority jo ye kaam khud kare" = PSP (Razorpay, Jusp
 
 Reel se (Stripe; Arpan: "scene-mock ka matlab nahi, tokenization credit card ka apna hota, Stripe ID rakhta"): card ka number apne DB me nahi, PSP card rakhe aur hume ek ID de, DB me sirf wo ID; UPI me sirf UPI ID, PIN user ke UPI app me.
 Technical me: tokenization (payment method ID), card data PSP ke paas (PCI DSS), India me RBI ka niyam (1 Oct 2022): dukaan aur PSP dono card number nahi rakhte, sirf bank / card network; baaki ke paas token.
+**DB kaunsa: SQL ya NoSQL?** Arpan: Mera jhukaav consistency pe bahut zyada hai, system consistent hona chahiye. SQL DB ACID properties follow karta (atomicity, consistency); NoSQL (Cassandra jaisa) key-value hai, ACID follow nahi karta. Hum transaction, ACID, consistency wali cheezon pe zyada baat kar rahe, scale pe itni nahi. Scale pehle replicas aur index laga ke, sharding (partition) baad me, wo bahut badi baat hai. To MySQL ya Postgres.
+Technical me: paisa = ACID chahiye = SQL (Postgres / MySQL); scale ka kram: read replica + index pehle, shard aakhir me.
 
 **2. App ne PSP ko bola "500 kaato", aur PSP 30 second se chup. FAILED dikhaya to Arpan dobara pay karega aur 1,000 kat sakte. SUCCESS dikhaya to ho sakta paisa kata hi na ho, aur dukaan wala bina paise saamaan de de.**
 Arpan: Hum apne paas ek parchi rakh lein, jisse dekh sakein PSP pe kya ho raha. Pay dabaya, to maine apne paas parchi rakh di: INITIATED ho gaya. Parchi pe likha rahega kya-kya hua: PSP ne ye kara, ab ye kara. Fail ho gaya to FAIL mark kar do, pass ho gaya to PASS mark kar do.
@@ -87,6 +89,8 @@ Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATE
 **Maan lo net atka, Arpan ne "Pay" do baar daba diya.**
 Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; server pehle key dekhe, purani hai to wahi parchi lauta de. Wahi Chat aur Banking wali key.
 Technical me: "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
+**Maan lo ek hi key ki do request bilkul ek saath pahunchi:** Arpan: Key client banayega, server nahi. Do request ek saath aayi to DB atomic constraint lenge: check then act, ek waqt me ek hi key process hogi. Wo key DB me pehle se hai to doosri process hi nahi hogi.
+Technical me: "atomic check then act" = key pe unique constraint (INSERT ... ek hi jeetega), doosri ko "process ho rahi / ho chuki" lautao.
 
 **6. Arpan ke 500 hamare wallet me dukaan ke khaate me aa gaye. Ab dukaan wala ye 500 apne ICICI bank me nikalna chahta hai. ICICI hamara DB nahi, to ek transaction me nahi. Wallet se kaat liye, aur ICICI me jodte waqt PSP bola "FAILED".**
 Arpan: Ulta kar do, sab ulta kar do, sab wapas paise bhej do. Maan le main HDFC bank hoon, bagal wale bank ko bhejne gaya, usne mana kar diya: "nahi bhai, bank band ho gaya, kal aana, abhi server bekaar hai." Fail ho gaya, baatcheet khatam. To main apne register me sab kaat dunga: "maine yahan se paise liye the, ise wapas kar raha hoon", aur sab wapas paise bhej dunga.
@@ -105,6 +109,8 @@ Technical me: "sab taiyaar ho?" = 2PC (prepare round), "ek slow ki wajah se sab 
 **9. Diwali pe har second 3,000 payment, saare wallet ek hi register (DB) me. Register itni likhai nahi jhel pa raha.**
 Arpan: Us register ko kaat do, chhote-chhote tukde kar do. "Le bhai, tu yahan likh, tu ye likh, tu ye likh." Kaam baant diya, dikkat khatam. Ab aaram se sab apna-apna likh rahe.
 Technical me: "register ke chhote tukde" = shard, "tu ye likh, kaam baant diya" = har shard ka apna likhne wala, likhai bant gayi.
+**Maan lo Diwali sale pe sirf DB nahi, sab pe pel:** Arpan: Load balancer plus read replica, aur hum server badha denge, koi dikkat nahi. Alag-alag server hain to saga hi hamare paas.
+Technical me: app server scale + LB, padhai read replica pe, likhai shard pe.
 
 **10. Arpan ka wallet tukda 1 me, dukaan ka tukda 3 me. Ek se kaatna, doosre me jodna. Do alag register, ek transaction me nahi hoga.**
 Arpan: Apne office se ek ladka pakdunga: "ye 500 mera hai, us tukde me jaana hai, use de ke aa ja, aur jo hua mujhe aake bata." Saath me ek diary rakh, usme likh "ye 500 Arpan ne diye, is tukde me dene hain". Beech me koi dikkat aaye to diary me likhta jaaye kya-kya hua. Hisaab poora hua to theek, nahi to wapas aake mere paise de dega.
