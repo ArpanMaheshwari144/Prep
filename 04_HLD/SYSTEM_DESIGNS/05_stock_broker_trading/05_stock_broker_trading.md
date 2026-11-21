@@ -49,6 +49,8 @@ FR      buy / sell order dalo (apna bhaav likh ke) · bhaav mile to sauda · pai
         Hamara FR = raasta (2). Isliye hold din badalne pe bhi rehta hai, aur cancel karne pe hi wapas jaata hai.
         Jitna mila utna abhi de do, baaki ke liye order khula rahe; user bole "sab ek saath chahiye, warna kuch nahi" to wahi karo.
         FR ne ye maanga, isliye design ye hai. FR raasta (1) maange, to 3:30 pe hold wapas, aur jawab bhi badlega.
+        (pehle sawaal, Arpan 18-Oct: Zerodha / Groww jaisa poora app 45 minute me nahi banta. Poochho: price, risk,
+         settlement me se kya chahiye? margin, IPO, mutual fund scope me hain ya nahi? Hamara design = sirf order + sauda)
 NFR     paisa aur share hamesha sahi · jo pehle aaya wo pehle mile · har cheez ka record
 Numbers 50 lakh order roz, market ~6 ghante -> ~250 / sec aam · 9:15 pe jhatka ~10,000 / sec, saare share me bata
         live bhaav: ~10 lakh app khule, har second naya bhaav -> poochhne ki jagah push
