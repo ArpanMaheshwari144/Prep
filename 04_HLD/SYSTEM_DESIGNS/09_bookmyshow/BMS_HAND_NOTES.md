@@ -46,9 +46,9 @@ FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroo
         2  seat khaali hai to book karo (seat roko)
         3  book kiya to paisa kaato
         4  paisa kata to seat do (ticket)
-        (scope, Arpan 14 / 28-Oct + 21-Nov: BookMyShow city-wise show, recommendation, review, concert, refund sab karta;
+        (scope: BookMyShow city-wise show, recommendation, review, concert, refund sab karta;
          sab liya to design bahut bada. Scope = seat dekho, roko, pay, ticket; baaki interviewer maange to)
-        (pehle sawaal, Arpan 21-Nov: payment Razorpay / QR jaisa bahar ka PSP karega; uska andar ka kaam design ka hissa nahi
+        (pehle sawaal: payment Razorpay / QR jaisa bahar ka PSP karega; uska andar ka kaam design ka hissa nahi
          (writeups me bhi PSP = bahar ka dabba, Razorpay apne aap me alag system design). Interviewer se poochho: PSP ka timeout
          kitna rakhein, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout, uske baad FAILED aur alag column)
         (pehle se tay: seat chuni to 5 min tere naam, pay nahi to chhoot jaati -> kadam 2, 3 ·

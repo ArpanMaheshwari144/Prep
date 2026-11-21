@@ -45,7 +45,7 @@ FR      1  stock dekho (paas wale store ka), screen pe dikhe                -> k
         3  pay karo                                                         -> kadam 8
         4  order pakka                                                      -> kadam 2
         5  sale: seemit maal; sale me ek user ko ek hi                      -> Faisla FR se, kadam 3, 7, 7c
-        (pehle sawaal, Arpan 21-Nov: Pay PSP (Razorpay jaisa) se hota; uska andar ka kaam design ka hissa nahi. Interviewer
+        (pehle sawaal: Pay PSP (Razorpay jaisa) se hota; uska andar ka kaam design ka hissa nahi. Interviewer
          se poochho: PSP ka timeout kitna, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout, uske baad
          FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))
 

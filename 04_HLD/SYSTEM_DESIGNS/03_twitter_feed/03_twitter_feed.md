@@ -60,7 +60,7 @@ FR      1  tweet post karo (text, photo / video)                               -
            feed kabhi khaali nahi                                              -> (abhi kadam nahi)
         5  video har net pe chale (tukde, kai quality, beech se dekhna)       -> kadam 11-15
         6  search: interviewer maange to Elasticsearch jaisi alag cheez (Yelp jaisa); wo apne aap me alag
-           duniya (Arpan 21-Nov)                                               -> (abhi kadam nahi)
+           duniya                                                              -> (abhi kadam nahi)
 
 NFR     1  feed ~200 ms me (40 din baad aaya to thodi der chalegi)            -> kadam 1, 6
         2  2-5 sec purani chalegi (isliye pehle se bana sakte)                -> kadam 4, 5b

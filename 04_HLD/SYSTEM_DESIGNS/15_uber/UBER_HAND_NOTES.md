@@ -43,18 +43,18 @@ FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
         · Arpan ko Raju live dikhe · kiraya pehle dikhe · trip khatam pe pay
         · bheed me (concert) kiraya badh sakta hai, aur wo pehle hi dikh jaaye
         · ek saath kai booking aayein to aisi gaadi do ki sabki milake doori kam · jo der se ruka wo baar-baar peeche na rahe
-        · traffic me sach me bahut der fanse to kiraya badh sakta, laal batti pe nahi (Arpan 21-Nov, kadam 12 doosri kahani)
-        (pehle sawaal, Arpan 21-Nov: trip ka paisa PSP (Razorpay jaisa) kaatta; uska andar ka kaam design ka hissa nahi.
+        · traffic me sach me bahut der fanse to kiraya badh sakta, laal batti pe nahi (kadam 12 doosri kahani)
+        (pehle sawaal: trip ka paisa PSP (Razorpay jaisa) kaatta; uska andar ka kaam design ka hissa nahi.
          Interviewer se poochho: PSP ka timeout kitna, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout,
          uske baad FAILED aur alag column "kitni der baad kata" (kadam 13b))
 NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi
         · ride ke beech driver gaya to sambhalo
-        · sawari wali ride ka poora raasta pakka rahe (SOS / shikayat), khaali driver ka zaroori nahi (Arpan 21-Nov, kadam 2)
-        · gateway chup ho to customer / driver atke nahi (30 sec, phir doosra raasta) (Arpan 21-Nov, kadam 13)
-        · concert jaisi bheed (50-60 hazaar) me sabko turant cab ka vaada nahi, intezaar hoga (Arpan 21-Nov, kadam 6)
+        · sawari wali ride ka poora raasta pakka rahe (SOS / shikayat), khaali driver ka zaroori nahi (kadam 2)
+        · gateway chup ho to customer / driver atke nahi (30 sec, phir doosra raasta) (kadam 13)
+        · concert jaisi bheed (50-60 hazaar) me sabko turant cab ka vaada nahi, intezaar hoga (kadam 6)
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
-        Arpan 21-Nov: ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
+        ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
         ("driver tez aaye" na FR na NFR: traffic hamare haath me nahi)
 API     (Arpan 21-Nov) GET  aas-paas ke driver  -> app khulte hi naksha pe    (FR driver ki jagah, paas ka khaali)
                        POST book                -> kahan jaana, kiraya dikhe  (FR ek driver ek sawari, kiraya pehle)

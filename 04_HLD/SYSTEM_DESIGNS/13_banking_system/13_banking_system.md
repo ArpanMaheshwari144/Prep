@@ -56,7 +56,7 @@ FR      1  paisa daalo, nikaalo, balance + history dekho                    -> k
            kaam (RBI se juda). Interviewer se poochho "statement bhi chahiye?"; haan bole to   -> kadam 11-20
 
 NFR     1  paisa na gum ho, na bane; do baar na kate ki poori koshish (ek DB ke andar transaction +
-           idempotency key se rokte). Phir bhi kat sakta hai (Arpan 21-Nov): bank bada hua to DB baante
+           idempotency key se rokte). Phir bhi kat sakta hai: bank bada hua to DB baante
            (Mumbai, Delhi), saga aata, aur paisa UPI / doosre bank se jaata to beech ka net / bank hamare haath
            me nahi; HDFC me bhi kabhi do baar kat jaata. Kata to raat ke milaan (ledger) se pakdo aur wapas
            karo, ye pakka.                                                  -> kadam 1, 2, 3, 4, 7, 21

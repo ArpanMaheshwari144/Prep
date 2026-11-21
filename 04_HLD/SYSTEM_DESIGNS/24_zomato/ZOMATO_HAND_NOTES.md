@@ -32,7 +32,7 @@ Arpan (Whitefield) --> Zomato app --> server --> Redis (menu + area ki restauran
 ```
 FR      1  aas-paas (15 km) ke restaurant dikhao, rating ya doori se sort        -> kadam 1, 2
         2  menu dekho, order karo, khana pahunche                                -> kadam 0, 3
-        (pehle sawaal, Arpan 21-Nov: order ka paisa PSP (Razorpay jaisa) se; uska andar ka kaam design ka hissa nahi.
+        (pehle sawaal: order ka paisa PSP (Razorpay jaisa) se; uska andar ka kaam design ka hissa nahi.
          Interviewer se poochho: PSP ka timeout kitna, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout,
          uske baad FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))
 

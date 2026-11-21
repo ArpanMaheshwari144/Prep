@@ -49,7 +49,7 @@ FR      1  dukaan ko pay (bank se)                                         -> ka
         6  FR me poochho: dono khaate ek jagah (ek bank / ek register) ya alag?
            Ek jagah = seedha ek transaction. Alag jagah (do bank, do tukde) = saga.
            Hamara design = alag, isliye saga. FR badle to jawab badle.     -> kadam 6, 8, 10
-        (pehle sawaal, Arpan 21-Nov: bank se paisa PSP (Razorpay jaisa) laata; uska andar ka kaam design ka hissa nahi, Razorpay
+        (pehle sawaal: bank se paisa PSP (Razorpay jaisa) laata; uska andar ka kaam design ka hissa nahi, Razorpay
          apne aap me alag system design. Interviewer se poochho: PSP ka timeout kitna rakhein, ya PSP scope se bahar? Wo bole
          "30-60 sec bahut" to wahi timeout, uske baad FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))
 
@@ -60,7 +60,7 @@ NFR     1  do baar na kaatne ki poori koshish (payment id, idempotency); phir bh
         2  paisa kabhi gayab na dikhe                                      -> kadam 7
         3  kuch gire to bhi payment atka na rahe                           -> kadam 3, 3b, 4, 5, 11
         4  har paisa trace ho                                              -> kadam 2, 7
-        5  CAP me consistency, availability nahi (Arpan 13-Oct + 21-Nov): paise ka niyam hi consistency hai.
+        5  CAP me consistency, availability nahi: paise ka niyam hi consistency hai.
            Availability chuni to wahi hoga jo banking kadam 21 me hua: do jagah ki branch (Mumbai aur doosre desh
            wali) dono ne apne-apne register se 1000 de diye, raat ko balance -1000. Isliye paisa ek hi jagah se
            kate (jahan khaata hai); dheema chalega, galat hisaab nahi. PSP gira to doosri service, par hisaab
