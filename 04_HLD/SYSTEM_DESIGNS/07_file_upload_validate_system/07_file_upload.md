@@ -93,6 +93,9 @@ sach me PDF / CSV hai.
 **Asli naam:** line = Kafka + worker / consumer (async; Kafka me file nahi jaati, sirf file ki id / S3 ka pata, file S3 me), status = DB me file ki row ka status, chhota tukda = magic bytes,
 scan = third party virus scan.
 
+**Maan lo bheed badhi:** LB + zyada server, DB pe cache aur index pehle; shard last option, uski bahut cost.
+**Asli naam:** horizontal scale, cache + index, shard aakhri.
+
 ```mermaid
 flowchart TB
     A["Arpan: upload,<br/>10 minute spinner"]:::bad
@@ -197,6 +200,10 @@ chhod do; ulta aaya to dekho kaunsa naya, purana chhod do. (Grill: resume v1 phi
 ([AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html)) aur "Event notifications aren't guaranteed to arrive in the same order that the events occurred." ([AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html))
 **Asli naam:** idempotency (file id + version pe ek hi baar), S3 event ka `sequencer` ya hamara version number = thappa (usi file ke liye, bada = baad wala).
 
+**Maan lo user har 2-3 sec status poochhe:** status cache me, validate hote hi cache update (ya TTL). **Maan lo worker gira,
+file VALIDATING pe atki:** sweeper job har minute, 10 min se status nahi badla to hatao; S3 lifecycle rule adhoori files saaf.
+**Asli naam:** status cache (write-through), sweeper job, S3 lifecycle rule.
+
 ```mermaid
 flowchart TB
     S3[("File S3 me aa gayi")]:::card
@@ -234,6 +241,10 @@ nahi. Rename = ek row update.
 user ka kaam nahi. User ke saamne DB me turant hata do, S3 ka kaam peeche: ya delete pe ek event jaaye jo S3 se hata de,
 ya baad me sync job DB aur S3 milaaye, jo DB me nahi wo S3 se hatao.
 **Asli naam:** soft delete (DB me turant) + async delete (queue + worker) ya orphan cleanup / reconciliation job.
+
+**Maan lo folder ki ek file fail:** parent + child tracking id; ek child fail to poora folder fail, sab pass to pass.
+**Maan lo 10 file ek saath:** kai copy (worker) baant ke scan, dheere-dheere S3 ko; net gaya to status se kahan tak.
+**Asli naam:** folder status = sab child ka AND, parallel workers, resume.
 
 ```mermaid
 flowchart TB
@@ -344,6 +355,9 @@ lo hi mat = INFECTED -> file hatao (quarantine / delete) + user ko batao.
 **Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki:** Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko dead letter queue me daal do aur insaan ko alert, investigate karo, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
 **Asli naam:** dobara try = retry with backoff, dead letter queue = DLQ + alert (scan wali tez line se alag), link band = CLEAN tak download nahi (fail-closed).
 
+**Maan lo complete aaya hi nahi:** file pehle temporary jagah, pass ho tab asli jagah.
+**Asli naam:** quarantine / temp prefix.
+
 ```mermaid
 flowchart TB
     S3[("File aayi")]:::card
@@ -387,6 +401,9 @@ to file rahe. Aakhri wala (Priya) bhi delete kare tab S3 se.
 **Asli naam:** reference counting (kitne user is file ko pakde hain; ginti 0 tabhi S3 se safai).
 
 ---
+
+**Maan lo S3 khud dedup kyun nahi karta:** S3 ka paisa GB pe, double rakhe to double bill, business model wahi.
+**Asli naam:** S3 billing = GB-month.
 
 ## Wrap (30 second me poora design)
 
