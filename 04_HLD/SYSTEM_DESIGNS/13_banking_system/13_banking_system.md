@@ -27,7 +27,7 @@ Arpan  -->  LB  -->  kai counter (app server)  -->  DB (khaate, row lock)  --syn
  6   salary ka din, ek cashier                   ->  10 counter + LB
  7   register jal gaya                           ->  copy turant (sync replica, WAL)
  8   sab balance dekhne aaye                     ->  photocopy alag desk (read replica)
- 9   photocopy peeche, ghabra ke dobara bheja    ->  likhne wala main se padhe (read-your-writes)
+ 9   photocopy peeche, ghabra ke dobara bheja    ->  likhne wala main se padhe; photocopy uski likhai ke number tak pahunchi? (read-your-writes, LSN)
 10   haath se 100 ko 600 kar diya                ->  ledger se milao (reconciliation)
 11   5 saal ki line roz jodna bhaari             ->  mahine-mahine tod do (partition, snapshot)
 12   almari me jagah nahi, 10 saal               ->  S3 archive
@@ -363,6 +363,16 @@ Instagram pe bhi yahi hota: profile photo update ki, turant refresh kiya to pura
 sync ho jaaye to wahin se = phir read replica (baaki sab replica se).
 Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo leader me, refresh pe padhna copy se jo abhi peeche).
 
+**Maan lo "thodi der" ke baad photocopy pe wapas bhejna hai, kaise pata chale Arpan ka 500 photocopy me aa gaya:** photocopy
+khud bata de "main sync ho gaya, mujh pe bhejo", ya ek chhotu poochhta rahe "tu sync hua?"; haan to Arpan wapas photocopy pe.
+**Maan lo main register kabhi band nahi hota (Priya, Ravi lagaatar likh rahe), photocopy kabhi "poori sync" nahi:** to har
+likhai ka number rakho. 100 likhai aayi, Arpan ki 100vi me 500. Photocopy 99 tak pahunchi to Arpan ka 500 abhi nahi, main se
+padho; 100 tak pahunchi to aa gaya, photocopy se padho. Mujhe apna 100 chahiye, peeche Ravi, Priya kuch bhi kar rahe ho, lena-dena
+nahi. Jaise main 500 page padh chuka, photocopy wala 450 pe, koi baat nahi, padhta rahe.
+**Asli naam:** photocopy apni position bataye = replica ki replay position (replication lag ka check). Har likhai ka number =
+LSN (log sequence number, kadam 7 wale WAL me entry ki position). Arpan ke session me uski likhai ka LSN rakho, refresh pe
+replica se poochho; pahunchi to replica, nahi to primary (andaza nahi, seedha check).
+
 ```mermaid
 flowchart TB
     A["Arpan ne abhi 500 bheje"]:::card
@@ -370,7 +380,7 @@ flowchart TB
     subgraph TD["THODI DER MAIN REGISTER SE"]
         M[("Jisne update kiya, use main se padhao<br/>(read-your-writes)")]:::pill
     end
-    P[("Sync ho gaya: phir photocopy se")]:::good
+    P[("Photocopy Arpan ki likhai ke number tak pahunchi?<br/>(LSN) haan: phir photocopy se")]:::good
     A --> M
     A -.-> X
     M -. "thodi der baad" .-> P

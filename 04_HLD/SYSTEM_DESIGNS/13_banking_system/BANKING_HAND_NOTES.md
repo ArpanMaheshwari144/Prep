@@ -21,7 +21,7 @@ Arpan  -->  LB  -->  kai counter (app server)  -->  DB (khaate, row lock)  --syn
  6   salary ka din, ek cashier                   ->  10 counter + LB
  7   register jal gaya                           ->  copy turant (sync replica, WAL)
  8   sab balance dekhne aaye                     ->  photocopy alag desk (read replica)
- 9   photocopy peeche, ghabra ke dobara bheja    ->  likhne wala main se padhe (read-your-writes)
+ 9   photocopy peeche, ghabra ke dobara bheja    ->  likhne wala main se padhe; photocopy uski likhai ke number tak pahunchi? (read-your-writes, LSN)
 10   haath se 100 ko 600 kar diya                ->  ledger se milao (reconciliation)
 11   5 saal ki line roz jodna bhaari             ->  mahine-mahine tod do (partition, snapshot)
 12   almari me jagah nahi, 10 saal               ->  S3 archive
@@ -124,6 +124,14 @@ Technical me: "photocopy alag desk pe" = read replica, "main register likhne wal
 Arpan: Use pehle thodi der main file se padho na. Jisne update kiya, use turant main file pe padho. Thodi der baad jab wo replica pe sync ho jaayega, phir wahin se padh lo. Har cheez ka system hai yahan.
 Instagram pe bhi yahi hota: profile photo update ki, turant refresh kiya to purani photo dikhi, thodi der baad nayi.
 Technical me: "jisne update kiya, thodi der main file se" = read-your-writes (primary se padhna), "sync ho jaaye to wahin se" = phir read replica. Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo leader me, refresh pe padhna copy se jo abhi peeche).
+
+**Maan lo "thodi der" ke baad photocopy pe wapas bhejna hai. Bank ko kaise pata chale ki photocopy me Arpan ka 500 aa gaya?**
+Arpan: Replica khud bata de ki "haan bhai, main sync ho gaya, ab mujh pe traffic bhej sakte ho, mere paas sab hai". Ya ek chhotu bitha do jo isse poochhta rahe "tu sync hua ya nahi"; haan bola to Arpan ko wapas replica pe bhej do.
+Technical me: "replica khud bataye / chhotu poochhta rahe" = replica apni sync position bataye (replication lag ka check).
+
+**Maan lo main register kabhi band nahi hota, Priya, Ravi lagaatar likh rahe. Photocopy kabhi "poori sync" nahi hogi. To chhotu kya poochhe?**
+Arpan: Ek point rakh lo ki yahan tak sync hua. Maan lo 100 likhai aayi, Arpan ki 100vi hai, usme 500. Replication 99 tak pahuncha to mera 500 abhi nahi aaya, replica se nahi padhna. 100 tak pahuncha to mera 500 aa gaya. Mujhe apna 100 chahiye; mere peeche Ravi, Priya, Elon Musk kuch bhi kar rahe ho, lena-dena nahi. To replica bhai, jab tu Arpan tak pahunch jaaye to bata de; Ravi tak pahunche to Ravi ka, Priya tak to Priya ka. Jaise main primary hoon, register padhta ja raha aur peeche page pass karta ja raha; mera padhna tez, wo thoda peeche kyunki dene-lene me time lagta. Main poochhun "kahan tak padha?", main 500 page padh chuka, wo bole 450, koi dikkat nahi, padhta rahe.
+Technical me: "har likhai ka number, Arpan ki 100vi" = LSN (log sequence number, kadam 7 wale WAL me entry ki position), "replica kahan tak pahunchi" = replica ki replay position, "mujhe apna 100 chahiye" = Arpan ke session me uski likhai ka LSN rakho, refresh pe replica se poochho; pahunchi to replica, nahi to primary (andaza nahi, seedha check).
 
 **10. Raat ko kisi bank wale ne main register me Arpan ka balance haath se 100 ki jagah 600 kar diya, diary (ledger) me koi line nahi. Agle din Arpan ne 600 nikaal liye.**
 Arpan: Use main ledger se milwao na. Asli to ledger hai. Arpan ka balance koi bhi haath se update kar dega, wahan dikkat hai. Apna jo main hai wo ledger se hai: ledger me hum sab cheez likh rahe, -500 +500, ye hai asli sach, na ki wo column jo galti se koi bhi update kar de.
