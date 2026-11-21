@@ -88,8 +88,7 @@ Technical me: "parchi pe contest id + khatam hone ka waqt" = event time, "usi di
 **Isi dikkat ki doosri kahani (4-Nov):** Arpan: Mita mat, overwrite kar de. Aaj Arpan ke 10, Priya ke 10. Kal Arpan aaya +10, Priya nahi aayi to uska 0. Ya to ek alag register me rakh ke purana poora register discard kar de, ya overwrite kar de; ek-ek ko zero karne nahi baithna.
 Technical me: reset = naya key (din ki tareekh se) ya agla score aate hi overwrite; 80 lakh ko ek-ek zero karna nahi.
 
-**Maan lo contest raat 11 baje shuru, 1-3 baje khatam:** Arpan: 9 tareekh raat 11 baje shuru hua, to hamare leaderboard pe wo contest 9 tareekh ka; India scope maan ke poore desh ka ek waqt. World wide lena ho to ek time zone rakho, UTC jo aajkal standard hai; utna detail me jaane ka matlab nahi.
-Arpan (time zone): Ye leaderboard duniya bhar ke online contest (LeetCode jaisa) ke liye hai, to ek hi time zone UTC; aisa nahi ki India ka IST, Europe ka alag. Ek room me bulaya elite contest (Gennady jaise, China / Japan / Korea ke top coder) alag cheez hai, wo yahan ki baat nahi; ICPC bhi online hi hota.
+**Maan lo contest raat 11 baje shuru, 1-3 baje khatam:** Arpan: 9 tareekh raat 11 baje shuru hua, to hamare leaderboard pe wo contest 9 tareekh ka. Ye leaderboard duniya bhar ke online contest (LeetCode jaisa) ka hai, to ek hi time zone rakho, UTC jo aajkal standard hai; aisa nahi ki India ka IST, Europe ka alag. Ek room me bulaya elite contest (Gennady jaise top coder) alag cheez hai, wo yahan ki baat nahi.
 Technical me: contest ka din = shuru hone ki tareekh (contest id ke saath); duniya bhar ka online contest = ek hi time zone UTC.
 
 **6. Main 4,52,318 pe hoon, top 10 me kabhi nahi aaunga. Screen pe mere aage ke 5 aur peeche ke 5 chahiye, par wo alag-alag dabbon me baithe hain (Kenji Japan me, Sara Europe me).**
