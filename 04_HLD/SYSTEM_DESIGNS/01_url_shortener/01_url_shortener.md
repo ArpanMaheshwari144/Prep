@@ -62,9 +62,10 @@ Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me na
 
 Counter wala token apne man se bana raha tha, kuch bhi chhota likh deta, aur ek din do alag logon ko same token de
 diya. To uska token ek line wala kar do: abhi number 9 hai to agla 10. Ye ban gaya to aage badhao, phir ye ban gaya to
-aage badhao, isliye number kabhi repeat nahi hoga. Counter kar do, counter service.
+aage badhao, isliye number kabhi repeat nahi hoga. Counter kar do, counter service. Random ya hash me do logon ko same
+code mil sakta, har baar DB me jaanchna padta; counter me ye dikkat hi nahi.
 
-**Asli naam:** ek line me, aage badhao = counter (har link ko agla number), kabhi repeat nahi = takrav kabhi nahi.
+**Asli naam:** ek line me, aage badhao = counter (har link ko agla number), kabhi repeat nahi = takrav kabhi nahi, random / hash = collision + DB check.
 
 **Maan lo do log ek hi pal me aayein:** upar se ek pehra aur: DB me code pe unique, "insert if not exist", jo DB me
 apne aap atomic hai.
