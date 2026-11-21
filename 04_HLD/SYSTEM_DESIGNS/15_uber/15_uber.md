@@ -36,7 +36,9 @@ Arpan "Book"  -->  matching: apna + aas-paas ke dabbe, sadak ki doori (ETA), 15-
 13b  cash diya, 5 min baad GPay se bhi kata       ->  "kitni der baad kata" column, raat ki job lautaye
 14   Raju ka phone band, naksha pe gayab         ->  location timeout
 15   Car A Arpan se 2 km, Ravi se 1 km           ->  sab saath milao, kul doori kam (batch matching, 15-20 sec window)
+15b  Arpan 7:00:00, Ravi 7:00:02                 ->  turant mat do, 15-20 sec ruk ke sab saath milao
 15c  Arpan baar-baar peeche                      ->  aging, agli gaadi usi ki
+15d  cancel karke turant dobara book             ->  Redis me "pehle kab ruka" + 30 sec umar, warna peeche
 16   signal pe khada, har 4 sec wahi jagah       ->  15-20 sec (adaptive ping); 16b-d chhat pe / nadi paar / tunnel / basement
 ```
 
