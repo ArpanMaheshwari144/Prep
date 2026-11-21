@@ -177,6 +177,29 @@ gudda bana ke dekha goli kahan lagi: upar lagi to headshot, neeche to "Arpan kil
 **Asli naam:** server line kheenche, deewar dekhe, gudda bana ke dekhe = server-side hit validation (raycast: goli ki
 line, beech me deewar, player ka hitbox), sar / body / pair alag = hitbox. Phone sirf "is disha me goli chalayi" bhejta.
 
+```mermaid
+flowchart TB
+    X["Hacker ka phone: 'meri goli lagi'<br/>(goli deewar pe / 5-6 m door)"]:::bad
+    P["Phone sirf bhejta: is disha me goli chalayi"]:::card
+    subgraph SF["FAISLA SERVER KA"]
+        L(["Goli ki seedhi line kheencho,<br/>beech me deewar?"]):::pill
+        H(["Gudda (hitbox): sar / body / pair"]):::pill
+    end
+    N["Deewar ya door: nahi lagi"]:::good
+    K["Lagi: sar pe headshot, warna killed"]:::good
+    X -.-> L
+    P --> L
+    L --> H
+    L --> N
+    H --> K
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SF fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 3b. Phone pe 3 kadam aage, server bole goli pehle lag chuki (server ki maano, rewind)
 
 Phone ne Arpan ko turant 3 kadam aage dikha diya. 120 ms baad server ka jawab: us pal se pehle Claude ki goli lag chuki
