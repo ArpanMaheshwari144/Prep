@@ -39,6 +39,8 @@ Arpan / Ravi  -->  WebSocket  -->  doc ka owner server (ek doc = ek maalik, ek v
 FR      kai log ek doc ek saath edit karein · doosre ka likha turant dikhe, kisi ka likha mite nahi
         · kaun edit kar sakta, hataya to turant band
 NFR     typing turant, ruke nahi · aakhir me sabka doc SAME · "Saved" dikha to ude nahi (sab copy ek saath gire to aakhri kuch second)
+        · likhna = AP (net gaya to bhi typing chale, baad me sync); permission = CP (jiska haq hata, wo kabhi na likh
+          paaye; net aate hi server check, haq nahi to operation reject) (Arpan 22-Oct)       -> kadam 6, 6b
 Numbers ~10 crore user, roz ~3-4 crore · har akshar ek badlaav
         -> likhna bahut zyada: har akshar pe DB nahi chal sakta
 ```
