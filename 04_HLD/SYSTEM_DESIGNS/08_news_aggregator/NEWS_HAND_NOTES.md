@@ -56,6 +56,8 @@ Technical me: "chhotu" = fetcher (har site se khabar khinchne wala), "dabba" = D
 **2. Chhotu akela, 5000 site, ek site pe 2 second = ek chakkar 3 ghante. 8:55 wali khabar 11 baje pahunchi.**
 Arpan: Bahut saare chhotu rakh le. Aur khabar pehle se taiyaar rakh, ek chhoti parchi me, sab wahin se padh lein. Jaise akhbaar me saari khabar ek saath aati hai, jo achha lage padh lo.
 Technical me: "bahut saare chhotu" = kai fetcher ek saath, "chhoti parchi" = Redis me taiyaar feed (cache).
+**Maan lo koi site band hai ya bahut dheemi:** Arpan: Har site ka fetch parallel hoga, timeout hoga, aur har site ka circuit breaker: koi site fail ho gayi to circuit breaker hai hamare paas. Aur peeche queue hai jo backlog aur spike sambhal sakti hai.
+Technical me: per-source timeout + circuit breaker (ek dheemi site baaki ko na roke), queue = backlog / spike buffer.
 
 **Maan lo chhotu 7 ke paas 100 site thi, aur wo beech me mar gaya.**
 Arpan: Ye Twitter ke worker / consumer 7 jaisa hai. Har chhotu thodi-thodi der me bolta rahe "main zinda hoon". Kuch der tak awaaz nahi aayi to main samajh jaata hoon chhotu 7 gaya, aur uski 100 site baaki chhotuon me baant deta hoon. Is tarah koi site bina dekhe nahi chhoot-ti.
@@ -68,6 +70,8 @@ Technical me: "thodi der intezaar" = lease / heartbeat timeout, "purana wapas aa
 **3. 50 chhotu. Ravi ki feed me ek khabar 40 baar: 2 chhotu ek hi Cricbuzz se laaye, 38 alag site se alag shabdon me.**
 Arpan: Chhotu ke paas ek bada aadmi rakh: "ye dobara hai, hatao, pehle aa chuki". Par "India jeeta, Kohli ki century" aur "Kohli ki shaandaar century, India jeeta" me shabd alag hain, hubahu wala check nahi pakdega. To wordings dekh lo: dono me Kohli, century, India, jeeta hai, to same khabar, hata do; nahi to rakh lo.
 Technical me: "bada aadmi" = dedup, "hubahu same" = URL / title ka hash, "wordings dekh lo" = shabd milaan (near-duplicate check).
+**Isi dikkat ki doosri baat (6-Oct):** Arpan: Ek hi khabar baar-baar repeat ho rahi to duplicate hata sakte, dedup: paanch source pe ek hi khabar ho to ek hi laao. Jaise Bloom filter use kar sakte, usse repetition nahi hogi; aur category me baant sakte, tag: sports, politics.
+Technical me: Bloom filter = "ye pehle dekha?" ka tez jawab (thodi jagah me; kabhi-kabhi galat "haan", "nahi" hamesha sahi), category tag.
 
 **4. Bada aadmi akela, har khabar ko hafte ki 5 lakh khabron se milata, 1 minute ek khabar. Line lambi, 8:55 wali 10:30 pe.**
 Arpan: Chhotu ko faltu khada mat kar. Khabar Kafka me daal (stadium wali kahani) aur chhotu apna kaam karta rahe. Peeche workers / consumers dupe hata ke feed / DB / Redis me rakhte rahenge. Aur har dupe nahi hatega, kabhi aa jaayega, jaise Instagram feed me bhi aata.

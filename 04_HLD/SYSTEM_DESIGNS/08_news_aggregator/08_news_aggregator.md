@@ -99,6 +99,9 @@ ekdam se mat do, thodi der ruko, net aaya to chhotu 7 wapas. Nahi aaya to chhotu
 wo dobara malik nahi, leader wali baat (purana leader wapas aaye to leader nahi banta).
 **Asli naam:** lease / heartbeat timeout + fencing (naye malik ka bada number / epoch, purane ki baat nahi maani jaati).
 
+**Maan lo koi site band / bahut dheemi:** har site ka fetch parallel, timeout + circuit breaker, peeche queue backlog jhele.
+**Asli naam:** per-source timeout + circuit breaker.
+
 ```mermaid
 flowchart TB
     X["Chhotu akela: ek chakkar 3 ghante,<br/>8:55 wali 11 baje"]:::bad
@@ -129,6 +132,9 @@ dono me Kohli, century, India, jeeta hai, to same khabar, hata do; nahi to rakh 
 
 **Asli naam:** bada aadmi = dedup, hubahu same = url UNIQUE + title ka hash, wordings dekh lo = near-duplicate check
 (SimHash). Perfect nahi, trade-off maana (matlab se milana = ML, scope se bahar).
+
+**Doosri baat:** paanch source pe ek khabar to ek hi laao; Bloom filter se repetition rokna, category tag.
+**Asli naam:** Bloom filter (dedup), tags.
 
 ```mermaid
 flowchart TB
