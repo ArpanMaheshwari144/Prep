@@ -88,6 +88,9 @@ inbox se.
 **Maan lo Ravi ne Arpan ko unfollow kiya, par dabbe me Arpan ke 50 purane tweet pade hain:** Feed sirf follow walon se nahi banti: main khud Elon, Sachin, Kohli ko follow nahi karta, phir bhi mujhe unke tweet dikhte, kyunki Twitter / Instagram ka kaam hi engage rakhna hai; kuch follow na karo to bhi khaali page nahi dikhta. Unfollow ke baad pade hue tweet turant gayab nahi honge, par naye aane band, aur jaise-jaise feed banegi Arpan ke tweet dheere-dheere kam ho jaayenge.
 **Asli naam:** "turant gayab nahi, dheere kam" = dabba saaf nahi karte (lazy, purge nahi), naye fanout band, ranking (kadam 17) neeche karti; feed me follow ke alawa recommendation bhi.
 
+**Maan lo kai server, request kabhi kisi pe:** app stateless, har server yaad nahi rakhega, pehchaan JWT se.
+**Asli naam:** stateless app server + JWT.
+
 ```mermaid
 flowchart TB
     X["Har baar 500 logon ke tweet<br/>DB se: feed 6-7 second"]:::bad
@@ -284,6 +287,10 @@ id se baanto. Meri id har baar same, to mera saara data ek jagah.
 **Asli naam:** likhai bahut, bada bhai = Cassandra (write-heavy, na join na transaction chahiye, khud kai machine me baant-ta, andar ring = consistent hashing: nayi machine jude to sirf paas ka hissa hile), replica bhi wo kar leta = Cassandra ki apni copy,
 naam se nahi, id se baant do = partition key = user id, mera saara data ek jagah = ek partition (author id se hissa, andar tweet id se tweet, time ke kram me),
 follow ka track = graph DB Neo4j.
+
+**Cassandra kyun (doosri baat):** writes bhi zyada, reads bhi zyada, TB data; shard user ID se. **Maan lo har baar "Arpan
+ke naye 500" poori table me:** roz follower wahi maangta (per day pattern), to author ke naye tweet thodi der apne paas rakh lo.
+**Asli naam:** write + read heavy = Cassandra (partition = user id); recent tweets cache (Redis, TTL).
 
 ```mermaid
 flowchart TB

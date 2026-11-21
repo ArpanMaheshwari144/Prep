@@ -150,6 +150,10 @@ pehle check, mila to skip. Ek chhoti khidki fir bhi bachti: SMS chala gaya aur "
 ek baar dobara ja sakta. Parchi is khidki ko bahut chhota kar deti, poora band nahi karti; ye kabhi-kabhar wala dohra
 maan ke chalte.
 
+**Parchi kahan:** Redis me map jaisa, chhota TTL; map me hai to skip. **Maan lo Redis gira:** DB me event id pe unique
+constraint, Redis sirf tez raasta, single point of failure nahi.
+**Asli naam:** Redis SET NX + TTL, unique constraint (asli pehra).
+
 ```mermaid
 flowchart TB
     W["SMS gaya, commit se pehle crash:<br/>wahi khabar dobara aayi"]:::bad
@@ -320,6 +324,9 @@ DELIVERED / FAILED, apni parchi = Tracking DB (Cassandra: har message ek row, ba
 **Maan lo company ne "le liya" bola, phir DELIVERED / FAILED kabhi aaya hi nahi:** Payment wala beech ka banda, cron job jaisa. Ek chhotu ACCEPTED pe atke record dekhta rahe; kuch der baad bhi jawab nahi aaya to company se khud poochhe "is SMS ka kya hua". Wahan se bhi kuch na mile to FAILED maan ke backup se bhej do.
 **Asli naam:** "beech ka banda, cron job" = status poll job (har kuch minute, ACCEPTED + purane record utha ke company ki status API se poochhe), "kuch na mile to FAILED" = timeout ke baad fail maan ke failover (kadam 5): doosri SMS company, wahi code (naya nahi). WhatsApp pe OTP sirf tab, jab FR me WhatsApp channel ho; uske apne niyam aur alag flow hain, to ye pehle FR me tay (channel failover). Payment kadam 3 jaisa.
 
+**DB kaunsa:** consistency nahi chahiye, ~5 TB, likhna bahut padhna kam -> Cassandra jaisa NoSQL, zaroorat pe shard.
+**Asli naam:** write-heavy = Cassandra.
+
 ```mermaid
 flowchart TB
     W["SMS worker / consumer"]:::card
@@ -356,6 +363,11 @@ rokti: isko bhej diya tha? Haan, to dobara nahi.
 100 logon ki line me peeche khada. Serious ki line alag karo, parchi wale apni line me aaram se aate rahein.
 **Asli naam:** OTP / order ki alag priority line (topic + apne worker / consumer), promo alag topic; promo kitna bhi lamba ho, OTP pe asar nahi
 (kadam 5 wali VIP line).
+
+**Maan lo campaign ka button hi atka:** campaign service turant 202, DB me campaign row (id, kisko, template), 10 hazaar
+ke tukde Kafka me, kai fan-out worker parallel, opt-out hatao, provider ki raftaar se. Kafka me priority nahi hoti, isliye
+OTP ki alag topic + alag worker pool (Java PriorityBlockingQueue sirf ek process me).
+**Asli naam:** 202 Accepted, chunked fan-out, priority = alag topic.
 
 ```mermaid
 flowchart TB
@@ -397,6 +409,9 @@ pehle se hain. Baad me naap ke lage ki faltu queries bahut badh gayi, tab sochun
 **Maan lo Diwali ki bheed se DB ki saans phooli, aur OTP worker / consumer bhi pasand padhne usi DB pe gaya, OTP 40 second late:**
 OTP ka worker / consumer DB me pasand padhne jaaye kyun? Offer thodi bhej rahe. Seedha OTP bhejo. Pasand sirf offer pe dekho.
 **Asli naam:** OTP pe preference check skip (OTP opt-out nahi hota), OTP path pe pasand (preference) wala DB nahi, line ke saath DB se bhi alag.
+
+**Maan lo SMS band tha phir bhi raat 2 baje chala gaya:** bhejne se pehle channel on + quiet hours bhi dekho.
+**Asli naam:** opt-in + quiet hours check.
 
 ```mermaid
 flowchart TB
