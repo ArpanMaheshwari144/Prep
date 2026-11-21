@@ -48,9 +48,8 @@ FR      1  dukaan ko pay (bank se)                                         -> ka
          "30-60 sec bahut" to wahi timeout, uske baad FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))
 
 NFR     1  do baar na kaatne ki poori koshish (payment id, idempotency); phir bhi PSP / bank / net ki
-           gadbad se kabhi do baar kat sakta, GPay / PhonePe / Paytm sab me hota. Kata to apne aap
-           wapas: raat ka milaan (reconciliation) + refund. RBI ka niyam: UPI dukaan wala payment
-           T+5 din me wapas, P2P T+1, der hui to bank Rs 100 / din deta       -> kadam 5, 5b, 11b
+           gadbad se kabhi do baar kat sakta. Kata to apne aap wapas: raat ka milaan
+           (reconciliation) + refund                                       -> kadam 5, 5b, 11b
         2  paisa kabhi gayab na dikhe                                      -> kadam 7
         3  kuch gire to bhi payment atka na rahe                           -> kadam 3, 3b, 4, 5, 11
         4  har paisa trace ho                                              -> kadam 2, 7
