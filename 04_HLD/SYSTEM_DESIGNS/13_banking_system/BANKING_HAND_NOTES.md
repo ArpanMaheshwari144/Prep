@@ -48,7 +48,11 @@ FR      1  paisa daalo, nikaalo, balance + history dekho                    -> k
         SCOPE KA SAWAAL (FR / NFR nahi): mahine / saal ki statement, purana hisaab 10 saal = bank ka andar ka
            kaam (RBI se juda). Interviewer se poochho "statement bhi chahiye?"; haan bole to   -> kadam 11-20
 
-NFR     1  paisa na gum ho, na bane, na do baar kate                       -> kadam 1, 2, 3, 4, 7, 21
+NFR     1  paisa na gum ho, na bane; do baar na kate ki poori koshish (ek DB ke andar transaction +
+           idempotency key se rokte). Phir bhi kat sakta hai (Arpan 21-Nov): bank bada hua to DB baante
+           (Mumbai, Delhi), saga aata, aur paisa UPI / doosre bank se jaata to beech ka net / bank hamare haath
+           me nahi; HDFC me bhi kabhi do baar kat jaata. Kata to raat ke milaan (ledger) se pakdo aur wapas
+           karo, ye pakka.                                                  -> kadam 1, 2, 3, 4, 7, 21
         2  har paise ka hisaab mile (audit)                                -> kadam 4, 10, 13
         3  balance dekhna tez                                              -> kadam 8, 9
 Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna isse kahin zyada
