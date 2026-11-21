@@ -92,6 +92,10 @@ aur pay hua to seat + booking + payment teeno ek saath badlein ya koi nahi, ye t
 **DB kaunsa:** check + book ek hi update me; consistency over availability, ek seat do ko nahi -> SQL, NoSQL nahi.
 **Asli naam:** atomic conditional UPDATE, SQL.
 
+**Maan lo Arpan seat map khol ke 1 ghanta baitha, is beech D5 kisi aur ne le li:** design nahi tootta. Seat tab tak hold
+jab tak pay nahi; "ye seat book ho chuki" dikha do ya "seat map badal gaya, refresh karo" ka button. Sabko Redis me daal ke
+live dikhane ka matlab nahi. **Asli naam:** purana seat map = sirf UI baat, asli roka upar ki ek query.
+
 ```mermaid
 flowchart TB
     A["Arpan: ek seat chahiye,<br/>lo mere paise"]:::card
