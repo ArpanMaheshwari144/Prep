@@ -68,7 +68,7 @@ API     GET  aas-paas ke driver  -> app khulte hi naksha pe    (FR driver ki jag
         driver ki jagah = phone ka har 4 sec wala bhejna, pehle se design me (kadam 1)
 ```
 
-**Dhaancha (Arpan 21-Nov round):** Arpan ne app khola -> aas-paas ke driver dikhe; Book -> server -> process -> DB me likha
+**Dhaancha (round):** Arpan ne app khola -> aas-paas ke driver dikhe; Book -> server -> process -> DB me likha
 -> wapas Arpan ko ride. Bahut saare server, DB ki replica. CDN / S3 ki zaroorat nahi. Redis aage jahan lage.
 **Asli naam:** client -> kai app server (LB) -> DB + read replica; CDN / S3 nahi.
 
