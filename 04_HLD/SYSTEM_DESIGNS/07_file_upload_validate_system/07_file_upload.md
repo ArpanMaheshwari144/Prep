@@ -204,6 +204,9 @@ chhod do; ulta aaya to dekho kaunsa naya, purana chhod do. (Grill: resume v1 phi
 file VALIDATING pe atki:** sweeper job har minute, 10 min se status nahi badla to hatao; S3 lifecycle rule adhoori files saaf.
 **Asli naam:** status cache (write-through), sweeper job, S3 lifecycle rule.
 
+**DB kaunsa:** file S3 me, DB me sirf metadata (naam, type, waqt, size, status); seedhi row, NoSQL ka point nahi -> SQL (RDS Postgres).
+**Asli naam:** S3 + RDS Postgres (metadata / status).
+
 ```mermaid
 flowchart TB
     S3[("File S3 me aa gayi")]:::card

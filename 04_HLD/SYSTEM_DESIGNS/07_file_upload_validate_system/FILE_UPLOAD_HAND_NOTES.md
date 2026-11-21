@@ -93,6 +93,8 @@ Technical me: status poll = read-heavy -> status Redis me, "validate hote hi upd
 
 **Maan lo worker beech me gira, file VALIDATING pe atki:** Arpan: Sweeper job chala sakte: har minute dekhe, VALIDATING / UPLOADING agar 10 minute se nahi badla to us file ko hata do, wo bekaar hai. S3 me lifecycle rule bhi purani temporary aur adhoori multipart files apne aap clean kar deta.
 Technical me: sweeper / reaper job (status + updated_at dekh ke), S3 lifecycle rule (adhoora multipart abort).
+**DB kaunsa:** Arpan (21-Nov): File upload me main kaam to S3 karta hai, file wahin jaati hai. DB me hamein metadata chahiye: file ka naam, type (PDF, EXE, document), kab aur kitne baje upload hui, kitne GB ki, status. Iske liye NoSQL ka koi point nahi banta: JSON me kya store karna, MongoDB, DynamoDB, Cassandra ki zaroorat nahi, Cassandra to bahut badi baat. Requirement me bhi kya badlega. Isliye lean aaj bhi ACID / SQL wala: AWS RDS (Postgres / MySQL), jo chahiye wo SQL me mil jaata. (4-Oct bhi yahi: tracking aur status consistent chahiye.)
+Technical me: file = S3, metadata + status = SQL (RDS Postgres), seedhi row + consistency, NoSQL ki zaroorat nahi.
 
 **5. "Goa trip" folder (Day1, Day2, 500 photo). S3 me folder hote hi nahi; naam path me likha to rename = 500 copy + 500 delete.**
 Arpan: Folder ka hisaab alag, apne server me. Ek parent, baaki uske child, tree jaisa (DSA wala tree: root, phir level 1, level 2). Naam badalna = sirf parent ka naam badlo, saare bachche usi ke neeche. Parent bulaya to saari files saath; delete kiya to poora. S3 sirf files rakhe.
