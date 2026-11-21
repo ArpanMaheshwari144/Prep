@@ -466,6 +466,14 @@ int largestRectangleArea(vector<int> &heights) {
 > **PEHCHAAN / SAAR:** = LC-84 ka 2D bhai: HAR ROW = histogram -> upar wala largestRectangleArea REUSE -> sab rows ka MAX
 
 > [!WARNING]
+> ★ GALTI (grill me hui): grid + 1 / 0 dekh ke DFS socha -> GALAT. DFS jude hue SAARE 1 gin leta, shape kaisi bhi ho
+> (L, T, tedhi-medhi), kyunki wo kone pe mud jaata. Upar wale e.g. me saare 1 ek hi tukda -> DFS = 13, jawab 6.
+> Yahan RECTANGLE maanga = SEEDHI DEEWAR, isliye DFS nahi.
+> Pehchaan: "rectangle / square / sirf 1 se bhara plot" -> har row pe NEECHE khade hoke UPAR dekho (har column me
+> lagaatar kitne 1) = histogram ki heights -> stack wala largestRectangleArea.
+> "jude hue 1, kitne tukde / sabse bada tukda, shape kuch bhi" -> tab DFS (islands, max area of island).
+
+> [!WARNING]
 > ★ LeetCode pe matrix `vector<vector<char>>` aati: wahan signature char karo aur check matrix[i][j] == '1'
 > (neeche code teri file 06_STACK/10_maximal_rectangle.cpp jaisa: int matrix + == 1)
 

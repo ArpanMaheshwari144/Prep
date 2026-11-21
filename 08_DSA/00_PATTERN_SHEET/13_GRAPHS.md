@@ -15,6 +15,33 @@
 > **TREE se transfer:** BFS = queue (level-order jaisa) · DFS = recursion (left/right ki jagah adj[node]).
 > bas 'visited' add.
 
+### DFS KAB LAGTA, KAB NAHI (pehle ye dekho)
+
+```
+DFS = ek raasta pakdo, jahan tak ja sako jao, ruk gaye to laut ke agla raasta. Recursion se likhte (ya apne stack se).
+      Tree ka har traversal aur backtracking bhi yahi chalna hai: ant tak jao, laut ke doosra.
+      (har recursion DFS nahi: binary search / merge sort recursion hain par raaste nahi ghoomte)
+
+DFS LAGTA (jude hue cheezein, SHAPE KUCH BHI chalegi):
+  grid      islands (kitne tukde) · max area of island (sabse bada tukda) · word search (grid me raasta)
+  graph     path exists · connected components · clone graph · cycle dhoondhna
+  tree      inorder / preorder / postorder · diameter · max path sum · height
+  backtrack subsets · permutations · combinations · combination sum (saare raaste ghoom ke)
+
+DFS NAHI LAGTA:
+  SEEDHI DEEWAR wali shape (rectangle / square, sirf 1 se bhara)
+      -> maximal rectangle = har row histogram (STACK). DFS kone pe mud ke L / T bhi gin leta:
+         [[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]] pe DFS = 13, jawab 6.   (06_STACK)
+  KAM SE KAM step / minute (bina weight)
+      -> BFS level-order (rotting oranges, word ladder). DFS pehla mila raasta deta, chhota wala nahi.
+  WEIGHT wala sabse chhota raasta
+      -> Dijkstra (min-heap).
+  KRAM chahiye (pehle ye, phir wo) / cycle hai ya nahi
+      -> topo sort Kahn's (BFS + indegree). (DFS se bhi banta, par folder me Kahn's)
+
+PEHCHAAN EK LINE: shape kuch bhi chalegi -> DFS · seedhi deewar chahiye -> DFS nahi · "kam se kam" -> BFS.
+```
+
 ### INPUT-FORM pehchano (pehle ye -- kab adj-list banani, kab NAHI):
 
 ```
