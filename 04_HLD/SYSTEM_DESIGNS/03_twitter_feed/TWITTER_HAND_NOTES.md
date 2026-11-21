@@ -38,6 +38,7 @@ Ravi  -->  LB  -->  tweet server  -->  Kafka ("post ho gaya, nikal")  -->  worke
 17   Amit ka tweet 40 ke neeche dab gaya        ->  jisse judta wo upar (ranking)
 18   scroll pe wahi 5 dobara                    ->  cursor, offset nahi
 19   "mast DP" gaayab                           ->  do pe likho, do se padho (quorum)
+20   naya user, 2 tweet ke baad khaali          ->  trending + suggested, engagement se apni pasand (cold start)
 ```
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
@@ -51,10 +52,10 @@ FR      1  tweet post karo (text, photo / video)                               -
         3  infinite scroll: ek scroll ke beech wahi tweet dobara na aaye
            (refresh pe aa sakta, Twitter iska hisaab nahi rakhta)              -> kadam 18
         4  follow wale khatam to neeche doosron ke tweet (trending),
-           feed kabhi khaali nahi                                              -> (abhi kadam nahi)
+           feed kabhi khaali nahi                                              -> kadam 20
         5  video har net pe chale (tukde, kai quality, beech se dekhna)       -> kadam 11-15
         6  search: interviewer maange to Elasticsearch jaisi alag cheez (Yelp jaisa); wo apne aap me alag
-           duniya                                                              -> (abhi kadam nahi)
+           duniya                                                              -> News kadam 13 (wahi jawab)
 
 NFR     1  feed ~200 ms me (40 din baad aaya to thodi der chalegi)            -> kadam 1, 6
         2  2-5 sec purani chalegi (isliye pehle se bana sakte)                -> kadam 4, 5b
@@ -202,5 +203,10 @@ Technical me: "thodi der leader se padhwa do" = naya likhne ke baad kuch der rea
 Arpan (phir): Ye to pehle kar rakha hai: do pe likho, do se padho. 3 copy hain, update kisi me bhi ja sakta hai. Maan le DB shard karke ek leader aur neeche 3 copy rakhi. Leader ne "mast DP" likha, wo copy pe jaa raha. Jab tak leader aur kisi 2 copy ne rakh nahi liya, tab tak usko pura mano hi mat. Phir Priya ki request aayi to wo kisi 2 copy se poochhegi: C aur A se poochha, C me nahi to A me hai; B aur A se poochha, B me nahi to A me hai. Aur Twitter me to humne Cassandra lagaya hai, Cassandra ye apne aap karta hai (andar consistent hashing bhi).
 Instagram pe bhi yahi hota: profile photo update ki, turant refresh kiya to purani photo dikhi, thodi der baad nayi.
 Technical me: "do pe likho, do se padho" = quorum (3 copy me W = 2, R = 2, W + R > 3, isliye padhne wali do me se ek me naya reply zaroor), "leader aur 2 copy ne rakh liya tabhi pura mano" = write tabhi OK jab 2 copy ne haan bola (ack), "Cassandra apne aap karta" = Cassandra me koi leader nahi, quorum ka level khud set hota (QUORUM read / write), URL kadam 9-10 wala hi. Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo leader me, refresh pe padhna copy se jo abhi peeche).
+
+**20. Priya ne kal hi Twitter join kiya, sirf 2 logon ko follow karti, un dono ne 2 hi tweet kiye. Priya ne dono dekh liye, ab neeche scroll kare to kya dikhe? Khaali page?**
+Arpan: Twitter engagement ke hisaab se dekhna hai. Koi banda naya-naya join kiya, kisi ko follow nahi karta, to kya khaali page dikhaunga? Nahi. Use trending dikhaunga: aaj ye hua, wo hua, Elon Musk ne SpaceX ka ye kiya, SpaceX aur Tesla ka merger hua, jisse engagement bane. Instagram bhi same karta: main kisi ko follow nahi karta, phir bhi bahut cheezein aati hain; jaise-jaise engagement hua, maine follow karna shuru kiya, ab wahi dikhata. Google pe GTA 6 baar-baar search kiya to GTA 6 ka aane laga. Twitter aur Instagram almost same algorithm pe: engagement rakhna. Ek ko follow kiya, uska ek hi tweet dikha diya to Twitter ka revenue kat jaayega; us waqt Elon Musk, Bill Gates kisi ka bhi suggest karunga, beech-beech me random tweet bhi.
+Ravi ka case alag: wo 1000 logon ko follow karta, unke tweet kabhi khatam nahi, wo apna dekhta rahega. Baat unki hai jo 1-2 logon ko follow karte aur jinhone 1-2 tweet kiye.
+Technical me: follow wale khatam / naya user = trending + suggested (cold start), engagement se dheere-dheere apni pasand (personalized); following feed ke neeche doosron ke tweet.
 
 Poora design = [03_twitter_feed.md](03_twitter_feed.md)

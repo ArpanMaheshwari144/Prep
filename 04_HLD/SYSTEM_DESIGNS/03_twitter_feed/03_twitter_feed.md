@@ -43,6 +43,7 @@ Ravi  -->  LB  -->  tweet server  -->  Kafka ("post ho gaya, nikal")  -->  worke
 17   Amit ka tweet 40 ke neeche dab gaya        ->  jisse judta wo upar (ranking)
 18   scroll pe wahi 5 dobara                    ->  cursor, offset nahi
 19   "mast DP" gaayab                           ->  do pe likho, do se padho (quorum)
+20   naya user, 2 tweet ke baad khaali          ->  trending + suggested, engagement se apni pasand (cold start)
 ```
 
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
@@ -57,10 +58,10 @@ FR      1  tweet post karo (text, photo / video)                               -
         3  infinite scroll: ek scroll ke beech wahi tweet dobara na aaye
            (refresh pe aa sakta, Twitter iska hisaab nahi rakhta)              -> kadam 18
         4  follow wale khatam to neeche doosron ke tweet (trending),
-           feed kabhi khaali nahi                                              -> (abhi kadam nahi)
+           feed kabhi khaali nahi                                              -> kadam 20
         5  video har net pe chale (tukde, kai quality, beech se dekhna)       -> kadam 11-15
         6  search: interviewer maange to Elasticsearch jaisi alag cheez (Yelp jaisa); wo apne aap me alag
-           duniya                                                              -> (abhi kadam nahi)
+           duniya                                                              -> News kadam 13 (wahi jawab)
 
 NFR     1  feed ~200 ms me (40 din baad aaya to thodi der chalegi)            -> kadam 1, 6
         2  2-5 sec purani chalegi (isliye pehle se bana sakte)                -> kadam 4, 5b
@@ -715,6 +716,38 @@ flowchart TB
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000
     classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
     classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+```
+
+## 20. Priya naya user, 2 tweet dekh liye, neeche khaali (trending + suggested)
+
+Priya ne kal hi Twitter join kiya, sirf 2 logon ko follow karti, un dono ne 2 hi tweet kiye. Dono dekh liye, ab neeche
+khaali page? Nahi. Twitter engagement pe chalta: naye user ko trending dikhao (aaj ye hua, Elon Musk ne SpaceX ka ye
+kiya), beech-beech me suggested / random tweet. Instagram bhi yahi karta: follow kisi ko nahi, phir bhi cheezein aati;
+engagement badha to wahi dikhane laga (GTA 6 search kiya to GTA 6 aane laga). Ek ka ek tweet dikha ke chhod diya to
+revenue kata. Ravi 1000 ko follow karta, uske tweet khatam hi nahi hote; baat 1-2 follow wale ki hai.
+
+**Asli naam:** naya user / follow wale khatam = trending + suggested (cold start), engagement se apni pasand
+(personalized feed); following feed ke neeche doosron ke tweet.
+
+```mermaid
+flowchart TB
+    X["Priya: 2 follow, 2 tweet dekh liye,<br/>neeche khaali page?"]:::bad
+    F[("Apna dabba (following feed)")]:::card
+    subgraph TR["KHAALI NAHI: NEECHE DOOSRON KE"]
+        T(["Trending: aaj kya hua"]):::pill
+        S(["Suggested / random<br/>(Elon Musk, Bill Gates)"]):::pill
+    end
+    E["Engagement badha: apni pasand ka<br/>(Instagram jaisa)"]:::good
+    X -.-> TR
+    F --> T
+    T --> S
+    S --> E
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style TR fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
 ```
 
 ---

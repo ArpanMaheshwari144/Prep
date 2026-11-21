@@ -510,6 +510,7 @@ Yahi dikkat yahan bhi:
   Netflix       6   "tere liye" me 6 second                        ->  parlour wala GTA pehle se (raat ka batch, cache se uthao)
   Netflix       6b  11 baje Dhurandhar dekhi                       ->  turant parchi, dikhate waqt milao (abhi ka fast store + bani list)
   Netflix       6c  Priya naya user                                ->  India ka garam maal (cold start)
+  Twitter       20  naya user, 2 tweet ke baad feed khaali         ->  trending + suggested, engagement se apni pasand (cold start)
   YouTube       7   MrBeast ki video, crore subscriber             ->  Twitter wala fan-out, sabko push (fan-out + notification, queue + workers / consumers)
   Twitter       17  Amit ka tweet 40 ke neeche dab gaya            ->  jisse judta wo pehle (ranking)
   Docs          2b  2 saal purana doc, 50 lakh op                  ->  har kuch hazaar op pe doc ki photo, photo + baad ke op (snapshot)
