@@ -49,11 +49,10 @@ FR      1  stock dekho (paas wale store ka), screen pe dikhe                -> k
          se poochho: PSP ka timeout kitna, ya PSP scope se bahar? Wo bole "30-60 sec bahut" to wahi timeout, uske baad
          FAILED aur alag column "kitni der baad kata" (BMS 6c jaisa))
 
-NFR     1  ek dabba do logon ko kabhi nahi (consistency)                    -> kadam 1, 2, 4
-        2  sale me 500 maal hai to wo 500 logon ko hi mile, baaki ko "out of stock"
-           (availability nahi, ye FR me hi cut off)                         -> Faisla FR se, kadam 4, 5, 7, 7b
-        3  sale ki bheed se normal orders na atkein                         -> kadam 3
-        4  paisa kata to maal ya refund, net / PSP chup ho to bhi order latka na rahe  -> kadam 8, 8b-8e
+NFR     1  ek dabba do logon ko kabhi nahi; sale me 500 maal to 500 ko hi, baaki "out of stock"
+           (consistency)                                                    -> kadam 1, 2, 4, 5, 7, 7b
+        2  sale ki bheed se normal orders na atkein                         -> kadam 3
+        3  paisa kata to maal ya refund, net / PSP chup ho to bhi order latka na rahe  -> kadam 8, 8b-8e
 Numbers Diwali 8 baje: 50 hazaar log, ghee sirf 500 · zyadatar log dekhne / cart me daalne aate, pay kam
 ```
 
