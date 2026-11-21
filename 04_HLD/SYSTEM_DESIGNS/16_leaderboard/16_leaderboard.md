@@ -43,7 +43,7 @@ PEHLE SAWAAL (FR se pehle interviewer se poochho, jawab se FR badle):
         a  top kitne dikhane: 10, 50 ya 100?
         b  board kis hisaab se: aaj ka, hafte ka, all-time, ya teeno?             -> kadam 5, 5b
         c  board poori duniya ka ya ek desh (India) ka?                           -> kadam 3, 4, 6b
-        d  contest hai to waqt kis time zone me (UTC)?                            -> kadam 6b
+        d  contest hai to waqt kis time zone me (UTC)?                            -> kadam 5, 6b
         e  kisi ek user ka rank / uske aage-peeche ke 5 chahiye?                  -> kadam 4, 6, 6c
 
 FR      1  score update                                                     -> kadam 3
@@ -227,8 +227,8 @@ ke register me hi nahi.
 **Maan lo Ravi ka match 11:59:58 pe khatam, score 12:00:02 pe pahuncha, server ne 9 Nov ke register me daal diya:** LeetCode jaisa: Arpan ne contest diya, main parchi pe sab likh deta hoon: contest 137, Arpan ki rank, aur kis waqt khatam hua. Request server tak late aayi to koi baat nahi, parchi me sab likha hai: ye is din ka contest tha, itne baje khatam hua, to usi din ke register me daalo. Jo register kar ke aaye nahi, unka 0. Beech me LeetCode crash bhi ho jaaye to parchi hamare paas hai, wapas aate hi mote register me daal do. Purana register phekna nahi, side me rakh do; Ravi ko 7 Nov ka dekhna hai to wahi register khol ke dikha do. Agar Ravi aaj ka (10 tarikh ka) board khol ke baitha hai, to UI pe saaf likh do "ye 10 tarikh ka contest hai, kal wale ka result is link pe".
 **Asli naam:** "parchi pe contest id + khatam hone ka waqt" = event time, "usi din ke register me" = event time se bucket (pahunchne ke waqt se nahi), "purana register side me" = har din ka board history me rakho (discard nahi). "register kar ke aaye nahi" = contest ka sign-up; "mota register" = DB (kadam 7, score pehle DB me).
 
-**Doosri kahani:** mita mat, overwrite; aaj nahi aaya to 0; ya naya register, purana discard. **Maan lo contest 11 baje shuru,
-1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh). Leaderboard duniya bhar ke
+**Doosri kahani:** mita mat, overwrite; aaj nahi aaya to 0; ya naya register, purana discard.
+**Maan lo contest 11 baje shuru, 1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh). Leaderboard duniya bhar ke
 online contest ka, to ek hi time zone UTC, IST / Europe alag-alag nahi (ek room wala elite contest alag cheez, yahan nahi).
 **Asli naam:** reset = naya key / overwrite, contest date = start date, ek time zone.
 

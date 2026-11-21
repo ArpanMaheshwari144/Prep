@@ -36,7 +36,7 @@ PEHLE SAWAAL (FR se pehle interviewer se poochho, jawab se FR badle):
         a  top kitne dikhane: 10, 50 ya 100?
         b  board kis hisaab se: aaj ka, hafte ka, all-time, ya teeno?             -> kadam 5, 5b
         c  board poori duniya ka ya ek desh (India) ka?                           -> kadam 3, 4, 6b
-        d  contest hai to waqt kis time zone me (UTC)?                            -> kadam 6b
+        d  contest hai to waqt kis time zone me (UTC)?                            -> kadam 5, 6b
         e  kisi ek user ka rank / uske aage-peeche ke 5 chahiye?                  -> kadam 4, 6, 6c
 
 FR      1  score update                                                     -> kadam 3
