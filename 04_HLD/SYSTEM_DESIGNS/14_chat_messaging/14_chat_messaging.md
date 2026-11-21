@@ -43,7 +43,7 @@ Arpan  --WebSocket-->  chat server S1  -->  DB (message store, pehle likho)  -->
 FR      1-to-1 chat + group (500 tak) · Ravi offline ho to baad me mile · tick (pahuncha / padha) + unread
         · photo / video · online / last seen (end-to-end encryption, call: scope se bahar)
         · history kab tak rakhni hai (1 saal / hamesha), pehle poochho; jawab se DB ka size aur purana maal kahan, ye tay
-                                                                             -> (abhi kadam nahi)
+                                                                             -> kadam 2
 NFR     message turant (1 sec se kam) · kabhi na khoye · ek chat me kram na bigde (server har message pe kram number lagata; ulta pahunche to phone usi number se sahi kram me laga leta) · do baar na dikhe
 Numbers 50 crore user, ek waqt ~10 crore online = 10 crore khule taar -> ~100 chat server
         roz ~400 crore message = ~46,000 likhai / sec, ek message ~300 byte -> roz ~1.2 TB
@@ -97,6 +97,9 @@ phenk thodi dunga.
 to message gaya), online hoga to bhej denge = offline delivery. DB = Cassandra, `chat_id` se baanta (andar ring = consistent hashing): likhai bahut
 (46,000 / sec, roz 1.2 TB), padhai hamesha ek chat ki ("aakhri 50 do"), join nahi chahiye (message + parchi ek saath likhne ka kaam batch se, kadam 5). Ek chat ke saare
 message ek machine pe, kram me.
+
+**Maan lo group 3 saal purana, 50 lakh message:** 2 saal purana upar scroll karke koi nahi dhoondhta. Photo kholte hi phone
+ki gallery me download, purani photo phone me hi; server pe sirf link. Baant chat id se, user id se nahi.
 
 ```mermaid
 flowchart TB

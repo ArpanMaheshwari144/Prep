@@ -37,7 +37,7 @@ Arpan  --WebSocket-->  chat server S1  -->  DB (message store, pehle likho)  -->
 FR      1-to-1 chat + group (500 tak) · Ravi offline ho to baad me mile · tick (pahuncha / padha) + unread
         · photo / video · online / last seen (end-to-end encryption, call: scope se bahar)
         · history kab tak rakhni hai (1 saal / hamesha), pehle poochho; jawab se DB ka size aur purana maal kahan, ye tay
-                                                                             -> (abhi kadam nahi)
+                                                                             -> kadam 2
 NFR     message turant (1 sec se kam) · kabhi na khoye · ek chat me kram na bigde (server har message pe kram number lagata; ulta pahunche to phone usi number se sahi kram me laga leta) · do baar na dikhe
 Numbers 50 crore user, ek waqt ~10 crore online = 10 crore khule taar -> ~100 chat server
         roz ~400 crore message = ~46,000 likhai / sec, ek message ~300 byte -> roz ~1.2 TB
@@ -56,6 +56,9 @@ Technical me: "poochne ka mauka hi na do" = polling band, "beech ka dabba jo aat
 **2. Arpan ne "kahan hai?" bheja, par Ravi ka phone band, 2 ghante baad on hoga. Taar toota pada hai. Server ke haath me message hai, bhejne ki jagah nahi.**
 Arpan: Server se bol do, ise thodi der apne paas rakh le, aisi jagah jahan baad me dekh paaye. Ek dabba bana le, usme rakh lo: "Arpan ne Ravi ko ye bheja hai." Ravi online hoga to use bhej denge, sanjo lo. Jaise papa ne mujhe paise de ke kahin bheja, aur uncle ji mile nahi, to main paise apne paas hi rakhunga, kharch ya phenk thodi dunga.
 Technical me: "ek dabbe me rakh lo" = message store (pehle DB me save), "online hoga to bhej denge" = offline delivery.
+Arpan (11-Oct, partition): Main cheez partition kis cheez pe ho raha. Chat id ke saath partition karenge, user id ke saath nahi.
+**Maan lo group 3 saal purana, 50 lakh message:** Arpan: 50 lakh message bahut ho sakte, theek. Par 2 saal purana upar scroll karke dhoondhna sense nahi banata, aisa hota bhi nahi. WhatsApp pe photo kholte hi gallery me download ho jaati hai, purani photo phone me hi hai.
+Technical me: DB = Cassandra, chat_id se baanta (ek chat ek machine pe, kram me); purani photo / video phone ki gallery me (client pe), server pe sirf link.
 
 **3. 10 crore log, ek server sabke taar nahi pakad sakta, 100 server lage. Arpan ka taar server 3 pe, Ravi ka server 71 pe. Server 3 ko pata hi nahi Ravi kis server pe.**
 Arpan: Ek map rakh le apne paas, DSA wala map: ye is server pe hai, ye us server pe. Dhoondhne ki zaroorat nahi, O(1) time me mil gaya. Key-value pe rakh lo.
