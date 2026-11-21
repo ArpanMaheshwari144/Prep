@@ -57,7 +57,7 @@ NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi
         · ride ke beech driver gaya to sambhalo
         · sawari wali ride ka poora raasta pakka rahe (SOS / shikayat), khaali driver ka zaroori nahi (kadam 2)
         · gateway chup ho to customer / driver atke nahi (30 sec, phir doosra raasta) (kadam 13)
-        · concert jaisi bheed (50-60 hazaar) me sabko turant cab ka vaada nahi, intezaar hoga (kadam 6)
+        · concert jaisi bheed ho to bhi sambhle (kadam 6)
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
         ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
