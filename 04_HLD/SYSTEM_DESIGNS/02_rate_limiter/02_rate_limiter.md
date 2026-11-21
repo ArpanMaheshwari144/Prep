@@ -134,6 +134,9 @@ user apni raftaar se aata. User der tak nahi aaya to uska dabba poora bhara
 refill rate (OTP: max 5, har 2 minute me 1, aam raftaar 10 min me 5, request aane pe hi hisaab = lazy refill), der baad aaya to bahut token =
 burst allow. Sirf 2 number rakhne padte (kitne bache, aakhri baar kab), wahi 500 MB.
 
+**Maan lo aur tareeke:** fixed window, sliding window, leaky bucket bhi hain; token bucket popular, burst allow, simple.
+**Asli naam:** fixed / sliding window, leaky bucket, token bucket.
+
 ```mermaid
 flowchart TB
     K["Khaata badla: 10:09:58 pe 5,<br/>10:10:01 pe phir 5"]:::bad
@@ -170,6 +173,10 @@ baaki 19 ko 429.
 **Maan lo counter wala tareeka:** har request pe +1, pehli pe 60 sec ki umar. Ravi ki pehli request pe +1 ho gaya aur umar lagane se pehle server
 gira. Counter bina umar ke pada rahega, Ravi hamesha ke liye atka. Isliye +1 aur umar ek hi kaam: ya dono likhe jaayein ya kuch nahi, phir dobara try.
 **Asli naam:** INCR + EXPIRE ek Lua script me (atomic); bina umar ki key kabhi expire nahi hoti (HANDS_ON 02_incr_expire_crash).
+
+**Maan lo Lua hi atki:** Lua chalte waqt poora Redis atakta, isliye script chhoti, loop nahi; ek machine lakh command /
+sec, zyada to shard.
+**Asli naam:** Lua atomic par blocking, Redis cluster.
 
 ```mermaid
 flowchart TB
@@ -273,6 +280,9 @@ ban list, permanent band = ban wala gate pe bina gine lautta.
 block, kahani khatam.
 **Asli naam:** roz ka pattern = abuse pattern, WAF me daal do = WAF block list (gateway tak bhi nahi pahunchta).
 
+**Maan lo pattern kaise pakdein:** peeche Kafka se dekho kitni baar aaya, kaunse endpoint jhaanke, us pattern se WAF me.
+**Asli naam:** request events -> Kafka -> abuse detection consumer -> WAF block list.
+
 ```mermaid
 flowchart TB
     R["Ravi: ek baar mana, do baar mana,<br/>teesri baar bhi aaya"]:::bad
@@ -305,6 +315,10 @@ koi nahi, aaj bhi Google, YouTube toot-te hain.
 
 **Asli naam:** login ke baad userId hamare paas = userId pe kadi had, login pe dheeli had = login se pehle IP pe
 dheeli had, insaan hazaar baar nahi, pattern notice = script pattern pakadna, IP ko WAF me daal do = WAF block.
+
+**Maan lo login aur baaki ki had:** login ki apni had, baaki ki alag; paar hui to 429. **Maan lo had asli user pe bhaari
+(JP Morgan me 5 galat password pe khud atka):** permanent hal nahi; sabse achha passkeys / Authenticator, bot ke paas code hi nahi.
+**Asli naam:** per-endpoint limit, false positive lockout, MFA / passkeys.
 
 ```mermaid
 flowchart TB
@@ -339,6 +353,10 @@ ek saanjhi had se (global had, Redis ka ek token bucket).
 
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar:** Line me har OTP pe uski umar likh do. Line se nikalte waqt dekho, umar khatam to phenk do, bhejo mat; bachcha naya OTP maang lega.
 **Asli naam:** umar = message TTL / expiry (line se nikalte waqt jaancho), purana OTP SMS company tak jaata hi nahi.
+
+**Doosri kahani:** sab apni had me, phir bhi server bhar gaya: apne server ki global cap, upar 503 ("thodi der baad aana"),
+kam zaroori kaam pehle hatao, login / paisa chalta rahe.
+**Asli naam:** global limit + 503, load shedding (priority).
 
 ```mermaid
 flowchart TB

@@ -66,6 +66,10 @@ aage badhao, isliye number kabhi repeat nahi hoga. Counter kar do, counter servi
 
 **Asli naam:** ek line me, aage badhao = counter (har link ko agla number), kabhi repeat nahi = takrav kabhi nahi.
 
+**Maan lo do log ek hi pal me aayein:** upar se ek pehra aur: DB me code pe unique, "insert if not exist", jo DB me
+apne aap atomic hai.
+**Asli naam:** unique index / constraint on code.
+
 ```mermaid
 flowchart TB
     L["Log: lamba pata likhi chit"]:::card
@@ -120,6 +124,10 @@ aa rahe, wo wahin se chale jaayenge.
 **Asli naam:** chhota pehla register = cache (Redis), mota register = DB (Cassandra: data bas code -> link, na join na transaction, par 90 TB kai
 machine me baantna hai, isliye NoSQL key-value), bahut baar
 poochhe jaane wale = garam / baar-baar padhe link. Pehle Redis, nahi mila to DB se laake Redis me rakho (cache-aside).
+
+**Maan lo server ki memory me hi rakh lo:** server restart hua to saare link gaayab, isliye pakki jagah DB, tez padhne
+ko alag Redis. **Maan lo Redis gira:** copy (replica); copy bhi giri to fail open, sab DB se, itne me Redis wapas khada.
+**Asli naam:** memory volatile -> durable DB; Redis replica; fail open (cache bypass).
 
 ```mermaid
 flowchart TB
@@ -235,6 +243,10 @@ aur 2 dono ne apne 10ve aadmi ko token "10" de diya. To paanchon ko range me baa
 **Asli naam:** apni-apni range = counter range (beech ka counter har app server ko number ka dabba deta, dabba khatam hone pe hi agla maangta, to us pe bojh bhi nahi), 5 counter =
 kai app server + aage load balancer.
 
+**Maan lo counter range ke beech (400 pe) crash:** us range ke baaki number bekaar, par 62^7 (~3.5 trillion) hain,
+koi farak nahi, app chalta rahega.
+**Asli naam:** range ke bache number = gap, counter wapas nahi maangta.
+
 ```mermaid
 flowchart TB
     X["5 counter, sab apni ginti 1, 2, 3:<br/>do ne token 10 diya"]:::bad
@@ -272,6 +284,10 @@ karta, nayi machine lagao to apne aap thoda data baant deta, baaki apni jagah. Y
 faisla nahi; interview me "Cassandra, partition key = token, machine jodte jao" kaafi.
 **Asli naam:** Cassandra andar token ring pe data baantta hai (official doc: "Dataset Partitioning: Consistent
 Hashing", https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html).
+
+**Maan lo 10vi almari:** mod se sab token idhar-udhar ho jaate, isliye almariyan gol chakkar me; hash jahan gire, uske
+sabse paas wali almari.
+**Asli naam:** hash % N ki dikkat -> consistent hashing (ring).
 
 ```mermaid
 flowchart TB
@@ -440,6 +456,10 @@ token de denge. Agar phone wali dikkat hai to uske phone me likhna hi mat do, sa
 cache ko TTL laga ke invalidate kar sakte, lekin hum technical nahi, aam dikkat ka solution bol rahe the.
 **Asli naam:** phone me likh le = 301 (browser cache, hamesha ke liye), phone me likhna hi mat do, har baar counter pe aaye = 302 + `Cache-Control: no-store` (save hi mat karna; 301
 nahi; har click hamare paas, control hamare paas), phone cache pe TTL = browser cache ki umar.
+
+**302 ka doosra fayda:** har click hamare paas aata hai, to link track karke dashboard bana sakte. **Maan lo har click
+ginna hai:** user ko turant link do, ginti peeche Kafka / worker se; fail ho to dead letter queue, baad me theek.
+**Asli naam:** click tracking / analytics, async click events (Kafka -> consumer), DLQ.
 
 ```mermaid
 flowchart TB

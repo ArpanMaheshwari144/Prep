@@ -57,6 +57,8 @@ Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me na
 **1. Counter wala token apne man se bana raha, kuch bhi chhota likh deta. Ek din do alag logon ko same token de diya. Chhota bhi rahe aur do logon ko kabhi same na mile, kaise?**
 Arpan: Uska token ek line wala kar do. Jaise abhi number hai 9, to agla 10. Matlab ek line me wo token banayega. Counter kar do, counter: ye ban gaya to aage badhao, phir ye ban gaya to aage badhao. Aise wo number kabhi repeat nahi hoga. Counter service.
 Technical me: "ek line me, aage badhao" = counter (har link ko agla number), "kabhi repeat nahi" = takrav nahi.
+**Maan lo do log bilkul ek hi pal me aayein:** Arpan: Ek aur pehra laga do: DB me code pe unique constraint, "insert if not exist". Ye DB me apne aap atomic kaam hai, do baar same code likha hi nahi jaayega.
+Technical me: "insert if not exist" = unique index / constraint on code (counter ke upar aakhri pehra).
 
 **2. Saal bhar me counter 10 arab pe. Token "10000000000", 11 akshar, aur lamba hota jaayega. Number wahi rakhte hue token chhota kaise? (Sawaal: gaadi ki number plate "DL 3C AB 1234" me sirf number nahi, akshar bhi.)**
 Arpan: Uske peeche kuch laga do, kuch aisi algorithm set kar do ki wo number apna bhi chhota kar de. Technical terms me kuch hota hoga. Jaise DL 3C, phir agla aa jaayega 4C, 5C, phir 5D, phir A, AB ke baad CB, ye aata rahega. 1 2 3 4 ki jagah aisa kuch, hum combination bana sakte hain. 7 character hain to kaafi combination ho sakte hain.
@@ -65,6 +67,11 @@ Technical me: "number plate jaise akshar bhi, combination" = base62 (0-9, a-z, A
 **3. Token lene kam aate, token dikha ke pata lene wale bahut: har second 1 lakh. Counter wala har baar mota register palat ke dhoondhta, line ruk jaati. Kuch token din me hazaar baar aate.**
 Arpan: Unhe chhote register me rakh lo. Jo bhi log dekhne aa rahe, bas usi register se wapas kar do. Mota register to rakh lo, koi dikkat nahi, ek chhota pehla register rakh lo, usme wahi wale token rakh lo. Jo log bahut baar poochhne aa rahe, wo wahin se chale jaayenge.
 Technical me: "chhota pehla register" = cache (Redis), "mota register" = DB, "bahut baar poochhe jaane wale" = garam / baar-baar padhe link.
+**Maan lo pooche server ki memory me hi kyun nahi rakh lete, baar-baar DB kyun:** Arpan: Sabse seedha design ek server aur ek DB: link aaya to code banao, DB me likh do; kisi ne khola to DB se bada link de do, 302 redirect. Memory me rakhne ka sawaal aa sakta hai, par server restart ho gaya to link saare gaayab ho jaayenge, isliye memory me nahi rakh sakte.
+Technical me: "restart pe gaayab" = server ki memory volatile, link ko pakki jagah (DB) chahiye; tez padhne ke liye alag chhota register (Redis).
+
+**Maan lo chhota register (Redis) gir gaya:** Arpan: Redis gira to copy (replica) rakh lo. Copy bhi giri to aakhri kaam fail open kar do: sab dobara DB se aa jaayega. DB to zinda hai, wahan se aa jaayega, itne me Redis dobara khada ho jaayega aur waise hi chal padega.
+Technical me: Redis replica; dono gire to fail open (cache chhod ke seedha DB se), Redis wapas aate hi phir cache se.
 
 **4. Chhota register bhar gaya. Naya token likhna hai, kisi purane ko hatana padega. Kise?**
 Arpan: Purana hata denge, hamare paas kuch tareeke hain. Time laga lo na, ki ye token itni der tak rahega register me, uske baad hata do. Ya jo sabse kam use hua, jo ab poochha hi nahi ja raha, wo token hata do. Wo likha hi kyun ja raha hai, hatao use.
@@ -81,6 +88,8 @@ Technical me: "ladke ki timeline, nahi aaya to agla" = lock TTL (umar khatam to 
 **7. Ek counter se bheed nahi sambhli, 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha. Counter 1 aur 2 dono ne apne 10ve aadmi ko token "10" de diya.**
 Arpan: Counter ko kahunga ki tum apni-apni range le lo. Un paanch counter ko tod dunga: tu 1 se 100 karega, tu 101 se 200, tu 201 se 300, tu 301 se 400. Aise sabko range me baant dunga.
 Technical me: "apni-apni range" = counter range (beech ka counter har app server ko number ka dabba deta).
+**Maan lo ek counter apni range ke beech, 400 pe, crash ho gaya:** Arpan: Dikkat ho sakti hai, us range ke baaki number bekaar gaye. Lekin hamare paas 62^7, 3.5 trillion aur bhi hain; kuch bekaar ho jaayenge, koi farak nahi padta, app chalta hi rahega.
+Technical me: range ke bache number kho jaate (gap), koi dikkat nahi; counter number wapas nahi maangta.
 
 **8. 5 saal me mote register me itne token (90 TB) ki wo ek almari me aata hi nahi.**
 Arpan: Shard kar do, chhote-chhote tukde bana do. 90 TB kab tak sambhaal loge, wo bharta jaayega. 10 TB ke 9 tukde kar do, aur sab tukde alag-alag rakh do: ye yahan, ye yahan. Aur use hash se baant do, ki ab kabhi aayega to wo is tukde pe chala jaayega, phir same aayega to phir usi tukde pe.
@@ -88,6 +97,8 @@ Technical me: "chhote tukde, alag almari" = shard, "hash se baant do, same aaye 
 
 **Maan lo almari phir kam padi, 10vi lagani hai:** Cassandra khud sambhalta: token ke hash se tukda wahi tay karta, nayi machine lagao to apne aap thoda data baant deta. Uska andar ka kaam, hamara faisla nahi.
 Technical me: Cassandra andar token ring (consistent hashing) se baantta, official doc: https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
+Arpan (jab 9 almari bhar gayi, 10vi aayi): Hum mod karte the na, to mod se ab har cheez badal jaayegi. To aisa karo ki in sabko gol chakkar me bitha do. Token ka hash aaya, maan lo 5vi aur 6vi ke beech gira, to jo sabse paas wali almari hai wahan chala jaayega.
+Technical me: "mod se har cheez badal jaayegi" = hash % N me N badla to lagbhag saare token nayi almari pe, "gol chakkar, sabse paas wali" = consistent hashing (ring pe agli machine).
 
 **Isi dikkat ki doosri kahani: mota register state ke hisaab se kaato.**
 Arpan: Register 100 page, phir 200, phir 10,000, phir 20,000; kitna mota karenge, ek limit to hogi. To mote register ko tod do: 50,000 page ka hai to 15,000 alag, 15,000 alag, 20,000 alag. Par ab 3 register hain, kisi ko data kahan milega, teeno me dhoondhne me pagal ho jaayenge. To baantte waqt har register ke upar thappa laga do ki isme ye pattern hai. Register baantna achhi baat, par trade-off: dhoondhne me samay lagega, isliye tabhi jab sach me bahut zaroorat ho; aur shard karna AWS ka kaam, hum utna gehra nahi padhte. Scene: mote register pe Delhi, Ambala, Chandigarh, Punjab sab ke log aa rahe. To Delhi wali information kaat ke Delhi ke office me rakh do, Punjab wali Punjab me, UP ki East UP aur West UP me. Ab Punjab ke log Punjab ke register pe, Delhi ke Delhi me, UP ke UP me; dhoondhne ki zaroorat nahi kyunki pata hai kaunsa kis ka.
@@ -140,6 +151,10 @@ Technical me: "token radd" = code band, "dene se pehle khud check" = kaali list 
 Arpan: Unke phone me wo cheez update kar do na. Wo cookies aur cache se aa rahe honge, to unka cache radd kar do, hata do, to agli request seedha yahan aayegi. Phir (jab poocha ki phone uske haath me hai, tu kaise mitayega): To phir phone pe likho mat na bhai. Phone pe likhega nahi to wo hamare counter pe dobara aayega, dobara hum use theek token de denge. Agar aisi phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai.
 Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte hain, lekin hum technical nahi, aam dikkat ka solution bol rahe the, isliye thodi der me samjha.
 Technical me: "phone me likhna hi mat do, har baar counter pe aaye" = 302 + `Cache-Control: no-store` (save hi mat karna; 301 nahi), "phone me likh le" = 301 (browser cache), "phone cache pe TTL" = browser cache ki umar.
+**302 ka doosra fayda:** Arpan: Link ko track bhi karna ho to main 302 redirect kar sakta hoon, aur peeche apna dashboard bhi bana sakta hoon, koi dikkat wali baat nahi.
+
+**Maan lo dashboard banana hai, har click ginna hai, par user click karke khada na rahe:** Arpan: User ko link do, use free karo, wo chala jaayega. Peeche Kafka, worker, queue rakh do, ye sab peeche apna dashboard banate rahenge. Kuch fail ho jaaye to dead letter queue hai hi, wahan daal do, baad me investigate karke theek kar sakte hain.
+Technical me: "302 se har click hamare paas" = click tracking / analytics, "peeche queue, worker" = async click events (Kafka -> consumer -> dashboard), redirect dheema nahi hota, "fail to alag dabba" = DLQ.
 
 **Isi dikkat ki doosri kahani:** Arpan: Link banate hue chupke se khol ke dekh lo ki theek hai ya nahi. Koi mere paas kitaab rakhne aaya, cover chadha rakha; main chupke se dekh lunga kitaab sach me theek hai ya nahi, tab library me rakhunga, warna kal log aake kahenge "kaisi kitaab rakh rakhi, police case kar raha". Kitaab gandi nikli to "nikal beta, chal nikal". Site ka koi score-vagairah peeche hota hoga, wo check kar sakte. Theek hai to user ko do, nahi to mat do.
 Technical me: "banate waqt chupke se dekho" = create time pe URL safety check (reputation / kaali list), "gandi to mat do" = reject.
