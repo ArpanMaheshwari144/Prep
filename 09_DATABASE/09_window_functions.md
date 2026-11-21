@@ -1,5 +1,12 @@
 # SQL Window Functions
 
+## Koi poochhe to aise bolo
+
+Window function wahi hisaab karta jo GROUP BY (jod, average, rank), par rows ko dabata nahi: har row apni jagah rehti aur
+saath me hisaab ka ek naya khaana jud jaata. PARTITION BY = kis hisaab se baanto (customer-wise), ORDER BY = kis kram me
+chalo. Isi se running total, pichhle 2 din ka average, rank, aur "kal se kitna badha" (LAG) bina alag query ke nikal aate.
+MySQL 8 se milta hai, 5.7 me nahi. DSA se jod: running total = prefix sum, pichhli N row ka average = sliding window.
+
 MySQL 5.7 pe ye chalta hi nahi: `ROW_NUMBER() OVER (...)` pe `ERROR 1064 syntax error`, kyunki window function MySQL 8 se aaye. Neeche ke
 saare output SQLite pe chala ke nikaale hain (9-Nov).
 
