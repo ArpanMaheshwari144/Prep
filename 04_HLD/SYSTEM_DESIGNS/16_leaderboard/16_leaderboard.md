@@ -110,6 +110,28 @@ Priya  9800, 10:05 pe  ->  9800.90      line: Ravi -> Priya
 **Asli naam:** composite score (score + earlier-time fraction). Score pehle tolta, fraction sirf barabari pe.
 Time na jodo to barabar score pe Redis khud member naam ke alphabet (lexicographic) se kram lagata, pehle pahuncha wala nahi; isliye time jodte hain.
 
+```mermaid
+flowchart TB
+    X["Ravi 9800, Priya 9800:<br/>dabba ek hi number rakhta, kaun upar?"]:::bad
+    subgraph EK["DONO CHEEZ EK NUMBER ME"]
+        F(["Aage score, point ke baad time<br/>(jo pehle aaya uska bada)"]):::pill
+    end
+    R["Ravi 10:00 -> 9800.95"]:::card
+    P["Priya 10:05 -> 9800.90"]:::card
+    L["Line: Ravi upar, phir Priya"]:::good
+    X -.-> F
+    F --> R
+    F --> P
+    R --> L
+    P --> L
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style EK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 3. Har second lakhon update ek Redis pe (baant do, phir milao)
 
 Saare score ek hi Redis pe ja rahe, wo dab gaya. Ek Redis kyun? Baant do, jaise region ke hisaab se: India ke, Europe
@@ -209,6 +231,31 @@ ke register me hi nahi.
 1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh). Ek jagah ka contest (LeetCode ne sabko USA bulaya) = wahan
 ka time zone; duniya bhar ka online = UTC, IST / Europe alag-alag nahi.
 **Asli naam:** reset = naya key / overwrite, contest date = start date, ek time zone.
+
+```mermaid
+flowchart TB
+    X["Raat 12 baje 1 crore score<br/>ek-ek zero karna"]:::bad
+    M["Arpan ka match: +50"]:::card
+    subgraph AL["HAR BOARD KA ALAG REGISTER"]
+        A[("board:5-Nov")]:::pill
+        W[("board:week-45")]:::pill
+        T[("board:all-time")]:::pill
+    end
+    H[("Kal ka register: history me,<br/>phenko nahi")]:::card
+    G["Naya din = naya register,<br/>zero karne ki zaroorat nahi"]:::good
+    X -.-> AL
+    M --> A
+    M --> W
+    M --> T
+    A -. "din khatam" .-> H
+    AL --> G
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style AL fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
 
 ## 6. Mere aage ke 5, peeche ke 5 (bheed me aas-paas scan, paas ka petrol pump)
 

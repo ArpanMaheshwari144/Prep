@@ -408,6 +408,31 @@ to file rahe. Aakhri wala (Priya) bhi delete kare tab S3 se.
 **Maan lo S3 khud dedup kyun nahi karta:** S3 ka paisa GB pe, double rakhe to double bill, business model wahi.
 **Asli naam:** S3 billing = GB-month.
 
+```mermaid
+flowchart TB
+    X["Ek hi meme lakhon baar S3 me:<br/>bill double"]:::bad
+    U["File aayi (Ravi / Priya)"]:::card
+    subgraph NB["FILE KA NUMBER (maal se)"]
+        H(["Number nikalo: ABC123<br/>(content hash)"]):::pill
+        R[("Register: number + kiske naam<br/>(ginti kitne pakde)")]:::pill
+    end
+    N["Naya number: S3 me daalo"]:::good
+    P["Pehle se hai: sirf uske naam nayi row,<br/>S3 me dobara nahi"]:::good
+    D["Delete: sirf apni row; ginti 0 tabhi S3 se"]:::good
+    X -.-> H
+    U --> H
+    H --> R
+    R -- "nahi mila" --> N
+    R -- "mila" --> P
+    R --> D
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style NB fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## Wrap (30 second me poora design)
 
 User ko server se token milta hai aur file seedha S3 me jaati hai, badi ho to tukdon me; adhoore tukde S3 ki safai

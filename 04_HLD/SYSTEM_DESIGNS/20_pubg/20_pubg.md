@@ -144,6 +144,27 @@ idhar-udhar, exact nahi par andaza aaram se. Player ka button smooth, server ka 
 **Asli naam:** player turant apni screen pe chale, server ka intezaar nahi = client-side prediction, phone apni chaal
 (input) bhejta aur faisla server ka = server authoritative.
 
+```mermaid
+flowchart TB
+    X["Har kadam pe 120 ms:<br/>server ki haan ka intezaar, kichad"]:::bad
+    B["Arpan ne 'aage chal' dabaya"]:::card
+    subgraph CP["PHONE TURANT CHALAYE"]
+        P(["Apni screen pe turant chalo<br/>(client-side prediction)"]):::pill
+    end
+    S[("Server: chaal peeche-peeche,<br/>faisla server ka")]:::card
+    G["Button smooth, hisaab bhi server pe"]:::good
+    X -.-> P
+    B --> P
+    P -- "chaal (input) bhejta" --> S
+    P --> G
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style CP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 3. Hacker ka phone bole "meri goli lagi" (faisla server ka)
 
 Hacker ka phone server ko bolta "meri goli Arpan ko lagi", jabki goli deewar pe lagi ya Arpan se 5-6 meter door.
@@ -169,6 +190,27 @@ bahut game me). Server ki aankhen nahi, wo ping se baat karta. Goli deewar pe la
 scene peeche ghuma ke dekhe = lag compensation (server rewind, goli wale ke ping jitna; Valve ne apne games me likha),
 deewar ke peeche marna iska asar, corner se nikal ke maarne wale ko fayda = peeker's advantage (Riot ne kam karne ko
 Valorant me 128 tick server, second me 128 baar duniya update).
+
+```mermaid
+flowchart TB
+    X["Phone pe Arpan 3 kadam aage,<br/>server bole goli pehle lag chuki"]:::bad
+    subgraph SK["SERVER KI MAANO"]
+        R(["Scene peeche ghumao: goli ke pal<br/>Arpan kahan tha (rewind)"]):::pill
+        C(["Phone 3 kadam peeche<br/>(reconciliation)"]):::pill
+    end
+    L["Us pal saamne tha: goli lagi"]:::good
+    D["Deewar beech me: mana (kadam 3)"]:::good
+    X -.-> R
+    R --> L
+    R --> D
+    L --> C
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style SK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
 
 ## 4. Hacker 1 second me 500 meter (chaal bhi server jaanche)
 

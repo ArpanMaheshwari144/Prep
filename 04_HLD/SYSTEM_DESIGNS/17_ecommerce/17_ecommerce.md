@@ -115,6 +115,25 @@ likho, aur ye ek hi kaam bana do: uthana aur parchi update karna alag kaam nahi.
 **Asli naam:** parchi = Inventory DB. Maal hilaana (godown -> shelf) aur ginti badalna ek hi transaction me (atomic):
 `godown - 10` aur `shelf + 10` dono ya koi nahi.
 
+```mermaid
+flowchart TB
+    X["Ladka 10 dabbe shelf pe le gaya,<br/>likha nahi: app pe 40, sach me 30"]:::bad
+    subgraph EK["UTHANA + LIKHNA EK HI KAAM"]
+        T(["Ek transaction:<br/>godown - 10 aur shelf + 10,<br/>dono ya koi nahi"]):::pill
+    end
+    I[("Parchi (Inventory DB)")]:::card
+    G["Ginti hamesha sach: bhoolne ka mauka nahi"]:::good
+    X -.-> T
+    T --> I
+    I --> G
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style EK fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
+
 ## 3. Diwali sale, aata-daal bhi atka (sale ki alag dukaan)
 
 8 baje "ghee aadhe daam, sirf 500" ka message, 50 hazaar log ek saath app pe. App atak gaya, aur jo aata-daal lene
@@ -217,6 +236,27 @@ query). Cart purana ho to checkout pe abhi ka daam + abhi ka stock dobara check 
 **Maan lo ek order me ghee, aata, daal, aur aata khatam:** poora order mat roko. Jo hai wo bhejo, aate pe out of
 stock dikha do. Wo chahe to baaki do le le.
 **Asli naam:** har cheez alag check, adhoora (partial) order chalta.
+
+```mermaid
+flowchart TB
+    X["500 cart me, ginti kat gayi,<br/>60 ne pay hi nahi kiya"]:::bad
+    C["Cart = sirf list<br/>(kabhi khaali nahi, ginti nahi katti)"]:::card
+    subgraph PP["GINTI PAY PE KATE"]
+        K(["Checkout: abhi ka daam + stock<br/>dobara dekho"]):::pill
+        S[("Pay hua: ginti ghatao<br/>(fail to wapas)")]:::pill
+    end
+    O["Jo hai wo bhejo, khatam wale pe<br/>out of stock (adhoora order)"]:::good
+    X -.-> C
+    C --> K
+    K --> S
+    S --> O
+    linkStyle default stroke:#8fa3c7,stroke-width:2px
+    classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
+    classDef pill fill:#f5c542,stroke:#f5c542,color:#000
+    classDef good fill:#2e7d4f,stroke:#3fbf6f,color:#fff
+    classDef bad fill:#5c1f24,stroke:#e05561,color:#fff
+    style PP fill:#141a29,stroke:#3a4a6b,color:#9fb3d9
+```
 
 ## 7. 3000 ek second me Pay (server pe line, 500 ke baad rollback)
 
