@@ -1,5 +1,12 @@
 # Transaction Internals (MySQL InnoDB)
 
+## Koi poochhe to aise bolo
+
+Transaction ke andar kiya badlaav COMMIT tak sirf mujhe dikhta; doosron ko purani value, kyunki MySQL badalne se pehle
+purani value alag rakh leta (**undo log**). Usi waqt us row pe taala (row lock), doosra badal nahi sakta, intezaar karta.
+ROLLBACK = undo se purani value wapas. COMMIT = nayi value pehle log file me disk pe (**redo log / WAL**), taaki usi second
+server gire tab bhi wapas aate hi badlaav mil jaaye.
+
 ## Scene: prod ticket, "order 101 cancel karna hai"
 
 Workbench me:
