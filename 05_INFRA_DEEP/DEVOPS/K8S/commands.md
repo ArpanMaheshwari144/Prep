@@ -379,7 +379,6 @@ Within cluster, services resolvable by name:
 - Job / CronJob (batch + scheduled tasks)
 - ConfigMap / Secret (config externalization)
 - Ingress controller (domain-based routing)
-- HPA (horizontal pod autoscaler)
 - RBAC (access control)
 - Helm (package manager — npm of K8s)
 - Operators (custom controllers)

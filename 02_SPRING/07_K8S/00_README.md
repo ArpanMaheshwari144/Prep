@@ -37,10 +37,6 @@
                                         ConfigMap (non-sensitive) + Secret (sensitive)
                                         [Day 2 morning — done]
 
-8. (lower priority — optional):
-      07_namespaces.md                 ← Multi-tenancy
-      08_hpa.md                        ← Auto-scaling
-      09_pv_pvc.md                     ← Persistent volumes
 
 ---
 
