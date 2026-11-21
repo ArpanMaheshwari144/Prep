@@ -326,7 +326,7 @@ delivery. Ek hi raasta nahi.
 **Maan lo Ravi ka paisa kat gaya, par Myntra ko ye khabar der se mile ya mile hi na. Har baar Razorpay se poochhte rahoge?
 (BookMyShow 6c wala hi jawab):** Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe
 event bhejta. Event aaya = kata, hum "mil gaya" bol dete. Event raste me kho gaya to wo Razorpay ka HLD hai, wo dobara
-bhejega. Badi sale (Big Billion Day) pe 3-4 company (Stripe, Amazon Pay) line me.
+bhejega. Badi sale (Big Billion Day) pe 3-4 company (Razorpay jaisi doosri service) line me.
 
 **Asli naam:** event = webhook (PSP callback), "mil gaya" = ack (2xx), dobara bhejega = webhook redelivery, 3-4 company =
 backup PSP (failover).

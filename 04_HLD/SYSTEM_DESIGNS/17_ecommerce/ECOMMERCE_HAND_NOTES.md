@@ -137,7 +137,7 @@ Arpan: Payment fail hua to cart khaali mat karo. Amazon cart tabhi khaali karta 
 Technical me: cart sirf payment SUCCESS pe khaali, fail pe cart + order wahin, retry options = doosra PSP (failover) / net banking / COD (payment method fallback).
 
 **Maan lo Ravi ka paisa kat gaya, par Myntra ko ye khabar der se mile ya mile hi na. Har baar Razorpay se poochhte rahoge?** (BookMyShow 6c wala hi jawab)
-Arpan: Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe event bhejta. Event aaya = kata, hum "mil gaya" bol dete. Event raste me kho gaya to wo Razorpay ka HLD hai, wo dobara bhejega. Aur Big Billion Day jaisi sale pe 3-4 company (Stripe, Amazon Pay) line me rakho, ek dheemi hui to doosri khadi.
+Arpan: Razorpay ko bolo "paisa katte hi mujhe chhota sa event bhej do", jaise S3 file aane pe event bhejta. Event aaya = kata, hum "mil gaya" bol dete. Event raste me kho gaya to wo Razorpay ka HLD hai, wo dobara bhejega. Aur Big Billion Day jaisi sale pe 3-4 company (Razorpay jaisi doosri service) line me rakho, ek dheemi hui to doosri khadi.
 Technical me: "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack (2xx), "dobara bhejega" = webhook redelivery, "3-4 company line me" = backup PSP (failover).
 
 **Maan lo PSP ka "success" do baar aaya (ek retry se, ek status job se).**

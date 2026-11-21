@@ -291,7 +291,7 @@ reh sakte, peeche aur log hain, aur user khud pareshan hota "seat hui ya nahi, p
 andar paisa kata to seat BOOKED, refund nahi. 1 minute ho gaya aur jawab nahi, to "booking fail hui, paisa kata hoga to wapas
 aa jaayega, seat abhi bhi tumhari hai". Saath me UI pe popup:
 "pehla payment fail hua, dikkat ho to refund kar denge ya reach out karo; isi seat ko book karna hai to dobara pay karo,
-Haan / Naa". Haan = QR dobara khule, is baar doosre PSP ka (Amazon Pay), pay hua to BOOKED. Naa = seat turant khali,
+Haan / Naa". Haan = QR dobara khule, is baar doosre PSP ka (Razorpay jaisi doosri service), pay hua to BOOKED. Naa = seat turant khali,
 apni jagah wapas. Seat ki umar (TTL) ab nahi badhate, seedha user se poochh lo; 99% Haan dabayega kyunki galti hamari taraf
 ki. Har cheez backend se nahi, UI bhi kaam karta. (Bank ka server hi down ho to wo HLD ke bahar.) DB me likho: booking fail, paisa kata ho to refund; Razorpay ko bolo "kata ho to
 lautao", wo bank se poochh ke lautata aur hume batata. 1 minute ke baad aaya "paisa kat gaya" = refund.
@@ -338,7 +338,7 @@ paisa kaat liya. Mujhe lag raha: paisa gaya, seat bhi gayi.
 Razorpay kitni der lega, wo hamare haath me nahi, uska design hai. User ko zyada der nahi rok
 sakte, itne me to Doomsday ka poora hall book ho jaayega. To 30 se 55 second gola ghumao, uske
 baad saaf bol do: "payment abhi ho nahi pa raha, paisa kata hoga to apne aap wapas aa jaayega, doosre tareeke se pay kar
-lo". Doosra pay doosre PSP pe (Amazon Pay), Razorpay pe nahi. Seat mat chhodo, parchi ki bachi umar tak Arpan ki HELD (6b):
+lo". Doosra pay doosre PSP pe (Razorpay jaisi doosri service), Razorpay pe nahi. Seat mat chhodo, parchi ki bachi umar tak Arpan ki HELD (6b):
 peeche picture ki line lagi hai aur log 1 minute bhi nahi rukte, par dikkat hamari taraf ki hai, user ki nahi.
 
 Haan, onboard karte waqt Razorpay se SLA zaroor lo: unka system kitna chalega (uptime, jaise 99.9%) aur down hua to
@@ -347,7 +347,7 @@ kitni der me khabar + theek karenge. Ye unke haath me hai, isliye likh ke dete h
 Pehla payment DB me FAILED likh do (booking nahi, wo HELD rehti). Peeche hum khud Razorpay se poochte rahenge, aur uska event bhi aayega (paisa katte hi,
 jaise S3 bhejta), hum "mil gaya" bol dete. Baad me pata chala paisa kata tha, to Razorpay ko bolo "is user ka paisa
 lautao"; wo bank se poochh ke kata tha to wapas karega. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi;
-paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Stripe, Amazon Pay) line me.
+paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Razorpay jaisi doosri service) line me.
 
 Doosri kahani (18-Nov raat): GPay se pay kar raha hoon. GPay ka gola hamare server pe nahi, to 1 minute ho ya 10
 minute, wo sawaal hi nahi. Back dabaya aur paise kate hi nahi = user khush. Do haal: (1) user app me ruka, 10 second me
@@ -368,7 +368,7 @@ REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo laut
 flowchart LR
     G["30-55 sec gola<br/>(hamari ghadi)"]:::card --> P{"Paisa kata?"}:::card
     P -- "haan: event (webhook)" --> S["Seat BOOKED,<br/>'mil gaya' (ack)"]:::good
-    P -. "chup" .-> F["Payment FAILED dikhao, seat HELD:<br/>kata to wapas, doosra pay Amazon Pay pe"]:::bad
+    P -. "chup" .-> F["Payment FAILED dikhao, seat HELD:<br/>kata to wapas, doosra pay doosri service pe"]:::bad
     F -.-> R["Baad me kata nikla:<br/>Razorpay lautaye (refund)"]:::pill
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
