@@ -228,8 +228,8 @@ ke register me hi nahi.
 **Asli naam:** "parchi pe contest id + khatam hone ka waqt" = event time, "usi din ke register me" = event time se bucket (pahunchne ke waqt se nahi), "purana register side me" = har din ka board history me rakho (discard nahi). "register kar ke aaye nahi" = contest ka sign-up; "mota register" = DB (kadam 7, score pehle DB me).
 
 **Doosri kahani:** mita mat, overwrite; aaj nahi aaya to 0; ya naya register, purana discard. **Maan lo contest 11 baje shuru,
-1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh). Ek jagah ka contest (LeetCode ne sabko USA bulaya) = wahan
-ka time zone; duniya bhar ka online = UTC, IST / Europe alag-alag nahi.
+1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh). Leaderboard duniya bhar ke
+online contest ka, to ek hi time zone UTC, IST / Europe alag-alag nahi (ek room wala elite contest alag cheez, yahan nahi).
 **Asli naam:** reset = naya key / overwrite, contest date = start date, ek time zone.
 
 ```mermaid
@@ -296,8 +296,8 @@ flowchart TB
 ```
 
 **Maan lo (12-Nov grill) dabbe region ke hisaab se (India, US, Europe), is Sunday ke world contest me Arpan ki rank 50,000 (game wali 4,52,318 alag), world me upar ke 5 aur neeche ke 5:**
-Jaisa FR me tay kiya, kaam **poora world leaderboard** banana hai; Arpan ke aas-paas wale isi board ka hissa. Contest ek jagah
-(ICPC jaisa), sabka waqt ek time zone, UTC. Bada bhai sab region ka result likhe. Pehle gino kisne kitne sawaal kiye: 5 me se
+Jaisa FR me tay kiya, kaam **poora world leaderboard** banana hai; Arpan ke aas-paas wale isi board ka hissa. Contest duniya bhar
+me online (India, US, Europe), sabka waqt ek time zone, UTC. Bada bhai sab region ka result likhe. Pehle gino kisne kitne sawaal kiye: 5 me se
 paanchon wale (50,000 me 20,000) pehle, unki rank pehle; baaki 30,000 baad me alag. Ek jitne sawaal walon me UTC me pehle khatam
 wala upar, barabar to milli second, wo bhi barabar to naam. Result aate jaayein, line me judte jaayein; rank dheere-dheere theek
 (Arpan ko thodi der 5,000, phir 50,000). Har baar region se "aas-paas" maangna bhaari, isliye ek board.
