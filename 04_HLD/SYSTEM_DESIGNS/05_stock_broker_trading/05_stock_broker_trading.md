@@ -73,6 +73,9 @@ dono ka bhaav theek = match (ek bhaav pe do log to jo pehle aaya wo pehle: price
 DB (Postgres; ek user ka paisa kaatna / hold ek transaction me = ACID). Portfolio (share dikhana) alag service ka DB,
 sauda wahan Kafka se pahunchta (kadam 6-7).
 
+**Book dikhti kaisi:** bechne wale me sabse sasta upar, kharidne wale me sabse mehenga upar; 3000 me liya to 3000 ya
+upar hi bechega. **Asli naam:** best ask / best bid.
+
 ```mermaid
 flowchart TB
     A["Arpan: 3500 pe kharidna"]:::card
@@ -176,6 +179,9 @@ Matlab sabko ek line me, ek hi jagah rakho, alag-alag mat baanto.
 ki book ek hi thread (single-threaded per symbol). Lock nahi chahiye, aur line ka kram hi "pehle aaya pehle mila".
 Cancel bhi isi line me: sauda pehle aaya to "bik chuka", cancel pehle to hold wapas.
 
+**Doosri kahani (hot IPO burst):** baanto mat, warna race; ek line, counter jaisa "10 share lo, niklo", ek thread,
+engine lakhon / sec kar leta. **Asli naam:** per-symbol queue + single thread.
+
 ```mermaid
 flowchart TB
     X["Copy door khadi: do thread,<br/>10 share 20 me bik gaye"]:::bad
@@ -218,6 +224,10 @@ saath me mota register ho, aakhri sach wahi.
 numbers se RAM ya DB ka faisla (bahut kam traffic pe DB pe hi chal jaata; RAM + micro-second wala jhanjhat tab jab NSE
 jaisi bheed ho), subah se parchi = order log (append-only, sirf jodna), parchi dekh ke bag dobara = log replay
 se book wapas, replay pe mota register = trade DB (source of truth), ho chuke trade book me wapas nahi.
+
+**Teesri kahani:** match me ek banda har ball book me likh raha, light gayi to book se wapas kaunsi ball, kitne run
+(audit trail bhi). **Maan lo engine hi mara:** engine ki replica, barabar wali promote, gap log se replay.
+**Asli naam:** event log / WAL + replay, hot standby promote.
 
 ```mermaid
 flowchart TB
@@ -286,6 +296,9 @@ intezaar kar rahe.
 = message Kafka me pada, DB aate hi retry. Sauda id (trade_id) se pehchana, to dobara chale tab bhi paisa do baar nahi
 katta.
 
+**Maan lo portfolio DB 2 ghante band:** read replica zinda to padhna wahan, data dikhta rahe; poora band to retry +
+"thodi der baad". **Asli naam:** read replica fallback, retry + PENDING.
+
 ```mermaid
 flowchart TB
     X["Paisa kata, portfolio DB band"]:::bad
@@ -315,6 +328,9 @@ rakho aur bhaav khud bhejo.
 
 **Asli naam:** chat wala hi: khula taar = WebSocket (push), bhaav sab machine tak = Redis pub/sub (channel "TCS"), Price Service = trades
 se har share ka ek bhaav / sec. Bhaav kho bhi jaaye to agle second naya, isliye yahan Kafka nahi.
+
+**Kahani:** Salman ka tweet dekhne nahi jaate, follow kiya to khud aata; bhaav bhi WebSocket se khud push.
+**Asli naam:** push / pub-sub.
 
 ```mermaid
 flowchart TB
@@ -351,6 +367,9 @@ ho gaya".
 **Asli naam:** chhoti parchi = order book RAM me (in-memory, micro-second), baad me ek saath = DB me batch write, 3-4-5
 copy = standby / replica + order log (append-only, gire to replay). Kam bheed ho to section 5 jaisa DB pe chal jaata;
 NSE jaisi bheed pe RAM. Sach = DB (source of truth), "processing" = ACCEPTED / PENDING turant, DB commit ke baad FILLED.
+
+**Maan lo bheed 10x:** LB + zyada server, Kafka scale; engine ko bada karo (vertical), ek share ki line baant nahi sakte.
+**Asli naam:** horizontal app, vertical engine.
 
 ```mermaid
 flowchart TB
