@@ -57,6 +57,8 @@ Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me na
 **1. Counter wala token apne man se bana raha, kuch bhi chhota likh deta. Ek din do alag logon ko same token de diya. Chhota bhi rahe aur do logon ko kabhi same na mile, kaise?**
 Arpan: Uska token ek line wala kar do. Jaise abhi number hai 9, to agla 10. Matlab ek line me wo token banayega. Counter kar do, counter: ye ban gaya to aage badhao, phir ye ban gaya to aage badhao. Aise wo number kabhi repeat nahi hoga. Counter service. Random ya hash me dono logon ko same code mil sakta hai aur har baar DB me jaanchna padta hai; counter me number kabhi same hoga nahi, to ye dikkat khatam.
 Technical me: "ek line me, aage badhao" = counter (har link ko agla number), "kabhi repeat nahi" = takrav nahi, "random / hash me same code" = collision, har baar DB check; counter me check ki zaroorat nahi.
+**Maan lo Arpan ne Delhi me YouTube ka ek gaana chhota kiya, Mumbai me kisi aur ne wahi link chhota kiya:** Arpan: URL shortener banane dega, uska link alag hoga. Duplicate link nahi banenge, par ek ke do link ho sakte hain, dikkat nahi, ye to design ka hissa hai; counter aage chalega hi chalega. (21-Nov Arpan ne bit.ly pe khud jaancha: ek hi YouTube link do baar chhota kiya, dono baar alag link mila, bit.ly/4AGUMOh aur bit.ly/4AKx7N1.)
+Technical me: same lamba link = har baar naya code (lambe link pe "pehle se hai?" ki jaanch nahi), ek lambe ke kai chhote chalte hain.
 **Maan lo do log bilkul ek hi pal me aayein:** Arpan: Ek aur pehra laga do: DB me code pe unique constraint, "insert if not exist". Ye DB me apne aap atomic kaam hai, do baar same code likha hi nahi jaayega.
 Technical me: "insert if not exist" = unique index / constraint on code (counter ke upar aakhri pehra).
 

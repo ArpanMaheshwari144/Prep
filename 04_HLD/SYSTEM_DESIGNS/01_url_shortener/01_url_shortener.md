@@ -71,6 +71,10 @@ code mil sakta, har baar DB me jaanchna padta; counter me ye dikkat hi nahi.
 apne aap atomic hai.
 **Asli naam:** unique index / constraint on code.
 
+**Maan lo do log same lamba link chhota karein (Delhi, Mumbai):** dono ko alag code, ek ke do link chalte, dikkat nahi;
+counter aage hi chalega. bit.ly pe jaancha (21-Nov): ek hi YouTube link do baar, dono baar alag link.
+**Asli naam:** same long URL = naya code, lambe link pe dedup nahi.
+
 ```mermaid
 flowchart TB
     L["Log: lamba pata likhi chit"]:::card
