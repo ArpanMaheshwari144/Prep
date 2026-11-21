@@ -701,6 +701,7 @@ Instagram pe bhi yahi hota: profile photo update ki, turant refresh kiya to pura
 **Asli naam:** do pe likho, do se padho = quorum (N = 3, W = 2, R = 2, W + R > N, isliye padhi gayi do copy me se ek me
 naya likha zaroor), thodi der leader se padho = leader read / read-your-writes (trade-off: leader pe bojh), 2 ne rakha tabhi pura = write ack, Cassandra = leaderless, QUORUM read / write (URL kadam 9-10).
 Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo leader me, refresh pe padhna copy se jo abhi peeche).
+"Thodi der" kitni: andaza nahi; uski likhai ka number (LSN) rakho, copy us number tak pahunchi to copy se, nahi to leader se (banking kadam 9).
 
 ```mermaid
 flowchart TB
