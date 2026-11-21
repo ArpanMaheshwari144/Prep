@@ -65,6 +65,11 @@ ek-ek karke jao = khabar line me, padhne wale apni raftaar se (async). Spike aay
 isliye ek hi khabar SMS aur Fraud dono padh lete hain, aur peeche ja ke dobara bhi padh sakte hain (RabbitMQ me ack
 hote hi queue se hat jaati, dobara nahi padh sakte).
 
+**Doosri kahani (tube):** idhar se daalo = producer, line = Kafka, udhar se nikaalo = consumer. **Maan lo async thread kyun
+nahi:** thread gira to sab gaya, kaam disk pe chahiye. **RabbitMQ kyun nahi:** padhi to hata deta (cinema ka ticket phaad),
+hamein khabar rehni chahiye. **Kab nahi:** jab jawab turant chahiye (REST). **AWS pe:** broker, copy AWS sambhale.
+**Asli naam:** durable log vs in-process thread, RabbitMQ delete-on-ack, sync REST, managed Kafka.
+
 ```mermaid
 flowchart TB
     T["Ticket counter<br/>(Order Service)"]:::card
@@ -134,6 +139,9 @@ ke andar, kaun kis gate pe, hash = key ka hash se partition (`hash(order id) % 3
 mat bhejo, key se ek partition: A7 ki saari khabar ek line me, A8 ki ek me. Ek line ke andar kram pakka, pehle paid phir
 shipped.
 **Asli naam:** partition key (message key = order id), kram sirf ek partition ke andar.
+
+**Doosri kahani (exam hall):** bahar kaise bhi, andar roll number ki fix seat = partition ke andar kram. **Maan lo ek user
+garam:** key me number jodo, alag tukde; keemat: us user ka kram sirf tukde ke andar. **Asli naam:** per-partition order, key salting.
 
 ```mermaid
 flowchart TB
@@ -259,6 +267,9 @@ ek pakki id bana do; wahi id dobara aaye to discard kar do, chahe naya worker / 
 **Asli naam:** at-least-once, idempotent consumer (idempotency key = eventId / order id), wahi id SMS company ko bhi
 bhejo taaki wo bhi dobara na bheje.
 
+**Maan lo exactly once:** Kafka sirf Kafka se Kafka tak deta, SMS bahar ki cheez, isliye pakki id se dohra phenko.
+**Asli naam:** EOS sirf Kafka ke andar, bahar at-least-once + dedup.
+
 ```mermaid
 flowchart TB
     C["Checker ne punch kiya,<br/>register se pehle gira"]:::bad
@@ -289,6 +300,8 @@ sampatti likh ke chala jaata hai, aur baad me vasiyat mil jaati hai.
 **Asli naam:** pehle kahin likh de = outbox (khabar order ke saath usi DB transaction me, `sent = false`), baap ki vasiyat, baad me
 mil jaaye = relay outbox se utha ke `acks=all` se Kafka ko bhejta, phir `sent = true`. Relay ne dobara bhej di
 to `eventId` pakad leta hai.
+
+**Maan lo outbox dabba hi gira:** uska replica. **Asli naam:** outbox DB me, DB ki replica.
 
 ```mermaid
 flowchart TB
@@ -391,6 +404,9 @@ kharidna hai.
 do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna
 peeche kyun ja raha hai."
 **Asli naam:** consumer lag alert (lag 1 ghante se zyada to alert).
+
+**Doosri baat:** bookmark aage mat khiskao; retention se pehle khabar kahin aur daal do, ya retention badhao.
+**Asli naam:** offset skip nahi, archive / alag topic, retention.ms.
 
 ```mermaid
 flowchart TB

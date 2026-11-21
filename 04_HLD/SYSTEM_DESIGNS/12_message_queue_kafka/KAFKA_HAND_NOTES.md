@@ -50,6 +50,12 @@ do baar aaye to kaam ek baar = 6, 6b · ek service dheemi to baaki na rukein = 2
 **1. Stadium ke bahar bahut bheed, sab ek saath andar ghusna chahte hain.**
 Arpan: Kafka mere liye ek aisa banda hai jo bheed ko kaabu karta hai. Stadium ke bahar bahut bheed, sab ghus rahe. Ek admin ne bola: line banao, ek-ek karke jao, seat mili to baith jao. Bas ye hai Kafka mere liye: bheed ko rokne wala. Spike aaya, usne rok diya.
 Technical me: "bheed ko kaabu karne wala" = Kafka (beech ki queue), "line banao, ek-ek karke jao" = khabar line me, padhne wale apni raftaar se (async), "spike aaya, rok diya" = spike / load sambhalna.
+**Isi ki doosri kahani (tube):** Arpan: Ise tunnel samajh, ek tube samajh: tube me main idhar se kuch daal raha, wo producer. Wo jagah jahan line lag rahi, wo Kafka. Jo main udhar se nikaal lun, wo consumer, worker / consumer jo bhi kehna chaho.
+**Maan lo pooche app ke andar hi async thread kyun nahi:** Arpan: Kaam disk pe rehna chahiye. Thread hai aur kuch gir gaya to thread sab kho dega, wo hum afford nahi kar sakte; email kisko gaya, kya gaya, kuch pata nahi lagega. Kafka apni cheez disk pe rakhta, consumer kahan tak hai, offset hai.
+**Maan lo pooche RabbitMQ jaisi aam queue kyun nahi:** Arpan: Server ki memory me list rakhi to restart pe saari khabar gaayab. RabbitMQ jaisi aam queue me ek ne khabar padhi aur wo line se hata degi, jaise pehle cinema me ticket le ke line me lagte, gate wala ticket phaad deta taaki us ticket pe koi doosra na ghuse. Hamein aisa chahiye jisme khabar hate na, isliye Kafka: khabar disk pe, mitegi nahi; har service apna bookmark rakhti.
+**Maan lo pooche Kafka kab nahi chahiye:** Arpan: Jab jawab tumhe turant chahiye, jaise REST API.
+**AWS pe:** Arpan: Kafka AWS me hai to broker, copy sab AWS manage karega, hum nahi.
+Technical me: producer -> topic -> consumer (tube), in-process async thread = crash pe kaam gaya (durable nahi), RabbitMQ = padha to hata (ticket phaad), Kafka = log disk pe + offset, turant jawab chahiye = sync REST, managed Kafka (MSK) me broker / replica AWS ka kaam.
 
 **2. Line me ek aadmi ruk gaya, peeche sab atak gaye. Wo line se nikal ke bahar chala gaya. (Ye dikkat Arpan ne khud uthayi.)**
 Arpan: Maan le stadium me line hai, ek aadmi ruk gaya, wahin se peeche sab disturb ho gaye. Wo line se nikla, bahar chala gaya. Uski seat booked hai, wahi baithega, uski seat pe koi aur nahi baith sakta. To line dobara shuru kari, koi gum nahi hua, kuch dikkat nahi.
@@ -62,6 +68,9 @@ Technical me: "aur gate" = partition, "har gate ke andar apni line" = kram sirf 
 **Maan lo bahar ka ticket counter (Order Service) har order ki do khabar bhejta hai, pehle "paid" phir "shipped". Order #A7 ke dono wo koi bhi khaali partition me daal deta: paid partition 2 me, shipped partition 5 me. Partition 5 ka consumer tez, shipped pehle chal gaya.**
 Arpan: Alag-alag nahi bhej sakte. Key ke zariye ek hi partition me laayenge: A7 ki saari cheez ek partition me, A8 ki ek me. Main Kafka hoon: paid is line me ghusa, shipped us line me, shipped aage nikal gaya, paid peeche reh gaya, dikkat. Isliye ek key, ek tukda: A7, phir A8, phir A9. Tukde ke andar Kafka line follow karta hi hai: pehle paid phir shipped.
 Technical me: "key ke zariye ek partition" = partition key (message key = order id), "tukde ke andar line" = kram sirf ek partition ke andar.
+**Isi ki doosri kahani (exam hall):** Arpan: Class me bachche kaise bhi baithe hon, par exam hall me aaye to fix seat: tera roll number yahan, tera wahan. Cinema ke bahar bheed kaise bhi, andar ek ke baad ek. Kafka ka matlab hi line lagana; partition ke andar kram wo follow karega hi.
+**Maan lo ek user ki khabar bahut garam:** Arpan: Key me number jod deta hoon, jaise user 9 ya 4, to wo alag tukde pe chala jaata. Keemat ye ki us user ka poora kram nahi bachta, bas har tukde ke andar bachta.
+Technical me: "fix seat" = partition ke andar order guaranteed, "key me number jodo" = key salting (hot key ko kai partition me baanto), keemat = us key ka global order toota.
 
 **4. Gate ke andar 3 ticket checker, teeno har fan ka ticket punch kar rahe. Har ticket 3 baar punch, line teen guna dheemi.**
 Arpan: 3 punch ho gaya hai. To aise kar de, un saalon ko mila de, ek bana de, ek kamre me hi baitha de. Is kamre me 3 baithe hain, koi bhi aaye, bas in 3 me se ek pe bhej. Jisne punch kar diya, baaki 2 usko dekhe hi nahi.
@@ -88,10 +97,14 @@ Arpan (pehli soch): Parchi pe likh lo "Ravi ko 10,000 dene hain", de diye to par
 Pench: paise dena (SMS company) aur parchi (hamara DB) do alag jagah hain, ek jhatke me nahi ho sakte. SMS chala gaya aur DONE likhne se pehle gira, ye beech ka pal kabhi nahi hatega. Is pal ko rok nahi sakte, isliye dobara aana maan ke chalo.
 Arpan (aakhri): Har message ki ek pakki id bana do. Is id se ek SMS chala gaya; wahi id dobara aaye to discard kar do, chahe naya worker / consumer laaye ya doosri SMS company se jaaye.
 Technical me: "rok nahi sakte, dobara aayega hi" = Kafka at-least-once, "pakki id, dobara aaye to discard" = idempotent consumer (idempotency key, eventId / order id se), wahi id SMS company ko bhi bhejo taaki wo bhi dobara na bheje.
+**Maan lo pooche exactly once kyun nahi:** Arpan: Exactly once main scope ke bahar rakhta hoon; Kafka exactly once sirf Kafka se Kafka tak deta, SMS bahar ki cheez hai.
+Technical me: Kafka EOS = sirf Kafka ke andar (read-process-write), bahar ka SMS = at-least-once + pakki id se dohra phenko.
 
 **7. Ticket dene wala (Order Service) gate tak khabar bhejne se pehle hi gir gaya.**
 Arpan: Yahan pe outbox. Matlab wo pehle kahin likh de ki haan, main ye daal dunga. Kabhi koi mar bhi jaaye, to wo cheez ek jagah mil jaaye. Jaise real life me hota hai: baap marne se pehle apni sampatti likh ke chala jaata hai.
 Technical me: "pehle kahin likh de" = outbox (khabar usi DB transaction me), "baap ki vasiyat, baad me mil jaaye" = relay outbox se utha ke Kafka ko bhejta hai.
+**Maan lo wo dabba (outbox) hi gir jaaye:** Arpan: Kafka aur bhejne ke beech kuch gira to use dabbe me kahin store kar lo, dikkat khatam; wo dabba hi gir jaaye to uska replica bana do. Yahi kahani hai.
+Technical me: outbox table DB me hi (DB ki apni replica), relay gire to dobara uthata.
 
 **8. Ek fan ka ticket hi galat hai. Wo baar-baar gate pe ghusne ki koshish karta, har baar mana, aur peeche poori line atki.**
 Arpan: Use line se hata, usko ghusne hi mat de. Tu bahar, tu aayega hi nahi. Matlab mere paas ek aisi cheez ho jo uske gate pe hi rok de, andar hi na aane de. Matlab bouncer, hahaha.
@@ -112,6 +125,8 @@ Technical me: "aur admin daalo" = pehle checker (consumer) badhao, gate (30) tak
 **Maan lo wo dheere-dheere peeche ja raha: aaj 1 din, kal 2 din. 7 din hone se pehle kaise pata chalega?**
 Arpan: Alert laga do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."
 Technical me: "alert laga do" = consumer lag alert.
+**Isi dikkat ki doosri baat (29-Oct):** Arpan: Fraud service 7 din peeche chal rahi, kal 8, parson 9. Hum aisa thodi karenge ki bookmark aage badha do, "ab tu na padh"; khabar to use padhwani hi hai, Kafka ka matlab wahi hai. To retention se pehle us khabar ko kahin aur daal do, wo wahan se padh legi apne hisaab se, baaki service pe asar nahi; ya retention 7 din se badha do.
+Technical me: "bookmark aage mat khiskao" = offset skip nahi (data loss), "kahin aur daal do" = archive / alag topic (S3 sink), "retention badha do" = retention.ms.
 
 &nbsp;
 
