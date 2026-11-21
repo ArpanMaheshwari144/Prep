@@ -1,5 +1,12 @@
 # Custom @Query + DTO Projection
 
+## Koi poochhe to aise bolo
+
+Spring Data JPA me repository likh do, to `findAll()`, `findById()` jaise kaam bina SQL ke mil jaate. Par `findAll()` poori
+entity laata, har column ke saath. Jab sirf 3 cheez chahiye, to `@Query` likh ke sirf wahi 3 column maango aur ek chhote
+dabbe (DTO, yahan interface) me bhar lo: DB se kam data, password jaisi cheez galti se bahar nahi, aur Hibernate us dabbe ko
+track bhi nahi karta.
+
 ## Scene: dashboard pe sirf naam, umar aur shehar chahiye
 
 `userRepo.findAll()` kiya to har user ki poori row aayi: password hash, phone, address, sab. Do dikkat:
