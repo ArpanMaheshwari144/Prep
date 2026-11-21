@@ -98,8 +98,11 @@ to message gaya), online hoga to bhej denge = offline delivery. DB = Cassandra, 
 (46,000 / sec, roz 1.2 TB), padhai hamesha ek chat ki ("aakhri 50 do"), join nahi chahiye (message + parchi ek saath likhne ka kaam batch se, kadam 5). Ek chat ke saare
 message ek machine pe, kram me.
 
-**Maan lo group 3 saal purana, 50 lakh message:** 2 saal purana upar scroll karke koi nahi dhoondhta. Photo kholte hi phone
-ki gallery me download, purani photo phone me hi; server pe sirf link. Baant chat id se, user id se nahi.
+**Maan lo pooche baantoge kis cheez se:** chat id se, user id se nahi.
+
+**Maan lo group 3 saal purana, 50 lakh message, Ravi upar scroll karke 2 saal purani trip ki photo dhoondhta (scene hi
+galat tha, aisa hota nahi):** 2 saal purana upar scroll karke koi nahi dhoondhta. Photo kholte hi phone ki gallery me
+download, purani photo phone me hi; server pe sirf link.
 
 ```mermaid
 flowchart TB
