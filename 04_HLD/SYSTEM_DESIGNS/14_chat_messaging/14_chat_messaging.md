@@ -24,7 +24,7 @@ Arpan  --WebSocket-->  chat server S1  -->  DB (message store, pehle likho)  -->
  5b  DB me likha, pub/sub se pehle server gira   ->  outbox + relay
  5c-e  late chhotu do baar bheje, kram ulta      ->  outbox status, dedup, sequence + phone sort
  6   lift me jawab kho gaya, "hi hi"             ->  clientMsgId, same aaye to mana
- 6b  "mil gaya" kho gaya, dobara aaya            ->  phone message ka number dekhe (idempotency)
+ 6b  "mil gaya" kho gaya, dobara aaya            ->  message ka number dekh ke dobara wala chhodo (idempotency)
  7   "kahan?" pehle dikha                        ->  server ka number (sequence)
  7b  #980 atka, #981 pehle                       ->  server record, jo nahi gaya do; phone sort (store-and-forward)
  8   "12 naye message"                           ->  kul - padhe (read count)
@@ -44,7 +44,7 @@ FR      1-to-1 chat + group (500 tak) · Ravi offline ho to baad me mile · tick
         · photo / video · online / last seen (end-to-end encryption, call: scope se bahar)
         · history kab tak rakhni hai (1 saal / hamesha), pehle poochho; jawab se DB ka size aur purana maal kahan, ye tay
                                                                              -> (abhi kadam nahi)
-NFR     message turant (1 sec se kam) · kabhi na khoye · ek chat me kram na bigde (thodi der ulta dikh sakta, phone message ka kram number dekh ke theek kar leta) · do baar na dikhe
+NFR     message turant (1 sec se kam) · kabhi na khoye · ek chat me kram na bigde (server har message pe kram number lagata; ulta pahunche to phone usi number se sahi kram me laga leta) · do baar na dikhe
 Numbers 50 crore user, ek waqt ~10 crore online = 10 crore khule taar -> ~100 chat server
         roz ~400 crore message = ~46,000 likhai / sec, ek message ~300 byte -> roz ~1.2 TB
 ```
