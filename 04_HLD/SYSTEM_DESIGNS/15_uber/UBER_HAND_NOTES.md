@@ -86,6 +86,8 @@ Technical me: "jaldi ke liye parchi" = matching Redis se (abhi ki jagah, overwri
 **3. Book pe server 5 lakh driver ka fasla naap raha, 40 sec "dhoondh rahe hain".**
 Arpan: Connaught Place pe khade ko ISBT ka driver kyun? Sirf 8-9 km ke andar wale chahiye. Aur 5 lakh me se chhaanto mat: naksha pehle se dabbon me kata ho, server sirf usi dabbe me dekhe jahan Arpan khada. Usme 3 driver, unme jo khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
 Technical me: "naksha dabbon me" = geohash (grid), "sirf apna dabba" = 5 lakh ki jagah gine-chune driver.
+**Maan lo gole ke teeno driver booked:** Arpan: Gole ke andar 3 driver hain, unme se jo bhi khaali ho wo Arpan ko mil jaayega; 5 lakh se lena-dena nahi. Teeno book hain to thodi der wait karna padega, jaise Uber karwata bhi hai, 15 minute wait.
+Technical me: gole me khaali nahi = intezaar / dobara dhoondo (koi gaadi zabardasti nahi).
 
 **Isi dikkat ki doosri kahani (21-Nov round, Whitefield):** Whitefield bahut bada ilaaka hai; ITPL me Samudra tower pe khada hoon, ek cab Agrahara ke paas, ek idhar, ek udhar.
 Arpan: Area ko baant do, chhote-chhote hisse: ITPL alag, Agrahara alag, Nexus Forum mall alag. Whitefield ki saari cab mere phone pe thodi dikhengi, us waqt lakhon cab ho sakti, phone me dikhana namumkin. Jahan traffic / bheed zyada wahan dabba chhota-bada karna, wo baad me.
@@ -94,6 +96,8 @@ Technical me: "chhote hisse" = geohash cell, "bheed pe dabba chhota-bada" = cell
 **4. Arpan dabbe ke kinare pe, 200 meter door bagal wale dabbe me khaali driver, app bola "koi nahi".**
 Arpan: Dabbe ki seema pe mat chalo. Arpan jahan khada wahan se 8 km ka gola khincho; jin dabbon ko gola chhoota, unke driver bhi dekho.
 Technical me: "gola + chhoote dabbe" = apna geohash + aas-paas ke dabbe, phir asli fasla.
+**Maan lo normal din bhi gole me koi cab khadi nahi:** Arpan: Main jahan khada hoon, Uber ek gola bana dega; itne distance me koi cab nahi hai to gola bada kar do, phir bhi nahi to aur bada.
+Technical me: search radius dheere-dheere badhao (expanding ring / neighbour cells), concert wale din jaisa hi par chhota.
 
 **21-Nov round (Raju border paar karke Agrahara gaya):**
 Arpan: Driver to aate-jaate rahenge, gaadi non-stop chal rahi. Main upar se dekh raha: Arpan jahan khada wahan se 5 km ka gola (7-8 km bhi chalega), us gole me jo bhi driver hain. 10 me se ek gaya, ek aaya, chalta rahega. Jo sawari leke ja raha hai wo nahi, jo khaali hai unka phone baja do: "Arpan ki request aayi, ITPL se airport." Request ki umar, maan lo 30 second; jo accept kare usko ride. Raju akela tha aur dabbe se nikal gaya to Arpan ko us waqt koi nahi dikhega, jaise naye aayenge dikhte jaayenge.

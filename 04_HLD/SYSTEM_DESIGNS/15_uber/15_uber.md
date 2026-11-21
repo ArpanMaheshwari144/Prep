@@ -154,6 +154,8 @@ dikhana namumkin, sirf apna hissa. Bheed wali jagah dabba chhota-bada baad me (6
 
 ![Naksha pehle se dabbon me kata: server sirf Arpan ke dabbe me dekhe](../00_IMG/15_uber_map_kadam3.svg)
 
+**Maan lo gole ke teeno booked:** thodi der wait, jaise Uber 15 minute wait karwata. **Asli naam:** intezaar / dobara dhoondo.
+
 ## 4. Arpan dabbe ke kinare pe, 200 meter door khaali driver (gola khincho)
 
 Arpan dabbe ke kinare pe khada hai, aur 200 meter door bagal wale dabbe me khaali driver, par app bola "koi nahi".
@@ -174,6 +176,8 @@ sabka phone bajao ("ITPL se airport"), request ki umar ~30 sec, jo accept kare u
 dikh raha ye nahi dekhna. Gole ke driver ki asli doori nikaalo: sadak se kitni door, kitni der lagegi. Nadi wala sadak se 8 km,
 peeche wala 2 km, to Arpan ko peeche wala. Achanak jaam alag baat, wo pehle se nahi pata.
 **Asli naam:** map pe paas = seedhi lakeer (straight-line) doori, sadak se kitni door = road distance / ETA (routing se, sirf gole ke kuch paas wale driver pe).
+
+**Maan lo normal din bhi gole me cab nahi:** gola bada karo, phir aur bada. **Asli naam:** expanding search radius.
 
 ## 5. Raju ek, Arpan aur Priya do (BMS wali parchi)
 
