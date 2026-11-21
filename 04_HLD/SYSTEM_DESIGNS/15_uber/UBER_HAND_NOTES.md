@@ -14,6 +14,7 @@ Arpan "Book"  -->  matching: apna + aas-paas ke dabbe, sadak ki doori (ETA), 15-
 
  1   server ko pata nahi driver kahan            ->  phone khud bheje (Location Service)
  2   1.25 lakh update / sec, DB ghuta            ->  Cassandra; abhi ki jagah Redis, raasta Kafka (2b)
+ 2c  matching ko abhi chahiye, bhare ka raasta     ->  Redis se matching; sawari ka raasta Cassandra (SOS)
  3   5 lakh driver ka fasla naap raha            ->  naksha dabbon me (geohash)
  4   dabbe ke kinare, bagal me driver            ->  aas-paas ke dabbe bhi; nadi ke us paar = sadak se doori (4b)
  5   Raju pe ek second me do ride                ->  parchi, ek kadam me (hold / lock); 15 sec umar, net atka = wahi booking id
@@ -25,7 +26,9 @@ Arpan "Book"  -->  matching: apna + aas-paas ke dabbe, sadak ki doori (ETA), 15-
 10   10 lakh phone "Raju kahan?"                 ->  push, WebSocket
 11   Arpan server 12 pe, Raju 57 pe              ->  pub/sub
 12   250 dikha, aakhir me 500 kate               ->  jo dikhaya wahi (upfront fare)
+12b  900 dikha, traffic 2.5 ghante, 1400 kate     ->  laal batti pe nahi, sach me der to +100 / 30 min
 13   wallet me 40, gateway chup                  ->  poora kaato; ride id key; 30-55 sec phir GPay / cash; PAYMENT_PENDING
+13b  cash diya, 5 min baad GPay se bhi kata       ->  "kitni der baad kata" column, raat ki job lautaye
 14   Raju ka phone band, naksha pe gayab         ->  location timeout
 15   Car A Arpan se 2 km, Ravi se 1 km           ->  sab saath milao, kul doori kam (batch matching, 15-20 sec window)
 15c  Arpan baar-baar peeche                      ->  aging, agli gaadi usi ki
@@ -38,10 +41,19 @@ FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
         · Arpan ko Raju live dikhe · kiraya pehle dikhe · trip khatam pe pay
         · bheed me (concert) kiraya badh sakta hai, aur wo pehle hi dikh jaaye
         · ek saath kai booking aayein to aisi gaadi do ki sabki milake doori kam · jo der se ruka wo baar-baar peeche na rahe
+        · traffic me sach me bahut der fanse to kiraya badh sakta, laal batti pe nahi (Arpan 21-Nov, kadam 12 doosri kahani)
 NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi
         · ride ke beech driver gaya to sambhalo
+        · sawari wali ride ka poora raasta pakka rahe (SOS / shikayat), khaali driver ka zaroori nahi (Arpan 21-Nov, kadam 2)
+        · gateway chup ho to customer / driver atke nahi (30 sec, phir doosra raasta) (Arpan 21-Nov, kadam 13)
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
+        Arpan 21-Nov: ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
+        ("driver tez aaye" na FR na NFR: traffic hamare haath me nahi)
+API     (Arpan 21-Nov) GET  aas-paas ke driver  -> app khulte hi naksha pe    (FR driver ki jagah, paas ka khaali)
+                       POST book                -> kahan jaana, kiraya dikhe  (FR ek driver ek sawari, kiraya pehle)
+                       POST pay                 -> trip khatam pe paisa       (FR trip khatam pe pay)
+        driver ki jagah = phone ka har 4 sec wala bhejna, pehle se design me (kadam 1)
 ```
 
 **FR / NFR -> kadam (Arpan: "theek lag raha, achha lag raha"):** driver ki jagah = 1, 2, 2b, 8, 14, 16 · paas ka khaali driver =
@@ -62,6 +74,10 @@ Technical me: "bada dabba" = Cassandra (likhai tez, apni copies, machine jodo to
 **Isi dikkat ki doosri kahani (Zomato wali reel se): Raju ki har nayi jagah DB me nayi line ban ke jud rahi. Arpan ke map ko sirf abhi ki jagah chahiye, par DB laakhon purani lines me se sabse nayi dhoondh raha, map dheema. Aur company ko baad me poora raasta bhi chahiye (kis raaste gaya, kahan ruka), purani lines phenk nahi sakte.**
 Arpan: DB me location likhne ka koi matlab nahi, ye to faltu ki cheez ho gayi. DB me to bas wo likhenge jo kaam ki hai: haan bhai tumhara driver pahunch gaya, order delivered, order pending. Location to ek parchi pe daal do: 4 second baad request aayi, purani kaat ke nayi likh di, kaat ke likh di, jisse parchi bhi na bhare. Delivery ho jaaye to Redis se hata do, use rakhne ka koi matlab nahi. Ab maan le company ko ye sab chahiye, to wo kahin aur lagega, apne alag storage box me. Aur ye cheez bahut zyada aa sakti hai, bheed lag sakti hai; bheed ka jawab hamare paas pehle se hai, Kafka. Jitne bhi driver ki saari location har 4 second, Kafka me daal do, aur batch me alag storage box me daalte jao: 4 second baad driver yahan pahuncha, 4 second baad yahan, 10 minute se yahan khada tha, 20 minute yahan cigarette phooki (wo map nahi dikhayega, par cheezein alag-alag). DB me location daali to DB pata nahi kitne guna bada karna padega, Cassandra jaisa koi bhi DB nahi jhel paayega, aur fayda bhi nahi.
 Technical me: kadam 2 ke do raaste: pehli kahani me Cassandra me overwrite, is kahani me Redis me overwrite + raasta Kafka se alag storage. "parchi pe kaat ke nayi" = Redis me sirf aakhri jagah (overwrite), delivery ke baad hata do; "Kafka me daal, batch me alag storage box" = poore raaste ki history alag jagah (Kafka -> batch write); DB me sirf order ka status.
+
+**Isi dikkat ki teesri kahani (21-Nov round): Arpan ne book dabaya, abhi ke abhi 5 km ke khaali driver chahiye, par location pehle Kafka ki line me baithti aur Cassandra tak batch me der se pahunchti.**
+Arpan: Ride book hi nahi hui to koi SOS nahi dabayega, kuch nahi; yahan mujhe jaldi chahiye. To Redis pe parchi: driver ki location har baar kaat ke latitude-longitude dhadadhad likhta rahunga. 5 km me 10, 50, 100 driver honge, 1 lakh nahi, aur Uber ke paas server aur paise ki kami nahi. Ride book hui, Arpan cab me baith gaya, tab raasta thos chahiye: driver kahin aur le gaya, maine Uber ke SOS / support pe call kiya, to unke paas pakki location honi chahiye ki Whitefield se kahan le gaya. Isliye DB / Cassandra me wo rakho jo important hai. Khaali ghoomne wala aur bhara (sawari wala) driver alag: bhare ka raasta zaroori, Kafka se batch me Cassandra; khaali ka bhi chahiye to alag Cassandra, padhai ke liye. Aage Uber purane raaste padh ke ye bhi nikaal sakta: airport jaane ke 10 raste, sabse achha 9va, to zyada driver ko wahi dikhao.
+Technical me: "jaldi ke liye parchi" = matching Redis se (abhi ki jagah, overwrite), "pakka raasta" = trip location history (Kafka -> batch -> Cassandra) for SOS / support / audit, "khaali vs bhara alag" = idle aur on-trip location alag store, "9va raasta" = purani trips se raaste ki padhai (routing / ETA).
 
 **3. Book pe server 5 lakh driver ka fasla naap raha, 40 sec "dhoondh rahe hain".**
 Arpan: Connaught Place pe khade ko ISBT ka driver kyun? Sirf 8-9 km ke andar wale chahiye. Aur 5 lakh me se chhaanto mat: naksha pehle se dabbon me kata ho, server sirf usi dabbe me dekhe jahan Arpan khada. Usme 3 driver, unme jo khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
@@ -129,6 +145,10 @@ Technical me: "store karwa lo" = session map (user -> server, Redis) + ride map 
 Arpan: Jo dikhaya wahi lena meri zimmedari. 250 hi lo. Traffic me phase aur driver ki mehnat zyada lagi to rider ki marzi pe tip: 50-100 de de, na de to jitna dikhaya utna. (Uber / Rapido asal me badha deti hain, par main banata to aise.)
 Technical me: "jo dikhaya wahi" = upfront fare: quote ride ke saath save (lock), aakhir me wahi kaato; "zyada mehnat" = tip alag, rider ki marzi.
 
+**Isi dikkat ki doosri kahani (21-Nov round): concert se Whitefield, book pe 900 dikha. Raste me bhaari traffic, 1 ghante ka raasta 2.5 ghante, aakhir me 1400 kate. Arpan bhadka.**
+Arpan: Ye design ka hissa hai ya nahi, thoda controversy hai. Teen nazar se dekho. Driver 1.5 ghanta traffic me khada raha, utne me 3-4 ride kar leta ya ek airport wali (Whitefield se 1200); use 900 me se Uber ka cut kat ke 100 mile to galat. Uber ka bhi nuksaan, cab fansi rahi. Customer ka gussa jaayaz, use 1400 dene pade. Par aage ka traffic pehle se nahi pata, Bangalore chhota bhida shahar hai, Chandigarh jaisa khula nahi; pehle hi 1400 bol diya aur traffic laga hi nahi to bezzati, bharosa gaya, isliye frontend pe pehle nahi dikha sakte. Normal laal batti pe nahi badhao (30-50 second, har shahar me), thoda buffer rakho, warna log seedha auto le lenge. Sach me der hui (1 ghante ka 1.5 ghante se upar) to har extra 30 minute pe +100 / 150: driver khush, Uber ka nuksaan kam, customer ko thoda nuksaan; ye to aam auto wala bhi karta.
+Technical me: "traffic me fanse ka paisa" = time-based fare / waiting charge, "laal batti pe nahi" = buffer (free waiting), "pehle se nahi bol sakte" = upfront fare me aage ka traffic predict nahi hota; pehli kahani (jo dikhaya wahi + tip) aur ye, dono raaste.
+
 **13. Trip khatam, ₹250 kaatne gaye, Arpan ke wallet me sirf ₹40. Payment fail, Arpan gaadi me hi baitha, Raju saamne, Raju ka petrol aur 40 minute.**
 Arpan: Kaatna hai to poora kaato, aadha mat kaato: 40 kaat ke chhod diya to log jaan-boojh ke 1 rupaya rakhenge. Wallet me 250 nahi to app me saaf dikhao "payment nahi hua", aur Raju ke phone pe bhi dikhe. Arpan GPay se de, warna cash, kaise bhi. Jab tak paisa nahi aaya, ride khatam hi nahi hogi.
 Technical me: "poora ya kuch nahi" = atomic charge (partial nahi), "ride tab tak khatam nahi" = ride status PAYMENT_PENDING jab tak SUCCESS, "GPay / cash" = fallback payment method, dono app pe dikhe.
@@ -140,6 +160,10 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 **Maan lo poochhte raho aur gateway ka jawab aaye hi na. Arpan gaadi me baitha, Raju saamne, dono intezaar kar rahe. Kab tak rokoge?** (BookMyShow 6c wala hi jawab)
 Arpan: Gateway kitni der lega, hamare haath me nahi, to hum apni ghadi rakhte: 30 se 55 second, phir dono app pe "payment nahi hua, paisa kata to wapas aa jaayega", Arpan GPay / cash se de. Paisa katte hi gateway chhota sa event bhejta, jaise S3 file aane pe bhejta. Event aaya = kata, hum "mil gaya" bol dete. Baad me kata nikla aur Arpan cash de chuka, to gateway ko bolo "lautao". Onboard pe gateway se SLA lo: uptime aur down hone pe kitni der me khabar; bank ki der nahi.
 Technical me: "30-55 sec" = hamara client timeout, "paisa katte hi event" = webhook (PSP callback), "mil gaya" = ack (2xx), "baad me kata to lautao" = DB me REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe, "onboard pe SLA" = uptime SLA + incident response.
+
+**21-Nov round: 1400 kaatne gaye, gateway chup, Raju agli sawari ke liye nikalna chahta hai.**
+Arpan: Jab tak paisa nahi kata, ride poori nahi hoti; Uber me bhi pay ke baad hi ride poori hoti hai. Kuch second ruk sakte, hamesha nahi, aur bhi ride hain. 30 second jawab nahi to DB me FAILED likho. Teen raaste: Uber ka apna wallet, doosra PSP (Razorpay, jo India me chalta ho), ya driver ko cash. Arpan ne cash de diya aur 5 minute baad GPay se bhi 1400 kat gaye, to Razorpay event bhejega; table me ek extra column "kitni der baad kata" (5 minute), raat ki cron job usse pakde aur Razorpay ko bole lautao. Kaise diya wo bhi rakho: cash (transaction id nahi, driver likhega) ya GPay (transaction id). Refund 5 din me na aaye to Arpan transaction id se bank se poochh sake. Arpan ke wallet se kat gaya aur Razorpay ka event aa gaya to Arpan ko mat roko, ride poori; Uber ke account me der se aaye wo Uber aur bank ki dikkat. Gateway / bank ke andar kya hua wo PSP ka kaam, design ka hissa nahi.
+Technical me: "30 sec" = client timeout -> FAILED, "wallet / doosra PSP / cash" = fallback + PSP failover, "kitni der baad kata" = late debit ka alag column (raat ki reconciliation job ke liye), "kaise diya" = payment method + transaction id, "event aaya to mat roko" = webhook SUCCESS pe ride complete.
 
 **14. (Socha hua, hypothetical) Ride ke beech Raju ka phone switch off. GPS bhi band, naksha pe Raju gayab. Ride khatam kaun karega?**
 Arpan: Phone band hona Uber ke haath me nahi, design ki dikkat nahi. Phone apni location khud bhejta hai, server poochhta nahi. Location aani band hui to server ek-do baar dekhega, phir apni taraf se bhi band. Jahan tak aaye utne paise Arpan ki app me dikhenge, wo de do. Phir Uber support ko phone: "driver ka phone band ho gaya". Support wahan se ride band kar dega, DB me update, Raju kahin nahi dikhega.

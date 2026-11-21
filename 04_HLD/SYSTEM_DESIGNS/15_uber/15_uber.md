@@ -19,6 +19,7 @@ Arpan "Book"  -->  matching: apna + aas-paas ke dabbe, sadak ki doori (ETA), 15-
 
  1   server ko pata nahi driver kahan            ->  phone khud bheje (Location Service)
  2   1.25 lakh update / sec, DB ghuta            ->  Cassandra; abhi ki jagah Redis, raasta Kafka (2b)
+ 2c  matching ko abhi chahiye, bhare ka raasta     ->  Redis se matching; sawari ka raasta Cassandra (SOS)
  3   5 lakh driver ka fasla naap raha            ->  naksha dabbon me (geohash)
  4   dabbe ke kinare, bagal me driver            ->  aas-paas ke dabbe bhi; nadi ke us paar = sadak se doori (4b)
  5   Raju pe ek second me do ride                ->  parchi, ek kadam me (hold / lock); 15 sec umar, net atka = wahi booking id
@@ -30,7 +31,9 @@ Arpan "Book"  -->  matching: apna + aas-paas ke dabbe, sadak ki doori (ETA), 15-
 10   10 lakh phone "Raju kahan?"                 ->  push, WebSocket
 11   Arpan server 12 pe, Raju 57 pe              ->  pub/sub
 12   250 dikha, aakhir me 500 kate               ->  jo dikhaya wahi (upfront fare)
+12b  900 dikha, traffic 2.5 ghante, 1400 kate     ->  laal batti pe nahi, sach me der to +100 / 30 min
 13   wallet me 40, gateway chup                  ->  poora kaato; ride id key; 30-55 sec phir GPay / cash; PAYMENT_PENDING
+13b  cash diya, 5 min baad GPay se bhi kata       ->  "kitni der baad kata" column, raat ki job lautaye
 14   Raju ka phone band, naksha pe gayab         ->  location timeout
 15   Car A Arpan se 2 km, Ravi se 1 km           ->  sab saath milao, kul doori kam (batch matching, 15-20 sec window)
 15c  Arpan baar-baar peeche                      ->  aging, agli gaadi usi ki
@@ -44,10 +47,19 @@ FR      driver ki jagah lo · paas ka khaali driver do · ek driver ek sawari
         · Arpan ko Raju live dikhe · kiraya pehle dikhe · trip khatam pe pay
         · bheed me (concert) kiraya badh sakta hai, aur wo pehle hi dikh jaaye
         · ek saath kai booking aayein to aisi gaadi do ki sabki milake doori kam · jo der se ruka wo baar-baar peeche na rahe
+        · traffic me sach me bahut der fanse to kiraya badh sakta, laal batti pe nahi (Arpan 21-Nov, kadam 12 doosri kahani)
 NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi
         · ride ke beech driver gaya to sambhalo
+        · sawari wali ride ka poora raasta pakka rahe (SOS / shikayat), khaali driver ka zaroori nahi (Arpan 21-Nov, kadam 2)
+        · gateway chup ho to customer / driver atke nahi (30 sec, phir doosra raasta) (Arpan 21-Nov, kadam 13)
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
+        Arpan 21-Nov: ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
+        ("driver tez aaye" na FR na NFR: traffic hamare haath me nahi)
+API     (Arpan 21-Nov) GET  aas-paas ke driver  -> app khulte hi naksha pe    (FR driver ki jagah, paas ka khaali)
+                       POST book                -> kahan jaana, kiraya dikhe  (FR ek driver ek sawari, kiraya pehle)
+                       POST pay                 -> trip khatam pe paisa       (FR trip khatam pe pay)
+        driver ki jagah = phone ka har 4 sec wala bhejna, pehle se design me (kadam 1)
 ```
 
 **FR / NFR -> kadam (Arpan: "theek lag raha, achha lag raha"):** driver ki jagah = 1, 2, 2b, 8, 14, 16 · paas ka khaali driver =
@@ -98,6 +110,12 @@ nayi jagah aate hi upar likh do (sirf taaza chahiye).
 Abhi ki jagah ek parchi (Redis) pe, har 4 second purani kaat ke nayi, delivery ke baad hata do. Company ko poora raasta
 chahiye to saari location Kafka me (bheed ka jawab), wahan se batch me alag storage box me ("10 minute yahan khada tha").
 **Asli naam:** Redis me sirf aakhri jagah (overwrite), history = Kafka -> batch write alag storage, DB = sirf status.
+
+**Teesri kahani (21-Nov round):** matching ko abhi ke abhi chahiye, Kafka -> Cassandra batch me der se, isliye matching Redis
+se (har baar kaat ke latitude-longitude). Ride book hui tab raasta pakka chahiye (SOS / support: "Whitefield se kahan le gaya"),
+isliye Cassandra me wo jo important hai. Khaali aur bhara (sawari wala) driver alag: bhare ka raasta Kafka se batch me Cassandra,
+khaali ka padhai ke liye alag. Aage purane raaston se "airport ka sabse achha 9va raasta" bhi nikaal sakte.
+**Asli naam:** matching = Redis (overwrite), trip location history = Kafka -> batch -> Cassandra (SOS / audit), idle vs on-trip alag store, raaste ki padhai.
 
 ```mermaid
 flowchart TB
@@ -363,6 +381,12 @@ banata to aise.)
 **Asli naam:** jo dikhaya wahi = upfront fare: quote ride ke saath save (lock), aakhir me wahi kaato; zyada mehnat =
 tip alag, rider ki marzi.
 
+**Doosri kahani (21-Nov round):** concert se Whitefield, 900 dikha, traffic me 1 ghante ka raasta 2.5 ghante, 1400 kate.
+Teen nazar: driver ka 1.5 ghanta gaya (3-4 ride ya ek airport wali), Uber ka nuksaan, customer ka gussa jaayaz. Aage ka traffic
+pehle se nahi pata (Bangalore bhida shahar), pehle hi 1400 bol diya aur traffic nahi laga to bharosa gaya. Normal laal batti
+pe nahi badhao (buffer), sach me der (1.5 ghante se upar) to har extra 30 minute +100 / 150.
+**Asli naam:** time-based fare / waiting charge, buffer = free waiting; pehli kahani (upfront + tip) aur ye, dono raaste.
+
 ```mermaid
 flowchart TB
     A["Book pe 250 dikha, Arpan ne haan kiya"]:::card
@@ -406,6 +430,11 @@ to gateway ko bolo "lautao". Onboard pe SLA lo: uptime aur down hone pe khabar; 
 
 **Asli naam:** 30-55 sec = hamara client timeout, event = webhook (PSP callback), "mil gaya" = ack (2xx), baad me kata to
 lautao = REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe, onboard pe SLA = uptime SLA + incident response.
+
+**Maan lo (21-Nov round) 30 second jawab nahi, Arpan ne cash de diya, 5 minute baad GPay se bhi kat gaya:** DB me FAILED,
+raaste: Uber wallet / doosra PSP / cash. Table me "kitni der baad kata" column, raat ki cron job pakde aur Razorpay ko bole
+lautao. Kaise diya (cash / GPay + transaction id) bhi rakho. Wallet se kat gaya aur event aa gaya to Arpan ko mat roko.
+**Asli naam:** client timeout -> FAILED, PSP failover + cash fallback, late debit column -> reconciliation job, payment method + transaction id.
 
 ```mermaid
 flowchart TB
