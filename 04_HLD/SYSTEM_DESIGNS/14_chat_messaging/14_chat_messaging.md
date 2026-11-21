@@ -124,6 +124,9 @@ server pe. Dhoondhne ki zaroorat nahi, O(1) time me mil gaya. Key-value pe rakh 
 **Asli naam:** DSA wala map = session map Redis me (`ravi -> server 71`, userId -> server), O(1) me mil gaya = seedha
 lookup. Taar toota to server 71 map se Ravi ki entry mita deta.
 
+**Maan lo server gira, 1 lakh log ek saath judne aaye:** backoff + jitter, thodi-thodi request, warna server phir gire.
+**Asli naam:** reconnect storm, backoff + jitter.
+
 ```mermaid
 flowchart TB
     S3["Server 3 (Arpan):<br/>Ravi kis server pe?"]:::card
@@ -241,6 +244,9 @@ double tick = "pahuncha" ka jawab (ack) dobara bhejo.
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
 Isi key ki doosri kahani = kadam 5 ka bahar wala aadmi: wo 500 ko jaanta, #980 dobara aaye to "ye to chala gaya" bol
 ke phenk de (dedup fan-out pe).
+
+**Key ka pench:** clientMsgId sirf retry ka dohra rokta; user khud do baar bheje to dono jaayein, theek.
+**Asli naam:** idempotency sirf retry ke liye.
 
 ```mermaid
 flowchart TB
@@ -382,6 +388,9 @@ bitha do: "video aayi, mere paas aa ja, main chhota URL bana ke bhej deta hoon",
 (app ko S3 ka presigned upload URL deta, app video seedha S3 me daalti, phir chhota link banta), chhota URL = message
 me sirf link, wahin se dekh lenge = video S3 / CDN se. 500 log dekhein to bhi video ki copy ek hi.
 
+**Link ki umar:** presigned URL server ki secret key se, thode time baad expire; thumbnail alag.
+**Asli naam:** short-lived presigned URL.
+
 ```mermaid
 flowchart TB
     A["Arpan: 200 MB party video"]:::card
@@ -411,6 +420,8 @@ diya, ab wo offline.
 
 **Asli naam:** register = presence entry (Redis), har 3-5 second hilana = heartbeat, 2-3 baar jawab nahi to naam
 kaato = entry ki umar (TTL), heartbeat chhoote to apne aap mite. Aakhri heartbeat ka time = "last seen".
+
+**Maan lo Ravi chahta hi nahi dikhe:** privacy setting se last seen band. **Asli naam:** privacy setting check.
 
 ```mermaid
 flowchart TB

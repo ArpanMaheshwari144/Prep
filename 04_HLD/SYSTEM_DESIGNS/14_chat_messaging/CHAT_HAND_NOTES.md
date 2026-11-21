@@ -58,6 +58,8 @@ Technical me: "ek dabbe me rakh lo" = message store (pehle DB me save), "online 
 **3. 10 crore log, ek server sabke taar nahi pakad sakta, 100 server lage. Arpan ka taar server 3 pe, Ravi ka server 71 pe. Server 3 ko pata hi nahi Ravi kis server pe.**
 Arpan: Ek map rakh le apne paas, DSA wala map: ye is server pe hai, ye us server pe. Dhoondhne ki zaroorat nahi, O(1) time me mil gaya. Key-value pe rakh lo.
 Technical me: "DSA wala map, key-value" = session map in Redis (userId -> server), "O(1) me mil gaya" = seedha lookup.
+**Maan lo ek server gira, uske 1 lakh log ek second me dobara judne aaye:** Arpan: Sab users ek saath server pe hit karenge to dikkat, server dobara gir jaayega, use garam hone ka time chahiye. To backoff plus jitter: thodi-thodi request ek saath jaayengi, aisa nahi ki das crore sidha chale jaayein.
+Technical me: reconnect storm -> exponential backoff + jitter (har phone alag waqt pe dobara jude).
 
 **4. Server 3 ko pata chal gaya Ravi server 71 pe. Message 71 tak kaise pahunche? Har server baaki 99 se seedha taar jode? 100 x 99 taar, kal 500 server to aur zyada.**
 Arpan: Ravi online hai, hume pata hai wo kis server pe. Maan le saamne 10 ladke khade, maine ek chhote ladke ko kaha: "jo address tere paas hai, use le ke chala ja, wahan koi aadmi hoga, use ye pakda de." Wo dekhega "haan bhai, ye wo ladka hai", aur message pakda dega.
@@ -94,6 +96,8 @@ Technical me: "ek key rakh lo, key same to mana" = clientMsgId (idempotency key)
 **Maan lo ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja.**
 Arpan: (Arpan, 8-Nov: "ID jodna bas, sab me ID jodna; same ID to idempotency, server reject kar dega; bas chhota connect rakh.") Wahi key, lene wale ke phone pe: Ravi ka phone message ka number (seq / clientMsgId) dekhe, pehle aa chuka to dobara mat dikhao.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
+Arpan (key ka pench): Client message id idempotency key use karenge, to do message ek saath nahi jaayenge. Par ek pench hai: ye key server / app ke retry pe lagti hai; agar hum khud do baar bhejein to WhatsApp pe dono chale jaate, aur koi dikkat nahi.
+Technical me: clientMsgId = retry ka dohra rokta; user ne khud do baar bheja = do alag message (do alag id), theek.
 Isi key ki doosri kahani = 5d: bahar wala aadmi jo 500 ko jaanta, wahi #980 dobara aaye to "ye to chala gaya" bol ke parchi phaad de.
 
 **7. Group me Arpan ne "kal party" bheja, usi second Ravi ne "kahan?". Kuch members ko "kahan?" pehle dikha. Dono phone ki ghadiyan bhi 2 second aage-peeche. (Claude ne poochha: number lagayega kaun?)**
@@ -116,10 +120,14 @@ Technical me: "ginti 978, matlab 975 padha" = read watermark (number >= 975 to p
 **10. Arpan ne group me party ka 200 MB ka video bheja. Chat server ke raaste DB me save hoga aur 500 ko isi raaste. Taar chhote text ke liye bane the, video ne sab jam kar diya.**
 Arpan: Video ke liye alag taar jod do. Aaj 200 MB, kal koi 500 MB ya 1 GB bhi bhej sakta. Ise yahan se hatao, alag raaste pe bhej do. Ek alag machine rakh lo: "tu video hai, tu idhar ja", hamari chat block na kare. Video ko wahin pada rehne do, uska ek chhota URL bana do aur sabme bhej do, wo wahin se dekh lenge. Ek insaan bitha do: "video aayi, mere paas aa ja, main chhota URL bana ke bhej deta hoon", chat server pe koi dikkat nahi.
 Technical me: "alag machine, alag raasta" = S3 (chat server ke bahar), "chhota URL sabme bhejo" = message me sirf link, "wahin se dekh lenge" = video S3 / CDN se.
+Arpan (11-Oct): Video seedha S3 me, DB me uska presigned URL; jisko chahiye use URL bhejo, thumbnail bhi store kar sakte. Saath me server ki apni secret key, jisse video ka link thode time baad expire bhi ho jaaye.
+Technical me: presigned URL (server ki key se sign, chhoti umar), thumbnail alag.
 
 **11. Ravi ke naam ke neeche "online". Ravi ka phone lift me band, taar tootne ka signal server tak pahuncha hi nahi. 2 ghante se Ravi "online" dikh raha, phone band pada.**
 Arpan: Ek register me likh liya "Ravi online hai". Ab har 3-5 second baad Ravi ko hilaunga, haath maarunga: "Ravi, tu online hai?" "Haan bhai, online hoon, pareshaan mat kar." Phir haath maara, jawab nahi diya. Phir maara, phir jawab nahi. 2-3 baar hilaya aur jawab nahi diya, to register se Ravi ka naam kaat diya, ab wo offline.
 Technical me: "register me Ravi online" = presence entry (Redis), "har 3-5 second hilaunga" = heartbeat, "2-3 baar jawab nahi to naam kaat diya" = heartbeat chhoote to entry mite (TTL), "last seen" dikhe.
+**Maan lo Ravi chahta hi nahi ki sabko dikhe:** Arpan: Aajkal WhatsApp pe privacy hai, sabko na dikhe; app me setting se band kar lein. Ye ek feature hai, itna bada feature bhi nahi.
+Technical me: last seen privacy setting (server bhejne se pehle setting dekhe).
 
 **11b. Ravi online aaya. Uske phone me 500 contacts. Server "Ravi online hai" ki khabar 500 ko bheje? Lakhon log har minute online / offline, har baar 500-500 khabar ka toofan, aur 500 me se zyada tar ne Ravi ka naam us waqt screen pe dekha hi nahi.**
 Arpan: WhatsApp mujhe notification bhej ke thodi batayega ki dost online hai. Jisne Ravi ki chat khol rakhi hai, bas use dikhao. Maan lo 500 me se 10 ne chat khol rakhi, to 500 ko kyun, 10 ko dikhao. Jaise gaon me 500 log aur ek dukaan. Electronics ki dukaan pe nayi LED aayi, to dukaan wala 500 logon ke ghar thodi jaayega, ya bahar board laga ke raah chalte ko thodi dikhayega. Jo dukaan ke andar aaya, "aaiye sir, ye nayi LED aayi hai", usi ko dikhayega. Aur main server se baar-baar poochta nahi ki Ravi online hai. Taar to pehle se khula hai (1). Maine chat kholi to bas server ko pata lag gaya, ab wo usi khule taar pe mujhe khud bata dega. Dono taraf se taar khula hai.
