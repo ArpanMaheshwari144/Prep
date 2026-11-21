@@ -89,7 +89,8 @@ Technical me: "parchi pe contest id + khatam hone ka waqt" = event time, "usi di
 Technical me: reset = naya key (din ki tareekh se) ya agla score aate hi overwrite; 80 lakh ko ek-ek zero karna nahi.
 
 **Maan lo contest raat 11 baje shuru, 1-3 baje khatam:** Arpan: 9 tareekh raat 11 baje shuru hua, to hamare leaderboard pe wo contest 9 tareekh ka; India scope maan ke poore desh ka ek waqt. World wide lena ho to ek time zone rakho, UTC jo aajkal standard hai; utna detail me jaane ka matlab nahi.
-Technical me: contest ka din = shuru hone ki tareekh (contest id ke saath), ek time zone (India IST / duniya UTC).
+Arpan (12 + 21-Nov, contest do tarah ke): (1) ek jagah ka contest: LeetCode ne duniya bhar se log ek room me (maan lo USA) bulaye, to wahan ka time zone; Europe karwaye to Europe ka. (2) duniya bhar ka online contest (LeetCode jaisa): ek hi time zone UTC; aisa nahi ki India ka IST, Europe ka alag.
+Technical me: contest ka din = shuru hone ki tareekh (contest id ke saath); ek hi time zone: ek jagah ka contest = wahan ka, duniya bhar ka online = UTC.
 
 **6. Main 4,52,318 pe hoon, top 10 me kabhi nahi aaunga. Screen pe mere aage ke 5 aur peeche ke 5 chahiye, par wo alag-alag dabbon me baithe hain (Kenji Japan me, Sara Europe me).**
 Arpan: Mera score 5200 hai, to mujhe 10,000 wale se kya lena-dena. Bheed me main apne aas-paas scan karta, poori bheed nahi dekhta. 5200 ke aas-paas wali range dekho; 4000 aur 6000 walon se matlab nahi. Jaise highway pe gaadi 300-350 km jaayegi to petrol pump usi area me dhoondhta hoon (yahi soch cache 4 me: key ring pe paas ke dabbe me).

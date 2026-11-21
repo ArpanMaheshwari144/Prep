@@ -206,7 +206,8 @@ ke register me hi nahi.
 **Asli naam:** "parchi pe contest id + khatam hone ka waqt" = event time, "usi din ke register me" = event time se bucket (pahunchne ke waqt se nahi), "purana register side me" = har din ka board history me rakho (discard nahi). "register kar ke aaye nahi" = contest ka sign-up; "mota register" = DB (kadam 7, score pehle DB me).
 
 **Doosri kahani:** mita mat, overwrite; aaj nahi aaya to 0; ya naya register, purana discard. **Maan lo contest 11 baje shuru,
-1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh), India me ek waqt, duniya me UTC.
+1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh). Ek jagah ka contest (LeetCode ne sabko USA bulaya) = wahan
+ka time zone; duniya bhar ka online = UTC, IST / Europe alag-alag nahi.
 **Asli naam:** reset = naya key / overwrite, contest date = start date, ek time zone.
 
 ## 6. Mere aage ke 5, peeche ke 5 (bheed me aas-paas scan, paas ka petrol pump)
