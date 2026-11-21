@@ -461,7 +461,7 @@ dobara bharo.
 Ek aur raasta: pehle dono ko sync karo (30-40 sec), phir hi feed me dikhao, to search me bhi turant mile. Kaunsa, ye
 requirement se: user kitne second ruk sakta.
 
-**Asli naam:** Elasticsearch = alag search index (black box, PSP jaisa); koi pooche to: har shabd ke saamne khabar ki list,
+**Asli naam:** Elasticsearch = alag search index (black box, PSP jaisa) (bana-banaya: AWS OpenSearch / Elastic Cloud; hum sirf sikhate kya aur kaise dhoondhna, Foundations 12); koi pooche to: har shabd ke saamne khabar ki list,
 jaise kitaab ke peeche ka index ("Kohli" -> khabar 3, 7, 9), isliye poori likhai nahi padhni padti (inverted index); sabki jad = stemming / synonyms (analyzer); ek baat
 ke 5 paper = clustering (kadam 3 jaisa); dono me ek saath = dual write; peeche-peeche = async indexing (eventual
 consistency); sync fail = alert + reindex.

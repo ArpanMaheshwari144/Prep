@@ -48,7 +48,7 @@ Abhi sirf Postgres hai, 50 lakh restaurant, har ek ke naam aur menu me "burger" 
 aur "burgr" likha to ek bhi result nahi. Ravi ka latitude longitude lo, uske aas-paas ke restaurant hi dekho, jaise Uber
 me karte. Text dhoondhna Elasticsearch ka kaam: kuch bhi likho, sahi option de deta, "burgr" pe bhi burger.
 
-**Asli naam:** aas-paas = geo filter (geohash / radius), text = Elasticsearch (inverted index), galat spelling pe bhi =
+**Asli naam:** aas-paas = geo filter (geohash / radius), text = Elasticsearch (inverted index) (bana-banaya: AWS OpenSearch / Elastic Cloud; hum sirf sikhate kya aur kaise dhoondhna, Foundations 12), galat spelling pe bhi =
 fuzzy search (typo tolerance).
 
 ```mermaid

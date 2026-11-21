@@ -19,6 +19,27 @@
 
 ---
 
+## Apne app me kaise lagaun (bana-banaya milta, hum sirf sikhate)
+
+Elasticsearch khud banana nahi padta. Bana-banaya milta: **AWS OpenSearch** (AWS ne Elasticsearch se hi bana ke diya, kaam
+wahi) ya **Elastic Cloud**, jaise Postgres ke liye RDS liya tha. Humara kaam sirf use **sikhana**: kya dhoondhna, kis shabd
+se kya milana.
+
+```
+1. ES chalao: bana-banaya le lo (AWS OpenSearch / Elastic Cloud)
+2. Ek "index" banao (ES ki table jaisa) aur ek baar batao khabar me kya-kya:
+   title, body = text      -> shabdon me todo, "shoes" = "shoe" maano          <- yahi "sikhana"
+   category, date = seedha -> filter ke liye
+3. Khabar aayi to ES ko bhi do: worker Postgres me likhe aur saath me ES ko JSON { id, title, body, category, date };
+   ya Kafka se ek alag worker peeche-peeche ES me bhare (sync)
+4. User ne search kiya: server ES se poochhe "title/body me 'Kohli century', cricket, pichhle 7 din";
+   ES khabar ke id deta (sabse matching pehle), server un id se khabar dikhata
+```
+
+Java me: Spring Data Elasticsearch, JPA jaisa: repository, `save()` se ES me, `findBy...` se dhoondho. Andar sab HTTP pe JSON.
+
+---
+
 ## Problem — DB search kyun weak
 
 ```

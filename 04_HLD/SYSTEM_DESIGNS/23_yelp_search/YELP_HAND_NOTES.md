@@ -38,7 +38,7 @@ NFR     1  band dukaan search me "Closed" dikhe (search thodi der peeche chalega
 
 **1. Raat 10 baje Ravi "burger" likhta hai. Abhi sirf Postgres hai, 50 lakh restaurant, har ek ke naam aur menu me "burger" dhoondhna (LIKE '%burger%'), 8 second. Upar se "burgr" likha to ek bhi result nahi.**
 Arpan: Ravi ne burger likha, to uske aas-paas ka, geohash, uska latitude longitude hoga, aur uske aas-paas ke jitne restaurant me burger hai wo dikha denge. Ye wahi cheez hai jo Uber me karte, same. Ab usne "burger" nahi "burgr" likha, to Elasticsearch hai, ek cheez jo kuch bhi likho sahi option de degi: burger. Almost easy hai, pehle se padha hua.
-Technical me: "aas-paas ke restaurant, latitude longitude" = geo filter (geohash / radius), "kuch bhi likho sahi option" = Elasticsearch (inverted index) + fuzzy search (typo tolerance).
+Technical me: "aas-paas ke restaurant, latitude longitude" = geo filter (geohash / radius), "kuch bhi likho sahi option" = Elasticsearch (inverted index) + fuzzy search (typo tolerance). (bana-banaya: AWS OpenSearch / Elastic Cloud; hum sirf sikhate kya aur kaise dhoondhna, Foundations 12)
 
 **2. Search ab Elasticsearch se, asli data Postgres me. "Burger Singh" ne aaj ke liye dukaan band ki (chhutti), Postgres me "closed". Par Ravi ke search me Burger Singh abhi bhi aa raha, ES ke paas purani jaankari.**
 Arpan: Postgres aur Elasticsearch ko sync kar do: Burger Singh close ho gaya to close dikha do. Ye thodi hoga ki Burger Singh search me aana hi band; Zomato me restaurant aate hain, bas Closed dikhta hai, dikkat kya hai. To Postgres aur Elasticsearch ke beech sync job chala do: ye ab close ho chuka, to close.
