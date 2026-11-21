@@ -52,6 +52,7 @@ NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi
         · ride ke beech driver gaya to sambhalo
         · sawari wali ride ka poora raasta pakka rahe (SOS / shikayat), khaali driver ka zaroori nahi (Arpan 21-Nov, kadam 2)
         · gateway chup ho to customer / driver atke nahi (30 sec, phir doosra raasta) (Arpan 21-Nov, kadam 13)
+        · concert jaisi bheed (50-60 hazaar) me sabko turant cab ka vaada nahi, intezaar hoga (Arpan 21-Nov, kadam 6)
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
         Arpan 21-Nov: ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
@@ -61,6 +62,10 @@ API     (Arpan 21-Nov) GET  aas-paas ke driver  -> app khulte hi naksha pe    (F
                        POST pay                 -> trip khatam pe paisa       (FR trip khatam pe pay)
         driver ki jagah = phone ka har 4 sec wala bhejna, pehle se design me (kadam 1)
 ```
+
+**Dhaancha (Arpan 21-Nov round):** Arpan ne app khola -> aas-paas ke driver dikhe; Book -> server -> process -> DB me likha
+-> wapas Arpan ko ride. Bahut saare server, DB ki replica. CDN / S3 ki zaroorat nahi. Redis aage jahan lage.
+**Asli naam:** client -> kai app server (LB) -> DB + read replica; CDN / S3 nahi.
 
 **FR / NFR -> kadam (Arpan: "theek lag raha, achha lag raha"):** driver ki jagah = 1, 2, 2b, 8, 14, 16 · paas ka khaali driver =
 3, 4, 4b, 6c, 9 · ek driver ek sawari = 5, 7 · Raju live = 10, 11, 16b-16d · kiraya pehle = 12 · trip khatam pe pay = 13 ·
@@ -143,6 +148,10 @@ khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
 
 **Asli naam:** naksha dabbon me = geohash (grid), sirf apna dabba = 5 lakh ki jagah gine-chune driver.
 
+**21-Nov round (Whitefield):** Whitefield bada; ITPL, Agrahara, Nexus Forum mall alag-alag chhote hisse. Lakhon cab phone pe
+dikhana namumkin, sirf apna hissa. Bheed wali jagah dabba chhota-bada baad me (6c).
+**Asli naam:** geohash cell, adaptive cell size.
+
 ![Naksha pehle se dabbon me kata: server sirf Arpan ke dabbe me dekhe](../00_IMG/15_uber_map_kadam3.svg)
 
 ## 4. Arpan dabbe ke kinare pe, 200 meter door khaali driver (gola khincho)
@@ -152,6 +161,10 @@ Dabbe ki seema pe mat chalo. Arpan jahan khada wahan se 8 km ka gola khincho; ji
 bhi dekho, phir asli fasla naap ke sabse paas wala.
 
 **Asli naam:** gola + chhoote dabbe = apna geohash + aas-paas ke dabbe (neighbours), phir asli distance.
+
+**21-Nov round (Raju border paar Agrahara):** Arpan se 5 km gola (7-8 bhi), driver aate-jaate rahenge. Sirf khaali driver,
+sabka phone bajao ("ITPL se airport"), request ki umar ~30 sec, jo accept kare uski.
+**Asli naam:** neighbour cells + asli fasla, available filter, broadcast dispatch, request TTL.
 
 ![Dabbe ki seema pe mat chalo: Arpan se 8 km ka gola, chhoote dabbon ke driver bhi](../00_IMG/15_uber_map_kadam4.svg)
 
@@ -171,6 +184,10 @@ driver.
 
 **Asli naam:** parchi = driver pe hold / lock (atomic: sirf FREE ho to lagao), umar = TTL. Taala har driver ka alag,
 to bheed me bhi sab ek taale pe nahi toot-te.
+
+**21-Nov round (Samudra tower gate 3 / gate 1):** pehle dekha phir alag se book kiya to beech me dono ko wahi driver.
+Dekhna + book ek saath (lock, select + update ek kadam). Alag-alag tod ke kiya to server faltu chakkar, din me hazaron baar.
+**Asli naam:** atomic conditional update / lock (WHERE driver FREE), read-then-write race se bachao.
 
 **Maan lo net atka, Arpan ne Book do baar daba diya:** Payment wali idempotency key: phone Book dabate hi booking id banaye, dono request me wahi. Server pehle id dekhe, pehle aa chuki to nayi ride nahi, wahi purani ride lauta do.
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
@@ -205,6 +222,11 @@ to 500 log andar, baaki line me, agli baari. 50 hazaar ko server pe bitha ke kya
 kiraya badha ke door ki cab bulao.
 
 **Asli naam:** 500 andar, baaki line = virtual queue (waiting room), kiraya badhao, door ki cab aaye = surge pricing.
+
+**21-Nov round (Palace Grounds, Arijit Singh concert, 50-60 hazaar):** garam jagah pe server badhao (autoscale), dayra
+5 -> 20-30 -> 50 km, door se driver + kiraya badhao, Palace Grounds ko khaano me kaat ke alag server (ek server pe dhaava nahi),
+laut ke aayi cab turant available, bagal ke khaane ki khaali cab ke liye dayra badhao. Sach: intezaar hoga hi.
+**Asli naam:** autoscaling, search radius, surge, cell-wise baantna (thundering herd se bachao), scatter-gather, NFR me "bheed me turant ka vaada nahi".
 
 ```mermaid
 flowchart TB
@@ -244,6 +266,10 @@ sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd.
 dikhti hai.
 
 **Asli naam:** ghadi server ki = TTL ka faisla server pe, der se aaya accept reject.
+
+**21-Nov round:** umar 30 sec; 29.3 pe accept par server dheema, 30 nikla -> ride nahi, agla driver (lakhon me ek). Ya
+jab tak koi accept na kare sabka phone bajta rahe. Uber asal me kaise, pakka nahi pata; dono raaste.
+**Asli naam:** request TTL (server ki ghadi), re-dispatch, TTL ke bina broadcast.
 
 Doosri kahani: aakhri ice-cream, do bachche daude, pehle shuru karne wala gir gaya; ice-cream usko jo pehle pahuncha.
 Server pe Suresh ka accept pehle aaya to ride Suresh ki. Raju ko "request nahi pahunchi" nahi, bas "tumse pehle kisi aur

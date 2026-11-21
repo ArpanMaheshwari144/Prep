@@ -46,6 +46,7 @@ NFR     driver turant mile (kuch second) · ek driver do jagah kabhi nahi
         · ride ke beech driver gaya to sambhalo
         · sawari wali ride ka poora raasta pakka rahe (SOS / shikayat), khaali driver ka zaroori nahi (Arpan 21-Nov, kadam 2)
         · gateway chup ho to customer / driver atke nahi (30 sec, phir doosra raasta) (Arpan 21-Nov, kadam 13)
+        · concert jaisi bheed (50-60 hazaar) me sabko turant cab ka vaada nahi, intezaar hoga (Arpan 21-Nov, kadam 6)
 Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking shaam ko hazaaron / sec
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
         Arpan 21-Nov: ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
@@ -60,6 +61,9 @@ API     (Arpan 21-Nov) GET  aas-paas ke driver  -> app khulte hi naksha pe    (F
 3, 4, 4b, 6c, 9 · ek driver ek sawari = 5, 7 · Raju live = 10, 11, 16b-16d · kiraya pehle = 12 · trip khatam pe pay = 13 ·
 bheed me kiraya = 6 · sabki milake doori kam = 15, 15b · der se ruka peeche na rahe = 15c, 15d · NFR turant mile = 3, 4, 7b ·
 ek driver do jagah nahi = 5, 7 · ride ke beech driver gaya = 14, 16d.
+
+**Dhaancha (Arpan 21-Nov round, copy pe):** Arpan ne Uber khola, use Whitefield ke aas-paas ke saare driver dikhne chahiye. Book dabaya to request server pe gayi, server ne andar process kiya, DB me likha, wapas aayi, Arpan ko ride mil gayi. Uber ke paas ek nahi, bahut saare server; DB ki replica. CDN aur S3 ki zaroorat nahi, inka yahan koi lena-dena nahi. Redis kahan lagega, wo aage dekhenge.
+Technical me: client -> kai app server (LB ke peeche) -> DB + read replica; CDN / S3 nahi (koi badi file nahi).
 
 &nbsp;
 
@@ -83,9 +87,17 @@ Technical me: "jaldi ke liye parchi" = matching Redis se (abhi ki jagah, overwri
 Arpan: Connaught Place pe khade ko ISBT ka driver kyun? Sirf 8-9 km ke andar wale chahiye. Aur 5 lakh me se chhaanto mat: naksha pehle se dabbon me kata ho, server sirf usi dabbe me dekhe jahan Arpan khada. Usme 3 driver, unme jo khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
 Technical me: "naksha dabbon me" = geohash (grid), "sirf apna dabba" = 5 lakh ki jagah gine-chune driver.
 
+**Isi dikkat ki doosri kahani (21-Nov round, Whitefield):** Whitefield bahut bada ilaaka hai; ITPL me Samudra tower pe khada hoon, ek cab Agrahara ke paas, ek idhar, ek udhar.
+Arpan: Area ko baant do, chhote-chhote hisse: ITPL alag, Agrahara alag, Nexus Forum mall alag. Whitefield ki saari cab mere phone pe thodi dikhengi, us waqt lakhon cab ho sakti, phone me dikhana namumkin. Jahan traffic / bheed zyada wahan dabba chhota-bada karna, wo baad me.
+Technical me: "chhote hisse" = geohash cell, "bheed pe dabba chhota-bada" = cell size badalna (adaptive), wo aage kadam 6c.
+
 **4. Arpan dabbe ke kinare pe, 200 meter door bagal wale dabbe me khaali driver, app bola "koi nahi".**
 Arpan: Dabbe ki seema pe mat chalo. Arpan jahan khada wahan se 8 km ka gola khincho; jin dabbon ko gola chhoota, unke driver bhi dekho.
 Technical me: "gola + chhoote dabbe" = apna geohash + aas-paas ke dabbe, phir asli fasla.
+
+**21-Nov round (Raju border paar karke Agrahara gaya):**
+Arpan: Driver to aate-jaate rahenge, gaadi non-stop chal rahi. Main upar se dekh raha: Arpan jahan khada wahan se 5 km ka gola (7-8 km bhi chalega), us gole me jo bhi driver hain. 10 me se ek gaya, ek aaya, chalta rahega. Jo sawari leke ja raha hai wo nahi, jo khaali hai unka phone baja do: "Arpan ki request aayi, ITPL se airport." Request ki umar, maan lo 30 second; jo accept kare usko ride. Raju akela tha aur dabbe se nikal gaya to Arpan ko us waqt koi nahi dikhega, jaise naye aayenge dikhte jaayenge.
+Technical me: "5 km gola" = aas-paas ke cell + asli fasla, "sirf khaali" = available drivers filter, "phone baja do" = broadcast dispatch, "30 second" = request TTL.
 
 (Yahan se kadam 6 ke India-Pakistan wale Maan lo tak saare scene Lucknow ke: Arpan Lucknow me hai, wahan Gomti nadi aur Ekana stadium. Shehar badla, Uber ki baat wahi.)
 
@@ -97,6 +109,10 @@ Technical me: "map pe paas" = seedhi lakeer (straight-line) doori, "sadak se kit
 Arpan: BMS wali parchi: "Raju khaali hai to Arpan ka" ek kadam me. Jiski pehle pahunchi uski parchi, doosre ko "Raju chala gaya", uske liye agla driver. Parchi ki umar: Raju 15 sec me accept na kare to parchi hatao, agla driver.
 Technical me: "parchi" = driver pe hold / lock (atomic, sirf FREE ho to), "umar" = TTL.
 
+**21-Nov round (Samudra tower: Arpan gate 3 pe, Priya gate 1 pe, saamne wali road se ek khaali driver):**
+Arpan: Worst case dono request server pe ek hi millisecond me. Agar pehle dekha "driver khaali hai" aur phir alag se book kiya, to beech me Priya ke liye bhi wahi driver khaali dikh gaya, dono ko mil gaya. Isliye dekhna aur book karna ek saath karo: lock lagao, select aur update ek hi kadam, khatam. Pehli request andar gayi to apna kaam poora karke aayegi, driver Arpan ka; Priya ke liye wo driver bacha hi nahi. Alag-alag tod ke kiya to server Priya ki request le ke faltu andar jaata, din me hazaron baar ye extra kaam.
+Technical me: "select aur update ek saath" = atomic conditional update / lock (WHERE driver FREE), "faltu kaam" = alag read-then-write me race + bekaar DB chakkar.
+
 **Maan lo net atka, Arpan ne Book do baar daba diya.**
 Arpan: ID jodna bas, sab me ID jodna. Booking ID jaayegi, same hi ID hai na, to wo idempotency ki ho jaayegi, server apne aap reject kar dega. Yahan booking ID hogi, wahan koi aur ID hogi; bas chhota connect rakh.
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
@@ -104,6 +120,10 @@ Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 **6. Diljit ka concert khatam, 50 hazaar log, cab sirf 500.**
 Arpan: BMS jaisa: 500 cab hain to 500 log andar, baaki line me, agli baari. 50 hazaar ko server pe bitha ke kya karunga. Pehle 500 sambhalo, phir kiraya badha ke door ki cab bulao.
 Technical me: "500 andar, baaki line" = virtual queue, "kiraya badhao, door ki cab aaye" = surge pricing.
+
+**21-Nov round (Palace Grounds pe Arijit Singh ka concert, 50-60 hazaar log cab se aaye the, ab sab ek saath book kar rahe):**
+Arpan: Sab ki request ek server pe aayi to server baith jaayega, to us garam jagah pe thodi der ke liye server badha do (autoscale, Kubernetes / AWS khud karte, uski andar ki baat design ka hissa nahi). Cab 150-200 hain, log 50-60 hazaar, to dayra badhao: 5 km ki jagah 20-30, phir 50 km; Sankey Tank, idhar-udhar door se driver bulao, aur door se aane ka kiraya badhao (aane ka + jaane ka), warna driver tel phoonk ke aayega aur Uber ka bhi bhada nahi niklega. Palace Grounds ko chhote khaano me kaato, upar ke 5 khaane ek server pe, neeche ke 5 doosre pe, taaki 50-60 hazaar ek hi server pe dhaava na bolein. Jo cab Kormangala chhod ke laut aayi wo turant phir available. Bagal wale khaane me cab khaali ghoom rahi aur Arpan ke khaane me koi nahi, to Arpan ka dayra ek khaana aur badhao. Aur sach: 50-60 hazaar ko turant cab namumkin, intezaar hoga hi, ek-do ghanta bhi; main ITPL se normal din me bhi 45 minute gola ghumte dekhta hoon.
+Technical me: "server badhao" = autoscaling, "dayra badhao" = search radius badhana, "door ka kiraya" = surge pricing, "khaano me kaato, alag server" = cell / shard ke hisaab se baantna, thundering herd se bachao, "bagal ka khaana" = scatter-gather (kadam 6c), "laut ke turant available" = driver free after trip, "intezaar hoga" = NFR me saaf: bheed me turant cab ka vaada nahi.
 
 **Maan lo Ekana stadium me match khatam, 2 minute me 15,000 booking ek hi dabbe se. Drivers ka data dabbe ke hisaab se alag-alag server pe baanta hai; stadium wale server ka CPU 100%, baaki shehar ke server khaali.**
 Arpan: Pehle to itne driver us dabbe me honge hi nahi, gola bada karo, Gomti Nagar, Chinhat se bhi gaadi aaye. Aur ek server pe bojh: us ilaake ke liye 2-3 dabbe extra laga do taaki load ek machine pe na rahe. Har baar haath se nahi lagaunge: stadium, Connaught Place jaise hotspot pata hain, wahan pehle se 2-3 extra dabbe le ke chalo, aur 40-50 hazaar booking ki had paar ho to system apne aap dabbe badha de.
@@ -118,6 +138,10 @@ Technical me: "pehle server, phir todo" = pehle scale out, zaroorat pe hi split,
 **7. Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak Priya ko de diya.**
 Arpan: Ghadi server ki. 15 sec tak ruka, phir chala gaya; der se aaya to uski parchi phaad do, accept radd. Uber me bhi aise booking cancel hoti dikhti.
 Technical me: "ghadi server ki" = TTL ka faisla server pe, der se aaya accept reject.
+
+**21-Nov round:**
+Arpan: Request ki umar maan lo 30 second. Arpan ki request 29.3 pe Raju ne accept ki par server dheema tha, likh nahi paaya, 30 nikal gaya: ride nahi milegi, umar aage nahi badhayenge. Agla driver le lega; ye sanyog lakhon me ek baar, Arpan ki cab agle driver se lag jaayegi. Doosra raasta: jab tak koi accept na kare, sabka phone bajta rahe, umar hi nahi. Uber asal me kaise karta (1 minute, 1.5, 3, ya jab tak driver dayre me), pakka nahi pata; dono notes me.
+Technical me: "30 second, phir nahi" = request TTL, server ki ghadi; "agla driver" = re-dispatch; "bajta rahe" = TTL ke bina broadcast jab tak accept.
 Doosri kahani (17-Nov grill): Main server pe baitha hoon. Uber me ride ek driver ko nahi, aas-paas ke jitne khaali driver hain sabke paas jaati. Raju ne 14.9 pe dabaya par server tak 16 pe aaya, itne me Suresh ka accept server pe aa gaya, to cab Suresh ko, kyunki server ne usse pehle dekha. Jaise mere paas ek aakhri ice-cream bachi, do bachche daude; ek ne pehle shuru kiya par gir gaya, mujhe dukh hua, par doosra aake paise de deta hai. Emotion me keh sakte ruk jaao, par technically ice-cream usko jo pehle mere paas aaya. Raju ko ye nahi bolenge "tumhari request nahi pahunchi", bas "tumse pehle kisi aur ne le li".
 Technical me: "server ne pehle dekha" = server pe jo accept pehle pahuncha wo jeeta (first-write-wins / conditional update), "kisi aur ne le li" = Raju ko ride taken / expired message.
 
