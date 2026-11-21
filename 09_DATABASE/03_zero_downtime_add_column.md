@@ -1,58 +1,58 @@
-# Zero-Downtime: Huge Hot Table me Column Add Karna
-
-> **DATABASE Q&A — Topic 03** (backend/HLD classic, JP-relevant)
+# DB 03 — Chalti table me naya column (bina dukaan band kiye)
 
 ---
 
-## QUESTION
+## Koi poochhe to aise bolo
 
-> Ek table hai jispe **millions of users har second read + write** kar rahe (hot table).
-> Ab mujhe usme **ek naya column ADD** karna hai — **NO DOWNTIME**. Kaise?
-
----
-
-## PROBLEM — naive ALTER kyun khatarnaak
-
-Naive `ALTER TABLE users ADD COLUMN ...` purane DB/versions me:
-- **Poori table LOCK** kar deta (reads/writes block) jab tak table **rewrite** hota
-- Millions users ke liye = **DOWNTIME**
+Badi table jispe har second laakhon log padh-likh rahe, usme naya column jodna hai bina roke. Purane DB me `ALTER TABLE ADD
+COLUMN` poori table pe taala laga ke use dobara likhta tha, utni der sab ruk jaata. Aaj MySQL 8 / Postgres 11+ me **khaali
+(nullable) column** jodna turant hota: sirf table ka naqsha badalta, data dobara nahi likha jaata. Column pakka (NOT NULL) aur
+bhara chahiye to teen kadam: khaali column jodo -> purani rows chhote batch me bharo -> sab bhar jaaye tab NOT NULL.
 
 ---
 
-## ANSWER — solutions (chhote-se-bade order me)
+## Kahani: chalti dukaan me naya shelf
 
-### 1. Modern DB — native INSTANT add (chhota/nullable column)
-- **MySQL 8.0+:** nullable column **end me** add = **INSTANT** (metadata-only, NO table rewrite).
-  ya `ALTER TABLE ... ADD COLUMN ..., ALGORITHM=INPLACE, LOCK=NONE` (writes chalte rehte).
-- **PostgreSQL 11+:** nullable / constant-default column add = **instant** (metadata-only).
-- **KEY:** **nullable + no-heavy-default = FAST.** **NOT NULL + computed default = full REWRITE (bura).**
-
-### 2. Online-schema-change TOOLS (badi table / purana DB / complex change)
-**gh-ost (GitHub)** ya **pt-online-schema-change (Percona):**
-1. Ek **shadow/ghost table** banate (original + naya column)
-2. Data ko **chhote BATCHES** me background me copy
-3. Ongoing writes ko **SYNC** rakhte (pt-osc = triggers, gh-ost = binlog)
-4. Catch-up pe **atomic RENAME swap** (near-instant cutover)
-5. Original pe reads/writes chalte rehte → **ZERO downtime**
-
-### 3. EXPAND-CONTRACT pattern (safest, app-level — jab NOT NULL/default chahiye)
-- **Expand:** column **nullable, no-constraint** add (fast/safe)
-- **Backfill:** background job purane rows **BATCHES me** bhare (1 bada UPDATE NAHI -> lock + replication-lag)
-- **Migrate:** app naye column pe read/write shift kare
-- **Contract:** baad me NOT-NULL/constraint add, ya purana column hatao
+```
+Purana tareeka:  shutter gira ke poora maal naye rack me shift -> grahak bahar khade (downtime)
+Khaali column:   diwaar pe khaali shelf tang di, kuch hila hi nahi (instant)
+Bhara chahiye:   shelf tango -> raat ko thoda-thoda maal rakho (batch) -> sab bhar gaya to board "yahan hamesha maal" (NOT NULL)
+Bahut badi table: bagal me naya godown (shadow table), maal dheere shift, nayi aamad dono jagah, ant me board badal do
+```
 
 ---
 
-## KEY DON'Ts
-- Huge table pe **NOT NULL + computed/volatile default (ya purana MySQL/PG) EK-SHOT me NAHI** (rewrite/lock). Constant default PG 11+ / MySQL 8.0.12+ pe instant.
-- Backfill **ek bade UPDATE me NAHI** — hamesha **BATCH** (1k-10k rows at a time; warna lock + replica-lag)
+## Do raaste
+
+**Raasta 1 (zyaadatar): usi table me naya column**
+```
+1. usi table me khaali column (turant)
+2. ab se jo naya aaya, app naye column me bhi likhti
+3. purani rows peeche se query se bharte gaye, chhote batch me   (backfill)
+4. sab bhar gaya to NOT NULL
+```
+
+**Raasta 2 (bahut badi table / purana DB): nayi table**
+```
+1. bagal me nayi table (purani + naya column)
+2. purana data peeche se batch me copy
+3. is beech jo naya aa raha wo dono jagah likha jaata (tool khud karta: gh-ost / pt-osc)
+4. sab barabar to ek pal me naam badal do: nayi table hi ab asli
+```
+
+Dono me "peeche se dheere-dheere bharna" wahi baat; farak itna ki raasta 1 me sab usi table me, raasta 2 me bagal ki nayi
+table ant me purani ki jagah leti.
 
 ---
 
-## POWER LINE (interview)
-> *"Add the column as nullable — on MySQL 8 / Postgres 11 that's an instant metadata change, no rewrite. For large tables or backfills, use gh-ost / pt-online-schema-change (shadow table + batched copy + live sync + atomic swap), or the expand-contract pattern: add nullable → backfill in batches → then add constraints. Never a single big ALTER with a computed NOT NULL default on a hot table."*
+## Dikkat se hal
 
-> **Yaad rakh:**
-> nullable-add = instant (modern DB) · badi table = gh-ost/pt-osc (shadow+batch+swap)
-> NOT-NULL/default chahiye = expand-contract (nullable -> backfill-batches -> constraint)
-> backfill ALWAYS batched, kabhi single-big-UPDATE nahi
+Ek jhatke me NOT NULL + default wala column jodo to purane DB me poori table dobara likhi jaati, taala lagta. Hal: khaali
+jodo, batch me bharo, phir shart (expand-contract).
+
+---
+
+## Trap
+
+Purani rows bharne ke liye ek hi bada `UPDATE users SET city = ...` chala diya: laakhon rows pe ek saath taala (DB 02 wala),
+replica peeche, app ruki. Bharna hamesha 1-10 hazaar rows ke batch me.
