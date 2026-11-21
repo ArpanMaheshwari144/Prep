@@ -60,6 +60,9 @@ Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna iss
 **1. Arpan ne parchi di "Ravi ko 500 bhej do". Cashier ne Arpan ke 500 kaate, Ravi me jodne jaata usi pal bijli chali gayi. Arpan ke 500 kat gaye, Ravi ko kuch nahi mila.**
 Arpan: Bhai aisa karo na, mere 500 kat gaye to mujhe 500 wapas de do. Ye hai dikkat: mere 500 kate, Ravi ko kuch nahi mila, to mujhe mere 500 wapas de do na, dikkat hi khatam.
 Technical me: "mere 500 wapas de do" = transaction rollback (ya dono kaam, ya koi nahi).
+**Maan lo pooche saga kyun nahi, aur DB kaunsa:** Arpan: Saga isliye nahi le rahe ki saga ke liye do alag DB chahiye; yahan sab same DB me kaam kar raha. Ek se kata, doosre ko mila, ye transactional hai, consistency bhi chahiye, log bhi. Isliye SQL DB prefer karunga, wo bahut cheezein free me deta: ACID, transaction. Aisa nahi ki NoSQL me transaction nahi hota, hota hai; par yahan itna likhna nahi chahiye, JSON type data nahi, row wala data hai: pehli row, doosri row.
+**Asli bank me (sach):** Arpan: Ye bolne me jitna aasaan lagta, utna aasaan nahi. Banking me aksar teen-chaar se paanch din baad paise wapas aate hain; peeche job chalti hongi.
+Technical me: ek DB = ek transaction (ACID), saga sirf alag DB pe; row data + transaction = SQL; asli refund / reversal = peeche ki reconciliation job (din lag sakte).
 
 **2. Ravi ko 500 pahunch gaye, par receipt milne se pehle Arpan ki line kat gayi. Use pata nahi chala, usne wahi parchi dobara di.**
 Arpan: Wo cheez hamare paas hai na, humne likh di thi. Bhale hi uski line kati ho, wo dobara bheje, wo log to hamare paas hai. Hum dekh lenge ki 500 chale gaye, to mana kar do: "nahi bhai, 500 tumhare already bhej diye hain."
@@ -68,6 +71,8 @@ Technical me: "log hamare paas hai, dekh ke mana" = DB me pehle wala record dekh
 **Maan lo agle din Arpan sach me Ravi ko phir 500 bhejna chahta hai. Diary me pehle se "Arpan se Ravi, 500" hai, cashier use bhi mana kar dega. Wahi purani parchi hai ya nayi, kaise pehchaane?**
 Arpan: Aisa karo, ek key bana do, ek key le lo. Arpan ne Ravi ko 500 bheje, ab use pata nahi gaye ki nahi, to wo dobara bhejega to usi key ke saath bhejega na, key thodi badli, key to same hi hai. Key kuch aisa rakho jo badle hi na. Maan lo maine ek parchi pe likh diya ki Ravi ko 500 bhejne hain is waqt, aur parchi bank wale ko de di. Mujhe nahi pata gaye ki nahi, to main dobara wahi same parchi dunga. Wo dekhega: "abe yaar ye to same hi hai, ise kyun wapas bhejna, hatao." Matlab ek key aisi banegi jo do baar transaction me same hi rahegi.
 Technical me: "key jo badle hi na, same parchi" = idempotency key, "ye to same hi hai, hatao" = key pehle aa chuki to purana jawab (UNIQUE), nayi parchi = nayi key.
+**Maan lo wahi key abhi process ho hi rahi hai:** Arpan: DB me unique constraint, key ABC123 pehle payment ke saath gayi; retry pe wahi key aayi to insert fail. Aur agar server abhi process hi kar raha hai to bhi reject kar dega ki ye bhi process ho rahi hai, dobara nahi.
+Technical me: unique key + "IN_PROGRESS" bhi ek jawab (doosri request ruk jaaye, dohra kaam nahi).
 
 **3. Branch me do counter. Arpan ke khaate me 600. Ek hi pal me do parchi, Netflix 500 aur UPI 500, alag counter pe. Dono cashier ne 600 dekha, dono ne kaat diya, balance -400.**
 Arpan: Ise ek hi kram me kar lo, dekhna aur kaatna ek hi kram me. Jisne pehle 600 dekha, wo pehle kaat de: Netflix ke 500 turant kat gaye, ab account me 100 rupaye hain, to agla counter 600 nahi, 100 dekhega. Technical terms me jo bhi kehte hain wo mujhe pata nahi, lekin ek kar do, aur doosre wale ko 600 dikhne nahi chahiye.
@@ -86,6 +91,8 @@ Technical me: "counter pe group ki line, kaam khatam to agla" = thode workers / 
 **4. Hafte baad Ravi aaya: "Arpan ke 500 mile hi nahi". Register me sirf aaj ka balance, purana number har baar kaat ke naya likha. Saabit kaise karein?**
 Arpan: Ek alag diary rakh lo, usme kaato mat, uske neeche bas likhte jao, jodte jao. Ya ek copy me do column bana lo: ek me update likhte ja rahe, koi dikkat nahi, lekin doosre me update mat karo, 500 kaato mat, neeche likhte jao: Ravi me +500 hua, yahan se -500 hua. To kabhi koi dikkat nahi. Main bol raha hoon do alag cheez rakho.
 Technical me: "alag diary, kaato mat, neeche likhte jao" = ledger (append-only), "+500 / -500" = double-entry, "ek column me update" = balance column, alag.
+**Maan lo pooche ledger kaunsi dikkat solve karta:** Arpan: Ledger kisi dikkat ko solve nahi kar raha; ledger ek audit record hai. Sab cheez DB me pehle se hai, logs me hai. Ledger ek book jaisa: kal RBI ka audit aaya to main DB me query chala-chala ke nahi dhoondhunga, ledger ki copy de dunga. RBI bank ka DB nahi maangta; RBI apna audit karta, bank apna, dono ledger milaate hain.
+Technical me: ledger = append-only audit trail (regulator / reconciliation ke liye), balance ka sach ussi se jodke milta.
 
 **5. Paisa jaate hi Ravi ko khabar deni thi. Cashier ne paisa bheja, aur ladke ko "Ravi ko khabar do" bolne se pehle bijli chali gayi. Ladke ko pata hi nahi ki kisko khabar deni hai.**
 Arpan: Jo kuch yaad nahi rehta kisi ko, to likh lo na bhai. Hum bhi to yahan likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Kahin likh lo, logs me likh lo. Ab cashier kabhi bhi aaye ya jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
@@ -94,6 +101,8 @@ Technical me: "jo yaad nahi rehta, likh lo" = outbox (usi transaction me), "koi 
 **6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Roz ki bheed ke liye kadam 3 wale do counter kaafi the, aaj unhi do pe line sadak tak.**
 Arpan: Cashier badha do. Ek cashier tha, 10 cashier kar do, 10 counter kar do. Bheed badh gayi, kaam khatam, paisa hazam. Aam taur pe bhi yahi hota hai: bank me ek counter pe bheed hai to hum doosre counter pe jaate hain, movies me bhi same, har jagah same.
 Technical me: "10 cashier, 10 counter" = kai service machine, "doosre counter pe jaate" = LB khaali machine pe bheje.
+Arpan (dheema chalega, galat nahi): Bank ke server kabhi-kabhi down rehte, HDFC bank down; dheema chalta hai lekin consistent rahe. Aisa nahi ki system available rakhein aur kuch bhi, kahin bhi dikha dein.
+Technical me: consistency > availability (CP), bheed pe dheema / "baad me try" chalega, galat balance nahi.
 
 **7. Cashier 10 ho gaye, par register abhi bhi ek hi. Raat ko branch me aag lagi, register jal gaya.**
 Arpan: Use kahin store karwa lo na, kai jagah store karo. Maan le meri ek important copy hai, usme kuch notes likh rakhe hain. Main use office me chhod gaya, raat me office me aag lagi, wo notes kho jaayenge na. Nahi, main aisa nahi karunga: main use laptop me save kar lunga aur laptop ghar le jaaunga. Ab us copy me aag lage chahe kuch bhi ho, mere laptop me to mera saamaan hai.

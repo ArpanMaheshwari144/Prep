@@ -74,6 +74,9 @@ Ya dono kaam honge, ya koi nahi.
 rollback (BEGIN, Arpan -500, Ravi +500, COMMIT; COMMIT se pehle gira to dono ulte). SQL isliye: ek transfer me do row
 ek saath pakki badalni hain (ACID), aur 120 likhai / sec ke liye NoSQL ki kai-machine wali taakat chahiye hi nahi.
 
+**Maan lo saga kyun nahi:** sab ek hi DB me, saga sirf do alag DB pe; row data + transaction = SQL (NoSQL me bhi transaction hota,
+par yahan zaroorat nahi). **Sach:** asli bank me paisa 3-5 din baad wapas, peeche job. **Asli naam:** ACID, saga sirf alag DB, reconciliation.
+
 ```mermaid
 flowchart TB
     A["Parchi: Ravi ko 500 bhej do"]:::card
@@ -109,6 +112,8 @@ bhejna, hatao." Nayi baar bhejna hai to nayi parchi, nayi key.
 idempotency key (app Send screen khulte hi UUID banati, jaise `k-77`, dobara bhejne pe wahi). Server key usi transaction me
 ek table me likhta jispe UNIQUE hai: key pehle aa chuki to paisa nahi kat-ta, purana jawab wapas. Amount se pehchaan
 nahi, kyunki Arpan sach me do baar 500 bhej sakta hai.
+
+**Maan lo key abhi process ho rahi:** server bole "ye bhi process ho rahi", doosri reject. **Asli naam:** IN_PROGRESS reject.
 
 ```mermaid
 flowchart TB
@@ -182,6 +187,9 @@ jao: Ravi me +500 hua, yahan se -500 hua. Do alag cheez rakho.
 +500 / -500 = double-entry (har transfer ki do line, jod 0). Update wala column = balance column, alag, bas tez padhne
 ke liye. Dono usi transaction me likhe jaate hain, ledger isi DB ki ek alag table hai.
 
+**Maan lo ledger kya solve karta:** koi dikkat nahi; wo audit record, RBI aaye to ledger ki copy, RBI DB nahi maangta, dono
+apna audit milaate. **Asli naam:** append-only audit trail.
+
 ```mermaid
 flowchart TB
     R["Ravi: 500 mile hi nahi"]:::bad
@@ -239,6 +247,9 @@ pe bheed ho to hum doosre counter pe jaate hain, movies me bhi same.
 
 **Asli naam:** 10 cashier = kai Banking Service machine (stateless, sach DB me), doosre counter pe bhejna = load
 balancer (khaali machine pe bheje).
+
+**Dheema chalega, galat nahi:** HDFC down hota, par consistent rahe, available rakh ke kuch bhi mat dikhao.
+**Asli naam:** consistency > availability.
 
 ```mermaid
 flowchart TB
