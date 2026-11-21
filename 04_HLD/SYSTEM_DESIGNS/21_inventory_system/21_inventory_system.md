@@ -123,6 +123,9 @@ hai.
 phone kisi dabbe ka nahi. Wapas aaya to stock me +1 (koi bhi dabba), "Out of stock" hata do, jo pehle pay kare uska.
 **Asli naam:** restock / inventory release, ginti payment pe (koi reserve nahi).
 
+**Maan lo phone kam pad gaye:** pehle se zyada mangwao, ya jitne hain utne, phir out of stock; cart = khareed nahi.
+**Asli naam:** forecast stock, cart != reservation.
+
 ```mermaid
 flowchart TB
     X["2 lakh Pay,<br/>ek row pe taala"]:::bad
@@ -285,6 +288,9 @@ raha ho to order lete raho, 1 mahina lagega to out of stock dikhao.
 raaste = email, SMS, WhatsApp + backup provider. Saare godown ka jod = available to promise across warehouses (kitne
 godown = FR). Maal mangwana = purchase / procurement system, scope se bahar. Jaldi aane wala maal = backorder, der =
 out of stock (restock lead time, FR tay kare).
+
+**Email down:** kuch second ruko, siren + SMS, doosra email server; alert manager se upar CTO tak.
+**Asli naam:** escalation + multi-channel alert.
 
 ```mermaid
 flowchart TB

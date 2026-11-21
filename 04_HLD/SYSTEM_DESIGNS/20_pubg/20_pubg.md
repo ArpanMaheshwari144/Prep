@@ -130,6 +130,9 @@ interest management (naksha dabbon me, Uber ke geohash jaisa; har player ko sirf
 
 ![Sirf aas-paas ki khabar: Arpan aur Claude Pochinki me, Military Base ki khabar nahi](../00_IMG/20_pubg_kadam2_aas_paas.svg)
 
+**Maan lo aas-paas kitna:** 500-800 meter, bahut hua to 1 km; door ki goli / bomb nahi.
+**Asli naam:** AOI radius.
+
 ## 2b. Har kadam pe 120 ms, kichad me chalna (apni chaal turant)
 
 Arpan ka phone Mumbai server se 60 ms door hai, jaana-aana 120 ms. Arpan "aage chal" dabata, phone server ko batata,

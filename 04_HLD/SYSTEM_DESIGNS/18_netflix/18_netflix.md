@@ -65,6 +65,9 @@ aao. Bekaar me baar-baar shehar kyun.
 **Asli naam:** apne shehar ka dabba = ISP ke andar Netflix ka apna CDN box (Open Connect). Ghar nahi la sakte = poora
 video phone pe nahi rakhte. Dost roz aata-jaata = dabba US ke store (origin) se bharta rehta.
 
+**Maan lo video cache me kyun nahi:** cache us kaam ka nahi; video ek baar bani, badalti nahi, isliye dabbe (CDN) me,
+pen drive jaisa. **Asli naam:** CDN for immutable video, Redis chhote data ke liye.
+
 ```mermaid
 flowchart TB
     US[("US ka store<br/>(doosra shehar)")]:::card
@@ -235,6 +238,9 @@ mila ke dikhana.
 **Maan lo Priya ne pehli baar join kiya, koi itihaas nahi:** parlour wala mere bhai ko nahi jaanta, wo kahega ye hit
 game hai, khelo. India me hai to India ka garam maal dikhao. Dheere-dheere lat lagegi, pattern banega.
 **Asli naam:** garam maal = naye user ko region ka trending (cold start). Pattern banega = dekhne se apni list.
+
+**Maan lo Priya Ravi ki behen:** Netflix ko rishta nahi pata, alag account; India ke hot topic dikhao. Family account alag baat.
+**Asli naam:** per-profile recommendation, cold start = region trending.
 
 ```mermaid
 flowchart TB

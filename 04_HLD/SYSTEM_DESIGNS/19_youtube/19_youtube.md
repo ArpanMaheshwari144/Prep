@@ -349,6 +349,9 @@ baaki chupchaap aa jaayenge. Par 1-2 page dekh ke kitaab mat hatao; 1-2 din patt
 **Asli naam:** pre-fetch me sirf pehle kuch second, kitna laana = user ke pattern se. Trade-off: zyada laaye to data aur
 battery, kam laaye to spinner. Data saver on ho to pehle se laana band.
 
+**Maan lo pattern kaise:** pehle region (India, phir north / south) ka, phir roz ke dekhne se apna. **Maan lo 1-2 reel
+achhi nahi lagi:** 1-2 page pe kitaab nahi phaadte, 7 din koi na padhe to hatao. **Asli naam:** region trending, engagement signal.
+
 ```mermaid
 flowchart TB
     R["Ravi: reel 1 dekh raha"]:::card
