@@ -36,6 +36,9 @@ Arpan (shard pe): BookMyShow me shard nahi, partition kar do. Shard ki ek keemat
 Technical me: "pehle partition" = ek hi DB ke andar table partitioning (jaise show date se), "indexing" = sahi index, "shard ki keemat" = cross-shard transaction, rebalancing, ops ka bojh; shard aakhri raasta.
 Arpan (FR dobara, chain dekh ke): FR wo jo BookMyShow asal me karta hai. Chain me har baar seat dekhna, rokna, pay karna, book karna hi ho raha. To FR ke liye dikkat dekhne ki zaroorat nahi: seat dekho, seat hai to book karo, book kiya to paise kaato, paise kate to seat do, bas. Baaki NFR: do log ek saath book na karein, zyada bheed na ho, zyada line me intezaar na karna pade, refund turant mile, seat turant dikhe.
 
+Arpan (21-Nov, API): API me kya hai bhai: seat book karenge, payment karenge, get karenge. Ek POST seat ki, ki haan bhai kaunsi seat book kari. GET poori seat mapping lene ke liye. Aur payment ka ek POST. Teen API bahut hai isme, aur kuch to hai nahi.
+Technical me: GET seat map = read (padhne wali copy se), POST seat book = hold (dekhna + rokna ek query), POST payment = PSP ko bhejo, PAYMENT_PENDING.
+
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 ```
 FR      (jo BookMyShow asal me karta hai, iske liye dikkat chain dekhne ki zaroorat nahi)
@@ -56,7 +59,10 @@ NFR     (ye dikkat chain se)
 Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
         -> line + padhne wali copy (kadam 4)
 Shard   nahi: shard ki keemat badi hai, companiyan 10 baar sochti hain. Bada ho to pehle partition + index (Arpan 17-Nov)
-API     abhi nahi (Arpan 17-Nov: kuch din baad)
+API     (Arpan 21-Nov: "teen API bahut hai, aur kuch to hai nahi")
+        GET  seat map   -> poori seat mapping lo (kaun khaali, kaun bhari)          (FR 1)
+        POST seat book  -> kaunsi seat book ki (seat roko, parchi lagi)             (FR 2)
+        POST payment    -> paisa kaato (PSP), kata to seat do                       (FR 3, 4)
 ```
 
 &nbsp;

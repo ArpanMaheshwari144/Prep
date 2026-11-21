@@ -59,7 +59,10 @@ NFR     (ye dikkat chain se)
 Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
         -> line + padhne wali copy (kadam 4)
 Shard   nahi: shard ki keemat badi hai, companiyan 10 baar sochti hain. Bada ho to pehle partition + index (Arpan 17-Nov)
-API     abhi nahi (Arpan 17-Nov: kuch din baad)
+API     (Arpan 21-Nov: "teen API bahut hai, aur kuch to hai nahi")
+        GET  seat map   -> poori seat mapping lo (kaun khaali, kaun bhari)          (FR 1)
+        POST seat book  -> kaunsi seat book ki (seat roko, parchi lagi)             (FR 2)
+        POST payment    -> paisa kaato (PSP), kata to seat do                       (FR 3, 4)
 ```
 
 ---
