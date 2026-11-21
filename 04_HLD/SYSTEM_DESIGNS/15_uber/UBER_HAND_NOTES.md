@@ -56,7 +56,7 @@ Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking sha
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
         ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
         ("driver tez aaye" na FR na NFR: traffic hamare haath me nahi)
-API     (Arpan 21-Nov) GET  aas-paas ke driver  -> app khulte hi naksha pe    (FR driver ki jagah, paas ka khaali)
+API     GET  aas-paas ke driver  -> app khulte hi naksha pe    (FR driver ki jagah, paas ka khaali)
                        POST book                -> kahan jaana, kiraya dikhe  (FR ek driver ek sawari, kiraya pehle)
                        POST pay                 -> trip khatam pe paisa       (FR trip khatam pe pay)
         driver ki jagah = phone ka har 4 sec wala bhejna, pehle se design me (kadam 1)
@@ -67,7 +67,7 @@ API     (Arpan 21-Nov) GET  aas-paas ke driver  -> app khulte hi naksha pe    (F
 bheed me kiraya = 6 · sabki milake doori kam = 15, 15b · der se ruka peeche na rahe = 15c, 15d · NFR turant mile = 3, 4, 7b ·
 ek driver do jagah nahi = 5, 7 · ride ke beech driver gaya = 14, 16d.
 
-**Dhaancha (Arpan 21-Nov round, copy pe):** Arpan ne Uber khola, use Whitefield ke aas-paas ke saare driver dikhne chahiye. Book dabaya to request server pe gayi, server ne andar process kiya, DB me likha, wapas aayi, Arpan ko ride mil gayi. Uber ke paas ek nahi, bahut saare server; DB ki replica. CDN aur S3 ki zaroorat nahi, inka yahan koi lena-dena nahi. Redis kahan lagega, wo aage dekhenge.
+**Dhaancha (round, copy pe):** Arpan ne Uber khola, use Whitefield ke aas-paas ke saare driver dikhne chahiye. Book dabaya to request server pe gayi, server ne andar process kiya, DB me likha, wapas aayi, Arpan ko ride mil gayi. Uber ke paas ek nahi, bahut saare server; DB ki replica. CDN aur S3 ki zaroorat nahi, inka yahan koi lena-dena nahi. Redis kahan lagega, wo aage dekhenge.
 Technical me: client -> kai app server (LB ke peeche) -> DB + read replica; CDN / S3 nahi (koi badi file nahi).
 
 &nbsp;

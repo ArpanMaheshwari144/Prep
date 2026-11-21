@@ -60,10 +60,10 @@ NFR     1  do log ek seat ek saath book na kar sakein                           
         4  seat map turant dikhe                                                     -> kadam 4
         5  user ko zyada der na latkao: PSP chup to 30-55 sec me saaf jawab, der se kata to hisaab rahe   -> kadam 6b, 6c
 
-Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut (Arpan 17-Nov)
+Numbers sirf jahan faisla badle: advance booking 10 baje ~10 lakh log ek saath, itna hi bahut
         -> line + padhne wali copy (kadam 4)
-Shard   nahi: shard ki keemat badi hai, companiyan 10 baar sochti hain. Bada ho to pehle partition + index (Arpan 17-Nov)
-API     (Arpan 21-Nov: "teen API bahut hai, aur kuch to hai nahi")
+Shard   nahi: shard ki keemat badi hai, companiyan 10 baar sochti hain. Bada ho to pehle partition + index
+API     (Arpan: "teen API bahut hai, aur kuch to hai nahi")
         GET  seat map   -> poori seat mapping lo (kaun khaali, kaun bhari)          (FR 1)
         POST seat book  -> kaunsi seat book ki (seat roko, parchi lagi)             (FR 2)
         POST payment    -> paisa kaato (PSP), kata to seat do                       (FR 3, 4)

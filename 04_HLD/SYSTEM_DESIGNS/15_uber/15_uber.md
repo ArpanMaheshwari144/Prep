@@ -62,7 +62,7 @@ Numbers 5 lakh driver, har 4 sec jagah -> ~1.25 lakh likhai / sec · booking sha
         -> likhai bahut zyada (jagah), booking pe paas wale jaldi chhaantne hain
         ~50 million user · peak (concert) 50-60 hazaar ek saath, normal din me bheed badi baat nahi
         ("driver tez aaye" na FR na NFR: traffic hamare haath me nahi)
-API     (Arpan 21-Nov) GET  aas-paas ke driver  -> app khulte hi naksha pe    (FR driver ki jagah, paas ka khaali)
+API     GET  aas-paas ke driver  -> app khulte hi naksha pe    (FR driver ki jagah, paas ka khaali)
                        POST book                -> kahan jaana, kiraya dikhe  (FR ek driver ek sawari, kiraya pehle)
                        POST pay                 -> trip khatam pe paisa       (FR trip khatam pe pay)
         driver ki jagah = phone ka har 4 sec wala bhejna, pehle se design me (kadam 1)
