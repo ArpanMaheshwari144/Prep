@@ -38,6 +38,7 @@ FR      1  aas-paas (15 km) ke restaurant dikhao, rating ya doori se sort       
 
 NFR     1  driver ko track kar sake                                              -> kadam 3 (tracking Uber wali)
         2  khana kaisa pahunche: door se aaye to user ko bata do, thoda thanda ho sakta -> kadam 4
+        3  aakhri plate do logon ko na bike: ginti ek jagah, "bacha >= 1 to ghatao" ek saath    -> kadam 7
 ```
 **Numbers (Arpan):** bahut bada scale nahi. Bangalore me ~5,000, average 8-10 hazaar DAU; India level pe 60-80 hazaar ya 1 lakh tak. Diwali / Navratri pe peak, maan lo 50 hazaar ek saath. Isliye NoSQL / Cassandra / MongoDB / DynamoDB ki zaroorat nahi: Cassandra "big bull" hai, use laana hi nahi, ladai karna hoga. Simple Postgres, AWS RDS le liya (wo replica, backup sab sambhal leta), 2 replica bahut.
 
