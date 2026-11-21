@@ -27,7 +27,7 @@ Arpan  -->  LB  -->  kai counter (app server)  -->  DB (khaate, row lock)  --syn
  6   salary ka din, ek cashier                   ->  10 counter + LB
  7   register jal gaya                           ->  copy turant (sync replica, WAL)
  8   sab balance dekhne aaye                     ->  photocopy alag desk (read replica)
- 9   photocopy peeche, ghabra ke dobara bheja    ->  likhne wala main se padhe; photocopy uski likhai ke number tak pahunchi? (read-your-writes, LSN)
+ 9   photocopy peeche, ghabra ke dobara bheja    ->  likhne wala main se padhe; photocopy bataye kahan tak pahunchi (read-your-writes, replication lag)
 10   haath se 100 ko 600 kar diya                ->  ledger se milao (reconciliation)
 11   5 saal ki line roz jodna bhaari             ->  mahine-mahine tod do (partition, snapshot)
 12   almari me jagah nahi, 10 saal               ->  S3 archive
@@ -368,10 +368,10 @@ khud bata de "main sync ho gaya, mujh pe bhejo", ya ek chhotu poochhta rahe "tu 
 **Maan lo main register kabhi band nahi hota (Priya, Ravi lagaatar likh rahe), photocopy kabhi "poori sync" nahi:** to har
 likhai ka number rakho. 100 likhai aayi, Arpan ki 100vi me 500. Photocopy 99 tak pahunchi to Arpan ka 500 abhi nahi, main se
 padho; 100 tak pahunchi to aa gaya, photocopy se padho. Mujhe apna 100 chahiye, peeche Ravi, Priya kuch bhi kar rahe ho, lena-dena
-nahi. Jaise main 500 page padh chuka, photocopy wala 450 pe, koi baat nahi, padhta rahe.
-**Asli naam:** photocopy apni position bataye = replica ki replay position (replication lag ka check). Har likhai ka number =
-LSN (log sequence number, kadam 7 wale WAL me entry ki position). Arpan ke session me uski likhai ka LSN rakho, refresh pe
-replica se poochho; pahunchi to replica, nahi to primary (andaza nahi, seedha check).
+nahi. Jaise main 500 page padh chuka, photocopy wala 450 pe, koi baat nahi, padhta rahe. DB 1000 pe, photocopy bole 980 = 20 peeche.
+**Asli naam:** photocopy bataye kahan tak pahunchi, 1000 me 980 = replication lag (replica apni position batati). Arpan ki
+likhai tak pahunchi to replica se, nahi to primary se (andaza nahi, seedha check). Log aur uska number DB apne andar khud
+rakhta, wo design ka hissa nahi.
 
 ```mermaid
 flowchart TB
@@ -380,7 +380,7 @@ flowchart TB
     subgraph TD["THODI DER MAIN REGISTER SE"]
         M[("Jisne update kiya, use main se padhao<br/>(read-your-writes)")]:::pill
     end
-    P[("Photocopy Arpan ki likhai ke number tak pahunchi?<br/>(LSN) haan: phir photocopy se")]:::good
+    P[("Photocopy bataye kahan tak pahunchi,<br/>Arpan ki likhai tak aa gayi?<br/>haan: phir photocopy se")]:::good
     A --> M
     A -.-> X
     M -. "thodi der baad" .-> P

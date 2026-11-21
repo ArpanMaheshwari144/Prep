@@ -274,7 +274,7 @@ Yahi dikkat yahan bhi:
   Banking       7   register jal gaya                              ->  laptop me save, ghar le jaao (replica, Multi-AZ)
   Banking       7b  2 baje likha, 3 baje aag                       ->  turant laptop pe, tabhi pakka (sync copy; DB ke andar wahi = WAL)
   Banking       8   sab balance dekhne aaye, kaam atka             ->  photocopy alag desk pe (read replica)
-  Banking       9   photocopy peeche, ghabra ke dobara bheja       ->  jisne likha, thodi der main file se; photocopy uski likhai ke number tak pahunchi? (read-your-writes, LSN)
+  Banking       9   photocopy peeche, ghabra ke dobara bheja       ->  jisne likha, thodi der main file se; photocopy bataye kahan tak pahunchi (read-your-writes, replication lag)
   Banking       20  2 baje chhotu ne register gher liya            ->  chhotu photocopy se padhein (read replica)
   Leaderboard   7   Redis gira                                     ->  clone, phir clone, teeno gaye to DB se bharo (replica, DB sach)
   News          2b  chhotu 7 ki 100 site, wo mara                  ->  "main zinda hoon" band to site baaki chhotuon me (heartbeat)
@@ -282,7 +282,7 @@ Yahi dikkat yahan bhi:
   Twitter       5b  "Inida" se "India", kuch copy purana dikhaye   ->  thodi der galat, peeche ek ladka sabko theek kare (eventual consistency)
   News          13  feed me dikhi, search me 2 min baad            ->  dono me ek saath bharo ya peeche-peeche, fail pe alert (dual write, async index)
 
-Naam: replica / quorum / sync copy / read-your-writes / LSN / fail-open / fail-closed / heartbeat / eventual consistency / timeout / coordinator / Redis AOF / naya owner (failover) / read replica / Multi-AZ
+Naam: replica / quorum / sync copy / read-your-writes / replication lag / fail-open / fail-closed / heartbeat / eventual consistency / timeout / coordinator / Redis AOF / naya owner (failover) / read replica / Multi-AZ
 Juda: sirf wahi "maan lo gira" jahan HUM faisla lete (sync ya async, fail-open), AWS wala nahi.
 ```
 
