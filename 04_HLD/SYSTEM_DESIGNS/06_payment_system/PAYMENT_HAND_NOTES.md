@@ -54,6 +54,11 @@ NFR     1  do baar na kaatne ki poori koshish (payment id, idempotency); phir bh
         2  paisa kabhi gayab na dikhe                                      -> kadam 7
         3  kuch gire to bhi payment atka na rahe                           -> kadam 3, 3b, 4, 5, 11
         4  har paisa trace ho                                              -> kadam 2, 7
+        5  CAP me consistency, availability nahi (Arpan 13-Oct + 21-Nov): paise ka niyam hi consistency hai.
+           Availability chuni to wahi hoga jo banking kadam 21 me hua: do jagah ki branch (Mumbai aur doosre desh
+           wali) dono ne apne-apne register se 1000 de diye, raat ko balance -1000. Isliye paisa ek hi jagah se
+           kate (jahan khaata hai); dheema chalega, galat hisaab nahi. PSP gira to doosri service, par hisaab
+           ek hi jagah.                                                    -> kadam 7, 9, 10
 Numbers ~10 crore user, aam din kuch sau payment / sec, Diwali pe ~3,000 / sec
         -> aam din bheed badi dikkat nahi, sahi hona badi dikkat · Diwali ka 3,000 / sec ek register nahi jhelega (kadam 9)
 ```
