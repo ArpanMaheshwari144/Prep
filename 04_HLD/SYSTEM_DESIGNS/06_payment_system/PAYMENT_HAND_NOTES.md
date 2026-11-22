@@ -94,7 +94,7 @@ Arpan: Beech me ek register rakho, usme likh lo "initiate hua". Server gira to a
 Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATED commit, "aake dekhega, PSP se dobara poochte" = restart pe job INITIATED utha ke status poochhe, "idempotency key" = payment id hi PSP ki idempotency key.
 
 **Maan lo net atka, Arpan ne "Pay" do baar daba diya.**
-Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; server pehle key dekhe, purani hai to wahi parchi lauta de. Wahi Chat aur Banking wali key.
+Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; wo key pehle se hai to server khud reject kar dega. Wahi Chat aur Banking wali key.
 Technical me: parchi = pehle wala jawab (key ke saath save) · "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
 
 **Maan lo ek hi key ki do request bilkul ek saath pahunchi:**

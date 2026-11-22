@@ -190,7 +190,7 @@ Arpan: Mere paas ek mota register hai, sab likha hua. 1,00,000 page me dhoondhna
 Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup; dabbe me tweet number ke saath kiska tweet bhi, "905, Arpan ka": author se hissa, number se tweet), "photo CDN se" = post me CDN link, "mota register" = tweet store (Cassandra), like count saath me.
 
 **Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai.**
-Arpan: 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega.
+Arpan: Tweet feed me push ho chuka tha to Ravi ko kuch second ke liye dikh sakta hai; Twitter ko baad me pata chala user ne delete kar diya, to wahan likh dega "the user has deleted this post". Ye aasaan cheez hai.
 Technical me: page pe deleted = tweet store me deleted flag (soft delete), dikhate waqt chhod do = hydration pe filter, 8000 dabbe saaf nahi karne padte.
 
 Arpan (isi Maan lo me aur neeche: Ravi ne usi pal khola to?): Arpan ka tweet Ravi ki feed me push ho chuka tha, Ravi ne ekdum khola to ho sakta hai kuch second dikhe. Phir Twitter ko pata chala user ne delete kar diya, to wahan likh deta "The user has deleted this post". Twitter me aisa hota bhi hai, cheez thodi der dikhti phir hat jaati.
@@ -205,7 +205,7 @@ Arpan: 20 padhe, agle 20 maange, beech me upar 5 aa gaye, to neeche wale 5 khisa
 Technical me: "page number se agle 20" = offset pagination (isi se khisakta), "kahan tak padha yaad rakh" = cursor (har page ke saath aakhri dikhayi post lautao, agla uske theek baad se), "thodi der yaad" = ranked feed me ranked list thodi der save, cursor usi list me aage.
 
 **19. Reply ki 3 copy (A, B, C) (Twitter me Cassandra, koi leader nahi; SQL shard ho to leader + copy). Tune Ravi ki DP pe reply kiya "mast DP bhai", ye A aur B me likha, C tak abhi nahi. Ravi ka "thank you bhai" C me pehle pahunch gaya. Priya C se padh rahi: sirf "thank you bhai" dikha, tera reply gaayab.**
-Arpan: Sabse pehle to ye bolunga ki thodi der leader se padhwa do. Interviewer cross-question karega: leader pe bahut bojh padega, phir? To phir neeche wala.
+Arpan: Sabse pehle to ye bolunga ki thodi der leader se padhwa do. Interviewer cross-question karega: leader pe bahut bojh padega, phir? To phir leader jab tak 2 copy me na likh le tab tak "ho gaya" mat bolo, aur padhwao bhi 2 copy se, A aur C ya A aur B; jawab ek mil hi jaayega.
 Technical me: "thodi der leader se padhwa do" = naya likhne ke baad kuch der read leader se (read-your-writes / leader read), "leader pe bojh" = trade-off: saari read leader pe = leader garam, isliye phir quorum.
 "Thodi der" kitni: andaza nahi; copy khud bataye kahan tak pahunchi, uski likhai tak aa gayi to copy se, nahi to leader se (banking kadam 9).
 Arpan (phir): Ye to pehle kar rakha hai: do pe likho, do se padho. 3 copy hain, update kisi me bhi ja sakta hai. Maan le DB shard karke ek leader aur neeche 3 copy rakhi. Leader ne "mast DP" likha, wo copy pe jaa raha. Jab tak leader aur kisi 2 copy ne rakh nahi liya, tab tak usko pura mano hi mat. Phir Priya ki request aayi to wo kisi 2 copy se poochhegi: C aur A se poochha, C me nahi to A me hai; B aur A se poochha, B me nahi to A me hai. Aur Twitter me to humne Cassandra lagaya hai, Cassandra ye apne aap karta hai (andar consistent hashing bhi).
