@@ -96,12 +96,14 @@ Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATE
 **Maan lo net atka, Arpan ne "Pay" do baar daba diya.**
 Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; server pehle key dekhe, purani hai to wahi parchi lauta de. Wahi Chat aur Banking wali key.
 Technical me: "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
+
 **Maan lo ek hi key ki do request bilkul ek saath pahunchi:** Arpan: Key client banayega, server nahi. Do request ek saath aayi to DB atomic constraint lenge: check then act, ek waqt me ek hi key process hogi. Wo key DB me pehle se hai to doosri process hi nahi hogi.
 Technical me: "atomic check then act" = key pe unique constraint (INSERT ... ek hi jeetega), doosri ko "process ho rahi / ho chuki" lautao.
 
 **6. Arpan ke 500 hamare wallet me dukaan ke khaate me aa gaye. Ab dukaan wala ye 500 apne ICICI bank me nikalna chahta hai. ICICI hamara DB nahi, to ek transaction me nahi. Wallet se kaat liye, aur ICICI me jodte waqt PSP bola "FAILED".**
 Arpan: Ulta kar do, sab ulta kar do, sab wapas paise bhej do. Maan le main HDFC bank hoon, bagal wale bank ko bhejne gaya, usne mana kar diya: "nahi bhai, bank band ho gaya, kal aana, abhi server bekaar hai." Fail ho gaya, baatcheet khatam. To main apne register me sab kaat dunga: "maine yahan se paise liye the, ise wapas kar raha hoon", aur sab wapas paise bhej dunga.
-Arpan (doosri kahani, 16-Nov grill, wallet se 2000 Ravi ke ICICI me, ICICI ne FAILED bola): Agar Arpan ka account bhi usi ICICI me hai to badhiya, ek hi transaction me sab, fail hua to apne aap rollback, koi dikkat nahi. Worst case: Arpan ka account alag bank me hai, dono ke alag DB hain, to ek transaction nahi ban sakta. Tab saga: payment nahi hua to peeche jaate-jaate sab rollback kar do.
+
+Arpan (doosri kahani, wallet se 2000 Ravi ke ICICI me, ICICI ne FAILED bola): Agar Arpan ka account bhi usi ICICI me hai to badhiya, ek hi transaction me sab, fail hua to apne aap rollback, koi dikkat nahi. Worst case: Arpan ka account alag bank me hai, dono ke alag DB hain, to ek transaction nahi ban sakta. Tab saga: payment nahi hua to peeche jaate-jaate sab rollback kar do.
 Technical me: "ek hi bank = ek transaction me rollback" = ek DB ke andar @Transactional / ACID; "alag DB, ek transaction nahi" = isliye saga.
 Technical me: "sab ulta kar do" = saga (fail pe ulta kadam), "register me sab kaat diya" = ledger me ulti line, "wapas paise bhej dunga" = 500 wapas dukaan ke wallet me.
 
@@ -116,6 +118,7 @@ Technical me: "sab taiyaar ho?" = 2PC (prepare round), "ek slow ki wajah se sab 
 **9. Diwali pe har second 3,000 payment, saare wallet ek hi register (DB) me. Register itni likhai nahi jhel pa raha.**
 Arpan: Us register ko kaat do, chhote-chhote tukde kar do. "Le bhai, tu yahan likh, tu ye likh, tu ye likh." Kaam baant diya, dikkat khatam. Ab aaram se sab apna-apna likh rahe.
 Technical me: "register ke chhote tukde" = shard, "tu ye likh, kaam baant diya" = har shard ka apna likhne wala, likhai bant gayi.
+
 **Maan lo Diwali sale pe sirf DB nahi, sab pe pel:** Arpan: Load balancer plus read replica, aur hum server badha denge, koi dikkat nahi. Alag-alag server hain to saga hi hamare paas.
 Technical me: app server scale + LB, padhai read replica pe, likhai shard pe.
 

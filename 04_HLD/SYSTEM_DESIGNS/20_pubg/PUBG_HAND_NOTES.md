@@ -62,6 +62,7 @@ Technical me: "America wala America ke server pe" = region-based matchmaking (ha
 **2. Match shuru. Server har second (maan lo) 20 baar sabki jagah sabko bhej raha: 100 logon ko 99-99 ki khabar. Arpan Pochinki ke ghar me chhupa, 6 km door Military Base me 30 log lad rahe, unki har goli, har kadam Arpan ke phone pe. Phone garam, data jal raha.**
 Arpan: Ek khula taar rakh lo, phone mangwa nahi raha, khabar apne aap aa rahi. Par 6 km door ki awaaz PUBG me aati hi nahi, mere aas-paas ki aayegi. Goli chali to ek event bana; server dekhe kaun-kaun us jagah ke aas-paas hai, sirf unko bhejo. Saamne wali building me goli chali to mujhe sunai de, Military Base wali nahi. Ye Uber jaisa hai: hamein aas-paas ka dikhana hai, Arpan ke aas-paas kya ho raha, wahi Arpan ke kaano me jaana chahiye. Map pe bhi aas-paas ke log dikhenge, door ke nahi.
 Technical me: "khula taar" = WebSocket / UDP connection (push), "sirf aas-paas walon ko event" = area of interest / interest management (map ko dabbon me baanto, Uber ke geohash jaisa, har player ko sirf aas-paas ke dabbon ki khabar).
+
 **Maan lo pooche aas-paas kitna:** Arpan: Ghar baithe 40-50 km door kya ho raha, jaanna zaroori nahi. PUBG me 5 km bhi bahut doori hai. Aas-paas goli chali, grenade phata, gaadi ja rahi, loot, bande aaye, wahi dikhao: mushkil se 500 se 800 meter, bahut hua to 1 km, isse zyada nahi.
 Technical me: area of interest radius ~500 m - 1 km.
 

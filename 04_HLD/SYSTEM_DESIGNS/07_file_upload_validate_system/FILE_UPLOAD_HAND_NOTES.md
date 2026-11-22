@@ -60,6 +60,7 @@ Numbers 1000 log x 2 GB ek saath = 2 TB -> ye data hamare server se guzarna hi n
 **1. Server khud sab kar raha (lena, virus scan, thumbnail, save), Arpan 10 min spinner dekh raha, 1000 log aaye to list kholne wale bhi atke.**
 Arpan: YouTube kuch rokta nahi, bol deta "upload chal raha, chai pi aao". Matlab peeche kuch chal raha. Stadium jaisa: line me lag jao, baaki main peeche karta rahunga. File lo, line (Kafka) me daalo, worker / consumer peeche kaam kare. Status apne DB me, user UI pe dekh le. Aur jaanch: PDF bol ke exe na chadha de, to virus scan (third party) + file ka chhota tukda dekh lo ki sach me PDF / CSV hai.
 Technical me: "line" = Kafka + worker / consumer (async; Kafka me file nahi jaati, sirf file ki id / S3 ka pata, file S3 me), "status" = DB me file ka status, "chhota tukda" = magic bytes, "scan" = third party virus scan.
+
 **Maan lo bheed badhi, kahan tootega:** Arpan: Ek hi service hai to server banane padenge, aage LB laga do. S3 ke liye koi dikkat nahi. DB pe bojh pade to cache (Redis); DB me writes aur badhe to shard kar sakte, lekin sharding zaroori nahi: pehle cache aur indexing se dekho, theek chal raha to theek, nahi to sharding last option hai, kyunki uski bahut cost hai, sharding free nahi.
 Technical me: LB + zyada server, padhai pe cache, DB pe index; shard aakhri (mehnga, operational cost).
 
@@ -88,6 +89,7 @@ Arpan: Do baar aa sakta hai, koi dikkat nahi. Parchi rakho: is file ka kaam ho g
 Maan lo resume me v1 phir v2 aaye aur event ulte pahunche. Arpan: Apna thappa lagao, pehli = current, doosri = updated. V1 / V2 ke naam se nahi, apne thappe se faisla; purana thappa baad me aaya to phenk do.
 S3 khud likhta hai: "Amazon S3 event notifications are designed to be delivered at least once." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html) aur "Event notifications aren't guaranteed to arrive in the same order that the events occurred." (https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html)
 Technical me: "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa naya" / "apna thappa" = S3 event ka `sequencer` ya hamara version number (bada = baad wala, usi file ke liye).
+
 **Maan lo user har 2-3 second status poochh raha:** Arpan: User har second, har do-teen second baad poll kar raha, "meri file kahan hai", to read bahut zyada ho jaayenge. Cache use karo, user cache se hi laut jaayega, server pe load direct nahi. Par cache stale ho sakta hai: worker ne file validate kar di aur cache purana, user ko galat status. To TTL rakh sakte, ya jab validate ho jaaye tab cache bhi update kar do.
 Technical me: status poll = read-heavy -> status Redis me, "validate hote hi update" = write-through / invalidate on status change, TTL backup.
 
@@ -103,13 +105,16 @@ Technical me: "tree" = DB me folders table (id, parent_id), file ki row me folde
 **Maan lo Arpan ne "Goa trip" folder delete kiya. DB me folder aur 500 file ki rows "deleted", app me folder gayab. Par S3 me 500 photo abhi bhi padi, jagah aur paisa.**
 Arpan: S3 se kaam hatana user ka nahi. Hum apna DB theek kar denge, S3 se hum hata denge. File mere mote store (kamre) me padi, uska saaraansh mere DB me. User bola file delete karni, maine uske saamne faad ke phenk di. Bahut log nahi jaante peeche S3 hai, wo sochte file bas hamare paas hai. To S3 pe abhi request nahi bhejenge. Do raaste: ya delete pe ek event jaaye jo S3 ko bole in files ko delete kar do, ya baad me ek sync job chale: DB me nahi hai to S3 se hata do.
 Technical me: "saamne faad di, S3 baad me" = soft delete (DB me turant), "event jaaye, S3 se hatao" = async delete (queue + worker), "sync job" = orphan cleanup / reconciliation job.
+
 **Maan lo folder ki jaanch, ek file fail:** Arpan: Folder parent aur child ke hisaab se: parent ki tracking id aur har child ki tracking id, ek-ek karke upload. Ek child fail hua to poora parent folder fail; ek bhi fail nahi, sab pass, to poora folder pass.
+
 **Maan lo ek saath 10 file aayi:** Arpan: Apni copy badha dunga, chaar copy ho gayi: le bhai 10 file, thodi tu sambhal, thodi tu, thodi main. Inhe scan karo aur dheere-dheere us bade ladke ko dete raho jiska naam S3 hai. Beech me net chala gaya to dobara upload, hamare paas status hai ki kahan tak hua tha.
 Technical me: "parent ka haal bachchon se" = folder status = sab child ka AND, "copy badha do, baant ke" = kai worker parallel, "kahan tak hua" = har file ka apna status (resume).
 
 **6. Ravi ne URL me 1042 ki jagah 1043 likha aur Priya ka bank statement khul gaya. Download bhi hamare server se ja raha.**
 Arpan: Ravi asli member hai (JWT), par Priya ki statement maange to "Priya ko saath la". Server DB me dekhe file kiski hai / kisse share hui, tabhi link de. Link me chhed-chhaad ki to link bekaar. Download truck seedha ghar (S3 se seedha user ke phone pe), hamare bank me nahi aata (hamare server se data nahi guzarta).
 Technical me: "kiski hai" = owner / share check (authorization, JWT sirf pehchaan), "link bekaar" = presigned download URL (signature), "truck seedha ghar" = S3 se direct download.
+
 **Maan lo beech me CDN laga diya, Priya ka statement Jaipur ke CDN dabbe me pada, Ravi CDN wala URL khole:**
 Arpan: Faisla hamara server karega, S3 / CDN sirf rakhte aur dete. Kamre ke bahar main khada: ID dikha, file kiski hai dekho, tabhi token; bina token CDN file nahi deta.
 Technical me: CDN pe bhi signed URL / signed cookie (server sign kare, CDN jaanche).
@@ -125,12 +130,14 @@ Technical me: "alag line" = scan ka alag Kafka topic (Kafka me priority nahi hot
 **Maan lo bahar wala scanner 1 ghante se jawab hi nahi de raha, Ravi ki file "scan baaki" pe atki.**
 Arpan: Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko dead letter queue me daal do aur insaan ko alert, investigate karo, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
 Technical me: dobara try = retry with backoff, dead letter queue = DLQ + alert (scan wali tez line se alag), link band = CLEAN tak download nahi (fail-closed).
+
 **Maan lo complete kabhi aaya hi nahi:** Arpan: Pehli baat, file ko temporary jagah rakho; jaanch pass ho tab asli jagah, phir complete bhejo.
 Technical me: quarantine / temp prefix pe upload, pass hone pe asli bucket / prefix me copy.
 
 **9. App ko 6 mahine ho gaye. S3 ka bill pichhle mahine se double. S3 me ek hi meme lakhon baar padi, Ravi ne apni shaadi ki 2 GB video teen baar daali (bhool gaya tha ki pehle daal chuka).**
 Arpan: Pehli baat, S3 duplicate file handle nahi karta, to hamein apne server se kehna padega duplicate handle karo. Main server pe baitha hoon, ek aadmi moti file le ke aaya, maine bhej di. Kuch din baad wahi file dobara le aaya, phir bhej di; 3-4 baar aa raha. To uski file pe ek number chipka do, maan lo ABC123, aur DB (mote register) me rakh do. Number hash hoga: file ka content dekh ke koi bhi algorithm chalao, number nikla ABC123. Wahi file dobara aayi to dobara number nikala, wahi ABC123 nikla kyunki same file hai; to wo file upload nahi hone denge. Number phone nikaale ya server, wo design ka hissa nahi; hamein bas ek number chahiye jisse pata chale ye file pehle se hai ya nahi. Presigned URL me number jod sakte, par pata nahi wahan hota hai ya nahi, to wahan nahi. Number ka roop kuch bhi (string, number); mote register me rakho, pehle se hai to theek, nahi to nahi.
 Technical me: "file ke content se number" = content hash (jaise SHA-256), "mote register me number" = DB me hash, "pehle se hai to upload nahi" = deduplication (S3 khud nahi karta).
+
 **Maan lo pooche S3 khud dedup kyun nahi karta:** Arpan: S3 ko to paise chahiye na. Tumne jitna GB use kiya uske hisaab se paise katenge, uske liye to fayda hi hai. Andar wo override bhi kar de, tab bhi tumse double charge karega, kyunki S3 ka business model wahi hai.
 Technical me: S3 ka bill = jitni jagah (GB-month), dedup hamari zimmedari.
 

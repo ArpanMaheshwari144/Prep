@@ -64,6 +64,7 @@ Numbers 50 lakh account, roz 1 crore transaction = ~120 likhai / sec, padhna iss
 **1. Arpan ne parchi di "Ravi ko 500 bhej do". Cashier ne Arpan ke 500 kaate, Ravi me jodne jaata usi pal bijli chali gayi. Arpan ke 500 kat gaye, Ravi ko kuch nahi mila.**
 Arpan: Bhai aisa karo na, mere 500 kat gaye to mujhe 500 wapas de do. Ye hai dikkat: mere 500 kate, Ravi ko kuch nahi mila, to mujhe mere 500 wapas de do na, dikkat hi khatam.
 Technical me: "mere 500 wapas de do" = transaction rollback (ya dono kaam, ya koi nahi).
+
 **Maan lo pooche saga kyun nahi, aur DB kaunsa:** Arpan: Saga isliye nahi le rahe ki saga ke liye do alag DB chahiye; yahan sab same DB me kaam kar raha. Ek se kata, doosre ko mila, ye transactional hai, consistency bhi chahiye, log bhi. Isliye SQL DB prefer karunga, wo bahut cheezein free me deta: ACID, transaction. Aisa nahi ki NoSQL me transaction nahi hota, hota hai; par yahan itna likhna nahi chahiye, JSON type data nahi, row wala data hai: pehli row, doosri row.
 **Asli bank me (sach):** Arpan: Ye bolne me jitna aasaan lagta, utna aasaan nahi. Banking me aksar teen-chaar se paanch din baad paise wapas aate hain; peeche job chalti hongi.
 Technical me: ek DB = ek transaction (ACID), saga sirf alag DB pe; row data + transaction = SQL; asli refund / reversal = peeche ki reconciliation job (din lag sakte).
@@ -75,6 +76,7 @@ Technical me: "log hamare paas hai, dekh ke mana" = DB me pehle wala record dekh
 **Maan lo agle din Arpan sach me Ravi ko phir 500 bhejna chahta hai. Diary me pehle se "Arpan se Ravi, 500" hai, cashier use bhi mana kar dega. Wahi purani parchi hai ya nayi, kaise pehchaane?**
 Arpan: Aisa karo, ek key bana do, ek key le lo. Arpan ne Ravi ko 500 bheje, ab use pata nahi gaye ki nahi, to wo dobara bhejega to usi key ke saath bhejega na, key thodi badli, key to same hi hai. Key kuch aisa rakho jo badle hi na. Maan lo maine ek parchi pe likh diya ki Ravi ko 500 bhejne hain is waqt, aur parchi bank wale ko de di. Mujhe nahi pata gaye ki nahi, to main dobara wahi same parchi dunga. Wo dekhega: "abe yaar ye to same hi hai, ise kyun wapas bhejna, hatao." Matlab ek key aisi banegi jo do baar transaction me same hi rahegi.
 Technical me: "key jo badle hi na, same parchi" = idempotency key, "ye to same hi hai, hatao" = key pehle aa chuki to purana jawab (UNIQUE), nayi parchi = nayi key.
+
 **Maan lo wahi key abhi process ho hi rahi hai:** Arpan: DB me unique constraint, key ABC123 pehle payment ke saath gayi; retry pe wahi key aayi to insert fail. Aur agar server abhi process hi kar raha hai to bhi reject kar dega ki ye bhi process ho rahi hai, dobara nahi.
 Technical me: unique key + "IN_PROGRESS" bhi ek jawab (doosri request ruk jaaye, dohra kaam nahi).
 
@@ -95,6 +97,7 @@ Technical me: "counter pe group ki line, kaam khatam to agla" = thode workers / 
 **4. Hafte baad Ravi aaya: "Arpan ke 500 mile hi nahi". Register me sirf aaj ka balance, purana number har baar kaat ke naya likha. Saabit kaise karein?**
 Arpan: Ek alag diary rakh lo, usme kaato mat, uske neeche bas likhte jao, jodte jao. Ya ek copy me do column bana lo: ek me update likhte ja rahe, koi dikkat nahi, lekin doosre me update mat karo, 500 kaato mat, neeche likhte jao: Ravi me +500 hua, yahan se -500 hua. To kabhi koi dikkat nahi. Main bol raha hoon do alag cheez rakho.
 Technical me: "alag diary, kaato mat, neeche likhte jao" = ledger (append-only), "+500 / -500" = double-entry, "ek column me update" = balance column, alag.
+
 **Maan lo pooche ledger kaunsi dikkat solve karta:** Arpan: Ledger kisi dikkat ko solve nahi kar raha; ledger ek audit record hai. Sab cheez DB me pehle se hai, logs me hai. Ledger ek book jaisa: kal RBI ka audit aaya to main DB me query chala-chala ke nahi dhoondhunga, ledger ki copy de dunga. RBI bank ka DB nahi maangta; RBI apna audit karta, bank apna, dono ledger milaate hain.
 Technical me: ledger = append-only audit trail (regulator / reconciliation ke liye), balance ka sach ussi se jodke milta.
 

@@ -51,6 +51,7 @@ Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabk
 **1. Saari episode US ke store me. 12:30 pe karodon log wahi file maang rahe, har tukda samundar paar se, Ravi ke TV pe buffering, data pahunchane wali company ka bill aasmaan pe.**
 Arpan: Main roz wahi file lene doosre shehar jaata hoon, bus me tel phoonk ke. File ghar nahi la sakta, par apne shehar me to la sakta hoon. CA doosre shehar me hai, to mera dost jo roz aata-jaata hai, wo file mere shehar le aaye. Main chupchaap jaao, sign karo, wapas aao. Bekaar me baar-baar shehar kyun.
 Technical me: "file apne shehar me" = ISP ke andar Netflix ka dabba (Open Connect), "ghar nahi la sakta" = poora video phone pe nahi rakhte, "dost roz aata-jaata" = dabba US ke store se bharta rehta.
+
 **Maan lo pooche video cache (Redis) me kyun nahi:** Arpan: Cache me video thodi rakhenge, cache us kaam ka nahi. Video ek dabbe me rakh lo (CDN). Is design ki sabse badhiya baat: video ban gayi, ab update nahi hogi, isliye hum use apne paas rakh sakte. Jaise maine pen drive me Money Heist rakh liya aur sabko baant raha, baar-baar laptop leke nahi ja raha.
 Technical me: badi, kabhi na badalne wali file = CDN (edge), Redis = chhota garam data (KB), video nahi.
 
@@ -98,6 +99,7 @@ Technical me: "turant parchi" = abhi ka dekha alag fast store me, "dikhate waqt 
 **Maan lo Priya ne pehli baar join kiya, koi itihaas nahi.**
 Arpan: Parlour wala mere bhai ko nahi jaanta, wo kahega ye hit game hai, khelo. India me hai to India ka garam maal dikhao. Dheere-dheere lat lagegi, pattern banega.
 Technical me: "garam maal" = naye user ko region ka trending (cold start), "pattern banega" = dekhne se apni list.
+
 **Maan lo Priya Ravi ki behen hai:** Arpan: Netflix ko nahi pata Priya Ravi ki behen hai, wo Ravi ke account se nahi aayi, uska apna alag account hai. Family account hota to alag baat. To Priya ko India ke hot topic dikhao (jaise Dhurandhar).
 Technical me: pasand account / profile ke hisaab se, rishta nahi pata; naye account pe region ke trending (cold start).
 

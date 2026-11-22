@@ -61,6 +61,7 @@ Technical me: khaali bucket -> request agle bucket pe, out of stock = saare buck
 **Maan lo sab dabbe 0, page pe "Out of stock". Ravi ne order cancel kiya, ek iPhone wapas. +1 kis dabbe me, aur page dekh rahi Priya ko kaise mile?**
 Arpan: 5 dabbe isliye ki bheed kam ho; hai to mere paas 1000 hi. Offline store jaisa: board laga diya, line lambi to 5 line me baant do, paanchon billing karein, bill dikhao iPhone lo. Ek phone wapas aaya to mere stock me aayega, kisi dabbe ka nahi, ek iPhone hai. Pay karo, jisne pehle pay kiya uska.
 Technical me: "stock me wapas, kisi dabbe ka nahi" = restock / inventory release (koi bhi dabba +1, "out of stock" hata do), "jisne pehle pay kiya uska" = ginti payment pe (koi reserve nahi, kadam 1).
+
 **Maan lo phone hi kam pad gaye:** Arpan: Ya to shuruaat me hi zyada phone mangwao, tumhe pata hai sale pe zyada log aayenge; ya jitne phone hain usse kaam chalao, khatam hone pe out of stock dikha do. Cart me add hone ka matlab ye nahi ki khareed liya.
 Technical me: sale ka stock pehle se plan (forecast), khatam = out of stock, cart = reservation nahi.
 

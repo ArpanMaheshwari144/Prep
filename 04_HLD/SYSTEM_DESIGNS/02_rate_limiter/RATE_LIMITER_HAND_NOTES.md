@@ -70,12 +70,14 @@ Technical me: "tu chhod, mujhe bata, hisaab main rakhunga" = central counter (Re
 **3. Ginti ka khaata ghadi se: 10:00-10:10 ek khaata, 10:10-10:20 agla, har khaate me 5. Ravi 10:09:58 pe 5 leta, khaata badla, 10:10:01 pe phir 5. 3 second me 10.**
 Arpan: Iska answer mujhe pehle se pata hai, padha tha tabhi ban pa raha. Had ek dabbe me rakh lete hain, har bande ke liye: is dabbe se token nikaalo aur aage badh jaao. Dabbe pe ek had hoti hai, 5 second me ek token ya 3 second me ek token. Wo apni raftaar se badhega, user apni raftaar se aayega. User aaye nahi to uske paas bahut saare token, to burst allow hai, koi dikkat nahi. Ye token bucket naam ka algorithm hai.
 Technical me: "dabbe se token nikaalo, aage badho" = token bucket, "apni raftaar se badhega" = refill rate (OTP pe: max 5, har 2 minute me 1, aam raftaar 10 min me 5, khaali baitha user ek saath 5 le sakta), "user aaye nahi to bahut token" = burst allow.
+
 **Maan lo pooche aur tareeke kaunse:** Arpan: Token bucket, sliding window, fixed window, leaky bucket; par token bucket bahut popular hai.
 Technical me: fixed window (kinare pe dugni, upar wali dikkat), sliding window (ghadi khisakti), leaky bucket (ek raftaar se nikalta, burst nahi), token bucket (burst allow, simple), isliye token bucket chuna.
 
 **4. Ravi ke dabbe me 1 token. Script ne ek pal me 20 request maari, 10 server pe. Har server ne Redis se padha "tokens = 1", ek nikaala, 20 andar ghus gayi.**
 Arpan: Pehle bola: Ravi ko 10 alag server pe jaane hi mat do, uska ek home server, wahi se jaaye. Phir: Redis single thread application hai, wo ek waqt me ek hi chalata. Iska answer bhi pata hai: Lua script. Ye sab cheez ek hi baari me kar de, andar koi ghus hi na paaye. Jaise banking me update aur check ek hi me karte hain, wahi Lua script kar degi.
 Technical me: "Redis single thread" = Redis ek command ek waqt (par alag-alag GET aur DECR ke beech doosra server ghus sakta, isliye single thread akela kaafi nahi), "sab ek hi baari me, andar koi ghus na paaye" = Lua script (check + nikaalna atomic), "banking me update aur check ek me" = wahi atomic check-and-update.
+
 **Maan lo Lua script hi dheemi ho gayi ya atak gayi:** Arpan: Lua dheema ho ya atak jaaye to poora Redis atakta hai, isliye script chhota rakho, loop me nahi. Redis ek line me chalta, RAM hai, ek machine lakh command per second; zyada hoga to shard kar do, cluster hai to koi dikkat nahi.
 Technical me: Lua chalte waqt Redis aur kuch nahi karta (single thread), isliye script chhoti, loop nahi; ek node ~lakh ops / sec, zyada to Redis cluster (shard).
 
@@ -95,14 +97,17 @@ Technical me: "dono khule, bouncer 5-5 karke bheje" = Redis gira to fail-open, p
 
 **7. Script gate pe rukti, 429 khaati, par ruki nahi. Din-raat har second maarti, gate ko roz karodon "mana", Ravi ko farak nahi.**
 Arpan: Ek baar mana kiya, do baar mana kiya, teesri baar bhi aaya. "Ravi bhai, tum yahan aao, mere is dabbe se jaake baat karo, wo kuch samjhaayega, chhoti si toffee dega." Us dabbe me Ravi ka gala pakad ke wahin bitha denge: tu ab kahin nahi ja sakta, yahan se hil hi nahi sakta, is site ke liye tu permanent band.
-Arpan (doosri kahani, 16-Nov round): Pehle 1-2 baar chot khaayi to bouncer API gateway pe khada kiya. Ab bouncer bhi roz 1000 logon se uljha hai. To pattern dekho: ye banda roz-roz aa ke yahi kar raha? Haan to ban karo, WAF me daal do, block, kahani khatam.
+
+Arpan (doosri kahani): Pehle 1-2 baar chot khaayi to bouncer API gateway pe khada kiya. Ab bouncer bhi roz 1000 logon se uljha hai. To pattern dekho: ye banda roz-roz aa ke yahi kar raha? Haan to ban karo, WAF me daal do, block, kahani khatam.
 Technical me: "ek baar, do baar, teesri baar" = baar-baar had todne ka pattern, "alag dabba, yahan se hil nahi sakta" = ban list, "permanent band" = ban wala gate pe bina gine lautta.
+
 **Maan lo pattern pakadna kaise:** Arpan: Kafka peeche chhod do, Kafka se pattern nikalo ki ye kitni baar aaya, kya kiya, kaunse endpoint jhaankne ki koshish kari; ye sab dekho, us pattern ke hisaab se WAF me daal do. Aur ban kuch der ka hota hai, aisa nahi ki wo permanent rahega, kyunki IP badalte rehte hain.
 Technical me: "Kafka se pattern" = request log events -> Kafka -> consumer (abuse detection), "kaunse endpoint jhaanke" = endpoint scanning pakadna, phir WAF block list. "Ban kuch der ka" = IP ban pe umar (TTL), kyunki IP badalta aur ek IP ke peeche asli log bhi; upar wala "permanent band" = pakka pakda gaya user / account. Dono saath chalte.
 
 **8. OTP login se pehle, had phone number pe. Ravi ki script har baar naya number daalti, har number ki ginti 1. Had IP pe lagai to subah 9 baje office ke 500 log ek hi WiFi (IP) se, 5 OTP ke baad poora office atka.**
 Arpan: User login ho gaya to uski saari information aa jaati, userId hamare paas, wahan koi dikkat nahi; kuch kare to ban kar do. Login se pehle ki dikkat hai, to login pe thodi dheeli had chhod do. Par itni dheeli nahi ki koi script hazaar baar chala de. Google pe password kitni baar guess karega, 2, 3, 5 baar. Hazaar baar koi haath se type nahi karta, karega to intention theek nahi. Ek banda roz hazaar baar password reset kar raha, kal dekha phir hazaar, ye insaan ke liye possible nahi, us IP ko WAF me daal do. Office me hazaar log hain par hazaar log ek saath password nahi bhoolte, bhoole bhi to ek-do din, isliye pattern notice karte hain. Ek second me login button pe 10,000 request, ek office WiFi bhi ye nahi kar sakta. 1 lakh me 50,000 bhool gaye to aisa to main har design tod dun, perfect design koi nahi, aaj bhi Google, YouTube toot-ta hai.
 Technical me: "login ke baad userId hamare paas" = userId pe kadi had, "login pe dheeli had" = login se pehle IP pe dheeli had, "insaan hazaar baar nahi, pattern notice" = script pattern pakadna, "IP ko WAF me daal do" = WAF.
+
 **Maan lo login ki had aur baaki ki had ek hi?** Arpan: Har user ki had: login pe uski apni had ki kitna login kar sakta, aur baaki pe baaki doosri had. Had paar hui to 429, thodi der baad aana.
 Technical me: per-endpoint limit (login ki alag kadi had, baaki API ki alag), had paar = 429 + Retry-After.
 
@@ -112,6 +117,7 @@ Technical me: "had asli user pe bhaari" = false positive (lockout), "passkeys / 
 **9. Result ka din, subah 10 baje 1 crore bachche OTP maangte. Har bachcha apni had me, phir bhi OTP Service aur SMS company dono gire.**
 Arpan: Mere paas 2-3 log hain jo 10,000 logon ka kaam kar rahe, koi na koi girega hi. To log badha do, server badha do. Aur SMS company ko utni bheed mat jaane do, wo apne hisaab se kaam kar rahi. Line lagwa, aaram-aaram se: "jaao beta, ek-ek karke; tu nikal, ab tu nikal." Hamare aur SMS company ke beech ek cheez fit kar denge jo spike rok le. SMS ab ek ja, ek ja, dheela-dheela, aaram se.
 Technical me: "log badha do, server badha do" = apne server scale, "line lagwa, ek-ek karke" = queue (Kafka), "beech me cheez jo spike rok le" = SMS company ki raftaar se worker / consumer, global had.
+
 **Isi dikkat ki doosri kahani:** Arpan: Sale me 1 crore log aa gaye, har koi apni had me tha, phir bhi server gira, matlab hamara server bhar gaya. To apne server ke liye ek global cap rakh denge; uske upar jitni request aayein unhe 503 de denge: hum bhare hue hain, thodi der baad aana. Aur wahan jo kam zaroori kaam hai wo hatega; jo zyada zaroori hai, login, paise wala, wo chalta rahega.
 Technical me: "global cap, upar 503" = global / server-wide limit (503 Service Unavailable), "kam zaroori pehle hatao" = load shedding (priority: login / payment pehle, recommendation / analytics baad).
 

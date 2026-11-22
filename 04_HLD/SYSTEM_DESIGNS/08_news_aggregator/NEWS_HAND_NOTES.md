@@ -61,6 +61,7 @@ Technical me: "chhotu" = fetcher (har site se khabar khinchne wala), "dabba" = D
 **2. Chhotu akela, 5000 site, ek site pe 2 second = ek chakkar 3 ghante. 8:55 wali khabar 11 baje pahunchi.**
 Arpan: Bahut saare chhotu rakh le. Aur khabar pehle se taiyaar rakh, ek chhoti parchi me, sab wahin se padh lein. Jaise akhbaar me saari khabar ek saath aati hai, jo achha lage padh lo.
 Technical me: "bahut saare chhotu" = kai fetcher ek saath, "chhoti parchi" = Redis me taiyaar feed (cache).
+
 **Maan lo koi site band hai ya bahut dheemi:** Arpan: Har site ka fetch parallel hoga, timeout hoga, aur har site ka circuit breaker: koi site fail ho gayi to circuit breaker hai hamare paas. Aur peeche queue hai jo backlog aur spike sambhal sakti hai.
 Technical me: per-source timeout + circuit breaker (ek dheemi site baaki ko na roke), queue = backlog / spike buffer.
 **DB kaunsa:** Arpan (21-Nov): News me consistency honi chahiye: khabar kahan se laa rahe, title, URL, category, time, ye sab theek chahiye. Isliye shuruaat Postgres (ya MySQL) se karunga, Cassandra ekdum se nahi ghusa sakta. Kaunsa DB, iska jawab FR se milega: interviewer bole "likhai bahut hai, 50,000 fetcher, har fetcher 100-1000 khabar laa raha, har minute DB me update", tab write-heavy hai aur Cassandra ka sense banta. Bole "padhai zyada, likhai me itni dikkat nahi", to Cassandra lunga hi nahi, Postgres se kaam chal jaayega. Badi companiyan dono rakh sakti: ACID wala bhi aur NoSQL bhi (key-value / JSON me khabar ka title, khabar).
@@ -77,7 +78,8 @@ Technical me: "thodi der intezaar" = lease / heartbeat timeout, "purana wapas aa
 **3. 50 chhotu. Ravi ki feed me ek khabar 40 baar: 2 chhotu ek hi Cricbuzz se laaye, 38 alag site se alag shabdon me.**
 Arpan: Chhotu ke paas ek bada aadmi rakh: "ye dobara hai, hatao, pehle aa chuki". Par "India jeeta, Kohli ki century" aur "Kohli ki shaandaar century, India jeeta" me shabd alag hain, hubahu wala check nahi pakdega. To wordings dekh lo: dono me Kohli, century, India, jeeta hai, to same khabar, hata do; nahi to rakh lo.
 Technical me: "bada aadmi" = dedup, "hubahu same" = URL / title ka hash, "wordings dekh lo" = shabd milaan (near-duplicate check).
-**Isi dikkat ki doosri baat (6-Oct):** Arpan: Ek hi khabar baar-baar repeat ho rahi to duplicate hata sakte, dedup: paanch source pe ek hi khabar ho to ek hi laao. Jaise Bloom filter use kar sakte, usse repetition nahi hogi; aur category me baant sakte, tag: sports, politics.
+
+**Isi dikkat ki doosri baat:** Arpan: Ek hi khabar baar-baar repeat ho rahi to duplicate hata sakte, dedup: paanch source pe ek hi khabar ho to ek hi laao. Jaise Bloom filter use kar sakte, usse repetition nahi hogi; aur category me baant sakte, tag: sports, politics.
 Technical me: Bloom filter = "ye pehle dekha?" ka tez jawab (thodi jagah me; kabhi-kabhi galat "haan", "nahi" hamesha sahi), category tag.
 
 **4. Bada aadmi akela, har khabar ko hafte ki 5 lakh khabron se milata, 1 minute ek khabar. Line lambi, 8:55 wali 10:30 pe.**
@@ -122,6 +124,7 @@ Technical me: "FR me tay kab tak" = data retention policy, "raddi, register se n
 
 **13. Ravi ne search me "Kohli century" likha. Server mote register me 7 din ki lakhon khabron ki poori likhai me ek-ek karke "Kohli" dhoondh raha, Ravi 8 second se gola dekh raha.**
 Arpan: Main Elasticsearch add kar dunga. Elasticsearch apne aap me alag design hai. 7 din me sach me bahut khabar, Kohli ki dhoondhne me bahut time lagega; aisa nahi ki har din ka partition karo. Elasticsearch search index bana ke khud dhoondh lega. Andar kaise kaam karta wo Elasticsearch jaane, uska design hum nahi bana rahe.
+
 **Maan lo headline alag-alag shabdon me:** Arpan: Koi "Kohli ne century maari", koi "aaj Kohli ki shatakiya paari". Hamari company khabar banati nahi, bahar se laati hai, aur sabki headline alag. To sabki jad nikaalo: Kohli century. Mere paas 10 paper aaye, 5 me almost wahi baat, likhne ka andaaz alag. Koi aaya "Kohli ki century?", maine kaha haan maari, ye le 5 paper, isme sab likha hai kab maari.
 Technical me: Elasticsearch = alag search index (black box, PSP jaisa) (bana-banaya: AWS OpenSearch / Elastic Cloud; hum sirf sikhate kya aur kaise dhoondhna, Foundations 12); koi pooche to: har shabd ke saamne khabar ki list, jaise kitaab ke peeche ka index ("Kohli" -> khabar 3, 7, 9), isliye poori likhai nahi padhni padti (inverted index); "sabki jad" = stemming / synonyms (analyzer), "ek baat ke 5 paper ek saath" = milti-julti khabar ka group (clustering, kadam 3 jaisa).
 

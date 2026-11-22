@@ -246,6 +246,7 @@ ya baad me sync job DB aur S3 milaaye, jo DB me nahi wo S3 se hatao.
 **Asli naam:** soft delete (DB me turant) + async delete (queue + worker) ya orphan cleanup / reconciliation job.
 
 **Maan lo folder ki ek file fail:** parent + child tracking id; ek child fail to poora folder fail, sab pass to pass.
+
 **Maan lo 10 file ek saath:** kai copy (worker) baant ke scan, dheere-dheere S3 ko; net gaya to status se kahan tak.
 **Asli naam:** folder status = sab child ka AND, parallel workers, resume.
 

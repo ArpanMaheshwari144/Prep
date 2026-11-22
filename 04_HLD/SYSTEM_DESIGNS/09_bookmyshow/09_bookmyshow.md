@@ -36,7 +36,7 @@ User --> line (virtual queue, token: capacity jitne andar) --> LB --> kai counte
 ```
 
 **FR / NFR kahan se:** hawa se nahi aate. Upar ki dikkat chain dekh ke nikale; har FR / NFR line ke aage likha hai wo kis kadam ki dikkat se aayi.
-Arpan (17-Nov round): Log aa rahe hain, paise dekar ja rahe hain, matlab seat book honi chahiye. Ek seat do aadmi ko nahi milni chahiye. Payment consistent hona chahiye. Logon ko zyada intezaar na karna pade. FR me wo jo BookMyShow karta hai: seat book karna, pay karna, ek seat do ko nahi. NFR wo jo hum engineer ki tarah dekhte: Redis, replica, kai server, load balancer, kuch atke nahi; koi line me aaya aur bahut der khada raha, uski parchi khatam ho gayi aur bina pay kiye chala gaya, 8 minute khade rehne ka fayda hi nahi hua, aisa na ho. Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai. API abhi nahi, kuch din baad.
+Arpan: Log aa rahe hain, paise dekar ja rahe hain, matlab seat book honi chahiye. Ek seat do aadmi ko nahi milni chahiye. Payment consistent hona chahiye. Logon ko zyada intezaar na karna pade. FR me wo jo BookMyShow karta hai: seat book karna, pay karna, ek seat do ko nahi. NFR wo jo hum engineer ki tarah dekhte: Redis, replica, kai server, load balancer, kuch atke nahi; koi line me aaya aur bahut der khada raha, uski parchi khatam ho gayi aur bina pay kiye chala gaya, 8 minute khade rehne ka fayda hi nahi hua, aisa na ho. Refund me BookMyShow ka seedha lena-dena nahi, wo PSP ka kaam hai. API abhi nahi, kuch din baad.
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
@@ -190,7 +190,7 @@ aur replica wali cheez. Aur thode-thode log andar jaao, zyada nahi. Sabse pehli 
 utne log andar. Maan lo mere hall me 1000 ki jagah aur saamne 5000 khade, to 1000 andar jaao, baaki 4000 ghar jaao. Aur
 wo line me lago: "le bhai, ye teri parchi, tu jaayega, phir agla number tera."
 
-Doosri kahani (18-Nov raat): bheed ko aane se pehle baant do. Avengers Doomsday 17 December ko aa rahi hai, par uski
+Doosri kahani: bheed ko aane se pehle baant do. Avengers Doomsday 17 December ko aa rahi hai, par uski
 booking 17 November ko hi khul gayi, to log mahine bhar me dheere-dheere seat lete hain. GTA 6 ka pre-download release
 (19 November) se 9 din pehle khula, taaki release ke din server pe ek saath download na aaye. Interview me: "Sir, hum
 mahina pehle booking khol dete hain, to itna shor aata hi nahi."
@@ -305,7 +305,7 @@ lautao", wo bank se poochh ke lautata aur hume batata. 1 minute ke baad aaya "pa
 **Maan lo Pay do baar daba:** key client banaye, wahi key dobara aaye to "process ho rahi / ho chuki".
 **Asli naam:** client idempotency key.
 
-**Maan lo PSP chup (21-Nov):** 30-55 sec ke baad FAILED; Razorpay bank se 3 din tak poochhta, der se kata to webhook
+**Maan lo PSP chup:** 30-55 sec ke baad FAILED; Razorpay bank se 3 din tak poochhta, der se kata to webhook
 (late_authorized). Alag column "kitni der baad kata" = refund job + Razorpay ki der ka saboot (roz ka pattern).
 **Asli naam:** polling vs webhook, late authorisation, auto-refund, late debit column.
 
@@ -353,7 +353,7 @@ jaise S3 bhejta), hum "mil gaya" bol dete. Baad me pata chala paisa kata tha, to
 lautao"; wo bank se poochh ke kata tha to wapas karega. Bank se poochhne ka haq Razorpay ka hai, BookMyShow ka nahi;
 paisa Razorpay ne kaata, lautayega bhi wahi. Badi film pe 3-4 company (Razorpay jaisi doosri service) line me.
 
-Doosri kahani (18-Nov raat): GPay se pay kar raha hoon. GPay ka gola hamare server pe nahi, to 1 minute ho ya 10
+Doosri kahani: GPay se pay kar raha hoon. GPay ka gola hamare server pe nahi, to 1 minute ho ya 10
 minute, wo sawaal hi nahi. Back dabaya aur paise kate hi nahi = user khush. Do haal: (1) user app me ruka, 10 second me
 "fail" aaya -> wahin popup "seat tumhari, dobara pay karo", dobara pay doosre PSP pe. (2) user ne back daba ke app band
 kar diya: 1.5 minute rokenge, chhotu peeche dekhta, kata to seat book; uske baad khatam (peeche bheed, chhotu 10 minute

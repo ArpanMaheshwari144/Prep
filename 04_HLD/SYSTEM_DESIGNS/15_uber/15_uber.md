@@ -121,7 +121,7 @@ Abhi ki jagah ek parchi (Redis) pe, har 4 second purani kaat ke nayi, delivery k
 chahiye to saari location Kafka me (bheed ka jawab), wahan se batch me alag storage box me ("10 minute yahan khada tha").
 **Asli naam:** Redis me sirf aakhri jagah (overwrite), history = Kafka -> batch write alag storage, DB = sirf status.
 
-**Teesri kahani (21-Nov round):** matching ko abhi ke abhi chahiye, Kafka -> Cassandra batch me der se, isliye matching Redis
+**Teesri kahani:** matching ko abhi ke abhi chahiye, Kafka -> Cassandra batch me der se, isliye matching Redis
 se (har baar kaat ke latitude-longitude). Ride book hui tab raasta pakka chahiye (SOS / support: "Whitefield se kahan le gaya"),
 isliye Cassandra me wo jo important hai. Khaali aur bhara (sawari wala) driver alag: bhare ka raasta Kafka se batch me Cassandra,
 khaali ka padhai ke liye alag. Aage purane raaston se "airport ka sabse achha 9va raasta" bhi nikaal sakte.
@@ -262,7 +262,7 @@ dabbe extra, load ek machine pe na rahe. Stadium, Connaught Place jaise hotspot 
 booking ki had paar ho to system apne aap dabbe badha de.
 **Asli naam:** ek dabbe pe saara bojh = hot cell (hot shard), 2-3 dabbe extra = hot cell ko chhote dabbon me tod ke kai shard pe, pehle se = pre-scaling, had paar to apne aap = auto-scaling.
 
-**Maan lo (12-Nov grill) India-Pakistan match, 2 lakh log, server badhane se kaam nahi chala to dabba tukdon me toda. Arpan ke tukde
+**Maan lo India-Pakistan match, 2 lakh log, server badhane se kaam nahi chala to dabba tukdon me toda. Arpan ke tukde
 me koi khaali driver nahi, 300 meter door neeche wale tukde me 5, par doosre server pe:** Pehle server badhao, kaam na chale tab hi
 todo. Toda to ek papa ji (bada aadmi) jo sab tukde dekhe: Arpan ka tukda + uske upar, neeche, bagal wale tukde, unke khaali driver
 Arpan ko. Har tukde ke liye yahi. Phir bhi bheed to gola bada.
@@ -416,7 +416,7 @@ banata to aise.)
 **Asli naam:** jo dikhaya wahi = upfront fare: quote ride ke saath save (lock), aakhir me wahi kaato; zyada mehnat =
 tip alag, rider ki marzi.
 
-**Doosri kahani (21-Nov round):** concert se Whitefield, 900 dikha, traffic me 1 ghante ka raasta 2.5 ghante, 1400 kate.
+**Doosri kahani:** concert se Whitefield, 900 dikha, traffic me 1 ghante ka raasta 2.5 ghante, 1400 kate.
 Teen nazar: driver ka 1.5 ghanta gaya (3-4 ride ya ek airport wali), Uber ka nuksaan, customer ka gussa jaayaz. Aage ka traffic
 pehle se nahi pata (Bangalore bhida shahar), pehle hi 1400 bol diya aur traffic nahi laga to bharosa gaya. Normal laal batti
 pe nahi badhao (buffer), sach me der (1.5 ghante se upar) to har extra 30 minute +100 / 150.
@@ -466,7 +466,7 @@ to gateway ko bolo "lautao". Onboard pe SLA lo: uptime aur down hone pe khabar; 
 **Asli naam:** 30-55 sec = hamara client timeout, event = webhook (PSP callback), "mil gaya" = ack (2xx), baad me kata to
 lautao = REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe, onboard pe SLA = uptime SLA + incident response.
 
-**Maan lo (21-Nov round) 30 second jawab nahi, Arpan ne cash de diya, 5 minute baad GPay se bhi kat gaya:** DB me FAILED,
+**Maan lo 30 second jawab nahi, Arpan ne cash de diya, 5 minute baad GPay se bhi kat gaya:** DB me FAILED,
 raaste: Uber wallet / doosra PSP / cash. Table me "kitni der baad kata" column, raat ki cron job pakde aur Razorpay ko bole
 lautao. Kaise diya (cash / GPay + transaction id) bhi rakho. Wallet se kat gaya aur event aa gaya to Arpan ko mat roko.
 **Asli naam:** client timeout -> FAILED, PSP failover + cash fallback, late debit column -> reconciliation job, payment method + transaction id.
@@ -615,6 +615,7 @@ building ki chhat pe dikh rahi (ghost bike):** Server pe dikha location building
 sadak hai, signal buildings me ulajhta. Hamein pata hai Raju is building ke aas-paas hai aur wahan sadak kaunsi hai, to
 chhat pe dikhe to use paas wali sadak pe wapas utaar do.
 **Asli naam:** paas wali sadak pe chipka do = map matching (GPS ka galat point sabse paas ki sadak pe, raaste ke hisaab se).
+
 **Doosri kahani (nadi):** GPS ne bike 1 second me nadi ke us paar dikha di. Network theek nahi to app kahin bhi phenk sakta,
 ye rok nahi sakte (Uber, Rapido me hota); animation se use wapas isi road pe le aao. Wahi map matching.
 
@@ -625,6 +626,7 @@ aur hum gudde ko aage chala rahe the; signal aaya to asli jagah peeche, gudda ut
 Zomato, Swiggy sab me dikhta hai.
 **Asli naam:** gudde ko andaze se aage = dead reckoning (speed + sadak se andaza), nayi aayi to sahi jagah = correction,
 U-turn pe kooda = andaza galat nikla.
+
 **Doosri kahani (tunnel, flyover jaisi hi):** Raju raaste me tunnel me ghusa, net 1 minute gaya, phone ne 15 jagah note
 ki par bhej nahi paaya; map pe bike ek jagah khadi (basement se alag: wahan pahunch chuka, yahan raaste me). Net poora
 gaya to driver ruka dikhega, chalta nahi dikha sakte (pata nahi kya kar raha); ya aage-aage badhao, par galat gudda nahi,

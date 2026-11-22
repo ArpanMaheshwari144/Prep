@@ -240,7 +240,8 @@ maalik hoga, sab uske hisaab se chalega.
 
 **Asli naam:** centralized system, ek hi version = ek jagah kram aur OT, har doc ka alag centralized system, uska
 maalik = har doc ka ek owner server (LB `docId` dekh ke ring pe owner chunta = consistent hashing, server jude / gire to sirf paas ke doc hilein, ek doc ke saare editor wahin).
-Doosri kahani (16-Nov grill, Arpan Mumbai server se, Ravi Delhi server se): pehle saare op apne paas jama karo (Redis,
+
+Doosri kahani (Arpan Mumbai server se, Ravi Delhi server se): pehle saare op apne paas jama karo (Redis,
 abhi DB nahi). Arpan ne jagah 0 pe "ARPAN" likha, Ravi ne jagah 2 pe "RAVI". Dono op ek jagah aaye: pehle ARPAN, phir
 Ravi jagah 2 pe, jahan "P" hai. Arpan ka kaat ke Ravi ka likhna, ya "AR" + "RAVI" likh ke "PAN" kho dena, dono galat. To
 "P" ko khiska do, beech me poora "RAVI": "AR RAVI PAN". Jaise main Madhya Pradesh me beech me baitha, Ravi Delhi se, Arpan
@@ -325,6 +326,7 @@ Bahut se answer ho sakte, ek sahi answer nahi: Redis pub/sub bolo ya building ke
 
 **Asli naam:** centralized authority = permission ka asli sach (SQL: kaun, kis doc pe, kya kar sakta), memory me note =
 server pe permission cache + har op pe check (har akshar pe SQL nahi), iska operation accept nahi = op reject, tez bhaagne wala bachcha / building ke bahar chilla de = pub/sub invalidation (Redis pub/sub).
+
 **Maan lo Ravi hatne ke waqt offline tha:** laptop pe likhta raha, aadhe ghante baad net aaya aur saare edits ek saath aaye. Net aate hi
 Ravi ko popup "tumhe owner ne hata diya". Server pe edit seedha nahi lagta, har edit pe dekho bhejne wale ke paas abhi edit ka haq hai ya nahi;
 tha to merge, nahi to saare edits phenk do. Alag rakhna ho (Ravi baad me wapas mile) to wo FR ki baat, interviewer se poochh ke.

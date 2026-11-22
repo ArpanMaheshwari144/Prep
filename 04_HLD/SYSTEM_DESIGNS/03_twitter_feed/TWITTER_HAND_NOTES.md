@@ -78,6 +78,7 @@ Technical me: "follow karte hi purane push" = backfill on follow, "naya waise hi
 **Maan lo Ravi ne Arpan ko unfollow kiya, par dabbe me Arpan ke 50 purane tweet pade hain.**
 Arpan: Feed sirf follow walon se nahi banti: main khud Elon, Sachin, Kohli ko follow nahi karta, phir bhi mujhe unke tweet dikhte, kyunki Twitter / Instagram ka kaam hi engage rakhna hai; kuch follow na karo to bhi khaali page nahi dikhta. Unfollow ke baad pade hue tweet turant gayab nahi honge, par naye aane band, aur jaise-jaise feed banegi Arpan ke tweet dheere-dheere kam ho jaayenge.
 Technical me: "turant gayab nahi, dheere kam" = dabba saaf nahi karte (lazy, purge nahi), naye fanout band, ranking (kadam 17) neeche karti; feed me follow ke alawa recommendation bhi.
+
 **Maan lo bahut saare server, Ravi ki request kabhi kisi pe:** Arpan: App stateless hoga. Bahut saare server honge, har server yaad nahi rakhega ki ye zaroori info kiski hai, to hum JWT use kar lenge.
 Technical me: "har server yaad nahi rakhega" = stateless app server (session server me nahi), "JWT" = token me hi user ki pehchaan, koi bhi server padh le.
 
@@ -150,6 +151,7 @@ Technical me: "har worker / consumer ka status" = DB me hisson ki ginti, "tu hai
 **Maan lo worker / consumer 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana raha, baaki 2 minute me khatam.**
 Arpan: Uski wajah se mera kaam ruk raha. "Tu thoda rest le, ye tera replacement, bata kahan tak chhoda, ye wahin se karke dega."
 Technical me: "atka to replacement" = timeout pe slow worker / consumer ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
+
 Isi dikkat ki doosri kahani: "zinda hoon" kaafi nahi. Chhotu tu zinda hai na? Haan. Kaam kahan tak hua? "Main zinda hoon, kaam kar raha hoon." Mujhe ye bata kaam kahan tak hua. "Abhi kuch feed reh rahi." In 10 ne kaam kar liya, tere paas aisa kya kaam? Ek aur chhotu ko bhej ke dekho: "Arpan bhai, iske paas bahut bada chunk hai, akele sambhal nahi pa raha, thak chuka." Kisi ke paas 10 newspaper the, kisi ke 20, is bande ke paas 50 aa gaye. To 2-3 chhotu extra bhej do, madad kar lein, feed taiyaar ho jaayegi aur log subah akhbaar padhne aayein to taaza mile.
 Technical me: "zinda hoon != kaam ho raha" = heartbeat ke saath progress report, "bada chunk" = data skew (ek hisse pe zyada kaam), "2-3 chhotu madad" = hissa tod ke baanto (work stealing / split).
 
@@ -186,7 +188,8 @@ Technical me: "ID se seedha page" = hydration (ID se poori post, key se lookup; 
 **Maan lo Arpan ne tweet delete kar diya, par 8000 logon ke dabbe me uska number (ID) abhi bhi pada hai.**
 Arpan: 8000 dabbe ek-ek karke saaf karna bhaari hai, zaroorat bhi nahi. Kadam 16 me screen pe dikhane se pehle hum ID se mote register ka page kholte hi hain. Page pe likha mile "ye tweet delete ho gaya", to bas use dikhao mat, chhod do. Dabbe me pada number apne aap purana hokar khisak jaayega.
 Technical me: page pe deleted = tweet store me deleted flag (soft delete), dikhate waqt chhod do = hydration pe filter, 8000 dabbe saaf nahi karne padte.
-Arpan (18-Nov, doosri kahani): Arpan ka tweet Ravi ki feed me push ho chuka tha, Ravi ne ekdum khola to ho sakta hai kuch second dikhe. Phir Twitter ko pata chala user ne delete kar diya, to wahan likh deta "The user has deleted this post". Twitter me aisa hota bhi hai, cheez thodi der dikhti phir hat jaati.
+
+Arpan (doosri kahani): Arpan ka tweet Ravi ki feed me push ho chuka tha, Ravi ne ekdum khola to ho sakta hai kuch second dikhe. Phir Twitter ko pata chala user ne delete kar diya, to wahan likh deta "The user has deleted this post". Twitter me aisa hota bhi hai, cheez thodi der dikhti phir hat jaati.
 Technical me: kuch second purana dikhna = eventual consistency, "deleted" ki patti = tombstone / deleted placeholder.
 
 **17. Ravi roz dost Amit ke tweet pe like / comment karta. Amit ka tweet 3 ghante pehle aaya, uske baad 40 aur, Amit ka neeche dab gaya; upar wo jinhe Ravi kholta bhi nahi.**

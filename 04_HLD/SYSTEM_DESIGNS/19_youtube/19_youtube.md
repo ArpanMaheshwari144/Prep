@@ -32,7 +32,7 @@ nayi video  -->  Twitter wala fan-out, subscribers ko khabar · reels: agle kuch
  8c  har reel poori pehle se, 29 sec bekaar      ->  sirf shuru ke tukde pehle se
 ```
 
-**Arpan (FR / NFR pe, 18-Nov):** nakli view FR nahi, NFR hai (FR 6 hata, NFR 4 me). "Bina buffering" jhootha vaada, Netflix jaisa: net ke hisaab se buffering hogi.
+**Arpan (FR / NFR pe):** nakli view FR nahi, NFR hai (FR 6 hata, NFR 4 me). "Bina buffering" jhootha vaada, Netflix jaisa: net ke hisaab se buffering hogi.
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 

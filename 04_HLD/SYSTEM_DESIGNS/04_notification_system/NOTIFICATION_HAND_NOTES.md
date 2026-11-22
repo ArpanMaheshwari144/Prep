@@ -76,6 +76,7 @@ Technical me: "sabki line alag" = SMS, email, push ka alag topic, "apni line sam
 Arpan: Parchi rakh le apne paas. Ye kaam ho gaya, to maine likh liya aur likh ke kahin rakh liya. Ab 10 din baad dobara aaya, dekha Arpan ke 500 rupaye (ya 5000, 10000) to chale gaye hain, kaam ho gaya hai. To apni parchi pe likh lo, parchi rakho. Kabhi bhi kuch ho jaaye, parchi hai. Parchi zindabaad.
 Technical me: "kaam ho gaya, parchi pe likh liya" = idempotency (khabar ki id + "ho gaya" record), "dobara aaya, dekha ho gaya" = bhejne se pehle check, mila to skip (SMS gaya aur record likhne se pehle crash hua to ek baar dohra ab bhi ho sakta; parchi khidki chhoti karti, band nahi).
 Arpan (parchi kahan): Bhejne se pehle Redis me dekh lenge ki ye event process hua ya nahi, Redis ke saath ek chhota TTL bhi. Ise ek map ki tarah dekho: wo cheez map me pehle se hai to skip kar do, process ho rahi ya ho gayi; map me nahi hai to iska matlab nahi gaya.
+
 **Maan lo Redis (parchi) hi gir gaya:** Arpan: Replica laga sakte hain, aur DB me bhi unique constraint hai: event id pe unique daal do, event ho gaya to dobara process nahi hoga, DB dekh ke reject kar dega. Redis yahan sirf fast raasta hai, single point of failure nahi; wo gira to DB hai.
 Technical me: "map me hai to skip" = Redis SET NX eventId + chhota TTL, "DB me unique" = event id pe unique constraint (asli pehra), Redis = tez pehli jaanch.
 
@@ -90,7 +91,8 @@ Arpan: OTP retry line me gaya matlab kuch toota hai, chup mat baitho: turant ale
 
 **Maan lo "Order placed" SMS bheed me atka (retry line), aur "Shipped" push jaane ko taiyaar hai; aise hi gaya to Arpan ko pehle Shipped dikhega.**
 Arpan: Ek parchi rakhunga: Arpan ka order placed, chhotu ko bheja. Chhotu wapas nahi aaya, to parchi pe likha SMS abhi gaya nahi. Order pack hokar ship hua, parchi pe likha, par mujhe pata hai placed abhi gaya nahi. Chhotu aaya, bola SMS company bheed me hai. To ek saath bhej do: "aapka order placed aur ship ho gaya". Interviewer bole alag-alag dikhao, to retry mat karwao, placed wala doosri SMS company ko de do, phir shipped. SMS nahi ja raha to bagal me email wala khada hai, confirmation ek baar to chala jaayega.
-Arpan (doosri kahani, 16-Nov grill): SMS company ek nahi, teen-chaar hongi; ek fail to doosri, teesri. Sab fail to WhatsApp se, wo bhi nahi to email se. Ek cheez fail hui matlab poora system nahi atkega. Order placed app pe to dikh hi jaayega; customer ko farak nahi padta SMS aaya ya email, wo app me dekh lega. SMS company down hai to DB me likh lo "abhi gaya nahi", company wapas aayi to dobara bhej do.
+
+Arpan (doosri kahani): SMS company ek nahi, teen-chaar hongi; ek fail to doosri, teesri. Sab fail to WhatsApp se, wo bhi nahi to email se. Ek cheez fail hui matlab poora system nahi atkega. Order placed app pe to dikh hi jaayega; customer ko farak nahi padta SMS aaya ya email, wo app me dekh lega. SMS company down hai to DB me likh lo "abhi gaya nahi", company wapas aayi to dobara bhej do.
 Technical me: "order ki parchi" = har order ka status (order id pe), "pehle wala gaya nahi to dono saath" = khabar milana (coalesce, kram bachao), "doosri SMS company" = failover (kadam 5), "email wala" = channel fallback.
 
 **5. SMS company poori band. Har call 30 second latke phir fail, saare worker / consumer atke, retry line phoolti ja rahi, Arpan ka OTP nahi aaya. (Sawaal: kab tay karega ki main company ko call band karo, seedha backup, aur kaise pata chalega ki wo wapas theek ho gayi?)**
@@ -133,6 +135,7 @@ Technical me: write-heavy, read kam, consistency nahi chahiye, ~5 TB = Cassandra
 Arpan: Thoda todte hain. 1 crore ek worker / consumer nahi sambhalega. 20, 30, 50 worker / consumer me baant do, alag-alag range de do: tu yahan se yahan bhejega. Jo bheje gaye unhe turant DB me mark kar do. 1 crore Redis me nahi rakhunga, Redis ko befaltu nahi bharna, apni ek moti diary hai usme karte jao. Bai chance worker / consumer fail hone ke baad dobara bhej de, to idempotency hamare paas hai hi: isko bhej diya tha? Haan, to dobara nahi jaayega.
 Jaise mere paas 10 log hain, maine kaam diya: tu iske ghar jaa, tu iske ghar. Parchi pe likhte raho ye ghar ho gaya. Kal koi bimaar pad gaya: apni parchi dikhana, achha 10 me se 7 ko bhej diya tha. Backup tu aa ja, baaki 3 ko tu bhej de.
 Technical me: "tod do, alag range" = campaign tukde (chunks), "turant DB me mark, moti diary" = checkpoint (DB), "10 me se 7, baaki 3 backup bheje" = crash pe wahin se, "bhej diya tha? dobara nahi" = idempotency.
+
 **Maan lo campaign shuru karne wala button bhi atka:** Arpan: Campaign service turant 202 de degi; DB me campaign ki row: id, kisko, template. Kaam peeche hota rahega: 10 hazaar ke tukde Kafka me, kai fan-out worker parallel me, har worker opt-out wale hataye, template lagaye, provider ki raftaar se bheje; do baar na jaaye uske liye idempotency.
 Technical me: "turant 202" = 202 Accepted (kaam async), "campaign row" = campaign record (id, audience, template), "tukde Kafka me, kai worker" = chunked fan-out, "provider ki raftaar" = rate-limited send.
 
@@ -146,6 +149,7 @@ Technical me: Kafka me message priority nahi -> priority = alag topic + alag con
 Arpan: Wo baar-baar wahi cheez padh raha hai, use apne paas rakh lo. Diwali pe sabko ek hi offer jaata hai, "Diwali 50% off", sabko wahi message. Mote register pe baar-baar kyun jaun? Main apne paas rakh lunga: le, ye ek hi tera hai, isme bas naam badalna hai, bhejta ja.
 User ki pasand uski settings hai, wo DB me hai, DB se hi uthayenge. Hamari company bhi aise hi karti hai, email template banate waqt code DB se khud padh leta hai. Crore users hain, sabki setting cache me kaise rakhenge. OTP itna late nahi hoga, kyunki OTP ki priority pehle se set hai, worker / consumer bhi hain, rate limit bhi hai. Baad me kabhi lage ki faltu queries bahut badh gayi, tab sochunga cache me rakhun, aur tab har user ke liye.
 Technical me: "ek hi saancha apne paas, bas naam badlo" = template cache, "settings DB se hi" = user preference DB se, "OTP ki priority pehle se" = OTP ki alag line, "queries badhi tab cache" = naap ke hi preference cache.
+
 **Maan lo SMS band tha phir bhi raat 2 baje SMS chala gaya:** Arpan: Bhejne se pehle preference dekho: channel on hai ya nahi, quiet hours hain ya nahi, template; phir bhejo.
 Technical me: preference check me channel opt-in + quiet hours (raat ko promo nahi), tab bhejo.
 

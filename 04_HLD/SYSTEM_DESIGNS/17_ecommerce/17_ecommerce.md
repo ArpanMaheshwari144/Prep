@@ -270,6 +270,7 @@ API). Doosra raasta: Pay dabaate hi dabba ghadi (10 min) ke saath rok do (BMS ja
 dabba mila; refund kam, par dabba ghadi tak kisi ke kaam nahi aata. Dono ki keemat: refund ya ruka dabba.
 
 **Ghadi wale ki ek aur keemat:** hold ke beech stock me +1 dikhaya to ek hi dabba cart me bhi, stock me bhi, do jagah.
+
 **Maan lo sabko nahi mil sakta:** Amazon, Flipkart bhi sale pe book karke baad me cancel karte; poora hal nahi, jitna stock
 utne log andar ya turant out of stock. **Asli naam:** available vs reserved stock, oversell ka 100% hal nahi.
 

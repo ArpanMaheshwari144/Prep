@@ -57,8 +57,10 @@ Numbers sirf jahan faisla badle: saalon me itna data (~90 TB) ki ek almari me na
 **1. Counter wala token apne man se bana raha, kuch bhi chhota likh deta. Ek din do alag logon ko same token de diya. Chhota bhi rahe aur do logon ko kabhi same na mile, kaise?**
 Arpan: Uska token ek line wala kar do. Jaise abhi number hai 9, to agla 10. Matlab ek line me wo token banayega. Counter kar do, counter: ye ban gaya to aage badhao, phir ye ban gaya to aage badhao. Aise wo number kabhi repeat nahi hoga. Counter service. Random ya hash me dono logon ko same code mil sakta hai aur har baar DB me jaanchna padta hai; counter me number kabhi same hoga nahi, to ye dikkat khatam.
 Technical me: "ek line me, aage badhao" = counter (har link ko agla number), "kabhi repeat nahi" = takrav nahi, "random / hash me same code" = collision, har baar DB check; counter me check ki zaroorat nahi.
+
 **Maan lo Arpan ne Delhi me YouTube ka ek gaana chhota kiya, Mumbai me kisi aur ne wahi link chhota kiya:** Arpan: URL shortener banane dega, uska link alag hoga. Duplicate link nahi banenge, par ek ke do link ho sakte hain, dikkat nahi, ye to design ka hissa hai; counter aage chalega hi chalega. (21-Nov Arpan ne bit.ly pe khud jaancha: ek hi YouTube link do baar chhota kiya, dono baar alag link mila, bit.ly/4AGUMOh aur bit.ly/4AKx7N1.)
 Technical me: same lamba link = har baar naya code (lambe link pe "pehle se hai?" ki jaanch nahi), ek lambe ke kai chhote chalte hain.
+
 **Maan lo do log bilkul ek hi pal me aayein:** Arpan: Ek aur pehra laga do: DB me code pe unique constraint, "insert if not exist". Ye DB me apne aap atomic kaam hai, do baar same code likha hi nahi jaayega.
 Technical me: "insert if not exist" = unique index / constraint on code (counter ke upar aakhri pehra).
 
@@ -69,6 +71,7 @@ Technical me: "number plate jaise akshar bhi, combination" = base62 (0-9, a-z, A
 **3. Token lene kam aate, token dikha ke pata lene wale bahut: har second 1 lakh. Counter wala har baar mota register palat ke dhoondhta, line ruk jaati. Kuch token din me hazaar baar aate.**
 Arpan: Unhe chhote register me rakh lo. Jo bhi log dekhne aa rahe, bas usi register se wapas kar do. Mota register to rakh lo, koi dikkat nahi, ek chhota pehla register rakh lo, usme wahi wale token rakh lo. Jo log bahut baar poochhne aa rahe, wo wahin se chale jaayenge.
 Technical me: "chhota pehla register" = cache (Redis), "mota register" = DB, "bahut baar poochhe jaane wale" = garam / baar-baar padhe link.
+
 **Maan lo pooche server ki memory me hi kyun nahi rakh lete, baar-baar DB kyun:** Arpan: Sabse seedha design ek server aur ek DB: link aaya to code banao, DB me likh do; kisi ne khola to DB se bada link de do, 302 redirect. Memory me rakhne ka sawaal aa sakta hai, par server restart ho gaya to link saare gaayab ho jaayenge, isliye memory me nahi rakh sakte.
 Technical me: "restart pe gaayab" = server ki memory volatile, link ko pakki jagah (DB) chahiye; tez padhne ke liye alag chhota register (Redis).
 
@@ -90,6 +93,7 @@ Technical me: "ladke ki timeline, nahi aaya to agla" = lock TTL (umar khatam to 
 **7. Ek counter se bheed nahi sambhli, 5 counter khol diye. Har counter apni ginti 1, 2, 3 chala raha. Counter 1 aur 2 dono ne apne 10ve aadmi ko token "10" de diya.**
 Arpan: Counter ko kahunga ki tum apni-apni range le lo. Un paanch counter ko tod dunga: tu 1 se 100 karega, tu 101 se 200, tu 201 se 300, tu 301 se 400. Aise sabko range me baant dunga.
 Technical me: "apni-apni range" = counter range (beech ka counter har app server ko number ka dabba deta).
+
 **Maan lo ek counter apni range ke beech, 400 pe, crash ho gaya:** Arpan: Dikkat ho sakti hai, us range ke baaki number bekaar gaye. Lekin hamare paas 62^7, 3.5 trillion aur bhi hain; kuch bekaar ho jaayenge, koi farak nahi padta, app chalta hi rahega.
 Technical me: range ke bache number kho jaate (gap), koi dikkat nahi; counter number wapas nahi maangta.
 

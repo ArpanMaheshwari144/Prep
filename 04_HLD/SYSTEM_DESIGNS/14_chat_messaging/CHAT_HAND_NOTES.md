@@ -56,13 +56,16 @@ Technical me: "poochne ka mauka hi na do" = polling band, "beech ka dabba jo aat
 **2. Arpan ne "kahan hai?" bheja, par Ravi ka phone band, 2 ghante baad on hoga. Taar toota pada hai. Server ke haath me message hai, bhejne ki jagah nahi.**
 Arpan: Server se bol do, ise thodi der apne paas rakh le, aisi jagah jahan baad me dekh paaye. Ek dabba bana le, usme rakh lo: "Arpan ne Ravi ko ye bheja hai." Ravi online hoga to use bhej denge, sanjo lo. Jaise papa ne mujhe paise de ke kahin bheja, aur uncle ji mile nahi, to main paise apne paas hi rakhunga, kharch ya phenk thodi dunga.
 Technical me: "ek dabbe me rakh lo" = message store (pehle DB me save), "online hoga to bhej denge" = offline delivery.
+
 **Maan lo pooche message baantoge kis cheez se, chat id ya user id?** Arpan: Main cheez ye ki partition kis cheez pe ho raha. Chat id ke saath partition karenge, user id ke saath nahi.
+
 **Maan lo "college-gang" group 3 saal purana, 50 lakh message aur hazaron photo; roz log aaj-kal ke message padhte, par kabhi-kabhi Ravi upar scroll karke 2 saal purani trip ki photo dhoondhta (Claude ka scene; scene hi galat tha, aisa hota nahi):** Arpan: 50 lakh message bahut ho sakte, theek. Par 2 saal purana upar scroll karke dhoondhna sense nahi banata, aisa hota bhi nahi; ye scene galat likha hua hai. WhatsApp pe photo kholte hi gallery me download ho jaati hai, purani photo phone me hi hai.
 Technical me: DB = Cassandra, chat_id se baanta (ek chat ek machine pe, kram me); purani photo / video phone ki gallery me (client pe), server pe sirf link.
 
 **3. 10 crore log, ek server sabke taar nahi pakad sakta, 100 server lage. Arpan ka taar server 3 pe, Ravi ka server 71 pe. Server 3 ko pata hi nahi Ravi kis server pe.**
 Arpan: Ek map rakh le apne paas, DSA wala map: ye is server pe hai, ye us server pe. Dhoondhne ki zaroorat nahi, O(1) time me mil gaya. Key-value pe rakh lo.
 Technical me: "DSA wala map, key-value" = session map in Redis (userId -> server), "O(1) me mil gaya" = seedha lookup.
+
 **Maan lo ek server gira, uske 1 lakh log ek second me dobara judne aaye:** Arpan: Sab users ek saath server pe hit karenge to dikkat, server dobara gir jaayega, use garam hone ka time chahiye. To backoff plus jitter: thodi-thodi request ek saath jaayengi, aisa nahi ki das crore sidha chale jaayein.
 Technical me: reconnect storm -> exponential backoff + jitter (har phone alag waqt pe dobara jude).
 
@@ -111,6 +114,7 @@ Technical me: "numbering kar do" = sequence number, "server lagayega number" = s
 
 **Maan lo "kal party" ko #980 mila par DB me save hone me atka, Ravi ka "kahan?" #981 pehle pahunch gaya. Ravi ka phone yaad rakhe "aakhri #981", net gaya, wapas aaya, "#981 ke baad do" bola. #980 chhoot gaya?**
 Arpan: Server chootiya thodi hai. Server har cheez bhej raha to record bhi rakh raha: ye bhej diya, ye bhej diya, teesra nahi gaya, chautha gaya, phir teesra bhi gaya. To Ravi ko message milega hi milega, kabhi nahi jaayega aisa nahi. Haan, group me kram thoda aage-peeche ho sakta hai. Server ko pata hai kaunsa pehle aaya, to sort karke daal do: thodi der ulta dikha, phir sahi. Kram kitna zaroori hai, ye FR me pehle hi tay kar lo; WhatsApp social app hai, ek message aage-peeche gaya to badi baat nahi. Jaise class me teacher: roll number 6 late hai to main rukunga nahi, 100 bachchon ki attendance lunga aur register me likh dunga "6 abhi nahi aaya". 6 aaya to "tu 6 hai, 5 ke baad wali jagah baith". Register server ke paas hai, kuch khota nahi.
+
 Arpan (doosri kahani, Priya metro me, #981 aaya #980 atka): Chat server bahut saare hain aur har cheez ki copy hai, to message khoyega nahi, aayega hi aayega. Har message pe number hai (sequence). Server dekhega 2 aa gaya par 1 aaya hi nahi, to poochhega "1 kahan rah gaya". Atka hai to kuch second ke liye, 10 ghante nahi (WhatsApp ka server hi down ho wo alag baat, us din 2 bhejne ka bhi fayda nahi). To 2 bhej do, 1 aate hi turant 1 bhej do. Chat me thodi der pehla message baad me dikhe to bhi phone number se sort karke sahi jagah laga dega.
 Technical me: "server ka record, ye gaya ye nahi" = har user ka delivery record (store-and-forward; group me har member ka bas ek number "yahan tak pahuncha", kadam 9), reconnect pe "jo nahi gaya wo sab do", phone ke aakhri number se nahi; "sort karke daal do" = sequence number se phone pe ordering; "FR me tay" = ordering kitni strict, requirement ka faisla.
 
@@ -125,12 +129,13 @@ Technical me: "ginti 978, matlab 975 padha" = read watermark (number >= 975 to p
 **10. Arpan ne group me party ka 200 MB ka video bheja. Chat server ke raaste DB me save hoga aur 500 ko isi raaste. Taar chhote text ke liye bane the, video ne sab jam kar diya.**
 Arpan: Video ke liye alag taar jod do. Aaj 200 MB, kal koi 500 MB ya 1 GB bhi bhej sakta. Ise yahan se hatao, alag raaste pe bhej do. Ek alag machine rakh lo: "tu video hai, tu idhar ja", hamari chat block na kare. Video ko wahin pada rehne do, uska ek chhota URL bana do aur sabme bhej do, wo wahin se dekh lenge. Ek insaan bitha do: "video aayi, mere paas aa ja, main chhota URL bana ke bhej deta hoon", chat server pe koi dikkat nahi.
 Technical me: "alag machine, alag raasta" = S3 (chat server ke bahar), "chhota URL sabme bhejo" = message me sirf link, "wahin se dekh lenge" = video S3 / CDN se.
-Arpan (11-Oct): Video seedha S3 me, DB me uska presigned URL; jisko chahiye use URL bhejo, thumbnail bhi store kar sakte. Saath me server ki apni secret key, jisse video ka link thode time baad expire bhi ho jaaye.
+Arpan: Video seedha S3 me, DB me uska presigned URL; jisko chahiye use URL bhejo, thumbnail bhi store kar sakte. Saath me server ki apni secret key, jisse video ka link thode time baad expire bhi ho jaaye.
 Technical me: presigned URL (server ki key se sign, chhoti umar), thumbnail alag.
 
 **11. Ravi ke naam ke neeche "online". Ravi ka phone lift me band, taar tootne ka signal server tak pahuncha hi nahi. 2 ghante se Ravi "online" dikh raha, phone band pada.**
 Arpan: Ek register me likh liya "Ravi online hai". Ab har 3-5 second baad Ravi ko hilaunga, haath maarunga: "Ravi, tu online hai?" "Haan bhai, online hoon, pareshaan mat kar." Phir haath maara, jawab nahi diya. Phir maara, phir jawab nahi. 2-3 baar hilaya aur jawab nahi diya, to register se Ravi ka naam kaat diya, ab wo offline.
 Technical me: "register me Ravi online" = presence entry (Redis), "har 3-5 second hilaunga" = heartbeat, "2-3 baar jawab nahi to naam kaat diya" = heartbeat chhoote to entry mite (TTL), "last seen" dikhe.
+
 **Maan lo Ravi chahta hi nahi ki sabko dikhe:** Arpan: Aajkal WhatsApp pe privacy hai, sabko na dikhe; app me setting se band kar lein. Ye ek feature hai, itna bada feature bhi nahi.
 Technical me: last seen privacy setting (server bhejne se pehle setting dekhe).
 

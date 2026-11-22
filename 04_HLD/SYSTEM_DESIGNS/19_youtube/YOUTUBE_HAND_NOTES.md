@@ -24,7 +24,7 @@ nayi video  -->  Twitter wala fan-out, subscribers ko khabar · reels: agle kuch
  8c  har reel poori pehle se, 29 sec bekaar      ->  sirf shuru ke tukde pehle se
 ```
 
-**Arpan (FR / NFR pe, 18-Nov):** nakli view FR nahi, NFR hai (FR 6 hata, NFR 4 me). "Bina buffering" jhootha vaada, Netflix jaisa: net ke hisaab se buffering hogi.
+**Arpan (FR / NFR pe):** nakli view FR nahi, NFR hai (FR 6 hata, NFR 4 me). "Bina buffering" jhootha vaada, Netflix jaisa: net ke hisaab se buffering hogi.
 
 **FR / NFR / Numbers (interview me pehle 2 minute, main file se):**
 Pehli line interviewer ko: "Main poora YouTube (sign-up se logout tak) nahi, ye cheezein solve karunga: video upload,
@@ -72,7 +72,8 @@ Technical me: "upload ho gaya, khabar bhejo" = storage event, queue, "file tod d
 **3. Vlog viral: 1 minute me 1 lakh view. Har view pe DB me ek hi row me views + 1. Ek lakh request ek row ke lock pe line me, DB atka, baaki videos ke like / comment bhi ruke.**
 Arpan: Har +1 pe mote register tak bhaagna pagalpan hai. +1 abhi parchi pe likh do. Peeche chhotu rakh lo: wo parchi dekhta rahe aur batch me mote register me jodta rahe: "is batch me itne +1 aaye". Ek chhotu gira to 2-3 aur hain. Ye Kafka jaisa hai: ek stream me aate rahein, chhotu batch me DB me daalein. Aur YouTube pe likhai bahut zyada hai, to Cassandra jaisa DB soch sakte.
 Technical me: "parchi pe +1" = view event stream me (Kafka), "chhotu batch me jode" = batch aggregation (memory me gino, kuch second me ek baar likho), count thodi der se badhta = trade-off, "likhai zyada" = Cassandra.
-Doosri kahani (17-Nov grill): Har baar DB me update karna pagalpan. Bheed aa rahi hai to Kafka bhi laga sakte, Redis bhi: sabko pehle ek dabbe me rakh lo. Jaise koi har ghante mere paas ek rupaya leke aa raha, to main har ek rupaye ke liye bank nahi bhaagunga; apne paas rakh lunga, dheere-dheere badhta rahe. Din poora hua, to jitni gaddi jama hui, poora batch chupchaap jaake update kar do.
+
+Doosri kahani: Har baar DB me update karna pagalpan. Bheed aa rahi hai to Kafka bhi laga sakte, Redis bhi: sabko pehle ek dabbe me rakh lo. Jaise koi har ghante mere paas ek rupaya leke aa raha, to main har ek rupaye ke liye bank nahi bhaagunga; apne paas rakh lunga, dheere-dheere badhta rahe. Din poora hua, to jitni gaddi jama hui, poora batch chupchaap jaake update kar do.
 Technical me: "pehle dabbe me" = Redis counter (INCR) / Kafka, "gaddi jama hone pe ek saath" = batch flush to DB.
 
 **4. Ek creator ne script likhi: hazaar phone / bot se har 3 second refresh, ek ghante me 10 lakh "view". Views pe paisa milta, wo trending me upar, asli creators shikayat kar rahe.**
@@ -102,7 +103,9 @@ Technical me: "net ke hisaab se quality" = ABR (adaptive bitrate, pehle blur phi
 **Maan lo Ravi ka net achha, reels 1080p me aa rahi, par 5 me se 4 reels 1 second me skip. App ne har reel poori 30 second ki pehle hi utaar li thi, skip hui reel ke 29 second ka data bekaar.**
 Arpan: 10 reel poori laana thoda bewakoofi hai: 10 ki 10 skip kar di to aage 10 reel ke liye phir mehnat. To shuru ke kuch chunks le lo; use achha laga to theek, hamari mehnat bhi bekaar nahi gayi. Copy wala scene: chhotu ko 20 page laane bheja, dekha banda 1-2 page padh ke chala gaya; kal phir aaya, phir 1-2 page. Agle din kaha "chhotu, sirf 3-4 page la, bahut hai". Usne poora padh liya to chhotu ko chupchaap bhej dunga, wo poore le aayega. Par 1-2 page dekh ke kitaab nahi hataunga, kya pata use teesra-chautha page achha lage. Shuru me Instagram ke paas hamara kuch nahi hota, kuch bhi dikhata; 1-2 din pattern dekhega ki kya padhta, kitna padhta, phir laana kam karega. Pre-fetch bina soche nahi, dekh ke laaya hua.
 Technical me: "shuru ke kuch chunks" = pre-fetch me sirf pehle kuch second, baaki tab jab reel sach me chale; "kitna laana" = user ke pattern se (kitna skip karta). Trade-off: zyada laaye to data aur battery, kam laaye to spinner. Data saver on ho to pehle se laana band.
+
 **Maan lo pattern kaise banta:** Arpan: Shuru me Instagram ke paas hamara kuch nahi hota, kuch bhi reel dikhata. Roz jaate hain to use pata lag jaata ye Arpan ye zyada dekhta, to feed me wahi. Algorithm set hota: is region (India) ke log ye zyada dekhte, phir India me north ke log ye, south ke ye. Main bhi library me aisa karunga: is region ke log comic zyada padhte, is region ke horror fantasy.
+
 **Maan lo 1-2 reel achhi nahi lagi:** Arpan: 1-2 page pe poori kitaab nahi phaadunga; kya pata teesre-chauthe page pe interesting lage. Thoda-thoda dikhao, pattern samjho. Haan, 7 din nikal gaye aur kisi ne nahi padhi, to us kitaab ko zaroor hata dunga.
 Technical me: region / sub-region pe trending (cold start), user signal se personal feed; ek-do skip pe nahi hatao, lambe waqt tak koi engagement nahi to hatao.
 
