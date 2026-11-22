@@ -276,7 +276,7 @@ hota (na query na safai job isko chhoote). PSP ka SUCCESS -> BOOKED.
 
 ### 6b. Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup
 
-PSP do hi haal me hota: haan bola to BOOKED. Dheema hai to 1-2 baar ping, phir bhi chup to payment FAILED dikha do, kyunki
+PSP do hi haal me hota: haan bola to BOOKED. Dheema hai to 1-2 baar ping, phir bhi chup to booking FAILED dikha do, kyunki
 peeche line lagi hai. Par seat mat chhodo: user to pay kar raha, dikkat Razorpay / bank ki taraf se, seat chhodi to galti
 hamari. Seat parchi ki bachi umar tak Arpan ki HELD, wo dobara pay kare (doosre PSP pe); popup pe Naa dabaya to
 seat turant agle ki. Jaise do ladke: ek baar-baar mana kar raha, to "chhod, doosra ladka tu ja": ab jo bhi naya pay karne aaye, doosre
