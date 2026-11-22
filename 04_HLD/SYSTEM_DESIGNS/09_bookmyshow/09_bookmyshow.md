@@ -163,7 +163,7 @@ query me hi: `WHERE status = FREE OR (status = HELD AND hold_until < now)`, phaa
 
 ```mermaid
 flowchart TB
-    X["Parchi phaadne wala chhutti pe,<br/>parchi 20 minute se lagi<br/>(backup safai job)"]:::bad
+    X["Parchi phaadne wala chhutti pe,<br/>parchi 20 minute se lagi<br/>(safai job)"]:::bad
     N["Naya aadmi: D5 chahiye"]:::card
     subgraph DR["DO RAASTE"]
         B(["Chhota bhai / replacement<br/>(backup safai job)"]):::pill
