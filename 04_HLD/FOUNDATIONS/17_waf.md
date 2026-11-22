@@ -5,7 +5,7 @@
 ## Scene: Arpan ke hi jawab
 
 Rate limiter me: "ek banda roz hazaar baar password reset maar raha, insaan ke liye ye possible nahi, us IP ko WAF me daal do". URL me:
-"machine se hazaar chit, pattern pata lag jaayega, gate pe bhaga do". DIKKAT_CHAIN me is parivaar ka naam bhi wahi: **BOUNCER**. WAF wahi
+"machine se hazaar chit, pattern pata lag jaayega, gate pe bhaga do". WAF wahi
 bouncer hai, jo app se pehle gate pe khada hai aur har request ko dekhta hai.
 
 ```
