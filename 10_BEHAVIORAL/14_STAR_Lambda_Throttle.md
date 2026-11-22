@@ -18,7 +18,8 @@
          page load bhi graph pe lagbhag 8 guna upar gaya.
       throttle tab hota jab Lambda ki ek saath chalne wali copies ki had (concurrency) bhar jaaye.
       maine pakda ki doosri team ke ek dev ne us Lambda ki concurrency setting ghata di thi.
-      wo setting wapas pehle jaisi ki (revert).
+      Lambda doosri team ka tha, isliye maine unhe bataya kya mila;
+      jisne setting badli thi usi ne wapas pehle jaisi ki (revert).
 
    R: throttle ruka, app phir normal chalne laga.
       VP aur CTO ne kaam saraha.
@@ -38,7 +39,8 @@
     touching the red limit line, and page load time went up about eight times.
 
     A Lambda throttles when its concurrency limit is full. I found that someone from another team
-    had reduced the concurrency setting on that Lambda. We reverted the setting, the throttles
+    had reduced the concurrency setting on that Lambda. Since it was their Lambda, I shared what I
+    found with that team, and the developer who changed it reverted the setting. The throttles
     stopped, and the app was back to normal. The VP and CTO appreciated the fix.
 
     My learning was that when an app is slow, it is not always the code. Check infra settings too:
@@ -54,5 +56,6 @@
                                           achanak upar, laal line tak.
    "Setting kitni se kitni hui?"       -> exact number yaad nahi, concurrency kam kar di gayi thi.
    "8x kaise pata?"                    -> page load ke graph se.
-   "Theek kaise kiya?"                 -> setting revert ki, throttle ruka, app normal.
+   "Theek kaise kiya?"                 -> Lambda doosri team ka tha; maine unhe bataya, jisne badla tha
+                                          usi ne revert kiya. throttle ruka, app normal.
 ```
