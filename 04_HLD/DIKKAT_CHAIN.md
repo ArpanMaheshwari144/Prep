@@ -11,6 +11,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### URL shortener
 
 ```
+FR / NFR / dhaancha
        = "do logon ko same token na mile" = uniqueness (counter / range), "lambe ka chhota hamesha theek" = consistency (quorum read / write), "garam URL sambhale" = hot key (cache, copies), "sab mote register pe na jaaye" = cache hit ratio, "machine se hazaar chit nahi" = rate limit, "jaldi" = low latency, "copies" = replication / availability.
 
 1    Counter wala token apne man se bana raha, kuch bhi chhota likh deta. Ek din do alag logon ko ...
@@ -117,6 +118,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Rate limiter
 
 ```
+FR / NFR / dhaancha
        = "had paar to 429, baad me try" = 429 Too Many Requests + Retry-After, "alag server pe gayi to bhi ek ginti" = central counter (Redis), "consistent" = atomic ginti (Lua), "wahi gira to poora down nahi" = availability (fail-open + local fallback), "office ke IP se 500" = per-user had (IP nahi), "VPN se region badle to ghar region" = home region.
 
 1    Server dab gaya, har request pe SMS ja raha, SMS company ka bill chadh raha.
@@ -187,6 +189,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Twitter feed
 
 ```
+FR / NFR / dhaancha
        = "khaali page nahi, trending dikhao" = cold start / recommendation (follow ke alawa), "jo search kiya wahi aane laga" = interest se ranking, "scroll me dohrav nahi" = cursor (kadam 18).
 
 1    Ravi app khole to server dhoondhe wo kis-kis ko follow karta (500 log), sabke tweet DB se ...
@@ -299,6 +302,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Notification
 
 ```
+FR / NFR / dhaancha
        = FR = kya karta (functional), NFR = kitna achha / kis shart pe karta (priority, TTL, scale, delivery tracking).
 
 1    Order Service khud DB me order likhta, phir khud SMS, email, push company ko call karta. SMS ...
@@ -445,6 +449,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Payment
 
 ```
+FR / NFR / dhaancha
        = ek jagah = ek DB transaction (ACID), alag jagah = saga (har kadam ka ulta kadam), 2PC nahi (kadam 8). Double debit = idempotency se kam, par zero ka vaada nahi; reconciliation + auto refund; RBI TAT circular (20-Sep-2019): UPI merchant T+5, P2P T+1, der pe Rs 100 / din.
 
 1    Arpan ne "pay 500" dabaya, app ko HDFC khaate se 500 nikalne hain. Par app HDFC ka hissa nahi, ...
@@ -639,6 +644,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### BookMyShow
 
 ```
+FR / NFR / dhaancha
        = "pehle partition" = ek hi DB ke andar table partitioning (jaise show date se), "indexing" = sahi index, "shard ki keemat" = cross-shard transaction, rebalancing, ops ka bojh; shard aakhri raasta.
        = GET seat map = read (padhne wali copy se), POST seat book = hold (dekhna + rokna ek query), POST payment = PSP ko bhejo, PAYMENT_PENDING.
 
@@ -714,6 +720,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Cache
 
 ```
+FR / NFR / dhaancha
        = FR = cache ka API (get / put / delete), baaki sab NFR (latency, DB offload, staleness, eviction, hot key, negative cache).
 
 1    DB se ek baar padhne me ~50 ms, aur DB ek second me kuch hazaar query hi jhelta. Ravi ka ...
@@ -912,6 +919,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Banking
 
 ```
+FR / NFR / dhaancha
        = statement = scope clarification (poochho), bheed = scaling (design me LB, NFR me nahi), NFR = consistency + audit + tez padhna.
 
 1    Arpan ne parchi di "Ravi ko 500 bhej do". Cashier ne Arpan ke 500 kaate, Ravi me jodne jaata ...
@@ -1096,6 +1104,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Uber
 
 ```
+FR / NFR / dhaancha
        = client -> kai app server (LB ke peeche) -> DB + read replica; CDN / S3 nahi (koi badi file nahi).
 
 1    "Book" dabaya, par server ko pata hi nahi kaunsa driver abhi kahan hai.
@@ -1222,6 +1231,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Leaderboard
 
 ```
+FR / NFR / dhaancha
        = pehle sawaal = scope / requirement clarification, FR = score update + top N, NFR = tie-break + eventual consistency (contest ke beech).
        = FR = score update + scoreboard (har user usi board me apni rank dekhe); "top kitne dikhane" sirf pehle sawaal (a), FR nahi.
 
@@ -1304,6 +1314,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### E-commerce
 
 ```
+FR / NFR / dhaancha
        = FR = browse / stock -> cart -> checkout -> order; NFR = consistency (oversell nahi), alag sale service, payment latka na rahe.
 
 1    Shelf pe aakhri ek ghee. Ravi ne app pe order kiya, aur usi minute aunty wahi dabba counter pe ...
@@ -1375,6 +1386,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Netflix
 
 ```
+FR / NFR / dhaancha
        = NFR = jaldi shuru (low start-up time) + adaptive bitrate (ABR), buffering zero ka vaada nahi.
 
 1    Saari episode US ke store me. 12:30 pe karodon log wahi file maang rahe, har tukda samundar ...
@@ -1472,6 +1484,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### PUBG
 
 ```
+FR / NFR / dhaancha
        = "button dabate hi chale" = low input latency (client-side prediction), "goli ke pal tak peeche" = fair hit registration (lag compensation), "faisla server ka" = server authoritative.
 
 1    Raat 9 baje 1 lakh log ek saath "Start" dabate hain. Ek match me 100 chahiye, Arpan ke match ...
@@ -1565,6 +1578,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ### Yelp
 
 ```
+FR / NFR / dhaancha
        = FR = geo search (fuzzy bhi) + sort; NFR = DB aur search ka sync (Closed badge, change event + raat ki job).
 
 1    Raat 10 baje Ravi "burger" likhta hai. Abhi sirf Postgres hai, 50 lakh restaurant, har ek ke ...
