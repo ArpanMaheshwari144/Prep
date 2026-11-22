@@ -12,7 +12,7 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
   Java + Spring poora · LLD 11 · 6 project
   HLD: 24 design (kahani -> asli naam -> tasveer) + scene-mock + hand notes 24 + 19 foundation + dikkat chain 21 parivaar
         23 / 23 design: upar Ek nazar (dhaancha + dikkat chain), FR / NFR har line kadam se judi (18-Nov), alag aankh se audit
-        round ho gaye: 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov) · naye 18-Nov: 23 Yelp, file upload dedup (kadam 9) · 19-Nov: 24 Zomato
+        round ho gaye: 01 URL (15-Nov) · 02 rate limiter (16-Nov) · 09 BMS (17-Nov) · naye 18-Nov: 23 Yelp, file upload dedup (kadam 9) · 19-Nov: 24 Zomato · 15 Uber (21-Nov) · 16 leaderboard (22-Nov, FR / NFR + dhaancha + API)
         Kafka = stadium + tube: producer daale -> Kafka / queue line -> worker / consumer nikaale
   DSA: 18 pattern · 183 problem + 159 REDO = 342 .cpp · pattern sheet folder (19 file, 178 sawaal + MATHS KA KHEL)
   STAR 11 kahani · PR review framework · DB internals
@@ -130,7 +130,7 @@ SAFAR (March: khaali folder)  ->  aaj (18-Nov)
   - [★13 mini-banking (JP ka sabse sambhavit)](04_HLD/SYSTEM_DESIGNS/13_banking_system/13_banking_system.md) (kadam 14-20 = mahine ki statement, "billions of records" wala sawaal)
   - [★14 chat/messaging (khud chala ke banaya)](04_HLD/SYSTEM_DESIGNS/14_chat_messaging/14_chat_messaging.md)
   - [15 uber (Connaught Place se ghar)](04_HLD/SYSTEM_DESIGNS/15_uber/15_uber.md) (kadam 15 = batch matching, aging · kadam 16 = map pe live gaadi, Zomato reel · 21-Nov round: FR / NFR + API, 2c Redis matching + sawari ka raasta, 12b traffic kiraya, 13b der se kata)
-  - [16 leaderboard (1 crore khiladi)](04_HLD/SYSTEM_DESIGNS/16_leaderboard/16_leaderboard.md)
+  - [16 leaderboard (1 crore khiladi)](04_HLD/SYSTEM_DESIGNS/16_leaderboard/16_leaderboard.md) (22-Nov round: world contest UTC, weekly / biweekly / mahina board, API; banking 9 me replica kab tak)
   - [17 e-commerce (mausi ka mart, Diwali sale)](04_HLD/SYSTEM_DESIGNS/17_ecommerce/17_ecommerce.md) (kadam 9 = reel se: cart ki do almari giri -> sloppy quorum, wapas aayi -> hinted handoff)
   - [18 Netflix (Money Heist ka naya season)](04_HLD/SYSTEM_DESIGNS/18_netflix/18_netflix.md) (kadam 1-7 = scene, neeche padhai wala hissa P1-P4)
   - [19 YouTube (reel wala scene)](04_HLD/SYSTEM_DESIGNS/19_youtube/19_youtube.md)

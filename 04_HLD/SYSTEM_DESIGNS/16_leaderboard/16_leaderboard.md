@@ -35,16 +35,17 @@ match khatam (+50, match id)  -->  server  -->  Redis sorted set (apne aap sort)
 **FR / NFR kahan se:** upar ki dikkat chain dekh ke nikale; har line ke aage likha hai wo kis kadam se aayi.
 Arpan: Score update FR hai. Top 10 FR nahi ho sakta, scoreboard aise kaam nahi karta: poochho top 10, 50 ya 100. "Mera rank" aur "mere aage-peeche ke 5" FR nahi, board sabke hisaab se banta, ye kisi ek user ka hai. Aaj / hafta / all-time, UTC, world ya India ka board: ye sab FR se pehle sawaal hain, pehle requirement clear kar lo, phir uske hisaab se FR me daalo. Score barabar to pehle wala upar = NFR. Rank milli second, score kuch second, Redis gira: inka yahan matlab nahi; asli rank to contest khatam hone ke baad hi pata chalti, beech me thodi purani chalegi.
 Technical me: pehle sawaal = scope / requirement clarification, FR = score update + top N, NFR = tie-break + eventual consistency (contest ke beech).
+Arpan (22-Nov round): world hi hoga, time zone UTC; "upar ke 5, neeche ke 5" sawaal nahi banta (board sabka, kisi ek ki nazar se nahi). FR: contest diya to rank dikhe; weekly, biweekly, mahine ka top. NFR: barabar score pe time, low latency, consistency, crash na ho.
+Dhaancha (22-Nov, Arpan): user -> CDN (static) -> LB -> kai server -> local cache -> Redis -> AWS RDS Postgres + replica. DB me user id, naam, score, contest id: row wala consistent data, isliye SQL / Postgres.
 
 ## FR / NFR / Numbers (interview me pehle 2 minute)
 
 ```
 PEHLE SAWAAL (FR se pehle interviewer se poochho, jawab se FR badle):
         a  top kitne dikhane: 10, 50 ya 100?
-        b  board kis hisaab se: aaj ka, hafte ka, all-time, ya teeno?             -> kadam 5, 5b
+        b  board kis hisaab se: har contest (weekly, biweekly), mahina, all-time?  -> kadam 5, 5b
         c  board poori duniya ka ya ek desh (India) ka?                           -> kadam 3, 4, 6b
         d  contest hai to waqt kis time zone me (UTC)?                            -> kadam 5, 6b
-        e  kisi ek user ka rank / uske aage-peeche ke 5 chahiye?                  -> kadam 4, 6, 6c
 
 FR      1  score update                                                     -> kadam 3
         2  top N ka board (N, board aur region upar ke sawaal se)           -> kadam 1, 4, 5
@@ -54,6 +55,11 @@ NFR     1  score barabar to jisne pehle banaya wo upar (contest me: pehle khatam
         3  ek match ka score ek hi baar jude (match id)                    -> kadam 3b
 Numbers 1 crore khiladi · har second lakhon match khatam -> likhai bahut · board dekhne wale usse bhi zyada
         -> har baar 1 crore sort / ginti nahi chal sakti
+API     (Arpan 22-Nov: "API ki aisi koi zaroori baat nahi")
+        GET  contests                 -> kaunse contest hain (weekly, biweekly)
+        POST submit                   -> ek sawaal submit, uska score                  (FR score update)
+        POST contest submit           -> poora contest submit
+        GET  world board / world rank -> board aur apni rank                          (FR board)
 ```
 
 ---
@@ -74,6 +80,9 @@ score ke kram me".
 "mere upar kitne" gin-na padta, 1 crore me time badhta. Aur score har second badal raha, to har likhai pe index bhi
 badlega; jahan likhai zyada wahan index ka utna fayda nahi. Isliye sorted set, jo andar hi sort rakhta.
 **Asli naam:** index se bhi count scan, write-heavy pe index ka bojh, isliye Redis sorted set (log N).
+**Teesri kahani (22-Nov round, Arpan):** contest me log dheere-dheere aate (3, 10, 100, 1000); Postgres ko har baar "ab 100 sort
+kar, ab 2000" bolo to thak jaata, isliye tez sort karne wala chhotu (dabba). Kafka ki misaal sirf bheed ko line me lagane ki
+thi; sort Kafka nahi karta, Kafka bheed ke liye kadam 5 me.
 
 ```mermaid
 flowchart TB
@@ -109,6 +118,9 @@ Priya  9800, 10:05 pe  ->  9800.90      line: Ravi -> Priya
 
 **Asli naam:** composite score (score + earlier-time fraction). Score pehle tolta, fraction sirf barabari pe.
 Time na jodo to barabar score pe Redis khud member naam ke alphabet (lexicographic) se kram lagata, pehle pahuncha wala nahi; isliye time jodte hain.
+**22-Nov round (Arpan):** pehle score, barabar to time, pehle khatam wala upar; LeetCode andar kaunsa hisaab lagata public nahi,
+number jodo, ghatao ya ulta karo, andar ki baat. (Claude ne misaal ke number 9805 / 9805.15 pe kheencha = nitpick; jawab sahi
+tha, misaal ka number sirf misaal.)
 
 ```mermaid
 flowchart TB
@@ -141,9 +153,14 @@ dabbe na khatkhataye.
 
 **Asli naam:** baantna = shard (har khiladi ek hi dabbe me), har dabbe se le ke milana = scatter-gather, chhotu =
 aggregator, badi screen = global top 10 ka cache.
+**22-Nov round (Arpan):** 10 lakh register, aate maan lo 1 lakh, 1-2 Redis kaafi; region se baanto: EU, USA + Canada,
+Russia + Belarus, India, Australia + NZ; India bada to aur baanto. Top 10: har dabbe se 10, 5 dabbe = 50, unme se top 10
+(5 priority queue jaisa). **Asli naam:** shard, scatter-gather, merge k sorted (heap).
 
 **Maan lo match ka +50 retry se do baar pahuncha:** Match id hi key: is match ka score pehle jud chuka to dobara mat jodo. +100 nahi, +50.
 **Asli naam:** idempotency key (wahi ID dobara aaye to chhodo).
+**22-Nov round (Arpan):** sawaal ki ID saath bhejo; server atka to parchi pe likh ke baad me bhejo; retry me wahi ID to dobara nahi
+judega. **Asli naam:** idempotency key + outbox / retry.
 
 ```mermaid
 flowchart TB
@@ -177,6 +194,9 @@ chhotu ka kaam, har kuch minute me sab dabbe mila ke ek bada board. Referee ke l
 
 **Asli naam:** mera rank = har shard se count (mere score se upar, `ZCOUNT`), jod ke +1. Poora board = background job
 jo snapshot banata.
+**22-Nov round (Arpan):** world rank ekdum nahi niklegi; pehle andaze wali (maan lo 5000), jaise-jaise US, EU wale khatam karte,
+board pe judte, rank hilti, sab khatam hone ke 5-10 minute baad theek. Board sabka banta, kisi ek ka nahi. LeetCode andar
+kaise karta nahi pata, galat nahi bolunga. **Asli naam:** estimated rank, aggregator, eventual consistency.
 
 **Khiladi alag region me (12-Nov, Arpan):** FR ke hisaab se poora world board (kadam 6 ke neeche "12-Nov grill") se. Hum Arpan ki
 nazar se nahi, leaderboard ki nazar se soch rahe: sabka dekhna hai, US me Pablo ka bhi.
@@ -219,6 +239,9 @@ board:4-Nov  -> live se hata, history me (dekhna ho to wahi register khol do)
 ```
 
 **Asli naam:** alag register = key me tareekh / hafta (time-bucketed key), side me rakhna = purana dabba live Redis se TTL se hat sakta, par board history me (DB / sasti jagah) rehta.
+**Contest ke board (22-Nov round, Arpan):** contest 437 ka board alag, DB me pada; agla Sunday 438 naya. UI pe link: "437 ki rank
+yahan, 438 me register yahan". Mahine ka board = har contest ka score jod ke formula se rank; contest nahi diya to +0.
+**Asli naam:** key me contest id, purana = history, mahina = sab contest ka jod (aggregate).
 
 **Maan lo Priya aaj khelti hi nahi:** agar requirement hai ki naam dikhe to 0 ke saath dikha do, nahi hai to wo aaj
 ke register me hi nahi.
@@ -226,6 +249,9 @@ ke register me hi nahi.
 
 **Maan lo Ravi ka match 11:59:58 pe khatam, score 12:00:02 pe pahuncha, server ne 9 Nov ke register me daal diya:** LeetCode jaisa: Arpan ne contest diya, main parchi pe sab likh deta hoon: contest 137, Arpan ki rank, aur kis waqt khatam hua. Request server tak late aayi to koi baat nahi, parchi me sab likha hai: ye is din ka contest tha, itne baje khatam hua, to usi din ke register me daalo. Jo register kar ke aaye nahi, unka 0. Beech me LeetCode crash bhi ho jaaye to parchi hamare paas hai, wapas aate hi mote register me daal do. Purana register phekna nahi, side me rakh do; Ravi ko 7 Nov ka dekhna hai to wahi register khol ke dikha do. Agar Ravi aaj ka (10 tarikh ka) board khol ke baitha hai, to UI pe saaf likh do "ye 10 tarikh ka contest hai, kal wale ka result is link pe".
 **Asli naam:** "parchi pe contest id + khatam hone ka waqt" = event time, "usi din ke register me" = event time se bucket (pahunchne ke waqt se nahi), "purana register side me" = har din ka board history me rakho (discard nahi). "register kar ke aaye nahi" = contest ka sign-up; "mota register" = DB (kadam 7, score pehle DB me).
+**22-Nov round (Arpan, 12:59:59 submit, server tak 1:00:03):** parchi pe submit ka waqt likh lo; server gira to wapas aate hi parchi se
+bhejo, ya doosre server pe. Bahut bheed ho to beech me Kafka, worker ek-ek karke uthaye (Kafka disk pe rakhta); itna data na ho
+to Kafka ka matlab nahi. **Asli naam:** event time, Kafka = buffer / queue.
 
 **Doosri kahani:** mita mat, overwrite; aaj nahi aaya to 0; ya naya register, purana discard.
 **Maan lo contest 11 baje shuru, 1-3 baje khatam:** contest ka din = shuru wala din (9 tareekh). Leaderboard duniya bhar ke
@@ -333,6 +359,9 @@ likha hai, wahan se dobara bhar do.
 
 **Asli naam:** clone = Redis replica (primary gira to replica primary banti, failover). Teeno gaye to DB = sach, Redis
 wahan se rebuild.
+**22-Nov round (Arpan):** Redis ki copy saath; peeche job Redis se DB me likhti rahe (contest ka data nahi khona). Bilkul pakka chahiye
+to pehle parchi, phir Redis, phir 2-3 copy; thoda chhoot sakta to ek Redis + ek copy. **Asli naam:** replica, DB sach,
+log / outbox, consistency ka faisla.
 
 ```mermaid
 flowchart TB
