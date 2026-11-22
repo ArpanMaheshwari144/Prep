@@ -292,10 +292,10 @@ Window 20-25 sec bhi kar sakte, par faisla phir bhi server ki ghadi.
 ```mermaid
 flowchart TB
     R["Raju: accept 14.9 sec pe dabaya"]:::card
-    subgraph GS["GHADI SERVER KI"]
+    subgraph GS["GHADI SERVER KI<br/>(server TTL)"]
         S{"Server pe kab pahuncha?"}:::pill
     end
-    X["16 sec pe: der se, parchi phaad do,<br/>accept radd"]:::bad
+    X["16 sec pe: der se, parchi phaad do,<br/>accept radd<br/>(TTL expire)"]:::bad
     B(["Ya: aas-paas ke saare phone bajao,<br/>jo pehle accept kare (broadcast)"]):::card
     R --> S
     S --> X
@@ -319,7 +319,7 @@ double se bachata.
 
 ```mermaid
 flowchart TB
-    X["Raju Janpath gaya, CP ke dabbe me<br/>naam pada: Arpan, Priya dono ko dikhe"]:::bad
+    X["Raju Janpath gaya, CP ke dabbe me<br/>naam pada: Arpan, Priya dono ko dikhe<br/>(purani geohash entry)"]:::bad
     subgraph TJ["SACH WAHI JO GPS NE ABHI BHEJA"]
         L(["Book pe Raju ki taaza jagah dekho"]):::pill
     end

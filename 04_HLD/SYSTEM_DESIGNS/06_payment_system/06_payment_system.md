@@ -122,7 +122,7 @@ parchi pe likhte raho kya-kya hua: PSP ne ye kara, ab ye kara. Fail hua to FAIL 
 ```mermaid
 flowchart TB
     A["Pay dabaya"]:::card
-    subgraph AP["APNE PAAS EK PARCHI<br/>(status)"]
+    subgraph AP["APNE PAAS EK PARCHI<br/>(payments table, status)"]
         D[("INITIATED ho gaya,<br/>PSP ne ye kara, ab ye")]:::pill
     end
     P["PSP: 30 second chup"]:::bad
@@ -378,7 +378,7 @@ hold), wapas aake paise = fail pe ulta kadam.
 ```mermaid
 flowchart TB
     T1[("Tukda 1: Arpan ka wallet")]:::card
-    subgraph OL["OFFICE KA LADKA + DIARY"]
+    subgraph OL["OFFICE KA LADKA + DIARY<br/>(saga + saga log)"]
         L(["Ye 500 Arpan ne diye, is tukde<br/>me dene hain: de ke aa, bata<br/>(saga + hold)"]):::pill
     end
     T3[("Tukda 3: dukaan")]:::good
@@ -430,7 +430,7 @@ flowchart TB
     R["Ravi ka top-up 500"]:::card
     CB{"PSP-1 pehle se down?"}:::card
     P2["Seedha PSP-2"]:::good
-    subgraph CH["CHHOTU KO WAQT DO"]
+    subgraph CH["CHHOTU KO WAQT DO<br/>(timeout + status poll)"]
         PD(["Ravi: process ho raha hai<br/>(PENDING, 30-55 sec tak;<br/>phir neeche wala Maan lo)"]):::pill
         J(["Chhotu: itna waqt, haan ya naa<br/>(timeout + status job)"]):::pill
     end
@@ -457,7 +457,7 @@ flowchart TB
 ```mermaid
 flowchart TB
     A(["Arpan"]):::pill --> S["App server"]:::card
-    S --> I[("Parchi INITIATED<br/>pehle apne register me<br/>(INITIATED status)")]:::pill
+    S --> I[("Parchi INITIATED<br/>pehle apne register me<br/>(INITIATED status, commit first)")]:::pill
     I --> P1["PSP-1"]:::card
     P1 -. "band / chup" .-> P2["PSP-2"]:::card
     P1 --> B(["HDFC"]):::good

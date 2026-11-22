@@ -128,14 +128,14 @@ phone kisi dabbe ka nahi. Wapas aaya to stock me +1 (koi bhi dabba), "Out of sto
 
 ```mermaid
 flowchart TB
-    X["2 lakh Pay,<br/>ek row pe taala"]:::bad
+    X["2 lakh Pay,<br/>ek row pe taala<br/>(row lock, hot row)"]:::bad
     subgraph BK["1000 IPHONE, 5 DABBE (bucketing)"]
         B1(["Dabba 1: 200<br/>(bucket)"]):::pill
         B2(["Dabba 2: 200<br/>(bucket)"]):::pill
         B3(["Dabba 3: khaali<br/>(bucket)"]):::card
         B5(["... Dabba 5: 200<br/>(bucket)"]):::pill
     end
-    M["Dabba 3 khaali:<br/>request agle dabbe pe"]:::good
+    M["Dabba 3 khaali:<br/>request agle dabbe pe<br/>(agla bucket)"]:::good
     X --> B1
     X --> B2
     X --> B3

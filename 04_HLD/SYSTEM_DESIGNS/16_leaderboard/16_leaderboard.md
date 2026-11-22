@@ -277,12 +277,12 @@ online contest ka, to ek hi time zone UTC, IST / Europe alag-alag nahi (ek room 
 flowchart TB
     X["Raat 12 baje 1 crore score<br/>ek-ek zero karna"]:::bad
     M["Arpan ka match: +50"]:::card
-    subgraph AL["HAR BOARD KA ALAG REGISTER"]
+    subgraph AL["HAR BOARD KA ALAG REGISTER<br/>(alag key)"]
         A[("board:5-Nov")]:::pill
         W[("board:week-45")]:::pill
         T[("board:all-time")]:::pill
     end
-    H[("Kal ka register: history me,<br/>phenko nahi")]:::card
+    H[("Kal ka register: history me,<br/>phenko nahi<br/>(purani key = history)")]:::card
     G["Naya din = naya register,<br/>zero karne ki zaroorat nahi<br/>(key me tareekh)"]:::good
     X -.-> AL
     M --> A
@@ -410,7 +410,7 @@ flowchart TB
     Z -- "clone" --> REP[("Replica · DB sach")]:::card
     Z --> RG["Region ke dabbe: India / US / Europe<br/>(shard)"]:::card
     RG --> W(["World board: chhotu milaye<br/>(scatter-gather)"]):::good
-    Z --> T["Aaj / hafta / all-time<br/>teen dabbe"]:::card
+    Z --> T["Aaj / hafta / all-time<br/>teen dabbe<br/>(teen sorted set)"]:::card
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000

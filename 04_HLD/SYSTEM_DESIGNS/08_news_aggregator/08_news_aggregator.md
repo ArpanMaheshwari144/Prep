@@ -113,7 +113,7 @@ flowchart TB
     X["Chhotu akela: ek chakkar 3 ghante,<br/>8:55 wali 11 baje"]:::bad
     C["Bahut saare chhotu<br/>(kai fetcher)"]:::card
     D[("Dabba (DB)")]:::card
-    subgraph CP["CHHOTI PARCHI, PEHLE SE TAIYAAR<br/>(Redis feed)"]
+    subgraph CP["CHHOTI PARCHI, PEHLE SE TAIYAAR<br/>(Redis feed, precompute)"]
         P[("Akhbaar jaisi: sab yahin se padhein<br/>(Redis feed)")]:::pill
     end
     R["Ravi"]:::good
@@ -149,7 +149,7 @@ flowchart TB
         H(["Ye dobara hai, hatao<br/>(hubahu: hash)"]):::pill
         W(["Wordings dekh lo: Kohli, century,<br/>India, jeeta = same (near-duplicate)"]):::pill
     end
-    D[("Dabba: khabar ek hi baar<br/>(DB)")]:::good
+    D[("Dabba: khabar ek hi baar<br/>(DB, unique URL)")]:::good
     C --> H
     H --> W
     W --> D
@@ -215,7 +215,7 @@ logged-out default / trending feed.
 ```mermaid
 flowchart TB
     U["9 baje 1 crore log"]:::card
-    subgraph MB["EK BANDA JO SABKO MANAGE KARE"]
+    subgraph MB["EK BANDA JO SABKO MANAGE KARE<br/>(scheduler)"]
         LB(["Tere pe 10 load, tere pe 5,<br/>agli request tere paas<br/>(load balancer)"]):::pill
     end
     F1["Server 1"]:::card
@@ -251,7 +251,7 @@ flowchart TB
     P["Priya app kholti hai"]:::card
     subgraph DP["PEHLI BAAR DB, PHIR PARCHI<br/>(cache-aside)"]
         D[("Pehle din pasand: tech,<br/>DB se laao (thoda time)")]:::card
-        R[("Parchi me rakh do: roz tech<br/>to wahi saamne")]:::pill
+        R[("Parchi me rakh do: roz tech<br/>to wahi saamne<br/>(preference cache)")]:::pill
     end
     S["Site band: 5 sec, 10 sec baad try,<br/>na khule to chhodo, baaki chalti"]:::card
     P --> D
@@ -278,7 +278,7 @@ flowchart TB
     W["9:05 iPhone ki khabar"]:::card
     D[("Dabba (DB)")]:::card
     subgraph AH["AATE HI TECH WALON KI FEED ME"]
-        P[("Tech parchi")]:::pill
+        P[("Tech parchi<br/>(Redis feed key)")]:::pill
     end
     J(["Milaan: aaj ki badi khabar hai na?<br/>chhooti to DB se feed me (check job)"]):::pill
     W --> D
@@ -306,7 +306,7 @@ ki pasand se. Har user ki alag feed (twitter jaisi fan-out) yahan faltu.
 flowchart TB
     X["50 lakh alag parchi:<br/>10 crore likhna, bekaar"]:::bad
     W["Worker / consumer: ek baar likho"]:::card
-    subgraph ET["SAARI TECH KHABAR EK PARCHI ME"]
+    subgraph ET["SAARI TECH KHABAR EK PARCHI ME<br/>(category key)"]
         T[("Tesla launch sabke liye")]:::pill
     end
     A["Arpan"]:::good
@@ -425,7 +425,7 @@ ke sasti jagah, jaise S3 / cold storage); jo data padha hi nahi jaata uska shard
 flowchart TB
     X["6 mahine, khabar table mota:<br/>bill badha, feed dheemi"]:::bad
     subgraph RD["RADDI JAISA (FR me tay: kab tak)"]
-        K(["Purani khabar mote register se nikaalo"]):::pill
+        K(["Purani khabar mote register se nikaalo<br/>(archive)"]):::pill
     end
     D[("Mota register: sirf taazi khabar<br/>(DB)")]:::good
     A[("Alag sasti jagah (archive, S3)")]:::card

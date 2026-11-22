@@ -209,7 +209,7 @@ hua wo counter band, aur uski line ko bolo jahan ghee bacha wahan jaao. "Khatam"
 ```mermaid
 flowchart TB
     C3["Counter 3: 50 khatam,<br/>line me 2000"]:::bad
-    subgraph KB["KHAALI COUNTER BAND, BAAKI KHULE"]
+    subgraph KB["KHAALI COUNTER BAND, BAAKI KHULE<br/>(khaali tukda skip)"]
         C7(["Counter 7: abhi 30 pade,<br/>yahan jaao"]):::pill
     end
     S["Khatam tab hi bolo<br/>jab sabka zero"]:::good
@@ -328,7 +328,7 @@ flowchart TB
     U["Bahar 3000 log"]:::card
     subgraph AG["APPLE STORE JAISA SALE GATE<br/>(sale gate)"]
         G(["Jitne phone utne andar<br/>(Redis DECR)"]):::pill
-        T(["Andar aate hi 5 min ghadi:<br/>ya pay kar, ya rakh de"]):::pill
+        T(["Andar aate hi 5 min ghadi:<br/>ya pay kar, ya rakh de<br/>(reservation TTL)"]):::pill
     end
     P["Pay kiya: phone uska"]:::good
     N["Card decline / chala gaya:<br/>wapas, agla batch andar"]:::card

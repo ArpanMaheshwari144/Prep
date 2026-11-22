@@ -270,7 +270,7 @@ flowchart LR
         B["Ek saath batch"]:::card
     end
     subgraph K["LINE (Kafka)"]
-        Q["Lakh match = lakh parchi<br/>+ har parchi ki copy"]:::good
+        Q["Lakh match = lakh parchi<br/>+ har parchi ki copy<br/>(match state + replica)"]:::good
     end
     subgraph D["DB"]
         C[("Cassandra<br/>(likhai dhadadhad)")]:::good

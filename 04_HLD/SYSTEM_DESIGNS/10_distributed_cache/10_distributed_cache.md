@@ -126,9 +126,9 @@ flowchart TB
     X["10 crore users, 1 TB:<br/>ek dabba 64 GB"]:::bad
     H(["Hash: same key, same dabba<br/>(sharding)"]):::pill
     subgraph TD["TOD DO (kam pade to aur tod do)"]
-        M1[("Dabba 1: 2 crore")]:::card
-        M2[("Dabba 2: 2 crore")]:::card
-        MN[("... aur dabbe")]:::card
+        M1[("Dabba 1: 2 crore<br/>(cache machine)")]:::card
+        M2[("Dabba 2: 2 crore<br/>(cache machine)")]:::card
+        MN[("... aur dabbe<br/>(cache machines)")]:::card
     end
     X --> H
     H --> M1
@@ -229,7 +229,7 @@ flowchart TB
     end
     G["Koi get kare: parchi khaali,<br/>DB se Ravi Kumar, parchi pe"]:::good
     J(["Ek banda har baar check:<br/>yahan Ravi, wahan Ravi Kumar?<br/>DB sach (sync job)"]):::card
-    F[("Parchi pe DB wala naam:<br/>Ravi Kumar")]:::good
+    F[("Parchi pe DB wala naam:<br/>Ravi Kumar<br/>(cache refill)")]:::good
     R --> C
     C --> D
     D --> G
@@ -293,9 +293,9 @@ flowchart TB
     subgraph CH["CHUPCHAAP EK CHHOTU<br/>(single flight)"]
         L(["Chhotu jaldi DB jaa,<br/>Priya ki parchi le aa<br/>(single flight)"]):::pill
     end
-    B["Chhotu gira? kuch second dekho,<br/>bheed me se ek aadmi bhejo"]:::card
+    B["Chhotu gira? kuch second dekho,<br/>bheed me se ek aadmi bhejo<br/>(lock TTL)"]:::card
     D[("Mota register (DB)")]:::card
-    C[("Parchi pe likh, sabko<br/>yahin se bhaga do")]:::good
+    C[("Parchi pe likh, sabko<br/>yahin se bhaga do<br/>(cache bharo)")]:::good
     U --> L
     L --> D
     D --> C

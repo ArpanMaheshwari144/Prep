@@ -442,7 +442,7 @@ flowchart TB
     R["Ravi ki request"]:::card
     F["Diwali: lakhon product page"]:::card
     subgraph S1["REDIS 1: SACH (noeviction)"]
-        D[("Ravi ka dabba<br/>kabhi phenka nahi jaata<br/>(noeviction)")]:::pill
+        D[("Ravi ka dabba<br/>kabhi phenka nahi jaata<br/>(Redis key, noeviction)")]:::pill
     end
     subgraph S2["REDIS 2: CACHE (TTL, bheed me chhota TTL)"]
         C[("product page / feed")]:::card

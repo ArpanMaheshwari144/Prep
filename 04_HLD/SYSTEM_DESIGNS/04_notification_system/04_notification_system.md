@@ -119,9 +119,9 @@ sale me push ke 100, SMS ke 20).
 flowchart TB
     X["Ek hi line: SMS ke peeche<br/>bill aadhe ghante baad"]:::bad
     subgraph AL["SABKI LINE ALAG (ladies, gents, bachche)"]
-        S1[("SMS ki line")]:::pill
-        E1[("Email ki line")]:::pill
-        P1[("Push ki line")]:::pill
+        S1[("SMS ki line<br/>(SMS topic)")]:::pill
+        E1[("Email ki line<br/>(Email topic)")]:::pill
+        P1[("Push ki line<br/>(Push topic)")]:::pill
     end
     S2["Apni line sambhale<br/>(consumer group)"]:::card
     E2["Apni line sambhale<br/>(apna consumer group)"]:::card
@@ -157,7 +157,7 @@ constraint, Redis sirf tez raasta, single point of failure nahi.
 ```mermaid
 flowchart TB
     W["SMS gaya, commit se pehle crash:<br/>wahi khabar dobara aayi"]:::bad
-    subgraph PZ["PARCHI ZINDABAAD"]
+    subgraph PZ["PARCHI ZINDABAAD<br/>(idempotency record)"]
         P{"Parchi dekho:<br/>ye kaam ho gaya?<br/>(idempotency)"}:::pill
     end
     S["Haan: dobara nahi"]:::good
@@ -335,7 +335,7 @@ flowchart TB
     subgraph LB["EK TIME KE BAAD COMPANY BATAYEGI"]
         H(["Do hi raaste: sent ya fail<br/>(webhook)"]):::pill
     end
-    P[("Apni parchi me likh lo<br/>sent / fail")]:::good
+    P[("Apni parchi me likh lo<br/>sent / fail<br/>(status record)")]:::good
     W --> C
     C --> H
     H --> P

@@ -129,7 +129,7 @@ pe wahan se (fanout on read). Dono saath = hybrid fanout.
 flowchart TB
     K["Kohli: Century for India"]:::card
     X["27 crore dabbon me daalna:<br/>ghanton, system thak jaayega"]:::bad
-    subgraph CP["KOHLI KI EK CHHOTI PARCHI<br/>(Redis)"]
+    subgraph CP["KOHLI KI EK CHHOTI PARCHI<br/>(celeb ke tweet ki alag list, Redis)"]
         P[("Na DB, na kuch:<br/>27 crore yahin se padh lenge")]:::pill
     end
     N["100-200, 2,000-3,000 wale"]:::card
@@ -195,7 +195,7 @@ flowchart TB
         K[("Kafka")]:::pill
     end
     OK["Tera post ho gaya, nikal"]:::good
-    W["Peeche dabbe bharte rahe"]:::card
+    W["Peeche dabbe bharte rahe<br/>(fanout worker / consumer)"]:::card
     C["Kohli wala tareeka:<br/>apni parchi, feed khulne pe padho<br/>(fanout on read)"]:::card
     A --> T
     T -- "nahi" --> K
@@ -229,9 +229,9 @@ lagenge. System rok nahi sakte, ye nahi keh sakte ki nahi dekhne denge.
 flowchart TB
     U["Six ke baad 5 crore refresh,<br/>sabko wahi ek parchi<br/>(hot key)"]:::bad
     subgraph CL["10-15 COPY, ALAG MACHINE (clone kar do)"]
-        C1[("Copy 1")]:::good
-        C2[("Copy 2")]:::good
-        CN[("... Copy 15")]:::good
+        C1[("Copy 1<br/>(Redis replica)")]:::good
+        C2[("Copy 2<br/>(Redis replica)")]:::good
+        CN[("... Copy 15<br/>(Redis replica)")]:::good
     end
     L(["Inida se India: peeche ek ladka<br/>sab copy theek kare (kuch second)"]):::pill
     U --> C1
@@ -262,7 +262,7 @@ Redis me = on-demand inbox banana.
 
 ```mermaid
 flowchart TB
-    subgraph PC["PARCHI CHHOTI KARO<br/>(last 500)"]
+    subgraph PC["PARCHI CHHOTI KARO<br/>(inbox had, last 500)"]
         IN[("Bas last 500<br/>(Redis)")]:::pill
         DB[("Mota register<br/>(DB)")]:::card
         S3[("3-4 saal purana: permanent diary<br/>(S3, archive)")]:::card
@@ -360,7 +360,7 @@ flowchart TB
     A["Arpan ka tweet<br/>(India branch)"]:::card
     subgraph BB["BRANCHES AAPAS ME BAAT"]
         B(["Us register pe bhi bhej do<br/>jahan se John padhta<br/>(cross-region replication)"]):::pill
-        P(["Baat ruki? Pal-pal dekhne wala<br/>banda: aa gaya to 5 tweet push"]):::pill
+        P(["Baat ruki? Pal-pal dekhne wala<br/>banda: aa gaya to 5 tweet push<br/>(replication lag monitor)"]):::pill
     end
     US["America branch:<br/>John ko dikha"]:::good
     A --> B
@@ -443,7 +443,7 @@ video id + hissa number se.
 ```mermaid
 flowchart TB
     X["Ek machine, 20 minute,<br/>50,000 video peeche"]:::bad
-    P(["Video ki id, parchi pe:<br/>taaki repeat na ho"]):::pill
+    P(["Video ki id, parchi pe:<br/>taaki repeat na ho<br/>(idempotency key)"]):::pill
     subgraph KM["KAI MACHINE, KAAM BAANTO"]
         W1["Machine 1: isi id ka hissa 1"]:::card
         W2["Machine 2: hissa 2"]:::card
@@ -567,7 +567,7 @@ flowchart TB
         U[("US copy")]:::good
         E[("Europe copy")]:::good
     end
-    T(["Taala-chaabi mere paas:<br/>10 dost hi, link 5 minute<br/>(signed URL)"]):::pill
+    T(["Taala-chaabi mere paas:<br/>10 dost hi, link 5 minute<br/>(permission check, signed URL)"]):::pill
     X --> CP
     T -.-> CP
     linkStyle default stroke:#8fa3c7,stroke-width:2px
@@ -594,7 +594,7 @@ register = tweet store (Cassandra), like count saath me. Dabbe me sirf ID isliye
 
 ```mermaid
 flowchart TB
-    subgraph DB["RAVI KA DABBA: SIRF NUMBER"]
+    subgraph DB["RAVI KA DABBA: SIRF NUMBER<br/>(inbox me sirf tweet ID)"]
         direction LR
         a(["#905"]):::pill
         b(["#902"]):::pill
@@ -707,7 +707,7 @@ Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo 
 ```mermaid
 flowchart TB
     W["Arpan ka reply 'mast DP':<br/>A aur B me likha (2 ne haan bola)"]:::card
-    C[("Copy C: abhi sirf<br/>'thank you'")]:::bad
+    C[("Copy C: abhi sirf<br/>'thank you'<br/>(replica peeche)")]:::bad
     Q(["Priya kisi 2 copy se padhe<br/>(quorum: W 2, R 2)"]):::pill
     OK["C me nahi to A me hai:<br/>dono reply sahi kram me"]:::good
     W -.-> C
