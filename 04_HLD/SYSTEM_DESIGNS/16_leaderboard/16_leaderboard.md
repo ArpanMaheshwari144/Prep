@@ -127,8 +127,8 @@ Time na jodo to barabar score pe Redis khud member naam ke alphabet (lexicograph
 number jodo, ghatao ya ulta karo, andar ki baat.
 
 **Maan lo (Claude ka nitpick) pooche:** time ka number jodo to baad wale ka bada: Ravi 10:00 = 9805, Priya 10:05 = 9805.15,
-Redis bade ko upar rakhta to Priya upar? Arpan: Ravi upar hi aayega; number sirf misaal tha, jodo, ghatao ya sorted ulta (reverse)
-kar do. **Asli naam:** pehle aaye ka hissa bada (ya time ulta karke jodo) = composite score; misaal ka number sirf misaal.
+board pe sabse zyada score upar chahiye to Priya upar? Arpan: Ravi upar hi aayega; number sirf misaal tha. Redis 1, 2, 3 (chhota upar)
+rakhta, jo upar chahiye us hisaab se reverse karke padho; jodo, ghatao ya reverse, andar ki baat. **Asli naam:** pehle aaye ka hissa bada (ya time ulta karke jodo) = composite score; misaal ka number sirf misaal.
 
 ```mermaid
 flowchart TB

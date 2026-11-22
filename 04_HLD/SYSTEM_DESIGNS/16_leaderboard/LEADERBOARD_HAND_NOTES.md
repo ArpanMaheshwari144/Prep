@@ -81,8 +81,8 @@ Jaankari (reel se): time na jodo to score barabar hone pe Redis khud naam ke alp
 
 **Isi dikkat ki doosri kahani:** Arpan: Pehle score, score same to time: Ravi ne pehle khatam kiya to Ravi upar, Priya ek second bhi late to neeche. LeetCode andar kaunsa hisaab lagata public nahi; number jodo, ghatao ya baad me ulta kar do, wo andar ki baat.
 
-**Maan lo (Claude ka nitpick) pooche: time ko number bana ke score me jodo, to baad wale ka number bada; Ravi 10:00 = 9800 + 5 = 9805, Priya 10:05 = 9800 + 5.15 = 9805.15. Redis bade number ko upar rakhta, to upar Priya aa jaayegi?**
-Arpan: Ravi upar hi aayega, Priya kaise aa jaayegi. Wo number sirf misaal tha. Number jodo, ghatao, ya Redis ka sorted ulta (reverse) kar do, dikkat kya hai; LeetCode andar kaunsa hisaab lagata wo public nahi. Baat itni: pehle score, barabar to time, pehle khatam wala upar.
+**Maan lo (Claude ka nitpick) pooche: time ko number bana ke score me jodo, to baad wale ka number bada; Ravi 10:00 = 9800 + 5 = 9805, Priya 10:05 = 9800 + 5.15 = 9805.15. Board pe sabse zyada score upar dikhana hai, to upar Priya aa jaayegi?**
+Arpan: Ravi upar hi aayega, Priya kaise aa jaayegi. Wo number sirf misaal tha. Redis sorted rakhta hai 1, 2, 3, matlab sabse chhota upar. Hume jo upar chahiye us hisaab se ulta (reverse) kar do: sabse zyada score upar chahiye to reverse karke padho. Number jodo, ghatao ya reverse karo, dikkat kya hai; LeetCode andar kaunsa hisaab lagata wo public nahi. Baat itni: pehle score, barabar to time, pehle khatam wala upar.
 Technical me: jo pehle aaya uska hissa bada rakho (ya time ko ulta karke jodo), tabhi bade-se-chhote padhne pe pehle wala upar = composite score; misaal ka number sirf misaal.
 
 **3. Har second lakhon match khatam, saare score update ek hi Redis pe.**
