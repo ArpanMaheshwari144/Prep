@@ -106,7 +106,8 @@ Technical me: "DB ki copy, padhne ke liye" = read replica, "dheemi copy chhod ke
 Isi Maan lo me aur neeche (saari copy bhi dheemi): Pehle replica se serve karne ki koshish. Wo bhi dheemi, to thodi der ke liye purani (stale) jaankari dikha do. Logon ko pata hi nahi ki Priya ne kya badla; Priya ne naam badla to baaki refresh karein to purana naam dikhega, koi baat nahi, ye sirf Priya ko, hamare server ko aur hume pata hai. Priya ko UI pe dikha do "tumhari jaankari peeche update ho rahi hai". DB kyun dheema, wo HLD ke bahar. Purani jaankari local cache me rakh do, saath me TTL (jaise 30-45 second), taaki baar-baar Redis tak bhi na aayein. DB theek hua, chhotu dobara gaya, nayi jaankari Redis me daali, local ka TTL khatam hua, sab dobara aake naya le gaye.
 Technical me: "thodi der purani jaankari" = serve stale (stale-while-revalidate), "Priya ko UI pe batao" = read-your-writes ka UI message, "local cache + TTL 30-45 sec" = local cache with short TTL, "DB theek, chhotu dobara" = background refresh.
 
-**Maan lo chhotu parchi bhar laaya, ab baaki bheed ka kya:** Arpan: Ek thread andar bhejo, ek request jaaye, laaye, return kare, hum use cache kar denge; phir dobara normal traffic bhejenge, par thoda slow, ekdum se nahi, warna wo dobara gir bhi sakta hai.
+**Maan lo chhotu parchi bhar laaya, ab baaki bheed ka kya:**
+Arpan: Ek thread andar bhejo, ek request jaaye, laaye, return kare, hum use cache kar denge; phir dobara normal traffic bhejenge, par thoda slow, ekdum se nahi, warna wo dobara gir bhi sakta hai.
 Technical me: refill ke baad traffic dheere-dheere wapas (ramp-up / warm-up), ek saath nahi.
 
 **Maan lo ek bot har second 10,000 aise user id maang raha jo hain hi nahi (50 crore, 70 crore, 99 crore...). Cache me kuch nahi, DB me bhi kuch nahi, cache me rakhne ko kuch nahi, to har baar seedha DB.**
@@ -121,7 +122,8 @@ Technical me: "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parc
 Arpan: Baaki machine pe baant de. Machine 4 ka replica bana de, teen jagah ho gayi, to bat gaya. Ya ring me aur jagah bitha de: machine 8 tu bhi dekh le, machine 9 tu bhi dekh le. Jaise bheed zyada ho gayi to ek aur gaadi extra kar lo. Ek gaadi me sab nahi aa sakte, to ek-do chhoti gaadi kar lo.
 Technical me: "machine 4 ka replica, 8 aur 9 tu bhi dekh" = hot key ki copies kai machines pe, "ek aur gaadi" = padhne ki bheed copies me bat-ti.
 
-**Maan lo pehle se pata hai bheed kab aayegi (Diwali flash sale, iPhone launch, World Cup):** Arpan: Ye predicted hai; website ko pehle se pata hota, isliye wo sab taiyaar karke rakh dete. Twitter ko bhi pata World Cup kab hai. Isliye ye cheez bahut kam hoti: sale kab hai, dev ko pehle se pata hota.
+**Maan lo pehle se pata hai bheed kab aayegi (Diwali flash sale, iPhone launch, World Cup):**
+Arpan: Ye predicted hai; website ko pehle se pata hota, isliye wo sab taiyaar karke rakh dete. Twitter ko bhi pata World Cup kab hai. Isliye ye cheez bahut kam hoti: sale kab hai, dev ko pehle se pata hota.
 Technical me: cache pre-warm (event se pehle garam key cache me bhar do), capacity pehle se badhao.
 
 **Maan lo Priya ki key machine 4, 8, 9 teeno pe hai (copies), usne naam badla, aur sirf machine 4 ki parchi kati.**

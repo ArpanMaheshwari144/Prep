@@ -104,9 +104,11 @@ Technical me: "net ke hisaab se quality" = ABR (adaptive bitrate, pehle blur phi
 Arpan: 10 reel poori laana thoda bewakoofi hai: 10 ki 10 skip kar di to aage 10 reel ke liye phir mehnat. To shuru ke kuch chunks le lo; use achha laga to theek, hamari mehnat bhi bekaar nahi gayi. Copy wala scene: chhotu ko 20 page laane bheja, dekha banda 1-2 page padh ke chala gaya; kal phir aaya, phir 1-2 page. Agle din kaha "chhotu, sirf 3-4 page la, bahut hai". Usne poora padh liya to chhotu ko chupchaap bhej dunga, wo poore le aayega. Par 1-2 page dekh ke kitaab nahi hataunga, kya pata use teesra-chautha page achha lage. Shuru me Instagram ke paas hamara kuch nahi hota, kuch bhi dikhata; 1-2 din pattern dekhega ki kya padhta, kitna padhta, phir laana kam karega. Pre-fetch bina soche nahi, dekh ke laaya hua.
 Technical me: chhotu = phone ka background pre-fetch · "shuru ke kuch chunks" = pre-fetch me sirf pehle kuch second, baaki tab jab reel sach me chale; "kitna laana" = user ke pattern se (kitna skip karta). Trade-off: zyada laaye to data aur battery, kam laaye to spinner. Data saver on ho to pehle se laana band.
 
-**Maan lo pattern kaise banta:** Arpan: Shuru me Instagram ke paas hamara kuch nahi hota, kuch bhi reel dikhata. Roz jaate hain to use pata lag jaata ye Arpan ye zyada dekhta, to feed me wahi. Algorithm set hota: is region (India) ke log ye zyada dekhte, phir India me north ke log ye, south ke ye. Main bhi library me aisa karunga: is region ke log comic zyada padhte, is region ke horror fantasy.
+**Maan lo pattern kaise banta:**
+Arpan: Shuru me Instagram ke paas hamara kuch nahi hota, kuch bhi reel dikhata. Roz jaate hain to use pata lag jaata ye Arpan ye zyada dekhta, to feed me wahi. Algorithm set hota: is region (India) ke log ye zyada dekhte, phir India me north ke log ye, south ke ye. Main bhi library me aisa karunga: is region ke log comic zyada padhte, is region ke horror fantasy.
 
-**Maan lo 1-2 reel achhi nahi lagi:** Arpan: 1-2 page pe poori kitaab nahi phaadunga; kya pata teesre-chauthe page pe interesting lage. Thoda-thoda dikhao, pattern samjho. Haan, 7 din nikal gaye aur kisi ne nahi padhi, to us kitaab ko zaroor hata dunga.
+**Maan lo 1-2 reel achhi nahi lagi:**
+Arpan: 1-2 page pe poori kitaab nahi phaadunga; kya pata teesre-chauthe page pe interesting lage. Thoda-thoda dikhao, pattern samjho. Haan, 7 din nikal gaye aur kisi ne nahi padhi, to us kitaab ko zaroor hata dunga.
 Technical me: region / sub-region pe trending (cold start), user signal se personal feed; ek-do skip pe nahi hatao, lambe waqt tak koi engagement nahi to hatao.
 
 &nbsp;

@@ -74,21 +74,24 @@ API     (Arpan: "teen API bahut hai, aur kuch to hai nahi")
 **1. Arpan ne D5 chuni aur "book" dabaya. Usi second ek aur ladke ne bhi D5 pe book dabaya. Dono ke app ne seat khaali dekhi, aur dono ko "seat mil gayi" aa gaya.**
 Arpan: Seat dekhna aur seat book karna, ise ek saath rakh, alag-alag mat rakh. Maan le do counter hain, main is counter pe, doosra us counter pe, aur andar ek hi seat bachi. Dono counter ko nahi pata ki doosra bhi wahi seat bech raha. Maine kaha "ek seat chahiye, lo mere paise". Mere counter wale ne jaake seat pe ek parchi rakh di: "ye Arpan ki seat hai, Arpan iska payment karega, ye Arpan ko milegi, kisi aur ko nahi." Doosra counter wala dekhega: "achha, yahan Arpan ki parchi lagi hai, ise main bech nahi sakta. Tu ja bhai, seat book ho gayi."
 Technical me: counter = hamara server · "ek saath rakh, alag mat" = dekhna aur rokna ek hi query (UPDATE ... WHERE seat FREE), "seat pe parchi" = hold, "doosra parchi dekh ke mana" = doosre ko 0 row, "seat chali gayi".
-**DB kaunsa:** Arpan: Atomic update: check plus book ek hi update me, WHERE me "seat available hai" to hi book. MySQL do query ek saath nahi chalata, ek baar me ek, to atomic apne aap. Isse baat uthi ki SQL database lenge, NoSQL nahi: yahan consistency chahiye over availability, consistency bahut zyada chahiye, kyunki ek seat do logon ko nahi ja sakti.
+**DB kaunsa:**
+Arpan: Atomic update: check plus book ek hi update me, WHERE me "seat available hai" to hi book. MySQL do query ek saath nahi chalata, ek baar me ek, to atomic apne aap. Isse baat uthi ki SQL database lenge, NoSQL nahi: yahan consistency chahiye over availability, consistency bahut zyada chahiye, kyunki ek seat do logon ko nahi ja sakti.
 Technical me: atomic conditional UPDATE, consistency > availability = SQL (Postgres / MySQL).
 
 **Maan lo Arpan ko family ke saath D5, D6, D7 teeno chahiye; counter wale ne D5, D6 pe parchi lagayi, D7 tak pahuncha to usi second doosre counter wale ne D7 pe Priya ki parchi laga di.**
 Arpan: Ye almost same hai. D5 D6 D7 ka kaam ek saath hi hoga, alag-alag nahi: dekhna aur rokna teeno ka ek hi baar, beech me koi nahi aa sakta. Agar teeno available hain tabhi book karo. Maan lo mujhe D1 se D10 poora block chahiye, to main beech me khada hoke bolunga "sab sun lo, D1 se D10 meri", ek parchi pe likh dunga aur sab counter wale usi parchi se padhenge. Jaise ek chhotu board leke khada ho gaya: "D1 se D10 book hai, ise koi book nahi karega".
 Technical me: chhotu ka board = ek booking id saari seat pe, counter = server · "teeno ek saath, beech me koi nahi" = ek transaction (all-or-nothing, UPDATE ... WHERE seat IN (...) AND FREE; ek bhi na mili to rollback, kisi pe parchi nahi), "ek parchi poore block ki" = ek booking id ke neeche saari seat.
 
-**Maan lo Arpan seat map khol ke 1 ghanta baitha raha, aate waqt poora hall khaali tha, is beech peeche se koi aaya aur D5 book karke le gaya:** Arpan: Isme koi design nahi toot raha: na LB ka dabba, na Redis, kuch nahi. Ye sabko Redis me daal ke live dikhana, iska koi matlab nahi. Seat tab tak hold, jab tak pay nahi hua; pay karte jao, seat lete jao. Main 1 ghante khol ke baitha to kya poora hall waisa hi rahega? Seat book hoti rahengi. App back karke dobara aaunga to pata lagega 10 seat book ho gayi. Ya to "ye seat book ho chuki" dikha do, ya front end pe "seat map badal gaya, refresh karo" ka button. Ye user ki baat hai, hamari dikkat nahi; hamari dikkat tab jab pay na ho, ya 10 seat thi aur 5 hi dikh rahi.
+**Maan lo Arpan seat map khol ke 1 ghanta baitha raha, aate waqt poora hall khaali tha, is beech peeche se koi aaya aur D5 book karke le gaya:**
+Arpan: Isme koi design nahi toot raha: na LB ka dabba, na Redis, kuch nahi. Ye sabko Redis me daal ke live dikhana, iska koi matlab nahi. Seat tab tak hold, jab tak pay nahi hua; pay karte jao, seat lete jao. Main 1 ghante khol ke baitha to kya poora hall waisa hi rahega? Seat book hoti rahengi. App back karke dobara aaunga to pata lagega 10 seat book ho gayi. Ya to "ye seat book ho chuki" dikha do, ya front end pe "seat map badal gaya, refresh karo" ka button. Ye user ki baat hai, hamari dikkat nahi; hamari dikkat tab jab pay na ho, ya 10 seat thi aur 5 hi dikh rahi.
 Technical me: purana seat map = sirf UI ("already booked" / refresh), design nahi badalta; asli roka = kadam 1 ka "dekhna + rokna ek query".
 
 **2. Arpan ne D5 pe parchi laga di, phir pay kiye bina phone rakh ke chai peene chala gaya, kabhi wapas nahi aaya. D5 pe hamesha ke liye Arpan ki parchi, koi aur le hi nahi sakta.**
 Arpan: Parchi ko thodi der ke liye wahin rehne de. Counter wala dekh raha: "ye payment kar raha, chal main 5 minute tak dekhta hoon. Aa gaya to theek, nahi to hata dunga yahan se." Usne 5 minute intezaar kiya, Arpan nahi aaya, to parchi phaad ke phenk di. Seat agle ke liye.
 Technical me: counter wala = hamara server · "5 minute tak dekhta hoon" = hold expiry (hold_until), "parchi phaad ke phenk di, seat agle ke liye" = hold hata ke seat wapas FREE.
 
-**Maan lo pooche parchi ki umar Redis TTL me kyun nahi:** Arpan: Main yahan DB column zyada prefer karta hoon. Redis abhi is waqt system me lagana thoda early stage hai, kyunki ye DB column se bhi manage ho sakta. Redis lagaya to ek aur system maintain karna padega; kisi din Redis gira to un keys ka kya hoga, stampede / avalanche wali dikkat, replica bhi chahiye. DB column se abhi itni dikkat nahi.
+**Maan lo pooche parchi ki umar Redis TTL me kyun nahi:**
+Arpan: Main yahan DB column zyada prefer karta hoon. Redis abhi is waqt system me lagana thoda early stage hai, kyunki ye DB column se bhi manage ho sakta. Redis lagaya to ek aur system maintain karna padega; kisi din Redis gira to un keys ka kya hoga, stampede / avalanche wali dikkat, replica bhi chahiye. DB column se abhi itni dikkat nahi.
 Technical me: hold_until DB column (ek hi sach, ek system), Redis = aur ek cheez sambhalni (failover, replica); zaroorat pe baad me.
 
 **3. Parchi phaadne wala counter wala har minute ghoom ke purani parchiyan dekhta hai. Aaj wo chhutti pe. Arpan ki parchi ko 20 minute ho gaye, abhi bhi D5 pe lagi, aur naya aadmi D5 lena chahta hai.**
@@ -115,7 +118,8 @@ Technical me: "seat chuni to grace" = hold ki apni umar (hold_until), token khat
 Arpan: Time ke andar Pay dabaya to seat Arpan ki, Priya ko nahi; humne vaada kar diya, warna consumer court ka case. PSP dheema hai to galti Arpan ki nahi, hamari taraf ki hai. To parchi pe status likh lo: pay chal raha hai, PSP ka jawab baaki. Jab tak ye likha hai, umar badha do, seat kisi aur ko dikhe hi nahi. Ya query me hi daal do.
 Technical me: parchi = seat ka hold, ghadi = client timeout · "status likh lo" = HELD -> PAYMENT_PENDING (Pay dabate hi), "umar badha do" = is status pe hold expire nahi hota (query aur safai job isko nahi chhoote).
 
-**Maan lo network glitch, Pay do baar daba:** Arpan: Key client hi banayega, server nahi, kyunki request client ki taraf se aa rahi; jaise GPay ke server key banake saath bhejte, hum us key ke hisaab se aage process karte. Wahi key dobara aaye to "process ho rahi" ya "ho chuki" lauta do.
+**Maan lo network glitch, Pay do baar daba:**
+Arpan: Key client hi banayega, server nahi, kyunki request client ki taraf se aa rahi; jaise GPay ke server key banake saath bhejte, hum us key ke hisaab se aage process karte. Wahi key dobara aaye to "process ho rahi" ya "ho chuki" lauta do.
 Technical me: client idempotency key (app banaye), server pe key dekh ke purana jawab.
 
 **6b. Maan lo chhotu (PSP) jawab hi nahi de raha, 1-2 baar jagaya phir bhi chup. User ko kab tak rokun?**

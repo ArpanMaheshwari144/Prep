@@ -77,7 +77,8 @@ Arpan: Parchi rakh le apne paas. Ye kaam ho gaya, to maine likh liya aur likh ke
 Technical me: "kaam ho gaya, parchi pe likh liya" = idempotency (khabar ki id + "ho gaya" record), "dobara aaya, dekha ho gaya" = bhejne se pehle check, mila to skip (SMS gaya aur record likhne se pehle crash hua to ek baar dohra ab bhi ho sakta; parchi khidki chhoti karti, band nahi).
 Arpan (parchi kahan): Bhejne se pehle Redis me dekh lenge ki ye event process hua ya nahi, Redis ke saath ek chhota TTL bhi. Ise ek map ki tarah dekho: wo cheez map me pehle se hai to skip kar do, process ho rahi ya ho gayi; map me nahi hai to iska matlab nahi gaya.
 
-**Maan lo Redis (parchi) hi gir gaya:** Arpan: Replica laga sakte hain, aur DB me bhi unique constraint hai: event id pe unique daal do, event ho gaya to dobara process nahi hoga, DB dekh ke reject kar dega. Redis yahan sirf fast raasta hai, single point of failure nahi; wo gira to DB hai.
+**Maan lo Redis (parchi) hi gir gaya:**
+Arpan: Replica laga sakte hain, aur DB me bhi unique constraint hai: event id pe unique daal do, event ho gaya to dobara process nahi hoga, DB dekh ke reject kar dega. Redis yahan sirf fast raasta hai, single point of failure nahi; wo gira to DB hai.
 Technical me: "map me hai to skip" = Redis SET NX eventId + chhota TTL, "DB me unique" = event id pe unique constraint (asli pehra), Redis = tez pehli jaanch.
 
 **4. Company ne OTP pe error lautaya: "abhi bheed hai, baad me try karo". Chhod de to OTP kabhi nahi milega, turant baar-baar bheje to company pe bojh aur peeche ki saari SMS line ruki. Kuch khabar kabhi ja hi nahi sakti, jaise galat number.**
@@ -128,7 +129,8 @@ Technical me: "le liya, abhi bheja nahi" = ACCEPTED, "ek time ke baad company ba
 **Maan lo company ne "le liya" bola, phir DELIVERED / FAILED kabhi aaya hi nahi.**
 Arpan: Payment wala beech ka banda, cron job jaisa. Ek chhotu ACCEPTED pe atke record dekhta rahe; kuch der baad bhi jawab nahi aaya to company se khud poochhe "is SMS ka kya hua". Wahan se bhi kuch na mile to FAILED maan ke backup se bhej do.
 Technical me: chhotu = status poll job · "beech ka banda, cron job" = status poll job (har kuch minute, ACCEPTED + purane record utha ke company ki status API se poochhe), "kuch na mile to FAILED" = timeout ke baad fail maan ke failover (kadam 5). Payment kadam 3 jaisa.
-**DB kaunsa (record kahan):** Arpan: Yahan consistency nahi chahiye. Data bahut, lagbhag 5 TB, aur write bahut zyada hai, read bahut kam: baar-baar likhna, idhar jao udhar jao, delivered mark karo. To aisa DB jo aaram se scale ho: Cassandra jaisa NoSQL, write-scalable; zaroorat pade to shard bhi.
+**DB kaunsa (record kahan):**
+Arpan: Yahan consistency nahi chahiye. Data bahut, lagbhag 5 TB, aur write bahut zyada hai, read bahut kam: baar-baar likhna, idhar jao udhar jao, delivered mark karo. To aisa DB jo aaram se scale ho: Cassandra jaisa NoSQL, write-scalable; zaroorat pade to shard bhi.
 Technical me: write-heavy, read kam, consistency nahi chahiye, ~5 TB = Cassandra (NoSQL, write scale).
 
 **8. Diwali: ek khabar "1 crore users ko offer bhejo". Ek worker / consumer ne list nikaali, loop me bhejne laga, 40 lakh pe crash. Dobara chala to loop shuru se, 40 lakh ko do baar, kaam ek worker / consumer pe atka, baaki khaali.**
@@ -136,7 +138,8 @@ Arpan: Thoda todte hain. 1 crore ek worker / consumer nahi sambhalega. 20, 30, 5
 Jaise mere paas 10 log hain, maine kaam diya: tu iske ghar jaa, tu iske ghar. Parchi pe likhte raho ye ghar ho gaya. Kal koi bimaar pad gaya: apni parchi dikhana, achha 10 me se 7 ko bhej diya tha. Backup tu aa ja, baaki 3 ko tu bhej de.
 Technical me: "tod do, alag range" = campaign tukde (chunks), "turant DB me mark, moti diary" = checkpoint (DB), "10 me se 7, baaki 3 backup bheje" = crash pe wahin se, "bhej diya tha? dobara nahi" = idempotency.
 
-**Maan lo campaign shuru karne wala button bhi atka:** Arpan: Campaign service turant 202 de degi; DB me campaign ki row: id, kisko, template. Kaam peeche hota rahega: 10 hazaar ke tukde Kafka me, kai fan-out worker parallel me, har worker opt-out wale hataye, template lagaye, provider ki raftaar se bheje; do baar na jaaye uske liye idempotency.
+**Maan lo campaign shuru karne wala button bhi atka:**
+Arpan: Campaign service turant 202 de degi; DB me campaign ki row: id, kisko, template. Kaam peeche hota rahega: 10 hazaar ke tukde Kafka me, kai fan-out worker parallel me, har worker opt-out wale hataye, template lagaye, provider ki raftaar se bheje; do baar na jaaye uske liye idempotency.
 Technical me: "turant 202" = 202 Accepted (kaam async), "campaign row" = campaign record (id, audience, template), "tukde Kafka me, kai worker" = chunked fan-out, "provider ki raftaar" = rate-limited send.
 
 **Maan lo Big Billion Day ka 5 crore promo usi line me pada hai, aur ek user ka OTP uske peeche lag gaya. OTP 40 minute baad aaya.**
@@ -150,7 +153,8 @@ Arpan: Wo baar-baar wahi cheez padh raha hai, use apne paas rakh lo. Diwali pe s
 User ki pasand uski settings hai, wo DB me hai, DB se hi uthayenge. Hamari company bhi aise hi karti hai, email template banate waqt code DB se khud padh leta hai. Crore users hain, sabki setting cache me kaise rakhenge. OTP itna late nahi hoga, kyunki OTP ki priority pehle se set hai, worker / consumer bhi hain, rate limit bhi hai. Baad me kabhi lage ki faltu queries bahut badh gayi, tab sochunga cache me rakhun, aur tab har user ke liye.
 Technical me: mota register = DB · "ek hi saancha apne paas, bas naam badlo" = template cache, "settings DB se hi" = user preference DB se, "OTP ki priority pehle se" = OTP ki alag line, "queries badhi tab cache" = naap ke hi preference cache.
 
-**Maan lo SMS band tha phir bhi raat 2 baje SMS chala gaya:** Arpan: Bhejne se pehle preference dekho: channel on hai ya nahi, quiet hours hain ya nahi, template; phir bhejo.
+**Maan lo SMS band tha phir bhi raat 2 baje SMS chala gaya:**
+Arpan: Bhejne se pehle preference dekho: channel on hai ya nahi, quiet hours hain ya nahi, template; phir bhejo.
 Technical me: preference check me channel opt-in + quiet hours (raat ko promo nahi), tab bhejo.
 
 **Maan lo Diwali pe 1 crore offer, har ek se pehle DB me pasand, DB ki saans phooli. OTP worker / consumer bhi pasand padhne usi DB pe gaya, OTP 40 second late.**

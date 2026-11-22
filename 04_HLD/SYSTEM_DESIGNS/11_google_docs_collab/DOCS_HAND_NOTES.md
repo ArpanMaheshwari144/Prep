@@ -56,7 +56,8 @@ Arpan: Har op ki apni id: server pehle id dekhe, ye op lag chuka to dobara mat l
 Technical me: idempotency key (wahi ID dobara aaye to chhodo).
 Arpan (misaal): Har operation version number ke saath jaata, jaise Atlassian me: save karne jaate to mana kar deta "abhi yahan kuch change hua hai"; Jira comment me bhi kai baar comment save nahi hota, wo bhi version number se hota hai.
 
-**Maan lo Ravi ko Arpan ka likha dikh hi nahi raha, refresh pe bhi nahi:** Arpan: Hum HTTP use kar rahe the, HTTP ek tarafa hai, server Ravi ko khud nahi bhejega, har baar refresh karna padega. Peeche WebSocket laga dunga: change hua, turant push, two-way. WebSocket toota to jaise hi connection judega wo apne aap dekh lega aur turant push kar dega, same as WhatsApp: offline hue, online aaye to saare message ek saath.
+**Maan lo Ravi ko Arpan ka likha dikh hi nahi raha, refresh pe bhi nahi:**
+Arpan: Hum HTTP use kar rahe the, HTTP ek tarafa hai, server Ravi ko khud nahi bhejega, har baar refresh karna padega. Peeche WebSocket laga dunga: change hua, turant push, two-way. WebSocket toota to jaise hi connection judega wo apne aap dekh lega aur turant push kar dega, same as WhatsApp: offline hue, online aaye to saare message ek saath.
 Technical me: version number = optimistic check (Jira / Confluence wala "kisi ne badla"), "HTTP ek tarafa" = request-response, "WebSocket two-way push", "judte hi chhoote ek saath" = reconnect pe missed ops replay (last version se aage).
 
 **2. (Ye dikkat Arpan ne khud uthayi) Hazaron-laakhon log dhadadhad save kar rahe, har chhota badlaav DB pe jaaye to?**
@@ -108,9 +109,11 @@ OT ke saath                                      delete jagah 1 pe hua, insert j
 Arpan: Phir Google Docs ka matlab hi nahi rahega; Google Docs ka matlab hi sharing document hai. Ek pe taala laga doge to saara matlab mitti paleet. Wahi baat hogi ki YouTube pe video upload karne gaya aur YouTube ne pehle hi mana kar diya. Taala laga ke baith jaoge to doosra banda bas dekhta rahega, jo galat hai. Google Docs me taala jaisa koi feature ho sakta hai, par usme hum nahi jaate, wo design ka part nahi. Tum likho, Google Docs apne hisaab se use aage-peeche karta hai.
 Technical me: taala = locking (ek likhe, baaki ruke), mil ke likhne wale doc me nahi chalta; OT me sab ek saath likhte, kram server tay karta.
 
-**Maan lo dono ne bilkul ek hi jagah (0 pe) likha:** Arpan: Dono ko ek hi dikhega, "XY Hello" ya "YX Hello", deterministic tie-break: user id aur timestamp pe, dono ko same.
+**Maan lo dono ne bilkul ek hi jagah (0 pe) likha:**
+Arpan: Dono ko ek hi dikhega, "XY Hello" ya "YX Hello", deterministic tie-break: user id aur timestamp pe, dono ko same.
 
-**Maan lo pooche OT ke alawa raasta:** Arpan: CRDT doosra raasta: har character ki unique id aur position, merge kisi bhi kram me same (commutative), beech me central transform nahi. Implement nahi karna, bas samajhna aur bolna: CRDT bhi hai, OT bhi; humne OT explain kiya, CRDT aisa hi hai par thoda alag.
+**Maan lo pooche OT ke alawa raasta:**
+Arpan: CRDT doosra raasta: har character ki unique id aur position, merge kisi bhi kram me same (commutative), beech me central transform nahi. Implement nahi karna, bas samajhna aur bolna: CRDT bhi hai, OT bhi; humne OT explain kiya, CRDT aisa hi hai par thoda alag.
 Technical me: same jagah = tie-break (userId / timestamp), CRDT = har akshar ki id, merge commutative, server pe transform nahi (offline ke liye achha).
 
 **4. Lakhon doc, 100 server. Arpan server A se, Ravi server B se. Dono server apne kram me OT lagaate, ek hi doc ki do alag shakal.**
@@ -120,7 +123,8 @@ Par sabka ek nahi hoga: har doc ke liye alag. Main aur Ravi ek doc pe to hum don
 Arpan (aur neeche: Arpan Mumbai server pe, Ravi Delhi server pe, centralized kaise): Pehle saare operation apne paas jama kar lunga, Redis me ya kahin bhi, abhi DB me nahi (DB baith jaayega). Arpan ne index 0 pe "ARPAN" likha, Ravi ne index 2 pe "RAVI". Dono operation Google Docs ke andar ek jagah aayenge, wahan dekha jaayega: pehle ARPAN, phir Ravi index 2 pe, wahan "P" hai. Noob sochega Arpan ka kaat ke Ravi ka overwrite kar do, ya "AR" + "RAVI" likh ke "PAN" kho do; dono galat, phir sharing doc ka matlab hi khatam. To "P" ko khiska do, beech me poora "RAVI" daal do: "AR RAVI PAN". Jaise main Madhya Pradesh me beech me baitha hoon, Ravi Delhi se, Arpan Mumbai se likh rahe: dono ka mere paas aaya, merge karke poora sentence dono ko ek jaisa dikha dunga. Upar se aajkal Docs me har likhne wale ki rang wali vertical line (cursor) dikhti hai, Jira me bhi.
 Technical me: "centralized system, ek hi version" = ek jagah kram aur OT, "har doc ka alag centralized system, uska maalik" = har doc ka ek owner server.
 
-**Maan lo ek doc pe 1000 log aa gaye:** Arpan: Editor owner pe hai, OT sirf likhne walon ka hai; viewer koi bhi ho, 900 viewer hain to bhi koi dikkat nahi.
+**Maan lo ek doc pe 1000 log aa gaye:**
+Arpan: Editor owner pe hai, OT sirf likhne walon ka hai; viewer koi bhi ho, 900 viewer hain to bhi koi dikkat nahi.
 Technical me: OT / transform sirf editors ke ops pe, viewers sirf broadcast sunte (fan-out), owner pe bojh likhne walon se.
 
 **5. Owner server ne 5 second ke badlaav register (apni memory) me jama kiye, Arpan ko "Saved" dikha diya. DB me likhne se pehle server gira, Arpan ka poora para uda.**

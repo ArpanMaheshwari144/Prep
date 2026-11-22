@@ -59,14 +59,16 @@ Technical me: "ek dabbe me rakh lo" = message store (pehle DB me save), "online 
 
 **Maan lo pooche message baantoge kis cheez se, chat id ya user id?** Arpan: Main cheez ye ki partition kis cheez pe ho raha. Chat id ke saath partition karenge, user id ke saath nahi.
 
-**Maan lo "college-gang" group 3 saal purana, 50 lakh message aur hazaron photo; roz log aaj-kal ke message padhte, par kabhi-kabhi Ravi upar scroll karke 2 saal purani trip ki photo dhoondhta (Claude ka scene; scene hi galat tha, aisa hota nahi):** Arpan: 50 lakh message bahut ho sakte, theek. Par 2 saal purana upar scroll karke dhoondhna sense nahi banata, aisa hota bhi nahi; ye scene galat likha hua hai. WhatsApp pe photo kholte hi gallery me download ho jaati hai, purani photo phone me hi hai.
+**Maan lo "college-gang" group 3 saal purana, 50 lakh message aur hazaron photo; roz log aaj-kal ke message padhte, par kabhi-kabhi Ravi upar scroll karke 2 saal purani trip ki photo dhoondhta (Claude ka scene; scene hi galat tha, aisa hota nahi):**
+Arpan: 50 lakh message bahut ho sakte, theek. Par 2 saal purana upar scroll karke dhoondhna sense nahi banata, aisa hota bhi nahi; ye scene galat likha hua hai. WhatsApp pe photo kholte hi gallery me download ho jaati hai, purani photo phone me hi hai.
 Technical me: DB = Cassandra, chat_id se baanta (ek chat ek machine pe, kram me); purani photo / video phone ki gallery me (client pe), server pe sirf link.
 
 **3. 10 crore log, ek server sabke taar nahi pakad sakta, 100 server lage. Arpan ka taar server 3 pe, Ravi ka server 71 pe. Server 3 ko pata hi nahi Ravi kis server pe.**
 Arpan: Ek map rakh le apne paas, DSA wala map: ye is server pe hai, ye us server pe. Dhoondhne ki zaroorat nahi, O(1) time me mil gaya. Key-value pe rakh lo.
 Technical me: "DSA wala map, key-value" = session map in Redis (userId -> server), "O(1) me mil gaya" = seedha lookup.
 
-**Maan lo ek server gira, uske 1 lakh log ek second me dobara judne aaye:** Arpan: Sab users ek saath server pe hit karenge to dikkat, server dobara gir jaayega, use garam hone ka time chahiye. To backoff plus jitter: thodi-thodi request ek saath jaayengi, aisa nahi ki das crore sidha chale jaayein.
+**Maan lo ek server gira, uske 1 lakh log ek second me dobara judne aaye:**
+Arpan: Sab users ek saath server pe hit karenge to dikkat, server dobara gir jaayega, use garam hone ka time chahiye. To backoff plus jitter: thodi-thodi request ek saath jaayengi, aisa nahi ki das crore sidha chale jaayein.
 Technical me: reconnect storm -> exponential backoff + jitter (har phone alag waqt pe dobara jude).
 
 **4. Server 3 ko pata chal gaya Ravi server 71 pe. Message 71 tak kaise pahunche? Har server baaki 99 se seedha taar jode? 100 x 99 taar, kal 500 server to aur zyada.**
@@ -136,7 +138,8 @@ Technical me: presigned URL (server ki key se sign, chhoti umar), thumbnail alag
 Arpan: Ek register me likh liya "Ravi online hai". Ab har 3-5 second baad Ravi ko hilaunga, haath maarunga: "Ravi, tu online hai?" "Haan bhai, online hoon, pareshaan mat kar." Phir haath maara, jawab nahi diya. Phir maara, phir jawab nahi. 2-3 baar hilaya aur jawab nahi diya, to register se Ravi ka naam kaat diya, ab wo offline.
 Technical me: "register me Ravi online" = presence entry (Redis), "har 3-5 second hilaunga" = heartbeat, "2-3 baar jawab nahi to naam kaat diya" = heartbeat chhoote to entry mite (TTL), "last seen" dikhe.
 
-**Maan lo Ravi chahta hi nahi ki sabko dikhe:** Arpan: Aajkal WhatsApp pe privacy hai, sabko na dikhe; app me setting se band kar lein. Ye ek feature hai, itna bada feature bhi nahi.
+**Maan lo Ravi chahta hi nahi ki sabko dikhe:**
+Arpan: Aajkal WhatsApp pe privacy hai, sabko na dikhe; app me setting se band kar lein. Ye ek feature hai, itna bada feature bhi nahi.
 Technical me: last seen privacy setting (server bhejne se pehle setting dekhe).
 
 **11b. Ravi online aaya. Uske phone me 500 contacts. Server "Ravi online hai" ki khabar 500 ko bheje? Lakhon log har minute online / offline, har baar 500-500 khabar ka toofan, aur 500 me se zyada tar ne Ravi ka naam us waqt screen pe dekha hi nahi.**

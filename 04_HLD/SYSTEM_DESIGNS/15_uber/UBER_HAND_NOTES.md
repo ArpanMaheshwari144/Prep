@@ -92,7 +92,8 @@ Technical me: "jaldi ke liye parchi" = matching Redis se (abhi ki jagah, overwri
 Arpan: Connaught Place pe khade ko ISBT ka driver kyun? Sirf 8-9 km ke andar wale chahiye. Aur 5 lakh me se chhaanto mat: naksha pehle se dabbon me kata ho, server sirf usi dabbe me dekhe jahan Arpan khada. Usme 3 driver, unme jo khaali wo Arpan ko. Baaki 5 lakh kahin bhi ghoomein, lena-dena nahi.
 Technical me: "naksha dabbon me" = geohash (grid), "sirf apna dabba" = 5 lakh ki jagah gine-chune driver.
 
-**Maan lo gole ke teeno driver booked:** Arpan: Gole ke andar 3 driver hain, unme se jo bhi khaali ho wo Arpan ko mil jaayega; 5 lakh se lena-dena nahi. Teeno book hain to thodi der wait karna padega, jaise Uber karwata bhi hai, 15 minute wait.
+**Maan lo gole ke teeno driver booked:**
+Arpan: Gole ke andar 3 driver hain, unme se jo bhi khaali ho wo Arpan ko mil jaayega; 5 lakh se lena-dena nahi. Teeno book hain to thodi der wait karna padega, jaise Uber karwata bhi hai, 15 minute wait.
 Technical me: gole me khaali nahi = intezaar / dobara dhoondo (koi gaadi zabardasti nahi).
 
 **Aur neeche (gola hi bahut bada, Whitefield):** Whitefield bahut bada ilaaka hai; ITPL me Samudra tower pe khada hoon, ek cab Agrahara ke paas, ek idhar, ek udhar.
@@ -103,7 +104,8 @@ Technical me: "chhote hisse" = geohash cell, "bheed pe dabba chhota-bada" = cell
 Arpan: Dabbe ki seema pe mat chalo. Arpan jahan khada wahan se 8 km ka gola khincho; jin dabbon ko gola chhoota, unke driver bhi dekho.
 Technical me: "gola + chhoote dabbe" = apna geohash + aas-paas ke dabbe, phir asli fasla.
 
-**Maan lo normal din bhi gole me koi cab khadi nahi:** Arpan: Main jahan khada hoon, Uber ek gola bana dega; itne distance me koi cab nahi hai to gola bada kar do, phir bhi nahi to aur bada.
+**Maan lo normal din bhi gole me koi cab khadi nahi:**
+Arpan: Main jahan khada hoon, Uber ek gola bana dega; itne distance me koi cab nahi hai to gola bada kar do, phir bhi nahi to aur bada.
 Technical me: search radius dheere-dheere badhao (expanding ring / neighbour cells), concert wale din jaisa hi par chhota.
 
 **21-Nov round (Raju border paar karke Agrahara gaya):**

@@ -79,7 +79,8 @@ Technical me: "follow karte hi purane push" = backfill on follow, "naya waise hi
 Arpan: Feed sirf follow walon se nahi banti: main khud Elon, Sachin, Kohli ko follow nahi karta, phir bhi mujhe unke tweet dikhte, kyunki Twitter / Instagram ka kaam hi engage rakhna hai; kuch follow na karo to bhi khaali page nahi dikhta. Unfollow ke baad pade hue tweet turant gayab nahi honge, par naye aane band, aur jaise-jaise feed banegi Arpan ke tweet dheere-dheere kam ho jaayenge.
 Technical me: "turant gayab nahi, dheere kam" = dabba saaf nahi karte (lazy, purge nahi), naye fanout band, ranking (kadam 17) neeche karti; feed me follow ke alawa recommendation bhi.
 
-**Maan lo bahut saare server, Ravi ki request kabhi kisi pe:** Arpan: App stateless hoga. Bahut saare server honge, har server yaad nahi rakhega ki ye zaroori info kiski hai, to hum JWT use kar lenge.
+**Maan lo bahut saare server, Ravi ki request kabhi kisi pe:**
+Arpan: App stateless hoga. Bahut saare server honge, har server yaad nahi rakhega ki ye zaroori info kiski hai, to hum JWT use kar lenge.
 Technical me: "har server yaad nahi rakhega" = stateless app server (session server me nahi), "JWT" = token me hi user ki pehchaan, koi bhi server padh le.
 
 **2. Kohli ne tweet kiya "Century for India". 27 crore dabbon me daalna, ghanton lagte. Ravi ko 2 ghante baad dikha, match khatam. Tab tak baaki sabke tweet bhi line me peeche atke.**
@@ -111,10 +112,12 @@ Arpan: Likhai bahut zyada hai to alag machine, technical naam Cassandra, mera ba
 Aur Arpan ke saare tweet ek jagah: naam se todo, par naam do logon ke same ho sakte (doosra Arpan), to id me baant do. Meri id har baar same, to mera saara data ek jagah.
 Technical me: "likhai bahut, bada bhai" = Cassandra (write-heavy; andar ring = consistent hashing), "replica bhi wo kar leta" = Cassandra ki apni copy, "naam se nahi, id se baant do" = partition key = user id, "mera saara data ek jagah" = ek partition (author id se hissa, andar tweet id se tweet: key = author id + tweet id), "follow ka track" = graph DB Neo4j.
 
-**Maan lo har baar "Arpan ke naye 500" poori table me dhoondhna pad raha:** Arpan: Mujhe naye tweet chahiye, purane se koi matlab nahi. Main ek pattern note kar raha: har din ek banda aata, "Arpan ke naye 40, 50, 500" maangta; samajh gaya wo uska follower hai, use ye chahiye. To unhe thodi der ke liye apne paas rakh le, jo poori table na khojni pade. "Le bhai, Arpan ne aaj 50 kiye, rakh le"; "aaj Arpan ne kuch nahi kiya, sorry"; "aaj bas ek, le le". Har baari poori table pe mat jao, apne paas rakh lo, kyunki per day pattern hai, har din aayega.
+**Maan lo har baar "Arpan ke naye 500" poori table me dhoondhna pad raha:**
+Arpan: Mujhe naye tweet chahiye, purane se koi matlab nahi. Main ek pattern note kar raha: har din ek banda aata, "Arpan ke naye 40, 50, 500" maangta; samajh gaya wo uska follower hai, use ye chahiye. To unhe thodi der ke liye apne paas rakh le, jo poori table na khojni pade. "Le bhai, Arpan ne aaj 50 kiye, rakh le"; "aaj Arpan ne kuch nahi kiya, sorry"; "aaj bas ek, le le". Har baari poori table pe mat jao, apne paas rakh lo, kyunki per day pattern hai, har din aayega.
 Technical me: "naye tweet thodi der apne paas" = author ke recent tweets ka cache (Redis, TTL), "per day pattern" = recent data hi garam (time-based: naye tweet baar-baar padhe jaate), poori table scan nahi.
 
-**Aur neeche (Cassandra hi kyun, aur key kya):** Arpan: Twitter ke liye TB of data ho sakta hai; yahan writes bhi zyada hain aur read bhi zyada, aisa nahi ki sirf read hi zyada. Isliye Cassandra, aur Twitter har jagah hai to user ID se shard.
+**Aur neeche (Cassandra hi kyun, aur key kya):**
+Arpan: Twitter ke liye TB of data ho sakta hai; yahan writes bhi zyada hain aur read bhi zyada, aisa nahi ki sirf read hi zyada. Isliye Cassandra, aur Twitter har jagah hai to user ID se shard.
 Technical me: write-heavy + read-heavy + TB data = Cassandra, partition key = user id.
 
 **8. Saare server America me. Ravi Delhi me, har request samundar paar, har kaam me aadha second upar se. IPL pe India ke 10 crore America ki machine hila rahe.**

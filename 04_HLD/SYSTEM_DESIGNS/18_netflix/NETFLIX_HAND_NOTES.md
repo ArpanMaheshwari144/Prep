@@ -52,7 +52,8 @@ Numbers India me 2 crore log ek saath, saath me baaki duniya -> ek jagah se sabk
 Arpan: Main roz wahi file lene doosre shehar jaata hoon, bus me tel phoonk ke. File ghar nahi la sakta, par apne shehar me to la sakta hoon. CA doosre shehar me rehta hai, roz sign karne bulata hai, to mera dost jo roz aata-jaata hai, wo file mere shehar le aaye. Main chupchaap jaaun, sign karun, wapas aa jaaun. Bekaar me baar-baar shehar kyun.
 Technical me: "file apne shehar me" = ISP ke andar Netflix ka dabba (Open Connect), "ghar nahi la sakta" = poora video phone pe nahi rakhte, "dost roz aata-jaata" = dabba US ke store se bharta rehta.
 
-**Maan lo pooche video cache (Redis) me kyun nahi:** Arpan: Cache me video thodi rakhenge, cache us kaam ka nahi. Video ek dabbe me rakh lo (CDN). Is design ki sabse badhiya baat: video ban gayi, ab update nahi hogi, isliye hum use apne paas rakh sakte. Jaise maine pen drive me Money Heist rakh liya aur sabko baant raha, baar-baar laptop leke nahi ja raha.
+**Maan lo pooche video cache (Redis) me kyun nahi:**
+Arpan: Cache me video thodi rakhenge, cache us kaam ka nahi. Video ek dabbe me rakh lo (CDN). Is design ki sabse badhiya baat: video ban gayi, ab update nahi hogi, isliye hum use apne paas rakh sakte. Jaise maine pen drive me Money Heist rakh liya aur sabko baant raha, baar-baar laptop leke nahi ja raha.
 Technical me: badi, kabhi na badalne wali file = CDN (edge), Redis = chhota garam data (KB), video nahi.
 
 **2. Dabba lag gaya, par season 12:30 pe aaya, 12:29 tak dabba khaali. 12:30 pe 2 crore ek saath, dabba sabko "laata hoon" bolta, saari request phir samundar paar.**
@@ -100,7 +101,8 @@ Technical me: "turant parchi" = abhi ka dekha alag fast store me, "dikhate waqt 
 Arpan: Parlour wala mere bhai ko nahi jaanta, wo kahega ye hit game hai, khelo. India me hai to India ka garam maal dikhao. Dheere-dheere lat lagegi, pattern banega.
 Technical me: "garam maal" = naye user ko region ka trending (cold start), "pattern banega" = dekhne se apni list.
 
-**Maan lo Priya Ravi ki behen hai:** Arpan: Netflix ko nahi pata Priya Ravi ki behen hai, wo Ravi ke account se nahi aayi, uska apna alag account hai. Family account hota to alag baat. To Priya ko India ke hot topic dikhao (jaise Dhurandhar).
+**Maan lo Priya Ravi ki behen hai:**
+Arpan: Netflix ko nahi pata Priya Ravi ki behen hai, wo Ravi ke account se nahi aayi, uska apna alag account hai. Family account hota to alag baat. To Priya ko India ke hot topic dikhao (jaise Dhurandhar).
 Technical me: pasand account / profile ke hisaab se, rishta nahi pata; naye account pe region ke trending (cold start).
 
 &nbsp;

@@ -101,9 +101,11 @@ Technical me: har cheez alag check. Adhoora order chalta.
 **7. 3000 log ek hi second me Pay dabaate hain, ghee 500.**
 Arpan: Pay ki request hamare server pe aati hai, wahan line lagao: jo pehle aaya wo pehle paaya, duniya ka dastoor. Jiska paisa aaya, ginti kaato, dabba uska. 500 khatam hone ke baad jiska paisa aaya uska turant rollback, do minute me paisa wapas, aur "out of stock" bol do. Out of stock to dikhna hi hai, chahe pehle dikhe chahe baad me. Asli hal: sale ke liye stock pehle se zyada mangwao. Samsung pe discount lagaunga to 500 nahi, 10-20 hazaar laaunga.
 Technical me: paisa aane pe server pe ek-ek karke ginti kaato, 500 ke baad aaye paise ka refund (rollback). Doosra raasta: Pay dabaate hi dabba ghadi (10 min) ke saath rok do, refund kam, par dabba ghadi tak ruka. Dono ki keemat.
-**Ghadi wale raaste ki ek aur keemat:** Arpan: Hold ke beech stock me us dabbe ko kya dikhaoge, +1 ya 0? Tumne stock me +1 dikhaya, aur wo uske cart me bhi hai, to kaun khareedega? Ek hi product hai aur do jagah dikh raha: ek ke cart me bhi, stock me bhi. Keemat to wahan bhi hai.
+**Ghadi wale raaste ki ek aur keemat:**
+Arpan: Hold ke beech stock me us dabbe ko kya dikhaoge, +1 ya 0? Tumne stock me +1 dikhaya, aur wo uske cart me bhi hai, to kaun khareedega? Ek hi product hai aur do jagah dikh raha: ek ke cart me bhi, stock me bhi. Keemat to wahan bhi hai.
 
-**Maan lo sabko mil hi nahi sakta:** Arpan: Stock to khatam hoga aur kuch customer naraaz honge, sabko nahi mil sakta. Blinkit, Instamart, Amazon, Flipkart sab karte: Diwali sale pe iPhone book kar liya to baad me cancel hota hai. Ye never ending hai, iska poora solution waqai me hai nahi; jitna stock utne hi log andar, ya turant out of stock dikha do.
+**Maan lo sabko mil hi nahi sakta:**
+Arpan: Stock to khatam hoga aur kuch customer naraaz honge, sabko nahi mil sakta. Blinkit, Instamart, Amazon, Flipkart sab karte: Diwali sale pe iPhone book kar liya to baad me cancel hota hai. Ye never ending hai, iska poora solution waqai me hai nahi; jitna stock utne hi log andar, ya turant out of stock dikha do.
 Technical me: "+1 ya 0" = hold ke beech dikhne wala stock (available vs reserved alag rakho), "sabko nahi mil sakta" = oversell / cancel ka 100% hal nahi, gate + jaldi out of stock.
 
 **7b. Rollback me bhi pech, 10 minute wale me bhi pech. Koi screwdriver?**

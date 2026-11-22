@@ -97,7 +97,8 @@ Technical me: "pehle register me likho, phir bhejo" = PSP call se pehle INITIATE
 Arpan: Ye idempotency key hi hai. Phone Pay dabate hi key banaye, dono request me wahi key; server pehle key dekhe, purani hai to wahi parchi lauta de. Wahi Chat aur Banking wali key.
 Technical me: parchi = pehle wala jawab (key ke saath save) · "phone ki key" = client idempotency key (app -> server), payment id = server -> PSP ki key. Do teer, dono pe key.
 
-**Maan lo ek hi key ki do request bilkul ek saath pahunchi:** Arpan: Key client banayega, server nahi. Do request ek saath aayi to DB atomic constraint lenge: check then act, ek waqt me ek hi key process hogi. Wo key DB me pehle se hai to doosri process hi nahi hogi.
+**Maan lo ek hi key ki do request bilkul ek saath pahunchi:**
+Arpan: Key client banayega, server nahi. Do request ek saath aayi to DB atomic constraint lenge: check then act, ek waqt me ek hi key process hogi. Wo key DB me pehle se hai to doosri process hi nahi hogi.
 Technical me: "atomic check then act" = key pe unique constraint (INSERT ... ek hi jeetega), doosri ko "process ho rahi / ho chuki" lautao.
 
 **6. Arpan ke 500 hamare wallet me dukaan ke khaate me aa gaye. Ab dukaan wala ye 500 apne ICICI bank me nikalna chahta hai. ICICI hamara DB nahi, to ek transaction me nahi. Wallet se kaat liye, aur ICICI me jodte waqt PSP bola "FAILED".**
@@ -119,7 +120,8 @@ Technical me: "sab taiyaar ho?" = 2PC (prepare round), "ek slow ki wajah se sab 
 Arpan: Us register ko kaat do, chhote-chhote tukde kar do. "Le bhai, tu yahan likh, tu ye likh, tu ye likh." Kaam baant diya, dikkat khatam. Ab aaram se sab apna-apna likh rahe.
 Technical me: "register ke chhote tukde" = shard, "tu ye likh, kaam baant diya" = har shard ka apna likhne wala, likhai bant gayi.
 
-**Maan lo Diwali sale pe sirf DB nahi, sab pe pel:** Arpan: Load balancer plus read replica, aur hum server badha denge, koi dikkat nahi. Alag-alag server hain to saga hi hamare paas.
+**Maan lo Diwali sale pe sirf DB nahi, sab pe pel:**
+Arpan: Load balancer plus read replica, aur hum server badha denge, koi dikkat nahi. Alag-alag server hain to saga hi hamare paas.
 Technical me: app server scale + LB, padhai read replica pe, likhai shard pe.
 
 **10. Arpan ka wallet tukda 1 me, dukaan ka tukda 3 me. Ek se kaatna, doosre me jodna. Do alag register, ek transaction me nahi hoga.**
