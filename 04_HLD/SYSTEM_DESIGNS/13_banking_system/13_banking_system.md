@@ -771,7 +771,7 @@ flowchart TB
     R2["Frankfurt: card se 1000"]:::card
     F["Frankfurt branch"]:::card
     subgraph HR["KHAATA MUMBAI ME KHULA: HAR KAAM YAHIN"]
-        M[("Mumbai register<br/>1000 -> 0<br/>(multi-leader)")]:::pill
+        M[("Mumbai register<br/>1000 -> 0<br/>(write affinity / home region)")]:::pill
     end
     R1 --> M
     R2 --> F
