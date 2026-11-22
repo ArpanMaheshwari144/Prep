@@ -272,7 +272,7 @@ Yahi dikkat yahan bhi:
   Docs          5c  poore data center ki bijli gayi                 ->  copy doosre shehar (Mumbai + Delhi) (multi-region replica)
   Docs          5   owner server hi gira                           ->  "mujhe kuch ho to tu hai" (naya owner wahin se)
   Banking       7   register jal gaya                              ->  laptop me save, ghar le jaao (replica, Multi-AZ)
-  Banking       7b  2 baje likha, 3 baje aag                       ->  turant laptop pe, tabhi pakka (sync copy; DB ke andar wahi = WAL)
+  Banking       7b  2 baje likha, 3 baje aag                       ->  turant laptop pe, tabhi pakka (sync copy)
   Banking       8   sab balance dekhne aaye, kaam atka             ->  photocopy alag desk pe (read replica)
   Banking       9   photocopy peeche, ghabra ke dobara bheja       ->  jisne likha, thodi der main file se; photocopy bataye kahan tak pahunchi (read-your-writes, replication lag)
   Banking       20  2 baje chhotu ne register gher liya            ->  chhotu photocopy se padhein (read replica)
@@ -666,7 +666,7 @@ Yahi dikkat yahan bhi:
   Uber          16b GPS ne bike nadi ke us paar phenki, 1 second   ->  rok nahi sakte, animation se wapas isi road pe (map matching)
   News          7   Priya ki parchi me aaj ki badi khabar chhooti  ->  milaan: chhoot gayi to DB se le ke seedha feed me (check job)
   Yelp          2   Burger Singh band, search me abhi bhi          ->  Postgres -> ES sync, "Closed" dikhao, Zomato jaisa (DB -> search sync)
-  Yelp          3   dopahar ka naya burger, ES ko raat 2 baje       ->  badlaav pe change event, raat ki job bhi (CDC, reconciliation)
+  Yelp          3   dopahar ka naya burger, ES ko raat 2 baje       ->  badlaav pe change event, raat ki job bhi (change event, reconciliation)
 
 Naam: ledger / reconciliation / eventual consistency / sahi dabba / central counter / Neo4j / matching engine / DB = sach / cache DELETE / sync job / write-then-invalidate / updated_at / check job / double-entry / S3 Object Lock / revised statement / latest location / upfront fare / map matching / Redis sorted set / compensation
 Juda: paisa ho to sach turant chahiye; profile ho to thodi der purana chalega.

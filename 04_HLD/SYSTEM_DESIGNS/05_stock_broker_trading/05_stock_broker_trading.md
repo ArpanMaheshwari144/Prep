@@ -216,7 +216,7 @@ parchi banayi, Bangalore ja raha, 10 kapde rakhne hain, 5 ye, 3 ye, jo rakha us 
 kiya to bhi parchi utni ki utni hai, wo dekh ke dobara jama lo.
 
 Doosri kahani: RAM fast hai isliye RAM me rakha, par RAM me daalne se pehle kahin aur bhi likh lo. RAM
-udi, restart hui, to jo likha hai wo wapas RAM me aa jaayega (write-ahead order log).
+udi, restart hui, to jo likha hai wo wapas RAM me aa jaayega (order log: pehle log me likho, phir RAM).
 
 **Maan lo replay me wo order bhi aa gaye jo crash se pehle trade ban chuke the:** Arpan ke 10 share Ravi ko bik chuke,
 portfolio bhi update. Phir match hue to dobara bikenge. Isliye jo trade pakka hua wo mote register (DB) me likha hai;
@@ -230,7 +230,7 @@ se book wapas, replay pe mota register = trade DB (source of truth), ho chuke tr
 
 **Teesri kahani:** match me ek banda har ball book me likh raha, light gayi to book se wapas kaunsi ball, kitne run
 (audit trail bhi). **Maan lo engine hi mara:** engine ki replica, barabar wali promote, gap log se replay.
-**Asli naam:** event log / WAL + replay, hot standby promote.
+**Asli naam:** event log + replay, hot standby promote.
 
 ```mermaid
 flowchart TB

@@ -100,7 +100,7 @@ ek event bhejo jo ES ko update kare, jaise S3 ka "file aa gayi" event. Raat wali
 wo pakde. Yahan queue / Kafka nahi; Kafka numbers dekh ke: ek saath ~20 hazaar seedha sambhal jaata, Kafka tab
 jab peak pe lakh log ek saath aayein (Arpan).
 
-**Asli naam:** change event (Postgres ke badlaav ko seedha padhna = CDC), raat ki job = reconciliation.
+**Asli naam:** change event (Postgres me badlaav hua to event), raat ki job = reconciliation.
 
 ```mermaid
 flowchart TB

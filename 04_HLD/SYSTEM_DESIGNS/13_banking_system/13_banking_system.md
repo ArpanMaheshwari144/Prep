@@ -25,7 +25,7 @@ Arpan  -->  LB  -->  kai counter (app server)  -->  DB (khaate, row lock)  --syn
  4   "500 mile hi nahi", saabit kaise            ->  alag diary, kaato mat (ledger)
  5   khabar dene se pehle bijli gayi             ->  likh lo (outbox = DB table, relay)
  6   salary ka din, ek cashier                   ->  10 counter + LB
- 7   register jal gaya                           ->  copy turant (sync replica, WAL)
+ 7   register jal gaya                           ->  copy turant (sync replica)
  8   sab balance dekhne aaye                     ->  photocopy alag desk (read replica)
  9   photocopy peeche, ghabra ke dobara bheja    ->  likhne wala main se padhe; photocopy bataye kahan tak pahunchi (read-your-writes, replication lag)
 10   haath se 100 ko 600 kar diya                ->  ledger se milao (reconciliation)
@@ -293,8 +293,7 @@ kuch bhi, laptop me mera saamaan hai.
 likha, turant laptop pe likh lo, dikkat hi khatam. Wo cheez tab tak pakki nahi jab tak laptop me nahi aati. Copy pe
 likh liya, turant laptop pe lao, phir pakka maano.
 **Asli naam:** turant laptop pe, tabhi pakka = sync copy (thoda dheema, par ek bhi transfer nahi khota; 120 / sec pe
-dheemapan dikhta bhi nahi). Shaam ko ek baar = async (aakhri likha kho jaata), paise me nahi chalta. Ek DB ke andar bhi
-yahi soch: pehle diary me pakka, phir haan = write-ahead log (WAL), DB khud karta (Foundations 05).
+dheemapan dikhta bhi nahi). Shaam ko ek baar = async (aakhri likha kho jaata), paise me nahi chalta.
 
 ```mermaid
 flowchart TB
