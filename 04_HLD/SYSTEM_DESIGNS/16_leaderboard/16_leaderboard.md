@@ -81,8 +81,7 @@ score ke kram me".
 badlega; jahan likhai zyada wahan index ka utna fayda nahi. Isliye sorted set, jo andar hi sort rakhta.
 **Asli naam:** index se bhi count scan, write-heavy pe index ka bojh, isliye Redis sorted set (log N).
 **Teesri kahani (22-Nov round, Arpan):** contest me log dheere-dheere aate (3, 10, 100, 1000); Postgres ko har baar "ab 100 sort
-kar, ab 2000" bolo to thak jaata, isliye tez sort karne wala chhotu (dabba). Kafka ki misaal sirf bheed ko line me lagane ki
-thi; sort Kafka nahi karta, Kafka bheed ke liye kadam 5 me.
+kar, ab 2000" bolo to thak jaata, isliye tez sort karne wala chhotu (dabba).
 
 ```mermaid
 flowchart TB
