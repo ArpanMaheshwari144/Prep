@@ -24,7 +24,7 @@ User --> line (virtual queue, token: capacity jitne andar) --> LB --> kai counte
  6a  Pay 4:30, umar 5:00, PSP jawab 5:20         ->  PAYMENT_PENDING pe umar nahi kat-ti
  6b  PSP chup                                    ->  ~1 min ghadi, phir FAILED + popup (Haan = PSP-2, Naa = seat khali)
  6c  back daba diya, baad me paisa kata          ->  seat HELD, poll + webhook, kata nikla to refund
- 6d  SUCCESS likha, ticket se pehle server gira  ->  SUCCESS + parchi ek saath (outbox)
+ 6d  SUCCESS likha, ticket se pehle server gira  ->  SUCCESS + parchi ek saath (outbox, DB table)
  6e  bank ne 12 min lagaye, seat Priya ko        ->  payment SUCCESS + booking FAILED, refund job
  6f  purana PENDING ne SUCCESS kaata             ->  sach DB me, likhne se pehle DB dekho, sync job
  6g  "refund shuru" ko "ho gaya" likha           ->  pakke event pe hi REFUNDED, stuck refund job
@@ -147,7 +147,7 @@ Technical me: "chhotu poochhe" = status polling, "Razorpay khud bataye" = webhoo
 
 **6d. Razorpay ka event aaya "paisa kat gaya", parchi pe SUCCESS likh diya. Ticket banane wale ko bolne hi wale the ki server gir gaya. Restart ke baad parchi SUCCESS hai, to koi chhotu use nahi uthata (wo sirf PENDING dekhta). Paisa kata, ticket kabhi nahi bana.**
 Arpan: SUCCESS likhna aur ticket book karna, ye do kaam alag-alag nahi, ek hi jagah hon. Ya to dono ek saath karo, ya SUCCESS ke saath hi ek parchi pe likh do "Arpan ne paisa de diya, D5 book karna hai", kyunki SUCCESS likhne ke baad bhi server gir sakta hai. Jaise mujhe D5 book karna tha aur beech me koi kaam yaad aa gaya, main bhool gaya; doosre ko D5 ka kuch pata hi nahi, wo apna agla kaam dekh lega. Isliye parchi pe likh do: koi bhi aaye, kahin se bhi aaye, parchi dekh le aur D5 book kar de.
-Technical me: "SUCCESS aur parchi ek saath" = transactional outbox (payment SUCCESS + "ticket banao" ek hi DB transaction me), "koi bhi aaye parchi dekh ke book kare" = relay / worker / consumer outbox table padh ke ticket service ko bheje; server gire to restart pe parchi wahin padi.
+Technical me: "SUCCESS aur parchi ek saath" = transactional outbox (hamare DB ki table; payment SUCCESS + "ticket banao" ek hi DB transaction me), "koi bhi aaye parchi dekh ke book kare" = relay / worker / consumer outbox table padh ke ticket service ko bheje; server gire to restart pe parchi wahin padi.
 
 Doosri kahani: Payment aur ticket do alag service hain, to dono pe ek transaction nahi lag sakta. Beech me ek dabba (DB) rakh lo jo ek service likhe, doosri padhe. DB me likh do "Arpan ka payment poora, ticket abhi PENDING, bani nahi". Server gira to koi baat nahi, jaankari kahin store hai. Ticket service aayi, dekha "Arpan ka ticket pending hai", bana diya, phir dabbe se nikaal ke phenk do. Ticket service khud bhi beech me giri to dobara aake wahi dabba padhegi: "jiske pending hain sab aa jaao". Gire usse pehle store kar lo, kahin bhi.
 Technical me: "do service, ek transaction nahi" = distributed, "beech ka dabba, ticket PENDING" = outbox / pending table, "ticket service pending padh ke banaye" = consumer poll + retry, "kaam ke baad dabbe se hatao" = outbox row processed.

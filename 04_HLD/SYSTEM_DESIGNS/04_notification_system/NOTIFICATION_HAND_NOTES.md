@@ -18,7 +18,7 @@ Order Service  -->  DB me order + saath me vasiyat (outbox)  -->  Kafka
                  pasand + saancha apne paas (cache) · Diwali 1 crore = tukdon me, parchi pe "kahan tak"
 
  1   order khud SMS call kare, button 8 sec        ->  beech me dabba, aaram se bhejo (Kafka)
- 1b  DB me order, Kafka se pehle gira              ->  order ke saath vasiyat (outbox + relay)
+ 1b  DB me order, Kafka se pehle gira              ->  order ke saath vasiyat (outbox = DB table, + relay)
  2   ek hi line, bill aadha ghanta baad            ->  har kaam ki alag line (topic, group)
  3   commit se pehle crash, SMS do baar            ->  "ho gaya" likh lo (idempotency)
  4   company bole "abhi bheed hai"                 ->  thodi der ruk ke (retry queue)
@@ -66,7 +66,7 @@ Technical me: "beech me ek dabba" = queue (Kafka), "sabko store kar lunga, aaram
 
 **Maan lo Order Service ne DB me order likh diya, par Kafka me khabar daalne se pehle server gir gaya. Order ho gaya, SMS kabhi nahi aaya.**
 Arpan: Yahan outbox chalega, Kafka wala hi. Pehle kahin likh de ki haan, main ye khabar daalunga, order ke saath hi. Kabhi beech me mar bhi jaaye to wo cheez ek jagah mil jaaye, jaise baap marne se pehle vasiyat likh ke jaata hai. Baad me koi utha ke Kafka me daal dega.
-Technical me: "order ke saath likh de" = outbox (order + khabar ek hi DB transaction me), "baad me koi utha ke daale" = relay (runner) outbox se Kafka ko bhejta.
+Technical me: "order ke saath likh de" = outbox (hamare DB ki table; order + khabar ek hi DB transaction me, server gire to bhi row bachi), "baad me koi utha ke daale" = relay (runner) outbox se Kafka ko bhejta.
 
 **2. Dabbe me ek hi line, SMS, email, push sab ek ke peeche ek. Ek worker / consumer. SMS company dheemi, 8 second har SMS. Email aur push company theek, phir bhi bill aadhe ghante baad mila.**
 Arpan: Line alag-alag kar de, sabki line alag. Jaise ladies ki alag line, gents ki alag, bachchon ki alag. Hum aamtaur pe aise hi karte hain, airport security, mandiron me sabki alag line hoti hai. Iska matlab consumer group: sab apni alag line sambhal lenge.

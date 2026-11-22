@@ -24,7 +24,7 @@ Order Service  -->  DB me order + saath me vasiyat (outbox)  -->  Kafka
                  pasand + saancha apne paas (cache) · Diwali 1 crore = tukdon me, parchi pe "kahan tak"
 
  1   order khud SMS call kare, button 8 sec        ->  beech me dabba, aaram se bhejo (Kafka)
- 1b  DB me order, Kafka se pehle gira              ->  order ke saath vasiyat (outbox + relay)
+ 1b  DB me order, Kafka se pehle gira              ->  order ke saath vasiyat (outbox = DB table, + relay)
  2   ek hi line, bill aadha ghanta baad            ->  har kaam ki alag line (topic, group)
  3   commit se pehle crash, SMS do baar            ->  "ho gaya" likh lo (idempotency)
  4   company bole "abhi bheed hai"                 ->  thodi der ruk ke (retry queue)
@@ -81,7 +81,7 @@ async, order turant.
 **Maan lo DB me order likh diya, Kafka me daalne se pehle server gira:** order ho gaya, SMS kabhi nahi aayega. To Kafka
 wala outbox: order ke saath hi likh do "ye khabar daalni hai", jaise baap marne se pehle vasiyat likh jaata. Beech me
 gira to baad me koi utha ke Kafka me daal dega.
-**Asli naam:** outbox (order + khabar ek hi DB transaction me), relay (runner) outbox se Kafka ko bhejta.
+**Asli naam:** outbox (hamare DB ki table; order + khabar ek hi DB transaction me, server gire to bhi row bachi), relay (runner) outbox se Kafka ko bhejta.
 
 ```mermaid
 flowchart TB

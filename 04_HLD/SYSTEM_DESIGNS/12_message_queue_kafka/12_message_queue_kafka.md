@@ -28,7 +28,7 @@ Order Service  -->  DB + vasiyat (outbox)  -->  Kafka (stadium: gate = partition
  5   admin ne "aa gaya" bola, phir gira          ->  copy bhi likhe, tab "likh di" (acks=all)
  6   punch ke baad, register se pehle gira       ->  pehle aaya hai? check (idempotency)
  6b  SMS gaya, bookmark se pehle gira            ->  pakki id, dobara aaye to phenko (idempotent consumer)
- 7   Order Service gate tak bhejne se pehle gira ->  pehle vasiyat likh de (outbox)
+ 7   Order Service gate tak bhejne se pehle gira ->  pehle vasiyat likh de (outbox, DB table)
  8   galat ticket baar-baar, line atki           ->  line se hata (DLQ); gate pe hi rok (validation)
  8b  pay DLQ me, cancel chal gayi, kram toota    ->  A2 ruka to A3 bhi ruka (same key parking)
  9   SMS counter 10 min band, sab DLQ me         ->  pehle check, waqai band? (circuit breaker, fallback)
@@ -297,7 +297,7 @@ Ticket dene wala (Order Service) gate tak khabar bhejne se pehle hi gir gaya. To
 dunga. Kabhi koi mar bhi jaaye, to wo cheez ek jagah mil jaaye. Jaise real life me hota hai: baap marne se pehle apni
 sampatti likh ke chala jaata hai, aur baad me vasiyat mil jaati hai.
 
-**Asli naam:** pehle kahin likh de = outbox (khabar order ke saath usi DB transaction me, `sent = false`), baap ki vasiyat, baad me
+**Asli naam:** pehle kahin likh de = outbox (hamare DB ki table; khabar order ke saath usi DB transaction me, server gire to bhi row bachi, `sent = false`), baap ki vasiyat, baad me
 mil jaaye = relay outbox se utha ke `acks=all` se Kafka ko bhejta, phir `sent = true`. Relay ne dobara bhej di
 to `eventId` pakad leta hai.
 

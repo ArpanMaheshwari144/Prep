@@ -123,7 +123,7 @@ Yahi dikkat yahan bhi:
   Chat          2   Ravi ka phone band, 2 ghante                   ->  uncle nahi mile, paise apne paas (message store)
   Chat          5b  #981 DB me, pub/sub se pehle server gira       ->  extra chhotu + deewar pe parchi (backup, outbox + relay)
 
-Naam: outbox + relay / acks=all / rollback / order log + replay / message store
+Naam: outbox (hamare DB ki table, kaam ke saath usi transaction me) + relay / acks=all / rollback / order log + replay / message store
 Juda: vasiyat padh ke dobara bheja to (3) chahiye. Notification, File upload, Kafka, Banking, News sab me same.
 ```
 

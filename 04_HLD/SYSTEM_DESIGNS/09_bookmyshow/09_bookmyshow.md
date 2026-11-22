@@ -29,7 +29,7 @@ User --> line (virtual queue, token: capacity jitne andar) --> LB --> kai counte
  6a  Pay 4:30, umar 5:00, PSP jawab 5:20         ->  PAYMENT_PENDING pe umar nahi kat-ti
  6b  PSP chup                                    ->  ~1 min ghadi, phir FAILED + popup (Haan = PSP-2, Naa = seat khali)
  6c  back daba diya, baad me paisa kata          ->  seat HELD, poll + webhook, kata nikla to refund
- 6d  SUCCESS likha, ticket se pehle server gira  ->  SUCCESS + parchi ek saath (outbox)
+ 6d  SUCCESS likha, ticket se pehle server gira  ->  SUCCESS + parchi ek saath (outbox, DB table)
  6e  bank ne 12 min lagaye, seat Priya ko        ->  payment SUCCESS + booking FAILED, refund job
  6f  purana PENDING ne SUCCESS kaata             ->  sach DB me, likhne se pehle DB dekho, sync job
  6g  "refund shuru" ko "ho gaya" likha           ->  pakke event pe hi REFUNDED, stuck refund job
@@ -390,7 +390,7 @@ SUCCESS likhna aur ticket book karna do alag kaam nahi, ek jagah hon. SUCCESS ke
 paisa de diya, D5 book karna hai". Koi bhi aaye, kahin se bhi aaye, parchi dekh ke D5 book kar de. Server gire to bhi
 parchi wahin padi.
 
-**Asli naam:** SUCCESS + parchi ek saath = transactional outbox (ek hi DB transaction), parchi dekh ke book = relay /
+**Asli naam:** SUCCESS + parchi ek saath = transactional outbox (hamare DB ki table, SUCCESS ke saath ek hi DB transaction me; server gire to bhi row bachi), parchi dekh ke book = relay /
 worker / consumer outbox padh ke ticket service ko bhejta.
 
 Doosri kahani: payment aur ticket alag service, beech me ek dabba: "Arpan ka payment poora, ticket PENDING". Ticket

@@ -101,7 +101,7 @@ Technical me: sawaal ki ID = idempotency key, parchi pe likh ke baad me bhejo = 
 
 **Maan lo server parchi pe likhne se pehle hi gir gaya, likh hi nahi paaya.**
 Arpan: Score aur parchi ek hi transaction me likh do, ek hi jagah. Dono likhe gaye ya koi nahi; aadha kabhi nahi hoga.
-Technical me: score + outbox ki line ek hi DB transaction me (dono ya koi nahi), isliye "score likha par parchi nahi" ho hi nahi sakta.
+Technical me: score + outbox (hamare DB ki table) ki line ek hi DB transaction me (dono ya koi nahi), isliye "score likha par parchi nahi" ho hi nahi sakta.
 
 **4. Main India wali line me 3,000 pe hoon. Screen pe poori duniya ka rank dikhana hai, aur lines 10 hain.**
 Arpan: Do nazar hain. Race me bhaagne wala sirf apne aage wale dekhta, peeche wale nahi: mera rank = mere upar kitne log. Referee sabko dekhta, ek ko nahi: scoreboard sabka dikhana hai to wo kaam chhotu ka, sab mila ke.
@@ -155,7 +155,7 @@ Arpan: Ekdum DB pe nahi bhaagunga. Pehle koshish ki gire hi na; gira to uska clo
 Technical me: "clone" = Redis replica (gira to replica primary), "teeno gaye to DB" = DB sach, Redis wahan se rebuild.
 
 **Isi dikkat ki doosri kahani:** Arpan: Ek Redis nahi, uski copy bhi. Peeche ek job Redis se DB me likhti rahe, contest ka data nahi khona. Kitni consistency chahiye us hisaab se: bilkul pakka to pehle parchi, phir Redis, phir 2-3 copy; thoda chhoot sakta to ek Redis + ek copy, gira to server copy se baat kar lega.
-Technical me: copy = Redis replica, peeche DB me likhna = DB sach (Redis wahan se dobara), pehle parchi = log / outbox, kitni copy = consistency ka faisla.
+Technical me: copy = Redis replica, peeche DB me likhna = DB sach (Redis wahan se dobara), pehle parchi = log / outbox (DB ki table), kitni copy = consistency ka faisla.
 
 &nbsp;
 

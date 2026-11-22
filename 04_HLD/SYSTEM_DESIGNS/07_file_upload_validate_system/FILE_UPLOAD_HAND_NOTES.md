@@ -19,7 +19,7 @@ Phone  -->  hamara server (JWT dekhe, token de)          DB: file ka status, fol
  3   S3 kaise maane ye hamara user                 ->  receptionist ka token (presigned URL)
  3b  10 GB upload, token beech me khatam           ->  har tukde ka apna token (presigned per part)
  4   file S3 me aayi, server ko pata nahi          ->  S3 bataye "aa gayi" (event notification)
- 4b  UPLOADED likha, scan daalne se pehle gira     ->  UPLOADED ke saath vasiyat (outbox + relay)
+ 4b  UPLOADED likha, scan daalne se pehle gira     ->  UPLOADED ke saath vasiyat (outbox = DB table, + relay)
  4c  S3 ne "aa gayi" do baar / ulta bataya         ->  parchi + apna thappa (idempotency, sequencer / version)
  5   folder rename = 500 copy + 500 delete         ->  tree jaisa, sirf parent badlo (parent_id)
  6   1043 likha, Priya ka statement khula          ->  "Priya ko saath la", truck seedha ghar (owner check, S3 direct download)
@@ -82,7 +82,7 @@ Technical me: "S3 bataye" = S3 event notification -> DB status + Kafka me scan k
 
 **Maan lo server ne DB me UPLOADED likh diya, par Kafka me scan ka kaam daalne se pehle gira. File UPLOADED pe atki, scan kabhi shuru nahi.**
 Arpan: Wahi Kafka aur Notification wala: vasiyat likh do. UPLOADED ke saath hi likh do "iska scan karwana hai", ek hi baar me. Beech me gira to baad me koi utha ke Kafka me daal dega.
-Technical me: "UPLOADED ke saath vasiyat" = outbox (status + scan ka kaam ek hi DB transaction me), "baad me koi daal dega" = relay.
+Technical me: "UPLOADED ke saath vasiyat" = outbox (hamare DB ki table; status + scan ka kaam ek hi DB transaction me, server gire to bhi row bachi), "baad me koi daal dega" = relay.
 
 **Maan lo S3 ne "file aa gayi" do baar bataya, ya ulte kram me.**
 Arpan: Do baar aa sakta hai, koi dikkat nahi. Parchi rakho: is file ka kaam ho gaya, likh liya; dobara aaya to dekha ho gaya, chhod do. Ulta aaya to dekho kaunsa naya hai, purana aaya to chhod do.

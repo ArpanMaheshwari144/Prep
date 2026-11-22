@@ -116,7 +116,7 @@ Technical me: "do me likho, do se padho" = quorum (3 me W=2, R=2, kam se kam ek 
 
 **11. Worker / consumer ne khabar DB me likhi, parchi me daalne se pehle mar gaya. Doosra worker / consumer DB me dekh ke dupe samjha, hata di. Khabar kisi ko nahi dikhi.**
 Arpan: Gadbad parchi se pehle hui. DB se pehle mara to dikkat nahi, doosra daal dega, dupe check + unique constraint hai. To ek status rakh: "DB me daali", "parchi me daali". Beech me gira to agla status dekh ke kaam aage badha dega. Ek tarah ki logging.
-Technical me: "status" = khabar ka state (DB me -> feed me), agla worker / consumer adhoora kaam poora karta; "logging" = outbox / WAL wali soch.
+Technical me: "status" = khabar ka state (DB me -> feed me), agla worker / consumer adhoora kaam poora karta; "logging" = outbox wali soch (outbox = DB ki table, kaam ke saath usi transaction me likhi).
 
 **12. App ko 6 mahine ho gaye. Roz 5000 site se ~1 khabar / sec, photo ke saath. "Khabar" table mota, disk ka bill har mahine badh raha, feed banate waqt itne bade table me chhaantna dheema. Par Ravi aur Priya 2-3 din se purani khabar kabhi kholte hi nahi.**
 Arpan: Sabse pehle FR me tay karo ki purani khabar kab tak rahegi. Jaise main akhbaar padhta hoon, ghar me akhbaar jama hote rehte hain. Aaj ka padh liya, wo dheere-dheere raddi ban jaata hai, phir raddi me bech dete hain, ghar me nahi rakhte. Same yahan: purani khabar mote register me rakhne ka matlab nahi. Shard karna sense nahi banata: shard tab karo jab dono hisse ka data kaam me aa raha ho. Ek mahine purani khabar kaun dobara padhta, koi nahi. Koi bolega partition kar do, usse bhi fayda nahi; jab tak DB me padi hai, matlab nahi. Ek saal purani khabar kaun padhega? Use mote register se nikaalo, panna nikaal ke alag rakh do.

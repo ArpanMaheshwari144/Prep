@@ -388,7 +388,7 @@ unique constraint hai. To ek status rakho: "DB me daali", "parchi me daali". Bee
 aage badha dega. Ek tarah ki logging.
 
 **Asli naam:** status = khabar ka state (SAVED -> IN_FEED), agla worker / consumer adhoora kaam poora karta; DB se pehle gira to
-url UNIQUE bacha leta; logging = outbox / WAL wali soch.
+url UNIQUE bacha leta; logging = outbox wali soch (outbox = DB ki table, kaam ke saath usi transaction me likhi).
 
 ```mermaid
 flowchart TB

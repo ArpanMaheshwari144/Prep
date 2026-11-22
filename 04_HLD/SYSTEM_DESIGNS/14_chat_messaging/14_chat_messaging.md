@@ -21,7 +21,7 @@ Arpan  --WebSocket-->  chat server S1  -->  DB (message store, pehle likho)  -->
  3   100 server, Ravi kis pe                     ->  session map (Redis)
  4   har server baaki 99 se taar jode?           ->  chhota ladka address le ke jaaye (Redis pub/sub)
  5   group ke 500, ek message 500 kaam           ->  ek baar DB, log khud aake sunein
- 5b  DB me likha, pub/sub se pehle server gira   ->  outbox + relay
+ 5b  DB me likha, pub/sub se pehle server gira   ->  outbox (DB table) + relay
  5c-e  late chhotu do baar bheje, kram ulta      ->  outbox status, dedup, sequence + phone sort
  6   lift me jawab kho gaya, "hi hi"             ->  clientMsgId, same aaye to mana
  6b  "mil gaya" kho gaya, dobara aaya            ->  message ka number dekh ke dobara wala chhodo (idempotency)
@@ -195,13 +195,13 @@ online walon ko map + pub/sub se bhejo, baaki wapas aayein to dabbe se (500 ka b
 1-2 chhotu extra rakh lo; ek bimar pada to doosra aayega. Par doosre ko pata kaise chale ki #980 bhejna baaki hai? Main
 nikal raha hoon aur chhotu baad me aayega, to parchi pe likh ke deewar pe chipka jaunga: "chhotu bhai ye message yahan
 jaana chahiye". Chhotu aayega, parchi padhega, message dene nikal jaayega.
-**Asli naam:** extra chhotu = backup server / kai worker / consumer, deewar ki parchi = outbox (message ke saath ek saath, dono ya koi nahi (batch),
+**Asli naam:** extra chhotu = backup server / kai worker / consumer, deewar ki parchi = outbox (hamare DB ki table, message ke saath ek saath, dono ya koi nahi (batch),
 "ye bhejna hai" wali row), parchi padhne wala chhotu = relay jo outbox padh ke pub/sub pe daale.
 
 **5c. Maan lo pehla chhotu sirf der se tha, wo bhi aaya aur backup bhi, dono ne #980 bhej diya:** Status rakho. Bheja to
 parchi pe DONE aur mote register me DONE, dono ek saath (dono ya koi nahi), beech me gire to kuch nahi likha, phir se. Koi aaye aur DONE dikhe
 to kaam ho chuka.
-**Asli naam:** outbox row ka status (bhejna baaki -> DONE). Par bhejna DB ke bahar hai, to bhejna aur DONE ek
+**Asli naam:** outbox (hamare DB ki table) ki row ka status (bhejna baaki -> DONE). Par bhejna DB ke bahar hai, to bhejna aur DONE ek
 transaction nahi: bhej ke DONE se pehle gira to dobara jaayega. Isliye agla.
 
 **5d. Maan lo dono chhotu ne ek hi pal me parchi padhi, DONE kisi ne likha hi nahi tha, dono bhejne nikle:** Chhotu thode

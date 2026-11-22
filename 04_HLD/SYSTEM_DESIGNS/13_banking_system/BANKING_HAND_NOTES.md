@@ -17,7 +17,7 @@ Arpan  -->  LB  -->  kai counter (app server)  -->  DB (khaate, row lock)  --syn
  3b  Arpan->Ravi, Ravi->Arpan, dono atke         ->  ek line, ya ek kram me lock (lock ordering)
  3c  1 crore transfer, sab ek line me            ->  sirf takrane walon ka group (per-account lock)
  4   "500 mile hi nahi", saabit kaise            ->  alag diary, kaato mat (ledger)
- 5   khabar dene se pehle bijli gayi             ->  likh lo (outbox, relay)
+ 5   khabar dene se pehle bijli gayi             ->  likh lo (outbox = DB table, relay)
  6   salary ka din, ek cashier                   ->  10 counter + LB
  7   register jal gaya                           ->  copy turant (sync replica, WAL)
  8   sab balance dekhne aaye                     ->  photocopy alag desk (read replica)
@@ -103,7 +103,7 @@ Technical me: ledger = append-only audit trail (regulator / reconciliation ke li
 
 **5. Paisa jaate hi Ravi ko khabar deni thi. Cashier ne paisa bheja, aur ladke ko "Ravi ko khabar do" bolne se pehle bijli chali gayi. Ladke ko pata hi nahi ki kisko khabar deni hai.**
 Arpan: Jo kuch yaad nahi rehta kisi ko, to likh lo na bhai. Hum bhi to yahan likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Kahin likh lo, logs me likh lo. Ab cashier kabhi bhi aaye ya jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
-Technical me: "jo yaad nahi rehta, likh lo" = outbox (usi transaction me), "koi bhi ladka aaye, pahuncha dega" = relay.
+Technical me: "jo yaad nahi rehta, likh lo" = outbox (hamare DB ki table, paise ke saath usi transaction me; bijli gaye to bhi row bachi), "koi bhi ladka aaye, pahuncha dega" = relay.
 
 **6. Mahine ki 1 tareekh, sabki salary, poora mohalla branch me. Roz ki bheed ke liye kadam 3 wale do counter kaafi the, aaj unhi do pe line sadak tak.**
 Arpan: Cashier badha do. Ek cashier tha, 10 cashier kar do, 10 counter kar do. Bheed badh gayi, kaam khatam, paisa hazam. Aam taur pe bhi yahi hota hai: bank me ek counter pe bheed hai to hum doosre counter pe jaate hain, movies me bhi same, har jagah same.

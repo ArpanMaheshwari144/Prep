@@ -173,7 +173,7 @@ Russia + Belarus, India, Australia + NZ; India bada to aur baanto. Top 10: har d
 judega. **Asli naam:** idempotency key + outbox (DB ki table, relay baad me bheje) / retry.
 
 **Maan lo server parchi pe likhne se pehle hi gira:** score aur parchi ek hi transaction me, dono ya koi nahi.
-**Asli naam:** score + outbox ek DB transaction me (atomic).
+**Asli naam:** score + outbox (hamare DB ki table) ek DB transaction me (atomic).
 
 ```mermaid
 flowchart TB
@@ -380,7 +380,7 @@ wahan se rebuild.
 
 **Doosri kahani:** Redis ki copy saath; peeche job Redis se DB me likhti rahe (contest ka data nahi khona). Bilkul pakka chahiye
 to pehle parchi, phir Redis, phir 2-3 copy; thoda chhoot sakta to ek Redis + ek copy. **Asli naam:** replica, DB sach,
-log / outbox, consistency ka faisla.
+log / outbox (DB ki table), consistency ka faisla.
 
 ```mermaid
 flowchart TB

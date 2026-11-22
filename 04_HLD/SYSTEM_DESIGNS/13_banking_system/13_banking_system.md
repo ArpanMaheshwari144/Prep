@@ -23,7 +23,7 @@ Arpan  -->  LB  -->  kai counter (app server)  -->  DB (khaate, row lock)  --syn
  3b  Arpan->Ravi, Ravi->Arpan, dono atke         ->  ek line, ya ek kram me lock (lock ordering)
  3c  1 crore transfer, sab ek line me            ->  sirf takrane walon ka group (per-account lock)
  4   "500 mile hi nahi", saabit kaise            ->  alag diary, kaato mat (ledger)
- 5   khabar dene se pehle bijli gayi             ->  likh lo (outbox, relay)
+ 5   khabar dene se pehle bijli gayi             ->  likh lo (outbox = DB table, relay)
  6   salary ka din, ek cashier                   ->  10 counter + LB
  7   register jal gaya                           ->  copy turant (sync replica, WAL)
  8   sab balance dekhne aaye                     ->  photocopy alag desk (read replica)
@@ -219,7 +219,7 @@ chali gayi: ladke ko pata hi nahi ki kisko khabar deni hai. Jo kisi ko yaad nahi
 yahan likh rahe hain kyunki mujhe kal yaad nahi hoga, same to same cashier ke saath hai. Ab cashier kabhi bhi aaye ya
 jaaye, wo likha hai, agli baar koi bhi ladka aayega to wo pahuncha hi dega.
 
-**Asli naam:** likh lo = outbox (khabar usi transaction me ek table me, `sent = false`), ladka = relay (outbox se utha
+**Asli naam:** likh lo = outbox (hamare DB ki table: khabar paise ke saath usi transaction me, `sent = false`; bijli gaye to bhi row bachi), ladka = relay (outbox se utha
 ke SMS Service ko bheje, gaya to `sent = true`, SMS gira to dobara try). Transfer SMS pe nahi atakta, aur SMS khota
 bhi nahi.
 

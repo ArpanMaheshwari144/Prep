@@ -183,7 +183,7 @@ usi kram me karti hai.
 - PostgreSQL: WAL (commit tabhi pakka jab WAL disk pe aa gaya). MySQL InnoDB: redo log. MongoDB (WiredTiger): journal.
   Cassandra: commit log. Naam alag, kaam wahi.
 - Ye DB ka andar ka kaam hai (RDS / Postgres khud karta), hamara design faisla nahi. Design me yahi soch hum apni taraf
-  karte hain: DB + parchi ek saath (outbox), PSP se pehle INITIATED likho (Payment), Redis me AOF (Docs), pehle diary
+  karte hain: DB + parchi ek saath (outbox, DB ki table), PSP se pehle INITIATED likho (Payment), Redis me AOF (Docs), pehle diary
   phir "ho gaya" (Banking sync copy).
 
 ---

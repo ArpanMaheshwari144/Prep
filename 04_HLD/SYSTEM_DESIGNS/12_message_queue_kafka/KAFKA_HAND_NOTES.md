@@ -23,7 +23,7 @@ Order Service  -->  DB + vasiyat (outbox)  -->  Kafka (stadium: gate = partition
  5   admin ne "aa gaya" bola, phir gira          ->  copy bhi likhe, tab "likh di" (acks=all)
  6   punch ke baad, register se pehle gira       ->  pehle aaya hai? check (idempotency)
  6b  SMS gaya, bookmark se pehle gira            ->  pakki id, dobara aaye to phenko (idempotent consumer)
- 7   Order Service gate tak bhejne se pehle gira ->  pehle vasiyat likh de (outbox)
+ 7   Order Service gate tak bhejne se pehle gira ->  pehle vasiyat likh de (outbox, DB table)
  8   galat ticket baar-baar, line atki           ->  line se hata (DLQ); gate pe hi rok (validation)
  8b  pay DLQ me, cancel chal gayi, kram toota    ->  A2 ruka to A3 bhi ruka (same key parking)
  9   SMS counter 10 min band, sab DLQ me         ->  pehle check, waqai band? (circuit breaker, fallback)
@@ -107,7 +107,7 @@ Technical me: Kafka EOS = sirf Kafka ke andar (read-process-write), bahar ka SMS
 
 **7. Ticket dene wala (Order Service) gate tak khabar bhejne se pehle hi gir gaya.**
 Arpan: Yahan pe outbox. Matlab wo pehle kahin likh de ki haan, main ye daal dunga. Kabhi koi mar bhi jaaye, to wo cheez ek jagah mil jaaye. Jaise real life me hota hai: baap marne se pehle apni sampatti likh ke chala jaata hai.
-Technical me: "pehle kahin likh de" = outbox (khabar usi DB transaction me), "baap ki vasiyat, baad me mil jaaye" = relay outbox se utha ke Kafka ko bhejta hai.
+Technical me: "pehle kahin likh de" = outbox (hamare DB ki table; khabar order ke saath usi DB transaction me, server gire to bhi row bachi), "baap ki vasiyat, baad me mil jaaye" = relay outbox se utha ke Kafka ko bhejta hai.
 
 **Maan lo wo dabba (outbox) hi gir jaaye:** Arpan: Kafka aur bhejne ke beech kuch gira to use dabbe me kahin store kar lo, dikkat khatam; wo dabba hi gir jaaye to uska replica bana do. Yahi kahani hai.
 Technical me: outbox table DB me hi (DB ki apni replica), relay gire to dobara uthata.

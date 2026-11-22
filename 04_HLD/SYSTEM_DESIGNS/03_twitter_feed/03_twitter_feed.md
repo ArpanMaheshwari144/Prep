@@ -183,7 +183,7 @@ dabba laga do, mera favourite stadium wala bhai Kafka. Maine post dabaya to "ter
 sab karta rahega. Kuch gira to outbox me rakh lo, ek parchi pe likha hai.
 
 **Asli naam:** threshold, Kohli wala tareeka = had ke upar celeb raasta, stadium wala bhai = Kafka (async fanout, peeche fanout workers / consumers),
-post ho gaya, nikal = turant OK, parchi pe likha = outbox ki soch. Yahan tweet Cassandra me jaata, aur wahan tweet +
+post ho gaya, nikal = turant OK, parchi pe likha = outbox ki soch (outbox = DB ki table jo kaam ke saath usi transaction me likhi jaati). Yahan tweet Cassandra me jaata, aur wahan tweet +
 outbox ek transaction me nahi likhe jaate, isliye Kafka hi pakki parchi: Tweet Service pehle Kafka me daale
 (acks=all), peeche workers / consumers tweet Cassandra me aur inbox me likhein (tweet_id se idempotent, dobara aaye to do baar nahi).
 
