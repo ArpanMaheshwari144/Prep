@@ -95,7 +95,7 @@ flowchart TB
     subgraph S["OBJECT STORAGE (S3 / GCS)"]
         T["tukda 1 · tukda 2 · tukda 3 ...<br/>(net toota to wahi se resume)"]:::good
     end
-    P -- "1. le, ye parchi" --> F
+    P -- "1. le, ye parchi<br/>(metadata)" --> F
     F == "2. seedha upload, tukdon me" ==> T
     T -- "3. aa gaya (event)" --> M
     linkStyle default stroke:#8fa3c7,stroke-width:2px

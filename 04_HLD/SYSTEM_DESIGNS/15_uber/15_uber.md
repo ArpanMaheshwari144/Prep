@@ -92,7 +92,7 @@ flowchart TB
     A["Arpan: Book"]:::card
     X["Server: kaunsa driver kahan?<br/>pata hi nahi"]:::bad
     P["Driver ka phone: GPS lat/long,<br/>thodi-thodi der me (~4 sec)"]:::card
-    subgraph BD["BEECH KA DABBA"]
+    subgraph BD["BEECH KA DABBA<br/>(Location Service)"]
         L(["Kaam sirf ek: har driver ki<br/>sabse taaza jagah (Location Service)"]):::pill
     end
     A -.-> X
@@ -130,7 +130,7 @@ khaali ka padhai ke liye alag. Aage purane raaston se "airport ka sabse achha 9v
 ```mermaid
 flowchart TB
     X["Har 4 sec, 5 lakh driver:<br/>1.25 lakh / sec, normal DB ghut gaya"]:::bad
-    P["Chhoti parchi: dheemi ho sakti,<br/>gir sakti, kab tak replica"]:::card
+    P["Chhoti parchi: dheemi ho sakti,<br/>gir sakti, kab tak replica<br/>(Redis)"]:::card
     subgraph BB["BADA BHAI (isi kaam ke liye bana)"]
         C[("Likhai tez, copies khud<br/>(Cassandra)")]:::pill
     end
@@ -205,7 +205,7 @@ Dekhna + book ek saath (lock, select + update ek kadam). Alag-alag tod ke kiya t
 flowchart TB
     A["Arpan: Book"]:::card
     Pr["Priya: Book (usi second)"]:::card
-    subgraph BP["BMS WALI PARCHI"]
+    subgraph BP["BMS WALI PARCHI<br/>(driver pe hold / lock)"]
         R[("Raju khaali hai to Arpan ka,<br/>ek kadam me (lock)")]:::pill
     end
     OK["Arpan: Raju mila"]:::good
@@ -292,10 +292,10 @@ Window 20-25 sec bhi kar sakte, par faisla phir bhi server ki ghadi.
 ```mermaid
 flowchart TB
     R["Raju: accept 14.9 sec pe dabaya"]:::card
-    subgraph GS["GHADI SERVER KI"]
+    subgraph GS["GHADI SERVER KI<br/>(TTL)"]
         S{"Server pe kab pahuncha?"}:::pill
     end
-    X["16 sec pe: der se, parchi phaad do,<br/>accept radd"]:::bad
+    X["16 sec pe: der se, parchi phaad do,<br/>accept radd<br/>(request TTL)"]:::bad
     B(["Ya: aas-paas ke saare phone bajao,<br/>jo pehle accept kare (broadcast)"]):::card
     R --> S
     S --> X
@@ -324,7 +324,7 @@ flowchart TB
         L(["Book pe Raju ki taaza jagah dekho"]):::pill
     end
     N["Gole me nahi: Raju mat do,<br/>Arpan ko CP me koi aur"]:::good
-    T["Dono ek saath: wahi taala"]:::card
+    T["Dono ek saath: wahi taala<br/>(lock)"]:::card
     X --> L
     L --> N
     L -.-> T
@@ -352,7 +352,7 @@ se bahar = sirf khaali driver set me, sawari khatam pe wapas.
 
 ```mermaid
 flowchart TB
-    X["Register driver ke naam se:<br/>CP me kaun? phir 5 lakh line"]:::bad
+    X["Register driver ke naam se:<br/>CP me kaun? phir 5 lakh line<br/>(DB)"]:::bad
     subgraph JP["JAGAH KE HISAAB SE PANNA (Redis set)"]
         CP[("CP: itne driver")]:::pill
         JN[("Janpath: Raju")]:::pill

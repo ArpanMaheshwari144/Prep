@@ -74,12 +74,12 @@ hamein khabar rehni chahiye. **Kab nahi:** jab jawab turant chahiye (REST). **AW
 flowchart TB
     T["Ticket counter<br/>(Order Service)"]:::card
     B["Stadium ke bahar bheed<br/>(sab ek saath)"]:::bad
-    subgraph GT["STADIUM GATE"]
+    subgraph GT["STADIUM GATE<br/>(partition)"]
         K(["Admin: line banao,<br/>ek-ek karke jao<br/>(Kafka)"]):::pill
     end
     subgraph AN["STADIUM KE ANDAR"]
-        S["SMS counter"]:::good
-        F["Fraud counter"]:::good
+        S["SMS counter<br/>(consumer group)"]:::good
+        F["Fraud counter<br/>(consumer group)"]:::good
     end
     T --> B
     B --> K
@@ -107,7 +107,7 @@ rukega.
 
 ```mermaid
 flowchart TB
-    subgraph LN["GATE KI LINE"]
+    subgraph LN["GATE KI LINE<br/>(partition)"]
         A["Aadmi ruk gaya,<br/>bahar chala gaya<br/>(consumer gira)"]:::bad
         P["Peeche wale"]:::card
     end
@@ -192,9 +192,9 @@ pehle ticket phir talaashi = do topic ki chain (`ticket_ok`).
 flowchart TB
     G["Gate se fan andar"]:::card
     subgraph CK["PEHLE: TICKET CHECKER KA ROOM (ek group)"]
-        C1["Checker 1"]:::card
-        C2["Checker 2"]:::card
-        C3["Checker 3"]:::card
+        C1["Checker 1<br/>(consumer)"]:::card
+        C2["Checker 2<br/>(consumer)"]:::card
+        C3["Checker 3<br/>(consumer)"]:::card
     end
     subgraph SK["PHIR: SECURITY KA ROOM (alag group)"]
         S1(["Talaashi"]):::pill
@@ -227,9 +227,9 @@ replica leader ban jaati. 2 pakki copy na hon to likhna band: khabar khone se be
 
 ```mermaid
 flowchart TB
-    T["Ticket counter"]:::card
+    T["Ticket counter<br/>(producer)"]:::card
     L["Gate ka admin"]:::card
-    subgraph VC["VASIYAT KI COPY"]
+    subgraph VC["VASIYAT KI COPY<br/>(replica, acks=all)"]
         R1(["Copy 1: likh liya<br/>(replica)"]):::pill
         R2(["Copy 2: likh liya<br/>(replica)"]):::pill
     end
@@ -272,8 +272,8 @@ bhejo taaki wo bhi dobara na bheje.
 
 ```mermaid
 flowchart TB
-    C["Checker ne punch kiya,<br/>register se pehle gira"]:::bad
-    N["Naya checker,<br/>wahi fan dobara"]:::card
+    C["Checker ne punch kiya,<br/>register se pehle gira<br/>(consumer, idempotency)"]:::bad
+    N["Naya checker,<br/>wahi fan dobara<br/>(consumer)"]:::card
     subgraph PA["PEHLE AAYA? DEKH LO"]
         I{"Order #501 ki<br/>pakki id<br/>(idempotency)"}:::pill
     end
@@ -306,7 +306,7 @@ to `eventId` pakad leta hai.
 ```mermaid
 flowchart TB
     T["Ticket dene wala<br/>(Order Service)"]:::card
-    subgraph VS["BAAP KI VASIYAT"]
+    subgraph VS["BAAP KI VASIYAT<br/>(outbox, DB ki table)"]
         D[("Pehle kahin likh de: main ye<br/>daal dunga (outbox)")]:::pill
         R(["Baad me vasiyat mil jaaye<br/>(relay)"]):::pill
     end
@@ -342,7 +342,7 @@ flowchart TB
         B(["validation"]):::pill
     end
     K["Stadium gate<br/>(Kafka)"]:::card
-    C["Checker"]:::card
+    C["Checker<br/>(consumer)"]:::card
     D["Line se hata, tu bahar<br/>(DLQ)"]:::bad
     OK["Baaki line chalti rahi"]:::good
     F --> B
@@ -371,7 +371,7 @@ check, traffic divert = fallback (doosri SMS company). DLQ sirf us khabar ke liy
 
 ```mermaid
 flowchart TB
-    C["Checker"]:::card
+    C["Checker<br/>(consumer)"]:::card
     subgraph PC["PEHLE CHECK: KYA WAQAI BAND?"]
         CB{"circuit breaker<br/>+ health check"}:::pill
     end

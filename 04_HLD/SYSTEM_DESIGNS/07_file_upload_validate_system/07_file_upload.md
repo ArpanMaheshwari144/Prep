@@ -133,7 +133,7 @@ unhe hata de.
 flowchart TB
     X["1000 log x 2 GB:<br/>hamare server se 2 TB"]:::bad
     A["Arpan ka phone"]:::card
-    subgraph BD["SEEDHA BADE DABBE ME"]
+    subgraph BD["SEEDHA BADE DABBE ME<br/>(S3)"]
         S3[("S3: 10 GB ke tukde,<br/>8 GB pe net gaya to baaki 2 GB")]:::pill
     end
     C["Adhoore tukde: thodi der baad<br/>S3 ki safai (lifecycle)"]:::card
@@ -215,7 +215,7 @@ flowchart TB
         V[("UPLOADED ke saath vasiyat:<br/>iska scan karwana hai (outbox)")]:::pill
     end
     R["Baad me koi utha ke<br/>Kafka me daal dega (relay)"]:::card
-    P{"Parchi: do baar ya ulta aaya?<br/>ho gaya to chhodo"}:::card
+    P{"Parchi: do baar ya ulta aaya?<br/>ho gaya to chhodo<br/>(idempotency)"}:::card
     W["Scan shuru"]:::good
     S3 --> E
     E --> P

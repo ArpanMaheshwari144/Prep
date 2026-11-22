@@ -145,7 +145,7 @@ flowchart TB
         F["Apni raftaar se badhe<br/>(2 min me 1)"]:::card
     end
     OK["Token mila: OTP gaya"]:::good
-    X["Dabba khaali: 429"]:::bad
+    X["Dabba khaali: 429<br/>(token bucket)"]:::bad
     K --> D
     F --> D
     D --> OK
@@ -287,7 +287,7 @@ Ban kuch der ka, kyunki IP badalte rehte; pakka pakda gaya user / account perman
 ```mermaid
 flowchart TB
     R["Ravi: ek baar mana, do baar mana,<br/>teesri baar bhi aaya"]:::bad
-    subgraph AD["ALAG DABBA"]
+    subgraph AD["ALAG DABBA<br/>(ban list)"]
         B(["Yahan se hil hi nahi sakta<br/>(ban list)"]):::pill
     end
     X["Is site ke liye permanent band:<br/>gate pe bina gine lautta"]:::bad
@@ -442,7 +442,7 @@ flowchart TB
     R["Ravi ki request"]:::card
     F["Diwali: lakhon product page"]:::card
     subgraph S1["REDIS 1: SACH (noeviction)"]
-        D[("Ravi ka dabba<br/>kabhi phenka nahi jaata")]:::pill
+        D[("Ravi ka dabba<br/>kabhi phenka nahi jaata<br/>(limiter ka Redis, noeviction)")]:::pill
     end
     subgraph S2["REDIS 2: CACHE (TTL, bheed me chhota TTL)"]
         C[("product page / feed")]:::card

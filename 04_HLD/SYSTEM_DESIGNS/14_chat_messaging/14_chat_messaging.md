@@ -70,7 +70,7 @@ kuch hi thread, sirf jis taar pe message aaya use sambhalo.
 flowchart TB
     X["10 crore phone har second:<br/>mere liye kuch aaya? (99% kuch nahi)"]:::bad
     A["Arpan: kahan hai?"]:::card
-    subgraph BD["BEECH KA DABBA"]
+    subgraph BD["BEECH KA DABBA<br/>(WebSocket)"]
         W(["Jaise hi aaya, turant doosre ko bhej de<br/>(khula taar, WebSocket)"]):::pill
     end
     R["Ravi ko seedha mila,<br/>poochne ka mauka hi nahi"]:::good
@@ -108,7 +108,7 @@ download, purani photo phone me hi; server pe sirf link.
 flowchart TB
     A["Arpan: kahan hai?"]:::card
     X["Ravi ka phone band,<br/>2 ghante baad on"]:::bad
-    subgraph SJ["DABBE ME SANJO LO"]
+    subgraph SJ["DABBE ME SANJO LO<br/>(message store)"]
         D[("Arpan ne Ravi ko ye bheja hai<br/>(pehle DB me save)")]:::pill
     end
     R["Ravi online: tab bhej denge"]:::good
@@ -166,7 +166,7 @@ pe publish karta. Wahan wale ko pakda de = server 71 apne channel se le ke Ravi 
 flowchart TB
     S3["Server 3: Ravi server 71 pe"]:::card
     X["Har server baaki 99 se taar:<br/>100 x 99"]:::bad
-    subgraph CL["CHHOTA LADKA"]
+    subgraph CL["CHHOTA LADKA<br/>(Redis pub/sub)"]
         P(["Address le ke chala ja,<br/>wahan wale ko pakda de<br/>(Redis pub/sub)"]):::pill
     end
     S71["Server 71: haan, ye wo ladka,<br/>Ravi ke taar pe"]:::good
@@ -221,7 +221,7 @@ baad dikhe.
 flowchart TB
     A["Arpan: kal party hai<br/>(500 logon ka group)"]:::card
     X["Har member ki alag copy:<br/>ek message, 500 kaam"]:::bad
-    subgraph ED["EK DABBE ME EK BAAR"]
+    subgraph ED["EK DABBE ME EK BAAR<br/>(DB)"]
         D[("chat_id = college-gang<br/>(group message DB me)")]:::pill
     end
     M["500 log khud aayenge sunne"]:::good
@@ -548,7 +548,7 @@ flowchart TB
 flowchart TB
     A(["Arpan"]):::pill -- "WebSocket" --> S1["Chat server S1"]:::card
     S1 --> DB[("DB: message store,<br/>pehle likho")]:::pill
-    DB --> OB["Outbox + chhotu"]:::card
+    DB --> OB["Outbox + chhotu<br/>(relay)"]:::card
     S1 --> SM[("Session map (Redis)<br/>Ravi kis server pe")]:::card
     OB --> PS["Redis pub/sub"]:::card --> S7["Ravi ka server S7"]:::card
     S7 -- "WebSocket" --> R(["Ravi"]):::good

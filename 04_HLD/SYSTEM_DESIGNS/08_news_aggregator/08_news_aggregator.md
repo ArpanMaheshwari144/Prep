@@ -72,7 +72,7 @@ Cassandra; dono saath bhi chal sakte).
 ```mermaid
 flowchart TB
     S["5000 site: NDTV, Times, Cricbuzz"]:::card
-    subgraph CH["CHHOTU"]
+    subgraph CH["CHHOTU<br/>(fetcher)"]
         C(["Saari khabar utha ke<br/>dabbe me daal de (fetcher)"]):::pill
     end
     D[("Dabba (DB)")]:::card
@@ -110,10 +110,10 @@ wo dobara malik nahi, leader wali baat (purana leader wapas aaye to leader nahi 
 
 ```mermaid
 flowchart TB
-    X["Chhotu akela: ek chakkar 3 ghante,<br/>8:55 wali 11 baje"]:::bad
-    C["Bahut saare chhotu"]:::card
+    X["Chhotu akela: ek chakkar 3 ghante,<br/>8:55 wali 11 baje<br/>(fetcher)"]:::bad
+    C["Bahut saare chhotu<br/>(kai fetcher)"]:::card
     D[("Dabba (DB)")]:::card
-    subgraph CP["CHHOTI PARCHI, PEHLE SE TAIYAAR"]
+    subgraph CP["CHHOTI PARCHI, PEHLE SE TAIYAAR<br/>(Redis feed)"]
         P[("Akhbaar jaisi: sab yahin se padhein<br/>(Redis feed)")]:::pill
     end
     R["Ravi"]:::good
@@ -144,12 +144,12 @@ dono me Kohli, century, India, jeeta hai, to same khabar, hata do; nahi to rakh 
 
 ```mermaid
 flowchart TB
-    C["50 chhotu: ek khabar 40 baar"]:::bad
-    subgraph BA["CHHOTU KE PAAS EK BADA AADMI"]
+    C["50 chhotu: ek khabar 40 baar<br/>(fetcher)"]:::bad
+    subgraph BA["CHHOTU KE PAAS EK BADA AADMI<br/>(dedup)"]
         H(["Ye dobara hai, hatao<br/>(hubahu: hash)"]):::pill
         W(["Wordings dekh lo: Kohli, century,<br/>India, jeeta = same (near-duplicate)"]):::pill
     end
-    D[("Dabba: khabar ek hi baar")]:::good
+    D[("Dabba: khabar ek hi baar<br/>(DB)")]:::good
     C --> H
     H --> W
     W --> D
@@ -215,7 +215,7 @@ logged-out default / trending feed.
 ```mermaid
 flowchart TB
     U["9 baje 1 crore log"]:::card
-    subgraph MB["EK BANDA JO SABKO MANAGE KARE"]
+    subgraph MB["EK BANDA JO SABKO MANAGE KARE<br/>(load balancer)"]
         LB(["Tere pe 10 load, tere pe 5,<br/>agli request tere paas<br/>(load balancer)"]):::pill
     end
     F1["Server 1"]:::card
@@ -249,9 +249,9 @@ baaki pe asar nahi.
 ```mermaid
 flowchart TB
     P["Priya app kholti hai"]:::card
-    subgraph DP["PEHLI BAAR DB, PHIR PARCHI"]
+    subgraph DP["PEHLI BAAR DB, PHIR PARCHI<br/>(cache-aside)"]
         D[("Pehle din pasand: tech,<br/>DB se laao (thoda time)")]:::card
-        R[("Parchi me rakh do: roz tech<br/>to wahi saamne")]:::pill
+        R[("Parchi me rakh do: roz tech<br/>to wahi saamne<br/>(Redis feed)")]:::pill
     end
     S["Site band: 5 sec, 10 sec baad try,<br/>na khule to chhodo, baaki chalti"]:::card
     P --> D
@@ -278,7 +278,7 @@ flowchart TB
     W["9:05 iPhone ki khabar"]:::card
     D[("Dabba (DB)")]:::card
     subgraph AH["AATE HI TECH WALON KI FEED ME"]
-        P[("Tech parchi")]:::pill
+        P[("Tech parchi<br/>(Redis feed)")]:::pill
     end
     J(["Milaan: aaj ki badi khabar hai na?<br/>chhooti to DB se feed me (check job)"]):::pill
     W --> D
@@ -304,9 +304,9 @@ ki pasand se. Har user ki alag feed (twitter jaisi fan-out) yahan faltu.
 
 ```mermaid
 flowchart TB
-    X["50 lakh alag parchi:<br/>10 crore likhna, bekaar"]:::bad
+    X["50 lakh alag parchi:<br/>10 crore likhna, bekaar<br/>(Redis feed)"]:::bad
     W["Worker / consumer: ek baar likho"]:::card
-    subgraph ET["SAARI TECH KHABAR EK PARCHI ME"]
+    subgraph ET["SAARI TECH KHABAR EK PARCHI ME<br/>(category ka ek feed)"]
         T[("Tesla launch sabke liye")]:::pill
     end
     A["Arpan"]:::good
@@ -335,9 +335,9 @@ likhta, isliye agla kadam quorum).
 
 ```mermaid
 flowchart TB
-    F["9 baje iPhone launch:<br/>10 lakh / sec, tech dabba 1 lakh"]:::bad
+    F["9 baje iPhone launch:<br/>10 lakh / sec, tech dabba 1 lakh<br/>(Redis node)"]:::bad
     subgraph DT["DO TAREEKE: TEENO AAPAS ME BAANT LO"]
-        A[("Tech ke dabbe badha do")]:::pill
+        A[("Tech ke dabbe badha do<br/>(Redis node)")]:::pill
         B[("Cricket dabba (kal match nahi):<br/>isme bhi tech parchi")]:::pill
     end
     F --> A
@@ -362,10 +362,10 @@ taaza). Redis copies khud ye nahi karti; app do me likhe aur do se padhe (Cassan
 ```mermaid
 flowchart TB
     W["Garam khabar"]:::card
-    subgraph TD["TECH PARCHI 3 DABBON ME"]
-        A[("Dabba A: hai")]:::good
-        B[("Dabba B: hai")]:::good
-        C[("Dabba C: abhi nahi")]:::card
+    subgraph TD["TECH PARCHI 3 DABBON ME<br/>(quorum)"]
+        A[("Dabba A: hai<br/>(Redis node)")]:::good
+        B[("Dabba B: hai<br/>(Redis node)")]:::good
+        C[("Dabba C: abhi nahi<br/>(Redis node)")]:::card
     end
     P["Priya"]:::card
     W -- "do me likho" --> A
@@ -392,7 +392,7 @@ url UNIQUE bacha leta; logging = outbox wali soch (outbox = DB ki table, kaam ke
 
 ```mermaid
 flowchart TB
-    W1["Worker / consumer ne DB me likhi,<br/>parchi se pehle mara"]:::bad
+    W1["Worker / consumer ne DB me likhi,<br/>parchi se pehle mara<br/>(Redis feed)"]:::bad
     subgraph ST["EK STATUS RAKH (logging)"]
         D[("DB me daali / parchi me daali")]:::pill
     end
@@ -425,9 +425,9 @@ ke sasti jagah, jaise S3 / cold storage); jo data padha hi nahi jaata uska shard
 flowchart TB
     X["6 mahine, khabar table mota:<br/>bill badha, feed dheemi"]:::bad
     subgraph RD["RADDI JAISA (FR me tay: kab tak)"]
-        K(["Purani khabar mote register se nikaalo"]):::pill
+        K(["Purani khabar mote register se nikaalo<br/>(DB, archival)"]):::pill
     end
-    D[("Mota register: sirf taazi khabar")]:::good
+    D[("Mota register: sirf taazi khabar<br/>(DB)")]:::good
     A[("Alag sasti jagah (archive, S3)")]:::card
     N["Shard / partition nahi:<br/>jo padha hi nahi jaata"]:::card
     X -.-> K
@@ -471,7 +471,7 @@ flowchart TB
     X["'Kohli century': register ki lakhon<br/>khabar me ek-ek, 8 sec gola"]:::bad
     K["Khabar aayi"]:::card
     D[("Mota register (Postgres): feed")]:::card
-    subgraph ES["SEARCH KA ALAG DABBA"]
+    subgraph ES["SEARCH KA ALAG DABBA<br/>(Elasticsearch)"]
         E[("Elasticsearch: index,<br/>sabki jad (Kohli century)")]:::pill
     end
     S["Ravi ka search: 5 paper ek saath"]:::good

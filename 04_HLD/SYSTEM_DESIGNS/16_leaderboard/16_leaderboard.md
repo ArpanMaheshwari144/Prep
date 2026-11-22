@@ -92,7 +92,7 @@ kar, ab 2000" bolo to thak jaata, isliye tez sort karne wala dabba.
 flowchart TB
     X["SQL: har baar 1 crore row sort,<br/>rank ke liye 1 crore gino"]:::bad
     M["Match khatam: khiladi + score"]:::card
-    subgraph SD["APNE AAP SORT WALA DABBA"]
+    subgraph SD["APNE AAP SORT WALA DABBA<br/>(Redis sorted set)"]
         Z[("Poori line sorted<br/>(Redis sorted set)")]:::pill
     end
     T["Top 10: 0 se 9 utha lo"]:::good
@@ -130,7 +130,7 @@ rakhta, jo upar chahiye us hisaab se reverse karke padho; jodo, ghatao ya revers
 
 ```mermaid
 flowchart TB
-    X["Ravi 9800, Priya 9800:<br/>dabba ek hi number rakhta, kaun upar?"]:::bad
+    X["Ravi 9800, Priya 9800:<br/>dabba ek hi number rakhta, kaun upar?<br/>(sorted set)"]:::bad
     subgraph EK["DONO CHEEZ EK NUMBER ME"]
         F(["Aage score, point ke baad time<br/>(jo pehle aaya uska bada)"]):::pill
     end
@@ -277,13 +277,13 @@ online contest ka, to ek hi time zone UTC, IST / Europe alag-alag nahi (ek room 
 flowchart TB
     X["Raat 12 baje 1 crore score<br/>ek-ek zero karna"]:::bad
     M["Arpan ka match: +50"]:::card
-    subgraph AL["HAR BOARD KA ALAG REGISTER"]
+    subgraph AL["HAR BOARD KA ALAG REGISTER<br/>(naya key)"]
         A[("board:5-Nov")]:::pill
         W[("board:week-45")]:::pill
         T[("board:all-time")]:::pill
     end
-    H[("Kal ka register: history me,<br/>phenko nahi")]:::card
-    G["Naya din = naya register,<br/>zero karne ki zaroorat nahi"]:::good
+    H[("Kal ka register: history me,<br/>phenko nahi<br/>(key)")]:::card
+    G["Naya din = naya register,<br/>zero karne ki zaroorat nahi<br/>(naya key)"]:::good
     X -.-> AL
     M --> A
     M --> W
@@ -410,7 +410,7 @@ flowchart TB
     Z -- "clone" --> REP[("Replica · DB sach")]:::card
     Z --> RG["Region ke dabbe: India / US / Europe"]:::card
     RG --> W(["World board: chhotu milaye<br/>(scatter-gather)"]):::good
-    Z --> T["Aaj / hafta / all-time<br/>teen dabbe"]:::card
+    Z --> T["Aaj / hafta / all-time<br/>teen dabbe<br/>(sorted set)"]:::card
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
     classDef pill fill:#f5c542,stroke:#f5c542,color:#000

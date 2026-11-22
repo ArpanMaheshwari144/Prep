@@ -117,7 +117,7 @@ SAFAR (March: khaali folder)  ->  aaj (22-Nov)
 
 - ★★ **[SYSTEM_DESIGNS](04_HLD/SYSTEM_DESIGNS)** — poora design, kahani format (har kadam: kahani -> asli naam -> tasveer; hand notes se bana)
   - **FR / NFR + Ek nazar (18-Nov):** 24 / 24 DONE. Har FR / NFR line kadam se judi, upar Ek nazar; alag aankh se audit bhi ho gaya (FR = app + user ka kaam, NFR = peeche ka, bheed FR / NFR me nahi).
-  - **Diagram (22-Nov):** har main file me kahani ka shabd + bracket me asli naam, jaise "Chhotu (fetcher)", "Baap ki vasiyat (outbox, DB ki table)". Bracket me sirf wahi naam jo us design ki hand notes me hai, apni taraf se koi naam nahi. Text purana hi, sirf diagram ke label.
+  - **Diagram (22-Nov):** kahani ke dohraaye shabd (chhotu, parchi, dabba, mota register ...) ke saath bracket me us jagah ka matlab, notes se: "Chhotu (fetcher)", "Parchi (hold)", "Dabba (Redis node)". Text purana hi, sirf diagram ke label.
   - [00_IMG](04_HLD/SYSTEM_DESIGNS/00_IMG) — jo mermaid se nahi banta (cache ki ring, Uber ka naksha + gaadi, PUBG ke dabbe + gudde), saari tasveer ek folder me
   - [01 url-shortener](04_HLD/SYSTEM_DESIGNS/01_url_shortener/01_url_shortener.md) (round ho gaya: Ek nazar dhaancha + FR / NFR design se, saancha baaki design ke liye)
   - [02 rate-limiter](04_HLD/SYSTEM_DESIGNS/02_rate_limiter/02_rate_limiter.md) (round ho gaya: kadam 6 = dono khule, gateway pe kachchi ginti, sirf shaq wale ka OTP band)

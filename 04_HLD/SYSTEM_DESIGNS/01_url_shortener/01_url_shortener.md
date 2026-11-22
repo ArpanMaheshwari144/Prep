@@ -137,8 +137,8 @@ ko alag Redis. **Maan lo Redis gira:** copy (replica); copy bhi giri to fail ope
 ```mermaid
 flowchart TB
     U["Har second 1 lakh log:<br/>token dikhao, pata do"]:::card
-    C["Counter wala"]:::card
-    subgraph RG["DO REGISTER"]
+    C["Counter wala<br/>(app server)"]:::card
+    subgraph RG["DO REGISTER<br/>(Redis + DB)"]
         R[("Chhota pehla register<br/>(baar-baar wale token, Redis)")]:::pill
         D[("Mota register<br/>(sab token, DB)")]:::card
     end
@@ -163,7 +163,7 @@ ja raha, wo hatao, kyunki wo likha hi kyun ja raha hai.
 
 ```mermaid
 flowchart TB
-    R["Chhota register bhar gaya,<br/>naya token likhna hai"]:::bad
+    R["Chhota register bhar gaya,<br/>naya token likhna hai<br/>(Redis)"]:::bad
     subgraph KH["KISE HATAYEIN"]
         T(["Time laga do: itni der rahega,<br/>phir hata do (TTL)"]):::pill
         L(["Jo poochha hi nahi ja raha,<br/>wo hatao (LRU)"]):::pill
@@ -194,11 +194,11 @@ Redis bharna. Isse stampede rukta hai.
 ```mermaid
 flowchart TB
     U["7 baje 1,000 log wahi token<br/>(chhote register se hat gaya)"]:::bad
-    subgraph CW["COUNTER WALA"]
+    subgraph CW["COUNTER WALA<br/>(app server)"]
         K(["Chhota ladka: bhaag ke ja,<br/>baaki sab yahin ruko<br/>(single flight)"]):::pill
     end
-    D[("Mota register")]:::card
-    R[("Chhota register me rakh de")]:::good
+    D[("Mota register<br/>(DB)")]:::card
+    R[("Chhota register me rakh de<br/>(Redis)")]:::good
     U --> K
     K -- "sirf ek" --> D
     D --> R
@@ -222,11 +222,11 @@ information do, baad me update = soft / hard TTL (soft nikla to purana turant do
 
 ```mermaid
 flowchart TB
-    L["Ladka raste me gira,<br/>kabhi wapas nahi aayega"]:::bad
+    L["Ladka raste me gira,<br/>kabhi wapas nahi aayega<br/>(single flight)"]:::bad
     subgraph TL["LADKE KI TIMELINE"]
         T(["Itni der tak nahi aaya?<br/>(lock TTL)"]):::pill
     end
-    A["999 me se ek aadmi:<br/>mote register se la ke de"]:::good
+    A["999 me se ek aadmi:<br/>mote register se la ke de<br/>(DB)"]:::good
     P["Tab tak logon ko purani information,<br/>baad me update (soft TTL)"]:::card
     L --> T
     T --> A
@@ -300,9 +300,9 @@ flowchart TB
     H(["Hash se baanto:<br/>same token, same tukda"]):::pill
     subgraph SH["10 TB KE 9 TUKDE, ALAG-ALAG ALMARI (shard)"]
         direction LR
-        A1[("Almari 1")]:::card
-        A2[("Almari 2")]:::good
-        A9[("... Almari 9")]:::card
+        A1[("Almari 1<br/>(shard)")]:::card
+        A2[("Almari 2<br/>(shard)")]:::good
+        A9[("... Almari 9<br/>(shard)")]:::card
         A1 ~~~ A2 ~~~ A9
     end
     T --> H
@@ -333,7 +333,7 @@ maine likh liya, tu acknowledge bhej". Jab tak acknowledge nahi aata, tab tak pa
 flowchart TB
     F["Almari 3 me aag lagi"]:::bad
     W["Naya token likho"]:::card
-    subgraph CP["ALMARI KI COPY"]
+    subgraph CP["ALMARI KI COPY<br/>(replica)"]
         A[("Copy A: likh liya")]:::good
         B[("Copy B: likh liya")]:::good
         C[("Copy C: thodi peeche")]:::card
@@ -369,7 +369,7 @@ B aur C se, ya A aur C se. Ek copy peeche reh bhi gayi to atleast ek ke paas to 
 ```mermaid
 flowchart TB
     W["Arpan ka naya token"]:::card
-    subgraph CP["TEEN COPY"]
+    subgraph CP["TEEN COPY<br/>(replica)"]
         A[("A: haan")]:::good
         B[("B: haan")]:::good
         C[("C: peeche, nahi mila")]:::bad
@@ -419,15 +419,15 @@ sirf ek ladka jaata, ek hi information to laani hai.
 ```mermaid
 flowchart TB
     U["Cricket ka token viral:<br/>1 crore log ek saath"]:::bad
-    subgraph CW["COUNTER WALA"]
+    subgraph CW["COUNTER WALA<br/>(app server)"]
         P(["Apni parchi, kursi pe hi<br/>(local cache)"]):::pill
     end
     subgraph PC["CHHOTE REGISTER KI PHOTOCOPY (10, 100)"]
-        R1[("Photocopy 1")]:::good
-        R2[("Photocopy 2")]:::good
+        R1[("Photocopy 1<br/>(Redis replica)")]:::good
+        R2[("Photocopy 2<br/>(Redis replica)")]:::good
     end
     U --> P
-    P -. "parchi me nahi" .-> R1
+    P -. "parchi me nahi<br/>(local cache)" .-> R1
     P -.-> R2
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
@@ -473,7 +473,7 @@ ginna hai:** user ko turant link do, ginti peeche Kafka / worker se; fail ho to 
 ```mermaid
 flowchart TB
     T["Dhokhe wali site ka token"]:::bad
-    subgraph CW["COUNTER WALA"]
+    subgraph CW["COUNTER WALA<br/>(app server)"]
         K(["Dene se pehle khud check<br/>(kaali list)"]):::pill
         R(["Token radd kar do"]):::pill
     end
@@ -525,7 +525,7 @@ flowchart TB
         W(["Pattern pata laga:<br/>gate pe hi bhaga do (WAF)"]):::pill
         H(["Har aadmi pe had: ek baar me 5<br/>(per user, group pe nahi)"]):::pill
     end
-    C["Counter wala"]:::good
+    C["Counter wala<br/>(app server)"]:::good
     S -. "roka" .-> W
     L --> W
     W --> H

@@ -122,7 +122,7 @@ parchi pe likhte raho kya-kya hua: PSP ne ye kara, ab ye kara. Fail hua to FAIL 
 ```mermaid
 flowchart TB
     A["Pay dabaya"]:::card
-    subgraph AP["APNE PAAS EK PARCHI"]
+    subgraph AP["APNE PAAS EK PARCHI<br/>(payment table me status)"]
         D[("INITIATED ho gaya,<br/>PSP ne ye kara, ab ye")]:::pill
     end
     P["PSP: 30 second chup"]:::bad
@@ -158,7 +158,7 @@ paisa kaato, mujhe ek chhota sa event bhej do", jaise S3 file aane pe event bhej
 flowchart TB
     D[("Parchi: jawab ka intezaar<br/>(PENDING)")]:::card
     P["PSP<br/>(batana bhool gaya / message khoya)"]:::bad
-    subgraph BB["BEECH ME EK BANDA"]
+    subgraph BB["BEECH ME EK BANDA<br/>(poochne wala job)"]
         J(["Hua ya nahi hua, bata do:<br/>dono se permanent baat<br/>(poochne wala job)"]):::pill
     end
     J --> D
@@ -223,7 +223,7 @@ purani parchi lauta do. Wahi Chat ka `clientMsgId`, wahi Banking ki key.
 ```mermaid
 flowchart TB
     S["Server"]:::card
-    subgraph BR["BEECH ME EK REGISTER"]
+    subgraph BR["BEECH ME EK REGISTER<br/>(DB)"]
         D[("Pehle likho: initiate hua<br/>(INITIATED commit)")]:::pill
     end
     P["Phir PSP ko bhejo<br/>+ idempotency key (payment id)"]:::card
@@ -348,8 +348,8 @@ shard ka apna likhne wala, likhai bant gayi.
 
 ```mermaid
 flowchart TB
-    X["Diwali: 3,000 payment / sec,<br/>ek register nahi jhel raha"]:::bad
-    subgraph KD["REGISTER KAAT DO, CHHOTE TUKDE"]
+    X["Diwali: 3,000 payment / sec,<br/>ek register nahi jhel raha<br/>(DB)"]:::bad
+    subgraph KD["REGISTER KAAT DO, CHHOTE TUKDE<br/>(shard)"]
         T1[("Tu yahan likh<br/>(tukda 1)")]:::pill
         T2[("Tu ye likh<br/>(tukda 2)")]:::pill
         T3[("Tu ye likh<br/>(tukda 3)")]:::pill
@@ -378,7 +378,7 @@ hold), wapas aake paise = fail pe ulta kadam.
 ```mermaid
 flowchart TB
     T1[("Tukda 1: Arpan ka wallet")]:::card
-    subgraph OL["OFFICE KA LADKA + DIARY"]
+    subgraph OL["OFFICE KA LADKA + DIARY<br/>(saga)"]
         L(["Ye 500 Arpan ne diye, is tukde<br/>me dene hain: de ke aa, bata<br/>(saga + hold)"]):::pill
     end
     T3[("Tukda 3: dukaan")]:::good
@@ -457,7 +457,7 @@ flowchart TB
 ```mermaid
 flowchart TB
     A(["Arpan"]):::pill --> S["App server"]:::card
-    S --> I[("Parchi INITIATED<br/>pehle apne register me")]:::pill
+    S --> I[("Parchi INITIATED<br/>pehle apne register me<br/>(DB)")]:::pill
     I --> P1["PSP-1"]:::card
     P1 -. "band / chup" .-> P2["PSP-2"]:::card
     P1 --> B(["HDFC"]):::good
