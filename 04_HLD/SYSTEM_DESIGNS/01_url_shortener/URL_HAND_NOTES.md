@@ -65,7 +65,7 @@ Technical me: same lamba link = har baar naya code (lambe link pe "pehle se hai?
 Technical me: "insert if not exist" = unique index / constraint on code (counter ke upar aakhri pehra).
 
 **2. Saal bhar me counter 10 arab pe. Token "10000000000", 11 akshar, aur lamba hota jaayega. Number wahi rakhte hue token chhota kaise? (Sawaal: gaadi ki number plate "DL 3C AB 1234" me sirf number nahi, akshar bhi.)**
-Arpan: Uske peeche kuch laga do, kuch aisi algorithm set kar do ki wo number apna bhi chhota kar de. Technical terms me kuch hota hoga. Jaise DL 3C, phir agla aa jaayega 4C, 5C, phir 5D, phir A, AB ke baad CB, ye aata rahega. 1 2 3 4 ki jagah aisa kuch, hum combination bana sakte hain. 7 character hain to kaafi combination ho sakte hain.
+Arpan: Uske peeche kuch laga do, kuch aisi algorithm set kar do ki wo number apna bhi chhota kar de. Technical terms me kuch hota hoga. Jaise DL 3C, phir agla aa jaayega 4C, 5C, phir 5D, phir A, AB ke baad CB, ye aata rahega. 1 2 3 4 ki jagah 1 2 4 3 ya 1 3 2 4, aisa kuch, hum combination bana sakte hain. 7 character hain to kaafi combination ho sakte hain.
 Technical me: "number plate jaise akshar bhi, combination" = base62 (0-9, a-z, A-Z), "7 character, kaafi combination" = 62^7, ~3.5 lakh crore code.
 
 **3. Token lene kam aate, token dikha ke pata lene wale bahut: har second 1 lakh. Counter wala har baar mota register palat ke dhoondhta, line ruk jaati. Kuch token din me hazaar baar aate.**

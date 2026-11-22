@@ -131,7 +131,8 @@ Technical me: "alag line" = scan ka alag Kafka topic (Kafka me priority nahi hot
 Arpan: Ye wahi Notification wali company ki kahani hai. Scanner hamara nahi, bahar ka hai, to wo chup bhi ho sakta hai. Thodi der ruk ke dobara bhejo; do-teen baar bhi chup rahe to file ko dead letter queue me daal do aur insaan ko alert, investigate karo, taaki baaki files ki line na atke. Tab tak file "scan baaki" pe hi rahegi aur link band rahega, kyunki bina scan ke file kisi ko dena khatra hai. Ravi ko app pe dikhao "file jaanch me hai".
 Technical me: dobara try = retry with backoff, dead letter queue = DLQ + alert (scan wali tez line se alag), link band = CLEAN tak download nahi (fail-closed).
 
-**Maan lo complete kabhi aaya hi nahi:** Arpan: Pehli baat, file ko temporary jagah rakho; jaanch pass ho tab asli jagah, phir complete bhejo.
+**Maan lo complete kabhi aaya hi nahi:**
+Arpan: Pehli baat, file ko temporary jagah rakho; jaanch pass ho tab asli jagah, phir complete bhejo. Aur complete nahi aaya to S3 ka lifecycle rule purani temporary aur adhoori multipart files apne aap clean kar dega, ya sweeper job chala sakte jo bekaar files khud hata de.
 Technical me: quarantine / temp prefix pe upload, pass hone pe asli bucket / prefix me copy.
 
 **9. App ko 6 mahine ho gaye. S3 ka bill pichhle mahine se double. S3 me ek hi meme lakhon baar padi, Ravi ne apni shaadi ki 2 GB video teen baar daali (bhool gaya tha ki pehle daal chuka).**

@@ -68,7 +68,7 @@ Numbers ~50 crore user, 50 crore tweet / din = ~5,800 / sec · ek aadmi ~500 ko 
 &nbsp;
 
 **1. Ravi app khole to server dhoondhe wo kis-kis ko follow karta (500 log), sabke tweet DB se nikaale, milaye, sort kare. Shaam 8 baje 5 crore log ek saath, feed 6-7 second ghoome, DB hil jaaye.**
-Arpan: Baar-baar DB jaana padta. Mere 10 dost hain, roz apna hisaab maang rahe. Har baar unke paas kyun jaun jab roz yahi karna hai? Main kahunga tum teeno idhar aao, mujhe apna de do, main apne paas rakhunga aur apne paas se bhej dunga. Dobara DB hit nahi. Unhone app khola, unhe turant mila. Har baar mote register me nahi jaana pada.
+Arpan: Baar-baar DB jaana padta. Mere 10 dost hain, wo 10 dost 3 logon ko follow kar rahe, roz din ka hisaab maang rahe. Har baar un teeno ke paas kyun jaun jab roz yahi karna hai? Main kahunga tum teeno idhar aao, mujhe apna de do, main apne paas rakhunga aur apne paas se bhej dunga. Dobara DB hit nahi. Unhone app khola, unhe turant mila. Har baar mote register me nahi jaana pada.
 Technical me: mota register = DB · "apne paas rakhunga, apne paas se bhej dunga" = har user ka pehle se bana inbox (Redis), "dost apna mujhe de do" = tweet aate hi followers ke inbox me (fanout on write), "dobara DB hit nahi" = feed seedha inbox se.
 
 **Maan lo Ravi ne aaj Amit ko follow kiya, Amit ke pichhle hafte ke 20 tweet Ravi ke dabbe me kabhi gaye hi nahi.**
@@ -198,7 +198,7 @@ Arpan: Ye ek tarah recommendation hi hai. Peeche kaunsa algorithm / machine lear
 Technical me: "jisse zyada judta wo pehle" = ranking (kisse baat karta, post kitni nayi, likes), "algorithm design ka hissa nahi" = ranking model alag; hum list dete, ranked list lete. Netflix 6 ("tere liye") se juda.
 
 **18. Ravi scroll kar raha, 20 dekhe, agle 20 maange. Beech me upar 5 naye aa gaye, agle page pe wahi 5 dobara.**
-Arpan: 20 padhe, agle 20 maange, beech me upar 5 aa gaye, to neeche wale 5 khisak ke agle page me chale gaye; isliye wahi 5 dobara. Hal: Ravi ne kahan tak padha, thodi der ke liye yaad rakh lo. "Ravi ne yahan tak padh liya, ab iske baad wale do." Naye 5 upar hain, upar scroll karega to dikhenge. Refresh pe purani post dobara aa sakti hai, Instagram ka kaam hi engage rakhna, wo chalta hai; par interview me ye bataunga.
+Arpan: 20 padhe, agle 20 maange, beech me upar 5 aa gaye, to neeche wale 5 khisak ke agle page me chale gaye; isliye wahi 5 dobara. Hal: Ravi ne kahan tak padha, thodi der ke liye yaad rakh lo. "Ravi ne yahan tak padh liya, ab iske baad wale do." Naye 5 upar hain, upar scroll karega to dikhenge. Refresh pe purani post dobara aa sakti hai, Instagram ka kaam hi engage rakhna, wo chalta hai; par interviewer poochhega to use batana padega, to main yahi karunga: Ravi ne kahan tak padha wo yaad rakh ke agle dikha dunga.
 Technical me: "page number se agle 20" = offset pagination (isi se khisakta), "kahan tak padha yaad rakh" = cursor (har page ke saath aakhri dikhayi post lautao, agla uske theek baad se), "thodi der yaad" = ranked feed me ranked list thodi der save, cursor usi list me aage.
 
 **19. Reply ki 3 copy (A, B, C) (Twitter me Cassandra, koi leader nahi; SQL shard ho to leader + copy). Tune Ravi ki DP pe reply kiya "mast DP bhai", ye A aur B me likha, C tak abhi nahi. Ravi ka "thank you bhai" C me pehle pahunch gaya. Priya C se padh rahi: sirf "thank you bhai" dikha, tera reply gaayab.**

@@ -78,7 +78,7 @@ Arpan: Bahut log aa rahe aur bas daam / ginti pata karke chale jaate, dukaan me 
 Technical me: chhotu = har baar DB se ginti poochhna · banner / copy = cache (Redis), page pe thodi purani ginti chalti hai, asli jaanch Pay pe (NFR 2).
 
 **6. Ravi ne iPhone return kiya, courier ne box godown pe chhoda, aate hi ginti +1. 10 minute me wahi iPhone Priya ko bika: box khula, screen tooti.**
-Arpan: Jaanch wahin darwaze pe: delivery wale ko bol do jis haalat me gaya usi haalat me phone chahiye. Phone khol ke dekh, kaisa hai; kuch dikkat hai to return wahin reject. Inventory me maan lene ke baad nahi, warna doosre user ko bik gaya to Priya naraaz. Badi company jhel le, chhoti company ke liye ye bahut badi dikkat. Jaise mere se koi ghee ka dabba le gaya, 2-3 ghante baad lautane aaya, seal khuli, thoda ghee nikla hua; nahi lunga, ise main kisi ko bech nahi sakta. Seal pack hai to lenge, nahi to nahi.
+Arpan: Jaanch wahin darwaze pe: delivery wale ko bol do jis haalat me gaya usi haalat me phone chahiye. Phone khol ke dekh, kaisa hai; kuch dikkat hai to return wahin reject. Inventory me maan ke daal dene ke baad nahi; agar maan ke inventory me daal diya aur doosre user ko bik gaya to Priya naraaz. Badi company jhel le, chhoti company ke liye ye bahut badi dikkat. Jaise mere se koi ghee ka dabba le gaya, 2-3 ghante baad lautane aaya, seal khuli, thoda ghee nikla hua; nahi lunga, ise main kisi ko bech nahi sakta. Seal pack hai to lenge, nahi to nahi.
 Technical me: return pe doorstep quality check, ginti sirf sellable stock me badhe, kharab maal alag khaane me (damaged).
 
 **7. Delhi me iPhone 5 se neeche aa gaye. Ab kya: sirf manager ko email, ya kuch aur?**
