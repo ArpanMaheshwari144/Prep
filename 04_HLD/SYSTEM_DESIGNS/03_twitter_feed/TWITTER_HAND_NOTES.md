@@ -110,11 +110,12 @@ Technical me: "last 500" = inbox ki had, "DB se query karke Redis me" = cache mi
 Arpan: Likhai bahut zyada hai to alag machine, technical naam Cassandra, mera bade bhai. "Bhai Cassandra, mera system bahut likh raha, tu bada bhai hai, dekh le." Replica bhi wo kar leta. Kaun kisko follow kar raha, wo Cassandra me rakhne ka matlab nahi, uske liye ek aur bada bhai Neo4j: "ye aadmi isko follow kar raha, iska track rakhna."
 Aur Arpan ke saare tweet ek jagah: naam se todo, par naam do logon ke same ho sakte (doosra Arpan), to id me baant do. Meri id har baar same, to mera saara data ek jagah.
 Technical me: "likhai bahut, bada bhai" = Cassandra (write-heavy; andar ring = consistent hashing), "replica bhi wo kar leta" = Cassandra ki apni copy, "naam se nahi, id se baant do" = partition key = user id, "mera saara data ek jagah" = ek partition (author id se hissa, andar tweet id se tweet: key = author id + tweet id), "follow ka track" = graph DB Neo4j.
-**Isi kadam ki doosri baat (Cassandra kyun):** Arpan: Twitter ke liye TB of data ho sakta hai; yahan writes bhi zyada hain aur read bhi zyada, aisa nahi ki sirf read hi zyada. Isliye Cassandra, aur Twitter har jagah hai to user ID se shard.
-Technical me: write-heavy + read-heavy + TB data = Cassandra, partition key = user id.
 
 **Maan lo har baar "Arpan ke naye 500" poori table me dhoondhna pad raha:** Arpan: Mujhe naye tweet chahiye, purane se koi matlab nahi. Main ek pattern note kar raha: har din ek banda aata, "Arpan ke naye 40, 50, 500" maangta; samajh gaya wo uska follower hai, use ye chahiye. To unhe thodi der ke liye apne paas rakh le, jo poori table na khojni pade. "Le bhai, Arpan ne aaj 50 kiye, rakh le"; "aaj Arpan ne kuch nahi kiya, sorry"; "aaj bas ek, le le". Har baari poori table pe mat jao, apne paas rakh lo, kyunki per day pattern hai, har din aayega.
 Technical me: "naye tweet thodi der apne paas" = author ke recent tweets ka cache (Redis, TTL), "per day pattern" = recent data hi garam (time-based: naye tweet baar-baar padhe jaate), poori table scan nahi.
+
+**Isi kadam ki doosri baat (Cassandra kyun):** Arpan: Twitter ke liye TB of data ho sakta hai; yahan writes bhi zyada hain aur read bhi zyada, aisa nahi ki sirf read hi zyada. Isliye Cassandra, aur Twitter har jagah hai to user ID se shard.
+Technical me: write-heavy + read-heavy + TB data = Cassandra, partition key = user id.
 
 **8. Saare server America me. Ravi Delhi me, har request samundar paar, har kaam me aadha second upar se. IPL pe India ke 10 crore America ki machine hila rahe.**
 Arpan: Ravi India se kar raha to har baar America kyun bhejna, bekaar ka travel. India me hai to baatcheet India me rakh. Ye bank jaisa hai: Lajpat Nagar ke log doosri branch me aa rahe, us bank pe dabaav. Lajpat Nagar me branch nahi hai? To wahan branch khol do, wahi chale jaayenge.

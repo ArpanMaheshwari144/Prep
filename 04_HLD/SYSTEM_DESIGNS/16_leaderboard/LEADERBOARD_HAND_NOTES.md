@@ -67,11 +67,11 @@ Arpan: Ek aisa dabba jisme khiladi aur score daalte jao, wo apne aap sort karke 
 Technical me: "apne aap sort wala dabba" = Redis sorted set (har khiladi + score, kram me; daalna, top 10, rank sab log N). (Redis khud chhote se bade ke kram me rakhta; leaderboard me ulta (reverse) padhte, bade se chhote, taaki sabse zyada score upar.)
 Jaankari (reel se): sorted set andar se skip list hai, highway jaisi (neeche sadak har gaon rukti, upar express lane sirf bade shehron pe), isliye 1 crore me bhi ~24 kadam.
 
-**Isi dikkat ki doosri kahani (reel se): kisi ne kaha Redis kyun, SQL me score pe index laga do. Index laga diya, top 10 ab turant, par Arpan ka rank (45,23,118) abhi bhi 3 second leta hai.**
+**Maan lo (reel se) kisi ne kaha Redis kyun, SQL me score pe index laga do. Index laga diya, top 10 ab turant, par Arpan ka rank (45,23,118) abhi bhi 3 second leta hai.**
 Arpan: 1 crore khiladi pe index kaise lagega: maan lo 5 lakh ka ek block, phir 5 lakh ka, phir 5 lakh ka. Mujhe 1 crore me se 45 lakh wala rank dhoondhna hai; 5-5 lakh alag bhi kar diye to bhi har block me jaake dekhna hi padega, dhoondhne ka time badhega. Asli dikkat ye hai ki score badalta jaata hai, har second update ho raha. Index lagaya to har likhai pe index bhi badlega, likhne aur update ka time har waqt badhta jaayega. Index ka fayda ye ki query jaldi chalti, par jahan likhai zyada hai wahan index ka utna fayda nahi; log bahut hain aur real time me score dhadadhad update ho raha. Isliye Redis sorted set: andar hi andar sort karta rehta, top 500 aur rank dono turant.
 Technical me: "har block me jaake dekhna" = rank ke liye "mere upar kitne" gin-na (index se bhi count scan), "har likhai pe index badle" = write-heavy pe index ka bojh (har update pe index update), isliye sorted set (daalna, rank, top sab log N).
 
-**Isi dikkat ki teesri kahani:** Arpan: Ek dabba rakh do jo apne aap sort kar de, sabko us dabbe se guzaar do, baar-baar query na chalani pade. Contest me ek saath 1 crore nahi aate, dheere-dheere: 3, 10, 20, 100, 1000. Postgres ko har baar bolo "10 sort kar, ab 100, ab 2000" to wo thak jaata. Isliye ek chhotu bula liya jo tez sort karta, usko de do.
+**Isi Maan lo ka doosra jawab:** Arpan: Ek dabba rakh do jo apne aap sort kar de, sabko us dabbe se guzaar do, baar-baar query na chalani pade. Contest me ek saath 1 crore nahi aate, dheere-dheere: 3, 10, 20, 100, 1000. Postgres ko har baar bolo "10 sort kar, ab 100, ab 2000" to wo thak jaata. Isliye ek chhotu bula liya jo tez sort karta, usko de do.
 Technical me: "apne aap sort wala dabba" = Redis sorted set (ek dabba jisme score daalte hi line apne aap kram me rehti).
 
 **2. Ravi aur Priya dono ke 9800. Line me aage kaun?**
@@ -115,6 +115,9 @@ Technical me: andaze wali rank = estimated rank, sab region mila ke board = aggr
 Arpan: Teeno ka kram alag hoga: aaj koi aur upar, hafte me koi aur, all-time me koi aur. Ek-ek ka score zero karne ka koi matlab nahi. Ek alag register me rakh lo, aur kal wala register side me rakh do, phekna nahi. Priya aaj nahi khelti: agar requirement hai ki naam dikhe to 0 ke saath dikha do, nahi hai to wo aaj ke register me hi nahi.
 Technical me: match jeeta to score teeno dabbon me jodo. "Alag register" = har din ka alag dabba, naam me tareekh (board:5-Nov, board:week-45, board:all-time). "Kal wala side me" = live Redis se TTL se hat sakta, par board history me rehta; 80 lakh ko ek-ek chhuna nahi padta.
 
+**Isi dikkat ki doosri kahani:** Arpan: Mita mat, overwrite kar de. Aaj Arpan ke 10, Priya ke 10. Kal Arpan aaya +10, Priya nahi aayi to uska 0. Ya to ek alag register me rakh ke purana poora register discard kar de, ya overwrite kar de; ek-ek ko zero karne nahi baithna.
+Technical me: reset = naya key (din ki tareekh se) ya agla score aate hi overwrite; 80 lakh ko ek-ek zero karna nahi.
+
 **Isi dikkat ki doosri kahani (contest ke board):** Arpan: Contest ka naam 437, sabke score DB me. Agla Sunday 438; 437 phenkna nahi, DB me pada. UI pe link: "437 ki rank yahan dekho, 438 me register yahan"; thodi der baad link 437 ke poore board pe le jaayega. Mahine ka board: Arpan ke har contest (Saturday, Sunday, Wednesday) ka score jod ke ek formula se rank; jo contest nahi diya uska +0, rank dheere-dheere theek.
 Technical me: contest id se alag board (key me contest id), purana = DB me history, mahine wala = sab contest ka jod (aggregate).
 
@@ -124,9 +127,6 @@ Technical me: "parchi pe contest id + khatam hone ka waqt" = event time, "usi di
 
 **Isi dikkat ki doosri kahani (aakhri sawaal 12:59:59 pe, server tak 1:00:03):** Arpan: Parchi pe likh lo Arpan ne kis waqt khatam kiya. Server dheema / gira, wapas aaye to parchi se bhejo; ya doosre server pe bhejo. LeetCode crash hota tab bhi score kho nahi jaate, matlab kahin store karta. Bahut saare log ek saath to beech me Kafka, worker ek-ek karke uthaye (Kafka disk pe rakhta); itna data na ho to Kafka ka matlab nahi.
 Technical me: parchi pe submit ka waqt = event time, gira to parchi se baad me bhejo = outbox (DB ki table), bheed me beech ka Kafka = buffer / queue (disk pe, worker = consumer).
-
-**Isi dikkat ki doosri kahani:** Arpan: Mita mat, overwrite kar de. Aaj Arpan ke 10, Priya ke 10. Kal Arpan aaya +10, Priya nahi aayi to uska 0. Ya to ek alag register me rakh ke purana poora register discard kar de, ya overwrite kar de; ek-ek ko zero karne nahi baithna.
-Technical me: reset = naya key (din ki tareekh se) ya agla score aate hi overwrite; 80 lakh ko ek-ek zero karna nahi.
 
 **Maan lo contest raat 11 baje shuru, 1-3 baje khatam:** Arpan: 9 tareekh raat 11 baje shuru hua, to hamare leaderboard pe wo contest 9 tareekh ka. Ye leaderboard duniya bhar ke online contest (LeetCode jaisa) ka hai, to ek hi time zone rakho, UTC jo aajkal standard hai; aisa nahi ki India ka IST, Europe ka alag. Ek room me bulaya elite contest (Gennady jaise top coder) alag cheez hai, wo yahan ki baat nahi.
 Technical me: contest ka din = shuru hone ki tareekh (contest id ke saath); duniya bhar ka online contest = ek hi time zone UTC.

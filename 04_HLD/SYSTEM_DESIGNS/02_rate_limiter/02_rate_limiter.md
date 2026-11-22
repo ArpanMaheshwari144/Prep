@@ -201,7 +201,7 @@ flowchart TB
 
 ## 5. Guard andar kamre me baitha (guard ko gate pe bithao)
 
-Limiter OTP Service ke andar tha. Script ki 1000 request LB se, login check karke OTP Service tak pahunchti, wahan mana.
+Limiter OTP Service ke andar tha. Script ki 1000 request LB se, beech ke server se hote hue OTP Service tak pahunchti, wahan mana.
 SMS nahi gaya, par raaste ke saare server bojh utha rahe. Mere ghar me ek security guard hai jo kehta 10,000 log andar
 nahi aa sakte, par wo main gate pe nahi, andar kamre me baitha hai. Ghar ke andar to 1000 log ghus gaye. To use bahar
 gate pe bitha do, ghar me koi ghuse hi nahi, gate pe hi hata do.

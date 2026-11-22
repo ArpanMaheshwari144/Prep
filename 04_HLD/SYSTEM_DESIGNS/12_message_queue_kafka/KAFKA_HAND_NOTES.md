@@ -132,7 +132,7 @@ Technical me: "aur admin daalo" = pehle checker (consumer) badhao, gate (30) tak
 Arpan: Alert laga do. Wo peeche ja raha, alert aa gaya. Wo aise bolta: "abe ye bahut peeche hai, admin jaldi-jaldi kaam karo, itna peeche kyun ja raha hai."
 Technical me: "alert laga do" = consumer lag alert.
 
-**Isi dikkat ki doosri baat:** Arpan: Fraud service 7 din peeche chal rahi, kal 8, parson 9. Hum aisa thodi karenge ki bookmark aage badha do, "ab tu na padh"; khabar to use padhwani hi hai, Kafka ka matlab wahi hai. To retention se pehle us khabar ko kahin aur daal do, wo wahan se padh legi apne hisaab se, baaki service pe asar nahi; ya retention 7 din se badha do.
+**Maan lo alert ke baad bhi peeche hi rahe:** Arpan: Fraud service 7 din peeche chal rahi, kal 8, parson 9. Hum aisa thodi karenge ki bookmark aage badha do, "ab tu na padh"; khabar to use padhwani hi hai, Kafka ka matlab wahi hai. To retention se pehle us khabar ko kahin aur daal do, wo wahan se padh legi apne hisaab se, baaki service pe asar nahi; ya retention 7 din se badha do.
 Technical me: "bookmark aage mat khiskao" = offset skip nahi (data loss), "kahin aur daal do" = archive / alag topic (S3 sink), "retention badha do" = retention.ms.
 
 &nbsp;

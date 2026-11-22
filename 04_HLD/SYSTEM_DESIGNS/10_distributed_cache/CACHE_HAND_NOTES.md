@@ -99,14 +99,6 @@ Technical me: "10,000 ek saath DB pe" = cache stampede, "ek chhotu bhejo, baaki 
 Arpan: ek ki jagah do chhotu bhejo, ek gira to doosra le aayega. Hot key ko zyada der tak rakho. Ya key ki 3 copy rakho aur sabka expire ka time alag, to sab ek saath kabhi expire nahi honge. "Ek sahi jawab nahi, company kya chahti hai us pe."
 Technical me: do chhotu = redundant fetch, hot key lambi umar = longer TTL, alag-alag expire = TTL jitter (staggered expiry).
 
-**Maan lo ek bot har second 10,000 aise user id maang raha jo hain hi nahi (50 crore, 70 crore, 99 crore...). Cache me kuch nahi, DB me bhi kuch nahi, cache me rakhne ko kuch nahi, to har baar seedha DB.**
-Arpan: Main khud ko scene me rakh ke dekhta hoon. Mere paas 1 se 10 tak gintee hai. Ek ladka aaya: "11 hai?" Main andar jaake dekhta hoon, nahi hai. Phir aaya: "33 hai?" Phir andar gaya, nahi hai. 2-3 baar aisa hua, har baar andar jaana pada, main pareshaan ho gaya. Aise to wo number badhata jaayega aur main har baar andar bhaagta rahunga.
-
-To main parchi pe likh lunga "mere paas 1 se 10 tak hai", isse bada koi maange to wahin mana: "11 nahi hai, nikal", andar jaane ki zaroorat hi nahi. Fayda: sabka naam yaad rakhne ki zaroorat nahi, bas ek range. DB SQL hai, id 1, 2, 3 kram se banti, to DB me 1 se 10 crore user hain to beech wale milenge hi. 50 crore maanga to parchi dekh ke wahin mana, DB tak gaya hi nahi.
-
-Range ke andar wala, jaise 500, nahi mila to null de do; null ka kya karna wo uska engineer if-else lagaye. Aur koi 500 baar-baar maange (range ke andar, par hai nahi), to main parchi pe likh lunga "500 = null"; ab koi bhi 500 maange, DB jaaunga hi nahi.
-Technical me: "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parchi pe range, bahar wala wahin wapas" = request aate hi id range check (input validation), cache aur DB se pehle; galat id na cache tak pahunchti na DB tak. (Yahan parchi = range ki parchi, cache wali key nahi.) Range ke andar par nahi mila = null ko bhi cache me rakho (negative caching, thodi der ki umar), taaki baar-baar wahi nakli id DB tak na pahunche.
-
 **Maan lo wo ek chhotu DB pe jaake atak gaya, DB zinda hai par bojh se bahut dheema, 2 minute ho gaye. Baaki 9,999 kab tak rukenge?**
 Arpan: Yahan dikkat chhotu ki nahi, DB ki hai, to ilaaj bhi DB ka. 10-15 chhotu aur bhejne ka fayda nahi, wo bhi dheeme DB pe atkenge. Padhne wale zyada hain to DB ki 2-3 copy bana do: ek primary jo likhta hai, baaki padhne ke liye. Chhotu ne dekha ye copy dheemi hai, to use chhod ke doosri pe jaaye, wahan se jaldi jawab mila, cache me rakha, aur 9,999 sab free, cache se utha ke le gaye. Copy sync karna AWS (RDS) ka kaam hai, hamara nahi.
 Technical me: "DB ki copy, padhne ke liye" = read replica, "dheemi copy chhod ke doosri pe" = timeout + retry on another replica, "sync AWS ka kaam" = managed replication (RDS).
@@ -116,6 +108,14 @@ Technical me: "thodi der purani jaankari" = serve stale (stale-while-revalidate)
 
 **Maan lo chhotu parchi bhar laaya, ab baaki bheed ka kya:** Arpan: Ek thread andar bhejo, ek request jaaye, laaye, return kare, hum use cache kar denge; phir dobara normal traffic bhejenge, par thoda slow, ekdum se nahi, warna wo dobara gir bhi sakta hai.
 Technical me: refill ke baad traffic dheere-dheere wapas (ramp-up / warm-up), ek saath nahi.
+
+**Maan lo ek bot har second 10,000 aise user id maang raha jo hain hi nahi (50 crore, 70 crore, 99 crore...). Cache me kuch nahi, DB me bhi kuch nahi, cache me rakhne ko kuch nahi, to har baar seedha DB.**
+Arpan: Main khud ko scene me rakh ke dekhta hoon. Mere paas 1 se 10 tak gintee hai. Ek ladka aaya: "11 hai?" Main andar jaake dekhta hoon, nahi hai. Phir aaya: "33 hai?" Phir andar gaya, nahi hai. 2-3 baar aisa hua, har baar andar jaana pada, main pareshaan ho gaya. Aise to wo number badhata jaayega aur main har baar andar bhaagta rahunga.
+
+To main parchi pe likh lunga "mere paas 1 se 10 tak hai", isse bada koi maange to wahin mana: "11 nahi hai, nikal", andar jaane ki zaroorat hi nahi. Fayda: sabka naam yaad rakhne ki zaroorat nahi, bas ek range. DB SQL hai, id 1, 2, 3 kram se banti, to DB me 1 se 10 crore user hain to beech wale milenge hi. 50 crore maanga to parchi dekh ke wahin mana, DB tak gaya hi nahi.
+
+Range ke andar wala, jaise 500, nahi mila to null de do; null ka kya karna wo uska engineer if-else lagaye. Aur koi 500 baar-baar maange (range ke andar, par hai nahi), to main parchi pe likh lunga "500 = null"; ab koi bhi 500 maange, DB jaaunga hi nahi.
+Technical me: "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parchi pe range, bahar wala wahin wapas" = request aate hi id range check (input validation), cache aur DB se pehle; galat id na cache tak pahunchti na DB tak. (Yahan parchi = range ki parchi, cache wali key nahi.) Range ke andar par nahi mila = null ko bhi cache me rakho (negative caching, thodi der ki umar), taaki baar-baar wahi nakli id DB tak na pahunche.
 
 **7. Priya ki parchi cache me aa gayi, par ek second me 1 crore log. Ring pe uski key sirf machine 4 pe. Baaki 9 aaram se, akeli machine 4 pe poori bheed, dheemi hote-hote girne lagi.**
 Arpan: Baaki machine pe baant de. Machine 4 ka replica bana de, teen jagah ho gayi, to bat gaya. Ya ring me aur jagah bitha de: machine 8 tu bhi dekh le, machine 9 tu bhi dekh le. Jaise bheed zyada ho gayi to ek aur gaadi extra kar lo. Ek gaadi me sab nahi aa sakte, to ek-do chhoti gaadi kar lo.

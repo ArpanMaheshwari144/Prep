@@ -101,6 +101,9 @@ Technical me: range ke bache number kho jaate (gap), koi dikkat nahi; counter nu
 Arpan: Shard kar do, chhote-chhote tukde bana do. 90 TB kab tak sambhaal loge, wo bharta jaayega. 10 TB ke 9 tukde kar do, aur sab tukde alag-alag rakh do: ye yahan, ye yahan. Aur use hash se baant do, ki ab kabhi aayega to wo is tukde pe chala jaayega, phir same aayega to phir usi tukde pe.
 Technical me: "chhote tukde, alag almari" = shard, "hash se baant do, same aaye to usi tukde pe" = code ke hash se machine tay.
 
+**DB kaunsa:** Arpan: Cassandra, kyunki likhai bahut hai; link pelam pel ban rahe, aur yahan poori consistency chahiye bhi nahi, nature of data hi aisa hai: key-value pair (token -> lamba link). MongoDB, DynamoDB, Cassandra jaisa; Cassandra 90 TB ke liye bhi aaram se scale ho jaayega, saalon tak dikkat nahi. Aur Cassandra apne andar copy (replica) aur node wali consistency khud sambhalta, hamein zyada lena-dena nahi.
+Technical me: key-value + bahut likhai + saalon ka data = Cassandra (wide-column, apne aap replica + scale). Cassandra kyun: data key-value, likhai bahut, aur data me bank jaisi consistency (paisa nikaalna, transaction) chahiye hi nahi.
+
 **Maan lo almari phir kam padi, 10vi lagani hai:** Cassandra khud sambhalta: token ke hash se tukda wahi tay karta, nayi machine lagao to apne aap thoda data baant deta. Uska andar ka kaam, hamara faisla nahi.
 Technical me: Cassandra andar token ring (consistent hashing) se baantta, official doc: https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
 Arpan (jab 9 almari bhar gayi, 10vi aayi): Hum mod karte the na, to mod se ab har cheez badal jaayegi. To aisa karo ki in sabko gol chakkar me bitha do. Token ka hash aaya, maan lo 5vi aur 6vi ke beech gira, to jo sabse paas wali almari hai wahan chala jaayega.
@@ -113,9 +116,6 @@ Technical me: "region ke hisaab se kaato" = sharding by region (geo-partition), 
 **Maan lo Ravi ne Delhi me link banaya, Delhi ke register me gaya. Mumbai wala dost kholta hai; counter ke paas bas token aB3x9. Use kaise pata Delhi ke register me jaana hai?**
 Arpan: Ek code bana lo: Delhi ka 01, Punjab ka 03, UP ka koi aur; state 25-30 hain to 30 number kaafi. Ye code link me sabko nahi dikhega, server chupchaap aage ya peeche jod dega. Ek bada bhai beech me baitha hai, uske paas list hai: 01 wali, 02 wali. Use bol diya: tere paas link aayega, uske shuru ke 2 digit uthaana, list se milana kis state ka hai, aur request wahin bhej dena. Mumbai se aaya, shuru me 01 likha, list me 01 = Delhi, to Delhi bhejo. Kahani khatam.
 Technical me: "token me state ka code" = shard key ID ke andar (shard id prefix), "bada bhai list dekh ke bheje" = router / lookup (shard map).
-
-**DB kaunsa:** Arpan: Cassandra, kyunki likhai bahut hai; link pelam pel ban rahe, aur yahan poori consistency chahiye bhi nahi, nature of data hi aisa hai: key-value pair (token -> lamba link). MongoDB, DynamoDB, Cassandra jaisa; Cassandra 90 TB ke liye bhi aaram se scale ho jaayega, saalon tak dikkat nahi. Aur Cassandra apne andar copy (replica) aur node wali consistency khud sambhalta, hamein zyada lena-dena nahi.
-Technical me: key-value + bahut likhai + saalon ka data = Cassandra (wide-column, apne aap replica + scale). Cassandra kyun: data key-value, likhai bahut, aur data me bank jaisi consistency (paisa nikaalna, transaction) chahiye hi nahi.
 
 **9. Almari number 3 me aag lagi, uske saare token jal gaye.**
 Arpan: Ek almari mat rakho, unhi ki copy bana do. 3 number ki almari gir gayi to uski ek aur copy hai. Ab isme dikkat ye aa sakti hai ki copy thodi si peeche ho sakti hai, to wahi acknowledge wala kar lo: jab tak acknowledge nahi hota wo wahin rahega, "haan bhai maine likh liya, tu acknowledge bhej". Same dikkat ka same solution ho gaya.
@@ -153,6 +153,9 @@ Technical me: "server ke paas" = local cache, "us link ka alag dabba" = hot key 
 Arpan: Token radd kar do, ki ab wo galat site pe nahi jaayega. Doosri cheez, aisi kisi cheez ko hum pehle se hi dekh lenge ki wo theek bhi hai: user ko dene se pehle khud check kar lo ki jo wo bana raha hai wo theek bana raha hai ya nahi. Galat bana raha hai to mana kar do banane se, aur us token ko radd kar do.
 Technical me: "token radd" = code band, "dene se pehle khud check" = kaali list (Google Safe Browsing).
 
+**Isi dikkat ki doosri kahani:** Arpan: Link banate hue chupke se khol ke dekh lo ki theek hai ya nahi. Koi mere paas kitaab rakhne aaya, cover chadha rakha; main chupke se dekh lunga kitaab sach me theek hai ya nahi, tab library me rakhunga, warna kal log aake kahenge "kaisi kitaab rakh rakhi, police case kar raha". Kitaab gandi nikli to "nikal beta, chal nikal". Site ka koi score-vagairah peeche hota hoga, wo check kar sakte. Theek hai to user ko do, nahi to mat do.
+Technical me: "banate waqt chupke se dekho" = create time pe URL safety check (reputation / kaali list), "gandi to mat do" = reject.
+
 **Maan lo token radd kiya, par log counter pe aa hi nahi rahe. Unhe kaise pata chale? Shuru me phone me likhne dena tha ya nahi?**
 Arpan: Unke phone me wo cheez update kar do na. Wo cookies aur cache se aa rahe honge, to unka cache radd kar do, hata do, to agli request seedha yahan aayegi. Phir (jab poocha ki phone uske haath me hai, tu kaise mitayega): To phir phone pe likho mat na bhai. Phone pe likhega nahi to wo hamare counter pe dobara aayega, dobara hum use theek token de denge. Agar aisi phone wali dikkat hai to uske phone me likhna hi mat do, saaf baat hai.
 Baad me Arpan: aam taur pe phone ke cache ko TTL laga ke invalidate kar sakte hain, lekin hum technical nahi, aam dikkat ka solution bol rahe the, isliye thodi der me samjha.
@@ -161,9 +164,6 @@ Technical me: "phone me likhna hi mat do, har baar counter pe aaye" = 302 + `Cac
 
 **Maan lo dashboard banana hai, har click ginna hai, par user click karke khada na rahe:** Arpan: User ko link do, use free karo, wo chala jaayega. Peeche Kafka, worker, queue rakh do, ye sab peeche apna dashboard banate rahenge. Kuch fail ho jaaye to dead letter queue hai hi, wahan daal do, baad me investigate karke theek kar sakte hain.
 Technical me: "302 se har click hamare paas" = click tracking / analytics, "peeche queue, worker" = async click events (Kafka -> consumer -> dashboard), redirect dheema nahi hota, "fail to alag dabba" = DLQ.
-
-**Isi dikkat ki doosri kahani:** Arpan: Link banate hue chupke se khol ke dekh lo ki theek hai ya nahi. Koi mere paas kitaab rakhne aaya, cover chadha rakha; main chupke se dekh lunga kitaab sach me theek hai ya nahi, tab library me rakhunga, warna kal log aake kahenge "kaisi kitaab rakh rakhi, police case kar raha". Kitaab gandi nikli to "nikal beta, chal nikal". Site ka koi score-vagairah peeche hota hoga, wo check kar sakte. Theek hai to user ko do, nahi to mat do.
-Technical me: "banate waqt chupke se dekho" = create time pe URL safety check (reputation / kaali list), "gandi to mat do" = reject.
 
 **13. Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka number faltu khatam, register bhar raha, asli log atke.**
 Arpan: Jaanch padtaal karenge ki script laga di. Ek-do baar to aisa hoga hi, teen baar, chaar baar, phir pattern pata lag jaayega ki ye banda to har baar aa raha hai, har baar ye drama karke chala jaata hai. To us bande ko rok do, andar ghusne hi mat do, wo kamre me hi nahi aayega, use bahar gate pe hi bhaga do.

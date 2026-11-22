@@ -85,7 +85,7 @@ Technical me: Lua chalte waqt Redis aur kuch nahi karta (single thread), isliye 
 Arpan: Counter bina umar ke pada rahega, kabhi khatam nahi hoga, Ravi ka hisaab hamesha ke liye bigad gaya. To +1 aur umar do alag kaam nahi, ek hi kaam: ya dono likhe jaayein ya kuch nahi. Ladke ko bula ke bolo "+1 aur 60 dono ek saath likhna, beech me gira to kuch mat likhna, sab pehle jaisa". Kuch nahi hua to dobara try kar lo.
 Technical me: "dono ek saath ya kuch nahi" = INCR + EXPIRE ek Lua script me (atomic, ya SET key 1 EX 60 NX + INCR); bina umar ka counter = key kabhi expire nahi, user hamesha block. (HANDS_ON 02 me chala ke dekha.)
 
-**5. Limiter OTP Service ke andar. Script ki 1000 request LB se, login check karke OTP Service tak pahunchti, wahan mana. SMS nahi gaya, par raaste ke saare server bojh utha rahe.**
+**5. Limiter OTP Service ke andar. Script ki 1000 request LB se, beech ke server se hote hue OTP Service tak pahunchti, wahan mana. SMS nahi gaya, par raaste ke saare server bojh utha rahe.**
 Arpan: Mere ghar me ek security guard hai, wo kehta 10,000 log andar nahi aa sakte. Par wo main gate pe nahi, andar kamre me baitha hai. Ghar ke andar to 1000 log ghus gaye, galat ho gaya. Use bahar gate pe bitha de, ghar ke andar koi ghus hi na paaye, gate pe hi hata do.
 Technical me: "guard andar kamre me" = limiter service ke andar, "guard bahar gate pe" = limiter API gateway pe.
 
@@ -118,12 +118,12 @@ Technical me: "had asli user pe bhaari" = false positive (lockout), "passkeys / 
 Arpan: Mere paas 2-3 log hain jo 10,000 logon ka kaam kar rahe, koi na koi girega hi. To log badha do, server badha do. Aur SMS company ko utni bheed mat jaane do, wo apne hisaab se kaam kar rahi. Line lagwa, aaram-aaram se: "jaao beta, ek-ek karke; tu nikal, ab tu nikal." Hamare aur SMS company ke beech ek cheez fit kar denge jo spike rok le. SMS ab ek ja, ek ja, dheela-dheela, aaram se.
 Technical me: "log badha do, server badha do" = apne server scale, "line lagwa, ek-ek karke" = queue (Kafka), "beech me cheez jo spike rok le" = SMS company ki raftaar se worker / consumer, global had.
 
-**Isi dikkat ki doosri kahani:** Arpan: Sale me 1 crore log aa gaye, har koi apni had me tha, phir bhi server gira, matlab hamara server bhar gaya. To apne server ke liye ek global cap rakh denge; uske upar jitni request aayein unhe 503 de denge: hum bhare hue hain, thodi der baad aana. Aur wahan jo kam zaroori kaam hai wo hatega; jo zyada zaroori hai, login, paise wala, wo chalta rahega.
-Technical me: "global cap, upar 503" = global / server-wide limit (503 Service Unavailable), "kam zaroori pehle hatao" = load shedding (priority: login / payment pehle, recommendation / analytics baad).
-
 **Maan lo OTP line me atka, der se nikla, tab tak bekaar.**
 Arpan: Line me har OTP pe uski umar likh do. Line se nikalte waqt dekho, umar khatam to phenk do, bhejo hi mat. Agar OTP ki umar khatam ho gayi to use bhej hi kyun rahe ho, rok do; wo 60 second baad dobara maang lega. Tumne kabhi dekha hai, OTP maangte hain to neeche second chalte hain, 60, 59, 58, ki 60 second me OTP aa jaayega; nahi aaya to "Resend OTP" ka button aata hai. Bahut se bank me aisa hi hota hai. Wahi cheez yahan jodni hai.
 Technical me: umar = message TTL / expiry (line se nikalte waqt jaancho), purana OTP SMS company tak jaata hi nahi.
+
+**Isi dikkat ki doosri kahani:** Arpan: Sale me 1 crore log aa gaye, har koi apni had me tha, phir bhi server gira, matlab hamara server bhar gaya. To apne server ke liye ek global cap rakh denge; uske upar jitni request aayein unhe 503 de denge: hum bhare hue hain, thodi der baad aana. Aur wahan jo kam zaroori kaam hai wo hatega; jo zyada zaroori hai, login, paise wala, wo chalta rahega.
+Technical me: "global cap, upar 503" = global / server-wide limit (503 Service Unavailable), "kam zaroori pehle hatao" = load shedding (priority: login / payment pehle, recommendation / analytics baad).
 
 **10. App 3 region me: Mumbai, US, Europe, har region ka apna Redis. Ravi VPN badal-badal ke teeno se OTP maangta, har Redis sochta "5 hi hue", 15 OTP le gaya.**
 Arpan: VPN se aa raha ho to uska ek particular region decide kar lete hain. Suppose uska region Mumbai, India ke servers. 3 se maara ya 10 se, uska main region India hai to count India ke Redis pe hoga, US aur Europe pe nahi. Wahi se count karo, wahi se dekho, uske hisaab se aage badhenge.
