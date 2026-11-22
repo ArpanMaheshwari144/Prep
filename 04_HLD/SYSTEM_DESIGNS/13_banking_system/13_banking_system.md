@@ -364,9 +364,6 @@ Instagram me "photo update ki, refresh pe purani" = replication lag (nayi photo 
 
 **Maan lo "thodi der" ke baad photocopy pe wapas bhejna hai, kaise pata chale Arpan ka 500 photocopy me aa gaya:** photocopy
 khud bata de "main sync ho gaya, mujh pe bhejo", ya ek chhotu poochhta rahe "tu sync hua?"; haan to Arpan wapas photocopy pe.
-**Doosri kahani (dono me se kaunsa, trade-off):** dono sahi. Photocopy khud bataye "980 tak" = ek kadam kam, par photocopy
-atki / beemar ho to chup, main register samjhega sab theek. Chhotu poochhe = ek kadam zyada (aur chhotu ki bhi backup), par
-jawab na aaye to turant pata "photocopy band". **Asli naam:** replica apni position bhejti vs poll / health check, trade-off.
 
 **Maan lo main register kabhi band nahi hota (Priya, Ravi lagaatar likh rahe), photocopy kabhi "poori sync" nahi:** to har
 likhai ka number rakho. 100 likhai aayi, Arpan ki 100vi me 500. Photocopy 99 tak pahunchi to Arpan ka 500 abhi nahi, main se
@@ -375,6 +372,10 @@ nahi. Jaise main 500 page padh chuka, photocopy wala 450 pe, koi baat nahi, padh
 **Asli naam:** photocopy bataye kahan tak pahunchi, 1000 me 980 = replication lag (replica apni position batati). Arpan ki
 likhai tak pahunchi to replica se, nahi to primary se (andaza nahi, seedha check). Log aur uska number DB apne andar khud
 rakhta, wo design ka hissa nahi.
+
+**Maan lo aur neeche: photocopy khud bataye ya chhotu poochhe, dono me kaunsa; photocopy hi atak gayi to?** dono sahi. Photocopy khud bataye "980 tak" = ek kadam kam, par photocopy
+atki / beemar ho to chup, main register samjhega sab theek. Chhotu poochhe = ek kadam zyada (aur chhotu ki bhi backup), par
+jawab na aaye to turant pata "photocopy band". **Asli naam:** replica apni position bhejti vs poll / health check, trade-off.
 
 ```mermaid
 flowchart TB
