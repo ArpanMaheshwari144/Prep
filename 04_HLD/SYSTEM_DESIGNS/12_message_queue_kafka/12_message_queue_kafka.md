@@ -301,7 +301,7 @@ sampatti likh ke chala jaata hai, aur baad me vasiyat mil jaati hai.
 mil jaaye = relay outbox se utha ke `acks=all` se Kafka ko bhejta, phir `sent = true`. Relay ne dobara bhej di
 to `eventId` pakad leta hai.
 
-**Maan lo outbox dabba hi gira:** uska replica. **Asli naam:** outbox DB me, DB ki replica.
+**Maan lo DB hi gir jaaye (outbox usi DB ki ek table hai):** outbox koi alag dabba nahi, DB gira to DB ki replica, outbox bhi usi me. **Asli naam:** outbox = DB ki table, DB ki replica.
 
 ```mermaid
 flowchart TB
