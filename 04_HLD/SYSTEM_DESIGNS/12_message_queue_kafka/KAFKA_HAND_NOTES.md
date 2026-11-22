@@ -109,7 +109,7 @@ Technical me: Kafka EOS = sirf Kafka ke andar (read-process-write), bahar ka SMS
 Arpan: Yahan pe outbox. Matlab wo pehle kahin likh de ki haan, main ye daal dunga. Kabhi koi mar bhi jaaye, to wo cheez ek jagah mil jaaye. Jaise real life me hota hai: baap marne se pehle apni sampatti likh ke chala jaata hai.
 Technical me: "pehle kahin likh de" = outbox (hamare DB ki table; khabar order ke saath usi DB transaction me, server gire to bhi row bachi), "baap ki vasiyat, baad me mil jaaye" = relay outbox se utha ke Kafka ko bhejta hai.
 
-**Maan lo wo dabba (outbox) hi gir jaaye:** Arpan: Kafka aur bhejne ke beech kuch gira to use dabbe me kahin store kar lo, dikkat khatam; wo dabba hi gir jaaye to uska replica bana do. Yahi kahani hai.
+**Maan lo wo dabba (outbox) hi gir jaaye:** Arpan: Kafka ko kuch bhejne ke beech hum gir gaye, to use box me kahin store kar lo, dikkat hi khatam. Kafka ko kuch bhi ho jaaye, wo box me likha pada hai. Aur wo box hi gir jaaye to uska replica bana do. Yahi hai kahani.
 Technical me: outbox table DB me hi (DB ki apni replica), relay gire to dobara uthata.
 
 **8. Ek fan ka ticket hi galat hai. Wo baar-baar gate pe ghusne ki koshish karta, har baar mana, aur peeche poori line atki.**
