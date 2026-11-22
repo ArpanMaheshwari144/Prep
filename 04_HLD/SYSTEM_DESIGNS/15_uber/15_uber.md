@@ -92,7 +92,7 @@ flowchart TB
     A["Arpan: Book"]:::card
     X["Server: kaunsa driver kahan?<br/>pata hi nahi"]:::bad
     P["Driver ka phone: GPS lat/long,<br/>thodi-thodi der me (~4 sec)"]:::card
-    subgraph BD["BEECH KA DABBA<br/>(Location Service)"]
+    subgraph BD["BEECH KA DABBA"]
         L(["Kaam sirf ek: har driver ki<br/>sabse taaza jagah (Location Service)"]):::pill
     end
     A -.-> X
@@ -130,7 +130,7 @@ khaali ka padhai ke liye alag. Aage purane raaston se "airport ka sabse achha 9v
 ```mermaid
 flowchart TB
     X["Har 4 sec, 5 lakh driver:<br/>1.25 lakh / sec, normal DB ghut gaya"]:::bad
-    P["Chhoti parchi: dheemi ho sakti,<br/>gir sakti, kab tak replica<br/>(Redis)"]:::card
+    P["Chhoti parchi: dheemi ho sakti,<br/>gir sakti, kab tak replica"]:::card
     subgraph BB["BADA BHAI (isi kaam ke liye bana)"]
         C[("Likhai tez, copies khud<br/>(Cassandra)")]:::pill
     end
@@ -205,7 +205,7 @@ Dekhna + book ek saath (lock, select + update ek kadam). Alag-alag tod ke kiya t
 flowchart TB
     A["Arpan: Book"]:::card
     Pr["Priya: Book (usi second)"]:::card
-    subgraph BP["BMS WALI PARCHI<br/>(hold / lock)"]
+    subgraph BP["BMS WALI PARCHI"]
         R[("Raju khaali hai to Arpan ka,<br/>ek kadam me (lock)")]:::pill
     end
     OK["Arpan: Raju mila"]:::good
@@ -240,7 +240,7 @@ laut ke aayi cab turant available, bagal ke khaane ki khaali cab ke liye dayra b
 ```mermaid
 flowchart TB
     U["Concert khatam: 50 hazaar log,<br/>cab 500"]:::bad
-    subgraph BL["BMS JAISA: 500 ANDAR, BAAKI LINE ME<br/>(virtual queue)"]
+    subgraph BL["BMS JAISA: 500 ANDAR, BAAKI LINE ME"]
         Q(["Agli baari (virtual queue)"]):::pill
     end
     S2(["Kiraya badha ke door ki cab bulao<br/>(surge)"]):::pill
@@ -292,10 +292,10 @@ Window 20-25 sec bhi kar sakte, par faisla phir bhi server ki ghadi.
 ```mermaid
 flowchart TB
     R["Raju: accept 14.9 sec pe dabaya"]:::card
-    subgraph GS["GHADI SERVER KI<br/>(server TTL)"]
+    subgraph GS["GHADI SERVER KI"]
         S{"Server pe kab pahuncha?"}:::pill
     end
-    X["16 sec pe: der se, parchi phaad do,<br/>accept radd<br/>(TTL expire)"]:::bad
+    X["16 sec pe: der se, parchi phaad do,<br/>accept radd"]:::bad
     B(["Ya: aas-paas ke saare phone bajao,<br/>jo pehle accept kare (broadcast)"]):::card
     R --> S
     S --> X
@@ -319,12 +319,12 @@ double se bachata.
 
 ```mermaid
 flowchart TB
-    X["Raju Janpath gaya, CP ke dabbe me<br/>naam pada: Arpan, Priya dono ko dikhe<br/>(purani geohash entry)"]:::bad
+    X["Raju Janpath gaya, CP ke dabbe me<br/>naam pada: Arpan, Priya dono ko dikhe"]:::bad
     subgraph TJ["SACH WAHI JO GPS NE ABHI BHEJA"]
         L(["Book pe Raju ki taaza jagah dekho"]):::pill
     end
     N["Gole me nahi: Raju mat do,<br/>Arpan ko CP me koi aur"]:::good
-    T["Dono ek saath: wahi taala<br/>(lock)"]:::card
+    T["Dono ek saath: wahi taala"]:::card
     X --> L
     L --> N
     L -.-> T

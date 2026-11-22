@@ -88,7 +88,7 @@ flowchart TB
     O["Order Service:<br/>Place Order 8 second ghooma"]:::bad
     V[("Vasiyat: order ke saath likh de<br/>main ye khabar daalunga<br/>(order + outbox)")]:::card
     R["Baad me koi utha ke daal dega<br/>(relay)"]:::card
-    subgraph BD["BEECH ME EK DABBA<br/>(Kafka)"]
+    subgraph BD["BEECH ME EK DABBA"]
         K(["Aao bhai, sab mere paas,<br/>aaram-aaram se bhejta rahunga<br/>(Kafka)"]):::pill
     end
     C["SMS / email / push company"]:::good
@@ -119,13 +119,13 @@ sale me push ke 100, SMS ke 20).
 flowchart TB
     X["Ek hi line: SMS ke peeche<br/>bill aadhe ghante baad"]:::bad
     subgraph AL["SABKI LINE ALAG (ladies, gents, bachche)"]
-        S1[("SMS ki line<br/>(SMS topic)")]:::pill
-        E1[("Email ki line<br/>(Email topic)")]:::pill
-        P1[("Push ki line<br/>(Push topic)")]:::pill
+        S1[("SMS ki line")]:::pill
+        E1[("Email ki line")]:::pill
+        P1[("Push ki line")]:::pill
     end
     S2["Apni line sambhale<br/>(consumer group)"]:::card
-    E2["Apni line sambhale<br/>(apna consumer group)"]:::card
-    P2["Apni line sambhale<br/>(apna consumer group)"]:::card
+    E2["Apni line sambhale"]:::card
+    P2["Apni line sambhale"]:::card
     X --> AL
     S1 --> S2
     E1 --> E2
@@ -157,11 +157,11 @@ constraint, Redis sirf tez raasta, single point of failure nahi.
 ```mermaid
 flowchart TB
     W["SMS gaya, commit se pehle crash:<br/>wahi khabar dobara aayi"]:::bad
-    subgraph PZ["PARCHI ZINDABAAD<br/>(idempotency record)"]
+    subgraph PZ["PARCHI ZINDABAAD"]
         P{"Parchi dekho:<br/>ye kaam ho gaya?<br/>(idempotency)"}:::pill
     end
     S["Haan: dobara nahi"]:::good
-    B["Nahi: bhejo, parchi pe likho<br/>(idempotency)"]:::good
+    B["Nahi: bhejo, parchi pe likho"]:::good
     W --> P
     P -- "haan" --> S
     P -- "nahi" --> B
@@ -251,7 +251,7 @@ flowchart TB
         H(["Beech-beech me main ko:<br/>tu theek hai?"]):::pill
     end
     B["Backup company<br/>(teen-chaar extra)"]:::good
-    V["OTP: VIP darshan,<br/>alag line<br/>(priority topic)"]:::card
+    V["OTP: VIP darshan,<br/>alag line"]:::card
     D["Backup bhi fail: number galat<br/>(DLQ, investigate)"]:::bad
     F --> N
     N --> B
@@ -335,7 +335,7 @@ flowchart TB
     subgraph LB["EK TIME KE BAAD COMPANY BATAYEGI"]
         H(["Do hi raaste: sent ya fail<br/>(webhook)"]):::pill
     end
-    P[("Apni parchi me likh lo<br/>sent / fail<br/>(status record)")]:::good
+    P[("Apni parchi me likh lo<br/>sent / fail")]:::good
     W --> C
     C --> H
     H --> P

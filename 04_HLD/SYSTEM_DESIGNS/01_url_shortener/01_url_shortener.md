@@ -137,7 +137,7 @@ ko alag Redis. **Maan lo Redis gira:** copy (replica); copy bhi giri to fail ope
 ```mermaid
 flowchart TB
     U["Har second 1 lakh log:<br/>token dikhao, pata do"]:::card
-    C["Counter wala<br/>(app server)"]:::card
+    C["Counter wala"]:::card
     subgraph RG["DO REGISTER"]
         R[("Chhota pehla register<br/>(baar-baar wale token, Redis)")]:::pill
         D[("Mota register<br/>(sab token, DB)")]:::card
@@ -194,11 +194,11 @@ Redis bharna. Isse stampede rukta hai.
 ```mermaid
 flowchart TB
     U["7 baje 1,000 log wahi token<br/>(chhote register se hat gaya)"]:::bad
-    subgraph CW["COUNTER WALA (app server)"]
+    subgraph CW["COUNTER WALA"]
         K(["Chhota ladka: bhaag ke ja,<br/>baaki sab yahin ruko<br/>(single flight)"]):::pill
     end
-    D[("Mota register<br/>(DB)")]:::card
-    R[("Chhota register me rakh de<br/>(Redis)")]:::good
+    D[("Mota register")]:::card
+    R[("Chhota register me rakh de")]:::good
     U --> K
     K -- "sirf ek" --> D
     D --> R
@@ -222,7 +222,7 @@ information do, baad me update = soft / hard TTL (soft nikla to purana turant do
 
 ```mermaid
 flowchart TB
-    L["Ladka (lock wali ek request)<br/>raste me gira, wapas nahi aayega"]:::bad
+    L["Ladka raste me gira,<br/>kabhi wapas nahi aayega"]:::bad
     subgraph TL["LADKE KI TIMELINE"]
         T(["Itni der tak nahi aaya?<br/>(lock TTL)"]):::pill
     end
@@ -300,7 +300,7 @@ flowchart TB
     H(["Hash se baanto:<br/>same token, same tukda"]):::pill
     subgraph SH["10 TB KE 9 TUKDE, ALAG-ALAG ALMARI (shard)"]
         direction LR
-        A1[("Almari 1<br/>(DB machine)")]:::card
+        A1[("Almari 1")]:::card
         A2[("Almari 2")]:::good
         A9[("... Almari 9")]:::card
         A1 ~~~ A2 ~~~ A9
@@ -333,7 +333,7 @@ maine likh liya, tu acknowledge bhej". Jab tak acknowledge nahi aata, tab tak pa
 flowchart TB
     F["Almari 3 me aag lagi"]:::bad
     W["Naya token likho"]:::card
-    subgraph CP["ALMARI KI COPY (replica)"]
+    subgraph CP["ALMARI KI COPY"]
         A[("Copy A: likh liya")]:::good
         B[("Copy B: likh liya")]:::good
         C[("Copy C: thodi peeche")]:::card
@@ -369,7 +369,7 @@ B aur C se, ya A aur C se. Ek copy peeche reh bhi gayi to atleast ek ke paas to 
 ```mermaid
 flowchart TB
     W["Arpan ka naya token"]:::card
-    subgraph CP["TEEN COPY (replica, quorum)"]
+    subgraph CP["TEEN COPY"]
         A[("A: haan")]:::good
         B[("B: haan")]:::good
         C[("C: peeche, nahi mila")]:::bad
@@ -419,10 +419,10 @@ sirf ek ladka jaata, ek hi information to laani hai.
 ```mermaid
 flowchart TB
     U["Cricket ka token viral:<br/>1 crore log ek saath"]:::bad
-    subgraph CW["COUNTER WALA (app server)"]
+    subgraph CW["COUNTER WALA"]
         P(["Apni parchi, kursi pe hi<br/>(local cache)"]):::pill
     end
-    subgraph PC["CHHOTE REGISTER KI PHOTOCOPY (Redis replica, 10, 100)"]
+    subgraph PC["CHHOTE REGISTER KI PHOTOCOPY (10, 100)"]
         R1[("Photocopy 1")]:::good
         R2[("Photocopy 2")]:::good
     end
@@ -473,9 +473,9 @@ ginna hai:** user ko turant link do, ginti peeche Kafka / worker se; fail ho to 
 ```mermaid
 flowchart TB
     T["Dhokhe wali site ka token"]:::bad
-    subgraph CW["COUNTER WALA (app server)"]
+    subgraph CW["COUNTER WALA"]
         K(["Dene se pehle khud check<br/>(kaali list)"]):::pill
-        R(["Token radd kar do<br/>(code band)"]):::pill
+        R(["Token radd kar do"]):::pill
     end
     PH["Phone me likhna hi mat do:<br/>har baar counter pe aaye (302)"]:::good
     T --> K
@@ -521,11 +521,11 @@ jail, dobara nahi aayega. AWS ke gateway pe hi rok do, phir block list me.
 flowchart TB
     S["Machine: har second hazaar chit"]:::bad
     L["Asli log (office ka WiFi bhi)"]:::card
-    subgraph GT["GATE (API gateway)"]
+    subgraph GT["GATE"]
         W(["Pattern pata laga:<br/>gate pe hi bhaga do (WAF)"]):::pill
         H(["Har aadmi pe had: ek baar me 5<br/>(per user, group pe nahi)"]):::pill
     end
-    C["Counter wala<br/>(app server)"]:::good
+    C["Counter wala"]:::good
     S -. "roka" .-> W
     L --> W
     W --> H

@@ -67,12 +67,12 @@ cache hit, nahi mila to DB se laake rakho = cache-aside. DB = source of truth.
 flowchart TB
     U["Hazaaron log: Ravi ka profile<br/>(DB 50 ms, saans phooli)"]:::bad
     S["Server"]:::card
-    subgraph DP["DB SE PEHLE EK DABBA<br/>(cache, Redis)"]
+    subgraph DP["DB SE PEHLE EK DABBA"]
         C[("Padhi bahut, update kam:<br/>yahin se de de (Redis)")]:::pill
     end
     D[("DB")]:::card
     U --> S
-    S -- "pehle dabba<br/>(cache)" --> C
+    S -- "pehle dabba" --> C
     S -. "baar-baar nahi" .-> D
     linkStyle default stroke:#8fa3c7,stroke-width:2px
     classDef card fill:#1e2638,stroke:#3a4a6b,color:#e8ecf5
@@ -124,11 +124,11 @@ cache client library karti, beech me koi alag dabba nahi.
 ```mermaid
 flowchart TB
     X["10 crore users, 1 TB:<br/>ek dabba 64 GB"]:::bad
-    H(["Hash: same key, same dabba<br/>(sharding)"]):::pill
+    H(["Hash: same key, same dabba"]):::pill
     subgraph TD["TOD DO (kam pade to aur tod do)"]
-        M1[("Dabba 1: 2 crore<br/>(cache machine)")]:::card
-        M2[("Dabba 2: 2 crore<br/>(cache machine)")]:::card
-        MN[("... aur dabbe<br/>(cache machines)")]:::card
+        M1[("Dabba 1: 2 crore")]:::card
+        M2[("Dabba 2: 2 crore")]:::card
+        MN[("... aur dabbe")]:::card
     end
     X --> H
     H --> M1
@@ -224,12 +224,12 @@ deta hai.
 flowchart TB
     R["Ravi: naam Ravi Kumar kar do"]:::card
     subgraph KR["KRAM"]
-        C[("1. Parchi se Ravi kaat do<br/>(cache DELETE)")]:::pill
+        C[("1. Parchi se Ravi kaat do")]:::pill
         D[("2. Diary (DB) me Ravi Kumar")]:::pill
     end
     G["Koi get kare: parchi khaali,<br/>DB se Ravi Kumar, parchi pe"]:::good
     J(["Ek banda har baar check:<br/>yahan Ravi, wahan Ravi Kumar?<br/>DB sach (sync job)"]):::card
-    F[("Parchi pe DB wala naam:<br/>Ravi Kumar<br/>(cache refill)")]:::good
+    F[("Parchi pe DB wala naam:<br/>Ravi Kumar")]:::good
     R --> C
     C --> D
     D --> G
@@ -290,12 +290,12 @@ Range ke andar wala, jaise 500, nahi mila to null de do; null ka kya karna wo us
 ```mermaid
 flowchart TB
     U["Priya viral: 10,000 log,<br/>sab miss"]:::bad
-    subgraph CH["CHUPCHAAP EK CHHOTU<br/>(single flight)"]
+    subgraph CH["CHUPCHAAP EK CHHOTU"]
         L(["Chhotu jaldi DB jaa,<br/>Priya ki parchi le aa<br/>(single flight)"]):::pill
     end
-    B["Chhotu gira? kuch second dekho,<br/>bheed me se ek aadmi bhejo<br/>(lock TTL)"]:::card
+    B["Chhotu gira? kuch second dekho,<br/>bheed me se ek aadmi bhejo"]:::card
     D[("Mota register (DB)")]:::card
-    C[("Parchi pe likh, sabko<br/>yahin se bhaga do<br/>(cache bharo)")]:::good
+    C[("Parchi pe likh, sabko<br/>yahin se bhaga do")]:::good
     U --> L
     L --> D
     D --> C

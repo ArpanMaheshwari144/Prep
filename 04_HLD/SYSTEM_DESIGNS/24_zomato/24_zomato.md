@@ -72,7 +72,7 @@ update kar de.
 flowchart TB
     X["Har baar menu DB se,<br/>Diwali pe 50 hazaar = bekaar bojh"]:::bad
     A["Arpan: menu dekho"]:::card
-    subgraph G["DB SE AAGE EK DABBA<br/>(cache, Redis)"]
+    subgraph G["DB SE AAGE EK DABBA"]
         R[("Menu Redis me")]:::pill
     end
     P[("Postgres: menu badla")]:::card
@@ -235,7 +235,7 @@ ki apni line; andar walon ko "order placed" dikhao aur Kafka me daalo, worker pe
 ```mermaid
 flowchart TB
     X["Diwali: 2 min me 500 order,<br/>seedha Postgres = app hang"]:::bad
-    subgraph G["CAPACITY GATE + LINE<br/>(capacity gate + Kafka)"]
+    subgraph G["CAPACITY GATE + LINE"]
         S(["Subah stock: Burger Singh 350"]):::pill
         K(["350 andar: order placed,<br/>Kafka line (key = restaurant)"]):::pill
     end
@@ -265,7 +265,7 @@ bhi ek ko hi milega, kismat se.
 ```mermaid
 flowchart TB
     X["Ginti 349: do server ne ek pal me padhi,<br/>dono andar = 351"]:::bad
-    subgraph G["EK COUNTER, ATOMIC<br/>(atomic decrement)"]
+    subgraph G["EK COUNTER, ATOMIC"]
         C[("UPDATE bacha = bacha - 1<br/>WHERE bacha >= 1")]:::pill
     end
     A["Pehla pahuncha: burger mila"]:::good
