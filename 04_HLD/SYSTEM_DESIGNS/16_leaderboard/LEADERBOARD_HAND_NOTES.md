@@ -74,7 +74,9 @@ Arpan: LeetCode jaisa: time se sort kar do. Jisne ek second, ya 0.01 milli secon
 Technical me: dabba har khiladi ke saath ek hi number leta, to "score phir time" ek number me pack: aage score, point ke baad time (jo pehle aaya uska hissa bada). Ravi 9800.95, Priya 9800.90.
 Jaankari (reel se, 17-Nov): time na jodo to score barabar hone pe Redis khud naam ke alphabet se kram lagata (Aditi pehle, Zoya baad me), pehle pahunchne wala nahi; isliye time jodte hain.
 Arpan (22-Nov round): Pehle score, score same to time: Ravi ne pehle khatam kiya to Ravi upar, Priya ek second bhi late to neeche. LeetCode andar kaunsa hisaab lagata public nahi; number jodo, ghatao ya baad me ulta kar do, wo andar ki baat.
-(22-Nov round me Claude ne Arpan ki misaal ke number (9805 / 9805.15) pakad ke teen baar kheencha = nitpick. Jawab pehle se sahi tha: score phir time, pehle khatam wala upar; number kaise bane wo andar ka hisaab, misaal ka number sirf misaal.)
+**Maan lo (22-Nov round, Claude ka nitpick) pooche: time ko number bana ke score me jodo, to baad wale ka number bada; Ravi 10:00 = 9800 + 5 = 9805, Priya 10:05 = 9800 + 5.15 = 9805.15. Redis bade number ko upar rakhta, to upar Priya aa jaayegi?**
+Arpan: Ravi upar hi aayega, Priya kaise aa jaayegi. Wo number sirf misaal tha. Number jodo, ghatao, ya Redis ka sorted ulta (reverse) kar do, dikkat kya hai; LeetCode andar kaunsa hisaab lagata wo public nahi. Baat itni: pehle score, barabar to time, pehle khatam wala upar.
+Technical me: jo pehle aaya uska hissa bada rakho (ya time ko ulta karke jodo), tabhi bade-se-chhote padhne pe pehle wala upar = composite score; misaal ka number sirf misaal.
 
 **3. Har second lakhon match khatam, saare score update ek hi Redis pe.**
 Arpan: Ek Redis kyun? Alag-alag kar do, region ke hisaab se baant do: India ke, Europe ke, aise 10 line. Top 10 ke liye har line ka top 10 le lo, aur ek chhotu ko de do: "ye sab mila ke sort kar aur badi screen pe dikha de". 10 line ke top 10 = 100 log, unme se top 10.

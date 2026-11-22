@@ -119,8 +119,10 @@ Priya  9800, 10:05 pe  ->  9800.90      line: Ravi -> Priya
 **Asli naam:** composite score (score + earlier-time fraction). Score pehle tolta, fraction sirf barabari pe.
 Time na jodo to barabar score pe Redis khud member naam ke alphabet (lexicographic) se kram lagata, pehle pahuncha wala nahi; isliye time jodte hain.
 **22-Nov round (Arpan):** pehle score, barabar to time, pehle khatam wala upar; LeetCode andar kaunsa hisaab lagata public nahi,
-number jodo, ghatao ya ulta karo, andar ki baat. (Claude ne misaal ke number 9805 / 9805.15 pe kheencha = nitpick; jawab sahi
-tha, misaal ka number sirf misaal.)
+number jodo, ghatao ya ulta karo, andar ki baat.
+**Maan lo (22-Nov, Claude ka nitpick) pooche:** time ka number jodo to baad wale ka bada: Ravi 10:00 = 9805, Priya 10:05 = 9805.15,
+Redis bade ko upar rakhta to Priya upar? Arpan: Ravi upar hi aayega; number sirf misaal tha, jodo, ghatao ya sorted ulta (reverse)
+kar do. **Asli naam:** pehle aaye ka hissa bada (ya time ulta karke jodo) = composite score; misaal ka number sirf misaal.
 
 ```mermaid
 flowchart TB
