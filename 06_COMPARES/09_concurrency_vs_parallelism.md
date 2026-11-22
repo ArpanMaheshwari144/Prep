@@ -1,237 +1,44 @@
-# Concurrency vs Parallelism
+# Concurrency vs Parallelism — ek chef kai dish, ya kai chef
 
 ---
 
-## 1-Line Analogy
+## Koi poochhe to aise bolo
 
-```
-Concurrency = 1 chef cooking 3 dishes (alternating)
-Parallelism = 3 chefs cooking 3 dishes (truly same time)
-```
+**Concurrency** = kai kaam ek saath SAMBHALNA, chahe CPU ek hi ho: CPU baari-baari thoda-thoda har kaam karta; ek kaam DB ke
+jawab ka intezaar kar raha to tab tak doosra chal jaata. **Parallelism** = kai kaam sach me ek hi pal me CHALNA, alag-alag core
+pe. Concurrency = dhaancha (kaam kaise baanta), parallelism = hardware (kitne core sach me saath chal rahe). Tera Spring app dono
+karta hai: 200 thread = concurrency, aur machine me 8 core hon to unme se 8 ek pal me sach me chal rahe.
 
 ---
 
-## Rob Pike (Go creator) — KEY QUOTE
+## Kahani: ek chef vs teen chef
 
 ```
-"Concurrency is dealing with lots of things at once.
- Parallelism is doing lots of things at once."
-
-   = Concurrency = STRUCTURE (handle multiple tasks)
-   = Parallelism = EXECUTION (actually run together)
+Concurrency = ek chef, teen dish: daal ubaal pe rakhi, tab tak sabzi kaati, phir roti; teeno chalti dikhti, haath ek hi
+Parallelism = teen chef, teen dish: sach me teeno ek pal me ban rahi
 ```
 
 ---
 
-## Side by Side
+## Tere project se
 
-```
-┌──────────────────┬──────────────────┬──────────────────┐
-│  Feature         │  Concurrency      │  Parallelism      │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Definition       │ Multiple tasks    │ Multiple tasks    │
-│                  │ MAKING PROGRESS    │ RUNNING TOGETHER  │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Time             │ Interleaved        │ Simultaneous      │
-│                  │ (rapid switching)  │ (truly same time) │
-├──────────────────┼──────────────────┼──────────────────┤
-│ CPU cores        │ 1 core enough      │ Need MULTIPLE      │
-│                  │                     │ cores              │
-├──────────────────┼──────────────────┼──────────────────┤
-│ About            │ STRUCTURE          │ EXECUTION          │
-│                  │ (design pattern)   │ (hardware ability)│
-├──────────────────┼──────────────────┼──────────────────┤
-│ Synonyms         │ Multitasking       │ Multi-core         │
-│                  │ Time-slicing       │ True parallel      │
-├──────────────────┼──────────────────┼──────────────────┤
-│ Example          │ Node.js single    │ Java Streams        │
-│                  │ thread async       │ .parallelStream()  │
-└──────────────────┴──────────────────┴──────────────────┘
-```
+- **Tomcat ke 200 thread:** zyadatar request DB / doosri service ka intezaar karti; intezaar me CPU khaali, isliye 8 core pe
+  bhi 200 request sambhal lete. Ye concurrency.
+- **parallelStream / bhaari ginti** (1 crore number ka jod): intezaar nahi, sirf CPU ka kaam, 8 core pe baant ke tez.
+  Ye parallelism.
+- **Kafka partitions:** 6 partition, 6 consumer sach me ek saath padhte. Ye parallelism.
 
 ---
 
-## CONCURRENCY VISUAL
+## Dikkat se hal
 
-```
-1 CHEF (1 CPU core):
-
-Task A: ▓▓░░▓▓░░▓▓░░░░▓▓
-Task B: ░░▓▓░░▓▓░░░░▓▓░░
-Task C: ░░░░░░░░▓▓▓▓░░░░
-
-Time: ──────────────────►
-
-   Chef switches between dishes:
-   A (chop) → B (stir) → A (chop) → C (boil) → B (stir)
-
-   Sirf 1 task ek time pe actually running
-   But MULTIPLE tasks PROGRESS kar rahe
-
-   = Concurrent, not parallel
-   = Time-slicing
-```
+CPU wala bhaari kaam (image resize) chalana tha, to 500 thread bana diye ki tez hoga. Core 8 hi the: 500 thread aapas me
+baari-baari karte rahe aur ulta dheema. Hal: CPU wale kaam me thread lagbhag core jitne; intezaar wale kaam (DB, network) me
+thread zyada rakh sakte.
 
 ---
 
-## PARALLELISM VISUAL
+## Trap
 
-```
-3 CHEFS (3 CPU cores):
-
-Chef 1 (Task A): ▓▓▓▓▓▓▓▓▓▓
-Chef 2 (Task B): ▓▓▓▓▓▓▓▓▓▓
-Chef 3 (Task C): ▓▓▓▓▓▓▓▓▓▓
-
-Time: ──────────────────►
-
-   All 3 dishes cooking SIMULTANEOUSLY
-   = True parallel execution
-   = Requires multiple cores
-```
-
----
-
-## SUBTLE — Concurrency can EXIST without Parallelism
-
-```
-SINGLE CORE CPU:
-
-   Concurrent? YES (rapid switching simulates parallel)
-   Parallel?   NO  (only 1 thing actually runs at a time)
-
-   Examples:
-   • Node.js (single-threaded event loop)
-   • Original Java threads on single-core CPU
-   • Goroutines on 1-core machine
-
-MULTI-CORE CPU:
-
-   Concurrent? YES (multiple tasks managed)
-   Parallel?   YES (actually run together)
-
-   Examples:
-   • Java parallel streams
-   • Goroutines on 8-core machine
-   • Modern web servers (Tomcat thread pool on multi-core)
-```
-
----
-
-## KEY INSIGHT
-
-```
-"Parallelism IMPLIES concurrency,
- but concurrency does NOT imply parallelism."
-
-Think of it as:
-   PARALLELISM = subset of CONCURRENCY
-
-   ┌──────────────────────────────┐
-   │  CONCURRENCY                   │
-   │  (handling multiple tasks)     │
-   │                                  │
-   │   ┌────────────────────────┐  │
-   │   │  PARALLELISM            │ │
-   │   │  (running together)     │ │
-   │   │  needs multi-core         │ │
-   │   └────────────────────────┘  │
-   └──────────────────────────────┘
-```
-
----
-
-## JAVA EXAMPLES
-
-```
-CONCURRENT (non-parallel) — single thread:
-   ExecutorService one = Executors.newSingleThreadExecutor();
-   one.submit(() -> task1());
-   one.submit(() -> task2());
-   one.submit(() -> task3());
-
-   = 3 kaam ek saath 'chal rahe' (baari-baari, ek thread)
-   = But on 1 thread = no parallelism
-   (supplyAsync bina executor ke = ForkJoinPool, single thread NAHI)
-
-PARALLEL — multiple threads:
-   List<Integer> data = ...;
-   data.parallelStream()
-       .map(this::heavyComputation)
-       .collect(toList());
-
-   = JVM splits work across multiple cores
-   = TRUE parallel execution
-
-CONCURRENT + PARALLEL:
-   ExecutorService pool = Executors.newFixedThreadPool(4);
-   pool.submit(task1);
-   pool.submit(task2);
-   pool.submit(task3);
-
-   = Concurrent (handling multiple tasks)
-   = Parallel (runs on multiple cores)
-```
-
----
-
-## WHEN TO USE WHAT
-
-```
-CONCURRENCY USEFUL FOR:
-   • I/O-bound work (waiting for DB, network)
-   • Many slow tasks (don't need CPU)
-   • Single-threaded event loops (Node.js model)
-   • Async user interactions
-
-PARALLELISM USEFUL FOR:
-   • CPU-bound work (heavy computation)
-   • Independent tasks (no shared state)
-   • Data processing (map/reduce)
-   • Image/video encoding
-   • Scientific computing
-```
-
----
-
-## INTERVIEW LINE
-
-```
-"Concurrency is the structure of handling multiple tasks
- — interleaving their progress, can happen on a single core
- via time-slicing.
-
- Parallelism is actually executing multiple tasks at the
- same instant — requires multiple cores.
-
- Rob Pike: concurrency is dealing with many things at once,
- parallelism is doing many things at once.
-
- Node.js single-threaded model is concurrent but not
- parallel. Java parallel streams or Goroutines on multi-core
- are both concurrent and parallel.
-
- Choose concurrency for I/O-bound work, parallelism for
- CPU-bound computation."
-```
-
----
-
-## Memory Hook
-
-```
-Concurrency = 1 chef juggling 3 dishes (structure)
-Parallelism = 3 chefs (execution)
-
-Rob Pike:
-   "Concurrency = dealing with many at once"
-   "Parallelism = doing many at once"
-
-Single core → only concurrency possible
-Multi-core  → parallelism possible
-
-I/O-bound → concurrency wins
-CPU-bound → parallelism wins
-```
-
-[← HLD README](../README.md)
+`parallelStream()` laga diya ki tez hoga, par list chhoti thi, ya andar DB call thi, ya `ArrayList` me add kar rahe the.
+Nateeja: kabhi dheema, kabhi galat ginti (`ArrayList` thread-safe nahi). parallelStream sirf bade, saaf CPU wale kaam me.
