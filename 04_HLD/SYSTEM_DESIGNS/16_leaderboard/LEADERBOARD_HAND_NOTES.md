@@ -64,7 +64,7 @@ API     (Arpan: "API ki aisi koi zaroori baat nahi")
 
 **1. Top 10 aur "tera rank" chahiye. SQL me har baar 1 crore row sort, aur rank ke liye "mere upar kitne" gino to 1 crore dekhne padte.**
 Arpan: Ek aisa dabba jisme khiladi aur score daalte jao, wo apne aap sort karke de deta hai. Top 10 chahiye to 0 se 9 utha lo. Ye priority queue jaisa hi hai, bas wahan parent-child wala rishta hota, yahan poori line sorted hai, nikalo to wo de deta.
-Technical me: "apne aap sort wala dabba" = Redis sorted set (har khiladi + score, kram me; daalna, top 10, rank sab log N).
+Technical me: "apne aap sort wala dabba" = Redis sorted set (har khiladi + score, kram me; daalna, top 10, rank sab log N). (Redis khud chhote se bade ke kram me rakhta; leaderboard me ulta (reverse) padhte, bade se chhote, taaki sabse zyada score upar.)
 Jaankari (reel se): sorted set andar se skip list hai, highway jaisi (neeche sadak har gaon rukti, upar express lane sirf bade shehron pe), isliye 1 crore me bhi ~24 kadam.
 
 **Isi dikkat ki doosri kahani (reel se): kisi ne kaha Redis kyun, SQL me score pe index laga do. Index laga diya, top 10 ab turant, par Arpan ka rank (45,23,118) abhi bhi 3 second leta hai.**

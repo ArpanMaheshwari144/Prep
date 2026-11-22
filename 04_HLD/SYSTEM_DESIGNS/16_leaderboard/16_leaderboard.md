@@ -78,6 +78,7 @@ poori line sorted hai.
 **Asli naam:** apne aap sort wala dabba = Redis sorted set. Score daalna / badalna (`ZADD`; kadam 2 ke baad naya pack kiya number `ZADD` se, `ZINCRBY` nahi, kyunki time wala hissa bhi badalna hai), top 10 (`ZRANGE 0 9 REV`),
 mera rank (`ZREVRANK`) teeno log N: 1 crore me ~24 kadam. (Andar se sorted set = skip list + hash table: highway ki express lane jaisa, upar ki lane se bhaago, sahi jagah neeche utro.) Commands interview me bolni nahi padti, bas "sorted set,
 score ke kram me".
+(Redis khud chhote se bade ke kram me rakhta; leaderboard me ulta (reverse) padhte, bade se chhote, taaki sabse zyada score upar.)
 
 **Doosri kahani (index laga do?):** score pe SQL index lagaya to top 10 turant, par rank ke liye har block me jaake
 "mere upar kitne" gin-na padta, 1 crore me time badhta. Aur score har second badal raha, to har likhai pe index bhi
