@@ -19,7 +19,7 @@ SAFAR (March: khaali folder)  ->  aaj (22-Nov)
         API ab tak: BMS, Uber, leaderboard (baaki design me us din ke round ke ant me)
         Kafka = stadium + tube: producer daale -> Kafka / queue line -> worker / consumer nikaale
   DSA: 18 pattern · 183 problem + 163 REDO = 346 .cpp · pattern sheet folder (19 file, 179 sawaal + MATHS KA KHEL)
-  STAR 11 kahani · PR review framework · DB internals
+  STAR 12 kahani · PR review framework · DB internals
 ```
 
 ---
@@ -37,7 +37,7 @@ SAFAR (March: khaali folder)  ->  aaj (22-Nov)
 | 07 | [**07_PROJECTS**](07_PROJECTS) | 5 Spring Boot projects + SimpleBankSystem (plain Java) | Resume-backing + "kya banaya" ka **live proof** |
 | 08 | [**08_DSA**](08_DSA) | 18 pattern · 183 problem + 163 REDO + sheet (179 sawaal) | **Gate** — pass karna hai (ab revise-only) |
 | 09 | [**09_DATABASE**](09_DATABASE) | Indexing · txn · isolation · deadlock (hands-on) | Backend + HLD ka data-layer depth |
-| 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 11 STAR kahani + JP company + why JP | JP ka pura **behavioral round** |
+| 10 | [**10_BEHAVIORAL**](10_BEHAVIORAL) | 12 STAR kahani + JP company + why JP | JP ka pura **behavioral round** |
 | 11 | [**11_GIT**](11_GIT) | line-endings · PR · merge-vs-rebase · index.lock | PR-review + daily workflow Qs |
 | 12 | [**12_CODE_REVIEW**](12_CODE_REVIEW) | asli JP round ke hisaab se: correctness · security · quality · design | JP Superday **~10 min PR review** |
 | 13 | [**13_TOOLS**](13_TOOLS) | IntelliJ shortcuts + setup (source me ghoomna) | Spring/library ka andar khol ke dekhna, live coding me tez |
@@ -276,9 +276,9 @@ ROZ: us pattern ka sheet block padho → khaali page pe 1 REDO → grill 5 (disg
 ---
 
 ## [10_BEHAVIORAL](10_BEHAVIORAL) — STAR
-**Kya:** JP-fit STAR kahaniyaan (11 STAR + JP company + why JP, sab ek-ek baar bolke). &nbsp; **Kyu:** pura behavioral round; "tell me about a time" — har SUNDAY ek kahani dobara.
+**Kya:** JP-fit STAR kahaniyaan (12 STAR + JP company + why JP, sab ek-ek baar bolke). &nbsp; **Kyu:** pura behavioral round; "tell me about a time" — har SUNDAY ek kahani dobara.
 
-[01 JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [02 why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [03 STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [04 STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [05 STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [06 STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [07 STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md) · [08 STAR: SQLi-WAF](10_BEHAVIORAL/08_STAR_SQLi_WAF.md) · [09 STAR: SMS opt-out](10_BEHAVIORAL/09_STAR_SMS_OptOut.md) · [10 STAR: email dedup](10_BEHAVIORAL/10_STAR_Email_Dedup.md) · [11 STAR: MongoDB sync](10_BEHAVIORAL/11_STAR_MongoDB_Sync.md) · [12 STAR: Fargate subnets](10_BEHAVIORAL/12_STAR_Fargate_Subnets.md) · [13 STAR: $0 pricing](10_BEHAVIORAL/13_STAR_Zero_Pricing.md)
+[01 JP-company](10_BEHAVIORAL/01_JP_COMPANY.md) · [02 why-JP](10_BEHAVIORAL/02_WHY_JP.md) · [03 STAR: HikariCP](10_BEHAVIORAL/03_STAR_HikariCP.md) · [04 STAR: WAF-IP](10_BEHAVIORAL/04_STAR_WAF_IP.md) · [05 STAR: payment](10_BEHAVIORAL/05_STAR_Doximity_Payment.md) · [06 STAR: mentoring](10_BEHAVIORAL/06_STAR_Mentoring.md) · [07 STAR: failure-JDK](10_BEHAVIORAL/07_STAR_Failure_JDK.md) · [08 STAR: SQLi-WAF](10_BEHAVIORAL/08_STAR_SQLi_WAF.md) · [09 STAR: SMS opt-out](10_BEHAVIORAL/09_STAR_SMS_OptOut.md) · [10 STAR: email dedup](10_BEHAVIORAL/10_STAR_Email_Dedup.md) · [11 STAR: MongoDB sync](10_BEHAVIORAL/11_STAR_MongoDB_Sync.md) · [12 STAR: Fargate subnets](10_BEHAVIORAL/12_STAR_Fargate_Subnets.md) · [13 STAR: $0 pricing](10_BEHAVIORAL/13_STAR_Zero_Pricing.md) · [14 STAR: Lambda throttle](10_BEHAVIORAL/14_STAR_Lambda_Throttle.md)
 
 ---
 
