@@ -51,22 +51,22 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 
 8    5 saal me mote register me itne token (90 TB) ki wo ek almari me aata hi nahi.
        = "chhote tukde, alag almari" = shard, "hash se baant do, same aaye to usi tukde pe" = code ke hash se machine tay.
+       = key-value + bahut likhai + saalon ka data = Cassandra (wide-column, apne aap replica + scale). Cassandra kyun: data key-value, likhai bahut, aur data me bank jaisi consistency (paisa nikaalna, transaction) chahiye hi nahi.
 
   -> maan lo: almari phir kam padi, 10vi lagani hai
        = Cassandra andar token ring (consistent hashing) se baantta, official doc: https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html
        = "mod se har cheez badal jaayegi" = hash % N me N badla to lagbhag saare token nayi almari pe, "gol chakkar, sabse paas wali" = consistent hashing (ring pe agli machine).
 
-  -> aur kahani: mota register state ke hisaab se kaato.
+  -> isi pe ek aur raasta: hash ki jagah state ke hisaab se kaato).
        = "region ke hisaab se kaato" = sharding by region (geo-partition), "register pe thappa" = shard ka record (kaunsa data kahan).
 
   -> maan lo: Ravi ne Delhi me link banaya, Delhi ke register me gaya. Mumbai wala dost kholta ...
        = "token me state ka code" = shard key ID ke andar (shard id prefix), "bada bhai list dekh ke bheje" = router / lookup (shard map).
-       = key-value + bahut likhai + saalon ka data = Cassandra (wide-column, apne aap replica + scale). Cassandra kyun: data key-value, likhai bahut, aur data me bank jaisi consistency (paisa nikaalna, transaction) chahiye hi nahi.
 
 9    Almari number 3 me aag lagi, uske saare token jal gaye.
        = "almari ki copy" = 3 copy (replica), "acknowledge aaye tab pakka" = quorum write (W=2).
 
-  -> aur kahani: wahi dikkat
+  -> aur neeche: poori building / shehar me aag to
        = "copy alag-alag jagah" = replica (alag zone), "central authority pehle likhe phir bheje" = coordinator (jo request leta, ring me aas-paas ki copies ko aage bhejta), "copy peeche chale, baad me update" = async replication lag (save fail to user ko "dobara banao", number bekaar gaya to naya number, arabon hain), "authority ki bhi copy" = wo gire to koi aur coordinator ban jaaye. Cassandra andar se kaise karta, wo uska kaam, design ka hissa nahi.
 
 10   Teen copy A, B, C. Arpan ne naya token banaya, A aur B ne haan bola, C peeche. Turant dost ne ...
@@ -85,20 +85,20 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
        = (yahan "counter" = counter wala, yaani hamara server; "chhotu" = us counter ka ladka.) "sabke saamne ek banda, sirf ek ladka" = distributed lock (saajha lock, Redis me ek key: SET NX + umar). Kadam 5 ka ladka sirf ek counter ka ho to 50 counter ke 50 ladke jaate, isliye lock saajha.
        = "ek chhotu laake sabke kaan me" = request coalescing (ek fetch, baaki ko wahi jawab), saajha lock ke saath.
 
-  -> aur kahani: wahi dikkat
+  -> isi pe ek aur raasta: Redis tak aane hi mat do
        = "server ke paas" = local cache, "us link ka alag dabba" = hot key isolation (alag Redis / alag pool, baaki link na atkein), "1-2 copy" = hot key replicas, "copiyan ring me, gira to agli copy" = replicas ring pe (failover agli copy pe), consistent hashing nahi.
 
 12   Kisi ka idea: har aadmi pata apne phone me hi likh le, counter pe aaye hi nahi. Hafte baad ...
        = "token radd" = code band, "dene se pehle khud check" = kaali list (Google Safe Browsing).
+
+  -> isi pe ek aur raasta: radd karne ki jagah banate waqt hi jaanch
+       = "banate waqt chupke se dekho" = create time pe URL safety check (reputation / kaali list), "gandi to mat do" = reject.
 
   -> maan lo: token radd kiya, par log counter pe aa hi nahi rahe. Unhe kaise pata chale? Shuru me ...
        = "phone me likhna hi mat do, har baar counter pe aaye" = 302 + `Cache-Control: no-store` (save hi mat karna; 301 nahi), "phone me likh le" = 301 (browser cache), "phone cache pe TTL" = browser cache ki umar.
 
   -> maan lo: dashboard banana hai, har click ginna hai, par user click karke khada na rahe
        = "302 se har click hamare paas" = click tracking / analytics, "peeche queue, worker" = async click events (Kafka -> consumer -> dashboard), redirect dheema nahi hota, "fail to alag dabba" = DLQ.
-
-  -> aur kahani: wahi dikkat
-       = "banate waqt chupke se dekho" = create time pe URL safety check (reputation / kaali list), "gandi to mat do" = reject.
 
 13   Ek aadmi ne machine laga di, har second hazaar chit, sab nakli ya dhokhe wale pate. Counter ka ...
        = "pattern pata lag jaayega, gate pe bhaga do" = WAF block.
@@ -109,7 +109,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: bina login ke bhi link banta, script har second hazaar link bana rahi, userId hai hi ...
        = "login laga do" = auth zaroori (tab userId pe had + tracking), "bina login IP pe dheeli had" = anonymous rate limit per IP, "IP ban, desh block" = WAF block list / geo-block.
 
-  -> aur kahani: wahi dikkat
+  -> isi pe ek aur raasta: bodyguard
        = "bodyguard" = API gateway / WAF pe rate limit + anomaly check, "jail" = IP / user ban.
 
 ```
@@ -140,7 +140,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: counter wala tareeka (har request pe +1, pehli pe 60 sec ki umar). Ravi ki pehli ...
        = "dono ek saath ya kuch nahi" = INCR + EXPIRE ek Lua script me (atomic, ya SET key 1 EX 60 NX + INCR); bina umar ka counter = key kabhi expire nahi, user hamesha block. (HANDS_ON 02 me chala ke dekha.)
 
-5    Limiter OTP Service ke andar. Script ki 1000 request LB se, login check karke OTP Service tak ...
+5    Limiter OTP Service ke andar. Script ki 1000 request LB se, beech ke server se hote hue OTP ...
        = "guard andar kamre me" = limiter service ke andar, "guard bahar gate pe" = limiter API gateway pe.
 
 6    Gate ka guard ginti Redis se dekhta, Redis gira. Ya sabko jaane de ya sabko rok de. OTP button ...
@@ -164,11 +164,11 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 9    Result ka din, subah 10 baje 1 crore bachche OTP maangte. Har bachcha apni had me, phir bhi ...
        = "log badha do, server badha do" = apne server scale, "line lagwa, ek-ek karke" = queue (Kafka), "beech me cheez jo spike rok le" = SMS company ki raftaar se worker / consumer, global had.
 
-  -> aur kahani: wahi dikkat
-       = "global cap, upar 503" = global / server-wide limit (503 Service Unavailable), "kam zaroori pehle hatao" = load shedding (priority: login / payment pehle, recommendation / analytics baad).
-
   -> maan lo: OTP line me atka, der se nikla, tab tak bekaar.
        = umar = message TTL / expiry (line se nikalte waqt jaancho), purana OTP SMS company tak jaata hi nahi.
+
+  -> isi pe ek aur raasta: log badhane ki jagah upar ek had
+       = "global cap, upar 503" = global / server-wide limit (503 Service Unavailable), "kam zaroori pehle hatao" = load shedding (priority: login / payment pehle, recommendation / analytics baad).
 
 10   App 3 region me: Mumbai, US, Europe, har region ka apna Redis. Ravi VPN badal-badal ke teeno ...
        = "ek particular region decide" = home region, "count India ke Redis pe" = ginti ghar region ke Redis me.
@@ -221,10 +221,12 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 
 7    Saare tweet ek SQL DB me, din me 50 crore naye, likhne ki line itni lambi ki machine hile. Aur ...
        = "likhai bahut, bada bhai" = Cassandra (write-heavy; andar ring = consistent hashing), "replica bhi wo kar leta" = Cassandra ki apni copy, "naam se nahi, id se baant do" = partition key = user id, "mera saara data ek jagah" = ek partition (author id se hissa, andar tweet id se tweet: key = author id + tweet id), "follow ka track" = graph DB Neo4j.
-       = write-heavy + read-heavy + TB data = Cassandra, partition key = user id.
 
   -> maan lo: har baar "Arpan ke naye 500" poori table me dhoondhna pad raha
        = "naye tweet thodi der apne paas" = author ke recent tweets ka cache (Redis, TTL), "per day pattern" = recent data hi garam (time-based: naye tweet baar-baar padhe jaate), poori table scan nahi.
+
+  -> aur neeche: Cassandra hi kyun, aur key kya
+       = write-heavy + read-heavy + TB data = Cassandra, partition key = user id.
 
 8    Saare server America me. Ravi Delhi me, har request samundar paar, har kaam me aadha second ...
        = "baatcheet India me rakh" = India region, "Lajpat Nagar me branch khol do" = user ke paas wala region.
@@ -249,6 +251,8 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 
   -> maan lo: worker / consumer 7 zinda hai, heartbeat aa rahi, par 1 ghante se ek hissa bana ...
        = "atka to replacement" = timeout pe slow worker / consumer ka hissa doosre ko, "kahan tak chhoda" = checkpoint.
+
+  -> isi maan lo me aur neeche: "zinda hoon" kaafi nahi, kaam kahan tak hua
        = "zinda hoon != kaam ho raha" = heartbeat ke saath progress report, "bada chunk" = data skew (ek hisse pe zyada kaam), "2-3 chhotu madad" = hissa tod ke baanto (work stealing / split).
 
   -> maan lo: worker / consumer 7 ke 50 me se 30 ban chuke, 2 naye chhotu bheje; unhe kaise pata ...
@@ -384,7 +388,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: Arpan ko 10 TCS chahiye, 35,000 hold; Ravi sirf 4 bech raha, 4 mile, 6 baaki.
        = "4 abhi, 6 baad me" = partial fill (order PARTIALLY_FILLED, baaki 6 order book me), "10 turant warna nahi" = all-or-nothing (Fill-or-Kill, hold wapas), FR tay kare. Partial me 4 ka paisa kata (14,000), baaki 6 ka hold (21,000) jaari.
 
-  -> maan lo: Arpan ne 3500 pe 10 TCS ka order daala, TCS 3600 pe hi raha, 3:30 baje market band, ...
+  -> maan lo: Arpan ne 3500 pe 10 TCS ka order daala, TCS 3600 pe hi raha, 3
        = "jab tak cancel na kare order khula, paisa hold" = GTC (Good Till Cancelled) order, cancel pe hold wapas available me.
 
   -> maan lo: Ravi ke paas 10 TCS, usne 3600 pe 10 bechne ka order daala, bika nahi, phir 3650 pe ...
@@ -396,14 +400,16 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 4    9:15 baje bheed, engine tez karne ko 4 thread. Do thread ne ek saath TCS ki book dekhi, dono ...
        = "copy door khadi, dono ne bech diya" = do thread ek book pe (race), "sabko ek line me, ek jagah, alag mat baanto" = ek share ki book ek hi thread (single-threaded per symbol).
 
-  -> aur kahani: hot IPO pe burst)
+  -> aur neeche: hot IPO pe sab ek saath burst
        = "ek line, counter" = symbol ki ek queue, ek thread (sequencer), "baanta to race" = shard ek symbol ke andar nahi.
 
 5    Tez chalne ko TCS ki book RAM me. 10:30 baje machine mar gayi. Book ke saare order, Arpan ka ...
        = "permanent dabba" = DB, "3-4 copy" = replica / standby, "numbers discuss nahi kiye, itni bheed nahi" = pehle numbers, phir RAM ya DB ka faisla, "subah se ek parchi, utni ki utni rehti" = order log (append-only), "parchi dekh ke bag dobara jamao" = log replay se book wapas.
+
+  -> isi pe ek aur raasta: RAM me daalne se pehle kahin aur likh lo
        = "RAM me daalne se pehle kahin aur likh le" = order log (pehle log me likho, phir RAM; append-only, sirf jodna), "restart pe wapas RAM me" = log replay se in-memory book rebuild.
 
-  -> aur kahani: wahi dikkat
+  -> isi pe ek aur raasta: match ki book
        = "har event book me likhna" = event log (append-only, Kafka ya disk), "light gayi, book se wapas" = replay, "kaun kya kab" = audit trail.
 
   -> maan lo: replay me wo order bhi wapas aa gaye jo crash se pehle match hoke trade ban chuke ...
@@ -518,7 +524,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: server ne DB me UPLOADED likh diya, par Kafka me scan ka kaam daalne se pehle gira. ...
        = "UPLOADED ke saath vasiyat" = outbox (hamare DB ki table; status + scan ka kaam ek hi DB transaction me, server gire to bhi row bachi), "baad me koi daal dega" = relay.
 
-  -> maan lo: S3 ne "file aa gayi" do baar bataya, ya ulte kram me.
+  -> maan lo: resume me v1 phir v2 aaye aur event ulte pahunche. Arpan
        = "parchi" = idempotency (file id + version pe ek hi baar), "kaunsa naya" / "apna thappa" = S3 event ka `sequencer` ya hamara version number (bada = baad wala, usi file ke liye).
 
   -> maan lo: user har 2-3 second status poochh raha
@@ -598,7 +604,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 5    Ravi ko cricket, Priya ko tech, par sabki ek parchi. Aur 9 baje 1 crore log ek saath.
        = "category me baant" = har khabar pe category, user ki pasand DB me, "manage karne wala banda" = load balancer.
 
-  -> maan lo: Priya ne teen category chuni: tech, cricket, business. Use EK feed dikhani, upar ...
+  -> maan lo: Priya ne teen category chuni
        = "pasand ki ek parchi" = user preference store, "shabdon ki list se chhaanto" = keyword-based classification (category tag), "feed me push" = fan-out on write, "neeche scroll pe load" = pagination / infinite scroll, "login nahi to normal khabar" = logged-out default / trending feed.
 
 6    Priya app kholti hai. Chhotu site pe jaata hai ya parchi se deta hai?
@@ -625,7 +631,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: headline alag-alag shabdon me
        = Elasticsearch = alag search index (black box, PSP jaisa) (bana-banaya: AWS OpenSearch / Elastic Cloud; hum sirf sikhate kya aur kaise dhoondhna, Foundations 12); koi pooche to: har shabd ke saamne khabar ki list, jaise kitaab ke peeche ka index ("Kohli" -> khabar 3, 7, 9), isliye poori likhai nahi padhni padti (inverted index); "sabki jad" = stemming / synonyms (analyzer), "ek baat ke 5 paper ek saath" = milti-julti khabar ka group (clustering, kadam 3 jaisa).
 
-  -> maan lo: headline me ekdum "Kohli century" likha, khabar 9:00 pe register me gayi, feed me ...
+  -> maan lo: headline me ekdum "Kohli century" likha, khabar 9
        = "dono me ek saath bharo" = dual write, "peeche-peeche" = async indexing (eventual consistency), "kitni der chalegi, FR me" = search lag tay, "sync fail to alert" = alert + reindex.
 
 ```
@@ -657,10 +663,14 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 
 4    Avengers ki advance booking subah 10 baje khuli. 10 lakh log ek saath app pe toot pade, seat ...
        = "counter / server badha de" = machine badhana, "dekhne wale ki alag diary" = read replica, "capacity jitne andar, baaki line me" = virtual queue (waiting room), "ye teri parchi, agla number tera" = token.
+
+  -> isi pe ek aur raasta: ek saath aane hi mat do, booking pehle se khol do) (Arpan
        = "pehle se khol do, dheere-dheere aayein" = load ko waqt pe phailana (advance booking / pre-load), peak ko chapta karna; "ek saath bheed" ka ilaaj sirf jhelna nahi, bheed ko aane se pehle baant dena.
 
 5    Line me Arpan ka number aaya, andar jaane ka token mila jo 10 minute chalega. Usne 8ve minute ...
        = "token diya, andar aa gaya, authenticate ho chuka" = token sirf gate ka pass, "seat ruk gayi, allot hue time me payment" = pay ka faisla hold ki ghadi (hold_until) karti. Do alag ghadiyan: token = gate, hold = seat.
+
+  -> isi pe ek aur raasta: der se seat chuni to 4-5 min ka grace
        = "seat chuni to grace" = hold ki apni umar (hold_until), token khatam hone se nahi kat-ti.
 
 6a   Seat kiski?
@@ -675,22 +685,28 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 
 6c   6b wala gola ghoom hi raha tha, popup aane se pehle hi Arpan ne thak ke back daba diya, app ...
        = "30-55 sec gola" = hamara client timeout, "pehla DB me FAILED" = payment attempt FAILED, booking HELD rehti (payment ka sach event / poll se, BMS 6f), "onboard pe SLA" = PSP ka uptime SLA + incident response (latency ka nahi), "doosra pay doosre PSP pe" = PSP failover (backup PSP), "hum khud poochte" = status poll (fetch payment API), "chhota event" = webhook, "mil gaya" = ack (2xx), "baad me kata nikla to lautao" = REFUND_PENDING + raat ki refund job (BMS 6e) + refund API (Razorpay ko bolo lautao), REFUNDED sirf pakke jawab pe.
-       = "GPay ka gola hamare server pe nahi" = UPI app (GPay) ka apna screen, hamara client timeout wahan nahi chalta; "app me ruka to wahin popup, dobara pay doosre PSP pe" = 6b wala popup + PSP failover; "1.5 minute rokenge, chhotu dekhta" = status poll / webhook ka time; "popup to dikhayenge hi, backend ko pata nahi app band hai" = server user ki screen nahi jaanta, isliye hamesha popup bhejo; "popup ka timer, utni der seat uski" = popup / hold ki umar (TTL, train booking jaisa countdown), timer khatam = hold release; "booking fail" = INITIATED -> FAILED; "der se kata" = late debit -> REFUND_PENDING + refund API (Razorpay lautaye); "agli baar app khole tab batao" = booking status jab user wapas aaye.
        = "chhotu poochhe" = status polling, "Razorpay khud bataye" = webhook (late ho to payment.authorized + late_authorized: true); Razorpay bank se 3 din tak poochhta rehta, capture na karo to khud auto-refund (Razorpay docs); "kitni der baad kata" = late debit column (reconciliation + PSP latency ka saboot).
+
+  -> aur neeche: UPI app ka apna gola, user back daba de to) (Arpan
+       = "GPay ka gola hamare server pe nahi" = UPI app (GPay) ka apna screen, hamara client timeout wahan nahi chalta; "app me ruka to wahin popup, dobara pay doosre PSP pe" = 6b wala popup + PSP failover; "1.5 minute rokenge, chhotu dekhta" = status poll / webhook ka time; "popup to dikhayenge hi, backend ko pata nahi app band hai" = server user ki screen nahi jaanta, isliye hamesha popup bhejo; "popup ka timer, utni der seat uski" = popup / hold ki umar (TTL, train booking jaisa countdown), timer khatam = hold release; "booking fail" = INITIATED -> FAILED; "der se kata" = late debit -> REFUND_PENDING + refund API (Razorpay lautaye); "agli baar app khole tab batao" = booking status jab user wapas aaye.
 
 6d   Razorpay ka event aaya "paisa kat gaya", parchi pe SUCCESS likh diya. Ticket banane wale ko ...
        = "SUCCESS aur parchi ek saath" = transactional outbox (hamare DB ki table; payment SUCCESS + "ticket banao" ek hi DB transaction me), "koi bhi aaye parchi dekh ke book kare" = relay (wo chhotu jo outbox ki row padh ke ticket service ko bheje); server gire to restart pe parchi wahin padi.
+
+  -> isi pe ek aur raasta: do service, beech ka dabba, ticket PENDING
        = "do service, ek transaction nahi" = distributed, "beech ka dabba, ticket PENDING" = outbox / pending table, "ticket service pending padh ke banaye" = consumer poll + retry, "kaam ke baad dabbe se hatao" = outbox row processed.
 
 6e   Arpan ne parchi ki umar ke andar Pay dabaya, bank ne paisa kaatne me 12 minute lagaye. 6a se ...
        = "window khatam" = 30-55 sec client timeout pe payment FAILED, phir popup pe Naa to seat turant khuli (EXPIRED), "chhotu poochta rahe" = status poll job, "paisa kata, seat nahi" = payment SUCCESS + booking FAILED (do alag haalat), "refund dena hai" = REFUND_PENDING, "raat ki sync job" = refund / reconciliation job, "Razorpay ko bolo lautao" = refund API.
 
-6f   Razorpay ka event aaya SUCCESS, parchi pe SUCCESS likha. 2 second baad chhotu ka purana jawab ...
+  -> maan lo: PENDING (1) raste me kho gaya, kabhi aaya hi nahi
        = "khabar pe number, 2 ruke jab tak 1" = sequence number + ordering (out-of-order hold), "1 kho gaya to chhotu Razorpay se pooche" = timeout ke baad status poll (fetch payment API), "ek operation" = dono status ek saath (atomic).
        = "ek mote register me sach" = source of truth (DB), "likhne se pehle DB dekho, SUCCESS ke upar PENDING nahi" = conditional update (sirf tab likho jab abhi PENDING ho) = state machine, haalat sirf aage jaati, "DB se parchi theek, ulta nahi" = reconciliation / sync job.
 
 6g   Raat ki job ne Razorpay ko bola "Arpan ka 500 lautao", Razorpay bola "refund shuru". Job ne DB ...
        = "pakka jawab tak REFUND_PENDING" = refund state (REFUND_PENDING -> REFUNDED / REFUND_FAILED, sirf refund.processed / refund.failed event pe), "5 din se purane pending, Razorpay se poochho" = stuck refund job (reconciliation), "galat jawab mat likho" = source of truth.
+
+  -> aur neeche: refund ke do event
        = "shuru" = refund.created (REFUND_PENDING / INITIATED), "poora" = refund.processed (REFUNDED), "ladke ki baat nahi, saamne wale se poochho" = sirf pakke event pe final state.
 
 ```
@@ -725,7 +741,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
        = "parchi se kaat do" = cache DELETE, "DB source of truth" = DB = sach, "banda har baar check kare, farak mila to theek" = background sync (reconciliation) job, "kuch second Ravi dikhe, paisa nahi" = eventual consistency chalegi, "thodi der wala data, chhota TTL" = TTL. Sync job ke saath bhi ek lamba TTL rakho, taaki job chooke to purana data hamesha ke liye na atke (safety net).
        = TTL (samay pe khud mite) / delete (likhte waqt hum kaatein) / sync job (peeche se milaye) = teen raaste, jagah dekh ke chuno.
 
-  -> maan lo: poochhe: pehle DB likho phir parchi kaato, ulta kyun nahi?
+  -> maan lo: poochhe
        = "pehle DB phir kaato" = write-then-invalidate, "kaatna fail to dobara" = invalidation retry, "pakka chahiye" = version check / lock.
 
   -> maan lo: cache me 1 TB, crore-on key. Sync job ko kaise pata kaunsi key check karni hai? Har ...
@@ -737,20 +753,22 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: interviewer poochhe, aur raaste?
        = do chhotu = redundant fetch, hot key lambi umar = longer TTL, alag-alag expire = TTL jitter (staggered expiry).
 
-  -> maan lo: ek bot har second 10,000 aise user id maang raha jo hain hi nahi (50 crore, 70 ...
-       = "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parchi pe range, bahar wala wahin wapas" = request aate hi id range check (input validation), cache aur DB se pehle; galat id na cache tak pahunchti na DB tak. (Yahan parchi = range ki parchi, cache wali key nahi.) Range ke andar par nahi mila = null ko bhi cache me rakho (negative caching, thodi der ki umar), taaki baar-baar wahi nakli id DB tak na pahunche.
-
   -> maan lo: wo ek chhotu DB pe jaake atak gaya, DB zinda hai par bojh se bahut dheema, 2 minute ...
        = "DB ki copy, padhne ke liye" = read replica, "dheemi copy chhod ke doosri pe" = timeout + retry on another replica, "sync AWS ka kaam" = managed replication (RDS).
+
+  -> isi maan lo me aur neeche: saari copy bhi dheemi
        = "thodi der purani jaankari" = serve stale (stale-while-revalidate), "Priya ko UI pe batao" = read-your-writes ka UI message, "local cache + TTL 30-45 sec" = local cache with short TTL, "DB theek, chhotu dobara" = background refresh.
 
   -> maan lo: chhotu parchi bhar laaya, ab baaki bheed ka kya
        = refill ke baad traffic dheere-dheere wapas (ramp-up / warm-up), ek saath nahi.
 
+  -> maan lo: ek bot har second 10,000 aise user id maang raha jo hain hi nahi (50 crore, 70 ...
+       = "nakli id, har baar andar (DB) bhaagna" = cache penetration. "parchi pe range, bahar wala wahin wapas" = request aate hi id range check (input validation), cache aur DB se pehle; galat id na cache tak pahunchti na DB tak. (Yahan parchi = range ki parchi, cache wali key nahi.) Range ke andar par nahi mila = null ko bhi cache me rakho (negative caching, thodi der ki umar), taaki baar-baar wahi nakli id DB tak na pahunche.
+
 7    Priya ki parchi cache me aa gayi, par ek second me 1 crore log. Ring pe uski key sirf machine ...
        = "machine 4 ka replica, 8 aur 9 tu bhi dekh" = hot key ki copies kai machines pe, "ek aur gaadi" = padhne ki bheed copies me bat-ti.
 
-  -> maan lo: pehle se pata hai bheed kab aayegi (Diwali flash sale, iPhone launch, World Cup)
+  -> maan lo: pehle se pata hai bheed kab aayegi (Diwali flash sale, iPhone launch, World Cup
        = cache pre-warm (event se pehle garam key cache me bhar do), capacity pehle se badhao.
 
   -> maan lo: Priya ki key machine 4, 8, 9 teeno pe hai (copies), usne naam badla, aur sirf ...
@@ -788,10 +806,10 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 3    Doc me `Goa jaayenge`. Ek hi second me Arpan ne shuru me "Hum " joda, Ravi ne "Goa" ke baad ...
        = "shabdon ko khiska diya" = OT (Operational Transformation), "yaad rakhun kisne kahan likha" = op ki jagah pichhle op ke hisaab se aage.
 
-  -> aur kahani: Arpan ke paas A B C D, Ravi ke paas bhi A B C D. Usi pal Ravi ne B hataya aur Arpan ...
+  -> aur neeche: ek ne hataya, doosre ne usi pal joda
        = wahi OT: Ravi ka "B hatao" pehle laga, to Arpan ke E ki jagah ek peeche khisak gayi, dono jagah A E C D.
 
-  -> maan lo: server ka ek banda bole: seedha hal hai, jo pehle likhne aaya wo doc pe taala laga ...
+  -> maan lo: server ka ek banda bole
        = taala = locking (ek likhe, baaki ruke), mil ke likhne wale doc me nahi chalta; OT me sab ek saath likhte, kram server tay karta.
 
   -> maan lo: pooche OT ke alawa raasta
@@ -883,8 +901,10 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 10   Koi line me 7 din se zyada peeche reh gaya, aur gate ki 7 din purani list ka panna phaad diya ...
        = "aur admin daalo" = pehle checker (consumer) badhao, gate (30) tak; gate bhar gaye tab gate (partition) bhi badhao, isliye shuru se zyada gate rakhe the, "itna peeche rehne hi mat do" = retention khatam hone se pehle lag pakadna.
 
-  -> maan lo: wo dheere-dheere peeche ja raha: aaj 1 din, kal 2 din. 7 din hone se pehle kaise ...
+  -> maan lo: wo dheere-dheere peeche ja raha
        = "alert laga do" = consumer lag alert.
+
+  -> maan lo: alert ke baad bhi peeche hi rahe
        = "bookmark aage mat khiskao" = offset skip nahi (data loss), "kahin aur daal do" = archive / alag topic (S3 sink), "retention badha do" = retention.ms.
 
 ```
@@ -912,7 +932,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 3    Branch me do counter. Arpan ke khaate me 600. Ek hi pal me do parchi, Netflix 500 aur UPI 500, ...
        = "dekhna aur kaatna ek kram me" = ek query me check + kaato (`balance - 500 WHERE balance >= 500`), "doosre ko 600 dikhne nahi chahiye" = row lock.
 
-  -> maan lo: ek hi pal me do parchi: counter 1 pe "Arpan se Ravi 500", counter 2 pe "Ravi se ...
+  -> maan lo: ek hi pal me do parchi
        = "dono ek doosre ka khaata pakad ke baithe" = deadlock. "ek hi line, ek counter" = ek ke baad ek (serialize); 10 counter bane rahein aur phir bhi na atkein, uske liye har counter pehle chhota account number pakde (lock ordering). "pehle ek poora, phir doosra" = DB atkan pakadta hai (deadlock detection), ek parchi rollback, doosri poori, phir pehli dobara (retry).
 
   -> maan lo: bank me roz 1 crore transfer, sab ek hi line me lage to Priya ka Amit ko bheja paisa ...
@@ -947,11 +967,11 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: "thodi der" ke baad photocopy pe wapas bhejna hai. Bank ko kaise pata chale ki ...
        = "replica khud bataye / chhotu poochhta rahe" = replica apni sync position bataye (replication lag ka check).
 
-  -> aur kahani: dono me se kaunsa, trade-off)
-       = replica khud bataye = replica apni position bhejti (kam kadam, par replica atki ho to chup rehti, pata der se chalta); chhotu poochhe = poll / health check (ek kadam zyada, par jawab na aaye to turant pata, replica band). Dono sahi, trade-off.
-
   -> maan lo: main register kabhi band nahi hota, Priya, Ravi lagaatar likh rahe. Photocopy kabhi ...
        = "replica bataye kahan tak pahunchi, 1000 me 980 = 20 peeche" = replication lag (replica apni position batati), "mujhe apna 100 chahiye" = Arpan ki likhai tak pahunchi to replica se, nahi to primary se (andaza nahi, seedha check). Log aur uska number DB apne andar khud rakhta, wo design ka hissa nahi.
+
+  -> maan lo aur neeche: chalein
+       = replica khud bataye = replica apni position bhejti (kam kadam, par replica atki ho to chup rehti, pata der se chalta); chhotu poochhe = poll / health check (ek kadam zyada, par jawab na aaye to turant pata, replica band). Dono sahi, trade-off.
 
 10   Raat ko kisi bank wale ne main register me Arpan ka balance haath se 100 ki jagah 600 kar ...
        = "ledger se milwao" = raat ka milaan (reconciliation), "asli sach ledger, column nahi" = ledger = source of truth, balance bas copy.
@@ -1033,7 +1053,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 6    Arpan lift me, Ravi ko "hi" bheja. Message server pe save ho gaya, par "pahuncha" wala jawab ...
        = "ek key rakh lo, key same to mana" = clientMsgId (idempotency key), "doosri baar discard" = dupe copy chhodo, "network aaye to double tick" = "pahuncha" ka jawab dobara bhejo.
 
-  -> maan lo: ulta: Ravi ke phone ka "mil gaya" kho gaya, server ne message dobara bheja.
+  -> maan lo: ulta
        = idempotency key (wahi ID dobara aaye to chhodo).
        = clientMsgId = retry ka dohra rokta; user ne khud do baar bheja = do alag message (do alag id), theek.
 
@@ -1065,7 +1085,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 12   Ravi ne Arpan ko "kal milte hain" phir "nahi, parso" bheja. Pehla server S1 se gaya, doosra S2 ...
        = "server pe pata kaun pehle aaya" = har chat ka sequence number (block 7), "phone sahi kram me lagaye" = client number se sort kare, aane ke kram se nahi, "dheeme ke liye doosra mat roko" = deliver turant, baad me reorder.
 
-  -> maan lo: interviewer kheeche: number kaun lagayega, aur ye number kabhi khatam to nahi hoga?
+  -> maan lo: interviewer kheeche
        = "time ko hi number" = Snowflake ID (time + machine + chhota counter, FOUNDATIONS 13), "har group ka apna server, ghadi usi ki" = ek chat hamesha ek hi server pe (chat id se server tay), isliye usi server ki ghadi aur counter se kram theek; server 20 pe gaya to wahan number pichhle aakhri number ke aage se shuru. "ek ID" = har chat ka sequence number. Kamzor jawab = number / had ka daava ("long ki had itni, kabhi nahi bharega"), kyunki interviewer use kheench sakta. Mazboot jawab = sirf dhaancha. Had yaad aa gayi to bonus line: long (64-bit) me lagbhag 9.2 x 10^18 (9 ke baad 18 zero), aur counter har chat ka alag. Range jaisa kuch aur pooche to: "padhte waqt dekha tha isliye yaad hai, baaki net se dekh lete".
 
   -> maan lo: group me 500 log hain. Har message pe 500 logon ka server dhoondhna padega?
@@ -1084,10 +1104,10 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 2    Har 4 sec, 5 lakh driver = 1.25 lakh update / sec. Normal DB ghut gaya, jagah 30 sec peeche.
        = "bada dabba" = Cassandra (likhai tez, apni copies, machine jodo to badhta; andar ring = consistent hashing).
 
-  -> aur kahani: Zomato wali reel se): Raju ki har nayi jagah DB me nayi line ban ke jud rahi. Arpan ...
+  -> aur neeche: Zomato wali reel se
        = kadam 2 ke do raaste: pehli kahani me Cassandra me overwrite, is kahani me Redis me overwrite + raasta Kafka se alag storage. "parchi pe kaat ke nayi" = Redis me sirf aakhri jagah (overwrite), delivery ke baad hata do; "Kafka me daal, batch me alag storage box" = poore raaste ki history alag jagah (Kafka -> batch write); DB me sirf order ka status.
 
-  -> aur kahani: Arpan ne book dabaya, abhi ke abhi 5 km ke khaali driver chahiye, par location pehle ...
+  -> maan lo: is doosri kahani me (location Kafka + batch se
        = "jaldi ke liye parchi" = matching Redis se (abhi ki jagah, overwrite), "pakka raasta" = trip location history (Kafka -> batch -> Cassandra) for SOS / support / audit, "khaali vs bhara alag" = idle aur on-trip location alag store, "9va raasta" = purani trips se raaste ki padhai (routing / ETA).
 
 3    Book pe server 5 lakh driver ka fasla naap raha, 40 sec "dhoondh rahe hain".
@@ -1096,7 +1116,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: gole ke teeno driver booked
        = gole me khaali nahi = intezaar / dobara dhoondo (koi gaadi zabardasti nahi).
 
-  -> aur kahani: Whitefield)
+  -> aur neeche: gola hi bahut bada, Whitefield
        = "chhote hisse" = geohash cell, "bheed pe dabba chhota-bada" = cell size badalna (adaptive), wo aage kadam 6c.
 
 4    Arpan dabbe ke kinare pe, 200 meter door bagal wale dabbe me khaali driver, app bola "koi ...
@@ -1129,6 +1149,8 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 7    Raju ne 14.9 sec pe accept dabaya, server pe 16 sec pe pahuncha, tab tak Priya ko de diya.
        = "ghadi server ki" = TTL ka faisla server pe, der se aaya accept reject.
        = "30 second, phir nahi" = request TTL, server ki ghadi; "agla driver" = re-dispatch; "bajta rahe" = TTL ke bina broadcast jab tak accept.
+
+  -> isi pe ek aur raasta: ek-ek driver nahi, sabke paas ek saath
        = "server ne pehle dekha" = server pe jo accept pehle pahuncha wo jeeta (first-write-wins / conditional update), "kisi aur ne le li" = Raju ko ride taken / expired message.
 
   -> maan lo: ek-ek driver ko 15 sec dene ki jagah kuch aur karna ho?
@@ -1149,7 +1171,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 12   Book pe ₹250 dikha, ride ke beech surge 2 guna, aakhir me ₹500 kate. Arpan: "maine 250 dekh ke ...
        = "jo dikhaya wahi" = upfront fare: quote ride ke saath save (lock), aakhir me wahi kaato; "zyada mehnat" = tip alag, rider ki marzi.
 
-  -> aur kahani: concert se Whitefield, book pe 900 dikha. Raste me bhaari traffic, 1 ghante ka ...
+  -> aur neeche: surge nahi, traffic se raasta lamba
        = "traffic me fanse ka paisa" = time-based fare / waiting charge, "laal batti pe nahi" = buffer (free waiting), "pehle se nahi bol sakte" = upfront fare me aage ka traffic predict nahi hota; pehli kahani (jo dikhaya wahi + tip) aur ye, dono raaste.
 
 13   Trip khatam, ₹250 kaatne gaye, Arpan ke wallet me sirf ₹40. Payment fail, Arpan gaadi me hi ...
@@ -1168,7 +1190,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 15   Arpan aur Ravi ne saath me book kiya. Do gaadi: Car A aur Car B. Arpan ki booking pehle ...
        = "dono ko saath milao, kul doori kam" = batch matching (kai booking aur kai gaadi ek saath, sabka milake pickup kam).
 
-  -> maan lo: Arpan ki booking 7:00:00 pe aayi aur Ravi ki 7:00:02 pe. Jab Arpan ki aayi tab Ravi ...
+  -> maan lo: Arpan ki booking 7
        = "15-20 second ruko, sab saath milao" = batching window.
 
   -> maan lo: shaam 7 baje office chhutne ka waqt. Har baar koi naya banda gaadi ke bilkul paas ...
@@ -1183,13 +1205,13 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: Raju Connaught Place ki oonchi buildings ke beech hai. GPS buildings se takra ke ...
        = "paas wali sadak pe chipka do" = map matching (GPS ka galat point sabse paas ki sadak pe, Raju ke raaste ke hisaab se).
 
-  -> aur kahani: Zomato wali reel se): Raju sadak pe chal raha, achanak GPS ne galat point bheja aur ...
+  -> aur neeche: Zomato wali reel se, GPS ek second me nadi paar
        = wahi map matching (galat point sabse paas ki sadak pe); GPS ka galat point aana rok nahi sakte, sirf dikhne se pehle sadak pe utaar do.
 
   -> maan lo: location har 4 second aati hai. Beech me gaadi 4 second khadi, phir achanak aage ...
        = "gudde ko andaze se aage chalao" = dead reckoning (speed + sadak dekh ke andaza), "nayi aayi to sahi jagah" = correction, "U-turn pe kooda" = andaza galat nikla, isliye jump.
 
-  -> aur kahani: Zomato wali reel se): Raju raaste me tunnel me ghusa, net 1 minute chala gaya. Is ...
+  -> aur neeche: Zomato wali reel se, tunnel me net gaya
        = "aakhri wali jeete" = last write wins (Redis me overwrite), "bike tairti hui" = purani se nayi jagah tak animation, "15 jagah Kafka -> worker / consumer ki tasveer" = sirf history ke liye, live map ke liye nahi, "khada to 8 second" = adaptive ping.
 
   -> maan lo: Raju Arpan ki society ki basement parking me ghusa aur phone 5 minute bilkul ...
@@ -1202,33 +1224,35 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 ```
        = pehle sawaal = scope / requirement clarification, FR = score update + top N, NFR = tie-break + eventual consistency (contest ke beech).
        = FR = score update + scoreboard (har user usi board me apni rank dekhe); "top kitne dikhane" sirf pehle sawaal (a), FR nahi.
+
+  -> fr / nfr ki doosri kahani: wahi dikkat
        = dhaancha = CDN + LB + kai app server + local cache + Redis + RDS Postgres (primary + replica); "consistent, JSON nahi" = row wala data, SQL.
 
 1    Top 10 aur "tera rank" chahiye. SQL me har baar 1 crore row sort, aur rank ke liye "mere upar ...
        = "apne aap sort wala dabba" = Redis sorted set (har khiladi + score, kram me; daalna, top 10, rank sab log N). (Redis khud chhote se bade ke kram me rakhta; leaderboard me ulta (reverse) padhte, bade se chhote, taaki sabse zyada score upar.)
 
-  -> aur kahani: reel se): kisi ne kaha Redis kyun, SQL me score pe index laga do. Index laga diya, ...
+  -> maan lo: reel se) kisi ne kaha Redis kyun, SQL me score pe index laga do. Index laga diya, ...
        = "har block me jaake dekhna" = rank ke liye "mere upar kitne" gin-na (index se bhi count scan), "har likhai pe index badle" = write-heavy pe index ka bojh (har update pe index update), isliye sorted set (daalna, rank, top sab log N).
 
-  -> aur kahani: wahi dikkat
+  -> isi maan lo ka doosra jawab: wahi dikkat
        = "apne aap sort wala dabba" = Redis sorted set (ek dabba jisme score daalte hi line apne aap kram me rehti).
 
 2    Ravi aur Priya dono ke 9800. Line me aage kaun?
        = dabba har khiladi ke saath ek hi number leta, to "score phir time" ek number me pack: aage score, point ke baad time (jo pehle aaya uska hissa bada). Ravi 9800.95, Priya 9800.90.
 
-  -> maan lo: Claude ka nitpick) pooche: time ko number bana ke score me jodo, to baad wale ka ...
+  -> maan lo: Claude ka nitpick) pooche
        = jo pehle aaya uska hissa bada rakho (ya time ko ulta karke jodo), tabhi bade-se-chhote padhne pe pehle wala upar = composite score; misaal ka number sirf misaal.
 
 3    Har second lakhon match khatam, saare score update ek hi Redis pe.
        = "baant do" = shard, "har line se le ke milao" = scatter-gather, "chhotu + badi screen" = aggregator jo global top 10 bana ke cache me rakhta.
 
-  -> aur kahani: wahi dikkat
+  -> aur neeche: kitne Redis chahiye, kaunse region, top 10 kaise jude
        = region se baanto = shard, har dabbe se lo = scatter-gather, 5 sorted list milana = merge k sorted (heap).
 
   -> maan lo: match ka +50 retry se do baar pahuncha.
        = idempotency key (wahi ID dobara aaye to chhodo).
 
-  -> aur kahani: wahi dikkat
+  -> isi maan lo me aur neeche: server atka to? parchi pe likh lo
        = sawaal ki ID = idempotency key, parchi pe likh ke baad me bhejo = outbox (hamare DB ki table, usi transaction me likho; chhotu / relay baad me bheje) + retry.
 
   -> maan lo: server parchi pe likhne se pehle hi gir gaya, likh hi nahi paaya.
@@ -1237,23 +1261,23 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 4    Main India wali line me 3,000 pe hoon. Screen pe poori duniya ka rank dikhana hai, aur lines ...
        = "mere upar kitne" = har shard se count (mere score se upar), sab jodo, +1. "Referee wala poora board" = background job jo har kuch minute me snapshot banata (thoda purana chalega).
 
-  -> aur kahani: wahi dikkat
+  -> aur neeche: world rank turant kyun nahi niklegi
        = andaze wali rank = estimated rank, sab region mila ke board = aggregator / global board, rank dheere theek = eventual consistency.
 
 5    Teen board chahiye: aaj ka, is hafte ka, all-time. Raat 12 baje aaj wala khaali ho ke naya din ...
        = match jeeta to score teeno dabbon me jodo. "Alag register" = har din ka alag dabba, naam me tareekh (board:5-Nov, board:week-45, board:all-time). "Kal wala side me" = live Redis se TTL se hat sakta, par board history me rehta; 80 lakh ko ek-ek chhuna nahi padta.
 
-  -> aur kahani: contest ke board)
+  -> isi pe ek aur raasta: alag register ki jagah seedha overwrite
+       = reset = naya key (din ki tareekh se) ya agla score aate hi overwrite; 80 lakh ko ek-ek zero karna nahi.
+
+  -> aur neeche: game nahi, contest ho to board kaise
        = contest id se alag board (key me contest id), purana = DB me history, mahine wala = sab contest ka jod (aggregate).
 
-  -> maan lo: Ravi ka match 11:59:58 pe khatam, score 12:00:02 pe pahuncha, server ne 9 Nov ke ...
+  -> maan lo: Ravi ka match 11
        = "parchi pe contest id + khatam hone ka waqt" = event time, "usi din ke register me" = event time se bucket (pahunchne ke waqt se nahi), "purana register side me" = har din ka board history me rakho (discard nahi). "register kar ke aaye nahi" = contest ka sign-up; "mota register" = DB (kadam 7, score pehle DB me).
 
-  -> aur kahani: aakhri sawaal 12:59:59 pe, server tak 1:00:03)
+  -> isi maan lo me aur neeche: contest ka aakhri sawaal 12
        = parchi pe submit ka waqt = event time, gira to parchi se baad me bhejo = outbox (DB ki table), bheed me beech ka Kafka = buffer / queue (disk pe, worker = consumer).
-
-  -> aur kahani: wahi dikkat
-       = reset = naya key (din ki tareekh se) ya agla score aate hi overwrite; 80 lakh ko ek-ek zero karna nahi.
 
   -> maan lo: contest raat 11 baje shuru, 1-3 baje khatam
        = contest ka din = shuru hone ki tareekh (contest id ke saath); duniya bhar ka online contest = ek hi time zone UTC.
@@ -1261,16 +1285,18 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 6    Main 4,52,318 pe hoon, top 10 me kabhi nahi aaunga. Screen pe mere aage ke 5 aur peeche ke 5 ...
        = "apne aas-paas scan" = har shard se mere score ke thoda upar aur thoda neeche wale (score range query), sab mila ke sort, mere upar ke 5 aur neeche ke 5.
 
-  -> maan lo: dabbe region ke hisaab se: India, US, Europe. Is Sunday ke world contest me Arpan ki ...
+  -> maan lo: dabbe region ke hisaab se
        = "dabbe score ki range se" = range partitioning (score range pe shard), "coordinator ka thappa" = shard map / router jo batata kaunsi range kis shard me, "seedha Delhi wale dabbe pe" = sirf matching shard pe range query (baaki shard skip), "andaze wali rank" = estimated rank, "galat jawab bhi ginte" = penalty (LeetCode: har galat submission pe 5 minute).
        = "availability zyada, rank baad me theek" = AP + eventual consistency, "sign-up se pehle pata kitne aayenge" = capacity planning / pre-partition, "IP se desh, shehar" = jagah ke hisaab se baantna (geo partitioning; shehar IP / profile se), "ek dabbe pe kai thappe" = shard map me har shard ki kai score range, "ye rank nahi, bas baantna" = partition key, rank global board pe.
+
+  -> aur neeche: range se baantne ka matlab saaf
        = "shehar ke gole" = geo partitioning (location se shard), "dabbe pe range ka thappa" = shard map (kis shard me kaunsi range), "seedha Delhi ke dabbe pe" = query sirf us ek shard pe, poore 10 lakh pe nahi.
        = poora world board = global leaderboard (aggregator sab region ke result mila ke ek sorted board), "pehle sawaal gino, phir waqt, ms, naam" = sort key (solved desc, finish time asc, ms, naam) = composite score (kadam 2), "paanchon wale pehle, baaki baad me" = solved count ke hisaab se bucket, "rank dheere theek" = eventual consistency.
 
 7    Redis gira to saare score?
        = "clone" = Redis replica (gira to replica primary), "teeno gaye to DB" = DB sach, Redis wahan se rebuild.
 
-  -> aur kahani: wahi dikkat
+  -> aur neeche: kitni consistency chahiye, uske hisaab se kitni copy
        = copy = Redis replica, peeche DB me likhna = DB sach (Redis wahan se dobara), pehle parchi = log / outbox (DB ki table), kitni copy = consistency ka faisla.
 
 ```
@@ -1322,7 +1348,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: gate se 500 andar, Ravi Pay page pe gaya aur chai peene chala gaya, na pay kiya na ...
        = "ya pay kar ya rakh de" = reservation expiry (TTL, 5 min), "wapas line me, agla andar" = release (Redis INCR) + agla batch. TTL khatam hone se ginti apne aap wapas nahi badhti; ek job (ya expiry ki khabar) INCR karti hai.
 
-  -> maan lo: Ravi ki ghadi 10:05 pe khatam, phone Priya ko gaya, aur 10:05 + 1 second pe Ravi ...
+  -> maan lo: Ravi ki ghadi 10
        = "5 min ke baad phone uska nahi" = Pay pe server check kare ki reservation abhi zinda hai (expiry check), "1-2 second upar" = chhota grace period, "andar pay, PSP dheema = hamari zimmedari" = Pay dabate hi PAYMENT_PENDING, hold ruk jaata (BMS jaisa).
 
 8    Net gaya / PSP chup: Ravi ko laga pay ho gaya, par PSP tak request pahunchi nahi, ya paisa ...
@@ -1372,10 +1398,10 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 5    Ravi ne TV pe 27 minute dekha, band kiya. Subah metro me phone pe khola, 27:00 se chahiye.
        = "account se yaad" = watch position user ke account pe server me, device me nahi, "parchi DB me" = persistent store.
 
-  -> maan lo: TV ka net gaya, TV ne "27:00" apne paas rakh liya. Subah phone pe 37 tak dekha, ...
+  -> maan lo: TV ka net gaya, TV ne "27
        = "naya point jeete, purana 27 discard" = har position ke saath uska waqt (timestamp), baad wala jeete (last-write-wins, event time se, aane ke waqt se nahi), "main Netflix hoon, tukde main hi bhej raha" = ISP wala dabba bhi Netflix ka (Open Connect), agla tukda nahi maanga to andaza 25-27 ke aas-paas.
 
-  -> maan lo: karodon TV har kuch second "26:50 pe hoon" bhej rahe, DB ki saans phool gayi.
+  -> maan lo: karodon TV har kuch second "26
        = "parchi paas" = position pehle fast store me, "ruk gaya to register" = DB me sirf aakhri / kabhi-kabhi likhna (write kam).
 
   -> maan lo: tukde ISP ke dabbe se aa rahe, AWS ke server ko kaise pata ki ruk gaya?
@@ -1384,7 +1410,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 6    App khola, server pasand wali list banane baitha: 3 saal ka itihaas, karodon logon se milaan, ...
        = "pehle se laga ke rakhta" = list raat ko pehle se banti (batch), "app khole to saamne" = cache se uthao, sochna nahi.
 
-  -> maan lo: list raat 2 baje bani, Ravi ne 11 baje Dhurandhar khatam ki, 11:05 pe sabse upar ...
+  -> maan lo: list raat 2 baje bani, Ravi ne 11 baje Dhurandhar khatam ki, 11
        = "turant parchi" = abhi ka dekha alag fast store me, "dikhate waqt milao" = pehle se bani list + abhi ki baat mila ke dikhana.
 
   -> maan lo: Priya ne pehli baar join kiya, koi itihaas nahi.
@@ -1413,6 +1439,8 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 
 3    Vlog viral: 1 minute me 1 lakh view. Har view pe DB me ek hi row me views + 1. Ek lakh request ...
        = "parchi pe +1" = view event stream me (Kafka), "chhotu batch me jode" = batch aggregation (memory me gino, kuch second me ek baar likho), count thodi der se badhta = trade-off, "likhai zyada" = Cassandra.
+
+  -> isi pe ek aur raasta: Kafka ya Redis, pehle ek dabbe me jama
        = "pehle dabbe me" = Redis counter (INCR) / Kafka, "gaddi jama hone pe ek saath" = batch flush to DB.
 
 4    Ek creator ne script likhi: hazaar phone / bot se har 3 second refresh, ek ghante me 10 lakh ...
@@ -1529,7 +1557,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
   -> maan lo: tu akela ya 5 bande har route pe safar karke note karoge to saalon lagenge, aur Jio ...
        = list ka source = data partner (jiske paas permission ka record), updates = naya / hata tower aate rahein, app ki list taaza (data refresh).
 
-  -> maan lo: railway bole: "ye data hamare paas hai hi nahi, kuch tower private zameen pe, unki ...
+  -> maan lo: railway bole
        = kai source se list jodna (railway + shehar ki authority + operator), jo mile wahi; asal me kaise bani wo public nahi.
 
 ```
@@ -1565,7 +1593,7 @@ Sirf hand notes ki Technical lines se, apni taraf se kuch nahi.
 2    Neha Whitefield ke kinare pe hai, KR Puram ki taraf. Uske 15 km me do-teen restaurant aate jo ...
        = "area ke andar area, har ek ki list" = grid / geohash cell (Uber jaisa), har cell ki list cache me; "har user ki alag nahi" = cell ke naam pe key.
 
-3    Menu dekh ke Burger Singh se burger order kiya, paisa kata. Order Burger Singh tak kaise ...
+3    Menu dekh ke Burger Singh se burger order kiya. Order Burger Singh tak kaise pahunchega?
        = "accepted -> ready -> delivering" = order status flow (state DB me), "mere phone pe" = notification / webhook, "restaurant 5 km ke driver bulaye" = driver dispatch (radius), tracking = Uber wali.
 
 4    Burger 7:30 pe ready, sabse paas wala driver 5 km door, aane me 15 min. Tab tak burger counter ...
@@ -1603,7 +1631,6 @@ Yahi dikkat yahan bhi:
   Banking       3   600 me do counter pe 500-500                   ->  dekhna aur kaatna ek kram me (row lock)
   Banking       3b  Arpan->Ravi, Ravi->Arpan, dono atke            ->  ek hi line, ek counter; ya pehle ek poora, phir doosra (serialize / lock ordering, deadlock detection + retry)
   Banking       3c  1 crore transfer, sab ek line me, bank dheema  ->  jo takra rahe sirf unka group, baaki 50 counter pe (per-account lock, partition)
-  Banking       21  Mumbai + Frankfurt dono ne 1000 de diye        ->  jahan khaata khula wahi har kaam kare, baaki request aage bhejein (write affinity / home region)
   Uber          5   Raju pe ek second me do ride                   ->  BMS wali parchi, ek kadam me (hold / lock)
   Uber          13  wallet me sirf 40                              ->  poora kaato, aadha nahi (atomic charge)
   Uber          15  Car A Arpan se 2 km, Ravi se 1 km; Arpan ko di ->  dono ko saath milao, kul doori kam (batch matching)
@@ -1615,7 +1642,7 @@ Yahi dikkat yahan bhi:
   E-commerce    6b  ek order me ghee, aata, daal; aata khatam      ->  poora order mat roko, jo hai wo bhejo, aate pe out of stock (adhoora order)
   Zomato        7   349 pe Arpan + Rahul ek pal me, 351 ho gaye     ->  ek hi counter, check + ghatao ek saath, pehle wale ko (atomic decrement)
 
-Naam: lock / atomic / counter range / Lua script / 1 thread per symbol / transaction / row lock / deadlock / lock ordering / batch matching / batching window / channel ka alag stock / adhoora order
+Naam: lock / atomic update / transaction / row lock / counter range
 Juda: parchi laga ke koi gayab ho jaaye to umar chahiye (2). Ek hi cheez pe bahut bheed to counter todo (7).
 ```
 
@@ -1648,7 +1675,7 @@ Yahi dikkat yahan bhi:
   Rate limiter  9b  OTP line me atka, der se nikla, bekaar         ->  har OTP pe umar, khatam to phenk do (message TTL)
   Notification  4b  OTP retry line se 3 ghante baad gaya           ->  OTP umar ke andar priority line (bhari to 3-4); umar khatam = bhejo mat, app pe Resend (priority queue, expiry)
 
-Naam: TTL / hold expiry / message TTL / funds block / partial / FOK / GTC / modify order / backup safai job / heartbeat / presence / location timeout / broadcast dispatch / reservation expiry / grace period / key me tareekh
+Naam: TTL (umar) / hold expiry / heartbeat / grace period
 Juda: single flight ka ladka gira to bhi yahi umar (6). Chat ka "online" bhi isi se (heartbeat).
 ```
 
@@ -1665,7 +1692,6 @@ Yahi dikkat yahan bhi:
   Payment       5b  net atka, Pay do baar daba diya                ->  phone ki key, wahi parchi lauta do (client idempotency key)
   Uber          5b  net atka, Book do baar daba diya               ->  wahi booking id, wahi ride (idempotency key)
   Uber          13b 250 kaatne gaye, gateway chup                  ->  ride id hi key, pehle poochho phir dobara (idempotency)
-  Uber          13c gateway ka jawab aaye hi na, kab tak rokoge?   ->  30-55 sec ghadi, phir GPay / cash; kata nikla to lautao (timeout, webhook, refund)
   E-commerce    8d  PSP ka success do baar aaya                    ->  payment id dekh ke doosra chhodo (idempotency)
   E-commerce    7c  Ravi ne 4 tab khole, Buy now 4 baar            ->  user id pe ek hi rukega (idempotency)
   Leaderboard   3b  match ka +50 do baar pahuncha                  ->  match id dekh ke ek hi baar jodo (idempotency)
@@ -1682,7 +1708,7 @@ Yahi dikkat yahan bhi:
   Chat          5c  late chhotu bhi aaya, #981 500 ko do baar      ->  parchi + register pe DONE, ek transaction (outbox status)
   Chat          5d  do chhotu ek hi pal me, dono bhejne nikle      ->  bahar wala aadmi: "ye to chala gaya", parchi phaado (dedup fan-out, message id)
 
-Naam: idempotency key / dedup / near-duplicate check / sequencer / idempotent consumer
+Naam: idempotency key / dedup / idempotent consumer
 Juda: dobara aata hi isliye ki beech me koi gira (4). Kafka ka retry bhi dobara bhejta, isliye har consumer pe yahi.
 ```
 
@@ -1707,7 +1733,7 @@ Yahi dikkat yahan bhi:
   Chat          2   Ravi ka phone band, 2 ghante                   ->  uncle nahi mile, paise apne paas (message store)
   Chat          5b  #981 DB me, pub/sub se pehle server gira       ->  extra chhotu + deewar pe parchi (backup, outbox + relay)
 
-Naam: outbox (hamare DB ki table, kaam ke saath usi transaction me) + relay / acks=all / rollback / order log + replay / message store
+Naam: outbox (hamare DB ki table) + relay / acks=all / rollback / order log + replay
 Juda: vasiyat padh ke dobara bheja to (3) chahiye. Notification, File upload, Kafka, Banking, News sab me same.
 ```
 
@@ -1734,7 +1760,7 @@ Yahi dikkat yahan bhi:
   Zomato        1   Whitefield me sabko wahi 15 km list, 4 baar DB ->  area ki list ek dabbe me, TTL, band = closed nishaan (area list cache)
   Zomato        2   Neha kinare pe, Whitefield bahut bada           ->  area ke andar chhote area, har ek ki list (grid / geohash cell)
 
-Naam: cache (Redis) / LRU, TTL / write buffer + batch / local cache / cache-aside / eviction
+Naam: cache (Redis) / TTL + LRU / local cache / write buffer + batch
 Juda: parchi bhar gayi to purana nikaalo; parchi aur DB alag ho sakte (20).
 ```
 
@@ -1759,7 +1785,7 @@ Yahi dikkat yahan bhi:
   URL shortener 11c cricket token, photocopy 7 pe umar khatam      ->  umar badhao, photocopy umar alag, chupchaap doosri parchi, 10 ladke na aayein tab backoff (TTL extend, TTL jitter, stale copy, backoff)
   URL shortener 11d 50 counter ke 50 ladke                         ->  saamne ek banda, sirf ek ladka (distributed lock)
 
-Naam: single flight / lock timeout / cache stampede / cache penetration / negative caching / TTL jitter / stale copy / distributed lock
+Naam: single flight (lock) / lock TTL / cache penetration / TTL jitter / stale copy
 Juda: ladke ki timeline = parchi ki umar (2). URL aur Cache dono me same.
 ```
 
@@ -1786,7 +1812,7 @@ Yahi dikkat yahan bhi:
   Inventory     2c  sab dabbe 0, ek cancel, iPhone wapas           ->  stock me +1, kisi dabbe ka nahi; jo pehle pay kare uska (restock)
   News          5   9 baje 1 crore log ek saath                    ->  bahut saare server + ek banda jo sabko manage kare (load balancer)
 
-Naam: hot key copies / replica / hot row todo / bucketing / sharded counter / work stealing / kai machine + load balancer
+Naam: hot key copies / replica / sharded counter / kai machine + LB
 Juda: machine badhane se nahi hota, kyunki ek key ek hi machine pe (8).
 ```
 
@@ -1829,7 +1855,7 @@ Yahi dikkat yahan bhi:
   Leaderboard   6c  chalte contest me aage-peeche 10               ->  dabbe score range se, coordinator ka thappa, seedha sahi dabba; andaze wali rank, galat jawab bhi ginte (range partition, shard map, penalty)
   Leaderboard   6d  1 crore contest aur tez kaise                  ->  availability > consistency; sign-up se pehle pata kitne, desh ko jagah baanto (rank nahi), shehar ke gole + range ka thappa (pre-partition, geo routing, AP)
 
-Naam: shard / partition key / consistent hashing / saga / clockwise / scale out / owner server / geohash / scatter-gather / score range
+Naam: shard / partition key / consistent hashing / scatter-gather
 Juda: URL 8 aur Cache 4 dono me ring wahi (Cassandra andar khud karta). Bheed ek tukde pe ho to (7).
 ```
 
@@ -1866,7 +1892,7 @@ Yahi dikkat yahan bhi:
   Twitter       5b  "Inida" se "India", kuch copy purana dikhaye   ->  thodi der galat, peeche ek ladka sabko theek kare (eventual consistency)
   News          13  feed me dikhi, search me 2 min baad            ->  dono me ek saath bharo ya peeche-peeche, fail pe alert (dual write, async index)
 
-Naam: replica / quorum / sync copy / read-your-writes / replication lag / fail-open / fail-closed / heartbeat / eventual consistency / timeout / coordinator / Redis AOF / naya owner (failover) / read replica / Multi-AZ
+Naam: replica / sync copy / read-your-writes / replication lag / failover
 Juda: sirf wahi "maan lo gira" jahan HUM faisla lete (sync ya async, fail-open), AWS wala nahi.
 ```
 
@@ -1899,7 +1925,7 @@ Yahi dikkat yahan bhi:
   Inventory     7   5 se kam, ab kya: sirf email?           ->  saari inventory dekho, grahak mat roko, alert kai raaston se (line me); mangwana purchase team ka (scope se bahar)
   Zomato        6   Diwali, 500 order seedha Postgres pe            ->  "order placed" dikhao, restaurant-wise Kafka line, worker peeche (queue + async)
 
-Naam: Kafka / queue + worker / consumer group / batch + Cassandra (likhai tez) / partition / alag topic / priority topic / consumer lag alert
+Naam: Kafka (queue) / consumer group / partition / alag (priority) topic
 Juda: line me se gira to (4) aur (3). Line peeche reh gayi to alert.
 ```
 
@@ -1955,8 +1981,9 @@ Yahi dikkat yahan bhi:
   E-commerce    9b  B, C wapas, iPhone D, E pe                    ->  D ka chhotu lauta de + sync job (hinted handoff, anti-entropy)
   Zomato        5   Burger Singh chup, na accept na reject          ->  2-3 min window, phir order fail, paisa nahi kata / wapas (accept timeout)
   Zomato        8   address khaali order, saari line atki (reel)    ->  3 retry, phir alag line + alert (retry limit + DLQ, poison message)
+  Uber          13c gateway ka jawab aaye hi na, kab tak rokoge?   ->  30-55 sec ghadi, phir GPay / cash; kata nikla to lautao (timeout, webhook, refund)
 
-Naam: PENDING + status job / retry / fallback / circuit breaker / saga / DLQ / webhook / failover / shared token bucket / status poll / 2PC (nahi) / timeout + refund / backoff / health check / PSP failover / reconciliation job / SLA / webhook + ack / backup PSP / REFUND_PENDING + refund job / webhook redelivery
+Naam: status poll / webhook / timeout + refund / retry + backoff / circuit breaker / reconciliation job
 Juda: Payment, BMS, E-com, Uber me wahi PAYMENT_PENDING. Notification aur Kafka me wahi circuit breaker. PSP pe hamari ghadi 30-55 sec + chhotu poochta (status poll) + paisa katte hi event (webhook) + der se kata to DB me REFUND, raat ki job lautaye, charon me (BMS 6c, 6e); SUCCESS + parchi ek saath (outbox, BMS 6d); onboard pe SLA sirf uptime ka.
 ```
 
@@ -1980,7 +2007,7 @@ Yahi dikkat yahan bhi:
   Netflix       5d  tukde ISP ke dabbe se, AWS ko kaise pata ruka  ->  dost sankshep me bata diya kar; kuch nahi bataya = aage nahi badha (playback report)
   PUBG          2   100 logon ko 99-99 ki khabar, har second       ->  khula taar, phone mangwa nahi raha, khabar apne aap (WebSocket / UDP push)
 
-Naam: WebSocket / Redis pub/sub / session map / pub/sub invalidation / standby + reconnect / per-server fan-out / Location Service / playback report / UDP push
+Naam: WebSocket / Redis pub/sub / session map
 Juda: Chat, Stock, Uber, Docs, sab me ek hi cheez.
 ```
 
@@ -2012,7 +2039,7 @@ Yahi dikkat yahan bhi:
   Leaderboard   5b  11:59:58 ka match, score 12:00:02 pe           ->  parchi pe khatam hone ka waqt, usi din ka register (event time)
   PUBG          3b  deewar ke peeche pahuncha, phir bhi mara       ->  server goli ke pal tak peeche ghuma ke dekhe (lag compensation, peeker's advantage)
 
-Naam: sequence number / offset / OT / coalesce / cursor / store-and-forward / client sort / Snowflake ID / same key parking / event time / last-write-wins / lag compensation
+Naam: sequence number / event time / OT / offset
 Juda: Kafka ka offset bhi yahi number.
 ```
 
@@ -2058,7 +2085,7 @@ Yahi dikkat yahan bhi:
   YouTube       8c  har reel poori pehle se, 29 sec bekaar         ->  shuru ke kuch chunks, pattern dekh ke kam (pre-fetch sirf shuru, trade-off)
   File upload   3b  10 GB upload, token beech me khatam            ->  har tukde ka apna token, resume pe baaki ke naye (presigned per part)
 
-Naam: S3 + presigned URL / multipart / transcoding + ABR / pre-fetch / CDN / hot-cold / event notification / lifecycle rule / manifest + seek / archive / Open Connect / steering / client failover / player buffer / parallel encoding / promote / demote
+Naam: S3 + presigned URL / multipart / CDN / transcoding + ABR / hot-cold
 Juda: link kisko mile wo gate pe (16).
 ```
 
@@ -2101,7 +2128,7 @@ Yahi dikkat yahan bhi:
   Train         4   tower ki list koi nahi deta                    ->  khud tukdon me, ya permission wali authority (railway, MCD, BMC), updates (data partner)
   Zomato        4   burger ready, driver 15 min door                ->  quantity se ready time, driver ko wahi time (prep-time dispatch)
 
-Naam: fanout on write / precompute / batch / checkpoint / data partner / MapReduce / fanout on read / backfill / merge at read / chunks / snapshot / balance snapshot / snapshot job / proactive fill / cold start
+Naam: precompute / fanout on write vs read / batch / checkpoint
 Juda: Kohli jaise 27 crore pe ulta: padhte waqt milao (fanout on read).
 ```
 
@@ -2140,7 +2167,7 @@ Yahi dikkat yahan bhi:
   PUBG          4   1 second me 500 meter                          ->  Koramangala se Whitefield namumkin, phenk do, ban (movement validation)
   Inventory     6   return aate hi +1, tooti screen Priya ko       ->  jaanch darwaze pe, kharab to wahin reject; ginti sirf bechne layak ki (doorstep QC, sellable vs damaged)
 
-Naam: rate limit / token bucket / API gateway / WAF / validation / permission check / hit validation / movement validation / kaali list / 302 / auth / 429 / ban list / allow list / signed URL / magic bytes / virus scan / quarantine / fraud detection / anti-cheat ban
+Naam: rate limit (token bucket) / API gateway / WAF / validation / auth
 Juda: Rate limiter, URL, File, Kafka, Docs, Twitter video, YouTube views, PUBG ka hacker: ek hi gate.
 ```
 
@@ -2162,7 +2189,7 @@ Yahi dikkat yahan bhi:
   E-commerce    7b  rollback + ghadi dono me pech                  ->  Apple store: sale gate, stock jitne hi Pay tak, fail = agla batch
   Zomato        6   Diwali, Burger Singh pe 2 min me 500            ->  subah stock poocho, 350 hi andar, baaki out of stock (capacity gate)
 
-Naam: virtual queue / sale gate / surge / token / starvation -> aging / alag service
+Naam: virtual queue / sale gate / token
 Juda: andar gaya to ghadi (2), pay pe (11).
 ```
 
@@ -2191,7 +2218,7 @@ Yahi dikkat yahan bhi:
   Uber          16  Raju signal pe khada, har 4 sec wahi jagah     ->  sote ke kamre me baar-baar mat jao, 15-20 sec (adaptive ping)
   PUBG          2   Military Base ki har goli Pochinki tak         ->  6 km door ki awaaz aati hi nahi, sirf aas-paas ki (area of interest)
 
-Naam: operation / inbox had / watermark / parent_id / template cache / adaptive ping / area of interest / base62 / on-demand inbox / hydration / soft delete / read count / presence pub/sub (subscribe)
+Naam: sirf badlaav bhejo / had lagao / soft delete / hydration
 Juda: "padha" ka ek number kram wale number se hi banta (13). Kam bhejna bheed ka bojh bhi ghatata (7).
 ```
 
@@ -2211,8 +2238,9 @@ Yahi dikkat yahan bhi:
   PUBG          1   America ka ladka Mumbai match me, ping 300     ->  America wala America server pe; akela 3 wale squad me (region matchmaking, squad fill)
   E-commerce    1b  Lucknow ka store khaali, Kanpur me 20          ->  Lucknow wale ko Lucknow ka store, dark store = aas-paas ka (location se paas wala store)
   Inventory     4   Bangalore khaali, Delhi 50, Mumbai 10          ->  pehle apna shehar, phir main warehouse; doosra shehar FR tay kare (hub and spoke, sourcing rule)
+  Banking       21  Mumbai + Frankfurt dono ne 1000 de diye        ->  jahan khaata khula wahi har kaam kare, baaki request aage bhejein (write affinity / home region)
 
-Naam: multi-region / home region / region matchmaking / country code / cross-region / squad fill / dark store / hub and spoke
+Naam: multi-region / home region / cross-region
 Juda: video ke liye yahi kaam CDN karta (14).
 ```
 
@@ -2252,7 +2280,7 @@ Yahi dikkat yahan bhi:
   Yelp          2   Burger Singh band, search me abhi bhi          ->  Postgres -> ES sync, "Closed" dikhao, Zomato jaisa (DB -> search sync)
   Yelp          3   dopahar ka naya burger, ES ko raat 2 baje       ->  badlaav pe change event, raat ki job bhi (change event, reconciliation)
 
-Naam: ledger / reconciliation / eventual consistency / sahi dabba / central counter / Neo4j / matching engine / DB = sach / cache DELETE / sync job / write-then-invalidate / updated_at / check job / double-entry / S3 Object Lock / revised statement / latest location / upfront fare / map matching / Redis sorted set / compensation
+Naam: ledger / reconciliation / DB = sach / cache delete on write
 Juda: paisa ho to sach turant chahiye; profile ho to thodi der purana chalega.
 ```
 
@@ -2274,7 +2302,7 @@ Yahi dikkat yahan bhi:
   Train         3   mera net band, dost ko khabar                  ->  jinka net chalu unka app bheje, server se push (crowdsourcing)
   Zomato        3   order Burger Singh tak, user ko kya dikhe       ->  placed -> accepted -> ready -> delivering + notification (order status flow)
 
-Naam: dead reckoning / client-side prediction / rubber banding / correction / last known location / status (arrived, delivered) / geofence / last write wins / cell ID / ETA / crowdsourcing
+Naam: dead reckoning / client-side prediction / last known location / status
 Juda: server ki taraf location band ho to Uber 14 (location timeout); Zomato me do status, building tak + haath me.
 ```
 
